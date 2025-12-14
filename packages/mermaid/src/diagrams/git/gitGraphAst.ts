@@ -1,5 +1,5 @@
 import { log } from '../../logger.js';
-import { cleanAndMerge, random } from '../../utils.js';
+import { cleanAndMerge, random, formatUrl } from '../../utils.js';
 import { getConfig as commonGetConfig } from '../../config.js';
 import common from '../common/common.js';
 import {
@@ -19,6 +19,7 @@ import type {
   MergeDB,
   BranchDB,
   CherryPickDB,
+  GitGraphLink,
 } from './gitGraphTypes.js';
 import { commitType } from './gitGraphTypes.js';
 import { ImperativeState } from '../../utils/imperativeState.js';
@@ -35,6 +36,7 @@ interface GitGraphState {
   direction: DiagramOrientation;
   seq: number;
   options: any;
+  links: Map<string, GitGraphLink>;
 }
 
 const DEFAULT_GITGRAPH_CONFIG: Required<GitGraphDiagramConfig> = DEFAULT_CONFIG.gitGraph;
@@ -60,6 +62,7 @@ const state = new ImperativeState<GitGraphState>(() => {
     direction: 'LR',
     seq: 0,
     options: {},
+    links: new Map(),
   };
 });
 
@@ -495,6 +498,39 @@ export const getHead = function () {
   return state.records.head;
 };
 
+export const setLink = function (
+  id: string,
+  link: string,
+  tooltip?: string,
+  target?: string
+): void {
+  const config = getConfig();
+  const sanitizedLink = formatUrl(link, config);
+  if (!sanitizedLink) {
+    return;
+  }
+
+  let validTarget: GitGraphLink['target'] = '_self';
+  if (target && ['_self', '_blank', '_parent', '_top'].includes(target)) {
+    validTarget = target as GitGraphLink['target'];
+  }
+
+  state.records.links.set(id, {
+    id,
+    link: sanitizedLink,
+    tooltip: tooltip ? common.sanitizeText(tooltip, config) : undefined,
+    target: validTarget,
+  });
+};
+
+export const getLinks = function (): Map<string, GitGraphLink> {
+  return new Map(state.records.links);
+};
+
+export const getLink = function (id: string): GitGraphLink | undefined {
+  return state.records.links.get(id);
+};
+
 export const db: GitGraphDB = {
   commitType,
   getConfig,
@@ -522,4 +558,7 @@ export const db: GitGraphDB = {
   setAccDescription,
   setDiagramTitle,
   getDiagramTitle,
+  setLink,
+  getLinks,
+  getLink,
 };

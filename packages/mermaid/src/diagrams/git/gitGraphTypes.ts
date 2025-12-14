@@ -87,6 +87,13 @@ export interface CherryPickingAst {
   tags?: string[];
 }
 
+export interface GitGraphLink {
+  id: string;
+  link: string;
+  tooltip?: string;
+  target: '_self' | '_blank' | '_parent' | '_top';
+}
+
 export interface GitGraphDB extends DiagramDBBase<GitGraphDiagramConfig> {
   commitType: typeof commitType;
   setDirection: (dir: DiagramOrientation) => void;
@@ -106,6 +113,9 @@ export interface GitGraphDB extends DiagramDBBase<GitGraphDiagramConfig> {
   getCurrentBranch: () => string;
   getDirection: () => DiagramOrientation;
   getHead: () => Commit | null;
+  setLink: (id: string, link: string, tooltip?: string, target?: string) => void;
+  getLinks: () => Map<string, GitGraphLink>;
+  getLink: (id: string) => GitGraphLink | undefined;
 }
 
 export interface GitGraphDBParseProvider extends Partial<GitGraphDB> {
