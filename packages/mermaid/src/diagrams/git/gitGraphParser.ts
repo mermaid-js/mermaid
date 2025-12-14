@@ -16,6 +16,7 @@ import type {
   BranchDB,
   MergeDB,
   CherryPickDB,
+  ClickAst,
 } from './gitGraphTypes.js';
 
 const populate = (ast: GitGraph, db: GitGraphDBParseProvider) => {
@@ -37,6 +38,7 @@ const parseStatement = (statement: any, db: GitGraphDBParseProvider) => {
     Merge: (stmt) => db.merge(parseMerge(stmt)),
     Checkout: (stmt) => db.checkout(parseCheckout(stmt)),
     CherryPicking: (stmt) => db.cherryPick(parseCherryPicking(stmt)),
+    Click: (stmt) => parseClick(stmt, db),
   };
 
   const parser = parsers[statement.$type];
@@ -90,6 +92,10 @@ const parseCherryPicking = (cherryPicking: CherryPickingAst): CherryPickDB => {
   return cherryPickDB;
 };
 
+const parseClick = (click: ClickAst, db: GitGraphDBParseProvider) => {
+  db.setLink(click.id, click.href, click.tooltip, click.target);
+};
+
 export const parser: ParserDefinition = {
   parse: async (input: string): Promise<void> => {
     const ast: GitGraph = await parse('gitGraph', input);
@@ -109,6 +115,7 @@ if (import.meta.vitest) {
     merge: vi.fn(),
     cherryPick: vi.fn(),
     checkout: vi.fn(),
+    setLink: vi.fn(),
   };
 
   describe('GitGraph Parser', () => {
@@ -241,15 +248,20 @@ if (import.meta.vitest) {
     });
 
     it('should handle click statement gracefully', () => {
-       const click = {
+      const click = {
         $type: 'Click',
         id: '1',
         href: 'http://example.com',
         tooltip: 'tooltip',
-        target: '_blank'
+        target: '_blank',
       };
-      // Expect no error to be thrown
-      expect(() => parseStatement(click, mockDB)).not.toThrow();
+      parseStatement(click, mockDB);
+      expect(mockDB.setLink).toHaveBeenCalledWith(
+        '1',
+        'http://example.com',
+        'tooltip',
+        '_blank'
+      );
     });
   });
 }

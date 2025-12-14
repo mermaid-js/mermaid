@@ -58,7 +58,21 @@ export interface GitGraph {
   statements: Statement[];
 }
 
-export type Statement = CommitAst | BranchAst | MergeAst | CheckoutAst | CherryPickingAst;
+export type Statement =
+  | CommitAst
+  | BranchAst
+  | MergeAst
+  | CheckoutAst
+  | CherryPickingAst
+  | ClickAst;
+
+export interface ClickAst {
+  $type: 'Click';
+  id: string;
+  href: string;
+  tooltip?: string;
+  target?: '_self' | '_blank' | '_parent' | '_top';
+}
 
 export interface CommitAst {
   $type: 'Commit';
@@ -131,6 +145,12 @@ export interface GitGraphDBParseProvider extends Partial<GitGraphDB> {
   merge: (mergeDB: MergeDB) => void;
   cherryPick: (cherryPickDB: CherryPickDB) => void;
   checkout: (branch: string) => void;
+  setLink: (
+    id: string,
+    link: string,
+    tooltip?: string,
+    target?: '_self' | '_blank' | '_parent' | '_top'
+  ) => void;
 }
 
 export interface GitGraphDBRenderProvider extends Partial<GitGraphDB> {
