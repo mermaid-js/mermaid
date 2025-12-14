@@ -129,7 +129,7 @@ export const drawEdges = async function (
               : 'Y'
             : 'XY';
 
-          let width = 0;
+          let width;
           if (axis === 'X') {
             width = Math.abs(startX - endX);
           } else if (axis === 'Y') {
@@ -375,7 +375,7 @@ export const drawJunctions = function (
 
     junctionElem.attr('class', 'architecture-junction');
 
-    const { width, height } = junctionElem._groups[0][0].getBBox();
+    const { width, height } = junctionElem.node().getBBox();
     junctionElem.width = width;
     junctionElem.height = height;
     db.setElementForId(junction.id, junctionElem);
