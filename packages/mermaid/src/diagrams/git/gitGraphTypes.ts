@@ -35,6 +35,13 @@ export interface CherryPickDB {
   tags?: string[];
 }
 
+export interface GitGraphLink {
+  id: string;
+  link: string;
+  tooltip?: string;
+  target: '_self' | '_blank' | '_parent' | '_top';
+}
+
 export interface Commit {
   id: string;
   message: string;
