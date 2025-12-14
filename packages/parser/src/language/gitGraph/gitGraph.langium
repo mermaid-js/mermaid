@@ -18,6 +18,7 @@ Statement
 | Merge 
 | Checkout 
 | CherryPicking
+| Click
 ;
 
 Direction:
@@ -54,3 +55,6 @@ CherryPicking:
         |'tag:' tags+=STRING
         |'parent:' parent=STRING
     )* EOL;
+
+Click:
+    'click' id=(STRING|REFERENCE) href=STRING (tooltip=STRING)? (target=('_blank' | '_self' | '_parent' | '_top'))? EOL;

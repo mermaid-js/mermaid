@@ -239,5 +239,17 @@ if (import.meta.vitest) {
       });
       expect(mockDB.checkout).toHaveBeenCalledWith('newBranch');
     });
+
+    it('should handle click statement gracefully', () => {
+       const click = {
+        $type: 'Click',
+        id: '1',
+        href: 'http://example.com',
+        tooltip: 'tooltip',
+        target: '_blank'
+      };
+      // Expect no error to be thrown
+      expect(() => parseStatement(click, mockDB)).not.toThrow();
+    });
   });
 }
