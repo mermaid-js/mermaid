@@ -1012,6 +1012,7 @@ You have to call mermaid.initialize.`
       const baseNode = {
         id: vertex.id,
         label: vertex.text,
+        labelType: vertex.labelType,
         labelStyle: '',
         parentId,
         padding: config.flowchart?.padding || 8,
@@ -1119,6 +1120,7 @@ You have to call mermaid.initialize.`
         end: rawEdge.end,
         type: rawEdge.type ?? 'normal',
         label: rawEdge.text,
+        labelType: rawEdge.labelType,
         labelpos: 'c',
         thickness: rawEdge.stroke,
         minlen: rawEdge.length,

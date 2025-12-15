@@ -20,23 +20,20 @@ export const clear = () => {
 export const insertEdgeLabel = async (elem, edge) => {
   const config = getConfig();
   const useHtmlLabels = evaluate(config.flowchart.htmlLabels);
-  // Only process as markdown if labelType is explicitly 'markdown'
-  // This ensures only labels properly delimited with ["`...`"] are processed as markdown
-  const isFlowchart = config.flowchart !== undefined;
-  const shouldProcessAsMarkdown = isFlowchart && edge.labelType === 'markdown';
   // Create the actual text element
-  const labelElement = shouldProcessAsMarkdown
-    ? createText(
-        elem,
-        edge.label,
-        {
-          style: edge.labelStyle,
-          useHtmlLabels,
-          addSvgBackground: true,
-        },
-        config
-      )
-    : await createLabel(edge.label, edge.labelStyle);
+  const labelElement =
+    edge.labelType === 'markdown'
+      ? createText(
+          elem,
+          edge.label,
+          {
+            style: edge.labelStyle,
+            useHtmlLabels,
+            addSvgBackground: true,
+          },
+          config
+        )
+      : await createLabel(edge.label, edge.labelStyle);
 
   // Create outer g, edgeLabel, this will be positioned after graph layout
   const edgeLabel = elem.insert('g').attr('class', 'edgeLabel');
