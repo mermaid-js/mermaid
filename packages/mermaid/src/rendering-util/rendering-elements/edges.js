@@ -29,7 +29,7 @@ import {
 import rough from 'roughjs';
 import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
-import { isLabelStyle, styles2String } from './shapes/handDrawnShapeStyles.js';
+import { isLabelStyle } from './shapes/handDrawnShapeStyles.js';
 
 export const edgeLabels = new Map();
 export const terminalLabels = new Map();
@@ -47,14 +47,15 @@ export const getLabelStyles = (styleArray) => {
 export const insertEdgeLabel = async (elem, edge) => {
   let useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
 
-  const { labelStyles } = styles2String(edge);
-  edge.labelStyle = labelStyles;
-  const labelElement = await createText(elem, edge.label, {
-    style: edge.labelStyle,
-    useHtmlLabels,
-    addSvgBackground: true,
-    isNode: false,
-  });
+  const labelElement =
+    edge.labelType === 'markdown'
+      ? await createText(elem, edge.label, {
+          style: getLabelStyles(edge.labelStyle),
+          useHtmlLabels,
+          addSvgBackground: true,
+          isNode: false,
+        })
+      : await createLabel(edge.label, getLabelStyles(edge.labelStyle), undefined, false);
   log.info('abc82', edge, edge.labelType);
 
   // Create outer g, edgeLabel, this will be positioned after graph layout
