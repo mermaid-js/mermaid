@@ -1,4 +1,4 @@
-import { markdownToLines, markdownToHTML } from './handle-markdown-text.js';
+import { markdownToLines, markdownToHTML, hasMarkdownSyntax } from './handle-markdown-text.js';
 import { test, expect } from 'vitest';
 
 test('markdownToLines - Basic test', () => {
@@ -310,4 +310,36 @@ test('markdownToHTML - auto wrapping', () => {
       { markdownAutoWrap: true }
     )
   ).toMatchInlineSnapshot('"<p>Hello, how do<br/>you do?</p>"');
+});
+
+test('hasMarkdownSyntax - detects bold text', () => {
+  expect(hasMarkdownSyntax('This is **bold** text')).toBe(true);
+  expect(hasMarkdownSyntax('**Bold**')).toBe(true);
+  expect(hasMarkdownSyntax('Text with **bold** in middle')).toBe(true);
+});
+
+test('hasMarkdownSyntax - detects italic text', () => {
+  expect(hasMarkdownSyntax('This is *italic* text')).toBe(true);
+  expect(hasMarkdownSyntax('*Italic*')).toBe(true);
+  expect(hasMarkdownSyntax('Text with *italic* in middle')).toBe(true);
+});
+
+test('hasMarkdownSyntax - detects mixed formatting', () => {
+  expect(hasMarkdownSyntax('*Italic* and **bold**')).toBe(true);
+  expect(hasMarkdownSyntax('The dog in **the** hog')).toBe(true);
+});
+
+test('hasMarkdownSyntax - returns false for plain text', () => {
+  expect(hasMarkdownSyntax('This is plain text')).toBe(false);
+  expect(hasMarkdownSyntax('The dog in the hog')).toBe(false);
+  expect(hasMarkdownSyntax('Simple label')).toBe(false);
+  expect(hasMarkdownSyntax('')).toBe(false);
+});
+
+test('hasMarkdownSyntax - handles edge cases', () => {
+  expect(hasMarkdownSyntax(null as any)).toBe(false);
+  expect(hasMarkdownSyntax(undefined as any)).toBe(false);
+  expect(hasMarkdownSyntax('   ')).toBe(false);
+  expect(hasMarkdownSyntax('Text with asterisks * but not italic')).toBe(false);
+  expect(hasMarkdownSyntax('Text with ** but not bold')).toBe(false);
 });

@@ -34,7 +34,11 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
 
   const textNode = label.node();
   let text;
-  if (node.labelType === 'markdown') {
+  // Only process as markdown if labelType is explicitly 'markdown'
+  // This ensures only labels properly delimited with ["`...`"] are processed as markdown
+  const isFlowchart = config.flowchart !== undefined;
+  const shouldProcessAsMarkdown = isFlowchart && node.labelType === 'markdown';
+  if (shouldProcessAsMarkdown) {
     // text = textNode;
     text = createText(
       label,

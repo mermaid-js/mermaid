@@ -28,12 +28,13 @@ const rect = async (parent, node) => {
   // const text = label
   //   .node()
   //   .appendChild(createLabel(node.labelText, node.labelStyle, undefined, true));
-  const text =
-    node.labelType === 'markdown'
-      ? createText(label, node.labelText, { style: node.labelStyle, useHtmlLabels }, siteConfig)
-      : label
-          .node()
-          .appendChild(await createLabel(node.labelText, node.labelStyle, undefined, true));
+  // Only process as markdown if labelType is explicitly 'markdown'
+  // This ensures only labels properly delimited with ["`...`"] are processed as markdown
+  const isFlowchart = siteConfig.flowchart !== undefined;
+  const shouldProcessAsMarkdown = isFlowchart && node.labelType === 'markdown';
+  const text = shouldProcessAsMarkdown
+    ? createText(label, node.labelText, { style: node.labelStyle, useHtmlLabels }, siteConfig)
+    : label.node().appendChild(await createLabel(node.labelText, node.labelStyle, undefined, true));
 
   // Get the size of the label
   let bbox = text.getBBox();
