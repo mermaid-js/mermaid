@@ -32,6 +32,32 @@ mermaid.registerLayoutLoaders(tidyTreeLayouts);
 </script>
 ```
 
+### Registering Multiple Layouts
+
+You can register multiple layout engines by calling `registerLayoutLoaders` multiple times:
+
+```ts
+import mermaid from 'mermaid';
+import tidyTreeLayouts from '@mermaid-js/layout-tidy-tree';
+import elkLayouts from '@mermaid-js/layout-elk';
+
+mermaid.registerLayoutLoaders(tidyTreeLayouts);
+mermaid.registerLayoutLoaders(elkLayouts);
+```
+
+Or with CDN:
+
+```html
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  import tidyTreeLayouts from 'https://cdn.jsdelivr.net/npm/@mermaid-js/layout-tidy-tree@0/dist/mermaid-layout-tidy-tree.esm.min.mjs';
+  import elkLayouts from 'https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0/dist/mermaid-layout-elk.esm.min.mjs';
+
+  mermaid.registerLayoutLoaders(tidyTreeLayouts);
+  mermaid.registerLayoutLoaders(elkLayouts);
+</script>
+```
+
 ## Usage
 
 After registering the layout, add a configuration block at the top of your diagram:
