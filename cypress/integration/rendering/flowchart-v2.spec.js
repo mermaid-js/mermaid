@@ -79,6 +79,18 @@ describe('Flowchart v2', () => {
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
+  it('6a: should render complex HTML in labels with sandbox security', () => {
+    imgSnapshotTest(
+      `flowchart TD
+    A[Christmas] -->|Get money| B(Go shopping)
+    B --> C{Let me think}
+    C -->|One| D[Laptop]
+    C -->|Two| E[iPhone]
+    C -->|Three| F[fa:fa-car Car]
+      `,
+      { securityLevel: 'sandbox', flowchart: { htmlLabels: true } }
+    );
+  });
   it('7: should render a flowchart when useMaxWidth is true (default)', () => {
     renderGraph(
       `flowchart TD

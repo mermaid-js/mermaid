@@ -7,6 +7,7 @@ import type { MindmapNode } from './mindmapTypes.js';
 import defaultConfig from '../../defaultConfig.js';
 import type { LayoutData, Node, Edge } from '../../rendering-util/types.js';
 import { getUserDefinedConfig } from '../../config.js';
+import { MAX_SECTIONS } from './svgDraw.js';
 
 // Extend Node type for mindmap-specific properties
 export type MindmapLayoutNode = Node & {
@@ -203,7 +204,7 @@ export class MindmapDB {
     // For other nodes, inherit parent's section number
     if (node.children) {
       for (const [index, child] of node.children.entries()) {
-        const childSectionNumber = node.level === 0 ? index : sectionNumber;
+        const childSectionNumber = node.level === 0 ? index % (MAX_SECTIONS - 1) : sectionNumber;
         this.assignSections(child, childSectionNumber);
       }
     }

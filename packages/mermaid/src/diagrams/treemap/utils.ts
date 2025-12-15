@@ -12,7 +12,7 @@ export function buildHierarchy(
     type: string;
     value?: number;
     classSelector?: string;
-    cssCompiledStyles?: string;
+    cssCompiledStyles?: string[];
   }[]
 ): TreemapNode[] {
   if (!items.length) {
@@ -29,7 +29,7 @@ export function buildHierarchy(
     };
     node.classSelector = item?.classSelector;
     if (item?.cssCompiledStyles) {
-      node.cssCompiledStyles = [item.cssCompiledStyles];
+      node.cssCompiledStyles = item.cssCompiledStyles;
     }
 
     if (item.type === 'Leaf' && item.value !== undefined) {
