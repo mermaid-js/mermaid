@@ -256,12 +256,7 @@ if (import.meta.vitest) {
         target: '_blank',
       };
       parseStatement(click, mockDB);
-      expect(mockDB.setLink).toHaveBeenCalledWith(
-        '1',
-        'http://example.com',
-        'tooltip',
-        '_blank'
-      );
+      expect(mockDB.setLink).toHaveBeenCalledWith('1', 'http://example.com', 'tooltip', '_blank');
     });
   });
 }

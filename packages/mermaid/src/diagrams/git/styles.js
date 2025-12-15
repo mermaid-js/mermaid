@@ -56,6 +56,27 @@ const getStyles = (options) =>
     font-size: 18px;
     fill: ${options.textColor};
   }
+
+  /* Clickable commit styles */
+  .commit.clickable {
+    cursor: pointer;
+  }
+
+  .commit.clickable:hover .commit-label-bkg,
+  .commit.clickable:focus .commit-label-bkg {
+    stroke-width: 4px;
+    stroke: ${options.git0 || '#000'} !important;
+  }
+
+  .commit.clickable:hover text.commit-label,
+  .commit.clickable:focus text.commit-label {
+    text-decoration: underline;
+  }
+
+  .commit.clickable:focus {
+    outline: 2px solid ${options.git0 || '#000'};
+    outline-offset: 2px;
+  }
 `;
 
 export default getStyles;

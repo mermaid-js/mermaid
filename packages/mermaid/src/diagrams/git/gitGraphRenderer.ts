@@ -299,6 +299,8 @@ const drawCommitLabel = (
     DEFAULT_GITGRAPH_CONFIG?.showCommitLabel
   ) {
     const wrapper = gLabels.append('g');
+    wrapper.attr('class', 'commit');
+    wrapper.attr('data-commit-id', commit.id);
     const labelBkg = wrapper.insert('rect').attr('class', 'commit-label-bkg');
     const text = wrapper
       .append('text')
@@ -920,8 +922,8 @@ const setupClickEvents = (
     links.forEach((linkData, commitId) => {
       // Escape special characters in commit ID for CSS selector
       const escapedId = CSS.escape(commitId);
-      const element = svg.select(`[data-commit-id="${escapedId}"]`);
-      if (element.empty()) {
+      const elements = svg.selectAll(`[data-commit-id="${escapedId}"]`);
+      if (elements.empty()) {
         return;
       }
       // Sanitize URL to prevent XSS
@@ -930,13 +932,12 @@ const setupClickEvents = (
         return;
       }
       // Add clickable styling and accessibility
-      element
-        .classed('clickable', true)
-        .attr('tabindex', '0')
-        .style('cursor', 'pointer');
+      elements.classed('clickable', true).attr('tabindex', '0').style('cursor', 'pointer');
       // Add tooltip if provided
       if (linkData.tooltip) {
-        element.append('title').text(linkData.tooltip);
+        elements.each(function () {
+          select(this).append('title').text(linkData.tooltip!);
+        });
       }
       // Click handler
       const handleClick = () => {
@@ -960,9 +961,9 @@ const setupClickEvents = (
         }
       };
       // Bind click event
-      element.on('click', handleClick);
+      elements.on('click', handleClick);
       // Bind keyboard event for accessibility
-      element.on('keydown', (event: KeyboardEvent) => {
+      elements.on('keydown', (event: KeyboardEvent) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
           handleClick();
