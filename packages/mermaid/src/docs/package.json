@@ -24,14 +24,14 @@
     "vue": "^3.5.25"
   },
   "devDependencies": {
-    "@iconify-json/carbon": "^1.2.14",
-    "@unocss/reset": "^66.5.9",
+    "@iconify-json/carbon": "^1.2.15",
+    "@unocss/reset": "^66.5.10",
     "@vite-pwa/vitepress": "^1.0.1",
-    "@vitejs/plugin-vue": "^6.0.2",
+    "@vitejs/plugin-vue": "^6.0.3",
     "fast-glob": "^3.3.3",
     "https-localhost": "^4.7.1",
     "pathe": "^2.0.3",
-    "unocss": "^66.5.9",
+    "unocss": "^66.5.10",
     "unplugin-vue-components": "^28.8.0",
     "vite": "^7.0.8",
     "vite-plugin-pwa": "^1.0.3",
