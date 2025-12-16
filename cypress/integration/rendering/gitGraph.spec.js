@@ -1570,3 +1570,145 @@ gitGraph TB:
     );
   });
 });
+
+describe('GitGraph with click statements', () => {
+  it('should render commit with click link', () => {
+    imgSnapshotTest(
+      `gitGraph
+        commit id: "c1"
+        commit id: "c2"
+        click "c1" "https://example.com"
+      `,
+      {}
+    );
+  });
+  it('should render with click tooltip', () => {
+    imgSnapshotTest(
+      `gitGraph
+        commit id: "c1"
+        click "c1" "https://example.com" "Click me"
+      `,
+      {}
+    );
+  });
+  it('should render multiple linked commits', () => {
+    imgSnapshotTest(
+      `gitGraph
+        commit id: "c1"
+        commit id: "c2"
+        commit id: "c3"
+        click "c1" "https://example.com/1"
+        click "c2" "https://example.com/2"
+        click "c3" "https://example.com/3"
+      `,
+      {}
+    );
+  });
+  it('should render with branches and links', () => {
+    imgSnapshotTest(
+      `gitGraph
+        commit id: "init"
+        branch feature
+        commit id: "feat"
+        click "feat" "https://github.com/pr/1"
+        checkout main
+        merge feature id: "merge"
+        click "merge" "https://github.com/pr/1#merged"
+      `,
+      {}
+    );
+  });
+  it('should render links with TB orientation', () => {
+    imgSnapshotTest(
+      `gitGraph TB:
+        commit id: "top"
+        commit id: "bottom"
+        click "top" "https://example.com"
+      `,
+      {}
+    );
+  });
+  it('should render links with BT orientation', () => {
+    imgSnapshotTest(
+      `gitGraph BT:
+        commit id: "bottom"
+        commit id: "top"
+        click "bottom" "https://example.com"
+      `,
+      {}
+    );
+  });
+  it('should render links with LR orientation', () => {
+    imgSnapshotTest(
+      `gitGraph LR:
+        commit id: "left"
+        commit id: "right"
+        click "left" "https://example.com"
+      `,
+      {}
+    );
+  });
+  it('should handle special characters in commit id with click', () => {
+    imgSnapshotTest(
+      `gitGraph
+        commit id: "v1.0.0-beta"
+        click "v1.0.0-beta" "https://example.com"
+      `,
+      {}
+    );
+  });
+  it('should render linked commit with tag', () => {
+    imgSnapshotTest(
+      `gitGraph
+        commit id: "release" tag: "v1.0"
+        click "release" "https://github.com/releases/v1.0"
+      `,
+      {}
+    );
+  });
+  it('should render linked HIGHLIGHT commit', () => {
+    imgSnapshotTest(
+      `gitGraph
+        commit id: "normal"
+        commit id: "important" type: HIGHLIGHT
+        commit id: "another"
+        click "important" "https://example.com"
+      `,
+      {}
+    );
+  });
+  it('should render linked REVERSE commit', () => {
+    imgSnapshotTest(
+      `gitGraph
+        commit id: "normal"
+        commit id: "reverted" type: REVERSE
+        commit id: "another"
+        click "reverted" "https://example.com"
+      `,
+      {}
+    );
+  });
+  it('should render complex graph with mixed links', () => {
+    imgSnapshotTest(
+      `gitGraph
+        commit id: "init"
+        click "init" "https://example.com/init"
+        branch develop
+        commit id: "dev1"
+        branch feature
+        commit id: "feat1"
+        click "feat1" "https://example.com/feat"
+        checkout develop
+        commit id: "dev2"
+        checkout main
+        merge develop id: "merge1"
+        checkout feature
+        commit id: "feat2"
+        checkout main
+        merge feature id: "merge2"
+        click "merge2" "https://example.com/merge"
+      `,
+      {}
+    );
+  });
+});
