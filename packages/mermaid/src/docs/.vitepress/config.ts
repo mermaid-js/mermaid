@@ -122,7 +122,7 @@ function nav() {
     },
     {
       text: '💻 Open Editor',
-      link: 'https://mermaid.live/edit',
+      link: 'https://mermaid.ai/live/edit',
       target: '_blank',
       rel: 'external',
     },
