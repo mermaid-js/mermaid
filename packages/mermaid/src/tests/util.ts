@@ -104,6 +104,12 @@ export function jsdomIt(message: string, run: (input: JsdomItInput) => void | Pr
       const dom = new JSDOM(baseHtml, {
         resources: 'usable',
         beforeParse(_window) {
+          _window.CSS = {
+            // https://github.com/jsdom/jsdom/issues/3991
+            escape(input: string): string {
+              return input;
+            },
+          };
           // Mocks DOM functions that require rendering, JSDOM doesn't
           setOnProtectedConstant(_window.Element.prototype, 'getBBox', () => MOCKED_BBOX);
           setOnProtectedConstant(_window.Element.prototype, 'getTotalLength', () => MOCK_SIZE);

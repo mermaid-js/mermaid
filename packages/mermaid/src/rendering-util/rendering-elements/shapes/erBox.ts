@@ -1,7 +1,7 @@
-import { updateNodeBounds, getNodeClasses } from './util.js';
+import { getNodeClasses, updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
-import { userNodeOverrides, styles2String } from './handDrawnShapeStyles.js';
+import { styles2String, userNodeOverridesNewGen } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { drawRect } from './drawRect.js';
 import { getConfig } from '../../../config.js';
@@ -12,6 +12,7 @@ import { select } from 'd3';
 import { calculateTextWidth } from '../../../utils.js';
 import type { MermaidConfig } from '../../../config.type.js';
 import type { D3Selection } from '../../../types.js';
+import { type RoughSVG } from 'roughjs/bin/svg.js';
 
 export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   // Treat node as entityNode for certain entityNode checks
@@ -179,7 +180,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
 
   // @ts-ignore TODO: Fix rough typings
   const rc = rough.svg(shapeSvg);
-  const options = userNodeOverrides(node, {});
+  const options = userNodeOverridesNewGen(node, {});
 
   if (node.look !== 'handDrawn') {
     options.roughness = 0;
@@ -229,68 +230,122 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     .attr('transform', 'translate(' + -nameBBox.width / 2 + ', ' + (y + TEXT_PADDING / 2) + ')');
 
   // Draw shape
-  const roughRect = rc.rectangle(x, y, w, h, options);
-  const rect = shapeSvg.insert(() => roughRect, ':first-child').attr('style', cssStyles!.join(''));
-
-  const { themeVariables } = getConfig();
-  const { rowEven, rowOdd, nodeBorder } = themeVariables;
+  const rect =
+    node.look === 'handDrawn'
+      ? drawRoughShape(shapeSvg, rc, x, y, w, h, options, cssStyles)
+      : shapeSvg
+          .insert('rect', ':first-child')
+          .attr('x', x)
+          .attr('y', y)
+          .attr('width', w)
+          .attr('height', h);
 
   yOffsets.push(0);
   // Draw row rects
   for (const [i, row] of rows.entries()) {
     const contentRowIndex = i + 1; // Adjusted index to skip the header (name) row
     const isEven = contentRowIndex % 2 === 0 && row.yOffset !== 0;
-    const roughRect = rc.rectangle(x, nameBBox.height + y + row?.yOffset, w, row?.rowHeight, {
-      ...options,
-      fill: isEven ? rowEven : rowOdd,
-      stroke: nodeBorder,
-    });
-    shapeSvg
-      .insert(() => roughRect, 'g.label')
-      .attr('style', cssStyles!.join(''))
-      .attr('class', `row-rect-${isEven ? 'even' : 'odd'}`);
+    if (node.look === 'handDrawn') {
+      shapeSvg
+        .insert(
+          () => rc.rectangle(x, nameBBox.height + y + row?.yOffset, w, row?.rowHeight, options),
+          'g.label'
+        )
+        .attr('style', cssStyles!.join(''))
+        .attr('class', `row-rect-${isEven ? 'even' : 'odd'}`);
+    } else {
+      shapeSvg
+        .insert<'rect'>('rect', 'g.label')
+        .attr('x', x)
+        .attr('y', nameBBox.height + y + row?.yOffset)
+        .attr('width', w)
+        .attr('height', row?.rowHeight)
+        .attr('class', `row-rect-${isEven ? 'even' : 'odd'}`);
+    }
   }
 
   // Draw divider lines
-  // Name line
-  let roughLine = rc.line(x, nameBBox.height + y, w + x, nameBBox.height + y, options);
-  shapeSvg.insert(() => roughLine).attr('class', 'divider');
-  // First line
-  roughLine = rc.line(maxTypeWidth + x, nameBBox.height + y, maxTypeWidth + x, h + y, options);
-  shapeSvg.insert(() => roughLine).attr('class', 'divider');
-  // Second line
-  if (keysPresent) {
-    roughLine = rc.line(
-      maxTypeWidth + maxNameWidth + x,
-      nameBBox.height + y,
-      maxTypeWidth + maxNameWidth + x,
-      h + y,
-      options
-    );
-    shapeSvg.insert(() => roughLine).attr('class', 'divider');
-  }
-  // Third line
-  if (commentPresent) {
-    roughLine = rc.line(
-      maxTypeWidth + maxNameWidth + maxKeysWidth + x,
-      nameBBox.height + y,
-      maxTypeWidth + maxNameWidth + maxKeysWidth + x,
-      h + y,
-      options
-    );
-    shapeSvg.insert(() => roughLine).attr('class', 'divider');
-  }
+  if (node.look === 'handDrawn') {
+    const nameLine = rc.line(x, nameBBox.height + y, w + x, nameBBox.height + y, options);
+    shapeSvg.insert(() => nameLine).attr('class', 'divider');
 
-  // Attribute divider lines
-  for (const yOffset of yOffsets) {
-    roughLine = rc.line(
-      x,
-      nameBBox.height + y + yOffset,
-      w + x,
-      nameBBox.height + y + yOffset,
+    const firstLine = rc.line(
+      maxTypeWidth + x,
+      nameBBox.height + y,
+      maxTypeWidth + x,
+      h + y,
       options
     );
-    shapeSvg.insert(() => roughLine).attr('class', 'divider');
+    shapeSvg.insert(() => firstLine).attr('class', 'divider');
+
+    if (keysPresent) {
+      const secondLine = rc.line(
+        maxTypeWidth + maxNameWidth + x,
+        nameBBox.height + y,
+        maxTypeWidth + maxNameWidth + x,
+        h + y,
+        options
+      );
+      shapeSvg.insert(() => secondLine).attr('class', 'divider');
+    }
+
+    if (commentPresent) {
+      const thirdLine = rc.line(
+        maxTypeWidth + maxNameWidth + maxKeysWidth + x,
+        nameBBox.height + y,
+        maxTypeWidth + maxNameWidth + maxKeysWidth + x,
+        h + y,
+        options
+      );
+      shapeSvg.insert(() => thirdLine).attr('class', 'divider');
+    }
+
+    for (const yOffset of yOffsets) {
+      const attributeDividerLine = rc.line(
+        x,
+        nameBBox.height + y + yOffset,
+        w + x,
+        nameBBox.height + y + yOffset,
+        options
+      );
+      shapeSvg.insert(() => attributeDividerLine).attr('class', 'divider');
+    }
+  } else {
+    drawDivider(shapeSvg, x, nameBBox.height + y, w + x, nameBBox.height + y); // Name line
+    drawDivider(shapeSvg, maxTypeWidth + x, nameBBox.height + y, maxTypeWidth + x, h + y); // First line
+
+    if (keysPresent) {
+      drawDivider(
+        // Second line
+        shapeSvg,
+        maxTypeWidth + maxNameWidth + x,
+        nameBBox.height + y,
+        maxTypeWidth + maxNameWidth + x,
+        h + y
+      );
+    }
+
+    if (commentPresent) {
+      drawDivider(
+        // Third line
+        shapeSvg,
+        maxTypeWidth + maxNameWidth + maxKeysWidth + x,
+        nameBBox.height + y,
+        maxTypeWidth + maxNameWidth + maxKeysWidth + x,
+        h + y
+      );
+    }
+
+    for (const yOffset of yOffsets) {
+      drawDivider(
+        // Attribute lines
+        shapeSvg,
+        x,
+        nameBBox.height + y + yOffset,
+        w + x,
+        nameBBox.height + y + yOffset
+      );
+    }
   }
 
   updateNodeBounds(node, rect);
@@ -311,6 +366,41 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     return intersect.rect(node, point);
   };
   return shapeSvg;
+}
+
+function drawRoughShape(
+  shapeSvg: D3Selection<SVGGElement>,
+  rc: RoughSVG,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  options: any,
+  cssStyles: string[] | undefined
+): D3Selection<SVGGElement> {
+  const rect = shapeSvg
+    .insert(() => rc.rectangle(x, y, w, h, options), ':first-child')
+    .attr('style', cssStyles!.join(''));
+
+  rect.select('path').attr('fill', null);
+
+  return rect;
+}
+
+function drawDivider(
+  shapeSvg: D3Selection<SVGGElement>,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+) {
+  shapeSvg
+    .insert('line')
+    .attr('x1', x1)
+    .attr('y1', y1)
+    .attr('x2', x2)
+    .attr('y2', y2)
+    .attr('class', 'divider');
 }
 
 // Helper function to add label text g with translate position and style

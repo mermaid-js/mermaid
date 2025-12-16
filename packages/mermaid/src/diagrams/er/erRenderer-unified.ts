@@ -45,7 +45,7 @@ export const draw = async function (text: string, id: string, _version: string, 
       const backgroundId = backgroundNode.attr('id');
 
       const nonBackgroundId = backgroundId.replace('-background', '');
-      const nonBackgroundNode = svg.select(`#${CSS.escape(nonBackgroundId)}`);
+      const nonBackgroundNode = svg.select(`#${window.CSS.escape(nonBackgroundId)}`);
 
       if (!nonBackgroundNode.empty()) {
         const transform = nonBackgroundNode.attr('transform');

@@ -14,6 +14,7 @@ const fade = (color: string, opacity: number) => {
 };
 
 export interface ErStyleOptions {
+  nodeBorder: string;
   rowOdd: string;
   rowEven: string;
 }
@@ -75,15 +76,21 @@ const getStyles = (options: FlowChartStyleOptions & ErStyleOptions) =>
     stroke-width: 1;
   }
   
-  /*
-  .row-rect-odd {
-    fill: ${options.rowOdd};
+  line.divider {
+    stroke: ${options.nodeBorder};
   }
   
-  .row-rect-even {
+  path[class^=row-rect-] {
+    stroke: ${options.nodeBorder};
+  }
+  
+  rect.row-rect-odd, path.row-rect-odd {
+    fill: ${options.rowOdd};
+  }
+
+  rect.row-rect-even, path.row-rect-even {
     fill: ${options.rowEven};
   }
-  */
 `;
 
 export default getStyles;
