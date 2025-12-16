@@ -224,6 +224,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     .attr('dominant-baseline', 'middle')
     .text((d) => (d.depth === 0 ? '' : d.data.name)) // Skip label for root section
     .attr('font-weight', 'bold')
+    .attr('clip-path', (_d, i) => `url(#clip-section-${id}-${i})`) // Apply clip-path to prevent overflow
     .attr('style', (d) => {
       // Hide the label for the root section
       if (d.depth === 0) {
@@ -359,7 +360,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     // .style('fill', (d) => colorScaleLabel(d.data.name))
     .attr('style', (d) => {
       const labelStyles =
-        'text-anchor: middle; dominant-baseline: middle; font-size: 38px;fill:' +
+        'text-anchor: middle; dominant-baseline: middle; font-size: 16px;fill:' +
         colorScaleLabel(d.data.name) +
         ';';
       const styles = styles2String({ cssCompiledStyles: d.data.cssCompiledStyles } as Node);
@@ -374,21 +375,21 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     const nodeHeight = d.y1 - d.y0;
     const textNode = self.node()!;
 
-    const padding = 4;
+    const padding = 2;
     const availableWidth = nodeWidth - 2 * padding;
     const availableHeight = nodeHeight - 2 * padding;
 
-    if (availableWidth < 10 || availableHeight < 10) {
+    if (availableWidth < 8 || availableHeight < 8) {
       self.style('display', 'none');
       return;
     }
 
     let currentLabelFontSize = parseInt(self.style('font-size'), 10);
-    const minLabelFontSize = 8;
-    const originalValueRelFontSize = 28; // Original font size of value, for max cap
+    const minLabelFontSize = 4;
+    const originalValueRelFontSize = 14;
     const valueScaleFactor = 0.6; // Value font size as a factor of label font size
-    const minValueFontSize = 6;
-    const spacingBetweenLabelAndValue = 2;
+    const minValueFontSize = 4;
+    const spacingBetweenLabelAndValue = 1;
 
     // 1. Adjust label font size to fit width
     while (
@@ -432,11 +433,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     self.style('font-size', `${currentLabelFontSize}px`);
 
     // 3. Final visibility check for the label
-    if (
-      textNode.getComputedTextLength() > availableWidth ||
-      currentLabelFontSize < minLabelFontSize ||
-      availableHeight < currentLabelFontSize
-    ) {
+    if (currentLabelFontSize < minLabelFontSize || availableHeight < minLabelFontSize) {
       self.style('display', 'none');
       // If label is hidden, value will be hidden by its own .each() loop
     }
@@ -481,10 +478,10 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       }
 
       const finalLabelFontSize = parseFloat(labelElement.style('font-size'));
-      const originalValueFontSize = 28; // From initial style setting
+      const originalValueFontSize = 14;
       const valueScaleFactor = 0.6;
-      const minValueFontSize = 6;
-      const spacingBetweenLabelAndValue = 2;
+      const minValueFontSize = 4;
+      const spacingBetweenLabelAndValue = 1;
 
       const actualValueFontSize = Math.max(
         minValueFontSize,
