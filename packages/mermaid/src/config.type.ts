@@ -210,6 +210,7 @@ export interface MermaidConfig {
   packet?: PacketDiagramConfig;
   block?: BlockDiagramConfig;
   radar?: RadarDiagramConfig;
+  railroad?: RailroadDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
@@ -1622,6 +1623,108 @@ export interface RadarDiagramConfig extends BaseDiagramConfig {
    * The tension factor for the Catmull-Rom spline conversion to cubic Bézier curves.
    */
   curveTension?: number;
+}
+export interface RailroadDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Diagram orientation (left-to-right or top-to-bottom)
+   */
+  orientation?: 'LR' | 'TB';
+  /**
+   * Use compact layout mode
+   */
+  compactMode?: boolean;
+  /**
+   * Padding around elements
+   */
+  padding?: number;
+  /**
+   * Vertical separation between elements
+   */
+  verticalSeparation?: number;
+  /**
+   * Horizontal separation between elements
+   */
+  horizontalSeparation?: number;
+  /**
+   * Radius for curved paths
+   */
+  arcRadius?: number;
+  /**
+   * Font size for text
+   */
+  fontSize?: number;
+  /**
+   * Font family for text
+   */
+  fontFamily?: string;
+  /**
+   * Fill color for terminal elements
+   */
+  terminalFill?: string;
+  /**
+   * Stroke color for terminal elements
+   */
+  terminalStroke?: string;
+  /**
+   * Text color for terminal elements
+   */
+  terminalTextColor?: string;
+  /**
+   * Fill color for non-terminal elements
+   */
+  nonTerminalFill?: string;
+  /**
+   * Stroke color for non-terminal elements
+   */
+  nonTerminalStroke?: string;
+  /**
+   * Text color for non-terminal elements
+   */
+  nonTerminalTextColor?: string;
+  /**
+   * Color for connection lines
+   */
+  lineColor?: string;
+  /**
+   * Width of strokes
+   */
+  strokeWidth?: number;
+  /**
+   * Fill color for start/end markers
+   */
+  markerFill?: string;
+  /**
+   * Fill color for comments
+   */
+  commentFill?: string;
+  /**
+   * Stroke color for comments
+   */
+  commentStroke?: string;
+  /**
+   * Text color for comments
+   */
+  commentTextColor?: string;
+  /**
+   * Fill color for special sequences
+   */
+  specialFill?: string;
+  /**
+   * Stroke color for special sequences
+   */
+  specialStroke?: string;
+  /**
+   * Color for rule names
+   */
+  ruleNameColor?: string;
+  /**
+   * Show start/end markers
+   */
+  showMarkers?: boolean;
+  /**
+   * Radius of start/end markers
+   */
+  markerRadius?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
