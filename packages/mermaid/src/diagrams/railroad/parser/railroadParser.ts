@@ -5,32 +5,34 @@ import { log } from '../../../logger.js';
 /**
  * Token types for Railroad diagram lexer
  */
-enum TokenType {
-  RAILROAD_DIAGRAM = 'RAILROAD_DIAGRAM',
-  TITLE = 'TITLE',
-  IDENTIFIER = 'IDENTIFIER',
-  DOUBLE_STRING = 'DOUBLE_STRING',
-  SINGLE_STRING = 'SINGLE_STRING',
-  EQUALS = 'EQUALS',
-  BNF_DEFINE = 'BNF_DEFINE',
-  SEMICOLON = 'SEMICOLON',
-  PIPE = 'PIPE',
-  QUESTION = 'QUESTION',
-  STAR = 'STAR',
-  PLUS = 'PLUS',
-  LPAREN = 'LPAREN',
-  RPAREN = 'RPAREN',
-  LBRACKET = 'LBRACKET',
-  RBRACKET = 'RBRACKET',
-  LBRACE = 'LBRACE',
-  RBRACE = 'RBRACE',
-  COMMA = 'COMMA',
-  MINUS = 'MINUS',
-  SPECIAL = 'SPECIAL',
-  COMMENT = 'COMMENT',
-  ISO_COMMENT = 'ISO_COMMENT',
-  EOF = 'EOF',
-}
+const TokenType = {
+  RAILROAD_DIAGRAM: 'RAILROAD_DIAGRAM',
+  TITLE: 'TITLE',
+  IDENTIFIER: 'IDENTIFIER',
+  DOUBLE_STRING: 'DOUBLE_STRING',
+  SINGLE_STRING: 'SINGLE_STRING',
+  EQUALS: 'EQUALS',
+  BNF_DEFINE: 'BNF_DEFINE',
+  SEMICOLON: 'SEMICOLON',
+  PIPE: 'PIPE',
+  QUESTION: 'QUESTION',
+  STAR: 'STAR',
+  PLUS: 'PLUS',
+  LPAREN: 'LPAREN',
+  RPAREN: 'RPAREN',
+  LBRACKET: 'LBRACKET',
+  RBRACKET: 'RBRACKET',
+  LBRACE: 'LBRACE',
+  RBRACE: 'RBRACE',
+  COMMA: 'COMMA',
+  MINUS: 'MINUS',
+  SPECIAL: 'SPECIAL',
+  COMMENT: 'COMMENT',
+  ISO_COMMENT: 'ISO_COMMENT',
+  EOF: 'EOF',
+} as const;
+
+type TokenType = (typeof TokenType)[keyof typeof TokenType];
 
 interface Token {
   type: TokenType;
@@ -150,12 +152,12 @@ class RailroadLexer {
     const startColumn = this.column;
     let value = '';
 
-    while (/[a-zA-Z0-9_-]/.test(this.peek())) {
+    while (/[\w-]/.test(this.peek())) {
       value += this.advance();
     }
 
     // Check for keywords
-    let type = TokenType.IDENTIFIER;
+    let type: TokenType = TokenType.IDENTIFIER;
     if (value === 'railroad-diagram' || value === 'railroad') {
       type = TokenType.RAILROAD_DIAGRAM;
     } else if (value === 'title') {
@@ -283,7 +285,7 @@ class RailroadLexer {
     }
 
     // Identifiers
-    if (/[a-zA-Z_]/.test(char)) {
+    if (/[A-Z_a-z]/.test(char)) {
       return this.readIdentifier();
     }
 
@@ -488,7 +490,7 @@ class RailroadParser {
             max: Infinity,
           };
           break;
-        case TokenType.MINUS:
+        case TokenType.MINUS: {
           // Exception: A - B
           const except = this.parseFactor();
           node = {
@@ -497,6 +499,7 @@ class RailroadParser {
             except,
           };
           break;
+        }
       }
     }
 

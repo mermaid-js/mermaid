@@ -116,7 +116,7 @@ const getDiagramTitle = (): string => {
 /**
  * Get configuration
  */
-const getRailroadConfig = () => {
+const _getRailroadConfig = () => {
   return getGlobalConfig().railroad || {};
 };
 
