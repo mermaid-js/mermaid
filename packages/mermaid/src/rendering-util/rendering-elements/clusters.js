@@ -36,9 +36,17 @@ const rect = async (parent, node) => {
       style: node.labelStyle,
       useHtmlLabels,
       isNode: true,
+      width: node.width,
     });
   } else {
-    const labelElement = await createLabel(node.label, node.labelStyle, false, true);
+    const labelElement = await createLabel(
+      node.label,
+      node.labelStyle,
+      false,
+      true,
+      false,
+      node.width
+    );
     text = labelEl.node()?.appendChild(labelElement);
   }
 
@@ -189,7 +197,9 @@ const roundedWithTitle = async (parent, node) => {
 
   const text = label
     .node()
-    .appendChild(await createLabel(node.label, node.labelStyle, undefined, true));
+    .appendChild(
+      await createLabel(node.label, node.labelStyle, undefined, true, false, node.width)
+    );
 
   // Get the size of the label
   let bbox = text.getBBox();
@@ -492,7 +502,7 @@ export const insertCluster = async (elem, node) => {
 };
 
 export const getClusterTitleWidth = (elem, node) => {
-  const label = createLabel(node.label, node.labelStyle, undefined, true);
+  const label = createLabel(node.label, node.labelStyle, undefined, true, false, node.width);
   elem.node().appendChild(label);
   const width = label.getBBox().width;
   elem.node().removeChild(label);
