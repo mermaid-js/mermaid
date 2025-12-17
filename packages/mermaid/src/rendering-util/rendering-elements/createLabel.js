@@ -22,28 +22,32 @@ function applyStyle(dom, styleFn) {
 /**
  * @param {any} node
  * @param {number} width
+ * @param {boolean} addBackground
  * @returns {Promise<SVGForeignObjectElement>} Node
  */
-async function addHtmlLabel(node, width = 200) {
+async function addHtmlLabel(node, width = 200, addBackground = false) {
   const fo = select(document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject'));
+  // Set foreignObject dimensions first (same as createText)
+  fo.attr('width', `${10 * width}px`);
+  fo.attr('height', `${10 * width}px`);
+
   const div = fo.append('xhtml:div');
-
   const config = getConfig();
-  let label = node.label;
-  if (node.label && hasKatex(node.label)) {
-    label = await renderKatexSanitized(node.label.replace(common.lineBreakRegex, '\n'), config);
-  }
-  const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
-  const labelSpan =
-    '<span class="' +
-    labelClass +
-    '" ' +
-    (node.labelStyle ? 'style="' + node.labelStyle + '"' : '') + // codeql [js/html-constructed-from-input] : false positive
-    '>' +
-    label +
-    '</span>';
-  div.html(sanitizeText(labelSpan, config));
 
+  // Sanitize label (same as createText)
+  const sanitizedLabel = hasKatex(node.label)
+    ? await renderKatexSanitized(node.label.replace(common.lineBreakRegex, '\n'), config)
+    : sanitizeText(node.label, config);
+
+  const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
+
+  // Create span and set content (same as createText)
+  const span = div.append('span');
+  span.html(sanitizedLabel);
+  applyStyle(span, node.labelStyle);
+  span.attr('class', labelClass);
+
+  // Apply div styles (same as createText)
   applyStyle(div, node.labelStyle);
   div.style('display', 'table-cell');
   div.style('white-space', 'nowrap');
@@ -51,10 +55,9 @@ async function addHtmlLabel(node, width = 200) {
   div.style('max-width', width + 'px');
   div.style('text-align', 'center');
   div.attr('xmlns', 'http://www.w3.org/1999/xhtml');
-
-  // Set foreignObject dimensions (same as createText)
-  fo.attr('width', `${10 * width}px`);
-  fo.attr('height', `${10 * width}px`);
+  if (addBackground) {
+    div.attr('class', 'labelBkg');
+  }
 
   // Check if text needs wrapping (same logic as createText)
   let bbox = div.node().getBoundingClientRect();
@@ -72,9 +75,10 @@ async function addHtmlLabel(node, width = 200) {
  * @param style
  * @param isTitle
  * @param isNode
+ * @param addBackground
  * @deprecated svg-util/createText instead
  */
-const createLabel = async (_vertexText, style, isTitle, isNode) => {
+const createLabel = async (_vertexText, style, isTitle, isNode, addBackground = false) => {
   let vertexText = _vertexText || '';
   if (typeof vertexText === 'object') {
     vertexText = vertexText[0];
@@ -93,7 +97,7 @@ const createLabel = async (_vertexText, style, isTitle, isNode) => {
       labelStyle: style ? style.replace('fill:', 'color:') : style,
     };
     const width = getConfig().flowchart?.wrappingWidth || 200;
-    let vertexNode = await addHtmlLabel(node, width);
+    let vertexNode = await addHtmlLabel(node, width, addBackground);
     // vertexNode.parentNode.removeChild(vertexNode);
     return vertexNode;
   } else {

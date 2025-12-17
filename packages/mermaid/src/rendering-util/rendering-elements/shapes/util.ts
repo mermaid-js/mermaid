@@ -42,6 +42,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   }
 
   let text;
+  const addBackground = !!node.icon || !!node.img;
   if (node.labelType === 'markdown') {
     text = await createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
       useHtmlLabels,
@@ -49,14 +50,15 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
       // @ts-expect-error -- This is currently not used. Should this be `classes` instead?
       cssClasses: 'markdown-node-label',
       style: node.labelStyle,
-      addSvgBackground: !!node.icon || !!node.img,
+      addSvgBackground: addBackground,
     });
   } else {
     const labelElement = await createLabel(
       sanitizeText(decodeEntities(label), getConfig()),
       node.labelStyle,
       false,
-      true
+      true,
+      addBackground
     );
     text = labelEl.node()?.appendChild(labelElement);
   }

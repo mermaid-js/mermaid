@@ -55,7 +55,7 @@ export const insertEdgeLabel = async (elem, edge) => {
           addSvgBackground: true,
           isNode: false,
         })
-      : await createLabel(edge.label, getLabelStyles(edge.labelStyle), undefined, false);
+      : await createLabel(edge.label, getLabelStyles(edge.labelStyle), undefined, false, true);
 
   log.info('abc82', edge, edge.labelType);
 
