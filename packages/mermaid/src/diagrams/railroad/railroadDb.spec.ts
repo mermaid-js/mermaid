@@ -34,4 +34,70 @@ describe('Railroad Database', () => {
     expect(db.getTitle()).toBe('');
     expect(db.getRules()).toHaveLength(0);
   });
+
+  it('should handle duplicate rules', () => {
+    const rule1 = {
+      name: 'test',
+      definition: { type: 'terminal' as const, value: 'first' },
+    };
+    const rule2 = {
+      name: 'test',
+      definition: { type: 'terminal' as const, value: 'second' },
+    };
+
+    db.addRule(rule1);
+    db.addRule(rule2); // Should overwrite
+
+    expect(db.getRules()).toHaveLength(2); // Both are in the array
+    expect(db.getRule('test')).toEqual(rule2); // Map has the second one
+  });
+
+  it('should handle accessibility title', () => {
+    db.setAccTitle('Accessible Title');
+    expect(db.getAccTitle()).toBe('Accessible Title');
+  });
+
+  it('should handle accessibility description', () => {
+    db.setAccDescription('Accessible Description');
+    expect(db.getAccDescription()).toBe('Accessible Description');
+  });
+
+  it('should handle diagram title', () => {
+    db.setDiagramTitle('Diagram Title');
+    expect(db.getDiagramTitle()).toBe('Diagram Title');
+  });
+
+  it('should fall back to title when diagram title is not set', () => {
+    db.setTitle('Regular Title');
+    expect(db.getDiagramTitle()).toBe('Regular Title');
+  });
+
+  it('should prioritize diagram title over regular title', () => {
+    db.setTitle('Regular Title');
+    db.setDiagramTitle('Diagram Title');
+    expect(db.getDiagramTitle()).toBe('Diagram Title');
+  });
+
+  it('should return undefined for non-existent rule', () => {
+    expect(db.getRule('nonexistent')).toBeUndefined();
+  });
+
+  it('should clear all state including accessibility fields', () => {
+    db.setTitle('Test Title');
+    db.setAccTitle('Acc Title');
+    db.setAccDescription('Acc Desc');
+    db.setDiagramTitle('Diagram Title');
+    db.addRule({
+      name: 'rule',
+      definition: { type: 'terminal', value: 'test' },
+    });
+
+    db.clear();
+
+    expect(db.getTitle()).toBe('');
+    expect(db.getAccTitle()).toBe('');
+    expect(db.getAccDescription()).toBe('');
+    expect(db.getDiagramTitle()).toBe('');
+    expect(db.getRules()).toHaveLength(0);
+  });
 });

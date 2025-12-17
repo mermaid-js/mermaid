@@ -221,4 +221,182 @@ describe('Railroad Parser', () => {
       expect(() => parser.parse(input)).toThrow();
     });
   });
+
+  describe('Special Sequences', () => {
+    it('should parse special sequence with question mark syntax', () => {
+      const input = `
+        railroad-diagram
+        rule = ? special ? ;
+      `;
+      parser.parse(input);
+      const rules = db.getRules();
+
+      expect(rules).toHaveLength(1);
+      expect(rules[0].definition.type).toBe('special');
+      if (rules[0].definition.type === 'special') {
+        expect(rules[0].definition.text).toBe('special');
+      }
+    });
+
+    it('should parse comment', () => {
+      const input = `
+        railroad-diagram
+        rule = (* this is a comment *) "a" ;
+      `;
+      parser.parse(input);
+      const rules = db.getRules();
+
+      expect(rules).toHaveLength(1);
+      expect(rules[0].definition.type).toBe('sequence');
+    });
+
+    it('should parse grouped elements', () => {
+      const input = `
+        railroad-diagram
+        rule = ( "a" "b" ) | "c" ;
+      `;
+      parser.parse(input);
+      const rules = db.getRules();
+
+      expect(rules).toHaveLength(1);
+      expect(rules[0].definition.type).toBe('choice');
+    });
+  });
+
+  describe('Edge Cases', () => {
+    it('should handle empty rules list', () => {
+      const input = `
+        railroad-diagram
+        title "Empty Grammar"
+      `;
+      parser.parse(input);
+      const rules = db.getRules();
+
+      expect(rules).toHaveLength(0);
+      expect(db.getTitle()).toBe('Empty Grammar');
+    });
+
+    it('should handle single character terminals', () => {
+      const input = `
+        railroad-diagram
+        rule = "a" ;
+      `;
+      parser.parse(input);
+      const rules = db.getRules();
+
+      expect(rules).toHaveLength(1);
+      if (rules[0].definition.type === 'terminal') {
+        expect(rules[0].definition.value).toBe('a');
+      }
+    });
+
+    it('should handle whitespace in strings', () => {
+      const input = `
+        railroad-diagram
+        rule = "hello world" ;
+      `;
+      parser.parse(input);
+      const rules = db.getRules();
+
+      expect(rules).toHaveLength(1);
+      if (rules[0].definition.type === 'terminal') {
+        expect(rules[0].definition.value).toBe('hello world');
+      }
+    });
+
+    it('should handle underscore in identifiers', () => {
+      const input = `
+        railroad-diagram
+        my_rule = "test" ;
+      `;
+      parser.parse(input);
+      const rules = db.getRules();
+
+      expect(rules).toHaveLength(1);
+      expect(rules[0].name).toBe('my_rule');
+    });
+
+    it('should handle numbers in identifiers', () => {
+      const input = `
+        railroad-diagram
+        rule123 = "test" ;
+      `;
+      parser.parse(input);
+      const rules = db.getRules();
+
+      expect(rules).toHaveLength(1);
+      expect(rules[0].name).toBe('rule123');
+    });
+
+    it('should parse complex nested choice and sequence', () => {
+      const input = `
+        railroad-diagram
+        rule = ( "a" | "b" ) ( "c" | "d" ) ;
+      `;
+      parser.parse(input);
+      const rules = db.getRules();
+
+      expect(rules).toHaveLength(1);
+      expect(rules[0].definition.type).toBe('sequence');
+      if (rules[0].definition.type === 'sequence') {
+        expect(rules[0].definition.elements).toHaveLength(2);
+        expect(rules[0].definition.elements[0].type).toBe('choice');
+        expect(rules[0].definition.elements[1].type).toBe('choice');
+      }
+    });
+
+    it('should parse repetition with separator (ISO style)', () => {
+      const input = `
+        railroad-diagram
+        rule = { "a" }- ;
+      `;
+      parser.parse(input);
+      const rules = db.getRules();
+
+      expect(rules).toHaveLength(1);
+      expect(rules[0].definition.type).toBe('repetition');
+    });
+  });
+
+  describe('Real-world Examples', () => {
+    it('should parse a simple expression grammar', () => {
+      const input = `
+        railroad-diagram
+        title "Simple Expression"
+        expression = term ( "+" term | "-" term )* ;
+        term = factor ( "*" factor | "/" factor )* ;
+        factor = number | "(" expression ")" ;
+        number = digit+ ;
+        digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+      `;
+      parser.parse(input);
+      const rules = db.getRules();
+
+      expect(rules).toHaveLength(5);
+      expect(db.getTitle()).toBe('Simple Expression');
+      expect(rules[0].name).toBe('expression');
+      expect(rules[1].name).toBe('term');
+      expect(rules[2].name).toBe('factor');
+      expect(rules[3].name).toBe('number');
+      expect(rules[4].name).toBe('digit');
+    });
+
+    it('should parse JSON grammar excerpt', () => {
+      const input = `
+        railroad-diagram
+        title "JSON Subset"
+        value = string | number | "true" | "false" | "null" ;
+        string = '"' character* '"' ;
+        number = digit+ ;
+        character = letter | digit ;
+        letter = "a" | "b" | "c" ;
+        digit = "0" | "1" | "2" ;
+      `;
+      parser.parse(input);
+      const rules = db.getRules();
+
+      expect(rules).toHaveLength(6);
+      expect(db.getTitle()).toBe('JSON Subset');
+    });
+  });
 });
