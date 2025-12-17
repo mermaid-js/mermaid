@@ -471,7 +471,10 @@ classDef highlight fill:#f39c12,color:#000,stroke:#e67e22,stroke-width:2px;
 
   it('should render treemap title readable on dark theme', () => {
     imgSnapshotTest(
-      `%%{init: {"theme": "dark"}}%%
+      `---
+config:
+  theme: dark
+---      
 treemap
 title Sales Data Q4 2024
 "All Products"
