@@ -252,7 +252,15 @@ class RailroadRenderer {
         // Arc down from center
         leftPath
           .moveTo(0, centerY)
-          .arcTo(arcRadius, arcRadius, 0, false, elemCenterY > centerY, arcRadius, centerY + (elemCenterY > centerY ? arcRadius : -arcRadius))
+          .arcTo(
+            arcRadius,
+            arcRadius,
+            0,
+            false,
+            elemCenterY > centerY,
+            arcRadius,
+            centerY + (elemCenterY > centerY ? arcRadius : -arcRadius)
+          )
           .lineTo(arcRadius, elemCenterY - (elemCenterY > centerY ? arcRadius : -arcRadius))
           .arcTo(arcRadius, arcRadius, 0, false, elemCenterY > centerY, arcRadius * 2, elemCenterY);
       }
@@ -269,8 +277,19 @@ class RailroadRenderer {
         // Arc back to center
         rightPath
           .moveTo(rightStart, elemCenterY)
-          .arcTo(arcRadius, arcRadius, 0, false, elemCenterY > centerY, rightStart + arcRadius, elemCenterY + (elemCenterY > centerY ? -arcRadius : arcRadius))
-          .lineTo(rightStart + arcRadius, centerY - (elemCenterY > centerY ? -arcRadius : arcRadius))
+          .arcTo(
+            arcRadius,
+            arcRadius,
+            0,
+            false,
+            elemCenterY > centerY,
+            rightStart + arcRadius,
+            elemCenterY + (elemCenterY > centerY ? -arcRadius : arcRadius)
+          )
+          .lineTo(
+            rightStart + arcRadius,
+            centerY - (elemCenterY > centerY ? -arcRadius : arcRadius)
+          )
           .arcTo(arcRadius, arcRadius, 0, false, elemCenterY > centerY, totalWidth, centerY);
       }
 
@@ -311,9 +330,7 @@ class RailroadRenderer {
     const centerY = elemY + inner.dimensions.up;
 
     // Lower path (through element)
-    const lowerPath = new PathBuilder()
-      .moveTo(0, centerY)
-      .lineTo(arcRadius * 2, centerY);
+    const lowerPath = new PathBuilder().moveTo(0, centerY).lineTo(arcRadius * 2, centerY);
     group.append('path').attr('class', 'railroad-line').attr('d', lowerPath.build());
 
     const lowerPath2 = new PathBuilder()
@@ -372,7 +389,13 @@ class RailroadRenderer {
     group
       .append('path')
       .attr('class', 'railroad-line')
-      .attr('d', new PathBuilder().moveTo(0, centerY).lineTo(arcRadius * 2, centerY).build());
+      .attr(
+        'd',
+        new PathBuilder()
+          .moveTo(0, centerY)
+          .lineTo(arcRadius * 2, centerY)
+          .build()
+      );
 
     group
       .append('path')
@@ -389,9 +412,25 @@ class RailroadRenderer {
     const loopY = elemY + inner.dimensions.height + arcRadius;
     const loopPath = new PathBuilder()
       .moveTo(elemX + inner.dimensions.width, centerY)
-      .arcTo(arcRadius, arcRadius, 0, false, false, elemX + inner.dimensions.width + arcRadius, centerY + arcRadius)
+      .arcTo(
+        arcRadius,
+        arcRadius,
+        0,
+        false,
+        false,
+        elemX + inner.dimensions.width + arcRadius,
+        centerY + arcRadius
+      )
       .lineTo(elemX + inner.dimensions.width + arcRadius, loopY)
-      .arcTo(arcRadius, arcRadius, 0, false, false, elemX + inner.dimensions.width, loopY + arcRadius)
+      .arcTo(
+        arcRadius,
+        arcRadius,
+        0,
+        false,
+        false,
+        elemX + inner.dimensions.width,
+        loopY + arcRadius
+      )
       .lineTo(arcRadius * 2, loopY + arcRadius)
       .arcTo(arcRadius, arcRadius, 0, false, false, arcRadius, loopY)
       .lineTo(arcRadius, centerY + arcRadius)
@@ -499,7 +538,10 @@ class RailroadRenderer {
    * Render a single rule
    */
   renderRule(rule: RailroadRule, y: number): { height: number } {
-    const group = this.svg.append('g').attr('class', 'railroad-rule').attr('transform', `translate(0, ${y})`);
+    const group = this.svg
+      .append('g')
+      .attr('class', 'railroad-rule')
+      .attr('transform', `translate(0, ${y})`);
 
     // Rule name
     const nameGroup = group.append('g').attr('class', 'railroad-rule-name-group');
@@ -538,7 +580,13 @@ class RailroadRenderer {
     group
       .append('path')
       .attr('class', 'railroad-line')
-      .attr('d', new PathBuilder().moveTo(nameWidth + this.config.markerRadius, 20).lineTo(nameWidth + 20, 20).build());
+      .attr(
+        'd',
+        new PathBuilder()
+          .moveTo(nameWidth + this.config.markerRadius, 20)
+          .lineTo(nameWidth + 20, 20)
+          .build()
+      );
 
     // Line from definition to end
     group

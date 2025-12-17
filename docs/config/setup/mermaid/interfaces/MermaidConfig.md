@@ -377,6 +377,14 @@ Defined in: [packages/mermaid/src/config.type.ts:242](https://github.com/mermaid
 
 ---
 
+### railroad?
+
+> `optional` **railroad**: `RailroadDiagramConfig`
+
+Defined in: [packages/mermaid/src/config.type.ts:244](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L244)
+
+---
+
 ### requirement?
 
 > `optional` **requirement**: `RequirementDiagramConfig`

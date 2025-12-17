@@ -442,7 +442,16 @@ class RailroadParser {
   private parseConcatenation(): ASTNode {
     const elements: ASTNode[] = [];
 
-    while (!this.match(TokenType.PIPE, TokenType.SEMICOLON, TokenType.RPAREN, TokenType.RBRACKET, TokenType.RBRACE, TokenType.EOF)) {
+    while (
+      !this.match(
+        TokenType.PIPE,
+        TokenType.SEMICOLON,
+        TokenType.RPAREN,
+        TokenType.RBRACKET,
+        TokenType.RBRACE,
+        TokenType.EOF
+      )
+    ) {
       // Skip optional commas (ISO style)
       if (this.match(TokenType.COMMA)) {
         this.advance();
