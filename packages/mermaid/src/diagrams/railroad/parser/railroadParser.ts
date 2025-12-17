@@ -225,9 +225,18 @@ class RailroadLexer {
       return this.readString("'");
     }
 
-    // Special sequence
-    if (char === '?' && /[^?]/.test(this.peek(1))) {
-      return this.readSpecial();
+    // Special sequence (? text ?)
+    // Only treat as special if followed by non-whitespace and not immediately followed by operators/delimiters
+    if (char === '?' && this.peek(1) && /[^\s;|)}\]]/.test(this.peek(1)) && this.peek(1) !== '?') {
+      // Look ahead to see if there's a closing ?
+      let pos = 1;
+      while (this.peek(pos) && this.peek(pos) !== '?') {
+        pos++;
+      }
+      // If we found a closing ?, treat as special sequence
+      if (this.peek(pos) === '?') {
+        return this.readSpecial();
+      }
     }
 
     // Multi-character operators
