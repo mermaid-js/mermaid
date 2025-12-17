@@ -21,9 +21,10 @@ function applyStyle(dom, styleFn) {
 
 /**
  * @param {any} node
+ * @param {number} width
  * @returns {Promise<SVGForeignObjectElement>} Node
  */
-async function addHtmlLabel(node) {
+async function addHtmlLabel(node, width = 200) {
   const fo = select(document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject'));
   const div = fo.append('xhtml:div');
 
@@ -44,10 +45,26 @@ async function addHtmlLabel(node) {
   div.html(sanitizeText(labelSpan, config));
 
   applyStyle(div, node.labelStyle);
-  div.style('display', 'inline-block');
-  // Fix for firefox
+  div.style('display', 'table-cell');
   div.style('white-space', 'nowrap');
+  div.style('line-height', '1.5');
+  div.style('max-width', width + 'px');
+  div.style('text-align', 'center');
   div.attr('xmlns', 'http://www.w3.org/1999/xhtml');
+
+  // Set foreignObject dimensions (same as createText)
+  fo.attr('width', `${10 * width}px`);
+  fo.attr('height', `${10 * width}px`);
+
+  // Check if text needs wrapping (same logic as createText)
+  let bbox = div.node().getBoundingClientRect();
+  if (bbox.width === width) {
+    div.style('display', 'table');
+    div.style('white-space', 'break-spaces');
+    div.style('width', width + 'px');
+    bbox = div.node().getBoundingClientRect();
+  }
+
   return fo.node();
 }
 /**
@@ -75,7 +92,8 @@ const createLabel = async (_vertexText, style, isTitle, isNode) => {
       ),
       labelStyle: style ? style.replace('fill:', 'color:') : style,
     };
-    let vertexNode = await addHtmlLabel(node);
+    const width = getConfig().flowchart?.wrappingWidth || 200;
+    let vertexNode = await addHtmlLabel(node, width);
     // vertexNode.parentNode.removeChild(vertexNode);
     return vertexNode;
   } else {
