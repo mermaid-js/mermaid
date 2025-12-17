@@ -81,13 +81,14 @@ LINKSTYLE
 LLABEL
 loglevel
 LOGMSG
-LPAREN
 lookaheads
+LPAREN
 mdast
 metafile
 minlen
 Mstartx
 MULT
+Naur
 NODIR
 nonterminal
 NSTR
@@ -152,6 +153,7 @@ urlsafe
 verifymethod
 VERIFYMTHD
 WARN_DOCSDIR_DOESNT_MATCH
+Wirth
 xhost
 yaxis
 yfunc

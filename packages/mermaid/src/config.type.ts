@@ -1624,6 +1624,12 @@ export interface RadarDiagramConfig extends BaseDiagramConfig {
    */
   curveTension?: number;
 }
+/**
+ * Configuration for Railroad (Syntax) Diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "RailroadDiagramConfig".
+ */
 export interface RailroadDiagramConfig extends BaseDiagramConfig {
   /**
    * Diagram orientation (left-to-right or top-to-bottom)
