@@ -71,14 +71,22 @@ async function addHtmlLabel(node, width = 200, addBackground = false) {
   return fo.node();
 }
 /**
- * @param _vertexText
- * @param style
- * @param isTitle
- * @param isNode
- * @param addBackground
+ * @param {string} _vertexText
+ * @param {string | undefined} style
+ * @param {boolean} isTitle
+ * @param {boolean} isNode
+ * @param {boolean} [addBackground=false]
+ * @param {number | undefined} [width]
  * @deprecated svg-util/createText instead
  */
-const createLabel = async (_vertexText, style, isTitle, isNode, addBackground = false) => {
+const createLabel = async (
+  _vertexText,
+  style,
+  isTitle,
+  isNode,
+  addBackground = false,
+  width = undefined
+) => {
   let vertexText = _vertexText || '';
   if (typeof vertexText === 'object') {
     vertexText = vertexText[0];
@@ -96,8 +104,9 @@ const createLabel = async (_vertexText, style, isTitle, isNode, addBackground = 
       ),
       labelStyle: style ? style.replace('fill:', 'color:') : style,
     };
-    const width = getConfig().flowchart?.wrappingWidth || 200;
-    let vertexNode = await addHtmlLabel(node, width, addBackground);
+    // Use provided width or fall back to config
+    const labelWidth = width || getConfig().flowchart?.wrappingWidth || 200;
+    let vertexNode = await addHtmlLabel(node, labelWidth, addBackground);
     // vertexNode.parentNode.removeChild(vertexNode);
     return vertexNode;
   } else {

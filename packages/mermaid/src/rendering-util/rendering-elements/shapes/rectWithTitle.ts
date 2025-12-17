@@ -38,7 +38,7 @@ export async function rectWithTitle<T extends SVGGraphicsElement>(
 
   const description = node.description;
 
-  const title = node.label;
+  const title = node.label || '';
 
   const text = label.node()!.appendChild(await createLabel(title, node.labelStyle, true, true));
   let bbox = { width: 0, height: 0 };
@@ -56,7 +56,7 @@ export async function rectWithTitle<T extends SVGGraphicsElement>(
     .node()!
     .appendChild(
       await createLabel(
-        textRows.join ? textRows.join('<br/>') : textRows,
+        Array.isArray(textRows) ? textRows.join('<br/>') : textRows,
         node.labelStyle,
         true,
         true
