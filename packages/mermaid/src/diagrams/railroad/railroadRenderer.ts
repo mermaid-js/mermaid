@@ -1,5 +1,5 @@
 import type { DrawDefinition } from '../../diagram-api/types.js';
-import type { ASTNode, DiagramDimensions, RailroadRule, RenderResult } from './railroadTypes.js';
+import type { ASTNode, RailroadRule, RenderResult } from './railroadTypes.js';
 import { log } from '../../logger.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
@@ -234,8 +234,7 @@ class RailroadRenderer {
     let y = 0;
     const centerY = totalHeight / 2;
 
-    for (let i = 0; i < rendered.length; i++) {
-      const r = rendered[i];
+    for (const [i, r] of rendered.entries()) {
       const elemY = y;
       const elemCenterY = elemY + r.dimensions.up;
 
@@ -581,7 +580,7 @@ class RailroadRenderer {
 /**
  * Main draw function
  */
-const draw: DrawDefinition = (text, id, version) => {
+const draw: DrawDefinition = (text, id, _version) => {
   log.debug('[Railroad] Rendering diagram\n' + text);
 
   try {
