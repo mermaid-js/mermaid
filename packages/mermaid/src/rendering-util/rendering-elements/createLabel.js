@@ -1,9 +1,55 @@
 import { select } from 'd3';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { evaluate } from '../../diagrams/common/common.js';
+import common, {
+  evaluate,
+  hasKatex,
+  renderKatexSanitized,
+  sanitizeText,
+} from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
 import { decodeEntities } from '../../utils.js';
-import { addHtmlSpan } from '../createText.js';
+
+/**
+ * @param dom
+ * @param styleFn
+ */
+function applyStyle(dom, styleFn) {
+  if (styleFn) {
+    dom.attr('style', styleFn);
+  }
+}
+
+/**
+ * @param {any} node
+ * @returns {Promise<SVGForeignObjectElement>} Node
+ */
+async function addHtmlLabel(node) {
+  const fo = select(document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject'));
+  const div = fo.append('xhtml:div');
+
+  const config = getConfig();
+  let label = node.label;
+  if (node.label && hasKatex(node.label)) {
+    label = await renderKatexSanitized(node.label.replace(common.lineBreakRegex, '\n'), config);
+  }
+  const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
+  const labelSpan =
+    '<span class="' +
+    labelClass +
+    '" ' +
+    (node.labelStyle ? 'style="' + node.labelStyle + '"' : '') + // codeql [js/html-constructed-from-input] : false positive
+    '>' +
+    label +
+    '</span>';
+  div.html(sanitizeText(labelSpan, config));
+
+  applyStyle(div, node.labelStyle);
+  div.style('display', 'inline-block');
+  // Fix for firefox
+  div.style('white-space', 'nowrap');
+  div.attr('xmlns', 'http://www.w3.org/1999/xhtml');
+  return fo.node();
+}
 /**
  * @param _vertexText
  * @param style
@@ -18,6 +64,7 @@ const createLabel = async (_vertexText, style, isTitle, isNode) => {
   }
 
   if (evaluate(getConfig().flowchart.htmlLabels)) {
+    // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
     vertexText = vertexText.replace(/\\n|\n/g, '<br />');
     log.info('vertexText' + vertexText);
     const node = {
@@ -28,10 +75,8 @@ const createLabel = async (_vertexText, style, isTitle, isNode) => {
       ),
       labelStyle: style ? style.replace('fill:', 'color:') : style,
     };
-    const config = getConfig();
-    const width = config.flowchart?.wrappingWidth || 200;
-    const tempContainer = select(document.createElementNS('http://www.w3.org/2000/svg', 'g'));
-    const vertexNode = await addHtmlSpan(tempContainer, node, width, '', false, config);
+    let vertexNode = await addHtmlLabel(node);
+    // vertexNode.parentNode.removeChild(vertexNode);
     return vertexNode;
   } else {
     const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
