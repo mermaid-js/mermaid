@@ -96,14 +96,7 @@ async function addHtmlLabel(node, width, addBackground = false) {
 /**
  * @deprecated svg-util/createText instead
  */
-const createLabel = async (
-  _vertexText,
-  style,
-  isTitle,
-  isNode,
-  addBackground = false,
-  width = undefined
-) => {
+const createLabel = async (_vertexText, style, isTitle, isNode, addBackground = false, width) => {
   let vertexText = _vertexText || '';
   if (typeof vertexText === 'object') {
     vertexText = vertexText[0];
