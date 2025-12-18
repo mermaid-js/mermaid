@@ -14,6 +14,7 @@ const fade = (color: string, opacity: number) => {
 };
 
 export interface ErStyleOptions {
+  background: string;
   nodeBorder: string;
   rowOdd: string;
   rowEven: string;
@@ -76,20 +77,58 @@ const getStyles = (options: FlowChartStyleOptions & ErStyleOptions) =>
     stroke-width: 1;
   }
   
+  /* Shape  */
+  .rect.shape {
+    fill: transparent;
+  }
+  
+  /* Lines */
   line.divider {
     stroke: ${options.nodeBorder};
   }
   
-  path[class^=row-rect-] {
+  g.rect>path:nth-child(2), g.divider>path {
     stroke: ${options.nodeBorder};
   }
-  
-  rect.row-rect-odd, path.row-rect-odd {
-    fill: ${options.rowOdd};
+
+  /* Header */
+  .rect.row-header {
+    fill: ${options.mainBkg};
+  }
+  .rect.row-header-background {
+    fill: ${options.background};
   }
 
-  rect.row-rect-even, path.row-rect-even {
+  g.row-header path:nth-child(1) {
+    stroke: ${options.mainBkg};
+  }
+
+  /* Odd rows */
+  .rect.row-odd {
+    fill: ${options.rowOdd};
+    stroke: ${options.nodeBorder};
+    stroke-width: 1px;
+  }
+  .rect.row-odd-background {
+    fill: ${options.mainBkg};
+  }
+  
+  g.row-odd path:nth-child(1) {
+    stroke: ${options.rowOdd};
+  }
+  
+  /* Even rows */
+  .rect.row-even {
     fill: ${options.rowEven};
+    stroke: ${options.nodeBorder};
+    stroke-width: 1px;
+  }
+  .rect.row-even-background {
+      fill: ${options.mainBkg};
+  }
+  
+  g.row-even path:nth-child(1) {
+    stroke: ${options.rowEven};
   }
 `;
 
