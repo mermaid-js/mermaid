@@ -91,6 +91,7 @@
   "devDependencies": {
     "@adobe/jsonschema2md": "^8.0.8",
     "@iconify/types": "^2.0.0",
+    "@mermaid-js/mermaid-cli": "^11.12.0",
     "@types/cytoscape": "^3.21.9",
     "@types/cytoscape-fcose": "^2.2.5",
     "@types/d3-sankey": "^0.12.5",

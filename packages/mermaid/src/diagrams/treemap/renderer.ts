@@ -315,7 +315,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     .enter()
     .append('g')
     .attr('class', (d, i) => {
-      return `treemapNode treemapLeafGroup leaf${i}${d.data.classSelector ? ` ${d.data.classSelector}` : ''}x`;
+      return `treemapNode treemapLeafGroup leaf${i}${d.data.classSelector ? ` ${d.data.classSelector}` : ''}`;
     })
     .attr('transform', (d) => `translate(${d.x0},${d.y0})`);
 
@@ -326,18 +326,26 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     .attr('height', (d) => d.y1 - d.y0)
     .attr('class', 'treemapLeaf')
     .attr('fill', (d) => {
-      // Leaves inherit color from their immediate parent section's name.
-      // If a leaf is the root itself (no parent), it uses its own name.
+      // explicit fill from classDef if present, otherwise fallback to parent color
+      const styles = styles2String({ cssCompiledStyles: d.data.cssCompiledStyles } as Node);
+      const explicitFillMatch = /fill:\s*([^;]+)/.exec(styles.nodeStyles);
+      if (explicitFillMatch?.[1]?.trim()) {
+        return explicitFillMatch[1].trim();
+      }
       return d.parent ? colorScale(d.parent.data.name) : colorScale(d.data.name);
     })
     .attr('style', (d) => {
       const styles = styles2String({ cssCompiledStyles: d.data.cssCompiledStyles } as Node);
       return styles.nodeStyles;
     })
-    .attr('fill-opacity', 0.3)
+    .attr('fill-opacity', 1)
     .attr('stroke', (d) => {
-      // Leaves inherit color from their immediate parent section's name.
-      // If a leaf is the root itself (no parent), it uses its own name.
+      // explicit stroke from classDef if present, otherwise fallback to parent color
+      const styles = styles2String({ cssCompiledStyles: d.data.cssCompiledStyles } as Node);
+      const explicitStrokeMatch = /stroke:\s*([^;]+)/.exec(styles.nodeStyles);
+      if (explicitStrokeMatch?.[1]?.trim()) {
+        return explicitStrokeMatch[1].trim();
+      }
       return d.parent ? colorScale(d.parent.data.name) : colorScale(d.data.name);
     })
     .attr('stroke-width', 3.0);
