@@ -21,20 +21,6 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     node.label = entityNode.alias;
   }
 
-  // Background shapes are drawn to fill in the background color and cover up the ER diagram edge markers.
-  // Draw background shape once.
-  if (node.look === 'handDrawn') {
-    const { themeVariables } = getConfig();
-    const { background } = themeVariables;
-    const backgroundNode = {
-      ...node,
-      id: node.id + '-background',
-      look: 'default',
-      cssStyles: ['stroke: none', `fill: ${background}`],
-    };
-    await erBox(parent, backgroundNode);
-  }
-
   const config = getConfig();
   node.useHtmlLabels = config.htmlLabels;
   let PADDING = config.er?.diagramPadding ?? 10;
@@ -232,119 +218,70 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   // Draw shape
   const rect =
     node.look === 'handDrawn'
-      ? drawRoughShape(shapeSvg, rc, x, y, w, h, options, cssStyles)
-      : shapeSvg
-          .insert('rect', ':first-child')
-          .attr('x', x)
-          .attr('y', y)
-          .attr('width', w)
-          .attr('height', h);
+      ? drawRoughShape(shapeSvg, rc, x, y, w, h, options)
+      : drawClassicShape(shapeSvg, x, y, w, h);
 
+  // Draw header
+  if (node.look === 'handDrawn') {
+    drawRoughHeader(shapeSvg, rc, x, y, w, nameBBox.height, options, cssStyles);
+  } else {
+    drawClassicHeader(shapeSvg, x, y, w, nameBBox.height, cssStyles);
+  }
+
+  // Draw rows
   yOffsets.push(0);
-  // Draw row rects
-  for (const [i, row] of rows.entries()) {
-    const contentRowIndex = i + 1; // Adjusted index to skip the header (name) row
-    const isEven = contentRowIndex % 2 === 0 && row.yOffset !== 0;
+  for (const [index, row] of rows.entries()) {
+    const indexSkippingHeader = index + 1;
+    const isEven = indexSkippingHeader % 2 === 0; // TODO: always true ?  && row.yOffset !== 0;
+    const rowY = nameBBox.height + y + row?.yOffset;
+    const rowH = row?.rowHeight;
+    const rowClass = `rect row-${isEven ? 'even' : 'odd'}`;
     if (node.look === 'handDrawn') {
-      shapeSvg
-        .insert(
-          () => rc.rectangle(x, nameBBox.height + y + row?.yOffset, w, row?.rowHeight, options),
-          'g.label'
-        )
-        .attr('style', cssStyles!.join(''))
-        .attr('class', `row-rect-${isEven ? 'even' : 'odd'}`);
+      drawRoughRow(shapeSvg, rc, x, rowY, w, rowH, options, rowClass, cssStyles);
     } else {
-      shapeSvg
-        .insert<'rect'>('rect', 'g.label')
-        .attr('x', x)
-        .attr('y', nameBBox.height + y + row?.yOffset)
-        .attr('width', w)
-        .attr('height', row?.rowHeight)
-        .attr('class', `row-rect-${isEven ? 'even' : 'odd'}`);
+      drawClassicRow(shapeSvg, x, rowY, w, rowH, rowClass, cssStyles);
     }
   }
 
-  // Draw divider lines
+  //===========================
+  // = Draw vertical dividers =
+  //===========================
+  const verticalDivsY1 = nameBBox.height + y;
+  const verticalDivsY2 = h + y;
+
+  // Draw first vertical divider line
+  const firstDivX = maxTypeWidth + x;
   if (node.look === 'handDrawn') {
-    const nameLine = rc.line(x, nameBBox.height + y, w + x, nameBBox.height + y, options);
-    shapeSvg.insert(() => nameLine).attr('class', 'divider');
-
-    const firstLine = rc.line(
-      maxTypeWidth + x,
-      nameBBox.height + y,
-      maxTypeWidth + x,
-      h + y,
-      options
-    );
-    shapeSvg.insert(() => firstLine).attr('class', 'divider');
-
-    if (keysPresent) {
-      const secondLine = rc.line(
-        maxTypeWidth + maxNameWidth + x,
-        nameBBox.height + y,
-        maxTypeWidth + maxNameWidth + x,
-        h + y,
-        options
-      );
-      shapeSvg.insert(() => secondLine).attr('class', 'divider');
-    }
-
-    if (commentPresent) {
-      const thirdLine = rc.line(
-        maxTypeWidth + maxNameWidth + maxKeysWidth + x,
-        nameBBox.height + y,
-        maxTypeWidth + maxNameWidth + maxKeysWidth + x,
-        h + y,
-        options
-      );
-      shapeSvg.insert(() => thirdLine).attr('class', 'divider');
-    }
-
-    for (const yOffset of yOffsets) {
-      const attributeDividerLine = rc.line(
-        x,
-        nameBBox.height + y + yOffset,
-        w + x,
-        nameBBox.height + y + yOffset,
-        options
-      );
-      shapeSvg.insert(() => attributeDividerLine).attr('class', 'divider');
-    }
+    drawRoughDivider(shapeSvg, rc, firstDivX, verticalDivsY1, firstDivX, verticalDivsY2, options);
   } else {
-    drawDivider(shapeSvg, x, nameBBox.height + y, w + x, nameBBox.height + y); // Name line
-    drawDivider(shapeSvg, maxTypeWidth + x, nameBBox.height + y, maxTypeWidth + x, h + y); // First line
+    drawClassicDivider(shapeSvg, firstDivX, verticalDivsY1, firstDivX, verticalDivsY2);
+  }
 
-    if (keysPresent) {
-      drawDivider(
-        // Second line
+  // Draw second vertical divider line
+  if (keysPresent) {
+    const secondDivX = maxTypeWidth + maxNameWidth + x;
+    if (node.look === 'handDrawn') {
+      drawRoughDivider(
         shapeSvg,
-        maxTypeWidth + maxNameWidth + x,
-        nameBBox.height + y,
-        maxTypeWidth + maxNameWidth + x,
-        h + y
+        rc,
+        secondDivX,
+        verticalDivsY1,
+        secondDivX,
+        verticalDivsY2,
+        options
       );
+    } else {
+      drawClassicDivider(shapeSvg, secondDivX, verticalDivsY1, secondDivX, verticalDivsY2);
     }
+  }
 
-    if (commentPresent) {
-      drawDivider(
-        // Third line
-        shapeSvg,
-        maxTypeWidth + maxNameWidth + maxKeysWidth + x,
-        nameBBox.height + y,
-        maxTypeWidth + maxNameWidth + maxKeysWidth + x,
-        h + y
-      );
-    }
-
-    for (const yOffset of yOffsets) {
-      drawDivider(
-        // Attribute lines
-        shapeSvg,
-        x,
-        nameBBox.height + y + yOffset,
-        w + x,
-        nameBBox.height + y + yOffset
-      );
+  // Draw third vertical divider line
+  if (commentPresent) {
+    const thirdDivX = maxTypeWidth + maxNameWidth + maxKeysWidth + x;
+    if (node.look === 'handDrawn') {
+      drawRoughDivider(shapeSvg, rc, thirdDivX, verticalDivsY1, thirdDivX, verticalDivsY2, options);
+    } else {
+      drawClassicDivider(shapeSvg, thirdDivX, verticalDivsY1, thirdDivX, verticalDivsY2);
     }
   }
 
@@ -375,19 +312,130 @@ function drawRoughShape(
   y: number,
   w: number,
   h: number,
-  options: any,
-  cssStyles: string[] | undefined
+  options: any
 ): D3Selection<SVGGElement> {
-  const rect = shapeSvg
+  return shapeSvg
     .insert(() => rc.rectangle(x, y, w, h, options), ':first-child')
-    .attr('style', cssStyles!.join(''));
-
-  rect.select('path').attr('fill', null);
-
-  return rect;
+    .attr('class', 'rect shape')
+    .attr('fill', 'transparent');
 }
 
-function drawDivider(
+function drawClassicShape(
+  shapeSvg: D3Selection<SVGGElement>,
+  x: number,
+  y: number,
+  w: number,
+  h: number
+) {
+  return shapeSvg
+    .insert('rect', ':first-child')
+    .attr('class', 'rect shape')
+    .attr('fill', 'transparent')
+    .attr('x', x)
+    .attr('y', y)
+    .attr('width', w)
+    .attr('height', h);
+}
+
+function drawRoughHeader(
+  shapeSvg: D3Selection<SVGGElement>,
+  rc: RoughSVG,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  options: any,
+  cssStyles: string[] | undefined
+) {
+  shapeSvg // Hachures + cover for edges
+    .insert<'rect'>('rect', '.shape')
+    .attr('class', `rect row-header-background`)
+    .attr('x', x)
+    .attr('y', y)
+    .attr('width', w)
+    .attr('height', h);
+
+  shapeSvg
+    .insert(() => rc.rectangle(x, y, w, h, options), '.shape')
+    .attr('class', 'rect row-header')
+    .attr('style', cssStyles!.join(';'));
+}
+
+function drawClassicHeader(
+  shapeSvg: D3Selection<SVGGElement>,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  cssStyles: string[] | undefined
+) {
+  return shapeSvg
+    .insert('rect', '.shape')
+    .attr('class', 'rect row-header')
+    .attr('style', cssStyles!.join(';'))
+    .attr('x', x)
+    .attr('y', y)
+    .attr('width', w)
+    .attr('height', h);
+}
+
+function drawRoughRow(
+  shapeSvg: D3Selection<SVGGElement>,
+  rc: RoughSVG,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  options: any,
+  cssClass: string,
+  cssStyles: string[] | undefined
+) {
+  shapeSvg // Hachures + cover for edges
+    .insert<'rect'>('rect', '.shape')
+    .attr('class', `${cssClass}-background`)
+    .attr('x', x)
+    .attr('y', y)
+    .attr('width', w)
+    .attr('height', h);
+
+  shapeSvg
+    .insert(() => rc.rectangle(x, y, w, h, options), '.shape')
+    .attr('class', cssClass)
+    .attr('style', cssStyles!.join(';'));
+}
+
+function drawClassicRow(
+  shapeSvg: D3Selection<SVGGElement>,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  cssClass: string,
+  cssStyles: string[] | undefined
+) {
+  shapeSvg
+    .insert<'rect'>('rect', '.shape')
+    .attr('class', cssClass)
+    .attr('style', cssStyles!.join(';'))
+    .attr('x', x)
+    .attr('y', y)
+    .attr('width', w)
+    .attr('height', h);
+}
+
+function drawRoughDivider(
+  shapeSvg: D3Selection<SVGGElement>,
+  rc: RoughSVG,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  options: any
+) {
+  shapeSvg.insert(() => rc.line(x1, y1, x2, y2, options)).attr('class', 'divider');
+}
+
+function drawClassicDivider(
   shapeSvg: D3Selection<SVGGElement>,
   x1: number,
   y1: number,
@@ -396,11 +444,11 @@ function drawDivider(
 ) {
   shapeSvg
     .insert('line')
+    .attr('class', 'divider')
     .attr('x1', x1)
     .attr('y1', y1)
     .attr('x2', x2)
-    .attr('y2', y2)
-    .attr('class', 'divider');
+    .attr('y2', y2);
 }
 
 // Helper function to add label text g with translate position and style
