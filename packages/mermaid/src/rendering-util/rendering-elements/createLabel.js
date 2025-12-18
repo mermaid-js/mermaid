@@ -8,6 +8,7 @@ import common, {
 } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
 import { decodeEntities } from '../../utils.js';
+import { configureLabelImages } from './shapes/util.js';
 
 /**
  * Default width for wrapping text in labels.
@@ -78,6 +79,9 @@ async function addHtmlLabel(node, width, addBackground = false) {
     .append('svg')
     .attr('style', 'position: absolute; visibility: hidden; height: 0; width: 0;');
   tempSvg.node().appendChild(fo.node());
+
+  // if there are images, need to wait for them to load before getting the bounding box
+  await configureLabelImages(div.node(), node.label);
 
   // Check if text needs wrapping (same logic as createText)
   let bbox = div.node().getBoundingClientRect();
