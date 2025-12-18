@@ -10,10 +10,6 @@ import { log } from '../../logger.js';
 import { decodeEntities } from '../../utils.js';
 import { configureLabelImages } from './shapes/util.js';
 
-/**
- * Default width for wrapping text in labels.
- * This matches the default value in the flowchart config schema.
- */
 const DEFAULT_WRAPPING_WIDTH = 200;
 
 /**
@@ -36,41 +32,36 @@ function getWrappingWidth() {
 
 /**
  * @param {any} node
- * @param {number} width
+ * @param {number | undefined} width
  * @param {boolean} addBackground
- * @returns {Promise<SVGForeignObjectElement>} Node
+ * @returns {Promise<SVGForeignObjectElement>}
  */
 async function addHtmlLabel(node, width, addBackground = false) {
   const labelWidth = width ?? getWrappingWidth();
   const fo = select(document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject'));
-  // Set foreignObject dimensions first (same as createText)
-  fo.attr('width', `${10 * labelWidth}px`);
-  fo.attr('height', `${10 * labelWidth}px`);
+  fo.attr('width', 10000).attr('height', 10000);
 
   const div = fo.append('xhtml:div');
   const config = getConfig();
 
-  // Sanitize label (same as createText)
   const sanitizedLabel = hasKatex(node.label)
     ? await renderKatexSanitized(node.label.replace(common.lineBreakRegex, '\n'), config)
     : sanitizeText(node.label, config);
 
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
 
-  // Create span and set content (same as createText)
   const span = div.append('span');
   span.html(sanitizedLabel);
   applyStyle(span, node.labelStyle);
   span.attr('class', labelClass);
 
-  // Apply div styles (same as createText)
   applyStyle(div, node.labelStyle);
-  div.style('display', 'table-cell');
-  div.style('white-space', 'nowrap');
-  div.style('line-height', '1.5');
-  div.style('max-width', labelWidth + 'px');
-  div.style('text-align', 'center');
-  div.attr('xmlns', 'http://www.w3.org/1999/xhtml');
+  div
+    .style('display', 'inline-block')
+    .style('white-space', 'nowrap')
+    .style('line-height', '1.5')
+    .style('text-align', 'center')
+    .attr('xmlns', 'http://www.w3.org/1999/xhtml');
   if (addBackground) {
     div.attr('class', 'labelBkg');
   }
@@ -85,10 +76,13 @@ async function addHtmlLabel(node, width, addBackground = false) {
 
   // Check if text needs wrapping (same logic as createText)
   let bbox = div.node().getBoundingClientRect();
-  if (bbox.width === labelWidth) {
-    div.style('display', 'table');
-    div.style('white-space', 'break-spaces');
-    div.style('width', labelWidth + 'px');
+
+  if (bbox.width > labelWidth) {
+    div
+      .style('white-space', 'break-spaces')
+      .style('max-width', labelWidth + 'px')
+      .style('display', 'inline-block');
+
     bbox = div.node().getBoundingClientRect();
   }
 
@@ -100,12 +94,6 @@ async function addHtmlLabel(node, width, addBackground = false) {
   return fo.node();
 }
 /**
- * @param {string} _vertexText
- * @param {string | undefined} style
- * @param {boolean} isTitle
- * @param {boolean} isNode
- * @param {boolean} [addBackground=false]
- * @param {number | undefined} [width]
  * @deprecated svg-util/createText instead
  */
 const createLabel = async (
@@ -133,36 +121,28 @@ const createLabel = async (
       ),
       labelStyle: style ? style.replace('fill:', 'color:') : style,
     };
-    let vertexNode = await addHtmlLabel(node, width, addBackground);
-    // vertexNode.parentNode.removeChild(vertexNode);
-    return vertexNode;
-  } else {
-    const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    svgLabel.setAttribute('style', style.replace('color:', 'fill:'));
-    let rows = [];
-    if (typeof vertexText === 'string') {
-      rows = vertexText.split(/\\n|\n|<br\s*\/?>/gi);
-    } else if (Array.isArray(vertexText)) {
-      rows = vertexText;
-    } else {
-      rows = [];
-    }
-
-    for (const row of rows) {
-      const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-      tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
-      tspan.setAttribute('dy', '1em');
-      tspan.setAttribute('x', '0');
-      if (isTitle) {
-        tspan.setAttribute('class', 'title-row');
-      } else {
-        tspan.setAttribute('class', 'row');
-      }
-      tspan.textContent = row.trim();
-      svgLabel.appendChild(tspan);
-    }
-    return svgLabel;
+    return await addHtmlLabel(node, width, addBackground);
   }
+  const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  svgLabel.setAttribute('style', style.replace('color:', 'fill:'));
+
+  const rows =
+    typeof vertexText === 'string'
+      ? vertexText.split(/\\n|\n|<br\s*\/?>/gi)
+      : Array.isArray(vertexText)
+        ? vertexText
+        : [];
+
+  for (const row of rows) {
+    const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+    tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
+    tspan.setAttribute('dy', '1em');
+    tspan.setAttribute('x', '0');
+    tspan.setAttribute('class', isTitle ? 'title-row' : 'row');
+    tspan.textContent = row.trim();
+    svgLabel.appendChild(tspan);
+  }
+  return svgLabel;
 };
 
 export default createLabel;
