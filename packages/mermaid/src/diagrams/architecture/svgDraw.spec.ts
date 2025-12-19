@@ -3,7 +3,7 @@ import { draw } from './architectureRenderer.js';
 import { Diagram } from '../../Diagram.js';
 import { addDetector } from '../../diagram-api/detectType.js';
 import architectureDetector from './architectureDetector.js';
-import { ensureNodeFromSelector, jsdomIt } from '../../tests/util.js';
+import { SVG_NODE_ID, ensureNodeFromSelector, jsdomIt } from '../../tests/util.js';
 
 const { id, detector, loader } = architectureDetector;
 
@@ -43,6 +43,6 @@ describe('architecture diagram SVGs', () => {
 
 async function drawDiagram(diagramText: string): Promise<Element> {
   const diagram = await Diagram.fromText(diagramText, {});
-  await draw('NOT_USED', 'svg', '1.0.0', diagram);
-  return ensureNodeFromSelector('#svg');
+  await draw('NOT_USED', SVG_NODE_ID, '1.0.0', diagram);
+  return ensureNodeFromSelector(`#${SVG_NODE_ID}`);
 }
