@@ -4,7 +4,7 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { select } from 'd3';
 import { evaluate, sanitizeText } from '../../diagrams/common/common.js';
 import { decodeEntities } from '../../utils.js';
-import { configureLabelImages } from '../../rendering-util/rendering-elements/shapes/util.js';
+import { configureLabelImages } from '../../rendering-util/rendering-elements/shapes/labelImageUtils.js';
 
 export const labelHelper = async (parent, node, _classes, isNode) => {
   const config = getConfig();
