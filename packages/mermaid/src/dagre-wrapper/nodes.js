@@ -96,9 +96,9 @@ const hexagon = async (parent, node) => {
   );
 
   const f = 4;
-  const h = bbox.height + node.padding;
+  const h = node.positioned ? node.height : bbox.height + node.padding;
   const m = h / f;
-  const w = bbox.width + 2 * m + node.padding;
+  const w = node.positioned ? node.width : bbox.width + 2 * m + node.padding;
   const points = [
     { x: m, y: 0 },
     { x: w - m, y: 0 },
