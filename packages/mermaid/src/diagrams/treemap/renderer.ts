@@ -310,6 +310,17 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
 
   // Draw the leaf nodes
   const leafNodes = treemapData.leaves();
+
+  const isComplexTreemap = leafNodes.length > 20;
+
+  const baseLabelFontSize = isComplexTreemap ? 16 : 38;
+  const baseValueFontSize = isComplexTreemap ? 14 : 28;
+  const minLabelFontSize = isComplexTreemap ? 4 : 8;
+  const minValueFontSize = isComplexTreemap ? 4 : 6;
+  const labelPadding = isComplexTreemap ? 2 : 4;
+  const minDisplayThreshold = isComplexTreemap ? 8 : 10;
+  const spacingBetweenLabelAndValue = isComplexTreemap ? 1 : 2;
+
   const cell = g
     .selectAll('.treemapLeafGroup')
     .data(leafNodes)
@@ -360,7 +371,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     // .style('fill', (d) => colorScaleLabel(d.data.name))
     .attr('style', (d) => {
       const labelStyles =
-        'text-anchor: middle; dominant-baseline: middle; font-size: 16px;fill:' +
+        `text-anchor: middle; dominant-baseline: middle; font-size: ${baseLabelFontSize}px;fill:` +
         colorScaleLabel(d.data.name) +
         ';';
       const styles = styles2String({ cssCompiledStyles: d.data.cssCompiledStyles } as Node);
@@ -375,21 +386,16 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     const nodeHeight = d.y1 - d.y0;
     const textNode = self.node()!;
 
-    const padding = 2;
-    const availableWidth = nodeWidth - 2 * padding;
-    const availableHeight = nodeHeight - 2 * padding;
+    const availableWidth = nodeWidth - 2 * labelPadding;
+    const availableHeight = nodeHeight - 2 * labelPadding;
 
-    if (availableWidth < 8 || availableHeight < 8) {
+    if (availableWidth < minDisplayThreshold || availableHeight < minDisplayThreshold) {
       self.style('display', 'none');
       return;
     }
 
     let currentLabelFontSize = parseInt(self.style('font-size'), 10);
-    const minLabelFontSize = 4;
-    const originalValueRelFontSize = 14;
     const valueScaleFactor = 0.6; // Value font size as a factor of label font size
-    const minValueFontSize = 4;
-    const spacingBetweenLabelAndValue = 1;
 
     // 1. Adjust label font size to fit width
     while (
@@ -403,7 +409,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     // 2. Adjust both label and prospective value font size to fit combined height
     let prospectiveValueFontSize = Math.max(
       minValueFontSize,
-      Math.min(originalValueRelFontSize, Math.round(currentLabelFontSize * valueScaleFactor))
+      Math.min(baseValueFontSize, Math.round(currentLabelFontSize * valueScaleFactor))
     );
     let combinedHeight =
       currentLabelFontSize + spacingBetweenLabelAndValue + prospectiveValueFontSize;
@@ -412,7 +418,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       currentLabelFontSize--;
       prospectiveValueFontSize = Math.max(
         minValueFontSize,
-        Math.min(originalValueRelFontSize, Math.round(currentLabelFontSize * valueScaleFactor))
+        Math.min(baseValueFontSize, Math.round(currentLabelFontSize * valueScaleFactor))
       );
       if (
         prospectiveValueFontSize < minValueFontSize &&
@@ -433,9 +439,18 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     self.style('font-size', `${currentLabelFontSize}px`);
 
     // 3. Final visibility check for the label
-    if (currentLabelFontSize < minLabelFontSize || availableHeight < minLabelFontSize) {
-      self.style('display', 'none');
-      // If label is hidden, value will be hidden by its own .each() loop
+    if (isComplexTreemap) {
+      if (currentLabelFontSize < minLabelFontSize || availableHeight < minLabelFontSize) {
+        self.style('display', 'none');
+      }
+    } else {
+      if (
+        textNode.getComputedTextLength() > availableWidth ||
+        currentLabelFontSize < minLabelFontSize ||
+        availableHeight < currentLabelFontSize
+      ) {
+        self.style('display', 'none');
+      }
     }
   });
 
@@ -451,7 +466,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       })
       .attr('style', (d) => {
         const labelStyles =
-          'text-anchor: middle; dominant-baseline: hanging; font-size: 28px;fill:' +
+          `text-anchor: middle; dominant-baseline: hanging; font-size: ${baseValueFontSize}px;fill:` +
           colorScaleLabel(d.data.name) +
           ';';
         const styles = styles2String({ cssCompiledStyles: d.data.cssCompiledStyles } as Node);
@@ -478,14 +493,11 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       }
 
       const finalLabelFontSize = parseFloat(labelElement.style('font-size'));
-      const originalValueFontSize = 14;
       const valueScaleFactor = 0.6;
-      const minValueFontSize = 4;
-      const spacingBetweenLabelAndValue = 1;
 
       const actualValueFontSize = Math.max(
         minValueFontSize,
-        Math.min(originalValueFontSize, Math.round(finalLabelFontSize * valueScaleFactor))
+        Math.min(baseValueFontSize, Math.round(finalLabelFontSize * valueScaleFactor))
       );
       valueTextElement.style('font-size', `${actualValueFontSize}px`);
 
@@ -497,7 +509,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       const nodeTotalHeight = d.y1 - d.y0;
       const cellBottomPadding = 4;
       const maxValueBottomY = nodeTotalHeight - cellBottomPadding;
-      const availableWidthForValue = nodeWidth - 2 * 4; // padding for value text
+      const availableWidthForValue = nodeWidth - 2 * labelPadding;
 
       if (
         valueTextElement.node()!.getComputedTextLength() > availableWidthForValue ||
