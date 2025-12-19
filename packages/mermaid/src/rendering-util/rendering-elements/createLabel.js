@@ -8,7 +8,7 @@ import common, {
 } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
 import { decodeEntities } from '../../utils.js';
-import { configureLabelImages } from './shapes/util.js';
+import { configureLabelImages } from './labelImageUtils.js';
 
 const DEFAULT_WRAPPING_WIDTH = 200;
 
