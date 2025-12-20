@@ -54,12 +54,7 @@ export const addRel = function (type, from, to, label, techn, descr, sprite, tag
   }
 
   let rel = {};
-  const old = rels.find((rel) => rel.from === from && rel.to === to);
-  if (old) {
-    rel = old;
-  } else {
-    rels.push(rel);
-  }
+  rels.push(rel);
 
   rel.type = type;
   rel.from = from;
