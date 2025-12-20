@@ -310,6 +310,8 @@ properties:
     $ref: '#/$defs/BlockDiagramConfig'
   radar:
     $ref: '#/$defs/RadarDiagramConfig'
+  railroad:
+    $ref: '#/$defs/RailroadDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration
     description: Configuration options to pass to the `dompurify` library.
@@ -2328,6 +2330,122 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         minimum: 0
         maximum: 1
         default: 0.17
+
+  RailroadDiagramConfig:
+    title: Railroad Diagram Config
+    description: Configuration for Railroad (Syntax) Diagrams
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    type: object
+    unevaluatedProperties: false
+    properties:
+      orientation:
+        description: Diagram orientation (left-to-right or top-to-bottom)
+        type: string
+        enum: ['LR', 'TB']
+        default: 'LR'
+      compactMode:
+        description: Use compact layout mode
+        type: boolean
+        default: false
+      padding:
+        description: Padding around elements
+        type: number
+        minimum: 0
+        default: 10
+      verticalSeparation:
+        description: Vertical separation between elements
+        type: number
+        minimum: 0
+        default: 8
+      horizontalSeparation:
+        description: Horizontal separation between elements
+        type: number
+        minimum: 0
+        default: 10
+      arcRadius:
+        description: Radius for curved paths
+        type: number
+        minimum: 0
+        default: 10
+      fontSize:
+        description: Font size for text
+        type: number
+        minimum: 0
+        default: 14
+      fontFamily:
+        description: Font family for text
+        type: string
+        default: 'monospace'
+      terminalFill:
+        description: Fill color for terminal elements
+        type: string
+        default: '#FFFFC0'
+      terminalStroke:
+        description: Stroke color for terminal elements
+        type: string
+        default: '#000000'
+      terminalTextColor:
+        description: Text color for terminal elements
+        type: string
+        default: '#000000'
+      nonTerminalFill:
+        description: Fill color for non-terminal elements
+        type: string
+        default: '#FFFFFF'
+      nonTerminalStroke:
+        description: Stroke color for non-terminal elements
+        type: string
+        default: '#000000'
+      nonTerminalTextColor:
+        description: Text color for non-terminal elements
+        type: string
+        default: '#000000'
+      lineColor:
+        description: Color for connection lines
+        type: string
+        default: '#000000'
+      strokeWidth:
+        description: Width of strokes
+        type: number
+        minimum: 0
+        default: 2
+      markerFill:
+        description: Fill color for start/end markers
+        type: string
+        default: '#000000'
+      commentFill:
+        description: Fill color for comments
+        type: string
+        default: '#E8E8E8'
+      commentStroke:
+        description: Stroke color for comments
+        type: string
+        default: '#888888'
+      commentTextColor:
+        description: Text color for comments
+        type: string
+        default: '#666666'
+      specialFill:
+        description: Fill color for special sequences
+        type: string
+        default: '#F0E0FF'
+      specialStroke:
+        description: Stroke color for special sequences
+        type: string
+        default: '#8800CC'
+      ruleNameColor:
+        description: Color for rule names
+        type: string
+        default: '#000066'
+      showMarkers:
+        description: Show start/end markers
+        type: boolean
+        default: true
+      markerRadius:
+        description: Radius of start/end markers
+        type: number
+        minimum: 0
+        default: 5
 
   FontCalculator:
     title: Font Calculator
