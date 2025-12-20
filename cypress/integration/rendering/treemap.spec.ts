@@ -468,4 +468,65 @@ classDef highlight fill:#f39c12,color:#000,stroke:#e67e22,stroke-width:2px;
     );
   });
   */
+
+  it('14: should render labels in complex treemap with many nested blocks', () => {
+    imgSnapshotTest(
+      `treemap-beta
+    "🔴 High Activity (Top 50%)":::redContainer
+        "packages/app (1115)": 15:::redleaf
+        "packages/app/src (844)": 12:::redleaf
+        "packages/app/src/lib (707)": 11:::redleaf
+        "packages/app/src/routes (353)": 7:::redleaf
+        "packages/app/tests (277)": 6:::redleaf
+        "packages/app/tests/e2e (245)": 6:::redleaf
+        "packages/app/tests/common (48)": 4:::redleaf
+        "packages/llm-prompts (29)": 3:::redleaf
+        "packages/emails (26)": 3:::redleaf
+        "packages/app/tests/api (23)": 3:::redleaf
+        "packages/emails/src (18)": 3:::redleaf
+        "packages/emails/src/emails (17)": 3:::redleaf
+        "packages/app/static (15)": 3:::redleaf
+        "packages/llm-prompts/diagram-chat (15)": 3:::redleaf
+        "packages/app/prisma (11)": 3:::redleaf
+        "packages/app/prisma/migrations (11)": 3:::redleaf
+        "packages/llm-prompts/shared (9)": 3:::redleaf
+        "packages/app/static/icons (8)": 3:::redleaf
+        "packages/emails/src/components (8)": 3:::redleaf
+        "packages/app-observability (8)": 3:::redleaf
+        "packages/mermaid-pre-render-server (8)": 3:::redleaf
+    "🟠 Medium Activity (35%)":::orangeContainer
+        "packages/app/tests/mobile (6)": 3:::orangeleaf
+        "packages/llm-prompts/diagram-chat/tests (6)": 3:::orangeleaf
+        "packages/eslint-plugin (6)": 3:::orangeleaf
+        "packages/eslint-plugin/src (5)": 3:::orangeleaf
+        "packages/eslint-plugin/src/rules (5)": 3:::orangeleaf
+        "packages/app/static/img (4)": 3:::orangeleaf
+        "packages/llm-prompts/tests (4)": 3:::orangeleaf
+        "packages/llm-prompts/common (3)": 3:::orangeleaf
+        "packages/mermaid-pre-render-server/tests (3)": 3:::orangeleaf
+        "packages/mermaid-pre-render-server/tests/e2e (3)": 3:::orangeleaf
+        "packages/app/tests/seed (2)": 3:::orangeleaf
+        "packages/llm-prompts/shared/patches (2)": 3:::orangeleaf
+        "packages/mermaid-pre-render-server/src (2)": 3:::orangeleaf
+        "packages/app/scripts (1)": 3:::orangeleaf
+    "🟡 Low Activity (15%)":::yellowContainer
+        "packages/llm-prompts/regenerate-diagram (1)": 3:::yellowleaf
+        "packages/llm-prompts/repair-diagram (1)": 3:::yellowleaf
+        "packages/app-buildship (1)": 3:::yellowleaf
+        "packages/app-buildship/src (1)": 3:::yellowleaf
+        "packages/app-buildship/src/cleanupAssets (1)": 3:::yellowleaf
+        "packages/icons (1)": 3:::yellowleaf
+
+classDef root fill:#F5BA71
+classDef redContainer fill:#F54927
+classDef orangeContainer fill:#DE8118
+classDef yellowContainer fill:#F5E514
+
+classDef redleaf fill:#F54927,stroke:none,color:#FFFFFF
+classDef orangeleaf fill:#DE8118,stroke:none,color:#FFFFFF
+classDef yellowleaf fill:#F5E514,stroke:none,color:#333333
+      `,
+      {}
+    );
+  });
 });
