@@ -9,7 +9,19 @@ export interface VennData {
   background: string | undefined;
 }
 
+export interface VennTextData {
+  sets: string[];
+  text: string;
+  color: string | undefined;
+}
+
 export interface VennDB extends DiagramDBBase<VennDiagramConfig> {
   addSubsetData: (identifierList: string[], data: [string, string][] | undefined) => void;
+  addTextData: (
+    identifierList: string[],
+    text: string,
+    data: [string, string][] | undefined
+  ) => void;
   getSubsetData: () => VennData[];
+  getTextData: () => VennTextData[];
 }
