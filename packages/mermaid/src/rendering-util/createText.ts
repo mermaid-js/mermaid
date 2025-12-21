@@ -19,7 +19,7 @@ function applyStyle(dom, styleFn) {
   }
 }
 
-async function addHtmlSpan(
+export async function addHtmlSpan(
   element,
   node,
   width,
