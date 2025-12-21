@@ -19,32 +19,87 @@
       <pre class="mermaid">
       venn-beta
         title Very Basic Venn Diagram
-        sets A
-        sets B
-        sets A,B     label: AB
+        set A
+        set B
+        set A,B   label: AB
       </pre>
       <hr />
       <pre class="mermaid">
       venn-beta
-        title Three overlapping circles
-        sets A
-        sets B
-        sets C
-        sets A,B   label: AB, background: skyblue
-        sets B,C   label: BC, background: orange
-        sets A,C   label: AC, background: lightgreen
-        sets A,B,C   label: ABC, color: red,  background: white
+        title Three overlapping sets
+        set A
+        set B
+        set C
+        set A,B     label: AB,   background: skyblue
+        set B,C     label: BC,   background: orange
+        set A,C     label: AC,   background: lightgreen
+        set A,B,C   label: ABC,  background: white,      color: red
+      </pre>
+
+      <hr />
+      <pre class="mermaid">
+      %%{init: { 'venn': { 'debugTextLayout': true } } }%%
+      venn-beta
+        title Four sets with all pairwise intersections
+        set A      size: 18
+        set B      size: 18
+        set C      size: 18
+        set D      size: 18
+        set A,B    size: 5
+        set A,C    size: 2.5
+        set A,D    size: 5
+        set B,C    size: 5
+        set B,D    size: 2.5
+        set C,D    size: 5
       </pre>
       <hr />
       <pre class="mermaid">
       venn-beta
-        title Three concatenated circles and one isolated circle
-        sets A       size: 15, label: ALPHA
-        sets B       size: 5,  label: BETA
-        sets C       size: 10
-        sets D       size: 10, label: DELTA
-        sets A,B     size: 1,  label: AB, background: gold
-        sets B,D     size: 1
+        title Three concatenated sets and one isolated set
+        set A    size: 15,  label: ALPHA
+        set B    size: 5,   label: BETA
+        set C    size: 10
+        set D    size: 10,  label: DELTA
+        set A,B  size: 1,   label: AB,    background: gold
+        set B,D  size: 1
+      </pre>
+      <hr />
+      <pre class="mermaid">
+      venn-beta
+        title Text nodes inside sets
+        set A      label: Colored texts,  size: 18
+        set B      label: Default texts,  size: 12
+        set A,B    label: Common,         size: 5
+        text A     label: rgba,           color: rgba(255, 0, 0, 0.75)
+        text A     label: rgb,            color: rgb(255, 0, 128)
+        text A     label: hex,            color: #ff33cc
+        text A     label: color name,     color: green
+        text B     label: default color
+        text A,B   label: "shared note"
+      </pre>
+      <hr />
+      <pre class="mermaid">
+      %%{init: { 'venn': { 'debugTextLayout': true } } }%%
+      venn-beta
+        title Many text nodes in debug text layout mode
+        set A      label: Five nodes,  size: 18
+        set B      label: Nine nodes,  size: 18
+        set A,B    label: Common,      size: 3
+        text A     label: A1
+        text A     label: A2
+        text A     label: A3
+        text A     label: A4
+        text A     label: A5
+        text B     label: B1
+        text B     label: B2
+        text B     label: B3
+        text B     label: B4
+        text B     label: B5
+        text B     label: B6
+        text B     label: B7
+        text B     label: B8
+        text B     label: B9
+        text A,B   label: "shared note"
       </pre>
     </div>
     <script type="module">

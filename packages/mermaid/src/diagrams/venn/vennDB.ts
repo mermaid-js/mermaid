@@ -1,4 +1,4 @@
-import type { VennDB, VennData } from './vennTypes.js';
+import type { VennDB, VennData, VennTextData } from './vennTypes.js';
 import type { VennDiagramConfig } from '../../config.type.js';
 import { cleanAndMerge } from '../../utils.js';
 import { getConfig as commonGetConfig } from '../../config.js';
@@ -14,6 +14,8 @@ import {
 import DEFAULT_CONFIG from '../../defaultConfig.js';
 
 const subsets = new Array<VennData>();
+const textNodes = new Array<VennTextData>();
+
 export const addSubsetData: VennDB['addSubsetData'] = (identifierList, data) => {
   const { size: rawSize, label, color, background } = Object.fromEntries(data ?? []);
 
@@ -22,26 +24,56 @@ export const addSubsetData: VennDB['addSubsetData'] = (identifierList, data) => 
   subsets.push({
     sets: identifierList.sort(),
     size,
-    label,
-    color,
-    background,
+    label: normalizeStyleValue(label),
+    color: normalizeStyleValue(color),
+    background: normalizeStyleValue(background),
   });
 };
+
 export const getSubsetData = () => {
   return subsets;
+};
+
+const normalizeText = (text: string) => {
+  const trimmed = text.trim();
+  if (trimmed.length >= 2 && trimmed.startsWith('"') && trimmed.endsWith('"')) {
+    return trimmed.slice(1, -1);
+  }
+  return trimmed;
+};
+
+const normalizeStyleValue = (value: string | undefined): string | undefined => {
+  return value ? normalizeText(value) : value;
+};
+
+export const addTextData: VennDB['addTextData'] = (identifierList, text, data) => {
+  const styleEntries = Object.fromEntries(data ?? []);
+  const color = normalizeStyleValue(styleEntries.color ?? styleEntries.textColor);
+  const label = normalizeStyleValue(styleEntries.label);
+  const resolvedText = normalizeText(text) || label || '';
+  textNodes.push({
+    sets: identifierList.sort(),
+    text: resolvedText,
+    color,
+  });
+};
+
+export const getTextData = () => {
+  return textNodes;
 };
 
 const DEFAULT_PACKET_CONFIG: Required<VennDiagramConfig> = DEFAULT_CONFIG.venn;
 const getConfig = (): Required<VennDiagramConfig> => {
   return cleanAndMerge({
     ...DEFAULT_PACKET_CONFIG,
-    ...commonGetConfig().packet,
+    ...commonGetConfig().venn,
   });
 };
 
 const customClear = () => {
   clear();
   subsets.length = 0;
+  textNodes.length = 0;
 };
 
 export const db: VennDB = {
@@ -55,4 +87,6 @@ export const db: VennDB = {
   setAccDescription,
   addSubsetData,
   getSubsetData,
+  addTextData,
+  getTextData,
 };

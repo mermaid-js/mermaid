@@ -13,9 +13,9 @@ describe('Venn diagram', function () {
   test('simple', () => {
     const str = `venn-beta
           title foo bar
-          sets A
-          sets B
-          sets A,B
+          set A
+          set B
+          set A,B
       `;
     venn.parse(str);
     expect(db.getDiagramTitle()).toBe('foo bar');
@@ -29,38 +29,54 @@ describe('Venn diagram', function () {
   test('with options', () => {
     const str = `venn-beta
           title foo bar
-          sets A
-          sets B        size : 20
-          sets C       size : 30,   label : bar
-          sets A,D      size : 5.3,  label : foo
-          sets C, A,B
+          set A
+          set B       size : 20,   label : foo
+          set C       size : 30,   label : bar
+          set A,D     size : 5.3,  label : buz buz
+          set C, A,B               label : "Hello, world!"
       `;
     venn.parse(str);
     expect(db.getSubsetData()).toEqual([
       expect.objectContaining({ sets: ['A'], size: 10 }),
-      expect.objectContaining({ sets: ['B'], size: 20 }),
+      expect.objectContaining({ sets: ['B'], size: 20, label: 'foo' }),
       expect.objectContaining({ sets: ['C'], size: 30, label: 'bar' }),
-      expect.objectContaining({ sets: ['A', 'D'], size: 5.3, label: 'foo' }),
-      expect.objectContaining({ sets: ['A', 'B', 'C'], size: 1.1111111111111112 }),
+      expect.objectContaining({ sets: ['A', 'D'], size: 5.3, label: 'buz buz' }),
+      expect.objectContaining({
+        sets: ['A', 'B', 'C'],
+        size: 1.1111111111111112,
+        label: 'Hello, world!',
+      }),
     ]);
   });
 
-  test('with elements', () => {
+  test('with text nodes', () => {
     const str = `venn-beta
-          title foo bar
-          sets A
-          sets B        size : 20
-          sets C       size : 30,   label : bar
-          sets A,D      size : 5.3,  label : foo
-          sets C, A,B
+          set A
+          set B
+          set A,B
+          text A     label: foo bar
+          text A,B   label: "shared note"
+          text B     label: "hello, world",  color: red
+          text B     label: "hex",  color: #fff
+          text B     label: "rgb",  color: rgb(255, 0, 128)
+          text B     label: "rgba", color: rgba(255, 0, 128, 0.5)
       `;
     venn.parse(str);
-    expect(db.getSubsetData()).toEqual([
-      expect.objectContaining({ sets: ['A'], size: 10 }),
-      expect.objectContaining({ sets: ['B'], size: 20 }),
-      expect.objectContaining({ sets: ['C'], size: 30, label: 'bar' }),
-      expect.objectContaining({ sets: ['A', 'D'], size: 5.3, label: 'foo' }),
-      expect.objectContaining({ sets: ['A', 'B', 'C'], size: 1.1111111111111112 }),
+    expect(db.getTextData()).toEqual([
+      expect.objectContaining({ sets: ['A'], text: 'foo bar' }),
+      expect.objectContaining({ sets: ['A', 'B'], text: 'shared note' }),
+      expect.objectContaining({ sets: ['B'], text: 'hello, world', color: 'red' }),
+      expect.objectContaining({ sets: ['B'], text: 'hex', color: '#fff' }),
+      expect.objectContaining({ sets: ['B'], text: 'rgb', color: 'rgb(255, 0, 128)' }),
+      expect.objectContaining({ sets: ['B'], text: 'rgba', color: 'rgba(255, 0, 128, 0.5)' }),
     ]);
+  });
+
+  test('text node requires label', () => {
+    const str = `venn-beta
+        set A
+        text A  color: red
+    `;
+    expect(() => venn.parse(str)).toThrow('text requires label');
   });
 });

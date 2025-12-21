@@ -1,26 +1,29 @@
 %lex
 %options case-insensitive
 
-%x string
 %x title
 %%
-\%\%(?!\{)[^\n]*                          /* skip comments */
-[^\}]\%\%[^\n]*                           /* skip comments */
-[\n\r]+                                   return 'NEWLINE';
-\%\%[^\n]*                                /* do nothing */
-\s+                                       /* skip */
-<<EOF>>                                   return 'EOF';
+\%\%(?!\{)[^\n]*   /* skip comments */
+[^\}]\%\%[^\n]*    /* skip comments */
+[\n\r]+            return 'NEWLINE';
+\%\%[^\n]*         /* do nothing */
+\s+                /* skip */
+<<EOF>>            return 'EOF';
 
-"title"\s[^#\n;]+                       {return 'TITLE';}
-"venn-beta"                            {return 'VENN';}
-"sets"                                  {  return 'SETS'; }
+"title"\s[^#\n;]+  { return 'TITLE'; }
+"venn-beta"        { return 'VENN'; }
+"set"              { return 'SET';  }
+"text"             { return 'TEXT'; }
 
-[+-]?(?:\d+(?:\.\d+)?|\.\d+)              { return 'NUMERIC'; }
-[A-Za-z_][A-Za-z0-9\-_]*                { return 'IDENTIFIER'; }
-[^":,]+                                 {  return "OPT_VALUE"; }
+[+-]?(\d+(\.\d+)?|\.\d+)                                              { return 'NUMERIC'; }
+\#[0-9a-fA-F]{3,8}                                                    { return 'HEXCOLOR'; }
+rgba\(\s*[0-9.]+\s*[,]\s*[0-9.]+\s*[,]\s*[0-9.]+\s*[,]\s*[0-9.]+\s*\) { return 'RGBACOLOR'; }
+rgb\(\s*[0-9.]+\s*[,]\s*[0-9.]+\s*[,]\s*[0-9.]+\s*\)                  { return 'RGBCOLOR'; }
+[A-Za-z_][A-Za-z0-9\-_]*                                              { return 'IDENTIFIER'; }
+\"[^\"]*\"                                                            { return 'STRING'; }
 
-","                    { return 'COMMA'; }
-":"                    { return 'COLON'; }
+","  { return 'COMMA'; }
+":"  { return 'COLON'; }
 
 /lex
 
@@ -29,7 +32,12 @@
 %% /* language grammar */
 
 start
-  : VENN document 'EOF' { return $2; }
+  : optNewlines VENN document 'EOF' { return $3; }
+  ;
+
+optNewlines
+  : /* empty */         { $$ = [] }
+  | optNewlines NEWLINE { $$ = [] }
   ;
 
 document
@@ -45,23 +53,58 @@ line
   ;
 
 statement
-  : TITLE                                                       {yy.setDiagramTitle( $1.substr(6));$$=$1.substr(6);}
-  | SETS  identifierList                                         { yy.addSubsetData($identifierList, undefined); }
-  | SETS  identifierList stylesOpt                               { yy.addSubsetData($identifierList, $stylesOpt); }
+  : TITLE                                           { yy.setDiagramTitle( $1.substr(6));$$=$1.substr(6); }
+  | SET  identifierList                             { yy.addSubsetData($identifierList, undefined); }
+  | SET  identifierList stylesOpt                   { yy.addSubsetData($identifierList, $stylesOpt); }
+  | TEXT identifierList labelField                  { yy.addTextData($identifierList, "", [$labelField]); }
+  | TEXT identifierList labelField COMMA stylesOpt  { yy.addTextData($identifierList, "", [$labelField, ...$stylesOpt]); }
+  | TEXT identifierList                             { throw new Error('text requires label'); }
   ;
 
 stylesOpt
-  : styleField                                                 { $$ = [$styleField] }
-  | stylesOpt COMMA styleField                                       { $$ = [...$stylesOpt, $styleField] }
+  : styleField                   { $$ = [$styleField] }
+  | stylesOpt COMMA styleField   { $$ = [...$stylesOpt, $styleField] }
+  ;
+
+labelField
+  : IDENTIFIER COLON styleValue  { if (String($1).toLowerCase() !== 'label') { throw new Error('text requires label'); } $$ = ['label', $3] }
   ;
 
 styleField
-  : IDENTIFIER COLON IDENTIFIER                                      { $$ = [$1, $3] }
-  | IDENTIFIER COLON OPT_VALUE                                      { $$ = [$IDENTIFIER, $OPT_VALUE] }
-  | IDENTIFIER COLON NUMERIC                                   { $$ = [$IDENTIFIER, $NUMERIC] }
+  : IDENTIFIER COLON styleValue  { $$ = [$1, $3] }
   ;
 
-text:  STR
+styleValue
+  : STRING                       { $$ = $1; }
+  | valueTokens                  { $$ = $valueTokens.join(' '); }
+  ;
+
+valueTokens
+  : valueToken                   { $$ = [$valueToken]; }
+  | valueTokens valueToken       { $1.push($2); $$ = $1; }
+  ;
+
+valueToken
+  : IDENTIFIER                   { $$ = $1; }
+  | NUMERIC                      { $$ = $1; }
+  | HEXCOLOR                     { $$ = $1; }
+  | RGBCOLOR                     { $$ = $1; }
+  | RGBACOLOR                    { $$ = $1; }
+  ;
+
+textValue
+  : STRING                       { $$ = $1; }
+  | textTokens                   { $$ = $textTokens.join(' '); }
+  ;
+
+textTokens
+  : textToken                    { $$ = [$textToken]; }
+  | textTokens textToken         { $1.push($2); $$ = $1; }
+  ;
+
+textToken
+  : IDENTIFIER                   { $$ = $1; }
+  | NUMERIC                      { $$ = $1; }
   ;
 
 identifierList

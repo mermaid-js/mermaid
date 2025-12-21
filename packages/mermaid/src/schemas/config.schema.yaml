@@ -48,6 +48,7 @@ required:
   - requirement
   - architecture
   - mindmap
+  - kanban
   - gitGraph
   - c4
   - sankey
@@ -132,6 +133,21 @@ properties:
           - MODEL_ORDER
           - GREEDY_MODEL_ORDER
         default: GREEDY_MODEL_ORDER
+      forceNodeModelOrder:
+        description: |
+          The node order given by the model does not change to produce a better layout. E.g. if node A is before node B in the model this is not changed during crossing minimization. This assumes that the node model order is already respected before crossing minimization. This can be achieved by setting considerModelOrder.strategy to NODES_AND_EDGES.
+        type: boolean
+        default: false
+      considerModelOrder:
+        description: |
+          Preserves the order of nodes and edges in the model file if this does not lead to additional edge crossings. Depending on the strategy this is not always possible since the node and edge order might be conflicting.
+        type: string
+        enum:
+          - NONE
+          - NODES_AND_EDGES
+          - PREFER_EDGES
+          - PREFER_NODES
+        default: 'NODES_AND_EDGES'
   darkMode:
     type: boolean
     default: false
@@ -280,6 +296,8 @@ properties:
     $ref: '#/$defs/ArchitectureDiagramConfig'
   mindmap:
     $ref: '#/$defs/MindmapDiagramConfig'
+  kanban:
+    $ref: '#/$defs/KanbanDiagramConfig'
   gitGraph:
     $ref: '#/$defs/GitGraphDiagramConfig'
   c4:
@@ -290,6 +308,8 @@ properties:
     $ref: '#/$defs/PacketDiagramConfig'
   block:
     $ref: '#/$defs/BlockDiagramConfig'
+  radar:
+    $ref: '#/$defs/RadarDiagramConfig'
   venn:
     $ref: '#/$defs/VennDiagramConfig'
   dompurifyConfig:
@@ -959,6 +979,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - useMaxWidth
       - padding
       - maxNodeWidth
+      - layoutAlgorithm
     properties:
       padding:
         type: number
@@ -966,6 +987,27 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       maxNodeWidth:
         type: number
         default: 200
+      layoutAlgorithm:
+        description: Layout algorithm to use for positioning mindmap nodes
+        type: string
+        default: 'cose-bilkent'
+
+  KanbanDiagramConfig:
+    title: Kanban Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for kanban diagrams
+    type: object
+    unevaluatedProperties: false
+    properties:
+      padding:
+        type: number
+        default: 8
+      sectionWidth:
+        type: number
+        default: 200
+      ticketBaseUrl:
+        type: string
+        default: ''
 
   PieDiagramConfig:
     title: Pie Diagram Config
@@ -1208,6 +1250,10 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         default: 10
         minimum: 0
+      showDataLabel:
+        description: Should show the value corresponding to the bar within the bar
+        type: boolean
+        default: false
       showTitle:
         description: Should show the chart title
         type: boolean
@@ -1282,6 +1328,14 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           Expressed in pixels.
         type: integer
         default: 15
+        minimum: 0
+      nodeSpacing:
+        type: integer
+        default: 140
+        minimum: 0
+      rankSpacing:
+        type: integer
+        default: 80
         minimum: 0
       stroke:
         description: Stroke color of box edges and lines.
@@ -1431,6 +1485,9 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       htmlLabels:
         type: boolean
         default: false
+      hideEmptyMembersBox:
+        type: boolean
+        default: false
 
   JourneyDiagramConfig:
     title: Journey Diagram Config
@@ -1453,6 +1510,9 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - bottomMarginAdj
       - useMaxWidth
       - rightAngles
+      - titleColor
+      - titleFontFamily
+      - titleFontSize
     properties:
       diagramMarginX:
         $ref: '#/$defs/C4DiagramConfig/properties/diagramMarginX'
@@ -1465,6 +1525,10 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: integer
         default: 150
         minimum: 0
+      maxLabelWidth:
+        description: Maximum width of actor labels
+        type: integer
+        default: 360
       width:
         description: Width of actor boxes
         type: integer
@@ -1553,6 +1617,18 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         items:
           type: string
         default: ['#fff']
+      titleColor:
+        description: Color of the title text in Journey Diagrams
+        type: string
+        default: ''
+      titleFontFamily:
+        description: Font family to be used for the title text in Journey Diagrams
+        type: string
+        default: '"trebuchet ms", verdana, arial, sans-serif'
+      titleFontSize:
+        description: Font size to be used for the title text in Journey Diagrams
+        type: string
+        default: '4ex'
 
   TimelineDiagramConfig:
     # added by https://github.com/mermaid-js/mermaid/commit/0d5246fbc730bf15463d7183fe4400a1e2fc492c
@@ -2035,7 +2111,21 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: |
           Defines how mermaid renders curves for flowcharts.
         type: string
-        enum: ['basis', 'linear', 'cardinal']
+        enum:
+          [
+            'basis',
+            'bumpX',
+            'bumpY',
+            'cardinal',
+            'catmullRom',
+            'linear',
+            'monotoneX',
+            'monotoneY',
+            'natural',
+            'step',
+            'stepAfter',
+            'stepBefore',
+          ]
         default: 'basis'
       padding:
         description: |
@@ -2051,10 +2141,17 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: |
           Width of nodes where text is wrapped.
 
-          When using markdown strings the text ius wrapped automatically, this
+          When using markdown strings the text is wrapped automatically, this
           value sets the max width of a text before it continues on a new line.
         type: number
         default: 200
+
+      inheritDir:
+        type: boolean
+        default: false
+        description: |
+          If true, subgraphs without explicit direction will inherit the global graph direction
+          (e.g., LR, TB, RL, BT). Defaults to false to preserve legacy layout behavior.
 
   SankeyLinkColor:
     description: |
@@ -2180,6 +2277,60 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         minimum: 0
         default: 8
 
+  RadarDiagramConfig:
+    title: Radar Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for radar diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      width:
+        description: The size of the radar diagram.
+        type: number
+        minimum: 1
+        default: 600
+      height:
+        description: The size of the radar diagram.
+        type: number
+        minimum: 1
+        default: 600
+      marginTop:
+        description: The margin from the top of the radar diagram.
+        type: number
+        minimum: 0
+        default: 50
+      marginRight:
+        description: The margin from the right of the radar diagram.
+        type: number
+        minimum: 0
+        default: 50
+      marginBottom:
+        description: The margin from the bottom of the radar diagram.
+        type: number
+        minimum: 0
+        default: 50
+      marginLeft:
+        description: The margin from the left of the radar diagram.
+        type: number
+        minimum: 0
+        default: 50
+      axisScaleFactor:
+        description: The scale factor of the axis.
+        type: number
+        minimum: 0
+        default: 1
+      axisLabelFactor:
+        description: The scale factor of the axis label.
+        type: number
+        minimum: 0
+        default: 1.05
+      curveTension:
+        description: The tension factor for the Catmull-Rom spline conversion to cubic Bézier curves.
+        type: number
+        minimum: 0
+        maximum: 1
+        default: 0.17
+
   VennDiagramConfig:
     title: Venn Diagram Config
     allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
@@ -2191,6 +2342,9 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         minimum: 0
         default: 8
+      debugTextLayout:
+        type: boolean
+        default: false
 
   FontCalculator:
     title: Font Calculator
