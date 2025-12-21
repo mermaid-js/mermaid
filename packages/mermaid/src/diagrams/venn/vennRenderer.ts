@@ -174,7 +174,8 @@ function renderTextNodes(
     const innerWidth = Math.max(80, innerRadius * 2 * 0.95);
     const innerHeight = Math.max(60, innerRadius * 2 * 0.95);
     const labelOffsetBase = (area.data.label?.length ?? '') ? Math.min(32, innerRadius * 0.25) : 0;
-    const labelOffset = nodes.length === 1 ? labelOffsetBase + 30 : labelOffsetBase;
+    const labelOffset =
+      nodes.length === 1 ? labelOffsetBase + 30 : labelOffsetBase;
     const startX = centerX - innerWidth / 2;
     const startY = centerY - innerHeight / 2 + labelOffset;
     const cols = Math.max(1, Math.ceil(Math.sqrt(nodes.length)));
