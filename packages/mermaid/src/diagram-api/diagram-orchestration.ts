@@ -103,6 +103,6 @@ export const addDiagrams = () => {
     block,
     radar,
     treemap,
-    venn
+    venn,
   );
 };
