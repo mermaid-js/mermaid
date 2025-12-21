@@ -99,12 +99,14 @@ export const draw: DrawDefinition = (
       const d = e as VennData;
       return customBackgroundColorMap.get(d.sets) ?? 'white';
     });
-  const vennBox = svg.append('svg').attr('y', titleHeight);
-
-  // Transfer the Venn diagram to the real SVG
-  vennBox.append(() => dummyD3root.select('svg').node());
-
-  configureSvgSize(svg, svgHeight, svgWidth, true);
+  const vennGroup = svg.append('g').attr('transform', `translate(0, ${titleHeight})`);
+  const dummySvg = dummyD3root.select('svg').node();
+  if (dummySvg && 'childNodes' in dummySvg) {
+    for (const child of [...dummySvg.childNodes]) {
+      vennGroup.node()?.appendChild(child);
+    }
+  }
+  configureSvgSize(svg, svgHeight, svgWidth, config?.useMaxWidth ?? true);
 };
 
 function setsKey(setIds: string[]): string {
