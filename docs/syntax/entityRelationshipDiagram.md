@@ -209,6 +209,72 @@ erDiagram
     PERSON many(0) optionally to 0+ NAMED-DRIVER : is
 ```
 
+### Aggregation (v\<MERMAID_RELEASE_VERSION>+)
+
+Aggregation represents a "has-a" relationship where the part can exist independently of the whole. This is different from composition, where the part cannot exist without the whole. Aggregation relationships are rendered with hollow diamond markers at the endpoints.
+
+Aggregation syntax follows a compositional pattern where you combine cardinality markers with the aggregation symbol (`<>`) and line type:
+
+**Syntax:**
+
+```
+<first-entity> <cardinalityA><>--<cardinalityB> <second-entity> : <relationship-label>
+<first-entity> <cardinalityA><>..<cardinalityB> <second-entity> : <relationship-label>
+```
+
+Where:
+
+- `<>` is the aggregation marker
+- `--` represents a solid line (identifying relationship)
+- `..` represents a dashed line (non-identifying relationship)
+- Cardinality markers can be: `||` (only one), `o|` (zero or one), `o{` (zero or more), `|{` (one or more)
+
+**Examples:**
+
+```mermaid-example
+erDiagram
+    DEPARTMENT ||<>--o{ EMPLOYEE : contains
+    PROJECT o{<>..o{ TASK : manages
+    TEAM ||<>--|| MEMBER : consists_of
+    COMPANY ||<>--o{ DEPARTMENT : owns
+```
+
+```mermaid
+erDiagram
+    DEPARTMENT ||<>--o{ EMPLOYEE : contains
+    PROJECT o{<>..o{ TASK : manages
+    TEAM ||<>--|| MEMBER : consists_of
+    COMPANY ||<>--o{ DEPARTMENT : owns
+```
+
+In these examples:
+
+- `DEPARTMENT ||<>--o{ EMPLOYEE` shows that one department contains zero or more employees (solid aggregation)
+- `PROJECT o{<>..o{ TASK` shows that zero or more projects manage zero or more tasks (dashed aggregation)
+- `TEAM ||<>--|| MEMBER` shows that one team consists of one member (solid aggregation)
+- `COMPANY ||<>--o{ DEPARTMENT` shows that one company owns zero or more departments (solid aggregation)
+
+**Aggregation vs Association**
+
+- **Aggregation** (`<>`): "Has-a" relationship where parts can exist independently. The aggregation marker must be combined with cardinalities and line type (e.g., `||<>--o{`)
+- **Association** (`||--`, `}o--`): General relationship between entities with cardinality markers directly connected to line type
+
+**Additional Examples:**
+
+```mermaid-example
+erDiagram
+    UNIVERSITY ||<>--o{ COLLEGE : "has multiple"
+    MANAGER o|<>..o| TEAM : leads
+    PERSON o|<>--o| PASSPORT : owns
+```
+
+```mermaid
+erDiagram
+    UNIVERSITY ||<>--o{ COLLEGE : "has multiple"
+    MANAGER o|<>..o| TEAM : leads
+    PERSON o|<>--o| PASSPORT : owns
+```
+
 ### Attributes
 
 Attributes can be defined for entities by specifying the entity name followed by a block containing multiple `type name` pairs, where a block is delimited by an opening `{` and a closing `}`. The attributes are rendered inside the entity boxes. For example:

@@ -75,6 +75,7 @@ o\|                             return 'ZERO_OR_ONE';
 o\{                             return 'ZERO_OR_MORE';
 \|\{                            return 'ONE_OR_MORE';
 u(?=[\.\-\|])                   return 'MD_PARENT';
+"<>"                            return 'AGGREGATION';
 \.\.                            return 'NON_IDENTIFYING';
 \-\-                            return 'IDENTIFYING';
 "to"                            return 'IDENTIFYING';
@@ -172,6 +173,36 @@ statement
     | entityName SQS entityName SQE STYLE_SEPARATOR idList BLOCK_START BLOCK_STOP { yy.addEntity($1, $3); yy.setClass([$1], $6); }
     | entityName SQS entityName SQE { yy.addEntity($1, $3); }
     | entityName SQS entityName SQE STYLE_SEPARATOR idList { yy.addEntity($1, $3); yy.setClass([$1], $6); }
+    | entityName aggregationRelSpec entityName COLON role
+      {
+          yy.addEntity($1);
+          yy.addEntity($3);
+          yy.addRelationship($1, $5, $3, $2);
+      }
+    | entityName STYLE_SEPARATOR idList aggregationRelSpec entityName STYLE_SEPARATOR idList COLON role
+      {
+          yy.addEntity($1);
+          yy.addEntity($5);
+          yy.addRelationship($1, $9, $5, $4);
+          yy.setClass([$1], $3);
+          yy.setClass([$5], $7);
+      }
+    | entityName STYLE_SEPARATOR idList aggregationRelSpec entityName COLON role
+      {
+          yy.addEntity($1);
+          yy.addEntity($5);
+          yy.addRelationship($1, $7, $5, $4);
+          yy.setClass([$1], $3);
+      }
+    | entityName aggregationRelSpec entityName STYLE_SEPARATOR idList COLON role
+      {
+          yy.addEntity($1);
+          yy.addEntity($3);
+          yy.addRelationship($1, $7, $3, $2);
+          yy.setClass([$3], $5);
+      }
+
+
     | title title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
@@ -277,6 +308,17 @@ relSpec
       {
         $$ = { cardA: $3, relType: $2, cardB: $1 };
         /*console.log('relSpec: ' + $3 + $2 + $1);*/
+      }
+    ;
+
+aggregationRelSpec
+    : cardinality 'AGGREGATION' 'IDENTIFYING' cardinality
+      {
+        $$ = { cardA: $1, relType: yy.Aggregation.AGGREGATION, cardB: $4 };
+      }
+    | cardinality 'AGGREGATION' 'NON_IDENTIFYING' cardinality
+      {
+        $$ = { cardA: $1, relType: yy.Aggregation.AGGREGATION_DASHED, cardB: $4 };
       }
     ;
 

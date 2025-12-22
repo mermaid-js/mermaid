@@ -457,4 +457,117 @@ ORDER ||--|{ LINE-ITEM : contains
       );
     });
   });
+
+  describe('Aggregation Relationships', () => {
+    it('should render basic aggregation relationships', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          DEPARTMENT ||<>--|| EMPLOYEE : contains
+          PROJECT o{<>..o{ TASK : manages
+          TEAM ||<>--|| MEMBER : consists_of
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render aggregation with entity attributes', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          DEPARTMENT ||<>--o{ EMPLOYEE : contains
+          DEPARTMENT {
+            int id PK
+            string name
+            string location
+          }
+          EMPLOYEE {
+            int id PK
+            string name
+            int department_id FK
+          }
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render aggregation with quoted labels', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          UNIVERSITY ||<>--o{ COLLEGE : "has multiple"
+          COLLEGE ||<>--o{ DEPARTMENT : "contains"
+          DEPARTMENT ||<>--o{ FACULTY : "employs"
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render mixed relationship types', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          CUSTOMER ||--o{ ORDER : places
+          ORDER ||--|{ ORDER_ITEM : contains
+          PRODUCT ||<>--o{ ORDER_ITEM : "aggregated in"
+          WAREHOUSE o{<>..o{ PRODUCT : "stores"
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render aggregation with entity aliases', () => {
+      imgSnapshotTest(
+        `
+       erDiagram
+         d[DEPARTMENT]
+         e[EMPLOYEE]
+         p[PROJECT]
+         t[TASK]
+
+         d ||<>--|| e : contains
+         p o{<>..o{ t : manages
+
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render complex aggregation scenarios', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          COMPANY ||<>--o{ DEPARTMENT : owns
+          DEPARTMENT ||<>--o{ EMPLOYEE : contains
+          EMPLOYEE o{<>--o{ PROJECT : works_on
+          PROJECT ||<>--o{ TASK : consists_of
+          TASK ||<>--o{ SUBTASK : includes
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render aggregation with different cardinalities', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          COMPANY ||<>--o{ DEPARTMENT : has
+          MANAGER o|<>..o| TEAM : leads
+          PRODUCT |{<>--|{ CATEGORY : belongs_to
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render aggregation with zero-or-one relationships', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          PERSON o|<>--o| PASSPORT : owns
+          EMPLOYEE o|<>..o| PARKING_SPOT : assigned
+        `,
+        { logLevel: 1 }
+      );
+    });
+  });
 });

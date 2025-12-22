@@ -9,6 +9,10 @@ const ERMarkers = {
   ZERO_OR_MORE_END: 'ZERO_OR_MORE_END',
   MD_PARENT_END: 'MD_PARENT_END',
   MD_PARENT_START: 'MD_PARENT_START',
+  AGGREGATION_START: 'AGGREGATION_START',
+  AGGREGATION_END: 'AGGREGATION_END',
+  AGGREGATION_DASHED_START: 'AGGREGATION_DASHED_START',
+  AGGREGATION_DASHED_END: 'AGGREGATION_DASHED_END',
 };
 
 /**
@@ -179,6 +183,66 @@ const insertMarkers = function (elem, conf) {
     .attr('stroke', conf.stroke)
     .attr('fill', 'none')
     .attr('d', 'M21,18 Q39,0 57,18 Q39,36 21,18');
+
+  // Aggregation markers (hollow diamond)
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', ERMarkers.AGGREGATION_START)
+    .attr('refX', 0)
+    .attr('refY', 9)
+    .attr('markerWidth', 20)
+    .attr('markerHeight', 18)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('stroke', conf.stroke)
+    .attr('fill', 'white')
+    .attr('d', 'M18,9 L9,0 L0,9 L9,18 Z');
+
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', ERMarkers.AGGREGATION_END)
+    .attr('refX', 20)
+    .attr('refY', 9)
+    .attr('markerWidth', 20)
+    .attr('markerHeight', 18)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('stroke', conf.stroke)
+    .attr('fill', 'white')
+    .attr('d', 'M2,9 L11,0 L20,9 L11,18 Z');
+
+  // Dashed aggregation markers
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', ERMarkers.AGGREGATION_DASHED_START)
+    .attr('refX', 0)
+    .attr('refY', 9)
+    .attr('markerWidth', 20)
+    .attr('markerHeight', 18)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('stroke', conf.stroke)
+    .attr('fill', 'white')
+    .attr('stroke-dasharray', '3,3')
+    .attr('d', 'M18,9 L9,0 L0,9 L9,18 Z');
+
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', ERMarkers.AGGREGATION_DASHED_END)
+    .attr('refX', 20)
+    .attr('refY', 9)
+    .attr('markerWidth', 20)
+    .attr('markerHeight', 18)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('stroke', conf.stroke)
+    .attr('fill', 'white')
+    .attr('stroke-dasharray', '3,3')
+    .attr('d', 'M2,9 L11,0 L20,9 L11,18 Z');
 
   return;
 };

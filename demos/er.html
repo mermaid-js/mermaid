@@ -169,6 +169,164 @@
     </pre>
     <hr />
 
+    <!-- Aggregation Examples -->
+    <h2>Aggregation Examples</h2>
+
+    <h3>Basic Aggregation (Solid Line)</h3>
+    <pre class="mermaid">
+    erDiagram
+      DEPARTMENT <> EMPLOYEE : contains
+      DEPARTMENT {
+          int id PK
+          string name
+          string location
+      }
+      EMPLOYEE {
+          int id PK
+          string name
+          int department_id FK
+      }
+    </pre>
+    <hr />
+
+    <h3>Dashed Aggregation</h3>
+    <pre class="mermaid">
+    erDiagram
+      PROJECT <>.. TASK : manages
+      PROJECT {
+          int id PK
+          string name
+          string description
+      }
+      TASK {
+          int id PK
+          string title
+          int project_id FK
+      }
+    </pre>
+    <hr />
+
+    <h3>Aggregation with Different Cardinalities</h3>
+    <pre class="mermaid">
+    erDiagram
+      COMPANY <> DEPARTMENT : owns
+      DEPARTMENT <> EMPLOYEE : contains
+      EMPLOYEE <> PROJECT : works_on
+      PROJECT <> TASK : consists_of
+      
+      COMPANY {
+          int id PK
+          string name
+      }
+      DEPARTMENT {
+          int id PK
+          string name
+          int company_id FK
+      }
+      EMPLOYEE {
+          int id PK
+          string name
+          int department_id FK
+      }
+      PROJECT {
+          int id PK
+          string name
+          int employee_id FK
+      }
+      TASK {
+          int id PK
+          string title
+          int project_id FK
+      }
+    </pre>
+    <hr />
+
+    <h3>Two-way Aggregation</h3>
+    <pre class="mermaid">
+    erDiagram
+      TEAM <> MEMBER : consists_of
+      TEAM {
+          int id PK
+          string name
+      }
+      MEMBER {
+          int id PK
+          string name
+          int team_id FK
+      }
+    </pre>
+    <hr />
+
+    <h3>Complex Aggregation with Labels</h3>
+    <pre class="mermaid">
+    erDiagram
+      UNIVERSITY <> COLLEGE : "has multiple"
+      COLLEGE <> DEPARTMENT : "contains"
+      DEPARTMENT <> FACULTY : "employs"
+      FACULTY <> STUDENT : "teaches"
+      
+      UNIVERSITY {
+          int id PK
+          string name
+      }
+      COLLEGE {
+          int id PK
+          string name
+          int university_id FK
+      }
+      DEPARTMENT {
+          int id PK
+          string name
+          int college_id FK
+      }
+      FACULTY {
+          int id PK
+          string name
+          int department_id FK
+      }
+      STUDENT {
+          int id PK
+          string name
+          int faculty_id FK
+      }
+    </pre>
+    <hr />
+
+    <h3>Mixed Relationship Types</h3>
+    <pre class="mermaid">
+    erDiagram
+      CUSTOMER ||--o{ ORDER : places
+      ORDER ||--|{ ORDER_ITEM : contains
+      PRODUCT <> ORDER_ITEM : "aggregated in"
+      WAREHOUSE <>.. PRODUCT : "stores"
+      
+      CUSTOMER {
+          int id PK
+          string name
+      }
+      ORDER {
+          int id PK
+          int customer_id FK
+          date order_date
+      }
+      ORDER_ITEM {
+          int id PK
+          int order_id FK
+          int product_id FK
+          int quantity
+      }
+      PRODUCT {
+          int id PK
+          string name
+          int warehouse_id FK
+      }
+      WAREHOUSE {
+          int id PK
+          string name
+      }
+    </pre>
+    <hr />
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({

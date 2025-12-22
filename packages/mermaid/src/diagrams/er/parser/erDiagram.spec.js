@@ -1087,4 +1087,95 @@ describe('when parsing ER diagram it...', function () {
       });
     });
   });
+
+  describe('aggregation relationships', function () {
+    it('should parse basic aggregation syntax with solid line', function () {
+      erDiagram.parser.parse('erDiagram\nDEPARTMENT o{<>--o{ EMPLOYEE : contains');
+      const rels = erDb.getRelationships();
+      expect(erDb.getEntities().size).toBe(2);
+      expect(rels.length).toBe(1);
+      expect(rels[0].relSpec.relType).toBe(erDb.Aggregation.AGGREGATION);
+      expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ZERO_OR_MORE);
+      expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ZERO_OR_MORE);
+      expect(rels[0].roleA).toBe('contains');
+    });
+
+    it('should parse dashed aggregation syntax', function () {
+      erDiagram.parser.parse('erDiagram\nPROJECT o{<>..o{ TASK : manages');
+      const rels = erDb.getRelationships();
+      expect(erDb.getEntities().size).toBe(2);
+      expect(rels.length).toBe(1);
+      expect(rels[0].relSpec.relType).toBe(erDb.Aggregation.AGGREGATION_DASHED);
+      expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ZERO_OR_MORE);
+      expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ZERO_OR_MORE);
+      expect(rels[0].roleA).toBe('manages');
+    });
+
+    it('should parse aggregation with quoted labels', function () {
+      erDiagram.parser.parse('erDiagram\nUNIVERSITY ||<>--|| COLLEGE : "has multiple"');
+      const rels = erDb.getRelationships();
+      expect(erDb.getEntities().size).toBe(2);
+      expect(rels.length).toBe(1);
+      expect(rels[0].relSpec.relType).toBe(erDb.Aggregation.AGGREGATION);
+      expect(rels[0].roleA).toBe('has multiple');
+    });
+
+    it('should parse multiple aggregation relationships', function () {
+      erDiagram.parser.parse(
+        'erDiagram\nDEPARTMENT o{<>--o{ EMPLOYEE : contains\nPROJECT o{<>..o{ TASK : manages'
+      );
+      const rels = erDb.getRelationships();
+      expect(erDb.getEntities().size).toBe(4);
+      expect(rels.length).toBe(2);
+      expect(rels[0].relSpec.relType).toBe(erDb.Aggregation.AGGREGATION);
+      expect(rels[1].relSpec.relType).toBe(erDb.Aggregation.AGGREGATION_DASHED);
+    });
+
+    it('should parse aggregation with entity aliases', function () {
+      erDiagram.parser.parse('erDiagram\nd[DEPARTMENT]\ne[EMPLOYEE]\nd ||<>--|| e : contains');
+      const rels = erDb.getRelationships();
+      expect(erDb.getEntities().size).toBe(2);
+      expect(rels.length).toBe(1);
+      expect(rels[0].relSpec.relType).toBe(erDb.Aggregation.AGGREGATION);
+      expect(erDb.getEntity('d').alias).toBe('DEPARTMENT');
+      expect(erDb.getEntity('e').alias).toBe('EMPLOYEE');
+    });
+
+    it('should validate aggregation relationships', function () {
+      erDiagram.parser.parse('erDiagram\nDEPARTMENT ||<>--|| EMPLOYEE : contains');
+      const rels = erDb.getRelationships();
+      expect(erDb.validateAggregationRelationship(rels[0].relSpec)).toBe(true);
+    });
+
+    it('should handle mixed relationship types', function () {
+      erDiagram.parser.parse(
+        'erDiagram\nCUSTOMER ||--o{ ORDER : places\nPRODUCT ||<>--|| ORDER_ITEM : "aggregated in"'
+      );
+      const rels = erDb.getRelationships();
+      expect(erDb.getEntities().size).toBe(4);
+      expect(rels.length).toBe(2);
+      expect(rels[0].relSpec.relType).toBe(erDb.Identification.IDENTIFYING);
+      expect(rels[1].relSpec.relType).toBe(erDb.Aggregation.AGGREGATION);
+    });
+
+    it('should parse aggregation with different cardinalities', function () {
+      erDiagram.parser.parse('erDiagram\nCOMPANY ||<>--o{ DEPARTMENT : has');
+      const rels = erDb.getRelationships();
+      expect(erDb.getEntities().size).toBe(2);
+      expect(rels.length).toBe(1);
+      expect(rels[0].relSpec.relType).toBe(erDb.Aggregation.AGGREGATION);
+      expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ONLY_ONE);
+      expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ZERO_OR_MORE);
+    });
+
+    it('should parse aggregation with zero-or-one cardinality', function () {
+      erDiagram.parser.parse('erDiagram\nMANAGER o|<>..o| TEAM : leads');
+      const rels = erDb.getRelationships();
+      expect(erDb.getEntities().size).toBe(2);
+      expect(rels.length).toBe(1);
+      expect(rels[0].relSpec.relType).toBe(erDb.Aggregation.AGGREGATION_DASHED);
+      expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ZERO_OR_ONE);
+      expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ZERO_OR_ONE);
+    });
+  });
 });
