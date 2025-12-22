@@ -7,7 +7,6 @@ import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
 import DOMPurify from 'dompurify';
 import isEmpty from 'lodash-es/isEmpty.js';
-import packageJson from '../package.json' assert { type: 'json' };
 import { addSVGa11yTitleDescription, setA11yDiagramInfo } from './accessibility.js';
 import assignWithDepth from './assignWithDepth.js';
 import * as configApi from './config.js';
@@ -422,12 +421,12 @@ const render = async function (
   // -------------------------------------------------------------------------------
   // Draw the diagram with the renderer
   try {
-    await diag.renderer.draw(text, id, packageJson.version, diag);
+    await diag.renderer.draw(text, id, injected.version, diag);
   } catch (e) {
     if (config.suppressErrorRendering) {
       removeTempElements();
     } else {
-      errorRenderer.draw(text, id, packageJson.version);
+      errorRenderer.draw(text, id, injected.version);
     }
     throw e;
   }

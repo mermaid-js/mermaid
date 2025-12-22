@@ -67,7 +67,7 @@ export const removeScript = (txt: string): string => {
 const sanitizeMore = (text: string, config: MermaidConfig) => {
   if (getEffectiveHtmlLabels(config)) {
     const level = config.securityLevel;
-    if (level === 'antiscript' || level === 'strict') {
+    if (level === 'antiscript' || level === 'strict' || level === 'sandbox') {
       text = removeScript(text);
     } else if (level !== 'loose') {
       text = breakToPlaceholder(text);
@@ -334,7 +334,7 @@ const renderKatexUnsanitized = async (text: string, config: MermaidConfig): Prom
     return text.replace(katexRegex, 'MathML is unsupported in this environment.');
   }
 
-  if (includeLargeFeatures) {
+  if (injected.includeLargeFeatures) {
     const { default: katex } = await import('katex');
     const outputMode =
       config.forceLegacyMathML || (!isMathMLSupported() && config.legacyMathML)

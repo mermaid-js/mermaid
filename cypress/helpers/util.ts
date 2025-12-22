@@ -6,6 +6,7 @@ interface CypressConfig {
   listUrl?: boolean;
   listId?: string;
   name?: string;
+  screenshot?: boolean;
 }
 type CypressMermaidConfig = MermaidConfig & CypressConfig;
 
@@ -90,20 +91,33 @@ export const renderGraph = (
 
 export const openURLAndVerifyRendering = (
   url: string,
-  options: CypressMermaidConfig,
+  { screenshot = true, ...options }: CypressMermaidConfig,
   validation?: any
 ): void => {
   const name: string = (options.name ?? cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
 
   cy.visit(url);
   cy.window().should('have.property', 'rendered', true);
-  cy.get('svg').should('be.visible');
 
-  if (validation) {
-    cy.get('svg').should(validation);
+  // Handle sandbox mode where SVG is inside an iframe
+  if (options.securityLevel === 'sandbox') {
+    cy.get('iframe').should('be.visible');
+    if (validation) {
+      cy.get('iframe').should(validation);
+    }
+  } else {
+    cy.get('svg').should('be.visible');
+    // cspell:ignore viewbox
+    cy.get('svg').should('not.have.attr', 'viewbox');
+
+    if (validation) {
+      cy.get('svg').should(validation);
+    }
   }
 
-  verifyScreenshot(name);
+  if (screenshot) {
+    verifyScreenshot(name);
+  }
 };
 
 export const verifyScreenshot = (name: string): void => {
