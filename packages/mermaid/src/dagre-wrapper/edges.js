@@ -3,8 +3,9 @@ import createLabel from './createLabel.js';
 import { createText } from '../rendering-util/createText.js';
 import { line, curveBasis, select } from 'd3';
 import { getConfig } from '../diagram-api/diagramAPI.js';
+import { getEffectiveHtmlLabels } from '../config.js';
 import utils from '../utils.js';
-import { evaluate, getUrl } from '../diagrams/common/common.js';
+import { getUrl } from '../diagrams/common/common.js';
 import { getLineFunctionsWithOffset } from '../utils/lineWithOffset.js';
 import { getSubGraphTitleMargins } from '../utils/subGraphTitleMargins.js';
 import { addEdgeMarkers } from './edgeMarker.js';
@@ -19,7 +20,7 @@ export const clear = () => {
 
 export const insertEdgeLabel = async (elem, edge) => {
   const config = getConfig();
-  const useHtmlLabels = evaluate(config.flowchart.htmlLabels);
+  const useHtmlLabels = getEffectiveHtmlLabels(config);
   // Create the actual text element
   const labelElement =
     edge.labelType === 'markdown'
@@ -133,7 +134,7 @@ export const insertEdgeLabel = async (elem, edge) => {
  * @param {any} value
  */
 function setTerminalWidth(fo, value) {
-  if (getConfig().flowchart.htmlLabels && fo) {
+  if (getEffectiveHtmlLabels(getConfig()) && fo) {
     fo.style.width = value.length * 9 + 'px';
     fo.style.height = '12px';
   }

@@ -185,22 +185,27 @@ A --> C[End]
 
 Some common flowchart configurations are:
 
-- _htmlLabels_: true/false
 - _curve_: linear/curve
 - _diagramPadding_: number
 - _useMaxWidth_: number
+
+**Deprecated configurations:**
+
+- ~~_htmlLabels_~~: Use global `htmlLabels` instead
 
 For a complete list of flowchart configurations, see [defaultConfig.ts](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/defaultConfig.ts) in the source code.
 _Soon we plan to publish a complete list of all diagram-specific configurations updated in the docs._
 
 The following code snippet changes flowchart config:
 
-`%%{init: { "flowchart": { "htmlLabels": true, "curve": "linear" } } }%%`
+```
+%%{init: { "htmlLabels": true, "flowchart": { "curve": "linear" } } }%%
+```
 
-Here we are overriding only the flowchart config, and not the general config, setting `htmlLabels` to `true` and `curve` to `linear`.
+**Note:** `flowchart.htmlLabels` has been deprecated. Use the global `htmlLabels` configuration instead.
 
 ```mermaid-example
-%%{init: { "flowchart": { "htmlLabels": true, "curve": "linear" } } }%%
+%%{init: { "htmlLabels": true, "flowchart": { "curve": "linear" } } }%%
 graph TD
 A(Forest) --> B[/Another/]
 A --> C[End]
