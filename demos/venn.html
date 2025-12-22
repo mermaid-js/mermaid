@@ -9,6 +9,22 @@
       div.mermaid {
         font-family: 'Courier New', Courier, monospace !important;
       }
+      .dark-sample {
+        background: #0d1117;
+        color: #e6edf3;
+        padding: 16px 20px;
+        border-radius: 12px;
+        margin: 24px 0;
+        border: 1px solid #30363d;
+      }
+      .dark-sample h2 {
+        margin: 0 0 12px;
+        font-size: 18px;
+      }
+      .dark-sample pre.mermaid {
+        background: transparent;
+        margin: 0;
+      }
     </style>
   </head>
 
@@ -36,6 +52,24 @@
         set A,B,C   label: ABC,  background: white,      color: red
       </pre>
 
+      <hr />
+      <div class="dark-sample">
+        <h2>Dark mode sample</h2>
+        <pre class="mermaid">
+        %%{init: { 'theme': 'dark', 'themeVariables': { 'background': '#0d1117' } } }%%
+        venn-beta
+          title Night Shift Sets
+          set A     label: Frontend
+          set B     label: Backend
+          set C     label: Ops
+          set A,B   label: APIs
+          set B,C   label: Infra
+          set A,C   label: SRE
+          set A,B,C label: Shared
+          text A    label: d3
+          text A    label: react
+        </pre>
+      </div>
       <hr />
       <pre class="mermaid">
       %%{init: { 'venn': { 'debugTextLayout': true } } }%%

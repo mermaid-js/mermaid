@@ -4,6 +4,7 @@ import type { DiagramRenderer, DrawDefinition } from '../../diagram-api/types.js
 import type { VennDiagramConfig } from '../../config.type.js';
 import type { Selection } from 'd3';
 import { schemeCategory10 as colors, select as d3select } from 'd3';
+import { getConfig } from '../../config.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import * as venn from '@upsetjs/venn.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
@@ -24,6 +25,8 @@ export const draw: DrawDefinition = (
   const textNodes = db.getTextData();
   const customFontColorMap = new Map<VennData['sets'], string>();
   const customBackgroundColorMap = new Map<VennData['sets'], string>();
+  const { themeVariables } = getConfig();
+  const defaultTextColor = themeVariables.primaryTextColor ?? themeVariables.textColor;
   for (const set of sets) {
     if (set.color) {
       customFontColorMap.set(set.sets, set.color);
@@ -79,14 +82,14 @@ export const draw: DrawDefinition = (
     .style('stroke-width', 5)
     .style('stroke-opacity', 0.3)
     .style('stroke', (_, i) => colors[i]);
-  dummyD3root.selectAll('.venn-circle text').style('font-size', '48px'); //.style('fill', 'white');
+  dummyD3root.selectAll('.venn-circle text').style('font-size', '48px');
 
   dummyD3root
     .selectAll('.venn-intersection text')
     .style('font-size', '48px')
     .style('fill', (e) => {
       const d = e as VennData;
-      return customFontColorMap.get(d.sets) || 'b;acl';
+      return customFontColorMap.get(d.sets) ?? defaultTextColor;
     });
 
   dummyD3root
@@ -97,7 +100,7 @@ export const draw: DrawDefinition = (
     })
     .style('fill', (e) => {
       const d = e as VennData;
-      return customBackgroundColorMap.get(d.sets) ?? 'white';
+      return customBackgroundColorMap.get(d.sets) ?? 'transparent';
     });
   const vennGroup = svg.append('g').attr('transform', `translate(0, ${titleHeight})`);
   const dummySvg = dummyD3root.select('svg').node();
