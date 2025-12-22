@@ -1,0 +1,11 @@
+flowchart LR
+A["A"] e1@==> B["B"]
+A L_A_n1_0@--> n1["C"]
+B L_B_n2_0@==> n2["D"]
+n1 L_n1_n2_0@--> n2
+
+
+e1@{ animate: true }
+L_A_n1_0@{ animation: slow }
+L_B_n2_0@{ animation: slow }
+L_n1_n2_0@{ animation: fast }

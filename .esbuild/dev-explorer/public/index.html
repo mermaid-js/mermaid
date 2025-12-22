@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" class="sl-theme-dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mermaid Dev Explorer</title>
+
+    <link rel="stylesheet" href="/dev/vendor/shoelace/themes/dark.css" />
+    <link rel="stylesheet" href="/dev/styles.css?v=6" />
+  </head>
+  <body>
+    <!-- Mermaid ESM + ELK layout loaders (required for `layout: 'elk'`) -->
+    <script type="module">
+      // Expose a single async hook so the app can reliably await Mermaid "activation".
+      // This avoids races where the UI calls initialize/render before layouts/diagrams are ready.
+      window.mermaidReady = (async () => {
+        try {
+          const [{ default: mermaid }, { default: layouts }] = await Promise.all([
+            import('/mermaid.esm.mjs'),
+            import('/mermaid-layout-elk.esm.mjs'),
+          ]);
+
+          mermaid.registerLayoutLoaders(layouts);
+
+          // Keep the rest of the dev explorer simple: expose mermaid on window for the Lit components.
+          window.mermaid = mermaid;
+          return mermaid;
+        } catch (err) {
+          console.error('[dev-explorer] Failed to initialize mermaid (ESM + elk loaders).', err);
+          throw err;
+        }
+      })();
+    </script>
+
+    <dev-explorer-app></dev-explorer-app>
+
+    <script type="module" src="/dev/assets/explorer-app.js?v=6"></script>
+  </body>
+</html>

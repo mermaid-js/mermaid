@@ -1,0 +1,11 @@
+---
+config:
+  layout: elk
+  flowchart:
+    curve: rounded
+---
+flowchart LR
+    D["Use the editor"] -- Mermaid js --> I["fa:fa-code Text"]
+    I --> D & D
+    D@{ shape: question}
+    I@{ shape: question}

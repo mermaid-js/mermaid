@@ -1,0 +1,359 @@
+/* Dev Explorer tokens. Keep on :root so the page background picks them up too. */
+:root {
+  --app-bg: #0b1020;
+  --app-fg: #e8eefc;
+  --panel-bg: #0f1733;
+  --muted: rgba(232, 238, 252, 0.75);
+  --border: rgba(232, 238, 252, 0.12);
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--app-bg);
+  color: var(--app-fg);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  /* Keep the page from becoming scrollable when components accidentally overflow. */
+  overflow: hidden;
+}
+
+a {
+  color: inherit;
+}
+
+/* Scope app-level layout rules to avoid generic class collisions. */
+dev-explorer-app {
+  display: block;
+  height: 100%;
+}
+
+dev-explorer-app .app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Let the top-level view components actually fill the available vertical space. */
+dev-explorer-app dev-file-explorer,
+dev-explorer-app dev-diagram-viewer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+dev-explorer-app .header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel-bg);
+}
+
+dev-explorer-app .viewer-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 8px;
+}
+
+dev-explorer-app .viewer-controls .control {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+dev-explorer-app .viewer-controls .label {
+  font-size: 12px;
+  color: var(--muted);
+  user-select: none;
+}
+
+dev-explorer-app .viewer-controls sl-select {
+  width: 140px;
+}
+
+dev-explorer-app .header .spacer {
+  flex: 1;
+}
+
+dev-explorer-app .title {
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+dev-explorer-app .subtle {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+dev-explorer-app .content {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+/* Diagram view should behave like a full-height canvas; avoid nested scrollbars. */
+dev-explorer-app dev-diagram-viewer .content {
+  overflow: hidden;
+}
+
+/* Shoelace split panel: ensure slot content can't overflow and push itself off-screen. */
+dev-explorer-app sl-split-panel {
+  height: 100%;
+  overflow: hidden;
+}
+
+dev-explorer-app sl-split-panel::part(base) {
+  height: 100%;
+  overflow: hidden;
+}
+
+dev-explorer-app sl-split-panel::part(start),
+dev-explorer-app sl-split-panel::part(end) {
+  overflow: hidden;
+  min-height: 0;
+}
+
+dev-explorer-app .list {
+  padding: 24px;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fill, 260px);
+}
+
+/* Card base - use button element */
+dev-explorer-app button.card {
+  all: unset;
+  box-sizing: border-box;
+  width: 260px;
+  height: 200px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Folder card style */
+dev-explorer-app button.card.card-folder {
+  background: linear-gradient(160deg, #1a3052 0%, #0d1a2d 100%);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+dev-explorer-app button.card.card-folder:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.5),
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* File card style */
+dev-explorer-app button.card.card-file {
+  background: linear-gradient(160deg, #1e2d4a 0%, #111827 100%);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+dev-explorer-app button.card.card-file:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.5),
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+dev-explorer-app button.card:focus-visible {
+  outline: 3px solid rgba(96, 165, 250, 0.7);
+  outline-offset: 4px;
+}
+
+/* Subtle border overlay */
+dev-explorer-app button.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+dev-explorer-app .card-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 24px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* Icon styling */
+dev-explorer-app .card-icon {
+  font-size: 56px !important;
+  width: 56px;
+  height: 56px;
+}
+
+dev-explorer-app button.card.card-folder .card-icon {
+  color: #f59e0b;
+  filter: drop-shadow(0 4px 12px rgba(245, 158, 11, 0.4));
+}
+
+dev-explorer-app button.card.card-file .card-icon {
+  color: #3b82f6;
+  filter: drop-shadow(0 4px 12px rgba(59, 130, 246, 0.35));
+}
+
+/* Title styling */
+dev-explorer-app .card-title {
+  font-size: 12px;
+  font-family: var(--mono);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 230px;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.4;
+  text-align: center;
+}
+
+dev-explorer-app .row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+dev-explorer-app .row:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+dev-explorer-app .row sl-icon {
+  font-size: 16px;
+}
+
+dev-explorer-app .path {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+dev-explorer-app .diagram {
+  height: 100%;
+  overflow: hidden;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+dev-explorer-app .diagram-inner {
+  /* Canvas background behind the rendered SVG (theme-dependent). */
+  background: #fff;
+  color: #111;
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* Fit the rendered SVG within the available pane (no scrollbars). */
+dev-explorer-app .diagram-inner > svg {
+  width: auto;
+  height: auto;
+  max-width: 100% !important;
+  max-height: 100% !important;
+}
+
+dev-explorer-app .diagram-inner[data-theme='dark'] {
+  background: #0b1020;
+  color: #e8eefc;
+}
+
+dev-explorer-app .console {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--border);
+  background: var(--panel-bg);
+}
+
+dev-explorer-app .spacer {
+  flex: 1;
+}
+
+dev-explorer-app .console-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+dev-explorer-app .console-toolbar sl-input {
+  width: 260px;
+}
+
+dev-explorer-app .console-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 10px 12px;
+}
+
+dev-explorer-app .logline {
+  font-family: var(--mono);
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0 0 8px 0;
+  line-height: 1.35;
+}
+
+dev-explorer-app .logmeta {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+dev-explorer-app .empty {
+  padding: 18px 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+dev-explorer-app sl-breadcrumb::part(base) {
+  font-size: 12px;
+}
+
+

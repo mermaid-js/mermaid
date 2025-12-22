@@ -1,0 +1,21 @@
+---
+config:
+  layout: elk
+---
+flowchart-elk TB
+internet
+nat
+router
+compute1
+
+subgraph project
+router
+nat
+  subgraph subnet1
+    compute1
+  end
+end
+
+%% router --> subnet1
+subnet1  --> nat
+%% nat --> internet

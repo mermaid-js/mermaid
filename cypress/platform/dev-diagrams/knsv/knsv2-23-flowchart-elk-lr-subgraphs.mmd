@@ -1,0 +1,18 @@
+---
+config:
+  layout: elk
+  theme: default
+  look: classic
+---
+flowchart LR
+ subgraph s1["APA"]
+        D{"Use the editor"}
+  end
+ subgraph S2["S2"]
+        s1
+        I>"fa:fa-code Text"]
+        E["E"]
+  end
+    D -- Mermaid js --> I
+    D --> I & E
+    E --> I

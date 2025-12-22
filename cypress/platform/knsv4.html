@@ -105,74 +105,64 @@
   </head>
 
   <body>
-    <div class="grid grid-cols-2 gap-4">
-      <pre id="diagram4" class="mermaid">
-      sequenceDiagram
-      actor Alice
-      participant John@{ "type": "boundary" }
-      participant P1@{ "type": "control" } as New Control
-      participant P2@{ "type": "entity" } as New Entity
-      participant P3@{ "type": "database" } as New Database
-      Alice->>+John: Hello John, how are you?
-      John->>P1: new msg
-      P1->>P2: new msg
-      P2->>P3: new msg
-      Alice->>+John: John, can you hear me?
-      P3->>P2: new msg
-      P2->>P1: new msg
-      John-->>-Alice: Hi Alice, I can hear you!
-      P1->>John: new msg
-      John-->>-Alice: I feel great!
-  </pre
-      >
-      <pre id="diagram4" class="mermaid">
-      treemap
-      "Section 1"
-          "Leaf 1.1": 12
-          "Section 1.2":::class1
-            "Leaf 1.2.1": 12
-      "Section 2"
-          "Leaf 2.1": 20:::class1
-          "Leaf 2.2": 25
-          "Leaf 2.3": 12
-
-          </pre
-      >
-      <pre id="diagram4" class="mermaid">
-      ---
-title: "Grades"
+    <pre id="diagram4" class="mermaid">
 ---
-radar-beta
-  axis m["Math"], s["Science"], e["English"]
-  axis h["History"], g["Geography"], a["Art"]
-  curve a["Alice"]{85, 90, 80, 70, 75, 90}
-  curve b["Bob"]{70, 75, 85, 80, 90, 85}
-
-  max 100
-  min 0
-    </pre
-      >
-      <pre id="diagram4" class="mermaid">
-      flowchart LR
-      A["A"] e1@==> B["B"]
-      A L_A_n1_0@--> n1["C"]
-      B L_B_n2_0@==> n2["D"]
-      n1 L_n1_n2_0@--> n2
-
-
-      e1@{ animate: true }
-      L_A_n1_0@{ animation: slow }
-      L_B_n2_0@{ animation: slow }
-      L_n1_n2_0@{ animation: fast }
-
-    </pre
-      >
-    </div>
-
+config:
+  layout: tidy-tree
+---
+mindmap
+[My User Manual ]
+  )What motivates me?(
+    a("Impact: Create real change, see outcomes")
+    People Energy: Connection, fun, joy
+  )What drives me nuts?(
+    Inefficiency: Poor execution, no follow-through
+    Indecision: Limbo > Action, prefer decisive moves
+  )How can people really impress me?(
+    Bring energy, ideas, enthusiasm
+    Execute + follow through!
+    Make things better, not just maintain
+  )What qualities do I value?(
+    Approachable & collaborative
+    Direct, transparent communication
+    Ownership with healthy boundaries
+    Willingness to learn and share
+    New perspectives & expertise
+  )What people might misunderstand(
+    Passion ≠ upset; high energy!
+    Many ideas ≠ all top priorities
+    I move fast - let me know if pace is overwhelming
+  )Real talk: My quirks & weaknesses(
+    Thrive on momentum, find it hard to slow down
+    Prefer "real" over "polished"
+    "Why" is my default question
+    Action > reflection sometimes
+    My energy can overshadow quieter voices
+      Help me pause & amplify all voices!
+  )Working & Growing Together(
+    How I like to be coached: Help me see blind spots, push/anchor me
+    Communication: Slack for quick; docs for updates; calls for nuance
+    Feedback: Real-time & caring, structured for growth
+    Receiving feedback: Direct, soon, with impact; ideally 1:1 or positive+constructive together
+    How I coach: Focus on outcomes, stretch/celebrate, creative growth opportunities, consultative problem-solving
+    Mistakes: Be quick, transparent, own it, share learnings
+    </pre>
     <pre id="diagram4" class="mermaid2">
-      flowchart LR
-      A e1@==> B
-      e1@{ animate: true }
+      ---
+      config:
+        layout: elk
+      ---
+      flowchart
+       aid0
+  </pre
+    >
+    <pre id="diagram4" class="mermaid2">
+      ---
+      config:
+        layout: elk
+      ---
+      mindmap
+      aid0
 
     </pre>
     <pre id="diagram4" class="mermaid2">
@@ -379,6 +369,18 @@ config:
               b2 --> b3
               b1 --> b4</pre
     >
+    <pre id="diagram4" class="mermaid2">
+treemap
+"Section 1"
+    "Leaf 1.1": 12
+    "Section 1.2":::class1
+      "Leaf 1.2.1": 12
+"Section 2"
+    "Leaf 2.1": 20:::class1
+    "Leaf 2.2": 25
+    "Leaf 2.3": 12
+
+    </pre>
     <pre id="diagram5" class="mermaid2">
       ---
       config:
@@ -773,7 +775,8 @@ kanban
     </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
-      import layouts from './mermaid-layout-elk.esm.mjs';
+      import layoutElk from './mermaid-layout-elk.esm.mjs';
+      import layouts from './mermaid-layout-tidy-tree.esm.mjs';
 
       const staticBellIconPack = {
         prefix: 'fa6-regular',
@@ -799,41 +802,8 @@ kanban
         },
       ]);
       mermaid.registerLayoutLoaders(layouts);
-      mermaid.parseError = function (err, hash) {
-        console.error('Mermaid error: ', err);
-      };
-      window.callback = function () {
-        alert('A callback was triggered');
-      };
-      function callback() {
-        alert('It worked');
-      }
-      await mermaid.initialize({
-        // theme: 'base',
-        // theme: 'default',
-        // theme: 'forest',
-        // handDrawnSeed: 12,
-        // look: 'handDrawn',
-        // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
-        // layout: 'dagre',
-        layout: 'dagre',
-        // layout: 'fixed',
-        // htmlLabels: false,
-        flowchart: { titleTopMargin: 10 },
 
-        // fontFamily: 'Caveat',
-        // fontFamily: 'Kalam',
-        // fontFamily: 'courier',
-        fontFamily: 'arial',
-        sequence: {
-          actorFontFamily: 'courier',
-          noteFontFamily: 'courier',
-          messageFontFamily: 'courier',
-        },
-        kanban: {
-          htmlLabels: false,
-        },
-        fontSize: 12,
+      await mermaid.initialize({
         logLevel: 0,
         securityLevel: 'loose',
         callback,

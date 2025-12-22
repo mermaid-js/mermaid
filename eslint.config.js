@@ -11,7 +11,8 @@ import unicorn from 'eslint-plugin-unicorn';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
-export default tseslint.config(
+/** @type {import('eslint').Linter.FlatConfig[]} */
+const config = tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,
@@ -23,6 +24,7 @@ export default tseslint.config(
       '.git/',
       '**/generated/',
       '**/coverage/',
+      '.esbuild/dev-explorer/**',
       'packages/mermaid/src/config.type.ts',
       'packages/mermaid/src/docs/.vitepress/components.d.ts',
     ],
@@ -221,3 +223,5 @@ export default tseslint.config(
     processor: 'markdown/markdown',
   }
 );
+
+export default config;
