@@ -1,6 +1,7 @@
 import common from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
+import { parseFontSize } from '../../utils.js';
 
 export const drawRect = function (elem, rectData) {
   return svgDrawCommon.drawRect(elem, rectData);
@@ -595,6 +596,8 @@ const _drawTextCandidateFunc = (function () {
   function byTspan(content, g, x, y, width, height, textAttrs, conf) {
     const { fontSize, fontFamily, fontWeight } = conf;
 
+    const [_textFontSize, _textFontSizePx] = parseFontSize(fontSize);
+
     const lines = content.split(common.lineBreakRegex);
     for (let i = 0; i < lines.length; i++) {
       const dy = i * fontSize - (fontSize * (lines.length - 1)) / 2;
@@ -604,7 +607,7 @@ const _drawTextCandidateFunc = (function () {
         .attr('y', y)
         .style('text-anchor', 'middle')
         .attr('dominant-baseline', 'middle')
-        .style('font-size', fontSize)
+        .style('font-size', _textFontSizePx)
         .style('font-weight', fontWeight)
         .style('font-family', fontFamily);
       text
