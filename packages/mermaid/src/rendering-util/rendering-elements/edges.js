@@ -45,16 +45,29 @@ export const getLabelStyles = (styleArray) => {
 };
 
 export const insertEdgeLabel = async (elem, edge) => {
-  let useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
+  const config = getConfig();
+  let useHtmlLabels = evaluate(config.flowchart.htmlLabels);
+
+  // Only process as markdown if labelType is explicitly 'markdown'
+  // This ensures only labels properly delimited with ["`...`"] are processed as markdown
+  // This validation is restricted to flowcharts only
+  const isFlowchart = config.flowchart !== undefined;
+  const shouldProcessAsMarkdown = isFlowchart && edge.labelType === 'markdown';
 
   const { labelStyles } = styles2String(edge);
   edge.labelStyle = labelStyles;
-  const labelElement = await createText(elem, edge.label, {
-    style: edge.labelStyle,
-    useHtmlLabels,
-    addSvgBackground: true,
-    isNode: false,
-  });
+
+  let labelElement;
+  if (shouldProcessAsMarkdown) {
+    labelElement = await createText(elem, edge.label, {
+      style: edge.labelStyle,
+      useHtmlLabels,
+      addSvgBackground: true,
+      isNode: false,
+    });
+  } else {
+    labelElement = await createLabel(edge.label, edge.labelStyle, undefined, false);
+  }
   log.info('abc82', edge, edge.labelType);
 
   // Create outer g, edgeLabel, this will be positioned after graph layout

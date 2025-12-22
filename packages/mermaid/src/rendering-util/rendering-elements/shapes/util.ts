@@ -6,6 +6,7 @@ import defaultConfig from '../../../defaultConfig.js';
 import { evaluate, sanitizeText } from '../../../diagrams/common/common.js';
 import { decodeEntities, handleUndefinedAttr, parseFontSize } from '../../../utils.js';
 import type { D3Selection, Point } from '../../../types.js';
+import createLabel from '../createLabel.js';
 
 export const labelHelper = async <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -40,14 +41,31 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
     label = typeof node.label === 'string' ? node.label : node.label[0];
   }
 
-  const text = await createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
-    useHtmlLabels,
-    width: node.width || getConfig().flowchart?.wrappingWidth,
-    // @ts-expect-error -- This is currently not used. Should this be `classes` instead?
-    cssClasses: 'markdown-node-label',
-    style: node.labelStyle,
-    addSvgBackground: !!node.icon || !!node.img,
-  });
+  // Only process as markdown if labelType is explicitly 'markdown'
+  // This ensures only labels properly delimited with ["`...`"] are processed as markdown
+  // This validation is restricted to flowcharts only
+  const config = getConfig();
+  const isFlowchart = config.flowchart !== undefined;
+  const shouldProcessAsMarkdown = isFlowchart && node.labelType === 'markdown';
+  let text;
+  if (shouldProcessAsMarkdown) {
+    text = await createText(labelEl, sanitizeText(decodeEntities(label), config), {
+      useHtmlLabels,
+      width: node.width || config.flowchart?.wrappingWidth,
+      // @ts-expect-error -- This is currently not used. Should this be `classes` instead?
+      cssClasses: 'markdown-node-label',
+      style: node.labelStyle,
+      addSvgBackground: !!node.icon || !!node.img,
+    });
+  } else {
+    const labelElement = await createLabel(
+      sanitizeText(decodeEntities(label), config),
+      node.labelStyle,
+      false,
+      true
+    );
+    text = labelEl.node()?.appendChild(labelElement);
+  }
   // Get the size of the label
   let bbox = text.getBBox();
   const halfPadding = (node?.padding ?? 0) / 2;

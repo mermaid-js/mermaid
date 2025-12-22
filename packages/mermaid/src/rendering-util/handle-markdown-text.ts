@@ -70,6 +70,42 @@ export function markdownToLines(markdown: string, config: MermaidConfig = {}): M
   return lines;
 }
 
+/**
+ * Checks if text contains actual markdown syntax (bold, italic, etc.)
+ * This helps validate that labels marked as 'markdown' actually contain markdown
+ * @param text - text to check
+ * @returns true if text contains markdown syntax, false otherwise
+ */
+export function hasMarkdownSyntax(text: string): boolean {
+  if (!text || typeof text !== 'string') {
+    return false;
+  }
+
+  try {
+    const nodes = marked.lexer(text);
+
+    // Check if any node contains markdown formatting
+    function hasMarkdownInNode(node: Token): boolean {
+      if (node.type === 'strong' || node.type === 'em') {
+        return true;
+      }
+      if (node.type === 'paragraph' && node.tokens) {
+        return node.tokens.some(hasMarkdownInNode);
+      }
+      if ('tokens' in node && node.tokens) {
+        return node.tokens.some(hasMarkdownInNode);
+      }
+      return false;
+    }
+
+    return nodes.some(hasMarkdownInNode);
+  } catch (error) {
+    // If parsing fails, assume it's not markdown
+    log.debug('Failed to parse text as markdown:', error);
+    return false;
+  }
+}
+
 export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidConfig = {}) {
   const nodes = marked.lexer(markdown);
 
