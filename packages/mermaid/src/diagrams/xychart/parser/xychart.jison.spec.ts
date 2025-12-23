@@ -440,4 +440,26 @@ describe('Testing xychart jison file', () => {
       [45, 99, 12]
     );
   });
+  it('parses accented characters in x-axis labels and y-axis titles', () => {
+    const str = `
+    xychart
+      x-axis [jan, fév]
+      y-axis Température -20 --> 50
+      bar [22, 23]
+    `;
+
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    // x-axis categories
+    expect(mockDB.setXAxisBand).toHaveBeenCalledWith([
+      { text: 'jan', type: 'text' },
+      { text: 'fév', type: 'text' },
+    ]);
+
+    // y-axis title
+    expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({
+      text: 'Température',
+      type: 'text',
+    });
+  });
 });

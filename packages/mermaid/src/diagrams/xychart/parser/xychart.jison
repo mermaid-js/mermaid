@@ -58,7 +58,7 @@
 
 "["                                       return 'SQUARE_BRACES_START'
 "]"                                       return 'SQUARE_BRACES_END'
-[A-Za-z]+                                 return 'ALPHA';
+[A-Za-zÀ-ÖØ-öø-ÿ]+                        return 'ALPHA';
 ":"                                       return 'COLON';
 \+                                        return 'PLUS';
 ","                                       return 'COMMA';
