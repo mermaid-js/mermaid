@@ -381,6 +381,10 @@ const drawCommitTags = (
         .attr('y', commitPosition.y - 16 - yOffset)
         .attr('class', 'tag-label')
         .text(tagValue);
+
+      rect.attr('data-tag-name', tagValue);
+      tag.attr('data-tag-name', tagValue);
+
       const tagBbox = tag.node()?.getBBox();
       if (!tagBbox) {
         throw new Error('Tag bbox not found');
@@ -855,6 +859,7 @@ const drawBranches = (
     // Create outer g, edgeLabel, this will be positioned after graph layout
     const bkg = g.insert('rect');
     const branchLabel = g.insert('g').attr('class', 'branchLabel');
+    branchLabel.attr('data-branch-name', name);
 
     // Create inner g, label, this will be positioned now for centering the text
     const label = branchLabel.insert('g').attr('class', 'label branch-label' + adjustIndexForTheme);
@@ -919,10 +924,16 @@ const setupClickEvents = (
   }
   return () => {
     const svg = select(`[id="${svgId}"]`);
-    links.forEach((linkData, commitId) => {
+    links.forEach((linkData, id) => {
       // Escape special characters in commit ID for CSS selector
-      const escapedId = CSS.escape(commitId);
-      const elements = svg.selectAll(`[data-commit-id="${escapedId}"]`);
+      const escapedId = CSS.escape(id);
+      let selector = `[data-commit-id="${escapedId}"]`;
+      if (linkData.type === 'branch') {
+        selector = `[data-branch-name="${escapedId}"]`;
+      } else if (linkData.type === 'tag') {
+        selector = `[data-tag-name="${escapedId}"]`;
+      }
+      const elements = svg.selectAll(selector);
       if (elements.empty()) {
         return;
       }

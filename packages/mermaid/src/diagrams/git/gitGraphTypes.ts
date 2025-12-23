@@ -40,6 +40,7 @@ export interface GitGraphLink {
   link: string;
   tooltip?: string;
   target: '_self' | '_blank' | '_parent' | '_top';
+  type: 'commit' | 'branch' | 'tag';
 }
 
 export interface Commit {
@@ -69,6 +70,7 @@ export type Statement =
 export interface ClickAst {
   $type: 'Click';
   id: string;
+  type?: 'commit' | 'branch' | 'tag';
   href: string;
   tooltip?: string;
   target?: '_self' | '_blank' | '_parent' | '_top';
@@ -131,7 +133,8 @@ export interface GitGraphDB extends DiagramDBBase<GitGraphDiagramConfig> {
     id: string,
     link: string,
     tooltip?: string,
-    target?: '_self' | '_blank' | '_parent' | '_top'
+    target?: '_self' | '_blank' | '_parent' | '_top',
+    type?: 'commit' | 'branch' | 'tag'
   ) => void;
   getLink: (id: string) => GitGraphLink | undefined;
   getLinks: () => Map<string, GitGraphLink>;
@@ -149,7 +152,8 @@ export interface GitGraphDBParseProvider extends Partial<GitGraphDB> {
     id: string,
     link: string,
     tooltip?: string,
-    target?: '_self' | '_blank' | '_parent' | '_top'
+    target?: '_self' | '_blank' | '_parent' | '_top',
+    type?: 'commit' | 'branch' | 'tag'
   ) => void;
 }
 
