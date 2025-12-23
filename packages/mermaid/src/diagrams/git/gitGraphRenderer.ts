@@ -21,8 +21,7 @@ interface CommitPositionOffset extends CommitPosition {
   posWithOffset: number;
 }
 
-const DEFAULT_CONFIG = getConfig();
-const DEFAULT_GITGRAPH_CONFIG = DEFAULT_CONFIG?.gitGraph;
+let DEFAULT_GITGRAPH_CONFIG = getConfig()?.gitGraph;
 const LAYOUT_OFFSET = 10;
 const COMMIT_STEP = 40;
 const PX = 4;
@@ -897,6 +896,9 @@ const setBranchPosition = function (
 
 export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
   clear();
+
+  // Refresh gitGraph config so each render sees the latest mermaid config
+  DEFAULT_GITGRAPH_CONFIG = getConfig()?.gitGraph;
 
   log.debug('in gitgraph renderer', txt + '\n', 'id:', id, ver);
   if (!DEFAULT_GITGRAPH_CONFIG) {
