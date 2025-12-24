@@ -101,7 +101,7 @@ export const insertEdgeLabel = async (elem, edge) => {
       getLabelStyles(edge.labelStyle),
       undefined,
       false,
-      true,
+      false,
       width
     );
     const startEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
@@ -122,7 +122,7 @@ export const insertEdgeLabel = async (elem, edge) => {
       getLabelStyles(edge.labelStyle),
       undefined,
       false,
-      true,
+      false,
       width
     );
     const startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
@@ -145,7 +145,7 @@ export const insertEdgeLabel = async (elem, edge) => {
       getLabelStyles(edge.labelStyle),
       undefined,
       false,
-      true,
+      false,
       width
     );
     const endEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
@@ -169,7 +169,7 @@ export const insertEdgeLabel = async (elem, edge) => {
       getLabelStyles(edge.labelStyle),
       undefined,
       false,
-      true,
+      false,
       width
     );
     const endEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
