@@ -67,7 +67,9 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
       sanitizeText(decodeEntities(label), getConfig()),
       node.labelStyle,
       false,
-      true
+      true,
+      addBackground,
+      width
     );
     text = labelEl.node()?.appendChild(labelElement);
   }
