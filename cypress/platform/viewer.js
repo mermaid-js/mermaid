@@ -117,6 +117,29 @@ const contentLoaded = async function () {
       width: 256,
       height: 256,
     };
+    // Simplified AWS icons with rect elements for testing issue #7185
+    const staticAwsIconPack = {
+      prefix: 'aws',
+      icons: {
+        'arch-amazon-cloudwatch': {
+          width: 80,
+          height: 80,
+          body: '<g><rect x="0" y="0" width="80" height="80" fill="#FF4F8B" rx="4"/><path fill="#FFFFFF" d="M20 25h40v5H20zm0 10h40v5H20zm0 10h40v5H20z"/></g>',
+        },
+        'arch-amazon-route-53': {
+          width: 80,
+          height: 80,
+          body: '<g><rect x="0" y="0" width="80" height="80" fill="#8C4FFF" rx="4"/><circle cx="40" cy="40" r="15" fill="#FFFFFF"/><circle cx="40" cy="40" r="8" fill="#8C4FFF"/></g>',
+        },
+        'arch-amazon-eks-cloud': {
+          width: 80,
+          height: 80,
+          body: '<g><rect x="0" y="0" width="80" height="80" fill="#FF9900" rx="4"/><path fill="#FFFFFF" d="M40 20l15 10v20l-15 10-15-10V30z"/></g>',
+        },
+      },
+      width: 80,
+      height: 80,
+    };
     mermaid.registerIconPacks([
       {
         name: 'fa',
@@ -125,6 +148,10 @@ const contentLoaded = async function () {
       {
         name: 'fluent-emoji',
         loader: () => staticAwsLogoIconPack,
+      },
+      {
+        name: 'aws',
+        loader: () => staticAwsIconPack,
       },
     ]);
     await mermaid.run();
