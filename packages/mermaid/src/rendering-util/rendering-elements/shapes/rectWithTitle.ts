@@ -39,11 +39,8 @@ export async function rectWithTitle<T extends SVGGraphicsElement>(
   const description = node.description;
 
   const title = node.label || '';
-  const width = node.width || getConfig().flowchart?.wrappingWidth;
 
-  const text = label
-    .node()!
-    .appendChild(await createLabel(title, node.labelStyle, true, true, false, width));
+  const text = label.node()!.appendChild(await createLabel(title, node.labelStyle, true, true));
   let bbox = { width: 0, height: 0 };
   if (evaluate(getConfig()?.flowchart?.htmlLabels)) {
     const div = text.children[0];
@@ -62,9 +59,7 @@ export async function rectWithTitle<T extends SVGGraphicsElement>(
         Array.isArray(textRows) ? textRows.join('<br/>') : textRows,
         node.labelStyle,
         true,
-        true,
-        false,
-        width
+        true
       )
     );
 
