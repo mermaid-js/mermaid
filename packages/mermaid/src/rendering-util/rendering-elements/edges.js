@@ -40,8 +40,13 @@ export const clear = () => {
 };
 
 export const getLabelStyles = (styleArray) => {
-  let styles = styleArray ? styleArray.reduce((acc, style) => acc + ';' + style, '') : '';
-  return styles;
+  if (!styleArray) {
+    return '';
+  }
+  if (typeof styleArray === 'string') {
+    return styleArray;
+  }
+  return styleArray.reduce((acc, style) => acc + ';' + style, '');
 };
 
 export const insertEdgeLabel = async (elem, edge) => {
