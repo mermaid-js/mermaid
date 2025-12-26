@@ -1087,6 +1087,28 @@ end
         }
       );
     });
+    it('Should render multi-line edge labels without overlapping subgraph titles', () => {
+      imgSnapshotTest(
+        `flowchart TD
+          Medico["Miss Jackson"]
+
+          subgraph Entrada_Datos_SOPHIA ["Entrada de Datos en Aplicación SOPHIA"]
+              D1["Text1"]
+              D2["Long<br>Long<br>Text"]
+              D3["Text3"]
+          end
+
+          Medico -- "Connection1" --> D1
+          Medico -- "Long<br>Connection2" --> D2
+          Medico -- "Other connection" --> D3
+        `,
+        {
+          flowchart: { subGraphTitleMargin: { bottom: 25, top: 10 } },
+          look: 'neo',
+          theme: 'neo',
+        }
+      );
+    });
   });
   describe('New @ syntax for node metadata edge cases', () => {
     it('should be possible to use @  syntax to add labels on multi nodes', () => {
