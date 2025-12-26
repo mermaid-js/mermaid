@@ -289,11 +289,15 @@ const drawCommitLabel = (
   commitPosition: CommitPositionOffset,
   pos: number
 ) => {
-  if (
+  const hasCustomId = commit.customId || !/^\d+-[\dA-Za-z]+$/.exec(commit.id);
+
+  const shouldShowLabel =
     commit.type !== commitType.CHERRY_PICK &&
     ((commit.customId && commit.type === commitType.MERGE) || commit.type !== commitType.MERGE) &&
-    DEFAULT_GITGRAPH_CONFIG?.showCommitLabel
-  ) {
+    DEFAULT_GITGRAPH_CONFIG?.showCommitLabel &&
+    (DEFAULT_GITGRAPH_CONFIG?.showCommitHashLabel || hasCustomId);
+
+  if (shouldShowLabel) {
     const wrapper = gLabels.append('g');
     const labelBkg = wrapper.insert('rect').attr('class', 'commit-label-bkg');
     const text = wrapper
