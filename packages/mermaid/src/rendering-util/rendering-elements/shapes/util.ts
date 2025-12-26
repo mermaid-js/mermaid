@@ -3,7 +3,7 @@ import { createText } from '../../createText.js';
 import type { Node } from '../../types.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { select } from 'd3';
-import { evaluate, sanitizeText } from '../../../diagrams/common/common.js';
+import { evaluate, hasKatex, sanitizeText } from '../../../diagrams/common/common.js';
 import { decodeEntities, handleUndefinedAttr } from '../../../utils.js';
 import type { D3Selection, Point } from '../../../types.js';
 import { configureLabelImages } from './labelImageUtils.js';
@@ -53,7 +53,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   let text;
   const addBackground = !!node.icon || !!node.img;
   const width = node.width || getConfig().flowchart?.wrappingWidth;
-  if (node.labelType === 'markdown') {
+  if (node.labelType === 'markdown' || hasKatex(label)) {
     text = await createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
       useHtmlLabels,
       width,
