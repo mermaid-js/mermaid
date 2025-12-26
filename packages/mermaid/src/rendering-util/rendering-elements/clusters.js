@@ -30,11 +30,25 @@ const rect = async (parent, node) => {
   // Create the label and insert it after the rect
   const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label ');
 
-  const text = await createText(labelEl, node.label, {
-    style: node.labelStyle,
-    useHtmlLabels,
-    isNode: true,
-  });
+  let text;
+  if (node.labelType === 'markdown') {
+    text = await createText(labelEl, node.label, {
+      style: node.labelStyle,
+      useHtmlLabels,
+      isNode: true,
+      width: node.width,
+    });
+  } else {
+    const labelElement = await createLabel(
+      node.label,
+      node.labelStyle,
+      false,
+      true,
+      false,
+      node.width
+    );
+    text = labelEl.node()?.appendChild(labelElement);
+  }
 
   // Get the size of the label
   let bbox = text.getBBox();
@@ -183,7 +197,9 @@ const roundedWithTitle = async (parent, node) => {
 
   const text = label
     .node()
-    .appendChild(await createLabel(node.label, node.labelStyle, undefined, true));
+    .appendChild(
+      await createLabel(node.label, node.labelStyle, undefined, true, false, node.width)
+    );
 
   // Get the size of the label
   let bbox = text.getBBox();
@@ -486,7 +502,7 @@ export const insertCluster = async (elem, node) => {
 };
 
 export const getClusterTitleWidth = (elem, node) => {
-  const label = createLabel(node.label, node.labelStyle, undefined, true);
+  const label = createLabel(node.label, node.labelStyle, undefined, true, false, node.width);
   elem.node().appendChild(label);
   const width = label.getBBox().width;
   elem.node().removeChild(label);

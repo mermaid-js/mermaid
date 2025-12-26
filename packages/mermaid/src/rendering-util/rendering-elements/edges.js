@@ -40,21 +40,38 @@ export const clear = () => {
 };
 
 export const getLabelStyles = (styleArray) => {
-  let styles = styleArray ? styleArray.reduce((acc, style) => acc + ';' + style, '') : '';
-  return styles;
+  if (!styleArray) {
+    return '';
+  }
+  if (typeof styleArray === 'string') {
+    return styleArray;
+  }
+  return styleArray.reduce((acc, style) => acc + ';' + style, '');
 };
 
 export const insertEdgeLabel = async (elem, edge) => {
   let useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
-
+  const width = edge.width || getConfig().flowchart?.wrappingWidth;
   const { labelStyles } = styles2String(edge);
   edge.labelStyle = labelStyles;
-  const labelElement = await createText(elem, edge.label, {
-    style: edge.labelStyle,
-    useHtmlLabels,
-    addSvgBackground: true,
-    isNode: false,
-  });
+  const labelElement =
+    edge.labelType === 'markdown'
+      ? await createText(elem, edge.label, {
+          style: getLabelStyles(edge.labelStyle),
+          useHtmlLabels,
+          addSvgBackground: true,
+          isNode: false,
+          width,
+        })
+      : await createLabel(
+          edge.label,
+          getLabelStyles(edge.labelStyle),
+          undefined,
+          false,
+          true,
+          width
+        );
+
   log.info('abc82', edge, edge.labelType);
 
   // Create outer g, edgeLabel, this will be positioned after graph layout
@@ -87,7 +104,11 @@ export const insertEdgeLabel = async (elem, edge) => {
     // Create the actual text element
     const startLabelElement = await createLabel(
       edge.startLabelLeft,
-      getLabelStyles(edge.labelStyle)
+      getLabelStyles(edge.labelStyle),
+      undefined,
+      false,
+      useHtmlLabels,
+      width
     );
     const startEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelLeft.insert('g').attr('class', 'inner');
@@ -104,7 +125,11 @@ export const insertEdgeLabel = async (elem, edge) => {
     // Create the actual text element
     const startLabelElement = await createLabel(
       edge.startLabelRight,
-      getLabelStyles(edge.labelStyle)
+      getLabelStyles(edge.labelStyle),
+      undefined,
+      false,
+      useHtmlLabels,
+      width
     );
     const startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelRight.insert('g').attr('class', 'inner');
@@ -121,7 +146,14 @@ export const insertEdgeLabel = async (elem, edge) => {
   }
   if (edge.endLabelLeft) {
     // Create the actual text element
-    const endLabelElement = await createLabel(edge.endLabelLeft, getLabelStyles(edge.labelStyle));
+    const endLabelElement = await createLabel(
+      edge.endLabelLeft,
+      getLabelStyles(edge.labelStyle),
+      undefined,
+      false,
+      useHtmlLabels,
+      width
+    );
     const endEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelLeft.insert('g').attr('class', 'inner');
     fo = inner.node().appendChild(endLabelElement);
@@ -138,7 +170,14 @@ export const insertEdgeLabel = async (elem, edge) => {
   }
   if (edge.endLabelRight) {
     // Create the actual text element
-    const endLabelElement = await createLabel(edge.endLabelRight, getLabelStyles(edge.labelStyle));
+    const endLabelElement = await createLabel(
+      edge.endLabelRight,
+      getLabelStyles(edge.labelStyle),
+      undefined,
+      false,
+      useHtmlLabels,
+      width
+    );
     const endEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelRight.insert('g').attr('class', 'inner');
 

@@ -1,11 +1,21 @@
+import createLabel from '../createLabel.js';
 import { createText } from '../../createText.js';
 import type { Node } from '../../types.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { select } from 'd3';
-import defaultConfig from '../../../defaultConfig.js';
-import { evaluate, sanitizeText } from '../../../diagrams/common/common.js';
-import { decodeEntities, handleUndefinedAttr, parseFontSize } from '../../../utils.js';
+import { evaluate, hasKatex, sanitizeText } from '../../../diagrams/common/common.js';
+import { decodeEntities, handleUndefinedAttr } from '../../../utils.js';
 import type { D3Selection, Point } from '../../../types.js';
+import { configureLabelImages } from './labelImageUtils.js';
+
+/**
+ * Waits for all images in a container to load and applies appropriate styling.
+ * This ensures accurate bounding box measurements after images are loaded.
+ *
+ * @param container - The HTML element containing img tags
+ * @param labelText - The original label text to check if there's text besides images
+ * @returns Promise that resolves when all images are loaded and styled
+ */
 
 export const labelHelper = async <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -13,7 +23,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   _classes?: string
 ) => {
   let cssClasses;
-  const useHtmlLabels = node.useHtmlLabels || evaluate(getConfig()?.htmlLabels);
+  const useHtmlLabels = node.useHtmlLabels || evaluate(getConfig()?.flowchart?.htmlLabels);
   if (!_classes) {
     cssClasses = 'node default';
   } else {
@@ -40,14 +50,30 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
     label = typeof node.label === 'string' ? node.label : node.label[0];
   }
 
-  const text = await createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
-    useHtmlLabels,
-    width: node.width || getConfig().flowchart?.wrappingWidth,
-    // @ts-expect-error -- This is currently not used. Should this be `classes` instead?
-    cssClasses: 'markdown-node-label',
-    style: node.labelStyle,
-    addSvgBackground: !!node.icon || !!node.img,
-  });
+  let text;
+  const addBackground = !!node.icon || !!node.img;
+  const width = node.width || getConfig().flowchart?.wrappingWidth;
+  if (node.labelType === 'markdown' || hasKatex(label)) {
+    text = await createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
+      useHtmlLabels,
+      width,
+      // @ts-expect-error -- This is currently not used. Should this be `classes` instead?
+      cssClasses: 'markdown-node-label',
+      style: node.labelStyle,
+      addSvgBackground: addBackground,
+    });
+  } else {
+    const labelElement = await createLabel(
+      sanitizeText(decodeEntities(label), getConfig()),
+      node.labelStyle,
+      false,
+      true,
+      addBackground,
+      width
+    );
+    text = labelEl.node()?.appendChild(labelElement);
+  }
+
   // Get the size of the label
   let bbox = text.getBBox();
   const halfPadding = (node?.padding ?? 0) / 2;
@@ -57,47 +83,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
     const dv = select(text);
 
     // if there are images, need to wait for them to load before getting the bounding box
-    const images = div.getElementsByTagName('img');
-    if (images) {
-      const noImgText = label.replace(/<img[^>]*>/g, '').trim() === '';
-
-      await Promise.all(
-        [...images].map(
-          (img) =>
-            new Promise((res) => {
-              /**
-               *
-               */
-              function setupImage() {
-                img.style.display = 'flex';
-                img.style.flexDirection = 'column';
-
-                if (noImgText) {
-                  // default size if no text
-                  const bodyFontSize = getConfig().fontSize
-                    ? getConfig().fontSize
-                    : window.getComputedStyle(document.body).fontSize;
-                  const enlargingFactor = 5;
-                  const [parsedBodyFontSize = defaultConfig.fontSize] = parseFontSize(bodyFontSize);
-                  const width = parsedBodyFontSize * enlargingFactor + 'px';
-                  img.style.minWidth = width;
-                  img.style.maxWidth = width;
-                } else {
-                  img.style.width = '100%';
-                }
-                res(img);
-              }
-              setTimeout(() => {
-                if (img.complete) {
-                  setupImage();
-                }
-              });
-              img.addEventListener('error', setupImage);
-              img.addEventListener('load', setupImage);
-            })
-        )
-      );
-    }
+    await configureLabelImages(div, label);
 
     bbox = div.getBoundingClientRect();
     dv.attr('width', bbox.width);
