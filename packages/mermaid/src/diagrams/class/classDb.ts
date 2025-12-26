@@ -17,6 +17,7 @@ import type {
   ClassRelation,
   ClassNode,
   ClassNote,
+  ClassNoteMap,
   ClassMap,
   NamespaceMap,
   NamespaceNode,
@@ -33,15 +34,16 @@ const sanitizeText = (txt: string) => common.sanitizeText(txt, getConfig());
 
 export class ClassDB implements DiagramDB {
   private relations: ClassRelation[] = [];
-  private classes = new Map<string, ClassNode>();
+  private classes: ClassMap = new Map<string, ClassNode>();
   private readonly styleClasses = new Map<string, StyleClass>();
-  private notes: ClassNote[] = [];
+  private notes: ClassNoteMap = new Map<string, ClassNote>();
   private interfaces: Interface[] = [];
   // private static classCounter = 0;
   private namespaces = new Map<string, NamespaceNode>();
   private namespaceCounter = 0;
 
-  private functions: any[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  private functions: Function[] = [];
 
   constructor() {
     this.functions.push(this.setupToolTips.bind(this));
@@ -124,7 +126,7 @@ export class ClassDB implements DiagramDB {
       annotations: [],
       styles: [],
       domId: MERMAID_DOM_ID_PREFIX + name + '-' + classCounter,
-    } as ClassNode);
+    });
 
     classCounter++;
   }
@@ -155,12 +157,12 @@ export class ClassDB implements DiagramDB {
 
   public clear() {
     this.relations = [];
-    this.classes = new Map();
-    this.notes = [];
+    this.classes = new Map<string, ClassNode>();
+    this.notes = new Map<string, ClassNote>();
     this.interfaces = [];
     this.functions = [];
     this.functions.push(this.setupToolTips.bind(this));
-    this.namespaces = new Map();
+    this.namespaces = new Map<string, NamespaceNode>();
     this.namespaceCounter = 0;
     this.direction = 'TB';
     commonClear();
@@ -178,7 +180,12 @@ export class ClassDB implements DiagramDB {
     return this.relations;
   }
 
-  public getNotes() {
+  public getNote(id: string | number): ClassNote {
+    const key = typeof id === 'number' ? `note${id}` : id;
+    return this.notes.get(key)!;
+  }
+
+  public getNotes(): ClassNoteMap {
     return this.notes;
   }
 
@@ -279,16 +286,19 @@ export class ClassDB implements DiagramDB {
     }
   }
 
-  public addNote(text: string, className: string) {
+  public addNote(text: string, className: string): string {
+    const index = this.notes.size;
     const note = {
-      id: `note${this.notes.length}`,
+      id: `note${index}`,
       class: className,
       text: text,
+      index: index,
     };
-    this.notes.push(note);
+    this.notes.set(note.id, note);
+    return note.id;
   }
 
-  public cleanupLabel(label: string) {
+  public cleanupLabel(label: string): string {
     if (label.startsWith(':')) {
       label = label.substring(1);
     }
@@ -354,7 +364,7 @@ export class ClassDB implements DiagramDB {
     });
   }
 
-  public getTooltip(id: string, namespace?: string) {
+  public getTooltip(id: string, namespace?: string): string | undefined {
     if (namespace && this.namespaces.has(namespace)) {
       return this.namespaces.get(namespace)!.classes.get(id)!.tooltip;
     }
@@ -534,10 +544,11 @@ export class ClassDB implements DiagramDB {
 
     this.namespaces.set(id, {
       id: id,
-      classes: new Map(),
-      children: {},
+      classes: new Map<string, ClassNode>(),
+      notes: new Map<string, ClassNote>(),
+      children: new Map<string, NamespaceNode>(),
       domId: MERMAID_DOM_ID_PREFIX + id + '-' + this.namespaceCounter,
-    } as NamespaceNode);
+    });
 
     this.namespaceCounter++;
   }
@@ -555,16 +566,23 @@ export class ClassDB implements DiagramDB {
    *
    * @param id - ID of the namespace to add
    * @param classNames - IDs of the class to add
+   * @param noteNames - IDs of the notes to add
    * @public
    */
-  public addClassesToNamespace(id: string, classNames: string[]) {
+  public addClassesToNamespace(id: string, classNames: string[], noteNames: string[]) {
     if (!this.namespaces.has(id)) {
       return;
     }
     for (const name of classNames) {
       const { className } = this.splitClassNameAndType(name);
-      this.classes.get(className)!.parent = id;
-      this.namespaces.get(id)!.classes.set(className, this.classes.get(className)!);
+      const classNode = this.getClass(className);
+      classNode.parent = id;
+      this.namespaces.get(id)!.classes.set(className, classNode);
+    }
+    for (const noteName of noteNames) {
+      const noteNode = this.getNote(noteName);
+      noteNode.parent = id;
+      this.namespaces.get(id)!.notes.set(noteName, noteNode);
     }
   }
 
@@ -617,36 +635,32 @@ export class ClassDB implements DiagramDB {
     const edges: Edge[] = [];
     const config = getConfig();
 
-    for (const namespaceKey of this.namespaces.keys()) {
-      const namespace = this.namespaces.get(namespaceKey);
-      if (namespace) {
-        const node: Node = {
-          id: namespace.id,
-          label: namespace.id,
-          isGroup: true,
-          padding: config.class!.padding ?? 16,
-          // parent node must be one of [rect, roundedWithTitle, noteGroup, divider]
-          shape: 'rect',
-          cssStyles: ['fill: none', 'stroke: black'],
-          look: config.look,
-        };
-        nodes.push(node);
-      }
+    for (const namespace of this.namespaces.values()) {
+      const node: Node = {
+        id: namespace.id,
+        label: namespace.id,
+        isGroup: true,
+        padding: config.class!.padding ?? 16,
+        // parent node must be one of [rect, roundedWithTitle, noteGroup, divider]
+        shape: 'rect',
+        cssStyles: [],
+        look: config.look,
+      };
+      nodes.push(node);
     }
 
-    for (const classKey of this.classes.keys()) {
-      const classNode = this.classes.get(classKey);
-      if (classNode) {
-        const node = classNode as unknown as Node;
-        node.parentId = classNode.parent;
-        node.look = config.look;
-        nodes.push(node);
-      }
+    for (const classNode of this.classes.values()) {
+      const node: Node = {
+        ...classNode,
+        type: undefined,
+        isGroup: false,
+        parentId: classNode.parent,
+        look: config.look,
+      };
+      nodes.push(node);
     }
 
-    let cnt = 0;
-    for (const note of this.notes) {
-      cnt++;
+    for (const note of this.notes.values()) {
       const noteNode: Node = {
         id: note.id,
         label: note.text,
@@ -660,14 +674,15 @@ export class ClassDB implements DiagramDB {
           `stroke: ${config.themeVariables.noteBorderColor}`,
         ],
         look: config.look,
+        parentId: note.parent,
       };
       nodes.push(noteNode);
 
-      const noteClassId = this.classes.get(note.class)?.id ?? '';
+      const noteClassId = this.classes.get(note.class)?.id;
 
       if (noteClassId) {
         const edge: Edge = {
-          id: `edgeNote${cnt}`,
+          id: `edgeNote${note.index}`,
           start: note.id,
           end: noteClassId,
           type: 'normal',
@@ -697,7 +712,7 @@ export class ClassDB implements DiagramDB {
       nodes.push(interfaceNode);
     }
 
-    cnt = 0;
+    let cnt = 0;
     for (const classRelation of this.relations) {
       cnt++;
       const edge: Edge = {

@@ -21,19 +21,19 @@
     "font-awesome": "^4.7.0",
     "jiti": "^2.4.2",
     "mermaid": "workspace:^",
-    "vue": "^3.5.21"
+    "vue": "^3.5.25"
   },
   "devDependencies": {
-    "@iconify-json/carbon": "^1.2.13",
-    "@unocss/reset": "^66.5.1",
-    "@vite-pwa/vitepress": "^1.0.0",
-    "@vitejs/plugin-vue": "^6.0.1",
+    "@iconify-json/carbon": "^1.2.14",
+    "@unocss/reset": "^66.5.9",
+    "@vite-pwa/vitepress": "^1.0.1",
+    "@vitejs/plugin-vue": "^6.0.2",
     "fast-glob": "^3.3.3",
     "https-localhost": "^4.7.1",
     "pathe": "^2.0.3",
-    "unocss": "^66.5.1",
-    "unplugin-vue-components": "^28.4.1",
-    "vite": "^7.0.7",
+    "unocss": "^66.5.9",
+    "unplugin-vue-components": "^28.8.0",
+    "vite": "^7.0.8",
     "vite-plugin-pwa": "^1.0.3",
     "vitepress": "1.6.4",
     "workbox-window": "^7.3.0"

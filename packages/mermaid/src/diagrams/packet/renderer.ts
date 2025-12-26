@@ -16,7 +16,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const svgWidth = bitWidth * bitsPerRow + 2;
   const svg: SVG = selectSvgElement(id);
 
-  svg.attr('viewbox', `0 0 ${svgWidth} ${svgHeight}`);
+  svg.attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
   configureSvgSize(svg, svgHeight, svgWidth, config.useMaxWidth);
 
   for (const [word, packet] of words.entries()) {
