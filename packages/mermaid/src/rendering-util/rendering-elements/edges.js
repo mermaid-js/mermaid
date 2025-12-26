@@ -250,8 +250,10 @@ export const positionEdgeLabel = (edge, paths) => {
 /**
  * Adjusts cluster boundary to exclude the title area.
  * This prevents edges and labels from overlapping with the cluster title.
+ * @param {object} clusterNode - The cluster node with dimensions and labelBBox
+ * @returns {object} Adjusted cluster boundary excluding title area
  */
-const getAdjustedClusterBoundary = (clusterNode) => {
+export const getAdjustedClusterBoundary = (clusterNode) => {
   const siteConfig = getConfig();
   const { subGraphTitleTopMargin, subGraphTitleBottomMargin } = getSubGraphTitleMargins(siteConfig);
 
