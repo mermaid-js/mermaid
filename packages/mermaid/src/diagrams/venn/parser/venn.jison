@@ -26,6 +26,7 @@
 "title"\s[^#\n;]+  { return 'TITLE'; }
 "venn-beta"        { return 'VENN'; }
 "set"              { return 'SET'; }
+"union"            { return 'UNION'; }
 "text"             { if (yy.consumeIndentText) { yy.consumeIndentText = false; } else { return 'TEXT'; } }
 "label"(?=\s*:)    { return 'LABEL'; }
 
@@ -66,8 +67,10 @@ line
 
 statement
   : TITLE                                           { yy.setDiagramTitle($1.substr(6)); $$ = $1.substr(6); }
-  | SET identifierList                              { yy.addSubsetData($identifierList, undefined); if (yy.setIndentMode) { yy.setIndentMode(true); } }
-  | SET identifierList stylesOpt                    { yy.addSubsetData($identifierList, $stylesOpt); if (yy.setIndentMode) { yy.setIndentMode(true); } }
+  | SET identifierList                              { if ($identifierList.length !== 1) { throw new Error('set requires single identifier'); } yy.addSubsetData($identifierList, undefined); if (yy.setIndentMode) { yy.setIndentMode(true); } }
+  | SET identifierList stylesOpt                    { if ($identifierList.length !== 1) { throw new Error('set requires single identifier'); } yy.addSubsetData($identifierList, $stylesOpt); if (yy.setIndentMode) { yy.setIndentMode(true); } }
+  | UNION identifierList                            { if ($identifierList.length < 2) { throw new Error('union requires multiple identifiers'); } if (yy.validateUnionIdentifiers) { yy.validateUnionIdentifiers($identifierList); } yy.addSubsetData($identifierList, undefined); if (yy.setIndentMode) { yy.setIndentMode(true); } }
+  | UNION identifierList stylesOpt                  { if ($identifierList.length < 2) { throw new Error('union requires multiple identifiers'); } if (yy.validateUnionIdentifiers) { yy.validateUnionIdentifiers($identifierList); } yy.addSubsetData($identifierList, $stylesOpt); if (yy.setIndentMode) { yy.setIndentMode(true); } }
   | TEXT identifierList labelField                  { yy.addTextData($identifierList, "", [$labelField]); }
   | TEXT identifierList labelField COMMA stylesOpt  { yy.addTextData($identifierList, "", [$labelField, ...$stylesOpt]); }
   | TEXT identifierList                             { throw new Error('text requires label'); }
@@ -131,8 +134,13 @@ textValue
   ;
 
 identifierList
-  : IDENTIFIER                         { $$ = [$IDENTIFIER] }
-  | identifierList COMMA IDENTIFIER    { $$ = [...$identifierList, $IDENTIFIER] }
+  : identifier                         { $$ = [$identifier] }
+  | identifierList COMMA identifier    { $$ = [...$identifierList, $identifier] }
+  ;
+
+identifier
+  : IDENTIFIER                         { $$ = $1 }
+  | STRING                             { $$ = $1 }
   ;
 
 %%

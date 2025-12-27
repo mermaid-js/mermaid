@@ -15,7 +15,7 @@ describe('Venn diagram', function () {
           title foo bar
           set A
           set B
-          set A,B
+          union A,B
       `;
     venn.parse(str);
     expect(db.getDiagramTitle()).toBe('foo bar');
@@ -32,15 +32,15 @@ describe('Venn diagram', function () {
           set A
           set B       size : 20,   label : foo
           set C       size : 30,   label : bar
-          set A,D     size : 5.3,  label : buz buz
-          set C, A,B               label : "Hello, world!"
+          union A,B   size : 5.3,  label : buz buz
+          union C, A,B             label : "Hello, world!"
       `;
     venn.parse(str);
     expect(db.getSubsetData()).toEqual([
       expect.objectContaining({ sets: ['A'], size: 10 }),
       expect.objectContaining({ sets: ['B'], size: 20, label: 'foo' }),
       expect.objectContaining({ sets: ['C'], size: 30, label: 'bar' }),
-      expect.objectContaining({ sets: ['A', 'D'], size: 5.3, label: 'buz buz' }),
+      expect.objectContaining({ sets: ['A', 'B'], size: 5.3, label: 'buz buz' }),
       expect.objectContaining({
         sets: ['A', 'B', 'C'],
         size: 1.1111111111111112,
@@ -58,7 +58,7 @@ describe('Venn diagram', function () {
             text B2     label: "hex",  color: #fff
             text B3     label: "rgb",  color: rgb(255, 0, 128)
             text B4     label: "rgba", color: rgba(255, 0, 128, 0.5)
-          set A,B
+          union A,B
             text AB1    label: "shared note"
       `;
     venn.parse(str);
@@ -84,7 +84,7 @@ describe('Venn diagram', function () {
             text A2
           set B   label: Backend
             text B1
-          set A,B label: APIs
+          union A,B label: APIs
             text OpenAPI
       `;
     venn.parse(str);
@@ -102,5 +102,41 @@ describe('Venn diagram', function () {
             text A1  color: red
     `;
     expect(() => venn.parse(str)).toThrow('text requires label');
+  });
+
+  test('set requires single identifier', () => {
+    const str = `venn-beta
+        set A,B
+    `;
+    expect(() => venn.parse(str)).toThrow('set requires single identifier');
+  });
+
+  test('union requires multiple identifiers', () => {
+    const str = `venn-beta
+        union A
+    `;
+    expect(() => venn.parse(str)).toThrow('union requires multiple identifiers');
+  });
+
+  test('union requires known identifiers', () => {
+    const str = `venn-beta
+        set Foo
+        union Foo,Buz
+    `;
+    expect(() => venn.parse(str)).toThrow('unknown set identifier');
+  });
+
+  test('quoted identifiers', () => {
+    const str = `venn-beta
+        set "Foo Bar"
+        set Buz
+        union "Foo Bar",Buz
+    `;
+    venn.parse(str);
+    expect(db.getSubsetData()).toEqual([
+      expect.objectContaining({ sets: ['Foo Bar'], size: 10 }),
+      expect.objectContaining({ sets: ['Buz'], size: 10 }),
+      expect.objectContaining({ sets: ['Buz', 'Foo Bar'], size: 2.5 }),
+    ]);
   });
 });
