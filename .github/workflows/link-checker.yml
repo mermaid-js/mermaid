@@ -46,6 +46,7 @@ jobs:
             packages/mermaid/src/docs/**/*.md
             README.md
             README.zh-CN.md
+            README.ja.md
           fail: true
           jobSummary: true
         env:
