@@ -75,15 +75,17 @@ export const draw: DrawDefinition = (
     renderTextNodes(config, layoutByKey, dummyD3root, textNodes);
   }
 
-  // Styling
+  // Styling sets
   dummyD3root
     .selectAll('.venn-circle path')
     .style('fill-opacity', 0)
     .style('stroke-width', 5)
     .style('stroke-opacity', 0.3)
     .style('stroke', (_, i) => colors[i]);
+
   dummyD3root.selectAll('.venn-circle text').style('font-size', '48px');
 
+  // Styling unions
   dummyD3root
     .selectAll('.venn-intersection text')
     .style('font-size', '48px')
@@ -94,14 +96,9 @@ export const draw: DrawDefinition = (
 
   dummyD3root
     .selectAll('.venn-intersection path')
-    .style('fill-opacity', (e) => {
-      const d = e as VennData;
-      return customBackgroundColorMap.get(d.sets) ? 1 : 0;
-    })
-    .style('fill', (e) => {
-      const d = e as VennData;
-      return customBackgroundColorMap.get(d.sets) ?? 'transparent';
-    });
+    .style('fill-opacity', (e) => (customBackgroundColorMap.has((e as VennData).sets) ? 1 : 0))
+    .style('fill', (e) => customBackgroundColorMap.get((e as VennData).sets) ?? 'transparent');
+
   const vennGroup = svg.append('g').attr('transform', `translate(0, ${titleHeight})`);
   const dummySvg = dummyD3root.select('svg').node();
   if (dummySvg && 'childNodes' in dummySvg) {
@@ -158,11 +155,10 @@ function renderTextNodes(
     }
 
     // Render text area
-    const baseFontSize = 40;
     const areaGroup = textGroup
       .append('g')
       .attr('class', 'venn-text-area')
-      .attr('font-size', `${baseFontSize}px`);
+      .attr('font-size', `40px`);
     if (debugTextLayout) {
       areaGroup
         .append('circle')
@@ -180,7 +176,7 @@ function renderTextNodes(
     const innerWidth = Math.max(80, innerRadius * 2 * 0.95);
     const innerHeight = Math.max(60, innerRadius * 2 * 0.95);
     const labelOffsetBase = (area.data.label?.length ?? '') ? Math.min(32, innerRadius * 0.25) : 0;
-    const labelOffset = nodes.length === 1 ? labelOffsetBase + 30 : labelOffsetBase;
+    const labelOffset = labelOffsetBase + (nodes.length === 1 ? 30 : 0);
     const startX = centerX - innerWidth / 2;
     const startY = centerY - innerHeight / 2 + labelOffset;
     const cols = Math.max(1, Math.ceil(Math.sqrt(nodes.length)));
@@ -208,19 +204,16 @@ function renderTextNodes(
           .attr('stroke-dasharray', '4 3');
       }
 
-      const displayLabel = node.label ?? node.id;
       const boxWidth = cellWidth * 0.9;
       const boxHeight = cellHeight * 0.9;
-      const boxX = x - boxWidth / 2;
-      const boxY = y - boxHeight / 2;
 
       const container = areaGroup
         .append('foreignObject')
         .attr('class', 'venn-text-node-fo')
-        .attr('x', boxX)
-        .attr('y', boxY)
         .attr('width', boxWidth)
         .attr('height', boxHeight)
+        .attr('x', x - boxWidth / 2)
+        .attr('y', y - boxHeight / 2)
         .attr('overflow', 'visible');
 
       const text = container
@@ -235,7 +228,7 @@ function renderTextNodes(
         .style('text-align', 'center')
         .style('overflow-wrap', 'normal')
         .style('word-break', 'normal')
-        .text(displayLabel);
+        .text(node.label ?? node.id);
 
       if (node.color) {
         text.style('color', node.color);

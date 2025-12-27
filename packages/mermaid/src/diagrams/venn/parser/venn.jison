@@ -66,28 +66,26 @@ line
   ;
 
 statement
-  : TITLE                                           { yy.setDiagramTitle($1.substr(6)); $$ = $1.substr(6); }
-  | SET identifierList                              { if ($identifierList.length !== 1) { throw new Error('set requires single identifier'); } yy.addSubsetData($identifierList, undefined); if (yy.setIndentMode) { yy.setIndentMode(true); } }
-  | SET identifierList stylesOpt                    { if ($identifierList.length !== 1) { throw new Error('set requires single identifier'); } yy.addSubsetData($identifierList, $stylesOpt); if (yy.setIndentMode) { yy.setIndentMode(true); } }
-  | UNION identifierList                            { if ($identifierList.length < 2) { throw new Error('union requires multiple identifiers'); } if (yy.validateUnionIdentifiers) { yy.validateUnionIdentifiers($identifierList); } yy.addSubsetData($identifierList, undefined); if (yy.setIndentMode) { yy.setIndentMode(true); } }
-  | UNION identifierList stylesOpt                  { if ($identifierList.length < 2) { throw new Error('union requires multiple identifiers'); } if (yy.validateUnionIdentifiers) { yy.validateUnionIdentifiers($identifierList); } yy.addSubsetData($identifierList, $stylesOpt); if (yy.setIndentMode) { yy.setIndentMode(true); } }
-  | TEXT identifierList stylesOpt                   { yy.addTextData($identifierList, "", $stylesOpt); }
-  | TEXT identifierList                             { throw new Error('text requires label'); }
-  | INDENT_TEXT indentedTextTail                    { $$ = $2; }
+  : TITLE                          { yy.setDiagramTitle($1.substr(6)); $$ = $1.substr(6); }
+  | SET identifierList             { if ($identifierList.length !== 1) { throw new Error('set requires single identifier'); } yy.addSubsetData($identifierList, undefined); if (yy.setIndentMode) { yy.setIndentMode(true); } }
+  | SET identifierList stylesOpt   { if ($identifierList.length !== 1) { throw new Error('set requires single identifier'); } yy.addSubsetData($identifierList, $stylesOpt); if (yy.setIndentMode) { yy.setIndentMode(true); } }
+  | UNION identifierList           { if ($identifierList.length < 2) { throw new Error('union requires multiple identifiers'); } if (yy.validateUnionIdentifiers) { yy.validateUnionIdentifiers($identifierList); } yy.addSubsetData($identifierList, undefined); if (yy.setIndentMode) { yy.setIndentMode(true); } }
+  | UNION identifierList stylesOpt { if ($identifierList.length < 2) { throw new Error('union requires multiple identifiers'); } if (yy.validateUnionIdentifiers) { yy.validateUnionIdentifiers($identifierList); } yy.addSubsetData($identifierList, $stylesOpt); if (yy.setIndentMode) { yy.setIndentMode(true); } }
+  | TEXT identifierList stylesOpt  { yy.addTextData($identifierList, "", $stylesOpt); }
+  | INDENT_TEXT indentedTextTail   { $$ = $2; }
   ;
 
 indentedTextTail
-  : labelField                  { var currentSets = yy.getCurrentSets ? yy.getCurrentSets() : undefined; if (!currentSets) { throw new Error('text requires set'); } yy.addTextData(currentSets, "", [$labelField]); }
-  | labelField COMMA stylesOpt  { var currentSets = yy.getCurrentSets ? yy.getCurrentSets() : undefined; if (!currentSets) { throw new Error('text requires set'); } yy.addTextData(currentSets, "", [$labelField, ...$stylesOpt]); }
-  | textValue                   { var currentSets = yy.getCurrentSets ? yy.getCurrentSets() : undefined; if (!currentSets) { throw new Error('text requires set'); } yy.addTextData(currentSets, $textValue, undefined); }
-  | textValue stylesOpt          { var currentSets = yy.getCurrentSets ? yy.getCurrentSets() : undefined; if (!currentSets) { throw new Error('text requires set'); } yy.addTextData(currentSets, $textValue, $stylesOpt); }
-  | textValue COMMA stylesOpt    { var currentSets = yy.getCurrentSets ? yy.getCurrentSets() : undefined; if (!currentSets) { throw new Error('text requires set'); } yy.addTextData(currentSets, $textValue, $stylesOpt); }
-  | /* empty */                 { throw new Error('text requires label'); }
+  : labelField                 { var currentSets = yy.getCurrentSets(); if (!currentSets) { throw new Error('text requires set'); } yy.addTextData(currentSets, "", [$labelField]); }
+  | labelField COMMA stylesOpt { var currentSets = yy.getCurrentSets(); if (!currentSets) { throw new Error('text requires set'); } yy.addTextData(currentSets, "", [$labelField, ...$stylesOpt]); }
+  | textValue                  { var currentSets = yy.getCurrentSets(); if (!currentSets) { throw new Error('text requires set'); } yy.addTextData(currentSets, $textValue, undefined); }
+  | textValue stylesOpt        { var currentSets = yy.getCurrentSets(); if (!currentSets) { throw new Error('text requires set'); } yy.addTextData(currentSets, $textValue, $stylesOpt); }
+  | textValue COMMA stylesOpt  { var currentSets = yy.getCurrentSets(); if (!currentSets) { throw new Error('text requires set'); } yy.addTextData(currentSets, $textValue, $stylesOpt); }
   ;
 
 stylesOpt
-  : styleEntry                   { $$ = [$styleEntry] }
-  | stylesOpt COMMA styleEntry   { $$ = [...$stylesOpt, $styleEntry] }
+  : styleEntry                 { $$ = [$styleEntry] }
+  | stylesOpt COMMA styleEntry { $$ = [...$stylesOpt, $styleEntry] }
   ;
 
 styleEntry
