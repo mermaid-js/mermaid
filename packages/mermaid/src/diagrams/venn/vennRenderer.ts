@@ -23,6 +23,8 @@ export const draw: DrawDefinition = (
   const titleHeight = title ? 48 : 0;
   const sets = db.getSubsetData();
   const textNodes = db.getTextData();
+
+  // Build lookup tables for custom colors per set/union
   const customFontColorMap = new Map<VennData['sets'], string>();
   const customBackgroundColorMap = new Map<VennData['sets'], string>();
   const { themeVariables } = getConfig();
@@ -36,6 +38,7 @@ export const draw: DrawDefinition = (
     }
   }
 
+  // Prepare the target viewBox
   const svg = selectSvgElement(id);
   const svgWidth = 1600;
   const svgHeight = 900;
@@ -52,7 +55,7 @@ export const draw: DrawDefinition = (
       .attr('y', 32);
   }
 
-  // Create a dummy root to render the Venn diagram in
+  // Get the original SVG output of Venn.js from a dummy root
   const dummyD3root: DummyD3Root = d3select(document.createElement('div'));
   const vennDiagram = venn
     .VennDiagram()
@@ -60,14 +63,17 @@ export const draw: DrawDefinition = (
     .height(svgHeight - titleHeight);
   dummyD3root.datum(sets).call(vennDiagram as never);
 
+  // Compute layout areas so we can position additional text nodes
   const layoutAreas = venn.layout(sets, {
     width: svgWidth,
     height: svgHeight - titleHeight,
     padding: config?.padding ?? 15,
   });
+
+  // Build a lookup table from set key to layout area
   const layoutByKey = new Map<string, (typeof layoutAreas)[number]>();
   for (const area of layoutAreas) {
-    const key = setsKey([...area.data.sets].sort());
+    const key = stableSetsKey([...area.data.sets].sort());
     layoutByKey.set(key, area);
   }
 
@@ -75,7 +81,7 @@ export const draw: DrawDefinition = (
     renderTextNodes(config, layoutByKey, dummyD3root, textNodes);
   }
 
-  // Styling sets
+  // Style the set circles
   dummyD3root
     .selectAll('.venn-circle path')
     .style('fill-opacity', 0)
@@ -83,9 +89,10 @@ export const draw: DrawDefinition = (
     .style('stroke-opacity', 0.3)
     .style('stroke', (_, i) => colors[i]);
 
+  // Style the set labels
   dummyD3root.selectAll('.venn-circle text').style('font-size', '48px');
 
-  // Styling unions
+  // Style the union labels
   dummyD3root
     .selectAll('.venn-intersection text')
     .style('font-size', '48px')
@@ -93,12 +100,12 @@ export const draw: DrawDefinition = (
       const d = e as VennData;
       return customFontColorMap.get(d.sets) ?? defaultTextColor;
     });
-
   dummyD3root
     .selectAll('.venn-intersection path')
     .style('fill-opacity', (e) => (customBackgroundColorMap.has((e as VennData).sets) ? 1 : 0))
     .style('fill', (e) => customBackgroundColorMap.get((e as VennData).sets) ?? 'transparent');
 
+  // Transfer the dummy SVG contents into the real SVG group
   const vennGroup = svg.append('g').attr('transform', `translate(0, ${titleHeight})`);
   const dummySvg = dummyD3root.select('svg').node();
   if (dummySvg && 'childNodes' in dummySvg) {
@@ -109,7 +116,7 @@ export const draw: DrawDefinition = (
   configureSvgSize(svg, svgHeight, svgWidth, config?.useMaxWidth ?? true);
 };
 
-function setsKey(setIds: string[]): string {
+function stableSetsKey(setIds: string[]): string {
   return setIds.join('|');
 }
 
@@ -122,10 +129,11 @@ function renderTextNodes(
   const debugTextLayout = config?.debugTextLayout ?? false;
   const vennSvg = dummyD3root.select('svg');
   const textGroup = vennSvg.append('g').attr('class', 'venn-text-nodes');
-  const nodesByArea = new Map<string, VennTextData[]>();
 
+  // Group text nodes by the set key they belong to
+  const nodesByArea = new Map<string, VennTextData[]>();
   for (const node of textNodes) {
-    const key = setsKey(node.sets);
+    const key = stableSetsKey(node.sets);
     const existing = nodesByArea.get(key);
     if (existing) {
       existing.push(node);
@@ -134,11 +142,13 @@ function renderTextNodes(
     }
   }
 
+  // For each area, compute a text box and place nodes in a grid.
   for (const [key, nodes] of nodesByArea.entries()) {
     const area = layoutByKey.get(key);
     if (!area?.text) {
       continue;
     }
+    // Calculate the center point and a safe inner radius for text.
     const centerX = area.text.x;
     const centerY = area.text.y;
     const minCircleRadius = Math.min(...area.circles.map((circle) => circle.radius));
@@ -154,7 +164,7 @@ function renderTextNodes(
       innerRadius = minCircleRadius * 0.6;
     }
 
-    // Render text area
+    // Render text area container
     const areaGroup = textGroup
       .append('g')
       .attr('class', 'venn-text-area')
@@ -172,7 +182,7 @@ function renderTextNodes(
         .attr('stroke-dasharray', '6 4');
     }
 
-    // Render text nodes
+    // Compute a grid within the area for placing text nodes
     const innerWidth = Math.max(80, innerRadius * 2 * 0.95);
     const innerHeight = Math.max(60, innerRadius * 2 * 0.95);
     const labelOffsetBase = (area.data.label?.length ?? '') ? Math.min(32, innerRadius * 0.25) : 0;
@@ -184,6 +194,7 @@ function renderTextNodes(
     const cellWidth = innerWidth / cols;
     const cellHeight = innerHeight / rows;
 
+    // Place each node into a grid cell
     for (const [i, node] of nodes.entries()) {
       const col = i % cols;
       const row = Math.floor(i / cols);
@@ -207,6 +218,7 @@ function renderTextNodes(
       const boxWidth = cellWidth * 0.9;
       const boxHeight = cellHeight * 0.9;
 
+      // foreignObject lets us use HTML styling for auto-wrap
       const container = areaGroup
         .append('foreignObject')
         .attr('class', 'venn-text-node-fo')
