@@ -58,6 +58,7 @@
 
 "["                                       return 'SQUARE_BRACES_START'
 "]"                                       return 'SQUARE_BRACES_END'
+"NaN"                                     return 'NAN';
 [A-Za-z]+                                 return 'ALPHA';
 ":"                                       return 'COLON';
 \+                                        return 'PLUS';
@@ -117,6 +118,8 @@ plotData
 commaSeparatedNumbers
   : NUMBER_WITH_DECIMAL COMMA commaSeparatedNumbers                { $$ = [Number($NUMBER_WITH_DECIMAL), ...$commaSeparatedNumbers] }
   | NUMBER_WITH_DECIMAL                                           { $$ = [Number($NUMBER_WITH_DECIMAL)] }
+  | NAN COMMA commaSeparatedNumbers                               { $$ = [Number($NAN), ...$commaSeparatedNumbers] }
+  | NAN                                                           { $$ = [Number($NAN)] }
   ;
 
 parseXAxis
