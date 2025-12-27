@@ -159,6 +159,8 @@ Communication tools and platforms
 - [TiddlyWiki](https://tiddlywiki.com/)
   - [mermaid-tw5: wrapper for Mermaid Live](https://github.com/efurlanm/mermaid-tw5)
   - [tw5-mermaid: plugin for managing Mermaid.js tiddlers](https://github.com/jasonmhoule/tw5-mermaid)
+- [Antora](https://antora.org/)
+  - [antora-mermaid-extension: wrapper plugin for Mermaid.js](https://github.com/snt/antora-mermaid-extension)
 
 ### Editor Plugins
 
