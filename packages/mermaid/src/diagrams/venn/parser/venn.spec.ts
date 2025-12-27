@@ -85,23 +85,30 @@ describe('Venn diagram', function () {
           set B   label: Backend
             text B1
           union A,B label: APIs
-            text OpenAPI
+            text AB1, label: OpenAPI
       `;
     venn.parse(str);
     expect(db.getTextData()).toEqual([
       expect.objectContaining({ sets: ['A'], id: 'A1', label: undefined }),
       expect.objectContaining({ sets: ['A'], id: 'A2', label: undefined }),
       expect.objectContaining({ sets: ['B'], id: 'B1', label: undefined }),
-      expect.objectContaining({ sets: ['A', 'B'], id: 'OpenAPI', label: undefined }),
+      expect.objectContaining({ sets: ['A', 'B'], id: 'AB1', label: 'OpenAPI' }),
     ]);
   });
 
-  test('text node requires label', () => {
+  test('text nodes allow styling', () => {
     const str = `venn-beta
-        set A
-            text A1  color: red
-    `;
-    expect(() => venn.parse(str)).toThrow('text requires label');
+          set A
+            text A1, color: red
+          set B
+          union A,B label: AB
+            text AB1 color: #fff
+      `;
+    venn.parse(str);
+    expect(db.getTextData()).toEqual([
+      expect.objectContaining({ sets: ['A'], id: 'A1', label: undefined, color: 'red' }),
+      expect.objectContaining({ sets: ['A', 'B'], id: 'AB1', label: undefined, color: '#fff' }),
+    ]);
   });
 
   test('set requires single identifier', () => {

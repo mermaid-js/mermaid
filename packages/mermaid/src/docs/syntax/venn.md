@@ -52,3 +52,18 @@ venn-beta
   union A,B label: Shared
     text "OpenAPI"
 ```
+
+### Styling text nodes
+
+You can add optional style fields to `text` lines:
+
+- `label`: text label
+- `color`: text color
+
+```mermaid-example
+venn-beta
+  set A
+    text A1  label: React
+    text A2  label: Design Systems,  color: red
+  set B
+```
