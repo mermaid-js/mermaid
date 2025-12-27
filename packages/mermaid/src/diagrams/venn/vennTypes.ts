@@ -11,7 +11,8 @@ export interface VennData {
 
 export interface VennTextData {
   sets: string[];
-  text: string;
+  id: string;
+  label?: string;
   color: string | undefined;
 }
 
@@ -24,4 +25,7 @@ export interface VennDB extends DiagramDBBase<VennDiagramConfig> {
   ) => void;
   getSubsetData: () => VennData[];
   getTextData: () => VennTextData[];
+  getCurrentSets: () => string[] | undefined;
+  getIndentMode: () => boolean;
+  setIndentMode: (enabled: boolean) => void;
 }

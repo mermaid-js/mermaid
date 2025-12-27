@@ -1,19 +1,33 @@
 %lex
 %options case-insensitive
 
-%x title
+%s bol
+
 %%
 \%\%(?!\{)[^\n]*   /* skip comments */
 [^\}]\%\%[^\n]*    /* skip comments */
-[\n\r]+            return 'NEWLINE';
+
+<bol>[ \t]+(?=[\n\r])  /* ignore whitespace-only lines */
+<bol>[ \t]+(?=text\b)  {
+  if (yy.getIndentMode && yy.getIndentMode()) {
+    yy.consumeIndentText = true;
+    this.begin('INITIAL');
+    return 'INDENT_TEXT';
+  }
+}
+<bol>[ \t]+            /* ignore leading whitespace */
+<bol>[^ \t\n\r]        { if (yy.setIndentMode) { yy.setIndentMode(false); } this.begin('INITIAL'); this.unput(yytext); }
+
+[\n\r]+            { this.begin('bol'); return 'NEWLINE'; }
 \%\%[^\n]*         /* do nothing */
-\s+                /* skip */
+[ \t]+             /* skip */
 <<EOF>>            return 'EOF';
 
 "title"\s[^#\n;]+  { return 'TITLE'; }
 "venn-beta"        { return 'VENN'; }
-"set"              { return 'SET';  }
-"text"             { return 'TEXT'; }
+"set"              { return 'SET'; }
+"text"             { if (yy.consumeIndentText) { yy.consumeIndentText = false; } else { return 'TEXT'; } }
+"label"(?=\s*:)    { return 'LABEL'; }
 
 [+-]?(\d+(\.\d+)?|\.\d+)                                              { return 'NUMERIC'; }
 \#[0-9a-fA-F]{3,8}                                                    { return 'HEXCOLOR'; }
@@ -42,32 +56,50 @@ optNewlines
 
 document
   : /* empty */         { $$ = [] }
-  | document line       {$1.push($2);$$ = $1}
+  | document line       { $1.push($2); $$ = $1 }
   ;
 
 line
-  : SPACE statement  { $$ = $2 }
-  | statement  { $$ = $1 }
-  | NEWLINE { $$=[];}
-  | EOF    { $$=[];}
+  : NEWLINE { $$ = []; }
+  | statement { $$ = $1; }
   ;
 
 statement
-  : TITLE                                           { yy.setDiagramTitle( $1.substr(6));$$=$1.substr(6); }
-  | SET  identifierList                             { yy.addSubsetData($identifierList, undefined); }
-  | SET  identifierList stylesOpt                   { yy.addSubsetData($identifierList, $stylesOpt); }
+  : TITLE                                           { yy.setDiagramTitle($1.substr(6)); $$ = $1.substr(6); }
+  | SET identifierList                              { yy.addSubsetData($identifierList, undefined); if (yy.setIndentMode) { yy.setIndentMode(true); } }
+  | SET identifierList stylesOpt                    { yy.addSubsetData($identifierList, $stylesOpt); if (yy.setIndentMode) { yy.setIndentMode(true); } }
   | TEXT identifierList labelField                  { yy.addTextData($identifierList, "", [$labelField]); }
   | TEXT identifierList labelField COMMA stylesOpt  { yy.addTextData($identifierList, "", [$labelField, ...$stylesOpt]); }
   | TEXT identifierList                             { throw new Error('text requires label'); }
+  | INDENT_TEXT indentedTextTail                    { $$ = $2; }
+  ;
+
+indentedTextTail
+  : labelField                  { var currentSets = yy.getCurrentSets ? yy.getCurrentSets() : undefined; if (!currentSets) { throw new Error('text requires set'); } yy.addTextData(currentSets, "", [$labelField]); }
+  | labelField COMMA stylesOpt  { var currentSets = yy.getCurrentSets ? yy.getCurrentSets() : undefined; if (!currentSets) { throw new Error('text requires set'); } yy.addTextData(currentSets, "", [$labelField, ...$stylesOpt]); }
+  | textValue                   { var currentSets = yy.getCurrentSets ? yy.getCurrentSets() : undefined; if (!currentSets) { throw new Error('text requires set'); } yy.addTextData(currentSets, $textValue, undefined); }
+  | textValue labelField        { var currentSets = yy.getCurrentSets ? yy.getCurrentSets() : undefined; if (!currentSets) { throw new Error('text requires set'); } yy.addTextData(currentSets, $textValue, [$labelField]); }
+  | textValue labelField COMMA stylesOpt { var currentSets = yy.getCurrentSets ? yy.getCurrentSets() : undefined; if (!currentSets) { throw new Error('text requires set'); } yy.addTextData(currentSets, $textValue, [$labelField, ...$stylesOpt]); }
+  | textValue COMMA labelField  { var currentSets = yy.getCurrentSets ? yy.getCurrentSets() : undefined; if (!currentSets) { throw new Error('text requires set'); } yy.addTextData(currentSets, $textValue, [$labelField]); }
+  | textValue COMMA labelField COMMA stylesOpt { var currentSets = yy.getCurrentSets ? yy.getCurrentSets() : undefined; if (!currentSets) { throw new Error('text requires set'); } yy.addTextData(currentSets, $textValue, [$labelField, ...$stylesOpt]); }
+  | textValue styleField        { throw new Error('text requires label'); }
+  | textValue COMMA styleField  { throw new Error('text requires label'); }
+  | textValue COMMA styleField COMMA stylesOpt { throw new Error('text requires label'); }
+  | /* empty */                 { throw new Error('text requires label'); }
   ;
 
 stylesOpt
-  : styleField                   { $$ = [$styleField] }
-  | stylesOpt COMMA styleField   { $$ = [...$stylesOpt, $styleField] }
+  : styleEntry                   { $$ = [$styleEntry] }
+  | stylesOpt COMMA styleEntry   { $$ = [...$stylesOpt, $styleEntry] }
+  ;
+
+styleEntry
+  : styleField { $$ = $1 }
+  | labelField { $$ = $1 }
   ;
 
 labelField
-  : IDENTIFIER COLON styleValue  { if (String($1).toLowerCase() !== 'label') { throw new Error('text requires label'); } $$ = ['label', $3] }
+  : LABEL COLON styleValue  { $$ = ['label', $3] }
   ;
 
 styleField
@@ -94,16 +126,7 @@ valueToken
 
 textValue
   : STRING                       { $$ = $1; }
-  | textTokens                   { $$ = $textTokens.join(' '); }
-  ;
-
-textTokens
-  : textToken                    { $$ = [$textToken]; }
-  | textTokens textToken         { $1.push($2); $$ = $1; }
-  ;
-
-textToken
-  : IDENTIFIER                   { $$ = $1; }
+  | IDENTIFIER                   { $$ = $1; }
   | NUMERIC                      { $$ = $1; }
   ;
 

@@ -15,14 +15,18 @@ import DEFAULT_CONFIG from '../../defaultConfig.js';
 
 const subsets = new Array<VennData>();
 const textNodes = new Array<VennTextData>();
+let currentSets: string[] | undefined;
+let indentMode = false;
 
 export const addSubsetData: VennDB['addSubsetData'] = (identifierList, data) => {
   const { size: rawSize, label, color, background } = Object.fromEntries(data ?? []);
 
   const size = rawSize ? parseFloat(rawSize) : 10 / Math.pow(identifierList.length, 2);
+  const sets = [...identifierList].sort();
+  currentSets = sets;
 
   subsets.push({
-    sets: identifierList.sort(),
+    sets,
     size,
     label: normalizeStyleValue(label),
     color: normalizeStyleValue(color),
@@ -50,16 +54,23 @@ export const addTextData: VennDB['addTextData'] = (identifierList, text, data) =
   const styleEntries = Object.fromEntries(data ?? []);
   const color = normalizeStyleValue(styleEntries.color ?? styleEntries.textColor);
   const label = normalizeStyleValue(styleEntries.label);
-  const resolvedText = normalizeText(text) || label || '';
+  const id = normalizeText(text);
   textNodes.push({
     sets: identifierList.sort(),
-    text: resolvedText,
+    id,
+    label,
     color,
   });
 };
 
 export const getTextData = () => {
   return textNodes;
+};
+
+export const getCurrentSets: VennDB['getCurrentSets'] = () => currentSets;
+export const getIndentMode: VennDB['getIndentMode'] = () => indentMode;
+export const setIndentMode: VennDB['setIndentMode'] = (enabled) => {
+  indentMode = enabled;
 };
 
 const DEFAULT_PACKET_CONFIG: Required<VennDiagramConfig> = DEFAULT_CONFIG.venn;
@@ -74,6 +85,8 @@ const customClear = () => {
   clear();
   subsets.length = 0;
   textNodes.length = 0;
+  currentSets = undefined;
+  indentMode = false;
 };
 
 export const db: VennDB = {
@@ -89,4 +102,7 @@ export const db: VennDB = {
   getSubsetData,
   addTextData,
   getTextData,
+  getCurrentSets,
+  getIndentMode,
+  setIndentMode,
 };
