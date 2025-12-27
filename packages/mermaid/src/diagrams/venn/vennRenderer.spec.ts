@@ -46,10 +46,10 @@ describe('vennRenderer', () => {
 
     await draw('', 'venn', '1.0', diagram);
 
-    const nodes = [...document.querySelectorAll<SVGTextElement>('.venn-text-node')];
+    const nodes = [...document.querySelectorAll<HTMLDivElement>('.venn-text-node')];
     expect(nodes.length).toBeGreaterThanOrEqual(2);
     const colored = nodes.find((node) => node.textContent === 'alpha');
-    expect(colored?.getAttribute('fill')).toBe('#ff0000');
+    expect(colored?.style.color).toBe('#ff0000');
   });
 
   it('renders debug layout helpers when enabled', async () => {

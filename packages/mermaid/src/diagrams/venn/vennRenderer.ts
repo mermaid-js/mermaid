@@ -158,10 +158,11 @@ function renderTextNodes(
     }
 
     // Render text area
+    const baseFontSize = 40;
     const areaGroup = textGroup
       .append('g')
       .attr('class', 'venn-text-area')
-      .attr('font-size', `40px`);
+      .attr('font-size', `${baseFontSize}px`);
     if (debugTextLayout) {
       areaGroup
         .append('circle')
@@ -208,18 +209,36 @@ function renderTextNodes(
       }
 
       const displayLabel = node.label ?? node.id;
-      const textEl = areaGroup
-        .append('text')
+      const boxWidth = cellWidth * 0.9;
+      const boxHeight = cellHeight * 0.9;
+      const boxX = x - boxWidth / 2;
+      const boxY = y - boxHeight / 2;
+
+      const container = areaGroup
+        .append('foreignObject')
+        .attr('class', 'venn-text-node-fo')
+        .attr('x', boxX)
+        .attr('y', boxY)
+        .attr('width', boxWidth)
+        .attr('height', boxHeight)
+        .attr('overflow', 'visible');
+
+      const text = container
+        .append('xhtml:span')
         .attr('class', 'venn-text-node')
-        .attr('x', x)
-        .attr('y', y)
-        .attr('text-anchor', 'middle')
-        .attr('dominant-baseline', 'middle')
-        .attr('font-size', `40px`)
+        .style('display', 'flex')
+        .style('width', '100%')
+        .style('height', '100%')
+        .style('white-space', 'normal')
+        .style('align-items', 'center')
+        .style('justify-content', 'center')
+        .style('text-align', 'center')
+        .style('overflow-wrap', 'normal')
+        .style('word-break', 'normal')
         .text(displayLabel);
 
       if (node.color) {
-        textEl.attr('fill', node.color);
+        text.style('color', node.color);
       }
     }
   }
