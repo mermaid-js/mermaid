@@ -37,7 +37,7 @@
         title Very Basic Venn Diagram
         set A
         set B
-        set A,B   label: AB
+        union A,B   label: AB
       </pre>
       <hr />
       <pre class="mermaid">
@@ -46,10 +46,10 @@
         set A
         set B
         set C
-        set A,B     label: AB,   background: skyblue
-        set B,C     label: BC,   background: orange
-        set A,C     label: AC,   background: lightgreen
-        set A,B,C   label: ABC,  background: white,      color: red
+        union A,B     label: AB,   background: skyblue
+        union B,C     label: BC,   background: orange
+        union A,C     label: AC,   background: lightgreen
+        union A,B,C   label: ABC,  background: white,      color: red
       </pre>
 
       <hr />
@@ -64,10 +64,10 @@
             text react
           set B     label: Backend
           set C     label: Ops
-          set A,B   label: APIs
-          set B,C   label: Infra
-          set A,C   label: SRE
-          set A,B,C label: Shared
+          union A,B   label: APIs
+          union B,C   label: Infra
+          union A,C   label: SRE
+          union A,B,C label: Shared
         </pre>
       </div>
       <hr />
@@ -79,12 +79,12 @@
         set B      size: 18
         set C      size: 18
         set D      size: 18
-        set A,B    size: 5
-        set A,C    size: 2.5
-        set A,D    size: 5
-        set B,C    size: 5
-        set B,D    size: 2.5
-        set C,D    size: 5
+        union A,B    size: 5
+        union A,C    size: 2.5
+        union A,D    size: 5
+        union B,C    size: 5
+        union B,D    size: 2.5
+        union C,D    size: 5
       </pre>
       <hr />
       <pre class="mermaid">
@@ -94,8 +94,8 @@
         set B    size: 5,   label: BETA
         set C    size: 10
         set D    size: 10,  label: DELTA
-        set A,B  size: 1,   label: AB,    background: gold
-        set B,D  size: 1
+        union A,B  size: 1,   label: AB,    background: gold
+        union B,D  size: 1
       </pre>
       <hr />
       <pre class="mermaid">
@@ -108,7 +108,7 @@
           text colorname label: color name,  color: green
         set B      label: Default texts,  size: 12
           text default   label: default color
-        set A,B    label: Common,         size: 5
+        union A,B    label: Common,         size: 5
           text shared    label: "shared note"
       </pre>
       <hr />
@@ -132,7 +132,7 @@
           text B7
           text "B8 with a long label"
           text "B9 with a loooooooong label"
-        set A,B    label: Common,      size: 3
+        union A,B    label: Common,      size: 3
           text shared label: "shared note"
       </pre>
     </div>

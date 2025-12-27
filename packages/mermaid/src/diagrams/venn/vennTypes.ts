@@ -23,6 +23,7 @@ export interface VennDB extends DiagramDBBase<VennDiagramConfig> {
     text: string,
     data: [string, string][] | undefined
   ) => void;
+  validateUnionIdentifiers: (identifierList: string[]) => void;
   getSubsetData: () => VennData[];
   getTextData: () => VennTextData[];
   getCurrentSets: () => string[] | undefined;

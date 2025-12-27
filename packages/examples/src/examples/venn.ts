@@ -10,13 +10,13 @@ export default {
       isDefault: true,
       code: `venn-beta
     title "Three overlapping sets"
-    sets A
-    sets B
-    sets C
-    sets A,B    label: AB, background: skyblue
-    sets B,C    label: BC, background: orange
-    sets A,C    label: AC, background: lightgreen
-    sets A,B,C  label: ABC, color: red,  background: white
+    set A
+    set B
+    set C
+    union A,B    label: AB, background: skyblue
+    union B,C    label: BC, background: orange
+    union A,C    label: AC, background: lightgreen
+    union A,B,C  label: ABC, color: red,  background: white
     `,
     },
   ],
