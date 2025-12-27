@@ -39,8 +39,8 @@ describe('vennRenderer', () => {
     document.body.innerHTML = '<svg id="venn"></svg>';
     const diagram = createDiagram({
       getTextData: () => [
-        { sets: ['A'], text: 'alpha', color: '#ff0000' },
-        { sets: ['A', 'B'], text: 'shared', color: undefined },
+        { sets: ['A'], id: 'alpha', label: undefined, color: '#ff0000' },
+        { sets: ['A', 'B'], id: 'shared', label: undefined, color: undefined },
       ],
     });
 
@@ -61,7 +61,7 @@ describe('vennRenderer', () => {
         textMinFontSize: 12,
         textMaxFontSize: 28,
       }),
-      getTextData: () => [{ sets: ['A'], text: 'alpha', color: undefined }],
+      getTextData: () => [{ sets: ['A'], id: 'alpha', label: undefined, color: undefined }],
     });
 
     await draw('', 'venn', '1.0', diagram);

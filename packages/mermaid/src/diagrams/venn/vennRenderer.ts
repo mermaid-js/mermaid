@@ -207,6 +207,7 @@ function renderTextNodes(
           .attr('stroke-dasharray', '4 3');
       }
 
+      const displayLabel = node.label ?? node.id;
       const textEl = areaGroup
         .append('text')
         .attr('class', 'venn-text-node')
@@ -215,7 +216,7 @@ function renderTextNodes(
         .attr('text-anchor', 'middle')
         .attr('dominant-baseline', 'middle')
         .attr('font-size', `40px`)
-        .text(node.text);
+        .text(displayLabel);
 
       if (node.color) {
         textEl.attr('fill', node.color);

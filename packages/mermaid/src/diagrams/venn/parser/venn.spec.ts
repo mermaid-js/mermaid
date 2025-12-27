@@ -52,30 +52,54 @@ describe('Venn diagram', function () {
   test('with text nodes', () => {
     const str = `venn-beta
           set A
+            text A1     label: foo bar
           set B
+            text B1     label: "hello, world",  color: red
+            text B2     label: "hex",  color: #fff
+            text B3     label: "rgb",  color: rgb(255, 0, 128)
+            text B4     label: "rgba", color: rgba(255, 0, 128, 0.5)
           set A,B
-          text A     label: foo bar
-          text A,B   label: "shared note"
-          text B     label: "hello, world",  color: red
-          text B     label: "hex",  color: #fff
-          text B     label: "rgb",  color: rgb(255, 0, 128)
-          text B     label: "rgba", color: rgba(255, 0, 128, 0.5)
+            text AB1    label: "shared note"
       `;
     venn.parse(str);
     expect(db.getTextData()).toEqual([
-      expect.objectContaining({ sets: ['A'], text: 'foo bar' }),
-      expect.objectContaining({ sets: ['A', 'B'], text: 'shared note' }),
-      expect.objectContaining({ sets: ['B'], text: 'hello, world', color: 'red' }),
-      expect.objectContaining({ sets: ['B'], text: 'hex', color: '#fff' }),
-      expect.objectContaining({ sets: ['B'], text: 'rgb', color: 'rgb(255, 0, 128)' }),
-      expect.objectContaining({ sets: ['B'], text: 'rgba', color: 'rgba(255, 0, 128, 0.5)' }),
+      expect.objectContaining({ sets: ['A'], id: 'A1', label: 'foo bar' }),
+      expect.objectContaining({ sets: ['B'], id: 'B1', label: 'hello, world', color: 'red' }),
+      expect.objectContaining({ sets: ['B'], id: 'B2', label: 'hex', color: '#fff' }),
+      expect.objectContaining({ sets: ['B'], id: 'B3', label: 'rgb', color: 'rgb(255, 0, 128)' }),
+      expect.objectContaining({
+        sets: ['B'],
+        id: 'B4',
+        label: 'rgba',
+        color: 'rgba(255, 0, 128, 0.5)',
+      }),
+      expect.objectContaining({ sets: ['A', 'B'], id: 'AB1', label: 'shared note' }),
+    ]);
+  });
+
+  test('with indented text nodes', () => {
+    const str = `venn-beta
+          set A   label: Frontend
+            text A1
+            text A2
+          set B   label: Backend
+            text B1
+          set A,B label: APIs
+            text OpenAPI
+      `;
+    venn.parse(str);
+    expect(db.getTextData()).toEqual([
+      expect.objectContaining({ sets: ['A'], id: 'A1', label: undefined }),
+      expect.objectContaining({ sets: ['A'], id: 'A2', label: undefined }),
+      expect.objectContaining({ sets: ['B'], id: 'B1', label: undefined }),
+      expect.objectContaining({ sets: ['A', 'B'], id: 'OpenAPI', label: undefined }),
     ]);
   });
 
   test('text node requires label', () => {
     const str = `venn-beta
         set A
-        text A  color: red
+            text A1  color: red
     `;
     expect(() => venn.parse(str)).toThrow('text requires label');
   });
