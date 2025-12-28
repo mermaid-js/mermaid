@@ -98,12 +98,12 @@ export function userNodeOverridesNewGen(node: Node, options: any) {
   return Object.assign(
     {
       roughness: 0.7,
-      fill: 'transparent', // Set by CSS to vary from style to style
+      fill: 'transparent', // Set by CSS to vary from theme to theme
       fillStyle: 'hachure', // solid fill
       fillWeight: 4,
       hachureGap: 5.2,
       seed: handDrawnSeed,
-      stroke: 'transparent', // Set by CSS to vary from style to style
+      stroke: 'transparent', // Set by CSS to vary from theme to theme
       strokeWidth: stylesMap.get('stroke-width')?.replace('px', '') || 1.3,
       fillLineDash: [0, 0],
       strokeLineDash: getStrokeDashArray(stylesMap.get('stroke-dasharray')),

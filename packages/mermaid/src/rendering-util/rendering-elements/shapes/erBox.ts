@@ -13,6 +13,7 @@ import { calculateTextWidth } from '../../../utils.js';
 import type { MermaidConfig } from '../../../config.type.js';
 import type { D3Selection } from '../../../types.js';
 import { type RoughSVG } from 'roughjs/bin/svg.js';
+import { concatenateStyles } from '../../stylesUtil.js';
 
 export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   // Treat node as entityNode for certain entityNode checks
@@ -26,8 +27,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   let PADDING = config.er?.diagramPadding ?? 10;
   let TEXT_PADDING = config.er?.entityPadding ?? 6;
 
-  const { cssStyles } = node;
-  const { labelStyles, nodeStyles } = styles2String(node);
+  const { labelStyles, nodeStyles, backgroundStyles, borderStyles } = styles2String(node);
 
   // Draw rect if no attributes are found
   if (entityNode.attributes.length === 0 && node.label) {
@@ -75,7 +75,6 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   const nameBBox = await addText(shapeSvg, node.label ?? '', config, 0, 0, ['name'], labelStyles);
   nameBBox.height += TEXT_PADDING;
   let yOffset = 0;
-  const yOffsets = [];
   const rows = [];
   let maxTypeWidth = 0;
   let maxNameWidth = 0;
@@ -168,11 +167,6 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverridesNewGen(node, {});
 
-  if (node.look !== 'handDrawn') {
-    options.roughness = 0;
-    options.fillStyle = 'solid';
-  }
-
   let totalShapeBBoxHeight = 0;
   if (rows.length > 0) {
     totalShapeBBoxHeight = rows.reduce((sum, row) => sum + (row?.rowHeight ?? 0), 0);
@@ -218,28 +212,49 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   // Draw shape
   const rect =
     node.look === 'handDrawn'
-      ? drawRoughShape(shapeSvg, rc, x, y, w, h, options)
-      : drawClassicShape(shapeSvg, x, y, w, h);
+      ? drawRoughShape(shapeSvg, rc, x, y, w, h, options, borderStyles)
+      : drawClassicShape(shapeSvg, x, y, w, h, borderStyles);
 
   // Draw header
   if (node.look === 'handDrawn') {
-    drawRoughHeader(shapeSvg, rc, x, y, w, nameBBox.height, options, cssStyles);
+    drawRoughHeader(
+      shapeSvg,
+      rc,
+      x,
+      y,
+      w,
+      nameBBox.height,
+      options,
+      backgroundStyles,
+      borderStyles
+    );
   } else {
-    drawClassicHeader(shapeSvg, x, y, w, nameBBox.height, cssStyles);
+    drawClassicHeader(shapeSvg, x, y, w, nameBBox.height, nodeStyles);
   }
 
   // Draw rows
-  yOffsets.push(0);
   for (const [index, row] of rows.entries()) {
     const indexSkippingHeader = index + 1;
     const isEven = indexSkippingHeader % 2 === 0; // TODO: always true ?  && row.yOffset !== 0;
     const rowY = nameBBox.height + y + row?.yOffset;
     const rowH = row?.rowHeight;
     const rowClass = `rect row-${isEven ? 'even' : 'odd'}`;
+    const rowBackgroundStyles = isEven ? backgroundStyles : [];
     if (node.look === 'handDrawn') {
-      drawRoughRow(shapeSvg, rc, x, rowY, w, rowH, options, rowClass, cssStyles);
+      drawRoughRow(
+        shapeSvg,
+        rc,
+        x,
+        rowY,
+        w,
+        rowH,
+        options,
+        rowClass,
+        rowBackgroundStyles,
+        borderStyles
+      );
     } else {
-      drawClassicRow(shapeSvg, x, rowY, w, rowH, rowClass, cssStyles);
+      drawClassicRow(shapeSvg, x, rowY, w, rowH, rowClass, rowBackgroundStyles, ['stroke:none']);
     }
   }
 
@@ -252,9 +267,25 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   // Draw first vertical divider line
   const firstDivX = maxTypeWidth + x;
   if (node.look === 'handDrawn') {
-    drawRoughDivider(shapeSvg, rc, firstDivX, verticalDivsY1, firstDivX, verticalDivsY2, options);
+    drawRoughDivider(
+      shapeSvg,
+      rc,
+      firstDivX,
+      verticalDivsY1,
+      firstDivX,
+      verticalDivsY2,
+      options,
+      borderStyles
+    );
   } else {
-    drawClassicDivider(shapeSvg, firstDivX, verticalDivsY1, firstDivX, verticalDivsY2);
+    drawClassicDivider(
+      shapeSvg,
+      firstDivX,
+      verticalDivsY1,
+      firstDivX,
+      verticalDivsY2,
+      borderStyles
+    );
   }
 
   // Draw second vertical divider line
@@ -268,10 +299,18 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
         verticalDivsY1,
         secondDivX,
         verticalDivsY2,
-        options
+        options,
+        borderStyles
       );
     } else {
-      drawClassicDivider(shapeSvg, secondDivX, verticalDivsY1, secondDivX, verticalDivsY2);
+      drawClassicDivider(
+        shapeSvg,
+        secondDivX,
+        verticalDivsY1,
+        secondDivX,
+        verticalDivsY2,
+        borderStyles
+      );
     }
   }
 
@@ -279,9 +318,52 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   if (commentPresent) {
     const thirdDivX = maxTypeWidth + maxNameWidth + maxKeysWidth + x;
     if (node.look === 'handDrawn') {
-      drawRoughDivider(shapeSvg, rc, thirdDivX, verticalDivsY1, thirdDivX, verticalDivsY2, options);
+      drawRoughDivider(
+        shapeSvg,
+        rc,
+        thirdDivX,
+        verticalDivsY1,
+        thirdDivX,
+        verticalDivsY2,
+        options,
+        borderStyles
+      );
     } else {
-      drawClassicDivider(shapeSvg, thirdDivX, verticalDivsY1, thirdDivX, verticalDivsY2);
+      drawClassicDivider(
+        shapeSvg,
+        thirdDivX,
+        verticalDivsY1,
+        thirdDivX,
+        verticalDivsY2,
+        borderStyles
+      );
+    }
+  }
+
+  const horizontalDivsX1 = x;
+  const horizontalDivsX2 = w + x;
+  for (const [, row] of rows.entries()) {
+    const horizontalDivY = nameBBox.height + y + row.yOffset;
+    if (node.look === 'handDrawn') {
+      drawRoughDivider(
+        shapeSvg,
+        rc,
+        horizontalDivsX1,
+        horizontalDivY,
+        horizontalDivsX2,
+        horizontalDivY,
+        options,
+        borderStyles
+      );
+    } else {
+      drawClassicDivider(
+        shapeSvg,
+        horizontalDivsX1,
+        horizontalDivY,
+        horizontalDivsX2,
+        horizontalDivY,
+        borderStyles
+      );
     }
   }
 
@@ -296,7 +378,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
       ?.map((s) => `${s}`)
       .join('; ');
     shapeSvg.selectAll('path').attr('style', strokeStyles ?? '');
-    shapeSvg.selectAll('.row-rect-even path').attr('style', nodeStyles);
+    shapeSvg.selectAll('.rect.row-even path').attr('style', nodeStyles);
   }
 
   node.intersect = function (point) {
@@ -312,12 +394,17 @@ function drawRoughShape(
   y: number,
   w: number,
   h: number,
-  options: any
+  options: any,
+  borderStyles: string[]
 ): D3Selection<SVGGElement> {
-  return shapeSvg
+  const roughShape = shapeSvg
     .insert(() => rc.rectangle(x, y, w, h, options), ':first-child')
     .attr('class', 'rect shape')
-    .attr('fill', 'transparent');
+    .attr('fill', 'none');
+
+  roughShape.select('path:nth-of-type(2)').attr('style', concatenateStyles(borderStyles));
+
+  return roughShape;
 }
 
 function drawClassicShape(
@@ -325,12 +412,14 @@ function drawClassicShape(
   x: number,
   y: number,
   w: number,
-  h: number
+  h: number,
+  borderStyles: string[]
 ) {
   return shapeSvg
     .insert('rect', ':first-child')
     .attr('class', 'rect shape')
-    .attr('fill', 'transparent')
+    .attr('fill', 'none')
+    .attr('style', concatenateStyles(borderStyles))
     .attr('x', x)
     .attr('y', y)
     .attr('width', w)
@@ -345,7 +434,8 @@ function drawRoughHeader(
   w: number,
   h: number,
   options: any,
-  cssStyles: string[] | undefined
+  backgroundStyles: string[],
+  borderStyles: string[]
 ) {
   shapeSvg // Hachures + cover for edges
     .insert<'rect'>('rect', '.shape')
@@ -355,10 +445,14 @@ function drawRoughHeader(
     .attr('width', w)
     .attr('height', h);
 
-  shapeSvg
+  const roughRect = shapeSvg
     .insert(() => rc.rectangle(x, y, w, h, options), '.shape')
-    .attr('class', 'rect row-header')
-    .attr('style', cssStyles!.join(';'));
+    .attr('class', 'rect row-header');
+
+  const convertedBackgroundStyles = concatenateStyles(backgroundStyles).replace('fill', 'stroke'); // FIXME : extract
+  roughRect.select('path').attr('style', convertedBackgroundStyles);
+
+  roughRect.select('path:nth-of-type(2)').attr('style', concatenateStyles(borderStyles));
 }
 
 function drawClassicHeader(
@@ -367,12 +461,12 @@ function drawClassicHeader(
   y: number,
   w: number,
   h: number,
-  cssStyles: string[] | undefined
+  nodeStyles: string
 ) {
   return shapeSvg
     .insert('rect', '.shape')
     .attr('class', 'rect row-header')
-    .attr('style', cssStyles!.join(';'))
+    .attr('style', nodeStyles)
     .attr('x', x)
     .attr('y', y)
     .attr('width', w)
@@ -388,7 +482,8 @@ function drawRoughRow(
   h: number,
   options: any,
   cssClass: string,
-  cssStyles: string[] | undefined
+  backgroundStyles: string[],
+  borderStyles: string[]
 ) {
   shapeSvg // Hachures + cover for edges
     .insert<'rect'>('rect', '.shape')
@@ -398,10 +493,14 @@ function drawRoughRow(
     .attr('width', w)
     .attr('height', h);
 
-  shapeSvg
+  const roughRect = shapeSvg
     .insert(() => rc.rectangle(x, y, w, h, options), '.shape')
-    .attr('class', cssClass)
-    .attr('style', cssStyles!.join(';'));
+    .attr('class', cssClass);
+
+  const convertedBackgroundStyles = concatenateStyles(backgroundStyles).replace('fill', 'stroke'); // FIXME : extract
+  roughRect.select('path').attr('style', convertedBackgroundStyles);
+
+  roughRect.select('path:nth-of-type(2)').attr('style', concatenateStyles(borderStyles));
 }
 
 function drawClassicRow(
@@ -411,12 +510,13 @@ function drawClassicRow(
   w: number,
   h: number,
   cssClass: string,
-  cssStyles: string[] | undefined
+  backgroundStyles: string[],
+  borderStyles: string[]
 ) {
   shapeSvg
     .insert<'rect'>('rect', '.shape')
     .attr('class', cssClass)
-    .attr('style', cssStyles!.join(';'))
+    .attr('style', concatenateStyles([...backgroundStyles, ...borderStyles]))
     .attr('x', x)
     .attr('y', y)
     .attr('width', w)
@@ -430,9 +530,14 @@ function drawRoughDivider(
   y1: number,
   x2: number,
   y2: number,
-  options: any
+  options: any,
+  cssStyles: string[]
 ) {
-  shapeSvg.insert(() => rc.line(x1, y1, x2, y2, options)).attr('class', 'divider');
+  const roughDivider = shapeSvg
+    .insert(() => rc.line(x1, y1, x2, y2, options))
+    .attr('class', 'divider');
+
+  roughDivider.select('path').attr('style', concatenateStyles(cssStyles));
 }
 
 function drawClassicDivider(
@@ -440,11 +545,13 @@ function drawClassicDivider(
   x1: number,
   y1: number,
   x2: number,
-  y2: number
+  y2: number,
+  cssStyles: string[]
 ) {
   shapeSvg
     .insert('line')
     .attr('class', 'divider')
+    .attr('style', concatenateStyles(cssStyles))
     .attr('x1', x1)
     .attr('y1', y1)
     .attr('x2', x2)

@@ -37,6 +37,9 @@ erDiagram
         int quantity
         float price
     }
+
+    style ORDER fill:#292,stroke:#ccc,stroke-width:4px,color:#dd66dd
+    style PRODUCT fill:#bbf,stroke:#f66,stroke-width:2px,stroke-dasharray: 5 5,color:#444400
 `;
 
 /**

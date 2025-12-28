@@ -106,8 +106,6 @@ const getStyles = (options: FlowChartStyleOptions & ErStyleOptions) =>
   /* Odd rows */
   .rect.row-odd {
     fill: ${options.rowOdd};
-    stroke: ${options.nodeBorder};
-    stroke-width: 1px;
   }
   .rect.row-odd-background {
     fill: ${options.mainBkg};
@@ -120,11 +118,9 @@ const getStyles = (options: FlowChartStyleOptions & ErStyleOptions) =>
   /* Even rows */
   .rect.row-even {
     fill: ${options.rowEven};
-    stroke: ${options.nodeBorder};
-    stroke-width: 1px;
   }
   .rect.row-even-background {
-      fill: ${options.mainBkg};
+    fill: ${options.mainBkg};
   }
   
   g.row-even path:nth-child(1) {
