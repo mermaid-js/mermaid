@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sankey Apple Style Demo V18 (Robust)</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 40px; background: #f5f5f7; user-select: none; }
+        h2 { font-weight: 600; color: #1d1d1f; }
+        svg { background: #fff; border-radius: 18px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: visible; }
+
+        .node rect { shape-rendering: crispEdges; cursor: pointer; transition: fill-opacity 0.2s; }
+        .node rect:hover { fill-opacity: 0.8; }
+        .label { font-size: 11px; font-weight: 600; fill: #1d1d1f; pointer-events: none; opacity: 1;}
+        .label-bg { stroke: rgba(255,255,255,0.8); stroke-width: 4px; stroke-linejoin: round; paint-order: stroke; }
+        .indicator { pointer-events: none; fill: #555; stroke: none; }
+        .link { fill: none; stroke-opacity: 0.5; mix-blend-mode: multiply; }
+        .link:hover { stroke-opacity: 0.8; }
+    </style>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+</head>
+<body>
+    <h2>Apple Style V18: Robust Animation</h2>
+    <div id="chart" style="margin-left: 100px; margin-right: 100px;"></div>
+
+    <script>
+        // RAW DATA
+        const rawNodes = [
+            { id: "iPhone", color: "#6e6e73" },
+            { id: "Mac", color: "#6e6e73" },
+            { id: "iPad", color: "#6e6e73" },
+            { id: "Wearables", color: "#6e6e73" },
+            { id: "Products", color: "#6e6e73" },
+            { id: "Services", color: "#6e6e73" },
+            { id: "Revenue", color: "#424245" },
+            { id: "Cost of Revenue", color: "#ff3b30" },
+            { id: "Gross Profit", color: "#34c759" },
+            { id: "Op Expenses", color: "#ff3b30" },
+            { id: "Op Profit", color: "#34c759" },
+            { id: "Tax", color: "#ff3b30" },
+            { id: "Net Profit", color: "#34c759" }
+        ];
+
+        const rawLinks = [
+            { source: "iPhone", target: "Products", value: 205 },
+            { source: "Mac", target: "Products", value: 40 },
+            { source: "iPad", target: "Products", value: 29 },
+            { source: "Wearables", target: "Products", value: 41 },
+            { source: "Products", target: "Revenue", value: 315 },
+            { source: "Services", target: "Revenue", value: 78 },
+            { source: "Revenue", target: "Cost of Revenue", value: 223 },
+            { source: "Revenue", target: "Gross Profit", value: 170 },
+            { source: "Gross Profit", target: "Op Expenses", value: 51 },
+            { source: "Gross Profit", target: "Op Profit", value: 119 },
+            { source: "Op Profit", target: "Tax", value: 19 },
+            { source: "Op Profit", target: "Net Profit", value: 100 }
+        ];
+
+        const width = 800;
+        const height = 500;
+
+        // --- 1. PRE-COMPUTE ORDER ---
+        const nodeSortMap = new Map();
+        rawNodes.forEach((n, i) => nodeSortMap.set(n.id, i));
+
+        let collapsedStates = new Set();
+
+        const svg = d3.select("#chart").append("svg")
+            .attr("width", width).attr("height", height).attr("viewBox", [0, 0, width, height]);
+
+        function getInteractionMeta(id) {
+            const incoming = rawLinks.filter(l => l.target === id);
+            const outgoing = rawLinks.filter(l => l.source === id);
+            let dir = 'source';
+            if (incoming.length === 0 && outgoing.length > 0) dir = 'source';
+            else if (outgoing.length === 0 && incoming.length > 0) dir = 'target';
+            else if (incoming.length >= outgoing.length) dir = 'target';
+            const hasChildren = dir === 'source' ? outgoing.length > 0 : incoming.length > 0;
+            return { dir, hasChildren };
+        }
+
+        function getPrunedGraph() {
+             const isLinkBlocked = (l) => collapsedStates.has(`source:${l.source}`) || collapsedStates.has(`target:${l.target}`);
+            let activeLinks = rawLinks.map(d => ({...d})).filter(l => !isLinkBlocked(l));
+
+            let activeNodeIds = new Set(rawNodes.map(n => n.id));
+            let changed = true;
+            while(changed) {
+                changed = false;
+                const counts = new Map();
+                activeNodeIds.forEach(id => counts.set(id, { in: 0, out: 0 }));
+                const validLinks = activeLinks.filter(l => activeNodeIds.has(l.source) && activeNodeIds.has(l.target));
+                validLinks.forEach(l => { counts.get(l.source).out++; counts.get(l.target).in++; });
+
+                const nextActiveNodeIds = new Set();
+                activeNodeIds.forEach(id => {
+                    const rawHasIn = rawLinks.some(l => l.target === id);
+                    const rawHasOut = rawLinks.some(l => l.source === id);
+                    const currIn = counts.get(id).in;
+                    const currOut = counts.get(id).out;
+                    let keep = true;
+                    if (rawHasIn && currIn === 0) keep = false;
+                    if (rawHasOut && currOut === 0) keep = false;
+
+                    // FIX: Only resurrect anchor nodes if they still have at least one connection
+                    // If a node is completely orphaned (0 in AND 0 out), let it die
+                    const isAnchor = collapsedStates.has(`source:${id}`) || collapsedStates.has(`target:${id}`);
+                    if (isAnchor && (currIn > 0 || currOut > 0)) {
+                        keep = true;
+                    }
+
+                    if (keep) nextActiveNodeIds.add(id);
+                });
+
+                if (nextActiveNodeIds.size !== activeNodeIds.size) {
+                    activeNodeIds = nextActiveNodeIds;
+                    changed = true;
+                    activeLinks = validLinks.filter(l => nextActiveNodeIds.has(l.source) && nextActiveNodeIds.has(l.target));
+                }
+            }
+            const nodes = rawNodes.map(d => ({...d})).filter(d => activeNodeIds.has(d.id));
+            const links = activeLinks.filter(l => activeNodeIds.has(l.source) && activeNodeIds.has(l.target));
+            return { nodes, links };
+        }
+
+        function render() {
+            const graphData = getPrunedGraph();
+
+            const sankey = d3.sankey()
+                .nodeId(d => d.id)
+                .nodeWidth(20)
+                .nodePadding(40)
+                .nodeAlign(d3.sankeyLeft)
+                .extent([[1, 1], [width - 1, height - 20]])
+                .nodeSort((a, b) => nodeSortMap.get(a.id) - nodeSortMap.get(b.id));
+
+            const graph = sankey(graphData);
+
+            const t = svg.transition().duration(750).ease(d3.easeCubicOut);
+
+            // LINKS
+            const link = svg.selectAll(".link").data(graph.links, d => `${d.source.id}-${d.target.id}`);
+
+            link.enter().append("path").attr("class", "link")
+                .attr("d", d => d3.sankeyLinkHorizontal()(d)) // Start at final pos, but fade in
+                .attr("stroke", d => d.target.color || "#e5e5ea")
+                .attr("stroke-width", d => Math.max(1, d.width))
+                .style("opacity", 0)
+                .transition(t).style("opacity", 1);
+
+            link.transition(t)
+                .attr("d", d3.sankeyLinkHorizontal())
+                .attr("stroke-width", d => Math.max(1, d.width));
+
+            link.exit().transition(t).style("opacity", 0).remove();
+
+            // NODES
+            const node = svg.selectAll(".node-group").data(graph.nodes, d => d.id);
+            const nodeEnter = node.enter().append("g").attr("class", "node-group");
+
+            nodeEnter.append("rect").attr("class", "node").on("click", (e,d) => toggleCollapse(d));
+            nodeEnter.append("text").attr("class", "label label-bg");
+            nodeEnter.append("text").attr("class", "label label-fg");
+            nodeEnter.append("path").attr("class", "indicator");
+
+            // ENTER ANIMATION: Fade in at final position
+            // The graph naturally expands due to re-layout
+            nodeEnter.attr("transform", d => `translate(${d.x0}, ${d.y0})`)
+            .style("opacity", 0)
+            .transition(t)
+            .style("opacity", 1);
+
+            const nodeUpdate = node.merge(nodeEnter);
+            nodeUpdate.transition(t)
+                .attr("transform", d => `translate(${d.x0}, ${d.y0})`)
+                .style("opacity", 1);
+
+            nodeUpdate.select("rect").transition(t)
+                .attr("height", d => Math.max(1, d.y1 - d.y0))
+                .attr("width", d => d.x1 - d.x0)
+                .attr("fill", d => d.color || "#8e8e93");
+
+            // INDICATOR
+            nodeUpdate.select(".indicator")
+                .attr("transform", d => `translate(${(d.x1 - d.x0)/2}, ${(d.y1 - d.y0)/2})`)
+                .attr("d", d => {
+                    const { dir, hasChildren } = getInteractionMeta(d.id);
+                    if (!hasChildren) return null;
+                    const isCollapsed = collapsedStates.has(`${dir}:${d.id}`);
+                    if (!isCollapsed) return null;
+
+                    if (dir === 'source') return "M-2,-3 L2,0 L-2,3";
+                    else return "M2,-3 L-2,0 L2,3";
+                })
+                .style("display", "block");
+
+            // LABELS
+            const setLabel = (selection) => {
+                selection.text(d => `${d.id} $${Math.round(d.value)}B`)
+                    .transition(t)
+                    .attr("y", d => (d.y1 - d.y0) / 2).attr("dy", "0.35em")
+                    .attr("x", d => {
+                        const { dir } = getInteractionMeta(d.id);
+                        if (dir === 'source') return -10;
+                        return (d.x1 - d.x0) + 10;
+                    })
+                    .attr("text-anchor", d => {
+                        const { dir } = getInteractionMeta(d.id);
+                        if (dir === 'source') return "end";
+                        return "start";
+                    });
+            };
+            nodeUpdate.select(".label-bg").call(setLabel);
+            nodeUpdate.select(".label-fg").call(setLabel);
+
+            // EXIT ANIMATION: Fade out in place, don't move
+            // The remaining graph will naturally shift due to re-layout
+            node.exit()
+                .transition(t)
+                .style("opacity", 0)
+                .remove();
+        }
+
+        function toggleCollapse(d) {
+            const { dir, hasChildren } = getInteractionMeta(d.id);
+            if (!hasChildren) return;
+
+            const key = `${dir}:${d.id}`;
+            if (collapsedStates.has(key)) collapsedStates.delete(key);
+            else collapsedStates.add(key);
+            render();
+        }
+
+        render();
+    </script>
+</body>
+</html>
