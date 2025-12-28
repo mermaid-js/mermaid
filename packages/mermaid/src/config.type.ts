@@ -210,6 +210,7 @@ export interface MermaidConfig {
   packet?: PacketDiagramConfig;
   block?: BlockDiagramConfig;
   radar?: RadarDiagramConfig;
+  venn?: VennDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
@@ -1622,6 +1623,16 @@ export interface RadarDiagramConfig extends BaseDiagramConfig {
    * The tension factor for the Catmull-Rom spline conversion to cubic Bézier curves.
    */
   curveTension?: number;
+}
+/**
+ * The object containing configurations specific for Venn diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "VennDiagramConfig".
+ */
+export interface VennDiagramConfig extends BaseDiagramConfig {
+  padding?: number;
+  debugTextLayout?: boolean;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
