@@ -6,7 +6,7 @@ const createDiagram = (overrides: Partial<Record<string, unknown>> = {}) => {
   const defaultDb = {
     getConfig: () => ({
       padding: 15,
-      debugTextLayout: false,
+      useDebugLayout: false,
     }),
     getDiagramTitle: () => undefined,
     getSubsetData: () => [
@@ -57,7 +57,7 @@ describe('vennRenderer', () => {
     const diagram = createDiagram({
       getConfig: () => ({
         padding: 15,
-        debugTextLayout: true,
+        useDebugLayout: true,
         textMinFontSize: 12,
         textMaxFontSize: 28,
       }),

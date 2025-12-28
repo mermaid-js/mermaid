@@ -89,13 +89,11 @@ export const setIndentMode: VennDB['setIndentMode'] = (enabled) => {
   indentMode = enabled;
 };
 
-const DEFAULT_PACKET_CONFIG: Required<VennDiagramConfig> = DEFAULT_CONFIG.venn;
-const getConfig = (): Required<VennDiagramConfig> => {
-  return cleanAndMerge({
-    ...DEFAULT_PACKET_CONFIG,
-    ...commonGetConfig().venn,
-  });
-};
+const DEFAULT_VENN_CONFIG: Required<VennDiagramConfig> = DEFAULT_CONFIG.venn;
+
+function getConfig(): Required<VennDiagramConfig> {
+  return cleanAndMerge(DEFAULT_VENN_CONFIG, commonGetConfig().venn);
+}
 
 const customClear = () => {
   clear();

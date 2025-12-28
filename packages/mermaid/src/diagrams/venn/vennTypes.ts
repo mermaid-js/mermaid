@@ -12,7 +12,7 @@ export interface VennData {
 export interface VennTextData {
   sets: string[];
   id: string;
-  label?: string;
+  label: string | undefined;
   color: string | undefined;
 }
 

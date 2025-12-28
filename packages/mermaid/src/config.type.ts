@@ -1632,7 +1632,7 @@ export interface RadarDiagramConfig extends BaseDiagramConfig {
  */
 export interface VennDiagramConfig extends BaseDiagramConfig {
   padding?: number;
-  debugTextLayout?: boolean;
+  useDebugLayout?: boolean;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

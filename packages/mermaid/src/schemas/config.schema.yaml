@@ -2342,7 +2342,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         minimum: 0
         default: 8
-      debugTextLayout:
+      useDebugLayout:
         type: boolean
         default: false
 
