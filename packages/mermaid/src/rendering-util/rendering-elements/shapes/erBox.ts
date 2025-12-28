@@ -402,7 +402,12 @@ function drawRoughShape(
     .attr('class', 'rect shape')
     .attr('fill', 'none');
 
-  roughShape.select('path:nth-of-type(2)').attr('style', concatenateStyles(borderStyles));
+  roughShape.select('path').remove(); // Useless, only the stroke matters
+  roughShape
+    .select('path')
+    .attr('fill', null) // Set by CSS or style
+    .attr('stroke', null) // Set by CSS or style
+    .attr('style', concatenateStyles(borderStyles));
 
   return roughShape;
 }
@@ -450,9 +455,17 @@ function drawRoughHeader(
     .attr('class', 'rect row-header');
 
   const convertedBackgroundStyles = concatenateStyles(backgroundStyles).replace('fill', 'stroke'); // FIXME : extract
-  roughRect.select('path').attr('style', convertedBackgroundStyles);
+  roughRect
+    .select('path')
+    .attr('fill', null) // Set by CSS or style
+    .attr('stroke', null) // Set by CSS or style
+    .attr('style', convertedBackgroundStyles);
 
-  roughRect.select('path:nth-of-type(2)').attr('style', concatenateStyles(borderStyles));
+  roughRect
+    .select('path:nth-of-type(2)')
+    .attr('fill', null) // Set by CSS or style
+    .attr('stroke', null) // Set by CSS or style
+    .attr('style', concatenateStyles(borderStyles));
 }
 
 function drawClassicHeader(
@@ -498,9 +511,17 @@ function drawRoughRow(
     .attr('class', cssClass);
 
   const convertedBackgroundStyles = concatenateStyles(backgroundStyles).replace('fill', 'stroke'); // FIXME : extract
-  roughRect.select('path').attr('style', convertedBackgroundStyles);
+  roughRect
+    .select('path')
+    .attr('fill', null) // Set by CSS or style
+    .attr('stroke', null) // Set by CSS or style
+    .attr('style', convertedBackgroundStyles);
 
-  roughRect.select('path:nth-of-type(2)').attr('style', concatenateStyles(borderStyles));
+  roughRect
+    .select('path:nth-of-type(2)')
+    .attr('fill', null) // Set by CSS or style
+    .attr('stroke', null) // Set by CSS or style
+    .attr('style', concatenateStyles(borderStyles));
 }
 
 function drawClassicRow(
@@ -537,7 +558,11 @@ function drawRoughDivider(
     .insert(() => rc.line(x1, y1, x2, y2, options))
     .attr('class', 'divider');
 
-  roughDivider.select('path').attr('style', concatenateStyles(cssStyles));
+  roughDivider
+    .select('path')
+    .attr('fill', null) // Set by CSS or style
+    .attr('stroke', null) // Set by CSS or style
+    .attr('style', concatenateStyles(cssStyles));
 }
 
 function drawClassicDivider(
