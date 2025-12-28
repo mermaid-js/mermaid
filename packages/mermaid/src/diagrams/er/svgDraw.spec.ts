@@ -53,12 +53,12 @@ const darkThemeVariables = getThemeVariablesDark();
 describe('ER diagram SVGs', () => {
   jsdomIt('should be identical in dark and light themes (classic look)', async () => {
     prepareSvgNode();
-    setConfig({ theme: 'default', themeVariables: lightThemeVariables, handDrawnSeed: TEST_SEED });
+    setConfig({ theme: 'default', themeVariables: lightThemeVariables });
     const lightSvgNode = await drawDiagram(INPUT_DIAGRAM_TEXT);
     const lightSvg = await prettier.format(lightSvgNode.outerHTML, { parser: 'html' });
 
     prepareSvgNode();
-    setConfig({ theme: 'dark', themeVariables: darkThemeVariables, handDrawnSeed: TEST_SEED });
+    setConfig({ theme: 'dark', themeVariables: darkThemeVariables });
     const darkSvgNode = await drawDiagram(INPUT_DIAGRAM_TEXT);
     const darkSvg = await prettier.format(darkSvgNode.outerHTML, { parser: 'html' });
 
