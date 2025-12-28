@@ -19,6 +19,7 @@ export const draw: DrawDefinition = (
 ): void => {
   const db = diagObj.db as VennDB;
   const config = db.getConfig?.();
+  const { themeVariables } = getConfig();
   const title = db.getDiagramTitle?.();
   const titleHeight = title ? 48 : 0;
   const sets = db.getSubsetData();
@@ -27,7 +28,6 @@ export const draw: DrawDefinition = (
   // Build lookup tables for custom colors per set/union
   const customFontColorMap = new Map<VennData['sets'], string>();
   const customBackgroundColorMap = new Map<VennData['sets'], string>();
-  const { themeVariables } = getConfig();
   const defaultTextColor = themeVariables.primaryTextColor ?? themeVariables.textColor;
   for (const set of sets) {
     if (set.color) {
@@ -96,10 +96,7 @@ export const draw: DrawDefinition = (
   dummyD3root
     .selectAll('.venn-intersection text')
     .style('font-size', '48px')
-    .style('fill', (e) => {
-      const d = e as VennData;
-      return customFontColorMap.get(d.sets) ?? defaultTextColor;
-    });
+    .style('fill', (e) => customFontColorMap.get((e as VennData).sets) ?? defaultTextColor);
   dummyD3root
     .selectAll('.venn-intersection path')
     .style('fill-opacity', (e) => (customBackgroundColorMap.has((e as VennData).sets) ? 1 : 0))
@@ -151,13 +148,9 @@ function renderTextNodes(
     // Calculate the center point and a safe inner radius for text.
     const centerX = area.text.x;
     const centerY = area.text.y;
-    const minCircleRadius = Math.min(...area.circles.map((circle) => circle.radius));
+    const minCircleRadius = Math.min(...area.circles.map((c) => c.radius));
     const innerRadiusRaw = Math.min(
-      ...area.circles.map((circle) => {
-        const dx = centerX - circle.x;
-        const dy = centerY - circle.y;
-        return circle.radius - Math.hypot(dx, dy);
-      })
+      ...area.circles.map((c) => c.radius - Math.hypot(centerX - c.x, centerY - c.y))
     );
     let innerRadius = Number.isFinite(innerRadiusRaw) ? Math.max(0, innerRadiusRaw) : 0;
     if (innerRadius === 0 && Number.isFinite(minCircleRadius)) {
