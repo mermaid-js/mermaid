@@ -92,7 +92,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   // New config options with defaults
   const nodeWidth = conf?.nodeWidth ?? defaultSankeyConfig.nodeWidth ?? 10;
   const nodePadding = conf?.nodePadding ?? defaultSankeyConfig.nodePadding ?? 12;
-  const labelStyle = conf?.labelStyle ?? defaultSankeyConfig.labelStyle ?? 'outlined';
+  const labelStyle = conf?.labelStyle ?? defaultSankeyConfig.labelStyle ?? 'default';
   const nodeColors: Record<string, string> = conf?.nodeColors ?? {};
 
   // Prepare data for construction based on diagObj.db
@@ -194,8 +194,8 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   // Create labels for nodes
   const labelsGroup = svg.append('g').attr('class', 'node-labels').attr('font-size', 14);
 
-  if (labelStyle === 'outlined') {
-    // Outlined style: render background stroke first, then foreground text
+  if (labelStyle === 'default') {
+    // Default style: render background stroke first, then foreground text for readability
     // Background text with white stroke for readability
     labelsGroup
       .selectAll('.sankey-label-bg')
@@ -220,7 +220,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
       .attr('text-anchor', (d: any) => getLabelPosition(d).anchor)
       .text(getText);
   } else {
-    // Default style: single text element (backward compatible)
+    // Legacy style: single text element (original behavior)
     labelsGroup
       .selectAll('text')
       .data(graph.nodes)

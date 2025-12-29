@@ -152,25 +152,25 @@ describe('Sankey Diagram', () => {
       ).as('graph');
     });
 
-    it('should render outlined labels by default', function () {
+    it('should render with outlined style by default', function () {
       renderGraph(this.graph, { sankey: {} });
 
-      // Outlined style should create background and foreground label elements
+      // Default style should create background and foreground label elements
       cy.get('.node-labels .sankey-label-bg').should('exist');
       cy.get('.node-labels .sankey-label-fg').should('exist');
     });
 
-    it('should render default (plain) labels when labelStyle is default', function () {
-      renderGraph(this.graph, { sankey: { labelStyle: 'default' } });
+    it('should render legacy (plain) labels when labelStyle is legacy', function () {
+      renderGraph(this.graph, { sankey: { labelStyle: 'legacy' } });
 
-      // Default style should not have the outlined label classes
+      // Legacy style should not have the outlined label classes
       cy.get('.node-labels .sankey-label-bg').should('not.exist');
       cy.get('.node-labels .sankey-label-fg').should('not.exist');
       cy.get('.node-labels text').should('exist');
     });
 
-    it('should render outlined labels when labelStyle is outlined', function () {
-      renderGraph(this.graph, { sankey: { labelStyle: 'outlined' } });
+    it('should render outlined labels when labelStyle is default', function () {
+      renderGraph(this.graph, { sankey: { labelStyle: 'default' } });
 
       cy.get('.node-labels .sankey-label-bg').should('exist');
       cy.get('.node-labels .sankey-label-fg').should('exist');
@@ -228,7 +228,7 @@ describe('Sankey Diagram', () => {
         Op Profit,Tax,19
         Op Profit,Net Profit,100
         `,
-        { sankey: { width: 800, height: 500, labelStyle: 'outlined' } }
+        { sankey: { width: 800, height: 500, labelStyle: 'default' } }
       );
     });
 
@@ -334,7 +334,7 @@ describe('Sankey Diagram', () => {
           sankey: {
             width: 800,
             height: 500,
-            labelStyle: 'outlined',
+            labelStyle: 'default',
             showValues: true,
             prefix: '$',
             suffix: 'B',
