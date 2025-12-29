@@ -2168,12 +2168,11 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     type: string
     enum:
       - default
-      - outlined
+      - legacy
     meta:enum:
-      default: Plain text labels.
-      outlined: Labels with a white outline for better readability against colored backgrounds.
-      gradient: Use a gradient of the source and target for the color of the link.
-    default: gradient
+      default: Labels with a white outline for better readability against colored backgrounds.
+      legacy: Plain text labels (original style).
+    default: default
 
   SankeyNodeAlignment:
     description: |
@@ -2247,9 +2246,9 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         default: 12
       labelStyle:
         description: |
-          The style of labels in the sankey diagram. 'outlined' provides better readability with a white stroke behind the text.
+          The style of labels in the sankey diagram. 'default' provides better readability with a white stroke behind the text.
         $ref: '#/$defs/SankeyLabelStyle'
-        default: outlined
+        default: default
       nodeColors:
         description: |
           A mapping of node IDs to their colors. Nodes not specified will use the default color scheme.

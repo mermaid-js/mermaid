@@ -57,7 +57,7 @@ export type DOMPurifyConfiguration = import('dompurify').Config;
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
  * via the `definition` "SankeyLabelStyle".
  */
-export type SankeyLabelStyle = 'default' | 'outlined';
+export type SankeyLabelStyle = 'default' | 'legacy';
 /**
  * The font size to use
  */
@@ -1556,10 +1556,10 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
    */
   nodePadding?: number;
   /**
-   * The style of labels in the sankey diagram. 'outlined' provides better readability with a white stroke behind the text.
+   * The style of labels in the sankey diagram. 'default' provides better readability with a white stroke behind the text.
    *
    */
-  labelStyle?: 'default' | 'outlined';
+  labelStyle?: 'default' | 'legacy';
   /**
    * A mapping of node IDs to their colors. Nodes not specified will use the default color scheme.
    * Example: { "Revenue": "#424245", "Profit": "#34c759", "Expenses": "#ff3b30" }
