@@ -92,6 +92,7 @@
     "cypress": "^14.5.4",
     "cypress-image-snapshot": "^4.0.1",
     "cypress-split": "^1.24.25",
+    "dotenv": "^17.2.3",
     "esbuild": "^0.25.12",
     "eslint": "^9.26.0",
     "eslint-config-prettier": "^10.1.8",
