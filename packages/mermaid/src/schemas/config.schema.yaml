@@ -2252,7 +2252,6 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       nodeColors:
         description: |
           A mapping of node IDs to their colors. Nodes not specified will use the default color scheme.
-          Example: { "Revenue": "#424245", "Profit": "#34c759", "Expenses": "#ff3b30" }
         type: object
         additionalProperties:
           type: string

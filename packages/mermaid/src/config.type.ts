@@ -1562,7 +1562,6 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
   labelStyle?: 'default' | 'legacy';
   /**
    * A mapping of node IDs to their colors. Nodes not specified will use the default color scheme.
-   * Example: { "Revenue": "#424245", "Profit": "#34c759", "Expenses": "#ff3b30" }
    *
    */
   nodeColors?: {
