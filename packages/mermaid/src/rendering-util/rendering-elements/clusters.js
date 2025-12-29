@@ -30,11 +30,25 @@ const rect = async (parent, node) => {
   // Create the label and insert it after the rect
   const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label ');
 
-  const text = await createText(labelEl, node.label, {
-    style: node.labelStyle,
-    useHtmlLabels,
-    isNode: true,
-  });
+  let text;
+  if (node.labelType === 'markdown') {
+    text = await createText(labelEl, node.label, {
+      style: node.labelStyle,
+      useHtmlLabels,
+      isNode: true,
+      width: node.width,
+    });
+  } else {
+    const labelElement = await createLabel(
+      node.label,
+      node.labelStyle,
+      false,
+      true,
+      false,
+      node.width
+    );
+    text = labelEl.node()?.appendChild(labelElement);
+  }
 
   // Get the size of the label
   let bbox = text.getBBox();
@@ -176,6 +190,8 @@ const roundedWithTitle = async (parent, node) => {
 
   // add the rect
   const outerRectG = shapeSvg.insert('g', ':first-child');
+
+  const useHtmlLabels = evaluate(siteConfig.flowchart.htmlLabels);
 
   // Create the label and insert it after the rect
   const label = shapeSvg.insert('g').attr('class', 'cluster-label');

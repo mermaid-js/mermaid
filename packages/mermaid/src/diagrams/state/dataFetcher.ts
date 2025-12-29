@@ -291,6 +291,7 @@ export const dataFetcher = (
       rx: 10,
       ry: 10,
       look,
+      labelType: 'markdown',
     };
 
     // Clear the label for dividers who have no description

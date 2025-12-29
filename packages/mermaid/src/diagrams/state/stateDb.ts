@@ -161,6 +161,7 @@ export interface NodeData {
   centerLabel?: boolean;
   position?: string;
   description?: string | string[];
+  labelType?: string;
 }
 
 export interface Edge {
