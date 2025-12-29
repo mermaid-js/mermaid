@@ -1,7 +1,7 @@
-import { updateNodeBounds, getNodeClasses } from './util.js';
+import { getNodeClasses, updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
-import { userNodeOverrides, styles2String } from './handDrawnShapeStyles.js';
+import { styles2String, userNodeOverridesNewGen } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { drawRect } from './drawRect.js';
 import { getConfig } from '../../../config.js';
@@ -12,6 +12,8 @@ import { select } from 'd3';
 import { calculateTextWidth } from '../../../utils.js';
 import type { MermaidConfig } from '../../../config.type.js';
 import type { D3Selection } from '../../../types.js';
+import { type RoughSVG } from 'roughjs/bin/svg.js';
+import { concatenateStyles, fillToStroke } from '../../stylesUtil.js';
 
 export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   // Treat node as entityNode for certain entityNode checks
@@ -20,27 +22,12 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     node.label = entityNode.alias;
   }
 
-  // Background shapes are drawn to fill in the background color and cover up the ER diagram edge markers.
-  // Draw background shape once.
-  if (node.look === 'handDrawn') {
-    const { themeVariables } = getConfig();
-    const { background } = themeVariables;
-    const backgroundNode = {
-      ...node,
-      id: node.id + '-background',
-      look: 'default',
-      cssStyles: ['stroke: none', `fill: ${background}`],
-    };
-    await erBox(parent, backgroundNode);
-  }
-
   const config = getConfig();
   node.useHtmlLabels = config.htmlLabels;
   let PADDING = config.er?.diagramPadding ?? 10;
   let TEXT_PADDING = config.er?.entityPadding ?? 6;
 
-  const { cssStyles } = node;
-  const { labelStyles, nodeStyles } = styles2String(node);
+  const { labelStyles, nodeStyles, backgroundStyles, borderStyles } = styles2String(node);
 
   // Draw rect if no attributes are found
   if (entityNode.attributes.length === 0 && node.label) {
@@ -88,7 +75,6 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   const nameBBox = await addText(shapeSvg, node.label ?? '', config, 0, 0, ['name'], labelStyles);
   nameBBox.height += TEXT_PADDING;
   let yOffset = 0;
-  const yOffsets = [];
   const rows = [];
   let maxTypeWidth = 0;
   let maxNameWidth = 0;
@@ -179,12 +165,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
 
   // @ts-ignore TODO: Fix rough typings
   const rc = rough.svg(shapeSvg);
-  const options = userNodeOverrides(node, {});
-
-  if (node.look !== 'handDrawn') {
-    options.roughness = 0;
-    options.fillStyle = 'solid';
-  }
+  const options = userNodeOverridesNewGen(node, {});
 
   let totalShapeBBoxHeight = 0;
   if (rows.length > 0) {
@@ -229,68 +210,140 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     .attr('transform', 'translate(' + -nameBBox.width / 2 + ', ' + (y + TEXT_PADDING / 2) + ')');
 
   // Draw shape
-  const roughRect = rc.rectangle(x, y, w, h, options);
-  const rect = shapeSvg.insert(() => roughRect, ':first-child').attr('style', cssStyles!.join(''));
+  const rect =
+    node.look === 'handDrawn'
+      ? drawRoughShape(shapeSvg, rc, x, y, w, h, options, borderStyles)
+      : drawClassicShape(shapeSvg, x, y, w, h, borderStyles);
 
-  const { themeVariables } = getConfig();
-  const { rowEven, rowOdd, nodeBorder } = themeVariables;
-
-  yOffsets.push(0);
-  // Draw row rects
-  for (const [i, row] of rows.entries()) {
-    const contentRowIndex = i + 1; // Adjusted index to skip the header (name) row
-    const isEven = contentRowIndex % 2 === 0 && row.yOffset !== 0;
-    const roughRect = rc.rectangle(x, nameBBox.height + y + row?.yOffset, w, row?.rowHeight, {
-      ...options,
-      fill: isEven ? rowEven : rowOdd,
-      stroke: nodeBorder,
-    });
-    shapeSvg
-      .insert(() => roughRect, 'g.label')
-      .attr('style', cssStyles!.join(''))
-      .attr('class', `row-rect-${isEven ? 'even' : 'odd'}`);
+  // Draw header
+  if (node.look === 'handDrawn') {
+    drawRoughHeader(shapeSvg, rc, x, y, w, nameBBox.height, options, backgroundStyles);
+  } else {
+    drawClassicHeader(shapeSvg, x, y, w, nameBBox.height, nodeStyles);
   }
 
-  // Draw divider lines
-  // Name line
-  let roughLine = rc.line(x, nameBBox.height + y, w + x, nameBBox.height + y, options);
-  shapeSvg.insert(() => roughLine).attr('class', 'divider');
-  // First line
-  roughLine = rc.line(maxTypeWidth + x, nameBBox.height + y, maxTypeWidth + x, h + y, options);
-  shapeSvg.insert(() => roughLine).attr('class', 'divider');
-  // Second line
+  // Draw rows
+  for (const [index, row] of rows.entries()) {
+    const indexSkippingHeader = index + 1;
+    const isEven = indexSkippingHeader % 2 === 0; // TODO: always true ?  && row.yOffset !== 0;
+    const rowY = nameBBox.height + y + row?.yOffset;
+    const rowH = row?.rowHeight;
+    const rowClass = `rect row-${isEven ? 'even' : 'odd'}`;
+    const rowBackgroundStyles = isEven ? backgroundStyles : [];
+    if (node.look === 'handDrawn') {
+      drawRoughRow(shapeSvg, rc, x, rowY, w, rowH, options, rowClass, rowBackgroundStyles);
+    } else {
+      drawClassicRow(shapeSvg, x, rowY, w, rowH, rowClass, rowBackgroundStyles, ['stroke:none']);
+    }
+  }
+
+  //===========================
+  // = Draw vertical dividers =
+  //===========================
+  const verticalDivsY1 = nameBBox.height + y;
+  const verticalDivsY2 = h + y;
+
+  // Draw first vertical divider line
+  const firstDivX = maxTypeWidth + x;
+  if (node.look === 'handDrawn') {
+    drawRoughDivider(
+      shapeSvg,
+      rc,
+      firstDivX,
+      verticalDivsY1,
+      firstDivX,
+      verticalDivsY2,
+      options,
+      borderStyles
+    );
+  } else {
+    drawClassicDivider(
+      shapeSvg,
+      firstDivX,
+      verticalDivsY1,
+      firstDivX,
+      verticalDivsY2,
+      borderStyles
+    );
+  }
+
+  // Draw second vertical divider line
   if (keysPresent) {
-    roughLine = rc.line(
-      maxTypeWidth + maxNameWidth + x,
-      nameBBox.height + y,
-      maxTypeWidth + maxNameWidth + x,
-      h + y,
-      options
-    );
-    shapeSvg.insert(() => roughLine).attr('class', 'divider');
-  }
-  // Third line
-  if (commentPresent) {
-    roughLine = rc.line(
-      maxTypeWidth + maxNameWidth + maxKeysWidth + x,
-      nameBBox.height + y,
-      maxTypeWidth + maxNameWidth + maxKeysWidth + x,
-      h + y,
-      options
-    );
-    shapeSvg.insert(() => roughLine).attr('class', 'divider');
+    const secondDivX = maxTypeWidth + maxNameWidth + x;
+    if (node.look === 'handDrawn') {
+      drawRoughDivider(
+        shapeSvg,
+        rc,
+        secondDivX,
+        verticalDivsY1,
+        secondDivX,
+        verticalDivsY2,
+        options,
+        borderStyles
+      );
+    } else {
+      drawClassicDivider(
+        shapeSvg,
+        secondDivX,
+        verticalDivsY1,
+        secondDivX,
+        verticalDivsY2,
+        borderStyles
+      );
+    }
   }
 
-  // Attribute divider lines
-  for (const yOffset of yOffsets) {
-    roughLine = rc.line(
-      x,
-      nameBBox.height + y + yOffset,
-      w + x,
-      nameBBox.height + y + yOffset,
-      options
-    );
-    shapeSvg.insert(() => roughLine).attr('class', 'divider');
+  // Draw third vertical divider line
+  if (commentPresent) {
+    const thirdDivX = maxTypeWidth + maxNameWidth + maxKeysWidth + x;
+    if (node.look === 'handDrawn') {
+      drawRoughDivider(
+        shapeSvg,
+        rc,
+        thirdDivX,
+        verticalDivsY1,
+        thirdDivX,
+        verticalDivsY2,
+        options,
+        borderStyles
+      );
+    } else {
+      drawClassicDivider(
+        shapeSvg,
+        thirdDivX,
+        verticalDivsY1,
+        thirdDivX,
+        verticalDivsY2,
+        borderStyles
+      );
+    }
+  }
+
+  const horizontalDivsX1 = x;
+  const horizontalDivsX2 = w + x;
+  for (const [, row] of rows.entries()) {
+    const horizontalDivY = nameBBox.height + y + row.yOffset;
+    if (node.look === 'handDrawn') {
+      drawRoughDivider(
+        shapeSvg,
+        rc,
+        horizontalDivsX1,
+        horizontalDivY,
+        horizontalDivsX2,
+        horizontalDivY,
+        options,
+        borderStyles
+      );
+    } else {
+      drawClassicDivider(
+        shapeSvg,
+        horizontalDivsX1,
+        horizontalDivY,
+        horizontalDivsX2,
+        horizontalDivY,
+        borderStyles
+      );
+    }
   }
 
   updateNodeBounds(node, rect);
@@ -304,13 +357,197 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
       ?.map((s) => `${s}`)
       .join('; ');
     shapeSvg.selectAll('path').attr('style', strokeStyles ?? '');
-    shapeSvg.selectAll('.row-rect-even path').attr('style', nodeStyles);
+    shapeSvg.selectAll('.rect.row-even path').attr('style', nodeStyles);
   }
 
   node.intersect = function (point) {
     return intersect.rect(node, point);
   };
   return shapeSvg;
+}
+
+function drawRoughShape(
+  shapeSvg: D3Selection<SVGGElement>,
+  rc: RoughSVG,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  options: any,
+  borderStyles: string[]
+): D3Selection<SVGGElement> {
+  const roughShape = shapeSvg
+    .insert(() => rc.rectangle(x, y, w, h, options), ':first-child')
+    .attr('class', 'rect shape')
+    .attr('fill', 'none');
+
+  roughShape.select('path').remove(); // Useless, only the stroke matters
+  roughShape
+    .select('path')
+    .attr('fill', null) // Set by CSS or style
+    .attr('stroke', null) // Set by CSS or style
+    .attr('style', concatenateStyles(borderStyles));
+
+  return roughShape;
+}
+
+function drawClassicShape(
+  shapeSvg: D3Selection<SVGGElement>,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  borderStyles: string[]
+) {
+  return shapeSvg
+    .insert('rect', ':first-child')
+    .attr('class', 'rect shape')
+    .attr('fill', null)
+    .attr('style', concatenateStyles(borderStyles))
+    .attr('x', x)
+    .attr('y', y)
+    .attr('width', w)
+    .attr('height', h);
+}
+
+function drawRoughHeader(
+  shapeSvg: D3Selection<SVGGElement>,
+  rc: RoughSVG,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  options: any,
+  backgroundStyles: string[]
+) {
+  shapeSvg // Hachures + cover for edges
+    .insert<'rect'>('rect', '.shape')
+    .attr('class', `rect row-header-background`)
+    .attr('x', x)
+    .attr('y', y)
+    .attr('width', w)
+    .attr('height', h);
+
+  const roughRect = shapeSvg
+    .insert(() => rc.rectangle(x, y, w, h, options), '.shape')
+    .attr('class', 'rect row-header');
+
+  roughRect
+    .select('path')
+    .attr('fill', null) // Set by CSS or style
+    .attr('stroke', null) // Set by CSS or style
+    .attr('style', fillToStroke(backgroundStyles));
+
+  roughRect.select('path:nth-of-type(2)').remove();
+}
+
+function drawClassicHeader(
+  shapeSvg: D3Selection<SVGGElement>,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  nodeStyles: string
+) {
+  return shapeSvg
+    .insert('rect', '.shape')
+    .attr('class', 'rect row-header')
+    .attr('style', nodeStyles)
+    .attr('x', x)
+    .attr('y', y)
+    .attr('width', w)
+    .attr('height', h);
+}
+
+function drawRoughRow(
+  shapeSvg: D3Selection<SVGGElement>,
+  rc: RoughSVG,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  options: any,
+  cssClass: string,
+  backgroundStyles: string[]
+) {
+  shapeSvg // Hachures + cover for edges
+    .insert<'rect'>('rect', '.shape')
+    .attr('class', `${cssClass}-background`)
+    .attr('x', x)
+    .attr('y', y)
+    .attr('width', w)
+    .attr('height', h);
+
+  const roughRect = shapeSvg
+    .insert(() => rc.rectangle(x, y, w, h, options), '.shape')
+    .attr('class', cssClass);
+
+  roughRect
+    .select('path')
+    .attr('fill', null) // Set by CSS or style
+    .attr('stroke', null) // Set by CSS or style
+    .attr('style', fillToStroke(backgroundStyles));
+
+  roughRect.select('path:nth-of-type(2)').remove();
+}
+
+function drawClassicRow(
+  shapeSvg: D3Selection<SVGGElement>,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  cssClass: string,
+  backgroundStyles: string[],
+  borderStyles: string[]
+) {
+  shapeSvg
+    .insert<'rect'>('rect', '.shape')
+    .attr('class', cssClass)
+    .attr('style', concatenateStyles([...backgroundStyles, ...borderStyles]))
+    .attr('x', x)
+    .attr('y', y)
+    .attr('width', w)
+    .attr('height', h);
+}
+
+function drawRoughDivider(
+  shapeSvg: D3Selection<SVGGElement>,
+  rc: RoughSVG,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  options: any,
+  cssStyles: string[]
+) {
+  const roughDivider = shapeSvg
+    .insert(() => rc.line(x1, y1, x2, y2, options))
+    .attr('class', 'divider');
+
+  roughDivider
+    .select('path')
+    .attr('fill', null) // Set by CSS or style
+    .attr('stroke', null) // Set by CSS or style
+    .attr('style', concatenateStyles(cssStyles));
+}
+
+function drawClassicDivider(
+  shapeSvg: D3Selection<SVGGElement>,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  cssStyles: string[]
+) {
+  shapeSvg
+    .insert('line')
+    .attr('class', 'divider')
+    .attr('style', concatenateStyles(cssStyles))
+    .attr('x1', x1)
+    .attr('y1', y1)
+    .attr('x2', x2)
+    .attr('y2', y2);
 }
 
 // Helper function to add label text g with translate position and style

@@ -55,12 +55,18 @@ function setOnProtectedConstant(object: any, key: string, value: unknown): void 
   object[key] = value;
 }
 
+export const MOCK_SIZE = 666;
+export const MOCK_DOM_POINT = {
+  x: MOCK_SIZE,
+  y: MOCK_SIZE,
+};
 export const MOCKED_BBOX = {
   x: 0,
   y: 0,
-  width: 666,
-  height: 666,
+  width: MOCK_SIZE,
+  height: MOCK_SIZE,
 };
+export const SVG_NODE_ID = 'svg';
 
 interface JsdomItInput {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -91,16 +97,32 @@ export function jsdomIt(message: string, run: (input: JsdomItInput) => void | Pr
       const baseHtml = `
         <html lang="en">
           <body id="cy">
-            <svg id="svg"/>
+            <svg id="${SVG_NODE_ID}"/>
           </body>
         </html>
       `;
       const dom = new JSDOM(baseHtml, {
         resources: 'usable',
         beforeParse(_window) {
+          _window.CSS = {
+            // https://github.com/jsdom/jsdom/issues/3991
+            escape(input: string): string {
+              return input;
+            },
+          };
           // Mocks DOM functions that require rendering, JSDOM doesn't
           setOnProtectedConstant(_window.Element.prototype, 'getBBox', () => MOCKED_BBOX);
-          setOnProtectedConstant(_window.Element.prototype, 'getComputedTextLength', () => 200);
+          setOnProtectedConstant(_window.Element.prototype, 'getTotalLength', () => MOCK_SIZE);
+          setOnProtectedConstant(
+            _window.Element.prototype,
+            'getPointAtLength',
+            () => MOCK_DOM_POINT
+          );
+          setOnProtectedConstant(
+            _window.Element.prototype,
+            'getComputedTextLength',
+            () => MOCK_SIZE
+          );
         },
       });
       setOnProtectedConstant(global, 'window', dom.window); // Fool D3 into thinking it's in a browser

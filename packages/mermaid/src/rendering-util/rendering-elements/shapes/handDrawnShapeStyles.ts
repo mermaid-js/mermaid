@@ -89,8 +89,33 @@ export const styles2String = (node: Node) => {
   };
 };
 
-// Striped fill like start or fork nodes in state diagrams
-// TODO remove any
+/**
+ * TODO Fix any type !
+ */
+export function userNodeOverridesNewGen(node: Node, options: any) {
+  const { handDrawnSeed } = getConfig();
+  const { stylesMap } = compileStyles(node);
+  return Object.assign(
+    {
+      roughness: 0.7,
+      fill: 'transparent', // Set by CSS to vary from theme to theme
+      fillStyle: 'hachure', // solid fill
+      fillWeight: 4,
+      hachureGap: 5.2,
+      seed: handDrawnSeed,
+      stroke: 'transparent', // Set by CSS to vary from theme to theme
+      strokeWidth: stylesMap.get('stroke-width')?.replace('px', '') || 1.3,
+      fillLineDash: [0, 0],
+      strokeLineDash: getStrokeDashArray(stylesMap.get('stroke-dasharray')),
+    },
+    options
+  );
+}
+
+/**
+ * Striped fill like start or fork nodes in state diagrams
+ * @deprecated Use userNodeOverridesNewGen instead.
+ */
 export const userNodeOverrides = (node: Node, options: any) => {
   const { themeVariables, handDrawnSeed } = getConfig();
   const { nodeBorder, mainBkg } = themeVariables;
