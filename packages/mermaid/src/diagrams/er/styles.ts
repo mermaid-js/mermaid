@@ -78,7 +78,7 @@ const getStyles = (options: FlowChartStyleOptions & ErStyleOptions) =>
   }
   
   /* Shape  */
-  .rect.shape {
+  rect.shape {
     fill: transparent;
   }
   
@@ -87,7 +87,7 @@ const getStyles = (options: FlowChartStyleOptions & ErStyleOptions) =>
     stroke: ${options.nodeBorder};
   }
   
-  g.rect>path:nth-child(2), g.divider>path {
+  g.rect>path, g.divider>path {
     stroke: ${options.nodeBorder};
   }
 

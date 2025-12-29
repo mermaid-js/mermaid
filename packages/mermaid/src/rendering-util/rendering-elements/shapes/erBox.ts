@@ -13,7 +13,7 @@ import { calculateTextWidth } from '../../../utils.js';
 import type { MermaidConfig } from '../../../config.type.js';
 import type { D3Selection } from '../../../types.js';
 import { type RoughSVG } from 'roughjs/bin/svg.js';
-import { concatenateStyles } from '../../stylesUtil.js';
+import { concatenateStyles, fillToStroke } from '../../stylesUtil.js';
 
 export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   // Treat node as entityNode for certain entityNode checks
@@ -217,17 +217,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
 
   // Draw header
   if (node.look === 'handDrawn') {
-    drawRoughHeader(
-      shapeSvg,
-      rc,
-      x,
-      y,
-      w,
-      nameBBox.height,
-      options,
-      backgroundStyles,
-      borderStyles
-    );
+    drawRoughHeader(shapeSvg, rc, x, y, w, nameBBox.height, options, backgroundStyles);
   } else {
     drawClassicHeader(shapeSvg, x, y, w, nameBBox.height, nodeStyles);
   }
@@ -241,18 +231,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     const rowClass = `rect row-${isEven ? 'even' : 'odd'}`;
     const rowBackgroundStyles = isEven ? backgroundStyles : [];
     if (node.look === 'handDrawn') {
-      drawRoughRow(
-        shapeSvg,
-        rc,
-        x,
-        rowY,
-        w,
-        rowH,
-        options,
-        rowClass,
-        rowBackgroundStyles,
-        borderStyles
-      );
+      drawRoughRow(shapeSvg, rc, x, rowY, w, rowH, options, rowClass, rowBackgroundStyles);
     } else {
       drawClassicRow(shapeSvg, x, rowY, w, rowH, rowClass, rowBackgroundStyles, ['stroke:none']);
     }
@@ -423,7 +402,7 @@ function drawClassicShape(
   return shapeSvg
     .insert('rect', ':first-child')
     .attr('class', 'rect shape')
-    .attr('fill', 'none')
+    .attr('fill', null)
     .attr('style', concatenateStyles(borderStyles))
     .attr('x', x)
     .attr('y', y)
@@ -439,8 +418,7 @@ function drawRoughHeader(
   w: number,
   h: number,
   options: any,
-  backgroundStyles: string[],
-  borderStyles: string[]
+  backgroundStyles: string[]
 ) {
   shapeSvg // Hachures + cover for edges
     .insert<'rect'>('rect', '.shape')
@@ -454,18 +432,13 @@ function drawRoughHeader(
     .insert(() => rc.rectangle(x, y, w, h, options), '.shape')
     .attr('class', 'rect row-header');
 
-  const convertedBackgroundStyles = concatenateStyles(backgroundStyles).replace('fill', 'stroke'); // FIXME : extract
   roughRect
     .select('path')
     .attr('fill', null) // Set by CSS or style
     .attr('stroke', null) // Set by CSS or style
-    .attr('style', convertedBackgroundStyles);
+    .attr('style', fillToStroke(backgroundStyles));
 
-  roughRect
-    .select('path:nth-of-type(2)')
-    .attr('fill', null) // Set by CSS or style
-    .attr('stroke', null) // Set by CSS or style
-    .attr('style', concatenateStyles(borderStyles));
+  roughRect.select('path:nth-of-type(2)').remove();
 }
 
 function drawClassicHeader(
@@ -495,8 +468,7 @@ function drawRoughRow(
   h: number,
   options: any,
   cssClass: string,
-  backgroundStyles: string[],
-  borderStyles: string[]
+  backgroundStyles: string[]
 ) {
   shapeSvg // Hachures + cover for edges
     .insert<'rect'>('rect', '.shape')
@@ -510,18 +482,13 @@ function drawRoughRow(
     .insert(() => rc.rectangle(x, y, w, h, options), '.shape')
     .attr('class', cssClass);
 
-  const convertedBackgroundStyles = concatenateStyles(backgroundStyles).replace('fill', 'stroke'); // FIXME : extract
   roughRect
     .select('path')
     .attr('fill', null) // Set by CSS or style
     .attr('stroke', null) // Set by CSS or style
-    .attr('style', convertedBackgroundStyles);
+    .attr('style', fillToStroke(backgroundStyles));
 
-  roughRect
-    .select('path:nth-of-type(2)')
-    .attr('fill', null) // Set by CSS or style
-    .attr('stroke', null) // Set by CSS or style
-    .attr('style', concatenateStyles(borderStyles));
+  roughRect.select('path:nth-of-type(2)').remove();
 }
 
 function drawClassicRow(
