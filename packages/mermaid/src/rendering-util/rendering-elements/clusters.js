@@ -486,7 +486,7 @@ export const insertCluster = async (elem, node) => {
 };
 
 export const getClusterTitleWidth = (elem, node) => {
-  const label = createLabel(node.label, node.labelStyle, undefined, true);
+  const label = createLabel(node.label, node.labelStyle, undefined, true, false, node.width);
   elem.node().appendChild(label);
   const width = label.getBBox().width;
   elem.node().removeChild(label);
