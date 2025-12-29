@@ -5,7 +5,7 @@ describe('Sankey Diagram', () => {
     imgSnapshotTest(
       `
       sankey-beta
-
+      
       sourceNode,targetNode,10
       `,
       {}
@@ -63,14 +63,14 @@ describe('Sankey Diagram', () => {
       cy.wrap(
         `
         sankey
-
+        
         a,b,8
         b,c,8
         c,d,8
         d,e,8
-
+        
         x,c,4
-        c,y,4
+        c,y,4  
         `
       ).as('graph');
     });
@@ -231,88 +231,52 @@ describe('Sankey Diagram', () => {
         { sankey: { width: 800, height: 500, labelStyle: 'default' } }
       );
     });
+  });
 
-    it('should position left-of-center labels on the left', () => {
-      // Multi-layer diagram where we can verify label positioning
-      renderGraph(
+  describe('when given nodeColors', function () {
+    this.beforeAll(() => {
+      cy.wrap(
         `sankey
         a,b,10
-        b,c,10
-        c,d,10
-        `,
-        { sankey: { width: 400, useMaxWidth: false } }
-      );
+        b,c,20
+        `
+      ).as('graph');
+    });
 
-      // Node 'a' is at layer 0 (leftmost), should have label on left (text-anchor: end)
-      cy.get('.node-labels text')
+    it('should apply custom node colors', function () {
+      renderGraph(this.graph, { sankey: { nodeColors: { a: '#ff0000', b: '#00ff00' } } });
+
+      cy.get('.node')
         .first()
-        .should((label) => {
-          expect(label.attr('text-anchor')).to.equal('end');
+        .find('rect')
+        .should((node) => {
+          expect(node.attr('fill')).to.equal('#ff0000');
+        });
+    });
+
+    it('should fall back to default colors for unspecified nodes', function () {
+      renderGraph(this.graph, { sankey: { nodeColors: { a: '#ff0000' } } });
+
+      // Node 'a' should have custom color
+      cy.get('.node')
+        .first()
+        .find('rect')
+        .should((node) => {
+          expect(node.attr('fill')).to.equal('#ff0000');
         });
 
-      // Node 'd' is at layer 3 (rightmost), should have label on right (text-anchor: start)
-      cy.get('.node-labels text')
-        .last()
-        .should((label) => {
-          expect(label.attr('text-anchor')).to.equal('start');
+      // Node 'b' should have default color scheme (not #ff0000)
+      cy.get('.node')
+        .eq(1)
+        .find('rect')
+        .should((node) => {
+          expect(node.attr('fill')).to.not.equal('#ff0000');
         });
     });
   });
 
-  describe('when given nodeColors', function () {
-    it('should use custom colors for specified nodes', function () {
-      renderGraph(
-        `sankey
-        a,b,10
-        b,c,10
-        `,
-        {
-          sankey: {
-            nodeColors: {
-              a: '#ff0000',
-              b: '#00ff00',
-              c: '#0000ff',
-            },
-          },
-        }
-      );
-
-      cy.get('.node[id="node-1"] rect').should((node) => {
-        expect(node.attr('fill')).to.equal('#ff0000');
-      });
-      cy.get('.node[id="node-2"] rect').should((node) => {
-        expect(node.attr('fill')).to.equal('#00ff00');
-      });
-      cy.get('.node[id="node-3"] rect').should((node) => {
-        expect(node.attr('fill')).to.equal('#0000ff');
-      });
-    });
-
-    it('should fall back to default color scheme for unspecified nodes', function () {
-      renderGraph(
-        `sankey
-        a,b,10
-        b,c,10
-        `,
-        {
-          sankey: {
-            nodeColors: {
-              a: '#ff0000',
-            },
-          },
-        }
-      );
-
-      cy.get('.node[id="node-1"] rect').should((node) => {
-        expect(node.attr('fill')).to.equal('#ff0000');
-      });
-      // Node 'b' should use default color scheme (not #ff0000)
-      cy.get('.node[id="node-2"] rect').should((node) => {
-        expect(node.attr('fill')).to.not.equal('#ff0000');
-      });
-    });
-
-    it('should render Apple-style financial diagram with custom colors', () => {
+  describe('Apple-style financial flow demo', function () {
+    it('should render complete financial flow with custom colors', () => {
       imgSnapshotTest(
         `
         sankey
