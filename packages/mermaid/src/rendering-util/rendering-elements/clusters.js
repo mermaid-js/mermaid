@@ -191,20 +191,36 @@ const roundedWithTitle = async (parent, node) => {
   // add the rect
   const outerRectG = shapeSvg.insert('g', ':first-child');
 
+  const useHtmlLabels = evaluate(siteConfig.flowchart.htmlLabels);
+
   // Create the label and insert it after the rect
   const label = shapeSvg.insert('g').attr('class', 'cluster-label');
   let innerRect = shapeSvg.append('rect');
 
-  const text = label
-    .node()
-    .appendChild(
-      await createLabel(node.label, node.labelStyle, undefined, true, false, node.width)
+  let text;
+  if (node.labelType === 'markdown') {
+    text = await createText(label, node.label, {
+      style: node.labelStyle,
+      useHtmlLabels,
+      isNode: true,
+      width: 10000, // Use large width to prevent text clipping for title labels
+    });
+  } else {
+    const labelElement = await createLabel(
+      node.label,
+      node.labelStyle,
+      false,
+      true,
+      false,
+      10000 // Use large width to prevent text clipping for title labels
     );
+    text = label.node()?.appendChild(labelElement);
+  }
 
   // Get the size of the label
   let bbox = text.getBBox();
 
-  if (evaluate(siteConfig.flowchart.htmlLabels)) {
+  if (useHtmlLabels) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();
