@@ -8,17 +8,6 @@ import type {
   ArchitectureJunction,
 } from './architectureTypes.js';
 
-const {
-  clear,
-  getDiagramTitle,
-  getAccTitle,
-  getAccDescription,
-  getServices,
-  getGroups,
-  getEdges,
-  getJunctions,
-} = db;
-
 describe('architecture diagrams', () => {
   let db: ArchitectureDB;
   beforeEach(() => {
@@ -94,9 +83,9 @@ describe('architecture diagrams', () => {
             server:T--B:gateway
         `;
       await expect(parser.parse(str)).resolves.not.toThrow();
-      const services = getServices();
-      const groups = getGroups();
-      const edges = getEdges();
+      const services = db.getServices();
+      const groups = db.getGroups();
+      const edges = db.getEdges();
 
       expect(services.length).toBe(5);
       expect(groups.length).toBe(1);
@@ -237,26 +226,26 @@ describe('architecture diagrams', () => {
       `);
       expect(services[4]).toMatchInlineSnapshot(`
         {
-        "edges": [
-          {
-            "label": undefined,
-            "lhsDir": "T",
-            "lhsGroup": false,
-            "lhsId": "server",
-            "lhsInto": false,
-            "rhsDir": "B",
-            "rhsGroup": false,
-            "rhsId": "gateway",
-            "rhsInto": false,
-          },
-        ],
-        "icon": "internet",
-        "iconText": undefined,
-        "id": "gateway",
-        "in": undefined,
-        "label": "Gateway",
-        "type": "service",
-      }
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "server",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "gateway",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "internet",
+          "iconText": undefined,
+          "id": "gateway",
+          "in": undefined,
+          "label": "Gateway",
+          "type": "service",
+        }
       `);
       expect(edges[0]).toMatchInlineSnapshot(`
         {
@@ -338,9 +327,9 @@ describe('architecture diagrams', () => {
                 group g('cloud')['"\`диск\`"']
         `;
       await expect(parser.parse(str)).resolves.not.toThrow();
-      const services = getServices();
-      const groups = getGroups();
-      const edges = getEdges();
+      const services = db.getServices();
+      const groups = db.getGroups();
+      const edges = db.getEdges();
       expect(services.length).toBe(6);
       expect(groups.length).toBe(8);
       expect(edges.length).toBe(4);
@@ -638,17 +627,17 @@ describe('architecture diagrams', () => {
           disk2:T -- B:db
       `;
       await expect(parser.parse(str)).resolves.not.toThrow();
-      const services = getServices();
-      const groups = getGroups();
-      const edges = getEdges();
+      const services = db.getServices();
+      const groups = db.getGroups();
+      const edges = db.getEdges();
 
       expect(services.length).toBe(4);
       expect(groups.length).toBe(1);
       expect(edges.length).toBe(3);
 
-      expect(getDiagramTitle()).toBe('Simple Architecture Diagram');
-      expect(getAccTitle()).toBe('Accessibility Title');
-      expect(getAccDescription()).toBe('Accessibility Description');
+      expect(db.getDiagramTitle()).toBe('Simple Architecture Diagram');
+      expect(db.getAccTitle()).toBe('Accessibility Title');
+      expect(db.getAccDescription()).toBe('Accessibility Description');
       expect(groups[0]).toMatchInlineSnapshot(`
         {
           "icon": "cloud",
@@ -829,9 +818,9 @@ describe('architecture diagrams', () => {
                 serv1: L--R :gateway
             `;
       await expect(parser.parse(str)).resolves.not.toThrow();
-      const services = getServices();
-      const groups = getGroups();
-      const edges = getEdges();
+      const services = db.getServices();
+      const groups = db.getGroups();
+      const edges = db.getEdges();
 
       expect(services.length).toBe(4);
       expect(groups.length).toBe(3);
@@ -1019,9 +1008,9 @@ describe('architecture diagrams', () => {
                 service unknown('iconnamedoesntexist')['Unknown Icon']
             `;
       await expect(parser.parse(str)).resolves.not.toThrow();
-      const services = getServices();
-      const groups = getGroups();
-      const edges = getEdges();
+      const services = db.getServices();
+      const groups = db.getGroups();
+      const edges = db.getEdges();
 
       expect(services.length).toBe(1);
       expect(groups.length).toBe(0);
@@ -1053,9 +1042,9 @@ describe('architecture diagrams', () => {
                 serv1: T--B :disk
             `;
       await expect(parser.parse(str)).resolves.not.toThrow();
-      const services = getServices();
-      const groups = getGroups();
-      const edges = getEdges();
+      const services = db.getServices();
+      const groups = db.getGroups();
+      const edges = db.getEdges();
 
       expect(services.length).toBe(5);
       expect(groups.length).toBe(0);
@@ -1280,9 +1269,9 @@ describe('architecture diagrams', () => {
                 servR:B <--> R:servB
             `;
       await expect(parser.parse(str)).resolves.not.toThrow();
-      const services = getServices();
-      const groups = getGroups();
-      const edges = getEdges();
+      const services = db.getServices();
+      const groups = db.getGroups();
+      const edges = db.getEdges();
 
       expect(services.length).toBe(5);
       expect(groups.length).toBe(0);
@@ -1648,9 +1637,9 @@ describe('architecture diagrams', () => {
                 bottom_disk{group}:T <--> B:center_disk{group}
             `;
       await expect(parser.parse(str)).resolves.not.toThrow();
-      const services = getServices();
-      const groups = getGroups();
-      const edges = getEdges();
+      const services = db.getServices();
+      const groups = db.getGroups();
+      const edges = db.getEdges();
 
       expect(services.length).toBe(5);
       expect(groups.length).toBe(5);
@@ -1915,9 +1904,9 @@ describe('architecture diagrams', () => {
                 servR:B-['Label']-R:servB
             `;
       await expect(parser.parse(str)).resolves.not.toThrow();
-      const services = getServices();
-      const groups = getGroups();
-      const edges = getEdges();
+      const services = db.getServices();
+      const groups = db.getGroups();
+      const edges = db.getEdges();
 
       expect(services.length).toBe(5);
       expect(groups.length).toBe(0);
@@ -2281,10 +2270,10 @@ describe('architecture diagrams', () => {
                 bottom_gateway:T--B:juncR
             `;
       await expect(parser.parse(str)).resolves.not.toThrow();
-      const services = getServices();
-      const groups = getGroups();
-      const junctions = getJunctions();
-      const edges = getEdges();
+      const services = db.getServices();
+      const groups = db.getGroups();
+      const junctions = db.getJunctions();
+      const edges = db.getEdges();
 
       expect(services.length).toBe(5);
       expect(groups.length).toBe(0);
@@ -2602,10 +2591,10 @@ describe('architecture diagrams', () => {
                 juncC{group}:R-->L:juncR{group}
             `;
       await expect(parser.parse(str)).resolves.not.toThrow();
-      const services = getServices();
-      const groups = getGroups();
-      const junctions = getJunctions();
-      const edges = getEdges();
+      const services = db.getServices();
+      const groups = db.getGroups();
+      const junctions = db.getJunctions();
+      const edges = db.getEdges();
 
       expect(services.length).toBe(5);
       expect(groups.length).toBe(2);
@@ -2966,10 +2955,10 @@ describe('architecture diagrams', () => {
                   edge:R -- L:firewall
       `;
       await expect(parser.parse(str)).resolves.not.toThrow();
-      const services = getServices();
-      const groups = getGroups();
-      const junctions = getJunctions();
-      const edges = getEdges();
+      const services = db.getServices();
+      const groups = db.getGroups();
+      const junctions = db.getJunctions();
+      const edges = db.getEdges();
 
       expect(services.length).toBe(10);
       expect(groups.length).toBe(2);
