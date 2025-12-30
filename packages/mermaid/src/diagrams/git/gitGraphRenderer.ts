@@ -918,7 +918,7 @@ const escapeCssId = (id: string): string => {
     return CSS.escape(id);
   }
   // Fallback for older browsers: escape special CSS characters
-  return id.replace(/([!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~])/g, '\\$1');
+  return id.replace(/([!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~])/g, '\\$1');
 };
 
 /**
@@ -988,7 +988,6 @@ const setupClickEvents = (
         if (securityLevel === 'sandbox') {
           // In sandbox mode, post message to parent frame
           // Use window.location.origin to avoid wildcard target origin vulnerability
-          // @ts-expect-error - window.parent is available in sandbox mode
           window.parent.postMessage(
             {
               type: 'mermaid:gitgraph:link',

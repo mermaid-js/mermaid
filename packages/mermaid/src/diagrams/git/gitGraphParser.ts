@@ -321,6 +321,5 @@ if (import.meta.vitest) {
         'tag'
       );
     });
-
   });
 }
