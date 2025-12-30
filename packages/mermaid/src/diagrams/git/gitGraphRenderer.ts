@@ -2,6 +2,7 @@ import { select } from 'd3';
 import { getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 import utils, { sanitizeUrl } from '../../utils.js';
+import { sanitizeText } from '../common/common.js';
 import type { DrawDefinition } from '../../diagram-api/types.js';
 import type d3 from 'd3';
 import type { Commit, GitGraphDBRenderProvider, DiagramOrientation } from './gitGraphTypes.js';
@@ -907,6 +908,20 @@ const setBranchPosition = function (
 };
 
 /**
+ * Safely escapes CSS selector characters in an identifier.
+ * Falls back to manual escaping if CSS.escape() is not available.
+ * @param id - The identifier to escape
+ * @returns Escaped identifier safe for use in CSS selectors
+ */
+const escapeCssId = (id: string): string => {
+  if (typeof CSS !== 'undefined' && CSS.escape) {
+    return CSS.escape(id);
+  }
+  // Fallback for older browsers: escape special CSS characters
+  return id.replace(/([!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~])/g, '\\$1');
+};
+
+/**
  * Sets up click events for commits with links
  * @param svgId - The ID of the SVG element
  * @param db - The gitGraph database
@@ -924,44 +939,63 @@ const setupClickEvents = (
   }
   return () => {
     const svg = select(`[id="${svgId}"]`);
+    const config = getConfig();
+
     links.forEach((linkData, id) => {
       // Escape special characters in commit ID for CSS selector
-      const escapedId = CSS.escape(id);
+      const escapedId = escapeCssId(id);
       let selector = `[data-commit-id="${escapedId}"]`;
       if (linkData.type === 'branch') {
         selector = `[data-branch-name="${escapedId}"]`;
       } else if (linkData.type === 'tag') {
         selector = `[data-tag-name="${escapedId}"]`;
       }
+
       const elements = svg.selectAll(selector);
       if (elements.empty()) {
+        log.warn(
+          `No elements found for clickable ${linkData.type} with id: ${id}. The link will not be attached.`
+        );
         return;
       }
+
       // Sanitize URL to prevent XSS
       const sanitizedUrl = sanitizeUrl(linkData.link);
       if (!sanitizedUrl) {
+        log.warn(`Invalid or dangerous URL "${linkData.link}" for ${linkData.type} "${id}"`);
         return;
       }
+
       // Add clickable styling and accessibility
-      elements.classed('clickable', true).attr('tabindex', '0').style('cursor', 'pointer');
-      // Add tooltip if provided
+      elements
+        .classed('clickable', true)
+        .attr('tabindex', '0')
+        .attr('role', 'link')
+        .attr('aria-label', linkData.tooltip || `Link to ${sanitizedUrl}`)
+        .style('cursor', 'pointer');
+
+      // Add tooltip if provided (sanitized to prevent XSS)
       if (linkData.tooltip) {
+        const sanitizedTooltip = sanitizeText(linkData.tooltip, config);
         elements.each(function () {
-          select(this).append('title').text(linkData.tooltip!);
+          // Using .text() is safe from XSS as it doesn't parse HTML
+          select(this).append('title').text(sanitizedTooltip);
         });
       }
+
       // Click handler
       const handleClick = () => {
         if (securityLevel === 'sandbox') {
           // In sandbox mode, post message to parent frame
-          // @ts-ignore - window.parent is available in sandbox
+          // Use window.location.origin to avoid wildcard target origin vulnerability
+          // @ts-expect-error - window.parent is available in sandbox mode
           window.parent.postMessage(
             {
               type: 'mermaid:gitgraph:link',
               url: sanitizedUrl,
               target: linkData.target,
             },
-            '*'
+            window.location.origin
           );
         } else if (linkData.target === '_blank') {
           // Open in new tab with security attributes
@@ -971,8 +1005,10 @@ const setupClickEvents = (
           window.location.href = sanitizedUrl;
         }
       };
+
       // Bind click event
       elements.on('click', handleClick);
+
       // Bind keyboard event for accessibility
       elements.on('keydown', (event: KeyboardEvent) => {
         if (event.key === 'Enter' || event.key === ' ') {
