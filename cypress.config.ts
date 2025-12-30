@@ -12,7 +12,7 @@ export default eyesPlugin(
     viewportWidth: 1440,
     viewportHeight: 1024,
     e2e: {
-      baseUrl: `http://localhost:${process.env.PORT ?? 9000}`,
+      baseUrl: `http://localhost:${process.env.MERMAID_PORT ?? 9000}`,
       specPattern: 'cypress/integration/**/*.{js,ts}',
       setupNodeEvents(on, config) {
         coverage(on, config);

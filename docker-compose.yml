@@ -3,12 +3,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      PORT: ${PORT}  
     stdin_open: true
     tty: true
     working_dir: /mermaid
     mem_limit: '8G'
+    env_file: ./.env
     volumes:
       - ./:/mermaid
       - root_cache:/root/.cache
@@ -16,7 +15,7 @@ services:
       - root_npm:/root/.npm
       - /tmp:/tmp
     ports:
-      - ${PORT}:${PORT}
+      - "${MERMAID_PORT}:9000"
       - 3333:3333
   cypress:
     image: cypress/included:14.0.3
