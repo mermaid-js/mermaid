@@ -1,0 +1,3 @@
+[tools]
+node = "22.14.0"  # Version from .node-version
+pnpm = "10.4.1"   # Version from package.json packageManager field
