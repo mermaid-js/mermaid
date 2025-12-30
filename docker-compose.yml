@@ -7,7 +7,8 @@ services:
     tty: true
     working_dir: /mermaid
     mem_limit: '8G'
-    env_file: ./.env
+    environment: 
+      - MERMAID_PORT
     volumes:
       - ./:/mermaid
       - root_cache:/root/.cache
