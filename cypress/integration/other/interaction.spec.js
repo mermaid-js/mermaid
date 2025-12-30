@@ -1,4 +1,6 @@
 describe('Interaction', () => {
+  const baseUrl = Cypress.config('baseUrl');
+
   describe('Security level loose', () => {
     beforeEach(() => {
       cy.visit('/click_security_loose.html');
@@ -23,7 +25,6 @@ describe('Interaction', () => {
       // When there is a URL, `cy.contains()` selects the `a` tag instead of the `span` tag. The .node is a child of `a`, so we have to use `find()` instead of `parent`.
       cy.contains('URLTest1').find('.node').click();
       cy.location().should(({ href }) => {
-        const baseUrl = Cypress.config('baseUrl');
         expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
@@ -31,7 +32,6 @@ describe('Interaction', () => {
     it('Graph: should handle a click on a node with a bound url where the node starts with a number', () => {
       cy.contains('2URL').find('.node').click();
       cy.location().should(({ href }) => {
-        const baseUrl = Cypress.config('baseUrl');
         expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
@@ -49,7 +49,6 @@ describe('Interaction', () => {
     it('Flowchart-v2: should handle a click on a node with a bound url', () => {
       cy.contains('URLTest2').find('.node').click();
       cy.location().should(({ href }) => {
-        const baseUrl = Cypress.config('baseUrl');
         expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
@@ -57,7 +56,6 @@ describe('Interaction', () => {
     it('Flowchart-v2: should handle a click on a node with a bound url where the node starts with a number', () => {
       cy.contains('20URL').find('.node').click();
       cy.location().should(({ href }) => {
-        const baseUrl = Cypress.config('baseUrl');
         expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
@@ -65,7 +63,6 @@ describe('Interaction', () => {
     it('should handle a click on a task with a bound URL clicking on the rect', () => {
       cy.get('rect#cl1').click({ force: true });
       cy.location().should(({ href }) => {
-        const baseUrl = Cypress.config('baseUrl');
         expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
@@ -73,7 +70,6 @@ describe('Interaction', () => {
     it('should handle a click on a task with a bound URL clicking on the text', () => {
       cy.get('text#cl1-text').click({ force: true });
       cy.location().should(({ href }) => {
-        const baseUrl = Cypress.config('baseUrl');
         expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
@@ -116,7 +112,6 @@ describe('Interaction', () => {
     it('should handle a click on a node with a bound url', () => {
       cy.contains('URL1').find('.node').click();
       cy.location().should(({ href }) => {
-        const baseUrl = Cypress.config('baseUrl');
         expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
@@ -124,7 +119,6 @@ describe('Interaction', () => {
     it('should handle a click on a node with a bound url where the node starts with a number', () => {
       cy.contains('2URL').find('.node').click();
       cy.location().should(({ href }) => {
-        const baseUrl = Cypress.config('baseUrl');
         expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
@@ -132,7 +126,6 @@ describe('Interaction', () => {
     it('should handle a click on a task with a bound URL clicking on the rect', () => {
       cy.get('rect#cl1').click({ force: true });
       cy.location().should(({ href }) => {
-        const baseUrl = Cypress.config('baseUrl');
         expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
@@ -140,7 +133,6 @@ describe('Interaction', () => {
     it('should handle a click on a task with a bound URL clicking on the text', () => {
       cy.get('text#cl1-text').click({ force: true });
       cy.location().should(({ href }) => {
-        const baseUrl = Cypress.config('baseUrl');
         expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
@@ -174,7 +166,6 @@ describe('Interaction', () => {
     it('should handle a click on a node with a bound url', () => {
       cy.contains('URL1').find('.node').click();
       cy.location().should(({ href }) => {
-        const baseUrl = Cypress.config('baseUrl');
         expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
