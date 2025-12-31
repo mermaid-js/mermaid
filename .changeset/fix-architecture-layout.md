@@ -1,5 +1,5 @@
 ---
-"mermaid": patch
+'mermaid': patch
 ---
 
 fix: correct Y-axis coordinate calculation in architecture diagram layout
