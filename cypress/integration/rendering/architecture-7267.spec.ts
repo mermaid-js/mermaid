@@ -40,7 +40,7 @@ describe('architecture diagram - issue #7267', () => {
         expect(Boolean(el)).to.equal(true, 'service-admin element exists');
         const transform = el.getAttribute('transform') ?? '';
         // Expect a translate(...) transform and reasonable coordinates
-        const m = /translate\(([-\d.]+),\s*([\d.\-]+)\)/.exec(transform);
+        const m = /translate\(([\d.-]+),\s*([\d.-]+)\)/.exec(transform);
         expect(m !== null).to.equal(true, 'transform contains translate with numbers');
         if (m) {
           const x = parseFloat(m[1]);
