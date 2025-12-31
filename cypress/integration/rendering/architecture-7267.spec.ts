@@ -36,11 +36,12 @@ describe('architecture diagram - issue #7267', () => {
       false,
       (svg: JQuery<SVGElement>) => {
         const el = svg.find('#service-admin')[0];
-        expect(el, 'service-admin element exists').to.exist;
+        // ensure element exists
+        expect(Boolean(el)).to.equal(true, 'service-admin element exists');
         const transform = el.getAttribute('transform') ?? '';
         // Expect a translate(...) transform and reasonable coordinates
-        const m = transform.match(/translate\(([-\d.]+),\s*([\d.-]+)\)/);
-        expect(m, 'transform contains translate with numbers').to.not.be.null;
+        const m = /translate\(([-\d.]+),\s*([\d.\-]+)\)/.exec(transform);
+        expect(m !== null).to.equal(true, 'transform contains translate with numbers');
         if (m) {
           const x = parseFloat(m[1]);
           const y = parseFloat(m[2]);
