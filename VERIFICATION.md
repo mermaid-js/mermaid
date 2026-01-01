@@ -7,6 +7,7 @@
 **Current Argos Status: "1 added - waiting for your decision"**
 
 This is **EXPECTED** and **CORRECT** behavior because:
+
 - This PR adds a NEW test case (`architecture-7267.spec.ts`) that didn't exist before
 - Argos has no previous baseline screenshot to compare against
 - Argos needs a maintainer to **approve the new baseline** snapshot
@@ -52,7 +53,7 @@ const diagram = `architecture-beta
 `;
 
 // Render it
-await mermaid.render('test-diagram', diagram).then(({svg}) => {
+await mermaid.render('test-diagram', diagram).then(({ svg }) => {
   document.body.innerHTML = svg;
 });
 
@@ -74,6 +75,7 @@ if (match) {
 ```
 
 **Expected Result:**
+
 - The admin node coordinates should be reasonable (e.g., x: 200-2000, y: 100-1500)
 - All nodes should be visible in the viewport
 - No nodes should have coordinates like x: 50000 or y: -80000
@@ -83,24 +85,27 @@ if (match) {
 The fix corrected Y-axis calculations in `shiftPositionByArchitectureDirectionPair`:
 
 **Before (WRONG):**
+
 ```typescript
 // Top direction was ADDING +1 (moving DOWN - wrong!)
-y + (rhs === 'T' ? 1 : -1)  // ❌ INVERTED
+y + (rhs === 'T' ? 1 : -1); // ❌ INVERTED
 
 // Bottom direction was SUBTRACTING -1 (moving UP - wrong!)
-y + (rhs === 'T' ? 1 : -1)  // ❌ INVERTED
+y + (rhs === 'T' ? 1 : -1); // ❌ INVERTED
 ```
 
 **After (CORRECT):**
+
 ```typescript
 // Top direction now SUBTRACTS -1 (moves UP - correct!)
-y + (rhs === 'T' ? -1 : 1)  // ✅ CORRECT
+y + (rhs === 'T' ? -1 : 1); // ✅ CORRECT
 
 // Bottom direction now ADDS +1 (moves DOWN - correct!)
-y + (rhs === 'T' ? -1 : 1)  // ✅ CORRECT
+y + (rhs === 'T' ? -1 : 1); // ✅ CORRECT
 ```
 
 **Why this matters:**
+
 - SVG/screen coordinates have Y increasing DOWNWARD
 - "Top" means smaller Y values (move up = subtract)
 - "Bottom" means larger Y values (move down = add)
