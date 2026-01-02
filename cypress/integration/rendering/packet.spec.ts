@@ -86,7 +86,9 @@ describe('packet structure', () => {
   it('should render a simple packet with hand-drawn look', () => {
     imgSnapshotTest(
       `packet-beta
-      0-32: "Test Block"`,
+      0-13: "Test Block"
+      14-31: "Another Block"
+      32-40: "Final Block"`,
       {
         look: 'handDrawn',
         packet: {
