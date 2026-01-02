@@ -3,7 +3,6 @@ import type { PacketDiagramConfig, PacketDB, PacketWord } from './types.js';
 import type { DiagramRenderer, DrawDefinition, SVG, SVGGroup } from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-
 import rough from 'roughjs';
 import { getConfig } from '../../config.js';
 
