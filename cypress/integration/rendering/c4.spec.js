@@ -114,4 +114,28 @@ describe('C4 diagram', () => {
       {}
     );
   });
+  it('C4.6 should render C4Context diagram with ComponentQueue_Ext', () => {
+    imgSnapshotTest(
+      `
+      C4Context
+      title System Context diagram with ComponentQueue_Ext
+
+      Enterprise_Boundary(b0, "BankBoundary0") {
+          Person(customerA, "Banking Customer A", "A customer of the bank, with personal bank accounts.")
+
+          System(SystemAA, "Internet Banking System", "Allows customers to view information about their bank accounts, and make payments.")
+
+          Enterprise_Boundary(b1, "BankBoundary") {
+            ComponentQueue_Ext(msgQueue, "Message Queue", "RabbitMQ", "External message queue system for processing banking transactions")
+            System_Ext(SystemC, "E-mail system", "The internal Microsoft Exchange e-mail system.")
+          }
+        }
+
+      BiRel(customerA, SystemAA, "Uses")
+      Rel(SystemAA, msgQueue, "Sends messages to")
+      Rel(SystemAA, SystemC, "Sends e-mails", "SMTP")
+      `,
+      {}
+    );
+  });
 });

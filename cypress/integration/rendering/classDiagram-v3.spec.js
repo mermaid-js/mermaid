@@ -709,6 +709,20 @@ class C13["With Città foreign language"]
       `
     );
   });
+  it('should add notes in namespaces', function () {
+    imgSnapshotTest(
+      `
+      classDiagram
+      note "This is a outer note"
+      note for C1 "This is a outer note for C1"
+      namespace Namespace1 {
+        note "This is a inner note"
+        note for C1 "This is a inner note for C1"
+        class C1
+      }
+      `
+    );
+  });
   it('should render a simple class diagram with no members', () => {
     imgSnapshotTest(
       `
