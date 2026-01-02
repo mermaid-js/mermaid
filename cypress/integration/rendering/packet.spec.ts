@@ -91,9 +91,6 @@ describe('packet structure', () => {
       32-40: "Final Block"`,
       {
         look: 'handDrawn',
-        packet: {
-          blockStrokeWidth: '2',
-        },
       },
       false,
       ($svg: any) => {
