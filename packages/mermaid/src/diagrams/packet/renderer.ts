@@ -24,7 +24,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     rc = rough.svg(svg.node()!);
   }
 
-  svg.attr('viewbox', `0 0 ${svgWidth} ${svgHeight}`);
+  svg.attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
   configureSvgSize(svg, svgHeight, svgWidth, config.useMaxWidth);
 
   for (const [word, packet] of words.entries()) {
