@@ -82,4 +82,26 @@ describe('packet structure', () => {
       `
     );
   });
+
+  it('should render a simple packet with hand-drawn look', () => {
+    imgSnapshotTest(
+      `packet-beta
+      0-32: "Test Block"`,
+      {
+        look: 'handDrawn',
+        packet: {
+          blockStrokeWidth: '2',
+        },
+      },
+      false,
+      ($svg: any) => {
+        const paths = $svg.find('path');
+        const rects = $svg.find('rect');
+
+        expect(paths.length).to.be.greaterThan(0);
+        const blockRects = $svg.find('.packetBlock').filter('rect');
+        expect(blockRects.length).to.equal(0);
+      }
+    );
+  });
 });
