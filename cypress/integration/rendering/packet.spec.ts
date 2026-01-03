@@ -93,13 +93,33 @@ describe('packet structure', () => {
         look: 'handDrawn',
       },
       false,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ($svg: any) => {
         const paths = $svg.find('path');
-        const rects = $svg.find('rect');
-
         expect(paths.length).to.be.greaterThan(0);
         const blockRects = $svg.find('.packetBlock').filter('rect');
         expect(blockRects.length).to.equal(0);
+      }
+    );
+  });
+
+  it('should render a hand-drawn packet with thick strokes', () => {
+    imgSnapshotTest(
+      `packet-beta
+      0-15: "Thick Lines"
+      16-31: "More Lines"
+      32-40: "Final Block"`,
+      {
+        look: 'handDrawn',
+        packet: {
+          blockStrokeWidth: '2',
+        },
+      },
+      false,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ($svg: any) => {
+        const paths = $svg.find('path');
+        expect(paths.length).to.be.greaterThan(0);
       }
     );
   });
