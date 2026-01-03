@@ -375,16 +375,18 @@ const drawCommitTags = (
     const tagElements = [];
 
     for (const tagValue of commit.tags.reverse()) {
-      const rect = gLabels.insert('polygon');
-      const hole = gLabels.append('circle');
-      const tag = gLabels
+      // Create a group for this tag to enable wrapping in anchor tags
+      const tagGroup = gLabels.append('g');
+      tagGroup.attr('data-tag-name', tagValue);
+      tagGroup.attr('class', 'tag');
+
+      const rect = tagGroup.insert('polygon');
+      const hole = tagGroup.append('circle');
+      const tag = tagGroup
         .append('text')
         .attr('y', commitPosition.y - 16 - yOffset)
         .attr('class', 'tag-label')
         .text(tagValue);
-
-      rect.attr('data-tag-name', tagValue);
-      tag.attr('data-tag-name', tagValue);
 
       const tagBbox = tag.node()?.getBBox();
       if (!tagBbox) {
@@ -923,6 +925,7 @@ const escapeCssId = (id: string): string => {
 
 /**
  * Sets up click events for commits with links
+ * Uses SVG <a> elements like flowchart does for native browser link behavior
  * @param svgId - The ID of the SVG element
  * @param db - The gitGraph database
  * @param securityLevel - The mermaid security level
@@ -940,6 +943,10 @@ const setupClickEvents = (
   return () => {
     const svg = select(`[id="${svgId}"]`);
     const config = getConfig();
+
+    // @ts-expect-error - document is always available
+    const doc =
+      securityLevel === 'sandbox' ? select('#i' + svgId).nodes()[0].contentDocument : document;
 
     links.forEach((linkData, id) => {
       // Escape special characters in commit ID for CSS selector
@@ -966,54 +973,47 @@ const setupClickEvents = (
         return;
       }
 
-      // Add clickable styling and accessibility
-      elements
-        .classed('clickable', true)
-        .attr('tabindex', '0')
-        .attr('role', 'link')
-        .attr('aria-label', linkData.tooltip || `Link to ${sanitizedUrl}`)
-        .style('cursor', 'pointer');
+      // Wrap each element's children in an SVG <a> tag (same approach as flowchart)
+      elements.each(function () {
+        const element = select(this);
 
-      // Add tooltip if provided (sanitized to prevent XSS)
-      if (linkData.tooltip) {
-        const sanitizedTooltip = sanitizeText(linkData.tooltip, config);
-        elements.each(function () {
-          // Using .text() is safe from XSS as it doesn't parse HTML
-          select(this).append('title').text(sanitizedTooltip);
-        });
-      }
+        // Create SVG anchor element
+        const link = doc.createElementNS('http://www.w3.org/2000/svg', 'a');
+        link.setAttributeNS('http://www.w3.org/2000/svg', 'class', element.attr('class'));
+        link.setAttributeNS('http://www.w3.org/1999/xlink', 'href', sanitizedUrl);
+        link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
 
-      // Click handler
-      const handleClick = () => {
+        // Set target based on security level and user preference
         if (securityLevel === 'sandbox') {
-          // In sandbox mode, post message to parent frame
-          // Use window.location.origin to avoid wildcard target origin vulnerability
-          window.parent.postMessage(
-            {
-              type: 'mermaid:gitgraph:link',
-              url: sanitizedUrl,
-              target: linkData.target,
-            },
-            window.location.origin
-          );
-        } else if (linkData.target === '_blank') {
-          // Open in new tab with security attributes
-          window.open(sanitizedUrl, '_blank', 'noopener,noreferrer');
-        } else {
-          // Navigate in current window
-          window.location.href = sanitizedUrl;
+          link.setAttributeNS('http://www.w3.org/2000/svg', 'target', '_top');
+        } else if (linkData.target) {
+          link.setAttributeNS('http://www.w3.org/2000/svg', 'target', linkData.target);
         }
-      };
 
-      // Bind click event
-      elements.on('click', handleClick);
-
-      // Bind keyboard event for accessibility
-      elements.on('keydown', (event: KeyboardEvent) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          handleClick();
+        // Add tooltip if provided
+        if (linkData.tooltip) {
+          const sanitizedTooltip = sanitizeText(linkData.tooltip, config);
+          const title = doc.createElementNS('http://www.w3.org/2000/svg', 'title');
+          title.textContent = sanitizedTooltip;
+          link.appendChild(title);
         }
+
+        // Insert the <a> element as first child of the group
+        element.insert(function () {
+          return link;
+        }, ':first-child');
+
+        // Move all existing children into the <a> element
+        // Collect child nodes first to avoid stale DOM references during iteration
+        const childNodesToMove: SVGElement[] = [];
+        element.selectAll(':scope > :not(a)').each(function () {
+          childNodesToMove.push(this as SVGElement);
+        });
+
+        // Now move them into the link element
+        childNodesToMove.forEach((child) => {
+          link.appendChild(child);
+        });
       });
     });
   };
@@ -1070,7 +1070,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     DEFAULT_GITGRAPH_CONFIG.useMaxWidth
   );
 
-  const bindFunctions = setupClickEvents(id, db, DEFAULT_CONFIG?.securityLevel ?? 'strict');
+  const bindFunctions = setupClickEvents(id, db, getConfig().securityLevel ?? 'strict');
   if (bindFunctions) {
     bindFunctions();
   }

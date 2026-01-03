@@ -77,6 +77,48 @@ const getStyles = (options) =>
     outline: 2px solid ${options.git0 || '#000'};
     outline-offset: 2px;
   }
+
+  /* Clickable branch label styles */
+  .branchLabel.clickable {
+    cursor: pointer;
+  }
+
+  .branchLabel.clickable:hover .branchLabelBkg,
+  .branchLabel.clickable:focus .branchLabelBkg {
+    stroke-width: 3px;
+    stroke: ${options.git0 || '#000'} !important;
+  }
+
+  .branchLabel.clickable:hover .label,
+  .branchLabel.clickable:focus .label {
+    text-decoration: underline;
+  }
+
+  .branchLabel.clickable:focus {
+    outline: 2px solid ${options.git0 || '#000'};
+    outline-offset: 2px;
+  }
+
+  /* Clickable tag styles */
+  .tag.clickable {
+    cursor: pointer;
+  }
+
+  .tag.clickable:hover polygon,
+  .tag.clickable:focus polygon {
+    stroke-width: 3px;
+    stroke: ${options.git0 || '#000'} !important;
+  }
+
+  .tag.clickable:hover text,
+  .tag.clickable:focus text {
+    text-decoration: underline;
+  }
+
+  .tag.clickable:focus {
+    outline: 2px solid ${options.git0 || '#000'};
+    outline-offset: 2px;
+  }
 `;
 
 export default getStyles;
