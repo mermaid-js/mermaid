@@ -11,29 +11,24 @@ import defaultConfig from '../../defaultConfig.js';
 
 // Helper function to calculate dynamic spine length based on number of categories
 function calculateSpineLength(categories: IshikawaNode[]): number {
-  const minSpineLength = 800; // Minimum spine length for visual appeal
-  const baseSpineLength = 1200; // Base length for reference
-  const lengthPerCategory = 200; // Additional length per category
+  const minSpineLength = 1000; // Minimum spine length for visual appeal (increased)
+  const baseSpineLength = 1500; // Base length for reference (increased)
+  const lengthPerCategory = 300; // Additional length per category (increased)
 
   return Math.max(minSpineLength, baseSpineLength + (categories.length - 3) * lengthPerCategory);
 }
 
 // Helper function to calculate dynamic cause distance based on number of sub-causes
-function calculateCauseDistance(category: IshikawaNode, allCategories?: IshikawaNode[]): number {
-  const minDistance = 300; // Minimum distance from spine to category
-  const baseDistance = 400; // Base distance for reference
-  const distancePerSubCause = 50; // Additional distance per sub-cause
+// Each category's distance scales independently based on its own number of elements
+// Formula: 100 + (100 * number of sub-causes)
+function calculateCauseDistance(category: IshikawaNode): number {
+  const baseDistance = 100; // Base distance from spine
+  const distancePerSubCause = 100; // Distance per sub-cause
 
   const totalSubCauses = countSubCauses(category);
 
-  // If we have all categories, use the maximum sub-causes for consistent spacing
-  if (allCategories) {
-    const maxSubCauses = Math.max(...allCategories.map((cat) => countSubCauses(cat)));
-    return Math.max(minDistance, baseDistance + maxSubCauses * distancePerSubCause);
-  }
-
-  // Otherwise, use the current category's sub-causes
-  return Math.max(minDistance, baseDistance + totalSubCauses * distancePerSubCause);
+  // Simple formula: 100 + (100 * number of sub-causes)
+  return baseDistance + totalSubCauses * distancePerSubCause;
 }
 
 // Fishbone layout algorithm - Cause-based positioning with proportional spacing
@@ -83,8 +78,9 @@ function layoutFishbone(
       ? -Math.PI + Math.PI / 4 // Top: up and left (-135°)
       : Math.PI - Math.PI / 4; // Bottom: down and left (135°)
 
-    // Calculate dynamic distance based on number of sub-causes
-    const requiredDistance = calculateCauseDistance(category, categories);
+    // Calculate dynamic distance based on number of sub-causes in this specific category
+    // Each category scales independently based on its own number of elements
+    const requiredDistance = calculateCauseDistance(category);
 
     // Calculate category position at the required distance from spine
     const categoryX = spineX + requiredDistance * Math.cos(categoryAngle);
@@ -109,21 +105,28 @@ function layoutFishbone(
     // Position causes (level 2 children) along the category branch line
     const causes = category.children || [];
 
+    // Position causes in equal spacing: first cause at 100px from spine, then equal intervals
+    const firstCauseDistance = 100; // First cause distance from spine
+    const spacingBetweenCauses = 100; // Equal spacing between causes
+
     causes.forEach((cause, causeIndex) => {
-      // Calculate position along the diagonal category branch
-      // Distribute causes evenly along 60% of the branch (from 20% to 80%)
-      const branchProgress = 0.2 + (causeIndex * 0.6) / Math.max(causes.length - 1, 1);
-
-      // Calculate max sub-cause distance for all causes in this category
-      const maxSubCauses = Math.max(...causes.map((c) => (c.children ? c.children.length : 0)));
-      const causeDistance = Math.max(300, 400 + maxSubCauses * 50);
-
-      // Use causeDistance for the position of the cause node (not requiredDistance)
-      const causeX = spineX + causeDistance * branchProgress * Math.cos(categoryAngle);
-      const causeY = spineY + causeDistance * branchProgress * Math.sin(categoryAngle);
+      // Position causes in equal spacing: first at 100px, then each next at +100px
+      const totalDistance = firstCauseDistance + causeIndex * spacingBetweenCauses;
+      
+      // Use totalDistance for the position of the cause node along the branch
+      const causeX = spineX + totalDistance * Math.cos(categoryAngle);
+      const causeY = spineY + totalDistance * Math.sin(categoryAngle);
 
       // Position sub-causes in pairs, with first pair to the left of category point
       const subCauses = cause.children || [];
+      const subCausesCount = subCauses.length;
+
+      // Calculate spacing between pairs based on number of sub-causes
+      // More sub-causes = larger spacing between pairs for better distribution
+      const minSpacing = 120; // Minimum spacing between pairs (increased)
+      const baseSpacing = 150; // Base spacing (increased)
+      const spacingPerSubCause = 25; // Additional spacing per sub-cause (increased)
+      const pairSpacing = Math.max(minSpacing, baseSpacing + subCausesCount * spacingPerSubCause);
 
       subCauses.forEach((subCause, subCauseIndex) => {
         // Calculate sub-cause position in pairs
@@ -134,9 +137,11 @@ function layoutFishbone(
         const pairIndex = Math.floor(subCauseIndex / 2); // Which pair this sub-cause belongs to
         const isFirstInPair = subCauseIndex % 2 === 0; // Is this the first sub-cause in the pair?
 
-        // Calculate distance from cause point (negative = left, positive = right)
-        const distanceFromCause = (pairIndex + 1) * (causeDistance * 0.3); // Use cause distance for spacing
-        const pairOffset = isFirstInPair ? 40 : -40; // 40px offset to make ribs opposite to each other
+        // Calculate distance from cause point based on pair spacing
+        // Distance scales with number of sub-causes - more sub-causes = larger spacing
+        const distanceFromCause = (pairIndex + 1) * pairSpacing;
+        // Increased pair offset to prevent overlap - consider node width (typically 200px max)
+        const pairOffset = isFirstInPair ? 60 : -60; // Increased offset to make ribs opposite to each other
 
         // Calculate perpendicular angle for pair offset
         const perpendicularAngle = causeAngle + Math.PI / 2;
@@ -202,12 +207,12 @@ async function drawNodes(
   }
 }
 
-function drawEdges(edgesEl: D3Element, edges: { from: number; to: number }[], db: IshikawaDB) {
+function drawEdges(edgesElement: D3Element, edges: { from: number; to: number }[], db: IshikawaDB) {
   // Draw the main spine first (horizontal line from left to right)
   const root = db.getIshikawa();
   if (root?.x !== undefined && root?.y !== undefined && root.x > 100) {
     const spineStartX = 100; // Match the spineStartX from layout
-    edgesEl
+    edgesElement
       .insert('line')
       .attr('x1', spineStartX)
       .attr('y1', root.y)
@@ -222,16 +227,16 @@ function drawEdges(edgesEl: D3Element, edges: { from: number; to: number }[], db
     // Handle virtual spine points (categories connecting to spine)
     if (edge.from < 0) {
       // This is a category connecting to the spine
-      const toNode = db.getElementById(edge.to);
-      if (toNode) {
-        const toData = db.getIshikawa();
-        if (toData) {
-          const findNode = (id: number, node: IshikawaNode): IshikawaNode | null => {
-            if (node.id === id) {
+      const targetNodeElement = db.getElementByNodeId(edge.to);
+      if (targetNodeElement) {
+        const targetNodeData = db.getIshikawa();
+        if (targetNodeData) {
+          const findNodeById = (nodeId: number, node: IshikawaNode): IshikawaNode | null => {
+            if (node.id === nodeId) {
               return node;
             }
             for (const child of node.children || []) {
-              const found = findNode(id, child);
+              const found = findNodeById(nodeId, child);
               if (found) {
                 return found;
               }
@@ -239,11 +244,11 @@ function drawEdges(edgesEl: D3Element, edges: { from: number; to: number }[], db
             return null;
           };
 
-          const to = findNode(edge.to, toData);
-          if (to?.x !== undefined && to?.y !== undefined) {
+          const targetNode = findNodeById(edge.to, targetNodeData);
+          if (targetNode?.x !== undefined && targetNode?.y !== undefined) {
             // Calculate spine connection point with dynamic spine length
             const categoryIndex = Math.abs(edge.from) - 1;
-            const categories = toData.children || [];
+            const categories = targetNodeData.children || [];
 
             // Calculate dynamic spine length (same logic as layoutFishbone)
             const spineLength = calculateSpineLength(categories);
@@ -253,12 +258,12 @@ function drawEdges(edgesEl: D3Element, edges: { from: number; to: number }[], db
             const spineY = root?.y ?? 400;
 
             // Draw 45° diagonal line from spine to category
-            edgesEl
+            edgesElement
               .insert('line')
               .attr('x1', spineX) // Spine X coordinate
               .attr('y1', spineY) // Spine Y coordinate
-              .attr('x2', to.x)
-              .attr('y2', to.y)
+              .attr('x2', targetNode.x)
+              .attr('y2', targetNode.y)
               .attr('class', 'ishikawa-category-branch')
               .attr('stroke-width', 2)
               .attr('stroke', '#666');
@@ -269,17 +274,17 @@ function drawEdges(edgesEl: D3Element, edges: { from: number; to: number }[], db
     }
 
     // Handle regular edges
-    const fromNode = db.getElementById(edge.from);
-    const toNode = db.getElementById(edge.to);
+    const sourceNodeElement = db.getElementByNodeId(edge.from);
+    const targetNodeElement = db.getElementByNodeId(edge.to);
 
-    if (fromNode && toNode) {
+    if (sourceNodeElement && targetNodeElement) {
       // Get node data for positioning (single call is sufficient)
       const ishikawaData = db.getIshikawa();
 
       if (ishikawaData) {
         // Find the actual nodes with improved error handling
-        const findNode = (
-          id: number,
+        const findNodeById = (
+          nodeId: number,
           node: IshikawaNode,
           visited = new Set<number>()
         ): IshikawaNode | null => {
@@ -288,11 +293,11 @@ function drawEdges(edgesEl: D3Element, edges: { from: number; to: number }[], db
           }
           visited.add(node.id);
 
-          if (node.id === id) {
+          if (node.id === nodeId) {
             return node;
           }
           for (const child of node.children || []) {
-            const found = findNode(id, child, visited);
+            const found = findNodeById(nodeId, child, visited);
             if (found) {
               return found;
             }
@@ -300,31 +305,31 @@ function drawEdges(edgesEl: D3Element, edges: { from: number; to: number }[], db
           return null;
         };
 
-        const from = findNode(edge.from, ishikawaData);
-        const to = findNode(edge.to, ishikawaData);
+        const sourceNode = findNodeById(edge.from, ishikawaData);
+        const targetNode = findNodeById(edge.to, ishikawaData);
 
         if (
-          from &&
-          to &&
-          from.x !== undefined &&
-          from.y !== undefined &&
-          to.x !== undefined &&
-          to.y !== undefined
+          sourceNode &&
+          targetNode &&
+          sourceNode.x !== undefined &&
+          sourceNode.y !== undefined &&
+          targetNode.x !== undefined &&
+          targetNode.y !== undefined
         ) {
           // Determine edge class based on levels
           let edgeClass = 'ishikawa-cause-branch';
-          if (from.level === 1 && to.level === 2) {
+          if (sourceNode.level === 1 && targetNode.level === 2) {
             edgeClass = 'ishikawa-category-branch'; // Lines from categories to causes
-          } else if (from.level === 2 && to.level === 3) {
+          } else if (sourceNode.level === 2 && targetNode.level === 3) {
             edgeClass = 'ishikawa-cause-branch'; // Lines from causes to sub-causes (horizontal ribs)
           }
 
-          edgesEl
+          edgesElement
             .insert('line')
-            .attr('x1', from.x)
-            .attr('y1', from.y)
-            .attr('x2', to.x)
-            .attr('y2', to.y)
+            .attr('x1', sourceNode.x)
+            .attr('y1', sourceNode.y)
+            .attr('x2', targetNode.x)
+            .attr('y2', targetNode.y)
             .attr('class', edgeClass)
             .attr('stroke-width', 1)
             .attr('stroke', '#999');
@@ -344,22 +349,22 @@ export const renderer: DiagramRenderer = {
       return;
     }
 
-    const conf = getConfig();
-    conf.htmlLabels = false;
+    const configuration = getConfig();
+    configuration.htmlLabels = false;
 
     const svg = selectSvgElement(id);
 
     // Create container groups
-    const edgesElem = svg.append('g');
-    edgesElem.attr('class', 'ishikawa-edges');
-    const nodesElem = svg.append('g');
-    nodesElem.attr('class', 'ishikawa-nodes');
+    const edgesElement = svg.append('g');
+    edgesElement.attr('class', 'ishikawa-edges');
+    const nodesElement = svg.append('g');
+    nodesElement.attr('class', 'ishikawa-nodes');
 
     // Layout the fishbone diagram
-    const { nodes, edges } = layoutFishbone(root, conf);
+    const { nodes, edges } = layoutFishbone(root, configuration);
 
     // Draw nodes first to get their dimensions
-    await drawNodes(db, nodesElem, nodes, conf);
+    await drawNodes(db, nodesElement, nodes, configuration);
 
     // Position nodes according to layout
     nodes.forEach((node) => {
@@ -367,14 +372,14 @@ export const renderer: DiagramRenderer = {
     });
 
     // Draw edges
-    drawEdges(edgesElem, edges, db);
+    drawEdges(edgesElement, edges, db);
 
     // Setup the view box and size of the svg element
     setupGraphViewbox(
       undefined,
       svg,
-      conf.ishikawa?.padding ?? defaultConfig.ishikawa?.padding ?? 20,
-      conf.ishikawa?.useMaxWidth ?? defaultConfig.ishikawa?.useMaxWidth ?? false
+      configuration.ishikawa?.padding ?? defaultConfig.ishikawa?.padding ?? 20,
+      configuration.ishikawa?.useMaxWidth ?? defaultConfig.ishikawa?.useMaxWidth ?? false
     );
   },
 };

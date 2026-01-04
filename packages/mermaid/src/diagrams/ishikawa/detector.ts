@@ -3,7 +3,7 @@ import type {
   DiagramLoader,
   ExternalDiagramDefinition,
 } from '../../diagram-api/types.js';
-const id = 'ishikawa';
+const id = 'ishikawa-beta';
 
 const detector: DiagramDetector = (txt) => {
   return /^\s*ishikawa/.test(txt);

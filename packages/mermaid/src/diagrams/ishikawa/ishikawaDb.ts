@@ -4,196 +4,238 @@ import { sanitizeText } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
 import type { IshikawaNode } from './ishikawaTypes.js';
 import defaultConfig from '../../defaultConfig.js';
+import type { DiagramDB } from '../../diagram-api/types.js';
+import {
+  setAccTitle,
+  getAccTitle,
+  getAccDescription,
+  setAccDescription,
+  clear as commonClear,
+  setDiagramTitle,
+  getDiagramTitle,
+} from '../common/commonDb.js';
 
-let nodes: IshikawaNode[] = [];
-let cnt = 0;
-let elements: Record<number, D3Element> = {};
-let problemStatement = '';
-let categories: string[] = [];
+export class IshikawaDB implements DiagramDB {
+  private nodes: IshikawaNode[] = [];
+  private nodeIdCounter = 0;
+  private elements: Record<number, D3Element> = {};
+  private problemStatement = '';
+  private categories: string[] = [];
 
-const clear = () => {
-  nodes = [];
-  cnt = 0;
-  elements = {};
-  problemStatement = '';
-  categories = [];
-};
+  public readonly nodeType = {
+    DEFAULT: 0,
+    NO_BORDER: 0,
+    ROUNDED_RECT: 1,
+    RECT: 2,
+    CIRCLE: 3,
+    CLOUD: 4,
+    BANG: 5,
+    HEXAGON: 6,
+  } as const;
 
-const getParent = function (level: number) {
-  for (let i = nodes.length - 1; i >= 0; i--) {
-    if (nodes[i].level < level) {
-      return nodes[i];
+  constructor() {
+    this.clear();
+
+    // Needed for JISON since it only supports direct properties
+    this.addNode = this.addNode.bind(this);
+    this.getIshikawa = this.getIshikawa.bind(this);
+    this.getParent = this.getParent.bind(this);
+    this.setProblemStatement = this.setProblemStatement.bind(this);
+    this.getProblemStatement = this.getProblemStatement.bind(this);
+    this.addCategory = this.addCategory.bind(this);
+    this.getCategories = this.getCategories.bind(this);
+    this.getType = this.getType.bind(this);
+    this.setElementForNodeId = this.setElementForNodeId.bind(this);
+    this.decorateNode = this.decorateNode.bind(this);
+    this.nodeTypeToString = this.nodeTypeToString.bind(this);
+    this.type2Str = this.type2Str.bind(this);
+    this.getLogger = this.getLogger.bind(this);
+    this.getElementByNodeId = this.getElementByNodeId.bind(this);
+    this.getElementById = this.getElementById.bind(this);
+    this.setAccTitle = this.setAccTitle.bind(this);
+    this.setAccDescription = this.setAccDescription.bind(this);
+  }
+
+  public clear() {
+    commonClear();
+    this.nodes = [];
+    this.nodeIdCounter = 0;
+    this.elements = {};
+    this.problemStatement = '';
+    this.categories = [];
+  }
+
+  private getParent(level: number): IshikawaNode | null {
+    for (let i = this.nodes.length - 1; i >= 0; i--) {
+      if (this.nodes[i].level < level) {
+        return this.nodes[i];
+      }
     }
-  }
-  // No parent found
-  return null;
-};
-
-const getIshikawa = () => {
-  return nodes.length > 0 ? nodes[0] : null;
-};
-
-const setProblemStatement = (problem: string) => {
-  problemStatement = sanitizeText(problem, getConfig());
-  // Also create the root node if it doesn't exist
-  if (nodes.length === 0) {
-    addNode(0, 'problem', problem, nodeType.DEFAULT);
-  }
-};
-
-const getProblemStatement = () => {
-  // Try to get from the root node first, then fall back to the stored value
-  const root = getIshikawa();
-  if (root) {
-    return root.descr;
-  }
-  return problemStatement;
-};
-
-const addCategory = (category: string) => {
-  const sanitizedCategory = sanitizeText(category, getConfig());
-  if (!categories.includes(sanitizedCategory)) {
-    categories.push(sanitizedCategory);
-  }
-  // Also create a category node
-  addNode(1, 'category', category, nodeType.DEFAULT);
-  return sanitizedCategory;
-};
-
-const getCategories = () => {
-  return categories;
-};
-
-const addNode = (level: number, id: string, descr: string, type: number, category?: string) => {
-  log.info('addNode', level, id, descr, type, category);
-  const conf = getConfig();
-  let padding: number = conf.ishikawa?.padding ?? defaultConfig.ishikawa?.padding ?? 20;
-  switch (type) {
-    case nodeType.ROUNDED_RECT:
-    case nodeType.RECT:
-    case nodeType.HEXAGON:
-      padding *= 2;
+    // No parent found
+    return null;
   }
 
-  const node = {
-    id: cnt++,
-    nodeId: sanitizeText(id, conf),
-    level,
-    descr: sanitizeText(descr, conf),
-    type,
-    children: [],
-    width: conf.ishikawa?.maxNodeWidth ?? defaultConfig.ishikawa?.maxNodeWidth ?? 200,
-    padding,
-    category: category ? sanitizeText(category, conf) : undefined,
-  } satisfies IshikawaNode;
+  public getIshikawa(): IshikawaNode | null {
+    return this.nodes.length > 0 ? this.nodes[0] : null;
+  }
 
-  const parent = getParent(level);
-  if (parent) {
-    parent.children.push(node);
-    // Keep all nodes in the list
-    nodes.push(node);
-  } else {
-    if (nodes.length === 0) {
-      // First node, the root (problem statement)
-      nodes.push(node);
+  public setProblemStatement(problem: string) {
+    this.problemStatement = sanitizeText(problem, getConfig());
+    // Also create the root node if it doesn't exist
+    if (this.nodes.length === 0) {
+      this.addNode(0, 'problem', problem, this.nodeType.DEFAULT);
     } else {
-      // Syntax error ... there can only be one root
-      throw new Error(
-        'There can be only one root. No parent could be found for ("' + node.descr + '")'
-      );
+      // Update existing root node's description
+      const root = this.getIshikawa();
+      if (root) {
+        root.description = this.problemStatement;
+      }
     }
   }
-};
 
-const nodeType = {
-  DEFAULT: 0,
-  NO_BORDER: 0,
-  ROUNDED_RECT: 1,
-  RECT: 2,
-  CIRCLE: 3,
-  CLOUD: 4,
-  BANG: 5,
-  HEXAGON: 6,
-};
-
-const getType = (startStr: string, endStr: string): number => {
-  log.debug('In get type', startStr, endStr);
-  switch (startStr) {
-    case '[':
-      return nodeType.RECT;
-    case '(':
-      return endStr === ')' ? nodeType.ROUNDED_RECT : nodeType.CLOUD;
-    case '((':
-      return nodeType.CIRCLE;
-    case ')':
-      return nodeType.CLOUD;
-    case '))':
-      return nodeType.BANG;
-    case '{{':
-      return nodeType.HEXAGON;
-    default:
-      return nodeType.DEFAULT;
+  public getProblemStatement(): string {
+    // Try to get from the root node first, then fall back to the stored value
+    const root = this.getIshikawa();
+    if (root) {
+      return root.description;
+    }
+    return this.problemStatement;
   }
-};
 
-const setElementForId = (id: number, element: D3Element) => {
-  elements[id] = element;
-};
-
-const decorateNode = (decoration?: { class?: string; icon?: string }) => {
-  if (!decoration) {
-    return;
+  public addCategory(category: string): string {
+    const sanitizedCategory = sanitizeText(category, getConfig());
+    if (!this.categories.includes(sanitizedCategory)) {
+      this.categories.push(sanitizedCategory);
+    }
+    // Also create a category node
+    this.addNode(1, 'category', category, this.nodeType.DEFAULT);
+    return sanitizedCategory;
   }
-  const config = getConfig();
-  const node = nodes[nodes.length - 1];
-  if (decoration.icon) {
-    node.icon = sanitizeText(decoration.icon, config);
+
+  public getCategories(): string[] {
+    return this.categories;
   }
-  if (decoration.class) {
-    node.class = sanitizeText(decoration.class, config);
+
+  public addNode(level: number, id: string, description: string, type: number, category?: string) {
+    log.info('addNode', level, id, description, type, category);
+    const configuration = getConfig();
+    let padding: number = configuration.ishikawa?.padding ?? defaultConfig.ishikawa?.padding ?? 20;
+    switch (type) {
+      case this.nodeType.ROUNDED_RECT:
+      case this.nodeType.RECT:
+      case this.nodeType.HEXAGON:
+        padding *= 2;
+    }
+
+    const node = {
+      id: this.nodeIdCounter++,
+      nodeId: sanitizeText(id, configuration),
+      level,
+      description: sanitizeText(description, configuration),
+      type,
+      children: [],
+      width: configuration.ishikawa?.maxNodeWidth ?? defaultConfig.ishikawa?.maxNodeWidth ?? 200,
+      padding,
+      category: category ? sanitizeText(category, configuration) : undefined,
+    } satisfies IshikawaNode;
+
+    const parent = this.getParent(level);
+    if (parent) {
+      parent.children.push(node);
+      // Keep all nodes in the list
+      this.nodes.push(node);
+    } else {
+      if (this.nodes.length === 0) {
+        // First node, the root (problem statement)
+        this.nodes.push(node);
+      } else {
+        // Syntax error ... there can only be one root
+        throw new Error(
+          'There can be only one root. No parent could be found for ("' + node.description + '")'
+        );
+      }
+    }
   }
-};
 
-const type2Str = (type: number) => {
-  switch (type) {
-    case nodeType.DEFAULT:
-      return 'no-border';
-    case nodeType.RECT:
-      return 'rect';
-    case nodeType.ROUNDED_RECT:
-      return 'rounded-rect';
-    case nodeType.CIRCLE:
-      return 'circle';
-    case nodeType.CLOUD:
-      return 'cloud';
-    case nodeType.BANG:
-      return 'bang';
-    case nodeType.HEXAGON:
-      return 'hexagon';
-    default:
-      return 'no-border';
+  public getType(startStr: string, endStr: string): number {
+    log.debug('In get type', startStr, endStr);
+    switch (startStr) {
+      case '[':
+        return this.nodeType.RECT;
+      case '(':
+        return endStr === ')' ? this.nodeType.ROUNDED_RECT : this.nodeType.CLOUD;
+      case '((':
+        return this.nodeType.CIRCLE;
+      case ')':
+        return this.nodeType.CLOUD;
+      case '))':
+        return this.nodeType.BANG;
+      case '{{':
+        return this.nodeType.HEXAGON;
+      default:
+        return this.nodeType.DEFAULT;
+    }
   }
-};
 
-// Expose logger to grammar
-const getLogger = () => log;
-const getElementById = (id: number) => elements[id];
+  public setElementForNodeId(nodeId: number, element: D3Element) {
+    this.elements[nodeId] = element;
+  }
 
-const db = {
-  clear,
-  addNode,
-  getIshikawa,
-  setProblemStatement,
-  getProblemStatement,
-  addCategory,
-  getCategories,
-  nodeType,
-  getType,
-  setElementForId,
-  decorateNode,
-  type2Str,
-  getLogger,
-  getElementById,
-} as const;
+  public decorateNode(decoration?: { class?: string; icon?: string }) {
+    if (!decoration) {
+      return;
+    }
+    const configuration = getConfig();
+    const node = this.nodes[this.nodes.length - 1];
+    if (decoration.icon) {
+      node.icon = sanitizeText(decoration.icon, configuration);
+    }
+    if (decoration.class) {
+      node.class = sanitizeText(decoration.class, configuration);
+    }
+  }
 
-export default db;
+  public nodeTypeToString(type: number): string {
+    switch (type) {
+      case this.nodeType.DEFAULT:
+        return 'no-border';
+      case this.nodeType.RECT:
+        return 'rect';
+      case this.nodeType.ROUNDED_RECT:
+        return 'rounded-rect';
+      case this.nodeType.CIRCLE:
+        return 'circle';
+      case this.nodeType.CLOUD:
+        return 'cloud';
+      case this.nodeType.BANG:
+        return 'bang';
+      case this.nodeType.HEXAGON:
+        return 'hexagon';
+      default:
+        return 'no-border';
+    }
+  }
+
+  // Alias for backward compatibility
+  public type2Str = this.nodeTypeToString;
+
+  // Expose logger to grammar
+  public getLogger() {
+    return log;
+  }
+
+  public getElementByNodeId(nodeId: number): D3Element | undefined {
+    return this.elements[nodeId];
+  }
+
+  // Alias for backward compatibility
+  public getElementById = this.getElementByNodeId;
+
+  // Common DB methods
+  public setAccTitle = setAccTitle;
+  public getAccTitle = getAccTitle;
+  public setAccDescription = setAccDescription;
+  public getAccDescription = getAccDescription;
+  public setDiagramTitle = setDiagramTitle;
+  public getDiagramTitle = getDiagramTitle;
+}

@@ -1,11 +1,11 @@
 import type { RequiredDeep } from 'type-fest';
-import type ishikawaDb from './ishikawaDb.js';
+import type { IshikawaDB } from './ishikawaDb.js';
 
 export interface IshikawaNode {
   id: number;
   nodeId: string;
   level: number;
-  descr: string;
+  description: string;
   type: number;
   children: IshikawaNode[];
   width: number;
@@ -20,4 +20,4 @@ export interface IshikawaNode {
 }
 
 export type FilledIshikawaNode = RequiredDeep<IshikawaNode>;
-export type IshikawaDB = typeof ishikawaDb;
+export type { IshikawaDB };

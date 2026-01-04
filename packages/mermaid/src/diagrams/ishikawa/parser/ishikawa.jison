@@ -89,6 +89,8 @@ spaceLines
 ishikawaDiagram
   : ISHIKAWA document  { return yy; }
   | ISHIKAWA NL document  { return yy; }
+  | ISHIKAWA EOF  { return yy; }
+  | ISHIKAWA NL EOF  { return yy; }
   ;
 
 stop
@@ -106,13 +108,13 @@ document
 statement
 	: SPACELIST problemStatement       { yy.getLogger().info('Problem: ',$2);yy.setProblemStatement($2);  }
 	| SPACELIST categoryStatement      { yy.getLogger().info('Category: ',$2);yy.addCategory($2);  }
-	| SPACELIST node       { yy.getLogger().info('Node: ',$2.id);yy.addNode($1.length, $2.id, $2.descr, $2.type, $2.category);  }
+	| SPACELIST node       { yy.getLogger().info('Node: ',$2.id);yy.addNode($1.length, $2.id, $2.description, $2.type, $2.category);  }
 	| SPACELIST ICON       { yy.getLogger().trace('Icon: ',$2);yy.decorateNode({icon: $2}); }
 	| SPACELIST CLASS      { yy.decorateNode({class: $2}); }
   | SPACELINE { yy.getLogger().trace('SPACELIST');}
 	| problemStatement				       { yy.getLogger().trace('Problem: ',$1);yy.setProblemStatement($1);  }
 	| categoryStatement				       { yy.getLogger().trace('Category: ',$1);yy.addCategory($1);  }
-	| node					       { yy.getLogger().trace('Node: ',$1.id);yy.addNode(0, $1.id, $1.descr, $1.type, $1.category);  }
+	| node					       { yy.getLogger().trace('Node: ',$1.id);yy.addNode(0, $1.id, $1.description, $1.type, $1.category);  }
 	| ICON                 { yy.decorateNode({icon: $1}); }
 	| CLASS                { yy.decorateNode({class: $1}); }
   | SPACELIST
@@ -139,14 +141,14 @@ node
 
 nodeWithoutId
   :   NODE_DSTART NODE_DESCR NODE_DEND
-	      { yy.getLogger().trace("node found ..", $1); $$ = { id: $2, descr: $2, type: yy.getType($1, $3), category: undefined }; }
+	      { yy.getLogger().trace("node found ..", $1); $$ = { id: $2, description: $2, type: yy.getType($1, $3), category: undefined }; }
   ;
 
 nodeWithId
-	:  NODE_ID             { $$ = { id: $1, descr: $1, type: yy.nodeType.DEFAULT, category: undefined }; }
-	|  NODE_ID NODE_ID     { $$ = { id: $1, descr: $2, type: yy.nodeType.DEFAULT, category: undefined }; }
-	|  NODE_ID SPACELIST NODE_ID { $$ = { id: $1, descr: $3, type: yy.nodeType.DEFAULT, category: undefined }; }
+	:  NODE_ID             { $$ = { id: $1, description: $1, type: yy.nodeType.DEFAULT, category: undefined }; }
+	|  NODE_ID NODE_ID     { $$ = { id: $1, description: $2, type: yy.nodeType.DEFAULT, category: undefined }; }
+	|  NODE_ID SPACELIST NODE_ID { $$ = { id: $1, description: $3, type: yy.nodeType.DEFAULT, category: undefined }; }
 	|  NODE_ID NODE_DSTART NODE_DESCR NODE_DEND
-	                       { yy.getLogger().trace("node found ..", $1); $$ = { id: $1, descr: $3, type: yy.getType($2, $4), category: undefined }; }
+	                       { yy.getLogger().trace("node found ..", $1); $$ = { id: $1, description: $3, type: yy.getType($2, $4), category: undefined }; }
 	;
-%% 
+%%

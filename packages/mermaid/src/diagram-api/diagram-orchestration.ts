@@ -102,7 +102,7 @@ export const addDiagrams = () => {
     xychart,
     block,
     radar,
-    treemap
+    treemap,
     ishikawa
   );
 };

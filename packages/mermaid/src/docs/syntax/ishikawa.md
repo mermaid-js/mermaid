@@ -1,4 +1,4 @@
-# Ishikawa Diagram
+# Ishikawa Diagram (v<MERMAID_RELEASE_VERSION>+)
 
 > **Note**: Ishikawa diagrams are also known as fishbone diagrams or cause-and-effect diagrams.
 
