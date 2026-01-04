@@ -1,10 +1,13 @@
-import type { Example } from '../types.js';
+import type { DiagramMetadata } from '../types.js';
 
-export const ishikawaExamples: Example[] = [
-  {
-    name: 'Basic Ishikawa Diagram',
-    description: 'A simple cause-and-effect diagram showing customer complaints with People, Process, and Equipment categories.',
-    code: `ishikawa
+export default {
+  id: 'ishikawa',
+  name: 'Ishikawa Diagram',
+  description: 'Visualize cause-and-effect relationships using fishbone diagrams',
+  examples: [
+    {
+      title: 'Basic Ishikawa Diagram',
+      code: `ishikawa
 problem "Customer complaints increasing"
 category "People"
   "Lack of training"
@@ -18,12 +21,11 @@ category "Equipment"
   "Outdated tools"
   "Maintenance issues"
   "Incompatible systems"`,
-    isDefault: true,
-  },
-  {
-    name: 'Manufacturing Quality Issues',
-    description: 'A comprehensive fishbone diagram analyzing product quality issues using the 6M framework (Materials, Methods, Machines, Environment, Measurement, Manpower).',
-    code: `ishikawa
+      isDefault: true,
+    },
+    {
+      title: 'Manufacturing Quality Issues',
+      code: `ishikawa
 problem "Product quality issues"
 category "Materials"
   "Poor quality raw materials"
@@ -49,11 +51,10 @@ category "Manpower"
   "Lack of training"
   "High turnover"
   "Fatigue"`,
-  },
-  {
-    name: 'Service Industry Problem Analysis',
-    description: 'An Ishikawa diagram for service industries using the 8P framework (Product, Price, Place, Promotion, People, Process, Physical Evidence, Performance).',
-    code: `ishikawa
+    },
+    {
+      title: 'Service Industry Problem Analysis',
+      code: `ishikawa
 problem "Customer satisfaction declining"
 category "Product/Service"
   "Quality issues"
@@ -87,11 +88,10 @@ category "Performance"
   "Slow service"
   "Inconsistent delivery"
   "Quality problems"`,
-  },
-  {
-    name: 'Different Node Shapes',
-    description: 'Demonstrates various node shapes available in Ishikawa diagrams: square, rounded square, circle, cloud, and hexagon.',
-    code: `ishikawa
+    },
+    {
+      title: 'Different Node Shapes',
+      code: `ishikawa
 problem "Test all shapes"
 category "Shapes"
   "Default shape"
@@ -100,15 +100,15 @@ category "Shapes"
   ((Circle shape))
   )Cloud shape(
   {{Hexagon shape}}`,
-  },
-  {
-    name: 'Simple Problem Analysis',
-    description: 'A minimal example with a single category and a few causes, perfect for getting started.',
-    code: `ishikawa
+    },
+    {
+      title: 'Simple Problem Analysis',
+      code: `ishikawa
 problem "Project delays"
 category "Resources"
   "Insufficient budget"
   "Limited staff"
   "Lack of expertise"`,
-  },
-];
+    },
+  ],
+} satisfies DiagramMetadata;
