@@ -413,6 +413,88 @@ Let see an example:
         commit id:"C"
 ```
 
+## Interaction
+
+You can add clickable links to commits, branches, and tags. This allows you to navigate to external URLs when clicking on the corresponding element in the diagram.
+
+> **Note**
+> This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
+
+Usage:
+
+- `click <id> <url>`: Adds a link to a commit with the given ID.
+- `click commit <id> <url>`: Explicitly adds a link to a commit.
+- `click branch <name> <url>`: Adds a link to a branch with the given name.
+- `click tag <name> <url>`: Adds a link to a tag with the given name.
+
+You can also specify an optional tooltip and target (e.g., `_blank` for new tab).
+
+Syntax: `click [type] <id> <url> ["tooltip"] [target]`
+
+Links are opened in the same browser tab/window by default. It is possible to change this by adding a link target to the click definition (`_self`, `_blank`, `_parent` and `_top` are supported):
+
+Example:
+
+```mermaid-example
+gitGraph
+   commit id: "1"
+   branch develop
+   commit id: "2"
+   commit id: "3" tag: "v1.0"
+   checkout main
+   merge develop
+
+   click "1" "https://www.github.com" "This is a link"
+   click "2" "https://www.google.com" "Open this in a new tab" _blank
+   click branch "develop" "https://www.wikipedia.org"
+   click tag "v1.0" "https://www.reddit.com" "Open this in a new tab" _blank
+```
+
+```mermaid
+gitGraph
+   commit id: "1"
+   branch develop
+   commit id: "2"
+   commit id: "3" tag: "v1.0"
+   checkout main
+   merge develop
+
+   click "1" "https://www.github.com" "This is a link"
+   click "2" "https://www.google.com" "Open this in a new tab" _blank
+   click branch "develop" "https://www.wikipedia.org"
+   click tag "v1.0" "https://www.reddit.com" "Open this in a new tab" _blank
+```
+
+```mermaid-example
+gitGraph
+   commit id: "1"
+   branch develop
+   commit id: "2"
+   commit id: "3" tag: "v1.0"
+   checkout main
+   merge develop
+
+   click "1" "https://www.github.com" "This is a link"
+   click "2" "https://www.google.com" "Open this in a new tab" _blank
+   click branch "develop" "https://www.wikipedia.org"
+   click tag "v1.0" "https://www.reddit.com" "Open this in a new tab" _blank
+```
+
+```mermaid
+gitGraph
+   commit id: "1"
+   branch develop
+   commit id: "2"
+   commit id: "3" tag: "v1.0"
+   checkout main
+   merge develop
+
+   click "1" "https://www.github.com" "This is a link"
+   click "2" "https://www.google.com" "Open this in a new tab" _blank
+   click branch "develop" "https://www.wikipedia.org"
+   click tag "v1.0" "https://www.reddit.com" "Open this in a new tab" _blank
+```
+
 ## GitGraph specific configuration options
 
 In Mermaid, you have the option to configure the gitgraph diagram. You can configure the following options:
