@@ -136,7 +136,7 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "roughjs": "patches/roughjs.patch"
+      "roughjs@4.6.6": "patches/roughjs@4.6.6.patch"
     },
     "onlyBuiltDependencies": [
       "canvas",
