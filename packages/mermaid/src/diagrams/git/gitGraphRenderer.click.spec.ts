@@ -82,28 +82,6 @@ describe('GitGraph Click Events', () => {
       expect(anchor.attr('target')).toBe('_blank');
     });
 
-    it.skip('should set target to _top in sandbox mode', async () => {
-      // Note: This test requires a real iframe which isn't available in jsdom
-      // Sandbox mode is tested in e2e tests instead
-      setConfig({ securityLevel: 'sandbox' });
-
-      const diagram = `
-        gitGraph
-          commit id: "c1"
-          click "c1" "https://github.com"
-      `;
-
-      await parser.parse(diagram);
-
-      const svg = select(container).append('svg').attr('id', 'gitGraph-test');
-      const diagObj = { db, type: 'gitGraph' };
-
-      await draw(diagram, 'gitGraph-test', '1.0', diagObj);
-
-      const anchor = svg.select('a');
-      expect(anchor.attr('target')).toBe('_top');
-    });
-
     it('should add tooltip as <title> element inside anchor', async () => {
       const diagram = `
         gitGraph
