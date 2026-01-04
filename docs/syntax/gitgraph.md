@@ -444,10 +444,10 @@ gitGraph
    checkout main
    merge develop
 
-   click "1" "https://www.github.com" "This is a link"
-   click "2" "https://www.google.com" "Open this in a new tab" _blank
-   click branch "develop" "https://www.wikipedia.org"
-   click tag "v1.0" "https://www.reddit.com" "Open this in a new tab" _blank
+   click "1" "https://github.com/mermaid-js/mermaid" "This is a link"
+   click "2" "https://www.wikipedia.org" "Open this in a new tab" _blank
+   click branch "develop" "https://example.org"
+   click tag "v1.0" "https://github.com/mermaid-js/mermaid/releases" "Open this in a new tab" _blank
 ```
 
 ```mermaid
@@ -459,40 +459,10 @@ gitGraph
    checkout main
    merge develop
 
-   click "1" "https://www.github.com" "This is a link"
-   click "2" "https://www.google.com" "Open this in a new tab" _blank
-   click branch "develop" "https://www.wikipedia.org"
-   click tag "v1.0" "https://www.reddit.com" "Open this in a new tab" _blank
-```
-
-```mermaid-example
-gitGraph
-   commit id: "1"
-   branch develop
-   commit id: "2"
-   commit id: "3" tag: "v1.0"
-   checkout main
-   merge develop
-
-   click "1" "https://www.github.com" "This is a link"
-   click "2" "https://www.google.com" "Open this in a new tab" _blank
-   click branch "develop" "https://www.wikipedia.org"
-   click tag "v1.0" "https://www.reddit.com" "Open this in a new tab" _blank
-```
-
-```mermaid
-gitGraph
-   commit id: "1"
-   branch develop
-   commit id: "2"
-   commit id: "3" tag: "v1.0"
-   checkout main
-   merge develop
-
-   click "1" "https://www.github.com" "This is a link"
-   click "2" "https://www.google.com" "Open this in a new tab" _blank
-   click branch "develop" "https://www.wikipedia.org"
-   click tag "v1.0" "https://www.reddit.com" "Open this in a new tab" _blank
+   click "1" "https://github.com/mermaid-js/mermaid" "This is a link"
+   click "2" "https://www.wikipedia.org" "Open this in a new tab" _blank
+   click branch "develop" "https://example.org"
+   click tag "v1.0" "https://github.com/mermaid-js/mermaid/releases" "Open this in a new tab" _blank
 ```
 
 ## GitGraph specific configuration options
