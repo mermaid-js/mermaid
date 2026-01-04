@@ -944,9 +944,9 @@ const setupClickEvents = (
     const svg = select(`[id="${svgId}"]`);
     const config = getConfig();
 
-    // @ts-expect-error - document is always available
     const doc =
-      securityLevel === 'sandbox' ? select('#i' + svgId).nodes()[0].contentDocument : document;
+      // @ts-ignore - contentDocument access in sandbox mode
+      securityLevel === 'sandbox' ? select('#i' + svgId).nodes()[0]?.contentDocument : document;
 
     links.forEach((linkData, id) => {
       // Escape special characters in commit ID for CSS selector

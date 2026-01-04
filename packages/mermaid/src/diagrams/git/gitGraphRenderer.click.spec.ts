@@ -29,12 +29,13 @@ describe('GitGraph Click Events', () => {
     clear();
 
     // Mock SVG getBBox method (not implemented in jsdom)
+    // @ts-ignore - jsdom doesn't implement getBBox
     Element.prototype.getBBox = vi.fn(() => ({
       x: 0,
       y: 0,
       width: 100,
       height: 50,
-    })) as any;
+    }));
   });
 
   afterEach(() => {
@@ -55,6 +56,7 @@ describe('GitGraph Click Events', () => {
       const svg = select(container).append('svg').attr('id', 'gitGraph-test');
       const diagObj = { db, type: 'gitGraph' };
 
+      // @ts-ignore - partial diagram object for testing
       await draw(diagram, 'gitGraph-test', '1.0', diagObj);
 
       // Check that an <a> element was created
@@ -76,6 +78,7 @@ describe('GitGraph Click Events', () => {
       const svg = select(container).append('svg').attr('id', 'gitGraph-test');
       const diagObj = { db, type: 'gitGraph' };
 
+      // @ts-ignore - partial diagram object for testing
       await draw(diagram, 'gitGraph-test', '1.0', diagObj);
 
       const anchor = svg.select('a');
@@ -94,6 +97,7 @@ describe('GitGraph Click Events', () => {
       const svg = select(container).append('svg').attr('id', 'gitGraph-test');
       const diagObj = { db, type: 'gitGraph' };
 
+      // @ts-ignore - partial diagram object for testing
       await draw(diagram, 'gitGraph-test', '1.0', diagObj);
 
       const title = svg.select('a title');
@@ -169,6 +173,7 @@ describe('GitGraph Click Events', () => {
       const svg = select(container).append('svg').attr('id', 'gitGraph-test');
       const diagObj = { db, type: 'gitGraph' };
 
+      // @ts-ignore - partial diagram object for testing
       await draw(diagram, 'gitGraph-test', '1.0', diagObj);
 
       // sanitizeUrl should block javascript: URLs
@@ -188,6 +193,7 @@ describe('GitGraph Click Events', () => {
       const svg = select(container).append('svg').attr('id', 'gitGraph-test');
       const diagObj = { db, type: 'gitGraph' };
 
+      // @ts-ignore - partial diagram object for testing
       await draw(diagram, 'gitGraph-test', '1.0', diagObj);
 
       const anchor = svg.select('a');
@@ -206,6 +212,7 @@ describe('GitGraph Click Events', () => {
       const svg = select(container).append('svg').attr('id', 'gitGraph-test');
       const diagObj = { db, type: 'gitGraph' };
 
+      // @ts-ignore - partial diagram object for testing
       await draw(diagram, 'gitGraph-test', '1.0', diagObj);
 
       const anchor = svg.select('a');
@@ -226,6 +233,7 @@ describe('GitGraph Click Events', () => {
       const svg = select(container).append('svg').attr('id', 'gitGraph-test');
       const diagObj = { db, type: 'gitGraph' };
 
+      // @ts-ignore - partial diagram object for testing
       await draw(diagram, 'gitGraph-test', '1.0', diagObj);
 
       const title = svg.select('a title');
@@ -244,6 +252,7 @@ describe('GitGraph Click Events', () => {
       const svg = select(container).append('svg').attr('id', 'gitGraph-test');
       const diagObj = { db, type: 'gitGraph' };
 
+      // @ts-ignore - partial diagram object for testing
       await draw(diagram, 'gitGraph-test', '1.0', diagObj);
 
       const title = svg.select('a title');
