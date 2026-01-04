@@ -5,8 +5,8 @@ import layouts from '../../../../../mermaid-layout-elk/dist/mermaid-layout-elk.c
 
 const init = Promise.all([
   mermaid.registerExternalDiagrams([zenuml]),
-  mermaid.registerLayoutLoaders(layouts),
-  mermaid.registerLayoutLoaders(tidyTreeLayout),
+  Promise.resolve(mermaid.registerLayoutLoaders(layouts)),
+  Promise.resolve(mermaid.registerLayoutLoaders(tidyTreeLayout)),
 ]);
 mermaid.registerIconPacks([
   {

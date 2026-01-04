@@ -56,6 +56,7 @@ required:
   - block
   - look
   - radar
+  - ishikawa
 properties:
   theme:
     description: |
@@ -296,6 +297,8 @@ properties:
     $ref: '#/$defs/ArchitectureDiagramConfig'
   mindmap:
     $ref: '#/$defs/MindmapDiagramConfig'
+  ishikawa:
+    $ref: '#/$defs/IshikawaDiagramConfig'
   kanban:
     $ref: '#/$defs/KanbanDiagramConfig'
   gitGraph:
@@ -989,6 +992,36 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: Layout algorithm to use for positioning mindmap nodes
         type: string
         default: 'cose-bilkent'
+
+  IshikawaDiagramConfig:
+    title: Ishikawa Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for Ishikawa diagrams
+    type: object
+    unevaluatedProperties: false
+    required:
+      - useMaxWidth
+      - padding
+      - maxNodeWidth
+    properties:
+      padding:
+        type: number
+        default: 10
+      maxNodeWidth:
+        type: number
+        default: 200
+      fontSize:
+        description: Font size for text in Ishikawa diagrams
+        type: number
+        default: 16
+      fontFamily:
+        description: Font family for text in Ishikawa diagrams
+        type: string
+        default: 'Arial, sans-serif'
+      fontWeight:
+        description: Font weight for text in Ishikawa diagrams
+        type: string
+        default: 'normal'
 
   KanbanDiagramConfig:
     title: Kanban Diagram Config

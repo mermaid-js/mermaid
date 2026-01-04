@@ -425,7 +425,7 @@ function prettyPrintCommitHistory(commitArr: Commit[]) {
     }
   }
   log.debug(label.join(' '));
-  if (commit.parents && commit.parents.length == 2 && commit.parents[0] && commit.parents[1]) {
+  if (commit.parents?.length == 2 && commit.parents[0] && commit.parents[1]) {
     const newCommit = state.records.commits.get(commit.parents[0]);
     upsert(commitArr, commit, newCommit);
     if (commit.parents[1]) {

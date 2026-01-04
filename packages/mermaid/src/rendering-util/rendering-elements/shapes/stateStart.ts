@@ -22,7 +22,7 @@ export function stateStart<T extends SVGGraphicsElement>(
     // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const roughNode = rc.circle(0, 0, 14, solidStateFill(lineColor));
-    circle = shapeSvg.insert(() => roughNode);
+    circle = shapeSvg.insert(() => roughNode) as D3Selection<SVGGElement>;
     // center the circle around its coordinate
     circle.attr('class', 'state-start').attr('r', 7).attr('width', 14).attr('height', 14);
   } else {
