@@ -977,18 +977,19 @@ const setupClickEvents = (
       elements.each(function () {
         const element = select(this);
 
-        // Create SVG anchor element
         const link = doc.createElementNS('http://www.w3.org/2000/svg', 'a');
         link.setAttributeNS('http://www.w3.org/2000/svg', 'class', element.attr('class'));
         link.setAttributeNS('http://www.w3.org/1999/xlink', 'href', sanitizedUrl);
         link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
-
-        // Set target based on security level and user preference
         if (securityLevel === 'sandbox') {
           link.setAttributeNS('http://www.w3.org/2000/svg', 'target', '_top');
         } else if (linkData.target) {
           link.setAttributeNS('http://www.w3.org/2000/svg', 'target', linkData.target);
         }
+
+        element.insert(function () {
+          return link;
+        }, ':first-child');
 
         // Add tooltip if provided
         if (linkData.tooltip) {
@@ -997,11 +998,6 @@ const setupClickEvents = (
           title.textContent = sanitizedTooltip;
           link.appendChild(title);
         }
-
-        // Insert the <a> element as first child of the group
-        element.insert(function () {
-          return link;
-        }, ':first-child');
 
         // Move all existing children into the <a> element
         // Collect child nodes first to avoid stale DOM references during iteration
