@@ -112,7 +112,7 @@ function layoutFishbone(
     causes.forEach((cause, causeIndex) => {
       // Position causes in equal spacing: first at 100px, then each next at +100px
       const totalDistance = firstCauseDistance + causeIndex * spacingBetweenCauses;
-      
+
       // Use totalDistance for the position of the cause node along the branch
       const causeX = spineX + totalDistance * Math.cos(categoryAngle);
       const causeY = spineY + totalDistance * Math.sin(categoryAngle);
