@@ -23,8 +23,7 @@ Try the Ultimate AI, Mermaid, and Visual Diagramming Suite by creating an accoun
 - **Plugins** - A plugin system for extending the functionality of Mermaid.
 
   Official Mermaid Chart plugins:
-
-  - [Mermaid Chart GPT](https://chat.openai.com/g/g-1IRFKwq4G-mermaid-chart)
+  - [Mermaid Chart GPT](https://chatgpt.com/g/g-684cc36f30208191b21383b88650a45d-mermaid-chart-diagrams-and-charts)
   - [Confluence](https://marketplace.atlassian.com/apps/1234056/mermaid-chart-for-confluence?hosting=cloud&tab=overview)
   - [Jira](https://marketplace.atlassian.com/apps/1234810/mermaid-chart-for-jira?tab=overview&hosting=cloud)
   - [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=MermaidChart.vscode-mermaid-chart)
@@ -42,16 +41,18 @@ Try the Ultimate AI, Mermaid, and Visual Diagramming Suite by creating an accoun
 
 ## Plans
 
-- **Free** - A free plan that includes three diagrams.
+- **Basic** - A free plan that includes three diagrams and limited AI usage.
 
-- **Pro** - A paid plan that includes unlimited diagrams, access to the collaboration feature, and more.
+- **Plus** - A paid plan that includes unlimited diagrams, scalable AI usage, and centralized billing for small teams.
 
-- **Enterprise** - A paid plan for enterprise use that includes all Pro features, and more.
+- **Premium** - A paid plan for larger teams that need massive AI or diagram usage along with team collaboration, knowledge management, and security features like SSO.
 
-To learn more, visit our [Pricing](https://mermaidchart.com/pricing) page.
+- **Enterprise** - A paid plan for enterprise use that includes all Premium features, custom contracts, support, and more.
 
-Mermaid Chart is currently offering a 7-day free trial on our Pro and Enterprise tiers. Sign up for a free account at [Mermaid Chart](https://www.mermaidchart.com/app/sign-up).
+To learn more, visit our [Pricing](https://www.mermaidchart.com/pricing) page.
+
+Sign up for a free account on the [Mermaid](https://www.mermaidchart.com/app/sign-up) website and trial paid features at any time for 7 days free.
 
 ## Mermaid JS contributions
 
-First time contributors are eligible for a free Pro tier account for 1 year.
+First time contributors are eligible for a free Premium tier account for 1 year.

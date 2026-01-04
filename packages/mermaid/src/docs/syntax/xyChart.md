@@ -7,7 +7,7 @@
 ## Example
 
 ```mermaid-example
-xychart-beta
+xychart
     title "Sales Revenue"
     x-axis [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
     y-axis "Revenue (in $)" 4000 --> 11000
@@ -26,7 +26,7 @@ All text values that contain only one word can be written without `"`. If a text
 The chart can be drawn horizontal or vertical, default value is vertical.
 
 ```
-xychart-beta horizontal
+xychart horizontal
 ...
 ```
 
@@ -37,7 +37,7 @@ The title is a short description of the chart and it will always render on top o
 #### Example
 
 ```
-xychart-beta
+xychart
     title "This is a simple example"
     ...
 ```
@@ -86,10 +86,10 @@ A bar chart offers the capability to graphically depict bars.
 
 #### Simplest example
 
-The only two things required are the chart name (`xychart-beta`) and one data set. So you will be able to draw a chart with a simple config like
+The only two things required are the chart name (`xychart`) and one data set. So you will be able to draw a chart with a simple config like
 
 ```
-xychart-beta
+xychart
     line [+1.3, .6, 2.4, -.34]
 ```
 
@@ -126,7 +126,7 @@ xychart-beta
 
 ## Chart Theme Variables
 
-Themes for xychart resides inside xychart attribute so to set the variables use this syntax:
+Themes for xychart reside inside the `xychart` attribute, allowing customization through the following syntax:
 
 ```yaml
 ---
@@ -151,6 +151,31 @@ config:
 | yAxisLineColor   | Color of the y-axis line                                  |
 | plotColorPalette | String of colors separated by comma e.g. "#f3456, #43445" |
 
+### Setting Colors for Lines and Bars
+
+To set the color for lines and bars, use the `plotColorPalette` parameter. Colors in the palette will correspond sequentially to the elements in your chart (e.g., first bar/line will use the first color specified in the palette).
+
+```mermaid-example
+---
+config:
+  themeVariables:
+    xyChart:
+      plotColorPalette: '#000000, #0000FF, #00FF00, #FF0000'
+---
+xychart
+title "Different Colors in xyChart"
+x-axis "categoriesX" ["Category 1", "Category 2", "Category 3", "Category 4"]
+y-axis "valuesY" 0 --> 50
+%% Black line
+line [10,20,30,40]
+%% Blue bar
+bar [20,30,25,35]
+%% Green bar
+bar [15,25,20,30]
+%% Red line
+line [5,15,25,35]
+```
+
 ## Example on config and theme
 
 ```mermaid-example
@@ -164,7 +189,7 @@ config:
         xyChart:
             titleColor: "#ff0000"
 ---
-xychart-beta
+xychart
     title "Sales Revenue"
     x-axis [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
     y-axis "Revenue (in $)" 4000 --> 11000

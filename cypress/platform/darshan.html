@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Pie chart demos</h1>
+    <pre class="mermaid">
+     pie title Default text position: Animal adoption
+        accTitle: simple pie char demo
+        accDescr: pie chart with 3 sections: dogs, cats, rats. Most are dogs.
+         "dogs" : -60.67
+        "rats" : 40.12
+    </pre>
+
+    <hr />
+    <script type="module">
+      import mermaid from '/mermaid.esm.mjs';
+      mermaid.initialize({
+        theme: 'forest',
+        logLevel: 3,
+        securityLevel: 'loose',
+      });
+    </script>
+  </body>
+</html>

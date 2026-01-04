@@ -1,8 +1,8 @@
 import type { MarkdownOptions } from 'vitepress';
 import { defineConfig } from 'vitepress';
 import packageJson from '../../../package.json' assert { type: 'json' };
-import MermaidExample from './mermaid-markdown-all.js';
 import { addCanonicalUrls } from './canonical-urls.js';
+import MermaidExample from './mermaid-markdown-all.js';
 
 const allMarkdownTransformers: MarkdownOptions = {
   // the shiki theme to highlight code blocks
@@ -179,6 +179,7 @@ function sidebarSyntax() {
         { text: 'Kanban 🔥', link: '/syntax/kanban' },
         { text: 'Architecture 🔥', link: '/syntax/architecture' },
         { text: 'Radar 🔥', link: '/syntax/radar' },
+        { text: 'Treemap 🔥', link: '/syntax/treemap' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
@@ -202,6 +203,7 @@ function sidebarConfig() {
         { text: 'Accessibility', link: '/config/accessibility' },
         { text: 'Mermaid CLI', link: '/config/mermaidCLI' },
         { text: 'FAQ', link: '/config/faq' },
+        { text: 'Layouts', link: '/config/layouts' },
       ],
     },
   ];

@@ -9,53 +9,48 @@ interface Feature {
 interface EditorColumn {
   title: string;
   description: string;
-  redirectUrl: string;
+  redBarText?: string;
+  redirectUrl?: string;
+  buttonText?: string;
   highlighted?: boolean;
+  proTrialUrl?: string;
+  proTrialButtonText?: string;
   features: Feature[];
+  isButtonMargined?: boolean;
 }
+
+const mermaidChartFeatures: Feature[] = [
+  { iconUrl: '/icons/whiteboard.svg', featureName: 'Visual editor' },
+  { iconUrl: '/icons/ai-diagram.svg', featureName: '300 AI credits' },
+  { iconUrl: '/icons/folder.svg', featureName: 'Unlimited diagram storage' },
+  { iconUrl: '/icons/presentation.svg', featureName: 'Limitless diagram size' },
+  { iconUrl: '/icons/comment.svg', featureName: 'View & comment collaboration' },
+];
+
+const openSourceFeatures: Feature[] = [
+  { iconUrl: '/icons/public.svg', featureName: 'Diagram stored in URL' },
+  { iconUrl: '/icons/terminal.svg', featureName: 'Code editor' },
+  { iconUrl: '/icons/open-source.svg', featureName: 'Open source' },
+  { iconUrl: '/icons/version-history.svg', featureName: 'Version history' },
+];
 
 const editorColumns: EditorColumn[] = [
   {
-    title: 'Playground',
-    description: 'Basic features, no login',
-    redirectUrl:
-      'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=playground',
-    features: [
-      { iconUrl: '/icons/public.svg', featureName: 'Diagram stored in URL' },
-      { iconUrl: '/icons/terminal.svg', featureName: 'Code editor' },
-      { iconUrl: '/icons/whiteboard.svg', featureName: 'Whiteboard' },
-    ],
-  },
-  {
-    title: 'Free',
-    description: 'Advanced features, free account',
-    redirectUrl:
-      'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=mermaid_chart&redirect=%2Fapp%2Fdiagrams%2Fnew',
+    title: 'Mermaid Plus',
+    description: 'Unlock AI, storage and collaboration',
     highlighted: true,
-    features: [
-      { iconUrl: '/icons/folder.svg', featureName: 'Storage' },
-      { iconUrl: '/icons/terminal.svg', featureName: 'Code editor' },
-      { iconUrl: '/icons/ai-diagram.svg', featureName: 'AI diagram generator' },
-      { iconUrl: '/icons/whiteboard.svg', featureName: 'Whiteboard' },
-      { iconUrl: '/icons/group.svg', featureName: 'Teams' },
-      { iconUrl: '/icons/groups.svg', featureName: 'Multi-user editing' },
-      { iconUrl: '/icons/ai-repair.svg', featureName: 'AI diagram repair' },
-      { iconUrl: '/icons/version-history.svg', featureName: 'Version history' },
-      { iconUrl: '/icons/comment.svg', featureName: 'Comments' },
-      { iconUrl: '/icons/presentation.svg', featureName: 'Presentations' },
-      { iconUrl: '/icons/plugins.svg', featureName: 'Advanced Plugins' },
-    ],
+    redBarText: 'Recommended',
+    proTrialButtonText: 'Start free trial',
+    proTrialUrl:
+      'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=2_editor_selection&utm_campaign=start_plus&redirect=%2Fapp%2Fuser%2Fbilling%2Fcheckout%3FisFromMermaid%3Dtrue',
+    features: mermaidChartFeatures,
   },
   {
     title: 'Open Source',
     description: 'Code only, no login',
+    buttonText: 'Start free',
     redirectUrl: 'https://mermaid.live/edit',
-    features: [
-      { iconUrl: '/icons/public.svg', featureName: 'Diagram stored in URL' },
-      { iconUrl: '/icons/terminal.svg', featureName: 'Code editor' },
-      { iconUrl: '/icons/open-source.svg', featureName: 'Open source' },
-      { iconUrl: '/icons/version-history.svg', featureName: 'Version history' },
-    ],
+    features: openSourceFeatures,
   },
 ];
 
@@ -84,44 +79,53 @@ onUnmounted(() => {
 <template>
   <div
     v-if="isVisible"
-    class="fixed top-0 left-0 z-50 flex h-screen w-screen backdrop-blur-sm items-center justify-center"
+    class="fixed top-0 left-0 z-50 flex h-screen w-screen backdrop-blur-sm items-center justify-center bg-[#8585A4]/40 plausible-event-name=editorSelectionModalOpen"
     @click.self="isVisible = false"
   >
-    <div class="flex flex-row rounded-3xl shadow relative gap-5 pt-20 pb-10 px-10 bg-[#F1F8FA]">
+    <div
+      class="flex flex-col sm:flex-row rounded-3xl shadow relative gap-5 pt-10 sm:pt-20 pb-10 px-4 sm:px-10 bg-[#F1F8FA] overflow-y-auto max-h-full"
+    >
       <div
         v-for="column in editorColumns"
-        class="w-80 flex relative flex-col justify-start items-center bg-[#dceef1] p-8 text-gray-800 shadow"
+        :key="column.title"
+        class="sm:w-96 flex relative flex-col justify-start items-center p-6 sm:p-8 text-gray-800 shadow w-full"
         :class="
-          column.highlighted ? 'bg-white rounded-b-3xl shadow-xl' : 'bg-[#DCEEF1] rounded-3xl'
+          column.highlighted ? 'bg-white rounded-b-3xl mt-10 sm:mt-0' : 'bg-[#DCEEF1] rounded-3xl'
         "
       >
         <div
           v-if="column.highlighted"
           class="absolute -top-10 w-full rounded-t-3xl bg-[#E0095F] py-2 flex justify-center"
         >
-          <p class="text-lg font-semibold text-white">Best for collaboration</p>
+          <p class="text-lg font-semibold text-white">{{ column.redBarText }}</p>
         </div>
+
         <header class="mb-6 w-full text-start space-y-1">
-          <p class="text-2xl font-medium capitalize text-[#1E1A2E]">
-            {{ column.title }}
-          </p>
-          <p class="text-sm text-gray-600">
-            {{ column.description }}
-          </p>
+          <p class="text-2xl font-medium text-[#1E1A2E]">{{ column.title }}</p>
+          <p class="text-sm text-gray-600">{{ column.description }}</p>
         </header>
+
         <a
+          v-if="column.redirectUrl"
           :href="column.redirectUrl"
           target="_blank"
-          class="mb-6 flex h-10 w-full items-center justify-center rounded-xl hover:bg-[#272040] hover:text-white hover:shadow-md"
-          :class="
-            column.highlighted
-              ? 'bg-[#1e1a2e] text-[#BEDDE3] hover:text-[#5CA3B4]'
-              : 'bg-[#BEDDE3] hover:bg-[#5CA3B4] text-[#1E1A2E]'
-          "
+          class="flex h-10 w-full bg-[#BEDDE3] hover:bg-[#5CA3B4] text-[#1E1A2E] items-center justify-center rounded-xl hover:text-white hover:shadow-md"
+          :class="column.isButtonMargined ? 'mb-[88px]' : ' mb-6'"
         >
-          Start free
+          {{ column.buttonText }}
         </a>
+
+        <a
+          v-if="column.proTrialUrl"
+          :href="column.proTrialUrl"
+          target="_blank"
+          class="mb-6 flex h-10 w-full text-white items-center justify-center rounded-xl bg-[#E0095F] hover:bg-[#B0134A]"
+        >
+          {{ column.proTrialButtonText || 'Start Pro trial' }}
+        </a>
+
         <div class="h-px w-full bg-[#bedde3] mb-6"></div>
+
         <ul class="w-full space-y-2">
           <li
             v-for="{ iconUrl, featureName } in column.features"

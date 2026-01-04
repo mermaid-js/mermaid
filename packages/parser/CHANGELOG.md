@@ -1,5 +1,33 @@
 # @mermaid-js/parser
 
+## 0.6.3
+
+### Patch Changes
+
+- [#7051](https://github.com/mermaid-js/mermaid/pull/7051) [`63df702`](https://github.com/mermaid-js/mermaid/commit/63df7021462e8dc1f2aaecb9c5febbbbde4c38e3) Thanks [@shubhamparikh2704](https://github.com/shubhamparikh2704)! - Add validation for negative values in pie charts:
+
+  Prevents crashes during parsing by validating values post-parsing.
+
+  Provides clearer, user-friendly error messages for invalid negative inputs.
+
+## 0.6.2
+
+### Patch Changes
+
+- [#6510](https://github.com/mermaid-js/mermaid/pull/6510) [`7a38eb7`](https://github.com/mermaid-js/mermaid/commit/7a38eb715d795cd5c66cb59357d64ec197b432e6) Thanks [@sidharthv96](https://github.com/sidharthv96)! - chore: Move packet diagram out of beta
+
+## 0.6.1
+
+### Patch Changes
+
+- [#6725](https://github.com/mermaid-js/mermaid/pull/6725) [`0da2922`](https://github.com/mermaid-js/mermaid/commit/0da2922ee7f47959e324ec10d3d21ee70594f557) Thanks [@shubham-mermaid](https://github.com/shubham-mermaid)! - chore: use Treemap instead of TreemapDoc in parser.
+
+## 0.6.0
+
+### Minor Changes
+
+- [#6590](https://github.com/mermaid-js/mermaid/pull/6590) [`f338802`](https://github.com/mermaid-js/mermaid/commit/f338802642cdecf5b7ed6c19a20cf2a81effbbee) Thanks [@knsv](https://github.com/knsv)! - Adding support for the new diagram type nested treemap
+
 ## 0.5.0
 
 ### Minor Changes
