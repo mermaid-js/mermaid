@@ -48,10 +48,8 @@ export class IshikawaDB implements DiagramDB {
     this.setElementForNodeId = this.setElementForNodeId.bind(this);
     this.decorateNode = this.decorateNode.bind(this);
     this.nodeTypeToString = this.nodeTypeToString.bind(this);
-    this.type2Str = this.type2Str.bind(this);
     this.getLogger = this.getLogger.bind(this);
     this.getElementByNodeId = this.getElementByNodeId.bind(this);
-    this.getElementById = this.getElementById.bind(this);
     this.setAccTitle = this.setAccTitle.bind(this);
     this.setAccDescription = this.setAccDescription.bind(this);
   }
@@ -217,19 +215,19 @@ export class IshikawaDB implements DiagramDB {
   }
 
   // Alias for backward compatibility
-  public type2Str = this.nodeTypeToString;
+  public type2Str = (type: number) => this.nodeTypeToString(type);
 
   // Expose logger to grammar
   public getLogger() {
     return log;
   }
 
-  public getElementByNodeId(nodeId: number): D3Element | undefined {
+  public getElementByNodeId(nodeId: number): D3Element {
     return this.elements[nodeId];
   }
 
   // Alias for backward compatibility
-  public getElementById = this.getElementByNodeId;
+  public getElementById = (nodeId: number) => this.getElementByNodeId(nodeId);
 
   // Common DB methods
   public setAccTitle = setAccTitle;
