@@ -95,6 +95,12 @@ async function addHtmlLabel(node, width, addBackground = false) {
 }
 /**
  * @deprecated svg-util/createText instead
+ * @param _vertexText
+ * @param style
+ * @param isTitle
+ * @param isNode
+ * @param {boolean} [addBackground=false] - Whether to add a background class to the label container
+ * @param {number} [width] - Maximum width for the label before wrapping. If not provided, uses the flowchart wrapping width from config
  */
 const createLabel = async (_vertexText, style, isTitle, isNode, addBackground = false, width) => {
   let vertexText = _vertexText || '';

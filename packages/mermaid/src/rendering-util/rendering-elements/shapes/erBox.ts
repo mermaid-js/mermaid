@@ -62,8 +62,8 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
 
     // drawRect doesn't center non-htmlLabels correctly as of now, so translate label
     if (!evaluate(config.htmlLabels)) {
-      const textElement = shapeSvg.select('.label text');
-      const textNode = textElement.node() as SVGTextElement;
+      const textElement = shapeSvg.select<SVGTextElement>('.label text');
+      const textNode = textElement.node();
       if (textNode) {
         const bbox = textNode.getBBox();
         textElement.attr('transform', `translate(${-bbox.width / 2}, 0)`);

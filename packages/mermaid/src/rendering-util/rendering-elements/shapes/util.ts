@@ -15,7 +15,6 @@ import { configureLabelImages } from './labelImageUtils.js';
  * @param labelText - The original label text to check if there's text besides images
  * @returns Promise that resolves when all images are loaded and styled
  */
-
 export const labelHelper = async <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,
