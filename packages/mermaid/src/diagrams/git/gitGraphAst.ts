@@ -501,16 +501,16 @@ export const getHead = function () {
 export const setLink = (
   id: string,
   link: string,
+  type: 'commit' | 'branch' | 'tag',
   tooltip?: string,
-  target?: '_self' | '_blank' | '_parent' | '_top',
-  type?: 'commit' | 'branch' | 'tag'
+  target?: '_self' | '_blank' | '_parent' | '_top'
 ): void => {
   state.records.links.set(id, {
     id,
     link,
     tooltip,
     target: target || '_self',
-    type: type || 'commit',
+    type: type,
   });
 };
 

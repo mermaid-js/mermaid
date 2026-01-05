@@ -48,7 +48,7 @@ describe('GitGraph Click Events', () => {
       const diagram = `
         gitGraph
           commit id: "c1"
-          click "c1" "https://github.com"
+          click commit "c1" "https://github.com"
       `;
 
       await parser.parse(diagram);
@@ -70,7 +70,7 @@ describe('GitGraph Click Events', () => {
       const diagram = `
         gitGraph
           commit id: "c1"
-          click "c1" "https://github.com" _blank
+          click commit "c1" "https://github.com" _blank
       `;
 
       await parser.parse(diagram);
@@ -89,7 +89,7 @@ describe('GitGraph Click Events', () => {
       const diagram = `
         gitGraph
           commit id: "c1"
-          click "c1" "https://github.com" "GitHub Homepage"
+          click commit "c1" "https://github.com" "GitHub Homepage"
       `;
 
       await parser.parse(diagram);
@@ -111,7 +111,7 @@ describe('GitGraph Click Events', () => {
       const diagram = `
         gitGraph
           commit id: "abc123"
-          click "abc123" "https://github.com/commit/abc123"
+          click commit "abc123" "https://github.com/commit/abc123"
       `;
 
       await parser.parse(diagram);
@@ -145,7 +145,7 @@ describe('GitGraph Click Events', () => {
         gitGraph
           commit id: "c1" tag: "v1.0"
           branch develop
-          click "c1" "https://github.com/commit/c1"
+          click commit "c1" "https://github.com/commit/c1"
           click branch "develop" "https://github.com/tree/develop"
           click tag "v1.0" "https://github.com/releases/v1.0"
       `;
@@ -165,7 +165,7 @@ describe('GitGraph Click Events', () => {
       const diagram = `
         gitGraph
           commit id: "c1"
-          click "c1" "javascript:alert('xss')"
+          click commit "c1" "javascript:alert('xss')"
       `;
 
       await parser.parse(diagram);
@@ -185,7 +185,7 @@ describe('GitGraph Click Events', () => {
       const diagram = `
         gitGraph
           commit id: "c1"
-          click "c1" "https://github.com/user/repo"
+          click commit "c1" "https://github.com/user/repo"
       `;
 
       await parser.parse(diagram);
@@ -204,7 +204,7 @@ describe('GitGraph Click Events', () => {
       const diagram = `
         gitGraph
           commit id: "c1"
-          click "c1" "http://example.com"
+          click commit "c1" "http://example.com"
       `;
 
       await parser.parse(diagram);
@@ -225,7 +225,7 @@ describe('GitGraph Click Events', () => {
       const diagram = `
         gitGraph
           commit id: "c1"
-          click "c1" "https://github.com" "<script>alert('xss')</script>"
+          click commit "c1" "https://github.com" "<script>alert('xss')</script>"
       `;
 
       await parser.parse(diagram);
@@ -244,7 +244,7 @@ describe('GitGraph Click Events', () => {
       const diagram = `
         gitGraph
           commit id: "c1"
-          click "c1" "https://github.com" "Safe tooltip text"
+          click commit "c1" "https://github.com" "Safe tooltip text"
       `;
 
       await parser.parse(diagram);
@@ -265,7 +265,7 @@ describe('GitGraph Click Events', () => {
       const diagram = `
         gitGraph
           commit id: "v1.0.0-beta.1"
-          click "v1.0.0-beta.1" "https://github.com"
+          click commit "v1.0.0-beta.1" "https://github.com"
       `;
 
       await parser.parse(diagram);
@@ -289,29 +289,18 @@ describe('GitGraph Click Events', () => {
       const diagram = `
         gitGraph
           commit id: "c1"
-          click "c1" "https://github.com"
+          click commit "c1" "https://github.com"
       `;
 
       await parser.parse(diagram);
       expect(db.getLink('c1')?.target).toBe('_self');
     });
-
-    it('should default type to commit when not specified', async () => {
-      const diagram = `
-        gitGraph
-          commit id: "c1"
-          click "c1" "https://github.com"
-      `;
-
-      await parser.parse(diagram);
-      expect(db.getLink('c1')?.type).toBe('commit');
-    });
   });
 
   describe('Link overwriting', () => {
     it('should allow overwriting existing links', () => {
-      db.setLink('c1', 'https://old-url.com');
-      db.setLink('c1', 'https://new-url.com');
+      db.setLink('c1', 'https://old-url.com', 'commit');
+      db.setLink('c1', 'https://new-url.com', 'commit');
 
       expect(db.getLink('c1')?.link).toBe('https://new-url.com');
     });

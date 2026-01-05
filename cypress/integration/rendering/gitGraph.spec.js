@@ -1574,7 +1574,7 @@ gitGraph TB:
       `gitGraph
         commit id: "c1"
         commit id: "c2"
-        click "c1" "https://example.com"
+        click commit "c1" "https://example.com"
       `,
       {}
     );
@@ -1583,7 +1583,7 @@ gitGraph TB:
     imgSnapshotTest(
       `gitGraph
         commit id: "c1"
-        click "c1" "https://example.com" "Click me"
+        click commit "c1" "https://example.com" "Click me"
       `,
       {}
     );
@@ -1594,9 +1594,9 @@ gitGraph TB:
         commit id: "c1"
         commit id: "c2"
         commit id: "c3"
-        click "c1" "https://example.com/1"
-        click "c2" "https://example.com/2"
-        click "c3" "https://example.com/3"
+        click commit "c1" "https://example.com/1"
+        click commit "c2" "https://example.com/2"
+        click commit "c3" "https://example.com/3"
       `,
       {}
     );
@@ -1607,10 +1607,10 @@ gitGraph TB:
         commit id: "init"
         branch feature
         commit id: "feat"
-        click "feat" "https://github.com/pr/1"
+        click commit "feat" "https://github.com/pr/1"
         checkout main
         merge feature id: "merge"
-        click "merge" "https://github.com/pr/1#merged"
+        click commit "merge" "https://github.com/pr/1#merged"
       `,
       {}
     );
@@ -1619,7 +1619,7 @@ gitGraph TB:
     imgSnapshotTest(
       `gitGraph
         commit id: "v1.0.0-beta"
-        click "v1.0.0-beta" "https://example.com"
+        click commit "v1.0.0-beta" "https://example.com"
       `,
       {}
     );
@@ -1628,7 +1628,7 @@ gitGraph TB:
     imgSnapshotTest(
       `gitGraph
         commit id: "release" tag: "v1.0"
-        click "release" "https://github.com/releases/v1.0"
+        click commit "release" "https://github.com/releases/v1.0"
       `,
       {}
     );
@@ -1639,7 +1639,7 @@ gitGraph TB:
         commit id: "normal"
         commit id: "important" type: HIGHLIGHT
         commit id: "another"
-        click "important" "https://example.com"
+        click commit "important" "https://example.com"
       `,
       {}
     );
@@ -1650,7 +1650,7 @@ gitGraph TB:
         commit id: "normal"
         commit id: "reverted" type: REVERSE
         commit id: "another"
-        click "reverted" "https://example.com"
+        click commit "reverted" "https://example.com"
       `,
       {}
     );
@@ -1659,12 +1659,12 @@ gitGraph TB:
     imgSnapshotTest(
       `gitGraph
         commit id: "init"
-        click "init" "https://example.com/init"
+        click commit "init" "https://example.com/init"
         branch develop
         commit id: "dev1"
         branch feature
         commit id: "feat1"
-        click "feat1" "https://example.com/feat"
+        click commit "feat1" "https://example.com/feat"
         checkout develop
         commit id: "dev2"
         checkout main
@@ -1673,7 +1673,7 @@ gitGraph TB:
         commit id: "feat2"
         checkout main
         merge feature id: "merge2"
-        click "merge2" "https://example.com/merge"
+        click commit "merge2" "https://example.com/merge"
       `,
       {}
     );

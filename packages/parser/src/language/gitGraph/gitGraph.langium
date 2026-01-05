@@ -57,4 +57,4 @@ CherryPicking:
     )* EOL;
 
 Click:
-    'click' (type=('commit' | 'branch' | 'tag'))? id=(STRING|REFERENCE) href=STRING (tooltip=STRING)? (target=('_blank' | '_self' | '_parent' | '_top'))? EOL;
+    'click' type=('commit' | 'branch' | 'tag') id=(STRING|REFERENCE) href=STRING (tooltip=STRING)? (target=('_blank' | '_self' | '_parent' | '_top'))? EOL;

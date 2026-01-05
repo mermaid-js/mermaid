@@ -422,14 +422,13 @@ You can add clickable links to commits, branches, and tags. This allows you to n
 
 Usage:
 
-- `click <id> <url>`: Adds a link to a commit with the given ID.
-- `click commit <id> <url>`: Explicitly adds a link to a commit.
+- `click commit <id> <url>`: Adds a link to a commit with the given ID.
 - `click branch <name> <url>`: Adds a link to a branch with the given name.
 - `click tag <name> <url>`: Adds a link to a tag with the given name.
 
 You can also specify an optional tooltip and target (e.g., `_blank` for new tab).
 
-Syntax: `click [type] <id> <url> ["tooltip"] [target]`
+Syntax: `click <type> <id> <url> ["tooltip"] [target]`
 
 Links are opened in the same browser tab/window by default. It is possible to change this by adding a link target to the click definition (`_self`, `_blank`, `_parent` and `_top` are supported):
 
@@ -444,8 +443,8 @@ gitGraph
    checkout main
    merge develop
 
-   click "1" "https://github.com/mermaid-js/mermaid" "This is a link"
-   click "2" "https://www.wikipedia.org" "Open this in a new tab" _blank
+   click commit "1" "https://github.com/mermaid-js/mermaid" "This is a link"
+   click commit "2" "https://www.wikipedia.org" "Open this in a new tab" _blank
    click branch "develop" "https://example.org"
    click tag "v1.0" "https://github.com/mermaid-js/mermaid/releases" "Open this in a new tab" _blank
 ```
@@ -459,8 +458,8 @@ gitGraph
    checkout main
    merge develop
 
-   click "1" "https://github.com/mermaid-js/mermaid" "This is a link"
-   click "2" "https://www.wikipedia.org" "Open this in a new tab" _blank
+   click commit "1" "https://github.com/mermaid-js/mermaid" "This is a link"
+   click commit "2" "https://www.wikipedia.org" "Open this in a new tab" _blank
    click branch "develop" "https://example.org"
    click tag "v1.0" "https://github.com/mermaid-js/mermaid/releases" "Open this in a new tab" _blank
 ```
