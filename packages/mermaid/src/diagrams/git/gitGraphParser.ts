@@ -247,78 +247,27 @@ if (import.meta.vitest) {
       expect(mockDB.checkout).toHaveBeenCalledWith('newBranch');
     });
 
-    it('should handle click statement gracefully', () => {
+    it.each([
+      { type: undefined, expectedType: undefined },
+      { type: 'commit', expectedType: 'commit' },
+      { type: 'branch', expectedType: 'branch' },
+      { type: 'tag', expectedType: 'tag' },
+    ])('should handle click statement with type: $type', ({ type, expectedType }) => {
       const click = {
         $type: 'Click',
-        id: '1',
+        id: 'test-id',
         href: 'http://example.com',
         tooltip: 'tooltip',
         target: '_blank',
+        ...(type && { type }),
       };
       parseStatement(click, mockDB);
       expect(mockDB.setLink).toHaveBeenCalledWith(
-        '1',
+        'test-id',
         'http://example.com',
         'tooltip',
         '_blank',
-        undefined
-      );
-    });
-
-    it('should handle click commit statement', () => {
-      const click = {
-        $type: 'Click',
-        id: '1',
-        href: 'http://example.com',
-        tooltip: 'tooltip',
-        target: '_blank',
-        type: 'commit',
-      };
-      parseStatement(click, mockDB);
-      expect(mockDB.setLink).toHaveBeenCalledWith(
-        '1',
-        'http://example.com',
-        'tooltip',
-        '_blank',
-        'commit'
-      );
-    });
-
-    it('should handle click branch statement', () => {
-      const click = {
-        $type: 'Click',
-        id: 'main',
-        href: 'http://example.com',
-        tooltip: 'tooltip',
-        target: '_blank',
-        type: 'branch',
-      };
-      parseStatement(click, mockDB);
-      expect(mockDB.setLink).toHaveBeenCalledWith(
-        'main',
-        'http://example.com',
-        'tooltip',
-        '_blank',
-        'branch'
-      );
-    });
-
-    it('should handle click tag statement', () => {
-      const click = {
-        $type: 'Click',
-        id: 'v1.0',
-        href: 'http://example.com',
-        tooltip: 'tooltip',
-        target: '_blank',
-        type: 'tag',
-      };
-      parseStatement(click, mockDB);
-      expect(mockDB.setLink).toHaveBeenCalledWith(
-        'v1.0',
-        'http://example.com',
-        'tooltip',
-        '_blank',
-        'tag'
+        expectedType
       );
     });
   });
