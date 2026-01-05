@@ -11,6 +11,7 @@ import mermaidAPI, {
   putIntoIFrame,
   removeExistingElements,
 } from './mermaidAPI.js';
+import * as configApi from './config.js';
 
 // --------------
 // Mocks
@@ -247,16 +248,27 @@ describe('mermaidAPI', () => {
       htmlLabels: true,
     };
 
+    beforeEach(() => {
+      configApi.reset();
+      configApi.saveConfigFromInitialize({});
+    });
+
     it('gets the cssStyles from the theme', () => {
-      const styles = createCssStyles(mocked_config_with_htmlLabels, null);
+      configApi.setSiteConfig(mocked_config_with_htmlLabels);
+      const config = configApi.getConfig();
+      const styles = createCssStyles(config, null);
       expect(styles).toMatch(/^\ndefault(.*)/);
     });
     it('gets the fontFamily from the config', () => {
-      const styles = createCssStyles(mocked_config_with_htmlLabels, new Map());
+      configApi.setSiteConfig(mocked_config_with_htmlLabels);
+      const config = configApi.getConfig();
+      const styles = createCssStyles(config, new Map());
       expect(styles).toMatch(/(.*)\n:root { --mermaid-font-family: serif(.*)/);
     });
     it('gets the alt fontFamily from the config', () => {
-      const styles = createCssStyles(mocked_config_with_htmlLabels, undefined);
+      configApi.setSiteConfig(mocked_config_with_htmlLabels);
+      const config = configApi.getConfig();
+      const styles = createCssStyles(config, undefined);
       expect(styles).toMatch(/(.*)\n:root { --mermaid-alt-font-family: sans-serif(.*)/);
     });
 
@@ -332,7 +344,11 @@ describe('mermaidAPI', () => {
               // @todo TODO Can't figure out how to spy on the cssImportantStyles method.
               //   That would be a much better approach than manually checking the result
 
-              const styles = createCssStyles(mocked_config, new Map(Object.entries(classDefs)));
+              // Set the config via the config API so getEffectiveHtmlLabels works correctly
+              configApi.setSiteConfig(mocked_config);
+              const config = configApi.getConfig();
+
+              const styles = createCssStyles(config, new Map(Object.entries(classDefs)));
               htmlElements.forEach((htmlElement) => {
                 expect_styles_matchesHtmlElements(styles, htmlElement);
               });
@@ -371,10 +387,12 @@ describe('mermaidAPI', () => {
             it('creates CSS styles for every style and textStyle in every classDef', () => {
               // TODO Can't figure out how to spy on the cssImportantStyles method. That would be a much better approach than manually checking the result.
 
-              const styles = createCssStyles(
-                mocked_config_no_htmlLabels,
-                new Map(Object.entries(classDefs))
-              );
+              // Set the config via the config API so getEffectiveHtmlLabels works correctly
+              configApi.saveConfigFromInitialize(mocked_config_no_htmlLabels);
+              configApi.setSiteConfig(mocked_config_no_htmlLabels);
+              const config = configApi.getConfig();
+
+              const styles = createCssStyles(config, new Map(Object.entries(classDefs)));
               htmlElements.forEach((htmlElement) => {
                 expect_styles_matchesHtmlElements(styles, htmlElement);
               });
