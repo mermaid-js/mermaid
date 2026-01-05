@@ -4,9 +4,17 @@ import theme from './themes/index.js';
 import config from './defaultConfig.js';
 import type { MermaidConfig } from './config.type.js';
 import { sanitizeDirective } from './utils/sanitizeDirective.js';
-import { evaluate } from './diagrams/common/common.js';
 
 export const defaultConfig: MermaidConfig = Object.freeze(config);
+
+/**
+ * Evaluate a string or boolean value to a boolean.
+ * Used to handle config values that might be strings like "false" or "true".
+ * @param val - The value to evaluate
+ * @returns The boolean result
+ */
+const evaluate = (val?: string | boolean): boolean =>
+  val === false || ['false', 'null', '0'].includes(String(val).trim().toLowerCase()) ? false : true;
 
 let siteConfig: MermaidConfig = assignWithDepth({}, defaultConfig);
 let configFromInitialize: MermaidConfig;
