@@ -4,6 +4,7 @@ import theme from './themes/index.js';
 import config from './defaultConfig.js';
 import type { MermaidConfig } from './config.type.js';
 import { sanitizeDirective } from './utils/sanitizeDirective.js';
+import { evaluate } from './diagrams/common/common.js';
 
 export const defaultConfig: MermaidConfig = Object.freeze(config);
 
@@ -279,12 +280,14 @@ export const getEffectiveHtmlLabels = (config: MermaidConfig): boolean => {
 
   // Check if htmlLabels was explicitly set at root level
   if ('htmlLabels' in userConfig) {
-    return config.htmlLabels ?? true;
+    return config.htmlLabels !== undefined ? evaluate(config.htmlLabels) : true;
   }
 
   // Fall back to flowchart.htmlLabels if explicitly set
   if (userConfig.flowchart?.htmlLabels !== undefined) {
-    return config.flowchart?.htmlLabels ?? true;
+    return config.flowchart?.htmlLabels !== undefined
+      ? evaluate(config.flowchart.htmlLabels)
+      : true;
   }
 
   return true;
