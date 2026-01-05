@@ -153,7 +153,6 @@ properties:
     default: false
   htmlLabels:
     type: boolean # maybe unused, seems to be copied in each diagram config
-    default: true
 
   fontFamily:
     description: |
@@ -2092,6 +2091,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           Please use the global `htmlLabels` configuration instead.
         type: boolean
         deprecated: true
+        default: true
       nodeSpacing:
         description: |
           Defines the spacing between nodes on the same level

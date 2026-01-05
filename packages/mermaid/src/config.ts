@@ -267,12 +267,25 @@ export const getUserDefinedConfig = (): MermaidConfig => {
 
 /**
  * Helper function to handle deprecated flowchart.htmlLabels
- * @param config - The configuration object
+ * @param config - The configuration object (merged config with defaults)
+ * @returns The effective htmlLabels value based on precedence: root flowchart  default
  */
 export const getEffectiveHtmlLabels = (config: MermaidConfig): boolean => {
   if (config.flowchart?.htmlLabels !== undefined) {
     issueWarning('FLOWCHART_HTML_LABELS_DEPRECATED');
   }
 
-  return config.htmlLabels ?? config.flowchart?.htmlLabels ?? true;
+  const userConfig = getUserDefinedConfig();
+
+  // Check if htmlLabels was explicitly set at root level
+  if ('htmlLabels' in userConfig) {
+    return config.htmlLabels ?? true;
+  }
+
+  // Fall back to flowchart.htmlLabels if explicitly set
+  if (userConfig.flowchart?.htmlLabels !== undefined) {
+    return config.flowchart?.htmlLabels ?? true;
+  }
+
+  return true;
 };
