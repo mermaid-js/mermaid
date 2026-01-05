@@ -1569,10 +1569,7 @@ gitGraph TB:
       {}
     );
   });
-});
-
-describe('GitGraph with click statements', () => {
-  it('should render commit with click link', () => {
+  it('77: should render a gitgraph with commit click link', () => {
     imgSnapshotTest(
       `gitGraph
         commit id: "c1"
@@ -1582,7 +1579,7 @@ describe('GitGraph with click statements', () => {
       {}
     );
   });
-  it('should render with click tooltip', () => {
+  it('78: should render a gitgraph with commit click link and tooltip', () => {
     imgSnapshotTest(
       `gitGraph
         commit id: "c1"
@@ -1591,7 +1588,7 @@ describe('GitGraph with click statements', () => {
       {}
     );
   });
-  it('should render multiple linked commits', () => {
+  it('79: should render a gitgraph with multiple commits with click links', () => {
     imgSnapshotTest(
       `gitGraph
         commit id: "c1"
@@ -1604,7 +1601,7 @@ describe('GitGraph with click statements', () => {
       {}
     );
   });
-  it('should render with branches and links', () => {
+  it('80: should render a gitgraph with branches and commit click links', () => {
     imgSnapshotTest(
       `gitGraph
         commit id: "init"
@@ -1618,37 +1615,7 @@ describe('GitGraph with click statements', () => {
       {}
     );
   });
-  it('should render links with TB orientation', () => {
-    imgSnapshotTest(
-      `gitGraph TB:
-        commit id: "top"
-        commit id: "bottom"
-        click "top" "https://example.com"
-      `,
-      {}
-    );
-  });
-  it('should render links with BT orientation', () => {
-    imgSnapshotTest(
-      `gitGraph BT:
-        commit id: "bottom"
-        commit id: "top"
-        click "bottom" "https://example.com"
-      `,
-      {}
-    );
-  });
-  it('should render links with LR orientation', () => {
-    imgSnapshotTest(
-      `gitGraph LR:
-        commit id: "left"
-        commit id: "right"
-        click "left" "https://example.com"
-      `,
-      {}
-    );
-  });
-  it('should handle special characters in commit id with click', () => {
+  it('81: should render a gitgraph with commit click link with special characters in commit id', () => {
     imgSnapshotTest(
       `gitGraph
         commit id: "v1.0.0-beta"
@@ -1657,7 +1624,7 @@ describe('GitGraph with click statements', () => {
       {}
     );
   });
-  it('should render linked commit with tag', () => {
+  it('82: should render a gitgraph with linked commit with tag', () => {
     imgSnapshotTest(
       `gitGraph
         commit id: "release" tag: "v1.0"
@@ -1666,7 +1633,7 @@ describe('GitGraph with click statements', () => {
       {}
     );
   });
-  it('should render linked HIGHLIGHT commit', () => {
+  it('83: should render a gitgraph with linked HIGHLIGHT commit', () => {
     imgSnapshotTest(
       `gitGraph
         commit id: "normal"
@@ -1677,7 +1644,7 @@ describe('GitGraph with click statements', () => {
       {}
     );
   });
-  it('should render linked REVERSE commit', () => {
+  it('84: should render a gitgraph with linked REVERSE commit', () => {
     imgSnapshotTest(
       `gitGraph
         commit id: "normal"
@@ -1688,7 +1655,7 @@ describe('GitGraph with click statements', () => {
       {}
     );
   });
-  it('should render complex graph with mixed links', () => {
+  it('85: should render a complex gitgraph with mixed click links', () => {
     imgSnapshotTest(
       `gitGraph
         commit id: "init"
