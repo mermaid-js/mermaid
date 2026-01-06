@@ -14,10 +14,11 @@ const createPieArcs = (sections: Sections): d3.PieArcDatum<D3Section>[] => {
 
   const pieData: D3Section[] = [...sections.entries()]
     .map(([label, value]) => ({ label, value }))
-    .filter((d) => (d.value / sum) * 100 >= 1) // Remove values < 1%
-    .sort((a, b) => b.value - a.value);
+    .filter((d) => (d.value / sum) * 100 >= 1); // Remove values < 1%
 
-  const pie: d3.Pie<unknown, D3Section> = d3pie<D3Section>().value((d) => d.value);
+  const pie: d3.Pie<unknown, D3Section> = d3pie<D3Section>()
+    .value((d) => d.value)
+    .sort(null);
   return pie(pieData);
 };
 
@@ -92,7 +93,9 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   const filteredArcs = arcs.filter((datum) => ((datum.data.value / sum) * 100).toFixed(0) !== '0');
 
   // Set the color scale
-  const color: d3.ScaleOrdinal<string, 12, never> = scaleOrdinal(myGeneratedColors);
+  const color: d3.ScaleOrdinal<string, 12, never> = scaleOrdinal(myGeneratedColors).domain([
+    ...sections.keys(),
+  ]);
 
   // Build the pie chart: each part of the pie is a path that we build using the arc function.
   group
