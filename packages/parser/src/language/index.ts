@@ -9,6 +9,7 @@ export {
   GitGraph,
   Radar,
   Treemap,
+  Wardley,
   Branch,
   Commit,
   Merge,
@@ -21,6 +22,7 @@ export {
   isArchitecture,
   isGitGraph,
   isTreemap,
+  isWardley,
   isBranch,
   isCommit,
   isMerge,
@@ -35,6 +37,7 @@ export {
   GitGraphGeneratedModule,
   RadarGeneratedModule,
   TreemapGeneratedModule,
+  WardleyGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';
@@ -45,3 +48,4 @@ export * from './pie/index.js';
 export * from './architecture/index.js';
 export * from './radar/index.js';
 export * from './treemap/index.js';
+export * from './wardley/index.js';
