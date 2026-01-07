@@ -268,7 +268,6 @@ export const addRelations = function (relations: ClassRelation[], g: graphlib.Gr
       edgeData.arrowheadStyle = 'fill: #333';
       edgeData.labelpos = 'c';
 
-      // TODO V10: Flowchart ? Keeping flowchart for backwards compatibility. Remove in next major release
       if (getEffectiveHtmlLabels(getConfig())) {
         edgeData.labelType = 'html';
         edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';

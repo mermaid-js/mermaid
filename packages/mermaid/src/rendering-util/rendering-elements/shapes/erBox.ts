@@ -4,10 +4,10 @@ import type { Node } from '../../types.js';
 import { userNodeOverrides, styles2String } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { drawRect } from './drawRect.js';
-import { getConfig } from '../../../config.js';
+import { getConfig, getEffectiveHtmlLabels } from '../../../config.js';
 import type { EntityNode } from '../../../diagrams/er/erTypes.js';
 import { createText } from '../../createText.js';
-import { evaluate, parseGenericTypes } from '../../../diagrams/common/common.js';
+import { parseGenericTypes } from '../../../diagrams/common/common.js';
 import { select } from 'd3';
 import { calculateTextWidth } from '../../../utils.js';
 import type { MermaidConfig } from '../../../config.type.js';
@@ -61,7 +61,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     const shapeSvg = await drawRect(parent, node, options);
 
     // drawRect doesn't center non-htmlLabels correctly as of now, so translate label
-    if (!evaluate(config.htmlLabels)) {
+    if (!getEffectiveHtmlLabels(getConfig())) {
       const textElement = shapeSvg.select('text');
       const bbox = (textElement.node() as SVGTextElement)?.getBBox();
       textElement.attr('transform', `translate(${-bbox.width / 2}, 0)`);
@@ -360,7 +360,7 @@ async function addText<T extends SVGGraphicsElement>(
   }
 
   let bbox = text.getBBox();
-  if (evaluate(config.htmlLabels)) {
+  if (getEffectiveHtmlLabels(getConfig())) {
     const div = text.children[0];
     div.style.textAlign = 'start';
     const dv = select(text);

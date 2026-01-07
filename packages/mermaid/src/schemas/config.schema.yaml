@@ -153,7 +153,6 @@ properties:
     default: false
   htmlLabels:
     type: boolean # maybe unused, seems to be copied in each diagram config
-
   fontFamily:
     description: |
       Specifies the font to be used in the rendered diagrams.

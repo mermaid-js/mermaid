@@ -14,7 +14,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   _classes?: string
 ) => {
   let cssClasses;
-  const useHtmlLabels = node.useHtmlLabels || evaluate(getConfig()?.htmlLabels);
+  const useHtmlLabels = node.useHtmlLabels ?? evaluate(getConfig()?.htmlLabels);
   if (!_classes) {
     cssClasses = 'node default';
   } else {
@@ -131,7 +131,7 @@ export const insertLabel = async <T extends SVGGraphicsElement>(
     addSvgBackground?: boolean | undefined;
   }
 ) => {
-  const useHtmlLabels = getEffectiveHtmlLabels(getConfig()) || options.useHtmlLabels;
+  const useHtmlLabels = options.useHtmlLabels ?? getEffectiveHtmlLabels(getConfig());
 
   // Create the label and insert it after the rect
   const labelEl = parent

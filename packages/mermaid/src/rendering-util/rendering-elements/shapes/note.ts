@@ -14,7 +14,7 @@ export async function note<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const useHtmlLabels = getEffectiveHtmlLabels(getConfig()) || node.useHtmlLabels;
+  const useHtmlLabels = node.useHtmlLabels ?? getEffectiveHtmlLabels(getConfig());
   if (!useHtmlLabels) {
     node.centerLabel = true;
   }
