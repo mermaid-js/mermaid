@@ -52,8 +52,8 @@ The following code snippet shows the structure of a directive:
     "theme": "dark",
     "fontFamily": "monospace",
     "logLevel": "info",
+    "htmlLabels": true,
     "flowchart": {
-      "htmlLabels": true,
       "curve": "linear"
     },
     "sequence": {
@@ -242,7 +242,7 @@ Some common flowchart configurations are:
 
 **Deprecated configurations:**
 
-- ~~_htmlLabels_~~: Use global `htmlLabels` instead
+- ~~_flowchart.htmlLabels_~~: **Deprecated** - Use the global `htmlLabels` configuration instead. The `flowchart.htmlLabels` option is no longer supported and should be replaced with the top-level `htmlLabels` setting.
 
 For a complete list of flowchart configurations, see [defaultConfig.ts](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/defaultConfig.ts) in the source code.
 _Soon we plan to publish a complete list of all diagram-specific configurations updated in the docs._
@@ -253,7 +253,8 @@ The following code snippet changes flowchart config:
 %%{init: { "htmlLabels": true, "flowchart": { "curve": "linear" } } }%%
 ```
 
-**Note:** `flowchart.htmlLabels` has been deprecated. Use the global `htmlLabels` configuration instead.
+> **Warning**
+> **Deprecated:** `flowchart.htmlLabels` has been deprecated. Use the global `htmlLabels` configuration instead. For example, instead of `"flowchart": { "htmlLabels": true }`, use `"htmlLabels": true` at the top level.
 
 ```mermaid-example
 %%{init: { "htmlLabels": true, "flowchart": { "curve": "linear" } } }%%
