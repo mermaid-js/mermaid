@@ -335,4 +335,12 @@ describe('getEffectiveHtmlLabels', () => {
     const config = configApi.getConfig();
     expect(configApi.getEffectiveHtmlLabels(config)).toBe(false);
   });
+
+  it('should handle directives with root htmlLabels true overriding flowchart htmlLabels false', () => {
+    configApi.saveConfigFromInitialize({ flowchart: { htmlLabels: false } });
+    configApi.setSiteConfig({ flowchart: { htmlLabels: false } });
+    configApi.addDirective({ htmlLabels: true });
+    const config = configApi.getConfig();
+    expect(configApi.getEffectiveHtmlLabels(config)).toBe(true);
+  });
 });
