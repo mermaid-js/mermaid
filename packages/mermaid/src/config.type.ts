@@ -121,7 +121,7 @@ export interface MermaidConfig {
     considerModelOrder?: 'NONE' | 'NODES_AND_EDGES' | 'PREFER_EDGES' | 'PREFER_NODES';
   };
   darkMode?: boolean;
-  htmlLabels?: boolean;
+  htmlLabels?: boolean | null;
   /**
    * Specifies the font to be used in the rendered diagrams.
    * Can be any possible CSS `font-family`.
@@ -256,7 +256,7 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    * Please use the global `htmlLabels` configuration instead.
    *
    */
-  htmlLabels?: boolean;
+  htmlLabels?: boolean | null;
   /**
    * Defines the spacing between nodes on the same level
    *

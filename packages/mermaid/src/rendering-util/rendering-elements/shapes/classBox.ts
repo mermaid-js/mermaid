@@ -14,7 +14,7 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
   const config = getConfig();
   const PADDING = config.class!.padding ?? 12;
   const GAP = PADDING;
-  const useHtmlLabels = node.useHtmlLabels ?? evaluate(config.htmlLabels) ?? true;
+  const useHtmlLabels = node.useHtmlLabels ?? (evaluate(config.htmlLabels ?? undefined) || true);
   // Treat node as classNode
   const classNode = node as unknown as ClassNode;
   classNode.annotations = classNode.annotations ?? [];

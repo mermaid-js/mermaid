@@ -152,7 +152,11 @@ properties:
     type: boolean
     default: false
   htmlLabels:
-    type: boolean # maybe unused, seems to be copied in each diagram config
+    # maybe unused, seems to be copied in each diagram config
+    type:
+      - boolean
+      - 'null'
+    default: null
   fontFamily:
     description: |
       Specifies the font to be used in the rendered diagrams.
@@ -2088,9 +2092,11 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           Flag for setting whether or not a html tag should be used for rendering labels on nodes and edges.
           This property is deprecated.
           Please use the global `htmlLabels` configuration instead.
-        type: boolean
+        type:
+          - boolean
+          - 'null'
         deprecated: true
-        default: true
+        default: null
       nodeSpacing:
         description: |
           Defines the spacing between nodes on the same level

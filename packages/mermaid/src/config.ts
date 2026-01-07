@@ -280,23 +280,9 @@ export const getUserDefinedConfig = (): MermaidConfig => {
  * @returns The effective htmlLabels value based on precedence: root flowchart  default
  */
 export const getEffectiveHtmlLabels = (config: MermaidConfig): boolean => {
-  if (config.flowchart?.htmlLabels !== undefined) {
+  // != instead of !== handles null case
+  if (config.flowchart?.htmlLabels != undefined) {
     issueWarning('FLOWCHART_HTML_LABELS_DEPRECATED');
   }
-
-  const userConfig = getUserDefinedConfig();
-
-  // Check if htmlLabels was explicitly set at root level
-  if ('htmlLabels' in userConfig) {
-    return config.htmlLabels !== undefined ? evaluate(config.htmlLabels) : true;
-  }
-
-  // Fall back to flowchart.htmlLabels if explicitly set
-  if (userConfig.flowchart?.htmlLabels !== undefined) {
-    return config.flowchart?.htmlLabels !== undefined
-      ? evaluate(config.flowchart.htmlLabels)
-      : true;
-  }
-
-  return true;
+  return evaluate(config.htmlLabels ?? config.flowchart?.htmlLabels ?? true);
 };

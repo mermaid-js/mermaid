@@ -35,7 +35,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   }
 
   const config = getConfig();
-  node.useHtmlLabels = config.htmlLabels;
+  node.useHtmlLabels = config.htmlLabels ?? undefined;
   let PADDING = config.er?.diagramPadding ?? 10;
   let TEXT_PADDING = config.er?.entityPadding ?? 6;
 
@@ -343,7 +343,7 @@ async function addText<T extends SVGGraphicsElement>(
       {
         width: calculateTextWidth(labelText, config) + 100,
         style,
-        useHtmlLabels: config.htmlLabels,
+        useHtmlLabels: config.htmlLabels ?? undefined,
       },
       config
     )
