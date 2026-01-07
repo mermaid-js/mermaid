@@ -152,7 +152,11 @@ properties:
     type: boolean
     default: false
   htmlLabels:
-    # maybe unused, seems to be copied in each diagram config
+    description: |
+      Flag for setting whether or not a html tag should be used for rendering labels on nodes and edges.
+      **Note:** Diagram-specific `htmlLabels` settings (e.g., `flowchart.htmlLabels`) are deprecated.
+      Use this root-level `htmlLabels` setting instead. The root-level `htmlLabels` takes precedence
+      over any diagram-specific settings.
     type:
       - boolean
       - 'null'

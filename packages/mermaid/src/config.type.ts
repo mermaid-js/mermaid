@@ -121,6 +121,13 @@ export interface MermaidConfig {
     considerModelOrder?: 'NONE' | 'NODES_AND_EDGES' | 'PREFER_EDGES' | 'PREFER_NODES';
   };
   darkMode?: boolean;
+  /**
+   * Flag for setting whether or not a html tag should be used for rendering labels on nodes and edges.
+   * **Note:** Diagram-specific `htmlLabels` settings (e.g., `flowchart.htmlLabels`) are deprecated.
+   * Use this root-level `htmlLabels` setting instead. The root-level `htmlLabels` takes precedence
+   * over any diagram-specific settings.
+   *
+   */
   htmlLabels?: boolean | null;
   /**
    * Specifies the font to be used in the rendered diagrams.
