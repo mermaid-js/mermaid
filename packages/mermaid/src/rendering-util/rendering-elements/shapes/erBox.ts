@@ -64,7 +64,9 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     if (!getEffectiveHtmlLabels(getConfig())) {
       const textElement = shapeSvg.select('text');
       const bbox = (textElement.node() as SVGTextElement)?.getBBox();
-      textElement.attr('transform', `translate(${-bbox.width / 2}, 0)`);
+      if (bbox) {
+        textElement.attr('transform', `translate(${-bbox.width / 2}, 0)`);
+      }
     }
     return shapeSvg;
   }
@@ -349,7 +351,9 @@ async function addText<T extends SVGGraphicsElement>(
     )
   );
   // Undo work around now that text passed through correctly
-  if (labelText.includes('&lt;') || labelText.includes('&gt;')) {
+  // Only do this for HTML labels, as SVG text elements don't have children
+  const useHtmlLabels = config.htmlLabels ?? undefined;
+  if (useHtmlLabels && (labelText.includes('&lt;') || labelText.includes('&gt;'))) {
     let child = text.children[0];
     child.textContent = child.textContent.replaceAll('&lt;', '<').replaceAll('&gt;', '>');
     while (child.childNodes[0]) {
@@ -362,11 +366,13 @@ async function addText<T extends SVGGraphicsElement>(
   let bbox = text.getBBox();
   if (getEffectiveHtmlLabels(getConfig())) {
     const div = text.children[0];
-    div.style.textAlign = 'start';
-    const dv = select(text);
-    bbox = div.getBoundingClientRect();
-    dv.attr('width', bbox.width);
-    dv.attr('height', bbox.height);
+    if (div) {
+      div.style.textAlign = 'start';
+      const dv = select(text);
+      bbox = div.getBoundingClientRect();
+      dv.attr('width', bbox.width);
+      dv.attr('height', bbox.height);
+    }
   }
 
   return bbox;
