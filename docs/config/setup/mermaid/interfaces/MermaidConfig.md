@@ -223,7 +223,7 @@ Defines the seed to be used when using handDrawn look. This is important for the
 
 ### htmlLabels?
 
-> `optional` **htmlLabels**: `boolean` | `null`
+> `optional` **htmlLabels**: `boolean`
 
 Defined in: [packages/mermaid/src/config.type.ts:131](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L131)
 
