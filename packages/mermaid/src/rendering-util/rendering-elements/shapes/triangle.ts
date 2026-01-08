@@ -13,7 +13,7 @@ export async function triangle<T extends SVGGraphicsElement>(parent: D3Selection
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const useHtmlLabels = node.useHtmlLabels ?? getEffectiveHtmlLabels(getConfig());
+  const useHtmlLabels = node.useHtmlLabels || getEffectiveHtmlLabels(getConfig());
   const w = bbox.width + (node.padding ?? 0);
   const h = w + bbox.height;
 

@@ -249,21 +249,15 @@ describe('mermaidAPI', () => {
     };
 
     it('gets the cssStyles from the theme', () => {
-      configApi.setSiteConfig(mocked_config_with_htmlLabels);
-      const config = configApi.getConfig();
-      const styles = createCssStyles(config, null);
+      const styles = createCssStyles(mocked_config_with_htmlLabels, null);
       expect(styles).toMatch(/^\ndefault(.*)/);
     });
     it('gets the fontFamily from the config', () => {
-      configApi.setSiteConfig(mocked_config_with_htmlLabels);
-      const config = configApi.getConfig();
-      const styles = createCssStyles(config, new Map());
+      const styles = createCssStyles(mocked_config_with_htmlLabels, new Map());
       expect(styles).toMatch(/(.*)\n:root { --mermaid-font-family: serif(.*)/);
     });
     it('gets the alt fontFamily from the config', () => {
-      configApi.setSiteConfig(mocked_config_with_htmlLabels);
-      const config = configApi.getConfig();
-      const styles = createCssStyles(config, undefined);
+      const styles = createCssStyles(mocked_config_with_htmlLabels, undefined);
       expect(styles).toMatch(/(.*)\n:root { --mermaid-alt-font-family: sans-serif(.*)/);
     });
 
@@ -339,11 +333,7 @@ describe('mermaidAPI', () => {
               // @todo TODO Can't figure out how to spy on the cssImportantStyles method.
               //   That would be a much better approach than manually checking the result
 
-              // Set the config via the config API so getEffectiveHtmlLabels works correctly
-              configApi.setSiteConfig(mocked_config);
-              const config = configApi.getConfig();
-
-              const styles = createCssStyles(config, new Map(Object.entries(classDefs)));
+              const styles = createCssStyles(mocked_config, new Map(Object.entries(classDefs)));
               htmlElements.forEach((htmlElement) => {
                 expect_styles_matchesHtmlElements(styles, htmlElement);
               });
@@ -382,11 +372,10 @@ describe('mermaidAPI', () => {
             it('creates CSS styles for every style and textStyle in every classDef', () => {
               // TODO Can't figure out how to spy on the cssImportantStyles method. That would be a much better approach than manually checking the result.
 
-              // Set the config via the config API so getEffectiveHtmlLabels works correctly
-              configApi.setSiteConfig(mocked_config_no_htmlLabels);
-              const config = configApi.getConfig();
-
-              const styles = createCssStyles(config, new Map(Object.entries(classDefs)));
+              const styles = createCssStyles(
+                mocked_config_no_htmlLabels,
+                new Map(Object.entries(classDefs))
+              );
               htmlElements.forEach((htmlElement) => {
                 expect_styles_matchesHtmlElements(styles, htmlElement);
               });
