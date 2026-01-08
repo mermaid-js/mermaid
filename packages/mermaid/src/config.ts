@@ -8,12 +8,12 @@ import { sanitizeDirective } from './utils/sanitizeDirective.js';
 export const defaultConfig: MermaidConfig = Object.freeze(config);
 
 /**
- * Evaluate a string or boolean value to a boolean.
- * Used to handle config values that might be strings like "false" or "true".
- * @param val - The value to evaluate
- * @returns The boolean result
+ * Converts a string/boolean into a boolean
+ *
+ * @param val - String or boolean to convert
+ * @returns The result from the input
  */
-const evaluate = (val?: string | boolean): boolean =>
+export const evaluate = (val?: string | boolean): boolean =>
   val === false || ['false', 'null', '0'].includes(String(val).trim().toLowerCase()) ? false : true;
 
 let siteConfig: MermaidConfig = assignWithDepth({}, defaultConfig);

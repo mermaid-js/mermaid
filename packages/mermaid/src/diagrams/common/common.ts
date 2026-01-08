@@ -1,5 +1,5 @@
 import DOMPurify from 'dompurify';
-import { getEffectiveHtmlLabels } from '../../config.js';
+import { evaluate, getEffectiveHtmlLabels } from '../../config.js';
 import type { MermaidConfig } from '../../config.type.js';
 
 // Remove and ignore br:s
@@ -166,14 +166,7 @@ export const getUrl = (useAbsolute: boolean): string => {
   return url;
 };
 
-/**
- * Converts a string/boolean into a boolean
- *
- * @param val - String or boolean to convert
- * @returns The result from the input
- */
-export const evaluate = (val?: string | boolean): boolean =>
-  val === false || ['false', 'null', '0'].includes(String(val).trim().toLowerCase()) ? false : true;
+export { evaluate };
 
 /**
  * Wrapper around Math.max which removes non-numeric values
