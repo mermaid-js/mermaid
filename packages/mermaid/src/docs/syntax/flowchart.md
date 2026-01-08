@@ -76,10 +76,6 @@ flowchart LR
     markdown --> newLines
 ```
 
-```warning
-**Deprecated:** `flowchart.htmlLabels` has been deprecated. Use the global `htmlLabels` configuration instead. For example, instead of `"flowchart": { "htmlLabels": true }`, use `"htmlLabels": true` at the top level.
-```
-
 ### Direction
 
 This statement declares the direction of the Flowchart.

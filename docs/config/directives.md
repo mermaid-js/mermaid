@@ -236,13 +236,10 @@ A --> C[End]
 
 Some common flowchart configurations are:
 
+- ~~_htmlLabels_~~: Deprecated, [prefer setting this at the root level](/config/schema-docs/config#htmllabels).
 - _curve_: linear/curve
 - _diagramPadding_: number
 - _useMaxWidth_: number
-
-**Deprecated configurations:**
-
-- ~~_flowchart.htmlLabels_~~: **Deprecated** - Use the global `htmlLabels` configuration instead. The `flowchart.htmlLabels` option is no longer supported and should be replaced with the top-level `htmlLabels` setting.
 
 For a complete list of flowchart configurations, see [defaultConfig.ts](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/defaultConfig.ts) in the source code.
 _Soon we plan to publish a complete list of all diagram-specific configurations updated in the docs._
@@ -253,11 +250,13 @@ The following code snippet changes flowchart config:
 %%{init: { "htmlLabels": true, "flowchart": { "curve": "linear" } } }%%
 ```
 
+Here we are overriding only the flowchart config, and not the general config, setting `htmlLabels` to `true` and `curve` to `linear`.
+
 > **Warning**
-> **Deprecated:** `flowchart.htmlLabels` has been deprecated. Use the global `htmlLabels` configuration instead. For example, instead of `"flowchart": { "htmlLabels": true }`, use `"htmlLabels": true` at the top level.
+> **Deprecated:** `flowchart.htmlLabels` has been deprecated from (v\<MERMAID_RELEASE_VERSION>+). Use the global `htmlLabels` configuration instead. For example, instead of `"flowchart": { "htmlLabels": true }`, use `"htmlLabels": true` at the top level.
 
 ```mermaid-example
-%%{init: { "htmlLabels": true, "flowchart": { "curve": "linear" } } }%%
+%%{init: { "flowchart": { "htmlLabels": true, "curve": "linear" } } }%%
 graph TD
 A(Forest) --> B[/Another/]
 A --> C[End]
@@ -268,7 +267,7 @@ A --> C[End]
 ```
 
 ```mermaid
-%%{init: { "htmlLabels": true, "flowchart": { "curve": "linear" } } }%%
+%%{init: { "flowchart": { "htmlLabels": true, "curve": "linear" } } }%%
 graph TD
 A(Forest) --> B[/Another/]
 A --> C[End]
