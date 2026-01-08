@@ -66,7 +66,7 @@ Use double quotes and backticks "\` text \`" to enclose the markdown text.
 ```mermaid-example
 ---
 config:
-    htmlLabels: false
+  htmlLabels: false
 ---
 flowchart LR
     markdown["`This **is** _Markdown_`"]
@@ -987,7 +987,7 @@ The "Markdown Strings" feature enhances flowcharts and mind maps by offering a m
 ```mermaid-example
 ---
 config:
-htmlLabels: false
+  htmlLabels: false
 ---
 flowchart LR
 subgraph "One"
