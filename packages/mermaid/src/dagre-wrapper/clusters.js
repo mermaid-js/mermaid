@@ -5,7 +5,6 @@ import { createText } from '../rendering-util/createText.js';
 import { select } from 'd3';
 import { getConfig } from '../diagram-api/diagramAPI.js';
 import { getEffectiveHtmlLabels } from '../config.js';
-
 import { getSubGraphTitleMargins } from '../utils/subGraphTitleMargins.js';
 
 const rect = async (parent, node) => {
