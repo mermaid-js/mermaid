@@ -182,7 +182,7 @@ export const drawNode = async function (
   fullSection: number,
   conf: MermaidConfig
 ): Promise<number> {
-  const htmlLabels = conf.htmlLabels ?? undefined;
+  const htmlLabels = conf.htmlLabels;
   const section = fullSection % (MAX_SECTIONS - 1);
   const nodeElem = elem.append('g');
   node.section = section;

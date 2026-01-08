@@ -157,10 +157,7 @@ properties:
       **Note:** Diagram-specific `htmlLabels` settings (e.g., `flowchart.htmlLabels`) are deprecated.
       Use this root-level `htmlLabels` setting instead. The root-level `htmlLabels` takes precedence
       over any diagram-specific settings.
-    type:
-      - boolean
-      - 'null'
-    default: null
+    type: boolean
   fontFamily:
     description: |
       Specifies the font to be used in the rendered diagrams.

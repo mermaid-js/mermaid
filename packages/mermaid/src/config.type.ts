@@ -128,7 +128,7 @@ export interface MermaidConfig {
    * over any diagram-specific settings.
    *
    */
-  htmlLabels?: boolean | null;
+  htmlLabels?: boolean;
   /**
    * Specifies the font to be used in the rendered diagrams.
    * Can be any possible CSS `font-family`.

@@ -1,7 +1,6 @@
 import { select } from 'd3';
 import { getConfig } from '../diagram-api/diagramAPI.js';
 import { getEffectiveHtmlLabels } from '../config.js';
-
 import { log } from '../logger.js';
 import { getArrowPoints } from './blockArrowHelper.js';
 import createLabel from './createLabel.js';

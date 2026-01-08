@@ -4,10 +4,10 @@ import type { Node } from '../../types.js';
 import { userNodeOverrides, styles2String } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { drawRect } from './drawRect.js';
-import { getConfig, getEffectiveHtmlLabels } from '../../../config.js';
+import { getConfig } from '../../../config.js';
 import type { EntityNode } from '../../../diagrams/er/erTypes.js';
 import { createText } from '../../createText.js';
-import { parseGenericTypes } from '../../../diagrams/common/common.js';
+import { evaluate, parseGenericTypes } from '../../../diagrams/common/common.js';
 import { select } from 'd3';
 import { calculateTextWidth } from '../../../utils.js';
 import type { MermaidConfig } from '../../../config.type.js';
@@ -35,7 +35,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   }
 
   const config = getConfig();
-  node.useHtmlLabels = config.htmlLabels ?? undefined;
+  node.useHtmlLabels = config.htmlLabels;
   let PADDING = config.er?.diagramPadding ?? 10;
   let TEXT_PADDING = config.er?.entityPadding ?? 6;
 
@@ -61,12 +61,10 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     const shapeSvg = await drawRect(parent, node, options);
 
     // drawRect doesn't center non-htmlLabels correctly as of now, so translate label
-    if (!getEffectiveHtmlLabels(getConfig())) {
+    if (!evaluate(config.htmlLabels)) {
       const textElement = shapeSvg.select('text');
       const bbox = (textElement.node() as SVGTextElement)?.getBBox();
-      if (bbox) {
-        textElement.attr('transform', `translate(${-bbox.width / 2}, 0)`);
-      }
+      textElement.attr('transform', `translate(${-bbox.width / 2}, 0)`);
     }
     return shapeSvg;
   }
@@ -345,15 +343,13 @@ async function addText<T extends SVGGraphicsElement>(
       {
         width: calculateTextWidth(labelText, config) + 100,
         style,
-        useHtmlLabels: config.htmlLabels ?? undefined,
+        useHtmlLabels: config.htmlLabels,
       },
       config
     )
   );
   // Undo work around now that text passed through correctly
-  // Only do this for HTML labels, as SVG text elements don't have children
-  const useHtmlLabels = config.htmlLabels ?? undefined;
-  if (useHtmlLabels && (labelText.includes('&lt;') || labelText.includes('&gt;'))) {
+  if (labelText.includes('&lt;') || labelText.includes('&gt;')) {
     let child = text.children[0];
     child.textContent = child.textContent.replaceAll('&lt;', '<').replaceAll('&gt;', '>');
     while (child.childNodes[0]) {
@@ -364,15 +360,13 @@ async function addText<T extends SVGGraphicsElement>(
   }
 
   let bbox = text.getBBox();
-  if (getEffectiveHtmlLabels(getConfig())) {
+  if (evaluate(config.htmlLabels)) {
     const div = text.children[0];
-    if (div) {
-      div.style.textAlign = 'start';
-      const dv = select(text);
-      bbox = div.getBoundingClientRect();
-      dv.attr('width', bbox.width);
-      dv.attr('height', bbox.height);
-    }
+    div.style.textAlign = 'start';
+    const dv = select(text);
+    bbox = div.getBoundingClientRect();
+    dv.attr('width', bbox.width);
+    dv.attr('height', bbox.height);
   }
 
   return bbox;

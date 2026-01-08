@@ -5,7 +5,7 @@ import { getEffectiveHtmlLabels } from '../../config.js';
 import intersect from '../intersect/index.js';
 
 const note = async (parent, node) => {
-  const useHtmlLabels = node.useHtmlLabels ?? getEffectiveHtmlLabels(getConfig());
+  const useHtmlLabels = node.useHtmlLabels || getEffectiveHtmlLabels(getConfig());
   if (!useHtmlLabels) {
     node.centerLabel = true;
   }

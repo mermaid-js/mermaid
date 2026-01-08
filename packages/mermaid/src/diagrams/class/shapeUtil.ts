@@ -104,7 +104,7 @@ async function addText<T extends SVGGraphicsElement>(
   const textEl = parentGroup.insert('g').attr('class', 'label').attr('style', styles.join('; '));
   const config = getConfig();
   let useHtmlLabels =
-    'useHtmlLabels' in node ? node.useHtmlLabels : evaluate(config.htmlLabels ?? undefined) || true;
+    'useHtmlLabels' in node ? node.useHtmlLabels : (evaluate(config.htmlLabels) ?? true);
 
   let textContent = '';
   // Support regular node type (.label) and classNodes (.text)
