@@ -141,4 +141,185 @@ describe('Sankey Diagram', () => {
       });
     });
   });
+
+  describe('when given a labelStyle', function () {
+    this.beforeAll(() => {
+      cy.wrap(
+        `sankey
+        a,b,10
+        b,c,10
+        `
+      ).as('graph');
+    });
+
+    it('should render with outlined style by default', function () {
+      renderGraph(this.graph, { sankey: {} });
+
+      // Default style should create background and foreground label elements
+      cy.get('.node-labels .sankey-label-bg').should('exist');
+      cy.get('.node-labels .sankey-label-fg').should('exist');
+    });
+
+    it('should render legacy (plain) labels when labelStyle is legacy', function () {
+      renderGraph(this.graph, { sankey: { labelStyle: 'legacy' } });
+
+      // Legacy style should not have the outlined label classes
+      cy.get('.node-labels .sankey-label-bg').should('not.exist');
+      cy.get('.node-labels .sankey-label-fg').should('not.exist');
+      cy.get('.node-labels text').should('exist');
+    });
+
+    it('should render outlined labels when labelStyle is default', function () {
+      renderGraph(this.graph, { sankey: { labelStyle: 'default' } });
+
+      cy.get('.node-labels .sankey-label-bg').should('exist');
+      cy.get('.node-labels .sankey-label-fg').should('exist');
+    });
+  });
+
+  describe('when given nodeWidth and nodePadding', function () {
+    it('should respect custom nodeWidth', function () {
+      renderGraph(
+        `sankey
+        a,b,10
+        `,
+        { sankey: { nodeWidth: 20, useMaxWidth: false } }
+      );
+
+      cy.get('.node rect')
+        .first()
+        .should((node) => {
+          expect(parseFloat(node.attr('width') ?? '0')).to.equal(20);
+        });
+    });
+
+    it('should use default nodeWidth of 10', function () {
+      renderGraph(
+        `sankey
+        a,b,10
+        `,
+        { sankey: { useMaxWidth: false } }
+      );
+
+      cy.get('.node rect')
+        .first()
+        .should((node) => {
+          expect(parseFloat(node.attr('width') ?? '0')).to.equal(10);
+        });
+    });
+  });
+
+  describe('smart label positioning', function () {
+    it('should render labels with Apple-style outlined text', () => {
+      imgSnapshotTest(
+        `
+        sankey
+
+        iPhone,Products,205
+        Mac,Products,40
+        iPad,Products,29
+        Wearables,Products,41
+        Products,Revenue,315
+        Services,Revenue,78
+        Revenue,Cost of Revenue,223
+        Revenue,Gross Profit,170
+        Gross Profit,Op Expenses,51
+        Gross Profit,Op Profit,119
+        Op Profit,Tax,19
+        Op Profit,Net Profit,100
+        `,
+        { sankey: { width: 800, height: 500, labelStyle: 'default' } }
+      );
+    });
+  });
+
+  describe('when given nodeColors', function () {
+    this.beforeAll(() => {
+      cy.wrap(
+        `sankey
+        a,b,10
+        b,c,20
+        `
+      ).as('graph');
+    });
+
+    it('should apply custom node colors', function () {
+      renderGraph(this.graph, { sankey: { nodeColors: { a: '#ff0000', b: '#00ff00' } } });
+
+      cy.get('.node')
+        .first()
+        .find('rect')
+        .should((node) => {
+          expect(node.attr('fill')).to.equal('#ff0000');
+        });
+    });
+
+    it('should fall back to default colors for unspecified nodes', function () {
+      renderGraph(this.graph, { sankey: { nodeColors: { a: '#ff0000' } } });
+
+      // Node 'a' should have custom color
+      cy.get('.node')
+        .first()
+        .find('rect')
+        .should((node) => {
+          expect(node.attr('fill')).to.equal('#ff0000');
+        });
+
+      // Node 'b' should have default color scheme (not #ff0000)
+      cy.get('.node')
+        .eq(1)
+        .find('rect')
+        .should((node) => {
+          expect(node.attr('fill')).to.not.equal('#ff0000');
+        });
+    });
+  });
+
+  describe('Apple-style financial flow demo', function () {
+    it('should render complete financial flow with custom colors', () => {
+      imgSnapshotTest(
+        `
+        sankey
+
+        iPhone,Products,205
+        Mac,Products,40
+        iPad,Products,29
+        Wearables,Products,41
+        Products,Revenue,315
+        Services,Revenue,78
+        Revenue,Cost of Revenue,223
+        Revenue,Gross Profit,170
+        Gross Profit,Op Expenses,51
+        Gross Profit,Op Profit,119
+        Op Profit,Tax,19
+        Op Profit,Net Profit,100
+        `,
+        {
+          sankey: {
+            width: 800,
+            height: 500,
+            labelStyle: 'default',
+            showValues: true,
+            prefix: '$',
+            suffix: 'B',
+            nodeColors: {
+              iPhone: '#6e6e73',
+              Mac: '#6e6e73',
+              iPad: '#6e6e73',
+              Wearables: '#6e6e73',
+              Products: '#6e6e73',
+              Services: '#6e6e73',
+              Revenue: '#424245',
+              'Cost of Revenue': '#ff3b30',
+              'Gross Profit': '#34c759',
+              'Op Expenses': '#ff3b30',
+              'Op Profit': '#34c759',
+              Tax: '#ff3b30',
+              'Net Profit': '#34c759',
+            },
+          },
+        }
+      );
+    });
+  });
 });

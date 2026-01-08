@@ -30,6 +30,27 @@ const alignmentsMap: Record<
 };
 
 /**
+ * Finds the layer of the central node (node with maximum value).
+ * Used to determine smart label positioning.
+ *
+ * @param nodes - Array of nodes with layer information
+ * @returns The layer number of the central (max value) node
+ */
+const findCentralNodeLayer = (nodes: any[]): number => {
+  let maxValue = 0;
+  let centralLayer = 0;
+
+  for (const node of nodes) {
+    if (node.value > maxValue) {
+      maxValue = node.value;
+      centralLayer = node.layer ?? 0;
+    }
+  }
+
+  return centralLayer;
+};
+
+/**
  * Draws Sankey diagram.
  *
  * @param text - The text of the diagram
@@ -68,6 +89,12 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   const suffix = conf?.suffix ?? defaultSankeyConfig.suffix!;
   const showValues = conf?.showValues ?? defaultSankeyConfig.showValues!;
 
+  // New config options with defaults
+  const nodeWidth = conf?.nodeWidth ?? defaultSankeyConfig.nodeWidth ?? 10;
+  const nodePadding = conf?.nodePadding ?? defaultSankeyConfig.nodePadding ?? 12;
+  const labelStyle = conf?.labelStyle ?? defaultSankeyConfig.labelStyle ?? 'default';
+  const nodeColors: Record<string, string> = conf?.nodeColors ?? {};
+
   // Prepare data for construction based on diagObj.db
   // This must be a mutable object with `nodes` and `links` properties:
   //
@@ -85,11 +112,10 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   // Construct and configure a Sankey generator
   // That will be a function that calculates nodes and links dimensions
   //
-  const nodeWidth = 10;
   const sankey = d3Sankey()
     .nodeId((d: any) => d.id) // we use 'id' property to identify node
     .nodeWidth(nodeWidth)
-    .nodePadding(10 + (showValues ? 15 : 0))
+    .nodePadding(nodePadding + (showValues ? 15 : 0))
     .nodeAlign(nodeAlign)
     .extent([
       [0, 0],
@@ -101,8 +127,22 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   //
   sankey(graph);
 
-  // Get color scheme for the graph
+  // Find central node layer for smart label positioning
+  const centralNodeLayer = findCentralNodeLayer(graph.nodes);
+
+  // Get color scheme for the graph (fallback for nodes without custom colors)
   const colorScheme = d3scaleOrdinal(d3schemeTableau10);
+
+  /**
+   * Gets the color for a node, using custom nodeColors config if available,
+   * otherwise falling back to the default color scheme.
+   *
+   * @param nodeId - The ID of the node
+   * @returns The color for the node
+   */
+  const getNodeColor = (nodeId: string): string => {
+    return nodeColors[nodeId] ?? colorScheme(nodeId);
+  };
 
   // Create rectangles for nodes
   svg
@@ -123,7 +163,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
       return d.y1 - d.y0;
     })
     .attr('width', (d: any) => d.x1 - d.x0)
-    .attr('fill', (d: any) => colorScheme(d.id));
+    .attr('fill', (d: any) => getNodeColor(d.id));
 
   const getText = ({ id, value }: { id: string; value: number }) => {
     if (!showValues) {
@@ -132,19 +172,65 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     return `${id}\n${prefix}${Math.round(value * 100) / 100}${suffix}`;
   };
 
+  /**
+   * Determines label position based on node layer relative to central node.
+   * Left-of-center nodes get labels on the left, right-of-center on the right.
+   *
+   * @param d - Node data with layer information
+   * @returns Object with x position and text-anchor
+   */
+  const getLabelPosition = (d: any): { x: number; anchor: string } => {
+    const nodeLayer = d.layer ?? 0;
+
+    if (nodeLayer < centralNodeLayer) {
+      // Left of center: label on the left
+      return { x: d.x0 - 6, anchor: 'end' };
+    } else {
+      // Right of center (or at center): label on the right
+      return { x: d.x1 + 6, anchor: 'start' };
+    }
+  };
+
   // Create labels for nodes
-  svg
-    .append('g')
-    .attr('class', 'node-labels')
-    .attr('font-size', 14)
-    .selectAll('text')
-    .data(graph.nodes)
-    .join('text')
-    .attr('x', (d: any) => (d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6))
-    .attr('y', (d: any) => (d.y1 + d.y0) / 2)
-    .attr('dy', `${showValues ? '0' : '0.35'}em`)
-    .attr('text-anchor', (d: any) => (d.x0 < width / 2 ? 'start' : 'end'))
-    .text(getText);
+  const labelsGroup = svg.append('g').attr('class', 'node-labels').attr('font-size', 14);
+
+  if (labelStyle === 'default') {
+    // Default style: render background stroke first, then foreground text for readability
+    // Background text with white stroke for readability
+    labelsGroup
+      .selectAll('.sankey-label-bg')
+      .data(graph.nodes)
+      .join('text')
+      .attr('class', 'sankey-label-bg')
+      .attr('x', (d: any) => getLabelPosition(d).x)
+      .attr('y', (d: any) => (d.y1 + d.y0) / 2)
+      .attr('dy', `${showValues ? '0' : '0.35'}em`)
+      .attr('text-anchor', (d: any) => getLabelPosition(d).anchor)
+      .text(getText);
+
+    // Foreground text
+    labelsGroup
+      .selectAll('.sankey-label-fg')
+      .data(graph.nodes)
+      .join('text')
+      .attr('class', 'sankey-label-fg')
+      .attr('x', (d: any) => getLabelPosition(d).x)
+      .attr('y', (d: any) => (d.y1 + d.y0) / 2)
+      .attr('dy', `${showValues ? '0' : '0.35'}em`)
+      .attr('text-anchor', (d: any) => getLabelPosition(d).anchor)
+      .text(getText);
+  } else {
+    // Legacy style: single text element (original behavior)
+    labelsGroup
+      .selectAll('text')
+      .data(graph.nodes)
+      .join('text')
+      .attr('x', (d: any) => getLabelPosition(d).x)
+      .attr('y', (d: any) => (d.y1 + d.y0) / 2)
+      .attr('dy', `${showValues ? '0' : '0.35'}em`)
+      .attr('text-anchor', (d: any) => getLabelPosition(d).anchor)
+      .text(getText);
+  }
 
   // Creates the paths that represent the links.
   const link = svg
@@ -171,12 +257,12 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     gradient
       .append('stop')
       .attr('offset', '0%')
-      .attr('stop-color', (d: any) => colorScheme(d.source.id));
+      .attr('stop-color', (d: any) => getNodeColor(d.source.id));
 
     gradient
       .append('stop')
       .attr('offset', '100%')
-      .attr('stop-color', (d: any) => colorScheme(d.target.id));
+      .attr('stop-color', (d: any) => getNodeColor(d.target.id));
   }
 
   let coloring: any;
@@ -185,10 +271,10 @@ export const draw = function (text: string, id: string, _version: string, diagOb
       coloring = (d: any) => d.uid;
       break;
     case 'source':
-      coloring = (d: any) => colorScheme(d.source.id);
+      coloring = (d: any) => getNodeColor(d.source.id);
       break;
     case 'target':
-      coloring = (d: any) => colorScheme(d.target.id);
+      coloring = (d: any) => getNodeColor(d.target.id);
       break;
     default:
       coloring = linkColor;

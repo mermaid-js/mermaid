@@ -264,6 +264,11 @@ const config: RequiredDeep<MermaidConfig> = {
   radar: {
     ...defaultConfigJson.radar,
   },
+  sankey: {
+    ...defaultConfigJson.sankey,
+    // Define nodeColors so it's included in configKeys (allows it through sanitizeDirective)
+    nodeColors: undefined,
+  },
   treemap: {
     useMaxWidth: true,
     padding: 10,
