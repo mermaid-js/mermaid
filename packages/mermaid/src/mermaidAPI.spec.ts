@@ -248,11 +248,6 @@ describe('mermaidAPI', () => {
       htmlLabels: true,
     };
 
-    beforeEach(() => {
-      configApi.reset();
-      configApi.saveConfigFromInitialize({});
-    });
-
     it('gets the cssStyles from the theme', () => {
       configApi.setSiteConfig(mocked_config_with_htmlLabels);
       const config = configApi.getConfig();
@@ -388,7 +383,6 @@ describe('mermaidAPI', () => {
               // TODO Can't figure out how to spy on the cssImportantStyles method. That would be a much better approach than manually checking the result.
 
               // Set the config via the config API so getEffectiveHtmlLabels works correctly
-              configApi.saveConfigFromInitialize(mocked_config_no_htmlLabels);
               configApi.setSiteConfig(mocked_config_no_htmlLabels);
               const config = configApi.getConfig();
 
