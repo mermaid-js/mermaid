@@ -124,20 +124,25 @@ const createLabel = async (_vertexText, style, isTitle, isNode, addBackground = 
   }
   const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
   svgLabel.setAttribute('style', style.replace('color:', 'fill:'));
-
-  const rows =
-    typeof vertexText === 'string'
-      ? vertexText.split(/\\n|\n|<br\s*\/?>/gi)
-      : Array.isArray(vertexText)
-        ? vertexText
-        : [];
+  let rows = [];
+  if (typeof vertexText === 'string') {
+    rows = vertexText.split(/\\n|\n|<br\s*\/?>/gi);
+  } else if (Array.isArray(vertexText)) {
+    rows = vertexText;
+  } else {
+    rows = [];
+  }
 
   for (const row of rows) {
     const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
     tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
     tspan.setAttribute('dy', '1em');
     tspan.setAttribute('x', '0');
-    tspan.setAttribute('class', isTitle ? 'title-row' : 'row');
+    if (isTitle) {
+      tspan.setAttribute('class', 'title-row');
+    } else {
+      tspan.setAttribute('class', 'row');
+    }
     tspan.textContent = row.trim();
     svgLabel.appendChild(tspan);
   }
