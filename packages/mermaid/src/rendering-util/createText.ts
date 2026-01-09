@@ -55,8 +55,6 @@ async function addHtmlSpan(
     div.attr('class', 'labelBkg');
   }
 
-  // Add a small buffer to prevent text truncation with certain character sets (e.g., CJK)
-  const TEXT_PADDING_BUFFER = 5;
   let bbox = div.node().getBoundingClientRect();
   if (bbox.width === width) {
     div.style('display', 'table');
