@@ -153,7 +153,10 @@ export const insertLabel = async <T extends SVGGraphicsElement>(
     const dv = select(text);
 
     bbox = div.getBoundingClientRect();
-    dv.attr('width', bbox.width);
+    // Add a small buffer to prevent text truncation with certain character sets (e.g., CJK)
+    // This accounts for sub-pixel rendering and font kerning differences
+    const TEXT_PADDING_BUFFER = 5;
+    dv.attr('width', bbox.width + TEXT_PADDING_BUFFER);
     dv.attr('height', bbox.height);
   }
 
