@@ -276,6 +276,9 @@ const config: RequiredDeep<MermaidConfig> = {
     labelFontSize: 14,
     valueFormat: ',',
   },
+  venn: {
+    ...defaultConfigJson.venn,
+  },
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

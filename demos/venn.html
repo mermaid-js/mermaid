@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+      .dark-sample {
+        background: #0d1117;
+        color: #e6edf3;
+        padding: 16px 20px;
+        border-radius: 12px;
+        margin: 24px 0;
+        border: 1px solid #30363d;
+      }
+      .dark-sample h2 {
+        margin: 0 0 12px;
+        font-size: 18px;
+      }
+      .dark-sample pre.mermaid {
+        background: transparent;
+        margin: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Venn diagram demo</h1>
+
+    <div class="diagrams">
+      <pre class="mermaid">
+      venn-beta
+        title Very Basic Venn Diagram
+        set A
+        set B
+        union A,B   label: AB
+      </pre>
+      <hr />
+      <pre class="mermaid">
+      venn-beta
+        title Three overlapping sets
+        set A
+        set B
+        set C
+        union A,B     label: AB,   background: skyblue
+        union B,C     label: BC,   background: orange
+        union A,C     label: AC,   background: lightgreen
+        union A,B,C   label: ABC,  background: white,      color: red
+      </pre>
+
+      <hr />
+      <div class="dark-sample">
+        <h2>Dark mode sample</h2>
+        <pre class="mermaid">
+        %%{init: { 'theme': 'dark', 'themeVariables': { 'background': '#0d1117' } } }%%
+        venn-beta
+          title Night Shift Sets
+          set A     label: Frontend
+            text d3
+            text react
+          set B     label: Backend
+          set C     label: Ops
+          union A,B   label: APIs
+          union B,C   label: Infra
+          union A,C   label: SRE
+          union A,B,C label: Shared
+        </pre>
+      </div>
+      <hr />
+      <pre class="mermaid">
+      %%{init: { 'venn': { 'useDebugLayout': true } } }%%
+      venn-beta
+        title Four sets with all pairwise intersections
+        set A      size: 18
+        set B      size: 18
+        set C      size: 18
+        set D      size: 18
+        union A,B    size: 5
+        union A,C    size: 2.5
+        union A,D    size: 5
+        union B,C    size: 5
+        union B,D    size: 2.5
+        union C,D    size: 5
+      </pre>
+      <hr />
+      <pre class="mermaid">
+      venn-beta
+        title Three concatenated sets and one isolated set
+        set A    size: 15,  label: ALPHA
+        set B    size: 5,   label: BETA
+        set C    size: 10
+        set D    size: 10,  label: DELTA
+        union A,B  size: 1,   label: AB,    background: gold
+        union B,D  size: 1
+      </pre>
+      <hr />
+      <pre class="mermaid">
+      venn-beta
+        title Text nodes inside sets
+        set A      label: Colored texts,  size: 18
+          text rgba      label: rgba,        color: rgba(255, 0, 0, 0.75)
+          text rgb       label: rgb,         color: rgb(255, 0, 128)
+          text hex       label: hex,         color: #ff33cc
+          text colorname label: color name,  color: green
+        set B      label: Default texts,  size: 12
+          text default   label: default color
+        union A,B    label: Common,         size: 5
+          text shared    label: "shared note"
+      </pre>
+      <hr />
+      <pre class="mermaid">
+      %%{init: { 'venn': { 'useDebugLayout': true } } }%%
+      venn-beta
+        title Many text nodes in debug text layout mode
+        set A      label: Five nodes,  size: 18
+          text A1
+          text A2
+          text A3
+          text A4
+          text A5
+        set B      label: Nine nodes,  size: 18
+          text B1
+          text B2
+          text B3
+          text B4  color: red
+          text B5
+          text B6
+          text B7  label: "Long label",  color: green
+          text "B8 with a long label"
+          text "B9 with a loooooooong label"
+        union A,B    label: Common,      size: 3
+          text shared label: "shared note"
+      </pre>
+    </div>
+    <script type="module">
+      import mermaid from '/mermaid.esm.mjs';
+      mermaid.initialize({
+        logLevel: 3,
+        securityLevel: 'loose',
+      });
+    </script>
+
+    <style>
+      pre {
+        /*width: 45vw;*/
+        /*padding: 2em;*/
+      }
+    </style>
+  </body>
+</html>
