@@ -13,8 +13,8 @@ import {
 } from '../common/commonDb.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
 
-const subsets = new Array<VennData>();
-const textNodes = new Array<VennTextData>();
+const subsets: VennData[] = [];
+const textNodes: VennTextData[] = [];
 const knownSets = new Set<string>();
 let currentSets: string[] | undefined;
 let indentMode = false;
