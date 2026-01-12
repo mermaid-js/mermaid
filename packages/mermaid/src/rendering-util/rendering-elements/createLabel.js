@@ -1,7 +1,7 @@
 import { select } from 'd3';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { getEffectiveHtmlLabels } from '../../config.js';
 import common, {
-  evaluate,
   hasKatex,
   renderKatexSanitized,
   sanitizeText,
@@ -108,7 +108,7 @@ const createLabel = async (_vertexText, style, isTitle, isNode, addBackground = 
     vertexText = vertexText[0];
   }
 
-  if (evaluate(getConfig().flowchart.htmlLabels)) {
+  if (getEffectiveHtmlLabels(getConfig())) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
     vertexText = vertexText.replace(/\\n|\n/g, '<br />');
     log.info('vertexText' + vertexText);

@@ -121,6 +121,13 @@ export interface MermaidConfig {
     considerModelOrder?: 'NONE' | 'NODES_AND_EDGES' | 'PREFER_EDGES' | 'PREFER_NODES';
   };
   darkMode?: boolean;
+  /**
+   * Flag for setting whether or not a html tag should be used for rendering labels on nodes and edges.
+   * **Note:** Diagram-specific `htmlLabels` settings (e.g., `flowchart.htmlLabels`) are deprecated.
+   * Use this root-level `htmlLabels` setting instead. The root-level `htmlLabels` takes precedence
+   * over any diagram-specific settings.
+   *
+   */
   htmlLabels?: boolean;
   /**
    * Specifies the font to be used in the rendered diagrams.
@@ -248,10 +255,15 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    */
   diagramPadding?: number;
   /**
-   * Flag for setting whether or not a html tag should be used for rendering labels on the edges.
+   * @deprecated
+   * **DEPRECATED: Use global `htmlLabels` instead.**
+   *
+   * Flag for setting whether or not a html tag should be used for rendering labels on nodes and edges.
+   * This property is deprecated.
+   * Please use the global `htmlLabels` configuration instead.
    *
    */
-  htmlLabels?: boolean;
+  htmlLabels?: boolean | null;
   /**
    * Defines the spacing between nodes on the same level
    *
