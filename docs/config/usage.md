@@ -372,7 +372,7 @@ The list of configuration objects are described [in the mermaidAPI documentation
 ```html
 <script type="module">
   import mermaid from './mermaid.esm.mjs';
-  let config = { startOnLoad: true, flowchart: { useMaxWidth: false, htmlLabels: true } };
+  let config = { startOnLoad: true, htmlLabels: true, flowchart: { useMaxWidth: false } };
   mermaid.initialize(config);
 </script>
 ```
