@@ -1,5 +1,5 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { evaluate } from '../../diagrams/common/common.js';
+import { getEffectiveHtmlLabels } from '../../config.js';
 import { log } from '../../logger.js';
 import { getSubGraphTitleMargins } from '../../utils/subGraphTitleMargins.js';
 import { select } from 'd3';
@@ -25,7 +25,7 @@ const rect = async (parent, node) => {
     .attr('id', node.id)
     .attr('data-look', node.look);
 
-  const useHtmlLabels = evaluate(siteConfig.flowchart.htmlLabels);
+  const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
 
   // Create the label and insert it after the rect
   const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label ');
@@ -39,7 +39,7 @@ const rect = async (parent, node) => {
   // Get the size of the label
   let bbox = text.getBBox();
 
-  if (evaluate(siteConfig.flowchart.htmlLabels)) {
+  if (getEffectiveHtmlLabels(siteConfig)) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();
@@ -188,7 +188,7 @@ const roundedWithTitle = async (parent, node) => {
   // Get the size of the label
   let bbox = text.getBBox();
 
-  if (evaluate(siteConfig.flowchart.htmlLabels)) {
+  if (getEffectiveHtmlLabels(siteConfig)) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();
@@ -264,7 +264,7 @@ const roundedWithTitle = async (parent, node) => {
 
   label.attr(
     'transform',
-    `translate(${node.x - bbox.width / 2}, ${y + 1 - (evaluate(siteConfig.flowchart.htmlLabels) ? 0 : 3)})`
+    `translate(${node.x - bbox.width / 2}, ${y + 1 - (getEffectiveHtmlLabels(siteConfig) ? 0 : 3)})`
   );
 
   const rectBox = rect.node().getBBox();
@@ -295,7 +295,7 @@ const kanbanSection = async (parent, node) => {
     .attr('id', node.id)
     .attr('data-look', node.look);
 
-  const useHtmlLabels = evaluate(siteConfig.flowchart.htmlLabels);
+  const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
 
   // Create the label and insert it after the rect
   const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label ');
@@ -310,7 +310,7 @@ const kanbanSection = async (parent, node) => {
   // Get the size of the label
   let bbox = text.getBBox();
 
-  if (evaluate(siteConfig.flowchart.htmlLabels)) {
+  if (getEffectiveHtmlLabels(siteConfig)) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();
