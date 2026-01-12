@@ -85,4 +85,58 @@ describe('architecture', () => {
       expect(accDescr).toBe('sample accDescr');
     });
   });
+
+  describe('should handle service titles with quotes', () => {
+    it('should handle service with quoted title using double quotes', () => {
+      const context = `architecture-beta
+            service db(database)["Database"] in api
+            `;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Architecture);
+
+      const service = result.value.services?.[0];
+      expect(service).toBeDefined();
+      expect(service?.title).toBe('Database');
+    });
+
+    it('should handle service with quoted title using single quotes', () => {
+      const context = `architecture-beta
+            service db(database)['Database'] in api
+            `;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Architecture);
+
+      const service = result.value.services?.[0];
+      expect(service).toBeDefined();
+      expect(service?.title).toBe('Database');
+    });
+
+    it('should handle service with unquoted title (backward compatibility)', () => {
+      const context = `architecture-beta
+            service db(database)[Database] in api
+            `;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Architecture);
+
+      const service = result.value.services?.[0];
+      expect(service).toBeDefined();
+      expect(service?.title).toBe('Database');
+    });
+
+    it('should handle group with quoted title', () => {
+      const context = `architecture-beta
+            group api(cloud)["API"]
+            `;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Architecture);
+
+      const group = result.value.groups?.[0];
+      expect(group).toBeDefined();
+      expect(group?.title).toBe('API');
+    });
+  });
 });

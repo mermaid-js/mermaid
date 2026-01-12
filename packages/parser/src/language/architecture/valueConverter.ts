@@ -13,7 +13,7 @@ export class ArchitectureValueConverter extends AbstractMermaidValueConverter {
     } else if (rule.name === 'ARCH_TEXT_ICON') {
       return input.replace(/["()]/g, '');
     } else if (rule.name === 'ARCH_TITLE') {
-      return input.replace(/[[\]]/g, '').trim();
+      return input.replace(/["'[\]]/g, '').trim();
     }
     return undefined;
   }
