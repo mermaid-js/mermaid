@@ -1,12 +1,7 @@
 import { select } from 'd3';
 import { getConfig } from '../diagram-api/diagramAPI.js';
-import common, {
-  getEffectiveHtmlLabels } from '../config.js';
-import {
-  hasKatex,
-  renderKatexSanitized,
-  sanitizeText,
-} from '../diagrams/common/common.js';
+import { getEffectiveHtmlLabels } from '../config.js';
+import common, { hasKatex, renderKatexSanitized, sanitizeText } from '../diagrams/common/common.js';
 import { log } from '../logger.js';
 import { decodeEntities } from '../utils.js';
 import { configureLabelImages } from '../rendering-util/rendering-elements/shapes/labelImageUtils.js';
