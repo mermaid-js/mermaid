@@ -410,7 +410,7 @@ With state diagrams you can use the direction statement to set the direction whi
 example.
 
 ```mermaid-example
-stateDiagram
+stateDiagram-v2
     direction LR
     [*] --> A
     A --> B
@@ -423,7 +423,7 @@ stateDiagram
 ```
 
 ```mermaid
-stateDiagram
+stateDiagram-v2
     direction LR
     [*] --> A
     A --> B
@@ -541,7 +541,7 @@ Here is a diagram that shows the examples in use. Note that the `Crash` state ha
 and `badBadEvent`
 
 ```mermaid-example
-   stateDiagram
+   stateDiagram-v2
    direction TB
 
    accTitle: This is the accessible title
@@ -565,7 +565,7 @@ and `badBadEvent`
 ```
 
 ```mermaid
-   stateDiagram
+   stateDiagram-v2
    direction TB
 
    accTitle: This is the accessible title
@@ -599,7 +599,7 @@ You can apply a classDef style to a state using the `:::` (three colons) operato
 You can use this in a diagram within a statement using a class. This includes the start and end states. For example:
 
 ```mermaid-example
-stateDiagram
+stateDiagram-v2
    direction TB
 
    accTitle: This is the accessible title
@@ -618,7 +618,7 @@ stateDiagram
 ```
 
 ```mermaid
-stateDiagram
+stateDiagram-v2
    direction TB
 
    accTitle: This is the accessible title
@@ -646,7 +646,7 @@ and also in the transition to **YetAnotherState** (`yswsii --> YetAnotherState`)
 (**yswsii** has been styled so that it is different from the other states.)
 
 ```mermaid-example
-stateDiagram
+stateDiagram-v2
     classDef yourState font-style:italic,font-weight:bold,fill:white
 
     yswsii: Your state with spaces in it
@@ -658,7 +658,7 @@ stateDiagram
 ```
 
 ```mermaid
-stateDiagram
+stateDiagram-v2
     classDef yourState font-style:italic,font-weight:bold,fill:white
 
     yswsii: Your state with spaces in it
