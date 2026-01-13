@@ -4,7 +4,7 @@ import createLabel from './createLabel.js';
 import { createText } from '../rendering-util/createText.js';
 import { select } from 'd3';
 import { getConfig } from '../diagram-api/diagramAPI.js';
-import { evaluate } from '../diagrams/common/common.js';
+import { getEffectiveHtmlLabels } from '../config.js';
 import { getSubGraphTitleMargins } from '../utils/subGraphTitleMargins.js';
 
 const rect = async (parent, node) => {
@@ -20,7 +20,7 @@ const rect = async (parent, node) => {
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
 
-  const useHtmlLabels = evaluate(siteConfig.flowchart.htmlLabels);
+  const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
 
   // Create the label and insert it after the rect
   const label = shapeSvg.insert('g').attr('class', 'cluster-label');
@@ -38,7 +38,7 @@ const rect = async (parent, node) => {
   // Get the size of the label
   let bbox = text.getBBox();
 
-  if (evaluate(siteConfig.flowchart.htmlLabels)) {
+  if (getEffectiveHtmlLabels(siteConfig)) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();
@@ -150,7 +150,7 @@ const roundedWithTitle = async (parent, node) => {
 
   // Get the size of the label
   let bbox = text.getBBox();
-  if (evaluate(siteConfig.flowchart.htmlLabels)) {
+  if (getEffectiveHtmlLabels(siteConfig)) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();
@@ -190,7 +190,7 @@ const roundedWithTitle = async (parent, node) => {
       node.y -
       node.height / 2 -
       node.padding / 3 +
-      (evaluate(siteConfig.flowchart.htmlLabels) ? 5 : 3) +
+      (getEffectiveHtmlLabels(siteConfig) ? 5 : 3) +
       subGraphTitleTopMargin
     })`
   );

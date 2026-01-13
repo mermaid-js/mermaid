@@ -1,14 +1,15 @@
 import createLabel from '../createLabel.js';
 import { createText } from '../../rendering-util/createText.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { getEffectiveHtmlLabels } from '../../config.js';
 import { select } from 'd3';
-import { evaluate, sanitizeText } from '../../diagrams/common/common.js';
+import { sanitizeText } from '../../diagrams/common/common.js';
 import { decodeEntities } from '../../utils.js';
 
 export const labelHelper = async (parent, node, _classes, isNode) => {
   const config = getConfig();
   let classes;
-  const useHtmlLabels = node.useHtmlLabels || evaluate(config.flowchart.htmlLabels);
+  const useHtmlLabels = node.useHtmlLabels || getEffectiveHtmlLabels(config);
   if (!_classes) {
     classes = 'node default';
   } else {
@@ -60,7 +61,7 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
   let bbox = text.getBBox();
   const halfPadding = node.padding / 2;
 
-  if (evaluate(config.flowchart.htmlLabels)) {
+  if (getEffectiveHtmlLabels(config)) {
     const div = text.children[0];
     const dv = select(text);
 

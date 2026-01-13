@@ -11,6 +11,7 @@ import mermaidAPI, {
   putIntoIFrame,
   removeExistingElements,
 } from './mermaidAPI.js';
+import * as configApi from './config.js';
 
 // --------------
 // Mocks
@@ -358,10 +359,11 @@ describe('mermaidAPI', () => {
         });
 
         describe('no htmlLabels in the configuration', () => {
-          const mocked_config_no_htmlLabels = {
+          const mocked_config_no_htmlLabels: MermaidConfig = {
             themeCSS: 'default',
             fontFamily: 'serif',
             altFontFamily: 'sans-serif',
+            htmlLabels: false, // Explicitly set to false
           };
 
           describe('creates styles for shape elements "rect", "polygon", "ellipse", and "circle"', () => {

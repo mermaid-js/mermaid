@@ -5,6 +5,7 @@ import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
 import type { D3Selection } from '../../../types.js';
 import { getConfig } from '../../../config.js';
+import { getEffectiveHtmlLabels } from '../../../config.js';
 
 export async function note<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -13,7 +14,7 @@ export async function note<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const useHtmlLabels = node.useHtmlLabels || getConfig().flowchart?.htmlLabels !== false;
+  const useHtmlLabels = node.useHtmlLabels || getEffectiveHtmlLabels(getConfig());
   if (!useHtmlLabels) {
     node.centerLabel = true;
   }
