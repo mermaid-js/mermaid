@@ -24,7 +24,6 @@ export async function cloud<T extends SVGGraphicsElement>(parent: D3Selection<T>
 
   const baseWidth = bbox.width + 2 * halfPadding;
   const baseHeight = bbox.height + 2 * halfPadding;
-
   const iconConfig = getMindmapIconConfig('cloud');
   const dimensions = calculateMindmapDimensions(
     node,
@@ -34,13 +33,10 @@ export async function cloud<T extends SVGGraphicsElement>(parent: D3Selection<T>
     halfPadding,
     iconConfig
   );
-
   const w = dimensions.width;
   const h = dimensions.height;
-
   node.width = w;
   node.height = h;
-
   label.attr('transform', `translate(${dimensions.labelOffset.x}, ${dimensions.labelOffset.y})`);
 
   // Cloud radii

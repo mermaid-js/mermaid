@@ -15,11 +15,9 @@ export async function mindmapCircle<T extends SVGGraphicsElement>(
 ) {
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
   const halfPadding = (node.padding ?? 0) / 2;
-
   const iconConfig = getMindmapIconConfig('circle');
   const baseRadius = bbox.width / 2 + halfPadding;
   const baseDiameter = baseRadius * 2;
-
   const dimensions = calculateMindmapDimensions(
     node,
     bbox,
@@ -28,7 +26,6 @@ export async function mindmapCircle<T extends SVGGraphicsElement>(
     halfPadding,
     iconConfig
   );
-
   const radius = dimensions.width / 2;
   node.width = dimensions.width;
   node.height = dimensions.height;
@@ -52,6 +49,5 @@ export async function mindmapCircle<T extends SVGGraphicsElement>(
   node.intersect = function (point) {
     return intersect.circle(node, radius, point);
   };
-
   return shapeSvg;
 }

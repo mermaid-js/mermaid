@@ -31,12 +31,9 @@ export async function hexagon<T extends SVGGraphicsElement>(parent: D3Selection<
 
   const h = bbox.height + (node.padding ?? 0);
   const w = bbox.width + (node.padding ?? 0) * 2.5;
-
   node.width = w;
   node.height = h;
-
   const labelXOffset = -bbox.width / 2;
-
   const labelYOffset = -bbox.height / 2;
 
   if (node.icon) {

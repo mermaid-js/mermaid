@@ -98,7 +98,6 @@ export async function roundedRect<T extends SVGGraphicsElement>(
 
   const w = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2;
   const h = (node?.height ? node?.height : bbox.height) + labelPaddingY * 2;
-
   const labelXOffset = -bbox.width / 2;
 
   if (node.icon) {

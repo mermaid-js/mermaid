@@ -15,17 +15,13 @@ export async function drawRect<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
   const totalWidth = Math.max(bbox.width + options.labelPaddingX * 2, node?.width || 0);
   const totalHeight = Math.max(bbox.height + options.labelPaddingY * 2, node?.height || 0);
-
   node.width = totalWidth;
   node.height = totalHeight;
-
   const labelXOffset = -bbox.width / 2;
-
   const labelYOffset = -bbox.height / 2;
   if (node.icon) {
     label.attr('transform', `translate(${labelXOffset}, ${labelYOffset})`);

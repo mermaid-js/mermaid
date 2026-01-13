@@ -14,7 +14,6 @@ export async function circle<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-
   const { shapeSvg, bbox, halfPadding, label } = await labelHelper(
     parent,
     node,
@@ -22,12 +21,9 @@ export async function circle<T extends SVGGraphicsElement>(
   );
 
   const padding = options?.padding ?? halfPadding;
-
   const radius = bbox.width / 2 + padding;
-
   node.width = radius * 2;
   node.height = radius * 2;
-
   const labelXOffset = -bbox.width / 2;
   const labelYOffset = -bbox.height / 2;
   if (node.icon) {

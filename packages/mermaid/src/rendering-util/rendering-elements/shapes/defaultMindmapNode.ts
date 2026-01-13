@@ -15,16 +15,13 @@ export async function defaultMindmapNode<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-
   const { shapeSvg, bbox, halfPadding, label } = await labelHelper(
     parent,
     node,
     getNodeClasses(node)
   );
-
   const baseWidth = bbox.width + 8 * halfPadding;
   const baseHeight = bbox.height + 2 * halfPadding;
-
   const iconConfig = getMindmapIconConfig('default');
   const dimensions = calculateMindmapDimensions(
     node,
@@ -40,10 +37,10 @@ export async function defaultMindmapNode<T extends SVGGraphicsElement>(
 
   node.width = w;
   node.height = h;
+  const RD = 5;
 
   label.attr('transform', `translate(${dimensions.labelOffset.x}, ${dimensions.labelOffset.y})`);
 
-  const RD = 5;
   const rectPath = `M${-w / 2} ${h / 2 - RD} 
     v${-h + 2 * RD} 
     q0,-${RD} ${RD},-${RD} 

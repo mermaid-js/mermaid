@@ -24,7 +24,6 @@ export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>,
 
   const baseWidth = bbox.width + 10 * halfPadding;
   const baseHeight = bbox.height + 8 * halfPadding;
-
   const iconConfig = getMindmapIconConfig('bang');
   const dimensions = calculateMindmapDimensions(
     node,
@@ -34,7 +33,6 @@ export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>,
     halfPadding,
     iconConfig
   );
-
   const w = dimensions.width;
   const h = dimensions.height;
 
@@ -48,6 +46,7 @@ export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>,
 
   label.attr('transform', `translate(${dimensions.labelOffset.x}, ${dimensions.labelOffset.y})`);
 
+  let bangElem;
   const r = 0.15 * effectiveWidth;
   const path = `M0 0
     a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${-1 * effectiveHeight * 0.1}
@@ -69,7 +68,6 @@ export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>,
     a${r},${r} 1 0,0 ${effectiveWidth * 0.1},${-1 * effectiveHeight * 0.33}
   H0 V0 Z`;
 
-  let bangElem;
   if (node.look === 'handDrawn') {
     // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(shapeSvg);
@@ -93,7 +91,6 @@ export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>,
   if (node.icon) {
     await insertMindmapIcon(shapeSvg, node, iconConfig);
   }
-
   updateNodeBounds(node, bangElem);
   node.calcIntersect = function (bounds: Bounds, point: Point) {
     return intersect.rect(bounds, point);
