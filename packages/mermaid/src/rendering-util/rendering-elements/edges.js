@@ -485,33 +485,31 @@ export const insertEdge = function (
   }
   // Check if this is a note edge
   const isNoteEdge = edge.classes.includes('note-edge');
+  if (isNoteEdge && head && tail) {
+    const horizontalY = (tail.y + head.y) / 2;
 
-  log.debug('UIO intersect check', edge.points, head.x, tail.x);
-  if (head.intersect && tail.intersect && !skipIntersect) {
-    if (isNoteEdge) {
-      // For note edges, create a simple horizontal line between the nodes
-      const horizontalY = (tail.y + head.y) / 2;
-
-      const leftNode = tail.x < head.x ? tail : head;
-      const rightNode = tail.x < head.x ? head : tail;
+    const leftNode = tail.x < head.x ? tail : head;
+    const rightNode = tail.x < head.x ? head : tail;
+    let startPoint, endPoint;
+    if (head.intersect && tail.intersect) {
       const leftNodeIntersect = tail.x < head.x ? tail.intersect : head.intersect;
       const rightNodeIntersect = tail.x < head.x ? head.intersect : tail.intersect;
-
-      const startPoint = leftNodeIntersect({ x: rightNode.x, y: horizontalY });
-      const endPoint = rightNodeIntersect({ x: leftNode.x, y: horizontalY });
-
-      startPoint.y = horizontalY;
-      endPoint.y = horizontalY;
-
-      startPoint.x = leftNode.x + leftNode.width / 2;
-      endPoint.x = rightNode.x - rightNode.width / 2;
-
-      points = [startPoint, endPoint];
-      pointsHasChanged = true;
+      startPoint = leftNodeIntersect({ x: rightNode.x, y: horizontalY });
+      endPoint = rightNodeIntersect({ x: leftNode.x, y: horizontalY });
     } else {
-      points = points.slice(1, edge.points.length - 1);
-      points.unshift(tail.intersect(points[0]));
+      startPoint = { x: leftNode.x + leftNode.width / 2, y: horizontalY };
+      endPoint = { x: rightNode.x - rightNode.width / 2, y: horizontalY };
     }
+    startPoint.y = horizontalY;
+    endPoint.y = horizontalY;
+    startPoint.x = leftNode.x + leftNode.width / 2;
+    endPoint.x = rightNode.x - rightNode.width / 2;
+
+    points = [startPoint, endPoint];
+    pointsHasChanged = true;
+  } else if (head.intersect && tail.intersect && !skipIntersect) {
+    points = points.slice(1, edge.points.length - 1);
+    points.unshift(tail.intersect(points[0]));
     log.debug(
       'Last point UIO',
       edge.start,
@@ -524,22 +522,42 @@ export const insertEdge = function (
     points.push(head.intersect(points[points.length - 1]));
   }
   const pointsStr = btoa(JSON.stringify(points));
-  if (edge.toCluster) {
-    log.info('to cluster abc88', clusterDb.get(edge.toCluster));
-    points = cutPathAtIntersect(edge.points, clusterDb.get(edge.toCluster).node);
+  if (!isNoteEdge) {
+    if (edge.toCluster) {
+      log.info('to cluster abc88', clusterDb.get(edge.toCluster));
+      points = cutPathAtIntersect(edge.points, clusterDb.get(edge.toCluster).node);
 
-    pointsHasChanged = true;
-  }
+      pointsHasChanged = true;
+    }
 
-  if (edge.fromCluster) {
-    log.debug(
-      'from cluster abc88',
-      clusterDb.get(edge.fromCluster),
-      JSON.stringify(points, null, 2)
-    );
-    points = cutPathAtIntersect(points.reverse(), clusterDb.get(edge.fromCluster).node).reverse();
+    if (edge.fromCluster) {
+      log.debug(
+        'from cluster abc88',
+        clusterDb.get(edge.fromCluster),
+        JSON.stringify(points, null, 2)
+      );
+      points = cutPathAtIntersect(points.reverse(), clusterDb.get(edge.fromCluster).node).reverse();
+      pointsHasChanged = true;
+    }
+  } else {
+    if (points.length >= 2 && head && tail) {
+      const horizontalY = (tail.y + head.y) / 2;
+      const leftNode = tail.x < head.x ? tail : head;
+      const rightNode = tail.x < head.x ? head : tail;
 
-    pointsHasChanged = true;
+      if (points[0]) {
+        points[0].y = horizontalY;
+        points[0].x = leftNode.x + leftNode.width / 2;
+      }
+      if (points[points.length - 1]) {
+        points[points.length - 1].y = horizontalY;
+        points[points.length - 1].x = rightNode.x - rightNode.width / 2;
+      }
+      if (points.length > 2) {
+        points = [points[0], points[points.length - 1]];
+        pointsHasChanged = true;
+      }
+    }
   }
 
   let lineData = points.filter((p) => !Number.isNaN(p.y));
