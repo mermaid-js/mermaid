@@ -483,11 +483,35 @@ export const insertEdge = function (
     }
     edgeClassStyles.push(edge.cssCompiledStyles[key]);
   }
+  // Check if this is a note edge
+  const isNoteEdge = edge.classes.includes('note-edge');
 
   log.debug('UIO intersect check', edge.points, head.x, tail.x);
   if (head.intersect && tail.intersect && !skipIntersect) {
-    points = points.slice(1, edge.points.length - 1);
-    points.unshift(tail.intersect(points[0]));
+    if (isNoteEdge) {
+      // For note edges, create a simple horizontal line between the nodes
+      const horizontalY = (tail.y + head.y) / 2;
+
+      const leftNode = tail.x < head.x ? tail : head;
+      const rightNode = tail.x < head.x ? head : tail;
+      const leftNodeIntersect = tail.x < head.x ? tail.intersect : head.intersect;
+      const rightNodeIntersect = tail.x < head.x ? head.intersect : tail.intersect;
+
+      const startPoint = leftNodeIntersect({ x: rightNode.x, y: horizontalY });
+      const endPoint = rightNodeIntersect({ x: leftNode.x, y: horizontalY });
+
+      startPoint.y = horizontalY;
+      endPoint.y = horizontalY;
+
+      startPoint.x = leftNode.x + leftNode.width / 2;
+      endPoint.x = rightNode.x - rightNode.width / 2;
+
+      points = [startPoint, endPoint];
+      pointsHasChanged = true;
+    } else {
+      points = points.slice(1, edge.points.length - 1);
+      points.unshift(tail.intersect(points[0]));
+    }
     log.debug(
       'Last point UIO',
       edge.start,
@@ -519,48 +543,54 @@ export const insertEdge = function (
   }
 
   let lineData = points.filter((p) => !Number.isNaN(p.y));
-  lineData = fixCorners(lineData);
+  if (!isNoteEdge) {
+    lineData = fixCorners(lineData);
+  }
   let curve = curveBasis;
-  curve = curveLinear;
-  switch (edge.curve) {
-    case 'linear':
-      curve = curveLinear;
-      break;
-    case 'basis':
-      curve = curveBasis;
-      break;
-    case 'cardinal':
-      curve = curveCardinal;
-      break;
-    case 'bumpX':
-      curve = curveBumpX;
-      break;
-    case 'bumpY':
-      curve = curveBumpY;
-      break;
-    case 'catmullRom':
-      curve = curveCatmullRom;
-      break;
-    case 'monotoneX':
-      curve = curveMonotoneX;
-      break;
-    case 'monotoneY':
-      curve = curveMonotoneY;
-      break;
-    case 'natural':
-      curve = curveNatural;
-      break;
-    case 'step':
-      curve = curveStep;
-      break;
-    case 'stepAfter':
-      curve = curveStepAfter;
-      break;
-    case 'stepBefore':
-      curve = curveStepBefore;
-      break;
-    default:
-      curve = curveBasis;
+  if (isNoteEdge) {
+    curve = curveLinear;
+  } else {
+    curve = curveLinear;
+    switch (edge.curve) {
+      case 'linear':
+        curve = curveLinear;
+        break;
+      case 'basis':
+        curve = curveBasis;
+        break;
+      case 'cardinal':
+        curve = curveCardinal;
+        break;
+      case 'bumpX':
+        curve = curveBumpX;
+        break;
+      case 'bumpY':
+        curve = curveBumpY;
+        break;
+      case 'catmullRom':
+        curve = curveCatmullRom;
+        break;
+      case 'monotoneX':
+        curve = curveMonotoneX;
+        break;
+      case 'monotoneY':
+        curve = curveMonotoneY;
+        break;
+      case 'natural':
+        curve = curveNatural;
+        break;
+      case 'step':
+        curve = curveStep;
+        break;
+      case 'stepAfter':
+        curve = curveStepAfter;
+        break;
+      case 'stepBefore':
+        curve = curveStepBefore;
+        break;
+      default:
+        curve = curveBasis;
+    }
   }
 
   // if (edge.curve) {
