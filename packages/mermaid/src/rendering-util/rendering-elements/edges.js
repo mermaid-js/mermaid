@@ -483,6 +483,8 @@ export const insertEdge = function (
     }
     edgeClassStyles.push(edge.cssCompiledStyles[key]);
   }
+
+  log.debug('UIO intersect check', edge.points, head.x, tail.x);
   // Check if this is a note edge
   const isNoteEdge = edge.classes.includes('note-edge');
   if (isNoteEdge && head && tail) {

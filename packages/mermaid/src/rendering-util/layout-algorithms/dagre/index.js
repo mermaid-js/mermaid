@@ -73,7 +73,6 @@ const positionNotes = (graph) => {
     noteNode.y = noteY;
   });
 };
-
 const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, siteConfig) => {
   log.warn('Graph in recursive render:XAX', graphlibJson.write(graph), parentCluster);
   const dir = graph.graph().rankdir;
@@ -210,7 +209,6 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   log.info('############################################# XXX');
 
   dagreLayout(graph);
-
   // Apply absolute note positioning after dagre layout
   positionNotes(graph);
 
