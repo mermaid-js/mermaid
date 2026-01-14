@@ -138,5 +138,30 @@ describe('architecture', () => {
       expect(group).toBeDefined();
       expect(group?.title).toBe('API');
     });
+    it('should preserve apostrophes in service titles', () => {
+      const context = `architecture-beta
+            service db(database)["John's Database"] in api
+            `;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Architecture);
+
+      const service = result.value.services?.[0];
+      expect(service).toBeDefined();
+      expect(service?.title).toBe("John's Database");
+    });
+
+    it('should preserve inner quotes in service titles when escaped', () => {
+      const context = `architecture-beta
+            service api(server)["The \\"Main\\" API"] in cloud
+            `;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Architecture);
+
+      const service = result.value.services?.[0];
+      expect(service).toBeDefined();
+      expect(service?.title).toBe('The "Main" API');
+    });
   });
 });
