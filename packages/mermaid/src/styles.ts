@@ -22,11 +22,28 @@ const getStyles = (
   } else {
     log.warn(`No theme found for ${type}`);
   }
+
   return ` & {
     font-family: ${options.fontFamily};
     font-size: ${options.fontSize};
     fill: ${options.textColor}
   }
+
+  & .nodeLabel {
+    max-width: none;
+    white-space: initial;
+    overflow: visible;
+  }
+
+  & .label-container {
+    overflow: visible;
+  }
+
+  & .label text {
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+
   @keyframes edge-animation-frame {
     from {
       stroke-dashoffset: 0;
