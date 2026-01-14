@@ -262,3 +262,72 @@ describe('getUserDefinedConfig', () => {
     configApi.reset();
   });
 });
+
+describe('getEffectiveHtmlLabels', () => {
+  beforeEach(() => {
+    configApi.reset();
+  });
+
+  it('should return true when root-level htmlLabels is true', () => {
+    configApi.setSiteConfig({ htmlLabels: true });
+    const config = configApi.getConfig();
+    expect(configApi.getEffectiveHtmlLabels(config)).toBe(true);
+  });
+
+  it('should return false when root-level htmlLabels is false', () => {
+    configApi.setSiteConfig({ htmlLabels: false });
+    const config = configApi.getConfig();
+    expect(configApi.getEffectiveHtmlLabels(config)).toBe(false);
+  });
+
+  it('should return true when flowchart.htmlLabels is true and root is not set', () => {
+    configApi.setSiteConfig({ flowchart: { htmlLabels: true } });
+    const config = configApi.getConfig();
+    expect(configApi.getEffectiveHtmlLabels(config)).toBe(true);
+  });
+
+  it('should return false when flowchart.htmlLabels is false and root is not set', () => {
+    configApi.setSiteConfig({ flowchart: { htmlLabels: false } });
+    const config = configApi.getConfig();
+    expect(configApi.getEffectiveHtmlLabels(config)).toBe(false);
+  });
+
+  it('should prioritize root-level htmlLabels over flowchart.htmlLabels', () => {
+    configApi.setSiteConfig({
+      htmlLabels: false,
+      flowchart: { htmlLabels: true },
+    });
+    const config = configApi.getConfig();
+    expect(configApi.getEffectiveHtmlLabels(config)).toBe(false);
+  });
+
+  it('should default to true when neither root nor flowchart htmlLabels is explicitly set', () => {
+    configApi.setSiteConfig({});
+    const config = configApi.getConfig();
+    // flowchart.htmlLabels has a default of true in the schema
+    expect(configApi.getEffectiveHtmlLabels(config)).toBe(true);
+  });
+
+  it('should handle directives with flowchart.htmlLabels set to false', () => {
+    configApi.setSiteConfig({});
+    // Add a directive that sets flowchart.htmlLabels to false
+    configApi.addDirective({ flowchart: { htmlLabels: false } });
+    const config = configApi.getConfig();
+    // Since flowchart.htmlLabels was explicitly set via directive, it should be false
+    expect(configApi.getEffectiveHtmlLabels(config)).toBe(false);
+  });
+
+  it('should handle directives with root htmlLabels taking precedence', () => {
+    configApi.setSiteConfig({ flowchart: { htmlLabels: true } });
+    configApi.addDirective({ htmlLabels: false });
+    const config = configApi.getConfig();
+    expect(configApi.getEffectiveHtmlLabels(config)).toBe(false);
+  });
+
+  it('should handle directives with root htmlLabels true overriding flowchart htmlLabels false', () => {
+    configApi.setSiteConfig({ flowchart: { htmlLabels: false } });
+    configApi.addDirective({ htmlLabels: true });
+    const config = configApi.getConfig();
+    expect(configApi.getEffectiveHtmlLabels(config)).toBe(true);
+  });
+});
