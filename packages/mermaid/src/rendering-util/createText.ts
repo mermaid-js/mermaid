@@ -6,7 +6,11 @@ import type { SVGGroup } from '../diagram-api/types.js';
 import common, { hasKatex, renderKatexSanitized, sanitizeText } from '../diagrams/common/common.js';
 import type { D3TSpanElement, D3TextElement } from '../diagrams/common/commonTypes.js';
 import { log } from '../logger.js';
-import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text.js';
+import {
+  markdownToHTML,
+  markdownToLines,
+  nonMarkdownToLines,
+} from '../rendering-util/handle-markdown-text.js';
 import { decodeEntities } from '../utils.js';
 import { getIconSVG, isIconAvailable } from './icons.js';
 import { splitLineToFitWidth } from './splitText.js';
@@ -229,6 +233,7 @@ export const createText = async (
     isTitle = false,
     classes = '',
     useHtmlLabels = true,
+    markdown = true,
     isNode = true,
     /**
      * The width to wrap the text within. Set to `Number.POSITIVE_INFINITY` for no wrapping.
@@ -252,7 +257,7 @@ export const createText = async (
   if (useHtmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
 
-    const htmlText = markdownToHTML(text, config);
+    const htmlText = markdown ? markdownToHTML(text, config) : text.replace(/\\n|\n/g, '<br />');
     const decodedReplacedText = await replaceIconSubstring(decodeEntities(htmlText), config);
 
     //for Katex the text could contain escaped characters, \\relax that should be transformed to \relax
@@ -268,7 +273,9 @@ export const createText = async (
   } else {
     //sometimes the user might add br tags with 1 or more spaces in between, so we need to replace them with <br/>
     const sanitizeBR = text.replace(/<br\s*\/?>/g, '<br/>');
-    const structuredText = markdownToLines(sanitizeBR.replace('<br>', '<br/>'), config);
+    const structuredText = markdown
+      ? markdownToLines(sanitizeBR.replace('<br>', '<br/>'), config)
+      : nonMarkdownToLines(sanitizeBR);
     const svgLabel = createFormattedText(
       width,
       el,
@@ -308,6 +315,12 @@ export const createText = async (
         .replace(/fill:[^;]+;?/g, '')
         .replace(/color:/g, 'fill:');
       select(svgLabel).select('text').attr('style', edgeLabelTextStyle);
+    }
+    if (isTitle) {
+      // I can't actually see the title-row/row class being used anywhere, but keeping it for backward compatibility
+      select(svgLabel).select('text').attr('class', 'title-row');
+    } else {
+      select(svgLabel).select('text').attr('class', 'row');
     }
     return svgLabel;
   }

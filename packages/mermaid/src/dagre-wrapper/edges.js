@@ -69,7 +69,14 @@ export const insertEdgeLabel = async (elem, edge) => {
     const inner = startEdgeLabelLeft.insert('g').attr('class', 'inner');
     const startLabelElement = await createLabel(inner, edge.startLabelLeft, edge.labelStyle);
     fo = startLabelElement;
-    const slBox = startLabelElement.getBBox();
+    let slBox = startLabelElement.getBBox();
+    if (useHtmlLabels) {
+      const div = startLabelElement.children[0];
+      const dv = select(startLabelElement);
+      slBox = div.getBoundingClientRect();
+      dv.attr('width', slBox.width);
+      dv.attr('height', slBox.height);
+    }
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
     if (!terminalLabels[edge.id]) {
       terminalLabels[edge.id] = {};
@@ -88,7 +95,14 @@ export const insertEdgeLabel = async (elem, edge) => {
     );
     fo = startLabelElement;
     inner.node().appendChild(startLabelElement);
-    const slBox = startLabelElement.getBBox();
+    let slBox = startLabelElement.getBBox();
+    if (useHtmlLabels) {
+      const div = startLabelElement.children[0];
+      const dv = select(startLabelElement);
+      slBox = div.getBoundingClientRect();
+      dv.attr('width', slBox.width);
+      dv.attr('height', slBox.height);
+    }
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
     if (!terminalLabels[edge.id]) {
@@ -103,7 +117,14 @@ export const insertEdgeLabel = async (elem, edge) => {
     const inner = endEdgeLabelLeft.insert('g').attr('class', 'inner');
     const endLabelElement = await createLabel(inner, edge.endLabelLeft, edge.labelStyle);
     fo = endLabelElement;
-    const slBox = endLabelElement.getBBox();
+    let slBox = endLabelElement.getBBox();
+    if (useHtmlLabels) {
+      const div = endLabelElement.children[0];
+      const dv = select(endLabelElement);
+      slBox = div.getBoundingClientRect();
+      dv.attr('width', slBox.width);
+      dv.attr('height', slBox.height);
+    }
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
     endEdgeLabelLeft.node().appendChild(endLabelElement);
@@ -120,7 +141,14 @@ export const insertEdgeLabel = async (elem, edge) => {
     const inner = endEdgeLabelRight.insert('g').attr('class', 'inner');
     const endLabelElement = await createLabel(inner, edge.endLabelRight, edge.labelStyle);
     fo = endLabelElement;
-    const slBox = endLabelElement.getBBox();
+    let slBox = endLabelElement.getBBox();
+    if (useHtmlLabels) {
+      const div = endLabelElement.children[0];
+      const dv = select(endLabelElement);
+      slBox = div.getBoundingClientRect();
+      dv.attr('width', slBox.width);
+      dv.attr('height', slBox.height);
+    }
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
     endEdgeLabelRight.node().appendChild(endLabelElement);
