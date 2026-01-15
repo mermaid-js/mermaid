@@ -55,7 +55,7 @@ export async function rectWithTitle<T extends SVGGraphicsElement>(
   const titleBox = text.getBBox();
   const descr = await createLabel(
     label,
-    textRows.join ? textRows.join('<br/>') : textRows,
+    Array.isArray(textRows) ? textRows.join('<br/>') : textRows,
     node.labelStyle,
     true,
     true

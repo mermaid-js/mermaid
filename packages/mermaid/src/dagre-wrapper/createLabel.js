@@ -78,14 +78,13 @@ async function addHtmlLabel(node, width, addBackground = false) {
 }
 /**
  * @param {import('../types.js').D3Selection<SVGGElement>} element - The parent element to which the label will be appended.
- * @param _vertexText
- * @param style
- * @param isTitle
- * @param isNode
- * @param {boolean} [addBackground=false] - Whether to add a background class to the label container
- * @param {number} [width] - Maximum width for the label before wrapping. If not provided, uses the flowchart wrapping width from config
+ * @param {string | [string] | undefined} _vertexText - The text content of the label.
+ * @param {string} style
+ * @param {boolean} [isTitle] - If `true`, style this as a title label, else as a normal label.
+ * @param {boolean} [isNode] - If `true`, style this as a node label, else as an edge label.
+ * @deprecated svg-util/createText instead
  */
-const createLabel = async (element, _vertexText, style, isTitle, isNode) => {
+const createLabel = async (element, _vertexText, style, isTitle = false, isNode = false) => {
   let vertexText = _vertexText || '';
   if (typeof vertexText === 'object') {
     vertexText = vertexText[0];
