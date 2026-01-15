@@ -1,4 +1,4 @@
-import { select } from 'd3';
+import { select, drag } from 'd3';
 import * as yaml from 'js-yaml';
 import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
@@ -33,6 +33,247 @@ interface LinkData {
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 
+/**
+ * Parse an SVG path d attribute and extract points.
+ * Handles M (moveto), L (lineto), C (curveto), Q (quadratic), and other path commands.
+ * @param d - The path d attribute string
+ * @returns Array of point objects with x, y coordinates and optional control points
+ */
+function parsePathD(d: string): { cmd: string; x: number; y: number; points?: number[] }[] {
+  const result: { cmd: string; x: number; y: number; points?: number[] }[] = [];
+  // Match path commands with their coordinates
+  const regex = /([achlmqstvz])([^achlmqstvz]*)/gi;
+  let match;
+
+  while ((match = regex.exec(d)) !== null) {
+    const cmd = match[1].toUpperCase();
+    const args = match[2]
+      .trim()
+      .split(/[\s,]+/)
+      .filter((s) => s.length > 0)
+      .map(parseFloat);
+
+    switch (cmd) {
+      case 'M':
+      case 'L':
+      case 'T':
+        // Move/Line/Smooth quadratic: x, y
+        for (let i = 0; i < args.length; i += 2) {
+          result.push({ cmd, x: args[i], y: args[i + 1] });
+        }
+        break;
+      case 'H':
+        // Horizontal line: x
+        result.push({ cmd, x: args[0], y: result.length > 0 ? result[result.length - 1].y : 0 });
+        break;
+      case 'V':
+        // Vertical line: y
+        result.push({ cmd, x: result.length > 0 ? result[result.length - 1].x : 0, y: args[0] });
+        break;
+      case 'C':
+        // Cubic bezier: x1, y1, x2, y2, x, y
+        for (let i = 0; i < args.length; i += 6) {
+          result.push({
+            cmd,
+            x: args[i + 4],
+            y: args[i + 5],
+            points: [args[i], args[i + 1], args[i + 2], args[i + 3]],
+          });
+        }
+        break;
+      case 'S':
+        // Smooth cubic bezier: x2, y2, x, y
+        for (let i = 0; i < args.length; i += 4) {
+          result.push({ cmd, x: args[i + 2], y: args[i + 3], points: [args[i], args[i + 1]] });
+        }
+        break;
+      case 'Q':
+        // Quadratic bezier: x1, y1, x, y
+        for (let i = 0; i < args.length; i += 4) {
+          result.push({ cmd, x: args[i + 2], y: args[i + 3], points: [args[i], args[i + 1]] });
+        }
+        break;
+      case 'A':
+        // Arc: rx, ry, x-axis-rotation, large-arc-flag, sweep-flag, x, y
+        for (let i = 0; i < args.length; i += 7) {
+          result.push({
+            cmd,
+            x: args[i + 5],
+            y: args[i + 6],
+            points: [args[i], args[i + 1], args[i + 2], args[i + 3], args[i + 4]],
+          });
+        }
+        break;
+      case 'Z':
+        // Close path - no coordinates
+        break;
+    }
+  }
+  return result;
+}
+
+/**
+ * Reconstruct an SVG path d attribute from parsed points.
+ * @param points - Array of parsed path points
+ * @returns The reconstructed path d attribute string
+ */
+function reconstructPathD(
+  points: { cmd: string; x: number; y: number; points?: number[] }[]
+): string {
+  return points
+    .map((p) => {
+      switch (p.cmd) {
+        case 'M':
+        case 'L':
+        case 'T':
+          return `${p.cmd}${p.x},${p.y}`;
+        case 'H':
+          return `H${p.x}`;
+        case 'V':
+          return `V${p.y}`;
+        case 'C':
+          return `C${p.points![0]},${p.points![1]} ${p.points![2]},${p.points![3]} ${p.x},${p.y}`;
+        case 'S':
+          return `S${p.points![0]},${p.points![1]} ${p.x},${p.y}`;
+        case 'Q':
+          return `Q${p.points![0]},${p.points![1]} ${p.x},${p.y}`;
+        case 'A':
+          return `A${p.points![0]},${p.points![1]} ${p.points![2]} ${p.points![3]},${p.points![4]} ${p.x},${p.y}`;
+        default:
+          return '';
+      }
+    })
+    .join(' ');
+}
+
+/**
+ * Clean a node ID by removing the flowchart prefix and trailing numbers.
+ * @param nodeId - The node ID to clean (e.g., "flowchart-A-0")
+ * @returns The cleaned node ID (e.g., "A")
+ */
+function cleanNodeId(nodeId: string): string {
+  return nodeId.replace(/^flowchart-/, '').replace(/-\d+$/, '');
+}
+
+/**
+ * Create regex patterns to match edge IDs for a given node.
+ * Edge IDs follow pattern like "L_A_B_0" where A is source and B is target.
+ * @param nodeId - The cleaned node ID
+ * @returns Object with sourcePattern and targetPattern
+ */
+function createEdgePatterns(nodeId: string): { sourcePattern: RegExp; targetPattern: RegExp } {
+  return {
+    sourcePattern: new RegExp(`^L_${nodeId}_`),
+    targetPattern: new RegExp(`_${nodeId}_\\d+$`),
+  };
+}
+
+/**
+ * Helper function to update connected edges when a node is dragged.
+ * Updates edge paths to follow the moved node by adjusting start/end points.
+ * @param svg - The SVG selection
+ * @param nodeId - The ID of the node being dragged
+ * @param dx - The delta X movement
+ * @param dy - The delta Y movement
+ */
+function updateConnectedEdges(
+  svg: ReturnType<typeof select>,
+  nodeId: string,
+  dx: number,
+  dy: number
+) {
+  // Find edge paths - try both selectors (older dagre uses .edgePaths, newer uses .edges/.edgePath)
+  let edgePathsGroup = svg.select('.edgePaths');
+  if (edgePathsGroup.empty()) {
+    edgePathsGroup = svg.select('.edges');
+  }
+  const { sourcePattern, targetPattern } = createEdgePatterns(cleanNodeId(nodeId));
+
+  // Update edge paths
+  edgePathsGroup.selectAll('path').each(function () {
+    const pathElem = select(this);
+    const pathId = pathElem.attr('id') || '';
+
+    const currentD = pathElem.attr('d');
+    if (!currentD) {
+      return;
+    }
+
+    // Parse the path
+    const points = parsePathD(currentD);
+    if (points.length < 2) {
+      return;
+    }
+
+    const isSource = sourcePattern.exec(pathId) !== null;
+    const isTarget = targetPattern.exec(pathId) !== null;
+
+    if (!isSource && !isTarget) {
+      return;
+    }
+
+    // Update points based on whether this node is source or target
+    if (isSource) {
+      // Update the first point(s) - the start of the path
+      points[0].x += dx;
+      points[0].y += dy;
+      // If there are control points, adjust them too for smooth curves
+      if (points.length > 1 && points[1].points) {
+        points[1].points[0] += dx;
+        points[1].points[1] += dy;
+      }
+    }
+
+    if (isTarget) {
+      // Update the last point(s) - the end of the path
+      const lastIdx = points.length - 1;
+      points[lastIdx].x += dx;
+      points[lastIdx].y += dy;
+      // If this point has control points, adjust the last control point
+      const lastControlPoints = points[lastIdx].points;
+      if (lastControlPoints && lastControlPoints.length >= 4) {
+        lastControlPoints[lastControlPoints.length - 2] += dx;
+        lastControlPoints[lastControlPoints.length - 1] += dy;
+      }
+    }
+
+    // Reconstruct and apply the new path
+    const newD = reconstructPathD(points);
+    pathElem.attr('d', newD);
+  });
+}
+
+/**
+ * Helper function to highlight edges connected to a node.
+ * @param svg - The SVG selection
+ * @param nodeId - The ID of the node
+ * @param highlight - Whether to highlight (true) or remove highlight (false)
+ */
+function highlightConnectedEdges(
+  svg: ReturnType<typeof select>,
+  nodeId: string,
+  highlight: boolean
+) {
+  // Try both edge path group selectors (older dagre uses .edgePaths, newer uses .edges/.edgePath)
+  let edgePathsGroup = svg.select('.edgePaths');
+  if (edgePathsGroup.empty()) {
+    edgePathsGroup = svg.select('.edges');
+  }
+  const { sourcePattern, targetPattern } = createEdgePatterns(cleanNodeId(nodeId));
+
+  edgePathsGroup.selectAll('path').each(function () {
+    const pathElem = select(this);
+    const pathId = pathElem.attr('id') || '';
+
+    const isSource = sourcePattern.exec(pathId) !== null;
+    const isTarget = targetPattern.exec(pathId) !== null;
+
+    if (isSource || isTarget) {
+      pathElem.classed('highlighted', highlight);
+    }
+  });
+}
+
 // We are using arrow functions assigned to class instance fields instead of methods as they are required by flow JISON
 export class FlowDB implements DiagramDB {
   private vertexCounter = 0;
@@ -55,6 +296,7 @@ export class FlowDB implements DiagramDB {
 
   constructor() {
     this.funs.push(this.setupToolTips.bind(this));
+    this.funs.push(this.setupInteraction.bind(this));
 
     // Needed for JISON since it only supports direct properties
     this.addVertex = this.addVertex.bind(this);
@@ -614,6 +856,133 @@ You have to call mermaid.initialize.`
   }
 
   /**
+   * Sets up interactive features for flowchart nodes:
+   * - Click to highlight a node (uses drop shadow via CSS)
+   * - Drag to rearrange nodes while keeping edges connected
+   * When a node is highlighted, connected edges are also highlighted.
+   */
+  private setupInteraction(element: Element) {
+    const flowchartConfig = this.config.flowchart;
+    if (!flowchartConfig?.enableInteraction) {
+      return;
+    }
+
+    const svg = select(element).select('svg');
+    const nodes = svg.selectAll<SVGGElement, unknown>('g.node');
+
+    // Track currently highlighted node and its ID for edge highlighting
+    let highlightedNode: Element | null = null;
+    let highlightedNodeId: string | null = null;
+
+    // Click on SVG background to deselect any highlighted node
+    // Use a flag to prevent SVG click from interfering with node click handling
+    let nodeClickHandled = false;
+
+    svg.on('click', () => {
+      // If a node click was just handled, don't process SVG background click
+      if (nodeClickHandled) {
+        nodeClickHandled = false;
+        return;
+      }
+
+      if (highlightedNode) {
+        const node = select(highlightedNode);
+        node.classed('highlighted', false);
+        // Remove edge highlighting
+        if (highlightedNodeId) {
+          highlightConnectedEdges(svg, highlightedNodeId, false);
+        }
+        highlightedNode = null;
+        highlightedNodeId = null;
+      }
+    });
+
+    // Track drag state
+    let hasDragged = false;
+
+    // Drag to rearrange functionality
+    const dragHandler = drag<SVGGElement, unknown>()
+      .clickDistance(3) // Allow clicks if mouse moved less than 3 pixels
+      .on('start', function () {
+        hasDragged = false;
+        select(this).classed('dragging', true);
+        select(this).raise(); // Bring to front
+      })
+      .on('drag', function (event) {
+        hasDragged = true;
+        // Get the current transform
+        const node = select(this);
+        const currentTransform = node.attr('transform');
+
+        // Parse the translate values
+        let x = 0;
+        let y = 0;
+        if (currentTransform) {
+          const translateRegex = /translate\(\s*([\d.-]+)\s*,\s*([\d.-]+)\s*\)/;
+          const match = translateRegex.exec(currentTransform);
+          if (match) {
+            x = parseFloat(match[1]);
+            y = parseFloat(match[2]);
+          }
+        }
+
+        // Apply the new position
+        const newX = x + event.dx;
+        const newY = y + event.dy;
+        node.attr('transform', `translate(${newX}, ${newY})`);
+
+        // Get node ID for edge updates
+        const nodeId = node.attr('data-id') || node.attr('id') || '';
+
+        // Update connected edges with the delta movement
+        updateConnectedEdges(svg, nodeId, event.dx, event.dy);
+      })
+      .on('end', function () {
+        select(this).classed('dragging', false);
+
+        // If no drag occurred, treat as a click for highlighting
+        if (!hasDragged) {
+          // Mark that we're handling a node click to prevent SVG click handler interference
+          nodeClickHandled = true;
+
+          const currentNode = this as Element;
+          const node = select(currentNode);
+          const nodeId = node.attr('data-id') || node.attr('id') || '';
+
+          // If clicking on the already highlighted node, deselect it
+          if (currentNode === highlightedNode) {
+            node.classed('highlighted', false);
+            highlightConnectedEdges(svg, nodeId, false);
+            highlightedNode = null;
+            highlightedNodeId = null;
+            return;
+          }
+
+          // Deselect previously highlighted node
+          if (highlightedNode) {
+            const prevNode = select(highlightedNode);
+            prevNode.classed('highlighted', false);
+            if (highlightedNodeId) {
+              highlightConnectedEdges(svg, highlightedNodeId, false);
+            }
+          }
+
+          // Highlight the clicked node using CSS class (drop shadow applied via CSS)
+          node.classed('highlighted', true);
+          highlightConnectedEdges(svg, nodeId, true);
+          highlightedNode = currentNode;
+          highlightedNodeId = nodeId;
+        }
+      });
+
+    // Apply drag handler to nodes
+    nodes.call(dragHandler);
+
+    // Make nodes show grab cursor
+    nodes.style('cursor', 'grab');
+  }
+
+  /**
    * Clears the internal graph db so that a new graph can be parsed.
    *
    */
@@ -621,7 +990,7 @@ You have to call mermaid.initialize.`
     this.vertices = new Map();
     this.classes = new Map();
     this.edges = [];
-    this.funs = [this.setupToolTips.bind(this)];
+    this.funs = [this.setupToolTips.bind(this), this.setupInteraction.bind(this)];
     this.subGraphs = [];
     this.subGraphLookup = new Map();
     this.subCount = 0;

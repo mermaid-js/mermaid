@@ -10,9 +10,69 @@
         /* font-family: 'trebuchet ms', verdana, arial; */
         font-family: 'Courier New', Courier, monospace !important;
       }
+      body.dark-mode {
+        background-color: #1a1a2e;
+        color: #eaeaea;
+      }
+      body.dark-mode h1,
+      body.dark-mode h2,
+      body.dark-mode h3 {
+        color: #eaeaea;
+      }
+      body.dark-mode hr {
+        border-color: #444;
+      }
+      .dark-mode-toggle {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        padding: 10px 20px;
+        background-color: #333;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        z-index: 1000;
+        font-size: 14px;
+      }
+      .dark-mode-toggle:hover {
+        background-color: #555;
+      }
+      body.dark-mode .dark-mode-toggle {
+        background-color: #eee;
+        color: #333;
+      }
+      body.dark-mode .dark-mode-toggle:hover {
+        background-color: #ccc;
+      }
+      .theme-selector {
+        position: fixed;
+        top: 10px;
+        right: 150px;
+        padding: 8px 12px;
+        background-color: #333;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        z-index: 1000;
+        font-size: 14px;
+      }
+      body.dark-mode .theme-selector {
+        background-color: #eee;
+        color: #333;
+      }
     </style>
   </head>
   <body>
+    <select class="theme-selector" onchange="changeTheme(this.value)">
+      <option value="default">🎨 Default Theme</option>
+      <option value="base">Base Theme</option>
+      <option value="dark">Dark Theme</option>
+      <option value="forest" selected>Forest Theme</option>
+      <option value="neutral">Neutral Theme</option>
+    </select>
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()">🌙 Dark Mode</button>
     <h1>Comparison "graph vs. flowchart"</h1>
     <h2>Sample 1</h2>
     <h3>graph</h3>
@@ -1622,6 +1682,17 @@
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
+
+      // Store the current theme and make mermaid available globally for re-rendering
+      window.currentTheme = 'forest';
+      window.mermaidInstance = mermaid;
+
+      // Store original diagram sources BEFORE mermaid renders them
+      const mermaidElements = document.querySelectorAll('.mermaid');
+      for (const elem of mermaidElements) {
+        elem.setAttribute('data-original-source', elem.textContent);
+      }
+
       mermaid.initialize({
         theme: 'forest',
         logLevel: 3,
@@ -1637,6 +1708,41 @@
         setTimeout(function () {
           document.querySelector('body').style.backgroundColor = originalBgColor;
         }, 100);
+      }
+
+      function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        const button = document.querySelector('.dark-mode-toggle');
+        if (document.body.classList.contains('dark-mode')) {
+          button.textContent = '☀️ Light Mode';
+        } else {
+          button.textContent = '🌙 Dark Mode';
+        }
+      }
+
+      async function changeTheme(theme) {
+        window.currentTheme = theme;
+        // Re-initialize mermaid with the new theme
+        window.mermaidInstance.initialize({
+          theme: theme,
+          logLevel: 3,
+          securityLevel: 'loose',
+          flowchart: { curve: 'basis' },
+        });
+
+        // Get all mermaid containers and re-render them
+        const mermaidElements = document.querySelectorAll('.mermaid');
+        for (const elem of mermaidElements) {
+          // Restore the original diagram source that was stored before first render
+          const source = elem.getAttribute('data-original-source');
+          if (source) {
+            elem.innerHTML = source;
+            // Remove processed attribute so mermaid will re-render it
+            elem.removeAttribute('data-processed');
+          }
+        }
+        // Re-render all diagrams
+        await window.mermaidInstance.run();
       }
     </script>
   </body>
