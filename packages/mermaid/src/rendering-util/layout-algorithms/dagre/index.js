@@ -58,7 +58,7 @@ const positionNotes = (graph) => {
   });
 
   noteStatePairs.forEach(({ noteNode, stateNode, position }) => {
-    const spacing = 60;
+    const spacing = graph.graph()?.nodesep;
 
     let noteX = noteNode.x;
     let noteY = stateNode.y;
