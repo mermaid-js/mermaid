@@ -492,6 +492,33 @@ function wrap(text, width) {
     }
   });
 }
+function wrapText(textElem, textContent, maxWidth, lineHeight) {
+  const words = textContent.split(/\s+/); // Split text into words
+  let line = '';
+
+  textElem.text(null); // Clear any existing content
+
+  let tspan = textElem.append('tspan').attr('x', 0).attr('dy', '0');
+
+  words.forEach((word) => {
+    const testLine = line + word + ' ';
+    tspan.text(testLine);
+    if (tspan.node().getComputedTextLength() > maxWidth && line !== '') {
+      tspan.text(line.trim());
+      line = word + ' ';
+
+      tspan = textElem.append('tspan').attr('x', 0).attr('dy', `${lineHeight}px`);
+    } else {
+      line = testLine;
+    }
+  });
+
+  tspan.text(line.trim());
+
+  // Re-center text group after wrapping
+  const bbox = textElem.node().getBBox();
+  textElem.attr('transform', `translate(${bbox.width / 2}, 0)`);
+}
 
 export const drawNode = function (elem, node, fullSection, conf) {
   const section = (fullSection % MAX_SECTIONS) - 1;
@@ -579,4 +606,5 @@ export default {
   initGraphics,
   drawNode,
   getVirtualNodeHeight,
+  wrapText,
 };

@@ -7,6 +7,7 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import type { Diagram } from '../../Diagram.js';
 import type { MermaidConfig } from '../../config.type.js';
+import { wrapLabel } from '../../utils.js';
 
 interface Block<TDesc, TSection> {
   number: number;
@@ -69,8 +70,8 @@ export const draw = function (text: string, id: string, version: string, diagObj
   let sectionBeginY = 0;
   let masterX = 50 + LEFT_MARGIN;
   //sectionBeginX = masterX;
-  let masterY = 50;
-  sectionBeginY = 50;
+  let masterY = 80;
+  sectionBeginY = 80;
   //draw sections
   let sectionNumber = 0;
   let hasSections = true;
@@ -202,13 +203,26 @@ export const draw = function (text: string, id: string, version: string, diagObj
   log.debug('bounds', box);
 
   if (title) {
-    svg
+    const maxAvailableWidth = svg.node().getBBox().width - LEFT_MARGIN; // Available width for the title
+
+    const wrappedTitle = wrapLabel(title, maxAvailableWidth, { fontSize });
+
+    const tempTitle = svg
       .append('text')
-      .text(title)
       .attr('x', box.width / 2 - LEFT_MARGIN)
-      .attr('font-size', '4ex')
-      .attr('font-weight', 'bold')
-      .attr('y', 20);
+      .attr('y', 20)
+      .attr('class', 'timelineTitleText')
+      .style('text-anchor', 'middle')
+      .style('white-space', 'pre-line')
+      .style('font-size', fontSize + 'px');
+
+    wrappedTitle.split('<br/>').forEach((line, idx) => {
+      tempTitle
+        .append('tspan')
+        .attr('x', box.width / 2 - LEFT_MARGIN)
+        .attr('dy', idx === 0 ? 0 : '1.2em')
+        .text(line);
+    });
   }
   //5. Draw the diagram
   depthY = hasSections ? maxSectionHeight + maxTaskHeight + 150 : maxTaskHeight + 100;
