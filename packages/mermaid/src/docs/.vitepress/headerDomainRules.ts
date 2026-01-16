@@ -23,6 +23,15 @@ export function getHeaderLogo(hostname: string): string {
   return isMermaidJsOrgHostname(hostname) ? MERMAID_JS_ORG_LOGO : MERMAID_CHART_LOGO;
 }
 
+/**
+ * Return the URL the header logo should link to.
+ * On mermaid.js.org: links to '/' (site root)
+ * On other domains: links to 'https://mermaid.ai'
+ */
+export function getHeaderLogoLink(hostname: string): string {
+  return isMermaidJsOrgHostname(hostname) ? '/' : 'https://mermaid.ai';
+}
+
 function isHomeNavItem(item: unknown): boolean {
   if (!item || typeof item !== 'object') {
     return false;

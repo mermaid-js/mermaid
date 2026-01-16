@@ -2,7 +2,7 @@ import type { MarkdownOptions } from 'vitepress';
 import { defineConfig } from 'vitepress';
 import packageJson from '../../../package.json' assert { type: 'json' };
 import { addCanonicalUrls } from './canonical-urls.js';
-import { getHeaderLogo, withConditionalHomeNav } from './headerDomainRules.js';
+import { getHeaderLogo, getHeaderLogoLink, withConditionalHomeNav } from './headerDomainRules.js';
 import MermaidExample from './mermaid-markdown-all.js';
 
 const allMarkdownTransformers: MarkdownOptions = {
@@ -56,6 +56,7 @@ export default defineConfig({
   ],
   themeConfig: {
     logo: getHeaderLogo(docsHostname()),
+    logoLink: getHeaderLogoLink(docsHostname()),
     nav: nav(),
     editLink: {
       pattern: ({ filePath, frontmatter }) => {

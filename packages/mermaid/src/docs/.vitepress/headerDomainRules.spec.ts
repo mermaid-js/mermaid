@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { getHeaderLogo, HOME_NAV_ITEM, withConditionalHomeNav } from './headerDomainRules.ts';
+import {
+  getHeaderLogo,
+  getHeaderLogoLink,
+  HOME_NAV_ITEM,
+  withConditionalHomeNav,
+} from './headerDomainRules.ts';
 
 describe('headerDomainRules', () => {
   describe('withConditionalHomeNav', () => {
@@ -31,6 +36,16 @@ describe('headerDomainRules', () => {
       expect(getHeaderLogo('mermaid.ai')).toBe(
         'https://static.mermaidchart.dev/assets/mermaid-icon.svg'
       );
+    });
+  });
+
+  describe('getHeaderLogoLink', () => {
+    it('returns / for mermaid.js.org', () => {
+      expect(getHeaderLogoLink('mermaid.js.org')).toBe('/');
+    });
+
+    it('returns https://mermaid.ai for other domains', () => {
+      expect(getHeaderLogoLink('mermaid.ai')).toBe('https://mermaid.ai');
     });
   });
 });
