@@ -1661,15 +1661,15 @@
       ---
 
       flowchart LR
-      
+
       X --> Y
-      
+
       subgraph X
         direction LR
         A
         C
       end
-      
+
       subgraph Y
         direction LR
         B
@@ -1736,7 +1736,7 @@
           // Restore the original diagram source that was stored before first render
           const source = elem.getAttribute('data-original-source');
           if (source) {
-            elem.innerHTML = source;
+            elem.textContent = source;
             // Remove processed attribute so mermaid will re-render it
             elem.removeAttribute('data-processed');
           }
