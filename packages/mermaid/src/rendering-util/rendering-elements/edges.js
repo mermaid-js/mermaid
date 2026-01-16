@@ -51,7 +51,6 @@ export const getLabelStyles = (styleArray) => {
 
 export const insertEdgeLabel = async (elem, edge) => {
   let useHtmlLabels = getEffectiveHtmlLabels(getConfig());
-  const width = edge.width || getConfig().flowchart?.wrappingWidth;
 
   const { labelStyles } = styles2String(edge);
   edge.labelStyle = labelStyles;

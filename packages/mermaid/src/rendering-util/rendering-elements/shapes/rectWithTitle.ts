@@ -39,7 +39,6 @@ export async function rectWithTitle<T extends SVGGraphicsElement>(
   const description = node.description;
 
   const title = node.label || '';
-  const width = node.width || getConfig().flowchart?.wrappingWidth;
 
   const text = await createLabel(label, title, node.labelStyle, true, true);
   let bbox = { width: 0, height: 0 };
