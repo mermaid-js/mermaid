@@ -1,9 +1,9 @@
-export const OPEN_SOURCE_HOME_PATH = '/open-source/';
+export const OPEN_SOURCE_HOME_PATH = '/';
 
 export const HOME_NAV_ITEM = {
   text: 'Home',
   link: OPEN_SOURCE_HOME_PATH,
-  activeMatch: OPEN_SOURCE_HOME_PATH,
+  activeMatch: '/open-source/',
 };
 
 /** Default logo for mermaid.js.org */
