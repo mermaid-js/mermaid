@@ -24,7 +24,8 @@ export const insertEdgeLabel = async (elem, edge) => {
   // Create the actual text element
   const labelElement =
     edge.labelType === 'markdown'
-      ? createText(
+      ? // TODO: the createText function returns a `Promise`, so do we need an wait here?
+        createText(
           elem,
           edge.label,
           {
@@ -34,7 +35,7 @@ export const insertEdgeLabel = async (elem, edge) => {
           },
           config
         )
-      : await createLabel(edge.label, edge.labelStyle);
+      : await createLabel(elem, edge.label, edge.labelStyle);
 
   // Create outer g, edgeLabel, this will be positioned after graph layout
   const edgeLabel = elem.insert('g').attr('class', 'edgeLabel');
@@ -64,10 +65,10 @@ export const insertEdgeLabel = async (elem, edge) => {
   let fo;
   if (edge.startLabelLeft) {
     // Create the actual text element
-    const startLabelElement = await createLabel(edge.startLabelLeft, edge.labelStyle);
     const startEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelLeft.insert('g').attr('class', 'inner');
-    fo = inner.node().appendChild(startLabelElement);
+    const startLabelElement = await createLabel(inner, edge.startLabelLeft, edge.labelStyle);
+    fo = startLabelElement;
     const slBox = startLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
     if (!terminalLabels[edge.id]) {
@@ -78,10 +79,14 @@ export const insertEdgeLabel = async (elem, edge) => {
   }
   if (edge.startLabelRight) {
     // Create the actual text element
-    const startLabelElement = await createLabel(edge.startLabelRight, edge.labelStyle);
     const startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelRight.insert('g').attr('class', 'inner');
-    fo = startEdgeLabelRight.node().appendChild(startLabelElement);
+    const startLabelElement = await createLabel(
+      startEdgeLabelRight,
+      edge.startLabelRight,
+      edge.labelStyle
+    );
+    fo = startLabelElement;
     inner.node().appendChild(startLabelElement);
     const slBox = startLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
@@ -94,10 +99,10 @@ export const insertEdgeLabel = async (elem, edge) => {
   }
   if (edge.endLabelLeft) {
     // Create the actual text element
-    const endLabelElement = await createLabel(edge.endLabelLeft, edge.labelStyle);
     const endEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelLeft.insert('g').attr('class', 'inner');
-    fo = inner.node().appendChild(endLabelElement);
+    const endLabelElement = await createLabel(inner, edge.endLabelLeft, edge.labelStyle);
+    fo = endLabelElement;
     const slBox = endLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
@@ -111,11 +116,10 @@ export const insertEdgeLabel = async (elem, edge) => {
   }
   if (edge.endLabelRight) {
     // Create the actual text element
-    const endLabelElement = await createLabel(edge.endLabelRight, edge.labelStyle);
     const endEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelRight.insert('g').attr('class', 'inner');
-
-    fo = inner.node().appendChild(endLabelElement);
+    const endLabelElement = await createLabel(inner, edge.endLabelRight, edge.labelStyle);
+    fo = endLabelElement;
     const slBox = endLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 

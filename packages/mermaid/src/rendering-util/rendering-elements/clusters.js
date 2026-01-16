@@ -181,9 +181,7 @@ const roundedWithTitle = async (parent, node) => {
   const label = shapeSvg.insert('g').attr('class', 'cluster-label');
   let innerRect = shapeSvg.append('rect');
 
-  const text = label
-    .node()
-    .appendChild(await createLabel(node.label, node.labelStyle, undefined, true));
+  const text = await createLabel(label, node.label, node.labelStyle, undefined, true);
 
   // Get the size of the label
   let bbox = text.getBBox();
@@ -486,8 +484,8 @@ export const insertCluster = async (elem, node) => {
 };
 
 export const getClusterTitleWidth = (elem, node) => {
-  const label = createLabel(node.label, node.labelStyle, undefined, true, false, node.width);
-  elem.node().appendChild(label);
+  // TODO: Doesn't this need an `await`?
+  const label = createLabel(elem, node.label, node.labelStyle, undefined, true);
   const width = label.getBBox().width;
   elem.node().removeChild(label);
   return width;

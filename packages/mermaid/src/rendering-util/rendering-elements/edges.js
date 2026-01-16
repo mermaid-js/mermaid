@@ -91,17 +91,14 @@ export const insertEdgeLabel = async (elem, edge) => {
   let fo;
   if (edge.startLabelLeft) {
     // Create the actual text element
-    const startLabelElement = await createLabel(
-      edge.startLabelLeft,
-      getLabelStyles(edge.labelStyle),
-      undefined,
-      false,
-      useHtmlLabels,
-      width
-    );
     const startEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelLeft.insert('g').attr('class', 'inner');
-    fo = inner.node().appendChild(startLabelElement);
+    const startLabelElement = await createLabel(
+      inner,
+      edge.startLabelLeft,
+      getLabelStyles(edge.labelStyle)
+    );
+    fo = startLabelElement;
     const slBox = startLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
     if (!terminalLabels.get(edge.id)) {
@@ -112,17 +109,14 @@ export const insertEdgeLabel = async (elem, edge) => {
   }
   if (edge.startLabelRight) {
     // Create the actual text element
-    const startLabelElement = await createLabel(
-      edge.startLabelRight,
-      getLabelStyles(edge.labelStyle),
-      undefined,
-      false,
-      useHtmlLabels,
-      width
-    );
     const startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelRight.insert('g').attr('class', 'inner');
-    fo = startEdgeLabelRight.node().appendChild(startLabelElement);
+    const startLabelElement = await createLabel(
+      startEdgeLabelRight,
+      edge.startLabelRight,
+      getLabelStyles(edge.labelStyle)
+    );
+    fo = startLabelElement;
     inner.node().appendChild(startLabelElement);
     const slBox = startLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
@@ -135,17 +129,14 @@ export const insertEdgeLabel = async (elem, edge) => {
   }
   if (edge.endLabelLeft) {
     // Create the actual text element
-    const endLabelElement = await createLabel(
-      edge.endLabelLeft,
-      getLabelStyles(edge.labelStyle),
-      undefined,
-      false,
-      useHtmlLabels,
-      width
-    );
     const endEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelLeft.insert('g').attr('class', 'inner');
-    fo = inner.node().appendChild(endLabelElement);
+    const endLabelElement = await createLabel(
+      inner,
+      edge.endLabelLeft,
+      getLabelStyles(edge.labelStyle)
+    );
+    fo = endLabelElement;
     const slBox = endLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
@@ -159,18 +150,15 @@ export const insertEdgeLabel = async (elem, edge) => {
   }
   if (edge.endLabelRight) {
     // Create the actual text element
-    const endLabelElement = await createLabel(
-      edge.endLabelRight,
-      getLabelStyles(edge.labelStyle),
-      undefined,
-      false,
-      useHtmlLabels,
-      width
-    );
     const endEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelRight.insert('g').attr('class', 'inner');
 
-    fo = inner.node().appendChild(endLabelElement);
+    const endLabelElement = await createLabel(
+      inner,
+      edge.endLabelRight,
+      getLabelStyles(edge.labelStyle)
+    );
+    fo = endLabelElement;
     const slBox = endLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 

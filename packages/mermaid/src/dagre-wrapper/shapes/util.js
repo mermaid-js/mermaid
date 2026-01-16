@@ -34,7 +34,6 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
     labelText = typeof node.labelText === 'string' ? node.labelText : node.labelText[0];
   }
 
-  const textNode = label.node();
   let text;
   if (node.labelType === 'markdown') {
     // text = textNode;
@@ -49,13 +48,12 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
       config
     );
   } else {
-    text = textNode.appendChild(
-      await createLabel(
-        sanitizeText(decodeEntities(labelText), config),
-        node.labelStyle,
-        false,
-        isNode
-      )
+    text = await createLabel(
+      label,
+      sanitizeText(decodeEntities(labelText), config),
+      node.labelStyle,
+      false,
+      isNode
     );
   }
   // Get the size of the label
