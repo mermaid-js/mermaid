@@ -1,4 +1,5 @@
 import DOMPurify from 'dompurify';
+import { evaluate, getEffectiveHtmlLabels } from '../../config.js';
 import type { MermaidConfig } from '../../config.type.js';
 
 // Remove and ignore br:s
@@ -64,7 +65,7 @@ export const removeScript = (txt: string): string => {
 };
 
 const sanitizeMore = (text: string, config: MermaidConfig) => {
-  if (config.flowchart?.htmlLabels !== false) {
+  if (getEffectiveHtmlLabels(config)) {
     const level = config.securityLevel;
     if (level === 'antiscript' || level === 'strict' || level === 'sandbox') {
       text = removeScript(text);
@@ -165,14 +166,7 @@ export const getUrl = (useAbsolute: boolean): string => {
   return url;
 };
 
-/**
- * Converts a string/boolean into a boolean
- *
- * @param val - String or boolean to convert
- * @returns The result from the input
- */
-export const evaluate = (val?: string | boolean): boolean =>
-  val === false || ['false', 'null', '0'].includes(String(val).trim().toLowerCase()) ? false : true;
+export { evaluate };
 
 /**
  * Wrapper around Math.max which removes non-numeric values

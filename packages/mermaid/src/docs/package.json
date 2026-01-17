@@ -21,7 +21,7 @@
     "font-awesome": "^4.7.0",
     "jiti": "^2.4.2",
     "mermaid": "workspace:^",
-    "vue": "^3.5.24"
+    "vue": "^3.5.25"
   },
   "devDependencies": {
     "@iconify-json/carbon": "^1.2.14",
