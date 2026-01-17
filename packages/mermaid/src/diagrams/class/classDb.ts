@@ -359,7 +359,14 @@ export class ClassDB implements DiagramDB {
   public setTooltip(ids: string, tooltip?: string) {
     ids.split(',').forEach((id) => {
       if (tooltip !== undefined) {
-        this.classes.get(id)!.tooltip = sanitizeText(tooltip);
+        tooltip = sanitizeText(tooltip);
+        // Backwards compatibility. Now that we're using `.innerText` instead of `.textContents`,
+        // we need to scrub out any raw LF or CRs in the contents.
+        tooltip = tooltip.replaceAll('\n', ' ').replaceAll('\r', ' ');
+        // Backwards compatibility. No need to support variations with spaces in them,
+        // since older versions only supported exactly `<br>` and `<br/>`.
+        tooltip = tooltip.replaceAll('<br>', '\n').replaceAll('<br/>', '\n');
+        this.classes.get(id)!.tooltip = tooltip;
       }
     });
   }
@@ -509,11 +516,11 @@ export class ClassDB implements DiagramDB {
         const rect = this.getBoundingClientRect();
 
         tooltipElem.transition().duration(200).style('opacity', '.9');
+        // use `.innerText` instead of `.text()` to convert \n to line breaks
+        tooltipElem.node()!.innerText = el.attr('title');
         tooltipElem
-          .text(el.attr('title'))
           .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
           .style('top', window.scrollY + rect.top - 14 + document.body.scrollTop + 'px');
-        tooltipElem.html(tooltipElem.html().replace(/&lt;br\/&gt;/g, '<br/>'));
         el.classed('hover', true);
       })
       .on('mouseout', (event: MouseEvent) => {
