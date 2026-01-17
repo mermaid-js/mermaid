@@ -41,7 +41,7 @@
     "e2e:coverage": "pnpm run load:env -- pnpm run e2e:harness:coverage",
     "e2e:harness": "start-server-and-test dev http://localhost:${MERMAID_PORT}/ cypress",
     "e2e:harness:coverage": "start-server-and-test dev:coverage http://localhost:${MERMAID_PORT}/ cypress",
-    "load:env": "dotenv -e .env.development -e .env",
+    "load:env": "dotenv -e .env",
     "test": "pnpm lint && vitest run",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
