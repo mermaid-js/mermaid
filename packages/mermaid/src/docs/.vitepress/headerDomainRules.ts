@@ -28,8 +28,8 @@ export function getHeaderLogo(hostname: string): string {
  * On mermaid.js.org: links to '/' (site root)
  * On other domains: links to 'https://mermaid.ai'
  */
-export function getHeaderLogoLink(hostname: string): string {
-  return isMermaidJsOrgHostname(hostname) ? '/' : 'https://mermaid.ai';
+export function getHeaderLogoLink(hostname: string): string | { link: string; target: string } {
+  return isMermaidJsOrgHostname(hostname) ? '/' : { link: 'https://mermaid.ai', target: '_self' }; //'https://mermaid.ai';
 }
 
 function isHomeNavItem(item: unknown): boolean {
