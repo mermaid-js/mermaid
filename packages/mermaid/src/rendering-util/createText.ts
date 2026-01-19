@@ -318,9 +318,9 @@ export const createText = async (
     }
     if (isTitle) {
       // I can't actually see the title-row/row class being used anywhere, but keeping it for backward compatibility
-      select(svgLabel).select('text').attr('class', 'title-row');
+      select(svgLabel).selectAll('tspan.text-outer-tspan').classed('title-row', true);
     } else {
-      select(svgLabel).select('text').attr('class', 'row');
+      select(svgLabel).selectAll('tspan.text-outer-tspan').classed('row', true);
     }
     return svgLabel;
   }
