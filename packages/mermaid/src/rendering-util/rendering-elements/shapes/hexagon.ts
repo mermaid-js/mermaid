@@ -26,10 +26,19 @@ export const createHexagonPathD = (
 export async function hexagon<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
   const h = bbox.height + (node.padding ?? 0);
   const w = bbox.width + (node.padding ?? 0) * 2.5;
+  node.width = w;
+  node.height = h;
+  const labelXOffset = -bbox.width / 2;
+  const labelYOffset = -bbox.height / 2;
+
+  if (node.icon) {
+    label.attr('transform', `translate(${labelXOffset}, ${labelYOffset})`);
+  }
   const { cssStyles } = node;
   // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
@@ -73,9 +82,6 @@ export async function hexagon<T extends SVGGraphicsElement>(parent: D3Selection<
   if (nodeStyles && node.look !== 'handDrawn') {
     polygon.selectChildren('path').attr('style', nodeStyles);
   }
-
-  node.width = w;
-  node.height = h;
 
   updateNodeBounds(node, polygon);
 

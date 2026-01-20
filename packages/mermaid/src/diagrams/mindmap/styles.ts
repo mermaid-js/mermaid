@@ -67,6 +67,9 @@ const getStyles: DiagramStylesProvider = (options) =>
   .section-root span {
     color: ${options.gitBranchLabel0};
   }
+  .node-icon--1 {
+    color: ${options.gitBranchLabel0};
+  }
   .section-2 span {
     color: ${options.gitBranchLabel0};
   }

@@ -6,6 +6,11 @@ import type { Node } from '../../types.js';
 import intersect from '../intersect/index.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
+import {
+  getMindmapIconConfig,
+  calculateMindmapDimensions,
+  insertMindmapIcon,
+} from '../../../diagrams/mindmap/mindmapIconHelper.js';
 
 export async function cloud<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
@@ -17,8 +22,22 @@ export async function cloud<T extends SVGGraphicsElement>(parent: D3Selection<T>
     getNodeClasses(node)
   );
 
-  const w = bbox.width + 2 * halfPadding;
-  const h = bbox.height + 2 * halfPadding;
+  const baseWidth = bbox.width + 2 * halfPadding;
+  const baseHeight = bbox.height + 2 * halfPadding;
+  const iconConfig = getMindmapIconConfig('cloud');
+  const dimensions = calculateMindmapDimensions(
+    node,
+    bbox,
+    baseWidth,
+    baseHeight,
+    halfPadding,
+    iconConfig
+  );
+  const w = dimensions.width;
+  const h = dimensions.height;
+  node.width = w;
+  node.height = h;
+  label.attr('transform', `translate(${dimensions.labelOffset.x}, ${dimensions.labelOffset.y})`);
 
   // Cloud radii
   const r1 = 0.15 * w;
@@ -61,10 +80,12 @@ export async function cloud<T extends SVGGraphicsElement>(parent: D3Selection<T>
       .attr('d', path);
   }
 
-  label.attr('transform', `translate(${-bbox.width / 2}, ${-bbox.height / 2})`);
-
   // Center the shape
   cloudElem.attr('transform', `translate(${-w / 2}, ${-h / 2})`);
+
+  if (node.icon) {
+    await insertMindmapIcon(shapeSvg, node, iconConfig);
+  }
 
   updateNodeBounds(node, cloudElem);
 

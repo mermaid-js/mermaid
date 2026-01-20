@@ -3,6 +3,11 @@ import type { Node } from '../../types.js';
 import intersect from '../intersect/index.js';
 import { styles2String } from './handDrawnShapeStyles.js';
 import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
+import {
+  getMindmapIconConfig,
+  calculateMindmapDimensions,
+  insertMindmapIcon,
+} from '../../../diagrams/mindmap/mindmapIconHelper.js';
 
 export async function defaultMindmapNode<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -10,29 +15,42 @@ export async function defaultMindmapNode<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-
   const { shapeSvg, bbox, halfPadding, label } = await labelHelper(
     parent,
     node,
     getNodeClasses(node)
   );
+  const baseWidth = bbox.width + 8 * halfPadding;
+  const baseHeight = bbox.height + 2 * halfPadding;
+  const iconConfig = getMindmapIconConfig('default');
+  const dimensions = calculateMindmapDimensions(
+    node,
+    bbox,
+    baseWidth,
+    baseHeight,
+    halfPadding,
+    iconConfig
+  );
 
-  const w = bbox.width + 8 * halfPadding;
-  const h = bbox.height + 2 * halfPadding;
-  const rd = 5;
+  const w = dimensions.width;
+  const h = dimensions.height;
 
-  const rectPath = `
-    M${-w / 2} ${h / 2 - rd}
-    v${-h + 2 * rd}
-    q0,-${rd} ${rd},-${rd}
-    h${w - 2 * rd}
-    q${rd},0 ${rd},${rd}
-    v${h - 2 * rd}
-    q0,${rd} -${rd},${rd}
-    h${-w + 2 * rd}
-    q-${rd},0 -${rd},-${rd}
-    Z
-  `;
+  node.width = w;
+  node.height = h;
+  const RD = 5;
+
+  label.attr('transform', `translate(${dimensions.labelOffset.x}, ${dimensions.labelOffset.y})`);
+
+  const rectPath = `M${-w / 2} ${h / 2 - RD} 
+    v${-h + 2 * RD} 
+    q0,-${RD} ${RD},-${RD} 
+    h${w - 2 * RD} 
+    q${RD},0 ${RD},${RD} 
+    v${h - 2 * RD} 
+    q0,${RD} -${RD},${RD} 
+    h${-w + 2 * RD} 
+    q-${RD},0 -${RD},-${RD} 
+    Z`;
 
   const bg = shapeSvg
     .append('path')
@@ -49,8 +67,11 @@ export async function defaultMindmapNode<T extends SVGGraphicsElement>(
     .attr('x2', w / 2)
     .attr('y2', h / 2);
 
-  label.attr('transform', `translate(${-bbox.width / 2}, ${-bbox.height / 2})`);
   shapeSvg.append(() => label.node());
+
+  if (node.icon) {
+    await insertMindmapIcon(shapeSvg, node, iconConfig);
+  }
 
   updateNodeBounds(node, bg);
   node.calcIntersect = function (bounds: Bounds, point: Point) {

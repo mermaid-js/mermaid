@@ -7,6 +7,11 @@ import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
 import { handleUndefinedAttr } from '../../../utils.js';
 import type { Bounds, Point } from '../../../types.js';
+import {
+  calculateMindmapDimensions,
+  getMindmapIconConfig,
+  insertMindmapIcon,
+} from '../../../diagrams/mindmap/mindmapIconHelper.js';
 
 export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
@@ -17,20 +22,33 @@ export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>,
     getNodeClasses(node)
   );
 
-  const w = bbox.width + 10 * halfPadding;
-  const h = bbox.height + 8 * halfPadding;
-  const r = 0.15 * w;
-  const { cssStyles } = node;
+  const baseWidth = bbox.width + 10 * halfPadding;
+  const baseHeight = bbox.height + 8 * halfPadding;
+  const iconConfig = getMindmapIconConfig('bang');
+  const dimensions = calculateMindmapDimensions(
+    node,
+    bbox,
+    baseWidth,
+    baseHeight,
+    halfPadding,
+    iconConfig
+  );
+  const w = dimensions.width;
+  const h = dimensions.height;
+
+  node.width = w;
+  node.height = h;
 
   const minWidth = bbox.width + 20;
   const minHeight = bbox.height + 20;
   const effectiveWidth = Math.max(w, minWidth);
   const effectiveHeight = Math.max(h, minHeight);
 
-  label.attr('transform', `translate(${-bbox.width / 2}, ${-bbox.height / 2})`);
+  label.attr('transform', `translate(${dimensions.labelOffset.x}, ${dimensions.labelOffset.y})`);
 
   let bangElem;
-  const path = `M0 0 
+  const r = 0.15 * effectiveWidth;
+  const path = `M0 0
     a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${-1 * effectiveHeight * 0.1}
     a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${0}
     a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${0}
@@ -56,7 +74,9 @@ export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>,
     const options = userNodeOverrides(node, {});
     const roughNode = rc.path(path, options);
     bangElem = shapeSvg.insert(() => roughNode, ':first-child');
-    bangElem.attr('class', 'basic label-container').attr('style', handleUndefinedAttr(cssStyles));
+    bangElem
+      .attr('class', 'basic label-container')
+      .attr('style', handleUndefinedAttr(node.cssStyles));
   } else {
     bangElem = shapeSvg
       .insert('path', ':first-child')
@@ -68,6 +88,9 @@ export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>,
   // Translate the path (center the shape)
   bangElem.attr('transform', `translate(${-effectiveWidth / 2}, ${-effectiveHeight / 2})`);
 
+  if (node.icon) {
+    await insertMindmapIcon(shapeSvg, node, iconConfig);
+  }
   updateNodeBounds(node, bangElem);
   node.calcIntersect = function (bounds: Bounds, point: Point) {
     return intersect.rect(bounds, point);

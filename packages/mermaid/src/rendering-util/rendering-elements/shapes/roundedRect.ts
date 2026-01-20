@@ -2,8 +2,8 @@ import { labelHelper, updateNodeBounds, getNodeClasses, createPathFromPoints } f
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
-import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
+import rough from 'roughjs';
 
 /**
  * Generates evenly spaced points along an elliptical arc connecting two points.
@@ -91,13 +91,19 @@ export async function roundedRect<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
   const labelPaddingX = node?.padding ?? 0;
   const labelPaddingY = node?.padding ?? 0;
 
   const w = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2;
   const h = (node?.height ? node?.height : bbox.height) + labelPaddingY * 2;
+  const labelXOffset = -bbox.width / 2;
+
+  if (node.icon) {
+    label.attr('transform', `translate(${labelXOffset}, ${-bbox.height / 2})`);
+  }
+
   const radius = node.radius || 5;
   const taper = node.taper || 5; // Taper width for the rounded corners
   const { cssStyles } = node;

@@ -7,6 +7,7 @@ import type { LayoutData } from '../../rendering-util/types.js';
 import type { FilledMindMapNode } from './mindmapTypes.js';
 import defaultConfig from '../../defaultConfig.js';
 import type { MindmapDB } from './mindmapDb.js';
+import { getMindmapIconConfig, insertMindmapIcon } from './mindmapIconHelper.js';
 
 /**
  * Update the layout data with actual node dimensions after drawing
@@ -71,6 +72,28 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
 
   // Use the unified rendering system
   await render(data4Layout, svg);
+  const genericShapes = ['hexagon', 'rect', 'rounded', 'squareRect'];
+  const nodesWithIcons = data4Layout.nodes.filter(
+    (node) => node.icon && genericShapes.includes(node.shape || '')
+  );
+
+  if (nodesWithIcons.length > 0) {
+    for (const node of nodesWithIcons) {
+      const nodeId = node.domId || node.id;
+      const nodeElement = svg.select(`g[id="${nodeId}"]`);
+
+      if (!nodeElement.empty()) {
+        try {
+          const iconConfig = getMindmapIconConfig(node.shape || 'default');
+          await insertMindmapIcon(nodeElement, node, iconConfig);
+        } catch (error) {
+          log.warn(`Failed to add icon to ${nodeId}:`, error);
+        }
+      } else {
+        log.warn(`Could not find DOM element for node ${nodeId}`);
+      }
+    }
+  }
 
   // Setup the view box and size of the svg element using config from data4Layout
   setupViewPortForSVG(
