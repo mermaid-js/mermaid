@@ -55,15 +55,13 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
       addSvgBackground: addBackground,
     });
   } else {
-    const labelElement = await createLabel(
+    text = await createLabel(
+      labelEl,
       sanitizeText(decodeEntities(label), getConfig()),
-      node.labelStyle,
+      node.labelStyle || '',
       false,
-      true,
-      addBackground,
-      width
+      true
     );
-    text = labelEl.node()?.appendChild(labelElement);
   }
 
   // Get the size of the label
