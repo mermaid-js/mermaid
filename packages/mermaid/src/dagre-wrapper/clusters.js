@@ -25,15 +25,11 @@ const rect = async (parent, node) => {
   // Create the label and insert it after the rect
   const label = shapeSvg.insert('g').attr('class', 'cluster-label');
 
-  // const text = label
-  //   .node()
-  //   .appendChild(createLabel(node.labelText, node.labelStyle, undefined, true));
+  // TODO: the createText function returns a `Promise`, so I'm guessing it never runs?
   const text =
     node.labelType === 'markdown'
       ? createText(label, node.labelText, { style: node.labelStyle, useHtmlLabels }, siteConfig)
-      : label
-          .node()
-          .appendChild(await createLabel(node.labelText, node.labelStyle, undefined, true));
+      : await createLabel(label, node.labelText, node.labelStyle, undefined, true);
 
   // Get the size of the label
   let bbox = text.getBBox();
@@ -144,9 +140,7 @@ const roundedWithTitle = async (parent, node) => {
   const label = shapeSvg.insert('g').attr('class', 'cluster-label');
   const innerRect = shapeSvg.append('rect');
 
-  const text = label
-    .node()
-    .appendChild(await createLabel(node.labelText, node.labelStyle, undefined, true));
+  const text = await createLabel(label, node.labelText, node.labelStyle, undefined, true);
 
   // Get the size of the label
   let bbox = text.getBBox();
@@ -244,8 +238,7 @@ export const insertCluster = async (elem, node) => {
   clusterElems[node.id] = await shapes[shape](elem, node);
 };
 export const getClusterTitleWidth = async (elem, node) => {
-  const label = await createLabel(node.labelText, node.labelStyle, undefined, true);
-  elem.node().appendChild(label);
+  const label = await createLabel(elem, node.labelText, node.labelStyle, undefined, true);
   const width = label.getBBox().width;
   elem.node().removeChild(label);
   return width;
