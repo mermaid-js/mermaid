@@ -16,6 +16,7 @@ import type {
   BranchDB,
   MergeDB,
   CherryPickDB,
+  ClickAst,
 } from './gitGraphTypes.js';
 
 const populate = (ast: GitGraph, db: GitGraphDBParseProvider) => {
@@ -37,6 +38,7 @@ const parseStatement = (statement: any, db: GitGraphDBParseProvider) => {
     Merge: (stmt) => db.merge(parseMerge(stmt)),
     Checkout: (stmt) => db.checkout(parseCheckout(stmt)),
     CherryPicking: (stmt) => db.cherryPick(parseCherryPicking(stmt)),
+    Click: (stmt) => parseClick(stmt, db),
   };
 
   const parser = parsers[statement.$type];
@@ -90,6 +92,10 @@ const parseCherryPicking = (cherryPicking: CherryPickingAst): CherryPickDB => {
   return cherryPickDB;
 };
 
+const parseClick = (click: ClickAst, db: GitGraphDBParseProvider) => {
+  db.setLink(click.id, click.href, click.type, click.tooltip, click.target);
+};
+
 export const parser: ParserDefinition = {
   parse: async (input: string): Promise<void> => {
     const ast: GitGraph = await parse('gitGraph', input);
@@ -109,6 +115,7 @@ if (import.meta.vitest) {
     merge: vi.fn(),
     cherryPick: vi.fn(),
     checkout: vi.fn(),
+    setLink: vi.fn(),
   };
 
   describe('GitGraph Parser', () => {
@@ -238,6 +245,30 @@ if (import.meta.vitest) {
         type: 0,
       });
       expect(mockDB.checkout).toHaveBeenCalledWith('newBranch');
+    });
+
+    it.each([
+      { type: 'commit', expectedType: 'commit' },
+      { type: 'branch', expectedType: 'branch' },
+      { type: 'tag', expectedType: 'tag' },
+    ])('should handle click statement with type: $type', ({ type, expectedType }) => {
+      const click = {
+        $type: 'Click',
+        id: 'test-id',
+        href: 'http://example.com',
+        tooltip: 'tooltip',
+        target: '_blank',
+        type: type,
+      };
+      // @ts-ignore: This is a partial mock object for testing
+      parseStatement(click, mockDB);
+      expect(mockDB.setLink).toHaveBeenCalledWith(
+        'test-id',
+        'http://example.com',
+        expectedType,
+        'tooltip',
+        '_blank'
+      );
     });
   });
 }
