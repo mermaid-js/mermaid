@@ -64,7 +64,7 @@ export function markdownToLines(markdown: string, config: MermaidConfig = {}): M
       node.tokens.forEach((contentNode) => {
         processNode(contentNode as MarkedToken, node.type);
       });
-    } else if (node.type === 'html') {
+    } else if (node.type === 'html' || node.type === 'link') {
       lines[currentLine].push({ content: node.text, type: 'normal' });
     }
   }
@@ -104,6 +104,8 @@ export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidCo
     } else if (node.type === 'html') {
       return `${node.text}`;
     } else if (node.type === 'escape') {
+      return node.text;
+    } else if (node.type === 'link') {
       return node.text;
     }
     log.warn(`Unsupported markdown: ${node.type}`);

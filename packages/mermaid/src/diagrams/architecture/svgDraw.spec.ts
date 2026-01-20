@@ -13,12 +13,12 @@ describe('architecture diagram SVGs', () => {
   jsdomIt('should add ids', async () => {
     const svgNode = await drawDiagram(`
       architecture-beta
-        group api(cloud)[API]
+        group api('cloud')['API']
 
-        service db(database)[Database] in api
-        service disk1(disk)[Storage] in api
-        service disk2(disk)[Storage] in api
-        service server(server)[Server] in api
+        service db('database')['Database'] in api
+        service disk1('disk')['Storage'] in api
+        service disk2('disk')['Storage'] in api
+        service server('server')['Server'] in api
 
         db:L -- R:server
         disk1:T -- B:server

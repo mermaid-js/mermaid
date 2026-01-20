@@ -1,7 +1,7 @@
 import type cytoscape from 'cytoscape';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { createText } from '../../rendering-util/createText.js';
 import { getIconSVG } from '../../rendering-util/icons.js';
+import { createNonFormattedText, createText } from '../../rendering-util/createText.js';
 import type { D3Element } from '../../types.js';
 import { sanitizeText } from '../common/common.js';
 import type { ArchitectureDB } from './architectureDb.js';
@@ -140,16 +140,24 @@ export const drawEdges = async function (
           }
 
           const textElem = g.append('g');
-          await createText(
-            textElem,
-            label,
-            {
-              useHtmlLabels: false,
+          if (label.startsWith('`')) {
+            await createText(
+              textElem,
+              label.slice(1, -1),
+              {
+                useHtmlLabels: false,
+                width,
+                classes: 'architecture-service-label',
+              },
+              getConfig()
+            );
+          } else {
+            createNonFormattedText(
               width,
-              classes: 'architecture-service-label',
-            },
-            getConfig()
-          );
+              textElem.attr('class', 'architecture-service-label'),
+              label
+            );
+          }
 
           textElem
             .attr('dy', '1em')
@@ -240,16 +248,24 @@ export const drawGroups = async function (
         }
         if (data.label) {
           const textElem = groupLabelContainer.append('g');
-          await createText(
-            textElem,
-            data.label,
-            {
-              useHtmlLabels: false,
-              width: w,
-              classes: 'architecture-service-label',
-            },
-            getConfig()
-          );
+          if (data.label.startsWith('`')) {
+            await createText(
+              textElem,
+              data.label.slice(1, -1),
+              {
+                useHtmlLabels: false,
+                width: w,
+                classes: 'architecture-service-label',
+              },
+              getConfig()
+            );
+          } else {
+            createNonFormattedText(
+              w,
+              textElem.attr('class', 'architecture-service-label'),
+              data.label
+            );
+          }
           textElem
             .attr('dy', '1em')
             .attr('alignment-baseline', 'middle')
@@ -281,18 +297,26 @@ export const drawServices = async function (
     const serviceElem = elem.append('g');
     const iconSize = db.getConfigField('iconSize');
 
-    if (service.title) {
+    if (service.label) {
       const textElem = serviceElem.append('g');
-      await createText(
-        textElem,
-        service.title,
-        {
-          useHtmlLabels: false,
-          width: iconSize * 1.5,
-          classes: 'architecture-service-label',
-        },
-        config
-      );
+      if (service.label.startsWith('`')) {
+        await createText(
+          textElem,
+          service.label.slice(1, -1),
+          {
+            useHtmlLabels: false,
+            width: iconSize * 1.5,
+            classes: 'architecture-service-label',
+          },
+          getConfig()
+        );
+      } else {
+        createNonFormattedText(
+          iconSize * 1.5,
+          textElem.attr('class', 'architecture-service-label'),
+          service.label
+        );
+      }
 
       textElem
         .attr('dy', '1em')

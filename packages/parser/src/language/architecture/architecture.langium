@@ -1,6 +1,5 @@
 grammar Architecture
 import "../common/common";
-import "arch";
 
 entry Architecture:
     NEWLINE*
@@ -20,31 +19,35 @@ fragment Statement:
 ;
 
 fragment LeftPort:
-    ':'lhsDir=ARROW_DIRECTION
+    ':' lhsDir=ARROW_DIRECTION
 ;
 
 fragment RightPort:
-    rhsDir=ARROW_DIRECTION':'
+    rhsDir=ARROW_DIRECTION ':'
 ;
 
 fragment Arrow:
-    LeftPort lhsInto?=ARROW_INTO? ('--' | '-' title=ARCH_TITLE '-') rhsInto?=ARROW_INTO? RightPort
+    LeftPort lhsInto?=ARROW_INTO? ('--' | '-' Label '-') rhsInto?=ARROW_INTO? RightPort
+;
+
+fragment Icon:
+    '(' icon = STRING ')'
 ;
 
 Group:
-    'group' id=ID icon=ARCH_ICON? title=ARCH_TITLE? ('in' in=ID)? EOL
+    'group' id=ID Icon? Label? ('in' in=ID)?
 ;
 
 Service:
-    'service' id=ID (iconText=STRING | icon=ARCH_ICON)? title=ARCH_TITLE? ('in' in=ID)? EOL
+    'service' id=ID (iconText=STRING | Icon)? Label? ('in' in=ID)?
 ;
 
 Junction:
-    'junction' id=ID ('in' in=ID)? EOL
+    'junction' id=ID ('in' in=ID)?
 ;
 
 Edge:
-    lhsId=ID lhsGroup?=ARROW_GROUP? Arrow rhsId=ID rhsGroup?=ARROW_GROUP? EOL
+    lhsId=ID lhsGroup?=ARROW_GROUP? Arrow rhsId=ID rhsGroup?=ARROW_GROUP?
 ;
 
 terminal ARROW_DIRECTION: 'L' | 'R' | 'T' | 'B';

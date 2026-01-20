@@ -117,6 +117,41 @@ export function computeDimensionOfText(
 }
 
 /**
+ * Creates a non-formatted text element by appending a text element to the given group.
+ *
+ * @param width - The maximum allowed width of the text.
+ * @param g - The parent group element to append the text.
+ * @param text - The raw string content of the text.
+ * @param addBackground - Whether to add a background to the text.
+ */
+export function createNonFormattedText(
+  width: number,
+  g: any,
+  text: string,
+  addBackground = false
+): SVGGroup {
+  const lineHeight = 1.1;
+  const labelGroup = g.append('g');
+  const bkg = labelGroup.insert('rect').attr('class', 'background').attr('style', 'stroke: none');
+  const textElement = labelGroup.append('text').attr('y', '-10.1');
+  const tspan = createTspan(textElement, 0, lineHeight);
+  tspan.text(text);
+  if (addBackground) {
+    const bbox = textElement.node().getBBox();
+    const padding = 2;
+    bkg
+      .attr('x', bbox.x - padding)
+      .attr('y', bbox.y - padding)
+      .attr('width', bbox.width + 2 * padding)
+      .attr('height', bbox.height + 2 * padding);
+
+    return labelGroup.node();
+  } else {
+    return textElement.node();
+  }
+}
+
+/**
  * Creates a formatted text element by breaking lines and applying styles based on
  * the given structuredText.
  *
