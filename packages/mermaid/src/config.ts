@@ -13,7 +13,7 @@ export const defaultConfig: MermaidConfig = Object.freeze(config);
  * @param val - String or boolean to convert
  * @returns The result from the input
  */
-export const evaluate = (val?: string | boolean): boolean =>
+export const evaluate = (val?: string | boolean | null): boolean =>
   val === false || ['false', 'null', '0'].includes(String(val).trim().toLowerCase()) ? false : true;
 
 let siteConfig: MermaidConfig = assignWithDepth({}, defaultConfig);
