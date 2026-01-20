@@ -191,8 +191,6 @@ const roundedWithTitle = async (parent, node) => {
   // add the rect
   const outerRectG = shapeSvg.insert('g', ':first-child');
 
-  const useHtmlLabels = evaluate(siteConfig.flowchart.htmlLabels);
-
   // Create the label and insert it after the rect
   const label = shapeSvg.insert('g').attr('class', 'cluster-label');
   let innerRect = shapeSvg.append('rect');
