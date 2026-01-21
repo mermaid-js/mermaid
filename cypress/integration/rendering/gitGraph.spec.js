@@ -1569,4 +1569,14 @@ gitGraph TB:
       {}
     );
   });
+  it('77: should render a gitGraph merging main into a newly created branch', () => {
+    imgSnapshotTest(
+      `gitGraph
+    commit
+    branch stable
+    checkout stable
+    merge main`,
+      {}
+    );
+  });
 });
