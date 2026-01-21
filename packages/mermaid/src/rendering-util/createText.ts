@@ -273,12 +273,12 @@ export const createText = async (
   } else {
     //sometimes the user might add br tags with 1 or more spaces in between, so we need to replace them with <br/>
     const sanitizeBR = text.replace(/<br\s*\/?>/g, '<br/>');
-// Decode entity codes (e.g., &#9829; -> ♥) for SVG labels
-const decodedText = decodeEntities(sanitizeBR.replace('<br>', '<br/>'));
+    // Decode entity codes (e.g., &#9829; -> ♥) for SVG labels
+    const decodedText = decodeEntities(sanitizeBR.replace('<br>', '<br/>'));
 
-const structuredText = markdown
-  ? markdownToLines(decodedText, config)
-  : nonMarkdownToLines(decodedText);
+    const structuredText = markdown
+      ? markdownToLines(decodedText, config)
+      : nonMarkdownToLines(decodedText);
 
     const svgLabel = createFormattedText(
       width,
