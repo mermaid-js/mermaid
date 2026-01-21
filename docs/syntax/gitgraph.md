@@ -651,6 +651,8 @@ gitGraph
 
 Sometimes you may want to hide the commit labels from the diagram. You can do this by using the `showCommitLabel` keyword. By default its value is `true`. You can set it to `false` using directives.
 
+### Hiding all commit labels
+
 Usage example:
 
 ```mermaid-example
@@ -758,6 +760,106 @@ config:
         checkout develop
         merge release
 ```
+
+### Hiding only auto-generated commit hash labels
+
+In many cases, you may want to show labels only for commits with custom IDs (like "Alpha", "v1.0", "Feature-X") while hiding the auto-generated hash labels (like "0-a1b2c3d", "1-x9y8z7w"). This is useful when you want to emphasize important commits while keeping the diagram clean.
+
+You can achieve this by using the `showCommitHashLabel` keyword. By default its value is `true`. When set to `false`, only commits with custom IDs will show their labels, while commits with auto-generated hash IDs will be hidden.
+
+**How it works:**
+
+- **Auto-generated IDs**: Commits without a custom `id` are automatically assigned IDs in the format `seq-hash` (e.g., `0-a1b2c3d`, `1-x9y8z7w`). These follow the pattern of a number, a dash, and a random hash.
+- **Custom IDs**: Commits with explicitly defined IDs using `commit id: "YourID"` are considered custom IDs.
+- When `showCommitHashLabel: false`, only custom IDs are displayed.
+
+Usage example - Hiding auto-generated hash labels:
+
+```mermaid-example
+---
+config:
+  gitGraph:
+    showCommitHashLabel: false
+---
+gitGraph
+  commit id: "Alpha"
+  commit
+  commit
+  branch develop
+  commit id: "Beta"
+  commit
+  checkout main
+  commit id: "Gamma"
+  commit
+  merge develop id: "Delta"
+  commit
+```
+
+```mermaid
+---
+config:
+  gitGraph:
+    showCommitHashLabel: false
+---
+gitGraph
+  commit id: "Alpha"
+  commit
+  commit
+  branch develop
+  commit id: "Beta"
+  commit
+  checkout main
+  commit id: "Gamma"
+  commit
+  merge develop id: "Delta"
+  commit
+```
+
+In this example, only the commits with custom IDs ("Alpha", "Beta", "Gamma", "Delta") will show their labels. The commits without custom IDs (created with just `commit`) will not display their auto-generated hash labels.
+
+Usage example - Showing all labels (default behavior):
+
+```mermaid-example
+---
+config:
+  gitGraph:
+    showCommitHashLabel: true
+---
+gitGraph
+  commit id: "Alpha"
+  commit
+  commit
+  branch develop
+  commit id: "Beta"
+  commit
+  checkout main
+  commit id: "Gamma"
+  commit
+  merge develop id: "Delta"
+  commit
+```
+
+```mermaid
+---
+config:
+  gitGraph:
+    showCommitHashLabel: true
+---
+gitGraph
+  commit id: "Alpha"
+  commit
+  commit
+  branch develop
+  commit id: "Beta"
+  commit
+  checkout main
+  commit id: "Gamma"
+  commit
+  merge develop id: "Delta"
+  commit
+```
+
+In this example, all commits will show their labels, including both custom IDs and auto-generated hash IDs.
 
 ## Customizing main branch name
 
