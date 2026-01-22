@@ -51,7 +51,7 @@ export const getLabelStyles = (styleArray) => {
 
 export const insertEdgeLabel = async (elem, edge) => {
   let useHtmlLabels = getEffectiveHtmlLabels(getConfig());
-  const width = edge.width || 200;
+  const config = getConfig();
 
   const { labelStyles } = styles2String(edge);
   edge.labelStyle = labelStyles;
@@ -64,14 +64,20 @@ export const insertEdgeLabel = async (elem, edge) => {
 
   const labelElement =
     edge.labelType === 'markdown'
-      ? await createText(label, edge.label, {
-          style: getLabelStyles(edge.labelStyle),
-          useHtmlLabels,
-          addSvgBackground: true,
-          isNode: false,
-          width,
-        })
-      : await createLabel(label, edge.label, getLabelStyles(edge.labelStyle) || '', false, false);
+      ? // TODO: the createText function returns a `Promise`, so do we need an wait here?
+        createText(
+          elem,
+          edge.label,
+          {
+            style: edge.labelStyle,
+            useHtmlLabels,
+            addSvgBackground: true,
+          },
+          config
+        )
+      : await createLabel(elem, edge.label, edge.labelStyle);
+
+  label.node().appendChild(labelElement);
 
   log.info('abc82', edge, edge.labelType);
 

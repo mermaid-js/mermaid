@@ -4,7 +4,7 @@ import type { Node } from '../../types.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { getEffectiveHtmlLabels } from '../../../config.js';
 import { select } from 'd3';
-import { hasKatex, sanitizeText } from '../../../diagrams/common/common.js';
+import { sanitizeText } from '../../../diagrams/common/common.js';
 import { decodeEntities, handleUndefinedAttr } from '../../../utils.js';
 import type { D3Selection, Point } from '../../../types.js';
 import { configureLabelImages } from './labelImageUtils.js';
@@ -14,6 +14,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   node: Node,
   _classes?: string
 ) => {
+  const config = getConfig();
   let cssClasses;
   const useHtmlLabels = node.useHtmlLabels || getEffectiveHtmlLabels(getConfig());
   if (!_classes) {
@@ -43,22 +44,22 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   }
 
   let text;
-  const addBackground = !!node.icon || !!node.img;
-  const width = node.width || getConfig().flowchart?.wrappingWidth;
-  if (node.labelType === 'markdown' || hasKatex(label)) {
-    text = await createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
-      useHtmlLabels,
-      width,
-      // @ts-expect-error -- This is currently not used. Should this be `classes` instead?
-      cssClasses: 'markdown-node-label',
-      style: node.labelStyle,
-      addSvgBackground: addBackground,
-    });
+  if (node.labelType === 'markdown') {
+    text = createText(
+      label,
+      sanitizeText(decodeEntities(label), config),
+      {
+        useHtmlLabels,
+        width: node.width || config.flowchart?.wrappingWidth,
+        classes: 'markdown-node-label',
+      },
+      config
+    );
   } else {
     text = await createLabel(
       labelEl,
-      sanitizeText(decodeEntities(label), getConfig()),
-      node.labelStyle || '',
+      sanitizeText(decodeEntities(label), config),
+      node.labelStyle ?? '',
       false,
       true
     );
