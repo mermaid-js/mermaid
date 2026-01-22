@@ -40,6 +40,15 @@ const getStyles = (options) => `
   .relationshipLabel {
     fill: ${options.relationLabelColor};
   }
+  .edgeLabel {
+    background-color: ${options.edgeLabelBackground};
+  }
+  .edgeLabel .label rect {
+    fill: ${options.edgeLabelBackground};
+  }
+  .edgeLabel .label text {
+    fill: ${options.relationLabelColor};
+  }
   .divider {
     stroke: ${options.nodeBorder};
     stroke-width: 1;

@@ -1,11 +1,12 @@
 import { createText } from '../../createText.js';
 import type { Node } from '../../types.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
+import { getEffectiveHtmlLabels } from '../../../config.js';
 import { select } from 'd3';
-import defaultConfig from '../../../defaultConfig.js';
 import { evaluate, sanitizeText } from '../../../diagrams/common/common.js';
-import { decodeEntities, handleUndefinedAttr, parseFontSize } from '../../../utils.js';
+import { decodeEntities, handleUndefinedAttr } from '../../../utils.js';
 import type { D3Selection, Point } from '../../../types.js';
+import { configureLabelImages } from './labelImageUtils.js';
 
 export const labelHelper = async <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -57,47 +58,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
     const dv = select(text);
 
     // if there are images, need to wait for them to load before getting the bounding box
-    const images = div.getElementsByTagName('img');
-    if (images) {
-      const noImgText = label.replace(/<img[^>]*>/g, '').trim() === '';
-
-      await Promise.all(
-        [...images].map(
-          (img) =>
-            new Promise((res) => {
-              /**
-               *
-               */
-              function setupImage() {
-                img.style.display = 'flex';
-                img.style.flexDirection = 'column';
-
-                if (noImgText) {
-                  // default size if no text
-                  const bodyFontSize = getConfig().fontSize
-                    ? getConfig().fontSize
-                    : window.getComputedStyle(document.body).fontSize;
-                  const enlargingFactor = 5;
-                  const [parsedBodyFontSize = defaultConfig.fontSize] = parseFontSize(bodyFontSize);
-                  const width = parsedBodyFontSize * enlargingFactor + 'px';
-                  img.style.minWidth = width;
-                  img.style.maxWidth = width;
-                } else {
-                  img.style.width = '100%';
-                }
-                res(img);
-              }
-              setTimeout(() => {
-                if (img.complete) {
-                  setupImage();
-                }
-              });
-              img.addEventListener('error', setupImage);
-              img.addEventListener('load', setupImage);
-            })
-        )
-      );
-    }
+    await configureLabelImages(div, label);
 
     bbox = div.getBoundingClientRect();
     dv.attr('width', bbox.width);
@@ -130,7 +91,7 @@ export const insertLabel = async <T extends SVGGraphicsElement>(
     addSvgBackground?: boolean | undefined;
   }
 ) => {
-  const useHtmlLabels = options.useHtmlLabels || evaluate(getConfig()?.flowchart?.htmlLabels);
+  const useHtmlLabels = options.useHtmlLabels ?? getEffectiveHtmlLabels(getConfig());
 
   // Create the label and insert it after the rect
   const labelEl = parent
@@ -148,7 +109,7 @@ export const insertLabel = async <T extends SVGGraphicsElement>(
   let bbox = text.getBBox();
   const halfPadding = options.padding / 2;
 
-  if (evaluate(getConfig()?.flowchart?.htmlLabels)) {
+  if (getEffectiveHtmlLabels(getConfig())) {
     const div = text.children[0];
     const dv = select(text);
 

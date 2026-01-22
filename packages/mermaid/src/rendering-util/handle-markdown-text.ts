@@ -23,6 +23,20 @@ function preprocessMarkdown(markdown: string, { markdownAutoWrap }: MermaidConfi
 }
 
 /**
+ * @param nonMarkdownText - Non-markdown text to split into plain-text formatted lines.
+ * This treats new lines, `\n`, and `<br/>` as line breaks, and splits on spaces for words.
+ */
+export function nonMarkdownToLines(nonMarkdownText: string): MarkdownLine[] {
+  return nonMarkdownText.split(/\\n|\n|<br\s*\/?>/gi).map(
+    (line) =>
+      line
+        .trim()
+        .split(/\s/g)
+        .map((word) => ({ content: word, type: 'normal' })) satisfies MarkdownLine
+  );
+}
+
+/**
  * @param markdown - markdown to split into lines
  */
 export function markdownToLines(markdown: string, config: MermaidConfig = {}): MarkdownLine[] {
