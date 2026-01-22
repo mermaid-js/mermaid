@@ -1,4 +1,4 @@
-import { select, type Selection } from 'd3';
+import { select } from 'd3';
 import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
@@ -12,6 +12,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
+import { createTooltip } from '../common/svgDrawCommon.js';
 import { ClassMember } from './classTypes.js';
 import type {
   ClassRelation,
@@ -26,6 +27,7 @@ import type {
 } from './classTypes.js';
 import type { Node, Edge } from '../../rendering-util/types.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
+import DOMPurify from 'dompurify';
 
 const MERMAID_DOM_ID_PREFIX = 'classId-';
 let classCounter = 0;
@@ -483,43 +485,45 @@ export class ClassDB implements DiagramDB {
     LOLLIPOP: 4,
   };
 
+  // Utility function to escape HTML meta-characters
+  private escapeHtml(str: string): string {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   private readonly setupToolTips = (element: Element) => {
-    let tooltipElem: Selection<HTMLDivElement, unknown, HTMLElement, unknown> =
-      select('.mermaidTooltip');
-    // @ts-expect-error - Incorrect types
-    if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
-      tooltipElem = select('body')
-        .append('div')
-        .attr('class', 'mermaidTooltip')
-        .style('opacity', 0);
-    }
+    const tooltipElem = createTooltip();
 
     const svg = select(element).select('svg');
 
-    const nodes = svg.selectAll('g.node');
+    const nodes = svg.selectAll('g').filter(function () {
+      return select(this).attr('title') !== null;
+    });
+
     nodes
       .on('mouseover', (event: MouseEvent) => {
         const el = select(event.currentTarget as HTMLElement);
         const title = el.attr('title');
-        // Don't try to draw a tooltip if no data is provided
-        if (title === null) {
+        if (!title) {
           return;
         }
-        // @ts-ignore - getBoundingClientRect is not part of the d3 type definition
-        const rect = this.getBoundingClientRect();
 
+        const rect = (event.currentTarget as Element).getBoundingClientRect();
         tooltipElem.transition().duration(200).style('opacity', '.9');
         tooltipElem
-          .text(el.attr('title'))
-          .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
-          .style('top', window.scrollY + rect.top - 14 + document.body.scrollTop + 'px');
-        tooltipElem.html(tooltipElem.html().replace(/&lt;br\/&gt;/g, '<br/>'));
+          .html(DOMPurify.sanitize(title))
+          .style('left', `${window.scrollX + rect.left + rect.width / 2}px`)
+          .style('top', `${window.scrollY + rect.bottom + 4}px`);
+
         el.classed('hover', true);
       })
       .on('mouseout', (event: MouseEvent) => {
         tooltipElem.transition().duration(500).style('opacity', 0);
-        const el = select(event.currentTarget as HTMLElement);
-        el.classed('hover', false);
+        select(event.currentTarget as HTMLElement).classed('hover', false);
       });
   };
 
