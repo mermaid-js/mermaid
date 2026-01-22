@@ -289,12 +289,18 @@ gantt
 
 ## Comments
 
-Comments can be entered within a gantt chart, which will be ignored by the parser. Comments need to be on their own line and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax.
+Comments can be entered within a gantt chart, which will be ignored by the parser. Mermaid supports two types of comments:
+
+- **Single-line comments**: Comments need to be on their own line and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax.
+- **Block comments**: Multi-line comments can be created using `%%*` to start the comment and `*%%` to end it.
 
 ```mermaid
 gantt
     title A Gantt Diagram
-    %% This is a comment
+    %% This is a single-line comment
+    %%* This is a block comment
+    that spans multiple lines
+    *%%
     dateFormat YYYY-MM-DD
     section Section
         A task          :a1, 2014-01-01, 30d
