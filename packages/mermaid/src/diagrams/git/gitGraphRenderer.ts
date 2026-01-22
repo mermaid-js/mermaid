@@ -1,11 +1,12 @@
 import { select } from 'd3';
-import { getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI.js';
+import { setupGraphViewbox } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 import utils from '../../utils.js';
 import type { DrawDefinition } from '../../diagram-api/types.js';
 import type d3 from 'd3';
 import type { Commit, GitGraphDBRenderProvider, DiagramOrientation } from './gitGraphTypes.js';
 import { commitType } from './gitGraphTypes.js';
+import type { GitGraphDiagramConfig } from '../../config.type.js';
 
 interface BranchPosition {
   pos: number;
@@ -21,8 +22,6 @@ interface CommitPositionOffset extends CommitPosition {
   posWithOffset: number;
 }
 
-const DEFAULT_CONFIG = getConfig();
-const DEFAULT_GITGRAPH_CONFIG = DEFAULT_CONFIG?.gitGraph;
 const LAYOUT_OFFSET = 10;
 const COMMIT_STEP = 40;
 const PX = 4;
@@ -287,12 +286,13 @@ const drawCommitLabel = (
   gLabels: d3.Selection<SVGGElement, unknown, HTMLElement, any>,
   commit: Commit,
   commitPosition: CommitPositionOffset,
-  pos: number
+  pos: number,
+  gitGraphConfig: GitGraphDiagramConfig
 ) => {
   if (
     commit.type !== commitType.CHERRY_PICK &&
     ((commit.customId && commit.type === commitType.MERGE) || commit.type !== commitType.MERGE) &&
-    DEFAULT_GITGRAPH_CONFIG?.showCommitLabel
+    gitGraphConfig.showCommitLabel
   ) {
     const wrapper = gLabels.append('g');
     const labelBkg = wrapper.insert('rect').attr('class', 'commit-label-bkg');
@@ -322,7 +322,7 @@ const drawCommitLabel = (
         text.attr('x', commitPosition.posWithOffset - bbox.width / 2);
       }
 
-      if (DEFAULT_GITGRAPH_CONFIG.rotateCommitLabel) {
+      if (gitGraphConfig.rotateCommitLabel) {
         if (dir === 'TB' || dir === 'BT') {
           text.attr(
             'transform',
@@ -514,16 +514,14 @@ const getCommitPosition = (
 const drawCommits = (
   svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
   commits: Map<string, Commit>,
-  modifyGraph: boolean
+  modifyGraph: boolean,
+  gitGraphConfig: GitGraphDiagramConfig
 ) => {
-  if (!DEFAULT_GITGRAPH_CONFIG) {
-    throw new Error('GitGraph config not found');
-  }
   const gBullets = svg.append('g').attr('class', 'commit-bullets');
   const gLabels = svg.append('g').attr('class', 'commit-labels');
   let pos = dir === 'TB' || dir === 'BT' ? defaultPos : 0;
   const keys = [...commits.keys()];
-  const isParallelCommits = DEFAULT_GITGRAPH_CONFIG?.parallelCommits ?? false;
+  const isParallelCommits = gitGraphConfig.parallelCommits ?? false;
 
   const sortKeys = (a: string, b: string) => {
     const seqA = commits.get(a)?.seq;
@@ -555,7 +553,7 @@ const drawCommits = (
       const commitSymbolType = commit.customType ?? commit.type;
       const branchIndex = branchPos.get(commit.branch)?.index ?? 0;
       drawCommitBullet(gBullets, commit, commitPosition, typeClass, branchIndex, commitSymbolType);
-      drawCommitLabel(gLabels, commit, commitPosition, pos);
+      drawCommitLabel(gLabels, commit, commitPosition, pos, gitGraphConfig);
       drawCommitTags(gLabels, commit, commitPosition, pos);
     }
     if (dir === 'TB' || dir === 'BT') {
@@ -812,7 +810,8 @@ const drawArrows = (
 
 const drawBranches = (
   svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
-  branches: { name: string }[]
+  branches: { name: string }[],
+  gitGraphConfig: GitGraphDiagramConfig
 ) => {
   const g = svg.append('g');
   branches.forEach((branch, index) => {
@@ -859,14 +858,14 @@ const drawBranches = (
       .attr('class', 'branchLabelBkg label' + adjustIndexForTheme)
       .attr('rx', 4)
       .attr('ry', 4)
-      .attr('x', -bbox.width - 4 - (DEFAULT_GITGRAPH_CONFIG?.rotateCommitLabel === true ? 30 : 0))
+      .attr('x', -bbox.width - 4 - (gitGraphConfig.rotateCommitLabel === true ? 30 : 0))
       .attr('y', -bbox.height / 2 + 8)
       .attr('width', bbox.width + 18)
       .attr('height', bbox.height + 4);
     label.attr(
       'transform',
       'translate(' +
-        (-bbox.width - 14 - (DEFAULT_GITGRAPH_CONFIG?.rotateCommitLabel === true ? 30 : 0)) +
+        (-bbox.width - 14 - (gitGraphConfig.rotateCommitLabel === true ? 30 : 0)) +
         ', ' +
         (pos - bbox.height / 2 - 1) +
         ')'
@@ -899,11 +898,13 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
   clear();
 
   log.debug('in gitgraph renderer', txt + '\n', 'id:', id, ver);
-  if (!DEFAULT_GITGRAPH_CONFIG) {
-    throw new Error('GitGraph config not found');
-  }
-  const rotateCommitLabel = DEFAULT_GITGRAPH_CONFIG.rotateCommitLabel ?? false;
   const db = diagObj.db as GitGraphDBRenderProvider;
+  if (!db.getConfig) {
+    log.error('getConfig method is not available on db');
+    return;
+  }
+  const gitGraphConfig = db.getConfig();
+  const rotateCommitLabel = gitGraphConfig.rotateCommitLabel ?? false;
   allCommitsDict = db.getCommits();
   const branches = db.getBranchesAsObjArray();
   dir = db.getDirection();
@@ -924,27 +925,22 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     g.remove();
   });
 
-  drawCommits(diagram, allCommitsDict, false);
-  if (DEFAULT_GITGRAPH_CONFIG.showBranches) {
-    drawBranches(diagram, branches);
+  drawCommits(diagram, allCommitsDict, false, gitGraphConfig);
+  if (gitGraphConfig.showBranches) {
+    drawBranches(diagram, branches, gitGraphConfig);
   }
   drawArrows(diagram, allCommitsDict);
-  drawCommits(diagram, allCommitsDict, true);
+  drawCommits(diagram, allCommitsDict, true, gitGraphConfig);
 
   utils.insertTitle(
     diagram,
     'gitTitleText',
-    DEFAULT_GITGRAPH_CONFIG.titleTopMargin ?? 0,
+    gitGraphConfig.titleTopMargin ?? 0,
     db.getDiagramTitle()
   );
 
   // Setup the view box and size of the svg element
-  setupGraphViewbox(
-    undefined,
-    diagram,
-    DEFAULT_GITGRAPH_CONFIG.diagramPadding,
-    DEFAULT_GITGRAPH_CONFIG.useMaxWidth
-  );
+  setupGraphViewbox(undefined, diagram, gitGraphConfig.diagramPadding, gitGraphConfig.useMaxWidth);
 };
 
 export default {
@@ -1307,7 +1303,6 @@ if (import.meta.vitest) {
       branchPos.set('main', { pos: 0, index: 0 });
       branchPos.set('develop', { pos: 107.49609375, index: 1 });
       branchPos.set('feature', { pos: 225.70703125, index: 2 });
-      DEFAULT_GITGRAPH_CONFIG!.parallelCommits = true;
       commits.forEach((commit, key) => {
         if (commit.parents.length > 0) {
           curPos = calculateCommitPosition(commit);
@@ -1335,7 +1330,6 @@ if (import.meta.vitest) {
       });
     });
   });
-  DEFAULT_GITGRAPH_CONFIG!.parallelCommits = false;
   it('add', () => {
     commitPos.set('parent1', { x: 1, y: 1 });
     commitPos.set('parent2', { x: 2, y: 2 });

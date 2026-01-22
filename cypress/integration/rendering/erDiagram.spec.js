@@ -445,7 +445,7 @@ ORDER ||--|{ LINE-ITEM : contains
         { logLevel: 1 }
       );
     });
-    it('should render ER diagram with numeric entity names and attributes', () => {
+    it('should render ER diagram with standalone numeric entities', () => {
       imgSnapshotTest(
         `erDiagram
          PRODUCT ||--o{ ORDER-ITEM : has
@@ -456,5 +456,19 @@ ORDER ||--|{ LINE-ITEM : contains
         { logLevel: 1 }
       );
     });
+  });
+
+  it('should render edge labels correctly when flowchart htmlLabels is false', () => {
+    imgSnapshotTest(
+      `
+    erDiagram
+        CUSTOMER ||--o{ ORDER : places
+        ORDER ||--|{ LINE-ITEM : contains
+        CUSTOMER ||--|{ ADDRESS : "invoiced at"
+        CUSTOMER ||--|{ ADDRESS : "receives goods at"
+        ORDER ||--o{ INVOICE : "liable for"
+      `,
+      { logLevel: 1, flowchart: { htmlLabels: false } }
+    );
   });
 });
