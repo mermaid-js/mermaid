@@ -320,10 +320,8 @@ classStatement
 
 classIdentifier
     : CLASS className                                    {$$=$2; yy.addClass($2);}
-    | CLASS className ANNOTATION_START alphaNumToken ANNOTATION_END {$$=$2; yy.addClass($2); yy.addAnnotation($2,$4);}
     | CLASS className annotationList                     {$$=$2; yy.addClass($2); for(const annotation of $3) { yy.addAnnotation($2, annotation); }}
     | CLASS className classLabel                         {$$=$2; yy.addClass($2);yy.setClassLabel($2, $3);}
-    | CLASS className classLabel ANNOTATION_START alphaNumToken ANNOTATION_END {$$=$2; yy.addClass($2);yy.setClassLabel($2, $3); yy.addAnnotation($2,$5);}
     | CLASS className classLabel annotationList          {$$=$2; yy.addClass($2);yy.setClassLabel($2, $3); for(const annotation of $4) { yy.addAnnotation($2, annotation); }}
     ;
 
@@ -335,8 +333,7 @@ emptyBody
     ;
 
 annotationStatement
-    : ANNOTATION_START alphaNumToken ANNOTATION_END className  { yy.addAnnotation($4,$2); }
-    | annotationList className  { for(const annotation of $1) { yy.addAnnotation($2, annotation); } }
+    : annotationList className  { for(const annotation of $1) { yy.addAnnotation($2, annotation); } }
     ;
 
 annotationList
