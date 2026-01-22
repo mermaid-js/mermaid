@@ -65,7 +65,9 @@ async function addHtmlSpan(
   }
 
   let bbox = div.node().getBoundingClientRect();
-  if (bbox.width === width) {
+  // bbox width might be a bit smaller than the actual width when browser scale is not 100%
+  const epsilon = 1e-2;
+  if (bbox.width >= width - epsilon) {
     div.style('display', 'table');
     div.style('white-space', 'break-spaces');
     div.style('width', width + 'px');
