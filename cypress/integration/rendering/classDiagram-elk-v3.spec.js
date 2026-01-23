@@ -661,6 +661,19 @@ class Class10
       { logLevel: 1, htmlLabels: true, layout: 'elk' }
     );
   });
+
+  it('ELK: should render a class with a text label, members and multiple annotations', () => {
+    imgSnapshotTest(
+      `classDiagram
+        class C1["Class 1 with text label"] {
+            &lt;&lt;interface&gt;&gt; &lt;&lt;injected&gt;&gt;
+            +member1
+        }
+        C1 -->  C2`,
+      { logLevel: 1, htmlLabels: true, layout: 'elk' }
+    );
+  });
+
   it('ELK: should render multiple classes with same text labels', () => {
     imgSnapshotTest(
       `classDiagram
