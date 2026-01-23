@@ -26,7 +26,7 @@
 "accDescr"\s*":"\s*                         { this.pushState("acc_descr");return 'acc_descr'; }
 <acc_descr>(?!\n|;|#)*[^\n]*              { this.popState(); return "acc_descr_value"; }
 "accDescr"\s*"{"\s*                         { this.pushState("acc_descr_multiline");}
-<acc_descr_multiline>"{"                 { this.popState(); }
+<acc_descr_multiline>"}"                 { this.popState(); }
 <acc_descr_multiline>[^\}]*               { return "acc_descr_multiline_value"; }
 
 "xychart-beta"                            {return 'XYCHART';}
