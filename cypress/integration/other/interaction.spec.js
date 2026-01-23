@@ -1,7 +1,9 @@
 describe('Interaction', () => {
+  const baseUrl = Cypress.config('baseUrl');
+
   describe('Security level loose', () => {
     beforeEach(() => {
-      cy.visit('http://localhost:9000/click_security_loose.html');
+      cy.visit('/click_security_loose.html');
     });
 
     it('Graph: should handle a click on a node with a bound function', () => {
@@ -23,14 +25,14 @@ describe('Interaction', () => {
       // When there is a URL, `cy.contains()` selects the `a` tag instead of the `span` tag. The .node is a child of `a`, so we have to use `find()` instead of `parent`.
       cy.contains('URLTest1').find('.node').click();
       cy.location().should(({ href }) => {
-        expect(href).to.eq('http://localhost:9000/empty.html');
+        expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
 
     it('Graph: should handle a click on a node with a bound url where the node starts with a number', () => {
       cy.contains('2URL').find('.node').click();
       cy.location().should(({ href }) => {
-        expect(href).to.eq('http://localhost:9000/empty.html');
+        expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
 
@@ -47,28 +49,28 @@ describe('Interaction', () => {
     it('Flowchart-v2: should handle a click on a node with a bound url', () => {
       cy.contains('URLTest2').find('.node').click();
       cy.location().should(({ href }) => {
-        expect(href).to.eq('http://localhost:9000/empty.html');
+        expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
 
     it('Flowchart-v2: should handle a click on a node with a bound url where the node starts with a number', () => {
       cy.contains('20URL').find('.node').click();
       cy.location().should(({ href }) => {
-        expect(href).to.eq('http://localhost:9000/empty.html');
+        expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
 
     it('should handle a click on a task with a bound URL clicking on the rect', () => {
       cy.get('rect#cl1').click({ force: true });
       cy.location().should(({ href }) => {
-        expect(href).to.eq('http://localhost:9000/empty.html');
+        expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
 
     it('should handle a click on a task with a bound URL clicking on the text', () => {
       cy.get('text#cl1-text').click({ force: true });
       cy.location().should(({ href }) => {
-        expect(href).to.eq('http://localhost:9000/empty.html');
+        expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
 
@@ -95,7 +97,7 @@ describe('Interaction', () => {
 
   describe('Interaction - security level tight', () => {
     beforeEach(() => {
-      cy.visit('http://localhost:9000/click_security_strict.html');
+      cy.visit('/click_security_strict.html');
     });
     it('should handle a click on a node without a bound function', () => {
       cy.contains('Function1').parents('.node').click();
@@ -110,28 +112,28 @@ describe('Interaction', () => {
     it('should handle a click on a node with a bound url', () => {
       cy.contains('URL1').find('.node').click();
       cy.location().should(({ href }) => {
-        expect(href).to.eq('http://localhost:9000/empty.html');
+        expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
 
     it('should handle a click on a node with a bound url where the node starts with a number', () => {
       cy.contains('2URL').find('.node').click();
       cy.location().should(({ href }) => {
-        expect(href).to.eq('http://localhost:9000/empty.html');
+        expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
 
     it('should handle a click on a task with a bound URL clicking on the rect', () => {
       cy.get('rect#cl1').click({ force: true });
       cy.location().should(({ href }) => {
-        expect(href).to.eq('http://localhost:9000/empty.html');
+        expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
 
     it('should handle a click on a task with a bound URL clicking on the text', () => {
       cy.get('text#cl1-text').click({ force: true });
       cy.location().should(({ href }) => {
-        expect(href).to.eq('http://localhost:9000/empty.html');
+        expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
 
@@ -148,7 +150,7 @@ describe('Interaction', () => {
 
   describe('Interaction - security level other, misspelling', () => {
     beforeEach(() => {
-      cy.visit('http://localhost:9000/click_security_other.html');
+      cy.visit('/click_security_other.html');
     });
 
     it('should handle a click on a node with a bound function', () => {
@@ -164,7 +166,7 @@ describe('Interaction', () => {
     it('should handle a click on a node with a bound url', () => {
       cy.contains('URL1').find('.node').click();
       cy.location().should(({ href }) => {
-        expect(href).to.eq('http://localhost:9000/empty.html');
+        expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
 

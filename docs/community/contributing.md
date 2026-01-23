@@ -274,6 +274,8 @@ After starting the dev server open <http://localhost:9000> in your browser.
 
 Now you are ready to make your changes!
 
+Note: By default, the Mermaid service will run on port 9000. To use a different port, change the environment variable `MERMAID_PORT` in the file `.env`. You should only need to do this if you are using port 9000 to run other projects.
+
 ### Make Changes
 
 Have a look at <http://localhost:9000>. There is a list of demos that can be used to see and test your changes.
