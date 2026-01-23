@@ -83,14 +83,25 @@ export const sanitizeText = (text: string, config: MermaidConfig): string => {
   if (!text) {
     return text;
   }
-  if (config.dompurifyConfig) {
-    text = DOMPurify.sanitize(sanitizeMore(text, config), config.dompurifyConfig).toString();
+
+  // Use optional chaining and fallback false if config.flowchart or htmlLabels is undefined
+  const htmlLabelsEnabled = evaluate(config.flowchart?.htmlLabels ?? false);
+
+  if (htmlLabelsEnabled) {
+    if (config.dompurifyConfig) {
+      return DOMPurify.sanitize(sanitizeMore(text, config), config.dompurifyConfig).toString();
+    } else {
+      return DOMPurify.sanitize(sanitizeMore(text, config), {
+        FORBID_TAGS: ['style'],
+      }).toString();
+    }
   } else {
-    text = DOMPurify.sanitize(sanitizeMore(text, config), {
-      FORBID_TAGS: ['style'],
-    }).toString();
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/\\/g, '\\\\');
   }
-  return text;
 };
 
 export const sanitizeTextOrArray = (
