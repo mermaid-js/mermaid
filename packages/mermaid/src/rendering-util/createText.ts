@@ -261,7 +261,9 @@ export const createText = async (
     const decodedReplacedText = await replaceIconSubstring(decodeEntities(htmlText), config);
 
     //for Katex the text could contain escaped characters, \\relax that should be transformed to \relax
-    const inputForKatex = text.replace(/\\\\/g, '\\');
+    const inputForKatex = hasKatex(text)
+      ? markdownToHTML(text.replace(/\\\\/g, '\\'), config)
+      : text.replace(/\\\\/g, '\\');
 
     const node = {
       isNode,
