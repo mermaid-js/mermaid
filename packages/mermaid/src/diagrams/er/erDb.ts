@@ -235,6 +235,7 @@ export class ErDB implements DiagramDB {
         arrowTypeEnd: relationship.relSpec.cardA.toLowerCase(),
         pattern: relationship.relSpec.relType == 'IDENTIFYING' ? 'solid' : 'dashed',
         look: config.look,
+        labelType: 'markdown',
       };
       edges.push(edge);
     }
