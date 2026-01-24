@@ -468,4 +468,26 @@ classDef highlight fill:#f39c12,color:#000,stroke:#e67e22,stroke-width:2px;
     );
   });
   */
+
+  it('should render treemap title readable on dark theme', () => {
+    imgSnapshotTest(
+      `---
+config:
+  theme: dark
+---      
+treemap
+title Sales Data Q4 2024
+"All Products"
+  "Electronics"
+    "Laptops": 2000
+    "Phones": 1500
+    "Tablets": 800
+  "Clothing"
+    "Women's": 750
+    "Men's": 500
+    "Kids": 300
+      `,
+      {}
+    );
+  });
 });
