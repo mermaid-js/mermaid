@@ -47,6 +47,8 @@ CRLF \u000D\u000A
 <INITIAL>({CRLF}|{LF})                     { return 'NL' }
 "columns"\s+"auto"             { yytext=-1; return 'COLUMNS'; }
 "columns"\s+[\d]+            { yytext = yytext.replace(/columns\s+/,''); yy.getLogger().debug('COLUMNS (LEX)', yytext); return 'COLUMNS'; }
+// "scale"\s+"rows:"("equal"|"varied")        { yytext = yytext.split(/\s+/)[1].split(':')[1] ; return 'SCALE'; }
+"scale"\s+("rows:"("equal"|"varied")|"columns:"("equal"|"varied"))(\s+("rows:"("equal"|"varied")|"columns:"("equal"|"varied"))){0,1} { yytext = yytext.replace(/scale\s+/, '') ; return 'SCALE'; }
 ["][`]          { this.pushState("md_string");}
 <md_string>[^`"]+        { return "MD_STR";}
 <md_string>[`]["]          { this.popState();}
@@ -211,6 +213,7 @@ link
 statement
   : nodeStatement
   | columnsStatement
+  | scaleStatement
   | SPACE_BLOCK
     { const num=parseInt($1); const spaceId = yy.generateId(); $$ = { id: spaceId, type:'space', label:'', width: num, children: [] }}
   | blockStatement
@@ -236,6 +239,10 @@ nodeStatement
 
 columnsStatement
   : COLUMNS { yy.getLogger().debug('APA123', this? this:'na'); yy.getLogger().debug("COLUMNS: ", $1); $$ = {type: 'column-setting', columns: $1 === 'auto'?-1:parseInt($1) } }
+  ;
+
+scaleStatement
+  : SCALE { const scale = {rows: '', columns: ''}; let elems = $1.split(/\s+/); elems = elems.map((el) => { return el.split(':') }); elems.forEach((el, i) => { el[0] == 'rows' ? scale.rows = el[1] : scale.columns = el[1] }); $$ = {type: 'scale-setting', scale: scale } }
   ;
 
 blockStatement

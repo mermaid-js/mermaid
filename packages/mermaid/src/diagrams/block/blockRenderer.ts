@@ -5,7 +5,7 @@ import insertMarkers from '../../dagre-wrapper/markers.js';
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { BlockDB } from './blockDB.js';
-import { layout } from './layout.js';
+import { scaleAndLayout } from './layout.js';
 import { calculateBlockSizes, insertBlocks, insertEdges } from './renderHelpers.js';
 
 export const getClasses = function (text: any, diagObj: any) {
@@ -46,7 +46,7 @@ export const draw = async function (
 
   const nodes = svg.insert('g').attr('class', 'block');
   await calculateBlockSizes(nodes, bl, db);
-  const bounds = layout(db);
+  const bounds = scaleAndLayout(db);
   await insertBlocks(nodes, bl, db);
   await insertEdges(nodes, edges, blArr, db, id);
 
