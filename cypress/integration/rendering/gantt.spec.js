@@ -803,4 +803,64 @@ describe('Gantt diagram', () => {
       {}
     );
   });
+  it('should handle numeric timestamps with dateFormat x', () => {
+    imgSnapshotTest(
+      `
+     gantt
+     title Process time profile (ms)
+     dateFormat x
+     axisFormat %L
+     tickInterval 250millisecond
+
+     section Pipeline
+     Parse JSON p1: 000, 120
+    `,
+      {}
+    );
+  });
+  it('should handle numeric timestamps with dateFormat X', () => {
+    imgSnapshotTest(
+      `
+     gantt
+     title Process time profile (ms)
+     dateFormat X
+     axisFormat %L
+     tickInterval 250millisecond
+
+     section Pipeline
+     Parse JSON p1: 000, 120
+    `,
+      {}
+    );
+  });
+  it('should handle seconds-only format with tickInterval (issue #5496)', () => {
+    imgSnapshotTest(
+      `
+     gantt
+     tickInterval 1second
+     dateFormat ss
+     axisFormat %s
+
+     section Network Request
+     RTT : rtt, 0, 20
+    `,
+      {}
+    );
+  });
+  it('should handle dates with year typo like 202 instead of 2024 (issue #5496)', () => {
+    imgSnapshotTest(
+      `
+     gantt
+     title Schedule
+     dateFormat YYYY-MM-DD
+     tickInterval 1week
+     axisFormat %m-%d
+
+     section Vacation
+     London : 2024-12-01, 7d
+     London : 202-12-01, 7d
+    `,
+      {}
+    );
+  });
 });

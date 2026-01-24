@@ -7,6 +7,7 @@ import express from 'express';
 import { packageOptions } from '../.build/common.js';
 import { generateLangium } from '../.build/generateLangium.js';
 import { defaultOptions, getBuildConfig } from './util.js';
+import 'dotenv/config';
 
 const configs = Object.values(packageOptions).map(({ packageName }) =>
   getBuildConfig({
@@ -88,6 +89,7 @@ async function createServer() {
   await generateLangium();
   handleFileChange();
   const app = express();
+  const port = process.env.MERMAID_PORT ?? 9000;
   chokidar
     .watch('**/src/**/*.{js,ts,langium,yaml,json}', {
       ignoreInitial: true,
@@ -114,8 +116,8 @@ async function createServer() {
   app.use(express.static('demos'));
   app.use(express.static('cypress/platform'));
 
-  app.listen(9000, () => {
-    console.log(`Listening on http://localhost:9000`);
+  app.listen(port, () => {
+    console.log(`Listening on http://localhost:${port}`);
   });
 }
 

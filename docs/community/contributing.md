@@ -29,7 +29,8 @@ In GitHub, you first [**fork a mermaid repository**](https://github.com/mermaid-
 
 Then you **clone** a copy to your local development machine (e.g. where you code) to make a copy with all the files to work with.
 
-> **💡 Tip** > [Here is a GitHub document that gives an overview of the process](https://docs.github.com/en/get-started/quickstart/fork-a-repo).
+> **💡 Tip**
+> [Here is a GitHub document that gives an overview of the process](https://docs.github.com/en/get-started/quickstart/fork-a-repo).
 
 ```bash
 git clone git@github.com/your-fork/mermaid
@@ -272,6 +273,8 @@ pnpm run dev
 After starting the dev server open <http://localhost:9000> in your browser.
 
 Now you are ready to make your changes!
+
+Note: By default, the Mermaid service will run on port 9000. To use a different port, change the environment variable `MERMAID_PORT` in the file `.env`. You should only need to do this if you are using port 9000 to run other projects.
 
 ### Make Changes
 

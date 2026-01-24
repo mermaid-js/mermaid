@@ -11,6 +11,7 @@ import mermaidAPI, {
   putIntoIFrame,
   removeExistingElements,
 } from './mermaidAPI.js';
+import * as configApi from './config.js';
 
 // --------------
 // Mocks
@@ -41,7 +42,6 @@ import { decodeEntities, encodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
 import { StateDB } from './diagrams/state/stateDb.js';
 import { ensureNodeFromSelector, jsdomIt } from './tests/util.js';
-import { select } from 'd3';
 import { JSDOM } from 'jsdom';
 
 /**
@@ -50,7 +50,6 @@ import { JSDOM } from 'jsdom';
  */
 
 // -------------------------------------------------------------------------------------
-
 describe('mermaidAPI', () => {
   describe('encodeEntities', () => {
     it('removes the ending ; from style [text1]:[optional word]#[text2]; with ', () => {
@@ -360,10 +359,11 @@ describe('mermaidAPI', () => {
         });
 
         describe('no htmlLabels in the configuration', () => {
-          const mocked_config_no_htmlLabels = {
+          const mocked_config_no_htmlLabels: MermaidConfig = {
             themeCSS: 'default',
             fontFamily: 'serif',
             altFontFamily: 'sans-serif',
+            htmlLabels: false, // Explicitly set to false
           };
 
           describe('creates styles for shape elements "rect", "polygon", "ellipse", and "circle"', () => {
@@ -912,5 +912,242 @@ graph TD;A--x|text including URL space|B;`)
       assert(sequenceDiagram2.db instanceof SequenceDB);
       expect(sequenceDiagram1.db.getActors()).not.toEqual(sequenceDiagram2.db.getActors());
     });
+  });
+
+  describe('mermaidAPI config precedence', () => {
+    const id = 'mermaid-config-test';
+
+    beforeEach(() => {
+      mermaidAPI.globalReset();
+    });
+
+    jsdomIt('renders with YAML config taking precedence over initialize config', async () => {
+      mermaid.initialize({
+        theme: 'forest',
+        fontFamily: 'Arial',
+        themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+        flowchart: { htmlLabels: false },
+      });
+
+      const diagramText = `---
+config:
+  theme: base
+  fontFamily: Courier
+  themeVariables:
+    fontFamily: "Courier New"
+    fontSize: "20px"
+  flowchart:
+    htmlLabels: true
+---
+flowchart TD
+  A --> B
+`;
+
+      const { svg } = await mermaidAPI.render('yaml-over-init', diagramText);
+
+      const config = mermaidAPI.getConfig();
+      expect(config.theme).toBe('base');
+      expect(config.fontFamily).toBe('Courier');
+      expect(config.themeVariables.fontFamily).toBe('Courier New');
+      expect(config.themeVariables.fontSize).toBe('20px');
+      expect(config.flowchart?.htmlLabels).toBe(true);
+
+      const svgNode = ensureNodeFromSelector('svg', new JSDOM(svg).window.document);
+      expect(svgNode).not.toBeNull();
+    });
+
+    jsdomIt(
+      'renders with YAML themeVariables fully overriding initialize themeVariables',
+      async () => {
+        mermaid.initialize({
+          themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+        });
+
+        const diagramText = `---
+config:
+  themeVariables:
+    fontFamily: "Courier New"
+    fontSize: "20px"
+---
+flowchart TD
+  A --> B
+`;
+
+        const { svg } = await mermaidAPI.render(id, diagramText);
+        const config = mermaidAPI.getConfig();
+
+        expect(config.themeVariables.fontFamily).toBe('Courier New');
+        expect(config.themeVariables.fontSize).toBe('20px');
+        expect(config.themeVariables.fontFamily).not.toBe('Arial');
+        expect(config.themeVariables.fontSize).not.toBe('16px');
+
+        const svgNode = ensureNodeFromSelector('svg', new JSDOM(svg).window.document);
+        expect(svgNode).not.toBeNull();
+      }
+    );
+
+    jsdomIt(
+      'renders with YAML themeVariables overriding only provided keys and keeping others from initialize',
+      async () => {
+        mermaid.initialize({
+          theme: 'forest',
+          fontFamily: 'Arial',
+          themeVariables: { fontFamily: 'Arial', fontSize: '16px', colorPrimary: '#ff0000' },
+        });
+
+        const diagramText = `---
+config:
+  themeVariables:
+    fontFamily: "Courier New"
+---
+flowchart TD
+  A --> B
+`;
+
+        const { svg } = await mermaidAPI.render(id, diagramText);
+
+        const config = mermaidAPI.getConfig();
+        expect(config.themeVariables.fontFamily).toBe('Courier New');
+        expect(config.themeVariables.fontSize).toBe('16px');
+        expect(config.themeVariables.colorPrimary).toBe('#ff0000');
+
+        const svgNode = ensureNodeFromSelector('svg', new JSDOM(svg).window.document);
+        expect(svgNode).not.toBeNull();
+      }
+    );
+
+    jsdomIt(
+      'renders with YAML config (no themeVariables) and falls back to initialize themeVariables',
+      async () => {
+        mermaid.initialize({
+          themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+        });
+
+        const diagramText = `---
+config:
+  theme: base
+---
+flowchart TD
+  A --> B
+`;
+
+        const { svg } = await mermaidAPI.render(id, diagramText);
+
+        const config = mermaidAPI.getConfig();
+        expect(config.themeVariables.fontFamily).toBe('Arial');
+        expect(config.themeVariables.fontSize).toBe('16px');
+        expect(config.theme).toBe('base');
+
+        const svgNode = ensureNodeFromSelector('svg', new JSDOM(svg).window.document);
+        expect(svgNode).not.toBeNull();
+      }
+    );
+
+    jsdomIt(
+      'renders with full YAML config block taking full precedence over initialize config',
+      async () => {
+        mermaid.initialize({
+          theme: 'forest',
+          fontFamily: 'Arial',
+          themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+          flowchart: { htmlLabels: false },
+        });
+
+        const diagramText = `---
+config:
+  theme: base
+  fontFamily: Courier
+  themeVariables:
+    fontFamily: "Courier New"
+    fontSize: "20px"
+  flowchart:
+    htmlLabels: true
+---
+flowchart TD
+  A --> B
+`;
+
+        const { svg } = await mermaidAPI.render('yaml-over-init', diagramText);
+
+        const config = mermaidAPI.getConfig();
+        expect(config.theme).toBe('base');
+        expect(config.fontFamily).toBe('Courier');
+        expect(config.themeVariables.fontFamily).toBe('Courier New');
+        expect(config.themeVariables.fontSize).toBe('20px');
+        expect(config.flowchart?.htmlLabels).toBe(true);
+
+        const svgNode = ensureNodeFromSelector('svg', new JSDOM(svg).window.document);
+        expect(svgNode).not.toBeNull();
+      }
+    );
+
+    jsdomIt(
+      'renders with YAML config (no themeVariables) and falls back to initialize themeVariables (duplicate scenario)',
+      async () => {
+        mermaid.initialize({
+          themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+        });
+
+        const diagramText = `---
+config:
+  theme: base
+---
+flowchart TD
+  A --> B
+`;
+
+        await mermaidAPI.render(id, diagramText);
+
+        const config = mermaidAPI.getConfig();
+        expect(config.themeVariables.fontFamily).toBe('Arial');
+        expect(config.themeVariables.fontSize).toBe('16px');
+        expect(config.theme).toBe('base');
+      }
+    );
+
+    jsdomIt('renders with no YAML config so initialize config is fully applied', async () => {
+      mermaid.initialize({
+        theme: 'forest',
+        fontFamily: 'Arial',
+        themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+      });
+
+      const diagramText = `
+flowchart TD
+  A --> B
+`;
+
+      await mermaidAPI.render(id, diagramText);
+
+      const config = mermaidAPI.getConfig();
+      expect(config.theme).toBe('forest');
+      expect(config.fontFamily).toBe('Arial');
+      expect(config.themeVariables.fontFamily).toBe('Arial');
+      expect(config.themeVariables.fontSize).toBe('16px');
+    });
+
+    jsdomIt(
+      'renders with empty YAML config block and falls back to initialize config',
+      async () => {
+        mermaid.initialize({
+          theme: 'dark',
+          themeVariables: { fontFamily: 'Times', fontSize: '14px' },
+        });
+
+        const diagramText = `---
+config: {}
+---
+flowchart TD
+  A --> B
+`;
+
+        await mermaidAPI.render(id, diagramText);
+
+        const config = mermaidAPI.getConfig();
+        expect(config.theme).toBe('dark');
+        expect(config.themeVariables.fontFamily).toBe('Times');
+        expect(config.themeVariables.fontSize).toBe('14px');
+      }
+    );
   });
 });

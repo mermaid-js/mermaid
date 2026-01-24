@@ -282,6 +282,94 @@ const drawNote = async function (elem: any, noteModel: NoteModel) {
   bounds.models.addNote(noteModel);
 };
 
+const drawCentralConnection = function (
+  elem: any,
+  msg: any,
+  msgModel: any,
+  diagObj: Diagram,
+  startx: number,
+  stopx: number,
+  lineStartY: number
+) {
+  const actors = diagObj.db.getActors();
+  const fromActor = actors.get(msg.from);
+  const toActor = actors.get(msg.to);
+  const isAutoNumberOn = msgModel.sequenceVisible;
+  let fromCenter = fromActor.x + fromActor.width / 2;
+  let toCenter = toActor.x + toActor.width / 2;
+
+  // Determine arrow direction: left-to-right or right-to-left
+  const isLeftToRight = fromCenter <= toCenter;
+  const isReverse = isReverseArrowType(msg, diagObj);
+
+  const g = elem.append('g');
+
+  const CENTRAL_CONNECTION_CIRCLE_OFFSET = 16.5;
+
+  const getCircleOffset = (isLeftToRight: boolean, isReverse: boolean) => {
+    const baseOffset = isLeftToRight
+      ? CENTRAL_CONNECTION_CIRCLE_OFFSET
+      : -CENTRAL_CONNECTION_CIRCLE_OFFSET;
+    return isReverse ? -baseOffset : baseOffset;
+  };
+
+  const drawCircle = (cx: number) => {
+    g.append('circle')
+      .attr('cx', cx)
+      .attr('cy', lineStartY)
+      .attr('r', 5)
+      .attr('width', 10)
+      .attr('height', 10);
+  };
+
+  const { CENTRAL_CONNECTION, CENTRAL_CONNECTION_REVERSE, CENTRAL_CONNECTION_DUAL } =
+    diagObj.db.LINETYPE;
+
+  // Calculate circle position adjustments when autonumber is enabled
+  if (isAutoNumberOn) {
+    switch (msg.centralConnection) {
+      case CENTRAL_CONNECTION:
+        // Pattern: actor ->>() actor - circle at destination
+        if (isReverse) {
+          toCenter += getCircleOffset(isLeftToRight, true);
+        }
+        // No adjustment for normal arrows
+        break;
+
+      case CENTRAL_CONNECTION_REVERSE:
+        // Pattern: actor ()->> actor - circle at source
+        if (!isReverse) {
+          fromCenter += getCircleOffset(isLeftToRight, false);
+        }
+        // No adjustment for reverse arrows
+        break;
+
+      case CENTRAL_CONNECTION_DUAL:
+        // Pattern: actor ()->>() actor - circles at both ends
+        if (isReverse) {
+          toCenter += getCircleOffset(isLeftToRight, true);
+        } else {
+          fromCenter += getCircleOffset(isLeftToRight, false);
+        }
+        break;
+    }
+  }
+
+  // Draw circles based on central connection type
+  switch (msg.centralConnection) {
+    case CENTRAL_CONNECTION:
+      drawCircle(toCenter);
+      break;
+    case CENTRAL_CONNECTION_REVERSE:
+      drawCircle(fromCenter);
+      break;
+    case CENTRAL_CONNECTION_DUAL:
+      drawCircle(fromCenter);
+      drawCircle(toCenter);
+      break;
+  }
+};
+
 const messageFont = (cnf) => {
   return {
     fontFamily: cnf.messageFontFamily,
@@ -367,7 +455,7 @@ async function boundMessage(_diagram, msgModel): Promise<number> {
  * @param lineStartY - The Y coordinate at which the message line starts
  * @param diagObj - The diagram object.
  */
-const drawMessage = async function (diagram, msgModel, lineStartY: number, diagObj: Diagram) {
+const drawMessage = async function (diagram, msgModel, lineStartY: number, diagObj: Diagram, msg) {
   const { startx, stopx, starty, message, type, sequenceIndex, sequenceVisible } = msgModel;
   const textDims = utils.calculateTextDimensions(message, messageFont(conf));
   const textObj = svgDrawCommon.getTextObj();
@@ -395,12 +483,17 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
 
   let line;
   if (startx === stopx) {
+    const isAutoNumberOn = sequenceVisible || conf.showSequenceNumbers;
+    const isReverse = isReverseArrowType(msg, diagObj);
+    const isBidirectional = isBidirectionalArrowType(msg, diagObj);
+    const lineStartX = startx + (isAutoNumberOn && (isReverse || isBidirectional) ? 10 : 0);
+
     if (conf.rightAngles) {
       line = diagram
         .append('path')
         .attr(
           'd',
-          `M  ${startx},${lineStartY} H ${
+          `M  ${lineStartX},${lineStartY} H ${
             startx + common.getMax(conf.width / 2, textWidth / 2)
           } V ${lineStartY + 25} H ${startx}`
         );
@@ -410,11 +503,11 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
         .attr(
           'd',
           'M ' +
-            startx +
+            lineStartX +
             ',' +
             lineStartY +
             ' C ' +
-            (startx + 60) +
+            (lineStartX + 60) +
             ',' +
             (lineStartY - 10) +
             ' ' +
@@ -433,6 +526,9 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
     line.attr('y1', lineStartY);
     line.attr('x2', stopx);
     line.attr('y2', lineStartY);
+    if (hasCentralConnection(msg, diagObj)) {
+      drawCentralConnection(diagram, msg, msgModel, diagObj, startx, stopx, lineStartY);
+    }
   }
   // Make an SVG Container
   // Draw the line
@@ -441,7 +537,15 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
     type === diagObj.db.LINETYPE.DOTTED_CROSS ||
     type === diagObj.db.LINETYPE.DOTTED_POINT ||
     type === diagObj.db.LINETYPE.DOTTED_OPEN ||
-    type === diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED
+    type === diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED ||
+    type === diagObj.db.LINETYPE.SOLID_TOP_DOTTED ||
+    type === diagObj.db.LINETYPE.SOLID_BOTTOM_DOTTED ||
+    type === diagObj.db.LINETYPE.STICK_TOP_DOTTED ||
+    type === diagObj.db.LINETYPE.STICK_BOTTOM_DOTTED ||
+    type === diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE_DOTTED ||
+    type === diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE_DOTTED ||
+    type === diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE_DOTTED ||
+    type === diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE_DOTTED
   ) {
     line.style('stroke-dasharray', '3, 3');
     line.attr('class', 'messageLine1');
@@ -457,6 +561,51 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
   line.attr('stroke-width', 2);
   line.attr('stroke', 'none'); // handled by theme/css anyway
   line.style('fill', 'none'); // remove any fill colour
+
+  if (type === diagObj.db.LINETYPE.SOLID_TOP || type === diagObj.db.LINETYPE.SOLID_TOP_DOTTED) {
+    line.attr('marker-end', 'url(' + url + '#solidTopArrowHead)');
+  }
+  if (
+    type === diagObj.db.LINETYPE.SOLID_BOTTOM ||
+    type === diagObj.db.LINETYPE.SOLID_BOTTOM_DOTTED
+  ) {
+    line.attr('marker-end', 'url(' + url + '#solidBottomArrowHead)');
+  }
+  if (type === diagObj.db.LINETYPE.STICK_TOP || type === diagObj.db.LINETYPE.STICK_TOP_DOTTED) {
+    line.attr('marker-end', 'url(' + url + '#stickTopArrowHead)');
+  }
+  if (
+    type === diagObj.db.LINETYPE.STICK_BOTTOM ||
+    type === diagObj.db.LINETYPE.STICK_BOTTOM_DOTTED
+  ) {
+    line.attr('marker-end', 'url(' + url + '#stickBottomArrowHead)');
+  }
+
+  if (
+    type === diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE ||
+    type === diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE_DOTTED
+  ) {
+    line.attr('marker-start', 'url(' + url + '#solidBottomArrowHead)');
+  }
+  if (
+    type === diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE ||
+    type === diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE_DOTTED
+  ) {
+    line.attr('marker-start', 'url(' + url + '#solidTopArrowHead)');
+  }
+  if (
+    type === diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE ||
+    type === diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE_DOTTED
+  ) {
+    line.attr('marker-start', 'url(' + url + '#stickBottomArrowHead)');
+  }
+  if (
+    type === diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE ||
+    type === diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE_DOTTED
+  ) {
+    line.attr('marker-start', 'url(' + url + '#stickTopArrowHead)');
+  }
+
   if (type === diagObj.db.LINETYPE.SOLID || type === diagObj.db.LINETYPE.DOTTED) {
     line.attr('marker-end', 'url(' + url + '#arrowhead)');
   }
@@ -481,28 +630,79 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
       type === diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID ||
       type === diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED;
 
-    if (isBidirectional) {
-      const SEQUENCE_NUMBER_RADIUS = 6;
+    const isReverseArrowType =
+      type === diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE ||
+      type === diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE_DOTTED ||
+      type === diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE ||
+      type === diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE_DOTTED ||
+      type === diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE ||
+      type === diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE_DOTTED ||
+      type === diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE ||
+      type === diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE_DOTTED;
 
+    const SEQUENCE_NUMBER_RADIUS = 6;
+    const hasCentralConn = hasCentralConnection(msg, diagObj);
+    let lineStartX = startx;
+    let lineStopX = stopx;
+
+    if (isBidirectional) {
+      // For bidirectional arrows, adjust the start position
       if (startx < stopx) {
-        line.attr('x1', startx + 2 * SEQUENCE_NUMBER_RADIUS);
+        lineStartX = startx + SEQUENCE_NUMBER_RADIUS * 2;
       } else {
-        line.attr('x1', startx + SEQUENCE_NUMBER_RADIUS);
+        lineStartX = startx - SEQUENCE_NUMBER_RADIUS + (hasCentralConn ? -5 : 0);
+        lineStartX +=
+          msg?.centralConnection === diagObj.db.LINETYPE.CENTRAL_CONNECTION_DUAL ||
+          msg?.centralConnection === diagObj.db.LINETYPE.CENTRAL_CONNECTION_REVERSE
+            ? -7.5
+            : 0;
       }
+      line.attr('x1', lineStartX);
+    } else if (isReverseArrowType) {
+      // For reverse arrows, adjust the stop position (where the arrowhead is)
+      if (stopx > startx) {
+        lineStopX = stopx - 2 * SEQUENCE_NUMBER_RADIUS;
+      } else {
+        lineStopX = stopx - SEQUENCE_NUMBER_RADIUS;
+        lineStartX +=
+          msg?.centralConnection === diagObj.db.LINETYPE.CENTRAL_CONNECTION_DUAL ||
+          msg?.centralConnection === diagObj.db.LINETYPE.CENTRAL_CONNECTION_REVERSE
+            ? -7.5
+            : 0;
+      }
+      lineStopX += hasCentralConn ? 15 : 0;
+
+      line.attr('x2', lineStopX);
+      line.attr('x1', lineStartX);
+    } else {
+      line.attr('x1', startx + SEQUENCE_NUMBER_RADIUS);
+    }
+
+    // Calculate autonumber X position
+    let autonumberX = 0;
+    const isSelfMessage = startx === stopx;
+    const isLeftToRight = startx <= stopx;
+
+    if (isSelfMessage) {
+      autonumberX = msgModel.fromBounds + 1;
+    } else if (isReverseArrowType) {
+      autonumberX = isLeftToRight ? msgModel.toBounds - 1 : msgModel.fromBounds + 1;
+    } else {
+      autonumberX = isLeftToRight ? msgModel.fromBounds + 1 : msgModel.toBounds - 1;
     }
 
     diagram
       .append('line')
-      .attr('x1', startx)
+      .attr('x1', autonumberX)
       .attr('y1', lineStartY)
-      .attr('x2', startx)
+      .attr('x2', autonumberX)
       .attr('y2', lineStartY)
       .attr('stroke-width', 0)
       .attr('marker-start', 'url(' + url + '#sequencenumber)');
 
     diagram
       .append('text')
-      .attr('x', startx)
+      .attr('x', autonumberX)
       .attr('y', lineStartY + 4)
       .attr('font-family', 'sans-serif')
       .attr('font-size', '12px')
@@ -857,6 +1057,10 @@ export const draw = async function (_text: string, id: string, _version: string,
   svgDraw.insertArrowCrossHead(diagram);
   svgDraw.insertArrowFilledHead(diagram);
   svgDraw.insertSequenceNumber(diagram);
+  svgDraw.insertSolidTopArrowHead(diagram);
+  svgDraw.insertSolidBottomArrowHead(diagram);
+  svgDraw.insertStickTopArrowHead(diagram);
+  svgDraw.insertStickBottomArrowHead(diagram);
 
   /**
    * @param msg - The message to draw.
@@ -895,6 +1099,12 @@ export const draw = async function (_text: string, id: string, _version: string,
         await drawNote(diagram, noteModel);
         break;
       case diagObj.db.LINETYPE.ACTIVE_START:
+        bounds.newActivation(msg, diagram, actors);
+        break;
+      case diagObj.db.LINETYPE.CENTRAL_CONNECTION:
+        bounds.newActivation(msg, diagram, actors);
+        break;
+      case diagObj.db.LINETYPE.CENTRAL_CONNECTION_REVERSE:
         bounds.newActivation(msg, diagram, actors);
         break;
       case diagObj.db.LINETYPE.ACTIVE_END:
@@ -1055,7 +1265,7 @@ export const draw = async function (_text: string, id: string, _version: string,
             createdActors,
             destroyedActors
           );
-          messagesToDraw.push({ messageModel: msgModel, lineStartY: lineStartY });
+          messagesToDraw.push({ messageModel: msgModel, lineStartY: lineStartY, msg });
           bounds.models.addMessage(msgModel);
         } catch (e) {
           log.error('error while drawing message', e);
@@ -1068,6 +1278,27 @@ export const draw = async function (_text: string, id: string, _version: string,
         diagObj.db.LINETYPE.SOLID_OPEN,
         diagObj.db.LINETYPE.DOTTED_OPEN,
         diagObj.db.LINETYPE.SOLID,
+
+        diagObj.db.LINETYPE.SOLID_TOP,
+        diagObj.db.LINETYPE.SOLID_BOTTOM,
+        diagObj.db.LINETYPE.STICK_TOP,
+        diagObj.db.LINETYPE.STICK_BOTTOM,
+
+        diagObj.db.LINETYPE.SOLID_TOP_DOTTED,
+        diagObj.db.LINETYPE.SOLID_BOTTOM_DOTTED,
+        diagObj.db.LINETYPE.STICK_TOP_DOTTED,
+        diagObj.db.LINETYPE.STICK_BOTTOM_DOTTED,
+
+        diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE,
+        diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE,
+        diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE,
+        diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE,
+
+        diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE_DOTTED,
+        diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE_DOTTED,
+        diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE_DOTTED,
+        diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE_DOTTED,
+
         diagObj.db.LINETYPE.DOTTED,
         diagObj.db.LINETYPE.SOLID_CROSS,
         diagObj.db.LINETYPE.DOTTED_CROSS,
@@ -1087,7 +1318,7 @@ export const draw = async function (_text: string, id: string, _version: string,
   await drawActors(diagram, actors, actorKeys, false);
 
   for (const e of messagesToDraw) {
-    await drawMessage(diagram, e.messageModel, e.lineStartY, diagObj);
+    await drawMessage(diagram, e.messageModel, e.lineStartY, diagObj, e.msg);
   }
   if (conf.mirrorActors) {
     await drawActors(diagram, actors, actorKeys, true);
@@ -1461,12 +1692,127 @@ const buildNoteModel = async function (msg, actors, diagObj) {
   return noteModel;
 };
 
+// Central connection positioning constants
+const CENTRAL_CONNECTION_BASE_OFFSET = 4;
+const CENTRAL_CONNECTION_BIDIRECTIONAL_OFFSET = 6;
+
+/**
+ * Check if a message has central connection
+ * @param msg - The message object
+ * @param diagObj - The diagram object containing LINETYPE constants
+ * @returns True if the message has any type of central connection
+ */
+const hasCentralConnection = function (msg, diagObj) {
+  const { CENTRAL_CONNECTION, CENTRAL_CONNECTION_REVERSE, CENTRAL_CONNECTION_DUAL } =
+    diagObj.db.LINETYPE;
+  return [CENTRAL_CONNECTION, CENTRAL_CONNECTION_REVERSE, CENTRAL_CONNECTION_DUAL].includes(
+    msg.centralConnection
+  );
+};
+
+/**
+ * Calculate the positioning offset for central connection arrows
+ * @param msg - The message object
+ * @param diagObj - The diagram object containing LINETYPE constants
+ * @param isArrowToRight - Whether the arrow is pointing to the right
+ * @returns The offset to apply to startx position
+ */
+const calculateCentralConnectionOffset = function (msg, diagObj, isArrowToRight) {
+  const {
+    CENTRAL_CONNECTION_REVERSE,
+    CENTRAL_CONNECTION_DUAL,
+    BIDIRECTIONAL_SOLID,
+    BIDIRECTIONAL_DOTTED,
+  } = diagObj.db.LINETYPE;
+
+  let offset = 0;
+
+  if (
+    msg.centralConnection === CENTRAL_CONNECTION_REVERSE ||
+    msg.centralConnection === CENTRAL_CONNECTION_DUAL
+  ) {
+    offset += CENTRAL_CONNECTION_BASE_OFFSET;
+  }
+
+  if (
+    (msg.centralConnection === CENTRAL_CONNECTION_REVERSE ||
+      msg.centralConnection === CENTRAL_CONNECTION_DUAL) &&
+    (msg.type === BIDIRECTIONAL_SOLID || msg.type === BIDIRECTIONAL_DOTTED)
+  ) {
+    offset += isArrowToRight ? 0 : -CENTRAL_CONNECTION_BIDIRECTIONAL_OFFSET;
+  }
+
+  return offset;
+};
+
+/**
+ * Check if a message is a reverse arrow type
+ * @param msg - The message object
+ * @param diagObj - The diagram object containing LINETYPE constants
+ * @returns True if the message is a reverse arrow type
+ */
+const isReverseArrowType = function (msg, diagObj) {
+  const {
+    SOLID_ARROW_TOP_REVERSE,
+    SOLID_ARROW_TOP_REVERSE_DOTTED,
+    SOLID_ARROW_BOTTOM_REVERSE,
+    SOLID_ARROW_BOTTOM_REVERSE_DOTTED,
+    STICK_ARROW_TOP_REVERSE,
+    STICK_ARROW_TOP_REVERSE_DOTTED,
+    STICK_ARROW_BOTTOM_REVERSE,
+    STICK_ARROW_BOTTOM_REVERSE_DOTTED,
+  } = diagObj.db.LINETYPE;
+
+  return [
+    SOLID_ARROW_TOP_REVERSE,
+    SOLID_ARROW_TOP_REVERSE_DOTTED,
+    SOLID_ARROW_BOTTOM_REVERSE,
+    SOLID_ARROW_BOTTOM_REVERSE_DOTTED,
+    STICK_ARROW_TOP_REVERSE,
+    STICK_ARROW_TOP_REVERSE_DOTTED,
+    STICK_ARROW_BOTTOM_REVERSE,
+    STICK_ARROW_BOTTOM_REVERSE_DOTTED,
+  ].includes(msg.type);
+};
+
+/**
+ * Check if a message is a bidirectional arrow type
+ * @param msg - The message object
+ * @param diagObj - The diagram object containing LINETYPE constants
+ * @returns True if the message is a bidirectional arrow type
+ */
+const isBidirectionalArrowType = function (msg, diagObj) {
+  const { BIDIRECTIONAL_SOLID, BIDIRECTIONAL_DOTTED } = diagObj.db.LINETYPE;
+  return [BIDIRECTIONAL_SOLID, BIDIRECTIONAL_DOTTED].includes(msg.type);
+};
+
 const buildMessageModel = function (msg, actors, diagObj) {
   if (
     ![
       diagObj.db.LINETYPE.SOLID_OPEN,
       diagObj.db.LINETYPE.DOTTED_OPEN,
       diagObj.db.LINETYPE.SOLID,
+
+      diagObj.db.LINETYPE.SOLID_TOP,
+      diagObj.db.LINETYPE.SOLID_BOTTOM,
+      diagObj.db.LINETYPE.STICK_TOP,
+      diagObj.db.LINETYPE.STICK_BOTTOM,
+
+      diagObj.db.LINETYPE.SOLID_TOP_DOTTED,
+      diagObj.db.LINETYPE.SOLID_BOTTOM_DOTTED,
+      diagObj.db.LINETYPE.STICK_TOP_DOTTED,
+      diagObj.db.LINETYPE.STICK_BOTTOM_DOTTED,
+
+      diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE,
+      diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE,
+      diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE,
+      diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE,
+
+      diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE_DOTTED,
+      diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE_DOTTED,
+      diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE_DOTTED,
+      diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE_DOTTED,
+
       diagObj.db.LINETYPE.DOTTED,
       diagObj.db.LINETYPE.SOLID_CROSS,
       diagObj.db.LINETYPE.DOTTED_CROSS,
@@ -1484,6 +1830,8 @@ const buildMessageModel = function (msg, actors, diagObj) {
   let startx = isArrowToRight ? fromRight : fromLeft;
   let stopx = isArrowToRight ? toLeft : toRight;
 
+  // Apply central connection positioning adjustments
+  startx += calculateCentralConnectionOffset(msg, diagObj, isArrowToRight);
   // As the line width is considered, the left and right values will be off by 2.
   const isArrowToActivation = Math.abs(toLeft - toRight) > 2;
 
@@ -1517,7 +1865,30 @@ const buildMessageModel = function (msg, actors, diagObj) {
      * Shorten the length of arrow at the end and move the marker forward (using refX) to have a clean arrowhead
      * This is not required for open arrows that don't have arrowheads
      */
-    if (![diagObj.db.LINETYPE.SOLID_OPEN, diagObj.db.LINETYPE.DOTTED_OPEN].includes(msg.type)) {
+    if (
+      ![
+        diagObj.db.LINETYPE.SOLID_OPEN,
+        diagObj.db.LINETYPE.DOTTED_OPEN,
+
+        diagObj.db.LINETYPE.STICK_TOP,
+        diagObj.db.LINETYPE.STICK_BOTTOM,
+
+        diagObj.db.LINETYPE.STICK_TOP_DOTTED,
+        diagObj.db.LINETYPE.STICK_BOTTOM_DOTTED,
+
+        diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE_DOTTED,
+        diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE_DOTTED,
+
+        diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE,
+        diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE,
+
+        diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE_DOTTED,
+        diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE_DOTTED,
+
+        diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE,
+        diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE,
+      ].includes(msg.type)
+    ) {
       stopx += adjustValue(3);
     }
 
@@ -1525,9 +1896,14 @@ const buildMessageModel = function (msg, actors, diagObj) {
      * Shorten start position of bidirectional arrow to accommodate for second arrowhead
      */
     if (
-      [diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID, diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED].includes(
-        msg.type
-      )
+      [
+        diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID,
+        diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED,
+        diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE_DOTTED,
+        diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE_DOTTED,
+        diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE,
+        diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE,
+      ].includes(msg.type)
     ) {
       startx -= adjustValue(3);
     }

@@ -85,8 +85,7 @@ Use double quotes and backticks "\` text \`" to enclose the markdown text.
 ```mermaid-example
 ---
 config:
-  flowchart:
-    htmlLabels: false
+  htmlLabels: false
 ---
 flowchart LR
     markdown["`This **is** _Markdown_`"]
@@ -99,8 +98,7 @@ flowchart LR
 ```mermaid
 ---
 config:
-  flowchart:
-    htmlLabels: false
+  htmlLabels: false
 ---
 flowchart LR
     markdown["`This **is** _Markdown_`"]
@@ -326,7 +324,9 @@ Below is a comprehensive list of the newly introduced shapes and their correspon
 
 | **Semantic Name**                 | **Shape Name**         | **Short Name** | **Description**                | **Alias Supported**                                              |
 | --------------------------------- | ---------------------- | -------------- | ------------------------------ | ---------------------------------------------------------------- |
+| Bang                              | Bang                   | `bang`         | Bang                           | `bang`                                                           |
 | Card                              | Notched Rectangle      | `notch-rect`   | Represents a card              | `card`, `notched-rectangle`                                      |
+| Cloud                             | Cloud                  | `cloud`        | cloud                          | `cloud`                                                          |
 | Collate                           | Hourglass              | `hourglass`    | Represents a collate operation | `collate`, `hourglass`                                           |
 | Com Link                          | Lightning Bolt         | `bolt`         | Communication link             | `com-link`, `lightning-bolt`                                     |
 | Comment                           | Curly Brace            | `brace`        | Adds a comment                 | `brace-l`, `comment`                                             |
@@ -1609,8 +1609,7 @@ The "Markdown Strings" feature enhances flowcharts and mind maps by offering a m
 ```mermaid-example
 ---
 config:
-  flowchart:
-    htmlLabels: false
+  htmlLabels: false
 ---
 flowchart LR
 subgraph "One"
@@ -1626,8 +1625,7 @@ end
 ```mermaid
 ---
 config:
-  flowchart:
-    htmlLabels: false
+  htmlLabels: false
 ---
 flowchart LR
 subgraph "One"
@@ -1758,7 +1756,8 @@ Beginner's tip—a full example using interactive links in a html context:
     };
     const config = {
       startOnLoad: true,
-      flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'cardinal' },
+      htmlLabels: true,
+      flowchart: { useMaxWidth: true, curve: 'cardinal' },
       securityLevel: 'loose',
     };
     mermaid.initialize(config);

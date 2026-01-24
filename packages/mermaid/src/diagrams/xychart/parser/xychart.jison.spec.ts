@@ -19,6 +19,8 @@ const mockDB: Record<string, Mock<any>> = {
   setYAxisRangeData: vi.fn(),
   setLineData: vi.fn(),
   setBarData: vi.fn(),
+  setAccTitle: vi.fn(),
+  setAccDescription: vi.fn(),
 };
 
 function clearMocks() {
@@ -439,5 +441,44 @@ describe('Testing xychart jison file', () => {
       { text: 'lineTitle2', type: 'text' },
       [45, 99, 12]
     );
+  });
+
+  describe('accessibility', () => {
+    it('should handle accTitle', () => {
+      const str = 'xychart\naccTitle: Accessible Title\nx-axis [Q1, Q2]\nline [1, 2]';
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.setAccTitle).toHaveBeenCalledWith('Accessible Title');
+    });
+
+    it('should handle single-line accDescr', () => {
+      const str = 'xychart\naccDescr: This is a description\nx-axis [Q1, Q2]\nline [1, 2]';
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.setAccDescription).toHaveBeenCalledWith('This is a description');
+    });
+
+    it('should handle multiline accDescr', () => {
+      const str = `xychart
+accDescr {
+  This is a multiline
+  description
+}
+x-axis [Q1, Q2]
+line [1, 2]`;
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.setAccDescription).toHaveBeenCalledWith('This is a multiline\n  description');
+    });
+
+    it('should handle both accTitle and accDescr', () => {
+      const str = `xychart
+accTitle: Sales Overview
+accDescr: Revenue report for Q1-Q4
+title "Revenue Report"
+x-axis [Q1, Q2, Q3, Q4]
+line [45, 67, 89, 55]`;
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.setAccTitle).toHaveBeenCalledWith('Sales Overview');
+      expect(mockDB.setAccDescription).toHaveBeenCalledWith('Revenue report for Q1-Q4');
+      expect(mockDB.setDiagramTitle).toHaveBeenCalledWith('Revenue Report');
+    });
   });
 });

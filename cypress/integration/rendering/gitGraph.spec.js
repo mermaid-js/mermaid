@@ -1569,4 +1569,514 @@ gitGraph TB:
       {}
     );
   });
+
+  describe('showBranches and showCommitLabel directives', () => {
+    it('77: should show branch lines when showBranches is true (default)', () => {
+      imgSnapshotTest(
+        `---
+          config:
+            gitGraph:
+              showBranches: true
+              showCommitLabel: true
+              rotateCommitLabel: false
+              parallelCommits: false
+          ---
+          gitGraph
+            commit id: "1"
+            commit id: "2"
+            branch develop
+            checkout develop
+            commit id: "3"
+            commit id: "4"
+            checkout main
+            commit id: "5"
+            commit id: "6"
+        `,
+        {}
+      );
+    });
+
+    it('78: should hide branch lines when showBranches is false', () => {
+      imgSnapshotTest(
+        `---
+          config:
+            gitGraph:
+              showBranches: false
+              showCommitLabel: true
+              rotateCommitLabel: false
+              parallelCommits: false
+          ---
+          gitGraph
+            commit id: "1"
+            commit id: "2"
+            branch develop
+            checkout develop
+            commit id: "3"
+            commit id: "4"
+            checkout main
+            commit id: "5"
+            commit id: "6"
+        `,
+        {}
+      );
+    });
+
+    it('79: should show commit labels when showCommitLabel is true (default)', () => {
+      imgSnapshotTest(
+        `---
+          config:
+            gitGraph:
+              showBranches: true
+              showCommitLabel: true
+              rotateCommitLabel: false
+              parallelCommits: false
+          ---
+          gitGraph
+            commit id: "1"
+            commit id: "2"
+            branch develop
+            checkout develop
+            commit id: "3"
+            commit id: "4"
+            checkout main
+            commit id: "5"
+            commit id: "6"
+        `,
+        {}
+      );
+    });
+
+    it('80: should hide commit labels when showCommitLabel is false', () => {
+      imgSnapshotTest(
+        `---
+          config:
+            gitGraph:
+              showBranches: true
+              showCommitLabel: false
+              rotateCommitLabel: false
+              parallelCommits: false
+          ---
+          gitGraph
+            commit id: "1"
+            commit id: "2"
+            branch develop
+            checkout develop
+            commit id: "3"
+            commit id: "4"
+            checkout main
+            commit id: "5"
+            commit id: "6"
+        `,
+        {}
+      );
+    });
+
+    it('81: should show both branches and commit labels when both directives are true (default)', () => {
+      imgSnapshotTest(
+        `---
+          config:
+            gitGraph:
+              showBranches: true
+              showCommitLabel: true
+              rotateCommitLabel: false
+              parallelCommits: false
+         ---
+          gitGraph
+            commit id: "1"
+            commit id: "2"
+            branch develop
+            checkout develop
+            commit id: "3"
+            commit id: "4"
+            checkout main
+            commit id: "5"
+            commit id: "6"
+        `,
+        {}
+      );
+    });
+
+    it('82: should hide both branches and commit labels when both directives are false', () => {
+      imgSnapshotTest(
+        `---
+          config:
+            gitGraph:
+              showBranches: false
+              showCommitLabel: false
+              rotateCommitLabel: false
+              parallelCommits: false
+          ---
+          gitGraph
+            commit id: "1"
+            commit id: "2"
+            branch develop
+            checkout develop
+            commit id: "3"
+            commit id: "4"
+            checkout main
+            commit id: "5"
+            commit id: "6"
+        `,
+        {}
+      );
+    });
+
+    it('83: should show branch lines with merge commits when showBranches is true', () => {
+      imgSnapshotTest(
+        `---
+          config:
+            gitGraph:
+              showBranches: true
+              showCommitLabel: true
+              rotateCommitLabel: false
+              parallelCommits: false
+          ---
+          gitGraph
+            commit id: "1"
+            commit id: "2"
+            branch develop
+            checkout develop
+            commit id: "3"
+            commit id: "4"
+            checkout main
+            merge develop
+            commit id: "5"
+            commit id: "6"
+        `,
+        {}
+      );
+    });
+
+    it('84: should hide branch lines with merge commits when showBranches is false', () => {
+      imgSnapshotTest(
+        `---
+          config:
+            gitGraph:
+              showBranches: false
+              showCommitLabel: true
+              rotateCommitLabel: false
+              parallelCommits: false
+          ---
+          gitGraph
+            commit id: "1"
+            commit id: "2"
+            branch develop
+            checkout develop
+            commit id: "3"
+            commit id: "4"
+            checkout main
+            merge develop
+            commit id: "5"
+            commit id: "6"
+        `,
+        {}
+      );
+    });
+
+    it('85: should show commit labels with tags when showCommitLabel is true', () => {
+      imgSnapshotTest(
+        `---
+          config:
+            gitGraph:
+              showBranches: true
+              showCommitLabel: true
+              rotateCommitLabel: false
+              parallelCommits: false
+          ---
+          gitGraph
+            commit id: "1" tag: "v1.0"
+            commit id: "2"
+            branch develop
+            checkout develop
+            commit id: "3" tag: "v1.1"
+            commit id: "4"
+            checkout main
+            merge develop tag: "v2.0"
+            commit id: "5"
+        `,
+        {}
+      );
+    });
+
+    it('86: should hide commit labels with tags when showCommitLabel is false', () => {
+      imgSnapshotTest(
+        `---
+        config:
+          gitGraph:
+            showBranches: true
+            showCommitLabel: false
+            rotateCommitLabel: false
+            parallelCommits: false
+        ---
+        gitGraph
+          commit id: "1" tag: "v1.0"
+          commit id: "2"
+          branch develop
+          checkout develop
+          commit id: "3" tag: "v1.1"
+          commit id: "4"
+          checkout main
+          merge develop tag: "v2.0"
+          commit id: "5"
+        `,
+        {}
+      );
+    });
+
+    it('87: should show branches with TB orientation when showBranches is true', () => {
+      imgSnapshotTest(
+        `---
+        config:
+          gitGraph:
+            showBranches: true
+            showCommitLabel: true
+            rotateCommitLabel: false
+            parallelCommits: false
+        ---
+        gitGraph TB:
+          commit id: "1"
+          commit id: "2"
+          branch develop
+          checkout develop
+          commit id: "3"
+          commit id: "4"
+          checkout main
+          commit id: "5"
+        `,
+        {}
+      );
+    });
+
+    it('88: should hide branches with TB orientation when showBranches is false', () => {
+      imgSnapshotTest(
+        `---
+          config:
+            gitGraph:
+              showBranches: false
+              showCommitLabel: true
+              rotateCommitLabel: false
+              parallelCommits: false
+          ---
+          gitGraph TB:
+            commit id: "1"
+            commit id: "2"
+            branch develop
+            checkout develop
+            commit id: "3"
+            commit id: "4"
+            checkout main
+            commit id: "5"
+        `,
+        {}
+      );
+    });
+
+    it('89: should show commit labels with BT orientation when showCommitLabel is true', () => {
+      imgSnapshotTest(
+        `---
+        config:
+          gitGraph:
+            showBranches: true
+            showCommitLabel: true
+            rotateCommitLabel: false
+            parallelCommits: false
+        ---
+        gitGraph BT:
+          commit id: "1"
+          commit id: "2"
+          branch develop
+          checkout develop
+          commit id: "3"
+          commit id: "4"
+          checkout main
+          commit id: "5"
+        `,
+        {}
+      );
+    });
+
+    it('90: should hide commit labels with BT orientation when showCommitLabel is false', () => {
+      imgSnapshotTest(
+        `---
+          config:
+            gitGraph:
+              showBranches: true
+              showCommitLabel: false
+              rotateCommitLabel: false
+              parallelCommits: false
+          ---
+          gitGraph BT:
+            commit id: "1"
+            commit id: "2"
+            branch develop
+            checkout develop
+            commit id: "3"
+            commit id: "4"
+            checkout main
+            commit id: "5"
+        `,
+        {}
+      );
+    });
+
+    it('91: should render with rotateCommitLabel set to true', () => {
+      imgSnapshotTest(
+        `---
+          config:
+            gitGraph:
+              showBranches: true
+              showCommitLabel: true
+              rotateCommitLabel: true
+              parallelCommits: false
+          ---
+          gitGraph
+            commit id: "Alpha"
+            commit id: "Beta"
+            branch develop
+            checkout develop
+            commit id: "Gamma"
+            commit id: "Delta"
+            checkout main
+            commit id: "Epsilon"
+        `,
+        {}
+      );
+    });
+
+    it('92: should render with rotateCommitLabel set to false', () => {
+      imgSnapshotTest(
+        `---
+        config:
+          gitGraph:
+            showBranches: true
+            showCommitLabel: true
+            rotateCommitLabel: false
+            parallelCommits: false
+        ---
+        gitGraph
+          commit id: "Alpha"
+          commit id: "Beta"
+          branch develop
+          checkout develop
+          commit id: "Gamma"
+          commit id: "Delta"
+          checkout main
+          commit id: "Epsilon"
+        `,
+        {}
+      );
+    });
+
+    it('93: should render with parallelCommits set to true', () => {
+      imgSnapshotTest(
+        `---
+          config:
+            gitGraph:
+              showBranches: true
+              showCommitLabel: true
+              rotateCommitLabel: false
+              parallelCommits: true
+          ---
+          gitGraph
+            commit id: "1"
+            commit id: "2"
+            branch develop
+            branch feature
+            checkout develop
+            commit id: "3"
+            checkout feature
+            commit id: "4"
+            checkout main
+            commit id: "5"
+            checkout develop
+            commit id: "6"
+            checkout feature
+            commit id: "7"
+        `,
+        {}
+      );
+    });
+
+    it('94: should render with parallelCommits set to false', () => {
+      imgSnapshotTest(
+        `---
+          config:
+            gitGraph:
+              showBranches: true
+              showCommitLabel: true
+              rotateCommitLabel: false
+              parallelCommits: false
+          ---
+          gitGraph
+            commit id: "1"
+            commit id: "2"
+            branch develop
+            branch feature
+            checkout develop
+            commit id: "3"
+            checkout feature
+            commit id: "4"
+            checkout main
+            commit id: "5"
+            checkout develop
+            commit id: "6"
+            checkout feature
+            commit id: "7"
+        `,
+        {}
+      );
+    });
+
+    it('95: should render with custom mainBranchName', () => {
+      imgSnapshotTest(
+        `---
+        config:
+          gitGraph:
+            showBranches: true
+            showCommitLabel: true
+            rotateCommitLabel: false
+            parallelCommits: false
+            mainBranchName: 'trunk'
+        ---
+        gitGraph
+          commit id: "1"
+          commit id: "2"
+          branch develop
+          checkout develop
+          commit id: "3"
+          commit id: "4"
+          checkout trunk
+          commit id: "5"
+          commit id: "6"
+        `,
+        {}
+      );
+    });
+
+    it('96: should render with custom mainBranchOrder', () => {
+      imgSnapshotTest(
+        `---
+          config:
+            gitGraph:
+              showBranches: true
+              showCommitLabel: true
+              rotateCommitLabel: false
+              parallelCommits: false
+              mainBranchOrder: 2
+          ---
+          gitGraph
+            commit id: "1"
+            branch feature1
+            branch feature2
+            checkout feature1
+            commit id: "2"
+            checkout feature2
+            commit id: "3"
+            checkout main
+            commit id: "4"
+        `,
+        {}
+      );
+    });
+  });
 });

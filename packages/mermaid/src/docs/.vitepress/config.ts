@@ -1,6 +1,6 @@
 import type { MarkdownOptions } from 'vitepress';
 import { defineConfig } from 'vitepress';
-import packageJson from '../../../package.json' assert { type: 'json' };
+import packageJson from '../../../package.json' with { type: 'json' };
 import { addCanonicalUrls } from './canonical-urls.js';
 import MermaidExample from './mermaid-markdown-all.js';
 
@@ -203,6 +203,7 @@ function sidebarConfig() {
         { text: 'Accessibility', link: '/config/accessibility' },
         { text: 'Mermaid CLI', link: '/config/mermaidCLI' },
         { text: 'FAQ', link: '/config/faq' },
+        { text: 'Layouts', link: '/config/layouts' },
       ],
     },
   ];

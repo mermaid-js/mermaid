@@ -1,0 +1,64 @@
+import type { Bounds, D3Selection, Point } from '../../../types.js';
+import type { Node } from '../../types.js';
+import intersect from '../intersect/index.js';
+import { styles2String } from './handDrawnShapeStyles.js';
+import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
+
+export async function defaultMindmapNode<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  node: Node
+) {
+  const { labelStyles, nodeStyles } = styles2String(node);
+  node.labelStyle = labelStyles;
+
+  const { shapeSvg, bbox, halfPadding, label } = await labelHelper(
+    parent,
+    node,
+    getNodeClasses(node)
+  );
+
+  const w = bbox.width + 8 * halfPadding;
+  const h = bbox.height + 2 * halfPadding;
+  const rd = 5;
+
+  const rectPath = `
+    M${-w / 2} ${h / 2 - rd}
+    v${-h + 2 * rd}
+    q0,-${rd} ${rd},-${rd}
+    h${w - 2 * rd}
+    q${rd},0 ${rd},${rd}
+    v${h - 2 * rd}
+    q0,${rd} -${rd},${rd}
+    h${-w + 2 * rd}
+    q-${rd},0 -${rd},-${rd}
+    Z
+  `;
+
+  const bg = shapeSvg
+    .append('path')
+    .attr('id', 'node-' + node.id)
+    .attr('class', 'node-bkg node-' + node.type)
+    .attr('style', nodeStyles)
+    .attr('d', rectPath);
+
+  shapeSvg
+    .append('line')
+    .attr('class', 'node-line-')
+    .attr('x1', -w / 2)
+    .attr('y1', h / 2)
+    .attr('x2', w / 2)
+    .attr('y2', h / 2);
+
+  label.attr('transform', `translate(${-bbox.width / 2}, ${-bbox.height / 2})`);
+  shapeSvg.append(() => label.node());
+
+  updateNodeBounds(node, bg);
+  node.calcIntersect = function (bounds: Bounds, point: Point) {
+    return intersect.rect(bounds, point);
+  };
+  node.intersect = function (point) {
+    return intersect.rect(node, point);
+  };
+
+  return shapeSvg;
+}

@@ -171,7 +171,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
       background-color: ${options.edgeLabelBackground};
       padding: 2px;
     }
-    rect {
+    .label rect {
       opacity: 0.5;
       background-color: ${options.edgeLabelBackground};
       fill: ${options.edgeLabelBackground};
