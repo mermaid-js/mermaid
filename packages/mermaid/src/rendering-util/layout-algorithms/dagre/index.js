@@ -42,9 +42,51 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
     log.info('Recursive edges', graph.edge(graph.edges()[0]));
   }
   const clusters = elem.insert('g').attr('class', 'clusters');
-  const edgePaths = elem.insert('g').attr('class', 'edgePaths');
-  const edgeLabels = elem.insert('g').attr('class', 'edgeLabels');
-  const nodes = elem.insert('g').attr('class', 'nodes');
+  const edgePaths = elem.insert('g').attr('class', 'edgePaths').attr('aria-hidden', 'true');
+  const edgeLabels = elem.insert('g').attr('class', 'edgeLabels').attr('aria-hidden', 'true');
+  const nodes = elem.insert('g').attr('class', 'nodes').attr('role', 'list');
+
+  const inboundEdges = new Map(),
+    outboundEdges = new Map();
+  // If nodes need to include a list of connected edges, for accessibility
+  // purposes, scan the edges once up front, instead of calling the O(|E|)
+  // inEdges() or outEdges() for each node.
+  if (siteConfig.accessibility.listInboundEdges || siteConfig.accessibility.listOutboundEdges) {
+    graph.edges().map(({ v, w, name }) => {
+      const edgeDetails = graph.edge(v, w, name);
+      // https://www.ashleysheridan.co.uk/blog/Creating+Accessible+Flowcharts#unique-links
+      // recommends using different text for accessible vs visual edge labels,
+      // to ensure that the accessibility tree's links all have unique labels.
+      // This will require a change to the diagram syntax, so it's not done yet.
+      const edgeLabel = edgeDetails.label;
+      if (siteConfig.accessibility.listInboundEdges) {
+        let inbound = inboundEdges.get(w);
+        if (inbound === undefined) {
+          inbound = [];
+          inboundEdges.set(w, inbound);
+        }
+        const vDetails = graph.node(v);
+        inbound.push({
+          edgeLabel,
+          nodeDomId: vDetails.domId || vDetails.id,
+          nodeLabel: vDetails.label,
+        });
+      }
+      if (siteConfig.accessibility.listOutboundEdges) {
+        let outbound = outboundEdges.get(v);
+        if (outbound === undefined) {
+          outbound = [];
+          outboundEdges.set(v, outbound);
+        }
+        const wDetails = graph.node(w);
+        outbound.push({
+          edgeLabel,
+          nodeDomId: wDetails.domId || wDetails.id,
+          nodeLabel: wDetails.label,
+        });
+      }
+    });
+  }
 
   // Insert nodes, this will insert them into the dom and each node will get a size. The size is updated
   // to the abstract node and is later used by dagre for the layout
@@ -125,7 +167,12 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
           // insertCluster(clusters, graph.node(v));
         } else {
           log.trace('Node - the non recursive path XAX', v, nodes, graph.node(v), dir);
-          await insertNode(nodes, graph.node(v), { config: siteConfig, dir });
+          await insertNode(nodes, graph.node(v), {
+            config: siteConfig,
+            dir,
+            inboundEdges: inboundEdges.get(v),
+            outboundEdges: outboundEdges.get(v),
+          });
         }
       }
     })
