@@ -359,7 +359,8 @@ const drawCommitTags = (
   gLabels: d3.Selection<SVGGElement, unknown, HTMLElement, any>,
   commit: Commit,
   commitPosition: CommitPositionOffset,
-  pos: number
+  pos: number,
+  gitGraphConfig: GitGraphDiagramConfig
 ) => {
   if (commit.tags.length > 0) {
     let yOffset = 0;
@@ -418,27 +419,33 @@ const drawCommitTags = (
       if (dir === 'TB' || dir === 'BT') {
         const yOrigin = pos + yOffset;
 
-        rect
-          .attr('class', 'tag-label-bkg')
-          .attr(
-            'points',
-            `
+        rect.attr('class', 'tag-label-bkg').attr(
+          'points',
+          `
         ${commitPosition.x},${yOrigin + 2}
         ${commitPosition.x},${yOrigin - 2}
         ${commitPosition.x + LAYOUT_OFFSET},${yOrigin - h2 - 2}
         ${commitPosition.x + LAYOUT_OFFSET + maxTagBboxWidth + 4},${yOrigin - h2 - 2}
         ${commitPosition.x + LAYOUT_OFFSET + maxTagBboxWidth + 4},${yOrigin + h2 + 2}
         ${commitPosition.x + LAYOUT_OFFSET},${yOrigin + h2 + 2}`
-          )
-          .attr('transform', 'translate(12,12) rotate(45, ' + commitPosition.x + ',' + pos + ')');
-        hole
-          .attr('cx', commitPosition.x + PX / 2)
-          .attr('cy', yOrigin)
-          .attr('transform', 'translate(12,12) rotate(45, ' + commitPosition.x + ',' + pos + ')');
-        tag
-          .attr('x', commitPosition.x + 5)
-          .attr('y', yOrigin + 3)
-          .attr('transform', 'translate(14,14) rotate(45, ' + commitPosition.x + ',' + pos + ')');
+        );
+        hole.attr('cx', commitPosition.x + PX / 2).attr('cy', yOrigin);
+        tag.attr('x', commitPosition.x + 5).attr('y', yOrigin + 3);
+
+        if (gitGraphConfig.rotateTagLabel) {
+          rect.attr(
+            'transform',
+            'translate(12,12) rotate(45, ' + commitPosition.x + ',' + pos + ')'
+          );
+          hole.attr(
+            'transform',
+            'translate(12,12) rotate(45, ' + commitPosition.x + ',' + pos + ')'
+          );
+          tag.attr(
+            'transform',
+            'translate(14,14) rotate(45, ' + commitPosition.x + ',' + pos + ')'
+          );
+        }
       }
     }
   }
@@ -554,7 +561,7 @@ const drawCommits = (
       const branchIndex = branchPos.get(commit.branch)?.index ?? 0;
       drawCommitBullet(gBullets, commit, commitPosition, typeClass, branchIndex, commitSymbolType);
       drawCommitLabel(gLabels, commit, commitPosition, pos, gitGraphConfig);
-      drawCommitTags(gLabels, commit, commitPosition, pos);
+      drawCommitTags(gLabels, commit, commitPosition, pos, gitGraphConfig);
     }
     if (dir === 'TB' || dir === 'BT') {
       commitPos.set(commit.id, { x: commitPosition.x, y: commitPosition.posWithOffset });
@@ -890,7 +897,9 @@ const setBranchPosition = function (
   rotateCommitLabel: boolean
 ): number {
   branchPos.set(name, { pos, index });
-  pos += 50 + (rotateCommitLabel ? 40 : 0) + (dir === 'TB' || dir === 'BT' ? bbox.width / 2 : 0);
+  const rotationSpacing =
+    dir === 'TB' || dir === 'BT' ? (rotateCommitLabel ? 40 : 20) : rotateCommitLabel ? 40 : 0;
+  pos += 50 + rotationSpacing + (dir === 'TB' || dir === 'BT' ? bbox.width / 2 : 0);
   return pos;
 };
 
@@ -993,6 +1002,20 @@ if (import.meta.vitest) {
       bbox.width = 56.421875;
       const posNext = setBranchPosition('develop', pos, 1, bbox, true);
       expect(posNext).toBe(225.70703125);
+      expect(branchPos.get('develop')).toEqual({ pos: pos, index: 1 });
+    });
+
+    it('should setBranchPositions TB with rotateCommitLabel false', () => {
+      dir = 'TB';
+      bbox.width = 34.9921875;
+
+      const pos = setBranchPosition('main', 0, 0, bbox, false);
+      expect(pos).toBe(87.49609375);
+      expect(branchPos.get('main')).toEqual({ pos: 0, index: 0 });
+
+      bbox.width = 56.421875;
+      const posNext = setBranchPosition('develop', pos, 1, bbox, false);
+      expect(posNext).toBe(185.70703125);
       expect(branchPos.get('develop')).toEqual({ pos: pos, index: 1 });
     });
   });
