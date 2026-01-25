@@ -28,6 +28,7 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
   'packet',
   'architecture',
   'radar',
+  'accessibility', // Not a diagram type, but needs the same support for nested default values.
 ] as const;
 
 /**

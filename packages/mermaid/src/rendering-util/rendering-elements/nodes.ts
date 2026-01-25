@@ -50,8 +50,52 @@ export async function insertNode(
     el = await shapeHandler(elem, node, renderOptions);
     newEl = el;
   }
+  el.attr('role', 'listitem');
   if (node.tooltip) {
     el.attr('title', node.tooltip);
+  }
+
+  // If requested, add lists of inbound and outbound edges, which link to the
+  // node at the other end of the edge. Note that if this node had a link or
+  // click handler, this violates the accessibility rule against nesting
+  // interactive elements. Fixing that requires moving the <a> and click
+  // handlers under the element with id=node.id, which is too risky to do as
+  // part of this change. People creating truly accessible diagrams can avoid
+  // interactive nodes for now.
+  if (renderOptions.inboundEdges && renderOptions.config.accessibility?.inboundEdgesLabel) {
+    const inboundEdgeList = el
+      .append('g')
+      .attr('role', 'list')
+      .attr('aria-label', renderOptions.config.accessibility.inboundEdgesLabel);
+    for (const edge of renderOptions.inboundEdges) {
+      let linkText = edge.nodeLabel;
+      if (edge.edgeLabel) {
+        linkText = `"${edge.edgeLabel}" from "${linkText}"`;
+      }
+      const listItem = inboundEdgeList.append('g').attr('role', 'listitem');
+      listItem
+        .append('a')
+        .attr('xlink:href', '#' + edge.nodeDomId)
+        .attr('aria-label', linkText);
+    }
+  }
+  if (renderOptions.outboundEdges && renderOptions.config.accessibility?.outboundEdgesLabel) {
+    const outboundEdgeList = el
+      .append('g')
+      .attr('role', 'list')
+      .attr('aria-label', renderOptions.config.accessibility.outboundEdgesLabel);
+    for (const edge of renderOptions.outboundEdges) {
+      let linkText = edge.nodeLabel;
+      if (edge.edgeLabel) {
+        // Assume that edge labels are meant to be read in the context of their source node.
+        linkText = `${edge.edgeLabel}`;
+      }
+      const listItem = outboundEdgeList.append('g').attr('role', 'listitem');
+      listItem
+        .append('a')
+        .attr('xlink:href', '#' + edge.nodeDomId)
+        .attr('aria-label', linkText);
+    }
   }
 
   nodeElems.set(node.id, newEl);
