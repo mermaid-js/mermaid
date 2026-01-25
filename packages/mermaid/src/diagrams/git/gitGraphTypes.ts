@@ -129,6 +129,7 @@ export interface GitGraphDBRenderProvider extends Partial<GitGraphDB> {
   getDirection: () => DiagramOrientation;
   getHead: () => Commit | null;
   getDiagramTitle: () => string;
+  getConfig: () => Required<GitGraphDiagramConfig>;
 }
 
 export type DiagramOrientation = 'LR' | 'TB' | 'BT';

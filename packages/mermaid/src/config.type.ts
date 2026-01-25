@@ -1119,6 +1119,7 @@ export interface GitGraphDiagramConfig extends BaseDiagramConfig {
   showCommitLabel?: boolean;
   showBranches?: boolean;
   rotateCommitLabel?: boolean;
+  rotateTagLabel?: boolean;
   parallelCommits?: boolean;
   /**
    * Controls whether or arrow markers in html code are absolute paths or anchors.

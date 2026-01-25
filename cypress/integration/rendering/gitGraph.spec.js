@@ -2078,5 +2078,59 @@ gitGraph TB:
         {}
       );
     });
+
+    it('97: should render tags without rotation in TB mode when rotateTagLabel is false', () => {
+      imgSnapshotTest(
+        `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
+          'rotateCommitLabel': false,
+          'rotateTagLabel': false
+        } } }%%
+        gitGraph TB:
+          commit id: "1" tag: "v1.0"
+          commit id: "2" tag: "v1.1"
+          branch release
+          checkout release
+          commit id: "3" tag: "v2.0"
+        `,
+        {}
+      );
+    });
+
+    it('98: should render with adequate branch spacing in TB mode when rotateCommitLabel is false', () => {
+      imgSnapshotTest(
+        `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
+          'rotateCommitLabel': false
+        } } }%%
+        gitGraph TB:
+          commit id: "A" tag: "v1.0"
+          commit id: "B" tag: "v1.1"
+          branch feature1
+          checkout feature1
+          commit id: "C" tag: "beta1"
+          checkout main
+          branch feature2
+          checkout feature2
+          commit id: "D" tag: "beta2"
+        `,
+        {}
+      );
+    });
+
+    it('99: should render tags without rotation in BT mode when rotateTagLabel is false', () => {
+      imgSnapshotTest(
+        `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
+          'rotateCommitLabel': false,
+          'rotateTagLabel': false
+        } } }%%
+        gitGraph BT:
+          commit id: "A" tag: "v1.0"
+          commit id: "B" tag: "v1.1"
+          branch feature
+          checkout feature
+          commit id: "C" tag: "beta"
+        `,
+        {}
+      );
+    });
   });
 });
