@@ -206,7 +206,75 @@ export const drawGroups = async function (
     cy.nodes().map(async (node) => {
       const data = nodeData(node);
       if (data.type === 'group') {
-        const { h, w, x1, y1 } = node.boundingBox();
+        // Calculate group bounding box from child nodes and their rendered sizes
+        // so that long group names or wide children expand the group correctly.
+        const paddingVal = padding;
+        let x1 = Number.POSITIVE_INFINITY;
+        let y1 = Number.POSITIVE_INFINITY;
+        let x2 = Number.NEGATIVE_INFINITY;
+        let y2 = Number.NEGATIVE_INFINITY;
+
+        const children = node.children();
+        if (children && children.length > 0) {
+          children.forEach((child) => {
+            try {
+              const pos = child.position();
+              const childId = child.id();
+              const childElem = db.getElementById(childId);
+              // Fallback to cy child's data width/height if element not found
+              const cwFromData = child.data?.()?.width ?? 0;
+              const chFromData = child.data?.()?.height ?? 0;
+              let cw = Number(cwFromData);
+              let ch = Number(chFromData);
+              const bb = childElem?.node?.()?.getBBox?.();
+              if (bb?.width && bb?.height) {
+                cw = bb.width;
+                ch = bb.height;
+              }
+
+              const left = pos.x - cw / 2;
+              const right = pos.x + cw / 2;
+              const top = pos.y - ch / 2;
+              const bottom = pos.y + ch / 2;
+
+              if (left < x1) {
+                x1 = left;
+              }
+              if (top < y1) {
+                y1 = top;
+              }
+              if (right > x2) {
+                x2 = right;
+              }
+              if (bottom > y2) {
+                y2 = bottom;
+              }
+            } catch (_err) {
+              // ignore individual child errors and continue
+            }
+          });
+
+          // If children were processed, calculate width/height and include padding
+          if (x1 === Number.POSITIVE_INFINITY) {
+            x1 = 0;
+            y1 = 0;
+            x2 = 0;
+            y2 = 0;
+          }
+        } else {
+          // No children: fall back to cytoscape boundingBox
+          const bb = node.boundingBox();
+          x1 = bb.x1;
+          y1 = bb.y1;
+          x2 = bb.x2;
+          y2 = bb.y2;
+        }
+
+        // Apply padding around the group
+        x1 = x1 - paddingVal;
+        y1 = y1 - paddingVal;
+        const w = x2 - x1 + paddingVal * 2;
+        const h = y2 - y1 + paddingVal * 2;
 
         const groupsNode = groupsEl.append('rect');
         groupsNode
