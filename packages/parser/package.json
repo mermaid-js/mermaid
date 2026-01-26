@@ -33,7 +33,7 @@
     "ast"
   ],
   "dependencies": {
-    "langium": "3.3.1"
+    "langium": "4.1.3"
   },
   "devDependencies": {
     "chevrotain": "^11.0.3"
