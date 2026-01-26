@@ -22,7 +22,7 @@ Defined in: [packages/mermaid/src/errors.ts:1](https://github.com/mermaid-js/mer
 
 > `optional` **cause**: `unknown`
 
-Defined in: node_modules/.pnpm/typescript\@5.7.3/node_modules/typescript/lib/lib.es2022.error.d.ts:26
+Defined in: node_modules/.pnpm/typescript\@5.9.3/node_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 #### Inherited from
 
@@ -34,7 +34,7 @@ Defined in: node_modules/.pnpm/typescript\@5.7.3/node_modules/typescript/lib/lib
 
 > **message**: `string`
 
-Defined in: node_modules/.pnpm/typescript\@5.7.3/node_modules/typescript/lib/lib.es5.d.ts:1077
+Defined in: node_modules/.pnpm/typescript\@5.9.3/node_modules/typescript/lib/lib.es5.d.ts:1077
 
 #### Inherited from
 
@@ -46,7 +46,7 @@ Defined in: node_modules/.pnpm/typescript\@5.7.3/node_modules/typescript/lib/lib
 
 > **name**: `string`
 
-Defined in: node_modules/.pnpm/typescript\@5.7.3/node_modules/typescript/lib/lib.es5.d.ts:1076
+Defined in: node_modules/.pnpm/typescript\@5.9.3/node_modules/typescript/lib/lib.es5.d.ts:1076
 
 #### Inherited from
 
@@ -58,7 +58,7 @@ Defined in: node_modules/.pnpm/typescript\@5.7.3/node_modules/typescript/lib/lib
 
 > `optional` **stack**: `string`
 
-Defined in: node_modules/.pnpm/typescript\@5.7.3/node_modules/typescript/lib/lib.es5.d.ts:1078
+Defined in: node_modules/.pnpm/typescript\@5.9.3/node_modules/typescript/lib/lib.es5.d.ts:1078
 
 #### Inherited from
 
