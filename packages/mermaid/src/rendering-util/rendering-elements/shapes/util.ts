@@ -49,7 +49,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
     {
       useHtmlLabels,
       width:
-        node.width ??
+        node.width ||
         (isMarkdown ? getConfig().flowchart?.wrappingWidth : Number.POSITIVE_INFINITY),
       // @ts-expect-error -- This is currently not used. Should this be `classes` instead?
       cssClasses: isMarkdown ? 'markdown-node-label' : undefined,
