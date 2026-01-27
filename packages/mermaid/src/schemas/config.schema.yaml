@@ -2162,6 +2162,15 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           If true, subgraphs without explicit direction will inherit the global graph direction
           (e.g., LR, TB, RL, BT). Defaults to false to preserve legacy layout behavior.
 
+      enableInteraction:
+        type: boolean
+        default: true
+        description: |
+          Enables interactive features for flowchart nodes:
+          - Click to highlight a node (uses drop shadow)
+          - Drag to rearrange nodes while keeping edges connected
+          When a node is highlighted, its connected edges are also highlighted.
+
   SankeyLinkColor:
     description: |
       Picks the color of the sankey diagram links, using the colors of the source and/or target of the links.
