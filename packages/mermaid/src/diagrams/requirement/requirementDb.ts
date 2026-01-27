@@ -331,6 +331,7 @@ export class RequirementDB implements DiagramDB {
         arrowTypeStart: isContains ? 'requirement_contains' : '',
         arrowTypeEnd: isContains ? '' : 'requirement_arrow',
         look: config.look,
+        labelType: 'markdown',
       };
 
       edges.push(edge);
