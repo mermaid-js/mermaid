@@ -4,10 +4,10 @@ import type { Node } from '../../types.js';
 import { userNodeOverrides, styles2String } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { drawRect } from './drawRect.js';
-import { getConfig, getEffectiveHtmlLabels } from '../../../config.js';
+import { getConfig } from '../../../config.js';
 import type { EntityNode } from '../../../diagrams/er/erTypes.js';
 import { createText } from '../../createText.js';
-import { parseGenericTypes } from '../../../diagrams/common/common.js';
+import { evaluate, parseGenericTypes } from '../../../diagrams/common/common.js';
 import { select } from 'd3';
 import { calculateTextWidth } from '../../../utils.js';
 import type { MermaidConfig } from '../../../config.type.js';
@@ -35,8 +35,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   }
 
   const config = getConfig();
-  const useHtmlLabels = getEffectiveHtmlLabels(config);
-  node.useHtmlLabels = useHtmlLabels;
+  node.useHtmlLabels = config.htmlLabels;
   let PADDING = config.er?.diagramPadding ?? 10;
   let TEXT_PADDING = config.er?.entityPadding ?? 6;
 
@@ -62,7 +61,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     const shapeSvg = await drawRect(parent, node, options);
 
     // drawRect doesn't center non-htmlLabels correctly as of now, so translate label
-    if (!useHtmlLabels) {
+    if (!evaluate(config.htmlLabels)) {
       const textElement = shapeSvg.select('text');
       const bbox = (textElement.node() as SVGTextElement)?.getBBox();
       textElement.attr('transform', `translate(${-bbox.width / 2}, 0)`);
@@ -70,7 +69,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     return shapeSvg;
   }
 
-  if (!useHtmlLabels) {
+  if (!config.htmlLabels) {
     PADDING *= 1.25;
     TEXT_PADDING *= 1.25;
   }
@@ -86,16 +85,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     .attr('class', cssClasses)
     .attr('id', node.domId || node.id);
 
-  const nameBBox = await addText(
-    shapeSvg,
-    node.label ?? '',
-    config,
-    useHtmlLabels,
-    0,
-    0,
-    ['name'],
-    labelStyles
-  );
+  const nameBBox = await addText(shapeSvg, node.label ?? '', config, 0, 0, ['name'], labelStyles);
   nameBBox.height += TEXT_PADDING;
   let yOffset = 0;
   const yOffsets = [];
@@ -111,7 +101,6 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
       shapeSvg,
       attribute.type,
       config,
-      useHtmlLabels,
       0,
       yOffset,
       ['attribute-type'],
@@ -122,7 +111,6 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
       shapeSvg,
       attribute.name,
       config,
-      useHtmlLabels,
       0,
       yOffset,
       ['attribute-name'],
@@ -133,7 +121,6 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
       shapeSvg,
       attribute.keys.join(),
       config,
-      useHtmlLabels,
       0,
       yOffset,
       ['attribute-keys'],
@@ -144,7 +131,6 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
       shapeSvg,
       attribute.comment,
       config,
-      useHtmlLabels,
       0,
       yOffset,
       ['attribute-comment'],
@@ -332,7 +318,6 @@ async function addText<T extends SVGGraphicsElement>(
   shapeSvg: D3Selection<T>,
   labelText: string,
   config: MermaidConfig,
-  useHtmlLabels: boolean,
   translateX = 0,
   translateY = 0,
   classes: string[] = [],
@@ -358,7 +343,7 @@ async function addText<T extends SVGGraphicsElement>(
       {
         width: calculateTextWidth(labelText, config) + 100,
         style,
-        useHtmlLabels,
+        useHtmlLabels: config.htmlLabels,
       },
       config
     )
@@ -375,7 +360,7 @@ async function addText<T extends SVGGraphicsElement>(
   }
 
   let bbox = text.getBBox();
-  if (useHtmlLabels) {
+  if (evaluate(config.htmlLabels)) {
     const div = text.children[0];
     div.style.textAlign = 'start';
     const dv = select(text);
