@@ -60,8 +60,13 @@ const getMaxChildSize = (block: Block) => {
     if (child.type === 'space') {
       continue;
     }
-    if (width > maxWidth) {
-      maxWidth = width / (block.widthInColumns ?? 1);
+    const widthInColumns = child.widthInColumns ?? 1;
+    if (widthInColumns <= 0) {
+      continue;
+    }
+    const widthPerColumn = width / widthInColumns;
+    if (widthPerColumn > maxWidth) {
+      maxWidth = widthPerColumn;
     }
     if (height > maxHeight) {
       maxHeight = height;
@@ -107,8 +112,9 @@ function setBlockSizes(block: Block, db: BlockDB, siblingWidth = 0, siblingHeigh
         log.debug(
           `abc95 Setting size of children of ${block.id} id=${child.id} ${maxWidth} ${maxHeight} ${JSON.stringify(child.size)}`
         );
-        child.size.width =
-          maxWidth * (child.widthInColumns ?? 1) + padding * ((child.widthInColumns ?? 1) - 1);
+        const childColumns = child.widthInColumns ?? 1;
+        const targetWidth = maxWidth * childColumns + padding * (childColumns - 1);
+        child.size.width = Math.max(child.size.width ?? 0, targetWidth);
         child.size.height = maxHeight;
         child.size.x = 0;
         child.size.y = 0;
