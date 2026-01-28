@@ -257,7 +257,9 @@ export const createText = async (
   if (useHtmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
 
-    const htmlText = markdown ? markdownToHTML(text, config) : text.replace(/\\n|\n/g, '<br />');
+    const htmlText = markdown
+      ? markdownToHTML(text, config)
+      : `<p>${text.replace(/\\n|\n/g, '<br />')}</p>`;
     const decodedReplacedText = await replaceIconSubstring(decodeEntities(htmlText), config);
 
     //for Katex the text could contain escaped characters, \\relax that should be transformed to \relax
