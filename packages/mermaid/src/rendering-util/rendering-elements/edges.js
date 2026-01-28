@@ -769,7 +769,8 @@ export const insertEdge = function (
   log.info('arrowTypeStart', edge.arrowTypeStart);
   log.info('arrowTypeEnd', edge.arrowTypeEnd);
 
-  addEdgeMarkers(svgPath, edge, url, id, diagramType, strokeColor);
+  const useMargin = !animatedEdge && edge?.look === 'neo';
+  addEdgeMarkers(svgPath, edge, url, id, diagramType, useMargin, strokeColor);
   const midIndex = Math.floor(points.length / 2);
   const point = points[midIndex];
   if (!utils.isLabelCoordinateInPath(point, svgPath.attr('d'))) {

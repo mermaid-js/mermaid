@@ -163,7 +163,7 @@ export const createUserStyles = (
   svgId: string
 ): string => {
   const userCSSstyles = createCssStyles(config, classDefs);
-  const allStyles = getStyles(graphType, userCSSstyles, config.themeVariables);
+  const allStyles = getStyles(graphType, userCSSstyles, config.themeVariables, svgId);
 
   // Now turn all of the styles into a (compiled) string that starts with the id
   // use the stylis library to compile the css, turn the results into a valid CSS string (serialize(...., stringify))

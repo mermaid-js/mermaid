@@ -7,18 +7,35 @@ import rough from 'roughjs';
 import { createPathFromPoints } from './util.js';
 import type { D3Selection } from '../../../types.js';
 
+const MIN_HEIGHT = 10;
+const MIN_WIDTH = 10;
 export async function flippedTriangle<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
+  if (node.width || node.height) {
+    node.height = node?.height ?? 0;
+    if (node.height < MIN_HEIGHT) {
+      node.height = MIN_HEIGHT;
+    }
+
+    node.width = (node?.width ?? 0) - labelPaddingX - labelPaddingX / 2;
+    if (node.width < MIN_WIDTH) {
+      node.width = MIN_WIDTH;
+    }
+  }
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const w = bbox.width + (node.padding ?? 0);
-  const h = w + bbox.height;
+  const w = (node?.width ? node?.width : bbox.width) + (labelPaddingX ?? 0);
+  const h = node?.height ? node?.height : w + bbox.height;
 
-  const tw = w + bbox.height;
+  const tw = h;
+
   const points = [
     { x: 0, y: -h },
     { x: tw, y: -h },

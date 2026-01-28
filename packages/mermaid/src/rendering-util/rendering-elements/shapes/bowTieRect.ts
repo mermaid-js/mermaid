@@ -71,16 +71,55 @@ function generateArcPoints(
   return points;
 }
 
+/**
+ * Calculates the sagitta of an arc of an ellipse given its chord and radii.
+ *
+ * @param chord - The chord of the arc (e.g. the line connecting the two points on the circle)
+ * @param radiusX - The x-radius of the ellipse.
+ * @param radiusY - The y-radius of the ellipse.
+ */
+function calculateArcSagitta(chord: number, radiusX: number, radiusY: number) {
+  const [semiMajorAxis, semiMinorAxis] = [radiusX, radiusY].sort((a, b) => b - a);
+  return semiMinorAxis * (1 - Math.sqrt(1 - (chord / semiMajorAxis / 2) ** 2));
+}
+
 export async function bowTieRect<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? 16 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
+
+  const calcTotalHeight = (labelHeight: number) => labelHeight + labelPaddingY * 2;
+  const calcEllipseRadius = (totalHeight: number) => {
+    const ry = totalHeight / 2;
+    const rx = ry / (2.5 + totalHeight / 50);
+    return [rx, ry];
+  };
+
+  // If incoming height & width are present, subtract the padding from them
+  // as labelHelper does not take padding into account
+  // also check if the width or height is less than minimum default values (50),
+  // if so set it to min value
+  if (node.width || node.height) {
+    node.height = Math.max((node?.height ?? 0) - labelPaddingY * 2, 10);
+    const totalHeight = calcTotalHeight(node.height);
+    const [rx, ry] = calcEllipseRadius(totalHeight);
+    node.width = Math.max(
+      (node?.width ?? 0) - labelPaddingX * 2 - calculateArcSagitta(totalHeight, rx, ry),
+      10
+    );
+  }
+
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = bbox.width + node.padding + 20;
-  const h = bbox.height + node.padding;
 
-  const ry = h / 2;
-  const rx = ry / (2.5 + h / 50);
+  const totalHeight = calcTotalHeight(node?.height ? node?.height : bbox.height);
+  const [rx, ry] = calcEllipseRadius(totalHeight);
+  const sagitta = calculateArcSagitta(totalHeight, rx, ry);
+  const totalWidth = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2 + sagitta;
 
+  const w = totalWidth - sagitta;
+  const h = totalHeight;
   // let shape: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;
   const { cssStyles } = node;
 

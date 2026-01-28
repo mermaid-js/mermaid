@@ -11,11 +11,28 @@ export async function dividedRectangle<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = bbox.width + node.padding;
-  const h = bbox.height + node.padding;
-  const rectOffset = h * 0.2;
 
+  const paddingX = node.look === 'neo' ? 16 : (node.padding ?? 0);
+  const paddingY = node.look === 'neo' ? 16 : (node.padding ?? 0);
+
+  // If incoming height & width are present, subtract the padding from them
+  // as labelHelper does not take padding into account
+  // also check if the width or height is less than minimum default values (50),
+  // if so set it to min value
+  if (node.width || node.height) {
+    node.width = Math.max((node?.width ?? 0) - paddingX * 2, 10);
+    node.height = Math.max((node?.height ?? 0) - paddingY * 2, 10);
+  }
+
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
+
+  const totalWidth = (node?.width ? node?.width : bbox.width) + paddingX * 2;
+  const totalHeight = (node?.height ? node?.height : bbox.height) + paddingY * 2;
+
+  const rectOffset = totalHeight * 0.2;
+
+  const w = totalWidth;
+  const h = totalHeight - rectOffset;
   const x = -w / 2;
   const y = -h / 2 - rectOffset / 2;
 

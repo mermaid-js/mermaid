@@ -17,13 +17,32 @@ export async function taggedWaveEdgedRectangle<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? 16 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
+
+  let adjustFinalHeight = true;
+  if (node.width || node.height) {
+    adjustFinalHeight = false;
+    node.width = (node?.width ?? 0) - labelPaddingX * 2;
+    if (node.width < 10) {
+      node.width = 10;
+    }
+
+    node.height = (node?.height ?? 0) - labelPaddingY * 2;
+    if (node.height < 10) {
+      node.height = 10;
+    }
+  }
+
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = Math.max(bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
-  const h = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
-  const waveAmplitude = h / 4;
+  const w = (node?.width ? node?.width : bbox.width) + (labelPaddingX ?? 0) * 2;
+  const h = (node?.height ? node?.height : bbox.height) + (labelPaddingY ?? 0) * 2;
+  const waveAmplitude = h / 8;
   const tagWidth = 0.2 * w;
   const tagHeight = 0.2 * h;
-  const finalH = h + waveAmplitude;
+  const finalH = h + (adjustFinalHeight ? waveAmplitude : -waveAmplitude);
   const { cssStyles } = node;
 
   // @ts-expect-error -- Passing a D3.Selection seems to work for some reason

@@ -432,7 +432,12 @@ const divider = (parent, node) => {
     rect = shapeSvg.insert(() => roughOuterNode, ':first-child');
   } else {
     rect = outerRectG.insert('rect', ':first-child');
-    const outerRectClass = 'divider';
+    let outerRectClass = 'outer';
+    if (node.look === 'neo') {
+      outerRectClass = 'divider';
+    } else {
+      outerRectClass = 'divider';
+    }
 
     // center the rect around its coordinate
     rect

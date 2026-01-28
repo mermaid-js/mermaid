@@ -14,25 +14,43 @@ import type { D3Selection } from '../../../types.js';
 //   return pointStrings.join(' ');
 // };
 
+/// Size of the notch on the top left corner
+const NOTCH_SIZE = 12;
+
 export async function card<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+
+  // If incoming height & width are present, subtract the padding from them
+  // as labelHelper does not take padding into account
+  // also check if the width or height is less than minimum default values (50),
+  // if so set it to min value
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? 28 : 0;
+  const labelPaddingY = node.look === 'neo' ? 24 : nodePadding;
+  if (node.width || node.height) {
+    node.width = Math.max((node?.width ?? 0) - (labelPaddingX ?? 0), 10);
+    node.height = Math.max((node?.height ?? 0) - (labelPaddingY ?? 0), 10);
+  }
+
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const h = bbox.height + node.padding;
-  const padding = 12;
-  const w = bbox.width + node.padding + padding;
+  const totalWidth = (node?.width ? node?.width : bbox.width) + (labelPaddingX ?? 0);
+  const totalHeight = (node?.height ? node?.height : bbox.height) + (labelPaddingY ?? 0);
+
+  const h = totalHeight;
+  const w = totalWidth;
   const left = 0;
   const right = w;
   const top = -h;
   const bottom = 0;
   const points = [
-    { x: left + padding, y: top },
+    { x: left + NOTCH_SIZE, y: top },
     { x: right, y: top },
     { x: right, y: bottom },
     { x: left, y: bottom },
-    { x: left, y: top + padding },
-    { x: left + padding, y: top },
+    { x: left, y: top + NOTCH_SIZE },
+    { x: left + NOTCH_SIZE, y: top },
   ];
 
   let polygon: D3Selection<SVGGElement> | Awaited<ReturnType<typeof insertPolygonShape>>;
