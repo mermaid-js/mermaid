@@ -171,7 +171,15 @@ erDiagram
     }
 ```
 
-The `type` values must begin with an alphabetic character and may contain digits, hyphens, underscores, parentheses and square brackets. The `name` values follow a similar format to `type`, but may start with an asterisk as another option to indicate an attribute is a primary key. Other than that, there are no restrictions, and there is no implicit set of valid data types.
+The `type` values must begin with an alphabetic character and may contain digits, hyphens, underscores, parentheses and square brackets. The `name` values follow a similar format to `type`, but may start with an asterisk as another option to indicate an attribute is a primary key. Other than that, there are no restrictions, and there is no implicit set of valid data types. To indicate a nullable type, append a `?` to the type.
+
+```mermaid-example
+erDiagram
+    FOO {
+        string id PK
+        string? alias
+    }
+```
 
 ### Entity Name Aliases
 
