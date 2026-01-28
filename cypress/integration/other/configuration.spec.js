@@ -117,7 +117,7 @@ describe('Configuration', () => {
       });
     });
     it('should not taint the initial configuration when using multiple directives', () => {
-      const url = 'http://localhost:9000/regression/issue-1874.html';
+      const url = '/regression/issue-1874.html';
       cy.visit(url);
       cy.window().should('have.property', 'rendered', true);
       verifyScreenshot(
@@ -134,7 +134,7 @@ describe('Configuration', () => {
     });
 
     it('should not render error diagram if suppressErrorRendering is set', () => {
-      const url = 'http://localhost:9000/suppressError.html?suppressErrorRendering=true';
+      const url = '/suppressError.html?suppressErrorRendering=true';
       cy.visit(url);
       cy.window().should('have.property', 'rendered', true);
       cy.get('#test')
@@ -151,7 +151,7 @@ describe('Configuration', () => {
     });
 
     it('should render error diagram if suppressErrorRendering is not set', () => {
-      const url = 'http://localhost:9000/suppressError.html';
+      const url = '/suppressError.html';
       cy.visit(url);
       cy.window().should('have.property', 'rendered', true);
       cy.get('#test')

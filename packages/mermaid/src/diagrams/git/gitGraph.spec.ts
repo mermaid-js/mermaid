@@ -1357,4 +1357,35 @@ describe('when parsing a gitGraph', function () {
 
     logWarnSpy.mockRestore();
   });
+
+  describe('gitGraph config directives', () => {
+    it('should expose getConfig method', () => {
+      expect(db.getConfig).toBeDefined();
+      expect(typeof db.getConfig).toBe('function');
+    });
+
+    it('should return config with showBranches property', () => {
+      const config = db.getConfig();
+      expect(config).toBeDefined();
+      expect(config).toHaveProperty('showBranches');
+    });
+
+    it('should return config with showCommitLabel property', () => {
+      const config = db.getConfig();
+      expect(config).toBeDefined();
+      expect(config).toHaveProperty('showCommitLabel');
+    });
+
+    it('should return config with rotateCommitLabel property', () => {
+      const config = db.getConfig();
+      expect(config).toBeDefined();
+      expect(config).toHaveProperty('rotateCommitLabel');
+    });
+
+    it('should return config with parallelCommits property', () => {
+      const config = db.getConfig();
+      expect(config).toBeDefined();
+      expect(config).toHaveProperty('parallelCommits');
+    });
+  });
 });
