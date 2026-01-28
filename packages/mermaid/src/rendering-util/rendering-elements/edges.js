@@ -62,7 +62,7 @@ export const insertEdgeLabel = async (elem, edge) => {
 
   const labelElement =
     edge.labelType === 'markdown'
-      ? await createText(label, edge.label, {
+      ? await createText(elem, edge.label, {
           style: getLabelStyles(edge.labelStyle),
           useHtmlLabels,
           addSvgBackground: true,
