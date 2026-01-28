@@ -16,10 +16,26 @@ export async function linedWaveEdgedRect<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? 16 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
+  if (node.width || node.height) {
+    const originalWidth = node.width;
+    node.width = ((originalWidth ?? 0) * 10) / 11 - labelPaddingX * 2;
+    if (node.width < 10) {
+      node.width = 10;
+    }
+    node.height = (node?.height ?? 0) - labelPaddingY * 2;
+    if (node.height < 10) {
+      node.height = 10;
+    }
+  }
+
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = Math.max(bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
-  const h = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
-  const waveAmplitude = h / 4;
+  const w = (node?.width ? node?.width : bbox.width) + (labelPaddingX ?? 0) * 2;
+  const h = (node?.height ? node?.height : bbox.height) + (labelPaddingY ?? 0) * 2;
+  const waveAmplitude = node.look === 'neo' ? h / 4 : h / 8;
   const finalH = h + waveAmplitude;
   const { cssStyles } = node;
 

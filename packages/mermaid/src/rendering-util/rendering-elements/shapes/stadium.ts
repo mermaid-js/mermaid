@@ -59,10 +59,31 @@ export const createStadiumPathD = (
 export async function stadium<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? 20 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
+  // If incoming height & width are present, subtract the padding from them
+  // as labelHelper does not take padding into account
+  // also check if the width or height is less than minimum default values (50),
+  // if so set it to min value
+  if (node.width || node.height) {
+    node.width = (node?.width ?? 0) - labelPaddingX * 2;
+    if (node.width < 10) {
+      node.width = 10;
+    }
+
+    node.height = (node?.height ?? 0) - labelPaddingY * 2;
+    if (node.height < 10) {
+      node.height = 10;
+    }
+  }
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const h = bbox.height + node.padding;
-  const w = bbox.width + h / 4 + node.padding;
+  // const h = Math.max(bbox.height, node?.height || 0) + labelPaddingY;
+  // const w = Math.max(bbox.width + h / 4, node?.width || 0, 150) + labelPaddingX;
+
+  const w = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2;
+  const h = (node?.height ? node?.height : bbox.height) + labelPaddingY * 2;
 
   const radius = h / 2;
   const { cssStyles } = node;

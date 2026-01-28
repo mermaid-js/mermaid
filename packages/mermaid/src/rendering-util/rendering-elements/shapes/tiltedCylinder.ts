@@ -51,22 +51,38 @@ export const createInnerCylinderPathD = (
   return [`M${x + width / 2},${-height / 2}`, `a${rx},${ry} 0,0,0 0,${height}`].join(' ');
 };
 
+const MIN_HEIGHT = 5;
+const MIN_WIDTH = 10;
+
 export async function tiltedCylinder<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox, label, halfPadding } = await labelHelper(
-    parent,
-    node,
-    getNodeClasses(node)
-  );
-  const labelPadding = node.look === 'neo' ? halfPadding * 2 : halfPadding;
-  const h = bbox.height + labelPadding;
+  const nodePadding = node.padding ?? 0;
+  const labelPadding = node.look === 'neo' ? 12 : nodePadding / 2;
+  if (node.width || node.height) {
+    const originalHeight = node.height ?? 0;
+    node.height = (node.height ?? 0) - labelPadding;
+    if (node.height < MIN_HEIGHT) {
+      node.height = MIN_HEIGHT;
+    }
+    const ry = originalHeight / 2;
+    // based on this height, width is calculated
+    const rx = ry / (2.5 + originalHeight / 50);
+
+    node.width = (node.width ?? 0) - labelPadding - rx * 3;
+    if (node.width < MIN_WIDTH) {
+      node.width = MIN_WIDTH;
+    }
+  }
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
+
+  const h = (node.height ? node.height : bbox.height) + labelPadding;
   const ry = h / 2;
   const rx = ry / (2.5 + h / 50);
-  const w = bbox.width + rx + labelPadding;
+  const w = (node.width ? node.width : bbox.width) + rx + labelPadding;
   const { cssStyles } = node;
 
   let cylinder: D3Selection<SVGGElement> | D3Selection<SVGPathElement>;

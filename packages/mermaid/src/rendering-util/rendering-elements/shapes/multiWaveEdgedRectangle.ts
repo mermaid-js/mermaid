@@ -18,13 +18,25 @@ export async function multiWaveEdgedRectangle<T extends SVGGraphicsElement>(
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = Math.max(bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
-  const h = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
-  const waveAmplitude = h / 4;
-  const finalH = h + waveAmplitude;
+
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? 16 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
+  let adjustFinalHeight = true;
+
+  if (node.width || node.height) {
+    adjustFinalHeight = false;
+    node.width = (node?.width ?? 0) - labelPaddingX * 2;
+    node.height = (node?.height ?? 0) - labelPaddingY * 3;
+  }
+
+  const w = Math.max(bbox.width, node?.width ?? 0) + labelPaddingX * 2;
+  const h = Math.max(bbox.height, node?.height ?? 0) + labelPaddingY * 3;
+  const waveAmplitude = node.look === 'neo' ? h / 4 : h / 8;
+  const finalH = h + (adjustFinalHeight ? waveAmplitude / 2 : -waveAmplitude / 2);
   const x = -w / 2;
   const y = -finalH / 2;
-  const rectOffset = 5;
+  const rectOffset = 10;
 
   const { cssStyles } = node;
 

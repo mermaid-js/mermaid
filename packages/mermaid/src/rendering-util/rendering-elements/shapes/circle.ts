@@ -14,9 +14,23 @@ export async function circle<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+  // If incoming height & width are present, subtract the padding from them
+  // as labelHelper does not take padding into account
+  // also check if the width or height is less than minimum default values (50),
+  // if so set it to min value
   const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
-  const padding = options?.padding ?? halfPadding;
-  const radius = bbox.width / 2 + padding;
+  const padding = node.padding ?? options?.padding ?? halfPadding ?? 0;
+  const labelPadding = node.look === 'neo' ? 16 : padding;
+  if (node.width || node.height) {
+    node.width = (node.width ?? 6) - labelPadding * 2;
+    node.height = node.width;
+  }
+
+  if (node?.width) {
+    node.width = node?.width - labelPadding * 2;
+  }
+
+  const radius = (node?.width ? node?.width / 2 : bbox.width / 2) + labelPadding * 2;
   let circleElem;
   const { cssStyles } = node;
 

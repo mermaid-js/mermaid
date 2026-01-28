@@ -14,12 +14,11 @@ const getStyles = (
     errorBkgColor: string;
     errorTextColor: string;
     lineColor: string;
-    useGradient?: boolean;
-    dropShadow?: string;
-    primaryBorderColor?: string;
-    compositeTitleBackground?: string;
-    THEME_COLOR_LIMIT?: number;
-    nodeBorder?: string;
+    useGradient: boolean;
+    dropShadow: string;
+    primaryBorderColor: string;
+    compositeTitleBackground: string;
+    THEME_COLOR_LIMIT: number;
   } & FlowChartStyleOptions,
   svgId: string
 ) => {
