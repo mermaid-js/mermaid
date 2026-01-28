@@ -70,6 +70,7 @@ export const insertEdgeLabel = async (elem, edge) => {
         })
       : await createLabel(label, edge.label, getLabelStyles(edge.labelStyle) || '', false, false);
 
+  label.node().appendChild(labelElement);
   log.info('abc82', edge, edge.labelType);
 
   // Center the label
