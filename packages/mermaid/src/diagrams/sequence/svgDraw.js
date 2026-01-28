@@ -681,8 +681,8 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter) {
   rect.class = 'actor';
 
   const cx = actor.x + actor.width / 2;
-  const cy = actorY + 30;
-  const r = 18;
+  const cy = actorY + 32;
+  const r = 22;
 
   actElem
     .append('defs')
@@ -719,7 +719,7 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter) {
     actor.description,
     actElem,
     rect.x,
-    rect.y + r + (isFooter ? 5 : 10),
+    rect.y + r + (!isFooter ? 12 : 5),
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
@@ -737,7 +737,7 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter) {
   const line = elem.append('g').lower();
 
   const actElem = elem.append('g');
-  let cssClass = ACTOR_MAN_FIGURE_CLASS;
+  let cssClass = 'actor';
   if (isFooter) {
     cssClass += ` ${BOTTOM_ACTOR_CLASS}`;
   } else {
@@ -756,7 +756,7 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter) {
 
   const cx = actor.x + actor.width / 2;
   const cy = actorY + (!isFooter ? 25 : 10);
-  const r = 18;
+  const r = 22;
 
   actElem
     .append('circle')
@@ -772,7 +772,6 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter) {
     .attr('x2', cx + r)
     .attr('y1', cy + r)
     .attr('y2', cy + r)
-    .attr('stroke', '#333')
     .attr('stroke-width', 2);
 
   const bounds = actElem.node().getBBox();
@@ -799,7 +798,7 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter) {
     actor.description,
     actElem,
     rect.x,
-    rect.y + (!isFooter ? (cy + r - actorY) / 2 : (cy - actorY + r - 5) / 2),
+    rect.y + (!isFooter ? 30 : 15),
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
@@ -807,9 +806,9 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter) {
   );
 
   if (!isFooter) {
-    actElem.attr('transform', `translate(${0}, ${r / 2})`);
+    actElem.attr('transform', `translate(${0}, ${r / 2 - 5})`);
   } else {
-    actElem.attr('transform', `translate(${0}, ${r / 2})`);
+    actElem.attr('transform', `translate(${0}, ${r})`);
   }
 
   return actor.height;
@@ -872,8 +871,8 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter) {
   // Cylinder dimensions
   rect.x = actor.x;
   rect.y = actorY;
-  const w = rect.width / 4;
-  const h = rect.width / 4;
+  const w = rect.width / 3;
+  const h = rect.width / 3;
   const rx = w / 2;
   const ry = rx / (2.5 + w / 50);
 
@@ -897,17 +896,14 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter) {
     .attr('stroke-width', 1)
     .attr('class', cssclass);
 
-  if (!isFooter) {
-    cylinderGroup.attr('transform', `translate(${w * 1.5}, ${(rect.height + ry) / 4})`);
-  } else {
-    cylinderGroup.attr('transform', `translate(${w * 1.5}, ${rect.height / 4 - 2 * ry})`);
-  }
+  cylinderGroup.attr('transform', `translate(${w}, ${ry})`);
+
   actor.rectData = rect;
   _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     g,
     rect.x,
-    rect.y + (!isFooter ? (rect.height + ry) / 2 : (rect.height + h) / 4),
+    rect.y + 35,
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_BOX_CLASS}` },
@@ -927,7 +923,7 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 80;
-  const radius = 30;
+  const radius = 22;
   const line = elem.append('g').lower();
 
   if (!isFooter) {
@@ -968,22 +964,22 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter) {
     .append('line')
     .attr('id', 'actor-man-torso' + actorCnt)
     .attr('x1', actor.x + actor.width / 2 - radius * 2.5)
-    .attr('y1', actorY + 10)
+    .attr('y1', actorY + 12)
     .attr('x2', actor.x + actor.width / 2 - 15)
-    .attr('y2', actorY + 10);
+    .attr('y2', actorY + 12);
 
   actElem
     .append('line')
     .attr('id', 'actor-man-arms' + actorCnt)
     .attr('x1', actor.x + actor.width / 2 - radius * 2.5)
-    .attr('y1', actorY + 0) // starting Y
+    .attr('y1', actorY + 2) // starting Y
     .attr('x2', actor.x + actor.width / 2 - radius * 2.5)
-    .attr('y2', actorY + 20); // ending Y (26px long, adjust as needed)
+    .attr('y2', actorY + 22); // ending Y (26px long, adjust as needed)
 
   actElem
     .append('circle')
     .attr('cx', actor.x + actor.width / 2)
-    .attr('cy', actorY + 10)
+    .attr('cy', actorY + 12)
     .attr('r', radius);
 
   const bounds = actElem.node().getBBox();
@@ -993,7 +989,7 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter) {
     actor.description,
     actElem,
     rect.x,
-    rect.y + (!isFooter ? radius / 2 + 3 : radius / 2 - 4),
+    rect.y + 15,
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
@@ -1001,9 +997,9 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter) {
   );
 
   if (!isFooter) {
-    actElem.attr('transform', `translate(0,${radius / 2 + 7})`);
+    actElem.attr('transform', `translate(0,${radius / 2 + 10})`);
   } else {
-    actElem.attr('transform', `translate(0,${radius / 2 + 7})`);
+    actElem.attr('transform', `translate(0,${radius / 2 + 10})`);
   }
 
   return actor.height;

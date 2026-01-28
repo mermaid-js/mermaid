@@ -25,4 +25,46 @@ describe('when rendering flowchart with icons', () => {
       );
     });
   }
+
+  /**
+   * Test for GitHub issue #7185
+   * SVG Logos have unintended opacity being applied when they use rect elements
+   *
+   */
+  describe('iconShape with rect elements (issue #7185)', () => {
+    it('should render single AWS icon with rect elements without unintended opacity', () => {
+      imgSnapshotTest(
+        `flowchart TB
+          Cloudwatch@{ icon: "aws:arch-amazon-cloudwatch" }
+        `,
+        {}
+      );
+    });
+
+    it('should render multiple AWS icons with rect elements in a flowchart', () => {
+      imgSnapshotTest(
+        `flowchart TB
+          Cloudwatch@{ icon: "aws:arch-amazon-cloudwatch" }
+          Cloudfront@{ icon: "aws:arch-amazon-route-53" }
+          Route53@{ icon: "aws:arch-amazon-eks-cloud" }
+          Cloudwatch --> Cloudfront
+          Cloudfront --> Route53
+        `,
+        {}
+      );
+    });
+
+    it('should render AWS icons with labels and rect elements', () => {
+      imgSnapshotTest(
+        `flowchart TB
+          Cloudwatch@{ icon: "aws:arch-amazon-cloudwatch", label: "CloudWatch" }
+          Route53@{ icon: "aws:arch-amazon-route-53", label: "Route 53" }
+          EKS@{ icon: "aws:arch-amazon-eks-cloud", label: "EKS Cloud" }
+          Cloudwatch --> Route53
+          Route53 --> EKS
+        `,
+        {}
+      );
+    });
+  });
 });
