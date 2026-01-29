@@ -506,6 +506,99 @@ describe('when using the ganttDb', function () {
     expect(() => ganttDb.getTasks()).toThrowError('Invalid date:202304');
   });
 
+  // tests for PR #7227 start
+  it('should throw on invalid duration with special characters', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('invalid duration test');
+    ganttDb.addTask('bad duration', 'idInvalid,2019-01-01,24d@#$');
+    expect(() => ganttDb.getTasks()).toThrowError('Invalid duration:24d@#$');
+  });
+
+  it('should throw on invalid duration with lowercase unit suffix missing', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('invalid duration test');
+    ganttDb.addTask('bad duration', 'idInvalid,2019-01-01,24');
+    expect(() => ganttDb.getTasks()).toThrowError();
+  });
+
+  it('should throw on invalid duration with multiple unit suffixes', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('invalid duration test');
+    ganttDb.addTask('bad duration', 'idInvalid,2019-01-01,24dw');
+    expect(() => ganttDb.getTasks()).toThrowError();
+  });
+
+  it('should throw on invalid duration with negative values', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('invalid duration test');
+    ganttDb.addTask('bad duration', 'idInvalid,2019-01-01,-5d');
+    expect(() => ganttDb.getTasks()).toThrowError();
+  });
+
+  it('should throw on invalid duration with whitespace in unit', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('invalid duration test');
+    ganttDb.addTask('bad duration', 'idInvalid,2019-01-01,24 d');
+    expect(() => ganttDb.getTasks()).toThrowError();
+  });
+
+  it('should throw on invalid duration with random letters after unit', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('invalid duration test');
+    ganttDb.addTask('bad duration', 'idInvalid,2019-01-01,24de');
+    expect(() => ganttDb.getTasks()).toThrowError();
+  });
+
+  it('should throw on invalid duration with integers after unit', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('invalid duration test');
+    ganttDb.addTask('bad duration', 'idInvalid,2019-01-01,24d7');
+    expect(() => ganttDb.getTasks()).toThrowError();
+  });
+
+  it('should throw on invalid duration with unknown unit type', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('invalid duration test');
+    ganttDb.addTask('bad duration', 'idInvalid,2019-01-01,24x');
+    expect(() => ganttDb.getTasks()).toThrowError();
+  });
+
+  // regression tests
+  it('should accept valid duration with zero value', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('zero duration test');
+    ganttDb.addTask('zero duration', 'idZero,2019-01-01,0d');
+    const tasks = ganttDb.getTasks();
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0].id).toEqual('idZero');
+    expect(tasks[0].startTime).toEqual(tasks[0].endTime);
+  });
+
+  it('should accept a normal, valid duration', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('normal duration test');
+    ganttDb.addTask('normal duration', 'idNormal,2019-01-01,10d');
+    const tasks = ganttDb.getTasks();
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0].id).toEqual('idNormal');
+    expect(tasks[0].startTime).toEqual(new Date(2019, 0, 1));
+    expect(tasks[0].endTime).toEqual(new Date(2019, 0, 11)); // start + 10d
+  });
+
+  it.each(
+    convert`
+    str      | expected
+    ${'3d'}  | ${[3, 'd']}
+    ${'6w'}  | ${[6, 'w']}
+    ${'2m'}  | ${[2, 'm']}
+    ${'12m'} | ${[12, 'm']}
+    ${'1y'}  | ${[1, 'y']}
+  `
+  )('parses basic durations like $str', ({ str, expected }) => {
+    expect(ganttDb.parseDuration(str)).toEqual(expected);
+  });
+  // tests for PR #7227 end
+
   it('should handle seconds-only format with valid numeric values (issue #5496)', function () {
     ganttDb.setDateFormat('ss');
     ganttDb.addSection('Network Request');
