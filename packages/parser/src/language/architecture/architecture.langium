@@ -20,11 +20,11 @@ fragment Statement:
 ;
 
 fragment LeftPort:
-    ':'lhsDir=ARROW_DIRECTION
+    ':' lhsDir=ID
 ;
 
 fragment RightPort:
-    rhsDir=ARROW_DIRECTION':'
+    rhsDir=ID ':'
 ;
 
 fragment Arrow:
@@ -47,6 +47,5 @@ Edge:
     lhsId=ID lhsGroup?=ARROW_GROUP? Arrow rhsId=ID rhsGroup?=ARROW_GROUP? EOL
 ;
 
-terminal ARROW_DIRECTION: 'L' | 'R' | 'T' | 'B';
 terminal ARROW_GROUP: /\{group\}/;
 terminal ARROW_INTO: /<|>/;
