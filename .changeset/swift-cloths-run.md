@@ -2,4 +2,4 @@
 'mermaid': patch
 ---
 
-fix: Add markdown-specific behavior on top of the common rendering changes.
+fix: Restore proper rendering of non-markdown flowchart labels with multiline support
