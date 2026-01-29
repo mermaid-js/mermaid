@@ -162,6 +162,7 @@ that id.
 
 <INITIAL,dottedEdgeText>\s*[xo<]?\-?\.+\-[xo>]?\s*   { this.popState(); return 'LINK'; }
 <INITIAL>\s*[xo<]?\-\.\s*                            { this.pushState("dottedEdgeText"); return 'START_LINK'; }
+<INITIAL>\s*[xo<]?\.\-\s*                            { this.pushState("dottedEdgeText"); return 'START_LINK'; }
 <dottedEdgeText>[^\.]|\.(?!-)                        return 'EDGE_TEXT';
 
 
