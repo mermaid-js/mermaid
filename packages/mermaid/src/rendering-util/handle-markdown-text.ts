@@ -84,6 +84,35 @@ export function markdownToLines(markdown: string, config: MermaidConfig = {}): M
   return lines;
 }
 
+/**
+ * Counterpart to {@link markdownToHTML} for non-markdown text.
+ *
+ * Non-markdown text is not wrapped normally, and users can use an explicit `\n`
+ * sequence to add a line break.
+ *
+ * @param text - Non-markdown text to convert to HTML.
+ */
+export function nonMarkdownToHTML(text: string) {
+  if (!text) {
+    return '';
+  }
+  /*
+   * Edge labels may have double backgrounds if `addBackground` is `true`.
+   * This `<p>` wrapper aligns with how {@link markdownToHTML} wraps its output, and
+   * ensures both backgrounds are the same size.
+   *
+   * We can't set it for empty labels, otherwise it causes rendering changes.
+   */
+  return `<p>${
+    /**
+     * Replace new lines with <br /> tags.
+     *
+     * Unlike in markdown text, `\n` sequences are treated as line breaks here.
+     */
+    text.replace(/\\n|\n/g, '<br />')
+  }</p>`;
+}
+
 export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidConfig = {}) {
   const nodes = marked.lexer(markdown);
 

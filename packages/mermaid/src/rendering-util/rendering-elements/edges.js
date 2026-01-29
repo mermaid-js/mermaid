@@ -51,23 +51,28 @@ export const getLabelStyles = (styleArray) => {
 
 export const insertEdgeLabel = async (elem, edge) => {
   let useHtmlLabels = getEffectiveHtmlLabels(getConfig());
-
   const { labelStyles } = styles2String(edge);
   edge.labelStyle = labelStyles;
-  const labelElement = await createText(elem, edge.label, {
-    style: edge.labelStyle,
-    useHtmlLabels,
-    addSvgBackground: true,
-    isNode: false,
-  });
-  log.info('abc82', edge, edge.labelType);
 
   // Create outer g, edgeLabel, this will be positioned after graph layout
   const edgeLabel = elem.insert('g').attr('class', 'edgeLabel');
 
   // Create inner g, label, this will be positioned now for centering the text
   const label = edgeLabel.insert('g').attr('class', 'label').attr('data-id', edge.id);
+
+  const isMarkdown = edge.labelType === 'markdown';
+  const labelElement = await createText(elem, edge.label, {
+    style: getLabelStyles(edge.labelStyle),
+    useHtmlLabels,
+    addSvgBackground: true,
+    isNode: false,
+    markdown: isMarkdown,
+    // If using markdown, wrap using default width
+    width: isMarkdown ? undefined : Number.POSITIVE_INFINITY,
+  });
+
   label.node().appendChild(labelElement);
+  log.info('abc82', edge, edge.labelType);
 
   // Center the label
   let bbox = labelElement.getBBox();
@@ -95,7 +100,9 @@ export const insertEdgeLabel = async (elem, edge) => {
     const startLabelElement = await createLabel(
       inner,
       edge.startLabelLeft,
-      getLabelStyles(edge.labelStyle)
+      getLabelStyles(edge.labelStyle) || '',
+      false,
+      false
     );
     fo = startLabelElement;
     let slBox = startLabelElement.getBBox();
@@ -118,9 +125,11 @@ export const insertEdgeLabel = async (elem, edge) => {
     const startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelRight.insert('g').attr('class', 'inner');
     const startLabelElement = await createLabel(
-      startEdgeLabelRight,
+      inner,
       edge.startLabelRight,
-      getLabelStyles(edge.labelStyle)
+      getLabelStyles(edge.labelStyle) || '',
+      false,
+      false
     );
     fo = startLabelElement;
     inner.node().appendChild(startLabelElement);
@@ -147,7 +156,9 @@ export const insertEdgeLabel = async (elem, edge) => {
     const endLabelElement = await createLabel(
       inner,
       edge.endLabelLeft,
-      getLabelStyles(edge.labelStyle)
+      getLabelStyles(edge.labelStyle) || '',
+      false,
+      false
     );
     fo = endLabelElement;
     let slBox = endLabelElement.getBBox();
@@ -176,7 +187,9 @@ export const insertEdgeLabel = async (elem, edge) => {
     const endLabelElement = await createLabel(
       inner,
       edge.endLabelRight,
-      getLabelStyles(edge.labelStyle)
+      getLabelStyles(edge.labelStyle) || '',
+      false,
+      false
     );
     fo = endLabelElement;
     let slBox = endLabelElement.getBBox();
