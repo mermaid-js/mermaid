@@ -597,10 +597,15 @@ export const drawNode = async function (elem, node, fullSection, conf) {
   const hasHtml = /<[a-z][\S\s]*>/i.test(node.descr);
 
   if (hasHtml) {
+    const originalWidth = node.width;
     const bbox = await processHtmlContent(textElem, node, conf, false);
     node.height = bbox.height + node.padding;
     node.height = Math.max(node.height, node.maxHeight);
     node.width = node.width + 2 * node.padding;
+    textElem.attr(
+      'transform',
+      'translate(' + (node.padding + originalWidth / 2) + ', ' + node.padding / 2 + ')'
+    );
   } else {
     const txt = textElem
       .append('text')
@@ -615,9 +620,8 @@ export const drawNode = async function (elem, node, fullSection, conf) {
     node.height = bbox.height + fontSize * 1.1 * 0.5 + node.padding;
     node.height = Math.max(node.height, node.maxHeight);
     node.width = node.width + 2 * node.padding;
+    textElem.attr('transform', 'translate(' + node.width / 2 + ', ' + node.padding / 2 + ')');
   }
-
-  textElem.attr('transform', 'translate(' + node.width / 2 + ', ' + node.padding / 2 + ')');
 
   // Create the background element
   defaultBkg(bkgElem, node, section, conf);
