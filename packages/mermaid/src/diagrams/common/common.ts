@@ -287,7 +287,7 @@ const processSet = (input: string): string => {
 // Firefox versions between [4,71] (0.47%) and Safari versions between [5,13.4] (0.17%) don't have this interface implemented but MathML is supported
 export const isMathMLSupported = () => window.MathMLElement !== undefined;
 
-export const katexRegex = /\$\$(.*)\$\$/g;
+export const katexRegex = /\$\$(.*?)\$\$/g;
 
 /**
  * Whether or not a text has KaTeX delimiters
