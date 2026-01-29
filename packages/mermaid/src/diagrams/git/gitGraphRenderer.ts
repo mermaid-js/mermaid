@@ -889,17 +889,99 @@ const drawBranches = (
   });
 };
 
+/**
+ * Calculate maximum content width for branch spacing
+ *
+ * @param branchName - The name of the branch
+ * @param commits - Map of all commits
+ * @param rotateCommitLabel - Whether commit labels are rotated
+ * @param rotateTagLabel - Whether tags are rotated
+ * @param diagram - D3 selection for temporary rendering
+ * @returns Maximum width needed for branch spacing
+ */
+const calculateMaxContentWidth = (
+  branchName: string,
+  commits: Map<string, Commit>,
+  rotateCommitLabel: boolean,
+  rotateTagLabel: boolean,
+  diagram: d3.Selection<d3.BaseType, unknown, HTMLElement, any>
+): number => {
+  let maxWidth = 0;
+  const tempGroup = diagram.append('g').attr('class', 'temp-measurement');
+
+  const branchText = tempGroup.append('text').attr('class', 'branch-label').text(branchName);
+  const branchBbox = branchText.node()?.getBBox();
+  if (branchBbox) {
+    maxWidth = Math.max(maxWidth, branchBbox.width / 2);
+  }
+  branchText.remove();
+
+  if (rotateCommitLabel && rotateTagLabel) {
+    tempGroup.remove();
+    return maxWidth;
+  }
+
+  commits.forEach((commit) => {
+    if (commit.branch === branchName) {
+      if (
+        !rotateCommitLabel &&
+        commit.type !== commitType.CHERRY_PICK &&
+        ((commit.customId && commit.type === commitType.MERGE) || commit.type !== commitType.MERGE)
+      ) {
+        const text = tempGroup.append('text').attr('class', 'commit-label').text(commit.id);
+        const bbox = text.node()?.getBBox();
+        if (bbox) {
+          maxWidth = Math.max(maxWidth, bbox.width);
+        }
+        text.remove();
+      }
+
+      if (!rotateTagLabel && commit.tags.length > 0) {
+        commit.tags.forEach((tagValue) => {
+          const text = tempGroup.append('text').attr('class', 'tag-label').text(tagValue);
+          const bbox = text.node()?.getBBox();
+          if (bbox) {
+            maxWidth = Math.max(maxWidth, bbox.width);
+          }
+          text.remove();
+        });
+      }
+    }
+  });
+
+  tempGroup.remove();
+  return maxWidth;
+};
+
 const setBranchPosition = function (
   name: string,
   pos: number,
   index: number,
   bbox: DOMRect,
-  rotateCommitLabel: boolean
+  commits: Map<string, Commit>,
+  rotateCommitLabel: boolean,
+  rotateTagLabel: boolean,
+  diagram: d3.Selection<d3.BaseType, unknown, HTMLElement, any>
 ): number {
   branchPos.set(name, { pos, index });
-  const rotationSpacing =
-    dir === 'TB' || dir === 'BT' ? (rotateCommitLabel ? 40 : 20) : rotateCommitLabel ? 40 : 0;
-  pos += 50 + rotationSpacing + (dir === 'TB' || dir === 'BT' ? bbox.width / 2 : 0);
+
+  let contentBasedSpacing = 0;
+  if (dir === 'TB' || dir === 'BT') {
+    const maxContentWidth = calculateMaxContentWidth(
+      name,
+      commits,
+      rotateCommitLabel,
+      rotateTagLabel,
+      diagram
+    );
+    const baseSpacing = maxContentWidth + LAYOUT_OFFSET + 4;
+    const rotatedCommitSpacing = rotateCommitLabel ? 40 : 0;
+    contentBasedSpacing = Math.max(20, baseSpacing, rotatedCommitSpacing);
+  } else {
+    contentBasedSpacing = rotateCommitLabel ? 40 : 0;
+  }
+
+  pos += 50 + contentBasedSpacing + (dir === 'TB' || dir === 'BT' ? bbox.width / 2 : 0);
   return pos;
 };
 
@@ -914,6 +996,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
   }
   const gitGraphConfig = db.getConfig();
   const rotateCommitLabel = gitGraphConfig.rotateCommitLabel ?? false;
+  const rotateTagLabel = gitGraphConfig.rotateTagLabel ?? true;
   allCommitsDict = db.getCommits();
   const branches = db.getBranchesAsObjArray();
   dir = db.getDirection();
@@ -928,7 +1011,16 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     label.node()?.appendChild(labelElement);
     const bbox = labelElement.getBBox();
 
-    pos = setBranchPosition(branch.name, pos, index, bbox, rotateCommitLabel);
+    pos = setBranchPosition(
+      branch.name,
+      pos,
+      index,
+      bbox,
+      allCommitsDict,
+      rotateCommitLabel,
+      rotateTagLabel,
+      diagram
+    );
     label.remove();
     branchLabel.remove();
     g.remove();
@@ -959,6 +1051,31 @@ export default {
 if (import.meta.vitest) {
   const { it, expect, describe } = import.meta.vitest;
 
+  const createMockDiagram = () => {
+    const mockText = {
+      node: () => ({
+        getBBox: () => ({ width: 0, height: 0, x: 0, y: 0 }),
+      }),
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      remove: () => {},
+      attr: function (_k: string, _v?: any) {
+        return this;
+      },
+      text: function (_t: string) {
+        return this;
+      },
+    };
+    const mockTempGroup = {
+      append: () => mockText,
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      remove: () => {},
+      attr: function (_k: string, _v?: any) {
+        return this;
+      },
+    };
+    return { append: () => mockTempGroup } as any;
+  };
+
   describe('drawText', () => {
     it('should drawText', () => {
       const svgLabel = drawText('main');
@@ -982,11 +1099,22 @@ if (import.meta.vitest) {
 
     it('should setBranchPositions LR with two branches', () => {
       dir = 'LR';
+      const emptyCommits = new Map<string, Commit>();
+      const mockDiagram = createMockDiagram();
 
-      const pos = setBranchPosition('main', 0, 0, bbox, true);
+      const pos = setBranchPosition('main', 0, 0, bbox, emptyCommits, true, true, mockDiagram);
       expect(pos).toBe(90);
       expect(branchPos.get('main')).toEqual({ pos: 0, index: 0 });
-      const posNext = setBranchPosition('develop', pos, 1, bbox, true);
+      const posNext = setBranchPosition(
+        'develop',
+        pos,
+        1,
+        bbox,
+        emptyCommits,
+        true,
+        true,
+        mockDiagram
+      );
       expect(posNext).toBe(180);
       expect(branchPos.get('develop')).toEqual({ pos: pos, index: 1 });
     });
@@ -994,13 +1122,24 @@ if (import.meta.vitest) {
     it('should setBranchPositions TB with two branches', () => {
       dir = 'TB';
       bbox.width = 34.9921875;
+      const emptyCommits = new Map<string, Commit>();
+      const mockDiagram = createMockDiagram();
 
-      const pos = setBranchPosition('main', 0, 0, bbox, true);
+      const pos = setBranchPosition('main', 0, 0, bbox, emptyCommits, true, true, mockDiagram);
       expect(pos).toBe(107.49609375);
       expect(branchPos.get('main')).toEqual({ pos: 0, index: 0 });
 
       bbox.width = 56.421875;
-      const posNext = setBranchPosition('develop', pos, 1, bbox, true);
+      const posNext = setBranchPosition(
+        'develop',
+        pos,
+        1,
+        bbox,
+        emptyCommits,
+        true,
+        true,
+        mockDiagram
+      );
       expect(posNext).toBe(225.70703125);
       expect(branchPos.get('develop')).toEqual({ pos: pos, index: 1 });
     });
@@ -1008,13 +1147,24 @@ if (import.meta.vitest) {
     it('should setBranchPositions TB with rotateCommitLabel false', () => {
       dir = 'TB';
       bbox.width = 34.9921875;
+      const emptyCommits = new Map<string, Commit>();
+      const mockDiagram = createMockDiagram();
 
-      const pos = setBranchPosition('main', 0, 0, bbox, false);
+      const pos = setBranchPosition('main', 0, 0, bbox, emptyCommits, false, true, mockDiagram);
       expect(pos).toBe(87.49609375);
       expect(branchPos.get('main')).toEqual({ pos: 0, index: 0 });
 
       bbox.width = 56.421875;
-      const posNext = setBranchPosition('develop', pos, 1, bbox, false);
+      const posNext = setBranchPosition(
+        'develop',
+        pos,
+        1,
+        bbox,
+        emptyCommits,
+        false,
+        true,
+        mockDiagram
+      );
       expect(posNext).toBe(185.70703125);
       expect(branchPos.get('develop')).toEqual({ pos: pos, index: 1 });
     });

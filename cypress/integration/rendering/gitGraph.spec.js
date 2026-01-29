@@ -2132,5 +2132,86 @@ gitGraph TB:
         {}
       );
     });
+
+    it('100: should handle long commit IDs and tags without overlap in TB mode', () => {
+      imgSnapshotTest(
+        `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
+          'rotateCommitLabel': false,
+          'rotateTagLabel': false
+        } } }%%
+        gitGraph TB:
+          commit id: "VERY-LONG-COMMIT-ID-1234567890"
+          commit id: "ANOTHER-LONG-ID-ABCDEFGH" tag: "v1.0.0-release-candidate"
+          branch feature-branch-with-long-name
+          checkout feature-branch-with-long-name
+          commit id: "FEATURE-COMMIT-XYZ" tag: "beta-version-2024"
+          checkout main
+          branch second-feature
+          checkout second-feature
+          commit id: "SHORT" tag: "v2"
+        `,
+        {}
+      );
+    });
+
+    it('101: should handle long tags with short branch names in TB mode', () => {
+      imgSnapshotTest(
+        `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
+          'rotateCommitLabel': false,
+          'rotateTagLabel': false
+        } } }%%
+        gitGraph TB:
+          commit id: "A" tag: "v1.0.0-release-candidate-final"
+          branch feature
+          checkout feature
+          commit id: "B" tag: "beta-test-version-2024-Q4"
+          checkout main
+          branch bugfix
+          checkout bugfix
+          commit id: "C" tag: "hotfix-production-v2.5.1"
+        `,
+        {}
+      );
+    });
+
+    it('102: should handle long branch names with long tags in TB mode', () => {
+      imgSnapshotTest(
+        `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
+          'rotateCommitLabel': false,
+          'rotateTagLabel': false
+        } } }%%
+        gitGraph TB:
+          commit id: "A" tag: "v1.0.0-release-candidate-final"
+          branch feature-branch-with-long-name
+          checkout feature-branch-with-long-name
+          commit id: "B" tag: "beta-test-version-2024-Q4"
+          checkout main
+          branch bugfix-branch-with-long-name
+          checkout bugfix-branch-with-long-name
+          commit id: "C" tag: "hotfix-production-v2.5.1"
+        `,
+        {}
+      );
+    });
+
+    it('103: should handle long tags with short branch names in BT mode', () => {
+      imgSnapshotTest(
+        `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
+          'rotateCommitLabel': false,
+          'rotateTagLabel': false
+        } } }%%
+        gitGraph BT:
+          commit id: "A" tag: "v1.0.0-release-candidate-final"
+          branch feature
+          checkout feature
+          commit id: "B" tag: "beta-test-version-2024-Q4"
+          checkout main
+          branch bugfix
+          checkout bugfix
+          commit id: "C" tag: "hotfix-production-v2.5.1"
+        `,
+        {}
+      );
+    });
   });
 });
