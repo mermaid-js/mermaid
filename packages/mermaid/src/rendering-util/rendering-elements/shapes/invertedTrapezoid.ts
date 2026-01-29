@@ -17,8 +17,9 @@ export async function inv_trapezoid<T extends SVGGraphicsElement>(
   const labelPaddingY = node.look === 'neo' ? nodePadding : nodePadding;
   const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const h = (node?.height ?? bbox.height) + labelPaddingY;
-  const w = (node?.width ?? bbox.width) + labelPaddingX;
+
+  const w = Math.max(bbox.width + (labelPaddingX ?? 0) * 2, node?.width ?? 0);
+  const h = Math.max(bbox.height + (labelPaddingY ?? 0) * 2, node?.height ?? 0);
 
   const points = [
     { x: 0, y: 0 },
