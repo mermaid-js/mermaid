@@ -451,9 +451,6 @@ importers:
       d3:
         specifier: ^7.9.0
         version: 7.9.0
-      non-layered-tidy-tree-layout:
-        specifier: ^2.0.2
-        version: 2.0.2
     devDependencies:
       '@types/d3':
         specifier: ^7.4.3
@@ -461,6 +458,9 @@ importers:
       mermaid:
         specifier: workspace:^
         version: link:../mermaid
+      non-layered-tidy-tree-layout:
+        specifier: ^2.0.2
+        version: 2.0.2
 
   packages/mermaid-zenuml:
     dependencies:
