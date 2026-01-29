@@ -6,6 +6,12 @@
 
 # Requirement Diagram
 
+<script setup>
+import IconsNote from './icons-note.md'
+</script>
+
+<IconsNote />
+
 > A Requirement diagram provides a visualization for requirements and their connections, to each other and other documented elements. The modeling specs follow those defined by SysML v1.6.
 
 Rendering requirements is straightforward.
