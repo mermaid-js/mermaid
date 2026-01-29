@@ -1,5 +1,11 @@
 # @mermaid-js/layout-tidy-tree
 
+## 0.2.1
+
+### Patch Changes
+
+- [#7355](https://github.com/mermaid-js/mermaid/pull/7355) [`0f94b84`](https://github.com/mermaid-js/mermaid/commit/0f94b845bf122625b95197c33ec51eeebfc34306) Thanks [@sidharthv96](https://github.com/sidharthv96)! - fix: Inline non-layered-tidy-tree-layout to avoid downstream import issues
+
 ## 0.2.0
 
 ### Minor Changes
