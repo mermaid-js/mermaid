@@ -554,9 +554,13 @@ export const addTask = function (descr, data) {
   rawTask.crit = taskInfo.crit;
   rawTask.milestone = taskInfo.milestone;
   rawTask.vert = taskInfo.vert;
-  rawTask.order = lastOrder;
 
-  lastOrder++;
+  if (rawTask.vert) {
+    rawTask.order = -1;
+  } else {
+    rawTask.order = lastOrder;
+    lastOrder++;
+  }
 
   const pos = rawTasks.push(rawTask);
 
