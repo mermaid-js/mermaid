@@ -1,5 +1,5 @@
-# Layouts
-graph TD
+---
+"mermaid": patchgraph TD
     %% Zone: ภายนอกและทางเข้า
     subgraph Exterior [โซนภายนอกและโรงรถแยก]
         MainGate(ประตูรั้วโครงการ) --> DropOff(จุดวนรถรับ-ส่ง Drop-off)
@@ -64,25 +64,7 @@ graph TD
     style Main_House_2F fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
     style Master_Zone fill:#fce4ec,stroke:#880e4f,stroke-dasharray: 5 5
 
-This page lists the available layout algorithms supported in Mermaid diagrams.
-
-## Supported Layouts
-
-- **elk**: [ELK (Eclipse Layout Kernel)](https://www.eclipse.org/elk/)
-- **tidy-tree**: Tidy tree layout for hierarchical diagrams [Tidy Tree Configuration](/config/tidy-tree)
-- **cose-bilkent**: Cose Bilkent layout for force-directed graphs
-- **dagre**: Dagre layout for layered graphs
-
-## How to Use
-
-You can specify the layout in your diagram's YAML config or initialization options. For example:
-
-```mermaid
+"@mermaid-js/docs": patch
 ---
-config:
-  layout: elk
----
-graph TD;
-  A-->B;
-  B-->C;
-```
+
+Update layouts.md
