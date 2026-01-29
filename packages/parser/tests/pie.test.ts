@@ -49,7 +49,7 @@ describe('pie', () => {
         expect(result.value.$type).toBe(Pie);
 
         const { title } = result.value;
-        expect(title).toBe('sample title');
+        expect(title).toEqual(['sample title']);
       });
 
       it.each([
@@ -69,7 +69,7 @@ describe('pie', () => {
         expect(result.value.$type).toBe(Pie);
 
         const { title } = result.value;
-        expect(title).toBe('sample title');
+        expect(title).toEqual(['sample title']);
       });
     });
 
@@ -85,7 +85,7 @@ describe('pie', () => {
 
         const { showData, title } = result.value;
         expect(showData).toBeTruthy();
-        expect(title).toBe('sample title');
+        expect(title).toEqual(['sample title']);
       });
 
       it.each([
@@ -106,7 +106,7 @@ describe('pie', () => {
 
         const { showData, title } = result.value;
         expect(showData).toBeTruthy();
-        expect(title).toBe('sample title');
+        expect(title).toEqual(['sample title']);
       });
     });
   });
@@ -166,7 +166,7 @@ describe('pie', () => {
       expect(result.value.$type).toBe(Pie);
 
       const { title, sections } = result.value;
-      expect(title).toBe('sample wow');
+      expect(title).toEqual(['sample wow']);
 
       expect(sections[0].label).toBe('GitHub');
       expect(sections[0].value).toBe(100);
@@ -200,7 +200,7 @@ describe('pie', () => {
       expect(result.value.$type).toBe(Pie);
 
       const { accTitle, sections } = result.value;
-      expect(accTitle).toBe('sample wow');
+      expect(accTitle).toEqual(['sample wow']);
 
       expect(sections[0].label).toBe('GitHub');
       expect(sections[0].value).toBe(100);
@@ -218,7 +218,7 @@ describe('pie', () => {
       expect(result.value.$type).toBe(Pie);
 
       const { accDescr, sections } = result.value;
-      expect(accDescr).toBe('sample wow');
+      expect(accDescr).toEqual(['sample wow']);
 
       expect(sections[0].label).toBe('GitHub');
       expect(sections[0].value).toBe(100);
@@ -238,7 +238,7 @@ describe('pie', () => {
       expect(result.value.$type).toBe(Pie);
 
       const { accDescr, sections } = result.value;
-      expect(accDescr).toBe('sample wow');
+      expect(accDescr).toEqual(['sample wow']);
 
       expect(sections[0].label).toBe('GitHub');
       expect(sections[0].value).toBe(100);
