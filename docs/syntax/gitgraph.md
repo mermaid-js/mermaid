@@ -2023,6 +2023,61 @@ config:
 
 See how the tag label font size changed.
 
+### Customizing Branch Label Font Size (v\<MERMAID_RELEASE_VERSION>+)
+
+You can customize the font size of branch labels using the `gitBranchLabelFontSize` theme variable. By default, branch labels use the same font size as the rest of the diagram (typically 16px).
+
+Example:
+Now let's override the default value for the `gitBranchLabelFontSize` variable:
+
+```mermaid-example
+---
+config:
+  logLevel: 'debug'
+  theme: 'default'
+  themeVariables:
+    gitBranchLabelFontSize: '14px'
+---
+       gitGraph
+       commit
+       branch develop
+       commit
+       branch featureA
+       commit
+       checkout develop
+       branch featureB
+       commit
+       checkout main
+       commit
+       merge develop
+
+```
+
+```mermaid
+---
+config:
+  logLevel: 'debug'
+  theme: 'default'
+  themeVariables:
+    gitBranchLabelFontSize: '14px'
+---
+       gitGraph
+       commit
+       branch develop
+       commit
+       branch featureA
+       commit
+       checkout develop
+       branch featureB
+       commit
+       checkout main
+       commit
+       merge develop
+
+```
+
+See how the branch label font size changed.
+
 ### Customizing Tag colors
 
 You can customize tag using the `tagLabelColor`,`tagLabelBackground` and `tagLabelBorder` theme variables for changes in the tag label color,tag label background color and tag label border respectively.
