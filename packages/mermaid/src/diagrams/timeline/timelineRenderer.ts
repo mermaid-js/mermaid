@@ -202,14 +202,24 @@ export const draw = function (text: string, id: string, version: string, diagObj
   log.debug('bounds', box);
 
   if (title) {
-    svg
-      .append('text')
-      .text(title)
-      .attr('x', box.width / 2 - LEFT_MARGIN)
-      .attr('font-size', '4ex')
-      .attr('font-weight', 'bold')
-      .attr('y', 20);
+    const foreignObject = svg
+      .append('foreignObject')
+      .attr('x', LEFT_MARGIN) // Adjust position as needed
+      .attr('y', 10) // Adjust vertical position as needed
+      .attr('width', box.width - 2 * LEFT_MARGIN) // Width of the foreignObject
+      .attr('height', 100); // Set a reasonable height for wrapping
+
+    // Append a div inside the foreignObject for proper HTML rendering
+    foreignObject
+      .append('xhtml:div') // Use xhtml namespace for HTML elements inside SVG
+      .attr('xmlns', 'http://www.w3.org/1999/xhtml') // Explicitly set XHTML namespace
+      .style('font-size', '16px') // Match font size with Mermaid's theme
+      .style('word-wrap', 'break-word') // Ensure long words wrap properly
+      .style('white-space', 'normal') // Allow normal wrapping behavior
+      .style('text-align', 'center') // Center-align the text
+      .text(title); // Set the title text
   }
+
   //5. Draw the diagram
   depthY = hasSections ? maxSectionHeight + maxTaskHeight + 150 : maxTaskHeight + 100;
 
