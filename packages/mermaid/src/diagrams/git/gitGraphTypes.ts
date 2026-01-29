@@ -1,6 +1,13 @@
 import type { GitGraphDiagramConfig } from '../../config.type.js';
 import type { DiagramDBBase } from '../../diagram-api/types.js';
 
+export const commitColor = {
+  BLACK: 0,
+  RED: 1,
+  BLUE: 2,
+  GREEN: 3,
+} as const;
+
 export const commitType = {
   NORMAL: 0,
   REVERSE: 1,
@@ -13,6 +20,7 @@ export interface CommitDB {
   msg: string;
   id: string;
   type: number;
+  color: number;
   tags?: string[];
 }
 
@@ -40,6 +48,7 @@ export interface Commit {
   message: string;
   seq: number;
   type: number;
+  color: number;
   tags: string[];
   parents: string[];
   branch: string;
@@ -59,6 +68,7 @@ export interface CommitAst {
   message?: string;
   tags?: string[];
   type?: 'NORMAL' | 'REVERSE' | 'HIGHLIGHT';
+  color?: 'BLACK' | 'RED' | 'GREEN' | 'BLUE';
 }
 
 export interface BranchAst {
@@ -89,6 +99,7 @@ export interface CherryPickingAst {
 
 export interface GitGraphDB extends DiagramDBBase<GitGraphDiagramConfig> {
   commitType: typeof commitType;
+  commitColor: typeof commitColor;
   setDirection: (dir: DiagramOrientation) => void;
   setOptions: (rawOptString: string) => void;
   getOptions: () => any;
@@ -110,6 +121,7 @@ export interface GitGraphDB extends DiagramDBBase<GitGraphDiagramConfig> {
 
 export interface GitGraphDBParseProvider extends Partial<GitGraphDB> {
   commitType: typeof commitType;
+  commitColor: typeof commitColor;
   setDirection: (dir: DiagramOrientation) => void;
   commit: (commitDB: CommitDB) => void;
   branch: (branchDB: BranchDB) => void;

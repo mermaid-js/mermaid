@@ -282,6 +282,18 @@ const drawCommitBullet = (
   }
 };
 
+const commitLabelColorClass = (color: number) => {
+  if (color == 1) {
+    return 'commit-label-color-red';
+  } else if (color == 2) {
+    return 'commit-label-color-blue';
+  } else if (color == 3) {
+    return 'commit-label-color-green';
+  } else {
+    return 'commit-label';
+  }
+};
+
 const drawCommitLabel = (
   gLabels: d3.Selection<SVGGElement, unknown, HTMLElement, any>,
   commit: Commit,
@@ -300,7 +312,7 @@ const drawCommitLabel = (
       .append('text')
       .attr('x', pos)
       .attr('y', commitPosition.y + 25)
-      .attr('class', 'commit-label')
+      .attr('class', commitLabelColorClass(commit.color))
       .text(commit.id);
     const bbox = text.node()?.getBBox();
 
@@ -1009,6 +1021,7 @@ if (import.meta.vitest) {
           tags: [],
           parents: [],
           branch: 'main',
+          color: 0,
         },
       ],
       [
@@ -1021,6 +1034,7 @@ if (import.meta.vitest) {
           tags: [],
           parents: ['ZERO'],
           branch: 'feature',
+          color: 0,
         },
       ],
       [
@@ -1033,6 +1047,7 @@ if (import.meta.vitest) {
           tags: [],
           parents: ['A'],
           branch: 'feature',
+          color: 0,
         },
       ],
       [
@@ -1046,6 +1061,7 @@ if (import.meta.vitest) {
           parents: ['ZERO', 'B'],
           branch: 'main',
           customId: true,
+          color: 0,
         },
       ],
       [
@@ -1058,6 +1074,7 @@ if (import.meta.vitest) {
           tags: [],
           parents: ['ZERO'],
           branch: 'release',
+          color: 0,
         },
       ],
       [
@@ -1070,6 +1087,7 @@ if (import.meta.vitest) {
           tags: [],
           parents: ['C', 'M'],
           branch: 'release',
+          color: 0,
         },
       ],
       [
@@ -1082,6 +1100,7 @@ if (import.meta.vitest) {
           tags: [],
           parents: ['5-8928ea0'],
           branch: 'release',
+          color: 0,
         },
       ],
       [
@@ -1094,6 +1113,7 @@ if (import.meta.vitest) {
           tags: [],
           parents: ['D', 'M'],
           branch: 'release',
+          color: 0,
         },
       ],
     ]);
@@ -1175,6 +1195,7 @@ if (import.meta.vitest) {
           tags: [],
           parents: [],
           branch: 'main',
+          color: 0,
         },
       ],
       [
@@ -1187,6 +1208,7 @@ if (import.meta.vitest) {
           tags: [],
           parents: ['1-abcdefg'],
           branch: 'main',
+          color: 0,
         },
       ],
       [
@@ -1199,6 +1221,7 @@ if (import.meta.vitest) {
           tags: [],
           parents: ['2-abcdefg'],
           branch: 'develop',
+          color: 0,
         },
       ],
       [
@@ -1211,6 +1234,7 @@ if (import.meta.vitest) {
           tags: [],
           parents: ['3-abcdefg'],
           branch: 'develop',
+          color: 0,
         },
       ],
       [
@@ -1223,6 +1247,7 @@ if (import.meta.vitest) {
           tags: [],
           parents: ['2-abcdefg'],
           branch: 'feature',
+          color: 0,
         },
       ],
       [
@@ -1235,6 +1260,7 @@ if (import.meta.vitest) {
           tags: [],
           parents: ['5-abcdefg'],
           branch: 'feature',
+          color: 0,
         },
       ],
       [
@@ -1247,6 +1273,7 @@ if (import.meta.vitest) {
           tags: [],
           parents: ['2-abcdefg'],
           branch: 'main',
+          color: 0,
         },
       ],
       [
@@ -1259,6 +1286,7 @@ if (import.meta.vitest) {
           tags: [],
           parents: ['7-abcdefg'],
           branch: 'main',
+          color: 0,
         },
       ],
     ]);
