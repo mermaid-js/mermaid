@@ -37,6 +37,7 @@ export const insertEdgeLabel = async (elem, edge) => {
       style: edge.labelStyle,
       useHtmlLabels,
       addSvgBackground: true,
+      isNode: false,
       markdown: isMarkdown,
       // If using markdown, wrap using default width
       width: isMarkdown ? undefined : Number.POSITIVE_INFINITY,

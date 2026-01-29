@@ -235,7 +235,6 @@ export async function insertEdges(
           await insertEdgeLabel(elem, {
             ...edge,
             label: edge.label,
-            labelType: 'markdown',
             labelStyle: 'stroke: #333; stroke-width: 1.5px;fill:none;',
             arrowTypeEnd: edge.arrowTypeEnd,
             arrowTypeStart: edge.arrowTypeStart,
