@@ -623,6 +623,99 @@ erDiagram
     classDef foobar stroke:#00f
 ```
 
+## Interaction
+
+It is possible to bind a click event to an entity, the click can lead to either a javascript callback or to a link which will be opened in the current or a new browser tab.
+
+> **Note**
+> This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
+
+```
+click entityId call callback
+click entityId call callback()
+```
+
+- entityId is the id of the entity
+- callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the entityId as parameter
+
+Examples of callback usage below:
+
+```html
+<script>
+  window.callback = function (entityId) {
+    alert('A callback was triggered for entity ' + entityId);
+  };
+</script>
+```
+
+```mermaid-example
+erDiagram
+    CUSTOMER ||--o{ ORDER : places
+    CUSTOMER {
+        string name
+        string custNumber
+        string sector
+    }
+    ORDER {
+        int orderNumber
+        string deliveryAddress
+    }
+    click CUSTOMER call callback
+    click ORDER call callback()
+```
+
+```mermaid
+erDiagram
+    CUSTOMER ||--o{ ORDER : places
+    CUSTOMER {
+        string name
+        string custNumber
+        string sector
+    }
+    ORDER {
+        int orderNumber
+        string deliveryAddress
+    }
+    click CUSTOMER call callback
+    click ORDER call callback()
+```
+
+Links are opened in the same browser tab/window by default. It is possible to change this by adding a link target to the click definition (`_self`, `_blank`, `_parent` and `_top` are supported):
+
+```mermaid-example
+erDiagram
+    CUSTOMER ||--o{ ORDER : places
+    CUSTOMER {
+        string name
+        string custNumber
+        string sector
+    }
+    ORDER {
+        int orderNumber
+        string deliveryAddress
+    }
+    click CUSTOMER "https://www.github.com"
+    click ORDER href "https://www.github.com" _blank
+```
+
+```mermaid
+erDiagram
+    CUSTOMER ||--o{ ORDER : places
+    CUSTOMER {
+        string name
+        string custNumber
+        string sector
+    }
+    ORDER {
+        int orderNumber
+        string deliveryAddress
+    }
+    click CUSTOMER "https://www.github.com"
+    click ORDER href "https://www.github.com" _blank
+```
+
+> **Success** The entity click functionality is available from version 10.3.0+.
+
 ## Configuration
 
 ### Layout
