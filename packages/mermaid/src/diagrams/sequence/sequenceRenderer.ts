@@ -691,6 +691,15 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
       autonumberX = isLeftToRight ? msgModel.fromBounds + 1 : msgModel.toBounds - 1;
     }
 
+    let fontSize = '12px';
+    const sequenceIndexLength = sequenceIndex.toString().length;
+
+    if (sequenceIndexLength > 5) {
+      fontSize = '7px';
+    } else if (sequenceIndexLength > 3) {
+      fontSize = '9px';
+    }
+
     diagram
       .append('line')
       .attr('x1', autonumberX)
@@ -705,7 +714,7 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
       .attr('x', autonumberX)
       .attr('y', lineStartY + 4)
       .attr('font-family', 'sans-serif')
-      .attr('font-size', '12px')
+      .attr('font-size', fontSize)
       .attr('text-anchor', 'middle')
       .attr('class', 'sequenceNumber')
       .text(sequenceIndex);
@@ -1308,7 +1317,8 @@ export const draw = async function (_text: string, id: string, _version: string,
         diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED,
       ].includes(msg.type)
     ) {
-      sequenceIndex = sequenceIndex + sequenceIndexStep;
+      // hitting a floating point number error, so round to 2 decimal places
+      sequenceIndex = Math.round((sequenceIndex + sequenceIndexStep) * 100) / 100;
     }
     index++;
   }
