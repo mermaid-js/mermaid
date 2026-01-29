@@ -245,4 +245,24 @@ config:
       {}
     );
   });
+  it('14: should render all supported HTML tags in timeline labels', () => {
+    imgSnapshotTest(
+      `---
+config:
+    theme: forest
+---
+
+ timeline
+    title HTML Formatting Test
+    section Text Formatting
+        Event 1 : Normal text with <em>italic</em> and <strong>bold</strong> formatting
+        Event 2 : Text with <sup>superscript</sup> and <br>line break
+        Event 3 : Link to <a href="https://mermaid.js.org">Mermaid</a> documentation
+    section Lists
+        Event 4 : Unordered list: <ul><li>First item</li><li>Second item</li><li>Third item</li></ul>
+        Event 5 : Paragraph with <p>multiple</p> <p>paragraphs</p>
+      `,
+      {}
+    );
+  });
 });
