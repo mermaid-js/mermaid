@@ -1053,6 +1053,32 @@ describe('Sequence diagram', () => {
       ]);
     });
   });
+
+  describe('Note over with KaTeX', () => {
+    it('should render KaTeX note over single actor with proper padding', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        participant A
+        participant B
+        Note over B: $$(sk_B, pk_B)\\leftarrow KeyGen(1^\\lambda)$$
+        A->>B: Message
+        `,
+        { sequence: { useMaxWidth: false } }
+      );
+    });
+
+    it('should render KaTeX notes consistently across positioning types', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        participant A
+        participant B
+        Note over B: $$(sk_B, pk_B)\\leftarrow KeyGen(1^\\lambda)$$
+        Note left of B: $$(sk_B, pk_B)\\leftarrow KeyGen(1^\\lambda)$$
+        A->>B: Message
+        `,
+        { sequence: { useMaxWidth: false } }
   describe('render new arrow type', () => {
     it('should render Solid half arrow top', () => {
       imgSnapshotTest(
