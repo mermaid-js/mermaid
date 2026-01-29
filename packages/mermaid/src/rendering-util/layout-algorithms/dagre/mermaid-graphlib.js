@@ -247,6 +247,15 @@ export const adjustClustersAndEdges = (graph, depth) => {
     if (parent !== id && clusterDb.has(parent) && !clusterDb.get(parent).externalConnections) {
       clusterDb.get(id).id = parent;
     }
+    const hasDirectOutgoingEdge = graph.edges().some((edge) => edge.v === id);
+    if (nonClusterChild && clusterDb.get(id)?.externalConnections && hasDirectOutgoingEdge) {
+      // Check if the current anchor is invalid
+      isNodeInExtractableCluster(graph, nonClusterChild, id);
+      const safeAnchor = findSafeAnchorNode(graph, id, graph.parent(nonClusterChild));
+      if (safeAnchor) {
+        clusterDb.get(id).id = safeAnchor;
+      }
+    }
   }
 
   graph.edges().forEach(function (e) {
@@ -411,3 +420,40 @@ const sorter = (graph, nodes) => {
 };
 
 export const sortNodesByHierarchy = (graph) => sorter(graph, graph.children());
+
+/** Checks if a node is inside a cluster that will be extracted (has no external connections). */
+const isNodeInExtractableCluster = (graph, node, rootId) => {
+  let parent = graph.parent(node);
+
+  while (parent && parent !== rootId) {
+    const cluster = clusterDb.get(parent);
+    if (cluster && !cluster.externalConnections) {
+      return true;
+    }
+    parent = graph.parent(parent);
+  }
+
+  return false;
+};
+
+/** Finds an alternative anchor node for a cluster that is not inside an extractable cluster. */
+const findSafeAnchorNode = (graph, clusterId, excludedCluster) => {
+  const children = graph.children(clusterId) ?? [];
+
+  for (const child of children) {
+    if (child === excludedCluster || isDescendant(child, excludedCluster)) {
+      continue;
+    }
+
+    const candidate = findNonClusterChild(child, graph, clusterId);
+    if (!candidate || candidate === child) {
+      continue;
+    }
+
+    if (!isNodeInExtractableCluster(graph, candidate, clusterId)) {
+      return candidate;
+    }
+  }
+
+  return null;
+};
