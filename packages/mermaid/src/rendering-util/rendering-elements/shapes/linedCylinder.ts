@@ -56,17 +56,42 @@ export const createInnerCylinderPathD = (
 ): string => {
   return [`M${x - width / 2},${-height / 2}`, `a${rx},${ry} 0,0,0 ${width},0`].join(' ');
 };
+
+const MIN_HEIGHT = 10;
+const MIN_WIDTH = 10;
+
 export async function linedCylinder<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? 16 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 24 : nodePadding;
+
+  if (node.width || node.height) {
+    const originalWidth = node.width ?? 0;
+    node.width = (node.width ?? 0) - labelPaddingX;
+    if (node.width < MIN_WIDTH) {
+      node.width = MIN_WIDTH;
+    }
+
+    const rx = originalWidth / 2;
+
+    // based on this width, height is calculated
+    const ry = rx / (2.5 + originalWidth / 50);
+    node.height = (node.height ?? 0) - labelPaddingY - ry * 3;
+    if (node.height < MIN_HEIGHT) {
+      node.height = MIN_HEIGHT;
+    }
+  }
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = Math.max(bbox.width + (node.padding ?? 0), node.width ?? 0);
+
+  const w = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2;
   const rx = w / 2;
   const ry = rx / (2.5 + w / 50);
-  const h = Math.max(bbox.height + ry + (node.padding ?? 0), node.height ?? 0);
+  const h = (node?.height ? node?.height : bbox.height) + ry + labelPaddingY * 2;
   const outerOffset = h * 0.1; // 10% of height
 
   let cylinder: typeof shapeSvg | D3Selection<SVGPathElement>;

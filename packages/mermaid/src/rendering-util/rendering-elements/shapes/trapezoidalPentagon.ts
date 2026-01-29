@@ -11,11 +11,26 @@ export async function trapezoidalPentagon<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? 16 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
+  const minWidth = 15,
+    minHeight = 5;
+  if (node.width || node.height) {
+    node.height = (node.height ?? 0) - labelPaddingY * 2;
+    if (node.height < minHeight) {
+      node.height = minHeight;
+    }
+
+    node.width = (node.width ?? 0) - labelPaddingX * 2;
+    if (node.width < minWidth) {
+      node.width = minWidth;
+    }
+  }
+
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const minWidth = 60,
-    minHeight = 20;
-  const w = Math.max(minWidth, bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
-  const h = Math.max(minHeight, bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
+  const w = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2;
+  const h = (node?.height ? node?.height : bbox.height) + labelPaddingY * 2;
 
   const { cssStyles } = node;
   // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
