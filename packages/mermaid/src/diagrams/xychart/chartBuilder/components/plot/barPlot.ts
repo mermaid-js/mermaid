@@ -41,19 +41,27 @@ export class BarPlot {
         },
       ];
     }
+    const zeroY = this.yAxis.getScaleValue(0);
+
     return [
       {
         groupTexts: ['plot', `bar-plot-${this.plotIndex}`],
         type: 'rect',
-        data: finalData.map((data) => ({
-          x: data[0] - barWidthHalf,
-          y: data[1],
-          width: barWidth,
-          height: this.boundingRect.y + this.boundingRect.height - data[1],
-          fill: this.barData.fill,
-          strokeWidth: 0,
-          strokeFill: this.barData.fill,
-        })),
+        data: finalData.map((data) => {
+          const barY = data[1];
+          const y = Math.min(zeroY, barY);
+          const height = Math.abs(zeroY - barY) + 1; // 👈 extends it by 1 pixel
+
+          return {
+            x: data[0] - barWidthHalf,
+            y: y,
+            width: barWidth,
+            height: height,
+            fill: this.barData.fill,
+            strokeWidth: 0,
+            strokeFill: this.barData.fill,
+          };
+        }),
       },
     ];
   }

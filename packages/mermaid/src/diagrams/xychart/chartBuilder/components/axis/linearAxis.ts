@@ -25,14 +25,26 @@ export class LinearAxis extends BaseAxis {
   }
 
   recalculateScale(): void {
-    const domain = [...this.domain]; // copy the array so if reverse is called two times it should not cancel the reverse effect
-    if (this.axisPosition === 'left') {
-      domain.reverse(); // since y-axis in svg start from top
+    // 👇 Add this
+    const shouldForceZero = this.axisConfig.forceZeroYStart ?? false;
+
+    let domain: [number, number];
+    if (shouldForceZero) {
+      domain = [
+        Math.min(0, this.domain[0]), // Always start at 0 if needed
+        this.domain[1],
+      ];
+    } else {
+      domain = [...this.domain]; // Normal behavior for all other charts
     }
+
+    if (this.axisPosition === 'left') {
+      domain.reverse(); // since y-axis in svg starts from top
+    }
+
     this.scale = scaleLinear().domain(domain).range(this.getRange());
   }
-
   getScaleValue(value: number): number {
-    return this.scale(value);
+    return Math.floor(this.scale(value)); // or Math.round
   }
 }
