@@ -105,6 +105,8 @@ export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidCo
       return `${node.text}`;
     } else if (node.type === 'escape') {
       return node.text;
+    } else if (node.type === 'link') {
+      return `<a xlink:href="${node.href}" href="${node.href}" target="__blank">${node.tokens?.map(output).join('')}</a>`;
     }
     log.warn(`Unsupported markdown: ${node.type}`);
     return node.raw;
