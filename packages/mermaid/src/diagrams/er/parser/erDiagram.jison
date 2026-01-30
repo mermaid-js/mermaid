@@ -34,7 +34,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <block>\s+                      /* skip whitespace in block */
 <block>\b((?:PK)|(?:FK)|(?:UK))\b      return 'ATTRIBUTE_KEY'
 <block>([^\s]*)[~].*[~]([^\s]*)        return 'ATTRIBUTE_WORD';
-<block>([\*A-Za-z_\u00C0-\uFFFF][A-Za-z0-9\-\_\[\]\(\)\u00C0-\uFFFF\*]*)  return 'ATTRIBUTE_WORD';
+<block>([\*A-Za-z_\u00C0-\uFFFF][A-Za-z0-9\-\_\[\]\(\)\u00C0-\uFFFF\*]*\??)  return 'ATTRIBUTE_WORD';
 <block>\"[^"]*\"                return 'COMMENT';
 <block>[\n]+                    /* nothing */
 <block>"}"                      { this.popState(); return 'BLOCK_STOP'; }
