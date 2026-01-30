@@ -290,6 +290,30 @@ export const positionEdgeLabel = (edge, paths) => {
   }
 };
 
+/**
+ * Adjusts cluster boundary to exclude the title area.
+ * This prevents edges and labels from overlapping with the cluster title.
+ * @param {object} clusterNode - The cluster node with dimensions and labelBBox
+ * @returns {object} Adjusted cluster boundary excluding title area
+ */
+export const getAdjustedClusterBoundary = (clusterNode) => {
+  const siteConfig = getConfig();
+  const { subGraphTitleTopMargin, subGraphTitleBottomMargin } = getSubGraphTitleMargins(siteConfig);
+
+  // Calculate the height of the title area (label height + margins)
+  const labelHeight = clusterNode?.labelBBox?.height || 0;
+  const titleAreaHeight = labelHeight + subGraphTitleTopMargin + subGraphTitleBottomMargin;
+
+  // Create an adjusted boundary that excludes the title area
+  return {
+    ...clusterNode,
+    // Move the boundary down by the title area height
+    y: clusterNode.y + titleAreaHeight / 2,
+    // Reduce the height by the title area height
+    height: clusterNode.height - titleAreaHeight,
+  };
+};
+
 const outsideNode = (node, point) => {
   const x = node.x;
   const y = node.y;
@@ -545,7 +569,9 @@ export const insertEdge = function (
   const pointsStr = btoa(JSON.stringify(points));
   if (edge.toCluster) {
     log.info('to cluster abc88', clusterDb.get(edge.toCluster));
-    points = cutPathAtIntersect(edge.points, clusterDb.get(edge.toCluster).node);
+    const clusterNode = clusterDb.get(edge.toCluster).node;
+    const adjustedBoundary = getAdjustedClusterBoundary(clusterNode);
+    points = cutPathAtIntersect(edge.points, adjustedBoundary);
 
     pointsHasChanged = true;
   }
@@ -556,7 +582,9 @@ export const insertEdge = function (
       clusterDb.get(edge.fromCluster),
       JSON.stringify(points, null, 2)
     );
-    points = cutPathAtIntersect(points.reverse(), clusterDb.get(edge.fromCluster).node).reverse();
+    const clusterNode = clusterDb.get(edge.fromCluster).node;
+    const adjustedBoundary = getAdjustedClusterBoundary(clusterNode);
+    points = cutPathAtIntersect(points.reverse(), adjustedBoundary).reverse();
 
     pointsHasChanged = true;
   }
