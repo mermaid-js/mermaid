@@ -107,7 +107,7 @@ const getStyles = (options: BlockChartStyleOptions) =>
   .labelBkg p {
     margin: 0;
     padding: 0;
-    display: inline-block;
+    background-color: transparent;
   }
 
   .node .cluster {
