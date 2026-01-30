@@ -225,4 +225,44 @@ timeline
       {}
     );
   });
+  it('13: should render markdown htmlLabels', () => {
+    imgSnapshotTest(
+      `---
+config:
+    theme: forest
+---
+
+ timeline
+    title Timeline of Industrial Revolution
+    section 17th-20th century
+        Industry 1.0 : Machinery, Water power, Steam <br>power
+        Industry 2.0 : Electricity, <strong>Internal combustion engine </strong>, Mass production
+        Industry 3.0 : Electronics, Computers, Automation
+    section 21st century
+        Industry 4.0 : Internet, Robotics, Internet of Things
+        Industry 5.0 : Artificial intelligence, Big data, 3D printing
+      `,
+      {}
+    );
+  });
+  it('14: should render all supported HTML tags in timeline labels', () => {
+    imgSnapshotTest(
+      `---
+config:
+    theme: forest
+---
+
+ timeline
+    title HTML Formatting Test
+    section Text Formatting
+        Event 1 : Normal text with <em>italic</em> and <strong>bold</strong> formatting
+        Event 2 : Text with <sup>superscript</sup> and <br>line break
+        Event 3 : Link to <a href="https://mermaid.js.org">Mermaid</a> documentation
+    section Lists
+        Event 4 : Unordered list: <ul><li>First item</li><li>Second item</li><li>Third item</li></ul>
+        Event 5 : Paragraph with <p>multiple</p> <p>paragraphs</p>
+      `,
+      {}
+    );
+  });
 });
