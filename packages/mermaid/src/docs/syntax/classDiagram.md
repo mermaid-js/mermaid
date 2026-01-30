@@ -358,17 +358,19 @@ It is possible to annotate classes with markers to provide additional metadata a
 - `<<Service>>` To represent a service class
 - `<<Enumeration>>` To represent an enum
 
-Annotations are defined within the opening `<<` and closing `>>`. There are two ways to add an annotation to a class, and either way the output will be same:
+Annotations are defined within the opening `<<` and closing `>>`. There are multiple ways to add an annotation to a class, which all result in the same output, and you can add multiple annotations by adding others on the same line:
 
-> **Tip:**  
-> In Mermaid class diagrams, annotations like `<<interface>>` can be attached in two ways:
->
 > - **Inline with the class definition** (Recommended for consistency):
 >
 >   ```mermaid-example
 >   classDiagram
 >     class Shape <<interface>>
 >   ```
+
+> ```mermaid-example
+> classDiagram
+>   class Shape <<interface>> <<injected>>
+> ```
 >
 > - **Separate line after the class definition**:
 >
@@ -378,25 +380,18 @@ Annotations are defined within the opening `<<` and closing `>>`. There are two 
 >     <<interface>> Shape
 >   ```
 >
-> Both methods are fully supported and produce identical diagrams.  
-> However, it is recommended to use the **inline style** for better readability and consistent formatting across diagrams.
+>   ```mermaid-example
+>   classDiagram
+>     class Shape
+>     <<interface>> <<injected>> Shape
+>   ```
 
-- In a **_separate line_** after a class is defined:
-
-```mermaid-example
-classDiagram
-class Shape
-<<interface>> Shape
-Shape : noOfVertices
-Shape : draw()
-```
-
-- In a **_nested structure_** along with the class definition:
+> In a **_nested structure_** along with the class definition:
 
 ```mermaid-example
 classDiagram
 class Shape{
-    <<interface>>
+    <<interface>> <<injected>>
     noOfVertices
     draw()
 }
