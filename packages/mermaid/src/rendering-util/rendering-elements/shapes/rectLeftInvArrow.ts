@@ -14,23 +14,23 @@ export async function rect_left_inv_arrow<T extends SVGGraphicsElement>(
   const nodePadding = node.padding ?? 0;
   const labelPaddingX = node.look === 'neo' ? 21 : (nodePadding ?? 0);
   const labelPaddingY = node.look === 'neo' ? 12 : (nodePadding ?? 0);
-  if (node.width || node.height) {
-    node.width = (node?.width ?? 10) - labelPaddingX * 2;
-    node.height = (node?.height ?? 10) - labelPaddingY * 2;
-  }
-
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2;
-  const h = (node?.height ? node?.height : bbox.height) + labelPaddingY * 2;
+
+  // const w = Math.max(bbox.width + (node.padding ?? 0), node?.width ?? 0);
+  // const h = Math.max(bbox.height + (node.padding ?? 0), node?.height ?? 0);
+
+  const w = (node?.width ?? bbox.width) + (node.look === 'neo' ? labelPaddingX * 2 : labelPaddingX);
+  const h =
+    (node?.height ?? bbox.height) + (node.look === 'neo' ? labelPaddingY * 2 : labelPaddingY);
 
   const x = -w / 2;
   const y = -h / 2;
-  const notch = -y / 2;
+  const notch = y / 2;
 
   const points = [
-    { x: x, y },
-    { x: x + notch, y: 0 },
-    { x: x, y: -y },
+    { x: x + notch, y },
+    { x: x, y: 0 },
+    { x: x + notch, y: -y },
     { x: -x, y: -y },
     { x: -x, y },
   ];
