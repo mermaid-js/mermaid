@@ -599,7 +599,8 @@ export const drawNode = async function (elem, node, fullSection, conf) {
   if (hasHtml) {
     const originalWidth = node.width;
     const bbox = await processHtmlContent(textElem, node, conf, false);
-    node.height = bbox.height + node.padding;
+    const fontSize = conf.fontSize?.replace ? conf.fontSize.replace('px', '') : conf.fontSize;
+    node.height = bbox.height + fontSize * 1.1 * 0.5 + node.padding;
     node.height = Math.max(node.height, node.maxHeight);
     node.width = node.width + 2 * node.padding;
     textElem.attr(
