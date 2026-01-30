@@ -65,7 +65,7 @@ async function addHtmlSpan(
   }
 
   let bbox = div.node().getBoundingClientRect();
-  if (bbox.width === width) {
+  if (bbox.width >= width - 1) {
     div.style('display', 'table');
     div.style('white-space', 'break-spaces');
     div.style('width', width + 'px');
