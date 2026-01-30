@@ -408,4 +408,16 @@ describe('Block diagram', () => {
       {}
     );
   });
+
+  it('BL32: hexagon shape block should span correctly', () => {
+    imgSnapshotTest(
+      `block-beta
+columns 3
+  A1{{"Opening tag"}} space A3{{"Closing tag"}}
+  B1["&lt;tagname&gt;"] B2["content"] B3["&lt;/tagname&gt;"]
+  C{{"Element"}}:3
+`,
+      {}
+    );
+  });
 });
