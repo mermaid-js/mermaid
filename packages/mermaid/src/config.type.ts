@@ -196,6 +196,7 @@ export interface MermaidConfig {
    *
    */
   deterministicIDSeed?: string;
+  accessibility?: AccessibilityConfig;
   flowchart?: FlowchartDiagramConfig;
   sequence?: SequenceDiagramConfig;
   gantt?: GanttDiagramConfig;
@@ -227,6 +228,36 @@ export interface MermaidConfig {
    *
    */
   suppressErrorRendering?: boolean;
+}
+/**
+ * Defines how accessibility information should be included in diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "AccessibilityConfig".
+ */
+export interface AccessibilityConfig {
+  /**
+   * When this flag is `true`, the accessibility tree for a node will
+   * include a list of links that follow the node's inbound edges.
+   *
+   */
+  listInboundEdges?: boolean;
+  /**
+   * When this flag is `true`, the accessibility tree for a node will
+   * include a list of links that follow the node's outbound edges.
+   *
+   */
+  listOutboundEdges?: boolean;
+  /**
+   * Label for the inbound edges list
+   *
+   */
+  inboundEdgesLabel?: string;
+  /**
+   * Label for the outbound edges list
+   *
+   */
+  outboundEdgesLabel?: string;
 }
 /**
  * The object containing configurations specific for flowcharts

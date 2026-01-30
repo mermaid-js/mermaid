@@ -434,3 +434,107 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
         Sit down: 5: Me
 
 ```
+
+### Accessible Diagram Structure
+
+#### Flowcharts (v\<MERMAID_RELEASE_VERSION>+)
+
+Flowcharts provide a list of the edges touching each node,
+as links to the node at the other end of the edge.
+Outbound edges are shown by default,
+while inbound edges can be enabled with:
+
+```
+config:
+  accessibility:
+    listInboundEdges: true
+```
+
+Outbound edges have the same accessible name as their visible label,
+while inbound edges use their label, "from", and the name of the other node.
+If either sort of edge doesn't have a visible label, it uses the name of the other node.
+
+You can configure the names of the lists using:
+
+```
+config:
+  accessibility:
+    listInboundEdges: true
+    inboundEdgesLabel: "Incoming edges"
+    outboundEdgesLabel: "Outgoing edges"
+```
+
+The following diagram
+
+```mermaid-example
+graph LR
+  accTitle: Big Decisions
+  accDescr: Bob's Burgers process for making big decisions
+  A[Identify Big Decision] --> B{Make Big Decision}
+  B --> D[Be done]
+```
+
+```mermaid
+graph LR
+  accTitle: Big Decisions
+  accDescr: Bob's Burgers process for making big decisions
+  A[Identify Big Decision] --> B{Make Big Decision}
+  B --> D[Be done]
+```
+
+generates the following (simplified) SVG:
+
+```html
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  role="graphics-document document"
+  aria-roledescription="flowchart-v2"
+  aria-describedby="chart-desc-mermaid-164"
+  aria-labelledby="chart-title-mermaid-164"
+>
+  <title id="chart-title-mermaid-164">Big Decisions</title>
+  <desc id="chart-desc-mermaid-164">Bob's Burgers process for making big decisions</desc>
+  <g>
+    <g class="root">
+      <g class="clusters"></g>
+      <g class="edgePaths" aria-hidden="true"></g>
+      <g class="edgeLabels" aria-hidden="true"></g>
+      <g class="nodes" role="list">
+        <g id="flowchart-A-0" role="listitem">
+          <rect></rect>
+          <g class="label">
+            <text>Identify Big Decision</text>
+          </g>
+          <g role="list" aria-label="Outbound edges">
+            <g role="listitem">
+              <a xlink:href="#flowchart-B-1" aria-label="Make Big Decision"></a>
+            </g>
+          </g>
+        </g>
+        <g id="flowchart-B-1" role="listitem">
+          <polygon></polygon>
+          <g class="label">
+            <g>
+              <text>Make Big Decision</text>
+            </g>
+          </g>
+          <g role="list" aria-label="Outbound edges">
+            <g role="listitem">
+              <a xlink:href="#flowchart-D-3" aria-label="Be done"></a>
+            </g>
+          </g>
+        </g>
+        <g id="flowchart-D-3" role="listitem">
+          <rect></rect>
+          <g class="label">
+            <g>
+              <text>Be done</text>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
+```
