@@ -110,7 +110,7 @@ classDef important fill:#f96,stroke:#333,stroke-width:2px;
 
 ### Theme Configuration
 
-You can customize the colors of your treemap using the theme configuration:
+You can customize the colors of your treemap using the theme configuration. Treemap diagrams automatically adapt to the selected theme, ensuring that titles, labels, and values remain readable across all themes including dark mode.
 
 ```mermaid-example
 ---
@@ -124,6 +124,27 @@ treemap-beta
 "Category B"
     "Item B1": 15
     "Item B2": 25
+```
+
+#### Dark Theme Support
+
+<LastUpdated v="MERMAID_RELEASE_VERSION" />
+
+Treemap titles and labels automatically use theme-aware colors to ensure readability on both light and dark backgrounds:
+
+```mermaid-example
+---
+config:
+    theme: 'dark'
+---
+treemap
+title Sales Data Q4 2024
+"All Products"
+  "Electronics"
+    "Laptops": 2000
+    "Phones": 1500
+  "Clothing"
+    "Apparel": 1250
 ```
 
 ### Diagram Padding
