@@ -76,6 +76,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
   - [redmine-mermaid](https://github.com/styz/redmine_mermaid)
 - Visual Studio Code [Polyglot Interactive Notebooks](https://github.com/dotnet/interactive#net-interactive)
 - [Microsoft Loop](https://loop.cloud.microsoft) ✅
+- [Fanfa.dev](https://fanfa.dev)
 
 ### LLM integrations
 
