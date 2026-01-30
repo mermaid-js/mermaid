@@ -17,11 +17,14 @@ export async function curvedTrapezoid<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? 16 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
+  const minWidth = 20,
+    minHeight = 5;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const minWidth = 80,
-    minHeight = 20;
-  const w = Math.max(minWidth, (bbox.width + (node.padding ?? 0) * 2) * 1.25, node?.width ?? 0);
-  const h = Math.max(minHeight, bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
+  const w = Math.max(minWidth, (bbox.width + labelPaddingX * 2) * 1.25, node?.width ?? 0);
+  const h = Math.max(minHeight, bbox.height + labelPaddingY * 2, node?.height ?? 0);
   const radius = h / 2;
 
   const { cssStyles } = node;

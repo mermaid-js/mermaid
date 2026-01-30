@@ -68,6 +68,12 @@ properties:
       - dark
       - forest
       - neutral
+      - neo
+      - neo-dark
+      - redux
+      - redux-dark
+      - redux-color
+      - redux-dark-color
       - 'null' # should this be a `null`-type?
     meta:enum:
       'null': Can be set to disable any pre-defined mermaid theme
@@ -83,6 +89,7 @@ properties:
     enum:
       - classic
       - handDrawn
+      - neo
     default: 'classic'
   handDrawnSeed:
     description: |

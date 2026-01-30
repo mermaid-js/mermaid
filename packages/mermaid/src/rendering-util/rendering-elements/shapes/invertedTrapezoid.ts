@@ -6,31 +6,20 @@ import rough from 'roughjs';
 import { insertPolygonShape } from './insertPolygonShape.js';
 import type { D3Selection } from '../../../types.js';
 
-// export const createInvertedTrapezoidPathD = (
-//   x: number,
-//   y: number,
-//   width: number,
-//   height: number
-// ): string => {
-//   return [
-//     `M${x + height / 6},${y}`,
-//     `L${x + width - height / 6},${y}`,
-//     `L${x + width + (2 * height) / 6},${y - height}`,
-//     `L${x - (2 * height) / 6},${y - height}`,
-//     'Z',
-//   ].join(' ');
-// };
-
 export async function inv_trapezoid<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingY = node.look === 'neo' ? nodePadding : nodePadding;
+  const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const w = Math.max(bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
-  const h = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
+  const w = Math.max(bbox.width + (labelPaddingX ?? 0) * 2, node?.width ?? 0);
+  const h = Math.max(bbox.height + (labelPaddingY ?? 0) * 2, node?.height ?? 0);
 
   const points = [
     { x: 0, y: 0 },
