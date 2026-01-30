@@ -36,7 +36,9 @@ export const insertEdgeLabel = async (elem, edge) => {
     {
       style: edge.labelStyle,
       useHtmlLabels,
-      addSvgBackground: true,
+      // TODO: The old code only set addSvgBackground when using markdown, but
+      // this function is only used by block diagrams which never use markdown.
+      addSvgBackground: isMarkdown,
       isNode: false,
       markdown: isMarkdown,
       // If using markdown, wrap using default width

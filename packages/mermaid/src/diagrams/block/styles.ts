@@ -91,6 +91,17 @@ const getStyles = (options: BlockChartStyleOptions) =>
 
   .edgeLabel {
     background-color: ${options.edgeLabelBackground};
+    /*
+     * This is for backward compatibility with existing code that didn't
+     * add a \`<p>\` around edge labels.
+     *
+     * TODO: We should probably remove this in a future release.
+     */
+    p {
+      margin: 0;
+      padding: 0;
+      display: inline;
+    }
     rect {
       opacity: 0.5;
       background-color: ${options.edgeLabelBackground};
@@ -102,12 +113,6 @@ const getStyles = (options: BlockChartStyleOptions) =>
   /* For html labels only */
   .labelBkg {
     background-color: ${options.edgeLabelBackground};
-  }
-
-  .labelBkg p {
-    margin: 0;
-    padding: 0;
-    background-color: transparent;
   }
 
   .node .cluster {
