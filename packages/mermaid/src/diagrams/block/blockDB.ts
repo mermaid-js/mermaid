@@ -125,6 +125,8 @@ const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
     }
     if (block.type === 'column-setting') {
       parent.columns = block.columns ?? -1;
+    } else if (block.type === 'scale-setting') {
+      parent.scale = block.scale ?? { rows: 'equal', columns: 'equal' };
     } else if (block.type === 'edge') {
       const count = (edgeCount.get(block.id) ?? 0) + 1;
       edgeCount.set(block.id, count);
