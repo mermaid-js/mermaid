@@ -413,11 +413,17 @@ class Color{
 
 ## Comments
 
-Comments can be entered within a class diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text until the next newline will be treated as a comment, including any class diagram syntax.
+Comments can be entered within a class diagram, which will be ignored by the parser. Mermaid supports two types of comments:
+
+- **Single-line comments**: Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text until the next newline will be treated as a comment, including any class diagram syntax.
+- **Block comments**: Multi-line comments can be created using `%%*` to start the comment and `*%%` to end it.
 
 ```mermaid
 classDiagram
 %% This whole line is a comment classDiagram class Shape <<interface>>
+%%* This is a block comment
+    that spans multiple lines
+*%%
 class Shape{
     <<interface>>
     noOfVertices

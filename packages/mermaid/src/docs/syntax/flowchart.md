@@ -1107,11 +1107,17 @@ Beginner's tip—a full example using interactive links in a html context:
 
 ### Comments
 
-Comments can be entered within a flow diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any flow syntax
+Comments can be entered within a flow diagram, which will be ignored by the parser. Mermaid supports two types of comments:
+
+- **Single-line comments**: Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any flow syntax.
+- **Block comments**: Multi-line comments can be created using `%%*` to start the comment and `*%%` to end it.
 
 ```mermaid
 flowchart LR
 %% this is a comment A -- text --> B{node}
+%%* This is a block comment
+    that spans multiple lines
+*%%
    A -- text --> B -- text2 --> C
 ```
 
