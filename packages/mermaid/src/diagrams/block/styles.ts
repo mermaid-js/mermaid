@@ -101,8 +101,13 @@ const getStyles = (options: BlockChartStyleOptions) =>
 
   /* For html labels only */
   .labelBkg {
-    background-color: ${fade(options.edgeLabelBackground, 0.5)};
-    // background-color:
+    background-color: ${options.edgeLabelBackground};
+  }
+
+  .labelBkg p {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
   }
 
   .node .cluster {
