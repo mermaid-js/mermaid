@@ -62,6 +62,7 @@ const getData = function () {
     const node = {
       id: section.id,
       label: sanitizeText(section.label ?? '', conf),
+      labelType: 'markdown',
       isGroup: true,
       ticket: section.ticket,
       shape: 'kanbanSection',
@@ -76,6 +77,7 @@ const getData = function () {
         id: item.id,
         parentId: section.id,
         label: sanitizeText(item.label ?? '', conf),
+        labelType: 'markdown',
         isGroup: false,
         ticket: item?.ticket,
         priority: item?.priority,

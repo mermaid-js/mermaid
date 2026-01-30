@@ -9,6 +9,7 @@ import { log } from '../logger.js';
 import {
   markdownToHTML,
   markdownToLines,
+  nonMarkdownToHTML,
   nonMarkdownToLines,
 } from '../rendering-util/handle-markdown-text.js';
 import { decodeEntities } from '../utils.js';
@@ -257,7 +258,7 @@ export const createText = async (
   if (useHtmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
 
-    const htmlText = markdown ? markdownToHTML(text, config) : text.replace(/\\n|\n/g, '<br />');
+    const htmlText = markdown ? markdownToHTML(text, config) : nonMarkdownToHTML(text);
     const decodedReplacedText = await replaceIconSubstring(decodeEntities(htmlText), config);
 
     //for Katex the text could contain escaped characters, \\relax that should be transformed to \relax
