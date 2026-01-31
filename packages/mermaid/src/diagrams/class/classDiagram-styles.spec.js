@@ -113,5 +113,39 @@ describe('class diagram, ', function () {
       ]);
       expect(parser.yy.getClass('Class01').cssClasses).toBe('default pink bold');
     });
+    it('should detect classDefs', function () {
+      const str =
+        'classDiagram\n' +
+        'class Animal\nclassDef red fill:red,color:white,stroke:red\nclassDef large color:black,font-size:20px,font-weight:bold';
+
+      parser.parse(str);
+
+      expect(parser.yy.getClassDefs()).toMatchInlineSnapshot(`
+        Map {
+          "red" => {
+            "id": "red",
+            "styles": [
+              "fill:red",
+              "color:white",
+              "stroke:red",
+            ],
+            "textStyles": [
+              "color:white",
+            ],
+          },
+          "large" => {
+            "id": "large",
+            "styles": [
+              "color:black",
+              "font-size:20px",
+              "font-weight:bold",
+            ],
+            "textStyles": [
+              "color:black",
+            ],
+          },
+        }
+      `);
+    });
   });
 });
