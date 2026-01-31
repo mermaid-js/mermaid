@@ -55,7 +55,7 @@ const getStyles = (options) =>
 }
 
 .classTitle {
-  font-weight: bolder;
+  font-weight: normal;
 }
 .node rect,
   .node circle,
@@ -171,6 +171,20 @@ g.classGroup line {
   fill: ${options.mainBkg} !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
+}
+  
+.classTitle.abstract {
+  font-style: italic;
+  font-weight: normal;
+}
+
+.classTitle.enumeration {
+  text-decoration: underline;
+  font-weight: normal;
+}
+
+.classTitle.interface {
+  font-weight: bold;
 }
 
 .edgeTerminals {
