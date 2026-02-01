@@ -1,10 +1,11 @@
 import * as configApi from './config.js';
-import { getDiagram, registerDiagram } from './diagram-api/diagramAPI.js';
 import { detectType, getDiagramLoader } from './diagram-api/detectType.js';
-import { UnknownDiagramError } from './errors.js';
-import { encodeEntities } from './utils.js';
-import type { DetailedError } from './utils.js';
+import { getDiagram, registerDiagram } from './diagram-api/diagramAPI.js';
 import type { DiagramDefinition, DiagramMetadata } from './diagram-api/types.js';
+import { UnknownDiagramError } from './errors.js';
+import { registerDiagramIconPacks } from './rendering-util/icons.js';
+import type { DetailedError } from './utils.js';
+import { encodeEntities } from './utils.js';
 
 // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
 export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: any) => void;
@@ -41,6 +42,7 @@ export class Diagram {
     if (metadata.title) {
       db.setDiagramTitle?.(metadata.title);
     }
+    registerDiagramIconPacks(config.icons);
     await parser.parse(text);
     return new Diagram(type, text, db, parser, renderer);
   }

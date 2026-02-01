@@ -1,12 +1,147 @@
-# Registering icon pack in mermaid
+# Icon Pack Configuration
 
-The icon packs available can be found at [icones.js.org](https://icones.js.org/).
-We use the name defined when registering the icon pack, to override the prefix field of the iconify pack. This allows the user to use shorter names for the icons. It also allows us to load a particular pack only when it is used in a diagram.
+Mermaid supports icons through Iconify-compatible icon packs. You can register icon packs either **declaratively via configuration** (recommended for most use cases) or **programmatically via JavaScript API** (for advanced/offline scenarios).
 
-Using JSON file directly from CDN:
+## Declarative Configuration (v<MERMAID_RELEASE_VERSION>+) (Recommended)
+
+The easiest way to use icons in Mermaid is through declarative configuration. This works in browsers, CLI, Live Editor, and headless renders without requiring custom JavaScript.
+
+### Basic Usage
+
+Configure icon packs in your Mermaid config:
+
+```yaml
+---
+config:
+  icons:
+    packs:
+      logos: "@iconify-json/logos@1"
+---
+flowchart TB
+  A[Start] --> B@{ icon: 'logos:docker', label: 'Docker' }
+  B --> C[End]
+```
+
+Or in JavaScript:
+
+```js
+mermaid.initialize({
+  icons: {
+    packs: {
+      logos: '@iconify-json/logos@1',
+      'simple-icons': '@iconify-json/simple-icons@1',
+    },
+  },
+});
+```
+
+### Package Spec Format
+
+Icon packs are specified using **package specs** with version pinning:
+
+- Format: `@scope/package@<version>` or `package@<version>`
+- **Must include at least a major version** (e.g., `@iconify-json/logos@1`)
+- Minor and patch versions are optional (e.g., `@iconify-json/logos@1.2.3`)
+
+**Important**: Only package specs are supported. Direct URLs are not allowed for security reasons.
+
+### Configuration Options
+
+```yaml
+icons:
+  packs:
+    # Icon pack configuration
+    # Key: local name to use in diagrams
+    # Value: package spec with version
+    logos: '@iconify-json/logos@1'
+    'simple-icons': '@iconify-json/simple-icons@1'
+
+  # CDN template for resolving package specs
+  # Must contain ${packageSpec} placeholder
+  cdnTemplate: 'https://cdn.jsdelivr.net/npm/${packageSpec}/icons.json'
+
+  # Maximum file size in MB for icon pack JSON files
+  # Range: 1-10 MB, default: 5 MB
+  maxFileSizeMB: 5
+
+  # Network timeout in milliseconds for icon pack fetches
+  # Range: 1000-30000 ms, default: 5000 ms
+  timeout: 5000
+
+  # List of allowed hosts to fetch icons from
+  allowedHosts:
+    - 'unpkg.com'
+    - 'cdn.jsdelivr.net'
+    - 'npmjs.com'
+```
+
+### Security Features
+
+- **Host allowlisting**: Only fetch from hosts in `allowedHosts`
+- **Size limits**: Maximum file size enforced via `maxFileSizeMB`
+- **Timeouts**: Network requests timeout after specified milliseconds
+- **HTTPS only**: All remote fetches occur over HTTPS
+- **Version pinning**: Package specs must include version for reproducibility
+
+### Examples
+
+#### Using Custom CDN Template
+
+```yaml
+---
+config:
+  icons:
+    packs:
+      logos: "@iconify-json/logos@1"
+    cdnTemplate: "https://unpkg.com/${packageSpec}/icons.json"
+---
+flowchart TB
+  A[Start] --> B@{ icon: 'logos:aws', label: 'AWS' }
+```
+
+#### Multiple Icon Packs
+
+```yaml
+---
+config:
+  icons:
+    packs:
+      logos: "@iconify-json/logos@1"
+      "simple-icons": "@iconify-json/simple-icons@1"
+---
+flowchart TB
+  A@{ icon: 'logos:docker', label: 'Docker' } --> B@{ icon: 'simple-icons:github', label: 'GitHub' }
+```
+
+#### CLI Usage
+
+Create a `mermaid.json` config file:
+
+```json
+{
+  "icons": {
+    "packs": {
+      "logos": "@iconify-json/logos@1"
+    }
+  }
+}
+```
+
+Then use it with the CLI:
+
+```bash
+mmdc -i diagram.mmd -o diagram.svg --configFile mermaid.json
+```
+
+## Programmatic API (v11.1.0+) (Advanced)
+
+For advanced scenarios or offline use, you can register icon packs programmatically:
+
+### Using JSON File from CDN
 
 ```js
 import mermaid from 'CDN/mermaid.esm.mjs';
+
 mermaid.registerIconPacks([
   {
     name: 'logos',
@@ -16,13 +151,15 @@ mermaid.registerIconPacks([
 ]);
 ```
 
-Using packages and a bundler:
+### Using Packages with Bundler
+
+Install the icon pack:
 
 ```bash
 npm install @iconify-json/logos@1
 ```
 
-With lazy loading
+#### With Lazy Loading
 
 ```js
 import mermaid from 'mermaid';
@@ -35,15 +172,39 @@ mermaid.registerIconPacks([
 ]);
 ```
 
-Without lazy loading
+#### Without Lazy Loading
 
 ```js
 import mermaid from 'mermaid';
 import { icons } from '@iconify-json/logos';
+
 mermaid.registerIconPacks([
   {
-    name: icons.prefix, // To use the prefix defined in the icon pack
+    name: icons.prefix, // Use the prefix defined in the icon pack
     icons,
   },
 ]);
 ```
+
+## Finding Icon Packs
+
+Icon packs available for use can be found at [iconify.design](https://icon-sets.iconify.design/) or [icones.js.org](https://icones.js.org/).
+
+The pack name you register is the **local name** used in diagrams. It can differ from the pack's prefix, allowing you to:
+
+- Use shorter names (e.g., register `@iconify-json/material-design-icons` as `mdi`)
+- Load specific packs only when used in diagrams (lazy loading)
+
+## Error Handling
+
+If an icon cannot be found:
+
+- The diagram still renders (non-fatal)
+- A fallback icon is displayed
+- A warning is logged (visible in CLI stderr or browser console)
+
+## Licensing
+
+Iconify JSON format is MIT licensed, but **individual icons may have varying licenses**. Please verify the licenses of the icon packs you configure before use in production.
+
+Mermaid does **not** redistribute third-party icon assets in the core bundle.
