@@ -890,14 +890,15 @@ const drawBranches = (
 };
 
 /**
- * Calculate maximum content width for branch spacing
+ * Calculate maximum content width for branch spacing in TB/BT modes.
+ * Measures actual text widths by temporarily creating SVG elements.
  *
- * @param branchName - The name of the branch
- * @param commits - Map of all commits
+ * @param branchName - The branch to measure
+ * @param commits - All commits in the diagram
  * @param rotateCommitLabel - Whether commit labels are rotated
- * @param rotateTagLabel - Whether tags are rotated
+ * @param rotateTagLabel - Whether tag labels are rotated
  * @param diagram - D3 selection for temporary rendering
- * @returns Maximum width needed for branch spacing
+ * @returns Maximum width to prevent label overlap
  */
 const calculateMaxContentWidth = (
   branchName: string,
@@ -909,48 +910,51 @@ const calculateMaxContentWidth = (
   let maxWidth = 0;
   const tempGroup = diagram.append('g').attr('class', 'temp-measurement');
 
-  const branchText = tempGroup.append('text').attr('class', 'branch-label').text(branchName);
-  const branchBbox = branchText.node()?.getBBox();
-  if (branchBbox) {
-    maxWidth = Math.max(maxWidth, branchBbox.width / 2);
-  }
-  branchText.remove();
+  try {
+    const branchText = tempGroup.append('text').attr('class', 'branch-label').text(branchName);
+    const branchBbox = branchText.node()?.getBBox();
+    if (branchBbox) {
+      maxWidth = Math.max(maxWidth, branchBbox.width / 2);
+    }
+    branchText.remove();
 
-  if (rotateCommitLabel && rotateTagLabel) {
-    tempGroup.remove();
-    return maxWidth;
-  }
+    if (rotateCommitLabel && rotateTagLabel) {
+      return maxWidth;
+    }
 
-  commits.forEach((commit) => {
-    if (commit.branch === branchName) {
-      if (
-        !rotateCommitLabel &&
-        commit.type !== commitType.CHERRY_PICK &&
-        ((commit.customId && commit.type === commitType.MERGE) || commit.type !== commitType.MERGE)
-      ) {
-        const text = tempGroup.append('text').attr('class', 'commit-label').text(commit.id);
-        const bbox = text.node()?.getBBox();
-        if (bbox) {
-          maxWidth = Math.max(maxWidth, bbox.width);
-        }
-        text.remove();
-      }
-
-      if (!rotateTagLabel && commit.tags.length > 0) {
-        commit.tags.forEach((tagValue) => {
-          const text = tempGroup.append('text').attr('class', 'tag-label').text(tagValue);
+    commits.forEach((commit) => {
+      if (commit.branch === branchName) {
+        if (
+          !rotateCommitLabel &&
+          commit.type !== commitType.CHERRY_PICK &&
+          ((commit.customId && commit.type === commitType.MERGE) ||
+            commit.type !== commitType.MERGE)
+        ) {
+          const text = tempGroup.append('text').attr('class', 'commit-label').text(commit.id);
           const bbox = text.node()?.getBBox();
           if (bbox) {
             maxWidth = Math.max(maxWidth, bbox.width);
           }
           text.remove();
-        });
-      }
-    }
-  });
+        }
 
-  tempGroup.remove();
-  return maxWidth;
+        if (!rotateTagLabel && commit.tags.length > 0) {
+          commit.tags.forEach((tagValue) => {
+            const text = tempGroup.append('text').attr('class', 'tag-label').text(tagValue);
+            const bbox = text.node()?.getBBox();
+            if (bbox) {
+              maxWidth = Math.max(maxWidth, bbox.width);
+            }
+            text.remove();
+          });
+        }
+      }
+    });
+
+    return maxWidth;
+  } finally {
+    tempGroup.remove();
+  }
 };
 
 const setBranchPosition = function (
@@ -958,30 +962,43 @@ const setBranchPosition = function (
   pos: number,
   index: number,
   bbox: DOMRect,
+  prevBbox: DOMRect | null,
   commits: Map<string, Commit>,
   rotateCommitLabel: boolean,
   rotateTagLabel: boolean,
   diagram: d3.Selection<d3.BaseType, unknown, HTMLElement, any>
 ): number {
-  branchPos.set(name, { pos, index });
-
-  let contentBasedSpacing = 0;
   if (dir === 'TB' || dir === 'BT') {
-    const maxContentWidth = calculateMaxContentWidth(
-      name,
-      commits,
-      rotateCommitLabel,
-      rotateTagLabel,
-      diagram
-    );
-    const baseSpacing = maxContentWidth + LAYOUT_OFFSET + 4;
-    const rotatedCommitSpacing = rotateCommitLabel ? 40 : 0;
-    contentBasedSpacing = Math.max(20, baseSpacing, rotatedCommitSpacing);
+    if (index === 0) {
+      pos = bbox.width / 2;
+    } else if (prevBbox) {
+      const prevHalfWidth = prevBbox.width / 2;
+      const currentHalfWidth = bbox.width / 2;
+      const baseGap = 50 + LAYOUT_OFFSET + 2 * PY;
+
+      // Adjust gap based on content when labels are not rotated
+      let dynamicGap = baseGap;
+      if (!rotateCommitLabel || !rotateTagLabel) {
+        const maxContentWidth = calculateMaxContentWidth(
+          name,
+          commits,
+          rotateCommitLabel,
+          rotateTagLabel,
+          diagram
+        );
+        // If content extends beyond label, add extra space
+        const additionalSpace = Math.max(0, maxContentWidth - currentHalfWidth);
+        dynamicGap = baseGap + additionalSpace;
+      }
+
+      pos = pos + prevHalfWidth + dynamicGap + currentHalfWidth;
+    }
   } else {
-    contentBasedSpacing = rotateCommitLabel ? 40 : 0;
+    const contentBasedSpacing = rotateCommitLabel ? 40 : 0;
+    pos += 50 + contentBasedSpacing;
   }
 
-  pos += 50 + contentBasedSpacing + (dir === 'TB' || dir === 'BT' ? bbox.width / 2 : 0);
+  branchPos.set(name, { pos, index });
   return pos;
 };
 
@@ -1002,6 +1019,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
   dir = db.getDirection();
   const diagram = select(`[id="${id}"]`);
   let pos = 0;
+  let prevBbox: DOMRect | null = null;
 
   branches.forEach((branch, index) => {
     const labelElement = drawText(branch.name);
@@ -1016,11 +1034,14 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
       pos,
       index,
       bbox,
+      prevBbox,
       allCommitsDict,
       rotateCommitLabel,
       rotateTagLabel,
       diagram
     );
+
+    prevBbox = bbox;
     label.remove();
     branchLabel.remove();
     g.remove();
@@ -1102,13 +1123,24 @@ if (import.meta.vitest) {
       const emptyCommits = new Map<string, Commit>();
       const mockDiagram = createMockDiagram();
 
-      const pos = setBranchPosition('main', 0, 0, bbox, emptyCommits, true, true, mockDiagram);
+      const pos = setBranchPosition(
+        'main',
+        0,
+        0,
+        bbox,
+        null,
+        emptyCommits,
+        true,
+        true,
+        mockDiagram
+      );
       expect(pos).toBe(90);
       expect(branchPos.get('main')).toEqual({ pos: 0, index: 0 });
       const posNext = setBranchPosition(
         'develop',
         pos,
         1,
+        bbox,
         bbox,
         emptyCommits,
         true,
@@ -1125,22 +1157,34 @@ if (import.meta.vitest) {
       const emptyCommits = new Map<string, Commit>();
       const mockDiagram = createMockDiagram();
 
-      const pos = setBranchPosition('main', 0, 0, bbox, emptyCommits, true, true, mockDiagram);
-      expect(pos).toBe(107.49609375);
+      const pos = setBranchPosition(
+        'main',
+        0,
+        0,
+        bbox,
+        null,
+        emptyCommits,
+        true,
+        true,
+        mockDiagram
+      );
+      expect(pos).toBe(139.49609375);
       expect(branchPos.get('main')).toEqual({ pos: 0, index: 0 });
 
+      const prevBbox = { ...bbox };
       bbox.width = 56.421875;
       const posNext = setBranchPosition(
         'develop',
         pos,
         1,
         bbox,
+        prevBbox,
         emptyCommits,
         true,
         true,
         mockDiagram
       );
-      expect(posNext).toBe(225.70703125);
+      expect(posNext).toBe(289.70703125);
       expect(branchPos.get('develop')).toEqual({ pos: pos, index: 1 });
     });
 
@@ -1150,23 +1194,403 @@ if (import.meta.vitest) {
       const emptyCommits = new Map<string, Commit>();
       const mockDiagram = createMockDiagram();
 
-      const pos = setBranchPosition('main', 0, 0, bbox, emptyCommits, false, true, mockDiagram);
-      expect(pos).toBe(87.49609375);
+      const pos = setBranchPosition(
+        'main',
+        0,
+        0,
+        bbox,
+        null,
+        emptyCommits,
+        false,
+        true,
+        mockDiagram
+      );
+      expect(pos).toBe(119.49609375);
       expect(branchPos.get('main')).toEqual({ pos: 0, index: 0 });
 
+      const prevBbox = { ...bbox };
       bbox.width = 56.421875;
       const posNext = setBranchPosition(
         'develop',
         pos,
         1,
         bbox,
+        prevBbox,
         emptyCommits,
         false,
         true,
         mockDiagram
       );
-      expect(posNext).toBe(185.70703125);
+      expect(posNext).toBe(249.70703125);
       expect(branchPos.get('develop')).toEqual({ pos: pos, index: 1 });
+    });
+  });
+
+  describe('calculateMaxContentWidth', () => {
+    const createTestCommit = (props: Partial<Commit>): Commit => ({
+      id: 'test-id',
+      message: 'test message',
+      seq: 0,
+      branch: 'main',
+      type: commitType.NORMAL,
+      tags: [],
+      parents: [],
+      customId: false,
+      ...props,
+    });
+
+    const createMockDiagramWithBBox = (widthMap: Map<string, number>) => {
+      const mockText = {
+        _text: '',
+        node: function () {
+          return {
+            getBBox: () => {
+              const width = widthMap.get(this._text) ?? 0;
+              return { width, height: 10, x: 0, y: 0 };
+            },
+          };
+        },
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        remove: () => {},
+        attr: function (_k: string, _v?: any) {
+          return this;
+        },
+        text: function (t: string) {
+          this._text = t;
+          return this;
+        },
+      };
+      const mockTempGroup = {
+        append: () => mockText,
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        remove: () => {},
+        attr: function (_k: string, _v?: any) {
+          return this;
+        },
+      };
+      return { append: () => mockTempGroup } as any;
+    };
+
+    it('should measure branch name width and return width/2', () => {
+      const commits = new Map<string, Commit>();
+      const widthMap = new Map([['main', 100]]);
+      const mockDiagram = createMockDiagramWithBBox(widthMap);
+
+      const maxWidth = calculateMaxContentWidth('main', commits, true, true, mockDiagram);
+
+      expect(maxWidth).toBe(50); // width / 2 to prevent overlap
+    });
+
+    it('should return early when both rotateCommitLabel and rotateTagLabel are true', () => {
+      const commits = new Map<string, Commit>([
+        [
+          'commit1',
+          createTestCommit({
+            id: 'COMMIT1',
+            branch: 'main',
+            tags: ['v1.0'],
+          }),
+        ],
+      ]);
+      const widthMap = new Map([
+        ['main', 100],
+        ['COMMIT1', 200],
+        ['v1.0', 150],
+      ]);
+      const mockDiagram = createMockDiagramWithBBox(widthMap);
+
+      const maxWidth = calculateMaxContentWidth('main', commits, true, true, mockDiagram);
+
+      // Should only measure branch width, not commit or tag labels
+      expect(maxWidth).toBe(50); // width / 2
+    });
+
+    it('should measure commit labels when rotateCommitLabel is false and showCommitLabel is true', () => {
+      const commits = new Map<string, Commit>([
+        [
+          'commit1',
+          createTestCommit({
+            id: 'COMMIT1',
+            branch: 'main',
+          }),
+        ],
+        [
+          'commit2',
+          createTestCommit({
+            id: 'COMMIT2',
+            branch: 'main',
+          }),
+        ],
+      ]);
+      const widthMap = new Map([
+        ['main', 100],
+        ['COMMIT1', 120],
+        ['COMMIT2', 80],
+      ]);
+      const mockDiagram = createMockDiagramWithBBox(widthMap);
+
+      const maxWidth = calculateMaxContentWidth('main', commits, false, true, mockDiagram);
+
+      // Should take max of branch width/2 (50) and commit widths (120, 80)
+      expect(maxWidth).toBe(120);
+    });
+
+    it('should not measure commit labels when rotateCommitLabel is true', () => {
+      const commits = new Map<string, Commit>([
+        [
+          'commit1',
+          createTestCommit({
+            id: 'COMMIT1',
+            branch: 'main',
+          }),
+        ],
+      ]);
+      const widthMap = new Map([
+        ['main', 100],
+        ['COMMIT1', 200],
+      ]);
+      const mockDiagram = createMockDiagramWithBBox(widthMap);
+
+      const maxWidth = calculateMaxContentWidth('main', commits, true, true, mockDiagram);
+
+      // Should only measure branch width, not commit labels
+      expect(maxWidth).toBe(50); // width / 2
+    });
+
+    it('should exclude CHERRY_PICK commits from measurement', () => {
+      const commits = new Map<string, Commit>([
+        [
+          'commit1',
+          createTestCommit({
+            id: 'COMMIT1',
+            branch: 'main',
+            type: commitType.NORMAL,
+          }),
+        ],
+        [
+          'commit2',
+          createTestCommit({
+            id: 'CHERRY',
+            branch: 'main',
+            type: commitType.CHERRY_PICK,
+          }),
+        ],
+      ]);
+      const widthMap = new Map([
+        ['main', 100],
+        ['COMMIT1', 120],
+        ['CHERRY', 300], // Should be excluded
+      ]);
+      const mockDiagram = createMockDiagramWithBBox(widthMap);
+
+      const maxWidth = calculateMaxContentWidth('main', commits, false, true, mockDiagram);
+
+      // Should not measure CHERRY_PICK commit
+      expect(maxWidth).toBe(120);
+    });
+
+    it('should measure MERGE commits only when customId is true', () => {
+      const commits = new Map<string, Commit>([
+        [
+          'merge1',
+          createTestCommit({
+            id: 'MERGE1',
+            branch: 'main',
+            type: commitType.MERGE,
+            customId: true,
+          }),
+        ],
+        [
+          'merge2',
+          createTestCommit({
+            id: 'MERGE2',
+            branch: 'main',
+            type: commitType.MERGE,
+            customId: false,
+          }),
+        ],
+      ]);
+      const widthMap = new Map([
+        ['main', 100],
+        ['MERGE1', 150],
+        ['MERGE2', 300], // Should be excluded
+      ]);
+      const mockDiagram = createMockDiagramWithBBox(widthMap);
+
+      const maxWidth = calculateMaxContentWidth('main', commits, false, true, mockDiagram);
+
+      // Should only measure MERGE1 (customId: true)
+      expect(maxWidth).toBe(150);
+    });
+
+    it('should not measure commits on different branches', () => {
+      const commits = new Map<string, Commit>([
+        [
+          'commit1',
+          createTestCommit({
+            id: 'COMMIT1',
+            branch: 'main',
+          }),
+        ],
+        [
+          'commit2',
+          createTestCommit({
+            id: 'COMMIT2',
+            branch: 'feature',
+          }),
+        ],
+      ]);
+      const widthMap = new Map([
+        ['main', 100],
+        ['COMMIT1', 120],
+        ['COMMIT2', 300], // Different branch, should be excluded
+      ]);
+      const mockDiagram = createMockDiagramWithBBox(widthMap);
+
+      const maxWidth = calculateMaxContentWidth('main', commits, false, true, mockDiagram);
+
+      // Should not measure commits on 'feature' branch
+      expect(maxWidth).toBe(120);
+    });
+
+    it('should measure tag labels when rotateTagLabel is false', () => {
+      const commits = new Map<string, Commit>([
+        [
+          'commit1',
+          createTestCommit({
+            id: 'COMMIT1',
+            branch: 'main',
+            tags: ['v1.0', 'release'],
+          }),
+        ],
+      ]);
+      const widthMap = new Map([
+        ['main', 100],
+        ['v1.0', 150],
+        ['release', 180],
+      ]);
+      const mockDiagram = createMockDiagramWithBBox(widthMap);
+
+      const maxWidth = calculateMaxContentWidth('main', commits, true, false, mockDiagram);
+
+      // Should take max of branch width/2 (50) and tag widths (150, 180)
+      expect(maxWidth).toBe(180);
+    });
+
+    it('should not measure tag labels when rotateTagLabel is true', () => {
+      const commits = new Map<string, Commit>([
+        [
+          'commit1',
+          createTestCommit({
+            id: 'COMMIT1',
+            branch: 'main',
+            tags: ['v1.0'],
+          }),
+        ],
+      ]);
+      const widthMap = new Map([
+        ['main', 100],
+        ['v1.0', 200],
+      ]);
+      const mockDiagram = createMockDiagramWithBBox(widthMap);
+
+      const maxWidth = calculateMaxContentWidth('main', commits, true, true, mockDiagram);
+
+      // Should only measure branch width, not tag labels
+      expect(maxWidth).toBe(50); // width / 2
+    });
+
+    it('should measure both commit and tag labels when both are not rotated', () => {
+      const commits = new Map<string, Commit>([
+        [
+          'commit1',
+          createTestCommit({
+            id: 'COMMIT1',
+            branch: 'main',
+            tags: ['v1.0'],
+          }),
+        ],
+        [
+          'commit2',
+          createTestCommit({
+            id: 'COMMIT2',
+            branch: 'main',
+            tags: ['v2.0'],
+          }),
+        ],
+      ]);
+      const widthMap = new Map([
+        ['main', 100],
+        ['COMMIT1', 120],
+        ['COMMIT2', 110],
+        ['v1.0', 90],
+        ['v2.0', 140],
+      ]);
+      const mockDiagram = createMockDiagramWithBBox(widthMap);
+
+      const maxWidth = calculateMaxContentWidth('main', commits, false, false, mockDiagram);
+
+      // Should take max of all measurements: 50, 120, 110, 90, 140
+      expect(maxWidth).toBe(140);
+    });
+
+    it('should handle commits with multiple tags', () => {
+      const commits = new Map<string, Commit>([
+        [
+          'commit1',
+          createTestCommit({
+            id: 'COMMIT1',
+            branch: 'main',
+            tags: ['v1.0', 'stable', 'production'],
+          }),
+        ],
+      ]);
+      const widthMap = new Map([
+        ['main', 100],
+        ['v1.0', 80],
+        ['stable', 120],
+        ['production', 200],
+      ]);
+      const mockDiagram = createMockDiagramWithBBox(widthMap);
+
+      const maxWidth = calculateMaxContentWidth('main', commits, true, false, mockDiagram);
+
+      // Should measure all tags and take max (200 for 'production')
+      expect(maxWidth).toBe(200);
+    });
+
+    it('should handle empty commits map', () => {
+      const commits = new Map<string, Commit>();
+      const widthMap = new Map([['main', 100]]);
+      const mockDiagram = createMockDiagramWithBBox(widthMap);
+
+      const maxWidth = calculateMaxContentWidth('main', commits, false, false, mockDiagram);
+
+      // Should only measure branch width
+      expect(maxWidth).toBe(50); // width / 2
+    });
+
+    it('should handle commits with no tags', () => {
+      const commits = new Map<string, Commit>([
+        [
+          'commit1',
+          createTestCommit({
+            id: 'COMMIT1',
+            branch: 'main',
+            tags: [],
+          }),
+        ],
+      ]);
+      const widthMap = new Map([
+        ['main', 100],
+        ['COMMIT1', 120],
+      ]);
+      const mockDiagram = createMockDiagramWithBBox(widthMap);
+
+      const maxWidth = calculateMaxContentWidth('main', commits, false, false, mockDiagram);
+
+      // Should measure branch and commit, but no tags
+      expect(maxWidth).toBe(120);
     });
   });
 
