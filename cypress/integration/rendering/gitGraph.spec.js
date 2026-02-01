@@ -2079,4 +2079,113 @@ gitGraph TB:
       );
     });
   });
+  it('97: should render a gitgraph with commit click link', () => {
+    imgSnapshotTest(
+      `gitGraph
+        commit id: "c1"
+        commit id: "c2"
+        click commit "c1" "https://example.com"
+      `,
+      {}
+    );
+  });
+  it('98: should render a gitgraph with commit click link and tooltip', () => {
+    imgSnapshotTest(
+      `gitGraph
+        commit id: "c1"
+        click commit "c1" "https://example.com" "Click me"
+      `,
+      {}
+    );
+  });
+  it('99: should render a gitgraph with multiple commits with click links', () => {
+    imgSnapshotTest(
+      `gitGraph
+        commit id: "c1"
+        commit id: "c2"
+        commit id: "c3"
+        click commit "c1" "https://example.com/1"
+        click commit "c2" "https://example.com/2"
+        click commit "c3" "https://example.com/3"
+      `,
+      {}
+    );
+  });
+  it('100: should render a gitgraph with branches and commit click links', () => {
+    imgSnapshotTest(
+      `gitGraph
+        commit id: "init"
+        branch feature
+        commit id: "feat"
+        click commit "feat" "https://github.com/pr/1"
+        checkout main
+        merge feature id: "merge"
+        click commit "merge" "https://github.com/pr/1#merged"
+      `,
+      {}
+    );
+  });
+  it('101: should render a gitgraph with commit click link with special characters in commit id', () => {
+    imgSnapshotTest(
+      `gitGraph
+        commit id: "v1.0.0-beta"
+        click commit "v1.0.0-beta" "https://example.com"
+      `,
+      {}
+    );
+  });
+  it('102: should render a gitgraph with linked commit with tag', () => {
+    imgSnapshotTest(
+      `gitGraph
+        commit id: "release" tag: "v1.0"
+        click commit "release" "https://github.com/releases/v1.0"
+      `,
+      {}
+    );
+  });
+  it('103: should render a gitgraph with linked HIGHLIGHT commit', () => {
+    imgSnapshotTest(
+      `gitGraph
+        commit id: "normal"
+        commit id: "important" type: HIGHLIGHT
+        commit id: "another"
+        click commit "important" "https://example.com"
+      `,
+      {}
+    );
+  });
+  it('104: should render a gitgraph with linked REVERSE commit', () => {
+    imgSnapshotTest(
+      `gitGraph
+        commit id: "normal"
+        commit id: "reverted" type: REVERSE
+        commit id: "another"
+        click commit "reverted" "https://example.com"
+      `,
+      {}
+    );
+  });
+  it('105: should render a complex gitgraph with mixed click links', () => {
+    imgSnapshotTest(
+      `gitGraph
+        commit id: "init"
+        click commit "init" "https://example.com/init"
+        branch develop
+        commit id: "dev1"
+        branch feature
+        commit id: "feat1"
+        click commit "feat1" "https://example.com/feat"
+        checkout develop
+        commit id: "dev2"
+        checkout main
+        merge develop id: "merge1"
+        checkout feature
+        commit id: "feat2"
+        checkout main
+        merge feature id: "merge2"
+        click commit "merge2" "https://example.com/merge"
+      `,
+      {}
+    );
+  });
 });
