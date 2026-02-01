@@ -185,6 +185,37 @@ timeline
           Bullet 4 : sub-point 4a : sub-point 4b
 ```
 
+### Direction
+
+Timeline can change its direction by the keyword after `timeline`.
+
+```mermaid-example
+timeline TD
+  title MermaidChart 2023 Timeline
+    section 2023 Q1 <br> Release Personal Tier
+      Bullet 1 : sub-point 1a : sub-point 1b
+      Bullet 2 : sub-point 2a : sub-point 2b
+    section 2023 Q2 <br> Release XYZ Tier
+      Bullet 3 : sub-point <br> 3a : sub-point 3b
+      Bullet 4 : sub-point 4a : sub-point 4b
+```
+
+```mermaid
+timeline TD
+  title MermaidChart 2023 Timeline
+    section 2023 Q1 <br> Release Personal Tier
+      Bullet 1 : sub-point 1a : sub-point 1b
+      Bullet 2 : sub-point 2a : sub-point 2b
+    section 2023 Q2 <br> Release XYZ Tier
+      Bullet 3 : sub-point <br> 3a : sub-point 3b
+      Bullet 4 : sub-point 4a : sub-point 4b
+```
+
+Possible directions are:
+
+- `LR`: Left to right (default)
+- `TD`: Top top down.
+
 ## Styling of time periods and events
 
 As explained earlier, each section has a color scheme, and each time period and event under a section follow the similar color scheme.
