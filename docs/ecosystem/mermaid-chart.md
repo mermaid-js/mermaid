@@ -8,7 +8,7 @@
 
 The Future of Diagramming & Visual Collaboration
 
-Try the Ultimate AI, Mermaid, and Visual Diagramming Suite by creating an account at [Mermaid Chart](https://www.mermaidchart.com/app/sign-up).
+Try the Ultimate AI, Mermaid, and Visual Diagramming Suite by creating an account at [Mermaid Chart](https://mermaid.ai/app/sign-up).
 
 <br />
 
@@ -37,7 +37,7 @@ Try the Ultimate AI, Mermaid, and Visual Diagramming Suite by creating an accoun
   - [Google Docs](https://gsuite.google.com/marketplace/app/mermaidchart/947683068472)
   - [Microsoft PowerPoint and Word](https://appsource.microsoft.com/en-us/product/office/WA200006214?tab=Overview)
 
-  Visit our [Plugins](https://www.mermaidchart.com/plugins) page for more information.
+  Visit our [Plugins](https://mermaid.ai/plugins) page for more information.
 
 - **Collaboration** - A web based collaboration feature for multi-user editing on Mermaid diagrams in real-time (Pro and Enterprise plans).
 
@@ -55,7 +55,7 @@ Try the Ultimate AI, Mermaid, and Visual Diagramming Suite by creating an accoun
 
 To learn more, visit our [Pricing](https://mermaidchart.com/pricing) page.
 
-Mermaid Chart is currently offering a 7-day free trial on our Pro and Enterprise tiers. Sign up for a free account at [Mermaid Chart](https://www.mermaidchart.com/app/sign-up).
+Mermaid Chart is currently offering a 7-day free trial on our Pro and Enterprise tiers. Sign up for a free account at [Mermaid Chart](https://mermaid.ai/app/sign-up).
 
 ## Mermaid JS contributions
 
