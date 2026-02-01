@@ -66,7 +66,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   data4Layout.markers = ['barb'];
   data4Layout.diagramId = id;
   // console.log('REF1:', data4Layout);
-  await render(data4Layout, svg);
+  await render(data4Layout, svg, (data) => diag.setGraphData(data));
   const padding = 8;
 
   // Inject clickable links after nodes are rendered
