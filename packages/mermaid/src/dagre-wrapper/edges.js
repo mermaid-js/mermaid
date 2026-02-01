@@ -3,8 +3,9 @@ import createLabel from './createLabel.js';
 import { createText } from '../rendering-util/createText.js';
 import { line, curveBasis, select } from 'd3';
 import { getConfig } from '../diagram-api/diagramAPI.js';
+import { getEffectiveHtmlLabels } from '../config.js';
 import utils from '../utils.js';
-import { evaluate, getUrl } from '../diagrams/common/common.js';
+import { getUrl } from '../diagrams/common/common.js';
 import { getLineFunctionsWithOffset } from '../utils/lineWithOffset.js';
 import { getSubGraphTitleMargins } from '../utils/subGraphTitleMargins.js';
 import { addEdgeMarkers } from './edgeMarker.js';
@@ -19,11 +20,12 @@ export const clear = () => {
 
 export const insertEdgeLabel = async (elem, edge) => {
   const config = getConfig();
-  const useHtmlLabels = evaluate(config.flowchart.htmlLabels);
+  const useHtmlLabels = getEffectiveHtmlLabels(config);
   // Create the actual text element
   const labelElement =
     edge.labelType === 'markdown'
-      ? createText(
+      ? // TODO: the createText function returns a `Promise`, so do we need an wait here?
+        createText(
           elem,
           edge.label,
           {
@@ -33,7 +35,7 @@ export const insertEdgeLabel = async (elem, edge) => {
           },
           config
         )
-      : await createLabel(edge.label, edge.labelStyle);
+      : await createLabel(elem, edge.label, edge.labelStyle);
 
   // Create outer g, edgeLabel, this will be positioned after graph layout
   const edgeLabel = elem.insert('g').attr('class', 'edgeLabel');
@@ -63,11 +65,18 @@ export const insertEdgeLabel = async (elem, edge) => {
   let fo;
   if (edge.startLabelLeft) {
     // Create the actual text element
-    const startLabelElement = await createLabel(edge.startLabelLeft, edge.labelStyle);
     const startEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelLeft.insert('g').attr('class', 'inner');
-    fo = inner.node().appendChild(startLabelElement);
-    const slBox = startLabelElement.getBBox();
+    const startLabelElement = await createLabel(inner, edge.startLabelLeft, edge.labelStyle);
+    fo = startLabelElement;
+    let slBox = startLabelElement.getBBox();
+    if (useHtmlLabels) {
+      const div = startLabelElement.children[0];
+      const dv = select(startLabelElement);
+      slBox = div.getBoundingClientRect();
+      dv.attr('width', slBox.width);
+      dv.attr('height', slBox.height);
+    }
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
     if (!terminalLabels[edge.id]) {
       terminalLabels[edge.id] = {};
@@ -77,12 +86,23 @@ export const insertEdgeLabel = async (elem, edge) => {
   }
   if (edge.startLabelRight) {
     // Create the actual text element
-    const startLabelElement = await createLabel(edge.startLabelRight, edge.labelStyle);
     const startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelRight.insert('g').attr('class', 'inner');
-    fo = startEdgeLabelRight.node().appendChild(startLabelElement);
+    const startLabelElement = await createLabel(
+      startEdgeLabelRight,
+      edge.startLabelRight,
+      edge.labelStyle
+    );
+    fo = startLabelElement;
     inner.node().appendChild(startLabelElement);
-    const slBox = startLabelElement.getBBox();
+    let slBox = startLabelElement.getBBox();
+    if (useHtmlLabels) {
+      const div = startLabelElement.children[0];
+      const dv = select(startLabelElement);
+      slBox = div.getBoundingClientRect();
+      dv.attr('width', slBox.width);
+      dv.attr('height', slBox.height);
+    }
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
     if (!terminalLabels[edge.id]) {
@@ -93,11 +113,18 @@ export const insertEdgeLabel = async (elem, edge) => {
   }
   if (edge.endLabelLeft) {
     // Create the actual text element
-    const endLabelElement = await createLabel(edge.endLabelLeft, edge.labelStyle);
     const endEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelLeft.insert('g').attr('class', 'inner');
-    fo = inner.node().appendChild(endLabelElement);
-    const slBox = endLabelElement.getBBox();
+    const endLabelElement = await createLabel(inner, edge.endLabelLeft, edge.labelStyle);
+    fo = endLabelElement;
+    let slBox = endLabelElement.getBBox();
+    if (useHtmlLabels) {
+      const div = endLabelElement.children[0];
+      const dv = select(endLabelElement);
+      slBox = div.getBoundingClientRect();
+      dv.attr('width', slBox.width);
+      dv.attr('height', slBox.height);
+    }
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
     endEdgeLabelLeft.node().appendChild(endLabelElement);
@@ -110,12 +137,18 @@ export const insertEdgeLabel = async (elem, edge) => {
   }
   if (edge.endLabelRight) {
     // Create the actual text element
-    const endLabelElement = await createLabel(edge.endLabelRight, edge.labelStyle);
     const endEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelRight.insert('g').attr('class', 'inner');
-
-    fo = inner.node().appendChild(endLabelElement);
-    const slBox = endLabelElement.getBBox();
+    const endLabelElement = await createLabel(inner, edge.endLabelRight, edge.labelStyle);
+    fo = endLabelElement;
+    let slBox = endLabelElement.getBBox();
+    if (useHtmlLabels) {
+      const div = endLabelElement.children[0];
+      const dv = select(endLabelElement);
+      slBox = div.getBoundingClientRect();
+      dv.attr('width', slBox.width);
+      dv.attr('height', slBox.height);
+    }
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
     endEdgeLabelRight.node().appendChild(endLabelElement);
@@ -133,7 +166,7 @@ export const insertEdgeLabel = async (elem, edge) => {
  * @param {any} value
  */
 function setTerminalWidth(fo, value) {
-  if (getConfig().flowchart.htmlLabels && fo) {
+  if (getEffectiveHtmlLabels(getConfig()) && fo) {
     fo.style.width = value.length * 9 + 'px';
     fo.style.height = '12px';
   }

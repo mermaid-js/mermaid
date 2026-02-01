@@ -1,5 +1,5 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { evaluate } from '../../diagrams/common/common.js';
+import { getEffectiveHtmlLabels } from '../../config.js';
 import { log } from '../../logger.js';
 import { createText } from '../createText.js';
 import utils from '../../utils.js';
@@ -40,12 +40,17 @@ export const clear = () => {
 };
 
 export const getLabelStyles = (styleArray) => {
-  let styles = styleArray ? styleArray.reduce((acc, style) => acc + ';' + style, '') : '';
-  return styles;
+  if (!styleArray) {
+    return '';
+  }
+  if (typeof styleArray === 'string') {
+    return styleArray;
+  }
+  return styleArray.reduce((acc, style) => acc + ';' + style, '');
 };
 
 export const insertEdgeLabel = async (elem, edge) => {
-  let useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
+  let useHtmlLabels = getEffectiveHtmlLabels(getConfig());
 
   const { labelStyles } = styles2String(edge);
   edge.labelStyle = labelStyles;
@@ -85,14 +90,22 @@ export const insertEdgeLabel = async (elem, edge) => {
   let fo;
   if (edge.startLabelLeft) {
     // Create the actual text element
+    const startEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
+    const inner = startEdgeLabelLeft.insert('g').attr('class', 'inner');
     const startLabelElement = await createLabel(
+      inner,
       edge.startLabelLeft,
       getLabelStyles(edge.labelStyle)
     );
-    const startEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
-    const inner = startEdgeLabelLeft.insert('g').attr('class', 'inner');
-    fo = inner.node().appendChild(startLabelElement);
-    const slBox = startLabelElement.getBBox();
+    fo = startLabelElement;
+    let slBox = startLabelElement.getBBox();
+    if (useHtmlLabels) {
+      const div = startLabelElement.children[0];
+      const dv = select(startLabelElement);
+      slBox = div.getBoundingClientRect();
+      dv.attr('width', slBox.width);
+      dv.attr('height', slBox.height);
+    }
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
     if (!terminalLabels.get(edge.id)) {
       terminalLabels.set(edge.id, {});
@@ -102,15 +115,23 @@ export const insertEdgeLabel = async (elem, edge) => {
   }
   if (edge.startLabelRight) {
     // Create the actual text element
+    const startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
+    const inner = startEdgeLabelRight.insert('g').attr('class', 'inner');
     const startLabelElement = await createLabel(
+      startEdgeLabelRight,
       edge.startLabelRight,
       getLabelStyles(edge.labelStyle)
     );
-    const startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
-    const inner = startEdgeLabelRight.insert('g').attr('class', 'inner');
-    fo = startEdgeLabelRight.node().appendChild(startLabelElement);
+    fo = startLabelElement;
     inner.node().appendChild(startLabelElement);
-    const slBox = startLabelElement.getBBox();
+    let slBox = startLabelElement.getBBox();
+    if (useHtmlLabels) {
+      const div = startLabelElement.children[0];
+      const dv = select(startLabelElement);
+      slBox = div.getBoundingClientRect();
+      dv.attr('width', slBox.width);
+      dv.attr('height', slBox.height);
+    }
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
     if (!terminalLabels.get(edge.id)) {
@@ -121,11 +142,22 @@ export const insertEdgeLabel = async (elem, edge) => {
   }
   if (edge.endLabelLeft) {
     // Create the actual text element
-    const endLabelElement = await createLabel(edge.endLabelLeft, getLabelStyles(edge.labelStyle));
     const endEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelLeft.insert('g').attr('class', 'inner');
-    fo = inner.node().appendChild(endLabelElement);
-    const slBox = endLabelElement.getBBox();
+    const endLabelElement = await createLabel(
+      inner,
+      edge.endLabelLeft,
+      getLabelStyles(edge.labelStyle)
+    );
+    fo = endLabelElement;
+    let slBox = endLabelElement.getBBox();
+    if (useHtmlLabels) {
+      const div = endLabelElement.children[0];
+      const dv = select(endLabelElement);
+      slBox = div.getBoundingClientRect();
+      dv.attr('width', slBox.width);
+      dv.attr('height', slBox.height);
+    }
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
     endEdgeLabelLeft.node().appendChild(endLabelElement);
@@ -138,12 +170,23 @@ export const insertEdgeLabel = async (elem, edge) => {
   }
   if (edge.endLabelRight) {
     // Create the actual text element
-    const endLabelElement = await createLabel(edge.endLabelRight, getLabelStyles(edge.labelStyle));
     const endEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelRight.insert('g').attr('class', 'inner');
 
-    fo = inner.node().appendChild(endLabelElement);
-    const slBox = endLabelElement.getBBox();
+    const endLabelElement = await createLabel(
+      inner,
+      edge.endLabelRight,
+      getLabelStyles(edge.labelStyle)
+    );
+    fo = endLabelElement;
+    let slBox = endLabelElement.getBBox();
+    if (useHtmlLabels) {
+      const div = endLabelElement.children[0];
+      const dv = select(endLabelElement);
+      slBox = div.getBoundingClientRect();
+      dv.attr('width', slBox.width);
+      dv.attr('height', slBox.height);
+    }
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
     endEdgeLabelRight.node().appendChild(endLabelElement);
@@ -161,7 +204,7 @@ export const insertEdgeLabel = async (elem, edge) => {
  * @param {any} value
  */
 function setTerminalWidth(fo, value) {
-  if (getConfig().flowchart.htmlLabels && fo) {
+  if (getEffectiveHtmlLabels(getConfig()) && fo) {
     fo.style.width = value.length * 9 + 'px';
     fo.style.height = '12px';
   }

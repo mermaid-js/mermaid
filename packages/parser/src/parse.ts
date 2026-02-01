@@ -72,8 +72,26 @@ export async function parse<T extends DiagramAST>(
 
 export class MermaidParseError extends Error {
   constructor(public result: ParseResult<DiagramAST>) {
-    const lexerErrors: string = result.lexerErrors.map((err) => err.message).join('\n');
-    const parserErrors: string = result.parserErrors.map((err) => err.message).join('\n');
+    const lexerErrors: string = result.lexerErrors
+      .map((err) => {
+        const line = err.line !== undefined && !isNaN(err.line) ? err.line : '?';
+        const column = err.column !== undefined && !isNaN(err.column) ? err.column : '?';
+        return `Lexer error on line ${line}, column ${column}: ${err.message}`;
+      })
+      .join('\n');
+    const parserErrors: string = result.parserErrors
+      .map((err) => {
+        const line =
+          err.token.startLine !== undefined && !isNaN(err.token.startLine)
+            ? err.token.startLine
+            : '?';
+        const column =
+          err.token.startColumn !== undefined && !isNaN(err.token.startColumn)
+            ? err.token.startColumn
+            : '?';
+        return `Parse error on line ${line}, column ${column}: ${err.message}`;
+      })
+      .join('\n');
     super(`Parsing failed: ${lexerErrors} ${parserErrors}`);
   }
 }

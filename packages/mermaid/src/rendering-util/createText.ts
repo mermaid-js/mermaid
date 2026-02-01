@@ -6,7 +6,11 @@ import type { SVGGroup } from '../diagram-api/types.js';
 import common, { hasKatex, renderKatexSanitized, sanitizeText } from '../diagrams/common/common.js';
 import type { D3TSpanElement, D3TextElement } from '../diagrams/common/commonTypes.js';
 import { log } from '../logger.js';
-import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text.js';
+import {
+  markdownToHTML,
+  markdownToLines,
+  nonMarkdownToLines,
+} from '../rendering-util/handle-markdown-text.js';
 import { decodeEntities } from '../utils.js';
 import { getIconSVG, isIconAvailable } from './icons.js';
 import { splitLineToFitWidth } from './splitText.js';
@@ -18,6 +22,9 @@ function applyStyle(dom, styleFn) {
     dom.attr('style', styleFn);
   }
 }
+
+// We assume that nobody will want to create labels larger than 16384 pixels wide
+const maxSafeSizeForWidth = 16384;
 
 async function addHtmlSpan(
   element,
@@ -31,8 +38,8 @@ async function addHtmlSpan(
   const fo = element.append('foreignObject');
   // This is not the final width but used in order to make sure the foreign
   // object in firefox gets a width at all. The final width is fetched from the div
-  fo.attr('width', `${10 * width}px`);
-  fo.attr('height', `${10 * width}px`);
+  fo.attr('width', `${Math.min(10 * width, maxSafeSizeForWidth)}px`);
+  fo.attr('height', `${Math.min(10 * width, maxSafeSizeForWidth)}px`);
 
   const div = fo.append('xhtml:div');
   const sanitizedLabel = hasKatex(node.label)
@@ -48,8 +55,10 @@ async function addHtmlSpan(
   div.style('display', 'table-cell');
   div.style('white-space', 'nowrap');
   div.style('line-height', '1.5');
-  div.style('max-width', width + 'px');
-  div.style('text-align', 'center');
+  if (width !== Number.POSITIVE_INFINITY) {
+    div.style('max-width', width + 'px');
+    div.style('text-align', 'center');
+  }
   div.attr('xmlns', 'http://www.w3.org/1999/xhtml');
   if (addBackground) {
     div.attr('class', 'labelBkg');
@@ -224,7 +233,11 @@ export const createText = async (
     isTitle = false,
     classes = '',
     useHtmlLabels = true,
+    markdown = true,
     isNode = true,
+    /**
+     * The width to wrap the text within. Set to `Number.POSITIVE_INFINITY` for no wrapping.
+     */
     width = 200,
     addSvgBackground = false,
   } = {},
@@ -244,7 +257,7 @@ export const createText = async (
   if (useHtmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
 
-    const htmlText = markdownToHTML(text, config);
+    const htmlText = markdown ? markdownToHTML(text, config) : text.replace(/\\n|\n/g, '<br />');
     const decodedReplacedText = await replaceIconSubstring(decodeEntities(htmlText), config);
 
     //for Katex the text could contain escaped characters, \\relax that should be transformed to \relax
@@ -260,7 +273,9 @@ export const createText = async (
   } else {
     //sometimes the user might add br tags with 1 or more spaces in between, so we need to replace them with <br/>
     const sanitizeBR = text.replace(/<br\s*\/?>/g, '<br/>');
-    const structuredText = markdownToLines(sanitizeBR.replace('<br>', '<br/>'), config);
+    const structuredText = markdown
+      ? markdownToLines(sanitizeBR.replace('<br>', '<br/>'), config)
+      : nonMarkdownToLines(sanitizeBR);
     const svgLabel = createFormattedText(
       width,
       el,
@@ -300,6 +315,12 @@ export const createText = async (
         .replace(/fill:[^;]+;?/g, '')
         .replace(/color:/g, 'fill:');
       select(svgLabel).select('text').attr('style', edgeLabelTextStyle);
+    }
+    if (isTitle) {
+      // I can't actually see the title-row/row class being used anywhere, but keeping it for backward compatibility
+      select(svgLabel).selectAll('tspan.text-outer-tspan').classed('title-row', true);
+    } else {
+      select(svgLabel).selectAll('tspan.text-outer-tspan').classed('row', true);
     }
     return svgLabel;
   }
