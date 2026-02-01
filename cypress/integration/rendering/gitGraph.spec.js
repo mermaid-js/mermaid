@@ -2078,5 +2078,202 @@ gitGraph TB:
         {}
       );
     });
+
+    it('97: should render tags without rotation in TB mode when rotateTagLabel is false', () => {
+      imgSnapshotTest(
+        `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
+          'rotateCommitLabel': false,
+          'rotateTagLabel': false
+        } } }%%
+        gitGraph TB:
+          commit id: "1" tag: "v1.0"
+          commit id: "2" tag: "v1.1"
+          branch release
+          checkout release
+          commit id: "3" tag: "v2.0"
+        `,
+        {}
+      );
+    });
+
+    it('98: should render tags without rotation in BT mode when rotateTagLabel is false', () => {
+      imgSnapshotTest(
+        `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
+          'rotateCommitLabel': false,
+          'rotateTagLabel': false
+        } } }%%
+        gitGraph BT:
+          commit id: "A" tag: "v1.0"
+          commit id: "B" tag: "v1.1"
+          branch feature
+          checkout feature
+          commit id: "C" tag: "beta"
+        `,
+        {}
+      );
+    });
+
+    it('99: should render long commit IDs and tags without overlap in TB mode', () => {
+      imgSnapshotTest(
+        `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
+          'rotateCommitLabel': false,
+          'rotateTagLabel': false
+        } } }%%
+        gitGraph TB:
+          commit id: "VERY-LONG-COMMIT-ID-1234567890"
+          commit id: "ANOTHER-LONG-ID-ABCDEFGH" tag: "v1.0.0-release-candidate"
+          branch feature-branch-with-long-name
+          checkout feature-branch-with-long-name
+          commit id: "FEATURE-COMMIT-XYZ" tag: "beta-version-2024"
+          checkout main
+          branch second-feature
+          checkout second-feature
+          commit id: "SHORT" tag: "v2"
+        `,
+        {}
+      );
+    });
+
+    it('100: should render long tags with short branch names in TB mode', () => {
+      imgSnapshotTest(
+        `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
+          'rotateCommitLabel': false,
+          'rotateTagLabel': false
+        } } }%%
+        gitGraph TB:
+          commit id: "A" tag: "v1.0.0-release-candidate-final"
+          branch feature
+          checkout feature
+          commit id: "B" tag: "beta-test-version-2024-Q4"
+          checkout main
+          branch bugfix
+          checkout bugfix
+          commit id: "C" tag: "hotfix-production-v2.5.1"
+        `,
+        {}
+      );
+    });
+
+    it('101: should render long branch names with long tags in TB mode', () => {
+      imgSnapshotTest(
+        `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
+          'rotateCommitLabel': false,
+          'rotateTagLabel': false
+        } } }%%
+        gitGraph TB:
+          commit id: "A" tag: "v1.0.0-release-candidate-final"
+          branch feature-branch-with-long-name
+          checkout feature-branch-with-long-name
+          commit id: "B" tag: "beta-test-version-2024-Q4"
+          checkout main
+          branch bugfix-branch-with-long-name
+          checkout bugfix-branch-with-long-name
+          commit id: "C" tag: "hotfix-production-v2.5.1"
+        `,
+        {}
+      );
+    });
+
+    it('102: should render extremely long branch names and tags in TB mode', () => {
+      imgSnapshotTest(
+        `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
+          'rotateCommitLabel': false,
+          'rotateTagLabel': false
+        } } }%%
+        gitGraph TB:
+          commit id: "A" tag: "v1.0.0-release-candidate-final"
+          branch feature-branch-with-extremely-long-descriptive-name
+          checkout feature-branch-with-extremely-long-descriptive-name
+          commit id: "B" tag: "beta-test-version-2024-Q4"
+          checkout main
+          branch bugfix-branch-with-very-long-name-describing-issue
+          checkout bugfix-branch-with-very-long-name-describing-issue
+          commit id: "C" tag: "hotfix-production-v2.5.1"
+        `,
+        {}
+      );
+    });
+
+    it('103: should render with rotateCommitLabel false and rotateTagLabel true in TB mode', () => {
+      imgSnapshotTest(
+        `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
+          'rotateCommitLabel': false,
+          'rotateTagLabel': true
+        } } }%%
+        gitGraph TB:
+          commit id: "VERY-LONG-COMMIT-ID" tag: "v1.0.0-release"
+          branch feature-branch
+          checkout feature-branch
+          commit id: "ANOTHER-LONG-ID" tag: "beta-version"
+          checkout main
+          branch bugfix
+          checkout bugfix
+          commit id: "SHORT" tag: "hotfix"
+        `,
+        {}
+      );
+    });
+
+    it('104: should render long tags when rotateTagLabel is false', () => {
+      imgSnapshotTest(
+        `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
+          'rotateCommitLabel': true,
+          'rotateTagLabel': false
+        } } }%%
+        gitGraph TB:
+          commit id: "A" tag: "v1.0.0-release-candidate-final-production"
+          branch feature
+          checkout feature
+          commit id: "B" tag: "beta-test-version-2024-Q4-candidate"
+          checkout main
+          branch bugfix
+          checkout bugfix
+          commit id: "C" tag: "hotfix-production-v2.5.1-emergency"
+        `,
+        {}
+      );
+    });
+  });
+
+  describe('rotated labels tests', () => {
+    it('105: should render extremely long branch names with rotated labels in TB mode', () => {
+      imgSnapshotTest(
+        `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
+          'rotateCommitLabel': true,
+          'rotateTagLabel': true
+        } } }%%
+        gitGraph TB:
+          commit id: "A" tag: "v1.0.0-release-candidate-final"
+          branch feature-branch-with-extremely-long-descriptive-name
+          checkout feature-branch-with-extremely-long-descriptive-name
+          commit id: "B" tag: "beta-test-version-2024-Q4"
+          checkout main
+          branch bugfix-branch-with-very-long-name-describing-issue
+          checkout bugfix-branch-with-very-long-name-describing-issue
+          commit id: "C" tag: "hotfix-production-v2.5.1"
+        `,
+        {}
+      );
+    });
+
+    it('106: should render extremely long names with rotated labels in BT mode', () => {
+      imgSnapshotTest(
+        `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
+          'rotateCommitLabel': true,
+          'rotateTagLabel': true
+        } } }%%
+        gitGraph BT:
+          commit id: "A" tag: "v1.0.0-release-candidate-final"
+          branch feature-branch-with-extremely-long-descriptive-name
+          checkout feature-branch-with-extremely-long-descriptive-name
+          commit id: "B" tag: "beta-test-version-2024-Q4"
+          checkout main
+          branch bugfix-branch-with-very-long-name
+          checkout bugfix-branch-with-very-long-name
+          commit id: "C" tag: "hotfix-production-v2.5.1"
+        `,
+        {}
+      );
+    });
   });
 });
