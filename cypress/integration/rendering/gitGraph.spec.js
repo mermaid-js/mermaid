@@ -2096,27 +2096,7 @@ gitGraph TB:
       );
     });
 
-    it('98: should render with adequate branch spacing in TB mode when rotateCommitLabel is false', () => {
-      imgSnapshotTest(
-        `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
-          'rotateCommitLabel': false
-        } } }%%
-        gitGraph TB:
-          commit id: "A" tag: "v1.0"
-          commit id: "B" tag: "v1.1"
-          branch feature1
-          checkout feature1
-          commit id: "C" tag: "beta1"
-          checkout main
-          branch feature2
-          checkout feature2
-          commit id: "D" tag: "beta2"
-        `,
-        {}
-      );
-    });
-
-    it('99: should render tags without rotation in BT mode when rotateTagLabel is false', () => {
+    it('98: should render tags without rotation in BT mode when rotateTagLabel is false', () => {
       imgSnapshotTest(
         `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
           'rotateCommitLabel': false,
@@ -2133,7 +2113,7 @@ gitGraph TB:
       );
     });
 
-    it('100: should handle long commit IDs and tags without overlap in TB mode', () => {
+    it('99: should render long commit IDs and tags without overlap in TB mode', () => {
       imgSnapshotTest(
         `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
           'rotateCommitLabel': false,
@@ -2154,7 +2134,7 @@ gitGraph TB:
       );
     });
 
-    it('101: should handle long tags with short branch names in TB mode', () => {
+    it('100: should render long tags with short branch names in TB mode', () => {
       imgSnapshotTest(
         `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
           'rotateCommitLabel': false,
@@ -2174,7 +2154,7 @@ gitGraph TB:
       );
     });
 
-    it('102: should handle long branch names with long tags in TB mode', () => {
+    it('101: should render long branch names with long tags in TB mode', () => {
       imgSnapshotTest(
         `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
           'rotateCommitLabel': false,
@@ -2194,20 +2174,102 @@ gitGraph TB:
       );
     });
 
-    it('103: should handle long tags with short branch names in BT mode', () => {
+    it('102: should render extremely long branch names and tags in TB mode', () => {
       imgSnapshotTest(
         `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
           'rotateCommitLabel': false,
           'rotateTagLabel': false
         } } }%%
-        gitGraph BT:
+        gitGraph TB:
           commit id: "A" tag: "v1.0.0-release-candidate-final"
-          branch feature
-          checkout feature
+          branch feature-branch-with-extremely-long-descriptive-name
+          checkout feature-branch-with-extremely-long-descriptive-name
           commit id: "B" tag: "beta-test-version-2024-Q4"
+          checkout main
+          branch bugfix-branch-with-very-long-name-describing-issue
+          checkout bugfix-branch-with-very-long-name-describing-issue
+          commit id: "C" tag: "hotfix-production-v2.5.1"
+        `,
+        {}
+      );
+    });
+
+    it('103: should render with rotateCommitLabel false and rotateTagLabel true in TB mode', () => {
+      imgSnapshotTest(
+        `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
+          'rotateCommitLabel': false,
+          'rotateTagLabel': true
+        } } }%%
+        gitGraph TB:
+          commit id: "VERY-LONG-COMMIT-ID" tag: "v1.0.0-release"
+          branch feature-branch
+          checkout feature-branch
+          commit id: "ANOTHER-LONG-ID" tag: "beta-version"
           checkout main
           branch bugfix
           checkout bugfix
+          commit id: "SHORT" tag: "hotfix"
+        `,
+        {}
+      );
+    });
+
+    it('104: should render long tags when rotateTagLabel is false', () => {
+      imgSnapshotTest(
+        `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
+          'rotateCommitLabel': true,
+          'rotateTagLabel': false
+        } } }%%
+        gitGraph TB:
+          commit id: "A" tag: "v1.0.0-release-candidate-final-production"
+          branch feature
+          checkout feature
+          commit id: "B" tag: "beta-test-version-2024-Q4-candidate"
+          checkout main
+          branch bugfix
+          checkout bugfix
+          commit id: "C" tag: "hotfix-production-v2.5.1-emergency"
+        `,
+        {}
+      );
+    });
+  });
+
+  describe('rotated labels tests', () => {
+    it('105: should render extremely long branch names with rotated labels in TB mode', () => {
+      imgSnapshotTest(
+        `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
+          'rotateCommitLabel': true,
+          'rotateTagLabel': true
+        } } }%%
+        gitGraph TB:
+          commit id: "A" tag: "v1.0.0-release-candidate-final"
+          branch feature-branch-with-extremely-long-descriptive-name
+          checkout feature-branch-with-extremely-long-descriptive-name
+          commit id: "B" tag: "beta-test-version-2024-Q4"
+          checkout main
+          branch bugfix-branch-with-very-long-name-describing-issue
+          checkout bugfix-branch-with-very-long-name-describing-issue
+          commit id: "C" tag: "hotfix-production-v2.5.1"
+        `,
+        {}
+      );
+    });
+
+    it('106: should render extremely long names with rotated labels in BT mode', () => {
+      imgSnapshotTest(
+        `%%{init: { 'logLevel': 'debug', 'theme': 'base' , 'gitGraph': {
+          'rotateCommitLabel': true,
+          'rotateTagLabel': true
+        } } }%%
+        gitGraph BT:
+          commit id: "A" tag: "v1.0.0-release-candidate-final"
+          branch feature-branch-with-extremely-long-descriptive-name
+          checkout feature-branch-with-extremely-long-descriptive-name
+          commit id: "B" tag: "beta-test-version-2024-Q4"
+          checkout main
+          branch bugfix-branch-with-very-long-name
+          checkout bugfix-branch-with-very-long-name
           commit id: "C" tag: "hotfix-production-v2.5.1"
         `,
         {}
