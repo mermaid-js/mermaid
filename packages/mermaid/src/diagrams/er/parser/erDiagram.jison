@@ -99,6 +99,22 @@ start
     : 'ER_DIAGRAM' document 'EOF' { /*console.log('finished parsing');*/ }
     ;
 
+relationship
+  : ENTITY relationType ENTITY maybeRole
+    {
+      yy.addRelationship($1, $4, $3, $2);
+    };
+
+maybeRole
+  : COLON role
+    {
+      $$ = $2;
+    }
+  | /* empty */
+    {
+      $$ = '';
+    };
+
 document
 	: /* empty */ { $$ = [] }
 	| document line {$1.push($2);$$ = $1}
@@ -113,32 +129,34 @@ line
 
 
 statement
-    : entityName relSpec entityName COLON role
+    : entityName relSpec entityName maybeRole
       {
           yy.addEntity($1);
           yy.addEntity($3);
-          yy.addRelationship($1, $5, $3, $2);
+          yy.addRelationship($1, $4, $3, $2);
       }
-    | entityName STYLE_SEPARATOR idList relSpec entityName STYLE_SEPARATOR idList COLON role
+    | entityName STYLE_SEPARATOR idList relSpec entityName STYLE_SEPARATOR idList maybeRole
+
       {
           yy.addEntity($1);
           yy.addEntity($5);
-          yy.addRelationship($1, $9, $5, $4);
+          yy.addRelationship($1, $8, $5, $4);
           yy.setClass([$1], $3);
           yy.setClass([$5], $7);
       }
-    | entityName STYLE_SEPARATOR idList relSpec entityName COLON role
+    | entityName STYLE_SEPARATOR idList relSpec entityName maybeRole
+
       {
           yy.addEntity($1);
           yy.addEntity($5);
-          yy.addRelationship($1, $7, $5, $4);
+          yy.addRelationship($1, $6, $5, $4);
           yy.setClass([$1], $3);
       }
-    | entityName relSpec entityName STYLE_SEPARATOR idList COLON role
+    | entityName relSpec entityName STYLE_SEPARATOR idList maybeRole
       {
           yy.addEntity($1);
           yy.addEntity($3);
-          yy.addRelationship($1, $7, $3, $2);
+          yy.addRelationship($1, $6, $3, $2);
           yy.setClass([$3], $5);
       }
     | entityName BLOCK_START attributes BLOCK_STOP
