@@ -1,4 +1,5 @@
-import { it, describe, expect } from 'vitest';
+import { it, describe, expect, beforeEach } from 'vitest';
+import mermaid from '../../mermaid.js';
 import { PacketDB } from './db.js';
 import { parser } from './parser.js';
 
@@ -270,5 +271,30 @@ describe('packet diagrams', () => {
     await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[Error: Packet block 0 is invalid. Cannot have a zero bit field.]`
     );
+  });
+});
+
+describe('handDrawn rendering', () => {
+  it('should render a hand-drawn packet diagram', async () => {
+    mermaid.initialize({
+      look: 'handDrawn',
+      packet: {
+        bitsPerRow: 32,
+        blockStrokeWidth: '2',
+      },
+    });
+
+    const diagramDefinition = `
+      packet
+        0-15: "Source Port"
+        16-31: "Destination Port"
+    `;
+
+    const { svg } = await mermaid.render('test-diagram', diagramDefinition);
+
+    expect(svg).toContain('<path');
+    expect(svg).not.toContain('<rect');
+
+    mermaid.initialize({});
   });
 });
