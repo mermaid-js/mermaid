@@ -42,7 +42,7 @@ const editorColumns: EditorColumn[] = [
     redBarText: 'Recommended',
     proTrialButtonText: 'Start free trial',
     proTrialUrl:
-      'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=2_editor_selection&utm_campaign=start_plus&redirect=%2Fapp%2Fuser%2Fbilling%2Fcheckout%3FisFromMermaid%3Dtrue',
+      'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=2_editor_selection&utm_campaign=start_plus&redirect=%2Fapp%2Fuser%2Fbilling%2Fcheckout%3FisFromMermaid%3Dtrue%26tier%3Dplus',
     features: mermaidChartFeatures,
   },
   {
