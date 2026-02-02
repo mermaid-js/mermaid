@@ -10,10 +10,8 @@ const { id, detector, loader } = architectureDetector;
 addDetector(id, detector, loader); // Add architecture schemas to Mermaid
 
 describe('architecture diagram SVGs', () => {
-  jsdomIt(
-    'should add ids',
-    async () => {
-      const svgNode = await drawDiagram(`
+  jsdomIt('should add ids', async () => {
+    const svgNode = await drawDiagram(`
       architecture-beta
         group api(cloud)[API]
 
@@ -27,22 +25,20 @@ describe('architecture diagram SVGs', () => {
         disk2:T -- B:db
     `);
 
-      const nodesForGroup = svgNode.querySelectorAll(`#group-api`);
-      expect(nodesForGroup.length).toBe(1);
+    const nodesForGroup = svgNode.querySelectorAll(`#group-api`);
+    expect(nodesForGroup.length).toBe(1);
 
-      const serviceIds = [...svgNode.querySelectorAll(`[id^=service-]`)].map(({ id }) => id).sort();
-      expect(serviceIds).toStrictEqual([
-        'service-db',
-        'service-disk1',
-        'service-disk2',
-        'service-server',
-      ]);
+    const serviceIds = [...svgNode.querySelectorAll(`[id^=service-]`)].map(({ id }) => id).sort();
+    expect(serviceIds).toStrictEqual([
+      'service-db',
+      'service-disk1',
+      'service-disk2',
+      'service-server',
+    ]);
 
-      const edgeIds = [...svgNode.querySelectorAll(`.edge[id^=L_]`)].map(({ id }) => id).sort();
-      expect(edgeIds).toStrictEqual(['L_db_server_0', 'L_disk1_server_0', 'L_disk2_db_0']);
-    },
-    15000
-  );
+    const edgeIds = [...svgNode.querySelectorAll(`.edge[id^=L_]`)].map(({ id }) => id).sort();
+    expect(edgeIds).toStrictEqual(['L_db_server_0', 'L_disk1_server_0', 'L_disk2_db_0']);
+  });
 });
 
 async function drawDiagram(diagramText: string): Promise<Element> {
