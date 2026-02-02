@@ -1,5 +1,6 @@
 /** Setup arrow head and define the marker. The result is appended to the svg. */
 import { log } from '../../logger.js';
+import * as configApi from '../../config.js';
 
 // Only add the number of markers that the diagram needs
 const insertMarkers = (elem, markerArray, type, id) => {
@@ -262,6 +263,10 @@ const cross = (elem, type, id) => {
     .style('stroke-dasharray', '1,0');
 };
 const barb = (elem, type, id) => {
+  const config = configApi.getConfig();
+  const { themeVariables } = config;
+  const { archEdgeArrowColor } = themeVariables;
+
   elem
     .append('defs')
     .append('marker')
@@ -274,6 +279,46 @@ const barb = (elem, type, id) => {
     .attr('orient', 'auto')
     .append('path')
     .attr('d', 'M 19,7 L9,13 L14,7 L9,1 Z');
+
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', id + '_' + type + '-barbEnd-margin')
+    .attr('refX', 17)
+    .attr('refY', 7)
+    .attr('markerWidth', 20)
+    .attr('markerHeight', 14)
+    .attr('markerUnits', 'userSpaceOnUse')
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M 19,7 L9,13 L14,7 L9,1 Z')
+    .attr('fill', `${archEdgeArrowColor}`);
+
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', id + '_' + type + '-barbStart')
+    .attr('refX', 0)
+    .attr('refY', 7)
+    .attr('markerWidth', 20)
+    .attr('markerHeight', 14)
+    .attr('markerUnits', 'userSpaceOnUse')
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M 0,7 L10,1 L5,7 L10,13 Z');
+
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', id + '_' + type + '-barbStart-margin')
+    .attr('refX', 0)
+    .attr('refY', 7)
+    .attr('markerWidth', 20)
+    .attr('markerHeight', 14)
+    .attr('markerUnits', 'userSpaceOnUse')
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M 0,7 L10,1 L5,7 L10,13 Z');
 };
 // erDiagram specific markers
 const only_one = (elem, type, id) => {
