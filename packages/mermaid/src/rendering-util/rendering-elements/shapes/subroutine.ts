@@ -44,19 +44,10 @@ export async function subroutine<T extends SVGGraphicsElement>(parent: D3Selecti
   const labelPaddingX = node.look === 'neo' ? 28 : nodePadding;
   const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
 
-  // If incoming height & width are present, subtract the padding from them
-  // as labelHelper does not take padding into account
-  // also check if the width or height is less than minimum default values (50),
-  // if so set it to min value
-  if (node.width || node.height) {
-    node.width = Math.max((node?.width ?? 0) - labelPaddingX - 2 * FRAME_WIDTH, 10);
-    node.height = Math.max((node?.height ?? 0) - labelPaddingY, 10);
-  }
-
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const totalWidth = (node?.width ? node?.width : bbox.width) + 2 * FRAME_WIDTH + labelPaddingX;
-  const totalHeight = (node?.height ? node?.height : bbox.height) + labelPaddingY;
+  const totalWidth = (node?.width ?? bbox.width) + 2 * FRAME_WIDTH + labelPaddingX;
+  const totalHeight = (node?.height ?? bbox.height) + labelPaddingY;
 
   const w = totalWidth - 2 * FRAME_WIDTH;
   const h = totalHeight;
