@@ -53,7 +53,7 @@ const pointTransformer = (data: Point | [number, number]) => {
 };
 
 export const getLineFunctionsWithOffset = (
-  edge: Pick<EdgeData, 'arrowTypeStart' | 'arrowTypeEnd'>
+  edge: Pick<EdgeData, 'arrowTypeStart' | 'arrowTypeEnd'> & { look?: string }
 ) => {
   return {
     x: function (
@@ -134,14 +134,19 @@ export const getLineFunctionsWithOffset = (
           Math.abs(Math.sin(angle)) *
           (deltaY >= 0 ? 1 : -1);
       } else if (i === data.length - 1 && Object.hasOwn(markerOffsets, edge.arrowTypeEnd)) {
-        const { angle, deltaY } = calculateDeltaAndAngle(
-          data[data.length - 1],
-          data[data.length - 2]
-        );
-        offset =
-          markerOffsets[edge.arrowTypeEnd as keyof typeof markerOffsets] *
-          Math.abs(Math.sin(angle)) *
-          (deltaY >= 0 ? 1 : -1);
+        // Only apply arrow_barb offset for neo look
+        if (edge.arrowTypeEnd === 'arrow_barb' && edge.look !== 'neo') {
+          // Skip offset for arrow_barb when not using neo look
+        } else {
+          const { angle, deltaY } = calculateDeltaAndAngle(
+            data[data.length - 1],
+            data[data.length - 2]
+          );
+          offset =
+            markerOffsets[edge.arrowTypeEnd as keyof typeof markerOffsets] *
+            Math.abs(Math.sin(angle)) *
+            (deltaY >= 0 ? 1 : -1);
+        }
       }
 
       const differenceToEnd = Math.abs(
