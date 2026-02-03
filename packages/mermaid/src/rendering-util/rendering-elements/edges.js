@@ -61,14 +61,18 @@ export const insertEdgeLabel = async (elem, edge) => {
   const label = edgeLabel.insert('g').attr('class', 'label').attr('data-id', edge.id);
 
   const isMarkdown = edge.labelType === 'markdown';
+  // Only pass markdown and width parameters if labelType is explicitly set to 'markdown'
+  // This maintains backward compatibility with diagrams that don't set labelType
   const labelElement = await createText(elem, edge.label, {
     style: getLabelStyles(edge.labelStyle),
     useHtmlLabels,
     addSvgBackground: true,
     isNode: false,
-    markdown: isMarkdown,
-    // If using markdown, wrap using default width
-    width: isMarkdown ? undefined : Number.POSITIVE_INFINITY,
+    ...(isMarkdown && {
+      markdown: true,
+      // If using markdown, wrap using default width
+      width: undefined,
+    }),
   });
 
   label.node().appendChild(labelElement);
