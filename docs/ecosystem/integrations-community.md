@@ -60,7 +60,9 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [GNU Octave](https://octave.org/) ✅
   - [octave_mermaid_js](https://github.com/CNOCTAVE/octave_mermaid_js) ✅
 - [HackMD](https://hackmd.io/c/tutorials/%2F%40docs%2Fflowchart-en#Create-more-complex-flowcharts) ✅
-- [Mermaid Plugin for JetBrains IDEs](https://plugins.jetbrains.com/plugin/20146-mermaid)
+- [JetBrains IDEs](https://www.jetbrains.com)
+  - [Mermaid Plugin](https://plugins.jetbrains.com/plugin/20146-mermaid)
+  - [Mermaid Studio](https://plugins.jetbrains.com/plugin/29870-mermaid-studio)
 - [MonsterWriter](https://www.monsterwriter.com/) ✅
 - [Joplin](https://joplinapp.org) ✅
 - [LiveBook](https://livebook.dev) ✅
@@ -88,6 +90,7 @@ LLM integrations to create mermaid diagrams using AI from text descriptions.
 
 - [HueHive - Create mermaid diagrams with text](https://huehive.co/tools/diagrams)
 - [MCP Server Mermaid](https://github.com/hustcc/mcp-mermaid) - Generate mermaid diagram and chart with AI MCP dynamically.
+- [Mermaid Studio](https://mermaidstudio.dev) - Leverage Mermaid Studio's code intelligence and diagram generation capabilities via MCP to create high-quality diagrams (requires a [JetBrains IDE](https://jetbrains.com/ides)) using your favorite coding agent.
 
 ### CRM/ERP
 
