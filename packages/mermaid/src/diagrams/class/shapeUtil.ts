@@ -148,14 +148,7 @@ async function addText<T extends SVGGraphicsElement>(
     const textChild = text.children[0];
     if (text.textContent === '' || text.textContent.includes('&gt')) {
       textChild.textContent =
-        textContent[0] +
-        textContent.substring(1).replaceAll('&gt;', '>').replaceAll('&lt;', '<').trim();
-
-      // Text was improperly removed due to spaces (preserve one space if present)
-      const preserveSpace = textContent[1] === ' ';
-      if (preserveSpace) {
-        textChild.textContent = textChild.textContent[0] + ' ' + textChild.textContent.substring(1);
-      }
+        textContent[0] + textContent.substring(1).replaceAll('&gt;', '>').replaceAll('&lt;', '<');
     }
 
     // To support empty boxes
