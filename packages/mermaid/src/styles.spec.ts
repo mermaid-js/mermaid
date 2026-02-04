@@ -75,7 +75,7 @@ describe('styles', () => {
 
       addStylesForDiagram(diagramType, myTypeGetStylesFunc);
 
-      const styles = getStyles(diagramType, '', getConfig().themeVariables);
+      const styles = getStyles(diagramType, '', getConfig().themeVariables, '#test-svg-id');
 
       checkValidStylisCSSStyleSheet(styles);
     });
@@ -110,7 +110,8 @@ describe('styles', () => {
             diagramId,
             '',
             // @ts-expect-error This will probably be broken until we create a proper Themes type.
-            themes[themeId].getThemeVariables()
+            themes[themeId].getThemeVariables(),
+            '#test-svg-id'
           );
 
           checkValidStylisCSSStyleSheet(styles);
