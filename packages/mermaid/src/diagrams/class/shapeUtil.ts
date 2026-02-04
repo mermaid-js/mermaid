@@ -131,6 +131,7 @@ async function addText<T extends SVGGraphicsElement>(
       width: calculateTextWidth(textContent, config) + 50, // Add room for error when splitting text into multiple lines
       classes: 'markdown-node-label',
       useHtmlLabels,
+      markdown: false, // Class diagram syntax is not markdown
     },
     config
   );
@@ -148,7 +149,14 @@ async function addText<T extends SVGGraphicsElement>(
     const textChild = text.children[0];
     if (text.textContent === '' || text.textContent.includes('&gt')) {
       textChild.textContent =
-        textContent[0] + textContent.substring(1).replaceAll('&gt;', '>').replaceAll('&lt;', '<');
+        textContent[0] +
+        textContent.substring(1).replaceAll('&gt;', '>').replaceAll('&lt;', '<').trim();
+
+      // Text was improperly removed due to spaces (preserve one space if present)
+      const preserveSpace = textContent[1] === ' ';
+      if (preserveSpace) {
+        textChild.textContent = textChild.textContent[0] + ' ' + textChild.textContent.substring(1);
+      }
     }
 
     // To support empty boxes
