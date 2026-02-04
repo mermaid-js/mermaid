@@ -649,7 +649,6 @@ export class ClassDB implements DiagramDB {
         shape: 'rect',
         cssStyles: [],
         look: config.look,
-        labelType: 'markdown',
       };
       nodes.push(node);
     }
@@ -661,7 +660,6 @@ export class ClassDB implements DiagramDB {
         isGroup: false,
         parentId: classNode.parent,
         look: config.look,
-        labelType: 'markdown',
       };
       nodes.push(node);
     }
