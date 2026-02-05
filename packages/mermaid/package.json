@@ -76,7 +76,7 @@
     "cytoscape-fcose": "^2.2.0",
     "d3": "^7.9.0",
     "d3-sankey": "^0.12.3",
-    "dagre-d3-es": "7.0.13",
+    "dagre-d3-es": "7.0.14",
     "dayjs": "^1.11.19",
     "dompurify": "^3.3.1",
     "katex": "^0.16.25",
