@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/syntax/classDiagram.md](../../packages/mermaid/src/docs/syntax/classDiagram.md).
 
-# Class diagrams
+# Class diagrams RAG
 
 > "In software engineering, a class diagram in the Unified Modeling Language (UML) is a type of static structure diagram that describes the structure of a system by showing the system's classes, their attributes, operations (or methods), and the relationships among objects."
 >
