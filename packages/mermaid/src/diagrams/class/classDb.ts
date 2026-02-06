@@ -679,6 +679,7 @@ export class ClassDB implements DiagramDB {
         ],
         look: config.look,
         parentId: note.parent,
+        labelType: 'markdown',
       };
       nodes.push(noteNode);
 
