@@ -15,6 +15,24 @@
 
   <body>
     <h1>XY Charts demos</h1>
+
+    <pre class="mermaid">
+---
+config:
+  theme: dark
+  xyChart:
+    width: 900
+    height: 600
+    showDataLabel: true
+---
+
+          xychart
+    title "Lee Basic xychart with many categories"
+    x-axis "this is x axis" [category1, "category 2", category3, category4, category5, category6, category7]
+    y-axis yaxisText 10 --> 150
+    bar "sample bar" [52, 96, 35, 10, 87, 34, 67, 99]
+    </pre>
+
     <pre class="mermaid">
     xychart
     title "Sales Revenue (in $)"
