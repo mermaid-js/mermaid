@@ -119,6 +119,7 @@ xychart
 | chartOrientation         | 'vertical' or 'horizontal'                                    |  'vertical'   |
 | plotReservedSpacePercent | Minimum space plots will take inside the chart                |      50       |
 | showDataLabel            | Should show the value corresponding to the bar within the bar |     false     |
+| showDataLabelOutsideBar  | If showing data label then show it outside the bar.           |     false     |
 
 ### AxisConfig
 
