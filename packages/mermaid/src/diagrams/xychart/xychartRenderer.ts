@@ -100,6 +100,11 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
           .attr('stroke-width', (data) => data.strokeWidth);
 
         if (chartConfig.showDataLabel) {
+          
+          
+          const showDataLabelOutsideBar = chartConfig.showDataLabelOutsideBar;
+          console.log({showDataLabelOutsideBar});
+          
           if (chartConfig.chartOrientation === 'horizontal') {
             // Factor to approximate each character's width.
             const charWidthFactor = 0.7;
