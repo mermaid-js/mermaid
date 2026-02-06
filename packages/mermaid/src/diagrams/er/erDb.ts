@@ -62,6 +62,7 @@ export class ErDB implements DiagramDB {
         look: getConfig().look ?? 'default',
         cssClasses: 'default',
         cssStyles: [],
+        labelType: 'markdown',
       });
       log.info('Added new entity :', name);
     } else if (!this.entities.get(name)?.alias && alias) {
