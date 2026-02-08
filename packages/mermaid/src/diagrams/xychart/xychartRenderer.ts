@@ -220,6 +220,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
               .attr('y', determineLabelYPosition)
               .attr('text-anchor', 'middle')
               .attr('dominant-baseline', showDataLabelOutsideBar ? 'auto' : 'hanging')
+              .attr('fill', 'black')
               .attr('font-size', `${uniformFontSize}px`)
               .text((item) => item.label);
           }
@@ -239,7 +240,6 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
           .attr('text-anchor', (data) => getTextAnchor(data.horizontalPos))
           .attr('transform', (data) => getTextTransformation(data))
           .text((data) => data.text);
-        //  .text((data) => "-");
 
         break;
       case 'path':
