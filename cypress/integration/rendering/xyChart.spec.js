@@ -371,6 +371,7 @@ describe('XY Chart', () => {
       xyChart:
         showDataLabel: true
         showDataLabelOutsideBar: true
+    ---
     xychart
       title "Sales Revenue"
       x-axis Months [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
