@@ -363,6 +363,44 @@ describe('XY Chart', () => {
     );
   });
 
+  it('should render vertical bar chart with labels outside bar', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        showDataLabel: true
+        showDataLabelOutsideBar: true
+    xychart
+      title "Sales Revenue"
+      x-axis Months [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
+      y-axis "Revenue (in $)" 4000 --> 11000
+      bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
+    `,
+      {}
+    );
+  });
+
+  it('should render horizontal bar chart with labels outside bar', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        showDataLabel: true
+        showDataLabelOutsideBar: true
+        chartOrientation: horizontal
+    ---
+    xychart
+      title "Sales Revenue"
+      x-axis Months [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
+      y-axis "Revenue (in $)" 4000 --> 11000
+      bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
+    `,
+      {}
+    );
+  });
+
   it('should render vertical bar chart without labels by default', () => {
     imgSnapshotTest(
       `
