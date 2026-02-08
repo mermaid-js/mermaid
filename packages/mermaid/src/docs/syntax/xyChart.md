@@ -176,9 +176,10 @@ bar [15,25,20,30]
 %% Red line
 line [5,15,25,35]
 ```
+
 ## Displaying individual values on a bar chart
 
-To show the y-axix value corresponding to a bar specify `showDataLabel: true`.
+To show the value corresponding to a bar specify `showDataLabel: true`.
 
 ```mermaid-example
 ---
@@ -208,7 +209,6 @@ xychart
     y-axis "Number of Books" 0 --> 30
     bar [12,2,20,25,17,24]
 ```
-
 
 ## Example on config and theme
 
