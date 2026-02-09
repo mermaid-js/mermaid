@@ -1,7 +1,27 @@
-const getStyles = (options) =>
-  `.actor {
+const getStyles = (options = {}) => {
+  const strokeWidth =
+    options.strokeWidth == null
+      ? '1px'
+      : typeof options.strokeWidth === 'number'
+        ? `${options.strokeWidth}px`
+        : options.strokeWidth;
+  const dropShadow = options.dropShadow ?? 'none';
+
+  return `.actor {
     stroke: ${options.actorBorder};
     fill: ${options.actorBkg};
+    stroke-width: ${strokeWidth};
+  }
+
+  rect.actor.outer-path[data-look="neo"] {
+      filter: ${dropShadow};
+  }
+
+  rect.note[data-look="neo"] {
+      stroke:${options.noteBorderColor};
+      fill:${options.noteBkgColor};
+      filter: ${dropShadow};
+      stroke-width: ${strokeWidth};
   }
 
   text.actor > tspan {
@@ -19,13 +39,13 @@ const getStyles = (options) =>
   }
 
   .messageLine0 {
-    stroke-width: 1.5;
+    stroke-width: ${strokeWidth};
     stroke-dasharray: none;
     stroke: ${options.signalColor};
   }
 
   .messageLine1 {
-    stroke-width: 1.5;
+    stroke-width: ${strokeWidth};
     stroke-dasharray: 2, 2;
     stroke: ${options.signalColor};
   }
@@ -56,6 +76,7 @@ const getStyles = (options) =>
   .labelBox {
     stroke: ${options.labelBoxBorderColor};
     fill: ${options.labelBoxBkgColor};
+    filter: ${dropShadow};
   }
 
   .labelText, .labelText > tspan {
@@ -84,6 +105,7 @@ const getStyles = (options) =>
   .noteText, .noteText > tspan {
     fill: ${options.noteTextColor};
     stroke: none;
+    ${options.noteFontWeight ? `font-weight: ${options.noteFontWeight};` : ''}
   }
 
   .activation0 {
@@ -111,16 +133,17 @@ const getStyles = (options) =>
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     filter: drop-shadow(3px 5px 2px rgb(0 0 0 / 0.4));
 }
-  .actor-man line {
-    stroke: ${options.actorBorder};
-    fill: ${options.actorBkg};
-  }
   .actor-man circle, line {
-    stroke: ${options.actorBorder};
     fill: ${options.actorBkg};
     stroke-width: 2px;
   }
 
+  g rect.rect {
+    filter: ${dropShadow};
+    stroke: ${options.nodeBorder};
+    stroke-width: ${strokeWidth};
+  }
 `;
+};
 
 export default getStyles;
