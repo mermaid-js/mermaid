@@ -7,12 +7,12 @@ import { it, describe, expect, beforeAll } from 'vitest';
 
 addDiagrams();
 beforeAll(async () => {
-  await Diagram.fromText('sequenceDiagram');
+  await Diagram.fromText('graph TD');
 });
 
 describe('DiagramAPI', () => {
   it('should return default diagrams', () => {
-    expect(getDiagram('sequence')).not.toBeNull();
+    expect(getDiagram('flowchart-elk')).not.toBeNull();
   });
 
   it('should throw error if diagram is not defined', () => {

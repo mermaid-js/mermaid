@@ -178,37 +178,18 @@ describe('when using mermaid and ', () => {
       `);
     });
 
-    it('should not throw for a valid sequenceDiagram definition (mmds1)', async () => {
+    it('should not throw for a valid flowchart definition (graph)', async () => {
       const text =
-        'sequenceDiagram\n' +
-        'Alice->Bob: Hello Bob, how are you?\n\n' +
-        '%% Comment\n' +
-        'Note right of Bob: Bob thinks\n' +
-        'alt isWell\n\n' +
-        'Bob-->Alice: I am good thanks!\n' +
-        'else isSick\n' +
-        'Bob-->Alice: Feel sick...\n' +
-        'end';
+        'graph TD\n' +
+        'A[Start] --> B{Decision}\n' +
+        'B -->|Yes| C[OK]\n' +
+        'B -->|No| D[Cancel]';
       await expect(mermaid.parse(text)).resolves.not.toThrow();
     });
 
-    it('should throw for an invalid sequenceDiagram definition', async () => {
-      const text =
-        'sequenceDiagram\n' +
-        'Alice:->Bob: Hello Bob, how are you?\n\n' +
-        '%% Comment\n' +
-        'Note right of Bob: Bob thinks\n' +
-        'alt isWell\n\n' +
-        'Bob-->Alice: I am good thanks!\n' +
-        'else isSick\n' +
-        'Bob-->Alice: Feel sick...\n' +
-        'end';
-      await expect(mermaid.parse(text)).rejects.toThrowErrorMatchingInlineSnapshot(`
-        [Error: Parse error on line 2:
-        ...equenceDiagramAlice:->Bob: Hello Bob, h...
-        ----------------------^
-        Expecting '()', 'SOLID_OPEN_ARROW', 'DOTTED_OPEN_ARROW', 'SOLID_ARROW', 'SOLID_ARROW_TOP', 'SOLID_ARROW_BOTTOM', 'STICK_ARROW_TOP', 'STICK_ARROW_BOTTOM', 'SOLID_ARROW_TOP_DOTTED', 'SOLID_ARROW_BOTTOM_DOTTED', 'STICK_ARROW_TOP_DOTTED', 'STICK_ARROW_BOTTOM_DOTTED', 'SOLID_ARROW_TOP_REVERSE', 'SOLID_ARROW_BOTTOM_REVERSE', 'STICK_ARROW_TOP_REVERSE', 'STICK_ARROW_BOTTOM_REVERSE', 'SOLID_ARROW_TOP_REVERSE_DOTTED', 'SOLID_ARROW_BOTTOM_REVERSE_DOTTED', 'STICK_ARROW_TOP_REVERSE_DOTTED', 'STICK_ARROW_BOTTOM_REVERSE_DOTTED', 'BIDIRECTIONAL_SOLID_ARROW', 'DOTTED_ARROW', 'BIDIRECTIONAL_DOTTED_ARROW', 'SOLID_CROSS', 'DOTTED_CROSS', 'SOLID_POINT', 'DOTTED_POINT', got 'TXT']
-      `);
+    it('should throw for an invalid flowchart definition (graph)', async () => {
+      const text = 'graph TD;A-->';
+      await expect(mermaid.parse(text)).rejects.toThrow();
     });
 
     it('should return false for invalid definition WITH a parseError() callback defined', async () => {

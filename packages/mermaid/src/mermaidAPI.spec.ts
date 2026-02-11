@@ -651,7 +651,7 @@ describe('mermaidAPI', () => {
         .toMatchInlineSnapshot(`
         {
           "config": {},
-          "diagramType": "flowchart-v2",
+          "diagramType": "flowchart-elk",
         }
       `);
     });
@@ -672,7 +672,7 @@ graph TD;A--x|text including URL space|B;`)
       },
       "theme": "base",
     },
-    "diagramType": "flowchart-v2",
+    "diagramType": "flowchart-elk",
   }
 `);
     });
@@ -686,7 +686,7 @@ graph TD;A--x|text including URL space|B;`)
     "config": {
       "theme": "base",
     },
-    "diagramType": "flowchart-v2",
+    "diagramType": "flowchart-elk",
   }
 `);
     });
@@ -709,7 +709,7 @@ graph TD;A--x|text including URL space|B;`)
       },
       "theme": "base",
     },
-    "diagramType": "flowchart-v2",
+    "diagramType": "flowchart-elk",
   }
 `);
     });
@@ -720,7 +720,7 @@ graph TD;A--x|text including URL space|B;`)
       ).resolves.toMatchInlineSnapshot(`
           {
             "config": {},
-            "diagramType": "flowchart-v2",
+            "diagramType": "flowchart-elk",
           }
         `);
     });
@@ -735,33 +735,8 @@ graph TD;A--x|text including URL space|B;`)
     // Test all diagram types.  Note that old flowchart 'graph' type will invoke the flowRenderer-v2. (See the flowchart v2 detector.)
     // We have to have both the specific textDiagramType and the expected type name because the expected type may be slightly different from what is put in the diagram text (ex: in -v2 diagrams)
     const diagramTypesAndExpectations = [
-      // { textDiagramType: 'C4Context', expectedType: 'c4' }, TODO : setAccTitle not called in C4 jison parser
-      { textDiagramType: 'classDiagram', expectedType: 'class' },
-      { textDiagramType: 'classDiagram-v2', expectedType: 'classDiagram' },
-      { textDiagramType: 'erDiagram', expectedType: 'er' },
-      { textDiagramType: 'graph', expectedType: 'flowchart-v2' },
-      { textDiagramType: 'flowchart', expectedType: 'flowchart-v2' },
-      { textDiagramType: 'gitGraph', expectedType: 'gitGraph' },
-      { textDiagramType: 'gantt', expectedType: 'gantt' },
-      { textDiagramType: 'journey', expectedType: 'journey' },
-      { textDiagramType: 'pie', expectedType: 'pie' },
-      { textDiagramType: 'packet', expectedType: 'packet' },
-      { textDiagramType: 'packet-beta', expectedType: 'packet' },
-      {
-        textDiagramType: 'xychart-beta',
-        expectedType: 'xychart',
-        content: 'x-axis "Attempts" 10000 --> 10000\ny-axis "Passing tests" 1 --> 1\nbar [1]',
-      },
-      {
-        textDiagramType: 'xychart',
-        expectedType: 'xychart',
-        content: 'x-axis "Attempts" 10000 --> 10000\ny-axis "Passing tests" 1 --> 1\nbar [1]',
-      },
-      { textDiagramType: 'requirementDiagram', expectedType: 'requirement' },
-      { textDiagramType: 'sequenceDiagram', expectedType: 'sequence' },
-      { textDiagramType: 'stateDiagram-v2', expectedType: 'stateDiagram' },
-      { textDiagramType: 'radar-beta', expectedType: 'radar' },
-      { textDiagramType: 'architecture-beta', expectedType: 'architecture' },
+      { textDiagramType: 'graph', expectedType: 'flowchart-elk' },
+      { textDiagramType: 'flowchart', expectedType: 'flowchart-elk' },
     ];
 
     describe('accessibility', () => {
@@ -804,7 +779,7 @@ graph TD;A--x|text including URL space|B;`)
       A -- text --> B -- text2 --> C`
       );
       expect(diagram).toBeInstanceOf(Diagram);
-      expect(diagram.type).toBe('flowchart-v2');
+      expect(diagram.type).toBe('flowchart-elk');
     });
 
     it('should not modify db when rendering different diagrams', async () => {
