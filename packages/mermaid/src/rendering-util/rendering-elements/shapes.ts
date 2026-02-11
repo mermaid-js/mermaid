@@ -57,9 +57,6 @@ import { triangle } from './shapes/triangle.js';
 import { waveEdgedRectangle } from './shapes/waveEdgedRectangle.js';
 import { waveRectangle } from './shapes/waveRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
-import { erBox } from './shapes/erBox.js';
-import { classBox } from './shapes/classBox.js';
-import { requirementBox } from './shapes/requirementBox.js';
 import { kanbanItem } from './shapes/kanbanItem.js';
 import { bang } from './shapes/bang.js';
 import { cloud } from './shapes/cloud.js';
@@ -499,14 +496,6 @@ const generateShapeMap = () => {
     //Mindmap diagram
     mindmapCircle,
     defaultMindmapNode,
-    // class diagram
-    classBox,
-
-    // er diagram
-    erBox,
-
-    // Requirement diagram
-    requirementBox,
   } as const;
 
   const entries = [

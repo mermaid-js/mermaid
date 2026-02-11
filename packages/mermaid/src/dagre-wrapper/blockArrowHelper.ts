@@ -1,4 +1,4 @@
-import type { Direction } from '../../src/diagrams/block/blockTypes.js';
+type Direction = 'up' | 'down' | 'left' | 'right' | 'x' | 'y';
 
 const expandAndDeduplicateDirections = (directions: Direction[]) => {
   const uniqueDirections = new Set();
