@@ -1731,6 +1731,41 @@ const hasCentralConnection = function (msg, diagObj) {
 };
 
 /**
+ * Calculate the positioning offset for central connection arrows
+ * @param msg - The message object
+ * @param diagObj - The diagram object containing LINETYPE constants
+ * @param isArrowToRight - Whether the arrow is pointing to the right
+ * @returns The offset to apply to startx position
+ */
+const calculateCentralConnectionOffset = function (msg, diagObj, isArrowToRight) {
+  const {
+    CENTRAL_CONNECTION_REVERSE,
+    CENTRAL_CONNECTION_DUAL,
+    BIDIRECTIONAL_SOLID,
+    BIDIRECTIONAL_DOTTED,
+  } = diagObj.db.LINETYPE;
+
+  let offset = 0;
+
+  if (
+    msg.centralConnection === CENTRAL_CONNECTION_REVERSE ||
+    msg.centralConnection === CENTRAL_CONNECTION_DUAL
+  ) {
+    offset += CENTRAL_CONNECTION_BASE_OFFSET;
+  }
+
+  if (
+    (msg.centralConnection === CENTRAL_CONNECTION_REVERSE ||
+      msg.centralConnection === CENTRAL_CONNECTION_DUAL) &&
+    (msg.type === BIDIRECTIONAL_SOLID || msg.type === BIDIRECTIONAL_DOTTED)
+  ) {
+    offset += isArrowToRight ? 0 : -CENTRAL_CONNECTION_BIDIRECTIONAL_OFFSET;
+  }
+
+  return offset;
+};
+
+/**
  * Check if a message is a reverse arrow type
  * @param msg - The message object
  * @param diagObj - The diagram object containing LINETYPE constants
@@ -1760,46 +1795,15 @@ const isReverseArrowType = function (msg, diagObj) {
   ].includes(msg.type);
 };
 
+/**
+ * Check if a message is a bidirectional arrow type
+ * @param msg - The message object
+ * @param diagObj - The diagram object containing LINETYPE constants
+ * @returns True if the message is a bidirectional arrow type
+ */
 const isBidirectionalArrowType = function (msg, diagObj) {
   const { BIDIRECTIONAL_SOLID, BIDIRECTIONAL_DOTTED } = diagObj.db.LINETYPE;
   return [BIDIRECTIONAL_SOLID, BIDIRECTIONAL_DOTTED].includes(msg.type);
-};
-
-/**
- * Calculate the positioning offset for central connection arrows
- * @param msg - The message object
- * @param diagObj - The diagram object containing LINETYPE constants
- * @param isArrowToRight - Whether the arrow is pointing to the right
- * @returns The offset to apply to startx position
- */
-const calculateCentralConnectionOffset = function (msg, diagObj, isArrowToRight) {
-  const {
-    CENTRAL_CONNECTION_REVERSE,
-    CENTRAL_CONNECTION_DUAL,
-    BIDIRECTIONAL_SOLID,
-    BIDIRECTIONAL_DOTTED,
-  } = diagObj.db.LINETYPE;
-
-  let offset = 0;
-
-  if (
-    msg.centralConnection === CENTRAL_CONNECTION_REVERSE ||
-    msg.centralConnection === CENTRAL_CONNECTION_DUAL
-  ) {
-    if (isReverseArrowType(msg, diagObj)) {
-      offset += CENTRAL_CONNECTION_BASE_OFFSET + (isArrowToRight ? 3.5 : -10);
-    } else {
-      offset += CENTRAL_CONNECTION_BASE_OFFSET;
-    }
-  }
-  if (
-    msg.centralConnection === CENTRAL_CONNECTION_DUAL &&
-    (msg.type === BIDIRECTIONAL_SOLID || msg.type === BIDIRECTIONAL_DOTTED)
-  ) {
-    offset += isArrowToRight ? 0 : -CENTRAL_CONNECTION_BIDIRECTIONAL_OFFSET;
-  }
-
-  return offset;
 };
 
 const buildMessageModel = function (msg, actors, diagObj) {
