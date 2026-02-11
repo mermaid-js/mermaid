@@ -121,7 +121,7 @@ timeline
           Bullet 4 : sub-point 4a : sub-point 4b
 ```
 
-### Direction
+### Direction (v<MERMAID_RELEASE_VERSION>+)
 
 Timeline can change its direction by the keyword after `timeline`.
 
