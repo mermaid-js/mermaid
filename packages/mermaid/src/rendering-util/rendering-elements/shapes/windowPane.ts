@@ -60,7 +60,7 @@ export async function windowPane<T extends SVGGraphicsElement>(parent: D3Selecti
   const windowPane = shapeSvg.insert(() => no, ':first-child');
   windowPane.attr('transform', `translate(${rectOffset / 2}, ${rectOffset / 2})`);
 
-  windowPane.attr('class', 'basic label-container');
+  windowPane.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     windowPane.selectAll('path').attr('style', cssStyles);

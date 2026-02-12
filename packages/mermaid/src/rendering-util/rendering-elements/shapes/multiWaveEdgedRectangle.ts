@@ -92,7 +92,7 @@ export async function multiWaveEdgedRectangle<T extends SVGGraphicsElement>(
   const shape = shapeSvg.insert(() => outerNode, ':first-child');
   shape.insert(() => innerNode);
 
-  shape.attr('class', 'basic label-container');
+  shape.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     shape.selectAll('path').attr('style', cssStyles);
