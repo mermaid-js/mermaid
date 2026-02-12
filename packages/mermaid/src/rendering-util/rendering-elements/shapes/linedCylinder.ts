@@ -119,7 +119,7 @@ export async function linedCylinder<T extends SVGGraphicsElement>(
     cylinder = shapeSvg
       .insert('path', ':first-child')
       .attr('d', pathData)
-      .attr('class', 'basic label-container')
+      .attr('class', 'basic label-container outer-path')
       .attr('style', handleUndefinedAttr(cssStyles))
       .attr('style', nodeStyles);
   }

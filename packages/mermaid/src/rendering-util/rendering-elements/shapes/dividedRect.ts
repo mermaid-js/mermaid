@@ -48,7 +48,7 @@ export async function dividedRectangle<T extends SVGGraphicsElement>(
   );
 
   const polygon = shapeSvg.insert(() => poly, ':first-child');
-  polygon.attr('class', 'basic label-container');
+  polygon.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     polygon.selectAll('path').attr('style', cssStyles);
