@@ -10,15 +10,15 @@ interface Taglines {
 const taglines: Taglines[] = [
   {
     label: 'Customize your layout and design in Mermaid Chart’s visual editor!',
-    url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=visual_editor',
+    url: 'https://mermaid.ai/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=visual_editor',
   },
   {
     label: 'Replace ChatGPT Pro, Mermaid.live, and Lucid Chart with Mermaid Chart',
-    url: 'https://www.mermaidchart.com/mermaid-ai?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=aibundle',
+    url: 'https://mermaid.ai/mermaid-ai?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=aibundle',
   },
   {
     label: 'Diagram live with teammates in Mermaid Chart',
-    url: 'https://www.mermaidchart.com/landing?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=team_collaboration',
+    url: 'https://mermaid.ai/landing?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=team_collaboration',
   },
 ];
 
