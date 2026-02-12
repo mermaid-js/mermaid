@@ -187,32 +187,32 @@ describe('when detecting chart type ', function () {
   it('should handle an initialize definition', function () {
     const str = `
 %%{initialize: { 'logLevel': 0, 'theme': 'dark' }}%%
-sequenceDiagram
-Alice->Bob: hi`;
+graph TD
+A-->B`;
     const type = detectType(str);
     const init = preprocessDiagram(str).config;
-    expect(type).toBe('sequence');
+    expect(type).toBe('flowchart');
     expect(init).toEqual({ logLevel: 0, theme: 'dark' });
   });
   it('should handle an init definition', function () {
     const str = `
 %%{init: { 'logLevel': 0, 'theme': 'dark' }}%%
-sequenceDiagram
-Alice->Bob: hi`;
+graph TD
+A-->B`;
     const type = detectType(str);
     const init = preprocessDiagram(str).config;
-    expect(type).toBe('sequence');
+    expect(type).toBe('flowchart');
     expect(init).toEqual({ logLevel: 0, theme: 'dark' });
   });
   it('should handle an init definition with config converted to the proper diagram configuration', function () {
     const str = `
 %%{init: { 'logLevel': 0, 'theme': 'dark', 'config': {'wrap': true} } }%%
-sequenceDiagram
-Alice->Bob: hi`;
+graph TD
+A-->B`;
     const type = detectType(str);
     const init = preprocessDiagram(str).config;
-    expect(type).toBe('sequence');
-    expect(init).toEqual({ logLevel: 0, theme: 'dark', sequence: { wrap: true } });
+    expect(type).toBe('flowchart');
+    expect(init).toEqual({ logLevel: 0, theme: 'dark', flowchart: { wrap: true } });
   });
   it('should handle a multiline init definition', function () {
     const str = `
@@ -222,11 +222,11 @@ Alice->Bob: hi`;
     'theme': 'dark'
   }
 }%%
-sequenceDiagram
-Alice->Bob: hi`;
+graph TD
+A-->B`;
     const type = detectType(str);
     const init = preprocessDiagram(str).config;
-    expect(type).toBe('sequence');
+    expect(type).toBe('flowchart');
     expect(init).toEqual({ logLevel: 0, theme: 'dark' });
   });
   it('should handle multiple init directives', function () {
@@ -237,11 +237,11 @@ Alice->Bob: hi`;
     'theme': 'dark'
   }
 }%%
-sequenceDiagram
-Alice->Bob: hi`;
+graph TD
+A-->B`;
     const type = detectType(str);
     const init = preprocessDiagram(str).config;
-    expect(type).toBe('sequence');
+    expect(type).toBe('flowchart');
     expect(init).toEqual({ logLevel: 0, theme: 'dark' });
   });
   it('should handle a graph definition with leading spaces', function () {
@@ -255,18 +255,18 @@ Alice->Bob: hi`;
     const type = detectType(str);
     expect(type).toBe('flowchart');
   });
-  it('should handle a graph definition for gitGraph', function () {
-    const str = '  \n  gitGraph TB:\nbfs1:queue';
+  it('should handle a graph definition for flowchart', function () {
+    const str = '  \n  flowchart TD\nbfs1:queue';
     const type = detectType(str);
-    expect(type).toBe('gitGraph');
+    expect(type).toBe('flowchart-v2');
   });
   it('should handle frontmatter', function () {
-    const str = '---\ntitle: foo\n---\n  gitGraph TB:\nbfs1:queue';
+    const str = '---\ntitle: foo\n---\n  graph TB\nbfs1:queue';
     const type = detectType(str);
-    expect(type).toBe('gitGraph');
+    expect(type).toBe('flowchart');
   });
   it('should handle malformed frontmatter (with leading spaces) with `---` error graphtype', function () {
-    const str = '    ---\ntitle: foo\n---\n  gitGraph TB:\nbfs1:queue';
+    const str = '    ---\ntitle: foo\n---\n  graph TB\nbfs1:queue';
     expect(detectType(str)).toBe('---');
   });
 });

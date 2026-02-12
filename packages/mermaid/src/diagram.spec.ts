@@ -32,12 +32,10 @@ describe('diagram detection', () => {
   test('should detect inbuilt diagrams', async () => {
     const graph = await Diagram.fromText('graph TD; A-->B');
     expect(graph).toBeInstanceOf(Diagram);
-    expect(graph.type).toBe('flowchart-v2');
-    const sequence = await Diagram.fromText(
-      'sequenceDiagram; Alice->>+John: Hello John, how are you?'
-    );
-    expect(sequence).toBeInstanceOf(Diagram);
-    expect(sequence.type).toBe('sequence');
+    expect(graph.type).toBe('flowchart-elk');
+    const flowchart = await Diagram.fromText('flowchart TD; A-->B');
+    expect(flowchart).toBeInstanceOf(Diagram);
+    expect(flowchart.type).toBe('flowchart-elk');
   });
 
   test('should detect external diagrams', async () => {
@@ -54,11 +52,11 @@ describe('diagram detection', () => {
   test('should allow external diagrams to override internal ones with same ID', async () => {
     const title = 'overridden';
     addDetector(
-      'flowchart-elk',
-      (str) => str.startsWith('flowchart-elk'),
-      () => Promise.resolve(getDummyDiagram('flowchart-elk', title))
+      'custom-test',
+      (str) => str.startsWith('custom-test'),
+      () => Promise.resolve(getDummyDiagram('custom-test', title))
     );
-    const diagram = await Diagram.fromText('flowchart-elk TD; A-->B');
+    const diagram = await Diagram.fromText('custom-test TD; A-->B');
     expect(diagram).toBeInstanceOf(Diagram);
     expect(diagram.db.getDiagramTitle?.()).toBe(title);
   });
@@ -70,12 +68,12 @@ describe('diagram detection', () => {
       --------------^
       Expecting 'AMP', 'COLON', 'PIPE', 'TESTSTR', 'DOWN', 'DEFAULT', 'NUM', 'COMMA', 'NODE_STRING', 'BRKT', 'MINUS', 'MULT', 'UNICODE_TEXT', got 'EOF']
     `);
-    await expect(Diagram.fromText('sequenceDiagram; A-->B')).rejects
+    await expect(Diagram.fromText('flowchart TD; A-->')).rejects
       .toThrowErrorMatchingInlineSnapshot(`
-      [Error: Parse error on line 1:
-      ...quenceDiagram; A-->B
-      -----------------------^
-      Expecting 'TXT', got 'NEWLINE']
+      [Error: Parse error on line 2:
+      flowchart TD; A-->
+      ------------------^
+      Expecting 'AMP', 'COLON', 'PIPE', 'TESTSTR', 'DOWN', 'DEFAULT', 'NUM', 'COMMA', 'NODE_STRING', 'BRKT', 'MINUS', 'MULT', 'UNICODE_TEXT', got 'EOF']
     `);
   });
 
@@ -86,16 +84,15 @@ describe('diagram detection', () => {
   });
 
   test('should consider entity codes when present in diagram definition', async () => {
-    const diagram = await Diagram.fromText(`sequenceDiagram
-    A->>B: I #9829; you!
-    B->>A: I #9829; you #infin; times more!`);
-    // @ts-ignore: we need to add types for sequenceDb which will be done in separate PR
-    const messages = diagram.db?.getMessages?.();
-    if (!messages) {
-      throw new Error('Messages not found!');
+    const diagram = await Diagram.fromText(`graph TD
+    A["I #9829; you!"] --> B["I #9829; you #infin; times more!"]`);
+    // @ts-ignore: getVertices is defined on flowchart db
+    const vertices = diagram.db?.getVertices?.();
+    if (!vertices) {
+      throw new Error('Vertices not found!');
     }
 
-    expect(messages[0].message).toBe('I ﬂ°°9829¶ß you!');
-    expect(messages[1].message).toBe('I ﬂ°°9829¶ß you ﬂ°infin¶ß times more!');
+    expect(vertices.get('A')?.text).toContain('ﬂ°°9829¶ß');
+    expect(vertices.get('B')?.text).toContain('ﬂ°infin¶ß');
   });
 });

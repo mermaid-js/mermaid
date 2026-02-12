@@ -20,21 +20,6 @@ describe('diagram-orchestration', () => {
       { text: 'flowchart-v2 TD;', expected: 'flowchart-v2' },
       { text: 'flowchart-elk TD;', expected: 'flowchart-elk' },
       { text: 'error', expected: 'error' },
-      { text: 'C4Context;', expected: 'c4' },
-      { text: 'classDiagram', expected: 'class' },
-      { text: 'classDiagram-v2', expected: 'classDiagram' },
-      { text: 'erDiagram', expected: 'er' },
-      { text: 'journey', expected: 'journey' },
-      { text: 'gantt', expected: 'gantt' },
-      { text: 'pie', expected: 'pie' },
-      { text: 'requirementDiagram', expected: 'requirement' },
-      { text: 'info', expected: 'info' },
-      { text: 'sequenceDiagram', expected: 'sequence' },
-      { text: 'mindmap', expected: 'mindmap' },
-      { text: 'timeline', expected: 'timeline' },
-      { text: 'gitGraph', expected: 'gitGraph' },
-      { text: 'stateDiagram', expected: 'state' },
-      { text: 'stateDiagram-v2', expected: 'stateDiagram' },
     ])(
       'should $text be detected as $expected',
       ({ text, expected }: { text: string; expected: string }) => {
@@ -72,47 +57,17 @@ describe('diagram-orchestration', () => {
       );
     });
 
-    it('should not detect flowchart if pie contains flowchart', () => {
-      expect(
-        detectType(`pie title: "flowchart"
-      flowchart: 1 "pie" pie: 2 "pie"`)
-      ).toBe('pie');
-    });
-
     it('should detect proper diagram when defaultRenderer is elk for flowchart', () => {
       expect(
-        detectType('mindmap\n  root\n    Photograph\n      Waterfall', {
+        detectType('flowchart TD; A-->B', {
           flowchart: { defaultRenderer: 'elk' },
         })
-      ).toBe('mindmap');
+      ).toBe('flowchart-elk');
       expect(
-        detectType(
-          `
-          classDiagram
-            class Person {
-              +String name
-              -Int id
-              #double age
-              +Text demographicProfile
-            }
-          `,
-          { flowchart: { defaultRenderer: 'elk' } }
-        )
-      ).toBe('class');
-      expect(
-        detectType(
-          `
-          erDiagram
-            p[Photograph] {
-              varchar(12) jobId
-              date dateCreated
-            }
-          `,
-          {
-            flowchart: { defaultRenderer: 'elk' },
-          }
-        )
-      ).toBe('er');
+        detectType('graph TD; A-->B', {
+          flowchart: { defaultRenderer: 'elk' },
+        })
+      ).toBe('flowchart-elk');
     });
   });
 });

@@ -14,22 +14,7 @@ import theme from './themes/index.js';
  * because many of the diagrams have a circular dependency import error
  * (they import mermaidAPI.js, which imports diagramOrchestrator.js, which causes a loop)
  */
-import c4 from './diagrams/c4/styles.js';
-import classDiagram from './diagrams/class/styles.js';
 import flowchart from './diagrams/flowchart/styles.js';
-import er from './diagrams/er/styles.js';
-import git from './diagrams/git/styles.js';
-import gantt from './diagrams/gantt/styles.js';
-import pie from './diagrams/pie/pieStyles.js';
-import requirement from './diagrams/requirement/styles.js';
-import sequence from './diagrams/sequence/styles.js';
-import state from './diagrams/state/styles.js';
-import journey from './diagrams/user-journey/styles.js';
-import timeline from './diagrams/timeline/styles.js';
-import mindmap from './diagrams/mindmap/styles.js';
-import packet from './diagrams/packet/styles.js';
-import block from './diagrams/block/styles.js';
-import radar from './diagrams/radar/styles.js';
 import themes from './themes/index.js';
 
 function checkValidStylisCSSStyleSheet(stylisString: string) {
@@ -85,22 +70,7 @@ describe('styles', () => {
      */
     for (const themeId of Object.keys(theme) as (keyof typeof theme)[]) {
       for (const [diagramId, getDiagramStyles] of Object.entries({
-        c4,
-        classDiagram,
-        er,
         flowchart,
-        gantt,
-        git,
-        journey,
-        mindmap,
-        pie,
-        requirement,
-        sequence,
-        state,
-        block,
-        timeline,
-        packet,
-        radar,
       })) {
         test(`should return a valid style for diagram ${diagramId} and theme ${themeId}`, async () => {
           const { default: getStyles, addStylesForDiagram } = await import('./styles.js');

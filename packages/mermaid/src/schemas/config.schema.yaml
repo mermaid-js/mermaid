@@ -2145,7 +2145,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         default: 15
       defaultRenderer:
         $ref: '#/$defs/StateDiagramConfig/properties/defaultRenderer'
-        default: dagre-wrapper
+        default: elk
       wrappingWidth:
         description: |
           Width of nodes where text is wrapped.

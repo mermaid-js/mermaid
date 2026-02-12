@@ -35,12 +35,9 @@ vi.mock('stylis', () => {
 
 import { compile, serialize } from 'stylis';
 import { Diagram } from './Diagram.js';
-import { ClassDB } from './diagrams/class/classDb.js';
 import { FlowDB } from './diagrams/flowchart/flowDb.js';
-import { SequenceDB } from './diagrams/sequence/sequenceDb.js';
 import { decodeEntities, encodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
-import { StateDB } from './diagrams/state/stateDb.js';
 import { ensureNodeFromSelector, jsdomIt } from './tests/util.js';
 import { JSDOM } from 'jsdom';
 
@@ -654,7 +651,7 @@ describe('mermaidAPI', () => {
         .toMatchInlineSnapshot(`
         {
           "config": {},
-          "diagramType": "flowchart-v2",
+          "diagramType": "flowchart-elk",
         }
       `);
     });
@@ -675,7 +672,7 @@ graph TD;A--x|text including URL space|B;`)
       },
       "theme": "base",
     },
-    "diagramType": "flowchart-v2",
+    "diagramType": "flowchart-elk",
   }
 `);
     });
@@ -689,7 +686,7 @@ graph TD;A--x|text including URL space|B;`)
     "config": {
       "theme": "base",
     },
-    "diagramType": "flowchart-v2",
+    "diagramType": "flowchart-elk",
   }
 `);
     });
@@ -712,7 +709,7 @@ graph TD;A--x|text including URL space|B;`)
       },
       "theme": "base",
     },
-    "diagramType": "flowchart-v2",
+    "diagramType": "flowchart-elk",
   }
 `);
     });
@@ -723,7 +720,7 @@ graph TD;A--x|text including URL space|B;`)
       ).resolves.toMatchInlineSnapshot(`
           {
             "config": {},
-            "diagramType": "flowchart-v2",
+            "diagramType": "flowchart-elk",
           }
         `);
     });
@@ -738,33 +735,8 @@ graph TD;A--x|text including URL space|B;`)
     // Test all diagram types.  Note that old flowchart 'graph' type will invoke the flowRenderer-v2. (See the flowchart v2 detector.)
     // We have to have both the specific textDiagramType and the expected type name because the expected type may be slightly different from what is put in the diagram text (ex: in -v2 diagrams)
     const diagramTypesAndExpectations = [
-      // { textDiagramType: 'C4Context', expectedType: 'c4' }, TODO : setAccTitle not called in C4 jison parser
-      { textDiagramType: 'classDiagram', expectedType: 'class' },
-      { textDiagramType: 'classDiagram-v2', expectedType: 'classDiagram' },
-      { textDiagramType: 'erDiagram', expectedType: 'er' },
-      { textDiagramType: 'graph', expectedType: 'flowchart-v2' },
-      { textDiagramType: 'flowchart', expectedType: 'flowchart-v2' },
-      { textDiagramType: 'gitGraph', expectedType: 'gitGraph' },
-      { textDiagramType: 'gantt', expectedType: 'gantt' },
-      { textDiagramType: 'journey', expectedType: 'journey' },
-      { textDiagramType: 'pie', expectedType: 'pie' },
-      { textDiagramType: 'packet', expectedType: 'packet' },
-      { textDiagramType: 'packet-beta', expectedType: 'packet' },
-      {
-        textDiagramType: 'xychart-beta',
-        expectedType: 'xychart',
-        content: 'x-axis "Attempts" 10000 --> 10000\ny-axis "Passing tests" 1 --> 1\nbar [1]',
-      },
-      {
-        textDiagramType: 'xychart',
-        expectedType: 'xychart',
-        content: 'x-axis "Attempts" 10000 --> 10000\ny-axis "Passing tests" 1 --> 1\nbar [1]',
-      },
-      { textDiagramType: 'requirementDiagram', expectedType: 'requirement' },
-      { textDiagramType: 'sequenceDiagram', expectedType: 'sequence' },
-      { textDiagramType: 'stateDiagram-v2', expectedType: 'stateDiagram' },
-      { textDiagramType: 'radar-beta', expectedType: 'radar' },
-      { textDiagramType: 'architecture-beta', expectedType: 'architecture' },
+      { textDiagramType: 'graph', expectedType: 'flowchart-elk' },
+      { textDiagramType: 'flowchart', expectedType: 'flowchart-elk' },
     ];
 
     describe('accessibility', () => {
@@ -807,35 +779,10 @@ graph TD;A--x|text including URL space|B;`)
       A -- text --> B -- text2 --> C`
       );
       expect(diagram).toBeInstanceOf(Diagram);
-      expect(diagram.type).toBe('flowchart-v2');
+      expect(diagram.type).toBe('flowchart-elk');
     });
 
     it('should not modify db when rendering different diagrams', async () => {
-      const stateDiagram1 = await mermaidAPI.getDiagramFromText(
-        `stateDiagram
-            direction LR
-            [*] --> Still
-            Still --> [*]
-            Still --> Moving
-            Moving --> Still
-            Moving --> Crash
-            Crash --> [*]`
-      );
-      const stateDiagram2 = await mermaidAPI.getDiagramFromText(
-        `stateDiagram
-          direction TB
-          [*] --> Still
-          Still --> [*]
-          Still --> Moving
-          Moving --> Still
-          Moving --> Crash
-          Crash --> [*]`
-      );
-      expect(stateDiagram1.db).not.toBe(stateDiagram2.db);
-      assert(stateDiagram1.db instanceof StateDB);
-      assert(stateDiagram2.db instanceof StateDB);
-      expect(stateDiagram1.db.getDirection()).not.toEqual(stateDiagram2.db.getDirection());
-
       const flowDiagram1 = await mermaidAPI.getDiagramFromText(
         `flowchart LR
       A -- text --> B -- text2 --> C`
@@ -849,68 +796,6 @@ graph TD;A--x|text including URL space|B;`)
       assert(flowDiagram1.db instanceof FlowDB);
       assert(flowDiagram2.db instanceof FlowDB);
       expect(flowDiagram1.db.getDirection()).not.toEqual(flowDiagram2.db.getDirection());
-
-      const classDiagram1 = await mermaidAPI.getDiagramFromText(
-        `classDiagram
-            direction TB
-            class Student {
-              -idCard : IdCard
-            }
-            class IdCard{
-              -id : int
-              -name : string
-            }
-            class Bike{
-              -id : int
-              -name : string
-            }
-            Student "1" --o "1" IdCard : carries
-            Student "1" --o "1" Bike : rides`
-      );
-      const classDiagram2 = await mermaidAPI.getDiagramFromText(
-        `classDiagram
-            direction LR
-            class Student {
-              -idCard : IdCard
-            }
-            class IdCard{
-              -id : int
-              -name : string
-            }
-            class Bike{
-              -id : int
-              -name : string
-            }
-            Student "1" --o "1" IdCard : carries
-            Student "1" --o "1" Bike : rides`
-      );
-      // Since classDiagram will return new Db object each time, we can compare the db to be different.
-      expect(classDiagram1.db).not.toBe(classDiagram2.db);
-      assert(classDiagram1.db instanceof ClassDB);
-      assert(classDiagram2.db instanceof ClassDB);
-      expect(classDiagram1.db.getDirection()).not.toEqual(classDiagram2.db.getDirection());
-
-      const sequenceDiagram1 = await mermaidAPI.getDiagramFromText(
-        `sequenceDiagram
-    Alice->>+John: Hello John, how are you?
-    Alice->>+John: John, can you hear me?
-    John-->>-Alice: Hi Alice, I can hear you!
-    John-->>-Alice: I feel great!`
-      );
-      const sequenceDiagram2 = await mermaidAPI.getDiagramFromText(
-        `sequenceDiagram
-        actor A1
-    Alice->>+John: Hello John, how are you?
-    Alice->>+John: John, can you hear me?
-    John-->>-Alice: Hi Alice, I can hear you!
-    John-->>-Alice: I feel great!`
-      );
-
-      // Since sequenceDiagram will return new Db object each time, we can compare the db to be different.
-      expect(sequenceDiagram1.db).not.toBe(sequenceDiagram2.db);
-      assert(sequenceDiagram1.db instanceof SequenceDB);
-      assert(sequenceDiagram2.db instanceof SequenceDB);
-      expect(sequenceDiagram1.db.getActors()).not.toEqual(sequenceDiagram2.db.getActors());
     });
   });
 

@@ -1,9 +1,22 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { validateLayoutData, executeCoseBilkentLayout } from './layout.js';
 import type { LayoutResult } from './types.js';
-import type { MindmapNode } from '../../../diagrams/mindmap/mindmapTypes.js';
 import type { MermaidConfig } from '../../../config.type.js';
 import type { LayoutData } from '../../types.js';
+
+interface MindmapNode {
+  id: number;
+  nodeId: string;
+  level: number;
+  descr: string;
+  type: number;
+  width: number;
+  height: number;
+  padding: number;
+  x: number;
+  y: number;
+  children?: MindmapNode[];
+}
 
 // Mock cytoscape and cytoscape-cose-bilkent before importing the modules
 
