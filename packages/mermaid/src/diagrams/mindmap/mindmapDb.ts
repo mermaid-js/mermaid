@@ -216,6 +216,7 @@ export class MindmapDB {
    * @param processedNodes - Array to collect processed nodes
    */
   public flattenNodes(node: MindmapNode, processedNodes: MindmapLayoutNode[]): void {
+    const conf = getConfig();
     // Build CSS classes for the node
     const cssClasses = ['mindmap-node'];
 
@@ -268,7 +269,7 @@ export class MindmapDB {
       padding: node.padding,
       cssClasses: classes,
       cssStyles: [],
-      look: 'default',
+      look: conf.look,
       icon: node.icon,
       x: node.x,
       y: node.y,
