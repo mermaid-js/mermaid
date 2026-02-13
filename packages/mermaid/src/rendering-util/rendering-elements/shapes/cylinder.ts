@@ -117,7 +117,7 @@ export async function cylinder<T extends SVGGraphicsElement>(parent: D3Selection
     cylinder = shapeSvg
       .insert('path', ':first-child')
       .attr('d', pathData)
-      .attr('class', 'basic label-container')
+      .attr('class', 'basic label-container outer-path')
       .attr('style', handleUndefinedAttr(cssStyles))
       .attr('style', nodeStyles);
   }
