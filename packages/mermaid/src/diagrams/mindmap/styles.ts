@@ -53,7 +53,7 @@ const genSections: DiagramStylesProvider = (options) => {
     [data-look="neo"].section-${i - 1} rect, .section-${i - 1} path, .section-${i - 1} circle, .section-${i - 1} polygon, .section-${i - 1} path {
       fill: ${theme === 'redux' || theme === 'redux-dark' || theme === 'neutral' ? options.mainBkg : options['cScale' + i]};
       stroke: ${theme === 'redux' || theme === 'redux-dark' ? options.nodeBorder : options['cScale' + i]};
-      stroke-width:${options.strokeWidth};
+      stroke-width: ${options.strokeWidth ?? 2}px;
     }
     [data-look="neo"].section-edge-${i - 1}{
       stroke: ${theme?.includes('redux') || theme === 'neo-dark' ? options.nodeBorder : options['cScale' + i]};
@@ -104,7 +104,7 @@ const getStyles: DiagramStylesProvider = (options) => {
     text-align: center;
   }
   [data-look="neo"].mindmap-node  {
-    filter: ${options.dropShadow};
+    filter: ${options.dropShadow ?? 'none'};
   }
   [data-look="neo"].section-root rect, .section-root path, .section-root circle, .section-root polygon  {
     fill: ${theme?.includes('redux') ? options.mainBkg : options.git0};
