@@ -2079,4 +2079,19 @@ gitGraph TB:
       );
     });
   });
+
+  it('97: should render branch labels with multi-line text aligned with background in LR layout', () => {
+    imgSnapshotTest(
+      `gitGraph LR:
+         commit id: "1"
+         branch "Feature A\n(ongoing)"
+         commit id: "2"
+         commit id: "3"
+         checkout main
+         commit id: "4"
+         commit id: "5"
+      `,
+      {}
+    );
+  });
 });

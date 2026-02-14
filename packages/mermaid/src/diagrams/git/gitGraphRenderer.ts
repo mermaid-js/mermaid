@@ -877,7 +877,7 @@ const drawBranches = (
       bkg.attr('x', pos - bbox.width / 2 - 10).attr('y', maxPos);
       label.attr('transform', 'translate(' + (pos - bbox.width / 2 - 5) + ', ' + maxPos + ')');
     } else {
-      bkg.attr('transform', 'translate(' + -19 + ', ' + (pos - bbox.height / 2) + ')');
+      bkg.attr('transform', 'translate(' + -19 + ', ' + (pos - 11) + ')');
     }
   });
 };
