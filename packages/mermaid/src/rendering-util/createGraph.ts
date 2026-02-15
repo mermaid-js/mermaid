@@ -112,7 +112,7 @@ export async function createGraphWithElements(
         label: undefined,
         isLabelEdge: true,
         arrowTypeEnd: 'none',
-        arrowTypeStart: 'none',
+        arrowTypeStart: edge.arrowTypeStart ?? 'none',
       };
       const edgeFromLabel = {
         ...edge,
@@ -122,7 +122,7 @@ export async function createGraphWithElements(
         label: undefined,
         isLabelEdge: true,
         arrowTypeStart: 'none',
-        arrowTypeEnd: 'arrow_point',
+        arrowTypeEnd: edge.arrowTypeEnd ?? 'arrow_point',
       };
       graph.setEdge(
         {
