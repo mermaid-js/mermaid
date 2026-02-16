@@ -24,11 +24,13 @@ class Theme {
     this.border1 = '#ccc';
     this.border2 = rgba(255, 255, 255, 0.25);
     this.arrowheadColor = 'calculated';
-    this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
-    this.fontSize = '16px';
+    this.fontFamily = 'arial, sans-serif';
+    this.fontSize = '14px';
     this.labelBackground = '#181818';
     this.textColor = '#ccc';
     this.THEME_COLOR_LIMIT = 12;
+    this.radius = 5;
+    this.strokeWidth = 1;
 
     /* Flowchart variables */
     this.nodeBkg = 'calculated';
@@ -57,6 +59,7 @@ class Theme {
     this.activationBorderColor = 'calculated';
     this.activationBkgColor = 'calculated';
     this.sequenceNumberColor = 'black';
+    this.clusterBkg = '#302F3D';
 
     /* Gantt chart variables */
 
@@ -101,6 +104,13 @@ class Theme {
 
     this.errorBkgColor = '#a44141';
     this.errorTextColor = '#ddd';
+    this.useGradient = true;
+    this.gradientStart = this.primaryBorderColor;
+    this.gradientStop = this.secondaryBorderColor;
+    this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,1))';
+
+    this.noteFontWeight = this.noteFontWeight || 'normal';
+    this.fontWeight = this.fontWeight || 'normal';
   }
   updateColors() {
     this.secondBkg = lighten(this.mainBkg, 16);
