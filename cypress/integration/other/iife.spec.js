@@ -1,6 +1,6 @@
 describe('IIFE', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:9000/iife.html');
+    cy.visit('/iife.html');
   });
 
   it('should render when using mermaid.min.js', () => {

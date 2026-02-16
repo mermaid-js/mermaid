@@ -1,5 +1,5 @@
-import flowDb from '../flowDb.js';
-import flow from './flow.jison';
+import { FlowDB } from '../flowDb.js';
+import flow from './flowParser.ts';
 import { setConfig } from '../../../config.js';
 import { cleanupComments } from '../../../diagram-api/comments.js';
 
@@ -9,7 +9,7 @@ setConfig({
 
 describe('[Comments] when parsing', () => {
   beforeEach(function () {
-    flow.parser.yy = flowDb;
+    flow.parser.yy = new FlowDB();
     flow.parser.yy.clear();
   });
 

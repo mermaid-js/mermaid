@@ -85,7 +85,7 @@ describe('diagram detection', () => {
     );
   });
 
-  test('should consider entity codes when present in diagram defination', async () => {
+  test('should consider entity codes when present in diagram definition', async () => {
     const diagram = await Diagram.fromText(`sequenceDiagram
     A->>B: I #9829; you!
     B->>A: I #9829; you #infin; times more!`);

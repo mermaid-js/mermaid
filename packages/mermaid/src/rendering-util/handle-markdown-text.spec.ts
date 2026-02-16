@@ -285,7 +285,11 @@ test('markdownToHTML - Unsupported formatting', () => {
   - l1
   - l2
   - l3`)
-  ).toMatchInlineSnapshot('"<p>Hello</p>Unsupported markdown: list"');
+  ).toMatchInlineSnapshot(`
+    "<p>Hello</p>  - l1
+      - l2
+      - l3"
+  `);
 });
 
 test('markdownToHTML - no auto wrapping', () => {

@@ -1,7 +1,7 @@
 import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
 describe('C4 diagram', () => {
-  it('should render a simple C4Context diagram', () => {
+  it('C4.1 should render a simple C4Context diagram', () => {
     imgSnapshotTest(
       `
       C4Context
@@ -31,7 +31,7 @@ describe('C4 diagram', () => {
       {}
     );
   });
-  it('should render a simple C4Container diagram', () => {
+  it('C4.2 should render a simple C4Container diagram', () => {
     imgSnapshotTest(
       `
       C4Container
@@ -50,7 +50,7 @@ describe('C4 diagram', () => {
       {}
     );
   });
-  it('should render a simple C4Component diagram', () => {
+  it('C4.3 should render a simple C4Component diagram', () => {
     imgSnapshotTest(
       `
       C4Component
@@ -68,7 +68,7 @@ describe('C4 diagram', () => {
       {}
     );
   });
-  it('should render a simple C4Dynamic diagram', () => {
+  it('C4.4 should render a simple C4Dynamic diagram', () => {
     imgSnapshotTest(
       `
       C4Dynamic
@@ -91,7 +91,7 @@ describe('C4 diagram', () => {
       {}
     );
   });
-  it('should render a simple C4Deployment diagram', () => {
+  it('C4.5 should render a simple C4Deployment diagram', () => {
     imgSnapshotTest(
       `
       C4Deployment
@@ -110,6 +110,30 @@ describe('C4 diagram', () => {
       }
 
       Rel(mobile, api, "Makes API calls to", "json/HTTPS")
+      `,
+      {}
+    );
+  });
+  it('C4.6 should render C4Context diagram with ComponentQueue_Ext', () => {
+    imgSnapshotTest(
+      `
+      C4Context
+      title System Context diagram with ComponentQueue_Ext
+
+      Enterprise_Boundary(b0, "BankBoundary0") {
+          Person(customerA, "Banking Customer A", "A customer of the bank, with personal bank accounts.")
+
+          System(SystemAA, "Internet Banking System", "Allows customers to view information about their bank accounts, and make payments.")
+
+          Enterprise_Boundary(b1, "BankBoundary") {
+            ComponentQueue_Ext(msgQueue, "Message Queue", "RabbitMQ", "External message queue system for processing banking transactions")
+            System_Ext(SystemC, "E-mail system", "The internal Microsoft Exchange e-mail system.")
+          }
+        }
+
+      BiRel(customerA, SystemAA, "Uses")
+      Rel(SystemAA, msgQueue, "Sends messages to")
+      Rel(SystemAA, SystemC, "Sends e-mails", "SMTP")
       `,
       {}
     );

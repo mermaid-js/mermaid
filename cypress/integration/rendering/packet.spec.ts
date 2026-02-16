@@ -1,7 +1,7 @@
 import { imgSnapshotTest } from '../../helpers/util';
 
 describe('packet structure', () => {
-  it('should render a simple packet diagram', () => {
+  it('should render a simple packet-beta diagram', () => {
     imgSnapshotTest(
       `packet-beta
   title Hello world
@@ -10,9 +10,18 @@ describe('packet structure', () => {
     );
   });
 
+  it('should render a simple packet diagram', () => {
+    imgSnapshotTest(
+      `packet
+  title Hello world
+  0-10: "hello"
+`
+    );
+  });
+
   it('should render a simple packet diagram without ranges', () => {
     imgSnapshotTest(
-      `packet-beta
+      `packet
   0: "h"
   1: "i"
 `
@@ -21,7 +30,7 @@ describe('packet structure', () => {
 
   it('should render a complex packet diagram', () => {
     imgSnapshotTest(
-      `packet-beta
+      `packet
         0-15: "Source Port"
         16-31: "Destination Port"
         32-63: "Sequence Number"
@@ -52,7 +61,7 @@ describe('packet structure', () => {
         packet:
           showBits: false
       ---
-      packet-beta
+      packet
         0-15: "Source Port"
         16-31: "Destination Port"
         32-63: "Sequence Number"

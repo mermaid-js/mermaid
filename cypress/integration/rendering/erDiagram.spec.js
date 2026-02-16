@@ -109,8 +109,8 @@ describe('Entity Relationship Diagram', () => {
       const style = svg.attr('style');
       expect(style).to.match(/^max-width: [\d.]+px;$/);
       const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-      // use within because the absolute value can be slightly different depending on the environment ±5%
-      expect(maxWidthValue).to.be.within(140 * 0.95, 140 * 1.05);
+      // use within because the absolute value can be slightly different depending on the environment ±6%
+      expect(maxWidthValue).to.be.within(140 * 0.96, 140 * 1.06);
     });
   });
 
@@ -125,8 +125,8 @@ describe('Entity Relationship Diagram', () => {
     );
     cy.get('svg').should((svg) => {
       const width = parseFloat(svg.attr('width'));
-      // use within because the absolute value can be slightly different depending on the environment ±5%
-      expect(width).to.be.within(140 * 0.95, 140 * 1.05);
+      // use within because the absolute value can be slightly different depending on the environment ±6%
+      expect(width).to.be.within(140 * 0.96, 140 * 1.06);
       // expect(svg).to.have.attr('height', '465');
       expect(svg).to.not.have.attr('style');
     });
@@ -317,6 +317,182 @@ ORDER ||--|{ LINE-ITEM : contains
         varchar(128) email
       }
       p ||--o| c : has
+      `,
+      { logLevel: 1 }
+    );
+  });
+
+  it('should render relationship labels with line breaks', () => {
+    imgSnapshotTest(
+      `
+    erDiagram
+      p[Person] {
+          string firstName
+          string lastName
+      }
+      a["Customer Account"] {
+          string email
+      }
+
+      b["Customer Account Secondary"] {
+        string email
+      }
+      
+      c["Customer Account Tertiary"] {
+        string email
+      }
+      
+      d["Customer Account Nth"] {
+        string email
+      }
+
+      p ||--o| a : "has<br />one"
+      p ||--o| b : "has<br />one<br />two"
+      p ||--o| c : "has<br />one<br/>two<br />three"
+      p ||--o| d : "has<br />one<br />two<br/>three<br />...<br/>Nth"
+      `,
+      { logLevel: 1 }
+    );
+  });
+
+  describe('Include char sequence "graph" in text (#6795)', () => {
+    it('has a label with char sequence "graph"', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          p[Photograph] {
+            varchar(12) jobId
+            date dateCreated
+          }
+        `,
+        { flowchart: { defaultRenderer: 'elk' } }
+      );
+    });
+  });
+
+  describe('Special characters and numbers syntax', () => {
+    it('should render ER diagram with numeric entity names', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          1 ||--|| ORDER : places
+          ORDER ||--|{ 2 : contains
+          2 ||--o{ 3.5 : references
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render ER diagram with "u" character in entity names and cardinality', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          CUSTOMER ||--|| u : has
+          u ||--|| ORDER : places
+          PROJECT u--o{ TEAM_MEMBER : "parent"
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render ER diagram with decimal numbers in relationships', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          2.5 ||--|| 1.5 : has
+          CUSTOMER ||--o{ 3.14 : references
+          1.0 ||--|{ ORDER : contains
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render ER diagram with numeric entity names and attributes', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          1 {
+            string name
+            int value
+          }
+          1 ||--|| ORDER : places
+          ORDER {
+            float price
+            string description
+          }
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render complex ER diagram with mixed special entity names', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          CUSTOMER ||--o{ 1 : places
+          1 ||--|{ u : contains
+          1.5
+          u ||--|| 2.5 : processes
+          2.5 {
+            string id
+            float value
+          }
+          u {
+            varchar(50) name
+            int count
+          }
+        `,
+        { logLevel: 1 }
+      );
+    });
+    it('should render ER diagram with standalone numeric entities', () => {
+      imgSnapshotTest(
+        `erDiagram
+         PRODUCT ||--o{ ORDER-ITEM : has
+         1.5
+         u
+         1
+        `,
+        { logLevel: 1 }
+      );
+    });
+  });
+
+  it('should render edge labels correctly when flowchart htmlLabels is false', () => {
+    imgSnapshotTest(
+      `
+    erDiagram
+        CUSTOMER ||--o{ ORDER : places
+        ORDER ||--|{ LINE-ITEM : contains
+        CUSTOMER ||--|{ ADDRESS : "invoiced at"
+        CUSTOMER ||--|{ ADDRESS : "receives goods at"
+        ORDER ||--o{ INVOICE : "liable for"
+      `,
+      { logLevel: 1, flowchart: { htmlLabels: false } }
+    );
+  });
+
+  it('should render ER diagram with "1" cardinality alias before relationship operators', () => {
+    imgSnapshotTest(
+      `
+      erDiagram
+        CUSTOMER 1--1 ORDER : "exactly one"
+        ORDER 1--o{ LINE-ITEM : "one to many"
+        PRODUCT 1--|{ CATEGORY : "one or more"
+        USER 1..1 PROFILE : "exactly one optional"
+      `,
+      { logLevel: 1 }
+    );
+  });
+
+  it('should render ER diagram with "1" cardinality using all 4 relationship operator styles', () => {
+    imgSnapshotTest(
+      `
+      erDiagram
+        A 1--1 B : "solid-solid"
+        C 1..1 D : "dotted-dotted"
+        E 1.-1 F : "dotted-solid"
+        G 1-.1 H : "solid-dotted"
       `,
       { logLevel: 1 }
     );

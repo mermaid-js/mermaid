@@ -1,10 +1,11 @@
 import { createText } from '../../rendering-util/createText.js';
-import type { FilledMindMapNode, MindmapDB } from './mindmapTypes.js';
+import type { FilledMindMapNode } from './mindmapTypes.js';
 import type { Point, D3Element } from '../../types.js';
 import { parseFontSize } from '../../utils.js';
 import type { MermaidConfig } from '../../config.type.js';
+import type { MindmapDB } from './mindmapDb.js';
 
-const MAX_SECTIONS = 12;
+export const MAX_SECTIONS = 12;
 
 type ShapeFunction = (
   db: MindmapDB,
@@ -174,13 +175,13 @@ const roundedRectBkg: ShapeFunction = function (db, elem, node) {
  * @param conf - The configuration object
  * @returns The height nodes dom element
  */
-export const drawNode = function (
+export const drawNode = async function (
   db: MindmapDB,
   elem: D3Element,
   node: FilledMindMapNode,
   fullSection: number,
   conf: MermaidConfig
-): number {
+): Promise<number> {
   const htmlLabels = conf.htmlLabels;
   const section = fullSection % (MAX_SECTIONS - 1);
   const nodeElem = elem.append('g');
@@ -195,7 +196,7 @@ export const drawNode = function (
   // Create the wrapped text element
   const textElem = nodeElem.append('g');
   const description = node.descr.replace(/(<br\/*>)/g, '\n');
-  createText(
+  await createText(
     textElem,
     description,
     {

@@ -5,26 +5,26 @@
 // @ts-ignore TODO: Investigate D3 issue
 import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
-// @ts-ignore: TODO Fix ts errors
-import { version } from '../package.json';
+import DOMPurify from 'dompurify';
+import isEmpty from 'lodash-es/isEmpty.js';
+import { addSVGa11yTitleDescription, setA11yDiagramInfo } from './accessibility.js';
+import assignWithDepth from './assignWithDepth.js';
 import * as configApi from './config.js';
+import { getEffectiveHtmlLabels } from './config.js';
+import type { MermaidConfig } from './config.type.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
+import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
 import { Diagram } from './Diagram.js';
+import { evaluate } from './diagrams/common/common.js';
 import errorRenderer from './diagrams/error/errorRenderer.js';
 import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
+import { preprocessDiagram } from './preprocess.js';
 import getStyles from './styles.js';
 import theme from './themes/index.js';
-import DOMPurify from 'dompurify';
-import type { MermaidConfig } from './config.type.js';
-import { evaluate } from './diagrams/common/common.js';
-import isEmpty from 'lodash-es/isEmpty.js';
-import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
-import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
-import { preprocessDiagram } from './preprocess.js';
+import type { D3Element, ParseOptions, ParseResult, RenderResult } from './types.js';
 import { decodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
-import type { D3Element, ParseOptions, ParseResult, RenderResult } from './types.js';
 
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
@@ -72,9 +72,9 @@ async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseRe
 async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult | false> {
   addDiagrams();
   try {
-    const { code } = processAndSetConfigs(text);
+    const { code, config } = processAndSetConfigs(text);
     const diagram = await getDiagramFromText(code);
-    return { diagramType: diagram.type };
+    return { diagramType: diagram.type, config };
   } catch (error) {
     if (parseOptions?.suppressErrors) {
       return false;
@@ -128,7 +128,7 @@ export const createCssStyles = (
 
   // classDefs defined in the diagram text
   if (classDefs instanceof Map) {
-    const htmlLabels = config.htmlLabels ?? config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?
+    const htmlLabels = getEffectiveHtmlLabels(config);
 
     const cssHtmlElements = ['> *', 'span']; // TODO make a constant
     const cssShapeElements = ['rect', 'polygon', 'ellipse', 'circle', 'path']; // TODO make a constant
@@ -145,7 +145,11 @@ export const createCssStyles = (
       }
       // create the css styles for the tspan element and the text styles (only if there are textStyles)
       if (!isEmpty(styleClassDef.textStyles)) {
-        cssStyles += cssImportantStyles(styleClassDef.id, 'tspan', styleClassDef.textStyles);
+        cssStyles += cssImportantStyles(
+          styleClassDef.id,
+          'tspan',
+          (styleClassDef?.textStyles || []).map((s) => s.replace('color', 'fill'))
+        );
       }
     });
   }
@@ -417,12 +421,12 @@ const render = async function (
   // -------------------------------------------------------------------------------
   // Draw the diagram with the renderer
   try {
-    await diag.renderer.draw(text, id, version, diag);
+    await diag.renderer.draw(text, id, injected.version, diag);
   } catch (e) {
     if (config.suppressErrorRendering) {
       removeTempElements();
     } else {
-      errorRenderer.draw(text, id, version);
+      errorRenderer.draw(text, id, injected.version);
     }
     throw e;
   }
@@ -450,6 +454,7 @@ const render = async function (
     svgCode = DOMPurify.sanitize(svgCode, {
       ADD_TAGS: DOMPURIFY_TAGS,
       ADD_ATTR: DOMPURIFY_ATTR,
+      HTML_INTEGRATION_POINTS: { foreignobject: true },
     });
   }
 
@@ -469,9 +474,10 @@ const render = async function (
 };
 
 /**
- * @param  options - Initial Mermaid options
+ * @param  userOptions - Initial Mermaid options
  */
-function initialize(options: MermaidConfig = {}) {
+function initialize(userOptions: MermaidConfig = {}) {
+  const options: MermaidConfig = assignWithDepth({}, userOptions);
   // Handle legacy location of font-family configuration
   if (options?.fontFamily && !options.themeVariables?.fontFamily) {
     if (!options.themeVariables) {

@@ -16,7 +16,7 @@ import { teamMembers } from '../contributors';
           <p text-lg max-w-200 text-center leading-7>
             <Contributors />
             <br />
-            <a href="https://discord.gg/AgrbSrBer3" rel="noopener noreferrer">Join the community</a>
+            <a href="https://discord.gg/sKeNQX4Wtj" rel="noopener noreferrer">Join the community</a>
             and get involved!
           </p>
         </div>

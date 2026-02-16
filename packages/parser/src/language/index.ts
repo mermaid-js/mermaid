@@ -5,7 +5,14 @@ export {
   PacketBlock,
   Pie,
   PieSection,
-  isCommon,
+  Architecture,
+  GitGraph,
+  Radar,
+  Treemap,
+  Branch,
+  Commit,
+  Merge,
+  Statement,
   isInfo,
   isPacket,
   isPacketBlock,
@@ -13,16 +20,31 @@ export {
   isPieSection,
   TreeView,
   TreeNode,
+  isArchitecture,
+  isGitGraph,
+  isTreemap,
+  isBranch,
+  isCommit,
+  isMerge,
 } from './generated/ast.js';
+
 export {
   InfoGeneratedModule,
   MermaidGeneratedSharedModule,
   PacketGeneratedModule,
   PieGeneratedModule,
+  ArchitectureGeneratedModule,
+  GitGraphGeneratedModule,
+  RadarGeneratedModule,
+  TreemapGeneratedModule,
 } from './generated/module.js';
 
+export * from './gitGraph/index.js';
 export * from './common/index.js';
 export * from './info/index.js';
 export * from './packet/index.js';
 export * from './pie/index.js';
 export * from './treeView/index.js';
+export * from './architecture/index.js';
+export * from './radar/index.js';
+export * from './treemap/index.js';

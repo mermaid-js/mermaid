@@ -2,29 +2,43 @@
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
  * functionality and to render the diagrams to svg code!
  */
+import type { AsyncIconLoader, IconLoader, SyncIconLoader } from './rendering-util/icons.js';
+import { registerIconPacks } from './rendering-util/icons.js';
 import { dedent } from 'ts-dedent';
 import type { MermaidConfig } from './config.type.js';
-import { log } from './logger.js';
-import utils from './utils.js';
-import type { ParseOptions, ParseResult, RenderResult } from './types.js';
-import { mermaidAPI } from './mermaidAPI.js';
-import { registerLazyLoadedDiagrams, detectType } from './diagram-api/detectType.js';
-import { loadRegisteredDiagrams } from './diagram-api/loadDiagram.js';
-import type { ParseErrorFunction } from './Diagram.js';
-import { isDetailedError } from './utils.js';
-import type { DetailedError } from './utils.js';
-import type { ExternalDiagramDefinition } from './diagram-api/types.js';
-import type { UnknownDiagramError } from './errors.js';
+import { detectType, detectors, registerLazyLoadedDiagrams } from './diagram-api/detectType.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
+import { loadRegisteredDiagrams } from './diagram-api/loadDiagram.js';
+import type { ExternalDiagramDefinition, SVG, SVGGroup } from './diagram-api/types.js';
+import type { ParseErrorFunction } from './Diagram.js';
+import type { UnknownDiagramError } from './errors.js';
+import type { InternalHelpers } from './internals.js';
+import { log } from './logger.js';
+import { mermaidAPI } from './mermaidAPI.js';
+import type { LayoutLoaderDefinition, RenderOptions } from './rendering-util/render.js';
+import { registerLayoutLoaders } from './rendering-util/render.js';
+import type { LayoutData } from './rendering-util/types.js';
+import type { ParseOptions, ParseResult, RenderResult } from './types.js';
+import type { DetailedError } from './utils.js';
+import utils, { isDetailedError } from './utils.js';
 
 export type {
-  MermaidConfig,
+  AsyncIconLoader,
   DetailedError,
   ExternalDiagramDefinition,
+  IconLoader,
+  InternalHelpers,
+  LayoutData,
+  LayoutLoaderDefinition,
+  MermaidConfig,
   ParseErrorFunction,
-  RenderResult,
   ParseOptions,
   ParseResult,
+  RenderOptions,
+  RenderResult,
+  SVG,
+  SVGGroup,
+  SyncIconLoader,
   UnknownDiagramError,
 };
 
@@ -357,7 +371,7 @@ const parse: typeof mermaidAPI.parse = async (text, parseOptions) => {
 };
 
 /**
- * Function that renders an svg with a graph from a chart definition. Usage example below.
+ * Function that renders an SVG with a graph from a chart definition. Usage example below.
  *
  * ```javascript
  *  element = document.querySelector('#graphDiv');
@@ -405,6 +419,17 @@ const render: typeof mermaidAPI.render = (id, text, container) => {
   });
 };
 
+/**
+ * Gets the metadata for all registered diagrams.
+ * Currently only the id is returned.
+ * @returns An array of objects with the id of the diagram.
+ */
+const getRegisteredDiagramsMetadata = (): Pick<ExternalDiagramDefinition, 'id'>[] => {
+  return Object.keys(detectors).map((id) => ({
+    id,
+  }));
+};
+
 export interface Mermaid {
   startOnLoad: boolean;
   parseError?: ParseErrorFunction;
@@ -420,11 +445,14 @@ export interface Mermaid {
    */
   init: typeof init;
   run: typeof run;
+  registerLayoutLoaders: typeof registerLayoutLoaders;
   registerExternalDiagrams: typeof registerExternalDiagrams;
   initialize: typeof initialize;
   contentLoaded: typeof contentLoaded;
   setParseErrorHandler: typeof setParseErrorHandler;
   detectType: typeof detectType;
+  registerIconPacks: typeof registerIconPacks;
+  getRegisteredDiagramsMetadata: typeof getRegisteredDiagramsMetadata;
 }
 
 const mermaid: Mermaid = {
@@ -435,11 +463,14 @@ const mermaid: Mermaid = {
   init,
   run,
   registerExternalDiagrams,
+  registerLayoutLoaders,
   initialize,
   parseError: undefined,
   contentLoaded,
   setParseErrorHandler,
   detectType,
+  registerIconPacks,
+  getRegisteredDiagramsMetadata,
 };
 
 export default mermaid;

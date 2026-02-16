@@ -79,6 +79,18 @@ describe('Flowchart v2', () => {
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
+  it('6a: should render complex HTML in labels with sandbox security', () => {
+    imgSnapshotTest(
+      `flowchart TD
+    A[Christmas] -->|Get money| B(Go shopping)
+    B --> C{Let me think}
+    C -->|One| D[Laptop]
+    C -->|Two| E[iPhone]
+    C -->|Three| F[fa:fa-car Car]
+      `,
+      { securityLevel: 'sandbox', flowchart: { htmlLabels: true } }
+    );
+  });
   it('7: should render a flowchart when useMaxWidth is true (default)', () => {
     renderGraph(
       `flowchart TD
@@ -99,7 +111,7 @@ describe('Flowchart v2', () => {
       const style = svg.attr('style');
       expect(style).to.match(/^max-width: [\d.]+px;$/);
       const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-      expect(maxWidthValue).to.be.within(290 * 0.95 - 1, 290 * 1.05);
+      expect(maxWidthValue).to.be.within(440 * 0.95, 440 * 1.05);
     });
   });
   it('8: should render a flowchart when useMaxWidth is false', () => {
@@ -118,7 +130,7 @@ describe('Flowchart v2', () => {
       const width = parseFloat(svg.attr('width'));
       // use within because the absolute value can be slightly different depending on the environment ±5%
       // expect(height).to.be.within(446 * 0.95, 446 * 1.05);
-      expect(width).to.be.within(290 * 0.95 - 1, 290 * 1.05);
+      expect(width).to.be.within(440 * 0.95, 440 * 1.05);
       expect(svg).to.not.have.attr('style');
     });
   });
@@ -198,13 +210,13 @@ describe('Flowchart v2', () => {
       `flowchart TB
   internet
   nat
-  routeur
+  router
   lb1
   lb2
   compute1
   compute2
   subgraph project
-  routeur
+  router
   nat
     subgraph subnet1
       compute1
@@ -215,8 +227,8 @@ describe('Flowchart v2', () => {
       lb2
     end
   end
-  internet --> routeur
-  routeur --> subnet1 & subnet2
+  internet --> router
+  router --> subnet1 & subnet2
   subnet1 & subnet2 --> nat --> internet
       `,
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
@@ -433,7 +445,7 @@ flowchart TD
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
-  it('63: title on subgraphs should be themable', () => {
+  it('63: title on subgraphs should be themeable', () => {
     imgSnapshotTest(
       `
       %%{init:{"theme":"base", "themeVariables": {"primaryColor":"#411d4e", "titleColor":"white", "darkMode":true}}}%%
@@ -699,7 +711,7 @@ A --> B
       { flowchart: { titleTopMargin: 10 } }
     );
   });
-  it('3192: It should be possieble to render flowcharts with invisible edges', () => {
+  it('3192: It should be possible to render flowcharts with invisible edges', () => {
     imgSnapshotTest(
       `---
 title: Simple flowchart with invisible edges
@@ -786,7 +798,7 @@ A ~~~ B
       `---
       title: Subgraph nodeSpacing and rankSpacing example
       config:
-        flowchart: 
+        flowchart:
           nodeSpacing: 250
           rankSpacing: 250
       ---
@@ -1047,8 +1059,156 @@ end
           A --lb3--> TOP --lb4--> B
           B1 --lb5--> B2
         `,
-        { flowchart: { subGraphTitleMargin: { top: 10, bottom: 5 } } }
+        {
+          flowchart: { subGraphTitleMargin: { top: 10, bottom: 5 } },
+        }
       );
     });
+    it('Should render self-loops', () => {
+      imgSnapshotTest(
+        `flowchart
+          A --> A
+          subgraph B
+            B1 --> B1
+          end
+          subgraph C
+            subgraph C1
+              C2 --> C2
+              subgraph D
+                D1 --> D1
+              end
+              D --> D
+            end
+            C1 --> C1
+          end
+        `,
+        {
+          flowchart: { subGraphTitleMargin: { top: 10, bottom: 5 } },
+        }
+      );
+    });
+  });
+  describe('New @ syntax for node metadata edge cases', () => {
+    it('should be possible to use @  syntax to add labels on multi nodes', () => {
+      imgSnapshotTest(
+        `flowchart TB
+       n2["label for n2"] &   n4@{ label: "label for n4"}   & n5@{ label: "label for n5"}
+        `,
+        {}
+      );
+    });
+    it('should be possible to use @  syntax to add labels with trail spaces and &', () => {
+      imgSnapshotTest(
+        `flowchart TB
+       n2["label for n2"] &   n4@{ label: "label for n4"}   & n5@{ label: "label for n5"}   
+        `,
+        {}
+      );
+    });
+    it('should be possible to use @  syntax to add labels with trail spaces', () => {
+      imgSnapshotTest(
+        `flowchart TB
+       n2["label for n2"]
+       n4@{ label: "label for n4"}
+       n5@{ label: "label for n5"}  
+        `,
+        {}
+      );
+    });
+    it('should be possible to use @  syntax to add labels with trail spaces and edge/link', () => {
+      imgSnapshotTest(
+        `flowchart TD
+    A["A"] --> B["for B"] &    C@{ label: "for c"} & E@{label : "for E"}  
+    D@{label: "for D"}     
+        `,
+        {}
+      );
+    });
+  });
+  describe('Flowchart Node Shape Rendering', () => {
+    it('should render a stadium-shaped node', () => {
+      imgSnapshotTest(
+        `flowchart TB
+          A(["Start"]) --> n1["Untitled Node"]
+          A --> n2["Untitled Node"]
+        `,
+        {}
+      );
+    });
+    it('should render a diamond-shaped node using shape config', () => {
+      imgSnapshotTest(
+        `flowchart BT
+          n2["Untitled Node"] --> n1["Diamond"]
+          n1@{ shape: diam}
+        `,
+        {}
+      );
+    });
+    it('should render a rounded rectangle and a normal rectangle', () => {
+      imgSnapshotTest(
+        `flowchart BT
+        n2["Untitled Node"] --> n1["Rounded Rectangle"]
+        n3["Untitled Node"] --> n1
+        n1@{ shape: rounded}
+        n3@{ shape: rect}
+    `,
+        {}
+      );
+    });
+  });
+
+  it('6617: Per Link Curve Styling using edge Ids', () => {
+    imgSnapshotTest(
+      `flowchart TD
+      A e1@-->B e5@--> E
+      E e7@--> D
+      B e3@-->D
+      A e2@-->C e4@-->D
+      C e6@--> F
+      F e8@--> D
+      e1@{ curve: natural }
+      e2@{ curve: stepAfter }
+      e3@{ curve: monotoneY }
+      e4@{ curve: bumpY }
+      e5@{ curve: linear }
+      e6@{ curve: catmullRom }
+      e7@{ curve: cardinal }
+      `
+    );
+  });
+
+  describe('when rendering unsuported markdown', () => {
+    const graph = `flowchart TB
+    mermaid{"What is\nyourmermaid version?"} --> v10["<11"] --"\`<**1**1\`"--> fine["No bug"]
+    mermaid --> v11[">= v11"] -- ">= v11" --> broken["Affected by https://github.com/mermaid-js/mermaid/issues/5824"]
+    subgraph subgraph1["\`How to fix **fix**\`"]
+        broken --> B["B"]
+    end
+    githost["Github, Gitlab, BitBucket, etc."]
+    githost2["\`Github, Gitlab, BitBucket, etc.\`"]
+    a["1."]
+    b["- x"]
+      `;
+
+    it('should render raw strings', () => {
+      imgSnapshotTest(graph);
+    });
+
+    it('should render raw strings with htmlLabels: false', () => {
+      imgSnapshotTest(graph, { htmlLabels: false });
+    });
+  });
+
+  it('V2 - 17: should apply class def colour to edge label', () => {
+    imgSnapshotTest(
+      ` graph LR
+    id1(Start) link@-- "Label" -->id2(Stop)
+    style id1 fill:#f9f,stroke:#333,stroke-width:4px
+
+class id2 myClass
+classDef myClass fill:#bbf,stroke:#f66,stroke-width:2px,color:white,stroke-dasharray: 5 5
+class link myClass
+`
+    );
   });
 });

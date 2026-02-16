@@ -5,15 +5,16 @@ entry Pie:
   NEWLINE*
   "pie" showData?="showData"?
   (
-    NEWLINE* TitleAndAccessibilities sections+=PieSection*
-    | NEWLINE+ sections+=PieSection+
-    | NEWLINE*
-  )
+    TitleAndAccessibilities 
+    | sections+=PieSection
+    | NEWLINE
+  )*
 ;
 
 PieSection:
-  label=PIE_SECTION_LABEL ":" value=PIE_SECTION_VALUE EOL
+  label=STRING ":" value=NUMBER_PIE EOL
 ;
 
-terminal PIE_SECTION_LABEL: /"[^"]+"/;
-terminal PIE_SECTION_VALUE returns number: /(0|[1-9][0-9]*)(\.[0-9]+)?/;
+terminal FLOAT_PIE returns number: /-?[0-9]+\.[0-9]+(?!\.)/;
+terminal INT_PIE returns number: /-?(0|[1-9][0-9]*)(?!\.)/;
+terminal NUMBER_PIE returns number: FLOAT_PIE |  INT_PIE;

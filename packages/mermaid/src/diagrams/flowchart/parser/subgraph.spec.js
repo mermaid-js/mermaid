@@ -1,5 +1,5 @@
-import flowDb from '../flowDb.js';
-import flow from './flow.jison';
+import { FlowDB } from '../flowDb.js';
+import flow from './flowParser.ts';
 import { setConfig } from '../../../config.js';
 
 setConfig({
@@ -8,7 +8,7 @@ setConfig({
 
 describe('when parsing subgraphs', function () {
   beforeEach(function () {
-    flow.parser.yy = flowDb;
+    flow.parser.yy = new FlowDB();
     flow.parser.yy.clear();
     flow.parser.yy.setGen('gen-2');
   });
@@ -308,5 +308,22 @@ describe('when parsing subgraphs', function () {
     expect(subgraphA.nodes).toContain('b');
     expect(subgraphA.nodes).toContain('a');
     expect(subgraphA.nodes).not.toContain('c');
+  });
+  it('should correctly parse direction TD inside a subgraph', function () {
+    const res = flow.parser.parse(`
+      graph LR
+        subgraph WithTD
+          direction TD
+          A1 --> A2
+        end
+    `);
+
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(1);
+    const subgraph = subgraphs[0];
+
+    expect(subgraph.dir).toBe('TD');
+    expect(subgraph.nodes).toContain('A1');
+    expect(subgraph.nodes).toContain('A2');
   });
 });

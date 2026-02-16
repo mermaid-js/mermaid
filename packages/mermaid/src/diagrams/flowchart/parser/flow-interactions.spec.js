@@ -1,5 +1,5 @@
-import flowDb from '../flowDb.js';
-import flow from './flow.jison';
+import { FlowDB } from '../flowDb.js';
+import flow from './flowParser.ts';
 import { setConfig } from '../../../config.js';
 import { vi } from 'vitest';
 const spyOn = vi.spyOn;
@@ -9,7 +9,9 @@ setConfig({
 });
 
 describe('[Interactions] when parsing', () => {
+  let flowDb;
   beforeEach(function () {
+    flowDb = new FlowDB();
     flow.parser.yy = flowDb;
     flow.parser.yy.clear();
   });
@@ -34,7 +36,7 @@ describe('[Interactions] when parsing', () => {
     expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', 'callback');
   });
 
-  it('should be possible to use click to a callback with toolip', function () {
+  it('should be possible to use click to a callback with tooltip', function () {
     spyOn(flowDb, 'setClickEvent');
     spyOn(flowDb, 'setTooltip');
     const res = flow.parser.parse('graph TD\nA-->B\nclick A callback "tooltip"');
@@ -46,7 +48,7 @@ describe('[Interactions] when parsing', () => {
     expect(flowDb.setTooltip).toHaveBeenCalledWith('A', 'tooltip');
   });
 
-  it('should be possible to use click to a click and call callback with toolip', function () {
+  it('should be possible to use click to a click and call callback with tooltip', function () {
     spyOn(flowDb, 'setClickEvent');
     spyOn(flowDb, 'setTooltip');
     const res = flow.parser.parse('graph TD\nA-->B\nclick A call callback() "tooltip"');

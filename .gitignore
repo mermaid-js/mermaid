@@ -4,6 +4,7 @@ node_modules/
 coverage/
 .idea/
 .pnpm-store/
+.instructions/
 
 dist
 v8-compile-cache-0
@@ -35,7 +36,7 @@ cypress/snapshots/
 .tsbuildinfo
 tsconfig.tsbuildinfo
 
-knsv*.html
+#knsv*.html
 local*.html
 stats/
 

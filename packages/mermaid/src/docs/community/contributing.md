@@ -240,6 +240,22 @@ Code is the heart of every software project. We strive to make it better. Who if
 
 The core of Mermaid is located under `packages/mermaid/src`.
 
+### Building Mermaid Locally
+
+**Host**
+
+```bash
+pnpm run build
+```
+
+**Docker**
+
+```bash
+./run build
+```
+
+This will build the Mermaid library and the documentation site.
+
 ### Running Mermaid Locally
 
 **Host**
@@ -257,6 +273,8 @@ pnpm run dev
 After starting the dev server open <http://localhost:9000> in your browser.
 
 Now you are ready to make your changes!
+
+Note: By default, the Mermaid service will run on port 9000. To use a different port, change the environment variable `MERMAID_PORT` in the file `.env`. You should only need to do this if you are using port 9000 to run other projects.
 
 ### Make Changes
 
@@ -286,7 +304,7 @@ If you are adding a feature, you will definitely need to add tests. Depending on
 
 Unit tests are tests that test a single function or module. They are the easiest to write and the fastest to run.
 
-Unit tests are mandatory for all code except the renderers. (The renderers are tested with integration tests.)
+Unit tests are mandatory for all code except the layout tests. (The layouts are tested with integration tests.)
 
 We use [Vitest](https://vitest.dev) to run unit tests.
 
@@ -311,6 +329,30 @@ When using Docker prepend your command with `./run`:
 ```sh
 ./run pnpm test
 ```
+
+##### Testing the DOM
+
+One can use `jsdomIt` to test any part of Mermaid that interacts with the DOM, as long as it is not related to the layout.
+
+The function `jsdomIt` ([developed in utils.ts](../../tests/util.ts)) overrides `it` from `vitest`, and creates a pseudo-browser environment that works almost like the real deal for the duration of the test. It uses JSDOM to create a DOM, and adds objects `window` and `document` to `global` to mock the browser environment.
+
+> [!NOTE]
+> The layout cannot work in `jsdomIt` tests because JSDOM has no rendering engine, hence the pseudo-browser environment.
+
+Example :
+
+```typescript
+import { ensureNodeFromSelector, jsdomIt } from './tests/util.js';
+
+jsdomIt('should add element "thing" in the SVG', ({ svg }) => {
+  // Code in this block runs in a pseudo-browser environment
+  addThing(svg); // The svg item is the D3 selection of the SVG node
+  const svgNode = ensureNodeFromSelector('svg'); // Retrieve the DOM node using the DOM API
+  expect(svgNode.querySelector('thing')).not.toBeNull(); // Test the structure of the SVG
+});
+```
+
+They can be used to test any method that interacts with the DOM, including for testing renderers. For renderers, additional integration testing is necessary to test the layout though.
 
 #### Integration / End-to-End (E2E) Tests
 
@@ -371,9 +413,9 @@ If the users have no way to know that things have changed, then you haven't real
 Likewise, if users don't know that there is a new feature that you've implemented, it will forever remain unknown and unused.
 
 The documentation has to be updated for users to know that things have been changed and added!
-If you are adding a new feature, add `(v10.8.0+)` in the title or description. It will be replaced automatically with the current version number when the release happens.
+If you are adding a new feature, add `(v<MERMAID_RELEASE_VERSION>+)` in the title or description. It will be replaced automatically with the current version number when the release happens.
 
-eg: `# Feature Name (v10.8.0+)`
+eg: `# Feature Name (v<MERMAID_RELEASE_VERSION>+)`
 
 We know it can sometimes be hard to code _and_ write user documentation.
 
@@ -481,14 +523,14 @@ This is a danger alert
 
 ### Navigation
 
-If you want to propose changes to how the documentation is _organized_, such as adding a new section or re-arranging or renaming a section, you must update the **sidebar navigation**, which is defined in [the vitepress config](../.vitepress/config.ts). The same goes to **topbar**.
+If you want to propose changes to how the documentation is _organized_, such as adding a new section or re-arranging or renaming a section, you must update the **sidebar navigation**, which is defined in [the vitepress config](../.vitepress/config.ts). The same goes for **topbar**.
 
 ### Build Docs
 
-The content of `/docs` folder is built with Github Actions.
+The content of `/docs` folder is built with GitHub Actions.
 
 ```warning
-So as to allow automatic compilation of documentation pages you have to enable Github Actions on your fork first
+So as to allow automatic compilation of documentation pages you have to enable GitHub Actions on your fork first
 ```
 
 ## Submit your pull request

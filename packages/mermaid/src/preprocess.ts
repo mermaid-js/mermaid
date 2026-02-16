@@ -26,6 +26,7 @@ const processFrontmatter = (code: string) => {
     }
     config.gantt.displayMode = displayMode;
   }
+
   return { title, config, text };
 };
 
@@ -49,7 +50,7 @@ const processDirectives = (code: string) => {
  * @param code - The code to preprocess.
  * @returns The object containing the preprocessed code, title, and configuration.
  */
-export function preprocessDiagram(code: string): DiagramMetadata & { code: string } {
+export function preprocessDiagram(code: string) {
   const cleanedCode = cleanupText(code);
   const frontMatterResult = processFrontmatter(cleanedCode);
   const directiveResult = processDirectives(frontMatterResult.text);
@@ -59,5 +60,5 @@ export function preprocessDiagram(code: string): DiagramMetadata & { code: strin
     code,
     title: frontMatterResult.title,
     config,
-  };
+  } satisfies DiagramMetadata & { code: string };
 }

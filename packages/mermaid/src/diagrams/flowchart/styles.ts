@@ -1,5 +1,6 @@
 // import khroma from 'khroma';
 import * as khroma from 'khroma';
+import { getIconStyles } from '../globalStyles.js';
 
 /** Returns the styles given options */
 export interface FlowChartStyleOptions {
@@ -38,11 +39,14 @@ const getStyles = (options: FlowChartStyleOptions) =>
   .cluster-label text {
     fill: ${options.titleColor};
   }
-  .cluster-label span,p {
+  .cluster-label span {
     color: ${options.titleColor};
   }
+  .cluster-label span p {
+    background-color: transparent;
+  }
 
-  .label text,span,p {
+  .label text,span {
     fill: ${options.nodeTextColor || options.textColor};
     color: ${options.nodeTextColor || options.textColor};
   }
@@ -56,7 +60,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke: ${options.nodeBorder};
     stroke-width: 1px;
   }
-  .flowchart-label text {
+  .rough-node .label text , .node .label text, .image-shape .label, .icon-shape .label {
     text-anchor: middle;
   }
   // .flowchart-label .text-outer-tspan {
@@ -72,11 +76,18 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke-width: 1px;
   }
 
-  .node .label {
+  .rough-node .label,.node .label, .image-shape .label, .icon-shape .label {
     text-align: center;
   }
   .node.clickable {
     cursor: pointer;
+  }
+
+
+  .root .anchor path {
+    fill: ${options.lineColor} !important;
+    stroke-width: 0;
+    stroke: ${options.lineColor};
   }
 
   .arrowheadPath {
@@ -95,6 +106,9 @@ const getStyles = (options: FlowChartStyleOptions) =>
 
   .edgeLabel {
     background-color: ${options.edgeLabelBackground};
+    p {
+      background-color: ${options.edgeLabelBackground};
+    }
     rect {
       opacity: 0.5;
       background-color: ${options.edgeLabelBackground};
@@ -106,7 +120,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
   /* For html labels only */
   .labelBkg {
     background-color: ${fade(options.edgeLabelBackground, 0.5)};
-    // background-color: 
+    // background-color:
   }
 
   .cluster rect {
@@ -119,7 +133,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
     fill: ${options.titleColor};
   }
 
-  .cluster span,p {
+  .cluster span {
     color: ${options.titleColor};
   }
   /* .cluster div {
@@ -145,6 +159,26 @@ const getStyles = (options: FlowChartStyleOptions) =>
     font-size: 18px;
     fill: ${options.textColor};
   }
+
+  rect.text {
+    fill: none;
+    stroke-width: 0;
+  }
+
+  .icon-shape, .image-shape {
+    background-color: ${options.edgeLabelBackground};
+    p {
+      background-color: ${options.edgeLabelBackground};
+      padding: 2px;
+    }
+    .label rect {
+      opacity: 0.5;
+      background-color: ${options.edgeLabelBackground};
+      fill: ${options.edgeLabelBackground};
+    }
+    text-align: center;
+  }
+  ${getIconStyles()}
 `;
 
 export default getStyles;

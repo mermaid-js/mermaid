@@ -6,7 +6,7 @@ import { log } from '../../logger.js';
 import utils from '../../utils.js';
 import erMarkers from './erMarkers.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import { parseGenericTypes } from '../common/common.js';
+import { parseGenericTypes, getUrl } from '../common/common.js';
 import { v5 as uuid5 } from 'uuid';
 
 /** Regex used to remove chars from the entity name so the result can be used in an id */
@@ -451,14 +451,7 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
   // TODO: Understand this better
   let url = '';
   if (conf.arrowMarkerAbsolute) {
-    url =
-      window.location.protocol +
-      '//' +
-      window.location.host +
-      window.location.pathname +
-      window.location.search;
-    url = url.replace(/\(/g, '\\(');
-    url = url.replace(/\)/g, '\\)');
+    url = getUrl(true);
   }
 
   // Decide which start and end markers it needs. It may be possible to be more concise here
@@ -519,6 +512,8 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
   // Append a text node containing the label
   const labelId = 'rel' + relCnt;
 
+  const labelText = rel.roleA.split(/<br ?\/>/g);
+
   const labelNode = svg
     .append('text')
     .classed('er relationshipLabel', true)
@@ -528,8 +523,20 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
     .style('text-anchor', 'middle')
     .style('dominant-baseline', 'middle')
     .style('font-family', getConfig().fontFamily)
-    .style('font-size', conf.fontSize + 'px')
-    .text(rel.roleA);
+    .style('font-size', conf.fontSize + 'px');
+
+  if (labelText.length == 1) {
+    labelNode.text(rel.roleA);
+  } else {
+    const firstShift = -(labelText.length - 1) * 0.5;
+    labelText.forEach((txt, i) => {
+      labelNode
+        .append('tspan')
+        .attr('x', labelPoint.x)
+        .attr('dy', `${i === 0 ? firstShift : 1}em`)
+        .text(txt);
+    });
+  }
 
   // Figure out how big the opaque 'container' rectangle needs to be
   const labelBBox = labelNode.node().getBBox();

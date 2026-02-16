@@ -2,10 +2,14 @@ name: E2E
 
 on:
   push:
-    branches-ignore:
-      - 'gh-readonly-queue/**'
+    branches:
+      - develop
+      - master
+      - release/**
   pull_request:
   merge_group:
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 permissions:
   contents: read
@@ -24,38 +28,38 @@ env:
       ) || 
       github.event.before
     }}
-  shouldRunParallel: ${{ secrets.CYPRESS_RECORD_KEY != '' && !(github.event_name == 'push' && github.ref == 'refs/heads/develop') }}
+  RUN_VISUAL_TEST: >-
+    ${{ github.repository == 'mermaid-js/mermaid' && (github.event_name != 'pull_request' || !startsWith(github.head_ref, 'renovate/')) }}
 jobs:
   cache:
     runs-on: ubuntu-latest
     container:
-      image: cypress/browsers:node-20.11.0-chrome-121.0.6167.85-1-ff-120.0-edge-121.0.2277.83-1
+      image: cypress/browsers:node-20.16.0-chrome-127.0.6533.88-1-ff-128.0.3-edge-127.0.2651.74-1
       options: --user 1001
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
         with:
           node-version-file: '.node-version'
       - name: Cache snapshots
         id: cache-snapshot
-        uses: actions/cache@v4
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
         with:
-          save-always: true
           path: ./cypress/snapshots
           key: ${{ runner.os }}-snapshots-${{ env.targetHash }}
 
       # If a snapshot for a given Hash is not found, we checkout that commit, run the tests and cache the snapshots.
       - name: Switch to base branch
         if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true' }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           ref: ${{ env.targetHash }}
 
       - name: Install dependencies
         if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true' }}
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@108b8684ae52e735ff7891524cbffbcd4be5b19f # v6.7.16
         with:
           # just perform install
           runTests: false
@@ -70,34 +74,34 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     container:
-      image: cypress/browsers:node-20.11.0-chrome-121.0.6167.85-1-ff-120.0-edge-121.0.2277.83-1
+      image: cypress/browsers:node-20.16.0-chrome-127.0.6533.88-1-ff-128.0.3-edge-127.0.2651.74-1
       options: --user 1001
     needs: cache
     strategy:
       fail-fast: false
       matrix:
-        containers: [1, 2, 3, 4]
+        containers: [1, 2, 3, 4, 5]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
         # uses version from "packageManager" field in package.json
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
         with:
           node-version-file: '.node-version'
 
       # These cached snapshots are downloaded, providing the reference snapshots.
       - name: Cache snapshots
         id: cache-snapshot
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
         with:
           path: ./cypress/snapshots
           key: ${{ runner.os }}-snapshots-${{ env.targetHash }}
 
       - name: Install dependencies
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@108b8684ae52e735ff7891524cbffbcd4be5b19f # v6.7.16
         with:
           runTests: false
 
@@ -113,11 +117,8 @@ jobs:
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@108b8684ae52e735ff7891524cbffbcd4be5b19f # v6.7.16
         id: cypress
-        # If CYPRESS_RECORD_KEY is set, run in parallel on all containers
-        # Otherwise (e.g. if running from fork), we run on a single container only
-        if: ${{ env.shouldRunParallel == 'true' || ( matrix.containers == 1 ) }}
         with:
           install: false
           start: pnpm run dev:coverage
@@ -125,19 +126,20 @@ jobs:
           browser: chrome
           # Disable recording if we don't have an API key
           # e.g. if this action was run from a fork
-          record: ${{ env.shouldRunParallel == 'true' }}
-          parallel: ${{ env.shouldRunParallel == 'true' }}
+          record: ${{ env.RUN_VISUAL_TEST == 'true' && secrets.CYPRESS_RECORD_KEY != '' }}
         env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          VITEST_COVERAGE: true
+          ARGOS_PARALLEL: ${{ env.RUN_VISUAL_TEST == 'true' }}
+          ARGOS_PARALLEL_TOTAL: ${{ env.RUN_VISUAL_TEST == 'true' && strategy.job-total || 1 }}
+          ARGOS_PARALLEL_INDEX: ${{ env.RUN_VISUAL_TEST == 'true' && matrix.containers || 1 }}
           CYPRESS_COMMIT: ${{ github.sha }}
-          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
-          ARGOS_PARALLEL: ${{ env.shouldRunParallel == 'true' }}
-          ARGOS_PARALLEL_TOTAL: 4
-          ARGOS_PARALLEL_INDEX: ${{ matrix.containers }}
+          CYPRESS_RECORD_KEY: ${{ env.RUN_VISUAL_TEST == 'true' && secrets.CYPRESS_RECORD_KEY || ''}}
+          SPLIT: ${{ strategy.job-total }}
+          SPLIT_INDEX: ${{ strategy.job-index }}
+          SPLIT_FILE: 'cypress/timings.json'
+          VITEST_COVERAGE: true
 
       - name: Upload Coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # v5.3.1
         # Run step only pushes to develop and pull_requests
         if: ${{ steps.cypress.conclusion == 'success' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/develop')}}
         with:

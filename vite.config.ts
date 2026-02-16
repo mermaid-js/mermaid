@@ -10,14 +10,12 @@ export default defineConfig({
   plugins: [
     jison(),
     jsonSchemaPlugin(), // handles .schema.yaml JSON Schema files
-    // @ts-expect-error According to the type definitions, rollup plugins are incompatible with vite
     typescript({ compilerOptions: { declaration: false } }),
   ],
   test: {
     environment: 'jsdom',
     globals: true,
     // TODO: should we move this to a mermaid-core package?
-    setupFiles: ['packages/mermaid/src/tests/setup.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
@@ -25,6 +23,7 @@ export default defineConfig({
       exclude: [...defaultExclude, './tests/**', '**/__mocks__/**', '**/generated/'],
     },
     includeSource: ['packages/*/src/**/*.{js,ts}'],
+    clearMocks: true,
   },
   build: {
     /** If you set esmExternals to true, this plugins assumes that
@@ -35,6 +34,9 @@ export default defineConfig({
     },
   },
   define: {
+    // Needs to be string
+    'injected.includeLargeFeatures': 'true',
     'import.meta.vitest': 'undefined',
+    packageVersion: "'0.0.0'",
   },
 });

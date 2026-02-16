@@ -138,8 +138,8 @@ describe('State diagram', () => {
     imgSnapshotTest(
       `
     stateDiagram-v2
-    State1: This a a single line description
-    State2: This a a multi line description
+    State1: This a single line description
+    State2: This a multi line description
     State2: here comes the multi part
     [*] --> State1
     State1 --> State2
@@ -345,7 +345,7 @@ stateDiagram
       }
     );
   });
-  it('v2 width of compond state should grow with title if title is wider', () => {
+  it('v2 width of compound state should grow with title if title is wider', () => {
     imgSnapshotTest(
       `
 stateDiagram-v2
@@ -402,8 +402,8 @@ stateDiagram-v2
       `
 stateDiagram-v2
     MyState
-    note left of MyState : I am a leftie
-    note right of MyState : I am a rightie
+    note left of MyState : I am a lefty
+    note right of MyState : I am a righty
     `,
       {
         logLevel: 0,
@@ -542,6 +542,43 @@ stateDiagram-v2
         { logLevel: 0, fontFamily: 'courier' }
       );
     });
+    it(' can have styles applied ', () => {
+      imgSnapshotTest(
+        `
+stateDiagram-v2
+AState
+style AState fill:#636,border:1px solid red,color:white;
+        `,
+        { logLevel: 0, fontFamily: 'courier' }
+      );
+    });
+    it(' should let styles take precedence over classes', () => {
+      imgSnapshotTest(
+        `
+stateDiagram-v2
+AState: Should NOT be white
+BState
+classDef exampleStyleClass fill:#fff,color: blue;
+class AState,BState exampleStyleClass
+style AState fill:#636,border:1px solid red,color:white;
+        `,
+        { logLevel: 0, fontFamily: 'courier' }
+      );
+    });
+    it(' should allow styles to take effect in subgraphs', () => {
+      imgSnapshotTest(
+        `
+  stateDiagram
+    state roundWithTitle {
+      C: Black with white text
+    }
+    D: Black with white text
+
+    style C,D stroke:#00f, fill:black, color:white
+        `,
+        { logLevel: 0, fontFamily: 'courier' }
+      );
+    });
   });
   it('1433: should render a simple state diagram with a title', () => {
     imgSnapshotTest(
@@ -551,6 +588,245 @@ title: simple state diagram
 stateDiagram-v2
 [*] --> State1
 State1 --> [*]
+`,
+      {}
+    );
+  });
+  it('should align dividers correctly', () => {
+    imgSnapshotTest(
+      `stateDiagram-v2
+  state s2 {
+      s3
+      --
+      s4
+      --
+      55
+  }
+`,
+      {}
+    );
+  });
+  it('should render edge labels correctly', () => {
+    imgSnapshotTest(
+      `---
+title: On The Way To Something Something DarkSide
+config:
+  look: default
+  theme: default
+---
+
+stateDiagram-v2
+
+   state State1_____________
+   {
+      c0
+   }
+
+   state State2_____________
+   {
+      c1
+   }
+
+   state State3_____________
+   {
+      c7
+   }
+
+   state State4_____________
+   {
+      c2
+   }
+
+   state State5_____________
+   {
+      c3
+   }
+
+   state State6_____________
+   {
+      c4
+   }
+
+   state State7_____________
+   {
+      c5
+   }
+
+   state State8_____________
+   {
+      c6
+   }
+
+
+[*] --> State1_____________
+State1_____________ --> State2_____________   : Transition1_____
+State2_____________ --> State4_____________   : Transition2_____
+State2_____________ --> State3_____________   : Transition3_____
+State3_____________ --> State2_____________
+State4_____________ --> State2_____________   : Transition5_____
+State4_____________ --> State5_____________   : Transition6_____
+State5_____________ --> State6_____________   : Transition7_____
+State6_____________ --> State4_____________   : Transition8_____
+State2_____________ --> State7_____________   : Transition4_____
+State4_____________ --> State7_____________   : Transition4_____
+State5_____________ --> State7_____________   : Transition4_____
+State6_____________ --> State7_____________   : Transition4_____
+State7_____________ --> State1_____________   : Transition9_____
+State5_____________ --> State8_____________   : Transition10____
+State8_____________ --> State5_____________   : Transition11____
+`,
+      {}
+    );
+  });
+  it('should render edge labels correctly with multiple transitions', () => {
+    imgSnapshotTest(
+      `---
+title: Multiple Transitions
+config:
+  look: default
+  theme: default
+---
+
+stateDiagram-v2
+
+   state State1_____________
+   {
+      c0
+   }
+
+   state State2_____________
+   {
+      c1
+   }
+
+   state State3_____________
+   {
+      c7
+   }
+
+   state State4_____________
+   {
+      c2
+   }
+
+   state State5_____________
+   {
+      c3
+   }
+
+   state State6_____________
+   {
+      c4
+   }
+
+   state State7_____________
+   {
+      c5
+   }
+
+   state State8_____________
+   {
+      c6
+   }
+
+   state State9_____________
+   {
+      c9
+   }
+
+[*] --> State1_____________
+State1_____________ --> State2_____________   : Transition1_____
+State2_____________ --> State4_____________   : Transition2_____
+State2_____________ --> State3_____________   : Transition3_____
+State3_____________ --> State2_____________
+State4_____________ --> State2_____________   : Transition5_____
+State4_____________ --> State5_____________   : Transition6_____
+State5_____________ --> State6_____________   : Transition7_____
+State6_____________ --> State4_____________   : Transition8_____
+State2_____________ --> State7_____________   : Transition4_____
+State4_____________ --> State7_____________   : Transition4_____
+State5_____________ --> State7_____________   : Transition4_____
+State6_____________ --> State7_____________   : Transition4_____
+State7_____________ --> State1_____________   : Transition9_____
+State5_____________ --> State8_____________   : Transition10____
+State8_____________ --> State5_____________   : Transition11____
+State9_____________ --> State8_____________   : Transition12____
+`,
+      {}
+    );
+  });
+
+  it('should render edge labels correctly with multiple states', () => {
+    imgSnapshotTest(
+      `---
+title: Multiple States
+config:
+  look: default
+  theme: default
+---
+
+stateDiagram-v2
+
+   state State1_____________
+   {
+      c0
+   }
+
+   state State2_____________
+   {
+      c1
+   }
+
+   state State3_____________
+   {
+      c7
+   }
+
+   state State4_____________
+   {
+      c2
+   }
+
+   state State5_____________
+   {
+      c3
+   }
+
+   state State6_____________
+   {
+      c4
+   }
+
+   state State7_____________
+   {
+      c5
+   }
+
+   state State8_____________
+   {
+      c6
+   }
+
+   state State9_____________
+   {
+      c9
+   }
+
+   state State10_____________
+   {
+      c10
+   }
+
+[*] --> State1_____________
+State1_____________ --> State2_____________   : Transition1_____
+State2_____________ --> State3_____________   : Transition2_____
+State3_____________ --> State4_____________   : Transition3_____
+State4_____________ --> State5_____________   : Transition4_____
+State5_____________ --> State6_____________   : Transition5_____
+State6_____________ --> State7_____________   : Transition6_____
+State7_____________ --> State8_____________   : Transition7_____
+State8_____________ --> State9_____________   : Transition8_____
+State9_____________ --> State10_____________   : Transition9_____
 `,
       {}
     );

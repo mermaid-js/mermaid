@@ -9,14 +9,14 @@ jobs:
   publish-preview:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
         with:
           cache: pnpm
           node-version-file: '.node-version'
@@ -28,7 +28,7 @@ jobs:
           CYPRESS_CACHE_FOLDER: .cache/Cypress
 
       - name: Install Json
-        run: npm i json --global
+        run: npm i json@11.0.0 --global
 
       - name: Publish
         working-directory: ./packages/mermaid

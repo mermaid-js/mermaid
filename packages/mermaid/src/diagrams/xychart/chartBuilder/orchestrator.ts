@@ -1,3 +1,9 @@
+import type { SVGGroup } from '../../../diagram-api/types.js';
+import type { Axis } from './components/axis/index.js';
+import { getAxis } from './components/axis/index.js';
+import { getChartTitleComponent } from './components/chartTitle.js';
+import type { Plot } from './components/plot/index.js';
+import { getPlotComponent } from './components/plot/index.js';
 import type {
   ChartComponent,
   DrawableElem,
@@ -6,12 +12,6 @@ import type {
   XYChartThemeConfig,
 } from './interfaces.js';
 import { isBarPlot } from './interfaces.js';
-import type { Axis } from './components/axis/index.js';
-import { getAxis } from './components/axis/index.js';
-import { getChartTitleComponent } from './components/chartTitle.js';
-import type { Plot } from './components/plot/index.js';
-import { getPlotComponent } from './components/plot/index.js';
-import type { Group } from '../../../diagram-api/types.js';
 
 export class Orchestrator {
   private componentStore: {
@@ -24,7 +24,7 @@ export class Orchestrator {
     private chartConfig: XYChartConfig,
     private chartData: XYChartData,
     chartThemeConfig: XYChartThemeConfig,
-    tmpSVGGroup: Group
+    tmpSVGGroup: SVGGroup
   ) {
     this.componentStore = {
       title: getChartTitleComponent(chartConfig, chartData, chartThemeConfig, tmpSVGGroup),

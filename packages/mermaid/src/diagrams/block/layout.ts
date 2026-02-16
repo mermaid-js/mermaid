@@ -77,7 +77,7 @@ function setBlockSizes(block: Block, db: BlockDB, siblingWidth = 0, siblingHeigh
     block?.size?.x,
     'block width =',
     block?.size,
-    'sieblingWidth',
+    'siblingWidth',
     siblingWidth
   );
   if (!block?.size?.width) {
@@ -141,7 +141,7 @@ function setBlockSizes(block: Block, db: BlockDB, siblingWidth = 0, siblingHeigh
     // If maxWidth
     if (width < siblingWidth) {
       log.debug(
-        `Detected to small siebling: abc95 ${block.id} sieblingWidth ${siblingWidth} sieblingHeight ${siblingHeight} width ${width}`
+        `Detected to small sibling: abc95 ${block.id} siblingWidth ${siblingWidth} siblingHeight ${siblingHeight} width ${width}`
       );
       width = siblingWidth;
       height = siblingHeight;
@@ -270,7 +270,12 @@ function layoutBlocks(block: Block, db: BlockDB) {
       if (child.children) {
         layoutBlocks(child, db);
       }
-      columnPos += child?.widthInColumns ?? 1;
+      let columnsFilled = child?.widthInColumns ?? 1;
+      if (columns > 0) {
+        // Make sure overflowing lines do not affect later lines
+        columnsFilled = Math.min(columnsFilled, columns - (columnPos % columns));
+      }
+      columnPos += columnsFilled;
       log.debug('abc88 columnsPos', child, columnPos);
     }
   }

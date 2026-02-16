@@ -3,7 +3,7 @@
  *  (c) 2014-2021 Knut Sveidqvist
  *  MIT license.
  *
- *  Based on js sequence diagrams jison grammr
+ *  Based on js sequence diagrams jison grammar
  *  https://bramp.github.io/js-sequence-diagrams/
  *  (c) 2012-2013 Andrew Brampton (bramp.net)
  *  Simplified BSD license.
@@ -27,6 +27,13 @@
 %x CLASSDEFID
 %x CLASS
 %x CLASS_STYLE
+
+// Style statement states
+%x STYLE
+%x STYLE_IDS
+%x STYLEDEF_STYLES
+%x STYLEDEF_STYLEOPTS
+
 %x NOTE
 %x NOTE_ID
 %x NOTE_TEXT
@@ -38,6 +45,10 @@
 %x LINE
 
 %%
+
+"click"                     return 'CLICK';
+"href"                      return 'HREF';
+\"[^"]*\"                   return 'STRING';   
 
 "default"             return 'DEFAULT';
 
@@ -74,6 +85,10 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <INITIAL,struct>"class"\s+      { this.pushState('CLASS'); return 'class'; }
 <CLASS>(\w+)+((","\s*\w+)*)     { this.popState(); this.pushState('CLASS_STYLE'); return 'CLASSENTITY_IDS' }
 <CLASS_STYLE>[^\n]*             { this.popState(); return 'STYLECLASS' }
+
+<INITIAL,struct>"style"\s+   { this.pushState('STYLE'); return 'style'; }
+<STYLE>[\w,]+\s+                 { this.popState(); this.pushState('STYLEDEF_STYLES'); return 'STYLE_IDS' }
+<STYLEDEF_STYLES>[^\n]*              { this.popState(); return 'STYLEDEF_STYLEOPTS' }
 
 "scale"\s+            { this.pushState('SCALE'); /* console.log('Got scale', yytext);*/ return 'scale'; }
 <SCALE>\d+            return 'WIDTH';
@@ -168,6 +183,7 @@ line
 
 statement
 	: classDefStatement
+    | styleStatement
     | cssClassStatement
 	| idStatement { /* console.log('got id', $1); */
             $$=$1;
@@ -234,8 +250,26 @@ statement
     | direction
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
-    | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }    ;
-
+    | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }    
+    | CLICK idStatement STRING STRING NL
+    {
+        $$ = {
+            stmt: "click",
+            id: $2,
+            url: $3,
+            tooltip: $4
+        };
+    }
+    | CLICK idStatement HREF STRING NL
+    {
+        $$ = {
+            stmt: "click",
+            id: $2,
+            url: $4,
+            tooltip: ""
+        };
+    }
+    ;
 
 classDefStatement
     : classDef CLASSDEF_ID CLASSDEF_STYLEOPTS {
@@ -243,6 +277,12 @@ classDefStatement
         }
     | classDef DEFAULT CLASSDEF_STYLEOPTS {
         $$ = { stmt: 'classDef', id: $2.trim(), classes: $3.trim() };
+        }
+    ;
+
+styleStatement
+    : style STYLE_IDS STYLEDEF_STYLEOPTS {
+        $$ = { stmt: 'style', id: $2.trim(), styleClass: $3.trim() };
         }
     ;
 

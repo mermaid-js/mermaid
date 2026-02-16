@@ -1,0 +1,43 @@
+name: Preview release
+
+on:
+  pull_request:
+    branches: [develop]
+    types: [opened, synchronize, labeled, ready_for_review]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  preview:
+    if: ${{ github.repository_owner == 'mermaid-js' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      issues: write
+      pull-requests: write
+    name: Publish preview release
+    timeout-minutes: 5
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+        with:
+          cache: pnpm
+          node-version-file: '.node-version'
+
+      - name: Install Packages
+        run: pnpm install --frozen-lockfile
+
+      - name: Publish packages
+        run: pnpx pkg-pr-new publish --pnpm './packages/*'

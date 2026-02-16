@@ -1,5 +1,5 @@
-import flowDb from '../flowDb.js';
-import flow from './flow.jison';
+import { FlowDB } from '../flowDb.js';
+import flow from './flowParser.ts';
 import { setConfig } from '../../../config.js';
 
 setConfig({
@@ -8,11 +8,11 @@ setConfig({
 
 describe('parsing a flow chart with markdown strings', function () {
   beforeEach(function () {
-    flow.parser.yy = flowDb;
+    flow.parser.yy = new FlowDB();
     flow.parser.yy.clear();
   });
 
-  it('mardown formatting in nodes and labels', function () {
+  it('markdown formatting in nodes and labels', function () {
     const res = flow.parser.parse(`flowchart
 A["\`The cat in **the** hat\`"]-- "\`The *bat* in the chat\`" -->B["The dog in the hog"] -- "The rat in the mat" -->C;`);
 
@@ -37,7 +37,7 @@ A["\`The cat in **the** hat\`"]-- "\`The *bat* in the chat\`" -->B["The dog in t
     expect(edges[1].text).toBe('The rat in the mat');
     expect(edges[1].labelType).toBe('string');
   });
-  it('mardown formatting in subgraphs', function () {
+  it('markdown formatting in subgraphs', function () {
     const res = flow.parser.parse(`flowchart LR
 subgraph "One"
   a("\`The **cat**

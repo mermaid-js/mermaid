@@ -45,7 +45,7 @@ describe('Quadrant Chart', () => {
       {}
     );
   });
-  it('should able to render y-axix on right side', () => {
+  it('should able to render y-axis on right side', () => {
     imgSnapshotTest(
       `
   %%{init: {"quadrantChart": {"yAxisPosition": "right"}}}%%
@@ -61,7 +61,7 @@ describe('Quadrant Chart', () => {
       {}
     );
   });
-  it('should able to render x-axix on bottom', () => {
+  it('should able to render x-axis on bottom', () => {
     imgSnapshotTest(
       `
   %%{init: {"quadrantChart": {"xAxisPosition": "bottom"}}}%%
@@ -77,7 +77,7 @@ describe('Quadrant Chart', () => {
       {}
     );
   });
-  it('should able to render x-axix on bottom and y-axis on right', () => {
+  it('should able to render x-axis on bottom and y-axis on right', () => {
     imgSnapshotTest(
       `
   %%{init: {"quadrantChart": {"xAxisPosition": "bottom", "yAxisPosition": "right"}}}%%

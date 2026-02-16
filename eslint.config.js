@@ -17,12 +17,14 @@ export default tseslint.config(
   ...tseslint.configs.stylisticTypeChecked,
   {
     ignores: [
+      '**/*.d.ts',
       '**/dist/',
       '**/node_modules/',
       '.git/',
       '**/generated/',
       '**/coverage/',
       'packages/mermaid/src/config.type.ts',
+      'packages/mermaid/src/docs/.vitepress/components.d.ts',
     ],
   },
   {
@@ -109,6 +111,7 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-return': 'off',
       '@typescript-eslint/only-throw-error': 'warn',
+      '@typescript-eslint/prefer-nullish-coalescing': 'warn',
       '@typescript-eslint/prefer-promise-reject-errors': 'warn',
       // END
       'json/*': ['error', 'allowComments'],
@@ -135,7 +138,6 @@ export default tseslint.config(
       'unicorn/no-instanceof-array': 'error',
       'unicorn/no-typeof-undefined': 'error',
       'unicorn/no-unnecessary-await': 'error',
-      'unicorn/no-unsafe-regex': 'warn',
       'unicorn/no-useless-promise-resolve-reject': 'error',
       'unicorn/prefer-array-find': 'error',
       'unicorn/prefer-array-flat-map': 'error',

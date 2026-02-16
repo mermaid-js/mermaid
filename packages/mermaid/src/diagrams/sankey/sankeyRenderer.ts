@@ -136,7 +136,6 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   svg
     .append('g')
     .attr('class', 'node-labels')
-    .attr('font-family', 'sans-serif')
     .attr('font-size', 14)
     .selectAll('text')
     .data(graph.nodes)

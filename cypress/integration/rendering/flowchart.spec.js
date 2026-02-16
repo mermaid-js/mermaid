@@ -733,7 +733,7 @@ describe('Graph', () => {
   });
   it('38: should render a flowchart when useMaxWidth is true (default)', () => {
     renderGraph(
-      `graph TD
+      `flowchart TD
       A[Christmas] -->|Get money| B(Go shopping)
       B --> C{Let me think}
       C -->|One| D[Laptop]
@@ -751,7 +751,7 @@ describe('Graph', () => {
       const style = svg.attr('style');
       expect(style).to.match(/^max-width: [\d.]+px;$/);
       const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-      expect(maxWidthValue).to.be.within(300 * 0.9, 300 * 1.1);
+      expect(maxWidthValue).to.be.within(446 * 0.9, 446 * 1.1);
     });
   });
   it('39: should render a flowchart when useMaxWidth is false', () => {
@@ -770,9 +770,24 @@ describe('Graph', () => {
       const width = parseFloat(svg.attr('width'));
       // use within because the absolute value can be slightly different depending on the environment ±10%
       // expect(height).to.be.within(446 * 0.95, 446 * 1.05);
-      expect(width).to.be.within(300 * 0.9, 300 * 1.1);
+      expect(width).to.be.within(446 * 0.9, 446 * 1.1);
       expect(svg).to.not.have.attr('style');
     });
+  });
+  it('40: should add edge animation', () => {
+    renderGraph(
+      `
+      flowchart TD
+          A(["Start"]) L_A_B_0@--> B{"Decision"}
+          B --> C["Option A"] & D["Option B"]
+          style C stroke-width:4px,stroke-dasharray: 5
+          L_A_B_0@{ animation: slow } 
+          L_B_D_0@{ animation: fast }`,
+      { screenshot: false }
+    );
+    // Verify animation classes are applied to both edges
+    cy.get('path#L_A_B_0').should('have.class', 'edge-animation-slow');
+    cy.get('path#L_B_D_0').should('have.class', 'edge-animation-fast');
   });
   it('58: handle styling with style expressions', () => {
     imgSnapshotTest(
@@ -895,7 +910,7 @@ graph TD
     imgSnapshotTest(
       `
       graph TD
-        classDef default fill:#a34,stroke:#000,stroke-width:4px,color:#fff 
+        classDef default fill:#a34,stroke:#000,stroke-width:4px,color:#fff
         hello --> default
       `,
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
@@ -905,13 +920,87 @@ graph TD
   it('67: should be able to style default node independently', () => {
     imgSnapshotTest(
       `
-    flowchart TD
+      flowchart TD
       classDef default fill:#a34
       hello --> default
 
       style default stroke:#000,stroke-width:4px
     `,
-      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+      {
+        flowchart: { htmlLabels: true },
+        securityLevel: 'loose',
+      }
+    );
+  });
+  it('#6369: edge color should affect arrow head', () => {
+    imgSnapshotTest(
+      `
+    flowchart LR
+        A --> B
+        A --> C
+        C --> D
+
+        linkStyle 0 stroke:#D50000
+        linkStyle 2 stroke:#D50000
+    `,
+      {
+        flowchart: { htmlLabels: true },
+        securityLevel: 'loose',
+      }
+    );
+  });
+  it('68: should honor subgraph direction when inheritDir is false', () => {
+    imgSnapshotTest(
+      `
+      %%{init: {"flowchart": { "inheritDir": false }}}%%
+      flowchart TB
+        direction LR
+        subgraph A
+          direction TB
+          a --> b
+        end
+        subgraph B
+          c --> d
+        end
+      `,
+      {
+        fontFamily: 'courier',
+      }
+    );
+  });
+
+  it('69: should inherit global direction when inheritDir is true', () => {
+    imgSnapshotTest(
+      `
+      %%{init: {"flowchart": { "inheritDir": true }}}%%
+      flowchart TB
+        direction LR
+        subgraph A
+          direction TB
+          a --> b
+        end
+        subgraph B
+          c --> d
+        end
+      `,
+      {
+        fontFamily: 'courier',
+      }
+    );
+  });
+
+  it('70: should render a subgraph with direction TD', () => {
+    imgSnapshotTest(
+      `
+      flowchart LR
+        subgraph A
+          direction TD
+          a --> b
+        end
+      `,
+      {
+        fontFamily: 'courier',
+      }
     );
   });
 });
