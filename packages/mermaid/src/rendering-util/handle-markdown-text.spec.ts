@@ -214,13 +214,25 @@ test('markdownToLines - No auto wrapping', () => {
     [
       [
         {
-          "content": "Hello,&nbsp;how&nbsp;do",
+          "content": "Hello,",
+          "type": "normal",
+        },
+        {
+          "content": "how",
+          "type": "normal",
+        },
+        {
+          "content": "do",
           "type": "normal",
         },
       ],
       [
         {
-          "content": "you&nbsp;do?",
+          "content": "you",
+          "type": "normal",
+        },
+        {
+          "content": "do?",
           "type": "normal",
         },
       ],
