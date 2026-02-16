@@ -42,7 +42,12 @@ const contentLoaded = async function () {
     pos = pos + 7;
     const graphBase64 = document.location.href.substr(pos);
     const graphObj = JSON.parse(b64ToUtf8(graphBase64));
-    if (graphObj.mermaid?.theme.includes('dark')) {
+    if (
+      (graphObj.mermaid && graphObj.mermaid.theme === 'dark') ||
+      (graphObj.mermaid && graphObj.mermaid.theme === 'neo-dark') ||
+      (graphObj.mermaid && graphObj.mermaid.theme === 'redux-dark') ||
+      (graphObj.mermaid && graphObj.mermaid.theme === 'redux-dark-color')
+    ) {
       document.body.style.background = '#3f3f3f';
     }
     console.log(graphObj);
