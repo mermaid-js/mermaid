@@ -1,16 +1,9 @@
-const getStyles = (options = {}) => {
-  const strokeWidth =
-    options.strokeWidth == null
-      ? '1px'
-      : typeof options.strokeWidth === 'number'
-        ? `${options.strokeWidth}px`
-        : options.strokeWidth;
+const getStyles = (options) => {
   const dropShadow = options.dropShadow ?? 'none';
 
   return `.actor {
     stroke: ${options.actorBorder};
     fill: ${options.actorBkg};
-    stroke-width: ${strokeWidth};
   }
 
   rect.actor.outer-path[data-look="neo"] {
@@ -21,7 +14,6 @@ const getStyles = (options = {}) => {
       stroke:${options.noteBorderColor};
       fill:${options.noteBkgColor};
       filter: ${dropShadow};
-      stroke-width: ${strokeWidth};
   }
 
   text.actor > tspan {
@@ -32,20 +24,20 @@ const getStyles = (options = {}) => {
   .actor-line {
     stroke: ${options.actorLineColor};
   }
-  
+
   .innerArc {
     stroke-width: 1.5;
     stroke-dasharray: none;
   }
 
   .messageLine0 {
-    stroke-width: ${strokeWidth};
+    stroke-width: 1.5;
     stroke-dasharray: none;
     stroke: ${options.signalColor};
   }
 
   .messageLine1 {
-    stroke-width: ${strokeWidth};
+    stroke-width: 1.5;
     stroke-dasharray: 2, 2;
     stroke: ${options.signalColor};
   }
@@ -141,7 +133,6 @@ const getStyles = (options = {}) => {
   g rect.rect {
     filter: ${dropShadow};
     stroke: ${options.nodeBorder};
-    stroke-width: ${strokeWidth};
   }
 `;
 };
