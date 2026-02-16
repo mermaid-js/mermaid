@@ -17,7 +17,10 @@ function preprocessMarkdown(markdown: string, { markdownAutoWrap }: MermaidConfi
   // Remove extra spaces at the beginning of each line
   const withoutExtraSpaces = dedent(withoutMultipleNewlines);
   if (markdownAutoWrap === false) {
-    return withoutExtraSpaces.replace(/ /g, '&nbsp;');
+    // TODO: Disabling `markdownAutoWrap` is currently broken for `htmlLabels: false`,
+    // since the code calls `splitWordToFitWidth` to split words even we can't
+    // break on spaces.
+    // return withoutExtraSpaces.replace(/ /g, '\u00A0');
   }
   return withoutExtraSpaces;
 }
