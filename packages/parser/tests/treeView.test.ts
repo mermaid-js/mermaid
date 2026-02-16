@@ -1,9 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { expectNoErrorsOrAlternatives } from './test-util.js';
-import type { TreeView, TreeNode } from '../src/language/generated/ast.js';
+import type { TreeView } from '../src/language/generated/ast.js';
 import type { LangiumParser } from 'langium';
 import { createTreeViewServices } from '../src/language/treeView/module.js';
-
 
 describe('TreeView Parser', () => {
   const services = createTreeViewServices().TreeView;
@@ -14,50 +13,86 @@ describe('TreeView Parser', () => {
   };
 
   describe('Basic Parsing', () => {
-    it('should parse empty treeView', () => {
-      const result = parse('treeView-beta\naccDescr:  foo\naccTitle: bar \ntitle yeah man\n0 thing\n2 other');
-      //const result = parse('treeView-beta\naccDescr:  foo\naccTitle: bar\ntitle yeah man\nthing\n');
-
-expect(result.parserErrors.length).toBe(0);
-      //expect(result.parserErrors[0]).toBe("foo-error")
-
-//      expectNoErrorsOrAlternatives(result);
+    it('should parse empty treemap', () => {
+      const result = parse('treeView-beta');
+      expectNoErrorsOrAlternatives(result);
       expect(result.value.$type).toBe('TreeView');
-       
-      
-      // expect(result.value.nodes[0].$type).toBe("TreeNode");
-      //   expect(result.value.nodes[0].name).toBe("thing");
-    
-    
-        expect(result.value.accDescr).toBe("foo");
-        expect(result.value.accTitle).toBe("bar");
-        expect(result.value.title).toBe("yeah man");
-        expect(result.value.nodes.length).toBe(2)
+      expect(result.value.nodes).toHaveLength(0);
+    });
 
-        // expect(result.value.nodes.length).toBe(2);
-        expect(result.value.nodes[0].name).toBe("thing");
-        expect(result.value.nodes[1].name).toBe("other");
-  
+    it('should parse a root node', () => {
+      const result = parse('treeView-beta\nRoot');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe('TreeView');
+      expect(result.value.nodes).toHaveLength(1);
+      if (result.value.nodes[0]) {
+        expect(result.value.nodes[0].name).toBe('Root');
+      }
+    });
+
+    it('should parse a section with leaf nodes', () => {
+      const result = parse(`treeView-beta
+Root
+    Child1
+    Child2`);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe('TreeView');
+      expect(result.value.nodes).toHaveLength(3);
+
+      if (result.value.nodes[0]) {
+        expect(result.value.nodes[0].name).toBe('Root');
+      }
+
+      if (result.value.nodes[1]) {
+        expect(result.value.nodes[1].name).toBe('Child1');
+      }
+
+      if (result.value.nodes[2]) {
+        expect(result.value.nodes[2].name).toBe('Child2');
+      }
+    });
+  });
+
+  describe('Title and Accessibilities', () => {
+    it('should parse a treeView with title', () => {
+      const result = parse('treeView-beta\ntitle My TreeView Diagram\nRoot\n  Child');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe('TreeView');
+      expect(result.value.title).toBe('My TreeView Diagram');
+      expect(result.value.nodes).toHaveLength(2);
+    });
+
+    it('should parse a treeView with accTitle', () => {
+      const result = parse('treeView-beta\naccTitle: Accessible Title\nRoot\n  Child');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe('TreeView');
+      expect(result.value.accTitle).toBe('Accessible Title');
+      expect(result.value.nodes).toHaveLength(2);
+    });
+
+    it('should parse a treeView with accDescr', () => {
+      const result = parse(
+        'treeView-beta\naccDescr: This is an accessible description\nRoot\n  Child'
+      );
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe('TreeView');
+      expect(result.value.accDescr).toBe('This is an accessible description');
+      expect(result.value.nodes).toHaveLength(2);
+    });
+
+    it('should parse a treeView with multiple accessibility attributes', () => {
+      const result = parse(`treeView-beta
+title My TreeView Diagram
+accTitle: Accessible Title
+accDescr: This is an accessible description
+Root
+  Child`);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe('TreeView');
+      expect(result.value.title).toBe('My TreeView Diagram');
+      expect(result.value.accTitle).toBe('Accessible Title');
+      expect(result.value.accDescr).toBe('This is an accessible description');
+      expect(result.value.nodes).toHaveLength(2);
+    });
   });
 });
-
-});
-// describe('treeView', () => {
-//   describe('Parsing with Accessibility Titles and Descriptions', () => {
-//     it('should parse accessibility titles', () => {
-//       const result = parse(`treeView-beta\naccDescr:desc\ndocs\n\tbuild\n\tmake.bat`)
-//       //const result = parse(`treeView-beta\n  accTitle: Accessible Graph\n  item\n`);
-//       expect(result.value.$type).toBe('TreeView');
-//       //expect(result.value.nodes.length).toBe(7);
-
-//       expect(result.value.accDescr).toBe('Accessible Graph');
-//     });
-
-//     // it('should parse multiline accessibility descriptions', () => {
-//     //   const result = parse(
-//     //     `treeView\n  accDescr {\n    Detailed description\n    across multiple lines\n  }\n  item\n`
-//     //   );
-//     //   expect(result.value.accDescr).toBe('Detailed description\nacross multiple lines');
-//     // });
-//   });
-// });

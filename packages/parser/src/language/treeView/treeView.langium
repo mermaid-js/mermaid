@@ -1,34 +1,38 @@
 grammar TreeView
 
-fragment TitleAndAccessibilities:
-  ((accDescr=ACC_DESCR | accTitle=ACC_TITLE | title=TITLE))+
-;
-
 terminal ACC_DESCR: /[\t ]*accDescr(?:[\t ]*:([^\n\r]*?(?=%%)|[^\n\r]*)|\s*{([^}]*)})/;
 terminal ACC_TITLE: /[\t ]*accTitle[\t ]*:(?:[^\n\r]*?(?=%%)|[^\n\r]*)/;
 terminal TITLE: /[\t ]*title(?:[\t ][^\n\r]*?(?=%%)|[\t ][^\n\r]*|)/;
 
-terminal INT returns number: /0|[1-9][0-9]*(?!\.)/;
-terminal TEXT: /\S+/;
-
+interface TreeView {
+    nodes: TreeNode[]
+    title?: string
+    accTitle?: string
+    accDescr?: string
+}
 
 entry TreeView returns TreeView:
     "treeView-beta"
-    (
-        TitleAndAccessibilities
-        | nodes+=TreeNode
-    )*;
+    TitleAndAccessibilities?
+    nodes+=TreeNode*
+    ;
 
-TreeNode: 
-    indent=INT name=TEXT
+fragment TitleAndAccessibilities:
+  ((accDescr=ACC_DESCR | accTitle=ACC_TITLE | title=TITLE))+
 ;
 
-interface TreeView {
-  accDescr?: string;
-  accTitle?: string;
-  title?: string;
-  nodes: TreeNode[];
-}
+hidden terminal WS: /[ \t]+/;  // One or more spaces or tabs for hidden whitespace
+hidden terminal NL: /\r?\n/;
 
+//terminal TEXT: /\S+/;
+// terminal INDENTATION: /[ \t]{1,}/;  // One or more spaces/tabs for indentation
 
+TreeNode: 
+    indent=INDENTATION?
+    name=TEXT
+;
 
+// This should be processed before whitespace is ignored
+terminal INDENTATION: /[ \t]{1,}/;  // One or more spaces/tabs for indentation
+
+terminal TEXT: /\S+/;
