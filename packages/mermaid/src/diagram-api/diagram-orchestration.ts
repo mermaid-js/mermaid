@@ -101,7 +101,7 @@ export const addDiagrams = () => {
     packet,
     xychart,
     block,
-    treeView
+    treeView,
     radar,
     treemap
   );

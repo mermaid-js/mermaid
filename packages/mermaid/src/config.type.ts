@@ -1615,6 +1615,8 @@ export interface TreeViewDiagramConfig extends BaseDiagramConfig {
    * Thickness of the line
    */
   lineThickness?: number;
+}
+/**
  * The object containing configurations specific for radar diagrams.
  *
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
