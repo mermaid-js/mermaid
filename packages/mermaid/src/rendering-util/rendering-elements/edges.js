@@ -60,11 +60,17 @@ export const insertEdgeLabel = async (elem, edge) => {
   // Create inner g, label, this will be positioned now for centering the text
   const label = edgeLabel.insert('g').attr('class', 'label').attr('data-id', edge.id);
 
+  const isMarkdown = edge.labelType === 'markdown';
+  const config = getConfig();
+  const markdownWidth = config.markdownAutoWrap === false ? Number.POSITIVE_INFINITY : undefined;
   const labelElement = await createText(elem, edge.label, {
     style: getLabelStyles(edge.labelStyle),
     useHtmlLabels,
     addSvgBackground: true,
     isNode: false,
+    markdown: isMarkdown,
+    // Plain text edge labels should auto-wrap, markdown edge labels respect markdownAutoWrap config
+    width: isMarkdown ? markdownWidth : undefined,
   });
 
   label.node().appendChild(labelElement);
