@@ -3,9 +3,7 @@
 // When imported, the terminals are considered after the terminals in the importing grammar
 // Note: Hence, to add a terminal greedier than the common terminals, import it separately after the common import
 
-fragment EOL returns string:
-  NEWLINE+ | EOF
-;
+EOL returns string: NEWLINE+ | EOF;
 
 fragment TitleAndAccessibilities:
   ((accDescr=ACC_DESCR | accTitle=ACC_TITLE | title=TITLE) EOL)+

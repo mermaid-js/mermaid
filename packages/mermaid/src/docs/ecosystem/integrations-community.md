@@ -6,7 +6,7 @@
 
 Mermaid Chart is built by the team behind Mermaid JS.
 
-For more details, visit the [Mermaid Chart page](./mermaid-chart.md), or visit the [Mermaid Chart website](https://www.mermaidchart.com) .
+For more details, visit the [Mermaid Chart page](./mermaid-chart.md), or visit the [Mermaid Chart website](https://mermaid.ai) .
 
 ## Community integrations
 
