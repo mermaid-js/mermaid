@@ -1,6 +1,15 @@
 import type { LangiumParser, ParseResult } from 'langium';
 
-import type { Info, Packet, Pie, Architecture, GitGraph, Radar, Treemap, TreeView } from './index.js';
+import type {
+  Info,
+  Packet,
+  Pie,
+  Architecture,
+  GitGraph,
+  Radar,
+  Treemap,
+  TreeView,
+} from './index.js';
 
 export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph | Radar | TreeView;
 
@@ -25,6 +34,7 @@ const initializers = {
     const { createTreeViewServices } = await import('./language/treeView/index.js');
     const parser = createTreeViewServices().TreeView.parser.LangiumParser;
     parsers.treeView = parser;
+  },
   architecture: async () => {
     const { createArchitectureServices } = await import('./language/architecture/index.js');
     const parser = createArchitectureServices().Architecture.parser.LangiumParser;
