@@ -2,30 +2,35 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Mermaid Quick Test Page</title>
-    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mermaid TreeView Diagram Demo</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
     <style>
-      div.mermaid {
-        font-family: 'Courier New', Courier, monospace !important;
+      body {
+        font-family: 'Montserrat', sans-serif;
+        margin: 0 auto;
+        max-width: 900px;
+        padding: 20px;
+      }
+      .mermaid {
+        margin: 30px 0;
+      }
+      h1,
+      h2 {
+        color: #333;
+      }
+      pre {
+        background-color: #f5f5f5;
+        padding: 15px;
+        border-radius: 5px;
       }
     </style>
   </head>
-
   <body>
     <h1>TreeView Diagram Demo</h1>
 
-    <div class="diagrams">
-      <pre class="mermaid">
-        treeView-beta
-            packages
-                mermaid
-                    src
-                parser
-    </pre
-      >
-
-      <pre class="mermaid">
+    <h2>Basic TreeView Example</h2>
+    <pre class="mermaid">
         treeView-beta
         docs
             build
@@ -37,13 +42,10 @@
                 static
                     _templates
                     div. Files
-    </pre
-      >
+    </pre>
 
-      <hr />
-
-      <h2>TreeView demos with all configs</h2>
-      <pre class="mermaid">
+    <h2>TreeView Config Example</h2>
+    <pre class="mermaid">
         ---
         config:
             treeView:
@@ -59,26 +61,15 @@
                     src
                 parser
 
-    </pre
-      >
-    </div>
+    </pre>
+
     <script type="module">
-      import mermaid from '/mermaid.esm.mjs';
+      import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
-        logLevel: 3,
+        theme: 'forest',
+        logLevel: 1,
         securityLevel: 'loose',
       });
     </script>
-
-    <style>
-      .diagrams {
-        display: flex;
-        flex-wrap: wrap;
-      }
-      pre {
-        width: 45vw;
-        padding: 2em;
-      }
-    </style>
   </body>
 </html>
