@@ -13,43 +13,43 @@ describe('TreeView Parser', () => {
   };
 
   describe('Basic Parsing', () => {
-    it('should parse empty treemap', () => {
+    it('should parse empty treeView', () => {
       const result = parse('treeView-beta');
       expectNoErrorsOrAlternatives(result);
       expect(result.value.$type).toBe('TreeView');
       expect(result.value.nodes).toHaveLength(0);
     });
 
-    it('should parse a root node', () => {
+    it('should parse a treeView with only a root node', () => {
       const result = parse('treeView-beta\nRoot');
       expectNoErrorsOrAlternatives(result);
       expect(result.value.$type).toBe('TreeView');
       expect(result.value.nodes).toHaveLength(1);
-      if (result.value.nodes[0]) {
-        expect(result.value.nodes[0].name).toBe('Root');
-      }
+      expect(result.value.nodes[0].name).toBe('Root');
+      expect(result.value.nodes[0].indent).toBe(undefined);
     });
 
-    it('should parse a section with leaf nodes', () => {
+    it('should parse a treeView with child nodes', () => {
       const result = parse(`treeView-beta
 Root
     Child1
-    Child2`);
+    Child2
+        Child3`);
       expectNoErrorsOrAlternatives(result);
       expect(result.value.$type).toBe('TreeView');
-      expect(result.value.nodes).toHaveLength(3);
+      expect(result.value.nodes).toHaveLength(4);
 
-      if (result.value.nodes[0]) {
-        expect(result.value.nodes[0].name).toBe('Root');
-      }
+      expect(result.value.nodes[0].name).toBe('Root');
+      expect(result.value.nodes[0].indent).toBe(undefined);
 
-      if (result.value.nodes[1]) {
-        expect(result.value.nodes[1].name).toBe('Child1');
-      }
+      expect(result.value.nodes[1].name).toBe('Child1');
+      expect(result.value.nodes[1].indent?.length).toBe(4);
 
-      if (result.value.nodes[2]) {
-        expect(result.value.nodes[2].name).toBe('Child2');
-      }
+      expect(result.value.nodes[2].name).toBe('Child2');
+      expect(result.value.nodes[2].indent?.length).toBe(4);
+
+      expect(result.value.nodes[3].name).toBe('Child3');
+      expect(result.value.nodes[3].indent?.length).toBe(8);
     });
   });
 
