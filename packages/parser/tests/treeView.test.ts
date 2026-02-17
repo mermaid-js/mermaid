@@ -30,11 +30,7 @@ describe('TreeView Parser', () => {
     });
 
     it('should parse a treeView with child nodes', () => {
-      const result = parse(`treeView-beta
-Root
-    Child1
-    Child2
-        Child3`);
+      const result = parse(`treeView-beta\nRoot\n    Child1\n    Child2\n        Child3`);
       expectNoErrorsOrAlternatives(result);
       expect(result.value.$type).toBe('TreeView');
       expect(result.value.nodes).toHaveLength(4);
