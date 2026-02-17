@@ -4,6 +4,7 @@ const getStyles = (options) => {
   return `.actor {
     stroke: ${options.actorBorder};
     fill: ${options.actorBkg};
+    stroke-width: ${options.strokeWidth ?? 1};
   }
 
   rect.actor.outer-path[data-look="neo"] {
