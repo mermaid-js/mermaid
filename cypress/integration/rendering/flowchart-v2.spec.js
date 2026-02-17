@@ -1211,4 +1211,35 @@ class link myClass
 `
     );
   });
+
+  it('V2 - 18: should render nested subgraphs with edge from cluster containing extractable subgraph', () => {
+    imgSnapshotTest(
+      `flowchart TB
+    subgraph asub
+        aa
+    end
+   a
+    subgraph bsub
+        subgraph csub
+            subgraph dsub
+                da
+            end
+        end
+        subgraph esub
+            subgraph fsub
+                %%comment out subgraph below
+                subgraph gsub
+                    ga
+                    abc
+                    abcd
+                end
+            end
+        end
+    end
+    bsub-->a
+    da-->a
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
 });
