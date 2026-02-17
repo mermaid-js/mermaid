@@ -21,6 +21,9 @@ fragment TitleAndAccessibilities:
   ((accDescr=ACC_DESCR | accTitle=ACC_TITLE | title=TITLE))+
 ;
 
+// This should be processed before whitespace is ignored
+terminal INDENTATION: /[ \t]{1,}/;  // One or more spaces/tabs for indentation
+
 hidden terminal WS: /[ \t]+/;  // One or more spaces or tabs for hidden whitespace
 hidden terminal NL: /\r?\n/;
 
@@ -29,8 +32,5 @@ TreeNode:
     indent=INDENTATION?
     name=TEXT
 ;
-
-// This should be processed before whitespace is ignored
-terminal INDENTATION: /[ \t]{1,}/;  // One or more spaces/tabs for indentation
 
 terminal TEXT: /\S+/;
