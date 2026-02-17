@@ -1,4 +1,12 @@
-grammar TreeView
+/**
+ * TreeView grammar for Langium
+ * Converted from treemap grammar
+ *
+ * The ML_COMMENT and NL hidden terminals handle whitespace, comments, and newlines
+ * before the treemap keyword, allowing for empty lines and comments before the
+ * treeView declaration.
+ */
+grammar TreeViewGrammar
 
 terminal ACC_DESCR: /[\t ]*accDescr(?:[\t ]*:([^\n\r]*?(?=%%)|[^\n\r]*)|\s*{([^}]*)})/;
 terminal ACC_TITLE: /[\t ]*accTitle[\t ]*:(?:[^\n\r]*?(?=%%)|[^\n\r]*)/;
@@ -22,10 +30,8 @@ fragment TitleAndAccessibilities:
 ;
 
 hidden terminal WS: /[ \t]+/;  // One or more spaces or tabs for hidden whitespace
+hidden terminal ML_COMMENT: /\%\%[^\n]*/;
 hidden terminal NL: /\r?\n/;
-
-//terminal TEXT: /\S+/;
-// terminal INDENTATION: /[ \t]{1,}/;  // One or more spaces/tabs for indentation
 
 TreeNode: 
     indent=INDENTATION?

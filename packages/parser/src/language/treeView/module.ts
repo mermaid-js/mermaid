@@ -13,7 +13,10 @@ import {
 } from 'langium';
 
 import { CommonValueConverter } from '../common/valueConverter.js';
-import { MermaidGeneratedSharedModule, TreeViewGeneratedModule } from '../generated/module.js';
+import {
+  MermaidGeneratedSharedModule,
+  TreeViewGrammarGeneratedModule as TreeViewGeneratedModule,
+} from '../generated/module.js';
 import { TreeViewTokenBuilder } from './tokenBuilder.js';
 
 /**
