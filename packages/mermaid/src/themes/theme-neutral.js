@@ -39,8 +39,8 @@ class Theme {
     this.critical = '#d42';
     this.done = '#bbb';
     this.arrowheadColor = '#333333';
-    this.fontFamily = 'arial, sans-serif';
-    this.fontSize = '14px';
+    this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
+    this.fontSize = '16px';
     this.THEME_COLOR_LIMIT = 12;
     this.radius = 5;
     this.strokeWidth = 1;

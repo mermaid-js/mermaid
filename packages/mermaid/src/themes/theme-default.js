@@ -29,12 +29,12 @@ class Theme {
     this.mainBkg = '#ECECFF';
     this.secondBkg = '#ffffde';
     this.lineColor = '#333333';
-    this.border1 = '#B8B8FF';
+    this.border1 = '#9370DB';
     this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
     this.border2 = '#aaaa33';
     this.arrowheadColor = '#333333';
-    this.fontFamily = 'arial, sans-serif';
-    this.fontSize = '14px';
+    this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
+    this.fontSize = '16px';
     this.labelBackground = 'rgba(232,232,232, 0.8)';
     this.textColor = '#333';
     this.THEME_COLOR_LIMIT = 12;
