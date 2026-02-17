@@ -34,7 +34,8 @@ hidden terminal ML_COMMENT: /\%\%[^\n]*/;
 hidden terminal NL: /\r?\n/;
 
 TreeNode: 
-    indent=INDENTATION?
+    // actually contains the indent, but is converted to a length value by valueConverter
+    indentLength=INDENTATION?
     name=TEXT
 ;
 

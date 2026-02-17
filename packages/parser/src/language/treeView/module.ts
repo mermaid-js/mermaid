@@ -12,7 +12,7 @@ import {
   inject,
 } from 'langium';
 
-import { CommonValueConverter } from '../common/valueConverter.js';
+import { TreeViewValueConverter } from './valueConverter.js';
 import {
   MermaidGeneratedSharedModule,
   TreeViewGrammarGeneratedModule as TreeViewGeneratedModule,
@@ -25,7 +25,7 @@ import { TreeViewTokenBuilder } from './tokenBuilder.js';
 interface TreeViewAddedServices {
   parser: {
     TokenBuilder: TreeViewTokenBuilder;
-    ValueConverter: CommonValueConverter;
+    ValueConverter: TreeViewValueConverter;
   };
 }
 
@@ -44,7 +44,7 @@ export const TreeViewModule: Module<
 > = {
   parser: {
     TokenBuilder: () => new TreeViewTokenBuilder(),
-    ValueConverter: () => new CommonValueConverter(),
+    ValueConverter: () => new TreeViewValueConverter(),
   },
 };
 
