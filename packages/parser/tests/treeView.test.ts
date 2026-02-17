@@ -26,7 +26,7 @@ describe('TreeView Parser', () => {
       expect(result.value.$type).toBe('TreeView');
       expect(result.value.nodes).toHaveLength(1);
       expect(result.value.nodes[0].name).toBe('Root');
-      expect(result.value.nodes[0].indent).toBe(undefined);
+      expect(result.value.nodes[0].indentLength).toBe(undefined);
     });
 
     it('should parse a treeView with child nodes', () => {
@@ -36,16 +36,16 @@ describe('TreeView Parser', () => {
       expect(result.value.nodes).toHaveLength(4);
 
       expect(result.value.nodes[0].name).toBe('Root');
-      expect(result.value.nodes[0].indent).toBe(undefined);
+      expect(result.value.nodes[0].indentLength).toBe(undefined);
 
       expect(result.value.nodes[1].name).toBe('Child1');
-      // expect(result.value.nodes[1].indent?.length).toBe(4);
+      expect(result.value.nodes[1].indentLength).toBe(4);
 
       expect(result.value.nodes[2].name).toBe('Child2');
-      // expect(result.value.nodes[2].indent?.length).toBe(4);
+      expect(result.value.nodes[2].indentLength).toBe(4);
 
       expect(result.value.nodes[3].name).toBe('Child3');
-      // expect(result.value.nodes[3].indent?.length).toBe(8);
+      expect(result.value.nodes[3].indentLength).toBe(8);
     });
   });
 

@@ -28,7 +28,8 @@ hidden terminal NL: /\r?\n/;
 // terminal INDENTATION: /[ \t]{1,}/;  // One or more spaces/tabs for indentation
 
 TreeNode: 
-    indent=INDENTATION?
+    // actually contains the indent, but is converted to a length value by valueConverter
+    indentLength=INDENTATION?
     name=TEXT
 ;
 
