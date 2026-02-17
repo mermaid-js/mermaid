@@ -6,9 +6,7 @@ import { parse, type TreeView } from '@mermaid-js/parser';
 
 const populate = (ast: TreeView) => {
   populateCommonDb(ast, db);
-  ast.nodes.map((node) =>
-    db.addNode(node.indentLength ? parseInt(node.indentLength) : 0, node.name)
-  );
+  ast.nodes.map((node) => db.addNode(node.indent ? parseInt(node.indent) : 0, node.name));
 };
 
 export const parser: ParserDefinition = {

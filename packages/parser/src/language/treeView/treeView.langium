@@ -24,12 +24,9 @@ fragment TitleAndAccessibilities:
 hidden terminal WS: /[ \t]+/;  // One or more spaces or tabs for hidden whitespace
 hidden terminal NL: /\r?\n/;
 
-//terminal TEXT: /\S+/;
-// terminal INDENTATION: /[ \t]{1,}/;  // One or more spaces/tabs for indentation
-
 TreeNode: 
     // actually contains the indent, but is converted to a length value by valueConverter
-    indentLength=INDENTATION?
+    indent=INDENTATION?
     name=TEXT
 ;
 
