@@ -13,13 +13,13 @@ export {
   Commit,
   Merge,
   Statement,
+  TreeView,
+  TreeNode,
   isInfo,
   isPacket,
   isPacketBlock,
   isPie,
   isPieSection,
-  TreeView,
-  TreeNode,
   isArchitecture,
   isGitGraph,
   isTreemap,
@@ -37,6 +37,7 @@ export {
   GitGraphGrammarGeneratedModule as GitGraphGeneratedModule,
   RadarGrammarGeneratedModule as RadarGeneratedModule,
   TreemapGrammarGeneratedModule as TreemapGeneratedModule,
+  TreeViewGrammarGeneratedModule as TreeViewGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';
