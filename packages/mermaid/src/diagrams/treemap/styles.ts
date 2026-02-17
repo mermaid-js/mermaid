@@ -1,8 +1,6 @@
 import type { DiagramStylesProvider } from '../../diagram-api/types.js';
 import { cleanAndMerge } from '../../utils.js';
 import type { TreemapStyleOptions } from './types.js';
-import { getThemeVariables } from '../../themes/theme-default.js';
-import { getConfig as getConfigAPI } from '../../config.js';
 
 const defaultTreemapStyleOptions: TreemapStyleOptions = {
   sectionStrokeColor: 'black',
@@ -11,22 +9,23 @@ const defaultTreemapStyleOptions: TreemapStyleOptions = {
   leafStrokeColor: 'black',
   leafStrokeWidth: '1',
   leafFillColor: '#efefef',
-  labelColor: 'black',
   labelFontSize: '12px',
   valueFontSize: '10px',
-  valueColor: 'black',
   titleFontSize: '14px',
 };
 
 export const getStyles: DiagramStylesProvider = ({
   treemap,
-}: { treemap?: TreemapStyleOptions } = {}) => {
-  const defaultThemeVariables = getThemeVariables();
-  const currentConfig = getConfigAPI();
-  const themeVariables = cleanAndMerge(defaultThemeVariables, currentConfig.themeVariables);
-
+  titleColor: themeTitleColor,
+  textColor: themeTextColor,
+}: { treemap?: TreemapStyleOptions; titleColor?: string; textColor?: string } = {}) => {
   const options = cleanAndMerge(
-    { ...defaultTreemapStyleOptions, titleColor: themeVariables.titleColor },
+    {
+      ...defaultTreemapStyleOptions,
+      titleColor: themeTitleColor,
+      labelColor: themeTextColor,
+      valueColor: themeTextColor,
+    },
     treemap
   );
 
