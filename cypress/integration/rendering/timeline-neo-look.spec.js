@@ -1,6 +1,6 @@
 import { imgSnapshotTest } from '../../helpers/util.ts';
 
-describe('Timeline - Neo Look and Themes', () => {
+describe('Timeline - Look and Themes', () => {
   const spaceExplorationTimeline = `timeline
     title Space Exploration Milestones
     section Early Era
