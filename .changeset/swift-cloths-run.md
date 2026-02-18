@@ -9,8 +9,7 @@ This fix restores backwards compatibility with Mermaid v10 by ensuring that plai
 **What changed:**
 
 - Plain text labels in flowcharts (without markdown syntax) now render as regular text
-  - For node labels, these will line-wrap automatically. Although this isn't backwards compatible with v10, we think this is a minor change and it's worth keeping to avoid too many changes from diagrams created from v11 onwards.
-  - For edge labels, these will **not** line-wrap automatically.
+  - For node labels and edge labels, these will line-wrap automatically. Although this isn't backwards compatible with v10, we think this is a minor change and it's worth keeping to avoid too many changes from diagrams created from v11 onwards.
   - Plain text labels in other diagrams will continue to not line wrap.
 - Plain text labels with `\n` characters now correctly create line breaks
 - Plain text that looks like markdown (e.g., "1.", "- x") is no longer misinterpreted
