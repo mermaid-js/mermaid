@@ -28,6 +28,8 @@ interface TimelineTask {
 export const draw = function (text: string, id: string, version: string, diagObj: Diagram) {
   //1. Fetch the configuration
   const conf = getConfig();
+  const { look, themeVariables } = conf;
+  const { useGradient, gradientStart, gradientStop } = themeVariables;
   const LEFT_MARGIN = conf.timeline?.leftMargin ?? 50;
 
   log.debug('timeline', diagObj.db);
@@ -205,7 +207,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
     svg
       .append('text')
       .text(title)
-      .attr('x', box.width / 2 - LEFT_MARGIN)
+      .attr('x', box.x * 2 + LEFT_MARGIN)
       .attr('font-size', '4ex')
       .attr('font-weight', 'bold')
       .attr('y', 20);
@@ -232,6 +234,29 @@ export const draw = function (text: string, id: string, version: string, diagObj
     conf.timeline?.padding ?? 50,
     conf.timeline?.useMaxWidth ?? false
   );
+
+  if (look === 'neo' && useGradient) {
+    const gradient = svg
+      .append('linearGradient')
+      .attr('id', svg.attr('id') + '-gradient')
+      .attr('gradientUnits', 'objectBoundingBox')
+      .attr('x1', '0%')
+      .attr('y1', '0%')
+      .attr('x2', '100%')
+      .attr('y2', '0%');
+
+    gradient
+      .append('svg:stop')
+      .attr('offset', '0%')
+      .attr('stop-color', gradientStart)
+      .attr('stop-opacity', 1);
+
+    gradient
+      .append('svg:stop')
+      .attr('offset', '100%')
+      .attr('stop-color', gradientStop)
+      .attr('stop-opacity', 1);
+  }
 
   // addSVGAccessibilityFields(diagObj.db, diagram, id);
 };
@@ -334,7 +359,7 @@ export const drawEvents = function (
     log.debug('eventNode', eventNode);
     // create event wrapper
     const eventWrapper = diagram.append('g').attr('class', 'eventWrapper');
-    const node = svgDraw.drawNode(eventWrapper, eventNode, sectionColor, conf);
+    const node = svgDraw.drawNode(eventWrapper, eventNode, sectionColor, conf, 'drawEvents');
     const eventHeight = node.height;
     maxEventHeight = maxEventHeight + eventHeight;
     eventWrapper.attr('transform', `translate(${masterX}, ${masterY})`);

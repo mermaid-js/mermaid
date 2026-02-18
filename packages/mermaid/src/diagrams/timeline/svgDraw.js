@@ -493,7 +493,9 @@ function wrap(text, width) {
   });
 }
 
-export const drawNode = function (elem, node, fullSection, conf) {
+export const drawNode = function (elem, node, fullSection, conf, currentDrawing) {
+  const { theme, look } = conf;
+  const isReduxTheme = theme?.includes('redux');
   const section = (fullSection % MAX_SECTIONS) - 1;
   const nodeElem = elem.append('g');
   node.section = section;
@@ -521,9 +523,34 @@ export const drawNode = function (elem, node, fullSection, conf) {
   node.width = node.width + 2 * node.padding;
 
   textElem.attr('transform', 'translate(' + node.width / 2 + ', ' + node.padding / 2 + ')');
+  if (isReduxTheme) {
+    textElem.attr(
+      'transform',
+      `translate(${node.width / 2}, ${currentDrawing === 'drawEvents' ? node.padding / 2 + 3 : node.padding})`
+    );
+  }
 
   // Create the background element
   defaultBkg(bkgElem, node, section, conf);
+
+  if (look === 'neo') {
+    nodeElem.attr('data-look', `neo`);
+    if (isReduxTheme) {
+      const isDark = theme.includes('dark');
+      nodeElem
+        .append('defs')
+        .append('filter')
+        .attr('id', 'drop-shadow')
+        .attr('height', '130%')
+        .attr('width', '130%')
+        .append('feDropShadow')
+        .attr('dx', '4')
+        .attr('dy', '4')
+        .attr('stdDeviation', 0)
+        .attr('flood-opacity', isDark ? '0.2' : '0.06')
+        .attr('flood-color', isDark ? '#FFFFFF' : '#000000');
+    }
+  }
 
   return node;
 };
@@ -544,7 +571,9 @@ export const getVirtualNodeHeight = function (elem, node, conf) {
   return bbox.height + fontSize * 1.1 * 0.5 + node.padding;
 };
 
-const defaultBkg = function (elem, node, section) {
+const defaultBkg = function (elem, node, section, config) {
+  const { theme } = config;
+  const r = theme?.includes('redux') ? 0 : 5;
   const rd = 5;
   elem
     .append('path')
@@ -552,18 +581,19 @@ const defaultBkg = function (elem, node, section) {
     .attr('class', 'node-bkg node-' + node.type)
     .attr(
       'd',
-      `M0 ${node.height - rd} v${-node.height + 2 * rd} q0,-5 5,-5 h${
+      `M0 ${node.height - rd} v${-node.height + 2 * rd} q0,-${r},${r},-${r} h${
         node.width - 2 * rd
-      } q5,0 5,5 v${node.height - rd} H0 Z`
+      } q${r},0 ,${r},${r} v${node.height - rd} H0 Z`
     );
-
-  elem
-    .append('line')
-    .attr('class', 'node-line-' + section)
-    .attr('x1', 0)
-    .attr('y1', node.height)
-    .attr('x2', node.width)
-    .attr('y2', node.height);
+  if (!theme?.includes('redux')) {
+    elem
+      .append('line')
+      .attr('class', 'node-line-' + section)
+      .attr('x1', 0)
+      .attr('y1', node.height)
+      .attr('x2', node.width)
+      .attr('y2', node.height);
+  }
 };
 
 export default {
