@@ -19,7 +19,7 @@ const genSections: DiagramStylesProvider = (options) => {
   }
 
   for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
-    const sw = '' + (look === 'neo' ? Math.max(10 - i * 2, 2) : 17 - 3 * i);
+    const sw = '' + (look === 'neo' ? Math.max(10 - (i - 1) * 2, 2) : 17 - 3 * i);
     sections += `
     .section-${i - 1} rect, .section-${i - 1} path, .section-${i - 1} circle, .section-${
       i - 1
