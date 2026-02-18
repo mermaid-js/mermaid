@@ -214,9 +214,8 @@ export class MindmapDB {
    * Convert mindmap tree structure to flat array of nodes
    * @param node - The mindmap node to process
    * @param processedNodes - Array to collect processed nodes
-   * @param look - Optional look override for mindmap nodes
    */
-  public flattenNodes(node: MindmapNode, processedNodes: MindmapLayoutNode[], look?: string): void {
+  public flattenNodes(node: MindmapNode, processedNodes: MindmapLayoutNode[]): void {
     const conf = getConfig();
     // Build CSS classes for the node
     const cssClasses = ['mindmap-node'];
@@ -270,7 +269,7 @@ export class MindmapDB {
       padding: node.padding,
       cssClasses: classes,
       cssStyles: [],
-      look: look || conf.look,
+      look: conf.look,
       icon: node.icon,
       x: node.x,
       y: node.y,
@@ -286,7 +285,7 @@ export class MindmapDB {
     // Recursively process children
     if (node.children) {
       for (const child of node.children) {
-        this.flattenNodes(child, processedNodes, look);
+        this.flattenNodes(child, processedNodes);
       }
     }
   }
@@ -345,15 +344,10 @@ export class MindmapDB {
 
     const userDefinedConfig = getUserDefinedConfig();
     const hasUserDefinedLayout = userDefinedConfig.layout !== undefined;
-    const hasUserDefinedLook = userDefinedConfig.look !== undefined;
 
     const finalConfig = config;
     if (!hasUserDefinedLayout) {
       finalConfig.layout = 'cose-bilkent';
-    }
-    // Set default look to 'neo' for mindmaps if not explicitly set by user
-    if (!hasUserDefinedLook) {
-      finalConfig.look = 'neo';
     }
 
     if (!mindmapRoot) {
@@ -363,7 +357,7 @@ export class MindmapDB {
         config: finalConfig,
       };
     }
-    log.debug('getData: mindmapRoot', mindmapRoot, finalConfig);
+    log.debug('getData: mindmapRoot', mindmapRoot, config);
 
     // Assign section numbers to all nodes based on their position relative to root
     this.assignSections(mindmapRoot);
@@ -372,7 +366,7 @@ export class MindmapDB {
     const processedNodes: MindmapLayoutNode[] = [];
     const processedEdges: MindmapLayoutEdge[] = [];
 
-    this.flattenNodes(mindmapRoot, processedNodes, finalConfig.look);
+    this.flattenNodes(mindmapRoot, processedNodes);
     this.generateEdges(mindmapRoot, processedEdges);
 
     log.debug(
