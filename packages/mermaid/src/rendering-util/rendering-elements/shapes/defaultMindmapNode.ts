@@ -27,10 +27,8 @@ export async function defaultMindmapNode<T extends SVGGraphicsElement>(
     q0,-${rd} ${rd},-${rd}
     h${w - 2 * rd}
     q${rd},0 ${rd},${rd}
-    v${h - 2 * rd}
-    q0,${rd} -${rd},${rd}
-    h${-w + 2 * rd}
-    q-${rd},0 -${rd},-${rd}
+    v${h - rd}
+    H${-w / 2} 
     Z
   `;
 
