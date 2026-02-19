@@ -378,20 +378,28 @@ const looksLikeDuration = function (str) {
  * @returns {boolean}
  */
 const looksLikeUntilReference = function (str) {
-  return /^until\s+(?<ids>[\d\w- ]+)/.test(str.trim());
+  return /^until\s+.+/.test(str.trim());
 };
 
 const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   str = str.trim();
 
   // test for until
-  const untilRePattern = /^until\s+(?<ids>[\d\w- ]+)/;
+  const untilRePattern = /^until\s+(?<target>.+)$/;
   const untilStatement = untilRePattern.exec(str);
 
   if (untilStatement !== null) {
+    const untilTarget = untilStatement.groups.target.trim();
+
+    // until can point to either a fixed date or one/more task ids
+    const untilDate = dayjs(untilTarget, dateFormat.trim(), true);
+    if (untilDate.isValid()) {
+      return untilDate.toDate();
+    }
+
     // check all until ids and take the earliest
     let earliestTask = null;
-    for (const id of untilStatement.groups.ids.split(' ')) {
+    for (const id of untilTarget.split(/\s+/)) {
       let task = findTaskById(id);
       if (task !== undefined && (!earliestTask || task.startTime < earliestTask.startTime)) {
         earliestTask = task;
@@ -526,8 +534,8 @@ const parseData = function (prevTaskId, dataStr) {
       break;
     case 2:
       task.id = parseId();
-      // If input is "<duration>, until <taskId>", figure out end date first,
-      // then compute start from that end and the duration.
+      // If input is "<duration>, until <taskId>" or "<duration>, until <endDate>",
+      // figure out end date first, then compute start date from the end date and duration.
       task.startTime =
         looksLikeDuration(data[0]) && looksLikeUntilReference(data[1])
           ? {
@@ -544,8 +552,8 @@ const parseData = function (prevTaskId, dataStr) {
       break;
     case 3:
       task.id = parseId(data[0]);
-      // If input is "<id>, duration>, until <taskId>", figure out end date first,
-      // then compute start from that end and the duration.
+      // If input is "<id>, <duration>, until <taskId>" or "<id>, <duration>, until <endDate>",
+      // figure out end date first, then compute start date from the end date and duration.
       task.startTime =
         looksLikeDuration(data[1]) && looksLikeUntilReference(data[2])
           ? {
@@ -645,8 +653,8 @@ const compileTasks = function () {
         }
         break;
       case 'deriveStartFromEnd': {
-        // With "<duration>, until <id>", the end date depends on another task id.
-        // So we find end date first, then calculate start date by subtracting duration.
+        // With "<duration>, until <id>" or "<duration>, until <endDate>",
+        // get end date first, then calculate start date by subtracting duration.
         rawTasks[pos].endTime = getEndDate(
           undefined,
           dateFormat,
@@ -681,7 +689,7 @@ const compileTasks = function () {
     }
 
     // It has both start and end dates
-    if (rawTasks[pos].startTime && rawTasks[pos].endTime && rawTasks[pos].endTime) {
+    if (rawTasks[pos].startTime && rawTasks[pos].endTime) {
       rawTasks[pos].processed = true;
       rawTasks[pos].manualEndTime = dayjs(
         rawTasks[pos].raw.endTime.data,

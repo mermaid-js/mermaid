@@ -194,6 +194,32 @@ describe('when using the ganttDb', function () {
     expect(tasks[0].task).toEqual('task1');
   });
 
+  it('should calculate start date from duration and until fixed end date', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('sec1');
+    ganttDb.addTask('task1', 'id1,7d,until 2013-02-01');
+
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 25));
+    expect(tasks[0].endTime).toEqual(new Date(2013, 1, 1));
+    expect(tasks[0].id).toEqual('id1');
+    expect(tasks[0].task).toEqual('task1');
+  });
+
+  it('should calculate start date from duration and until fixed end date without task id', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('sec1');
+    ganttDb.addTask('task1', '7d,until 2013-02-01');
+
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 25));
+    expect(tasks[0].endTime).toEqual(new Date(2013, 1, 1));
+    expect(tasks[0].id).toEqual('task1');
+    expect(tasks[0].task).toEqual('task1');
+  });
+
   it('should handle relative start date based on multiple id', function () {
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.addSection('sec1');

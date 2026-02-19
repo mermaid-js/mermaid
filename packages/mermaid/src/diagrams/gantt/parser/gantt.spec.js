@@ -168,6 +168,40 @@ describe('when parsing a gantt diagram it', function () {
     expect(tasks[0].task).toEqual('task A');
   });
 
+  it('should parse duration before until fixed end date', function () {
+    const str =
+      'gantt\n' +
+      'dateFormat YYYY-MM-DD\n' +
+      'section Documentation\n' +
+      'task A: a, 7d, until 2024-02-01';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    const tasks = parser.yy.getTasks();
+
+    expect(tasks[0].startTime).toEqual(new Date(2024, 0, 25));
+    expect(tasks[0].endTime).toEqual(new Date(2024, 1, 1));
+    expect(tasks[0].id).toEqual('a');
+    expect(tasks[0].task).toEqual('task A');
+  });
+
+  it('should parse duration before until fixed end date without task id', function () {
+    const str =
+      'gantt\n' +
+      'dateFormat YYYY-MM-DD\n' +
+      'section Documentation\n' +
+      'task A: 7d, until 2024-02-01';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    const tasks = parser.yy.getTasks();
+
+    expect(tasks[0].startTime).toEqual(new Date(2024, 0, 25));
+    expect(tasks[0].endTime).toEqual(new Date(2024, 1, 1));
+    expect(tasks[0].id).toEqual('task1');
+    expect(tasks[0].task).toEqual('task A');
+  });
+
   it.each`
     tags                     | milestone | done     | crit     | active
     ${'milestone'}           | ${true}   | ${false} | ${false} | ${false}
