@@ -61,8 +61,7 @@ export const render = async (data4Layout: LayoutData, svg: SVG) => {
   }
 
   // Prefix all node domIds with the diagram's SVG element ID to ensure uniqueness
-  // across multiple diagrams on the same page. This follows the same pattern used
-  // for marker IDs in PR #4825.
+  // across multiple diagrams on the same page.
   if (data4Layout.diagramId) {
     for (const node of data4Layout.nodes) {
       const originalDomId = node.domId || node.id;

@@ -147,11 +147,9 @@ export class ClassDB implements DiagramDB {
   /**
    * Sets the diagram's SVG element ID, used to prefix domIds for uniqueness
    * across multiple diagrams on the same page.
-   *
-   * @param id - The SVG element ID (e.g., "mermaid-0")
    */
-  public setDiagramId(id: string) {
-    this.diagramId = id;
+  public setDiagramId(svgElementId: string) {
+    this.diagramId = svgElementId;
   }
 
   /**
@@ -461,12 +459,10 @@ export class ClassDB implements DiagramDB {
 
       /* if no arguments passed into callback, default to passing in id */
       if (argList.length === 0) {
-        // Defer lookUpDomId to bind time so it includes the diagramId prefix
         argList.push(id);
       }
 
       this.functions.push(() => {
-        // Defer lookUpDomId to bind time so it includes the diagramId prefix
         const elemId = this.lookUpDomId(id);
         const elem = document.querySelector(`[id="${elemId}"]`);
         if (elem !== null) {

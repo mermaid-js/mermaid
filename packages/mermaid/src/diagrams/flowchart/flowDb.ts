@@ -90,11 +90,9 @@ export class FlowDB implements DiagramDB {
   /**
    * Sets the diagram's SVG element ID, used to prefix domIds for uniqueness
    * across multiple diagrams on the same page.
-   *
-   * @param id - The SVG element ID (e.g., "mermaid-0")
    */
-  public setDiagramId(id: string) {
-    this.diagramId = id;
+  public setDiagramId(svgElementId: string) {
+    this.diagramId = svgElementId;
   }
 
   /**
