@@ -30,7 +30,6 @@ export const insertEdgeLabel = async (elem, edge) => {
 
   // Create the actual text element
   const isMarkdown = edge.labelType === 'markdown';
-  const markdownWidth = config.markdownAutoWrap === false ? Number.POSITIVE_INFINITY : undefined;
   const labelElement = await createText(
     elem,
     edge.label,
@@ -42,8 +41,8 @@ export const insertEdgeLabel = async (elem, edge) => {
       addSvgBackground: isMarkdown,
       isNode: false,
       markdown: isMarkdown,
-      // Plain text edge labels should auto-wrap, markdown edge labels respect markdownAutoWrap config
-      width: isMarkdown ? markdownWidth : undefined,
+      // If using markdown, wrap using default width
+      width: isMarkdown ? undefined : Number.POSITIVE_INFINITY,
     },
     config
   );
