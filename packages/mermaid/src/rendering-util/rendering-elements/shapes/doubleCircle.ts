@@ -16,9 +16,7 @@ export async function doublecircle<T extends SVGGraphicsElement>(
   node.labelStyle = labelStyles;
   const padding = node.padding ?? 0;
   const labelPadding = node.look === 'neo' ? 16 : padding;
-
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-
   const outerRadius = (node?.width ? node?.width / 2 : bbox.width / 2) + (labelPadding ?? 0);
   const innerRadius = outerRadius - gap;
 
