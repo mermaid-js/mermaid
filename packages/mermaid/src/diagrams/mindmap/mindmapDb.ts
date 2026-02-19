@@ -237,6 +237,8 @@ export class MindmapDB {
 
     // Map mindmap node type to valid shape name
     const getShapeFromType = (type: number) => {
+      const theme = conf.theme?.toLowerCase() ?? '';
+      const isReduxTheme = theme.includes('redux');
       switch (type) {
         case nodeType.CIRCLE:
           return 'mindmapCircle';
@@ -251,7 +253,7 @@ export class MindmapDB {
         case nodeType.HEXAGON:
           return 'hexagon';
         case nodeType.DEFAULT:
-          return 'defaultMindmapNode';
+          return isReduxTheme ? 'rounded' : 'defaultMindmapNode';
         case nodeType.NO_BORDER:
         default:
           return 'rect';
