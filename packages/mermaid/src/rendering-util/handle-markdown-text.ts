@@ -31,11 +31,11 @@ function preprocessMarkdown(markdown: string, { markdownAutoWrap }: MermaidConfi
  * HTML tags are preserved as separate words to maintain proper formatting.
  */
 export function nonMarkdownToLines(nonMarkdownText: string): MarkdownLine[] {
-  return nonMarkdownText.split(/\r?\n|<br\s*\/?>/gi).map(
+  return nonMarkdownText.split(/\\n|\n|<br\s*\/?>/gi).map(
     (line) =>
       line
         .trim()
-        .match(/<[^>]+>|[^\s<>]+/g) // keeps HTML tags intact
+        .match(/<[^>]+>|[^\s<>]+/g) // keeps HTML tags intact and preserves space between tags and text
         ?.map((word) => ({ content: word, type: 'normal' })) ?? []
   );
 }
