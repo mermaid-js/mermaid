@@ -22,7 +22,7 @@ const rect = async (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'cluster ' + node.cssClasses)
-    .attr('id', node.id)
+    .attr('id', node.domId || node.id)
     .attr('data-look', node.look);
 
   const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
@@ -130,7 +130,10 @@ const rect = async (parent, node) => {
  */
 const noteGroup = (parent, node) => {
   // Add outer g element
-  const shapeSvg = parent.insert('g').attr('class', 'note-cluster').attr('id', node.id);
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', 'note-cluster')
+    .attr('id', node.domId || node.id);
 
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
@@ -170,7 +173,7 @@ const roundedWithTitle = async (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', node.cssClasses)
-    .attr('id', node.id)
+    .attr('id', node.domId || node.id)
     .attr('data-id', node.id)
     .attr('data-look', node.look);
 
@@ -290,7 +293,7 @@ const kanbanSection = async (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'cluster ' + node.cssClasses)
-    .attr('id', node.id)
+    .attr('id', node.domId || node.id)
     .attr('data-look', node.look);
 
   const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
@@ -399,7 +402,7 @@ const divider = (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', node.cssClasses)
-    .attr('id', node.id)
+    .attr('id', node.domId || node.id)
     .attr('data-look', node.look);
 
   // add the rect

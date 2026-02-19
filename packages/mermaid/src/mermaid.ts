@@ -194,6 +194,44 @@ const runThrowsErrors = async function (
       handleError(error, errors, mermaid.parseError);
     }
   }
+  // After all diagrams are rendered, check for duplicate element IDs in the document.
+  // This catches cross-diagram ID collisions that break url(#...) references and
+  // violate WCAG 4.1.1. Only runs when logLevel is debug or lower to avoid perf cost.
+  if (
+    typeof conf.logLevel === 'number'
+      ? conf.logLevel <= 1
+      : conf.logLevel === 'debug' || conf.logLevel === 'trace'
+  ) {
+    try {
+      const allElements = document.querySelectorAll('[id]');
+      const idCounts = new Map<string, number>();
+      for (const el of allElements) {
+        const elId = el.getAttribute('id')!;
+        idCounts.set(elId, (idCounts.get(elId) ?? 0) + 1);
+      }
+      const duplicates = [...idCounts.entries()].filter(([, count]) => count > 1);
+      if (duplicates.length > 0) {
+        const duplicateList = duplicates
+          .slice(0, 10) // Limit output to first 10
+          .map(([dupId, count]) => `  "${dupId}" (${count}x)`)
+          .join('\n');
+        const issueTitle = encodeURIComponent('Duplicate SVG element IDs across diagrams');
+        const issueBody = encodeURIComponent(
+          `## Description\nDuplicate element IDs were detected when rendering multiple diagrams on the same page.\n\n` +
+            `## Duplicate IDs\n${duplicates.map(([dupId, count]) => `- \`${dupId}\` (${count}x)`).join('\n')}\n\n` +
+            `## Mermaid version\n${injected.version}\n`
+        );
+        log.warn(
+          `Duplicate element IDs detected across mermaid diagrams:\n${duplicateList}\n` +
+            `This may cause broken arrow markers, CSS issues, and WCAG 4.1.1 violations.\n` +
+            `Please report: https://github.com/mermaid-js/mermaid/issues/new?title=${issueTitle}&body=${issueBody}`
+        );
+      }
+    } catch {
+      // Silently ignore — this is a best-effort diagnostic
+    }
+  }
+
   if (errors.length > 0) {
     // TODO: We should be throwing an error object.
     throw errors[0];
