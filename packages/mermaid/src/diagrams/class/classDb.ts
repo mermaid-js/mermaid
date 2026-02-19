@@ -26,7 +26,7 @@ import type {
   Interface,
 } from './classTypes.js';
 import type { Node, Edge } from '../../rendering-util/types.js';
-import type { DiagramDB } from '../../diagram-api/types.js';
+import { ScopedDiagramDB } from '../../diagram-api/DiagramDBBase.js';
 import DOMPurify from 'dompurify';
 
 const MERMAID_DOM_ID_PREFIX = 'classId-';
@@ -34,7 +34,7 @@ let classCounter = 0;
 
 const sanitizeText = (txt: string) => common.sanitizeText(txt, getConfig());
 
-export class ClassDB implements DiagramDB {
+export class ClassDB extends ScopedDiagramDB {
   private relations: ClassRelation[] = [];
   private classes: ClassMap = new Map<string, ClassNode>();
   private readonly styleClasses = new Map<string, StyleClass>();
@@ -43,12 +43,12 @@ export class ClassDB implements DiagramDB {
   // private static classCounter = 0;
   private namespaces = new Map<string, NamespaceNode>();
   private namespaceCounter = 0;
-  private diagramId = '';
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   private functions: Function[] = [];
 
   constructor() {
+    super();
     this.functions.push(this.setupToolTips.bind(this));
     this.clear();
 
@@ -142,14 +142,6 @@ export class ClassDB implements DiagramDB {
     };
 
     this.interfaces.push(classInterface);
-  }
-
-  /**
-   * Sets the diagram's SVG element ID, used to prefix domIds for uniqueness
-   * across multiple diagrams on the same page.
-   */
-  public setDiagramId(svgElementId: string) {
-    this.diagramId = svgElementId;
   }
 
   /**

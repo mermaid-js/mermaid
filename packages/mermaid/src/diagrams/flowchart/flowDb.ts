@@ -1,7 +1,7 @@
 import { select } from 'd3';
 import * as yaml from 'js-yaml';
 import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
-import type { DiagramDB } from '../../diagram-api/types.js';
+import { ScopedDiagramDB } from '../../diagram-api/DiagramDBBase.js';
 import { log } from '../../logger.js';
 import { isValidShape, type ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
 import type { Edge, Node } from '../../rendering-util/types.js';
@@ -35,10 +35,9 @@ interface LinkData {
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 
 // We are using arrow functions assigned to class instance fields instead of methods as they are required by flow JISON
-export class FlowDB implements DiagramDB {
+export class FlowDB extends ScopedDiagramDB {
   private vertexCounter = 0;
   private config = getConfig();
-  private diagramId = '';
   private vertices = new Map<string, FlowVertex>();
   private edges: FlowEdge[] & { defaultInterpolate?: string; defaultStyle?: string[] } = [];
   private classes = new Map<string, FlowClass>();
@@ -56,6 +55,7 @@ export class FlowDB implements DiagramDB {
   private funs: ((element: Element) => void)[] = []; // cspell:ignore funs
 
   constructor() {
+    super();
     this.funs.push(this.setupToolTips.bind(this));
 
     // Needed for JISON since it only supports direct properties
@@ -85,14 +85,6 @@ export class FlowDB implements DiagramDB {
 
   private sanitizeText(txt: string) {
     return common.sanitizeText(txt, this.config);
-  }
-
-  /**
-   * Sets the diagram's SVG element ID, used to prefix domIds for uniqueness
-   * across multiple diagrams on the same page.
-   */
-  public setDiagramId(svgElementId: string) {
-    this.diagramId = svgElementId;
   }
 
   /**
