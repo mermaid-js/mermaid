@@ -1212,52 +1212,29 @@ class link myClass
     );
   });
 
-  describe('Edge label auto-wrapping: plain text vs markdown with markdownAutoWrap', () => {
-    it('should handle edge labels with markdownAutoWrap true and htmlLabels true', () => {
+  describe('Edge label auto-wrapping', () => {
+    it('should wrap edge labels', () => {
       imgSnapshotTest(
-        `flowchart TD
-    A["\`This is a really **long**  line of plain text that will auto-wrap and support\`"]
+        [
+          {
+            markdownAutoWrap: true,
+            htmlLabels: true,
+          },
+          { markdownAutoWrap: true, htmlLabels: false },
+          { markdownAutoWrap: false, htmlLabels: true },
+          // TODO: currently broken
+          // {markdownAutoWrap: false, htmlLabels: false},
+        ].map(
+          ({ markdownAutoWrap, htmlLabels }) => `---
+config: ${JSON.stringify({ markdownAutoWrap, htmlLabels })}
+---
+flowchart TD
+    A["\`This is a really **long** line of plain text that will auto-wrap and support\`"]
     B["\`This is a really long line of markdown text that will autowrap, unless markdownAutoWrap:false is set.\`"]
-    A -- "Plain text **labels** in flowcharts will however not autowrap, unlike node labels. \n But newline characters work." --> B
+    A -- "Plain text **labels** in flowcharts will however not autowrap, unlike node labels. \\n But newline characters work." --> B
     B -- "\`Markdown edge labels will auto-wrap, even if markdownAutoWrap: false is set\`" --> C
-    `,
-        { markdownAutoWrap: true, htmlLabels: true }
-      );
-    });
-
-    it('should handle edge labels with markdownAutoWrap false and htmlLabels true', () => {
-      imgSnapshotTest(
-        `flowchart TD
-    A["\`This is a really **long**  line of plain text that will auto-wrap and support\`"]
-    B["\`This is a really long line of markdown text that will autowrap, unless markdownAutoWrap:false is set.\`"]
-    A -- "Plain text **labels** in flowcharts will however not autowrap, unlike node labels. \n But newline characters work." --> B
-    B -- "\`Markdown edge labels will auto-wrap, even if markdownAutoWrap: false is set\`" --> C
-    `,
-        { markdownAutoWrap: false, htmlLabels: true }
-      );
-    });
-
-    it('should handle edge labels with markdownAutoWrap true and htmlLabels false', () => {
-      imgSnapshotTest(
-        `flowchart TD
-    A["\`This is a really **long**  line of plain text that will auto-wrap and support\`"]
-    B["\`This is a really long line of markdown text that will autowrap, unless markdownAutoWrap:false is set.\`"]
-    A -- "Plain text **labels** in flowcharts will however not autowrap, unlike node labels. \n But newline characters work." --> B
-    B -- "\`Markdown edge labels will auto-wrap, even if markdownAutoWrap: false is set\`" --> C
-    `,
-        { markdownAutoWrap: true, htmlLabels: false }
-      );
-    });
-
-    it('should handle edge labels with markdownAutoWrap false and htmlLabels false', () => {
-      imgSnapshotTest(
-        `flowchart TD
-    A["\`This is a really **long**  line of plain text that will auto-wrap and support\`"]
-    B["\`This is a really long line of markdown text that will autowrap, unless markdownAutoWrap:false is set.\`"]
-    A -- "Plain text **labels** in flowcharts will however not autowrap, unlike node labels. \n But newline characters work." --> B
-    B -- "\`Markdown edge labels will auto-wrap, even if markdownAutoWrap: false is set\`" --> C
-    `,
-        { markdownAutoWrap: false, htmlLabels: false }
+`
+        )
       );
     });
   });
