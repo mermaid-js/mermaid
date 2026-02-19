@@ -49,6 +49,7 @@ demos/dev/**
 !/demos/dev/example.html
 !/demos/dev/reload.js
 tsx-0/**
+node-compile-cache/
 vite.config.ts.timestamp-*
 
 # autogenereated by langium-cli
