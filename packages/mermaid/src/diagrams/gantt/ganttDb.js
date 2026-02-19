@@ -360,6 +360,27 @@ const parseDuration = function (str) {
   return [NaN, 'ms'];
 };
 
+/**
+ * Checks if a value looks like a duration (for example `7d`, `20h`, `0.5s`).
+ *
+ * @param {string} str
+ * @returns {boolean}
+ */
+const looksLikeDuration = function (str) {
+  const [durationValue] = parseDuration(str);
+  return !Number.isNaN(durationValue);
+};
+
+/**
+ * Checks if a value starts with `until ...`.
+ *
+ * @param {string} str
+ * @returns {boolean}
+ */
+const looksLikeUntilReference = function (str) {
+  return /^until\s+(?<ids>[\d\w- ]+)/.test(str.trim());
+};
+
 const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   str = str.trim();
 
@@ -505,20 +526,36 @@ const parseData = function (prevTaskId, dataStr) {
       break;
     case 2:
       task.id = parseId();
-      task.startTime = {
-        type: 'getStartDate',
-        startData: data[0],
-      };
+      // If input is "<duration>, until <taskId>", figure out end date first,
+      // then compute start from that end and the duration.
+      task.startTime =
+        looksLikeDuration(data[0]) && looksLikeUntilReference(data[1])
+          ? {
+              type: 'deriveStartFromEnd',
+              durationText: data[0],
+            }
+          : {
+              type: 'getStartDate',
+              startData: data[0],
+            };
       task.endTime = {
         data: data[1],
       };
       break;
     case 3:
       task.id = parseId(data[0]);
-      task.startTime = {
-        type: 'getStartDate',
-        startData: data[1],
-      };
+      // If input is "<id>, duration>, until <taskId>", figure out end date first,
+      // then compute start from that end and the duration.
+      task.startTime =
+        looksLikeDuration(data[1]) && looksLikeUntilReference(data[2])
+          ? {
+              type: 'deriveStartFromEnd',
+              durationText: data[1],
+            }
+          : {
+              type: 'getStartDate',
+              startData: data[1],
+            };
       task.endTime = {
         data: data[2],
       };
@@ -607,24 +644,51 @@ const compileTasks = function () {
           rawTasks[pos].startTime = startTime;
         }
         break;
+      case 'deriveStartFromEnd': {
+        // With "<duration>, until <id>", the end date depends on another task id.
+        // So we find end date first, then calculate start date by subtracting duration.
+        rawTasks[pos].endTime = getEndDate(
+          undefined,
+          dateFormat,
+          rawTasks[pos].raw.endTime.data,
+          inclusiveEndDates
+        );
+
+        const [durationValue, durationUnit] = parseDuration(
+          rawTasks[pos].raw.startTime.durationText
+        );
+
+        if (rawTasks[pos].endTime && !Number.isNaN(durationValue)) {
+          startTime = dayjs(rawTasks[pos].endTime).subtract(durationValue, durationUnit);
+
+          if (startTime.isValid()) {
+            rawTasks[pos].startTime = startTime.toDate();
+          }
+        }
+
+        break;
+      }
     }
 
-    if (rawTasks[pos].startTime) {
+    // If no end date is given
+    if (rawTasks[pos].startTime && !rawTasks[pos].endTime) {
       rawTasks[pos].endTime = getEndDate(
         rawTasks[pos].startTime,
         dateFormat,
         rawTasks[pos].raw.endTime.data,
         inclusiveEndDates
       );
-      if (rawTasks[pos].endTime) {
-        rawTasks[pos].processed = true;
-        rawTasks[pos].manualEndTime = dayjs(
-          rawTasks[pos].raw.endTime.data,
-          'YYYY-MM-DD',
-          true
-        ).isValid();
-        checkTaskDates(rawTasks[pos], dateFormat, excludes, includes);
-      }
+    }
+
+    // It has both start and end dates
+    if (rawTasks[pos].startTime && rawTasks[pos].endTime && rawTasks[pos].endTime) {
+      rawTasks[pos].processed = true;
+      rawTasks[pos].manualEndTime = dayjs(
+        rawTasks[pos].raw.endTime.data,
+        'YYYY-MM-DD',
+        true
+      ).isValid();
+      checkTaskDates(rawTasks[pos], dateFormat, excludes, includes);
     }
 
     return rawTasks[pos].processed;

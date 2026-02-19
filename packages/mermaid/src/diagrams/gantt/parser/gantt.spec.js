@@ -149,6 +149,25 @@ describe('when parsing a gantt diagram it', function () {
     expect(tasks[3].id).toEqual('d');
     expect(tasks[3].task).toEqual('task D');
   });
+
+  it('should parse duration before until task id', function () {
+    const str =
+      'gantt\n' +
+      'dateFormat YYYY-MM-DD\n' +
+      'section Documentation\n' +
+      'task A: a, 7d, until b\n' +
+      'task B: b, 2024-02-01, 0d';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    const tasks = parser.yy.getTasks();
+
+    expect(tasks[0].startTime).toEqual(new Date(2024, 0, 25));
+    expect(tasks[0].endTime).toEqual(new Date(2024, 1, 1));
+    expect(tasks[0].id).toEqual('a');
+    expect(tasks[0].task).toEqual('task A');
+  });
+
   it.each`
     tags                     | milestone | done     | crit     | active
     ${'milestone'}           | ${true}   | ${false} | ${false} | ${false}
