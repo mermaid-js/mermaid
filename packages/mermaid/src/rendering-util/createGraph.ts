@@ -73,8 +73,11 @@ export async function createGraphWithElements(
     if (edge.label && edge.label?.length > 0) {
       // Create a label node for the edge
       const labelNodeId = `edge-label-${edge.start}-${edge.end}-${edge.id}`;
+      const diagramId = data4Layout.diagramId;
       const labelNode = {
         id: labelNodeId,
+        // Prefix the domId with the diagram SVG ID for uniqueness across diagrams
+        domId: diagramId ? `${diagramId}-${labelNodeId}` : undefined,
         label: edge.label,
         edgeStart: edge.start,
         edgeEnd: edge.end,

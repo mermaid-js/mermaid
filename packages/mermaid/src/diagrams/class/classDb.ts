@@ -43,6 +43,7 @@ export class ClassDB implements DiagramDB {
   // private static classCounter = 0;
   private namespaces = new Map<string, NamespaceNode>();
   private namespaceCounter = 0;
+  private diagramId = '';
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   private functions: Function[] = [];
@@ -144,7 +145,18 @@ export class ClassDB implements DiagramDB {
   }
 
   /**
+   * Sets the diagram's SVG element ID, used to prefix domIds for uniqueness
+   * across multiple diagrams on the same page.
+   *
+   * @param id - The SVG element ID (e.g., "mermaid-0")
+   */
+  public setDiagramId(id: string) {
+    this.diagramId = id;
+  }
+
+  /**
    * Function to lookup domId from id in the graph definition.
+   * When diagramId is set, returns the prefixed version for DOM uniqueness.
    *
    * @param id - class ID to lookup
    * @public
@@ -152,7 +164,8 @@ export class ClassDB implements DiagramDB {
   public lookUpDomId(_id: string): string {
     const id = common.sanitizeText(_id, getConfig());
     if (this.classes.has(id)) {
-      return this.classes.get(id)!.domId;
+      const domId = this.classes.get(id)!.domId;
+      return this.diagramId ? `${this.diagramId}-${domId}` : domId;
     }
     throw new Error('Class not found: ' + id);
   }
@@ -166,6 +179,7 @@ export class ClassDB implements DiagramDB {
     this.functions.push(this.setupToolTips.bind(this));
     this.namespaces = new Map<string, NamespaceNode>();
     this.namespaceCounter = 0;
+    this.diagramId = '';
     this.direction = 'TB';
     commonClear();
   }
@@ -430,7 +444,6 @@ export class ClassDB implements DiagramDB {
 
     const id = domId;
     if (this.classes.has(id)) {
-      const elemId = this.lookUpDomId(id);
       let argList: string[] = [];
       if (typeof functionArgs === 'string') {
         /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
@@ -448,10 +461,13 @@ export class ClassDB implements DiagramDB {
 
       /* if no arguments passed into callback, default to passing in id */
       if (argList.length === 0) {
-        argList.push(elemId);
+        // Defer lookUpDomId to bind time so it includes the diagramId prefix
+        argList.push(id);
       }
 
       this.functions.push(() => {
+        // Defer lookUpDomId to bind time so it includes the diagramId prefix
+        const elemId = this.lookUpDomId(id);
         const elem = document.querySelector(`[id="${elemId}"]`);
         if (elem !== null) {
           elem.addEventListener(

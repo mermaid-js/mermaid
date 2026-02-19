@@ -29,6 +29,9 @@ export const draw = async function (text: string, id: string, _version: string, 
   // @ts-ignore - document is always available
   const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
+  // Set the diagram ID for DOM element uniqueness across multiple diagrams
+  diag.db.setDiagramId(id);
+
   // The getData method provided in all supported diagrams is used to extract the data from the parsed structure
   // into the Layout data format
   log.debug('Before getData: ');
@@ -64,7 +67,7 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   // If node has a link, wrap it in an anchor SVG object.
   for (const vertex of data4Layout.nodes) {
-    const node = select(`#${id} [id="${vertex.id}"]`);
+    const node = select(`#${id} [id="${vertex.domId || vertex.id}"]`);
     if (!node || !vertex.link) {
       continue;
     }

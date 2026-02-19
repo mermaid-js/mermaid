@@ -60,6 +60,16 @@ export const render = async (data4Layout: LayoutData, svg: SVG) => {
     throw new Error(`Unknown layout algorithm: ${data4Layout.layoutAlgorithm}`);
   }
 
+  // Prefix all node domIds with the diagram's SVG element ID to ensure uniqueness
+  // across multiple diagrams on the same page. This follows the same pattern used
+  // for marker IDs in PR #4825.
+  if (data4Layout.diagramId) {
+    for (const node of data4Layout.nodes) {
+      const originalDomId = node.domId || node.id;
+      node.domId = `${data4Layout.diagramId}-${originalDomId}`;
+    }
+  }
+
   const layoutDefinition = layoutAlgorithms[data4Layout.layoutAlgorithm];
   const layoutRenderer = await layoutDefinition.loader();
   return layoutRenderer.render(data4Layout, svg, internalHelpers, {

@@ -670,7 +670,7 @@ export const insertEdge = function (
 
     svgPath = select(svgPathNode)
       .select('path')
-      .attr('id', edge.id)
+      .attr('id', id ? `${id}-${edge.id}` : edge.id)
       .attr(
         'class',
         ' ' +
@@ -693,7 +693,7 @@ export const insertEdge = function (
     svgPath = elem
       .append('path')
       .attr('d', linePath)
-      .attr('id', edge.id)
+      .attr('id', id ? `${id}-${edge.id}` : edge.id)
       .attr(
         'class',
         ' ' +
