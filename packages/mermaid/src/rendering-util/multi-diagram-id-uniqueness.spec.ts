@@ -2,12 +2,17 @@
  * Renders two identical diagrams side-by-side and asserts that ALL element IDs
  * across both SVGs are unique. Covers diagram types that go through the unified
  * render path (render.ts domId prefixing) or have their own scoping.
+ *
+ * IMPORTANT: When adding a new diagram type to mermaid, add a corresponding
+ * entry to the DIAGRAMS map below. The meta-test at the bottom will fail if
+ * a registered diagram type is missing from this map.
  */
 import { JSDOM } from 'jsdom';
-import { describe, beforeAll, it } from 'vitest';
+import { describe, beforeAll, it, expect } from 'vitest';
 import mermaid from '../mermaid.js';
 import { mermaidAPI } from '../mermaidAPI.js';
 import { assertNoDuplicateIds } from '../tests/util.js';
+import { detectors } from '../diagram-api/detectType.js';
 
 const DIAGRAMS: Record<string, string> = {
   'flowchart-v2': `flowchart LR
@@ -187,4 +192,50 @@ describe('Multi-diagram ID uniqueness', () => {
       await renderTwoAndCheckIds(code);
     });
   }
+
+  // Known ID collision issues — tracked as failing tests so they don't block CI
+  // but remain visible as work to be done.
+  const KNOWN_FAILING: Record<string, string> = {
+    block: `block-beta
+    columns 1
+    a["A"]
+    b["B"]`,
+    architecture: `architecture-beta
+    service api(cloud)[API]
+    service db(database)[DB]
+    api:R -- L:db`,
+  };
+
+  for (const [diagramType, code] of Object.entries(KNOWN_FAILING)) {
+    it.fails(`"${diagramType}" — known duplicate IDs (needs fix)`, async () => {
+      await renderTwoAndCheckIds(code);
+    });
+  }
+
+  // Diagram types that are aliases, variants, or internal-only and don't need
+  // their own uniqueness test entry. When adding a new type here, add a comment
+  // explaining why it's excluded.
+  const EXCLUDED_TYPES = new Set([
+    'error', // internal error-handling pseudo-diagram
+    '---', // YAML front-matter parse-error pseudo-diagram
+    'info', // simple diagnostic diagram with no generated IDs
+    'flowchart', // legacy alias, covered by flowchart-v2
+    'class', // legacy alias, covered by classDiagram
+    'state', // legacy alias, covered by stateDiagram
+    'flowchart-elk', // ELK layout variant, same renderer as flowchart-v2
+    'mindmap', // uses unified pipeline (IDs are prefixed), but cytoscape crashes in JSDOM
+  ]);
+
+  it('every registered diagram type has a uniqueness test or is explicitly excluded', () => {
+    const testedTypes = new Set([...Object.keys(DIAGRAMS), ...Object.keys(KNOWN_FAILING)]);
+    const missing = Object.keys(detectors).filter(
+      (key) => !testedTypes.has(key) && !EXCLUDED_TYPES.has(key)
+    );
+    if (missing.length > 0) {
+      expect.fail(
+        `Registered diagram type(s) missing from DIAGRAMS map: ${missing.join(', ')}.\n` +
+          'Add a test entry to DIAGRAMS, or add to EXCLUDED_TYPES with a justification.'
+      );
+    }
+  });
 });
