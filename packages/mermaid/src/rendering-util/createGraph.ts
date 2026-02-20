@@ -77,7 +77,7 @@ export async function createGraphWithElements(
       const labelNode = {
         id: labelNodeId,
         // Prefix the domId with the diagram SVG ID for uniqueness across diagrams
-        domId: diagramId ? `${diagramId}-${labelNodeId}` : undefined,
+        domId: `${diagramId}-${labelNodeId}`,
         label: edge.label,
         edgeStart: edge.start,
         edgeEnd: edge.end,

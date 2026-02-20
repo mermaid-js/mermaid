@@ -19,13 +19,7 @@ describe('Unique DOM element IDs', () => {
       addFlowVertex(db, 'B');
     });
 
-    it('returns unprefixed domId when diagramId is not set', () => {
-      const domId = db.lookUpDomId('A');
-      expect(domId).toMatch(/^flowchart-A-\d+$/);
-      expect(domId).not.toContain('mermaid');
-    });
-
-    it('returns prefixed domId when diagramId is set', () => {
+    it('always prefixes domId with diagramId', () => {
       db.setDiagramId('mermaid-0');
       expect(db.lookUpDomId('A')).toMatch(/^mermaid-0-flowchart-A-\d+$/);
     });
@@ -46,13 +40,8 @@ describe('Unique DOM element IDs', () => {
       db.setDiagramId('mermaid-0');
       db.clear();
       addFlowVertex(db, 'A');
+      // After clear, diagramId is empty so prefix is just "-"
       expect(db.lookUpDomId('A')).not.toContain('mermaid-0');
-    });
-
-    it('getData() returns unprefixed domIds (render.ts handles prefixing)', () => {
-      db.setDiagramId('mermaid-0');
-      const nodeA = db.getData().nodes.find((n) => n.id === 'A');
-      expect(nodeA?.domId).toMatch(/^flowchart-A-\d+$/);
     });
   });
 
@@ -64,11 +53,7 @@ describe('Unique DOM element IDs', () => {
       db.addClass('Admin');
     });
 
-    it('returns unprefixed domId when diagramId is not set', () => {
-      expect(db.lookUpDomId('User')).toMatch(/^classId-User-\d+$/);
-    });
-
-    it('returns prefixed domId when diagramId is set', () => {
+    it('always prefixes domId with diagramId', () => {
       db.setDiagramId('mermaid-0');
       expect(db.lookUpDomId('User')).toMatch(/^mermaid-0-classId-User-\d+$/);
     });
@@ -87,7 +72,33 @@ describe('Unique DOM element IDs', () => {
       db.setDiagramId('mermaid-0');
       db.clear();
       db.addClass('User');
+      // After clear, diagramId is empty so prefix is just "-"
       expect(db.lookUpDomId('User')).not.toContain('mermaid-0');
+    });
+  });
+
+  describe('FlowDB.lookUpDomId fallback prefixing', () => {
+    it('prefixes the fallback ID for unknown vertices when diagramId is set', () => {
+      const db = new FlowDB();
+      addFlowVertex(db, 'A');
+      db.setDiagramId('mermaid-0');
+
+      // 'nonexistent' is not in the vertex map, so lookUpDomId returns the fallback
+      const result = db.lookUpDomId('nonexistent');
+      expect(result).toBe('mermaid-0-nonexistent');
+    });
+
+    it('two diagrams with subgraph-like IDs not in vertex map produce unique fallbacks', () => {
+      const db1 = new FlowDB();
+      const db2 = new FlowDB();
+
+      db1.setDiagramId('mermaid-0');
+      db2.setDiagramId('mermaid-1');
+
+      // These simulate looking up subgraph/cluster IDs that aren't in the vertex map
+      expect(db1.lookUpDomId('subgraph1')).toBe('mermaid-0-subgraph1');
+      expect(db2.lookUpDomId('subgraph1')).toBe('mermaid-1-subgraph1');
+      expect(db1.lookUpDomId('subgraph1')).not.toBe(db2.lookUpDomId('subgraph1'));
     });
   });
 

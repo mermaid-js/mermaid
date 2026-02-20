@@ -163,7 +163,7 @@ export class ClassDB implements DiagramDB {
     const id = common.sanitizeText(_id, getConfig());
     if (this.classes.has(id)) {
       const domId = this.classes.get(id)!.domId;
-      return this.diagramId ? `${this.diagramId}-${domId}` : domId;
+      return `${this.diagramId}-${domId}`;
     }
     throw new Error('Class not found: ' + id);
   }

@@ -687,7 +687,7 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter) {
   actElem
     .append('defs')
     .append('marker')
-    .attr('id', (conf.diagramId || '') + '-filled-head-control')
+    .attr('id', conf.diagramId + '-filled-head-control')
     .attr('refX', 11)
     .attr('refY', 5.8)
     .attr('markerWidth', 20)
@@ -709,7 +709,7 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter) {
   // Draw looping arrow as arc path
   actElem
     .append('line')
-    .attr('marker-end', 'url(#' + (conf.diagramId || '') + '-filled-head-control)')
+    .attr('marker-end', 'url(#' + conf.diagramId + '-filled-head-control)')
     .attr('transform', `translate(${cx}, ${cy - r})`);
 
   const bounds = actElem.node().getBBox();

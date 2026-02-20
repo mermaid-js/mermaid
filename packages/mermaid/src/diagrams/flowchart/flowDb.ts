@@ -104,10 +104,10 @@ export class FlowDB implements DiagramDB {
   public lookUpDomId(id: string) {
     for (const vertex of this.vertices.values()) {
       if (vertex.id === id) {
-        return this.diagramId ? `${this.diagramId}-${vertex.domId}` : vertex.domId;
+        return `${this.diagramId}-${vertex.domId}`;
       }
     }
-    return id;
+    return `${this.diagramId}-${id}`;
   }
 
   /**

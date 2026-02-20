@@ -236,6 +236,39 @@ describe('Multi-diagram ID uniqueness', () => {
     expect(taskIds).toContain('journey-b-task0');
   });
 
+  it('"timeline" — task line IDs are scoped with the diagram ID', async () => {
+    // Before the fix, timeline task lines had bare IDs like "task0" with no diagram prefix.
+    const container = await renderTwoAndCheckIds(DIAGRAMS.timeline, ['timeline-a', 'timeline-b']);
+    const taskLines = [...container.querySelectorAll('.task-line')];
+    const ids = taskLines.map((el) => el.getAttribute('id'));
+    // Every task-line ID should be prefixed with the diagram ID
+    for (const id of ids) {
+      expect(id).toMatch(/^timeline-[ab]-task\d+$/);
+    }
+  });
+
+  it('"sequence" — marker IDs reference conf.diagramId (no stale module-level state)', async () => {
+    // Before the fix, sequence diagrams used a redundant module-level diagramId variable.
+    // This test renders two sequence diagrams and verifies markers are correctly scoped.
+    const seqWithControl = `sequenceDiagram
+      participant Alice
+      participant Bob
+      Alice->>Bob: Hello
+      Bob-->>Alice: Hi`;
+    const container = await renderTwoAndCheckIds(seqWithControl, ['seq-ctrl-0', 'seq-ctrl-1']);
+    // Verify arrowhead markers are scoped per diagram
+    const markers = [...container.querySelectorAll('marker[id]')];
+    const markerIds = markers.map((m) => m.getAttribute('id'));
+    const seq0Markers = markerIds.filter((id) => id!.startsWith('seq-ctrl-0'));
+    const seq1Markers = markerIds.filter((id) => id!.startsWith('seq-ctrl-1'));
+    expect(seq0Markers.length).toBeGreaterThan(0);
+    expect(seq1Markers.length).toBeGreaterThan(0);
+    // No marker should have an empty/missing diagram prefix
+    for (const id of markerIds) {
+      expect(id).not.toMatch(/^-/); // No leading hyphen (old empty-fallback bug)
+    }
+  });
+
   it('every registered diagram type has a uniqueness test or is explicitly excluded', () => {
     const testedTypes = new Set([...Object.keys(DIAGRAMS), ...Object.keys(KNOWN_FAILING)]);
     const missing = Object.keys(detectors).filter(
