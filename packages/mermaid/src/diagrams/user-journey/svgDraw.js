@@ -189,6 +189,7 @@ export const drawSection = function (elem, section, conf) {
 };
 
 let taskCount = -1;
+let diagramId = '';
 /**
  * Draws an actor in the diagram with the attached line
  *
@@ -202,7 +203,7 @@ export const drawTask = function (elem, task, conf) {
   taskCount++;
   const maxHeight = 300 + 5 * 30;
   g.append('line')
-    .attr('id', 'task' + taskCount)
+    .attr('id', diagramId + '-task' + taskCount)
     .attr('x1', center)
     .attr('y1', task.y)
     .attr('x2', center)
@@ -389,6 +390,8 @@ const _drawTextCandidateFunc = (function () {
 })();
 
 const initGraphics = function (graphics, id) {
+  diagramId = id;
+  taskCount = -1;
   graphics
     .append('defs')
     .append('marker')
