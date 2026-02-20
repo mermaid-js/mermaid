@@ -133,7 +133,10 @@ radar-beta
     Rel(user, system, "Uses")`,
 };
 
-async function renderTwoAndCheckIds(code: string): Promise<void> {
+async function renderTwoAndCheckIds(
+  code: string,
+  ids: [string, string] = ['mermaid-0', 'mermaid-1']
+): Promise<Element> {
   const oldWindow = global.window;
   const oldDocument = global.document;
 
@@ -155,18 +158,15 @@ async function renderTwoAndCheckIds(code: string): Promise<void> {
 
     const container = dom.window.document.getElementById('container')!;
 
-    const { svg: svg1 } = await mermaidAPI.render('mermaid-0', code);
-    const { svg: svg2 } = await mermaidAPI.render('mermaid-1', code);
-
-    const div1 = dom.window.document.createElement('div');
-    div1.innerHTML = svg1;
-    container.appendChild(div1);
-
-    const div2 = dom.window.document.createElement('div');
-    div2.innerHTML = svg2;
-    container.appendChild(div2);
+    for (const id of ids) {
+      const { svg } = await mermaidAPI.render(id, code);
+      const div = dom.window.document.createElement('div');
+      div.innerHTML = svg;
+      container.appendChild(div);
+    }
 
     assertNoDuplicateIds(container);
+    return container;
   } finally {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (global as any).window = oldWindow;
@@ -225,6 +225,16 @@ describe('Multi-diagram ID uniqueness', () => {
     'flowchart-elk', // ELK layout variant, same renderer as flowchart-v2
     'mindmap', // uses unified pipeline (IDs are prefixed), but cytoscape crashes in JSDOM
   ]);
+
+  it('"journey" — task line IDs are scoped with the diagram ID', async () => {
+    // Before the fix, task lines had bare IDs like "task0" with no diagram prefix.
+    const container = await renderTwoAndCheckIds(DIAGRAMS.journey, ['journey-a', 'journey-b']);
+    const taskIds = [...container.querySelectorAll('.task-line')].map((el) =>
+      el.getAttribute('id')
+    );
+    expect(taskIds).toContain('journey-a-task0');
+    expect(taskIds).toContain('journey-b-task0');
+  });
 
   it('every registered diagram type has a uniqueness test or is explicitly excluded', () => {
     const testedTypes = new Set([...Object.keys(DIAGRAMS), ...Object.keys(KNOWN_FAILING)]);
