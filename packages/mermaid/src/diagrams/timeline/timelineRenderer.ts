@@ -25,7 +25,11 @@ interface TimelineTask {
   score: number;
   events: string[];
 }
+
+let currentDiagramId = '';
+
 export const draw = function (text: string, id: string, version: string, diagObj: Diagram) {
+  currentDiagramId = id;
   //1. Fetch the configuration
   const conf = getConfig();
   const LEFT_MARGIN = conf.timeline?.leftMargin ?? 50;
@@ -293,7 +297,7 @@ export const drawTasks = function (
         .attr('y2', masterY + maxTaskHeight + 100 + maxEventLineLength + 100) // End at consistent depth with ample padding for visible dashed lines and arrowheads
         .attr('stroke-width', 2)
         .attr('stroke', 'black')
-        .attr('marker-end', `url(#${id}-arrowhead)`)
+        .attr('marker-end', `url(#${currentDiagramId}-arrowhead)`)
         .attr('stroke-dasharray', '5,5');
     }
 

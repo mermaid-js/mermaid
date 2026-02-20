@@ -99,6 +99,33 @@ radar-beta
     "Leaf 1.2": 8
 "Section 2"
     "Leaf 2.1": 20`,
+
+  sequence: `sequenceDiagram
+    Alice->>Bob: Hello
+    Bob-->>Alice: Hi
+    Alice-xBob: Bye`,
+
+  journey: `journey
+    title My working day
+    section Go to work
+      Make tea: 5: Me
+      Go upstairs: 3: Me`,
+
+  timeline: `timeline
+    title History
+    2020 : COVID-19 Pandemic
+    2021 : Vaccines`,
+
+  gantt: `gantt
+    dateFormat YYYY-MM-DD
+    section Section
+    Task A :a1, 2024-01-01, 30d
+    Task B :a2, after a1, 20d`,
+
+  c4: `C4Context
+    Person(user, "User")
+    System(system, "System")
+    Rel(user, system, "Uses")`,
 };
 
 async function renderTwoAndCheckIds(code: string): Promise<void> {
