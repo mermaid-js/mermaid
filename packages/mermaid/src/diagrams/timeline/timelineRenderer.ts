@@ -25,7 +25,11 @@ interface TimelineTask {
   score: number;
   events: string[];
 }
+
+let currentDiagramId = '';
+
 export const draw = function (text: string, id: string, version: string, diagObj: Diagram) {
+  currentDiagramId = id;
   //1. Fetch the configuration
   const conf = getConfig();
   const LEFT_MARGIN = conf.timeline?.leftMargin ?? 50;
@@ -55,7 +59,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
   log.debug('task', tasks);
 
   //5. Initialize the diagram
-  svgDraw.initGraphics(svg);
+  svgDraw.initGraphics(svg, id);
 
   // fetch Sections
   // @ts-expect-error - db not typed yet
@@ -223,7 +227,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
     .attr('y2', depthY)
     .attr('stroke-width', 4)
     .attr('stroke', 'black')
-    .attr('marker-end', 'url(#arrowhead)');
+    .attr('marker-end', `url(#${id}-arrowhead)`);
 
   // Setup the view box and size of the svg element
   setupGraphViewbox(
@@ -293,7 +297,7 @@ export const drawTasks = function (
         .attr('y2', masterY + maxTaskHeight + 100 + maxEventLineLength + 100) // End at consistent depth with ample padding for visible dashed lines and arrowheads
         .attr('stroke-width', 2)
         .attr('stroke', 'black')
-        .attr('marker-end', 'url(#arrowhead)')
+        .attr('marker-end', `url(#${currentDiagramId}-arrowhead)`)
         .attr('stroke-dasharray', '5,5');
     }
 

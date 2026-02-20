@@ -36,7 +36,7 @@ export async function defaultMindmapNode<T extends SVGGraphicsElement>(
 
   const bg = shapeSvg
     .append('path')
-    .attr('id', 'node-' + node.id)
+    .attr('id', node.domId || node.id)
     .attr('class', 'node-bkg node-' + node.type)
     .attr('style', nodeStyles)
     .attr('d', rectPath);

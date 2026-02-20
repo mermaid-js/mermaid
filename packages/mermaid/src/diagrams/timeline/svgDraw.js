@@ -1,5 +1,7 @@
 import { arc as d3arc, select } from 'd3';
 const MAX_SECTIONS = 12;
+let diagramId = '';
+let nodeCount = 0;
 
 export const drawRect = function (elem, rectData) {
   const rectElem = elem.append('rect');
@@ -433,11 +435,13 @@ const _drawTextCandidateFunc = (function () {
   };
 })();
 
-const initGraphics = function (graphics) {
+const initGraphics = function (graphics, id) {
+  diagramId = id;
+  nodeCount = 0;
   graphics
     .append('defs')
     .append('marker')
-    .attr('id', 'arrowhead')
+    .attr('id', id + '-arrowhead')
     .attr('refX', 5)
     .attr('refY', 2)
     .attr('markerWidth', 6)
@@ -548,7 +552,7 @@ const defaultBkg = function (elem, node, section) {
   const rd = 5;
   elem
     .append('path')
-    .attr('id', 'node-' + node.id)
+    .attr('id', diagramId + '-node-' + nodeCount++)
     .attr('class', 'node-bkg node-' + node.type)
     .attr(
       'd',
