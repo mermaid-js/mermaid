@@ -50,15 +50,15 @@ const genSections: DiagramStylesProvider = (options) => {
     .disabled text {
       fill: #efefef;
     }
-    [data-look="neo"].section-${i - 1} rect, .section-${i - 1} path, .section-${i - 1} circle, .section-${i - 1} polygon, .section-${i - 1} path {
+    [data-look="neo"].mindmap-node.section-${i - 1} rect, [data-look="neo"].mindmap-node.section-${i - 1} path, [data-look="neo"].mindmap-node.section-${i - 1} circle, [data-look="neo"].mindmap-node.section-${i - 1} polygon {
       fill: ${theme === 'redux' || theme === 'redux-dark' || theme === 'neutral' ? options.mainBkg : options['cScale' + i]};
       stroke: ${theme === 'redux' || theme === 'redux-dark' ? options.nodeBorder : options['cScale' + i]};
-      stroke-width: ${options.strokeWidth ?? 1}px;
+      stroke-width: ${options.strokeWidth ?? 2}px;
     }
     [data-look="neo"].section-edge-${i - 1}{
       stroke: ${theme?.includes('redux') || theme === 'neo-dark' ? options.nodeBorder : options['cScale' + i]};
     }
-    [data-look="neo"].section-${i - 1} text {
+    [data-look="neo"].mindmap-node.section-${i - 1} text {
      fill: ${theme === 'redux' || theme === 'redux-dark' ? options.nodeBorder : options['cScaleLabel' + (theme === 'neutral' ? 1 : i)]};
     }
     `;
@@ -106,10 +106,10 @@ const getStyles: DiagramStylesProvider = (options) => {
   [data-look="neo"].mindmap-node  {
     filter: ${options.dropShadow ?? 'none'};
   }
-  [data-look="neo"].section-root rect, .section-root path, .section-root circle, .section-root polygon  {
+  [data-look="neo"].mindmap-node.section-root rect, [data-look="neo"].mindmap-node.section-root path, [data-look="neo"].mindmap-node.section-root circle, [data-look="neo"].mindmap-node.section-root polygon  {
     fill: ${theme?.includes('redux') ? options.mainBkg : options.git0};
   }
-  [data-look="neo"].section-root .text-inner-tspan {
+  [data-look="neo"].mindmap-node.section-root .text-inner-tspan {
     fill:  ${theme?.includes('redux') ? options.nodeBorder : options['cScaleLabel' + (theme === 'neutral' ? 1 : 0)]};
   }
 `;
