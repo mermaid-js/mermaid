@@ -226,6 +226,66 @@ describe('Multi-diagram ID uniqueness', () => {
     'mindmap', // uses unified pipeline (IDs are prefixed), but cytoscape crashes in JSDOM
   ]);
 
+  it('"journey" — task line IDs are scoped with the diagram ID', async () => {
+    const oldWindow = global.window;
+    const oldDocument = global.document;
+
+    try {
+      const dom = new JSDOM(`<html lang="en"><body><div id="container"></div></body></html>`, {
+        resources: 'usable',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        beforeParse(_window: any) {
+          _window.Element.prototype.getBBox = () => ({ x: 0, y: 0, width: 100, height: 100 });
+          _window.Element.prototype.getComputedTextLength = () => 50;
+        },
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (global as any).window = dom.window;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (global as any).document = dom.window.document;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (global as any).MutationObserver = undefined;
+
+      const container = dom.window.document.getElementById('container')!;
+      const journeyCode = DIAGRAMS.journey;
+
+      const { svg: svg1 } = await mermaidAPI.render('journey-a', journeyCode);
+      const { svg: svg2 } = await mermaidAPI.render('journey-b', journeyCode);
+
+      const div1 = dom.window.document.createElement('div');
+      div1.innerHTML = svg1;
+      container.appendChild(div1);
+
+      const div2 = dom.window.document.createElement('div');
+      div2.innerHTML = svg2;
+      container.appendChild(div2);
+
+      // Task line elements must contain their diagram's ID prefix.
+      // Before the fix, these were bare "task0", "task1" with no prefix.
+      const taskLines = container.querySelectorAll('.task-line');
+      expect(taskLines.length).toBeGreaterThanOrEqual(4); // 2 tasks × 2 diagrams
+
+      const ids = [...taskLines].map((el) => el.getAttribute('id')!);
+      const fromA = ids.filter((id) => id.startsWith('journey-a-'));
+      const fromB = ids.filter((id) => id.startsWith('journey-b-'));
+
+      expect(fromA.length).toBeGreaterThanOrEqual(2);
+      expect(fromB.length).toBeGreaterThanOrEqual(2);
+
+      // Both diagrams reset their counter, so both have -task0 and -task1.
+      // Without the prefix this would be a collision.
+      expect(fromA).toContain('journey-a-task0');
+      expect(fromB).toContain('journey-b-task0');
+
+      assertNoDuplicateIds(container);
+    } finally {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (global as any).window = oldWindow;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (global as any).document = oldDocument;
+    }
+  });
+
   it('every registered diagram type has a uniqueness test or is explicitly excluded', () => {
     const testedTypes = new Set([...Object.keys(DIAGRAMS), ...Object.keys(KNOWN_FAILING)]);
     const missing = Object.keys(detectors).filter(
