@@ -301,6 +301,7 @@ export class MindmapDB {
     if (!node.children) {
       return;
     }
+    const conf = getConfig();
     for (const child of node.children) {
       // Build CSS classes for the edge
       let edgeClasses = 'edge';
@@ -321,7 +322,7 @@ export class MindmapDB {
         type: 'normal',
         curve: 'basis',
         thickness: 'normal',
-        look: 'default',
+        look: conf.look,
         classes: edgeClasses,
         // Store mindmap-specific data
         depth: node.level,

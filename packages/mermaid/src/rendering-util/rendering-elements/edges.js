@@ -2,7 +2,7 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { getEffectiveHtmlLabels } from '../../config.js';
 import { log } from '../../logger.js';
 import { createText } from '../createText.js';
-import utils from '../../utils.js';
+import utils, { handleUndefinedAttr } from '../../utils.js';
 import {
   getLineFunctionsWithOffset,
   markerOffsets,
@@ -733,7 +733,8 @@ export const insertEdge = function (
   svgPath.attr('data-et', 'edge');
   svgPath.attr('data-id', edge.id);
   svgPath.attr('data-points', pointsStr);
-
+  // Add data attributes for neo look support
+  svgPath.attr('data-look', handleUndefinedAttr(edge.look));
   // DEBUG code, adds a red circle at each edge coordinate
   // cornerPoints.forEach((point) => {
   //   elem
