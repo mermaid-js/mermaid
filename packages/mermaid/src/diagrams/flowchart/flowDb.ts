@@ -107,7 +107,7 @@ export class FlowDB implements DiagramDB {
         return this.diagramId ? `${this.diagramId}-${vertex.domId}` : vertex.domId;
       }
     }
-    return id;
+    return this.diagramId ? `${this.diagramId}-${id}` : id;
   }
 
   /**

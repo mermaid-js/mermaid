@@ -91,6 +91,39 @@ describe('Unique DOM element IDs', () => {
     });
   });
 
+  describe('FlowDB.lookUpDomId fallback prefixing', () => {
+    it('prefixes the fallback ID for unknown vertices when diagramId is set', () => {
+      const db = new FlowDB();
+      addFlowVertex(db, 'A');
+      db.setDiagramId('mermaid-0');
+
+      // 'nonexistent' is not in the vertex map, so lookUpDomId returns the fallback
+      const result = db.lookUpDomId('nonexistent');
+      expect(result).toBe('mermaid-0-nonexistent');
+    });
+
+    it('returns bare ID for unknown vertices when diagramId is not set', () => {
+      const db = new FlowDB();
+      addFlowVertex(db, 'A');
+
+      const result = db.lookUpDomId('nonexistent');
+      expect(result).toBe('nonexistent');
+    });
+
+    it('two diagrams with subgraph-like IDs not in vertex map produce unique fallbacks', () => {
+      const db1 = new FlowDB();
+      const db2 = new FlowDB();
+
+      db1.setDiagramId('mermaid-0');
+      db2.setDiagramId('mermaid-1');
+
+      // These simulate looking up subgraph/cluster IDs that aren't in the vertex map
+      expect(db1.lookUpDomId('subgraph1')).toBe('mermaid-0-subgraph1');
+      expect(db2.lookUpDomId('subgraph1')).toBe('mermaid-1-subgraph1');
+      expect(db1.lookUpDomId('subgraph1')).not.toBe(db2.lookUpDomId('subgraph1'));
+    });
+  });
+
   describe('Full collision simulation', () => {
     it('two flowcharts with identical nodes A->B->C produce zero duplicate IDs', () => {
       const db1 = new FlowDB();

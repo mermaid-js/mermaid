@@ -160,7 +160,7 @@ export const draw = function (text, id, version, diagObj) {
   drawActorLegend(diagram);
   leftMargin = conf.leftMargin + maxWidth;
   bounds.insert(0, 0, leftMargin, Object.keys(actors).length * 50);
-  drawTasks(diagram, tasks, 0);
+  drawTasks(diagram, tasks, 0, id);
 
   const box = bounds.getBounds();
   if (title) {
@@ -281,7 +281,7 @@ export const bounds = {
 const fills = conf.sectionFills;
 const textColours = conf.sectionColours;
 
-export const drawTasks = function (diagram, tasks, verticalPos) {
+export const drawTasks = function (diagram, tasks, verticalPos, diagramId) {
   const conf = getConfig().journey;
   let lastSection = '';
   const sectionVHeight = conf.height * 2 + conf.diagramMarginY;
@@ -345,7 +345,7 @@ export const drawTasks = function (diagram, tasks, verticalPos) {
     task.actors = taskActors;
 
     // Draw the box with the attached line
-    svgDraw.drawTask(diagram, task, conf);
+    svgDraw.drawTask(diagram, task, conf, diagramId);
     bounds.insert(task.x, task.y, task.x + task.width + conf.taskMargin, 300 + 5 * 30); // stopY is the length of the descenders.
   }
 };

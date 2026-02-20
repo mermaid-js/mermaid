@@ -189,15 +189,15 @@ export const drawSection = function (elem, section, conf) {
 };
 
 let taskCount = -1;
-let diagramId = '';
 /**
  * Draws an actor in the diagram with the attached line
  *
  * @param {any} elem The HTML element
  * @param {any} task The task to render
  * @param {any} conf The global configuration
+ * @param {string} diagramId The diagram's SVG element ID for scoping
  */
-export const drawTask = function (elem, task, conf) {
+export const drawTask = function (elem, task, conf, diagramId) {
   const center = task.x + conf.width / 2;
   const g = elem.append('g');
   taskCount++;
@@ -390,7 +390,6 @@ const _drawTextCandidateFunc = (function () {
 })();
 
 const initGraphics = function (graphics, id) {
-  diagramId = id;
   taskCount = -1;
   graphics
     .append('defs')
