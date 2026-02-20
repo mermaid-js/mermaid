@@ -146,23 +146,22 @@ const getStyles = (
     stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
     filter: ${options.dropShadow ?? 'none'};
   }
-  ${type === 'mindmap' ? genGradient(options.useGradient, options.THEME_COLOR_LIMIT, svgId, options.mainBkg) : ''}
+  ${type === 'mindmap' && options.useGradient ? genGradient(options.THEME_COLOR_LIMIT, svgId, options.mainBkg) : ''}
 
   ${userStyles}
 `;
 };
 
 const genGradient = (
-  useGradient: boolean | undefined,
   THEME_COLOR_LIMIT: number | undefined,
   svgId: string,
   mainBkg: string | undefined
 ) => {
   let sections = '';
-  if (useGradient && THEME_COLOR_LIMIT && mainBkg) {
+  if (THEME_COLOR_LIMIT && mainBkg) {
     for (let i = 0; i < THEME_COLOR_LIMIT; i++) {
       sections += `
-      [data-look="neo"].section-${i - 1} rect, .section-${i - 1} path, .section-${i - 1} circle, .section-${i - 1} polygon, .section-${i - 1} path {
+      [data-look="neo"].mindmap-node.section-${i - 1} rect, [data-look="neo"].mindmap-node.section-${i - 1} path, [data-look="neo"].mindmap-node.section-${i - 1} circle, [data-look="neo"].mindmap-node.section-${i - 1} polygon {
         stroke: ${'url(' + svgId + '-gradient)'};
         fill: ${mainBkg}
         }
