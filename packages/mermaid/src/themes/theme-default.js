@@ -129,6 +129,12 @@ class Theme {
     this.labelColor = 'black';
     this.errorBkgColor = '#552222';
     this.errorTextColor = '#552222';
+
+    // Neo-specific
+    this.useGradient = false;
+    this.gradientStart = this.primaryBorderColor;
+    this.gradientStop = this.secondaryBorderColor;
+    this.dropShadow = 'drop-shadow(1px 2px 2px rgba(185, 185, 185, 1))';
     this.updateColors();
   }
   updateColors() {
