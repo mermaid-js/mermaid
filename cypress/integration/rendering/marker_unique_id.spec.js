@@ -1,4 +1,4 @@
-import { urlSnapshotTest } from '../../helpers/util.ts';
+import { urlSnapshotTest, assertNoDuplicateIds } from '../../helpers/util.ts';
 
 describe('Marker Unique IDs Per Diagram', () => {
   it('should render a blue arrow tip in second digram', () => {
@@ -12,19 +12,6 @@ describe('Marker Unique IDs Per Diagram', () => {
     cy.visit('/marker_unique_id.html');
     cy.window().should('have.property', 'rendered', true);
     cy.get('svg').should('have.length.at.least', 4);
-
-    cy.document().then((doc) => {
-      const allElements = doc.querySelectorAll('[id]');
-      const idCounts = {};
-      for (const el of allElements) {
-        const id = el.getAttribute('id');
-        idCounts[id] = (idCounts[id] || 0) + 1;
-      }
-      const duplicates = Object.entries(idCounts).filter(([, count]) => count > 1);
-      expect(
-        duplicates,
-        `Duplicate IDs found: ${duplicates.map(([id, n]) => `${id} (${n}x)`).join(', ')}`
-      ).to.have.length(0);
-    });
+    assertNoDuplicateIds();
   });
 });
