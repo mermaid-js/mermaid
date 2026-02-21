@@ -34,9 +34,15 @@ export async function defaultMindmapNode<T extends SVGGraphicsElement>(
     Z
   `;
 
+  if (!node.domId) {
+    throw new Error(
+      `defaultMindmapNode: node "${node.id}" is missing a domId — was render.ts domId prefixing skipped?`
+    );
+  }
+
   const bg = shapeSvg
     .append('path')
-    .attr('id', node.domId || node.id)
+    .attr('id', node.domId)
     .attr('class', 'node-bkg node-' + node.type)
     .attr('style', nodeStyles)
     .attr('d', rectPath);

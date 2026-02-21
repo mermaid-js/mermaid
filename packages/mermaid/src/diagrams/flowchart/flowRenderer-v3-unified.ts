@@ -67,7 +67,12 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   // If node has a link, wrap it in an anchor SVG object.
   for (const vertex of data4Layout.nodes) {
-    const node = select(`#${id} [id="${vertex.domId || vertex.id}"]`);
+    if (!vertex.domId) {
+      throw new Error(
+        `flowRenderer: vertex "${vertex.id}" is missing a domId — was render.ts domId prefixing skipped?`
+      );
+    }
+    const node = select(`#${id} [id="${vertex.domId}"]`);
     if (!node || !vertex.link) {
       continue;
     }
