@@ -24,15 +24,16 @@ vi.mock('../../utils.js', () => ({
 }));
 
 describe('flowRenderer-v3-unified', () => {
-  it('throws when a vertex is missing domId after render', async () => {
+  it('calls setDiagramId with the svg element id', async () => {
     const { draw } = await import('./flowRenderer-v3-unified.js');
 
+    const setDiagramId = vi.fn();
     const diag = {
       type: 'flowchart-v2',
       db: {
-        setDiagramId: vi.fn(),
+        setDiagramId,
         getData: vi.fn().mockReturnValue({
-          nodes: [{ id: 'A', domId: '' }],
+          nodes: [],
           edges: [],
           config: { flowchart: {} },
         }),
@@ -41,8 +42,7 @@ describe('flowRenderer-v3-unified', () => {
       },
     };
 
-    await expect(draw('graph TB; A', 'test-id', '1.0.0', diag)).rejects.toThrow(
-      'flowRenderer: vertex "A" is missing a domId'
-    );
+    await draw('graph TB; A', 'test-id', '1.0.0', diag);
+    expect(setDiagramId).toHaveBeenCalledWith('test-id');
   });
 });
