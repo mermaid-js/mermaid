@@ -1,0 +1,114 @@
+name: Phone Home Improvements
+
+# When a PR is merged that contains a "Lessons Learned" section,
+# this workflow opens an issue on the template repository so the
+# improvement can be adopted across all downstream projects.
+
+on:
+  pull_request:
+    types: [closed]
+
+env:
+  TEMPLATE_REPO: "alexander-turner/claude-automation-template"
+
+permissions:
+  contents: read
+
+jobs:
+  phone-home:
+    # Only run for merged PRs (not closed-without-merge)
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract and submit improvements
+        env:
+          GH_TOKEN: ${{ secrets.TEMPLATE_SYNC_TOKEN || secrets.GITHUB_TOKEN }}
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ env.GH_TOKEN }}
+          script: |
+            const prBody = context.payload.pull_request.body || '';
+            const prTitle = context.payload.pull_request.title;
+            const prUrl = context.payload.pull_request.html_url;
+            const repo = `${context.repo.owner}/${context.repo.repo}`;
+
+            // Extract "Lessons Learned" section from PR body
+            const lessonsMatch = prBody.match(/## Lessons Learned\s*\n([\s\S]*?)(?=\n## |\n---|\s*$)/i);
+            if (!lessonsMatch) {
+              console.log('No "Lessons Learned" section found in PR body, skipping phone-home');
+              return;
+            }
+
+            let lessons = lessonsMatch[1].trim();
+            if (!lessons || lessons.length < 10) {
+              console.log('Lessons section is empty or too short, skipping');
+              return;
+            }
+
+            // Filter out template placeholders and session URLs
+            const filtered = lessons
+              .split('\n')
+              .filter(line => !line.trim().match(/^<.*>$/))
+              .filter(line => !line.trim().match(/^https:\/\/claude\.ai\/code\/session_/))
+              .join('\n')
+              .trim();
+            if (!filtered || filtered.length < 10) {
+              console.log('Lessons section only contains template placeholders, skipping');
+              return;
+            }
+            lessons = filtered;
+
+            // Check if this is about the template itself (skip to avoid self-referential issues)
+            const templateRepo = process.env.TEMPLATE_REPO;
+            if (repo === templateRepo) {
+              console.log('This IS the template repo, skipping phone-home');
+              return;
+            }
+
+            // Build the issue body
+            const issueBody = [
+              `## Improvement Suggestion from \`${repo}\``,
+              '',
+              `**Source PR:** ${prUrl}`,
+              `**PR Title:** ${prTitle}`,
+              '',
+              '## Lessons Learned',
+              '',
+              lessons,
+              '',
+              '---',
+              `*Automatically submitted by the phone-home workflow from \`${repo}\`.*`,
+            ].join('\n');
+
+            // Open an issue on the template repo (without labels first, then add them separately)
+            const [templateOwner, templateRepoName] = templateRepo.split('/');
+            let issue;
+            try {
+              issue = await github.rest.issues.create({
+                owner: templateOwner,
+                repo: templateRepoName,
+                title: `[phone-home] ${prTitle}`,
+                body: issueBody,
+              });
+              console.log(`Created issue on template repo: ${issue.data.html_url}`);
+            } catch (error) {
+              // If we don't have permission to create issues on the template repo,
+              // log it but don't fail the workflow
+              console.log(`Could not create issue on ${templateRepo}: ${error.message}`);
+              console.log('This is expected if TEMPLATE_SYNC_TOKEN is not configured.');
+              console.log('To enable phone-home, add a TEMPLATE_SYNC_TOKEN secret with');
+              console.log('permission to create issues on the template repository.');
+              return;
+            }
+
+            // Try to add labels separately — if they don't exist, the issue is still created
+            try {
+              await github.rest.issues.addLabels({
+                owner: templateOwner,
+                repo: templateRepoName,
+                issue_number: issue.data.number,
+                labels: ['phone-home', 'triage'],
+              });
+            } catch (labelError) {
+              console.log(`Could not add labels (they may not exist yet): ${labelError.message}`);
+            }

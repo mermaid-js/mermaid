@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/session-setup.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash(git push*|gh pr create*)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/pre-push-check.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash(git push*|gh pr create*)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=/tmp/claude-ci-watch.log; sleep 10 && timeout 300 gh pr checks --watch >\"$f\" 2>&1; rc=$?; if [ $rc -eq 0 ]; then echo 'CI passed'; else echo \"CI failed (exit $rc) — see $f\"; tail -20 \"$f\"; fi",
+            "timeout": 360
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/verify_ci.py",
+            "timeout": 300
+          }
+        ]
+      }
+    ]
+  }
+}

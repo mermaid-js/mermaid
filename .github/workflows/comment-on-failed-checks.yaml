@@ -1,0 +1,42 @@
+name: Comment on Failed Checks
+
+# Tracks CI failures on claude/ branch PRs and labels them when automated
+# fixes are exhausted. This is a notification system only — it does NOT ping
+# @claude. The Stop hook in the interactive session handles fix retries.
+
+on:
+  workflow_run:
+    workflows:
+      - "Unit Tests"
+      - "Lint"
+      - "E2E"
+    types:
+      - completed
+
+permissions:
+  pull-requests: write
+  issues: write
+  actions: read
+
+concurrency:
+  group: comment-on-failure-${{ github.event.workflow_run.pull_requests[0].number || github.run_id }}
+
+jobs:
+  comment-on-failure:
+    if: >
+      github.event.workflow_run.conclusion == 'failure' &&
+      github.event.workflow_run.pull_requests[0] != null &&
+      startsWith(github.event.workflow_run.head_branch, 'claude/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Track CI failure
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.workflow_run.pull_requests[0].number }}
+          WORKFLOW_NAME: ${{ github.event.workflow_run.name }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: python3 .github/scripts/track_ci_failures.py
