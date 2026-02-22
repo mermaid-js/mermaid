@@ -113,61 +113,61 @@ g.classGroup line {
   stroke-dasharray: 1 2;
 }
 
-#compositionStart, .composition {
+[id$="-compositionStart"], .composition {
   fill: ${options.lineColor} !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
-#compositionEnd, .composition {
+[id$="-compositionEnd"], .composition {
   fill: ${options.lineColor} !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
-#dependencyStart, .dependency {
+[id$="-dependencyStart"], .dependency {
   fill: ${options.lineColor} !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
-#dependencyStart, .dependency {
+[id$="-dependencyEnd"], .dependency {
   fill: ${options.lineColor} !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
-#extensionStart, .extension {
+[id$="-extensionStart"], .extension {
   fill: transparent !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
-#extensionEnd, .extension {
+[id$="-extensionEnd"], .extension {
   fill: transparent !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
-#aggregationStart, .aggregation {
+[id$="-aggregationStart"], .aggregation {
   fill: transparent !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
-#aggregationEnd, .aggregation {
+[id$="-aggregationEnd"], .aggregation {
   fill: transparent !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
-#lollipopStart, .lollipop {
+[id$="-lollipopStart"], .lollipop {
   fill: ${options.mainBkg} !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
-#lollipopEnd, .lollipop {
+[id$="-lollipopEnd"], .lollipop {
   fill: ${options.mainBkg} !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
