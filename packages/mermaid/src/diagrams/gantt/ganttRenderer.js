@@ -85,6 +85,8 @@ const MAX_TICK_COUNT = 10000;
 export const draw = function (text, id, version, diagObj) {
   const conf = getConfig().gantt;
 
+  diagObj.db.setDiagramId(id);
+
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;

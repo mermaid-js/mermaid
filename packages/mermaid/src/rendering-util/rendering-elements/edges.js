@@ -511,9 +511,14 @@ export const insertEdge = function (
   diagramType,
   startNode,
   endNode,
-  id,
+  diagramId,
   skipIntersect = false
 ) {
+  if (!diagramId) {
+    throw new Error(
+      `insertEdge: missing diagramId for edge "${edge.id}" — edge IDs require a diagram prefix for uniqueness`
+    );
+  }
   const { handDrawnSeed } = getConfig();
   let points = edge.points;
   let pointsHasChanged = false;
@@ -670,7 +675,7 @@ export const insertEdge = function (
 
     svgPath = select(svgPathNode)
       .select('path')
-      .attr('id', id ? `${id}-${edge.id}` : edge.id)
+      .attr('id', `${diagramId}-${edge.id}`)
       .attr(
         'class',
         ' ' +
@@ -693,7 +698,7 @@ export const insertEdge = function (
     svgPath = elem
       .append('path')
       .attr('d', linePath)
-      .attr('id', id ? `${id}-${edge.id}` : edge.id)
+      .attr('id', `${diagramId}-${edge.id}`)
       .attr(
         'class',
         ' ' +
@@ -769,7 +774,7 @@ export const insertEdge = function (
   log.info('arrowTypeStart', edge.arrowTypeStart);
   log.info('arrowTypeEnd', edge.arrowTypeEnd);
 
-  addEdgeMarkers(svgPath, edge, url, id, diagramType, strokeColor);
+  addEdgeMarkers(svgPath, edge, url, diagramId, diagramType, strokeColor);
   const midIndex = Math.floor(points.length / 2);
   const point = points[midIndex];
   if (!utils.isLabelCoordinateInPath(point, svgPath.attr('d'))) {
