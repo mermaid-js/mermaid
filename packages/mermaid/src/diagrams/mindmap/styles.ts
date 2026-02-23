@@ -29,6 +29,9 @@ const genSections: DiagramStylesProvider = (options) => {
     .section-${i - 1} text {
      fill: ${options['cScaleLabel' + i]};
     }
+     .section-${i - 1} span {
+     color: ${options['cScaleLabel' + i]};
+    }
     .node-icon-${i - 1} {
       font-size: 40px;
       color: ${options['cScaleLabel' + i]};
