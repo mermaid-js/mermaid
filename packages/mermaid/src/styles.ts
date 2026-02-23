@@ -1,6 +1,8 @@
 import type { FlowChartStyleOptions } from './diagrams/flowchart/styles.js';
 import { log } from './logger.js';
 import type { DiagramStylesProvider } from './diagram-api/types.js';
+import * as configApi from './config.js';
+import type { MermaidConfig } from './config.type.js';
 
 const themes: Record<string, DiagramStylesProvider> = {};
 
@@ -20,9 +22,13 @@ const getStyles = (
     compositeTitleBackground?: string;
     THEME_COLOR_LIMIT?: number;
     nodeBorder?: string;
+    mainBkg?: string;
+    strokeWidth?: number;
   } & FlowChartStyleOptions,
   svgId: string
 ) => {
+  const config = configApi.getConfig();
+  const { theme, look } = config;
   let diagramStyles = '';
   if (type in themes && themes[type]) {
     diagramStyles = themes[type](options);
@@ -146,8 +152,23 @@ const getStyles = (
     filter: ${options.dropShadow ?? 'none'};
   }
 
+  ${type === 'gitGraph' && theme?.includes('neo') && look === 'neo' ? genGitGraphGradient(config, svgId) : ''}
+
   ${userStyles}
 `;
+};
+
+const genGitGraphGradient = (config: MermaidConfig, svgId: string) => {
+  const { themeVariables: options } = config;
+  let sections = '';
+  if (options.useGradient) {
+    for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
+      sections += `
+      .label${i}  { fill: ${options.mainBkg}; stroke: ${'url(' + svgId + '-gradient)'}; stroke-width: ${options.strokeWidth};}
+             `;
+    }
+  }
+  return sections;
 };
 
 export const addStylesForDiagram = (type: string, diagramTheme?: DiagramStylesProvider): void => {
