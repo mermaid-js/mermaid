@@ -924,7 +924,7 @@ const drawBranches = (
         bkg.attr('transform', `translate(${-labelPaddingX / 2 - 3}, ${labelPaddingY + 10})`);
         label.attr(
           'transform',
-          'translate(' + (pos - bbox.width / 2 - 5) + ', ' + (maxPos + labelPaddingY + 2.5) + ')'
+          'translate(' + (pos - bbox.width / 2 - 5) + ', ' + (maxPos + labelPaddingY * 2 + 4) + ')'
         );
       }
     } else {
