@@ -889,7 +889,7 @@ const drawBranches = (
 
     bkg
       .attr('class', 'branchLabelBkg label' + adjustIndexForTheme)
-      .attr('style', `filter:${dropShadow}`)
+      .attr('style', look === 'neo' ? `filter:${dropShadow}` : '')
       .attr('rx', borderRadius)
       .attr('ry', borderRadius)
       .attr('x', -bbox.width - 4 - (gitGraphConfig.rotateCommitLabel === true ? 30 : 0))
