@@ -120,14 +120,14 @@ describe('XSS', () => {
   it('should sanitize colons properly', () => {
     cy.visit('/xss20.html');
     cy.wait(1000);
-    cy.get('a').click('');
+    cy.get('.nodeLabel a').click('');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
   it('should sanitize colons properly', () => {
     cy.visit('/xss21.html');
     cy.wait(1000);
-    cy.get('a').click('');
+    cy.get('.nodeLabel a').click('');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });

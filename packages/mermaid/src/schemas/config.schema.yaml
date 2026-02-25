@@ -35,6 +35,7 @@ required:
   - securityLevel
   - startOnLoad
   - arrowMarkerAbsolute
+  - accessibility
   - flowchart
   - sequence
   - gantt
@@ -273,6 +274,8 @@ properties:
       If set to `undefined` but deterministicIds is `true`, a simple number iterator is used.
       You can set this attribute to base the seed on a static string.
     type: string
+  accessibility:
+    $ref: '#/$defs/AccessibilityConfig'
   flowchart:
     $ref: '#/$defs/FlowchartDiagramConfig'
   sequence:
@@ -336,6 +339,34 @@ properties:
       This is useful when you want to control how to handle syntax errors in your application.
 
 $defs: # JSON Schema definition (maybe we should move these to a separate file)
+  AccessibilityConfig:
+    title: Accessibility Config
+    description: Defines how accessibility information should be included in diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      listInboundEdges:
+        description: |
+          When this flag is `true`, the accessibility tree for a node will
+          include a list of links that follow the node's inbound edges.
+        type: boolean
+        default: false
+      listOutboundEdges:
+        description: |
+          When this flag is `true`, the accessibility tree for a node will
+          include a list of links that follow the node's outbound edges.
+        type: boolean
+        default: true
+      inboundEdgesLabel:
+        type: string
+        default: 'Inbound edges'
+        description: |
+          Label for the inbound edges list
+      outboundEdgesLabel:
+        type: string
+        default: 'Outbound edges'
+        description: |
+          Label for the outbound edges list
   BaseDiagramConfig:
     # TODO: More config needs to be moved here
     title: Base Diagram Config

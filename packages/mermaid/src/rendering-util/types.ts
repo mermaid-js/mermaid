@@ -190,11 +190,21 @@ export type LayoutMethod =
   | 'osage'
   | 'grid';
 
+/** Provides enough information about an adjacent node to create an accessible link to it. */
+export interface AdjacentNode {
+  edgeLabel?: string;
+  nodeDomId: string;
+  nodeLabel: string;
+}
+
 export interface ShapeRenderOptions {
   config: MermaidConfig;
   /** Some shapes render differently if a diagram has a direction `LR` */
   dir?: Node['dir'];
   padding?: number;
+  /** Allows the node to include links to adjacent nodes, for accessibility. */
+  inboundEdges?: AdjacentNode[];
+  outboundEdges?: AdjacentNode[];
 }
 
 export type KanbanNode = Node & {
