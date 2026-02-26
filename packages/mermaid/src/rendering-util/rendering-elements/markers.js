@@ -402,7 +402,6 @@ const barbNeo = (elem, type, id) => {
     .attr('refY', 7)
     .attr('markerWidth', 20)
     .attr('markerHeight', 14)
-    .attr('markerUnits', 'strokeWidth')
     .attr('markerUnits', 'userSpaceOnUse')
     .attr('orient', 'auto')
     .append('path')
