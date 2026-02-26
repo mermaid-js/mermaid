@@ -40,6 +40,10 @@ const getStyles = (options) =>
 .nodeLabel, .edgeLabel {
   color: ${options.classText};
 }
+
+.noteLabel .nodeLabel, .noteLabel .edgeLabel {
+  color: ${options.noteTextColor};
+}
 .edgeLabel .label rect {
   fill: ${options.mainBkg};
 }
@@ -64,7 +68,7 @@ const getStyles = (options) =>
   .node path {
     fill: ${options.mainBkg};
     stroke: ${options.nodeBorder};
-    stroke-width: 1px;
+    stroke-width: ${options.strokeWidth};
   }
 
 
@@ -101,7 +105,7 @@ g.classGroup line {
 
 .relation {
   stroke: ${options.lineColor};
-  stroke-width: 1;
+  stroke-width: ${options.strokeWidth};
   fill: none;
 }
 
@@ -182,6 +186,19 @@ g.classGroup line {
   text-anchor: middle;
   font-size: 18px;
   fill: ${options.textColor};
+}
+
+.edgeLabel {
+  background-color: ${options.edgeLabelBackground};
+  p {
+    background-color: ${options.edgeLabelBackground};
+  }
+  rect {
+    opacity: 0.5;
+    background-color: ${options.edgeLabelBackground};
+    fill: ${options.edgeLabelBackground};
+  }
+  text-align: center;
 }
   ${getIconStyles()}
 `;
