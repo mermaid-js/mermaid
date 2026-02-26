@@ -50,7 +50,8 @@ export const getLabelStyles = (styleArray) => {
 };
 
 export const insertEdgeLabel = async (elem, edge) => {
-  let useHtmlLabels = getEffectiveHtmlLabels(getConfig());
+  const config = getConfig();
+  let useHtmlLabels = getEffectiveHtmlLabels(config);
   const { labelStyles } = styles2String(edge);
   edge.labelStyle = labelStyles;
 
@@ -61,15 +62,21 @@ export const insertEdgeLabel = async (elem, edge) => {
   const label = edgeLabel.insert('g').attr('class', 'label').attr('data-id', edge.id);
 
   const isMarkdown = edge.labelType === 'markdown';
-  const labelElement = await createText(elem, edge.label, {
-    style: getLabelStyles(edge.labelStyle),
-    useHtmlLabels,
-    addSvgBackground: true,
-    isNode: false,
-    markdown: isMarkdown,
-    // If using markdown, wrap using default width
-    width: isMarkdown ? undefined : Number.POSITIVE_INFINITY,
-  });
+  const markdownWidth = undefined; // Use default width for markdown labels
+  const labelElement = await createText(
+    elem,
+    edge.label,
+    {
+      style: getLabelStyles(edge.labelStyle),
+      useHtmlLabels,
+      addSvgBackground: true,
+      isNode: false,
+      markdown: isMarkdown,
+      // Plain text edge labels should auto-wrap, markdown edge labels respect markdownAutoWrap config
+      width: isMarkdown ? markdownWidth : undefined,
+    },
+    config
+  );
 
   label.node().appendChild(labelElement);
   log.info('abc82', edge, edge.labelType);
