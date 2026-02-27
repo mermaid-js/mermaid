@@ -5,7 +5,7 @@ import { execSync } from 'child_process';
 const buildType = (packageName: string) => {
   console.log(`Building types for ${packageName}`);
   try {
-    const out = execSync(`tsc -p ./packages/${packageName}/tsconfig.json --emitDeclarationOnly`);
+    const out = execSync(`tsc -p ./packages/${packageName}/tsconfig.json`);
     if (out.length > 0) {
       console.log(out.toString());
     }
