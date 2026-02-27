@@ -188,7 +188,7 @@ g.classGroup line {
   fill: ${options.textColor};
 }
 
-.edgeLabel {
+.edgeLabel[data-look="neo"] {
   background-color: ${options.edgeLabelBackground};
   p {
     background-color: ${options.edgeLabelBackground};

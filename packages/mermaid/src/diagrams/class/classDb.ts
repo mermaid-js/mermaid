@@ -699,7 +699,6 @@ export class ClassDB implements DiagramDB {
           style: ['fill: none'],
           pattern: 'dotted',
           look: config.look,
-          curve: 'rounded',
         };
         edges.push(edge);
       }
@@ -742,7 +741,6 @@ export class ClassDB implements DiagramDB {
         style: classRelation.style || '',
         pattern: classRelation.relation.lineType == 1 ? 'dashed' : 'solid',
         look: config.look,
-        curve: 'rounded',
       };
       edges.push(edge);
     }
