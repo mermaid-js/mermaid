@@ -87,7 +87,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
     plugins: [
       jisonPlugin(),
       jsonSchemaPlugin(), // handles `.schema.yaml` files
-      typescript({ compilerOptions: { declaration: false }, tsconfig: 'tsconfig.base.json' }),
+      typescript({ compilerOptions: { declaration: false } }),
       istanbul({
         exclude: ['node_modules', 'test/', '__mocks__', 'generated'],
         extension: ['.js', '.ts'],

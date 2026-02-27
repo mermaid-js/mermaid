@@ -19,5 +19,10 @@
     "./vite.config.ts",
     "./vitest.workspace.js",
     "eslint.config.js"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.json"
+    }
   ]
 }

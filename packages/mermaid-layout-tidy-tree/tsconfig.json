@@ -3,8 +3,14 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
+    "composite": true,
     "types": ["vitest/importMeta", "vitest/globals"]
   },
   "include": ["./src/**/*.ts", "./src/**/*.d.ts"],
-  "typeRoots": ["./src/types"]
+  "typeRoots": ["./src/types"],
+  "references": [
+    {
+      "path": "../mermaid"
+    }
+  ]
 }

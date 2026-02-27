@@ -1,0 +1,17 @@
+{
+  // No files, this just references the other tsconfig files in the packages,
+  // so we can use `tsc --build` to build all packages in the correct order.
+  "files": [],
+  "compilerOptions": {
+    "composite": true
+  },
+  "references": [
+    { "path": "./packages/mermaid" },
+    { "path": "./packages/mermaid-zenuml" },
+    { "path": "./packages/mermaid-layout-tidy-tree" },
+    { "path": "./packages/mermaid-layout-elk" },
+    { "path": "./packages/parser" },
+    { "path": "./packages/mermaid-example-diagram" },
+    { "path": "./packages/examples" }
+  ]
+}

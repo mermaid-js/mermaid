@@ -17,7 +17,7 @@
     }
   },
   "scripts": {
-    "clean": "rimraf dist src/language/generated",
+    "clean": "rimraf dist src/language/generated tsconfig.tsbuildinfo",
     "langium:generate": "langium generate",
     "langium:watch": "langium generate --watch"
   },

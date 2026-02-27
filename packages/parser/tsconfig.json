@@ -4,6 +4,7 @@
     "rootDir": ".",
     "outDir": "./dist",
     "allowJs": false,
+    "composite": true,
     "strictPropertyInitialization": false
   },
   "include": ["./src/**/*.ts", "./tests/**/*.ts"],
