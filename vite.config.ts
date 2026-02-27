@@ -10,7 +10,7 @@ export default defineConfig({
   plugins: [
     jison(),
     jsonSchemaPlugin(), // handles .schema.yaml JSON Schema files
-    typescript({ compilerOptions: { declaration: false } }),
+    typescript({ compilerOptions: { declaration: false }, tsconfig: 'tsconfig.base.json' }),
   ],
   test: {
     environment: 'jsdom',
