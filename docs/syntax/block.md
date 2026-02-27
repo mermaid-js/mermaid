@@ -748,6 +748,6 @@ Use classes to maintain consistent styling across similar elements. This not onl
 
 #### Comments and Documentation
 
-Use comments with `%%` within the Mermaid syntax to document the purpose of various parts of the diagram. This practice is invaluable for maintaining clarity, especially when working in teams or returning to a diagram after some time.
+Mermaid block diagrams support two types of comments. Single-line comments can be added with `%%`, which will comment out the rest of the line. For multi-line comments, use `%%*` to start the comment and `*%%` to end it. Comments are useful within the Mermaid syntax to document the purpose of various parts of the diagram. This practice is invaluable for maintaining clarity, especially when working in teams or returning to a diagram after some time.
 
 With these troubleshooting tips and best practices, you can effectively manage and resolve common issues in Mermaid block diagrams. The final section, 'Conclusion', will summarize the key points covered in this documentation and invite user feedback for continuous improvement.

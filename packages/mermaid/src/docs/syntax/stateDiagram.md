@@ -253,17 +253,21 @@ stateDiagram
 
 ## Comments
 
-Comments can be entered within a state diagram chart, which will be ignored by the parser. Comments need to be on their
-own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next
-newline will be treated as a comment, including any diagram syntax
+Comments can be entered within a state diagram chart, which will be ignored by the parser. Mermaid supports two types of comments:
+
+- **Single-line comments**: Comments need to be on their own line and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax.
+- **Block comments**: Multi-line comments can be created using `%%*` to start the comment and `*%%` to end it.
 
 ```mermaid
 stateDiagram-v2
+    %%* This is a block comment
+    that spans multiple lines
+    *%%
     [*] --> Still
     Still --> [*]
-%% this is a comment
+    %% this is a single-line comment
     Still --> Moving
-    Moving --> Still %% another comment
+    Moving --> Still
     Moving --> Crash
     Crash --> [*]
 ```
