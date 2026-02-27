@@ -1227,12 +1227,13 @@ class link myClass
         ].map(
           ({ markdownAutoWrap, htmlLabels }) => `---
 config: ${JSON.stringify({ markdownAutoWrap, htmlLabels })}
+title: Testing with ${JSON.stringify({ markdownAutoWrap, htmlLabels })}
 ---
 flowchart TD
-    A["\`This is a really **long** line of plain text that will auto-wrap and support\`"]
-    B["\`This is a really long line of markdown text that will autowrap, unless markdownAutoWrap:false is set.\`"]
-    A -- "Plain text **labels** in flowcharts will however not autowrap, unlike node labels. \\n But newline characters work." --> B
-    B -- "\`Markdown edge labels will auto-wrap, even if markdownAutoWrap: false is set\`" --> C
+    A["This is a really long line of plain text that will autowrap and support \\n newlines too."]    
+    B["\`This is a really long line of **markdown** text that will autowrap, unless markdownAutoWrap:false is set.\`"]
+    A -- "Plain text **labels** in flowcharts will autowrap,like node labels. \\n Newline characters work too." --> B
+    B -- "\`**Markdown** edge labels will autowrap, even if markdownAutoWrap: false is set\`" --> C
 `
         )
       );

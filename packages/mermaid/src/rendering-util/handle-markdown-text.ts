@@ -28,14 +28,14 @@ function preprocessMarkdown(markdown: string, { markdownAutoWrap }: MermaidConfi
 /**
  * @param nonMarkdownText - Non-markdown text to split into plain-text formatted lines.
  * This treats new lines, `\n`, and `<br/>` as line breaks, and splits on spaces for words.
- * HTML tags are preserved as separate words to maintain proper formatting.
+ * SVG tags are preserved as separate words to maintain proper formatting.
  */
 export function nonMarkdownToLines(nonMarkdownText: string): MarkdownLine[] {
   return nonMarkdownText.split(/\\n|\n|<br\s*\/?>/gi).map(
     (line) =>
       line
         .trim()
-        .match(/<[^>]+>|[^\s<>]+/g) // keeps HTML tags intact and preserves space between tags and text
+        .match(/<[^>]+>|[^\s<>]+/g) // keeps SVG tags intact and preserves space between tags and text
         ?.map((word) => ({ content: word, type: 'normal' })) ?? []
   );
 }
