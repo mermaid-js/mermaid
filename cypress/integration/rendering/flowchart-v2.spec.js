@@ -1212,7 +1212,7 @@ class link myClass
     );
   });
 
-  describe('Edge label auto-wrapping', () => {
+  describe('Edge label autowrapping', () => {
     it('should wrap edge labels', () => {
       imgSnapshotTest(
         [
@@ -1233,7 +1233,7 @@ flowchart TD
     A["This is a really long line of plain text that will autowrap and support \\n newlines too."]    
     B["\`This is a really long line of **markdown** text that will autowrap, unless markdownAutoWrap:false is set.\`"]
     A -- "Plain text **labels** in flowcharts will autowrap,like node labels. \\n Newline characters work too." --> B
-    B -- "\`**Markdown** edge labels will autowrap, even if markdownAutoWrap: false is set\`" --> C
+    B -- "\`**Markdown** edge labels will autowrap, unless markdownAutoWrap: false is set\`" --> C
 `
         )
       );
