@@ -138,7 +138,7 @@ looks.forEach((look) => {
         string[] tags
         varchar(255) description
         type~T~ genericType
-        decimal(10,2) price
+        float price
     }
 `;
         imgSnapshotTest(erCode, { look, theme });
