@@ -3,6 +3,7 @@ export type { BlockDiagramConfig as BlockConfig } from '../../config.type.js';
 export type BlockType =
   | 'na'
   | 'column-setting'
+  | 'scale-setting'
   | 'edge'
   | 'round'
   | 'block_arrow'
@@ -47,9 +48,17 @@ export interface Block {
     height: number;
     x: number;
     y: number;
+    // block's row column index in parent
+    irow: number;
+    icol: number;
+    // [rows, columns]
+    dimension: [number, number];
+    // relative heights of block rows
+    rowsHeightsRelative: number[];
   };
   node?: any;
   columns?: number; // | TBlockColumnsDefaultValue;
+  scale?: { rows: string; columns: string };
   classes?: string[];
   directions?: string[];
   css?: string;
@@ -66,3 +75,6 @@ export interface ClassDef {
 }
 
 export type Direction = 'up' | 'down' | 'left' | 'right' | 'x' | 'y';
+
+// cspell:ignore irow
+// cspell:ignore icol

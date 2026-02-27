@@ -9,7 +9,9 @@
 
   <body>
     <h1>Block diagram demos</h1>
-    <pre id="diagram" class="mermaid">
+    <ol>
+      <li></li>
+      <pre id="diagram" class="mermaid">
 block
 columns 1
   db(("DB"))
@@ -24,8 +26,10 @@ columns 1
   ID --> D
   C --> D
   style B fill:#f9F,stroke:#333,stroke-width:4px
-    </pre>
-    <pre id="diagram" class="mermaid">
+    </pre
+      >
+      <li></li>
+      <pre id="diagram" class="mermaid">
 block
     A1["square"]
     B1("rounded")
@@ -33,9 +37,10 @@ block
     A2>"rect_left_inv_arrow"]
     B2{"diamond"}
     C2{{"hexagon"}}
-    </pre>
-
-    <pre id="diagram" class="mermaid">
+    </pre
+      >
+      <li></li>
+      <pre id="diagram" class="mermaid">
 block
     A1(["stadium"])
     A2[["subroutine"]]
@@ -45,9 +50,10 @@ block
     B2[\"lean left"\]
     C2[/"trapezoid"\]
     D2[\"trapezoid"/]
-    </pre>
-
-    <pre id="diagram" class="mermaid">
+    </pre
+      >
+      <li></li>
+      <pre id="diagram" class="mermaid">
 block
   block:e:4
     columns 2
@@ -55,8 +61,10 @@ block
       g
   end
 
-    </pre>
-    <pre id="diagram" class="mermaid">
+    </pre
+      >
+      <li></li>
+      <pre id="diagram" class="mermaid">
 block
   block:e:4
     columns 2
@@ -65,8 +73,10 @@ block
       h
   end
 
-    </pre>
-    <pre id="diagram" class="mermaid">
+    </pre
+      >
+      <li></li>
+      <pre id="diagram" class="mermaid">
 block
   columns 3
   a:3
@@ -78,8 +88,10 @@ block
   i
   j
 
-    </pre>
-    <pre id="diagram" class="mermaid">
+    </pre
+      >
+      <li></li>
+      <pre id="diagram" class="mermaid">
 block
   columns 4
   a b c d
@@ -91,38 +103,103 @@ block
   end
   i:4
 
-    </pre>
-    <pre id="diagram" class="mermaid">
+    </pre
+      >
+      <li></li>
+      <pre id="diagram" class="mermaid">
 flowchart LR
   X-- "a label" -->z
-    </pre>
-    <pre id="diagram" class="mermaid">
+    </pre
+      >
+      <li></li>
+      <pre id="diagram" class="mermaid">
 block
 columns 5
    A space B
    A --x B
-    </pre>
-    <pre id="diagram" class="mermaid">
+    </pre
+      >
+      <li></li>
+      <pre id="diagram" class="mermaid">
 block
 columns 3
   a["A wide one"] b:2 c:2 d
-    </pre>
-
-    <pre id="diagram" class="mermaid">
+    </pre
+      >
+      <li></li>
+      <pre id="diagram" class="mermaid">
 block
 columns 3
   a b c
   e:3
   f g h
-    </pre>
-
-    <pre id="diagram" class="mermaid">
+    </pre
+      >
+      <li></li>
+      <pre id="diagram" class="mermaid">
 block
 
   A1:3
   A2:1
   A3
-    </pre>
+    </pre
+      >
+      <li></li>
+      <pre id="diagram" class="mermaid">
+block
+  columns 2
+  block:Bk
+    columns 2
+    a:2
+    b
+    c d
+    block:Bk2
+      aa bb
+    end
+  end
+  A\nA\nA
+  B:2
+
+    </pre
+      >
+      <li></li>
+      <pre id="diagram" class="mermaid">
+block
+  columns 4
+  A
+  block:Bk:2
+    columns 2
+    block:Bk2:2
+     a
+     b
+     c
+    end
+    A2
+  end
+  B
+    </pre
+      >
+      <li></li>
+      <pre id="diagram" class="mermaid">
+block
+  columns 1
+  scale rows:varied
+  A\nA\nA\nA
+  block:Bk
+    columns 2
+    scale rows:varied
+    A2
+    B2
+    block:Bk2
+      scale rows:varied
+      a b c
+    end
+  end
+  B
+
+    </pre
+      >
+    </ol>
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
