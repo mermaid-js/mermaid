@@ -31,6 +31,17 @@ import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
 import { isLabelStyle, styles2String } from './shapes/handDrawnShapeStyles.js';
 
+/**
+ * Resolve the effective curve type for an edge.
+ * If edge.curve is a string (e.g. 'rounded', 'linear'), use it directly.
+ * Otherwise (undefined, null, or a D3 CurveFactory function), fall back to config.
+ * @param {*} edgeCurve - The edge.curve value (string, function, or undefined/null)
+ * @returns {string|undefined} - The resolved curve type string
+ */
+export const resolveEdgeCurveType = (edgeCurve) => {
+  return typeof edgeCurve === 'string' ? edgeCurve : getConfig()?.flowchart?.curve;
+};
+
 export const edgeLabels = new Map();
 export const terminalLabels = new Map();
 
@@ -498,7 +509,9 @@ export const insertEdge = function (
   let lineData = points.filter((p) => !Number.isNaN(p.y));
   let curve = curveBasis;
   curve = curveLinear;
-  switch (edge.curve) {
+  // Resolve curve type: use edge.curve if it's a string, otherwise fall back to config default
+  const edgeCurveType = resolveEdgeCurveType(edge.curve);
+  switch (edgeCurveType) {
     case 'linear':
       curve = curveLinear;
       break;
@@ -534,6 +547,9 @@ export const insertEdge = function (
       break;
     case 'stepBefore':
       curve = curveStepBefore;
+      break;
+    case 'rounded':
+      curve = curveLinear;
       break;
     default:
       curve = curveBasis;
@@ -575,7 +591,7 @@ export const insertEdge = function (
   }
   let svgPath;
   let linePath =
-    edge.curve === 'rounded'
+    edgeCurveType === 'rounded'
       ? generateRoundedPath(applyMarkerOffsetsToPoints(lineData, edge), 5)
       : lineFunction(lineData);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
