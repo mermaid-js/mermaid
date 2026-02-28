@@ -1,13 +1,14 @@
-import eyesPlugin from '@applitools/eyes-cypress';
-import { registerArgosTask } from '@argos-ci/cypress/task';
-import coverage from '@cypress/code-coverage/task.js';
-import { defineConfig } from 'cypress';
-import { addMatchImageSnapshotPlugin } from 'cypress-image-snapshot/plugin.js';
-import cypressSplit from 'cypress-split';
-import 'dotenv/config';
+/* eslint-disable @typescript-eslint/no-require-imports -- Needed for `default` interop with CommonJS module */
+const eyesPlugin = require('@applitools/eyes-cypress');
+const { registerArgosTask } = require('@argos-ci/cypress/task');
+const coverage = require('@cypress/code-coverage/task.js');
+const cypress = require('cypress');
+const cypressImageSnapshotPlugin = require('cypress-image-snapshot/plugin.js');
+const cypressSplit = require('cypress-split');
+require('dotenv/config');
 
-export default eyesPlugin(
-  defineConfig({
+module.exports = eyesPlugin(
+  cypress.defineConfig({
     projectId: 'n2sma2',
     viewportWidth: 1440,
     viewportHeight: 1024,
@@ -33,7 +34,7 @@ export default eyesPlugin(
             uploadToArgos: !!process.env.CI,
           });
         } else {
-          addMatchImageSnapshotPlugin(on, config);
+          cypressImageSnapshotPlugin.addMatchImageSnapshotPlugin(on, config);
         }
         // do not forget to return the changed config object!
         return config;

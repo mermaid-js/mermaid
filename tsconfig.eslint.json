@@ -10,7 +10,7 @@
     "./.build/*.ts",
     "./.esbuild/*.ts",
     "./.vite/*.ts",
-    "./cypress.config.ts",
+    "./cypress.config.cjs",
     "./tests",
     "./scripts",
     "./cypress",
