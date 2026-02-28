@@ -41,7 +41,7 @@ describe('Unique DOM element IDs', () => {
       db.setDiagramId('mermaid-0');
       db.clear();
       addFlowVertex(db, 'A');
-      // After clear, diagramId is empty so prefix is just "-"
+      // After clear, diagramId is empty so no prefix is applied
       expect(db.lookUpDomId('A')).not.toContain('mermaid-0');
     });
   });
@@ -73,7 +73,7 @@ describe('Unique DOM element IDs', () => {
       db.setDiagramId('mermaid-0');
       db.clear();
       db.addClass('User');
-      // After clear, diagramId is empty so prefix is just "-"
+      // After clear, diagramId is empty so no prefix is applied
       expect(db.lookUpDomId('User')).not.toContain('mermaid-0');
     });
   });
