@@ -639,7 +639,7 @@ const drawActorTypeQueue = function (elem, actor, conf, isFooter) {
   return height;
 };
 
-const drawActorTypeControl = function (elem, actor, conf, isFooter) {
+const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 75;
@@ -687,7 +687,7 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter) {
   actElem
     .append('defs')
     .append('marker')
-    .attr('id', conf.diagramId + '-filled-head-control')
+    .attr('id', diagramId + '-filled-head-control')
     .attr('refX', 11)
     .attr('refY', 5.8)
     .attr('markerWidth', 20)
@@ -709,7 +709,7 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter) {
   // Draw looping arrow as arc path
   actElem
     .append('line')
-    .attr('marker-end', 'url(#' + conf.diagramId + '-filled-head-control)')
+    .attr('marker-end', 'url(#' + diagramId + '-filled-head-control)')
     .attr('transform', `translate(${cx}, ${cy - r})`);
 
   const bounds = actElem.node().getBBox();
@@ -1100,7 +1100,7 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
   return actor.height;
 };
 
-export const drawActor = async function (elem, actor, conf, isFooter) {
+export const drawActor = async function (elem, actor, conf, isFooter, diagramId) {
   switch (actor.type) {
     case 'actor':
       return await drawActorTypeActor(elem, actor, conf, isFooter);
@@ -1109,7 +1109,7 @@ export const drawActor = async function (elem, actor, conf, isFooter) {
     case 'boundary':
       return await drawActorTypeBoundary(elem, actor, conf, isFooter);
     case 'control':
-      return await drawActorTypeControl(elem, actor, conf, isFooter);
+      return await drawActorTypeControl(elem, actor, conf, isFooter, diagramId);
     case 'entity':
       return await drawActorTypeEntity(elem, actor, conf, isFooter);
     case 'database':
