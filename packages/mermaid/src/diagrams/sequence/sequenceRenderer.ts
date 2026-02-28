@@ -455,7 +455,14 @@ async function boundMessage(_diagram, msgModel): Promise<number> {
  * @param lineStartY - The Y coordinate at which the message line starts
  * @param diagObj - The diagram object.
  */
-const drawMessage = async function (diagram, msgModel, lineStartY: number, diagObj: Diagram, msg) {
+const drawMessage = async function (
+  diagram,
+  msgModel,
+  lineStartY: number,
+  diagObj: Diagram,
+  msg,
+  diagramId: string
+) {
   const { startx, stopx, starty, message, type, sequenceIndex, sequenceVisible } = msgModel;
   const textDims = utils.calculateTextDimensions(message, messageFont(conf));
   const textObj = svgDrawCommon.getTextObj();
@@ -563,65 +570,65 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
   line.style('fill', 'none'); // remove any fill colour
 
   if (type === diagObj.db.LINETYPE.SOLID_TOP || type === diagObj.db.LINETYPE.SOLID_TOP_DOTTED) {
-    line.attr('marker-end', 'url(' + url + '#' + conf.diagramId + '-solidTopArrowHead)');
+    line.attr('marker-end', 'url(' + url + '#' + diagramId + '-solidTopArrowHead)');
   }
   if (
     type === diagObj.db.LINETYPE.SOLID_BOTTOM ||
     type === diagObj.db.LINETYPE.SOLID_BOTTOM_DOTTED
   ) {
-    line.attr('marker-end', 'url(' + url + '#' + conf.diagramId + '-solidBottomArrowHead)');
+    line.attr('marker-end', 'url(' + url + '#' + diagramId + '-solidBottomArrowHead)');
   }
   if (type === diagObj.db.LINETYPE.STICK_TOP || type === diagObj.db.LINETYPE.STICK_TOP_DOTTED) {
-    line.attr('marker-end', 'url(' + url + '#' + conf.diagramId + '-stickTopArrowHead)');
+    line.attr('marker-end', 'url(' + url + '#' + diagramId + '-stickTopArrowHead)');
   }
   if (
     type === diagObj.db.LINETYPE.STICK_BOTTOM ||
     type === diagObj.db.LINETYPE.STICK_BOTTOM_DOTTED
   ) {
-    line.attr('marker-end', 'url(' + url + '#' + conf.diagramId + '-stickBottomArrowHead)');
+    line.attr('marker-end', 'url(' + url + '#' + diagramId + '-stickBottomArrowHead)');
   }
 
   if (
     type === diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE ||
     type === diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE_DOTTED
   ) {
-    line.attr('marker-start', 'url(' + url + '#' + conf.diagramId + '-solidBottomArrowHead)');
+    line.attr('marker-start', 'url(' + url + '#' + diagramId + '-solidBottomArrowHead)');
   }
   if (
     type === diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE ||
     type === diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE_DOTTED
   ) {
-    line.attr('marker-start', 'url(' + url + '#' + conf.diagramId + '-solidTopArrowHead)');
+    line.attr('marker-start', 'url(' + url + '#' + diagramId + '-solidTopArrowHead)');
   }
   if (
     type === diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE ||
     type === diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE_DOTTED
   ) {
-    line.attr('marker-start', 'url(' + url + '#' + conf.diagramId + '-stickBottomArrowHead)');
+    line.attr('marker-start', 'url(' + url + '#' + diagramId + '-stickBottomArrowHead)');
   }
   if (
     type === diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE ||
     type === diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE_DOTTED
   ) {
-    line.attr('marker-start', 'url(' + url + '#' + conf.diagramId + '-stickTopArrowHead)');
+    line.attr('marker-start', 'url(' + url + '#' + diagramId + '-stickTopArrowHead)');
   }
 
   if (type === diagObj.db.LINETYPE.SOLID || type === diagObj.db.LINETYPE.DOTTED) {
-    line.attr('marker-end', 'url(' + url + '#' + conf.diagramId + '-arrowhead)');
+    line.attr('marker-end', 'url(' + url + '#' + diagramId + '-arrowhead)');
   }
   if (
     type === diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID ||
     type === diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED
   ) {
-    line.attr('marker-start', 'url(' + url + '#' + conf.diagramId + '-arrowhead)');
-    line.attr('marker-end', 'url(' + url + '#' + conf.diagramId + '-arrowhead)');
+    line.attr('marker-start', 'url(' + url + '#' + diagramId + '-arrowhead)');
+    line.attr('marker-end', 'url(' + url + '#' + diagramId + '-arrowhead)');
   }
   if (type === diagObj.db.LINETYPE.SOLID_POINT || type === diagObj.db.LINETYPE.DOTTED_POINT) {
-    line.attr('marker-end', 'url(' + url + '#' + conf.diagramId + '-filled-head)');
+    line.attr('marker-end', 'url(' + url + '#' + diagramId + '-filled-head)');
   }
 
   if (type === diagObj.db.LINETYPE.SOLID_CROSS || type === diagObj.db.LINETYPE.DOTTED_CROSS) {
-    line.attr('marker-end', 'url(' + url + '#' + conf.diagramId + '-crosshead)');
+    line.attr('marker-end', 'url(' + url + '#' + diagramId + '-crosshead)');
   }
 
   // add node number
@@ -698,7 +705,7 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
       .attr('x2', autonumberX)
       .attr('y2', lineStartY)
       .attr('stroke-width', 0)
-      .attr('marker-start', 'url(' + url + '#' + conf.diagramId + '-sequencenumber)');
+      .attr('marker-start', 'url(' + url + '#' + diagramId + '-sequencenumber)');
 
     diagram
       .append('text')
@@ -1029,7 +1036,7 @@ export const draw = async function (_text: string, id: string, _version: string,
   const maxMessageWidthPerActor = await getMaxMessageWidthPerActor(actors, messages, diagObj);
   conf.height = await calculateActorMargins(actors, maxMessageWidthPerActor, boxes);
 
-  conf.diagramId = id;
+  const diagramId = id;
   svgDraw.insertComputerIcon(diagram, id);
   svgDraw.insertDatabaseIcon(diagram, id);
   svgDraw.insertClockIcon(diagram, id);
@@ -1319,7 +1326,7 @@ export const draw = async function (_text: string, id: string, _version: string,
   await drawActors(diagram, actors, actorKeys, false);
 
   for (const e of messagesToDraw) {
-    await drawMessage(diagram, e.messageModel, e.lineStartY, diagObj, e.msg);
+    await drawMessage(diagram, e.messageModel, e.lineStartY, diagObj, e.msg, diagramId);
   }
   if (conf.mirrorActors) {
     await drawActors(diagram, actors, actorKeys, true);
