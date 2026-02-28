@@ -1036,6 +1036,8 @@ export const draw = async function (_text: string, id: string, _version: string,
   const maxMessageWidthPerActor = await getMaxMessageWidthPerActor(actors, messages, diagObj);
   conf.height = await calculateActorMargins(actors, maxMessageWidthPerActor, boxes);
 
+  // Set diagramId on conf for svgDraw.js functions that read it directly
+  conf.diagramId = id;
   const diagramId = id;
   svgDraw.insertComputerIcon(diagram, id);
   svgDraw.insertDatabaseIcon(diagram, id);
