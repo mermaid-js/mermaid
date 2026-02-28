@@ -507,8 +507,7 @@ export const insertEdge = function (
   }
 
   let lineData = points.filter((p) => !Number.isNaN(p.y));
-  let curve = curveBasis;
-  curve = curveLinear;
+  let curve = curveLinear;
   // Resolve curve type: use edge.curve if it's a string, otherwise fall back to config default
   const edgeCurveType = resolveEdgeCurveType(edge.curve);
   switch (edgeCurveType) {
