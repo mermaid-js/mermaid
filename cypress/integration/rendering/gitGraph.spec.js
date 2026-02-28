@@ -1550,6 +1550,91 @@ gitGraph TB:
         {}
       );
     });
+    it('76: should render a BT gitGraph with branch ordering and merge from right branch | Regression #6593', () => {
+      imgSnapshotTest(
+        `gitGraph BT:
+    commit id: "A"
+    branch develop order: 3
+    checkout develop
+    commit id: "B"
+    branch release/1.0.0 order: 2
+    checkout release/1.0.0
+    commit id: "C"
+    commit id: "D"
+    checkout main
+    merge release/1.0.0 tag: "v1.0.0"
+    checkout develop`,
+        {}
+      );
+    });
+    it('77: should render a BT gitGraph with three branches and multiple merges | Regression #6593', () => {
+      imgSnapshotTest(
+        `gitGraph BT:
+  commit id: "1"
+  commit id: "2"
+  branch nice_feature
+  checkout main
+  commit id: "3"
+  checkout nice_feature
+  commit id: "4"
+  checkout main
+  branch very_nice_feature
+  checkout very_nice_feature
+  commit id: "5"
+  checkout main
+  commit id: "6"
+  checkout nice_feature
+  commit id: "7"
+  checkout main
+  merge nice_feature
+  checkout very_nice_feature
+  commit id: "8"
+  checkout main
+  merge very_nice_feature`,
+        {}
+      );
+    });
+    it('78: should render a BT gitGraph with cherry-pick | Regression #6593', () => {
+      imgSnapshotTest(
+        `gitGraph BT:
+  commit id: "ZERO"
+  branch develop
+  commit id:"A"
+  checkout main
+  commit id:"ONE"
+  checkout develop
+  commit id:"B"
+  checkout main
+  commit id:"TWO"
+  cherry-pick id:"A" tag: "cherry-picked"
+  commit id:"THREE"
+  checkout develop
+  commit id:"C"`,
+        {}
+      );
+    });
+    it('79: should render a BT gitGraph with two cherry-picks | Regression #6593', () => {
+      imgSnapshotTest(
+        `gitGraph BT:
+  commit id: "ZERO"
+  branch develop
+  commit id:"A"
+  checkout main
+  commit id:"ONE"
+  checkout develop
+  commit id:"B"
+  checkout main
+  commit id:"TWO"
+  cherry-pick id:"A"
+  commit id:"THREE"
+  checkout develop
+  commit id:"C"
+  checkout main
+  cherry-pick id:"C"
+  commit id:"FOUR"`,
+        {}
+      );
+    });
   });
   it('76: should render a gitGraph with multiple tags on a merge commit on left-to-right orientation', () => {
     imgSnapshotTest(

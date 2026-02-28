@@ -1186,8 +1186,8 @@ end
     end
     githost["Github, Gitlab, BitBucket, etc."]
     githost2["\`Github, Gitlab, BitBucket, etc.\`"]
-    a["1."]
-    b["- x"]
+    a["\`1.\`"]
+    b["\`- x\`"]
       `;
 
     it('should render raw strings', () => {
@@ -1210,5 +1210,33 @@ classDef myClass fill:#bbf,stroke:#f66,stroke-width:2px,color:white,stroke-dasha
 class link myClass
 `
     );
+  });
+
+  describe('Edge label autowrapping', () => {
+    it('should wrap edge labels', () => {
+      imgSnapshotTest(
+        [
+          {
+            markdownAutoWrap: true,
+            htmlLabels: true,
+          },
+          { markdownAutoWrap: true, htmlLabels: false },
+          { markdownAutoWrap: false, htmlLabels: true },
+          // TODO: currently broken
+          // {markdownAutoWrap: false, htmlLabels: false},
+        ].map(
+          ({ markdownAutoWrap, htmlLabels }) => `---
+config: ${JSON.stringify({ markdownAutoWrap, htmlLabels })}
+title: Testing with ${JSON.stringify({ markdownAutoWrap, htmlLabels })}
+---
+flowchart TD
+    A["This is a really long line of plain text that will autowrap and support \\n newlines too."]    
+    B["\`This is a really long line of **markdown** text that will autowrap, unless markdownAutoWrap:false is set.\`"]
+    A -- "Plain text **labels** in flowcharts will autowrap,like node labels. \\n Newline characters work too." --> B
+    B -- "\`**Markdown** edge labels will autowrap, unless markdownAutoWrap: false is set\`" --> C
+`
+        )
+      );
+    });
   });
 });

@@ -17,7 +17,10 @@ function preprocessMarkdown(markdown: string, { markdownAutoWrap }: MermaidConfi
   // Remove extra spaces at the beginning of each line
   const withoutExtraSpaces = dedent(withoutMultipleNewlines);
   if (markdownAutoWrap === false) {
-    return withoutExtraSpaces.replace(/ /g, '&nbsp;');
+    // TODO: Disabling `markdownAutoWrap` is currently broken for `htmlLabels: false`,
+    // since the code calls `splitWordToFitWidth` to split words even we can't
+    // break on spaces.
+    // return withoutExtraSpaces.replace(/ /g, '\u00A0');
   }
   return withoutExtraSpaces;
 }
@@ -25,14 +28,15 @@ function preprocessMarkdown(markdown: string, { markdownAutoWrap }: MermaidConfi
 /**
  * @param nonMarkdownText - Non-markdown text to split into plain-text formatted lines.
  * This treats new lines, `\n`, and `<br/>` as line breaks, and splits on spaces for words.
+ * SVG tags are preserved as separate words to maintain proper formatting.
  */
 export function nonMarkdownToLines(nonMarkdownText: string): MarkdownLine[] {
   return nonMarkdownText.split(/\\n|\n|<br\s*\/?>/gi).map(
     (line) =>
       line
         .trim()
-        .split(/\s/g)
-        .map((word) => ({ content: word, type: 'normal' })) satisfies MarkdownLine
+        .match(/<[^>]+>|[^\s<>]+/g) // keeps SVG tags intact and preserves space between tags and text
+        ?.map((word) => ({ content: word, type: 'normal' })) ?? []
   );
 }
 
@@ -82,6 +86,35 @@ export function markdownToLines(markdown: string, config: MermaidConfig = {}): M
   });
 
   return lines;
+}
+
+/**
+ * Counterpart to {@link markdownToHTML} for non-markdown text.
+ *
+ * Non-markdown text is not wrapped normally, and users can use an explicit `\n`
+ * sequence to add a line break.
+ *
+ * @param text - Non-markdown text to convert to HTML.
+ */
+export function nonMarkdownToHTML(text: string) {
+  if (!text) {
+    return '';
+  }
+  /*
+   * Edge labels may have double backgrounds if `addBackground` is `true`.
+   * This `<p>` wrapper aligns with how {@link markdownToHTML} wraps its output, and
+   * ensures both backgrounds are the same size.
+   *
+   * We can't set it for empty labels, otherwise it causes rendering changes.
+   */
+  return `<p>${
+    /**
+     * Replace new lines with <br /> tags.
+     *
+     * Unlike in markdown text, `\n` sequences are treated as line breaks here.
+     */
+    text.replace(/\\n|\n/g, '<br />')
+  }</p>`;
 }
 
 export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidConfig = {}) {

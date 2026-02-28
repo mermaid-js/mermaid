@@ -87,6 +87,17 @@ export class FlowDB implements DiagramDB {
     return common.sanitizeText(txt, this.config);
   }
 
+  private sanitizeNodeLabelType(labelType?: string) {
+    switch (labelType) {
+      case 'markdown':
+      case 'string':
+      case 'text':
+        return labelType;
+      default:
+        return 'markdown';
+    }
+  }
+
   /**
    * Sets the diagram's SVG element ID, used to prefix domIds for uniqueness
    * across multiple diagrams on the same page.
@@ -219,6 +230,7 @@ export class FlowDB implements DiagramDB {
 
       if (doc?.label) {
         vertex.text = doc?.label;
+        vertex.labelType = this.sanitizeNodeLabelType(doc?.labelType);
       }
       if (doc?.icon) {
         vertex.icon = doc?.icon;
@@ -278,7 +290,7 @@ export class FlowDB implements DiagramDB {
       if (edge.text.startsWith('"') && edge.text.endsWith('"')) {
         edge.text = edge.text.substring(1, edge.text.length - 1);
       }
-      edge.labelType = linkTextObj.type;
+      edge.labelType = this.sanitizeNodeLabelType(linkTextObj.type);
     }
 
     if (type !== undefined) {
@@ -707,7 +719,7 @@ You have to call mermaid.initialize.`
       title: title.trim(),
       classes: [],
       dir,
-      labelType: _title.type,
+      labelType: this.sanitizeNodeLabelType(_title?.type),
     };
 
     log.info('Adding', subGraph.id, subGraph.nodes, subGraph.dir);
@@ -1017,6 +1029,7 @@ You have to call mermaid.initialize.`
       const baseNode = {
         id: vertex.id,
         label: vertex.text,
+        labelType: vertex.labelType,
         labelStyle: '',
         parentId,
         padding: config.flowchart?.padding || 8,
@@ -1093,6 +1106,7 @@ You have to call mermaid.initialize.`
         id: subGraph.id,
         label: subGraph.title,
         labelStyle: '',
+        labelType: subGraph.labelType,
         parentId: parentDB.get(subGraph.id),
         padding: 8,
         cssCompiledStyles: this.getCompiledStyles(subGraph.classes),
@@ -1124,6 +1138,7 @@ You have to call mermaid.initialize.`
         end: rawEdge.end,
         type: rawEdge.type ?? 'normal',
         label: rawEdge.text,
+        labelType: rawEdge.labelType,
         labelpos: 'c',
         thickness: rawEdge.stroke,
         minlen: rawEdge.length,
