@@ -105,6 +105,18 @@ radar-beta
 "Section 2"
     "Leaf 2.1": 20`,
 
+  ishikawa: `ishikawa-beta
+Root Cause
+    Category A
+        Cause 1
+    Category B
+        Cause 2`,
+
+  venn: `venn-beta
+set A
+set B
+union A, B`,
+
   sequence: `sequenceDiagram
     Alice->>Bob: Hello
     Bob-->>Alice: Hi

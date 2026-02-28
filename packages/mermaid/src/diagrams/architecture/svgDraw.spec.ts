@@ -9,7 +9,9 @@ const { id, detector, loader } = architectureDetector;
 
 addDetector(id, detector, loader); // Add architecture schemas to Mermaid
 
-describe('architecture diagram SVGs', () => {
+// Cytoscape layout is CPU-intensive and can exceed the default 5s timeout
+// when running alongside the full test suite.
+describe('architecture diagram SVGs', { timeout: 15_000 }, () => {
   jsdomIt('should add ids', async () => {
     const svgNode = await drawDiagram(`
       architecture-beta
