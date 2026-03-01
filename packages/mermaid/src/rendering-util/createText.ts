@@ -239,6 +239,20 @@ export async function replaceIconSubstring(
 
 // Note when using from flowcharts converting the API isNode means classes should be set accordingly. When using htmlLabels => to set classes to 'nodeLabel' when isNode=true otherwise 'edgeLabel'
 // When not using htmlLabels => to set classes to 'title-row' when isTitle=true otherwise 'title-row'
+/**
+ * Creates a text element within the given SVG group element.
+ *
+ * If `markdown` is `true`, basic markdown syntax will be processed.
+ * Otherwise, if:
+ *   - `useHtmlLabels` is `true`, the text will be sanitized and set in `<foreignObject>` as HTML.
+ *   - `useHtmlLabels` is `false`, the text will be added as a `<text>` element using `.text`
+ *
+ * @param el - The parent SVG `<g>` element to append the text element to.
+ * @param text - The text content to be displayed.
+ * @param options - Optional options
+ * @param config - Mermaid configuration object
+ * @returns The created text element, either a `<foreignObject>` or a `<text>` element depending on the options.
+ */
 export const createText = async (
   el: D3Selection<SVGGElement>,
   text = '',
