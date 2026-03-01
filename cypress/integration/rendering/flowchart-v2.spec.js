@@ -1157,6 +1157,19 @@ end
     });
   });
 
+  it('7213: should render edges with rounded curve (right angles with rounded corners)', () => {
+    imgSnapshotTest(
+      `flowchart TD
+    A[Start] --> B{Decision}
+    B -->|Yes| C[Process 1]
+    B -->|No| D[Process 2]
+    C --> E[End]
+    D --> E
+    `,
+      { flowchart: { curve: 'rounded' } }
+    );
+  });
+
   it('6617: Per Link Curve Styling using edge Ids', () => {
     imgSnapshotTest(
       `flowchart TD
