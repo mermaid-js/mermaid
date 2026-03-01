@@ -1,7 +1,8 @@
 import { select } from 'd3';
-import { setupGraphViewbox } from '../../diagram-api/diagramAPI.js';
+import { getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
-import utils from '../../utils.js';
+import utils, { sanitizeUrl } from '../../utils.js';
+import { sanitizeText } from '../common/common.js';
 import type { DrawDefinition } from '../../diagram-api/types.js';
 import type d3 from 'd3';
 import type { Commit, GitGraphDBRenderProvider, DiagramOrientation } from './gitGraphTypes.js';
@@ -196,8 +197,12 @@ const drawCommitBullet = (
   branchIndex: number,
   commitSymbolType: number
 ) => {
+  const commitGroup = gBullets.append('g');
+  commitGroup.attr('class', 'commit');
+  commitGroup.attr('data-commit-id', commit.id);
+
   if (commitSymbolType === commitType.HIGHLIGHT) {
-    gBullets
+    commitGroup
       .append('rect')
       .attr('x', commitPosition.x - 10)
       .attr('y', commitPosition.y - 10)
@@ -207,7 +212,7 @@ const drawCommitBullet = (
         'class',
         `commit ${commit.id} commit-highlight${branchIndex % THEME_COLOR_LIMIT} ${typeClass}-outer`
       );
-    gBullets
+    commitGroup
       .append('rect')
       .attr('x', commitPosition.x - 6)
       .attr('y', commitPosition.y - 6)
@@ -218,27 +223,27 @@ const drawCommitBullet = (
         `commit ${commit.id} commit${branchIndex % THEME_COLOR_LIMIT} ${typeClass}-inner`
       );
   } else if (commitSymbolType === commitType.CHERRY_PICK) {
-    gBullets
+    commitGroup
       .append('circle')
       .attr('cx', commitPosition.x)
       .attr('cy', commitPosition.y)
       .attr('r', 10)
       .attr('class', `commit ${commit.id} ${typeClass}`);
-    gBullets
+    commitGroup
       .append('circle')
       .attr('cx', commitPosition.x - 3)
       .attr('cy', commitPosition.y + 2)
       .attr('r', 2.75)
       .attr('fill', '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
-    gBullets
+    commitGroup
       .append('circle')
       .attr('cx', commitPosition.x + 3)
       .attr('cy', commitPosition.y + 2)
       .attr('r', 2.75)
       .attr('fill', '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
-    gBullets
+    commitGroup
       .append('line')
       .attr('x1', commitPosition.x + 3)
       .attr('y1', commitPosition.y + 1)
@@ -246,7 +251,7 @@ const drawCommitBullet = (
       .attr('y2', commitPosition.y - 5)
       .attr('stroke', '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
-    gBullets
+    commitGroup
       .append('line')
       .attr('x1', commitPosition.x - 3)
       .attr('y1', commitPosition.y + 1)
@@ -255,13 +260,13 @@ const drawCommitBullet = (
       .attr('stroke', '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
   } else {
-    const circle = gBullets.append('circle');
+    const circle = commitGroup.append('circle');
     circle.attr('cx', commitPosition.x);
     circle.attr('cy', commitPosition.y);
     circle.attr('r', commit.type === commitType.MERGE ? 9 : 10);
     circle.attr('class', `commit ${commit.id} commit${branchIndex % THEME_COLOR_LIMIT}`);
     if (commitSymbolType === commitType.MERGE) {
-      const circle2 = gBullets.append('circle');
+      const circle2 = commitGroup.append('circle');
       circle2.attr('cx', commitPosition.x);
       circle2.attr('cy', commitPosition.y);
       circle2.attr('r', 6);
@@ -271,7 +276,7 @@ const drawCommitBullet = (
       );
     }
     if (commitSymbolType === commitType.REVERSE) {
-      const cross = gBullets.append('path');
+      const cross = commitGroup.append('path');
       cross
         .attr(
           'd',
@@ -295,6 +300,8 @@ const drawCommitLabel = (
     gitGraphConfig.showCommitLabel
   ) {
     const wrapper = gLabels.append('g');
+    wrapper.attr('class', 'commit');
+    wrapper.attr('data-commit-id', commit.id);
     const labelBkg = wrapper.insert('rect').attr('class', 'commit-label-bkg');
     const text = wrapper
       .append('text')
@@ -368,13 +375,19 @@ const drawCommitTags = (
     const tagElements = [];
 
     for (const tagValue of commit.tags.reverse()) {
-      const rect = gLabels.insert('polygon');
-      const hole = gLabels.append('circle');
-      const tag = gLabels
+      // Create a group for this tag to enable wrapping in anchor tags
+      const tagGroup = gLabels.append('g');
+      tagGroup.attr('data-tag-name', tagValue);
+      tagGroup.attr('class', 'tag');
+
+      const rect = tagGroup.insert('polygon');
+      const hole = tagGroup.append('circle');
+      const tag = tagGroup
         .append('text')
         .attr('y', commitPosition.y - 16 - yOffset)
         .attr('class', 'tag-label')
         .text(tagValue);
+
       const tagBbox = tag.node()?.getBBox();
       if (!tagBbox) {
         throw new Error('Tag bbox not found');
@@ -848,6 +861,7 @@ const drawBranches = (
     // Create outer g, edgeLabel, this will be positioned after graph layout
     const bkg = g.insert('rect');
     const branchLabel = g.insert('g').attr('class', 'branchLabel');
+    branchLabel.attr('data-branch-name', name);
 
     // Create inner g, label, this will be positioned now for centering the text
     const label = branchLabel.insert('g').attr('class', 'label branch-label' + adjustIndexForTheme);
@@ -892,6 +906,112 @@ const setBranchPosition = function (
   branchPos.set(name, { pos, index });
   pos += 50 + (rotateCommitLabel ? 40 : 0) + (dir === 'TB' || dir === 'BT' ? bbox.width / 2 : 0);
   return pos;
+};
+
+/**
+ * Safely escapes CSS selector characters in an identifier.
+ * Falls back to manual escaping if CSS.escape() is not available.
+ * @param id - The identifier to escape
+ * @returns Escaped identifier safe for use in CSS selectors
+ */
+const escapeCssId = (id: string): string => {
+  if (typeof CSS !== 'undefined' && CSS.escape) {
+    return CSS.escape(id);
+  }
+  // Fallback for older browsers: escape special CSS characters
+  return id.replace(/([!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~])/g, '\\$1');
+};
+
+/**
+ * Sets up click events for commits with links
+ * Uses SVG <a> elements like flowchart does for native browser link behavior
+ * @param svgId - The ID of the SVG element
+ * @param db - The gitGraph database
+ * @param securityLevel - The mermaid security level
+ * @returns A function to bind events, or undefined if no links
+ */
+const setupClickEvents = (
+  svgId: string,
+  db: GitGraphDBRenderProvider,
+  securityLevel: string
+): (() => void) | undefined => {
+  const links = db.getLinks?.();
+  if (!links || links.size === 0) {
+    return undefined;
+  }
+  return () => {
+    const svg = select(`[id="${svgId}"]`);
+    const config = getConfig();
+
+    const doc =
+      // @ts-ignore - contentDocument access in sandbox mode
+      securityLevel === 'sandbox' ? select('#i' + svgId).nodes()[0]?.contentDocument : document;
+
+    links.forEach((linkData, id) => {
+      // Escape special characters in commit ID for CSS selector
+      const escapedId = escapeCssId(id);
+      let selector = `[data-commit-id="${escapedId}"]`;
+      if (linkData.type === 'branch') {
+        selector = `[data-branch-name="${escapedId}"]`;
+      } else if (linkData.type === 'tag') {
+        selector = `[data-tag-name="${escapedId}"]`;
+      }
+
+      const elements = svg.selectAll(selector);
+      if (elements.empty()) {
+        log.warn(
+          `No elements found for clickable ${linkData.type} with id: ${id}. The link will not be attached.`
+        );
+        return;
+      }
+
+      // Sanitize URL to prevent XSS
+      const sanitizedUrl = sanitizeUrl(linkData.link);
+      if (!sanitizedUrl) {
+        log.warn(`Invalid or dangerous URL "${linkData.link}" for ${linkData.type} "${id}"`);
+        return;
+      }
+
+      // Wrap each element's children in an SVG <a> tag (same approach as flowchart)
+      elements.each(function () {
+        const element = select(this);
+
+        const link = doc.createElementNS('http://www.w3.org/2000/svg', 'a');
+        link.setAttributeNS('http://www.w3.org/2000/svg', 'class', element.attr('class'));
+        link.setAttributeNS('http://www.w3.org/1999/xlink', 'href', sanitizedUrl);
+        link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
+        if (securityLevel === 'sandbox') {
+          link.setAttributeNS('http://www.w3.org/2000/svg', 'target', '_top');
+        } else if (linkData.target) {
+          link.setAttributeNS('http://www.w3.org/2000/svg', 'target', linkData.target);
+        }
+
+        element.insert(function () {
+          return link;
+        }, ':first-child');
+
+        // Add tooltip if provided
+        if (linkData.tooltip) {
+          const sanitizedTooltip = sanitizeText(linkData.tooltip, config);
+          const title = doc.createElementNS('http://www.w3.org/2000/svg', 'title');
+          title.textContent = sanitizedTooltip;
+          link.appendChild(title);
+        }
+
+        // Move all existing children into the <a> element
+        // Collect child nodes first to avoid stale DOM references during iteration
+        const childNodesToMove: SVGElement[] = [];
+        element.selectAll(':scope > :not(a)').each(function () {
+          childNodesToMove.push(this as SVGElement);
+        });
+
+        // Now move them into the link element
+        childNodesToMove.forEach((child) => {
+          link.appendChild(child);
+        });
+      });
+    });
+  };
 };
 
 export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
@@ -941,6 +1061,11 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
 
   // Setup the view box and size of the svg element
   setupGraphViewbox(undefined, diagram, gitGraphConfig.diagramPadding, gitGraphConfig.useMaxWidth);
+
+  const bindFunctions = setupClickEvents(id, db, getConfig().securityLevel ?? 'strict');
+  if (bindFunctions) {
+    bindFunctions();
+  }
 };
 
 export default {

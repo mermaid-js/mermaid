@@ -1,4 +1,5 @@
 import { sanitizeUrl } from '@braintree/sanitize-url';
+export { sanitizeUrl };
 import type { BaseType, CurveFactory } from 'd3';
 import {
   curveBasis,
