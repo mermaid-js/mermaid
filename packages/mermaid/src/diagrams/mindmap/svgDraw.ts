@@ -5,7 +5,7 @@ import { parseFontSize } from '../../utils.js';
 import type { MermaidConfig } from '../../config.type.js';
 import type { MindmapDB } from './mindmapDb.js';
 
-const MAX_SECTIONS = 12;
+export const MAX_SECTIONS = 12;
 
 type ShapeFunction = (
   db: MindmapDB,

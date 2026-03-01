@@ -36,9 +36,9 @@ export const mermaidUrl = (
     mermaid: options,
   };
   const objStr: string = JSON.stringify(codeObject);
-  let url = `http://localhost:9000/e2e.html?graph=${utf8ToB64(objStr)}`;
+  let url = `/e2e.html?graph=${utf8ToB64(objStr)}`;
   if (api && typeof graphStr === 'string') {
-    url = `http://localhost:9000/xss.html?graph=${graphStr}`;
+    url = `/xss.html?graph=${graphStr}`;
   }
 
   if (options.listUrl) {
@@ -98,12 +98,21 @@ export const openURLAndVerifyRendering = (
 
   cy.visit(url);
   cy.window().should('have.property', 'rendered', true);
-  cy.get('svg').should('be.visible');
-  // cspell:ignore viewbox
-  cy.get('svg').should('not.have.attr', 'viewbox');
 
-  if (validation) {
-    cy.get('svg').should(validation);
+  // Handle sandbox mode where SVG is inside an iframe
+  if (options.securityLevel === 'sandbox') {
+    cy.get('iframe').should('be.visible');
+    if (validation) {
+      cy.get('iframe').should(validation);
+    }
+  } else {
+    cy.get('svg').should('be.visible');
+    // cspell:ignore viewbox
+    cy.get('svg').should('not.have.attr', 'viewbox');
+
+    if (validation) {
+      cy.get('svg').should(validation);
+    }
   }
 
   if (screenshot) {

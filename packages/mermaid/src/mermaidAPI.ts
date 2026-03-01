@@ -10,6 +10,7 @@ import isEmpty from 'lodash-es/isEmpty.js';
 import { addSVGa11yTitleDescription, setA11yDiagramInfo } from './accessibility.js';
 import assignWithDepth from './assignWithDepth.js';
 import * as configApi from './config.js';
+import { getEffectiveHtmlLabels } from './config.js';
 import type { MermaidConfig } from './config.type.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
@@ -127,7 +128,7 @@ export const createCssStyles = (
 
   // classDefs defined in the diagram text
   if (classDefs instanceof Map) {
-    const htmlLabels = config.htmlLabels ?? config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?
+    const htmlLabels = getEffectiveHtmlLabels(config);
 
     const cssHtmlElements = ['> *', 'span']; // TODO make a constant
     const cssShapeElements = ['rect', 'polygon', 'ellipse', 'circle', 'path']; // TODO make a constant

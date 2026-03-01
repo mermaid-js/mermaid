@@ -505,4 +505,27 @@ describe('when using the ganttDb', function () {
     ganttDb.addTask('test1', 'id1,202304,1d');
     expect(() => ganttDb.getTasks()).toThrowError('Invalid date:202304');
   });
+
+  it('should handle seconds-only format with valid numeric values (issue #5496)', function () {
+    ganttDb.setDateFormat('ss');
+    ganttDb.addSection('Network Request');
+    ganttDb.addTask('RTT', 'rtt, 0, 20');
+    const tasks = ganttDb.getTasks();
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0].task).toBe('RTT');
+    expect(tasks[0].id).toBe('rtt');
+  });
+
+  it('should handle dates with year typo like 202 instead of 2024 (issue #5496)', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('Vacation');
+    ganttDb.addTask('London Trip 1', '2024-12-01, 7d');
+    ganttDb.addTask('London Trip 2', '202-12-01, 7d');
+    const tasks = ganttDb.getTasks();
+    expect(tasks).toHaveLength(2);
+    // First task should be in year 2024
+    expect(tasks[0].startTime.getFullYear()).toBe(2024);
+    // Second task will be parsed as year 202 (fallback to new Date())
+    expect(tasks[1].startTime.getFullYear()).toBe(202);
+  });
 });

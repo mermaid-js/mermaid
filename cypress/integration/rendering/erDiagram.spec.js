@@ -457,4 +457,44 @@ ORDER ||--|{ LINE-ITEM : contains
       );
     });
   });
+
+  it('should render edge labels correctly when flowchart htmlLabels is false', () => {
+    imgSnapshotTest(
+      `
+    erDiagram
+        CUSTOMER ||--o{ ORDER : places
+        ORDER ||--|{ LINE-ITEM : contains
+        CUSTOMER ||--|{ ADDRESS : "invoiced at"
+        CUSTOMER ||--|{ ADDRESS : "receives goods at"
+        ORDER ||--o{ INVOICE : "liable for"
+      `,
+      { logLevel: 1, flowchart: { htmlLabels: false } }
+    );
+  });
+
+  it('should render ER diagram with "1" cardinality alias before relationship operators', () => {
+    imgSnapshotTest(
+      `
+      erDiagram
+        CUSTOMER 1--1 ORDER : "exactly one"
+        ORDER 1--o{ LINE-ITEM : "one to many"
+        PRODUCT 1--|{ CATEGORY : "one or more"
+        USER 1..1 PROFILE : "exactly one optional"
+      `,
+      { logLevel: 1 }
+    );
+  });
+
+  it('should render ER diagram with "1" cardinality using all 4 relationship operator styles', () => {
+    imgSnapshotTest(
+      `
+      erDiagram
+        A 1--1 B : "solid-solid"
+        C 1..1 D : "dotted-dotted"
+        E 1.-1 F : "dotted-solid"
+        G 1-.1 H : "solid-dotted"
+      `,
+      { logLevel: 1 }
+    );
+  });
 });

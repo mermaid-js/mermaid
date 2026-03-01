@@ -268,7 +268,15 @@ const fixTaskDates = function (startTime, endTime, dateFormat, excludes, include
 
 const getStartDate = function (prevTime, dateFormat, str) {
   str = str.trim();
-  if ((dateFormat.trim() === 'x' || dateFormat.trim() === 'X') && /^\d+$/.test(str)) {
+
+  // Helper function to check if format is a timestamp format (x or X)
+  const isTimestampFormat = (format) => {
+    const trimmedFormat = format.trim();
+    return trimmedFormat === 'x' || trimmedFormat === 'X';
+  };
+
+  // Handle timestamp formats (x, X) with numeric strings
+  if (isTimestampFormat(dateFormat) && /^\d+$/.test(str)) {
     return new Date(Number(str));
   }
   // Test for after
@@ -293,13 +301,15 @@ const getStartDate = function (prevTime, dateFormat, str) {
     return today;
   }
 
-  // Check for actual date set
+  // Check for actual date set using dayjs strict parsing
   let mDate = dayjs(str, dateFormat.trim(), true);
   if (mDate.isValid()) {
     return mDate.toDate();
   } else {
     log.debug('Invalid date:' + str);
     log.debug('With date format:' + dateFormat.trim());
+
+    // Timestamp formats can fall back to new Date()
     const d = new Date(str);
     if (
       d === undefined ||
