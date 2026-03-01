@@ -298,7 +298,8 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
     | 'natural'
     | 'step'
     | 'stepAfter'
-    | 'stepBefore';
+    | 'stepBefore'
+    | 'rounded';
   /**
    * Represents the padding between the labels and the shape
    *
