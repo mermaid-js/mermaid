@@ -83,6 +83,7 @@ LLM integrations to create mermaid diagrams using AI from text descriptions.
 
 - [HueHive - Create mermaid diagrams with text](https://huehive.co/tools/diagrams)
 - [MCP Server Mermaid](https://github.com/hustcc/mcp-mermaid) - Generate mermaid diagram and chart with AI MCP dynamically.
+- [DrillSpark](https://drillspark.io) - AI-powered flowchart creation tool. Generate business process diagrams in 30 seconds with natural language input.
 
 ### CRM/ERP
 
