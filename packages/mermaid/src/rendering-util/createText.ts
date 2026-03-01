@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// @ts-nocheck TODO: Fix types
 import { select } from 'd3';
 import type { MermaidConfig } from '../config.type.js';
 import type { SVGGroup } from '../diagram-api/types.js';
@@ -17,8 +15,12 @@ import { getIconSVG, isIconAvailable } from './icons.js';
 import { splitLineToFitWidth } from './splitText.js';
 import type { MarkdownLine, MarkdownWord } from './types.js';
 import { getConfig } from '../config.js';
+import type { D3Selection } from '../types.js';
 
-function applyStyle(dom, styleFn) {
+function applyStyle<T extends Element>(
+  dom: d3.Selection<T, unknown, Element | null, unknown>,
+  styleFn?: Parameters<typeof dom.attr>[1]
+) {
   if (styleFn) {
     dom.attr('style', styleFn);
   }
@@ -28,10 +30,10 @@ function applyStyle(dom, styleFn) {
 const maxSafeSizeForWidth = 16384;
 
 async function addHtmlSpan(
-  element,
-  node,
-  width,
-  classes,
+  element: D3Selection<SVGGElement>,
+  node: { label: string; labelStyle: string; isNode: boolean },
+  width: number,
+  classes: string,
   addBackground = false,
   // TODO: Make config mandatory
   config: MermaidConfig = getConfig()
@@ -42,7 +44,7 @@ async function addHtmlSpan(
   fo.attr('width', `${Math.min(10 * width, maxSafeSizeForWidth)}px`);
   fo.attr('height', `${Math.min(10 * width, maxSafeSizeForWidth)}px`);
 
-  const div = fo.append('xhtml:div');
+  const div = fo.append<HTMLDivElement>('xhtml:div');
   const sanitizedLabel = hasKatex(node.label)
     ? await renderKatexSanitized(node.label.replace(common.lineBreakRegex, '\n'), config)
     : sanitizeText(node.label, config);
@@ -65,15 +67,15 @@ async function addHtmlSpan(
     div.attr('class', 'labelBkg');
   }
 
-  let bbox = div.node().getBoundingClientRect();
+  let bbox = div.node()!.getBoundingClientRect();
   if (bbox.width === width) {
     div.style('display', 'table');
     div.style('white-space', 'break-spaces');
     div.style('width', width + 'px');
-    bbox = div.node().getBoundingClientRect();
+    bbox = div.node()!.getBoundingClientRect();
   }
 
-  return fo.node();
+  return fo.node()!;
 }
 
 /**
@@ -84,7 +86,11 @@ async function addHtmlSpan(
  * @param lineHeight - The line height value for the text.
  * @returns The created tspan element.
  */
-function createTspan(textElement: any, lineIndex: number, lineHeight: number) {
+function createTspan(
+  textElement: D3Selection<SVGTextElement>,
+  lineIndex: number,
+  lineHeight: number
+) {
   return textElement
     .append('tspan')
     .attr('class', 'text-outer-tspan')
@@ -93,11 +99,15 @@ function createTspan(textElement: any, lineIndex: number, lineHeight: number) {
     .attr('dy', lineHeight + 'em');
 }
 
-function computeWidthOfText(parentNode: any, lineHeight: number, line: MarkdownLine): number {
+function computeWidthOfText(
+  parentNode: D3Selection<SVGGElement>,
+  lineHeight: number,
+  line: MarkdownLine
+): number {
   const testElement = parentNode.append('text');
   const testSpan = createTspan(testElement, 1, lineHeight);
   updateTextContentAndStyles(testSpan, line);
-  const textLength = testSpan.node().getComputedTextLength();
+  const textLength = testSpan.node()!.getComputedTextLength();
   testElement.remove();
   return textLength;
 }
@@ -128,7 +138,7 @@ export function computeDimensionOfText(
  */
 function createFormattedText(
   width: number,
-  g: any,
+  g: D3Selection<SVGGElement>,
   structuredText: MarkdownWord[][],
   addBackground = false
 ) {
@@ -153,7 +163,7 @@ function createFormattedText(
     }
   }
   if (addBackground) {
-    const bbox = textElement.node().getBBox();
+    const bbox = textElement.node()!.getBBox();
     const padding = 2;
     bkg
       .attr('x', bbox.x - padding)
@@ -161,9 +171,9 @@ function createFormattedText(
       .attr('width', bbox.width + 2 * padding)
       .attr('height', bbox.height + 2 * padding);
 
-    return labelGroup.node();
+    return labelGroup.node()!;
   } else {
-    return textElement.node();
+    return textElement.node()!;
   }
 }
 
@@ -174,7 +184,10 @@ function createFormattedText(
  * @param tspan - The tspan element to update.
  * @param wrappedLine - The line data to apply to the tspan element.
  */
-function updateTextContentAndStyles(tspan: any, wrappedLine: MarkdownWord[]) {
+function updateTextContentAndStyles(
+  tspan: D3Selection<SVGTSpanElement>,
+  wrappedLine: MarkdownWord[]
+) {
   tspan.text('');
 
   wrappedLine.forEach((word, index) => {
@@ -227,7 +240,7 @@ export async function replaceIconSubstring(
 // Note when using from flowcharts converting the API isNode means classes should be set accordingly. When using htmlLabels => to set classes to 'nodeLabel' when isNode=true otherwise 'edgeLabel'
 // When not using htmlLabels => to set classes to 'title-row' when isTitle=true otherwise 'title-row'
 export const createText = async (
-  el,
+  el: D3Selection<SVGGElement>,
   text = '',
   {
     style = '',
