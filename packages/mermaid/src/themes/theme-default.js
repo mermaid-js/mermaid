@@ -407,6 +407,14 @@ class Theme {
       this.attributeBackgroundColorEven || oldAttributeBackgroundColorEven;
     /* -------------------------------------------------- */
   }
+
+  /**
+   * @typedef {Partial<Record<keyof Theme, Theme[keyof Theme]>>} ThemeOverrides
+   */
+
+  /**
+   * @param {ThemeOverrides} [overrides] - Optional overrides.
+   */
   calculate(overrides) {
     // for all keys in this object, if it is 'calculated' then set it to undefined
     Object.keys(this).forEach((k) => {
@@ -437,6 +445,9 @@ class Theme {
   }
 }
 
+/**
+ * @param {ThemeOverrides} [userOverrides] - Optional overrides.
+ */
 export const getThemeVariables = (userOverrides) => {
   const theme = new Theme();
   theme.calculate(userOverrides);
