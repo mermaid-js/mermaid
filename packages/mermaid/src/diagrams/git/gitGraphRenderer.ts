@@ -745,7 +745,7 @@ const drawArrow = (
             p2.y
           } L ${p2.x} ${p2.y}`;
         } else {
-          lineDef = `M ${p1.x} ${p1.y} L ${p2.x - radius} ${p1.y} ${arc} ${p2.x} ${
+          lineDef = `M ${p1.x} ${p1.y} L ${p2.x + radius} ${p1.y} ${arc2} ${p2.x} ${
             p1.y - offset
           } L ${p2.x} ${p2.y}`;
         }

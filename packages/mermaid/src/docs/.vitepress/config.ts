@@ -194,6 +194,7 @@ function sidebarSyntax() {
         { text: 'Architecture 🔥', link: '/syntax/architecture' },
         { text: 'Radar 🔥', link: '/syntax/radar' },
         { text: 'Treemap 🔥', link: '/syntax/treemap' },
+        { text: 'Venn 🔥', link: '/syntax/venn' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
