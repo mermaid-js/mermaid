@@ -198,7 +198,7 @@ async function addText<T extends SVGGraphicsElement>(
   if (!useHtmlLabels) {
     const textChild = text.children[0];
     for (const child of textChild.children) {
-      child.textContent = child.textContent.replaceAll('&gt;', '>').replaceAll('&lt;', '<');
+      child.textContent = child.textContent!.replaceAll('&gt;', '>').replaceAll('&lt;', '<');
       if (style) {
         child.setAttribute('style', style);
       }
