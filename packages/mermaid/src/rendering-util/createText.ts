@@ -300,7 +300,7 @@ export const createText = async (
     return vertexNode;
   } else {
     //sometimes the user might add br tags with 1 or more spaces in between, so we need to replace them with <br/>
-    const sanitizeBR = text.replace(/<br\s*\/?>/g, '<br/>');
+    const sanitizeBR = decodeEntities(text.replace(/<br\s*\/?>/g, '<br/>'));
     const structuredText = markdown
       ? markdownToLines(sanitizeBR.replace('<br>', '<br/>'), config)
       : nonMarkdownToLines(sanitizeBR);
