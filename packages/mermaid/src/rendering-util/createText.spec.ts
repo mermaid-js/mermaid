@@ -80,7 +80,7 @@ describe('createText', () => {
       markdown: true,
     },
     {
-      useHtmlLabels: true,
+      useHtmlLabels: false,
       markdown: false,
     },
     {
