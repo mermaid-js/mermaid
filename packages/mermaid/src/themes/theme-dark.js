@@ -230,11 +230,11 @@ class Theme {
       this['pie' + i] = this['cScale' + i];
     }
     this.pieTitleTextSize = this.pieTitleTextSize || '25px';
-    this.pieTitleTextColor = this.pieTitleTextColor || this.taskTextDarkColor;
+    this.pieTitleTextColor = this.pieTitleTextColor || this.mainContrastColor;
     this.pieSectionTextSize = this.pieSectionTextSize || '17px';
     this.pieSectionTextColor = this.pieSectionTextColor || this.textColor;
     this.pieLegendTextSize = this.pieLegendTextSize || '17px';
-    this.pieLegendTextColor = this.pieLegendTextColor || this.taskTextDarkColor;
+    this.pieLegendTextColor = this.pieLegendTextColor || this.mainContrastColor;
     this.pieStrokeColor = this.pieStrokeColor || 'black';
     this.pieStrokeWidth = this.pieStrokeWidth || '2px';
     this.pieOuterStrokeWidth = this.pieOuterStrokeWidth || '2px';
