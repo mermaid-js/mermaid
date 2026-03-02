@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+/* eslint-disable no-console -- CLI tool, console output is intentional */
+
 /**
  * verify-diagram — Render a mermaid diagram via the dev server and save a screenshot.
  *
@@ -56,8 +58,12 @@ if (!fs.existsSync(args.file)) {
 // --- Resolve port ---
 
 function resolvePort() {
-  if (args.port) return args.port;
-  if (process.env.MERMAID_PORT) return process.env.MERMAID_PORT;
+  if (args.port) {
+    return args.port;
+  }
+  if (process.env.MERMAID_PORT) {
+    return process.env.MERMAID_PORT;
+  }
 
   // Try reading .env from repo root
   const envPaths = [
@@ -67,8 +73,10 @@ function resolvePort() {
   for (const envPath of envPaths) {
     if (fs.existsSync(envPath)) {
       const content = fs.readFileSync(envPath, 'utf8');
-      const match = content.match(/^MERMAID_PORT=(\d+)/m);
-      if (match) return match[1];
+      const match = /^MERMAID_PORT=(\d+)/m.exec(content);
+      if (match) {
+        return match[1];
+      }
     }
   }
   return '9000';
@@ -89,7 +97,7 @@ async function checkServer(url) {
   }
 }
 
-// --- Render ---
+// --- Render --- // cspell:ignore networkidle
 
 async function render() {
   const serverUrl = `http://localhost:${port}`;
