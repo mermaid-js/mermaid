@@ -178,6 +178,32 @@ function createFormattedText(
 }
 
 /**
+ * Our HTML code uses `.innerHTML` to apply the text,
+ * however our plain text SVG code uses `.textContent` to apply the text,
+ * which means that HTML entities are not decoded in SVG text.
+ *
+ * This means that we need to decode any HTML entities that `sanitizeText` encodes.
+ *
+ * TODO: If we're using `.textContent`, we can probably skip sanitization entirely.
+ */
+function decodeHTMLEntities(text: string): string {
+  // We only need to decode the few entries that `sanitizeText` encodes.
+  const regex = /&(amp|lt|gt);/g;
+  return text.replace(regex, (match, entity) => {
+    switch (entity) {
+      case 'amp':
+        return '&';
+      case 'lt':
+        return '<';
+      case 'gt':
+        return '>';
+      default:
+        return match;
+    }
+  });
+}
+
+/**
  * Updates the text content and styles of the given tspan element based on the
  * provided wrappedLine data.
  *
@@ -197,10 +223,10 @@ function updateTextContentAndStyles(
       .attr('class', 'text-inner-tspan')
       .attr('font-weight', word.type === 'strong' ? 'bold' : 'normal');
     if (index === 0) {
-      innerTspan.text(word.content);
+      innerTspan.text(decodeHTMLEntities(word.content));
     } else {
       // TODO: check what joiner to use.
-      innerTspan.text(' ' + word.content);
+      innerTspan.text(' ' + decodeHTMLEntities(word.content));
     }
   });
 }
