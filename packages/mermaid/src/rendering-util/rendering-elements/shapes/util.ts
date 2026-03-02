@@ -63,7 +63,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   const halfPadding = (node?.padding ?? 0) / 2;
 
   if (useHtmlLabels) {
-    const div = text.children[0];
+    const div = text.children[0] as HTMLDivElement;
     const dv = select(text);
 
     // if there are images, need to wait for them to load before getting the bounding box

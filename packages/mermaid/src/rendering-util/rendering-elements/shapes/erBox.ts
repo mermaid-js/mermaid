@@ -361,7 +361,7 @@ async function addText<T extends SVGGraphicsElement>(
 
   let bbox = text.getBBox();
   if (evaluate(config.htmlLabels)) {
-    const div = text.children[0];
+    const div = text.children[0] as HTMLDivElement;
     div.style.textAlign = 'start';
     const dv = select(text);
     bbox = div.getBoundingClientRect();
