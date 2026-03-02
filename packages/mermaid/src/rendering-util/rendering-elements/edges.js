@@ -567,7 +567,7 @@ export const insertEdge = function (
       points.push(head.intersect(points[points.length - 1]));
     } else {
       // 2-point edge (e.g. constraint:false): compute border intersections directly
-      const [startPoint, endPoint] = points;
+      const [startPoint, endPoint] = edge.points;
       points = [tail.intersect(endPoint), head.intersect(startPoint)];
     }
   }
