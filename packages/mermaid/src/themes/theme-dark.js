@@ -142,7 +142,7 @@ class Theme {
     this.taskTextOutsideColor = this.taskTextLightColor;
     this.gridColor = this.mainContrastColor;
     this.doneTaskBkgColor = this.mainContrastColor;
-    this.taskTextDarkColor = this.darkTextColor;
+    this.taskTextDarkColor = invert(this.doneTaskBkgColor);
 
     /* Architecture Diagram variables */
     this.archEdgeColor = this.lineColor;
