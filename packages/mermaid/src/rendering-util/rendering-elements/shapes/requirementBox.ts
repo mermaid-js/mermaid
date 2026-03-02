@@ -198,12 +198,11 @@ async function addText<T extends SVGGraphicsElement>(
   if (!useHtmlLabels) {
     const textChild = text.children[0];
     for (const child of textChild.children) {
-      child.textContent = child.textContent!.replaceAll('&gt;', '>').replaceAll('&lt;', '<');
       if (style) {
         child.setAttribute('style', style);
       }
     }
-    // Get the bounding box after the text update
+    // Get the bounding box after the style update
     bbox = text.getBBox();
     // Add extra height so it is similar to the html labels
     bbox.height += 6;
