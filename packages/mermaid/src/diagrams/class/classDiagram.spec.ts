@@ -922,6 +922,46 @@ foo()
       expect(actual.methods.length).toBe(1);
       expect(actual.annotations[0]).toBe('interface');
     });
+
+    it('should handle the docs example: separate line annotation with members', function () {
+      const str =
+        'classDiagram\n' +
+        'class Shape\n' +
+        '<<interface>> Shape\n' +
+        'Shape : noOfVertices\n' +
+        'Shape : draw()';
+      parser.parse(str);
+
+      const actual = parser.yy.getClass('Shape');
+      expect(actual.annotations.length).toBe(1);
+      expect(actual.annotations[0]).toBe('interface');
+      expect(actual.members.length).toBe(1);
+      expect(actual.methods.length).toBe(1);
+    });
+
+    it('should handle the docs example: nested annotation with enumeration', function () {
+      const str =
+        'classDiagram\n' +
+        'class Shape{\n' +
+        '    <<interface>>\n' +
+        '    noOfVertices\n' +
+        '    draw()\n' +
+        '}\n' +
+        'class Color{\n' +
+        '    <<enumeration>>\n' +
+        '    RED\n' +
+        '    BLUE\n' +
+        '    GREEN\n' +
+        '    WHITE\n' +
+        '    BLACK\n' +
+        '}';
+      parser.parse(str);
+
+      const shape = parser.yy.getClass('Shape');
+      expect(shape.annotations[0]).toBe('interface');
+      const color = parser.yy.getClass('Color');
+      expect(color.annotations[0]).toBe('enumeration');
+    });
   });
 });
 
