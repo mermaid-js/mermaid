@@ -424,7 +424,7 @@ Lines can be solid or dotted, and can end with various types of arrowheads, cros
 | `-)`     | Solid line with an open arrow at the end (async)     |
 | `--)`    | Dotted line with a open arrow at the end (async)     |
 
-**Half-Arrows (v\<MERMAID_RELEASE_VERSION>+)**
+**Half-Arrows (v11.12.3+)**
 
 The following half-arrow types are supported for more expressive sequence diagrams. Both solid and dotted variants are available by increasing the number of dashes (`-` → `--`).
 
