@@ -468,3 +468,7 @@ A quick note from Knut Sveidqvist:
 ---
 
 _Mermaid was created by Knut Sveidqvist for easier documentation._
+
+---
+
+Branch created by [@Kravcant](https://github.com/Kravcant)
