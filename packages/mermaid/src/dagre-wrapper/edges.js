@@ -21,27 +21,32 @@ export const clear = () => {
 export const insertEdgeLabel = async (elem, edge) => {
   const config = getConfig();
   const useHtmlLabels = getEffectiveHtmlLabels(config);
-  // Create the actual text element
-  const labelElement =
-    edge.labelType === 'markdown'
-      ? // TODO: the createText function returns a `Promise`, so do we need an wait here?
-        createText(
-          elem,
-          edge.label,
-          {
-            style: edge.labelStyle,
-            useHtmlLabels,
-            addSvgBackground: true,
-          },
-          config
-        )
-      : await createLabel(elem, edge.label, edge.labelStyle);
 
   // Create outer g, edgeLabel, this will be positioned after graph layout
   const edgeLabel = elem.insert('g').attr('class', 'edgeLabel');
 
   // Create inner g, label, this will be positioned now for centering the text
   const label = edgeLabel.insert('g').attr('class', 'label');
+
+  // Create the actual text element
+  const isMarkdown = edge.labelType === 'markdown';
+  const labelElement = await createText(
+    elem,
+    edge.label,
+    {
+      style: edge.labelStyle,
+      useHtmlLabels,
+      // TODO: The old code only set addSvgBackground when using markdown, but
+      // this function is only used by block diagrams which never use markdown.
+      addSvgBackground: isMarkdown,
+      isNode: false,
+      markdown: isMarkdown,
+      // If using markdown, wrap using default width
+      width: isMarkdown ? undefined : Number.POSITIVE_INFINITY,
+    },
+    config
+  );
+
   label.node().appendChild(labelElement);
 
   // Center the label

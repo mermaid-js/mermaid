@@ -55,7 +55,7 @@ required:
   - packet
   - block
   - look
-  - radar
+  - venn
 properties:
   theme:
     description: |
@@ -301,6 +301,8 @@ properties:
     $ref: '#/$defs/ArchitectureDiagramConfig'
   mindmap:
     $ref: '#/$defs/MindmapDiagramConfig'
+  ishikawa:
+    $ref: '#/$defs/IshikawaDiagramConfig'
   kanban:
     $ref: '#/$defs/KanbanDiagramConfig'
   gitGraph:
@@ -315,6 +317,8 @@ properties:
     $ref: '#/$defs/BlockDiagramConfig'
   radar:
     $ref: '#/$defs/RadarDiagramConfig'
+  venn:
+    $ref: '#/$defs/VennDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration
     description: Configuration options to pass to the `dompurify` library.
@@ -994,6 +998,23 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: Layout algorithm to use for positioning mindmap nodes
         type: string
         default: 'cose-bilkent'
+
+  IshikawaDiagramConfig:
+    title: Ishikawa Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for ishikawa diagrams
+    type: object
+    properties:
+      diagramPadding:
+        description: |
+          The amount of padding around the diagram as a whole so that embedded
+          diagrams have margins, expressed in pixels.
+        type: integer
+        default: 20
+        minimum: 0
+      useMaxWidth:
+        type: boolean
+        default: false
 
   KanbanDiagramConfig:
     title: Kanban Diagram Config
@@ -2134,8 +2155,9 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
             'step',
             'stepAfter',
             'stepBefore',
+            'rounded',
           ]
-        default: 'basis'
+        default: 'rounded'
       padding:
         description: |
           Represents the padding between the labels and the shape
@@ -2339,6 +2361,31 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         minimum: 0
         maximum: 1
         default: 0.17
+
+  VennDiagramConfig:
+    title: Venn Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for Venn diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      width:
+        description: The width of the Venn diagram.
+        type: number
+        minimum: 1
+        default: 800
+      height:
+        description: The height of the Venn diagram.
+        type: number
+        minimum: 1
+        default: 450
+      padding:
+        type: number
+        minimum: 0
+        default: 8
+      useDebugLayout:
+        type: boolean
+        default: false
 
   FontCalculator:
     title: Font Calculator

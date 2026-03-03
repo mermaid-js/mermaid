@@ -1,9 +1,9 @@
 import { createText } from '../../createText.js';
 import type { Node } from '../../types.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
-import { getEffectiveHtmlLabels } from '../../../config.js';
+import { evaluate, getEffectiveHtmlLabels } from '../../../config.js';
 import { select } from 'd3';
-import { evaluate, sanitizeText } from '../../../diagrams/common/common.js';
+import { sanitizeText } from '../../../diagrams/common/common.js';
 import { decodeEntities, handleUndefinedAttr } from '../../../utils.js';
 import type { D3Selection, Point } from '../../../types.js';
 import { configureLabelImages } from './labelImageUtils.js';
@@ -41,14 +41,23 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
     label = typeof node.label === 'string' ? node.label : node.label[0];
   }
 
-  const text = await createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
-    useHtmlLabels,
-    width: node.width || getConfig().flowchart?.wrappingWidth,
-    // @ts-expect-error -- This is currently not used. Should this be `classes` instead?
-    cssClasses: 'markdown-node-label',
-    style: node.labelStyle,
-    addSvgBackground: !!node.icon || !!node.img,
-  });
+  const addBackground = !!node.icon || !!node.img;
+  const isMarkdown = node.labelType === 'markdown';
+  const text = await createText(
+    labelEl,
+    sanitizeText(decodeEntities(label), getConfig()),
+    {
+      useHtmlLabels,
+      width: node.width || getConfig().flowchart?.wrappingWidth,
+      // @ts-expect-error -- This is currently not used. Should this be `classes` instead?
+      cssClasses: isMarkdown ? 'markdown-node-label' : undefined,
+      style: node.labelStyle,
+      addSvgBackground: addBackground,
+      markdown: isMarkdown,
+    },
+    getConfig()
+  );
+
   // Get the size of the label
   let bbox = text.getBBox();
   const halfPadding = (node?.padding ?? 0) / 2;
