@@ -1,4 +1,5 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base",
     ":rebaseStalePrs",
@@ -39,8 +40,13 @@
     {
       "groupName": "dompurify",
       "matchPackagePatterns": ["dompurify"]
+    },
+    {
+      "matchPackageNames": ["chokidar"],
+      "enabled": false
     }
   ],
   "dependencyDashboard": false,
-  "dependencyDashboardAutoclose": true
+  "dependencyDashboardAutoclose": true,
+  "rangeStrategy": "bump"
 }

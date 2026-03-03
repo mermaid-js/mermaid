@@ -1,5 +1,6 @@
 // import khroma from 'khroma';
 import * as khroma from 'khroma';
+import { getIconStyles } from '../globalStyles.js';
 
 /** Returns the styles given options */
 export interface FlowChartStyleOptions {
@@ -170,13 +171,14 @@ const getStyles = (options: FlowChartStyleOptions) =>
       background-color: ${options.edgeLabelBackground};
       padding: 2px;
     }
-    rect {
+    .label rect {
       opacity: 0.5;
       background-color: ${options.edgeLabelBackground};
       fill: ${options.edgeLabelBackground};
     }
     text-align: center;
   }
+  ${getIconStyles()}
 `;
 
 export default getStyles;

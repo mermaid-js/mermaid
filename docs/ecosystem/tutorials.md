@@ -52,28 +52,33 @@ Examples are provided in [Getting Started](../intro/getting-started.md)
 
 [K8s.dev blog: Improve your documentation with Mermaid.js diagrams](https://www.kubernetes.dev/blog/2021/12/01/improve-your-documentation-with-mermaid.js-diagrams/)
 
-## Jupyter Integration with mermaid-js
+## Jupyter / Python Integration with mermaid-js
 
-Here's an example of Python integration with mermaid-js which uses the mermaid.ink service, that displays the graph in a Jupyter notebook.
+Here's an example of Python integration with mermaid-js which uses the mermaid.ink service, that displays the graph in a Jupyter notebook and save it as _.png_ image with the stated resolution (in this example, `dpi=1200`).
 
 ```python
 import base64
+import io, requests
 from IPython.display import Image, display
+from PIL import Image as im
 import matplotlib.pyplot as plt
 
 def mm(graph):
     graphbytes = graph.encode("utf8")
     base64_bytes = base64.urlsafe_b64encode(graphbytes)
     base64_string = base64_bytes.decode("ascii")
-    display(Image(url="https://mermaid.ink/img/" + base64_string))
+    img = im.open(io.BytesIO(requests.get('https://mermaid.ink/img/' + base64_string).content))
+    plt.imshow(img)
+    plt.axis('off') # allow to hide axis
+    plt.savefig('image.png', dpi=1200)
 
 mm("""
 graph LR;
-    A--> B & C & D;
-    B--> A & E;
-    C--> A & E;
-    D--> A & E;
-    E--> B & C & D;
+    A--> B & C & D
+    B--> A & E
+    C--> A & E
+    D--> A & E
+    E--> B & C & D
 """)
 ```
 
@@ -81,4 +86,4 @@ graph LR;
 
 ![Example graph of the Python integration](img/python-mermaid-integration.png)
 
-<!--- cspell:ignore Elle Jaoude Neurodiverse graphbytes --->
+<!--- cspell:ignore Elle Jaoude Neurodiverse graphbytes imshow savefig --->

@@ -14,6 +14,7 @@ export interface MermaidBuildOptions extends BuildOptions {
   metafile: boolean;
   format: 'esm' | 'iife';
   options: PackageOptions;
+  includeLargeFeatures: boolean;
 }
 
 export const defaultOptions: Omit<MermaidBuildOptions, 'entryName' | 'options'> = {
@@ -21,6 +22,7 @@ export const defaultOptions: Omit<MermaidBuildOptions, 'entryName' | 'options'> 
   metafile: false,
   core: false,
   format: 'esm',
+  includeLargeFeatures: true,
 } as const;
 
 const buildOptions = (override: BuildOptions): BuildOptions => {
@@ -39,11 +41,17 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
   };
 };
 
-const getFileName = (fileName: string, { core, format, minify }: MermaidBuildOptions) => {
+const getFileName = (
+  fileName: string,
+  { core, format, minify, includeLargeFeatures }: MermaidBuildOptions
+) => {
   if (core) {
     fileName += '.core';
   } else if (format === 'esm') {
     fileName += '.esm';
+  }
+  if (!includeLargeFeatures) {
+    fileName += '.tiny';
   }
   if (minify) {
     fileName += '.min';
@@ -54,31 +62,36 @@ const getFileName = (fileName: string, { core, format, minify }: MermaidBuildOpt
 export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
   const {
     core,
-    metafile,
     format,
-    minify,
     options: { name, file, packageName },
+    globalName = 'mermaid',
+    includeLargeFeatures,
+    ...rest
   } = options;
+
   const external: string[] = ['require', 'fs', 'path'];
   const outFileName = getFileName(name, options);
+  const { dependencies, version } = JSON.parse(
+    readFileSync(resolve(__dirname, `../packages/${packageName}/package.json`), 'utf-8')
+  );
   const output: BuildOptions = buildOptions({
+    ...rest,
     absWorkingDir: resolve(__dirname, `../packages/${packageName}`),
     entryPoints: {
       [outFileName]: `src/${file}`,
     },
-    metafile,
-    minify,
+    globalName,
     logLevel: 'info',
     chunkNames: `chunks/${outFileName}/[name]-[hash]`,
     define: {
+      // This needs to be stringified for esbuild
+      'injected.includeLargeFeatures': `${includeLargeFeatures}`,
+      'injected.version': `'${version}'`,
       'import.meta.vitest': 'undefined',
     },
   });
 
   if (core) {
-    const { dependencies } = JSON.parse(
-      readFileSync(resolve(__dirname, `../packages/${packageName}/package.json`), 'utf-8')
-    );
     // Core build is used to generate file without bundled dependencies.
     // This is used by downstream projects to bundle dependencies themselves.
     // Ignore dependencies and any dependencies of dependencies
@@ -89,11 +102,12 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
   if (format === 'iife') {
     output.format = 'iife';
     output.splitting = false;
-    output.globalName = '__esbuild_esm_mermaid';
+    const originalGlobalName = output.globalName ?? 'mermaid';
+    output.globalName = `__esbuild_esm_mermaid_nm[${JSON.stringify(originalGlobalName)}]`;
     // Workaround for removing the .default access in esbuild IIFE.
     // https://github.com/mermaid-js/mermaid/pull/4109#discussion_r1292317396
     output.footer = {
-      js: 'globalThis.mermaid = globalThis.__esbuild_esm_mermaid.default;',
+      js: `globalThis[${JSON.stringify(originalGlobalName)}] = globalThis.${output.globalName}.default;`,
     };
     output.outExtension = { '.js': '.js' };
   } else {

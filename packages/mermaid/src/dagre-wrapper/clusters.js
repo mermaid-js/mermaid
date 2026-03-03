@@ -4,10 +4,10 @@ import createLabel from './createLabel.js';
 import { createText } from '../rendering-util/createText.js';
 import { select } from 'd3';
 import { getConfig } from '../diagram-api/diagramAPI.js';
-import { evaluate } from '../diagrams/common/common.js';
+import { getEffectiveHtmlLabels } from '../config.js';
 import { getSubGraphTitleMargins } from '../utils/subGraphTitleMargins.js';
 
-const rect = (parent, node) => {
+const rect = async (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
   const siteConfig = getConfig();
 
@@ -20,23 +20,21 @@ const rect = (parent, node) => {
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
 
-  const useHtmlLabels = evaluate(siteConfig.flowchart.htmlLabels);
+  const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
 
   // Create the label and insert it after the rect
   const label = shapeSvg.insert('g').attr('class', 'cluster-label');
 
-  // const text = label
-  //   .node()
-  //   .appendChild(createLabel(node.labelText, node.labelStyle, undefined, true));
+  // TODO: the createText function returns a `Promise`, so I'm guessing it never runs?
   const text =
     node.labelType === 'markdown'
       ? createText(label, node.labelText, { style: node.labelStyle, useHtmlLabels }, siteConfig)
-      : label.node().appendChild(createLabel(node.labelText, node.labelStyle, undefined, true));
+      : await createLabel(label, node.labelText, node.labelStyle, undefined, true);
 
   // Get the size of the label
   let bbox = text.getBBox();
 
-  if (evaluate(siteConfig.flowchart.htmlLabels)) {
+  if (getEffectiveHtmlLabels(siteConfig)) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();
@@ -129,7 +127,7 @@ const noteGroup = (parent, node) => {
 
   return shapeSvg;
 };
-const roundedWithTitle = (parent, node) => {
+const roundedWithTitle = async (parent, node) => {
   const siteConfig = getConfig();
 
   // Add outer g element
@@ -142,13 +140,11 @@ const roundedWithTitle = (parent, node) => {
   const label = shapeSvg.insert('g').attr('class', 'cluster-label');
   const innerRect = shapeSvg.append('rect');
 
-  const text = label
-    .node()
-    .appendChild(createLabel(node.labelText, node.labelStyle, undefined, true));
+  const text = await createLabel(label, node.labelText, node.labelStyle, undefined, true);
 
   // Get the size of the label
   let bbox = text.getBBox();
-  if (evaluate(siteConfig.flowchart.htmlLabels)) {
+  if (getEffectiveHtmlLabels(siteConfig)) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();
@@ -188,7 +184,7 @@ const roundedWithTitle = (parent, node) => {
       node.y -
       node.height / 2 -
       node.padding / 3 +
-      (evaluate(siteConfig.flowchart.htmlLabels) ? 5 : 3) +
+      (getEffectiveHtmlLabels(siteConfig) ? 5 : 3) +
       subGraphTitleTopMargin
     })`
   );
@@ -236,14 +232,13 @@ const shapes = { rect, roundedWithTitle, noteGroup, divider };
 
 let clusterElems = {};
 
-export const insertCluster = (elem, node) => {
+export const insertCluster = async (elem, node) => {
   log.trace('Inserting cluster');
   const shape = node.shape || 'rect';
-  clusterElems[node.id] = shapes[shape](elem, node);
+  clusterElems[node.id] = await shapes[shape](elem, node);
 };
-export const getClusterTitleWidth = (elem, node) => {
-  const label = createLabel(node.labelText, node.labelStyle, undefined, true);
-  elem.node().appendChild(label);
+export const getClusterTitleWidth = async (elem, node) => {
+  const label = await createLabel(elem, node.labelText, node.labelStyle, undefined, true);
   const width = label.getBBox().width;
   elem.node().removeChild(label);
   return width;

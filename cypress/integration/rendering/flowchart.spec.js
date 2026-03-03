@@ -774,6 +774,21 @@ describe('Graph', () => {
       expect(svg).to.not.have.attr('style');
     });
   });
+  it('40: should add edge animation', () => {
+    renderGraph(
+      `
+      flowchart TD
+          A(["Start"]) L_A_B_0@--> B{"Decision"}
+          B --> C["Option A"] & D["Option B"]
+          style C stroke-width:4px,stroke-dasharray: 5
+          L_A_B_0@{ animation: slow } 
+          L_B_D_0@{ animation: fast }`,
+      { screenshot: false }
+    );
+    // Verify animation classes are applied to both edges
+    cy.get('path#L_A_B_0').should('have.class', 'edge-animation-slow');
+    cy.get('path#L_B_D_0').should('have.class', 'edge-animation-fast');
+  });
   it('58: handle styling with style expressions', () => {
     imgSnapshotTest(
       `
@@ -895,7 +910,7 @@ graph TD
     imgSnapshotTest(
       `
       graph TD
-        classDef default fill:#a34,stroke:#000,stroke-width:4px,color:#fff 
+        classDef default fill:#a34,stroke:#000,stroke-width:4px,color:#fff
         hello --> default
       `,
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
@@ -917,4 +932,120 @@ graph TD
       }
     );
   });
+  it('#6369: edge color should affect arrow head', () => {
+    imgSnapshotTest(
+      `
+    flowchart LR
+        A --> B
+        A --> C
+        C --> D
+
+        linkStyle 0 stroke:#D50000
+        linkStyle 2 stroke:#D50000
+    `,
+      {
+        flowchart: { htmlLabels: true },
+        securityLevel: 'loose',
+      }
+    );
+  });
+  it('68: should honor subgraph direction when inheritDir is false', () => {
+    imgSnapshotTest(
+      `
+      %%{init: {"flowchart": { "inheritDir": false }}}%%
+      flowchart TB
+        direction LR
+        subgraph A
+          direction TB
+          a --> b
+        end
+        subgraph B
+          c --> d
+        end
+      `,
+      {
+        fontFamily: 'courier',
+      }
+    );
+  });
+
+  it('69: should inherit global direction when inheritDir is true', () => {
+    imgSnapshotTest(
+      `
+      %%{init: {"flowchart": { "inheritDir": true }}}%%
+      flowchart TB
+        direction LR
+        subgraph A
+          direction TB
+          a --> b
+        end
+        subgraph B
+          c --> d
+        end
+      `,
+      {
+        fontFamily: 'courier',
+      }
+    );
+  });
+
+  it('70: should render a subgraph with direction TD', () => {
+    imgSnapshotTest(
+      `
+      flowchart LR
+        subgraph A
+          direction TD
+          a --> b
+        end
+      `,
+      {
+        fontFamily: 'courier',
+      }
+    );
+  });
+});
+it('#5824: should be able to render string and markdown labels', () => {
+  imgSnapshotTest(
+    `
+flowchart TB
+    mermaid{"What is\nyourmermaid version?"} --> v10["<11"] --"\`<**1**1\`"--> fine["No bug"]
+    mermaid --> v11[">= v11"] -- ">= v11" --> broken["Affected by https://github.com/mermaid-js/mermaid/issues/5824"]
+    subgraph subgraph1["\`How to fix **fix**\`"]
+        broken --> B["B"]
+    end
+    githost["Github, Gitlab, BitBucket, etc."]
+    githost2["\`Github, Gitlab, BitBucket, etc.\`"]
+    a["1."]
+    b["- x"]
+    `,
+    {
+      flowchart: { htmlLabels: true },
+      securityLevel: 'loose',
+    }
+  );
+});
+it('69: should render subgraphs with adhoc list headings', () => {
+  imgSnapshotTest(
+    `
+    graph TB
+      subgraph "1. first"
+        a1-->a2
+      end
+      subgraph 2. second
+        b1-->b2
+      end
+      `,
+    { fontFamily: 'courier' }
+  );
+});
+it('70: should render subgraphs with markdown headings', () => {
+  imgSnapshotTest(
+    `
+    graph TB
+      subgraph "\`**strong**\`"
+        a1-->a2
+      end
+      `,
+    { fontFamily: 'courier' }
+  );
 });

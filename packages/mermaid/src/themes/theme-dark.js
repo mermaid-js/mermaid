@@ -79,6 +79,7 @@ class Theme {
     this.critBkgColor = '#E83737';
     this.taskTextDarkColor = 'calculated';
     this.todayLineColor = '#DB5757';
+    this.vertLineColor = '#00BFFF';
 
     /* C4 Context Diagram variables */
     this.personBorder = this.primaryBorderColor;
@@ -90,6 +91,10 @@ class Theme {
     this.archEdgeWidth = '3';
     this.archGroupBorderColor = this.primaryBorderColor;
     this.archGroupBorderWidth = '2px';
+
+    /* Entity Relationship variables */
+    this.rowOdd = this.rowOdd || lighten(this.mainBkg, 5) || '#ffffff';
+    this.rowEven = this.rowEven || darken(this.mainBkg, 10);
 
     /* state colors */
     this.labelColor = 'calculated';
@@ -137,7 +142,7 @@ class Theme {
     this.taskTextOutsideColor = this.taskTextLightColor;
     this.gridColor = this.mainContrastColor;
     this.doneTaskBkgColor = this.mainContrastColor;
-    this.taskTextDarkColor = this.darkTextColor;
+    this.taskTextDarkColor = invert(this.doneTaskBkgColor);
 
     /* Architecture Diagram variables */
     this.archEdgeColor = this.lineColor;
@@ -225,16 +230,23 @@ class Theme {
       this['pie' + i] = this['cScale' + i];
     }
     this.pieTitleTextSize = this.pieTitleTextSize || '25px';
-    this.pieTitleTextColor = this.pieTitleTextColor || this.taskTextDarkColor;
+    this.pieTitleTextColor = this.pieTitleTextColor || this.mainContrastColor;
     this.pieSectionTextSize = this.pieSectionTextSize || '17px';
     this.pieSectionTextColor = this.pieSectionTextColor || this.textColor;
     this.pieLegendTextSize = this.pieLegendTextSize || '17px';
-    this.pieLegendTextColor = this.pieLegendTextColor || this.taskTextDarkColor;
+    this.pieLegendTextColor = this.pieLegendTextColor || this.mainContrastColor;
     this.pieStrokeColor = this.pieStrokeColor || 'black';
     this.pieStrokeWidth = this.pieStrokeWidth || '2px';
     this.pieOuterStrokeWidth = this.pieOuterStrokeWidth || '2px';
     this.pieOuterStrokeColor = this.pieOuterStrokeColor || 'black';
     this.pieOpacity = this.pieOpacity || '0.7';
+
+    /* venn */
+    for (let i = 0; i < 8; i++) {
+      this['venn' + (i + 1)] = this['venn' + (i + 1)] ?? lighten(this['cScale' + i], 30);
+    }
+    this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
+    this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
 
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;
@@ -285,6 +297,20 @@ class Theme {
       titleColor: this.primaryTextColor,
       blockStrokeColor: this.primaryTextColor,
       blockFillColor: this.background,
+    };
+
+    /* radar */
+    this.radar = {
+      axisColor: this.radar?.axisColor || this.lineColor,
+      axisStrokeWidth: this.radar?.axisStrokeWidth || 2,
+      axisLabelFontSize: this.radar?.axisLabelFontSize || 12,
+      curveOpacity: this.radar?.curveOpacity || 0.5,
+      curveStrokeWidth: this.radar?.curveStrokeWidth || 2,
+      graticuleColor: this.radar?.graticuleColor || '#DEDEDE',
+      graticuleStrokeWidth: this.radar?.graticuleStrokeWidth || 1,
+      graticuleOpacity: this.radar?.graticuleOpacity || 0.3,
+      legendBoxSize: this.radar?.legendBoxSize || 12,
+      legendFontSize: this.radar?.legendFontSize || 12,
     };
 
     /* class */

@@ -57,8 +57,14 @@ import { triangle } from './shapes/triangle.js';
 import { waveEdgedRectangle } from './shapes/waveEdgedRectangle.js';
 import { waveRectangle } from './shapes/waveRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
+import { erBox } from './shapes/erBox.js';
 import { classBox } from './shapes/classBox.js';
+import { requirementBox } from './shapes/requirementBox.js';
 import { kanbanItem } from './shapes/kanbanItem.js';
+import { bang } from './shapes/bang.js';
+import { cloud } from './shapes/cloud.js';
+import { defaultMindmapNode } from './shapes/defaultMindmapNode.js';
+import { mindmapCircle } from './shapes/mindmapCircle.js';
 
 type ShapeHandler = <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -132,6 +138,22 @@ export const shapesDefs = [
     description: 'Starting point',
     aliases: ['circ'],
     handler: circle,
+  },
+  {
+    semanticName: 'Bang',
+    name: 'Bang',
+    shortName: 'bang',
+    description: 'Bang',
+    aliases: ['bang'],
+    handler: bang,
+  },
+  {
+    semanticName: 'Cloud',
+    name: 'Cloud',
+    shortName: 'cloud',
+    description: 'cloud',
+    aliases: ['cloud'],
+    handler: cloud,
   },
   {
     semanticName: 'Decision',
@@ -474,8 +496,17 @@ const generateShapeMap = () => {
     // Kanban diagram
     kanbanItem,
 
+    //Mindmap diagram
+    mindmapCircle,
+    defaultMindmapNode,
     // class diagram
     classBox,
+
+    // er diagram
+    erBox,
+
+    // Requirement diagram
+    requirementBox,
   } as const;
 
   const entries = [

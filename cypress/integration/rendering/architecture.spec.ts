@@ -19,6 +19,25 @@ describe.skip('architecture diagram', () => {
             `
     );
   });
+  it('should render a simple architecture diagram with titleAndAccessibilities', () => {
+    imgSnapshotTest(
+      `architecture-beta
+          title Simple Architecture Diagram
+          accTitle: Accessibility Title
+          accDescr: Accessibility Description
+          group api(cloud)[API]
+
+          service db(database)[Database] in api
+          service disk1(disk)[Storage] in api
+          service disk2(disk)[Storage] in api
+          service server(server)[Server] in api
+
+          db:L -- R:server
+          disk1:T -- B:server
+          disk2:T -- B:db
+      `
+    );
+  });
   it('should render an architecture diagram with groups within groups', () => {
     imgSnapshotTest(
       `architecture-beta
@@ -171,8 +190,7 @@ describe.skip('architecture diagram', () => {
             `
     );
   });
-
-  it('should render an architecture diagram with a resonable height', () => {
+  it('should render an architecture diagram with a reasonable height', () => {
     imgSnapshotTest(
       `architecture-beta
               group federated(cloud)[Federated Environment]
@@ -223,7 +241,6 @@ describe.skip('architecture diagram', () => {
       `
     );
   });
-
   it('should render a consistent architecture diagram', () => {
     // #6024
     imgSnapshotTest(
@@ -241,7 +258,6 @@ describe.skip('architecture diagram', () => {
       `
     );
   });
-
   it('should render a consistent architecture diagram', () => {
     // #6166
     imgSnapshotTest(
@@ -271,7 +287,6 @@ describe.skip('architecture diagram', () => {
       `
     );
   });
-
   it('should render an error', () => {
     // #6166
     imgSnapshotTest(
@@ -296,11 +311,14 @@ describe.skip('architecture diagram', () => {
       `
     );
   });
-});
-
-// Skipped as the layout is not deterministic, and causes issues in E2E tests.
-describe.skip('architecture - external', () => {
-  it('should allow adding external icons', () => {
-    urlSnapshotTest('http://localhost:9000/architecture-external.html');
+  it('should render edges at correct length', () => {
+    imgSnapshotTest(`
+      architecture-beta
+        service cell[Table Cell]
+        service colspan[colspan]
+        service rowspan[rowspan]
+        cell:R --> L:colspan
+        cell:B --> T:rowspan
+    `);
   });
 });

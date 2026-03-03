@@ -125,6 +125,9 @@ export const commit = function (commitDB: CommitDB) {
   };
   state.records.head = newCommit;
   log.info('main branch', config.mainBranchName);
+  if (state.records.commits.has(newCommit.id)) {
+    log.warn(`Commit ID ${newCommit.id} already exists`);
+  }
   state.records.commits.set(newCommit.id, newCommit);
   state.records.branches.set(state.records.currBranch, newCommit.id);
   log.debug('in pushCommit ' + newCommit.id);
@@ -222,7 +225,7 @@ export const merge = (mergeDB: MergeDB): void => {
     const error: any = new Error(
       'Incorrect usage of "merge". Commit with id:' +
         customId +
-        ' already exists, use different custom Id'
+        ' already exists, use different custom id'
     );
     error.hash = {
       text: `merge ${otherBranch} ${customId} ${overrideType} ${customTags?.join(' ')}`,

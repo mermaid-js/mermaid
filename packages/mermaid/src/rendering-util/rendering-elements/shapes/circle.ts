@@ -1,18 +1,22 @@
-import { log } from '../../../logger.js';
-import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
-import intersect from '../intersect/index.js';
-import type { Node } from '../../types.js';
-import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
-import type { D3Selection } from '../../../types.js';
+import { log } from '../../../logger.js';
+import type { Bounds, D3Selection, Point } from '../../../types.js';
 import { handleUndefinedAttr } from '../../../utils.js';
+import type { MindmapOptions, Node, ShapeRenderOptions } from '../../types.js';
+import intersect from '../intersect/index.js';
+import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
 
-export async function circle<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
+export async function circle<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  node: Node,
+  options?: MindmapOptions | ShapeRenderOptions
+) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
-
-  const radius = bbox.width / 2 + halfPadding;
+  const padding = options?.padding ?? halfPadding;
+  const radius = bbox.width / 2 + padding;
   let circleElem;
   const { cssStyles } = node;
 
@@ -35,7 +39,10 @@ export async function circle<T extends SVGGraphicsElement>(parent: D3Selection<T
   }
 
   updateNodeBounds(node, circleElem);
-
+  node.calcIntersect = function (bounds: Bounds, point: Point) {
+    const radius = bounds.width / 2;
+    return intersect.circle(bounds, radius, point);
+  };
   node.intersect = function (point) {
     log.info('Circle intersect', node, radius, point);
     return intersect.circle(node, radius, point);

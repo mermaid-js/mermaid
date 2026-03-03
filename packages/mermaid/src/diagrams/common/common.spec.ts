@@ -28,7 +28,7 @@ describe('when securityLevel is antiscript, all script must be removed', () => {
   it('should remove all javascript urls', () => {
     compareRemoveScript(
       `This is a <a href="javascript:runHijackingScript();">clean link</a> + <a href="javascript:runHijackingScript();">clean link</a>
-  and <a href="javascript&colon;bipassedMining();">me too</a>`,
+  and <a href="javascript&colon;bypassedMining();">me too</a>`,
       `This is a <a>clean link</a> + <a>clean link</a>
   and <a>me too</a>`
     );
@@ -69,6 +69,31 @@ describe('Sanitize text', () => {
       flowchart: { htmlLabels: true },
     });
     expect(result).not.toContain('javascript:alert(1)');
+  });
+
+  it('should allow HTML tags in sandbox mode', () => {
+    const htmlStr = '<p>This is a <strong>bold</strong> text</p>';
+    const result = sanitizeText(htmlStr, {
+      securityLevel: 'sandbox',
+      flowchart: { htmlLabels: true },
+    });
+    expect(result).toContain('<p>');
+    expect(result).toContain('<strong>');
+    expect(result).toContain('</strong>');
+    expect(result).toContain('</p>');
+  });
+
+  it('should remove script tags in sandbox mode', () => {
+    const maliciousStr = '<p>Hello <script>alert(1)</script> world</p>';
+    const result = sanitizeText(maliciousStr, {
+      securityLevel: 'sandbox',
+      flowchart: { htmlLabels: true },
+    });
+    expect(result).not.toContain('<script>');
+    expect(result).not.toContain('alert(1)');
+    expect(result).toContain('<p>');
+    expect(result).toContain('Hello');
+    expect(result).toContain('world');
   });
 });
 
