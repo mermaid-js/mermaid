@@ -15,7 +15,7 @@ title: Animal example
 classDiagram
     note "From Duck till Zebra"
     Animal <|-- Duck
-    note for Duck "can fly\ncan swim\ncan dive\ncan help in debugging"
+    note for Duck "can fly<br>can swim<br>can dive<br>can help in debugging"
     Animal <|-- Fish
     Animal <|-- Zebra
     Animal : +int age

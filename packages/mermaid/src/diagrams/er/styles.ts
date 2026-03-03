@@ -68,6 +68,16 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke: ${options.lineColor} !important;
     stroke-width: 1;
   }
+    
+  .edgeLabel {
+    background-color: ${options.edgeLabelBackground};
+  }
+  .edgeLabel .label rect {
+    fill: ${options.edgeLabelBackground};
+  }
+  .edgeLabel .label text {
+    fill: ${options.textColor};
+  }
 `;
 
 export default getStyles;

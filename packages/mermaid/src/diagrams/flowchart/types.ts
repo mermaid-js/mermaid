@@ -29,7 +29,7 @@ export interface FlowVertex {
   domId: string;
   haveCallback?: boolean;
   id: string;
-  labelType: 'text';
+  labelType: 'markdown' | 'string' | 'text';
   link?: string;
   linkTarget?: string;
   props?: any;
@@ -62,7 +62,7 @@ export interface FlowEdge {
   style?: string[];
   length?: number;
   text: string;
-  labelType: 'text';
+  labelType: 'markdown' | 'string' | 'text';
   classes: string[];
   id?: string;
   animation?: 'fast' | 'slow';

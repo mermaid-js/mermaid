@@ -264,6 +264,9 @@ const config: RequiredDeep<MermaidConfig> = {
   radar: {
     ...defaultConfigJson.radar,
   },
+  ishikawa: {
+    ...defaultConfigJson.ishikawa,
+  },
   treemap: {
     useMaxWidth: true,
     padding: 10,
@@ -275,6 +278,9 @@ const config: RequiredDeep<MermaidConfig> = {
     valueFontSize: 12,
     labelFontSize: 14,
     valueFormat: ',',
+  },
+  venn: {
+    ...defaultConfigJson.venn,
   },
 };
 

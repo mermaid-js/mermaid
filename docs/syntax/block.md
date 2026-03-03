@@ -402,7 +402,7 @@ block
   blockArrowId4<["Label"]>(down)
   blockArrowId5<["Label"]>(x)
   blockArrowId6<["Label"]>(y)
-  blockArrowId6<["Label"]>(x, down)
+  blockArrowId7<["Label"]>(x, down)
 ```
 
 ```mermaid
@@ -413,7 +413,7 @@ block
   blockArrowId4<["Label"]>(down)
   blockArrowId5<["Label"]>(x)
   blockArrowId6<["Label"]>(y)
-  blockArrowId6<["Label"]>(x, down)
+  blockArrowId7<["Label"]>(x, down)
 ```
 
 #### Example - Space Blocks

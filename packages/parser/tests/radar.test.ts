@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { Radar } from '../src/language/index.js';
 import { expectNoErrorsOrAlternatives, radarParse as parse } from './test-util.js';
+import { parse as parseAsync, MermaidParseError } from '../src/parse.js';
 
 const mutateGlobalSpacing = (context: string) => {
   return [
@@ -339,5 +340,86 @@ describe('radar', () => {
         expect(option?.value).toBe(context.split(' ')[1] === 'true');
       }
     );
+  });
+
+  describe('error messages with line and column numbers', () => {
+    it('should include line and column numbers in parser errors for radar diagrams', async () => {
+      const invalidRadar = `radar-beta
+  title Restaurant Comparison
+  axis food["Food Quality"], service["Service"], price["Price"]
+  axis ambiance["Ambiance"],
+
+  curve a["Restaurant A"]{4, 3, 2, 4}`;
+
+      try {
+        await parseAsync('radar', invalidRadar);
+        expect.fail('Should have thrown MermaidParseError');
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(MermaidParseError);
+        expect(error.message).toMatch(/line \d+/);
+        expect(error.message).toMatch(/column \d+/);
+      }
+    });
+
+    it('should include line and column numbers for missing curve entries', async () => {
+      const invalidRadar = `radar-beta
+  axis my-axis
+  curve my-curve`;
+
+      try {
+        await parseAsync('radar', invalidRadar);
+        expect.fail('Should have thrown MermaidParseError');
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(MermaidParseError);
+        // Line and column may be ? if not available
+        expect(error.message).toMatch(/line (\d+|\?)/);
+        expect(error.message).toMatch(/column (\d+|\?)/);
+      }
+    });
+
+    it('should include line and column numbers for invalid axis syntax', async () => {
+      const invalidRadar = `radar-beta
+  axis my-axis my-axis2`;
+
+      try {
+        await parseAsync('radar', invalidRadar);
+        expect.fail('Should have thrown MermaidParseError');
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(MermaidParseError);
+        expect(error.message).toMatch(/line \d+/);
+        expect(error.message).toMatch(/column \d+/);
+      }
+    });
+
+    it('should handle lexer errors with line and column numbers', async () => {
+      const invalidRadar = `radar-beta
+  axis A
+  curve B{1}
+  invalid@symbol`;
+
+      try {
+        await parseAsync('radar', invalidRadar);
+        expect.fail('Should have thrown MermaidParseError');
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(MermaidParseError);
+        // Should have line and column in the error message
+        expect(error.message).toMatch(/line (\d+|\?)/);
+        expect(error.message).toMatch(/column (\d+|\?)/);
+      }
+    });
+
+    it('should format error message with "Parse error on line X, column Y" prefix', async () => {
+      const invalidRadar = `radar-beta
+  axis`;
+
+      try {
+        await parseAsync('radar', invalidRadar);
+        expect.fail('Should have thrown MermaidParseError');
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(MermaidParseError);
+        // Line and column may be ? if not available
+        expect(error.message).toMatch(/Parse error on line (\d+|\?), column (\d+|\?):/);
+      }
+    });
   });
 });

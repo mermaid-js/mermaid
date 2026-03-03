@@ -5,7 +5,7 @@ export interface ClassNode {
   id: string;
   type: string;
   label: string;
-  shape: string;
+  shape: 'classBox';
   text: string;
   cssClasses: string;
   methods: ClassMember[];
@@ -149,6 +149,8 @@ export interface ClassNote {
   id: string;
   class: string;
   text: string;
+  index: number;
+  parent?: string;
 }
 
 export interface ClassRelation {
@@ -177,6 +179,7 @@ export interface NamespaceNode {
   id: string;
   domId: string;
   classes: ClassMap;
+  notes: ClassNoteMap;
   children: NamespaceMap;
 }
 
@@ -187,4 +190,5 @@ export interface StyleClass {
 }
 
 export type ClassMap = Map<string, ClassNode>;
+export type ClassNoteMap = Map<string, ClassNote>;
 export type NamespaceMap = Map<string, NamespaceNode>;

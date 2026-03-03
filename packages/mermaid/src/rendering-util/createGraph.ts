@@ -121,8 +121,22 @@ export async function createGraphWithElements(
         arrowTypeStart: 'none',
         arrowTypeEnd: 'arrow_point',
       };
-      graph.setEdge(edgeToLabel.id, edgeToLabel.start, edgeToLabel.end, { ...edgeToLabel });
-      graph.setEdge(edgeFromLabel.id, edgeFromLabel.start, edgeFromLabel.end, { ...edgeFromLabel });
+      graph.setEdge(
+        {
+          v: edgeToLabel.start ?? 'undefined',
+          w: edgeToLabel.end,
+          name: edgeToLabel.id,
+        },
+        { ...edgeToLabel }
+      );
+      graph.setEdge(
+        {
+          v: edgeFromLabel.start,
+          w: edgeFromLabel.end ?? 'undefined',
+          name: edgeFromLabel.id,
+        },
+        { ...edgeFromLabel }
+      );
       data4Layout.edges.push(edgeToLabel, edgeFromLabel);
       const edgeIdToRemove = edge.id;
       data4Layout.edges = data4Layout.edges.filter((edge) => edge.id !== edgeIdToRemove);
@@ -132,7 +146,14 @@ export async function createGraphWithElements(
       }
     } else {
       // Regular edge without label
-      graph.setEdge(edge.id, edge.start, edge.end, { ...edge });
+      graph.setEdge(
+        {
+          v: edge.start ?? 'undefined',
+          w: edge.end ?? 'undefined',
+          name: edge.id,
+        },
+        { ...edge }
+      );
       const edgeExists = data4Layout.edges.some((existingEdge) => existingEdge.id === edge.id);
       if (!edgeExists) {
         data4Layout.edges.push(edge);
