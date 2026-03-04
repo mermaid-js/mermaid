@@ -1,6 +1,6 @@
 import { imgSnapshotTest } from '../../helpers/util.ts';
 
-const neoThemes = ['redux', 'redux-dark', 'redux-color', 'redux-dark-color'];
+const neoThemes = ['neo', 'neo-dark', 'redux', 'redux-dark', 'redux-color', 'redux-dark-color'];
 
 const examples = [
   {
@@ -142,7 +142,7 @@ neoThemes.forEach((theme) => {
   describe(`neo look gitGraph - ${theme} theme`, () => {
     examples.forEach((example) => {
       it(example.name, () => {
-        imgSnapshotTest(example.diagram, { look: 'classic', theme });
+        imgSnapshotTest(example.diagram, { look: 'neo', theme });
       });
     });
   });
