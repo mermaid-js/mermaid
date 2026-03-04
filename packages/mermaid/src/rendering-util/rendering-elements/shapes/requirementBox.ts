@@ -22,6 +22,8 @@ export async function requirementBox<T extends SVGGraphicsElement>(
   const gap = 20;
   const isRequirementNode = 'verifyMethod' in node;
   const classes = getNodeClasses(node);
+  const { theme, themeVariables } = getConfig();
+  const { borderColorArray } = themeVariables;
 
   // Add outer g element
   const shapeSvg = parent
@@ -116,7 +118,14 @@ export async function requirementBox<T extends SVGGraphicsElement>(
   const roughRect = rc.rectangle(x, y, totalWidth, totalHeight, options);
 
   const rect = shapeSvg.insert(() => roughRect, ':first-child');
-  rect.attr('class', 'basic label-container').attr('style', nodeStyles);
+  rect.attr('class', 'basic label-container outer-path').attr('style', nodeStyles);
+
+  if (theme?.includes('color')) {
+    const nodes = document.querySelectorAll('g.node.default');
+    // eslint-disable-next-line unicorn/prefer-spread
+    const nodeIndex = Array.from(nodes).findIndex((n) => n.id === node.id);
+    shapeSvg.attr('data-color-id', `color-${nodeIndex % borderColorArray.length}`);
+  }
 
   // Re-translate labels now that rect is centered
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -149,13 +158,15 @@ export async function requirementBox<T extends SVGGraphicsElement>(
 
   // Insert divider line if there is body text
   if (accumulativeHeight > typeHeight + nameHeight + gap) {
-    const roughLine = rc.line(
-      x,
-      y + typeHeight + nameHeight + gap,
-      x + totalWidth,
-      y + typeHeight + nameHeight + gap,
-      options
-    );
+    const lineY = y + typeHeight + nameHeight + gap;
+    const thickness = 0.001;
+    const polygonPoints: [number, number][] = [
+      [x, lineY],
+      [x + totalWidth, lineY],
+      [x + totalWidth, lineY + thickness],
+      [x, lineY + thickness],
+    ];
+    const roughLine = rc.polygon(polygonPoints, options);
     const dividerLine = shapeSvg.insert(() => roughLine);
     dividerLine.attr('style', nodeStyles);
   }
@@ -165,6 +176,10 @@ export async function requirementBox<T extends SVGGraphicsElement>(
   node.intersect = function (point) {
     return intersect.rect(node, point);
   };
+
+  if (nodeStyles && node.look !== 'handDrawn' && theme?.includes('redux')) {
+    shapeSvg.selectAll('path').attr('style', nodeStyles);
+  }
 
   return shapeSvg;
 }
