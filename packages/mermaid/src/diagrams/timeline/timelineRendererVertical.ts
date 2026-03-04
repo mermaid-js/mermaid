@@ -6,6 +6,7 @@ import type { Diagram } from '../../Diagram.js';
 import type { MermaidConfig } from '../../config.type.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import type { SVG } from '../../diagram-api/types.js';
+import { parseFontSize } from '../../utils.js';
 
 interface Block<TDesc, TSection> {
   number: number;
@@ -218,9 +219,9 @@ export const draw = function (text: string, id: string, version: string, diagObj
     log.debug('bounds after title', box);
   }
 
-  const fontSize = conf.fontSize;
-  const arrowTopOffset = (fontSize || 16) * 2;
-  const arrowBottomPadding = (fontSize || 16) * 0.5 + 20;
+  const [fontSize] = parseFontSize(conf.fontSize);
+  const arrowTopOffset = (fontSize ?? 16) * 2;
+  const arrowBottomPadding = (fontSize ?? 16) * 0.5 + 20;
 
   const lineWrapper = svg.append('g').attr('class', 'lineWrapper');
   // Draw activity line
