@@ -28,6 +28,13 @@ const PX = 4;
 const PY = 2;
 
 const THEME_COLOR_LIMIT = 8;
+
+const calcColorIndex = (rawIndex: number, limit: number): number => {
+  if (rawIndex === 0) {
+    return 0;
+  }
+  return ((rawIndex - 1) % (limit - 1)) + 1;
+};
 const branchPos = new Map<string, BranchPosition>();
 const commitPos = new Map<string, CommitPosition>();
 const defaultPos = 30;
@@ -208,7 +215,7 @@ const drawCommitBullet = (
       .attr('height', isReduxTheme ? 14 : 20)
       .attr(
         'class',
-        `commit ${commit.id} commit-highlight${branchIndex % THEME_COLOR_LIMIT} ${typeClass}-outer`
+        `commit ${commit.id} commit-highlight${calcColorIndex(branchIndex, THEME_COLOR_LIMIT)} ${typeClass}-outer`
       );
     gBullets
       .append('rect')
@@ -218,7 +225,7 @@ const drawCommitBullet = (
       .attr('height', isReduxTheme ? 8 : 12)
       .attr(
         'class',
-        `commit ${commit.id} commit${branchIndex % THEME_COLOR_LIMIT} ${typeClass}-inner`
+        `commit ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT)} ${typeClass}-inner`
       );
   } else if (commitSymbolType === commitType.CHERRY_PICK) {
     gBullets
@@ -262,7 +269,10 @@ const drawCommitBullet = (
     circle.attr('cx', commitPosition.x);
     circle.attr('cy', commitPosition.y);
     circle.attr('r', isReduxTheme ? 7 : 10);
-    circle.attr('class', `commit ${commit.id} commit${branchIndex % THEME_COLOR_LIMIT}`);
+    circle.attr(
+      'class',
+      `commit ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT)}`
+    );
     if (commitSymbolType === commitType.MERGE) {
       const circle2 = gBullets.append('circle');
       circle2.attr('cx', commitPosition.x);
@@ -270,7 +280,7 @@ const drawCommitBullet = (
       circle2.attr('r', isReduxTheme ? 5 : 6);
       circle2.attr(
         'class',
-        `commit ${typeClass} ${commit.id} commit${branchIndex % THEME_COLOR_LIMIT}`
+        `commit ${typeClass} ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT)}`
       );
     }
     if (commitSymbolType === commitType.REVERSE) {
@@ -281,7 +291,10 @@ const drawCommitBullet = (
           'd',
           `M ${commitPosition.x - constValue},${commitPosition.y - constValue}L${commitPosition.x + constValue},${commitPosition.y + constValue}M${commitPosition.x - constValue},${commitPosition.y + constValue}L${commitPosition.x + constValue},${commitPosition.y - constValue}`
         )
-        .attr('class', `commit ${typeClass} ${commit.id} commit${branchIndex % THEME_COLOR_LIMIT}`);
+        .attr(
+          'class',
+          `commit ${typeClass} ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT)}`
+        );
     }
   }
 };
@@ -793,7 +806,7 @@ const drawArrow = (
   svg
     .append('path')
     .attr('d', lineDef)
-    .attr('class', 'arrow arrow' + (colorClassNum! % THEME_COLOR_LIMIT));
+    .attr('class', 'arrow arrow' + calcColorIndex(colorClassNum!, THEME_COLOR_LIMIT));
 };
 
 const drawArrows = (
@@ -822,12 +835,10 @@ const drawBranches = (
   const isReduxTheme = theme?.includes('redux');
   const g = svg.append('g');
   branches.forEach((branch, index) => {
-    let adjustIndexForTheme;
-    if (isReduxTheme) {
-      adjustIndexForTheme = index === 0 ? 0 : (index % themeColorLimit) + 1;
-    } else {
-      adjustIndexForTheme = index % THEME_COLOR_LIMIT;
-    }
+    const adjustIndexForTheme = calcColorIndex(
+      index,
+      isReduxTheme ? themeColorLimit : THEME_COLOR_LIMIT
+    );
 
     const pos = branchPos.get(branch.name)?.pos;
     if (pos === undefined) {
@@ -960,6 +971,33 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
   const branches = db.getBranchesAsObjArray();
   dir = db.getDirection();
   const diagram = select(`[id="${id}"]`);
+
+  // Add linearGradient for neo look — render.ts does this for layout-based diagrams,
+  // but gitGraph uses its own draw function so we must define it here.
+  const { themeVariables } = getConfig();
+  const { useGradient, gradientStart, gradientStop } = themeVariables;
+  if (useGradient) {
+    const gradient = diagram
+      .append('defs')
+      .append('linearGradient')
+      .attr('id', id + '-gradient')
+      .attr('gradientUnits', 'objectBoundingBox')
+      .attr('x1', '0%')
+      .attr('y1', '0%')
+      .attr('x2', '100%')
+      .attr('y2', '0%');
+    gradient
+      .append('stop')
+      .attr('offset', '0%')
+      .attr('stop-color', gradientStart)
+      .attr('stop-opacity', 1);
+    gradient
+      .append('stop')
+      .attr('offset', '100%')
+      .attr('stop-color', gradientStop)
+      .attr('stop-opacity', 1);
+  }
+
   let pos = 0;
 
   branches.forEach((branch, index) => {
