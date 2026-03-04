@@ -4,6 +4,7 @@
     "config:base",
     ":rebaseStalePrs",
     "schedule:earlyMondays",
+    "security:minimumReleaseAgeNpm",
     ":automergeMinor",
     ":automergeTesters",
     ":automergeLinters",
@@ -11,6 +12,10 @@
     ":automergePatch"
   ],
   "packageRules": [
+    {
+      "description": "Don't allow any release to be automatically updated until it's at least 3 days old, to avoid supply-chain attacks/bugs.",
+      "minimumReleaseAge": "3 days"
+    },
     {
       "matchUpdateTypes": ["minor", "patch", "digest"],
       "automerge": true
