@@ -135,8 +135,13 @@ export const insertEdgeLabel = async (elem, edge) => {
       slBox = div.getBoundingClientRect();
       dv.attr('width', slBox.width);
       dv.attr('height', slBox.height);
+      inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
+    } else {
+      inner.attr(
+        'transform',
+        'translate(' + -(slBox.x + slBox.width / 2) + ', ' + -(slBox.y + slBox.height / 2) + ')'
+      );
     }
-    inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
     if (!terminalLabels.get(edge.id)) {
       terminalLabels.set(edge.id, {});
     }
@@ -163,8 +168,13 @@ export const insertEdgeLabel = async (elem, edge) => {
       slBox = div.getBoundingClientRect();
       dv.attr('width', slBox.width);
       dv.attr('height', slBox.height);
+      inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
+    } else {
+      inner.attr(
+        'transform',
+        'translate(' + -(slBox.x + slBox.width / 2) + ', ' + -(slBox.y + slBox.height / 2) + ')'
+      );
     }
-    inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
     if (!terminalLabels.get(edge.id)) {
       terminalLabels.set(edge.id, {});
@@ -191,8 +201,13 @@ export const insertEdgeLabel = async (elem, edge) => {
       slBox = div.getBoundingClientRect();
       dv.attr('width', slBox.width);
       dv.attr('height', slBox.height);
+      inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
+    } else {
+      inner.attr(
+        'transform',
+        'translate(' + -(slBox.x + slBox.width / 2) + ', ' + -(slBox.y + slBox.height / 2) + ')'
+      );
     }
-    inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
     endEdgeLabelLeft.node().appendChild(endLabelElement);
 
@@ -222,8 +237,13 @@ export const insertEdgeLabel = async (elem, edge) => {
       slBox = div.getBoundingClientRect();
       dv.attr('width', slBox.width);
       dv.attr('height', slBox.height);
+      inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
+    } else {
+      inner.attr(
+        'transform',
+        'translate(' + -(slBox.x + slBox.width / 2) + ', ' + -(slBox.y + slBox.height / 2) + ')'
+      );
     }
-    inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
     endEdgeLabelRight.node().appendChild(endLabelElement);
     if (!terminalLabels.get(edge.id)) {
