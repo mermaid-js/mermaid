@@ -3,6 +3,7 @@ import { select, curveLinear } from 'd3';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { getEffectiveHtmlLabels } from '../../config.js';
 import { render } from '../../dagre-wrapper/index.js';
 import utils, { getEdgeId } from '../../utils.js';
 import { interpolateToCurve, getStylesFromArray } from '../../utils.js';
@@ -267,8 +268,7 @@ export const addRelations = function (relations: ClassRelation[], g: graphlib.Gr
       edgeData.arrowheadStyle = 'fill: #333';
       edgeData.labelpos = 'c';
 
-      // TODO V10: Flowchart ? Keeping flowchart for backwards compatibility. Remove in next major release
-      if (getConfig().flowchart?.htmlLabels ?? getConfig().htmlLabels) {
+      if (getEffectiveHtmlLabels(getConfig())) {
         edgeData.labelType = 'html';
         edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
       } else {

@@ -327,8 +327,97 @@ classDef sales fill:#c3a66b,stroke:#333;
       {}
     );
   });
+
+  it('12: should apply classDef fill color to leaf nodes', () => {
+    imgSnapshotTest(
+      `treemap-beta
+"Root"
+    "Item A": 30:::redClass
+    "Item B": 20
+    "Item C": 25:::blueClass
+
+classDef redClass fill:#ff0000;
+classDef blueClass fill:#0000ff;
+      `,
+      {}
+    );
+  });
+
+  it('13: should apply classDef stroke styles to sections', () => {
+    imgSnapshotTest(
+      `treemap-beta
+      %% This is a comment
+      "Category A":::thickBorder
+          "Item A1": 10
+          "Item A2": 20
+      %% Another comment
+      "Category B":::dashedBorder
+          "Item B1": 15
+          "Item B2": 25
+
+classDef thickBorder stroke:red,stroke-width:8px;
+classDef dashedBorder stroke:black,stroke-dasharray:5,stroke-width:8px;
+      `,
+      {}
+    );
+  });
+
+  it('14: should apply classDef color to text labels', () => {
+    imgSnapshotTest(
+      `treemap-beta
+"Products"
+    "Electronics":::whiteText
+        "Phones": 40
+        "Laptops": 30
+    "Furniture":::darkText
+        "Chairs": 25
+        "Tables": 20
+
+classDef whiteText fill:#2c3e50,color:#ffffff;
+classDef darkText fill:#ecf0f1,color:#000000;
+      `,
+      {}
+    );
+  });
+
+  it('15: should apply multiple classDef properties simultaneously', () => {
+    imgSnapshotTest(
+      `treemap-beta
+"Budget"
+    "Critical":::critical
+        "Server Costs": 50000
+        "Salaries": 80000
+    "Normal":::normal
+        "Office Supplies": 5000
+        "Marketing": 15000
+classDef critical fill:#e74c3c,color:#fff,stroke:#c0392b,stroke-width:3px;
+classDef normal fill:#3498db,color:#fff,stroke:#2980b9,stroke-width:1px;
+      `,
+      {}
+    );
+  });
+
+  it('16: should handle classDef on nested sections and leaves', () => {
+    imgSnapshotTest(
+      `treemap-beta
+"Company"
+    "Engineering":::engSection
+        "Frontend": 30:::highlight
+        "Backend": 40
+        "DevOps": 20:::highlight
+    "Sales"
+        "Direct": 35
+        "Channel": 25:::highlight
+
+classDef engSection fill:#9b59b6,stroke:#8e44ad,stroke-width:2px;
+classDef highlight fill:#f39c12,color:#000,stroke:#e67e22,stroke-width:2px;
+      `,
+      {}
+    );
+  });
+
   /*
-  it.skip('12: should render a treemap with title', () => {
+  it.skip('17: should render a treemap with title', () => {
     imgSnapshotTest(
       `
     treemap-beta

@@ -70,6 +70,31 @@ describe('Sanitize text', () => {
     });
     expect(result).not.toContain('javascript:alert(1)');
   });
+
+  it('should allow HTML tags in sandbox mode', () => {
+    const htmlStr = '<p>This is a <strong>bold</strong> text</p>';
+    const result = sanitizeText(htmlStr, {
+      securityLevel: 'sandbox',
+      flowchart: { htmlLabels: true },
+    });
+    expect(result).toContain('<p>');
+    expect(result).toContain('<strong>');
+    expect(result).toContain('</strong>');
+    expect(result).toContain('</p>');
+  });
+
+  it('should remove script tags in sandbox mode', () => {
+    const maliciousStr = '<p>Hello <script>alert(1)</script> world</p>';
+    const result = sanitizeText(maliciousStr, {
+      securityLevel: 'sandbox',
+      flowchart: { htmlLabels: true },
+    });
+    expect(result).not.toContain('<script>');
+    expect(result).not.toContain('alert(1)');
+    expect(result).toContain('<p>');
+    expect(result).toContain('Hello');
+    expect(result).toContain('world');
+  });
 });
 
 describe('generic parser', () => {

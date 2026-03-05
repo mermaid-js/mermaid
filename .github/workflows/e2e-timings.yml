@@ -17,7 +17,7 @@ jobs:
   timings:
     runs-on: ubuntu-latest
     container:
-      image: cypress/browsers:node-20.11.0-chrome-121.0.6167.85-1-ff-120.0-edge-121.0.2277.83-1
+      image: cypress/browsers:node-20.16.0-chrome-127.0.6533.88-1-ff-128.0.3-edge-127.0.2651.74-1
       options: --user 1001
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -58,7 +58,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Commit and create pull request
-        uses: peter-evans/create-pull-request@915d841dae6a4f191bb78faf61a257411d7be4d2
+        uses: peter-evans/create-pull-request@2271f1ddcf09437ed8f019733eb5cfba58ac76f0
         with:
           add-paths: |
             cypress/timings.json

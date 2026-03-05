@@ -11,6 +11,7 @@ export interface NodeMetaData {
   priority: 'Very High' | 'High' | 'Medium' | 'Low' | 'Very Low';
   assigned?: string;
   ticket?: string;
+  labelType?: string;
 }
 
 export interface ParticipantMetaData {
@@ -23,6 +24,7 @@ export interface ParticipantMetaData {
     | 'database'
     | 'collections'
     | 'queue';
+  alias?: string;
 }
 
 export interface EdgeMetaData {

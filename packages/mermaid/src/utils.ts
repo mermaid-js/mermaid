@@ -918,6 +918,7 @@ export const encodeEntities = function (text: string): string {
 };
 
 /**
+ * Partially reverts encoding done via {@link encodeEntities}
  *
  * @param  text - text to be decoded
  * @returns

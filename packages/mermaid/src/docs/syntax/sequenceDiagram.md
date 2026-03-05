@@ -120,7 +120,11 @@ sequenceDiagram
 
 ### Aliases
 
-The actor can have a convenient identifier and a descriptive label.
+The actor can have a convenient identifier and a descriptive label. Aliases can be defined in two ways: using external syntax with the `as` keyword, or inline within the configuration object.
+
+#### External Alias Syntax
+
+You can define an alias using the `as` keyword after the participant declaration:
 
 ```mermaid-example
 sequenceDiagram
@@ -129,6 +133,48 @@ sequenceDiagram
     A->>J: Hello John, how are you?
     J->>A: Great!
 ```
+
+The external alias syntax also works with participant stereotype configurations, allowing you to combine type specification with aliases:
+
+```mermaid-example
+sequenceDiagram
+    participant API@{ "type": "boundary" } as Public API
+    actor DB@{ "type": "database" } as User Database
+    participant Svc@{ "type": "control" } as Auth Service
+    API->>Svc: Authenticate
+    Svc->>DB: Query user
+    DB-->>Svc: User data
+    Svc-->>API: Token
+```
+
+#### Inline Alias Syntax
+
+Alternatively, you can define an alias directly inside the configuration object using the `"alias"` field. This works with both `participant` and `actor` keywords:
+
+```mermaid-example
+sequenceDiagram
+    participant API@{ "type": "boundary", "alias": "Public API" }
+    participant Auth@{ "type": "control", "alias": "Auth Service" }
+    participant DB@{ "type": "database", "alias": "User Database" }
+    API->>Auth: Login request
+    Auth->>DB: Query user
+    DB-->>Auth: User data
+    Auth-->>API: Access token
+```
+
+#### Alias Precedence
+
+When both inline alias (in the configuration object) and external alias (using `as` keyword) are provided, the **external alias takes precedence**:
+
+```mermaid-example
+sequenceDiagram
+    participant API@{ "type": "boundary", "alias": "Internal Name" } as External Name
+    participant DB@{ "type": "database", "alias": "Internal DB" } as External DB
+    API->>DB: Query
+    DB-->>API: Result
+```
+
+In the example above, "External Name" and "External DB" will be displayed, not "Internal Name" and "Internal DB".
 
 ### Actor Creation and Destruction (v10.3.0+)
 
