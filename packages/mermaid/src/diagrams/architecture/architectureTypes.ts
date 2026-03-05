@@ -1,4 +1,4 @@
-import type { DiagramDB } from '../../diagram-api/types.js';
+import type { DiagramDBBase } from '../../diagram-api/types.js';
 import type { ArchitectureDiagramConfig } from '../../config.type.js';
 import type { D3Element } from '../../types.js';
 import type cytoscape from 'cytoscape';
@@ -106,9 +106,7 @@ export const isValidArchitectureDirectionPair = function (
   return x !== 'LL' && x !== 'RR' && x !== 'TT' && x !== 'BB';
 };
 
-export type ArchitectureDirectionPairMap = {
-  [key in ArchitectureDirectionPair]?: string;
-};
+export type ArchitectureDirectionPairMap = Partial<Record<ArchitectureDirectionPair, string>>;
 
 /**
  * Creates a pair of the directions of each side of an edge. This function should be used instead of manually creating it to ensure that the source is always the first character.
@@ -244,7 +242,7 @@ export interface ArchitectureEdge<DT = ArchitectureDirection> {
   title?: string;
 }
 
-export interface ArchitectureDB extends DiagramDB {
+export interface ArchitectureDB extends DiagramDBBase<ArchitectureDiagramConfig> {
   clear: () => void;
   addService: (service: Omit<ArchitectureService, 'edges'>) => void;
   getServices: () => ArchitectureService[];

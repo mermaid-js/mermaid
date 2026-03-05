@@ -22,7 +22,7 @@ It is a JavaScript based diagramming and charting tool that renders Markdown-ins
 [![Coverage Status](https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master)](https://coveralls.io/github/mermaid-js/mermaid?branch=master)
 [![CDN Status](https://img.shields.io/jsdelivr/npm/hm/mermaid)](https://www.jsdelivr.com/package/npm/mermaid)
 [![NPM](https://img.shields.io/npm/dm/mermaid)](https://www.npmjs.com/package/mermaid)
-[![Join our Discord!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=discord&label=discord)](https://discord.gg/AgrbSrBer3)
+[![Join our Discord!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=discord&label=discord)](https://discord.gg/sKeNQX4Wtj)
 [![Twitter Follow](https://img.shields.io/twitter/follow/mermaidjs_?style=social)](https://twitter.com/mermaidjs_)
 
 </div>
@@ -49,7 +49,7 @@ For a more detailed introduction to Mermaid and some of its more basic uses, loo
 
 🌐 [CDN](https://www.jsdelivr.com/package/npm/mermaid) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](../community/contributing.md) | 🔌 [Plug-Ins](../ecosystem/integrations-community.md)
 
-> 🖖 Keep a steady pulse: mermaid needs more Collaborators, [Read More](https://github.com/mermaid-js/mermaid/issues/866).
+> 🖖 Keep a steady pulse: [mermaid needs more Collaborators](https://github.com/mermaid-js/mermaid/issues/866).
 
 :trophy: **Mermaid was nominated and won the [JS Open Source Awards (2019)](https://osawards.com/javascript/#nominees) in the category "The most exciting use of technology"!!!**
 
@@ -354,6 +354,7 @@ To Deploy Mermaid:
 
 - [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor)
 - [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli)
+- [Mermaid Tiny](https://github.com/mermaid-js/mermaid/tree/develop/packages/tiny)
 - [Mermaid Webpack Demo](https://github.com/mermaidjs/mermaid-webpack-demo)
 - [Mermaid Parcel Demo](https://github.com/mermaidjs/mermaid-parcel-demo)
 
@@ -437,7 +438,7 @@ For public sites, it can be precarious to retrieve text from users on the intern
 
 As an extra level of security for sites with external users we are happy to introduce a new security level in which the diagram is rendered in a sandboxed iframe preventing JavaScript in the code from being executed. This is a great step forward for better security.
 
-_Unfortunately you can not have a cake and eat it at the same time which in this case means that some of the interactive functionality gets blocked along with the possible malicious code._
+_Unfortunately you cannot have a cake and eat it at the same time which in this case means that some of the interactive functionality gets blocked along with the possible malicious code._
 
 ## Reporting vulnerabilities
 

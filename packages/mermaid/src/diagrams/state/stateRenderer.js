@@ -136,7 +136,6 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
     return {};
   });
 
-  diagObj.db.extract(doc);
   const states = diagObj.db.getStates();
   const relations = diagObj.db.getRelations();
 

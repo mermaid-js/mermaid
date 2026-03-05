@@ -190,12 +190,12 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
 
 ```
 
-##### Gitgraph
+##### GitGraph
 
 ```mermaid-example
   gitGraph
-      accTitle: My Gitgraph Accessibility Title
-      accDescr: My Gitgraph Accessibility Description
+      accTitle: My GitGraph Accessibility Title
+      accDescr: My GitGraph Accessibility Description
 
      commit
      commit

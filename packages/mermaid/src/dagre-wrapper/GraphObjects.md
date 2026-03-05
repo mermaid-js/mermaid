@@ -22,7 +22,7 @@ flowchart
   C1 --> C2
 ```
 
-The new nodes C1 and C2 are a special type of nodes, clusterNodes. ClusterNodes have have the nodes in the cluster including the cluster attached in a graph object.
+The new nodes C1 and C2 are a special type of nodes, clusterNodes. ClusterNodes have the nodes in the cluster including the cluster attached in a graph object.
 
 When rendering this diagram it is being rendered recursively. The diagram is rendered by the dagre-mermaid:render function which in turn will be used to render the node C1 and the node C2. The result of those renderings will be inserted as nodes in the "root" diagram. With this recursive approach it would be possible to have different layout direction for each cluster.
 
@@ -32,7 +32,7 @@ When rendering this diagram it is being rendered recursively. The diagram is ren
 
 _Data for a clusterNode_
 
-When a cluster has edges to or from some of its nodes leading outside the cluster the approach of recursive rendering can not be used as the layout of the graph needs to take responsibility for nodes outside of the cluster.
+When a cluster has edges to or from some of its nodes leading outside the cluster the approach of recursive rendering cannot be used as the layout of the graph needs to take responsibility for nodes outside of the cluster.
 
 ```mermaid
 flowchart
@@ -53,7 +53,7 @@ Of these two approaches the top one renders better and is used when possible. Wh
 
 # Graph objects and their properties
 
-Explains the representation of various objects used to render the flow charts and what the properties mean. This ofc from the perspective of the dagre-wrapper.
+Explains the representation of various objects used to render the flow charts and what the properties mean. This is from the perspective of the dagre-wrapper.
 
 ## node
 
@@ -100,13 +100,13 @@ double_arrow_point
 arrow_circle
 double_arrow_circle
 
-Lets try to make these types semantic free so that diagram type semantics does not find its way in to this more generic layer.
+Lets try to make these types semantic free so that diagram type semantics does not find its way into this more generic layer.
 
 Required edgeData for proper rendering:
 
 | property   | description                                                          |
 | ---------- | -------------------------------------------------------------------- |
-| id         | Id of the edge                                                       |
+| id         | ID of the edge                                                       |
 | arrowHead  | overlap between arrowHead and arrowType?                             |
 | arrowType  | overlap between arrowHead and arrowType?                             |
 | style      |                                                                      |
