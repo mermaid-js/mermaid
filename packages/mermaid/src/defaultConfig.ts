@@ -273,7 +273,7 @@ const config: RequiredDeep<MermaidConfig> = {
   },
   sankey: {
     ...defaultConfigJson.sankey,
-    // Define nodeColors so it's included in configKeys (allows it through sanitizeDirective)
+    // Set so that `configKeys` includes this key for sanitizeDirective
     nodeColors: undefined,
   },
   treemap: {

@@ -92,7 +92,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   // New config options with defaults
   const nodeWidth = conf?.nodeWidth ?? defaultSankeyConfig.nodeWidth ?? 10;
   const nodePadding = conf?.nodePadding ?? defaultSankeyConfig.nodePadding ?? 12;
-  const labelStyle = conf?.labelStyle ?? defaultSankeyConfig.labelStyle ?? 'default';
+  const labelStyle = conf?.labelStyle ?? defaultSankeyConfig.labelStyle ?? 'legacy';
   const nodeColors: Record<string, string> = conf?.nodeColors ?? {};
 
   // Prepare data for construction based on diagObj.db
@@ -173,29 +173,34 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   };
 
   /**
-   * Determines label position based on node layer relative to central node.
-   * Left-of-center nodes get labels on the left, right-of-center on the right.
+   * Determines label position based on node position or layer.
+   * For 'outlined' style, uses layer-based positioning relative to central node.
+   * For 'legacy' style, uses position-based positioning (original behavior).
    *
-   * @param d - Node data with layer information
+   * @param d - Node data with layer/position information
    * @returns Object with x position and text-anchor
    */
   const getLabelPosition = (d: any): { x: number; anchor: string } => {
-    const nodeLayer = d.layer ?? 0;
-
-    if (nodeLayer < centralNodeLayer) {
-      // Left of center: label on the left
-      return { x: d.x0 - 6, anchor: 'end' };
-    } else {
-      // Right of center (or at center): label on the right
+    if (labelStyle === 'outlined') {
+      // Layer-based: left-of-center nodes get labels on the left
+      const nodeLayer = d.layer ?? 0;
+      if (nodeLayer < centralNodeLayer) {
+        return { x: d.x0 - 6, anchor: 'end' };
+      }
       return { x: d.x1 + 6, anchor: 'start' };
     }
+    // Legacy: position-based (original behavior)
+    if (d.x0 < width / 2) {
+      return { x: d.x1 + 6, anchor: 'start' };
+    }
+    return { x: d.x0 - 6, anchor: 'end' };
   };
 
   // Create labels for nodes
   const labelsGroup = svg.append('g').attr('class', 'node-labels').attr('font-size', 14);
 
-  if (labelStyle === 'default') {
-    // Default style: render background stroke first, then foreground text for readability
+  if (labelStyle === 'outlined') {
+    // Outlined style: render background stroke first, then foreground text for readability
     // Background text with white stroke for readability
     labelsGroup
       .selectAll('.sankey-label-bg')

@@ -152,12 +152,13 @@ describe('Sankey Diagram', () => {
       ).as('graph');
     });
 
-    it('should render with outlined style by default', function () {
+    it('should render with legacy style by default', function () {
       renderGraph(this.graph, { sankey: {} });
 
-      // Default style should create background and foreground label elements
-      cy.get('.node-labels .sankey-label-bg').should('exist');
-      cy.get('.node-labels .sankey-label-fg').should('exist');
+      // Default (legacy) style should not have the outlined label classes
+      cy.get('.node-labels .sankey-label-bg').should('not.exist');
+      cy.get('.node-labels .sankey-label-fg').should('not.exist');
+      cy.get('.node-labels text').should('exist');
     });
 
     it('should render legacy (plain) labels when labelStyle is legacy', function () {
@@ -169,8 +170,8 @@ describe('Sankey Diagram', () => {
       cy.get('.node-labels text').should('exist');
     });
 
-    it('should render outlined labels when labelStyle is default', function () {
-      renderGraph(this.graph, { sankey: { labelStyle: 'default' } });
+    it('should render outlined labels when labelStyle is outlined', function () {
+      renderGraph(this.graph, { sankey: { labelStyle: 'outlined' } });
 
       cy.get('.node-labels .sankey-label-bg').should('exist');
       cy.get('.node-labels .sankey-label-fg').should('exist');
@@ -228,7 +229,7 @@ describe('Sankey Diagram', () => {
         Op Profit,Tax,19
         Op Profit,Net Profit,100
         `,
-        { sankey: { width: 800, height: 500, labelStyle: 'default' } }
+        { sankey: { width: 800, height: 500, labelStyle: 'outlined' } }
       );
     });
   });
@@ -298,7 +299,7 @@ describe('Sankey Diagram', () => {
           sankey: {
             width: 800,
             height: 500,
-            labelStyle: 'default',
+            labelStyle: 'outlined',
             showValues: true,
             prefix: '$',
             suffix: 'B',
