@@ -121,10 +121,8 @@ export async function requirementBox<T extends SVGGraphicsElement>(
   rect.attr('class', 'basic label-container outer-path').attr('style', nodeStyles);
 
   if (theme?.includes('color')) {
-    const nodes = document.querySelectorAll('g.node.default');
-    // eslint-disable-next-line unicorn/prefer-spread
-    const nodeIndex = Array.from(nodes).findIndex((n) => n.id === node.id);
-    shapeSvg.attr('data-color-id', `color-${nodeIndex % borderColorArray.length}`);
+    const colorIndex = node.colorIndex ?? 0;
+    shapeSvg.attr('data-color-id', `color-${colorIndex % borderColorArray.length}`);
   }
 
   // Re-translate labels now that rect is centered
