@@ -306,7 +306,7 @@ The following half-arrow types are supported for more expressive sequence diagra
 | `\\-`   | Solid line with reverse bottom stick half arrowhead  |
 | `\\--`  | Dotted line with reverse bottom stick half arrowhead |
 
-## Central Connections (v<MERMAID_RELEASE_VERSION>+)
+## Central Connections (v11.12.3+)
 
 Mermaid sequence diagrams support **central lifeline connections** using a `()`.
 This is useful to represent messages or signals that connect to a central point, rather than from one actor directly to another.
