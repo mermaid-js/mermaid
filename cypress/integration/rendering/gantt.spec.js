@@ -117,6 +117,28 @@ describe('Gantt diagram', () => {
       {}
     );
   });
+  it('should render backward scheduling with until task IDs and end dates (with and without explicit IDs)', () => {
+    imgSnapshotTest(
+      `
+      gantt
+      dateFormat YYYY-MM-DD
+      axisFormat %Y-%m-%d
+      todayMarker off
+
+      section Anchors
+      Release milestone :milestone, release, 2024-03-01, 0d
+
+      section Until task ID
+      Development (with id)    :dev, 14d, until release
+      Planning (without id)    :7d, until dev
+
+      section Until end date
+      QA (with id)             :qa, 5d, until 2024-02-20
+      Docs (without id)        :3d, until 2024-02-24
+      `,
+      {}
+    );
+  });
   it('should FAIL rendering a gantt chart for issue #1060 with invalid date', () => {
     imgSnapshotTest(
       `

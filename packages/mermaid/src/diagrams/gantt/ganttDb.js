@@ -391,13 +391,16 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   if (untilStatement !== null) {
     const untilTarget = untilStatement.groups.target.trim();
 
-    // until can point to either a fixed date or one/more task ids
     const untilDate = dayjs(untilTarget, dateFormat.trim(), true);
+    // For `until <taskId|endDate>`, `getEndDate` checks `<endDate>` first using `dateFormat`.
+    // If `untilTarget` matches `dateFormat`, it is interpreted as an end date.
+    // That means a task ID that also matches the `dateFormat` pattern is treated as a date.
+    // This edge case is unlikely in practice, and this date-first order is intentional.
     if (untilDate.isValid()) {
       return untilDate.toDate();
     }
 
-    // check all until ids and take the earliest
+    // Date parsing failed, so interpret `untilTarget` as task ID(s) and pick the earliest.
     let earliestTask = null;
     for (const id of untilTarget.split(/\s+/)) {
       let task = findTaskById(id);
