@@ -234,19 +234,19 @@ over any diagram-specific settings.
 
 ---
 
+### icons?
+
+> `optional` **icons**: `IconsConfig`
+
+Defined in: [packages/mermaid/src/config.type.ts:232](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L232)
+
+---
+
 ### ishikawa?
 
 > `optional` **ishikawa**: `IshikawaDiagramConfig`
 
 Defined in: [packages/mermaid/src/config.type.ts:213](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L213)
-
----
-
-### icons?
-
-> `optional` **icons**: `IconsConfig`
-
-Defined in: [packages/mermaid/src/config.type.ts:223](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L223)
 
 ---
 

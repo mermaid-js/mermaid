@@ -1655,6 +1655,24 @@ export interface RadarDiagramConfig extends BaseDiagramConfig {
   curveTension?: number;
 }
 /**
+ * The object containing configurations specific for Venn diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "VennDiagramConfig".
+ */
+export interface VennDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The width of the Venn diagram.
+   */
+  width?: number;
+  /**
+   * The height of the Venn diagram.
+   */
+  height?: number;
+  padding?: number;
+  useDebugLayout?: boolean;
+}
+/**
  * Configuration for icon packs and CDN template.
  * Enables icons in browsers and CLI/headless renders without custom JavaScript.
  *
@@ -1693,25 +1711,6 @@ export interface IconsConfig {
    *
    */
   allowedHosts?: string[];
-}
-
-/**
- * The object containing configurations specific for Venn diagrams.
- *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "VennDiagramConfig".
- */
-export interface VennDiagramConfig extends BaseDiagramConfig {
-  /**
-   * The width of the Venn diagram.
-   */
-  width?: number;
-  /**
-   * The height of the Venn diagram.
-   */
-  height?: number;
-  padding?: number;
-  useDebugLayout?: boolean;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
