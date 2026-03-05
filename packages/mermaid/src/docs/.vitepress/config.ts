@@ -48,15 +48,6 @@ export default defineConfig({
       'meta',
       { property: 'og:image', content: 'https://mermaid.js.org/mermaid-logo-horizontal.svg' },
     ],
-    [
-      'script',
-      {
-        defer: 'true',
-        'data-domain': 'mermaid.js.org',
-        // All tracked stats are public and available at https://p.mermaid.live/mermaid.js.org
-        src: 'https://p.mermaid.live/js/script.tagged-events.outbound-links.js',
-      },
-    ],
   ],
   themeConfig: {
     logo: getHeaderLogo(docsHostname()),

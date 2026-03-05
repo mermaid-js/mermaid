@@ -15,6 +15,7 @@ import type { EnhanceAppContext } from 'vitepress';
 import Theme from 'vitepress/theme';
 import { h } from 'vue';
 import '../style/main.css';
+import { init } from '@plausible-analytics/tracker';
 
 export default {
   ...DefaultTheme,
@@ -29,6 +30,18 @@ export default {
     });
   },
   enhanceApp({ app, router }: EnhanceAppContext) {
+    if (typeof window !== 'undefined') {
+      init({
+        domain: 'mermaid.js.org',
+        // All tracked stats are public and available at https://p.mermaid.live/mermaid.js.org
+        endpoint: 'https://p.mermaid.live/api/event',
+        bindToWindow: true,
+        // captureOnLocalhost: true,
+        autoCapturePageviews: true,
+        outboundLinks: true,
+      });
+    }
+
     // register global components
     app.component('Mermaid', Mermaid);
     app.component('Contributors', Contributors);

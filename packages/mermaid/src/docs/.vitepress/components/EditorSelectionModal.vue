@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
+import { track } from '@plausible-analytics/tracker';
 
 interface Feature {
   iconUrl: string;
@@ -52,7 +53,8 @@ const editorColumns: EditorColumn[] = [
     description: 'Code only, no login',
     buttonText: 'Start free',
     buttonUrl: 'https://mermaid.live/edit',
-    buttonClasses: 'bg-[#BEDDE3] hover:bg-[#5CA3B4] text-[#1E1A2E] hover:text-white hover:shadow-md',
+    buttonClasses:
+      'bg-[#BEDDE3] hover:bg-[#5CA3B4] text-[#1E1A2E] hover:text-white hover:shadow-md',
     features: openSourceFeatures,
   },
 ];
@@ -67,6 +69,7 @@ const handleMouseDown = (e: MouseEvent) => {
   ) {
     e.preventDefault();
     isVisible.value = !isVisible.value;
+    track('editorSelectionModalOpen');
   }
 };
 
@@ -82,7 +85,7 @@ onUnmounted(() => {
 <template>
   <div
     v-if="isVisible"
-    class="fixed top-0 left-0 z-50 flex h-screen w-screen backdrop-blur-sm items-center justify-center bg-[#8585A4]/40 plausible-event-name=editorSelectionModalOpen"
+    class="fixed top-0 left-0 z-50 flex h-screen w-screen backdrop-blur-sm items-center justify-center bg-[#8585A4]/40"
     @click.self="isVisible = false"
   >
     <div
@@ -115,7 +118,7 @@ onUnmounted(() => {
             'mb-6 flex h-10 w-full items-center justify-center rounded-xl',
             column.buttonClasses,
             'plausible-event-name=editorPick',
-            `plausible-event-type=${column.id}`
+            `plausible-event-type=${column.id}`,
           ]"
         >
           {{ column.buttonText }}
