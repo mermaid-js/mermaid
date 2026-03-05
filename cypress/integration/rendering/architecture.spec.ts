@@ -242,11 +242,21 @@ describe.skip('architecture diagram', () => {
       `
     );
   });
+  it('should render edges at correct length', () => {
+    imgSnapshotTest(`
+      architecture-beta
+        service cell[Table Cell]
+        service colspan[colspan]
+        service rowspan[rowspan]
+        cell:R --> L:colspan
+        cell:B --> T:rowspan
+    `);
+  });
 });
 
 // Skipped as the layout is not deterministic, and causes issues in E2E tests.
 describe.skip('architecture - external', () => {
   it('should allow adding external icons', () => {
-    urlSnapshotTest('http://localhost:9000/architecture-external.html');
+    urlSnapshotTest('/architecture-external.html');
   });
 });

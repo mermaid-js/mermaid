@@ -699,5 +699,42 @@ requirementDiagram
         options
       );
     });
+
+    it(`${description}should render edge labels correctly when flowchart htmlLabels is false`, () => {
+      imgSnapshotTest(
+        `
+    requirementDiagram
+        requirement test_req {
+        id: 1
+        text: the test text.
+        risk: high
+        verifymethod: test
+        }
+
+        functionalRequirement test_req2 {
+        id: 1.1
+        text: the second test text.
+        risk: low
+        verifymethod: inspection
+        }
+
+        element test_entity {
+        type: simulation
+        }
+
+        element test_entity2 {
+        type: word doc
+        docRef: reqs/test_entity
+        }
+
+        test_entity - satisfies -> test_req2
+        test_req - traces -> test_req2
+        test_req - contains -> test_req2
+        test_entity2 - verifies -> test_req
+        test_req <- copies - test_entity2
+        `,
+        { ...options, flowchart: { htmlLabels: false } }
+      );
+    });
   });
 });

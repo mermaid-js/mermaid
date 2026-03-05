@@ -734,6 +734,52 @@ describe('when parsing ER diagram it...', function () {
     expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ZERO_OR_MORE);
   });
 
+  it('should handle "1" alias directly followed by identifying relationship operator "--"', function () {
+    erDiagram.parser.parse('erDiagram\nCUSTOMER 1--one or more DELIVERY-ADDRESS : has');
+    const rels = erDb.getRelationships();
+
+    expect(erDb.getEntities().size).toBe(2);
+    expect(rels.length).toBe(1);
+    expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ONE_OR_MORE);
+    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ONLY_ONE);
+    expect(rels[0].relSpec.relType).toBe(erDb.Identification.IDENTIFYING);
+  });
+
+  it('should handle "1" alias directly followed by non-identifying relationship operator ".."', function () {
+    erDiagram.parser.parse('erDiagram\nCUSTOMER 1..one or more DELIVERY-ADDRESS : has');
+    const rels = erDb.getRelationships();
+
+    expect(erDb.getEntities().size).toBe(2);
+    expect(rels.length).toBe(1);
+    expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ONE_OR_MORE);
+    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ONLY_ONE);
+    expect(rels[0].relSpec.relType).toBe(erDb.Identification.NON_IDENTIFYING);
+  });
+
+  it('should handle "1" alias directly followed by mixed relationship operator ".-"', function () {
+    erDiagram.parser.parse('erDiagram\nCUSTOMER 1.-one or more DELIVERY-ADDRESS : has');
+    const rels = erDb.getRelationships();
+
+    expect(erDb.getEntities().size).toBe(2);
+    expect(rels.length).toBe(1);
+    expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ONE_OR_MORE);
+    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ONLY_ONE);
+    // ".-" is dotted-to-solid, which is NON_IDENTIFYING on the left side
+    expect(rels[0].relSpec.relType).toBe(erDb.Identification.NON_IDENTIFYING);
+  });
+
+  it('should handle "1" alias directly followed by mixed relationship operator "-."', function () {
+    erDiagram.parser.parse('erDiagram\nCUSTOMER 1-.one or more DELIVERY-ADDRESS : has');
+    const rels = erDb.getRelationships();
+
+    expect(erDb.getEntities().size).toBe(2);
+    expect(rels.length).toBe(1);
+    expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ONE_OR_MORE);
+    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ONLY_ONE);
+    // "-." is solid-to-dotted, which is NON_IDENTIFYING per the grammar
+    expect(rels[0].relSpec.relType).toBe(erDb.Identification.NON_IDENTIFYING);
+  });
+
   it('should represent identifying relationships properly', function () {
     erDiagram.parser.parse('erDiagram\nHOUSE ||--|{ ROOM : contains');
     const rels = erDb.getRelationships();

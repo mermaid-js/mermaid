@@ -269,6 +269,9 @@ const config: RequiredDeep<MermaidConfig> = {
     // Set so that `configKeys` includes this key for sanitizeDirective
     nodeColors: undefined,
   },
+  ishikawa: {
+    ...defaultConfigJson.ishikawa,
+  },
   treemap: {
     useMaxWidth: true,
     padding: 10,
@@ -280,6 +283,9 @@ const config: RequiredDeep<MermaidConfig> = {
     valueFontSize: 12,
     labelFontSize: 14,
     valueFormat: ',',
+  },
+  venn: {
+    ...defaultConfigJson.venn,
   },
 };
 

@@ -7,6 +7,15 @@ import { sanitizeDirective } from './utils/sanitizeDirective.js';
 
 export const defaultConfig: MermaidConfig = Object.freeze(config);
 
+/**
+ * Converts a string/boolean into a boolean
+ *
+ * @param val - String or boolean to convert
+ * @returns The result from the input
+ */
+export const evaluate = (val?: string | boolean | null): boolean =>
+  val === false || ['false', 'null', '0'].includes(String(val).trim().toLowerCase()) ? false : true;
+
 let siteConfig: MermaidConfig = assignWithDepth({}, defaultConfig);
 let configFromInitialize: MermaidConfig;
 let directives: MermaidConfig[] = [];
@@ -227,6 +236,8 @@ export const reset = (config = siteConfig): void => {
 const ConfigWarning = {
   LAZY_LOAD_DEPRECATED:
     'The configuration options lazyLoadedDiagrams and loadExternalDiagramsAtStartup are deprecated. Please use registerExternalDiagrams instead.',
+  FLOWCHART_HTML_LABELS_DEPRECATED:
+    'flowchart.htmlLabels is deprecated. Please use global htmlLabels instead.',
 } as const;
 
 type ConfigWarningStrings = keyof typeof ConfigWarning;
@@ -261,4 +272,17 @@ export const getUserDefinedConfig = (): MermaidConfig => {
   }
 
   return userConfig;
+};
+
+/**
+ * Helper function to handle deprecated flowchart.htmlLabels
+ * @param config - The configuration object (merged config with defaults)
+ * @returns The effective htmlLabels value based on precedence: root flowchart  default
+ */
+export const getEffectiveHtmlLabels = (config: MermaidConfig): boolean => {
+  // != instead of !== handles null case
+  if (config.flowchart?.htmlLabels != undefined) {
+    issueWarning('FLOWCHART_HTML_LABELS_DEPRECATED');
+  }
+  return evaluate(config.htmlLabels ?? config.flowchart?.htmlLabels ?? true);
 };
