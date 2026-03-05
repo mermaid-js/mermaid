@@ -29,11 +29,21 @@ const PY = 2;
 
 const THEME_COLOR_LIMIT = 8;
 
-const calcColorIndex = (rawIndex: number, limit: number): number => {
-  if (rawIndex === 0) {
-    return 0;
+/**
+ * Map a raw branch index to a CSS color-class index.
+ * When avoidMainColor is true (redux-color / redux-dark-color themes only),
+ * non-main branches cycle through 1…(limit-1) so color 0 is never reused.
+ * For all other themes the plain modulo is used.
+ */
+export const calcColorIndex = (
+  rawIndex: number,
+  limit: number,
+  avoidDefaultColor = false
+): number => {
+  if (avoidDefaultColor && rawIndex > 0) {
+    return ((rawIndex - 1) % (limit - 1)) + 1;
   }
-  return ((rawIndex - 1) % (limit - 1)) + 1;
+  return rawIndex % limit;
 };
 const branchPos = new Map<string, BranchPosition>();
 const commitPos = new Map<string, CommitPosition>();
@@ -205,6 +215,7 @@ const drawCommitBullet = (
 ) => {
   const { theme } = getConfig();
   const isReduxTheme = theme?.includes('redux');
+  const isColorTheme = theme?.includes('color') ?? false;
   const isDark = theme?.includes('dark');
   if (commitSymbolType === commitType.HIGHLIGHT) {
     gBullets
@@ -215,7 +226,7 @@ const drawCommitBullet = (
       .attr('height', isReduxTheme ? 14 : 20)
       .attr(
         'class',
-        `commit ${commit.id} commit-highlight${branchIndex % THEME_COLOR_LIMIT} ${typeClass}-outer`
+        `commit ${commit.id} commit-highlight${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, isColorTheme)} ${typeClass}-outer`
       );
     gBullets
       .append('rect')
@@ -225,7 +236,7 @@ const drawCommitBullet = (
       .attr('height', isReduxTheme ? 8 : 12)
       .attr(
         'class',
-        `commit ${commit.id} commit${branchIndex % THEME_COLOR_LIMIT} ${typeClass}-inner`
+        `commit ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, isColorTheme)} ${typeClass}-inner`
       );
   } else if (commitSymbolType === commitType.CHERRY_PICK) {
     gBullets
@@ -271,7 +282,7 @@ const drawCommitBullet = (
     circle.attr('r', isReduxTheme ? 7 : 10);
     circle.attr(
       'class',
-      `commit ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT)}`
+      `commit ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, isColorTheme)}`
     );
     if (commitSymbolType === commitType.MERGE) {
       const circle2 = gBullets.append('circle');
@@ -280,7 +291,7 @@ const drawCommitBullet = (
       circle2.attr('r', isReduxTheme ? 5 : 6);
       circle2.attr(
         'class',
-        `commit ${typeClass} ${commit.id} commit${branchIndex % THEME_COLOR_LIMIT}`
+        `commit ${typeClass} ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, isColorTheme)}`
       );
     }
     if (commitSymbolType === commitType.REVERSE) {
@@ -291,7 +302,10 @@ const drawCommitBullet = (
           'd',
           `M ${commitPosition.x - constValue},${commitPosition.y - constValue}L${commitPosition.x + constValue},${commitPosition.y + constValue}M${commitPosition.x - constValue},${commitPosition.y + constValue}L${commitPosition.x + constValue},${commitPosition.y - constValue}`
         )
-        .attr('class', `commit ${typeClass} ${commit.id} commit${branchIndex % THEME_COLOR_LIMIT}`);
+        .attr(
+          'class',
+          `commit ${typeClass} ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, isColorTheme)}`
+        );
     }
   }
 };
@@ -619,6 +633,8 @@ const drawArrow = (
   commitB: Commit,
   allCommits: Map<string, Commit>
 ) => {
+  const { theme: arrowTheme } = getConfig();
+  const isColorTheme = arrowTheme?.includes('color') ?? false;
   const p1 = commitPos.get(commitA.id); // arrowStart
   const p2 = commitPos.get(commitB.id); // arrowEnd
   if (p1 === undefined || p2 === undefined) {
@@ -803,7 +819,7 @@ const drawArrow = (
   svg
     .append('path')
     .attr('d', lineDef)
-    .attr('class', 'arrow arrow' + calcColorIndex(colorClassNum!, THEME_COLOR_LIMIT));
+    .attr('class', 'arrow arrow' + calcColorIndex(colorClassNum!, THEME_COLOR_LIMIT, isColorTheme));
 };
 
 const drawArrows = (
@@ -830,11 +846,13 @@ const drawBranches = (
   const { look, theme, themeVariables } = getConfig();
   const { dropShadow, THEME_COLOR_LIMIT: themeColorLimit } = themeVariables;
   const isReduxTheme = theme?.includes('redux');
+  const isColorTheme = theme?.includes('color') ?? false;
   const g = svg.append('g');
   branches.forEach((branch, index) => {
     const adjustIndexForTheme = calcColorIndex(
       index,
-      isReduxTheme ? themeColorLimit : THEME_COLOR_LIMIT
+      isReduxTheme ? themeColorLimit : THEME_COLOR_LIMIT,
+      isColorTheme
     );
 
     const pos = branchPos.get(branch.name)?.pos;
