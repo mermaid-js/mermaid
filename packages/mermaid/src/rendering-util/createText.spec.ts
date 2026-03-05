@@ -1,7 +1,8 @@
+import { select } from 'd3';
 import { describe, expect, it } from 'vitest';
 import { sanitizeText } from '../diagram-api/diagramAPI.js';
 import mermaid from '../mermaid.js';
-import { replaceIconSubstring } from './createText.js';
+import { createText, replaceIconSubstring } from './createText.js';
 
 describe('replaceIconSubstring', () => {
   it('converts FontAwesome icon notations to HTML tags', async () => {
@@ -60,4 +61,42 @@ describe('replaceIconSubstring', () => {
     const expected = sanitizeText(staticBellIconPack.icons.bell.body);
     expect(output).toContain(expected);
   });
+});
+
+describe('createText', () => {
+  beforeEach(() => {
+    // JSDom has no SVGTSpanElement, so we need to mock getComputedTextLength to avoid errors in createText
+    const mock = vi.mockObject(window.SVGElement.prototype);
+    (mock as unknown as SVGTSpanElement).getComputedTextLength = vi.fn(() => 123.456);
+  });
+
+  it.for([
+    {
+      useHtmlLabels: false,
+      markdown: true,
+    },
+    {
+      useHtmlLabels: true,
+      markdown: true,
+    },
+    {
+      useHtmlLabels: false,
+      markdown: false,
+    },
+    {
+      useHtmlLabels: true,
+      markdown: false,
+    },
+  ])(
+    'decodes HTML entities in text when useHtmlLabels is $useHtmlLabels and markdown is $markdown',
+    async ({ useHtmlLabels, markdown }) => {
+      const input = '5 &gt; 3 &amp;&amp; 2 &lt; 4';
+      const expected = '5 > 3 && 2 < 4';
+
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      const svgGroup = svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'g'));
+      const output = await createText(select(svgGroup), input, { useHtmlLabels, markdown });
+      expect(output.textContent).toEqual(expected);
+    }
+  );
 });

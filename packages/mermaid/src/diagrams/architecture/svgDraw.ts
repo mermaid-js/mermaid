@@ -342,7 +342,7 @@ export const drawServices = async function (
         .attr('id', 'node-' + service.id)
         .attr(
           'd',
-          `M0 ${iconSize} v${-iconSize} q0,-5 5,-5 h${iconSize} q5,0 5,5 v${iconSize} H0 Z`
+          `M0,${iconSize} V5 Q0,0 5,0 H${iconSize - 5} Q${iconSize},0 ${iconSize},5 V${iconSize} Z`
         );
     }
 

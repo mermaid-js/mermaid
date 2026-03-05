@@ -12,7 +12,7 @@
 
 Mermaid Chart is built by the team behind Mermaid JS.
 
-For more details, visit the [Mermaid Chart page](./mermaid-chart.md), or visit the [Mermaid Chart website](https://www.mermaidchart.com) .
+For more details, visit the [Mermaid Chart page](./mermaid-chart.md), or visit the [Mermaid Chart website](https://mermaid.ai) .
 
 ## Community integrations
 
@@ -57,7 +57,12 @@ To add an integration to this list, see the [Integrations - create page](./integ
   - [GitHub Writer](https://github.com/ckeditor/github-writer)
   - [SVG diagram generator](https://github.com/SimonKenyonShepard/mermaidjs-github-svg-generator)
 - [GitLab](https://docs.gitlab.com/ee/user/markdown.html#diagrams-and-flowcharts) ✅
-- [Mermaid Plugin for JetBrains IDEs](https://plugins.jetbrains.com/plugin/20146-mermaid)
+- [GNU Octave](https://octave.org/) ✅
+  - [octave_mermaid_js](https://github.com/CNOCTAVE/octave_mermaid_js) ✅
+- [HackMD](https://hackmd.io/c/tutorials/%2F%40docs%2Fflowchart-en#Create-more-complex-flowcharts) ✅
+- [JetBrains IDEs](https://www.jetbrains.com)
+  - [Mermaid Plugin](https://plugins.jetbrains.com/plugin/20146-mermaid)
+  - [Mermaid Studio](https://plugins.jetbrains.com/plugin/29870-mermaid-studio)
 - [MonsterWriter](https://www.monsterwriter.com/) ✅
 - [Joplin](https://joplinapp.org) ✅
 - [LiveBook](https://livebook.dev) ✅
@@ -85,6 +90,7 @@ LLM integrations to create mermaid diagrams using AI from text descriptions.
 
 - [HueHive - Create mermaid diagrams with text](https://huehive.co/tools/diagrams)
 - [MCP Server Mermaid](https://github.com/hustcc/mcp-mermaid) - Generate mermaid diagram and chart with AI MCP dynamically.
+- [Mermaid Studio](https://mermaidstudio.dev) - Leverage Mermaid Studio's code intelligence and diagram generation capabilities via MCP to create high-quality diagrams (requires a [JetBrains IDE](https://jetbrains.com/ides)) using your favorite coding agent.
 
 ### CRM/ERP
 
@@ -272,6 +278,7 @@ Communication tools and platforms
   - [reveal.js-mermaid-plugin](https://github.com/ludwick/reveal.js-mermaid-plugin)
 - [Reveal CK](https://github.com/jedcn/reveal-ck)
   - [reveal-ck-mermaid-plugin](https://github.com/tmtm/reveal-ck-mermaid-plugin)
+- [speccharts: Turn your test suites into specification diagrams](https://github.com/arnaudrenaud/speccharts)
 - [Vitepress Plugin](https://github.com/sametcn99/vitepress-mermaid-renderer)
 
 <!--- cspell:ignore Blazorade HueHive --->

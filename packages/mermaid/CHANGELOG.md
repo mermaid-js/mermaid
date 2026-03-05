@@ -1,5 +1,11 @@
 # mermaid
 
+## 11.12.2
+
+### Patch Changes
+
+- [#7200](https://github.com/mermaid-js/mermaid/pull/7200) [`de7ed10`](https://github.com/mermaid-js/mermaid/commit/de7ed1033996d702e3983dcf8114f33faea89577) Thanks [@shubhamparikh2704](https://github.com/shubhamparikh2704)! - fix: validate dates and tick interval to prevent UI freeze/crash in gantt diagramtype
+
 ## 11.12.1
 
 ### Patch Changes

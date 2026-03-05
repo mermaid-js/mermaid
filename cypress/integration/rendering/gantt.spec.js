@@ -833,4 +833,55 @@ describe('Gantt diagram', () => {
       {}
     );
   });
+  it('should handle seconds-only format with tickInterval (issue #5496)', () => {
+    imgSnapshotTest(
+      `
+     gantt
+     tickInterval 1second
+     dateFormat ss
+     axisFormat %s
+
+     section Network Request
+     RTT : rtt, 0, 20
+    `,
+      {}
+    );
+  });
+  it('should handle dates with year typo like 202 instead of 2024 (issue #5496)', () => {
+    imgSnapshotTest(
+      `
+     gantt
+     title Schedule
+     dateFormat YYYY-MM-DD
+     tickInterval 1week
+     axisFormat %m-%d
+
+     section Vacation
+     London : 2024-12-01, 7d
+     London : 202-12-01, 7d
+    `,
+      {}
+    );
+  });
+  it('should render done tasks with readable text in dark mode', () => {
+    imgSnapshotTest(
+      `
+    gantt
+      dateFormat  YYYY-MM-DD
+      title Gantt dark mode done-task readability
+      excludes    weekends
+
+      section A section
+      Completed task            :done,    des1, 2014-01-06,2014-01-08
+      Active task               :active,  des2, 2014-01-09, 3d
+      Future task               :         des3, after des2, 5d
+
+      section Critical tasks
+      Completed task in the critical line :crit, done, 2014-01-06,24h
+      Implement parser and jison          :crit, done, after des1, 2d
+      Create tests for parser             :crit, active, 3d
+      `,
+      { theme: 'dark' }
+    );
+  });
 });

@@ -18,7 +18,9 @@
     "elk",
     "mermaid"
   ],
-  "scripts": {},
+  "scripts": {
+    "clean": "rimraf dist"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/mermaid-js/mermaid"
