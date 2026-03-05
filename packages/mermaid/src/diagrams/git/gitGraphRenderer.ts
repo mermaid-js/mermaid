@@ -215,7 +215,7 @@ const drawCommitBullet = (
       .attr('height', isReduxTheme ? 14 : 20)
       .attr(
         'class',
-        `commit ${commit.id} commit-highlight${calcColorIndex(branchIndex, THEME_COLOR_LIMIT)} ${typeClass}-outer`
+        `commit ${commit.id} commit-highlight${branchIndex % THEME_COLOR_LIMIT} ${typeClass}-outer`
       );
     gBullets
       .append('rect')
@@ -225,7 +225,7 @@ const drawCommitBullet = (
       .attr('height', isReduxTheme ? 8 : 12)
       .attr(
         'class',
-        `commit ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT)} ${typeClass}-inner`
+        `commit ${commit.id} commit${branchIndex % THEME_COLOR_LIMIT} ${typeClass}-inner`
       );
   } else if (commitSymbolType === commitType.CHERRY_PICK) {
     gBullets
@@ -280,7 +280,7 @@ const drawCommitBullet = (
       circle2.attr('r', isReduxTheme ? 5 : 6);
       circle2.attr(
         'class',
-        `commit ${typeClass} ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT)}`
+        `commit ${typeClass} ${commit.id} commit${branchIndex % THEME_COLOR_LIMIT}`
       );
     }
     if (commitSymbolType === commitType.REVERSE) {
@@ -291,10 +291,7 @@ const drawCommitBullet = (
           'd',
           `M ${commitPosition.x - constValue},${commitPosition.y - constValue}L${commitPosition.x + constValue},${commitPosition.y + constValue}M${commitPosition.x - constValue},${commitPosition.y + constValue}L${commitPosition.x + constValue},${commitPosition.y - constValue}`
         )
-        .attr(
-          'class',
-          `commit ${typeClass} ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT)}`
-        );
+        .attr('class', `commit ${typeClass} ${commit.id} commit${branchIndex % THEME_COLOR_LIMIT}`);
     }
   }
 };
