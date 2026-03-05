@@ -1,4 +1,5 @@
-import { it, describe, expect } from 'vitest';
+import { it, describe, expect, vi } from 'vitest';
+import cytoscape from 'cytoscape';
 import { parser } from './architectureParser.js';
 import { ArchitectureDB } from './architectureDb.js';
 describe('architecture diagrams', () => {
@@ -56,6 +57,54 @@ describe('architecture diagrams', () => {
             `;
       await expect(parser.parse(str)).resolves.not.toThrow();
       expect(db.getAccDescription()).toBe('Accessibility Description');
+    });
+  });
+
+  describe('cytoscape stylesheet warnings', () => {
+    it('should not produce console warnings for edges without labels', () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      try {
+        // Reproduce the architecture renderer's cytoscape stylesheet for edges.
+        // The 'edge' selector must NOT map label: 'data(label)' directly —
+        // only 'edge[label]' should, to avoid warnings on edges without titles.
+        const cy = cytoscape({
+          headless: true,
+          styleEnabled: true,
+          layout: { name: 'preset' },
+          style: [
+            {
+              selector: 'edge',
+              style: {
+                'curve-style': 'straight',
+              },
+            },
+            {
+              selector: 'edge[label]',
+              style: {
+                label: 'data(label)',
+              },
+            },
+          ],
+        });
+        // Add two nodes and an edge without a label (simulates architecture edges without titles)
+        cy.add({ group: 'nodes', data: { id: 'a' }, position: { x: 0, y: 0 } });
+        cy.add({ group: 'nodes', data: { id: 'b' }, position: { x: 50, y: 50 } });
+        cy.add({ group: 'edges', data: { id: 'a-b', source: 'a', target: 'b' } });
+
+        // Force cytoscape to resolve styles on the edge (triggers the warning for missing data fields)
+        cy.edges().forEach((edge) => edge.numericStyle('label'));
+
+        const mappingWarnings = warnSpy.mock.calls.filter((args) =>
+          args.some(
+            (arg) => typeof arg === 'string' && arg.includes('Do not assign mappings to elements')
+          )
+        );
+        expect(mappingWarnings).toHaveLength(0);
+
+        cy.destroy();
+      } finally {
+        warnSpy.mockRestore();
+      }
     });
   });
 
