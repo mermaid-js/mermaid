@@ -209,6 +209,11 @@ export const bounds = {
 const fills = conf.sectionFills;
 const textColours = conf.sectionColours;
 
+const EST_CHAR_WIDTH_PX = 8;
+const EST_LINE_HEIGHT_PX = 14;
+const TASK_BOX_PADDING_PX = 10;
+
+
 export const drawTasks = function (diagram, tasks, verticalPos) {
   const conf = getConfig().journey;
   let lastSection = '';
@@ -266,8 +271,11 @@ export const drawTasks = function (diagram, tasks, verticalPos) {
     task.x = i * conf.taskMargin + i * conf.width + LEFT_MARGIN;
     task.y = taskPos;
     task.width = conf.diagramMarginX;
-    const estimatedLines = Math.ceil((task.task.length * 8) / conf.width);
-    task.height = Math.max(conf.diagramMarginY, estimatedLines * 14 + 10);
+    const estimatedLines = Math.ceil((task.task.length * EST_CHAR_WIDTH_PX) / conf.width);
+task.height = Math.max(
+  conf.diagramMarginY,
+  estimatedLines * EST_LINE_HEIGHT_PX + TASK_BOX_PADDING_PX
+);
     task.colour = colour;
     task.fill = fill;
     task.num = num;
