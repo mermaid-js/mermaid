@@ -2,4 +2,4 @@
 'mermaid': patch
 ---
 
-docs: remove broken inline annotation example from classDiagram docs
+fix: support inline annotation syntax in class diagrams (class Shape <<interface>>)

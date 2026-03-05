@@ -962,6 +962,40 @@ foo()
       const color = parser.yy.getClass('Color');
       expect(color.annotations[0]).toBe('enumeration');
     });
+
+    it('should handle inline annotation syntax: class Shape <<interface>>', function () {
+      const str = 'classDiagram\n' + 'class Shape <<interface>>';
+      parser.parse(str);
+
+      const actual = parser.yy.getClass('Shape');
+      expect(actual.annotations.length).toBe(1);
+      expect(actual.annotations[0]).toBe('interface');
+    });
+
+    it('should handle inline annotation with members: class Shape <<interface>> { ... }', function () {
+      const str =
+        'classDiagram\n' +
+        'class Shape <<interface>> {\n' +
+        '    noOfVertices\n' +
+        '    draw()\n' +
+        '}';
+      parser.parse(str);
+
+      const actual = parser.yy.getClass('Shape');
+      expect(actual.annotations.length).toBe(1);
+      expect(actual.annotations[0]).toBe('interface');
+      expect(actual.members.length).toBe(1);
+      expect(actual.methods.length).toBe(1);
+    });
+
+    it('should handle inline annotation with empty body: class Shape <<interface>> {}', function () {
+      const str = 'classDiagram\n' + 'class Shape <<interface>> {\n' + '}';
+      parser.parse(str);
+
+      const actual = parser.yy.getClass('Shape');
+      expect(actual.annotations.length).toBe(1);
+      expect(actual.annotations[0]).toBe('interface');
+    });
   });
 });
 

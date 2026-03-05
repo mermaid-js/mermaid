@@ -543,7 +543,19 @@ It is possible to annotate classes with markers to provide additional metadata a
 - `<<Service>>` To represent a service class
 - `<<Enumeration>>` To represent an enum
 
-Annotations are defined within the opening `<<` and closing `>>`. There are two ways to add an annotation to a class, and either way the output will be same:
+Annotations are defined within the opening `<<` and closing `>>`. There are three ways to add an annotation to a class, and either way the output will be same:
+
+- **Inline** with the class definition:
+
+```mermaid-example
+classDiagram
+  class Shape <<interface>>
+```
+
+```mermaid
+classDiagram
+  class Shape <<interface>>
+```
 
 - In a **_separate line_** after a class is defined:
 
