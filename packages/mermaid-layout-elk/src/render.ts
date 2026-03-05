@@ -893,6 +893,7 @@ export const render = async (
       x: any;
       labels: { height: number; width: number; x: number; y: number }[];
       y: any;
+      curve?: any;
     }) => {
       // (elem, edge, clusterDb, diagramType, graph, id)
       const startNode = nodeDb[edge.sources[0]];
