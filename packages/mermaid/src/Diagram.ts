@@ -1,4 +1,5 @@
 import * as configApi from './config.js';
+import { log } from './logger.js';
 import { detectType, getDiagramLoader } from './diagram-api/detectType.js';
 import { getDiagram, registerDiagram } from './diagram-api/diagramAPI.js';
 import type { DiagramDefinition, DiagramMetadata } from './diagram-api/types.js';
@@ -42,7 +43,11 @@ export class Diagram {
     if (metadata.title) {
       db.setDiagramTitle?.(metadata.title);
     }
-    registerDiagramIconPacks(config.icons);
+    try {
+      registerDiagramIconPacks(config.icons);
+    } catch (error) {
+      log.error('Failed to register icon packs, continuing with diagram render:', error);
+    }
     await parser.parse(text);
     return new Diagram(type, text, db, parser, renderer);
   }

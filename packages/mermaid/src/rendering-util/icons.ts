@@ -128,7 +128,7 @@ export const clearIconPacks = () => {
 };
 
 export const isIconAvailable = async (iconName: string) => {
-  if (await ephemeralIconManager?.isIconAvailable(iconName)) {
+  if (await ephemeralIconManager.isIconAvailable(iconName)) {
     return true;
   }
   return await globalIconManager.isIconAvailable(iconName);
@@ -139,7 +139,7 @@ export const getIconSVG = async (
   customisations?: IconifyIconCustomisations & { fallbackPrefix?: string },
   extraAttributes?: Record<string, string>
 ) => {
-  if (ephemeralIconManager && (await ephemeralIconManager.isIconAvailable(iconName))) {
+  if (await ephemeralIconManager.isIconAvailable(iconName)) {
     return await ephemeralIconManager.getIconSVG(iconName, customisations, extraAttributes);
   }
   return await globalIconManager.getIconSVG(iconName, customisations, extraAttributes);
@@ -212,10 +212,10 @@ async function fetchIconsJson(
 
     return data;
   } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error(`Request timeout after ${timeout}ms while fetching icons from ${url}`);
+    }
     if (error instanceof TypeError) {
-      if (error.name === 'AbortError') {
-        throw new Error(`Request timeout after ${timeout}ms while fetching icons from ${url}`);
-      }
       throw new TypeError(`Network error while fetching icons from ${url}: ${error.message}`);
     } else if (error instanceof SyntaxError) {
       throw new SyntaxError(`Invalid JSON response from ${url}: ${error.message}`);
@@ -275,13 +275,22 @@ function getIconLoader(
   const timeout = config?.timeout ?? defaultConfig.icons?.timeout ?? 0;
 
   if (isUrl) {
-    throw new Error('Direct URLs are not allowed.');
+    throw new Error(
+      "Direct URLs are not allowed. Please use package specs with version (e.g., '@iconify-json/logos@1')."
+    );
   }
 
   // Validate package version for package specs
   validatePackageVersion(packageSpec);
 
   // Build URL using CDN template
+  if (!cdnTemplate) {
+    throw new Error('CDN template is required but not configured');
+  }
+
+  if (!cdnTemplate.startsWith('https://')) {
+    throw new Error('CDN template must start with https://');
+  }
   if (!cdnTemplate.includes('${packageSpec}')) {
     throw new Error('CDN template must contain ${packageSpec} placeholder');
   }

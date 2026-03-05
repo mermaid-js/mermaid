@@ -27,22 +27,6 @@ describe('Icons Loading', () => {
     },
   };
 
-  const mockIconsWithMultipleIcons: IconifyJSON = {
-    prefix: 'test',
-    icons: {
-      'test-icon': {
-        body: '<path d="M0 0h24v24H0z"/>',
-        width: 24,
-        height: 24,
-      },
-      'another-icon': {
-        body: '<path d="M12 12h12v12H12z"/>',
-        width: 24,
-        height: 24,
-      },
-    },
-  };
-
   const mockFetchResponse = {
     ok: true,
     headers: {
