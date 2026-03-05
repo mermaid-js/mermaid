@@ -7,16 +7,15 @@ interface Feature {
 }
 
 interface EditorColumn {
+  id: string;
   title: string;
   description: string;
   redBarText?: string;
-  redirectUrl?: string;
-  buttonText?: string;
+  buttonUrl: string;
+  buttonText: string;
+  buttonClasses: string;
   highlighted?: boolean;
-  proTrialUrl?: string;
-  proTrialButtonText?: string;
   features: Feature[];
-  isButtonMargined?: boolean;
 }
 
 const mermaidChartFeatures: Feature[] = [
@@ -36,20 +35,24 @@ const openSourceFeatures: Feature[] = [
 
 const editorColumns: EditorColumn[] = [
   {
+    id: 'mermaid-plus',
     title: 'Mermaid Plus',
     description: 'Unlock AI, storage and collaboration',
     highlighted: true,
     redBarText: 'Recommended',
-    proTrialButtonText: 'Start free trial',
-    proTrialUrl:
+    buttonText: 'Start free trial',
+    buttonUrl:
       'https://mermaid.ai/app/sign-up?utm_source=mermaid_js&utm_medium=2_editor_selection&utm_campaign=start_plus&redirect=%2Fapp%2Fuser%2Fbilling%2Fcheckout%3FisFromMermaid%3Dtrue%26tier%3Dplus',
+    buttonClasses: 'text-white bg-[#E0095F] hover:bg-[#B0134A]',
     features: mermaidChartFeatures,
   },
   {
+    id: 'open-source',
     title: 'Open Source',
     description: 'Code only, no login',
     buttonText: 'Start free',
-    redirectUrl: 'https://mermaid.live/edit',
+    buttonUrl: 'https://mermaid.live/edit',
+    buttonClasses: 'bg-[#BEDDE3] hover:bg-[#5CA3B4] text-[#1E1A2E] hover:text-white hover:shadow-md',
     features: openSourceFeatures,
   },
 ];
@@ -106,22 +109,16 @@ onUnmounted(() => {
         </header>
 
         <a
-          v-if="column.redirectUrl"
-          :href="column.redirectUrl"
+          :href="column.buttonUrl"
           target="_blank"
-          class="flex h-10 w-full bg-[#BEDDE3] hover:bg-[#5CA3B4] text-[#1E1A2E] items-center justify-center rounded-xl hover:text-white hover:shadow-md"
-          :class="column.isButtonMargined ? 'mb-[88px]' : ' mb-6'"
+          :class="[
+            'mb-6 flex h-10 w-full items-center justify-center rounded-xl',
+            column.buttonClasses,
+            'plausible-event-name=editorPick',
+            `plausible-event-type=${column.id}`
+          ]"
         >
           {{ column.buttonText }}
-        </a>
-
-        <a
-          v-if="column.proTrialUrl"
-          :href="column.proTrialUrl"
-          target="_blank"
-          class="mb-6 flex h-10 w-full text-white items-center justify-center rounded-xl bg-[#E0095F] hover:bg-[#B0134A]"
-        >
-          {{ column.proTrialButtonText || 'Start Pro trial' }}
         </a>
 
         <div class="h-px w-full bg-[#bedde3] mb-6"></div>
