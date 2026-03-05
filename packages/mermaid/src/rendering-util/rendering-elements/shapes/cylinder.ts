@@ -94,16 +94,7 @@ export async function cylinder<T extends SVGGraphicsElement>(parent: D3Selection
     const outerPathData = createOuterCylinderPathD(0, 0, w, h, rx, ry);
     const innerPathData = createInnerCylinderPathD(0, ry, w, h, rx, ry);
     const options = userNodeOverrides(node, {});
-    const overrides = {};
-    // node.look === 'neo'
-    //   ? {
-    //       roughness: 0,
-    //       stroke: 'none',
-    //       fillStyle: 'solid',
-    //     }
-    //   : {};
-
-    const outerNode = rc.path(outerPathData, { ...options, ...overrides });
+    const outerNode = rc.path(outerPathData, options);
     const innerLine = rc.path(innerPathData, userNodeOverrides(node, { fill: 'none' }));
 
     cylinder = shapeSvg.insert(() => innerLine, ':first-child');
