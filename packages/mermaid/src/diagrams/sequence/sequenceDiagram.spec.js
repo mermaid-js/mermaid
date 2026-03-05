@@ -2622,6 +2622,20 @@ Bob->>Alice:Got it!
       expect(error).toBe(true);
     });
 
+    it('should not hang when "as" is used without a space before the alias text', async () => {
+      let errorMessage = '';
+      try {
+        await Diagram.fromText(`
+          sequenceDiagram
+          participant X_AutoPublishable asAAAAAAAAAAAAA:AAAAAAAAAAAAA
+        `);
+      } catch (e) {
+        errorMessage = e instanceof Error ? e.message : String(e);
+      }
+      expect(errorMessage).not.toBe('');
+      expect(errorMessage).not.toContain('Lexical error');
+    }, 5000);
+
     it('should parse participant with stereotype and alias', async () => {
       const diagram = await Diagram.fromText(`
       sequenceDiagram
