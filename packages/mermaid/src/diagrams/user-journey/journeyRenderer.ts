@@ -5,10 +5,9 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 export const setConf = function (cnf) {
-  const keys = Object.keys(cnf);
-
-  keys.forEach(function (key) {
-    conf[key] = cnf[key];
+  const journeyConf = getConfig().journey;
+  Object.keys(cnf).forEach((key) => {
+    journeyConf[key] = cnf[key];
   });
 };
 
