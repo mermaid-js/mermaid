@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
-import { track } from '@plausible-analytics/tracker';
+import { trackPlausibleEvent } from '../theme/plausible.js';
 
 interface Feature {
   iconUrl: string;
@@ -69,7 +69,7 @@ const handleMouseDown = (e: MouseEvent) => {
   ) {
     e.preventDefault();
     isVisible.value = !isVisible.value;
-    track('editorSelectionModalOpen');
+    void trackPlausibleEvent('editorSelectionModalOpen');
   }
 };
 
