@@ -1586,7 +1586,7 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
    */
   nodePadding?: number;
   /**
-   * The style of labels in the sankey diagram. 'default' provides better readability with a white stroke behind the text.
+   * The style of labels in the sankey diagram. 'outlined' provides better readability with a white stroke behind the text.
    *
    */
   labelStyle?: 'legacy' | 'outlined';

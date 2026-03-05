@@ -40,7 +40,7 @@ export const sanitizeDirective = (args: any): void => {
     if (typeof args[key] === 'object') {
       if (key === 'nodeColors') {
         // Validate each value is a valid CSS color
-        const colorPattern = /^#[\dA-Fa-f]{3,8}$|^rgb\([\d\s,.%]+\)$|^hsl\([\d\s,.%]+\)$|^[a-z]+$/i;
+        const colorPattern = /^#[\da-f]{3,8}$|^rgb\([\d\s%,.]+\)$|^hsl\([\d\s%,.]+\)$|^[a-z]+$/i;
         for (const colorKey of Object.keys(args[key])) {
           if (typeof args[key][colorKey] !== 'string' || !colorPattern.test(args[key][colorKey])) {
             log.debug('sanitize deleting invalid color:', colorKey, args[key][colorKey]);
