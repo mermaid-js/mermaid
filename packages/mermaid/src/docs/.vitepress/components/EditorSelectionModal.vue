@@ -20,17 +20,11 @@ interface EditorColumn {
 }
 
 const mermaidChartFeatures: Feature[] = [
-  { iconUrl: '/icons/folder.svg', featureName: 'Storage' },
-  { iconUrl: '/icons/terminal.svg', featureName: 'Code editor' },
-  { iconUrl: '/icons/ai-diagram.svg', featureName: 'AI diagram generator' },
-  { iconUrl: '/icons/whiteboard.svg', featureName: 'Whiteboard' },
-  { iconUrl: '/icons/group.svg', featureName: 'Teams' },
-  { iconUrl: '/icons/groups.svg', featureName: 'Multi-user editing' },
-  { iconUrl: '/icons/ai-repair.svg', featureName: 'AI diagram repair' },
-  { iconUrl: '/icons/version-history.svg', featureName: 'Version history' },
-  { iconUrl: '/icons/comment.svg', featureName: 'Comments' },
-  { iconUrl: '/icons/presentation.svg', featureName: 'Presentations' },
-  { iconUrl: '/icons/plugins.svg', featureName: 'Advanced plugins' },
+  { iconUrl: '/icons/whiteboard.svg', featureName: 'Visual editor' },
+  { iconUrl: '/icons/ai-diagram.svg', featureName: '300 AI credits' },
+  { iconUrl: '/icons/folder.svg', featureName: 'Unlimited diagram storage' },
+  { iconUrl: '/icons/presentation.svg', featureName: 'Limitless diagram size' },
+  { iconUrl: '/icons/comment.svg', featureName: 'View & comment collaboration' },
 ];
 
 const openSourceFeatures: Feature[] = [
@@ -42,13 +36,13 @@ const openSourceFeatures: Feature[] = [
 
 const editorColumns: EditorColumn[] = [
   {
-    title: 'Mermaid Pro',
-    description: 'Unlock AI and real-time collaboration',
+    title: 'Mermaid Plus',
+    description: 'Unlock AI, storage and collaboration',
     highlighted: true,
     redBarText: 'Recommended',
     proTrialButtonText: 'Start free trial',
     proTrialUrl:
-      'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=2_editor_selection&utm_campaign=start_pro&redirect=%2Fapp%2Fuser%2Fbilling%2Fcheckout%3FisFromMermaid%3Dtrue',
+      'https://mermaid.ai/app/sign-up?utm_source=mermaid_js&utm_medium=2_editor_selection&utm_campaign=start_plus&redirect=%2Fapp%2Fuser%2Fbilling%2Fcheckout%3FisFromMermaid%3Dtrue%26tier%3Dplus',
     features: mermaidChartFeatures,
   },
   {

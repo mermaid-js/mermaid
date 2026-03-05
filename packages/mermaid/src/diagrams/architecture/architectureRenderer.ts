@@ -323,9 +323,14 @@ function layoutArchitecture(
           selector: 'edge',
           style: {
             'curve-style': 'straight',
-            label: 'data(label)',
             'source-endpoint': 'data(sourceEndpoint)',
             'target-endpoint': 'data(targetEndpoint)',
+          },
+        },
+        {
+          selector: 'edge[label]',
+          style: {
+            label: 'data(label)',
           },
         },
         {
