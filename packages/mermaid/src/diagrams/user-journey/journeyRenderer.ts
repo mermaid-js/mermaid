@@ -115,16 +115,11 @@ function drawActorLegend(diagram) {
   });
 }
 
-// TODO: Cleanup?
-const conf = getConfig().journey;
-let leftMargin = 0;
 export const draw = function (text, id, version, diagObj) {
-  const configObject = getConfig();
-  const titleColor = configObject.journey.titleColor;
-  const titleFontSize = configObject.journey.titleFontSize;
-  const titleFontFamily = configObject.journey.titleFontFamily;
-
-  const securityLevel = configObject.securityLevel;
+  const conf = getConfig().journey;
+  const leftMargin = conf.leftMargin;
+ 
+  const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
@@ -158,9 +153,8 @@ export const draw = function (text, id, version, diagObj) {
   });
 
   drawActorLegend(diagram);
-  leftMargin = conf.leftMargin + maxWidth;
   bounds.insert(0, 0, leftMargin, Object.keys(actors).length * 50);
-  drawTasks(diagram, tasks, 0);
+  drawTasks(diagram, tasks, 0, leftMargin);
 
   const box = bounds.getBounds();
   if (title) {
@@ -168,7 +162,7 @@ export const draw = function (text, id, version, diagObj) {
       .append('text')
       .text(title)
       .attr('x', leftMargin)
-      .attr('font-size', titleFontSize)
+      .attr('font-size', '4ex')
       .attr('font-weight', 'bold')
       .attr('y', 25)
       .attr('fill', titleColor)
@@ -178,13 +172,15 @@ export const draw = function (text, id, version, diagObj) {
   const height = box.stopy - box.starty + 2 * conf.diagramMarginY;
 
   // **Modified Width Calculation**
-  const width = LEFT_MARGIN + box.stopx + 2 * conf.diagramMarginX;
+  const width = leftMargin + box.stopx + 2 * conf.diagramMarginX;
   configureSvgSize(diagram, height + 50, width + 50, conf.useMaxWidth);
   // Draw activity line
   diagram
     .append('line')
     .attr('x1', leftMargin)
+    .attr('x1', leftMargin)
     .attr('y1', conf.height * 4) // One section head + one task + margins
+    .attr('x2', width - leftMargin - 4) // Subtract stroke width so arrow point is retained
     .attr('x2', width - leftMargin - 4) // Subtract stroke width so arrow point is retained
     .attr('y2', conf.height * 4)
     .attr('stroke-width', 4)
@@ -283,15 +279,17 @@ export const bounds = {
   },
 };
 
-const fills = conf.sectionFills;
-const textColours = conf.sectionColours;
+
 
 const EST_CHAR_WIDTH_PX = 8;
 const EST_LINE_HEIGHT_PX = 14;
 const TASK_BOX_PADDING_PX = 10;
 
-export const drawTasks = function (diagram, tasks, verticalPos) {
+
+export const drawTasks = function (diagram, tasks, verticalPos, leftMargin) {
   const conf = getConfig().journey;
+  const fills = conf.sectionFills;
+  const textColours = conf.sectionColours;
   let lastSection = '';
   const sectionVHeight = conf.height * 2 + conf.diagramMarginY;
   const taskPos = verticalPos + sectionVHeight;
@@ -321,6 +319,7 @@ export const drawTasks = function (diagram, tasks, verticalPos) {
 
       const section = {
         x: i * conf.taskMargin + i * conf.width + leftMargin,
+        x: i * conf.taskMargin + i * conf.width + leftMargin,
         y: 50,
         text: task.section,
         fill,
@@ -344,6 +343,7 @@ export const drawTasks = function (diagram, tasks, verticalPos) {
     }, {});
 
     // Add some rendering data to the object
+    task.x = i * conf.taskMargin + i * conf.width + leftMargin;
     task.x = i * conf.taskMargin + i * conf.width + leftMargin;
     task.y = taskPos;
     task.width = conf.diagramMarginX;
