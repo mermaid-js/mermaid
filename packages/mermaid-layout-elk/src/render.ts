@@ -347,14 +347,9 @@ export const render = async (
     edgeData.style = (edgeData.style || '') + (strokeRes.style || '');
     edgeData.labelStyle = (edgeData.labelStyle || '') + (strokeRes.labelStyle || '');
 
-    // Curve – ELK produces orthogonal edge routes, so default to 'rounded' (right-angle
-    // segments with rounded corners) unless the user explicitly set an interpolation.
-    if (edge.interpolate !== undefined || defaults.defaultInterpolate !== undefined) {
-      // @ts-ignore - defaults.confCurve is present at runtime but missing in type
-      edgeData.curve = getCurve(edge.interpolate, defaults.defaultInterpolate, defaults.confCurve);
-    } else {
-      edgeData.curve = 'rounded';
-    }
+    // Curve
+    // @ts-ignore - defaults.confCurve is present at runtime but missing in type
+    edgeData.curve = getCurve(edge.interpolate, defaults.defaultInterpolate, defaults.confCurve);
 
     // Arrowhead style + labelpos when we have label text
     const hasText = (edge?.text ?? '') !== '';
@@ -1074,6 +1069,9 @@ export const render = async (
           });
         }
         edge.points = deduped;
+        // ELK produces orthogonal edge routes — override the curve to 'rounded' (right-angle
+        // segments with rounded corners) so basis/smooth interpolation doesn't distort them.
+        edge.curve = 'rounded';
         const paths = insertEdge(
           edgesEl,
           edge,
