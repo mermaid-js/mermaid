@@ -9,7 +9,7 @@ const getStyles = (options) =>
 
   /* Outlined label style - background stroke for better readability */
   .sankey-label-bg {
-    stroke: rgba(255, 255, 255, 0.9);
+    stroke: ${options.mainBkg || options.background || '#fff'};
     stroke-width: 4px;
     stroke-linejoin: round;
     paint-order: stroke;
@@ -17,7 +17,7 @@ const getStyles = (options) =>
 
   /* Foreground label text */
   .sankey-label-fg {
-    fill: ${options.textColor || '#1d1d1f'};
+    fill: ${options.textColor};
   }
 
   /* Node styling */
