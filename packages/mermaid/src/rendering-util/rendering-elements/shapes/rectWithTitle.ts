@@ -1,6 +1,5 @@
 import type { Node } from '../../types.js';
 import { select } from 'd3';
-import { evaluate } from '../../../diagrams/common/common.js';
 import { updateNodeBounds } from './util.js';
 import createLabel from '../createLabel.js';
 import intersect from '../intersect/index.js';
@@ -9,8 +8,13 @@ import rough from 'roughjs';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 import { log } from '../../../logger.js';
+import type { D3Selection } from '../../../types.js';
+import { getEffectiveHtmlLabels } from '../../../config.js';
 
-export const rectWithTitle = async (parent: SVGElement, node: Node) => {
+export async function rectWithTitle<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  node: Node
+) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   let classes;
@@ -36,9 +40,9 @@ export const rectWithTitle = async (parent: SVGElement, node: Node) => {
 
   const title = node.label;
 
-  const text = label.node().appendChild(await createLabel(title, node.labelStyle, true, true));
+  const text = await createLabel(label, title, node.labelStyle, true, true);
   let bbox = { width: 0, height: 0 };
-  if (evaluate(getConfig()?.flowchart?.htmlLabels)) {
+  if (getEffectiveHtmlLabels(getConfig())) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();
@@ -48,16 +52,13 @@ export const rectWithTitle = async (parent: SVGElement, node: Node) => {
   log.info('Text 2', description);
   const textRows = description || [];
   const titleBox = text.getBBox();
-  const descr = label
-    .node()
-    .appendChild(
-      await createLabel(
-        textRows.join ? textRows.join('<br/>') : textRows,
-        node.labelStyle,
-        true,
-        true
-      )
-    );
+  const descr = await createLabel(
+    label,
+    Array.isArray(textRows) ? textRows.join('<br/>') : textRows,
+    node.labelStyle,
+    true,
+    true
+  );
 
   //if (evaluate(getConfig()?.flowchart?.htmlLabels)) {
   const div = descr.children[0];
@@ -87,7 +88,7 @@ export const rectWithTitle = async (parent: SVGElement, node: Node) => {
   // Get the size of the label
 
   // Bounding box for title and text
-  bbox = label.node().getBBox();
+  bbox = label.node()!.getBBox();
 
   // Center the label
   label.attr(
@@ -151,4 +152,4 @@ export const rectWithTitle = async (parent: SVGElement, node: Node) => {
   };
 
   return shapeSvg;
-};
+}

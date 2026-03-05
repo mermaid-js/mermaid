@@ -562,6 +562,20 @@ class C13["With Città foreign language"]
       `
     );
   });
+  it('should add notes in namespaces', function () {
+    imgSnapshotTest(
+      `
+      classDiagram
+      note "This is a outer note"
+      note for C1 "This is a outer note for C1"
+      namespace Namespace1 {
+        note "This is a inner note"
+        note for C1 "This is a inner note for C1"
+        class C1
+      }
+      `
+    );
+  });
   it('should render a simple class diagram with no members', () => {
     imgSnapshotTest(
       `
@@ -580,5 +594,64 @@ class C13["With Città foreign language"]
         `,
       { logLevel: 1, flowchart: { htmlLabels: false } }
     );
+  });
+
+  it('renders a class diagram with a generic class in a namespace', () => {
+    const diagramDefinition = `
+      classDiagram-v2
+      namespace Company.Project.Module {
+        class GenericClass~T~ {
+          +addItem(item: T)
+          +getItem() T
+        }
+      }
+    `;
+
+    imgSnapshotTest(diagramDefinition);
+  });
+
+  it('renders a class diagram with nested namespaces and relationships', () => {
+    const diagramDefinition = `
+      classDiagram-v2
+      namespace Company.Project.Module.SubModule {
+        class Report {
+          +generatePDF(data: List)
+          +generateCSV(data: List)
+        }
+      }
+      namespace Company.Project.Module {
+        class Admin {
+          +generateReport()
+        }
+      }
+      Admin --> Report : generates
+    `;
+
+    imgSnapshotTest(diagramDefinition);
+  });
+
+  it('renders a class diagram with multiple classes and relationships in a namespace', () => {
+    const diagramDefinition = `
+      classDiagram-v2
+      namespace Company.Project.Module {
+        class User {
+          +login(username: String, password: String)
+          +logout()
+        }
+        class Admin {
+          +addUser(user: User)
+          +removeUser(user: User)
+          +generateReport()
+        }
+        class Report {
+          +generatePDF(reportData: List)
+          +generateCSV(reportData: List)
+        }
+      }
+      Admin --> User : manages
+      Admin --> Report : generates
+    `;
+
+    imgSnapshotTest(diagramDefinition);
   });
 });

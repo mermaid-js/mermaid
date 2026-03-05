@@ -1,5 +1,5 @@
-import flowDb from '../flowDb.js';
-import flow from './flow.jison';
+import { FlowDB } from '../flowDb.js';
+import flow from './flowParser.ts';
 import { setConfig } from '../../../config.js';
 
 setConfig({
@@ -8,7 +8,7 @@ setConfig({
 
 describe('[Text] when parsing', () => {
   beforeEach(function () {
-    flow.parser.yy = flowDb;
+    flow.parser.yy = new FlowDB();
     flow.parser.yy.clear();
   });
 
@@ -429,7 +429,7 @@ describe('[Text] when parsing', () => {
 
       expect(vert.get('C').text).toBe('Начало');
     });
-    it('should handle backslask', function () {
+    it('should handle backslash', function () {
       const res = flow.parser.parse('graph TD;A-->C(c:\\windows);');
 
       const vert = flow.parser.yy.getVertices();
@@ -596,7 +596,7 @@ describe('[Text] when parsing', () => {
     expect(() => flow.parser.parse(str)).toThrowError("got 'STR'");
   });
 
-  it('should throw error for nested quoatation marks', function () {
+  it('should throw error for nested quotation marks', function () {
     const str = 'graph TD; A["This is a "()" in text"];';
 
     expect(() => flow.parser.parse(str)).toThrowError("Expecting 'SQE'");

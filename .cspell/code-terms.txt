@@ -1,3 +1,5 @@
+!viewbox
+# It should be viewBox
 # This file contains coding related terms
 ALPHANUM
 antiscript
@@ -26,6 +28,7 @@ concat
 controlx
 controly
 CSSCLASS
+curv
 CYLINDEREND
 CYLINDERSTART
 DAGA
@@ -46,13 +49,13 @@ edgesep
 EMPTYSTR
 enddate
 ERDIAGRAM
+eslint
 flatmap
 forwardable
 frontmatter
 funs
 gantt
 GENERICTYPE
-getBoundarys
 grammr
 graphtype
 halign
@@ -87,6 +90,7 @@ NODIR
 NSTR
 outdir
 Qcontrolx
+QSTR
 reinit
 rels
 reqs

@@ -1,5 +1,8 @@
 export type MarkdownWordType = 'normal' | 'strong' | 'em';
 import type { MermaidConfig } from '../config.type.js';
+import type { ClusterShapeID } from './rendering-elements/clusters.js';
+import type { ShapeID } from './rendering-elements/shapes.js';
+import type { Bounds, Point } from '../types.js';
 export interface MarkdownWord {
   content: string;
   type: MarkdownWordType;
@@ -8,8 +11,7 @@ export type MarkdownLine = MarkdownWord[];
 /** Returns `true` if the line fits a constraint (e.g. it's under 𝑛 chars) */
 export type CheckFitFunction = (text: MarkdownLine) => boolean;
 
-// Common properties for any node in the system
-export interface Node {
+interface BaseNode {
   id: string;
   label?: string;
   description?: string[];
@@ -37,12 +39,12 @@ export interface Node {
   linkTarget?: string;
   tooltip?: string;
   padding?: number; //REMOVE?, use from LayoutData.config - Keep, this could be shape specific
-  shape?: string;
-  isGroup: boolean;
+  isGroup?: boolean;
   width?: number;
   height?: number;
   // Specific properties for State Diagram nodes TODO remove and use generic properties
   intersect?: (point: any) => any;
+  calcIntersect?: (bounds: Bounds, point: Point) => any;
 
   // Non-generic properties
   rx?: number; // Used for rounded corners in Rect, Ellipse, etc.Maybe it to specialized RectNode, EllipseNode, etc.
@@ -58,13 +60,48 @@ export interface Node {
   borderStyle?: string;
   borderWidth?: number;
   labelTextColor?: string;
+  labelPaddingX?: number;
+  labelPaddingY?: number;
 
   // Flowchart specific properties
   x?: number;
   y?: number;
 
   look?: string;
+  icon?: string;
+  pos?: 't' | 'b';
+  img?: string;
+  assetWidth?: number;
+  assetHeight?: number;
+  defaultWidth?: number;
+  imageAspectRatio?: number;
+  constraint?: 'on' | 'off';
+  children?: NodeChildren;
+  nodeId?: string;
+  level?: number;
+  descr?: string;
+  type?: number;
+  radius?: number;
+  taper?: number;
+  stroke?: string;
 }
+
+/**
+ * Group/cluster nodes, e.g. nodes that contain other nodes.
+ */
+export type NodeChildren = Node[];
+
+export interface ClusterNode extends BaseNode {
+  shape?: ClusterShapeID;
+  isGroup: true;
+}
+export interface NonClusterNode extends BaseNode {
+  shape?: ShapeID;
+  isGroup: false;
+}
+
+// Common properties for any node in the system
+export type Node = ClusterNode | NonClusterNode;
 
 // Common properties for any edge in the system
 export interface Edge {
@@ -72,11 +109,14 @@ export interface Edge {
   label?: string;
   classes?: string;
   style?: string[];
+  animate?: boolean;
+  animation?: 'fast' | 'slow';
   // Properties common to both Flowchart and State Diagram edges
   arrowhead?: string;
   arrowheadStyle?: string;
   arrowTypeEnd?: string;
   arrowTypeStart?: string;
+  cssCompiledStyles?: string[];
   // Flowchart specific properties
   defaultInterpolate?: string;
   end?: string;
@@ -86,7 +126,10 @@ export interface Edge {
   start?: string;
   stroke?: string;
   text?: string;
-  type: string;
+  type?: string;
+  // Class Diagram specific properties
+  startLabelRight?: string;
+  endLabelLeft?: string;
   // Rendering specific properties
   curve?: string;
   labelpos?: string;
@@ -95,6 +138,13 @@ export interface Edge {
   pattern?: string;
   thickness?: 'normal' | 'thick' | 'invisible' | 'dotted';
   look?: string;
+  isUserDefinedId?: boolean;
+  points?: Point[];
+  parentId?: string;
+  dir?: string;
+  source?: string;
+  target?: string;
+  depth?: number;
 }
 
 export interface RectOptions {
@@ -105,10 +155,14 @@ export interface RectOptions {
   classes: string;
 }
 
-// Extending the Node interface for specific types if needed
-export interface ClassDiagramNode extends Node {
-  memberData: any; // Specific property for class diagram nodes
+export interface MindmapOptions {
+  padding: number;
 }
+
+// Extending the Node interface for specific types if needed
+export type ClassDiagramNode = Node & {
+  memberData: any; // Specific property for class diagram nodes
+};
 
 // Specific interfaces for layout and render data
 export interface LayoutData {
@@ -135,3 +189,19 @@ export type LayoutMethod =
   | 'fdp'
   | 'osage'
   | 'grid';
+
+export interface ShapeRenderOptions {
+  config: MermaidConfig;
+  /** Some shapes render differently if a diagram has a direction `LR` */
+  dir?: Node['dir'];
+  padding?: number;
+}
+
+export type KanbanNode = Node & {
+  // Kanban specif data
+  priority?: 'Very High' | 'High' | 'Medium' | 'Low' | 'Very Low';
+  ticket?: string;
+  assigned?: string;
+  icon?: string;
+  level: number;
+};

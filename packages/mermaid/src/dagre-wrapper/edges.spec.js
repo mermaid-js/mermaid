@@ -30,7 +30,7 @@ describe('Graphlib decorations', () => {
       expect(int.x).toBeCloseTo(192.4609375);
       expect(int.y).toBeCloseTo(145.15711441743503);
     });
-    it('case 3 - intersection on top of box outside point greater then inside point', function () {
+    it('case 3 - intersection on top of box outside point greater than inside point', function () {
       const o = { x: 157, y: 39 };
       const i = { x: 104, y: 105 };
       const node2 = {
@@ -44,7 +44,7 @@ describe('Graphlib decorations', () => {
       expect(int.y).toBeCloseTo(76);
       // expect(int.y).toBeCloseTo(67.833)
     });
-    it('case 4 - intersection on top of box inside point greater then inside point', function () {
+    it('case 4 - intersection on top of box inside point greater than inside point', function () {
       const o = { x: 144, y: 38 };
       const i = { x: 198, y: 105 };
       const node2 = {

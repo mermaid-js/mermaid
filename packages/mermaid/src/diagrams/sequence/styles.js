@@ -12,6 +12,11 @@ const getStyles = (options) =>
   .actor-line {
     stroke: ${options.actorLineColor};
   }
+  
+  .innerArc {
+    stroke-width: 1.5;
+    stroke-dasharray: none;
+  }
 
   .messageLine0 {
     stroke-width: 1.5;
@@ -114,6 +119,7 @@ const getStyles = (options) =>
     fill: ${options.actorBkg};
     stroke-width: 2px;
   }
+
 `;
 
 export default getStyles;

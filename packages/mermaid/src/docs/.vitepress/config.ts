@@ -1,6 +1,8 @@
 import type { MarkdownOptions } from 'vitepress';
 import { defineConfig } from 'vitepress';
-import { version } from '../../../package.json';
+import packageJson from '../../../package.json' with { type: 'json' };
+import { addCanonicalUrls } from './canonical-urls.js';
+import { getHeaderLogo, getHeaderLogoLink, withConditionalHomeNav } from './headerDomainRules.js';
 import MermaidExample from './mermaid-markdown-all.js';
 
 const allMarkdownTransformers: MarkdownOptions = {
@@ -25,8 +27,23 @@ export default defineConfig({
     // ignore all localhost links
     /^https?:\/\/localhost/,
   ],
+  transformPageData: addCanonicalUrls,
   head: [
     ['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    ['meta', { property: 'og:title', content: 'Mermaid' }],
+    [
+      'meta',
+      {
+        property: 'og:description',
+        content: 'Create diagrams and visualizations using text and code.',
+      },
+    ],
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:url', content: 'https://mermaid.js.org' }],
+    [
+      'meta',
+      { property: 'og:image', content: 'https://mermaid.js.org/mermaid-logo-horizontal.svg' },
+    ],
     [
       'script',
       {
@@ -38,6 +55,8 @@ export default defineConfig({
     ],
   ],
   themeConfig: {
+    logo: getHeaderLogo(docsHostname()),
+    logoLink: getHeaderLogoLink(docsHostname()),
     nav: nav(),
     editLink: {
       pattern: ({ filePath, frontmatter }) => {
@@ -58,21 +77,31 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/mermaid-js/mermaid' },
       {
         icon: 'discord',
-        link: 'https://discord.gg/AgrbSrBer3',
+        link: 'https://discord.gg/sKeNQX4Wtj',
       },
       {
         icon: {
           svg: '<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490.16 490.16"><defs><mask id="Mask"><rect x="0" y="0" width="490.16" height="490.16" fill="white" /><path fill="black" d="M407.48,111.18A165.2,165.2,0,0,0,245.08,220,165.2,165.2,0,0,0,82.68,111.18a165.5,165.5,0,0,0,72.06,143.64,88.81,88.81,0,0,1,38.53,73.45v50.86H296.9V328.27a88.8,88.8,0,0,1,38.52-73.45,165.41,165.41,0,0,0,72.06-143.64Z"/><path fill="black" d="M160.63,328.27a56.09,56.09,0,0,0-24.27-46.49,198.74,198.74,0,0,1-28.54-23.66A196.87,196.87,0,0,1,82.53,227V379.13h78.1Z"/><path fill="black" d="M329.53,328.27a56.09,56.09,0,0,1,24.27-46.49,198.74,198.74,0,0,0,28.54-23.66A196.87,196.87,0,0,0,407.63,227V379.13h-78.1Z"/></mask><style>.cls-1{fill:#76767B;}.cls-1:hover{fill:#FF3570}</style></defs><rect class="cls-1" width="490.16" height="490.16" rx="84.61" mask="url(#Mask)" /></svg>',
         },
-        link: 'https://www.mermaidchart.com/',
+        link: 'https://mermaid.ai/',
       },
     ],
   },
 });
 
+/**
+ * Get the deployment hostname from DOCS_HOSTNAME env var.
+ * Defaults to 'mermaid.js.org' if not set.
+ */
+function docsHostname(): string {
+  return (
+    ((globalThis as any).process?.env?.DOCS_HOSTNAME as string | undefined) ?? 'mermaid.js.org'
+  );
+}
+
 // Top (across the page) menu
 function nav() {
-  return [
+  const baseNav = [
     { text: 'Docs', link: '/intro/', activeMatch: '/intro/' },
     {
       text: 'Tutorials',
@@ -95,7 +124,7 @@ function nav() {
       activeMatch: '/announcements',
     },
     {
-      text: version,
+      text: packageJson.version,
       items: [
         {
           text: 'Changelog',
@@ -104,10 +133,14 @@ function nav() {
       ],
     },
     {
-      text: '💻 Live Editor',
-      link: 'https://mermaid.live',
+      text: '💻 Open Editor',
+      link: 'https://mermaid.live/edit',
+      target: '_blank',
+      rel: 'external',
     },
   ];
+
+  return withConditionalHomeNav(baseNav, docsHostname());
 }
 
 function sidebarAll() {
@@ -148,7 +181,7 @@ function sidebarSyntax() {
         { text: 'Pie Chart', link: '/syntax/pie' },
         { text: 'Quadrant Chart', link: '/syntax/quadrantChart' },
         { text: 'Requirement Diagram', link: '/syntax/requirementDiagram' },
-        { text: 'Gitgraph (Git) Diagram', link: '/syntax/gitgraph' },
+        { text: 'GitGraph (Git) Diagram', link: '/syntax/gitgraph' },
         { text: 'C4 Diagram 🦺⚠️', link: '/syntax/c4' },
         { text: 'Mindmaps', link: '/syntax/mindmap' },
         { text: 'Timeline', link: '/syntax/timeline' },
@@ -157,7 +190,11 @@ function sidebarSyntax() {
         { text: 'XY Chart 🔥', link: '/syntax/xyChart' },
         { text: 'Block Diagram 🔥', link: '/syntax/block' },
         { text: 'Packet 🔥', link: '/syntax/packet' },
+        { text: 'Kanban 🔥', link: '/syntax/kanban' },
         { text: 'Architecture 🔥', link: '/syntax/architecture' },
+        { text: 'Radar 🔥', link: '/syntax/radar' },
+        { text: 'Treemap 🔥', link: '/syntax/treemap' },
+        { text: 'Venn 🔥', link: '/syntax/venn' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
@@ -174,12 +211,14 @@ function sidebarConfig() {
         { text: 'API-Usage', link: '/config/usage' },
         { text: 'Mermaid API Configuration', link: '/config/setup/README' },
         { text: 'Mermaid Configuration Options', link: '/config/schema-docs/config' },
+        { text: 'Registering icons', link: '/config/icons' },
         { text: 'Directives', link: '/config/directives' },
         { text: 'Theming', link: '/config/theming' },
         { text: 'Math', link: '/config/math' },
         { text: 'Accessibility', link: '/config/accessibility' },
         { text: 'Mermaid CLI', link: '/config/mermaidCLI' },
         { text: 'FAQ', link: '/config/faq' },
+        { text: 'Layouts', link: '/config/layouts' },
       ],
     },
   ];

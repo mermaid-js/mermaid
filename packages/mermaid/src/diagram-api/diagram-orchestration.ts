@@ -19,12 +19,18 @@ import errorDiagram from '../diagrams/error/errorDiagram.js';
 import flowchartElk from '../diagrams/flowchart/elk/detector.js';
 import timeline from '../diagrams/timeline/detector.js';
 import mindmap from '../diagrams/mindmap/detector.js';
+import kanban from '../diagrams/kanban/detector.js';
 import sankey from '../diagrams/sankey/sankeyDetector.js';
 import { packet } from '../diagrams/packet/detector.js';
+import { radar } from '../diagrams/radar/detector.js';
 import block from '../diagrams/block/blockDetector.js';
 import architecture from '../diagrams/architecture/architectureDetector.js';
+import { ishikawa } from '../diagrams/ishikawa/ishikawaDetector.js';
+import venn from '../diagrams/venn/vennDetector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
+import { treemap } from '../diagrams/treemap/detector.js';
+import '../type.d.ts';
 
 let hasLoadedDiagrams = false;
 export const addDiagrams = () => {
@@ -67,9 +73,15 @@ export const addDiagrams = () => {
       return text.toLowerCase().trimStart().startsWith('---');
     }
   );
+
+  if (injected.includeLargeFeatures) {
+    registerLazyLoadedDiagrams(flowchartElk, mindmap, architecture);
+  }
+
   // Ordering of detectors is important. The first one to return true will be used.
   registerLazyLoadedDiagrams(
     c4,
+    kanban,
     classDiagramV2,
     classDiagram,
     er,
@@ -78,10 +90,8 @@ export const addDiagrams = () => {
     pie,
     requirement,
     sequence,
-    flowchartElk,
     flowchartV2,
     flowchart,
-    mindmap,
     timeline,
     git,
     stateV2,
@@ -92,6 +102,9 @@ export const addDiagrams = () => {
     packet,
     xychart,
     block,
-    architecture
+    radar,
+    ishikawa,
+    treemap,
+    venn
   );
 };

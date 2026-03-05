@@ -1,4 +1,4 @@
-import stateDb from '../stateDb.js';
+import { StateDB } from '../stateDb.js';
 import stateDiagram from './stateDiagram.jison';
 import { setConfig } from '../../../config.js';
 
@@ -7,7 +7,9 @@ setConfig({
 });
 
 describe('state parser can parse...', () => {
+  let stateDb;
   beforeEach(function () {
+    stateDb = new StateDB(2);
     stateDiagram.parser.yy = stateDb;
     stateDiagram.parser.yy.clear();
   });
@@ -18,7 +20,6 @@ describe('state parser can parse...', () => {
         const diagramText = `stateDiagram-v2
         state "Small State 1" as namedState1`;
         stateDiagram.parser.parse(diagramText);
-        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
         const states = stateDiagram.parser.yy.getStates();
         expect(states.get('namedState1')).not.toBeUndefined();
@@ -31,7 +32,6 @@ describe('state parser can parse...', () => {
         const diagramText = `stateDiagram-v2
         namedState1 : Small State 1`;
         stateDiagram.parser.parse(diagramText);
-        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
         const states = stateDiagram.parser.yy.getStates();
         expect(states.get('namedState1')).not.toBeUndefined();
@@ -42,7 +42,6 @@ describe('state parser can parse...', () => {
         const diagramText = `stateDiagram-v2
         namedState1:Small State 1`;
         stateDiagram.parser.parse(diagramText);
-        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
         const states = stateDiagram.parser.yy.getStates();
         expect(states.get('namedState1')).not.toBeUndefined();
@@ -60,7 +59,6 @@ describe('state parser can parse...', () => {
       state assemblies
       `;
       stateDiagram.parser.parse(diagramText);
-      stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
       const states = stateDiagram.parser.yy.getStates();
       expect(states.get('assemble')).not.toBeUndefined();
       expect(states.get('assemblies')).not.toBeUndefined();
@@ -71,7 +69,6 @@ describe('state parser can parse...', () => {
       state "as" as as
       `;
       stateDiagram.parser.parse(diagramText);
-      stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
       const states = stateDiagram.parser.yy.getStates();
       expect(states.get('as')).not.toBeUndefined();
       expect(states.get('as').descriptions.join(' ')).toEqual('as');
@@ -96,7 +93,6 @@ describe('state parser can parse...', () => {
         namedState2 --> bigState2: should point to \\nbigState2 container`;
 
       stateDiagram.parser.parse(diagramText);
-      stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
       const states = stateDiagram.parser.yy.getStates();
       expect(states.get('namedState1')).not.toBeUndefined();
@@ -120,7 +116,6 @@ describe('state parser can parse...', () => {
             inner1 --> inner2
         }`;
       stateDiagram.parser.parse(diagramText);
-      stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
       const states = stateDiagram.parser.yy.getStates();
       expect(states.get('bigState1')).not.toBeUndefined();
@@ -131,13 +126,46 @@ describe('state parser can parse...', () => {
     });
   });
 
+  describe('colons in transition descriptions (issue #7418)', () => {
+    it('should allow a colon inside transition text', () => {
+      const diagramText = `stateDiagram-v2
+        locked --> pending : recoverable error (ex: timeout)`;
+      stateDiagram.parser.parse(diagramText);
+
+      const relationships = stateDiagram.parser.yy.getRelations();
+      expect(relationships).toHaveLength(1);
+      expect(relationships[0].id1).toEqual('locked');
+      expect(relationships[0].id2).toEqual('pending');
+      expect(relationships[0].relationTitle).toEqual('recoverable error (ex: timeout)');
+    });
+
+    it('should allow multiple colons inside transition text', () => {
+      const diagramText = `stateDiagram-v2
+        A --> B : info: key: value`;
+      stateDiagram.parser.parse(diagramText);
+
+      const relationships = stateDiagram.parser.yy.getRelations();
+      expect(relationships).toHaveLength(1);
+      expect(relationships[0].relationTitle).toEqual('info: key: value');
+    });
+
+    it('should allow a colon inside state description text', () => {
+      const diagramText = `stateDiagram-v2
+        myState : status: active`;
+      stateDiagram.parser.parse(diagramText);
+
+      const states = stateDiagram.parser.yy.getStates();
+      expect(states.get('myState')).not.toBeUndefined();
+      expect(states.get('myState').descriptions.join(' ')).toEqual('status: active');
+    });
+  });
+
   describe('unsafe properties as state names', () => {
     it.each(['__proto__', 'constructor'])('should allow %s as a state name', function (prop) {
       stateDiagram.parser.parse(`
 stateDiagram-v2
 [*] --> ${prop}
 ${prop} --> [*]`);
-      stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
       const states = stateDiagram.parser.yy.getStates();
       expect(states.get(prop)).not.toBeUndefined();
     });

@@ -542,7 +542,7 @@ function drawInsideBoundary(
       );
     }
     parentBoundaryAlias = currentBoundary.alias;
-    let nextCurrentBoundaries = diagObj.db.getBoundarys(parentBoundaryAlias);
+    let nextCurrentBoundaries = diagObj.db.getBoundaries(parentBoundaryAlias);
 
     if (nextCurrentBoundaries.length > 0) {
       // draw boundary inside currentBoundary
@@ -622,7 +622,7 @@ export const draw = function (_text, id, _version, diagObj) {
   globalBoundaryMaxY = conf.diagramMarginY;
 
   const title = diagObj.db.getTitle();
-  let currentBoundaries = diagObj.db.getBoundarys('');
+  let currentBoundaries = diagObj.db.getBoundaries('');
   // switch (c4type) {
   //   case 'C4Context':
   drawInsideBoundary(diagram, '', screenBounds, currentBoundaries, diagObj);

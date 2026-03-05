@@ -20,6 +20,7 @@ export interface Actor {
 }
 
 export interface Message {
+  id: string;
   from?: string;
   to?: string;
   message:
@@ -34,6 +35,7 @@ export interface Message {
   type?: number;
   activate?: boolean;
   placement?: string;
+  centralConnection?: number;
 }
 
 export interface AddMessageParams {
@@ -49,6 +51,8 @@ export interface AddMessageParams {
     | 'destroyParticipant'
     | 'activeStart'
     | 'activeEnd'
+    | 'centralConnection'
+    | 'centralConnectionReverse'
     | 'addNote'
     | 'addLinks'
     | 'addALink'

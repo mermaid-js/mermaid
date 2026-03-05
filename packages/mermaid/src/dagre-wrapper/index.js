@@ -87,7 +87,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
           // insertCluster(clusters, graph.node(v));
         } else {
           log.info('Node - the non recursive path', v, node.id, node);
-          await insertNode(nodes, graph.node(v), dir);
+          await insertNode(nodes, graph.node(v), { config: siteConfig, dir });
         }
       }
     })
@@ -120,7 +120,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   // Move the nodes to the correct place
   let diff = 0;
   const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
-  sortNodesByHierarchy(graph).forEach(function (v) {
+  for (const v of sortNodesByHierarchy(graph)) {
     const node = graph.node(v);
     log.info('Position ' + v + ': ' + JSON.stringify(graph.node(v)));
     log.info(
@@ -141,14 +141,14 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         // A cluster in the non-recursive way
         // positionCluster(node);
         node.height += subGraphTitleTotalMargin;
-        insertCluster(clusters, node);
+        await insertCluster(clusters, node);
         clusterDb[node.id].node = node;
       } else {
         node.y += subGraphTitleTotalMargin / 2;
         positionNode(node);
       }
     }
-  });
+  }
 
   // Move the edge labels to the correct place after layout
   graph.edges().forEach(function (e) {

@@ -278,7 +278,7 @@ stateDiagram-v2
     }
 ```
 
-_You can not define transitions between internal states belonging to different composite states_
+_You cannot define transitions between internal states belonging to different composite states_
 
 ## Choice
 

@@ -92,7 +92,20 @@ export const setCssClass = function (itemIds: string, cssClassName: string) {
 const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
   const blockList = _blockList.flat();
   const children = [];
+  const columnSettingBlock = blockList.find((b) => b?.type === 'column-setting');
+  const column = columnSettingBlock?.columns ?? -1;
   for (const block of blockList) {
+    if (
+      typeof column === 'number' &&
+      column > 0 &&
+      block.type !== 'column-setting' &&
+      typeof block.widthInColumns === 'number' &&
+      block.widthInColumns > column
+    ) {
+      log.warn(
+        `Block ${block.id} width ${block.widthInColumns} exceeds configured column width ${column}`
+      );
+    }
     if (block.label) {
       block.label = sanitizeText(block.label);
     }
@@ -225,13 +238,15 @@ export function edgeTypeStr2Type(typeStr: string): string {
 }
 
 export function edgeStrToEdgeData(typeStr: string): string {
-  switch (typeStr.trim()) {
-    case '--x':
+  switch (typeStr.replace(/^[\s-]+|[\s-]+$/g, '')) {
+    case 'x':
       return 'arrow_cross';
-    case '--o':
+    case 'o':
       return 'arrow_circle';
-    default:
+    case '>':
       return 'arrow_point';
+    default:
+      return '';
   }
 }
 
@@ -287,7 +302,7 @@ const setBlock = (block: Block) => {
   blockDatabase.set(block.id, block);
 };
 
-const getLogger = () => console;
+const getLogger = () => log;
 
 /**
  * Return all of the style classes

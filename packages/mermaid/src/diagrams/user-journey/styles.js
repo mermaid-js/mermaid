@@ -1,7 +1,8 @@
+import { getIconStyles } from '../globalStyles.js';
+
 const getStyles = (options) =>
   `.label {
-    font-family: 'trebuchet ms', verdana, arial, sans-serif;
-    font-family: var(--mermaid-font-family);
+    font-family: ${options.fontFamily};
     color: ${options.textColor};
   }
   .mouth {
@@ -14,6 +15,7 @@ const getStyles = (options) =>
 
   .legend {
     fill: ${options.textColor};
+    font-family: ${options.fontFamily};
   }
 
   .label text {
@@ -79,8 +81,7 @@ const getStyles = (options) =>
     text-align: center;
     max-width: 200px;
     padding: 2px;
-    font-family: 'trebuchet ms', verdana, arial, sans-serif;
-    font-family: var(--mermaid-font-family);
+    font-family: ${options.fontFamily};
     font-size: 12px;
     background: ${options.tertiaryColor};
     border: 1px solid ${options.border2};
@@ -132,6 +133,7 @@ const getStyles = (options) =>
   .actor-5 {
     ${options.actor5 ? `fill: ${options.actor5}` : ''};
   }
+  ${getIconStyles()}
 `;
 
 export default getStyles;

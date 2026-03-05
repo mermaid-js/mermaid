@@ -26,6 +26,8 @@ dompurify
 elkjs
 fcose
 fontawesome
+Fonticons
+Forgejo
 Foswiki
 Gitea
 graphlib
@@ -62,6 +64,7 @@ rscratch
 shiki
 Slidev
 sparkline
+speccharts
 sphinxcontrib
 ssim
 stylis

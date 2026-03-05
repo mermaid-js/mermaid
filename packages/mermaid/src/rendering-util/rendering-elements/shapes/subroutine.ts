@@ -4,6 +4,8 @@ import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { insertPolygonShape } from './insertPolygonShape.js';
+import type { D3Selection } from '../../../types.js';
+import { handleUndefinedAttr } from '../../../utils.js';
 
 export const createSubroutinePathD = (
   x: number,
@@ -31,13 +33,13 @@ export const createSubroutinePathD = (
   ].join(' ');
 };
 
-export const subroutine = async (parent: SVGAElement, node: Node) => {
+export async function subroutine<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const halfPadding = (node?.padding || 0) / 2;
-  const w = bbox.width + node.padding;
-  const h = bbox.height + node.padding;
+  const halfPadding = (node.padding ?? 0) / 2;
+  const w = bbox.width + (node.padding ?? 0);
+  const h = bbox.height + (node.padding ?? 0);
   const x = -bbox.width / 2 - halfPadding;
   const y = -bbox.height / 2 - halfPadding;
 
@@ -55,7 +57,7 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
   ];
 
   if (node.look === 'handDrawn') {
-    // @ts-ignore - rough is not typed
+    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
 
@@ -67,7 +69,7 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
     shapeSvg.insert(() => l2, ':first-child');
     const rect = shapeSvg.insert(() => roughNode, ':first-child');
     const { cssStyles } = node;
-    rect.attr('class', 'basic label-container').attr('style', cssStyles);
+    rect.attr('class', 'basic label-container').attr('style', handleUndefinedAttr(cssStyles));
     updateNodeBounds(node, rect);
   } else {
     const el = insertPolygonShape(shapeSvg, w, h, points);
@@ -82,6 +84,4 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
   };
 
   return shapeSvg;
-};
-
-export default subroutine;
+}

@@ -88,6 +88,7 @@ class Theme {
     this.critBorderColor = 'calculated';
     this.critBkgColor = 'calculated';
     this.todayLineColor = 'calculated';
+    this.vertLineColor = 'calculated';
 
     this.sectionBkgColor = rgba(102, 102, 255, 0.49);
     this.altSectionBkgColor = 'white';
@@ -107,6 +108,7 @@ class Theme {
     this.critBorderColor = '#ff8888';
     this.critBkgColor = 'red';
     this.todayLineColor = 'red';
+    this.vertLineColor = 'navy';
 
     /* C4 Context Diagram variables */
     this.personBorder = this.primaryBorderColor;
@@ -118,6 +120,10 @@ class Theme {
     this.archEdgeWidth = '3';
     this.archGroupBorderColor = this.primaryBorderColor;
     this.archGroupBorderWidth = '2px';
+
+    /* Entity Relationship variables */
+    this.rowOdd = 'calculated';
+    this.rowEven = 'calculated';
 
     /* state colors */
     this.labelColor = 'black';
@@ -205,6 +211,9 @@ class Theme {
     this.archEdgeColor = this.lineColor;
     this.archEdgeArrowColor = this.lineColor;
 
+    /* Entity Relationship variables */
+    this.rowOdd = this.rowOdd || lighten(this.primaryColor, 75) || '#ffffff';
+    this.rowEven = this.rowEven || lighten(this.primaryColor, 1);
     /* state colors */
     this.transitionColor = this.transitionColor || this.lineColor;
     this.transitionLabelColor = this.transitionLabelColor || this.textColor;
@@ -259,6 +268,18 @@ class Theme {
     this.pieOuterStrokeColor = this.pieOuterStrokeColor || 'black';
     this.pieOpacity = this.pieOpacity || '0.7';
 
+    /* venn */
+    this.venn1 = this.venn1 ?? adjust(this.primaryColor, { l: -30 });
+    this.venn2 = this.venn2 ?? adjust(this.secondaryColor, { l: -30 });
+    this.venn3 = this.venn3 ?? adjust(this.tertiaryColor, { l: -40 });
+    this.venn4 = this.venn4 ?? adjust(this.primaryColor, { h: 60, l: -30 });
+    this.venn5 = this.venn5 ?? adjust(this.primaryColor, { h: -60, l: -30 });
+    this.venn6 = this.venn6 ?? adjust(this.secondaryColor, { h: 60, l: -30 });
+    this.venn7 = this.venn7 ?? adjust(this.primaryColor, { h: 120, l: -30 });
+    this.venn8 = this.venn8 ?? adjust(this.secondaryColor, { h: 120, l: -30 });
+    this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
+    this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
+
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;
     this.quadrant2Fill = this.quadrant2Fill || adjust(this.primaryColor, { r: 5, g: 5, b: 5 });
@@ -283,6 +304,20 @@ class Theme {
     this.quadrantExternalBorderStrokeFill =
       this.quadrantExternalBorderStrokeFill || this.primaryBorderColor;
     this.quadrantTitleFill = this.quadrantTitleFill || this.primaryTextColor;
+
+    /* radar */
+    this.radar = {
+      axisColor: this.radar?.axisColor || this.lineColor,
+      axisStrokeWidth: this.radar?.axisStrokeWidth || 2,
+      axisLabelFontSize: this.radar?.axisLabelFontSize || 12,
+      curveOpacity: this.radar?.curveOpacity || 0.5,
+      curveStrokeWidth: this.radar?.curveStrokeWidth || 2,
+      graticuleColor: this.radar?.graticuleColor || '#DEDEDE',
+      graticuleStrokeWidth: this.radar?.graticuleStrokeWidth || 1,
+      graticuleOpacity: this.radar?.graticuleOpacity || 0.3,
+      legendBoxSize: this.radar?.legendBoxSize || 12,
+      legendFontSize: this.radar?.legendFontSize || 12,
+    };
 
     /* xychart */
     this.xyChart = {
@@ -373,6 +408,13 @@ class Theme {
     /* -------------------------------------------------- */
   }
   calculate(overrides) {
+    // for all keys in this object, if it is 'calculated' then set it to undefined
+    Object.keys(this).forEach((k) => {
+      if (this[k] === 'calculated') {
+        this[k] = undefined;
+      }
+    });
+
     if (typeof overrides !== 'object') {
       // Calculate colors form base colors
       this.updateColors();

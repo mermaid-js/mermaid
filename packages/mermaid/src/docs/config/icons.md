@@ -1,0 +1,49 @@
+# Registering icon pack in mermaid
+
+The icon packs available can be found at [icones.js.org](https://icones.js.org/).
+We use the name defined when registering the icon pack, to override the prefix field of the iconify pack. This allows the user to use shorter names for the icons. It also allows us to load a particular pack only when it is used in a diagram.
+
+Using JSON file directly from CDN:
+
+```js
+import mermaid from 'CDN/mermaid.esm.mjs';
+mermaid.registerIconPacks([
+  {
+    name: 'logos',
+    loader: () =>
+      fetch('https://unpkg.com/@iconify-json/logos@1/icons.json').then((res) => res.json()),
+  },
+]);
+```
+
+Using packages and a bundler:
+
+```bash
+npm install @iconify-json/logos@1
+```
+
+With lazy loading
+
+```js
+import mermaid from 'mermaid';
+
+mermaid.registerIconPacks([
+  {
+    name: 'logos',
+    loader: () => import('@iconify-json/logos').then((module) => module.icons),
+  },
+]);
+```
+
+Without lazy loading
+
+```js
+import mermaid from 'mermaid';
+import { icons } from '@iconify-json/logos';
+mermaid.registerIconPacks([
+  {
+    name: icons.prefix, // To use the prefix defined in the icon pack
+    icons,
+  },
+]);
+```

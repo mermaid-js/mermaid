@@ -1,18 +1,19 @@
-import { registerIconPacks } from '../../rendering-util/icons.js';
-import type { Position } from 'cytoscape';
+import type { LayoutOptions, Position } from 'cytoscape';
 import cytoscape from 'cytoscape';
-import type { FcoseLayoutOptions } from 'cytoscape-fcose';
 import fcose from 'cytoscape-fcose';
 import { select } from 'd3';
 import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
 import type { Diagram } from '../../Diagram.js';
 import { log } from '../../logger.js';
+import { registerIconPacks } from '../../rendering-util/icons.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
-import { getConfigField } from './architectureDb.js';
+import type { ArchitectureDB } from './architectureDb.js';
 import { architectureIcons } from './architectureIcons.js';
 import type {
+  ArchitectureAlignment,
   ArchitectureDataStructures,
+  ArchitectureGroupAlignments,
   ArchitectureJunction,
   ArchitectureSpatialMap,
   EdgeSingular,
@@ -20,7 +21,6 @@ import type {
   NodeSingularData,
 } from './architectureTypes.js';
 import {
-  type ArchitectureDB,
   type ArchitectureDirection,
   type ArchitectureEdge,
   type ArchitectureGroup,
@@ -40,9 +40,9 @@ registerIconPacks([
     icons: architectureIcons,
   },
 ]);
-cytoscape.use(fcose);
+cytoscape.use(fcose as any);
 
-function addServices(services: ArchitectureService[], cy: cytoscape.Core) {
+function addServices(services: ArchitectureService[], cy: cytoscape.Core, db: ArchitectureDB) {
   services.forEach((service) => {
     cy.add({
       group: 'nodes',
@@ -52,15 +52,15 @@ function addServices(services: ArchitectureService[], cy: cytoscape.Core) {
         icon: service.icon,
         label: service.title,
         parent: service.in,
-        width: getConfigField('iconSize'),
-        height: getConfigField('iconSize'),
+        width: db.getConfigField('iconSize'),
+        height: db.getConfigField('iconSize'),
       } as NodeSingularData,
       classes: 'node-service',
     });
   });
 }
 
-function addJunctions(junctions: ArchitectureJunction[], cy: cytoscape.Core) {
+function addJunctions(junctions: ArchitectureJunction[], cy: cytoscape.Core, db: ArchitectureDB) {
   junctions.forEach((junction) => {
     cy.add({
       group: 'nodes',
@@ -68,8 +68,8 @@ function addJunctions(junctions: ArchitectureJunction[], cy: cytoscape.Core) {
         type: 'junction',
         id: junction.id,
         parent: junction.in,
-        width: getConfigField('iconSize'),
-        height: getConfigField('iconSize'),
+        width: db.getConfigField('iconSize'),
+        height: db.getConfigField('iconSize'),
       } as NodeSingularData,
       classes: 'node-junction',
     });
@@ -149,25 +149,91 @@ function addEdges(edges: ArchitectureEdge[], cy: cytoscape.Core) {
   });
 }
 
-function getAlignments(spatialMaps: ArchitectureSpatialMap[]): fcose.FcoseAlignmentConstraint {
+function getAlignments(
+  db: ArchitectureDB,
+  spatialMaps: ArchitectureSpatialMap[],
+  groupAlignments: ArchitectureGroupAlignments
+): fcose.FcoseAlignmentConstraint {
+  /**
+   * Flattens the alignment object so nodes in different groups will be in the same alignment array IFF their groups don't connect in a conflicting alignment
+   *
+   * i.e., two groups which connect horizontally should not have nodes with vertical alignments to one another
+   *
+   * See: #5952
+   *
+   * @param alignmentObj - alignment object with the outer key being the row/col # and the inner key being the group name mapped to the nodes on that axis in the group
+   * @param alignmentDir - alignment direction
+   * @returns flattened alignment object with an arbitrary key mapping to nodes in the same row/col
+   */
+  const flattenAlignments = (
+    alignmentObj: Record<number, Record<string, string[]>>,
+    alignmentDir: ArchitectureAlignment
+  ): Record<string, string[]> => {
+    return Object.entries(alignmentObj).reduce(
+      (prev, [dir, alignments]) => {
+        // prev is the mapping of x/y coordinate to an array of the nodes in that row/column
+        let cnt = 0;
+        const arr = Object.entries(alignments); // [group name, array of nodes within the group on axis dir]
+        if (arr.length === 1) {
+          // If only one group exists in the row/column, we don't need to do anything else
+          prev[dir] = arr[0][1];
+          return prev;
+        }
+        for (let i = 0; i < arr.length - 1; i++) {
+          for (let j = i + 1; j < arr.length; j++) {
+            const [aGroupId, aNodeIds] = arr[i];
+            const [bGroupId, bNodeIds] = arr[j];
+            const alignment = groupAlignments[aGroupId]?.[bGroupId]; // Get how the two groups are intended to align (undefined if they aren't)
+
+            if (alignment === alignmentDir) {
+              // If the intended alignment between the two groups is the same as the alignment we are parsing
+              prev[dir] ??= [];
+              prev[dir] = [...prev[dir], ...aNodeIds, ...bNodeIds]; // add the node ids of both groups to the axis array in prev
+            } else if (aGroupId === 'default' || bGroupId === 'default') {
+              // If either of the groups are in the default space (not in a group), use the same behavior as above
+              prev[dir] ??= [];
+              prev[dir] = [...prev[dir], ...aNodeIds, ...bNodeIds];
+            } else {
+              // Otherwise, the nodes in the two groups are not intended to align
+              const keyA = `${dir}-${cnt++}`;
+              prev[keyA] = aNodeIds;
+              const keyB = `${dir}-${cnt++}`;
+              prev[keyB] = bNodeIds;
+            }
+          }
+        }
+
+        return prev;
+      },
+      {} as Record<string, string[]>
+    );
+  };
+
   const alignments = spatialMaps.map((spatialMap) => {
-    const horizontalAlignments: Record<number, string[]> = {};
-    const verticalAlignments: Record<number, string[]> = {};
+    const horizontalAlignments: Record<number, Record<string, string[]>> = {};
+    const verticalAlignments: Record<number, Record<string, string[]>> = {};
+
     // Group service ids in an object with their x and y coordinate as the key
     Object.entries(spatialMap).forEach(([id, [x, y]]) => {
-      if (!horizontalAlignments[y]) {
-        horizontalAlignments[y] = [];
-      }
-      if (!verticalAlignments[x]) {
-        verticalAlignments[x] = [];
-      }
-      horizontalAlignments[y].push(id);
-      verticalAlignments[x].push(id);
+      const nodeGroup = db.getNode(id)?.in ?? 'default';
+
+      horizontalAlignments[y] ??= {};
+      horizontalAlignments[y][nodeGroup] ??= [];
+      horizontalAlignments[y][nodeGroup].push(id);
+
+      verticalAlignments[x] ??= {};
+      verticalAlignments[x][nodeGroup] ??= [];
+      verticalAlignments[x][nodeGroup].push(id);
     });
+
     // Merge the values of each object into a list if the inner list has at least 2 elements
     return {
-      horiz: Object.values(horizontalAlignments).filter((arr) => arr.length > 1),
-      vert: Object.values(verticalAlignments).filter((arr) => arr.length > 1),
+      horiz: Object.values(flattenAlignments(horizontalAlignments, 'horizontal')).filter(
+        (arr) => arr.length > 1
+      ),
+      vert: Object.values(flattenAlignments(verticalAlignments, 'vertical')).filter(
+        (arr) => arr.length > 1
+      ),
     };
   });
 
@@ -189,7 +255,8 @@ function getAlignments(spatialMaps: ArchitectureSpatialMap[]): fcose.FcoseAlignm
 }
 
 function getRelativeConstraints(
-  spatialMaps: ArchitectureSpatialMap[]
+  spatialMaps: ArchitectureSpatialMap[],
+  db: ArchitectureDB
 ): fcose.FcoseRelativePlacementConstraint[] {
   const relativeConstraints: fcose.FcoseRelativePlacementConstraint[] = [];
   const posToStr = (pos: number[]) => `${pos[0]},${pos[1]}`;
@@ -228,7 +295,7 @@ function getRelativeConstraints(
                 [ArchitectureDirectionName[
                   getOppositeArchitectureDirection(dir as ArchitectureDirection)
                 ]]: currId,
-                gap: 1.5 * getConfigField('iconSize'),
+                gap: 1.5 * db.getConfigField('iconSize'),
               });
             }
           });
@@ -244,7 +311,8 @@ function layoutArchitecture(
   junctions: ArchitectureJunction[],
   groups: ArchitectureGroup[],
   edges: ArchitectureEdge[],
-  { spatialMaps }: ArchitectureDataStructures
+  db: ArchitectureDB,
+  { spatialMaps, groupAlignments }: ArchitectureDataStructures
 ): Promise<cytoscape.Core> {
   return new Promise((resolve) => {
     const renderEl = select('body').append('div').attr('id', 'cy').attr('style', 'display:none');
@@ -255,9 +323,14 @@ function layoutArchitecture(
           selector: 'edge',
           style: {
             'curve-style': 'straight',
-            label: 'data(label)',
             'source-endpoint': 'data(sourceEndpoint)',
             'target-endpoint': 'data(targetEndpoint)',
+          },
+        },
+        {
+          selector: 'edge[label]',
+          style: {
+            label: 'data(label)',
           },
         },
         {
@@ -284,7 +357,7 @@ function layoutArchitecture(
           style: {
             'text-valign': 'bottom',
             'text-halign': 'center',
-            'font-size': `${getConfigField('fontSize')}px`,
+            'font-size': `${db.getConfigField('fontSize')}px`,
           },
         },
         {
@@ -306,24 +379,32 @@ function layoutArchitecture(
           selector: '.node-group',
           style: {
             // @ts-ignore Incorrect library types
-            padding: `${getConfigField('padding')}px`,
+            padding: `${db.getConfigField('padding')}px`,
           },
         },
       ],
+      layout: {
+        name: 'grid',
+        boundingBox: {
+          x1: 0,
+          x2: 100,
+          y1: 0,
+          y2: 100,
+        },
+      },
     });
     // Remove element after layout
     renderEl.remove();
 
     addGroups(groups, cy);
-    addServices(services, cy);
-    addJunctions(junctions, cy);
+    addServices(services, cy, db);
+    addJunctions(junctions, cy, db);
     addEdges(edges, cy);
-
     // Use the spatial map to create alignment arrays for fcose
-    const alignmentConstraint = getAlignments(spatialMaps);
+    const alignmentConstraint = getAlignments(db, spatialMaps, groupAlignments);
 
     // Create the relative constraints for fcose by using an inverse of the spatial map and performing BFS on it
-    const relativePlacementConstraint = getRelativeConstraints(spatialMaps);
+    const relativePlacementConstraint = getRelativeConstraints(spatialMaps, db);
 
     const layout = cy.layout({
       name: 'fcose',
@@ -338,7 +419,9 @@ function layoutArchitecture(
         const { parent: parentA } = nodeData(nodeA);
         const { parent: parentB } = nodeData(nodeB);
         const elasticity =
-          parentA === parentB ? 1.5 * getConfigField('iconSize') : 0.5 * getConfigField('iconSize');
+          parentA === parentB
+            ? 1.5 * db.getConfigField('iconSize')
+            : 0.5 * db.getConfigField('iconSize');
         return elasticity;
       },
       edgeElasticity(edge: EdgeSingular) {
@@ -350,7 +433,7 @@ function layoutArchitecture(
       },
       alignmentConstraint,
       relativePlacementConstraint,
-    } as FcoseLayoutOptions);
+    } as LayoutOptions);
 
     // Once the diagram has been generated and the service's position cords are set, adjust the XY edges to have a 90deg bend
     layout.one('layoutstop', () => {
@@ -432,6 +515,8 @@ function layoutArchitecture(
 }
 
 export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram) => {
+  // TODO: Add title support for architecture diagrams
+
   const db = diagObj.db as ArchitectureDB;
 
   const services = db.getServices();
@@ -454,13 +539,13 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
   await drawServices(db, servicesElem, services);
   drawJunctions(db, servicesElem, junctions);
 
-  const cy = await layoutArchitecture(services, junctions, groups, edges, ds);
+  const cy = await layoutArchitecture(services, junctions, groups, edges, db, ds);
 
-  await drawEdges(edgesElem, cy);
-  await drawGroups(groupElem, cy);
+  await drawEdges(edgesElem, cy, db);
+  await drawGroups(groupElem, cy, db);
   positionNodes(db, cy);
 
-  setupGraphViewbox(undefined, svg, getConfigField('padding'), getConfigField('useMaxWidth'));
+  setupGraphViewbox(undefined, svg, db.getConfigField('padding'), db.getConfigField('useMaxWidth'));
 };
 
 export const renderer = { draw };

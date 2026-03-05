@@ -4,6 +4,9 @@ node_modules/
 coverage/
 .idea/
 .pnpm-store/
+.instructions/
+.claude
+.mcp.json
 
 dist
 v8-compile-cache-0
@@ -44,6 +47,8 @@ stats/
 .pnpm-store
 .nyc_output
 
+.env
+
 demos/dev/**
 !/demos/dev/example.html
 !/demos/dev/reload.js
@@ -52,3 +57,14 @@ vite.config.ts.timestamp-*
 
 # autogenereated by langium-cli
 generated/
+
+# Agent instruction files (synced from mermaid-ops via /sync, not committed here)
+/CLAUDE.md
+/AGENTS.md
+/assistant/
+/.claude/skills/
+packages/mermaid/src/diagrams/CLAUDE.md
+packages/parser/CLAUDE.md
+AGENTS.mermaid.md
+CLAUDE.mermaid.md
+.envrc

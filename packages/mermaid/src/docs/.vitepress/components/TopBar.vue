@@ -1,47 +1,87 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { useRoute } from 'vitepress';
+import { computed, onMounted, type Ref, ref } from 'vue';
 
 interface Taglines {
   label: string;
-  url: string;
+  campaign: string;
+  button: string;
 }
 
 const taglines: Taglines[] = [
   {
-    label: 'Use the Visual Editor in Mermaid Chart to design and build diagrams',
-    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_live_editor&utm_medium=banner_ad&utm_campaign=visual_editor',
+    label: 'Use code NEWYEAR for 10% off Mermaid Advanced Editor (limited time)',
+    campaign: 'variant_a',
+    button: 'Try now',
   },
   {
-    label: 'Diagram live with teammates in Mermaid Chart',
-    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_live_editor&utm_medium=banner_ad&utm_campaign=teams',
+    label: 'Limited time: 10% off Mermaid Advanced Editor with code NEWYEAR',
+    campaign: 'variant_b',
+    button: 'Claim Discount',
   },
   {
-    label: 'Skip the rough draft with Mermaid AI in Mermaid Chart',
-    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_live_editor&utm_medium=banner_ad&utm_campaign=mermaid_ai',
+    label: 'Try Mermaid Advanced Editor — get 10% off with code NEWYEAR',
+    campaign: 'variant_c',
+    button: 'Get started',
   },
 ];
 
-let index = ref(Math.floor(Math.random() * taglines.length));
+const isRotationEnabled = false;
+const index: Ref<number> = ref(0);
+const isPaused: Ref<boolean> = ref(false);
+const isInitialized: Ref<boolean> = ref(false);
+const route = useRoute();
+
+const isHomePage = computed(() => {
+  return route.path === '/';
+});
+
+const currentUrl = computed(() => {
+  const isMermaidAi = window?.location.hostname.endsWith('mermaid.ai');
+  const params = new URLSearchParams({
+    utm_medium: 'banner_ad',
+    utm_campaign: taglines[index.value].campaign,
+    utm_source: isMermaidAi ? 'ai_open_source' : 'mermaid_js',
+  });
+  return `https://mermaid.ai/?${params.toString()}`;
+});
+
 onMounted(() => {
-  setInterval(() => {
-    index.value = (index.value + 1) % taglines.length;
-  }, 60_000);
+  index.value = Math.floor(Math.random() * taglines.length);
+  isInitialized.value = true;
+
+  if (isRotationEnabled) {
+    setInterval(() => {
+      if (isPaused.value) {
+        return;
+      }
+      index.value = (index.value + 1) % taglines.length;
+    }, 5_000);
+  }
 });
 </script>
 
 <template>
-  <div class="mb-4 w-full top-bar bg-gradient-to-r from-[#bd34fe] to-[#ff3670] flex p-1">
-    <p class="w-full tracking-wide fade-text">
+  <div
+    v-if="isInitialized"
+    class="mb-4 w-full top-bar flex p-2 bg-[#E0095F]"
+    @mouseenter="isPaused = true"
+    @mouseleave="isPaused = false"
+  >
+    <p class="w-full tracking-wide fade-text" :class="isHomePage ? 'text-lg' : 'text-sm'">
       <transition name="fade" mode="out-in">
         <a
           :key="index"
-          :href="taglines[index].url"
+          :href="currentUrl"
           target="_blank"
-          class="unstyled flex justify-center items-center gap-4 text-white tracking-wide plausible-event-name=bannerClick"
+          class="unstyled flex justify-center items-center gap-4 no-tooltip text-white tracking-wide plausible-event-name=bannerClick"
         >
           <span class="font-semibold">{{ taglines[index].label }}</span>
-          <button class="rounded bg-[#111113] p-1 px-2 text-sm font-semibold tracking-wide">
-            Try it now
+          <button
+            class="bg-[#1E1A2E] shrink-0 rounded-lg p-1.5 px-4 font-semibold tracking-wide"
+            :class="isHomePage ? 'text-lg' : 'text-sm'"
+          >
+            {{ taglines[index].button }}
           </button>
         </a>
       </transition>

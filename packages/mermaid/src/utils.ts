@@ -1,5 +1,5 @@
 import { sanitizeUrl } from '@braintree/sanitize-url';
-import type { CurveFactory } from 'd3';
+import type { BaseType, CurveFactory } from 'd3';
 import {
   curveBasis,
   curveBasisClosed,
@@ -337,6 +337,9 @@ export const calculatePoint = (points: Point[], distanceToTraverse: number): Poi
   for (const point of points) {
     if (prevPoint) {
       const vectorDistance = distance(point, prevPoint);
+      if (vectorDistance === 0) {
+        return prevPoint;
+      }
       if (vectorDistance < remainingDistance) {
         remainingDistance -= vectorDistance;
       } else {
@@ -642,7 +645,7 @@ const breakString: (
  * This calculates the text's height, taking into account the wrap breaks and both the statically
  * configured height, width, and the length of the text (in pixels).
  *
- * If the wrapped text text has greater height, we extend the height, so it's value won't overflow.
+ * If the wrapped text has greater height, we extend the height, so it's value won't overflow.
  *
  * @param text - The text to measure
  * @param config - The config for fontSize, fontFamily, and fontWeight all impacting the
@@ -824,6 +827,7 @@ export const insertTitle = (
   parent
     .append('text')
     .text(title)
+    .attr('text-anchor', 'middle')
     .attr('x', bounds.x + bounds.width / 2)
     .attr('y', -titleTopMargin)
     .attr('class', cssClass);
@@ -880,6 +884,7 @@ export default {
   runFunc,
   entityDecode,
   insertTitle,
+  isLabelCoordinateInPath,
   parseFontSize,
   InitIDGenerator,
 };
@@ -913,6 +918,7 @@ export const encodeEntities = function (text: string): string {
 };
 
 /**
+ * Partially reverts encoding done via {@link encodeEntities}
  *
  * @param  text - text to be decoded
  * @returns
@@ -936,7 +942,43 @@ export const getEdgeId = (
     counter?: number;
     prefix?: string;
     suffix?: string;
-  }
+  },
+  id?: string
 ) => {
+  if (id) {
+    return id;
+  }
   return `${prefix ? `${prefix}_` : ''}${from}_${to}_${counter}${suffix ? `_${suffix}` : ''}`;
 };
+
+/**
+ * D3's `selection.attr` method doesn't officially support `undefined`.
+ *
+ * However, it seems if you do pass `undefined`, it seems to be treated as `null`
+ * (e.g. it removes the attribute).
+ */
+export function handleUndefinedAttr(
+  attrValue: Parameters<d3.Selection<BaseType, unknown, HTMLElement, any>['attr']>[1] | undefined
+) {
+  return attrValue ?? null;
+}
+
+/**
+ * Checks if the  x or y coordinate of the edge label
+ * appears in the given SVG path data string.
+ *
+ * @param point  - The Point object with x and y properties to check.
+ * @param dAttr  - SVG path data string (the 'd' attribute of an SVG path element).
+ * @returns      - True if the rounded x or y coordinate of the edge label is found
+ *                 in the sanitized path data string; otherwise, false.
+ */
+export function isLabelCoordinateInPath(point: Point, dAttr: string) {
+  const roundedX = Math.round(point.x);
+  const roundedY = Math.round(point.y);
+
+  const sanitizedD = dAttr.replace(/(\d+\.\d+)/g, (match) =>
+    Math.round(parseFloat(match)).toString()
+  );
+
+  return sanitizedD.includes(roundedX.toString()) || sanitizedD.includes(roundedY.toString());
+}
