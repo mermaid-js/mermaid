@@ -1,5 +1,11 @@
 # @mermaid-js/parser
 
+## 1.0.1
+
+### Patch Changes
+
+- [#7333](https://github.com/mermaid-js/mermaid/pull/7333) [`fd3fc50`](https://github.com/mermaid-js/mermaid/commit/fd3fc501461e72d11933203175d70f130c1df3c5) Thanks [@omkarht](https://github.com/omkarht)! - fix: enhanced parser error messages to include line and column numbers for better debugging experience
+
 ## 1.0.0
 
 ### Major Changes
