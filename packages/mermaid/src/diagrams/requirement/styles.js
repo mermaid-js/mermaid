@@ -3,9 +3,9 @@ import * as configApi from '../../config.js';
 const genColor = (options) => {
   const config = configApi.getConfig();
 
-  const { theme, themeVariables, look } = config;
+  const { themeVariables, look } = config;
   const { bkgColorArray, borderColorArray } = themeVariables;
-  if (!theme?.includes('color')) {
+  if (!borderColorArray?.length) {
     return '';
   }
   let sections = '';
@@ -15,12 +15,12 @@ const genColor = (options) => {
 
     [data-look="${look}"][data-color-id="color-${i}"].node path {
     stroke: ${borderColorArray[i]};
-    fill: ${theme === 'redux-color' ? bkgColorArray[i] : ''};
+    fill: ${bkgColorArray?.length ? bkgColorArray[i] : ''};
     }
 
     [data-look="${look}"][data-color-id="color-${i}"].node  rect {
     stroke: ${borderColorArray[i]};
-    fill: ${theme === 'redux-color' ? bkgColorArray[i] : ''};
+    fill: ${bkgColorArray?.length ? bkgColorArray[i] : ''};
      }
     `;
   }
@@ -29,7 +29,7 @@ const genColor = (options) => {
 
 const getStyles = (options) => {
   const config = configApi.getConfig();
-  const { look, theme, themeVariables } = config;
+  const { look, themeVariables } = config;
   const { requirementEdgeLabelBackground } = themeVariables;
   return `
   ${genColor(options)}
@@ -86,7 +86,7 @@ const getStyles = (options) => {
     color: ${options.nodeTextColor || options.textColor};
   }
   .labelBkg {
-    background-color: ${theme?.includes('redux') && requirementEdgeLabelBackground ? requirementEdgeLabelBackground : options.edgeLabelBackground};
+    background-color: ${requirementEdgeLabelBackground ?? options.edgeLabelBackground};
   }
 
 `;

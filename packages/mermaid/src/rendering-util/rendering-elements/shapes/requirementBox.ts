@@ -22,8 +22,8 @@ export async function requirementBox<T extends SVGGraphicsElement>(
   const gap = 20;
   const isRequirementNode = 'verifyMethod' in node;
   const classes = getNodeClasses(node);
-  const { theme, themeVariables } = getConfig();
-  const { borderColorArray } = themeVariables;
+  const { themeVariables } = getConfig();
+  const { borderColorArray, requirementEdgeLabelBackground } = themeVariables;
 
   // Add outer g element
   const shapeSvg = parent
@@ -120,7 +120,7 @@ export async function requirementBox<T extends SVGGraphicsElement>(
   const rect = shapeSvg.insert(() => roughRect, ':first-child');
   rect.attr('class', 'basic label-container outer-path').attr('style', nodeStyles);
 
-  if (theme?.includes('color')) {
+  if (borderColorArray?.length) {
     const colorIndex = node.colorIndex ?? 0;
     shapeSvg.attr('data-color-id', `color-${colorIndex % borderColorArray.length}`);
   }
@@ -175,7 +175,11 @@ export async function requirementBox<T extends SVGGraphicsElement>(
     return intersect.rect(node, point);
   };
 
-  if (nodeStyles && node.look !== 'handDrawn' && theme?.includes('redux')) {
+  if (
+    nodeStyles &&
+    node.look !== 'handDrawn' &&
+    (requirementEdgeLabelBackground || borderColorArray?.length)
+  ) {
     shapeSvg.selectAll('path').attr('style', nodeStyles);
   }
 

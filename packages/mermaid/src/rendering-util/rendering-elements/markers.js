@@ -409,7 +409,6 @@ const requirement_arrow = (elem, type, id) => {
     .attr('markerWidth', 20)
     .attr('markerHeight', 20)
     .attr('orient', 'auto')
-    .attr('markerUnits', 'userSpaceOnUse')
     .append('path')
     .attr(
       'd',
@@ -458,7 +457,6 @@ const requirement_contains = (elem, type, id) => {
     .attr('markerWidth', 20)
     .attr('markerHeight', 20)
     .attr('orient', 'auto')
-    .attr('markerUnits', 'userSpaceOnUse')
     .append('g');
 
   containsNode.append('circle').attr('cx', 10).attr('cy', 10).attr('r', 9).attr('fill', 'none');
