@@ -884,6 +884,23 @@ describe('Gantt diagram', () => {
       { theme: 'dark' }
     );
   });
+  it('should render done task inside-text readable in dark mode', () => {
+    imgSnapshotTest(
+      `
+    gantt
+      dateFormat  YYYY-MM-DD
+      title Gantt dark mode done-task inside-text readability
+
+      section A section
+      Done :done, 2014-01-06, 14d
+      Active :active, 2014-01-20, 14d
+
+      section Critical tasks
+      Done critical :crit, done, 2014-01-06, 14d
+      `,
+      { theme: 'dark' }
+    );
+  });
   it('should render done task outside-text readable in dark mode (regression #7433)', () => {
     imgSnapshotTest(
       `
