@@ -42,6 +42,12 @@ describe('packet renderer', () => {
     `;
 
     const { svg } = await mermaid.render('test-diagram', diagramDefinition);
+
+    const container = document.getElementById('test-container');
+    if (container) {
+      container.innerHTML = svg;
+    }
+
     const svgElement = document.querySelector('#test-container svg');
     const startBits = svgElement?.querySelectorAll('.packetByte.start');
     const endBits = svgElement?.querySelectorAll('.packetByte.end');
