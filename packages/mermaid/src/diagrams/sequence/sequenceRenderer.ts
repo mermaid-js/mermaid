@@ -456,7 +456,14 @@ async function boundMessage(_diagram, msgModel): Promise<number> {
  * @param lineStartY - The Y coordinate at which the message line starts
  * @param diagObj - The diagram object.
  */
-const drawMessage = async function (diagram, id, msgModel, lineStartY: number, diagObj: Diagram, msg) {
+const drawMessage = async function (
+  diagram,
+  id,
+  msgModel,
+  lineStartY: number,
+  diagObj: Diagram,
+  msg
+) {
   const { startx, stopx, starty, message, type, sequenceIndex, sequenceVisible } = msgModel;
   const textDims = utils.calculateTextDimensions(message, messageFont(conf));
   const textObj = svgDrawCommon.getTextObj();
