@@ -11,10 +11,10 @@ interface Taglines {
 
 const taglines: Taglines[] = [
   {
-    label: 'Limited time: 10% off Mermaid Advanced Editor with code NEWYEAR',
-    campaign: 'newyear',
-    button: 'Claim Discount',
-    params: { coupon: 'dmIuNbqx' },
+    label: 'Try Mermaid Advanced Editor — OSS users get 10% off with code JS26',
+    campaign: 'oss_coupon',
+    button: 'Get started',
+    params: { coupon: 'arDfyFT8' },
   },
 ];
 
