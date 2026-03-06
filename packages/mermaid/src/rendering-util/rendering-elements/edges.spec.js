@@ -9,7 +9,7 @@ vi.mock('../../diagram-api/diagramAPI.js', () => ({
 }));
 
 import { resolveEdgeCurveType } from './edges.js';
-import { computeLabelTransform } from '../../tests/util.js';
+import { computeLabelTransform } from '../labelTransform.js';
 
 describe('resolveEdgeCurveType', () => {
   it('should return edge.curve when it is a string', () => {
