@@ -71,6 +71,17 @@ describe('Flowchart v2', () => {
       { htmlLabels: false, flowchart: { htmlLabels: false } }
     );
   });
+
+  it('5a: should render flowchart with edge labels centered when htmlLabels is false', () => {
+    imgSnapshotTest(
+      `flowchart TB
+        A[Start] -->|first| B[Middle]
+        B -->|second| C[End]
+      `,
+      { logLevel: 1, htmlLabels: false }
+    );
+  });
+
   it('6: should render non-escaped with html labels', () => {
     imgSnapshotTest(
       `flowchart TD

@@ -1,4 +1,15 @@
 /**
+ * Bounding box used for label transform computation.
+ * For SVG getBBox(), x/y may be present; for HTML getBoundingClientRect(), only width/height are used.
+ */
+export interface LabelBBox {
+  x?: number;
+  y?: number;
+  width: number;
+  height: number;
+}
+
+/**
  * Compute the SVG translate transform needed to center a label element at the origin.
  *
  * For HTML labels, getBoundingClientRect() is used and its x/y are viewport-absolute,
@@ -9,11 +20,11 @@
  * bbox.x/y negative), so we include those offsets to correctly center the visual
  * content at the origin.
  *
- * @param bbox - The bounding box of the label element { x?, y?, width, height }
+ * @param bbox - The bounding box of the label element
  * @param useHtmlLabels - Whether HTML labels are in use
  * @returns SVG transform string, e.g. "translate(-20, -10)"
  */
-export const computeLabelTransform = (bbox, useHtmlLabels) => {
+export const computeLabelTransform = (bbox: LabelBBox, useHtmlLabels: boolean): string => {
   if (useHtmlLabels) {
     return 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')';
   }
