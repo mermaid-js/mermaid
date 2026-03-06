@@ -3,8 +3,6 @@ import type { PacketDiagramConfig, PacketDB, PacketWord } from './types.js';
 import type { DiagramRenderer, DrawDefinition, SVG, SVGGroup } from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import rough from 'roughjs';
-import { getConfig } from '../../config.js';
 
 const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const db = diagram.db as PacketDB;
@@ -17,17 +15,11 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const svgWidth = bitWidth * bitsPerRow + 2;
   const svg: SVG = selectSvgElement(id);
 
-  const { look } = getConfig();
-  let rc: ReturnType<typeof rough.svg> | undefined;
-  if (look === 'handDrawn') {
-    rc = rough.svg(svg.node()!);
-  }
-
   svg.attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
   configureSvgSize(svg, svgHeight, svgWidth, config.useMaxWidth);
 
   for (const [word, packet] of words.entries()) {
-    drawWord(svg, rc, packet, word, config);
+    drawWord(svg, packet, word, config);
   }
 
   svg
@@ -42,7 +34,6 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
 
 const drawWord = (
   svg: SVG,
-  rc: ReturnType<typeof rough.svg> | undefined,
   word: PacketWord,
   rowNumber: number,
   config: Required<PacketDiagramConfig>
@@ -54,24 +45,26 @@ const drawWord = (
     const blockX = (block.start % bitsPerRow) * bitWidth + 1;
     const width = (block.end - block.start + 1) * bitWidth - paddingX;
 
-    if (rc) {
-      const roughRect = rc.rectangle(blockX, wordY, width, rowHeight, {
-        fill: config.blockFillColor,
-        stroke: config.blockStrokeColor,
-        strokeWidth: parseFloat(config.blockStrokeWidth),
-        fillStyle: 'solid',
-      });
-      group.node()?.appendChild(roughRect);
-    } else {
-      // Block rectangle
-      group
-        .append('rect')
-        .attr('x', blockX)
-        .attr('y', wordY)
-        .attr('width', width)
-        .attr('height', rowHeight)
-        .attr('class', 'packetBlock');
+    // Block rectangle
+    const rect = group
+      .append('rect')
+      .attr('x', blockX)
+      .attr('y', wordY)
+      .attr('width', width)
+      .attr('height', rowHeight)
+      .attr('class', 'packetBlock');
+
+    // Apply custom configurations if they exist
+    if (config.blockFillColor) {
+      rect.style('fill', config.blockFillColor);
     }
+    if (config.blockStrokeColor) {
+      rect.style('stroke', config.blockStrokeColor);
+    }
+    if (config.blockStrokeWidth) {
+      rect.style('stroke-width', config.blockStrokeWidth);
+    }
+
     // Block label
     group
       .append('text')
