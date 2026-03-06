@@ -884,4 +884,21 @@ describe('Gantt diagram', () => {
       { theme: 'dark' }
     );
   });
+  it('should render done task outside-text readable in dark mode (regression #7433)', () => {
+    imgSnapshotTest(
+      `
+    gantt
+      dateFormat  YYYY-MM-DD
+      title Gantt dark mode done-task outside-text readability
+
+      section A section
+      A very long label that will not fit inside the short bar :done, 2014-01-06, 1d
+      Active short bar                                         :active, 2014-01-07, 1d
+
+      section Critical tasks
+      A very long label that will not fit inside the short bar :crit, done, 2014-01-06, 1d
+      `,
+      { theme: 'dark' }
+    );
+  });
 });
