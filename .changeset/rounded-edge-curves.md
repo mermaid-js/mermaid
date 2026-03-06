@@ -1,9 +1,8 @@
 ---
-'mermaid': minor
+'mermaid': patch
+'@mermaid-js/mermaid-layout-elk': patch
 ---
 
-fix: replace smooth curve edges with rounded right-angle edges
+fix: use rounded right-angle edges for ELK layout
 
-The default flowchart edge curve changes from `basis` (smooth splines) to `rounded` (right-angle segments with rounded corners). This fixes ELK layout edges that were curving instead of routing at right angles (#7213) and applies consistently across all diagram types using the shared rendering pipeline.
-
-To restore the previous smooth curve behavior, set `flowchart.curve: 'basis'` in your config.
+ELK layout edges now default to `rounded` curve (right-angle segments with rounded corners) instead of inheriting the global `basis` default. This fixes ELK edges that were curving instead of routing at right angles (#7213). Non-ELK layouts are unaffected and keep their existing `basis` default.
