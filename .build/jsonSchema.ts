@@ -19,6 +19,7 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
   'xyChart',
   'requirement',
   'mindmap',
+  'ishikawa',
   'kanban',
   'timeline',
   'gitGraph',
@@ -29,6 +30,7 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
   'treeView',
   'architecture',
   'radar',
+  'venn',
 ] as const;
 
 /**

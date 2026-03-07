@@ -26,6 +26,8 @@ import { radar } from '../diagrams/radar/detector.js';
 import block from '../diagrams/block/blockDetector.js';
 import treeView from '../diagrams/treeView/detector.js';
 import architecture from '../diagrams/architecture/architectureDetector.js';
+import { ishikawa } from '../diagrams/ishikawa/ishikawaDetector.js';
+import venn from '../diagrams/venn/vennDetector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
 import { treemap } from '../diagrams/treemap/detector.js';
@@ -103,6 +105,8 @@ export const addDiagrams = () => {
     block,
     treeView,
     radar,
-    treemap
+    ishikawa,
+    treemap,
+    venn
   );
 };
