@@ -17,6 +17,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
+import { createTooltip } from '../common/svgDrawCommon.js';
 import type {
   FlowClass,
   FlowEdge,
@@ -26,7 +27,7 @@ import type {
   FlowVertex,
   FlowVertexTypeParam,
 } from './types.js';
-
+import DOMPurify from 'dompurify';
 interface LinkData {
   id: string;
 }
@@ -85,6 +86,17 @@ export class FlowDB implements DiagramDB {
     return common.sanitizeText(txt, this.config);
   }
 
+  private sanitizeNodeLabelType(labelType?: string) {
+    switch (labelType) {
+      case 'markdown':
+      case 'string':
+      case 'text':
+        return labelType;
+      default:
+        return 'markdown';
+    }
+  }
+
   /**
    * Function to lookup domId from id in the graph definition.
    *
@@ -138,6 +150,9 @@ export class FlowDB implements DiagramDB {
       }
       if (edgeDoc?.animation !== undefined) {
         edge.animation = edgeDoc.animation;
+      }
+      if (edgeDoc?.curve !== undefined) {
+        edge.interpolate = edgeDoc.curve;
       }
       return;
     }
@@ -205,6 +220,7 @@ export class FlowDB implements DiagramDB {
 
       if (doc?.label) {
         vertex.text = doc?.label;
+        vertex.labelType = this.sanitizeNodeLabelType(doc?.labelType);
       }
       if (doc?.icon) {
         vertex.icon = doc?.icon;
@@ -264,7 +280,7 @@ export class FlowDB implements DiagramDB {
       if (edge.text.startsWith('"') && edge.text.endsWith('"')) {
         edge.text = edge.text.substring(1, edge.text.length - 1);
       }
-      edge.labelType = linkTextObj.type;
+      edge.labelType = this.sanitizeNodeLabelType(linkTextObj.type);
     }
 
     if (type !== undefined) {
@@ -403,7 +419,8 @@ You have to call mermaid.initialize.`
    *
    */
   public setDirection(dir: string) {
-    this.direction = dir;
+    this.direction = dir.trim();
+
     if (/.*</.exec(this.direction)) {
       this.direction = 'RL';
     }
@@ -570,15 +587,7 @@ You have to call mermaid.initialize.`
   }
 
   private setupToolTips(element: Element) {
-    let tooltipElem = select('.mermaidTooltip');
-    // @ts-ignore TODO: fix this
-    if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
-      // @ts-ignore TODO: fix this
-      tooltipElem = select('body')
-        .append('div')
-        .attr('class', 'mermaidTooltip')
-        .style('opacity', 0);
-    }
+    const tooltipElem = createTooltip();
 
     const svg = select(element).select('svg');
 
@@ -599,7 +608,7 @@ You have to call mermaid.initialize.`
           .text(el.attr('title'))
           .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
           .style('top', window.scrollY + rect.bottom + 'px');
-        tooltipElem.html(tooltipElem.html().replace(/&lt;br\/&gt;/g, '<br/>'));
+        tooltipElem.html(DOMPurify.sanitize(title));
         el.classed('hover', true);
       })
       .on('mouseout', (e: MouseEvent) => {
@@ -698,7 +707,7 @@ You have to call mermaid.initialize.`
       title: title.trim(),
       classes: [],
       dir,
-      labelType: _title.type,
+      labelType: this.sanitizeNodeLabelType(_title?.type),
     };
 
     log.info('Adding', subGraph.id, subGraph.nodes, subGraph.dir);
@@ -1008,6 +1017,7 @@ You have to call mermaid.initialize.`
       const baseNode = {
         id: vertex.id,
         label: vertex.text,
+        labelType: vertex.labelType,
         labelStyle: '',
         parentId,
         padding: config.flowchart?.padding || 8,
@@ -1084,6 +1094,7 @@ You have to call mermaid.initialize.`
         id: subGraph.id,
         label: subGraph.title,
         labelStyle: '',
+        labelType: subGraph.labelType,
         parentId: parentDB.get(subGraph.id),
         padding: 8,
         cssCompiledStyles: this.getCompiledStyles(subGraph.classes),
@@ -1115,6 +1126,7 @@ You have to call mermaid.initialize.`
         end: rawEdge.end,
         type: rawEdge.type ?? 'normal',
         label: rawEdge.text,
+        labelType: rawEdge.labelType,
         labelpos: 'c',
         thickness: rawEdge.stroke,
         minlen: rawEdge.length,

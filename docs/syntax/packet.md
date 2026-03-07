@@ -17,18 +17,18 @@ This diagram type is particularly useful for developers, network engineers, educ
 ## Syntax
 
 ```
-packet-beta
+packet
 start: "Block name" %% Single-bit block
 start-end: "Block name" %% Multi-bit blocks
 ... More Fields ...
 ```
 
-### Bits Syntax (v\<MERMAID_RELEASE_VERSION>+)
+### Bits Syntax (v11.7.0+)
 
 Using start and end bit counts can be difficult, especially when modifying a design. For this we add a bit count field, which starts from the end of the previous field automagically. Use `+<count>` to set the number of bits, thus:
 
 ```
-packet-beta
+packet
 +1: "Block name" %% Single-bit block
 +8: "Block name" %% 8-bit block
 9-15: "Manually set start and end, it's fine to mix and match"
@@ -41,7 +41,7 @@ packet-beta
 ---
 title: "TCP Packet"
 ---
-packet-beta
+packet
 0-15: "Source Port"
 16-31: "Destination Port"
 32-63: "Sequence Number"
@@ -65,7 +65,7 @@ packet-beta
 ---
 title: "TCP Packet"
 ---
-packet-beta
+packet
 0-15: "Source Port"
 16-31: "Destination Port"
 32-63: "Sequence Number"
@@ -86,7 +86,7 @@ packet-beta
 ```
 
 ```mermaid-example
-packet-beta
+packet
 title UDP Packet
 +16: "Source Port"
 +16: "Destination Port"
@@ -96,7 +96,7 @@ title UDP Packet
 ```
 
 ```mermaid
-packet-beta
+packet
 title UDP Packet
 +16: "Source Port"
 +16: "Destination Port"
@@ -144,7 +144,7 @@ config:
     packet:
       startByteColor: red
 ---
-packet-beta
+packet
 0-15: "Source Port"
 16-31: "Destination Port"
 32-63: "Sequence Number"

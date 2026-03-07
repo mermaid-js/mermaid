@@ -17,6 +17,7 @@ export default tseslint.config(
   ...tseslint.configs.stylisticTypeChecked,
   {
     ignores: [
+      '**/*.d.ts',
       '**/dist/',
       '**/node_modules/',
       '.git/',

@@ -331,6 +331,20 @@ describe('State diagram', () => {
       }
     );
   });
+  it('should group all state elements under a single root <g> wrapper', () => {
+    imgSnapshotTest(
+      `
+    stateDiagram
+    [*] --> Still
+    Still --> [*]
+    Still --> Moving
+    Moving --> Still
+    Moving --> Crash
+    Crash --> [*]
+      `,
+      { logLevel: 0, fontFamily: 'courier' }
+    );
+  });
   it('should render a state diagram when useMaxWidth is true (default)', () => {
     renderGraph(
       `

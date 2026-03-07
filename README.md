@@ -12,10 +12,10 @@ Generate diagrams from markdown-like text.
 <p>
 
 <p align="center">
-<a href="https://mermaid.live/"><b>Live Editor!</b></a>
+<a href="https://mermaid.ai/live/"><b>Live Editor!</b></a>
 </p>
 <p align="center">
- <a href="https://mermaid.js.org">📖 Documentation</a> | <a href="https://mermaid.js.org/intro/">🚀 Getting Started</a> | <a href="https://www.jsdelivr.com/package/npm/mermaid">🌐 CDN</a> | <a href="https://discord.gg/sKeNQX4Wtj" title="Discord invite">🙌 Join Us</a>
+ <a href="https://mermaid.ai/open-source/">📖 Documentation</a> | <a href="https://mermaid.ai/open-source/intro/">🚀 Getting Started</a> | <a href="https://www.jsdelivr.com/package/npm/mermaid">🌐 CDN</a> | <a href="https://discord.gg/sKeNQX4Wtj" title="Discord invite">🙌 Join Us</a>
 </p>
 <p align="center">
 <a href="./README.zh-CN.md">简体中文</a>
@@ -94,10 +94,6 @@ In our release process we rely heavily on visual regression tests using [applito
 </a>
 
 <!-- </Main description> -->
-
-## Mermaid AI Bot
-
-[Mermaid](https://codeparrot.ai/oracle?owner=mermaid-js&repo=mermaid) Bot will help you understand this repository better. You can ask for code examples, installation guide, debugging help and much more.
 
 ## Examples
 

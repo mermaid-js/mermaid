@@ -46,13 +46,21 @@ exclude = [
 # Drupal 403
 "https://(www.)?drupal.org",
 
+# Phbpp 403
+"https://(www.)?phpbb.com",
+
 # Swimm returns 404, even though the link is valid
 "https://docs.swimm.io",
+
+# Certificate Error
+"https://noteshub.app",
 
 # Timeout
 "https://huehive.co",
 "https://foswiki.org",
 "https://www.gnu.org",
+"https://redmine.org",
+"https://mermaid-preview.com"
 ]
 
 # Exclude all private IPs from checking.

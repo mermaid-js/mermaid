@@ -350,18 +350,18 @@ async function addText<T extends SVGGraphicsElement>(
   );
   // Undo work around now that text passed through correctly
   if (labelText.includes('&lt;') || labelText.includes('&gt;')) {
-    let child = text.children[0];
-    child.textContent = child.textContent.replaceAll('&lt;', '<').replaceAll('&gt;', '>');
+    let child: Element | ChildNode = text.children[0];
+    child.textContent = child.textContent!.replaceAll('&lt;', '<').replaceAll('&gt;', '>');
     while (child.childNodes[0]) {
       child = child.childNodes[0];
       // Replace its text content
-      child.textContent = child.textContent.replaceAll('&lt;', '<').replaceAll('&gt;', '>');
+      child.textContent = child.textContent!.replaceAll('&lt;', '<').replaceAll('&gt;', '>');
     }
   }
 
   let bbox = text.getBBox();
   if (evaluate(config.htmlLabels)) {
-    const div = text.children[0];
+    const div = text.children[0] as HTMLDivElement;
     div.style.textAlign = 'start';
     const dv = select(text);
     bbox = div.getBoundingClientRect();

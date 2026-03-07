@@ -11,9 +11,15 @@ describe('packet', () => {
     `
     \tpacket-beta
     `,
+    `packet`,
+    `  packet  `,
+    `\tpacket\t`,
+    `
+    \tpacket
+    `,
   ])('should handle regular packet', (context: string) => {
     const result = parse(context);
     expectNoErrorsOrAlternatives(result);
-    expect(result.value.$type).toBe(Packet);
+    expect(result.value.$type).toBe(Packet.$type);
   });
 });

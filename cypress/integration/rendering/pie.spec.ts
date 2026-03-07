@@ -82,4 +82,23 @@ describe('pie chart', () => {
       `
     );
   });
+  it('should render pie slices only for non-zero values but shows all legends', () => {
+    imgSnapshotTest(
+      `   pie title Pets adopted by volunteers
+    "Dogs" : 386
+    "Cats" : 85
+    "Rats" : 1
+      `
+    );
+  });
+  it('should render a pie diagram with readable title and legend in dark mode', () => {
+    imgSnapshotTest(
+      `pie title Sports in Sweden
+        "Bandy": 40
+        "Ice-Hockey": 80
+        "Football": 90
+      `,
+      { theme: 'dark' }
+    );
+  });
 });

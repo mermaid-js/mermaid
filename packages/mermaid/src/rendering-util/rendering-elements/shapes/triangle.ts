@@ -5,16 +5,15 @@ import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { createPathFromPoints } from './util.js';
-import { evaluate } from '../../../diagrams/common/common.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import type { D3Selection } from '../../../types.js';
+import { getEffectiveHtmlLabels } from '../../../config.js';
 
 export async function triangle<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const useHtmlLabels = evaluate(getConfig().flowchart?.htmlLabels);
-
+  const useHtmlLabels = node.useHtmlLabels || getEffectiveHtmlLabels(getConfig());
   const w = bbox.width + (node.padding ?? 0);
   const h = w + bbox.height;
 

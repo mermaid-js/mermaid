@@ -71,12 +71,33 @@ describe('Flowchart v2', () => {
       { htmlLabels: false, flowchart: { htmlLabels: false } }
     );
   });
+  it('5a: angle brackets should be work without html labels', () => {
+    imgSnapshotTest(
+      `flowchart TD
+    a["**Plain text**:\n 5 > 3 && 2 < 4"]
+    b["\`**Markdown**:<br> 5 > 3 && 2 < 4\`"]
+    `,
+      { htmlLabels: false }
+    );
+  });
   it('6: should render non-escaped with html labels', () => {
     imgSnapshotTest(
       `flowchart TD
         a["<strong>Haiya</strong>"]===>b
       `,
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('6a: should render complex HTML in labels with sandbox security', () => {
+    imgSnapshotTest(
+      `flowchart TD
+    A[Christmas] -->|Get money| B(Go shopping)
+    B --> C{Let me think}
+    C -->|One| D[Laptop]
+    C -->|Two| E[iPhone]
+    C -->|Three| F[fa:fa-car Car]
+      `,
+      { securityLevel: 'sandbox', flowchart: { htmlLabels: true } }
     );
   });
   it('7: should render a flowchart when useMaxWidth is true (default)', () => {
@@ -1110,6 +1131,133 @@ end
     D@{label: "for D"}     
         `,
         {}
+      );
+    });
+  });
+  describe('Flowchart Node Shape Rendering', () => {
+    it('should render a stadium-shaped node', () => {
+      imgSnapshotTest(
+        `flowchart TB
+          A(["Start"]) --> n1["Untitled Node"]
+          A --> n2["Untitled Node"]
+        `,
+        {}
+      );
+    });
+    it('should render a diamond-shaped node using shape config', () => {
+      imgSnapshotTest(
+        `flowchart BT
+          n2["Untitled Node"] --> n1["Diamond"]
+          n1@{ shape: diam}
+        `,
+        {}
+      );
+    });
+    it('should render a rounded rectangle and a normal rectangle', () => {
+      imgSnapshotTest(
+        `flowchart BT
+        n2["Untitled Node"] --> n1["Rounded Rectangle"]
+        n3["Untitled Node"] --> n1
+        n1@{ shape: rounded}
+        n3@{ shape: rect}
+    `,
+        {}
+      );
+    });
+  });
+
+  it('7213: should render edges with rounded curve (right angles with rounded corners)', () => {
+    imgSnapshotTest(
+      `flowchart TD
+    A[Start] --> B{Decision}
+    B -->|Yes| C[Process 1]
+    B -->|No| D[Process 2]
+    C --> E[End]
+    D --> E
+    `,
+      { flowchart: { curve: 'rounded' } }
+    );
+  });
+
+  it('6617: Per Link Curve Styling using edge Ids', () => {
+    imgSnapshotTest(
+      `flowchart TD
+      A e1@-->B e5@--> E
+      E e7@--> D
+      B e3@-->D
+      A e2@-->C e4@-->D
+      C e6@--> F
+      F e8@--> D
+      e1@{ curve: natural }
+      e2@{ curve: stepAfter }
+      e3@{ curve: monotoneY }
+      e4@{ curve: bumpY }
+      e5@{ curve: linear }
+      e6@{ curve: catmullRom }
+      e7@{ curve: cardinal }
+      `
+    );
+  });
+
+  describe('when rendering unsuported markdown', () => {
+    const graph = `flowchart TB
+    mermaid{"What is\nyourmermaid version?"} --> v10["<11"] --"\`<**1**1\`"--> fine["No bug"]
+    mermaid --> v11[">= v11"] -- ">= v11" --> broken["Affected by https://github.com/mermaid-js/mermaid/issues/5824"]
+    subgraph subgraph1["\`How to fix **fix**\`"]
+        broken --> B["B"]
+    end
+    githost["Github, Gitlab, BitBucket, etc."]
+    githost2["\`Github, Gitlab, BitBucket, etc.\`"]
+    a["\`1.\`"]
+    b["\`- x\`"]
+      `;
+
+    it('should render raw strings', () => {
+      imgSnapshotTest(graph);
+    });
+
+    it('should render raw strings with htmlLabels: false', () => {
+      imgSnapshotTest(graph, { htmlLabels: false });
+    });
+  });
+
+  it('V2 - 17: should apply class def colour to edge label', () => {
+    imgSnapshotTest(
+      ` graph LR
+    id1(Start) link@-- "Label" -->id2(Stop)
+    style id1 fill:#f9f,stroke:#333,stroke-width:4px
+
+class id2 myClass
+classDef myClass fill:#bbf,stroke:#f66,stroke-width:2px,color:white,stroke-dasharray: 5 5
+class link myClass
+`
+    );
+  });
+
+  describe('Edge label autowrapping', () => {
+    it('should wrap edge labels', () => {
+      imgSnapshotTest(
+        [
+          {
+            markdownAutoWrap: true,
+            htmlLabels: true,
+          },
+          { markdownAutoWrap: true, htmlLabels: false },
+          { markdownAutoWrap: false, htmlLabels: true },
+          // TODO: currently broken
+          // {markdownAutoWrap: false, htmlLabels: false},
+        ].map(
+          ({ markdownAutoWrap, htmlLabels }) => `---
+config: ${JSON.stringify({ markdownAutoWrap, htmlLabels })}
+title: Testing with ${JSON.stringify({ markdownAutoWrap, htmlLabels })}
+---
+flowchart TD
+    A["This is a really long line of plain text that will autowrap and support \\n newlines too."]    
+    B["\`This is a really long line of **markdown** text that will autowrap, unless markdownAutoWrap:false is set.\`"]
+    A -- "Plain text **labels** in flowcharts will autowrap,like node labels. \\n Newline characters work too." --> B
+    B -- "\`**Markdown** edge labels will autowrap, unless markdownAutoWrap: false is set\`" --> C
+`
+        )
       );
     });
   });

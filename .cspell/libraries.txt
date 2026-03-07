@@ -64,6 +64,7 @@ rscratch
 shiki
 Slidev
 sparkline
+speccharts
 sphinxcontrib
 ssim
 stylis

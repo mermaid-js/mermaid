@@ -78,5 +78,41 @@ describe('diagram-orchestration', () => {
       flowchart: 1 "pie" pie: 2 "pie"`)
       ).toBe('pie');
     });
+
+    it('should detect proper diagram when defaultRenderer is elk for flowchart', () => {
+      expect(
+        detectType('mindmap\n  root\n    Photograph\n      Waterfall', {
+          flowchart: { defaultRenderer: 'elk' },
+        })
+      ).toBe('mindmap');
+      expect(
+        detectType(
+          `
+          classDiagram
+            class Person {
+              +String name
+              -Int id
+              #double age
+              +Text demographicProfile
+            }
+          `,
+          { flowchart: { defaultRenderer: 'elk' } }
+        )
+      ).toBe('class');
+      expect(
+        detectType(
+          `
+          erDiagram
+            p[Photograph] {
+              varchar(12) jobId
+              date dateCreated
+            }
+          `,
+          {
+            flowchart: { defaultRenderer: 'elk' },
+          }
+        )
+      ).toBe('er');
+    });
   });
 });

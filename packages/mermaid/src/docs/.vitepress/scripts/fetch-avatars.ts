@@ -32,11 +32,17 @@ async function fetchAvatars() {
   });
 
   contributors = JSON.parse(await readFile(pathContributors, { encoding: 'utf-8' }));
-  const avatars = contributors.map((name) =>
-    download(`https://github.com/${name}.png?size=100`, getAvatarPath(name))
-  );
 
-  await Promise.allSettled(avatars);
+  const batchSize = 10;
+  for (let i = 0; i < contributors.length; i += batchSize) {
+    console.log(
+      `Processing batch ${i / batchSize + 1} of ${Math.ceil(contributors.length / batchSize)}`
+    );
+    const batch = contributors.slice(i, i + batchSize);
+    await Promise.allSettled(
+      batch.map((name) => download(`https://github.com/${name}.png?size=100`, getAvatarPath(name)))
+    );
+  }
 }
 
 void fetchAvatars();
