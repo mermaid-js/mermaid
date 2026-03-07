@@ -2,4 +2,4 @@
 'mermaid': minor
 ---
 
-add theme support for data label colour in xy chart
+feat: add theme support for data label colour in xy chart
