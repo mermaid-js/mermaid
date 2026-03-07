@@ -34,7 +34,7 @@ config:
         rowIndent: 5
     themeVariables:
         treeView:
-            fontSize: '20px'
+            labelFontSize: '20px'
 ---
 treeView-beta
     "packages"
