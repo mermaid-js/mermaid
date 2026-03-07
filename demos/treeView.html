@@ -54,6 +54,8 @@
         themeVariables:
             treeView:
                 fontSize: '30px'
+                textColor: '#FF0000'
+                lineColor: '#00FF00'
     ---
     treeView-beta
     "packages"
@@ -65,7 +67,6 @@
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
-        theme: 'forest',
         logLevel: 1,
         securityLevel: 'loose',
       });
