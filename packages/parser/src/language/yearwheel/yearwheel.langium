@@ -3,7 +3,7 @@ import "../common/common";
 
 entry Yearwheel:
   NEWLINE*
-  "yearwheel" ';'?
+  "yearwheel"
   NEWLINE*
   baseDate=YearwheelBaseDate?
   (

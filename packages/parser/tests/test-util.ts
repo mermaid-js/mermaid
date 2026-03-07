@@ -13,6 +13,8 @@ import type {
   PacketServices,
   GitGraph,
   GitGraphServices,
+  Yearwheel,
+  YearwheelServices,
 } from '../src/language/index.js';
 import {
   createArchitectureServices,
@@ -21,6 +23,7 @@ import {
   createRadarServices,
   createPacketServices,
   createGitGraphServices,
+  createYearwheelServices,
 } from '../src/language/index.js';
 
 const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined);
@@ -105,3 +108,14 @@ export function createGitGraphTestServices() {
   return { services: gitGraphServices, parse };
 }
 export const gitGraphParse = createGitGraphTestServices().parse;
+
+const yearwheelServices: YearwheelServices = createYearwheelServices().Yearwheel;
+const yearwheelParser: LangiumParser = yearwheelServices.parser.LangiumParser;
+export function createYearwheelTestServices() {
+  const parse = (input: string) => {
+    return yearwheelParser.parse<Yearwheel>(input);
+  };
+
+  return { services: yearwheelServices, parse };
+}
+export const yearwheelParse = createYearwheelTestServices().parse;
