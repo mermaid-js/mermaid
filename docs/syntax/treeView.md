@@ -84,7 +84,8 @@ treeView-beta
 
 ### Theme Variables
 
-| Property  | Description            | Default Value |
-| --------- | ---------------------- | ------------- |
-| fontSize  | Font size of the label | '16px'        |
-| lineColor | Color of the line      | 'black'       |
+| Property      | Description            | Default Value |
+| ------------- | ---------------------- | ------------- |
+| labelFontSize | Font size of the label | '16px'        |
+| labelColor    | Color of the label     | 'black'       |
+| lineColor     | Color of the line      | 'black'       |

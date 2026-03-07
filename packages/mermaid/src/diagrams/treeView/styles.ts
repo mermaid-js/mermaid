@@ -3,8 +3,8 @@ import { cleanAndMerge } from '../../utils.js';
 import type { TreeViewDiagramStyles } from './types.js';
 
 const defaultTreeViewDiagramStyles: Required<TreeViewDiagramStyles> = {
-  fontSize: '16px',
-  textColor: 'black',
+  labelFontSize: '16px',
+  labelColor: 'black',
   lineColor: 'black',
 };
 
@@ -13,11 +13,14 @@ const styles: DiagramStylesProvider = ({
 }: {
   treeView?: TreeViewDiagramStyles;
 }): string => {
-  const { fontSize, textColor, lineColor } = cleanAndMerge(defaultTreeViewDiagramStyles, treeView);
+  const { labelFontSize, labelColor, lineColor } = cleanAndMerge(
+    defaultTreeViewDiagramStyles,
+    treeView
+  );
   return `
     .treeView-node-label {
-        font-size: ${fontSize};
-        fill: ${textColor};
+        font-size: ${labelFontSize};
+        fill: ${labelColor};
     }
     .treeView-node-line {
         stroke: ${lineColor};

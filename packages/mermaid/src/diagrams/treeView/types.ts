@@ -24,8 +24,8 @@ export interface TreeViewDB extends DiagramDBBase<TreeViewDiagramConfig> {
 }
 
 export interface TreeViewDiagramStyles {
-  textColor?: string;
-  fontSize?: string;
+  labelColor?: string;
+  labelFontSize?: string;
   lineColor?: string;
 }
 
