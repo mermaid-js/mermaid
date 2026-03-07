@@ -75,10 +75,15 @@ export interface DiagramRenderer {
   ) => Map<string, DiagramStyleClassDef>;
 }
 
+export interface DiagramCapabilities {
+  handDrawn?: boolean;
+}
+
 export interface DiagramDefinition {
   db: DiagramDB;
   renderer: DiagramRenderer;
   parser: ParserDefinition;
+  capabilities?: DiagramCapabilities;
   styles?: any;
   init?: (config: MermaidConfig) => void;
   injectUtils?: (

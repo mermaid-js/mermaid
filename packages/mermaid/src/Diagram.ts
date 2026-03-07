@@ -30,7 +30,7 @@ export class Diagram {
       const { id, diagram } = await loader();
       registerDiagram(id, diagram);
     }
-    const { db, parser, renderer, init } = getDiagram(type);
+    const { db, parser, renderer, init, capabilities } = getDiagram(type);
     if (parser.parser) {
       // The parser.parser.yy is only present in JISON parsers. So, we'll only set if required.
       parser.parser.yy = db;
@@ -42,7 +42,7 @@ export class Diagram {
       db.setDiagramTitle?.(metadata.title);
     }
     await parser.parse(text);
-    return new Diagram(type, text, db, parser, renderer);
+    return new Diagram(type, text, db, parser, renderer, capabilities);
   }
 
   private constructor(
@@ -50,7 +50,8 @@ export class Diagram {
     public text: string,
     public db: DiagramDefinition['db'],
     public parser: DiagramDefinition['parser'],
-    public renderer: DiagramDefinition['renderer']
+    public renderer: DiagramDefinition['renderer'],
+    public capabilities: DiagramDefinition['capabilities']
   ) {}
 
   async render(id: string, version: string) {

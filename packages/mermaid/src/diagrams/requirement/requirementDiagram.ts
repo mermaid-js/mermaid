@@ -10,6 +10,9 @@ export const diagram: DiagramDefinition = {
   get db() {
     return new RequirementDB();
   },
+  capabilities: {
+    handDrawn: true,
+  },
   renderer,
   styles,
 };
