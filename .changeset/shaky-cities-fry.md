@@ -1,5 +1,5 @@
 ---
-'mermaid': patch
+'mermaid': minor
 ---
 
-add showDataLabelOutsideBar option for xy chart
+feat: add showDataLabelOutsideBar option for xy chart
