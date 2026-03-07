@@ -115,10 +115,13 @@ function drawActorLegend(diagram) {
 }
 
 export const draw = function (text, id, version, diagObj) {
-  const conf = getConfig().journey;
-  const leftMargin = conf.leftMargin;
- 
-  const securityLevel = getConfig().securityLevel;
+const configObject = getConfig();
+const conf = configObject.journey;
+const leftMargin = conf.leftMargin;
+const titleColor = conf.titleColor;
+const titleFontSize = conf.titleFontSize;
+const titleFontFamily = conf.titleFontFamily;
+const securityLevel = configObject.securityLevel;
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
@@ -161,7 +164,7 @@ export const draw = function (text, id, version, diagObj) {
       .append('text')
       .text(title)
       .attr('x', leftMargin)
-      .attr('font-size', '4ex')
+      .attr('font-size', titleFontSize)
       .attr('font-weight', 'bold')
       .attr('y', 25)
       .attr('fill', titleColor)
@@ -177,10 +180,10 @@ export const draw = function (text, id, version, diagObj) {
   diagram
     .append('line')
     .attr('x1', leftMargin)
-    .attr('x1', leftMargin)
+  
     .attr('y1', conf.height * 4) // One section head + one task + margins
     .attr('x2', width - leftMargin - 4) // Subtract stroke width so arrow point is retained
-    .attr('x2', width - leftMargin - 4) // Subtract stroke width so arrow point is retained
+
     .attr('y2', conf.height * 4)
     .attr('stroke-width', 4)
     .attr('stroke', 'black')
@@ -318,7 +321,7 @@ export const drawTasks = function (diagram, tasks, verticalPos, leftMargin) {
 
       const section = {
         x: i * conf.taskMargin + i * conf.width + leftMargin,
-        x: i * conf.taskMargin + i * conf.width + leftMargin,
+       
         y: 50,
         text: task.section,
         fill,
@@ -343,7 +346,7 @@ export const drawTasks = function (diagram, tasks, verticalPos, leftMargin) {
 
     // Add some rendering data to the object
     task.x = i * conf.taskMargin + i * conf.width + leftMargin;
-    task.x = i * conf.taskMargin + i * conf.width + leftMargin;
+ 
     task.y = taskPos;
     task.width = conf.diagramMarginX;
     const estimatedLines = Math.ceil((task.task.length * EST_CHAR_WIDTH_PX) / conf.width);
