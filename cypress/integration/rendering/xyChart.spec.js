@@ -293,6 +293,7 @@ describe('XY Chart', () => {
           xyChart:
             titleColor: "#ff0000"
             backgroundColor: "#f0f8ff"
+            dataLabelColor: "#eeeeee"
             yAxisLabelColor: "#ee82ee"
             yAxisTitleColor: "#7fffd4"
             yAxisTickColor: "#87ceeb"
