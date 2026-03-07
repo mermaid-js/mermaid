@@ -1106,4 +1106,33 @@ describe('Title and arrow styling #4813', () => {
       expect(edges[3].getAttribute('class')).to.contain('edge-thickness-invisible');
     });
   });
+
+  it('7213: should render ELK edges with right angles not curves', () => {
+    imgSnapshotTest(
+      `---
+config:
+  layout: elk
+---
+flowchart LR
+    subgraph G1
+        N00
+        N11
+        N12
+        N13
+    end
+    subgraph G2
+        N21
+        N22
+    end
+    N00 --- N01 & N02 & N03 & N04 & N05
+    N00 --- N11 & N12 & N13 & N22
+    N11 --- N22
+    N11 --- N22
+    N11 --- N22
+    N11 --- N22
+    N11 --- N22
+    `,
+      {}
+    );
+  });
 });

@@ -679,6 +679,7 @@ export class ClassDB implements DiagramDB {
         ],
         look: config.look,
         parentId: note.parent,
+        labelType: 'markdown',
       };
       nodes.push(noteNode);
 
@@ -741,6 +742,7 @@ export class ClassDB implements DiagramDB {
         style: classRelation.style || '',
         pattern: classRelation.relation.lineType == 1 ? 'dashed' : 'solid',
         look: config.look,
+        labelType: 'markdown',
       };
       edges.push(edge);
     }
