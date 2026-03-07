@@ -31,36 +31,35 @@
 
     <h2>Basic TreeView Example</h2>
     <pre class="mermaid">
-        treeView-beta
-        docs
-            build
-            make.bat
-            Makefile
-            out
-            source
-                build
-                static
-                    _templates
-                    div. Files
+    treeView-beta
+    "docs"
+        "build"
+        "make.bat"
+        "Makefile"
+        "out"
+        "source"
+            "build"
+            "static"
+                "_templates"
+                "div. Files"
     </pre>
 
     <h2>TreeView Config Example</h2>
     <pre class="mermaid">
-        ---
-        config:
+    ---
+    config:
+        treeView:
+            rowIndent: 40
+            lineThickness: 2
+        themeVariables:
             treeView:
-                rowIndent: 40
-                lineThickness: 2
-            themeVariables:
-                treeView:
-                    fontSize: '30px'
-        ---
-        treeView-beta
-            packages
-                mermaid
-                    src
-                parser
-
+                fontSize: '30px'
+    ---
+    treeView-beta
+    "packages"
+        "mermaid"
+            "src"
+        "parser"
     </pre>
 
     <script type="module">

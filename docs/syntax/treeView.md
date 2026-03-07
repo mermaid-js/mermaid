@@ -16,29 +16,29 @@ The structure of the tree depends only on indentation.
 
 ```
 treeView-beta
-    <folder name>
-        <file name>
-        <folder name>
-            <file name>
-    <file-name>
+    "<folder name>"
+        "<file name>"
+        "<folder name>"
+            "<file name>"
+    "<file-name>"
 ```
 
 ## Examples
 
 ```mermaid-example
 treeView-beta
-    packages
-        mermaid
-            src
-        parser
+    "packages"
+        "mermaid"
+            "src"
+        "parser"
 ```
 
 ```mermaid
 treeView-beta
-    packages
-        mermaid
-            src
-        parser
+    "packages"
+        "mermaid"
+            "src"
+        "parser"
 ```
 
 ```mermaid-example
@@ -51,10 +51,10 @@ config:
             fontSize: '20px'
 ---
 treeView-beta
-    packages
-        mermaid
-            src
-        parser
+    "packages"
+        "mermaid"
+            "src"
+        "parser"
 ```
 
 ```mermaid
@@ -67,10 +67,10 @@ config:
             fontSize: '20px'
 ---
 treeView-beta
-    packages
-        mermaid
-            src
-        parser
+    "packages"
+        "mermaid"
+            "src"
+        "parser"
 ```
 
 ## Config Variables

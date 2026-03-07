@@ -9,16 +9,16 @@ export default {
       title: 'Basic TreeView',
       isDefault: true,
       code: `treeView-beta
-             docs
-                build
-                make.bat
-                Makefile
-                out
-                source
-                    build
-                    static
-                        _templates
-                        div. Files`,
+            "docs"
+                "build"
+                "make.bat"
+                "Makefile"
+                "out"
+                "source"
+                    "build"
+                    "static"
+                        "_templates"
+                        "div. Files"`,
     },
   ],
 } satisfies DiagramMetadata;

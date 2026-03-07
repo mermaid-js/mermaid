@@ -39,7 +39,7 @@ hidden terminal NL: /\r?\n/;
 TreeNode: 
     // actually contains the indent, but is converted to a length value by valueConverter
     indent=INDENTATION?
-    name=TEXT
+    name=STRING2
 ;
 
-terminal TEXT: /\S+/;
+terminal STRING2: /"[^"]*"|'[^']*'/;
