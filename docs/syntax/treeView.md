@@ -45,10 +45,13 @@ treeView-beta
 ---
 config:
     treeView:
-        rowIndent: 5
+        rowIndent: 80
+        lineThickness: 3
     themeVariables:
         treeView:
             labelFontSize: '20px'
+            labelColor: '#FF0000'
+            lineColor: '#00FF00'
 ---
 treeView-beta
     "packages"
@@ -61,10 +64,13 @@ treeView-beta
 ---
 config:
     treeView:
-        rowIndent: 5
+        rowIndent: 80
+        lineThickness: 3
     themeVariables:
         treeView:
             labelFontSize: '20px'
+            labelColor: '#FF0000'
+            lineColor: '#00FF00'
 ---
 treeView-beta
     "packages"
