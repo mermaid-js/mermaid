@@ -436,6 +436,7 @@ const _drawTextCandidateFunc = (function () {
 
 const initGraphics = function (graphics, id) {
   nodeCount = 0;
+  taskCount = -1;
   graphics
     .append('defs')
     .append('marker')
