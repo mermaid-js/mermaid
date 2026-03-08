@@ -10,6 +10,7 @@ export {
   Radar,
   Treemap,
   Wardley,
+  Vsm,
   Branch,
   Commit,
   Merge,
@@ -25,6 +26,7 @@ export {
   isGitGraph,
   isTreemap,
   isWardley,
+  isVsm,
   isBranch,
   isCommit,
   isMerge,
@@ -41,6 +43,7 @@ export {
   TreemapGrammarGeneratedModule as TreemapGeneratedModule,
   TreeViewGrammarGeneratedModule as TreeViewGeneratedModule,
   WardleyGrammarGeneratedModule as WardleyGeneratedModule,
+  VsmGrammarGeneratedModule as VsmGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';
@@ -53,3 +56,4 @@ export * from './architecture/index.js';
 export * from './radar/index.js';
 export * from './treemap/index.js';
 export * from './wardley/index.js';
+export * from './vsm/index.js';

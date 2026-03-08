@@ -10,9 +10,10 @@ import type {
   Treemap,
   TreeView,
   Wardley,
+  Vsm,
 } from './index.js';
 
-export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph | Radar | TreeView | Wardley;
+export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph | Radar | TreeView | Wardley | Vsm;
 
 const parsers: Record<string, LangiumParser> = {};
 const initializers = {
@@ -61,6 +62,11 @@ const initializers = {
     const parser = createWardleyServices().Wardley.parser.LangiumParser;
     parsers.wardley = parser;
   },
+  vsm: async () => {
+    const { createVsmServices } = await import('./language/vsm/index.js');
+    const parser = createVsmServices().Vsm.parser.LangiumParser;
+    parsers.vsm = parser;
+  },
 } as const;
 
 export async function parse(diagramType: 'info', text: string): Promise<Info>;
@@ -72,6 +78,7 @@ export async function parse(diagramType: 'gitGraph', text: string): Promise<GitG
 export async function parse(diagramType: 'radar', text: string): Promise<Radar>;
 export async function parse(diagramType: 'treemap', text: string): Promise<Treemap>;
 export async function parse(diagramType: 'wardley', text: string): Promise<Wardley>;
+export async function parse(diagramType: 'vsm', text: string): Promise<Vsm>;
 
 export async function parse<T extends DiagramAST>(
   diagramType: keyof typeof initializers,
