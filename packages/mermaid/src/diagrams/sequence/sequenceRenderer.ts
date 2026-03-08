@@ -1036,7 +1036,6 @@ export const draw = async function (_text: string, id: string, _version: string,
   const maxMessageWidthPerActor = await getMaxMessageWidthPerActor(actors, messages, diagObj);
   conf.height = await calculateActorMargins(actors, maxMessageWidthPerActor, boxes);
 
-  const diagramId = id;
   svgDraw.insertComputerIcon(diagram, id);
   svgDraw.insertDatabaseIcon(diagram, id);
   svgDraw.insertClockIcon(diagram, id);
@@ -1323,13 +1322,13 @@ export const draw = async function (_text: string, id: string, _version: string,
 
   log.debug('createdActors', createdActors);
   log.debug('destroyedActors', destroyedActors);
-  await drawActors(diagram, actors, actorKeys, false, diagramId);
+  await drawActors(diagram, actors, actorKeys, false, id);
 
   for (const e of messagesToDraw) {
-    await drawMessage(diagram, e.messageModel, e.lineStartY, diagObj, e.msg, diagramId);
+    await drawMessage(diagram, e.messageModel, e.lineStartY, diagObj, e.msg, id);
   }
   if (conf.mirrorActors) {
-    await drawActors(diagram, actors, actorKeys, true, diagramId);
+    await drawActors(diagram, actors, actorKeys, true, id);
   }
   backgrounds.forEach((e) => svgDraw.drawBackgroundRect(diagram, e));
   fixLifeLineHeights(diagram, actors, actorKeys, conf);

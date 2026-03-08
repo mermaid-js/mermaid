@@ -28,7 +28,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     const backgroundNode = {
       ...node,
       id: node.id + '-background',
-      domId: (node.domId ?? node.id) + '-background',
+      domId: (node.domId || node.id) + '-background',
       look: 'default',
       cssStyles: ['stroke: none', `fill: ${background}`],
     };
@@ -84,7 +84,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     // @ts-ignore Ignore .insert on SVGAElement
     .insert('g')
     .attr('class', cssClasses)
-    .attr('id', node.domId ?? node.id);
+    .attr('id', node.domId || node.id);
 
   const nameBBox = await addText(shapeSvg, node.label ?? '', config, 0, 0, ['name'], labelStyles);
   nameBBox.height += TEXT_PADDING;

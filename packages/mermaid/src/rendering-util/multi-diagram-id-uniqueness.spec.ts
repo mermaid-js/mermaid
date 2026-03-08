@@ -143,6 +143,16 @@ union A, B`,
     Person(user, "User")
     System(system, "System")
     Rel(user, system, "Uses")`,
+
+  block: `block-beta
+    columns 1
+    a["A"]
+    b["B"]`,
+
+  architecture: `architecture-beta
+    service api(cloud)[API]
+    service db(database)[DB]
+    api:R -- L:db`,
 };
 
 async function renderTwoAndCheckIds(
@@ -205,25 +215,6 @@ describe('Multi-diagram ID uniqueness', () => {
     });
   }
 
-  // Known ID collision issues — tracked as failing tests so they don't block CI
-  // but remain visible as work to be done.
-  const KNOWN_FAILING: Record<string, string> = {
-    block: `block-beta
-    columns 1
-    a["A"]
-    b["B"]`,
-    architecture: `architecture-beta
-    service api(cloud)[API]
-    service db(database)[DB]
-    api:R -- L:db`,
-  };
-
-  for (const [diagramType, code] of Object.entries(KNOWN_FAILING)) {
-    it.fails(`"${diagramType}" — known duplicate IDs (needs fix)`, async () => {
-      await renderTwoAndCheckIds(code);
-    });
-  }
-
   // Diagram types that are aliases, variants, or internal-only and don't need
   // their own uniqueness test entry. When adding a new type here, add a comment
   // explaining why it's excluded.
@@ -282,7 +273,7 @@ describe('Multi-diagram ID uniqueness', () => {
   });
 
   it('every registered diagram type has a uniqueness test or is explicitly excluded', () => {
-    const testedTypes = new Set([...Object.keys(DIAGRAMS), ...Object.keys(KNOWN_FAILING)]);
+    const testedTypes = new Set(Object.keys(DIAGRAMS));
     const missing = Object.keys(detectors).filter(
       (key) => !testedTypes.has(key) && !EXCLUDED_TYPES.has(key)
     );
