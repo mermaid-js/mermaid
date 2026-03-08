@@ -781,7 +781,7 @@ In this snippet:
 **Note on Escaping Commas:**
 When setting the `stroke-dasharray` property, remember to escape commas as `\,` since commas are used as delimiters in Mermaid’s style definitions.
 
-### Unconstrained Edges (constraint: false)
+### Unconstrained Edges (v<MERMAID_RELEASE_VERSION>+)
 
 By default, an edge between two nodes affects their relative rank (vertical position in a top-down graph). Setting `constraint: false` on an edge tells the layout engine to draw the edge without using it to determine rank, which lets you place nodes side by side that would otherwise be stacked vertically.
 
