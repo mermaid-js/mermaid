@@ -35,6 +35,11 @@
       "id": "treemap",
       "grammar": "src/language/treemap/treemap.langium",
       "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "vsm",
+      "grammar": "src/language/vsm/vsm.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
     }
   ],
   "mode": "production",
