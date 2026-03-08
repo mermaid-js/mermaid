@@ -116,7 +116,7 @@ export class FlowDB implements DiagramDB {
    */
   public addVertex(
     id: string,
-    textObj: FlowText,
+    textObj: FlowText | undefined,
     type: FlowVertexTypeParam,
     style: string[],
     classes: string[],

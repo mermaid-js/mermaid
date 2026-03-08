@@ -1283,6 +1283,50 @@ In this snippet:
 **Note on Escaping Commas:**
 When setting the `stroke-dasharray` property, remember to escape commas as `\,` since commas are used as delimiters in Mermaid’s style definitions.
 
+### Unconstrained Edges (constraint: false)
+
+By default, an edge between two nodes affects their relative rank (vertical position in a top-down graph). Setting `constraint: false` on an edge tells the layout engine to draw the edge without using it to determine rank, which lets you place nodes side by side that would otherwise be stacked vertically.
+
+To use this, assign an ID to the edge and then set the `constraint` property to `false`:
+
+```mermaid-example
+flowchart TB
+  A --> B
+  B e1@--> C
+  e1@{ constraint: false }
+```
+
+```mermaid
+flowchart TB
+  A --> B
+  B e1@--> C
+  e1@{ constraint: false }
+```
+
+In this example, `C` ends up at the same rank as `A` rather than below `B`, because the `B --> C` edge does not constrain `C`'s rank.
+
+You can combine this with an invisible node and the invisible-link (`~~~`) operator to anchor the unconstrained node at a specific rank:
+
+```mermaid-example
+flowchart TB
+  classDef hidden display: none;
+  A --> B
+  D:::hidden ~~~ C
+  B e1@--> C
+  e1@{ constraint: false }
+```
+
+```mermaid
+flowchart TB
+  classDef hidden display: none;
+  A --> B
+  D:::hidden ~~~ C
+  B e1@--> C
+  e1@{ constraint: false }
+```
+
+Here the hidden node `D` and hidden edge anchors `C` at the same rank as `B`, so `C` appears beside `B` instead of beside `A`.
+
 ## New arrow types
 
 There are new types of arrows supported:

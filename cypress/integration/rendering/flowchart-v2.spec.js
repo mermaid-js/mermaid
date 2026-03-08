@@ -1225,6 +1225,30 @@ class link myClass
     );
   });
 
+  it('Edge with constraint:false', () => {
+    imgSnapshotTest(
+      `flowchart TB
+      A --> B
+      B e1@--> C
+      e1@{ constraint: false }
+      `,
+      {}
+    );
+  });
+
+  it('Edge with constraint: false and forced rank with hidden nodes', () => {
+    imgSnapshotTest(
+      `flowchart TB
+      classDef hidden display: none;
+      A --> B
+      D:::hidden ~~~ C
+      B e1@--> C
+      e1@{ constraint: false }
+      `,
+      {}
+    );
+  });
+
   describe('Edge label autowrapping', () => {
     it('should wrap edge labels', () => {
       imgSnapshotTest(
