@@ -26,6 +26,14 @@ Defined in: [packages/mermaid/src/rendering-util/types.ts:171](https://github.co
 
 ---
 
+### diagramId?
+
+> `optional` **diagramId**: `string`
+
+Defined in: [packages/mermaid/src/rendering-util/types.ts:172](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L172)
+
+---
+
 ### edges
 
 > **edges**: `Edge`\[]
