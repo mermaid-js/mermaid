@@ -190,6 +190,7 @@ function sidebarSyntax() {
         { text: 'Radar 🔥', link: '/syntax/radar' },
         { text: 'Treemap 🔥', link: '/syntax/treemap' },
         { text: 'Venn 🔥', link: '/syntax/venn' },
+        { text: 'Value Stream Map 🔥', link: '/syntax/vsm' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },

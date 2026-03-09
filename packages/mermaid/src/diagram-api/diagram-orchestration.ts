@@ -30,6 +30,7 @@ import venn from '../diagrams/venn/vennDetector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
 import { treemap } from '../diagrams/treemap/detector.js';
+import { vsm } from '../diagrams/vsm/detector.js';
 import '../type.d.ts';
 
 let hasLoadedDiagrams = false;
@@ -105,6 +106,7 @@ export const addDiagrams = () => {
     radar,
     ishikawa,
     treemap,
-    venn
+    venn,
+    vsm
   );
 };
