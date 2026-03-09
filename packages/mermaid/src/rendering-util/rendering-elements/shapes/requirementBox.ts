@@ -157,16 +157,21 @@ export async function requirementBox<T extends SVGGraphicsElement>(
   // Insert divider line if there is body text
   if (accumulativeHeight > typeHeight + nameHeight + gap) {
     const lineY = y + typeHeight + nameHeight + gap;
-    const thickness = 0.001;
-    const polygonPoints: [number, number][] = [
-      [x, lineY],
-      [x + totalWidth, lineY],
-      [x + totalWidth, lineY + thickness],
-      [x, lineY + thickness],
-    ];
-    const roughLine = rc.polygon(polygonPoints, options);
+    let roughLine: SVGGElement;
+    if (node.look === 'neo') {
+      const thickness = 0.001;
+      const polygonPoints: [number, number][] = [
+        [x, lineY],
+        [x + totalWidth, lineY],
+        [x + totalWidth, lineY + thickness],
+        [x, lineY + thickness],
+      ];
+      roughLine = rc.polygon(polygonPoints, options);
+    } else {
+      roughLine = rc.line(x, lineY, x + totalWidth, lineY, options);
+    }
     const dividerLine = shapeSvg.insert(() => roughLine);
-    dividerLine.attr('style', nodeStyles);
+    dividerLine.attr('class', 'divider');
   }
 
   updateNodeBounds(node, rect);
@@ -180,7 +185,7 @@ export async function requirementBox<T extends SVGGraphicsElement>(
     node.look !== 'handDrawn' &&
     (requirementEdgeLabelBackground || borderColorArray?.length)
   ) {
-    shapeSvg.selectAll('path').attr('style', nodeStyles);
+    shapeSvg.selectAll('.outer-path path').attr('style', nodeStyles);
   }
 
   return shapeSvg;
