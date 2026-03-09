@@ -1,6 +1,6 @@
 ---
 'mermaid': patch
-'@mermaid-js/mermaid-layout-elk': patch
+'@mermaid-js/layout-elk': patch
 ---
 
 fix: use rounded right-angle edges for ELK layout
