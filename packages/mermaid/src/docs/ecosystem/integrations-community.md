@@ -214,7 +214,7 @@ Communication tools and platforms
   - [Adding diagrams to your Astro site with MermaidJS and Playwright](https://agramont.net/blog/diagraming-with-mermaidjs-astro/)
 - [Codedoc](https://codedoc.cc/)
   - [codedoc-mermaid-plugin](https://www.npmjs.com/package/codedoc-mermaid-plugin)
-- [Docsy Hugo Theme](https://www.docsy.dev/docs/adding-content/lookandfeel/#diagrams-with-mermaid) ✅
+- [Docsy Hugo Theme](https://www.docsy.dev/docs/content/diagrams-and-formulae/) ✅
 - [Docusaurus](https://docusaurus.io/docs/markdown-features/diagrams) ✅
 - [Gatsby](https://www.gatsbyjs.com/)
   - [gatsby-remark-mermaid](https://github.com/remcohaszing/gatsby-remark-mermaid)
