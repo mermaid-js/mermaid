@@ -126,6 +126,40 @@ describe('state parser can parse...', () => {
     });
   });
 
+  describe('colons in transition descriptions (issue #7418)', () => {
+    it('should allow a colon inside transition text', () => {
+      const diagramText = `stateDiagram-v2
+        locked --> pending : recoverable error (ex: timeout)`;
+      stateDiagram.parser.parse(diagramText);
+
+      const relationships = stateDiagram.parser.yy.getRelations();
+      expect(relationships).toHaveLength(1);
+      expect(relationships[0].id1).toEqual('locked');
+      expect(relationships[0].id2).toEqual('pending');
+      expect(relationships[0].relationTitle).toEqual('recoverable error (ex: timeout)');
+    });
+
+    it('should allow multiple colons inside transition text', () => {
+      const diagramText = `stateDiagram-v2
+        A --> B : info: key: value`;
+      stateDiagram.parser.parse(diagramText);
+
+      const relationships = stateDiagram.parser.yy.getRelations();
+      expect(relationships).toHaveLength(1);
+      expect(relationships[0].relationTitle).toEqual('info: key: value');
+    });
+
+    it('should allow a colon inside state description text', () => {
+      const diagramText = `stateDiagram-v2
+        myState : status: active`;
+      stateDiagram.parser.parse(diagramText);
+
+      const states = stateDiagram.parser.yy.getStates();
+      expect(states.get('myState')).not.toBeUndefined();
+      expect(states.get('myState').descriptions.join(' ')).toEqual('status: active');
+    });
+  });
+
   describe('unsafe properties as state names', () => {
     it.each(['__proto__', 'constructor'])('should allow %s as a state name', function (prop) {
       stateDiagram.parser.parse(`

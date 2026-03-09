@@ -71,6 +71,15 @@ describe('Flowchart v2', () => {
       { htmlLabels: false, flowchart: { htmlLabels: false } }
     );
   });
+  it('5a: angle brackets should be work without html labels', () => {
+    imgSnapshotTest(
+      `flowchart TD
+    a["**Plain text**:\n 5 > 3 && 2 < 4"]
+    b["\`**Markdown**:<br> 5 > 3 && 2 < 4\`"]
+    `,
+      { htmlLabels: false }
+    );
+  });
   it('6: should render non-escaped with html labels', () => {
     imgSnapshotTest(
       `flowchart TD
