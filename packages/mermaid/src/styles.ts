@@ -26,7 +26,7 @@ const getStyles = (
 ) => {
   let diagramStyles = '';
   if (type in themes && themes[type]) {
-    diagramStyles = themes[type](options);
+    diagramStyles = themes[type](options, svgId);
   } else {
     log.warn(`No theme found for ${type}`);
   }
@@ -146,31 +146,9 @@ const getStyles = (
     stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
     filter: ${options.dropShadow ?? 'none'};
   }
-  ${type === 'mindmap' && options.useGradient ? genGradient(options.THEME_COLOR_LIMIT, svgId, options.mainBkg) : ''}
 
   ${userStyles}
 `;
-};
-
-const genGradient = (
-  THEME_COLOR_LIMIT: number | undefined,
-  svgId: string,
-  mainBkg: string | undefined
-) => {
-  let sections = '';
-  if (THEME_COLOR_LIMIT && mainBkg) {
-    for (let i = 0; i < THEME_COLOR_LIMIT; i++) {
-      sections += `
-      [data-look="neo"].mindmap-node.section-${i - 1} rect, [data-look="neo"].mindmap-node.section-${i - 1} path, [data-look="neo"].mindmap-node.section-${i - 1} circle, [data-look="neo"].mindmap-node.section-${i - 1} polygon {
-        stroke: ${'url(' + svgId + '-gradient)'};
-        fill: ${mainBkg}
-        }
-      .section-${i - 1} line {
-      stroke-width: 0;
-    }`;
-    }
-  }
-  return sections;
 };
 
 export const addStylesForDiagram = (type: string, diagramTheme?: DiagramStylesProvider): void => {

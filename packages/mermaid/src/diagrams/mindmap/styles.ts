@@ -69,8 +69,23 @@ const genSections: DiagramStylesProvider = (options) => {
   return sections;
 };
 
+const genGradient = (THEME_COLOR_LIMIT: number, svgId: string, mainBkg: string) => {
+  let sections = '';
+  for (let i = 0; i < THEME_COLOR_LIMIT; i++) {
+    sections += `
+    [data-look="neo"].mindmap-node.section-${i - 1} rect, [data-look="neo"].mindmap-node.section-${i - 1} path, [data-look="neo"].mindmap-node.section-${i - 1} circle, [data-look="neo"].mindmap-node.section-${i - 1} polygon {
+      stroke: url(${svgId}-gradient);
+      fill: ${mainBkg};
+    }
+    .section-${i - 1} line {
+      stroke-width: 0;
+    }`;
+  }
+  return sections;
+};
+
 // TODO: These options seem incorrect.
-const getStyles: DiagramStylesProvider = (options) => {
+const getStyles: DiagramStylesProvider = (options, svgId) => {
   const config = configApi.getConfig();
   const { theme } = config;
   return `
@@ -115,6 +130,7 @@ const getStyles: DiagramStylesProvider = (options) => {
   [data-look="neo"].mindmap-node.section-root .text-inner-tspan {
     fill:  ${theme?.includes('redux') ? options.nodeBorder : options['cScaleLabel' + (theme === 'neutral' ? 1 : 0)]};
   }
+  ${options.useGradient && svgId && options.mainBkg ? genGradient(options.THEME_COLOR_LIMIT, svgId, options.mainBkg) : ''}
 `;
 };
 export default getStyles;
