@@ -289,6 +289,8 @@ describe('XY Chart', () => {
       `
       ---
       config:
+        xyChart:  
+          showDataLabel: true
         themeVariables:
           xyChart:
             titleColor: "#ff0000"
