@@ -71,7 +71,18 @@ describe('Flowchart v2', () => {
       { htmlLabels: false, flowchart: { htmlLabels: false } }
     );
   });
-  it('5a: angle brackets should be work without html labels', () => {
+
+  it('5a: should render flowchart with edge labels centered when htmlLabels is false', () => {
+    imgSnapshotTest(
+      `flowchart TB
+        A[Start] -->|first| B[Middle]
+        B -->|second| C[End]
+      `,
+      { logLevel: 1, htmlLabels: false }
+    );
+  });
+
+  it('5b: angle brackets should be work without html labels', () => {
     imgSnapshotTest(
       `flowchart TD
     a["**Plain text**:\n 5 > 3 && 2 < 4"]
