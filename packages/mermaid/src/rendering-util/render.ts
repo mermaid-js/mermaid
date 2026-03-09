@@ -77,7 +77,7 @@ export const render = async (data4Layout: LayoutData, svg: SVG) => {
     .attr('dy', '4')
     .attr('stdDeviation', 0)
     .attr('flood-opacity', '0.06')
-    .attr('flood-color', `${theme === 'redux' || theme === 'redux-color' ? '#000000' : '#FFFFFF'}`);
+    .attr('flood-color', `${theme?.includes('dark') ? '#FFFFFF' : '#000000'}`);
 
   svg
     .append('defs')
@@ -90,7 +90,7 @@ export const render = async (data4Layout: LayoutData, svg: SVG) => {
     .attr('dy', '2')
     .attr('stdDeviation', 0)
     .attr('flood-opacity', '0.06')
-    .attr('flood-color', `${theme === 'redux' || theme === 'redux-color' ? '#000000' : '#FFFFFF'}`);
+    .attr('flood-color', `${theme?.includes('dark') ? '#FFFFFF' : '#000000'}`);
 
   if (useGradient) {
     const gradient = svg

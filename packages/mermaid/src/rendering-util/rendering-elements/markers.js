@@ -261,7 +261,7 @@ const circle = (elem, type, id) => {
     .attr('id', id + '_' + type + '-circleEnd-margin')
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
-    .attr('refY', 5) // What!!!??
+    .attr('refY', 5)
     .attr('refX', 12.25)
     .attr('markerUnits', 'userSpaceOnUse')
     .attr('markerWidth', 14)
@@ -539,7 +539,7 @@ const only_one_neo = (elem, type, id) => {
 const zero_or_one_neo = (elem, type, id) => {
   const config = configApi.getConfig();
   const { themeVariables } = config;
-  const { strokeWidth } = themeVariables;
+  const { strokeWidth, mainBkg } = themeVariables;
   const startMarker = elem
     .append('defs')
     .append('marker')
@@ -553,7 +553,7 @@ const zero_or_one_neo = (elem, type, id) => {
     .attr('markerUnits', 'userSpaceOnUse');
   startMarker
     .append('circle')
-    .attr('fill', 'white') // Fill white for now?
+    .attr('fill', mainBkg ?? 'white')
     .attr('cx', 21)
     .attr('cy', 9)
     .attr('stroke-width', `${strokeWidth}`)
@@ -573,7 +573,7 @@ const zero_or_one_neo = (elem, type, id) => {
     .attr('orient', 'auto');
   endMarker
     .append('circle')
-    .attr('fill', 'white') // Fill white for now?
+    .attr('fill', mainBkg ?? 'white')
     .attr('cx', 9)
     .attr('cy', 9)
     .attr('stroke-width', `${strokeWidth}`)
@@ -619,7 +619,7 @@ const one_or_more_neo = (elem, type, id) => {
 const zero_or_more_neo = (elem, type, id) => {
   const config = configApi.getConfig();
   const { themeVariables } = config;
-  const { strokeWidth } = themeVariables;
+  const { strokeWidth, mainBkg } = themeVariables;
   const startMarker = elem
     .append('defs')
     .append('marker')
@@ -633,7 +633,7 @@ const zero_or_more_neo = (elem, type, id) => {
     .attr('orient', 'auto');
   startMarker
     .append('circle')
-    .attr('fill', 'white')
+    .attr('fill', mainBkg ?? 'white')
     .attr('cx', 45.5)
     .attr('cy', 18)
     .attr('r', 6)
@@ -656,7 +656,7 @@ const zero_or_more_neo = (elem, type, id) => {
     .attr('markerUnits', 'userSpaceOnUse');
   endMarker
     .append('circle')
-    .attr('fill', 'white')
+    .attr('fill', mainBkg ?? 'white')
     .attr('cx', 11)
     .attr('cy', 18)
     .attr('r', 6)

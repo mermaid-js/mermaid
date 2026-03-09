@@ -63,10 +63,8 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     }
     const shapeSvg = await drawRect(parent, node, options);
     if (theme?.includes('color')) {
-      const nodes = document.querySelectorAll('g.node.default');
-      // eslint-disable-next-line unicorn/prefer-spread
-      const nodeIndex = Array.from(nodes).findIndex((n) => n.id === node.id);
-      shapeSvg.attr('data-color-id', `color-${nodeIndex % borderColorArray.length}`);
+      const colorIndex = entityNode.colorIndex ?? 0;
+      shapeSvg.attr('data-color-id', `color-${colorIndex % borderColorArray.length}`);
     }
 
     // drawRect doesn't center non-htmlLabels correctly as of now, so translate label
@@ -238,10 +236,8 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     .attr('transform', 'translate(' + -nameBBox.width / 2 + ', ' + (y + TEXT_PADDING / 2) + ')');
 
   if (theme?.includes('color')) {
-    const nodes = document.querySelectorAll('g.node.default');
-    // eslint-disable-next-line unicorn/prefer-spread
-    const nodeIndex = Array.from(nodes).findIndex((n) => n.id === node.id);
-    shapeSvg.attr('data-color-id', `color-${nodeIndex % borderColorArray.length}`);
+    const colorIndex = entityNode.colorIndex ?? 0;
+    shapeSvg.attr('data-color-id', `color-${colorIndex % borderColorArray.length}`);
   }
   // Draw shape
   const roughRect = rc.rectangle(x, y, w, h, options);
@@ -414,26 +410,12 @@ function lineToPolygon(
       { x: x2 + thickness / 2, y: y2 },
       { x: x2 - thickness / 2, y: y2 },
     ];
-  } else if (y1 === y2) {
-    // Horizontal line
-    return [
-      { x: x1, y: y1 - thickness / 2 },
-      { x: x1, y: y1 + thickness / 2 },
-      { x: x2, y: y2 + thickness / 2 },
-      { x: x2, y: y2 - thickness / 2 },
-    ];
-  } else {
-    // Diagonal or angled line (general case)
-    const dx = x2 - x1;
-    const dy = y2 - y1;
-    const len = Math.sqrt(dx * dx + dy * dy);
-    const offsetX = (dy / len) * (thickness / 2);
-    const offsetY = -(dx / len) * (thickness / 2);
-    return [
-      { x: x1 - offsetX, y: y1 - offsetY },
-      { x: x1 + offsetX, y: y1 + offsetY },
-      { x: x2 + offsetX, y: y2 + offsetY },
-      { x: x2 - offsetX, y: y2 - offsetY },
-    ];
   }
+  // Horizontal line (ER dividers are always axis-aligned)
+  return [
+    { x: x1, y: y1 - thickness / 2 },
+    { x: x1, y: y1 + thickness / 2 },
+    { x: x2, y: y2 + thickness / 2 },
+    { x: x2, y: y2 - thickness / 2 },
+  ];
 }
