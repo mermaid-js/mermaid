@@ -1,11 +1,9 @@
 // @ts-expect-error Incorrect khroma types
 import { darken, lighten, isDark } from 'khroma';
 import type { DiagramStylesProvider } from '../../diagram-api/types.js';
-import * as configApi from '../../config.js';
 
 const genSections: DiagramStylesProvider = (options) => {
-  const config = configApi.getConfig();
-  const { theme, look } = config;
+  const { theme, look } = options;
 
   let sections = '';
 
@@ -86,8 +84,7 @@ const genGradient = (THEME_COLOR_LIMIT: number, svgId: string, mainBkg: string) 
 
 // TODO: These options seem incorrect.
 const getStyles: DiagramStylesProvider = (options, svgId) => {
-  const config = configApi.getConfig();
-  const { theme } = config;
+  const { theme } = options;
   return `
   .edge {
     stroke-width: 3;

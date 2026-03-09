@@ -48,7 +48,6 @@ looks.forEach((look) => {
         });
 
         imgSnapshotTest(mindmapCode, { look, theme });
-        console.log('mindmapCode', mindmapCode);
       });
     });
   });
