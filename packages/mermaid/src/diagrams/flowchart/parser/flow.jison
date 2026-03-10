@@ -116,6 +116,7 @@ that id.
 "flowchart-elk"          {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "graph"                  {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "flowchart"              {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
+"agentflow"              {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "subgraph"               return 'subgraph';
 "end"\b\s*               return 'end';
 
