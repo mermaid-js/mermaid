@@ -238,7 +238,54 @@ export const drawText = function (elem, textData) {
     }
 
     const text = line || ZERO_WIDTH_SPACE;
-    if (textData.tspan) {
+    const linkRegex = /\[([^\]]+)]\(([^)]+)\)/g;
+    const hasLinks = linkRegex.test(text);
+
+    if (hasLinks) {
+      // Render text with inline markdown links as SVG <a> elements
+      linkRegex.lastIndex = 0;
+      let lastIndex = 0;
+      let match;
+      while ((match = linkRegex.exec(text)) !== null) {
+        // Add text before the link
+        if (match.index > lastIndex) {
+          const beforeText = text.substring(lastIndex, match.index);
+          if (textData.tspan) {
+            const span = textElem.append('tspan');
+            span.attr('x', textData.x);
+            if (textData.fill !== undefined) {
+              span.attr('fill', textData.fill);
+            }
+            span.text(beforeText);
+          } else {
+            textElem.append('tspan').text(beforeText);
+          }
+        }
+        // Add the link
+        const linkText = match[1];
+        const linkHref = sanitizeUrl(match[2]);
+        const linkEl = textElem.append('a').attr('xlink:href', linkHref).attr('target', '_blank');
+        linkEl
+          .append('tspan')
+          .attr('fill', '#0d47a1')
+          .attr('text-decoration', 'underline')
+          .text(linkText);
+        lastIndex = match.index + match[0].length;
+      }
+      // Add remaining text after last link
+      if (lastIndex < text.length) {
+        if (textData.tspan) {
+          const span = textElem.append('tspan');
+          span.attr('x', textData.x);
+          if (textData.fill !== undefined) {
+            span.attr('fill', textData.fill);
+          }
+          span.text(text.substring(lastIndex));
+        } else {
+          textElem.append('tspan').text(text.substring(lastIndex));
+        }
+      }
+    } else if (textData.tspan) {
       const span = textElem.append('tspan');
       span.attr('x', textData.x);
       if (textData.fill !== undefined) {

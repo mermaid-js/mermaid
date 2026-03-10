@@ -342,3 +342,98 @@ test('nonMarkdownToLines - splits text by newlines, preserves SVG tags, does not
     ],
   ]);
 });
+
+test('markdownToLines - Link formatting', () => {
+  const input = `Click [here](https://example.com/page) for details`;
+  const output = markdownToLines(input);
+  expect(output).toEqual([
+    [
+      { content: 'Click', type: 'normal' },
+      { content: 'here', type: 'link', href: 'https://example.com/page' },
+      { content: 'for', type: 'normal' },
+      { content: 'details', type: 'normal' },
+    ],
+  ]);
+});
+
+test('markdownToLines - Link with multi-word text', () => {
+  const input = `See [the docs here](https://example.com/docs) now`;
+  const output = markdownToLines(input);
+  expect(output).toEqual([
+    [
+      { content: 'See', type: 'normal' },
+      { content: 'the', type: 'link', href: 'https://example.com/docs' },
+      { content: 'docs', type: 'link', href: 'https://example.com/docs' },
+      { content: 'here', type: 'link', href: 'https://example.com/docs' },
+      { content: 'now', type: 'normal' },
+    ],
+  ]);
+});
+
+test('markdownToLines - Multiple links', () => {
+  const input = `[A](https://a.com/x) and [B](https://b.com/y)`;
+  const output = markdownToLines(input);
+  expect(output).toEqual([
+    [
+      { content: 'A', type: 'link', href: 'https://a.com/x' },
+      { content: 'and', type: 'normal' },
+      { content: 'B', type: 'link', href: 'https://b.com/y' },
+    ],
+  ]);
+});
+
+test('markdownToLines - Link with bold and italic', () => {
+  const input = `**Bold** and [link](https://example.com/page) and *italic*`;
+  const output = markdownToLines(input);
+  expect(output).toEqual([
+    [
+      { content: 'Bold', type: 'strong' },
+      { content: 'and', type: 'normal' },
+      { content: 'link', type: 'link', href: 'https://example.com/page' },
+      { content: 'and', type: 'normal' },
+      { content: 'italic', type: 'em' },
+    ],
+  ]);
+});
+
+test('markdownToLines - Malicious javascript: URL is sanitized', () => {
+  const input = `[evil](javascript:alert(1))`;
+  const output = markdownToLines(input);
+  expect(output).toEqual([[{ content: 'evil', type: 'link', href: 'about:blank' }]]);
+});
+
+test('markdownToHTML - Link formatting', () => {
+  const input = `Click [here](https://example.com/page) for details`;
+  const output = markdownToHTML(input);
+  expect(output).toEqual(
+    '<p>Click <a href="https://example.com/page" target="_blank">here</a> for details</p>'
+  );
+});
+
+test('markdownToHTML - Link with bold inside', () => {
+  const input = `See [**bold link**](https://example.com/page)`;
+  const output = markdownToHTML(input);
+  expect(output).toEqual(
+    '<p>See <a href="https://example.com/page" target="_blank"><strong>bold link</strong></a></p>'
+  );
+});
+
+test('markdownToHTML - Multiple links', () => {
+  const input = `[A](https://a.com/x) and [B](https://b.com/y)`;
+  const output = markdownToHTML(input);
+  expect(output).toEqual(
+    '<p><a href="https://a.com/x" target="_blank">A</a> and <a href="https://b.com/y" target="_blank">B</a></p>'
+  );
+});
+
+test('markdownToHTML - Malicious javascript: URL is sanitized', () => {
+  const input = `[evil](javascript:alert(1))`;
+  const output = markdownToHTML(input);
+  expect(output).toEqual('<p><a href="about:blank" target="_blank">evil</a></p>');
+});
+
+test('markdownToHTML - Malicious data: URL is sanitized', () => {
+  const input = `[evil](data:text/html,<script>alert(1)</script>)`;
+  const output = markdownToHTML(input);
+  expect(output).toEqual('<p><a href="about:blank" target="_blank">evil</a></p>');
+});

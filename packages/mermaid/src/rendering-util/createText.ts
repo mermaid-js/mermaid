@@ -228,16 +228,26 @@ function updateTextContentAndStyles(
   tspan.text('');
 
   wrappedLine.forEach((word, index) => {
-    const innerTspan = tspan
-      .append('tspan')
-      .attr('font-style', word.type === 'em' ? 'italic' : 'normal')
-      .attr('class', 'text-inner-tspan')
-      .attr('font-weight', word.type === 'strong' ? 'bold' : 'normal');
-    if (index === 0) {
-      innerTspan.text(decodeHTMLEntities(word.content));
+    const textContent =
+      index === 0 ? decodeHTMLEntities(word.content) : ' ' + decodeHTMLEntities(word.content);
+
+    if (word.type === 'link' && word.href) {
+      const linkEl = tspan.append('a').attr('xlink:href', word.href).attr('target', '_blank');
+      linkEl
+        .append('tspan')
+        .attr('class', 'text-inner-tspan')
+        .attr('font-style', 'normal')
+        .attr('font-weight', 'normal')
+        .attr('fill', '#0d47a1')
+        .attr('text-decoration', 'underline')
+        .text(textContent);
     } else {
-      // TODO: check what joiner to use.
-      innerTspan.text(' ' + decodeHTMLEntities(word.content));
+      const innerTspan = tspan
+        .append('tspan')
+        .attr('font-style', word.type === 'em' ? 'italic' : 'normal')
+        .attr('class', 'text-inner-tspan')
+        .attr('font-weight', word.type === 'strong' ? 'bold' : 'normal');
+      innerTspan.text(textContent);
     }
   });
 }
