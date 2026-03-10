@@ -31,7 +31,7 @@ export function stateStart<T extends SVGGraphicsElement>(
   }
 
   if (!node.height) {
-    node.width = 14;
+    node.height = 14;
   }
 
   const shapeSvg = parent
