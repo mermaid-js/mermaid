@@ -1,28 +1,30 @@
 import { darken, lighten, isDark } from 'khroma';
-import * as configApi from '../../config.js';
 
 const genReduxSections = (options) => {
-  const config = configApi.getConfig();
-  const { theme, themeVariables } = config;
-  const { borderColorArray } = themeVariables;
-  const isDark = theme?.includes('dark');
-  const isColor = theme?.includes('color');
+  const isDarkTheme = options.darkMode === true;
+  const isColorTheme =
+    Array.isArray(options.borderColorArray) && options.borderColorArray.length > 0;
+  // options.svgId is the CSS selector (e.g. '#mermaid-0'), strip the leading '#' for use in url(#...)
+  const rawSvgId = options.svgId?.replace(/^#/, '') ?? '';
+  const scopedDropShadow = rawSvgId
+    ? `url(#${rawSvgId}-drop-shadow)`
+    : (options.dropShadow ?? 'none');
 
   let sections = '';
 
   for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
     const sw = `${17 - 3 * i}`;
-    const color = isColor ? borderColorArray[i] : options.mainBkg;
-    const stroke = isColor ? borderColorArray[i] : options.nodeBorder;
+    const color = isColorTheme ? options.borderColorArray[i] : options.mainBkg;
+    const stroke = isColorTheme ? options.borderColorArray[i] : options.nodeBorder;
 
     sections += `
     .section-${i - 1} rect,
     .section-${i - 1} path,
     .section-${i - 1} circle {
-      fill: ${isDark && isColor ? options.mainBkg : color};
+      fill: ${isDarkTheme && isColorTheme ? options.mainBkg : color};
       stroke: ${stroke};
       stroke-width: ${options.strokeWidth};
-      filter: ${options.dropShadow};
+      filter: ${scopedDropShadow};
     }
 
     .section-${i - 1} text {
@@ -56,11 +58,11 @@ const genReduxSections = (options) => {
     .disabled,
     .disabled circle,
     .disabled text {
-      fill: lightgray;
+      fill: ${options.tertiaryColor ?? 'lightgray'};
     }
 
     .disabled text {
-      fill: #efefef;
+      fill: ${options.clusterBorder ?? '#efefef'};
     }
     `;
   }
@@ -111,10 +113,10 @@ const genSections = (options) => {
     }
 
     .disabled, .disabled circle, .disabled text {
-      fill: lightgray;
+      fill: ${options.tertiaryColor ?? 'lightgray'};
     }
     .disabled text {
-      fill: #efefef;
+      fill: ${options.clusterBorder ?? '#efefef'};
     }
     `;
   }
@@ -122,13 +124,34 @@ const genSections = (options) => {
 };
 
 const getStyles = (options) => {
-  const config = configApi.getConfig();
-  const { theme } = config;
+  const isReduxTheme = options.dropShadow?.startsWith('url(#');
+
+  // options.svgId is the CSS selector (e.g. '#mermaid-0'), strip the leading '#' for use in url(#...)
+  const rawSvgId = options.svgId?.replace(/^#/, '') ?? '';
+  let gradientSections = '';
+  if (options.useGradient && rawSvgId && options.THEME_COLOR_LIMIT) {
+    for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
+      gradientSections += `
+      .section-${i - 1} rect,
+      .section-${i - 1} path,
+      .section-${i - 1} circle {
+        fill: ${options.mainBkg};
+        stroke: url(#${rawSvgId}-gradient);
+        stroke-width: 2;
+      }
+      .section-${i - 1} line {
+        stroke: url(#${rawSvgId}-gradient);
+        stroke-width: 2;
+      }`;
+    }
+  }
+
   return `
   .edge {
     stroke-width: 3;
   }
-  ${theme?.includes('redux') ? genReduxSections(options) : genSections(options)}
+  ${isReduxTheme ? genReduxSections(options) : genSections(options)}
+  ${gradientSections}
   .section-root rect, .section-root path, .section-root circle  {
     fill: ${options.git0};
   }

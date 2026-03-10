@@ -1,5 +1,4 @@
 import { arc as d3arc, select } from 'd3';
-const MAX_SECTIONS = 12;
 
 export const drawRect = function (elem, rectData) {
   const rectElem = elem.append('rect');
@@ -493,10 +492,11 @@ function wrap(text, width) {
   });
 }
 
-export const drawNode = function (elem, node, fullSection, conf, currentDrawing) {
+export const drawNode = function (elem, node, fullSection, conf, isEvent = false) {
   const { theme, look } = conf;
   const isReduxTheme = theme?.includes('redux');
-  const section = (fullSection % MAX_SECTIONS) - 1;
+  const maxSections = conf?.themeVariables?.THEME_COLOR_LIMIT ?? 12;
+  const section = (fullSection % maxSections) - 1;
   const nodeElem = elem.append('g');
   node.section = section;
   nodeElem.attr(
@@ -526,7 +526,7 @@ export const drawNode = function (elem, node, fullSection, conf, currentDrawing)
   if (isReduxTheme) {
     textElem.attr(
       'transform',
-      `translate(${node.width / 2}, ${currentDrawing === 'drawEvents' ? node.padding / 2 + 3 : node.padding})`
+      `translate(${node.width / 2}, ${isEvent ? node.padding / 2 + 3 : node.padding})`
     );
   }
 
@@ -537,18 +537,27 @@ export const drawNode = function (elem, node, fullSection, conf, currentDrawing)
     nodeElem.attr('data-look', `neo`);
     if (isReduxTheme) {
       const isDark = theme.includes('dark');
-      nodeElem
-        .append('defs')
-        .append('filter')
-        .attr('id', 'drop-shadow')
-        .attr('height', '130%')
-        .attr('width', '130%')
-        .append('feDropShadow')
-        .attr('dx', '4')
-        .attr('dy', '4')
-        .attr('stdDeviation', 0)
-        .attr('flood-opacity', isDark ? '0.2' : '0.06')
-        .attr('flood-color', isDark ? '#FFFFFF' : '#000000');
+      const rootSvgNode = elem.node()?.ownerSVGElement ?? elem.node();
+      const rootSvg = select(rootSvgNode);
+      const svgId = rootSvg.attr('id') ?? '';
+      const dropShadowId = svgId ? `${svgId}-drop-shadow` : 'drop-shadow';
+
+      // Only add the filter once per SVG to avoid duplicate definitions
+      if (rootSvg.select(`#${dropShadowId}`).empty()) {
+        const existingDefs = rootSvg.select('defs');
+        const defsEl = existingDefs.empty() ? rootSvg.append('defs') : existingDefs;
+        defsEl
+          .append('filter')
+          .attr('id', dropShadowId)
+          .attr('height', '130%')
+          .attr('width', '130%')
+          .append('feDropShadow')
+          .attr('dx', '4')
+          .attr('dy', '4')
+          .attr('stdDeviation', 0)
+          .attr('flood-opacity', isDark ? '0.2' : '0.06')
+          .attr('flood-color', isDark ? '#FFFFFF' : '#000000');
+      }
     }
   }
 
@@ -583,7 +592,7 @@ const defaultBkg = function (elem, node, section, config) {
       'd',
       `M0 ${node.height - rd} v${-node.height + 2 * rd} q0,-${r},${r},-${r} h${
         node.width - 2 * rd
-      } q${r},0 ,${r},${r} v${node.height - rd} H0 Z`
+      } q${r},0,${r},${r} v${node.height - rd} H0 Z`
     );
   if (!theme?.includes('redux')) {
     elem

@@ -1,7 +1,6 @@
 import type { FlowChartStyleOptions } from './diagrams/flowchart/styles.js';
 import { log } from './logger.js';
 import type { DiagramStylesProvider } from './diagram-api/types.js';
-import * as configApi from './config.js';
 
 const themes: Record<string, DiagramStylesProvider> = {};
 
@@ -21,15 +20,12 @@ const getStyles = (
     compositeTitleBackground?: string;
     THEME_COLOR_LIMIT?: number;
     nodeBorder?: string;
-    mainBkg?: string;
   } & FlowChartStyleOptions,
   svgId: string
 ) => {
-  const config = configApi.getConfig();
-  const { theme, look } = config;
   let diagramStyles = '';
   if (type in themes && themes[type]) {
-    diagramStyles = themes[type](options);
+    diagramStyles = themes[type]({ ...options, svgId });
   } else {
     log.warn(`No theme found for ${type}`);
   }
@@ -149,36 +145,9 @@ const getStyles = (
     stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
     filter: ${options.dropShadow ?? 'none'};
   }
-  ${type === 'timeline' && theme?.includes('neo') && look === 'neo' ? genTimelineGradient(options.useGradient, options.THEME_COLOR_LIMIT, svgId, options.mainBkg) : ''}
 
   ${userStyles}
 `;
-};
-
-const genTimelineGradient = (
-  useGradient: boolean | undefined,
-  THEME_COLOR_LIMIT: number | undefined,
-  svgId: string,
-  mainBkg: string | undefined
-) => {
-  let sections = '';
-  if (useGradient && THEME_COLOR_LIMIT && mainBkg) {
-    for (let i = 0; i < THEME_COLOR_LIMIT; i++) {
-      sections += `
-     .section-${i - 1} rect,
-    .section-${i - 1} path,
-    .section-${i - 1} circle {
-      fill: ${mainBkg};
-      stroke: ${'url(' + svgId + '-gradient)'};
-       stroke-width: 2;
-    }
-    .section-${i - 1} line {
-     stroke: ${'url(' + svgId + '-gradient)'};
-      stroke-width: 2;
-    }`;
-    }
-  }
-  return sections;
 };
 
 export const addStylesForDiagram = (type: string, diagramTheme?: DiagramStylesProvider): void => {

@@ -207,7 +207,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
     svg
       .append('text')
       .text(title)
-      .attr('x', box.x * 2 + LEFT_MARGIN)
+      .attr('x', look === 'neo' ? box.x * 2 + LEFT_MARGIN : box.width / 2 - LEFT_MARGIN)
       .attr('font-size', '4ex')
       .attr('font-weight', 'bold')
       .attr('y', 20);
@@ -359,7 +359,7 @@ export const drawEvents = function (
     log.debug('eventNode', eventNode);
     // create event wrapper
     const eventWrapper = diagram.append('g').attr('class', 'eventWrapper');
-    const node = svgDraw.drawNode(eventWrapper, eventNode, sectionColor, conf, 'drawEvents');
+    const node = svgDraw.drawNode(eventWrapper, eventNode, sectionColor, conf, true);
     const eventHeight = node.height;
     maxEventHeight = maxEventHeight + eventHeight;
     eventWrapper.attr('transform', `translate(${masterX}, ${masterY})`);
