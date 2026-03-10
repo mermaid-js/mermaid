@@ -793,12 +793,19 @@ const addActorRenderingData = function (
   bounds.bumpVerticalPos(maxHeight);
 };
 
-export const drawActors = async function (diagram, actors, actorKeys, isFooter, diagObj) {
+export const drawActors = async function (
+  diagram,
+  actors,
+  actorKeys,
+  isFooter,
+  diagObj,
+  actorIndexMap
+) {
   if (!isFooter) {
     for (const actorKey of actorKeys) {
       const actor = actors.get(actorKey);
       // Draw the box with the attached line
-      await svgDraw.drawActor(diagram, actor, conf, false, diagObj);
+      await svgDraw.drawActor(diagram, actor, conf, false, diagObj, actorIndexMap);
     }
   } else {
     let maxHeight = 0;
@@ -808,7 +815,7 @@ export const drawActors = async function (diagram, actors, actorKeys, isFooter, 
       if (!actor.stopy) {
         actor.stopy = bounds.getVerticalPos();
       }
-      const height = await svgDraw.drawActor(diagram, actor, conf, true, diagObj);
+      const height = await svgDraw.drawActor(diagram, actor, conf, true, diagObj, actorIndexMap);
       maxHeight = common.getMax(maxHeight, height);
     }
     bounds.bumpVerticalPos(maxHeight + conf.boxMargin);
@@ -1060,6 +1067,10 @@ export const draw = async function (_text: string, id: string, _version: string,
     actorKeys = actorKeys.filter((actorKey) => newActors.has(actorKey));
   }
 
+  const actorIndexMap = new Map(
+    actorKeys.map((actorKey, index) => [actors.get(actorKey)?.name ?? actorKey, index])
+  );
+
   addActorRenderingData(diagram, actors, createdActors, actorKeys, 0, messages, false);
   const loopWidths = await calculateLoopBounds(messages, actors, maxMessageWidthPerActor, diagObj);
 
@@ -1093,7 +1104,8 @@ export const draw = async function (_text: string, id: string, _version: string,
       verticalPos,
       conf,
       actorActivations(msg.from).length,
-      diagObj
+      diagObj,
+      actorIndexMap
     );
 
     bounds.insert(activationData.startx, verticalPos - 10, activationData.stopx, verticalPos);
@@ -1334,13 +1346,13 @@ export const draw = async function (_text: string, id: string, _version: string,
 
   log.debug('createdActors', createdActors);
   log.debug('destroyedActors', destroyedActors);
-  await drawActors(diagram, actors, actorKeys, false, diagObj);
+  await drawActors(diagram, actors, actorKeys, false, diagObj, actorIndexMap);
 
   for (const e of messagesToDraw) {
     await drawMessage(diagram, e.messageModel, e.lineStartY, diagObj, e.msg);
   }
   if (conf.mirrorActors) {
-    await drawActors(diagram, actors, actorKeys, true, diagObj);
+    await drawActors(diagram, actors, actorKeys, true, diagObj, actorIndexMap);
   }
   backgrounds.forEach((e) => svgDraw.drawBackgroundRect(diagram, e));
   fixLifeLineHeights(diagram, actors, actorKeys, conf);
