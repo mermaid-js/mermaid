@@ -178,29 +178,20 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
       .map((node) => (node as Element)?.getBoundingClientRect().width ?? 0)
   );
 
-  const legendWidth = pieWidth + MARGIN + LEGEND_RECT_SIZE + LEGEND_SPACING + longestTextWidth;
+  const chartAndLegendWidth =
+    pieWidth + MARGIN + LEGEND_RECT_SIZE + LEGEND_SPACING + longestTextWidth;
 
   // Measure title width to ensure it's not clipped
   const titleWidth = (titleText.node() as Element)?.getBoundingClientRect().width ?? 0;
 
-  // The title is centered at x = pieWidth / 2 in SVG coords.
-  // If the title is wider than the chart + legend area, we need to expand the viewBox.
-  // Calculate how far left the title extends from the SVG origin (x=0).
-  const titleLeftOverflow = Math.max(0, titleWidth / 2 - pieWidth / 2);
-  const titleRightOverflow = Math.max(0, titleWidth / 2 - (legendWidth - pieWidth / 2));
+  // Title is centered at pieWidth/2 in SVG coords — expand viewBox to contain it
+  const titleLeft = pieWidth / 2 - titleWidth / 2;
+  const titleRight = pieWidth / 2 + titleWidth / 2;
 
-  const totalWidth = legendWidth + titleLeftOverflow + titleRightOverflow;
-  const viewBoxX = -titleLeftOverflow;
+  const viewBoxX = Math.min(0, titleLeft);
+  const viewBoxRight = Math.max(chartAndLegendWidth, titleRight);
+  const totalWidth = viewBoxRight - viewBoxX;
 
-  // If title overflows left, shift the group right to compensate
-  if (titleLeftOverflow > 0) {
-    group.attr(
-      'transform',
-      'translate(' + (pieWidth / 2 + titleLeftOverflow) + ',' + height / 2 + ')'
-    );
-  }
-
-  // Set viewBox
   svg.attr('viewBox', `${viewBoxX} 0 ${totalWidth} ${height}`);
   configureSvgSize(svg, height, totalWidth, pieConfig.useMaxWidth);
 };
