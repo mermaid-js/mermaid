@@ -8,9 +8,9 @@ import type { D3Selection } from '../../../types.js';
 export function stateStart<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,
-  { config: { themeVariables, theme } }: ShapeRenderOptions
+  { config: { themeVariables } }: ShapeRenderOptions
 ) {
-  const { lineColor } = themeVariables;
+  const { lineColor, nodeShadow } = themeVariables;
 
   // If incoming height & width are present, subtract the padding from them
   // as labelHelper does not take padding into account
@@ -62,7 +62,7 @@ export function stateStart<T extends SVGGraphicsElement>(
       .attr('height', node.height ?? 14);
   }
 
-  if (node.width < 25 && theme?.includes('redux') && node.look !== 'handDrawn') {
+  if (node.width < 25 && nodeShadow && node.look !== 'handDrawn') {
     circle.attr('style', 'filter:url(#drop-shadow-small)');
   }
 

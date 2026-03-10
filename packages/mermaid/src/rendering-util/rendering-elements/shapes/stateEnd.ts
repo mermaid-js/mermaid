@@ -8,12 +8,12 @@ import type { D3Selection } from '../../../types.js';
 export function stateEnd<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,
-  { config: { themeVariables, theme } }: ShapeRenderOptions
+  { config: { themeVariables } }: ShapeRenderOptions
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { cssStyles } = node;
-  const { lineColor, stateBorder, nodeBorder } = themeVariables;
+  const { lineColor, stateBorder, nodeBorder, nodeShadow } = themeVariables;
 
   // If incoming height & width are present, subtract the padding from them
   // as labelHelper does not take padding into account
@@ -80,7 +80,7 @@ export function stateEnd<T extends SVGGraphicsElement>(
     circle.selectAll('path').attr('style', nodeStyles);
   }
 
-  if (node.width < 25 && theme?.includes('redux') && node.look !== 'handDrawn') {
+  if (node.width < 25 && nodeShadow && node.look !== 'handDrawn') {
     circle.attr('style', 'filter:url(#drop-shadow-small)');
   }
 

@@ -37,6 +37,7 @@ class Theme {
     this.gradientStart = '#0042eb';
     this.gradientStop = '#eb0042';
     this.dropShadow = 'url(#drop-shadow)';
+    this.nodeShadow = true;
     this.tertiaryColor = '#ffffff';
 
     /* Architecture Diagram variables */
