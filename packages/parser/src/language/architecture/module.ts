@@ -12,7 +12,10 @@ import {
   inject,
 } from 'langium';
 
-import { MermaidGeneratedSharedModule, ArchitectureGeneratedModule } from '../generated/module.js';
+import {
+  MermaidGeneratedSharedModule,
+  ArchitectureGrammarGeneratedModule as ArchitectureGeneratedModule,
+} from '../generated/module.js';
 import { ArchitectureTokenBuilder } from './tokenBuilder.js';
 import { ArchitectureValueConverter } from './valueConverter.js';
 

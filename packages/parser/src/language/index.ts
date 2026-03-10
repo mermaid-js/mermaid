@@ -27,14 +27,14 @@ export {
 } from './generated/ast.js';
 
 export {
-  InfoGeneratedModule,
+  InfoGrammarGeneratedModule as InfoGeneratedModule,
   MermaidGeneratedSharedModule,
-  PacketGeneratedModule,
-  PieGeneratedModule,
-  ArchitectureGeneratedModule,
-  GitGraphGeneratedModule,
-  RadarGeneratedModule,
-  TreemapGeneratedModule,
+  PacketGrammarGeneratedModule as PacketGeneratedModule,
+  PieGrammarGeneratedModule as PieGeneratedModule,
+  ArchitectureGrammarGeneratedModule as ArchitectureGeneratedModule,
+  GitGraphGrammarGeneratedModule as GitGraphGeneratedModule,
+  RadarGrammarGeneratedModule as RadarGeneratedModule,
+  TreemapGrammarGeneratedModule as TreemapGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';

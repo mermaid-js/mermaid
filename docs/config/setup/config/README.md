@@ -17,7 +17,9 @@
 ## Functions
 
 - [addDirective](functions/addDirective.md)
+- [evaluate](functions/evaluate.md)
 - [getConfig](functions/getConfig.md)
+- [getEffectiveHtmlLabels](functions/getEffectiveHtmlLabels.md)
 - [getSiteConfig](functions/getSiteConfig.md)
 - [getUserDefinedConfig](functions/getUserDefinedConfig.md)
 - [reset](functions/reset.md)

@@ -409,7 +409,45 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL32: hexagon shape block should span correctly', () => {
+  it('BL32: nested blocks spanning columns should not overlap (issue #5706)', () => {
+    imgSnapshotTest(
+      `block-beta
+    columns 4
+
+    block:0_0:4
+        columns 6
+            Example:2
+        space:2
+        ExampleOther:2
+        ExampleOther:1
+        block:0_0_0:6
+            a b c d e f g h
+        end
+    end
+`,
+      {}
+    );
+  });
+
+  it('BL33: rows with different heights should not overlap', () => {
+    imgSnapshotTest(
+      `block
+  columns 3
+  a:3
+  block:group1:2
+    columns 2
+    h i j k
+  end
+  g
+  block:group2:3
+    l m n o p q r
+  end
+`,
+      {}
+    );
+  });
+
+  it('BL34: hexagon shape block should span correctly', () => {
     imgSnapshotTest(
       `block-beta
 columns 3

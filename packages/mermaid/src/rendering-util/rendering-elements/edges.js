@@ -1,7 +1,8 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { evaluate } from '../../diagrams/common/common.js';
+import { getEffectiveHtmlLabels } from '../../config.js';
 import { log } from '../../logger.js';
 import { createText } from '../createText.js';
+import { computeLabelTransform } from '../labelTransform.js';
 import utils from '../../utils.js';
 import {
   getLineFunctionsWithOffset,
@@ -31,6 +32,17 @@ import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
 import { isLabelStyle, styles2String } from './shapes/handDrawnShapeStyles.js';
 
+/**
+ * Resolve the effective curve type for an edge.
+ * If edge.curve is a string (e.g. 'rounded', 'linear'), use it directly.
+ * Otherwise (undefined, null, or a D3 CurveFactory function), fall back to config.
+ * @param {*} edgeCurve - The edge.curve value (string, function, or undefined/null)
+ * @returns {string|undefined} - The resolved curve type string
+ */
+export const resolveEdgeCurveType = (edgeCurve) => {
+  return typeof edgeCurve === 'string' ? edgeCurve : getConfig()?.flowchart?.curve;
+};
+
 export const edgeLabels = new Map();
 export const terminalLabels = new Map();
 
@@ -40,40 +52,65 @@ export const clear = () => {
 };
 
 export const getLabelStyles = (styleArray) => {
-  let styles = styleArray ? styleArray.reduce((acc, style) => acc + ';' + style, '') : '';
-  return styles;
+  if (!styleArray) {
+    return '';
+  }
+  if (typeof styleArray === 'string') {
+    return styleArray;
+  }
+  return styleArray.reduce((acc, style) => acc + ';' + style, '');
 };
 
 export const insertEdgeLabel = async (elem, edge) => {
-  let useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
-
+  const config = getConfig();
+  let useHtmlLabels = getEffectiveHtmlLabels(config);
   const { labelStyles } = styles2String(edge);
   edge.labelStyle = labelStyles;
-  const labelElement = await createText(elem, edge.label, {
-    style: edge.labelStyle,
-    useHtmlLabels,
-    addSvgBackground: true,
-    isNode: false,
-  });
-  log.info('abc82', edge, edge.labelType);
 
   // Create outer g, edgeLabel, this will be positioned after graph layout
   const edgeLabel = elem.insert('g').attr('class', 'edgeLabel');
 
   // Create inner g, label, this will be positioned now for centering the text
   const label = edgeLabel.insert('g').attr('class', 'label').attr('data-id', edge.id);
+
+  const isMarkdown = edge.labelType === 'markdown';
+  const markdownWidth = undefined; // Use default width for markdown labels
+  const labelElement = await createText(
+    elem,
+    edge.label,
+    {
+      style: getLabelStyles(edge.labelStyle),
+      useHtmlLabels,
+      addSvgBackground: true,
+      isNode: false,
+      markdown: isMarkdown,
+      // Plain text edge labels should auto-wrap, markdown edge labels respect markdownAutoWrap config
+      width: isMarkdown ? markdownWidth : undefined,
+    },
+    config
+  );
+
   label.node().appendChild(labelElement);
+  log.info('abc82', edge, edge.labelType);
 
   // Center the label
   let bbox = labelElement.getBBox();
+  let transformBbox = bbox;
   if (useHtmlLabels) {
     const div = labelElement.children[0];
     const dv = select(labelElement);
     bbox = div.getBoundingClientRect();
+    transformBbox = bbox;
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
+  } else {
+    // For SVG labels, use text element's bbox so the text is centered on the edge
+    const textEl = select(labelElement).select('text').node();
+    if (textEl && typeof textEl.getBBox === 'function') {
+      transformBbox = textEl.getBBox();
+    }
   }
-  label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
+  label.attr('transform', computeLabelTransform(transformBbox, useHtmlLabels));
 
   // Make element accessible by id for positioning
   edgeLabels.set(edge.id, edgeLabel);
@@ -85,15 +122,25 @@ export const insertEdgeLabel = async (elem, edge) => {
   let fo;
   if (edge.startLabelLeft) {
     // Create the actual text element
-    const startLabelElement = await createLabel(
-      edge.startLabelLeft,
-      getLabelStyles(edge.labelStyle)
-    );
     const startEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelLeft.insert('g').attr('class', 'inner');
-    fo = inner.node().appendChild(startLabelElement);
-    const slBox = startLabelElement.getBBox();
-    inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
+    const startLabelElement = await createLabel(
+      inner,
+      edge.startLabelLeft,
+      getLabelStyles(edge.labelStyle) || '',
+      false,
+      false
+    );
+    fo = startLabelElement;
+    let slBox = startLabelElement.getBBox();
+    if (useHtmlLabels) {
+      const div = startLabelElement.children[0];
+      const dv = select(startLabelElement);
+      slBox = div.getBoundingClientRect();
+      dv.attr('width', slBox.width);
+      dv.attr('height', slBox.height);
+    }
+    inner.attr('transform', computeLabelTransform(slBox, useHtmlLabels));
     if (!terminalLabels.get(edge.id)) {
       terminalLabels.set(edge.id, {});
     }
@@ -102,16 +149,26 @@ export const insertEdgeLabel = async (elem, edge) => {
   }
   if (edge.startLabelRight) {
     // Create the actual text element
-    const startLabelElement = await createLabel(
-      edge.startLabelRight,
-      getLabelStyles(edge.labelStyle)
-    );
     const startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelRight.insert('g').attr('class', 'inner');
-    fo = startEdgeLabelRight.node().appendChild(startLabelElement);
+    const startLabelElement = await createLabel(
+      inner,
+      edge.startLabelRight,
+      getLabelStyles(edge.labelStyle) || '',
+      false,
+      false
+    );
+    fo = startLabelElement;
     inner.node().appendChild(startLabelElement);
-    const slBox = startLabelElement.getBBox();
-    inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
+    let slBox = startLabelElement.getBBox();
+    if (useHtmlLabels) {
+      const div = startLabelElement.children[0];
+      const dv = select(startLabelElement);
+      slBox = div.getBoundingClientRect();
+      dv.attr('width', slBox.width);
+      dv.attr('height', slBox.height);
+    }
+    inner.attr('transform', computeLabelTransform(slBox, useHtmlLabels));
 
     if (!terminalLabels.get(edge.id)) {
       terminalLabels.set(edge.id, {});
@@ -121,12 +178,25 @@ export const insertEdgeLabel = async (elem, edge) => {
   }
   if (edge.endLabelLeft) {
     // Create the actual text element
-    const endLabelElement = await createLabel(edge.endLabelLeft, getLabelStyles(edge.labelStyle));
     const endEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelLeft.insert('g').attr('class', 'inner');
-    fo = inner.node().appendChild(endLabelElement);
-    const slBox = endLabelElement.getBBox();
-    inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
+    const endLabelElement = await createLabel(
+      inner,
+      edge.endLabelLeft,
+      getLabelStyles(edge.labelStyle) || '',
+      false,
+      false
+    );
+    fo = endLabelElement;
+    let slBox = endLabelElement.getBBox();
+    if (useHtmlLabels) {
+      const div = endLabelElement.children[0];
+      const dv = select(endLabelElement);
+      slBox = div.getBoundingClientRect();
+      dv.attr('width', slBox.width);
+      dv.attr('height', slBox.height);
+    }
+    inner.attr('transform', computeLabelTransform(slBox, useHtmlLabels));
 
     endEdgeLabelLeft.node().appendChild(endLabelElement);
 
@@ -138,13 +208,26 @@ export const insertEdgeLabel = async (elem, edge) => {
   }
   if (edge.endLabelRight) {
     // Create the actual text element
-    const endLabelElement = await createLabel(edge.endLabelRight, getLabelStyles(edge.labelStyle));
     const endEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelRight.insert('g').attr('class', 'inner');
 
-    fo = inner.node().appendChild(endLabelElement);
-    const slBox = endLabelElement.getBBox();
-    inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
+    const endLabelElement = await createLabel(
+      inner,
+      edge.endLabelRight,
+      getLabelStyles(edge.labelStyle) || '',
+      false,
+      false
+    );
+    fo = endLabelElement;
+    let slBox = endLabelElement.getBBox();
+    if (useHtmlLabels) {
+      const div = endLabelElement.children[0];
+      const dv = select(endLabelElement);
+      slBox = div.getBoundingClientRect();
+      dv.attr('width', slBox.width);
+      dv.attr('height', slBox.height);
+    }
+    inner.attr('transform', computeLabelTransform(slBox, useHtmlLabels));
 
     endEdgeLabelRight.node().appendChild(endLabelElement);
     if (!terminalLabels.get(edge.id)) {
@@ -161,7 +244,7 @@ export const insertEdgeLabel = async (elem, edge) => {
  * @param {any} value
  */
 function setTerminalWidth(fo, value) {
-  if (getConfig().flowchart.htmlLabels && fo) {
+  if (getEffectiveHtmlLabels(getConfig()) && fo) {
     fo.style.width = value.length * 9 + 'px';
     fo.style.height = '12px';
   }
@@ -444,6 +527,7 @@ const fixCorners = function (lineData) {
   }
   return newLineData;
 };
+
 const generateDashArray = (len, oValueS, oValueE) => {
   const middleLength = len - oValueS - oValueE;
   const dashLength = 2; // Length of each dash
@@ -519,10 +603,15 @@ export const insertEdge = function (
   }
 
   let lineData = points.filter((p) => !Number.isNaN(p.y));
-  lineData = fixCorners(lineData);
-  let curve = curveBasis;
-  curve = curveLinear;
-  switch (edge.curve) {
+  // Resolve curve type: use edge.curve if it's a string, otherwise fall back to config default
+  const edgeCurveType = resolveEdgeCurveType(edge.curve);
+  // Apply fixCorners for non-rounded curves to pre-round right-angle corners
+  // (rounded curve type uses generateRoundedPath instead)
+  if (edgeCurveType !== 'rounded') {
+    lineData = fixCorners(lineData);
+  }
+  let curve = curveLinear;
+  switch (edgeCurveType) {
     case 'linear':
       curve = curveLinear;
       break;
@@ -559,13 +648,12 @@ export const insertEdge = function (
     case 'stepBefore':
       curve = curveStepBefore;
       break;
+    case 'rounded':
+      curve = curveLinear;
+      break;
     default:
       curve = curveBasis;
   }
-
-  // if (edge.curve) {
-  //   curve = edge.curve;
-  // }
 
   const { x, y } = getLineFunctionsWithOffset(edge);
   const lineFunction = line().x(x).y(y).curve(curve);
@@ -599,7 +687,7 @@ export const insertEdge = function (
   }
   let svgPath;
   let linePath =
-    edge.curve === 'rounded'
+    edgeCurveType === 'rounded'
       ? generateRoundedPath(applyMarkerOffsetsToPoints(lineData, edge), 5)
       : lineFunction(lineData);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
