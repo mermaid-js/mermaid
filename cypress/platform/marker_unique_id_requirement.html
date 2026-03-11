@@ -1,0 +1,37 @@
+<html>
+  <head></head>
+  <body>
+    <div style="visibility: hidden; height: 0">
+      <pre class="mermaid">
+        requirementDiagram
+        element test_entity {
+        }
+        requirement test_req {
+        }
+        performanceRequirement test_req_perf {
+        }
+        test_entity - satisfies -> test_req
+        test_req - contains -> test_req_perf
+      </pre>
+    </div>
+    <pre class="mermaid">
+      requirementDiagram
+      element test_entity {
+      }
+      requirement test_req {
+      }
+      performanceRequirement test_req_perf {
+      }
+      test_entity - satisfies -> test_req
+      test_req - contains -> test_req_perf
+    </pre>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({ startOnLoad: false, logLevel: 0 });
+      await mermaid.run();
+      if (window.Cypress) {
+        window.rendered = true;
+      }
+    </script>
+  </body>
+</html>

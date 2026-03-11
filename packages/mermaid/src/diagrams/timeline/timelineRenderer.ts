@@ -55,7 +55,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
   log.debug('task', tasks);
 
   //5. Initialize the diagram
-  svgDraw.initGraphics(svg);
+  svgDraw.initGraphics(svg, id);
 
   // fetch Sections
   // @ts-expect-error - db not typed yet
@@ -161,6 +161,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
       if (tasksForSection.length > 0) {
         drawTasks(
           svg,
+          id,
           tasksForSection,
           sectionNumber,
           masterX,
@@ -184,6 +185,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
     hasSections = false;
     drawTasks(
       svg,
+      id,
       tasks,
       sectionNumber,
       masterX,
@@ -223,7 +225,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
     .attr('y2', depthY)
     .attr('stroke-width', 4)
     .attr('stroke', 'black')
-    .attr('marker-end', 'url(#arrowhead)');
+    .attr('marker-end', 'url(#' + id + '-arrowhead)');
 
   // Setup the view box and size of the svg element
   setupGraphViewbox(
@@ -238,6 +240,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
 
 export const drawTasks = function (
   diagram: Selection<SVGElement, unknown, null, undefined>,
+  id: string,
   tasks: TimelineTask[],
   sectionColor: number,
   masterX: number,
@@ -293,7 +296,7 @@ export const drawTasks = function (
         .attr('y2', masterY + maxTaskHeight + 100 + maxEventLineLength + 100) // End at consistent depth with ample padding for visible dashed lines and arrowheads
         .attr('stroke-width', 2)
         .attr('stroke', 'black')
-        .attr('marker-end', 'url(#arrowhead)')
+        .attr('marker-end', 'url(#' + id + '-arrowhead)')
         .attr('stroke-dasharray', '5,5');
     }
 
