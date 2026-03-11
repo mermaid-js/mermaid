@@ -154,7 +154,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
               .attr('y', (item) => item.data.y + item.data.height / 2)
               .attr('text-anchor', showDataLabelOutsideBar ? 'start' : 'end')
               .attr('dominant-baseline', 'middle')
-              .attr('fill', 'black')
+              .attr('fill', themeConfig.dataLabelColor)
               .attr('font-size', `${uniformFontSize}px`)
               .text((item) => item.label);
           } else {
@@ -220,7 +220,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
               .attr('y', determineLabelYPosition)
               .attr('text-anchor', 'middle')
               .attr('dominant-baseline', showDataLabelOutsideBar ? 'auto' : 'hanging')
-              .attr('fill', 'black')
+              .attr('fill', themeConfig.dataLabelColor)
               .attr('font-size', `${uniformFontSize}px`)
               .text((item) => item.label);
           }

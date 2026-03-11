@@ -2161,7 +2161,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
             'stepBefore',
             'rounded',
           ]
-        default: 'rounded'
+        default: 'basis'
       padding:
         description: |
           Represents the padding between the labels and the shape
