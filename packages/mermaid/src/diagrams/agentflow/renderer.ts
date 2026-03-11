@@ -7,10 +7,7 @@ import { getRegisteredLayoutAlgorithm, render } from '../../rendering-util/rende
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
 import type { LayoutData } from '../../rendering-util/types.js';
 import utils from '../../utils.js';
-
-/** Shapes allowed in agentflow diagrams. Any other shape is replaced with the default (squareRect). */
-const ALLOWED_SHAPES = new Set(['squareRect', 'roundedRect', 'circle', 'diamond']);
-const DEFAULT_SHAPE = 'squareRect';
+import { transformData } from './transformData.js';
 
 export const getClasses = function (
   text: string,
@@ -39,15 +36,8 @@ export const draw = async function (text: string, id: string, _version: string, 
   const data4Layout = diag.db.getData() as LayoutData;
   log.debug('Data: ', data4Layout);
 
-  // Restrict nodes to the agentflow shape subset
-  for (const node of data4Layout.nodes) {
-    if (node.shape && !ALLOWED_SHAPES.has(node.shape)) {
-      log.warn(
-        `agentflow: shape "${node.shape}" is not supported, falling back to "${DEFAULT_SHAPE}"`
-      );
-      node.shape = DEFAULT_SHAPE;
-    }
-  }
+  // Apply agentflow-specific transformations to the layout data
+  transformData(data4Layout);
 
   // Create the root SVG
   const svg = getDiagramElement(id, securityLevel);
