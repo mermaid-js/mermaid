@@ -3,6 +3,7 @@ import { defineConfig } from 'vitepress';
 import packageJson from '../../../package.json' with { type: 'json' };
 import { addCanonicalUrls } from './canonical-urls.js';
 import { getHeaderLogo, getHeaderLogoLink, withConditionalHomeNav } from './headerDomainRules.js';
+import { applyHomePageHeroCopy } from './homepageHeroCopy.js';
 import MermaidExample from './mermaid-markdown-all.js';
 
 const allMarkdownTransformers: MarkdownOptions = {
@@ -27,7 +28,10 @@ export default defineConfig({
     // ignore all localhost links
     /^https?:\/\/localhost/,
   ],
-  transformPageData: addCanonicalUrls,
+  transformPageData: (pageData) => {
+    addCanonicalUrls(pageData);
+    applyHomePageHeroCopy(pageData, docsHostname());
+  },
   head: [
     ['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
     ['meta', { property: 'og:title', content: 'Mermaid' }],
@@ -43,15 +47,6 @@ export default defineConfig({
     [
       'meta',
       { property: 'og:image', content: 'https://mermaid.js.org/mermaid-logo-horizontal.svg' },
-    ],
-    [
-      'script',
-      {
-        defer: 'true',
-        'data-domain': 'mermaid.js.org',
-        // All tracked stats are public and available at https://p.mermaid.live/mermaid.js.org
-        src: 'https://p.mermaid.live/js/script.tagged-events.outbound-links.js',
-      },
     ],
   ],
   themeConfig: {
@@ -195,6 +190,7 @@ function sidebarSyntax() {
         { text: 'Radar 🔥', link: '/syntax/radar' },
         { text: 'Treemap 🔥', link: '/syntax/treemap' },
         { text: 'Venn 🔥', link: '/syntax/venn' },
+        { text: 'Ishikawa 🔥', link: '/syntax/ishikawa' },
         { text: 'TreeView 🔥', link: '/syntax/treeView' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],

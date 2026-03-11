@@ -1,5 +1,11 @@
 # @mermaid-js/examples
 
+## 1.1.0
+
+### Minor Changes
+
+- [#7387](https://github.com/mermaid-js/mermaid/pull/7387) [`acce4db`](https://github.com/mermaid-js/mermaid/commit/acce4db7a1bd8801666f1a9667a63e4010ec2020) Thanks [@exoego](https://github.com/exoego)! - feat: Add Ishikawa diagram (ishikawa-beta)
+
 ## 1.0.0
 
 ### Minor Changes
