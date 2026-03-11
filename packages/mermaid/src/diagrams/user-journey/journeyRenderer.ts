@@ -5,10 +5,9 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 export const setConf = function (cnf) {
-  const keys = Object.keys(cnf);
-
-  keys.forEach(function (key) {
-    conf[key] = cnf[key];
+  const journeyConf = getConfig().journey;
+  Object.keys(cnf).forEach((key) => {
+    journeyConf[key] = cnf[key];
   });
 };
 
@@ -115,15 +114,13 @@ function drawActorLegend(diagram) {
   });
 }
 
-// TODO: Cleanup?
-const conf = getConfig().journey;
-let leftMargin = 0;
 export const draw = function (text, id, version, diagObj) {
   const configObject = getConfig();
-  const titleColor = configObject.journey.titleColor;
-  const titleFontSize = configObject.journey.titleFontSize;
-  const titleFontFamily = configObject.journey.titleFontFamily;
-
+  const conf = configObject.journey;
+  const leftMargin = conf.leftMargin;
+  const titleColor = conf.titleColor;
+  const titleFontSize = conf.titleFontSize;
+  const titleFontFamily = conf.titleFontFamily;
   const securityLevel = configObject.securityLevel;
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
@@ -158,9 +155,8 @@ export const draw = function (text, id, version, diagObj) {
   });
 
   drawActorLegend(diagram);
-  leftMargin = conf.leftMargin + maxWidth;
   bounds.insert(0, 0, leftMargin, Object.keys(actors).length * 50);
-  drawTasks(diagram, tasks, 0);
+  drawTasks(diagram, tasks, 0, leftMargin);
 
   const box = bounds.getBounds();
   if (title) {
@@ -174,27 +170,33 @@ export const draw = function (text, id, version, diagObj) {
       .attr('fill', titleColor)
       .attr('font-family', titleFontFamily);
   }
-
+  // **Modified Height Calculation**
   const height = box.stopy - box.starty + 2 * conf.diagramMarginY;
+
+  // **Modified Width Calculation**
   const width = leftMargin + box.stopx + 2 * conf.diagramMarginX;
-
-  configureSvgSize(diagram, height, width, conf.useMaxWidth);
-
+  configureSvgSize(diagram, height + 50, width + 50, conf.useMaxWidth);
   // Draw activity line
   diagram
     .append('line')
     .attr('x1', leftMargin)
+
     .attr('y1', conf.height * 4) // One section head + one task + margins
     .attr('x2', width - leftMargin - 4) // Subtract stroke width so arrow point is retained
+
     .attr('y2', conf.height * 4)
     .attr('stroke-width', 4)
     .attr('stroke', 'black')
     .attr('marker-end', 'url(#arrowhead)');
 
   const extraVertForTitle = title ? 70 : 0;
-  diagram.attr('viewBox', `${box.startx} -25 ${width} ${height + extraVertForTitle}`);
+  // **Modified ViewBox Calculation**
+  diagram.attr(
+    'viewBox',
+    `${box.startx} -50 ${width + 50} ${height + extraVertForTitle + conf.diagramMarginY + 100}`
+  );
   diagram.attr('preserveAspectRatio', 'xMinYMin meet');
-  diagram.attr('height', height + extraVertForTitle + 25);
+  diagram.attr('height', height + extraVertForTitle + 50); // Adjust height for extra padding
 };
 
 export const bounds = {
@@ -226,6 +228,7 @@ export const bounds = {
   },
   updateBounds: function (startx, starty, stopx, stopy) {
     const conf = getConfig().journey;
+
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const _self = this;
     let cnt = 0;
@@ -278,11 +281,14 @@ export const bounds = {
   },
 };
 
-const fills = conf.sectionFills;
-const textColours = conf.sectionColours;
+const EST_CHAR_WIDTH_PX = 8;
+const EST_LINE_HEIGHT_PX = 14;
+const TASK_BOX_PADDING_PX = 10;
 
-export const drawTasks = function (diagram, tasks, verticalPos) {
+export const drawTasks = function (diagram, tasks, verticalPos, leftMargin) {
   const conf = getConfig().journey;
+  const fills = conf.sectionFills;
+  const textColours = conf.sectionColours;
   let lastSection = '';
   const sectionVHeight = conf.height * 2 + conf.diagramMarginY;
   const taskPos = verticalPos + sectionVHeight;
@@ -312,6 +318,7 @@ export const drawTasks = function (diagram, tasks, verticalPos) {
 
       const section = {
         x: i * conf.taskMargin + i * conf.width + leftMargin,
+
         y: 50,
         text: task.section,
         fill,
@@ -336,9 +343,14 @@ export const drawTasks = function (diagram, tasks, verticalPos) {
 
     // Add some rendering data to the object
     task.x = i * conf.taskMargin + i * conf.width + leftMargin;
+
     task.y = taskPos;
     task.width = conf.diagramMarginX;
-    task.height = conf.diagramMarginY;
+    const estimatedLines = Math.ceil((task.task.length * EST_CHAR_WIDTH_PX) / conf.width);
+    task.height = Math.max(
+      conf.diagramMarginY,
+      estimatedLines * EST_LINE_HEIGHT_PX + TASK_BOX_PADDING_PX
+    );
     task.colour = colour;
     task.fill = fill;
     task.num = num;
@@ -346,7 +358,8 @@ export const drawTasks = function (diagram, tasks, verticalPos) {
 
     // Draw the box with the attached line
     svgDraw.drawTask(diagram, task, conf);
-    bounds.insert(task.x, task.y, task.x + task.width + conf.taskMargin, 300 + 5 * 30); // stopY is the length of the descenders.
+
+    bounds.insert(task.x, task.y, task.x + task.width + conf.taskMargin, task.y + task.height + 10);
   }
 };
 
