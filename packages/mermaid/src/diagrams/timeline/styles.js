@@ -1,4 +1,5 @@
 import { darken, lighten, isDark } from 'khroma';
+import { getConfig } from '../../config.js';
 
 const genReduxSections = (options) => {
   const isDarkTheme = options.darkMode === true;
@@ -125,11 +126,12 @@ const genSections = (options) => {
 
 const getStyles = (options) => {
   const isReduxTheme = options.dropShadow?.startsWith('url(#');
-
+  const { look } = getConfig();
+  const isNeoLook = look === 'neo';
   // options.svgId is the CSS selector (e.g. '#mermaid-0'), strip the leading '#' for use in url(#...)
   const rawSvgId = options.svgId?.replace(/^#/, '') ?? '';
   let gradientSections = '';
-  if (options.useGradient && rawSvgId && options.THEME_COLOR_LIMIT) {
+  if (options.useGradient && (isReduxTheme || isNeoLook) && rawSvgId && options.THEME_COLOR_LIMIT) {
     for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
       gradientSections += `
       .section-${i - 1} rect,
