@@ -20,11 +20,14 @@ class Theme {
     this.noteTextColor = '#333';
 
     this.THEME_COLOR_LIMIT = 12;
-
+    this.radius = 5;
+    this.strokeWidth = 1;
     // dark
 
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
     this.fontSize = '16px';
+    this.useGradient = true;
+    this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,1))';
   }
   updateColors() {
     // The || is to make sure that if the variable has been defined by a user override that value is to be used
@@ -65,6 +68,7 @@ class Theme {
       (this.darkMode ? darken(this.secondaryColor, 30) : this.secondaryColor);
     this.nodeTextColor = this.nodeTextColor || this.primaryTextColor;
     /* Sequence Diagram variables */
+    this.clusterBkg = '#FFFFF8';
 
     // this.actorBorder = lighten(this.border1, 0.5);
     this.actorBorder = this.actorBorder || this.primaryBorderColor;
@@ -105,6 +109,9 @@ class Theme {
     this.taskTextColor = this.taskTextColor || this.primaryTextColor;
     this.taskTextDarkColor = this.taskTextDarkColor || this.textColor;
     this.taskTextClickableColor = this.taskTextClickableColor || '#003163';
+
+    this.noteFontWeight = this.noteFontWeight || 'normal';
+    this.fontWeight = this.fontWeight || 'normal';
 
     /* Sequence Diagram variables */
 
@@ -230,6 +237,18 @@ class Theme {
     this.pieOuterStrokeWidth = this.pieOuterStrokeWidth || '2px';
     this.pieOuterStrokeColor = this.pieOuterStrokeColor || 'black';
     this.pieOpacity = this.pieOpacity || '0.7';
+
+    /* venn */
+    this.venn1 = this.venn1 ?? adjust(this.primaryColor, { l: -30 });
+    this.venn2 = this.venn2 ?? adjust(this.secondaryColor, { l: -30 });
+    this.venn3 = this.venn3 ?? adjust(this.tertiaryColor, { l: -30 });
+    this.venn4 = this.venn4 ?? adjust(this.primaryColor, { h: 60, l: -30 });
+    this.venn5 = this.venn5 ?? adjust(this.primaryColor, { h: -60, l: -30 });
+    this.venn6 = this.venn6 ?? adjust(this.secondaryColor, { h: 60, l: -30 });
+    this.venn7 = this.venn7 ?? adjust(this.primaryColor, { h: 120, l: -30 });
+    this.venn8 = this.venn8 ?? adjust(this.secondaryColor, { h: 120, l: -30 });
+    this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
+    this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
 
     /* radar */
     this.radar = {
@@ -368,6 +387,9 @@ class Theme {
     this.attributeBackgroundColorEven =
       this.attributeBackgroundColorEven || oldAttributeBackgroundColorEven;
     /* -------------------------------------------------- */
+
+    this.gradientStart = this.primaryBorderColor;
+    this.gradientStop = this.secondaryBorderColor;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

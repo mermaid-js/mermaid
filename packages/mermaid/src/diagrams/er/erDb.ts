@@ -62,6 +62,7 @@ export class ErDB implements DiagramDB {
         look: getConfig().look ?? 'default',
         cssClasses: 'default',
         cssStyles: [],
+        labelType: 'markdown',
       });
       log.info('Added new entity :', name);
     } else if (!this.entities.get(name)?.alias && alias) {
@@ -237,6 +238,7 @@ export class ErDB implements DiagramDB {
         arrowTypeEnd: relationship.relSpec.cardA.toLowerCase(),
         pattern: relationship.relSpec.relType == 'IDENTIFYING' ? 'solid' : 'dashed',
         look: config.look,
+        labelType: 'markdown',
       };
       edges.push(edge);
     }
