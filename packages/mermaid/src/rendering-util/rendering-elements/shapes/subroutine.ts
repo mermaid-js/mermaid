@@ -37,9 +37,9 @@ export async function subroutine<T extends SVGGraphicsElement>(parent: D3Selecti
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const halfPadding = (node?.padding || 0) / 2;
-  const w = bbox.width + node.padding;
-  const h = bbox.height + node.padding;
+  const halfPadding = (node.padding ?? 0) / 2;
+  const w = bbox.width + (node.padding ?? 0);
+  const h = bbox.height + (node.padding ?? 0);
   const x = -bbox.width / 2 - halfPadding;
   const y = -bbox.height / 2 - halfPadding;
 

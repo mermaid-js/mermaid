@@ -261,6 +261,7 @@ export class MindmapDB {
       id: node.id.toString(),
       domId: 'node_' + node.id.toString(),
       label: node.descr,
+      labelType: 'markdown',
       isGroup: false,
       shape: getShapeFromType(node.type),
       width: node.width,
