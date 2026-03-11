@@ -53,16 +53,26 @@ import assignWithDepth from './assignWithDepth.js';
 vi.mock('./styles.js', () => {
   return {
     addStylesForDiagram: vi.fn(),
-    default: vi.fn().mockReturnValue(' .userStyle { font-weight:bold; }'),
+    default: vi.fn().mockImplementation(
+      (_type, userStyles, _options) => `
+    & .edge-pattern-dashed{
+      stroke-dasharray: 3;
+    }
+
+    ${userStyles}
+    `
+    ),
   };
 });
 import getStyles from './styles.js';
 
-vi.mock('stylis', () => {
+vi.mock('stylis', async (importOriginal) => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  const original: typeof import('stylis') = await importOriginal();
   return {
-    stringify: vi.fn(),
-    compile: vi.fn(),
-    serialize: vi.fn().mockReturnValue('stylis serialized css'),
+    stringify: vi.fn().mockImplementation(original.stringify),
+    compile: vi.fn().mockImplementation(original.compile),
+    serialize: vi.fn().mockImplementation(original.serialize),
   };
 });
 import { compile, serialize } from 'stylis';
@@ -455,7 +465,7 @@ describe('mermaidAPI', () => {
       const result = createUserStyles(mockConfig, 'someDiagram', {}, 'someId');
       expect(compile).toHaveBeenCalled();
       expect(serialize).toHaveBeenCalled();
-      expect(result).toEqual('stylis serialized css');
+      expect(result).toEqual('someId .edge-pattern-dashed{stroke-dasharray:3;}');
     });
   });
 
