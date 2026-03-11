@@ -12,8 +12,8 @@ export async function dividedRectangle<T extends SVGGraphicsElement>(
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = bbox.width + node.padding;
-  const h = bbox.height + node.padding;
+  const w = bbox.width + (node.padding ?? 0);
+  const h = bbox.height + (node.padding ?? 0);
   const rectOffset = h * 0.2;
 
   const x = -w / 2;
