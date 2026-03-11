@@ -1,18 +1,18 @@
 import type { MermaidConfig } from '../../config.type.js';
 import { setConfig } from '../../diagram-api/diagramAPI.js';
-import { FlowDB } from '../flowchart/flowDb.js';
+import { AgentFlowDB } from './agentflowDb.js';
 import renderer from './renderer.js';
 // @ts-ignore: JISON doesn't support types
-import flowParser from '../flowchart/parser/flowParser.ts';
-import flowStyles from '../flowchart/styles.js';
+import agentflowParser from './parser/agentflowParser.ts';
+import agentflowStyles from './styles.js';
 
 export const diagram = {
-  parser: flowParser,
+  parser: agentflowParser,
   get db() {
-    return new FlowDB();
+    return new AgentFlowDB();
   },
   renderer,
-  styles: flowStyles,
+  styles: agentflowStyles,
   init: (cnf: MermaidConfig) => {
     cnf.flowchart ??= {};
     if (cnf.layout) {

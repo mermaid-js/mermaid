@@ -76,6 +76,7 @@ interface BaseNode {
   defaultWidth?: number;
   imageAspectRatio?: number;
   constraint?: 'on' | 'off';
+  metadata?: Record<string, unknown>;
   children?: NodeChildren;
   nodeId?: string;
   level?: number;

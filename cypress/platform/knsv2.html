@@ -106,11 +106,56 @@
 
   <body>
     <pre id="diagram4" class="mermaid">
-      agentflow
-      a --> b
-      a@{
-        apa: 1
-      }
+agentflow LR
+    research_location["Research"]@{
+      description: "Research a city or location to gather useful local context for a business."
+      requires: ^net.read
+      source: ^search.duckduckgo(query)
+      params:
+        query: String
+      returns: String
+    }
+
+    write_copy["Write Copy"]@{
+      description: "Write the actual marketing copy for a coffee shop website."
+      requires: ^llm.query
+      params:
+        brief: String
+      returns: String
+    }
+
+    translate_to_swedish["Translate to Swedish"]@{
+      description: "Translate English marketing copy to Swedish. Output both versions."
+      requires: ^llm.query
+      params:
+        english_copy: String
+      returns: String
+    }
+
+    generate_html["Generate HTML"]@{
+      description: "Generate a complete one-page bilingual HTML website with inline CSS and JS."
+      requires: ^llm.query
+      params:
+        content: String
+      returns: String
+    }
+
+    subgraph researcher
+      research_location --> write_copy
+    end
+
+    subgraph translator
+      translate_to_swedish
+    end
+
+    subgraph designer
+      generate_html
+    end
+
+    %% Orchestration
+    write_copy --> translate_to_swedish
+    translate_to_swedish --> generate_html
+
     </pre>
 
     <script type="module">

@@ -11,6 +11,11 @@ const DEFAULT_SHAPE = 'roundedRect';
  */
 export function transformData(data: LayoutData): void {
   for (const node of data.nodes) {
+    // Group/cluster nodes use 'rect' for the cluster renderer — don't override
+    if (node.isGroup) {
+      continue;
+    }
+
     // Map rect/squareRect to rounded — agentflow default is rounded
     if (!node.shape || node.shape === 'squareRect') {
       node.shape = DEFAULT_SHAPE;

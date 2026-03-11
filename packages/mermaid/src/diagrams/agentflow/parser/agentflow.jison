@@ -54,7 +54,7 @@ accDescr\s*"{"\s*                               { this.begin("acc_descr_multilin
                                                     const re = /\n\s*/g;
                                                     yytext = yytext.replace(re,"<br/>");
                                                     return 'SHAPE_DATA'}
-<shapeData>[^}^"]+                                {
+<shapeData>[^}"]+                                {
                                                     // console.log('shapeData', yytext);
                                                     return 'SHAPE_DATA';
                                                 }
@@ -113,9 +113,7 @@ that id.
 <click>[\s\n]            this.popState();
 <click>[^\s\n]*          return 'CLICK';
 
-"flowchart-elk"          {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
-"graph"                  {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
-"flowchart"              {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
+"agentflow"              {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "subgraph"               return 'subgraph';
 "end"\b\s*               return 'end';
 
