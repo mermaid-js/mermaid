@@ -153,6 +153,7 @@ config:
 | ---------------- | --------------------------------------------------------- |
 | backgroundColor  | Background color of the whole chart                       |
 | titleColor       | Color of the Title text                                   |
+| dataLabelColor   | Color of the Data labels (if shown)                       |
 | xAxisLabelColor  | Color of the x-axis labels                                |
 | xAxisTitleColor  | Color of the x-axis title                                 |
 | xAxisTickColor   | Color of the x-axis tick                                  |

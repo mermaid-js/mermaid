@@ -142,7 +142,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
               .attr('y', (item) => item.data.y + item.data.height / 2)
               .attr('text-anchor', 'end')
               .attr('dominant-baseline', 'middle')
-              .attr('fill', 'black')
+              .attr('fill', themeConfig.dataLabelColor)
               .attr('font-size', `${uniformFontSize}px`)
               .text((item) => item.label);
           } else {
@@ -200,7 +200,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
               .attr('y', (item) => item.data.y + yOffset)
               .attr('text-anchor', 'middle')
               .attr('dominant-baseline', 'hanging')
-              .attr('fill', 'black')
+              .attr('fill', themeConfig.dataLabelColor)
               .attr('font-size', `${uniformFontSize}px`)
               .text((item) => item.label);
           }
