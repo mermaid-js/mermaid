@@ -95,6 +95,7 @@ export interface XYChartConfig {
   titlePadding: number;
   showTitle: boolean;
   showDataLabel: boolean;
+  showDataLabelOutsideBar: boolean;
   xAxis: XYChartAxisConfig;
   yAxis: XYChartAxisConfig;
   chartOrientation: 'vertical' | 'horizontal';

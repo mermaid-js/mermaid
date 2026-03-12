@@ -987,6 +987,10 @@ export interface XYChartConfig extends BaseDiagramConfig {
    */
   showDataLabel?: boolean;
   /**
+   * If showing data label then show it outside the bar
+   */
+  showDataLabelOutsideBar?: boolean;
+  /**
    * Should show the chart title
    */
   showTitle?: boolean;
