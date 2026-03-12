@@ -1,9 +1,9 @@
-import { adjust, darken, invert, isDark, lighten } from 'khroma';
+import { darken, lighten, adjust, invert, isDark } from 'khroma';
+import { mkBorder } from './theme-helpers.js';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
 } from './erDiagram-oldHardcodedValues.js';
-import { mkBorder } from './theme-helpers.js';
 
 class Theme {
   constructor() {
@@ -12,22 +12,42 @@ class Theme {
      * - Background - used to know what the background color is of the diagram. This is used for
      *   deducing colors for instance line color. Default value is #f4f4f4.
      */
-    this.background = '#f4f4f4';
+    this.background = '#ffffff';
 
-    this.primaryColor = '#fff4dd';
+    this.primaryColor = '#cccccc';
+    this.mainBkg = '#ffffff';
 
     this.noteBkgColor = '#fff5ad';
     this.noteTextColor = '#333';
 
     this.THEME_COLOR_LIMIT = 12;
-    this.radius = 5;
-    this.strokeWidth = 1;
+    this.radius = 3;
+    this.strokeWidth = 2;
+    this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
     // dark
 
-    this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
-    this.fontSize = '16px';
+    this.fontFamily = 'arial, sans-serif';
+    this.fontSize = '14px';
+
+    // Neo-specific
+    this.nodeBorder = '#000000';
+    this.stateBorder = '#000000';
     this.useGradient = true;
-    this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,1))';
+    this.gradientStart = '#0042eb';
+    this.gradientStop = '#eb0042';
+    // this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,1))';
+    // this.dropShadow = 'drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.25));';
+    this.dropShadow = 'drop-shadow( 0px 1px 2px rgba(0, 0, 0, 0.25));';
+    this.tertiaryColor = '#ffffff';
+
+    /* Architecture Diagram variables */
+    this.archEdgeColor = 'calculated';
+    this.archEdgeArrowColor = 'calculated';
+    this.archEdgeWidth = '3';
+    this.archGroupBorderColor = this.primaryBorderColor;
+    this.archGroupBorderWidth = '2px';
+    this.noteFontWeight = 'normal';
+    this.fontWeight = 'normal';
   }
   updateColors() {
     // The || is to make sure that if the variable has been defined by a user override that value is to be used
@@ -68,7 +88,6 @@ class Theme {
       (this.darkMode ? darken(this.secondaryColor, 30) : this.secondaryColor);
     this.nodeTextColor = this.nodeTextColor || this.primaryTextColor;
     /* Sequence Diagram variables */
-    this.clusterBkg = '#FFFFF8';
 
     // this.actorBorder = lighten(this.border1, 0.5);
     this.actorBorder = this.actorBorder || this.primaryBorderColor;
@@ -86,47 +105,40 @@ class Theme {
     this.sequenceNumberColor = this.sequenceNumberColor || invert(this.lineColor);
 
     /* Gantt chart variables */
-
-    this.sectionBkgColor = this.sectionBkgColor || this.tertiaryColor;
+    const primaryColor = '#ECECFE';
+    const secondaryColor = '#E9E9F1';
+    const tertiaryColor = adjust(primaryColor, { h: 180, l: 5 });
+    this.sectionBkgColor = this.sectionBkgColor || tertiaryColor;
     this.altSectionBkgColor = this.altSectionBkgColor || 'white';
-    this.sectionBkgColor = this.sectionBkgColor || this.secondaryColor;
-    this.sectionBkgColor2 = this.sectionBkgColor2 || this.primaryColor;
+    this.sectionBkgColor = this.sectionBkgColor || secondaryColor;
+    this.sectionBkgColor2 = this.sectionBkgColor2 || primaryColor;
     this.excludeBkgColor = this.excludeBkgColor || '#eeeeee';
     this.taskBorderColor = this.taskBorderColor || this.primaryBorderColor;
-    this.taskBkgColor = this.taskBkgColor || this.primaryColor;
-    this.activeTaskBorderColor = this.activeTaskBorderColor || this.primaryColor;
-    this.activeTaskBkgColor = this.activeTaskBkgColor || lighten(this.primaryColor, 23);
+    this.taskBkgColor = this.taskBkgColor || primaryColor;
+    this.activeTaskBorderColor = this.activeTaskBorderColor || primaryColor;
+    this.activeTaskBkgColor = this.activeTaskBkgColor || lighten(primaryColor, 23);
     this.gridColor = this.gridColor || 'lightgrey';
     this.doneTaskBkgColor = this.doneTaskBkgColor || 'lightgrey';
     this.doneTaskBorderColor = this.doneTaskBorderColor || 'grey';
     this.critBorderColor = this.critBorderColor || '#ff8888';
     this.critBkgColor = this.critBkgColor || 'red';
     this.todayLineColor = this.todayLineColor || 'red';
-    this.vertLineColor = this.vertLineColor || 'navy';
     this.taskTextColor = this.taskTextColor || this.textColor;
     this.taskTextOutsideColor = this.taskTextOutsideColor || this.textColor;
+    this.vertLineColor = this.vertLineColor || this.primaryBorderColor;
     this.taskTextLightColor = this.taskTextLightColor || this.textColor;
     this.taskTextColor = this.taskTextColor || this.primaryTextColor;
     this.taskTextDarkColor = this.taskTextDarkColor || this.textColor;
     this.taskTextClickableColor = this.taskTextClickableColor || '#003163';
 
-    this.noteFontWeight = this.noteFontWeight || 'normal';
-    this.fontWeight = this.fontWeight || 'normal';
+    /* Architecture Diagram variables */
+    this.archEdgeColor = this.lineColor;
+    this.archEdgeArrowColor = this.lineColor;
 
     /* Sequence Diagram variables */
 
     this.personBorder = this.personBorder || this.primaryBorderColor;
     this.personBkg = this.personBkg || this.mainBkg;
-
-    /* ER diagram */
-
-    if (this.darkMode) {
-      this.rowOdd = this.rowOdd || darken(this.mainBkg, 5) || '#ffffff';
-      this.rowEven = this.rowEven || darken(this.mainBkg, 10);
-    } else {
-      this.rowOdd = this.rowOdd || lighten(this.mainBkg, 75) || '#ffffff';
-      this.rowEven = this.rowEven || lighten(this.mainBkg, 5);
-    }
 
     /* state colors */
     this.transitionColor = this.transitionColor || this.lineColor;
@@ -137,7 +149,7 @@ class Theme {
     this.stateBkg = this.stateBkg || this.mainBkg;
     this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
     this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
-    this.altBackground = this.altBackground || this.tertiaryColor;
+    this.altBackground = this.altBackground || '#f0f0f0';
     this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
     this.compositeBorder = this.compositeBorder || this.nodeBorder;
     this.innerEndBackground = this.nodeBorder;
@@ -148,18 +160,19 @@ class Theme {
 
     /* Color Scale */
     /* Each color-set will have a background, a foreground and a border color */
-    this.cScale0 = this.cScale0 || this.primaryColor;
-    this.cScale1 = this.cScale1 || this.secondaryColor;
-    this.cScale2 = this.cScale2 || this.tertiaryColor;
-    this.cScale3 = this.cScale3 || adjust(this.primaryColor, { h: 30 });
-    this.cScale4 = this.cScale4 || adjust(this.primaryColor, { h: 60 });
-    this.cScale5 = this.cScale5 || adjust(this.primaryColor, { h: 90 });
-    this.cScale6 = this.cScale6 || adjust(this.primaryColor, { h: 120 });
-    this.cScale7 = this.cScale7 || adjust(this.primaryColor, { h: 150 });
-    this.cScale8 = this.cScale8 || adjust(this.primaryColor, { h: 210, l: 150 });
-    this.cScale9 = this.cScale9 || adjust(this.primaryColor, { h: 270 });
-    this.cScale10 = this.cScale10 || adjust(this.primaryColor, { h: 300 });
-    this.cScale11 = this.cScale11 || adjust(this.primaryColor, { h: 330 });
+
+    this.cScale0 = this.cScale0 || primaryColor;
+    this.cScale1 = this.cScale1 || secondaryColor;
+    this.cScale2 = this.cScale2 || tertiaryColor;
+    this.cScale3 = this.cScale3 || adjust(primaryColor, { h: 30 });
+    this.cScale4 = this.cScale4 || adjust(primaryColor, { h: 60 });
+    this.cScale5 = this.cScale5 || adjust(primaryColor, { h: 90 });
+    this.cScale6 = this.cScale6 || adjust(primaryColor, { h: 120 });
+    this.cScale7 = this.cScale7 || adjust(primaryColor, { h: 150 });
+    this.cScale8 = this.cScale8 || adjust(primaryColor, { h: 210, l: 150 });
+    this.cScale9 = this.cScale9 || adjust(primaryColor, { h: 270 });
+    this.cScale10 = this.cScale10 || adjust(primaryColor, { h: 300 });
+    this.cScale11 = this.cScale11 || adjust(primaryColor, { h: 330 });
     if (this.darkMode) {
       for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
         this['cScale' + i] = darken(this['cScale' + i], 75);
@@ -204,28 +217,28 @@ class Theme {
     this.classText = this.classText || this.textColor;
 
     /* user-journey */
-    this.fillType0 = this.fillType0 || this.primaryColor;
-    this.fillType1 = this.fillType1 || this.secondaryColor;
-    this.fillType2 = this.fillType2 || adjust(this.primaryColor, { h: 64 });
-    this.fillType3 = this.fillType3 || adjust(this.secondaryColor, { h: 64 });
-    this.fillType4 = this.fillType4 || adjust(this.primaryColor, { h: -64 });
-    this.fillType5 = this.fillType5 || adjust(this.secondaryColor, { h: -64 });
-    this.fillType6 = this.fillType6 || adjust(this.primaryColor, { h: 128 });
-    this.fillType7 = this.fillType7 || adjust(this.secondaryColor, { h: 128 });
+    this.fillType0 = this.fillType0 || primaryColor;
+    this.fillType1 = this.fillType1 || secondaryColor;
+    this.fillType2 = this.fillType2 || adjust(primaryColor, { h: 64 });
+    this.fillType3 = this.fillType3 || adjust(secondaryColor, { h: 64 });
+    this.fillType4 = this.fillType4 || adjust(primaryColor, { h: -64 });
+    this.fillType5 = this.fillType5 || adjust(secondaryColor, { h: -64 });
+    this.fillType6 = this.fillType6 || adjust(primaryColor, { h: 128 });
+    this.fillType7 = this.fillType7 || adjust(secondaryColor, { h: 128 });
 
     /* pie */
-    this.pie1 = this.pie1 || this.primaryColor;
-    this.pie2 = this.pie2 || this.secondaryColor;
-    this.pie3 = this.pie3 || this.tertiaryColor;
-    this.pie4 = this.pie4 || adjust(this.primaryColor, { l: -10 });
-    this.pie5 = this.pie5 || adjust(this.secondaryColor, { l: -10 });
-    this.pie6 = this.pie6 || adjust(this.tertiaryColor, { l: -10 });
-    this.pie7 = this.pie7 || adjust(this.primaryColor, { h: +60, l: -10 });
-    this.pie8 = this.pie8 || adjust(this.primaryColor, { h: -60, l: -10 });
-    this.pie9 = this.pie9 || adjust(this.primaryColor, { h: 120, l: 0 });
-    this.pie10 = this.pie10 || adjust(this.primaryColor, { h: +60, l: -20 });
-    this.pie11 = this.pie11 || adjust(this.primaryColor, { h: -60, l: -20 });
-    this.pie12 = this.pie12 || adjust(this.primaryColor, { h: 120, l: -10 });
+    this.pie1 = this.pie1 || primaryColor;
+    this.pie2 = this.pie2 || secondaryColor;
+    this.pie3 = this.pie3 || tertiaryColor;
+    this.pie4 = this.pie4 || adjust(primaryColor, { l: -10 });
+    this.pie5 = this.pie5 || adjust(secondaryColor, { l: -10 });
+    this.pie6 = this.pie6 || adjust(tertiaryColor, { l: -10 });
+    this.pie7 = this.pie7 || adjust(primaryColor, { h: +60, l: -10 });
+    this.pie8 = this.pie8 || adjust(primaryColor, { h: -60, l: -10 });
+    this.pie9 = this.pie9 || adjust(primaryColor, { h: 120, l: 0 });
+    this.pie10 = this.pie10 || adjust(primaryColor, { h: +60, l: -20 });
+    this.pie11 = this.pie11 || adjust(primaryColor, { h: -60, l: -20 });
+    this.pie12 = this.pie12 || adjust(primaryColor, { h: 120, l: -10 });
     this.pieTitleTextSize = this.pieTitleTextSize || '25px';
     this.pieTitleTextColor = this.pieTitleTextColor || this.taskTextDarkColor;
     this.pieSectionTextSize = this.pieSectionTextSize || '17px';
@@ -239,43 +252,14 @@ class Theme {
     this.pieOpacity = this.pieOpacity || '0.7';
 
     /* venn */
-    this.venn1 = this.venn1 ?? adjust(this.primaryColor, { l: -30 });
-    this.venn2 = this.venn2 ?? adjust(this.secondaryColor, { l: -30 });
-    this.venn3 = this.venn3 ?? adjust(this.tertiaryColor, { l: -30 });
-    this.venn4 = this.venn4 ?? adjust(this.primaryColor, { h: 60, l: -30 });
-    this.venn5 = this.venn5 ?? adjust(this.primaryColor, { h: -60, l: -30 });
-    this.venn6 = this.venn6 ?? adjust(this.secondaryColor, { h: 60, l: -30 });
-    this.venn7 = this.venn7 ?? adjust(this.primaryColor, { h: 120, l: -30 });
-    this.venn8 = this.venn8 ?? adjust(this.secondaryColor, { h: 120, l: -30 });
     this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
     this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
 
-    /* radar */
-    this.radar = {
-      axisColor: this.radar?.axisColor || this.lineColor,
-      axisStrokeWidth: this.radar?.axisStrokeWidth || 2,
-      axisLabelFontSize: this.radar?.axisLabelFontSize || 12,
-      curveOpacity: this.radar?.curveOpacity || 0.5,
-      curveStrokeWidth: this.radar?.curveStrokeWidth || 2,
-      graticuleColor: this.radar?.graticuleColor || '#DEDEDE',
-      graticuleStrokeWidth: this.radar?.graticuleStrokeWidth || 1,
-      graticuleOpacity: this.radar?.graticuleOpacity || 0.3,
-      legendBoxSize: this.radar?.legendBoxSize || 12,
-      legendFontSize: this.radar?.legendFontSize || 12,
-    };
-
-    /* architecture */
-    this.archEdgeColor = this.archEdgeColor || '#777';
-    this.archEdgeArrowColor = this.archEdgeArrowColor || '#777';
-    this.archEdgeWidth = this.archEdgeWidth || '3';
-    this.archGroupBorderColor = this.archGroupBorderColor || '#000';
-    this.archGroupBorderWidth = this.archGroupBorderWidth || '2px';
-
     /* quadrant-graph */
-    this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;
-    this.quadrant2Fill = this.quadrant2Fill || adjust(this.primaryColor, { r: 5, g: 5, b: 5 });
-    this.quadrant3Fill = this.quadrant3Fill || adjust(this.primaryColor, { r: 10, g: 10, b: 10 });
-    this.quadrant4Fill = this.quadrant4Fill || adjust(this.primaryColor, { r: 15, g: 15, b: 15 });
+    this.quadrant1Fill = this.quadrant1Fill || primaryColor;
+    this.quadrant2Fill = this.quadrant2Fill || adjust(primaryColor, { r: 5, g: 5, b: 5 });
+    this.quadrant3Fill = this.quadrant3Fill || adjust(primaryColor, { r: 10, g: 10, b: 10 });
+    this.quadrant4Fill = this.quadrant4Fill || adjust(primaryColor, { r: 15, g: 15, b: 15 });
     this.quadrant1TextFill = this.quadrant1TextFill || this.primaryTextColor;
     this.quadrant2TextFill =
       this.quadrant2TextFill || adjust(this.primaryTextColor, { r: -5, g: -5, b: -5 });
@@ -314,7 +298,7 @@ class Theme {
     };
 
     /* requirement-diagram */
-    this.requirementBackground = this.requirementBackground || this.primaryColor;
+    this.requirementBackground = this.requirementBackground || primaryColor;
     this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;
     this.requirementBorderSize = this.requirementBorderSize || '1';
     this.requirementTextColor = this.requirementTextColor || this.primaryTextColor;
@@ -325,14 +309,14 @@ class Theme {
     this.relationLabelColor = this.relationLabelColor || this.actorTextColor;
 
     /* git */
-    this.git0 = this.git0 || this.primaryColor;
-    this.git1 = this.git1 || this.secondaryColor;
-    this.git2 = this.git2 || this.tertiaryColor;
-    this.git3 = this.git3 || adjust(this.primaryColor, { h: -30 });
-    this.git4 = this.git4 || adjust(this.primaryColor, { h: -60 });
-    this.git5 = this.git5 || adjust(this.primaryColor, { h: -90 });
-    this.git6 = this.git6 || adjust(this.primaryColor, { h: +60 });
-    this.git7 = this.git7 || adjust(this.primaryColor, { h: +120 });
+    this.git0 = this.git0 || primaryColor;
+    this.git1 = this.git1 || secondaryColor;
+    this.git2 = this.git2 || tertiaryColor;
+    this.git3 = this.git3 || adjust(primaryColor, { h: -30 });
+    this.git4 = this.git4 || adjust(primaryColor, { h: -60 });
+    this.git5 = this.git5 || adjust(primaryColor, { h: -90 });
+    this.git6 = this.git6 || adjust(primaryColor, { h: +60 });
+    this.git7 = this.git7 || adjust(primaryColor, { h: +120 });
     if (this.darkMode) {
       this.git0 = lighten(this.git0, 25);
       this.git1 = lighten(this.git1, 25);
@@ -387,9 +371,6 @@ class Theme {
     this.attributeBackgroundColorEven =
       this.attributeBackgroundColorEven || oldAttributeBackgroundColorEven;
     /* -------------------------------------------------- */
-
-    this.gradientStart = this.primaryBorderColor;
-    this.gradientStop = this.secondaryBorderColor;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

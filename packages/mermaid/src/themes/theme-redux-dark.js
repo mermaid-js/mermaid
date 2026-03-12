@@ -1,9 +1,9 @@
-import { adjust, darken, invert, isDark, lighten } from 'khroma';
+import { adjust, darken, invert, isDark, lighten, rgba } from 'khroma';
+import { mkBorder } from './theme-helpers.js';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
 } from './erDiagram-oldHardcodedValues.js';
-import { mkBorder } from './theme-helpers.js';
 
 class Theme {
   constructor() {
@@ -12,28 +12,69 @@ class Theme {
      * - Background - used to know what the background color is of the diagram. This is used for
      *   deducing colors for instance line color. Default value is #f4f4f4.
      */
-    this.background = '#f4f4f4';
+    this.background = '#333';
+    this.primaryColor = '#1f2020';
+    this.secondaryColor = lighten(this.primaryColor, 16);
+    this.tertiaryColor = adjust(this.primaryColor, { h: -160 });
+    this.primaryBorderColor = invert(this.background);
+    this.secondaryBorderColor = mkBorder(this.secondaryColor, this.darkMode);
+    this.tertiaryBorderColor = mkBorder(this.tertiaryColor, this.darkMode);
+    this.primaryTextColor = invert(this.primaryColor);
+    this.secondaryTextColor = invert(this.secondaryColor);
+    this.tertiaryTextColor = invert(this.tertiaryColor);
 
-    this.primaryColor = '#fff4dd';
+    this.mainBkg = '#111113';
+    this.secondBkg = 'calculated';
+    this.mainContrastColor = 'lightgrey';
+    this.darkTextColor = lighten(invert('#323D47'), 10);
+    this.border1 = '#ccc';
+    this.border2 = rgba(255, 255, 255, 0.25);
+    this.arrowheadColor = invert(this.background);
+    this.fontFamily = '"Recursive Variable", arial, sans-serif';
+    this.fontSize = '14px';
+    this.labelBackground = '#111113';
+    this.textColor = '#ccc';
+    this.THEME_COLOR_LIMIT = 12;
+    this.radius = 12;
+    this.strokeWidth = 2;
 
-    this.noteBkgColor = '#fff5ad';
-    this.noteTextColor = '#333';
+    this.noteBkgColor = this.noteBkgColor ?? '#FEF9C3';
+    this.noteTextColor = this.noteTextColor ?? '#28253D';
 
     this.THEME_COLOR_LIMIT = 12;
-    this.radius = 5;
-    this.strokeWidth = 1;
     // dark
+    this.fontFamily = '"Recursive Variable", arial, sans-serif';
+    this.fontSize = '14px';
 
-    this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
-    this.fontSize = '16px';
-    this.useGradient = true;
-    this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,1))';
+    // Neo-specific
+    this.nodeBorder = '#FFFFFF';
+    this.stateBorder = '#FFFFFF';
+
+    this.useGradient = false;
+    this.gradientStart = '#0042eb';
+    this.gradientStop = '#eb0042';
+    this.dropShadow = 'url(#drop-shadow)';
+
+    /* Architecture Diagram variables */
+    this.archEdgeColor = 'calculated';
+    this.archEdgeArrowColor = 'calculated';
+    this.archEdgeWidth = '3';
+    this.archGroupBorderColor = this.primaryBorderColor;
+    this.archGroupBorderWidth = '2px';
+
+    /* Class Diagram variables */
+    this.clusterBkg = '#1E1A2E';
+    this.clusterBorder = '#BDBCCC';
+    this.noteBorderColor = '#FACC15';
+
+    /* Sequence Diagram variables */
+    this.noteFontWeight = 600;
   }
   updateColors() {
     // The || is to make sure that if the variable has been defined by a user override that value is to be used
 
     /* Main */
-    this.primaryTextColor = this.primaryTextColor || (this.darkMode ? '#eee' : '#333'); // invert(this.primaryColor);
+    this.primaryTextColor = this.primaryTextColor || (this.darkMode ? '#eee' : '#FFFFFF'); // invert(this.primaryColor);
     this.secondaryColor = this.secondaryColor || adjust(this.primaryColor, { h: -120 });
     this.tertiaryColor = this.tertiaryColor || adjust(this.primaryColor, { h: 180, l: 5 });
 
@@ -44,7 +85,7 @@ class Theme {
       this.tertiaryBorderColor || mkBorder(this.tertiaryColor, this.darkMode);
     this.noteBorderColor = this.noteBorderColor || mkBorder(this.noteBkgColor, this.darkMode);
     this.noteBkgColor = this.noteBkgColor || '#fff5ad';
-    this.noteTextColor = this.noteTextColor || '#333';
+    this.noteTextColor = this.noteTextColor || '#FFFFFF';
 
     this.secondaryTextColor = this.secondaryTextColor || invert(this.secondaryColor);
     this.tertiaryTextColor = this.tertiaryTextColor || invert(this.tertiaryColor);
@@ -58,7 +99,7 @@ class Theme {
     /* Flowchart variables */
     this.nodeBkg = this.nodeBkg || this.primaryColor;
     this.mainBkg = this.mainBkg || this.primaryColor;
-    this.nodeBorder = this.nodeBorder || this.primaryBorderColor;
+    this.nodeBorder = this.nodeBorder || this.border1;
     this.clusterBkg = this.clusterBkg || this.tertiaryColor;
     this.clusterBorder = this.clusterBorder || this.tertiaryBorderColor;
     this.defaultLinkColor = this.defaultLinkColor || this.lineColor;
@@ -67,10 +108,12 @@ class Theme {
       this.edgeLabelBackground ||
       (this.darkMode ? darken(this.secondaryColor, 30) : this.secondaryColor);
     this.nodeTextColor = this.nodeTextColor || this.primaryTextColor;
-    /* Sequence Diagram variables */
-    this.clusterBkg = '#FFFFF8';
 
-    // this.actorBorder = lighten(this.border1, 0.5);
+    /* Sequence Diagram variables */
+
+    this.actorBorder = '#FFFFFF';
+    this.signalColor = '#FFFFFF';
+    this.labelBoxBorderColor = '#BDBCCC';
     this.actorBorder = this.actorBorder || this.primaryBorderColor;
     this.actorBkg = this.actorBkg || this.mainBkg;
     this.actorTextColor = this.actorTextColor || this.primaryTextColor;
@@ -102,7 +145,6 @@ class Theme {
     this.critBorderColor = this.critBorderColor || '#ff8888';
     this.critBkgColor = this.critBkgColor || 'red';
     this.todayLineColor = this.todayLineColor || 'red';
-    this.vertLineColor = this.vertLineColor || 'navy';
     this.taskTextColor = this.taskTextColor || this.textColor;
     this.taskTextOutsideColor = this.taskTextOutsideColor || this.textColor;
     this.taskTextLightColor = this.taskTextLightColor || this.textColor;
@@ -110,34 +152,30 @@ class Theme {
     this.taskTextDarkColor = this.taskTextDarkColor || this.textColor;
     this.taskTextClickableColor = this.taskTextClickableColor || '#003163';
 
-    this.noteFontWeight = this.noteFontWeight || 'normal';
-    this.fontWeight = this.fontWeight || 'normal';
+    /* Architecture Diagram variables */
+    this.archEdgeColor = this.lineColor;
+    this.archEdgeArrowColor = this.lineColor;
 
     /* Sequence Diagram variables */
 
     this.personBorder = this.personBorder || this.primaryBorderColor;
     this.personBkg = this.personBkg || this.mainBkg;
 
-    /* ER diagram */
-
-    if (this.darkMode) {
-      this.rowOdd = this.rowOdd || darken(this.mainBkg, 5) || '#ffffff';
-      this.rowEven = this.rowEven || darken(this.mainBkg, 10);
-    } else {
-      this.rowOdd = this.rowOdd || lighten(this.mainBkg, 75) || '#ffffff';
-      this.rowEven = this.rowEven || lighten(this.mainBkg, 5);
-    }
-
     /* state colors */
     this.transitionColor = this.transitionColor || this.lineColor;
     this.transitionLabelColor = this.transitionLabelColor || this.textColor;
     /* The color of the text tables of the states*/
     this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
-
+    this.vertLineColor = this.vertLineColor || this.primaryBorderColor;
+    this.compositeBackground = '#16141F';
+    this.altBackground = '#16141F';
+    this.compositeTitleBackground = '#16141F';
+    this.stateEdgeLabelBackground = '#16141F';
+    this.fontWeight = 600;
     this.stateBkg = this.stateBkg || this.mainBkg;
     this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
     this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
-    this.altBackground = this.altBackground || this.tertiaryColor;
+    this.altBackground = this.altBackground || '#f0f0f0';
     this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
     this.compositeBorder = this.compositeBorder || this.nodeBorder;
     this.innerEndBackground = this.nodeBorder;
@@ -239,37 +277,8 @@ class Theme {
     this.pieOpacity = this.pieOpacity || '0.7';
 
     /* venn */
-    this.venn1 = this.venn1 ?? adjust(this.primaryColor, { l: -30 });
-    this.venn2 = this.venn2 ?? adjust(this.secondaryColor, { l: -30 });
-    this.venn3 = this.venn3 ?? adjust(this.tertiaryColor, { l: -30 });
-    this.venn4 = this.venn4 ?? adjust(this.primaryColor, { h: 60, l: -30 });
-    this.venn5 = this.venn5 ?? adjust(this.primaryColor, { h: -60, l: -30 });
-    this.venn6 = this.venn6 ?? adjust(this.secondaryColor, { h: 60, l: -30 });
-    this.venn7 = this.venn7 ?? adjust(this.primaryColor, { h: 120, l: -30 });
-    this.venn8 = this.venn8 ?? adjust(this.secondaryColor, { h: 120, l: -30 });
     this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
     this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
-
-    /* radar */
-    this.radar = {
-      axisColor: this.radar?.axisColor || this.lineColor,
-      axisStrokeWidth: this.radar?.axisStrokeWidth || 2,
-      axisLabelFontSize: this.radar?.axisLabelFontSize || 12,
-      curveOpacity: this.radar?.curveOpacity || 0.5,
-      curveStrokeWidth: this.radar?.curveStrokeWidth || 2,
-      graticuleColor: this.radar?.graticuleColor || '#DEDEDE',
-      graticuleStrokeWidth: this.radar?.graticuleStrokeWidth || 1,
-      graticuleOpacity: this.radar?.graticuleOpacity || 0.3,
-      legendBoxSize: this.radar?.legendBoxSize || 12,
-      legendFontSize: this.radar?.legendFontSize || 12,
-    };
-
-    /* architecture */
-    this.archEdgeColor = this.archEdgeColor || '#777';
-    this.archEdgeArrowColor = this.archEdgeArrowColor || '#777';
-    this.archEdgeWidth = this.archEdgeWidth || '3';
-    this.archGroupBorderColor = this.archGroupBorderColor || '#000';
-    this.archGroupBorderWidth = this.archGroupBorderWidth || '2px';
 
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;
@@ -323,6 +332,7 @@ class Theme {
       this.relationLabelBackground ||
       (this.darkMode ? darken(this.secondaryColor, 30) : this.secondaryColor);
     this.relationLabelColor = this.relationLabelColor || this.actorTextColor;
+    this.requirementEdgeLabelBackground = '#16141F';
 
     /* git */
     this.git0 = this.git0 || this.primaryColor;
@@ -378,18 +388,16 @@ class Theme {
     this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
     this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
     this.commitLabelFontSize = this.commitLabelFontSize || '10px';
+    this.commitLineColor = this.commitLineColor ?? '#BDBCCC';
 
     /* -------------------------------------------------- */
     /* EntityRelationship diagrams                        */
-
+    this.erEdgeLabelBackground = '#16141F';
     this.attributeBackgroundColorOdd =
       this.attributeBackgroundColorOdd || oldAttributeBackgroundColorOdd;
     this.attributeBackgroundColorEven =
       this.attributeBackgroundColorEven || oldAttributeBackgroundColorEven;
     /* -------------------------------------------------- */
-
-    this.gradientStart = this.primaryBorderColor;
-    this.gradientStop = this.secondaryBorderColor;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

@@ -1,9 +1,9 @@
-import { adjust, darken, invert, isDark, lighten } from 'khroma';
+import { adjust, darken, invert, isDark, lighten, rgba } from 'khroma';
+import { mkBorder } from './theme-helpers.js';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
 } from './erDiagram-oldHardcodedValues.js';
-import { mkBorder } from './theme-helpers.js';
 
 class Theme {
   constructor() {
@@ -12,22 +12,58 @@ class Theme {
      * - Background - used to know what the background color is of the diagram. This is used for
      *   deducing colors for instance line color. Default value is #f4f4f4.
      */
-    this.background = '#f4f4f4';
+    this.background = '#333';
+    this.primaryColor = '#1f2020';
+    this.secondaryColor = lighten(this.primaryColor, 16);
+    this.tertiaryColor = adjust(this.primaryColor, { h: -160 });
+    this.primaryBorderColor = invert(this.background);
+    this.secondaryBorderColor = mkBorder(this.secondaryColor, this.darkMode);
+    this.tertiaryBorderColor = mkBorder(this.tertiaryColor, this.darkMode);
+    this.primaryTextColor = invert(this.primaryColor);
+    this.secondaryTextColor = invert(this.secondaryColor);
+    this.tertiaryTextColor = invert(this.tertiaryColor);
 
-    this.primaryColor = '#fff4dd';
+    this.mainBkg = '#2a2020';
+    this.secondBkg = 'calculated';
+    this.mainContrastColor = 'lightgrey';
+    this.darkTextColor = lighten(invert('#323D47'), 10);
+    this.border1 = '#ccc';
+    this.border2 = rgba(255, 255, 255, 0.25);
+    this.arrowheadColor = invert(this.background);
+    this.fontFamily = 'arial, sans-serif';
+    this.fontSize = '14px';
+    this.labelBackground = '#181818';
+    this.textColor = '#ccc';
+    this.THEME_COLOR_LIMIT = 12;
+    this.radius = 3;
+    this.strokeWidth = 1;
 
     this.noteBkgColor = '#fff5ad';
     this.noteTextColor = '#333';
 
     this.THEME_COLOR_LIMIT = 12;
-    this.radius = 5;
-    this.strokeWidth = 1;
     // dark
+    this.fontFamily = 'arial, sans-serif';
+    this.fontSize = '14px';
 
-    this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
-    this.fontSize = '16px';
+    // Neo-specific
+    // this.nodeBorder = 'none';
+    // this.stateBorder = 'none';
+
     this.useGradient = true;
-    this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,1))';
+    this.gradientStart = '#0042eb';
+    this.gradientStop = '#eb0042';
+    this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,0.2))';
+
+    /* Architecture Diagram variables */
+    this.archEdgeColor = 'calculated';
+    this.archEdgeArrowColor = 'calculated';
+    this.archEdgeWidth = '3';
+    this.archGroupBorderColor = this.primaryBorderColor;
+    this.archGroupBorderWidth = '2px';
+
+    this.noteFontWeight = 'normal';
+    this.fontWeight = 'normal';
   }
   updateColors() {
     // The || is to make sure that if the variable has been defined by a user override that value is to be used
@@ -58,7 +94,7 @@ class Theme {
     /* Flowchart variables */
     this.nodeBkg = this.nodeBkg || this.primaryColor;
     this.mainBkg = this.mainBkg || this.primaryColor;
-    this.nodeBorder = this.nodeBorder || this.primaryBorderColor;
+    this.nodeBorder = this.nodeBorder || this.border1;
     this.clusterBkg = this.clusterBkg || this.tertiaryColor;
     this.clusterBorder = this.clusterBorder || this.tertiaryBorderColor;
     this.defaultLinkColor = this.defaultLinkColor || this.lineColor;
@@ -68,7 +104,6 @@ class Theme {
       (this.darkMode ? darken(this.secondaryColor, 30) : this.secondaryColor);
     this.nodeTextColor = this.nodeTextColor || this.primaryTextColor;
     /* Sequence Diagram variables */
-    this.clusterBkg = '#FFFFF8';
 
     // this.actorBorder = lighten(this.border1, 0.5);
     this.actorBorder = this.actorBorder || this.primaryBorderColor;
@@ -102,7 +137,7 @@ class Theme {
     this.critBorderColor = this.critBorderColor || '#ff8888';
     this.critBkgColor = this.critBkgColor || 'red';
     this.todayLineColor = this.todayLineColor || 'red';
-    this.vertLineColor = this.vertLineColor || 'navy';
+    this.vertLineColor = this.vertLineColor || this.primaryBorderColor;
     this.taskTextColor = this.taskTextColor || this.textColor;
     this.taskTextOutsideColor = this.taskTextOutsideColor || this.textColor;
     this.taskTextLightColor = this.taskTextLightColor || this.textColor;
@@ -110,23 +145,14 @@ class Theme {
     this.taskTextDarkColor = this.taskTextDarkColor || this.textColor;
     this.taskTextClickableColor = this.taskTextClickableColor || '#003163';
 
-    this.noteFontWeight = this.noteFontWeight || 'normal';
-    this.fontWeight = this.fontWeight || 'normal';
+    /* Architecture Diagram variables */
+    this.archEdgeColor = this.lineColor;
+    this.archEdgeArrowColor = this.lineColor;
 
     /* Sequence Diagram variables */
 
     this.personBorder = this.personBorder || this.primaryBorderColor;
     this.personBkg = this.personBkg || this.mainBkg;
-
-    /* ER diagram */
-
-    if (this.darkMode) {
-      this.rowOdd = this.rowOdd || darken(this.mainBkg, 5) || '#ffffff';
-      this.rowEven = this.rowEven || darken(this.mainBkg, 10);
-    } else {
-      this.rowOdd = this.rowOdd || lighten(this.mainBkg, 75) || '#ffffff';
-      this.rowEven = this.rowEven || lighten(this.mainBkg, 5);
-    }
 
     /* state colors */
     this.transitionColor = this.transitionColor || this.lineColor;
@@ -137,7 +163,7 @@ class Theme {
     this.stateBkg = this.stateBkg || this.mainBkg;
     this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
     this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
-    this.altBackground = this.altBackground || this.tertiaryColor;
+    this.altBackground = this.altBackground || '#f0f0f0';
     this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
     this.compositeBorder = this.compositeBorder || this.nodeBorder;
     this.innerEndBackground = this.nodeBorder;
@@ -239,37 +265,8 @@ class Theme {
     this.pieOpacity = this.pieOpacity || '0.7';
 
     /* venn */
-    this.venn1 = this.venn1 ?? adjust(this.primaryColor, { l: -30 });
-    this.venn2 = this.venn2 ?? adjust(this.secondaryColor, { l: -30 });
-    this.venn3 = this.venn3 ?? adjust(this.tertiaryColor, { l: -30 });
-    this.venn4 = this.venn4 ?? adjust(this.primaryColor, { h: 60, l: -30 });
-    this.venn5 = this.venn5 ?? adjust(this.primaryColor, { h: -60, l: -30 });
-    this.venn6 = this.venn6 ?? adjust(this.secondaryColor, { h: 60, l: -30 });
-    this.venn7 = this.venn7 ?? adjust(this.primaryColor, { h: 120, l: -30 });
-    this.venn8 = this.venn8 ?? adjust(this.secondaryColor, { h: 120, l: -30 });
     this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
     this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
-
-    /* radar */
-    this.radar = {
-      axisColor: this.radar?.axisColor || this.lineColor,
-      axisStrokeWidth: this.radar?.axisStrokeWidth || 2,
-      axisLabelFontSize: this.radar?.axisLabelFontSize || 12,
-      curveOpacity: this.radar?.curveOpacity || 0.5,
-      curveStrokeWidth: this.radar?.curveStrokeWidth || 2,
-      graticuleColor: this.radar?.graticuleColor || '#DEDEDE',
-      graticuleStrokeWidth: this.radar?.graticuleStrokeWidth || 1,
-      graticuleOpacity: this.radar?.graticuleOpacity || 0.3,
-      legendBoxSize: this.radar?.legendBoxSize || 12,
-      legendFontSize: this.radar?.legendFontSize || 12,
-    };
-
-    /* architecture */
-    this.archEdgeColor = this.archEdgeColor || '#777';
-    this.archEdgeArrowColor = this.archEdgeArrowColor || '#777';
-    this.archEdgeWidth = this.archEdgeWidth || '3';
-    this.archGroupBorderColor = this.archGroupBorderColor || '#000';
-    this.archGroupBorderWidth = this.archGroupBorderWidth || '2px';
 
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;
@@ -325,15 +322,16 @@ class Theme {
     this.relationLabelColor = this.relationLabelColor || this.actorTextColor;
 
     /* git */
-    this.git0 = this.git0 || this.primaryColor;
-    this.git1 = this.git1 || this.secondaryColor;
-    this.git2 = this.git2 || this.tertiaryColor;
-    this.git3 = this.git3 || adjust(this.primaryColor, { h: -30 });
-    this.git4 = this.git4 || adjust(this.primaryColor, { h: -60 });
-    this.git5 = this.git5 || adjust(this.primaryColor, { h: -90 });
-    this.git6 = this.git6 || adjust(this.primaryColor, { h: +60 });
-    this.git7 = this.git7 || adjust(this.primaryColor, { h: +120 });
-    if (this.darkMode) {
+    this.git0 = this.git0 || '#0b0000';
+    this.git1 = this.git1 || '#4d1037';
+    this.git2 = this.git2 || '#3f5258';
+    this.git3 = this.git3 || '#4f2f1b';
+    this.git4 = this.git4 || '#6e0a0a';
+    this.git5 = this.git5 || '#3b0048';
+    this.git6 = this.git6 || '#995a01';
+    this.git7 = this.git7 || '#154706';
+    this.gitDarkMode = true;
+    if (this.gitDarkMode) {
       this.git0 = lighten(this.git0, 25);
       this.git1 = lighten(this.git1, 25);
       this.git2 = lighten(this.git2, 25);
@@ -387,9 +385,6 @@ class Theme {
     this.attributeBackgroundColorEven =
       this.attributeBackgroundColorEven || oldAttributeBackgroundColorEven;
     /* -------------------------------------------------- */
-
-    this.gradientStart = this.primaryBorderColor;
-    this.gradientStop = this.secondaryBorderColor;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {
