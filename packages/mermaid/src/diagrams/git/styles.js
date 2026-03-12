@@ -1,14 +1,27 @@
 import * as configApi from '../../config.js';
 
+const genGitGraphGradient = (options) => {
+  const { svgId } = options;
+  let sections = '';
+  if (options.useGradient && svgId) {
+    for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
+      sections += `
+      .label${i}  { fill: ${options.mainBkg}; stroke: url(${svgId}-gradient); stroke-width: ${options.strokeWidth};}
+             `;
+    }
+  }
+  return sections;
+};
+
 const genColor = (options) => {
   const config = configApi.getConfig();
   const { theme, themeVariables } = config;
   const { borderColorArray } = themeVariables;
-  const isReduxTheme = theme.includes('redux');
+  const isReduxTheme = theme?.includes('redux');
   if (theme?.includes('neo')) {
     let sections = '';
 
-    for (let i = 0; i <= 7; i++) {
+    for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
       if (i === 0) {
         sections += `
         .branch-label${i} { fill: ${options.nodeBorder};}
@@ -17,7 +30,7 @@ const genColor = (options) => {
         .arrow${i} { stroke: ${options.nodeBorder}; }
         .commit-bullets { fill: ${options.nodeBorder}; }
         .commit-cherry-pick${i} { stroke: ${options.nodeBorder}; }
-        `;
+        ${genGitGraphGradient(options)}`;
       } else {
         sections += `
         .branch-label${i} { fill: ${options['gitBranchLabel' + i]}; }
@@ -31,7 +44,7 @@ const genColor = (options) => {
   } else if (!theme?.includes('color')) {
     let sections = '';
 
-    for (let i = 0; i <= options.THEME_COLOR_LIMIT; i++) {
+    for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
       sections += `
         .branch-label${i} { fill: ${options.nodeBorder}; ${isReduxTheme ? `font-weight:${options.noteFontWeight}` : ''} }
         .commit${i} { stroke: ${options.nodeBorder};   }
@@ -46,7 +59,7 @@ const genColor = (options) => {
   } else {
     let sections = '';
 
-    for (let i = 0; i <= options.THEME_COLOR_LIMIT; i++) {
+    for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
       if (i === 0) {
         sections += `
         .branch-label${i} { fill: ${options.nodeBorder}; ${isReduxTheme ? `font-weight:${options.noteFontWeight}` : ''} }
@@ -62,7 +75,7 @@ const genColor = (options) => {
         .branch-label${i} { fill: ${options.nodeBorder}; ${isReduxTheme ? `font-weight:${options.noteFontWeight}` : ''} }  
         .commit${i} { stroke: ${borderColorArray[colorIndex]}; fill: ${borderColorArray[colorIndex]}; }
         .commit-highlight${i} { stroke: ${borderColorArray[colorIndex]}; fill: ${borderColorArray[colorIndex]}; }
-        .label${i}  { fill: ${theme?.includes('dar') ? options.mainBkg : borderColorArray[colorIndex]}; stroke: ${borderColorArray[colorIndex]};  stroke-width: ${options.strokeWidth}; }
+        .label${i}  { fill: ${theme?.includes('dark') ? options.mainBkg : borderColorArray[colorIndex]}; stroke: ${borderColorArray[colorIndex]};  stroke-width: ${options.strokeWidth}; }
         .arrow${i} { stroke: ${borderColorArray[colorIndex]}; }
         `;
       }
@@ -88,7 +101,7 @@ const normalTheme = (options) => {
 const getStyles = (options) => {
   const config = configApi.getConfig();
   const { theme } = config;
-  const isReduxTheme = theme.includes('redux') || theme.includes('neo');
+  const isReduxTheme = theme?.includes('redux') || theme?.includes('neo');
 
   return `
   .commit-id,
@@ -129,8 +142,8 @@ const getStyles = (options) => {
     fill: ${isReduxTheme ? options.mainBkg : options.primaryColor};
   }
 
-  .arrow { 
-    stroke-width: ${theme.includes('redux') ? options.strokeWidth : 8};
+  .arrow {
+    stroke-width: ${theme?.includes('redux') ? options.strokeWidth : 8};
     stroke-linecap: round;
     fill: none
   }
