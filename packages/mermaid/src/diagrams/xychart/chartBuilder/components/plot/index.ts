@@ -55,6 +55,8 @@ export class BasePlot implements Plot {
       throw Error('Axes must be passed to render Plots');
     }
     const drawableElem: DrawableElem[] = [];
+    // Track cumulative bar values for stacking
+    let cumulativeBarOffsets: number[] = [];
     for (const [i, plot] of this.chartData.plots.entries()) {
       switch (plot.type) {
         case 'line':
@@ -77,9 +79,19 @@ export class BasePlot implements Plot {
               this.xAxis,
               this.yAxis,
               this.chartConfig.chartOrientation,
-              i
+              i,
+              cumulativeBarOffsets
             );
             drawableElem.push(...barPlot.getDrawableElement());
+            // Update cumulative offsets for stacking
+            const currentValues = plot.data.map((d) => d[1]);
+            if (cumulativeBarOffsets.length === 0) {
+              cumulativeBarOffsets = currentValues;
+            } else {
+              cumulativeBarOffsets = cumulativeBarOffsets.map(
+                (v, idx) => v + (currentValues[idx] || 0)
+              );
+            }
           }
           break;
       }
