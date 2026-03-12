@@ -15,6 +15,25 @@
 
   <body>
     <h1>Sequence diagram demos</h1>
+
+    <pre class="mermaid">
+	sequenceDiagram
+		participant A as Christmas
+		participant B as Go shopping
+		participant C as Let me think
+		participant D as Laptop
+		participant E as iPhone
+		participant F as Car
+		link B: BuyBuyBuy @ https://ebay.com
+
+		A->>B: [Get money](https://earnmoney.com)
+		B->>C: After shopping
+		C->>C: Decision making
+		C-->>D: Option: One
+		C-->>E: Option: Two
+		C-->>F: Option: Three
+	</pre
+    >
     <pre class="mermaid">
     sequenceDiagram
       accTitle: test the accTitle

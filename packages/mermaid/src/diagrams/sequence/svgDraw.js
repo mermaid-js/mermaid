@@ -264,12 +264,9 @@ export const drawText = function (elem, textData) {
         // Add the link
         const linkText = match[1];
         const linkHref = sanitizeUrl(match[2]);
-        const linkEl = textElem.append('a').attr('xlink:href', linkHref).attr('target', '_blank');
-        linkEl
-          .append('tspan')
-          .attr('fill', '#0d47a1')
-          .attr('text-decoration', 'underline')
-          .text(linkText);
+        const safeHref = linkHref.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+        const linkEl = textElem.append('a').attr('xlink:href', safeHref).attr('target', '_blank');
+        linkEl.append('tspan').attr('text-decoration', 'underline').text(linkText);
         lastIndex = match.index + match[0].length;
       }
       // Add remaining text after last link

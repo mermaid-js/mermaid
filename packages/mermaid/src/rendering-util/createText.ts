@@ -232,13 +232,13 @@ function updateTextContentAndStyles(
       index === 0 ? decodeHTMLEntities(word.content) : ' ' + decodeHTMLEntities(word.content);
 
     if (word.type === 'link' && word.href) {
-      const linkEl = tspan.append('a').attr('xlink:href', word.href).attr('target', '_blank');
+      const safeHref = word.href.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+      const linkEl = tspan.append('a').attr('xlink:href', safeHref).attr('target', '_blank');
       linkEl
         .append('tspan')
         .attr('class', 'text-inner-tspan')
         .attr('font-style', 'normal')
         .attr('font-weight', 'normal')
-        .attr('fill', '#0d47a1')
         .attr('text-decoration', 'underline')
         .text(textContent);
     } else {
