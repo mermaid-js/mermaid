@@ -8,6 +8,7 @@ export interface EntityNode {
   cssClasses?: string;
   cssStyles?: string[];
   cssCompiledStyles?: string[];
+  labelType?: string;
 }
 
 export interface Attribute {

@@ -43,6 +43,7 @@ export class ClassDB implements DiagramDB {
   // private static classCounter = 0;
   private namespaces = new Map<string, NamespaceNode>();
   private namespaceCounter = 0;
+  private diagramId = '';
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   private functions: Function[] = [];
@@ -144,7 +145,16 @@ export class ClassDB implements DiagramDB {
   }
 
   /**
+   * Sets the diagram's SVG element ID, used to prefix domIds for uniqueness
+   * across multiple diagrams on the same page.
+   */
+  public setDiagramId(svgElementId: string) {
+    this.diagramId = svgElementId;
+  }
+
+  /**
    * Function to lookup domId from id in the graph definition.
+   * When diagramId is set, returns the prefixed version for DOM uniqueness.
    *
    * @param id - class ID to lookup
    * @public
@@ -152,7 +162,8 @@ export class ClassDB implements DiagramDB {
   public lookUpDomId(_id: string): string {
     const id = common.sanitizeText(_id, getConfig());
     if (this.classes.has(id)) {
-      return this.classes.get(id)!.domId;
+      const domId = this.classes.get(id)!.domId;
+      return this.diagramId ? `${this.diagramId}-${domId}` : domId;
     }
     throw new Error('Class not found: ' + id);
   }
@@ -166,6 +177,7 @@ export class ClassDB implements DiagramDB {
     this.functions.push(this.setupToolTips.bind(this));
     this.namespaces = new Map<string, NamespaceNode>();
     this.namespaceCounter = 0;
+    this.diagramId = '';
     this.direction = 'TB';
     commonClear();
   }
@@ -430,7 +442,6 @@ export class ClassDB implements DiagramDB {
 
     const id = domId;
     if (this.classes.has(id)) {
-      const elemId = this.lookUpDomId(id);
       let argList: string[] = [];
       if (typeof functionArgs === 'string') {
         /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
@@ -448,10 +459,11 @@ export class ClassDB implements DiagramDB {
 
       /* if no arguments passed into callback, default to passing in id */
       if (argList.length === 0) {
-        argList.push(elemId);
+        argList.push(id);
       }
 
       this.functions.push(() => {
+        const elemId = this.lookUpDomId(id);
         const elem = document.querySelector(`[id="${elemId}"]`);
         if (elem !== null) {
           elem.addEventListener(
@@ -679,6 +691,7 @@ export class ClassDB implements DiagramDB {
         ],
         look: config.look,
         parentId: note.parent,
+        labelType: 'markdown',
       };
       nodes.push(noteNode);
 
@@ -741,6 +754,7 @@ export class ClassDB implements DiagramDB {
         style: classRelation.style || '',
         pattern: classRelation.relation.lineType == 1 ? 'dashed' : 'solid',
         look: config.look,
+        labelType: 'markdown',
       };
       edges.push(edge);
     }
