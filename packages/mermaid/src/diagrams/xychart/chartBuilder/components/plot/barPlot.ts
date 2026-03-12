@@ -8,14 +8,20 @@ export class BarPlot {
     private xAxis: Axis,
     private yAxis: Axis,
     private orientation: XYChartConfig['chartOrientation'],
-    private plotIndex: number
+    private plotIndex: number,
+    private cumulativeOffsets: number[] = []
   ) {}
 
   getDrawableElement(): DrawableElem[] {
-    const finalData: [number, number][] = this.barData.data.map((d) => [
-      this.xAxis.getScaleValue(d[0]),
-      this.yAxis.getScaleValue(d[1]),
-    ]);
+    const finalData: [number, number][] = this.barData.data.map((d, i) => {
+      const offset = this.cumulativeOffsets[i] || 0;
+      return [this.xAxis.getScaleValue(d[0]), this.yAxis.getScaleValue(d[1] + offset)];
+    });
+
+    const baselineData: number[] = this.barData.data.map((_, i) => {
+      const offset = this.cumulativeOffsets[i] || 0;
+      return this.yAxis.getScaleValue(offset);
+    });
 
     const barPaddingPercent = 0.05;
 
@@ -25,15 +31,19 @@ export class BarPlot {
     const barWidthHalf = barWidth / 2;
 
     if (this.orientation === 'horizontal') {
+      const baselineX: number[] = this.barData.data.map((_, i) => {
+        const offset = this.cumulativeOffsets[i] || 0;
+        return this.xAxis.getScaleValue(offset);
+      });
       return [
         {
           groupTexts: ['plot', `bar-plot-${this.plotIndex}`],
           type: 'rect',
-          data: finalData.map((data) => ({
-            x: this.boundingRect.x,
+          data: finalData.map((data, i) => ({
+            x: baselineX[i],
             y: data[0] - barWidthHalf,
             height: barWidth,
-            width: data[1] - this.boundingRect.x,
+            width: data[1] - baselineX[i],
             fill: this.barData.fill,
             strokeWidth: 0,
             strokeFill: this.barData.fill,
@@ -45,11 +55,11 @@ export class BarPlot {
       {
         groupTexts: ['plot', `bar-plot-${this.plotIndex}`],
         type: 'rect',
-        data: finalData.map((data) => ({
+        data: finalData.map((data, i) => ({
           x: data[0] - barWidthHalf,
           y: data[1],
           width: barWidth,
-          height: this.boundingRect.y + this.boundingRect.height - data[1],
+          height: baselineData[i] - data[1],
           fill: this.barData.fill,
           strokeWidth: 0,
           strokeFill: this.barData.fill,
