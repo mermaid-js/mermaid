@@ -11,6 +11,7 @@ import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import type { ArchitectureDB } from './architectureDb.js';
 import { architectureIcons } from './architectureIcons.js';
 import type {
+  ArchitectureAdjacencyList,
   ArchitectureAlignment,
   ArchitectureDataStructures,
   ArchitectureGroupAlignments,
@@ -256,6 +257,7 @@ function getAlignments(
 
 function getRelativeConstraints(
   spatialMaps: ArchitectureSpatialMap[],
+  adjList: ArchitectureAdjacencyList,
   db: ArchitectureDB
 ): fcose.FcoseRelativePlacementConstraint[] {
   const relativeConstraints: fcose.FcoseRelativePlacementConstraint[] = [];
@@ -267,14 +269,33 @@ function getRelativeConstraints(
       Object.entries(spatialMap).map(([id, pos]) => [posToStr(pos), id])
     );
 
+    // Restructure the adjList to just track which services connect (both ways)
+    const newAdjList = Object.entries(adjList).reduce(
+      (prev, [lhsId, pair]) => {
+        prev[lhsId] ??= {};
+        Object.values(pair).forEach((rhsId) => {
+          prev[lhsId][rhsId] = true;
+          prev[rhsId] ??= {};
+          prev[rhsId][lhsId] = true;
+        });
+
+        return prev;
+      },
+      {} as Record<string, Record<string, boolean>>
+    );
+
     // perform BFS
     const queue = [posToStr([0, 0])];
     const visited: Record<string, number> = {};
-    const directions: Record<ArchitectureDirection, number[]> = {
+    const directions: Record<ArchitectureDirection | 'LB' | 'LT' | 'RB' | 'RT', number[]> = {
       L: [-1, 0],
       R: [1, 0],
       T: [0, 1],
       B: [0, -1],
+      LB: [-1, -1],
+      LT: [-1, 1],
+      RB: [1, -1],
+      RT: [1, 1],
     };
     while (queue.length > 0) {
       const curr = queue.shift();
@@ -287,7 +308,7 @@ function getRelativeConstraints(
             const newPos = posToStr([currPos[0] + shift[0], currPos[1] + shift[1]]);
             const newId = invSpatialMap[newPos];
             // If there is an adjacent service to the current one and it has not yet been visited
-            if (newId && !visited[newPos]) {
+            if (dir.length === 1 && newId && !visited[newPos]) {
               queue.push(newPos);
               // @ts-ignore cannot determine if left/right or top/bottom are paired together
               relativeConstraints.push({
@@ -297,6 +318,26 @@ function getRelativeConstraints(
                 ]]: currId,
                 gap: 1.5 * db.getConfigField('iconSize'),
               });
+              // For XY, only add a constraint if there is a physical connection between the nodes
+            } else if (dir.length === 2 && newId && !visited[newPos] && newAdjList[currId][newId]) {
+              queue.push(newPos);
+              relativeConstraints.push(
+                // @ts-ignore cannot determine if left/right or top/bottom are paired together
+                {
+                  [ArchitectureDirectionName[dir[0] as ArchitectureDirection]]: newId,
+                  [ArchitectureDirectionName[
+                    getOppositeArchitectureDirection(dir[0] as ArchitectureDirection)
+                  ]]: currId,
+                  gap: 1.5 * db.getConfigField('iconSize'),
+                },
+                {
+                  [ArchitectureDirectionName[dir[1] as ArchitectureDirection]]: newId,
+                  [ArchitectureDirectionName[
+                    getOppositeArchitectureDirection(dir[1] as ArchitectureDirection)
+                  ]]: currId,
+                  gap: 1.5 * db.getConfigField('iconSize'),
+                }
+              );
             }
           });
         }
@@ -312,7 +353,7 @@ function layoutArchitecture(
   groups: ArchitectureGroup[],
   edges: ArchitectureEdge[],
   db: ArchitectureDB,
-  { spatialMaps, groupAlignments }: ArchitectureDataStructures
+  { spatialMaps, groupAlignments, adjList }: ArchitectureDataStructures
 ): Promise<cytoscape.Core> {
   return new Promise((resolve) => {
     const renderEl = select('body').append('div').attr('id', 'cy').attr('style', 'display:none');
@@ -404,7 +445,7 @@ function layoutArchitecture(
     const alignmentConstraint = getAlignments(db, spatialMaps, groupAlignments);
 
     // Create the relative constraints for fcose by using an inverse of the spatial map and performing BFS on it
-    const relativePlacementConstraint = getRelativeConstraints(spatialMaps, db);
+    const relativePlacementConstraint = getRelativeConstraints(spatialMaps, adjList, db);
 
     const layout = cy.layout({
       name: 'fcose',
