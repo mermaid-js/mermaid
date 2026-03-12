@@ -28,6 +28,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     const backgroundNode = {
       ...node,
       id: node.id + '-background',
+      domId: (node.domId || node.id) + '-background',
       look: 'default',
       cssStyles: ['stroke: none', `fill: ${background}`],
     };
