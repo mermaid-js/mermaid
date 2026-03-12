@@ -1,5 +1,6 @@
 import { arc as d3arc, select } from 'd3';
 const MAX_SECTIONS = 12;
+let nodeCount = 0;
 
 export const drawRect = function (elem, rectData) {
   const rectElem = elem.append('rect');
@@ -225,13 +226,13 @@ let taskCount = -1;
  * @param {any} task The task to render
  * @param {any} conf The global configuration
  */
-export const drawTask = function (elem, task, conf) {
+export const drawTask = function (elem, task, conf, diagramId) {
   const center = task.x + conf.width / 2;
   const g = elem.append('g');
   taskCount++;
   const maxHeight = 300 + 5 * 30;
   g.append('line')
-    .attr('id', 'task' + taskCount)
+    .attr('id', diagramId + '-task' + taskCount)
     .attr('x1', center)
     .attr('y1', task.y)
     .attr('x2', center)
@@ -433,11 +434,13 @@ const _drawTextCandidateFunc = (function () {
   };
 })();
 
-const initGraphics = function (graphics) {
+const initGraphics = function (graphics, id) {
+  nodeCount = 0;
+  taskCount = -1;
   graphics
     .append('defs')
     .append('marker')
-    .attr('id', 'arrowhead')
+    .attr('id', id + '-arrowhead')
     .attr('refX', 5)
     .attr('refY', 2)
     .attr('markerWidth', 6)
@@ -493,7 +496,7 @@ function wrap(text, width) {
   });
 }
 
-export const drawNode = function (elem, node, fullSection, conf) {
+export const drawNode = function (elem, node, fullSection, conf, diagramId) {
   const section = (fullSection % MAX_SECTIONS) - 1;
   const nodeElem = elem.append('g');
   node.section = section;
@@ -523,7 +526,7 @@ export const drawNode = function (elem, node, fullSection, conf) {
   textElem.attr('transform', 'translate(' + node.width / 2 + ', ' + node.padding / 2 + ')');
 
   // Create the background element
-  defaultBkg(bkgElem, node, section, conf);
+  defaultBkg(bkgElem, node, section, diagramId);
 
   return node;
 };
@@ -544,11 +547,11 @@ export const getVirtualNodeHeight = function (elem, node, conf) {
   return bbox.height + fontSize * 1.1 * 0.5 + node.padding;
 };
 
-const defaultBkg = function (elem, node, section) {
+const defaultBkg = function (elem, node, section, diagramId) {
   const rd = 5;
   elem
     .append('path')
-    .attr('id', 'node-' + node.id)
+    .attr('id', diagramId + '-node-' + nodeCount++)
     .attr('class', 'node-bkg node-' + node.type)
     .attr(
       'd',
