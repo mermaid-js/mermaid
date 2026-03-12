@@ -55,8 +55,18 @@ export class BasePlot implements Plot {
       throw Error('Axes must be passed to render Plots');
     }
     const drawableElem: DrawableElem[] = [];
-    // Track cumulative bar values for stacking
-    let cumulativeBarOffsets: number[] = [];
+
+    // Determine the length of data from the first plot (all plots share the same x categories)
+    const dataLength = this.chartData.plots.length > 0 ? this.chartData.plots[0].data.length : 0;
+
+    // Cumulative baselines for stacked bars, tracked per category index.
+    // Stored as raw data values (not pixel values) so the axis scale is applied per-bar in BarPlot.
+    const cumulativeBarValues: number[] = new Array(dataLength).fill(0);
+    // Track how many bar series have been rendered so the first series always
+    // receives an empty array (non-stacked path) and only subsequent series
+    // receive cumulative baselines (stacked path).
+    let barSeriesCount = 0;
+
     for (const [i, plot] of this.chartData.plots.entries()) {
       switch (plot.type) {
         case 'line':
@@ -73,6 +83,9 @@ export class BasePlot implements Plot {
           break;
         case 'bar':
           {
+            // First bar series gets empty array -> takes original non-stacked path.
+            // Subsequent bar series get cumulative baselines -> takes stacked path.
+            const stackedBase = barSeriesCount === 0 ? [] : [...cumulativeBarValues];
             const barPlot = new BarPlot(
               plot,
               this.boundingRect,
@@ -80,18 +93,15 @@ export class BasePlot implements Plot {
               this.yAxis,
               this.chartConfig.chartOrientation,
               i,
-              cumulativeBarOffsets
+              stackedBase
             );
             drawableElem.push(...barPlot.getDrawableElement());
-            // Update cumulative offsets for stacking
-            const currentValues = plot.data.map((d) => d[1]);
-            if (cumulativeBarOffsets.length === 0) {
-              cumulativeBarOffsets = currentValues;
-            } else {
-              cumulativeBarOffsets = cumulativeBarOffsets.map(
-                (v, idx) => v + (currentValues[idx] || 0)
-              );
-            }
+
+            // Accumulate this series' values into the baseline for the next bar series.
+            plot.data.forEach((d, idx) => {
+              cumulativeBarValues[idx] += d[1];
+            });
+            barSeriesCount++;
           }
           break;
       }

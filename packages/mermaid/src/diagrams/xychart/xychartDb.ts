@@ -108,7 +108,8 @@ function setYAxisRangeData(min: number, max: number) {
   hasSetYAxis = true;
 }
 
-// this function does not set `hasSetYAxis` as there can be multiple data so we should calculate the range accordingly
+// This function does not set `hasSetYAxis` as there can be multiple data series,
+// so we calculate the range accordingly.
 function setYAxisRangeFromPlotData(data: number[]) {
   const minValue = Math.min(...data);
   const maxValue = Math.max(...data);
@@ -119,6 +120,36 @@ function setYAxisRangeFromPlotData(data: number[]) {
     title: xyChartData.yAxis.title,
     min: Math.min(prevMinValue, minValue),
     max: Math.max(prevMaxValue, maxValue),
+  };
+}
+
+// Recalculates the y-axis range to account for stacked bar series.
+// For each category index, sums the values across all bar plots and uses
+// the maximum cumulative sum as the y-axis upper bound.
+function recalculateYAxisRangeForStackedBars() {
+  const barPlots = xyChartData.plots.filter((p) => p.type === 'bar');
+  if (barPlots.length <= 1) {
+    // No stacking needed for a single bar series.
+    return;
+  }
+
+  const dataLength = barPlots[0].data.length;
+  const cumulativeSums: number[] = new Array(dataLength).fill(0);
+
+  for (const plot of barPlots) {
+    plot.data.forEach((d, i) => {
+      cumulativeSums[i] += d[1];
+    });
+  }
+
+  const maxCumulative = Math.max(...cumulativeSums);
+  const prevMinValue = isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.min : 0;
+
+  xyChartData.yAxis = {
+    type: 'linear',
+    title: xyChartData.yAxis.title,
+    min: Math.min(prevMinValue, 0),
+    max: maxCumulative,
   };
 }
 
@@ -184,6 +215,12 @@ function getDrawableElem(): DrawableElem[] {
     throw Error('No Plot to render, please provide a plot with some data');
   }
   xyChartData.title = getDiagramTitle();
+
+  // Recalculate y-axis range to accommodate stacked bar totals before building.
+  if (!hasSetYAxis) {
+    recalculateYAxisRangeForStackedBars();
+  }
+
   return XYChartBuilder.build(xyChartConfig, xyChartData, xyChartThemeConfig, tmpSVGGroup);
 }
 
