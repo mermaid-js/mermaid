@@ -161,6 +161,11 @@ export class FlowDB implements DiagramDB {
 
     let vertex = this.vertices.get(id);
     if (vertex === undefined) {
+      if (textObj === undefined && type === undefined && style !== undefined && style !== null) {
+        log.warn(
+          `Style applied to unknown node "${id}". This may indicate a typo. The node will be created automatically.`
+        );
+      }
       vertex = {
         id,
         labelType: 'text',
