@@ -467,6 +467,28 @@ describe('mermaidAPI', () => {
       expect(serialize).toHaveBeenCalled();
       expect(result).toEqual('someId .edge-pattern-dashed{stroke-dasharray:3;}');
     });
+
+    it('should sanitize CSS to avoid unbalanced braces', () => {
+      const result = createUserStyles(
+        mockConfig,
+        'someDiagram',
+        Object.fromEntries(
+          Object.entries({
+            classDef1: {
+              styles: ['}*{ background-image: url("https://example.test")}'],
+              textStyles: [],
+            },
+            classDef2: {
+              styles: ['color: purple;'],
+            },
+          }).map(([id, value]) => [id, { ...value, id }])
+        ),
+        'someId'
+      );
+      expect(result).toEqual(
+        'someId .edge-pattern-dashed{stroke-dasharray:3;}someId .classDef2>*{color:purple;}someId .classDef2 span{color:purple;}'
+      );
+    });
   });
 
   describe('removeExistingElements', () => {

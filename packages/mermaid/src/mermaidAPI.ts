@@ -31,6 +31,7 @@ import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.
 import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
 import { preprocessDiagram } from './preprocess.js';
 import { decodeEntities } from './utils.js';
+import { sanitizeCss } from './utils/sanitizeDirective.js';
 
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
@@ -126,7 +127,8 @@ export const cssImportantStyles = (
   element: string,
   cssClasses: string[] = []
 ): string => {
-  return `\n.${cssClass} ${element} { ${cssClasses.join(' !important; ')} !important; }`;
+  const declarationBlock = sanitizeCss(`{ ${cssClasses.join(' !important; ')} !important; }`);
+  return `\n.${cssClass} ${element} ${declarationBlock}`;
 };
 
 /**

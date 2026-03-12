@@ -20,4 +20,15 @@ describe('CSS injections', () => {
       flowchart: { htmlLabels: true },
     });
   });
+  it('should sanitize CSS in class definitions', () => {
+    urlSnapshotTest('http://localhost:9000/css-injection.html', {
+      logLevel: 1,
+      flowchart: { htmlLabels: false },
+    });
+    cy.get('.otp-3').should(
+      'not.have.css',
+      'background-image',
+      'url("https://example.test/3.png")'
+    );
+  });
 });
