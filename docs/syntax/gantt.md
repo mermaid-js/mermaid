@@ -153,6 +153,7 @@ When specifying a `<length>`, use a number followed by one of these unit suffixe
 | ------------ | ------ | ------- |
 | Milliseconds | `ms`   | `500ms` |
 | Seconds      | `s`    | `30s`   |
+| Minutes      | `m`    | `30m`   |
 | Hours        | `h`    | `4h`    |
 | Days         | `d`    | `3d`    |
 | Weeks        | `w`    | `2w`    |
