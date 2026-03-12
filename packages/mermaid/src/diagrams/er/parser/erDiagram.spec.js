@@ -805,6 +805,21 @@ describe('when parsing ER diagram it...', function () {
     expect(rels[0].relSpec.relType).toBe(erDb.Identification.IDENTIFYING);
   });
 
+  it('should allow numeric entity identifier "12" on right side with cardinality 1 (issue #7472 boundary test)', function () {
+    // Test with multi-digit numeric entity name to ensure lookahead works for any digit sequence
+    erDiagram.parser.parse('erDiagram\na many to 1 12: label');
+    const entities = erDb.getEntities();
+    const rels = erDb.getRelationships();
+
+    expect(entities.size).toBe(2);
+    expect(entities.has('a')).toBe(true);
+    expect(entities.has('12')).toBe(true);
+    expect(rels.length).toBe(1);
+    expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ONLY_ONE);
+    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ZERO_OR_MORE);
+    expect(rels[0].relSpec.relType).toBe(erDb.Identification.IDENTIFYING);
+  });
+
   it('should represent identifying relationships properly', function () {
     erDiagram.parser.parse('erDiagram\nHOUSE ||--|{ ROOM : contains');
     const rels = erDb.getRelationships();
