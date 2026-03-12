@@ -186,6 +186,8 @@ Communication tools and platforms
   - [Mermaid plugin for google docs](https://workspace.google.com/marketplace/app/mermaid/636321283856)
 - [Inkdrop](https://www.inkdrop.app)
   - [Mermaid Plugin](https://github.com/inkdropapp/inkdrop-mermaid)
+- [IntelliJ Idea](https://www.jetbrains.com/idea/)
+  - [Mermaid Visualizer](https://plugins.jetbrains.com/plugin/30432-mermaid-visualizer)
 - [Light Table](http://lighttable.com/)
   - [Mermaid Plugin](https://github.com/cldwalker/Mermaid)
 - [Markdown-It](https://github.com/markdown-it/markdown-it)
