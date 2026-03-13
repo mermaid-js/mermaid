@@ -1278,6 +1278,10 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: Should show the value corresponding to the bar within the bar
         type: boolean
         default: false
+      showDataLabelOutsideBar:
+        description: If showing data label then show it outside the bar
+        type: boolean
+        default: false
       showTitle:
         description: Should show the chart title
         type: boolean

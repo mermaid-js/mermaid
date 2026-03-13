@@ -38,6 +38,7 @@ const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 export class FlowDB implements DiagramDB {
   private vertexCounter = 0;
   private config = getConfig();
+  private diagramId = '';
   private vertices = new Map<string, FlowVertex>();
   private edges: FlowEdge[] & { defaultInterpolate?: string; defaultStyle?: string[] } = [];
   private classes = new Map<string, FlowClass>();
@@ -98,17 +99,26 @@ export class FlowDB implements DiagramDB {
   }
 
   /**
+   * Sets the diagram's SVG element ID, used to prefix domIds for uniqueness
+   * across multiple diagrams on the same page.
+   */
+  public setDiagramId(svgElementId: string) {
+    this.diagramId = svgElementId;
+  }
+
+  /**
    * Function to lookup domId from id in the graph definition.
+   * When diagramId is set, returns the prefixed version for DOM uniqueness.
    *
    * @param id - id of the node
    */
   public lookUpDomId(id: string) {
     for (const vertex of this.vertices.values()) {
       if (vertex.id === id) {
-        return vertex.domId;
+        return this.diagramId ? `${this.diagramId}-${vertex.domId}` : vertex.domId;
       }
     }
-    return id;
+    return this.diagramId ? `${this.diagramId}-${id}` : id;
   }
 
   /**
@@ -161,6 +171,11 @@ export class FlowDB implements DiagramDB {
 
     let vertex = this.vertices.get(id);
     if (vertex === undefined) {
+      if (textObj === undefined && type === undefined && style !== undefined && style !== null) {
+        log.warn(
+          `Style applied to unknown node "${id}". This may indicate a typo. The node will be created automatically.`
+        );
+      }
       vertex = {
         id,
         labelType: 'text',
@@ -484,7 +499,6 @@ You have to call mermaid.initialize.`
   }
 
   private setClickFun(id: string, functionName: string, functionArgs: string) {
-    const domId = this.lookUpDomId(id);
     // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (getConfig().securityLevel !== 'loose') {
       return;
@@ -516,6 +530,8 @@ You have to call mermaid.initialize.`
     if (vertex) {
       vertex.haveCallback = true;
       this.funs.push(() => {
+        // Defer lookUpDomId to bind time so it includes the diagramId prefix
+        const domId = this.lookUpDomId(id);
         const elem = document.querySelector(`[id="${domId}"]`);
         if (elem !== null) {
           elem.addEventListener(
@@ -639,6 +655,7 @@ You have to call mermaid.initialize.`
     this.classes = new Map();
     this.edges = [];
     this.funs = [this.setupToolTips.bind(this)];
+    this.diagramId = '';
     this.subGraphs = [];
     this.subGraphLookup = new Map();
     this.subCount = 0;
