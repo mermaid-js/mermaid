@@ -91,6 +91,8 @@ Function arguments are optional: 'call <callbackname>()' simply executes 'callba
 "interpolate"           return 'INTERPOLATE';
 "classDef"              return 'CLASSDEF';
 "class"                 return 'CLASS';
+"type"[\t ]+[^\n;{]*"="[\t ]*"Record"[\t ]*"{"[^}]*"}" return 'TYPE_DECL';
+"type"[\t ]+[^\n;{]* return 'TYPE_DECL';
 
 
 
@@ -362,7 +364,9 @@ spaceList
     ;
 
 statement
-    : vertexStatement separator
+    : typeDeclarationStatement separator
+    {$$=[];}
+    | vertexStatement separator
     { $$=$vertexStatement.nodes}
     | styleStatement separator
     {$$=[];}
@@ -386,6 +390,11 @@ statement
     | acc_title acc_title_value  { $$=$acc_title_value.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$acc_descr_value.trim();yy.setAccDescription($$); }
     | acc_descr_multiline_value { $$=$acc_descr_multiline_value.trim();yy.setAccDescription($$); }
+    ;
+
+typeDeclarationStatement
+    : TYPE_DECL
+    { $$ = $TYPE_DECL; yy.addTypeDeclaration($TYPE_DECL); }
     ;
 
 separator: NEWLINE | SEMI | EOF ;

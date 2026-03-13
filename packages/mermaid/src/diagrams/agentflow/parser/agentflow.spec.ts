@@ -196,4 +196,194 @@ describe('parsing an agentflow diagram', function () {
     expect(data.edges[2].start).toBe('translate_to_swedish');
     expect(data.edges[2].end).toBe('generate_html');
   });
+
+  it('should parse top-level type declarations and preserve them in layout data', function () {
+    agentflow.parser.parse(`agentflow
+    type Report
+    type UserId = String
+    type Author = Record {
+      id: UserId
+      tags: List<String>
+      summary: String?
+      metadata: Map<String, String>
+    }
+
+    write_copy["Write Copy"]@{
+      type: Author
+      inferred: List<Author>
+    }
+    `);
+
+    const data = agentflow.parser.yy.getData();
+    const writeCopy = data.nodes.find((n: { id: string }) => n.id === 'write_copy');
+
+    expect(data.types).toEqual([
+      {
+        name: 'Report',
+        kind: 'opaque',
+      },
+      {
+        name: 'UserId',
+        kind: 'alias',
+        expression: 'String',
+      },
+      {
+        name: 'Author',
+        kind: 'record',
+        fields: [
+          { name: 'id', type: 'UserId' },
+          { name: 'tags', type: 'List<String>' },
+          { name: 'summary', type: 'String?' },
+          { name: 'metadata', type: 'Map<String, String>' },
+        ],
+      },
+    ]);
+    expect(writeCopy?.metadata?.type).toBe('Author');
+    expect(writeCopy?.metadata?.inferred).toBe('List<Author>');
+  });
+
+  it('should expose type declarations by name so node return types can be resolved from getData', function () {
+    agentflow.parser.parse(`agentflow
+    type Report = Record {
+      title: String
+      description: String
+      approved: Bool
+    }
+
+    research_location["Research"]@{
+      returns: Report
+    }
+    `);
+
+    const data = agentflow.parser.yy.getData();
+    const research = data.nodes.find((n: { id: string }) => n.id === 'research_location');
+    const returnTypeName = research?.metadata?.returns as string;
+
+    expect(returnTypeName).toBe('Report');
+    expect(data.typesByName).toEqual({
+      Report: {
+        name: 'Report',
+        kind: 'record',
+        fields: [
+          { name: 'title', type: 'String' },
+          { name: 'description', type: 'String' },
+          { name: 'approved', type: 'Bool' },
+        ],
+      },
+    });
+    expect(data.typesByName[returnTypeName]).toEqual({
+      name: 'Report',
+      kind: 'record',
+      fields: [
+        { name: 'title', type: 'String' },
+        { name: 'description', type: 'String' },
+        { name: 'approved', type: 'Bool' },
+      ],
+    });
+  });
+
+  it('should parse aliases records collections maps and optional type declarations together', function () {
+    agentflow.parser.parse(`agentflow
+    type UserId = String
+
+    type Author = Record {
+      id: UserId
+      name: String
+    }
+
+    type Report = Record {
+      title: String
+      author: Author
+      tags: List<String>
+      summary: String?
+      metadata: Map<String, String>
+    }
+
+    type Reports = List<Report>
+    type ReportById = Map<String, Report>
+    type OptionalReport = Report?
+
+    research_location["Research"]@{
+      returns: Report
+      inferred: Reports
+      type: OptionalReport
+    }
+    `);
+
+    const data = agentflow.parser.yy.getData();
+    const research = data.nodes.find((n: { id: string }) => n.id === 'research_location');
+
+    expect(data.types).toEqual([
+      {
+        name: 'UserId',
+        kind: 'alias',
+        expression: 'String',
+      },
+      {
+        name: 'Author',
+        kind: 'record',
+        fields: [
+          { name: 'id', type: 'UserId' },
+          { name: 'name', type: 'String' },
+        ],
+      },
+      {
+        name: 'Report',
+        kind: 'record',
+        fields: [
+          { name: 'title', type: 'String' },
+          { name: 'author', type: 'Author' },
+          { name: 'tags', type: 'List<String>' },
+          { name: 'summary', type: 'String?' },
+          { name: 'metadata', type: 'Map<String, String>' },
+        ],
+      },
+      {
+        name: 'Reports',
+        kind: 'alias',
+        expression: 'List<Report>',
+      },
+      {
+        name: 'ReportById',
+        kind: 'alias',
+        expression: 'Map<String, Report>',
+      },
+      {
+        name: 'OptionalReport',
+        kind: 'alias',
+        expression: 'Report?',
+      },
+    ]);
+
+    expect(data.typesByName.Report).toEqual({
+      name: 'Report',
+      kind: 'record',
+      fields: [
+        { name: 'title', type: 'String' },
+        { name: 'author', type: 'Author' },
+        { name: 'tags', type: 'List<String>' },
+        { name: 'summary', type: 'String?' },
+        { name: 'metadata', type: 'Map<String, String>' },
+      ],
+    });
+    expect(data.typesByName.Reports).toEqual({
+      name: 'Reports',
+      kind: 'alias',
+      expression: 'List<Report>',
+    });
+    expect(data.typesByName.ReportById).toEqual({
+      name: 'ReportById',
+      kind: 'alias',
+      expression: 'Map<String, Report>',
+    });
+    expect(data.typesByName.OptionalReport).toEqual({
+      name: 'OptionalReport',
+      kind: 'alias',
+      expression: 'Report?',
+    });
+
+    expect(research?.metadata?.returns).toBe('Report');
+    expect(research?.metadata?.inferred).toBe('Reports');
+    expect(research?.metadata?.type).toBe('OptionalReport');
+  });
 });

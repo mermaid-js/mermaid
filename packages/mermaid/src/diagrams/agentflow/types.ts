@@ -91,3 +91,26 @@ export interface FlowLink {
   type: string;
   text?: string;
 }
+
+export interface AgentFlowTypeField {
+  name: string;
+  type: string;
+}
+
+export type AgentFlowTypeDeclaration =
+  | {
+      name: string;
+      kind: 'opaque';
+    }
+  | {
+      name: string;
+      kind: 'alias';
+      expression: string;
+    }
+  | {
+      name: string;
+      kind: 'record';
+      fields: AgentFlowTypeField[];
+    };
+
+export type AgentFlowTypeDeclarationsByName = Record<string, AgentFlowTypeDeclaration>;

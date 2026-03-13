@@ -19,6 +19,9 @@ import {
 } from '../common/commonDb.js';
 import { createTooltip } from '../common/svgDrawCommon.js';
 import type {
+  AgentFlowTypeDeclaration,
+  AgentFlowTypeDeclarationsByName,
+  AgentFlowTypeField,
   FlowClass,
   FlowEdge,
   FlowLink,
@@ -43,6 +46,7 @@ export class AgentFlowDB implements DiagramDB {
   private classes = new Map<string, FlowClass>();
   private subGraphs: FlowSubGraph[] = [];
   private subGraphLookup = new Map<string, FlowSubGraph>();
+  private typeDeclarations = new Map<string, AgentFlowTypeDeclaration>();
   private tooltips = new Map<string, string>();
   private subCount = 0;
   private firstGraphFlag = true;
@@ -62,6 +66,7 @@ export class AgentFlowDB implements DiagramDB {
     this.firstGraph = this.firstGraph.bind(this);
     this.setDirection = this.setDirection.bind(this);
     this.addSubGraph = this.addSubGraph.bind(this);
+    this.addTypeDeclaration = this.addTypeDeclaration.bind(this);
     this.addLink = this.addLink.bind(this);
     this.setLink = this.setLink.bind(this);
     this.updateLink = this.updateLink.bind(this);
@@ -95,6 +100,63 @@ export class AgentFlowDB implements DiagramDB {
       default:
         return 'markdown';
     }
+  }
+
+  private parseRecordFields(body: string): AgentFlowTypeField[] {
+    const trimmedBody = body.trim();
+    if (trimmedBody.length === 0) {
+      return [];
+    }
+
+    return trimmedBody
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0)
+      .map((line) => {
+        const fieldMatch = /^([A-Z_a-z]\w*)\s*:\s*(.+)$/.exec(line);
+        if (!fieldMatch) {
+          throw new Error(`Invalid agentflow record field declaration: ${line}`);
+        }
+
+        return {
+          name: fieldMatch[1],
+          type: fieldMatch[2].trim(),
+        };
+      });
+  }
+
+  private parseTypeDeclaration(declaration: string): AgentFlowTypeDeclaration {
+    const trimmedDeclaration = declaration.trim();
+    const opaqueMatch = /^type\s+([A-Z_a-z]\w*)$/.exec(trimmedDeclaration);
+    if (opaqueMatch) {
+      return {
+        name: opaqueMatch[1],
+        kind: 'opaque',
+      };
+    }
+
+    const aliasMatch = /^type\s+([A-Z_a-z]\w*)\s*=\s*([\S\s]+)$/.exec(trimmedDeclaration);
+    if (!aliasMatch) {
+      throw new Error(`Invalid agentflow type declaration: ${trimmedDeclaration}`);
+    }
+
+    const [, name, expression] = aliasMatch;
+    const trimmedExpression = expression.trim();
+    const recordMatch = /^Record\s*{([\S\s]*)}$/.exec(trimmedExpression);
+
+    if (recordMatch) {
+      return {
+        name,
+        kind: 'record',
+        fields: this.parseRecordFields(recordMatch[1]),
+      };
+    }
+
+    return {
+      name,
+      kind: 'alias',
+      expression: trimmedExpression,
+    };
   }
 
   /**
@@ -630,6 +692,7 @@ You have to call mermaid.initialize.`
     this.funs = [this.setupToolTips.bind(this)];
     this.subGraphs = [];
     this.subGraphLookup = new Map();
+    this.typeDeclarations = new Map();
     this.subCount = 0;
     this.tooltips = new Map();
     this.firstGraphFlag = true;
@@ -782,8 +845,22 @@ You have to call mermaid.initialize.`
     }
   }
 
+  public addTypeDeclaration(declaration: string) {
+    const parsedDeclaration = this.parseTypeDeclaration(declaration);
+    this.typeDeclarations.set(parsedDeclaration.name, parsedDeclaration);
+    return parsedDeclaration.name;
+  }
+
   public getSubGraphs() {
     return this.subGraphs;
+  }
+
+  public getTypeDeclarations() {
+    return [...this.typeDeclarations.values()];
+  }
+
+  public getTypeDeclarationsByName(): AgentFlowTypeDeclarationsByName {
+    return Object.fromEntries(this.typeDeclarations.entries());
   }
 
   public firstGraph() {
@@ -1156,7 +1233,14 @@ You have to call mermaid.initialize.`
       edges.push(edge);
     });
 
-    return { nodes, edges, other: {}, config };
+    return {
+      nodes,
+      edges,
+      other: {},
+      config,
+      types: this.getTypeDeclarations(),
+      typesByName: this.getTypeDeclarationsByName(),
+    };
   }
 
   public defaultConfig() {
