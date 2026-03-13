@@ -129,6 +129,13 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke-width: 1px;
   }
 
+  .task-cluster rect {
+    fill: none;
+    stroke: ${options.clusterBorder};
+    stroke-width: 1.5px;
+    stroke-dasharray: 8, 4;
+  }
+
   .cluster text {
     fill: ${options.titleColor};
   }

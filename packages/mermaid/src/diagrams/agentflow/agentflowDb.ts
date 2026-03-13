@@ -712,11 +712,12 @@ You have to call mermaid.initialize.`
   public addSubGraph(
     _id: { text: string },
     list: string[],
-    _title: { text: string; type: string }
+    _title: { text: string; type: string },
+    type?: 'subgraph' | 'task'
   ) {
-    let id: string | undefined = _id.text.trim();
-    let title = _title.text;
-    if (_id === _title && /\s/.exec(_title.text)) {
+    let id: string | undefined = _id?.text?.trim();
+    let title = _title?.text;
+    if (_id === _title && _title?.text && /\s/.exec(_title.text)) {
       id = undefined;
     }
 
@@ -772,6 +773,7 @@ You have to call mermaid.initialize.`
       classes: [],
       dir,
       labelType: this.sanitizeNodeLabelType(_title?.type),
+      type: type ?? ('subgraph' as const),
     };
 
     log.info('Adding', subGraph.id, subGraph.nodes, subGraph.dir);
@@ -1178,7 +1180,7 @@ You have to call mermaid.initialize.`
         padding: 8,
         cssCompiledStyles: this.getCompiledStyles(subGraph.classes),
         cssClasses: subGraph.classes.join(' '),
-        shape: 'rect',
+        shape: subGraph.type === 'task' ? 'taskGroup' : 'rect',
         dir: subGraph.dir,
         isGroup: true,
         look: config.look,

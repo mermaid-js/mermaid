@@ -116,6 +116,7 @@ that id.
 <click>[^\s\n]*          return 'CLICK';
 
 "agentflow"              {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
+"task"                   return 'task';
 "subgraph"               return 'subgraph';
 "end"\b\s*               return 'end';
 
@@ -386,6 +387,12 @@ statement
     // {$$=yy.addSubGraph($textNoTags,$document,$textNoTags);}
     | subgraph separator document end
     {$$=yy.addSubGraph(undefined,$document,undefined);}
+    | task SPACE textNoTags SQS text SQE separator document end
+    {$$=yy.addSubGraph($textNoTags,$document,$text,'task');}
+    | task SPACE textNoTags separator document end
+    {$$=yy.addSubGraph($textNoTags,$document,{text:'', type:'text'},'task');}
+    | task separator document end
+    {$$=yy.addSubGraph(undefined,$document,undefined,'task');}
     | direction
     | acc_title acc_title_value  { $$=$acc_title_value.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$acc_descr_value.trim();yy.setAccDescription($$); }
@@ -522,7 +529,7 @@ text: textToken
 
 
 keywords
-    : STYLE | LINKSTYLE | CLASSDEF | CLASS | CLICK | GRAPH | DIR | subgraph | end | DOWN | UP;
+    : STYLE | LINKSTYLE | CLASSDEF | CLASS | CLICK | GRAPH | DIR | subgraph | task | end | DOWN | UP;
 
 
 textNoTags: textNoTagsToken

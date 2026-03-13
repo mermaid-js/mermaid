@@ -11,7 +11,7 @@ const DEFAULT_SHAPE = 'roundedRect';
  */
 export function transformData(data: LayoutData): void {
   for (const node of data.nodes) {
-    // Group/cluster nodes use 'rect' for the cluster renderer — don't override
+    // Group/cluster nodes use 'rect' or 'taskGroup' for the cluster renderer — don't override
     if (node.isGroup) {
       continue;
     }

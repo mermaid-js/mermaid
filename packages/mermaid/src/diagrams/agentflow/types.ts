@@ -83,6 +83,7 @@ export interface FlowSubGraph {
   labelType: string;
   nodes: string[];
   title: string;
+  type?: 'subgraph' | 'task';
 }
 
 export interface FlowLink {

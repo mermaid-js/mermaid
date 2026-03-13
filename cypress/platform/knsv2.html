@@ -107,6 +107,41 @@
   <body>
     <pre id="diagram4" class="mermaid">
 agentflow LR
+    task t1["Step 1"]
+        n3("write_copy")
+        n7["website_copy<br>Coffee shop<br>(output)"]
+        A["Template <br>Website copy"]
+  end
+ task t2
+        E("generate_html")
+        n9["scandinavian_design<br>(directive)"]
+        n19["Permissions"]
+        n10["website_html<br>(output)"]
+        n21["llmQuery"]
+        n22["netRead"]
+        n23["netWrite"]
+  end
+    n3 --- n7
+    E o--o n9 & n19
+    E --- n10
+    n3 o--o A
+    n19 --> n21 & n22
+    n19 --x n23
+    t1 --> t2
+
+    n7@{ shape: doc}
+    A@{ shape: lin-doc}
+    n9@{ shape: in-out}
+    n19@{ shape: hex}
+    n10@{ shape: doc}
+    n21@{ shape: terminal}
+    n22@{ shape: terminal}
+    n23@{ shape: terminal}
+    classDef Class_01 stroke:#FFF9C4, fill:#FFF9C4
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+agentflow LR
     research_location["Research"]@{
       description: "Research a city or location to gather useful local context for a business."
       requires: ^net.read
