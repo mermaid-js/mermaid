@@ -655,8 +655,8 @@ classDiagram
     -id : int
     -name : string
   }
-  Student "1" --o "1" IdCard : carries
-  Student "1" --o "1" Bike : rides
+  Student "1" -- "1" IdCard : carries
+  Student "1" -- "1" Bike : rides
 ```
 
 ```mermaid
@@ -673,8 +673,8 @@ classDiagram
     -id : int
     -name : string
   }
-  Student "1" --o "1" IdCard : carries
-  Student "1" --o "1" Bike : rides
+  Student "1" -- "1" IdCard : carries
+  Student "1" -- "1" Bike : rides
 ```
 
 ## Interaction
