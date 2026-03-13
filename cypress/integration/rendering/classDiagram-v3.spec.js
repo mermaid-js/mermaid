@@ -1042,4 +1042,88 @@ class C13["With Città foreign language"]
       { logLevel: 1, htmlLabels: true }
     );
   });
+  it('should render a full class diagram using interface annotation', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+      Class01 <|-- AveryLongClass : Cool
+      &lt;&lt;interface&gt;&gt; Class01
+      Class03 "0" *-- "0..n" Class04
+      Class05 "1" o-- "many" Class06
+      Class07 .. Class08
+      Class09 "many" --> "1" C2 : Where am i?
+      Class09 "0" --* "1..n" C3
+      Class09 --|> Class07
+      Class07 : equals()
+      Class07 : Object[] elementData
+      Class01 : #size()
+      Class01 : -int chimp
+      Class01 : +int gorilla
+      Class08 <--> C2: Cool label
+        class Class10 {
+        &lt;&lt;service&gt;&gt;
+        int id
+        size()
+        }
+    
+      `,
+      { logLevel: 1, htmlLabels: true }
+    );
+  });
+  it('should render a full class diagram using abstract annotation', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+      Class01 <|-- AveryLongClass : Cool
+      &lt;&lt;abstract&gt;&gt; Class01
+      Class03 "0" *-- "0..n" Class04
+      Class05 "1" o-- "many" Class06
+      Class07 .. Class08
+      Class09 "many" --> "1" C2 : Where am i?
+      Class09 "0" --* "1..n" C3
+      Class09 --|> Class07
+      Class07 : equals()
+      Class07 : Object[] elementData
+      Class01 : #size()
+      Class01 : -int chimp
+      Class01 : +int gorilla
+      Class08 <--> C2: Cool label
+        class Class10 {
+        &lt;&lt;service&gt;&gt;
+        int id
+        size()
+        }
+    
+      `,
+      { logLevel: 1, htmlLabels: true }
+    );
+  });
+  it('should render a full class diagram using enumeration annotation', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+      Class01 <|-- AveryLongClass : Cool
+      &lt;&lt;enumeration&gt;&gt; Class01
+      Class03 "0" *-- "0..n" Class04
+      Class05 "1" o-- "many" Class06
+      Class07 .. Class08
+      Class09 "many" --> "1" C2 : Where am i?
+      Class09 "0" --* "1..n" C3
+      Class09 --|> Class07
+      Class07 : equals()
+      Class07 : Object[] elementData
+      Class01 : #size()
+      Class01 : -int chimp
+      Class01 : +int gorilla
+      Class08 <--> C2: Cool label
+        class Class10 {
+        &lt;&lt;service&gt;&gt;
+        int id
+        size()
+        }
+    
+      `,
+      { logLevel: 1, htmlLabels: true }
+    );
+  });
 });
