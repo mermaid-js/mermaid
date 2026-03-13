@@ -965,6 +965,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - padding
       - iconSize
       - fontSize
+      - randomize
     properties:
       padding:
         type: number
