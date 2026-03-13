@@ -102,6 +102,25 @@ export class ArchitectureDB implements DiagramDB {
   }
 
   public addJunction({ id, in: parent }: Omit<ArchitectureJunction, 'edges'>): void {
+    if (this.registeredIds[id] !== undefined) {
+      throw new Error(
+        `The junction id [${id}] is already in use by another ${this.registeredIds[id]}`
+      );
+    }
+    if (parent !== undefined) {
+      if (id === parent) {
+        throw new Error(`The junction [${id}] cannot be placed within itself`);
+      }
+      if (this.registeredIds[parent] === undefined) {
+        throw new Error(
+          `The junction [${id}]'s parent does not exist. Please make sure the parent is created before this junction`
+        );
+      }
+      if (this.registeredIds[parent] === 'node') {
+        throw new Error(`The junction [${id}]'s parent is not a group`);
+      }
+    }
+
     this.registeredIds[id] = 'node';
 
     this.nodes[id] = {
