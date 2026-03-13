@@ -282,6 +282,74 @@ describe('when using the ganttDb', function () {
     expect(tasks[0].task).toEqual('test1');
   });
 
+  it('end date should not be stretched when using YYYY-MM-DD HH:mm:ss format with excludes', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD HH:mm:ss');
+    ganttDb.setExcludes('weekends');
+    ganttDb.addSection('datetime fixed end');
+    ganttDb.addTask(
+      'fixed datetime end across weekends',
+      'id1, 2025-09-01 10:00:00, 2025-09-25 15:00:00'
+    );
+
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].startTime).toEqual(
+      dayjs('2025-09-01 10:00:00', 'YYYY-MM-DD HH:mm:ss').toDate()
+    );
+    expect(tasks[0].endTime).toEqual(dayjs('2025-09-25 15:00:00', 'YYYY-MM-DD HH:mm:ss').toDate());
+    expect(tasks[0].renderEndTime).toBeNull();
+  });
+
+  it('end date should not be stretched when using YYYY-MM-DD hh:mm format with excludes', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD hh:mm');
+    ganttDb.setExcludes('weekends');
+    ganttDb.addSection('datetime fixed end');
+    ganttDb.addTask(
+      'fixed datetime end across weekends',
+      'id1, 2025-09-01 10:00, 2025-09-25 12:00'
+    );
+
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].startTime).toEqual(dayjs('2025-09-01 10:00', 'YYYY-MM-DD hh:mm').toDate());
+    expect(tasks[0].endTime).toEqual(dayjs('2025-09-25 12:00', 'YYYY-MM-DD hh:mm').toDate());
+    expect(tasks[0].renderEndTime).toBeNull();
+  });
+
+  // preserves behavior prior to YYYY-MM-DD HH:mm:ss exclude fix
+  it('end date should extend when using a duration and excludes', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD HH:mm:ss');
+    ganttDb.setExcludes('weekends');
+
+    ganttDb.addSection('datetime + duration');
+    ganttDb.addTask('duration over weekend', 'id, 2025-09-01 10:00:00, 7d');
+
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].startTime).toEqual(
+      dayjs('2025-09-01 10:00:00', 'YYYY-MM-DD HH:mm:ss').toDate()
+    );
+    expect(tasks[0].endTime).toEqual(dayjs('2025-09-10 10:00:00', 'YYYY-MM-DD HH:mm:ss').toDate());
+    expect(tasks[0].renderEndTime).toEqual(
+      dayjs('2025-09-10 10:00:00', 'YYYY-MM-DD HH:mm:ss').toDate()
+    );
+  });
+
+  // preserves behavior prior to YYYY-MM-DD HH:mm:ss exclude fix
+  it('end date using YYYY-MM-DD format should not be extended when using excludes', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.setExcludes('weekends');
+
+    ganttDb.addSection('datetime fixed end');
+    ganttDb.addTask('fixed datetime end across weekends', 'id, 2025-09-01 , 2025-09-25');
+
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].startTime).toEqual(dayjs('2025-09-01', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].endTime).toEqual(dayjs('2025-09-25', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].renderEndTime).toBeNull();
+  });
+
   it('should maintain the order in which tasks are created', function () {
     ganttDb.setAccTitle('Project Execution');
     ganttDb.setDateFormat('YYYY-MM-DD');
