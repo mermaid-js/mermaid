@@ -10,7 +10,7 @@ export async function lean_left<T extends SVGGraphicsElement>(parent: D3Selectio
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const nodePadding = node.padding ?? 0;
-  const labelPaddingY = node.look === 'neo' ? nodePadding : nodePadding;
+  const labelPaddingY = nodePadding;
   const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
   const h = (node?.height ?? bbox.height) + labelPaddingY;
