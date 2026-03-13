@@ -25,7 +25,7 @@ const getStyles = (
 ) => {
   let diagramStyles = '';
   if (type in themes && themes[type]) {
-    diagramStyles = themes[type](options);
+    diagramStyles = themes[type]({ ...options, svgId });
   } else {
     log.warn(`No theme found for ${type}`);
   }
