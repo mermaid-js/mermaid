@@ -2,4 +2,4 @@
 'mermaid': patch
 ---
 
-fix: Preserve original arrow types when splitting labeled edges in flowchart
+refactor: remove unused createGraphWithElements function and add regression test for open edge arrowheads
