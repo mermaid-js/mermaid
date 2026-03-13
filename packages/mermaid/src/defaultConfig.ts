@@ -264,6 +264,11 @@ const config: RequiredDeep<MermaidConfig> = {
   radar: {
     ...defaultConfigJson.radar,
   },
+  sankey: {
+    ...defaultConfigJson.sankey,
+    // Set so that `configKeys` includes this key for sanitizeDirective
+    nodeColors: undefined,
+  },
   ishikawa: {
     ...defaultConfigJson.ishikawa,
   },
