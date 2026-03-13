@@ -13,6 +13,9 @@ import { calculateTextWidth } from '../../../utils.js';
 import type { MermaidConfig } from '../../../config.type.js';
 import type { D3Selection } from '../../../types.js';
 
+const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
+const REDUX_THEMES = new Set(['redux', 'redux-dark', 'redux-color', 'redux-dark-color']);
+
 export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   // Treat node as entityNode for certain entityNode checks
   const entityNode = node as unknown as EntityNode;
@@ -62,7 +65,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
       node.height = (config.er!.minEntityHeight ?? 0) + PADDING / 2;
     }
     const shapeSvg = await drawRect(parent, node, options);
-    if (theme?.includes('color')) {
+    if (theme != null && COLOR_THEMES.has(theme)) {
       const colorIndex = entityNode.colorIndex ?? 0;
       shapeSvg.attr('data-color-id', `color-${colorIndex % borderColorArray.length}`);
     }
@@ -235,7 +238,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     .select('.name')
     .attr('transform', 'translate(' + -nameBBox.width / 2 + ', ' + (y + TEXT_PADDING / 2) + ')');
 
-  if (theme?.includes('color')) {
+  if (theme != null && COLOR_THEMES.has(theme)) {
     const colorIndex = entityNode.colorIndex ?? 0;
     shapeSvg.attr('data-color-id', `color-${colorIndex % borderColorArray.length}`);
   }
@@ -315,7 +318,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   updateNodeBounds(node, rect);
 
   if (nodeStyles && node.look !== 'handDrawn') {
-    if (theme?.includes('redux')) {
+    if (theme != null && REDUX_THEMES.has(theme)) {
       shapeSvg.selectAll('path').attr('style', nodeStyles);
     } else {
       const allStyle = nodeStyles.split(';');
