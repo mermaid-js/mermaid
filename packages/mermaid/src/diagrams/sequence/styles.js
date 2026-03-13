@@ -4,7 +4,7 @@ const getStyles = (options) =>
     fill: ${options.actorBkg};
   }
 
-  text.actor > tspan {
+  text.actor tspan {
     fill: ${options.actorTextColor};
     stroke: none;
   }

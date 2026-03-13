@@ -2934,4 +2934,60 @@ Bob->>Alice:Got it!
       expect(actors.get('C').description).toBe('C');
     });
   });
+
+  describe('Markdown links in actor descriptions', () => {
+    // Note: Markdown links in actor descriptions may not be fully supported by the parser yet
+    // These tests verify that when description contains link syntax, it is preserved
+    it('should preserve link syntax in actor description', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+          participant A as Click [Link](https://example.com) for info
+          participant B as Check [Search](https://example.com/search)
+          A->>B: Message
+      `);
+
+      const actors = diagram.db.getActors();
+      expect(actors.get('A').description).toBe('Click [Link](https://example.com) for info');
+      expect(actors.get('B').description).toBe('Check [Search](https://example.com/search)');
+    });
+
+    it('should handle actor with KaTeX only', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+          participant A as $E = mc^2$
+          participant B
+          A->>B: Check
+      `);
+
+      const actors = diagram.db.getActors();
+      expect(actors.get('A').description).toBe('$E = mc^2$');
+      expect(actors.get('B').description).toBe('B');
+    });
+
+    it('should parse actor description with markdown link syntax', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+          participant User as [Profile Page](https://example.com/profile)
+          participant Admin
+          User->>Admin: Check my profile
+      `);
+
+      const actors = diagram.db.getActors();
+      expect(actors.get('User').description).toBe('[Profile Page](https://example.com/profile)');
+    });
+
+    it('should handle multiple link syntax in actor description', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+          participant A as [Home](https://example.com) and [About](https://example.com/about)
+          participant B
+          A->>B: Message
+      `);
+
+      const actors = diagram.db.getActors();
+      expect(actors.get('A').description).toBe(
+        '[Home](https://example.com) and [About](https://example.com/about)'
+      );
+    });
+  });
 });
