@@ -43,9 +43,14 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
 
   const addBackground = !!node.icon || !!node.img;
   const isMarkdown = node.labelType === 'markdown';
+  // For markdown text, don't sanitize as it would break markdown syntax like [link](url)
+  // The text has already been sanitized in flowDb.ts
+  const textContent = isMarkdown
+    ? decodeEntities(label)
+    : sanitizeText(decodeEntities(label), getConfig());
   const text = await createText(
     labelEl,
-    sanitizeText(decodeEntities(label), getConfig()),
+    textContent,
     {
       useHtmlLabels,
       width: node.width || getConfig().flowchart?.wrappingWidth,

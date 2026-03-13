@@ -174,7 +174,13 @@ export class FlowDB implements DiagramDB {
 
     if (textObj !== undefined) {
       this.config = getConfig();
-      txt = this.sanitizeText(textObj.text.trim());
+      // For markdown type, don't sanitize to preserve markdown syntax like [link](url)
+      // Sanitization will happen during rendering in shapes/util.ts
+      if (textObj.type === 'markdown') {
+        txt = textObj.text.trim();
+      } else {
+        txt = this.sanitizeText(textObj.text.trim());
+      }
       vertex.labelType = textObj.type;
       // strip quotes if string starts and ends with a quote
       if (txt.startsWith('"') && txt.endsWith('"')) {
@@ -274,7 +280,13 @@ export class FlowDB implements DiagramDB {
     const linkTextObj = type.text;
 
     if (linkTextObj !== undefined) {
-      edge.text = this.sanitizeText(linkTextObj.text.trim());
+      // For markdown type, don't sanitize to preserve markdown syntax like [link](url)
+      // Sanitization will happen during rendering in edges.js
+      if (linkTextObj.type === 'markdown') {
+        edge.text = linkTextObj.text.trim();
+      } else {
+        edge.text = this.sanitizeText(linkTextObj.text.trim());
+      }
 
       // strip quotes if string starts and ends with a quote
       if (edge.text.startsWith('"') && edge.text.endsWith('"')) {
