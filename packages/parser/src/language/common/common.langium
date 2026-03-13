@@ -6,7 +6,7 @@
 EOL returns string: NEWLINE+ | EOF;
 
 fragment TitleAndAccessibilities:
-  ((accDescr=ACC_DESCR | accTitle=ACC_TITLE | title=TITLE) EOL)+
+  ((accDescr+=ACC_DESCR | accTitle+=ACC_TITLE | title+=TITLE) EOL)+
 ;
 
 terminal BOOLEAN returns boolean: 'true' | 'false';
