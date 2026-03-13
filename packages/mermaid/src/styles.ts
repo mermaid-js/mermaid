@@ -20,12 +20,16 @@ const getStyles = (
     compositeTitleBackground?: string;
     THEME_COLOR_LIMIT?: number;
     nodeBorder?: string;
+    mainBkg?: string;
+    strokeWidth?: number;
   } & FlowChartStyleOptions,
   svgId: string
 ) => {
   let diagramStyles = '';
   if (type in themes && themes[type]) {
-    diagramStyles = themes[type](options);
+    // Pass svgId through options so diagram-specific style functions can use it
+    // (e.g., for gradient URL references like url(svgId-gradient)).
+    diagramStyles = themes[type]({ ...options, svgId });
   } else {
     log.warn(`No theme found for ${type}`);
   }
