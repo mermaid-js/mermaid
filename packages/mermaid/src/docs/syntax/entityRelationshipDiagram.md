@@ -89,6 +89,30 @@ erDiagram
     "This **is** _Markdown_"
 ```
 
+#### Optional Relationship Labels (v<MERMAID_RELEASE_VERSION>+)
+
+The relationship label in ER diagrams is optional. You can define relationships without specifying a label, and the diagram will render correctly.
+
+For example, the following is valid:
+
+```mermaid-example
+erDiagram
+    BOOK }|..|{ AUTHOR
+    BOOK }|..|{ GENRE
+    AUTHOR }|..|{ GENRE
+```
+
+This will show the relationships between the entities without any labels on the connecting lines.
+
+You can still add a label if you want to describe the relationship:
+
+```mermaid-example
+erDiagram
+    BOOK }|..|{ AUTHOR : written_by
+    BOOK }|..|{ GENRE : categorized_as
+    AUTHOR }|..|{ GENRE : specializes_in
+```
+
 ### Relationship Syntax
 
 The `relationship` part of each statement can be broken down into three sub-components:
