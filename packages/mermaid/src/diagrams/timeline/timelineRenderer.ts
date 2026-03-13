@@ -227,16 +227,10 @@ export const draw = function (text: string, id: string, version: string, diagObj
     .attr('stroke', 'black')
     .attr('marker-end', 'url(#arrowhead)');
 
-  // Setup the view box and size of the svg element
-  setupGraphViewbox(
-    undefined,
-    svg,
-    conf.timeline?.padding ?? 50,
-    conf.timeline?.useMaxWidth ?? false
-  );
-
   if (look === 'neo' && useGradient) {
-    const gradient = svg
+    const existingDefs = svg.select('defs');
+    const defsEl = existingDefs.empty() ? svg.append('defs') : existingDefs;
+    const gradient = defsEl
       .append('linearGradient')
       .attr('id', svg.attr('id') + '-gradient')
       .attr('gradientUnits', 'objectBoundingBox')
@@ -246,17 +240,25 @@ export const draw = function (text: string, id: string, version: string, diagObj
       .attr('y2', '0%');
 
     gradient
-      .append('svg:stop')
+      .append('stop')
       .attr('offset', '0%')
       .attr('stop-color', gradientStart)
       .attr('stop-opacity', 1);
 
     gradient
-      .append('svg:stop')
+      .append('stop')
       .attr('offset', '100%')
       .attr('stop-color', gradientStop)
       .attr('stop-opacity', 1);
   }
+
+  // Setup the view box and size of the svg element
+  setupGraphViewbox(
+    undefined,
+    svg,
+    conf.timeline?.padding ?? 50,
+    conf.timeline?.useMaxWidth ?? false
+  );
 
   // addSVGAccessibilityFields(diagObj.db, diagram, id);
 };
