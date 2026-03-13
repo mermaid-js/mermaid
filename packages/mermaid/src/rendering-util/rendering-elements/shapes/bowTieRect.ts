@@ -75,8 +75,8 @@ export async function bowTieRect<T extends SVGGraphicsElement>(parent: D3Selecti
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = bbox.width + node.padding + 20;
-  const h = bbox.height + node.padding;
+  const w = bbox.width + (node.padding ?? 0) + 20;
+  const h = bbox.height + (node.padding ?? 0);
 
   const ry = h / 2;
   const rx = ry / (2.5 + h / 50);

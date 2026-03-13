@@ -71,6 +71,26 @@ describe('Flowchart v2', () => {
       { htmlLabels: false, flowchart: { htmlLabels: false } }
     );
   });
+
+  it('5a: should render flowchart with edge labels centered when htmlLabels is false', () => {
+    imgSnapshotTest(
+      `flowchart TB
+        A[Start] -->|first| B[Middle]
+        B -->|second| C[End]
+      `,
+      { logLevel: 1, htmlLabels: false }
+    );
+  });
+
+  it('5b: angle brackets should be work without html labels', () => {
+    imgSnapshotTest(
+      `flowchart TD
+    a["**Plain text**:\n 5 > 3 && 2 < 4"]
+    b["\`**Markdown**:<br> 5 > 3 && 2 < 4\`"]
+    `,
+      { htmlLabels: false }
+    );
+  });
   it('6: should render non-escaped with html labels', () => {
     imgSnapshotTest(
       `flowchart TD
@@ -1155,6 +1175,19 @@ end
         {}
       );
     });
+  });
+
+  it('7213: should render edges with rounded curve (right angles with rounded corners)', () => {
+    imgSnapshotTest(
+      `flowchart TD
+    A[Start] --> B{Decision}
+    B -->|Yes| C[Process 1]
+    B -->|No| D[Process 2]
+    C --> E[End]
+    D --> E
+    `,
+      { flowchart: { curve: 'rounded' } }
+    );
   });
 
   it('6617: Per Link Curve Styling using edge Ids', () => {

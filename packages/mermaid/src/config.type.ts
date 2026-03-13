@@ -298,7 +298,8 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
     | 'natural'
     | 'step'
     | 'stepAfter'
-    | 'stepBefore';
+    | 'stepBefore'
+    | 'rounded';
   /**
    * Represents the padding between the labels and the shape
    *
@@ -985,6 +986,10 @@ export interface XYChartConfig extends BaseDiagramConfig {
    * Should show the value corresponding to the bar within the bar
    */
   showDataLabel?: boolean;
+  /**
+   * If showing data label then show it outside the bar
+   */
+  showDataLabelOutsideBar?: boolean;
   /**
    * Should show the chart title
    */

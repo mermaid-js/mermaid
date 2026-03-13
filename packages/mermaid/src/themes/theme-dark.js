@@ -142,7 +142,7 @@ class Theme {
     this.taskTextOutsideColor = this.taskTextLightColor;
     this.gridColor = this.mainContrastColor;
     this.doneTaskBkgColor = this.mainContrastColor;
-    this.taskTextDarkColor = this.darkTextColor;
+    this.taskTextDarkColor = invert(this.doneTaskBkgColor);
 
     /* Architecture Diagram variables */
     this.archEdgeColor = this.lineColor;
@@ -230,11 +230,11 @@ class Theme {
       this['pie' + i] = this['cScale' + i];
     }
     this.pieTitleTextSize = this.pieTitleTextSize || '25px';
-    this.pieTitleTextColor = this.pieTitleTextColor || this.taskTextDarkColor;
+    this.pieTitleTextColor = this.pieTitleTextColor || this.mainContrastColor;
     this.pieSectionTextSize = this.pieSectionTextSize || '17px';
     this.pieSectionTextColor = this.pieSectionTextColor || this.textColor;
     this.pieLegendTextSize = this.pieLegendTextSize || '17px';
-    this.pieLegendTextColor = this.pieLegendTextColor || this.taskTextDarkColor;
+    this.pieLegendTextColor = this.pieLegendTextColor || this.mainContrastColor;
     this.pieStrokeColor = this.pieStrokeColor || 'black';
     this.pieStrokeWidth = this.pieStrokeWidth || '2px';
     this.pieOuterStrokeWidth = this.pieOuterStrokeWidth || '2px';
@@ -277,6 +277,7 @@ class Theme {
     this.xyChart = {
       backgroundColor: this.xyChart?.backgroundColor || this.background,
       titleColor: this.xyChart?.titleColor || this.primaryTextColor,
+      dataLabelColor: this.xyChart?.dataLabelColor || this.primaryTextColor,
       xAxisTitleColor: this.xyChart?.xAxisTitleColor || this.primaryTextColor,
       xAxisLabelColor: this.xyChart?.xAxisLabelColor || this.primaryTextColor,
       xAxisTickColor: this.xyChart?.xAxisTickColor || this.primaryTextColor,

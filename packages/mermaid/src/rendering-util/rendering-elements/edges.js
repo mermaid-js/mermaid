@@ -2,6 +2,7 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { getEffectiveHtmlLabels } from '../../config.js';
 import { log } from '../../logger.js';
 import { createText } from '../createText.js';
+import { computeLabelTransform } from '../labelTransform.js';
 import utils from '../../utils.js';
 import {
   getLineFunctionsWithOffset,
@@ -30,6 +31,17 @@ import rough from 'roughjs';
 import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
 import { isLabelStyle, styles2String } from './shapes/handDrawnShapeStyles.js';
+
+/**
+ * Resolve the effective curve type for an edge.
+ * If edge.curve is a string (e.g. 'rounded', 'linear'), use it directly.
+ * Otherwise (undefined, null, or a D3 CurveFactory function), fall back to config.
+ * @param {*} edgeCurve - The edge.curve value (string, function, or undefined/null)
+ * @returns {string|undefined} - The resolved curve type string
+ */
+export const resolveEdgeCurveType = (edgeCurve) => {
+  return typeof edgeCurve === 'string' ? edgeCurve : getConfig()?.flowchart?.curve;
+};
 
 export const edgeLabels = new Map();
 export const terminalLabels = new Map();
@@ -83,14 +95,22 @@ export const insertEdgeLabel = async (elem, edge) => {
 
   // Center the label
   let bbox = labelElement.getBBox();
+  let transformBbox = bbox;
   if (useHtmlLabels) {
     const div = labelElement.children[0];
     const dv = select(labelElement);
     bbox = div.getBoundingClientRect();
+    transformBbox = bbox;
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
+  } else {
+    // For SVG labels, use text element's bbox so the text is centered on the edge
+    const textEl = select(labelElement).select('text').node();
+    if (textEl && typeof textEl.getBBox === 'function') {
+      transformBbox = textEl.getBBox();
+    }
   }
-  label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
+  label.attr('transform', computeLabelTransform(transformBbox, useHtmlLabels));
 
   // Make element accessible by id for positioning
   edgeLabels.set(edge.id, edgeLabel);
@@ -120,7 +140,7 @@ export const insertEdgeLabel = async (elem, edge) => {
       dv.attr('width', slBox.width);
       dv.attr('height', slBox.height);
     }
-    inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
+    inner.attr('transform', computeLabelTransform(slBox, useHtmlLabels));
     if (!terminalLabels.get(edge.id)) {
       terminalLabels.set(edge.id, {});
     }
@@ -148,7 +168,7 @@ export const insertEdgeLabel = async (elem, edge) => {
       dv.attr('width', slBox.width);
       dv.attr('height', slBox.height);
     }
-    inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
+    inner.attr('transform', computeLabelTransform(slBox, useHtmlLabels));
 
     if (!terminalLabels.get(edge.id)) {
       terminalLabels.set(edge.id, {});
@@ -176,7 +196,7 @@ export const insertEdgeLabel = async (elem, edge) => {
       dv.attr('width', slBox.width);
       dv.attr('height', slBox.height);
     }
-    inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
+    inner.attr('transform', computeLabelTransform(slBox, useHtmlLabels));
 
     endEdgeLabelLeft.node().appendChild(endLabelElement);
 
@@ -207,7 +227,7 @@ export const insertEdgeLabel = async (elem, edge) => {
       dv.attr('width', slBox.width);
       dv.attr('height', slBox.height);
     }
-    inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
+    inner.attr('transform', computeLabelTransform(slBox, useHtmlLabels));
 
     endEdgeLabelRight.node().appendChild(endLabelElement);
     if (!terminalLabels.get(edge.id)) {
@@ -507,6 +527,7 @@ const fixCorners = function (lineData) {
   }
   return newLineData;
 };
+
 const generateDashArray = (len, oValueS, oValueE) => {
   const middleLength = len - oValueS - oValueE;
   const dashLength = 2; // Length of each dash
@@ -531,9 +552,14 @@ export const insertEdge = function (
   diagramType,
   startNode,
   endNode,
-  id,
+  diagramId,
   skipIntersect = false
 ) {
+  if (!diagramId) {
+    throw new Error(
+      `insertEdge: missing diagramId for edge "${edge.id}" — edge IDs require a diagram prefix for uniqueness`
+    );
+  }
   const { handDrawnSeed } = getConfig();
   let points = edge.points;
   let pointsHasChanged = false;
@@ -582,10 +608,15 @@ export const insertEdge = function (
   }
 
   let lineData = points.filter((p) => !Number.isNaN(p.y));
-  lineData = fixCorners(lineData);
-  let curve = curveBasis;
-  curve = curveLinear;
-  switch (edge.curve) {
+  // Resolve curve type: use edge.curve if it's a string, otherwise fall back to config default
+  const edgeCurveType = resolveEdgeCurveType(edge.curve);
+  // Apply fixCorners for non-rounded curves to pre-round right-angle corners
+  // (rounded curve type uses generateRoundedPath instead)
+  if (edgeCurveType !== 'rounded') {
+    lineData = fixCorners(lineData);
+  }
+  let curve = curveLinear;
+  switch (edgeCurveType) {
     case 'linear':
       curve = curveLinear;
       break;
@@ -622,13 +653,12 @@ export const insertEdge = function (
     case 'stepBefore':
       curve = curveStepBefore;
       break;
+    case 'rounded':
+      curve = curveLinear;
+      break;
     default:
       curve = curveBasis;
   }
-
-  // if (edge.curve) {
-  //   curve = edge.curve;
-  // }
 
   const { x, y } = getLineFunctionsWithOffset(edge);
   const lineFunction = line().x(x).y(y).curve(curve);
@@ -662,7 +692,7 @@ export const insertEdge = function (
   }
   let svgPath;
   let linePath =
-    edge.curve === 'rounded'
+    edgeCurveType === 'rounded'
       ? generateRoundedPath(applyMarkerOffsetsToPoints(lineData, edge), 5)
       : lineFunction(lineData);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
@@ -690,7 +720,7 @@ export const insertEdge = function (
 
     svgPath = select(svgPathNode)
       .select('path')
-      .attr('id', edge.id)
+      .attr('id', `${diagramId}-${edge.id}`)
       .attr(
         'class',
         ' ' +
@@ -713,7 +743,7 @@ export const insertEdge = function (
     svgPath = elem
       .append('path')
       .attr('d', linePath)
-      .attr('id', edge.id)
+      .attr('id', `${diagramId}-${edge.id}`)
       .attr(
         'class',
         ' ' +
@@ -789,7 +819,7 @@ export const insertEdge = function (
   log.info('arrowTypeStart', edge.arrowTypeStart);
   log.info('arrowTypeEnd', edge.arrowTypeEnd);
 
-  addEdgeMarkers(svgPath, edge, url, id, diagramType, strokeColor);
+  addEdgeMarkers(svgPath, edge, url, diagramId, diagramType, strokeColor);
   const midIndex = Math.floor(points.length / 2);
   const point = points[midIndex];
   if (!utils.isLabelCoordinateInPath(point, svgPath.attr('d'))) {
