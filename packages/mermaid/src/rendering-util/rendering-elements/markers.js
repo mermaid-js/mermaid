@@ -1,5 +1,6 @@
 /** Setup arrow head and define the marker. The result is appended to the svg. */
 import { log } from '../../logger.js';
+import * as configApi from '../../config.js';
 
 // Only add the number of markers that the diagram needs
 const insertMarkers = (elem, markerArray, type, id) => {
@@ -417,6 +418,35 @@ const requirement_arrow = (elem, type, id) => {
       L0,20`
     );
 };
+
+const requirement_arrow_neo = (elem, type, id) => {
+  const config = configApi.getConfig();
+  const { themeVariables } = config;
+  const { strokeWidth } = themeVariables;
+
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', id + '_' + type + '-requirement_arrowEnd')
+    .attr('refX', 20)
+    .attr('refY', 10)
+    .attr('markerWidth', 20)
+    .attr('markerHeight', 20)
+    .attr('orient', 'auto')
+    .attr('markerUnits', 'userSpaceOnUse')
+    .attr('stroke-width', `${strokeWidth}`)
+    .attr('viewBox', '0 0 25 20')
+    .append('path')
+    .attr(
+      'd',
+      `M0,0
+      L20,10
+      M20,10
+      L0,20`
+    )
+    .attr('stroke-linejoin', 'miter');
+};
+
 const requirement_contains = (elem, type, id) => {
   const containsNode = elem
     .append('defs')
@@ -436,6 +466,30 @@ const requirement_contains = (elem, type, id) => {
   containsNode.append('line').attr('y1', 1).attr('y2', 19).attr('x1', 10).attr('x2', 10);
 };
 
+const requirement_contains_neo = (elem, type, id) => {
+  const config = configApi.getConfig();
+  const { themeVariables } = config;
+  const { strokeWidth } = themeVariables;
+  const containsNode = elem
+    .append('defs')
+    .append('marker')
+    .attr('id', id + '_' + type + '-requirement_containsStart')
+    .attr('refX', 0)
+    .attr('refY', 10)
+    .attr('markerWidth', 20)
+    .attr('markerHeight', 20)
+    .attr('orient', 'auto')
+    .attr('markerUnits', 'userSpaceOnUse')
+    .append('g');
+
+  containsNode.append('circle').attr('cx', 10).attr('cy', 10).attr('r', 9).attr('fill', 'none');
+
+  containsNode.append('line').attr('x1', 1).attr('x2', 19).attr('y1', 10).attr('y2', 10);
+
+  containsNode.append('line').attr('y1', 1).attr('y2', 19).attr('x1', 10).attr('x2', 10);
+  containsNode.selectAll('*').attr('stroke-width', `${strokeWidth}`);
+};
+
 // TODO rename the class diagram markers to something shape descriptive and semantic free
 const markers = {
   extension,
@@ -453,5 +507,7 @@ const markers = {
   zero_or_more,
   requirement_arrow,
   requirement_contains,
+  requirement_arrow_neo,
+  requirement_contains_neo,
 };
 export default insertMarkers;
