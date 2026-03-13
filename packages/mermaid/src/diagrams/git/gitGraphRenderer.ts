@@ -841,7 +841,8 @@ const drawArrows = (
 const drawBranches = (
   svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
   branches: { name: string }[],
-  gitGraphConfig: GitGraphDiagramConfig
+  gitGraphConfig: GitGraphDiagramConfig,
+  id: string
 ) => {
   const { look, theme, themeVariables } = getConfig();
   const { dropShadow, THEME_COLOR_LIMIT: themeColorLimit } = themeVariables;
@@ -897,25 +898,16 @@ const drawBranches = (
     const labelPaddingY = isReduxTheme ? 12 : 0;
     if (look === 'neo') {
       bkg.attr('data-look', `neo`);
-      if (theme?.includes('redux')) {
-        bkg
-          .append('defs')
-          .append('filter')
-          .attr('id', 'drop-shadow')
-          .attr('height', '130%')
-          .attr('width', '130%')
-          .append('feDropShadow')
-          .attr('dx', '4')
-          .attr('dy', '4')
-          .attr('stdDeviation', 0)
-          .attr('flood-opacity', '0.06')
-          .attr('flood-color', `${theme.includes('dark') ? '#FFFFFF' : '#000000'}`);
-      }
     }
 
     bkg
       .attr('class', 'branchLabelBkg label' + adjustIndexForTheme)
-      .attr('style', look === 'neo' ? `filter:${dropShadow}` : '')
+      .attr(
+        'style',
+        look === 'neo'
+          ? `filter:${theme?.includes('redux') ? `url(#${id}-drop-shadow)` : dropShadow}`
+          : ''
+      )
       .attr('rx', borderRadius)
       .attr('ry', borderRadius)
       .attr('x', -bbox.width - 4 - (gitGraphConfig.rotateCommitLabel === true ? 30 : 0))
@@ -930,7 +922,7 @@ const drawBranches = (
           (gitGraphConfig.rotateCommitLabel === true ? 30 : 0) +
           labelPaddingX / 2) +
         ', ' +
-        (pos - bbox.height / 2 - 1 + labelPaddingY / 2) +
+        (pos - bbox.height / 2 + labelPaddingY / 2) +
         ')'
     );
     if (dir === 'TB') {
@@ -989,7 +981,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
 
   // Add linearGradient for neo look — render.ts does this for layout-based diagrams,
   // but gitGraph uses its own draw function so we must define it here.
-  const { themeVariables } = getConfig();
+  const { look, theme, themeVariables } = getConfig();
   const { useGradient, gradientStart, gradientStop } = themeVariables;
   if (useGradient) {
     const gradient = diagram
@@ -1013,6 +1005,24 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
       .attr('stop-opacity', 1);
   }
 
+  // Add drop-shadow SVG filter for neo+redux look. Defined once on the root <svg>
+  // with a diagram-unique ID to avoid collisions when multiple diagrams share the page.
+  if (look === 'neo' && theme?.includes('redux')) {
+    const filterColor = theme.includes('dark') ? '#FFFFFF' : '#000000';
+    diagram
+      .append('defs')
+      .append('filter')
+      .attr('id', id + '-drop-shadow')
+      .attr('height', '130%')
+      .attr('width', '130%')
+      .append('feDropShadow')
+      .attr('dx', '4')
+      .attr('dy', '4')
+      .attr('stdDeviation', 0)
+      .attr('flood-opacity', '0.06')
+      .attr('flood-color', filterColor);
+  }
+
   let pos = 0;
 
   branches.forEach((branch, index) => {
@@ -1031,7 +1041,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
 
   drawCommits(diagram, allCommitsDict, false, gitGraphConfig);
   if (gitGraphConfig.showBranches) {
-    drawBranches(diagram, branches, gitGraphConfig);
+    drawBranches(diagram, branches, gitGraphConfig, id);
   }
   drawArrows(diagram, allCommitsDict);
   drawCommits(diagram, allCommitsDict, true, gitGraphConfig);
