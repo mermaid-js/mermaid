@@ -24,6 +24,7 @@ import sankey from '../diagrams/sankey/sankeyDetector.js';
 import { packet } from '../diagrams/packet/detector.js';
 import { radar } from '../diagrams/radar/detector.js';
 import block from '../diagrams/block/blockDetector.js';
+import treeView from '../diagrams/treeView/detector.js';
 import architecture from '../diagrams/architecture/architectureDetector.js';
 import { ishikawa } from '../diagrams/ishikawa/ishikawaDetector.js';
 import venn from '../diagrams/venn/vennDetector.js';
@@ -102,6 +103,7 @@ export const addDiagrams = () => {
     packet,
     xychart,
     block,
+    treeView,
     radar,
     ishikawa,
     treemap,
