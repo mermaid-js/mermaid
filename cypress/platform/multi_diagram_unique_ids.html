@@ -1,0 +1,81 @@
+<html>
+  <head></head>
+  <body>
+    <h1>Multi-Diagram Unique ID Test</h1>
+    <p>Each diagram type below appears twice with identical content.</p>
+
+    <!-- Flowchart pair -->
+    <pre class="mermaid">
+      flowchart LR
+      A[Start] --> B{Decision}
+      B -->|Yes| C[OK]
+      B -->|No| D[Cancel]
+    </pre>
+    <pre class="mermaid">
+      flowchart LR
+      A[Start] --> B{Decision}
+      B -->|Yes| C[OK]
+      B -->|No| D[Cancel]
+    </pre>
+
+    <!-- Class diagram pair -->
+    <pre class="mermaid">
+      classDiagram
+      class Animal {
+        +String name
+        +makeSound()
+      }
+      class Dog {
+        +fetch()
+      }
+      Animal <|-- Dog
+    </pre>
+    <pre class="mermaid">
+      classDiagram
+      class Animal {
+        +String name
+        +makeSound()
+      }
+      class Dog {
+        +fetch()
+      }
+      Animal <|-- Dog
+    </pre>
+
+    <!-- ER diagram pair -->
+    <pre class="mermaid">
+      erDiagram
+      CUSTOMER ||--o{ ORDER : places
+      ORDER ||--|{ LINE-ITEM : contains
+    </pre>
+    <pre class="mermaid">
+      erDiagram
+      CUSTOMER ||--o{ ORDER : places
+      ORDER ||--|{ LINE-ITEM : contains
+    </pre>
+
+    <!-- State diagram pair -->
+    <pre class="mermaid">
+      stateDiagram-v2
+      [*] --> Active
+      Active --> Inactive
+      Inactive --> [*]
+    </pre>
+    <pre class="mermaid">
+      stateDiagram-v2
+      [*] --> Active
+      Active --> Inactive
+      Inactive --> [*]
+    </pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({ startOnLoad: false, logLevel: 0 });
+      await mermaid.run();
+
+      if (window.Cypress) {
+        window.rendered = true;
+      }
+    </script>
+  </body>
+</html>

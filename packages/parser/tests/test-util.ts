@@ -13,6 +13,8 @@ import type {
   PacketServices,
   GitGraph,
   GitGraphServices,
+  TreeView,
+  TreeViewServices,
 } from '../src/language/index.js';
 import {
   createArchitectureServices,
@@ -21,6 +23,7 @@ import {
   createRadarServices,
   createPacketServices,
   createGitGraphServices,
+  createTreeViewServices,
 } from '../src/language/index.js';
 
 const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined);
@@ -105,3 +108,14 @@ export function createGitGraphTestServices() {
   return { services: gitGraphServices, parse };
 }
 export const gitGraphParse = createGitGraphTestServices().parse;
+
+const treeViewServices: TreeViewServices = createTreeViewServices().TreeView;
+const treeViewParser: LangiumParser = treeViewServices.parser.LangiumParser;
+export function createTreeViewTestServices() {
+  const parse = (input: string) => {
+    return treeViewParser.parse<TreeView>(input);
+  };
+
+  return { services: treeViewServices, parse };
+}
+export const treeViewParse = createTreeViewTestServices().parse;

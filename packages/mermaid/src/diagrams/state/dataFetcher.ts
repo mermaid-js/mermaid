@@ -291,6 +291,7 @@ export const dataFetcher = (
       rx: 10,
       ry: 10,
       look,
+      labelType: 'markdown',
     };
 
     // Clear the label for dividers who have no description
@@ -311,6 +312,7 @@ export const dataFetcher = (
         labelStyle: '',
         shape: SHAPE_NOTE,
         label: parsedItem.note.text,
+        labelType: 'markdown',
         cssClasses: CSS_DIAGRAM_NOTE,
         // useHtmlLabels: false,
         cssStyles: [],
