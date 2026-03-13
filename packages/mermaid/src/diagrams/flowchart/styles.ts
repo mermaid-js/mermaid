@@ -17,7 +17,7 @@ export interface FlowChartStyleOptions {
   tertiaryColor: string;
   textColor: string;
   titleColor: string;
-  strokeWidth?: string;
+  strokeWidth: string;
 }
 
 const fade = (color: string, opacity: number) => {
