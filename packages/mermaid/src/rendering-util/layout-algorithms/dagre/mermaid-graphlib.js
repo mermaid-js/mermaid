@@ -360,22 +360,23 @@ export const extractor = (graph, depth) => {
       log.warn('Old graph before copy', graphlibJson.write(graph));
       copy(node, graph, clusterGraph, node);
 
-      // If the cluster has no edges, Dagre will lay out the nodes on the cross-axis.
-      // This means 'LR' will look like 'TB' and vice versa.
-      // To match user expectation, we swap the rankdir if there are no edges.
+      // When a subgraph cluster contains no edges, Dagre places all nodes in a
+      // single rank and lays them out along the cross-axis of the declared
+      // rankdir (e.g. `direction LR` produces a vertical column). To honour the
+      // user's declared direction we inject temporary, layout-only ordering
+      // edges (A → B → C → D …) that force Dagre to distribute the nodes across
+      // separate ranks. The edges are marked with `_virtual: true` so they can
+      // be stripped out in the rendering phase before any SVG paths are drawn.
       if (clusterGraph.edges().length === 0) {
-        log.warn('Cluster has no edges, swapping rankdir to match intuitive layout', dir);
-        let newDir = dir;
-        if (dir === 'LR') {
-          newDir = 'TB';
-        } else if (dir === 'TB') {
-          newDir = 'LR';
-        } else if (dir === 'RL') {
-          newDir = 'BT';
-        } else if (dir === 'BT') {
-          newDir = 'RL';
+        const clusterNodes = clusterGraph.nodes();
+        log.warn('Cluster has no edges, adding virtual ordering edges for layout', clusterNodes);
+        for (let i = 0; i < clusterNodes.length - 1; i++) {
+          clusterGraph.setEdge(clusterNodes[i], clusterNodes[i + 1], {
+            _virtual: true,
+            weight: 0,
+            minlen: 1,
+          });
         }
-        clusterGraph.graph().rankdir = newDir;
       }
 
       graph.setNode(node, {

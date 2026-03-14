@@ -164,6 +164,15 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
 
   dagreLayout(graph);
 
+  // Strip out any virtual ordering edges that were injected for edge-less
+  // clusters (see mermaid-graphlib.js). They must be removed before rendering
+  // so that no SVG edge path is drawn for them.
+  graph.edges().forEach(function (e) {
+    if (graph.edge(e)?._virtual) {
+      graph.removeEdge(e.v, e.w, e.name);
+    }
+  });
+
   log.info('Graph after layout:', JSON.stringify(graphlibJson.write(graph)));
   // Move the nodes to the correct place
   let diff = 0;
