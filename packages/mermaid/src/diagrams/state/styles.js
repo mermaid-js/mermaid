@@ -1,6 +1,6 @@
 const getStyles = (options) =>
   `
-defs #statediagram-barbEnd {
+defs [id$="-barbEnd"] {
     fill: ${options.transitionColor};
     stroke: ${options.transitionColor};
   }
@@ -124,7 +124,7 @@ g.stateGroup line {
   stroke: ${options.stateBorder || options.nodeBorder};;
   stroke-width: 1px;
 }
-#statediagram-barbEnd {
+[id$="-barbEnd"] {
   fill: ${options.lineColor};
 }
 
@@ -202,7 +202,7 @@ g.stateGroup line {
   color: red; // ${options.noteTextColor};
 }
 
-#dependencyStart, #dependencyEnd {
+[id$="-dependencyStart"], [id$="-dependencyEnd"] {
   fill: ${options.lineColor};
   stroke: ${options.lineColor};
   stroke-width: 1;

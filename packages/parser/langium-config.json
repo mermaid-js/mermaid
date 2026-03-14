@@ -17,6 +17,11 @@
       "fileExtensions": [".mmd", ".mermaid"]
     },
     {
+      "id": "treeView",
+      "grammar": "src/language/treeView/treeView.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
       "id": "architecture",
       "grammar": "src/language/architecture/architecture.langium",
       "fileExtensions": [".mmd", ".mermaid"]
