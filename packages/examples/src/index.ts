@@ -24,6 +24,7 @@ import blockDiagram from './examples/block.js';
 import treemapDiagram from './examples/treemap.js';
 import vennDiagram from './examples/venn.js';
 import treeViewDiagram from './examples/tree-view.js';
+import wardleyDiagram from './examples/wardley.js';
 
 export const diagramData: DiagramMetadata[] = [
   flowChart,
@@ -51,4 +52,5 @@ export const diagramData: DiagramMetadata[] = [
   treemapDiagram,
   vennDiagram,
   treeViewDiagram,
+  wardleyDiagram,
 ];

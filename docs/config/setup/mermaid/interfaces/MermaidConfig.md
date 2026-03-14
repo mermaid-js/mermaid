@@ -105,7 +105,7 @@ You can set this attribute to base the seed on a static string.
 
 > `optional` **dompurifyConfig**: `Config`
 
-Defined in: [packages/mermaid/src/config.type.ts:223](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L223)
+Defined in: [packages/mermaid/src/config.type.ts:224](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L224)
 
 ---
 
@@ -179,7 +179,7 @@ See <https://developer.mozilla.org/en-US/docs/Web/CSS/font-family>
 
 > `optional` **fontSize**: `number`
 
-Defined in: [packages/mermaid/src/config.type.ts:225](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L225)
+Defined in: [packages/mermaid/src/config.type.ts:226](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L226)
 
 ---
 
@@ -305,7 +305,7 @@ Defines which main look to use for the diagram.
 
 > `optional` **markdownAutoWrap**: `boolean`
 
-Defined in: [packages/mermaid/src/config.type.ts:226](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L226)
+Defined in: [packages/mermaid/src/config.type.ts:227](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L227)
 
 ---
 
@@ -437,7 +437,7 @@ Defined in: [packages/mermaid/src/config.type.ts:205](https://github.com/mermaid
 
 > `optional` **suppressErrorRendering**: `boolean`
 
-Defined in: [packages/mermaid/src/config.type.ts:232](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L232)
+Defined in: [packages/mermaid/src/config.type.ts:233](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L233)
 
 Suppresses inserting 'Syntax error' diagram in the DOM.
 This is useful when you want to control how to handle syntax errors in your application.
@@ -495,11 +495,19 @@ Defined in: [packages/mermaid/src/config.type.ts:222](https://github.com/mermaid
 
 ---
 
+### wardley-beta?
+
+> `optional` **wardley-beta**: `WardleyDiagramConfig`
+
+Defined in: [packages/mermaid/src/config.type.ts:223](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L223)
+
+---
+
 ### wrap?
 
 > `optional` **wrap**: `boolean`
 
-Defined in: [packages/mermaid/src/config.type.ts:224](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L224)
+Defined in: [packages/mermaid/src/config.type.ts:225](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L225)
 
 ---
 
