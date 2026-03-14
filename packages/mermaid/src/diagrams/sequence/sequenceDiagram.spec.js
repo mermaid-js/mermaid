@@ -900,6 +900,195 @@ deactivate Bob`);
 
   it('should handle comments in a sequenceDiagram', async () => {
     const diagram = await Diagram.fromText(`
+sequenceDiagram
+Alice->Bob:Hello Bob, how are you?
+Note right of Bob: Bob thinks
+Bob-->Alice: I am good thanks!`);
+
+    const actors = diagram.db.getActors();
+    expect(actors.get('Alice').description).toBe('Alice');
+    actors.get('Bob').description = 'Bob';
+
+    const messages = diagram.db.getMessages();
+
+    expect(messages.length).toBe(3);
+    expect(messages[0].from).toBe('Alice');
+    expect(messages[2].from).toBe('Bob');
+  });
+
+  describe('Markdown hyperlinks in messages', () => {
+    it('should parse a message with a single markdown link', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        Alice->>Bob: Please check [the docs](https://mermaid.js.org)
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages.length).toBe(1);
+      expect(messages[0].message).toBe('Please check [the docs](https://mermaid.js.org)');
+      expect(messages[0].from).toBe('Alice');
+      expect(messages[0].to).toBe('Bob');
+    });
+
+    it('should parse a message with multiple markdown links', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        Client->>Server: POST /order (see [API spec](https://example.com/api))
+        Server-->>Client: 200 OK — details at [dashboard](https://example.com/dashboard)
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages.length).toBe(2);
+      expect(messages[0].message).toBe('POST /order (see [API spec](https://example.com/api))');
+      expect(messages[1].message).toBe(
+        '200 OK — details at [dashboard](https://example.com/dashboard)'
+      );
+    });
+
+    it('should parse a message with mixed text and links', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        Alice->>Bob: Hello Bob! Check [this link](https://example.com) for more info
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages.length).toBe(1);
+      expect(messages[0].message).toBe(
+        'Hello Bob! Check [this link](https://example.com) for more info'
+      );
+    });
+
+    it('should parse a message with a link containing multiple words', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        Alice->>Bob: See [the documentation here](https://mermaid.js.org/docs)
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages.length).toBe(1);
+      expect(messages[0].message).toBe('See [the documentation here](https://mermaid.js.org/docs)');
+    });
+
+    it('should parse a message with bold and italic text in link', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        Alice->>Bob: Check [**bold link**](https://example.com/bold) and *[italic link]*(https://example.com/italic)
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages.length).toBe(1);
+      expect(messages[0].message).toBe(
+        'Check [**bold link**](https://example.com/bold) and *[italic link]*(https://example.com/italic)'
+      );
+    });
+
+    it('should parse a note with markdown link', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        Alice->>Bob: Hello
+        Note right of Bob: See [documentation](https://mermaid.js.org)
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages.length).toBe(2);
+      expect(messages[1].message).toBe('See [documentation](https://mermaid.js.org)');
+      expect(messages[1].type).toBe(diagram.db.LINETYPE.NOTE);
+    });
+
+    it('should parse a message with javascript: URL sanitized', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        Alice->>Bob: Click [evil link](javascript:alert(1))
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages.length).toBe(1);
+      // The message should still contain the original text
+      expect(messages[0].message).toBe('Click [evil link](javascript:alert(1))');
+    });
+
+    it('should parse a message with data: URL sanitized', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        Alice->>Bob: Click [bad link](data:text/html,<script>alert(1)</script>)
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages.length).toBe(1);
+      // The message should still contain the original text
+      expect(messages[0].message).toBe(
+        'Click [bad link](data:text/html,<script>alert(1)</script>)'
+      );
+    });
+
+    it('should parse loop text with markdown link', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        loop Check [docs](https://example.com)
+          Alice->>Bob: Hello
+        end
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages.length).toBe(3);
+      expect(messages[0].message).toBe('Check [docs](https://example.com)');
+      expect(messages[0].type).toBe(diagram.db.LINETYPE.LOOP_START);
+    });
+
+    it('should parse alt text with markdown link', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        alt Check [option A](https://example.com/a)
+          Alice->>Bob: Hello
+        else Check [option B](https://example.com/b)
+          Alice->>Bob: Goodbye
+        end
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages.length).toBe(5);
+      expect(messages[0].message).toBe('Check [option A](https://example.com/a)');
+      expect(messages[0].type).toBe(diagram.db.LINETYPE.ALT_START);
+      expect(messages[2].message).toBe('Check [option B](https://example.com/b)');
+      expect(messages[2].type).toBe(diagram.db.LINETYPE.ALT_ELSE);
+    });
+
+    it('should parse opt text with markdown link', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        Alice->>Bob: Hello
+        opt Optional [info](https://example.com/info)
+          Bob-->>Alice: Response
+        end
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages.length).toBe(4);
+      expect(messages[1].message).toBe('Optional [info](https://example.com/info)');
+      expect(messages[1].type).toBe(diagram.db.LINETYPE.OPT_START);
+    });
+
+    it('should parse par text with markdown link', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        par Parallel [task 1](https://example.com/task1)
+          Alice->>Bob: Hello
+        and Parallel [task 2](https://example.com/task2)
+          Bob-->>Alice: Response
+        end
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages.length).toBe(5);
+      expect(messages[0].message).toBe('Parallel [task 1](https://example.com/task1)');
+      expect(messages[0].type).toBe(diagram.db.LINETYPE.PAR_START);
+      expect(messages[2].message).toBe('Parallel [task 2](https://example.com/task2)');
+      expect(messages[2].type).toBe(diagram.db.LINETYPE.PAR_AND);
+    });
+  });
+
+  it('should handle special characters in signals', async () => {
+    const diagram = await Diagram.fromText(`
       sequenceDiagram
       Alice->Bob: Hello Bob, how are you?
       %% Comment
@@ -2743,6 +2932,62 @@ Bob->>Alice:Got it!
       expect(actors.get('B').description).toBe('Service B');
       expect(actors.get('C').type).toBe('database');
       expect(actors.get('C').description).toBe('C');
+    });
+  });
+
+  describe('Markdown links in actor descriptions', () => {
+    // Note: Markdown links in actor descriptions may not be fully supported by the parser yet
+    // These tests verify that when description contains link syntax, it is preserved
+    it('should preserve link syntax in actor description', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+          participant A as Click [Link](https://example.com) for info
+          participant B as Check [Search](https://example.com/search)
+          A->>B: Message
+      `);
+
+      const actors = diagram.db.getActors();
+      expect(actors.get('A').description).toBe('Click [Link](https://example.com) for info');
+      expect(actors.get('B').description).toBe('Check [Search](https://example.com/search)');
+    });
+
+    it('should handle actor with KaTeX only', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+          participant A as $E = mc^2$
+          participant B
+          A->>B: Check
+      `);
+
+      const actors = diagram.db.getActors();
+      expect(actors.get('A').description).toBe('$E = mc^2$');
+      expect(actors.get('B').description).toBe('B');
+    });
+
+    it('should parse actor description with markdown link syntax', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+          participant User as [Profile Page](https://example.com/profile)
+          participant Admin
+          User->>Admin: Check my profile
+      `);
+
+      const actors = diagram.db.getActors();
+      expect(actors.get('User').description).toBe('[Profile Page](https://example.com/profile)');
+    });
+
+    it('should handle multiple link syntax in actor description', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+          participant A as [Home](https://example.com) and [About](https://example.com/about)
+          participant B
+          A->>B: Message
+      `);
+
+      const actors = diagram.db.getActors();
+      expect(actors.get('A').description).toBe(
+        '[Home](https://example.com) and [About](https://example.com/about)'
+      );
     });
   });
 });

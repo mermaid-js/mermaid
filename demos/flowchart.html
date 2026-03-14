@@ -1620,6 +1620,19 @@
 
     <h1 id="link-clicked">Anchor for "link-clicked" test</h1>
 
+    <h2>Markdown Links in Flowchart</h2>
+    <p>Flowchart supports markdown links in both node labels and edge labels:</p>
+    <pre class="mermaid">
+    flowchart LR
+      A["`Visit [Google](https://google.com)`"]
+      B["`Check [GitHub](https://github.com)`"]
+      C["`Open [Example](https://example.com)`"]
+      
+      A -- "`Click [here](https://link1.com)`" --> B
+      B -. "`More [info](https://link2.com)`" .-> C
+      C == "`Try this [link](https://link3.com)`" ==> A
+    </pre>
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({

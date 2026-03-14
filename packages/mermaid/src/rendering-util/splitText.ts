@@ -40,25 +40,26 @@ export function splitWordToFitWidth(
   word: MarkdownWord
 ): [MarkdownWord, MarkdownWord] {
   const characters = splitTextToChars(word.content);
-  return splitWordToFitWidthRecursion(checkFit, [], characters, word.type);
+  return splitWordToFitWidthRecursion(checkFit, [], characters, word.type, word.href);
 }
 
 function splitWordToFitWidthRecursion(
   checkFit: CheckFitFunction,
   usedChars: string[],
   remainingChars: string[],
-  type: MarkdownWordType
+  type: MarkdownWordType,
+  href?: string
 ): [MarkdownWord, MarkdownWord] {
   if (remainingChars.length === 0) {
     return [
-      { content: usedChars.join(''), type },
-      { content: '', type },
+      { content: usedChars.join(''), type, href },
+      { content: '', type, href },
     ];
   }
   const [nextChar, ...rest] = remainingChars;
   const newWord = [...usedChars, nextChar];
   if (checkFit([{ content: newWord.join(''), type }])) {
-    return splitWordToFitWidthRecursion(checkFit, newWord, rest, type);
+    return splitWordToFitWidthRecursion(checkFit, newWord, rest, type, href);
   }
   if (usedChars.length === 0 && nextChar) {
     // If the first character does not fit, split it anyway
@@ -66,8 +67,8 @@ function splitWordToFitWidthRecursion(
     remainingChars.shift();
   }
   return [
-    { content: usedChars.join(''), type },
-    { content: remainingChars.join(''), type },
+    { content: usedChars.join(''), type, href },
+    { content: remainingChars.join(''), type, href },
   ];
 }
 
