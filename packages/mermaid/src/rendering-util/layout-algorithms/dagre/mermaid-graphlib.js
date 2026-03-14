@@ -359,6 +359,25 @@ export const extractor = (graph, depth) => {
 
       log.warn('Old graph before copy', graphlibJson.write(graph));
       copy(node, graph, clusterGraph, node);
+
+      // If the cluster has no edges, Dagre will lay out the nodes on the cross-axis.
+      // This means 'LR' will look like 'TB' and vice versa.
+      // To match user expectation, we swap the rankdir if there are no edges.
+      if (clusterGraph.edges().length === 0) {
+        log.warn('Cluster has no edges, swapping rankdir to match intuitive layout', dir);
+        let newDir = dir;
+        if (dir === 'LR') {
+          newDir = 'TB';
+        } else if (dir === 'TB') {
+          newDir = 'LR';
+        } else if (dir === 'RL') {
+          newDir = 'BT';
+        } else if (dir === 'BT') {
+          newDir = 'RL';
+        }
+        clusterGraph.graph().rankdir = newDir;
+      }
+
       graph.setNode(node, {
         clusterNode: true,
         id: node,
