@@ -40,7 +40,7 @@ export async function rectWithTitle<T extends SVGGraphicsElement>(
 
   const title = node.label;
 
-  const text = label.node()!.appendChild(await createLabel(title, node.labelStyle, true, true));
+  const text = await createLabel(label, title, node.labelStyle, true, true);
   let bbox = { width: 0, height: 0 };
   if (getEffectiveHtmlLabels(getConfig())) {
     const div = text.children[0];
@@ -52,16 +52,13 @@ export async function rectWithTitle<T extends SVGGraphicsElement>(
   log.info('Text 2', description);
   const textRows = description || [];
   const titleBox = text.getBBox();
-  const descr = label
-    .node()!
-    .appendChild(
-      await createLabel(
-        textRows.join ? textRows.join('<br/>') : textRows,
-        node.labelStyle,
-        true,
-        true
-      )
-    );
+  const descr = await createLabel(
+    label,
+    Array.isArray(textRows) ? textRows.join('<br/>') : textRows,
+    node.labelStyle,
+    true,
+    true
+  );
 
   //if (evaluate(getConfig()?.flowchart?.htmlLabels)) {
   const div = descr.children[0];

@@ -261,8 +261,15 @@ const config: RequiredDeep<MermaidConfig> = {
   packet: {
     ...defaultConfigJson.packet,
   },
+  treeView: {
+    ...defaultConfigJson.treeView,
+    useWidth: undefined,
+  },
   radar: {
     ...defaultConfigJson.radar,
+  },
+  ishikawa: {
+    ...defaultConfigJson.ishikawa,
   },
   treemap: {
     useMaxWidth: true,
@@ -275,6 +282,9 @@ const config: RequiredDeep<MermaidConfig> = {
     valueFontSize: 12,
     labelFontSize: 14,
     valueFormat: ',',
+  },
+  venn: {
+    ...defaultConfigJson.venn,
   },
 };
 

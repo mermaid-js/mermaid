@@ -91,4 +91,28 @@ describe('pie chart', () => {
       `
     );
   });
+  it('should render a pie diagram with readable title and legend in dark mode', () => {
+    imgSnapshotTest(
+      `pie title Sports in Sweden
+        "Bandy": 40
+        "Ice-Hockey": 80
+        "Football": 90
+      `,
+      { theme: 'dark' }
+    );
+  });
+
+  it('should render a pie diagram with a long title without clipping', () => {
+    imgSnapshotTest(
+      `pie title Weekly Grocery Consumption for a Family of 4
+        "Vegetables": 25
+        "Fruits": 5
+        "Cheese": 5
+        "Milk": 15
+        "Eggs": 15
+        "Meat": 30
+        "Bread": 5
+      `
+    );
+  });
 });

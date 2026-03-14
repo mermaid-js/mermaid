@@ -1,4 +1,4 @@
-grammar Packet
+grammar PacketGrammar
 import "../common/common";
 
 entry Packet:

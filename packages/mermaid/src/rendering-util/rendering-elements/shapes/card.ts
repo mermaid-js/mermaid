@@ -19,9 +19,9 @@ export async function card<T extends SVGGraphicsElement>(parent: D3Selection<T>,
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const h = bbox.height + node.padding;
+  const h = bbox.height + (node.padding ?? 0);
   const padding = 12;
-  const w = bbox.width + node.padding + padding;
+  const w = bbox.width + (node.padding ?? 0) + padding;
   const left = 0;
   const right = w;
   const top = -h;

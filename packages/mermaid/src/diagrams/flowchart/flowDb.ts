@@ -17,6 +17,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
+import { createTooltip } from '../common/svgDrawCommon.js';
 import type {
   FlowClass,
   FlowEdge,
@@ -26,7 +27,7 @@ import type {
   FlowVertex,
   FlowVertexTypeParam,
 } from './types.js';
-
+import DOMPurify from 'dompurify';
 interface LinkData {
   id: string;
 }
@@ -278,6 +279,7 @@ function highlightConnectedEdges(
 export class FlowDB implements DiagramDB {
   private vertexCounter = 0;
   private config = getConfig();
+  private diagramId = '';
   private vertices = new Map<string, FlowVertex>();
   private edges: FlowEdge[] & { defaultInterpolate?: string; defaultStyle?: string[] } = [];
   private classes = new Map<string, FlowClass>();
@@ -327,18 +329,38 @@ export class FlowDB implements DiagramDB {
     return common.sanitizeText(txt, this.config);
   }
 
+  private sanitizeNodeLabelType(labelType?: string) {
+    switch (labelType) {
+      case 'markdown':
+      case 'string':
+      case 'text':
+        return labelType;
+      default:
+        return 'markdown';
+    }
+  }
+
+  /**
+   * Sets the diagram's SVG element ID, used to prefix domIds for uniqueness
+   * across multiple diagrams on the same page.
+   */
+  public setDiagramId(svgElementId: string) {
+    this.diagramId = svgElementId;
+  }
+
   /**
    * Function to lookup domId from id in the graph definition.
+   * When diagramId is set, returns the prefixed version for DOM uniqueness.
    *
    * @param id - id of the node
    */
   public lookUpDomId(id: string) {
     for (const vertex of this.vertices.values()) {
       if (vertex.id === id) {
-        return vertex.domId;
+        return this.diagramId ? `${this.diagramId}-${vertex.domId}` : vertex.domId;
       }
     }
-    return id;
+    return this.diagramId ? `${this.diagramId}-${id}` : id;
   }
 
   /**
@@ -391,6 +413,11 @@ export class FlowDB implements DiagramDB {
 
     let vertex = this.vertices.get(id);
     if (vertex === undefined) {
+      if (textObj === undefined && type === undefined && style !== undefined && style !== null) {
+        log.warn(
+          `Style applied to unknown node "${id}". This may indicate a typo. The node will be created automatically.`
+        );
+      }
       vertex = {
         id,
         labelType: 'text',
@@ -450,6 +477,7 @@ export class FlowDB implements DiagramDB {
 
       if (doc?.label) {
         vertex.text = doc?.label;
+        vertex.labelType = this.sanitizeNodeLabelType(doc?.labelType);
       }
       if (doc?.icon) {
         vertex.icon = doc?.icon;
@@ -509,7 +537,7 @@ export class FlowDB implements DiagramDB {
       if (edge.text.startsWith('"') && edge.text.endsWith('"')) {
         edge.text = edge.text.substring(1, edge.text.length - 1);
       }
-      edge.labelType = linkTextObj.type;
+      edge.labelType = this.sanitizeNodeLabelType(linkTextObj.type);
     }
 
     if (type !== undefined) {
@@ -701,7 +729,6 @@ You have to call mermaid.initialize.`
   }
 
   private setClickFun(id: string, functionName: string, functionArgs: string) {
-    const domId = this.lookUpDomId(id);
     // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (getConfig().securityLevel !== 'loose') {
       return;
@@ -733,6 +760,8 @@ You have to call mermaid.initialize.`
     if (vertex) {
       vertex.haveCallback = true;
       this.funs.push(() => {
+        // Defer lookUpDomId to bind time so it includes the diagramId prefix
+        const domId = this.lookUpDomId(id);
         const elem = document.querySelector(`[id="${domId}"]`);
         if (elem !== null) {
           elem.addEventListener(
@@ -816,15 +845,7 @@ You have to call mermaid.initialize.`
   }
 
   private setupToolTips(element: Element) {
-    let tooltipElem = select('.mermaidTooltip');
-    // @ts-ignore TODO: fix this
-    if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
-      // @ts-ignore TODO: fix this
-      tooltipElem = select('body')
-        .append('div')
-        .attr('class', 'mermaidTooltip')
-        .style('opacity', 0);
-    }
+    const tooltipElem = createTooltip();
 
     const svg = select(element).select('svg');
 
@@ -845,7 +866,7 @@ You have to call mermaid.initialize.`
           .text(el.attr('title'))
           .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
           .style('top', window.scrollY + rect.bottom + 'px');
-        tooltipElem.html(tooltipElem.html().replace(/&lt;br\/&gt;/g, '<br/>'));
+        tooltipElem.html(DOMPurify.sanitize(title));
         el.classed('hover', true);
       })
       .on('mouseout', (e: MouseEvent) => {
@@ -991,6 +1012,7 @@ You have to call mermaid.initialize.`
     this.classes = new Map();
     this.edges = [];
     this.funs = [this.setupToolTips.bind(this), this.setupInteraction.bind(this)];
+    this.diagramId = '';
     this.subGraphs = [];
     this.subGraphLookup = new Map();
     this.subCount = 0;
@@ -1071,7 +1093,7 @@ You have to call mermaid.initialize.`
       title: title.trim(),
       classes: [],
       dir,
-      labelType: _title.type,
+      labelType: this.sanitizeNodeLabelType(_title?.type),
     };
 
     log.info('Adding', subGraph.id, subGraph.nodes, subGraph.dir);
@@ -1381,6 +1403,7 @@ You have to call mermaid.initialize.`
       const baseNode = {
         id: vertex.id,
         label: vertex.text,
+        labelType: vertex.labelType,
         labelStyle: '',
         parentId,
         padding: config.flowchart?.padding || 8,
@@ -1457,6 +1480,7 @@ You have to call mermaid.initialize.`
         id: subGraph.id,
         label: subGraph.title,
         labelStyle: '',
+        labelType: subGraph.labelType,
         parentId: parentDB.get(subGraph.id),
         padding: 8,
         cssCompiledStyles: this.getCompiledStyles(subGraph.classes),
@@ -1488,6 +1512,7 @@ You have to call mermaid.initialize.`
         end: rawEdge.end,
         type: rawEdge.type ?? 'normal',
         label: rawEdge.text,
+        labelType: rawEdge.labelType,
         labelpos: 'c',
         thickness: rawEdge.stroke,
         minlen: rawEdge.length,

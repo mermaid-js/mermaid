@@ -43,9 +43,18 @@ export class ArchitectureDB implements DiagramDB {
   private registeredIds: Record<string, 'node' | 'group'> = {};
   private dataStructures?: ArchitectureState['dataStructures'];
   private elements: Record<string, D3Element> = {};
+  private diagramId = '';
 
   constructor() {
     this.clear();
+  }
+
+  public setDiagramId(id: string): void {
+    this.diagramId = id;
+  }
+
+  public getDiagramId(): string {
+    return this.diagramId;
   }
 
   public clear(): void {
@@ -55,6 +64,7 @@ export class ArchitectureDB implements DiagramDB {
     this.registeredIds = {};
     this.dataStructures = undefined;
     this.elements = {};
+    this.diagramId = '';
     commonClear();
   }
 
@@ -102,6 +112,25 @@ export class ArchitectureDB implements DiagramDB {
   }
 
   public addJunction({ id, in: parent }: Omit<ArchitectureJunction, 'edges'>): void {
+    if (this.registeredIds[id] !== undefined) {
+      throw new Error(
+        `The junction id [${id}] is already in use by another ${this.registeredIds[id]}`
+      );
+    }
+    if (parent !== undefined) {
+      if (id === parent) {
+        throw new Error(`The junction [${id}] cannot be placed within itself`);
+      }
+      if (this.registeredIds[parent] === undefined) {
+        throw new Error(
+          `The junction [${id}]'s parent does not exist. Please make sure the parent is created before this junction`
+        );
+      }
+      if (this.registeredIds[parent] === 'node') {
+        throw new Error(`The junction [${id}]'s parent is not a group`);
+      }
+    }
+
     this.registeredIds[id] = 'node';
 
     this.nodes[id] = {

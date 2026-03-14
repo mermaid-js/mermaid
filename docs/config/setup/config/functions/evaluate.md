@@ -22,7 +22,7 @@ Converts a string/boolean into a boolean
 
 String or boolean to convert
 
-`string` | `boolean`
+`string` | `boolean` | `null`
 
 ## Returns
 
