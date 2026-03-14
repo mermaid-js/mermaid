@@ -70,8 +70,8 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
     await configureLabelImages(div, label);
 
     bbox = div.getBoundingClientRect();
-    dv.attr('width', bbox.width);
-    dv.attr('height', bbox.height);
+    dv.attr('width', Math.ceil(bbox.width));
+    dv.attr('height', Math.ceil(bbox.height));
   }
 
   // Center the label
