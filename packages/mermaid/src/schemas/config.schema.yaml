@@ -54,6 +54,7 @@ required:
   - sankey
   - packet
   - block
+  - treeView
   - look
   - venn
 properties:
@@ -315,6 +316,8 @@ properties:
     $ref: '#/$defs/PacketDiagramConfig'
   block:
     $ref: '#/$defs/BlockDiagramConfig'
+  treeView:
+    $ref: '#/$defs/TreeViewDiagramConfig'
   radar:
     $ref: '#/$defs/RadarDiagramConfig'
   venn:
@@ -2311,6 +2314,34 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         minimum: 0
         default: 8
+
+  TreeViewDiagramConfig:
+    title: TreeView Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for treeView diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      rowIndent:
+        description: Horizontal distance between rows differing by one level
+        type: number
+        minimum: 0
+        default: 10
+      paddingX:
+        description: Horizontal padding of label
+        type: number
+        minimum: 0
+        default: 5
+      paddingY:
+        description: Vertical padding of label
+        type: number
+        minimum: 0
+        default: 5
+      lineThickness:
+        description: Thickness of the line
+        type: number
+        minimum: 0
+        default: 1
 
   RadarDiagramConfig:
     title: Radar Diagram Config
