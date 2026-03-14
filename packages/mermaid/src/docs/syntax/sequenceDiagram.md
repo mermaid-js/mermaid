@@ -295,8 +295,8 @@ The following half-arrow types are supported for more expressive sequence diagra
 | `--\|/` | Dotted line with bottom half arrowhead               |
 | `/\|-`  | Solid line with reverse top half arrowhead           |
 | `/\|--` | Dotted line with reverse top half arrowhead          |
-| `\\-`   | Solid line with reverse bottom half arrowhead        |
-| `\\--`  | Dotted line with reverse bottom half arrowhead       |
+| `\\|-`   | Solid line with reverse bottom half arrowhead        |
+| `\\|--`  | Dotted line with reverse bottom half arrowhead       |
 | `-\\`   | Solid line with top stick half arrowhead             |
 | `--\\`  | Dotted line with top stick half arrowhead            |
 | `-//`   | Solid line with bottom stick half arrowhead          |
