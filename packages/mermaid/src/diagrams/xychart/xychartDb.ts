@@ -21,7 +21,7 @@ import type {
   XYChartData,
   XYChartThemeConfig,
 } from './chartBuilder/interfaces.js';
-import { isBandAxisData, isLinearAxisData } from './chartBuilder/interfaces.js';
+import { isBandAxisData, isLinearAxisData, isBarPlot } from './chartBuilder/interfaces.js';
 
 let plotIndex = 0;
 
@@ -127,7 +127,7 @@ function setYAxisRangeFromPlotData(data: number[]) {
 // For each category index, sums the values across all bar plots and uses
 // the maximum cumulative sum as the y-axis upper bound.
 function recalculateYAxisRangeForStackedBars() {
-  const barPlots = xyChartData.plots.filter((p) => p.type === 'bar');
+  const barPlots = xyChartData.plots.filter((p) => isBarPlot(p) && p.stacked);
   if (barPlots.length <= 1) {
     // No stacking needed for a single bar series.
     return;
@@ -200,11 +200,12 @@ function setLineData(title: NormalTextType, data: number[]) {
   plotIndex++;
 }
 
-function setBarData(title: NormalTextType, data: number[]) {
+function setBarData(title: NormalTextType, data: number[], stacked = false) {
   const plotData = transformDataWithoutCategory(data);
   xyChartData.plots.push({
     type: 'bar',
     fill: getPlotColorFromPalette(plotIndex),
+    stacked,
     data: plotData,
   });
   plotIndex++;

@@ -1,3 +1,4 @@
+import { isBarPlot } from '../../interfaces.js';
 import type {
   XYChartData,
   Dimension,
@@ -6,9 +7,9 @@ import type {
   Point,
   XYChartThemeConfig,
   XYChartConfig,
+  ChartComponent,
 } from '../../interfaces.js';
 import type { Axis } from '../axis/index.js';
-import type { ChartComponent } from '../../interfaces.js';
 import { LinePlot } from './linePlot.js';
 import { BarPlot } from './barPlot.js';
 
@@ -24,7 +25,7 @@ export class BasePlot implements Plot {
   constructor(
     private chartConfig: XYChartConfig,
     private chartData: XYChartData,
-    private chartThemeConfig: XYChartThemeConfig
+    private _chartThemeConfig: XYChartThemeConfig
   ) {
     this.boundingRect = {
       x: 0,
@@ -56,16 +57,17 @@ export class BasePlot implements Plot {
     }
     const drawableElem: DrawableElem[] = [];
 
-    // Determine the length of data from the first plot (all plots share the same x categories)
     const dataLength = this.chartData.plots.length > 0 ? this.chartData.plots[0].data.length : 0;
 
-    // Cumulative baselines for stacked bars, tracked per category index.
-    // Stored as raw data values (not pixel values) so the axis scale is applied per-bar in BarPlot.
-    const cumulativeBarValues: number[] = new Array(dataLength).fill(0);
-    // Track how many bar series have been rendered so the first series always
-    // receives an empty array (non-stacked path) and only subsequent series
-    // receive cumulative baselines (stacked path).
-    let barSeriesCount = 0;
+    // --- Stacked bar tracking ---
+    // Cumulative baselines per category for stacked bars only.
+    const stackedCumulativeValues: number[] = new Array(dataLength).fill(0);
+    let stackedBarCount = 0;
+
+    // --- Side-by-side (grouped) bar tracking ---
+    // Count total non-stacked bar series upfront so we can divide bar width evenly.
+    const totalGroupedBars = this.chartData.plots.filter((p) => isBarPlot(p) && !p.stacked).length;
+    let groupedBarIndex = 0;
 
     for (const [i, plot] of this.chartData.plots.entries()) {
       switch (plot.type) {
@@ -83,25 +85,43 @@ export class BasePlot implements Plot {
           break;
         case 'bar':
           {
-            // First bar series gets empty array -> takes original non-stacked path.
-            // Subsequent bar series get cumulative baselines -> takes stacked path.
-            const stackedBase = barSeriesCount === 0 ? [] : [...cumulativeBarValues];
-            const barPlot = new BarPlot(
-              plot,
-              this.boundingRect,
-              this.xAxis,
-              this.yAxis,
-              this.chartConfig.chartOrientation,
-              i,
-              stackedBase
-            );
-            drawableElem.push(...barPlot.getDrawableElement());
+            if (isBarPlot(plot) && plot.stacked) {
+              // Stacked path: first stacked series uses empty base (original behavior),
+              // subsequent stacked series stack on top of previous.
+              const stackedBase = stackedBarCount === 0 ? [] : [...stackedCumulativeValues];
+              const barPlot = new BarPlot(
+                plot,
+                this.boundingRect,
+                this.xAxis,
+                this.yAxis,
+                this.chartConfig.chartOrientation,
+                i,
+                stackedBase,
+                0,
+                1
+              );
+              drawableElem.push(...barPlot.getDrawableElement());
 
-            // Accumulate this series' values into the baseline for the next bar series.
-            plot.data.forEach((d, idx) => {
-              cumulativeBarValues[idx] += d[1];
-            });
-            barSeriesCount++;
+              plot.data.forEach((d, idx) => {
+                stackedCumulativeValues[idx] += d[1];
+              });
+              stackedBarCount++;
+            } else {
+              // Grouped (side-by-side) path: bars share the tick space, each offset by slot.
+              const barPlot = new BarPlot(
+                plot,
+                this.boundingRect,
+                this.xAxis,
+                this.yAxis,
+                this.chartConfig.chartOrientation,
+                i,
+                [],
+                groupedBarIndex,
+                totalGroupedBars
+              );
+              drawableElem.push(...barPlot.getDrawableElement());
+              groupedBarIndex++;
+            }
           }
           break;
       }
