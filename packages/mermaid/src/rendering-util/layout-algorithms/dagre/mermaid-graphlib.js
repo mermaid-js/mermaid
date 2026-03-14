@@ -274,12 +274,16 @@ export const adjustClustersAndEdges = (graph, depth) => {
       graph.removeEdge(e.v, e.w, e.name);
       if (v !== e.v) {
         const parent = graph.parent(v);
-        clusterDb.get(parent).externalConnections = true;
+        if (parent && clusterDb.has(parent)) {
+          clusterDb.get(parent).externalConnections = true;
+        }
         edge.fromCluster = e.v;
       }
       if (w !== e.w) {
         const parent = graph.parent(w);
-        clusterDb.get(parent).externalConnections = true;
+        if (parent && clusterDb.has(parent)) {
+          clusterDb.get(parent).externalConnections = true;
+        }
         edge.toCluster = e.w;
       }
       log.warn('Fix Replacing with XXX', v, w, e.name);
