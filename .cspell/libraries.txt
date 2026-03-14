@@ -69,6 +69,7 @@ sphinxcontrib
 ssim
 stylis
 Swimm
+Tachi
 tsbuildinfo
 tseslint
 Tuleap

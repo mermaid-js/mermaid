@@ -105,6 +105,12 @@ radar-beta
 "Section 2"
     "Leaf 2.1": 20`,
 
+  treeView: `treeView-beta
+"packages"
+  "mermaid"
+    "src"
+  "parser"`,
+
   ishikawa: `ishikawa-beta
 Root Cause
     Category A
