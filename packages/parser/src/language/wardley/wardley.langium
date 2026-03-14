@@ -1,4 +1,4 @@
-grammar Wardley
+grammar WardleyGrammar
 import "../common/common";
 
 entry Wardley:

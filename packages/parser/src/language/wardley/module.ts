@@ -12,7 +12,10 @@ import {
   inject,
 } from 'langium';
 
-import { MermaidGeneratedSharedModule, WardleyGeneratedModule } from '../generated/module.js';
+import {
+  MermaidGeneratedSharedModule,
+  WardleyGrammarGeneratedModule as WardleyGeneratedModule,
+} from '../generated/module.js';
 import { WardleyValueConverter } from './valueConverter.js';
 
 /**

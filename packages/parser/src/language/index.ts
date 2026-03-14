@@ -40,7 +40,7 @@ export {
   RadarGrammarGeneratedModule as RadarGeneratedModule,
   TreemapGrammarGeneratedModule as TreemapGeneratedModule,
   TreeViewGrammarGeneratedModule as TreeViewGeneratedModule,
-  WardleyGeneratedModule,
+  WardleyGrammarGeneratedModule as WardleyGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';
