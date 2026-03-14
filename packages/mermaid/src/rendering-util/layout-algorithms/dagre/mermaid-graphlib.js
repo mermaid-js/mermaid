@@ -364,14 +364,16 @@ export const extractor = (graph, depth) => {
       log.warn('Old graph before copy', graphlibJson.write(graph));
       copy(node, graph, clusterGraph, node);
 
-      // When a subgraph cluster contains no edges, Dagre places all nodes in a
-      // single rank and lays them out along the cross-axis of the declared
-      // rankdir (e.g. `direction LR` produces a vertical column). To honour the
-      // user's declared direction we inject temporary, layout-only ordering
-      // edges (A → B → C → D …) that force Dagre to distribute the nodes across
-      // separate ranks. The edges are marked with `_virtual: true` so they can
-      // be stripped out in the rendering phase before any SVG paths are drawn.
-      if (clusterGraph.edges().length === 0) {
+      // When a subgraph cluster that has an explicitly declared direction
+      // contains no edges, Dagre places all nodes in a single rank and lays
+      // them out along the cross-axis of that rankdir (e.g. `direction LR`
+      // produces a vertical column). To honour the user's declared direction
+      // we inject temporary, layout-only ordering edges (A → B → C → D …) that
+      // force Dagre to distribute the nodes across separate ranks. The edges
+      // are marked with `_virtual: true` so they can be stripped out in the
+      // rendering phase before any SVG paths are drawn.
+      const clusterMeta = clusterDb.get(node);
+      if (clusterMeta?.clusterData?.dir && clusterGraph.edges().length === 0) {
         const clusterNodes = clusterGraph.nodes();
         log.warn('Cluster has no edges, adding virtual ordering edges for layout', clusterNodes);
         for (let i = 0; i < clusterNodes.length - 1; i++) {
@@ -383,11 +385,11 @@ export const extractor = (graph, depth) => {
         }
       }
 
+      const existingNodeData = graph.node(node) || {};
       graph.setNode(node, {
+        ...existingNodeData,
         clusterNode: true,
-        id: node,
         clusterData: clusterDb.get(node).clusterData,
-        label: clusterDb.get(node).label,
         graph: clusterGraph,
       });
       log.warn('New graph after copy node: (', node, ')', graphlibJson.write(clusterGraph));
