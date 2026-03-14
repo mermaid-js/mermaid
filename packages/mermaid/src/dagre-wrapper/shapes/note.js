@@ -1,10 +1,11 @@
 import { updateNodeBounds, labelHelper } from './util.js';
 import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { getEffectiveHtmlLabels } from '../../config.js';
 import intersect from '../intersect/index.js';
 
 const note = async (parent, node) => {
-  const useHtmlLabels = node.useHtmlLabels || getConfig().flowchart.htmlLabels;
+  const useHtmlLabels = node.useHtmlLabels || getEffectiveHtmlLabels(getConfig());
   if (!useHtmlLabels) {
     node.centerLabel = true;
   }

@@ -36,9 +36,9 @@ export const mermaidUrl = (
     mermaid: options,
   };
   const objStr: string = JSON.stringify(codeObject);
-  let url = `http://localhost:9000/e2e.html?graph=${utf8ToB64(objStr)}`;
+  let url = `/e2e.html?graph=${utf8ToB64(objStr)}`;
   if (api && typeof graphStr === 'string') {
-    url = `http://localhost:9000/xss.html?graph=${graphStr}`;
+    url = `/xss.html?graph=${graphStr}`;
   }
 
   if (options.listUrl) {
@@ -143,6 +143,26 @@ export const verifyScreenshot = (name: string): void => {
   } else {
     cy.matchImageSnapshot(name);
   }
+};
+
+/**
+ * Asserts that no element ID appears more than once in the current document.
+ * Use after rendering multiple mermaid diagrams on the same page.
+ */
+export const assertNoDuplicateIds = (): void => {
+  cy.document().then((doc) => {
+    const allElements = doc.querySelectorAll('[id]');
+    const idCounts: Record<string, number> = {};
+    for (const el of allElements) {
+      const id = el.getAttribute('id')!;
+      idCounts[id] = (idCounts[id] || 0) + 1;
+    }
+    const duplicates = Object.entries(idCounts).filter(([, count]) => count > 1);
+    expect(
+      duplicates,
+      `Duplicate IDs found: ${duplicates.map(([id, n]) => `${id} (${n}x)`).join(', ')}`
+    ).to.have.length(0);
+  });
 };
 
 export const verifyNumber = (value: number, expected: number, deltaPercent = 10): void => {

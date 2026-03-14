@@ -8,10 +8,11 @@ import type {
   GitGraph,
   Radar,
   Treemap,
+  TreeView,
   Wardley,
 } from './index.js';
 
-export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph | Radar | Wardley;
+export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph | Radar | TreeView | Wardley;
 
 const parsers: Record<string, LangiumParser> = {};
 const initializers = {
@@ -29,6 +30,11 @@ const initializers = {
     const { createPieServices } = await import('./language/pie/index.js');
     const parser = createPieServices().Pie.parser.LangiumParser;
     parsers.pie = parser;
+  },
+  treeView: async () => {
+    const { createTreeViewServices } = await import('./language/treeView/index.js');
+    const parser = createTreeViewServices().TreeView.parser.LangiumParser;
+    parsers.treeView = parser;
   },
   architecture: async () => {
     const { createArchitectureServices } = await import('./language/architecture/index.js');
@@ -60,6 +66,7 @@ const initializers = {
 export async function parse(diagramType: 'info', text: string): Promise<Info>;
 export async function parse(diagramType: 'packet', text: string): Promise<Packet>;
 export async function parse(diagramType: 'pie', text: string): Promise<Pie>;
+export async function parse(diagramType: 'treeView', text: string): Promise<TreeView>;
 export async function parse(diagramType: 'architecture', text: string): Promise<Architecture>;
 export async function parse(diagramType: 'gitGraph', text: string): Promise<GitGraph>;
 export async function parse(diagramType: 'radar', text: string): Promise<Radar>;
@@ -87,8 +94,26 @@ export async function parse<T extends DiagramAST>(
 
 export class MermaidParseError extends Error {
   constructor(public result: ParseResult<DiagramAST>) {
-    const lexerErrors: string = result.lexerErrors.map((err) => err.message).join('\n');
-    const parserErrors: string = result.parserErrors.map((err) => err.message).join('\n');
+    const lexerErrors: string = result.lexerErrors
+      .map((err) => {
+        const line = err.line !== undefined && !isNaN(err.line) ? err.line : '?';
+        const column = err.column !== undefined && !isNaN(err.column) ? err.column : '?';
+        return `Lexer error on line ${line}, column ${column}: ${err.message}`;
+      })
+      .join('\n');
+    const parserErrors: string = result.parserErrors
+      .map((err) => {
+        const line =
+          err.token.startLine !== undefined && !isNaN(err.token.startLine)
+            ? err.token.startLine
+            : '?';
+        const column =
+          err.token.startColumn !== undefined && !isNaN(err.token.startColumn)
+            ? err.token.startColumn
+            : '?';
+        return `Parse error on line ${line}, column ${column}: ${err.message}`;
+      })
+      .join('\n');
     super(`Parsing failed: ${lexerErrors} ${parserErrors}`);
   }
 }

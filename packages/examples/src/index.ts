@@ -1,6 +1,7 @@
 import type { DiagramMetadata } from './types.js';
 import flowChart from './examples/flowchart.js';
 import c4 from './examples/c4.js';
+import ishikawaDiagram from './examples/ishikawa.js';
 import kanban from './examples/kanban.js';
 import classDiagram from './examples/class.js';
 import sequenceDiagram from './examples/sequence.js';
@@ -21,11 +22,14 @@ import quadrantChart from './examples/quadrant-chart.js';
 import packetDiagram from './examples/packet.js';
 import blockDiagram from './examples/block.js';
 import treemapDiagram from './examples/treemap.js';
+import vennDiagram from './examples/venn.js';
+import treeViewDiagram from './examples/tree-view.js';
 import wardleyDiagram from './examples/wardley.js';
 
 export const diagramData: DiagramMetadata[] = [
   flowChart,
   c4,
+  ishikawaDiagram,
   kanban,
   classDiagram,
   sequenceDiagram,
@@ -46,5 +50,7 @@ export const diagramData: DiagramMetadata[] = [
   packetDiagram,
   blockDiagram,
   treemapDiagram,
+  vennDiagram,
+  treeViewDiagram,
   wardleyDiagram,
 ];

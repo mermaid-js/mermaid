@@ -639,7 +639,7 @@ const drawActorTypeQueue = function (elem, actor, conf, isFooter) {
   return height;
 };
 
-const drawActorTypeControl = function (elem, actor, conf, isFooter) {
+const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 75;
@@ -681,13 +681,13 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter) {
   rect.class = 'actor';
 
   const cx = actor.x + actor.width / 2;
-  const cy = actorY + 30;
-  const r = 18;
+  const cy = actorY + 32;
+  const r = 22;
 
   actElem
     .append('defs')
     .append('marker')
-    .attr('id', 'filled-head-control')
+    .attr('id', diagramId + '-filled-head-control')
     .attr('refX', 11)
     .attr('refY', 5.8)
     .attr('markerWidth', 20)
@@ -709,7 +709,7 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter) {
   // Draw looping arrow as arc path
   actElem
     .append('line')
-    .attr('marker-end', 'url(#filled-head-control)')
+    .attr('marker-end', 'url(#' + diagramId + '-filled-head-control)')
     .attr('transform', `translate(${cx}, ${cy - r})`);
 
   const bounds = actElem.node().getBBox();
@@ -719,7 +719,7 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter) {
     actor.description,
     actElem,
     rect.x,
-    rect.y + r + (isFooter ? 5 : 10),
+    rect.y + r + (!isFooter ? 12 : 5),
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
@@ -737,7 +737,7 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter) {
   const line = elem.append('g').lower();
 
   const actElem = elem.append('g');
-  let cssClass = ACTOR_MAN_FIGURE_CLASS;
+  let cssClass = 'actor';
   if (isFooter) {
     cssClass += ` ${BOTTOM_ACTOR_CLASS}`;
   } else {
@@ -756,7 +756,7 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter) {
 
   const cx = actor.x + actor.width / 2;
   const cy = actorY + (!isFooter ? 25 : 10);
-  const r = 18;
+  const r = 22;
 
   actElem
     .append('circle')
@@ -772,7 +772,6 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter) {
     .attr('x2', cx + r)
     .attr('y1', cy + r)
     .attr('y2', cy + r)
-    .attr('stroke', '#333')
     .attr('stroke-width', 2);
 
   const bounds = actElem.node().getBBox();
@@ -799,7 +798,7 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter) {
     actor.description,
     actElem,
     rect.x,
-    rect.y + (!isFooter ? (cy + r - actorY) / 2 : (cy - actorY + r - 5) / 2),
+    rect.y + (!isFooter ? 30 : 15),
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
@@ -807,9 +806,9 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter) {
   );
 
   if (!isFooter) {
-    actElem.attr('transform', `translate(${0}, ${r / 2})`);
+    actElem.attr('transform', `translate(${0}, ${r / 2 - 5})`);
   } else {
-    actElem.attr('transform', `translate(${0}, ${r / 2})`);
+    actElem.attr('transform', `translate(${0}, ${r})`);
   }
 
   return actor.height;
@@ -872,8 +871,8 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter) {
   // Cylinder dimensions
   rect.x = actor.x;
   rect.y = actorY;
-  const w = rect.width / 4;
-  const h = rect.width / 4;
+  const w = rect.width / 3;
+  const h = rect.width / 3;
   const rx = w / 2;
   const ry = rx / (2.5 + w / 50);
 
@@ -897,17 +896,14 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter) {
     .attr('stroke-width', 1)
     .attr('class', cssclass);
 
-  if (!isFooter) {
-    cylinderGroup.attr('transform', `translate(${w * 1.5}, ${(rect.height + ry) / 4})`);
-  } else {
-    cylinderGroup.attr('transform', `translate(${w * 1.5}, ${rect.height / 4 - 2 * ry})`);
-  }
+  cylinderGroup.attr('transform', `translate(${w}, ${ry})`);
+
   actor.rectData = rect;
   _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     g,
     rect.x,
-    rect.y + (!isFooter ? (rect.height + ry) / 2 : (rect.height + h) / 4),
+    rect.y + 35,
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_BOX_CLASS}` },
@@ -927,7 +923,7 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 80;
-  const radius = 30;
+  const radius = 22;
   const line = elem.append('g').lower();
 
   if (!isFooter) {
@@ -968,22 +964,22 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter) {
     .append('line')
     .attr('id', 'actor-man-torso' + actorCnt)
     .attr('x1', actor.x + actor.width / 2 - radius * 2.5)
-    .attr('y1', actorY + 10)
+    .attr('y1', actorY + 12)
     .attr('x2', actor.x + actor.width / 2 - 15)
-    .attr('y2', actorY + 10);
+    .attr('y2', actorY + 12);
 
   actElem
     .append('line')
     .attr('id', 'actor-man-arms' + actorCnt)
     .attr('x1', actor.x + actor.width / 2 - radius * 2.5)
-    .attr('y1', actorY + 0) // starting Y
+    .attr('y1', actorY + 2) // starting Y
     .attr('x2', actor.x + actor.width / 2 - radius * 2.5)
-    .attr('y2', actorY + 20); // ending Y (26px long, adjust as needed)
+    .attr('y2', actorY + 22); // ending Y (26px long, adjust as needed)
 
   actElem
     .append('circle')
     .attr('cx', actor.x + actor.width / 2)
-    .attr('cy', actorY + 10)
+    .attr('cy', actorY + 12)
     .attr('r', radius);
 
   const bounds = actElem.node().getBBox();
@@ -993,7 +989,7 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter) {
     actor.description,
     actElem,
     rect.x,
-    rect.y + (!isFooter ? radius / 2 + 3 : radius / 2 - 4),
+    rect.y + 15,
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
@@ -1001,9 +997,9 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter) {
   );
 
   if (!isFooter) {
-    actElem.attr('transform', `translate(0,${radius / 2 + 7})`);
+    actElem.attr('transform', `translate(0,${radius / 2 + 10})`);
   } else {
-    actElem.attr('transform', `translate(0,${radius / 2 + 7})`);
+    actElem.attr('transform', `translate(0,${radius / 2 + 10})`);
   }
 
   return actor.height;
@@ -1104,7 +1100,7 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
   return actor.height;
 };
 
-export const drawActor = async function (elem, actor, conf, isFooter) {
+export const drawActor = async function (elem, actor, conf, isFooter, diagramId) {
   switch (actor.type) {
     case 'actor':
       return await drawActorTypeActor(elem, actor, conf, isFooter);
@@ -1113,7 +1109,7 @@ export const drawActor = async function (elem, actor, conf, isFooter) {
     case 'boundary':
       return await drawActorTypeBoundary(elem, actor, conf, isFooter);
     case 'control':
-      return await drawActorTypeControl(elem, actor, conf, isFooter);
+      return await drawActorTypeControl(elem, actor, conf, isFooter, diagramId);
     case 'entity':
       return await drawActorTypeEntity(elem, actor, conf, isFooter);
     case 'database':
@@ -1286,11 +1282,11 @@ export const drawBackgroundRect = function (elem, bounds) {
   svgDrawCommon.drawBackgroundRect(elem, bounds);
 };
 
-export const insertDatabaseIcon = function (elem) {
+export const insertDatabaseIcon = function (elem, id) {
   elem
     .append('defs')
     .append('symbol')
-    .attr('id', 'database')
+    .attr('id', id + '-database')
     .attr('fill-rule', 'evenodd')
     .attr('clip-rule', 'evenodd')
     .append('path')
@@ -1301,11 +1297,11 @@ export const insertDatabaseIcon = function (elem) {
     );
 };
 
-export const insertComputerIcon = function (elem) {
+export const insertComputerIcon = function (elem, id) {
   elem
     .append('defs')
     .append('symbol')
-    .attr('id', 'computer')
+    .attr('id', id + '-computer')
     .attr('width', '24')
     .attr('height', '24')
     .append('path')
@@ -1316,11 +1312,11 @@ export const insertComputerIcon = function (elem) {
     );
 };
 
-export const insertClockIcon = function (elem) {
+export const insertClockIcon = function (elem, id) {
   elem
     .append('defs')
     .append('symbol')
-    .attr('id', 'clock')
+    .attr('id', id + '-clock')
     .attr('width', '24')
     .attr('height', '24')
     .append('path')
@@ -1336,11 +1332,11 @@ export const insertClockIcon = function (elem) {
  *
  * @param elem
  */
-export const insertArrowHead = function (elem) {
+export const insertArrowHead = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'arrowhead')
+    .attr('id', id + '-arrowhead')
     .attr('refX', 7.9)
     .attr('refY', 5)
     .attr('markerUnits', 'userSpaceOnUse')
@@ -1356,11 +1352,11 @@ export const insertArrowHead = function (elem) {
  *
  * @param {any} elem
  */
-export const insertArrowFilledHead = function (elem) {
+export const insertArrowFilledHead = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'filled-head')
+    .attr('id', id + '-filled-head')
     .attr('refX', 15.5)
     .attr('refY', 7)
     .attr('markerWidth', 20)
@@ -1375,11 +1371,11 @@ export const insertArrowFilledHead = function (elem) {
  *
  * @param {any} elem
  */
-export const insertSequenceNumber = function (elem) {
+export const insertSequenceNumber = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'sequencenumber')
+    .attr('id', id + '-sequencenumber')
     .attr('refX', 15)
     .attr('refY', 15)
     .attr('markerWidth', 60)
@@ -1397,11 +1393,11 @@ export const insertSequenceNumber = function (elem) {
  *
  * @param {any} elem
  */
-export const insertArrowCrossHead = function (elem) {
+export const insertArrowCrossHead = function (elem, id) {
   const defs = elem.append('defs');
   const marker = defs
     .append('marker')
-    .attr('id', 'crosshead')
+    .attr('id', id + '-crosshead')
     .attr('markerWidth', 15)
     .attr('markerHeight', 8)
     .attr('orient', 'auto')
@@ -1714,11 +1710,11 @@ const _drawMenuItemTextCandidateFunc = (function () {
  *
  * @param elem
  */
-export const insertSolidTopArrowHead = function (elem) {
+export const insertSolidTopArrowHead = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'solidTopArrowHead')
+    .attr('id', id + '-solidTopArrowHead')
     .attr('refX', 7.9)
     .attr('refY', 7.25)
     .attr('markerUnits', 'userSpaceOnUse')
@@ -1729,11 +1725,11 @@ export const insertSolidTopArrowHead = function (elem) {
     .attr('d', 'M 0 0 L 10 8 L 0 8 z'); // this is actual shape for arrowhead
 };
 
-export const insertSolidBottomArrowHead = function (elem) {
+export const insertSolidBottomArrowHead = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'solidBottomArrowHead')
+    .attr('id', id + '-solidBottomArrowHead')
     .attr('refX', 7.9)
     .attr('refY', 0.75)
     .attr('markerUnits', 'userSpaceOnUse')
@@ -1744,11 +1740,11 @@ export const insertSolidBottomArrowHead = function (elem) {
     .attr('d', 'M 0 0 L 10 0 L 0 8 z');
 };
 
-export const insertStickTopArrowHead = function (elem) {
+export const insertStickTopArrowHead = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'stickTopArrowHead')
+    .attr('id', id + '-stickTopArrowHead')
     .attr('refX', 7.5)
     .attr('refY', 7)
     .attr('markerUnits', 'userSpaceOnUse')
@@ -1762,11 +1758,11 @@ export const insertStickTopArrowHead = function (elem) {
     .attr('fill', 'none');
 };
 
-export const insertStickBottomArrowHead = function (elem) {
+export const insertStickBottomArrowHead = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'stickBottomArrowHead')
+    .attr('id', id + '-stickBottomArrowHead')
     .attr('refX', 7.5)
     .attr('refY', 0)
     .attr('markerUnits', 'userSpaceOnUse')

@@ -298,6 +298,9 @@ classStatement
     | classIdentifier STRUCT_START members STRUCT_STOP   {yy.addMembers($1,$3);}
     | classIdentifier STRUCT_START STRUCT_STOP           {}
     | classIdentifier STYLE_SEPARATOR alphaNumToken STRUCT_START members STRUCT_STOP {yy.setCssClass($1, $3);yy.addMembers($1,$5);}
+    | classIdentifier ANNOTATION_START alphaNumToken ANNOTATION_END {yy.addAnnotation($1, $3);}
+    | classIdentifier ANNOTATION_START alphaNumToken ANNOTATION_END STRUCT_START members STRUCT_STOP {yy.addAnnotation($1, $3);yy.addMembers($1,$6);}
+    | classIdentifier ANNOTATION_START alphaNumToken ANNOTATION_END STRUCT_START STRUCT_STOP {yy.addAnnotation($1, $3);}
     ;
 
 classIdentifier
