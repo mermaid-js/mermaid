@@ -389,6 +389,8 @@ export const extractor = (graph, depth) => {
       graph.setNode(node, {
         ...existingNodeData,
         clusterNode: true,
+        id: node,
+        label: clusterDb.get(node).label,
         clusterData: clusterDb.get(node).clusterData,
         graph: clusterGraph,
       });
