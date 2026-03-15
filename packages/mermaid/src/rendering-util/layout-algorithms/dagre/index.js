@@ -51,6 +51,10 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   await Promise.all(
     graph.nodes().map(async function (v) {
       const node = graph.node(v);
+      if (!node) {
+        log.error('Node data is undefined for node ID:', v);
+        return;
+      }
       if (parentCluster !== undefined) {
         const data = JSON.parse(JSON.stringify(parentCluster.clusterData));
         // data.clusterPositioning = true;
@@ -68,10 +72,10 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
           graph.setParent(v, parentCluster.id, data);
         }
       }
-      log.info('(Insert) Node XXX' + v + ': ' + JSON.stringify(graph.node(v)));
+      log.info('(Insert) Node XXX' + v + ': ' + JSON.stringify(node));
       if (node?.clusterNode) {
         // const children = graph.children(v);
-        log.info('Cluster identified XBX', v, node.width, graph.node(v));
+        log.info('Cluster identified XBX', v, node.width, node);
 
         // `node.graph.setGraph` applies the graph configurations such as nodeSpacing to subgraphs as without this the default values would be used
         // We override only the `ranksep` and `nodesep` configurations to allow for setting subgraph spacing while avoiding overriding other properties
@@ -83,14 +87,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         });
 
         // "o" will contain the full cluster not just the children
-        const o = await recursiveRender(
-          nodes,
-          node.graph,
-          diagramType,
-          id,
-          graph.node(v),
-          siteConfig
-        );
+        const o = await recursiveRender(nodes, node.graph, diagramType, id, node, siteConfig);
         const newEl = o.elem;
         updateNodeBounds(node, newEl);
         // node.height = o.diff;
@@ -124,8 +121,8 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
           clusterDb.set(node.id, { id: findNonClusterChild(node.id, graph), node });
           // insertCluster(clusters, graph.node(v));
         } else {
-          log.trace('Node - the non recursive path XAX', v, nodes, graph.node(v), dir);
-          await insertNode(nodes, graph.node(v), { config: siteConfig, dir });
+          log.trace('Node - the non recursive path XAX', v, nodes, node, dir);
+          await insertNode(nodes, node, { config: siteConfig, dir });
         }
       }
     })
@@ -180,6 +177,10 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   await Promise.all(
     sortNodesByHierarchy(graph).map(async function (v) {
       const node = graph.node(v);
+      if (!node) {
+        log.error('Node data is undefined in second pass for node ID:', v);
+        return;
+      }
       log.info(
         'Position XBX => ' + v + ': (' + node.x,
         ',' + node.y,
