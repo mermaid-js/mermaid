@@ -8,6 +8,19 @@ import type { LayoutData } from '../../rendering-util/types.js';
 import utils from '../../utils.js';
 import { CSS_DIAGRAM, DEFAULT_NESTED_DOC_DIR } from './stateCommon.js';
 
+const normalizeSpacing = (value: unknown, fallback: number) => {
+  if (typeof value !== 'number') {
+    return fallback;
+  }
+  if (value < 10) {
+    return 10;
+  }
+  if (value > 200) {
+    return 200;
+  }
+  return value;
+};
+
 /**
  * Get the direction from the statement items.
  * Look through all of the documents (docs) in the parsedItems
@@ -61,8 +74,16 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   // TODO: Should we move these two to baseConfig? These types are not there in StateConfig.
 
-  data4Layout.nodeSpacing = conf?.nodeSpacing || 50;
-  data4Layout.rankSpacing = conf?.rankSpacing || 50;
+  const nodeSpacing = normalizeSpacing(conf?.nodeSpacing, 30);
+  const rankSpacing = normalizeSpacing(conf?.rankSpacing, 30);
+  data4Layout.nodeSpacing = nodeSpacing;
+  data4Layout.rankSpacing = rankSpacing;
+  // Ensure Dagre renderer picks state-specific spacing over global defaults.
+  data4Layout.config = {
+    ...data4Layout.config,
+    nodeSpacing,
+    rankSpacing,
+  };
   data4Layout.markers = ['barb'];
   data4Layout.diagramId = id;
   // console.log('REF1:', data4Layout);

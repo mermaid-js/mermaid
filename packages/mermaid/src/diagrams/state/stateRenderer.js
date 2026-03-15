@@ -12,6 +12,19 @@ let conf;
 
 const transformationLog = {};
 
+const normalizeSpacing = (value, fallback) => {
+  if (typeof value !== 'number') {
+    return fallback;
+  }
+  if (value < 10) {
+    return 10;
+  }
+  if (value > 200) {
+    return 200;
+  }
+  return value;
+};
+
 export const setConf = function () {
   //no-op
 };
@@ -92,6 +105,9 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
     compound: true,
     multigraph: true,
   });
+  const stateConf = getConfig().state || {};
+  const nodeSpacing = normalizeSpacing(stateConf.nodeSpacing, 30);
+  const rankSpacing = normalizeSpacing(stateConf.rankSpacing, 30);
 
   let i;
   let edgeFreeDoc = true;
@@ -110,8 +126,8 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
       compound: true,
       // acyclicer: 'greedy',
       ranker: 'tight-tree',
-      ranksep: edgeFreeDoc ? 1 : conf.edgeLengthFactor,
-      nodeSep: edgeFreeDoc ? 1 : 50,
+      ranksep: edgeFreeDoc ? 1 : rankSpacing,
+      nodesep: edgeFreeDoc ? 1 : nodeSpacing,
       isMultiGraph: true,
       // ranksep: 5,
       // nodesep: 1
@@ -124,8 +140,8 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
       // isCompound: true,
       // acyclicer: 'greedy',
       // ranker: 'longest-path'
-      ranksep: edgeFreeDoc ? 1 : conf.edgeLengthFactor,
-      nodeSep: edgeFreeDoc ? 1 : 50,
+      ranksep: edgeFreeDoc ? 1 : rankSpacing,
+      nodesep: edgeFreeDoc ? 1 : nodeSpacing,
       ranker: 'tight-tree',
       // ranker: 'network-simplex'
       isMultiGraph: true,
