@@ -1,5 +1,6 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramStyleClassDef } from '../../diagram-api/types.js';
+import type { MermaidConfig } from '../../config.type.js';
 import { log } from '../../logger.js';
 import { getDiagramElement } from '../../rendering-util/insertElementsForSize.js';
 import { render } from '../../rendering-util/render.js';
@@ -55,7 +56,8 @@ export const getClasses = function (
 export const draw = async function (text: string, id: string, _version: string, diag: any) {
   log.info('REF0:');
   log.info('Drawing state diagram (v2)', id);
-  const { securityLevel, state: conf, layout } = getConfig();
+  const config = getConfig();
+  const { securityLevel, state: conf, layout } = config;
   // Extracting the data from the parsed structure into a more usable form
   // Not related to the refactoring, but this is the first step in the rendering process
   diag.db.extract(diag.db.getRootDocV2());
@@ -74,15 +76,26 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   // TODO: Should we move these two to baseConfig? These types are not there in StateConfig.
 
-  const nodeSpacing = normalizeSpacing(conf?.nodeSpacing, 30);
-  const rankSpacing = normalizeSpacing(conf?.rankSpacing, 30);
+  const cfg: MermaidConfig = {
+    ...config,
+    state: {
+      ...config.state,
+      nodeSpacing: conf?.nodeSpacing,
+      rankSpacing: conf?.rankSpacing,
+    },
+  };
+  const nodeSpacing = normalizeSpacing(cfg.state?.nodeSpacing, 30);
+  const rankSpacing = normalizeSpacing(cfg.state?.rankSpacing, 30);
   data4Layout.nodeSpacing = nodeSpacing;
   data4Layout.rankSpacing = rankSpacing;
   // Ensure Dagre renderer picks state-specific spacing over global defaults.
   data4Layout.config = {
-    ...data4Layout.config,
-    nodeSpacing,
-    rankSpacing,
+    ...cfg,
+    flowchart: {
+      ...cfg.flowchart,
+      nodeSpacing,
+      rankSpacing,
+    },
   };
   data4Layout.markers = ['barb'];
   data4Layout.diagramId = id;
