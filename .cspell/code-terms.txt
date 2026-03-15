@@ -1,4 +1,3 @@
-!viewbox
 # It should be viewBox
 # This file contains coding related terms
 ALPHANUM
@@ -124,6 +123,7 @@ subcomponents
 subconfig
 SUBROUTINEEND
 SUBROUTINESTART
+SUBSCHEMA
 Subschemas
 substr
 SVGG
