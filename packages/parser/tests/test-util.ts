@@ -15,6 +15,8 @@ import type {
   GitGraphServices,
   TreeView,
   TreeViewServices,
+  Yearwheel,
+  YearwheelServices,
 } from '../src/language/index.js';
 import {
   createArchitectureServices,
@@ -24,6 +26,7 @@ import {
   createPacketServices,
   createGitGraphServices,
   createTreeViewServices,
+  createYearwheelServices,
 } from '../src/language/index.js';
 
 const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined);
@@ -119,3 +122,14 @@ export function createTreeViewTestServices() {
   return { services: treeViewServices, parse };
 }
 export const treeViewParse = createTreeViewTestServices().parse;
+
+const yearwheelServices: YearwheelServices = createYearwheelServices().Yearwheel;
+const yearwheelParser: LangiumParser = yearwheelServices.parser.LangiumParser;
+export function createYearwheelTestServices() {
+  const parse = (input: string) => {
+    return yearwheelParser.parse<Yearwheel>(input);
+  };
+
+  return { services: yearwheelServices, parse };
+}
+export const yearwheelParse = createYearwheelTestServices().parse;

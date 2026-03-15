@@ -15,6 +15,9 @@ export {
   Statement,
   TreeView,
   TreeNode,
+  Yearwheel,
+  YearwheelBaseDate,
+  YearwheelEvent,
   isInfo,
   isPacket,
   isPacketBlock,
@@ -26,6 +29,9 @@ export {
   isBranch,
   isCommit,
   isMerge,
+  isYearwheel,
+  isYearwheelBaseDate,
+  isYearwheelEvent,
 } from './generated/ast.js';
 
 export {
@@ -38,6 +44,7 @@ export {
   RadarGrammarGeneratedModule as RadarGeneratedModule,
   TreemapGrammarGeneratedModule as TreemapGeneratedModule,
   TreeViewGrammarGeneratedModule as TreeViewGeneratedModule,
+  YearwheelGrammarGeneratedModule as YearwheelGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';
@@ -49,3 +56,4 @@ export * from './treeView/index.js';
 export * from './architecture/index.js';
 export * from './radar/index.js';
 export * from './treemap/index.js';
+export * from './yearwheel/index.js';
