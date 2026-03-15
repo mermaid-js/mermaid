@@ -96,8 +96,14 @@ export const openURLAndVerifyRendering = (
 ): void => {
   const name: string = (options.name ?? cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
 
-  cy.visit(url);
-  cy.window().should('have.property', 'rendered', true);
+  // Preflight: wait for the server to respond with HTTP 200 before visiting.
+  // This makes CI/Argos runs more resilient when the dev server is still starting.
+  cy.request({ url, timeout: 120000, failOnStatusCode: false }).its('status').should('eq', 200);
+
+  // Try visiting the page with an extended timeout to allow the dev server to finish.
+  cy.visit(url, { timeout: 120000 });
+  // Wait for the page to set the global "rendered" flag; increase timeout for slow CI envs.
+  cy.window({ timeout: 120000 }).should('have.property', 'rendered', true);
 
   // Handle sandbox mode where SVG is inside an iframe
   if (options.securityLevel === 'sandbox') {

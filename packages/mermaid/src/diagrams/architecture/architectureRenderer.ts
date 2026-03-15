@@ -273,8 +273,8 @@ function getRelativeConstraints(
     const directions: Record<ArchitectureDirection, number[]> = {
       L: [-1, 0],
       R: [1, 0],
-      T: [0, 1],
-      B: [0, -1],
+      T: [0, -1],
+      B: [0, 1],
     };
     while (queue.length > 0) {
       const curr = queue.shift();
