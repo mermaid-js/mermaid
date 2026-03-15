@@ -30,6 +30,7 @@ export interface ParticipantMetaData {
 export interface EdgeMetaData {
   animation?: 'fast' | 'slow';
   animate?: boolean;
+  constraint?: boolean;
   curve?:
     | 'basis'
     | 'bumpX'

@@ -576,17 +576,14 @@ export const insertEdge = function (
   log.debug('UIO intersect check', edge.points, head.x, tail.x);
   if (head.intersect && tail.intersect && !skipIntersect) {
     points = points.slice(1, edge.points.length - 1);
-    points.unshift(tail.intersect(points[0]));
-    log.debug(
-      'Last point UIO',
-      edge.start,
-      '-->',
-      edge.end,
-      points[points.length - 1],
-      head,
-      head.intersect(points[points.length - 1])
-    );
-    points.push(head.intersect(points[points.length - 1]));
+    if (points.length > 0) {
+      points.unshift(tail.intersect(points[0]));
+      points.push(head.intersect(points[points.length - 1]));
+    } else {
+      // 2-point edge (e.g. constraint:false): compute border intersections directly
+      const [startPoint, endPoint] = edge.points;
+      points = [tail.intersect(endPoint), head.intersect(startPoint)];
+    }
   }
   const pointsStr = btoa(JSON.stringify(points));
   if (edge.toCluster) {
