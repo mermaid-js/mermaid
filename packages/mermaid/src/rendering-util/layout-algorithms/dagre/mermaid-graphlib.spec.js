@@ -400,6 +400,88 @@ flowchart TB
     expect(aGraph.parent('B')).toBe(undefined);
   });
 });
+
+describe('Virtual ordering edges for edge-less clusters', () => {
+  let g;
+  beforeEach(function () {
+    setLogLevel(1);
+    g = new graphlib.Graph({
+      multigraph: true,
+      compound: true,
+    });
+    g.setDefaultEdgeLabel(function () {
+      return {};
+    });
+  });
+
+  // Build a graph where cluster Y has no external edges (so it gets extracted
+  // into a clusterNode) and no internal edges (so virtual ordering edges are injected).
+  // The outer node X has no edge to Y; only Y's children are present.
+  const makeEdgelessCluster = (rankdir) => {
+    g.setGraph({
+      rankdir,
+      nodesep: 50,
+      ranksep: 50,
+      marginx: 8,
+      marginy: 8,
+    });
+    g.setNode('A', { data: 1 });
+    g.setNode('B', { data: 2 });
+    g.setNode('C', { data: 3 });
+    g.setNode('D', { data: 4 });
+    g.setNode('Y', { data: 5, dir: rankdir });
+    g.setParent('A', 'Y');
+    g.setParent('B', 'Y');
+    g.setParent('C', 'Y');
+    g.setParent('D', 'Y');
+    // NO edges to/from Y — ensures externalConnections stays false
+    // so Y gets extracted as a clusterNode
+  };
+
+  for (const dir of ['TB', 'BT', 'LR', 'RL']) {
+    it(`should inject virtual ordering edges for an edge-less cluster with direction ${dir}`, () => {
+      makeEdgelessCluster(dir);
+      adjustClustersAndEdges(g);
+
+      const yClusterNode = g.node('Y');
+      expect(yClusterNode).toBeDefined();
+      expect(yClusterNode.clusterNode).toBe(true);
+
+      const yGraph = yClusterNode.graph;
+      expect(yGraph.nodes().length).toBe(4);
+
+      // There should be exactly 3 virtual ordering edges (A→B, B→C, C→D)
+      const edges = yGraph.edges();
+      expect(edges.length).toBe(3);
+      edges.forEach((e) => {
+        expect(yGraph.edge(e)._virtual).toBe(true);
+      });
+    });
+  }
+
+  it('should NOT inject virtual edges when the cluster already has internal edges', () => {
+    g.setGraph({ rankdir: 'LR', nodesep: 50, ranksep: 50, marginx: 8, marginy: 8 });
+    g.setNode('A', { data: 1 });
+    g.setNode('B', { data: 2 });
+    g.setNode('Y', { data: 3, dir: 'LR' });
+    g.setParent('A', 'Y');
+    g.setParent('B', 'Y');
+    // One real internal edge — should prevent virtual edge injection
+    g.setEdge('A', 'B', { data: 'real' });
+
+    adjustClustersAndEdges(g);
+
+    const yClusterNode = g.node('Y');
+    expect(yClusterNode?.clusterNode).toBe(true);
+
+    const yGraph = yClusterNode.graph;
+    const edges = yGraph.edges();
+    expect(edges.length).toBe(1);
+    expect(yGraph.edge(edges[0]).data).toBe('real');
+    // No _virtual marker on the real edge
+    expect(yGraph.edge(edges[0])._virtual).toBeUndefined();
+  });
+});
 describe('extractDescendants', function () {
   let g;
   beforeEach(function () {

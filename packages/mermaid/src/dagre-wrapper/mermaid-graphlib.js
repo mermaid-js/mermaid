@@ -122,7 +122,11 @@ const copy = (clusterId, graph, newGraph, rootId) => {
       });
     }
     log.debug('Removing node', node);
-    graph.removeNode(node);
+    if (graph.hasNode(node)) {
+      graph.removeNode(node);
+    } else {
+      log.debug('Node already removed, skipping:', node);
+    }
   });
 };
 export const extractDescendants = (id, graph) => {
@@ -368,6 +372,11 @@ export const extractor = (graph, depth) => {
   // clusters.forEach(clusterId => {
   log.debug('Nodes = ', nodes, depth);
   for (const node of nodes) {
+    // Skip nodes that have been removed during previous extractions
+    if (!graph.hasNode(node)) {
+      log.debug('Node no longer exists, skipping extraction for:', node);
+      continue;
+    }
     log.debug(
       'Extracting node',
       node,

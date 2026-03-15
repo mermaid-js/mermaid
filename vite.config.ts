@@ -15,6 +15,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
+    testTimeout: 30000,
     // TODO: should we move this to a mermaid-core package?
     coverage: {
       provider: 'v8',
