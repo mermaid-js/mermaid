@@ -37,6 +37,14 @@ let lanes: number[] = [];
 let maxPos = 0;
 let dir: DiagramOrientation = 'LR';
 
+// Cherry-pick commits never show labels. Merge commits show labels only when they have a customId.
+const shouldShowCommitLabel = (commit: Commit): boolean => {
+  return (
+    commit.type !== commitType.CHERRY_PICK &&
+    ((commit.customId && commit.type === commitType.MERGE) || commit.type !== commitType.MERGE)
+  );
+};
+
 const clear = () => {
   branchPos.clear();
   commitPos.clear();
@@ -289,11 +297,7 @@ const drawCommitLabel = (
   pos: number,
   gitGraphConfig: GitGraphDiagramConfig
 ) => {
-  if (
-    commit.type !== commitType.CHERRY_PICK &&
-    ((commit.customId && commit.type === commitType.MERGE) || commit.type !== commitType.MERGE) &&
-    gitGraphConfig.showCommitLabel
-  ) {
+  if (shouldShowCommitLabel(commit) && gitGraphConfig.showCommitLabel) {
     const wrapper = gLabels.append('g');
     const labelBkg = wrapper.insert('rect').attr('class', 'commit-label-bkg');
     const text = wrapper
@@ -359,7 +363,8 @@ const drawCommitTags = (
   gLabels: d3.Selection<SVGGElement, unknown, HTMLElement, any>,
   commit: Commit,
   commitPosition: CommitPositionOffset,
-  pos: number
+  pos: number,
+  gitGraphConfig: GitGraphDiagramConfig
 ) => {
   if (commit.tags.length > 0) {
     let yOffset = 0;
@@ -418,27 +423,33 @@ const drawCommitTags = (
       if (dir === 'TB' || dir === 'BT') {
         const yOrigin = pos + yOffset;
 
-        rect
-          .attr('class', 'tag-label-bkg')
-          .attr(
-            'points',
-            `
+        rect.attr('class', 'tag-label-bkg').attr(
+          'points',
+          `
         ${commitPosition.x},${yOrigin + 2}
         ${commitPosition.x},${yOrigin - 2}
         ${commitPosition.x + LAYOUT_OFFSET},${yOrigin - h2 - 2}
         ${commitPosition.x + LAYOUT_OFFSET + maxTagBboxWidth + 4},${yOrigin - h2 - 2}
         ${commitPosition.x + LAYOUT_OFFSET + maxTagBboxWidth + 4},${yOrigin + h2 + 2}
         ${commitPosition.x + LAYOUT_OFFSET},${yOrigin + h2 + 2}`
-          )
-          .attr('transform', 'translate(12,12) rotate(45, ' + commitPosition.x + ',' + pos + ')');
-        hole
-          .attr('cx', commitPosition.x + PX / 2)
-          .attr('cy', yOrigin)
-          .attr('transform', 'translate(12,12) rotate(45, ' + commitPosition.x + ',' + pos + ')');
-        tag
-          .attr('x', commitPosition.x + 5)
-          .attr('y', yOrigin + 3)
-          .attr('transform', 'translate(14,14) rotate(45, ' + commitPosition.x + ',' + pos + ')');
+        );
+        hole.attr('cx', commitPosition.x + PX / 2).attr('cy', yOrigin);
+        tag.attr('x', commitPosition.x + 5).attr('y', yOrigin + 3);
+
+        if (gitGraphConfig.rotateTagLabel) {
+          rect.attr(
+            'transform',
+            'translate(12,12) rotate(45, ' + commitPosition.x + ',' + pos + ')'
+          );
+          hole.attr(
+            'transform',
+            'translate(12,12) rotate(45, ' + commitPosition.x + ',' + pos + ')'
+          );
+          tag.attr(
+            'transform',
+            'translate(14,14) rotate(45, ' + commitPosition.x + ',' + pos + ')'
+          );
+        }
       }
     }
   }
@@ -554,7 +565,7 @@ const drawCommits = (
       const branchIndex = branchPos.get(commit.branch)?.index ?? 0;
       drawCommitBullet(gBullets, commit, commitPosition, typeClass, branchIndex, commitSymbolType);
       drawCommitLabel(gLabels, commit, commitPosition, pos, gitGraphConfig);
-      drawCommitTags(gLabels, commit, commitPosition, pos);
+      drawCommitTags(gLabels, commit, commitPosition, pos, gitGraphConfig);
     }
     if (dir === 'TB' || dir === 'BT') {
       commitPos.set(commit.id, { x: commitPosition.x, y: commitPosition.posWithOffset });
@@ -882,15 +893,89 @@ const drawBranches = (
   });
 };
 
+const AVG_CHAR_WIDTH = 7.2;
+const ESTIMATION_PADDING = 12;
+
+const estimateTextWidth = (text: string): number => {
+  return text.length * AVG_CHAR_WIDTH + ESTIMATION_PADDING;
+};
+
+const estimateMaxContentWidth = (
+  branchName: string,
+  commits: Map<string, Commit>,
+  rotateCommitLabel: boolean,
+  rotateTagLabel: boolean
+): number => {
+  let maxWidth = 0;
+
+  // Branch label takes half width in the calculation
+  maxWidth = Math.max(maxWidth, estimateTextWidth(branchName) / 2);
+
+  if (rotateCommitLabel && rotateTagLabel) {
+    return maxWidth;
+  }
+
+  commits.forEach((commit) => {
+    if (commit.branch === branchName) {
+      if (!rotateCommitLabel && shouldShowCommitLabel(commit)) {
+        maxWidth = Math.max(maxWidth, estimateTextWidth(commit.id));
+      }
+
+      if (!rotateTagLabel && commit.tags.length > 0) {
+        commit.tags.forEach((tagValue) => {
+          maxWidth = Math.max(maxWidth, estimateTextWidth(tagValue));
+        });
+      }
+    }
+  });
+
+  return maxWidth;
+};
+
+const calculateContentSpacing = (
+  branchName: string,
+  currentHalfWidth: number,
+  commits: Map<string, Commit>,
+  rotateCommitLabel: boolean,
+  rotateTagLabel: boolean
+): number => {
+  if (rotateCommitLabel && rotateTagLabel) {
+    return 0;
+  }
+
+  const maxContentWidth = estimateMaxContentWidth(
+    branchName,
+    commits,
+    rotateCommitLabel,
+    rotateTagLabel
+  );
+  return Math.max(0, maxContentWidth - currentHalfWidth);
+};
+
 const setBranchPosition = function (
   name: string,
   pos: number,
   index: number,
   bbox: DOMRect,
-  rotateCommitLabel: boolean
+  prevBbox: DOMRect | null,
+  contentSpacing: number
 ): number {
+  if (dir === 'TB' || dir === 'BT') {
+    if (index === 0) {
+      pos = bbox.width / 2;
+    } else if (prevBbox) {
+      const prevHalfWidth = prevBbox.width / 2;
+      const currentHalfWidth = bbox.width / 2;
+      const baseGap = 50 + LAYOUT_OFFSET + 2 * PY;
+      const dynamicGap = baseGap + contentSpacing;
+
+      pos = pos + prevHalfWidth + dynamicGap + currentHalfWidth;
+    }
+  } else {
+    pos += 50 + contentSpacing;
+  }
+
   branchPos.set(name, { pos, index });
-  pos += 50 + (rotateCommitLabel ? 40 : 0) + (dir === 'TB' || dir === 'BT' ? bbox.width / 2 : 0);
   return pos;
 };
 
@@ -905,11 +990,13 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
   }
   const gitGraphConfig = db.getConfig();
   const rotateCommitLabel = gitGraphConfig.rotateCommitLabel ?? false;
+  const rotateTagLabel = gitGraphConfig.rotateTagLabel ?? true;
   allCommitsDict = db.getCommits();
   const branches = db.getBranchesAsObjArray();
   dir = db.getDirection();
   const diagram = select(`[id="${id}"]`);
   let pos = 0;
+  let prevBbox: DOMRect | null = null;
 
   branches.forEach((branch, index) => {
     const labelElement = drawText(branch.name);
@@ -919,7 +1006,23 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     label.node()?.appendChild(labelElement);
     const bbox = labelElement.getBBox();
 
-    pos = setBranchPosition(branch.name, pos, index, bbox, rotateCommitLabel);
+    const currentHalfWidth = bbox.width / 2;
+    const contentSpacing =
+      dir === 'TB' || dir === 'BT'
+        ? calculateContentSpacing(
+            branch.name,
+            currentHalfWidth,
+            allCommitsDict,
+            rotateCommitLabel,
+            rotateTagLabel
+          )
+        : rotateCommitLabel
+          ? 40
+          : 0;
+
+    pos = setBranchPosition(branch.name, pos, index, bbox, prevBbox, contentSpacing);
+
+    prevBbox = bbox;
     label.remove();
     branchLabel.remove();
     g.remove();
@@ -958,6 +1061,37 @@ if (import.meta.vitest) {
     });
   });
 
+  describe('shouldShowCommitLabel', () => {
+    const makeCommit = (overrides: Partial<Commit>): Commit => ({
+      id: 'test',
+      message: '',
+      seq: 0,
+      type: commitType.NORMAL,
+      tags: [],
+      parents: [],
+      branch: 'main',
+      ...overrides,
+    });
+
+    it('should return false for CHERRY_PICK commits', () => {
+      expect(shouldShowCommitLabel(makeCommit({ type: commitType.CHERRY_PICK }))).toBe(false);
+    });
+
+    it('should return true for MERGE commits with customId', () => {
+      expect(shouldShowCommitLabel(makeCommit({ type: commitType.MERGE, customId: true }))).toBe(
+        true
+      );
+    });
+  });
+
+  describe('estimateTextWidth', () => {
+    it('should return larger width for longer text', () => {
+      const shortWidth = estimateTextWidth('main');
+      const longWidth = estimateTextWidth('very-long-branch-name');
+      expect(longWidth).toBeGreaterThan(shortWidth);
+    });
+  });
+
   describe('branchPosition', () => {
     const bbox: DOMRect = {
       x: 0,
@@ -971,29 +1105,96 @@ if (import.meta.vitest) {
       toJSON: () => '',
     };
 
-    it('should setBranchPositions LR with two branches', () => {
+    it('should setBranchPositions LR with two branches and contentSpacing=40', () => {
       dir = 'LR';
 
-      const pos = setBranchPosition('main', 0, 0, bbox, true);
+      const pos = setBranchPosition('main', 0, 0, bbox, null, 40);
       expect(pos).toBe(90);
-      expect(branchPos.get('main')).toEqual({ pos: 0, index: 0 });
-      const posNext = setBranchPosition('develop', pos, 1, bbox, true);
+      expect(branchPos.get('main')).toEqual({ pos: 90, index: 0 });
+      const posNext = setBranchPosition('develop', pos, 1, bbox, bbox, 40);
       expect(posNext).toBe(180);
-      expect(branchPos.get('develop')).toEqual({ pos: pos, index: 1 });
+      expect(branchPos.get('develop')).toEqual({ pos: 180, index: 1 });
     });
 
-    it('should setBranchPositions TB with two branches', () => {
+    it('should setBranchPositions TB with content spacing', () => {
       dir = 'TB';
       bbox.width = 34.9921875;
 
-      const pos = setBranchPosition('main', 0, 0, bbox, true);
-      expect(pos).toBe(107.49609375);
-      expect(branchPos.get('main')).toEqual({ pos: 0, index: 0 });
+      const pos = setBranchPosition('main', 0, 0, bbox, null, 20);
+      expect(pos).toBe(17.49609375); // index=0 always uses bbox.width/2
+      expect(branchPos.get('main')).toEqual({ pos: 17.49609375, index: 0 });
 
+      const prevBbox = { ...bbox };
       bbox.width = 56.421875;
-      const posNext = setBranchPosition('develop', pos, 1, bbox, true);
-      expect(posNext).toBe(225.70703125);
-      expect(branchPos.get('develop')).toEqual({ pos: pos, index: 1 });
+      const posNext = setBranchPosition('develop', pos, 1, bbox, prevBbox, 20);
+      // 17.49609375 + 17.49609375 + (64 + 20) + 28.2109375 = 147.203125
+      expect(posNext).toBe(147.203125);
+      expect(branchPos.get('develop')?.index).toBe(1);
+    });
+  });
+
+  describe('estimateMaxContentWidth', () => {
+    const createTestCommit = (props: Partial<Commit>): Commit => ({
+      id: 'test-id',
+      message: 'test message',
+      seq: 0,
+      branch: 'main',
+      type: commitType.NORMAL,
+      tags: [],
+      parents: [],
+      customId: false,
+      ...props,
+    });
+
+    it('should return early when both rotateCommitLabel and rotateTagLabel are true', () => {
+      const commits = new Map<string, Commit>([
+        [
+          'commit1',
+          createTestCommit({
+            id: 'VERY_LONG_COMMIT_ID',
+            branch: 'main',
+            tags: ['v1.0'],
+          }),
+        ],
+      ]);
+
+      const maxWidth = estimateMaxContentWidth('main', commits, true, true);
+
+      // Should only estimate branch width, not commit or tag labels
+      expect(maxWidth).toBe(estimateTextWidth('main') / 2);
+    });
+
+    it('should measure both commit and tag labels when both are not rotated', () => {
+      const commits = new Map<string, Commit>([
+        [
+          'commit1',
+          createTestCommit({
+            id: 'SHORT_ID',
+            branch: 'main',
+            tags: ['v1.0'],
+          }),
+        ],
+        [
+          'commit2',
+          createTestCommit({
+            id: 'ANOTHER_ID',
+            branch: 'main',
+            tags: ['longest-tag-name-here'],
+          }),
+        ],
+      ]);
+
+      const maxWidth = estimateMaxContentWidth('main', commits, false, false);
+
+      // Should take max of all measurements
+      const expected = Math.max(
+        estimateTextWidth('main') / 2,
+        estimateTextWidth('SHORT_ID'),
+        estimateTextWidth('ANOTHER_ID'),
+        estimateTextWidth('v1.0'),
+        estimateTextWidth('longest-tag-name-here')
+      );
+      expect(maxWidth).toBe(expected);
     });
   });
 
@@ -1117,6 +1318,10 @@ if (import.meta.vitest) {
       ]);
       commits.forEach((commit, key) => {
         it(`should give the correct position for commit ${key}`, () => {
+          dir = 'TB';
+          branchPos.set('main', { pos: 0, index: 0 });
+          branchPos.set('feature', { pos: 107.49609375, index: 1 });
+          branchPos.set('release', { pos: 224.03515625, index: 2 });
           const position = getCommitPosition(commit, pos, false);
           expect(position).toEqual(expectedCommitPositionTB.get(key));
           pos += 50;
@@ -1126,18 +1331,23 @@ if (import.meta.vitest) {
     describe('LR', () => {
       let pos = 30;
       dir = 'LR';
+      // In LR mode: x = posWithOffset, y = branchPos.pos (opposite of TB)
       const expectedCommitPositionLR = new Map<string, CommitPositionOffset>([
-        ['commitZero', { x: 0, y: 40, posWithOffset: 40 }],
-        ['commitA', { x: 107.49609375, y: 90, posWithOffset: 90 }],
-        ['commitB', { x: 107.49609375, y: 140, posWithOffset: 140 }],
-        ['commitM', { x: 0, y: 190, posWithOffset: 190 }],
-        ['commitC', { x: 224.03515625, y: 240, posWithOffset: 240 }],
-        ['commit5_8928ea0', { x: 224.03515625, y: 290, posWithOffset: 290 }],
-        ['commitD', { x: 224.03515625, y: 340, posWithOffset: 340 }],
-        ['commit7_ed848ba', { x: 224.03515625, y: 390, posWithOffset: 390 }],
+        ['commitZero', { x: 40, y: 0, posWithOffset: 40 }],
+        ['commitA', { x: 90, y: 107.49609375, posWithOffset: 90 }],
+        ['commitB', { x: 140, y: 107.49609375, posWithOffset: 140 }],
+        ['commitM', { x: 190, y: 0, posWithOffset: 190 }],
+        ['commitC', { x: 240, y: 224.03515625, posWithOffset: 240 }],
+        ['commit5_8928ea0', { x: 290, y: 224.03515625, posWithOffset: 290 }],
+        ['commitD', { x: 340, y: 224.03515625, posWithOffset: 340 }],
+        ['commit7_ed848ba', { x: 390, y: 224.03515625, posWithOffset: 390 }],
       ]);
       commits.forEach((commit, key) => {
         it(`should give the correct position for commit ${key}`, () => {
+          dir = 'LR';
+          branchPos.set('main', { pos: 0, index: 0 });
+          branchPos.set('feature', { pos: 107.49609375, index: 1 });
+          branchPos.set('release', { pos: 224.03515625, index: 2 });
           const position = getCommitPosition(commit, pos, false);
           expect(position).toEqual(expectedCommitPositionLR.get(key));
           pos += 50;
