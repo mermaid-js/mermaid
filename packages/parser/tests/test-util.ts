@@ -13,6 +13,8 @@ import type {
   PacketServices,
   GitGraph,
   GitGraphServices,
+  TreeView,
+  TreeViewServices,
   Yearwheel,
   YearwheelServices,
 } from '../src/language/index.js';
@@ -23,6 +25,7 @@ import {
   createRadarServices,
   createPacketServices,
   createGitGraphServices,
+  createTreeViewServices,
   createYearwheelServices,
 } from '../src/language/index.js';
 
@@ -108,6 +111,17 @@ export function createGitGraphTestServices() {
   return { services: gitGraphServices, parse };
 }
 export const gitGraphParse = createGitGraphTestServices().parse;
+
+const treeViewServices: TreeViewServices = createTreeViewServices().TreeView;
+const treeViewParser: LangiumParser = treeViewServices.parser.LangiumParser;
+export function createTreeViewTestServices() {
+  const parse = (input: string) => {
+    return treeViewParser.parse<TreeView>(input);
+  };
+
+  return { services: treeViewServices, parse };
+}
+export const treeViewParse = createTreeViewTestServices().parse;
 
 const yearwheelServices: YearwheelServices = createYearwheelServices().Yearwheel;
 const yearwheelParser: LangiumParser = yearwheelServices.parser.LangiumParser;

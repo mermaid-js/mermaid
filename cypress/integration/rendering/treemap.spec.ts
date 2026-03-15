@@ -416,6 +416,42 @@ classDef highlight fill:#f39c12,color:#000,stroke:#e67e22,stroke-width:2px;
     );
   });
 
+  it('17: should render treemap with readable text on dark theme', () => {
+    imgSnapshotTest(
+      `---
+config:
+  theme: dark
+---
+treemap-beta
+"Category A"
+    "Item A1": 10
+    "Item A2": 20
+"Category B"
+    "Item B1": 15
+    "Item B2": 25
+      `,
+      {}
+    );
+  });
+
+  it('18: should render treemap with readable text on neutral theme', () => {
+    imgSnapshotTest(
+      `---
+config:
+  theme: neutral
+---
+treemap-beta
+"Category A"
+    "Item A1": 10
+    "Item A2": 20
+"Category B"
+    "Item B1": 15
+    "Item B2": 25
+      `,
+      {}
+    );
+  });
+
   /*
   it.skip('17: should render a treemap with title', () => {
     imgSnapshotTest(

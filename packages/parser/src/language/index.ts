@@ -13,6 +13,8 @@ export {
   Commit,
   Merge,
   Statement,
+  TreeView,
+  TreeNode,
   Yearwheel,
   YearwheelBaseDate,
   YearwheelEvent,
@@ -41,6 +43,7 @@ export {
   GitGraphGrammarGeneratedModule as GitGraphGeneratedModule,
   RadarGrammarGeneratedModule as RadarGeneratedModule,
   TreemapGrammarGeneratedModule as TreemapGeneratedModule,
+  TreeViewGrammarGeneratedModule as TreeViewGeneratedModule,
   YearwheelGrammarGeneratedModule as YearwheelGeneratedModule,
 } from './generated/module.js';
 
@@ -49,6 +52,7 @@ export * from './common/index.js';
 export * from './info/index.js';
 export * from './packet/index.js';
 export * from './pie/index.js';
+export * from './treeView/index.js';
 export * from './architecture/index.js';
 export * from './radar/index.js';
 export * from './treemap/index.js';
