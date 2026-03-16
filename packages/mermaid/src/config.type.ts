@@ -1086,6 +1086,13 @@ export interface ArchitectureDiagramConfig extends BaseDiagramConfig {
   padding?: number;
   iconSize?: number;
   fontSize?: number;
+  /**
+   * Whether to randomize initial node positions before running the layout algorithm.
+   * When false (default), the layout is deterministic and produces identical results on every render.
+   * When true, nodes start at random positions, which may produce varied but potentially better-spaced layouts.
+   *
+   */
+  randomize?: boolean;
 }
 /**
  * The object containing configurations specific for mindmap diagrams
