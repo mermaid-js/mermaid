@@ -43,3 +43,4 @@ visio
 vitepress
 xlink
 xychart
+yearwheel

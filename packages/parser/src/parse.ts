@@ -9,9 +9,18 @@ import type {
   Radar,
   Treemap,
   TreeView,
+  Yearwheel,
 } from './index.js';
 
-export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph | Radar | TreeView;
+export type DiagramAST =
+  | Info
+  | Packet
+  | Pie
+  | Architecture
+  | GitGraph
+  | Radar
+  | TreeView
+  | Yearwheel;
 
 const parsers: Record<string, LangiumParser> = {};
 const initializers = {
@@ -55,6 +64,11 @@ const initializers = {
     const parser = createTreemapServices().Treemap.parser.LangiumParser;
     parsers.treemap = parser;
   },
+  yearwheel: async () => {
+    const { createYearwheelServices } = await import('./language/yearwheel/index.js');
+    const parser = createYearwheelServices().Yearwheel.parser.LangiumParser;
+    parsers.yearwheel = parser;
+  },
 } as const;
 
 export async function parse(diagramType: 'info', text: string): Promise<Info>;
@@ -65,6 +79,7 @@ export async function parse(diagramType: 'architecture', text: string): Promise<
 export async function parse(diagramType: 'gitGraph', text: string): Promise<GitGraph>;
 export async function parse(diagramType: 'radar', text: string): Promise<Radar>;
 export async function parse(diagramType: 'treemap', text: string): Promise<Treemap>;
+export async function parse(diagramType: 'yearwheel', text: string): Promise<Yearwheel>;
 
 export async function parse<T extends DiagramAST>(
   diagramType: keyof typeof initializers,
