@@ -584,16 +584,17 @@ const defaultBkg = function (elem, node, section, config) {
   const { theme } = config;
   const r = theme?.includes('redux') ? 0 : 5;
   const rd = 5;
+  // When r=0 (redux themes), use straight line segments for sharp corners instead of
+  // degenerate quadratic bezier curves (q0,-0,0,-0) which are functionally a no-op.
+  const d =
+    r > 0
+      ? `M0 ${node.height - rd} v${-node.height + 2 * rd} q0,-${r},${r},-${r} h${node.width - 2 * rd} q${r},0,${r},${r} v${node.height - rd} H0 Z`
+      : `M0 ${node.height - rd} v${-(node.height - rd)} h${node.width} v${node.height} H0 Z`;
   elem
     .append('path')
     .attr('id', 'node-' + node.id)
     .attr('class', 'node-bkg node-' + node.type)
-    .attr(
-      'd',
-      `M0 ${node.height - rd} v${-node.height + 2 * rd} q0,-${r},${r},-${r} h${
-        node.width - 2 * rd
-      } q${r},0,${r},${r} v${node.height - rd} H0 Z`
-    );
+    .attr('d', d);
   if (!theme?.includes('redux')) {
     elem
       .append('line')
