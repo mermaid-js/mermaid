@@ -366,17 +366,49 @@ const parseDuration = function (str) {
   return [NaN, 'ms'];
 };
 
+/**
+ * Checks if a value looks like a duration (for example `7d`, `20h`, `0.5s`).
+ *
+ * @param {string} str
+ * @returns {boolean}
+ */
+const looksLikeDuration = function (str) {
+  const [durationValue] = parseDuration(str);
+  return !Number.isNaN(durationValue);
+};
+
+/**
+ * Checks if a value starts with `until ...`.
+ *
+ * @param {string} str
+ * @returns {boolean}
+ */
+const looksLikeUntilReference = function (str) {
+  return /^until\s+.+/.test(str.trim());
+};
+
 const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   str = str.trim();
 
   // test for until
-  const untilRePattern = /^until\s+(?<ids>[\d\w- ]+)/;
+  const untilRePattern = /^until\s+(?<target>.+)$/;
   const untilStatement = untilRePattern.exec(str);
 
   if (untilStatement !== null) {
-    // check all until ids and take the earliest
+    const untilTarget = untilStatement.groups.target.trim();
+
+    const untilDate = dayjs(untilTarget, dateFormat.trim(), true);
+    // For `until <taskId|endDate>`, `getEndDate` checks `<endDate>` first using `dateFormat`.
+    // If `untilTarget` matches `dateFormat`, it is interpreted as an end date.
+    // That means a task ID that also matches the `dateFormat` pattern is treated as a date.
+    // This edge case is unlikely in practice, and this date-first order is intentional.
+    if (untilDate.isValid()) {
+      return untilDate.toDate();
+    }
+
+    // Date parsing failed, so interpret `untilTarget` as task ID(s) and pick the earliest.
     let earliestTask = null;
-    for (const id of untilStatement.groups.ids.split(' ')) {
+    for (const id of untilTarget.split(/\s+/)) {
       let task = findTaskById(id);
       if (task !== undefined && (!earliestTask || task.startTime < earliestTask.startTime)) {
         earliestTask = task;
@@ -511,20 +543,36 @@ const parseData = function (prevTaskId, dataStr) {
       break;
     case 2:
       task.id = parseId();
-      task.startTime = {
-        type: 'getStartDate',
-        startData: data[0],
-      };
+      // If input is "<duration>, until <taskId>" or "<duration>, until <endDate>",
+      // figure out end date first, then compute start date from the end date and duration.
+      task.startTime =
+        looksLikeDuration(data[0]) && looksLikeUntilReference(data[1])
+          ? {
+              type: 'deriveStartFromEnd',
+              durationText: data[0],
+            }
+          : {
+              type: 'getStartDate',
+              startData: data[0],
+            };
       task.endTime = {
         data: data[1],
       };
       break;
     case 3:
       task.id = parseId(data[0]);
-      task.startTime = {
-        type: 'getStartDate',
-        startData: data[1],
-      };
+      // If input is "<id>, <duration>, until <taskId>" or "<id>, <duration>, until <endDate>",
+      // figure out end date first, then compute start date from the end date and duration.
+      task.startTime =
+        looksLikeDuration(data[1]) && looksLikeUntilReference(data[2])
+          ? {
+              type: 'deriveStartFromEnd',
+              durationText: data[1],
+            }
+          : {
+              type: 'getStartDate',
+              startData: data[1],
+            };
       task.endTime = {
         data: data[2],
       };
@@ -613,24 +661,51 @@ const compileTasks = function () {
           rawTasks[pos].startTime = startTime;
         }
         break;
+      case 'deriveStartFromEnd': {
+        // With "<duration>, until <id>" or "<duration>, until <endDate>",
+        // get end date first, then calculate start date by subtracting duration.
+        rawTasks[pos].endTime = getEndDate(
+          undefined,
+          dateFormat,
+          rawTasks[pos].raw.endTime.data,
+          inclusiveEndDates
+        );
+
+        const [durationValue, durationUnit] = parseDuration(
+          rawTasks[pos].raw.startTime.durationText
+        );
+
+        if (rawTasks[pos].endTime && !Number.isNaN(durationValue)) {
+          startTime = dayjs(rawTasks[pos].endTime).subtract(durationValue, durationUnit);
+
+          if (startTime.isValid()) {
+            rawTasks[pos].startTime = startTime.toDate();
+          }
+        }
+
+        break;
+      }
     }
 
-    if (rawTasks[pos].startTime) {
+    // If no end date is given
+    if (rawTasks[pos].startTime && !rawTasks[pos].endTime) {
       rawTasks[pos].endTime = getEndDate(
         rawTasks[pos].startTime,
         dateFormat,
         rawTasks[pos].raw.endTime.data,
         inclusiveEndDates
       );
-      if (rawTasks[pos].endTime) {
-        rawTasks[pos].processed = true;
-        rawTasks[pos].manualEndTime = dayjs(
-          rawTasks[pos].raw.endTime.data,
-          'YYYY-MM-DD',
-          true
-        ).isValid();
-        checkTaskDates(rawTasks[pos], dateFormat, excludes, includes);
-      }
+    }
+
+    // It has both start and end dates
+    if (rawTasks[pos].startTime && rawTasks[pos].endTime) {
+      rawTasks[pos].processed = true;
+      rawTasks[pos].manualEndTime = dayjs(
+        rawTasks[pos].raw.endTime.data,
+        'YYYY-MM-DD',
+        true
+      ).isValid();
+      checkTaskDates(rawTasks[pos], dateFormat, excludes, includes);
     }
 
     return rawTasks[pos].processed;
