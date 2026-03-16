@@ -4,9 +4,11 @@ import Ajv2019, { type JSONSchemaType } from 'ajv/dist/2019.js';
 import type { MermaidConfig, BaseDiagramConfig } from '../packages/mermaid/src/config.type.js';
 
 /**
- * All of the keys in the mermaid config that have a mermaid diagram config.
+ * All of the keys in the mermaid config that have a sub-schema with a $ref
+ * (includes diagram configs like flowchart/sequence as well as top-level
+ * configs like icons that use their own $defs entry).
  */
-const MERMAID_CONFIG_DIAGRAM_KEYS = [
+const MERMAID_CONFIG_SUBSCHEMA_KEYS = [
   'flowchart',
   'sequence',
   'gantt',
@@ -30,6 +32,7 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
   'treeView',
   'architecture',
   'radar',
+  'icons',
   'venn',
 ] as const;
 
@@ -65,7 +68,7 @@ function generateDefaults(mermaidConfigSchema: JSONSchemaType<MermaidConfig>) {
   assert.ok(mermaidConfigSchema.$defs);
   const baseDiagramConfig = mermaidConfigSchema.$defs.BaseDiagramConfig;
 
-  for (const key of MERMAID_CONFIG_DIAGRAM_KEYS) {
+  for (const key of MERMAID_CONFIG_SUBSCHEMA_KEYS) {
     const subSchemaRef = mermaidConfigSchema.properties[key].$ref;
     const [root, defs, defName] = subSchemaRef.split('/');
     assert.strictEqual(root, '#');

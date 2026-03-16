@@ -230,6 +230,7 @@ export interface MermaidConfig {
    *
    */
   suppressErrorRendering?: boolean;
+  icons?: IconsConfig;
 }
 /**
  * The object containing configurations specific for flowcharts
@@ -1699,6 +1700,46 @@ export interface VennDiagramConfig extends BaseDiagramConfig {
   height?: number;
   padding?: number;
   useDebugLayout?: boolean;
+}
+/**
+ * Configuration for icon packs and CDN template.
+ * Enables icons in browsers and CLI/headless renders without custom JavaScript.
+ *
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "IconsConfig".
+ */
+export interface IconsConfig {
+  /**
+   * Icon pack configuration. Key is the local pack name.
+   * Value is a package spec with version that complies with Iconify standards.
+   * Package specs must include at least a major version (e.g., '@iconify-json/logos@1').
+   *
+   */
+  packs?: {
+    [k: string]: string;
+  };
+  /**
+   * URL template for resolving package specs (must contain ${packageSpec}).
+   * Used to build URLs for package specs in icons.packs.
+   *
+   */
+  cdnTemplate?: string;
+  /**
+   * Maximum file size in MB for icon pack JSON files.
+   *
+   */
+  maxFileSizeMB?: number;
+  /**
+   * Network timeout in milliseconds for icon pack fetches.
+   *
+   */
+  timeout?: number;
+  /**
+   * List of allowed hosts to fetch icons from
+   *
+   */
+  allowedHosts?: string[];
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

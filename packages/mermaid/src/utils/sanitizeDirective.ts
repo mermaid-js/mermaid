@@ -35,6 +35,11 @@ export const sanitizeDirective = (args: any): void => {
       continue;
     }
 
+    if (key === 'icons') {
+      // Skip icons key as it is handled by the registerDiagramIconPacks function
+      continue;
+    }
+
     // Recurse if an object
     if (typeof args[key] === 'object') {
       log.debug('sanitizing object', key);
