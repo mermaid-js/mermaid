@@ -30,6 +30,21 @@ const PY = 2;
 const THEME_COLOR_LIMIT = 8;
 
 /**
+ * Themes that use redux-style geometry — smaller commit bullets, sharper label edges.
+ * Note: neo themes are intentionally excluded; they use standard geometry.
+ */
+const REDUX_GEOMETRY_THEMES = new Set(['redux', 'redux-dark', 'redux-color', 'redux-dark-color']);
+
+/**
+ * Themes that use per-branch color cycling with a non-default first color
+ * (avoidDefaultColor logic in calcColorIndex).
+ */
+const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
+
+/** Themes rendered on a dark background. */
+const DARK_THEMES = new Set(['dark', 'redux-dark', 'redux-dark-color', 'neo-dark']);
+
+/**
  * Map a raw branch index to a CSS color-class index.
  * When avoidMainColor is true (redux-color / redux-dark-color themes only),
  * non-main branches cycle through 1…(limit-1) so color 0 is never reused.
@@ -214,49 +229,49 @@ const drawCommitBullet = (
   commitSymbolType: number
 ) => {
   const { theme } = getConfig();
-  const isReduxTheme = theme?.includes('redux');
-  const isColorTheme = theme?.includes('color') ?? false;
-  const isDark = theme?.includes('dark');
+  const useReduxGeometry = REDUX_GEOMETRY_THEMES.has(theme ?? '');
+  const useColorTheme = COLOR_THEMES.has(theme ?? '');
+  const isDark = DARK_THEMES.has(theme ?? '');
   if (commitSymbolType === commitType.HIGHLIGHT) {
     gBullets
       .append('rect')
-      .attr('x', commitPosition.x - 10 + (isReduxTheme ? 3 : 0))
-      .attr('y', commitPosition.y - 10 + (isReduxTheme ? 3 : 0))
-      .attr('width', isReduxTheme ? 14 : 20)
-      .attr('height', isReduxTheme ? 14 : 20)
+      .attr('x', commitPosition.x - 10 + (useReduxGeometry ? 3 : 0))
+      .attr('y', commitPosition.y - 10 + (useReduxGeometry ? 3 : 0))
+      .attr('width', useReduxGeometry ? 14 : 20)
+      .attr('height', useReduxGeometry ? 14 : 20)
       .attr(
         'class',
-        `commit ${commit.id} commit-highlight${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, isColorTheme)} ${typeClass}-outer`
+        `commit ${commit.id} commit-highlight${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, useColorTheme)} ${typeClass}-outer`
       );
     gBullets
       .append('rect')
-      .attr('x', commitPosition.x - 6 + (isReduxTheme ? 2 : 0))
-      .attr('y', commitPosition.y - 6 + (isReduxTheme ? 2 : 0))
-      .attr('width', isReduxTheme ? 8 : 12)
-      .attr('height', isReduxTheme ? 8 : 12)
+      .attr('x', commitPosition.x - 6 + (useReduxGeometry ? 2 : 0))
+      .attr('y', commitPosition.y - 6 + (useReduxGeometry ? 2 : 0))
+      .attr('width', useReduxGeometry ? 8 : 12)
+      .attr('height', useReduxGeometry ? 8 : 12)
       .attr(
         'class',
-        `commit ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, isColorTheme)} ${typeClass}-inner`
+        `commit ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, useColorTheme)} ${typeClass}-inner`
       );
   } else if (commitSymbolType === commitType.CHERRY_PICK) {
     gBullets
       .append('circle')
       .attr('cx', commitPosition.x)
       .attr('cy', commitPosition.y)
-      .attr('r', isReduxTheme ? 7 : 10)
+      .attr('r', useReduxGeometry ? 7 : 10)
       .attr('class', `commit ${commit.id} ${typeClass}`);
     gBullets
       .append('circle')
       .attr('cx', commitPosition.x - 3)
       .attr('cy', commitPosition.y + 2)
-      .attr('r', isReduxTheme ? 2.5 : 2.75)
+      .attr('r', useReduxGeometry ? 2.5 : 2.75)
       .attr('fill', isDark ? '#000000' : '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
     gBullets
       .append('circle')
       .attr('cx', commitPosition.x + 3)
       .attr('cy', commitPosition.y + 2)
-      .attr('r', isReduxTheme ? 2.5 : 2.75)
+      .attr('r', useReduxGeometry ? 2.5 : 2.75)
       .attr('fill', isDark ? '#000000' : '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
     gBullets
@@ -279,24 +294,24 @@ const drawCommitBullet = (
     const circle = gBullets.append('circle');
     circle.attr('cx', commitPosition.x);
     circle.attr('cy', commitPosition.y);
-    circle.attr('r', isReduxTheme ? 7 : 10);
+    circle.attr('r', useReduxGeometry ? 7 : 10);
     circle.attr(
       'class',
-      `commit ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, isColorTheme)}`
+      `commit ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, useColorTheme)}`
     );
     if (commitSymbolType === commitType.MERGE) {
       const circle2 = gBullets.append('circle');
       circle2.attr('cx', commitPosition.x);
       circle2.attr('cy', commitPosition.y);
-      circle2.attr('r', isReduxTheme ? 5 : 6);
+      circle2.attr('r', useReduxGeometry ? 5 : 6);
       circle2.attr(
         'class',
-        `commit ${typeClass} ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, isColorTheme)}`
+        `commit ${typeClass} ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, useColorTheme)}`
       );
     }
     if (commitSymbolType === commitType.REVERSE) {
       const cross = gBullets.append('path');
-      const constValue = isReduxTheme ? 4 : 5;
+      const constValue = useReduxGeometry ? 4 : 5;
       cross
         .attr(
           'd',
@@ -304,7 +319,7 @@ const drawCommitBullet = (
         )
         .attr(
           'class',
-          `commit ${typeClass} ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, isColorTheme)}`
+          `commit ${typeClass} ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, useColorTheme)}`
         );
     }
   }
@@ -634,7 +649,7 @@ const drawArrow = (
   allCommits: Map<string, Commit>
 ) => {
   const { theme: arrowTheme } = getConfig();
-  const isColorTheme = arrowTheme?.includes('color') ?? false;
+  const useColorTheme = COLOR_THEMES.has(arrowTheme ?? '');
   const p1 = commitPos.get(commitA.id); // arrowStart
   const p2 = commitPos.get(commitB.id); // arrowEnd
   if (p1 === undefined || p2 === undefined) {
@@ -819,7 +834,10 @@ const drawArrow = (
   svg
     .append('path')
     .attr('d', lineDef)
-    .attr('class', 'arrow arrow' + calcColorIndex(colorClassNum!, THEME_COLOR_LIMIT, isColorTheme));
+    .attr(
+      'class',
+      'arrow arrow' + calcColorIndex(colorClassNum!, THEME_COLOR_LIMIT, useColorTheme)
+    );
 };
 
 const drawArrows = (
@@ -846,14 +864,14 @@ const drawBranches = (
 ) => {
   const { look, theme, themeVariables } = getConfig();
   const { dropShadow, THEME_COLOR_LIMIT: themeColorLimit } = themeVariables;
-  const isReduxTheme = theme?.includes('redux');
-  const isColorTheme = theme?.includes('color') ?? false;
+  const useReduxGeometry = REDUX_GEOMETRY_THEMES.has(theme ?? '');
+  const useColorTheme = COLOR_THEMES.has(theme ?? '');
   const g = svg.append('g');
   branches.forEach((branch, index) => {
     const adjustIndexForTheme = calcColorIndex(
       index,
-      isReduxTheme ? themeColorLimit : THEME_COLOR_LIMIT,
-      isColorTheme
+      useReduxGeometry ? themeColorLimit : THEME_COLOR_LIMIT,
+      useColorTheme
     );
 
     const pos = branchPos.get(branch.name)?.pos;
@@ -893,9 +911,9 @@ const drawBranches = (
 
     label.node()!.appendChild(labelElement);
     const bbox = labelElement.getBBox();
-    const borderRadius = isReduxTheme ? 0 : 4;
-    const labelPaddingX = isReduxTheme ? 16 : 0;
-    const labelPaddingY = isReduxTheme ? 12 : 0;
+    const borderRadius = useReduxGeometry ? 0 : 4;
+    const labelPaddingX = useReduxGeometry ? 16 : 0;
+    const labelPaddingY = useReduxGeometry ? 12 : 0;
     if (look === 'neo') {
       bkg.attr('data-look', `neo`);
     }
@@ -904,9 +922,7 @@ const drawBranches = (
       .attr('class', 'branchLabelBkg label' + adjustIndexForTheme)
       .attr(
         'style',
-        look === 'neo'
-          ? `filter:${theme?.includes('redux') ? `url(#${id}-drop-shadow)` : dropShadow}`
-          : ''
+        look === 'neo' ? `filter:${useReduxGeometry ? `url(#${id}-drop-shadow)` : dropShadow}` : ''
       )
       .attr('rx', borderRadius)
       .attr('ry', borderRadius)
@@ -928,7 +944,7 @@ const drawBranches = (
     if (dir === 'TB') {
       bkg.attr('x', pos - bbox.width / 2 - 10).attr('y', 0);
       label.attr('transform', 'translate(' + (pos - bbox.width / 2 - 5) + ', ' + 0 + ')');
-      if (isReduxTheme) {
+      if (useReduxGeometry) {
         bkg.attr('transform', `translate(${-labelPaddingX / 2 - 3}, ${-labelPaddingY - 10})`);
         label.attr(
           'transform',
@@ -938,7 +954,7 @@ const drawBranches = (
     } else if (dir === 'BT') {
       bkg.attr('x', pos - bbox.width / 2 - 10).attr('y', maxPos);
       label.attr('transform', 'translate(' + (pos - bbox.width / 2 - 5) + ', ' + maxPos + ')');
-      if (isReduxTheme) {
+      if (useReduxGeometry) {
         bkg.attr('transform', `translate(${-labelPaddingX / 2 - 3}, ${labelPaddingY + 10})`);
         label.attr(
           'transform',
@@ -1007,8 +1023,8 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
 
   // Add drop-shadow SVG filter for neo+redux look. Defined once on the root <svg>
   // with a diagram-unique ID to avoid collisions when multiple diagrams share the page.
-  if (look === 'neo' && theme?.includes('redux')) {
-    const filterColor = theme.includes('dark') ? '#FFFFFF' : '#000000';
+  if (look === 'neo' && REDUX_GEOMETRY_THEMES.has(theme ?? '')) {
+    const filterColor = DARK_THEMES.has(theme ?? '') ? '#FFFFFF' : '#000000';
     diagram
       .append('defs')
       .append('filter')

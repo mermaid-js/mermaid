@@ -1,4 +1,18 @@
 import * as configApi from '../../config.js';
+const GIT_NAMED_COLOR_COUNT = 8;
+
+const REDUX_GEOMETRY_THEMES = new Set(['redux', 'redux-dark', 'redux-color', 'redux-dark-color']);
+const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
+const NEO_THEMES = new Set(['neo', 'neo-dark']);
+const DARK_THEMES = new Set(['dark', 'redux-dark', 'redux-dark-color', 'neo-dark']);
+const NEO_COLOR_GEN_THEMES = new Set([
+  'redux',
+  'redux-dark',
+  'redux-color',
+  'redux-dark-color',
+  'neo',
+  'neo-dark',
+]);
 
 const genGitGraphGradient = (options) => {
   const { svgId } = options;
@@ -17,8 +31,8 @@ const genColor = (options) => {
   const config = configApi.getConfig();
   const { theme, themeVariables } = config;
   const { borderColorArray } = themeVariables;
-  const isReduxTheme = theme?.includes('redux');
-  if (theme?.includes('neo')) {
+  const useReduxGeometry = REDUX_GEOMETRY_THEMES.has(theme);
+  if (NEO_THEMES.has(theme)) {
     let sections = '';
 
     for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
@@ -32,24 +46,26 @@ const genColor = (options) => {
         .commit-cherry-pick${i} { stroke: ${options.nodeBorder}; }
         ${genGitGraphGradient(options)}`;
       } else {
+        // Wrap index to stay within the range of defined git color variables (git0..git7).
+        const ci = i % GIT_NAMED_COLOR_COUNT;
         sections += `
-        .branch-label${i} { fill: ${options['gitBranchLabel' + i]}; }
-        .commit${i} { stroke: ${options['git' + i]}; fill: ${options['git' + i]}; }
-        .commit-highlight${i} { stroke: ${options['gitInv' + i]}; fill: ${options['gitInv' + i]}; }
-        .arrow${i} { stroke: ${options['git' + i]}; }
+        .branch-label${i} { fill: ${options['gitBranchLabel' + ci]}; }
+        .commit${i} { stroke: ${options['git' + ci]}; fill: ${options['git' + ci]}; }
+        .commit-highlight${i} { stroke: ${options['gitInv' + ci]}; fill: ${options['gitInv' + ci]}; }
+        .arrow${i} { stroke: ${options['git' + ci]}; }
         `;
       }
     }
     return sections;
-  } else if (!theme?.includes('color')) {
+  } else if (!COLOR_THEMES.has(theme)) {
     let sections = '';
 
     for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
       sections += `
-        .branch-label${i} { fill: ${options.nodeBorder}; ${isReduxTheme ? `font-weight:${options.noteFontWeight}` : ''} }
+        .branch-label${i} { fill: ${options.nodeBorder}; ${useReduxGeometry ? `font-weight:${options.noteFontWeight}` : ''} }
         .commit${i} { stroke: ${options.nodeBorder};   }
         .commit-highlight${i} { stroke: ${options.nodeBorder}; fill: ${options.nodeBorder}; }
-        .label${i}  { fill: ${options.mainBkg}; stroke: ${options.nodeBorder}; stroke-width: ${options.strokeWidth}; ${isReduxTheme ? `font-weight:${options.noteFontWeight}` : ''}}
+        .label${i}  { fill: ${options.mainBkg}; stroke: ${options.nodeBorder}; stroke-width: ${options.strokeWidth}; ${useReduxGeometry ? `font-weight:${options.noteFontWeight}` : ''}}
         .arrow${i} { stroke: ${options.nodeBorder}; }
         .commit-bullets { fill: ${options.nodeBorder}; }
         .commit-cherry-pick${i} { stroke: ${options.nodeBorder}; }
@@ -62,20 +78,20 @@ const genColor = (options) => {
     for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
       if (i === 0) {
         sections += `
-        .branch-label${i} { fill: ${options.nodeBorder}; ${isReduxTheme ? `font-weight:${options.noteFontWeight}` : ''} }
+        .branch-label${i} { fill: ${options.nodeBorder}; ${useReduxGeometry ? `font-weight:${options.noteFontWeight}` : ''} }
         .commit${i} { stroke: ${options.nodeBorder}; }
         .commit-highlight${i} { stroke: ${options.nodeBorder}; fill: ${options.mainBkg}; }
-        .label${i}  { fill: ${options.mainBkg}; stroke: ${options.nodeBorder}; stroke-width: ${options.strokeWidth}; ${isReduxTheme ? `font-weight:${options.noteFontWeight}` : ''} }
+        .label${i}  { fill: ${options.mainBkg}; stroke: ${options.nodeBorder}; stroke-width: ${options.strokeWidth}; ${useReduxGeometry ? `font-weight:${options.noteFontWeight}` : ''} }
         .arrow${i} { stroke: ${options.nodeBorder}; }
         .commit-bullets { fill: ${options.nodeBorder}; }
         `;
       } else {
         const colorIndex = i % borderColorArray.length;
         sections += `
-        .branch-label${i} { fill: ${options.nodeBorder}; ${isReduxTheme ? `font-weight:${options.noteFontWeight}` : ''} }  
+        .branch-label${i} { fill: ${options.nodeBorder}; ${useReduxGeometry ? `font-weight:${options.noteFontWeight}` : ''} }
         .commit${i} { stroke: ${borderColorArray[colorIndex]}; fill: ${borderColorArray[colorIndex]}; }
         .commit-highlight${i} { stroke: ${borderColorArray[colorIndex]}; fill: ${borderColorArray[colorIndex]}; }
-        .label${i}  { fill: ${theme?.includes('dark') ? options.mainBkg : borderColorArray[colorIndex]}; stroke: ${borderColorArray[colorIndex]};  stroke-width: ${options.strokeWidth}; }
+        .label${i}  { fill: ${DARK_THEMES.has(theme) ? options.mainBkg : borderColorArray[colorIndex]}; stroke: ${borderColorArray[colorIndex]};  stroke-width: ${options.strokeWidth}; }
         .arrow${i} { stroke: ${borderColorArray[colorIndex]}; }
         `;
       }
@@ -85,23 +101,24 @@ const genColor = (options) => {
 };
 
 const normalTheme = (options) => {
-  return `${[0, 1, 2, 3, 4, 5, 6, 7]
-    .map(
-      (i) =>
-        `
-        .branch-label${i} { fill: ${options['gitBranchLabel' + i]}; }
-        .commit${i} { stroke: ${options['git' + i]}; fill: ${options['git' + i]}; }
-        .commit-highlight${i} { stroke: ${options['gitInv' + i]}; fill: ${options['gitInv' + i]}; }
-        .label${i}  { fill: ${options['git' + i]}; }
-        .arrow${i} { stroke: ${options['git' + i]}; }
-        `
-    )
+  return `${Array.from({ length: options.THEME_COLOR_LIMIT }, (_, i) => i)
+    .map((i) => {
+      // Wrap index to stay within the range of defined git color variables (git0..git7).
+      const ci = i % GIT_NAMED_COLOR_COUNT;
+      return `
+        .branch-label${i} { fill: ${options['gitBranchLabel' + ci]}; }
+        .commit${i} { stroke: ${options['git' + ci]}; fill: ${options['git' + ci]}; }
+        .commit-highlight${i} { stroke: ${options['gitInv' + ci]}; fill: ${options['gitInv' + ci]}; }
+        .label${i}  { fill: ${options['git' + ci]}; }
+        .arrow${i} { stroke: ${options['git' + ci]}; }
+        `;
+    })
     .join('\n')}`;
 };
 const getStyles = (options) => {
   const config = configApi.getConfig();
   const { theme } = config;
-  const isReduxTheme = theme?.includes('redux') || theme?.includes('neo');
+  const useNeoColorGen = NEO_COLOR_GEN_THEMES.has(theme);
 
   return `
   .commit-id,
@@ -113,37 +130,37 @@ const getStyles = (options) => {
     font-family: var(--mermaid-font-family);
   }
   
-  ${isReduxTheme ? genColor(options) : normalTheme(options)}
+  ${useNeoColorGen ? genColor(options) : normalTheme(options)}
 
   .branch {
     stroke-width: ${options.strokeWidth};
     stroke: ${options.commitLineColor ?? options.lineColor};
-    stroke-dasharray:  ${isReduxTheme ? '4 2' : '2'};
+    stroke-dasharray:  ${useNeoColorGen ? '4 2' : '2'};
   }
-  .commit-label { font-size: ${options.commitLabelFontSize}; fill: ${isReduxTheme ? options.nodeBorder : options.commitLabelColor}; ${isReduxTheme ? `font-weight:${options.noteFontWeight};` : ''}}
-  .commit-label-bkg { font-size: ${options.commitLabelFontSize}; fill: ${isReduxTheme ? 'transparent' : options.commitLabelBackground}; opacity: ${isReduxTheme ? '' : 0.5};  }
+  .commit-label { font-size: ${options.commitLabelFontSize}; fill: ${useNeoColorGen ? options.nodeBorder : options.commitLabelColor}; ${useNeoColorGen ? `font-weight:${options.noteFontWeight};` : ''}}
+  .commit-label-bkg { font-size: ${options.commitLabelFontSize}; fill: ${useNeoColorGen ? 'transparent' : options.commitLabelBackground}; opacity: ${useNeoColorGen ? '' : 0.5};  }
   .tag-label { font-size: ${options.tagLabelFontSize}; fill: ${options.tagLabelColor};}
-  .tag-label-bkg { fill: ${isReduxTheme ? options.mainBkg : options.tagLabelBackground}; stroke: ${isReduxTheme ? options.nodeBorder : options.tagLabelBorder}; ${isReduxTheme ? `filter:${options.dropShadow}` : ''}  }
+  .tag-label-bkg { fill: ${useNeoColorGen ? options.mainBkg : options.tagLabelBackground}; stroke: ${useNeoColorGen ? options.nodeBorder : options.tagLabelBorder}; ${useNeoColorGen ? `filter:${options.dropShadow}` : ''}  }
   .tag-hole { fill: ${options.textColor}; }
 
   .commit-merge {
-    stroke: ${isReduxTheme ? options.mainBkg : options.primaryColor};
-    fill: ${isReduxTheme ? options.mainBkg : options.primaryColor};
+    stroke: ${useNeoColorGen ? options.mainBkg : options.primaryColor};
+    fill: ${useNeoColorGen ? options.mainBkg : options.primaryColor};
   }
   .commit-reverse {
-    stroke: ${isReduxTheme ? options.mainBkg : options.primaryColor};
-    fill: ${isReduxTheme ? options.mainBkg : options.primaryColor};
-    stroke-width: ${isReduxTheme ? options.strokeWidth : 3};
+    stroke: ${useNeoColorGen ? options.mainBkg : options.primaryColor};
+    fill: ${useNeoColorGen ? options.mainBkg : options.primaryColor};
+    stroke-width: ${useNeoColorGen ? options.strokeWidth : 3};
   }
   .commit-highlight-outer {
   }
   .commit-highlight-inner {
-    stroke: ${isReduxTheme ? options.mainBkg : options.primaryColor};
-    fill: ${isReduxTheme ? options.mainBkg : options.primaryColor};
+    stroke: ${useNeoColorGen ? options.mainBkg : options.primaryColor};
+    fill: ${useNeoColorGen ? options.mainBkg : options.primaryColor};
   }
 
   .arrow {
-    stroke-width: ${theme?.includes('redux') ? options.strokeWidth : 8};
+    stroke-width: ${REDUX_GEOMETRY_THEMES.has(theme) ? options.strokeWidth : 8};
     stroke-linecap: round;
     fill: none
   }
