@@ -130,6 +130,10 @@ function getNode(id: string) {
   return builder.getNode(id);
 }
 
+function resolveNodeId(name: string) {
+  return builder.resolveNodeId(name);
+}
+
 function getWardleyData() {
   return builder.build();
 }
@@ -154,6 +158,7 @@ export default {
   addPipelineComponent,
   updateAxes,
   getNode,
+  resolveNodeId,
   getWardleyData,
   clear,
   setAccTitle,
