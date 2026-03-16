@@ -327,10 +327,18 @@ export class ArchitectureDB implements DiagramDB {
             const [posX, posY] = spatialMap[id];
             Object.entries(adj).forEach(([dir, rhsId]) => {
               if (!visited[rhsId]) {
-                spatialMap[rhsId] = shiftPositionByArchitectureDirectionPair(
+                const shift = shiftPositionByArchitectureDirectionPair(
                   [posX, posY],
                   dir as ArchitectureDirectionPair
                 );
+
+                if (spatialMap[rhsId] && spatialMap[rhsId].toString() !== shift.toString()) {
+                  throw new Error(
+                    `Edges cannot jump more then 1 grid space. Please see the "Considerations" section of the diagram documentation for details.`
+                  );
+                }
+
+                spatialMap[rhsId] = shift;
                 queue.push(rhsId);
               }
             });
@@ -350,7 +358,40 @@ export class ArchitectureDB implements DiagramDB {
         groupAlignments,
       };
     }
+    this.validateDataStructures(this.dataStructures);
     return this.dataStructures;
+  }
+
+  /**
+   * Validates the data structures for irregularities that could effect rendering accuracy.
+   * @param ds - data structures create by `getDataStructures()`
+   */
+  public validateDataStructures(ds: typeof this.dataStructures) {
+    if (ds) {
+      const { adjList, spatialMaps } = ds;
+
+      // Throw error if two services are more then 2 units away from one another
+      // See: #6166
+      Object.entries(adjList).forEach(([sourceNode, edges]) => {
+        Object.values(edges).forEach((targetNode) => {
+          spatialMaps.forEach((spatialMap) => {
+            const [sX, sY] = spatialMap[sourceNode];
+            const [tX, tY] = spatialMap[targetNode];
+
+            const xDiff = Math.abs(sX - tX);
+            const yDiff = Math.abs(sY - tY);
+
+            const errMsg = `Edges cannot jump more then 1 grid space ([${sourceNode}]--[${targetNode}]). Please see the "Considerations" section of the diagram documentation for details.`;
+            if (xDiff > 1) {
+              throw new Error(errMsg);
+            }
+            if (yDiff > 1) {
+              throw new Error(errMsg);
+            }
+          });
+        });
+      });
+    }
   }
 
   public setElementForId(id: string, element: D3Element): void {
