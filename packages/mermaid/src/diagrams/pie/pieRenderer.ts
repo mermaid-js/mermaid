@@ -126,7 +126,7 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .style('text-anchor', 'middle')
     .attr('class', 'slice');
 
-  group
+  const titleText = group
     .append('text')
     .text(db.getDiagramTitle())
     .attr('x', 0)
@@ -178,10 +178,21 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
       .map((node) => (node as Element)?.getBoundingClientRect().width ?? 0)
   );
 
-  const totalWidth = pieWidth + MARGIN + LEGEND_RECT_SIZE + LEGEND_SPACING + longestTextWidth;
+  const chartAndLegendWidth =
+    pieWidth + MARGIN + LEGEND_RECT_SIZE + LEGEND_SPACING + longestTextWidth;
 
-  // Set viewBox
-  svg.attr('viewBox', `0 0 ${totalWidth} ${height}`);
+  // Measure title width to ensure it's not clipped
+  const titleWidth = (titleText.node() as Element)?.getBoundingClientRect().width ?? 0;
+
+  // Title is centered at pieWidth/2 in SVG coords — expand viewBox to contain it
+  const titleLeft = pieWidth / 2 - titleWidth / 2;
+  const titleRight = pieWidth / 2 + titleWidth / 2;
+
+  const viewBoxX = Math.min(0, titleLeft);
+  const viewBoxRight = Math.max(chartAndLegendWidth, titleRight);
+  const totalWidth = viewBoxRight - viewBoxX;
+
+  svg.attr('viewBox', `${viewBoxX} 0 ${totalWidth} ${height}`);
   configureSvgSize(svg, height, totalWidth, pieConfig.useMaxWidth);
 };
 
