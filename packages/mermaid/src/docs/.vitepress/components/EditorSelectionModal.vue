@@ -22,7 +22,6 @@ const openSourceFeatures: Feature[] = [
   { iconUrl: '/icons/version-history.svg', featureName: 'Version history' },
 ];
 
-
 const isVisible = ref(false);
 
 const close = () => {
@@ -32,7 +31,10 @@ const close = () => {
 const handleStartTrial = () => {
   void trackPlausibleEvent('editor-pick', { props: { choice: 'mermaid-plus' } });
   close();
-  window.open('https://mermaid.ai/app/sign-up?utm_source=mermaid_js&utm_medium=2_editor_selection&utm_campaign=start_plus&redirect=%2Fapp%2Fuser%2Fbilling%2Fcheckout%3FisFromMermaid%3Dtrue%26tier%3Dplus', '_blank');
+  window.open(
+    'https://mermaid.ai/app/sign-up?utm_source=mermaid_js&utm_medium=2_editor_selection&utm_campaign=start_plus&redirect=%2Fapp%2Fuser%2Fbilling%2Fcheckout%3FisFromMermaid%3Dtrue%26tier%3Dplus',
+    '_blank'
+  );
 };
 
 const handleStartFree = () => {
@@ -84,7 +86,9 @@ onUnmounted(() => {
 
       <div class="grid gap-4 sm:grid-cols-2">
         <!-- Mermaid Plus Card -->
-        <div class="relative flex flex-col overflow-hidden rounded-xl border-2 border-[#E0095F] bg-white shadow">
+        <div
+          class="relative flex flex-col overflow-hidden rounded-xl border-2 border-[#E0095F] bg-white shadow"
+        >
           <div class="bg-[#E0095F] px-6 py-2 text-center text-sm font-semibold text-white">
             Recommended
           </div>
@@ -97,7 +101,9 @@ onUnmounted(() => {
 
             <div class="flex flex-col gap-2">
               <div class="flex justify-center">
-                <span class="rounded-full bg-[#FCE7F3] px-3 py-0.5 text-xs font-semibold text-[#BE185D]">
+                <span
+                  class="rounded-full bg-[#FCE7F3] px-3 py-0.5 text-xs font-semibold text-[#BE185D]"
+                >
                   10% off with code JS26
                 </span>
               </div>
@@ -137,7 +143,9 @@ onUnmounted(() => {
               @click="handleContinueToNewHome"
             >
               Continue to mermaid.ai/live
-              <svg class="size-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+              <svg class="size-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+              </svg>
             </button>
             <button
               class="inline-flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 border-solid border border-[#E5E7EB] bg-white text-[#1E1A2E] hover:bg-[#E0095F] hover:text-white shadow-md h-9 px-4 py-2 cursor-pointer"
