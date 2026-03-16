@@ -160,6 +160,7 @@ const getStyles = (options) => {
   }
 
   .arrow {
+    /* Intentional: neo themes keep the bold 8px arrow (like classic themes); only redux-geometry themes use the thinner options.strokeWidth. */
     stroke-width: ${REDUX_GEOMETRY_THEMES.has(theme) ? options.strokeWidth : 8};
     stroke-linecap: round;
     fill: none
