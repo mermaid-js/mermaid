@@ -115,6 +115,15 @@ class Theme {
     this.defaultLinkColor = this.lineColor;
     this.edgeLabelBackground = lighten(this.labelBackground, 25);
 
+    /* Agentflow variables */
+    this.agentContainerFill = this.agentContainerFill || lighten(this.primaryColor, 10);
+    this.agentContainerStroke = this.agentContainerStroke || this.primaryBorderColor;
+    this.agentContainerTextColor = this.agentContainerTextColor || this.primaryTextColor;
+    this.flowContainerStroke = this.flowContainerStroke || this.secondaryBorderColor;
+    this.taskContainerStroke = this.taskContainerStroke || this.tertiaryBorderColor;
+    this.referenceNodeFill = this.referenceNodeFill || lighten(this.primaryColor, 15);
+    this.referenceNodeStroke = this.referenceNodeStroke || this.primaryBorderColor;
+
     /* Sequence Diagram variables */
 
     this.actorBorder = this.border1;

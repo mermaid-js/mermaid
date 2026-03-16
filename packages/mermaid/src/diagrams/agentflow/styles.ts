@@ -129,10 +129,22 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke-width: 1px;
   }
 
+  .agent-cluster rect {
+    fill: ${options.mainBkg};
+    stroke: ${options.nodeBorder};
+    stroke-width: 1.5px;
+  }
+
+  .flow-cluster rect {
+    fill: none;
+    stroke: ${options.clusterBorder};
+    stroke-width: 0.75px;
+  }
+
   .task-cluster rect {
     fill: none;
     stroke: ${options.clusterBorder};
-    stroke-width: 1.5px;
+    stroke-width: 0.75px;
     stroke-dasharray: 8, 4;
   }
 

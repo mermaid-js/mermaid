@@ -37,6 +37,14 @@ interface LinkData {
 
 const MERMAID_DOM_ID_PREFIX = 'agentflow-';
 
+/** Maps subgraph container types to their cluster shape IDs. */
+const SUBGRAPH_TYPE_TO_SHAPE: Record<NonNullable<FlowSubGraph['type']>, string> = {
+  agent: 'agentGroup',
+  flow: 'flowGroup',
+  task: 'taskGroup',
+  subgraph: 'rect',
+};
+
 // We are using arrow functions assigned to class instance fields instead of methods as they are required by JISON
 export class AgentFlowDB implements DiagramDB {
   private vertexCounter = 0;
@@ -713,7 +721,7 @@ You have to call mermaid.initialize.`
     _id: { text: string },
     list: string[],
     _title: { text: string; type: string },
-    type?: 'subgraph' | 'task'
+    type?: 'subgraph' | 'task' | 'agent' | 'flow'
   ) {
     let id: string | undefined = _id?.text?.trim();
     let title = _title?.text;
@@ -1180,7 +1188,7 @@ You have to call mermaid.initialize.`
         padding: 8,
         cssCompiledStyles: this.getCompiledStyles(subGraph.classes),
         cssClasses: subGraph.classes.join(' '),
-        shape: subGraph.type === 'task' ? 'taskGroup' : 'rect',
+        shape: SUBGRAPH_TYPE_TO_SHAPE[subGraph.type ?? 'subgraph'],
         dir: subGraph.dir,
         isGroup: true,
         look: config.look,

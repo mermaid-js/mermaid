@@ -1,8 +1,31 @@
 import { log } from '../../logger.js';
 import type { LayoutData } from '../../rendering-util/types.js';
 
-/** Shapes allowed in agentflow diagrams. */
-const ALLOWED_SHAPES = new Set(['roundedRect', 'circle', 'diamond']);
+/**
+ * Shapes allowed in agentflow diagrams.
+ * Includes both canonical names (from getTypeFromVertex) and
+ * alias/shortName values (from shape metadata annotations).
+ */
+const ALLOWED_SHAPES = new Set([
+  // Canonical names from getTypeFromVertex
+  'roundedRect',
+  'squareRect',
+  'rect',
+  'circle',
+  'diamond',
+  // Alias / shortName values from shape metadata
+  'doc',
+  'hexagon',
+  'hex',
+  'stadium',
+  'terminal',
+  'subroutine',
+  'lean-right',
+  'in-out',
+  'lin-doc',
+  'lined-document',
+  'procs',
+]);
 const DEFAULT_SHAPE = 'roundedRect';
 
 /**
@@ -11,7 +34,7 @@ const DEFAULT_SHAPE = 'roundedRect';
  */
 export function transformData(data: LayoutData): void {
   for (const node of data.nodes) {
-    // Group/cluster nodes use 'rect' or 'taskGroup' for the cluster renderer — don't override
+    // Group/cluster nodes use specific cluster shapes — don't override
     if (node.isGroup) {
       continue;
     }

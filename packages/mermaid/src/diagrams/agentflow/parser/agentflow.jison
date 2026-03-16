@@ -116,6 +116,8 @@ that id.
 <click>[^\s\n]*          return 'CLICK';
 
 "agentflow"              {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
+"agent"                  return 'agent';
+"flow"                   return 'flow';
 "task"                   return 'task';
 "subgraph"               return 'subgraph';
 "end"\b\s*               return 'end';
@@ -387,6 +389,18 @@ statement
     // {$$=yy.addSubGraph($textNoTags,$document,$textNoTags);}
     | subgraph separator document end
     {$$=yy.addSubGraph(undefined,$document,undefined);}
+    | agent SPACE textNoTags SQS text SQE separator document end
+    {$$=yy.addSubGraph($textNoTags,$document,$text,'agent');}
+    | agent SPACE textNoTags separator document end
+    {$$=yy.addSubGraph($textNoTags,$document,{text:'', type:'text'},'agent');}
+    | agent separator document end
+    {$$=yy.addSubGraph(undefined,$document,undefined,'agent');}
+    | flow SPACE textNoTags SQS text SQE separator document end
+    {$$=yy.addSubGraph($textNoTags,$document,$text,'flow');}
+    | flow SPACE textNoTags separator document end
+    {$$=yy.addSubGraph($textNoTags,$document,{text:'', type:'text'},'flow');}
+    | flow separator document end
+    {$$=yy.addSubGraph(undefined,$document,undefined,'flow');}
     | task SPACE textNoTags SQS text SQE separator document end
     {$$=yy.addSubGraph($textNoTags,$document,$text,'task');}
     | task SPACE textNoTags separator document end
@@ -529,7 +543,7 @@ text: textToken
 
 
 keywords
-    : STYLE | LINKSTYLE | CLASSDEF | CLASS | CLICK | GRAPH | DIR | subgraph | task | end | DOWN | UP;
+    : STYLE | LINKSTYLE | CLASSDEF | CLASS | CLICK | GRAPH | DIR | subgraph | agent | flow | task | end | DOWN | UP;
 
 
 textNoTags: textNoTagsToken

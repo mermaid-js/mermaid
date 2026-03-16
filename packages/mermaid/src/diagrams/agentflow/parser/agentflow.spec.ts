@@ -602,4 +602,294 @@ describe('parsing an agentflow diagram', function () {
       expect(subGraphs[0].type).toBe('task');
     });
   });
+
+  describe('agent grouping', function () {
+    it('should parse an agent with a quoted label', function () {
+      agentflow.parser.parse(`agentflow LR
+        agent code_review["Code Review Agent"]
+          A --> B
+        end
+      `);
+
+      const subGraphs = agentflow.parser.yy.getSubGraphs();
+      expect(subGraphs).toHaveLength(1);
+      expect(subGraphs[0].id).toBe('code_review');
+      expect(subGraphs[0].title).toBe('Code Review Agent');
+      expect(subGraphs[0].type).toBe('agent');
+    });
+
+    it('should parse an agent without a label', function () {
+      agentflow.parser.parse(`agentflow LR
+        agent myAgent
+          A
+        end
+      `);
+
+      const subGraphs = agentflow.parser.yy.getSubGraphs();
+      expect(subGraphs).toHaveLength(1);
+      expect(subGraphs[0].id).toBe('myAgent');
+      expect(subGraphs[0].title).toBe('');
+      expect(subGraphs[0].type).toBe('agent');
+    });
+
+    it('should produce agentGroup shape in layout data', function () {
+      agentflow.parser.parse(`agentflow LR
+        agent a1["My Agent"]
+          A --> B
+        end
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const agentNode = data.nodes.find((n: { id: string }) => n.id === 'a1');
+      expect(agentNode).toBeDefined();
+      expect(agentNode?.isGroup).toBe(true);
+      expect(agentNode?.shape).toBe('agentGroup');
+    });
+
+    it('should parse an empty agent', function () {
+      agentflow.parser.parse(`agentflow LR
+        agent empty_agent["Empty"]
+        end
+      `);
+
+      const subGraphs = agentflow.parser.yy.getSubGraphs();
+      expect(subGraphs).toHaveLength(1);
+      expect(subGraphs[0].nodes).toHaveLength(0);
+      expect(subGraphs[0].type).toBe('agent');
+    });
+  });
+
+  describe('flow grouping', function () {
+    it('should parse a flow with a quoted label', function () {
+      agentflow.parser.parse(`agentflow LR
+        flow review_pipeline["Review Pipeline"]
+          A --> B
+        end
+      `);
+
+      const subGraphs = agentflow.parser.yy.getSubGraphs();
+      expect(subGraphs).toHaveLength(1);
+      expect(subGraphs[0].id).toBe('review_pipeline');
+      expect(subGraphs[0].title).toBe('Review Pipeline');
+      expect(subGraphs[0].type).toBe('flow');
+    });
+
+    it('should parse a flow without a label', function () {
+      agentflow.parser.parse(`agentflow LR
+        flow myFlow
+          A
+        end
+      `);
+
+      const subGraphs = agentflow.parser.yy.getSubGraphs();
+      expect(subGraphs).toHaveLength(1);
+      expect(subGraphs[0].id).toBe('myFlow');
+      expect(subGraphs[0].title).toBe('');
+      expect(subGraphs[0].type).toBe('flow');
+    });
+
+    it('should produce flowGroup shape in layout data', function () {
+      agentflow.parser.parse(`agentflow LR
+        flow f1["My Flow"]
+          A --> B
+        end
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const flowNode = data.nodes.find((n: { id: string }) => n.id === 'f1');
+      expect(flowNode).toBeDefined();
+      expect(flowNode?.isGroup).toBe(true);
+      expect(flowNode?.shape).toBe('flowGroup');
+    });
+  });
+
+  describe('nested agent > flow > task hierarchy', function () {
+    it('should parse nested agent containing flow containing task', function () {
+      agentflow.parser.parse(`agentflow LR
+        agent my_agent["My Agent"]
+          flow pipeline["Pipeline"]
+            task step1["Step 1"]
+              action1["Do thing"]
+            end
+            task step2["Step 2"]
+              action2["Do other thing"]
+            end
+          end
+        end
+      `);
+
+      const subGraphs = agentflow.parser.yy.getSubGraphs();
+      expect(subGraphs).toHaveLength(4);
+
+      const agentSg = subGraphs.find((sg: { id: string }) => sg.id === 'my_agent');
+      const flowSg = subGraphs.find((sg: { id: string }) => sg.id === 'pipeline');
+      const task1Sg = subGraphs.find((sg: { id: string }) => sg.id === 'step1');
+      const task2Sg = subGraphs.find((sg: { id: string }) => sg.id === 'step2');
+
+      expect(agentSg?.type).toBe('agent');
+      expect(agentSg?.title).toBe('My Agent');
+      expect(flowSg?.type).toBe('flow');
+      expect(flowSg?.title).toBe('Pipeline');
+      expect(task1Sg?.type).toBe('task');
+      expect(task1Sg?.title).toBe('Step 1');
+      expect(task2Sg?.type).toBe('task');
+      expect(task2Sg?.title).toBe('Step 2');
+
+      const data = agentflow.parser.yy.getData();
+
+      // Agent should produce agentGroup shape
+      const agentNode = data.nodes.find((n: { id: string }) => n.id === 'my_agent');
+      expect(agentNode?.shape).toBe('agentGroup');
+
+      // Flow should produce flowGroup shape
+      const flowNode = data.nodes.find((n: { id: string }) => n.id === 'pipeline');
+      expect(flowNode?.shape).toBe('flowGroup');
+
+      // Tasks should produce taskGroup shape
+      const taskNode1 = data.nodes.find((n: { id: string }) => n.id === 'step1');
+      const taskNode2 = data.nodes.find((n: { id: string }) => n.id === 'step2');
+      expect(taskNode1?.shape).toBe('taskGroup');
+      expect(taskNode2?.shape).toBe('taskGroup');
+
+      // Nesting: pipeline inside my_agent, steps inside pipeline
+      expect(flowNode?.parentId).toBe('my_agent');
+      expect(taskNode1?.parentId).toBe('pipeline');
+      expect(taskNode2?.parentId).toBe('pipeline');
+    });
+
+    it('should parse the complete spec example', function () {
+      agentflow.parser.parse(`agentflow LR
+        agent code_review["Code Review Agent"]
+          flow review_flow["Review Pipeline"]
+            task extract["Extract Changes"]
+              receive_pr("Receive PR")
+              analysis_output["Code Analysis"]
+              ExtractPerms["Permissions"]
+              llmQuery_1["llmQuery"]
+              receive_pr --- analysis_output
+              ExtractPerms --> llmQuery_1
+            end
+            task assess["Assess Risk"]
+              evaluate("Evaluate Findings")
+              risk_output["Risk Assessment"]
+              AssessPerms["Permissions"]
+              llmQuery_2["llmQuery"]
+              evaluate --- risk_output
+              AssessPerms --> llmQuery_2
+            end
+            extract --> assess
+          end
+        end
+      `);
+
+      const data = agentflow.parser.yy.getData();
+
+      // Should have: agent, flow, 2 tasks, and inner nodes
+      const agentNode = data.nodes.find((n: { id: string }) => n.id === 'code_review');
+      expect(agentNode?.shape).toBe('agentGroup');
+      expect(agentNode?.label).toBe('Code Review Agent');
+
+      const flowNode = data.nodes.find((n: { id: string }) => n.id === 'review_flow');
+      expect(flowNode?.shape).toBe('flowGroup');
+      expect(flowNode?.label).toBe('Review Pipeline');
+
+      const extractNode = data.nodes.find((n: { id: string }) => n.id === 'extract');
+      expect(extractNode?.shape).toBe('taskGroup');
+
+      const assessNode = data.nodes.find((n: { id: string }) => n.id === 'assess');
+      expect(assessNode?.shape).toBe('taskGroup');
+
+      // Inner nodes
+      const receivePr = data.nodes.find((n: { id: string }) => n.id === 'receive_pr');
+      expect(receivePr?.parentId).toBe('extract');
+
+      // Task-to-task edge
+      expect(
+        data.edges.some(
+          (e: { start: string; end: string }) => e.start === 'extract' && e.end === 'assess'
+        )
+      ).toBe(true);
+    });
+  });
+
+  describe('node shapes via metadata', function () {
+    it('should allow doc shape via @{} metadata', function () {
+      agentflow.parser.parse(`agentflow LR
+        task t1["Task"]
+          output["Result"]
+        end
+        output@{ shape: doc, schema: "{ findings: Finding[] }" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const outputNode = data.nodes.find((n: { id: string }) => n.id === 'output');
+      expect(outputNode).toBeDefined();
+      expect(outputNode?.shape).toBe('doc');
+    });
+
+    it('should allow hex shape for permissions', function () {
+      agentflow.parser.parse(`agentflow LR
+        task t1["Task"]
+          perms["Permissions"]
+        end
+        perms@{ shape: hex }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const permsNode = data.nodes.find((n: { id: string }) => n.id === 'perms');
+      expect(permsNode).toBeDefined();
+      expect(permsNode?.shape).toBe('hex');
+    });
+
+    it('should allow terminal shape for permission items', function () {
+      agentflow.parser.parse(`agentflow LR
+        task t1["Task"]
+          llmQuery["llmQuery"]
+        end
+        llmQuery@{ shape: terminal }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const llmNode = data.nodes.find((n: { id: string }) => n.id === 'llmQuery');
+      expect(llmNode).toBeDefined();
+      // terminal maps to stadium in Mermaid shapes
+      expect(llmNode?.shape).toBe('terminal');
+    });
+  });
+
+  describe('reference shape', function () {
+    it('should parse a reference node with procs shape and src', function () {
+      agentflow.parser.parse(`agentflow LR
+        analyze_pr["Analyze PR"]
+        analyze_pr@{ shape: procs, src: "./analyze-pr.agentflow" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const refNode = data.nodes.find((n: { id: string }) => n.id === 'analyze_pr');
+      expect(refNode).toBeDefined();
+      expect(refNode?.shape).toBe('procs');
+      expect(refNode?.metadata?.src).toBe('./analyze-pr.agentflow');
+    });
+
+    it('should parse a multi-file topology with references', function () {
+      agentflow.parser.parse(`agentflow LR
+        analyze_pr["Analyze PR"]
+        write_review["Write Review"]
+        post_review["Post Review"]
+        analyze_pr --> write_review --> post_review
+        analyze_pr@{ shape: procs, src: "./analyze-pr.agentflow" }
+        write_review@{ shape: procs, src: "./write-review.agentflow" }
+        post_review@{ shape: procs, src: "./post-review.agentflow" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      expect(data.nodes).toHaveLength(3);
+      expect(data.edges).toHaveLength(2);
+
+      for (const node of data.nodes) {
+        expect(node.shape).toBe('procs');
+        expect(node.metadata?.src).toBeDefined();
+      }
+    });
+  });
 });

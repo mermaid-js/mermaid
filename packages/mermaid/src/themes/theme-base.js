@@ -63,6 +63,15 @@ class Theme {
     this.edgeLabelBackground =
       this.edgeLabelBackground ||
       (this.darkMode ? darken(this.secondaryColor, 30) : this.secondaryColor);
+
+    /* Agentflow variables */
+    this.agentContainerFill = this.agentContainerFill || lighten(this.primaryColor, 60);
+    this.agentContainerStroke = this.agentContainerStroke || this.primaryBorderColor;
+    this.agentContainerTextColor = this.agentContainerTextColor || this.primaryTextColor;
+    this.flowContainerStroke = this.flowContainerStroke || this.secondaryBorderColor;
+    this.taskContainerStroke = this.taskContainerStroke || this.tertiaryBorderColor;
+    this.referenceNodeFill = this.referenceNodeFill || lighten(this.primaryColor, 70);
+    this.referenceNodeStroke = this.referenceNodeStroke || this.primaryBorderColor;
     this.nodeTextColor = this.nodeTextColor || this.primaryTextColor;
     /* Sequence Diagram variables */
 
