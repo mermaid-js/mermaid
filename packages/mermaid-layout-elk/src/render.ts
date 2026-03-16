@@ -893,6 +893,7 @@ export const render = async (
       x: any;
       labels: { height: number; width: number; x: number; y: number }[];
       y: any;
+      curve?: any;
     }) => {
       // (elem, edge, clusterDb, diagramType, graph, id)
       const startNode = nodeDb[edge.sources[0]];
@@ -1069,6 +1070,9 @@ export const render = async (
           });
         }
         edge.points = deduped;
+        // ELK produces orthogonal edge routes — override the curve to 'rounded' (right-angle
+        // segments with rounded corners) so basis/smooth interpolation doesn't distort them.
+        edge.curve = 'rounded';
         const paths = insertEdge(
           edgesEl,
           edge,
