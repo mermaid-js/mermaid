@@ -1,7 +1,14 @@
 import { imgSnapshotTest } from '../../helpers/util.ts';
 
 const looks = ['neo'] as const;
-const themes = ['neo', 'neo-dark', 'redux', 'redux-dark'] as const;
+const themes = [
+  'neo',
+  'neo-dark',
+  'redux',
+  'redux-dark',
+  'redux-color',
+  'redux-dark-color',
+] as const;
 
 // ER diagram relationship types
 const relationshipTypes = [
