@@ -189,8 +189,7 @@ export class FlowDB implements DiagramDB {
 
     if (textObj !== undefined) {
       this.config = getConfig();
-      // For markdown type, don't sanitize to preserve markdown syntax like [link](url)
-      // Sanitization will happen during rendering in shapes/util.ts
+      // Sanitization is deferred to the rendering layer — markdownToLines/createText handle text safely via D3's .text() and sanitizeUrl() for href attributes.
       if (textObj.type === 'markdown') {
         txt = textObj.text.trim();
       } else {

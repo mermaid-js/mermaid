@@ -142,8 +142,9 @@ export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidCo
       return `<em>${node.tokens?.map(output).join('')}</em>`;
     } else if (node.type === 'link') {
       const href = sanitizeUrl(node.href);
-      const text = node.tokens?.map(output).join('') || node.text;
-      return `<a href="${href}" target="_blank">${text}</a>`;
+      const text = node.tokens?.map(output).join('') ?? node.text;
+      const safeHref = href.replace(/&/g, '&').replace(/"/g, '"');
+      return `<a href="${safeHref}" target="_blank">${text}</a>`;
     } else if (node.type === 'paragraph') {
       return `<p>${node.tokens?.map(output).join('')}</p>`;
     } else if (node.type === 'space') {
