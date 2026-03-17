@@ -1,7 +1,14 @@
 import { imgSnapshotTest } from '../../helpers/util.ts';
 
 const looks = ['neo'] as const;
-const themes = ['neo', 'neo-dark', 'redux', 'redux-dark'] as const;
+const themes = [
+  'neo',
+  'neo-dark',
+  'redux',
+  'redux-dark',
+  'redux-color',
+  'redux-dark-color',
+] as const;
 
 // Mindmap shapes
 const mindmapShapes = ['square', 'rounded', 'circle', 'cloud', 'bang'] as const;
@@ -48,6 +55,101 @@ looks.forEach((look) => {
         });
 
         imgSnapshotTest(mindmapCode, { look, theme });
+      });
+    });
+
+    describe(`Test mindmap branches in ${look} look and ${theme} theme`, () => {
+      it('should render branches with children and grandchildren', () => {
+        imgSnapshotTest(
+          `mindmap
+root
+  child1
+      grandchild 1
+      grandchild 2
+  child2
+      grandchild 3
+      grandchild 4
+  child3
+      grandchild 5
+      grandchild 6
+    `,
+          { look, theme }
+        );
+      });
+    });
+
+    describe(`Test mindmap mixed shapes and icons in ${look} look and ${theme} theme`, () => {
+      it('should render branches with mixed shapes and icons', () => {
+        imgSnapshotTest(
+          `mindmap
+root
+  child1((Circle))
+      grandchild 1
+      grandchild 2
+  child2(Round rectangle)
+      grandchild 3
+      grandchild 4
+  child3[Square]
+      grandchild 5
+      ::icon(mdi mdi-fire)
+      gc6((grand<br/>child 6))
+      ::icon(mdi mdi-fire)
+    `,
+          { look, theme }
+        );
+      });
+    });
+
+    describe(`Test mindmap bang and cloud shapes in ${look} look and ${theme} theme`, () => {
+      it('should render bang and cloud shapes', () => {
+        imgSnapshotTest(
+          `mindmap
+root))bang((
+  ::icon(mdi mdi-fire)
+  a))Another bang((
+  ::icon(mdi mdi-fire)
+  a)A cloud(
+  ::icon(mdi mdi-fire)
+    `,
+          { look, theme }
+        );
+      });
+    });
+
+    describe(`Test mindmap markdown labels in ${look} look and ${theme} theme`, () => {
+      it('should render formatted markdown labels with linebreak and emojis', () => {
+        imgSnapshotTest(
+          `mindmap
+    id1[\`**Start** with
+    a second line 😎\`]
+      id2[\`The dog in **the** hog... a *very long text* about it Word!\`]`,
+          { look, theme }
+        );
+      });
+    });
+
+    describe(`Test mindmap Level 2 nodes exceeding 11 in ${look} look and ${theme} theme`, () => {
+      it('should render all Level 2 nodes correctly when there are more than 11', () => {
+        imgSnapshotTest(
+          `mindmap
+root
+  Node1
+  Node2
+  Node3
+  Node4
+  Node5
+  Node6
+  Node7
+  Node8
+  Node9
+  Node10
+  Node11
+  Node12
+  Node13
+  Node14
+  Node15`,
+          { look, theme }
+        );
       });
     });
   });
