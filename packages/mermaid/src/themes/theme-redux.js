@@ -51,6 +51,8 @@ class Theme {
 
     /* Sequence Diagram variables */
     this.actorBorder = '#28253D';
+
+    this.filterColor = '#000000';
   }
   updateColors() {
     // The || is to make sure that if the variable has been defined by a user override that value is to be used

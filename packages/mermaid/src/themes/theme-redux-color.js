@@ -80,6 +80,8 @@ class Theme {
       '#F0F9FF', //Sky-50
       '#FFF1F2', //Rose-50
     ];
+
+    this.filterColor = '#000000';
   }
   updateColors() {
     // The || is to make sure that if the variable has been defined by a user override that value is to be used

@@ -998,8 +998,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
   // Add linearGradient for neo look — render.ts does this for layout-based diagrams,
   // but gitGraph uses its own draw function so we must define it here.
   const { look, theme, themeVariables } = getConfig();
-  const { useGradient, gradientStart, gradientStop } = themeVariables;
-  const isDark = DARK_THEMES.has(theme ?? '');
+  const { useGradient, gradientStart, gradientStop, filterColor } = themeVariables;
   if (useGradient) {
     const gradient = diagram
       .append('defs')
@@ -1025,7 +1024,6 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
   // Add drop-shadow SVG filter for neo+redux look. Defined once on the root <svg>
   // with a diagram-unique ID to avoid collisions when multiple diagrams share the page.
   if (look === 'neo' && REDUX_GEOMETRY_THEMES.has(theme ?? '')) {
-    const filterColor = isDark ? '#FFFFFF' : '#000000';
     diagram
       .append('defs')
       .append('filter')
