@@ -84,6 +84,7 @@ export interface FlowSubGraph {
   nodes: string[];
   title: string;
   type?: 'subgraph' | 'task' | 'agent' | 'flow';
+  metadata?: Record<string, unknown>;
 }
 
 export interface FlowLink {

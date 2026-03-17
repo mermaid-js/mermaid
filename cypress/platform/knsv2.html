@@ -112,7 +112,7 @@ agentflow LR
         n7["website_copy<br>Coffee shop<br>(output)"]
         A["Template <br>Website copy"]
   end
- task t2
+ agent t2
         E("generate_html")
         n9["scandinavian_design<br>(directive)"]
         n19["Permissions"]
@@ -128,6 +128,7 @@ agentflow LR
     n19 --> n21 & n22
     n19 --x n23
     t1 --> t2
+    t2@{ view: collapsed }
 
     n7@{ shape: doc}
     A@{ shape: lin-doc}

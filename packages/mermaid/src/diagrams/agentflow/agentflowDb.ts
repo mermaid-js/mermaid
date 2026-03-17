@@ -211,6 +211,13 @@ export class AgentFlowDB implements DiagramDB {
       doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
     }
 
+    // Check if this is a subgraph (e.g. my_agent@{ view: "collapsed" })
+    const subGraph = this.subGraphLookup.get(id);
+    if (subGraph && doc) {
+      subGraph.metadata = doc as unknown as Record<string, unknown>;
+      return;
+    }
+
     // Check if this is an edge
     const edge = this.edges.find((e) => e.id === id);
     if (edge) {
@@ -1165,9 +1172,31 @@ You have to call mermaid.initialize.`
     const parentDB = new Map<string, string>();
     const subGraphDB = new Map<string, boolean>();
 
+    // Collect IDs hidden by collapsed subgraphs (the subgraph's descendants)
+    const hiddenIds = new Set<string>();
+    const collectDescendants = (sgId: string) => {
+      const sg = subGraphs.find((s) => s.id === sgId);
+      if (!sg) {
+        return;
+      }
+      for (const childId of sg.nodes) {
+        hiddenIds.add(childId);
+        // Recurse into child subgraphs
+        collectDescendants(childId);
+      }
+    };
+    for (const sg of subGraphs) {
+      if (sg.metadata?.view === 'collapsed') {
+        collectDescendants(sg.id);
+      }
+    }
+
     // Setup the subgraph data for adding nodes
     for (let i = subGraphs.length - 1; i >= 0; i--) {
       const subGraph = subGraphs[i];
+      if (hiddenIds.has(subGraph.id)) {
+        continue;
+      }
       if (subGraph.nodes.length > 0) {
         subGraphDB.set(subGraph.id, true);
       }
@@ -1179,29 +1208,62 @@ You have to call mermaid.initialize.`
     // Data is setup, add the nodes
     for (let i = subGraphs.length - 1; i >= 0; i--) {
       const subGraph = subGraphs[i];
-      nodes.push({
-        id: subGraph.id,
-        label: subGraph.title,
-        labelStyle: '',
-        labelType: subGraph.labelType,
-        parentId: parentDB.get(subGraph.id),
-        padding: 8,
-        cssCompiledStyles: this.getCompiledStyles(subGraph.classes),
-        cssClasses: subGraph.classes.join(' '),
-        shape: SUBGRAPH_TYPE_TO_SHAPE[subGraph.type ?? 'subgraph'],
-        dir: subGraph.dir,
-        isGroup: true,
-        look: config.look,
-      });
+      if (hiddenIds.has(subGraph.id)) {
+        continue;
+      }
+
+      const isCollapsed = subGraph.metadata?.view === 'collapsed';
+
+      if (isCollapsed) {
+        // Collapsed: render as an opaque node, not a group container
+        nodes.push({
+          id: subGraph.id,
+          label: subGraph.title,
+          labelStyle: '',
+          labelType: subGraph.labelType,
+          parentId: parentDB.get(subGraph.id),
+          padding: 8,
+          cssCompiledStyles: this.getCompiledStyles(subGraph.classes),
+          cssClasses: subGraph.classes.join(' '),
+          shape: 'roundedRect',
+          dir: subGraph.dir,
+          isGroup: false,
+          look: config.look,
+          metadata: subGraph.metadata,
+        });
+      } else {
+        nodes.push({
+          id: subGraph.id,
+          label: subGraph.title,
+          labelStyle: '',
+          labelType: subGraph.labelType,
+          parentId: parentDB.get(subGraph.id),
+          padding: 8,
+          cssCompiledStyles: this.getCompiledStyles(subGraph.classes),
+          cssClasses: subGraph.classes.join(' '),
+          shape: SUBGRAPH_TYPE_TO_SHAPE[subGraph.type ?? 'subgraph'],
+          dir: subGraph.dir,
+          isGroup: true,
+          look: config.look,
+        });
+      }
     }
 
     const n = this.getVertices();
     n.forEach((vertex) => {
+      // Skip vertices hidden by collapsed subgraphs
+      if (hiddenIds.has(vertex.id)) {
+        return;
+      }
       this.addNodeFromVertex(vertex, nodes, parentDB, subGraphDB, config, config.look || 'classic');
     });
 
     const e = this.getEdges();
     e.forEach((rawEdge, index) => {
+      // Skip edges where either endpoint is hidden by a collapsed subgraph
+      if (hiddenIds.has(rawEdge.start) || hiddenIds.has(rawEdge.end)) {
+        return;
+      }
       const { arrowTypeStart, arrowTypeEnd } = this.destructEdgeType(rawEdge.type);
       const styles = [...(e.defaultStyle ?? [])];
 

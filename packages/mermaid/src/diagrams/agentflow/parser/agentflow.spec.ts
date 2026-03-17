@@ -892,4 +892,146 @@ describe('parsing an agentflow diagram', function () {
       }
     });
   });
+
+  describe('view hint (collapsed/expanded)', function () {
+    it('should apply view metadata to a subgraph via @{} annotation', function () {
+      agentflow.parser.parse(`agentflow LR
+        agent a1["Agent One"]
+          step1["Do thing"]
+        end
+        a1@{ view: "collapsed" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const agentNode = data.nodes.find((n: { id: string }) => n.id === 'a1');
+      expect(agentNode).toBeDefined();
+      expect(agentNode?.metadata?.view).toBe('collapsed');
+    });
+
+    it('should render collapsed subgraph as a regular node, not a group', function () {
+      agentflow.parser.parse(`agentflow LR
+        agent a1["Agent One"]
+          step1["Do thing"]
+        end
+        a1@{ view: "collapsed" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const agentNode = data.nodes.find((n: { id: string }) => n.id === 'a1');
+      expect(agentNode?.isGroup).toBe(false);
+      expect(agentNode?.shape).toBe('roundedRect');
+      expect(agentNode?.label).toBe('Agent One');
+    });
+
+    it('should hide children of a collapsed subgraph', function () {
+      agentflow.parser.parse(`agentflow LR
+        agent a1["Agent One"]
+          step1["Step 1"]
+          step2["Step 2"]
+          step1 --> step2
+        end
+        a1@{ view: "collapsed" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      // Children should be hidden
+      expect(data.nodes.find((n: { id: string }) => n.id === 'step1')).toBeUndefined();
+      expect(data.nodes.find((n: { id: string }) => n.id === 'step2')).toBeUndefined();
+      // Edges between hidden children should be hidden
+      expect(
+        data.edges.some(
+          (e: { start: string; end: string }) => e.start === 'step1' && e.end === 'step2'
+        )
+      ).toBe(false);
+    });
+
+    it('should hide nested subgraphs inside a collapsed parent', function () {
+      agentflow.parser.parse(`agentflow LR
+        agent a1["Agent One"]
+          flow f1["Flow"]
+            task t1["Task"]
+              action1["Action"]
+            end
+          end
+        end
+        a1@{ view: "collapsed" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      // Only the collapsed agent should remain
+      expect(data.nodes.find((n: { id: string }) => n.id === 'a1')).toBeDefined();
+      expect(data.nodes.find((n: { id: string }) => n.id === 'f1')).toBeUndefined();
+      expect(data.nodes.find((n: { id: string }) => n.id === 't1')).toBeUndefined();
+      expect(data.nodes.find((n: { id: string }) => n.id === 'action1')).toBeUndefined();
+    });
+
+    it('should default to expanded when no view hint is given', function () {
+      agentflow.parser.parse(`agentflow LR
+        agent a1["Agent One"]
+          step1["Do thing"]
+        end
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const agentNode = data.nodes.find((n: { id: string }) => n.id === 'a1');
+      expect(agentNode?.isGroup).toBe(true);
+      expect(agentNode?.shape).toBe('agentGroup');
+      // Children visible
+      expect(data.nodes.find((n: { id: string }) => n.id === 'step1')).toBeDefined();
+    });
+
+    it('should keep sibling subgraphs expanded when one is collapsed', function () {
+      agentflow.parser.parse(`agentflow LR
+        agent a1["Agent One"]
+          s1["Step"]
+        end
+        agent a2["Agent Two"]
+          s2["Step"]
+        end
+        a1@{ view: "collapsed" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      // a1 is collapsed
+      const a1 = data.nodes.find((n: { id: string }) => n.id === 'a1');
+      expect(a1?.isGroup).toBe(false);
+      expect(data.nodes.find((n: { id: string }) => n.id === 's1')).toBeUndefined();
+
+      // a2 is expanded
+      const a2 = data.nodes.find((n: { id: string }) => n.id === 'a2');
+      expect(a2?.isGroup).toBe(true);
+      expect(a2?.shape).toBe('agentGroup');
+      expect(data.nodes.find((n: { id: string }) => n.id === 's2')).toBeDefined();
+    });
+
+    it('should work with flow containers', function () {
+      agentflow.parser.parse(`agentflow LR
+        flow f1["My Flow"]
+          step1["Do thing"]
+        end
+        f1@{ view: "collapsed" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const flowNode = data.nodes.find((n: { id: string }) => n.id === 'f1');
+      expect(flowNode?.isGroup).toBe(false);
+      expect(flowNode?.shape).toBe('roundedRect');
+      expect(data.nodes.find((n: { id: string }) => n.id === 'step1')).toBeUndefined();
+    });
+
+    it('should work with task containers', function () {
+      agentflow.parser.parse(`agentflow LR
+        task t1["My Task"]
+          action1["Action"]
+        end
+        t1@{ view: "collapsed" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const taskNode = data.nodes.find((n: { id: string }) => n.id === 't1');
+      expect(taskNode?.isGroup).toBe(false);
+      expect(taskNode?.shape).toBe('roundedRect');
+      expect(data.nodes.find((n: { id: string }) => n.id === 'action1')).toBeUndefined();
+    });
+  });
 });
