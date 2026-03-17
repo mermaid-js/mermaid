@@ -2,10 +2,11 @@ import { darken, lighten, isDark } from 'khroma';
 import { getConfig } from './../../config.js';
 
 const genReduxSections = (options) => {
-  const isDarkTheme = options.darkMode === true;
-  const isColorTheme =
-    Array.isArray(options.borderColorArray) && options.borderColorArray.length > 0;
-  // options.svgId is the CSS selector (e.g. '#mermaid-0'), strip the leading '#' for use in url(#...)
+  const { theme } = getConfig();
+  //Required to read the active theme at render time,
+  // since options alone does not expose the theme name needed to switch between redux and classic section generators.
+  const isDarkTheme = theme?.includes('dark');
+  const isColorTheme = theme?.includes('color');
   const rawSvgId = options.svgId?.replace(/^#/, '') ?? '';
   const scopedDropShadow = rawSvgId
     ? `url(#${rawSvgId}-drop-shadow)`
