@@ -1,5 +1,5 @@
 import { AgentFlowDB } from '../agentflowDb.js';
-import agentflow from './agentflowParser.ts';
+import agentflow from './agentflowParser.js';
 import { setConfig } from '../../../config.js';
 
 setConfig({
@@ -857,6 +857,334 @@ describe('parsing an agentflow diagram', function () {
     });
   });
 
+  describe('edge types', function () {
+    it('should parse --> as arrow_point', function () {
+      agentflow.parser.parse(`agentflow LR
+        A --> B
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      expect(data.edges).toHaveLength(1);
+      expect(data.edges[0].arrowTypeEnd).toBe('arrow_point');
+      expect(data.edges[0].arrowTypeStart).toBe('none');
+    });
+
+    it('should parse --o as arrow_circle', function () {
+      agentflow.parser.parse(`agentflow LR
+        A --o B
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      expect(data.edges).toHaveLength(1);
+      expect(data.edges[0].arrowTypeEnd).toBe('arrow_circle');
+      expect(data.edges[0].arrowTypeStart).toBe('none');
+    });
+
+    it('should parse --- as arrow_open (no arrowheads)', function () {
+      agentflow.parser.parse(`agentflow LR
+        A --- B
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      expect(data.edges).toHaveLength(1);
+      expect(data.edges[0].arrowTypeEnd).toBe('none');
+      expect(data.edges[0].arrowTypeStart).toBe('none');
+    });
+
+    it('should parse -->> as arrow_hierarchy', function () {
+      agentflow.parser.parse(`agentflow LR
+        A -->> B
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      expect(data.edges).toHaveLength(1);
+      expect(data.edges[0].arrowTypeEnd).toBe('arrow_hierarchy');
+      expect(data.edges[0].arrowTypeStart).toBe('none');
+    });
+
+    it('should parse --x as arrow_cross', function () {
+      agentflow.parser.parse(`agentflow LR
+        A --x B
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      expect(data.edges).toHaveLength(1);
+      expect(data.edges[0].arrowTypeEnd).toBe('arrow_cross');
+      expect(data.edges[0].arrowTypeStart).toBe('none');
+    });
+
+    it('should parse o--o as double_arrow_circle', function () {
+      agentflow.parser.parse(`agentflow LR
+        A o--o B
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      expect(data.edges).toHaveLength(1);
+      expect(data.edges[0].arrowTypeEnd).toBe('arrow_circle');
+      expect(data.edges[0].arrowTypeStart).toBe('arrow_circle');
+    });
+
+    it('should parse all four edge types in one diagram', function () {
+      agentflow.parser.parse(`agentflow TB
+        A --> B
+        B --o C
+        C --- D
+        D -->> E
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      expect(data.edges).toHaveLength(4);
+
+      // --> data flow
+      expect(data.edges[0].arrowTypeEnd).toBe('arrow_point');
+      // --o uses
+      expect(data.edges[1].arrowTypeEnd).toBe('arrow_circle');
+      // --- governs
+      expect(data.edges[2].arrowTypeEnd).toBe('none');
+      // -->> hierarchy
+      expect(data.edges[3].arrowTypeEnd).toBe('arrow_hierarchy');
+    });
+  });
+
+  describe('4-level nesting (agent > flow > agent > task)', function () {
+    it('should parse 4-level nesting as in v7 spec', function () {
+      agentflow.parser.parse(`agentflow TB
+        agent outer_agent["Outer Agent"]
+          flow build_site["Build Site"]
+            agent inner_agent["Inner Agent"]
+              task step1["Step 1"]
+                action1["Do thing"]
+              end
+            end
+          end
+        end
+      `);
+
+      const subGraphs = agentflow.parser.yy.getSubGraphs();
+      expect(subGraphs).toHaveLength(4);
+
+      const outerAgent = subGraphs.find((sg: { id: string }) => sg.id === 'outer_agent');
+      const flow = subGraphs.find((sg: { id: string }) => sg.id === 'build_site');
+      const innerAgent = subGraphs.find((sg: { id: string }) => sg.id === 'inner_agent');
+      const task = subGraphs.find((sg: { id: string }) => sg.id === 'step1');
+
+      expect(outerAgent?.type).toBe('agent');
+      expect(flow?.type).toBe('flow');
+      expect(innerAgent?.type).toBe('agent');
+      expect(task?.type).toBe('task');
+
+      const data = agentflow.parser.yy.getData();
+      const outerNode = data.nodes.find((n: { id: string }) => n.id === 'outer_agent');
+      const flowNode = data.nodes.find((n: { id: string }) => n.id === 'build_site');
+      const innerNode = data.nodes.find((n: { id: string }) => n.id === 'inner_agent');
+      const taskNode = data.nodes.find((n: { id: string }) => n.id === 'step1');
+      const actionNode = data.nodes.find((n: { id: string }) => n.id === 'action1');
+
+      expect(outerNode?.shape).toBe('agentGroup');
+      expect(flowNode?.shape).toBe('flowGroup');
+      expect(flowNode?.parentId).toBe('outer_agent');
+      expect(innerNode?.shape).toBe('agentGroup');
+      expect(innerNode?.parentId).toBe('build_site');
+      expect(taskNode?.shape).toBe('taskGroup');
+      expect(taskNode?.parentId).toBe('inner_agent');
+      expect(actionNode?.parentId).toBe('step1');
+    });
+  });
+
+  describe('permit-tree diagram', function () {
+    it('should parse the permit-tree.mmd with -->> hierarchy edges', function () {
+      agentflow.parser.parse(`agentflow TB
+        llm["llm"]
+        llm_query["llm.query"]
+        net["net"]
+        net_read["net.read"]
+        llm -->> llm_query
+        net -->> net_read
+
+        llm@{ shape: hex }
+        llm_query@{ shape: terminal }
+        net@{ shape: hex }
+        net_read@{ shape: terminal }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      expect(data.nodes).toHaveLength(4);
+      expect(data.edges).toHaveLength(2);
+
+      // Both edges should be hierarchy edges
+      expect(data.edges[0].arrowTypeEnd).toBe('arrow_hierarchy');
+      expect(data.edges[1].arrowTypeEnd).toBe('arrow_hierarchy');
+
+      // Shapes
+      const llm = data.nodes.find((n: { id: string }) => n.id === 'llm');
+      const llmQuery = data.nodes.find((n: { id: string }) => n.id === 'llm_query');
+      expect(llm?.shape).toBe('hex');
+      expect(llmQuery?.shape).toBe('terminal');
+    });
+  });
+
+  describe('v7 Coffee Website Builder integration', function () {
+    it('should parse the full v7 diagram with all features', function () {
+      agentflow.parser.parse(`agentflow TB
+        type CoffeeCopy = Record {
+          hero_tagline: String
+          hero_subtitle: String
+          about: String
+          menu_item: String * 6
+        }
+
+        type BilingualPage = Record {
+          english: String
+          swedish: String
+        }
+
+        agent coffee_team["Coffee Team"]
+          flow build_site["Build Site"]
+            agent researcher["Researcher"]
+              task step1["Research Location"]
+                city["city"]
+                research_loc["research_location"]
+                brief["Research Brief"]
+                city --> research_loc --> brief
+              end
+              task step2["Write Copy"]
+                write_copy["write_copy"]
+                english_copy["English Copy"]
+                brief --> write_copy --> english_copy
+                write_copy --o coffee_copy_ref
+              end
+              step1 --> step2
+            end
+
+            agent translator["Translator"]
+              task step3["Translate to Swedish"]
+                translate_sv["translate_to_swedish"]
+                bilingual["Bilingual Page"]
+                english_copy --> translate_sv --> bilingual
+                translate_sv --o bilingual_page_ref
+              end
+            end
+
+            agent designer["Designer"]
+              task step4["Generate Website"]
+                gen_html["generate_html"]
+                html_out["HTML Website"]
+                bilingual --> gen_html --> html_out
+              end
+              nordic["nordic_design"]
+              glass["glassmorphism"]
+              scroll["scroll_animations"]
+              toggle["bilingual_toggle"]
+              gen_html --- nordic
+              gen_html --- glass
+              gen_html --- scroll
+              gen_html --- toggle
+            end
+          end
+        end
+
+        coffee_copy_ref["CoffeeCopy"]
+        bilingual_page_ref["BilingualPage"]
+        permit_ref["Permission Tree"]
+
+        city@{ shape: lean-right }
+        brief@{ shape: doc }
+        english_copy@{ shape: doc }
+        bilingual@{ shape: doc }
+        html_out@{ shape: doc }
+        nordic@{ shape: lin-doc }
+        glass@{ shape: lin-doc }
+        scroll@{ shape: lin-doc }
+        toggle@{ shape: lin-doc }
+        coffee_copy_ref@{ shape: procs, type: "CoffeeCopy" }
+        bilingual_page_ref@{ shape: procs, type: "BilingualPage" }
+        permit_ref@{ shape: procs, src: "./permit-tree.mmd" }
+
+        research_loc@{ shape: subroutine, returns: "String", requires: "^net.read", cache: "24h", description: "Research a city's coffee culture" }
+        write_copy@{ shape: subroutine, returns: "CoffeeCopy", requires: "^llm.query", retry: 2, description: "Write marketing copy" }
+        translate_sv@{ shape: subroutine, returns: "BilingualPage", requires: "^llm.query", description: "Translate copy to Swedish" }
+        gen_html@{ shape: subroutine, returns: "String", requires: "^llm.query", description: "Generate HTML website" }
+
+        researcher@{ model: "claude-sonnet-4-20250514", permits: "^net.read, ^llm.query" }
+        translator@{ model: "claude-sonnet-4-20250514", permits: "^llm.query" }
+        designer@{ model: "claude-sonnet-4-20250514", permits: "^llm.query" }
+
+        build_site@{ params: "city :: String", returns: "String" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+
+      // Type declarations
+      expect(data.types).toHaveLength(2);
+      expect(data.types[0].name).toBe('CoffeeCopy');
+      expect(data.types[0].kind).toBe('record');
+      expect(data.types[0].fields).toHaveLength(4);
+      expect(data.types[1].name).toBe('BilingualPage');
+      expect(data.types[1].kind).toBe('record');
+      expect(data.types[1].fields).toHaveLength(2);
+
+      // 4-level nesting: coffee_team > build_site > researcher/translator/designer > step1..4
+      const subGraphs = agentflow.parser.yy.getSubGraphs();
+      const containerTypes = subGraphs.map((sg: { id: string; type: string }) => ({
+        id: sg.id,
+        type: sg.type,
+      }));
+      expect(containerTypes).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ id: 'coffee_team', type: 'agent' }),
+          expect.objectContaining({ id: 'build_site', type: 'flow' }),
+          expect.objectContaining({ id: 'researcher', type: 'agent' }),
+          expect.objectContaining({ id: 'translator', type: 'agent' }),
+          expect.objectContaining({ id: 'designer', type: 'agent' }),
+          expect.objectContaining({ id: 'step1', type: 'task' }),
+          expect.objectContaining({ id: 'step2', type: 'task' }),
+          expect.objectContaining({ id: 'step3', type: 'task' }),
+          expect.objectContaining({ id: 'step4', type: 'task' }),
+        ])
+      );
+
+      // Nesting hierarchy in layout data
+      const buildSiteNode = data.nodes.find((n: { id: string }) => n.id === 'build_site');
+      const researcherNode = data.nodes.find((n: { id: string }) => n.id === 'researcher');
+      expect(buildSiteNode?.parentId).toBe('coffee_team');
+      expect(researcherNode?.parentId).toBe('build_site');
+
+      // Node shapes
+      const cityNode = data.nodes.find((n: { id: string }) => n.id === 'city');
+      const briefNode = data.nodes.find((n: { id: string }) => n.id === 'brief');
+      const nordicNode = data.nodes.find((n: { id: string }) => n.id === 'nordic');
+      const coffeeRef = data.nodes.find((n: { id: string }) => n.id === 'coffee_copy_ref');
+      const researchLocNode = data.nodes.find((n: { id: string }) => n.id === 'research_loc');
+      expect(cityNode?.shape).toBe('lean-right');
+      expect(briefNode?.shape).toBe('doc');
+      expect(nordicNode?.shape).toBe('lin-doc');
+      expect(coffeeRef?.shape).toBe('procs');
+      expect(researchLocNode?.shape).toBe('subroutine');
+
+      // Metadata on agents
+      expect(researcherNode?.metadata?.model).toBe('claude-sonnet-4-20250514');
+      expect(researcherNode?.metadata?.permits).toBe('^net.read, ^llm.query');
+
+      // Metadata on tools
+      expect(researchLocNode?.metadata?.returns).toBe('String');
+      expect(researchLocNode?.metadata?.requires).toBe('^net.read');
+
+      // Metadata on flow
+      expect(buildSiteNode?.metadata?.params).toBe('city :: String');
+      expect(buildSiteNode?.metadata?.returns).toBe('String');
+
+      // Edge types: data flow (-->), uses (--o), governs (---)
+      const usesEdges = data.edges.filter(
+        (e: { arrowTypeEnd: string }) => e.arrowTypeEnd === 'arrow_circle'
+      );
+      const governsEdges = data.edges.filter(
+        (e: { arrowTypeEnd: string }) => e.arrowTypeEnd === 'none'
+      );
+      expect(usesEdges.length).toBeGreaterThanOrEqual(2); // write_copy --o coffee_copy_ref, translate_sv --o bilingual_page_ref
+      expect(governsEdges.length).toBeGreaterThanOrEqual(4); // gen_html --- nordic/glass/scroll/toggle
+    });
+  });
+
   describe('reference shape', function () {
     it('should parse a reference node with procs shape and src', function () {
       agentflow.parser.parse(`agentflow LR
@@ -919,8 +1247,9 @@ describe('parsing an agentflow diagram', function () {
       const data = agentflow.parser.yy.getData();
       const agentNode = data.nodes.find((n: { id: string }) => n.id === 'a1');
       expect(agentNode?.isGroup).toBe(false);
-      expect(agentNode?.shape).toBe('roundedRect');
+      expect(agentNode?.shape).toBe('collapsedGroup');
       expect(agentNode?.label).toBe('Agent One');
+      expect(agentNode?.metadata?.containerType).toBe('agent');
     });
 
     it('should hide children of a collapsed subgraph', function () {
@@ -1015,7 +1344,8 @@ describe('parsing an agentflow diagram', function () {
       const data = agentflow.parser.yy.getData();
       const flowNode = data.nodes.find((n: { id: string }) => n.id === 'f1');
       expect(flowNode?.isGroup).toBe(false);
-      expect(flowNode?.shape).toBe('roundedRect');
+      expect(flowNode?.shape).toBe('collapsedGroup');
+      expect(flowNode?.metadata?.containerType).toBe('flow');
       expect(data.nodes.find((n: { id: string }) => n.id === 'step1')).toBeUndefined();
     });
 
@@ -1030,7 +1360,8 @@ describe('parsing an agentflow diagram', function () {
       const data = agentflow.parser.yy.getData();
       const taskNode = data.nodes.find((n: { id: string }) => n.id === 't1');
       expect(taskNode?.isGroup).toBe(false);
-      expect(taskNode?.shape).toBe('roundedRect');
+      expect(taskNode?.shape).toBe('collapsedGroup');
+      expect(taskNode?.metadata?.containerType).toBe('task');
       expect(data.nodes.find((n: { id: string }) => n.id === 'action1')).toBeUndefined();
     });
   });

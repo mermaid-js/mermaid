@@ -31,6 +31,7 @@ const arrowTypesMap = {
   arrow_point: { type: 'point', fill: true },
   arrow_barb: { type: 'barb', fill: true },
   arrow_circle: { type: 'circle', fill: false },
+  arrow_hierarchy: { type: 'hierarchy', fill: false },
   aggregation: { type: 'aggregation', fill: false },
   extension: { type: 'extension', fill: false },
   composition: { type: 'composition', fill: true },

@@ -155,7 +155,7 @@ that id.
 ","                          return 'COMMA';
 "*"                          return 'MULT';
 
-<INITIAL,edgeText>\s*[xo<]?\-\-+[-xo>]\s*          { this.popState(); return 'LINK'; }
+<INITIAL,edgeText>\s*[xo<]?\-\-+[-xo>]\>?\s*        { this.popState(); return 'LINK'; }
 <INITIAL>\s*[xo<]?\-\-\s*                          { this.pushState("edgeText"); return 'START_LINK'; }
 <edgeText>[^-]|\-(?!\-)+                           return 'EDGE_TEXT';
 

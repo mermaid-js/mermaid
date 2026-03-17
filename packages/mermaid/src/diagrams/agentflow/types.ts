@@ -83,7 +83,7 @@ export interface FlowSubGraph {
   labelType: string;
   nodes: string[];
   title: string;
-  type?: 'subgraph' | 'task' | 'agent' | 'flow';
+  type?: 'subgraph' | 'task' | 'agent' | 'flow' | 'types';
   metadata?: Record<string, unknown>;
 }
 

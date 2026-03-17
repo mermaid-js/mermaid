@@ -768,6 +768,22 @@ const flowGroup = async (parent, node) => {
   });
 };
 
+/** Types group: container for type declarations. Light background, subtle border. */
+const typesGroup = async (parent, node) => {
+  const { themeVariables } = getConfig();
+  const stroke = themeVariables.clusterBorder || themeVariables.secondaryBorderColor;
+  const fill = themeVariables.tertiaryColor || '#f0f0f0';
+  return createContainerGroup(parent, node, {
+    cssClass: 'types-cluster',
+    rx: 6,
+    fill,
+    stroke,
+    strokeWidth: 0.75,
+    roughness: 0.7,
+    strokeDash: [4, 4],
+  });
+};
+
 const squareRect = rect;
 const shapes = {
   rect,
@@ -779,6 +795,7 @@ const shapes = {
   taskGroup,
   agentGroup,
   flowGroup,
+  typesGroup,
 };
 
 let clusterElems = new Map();

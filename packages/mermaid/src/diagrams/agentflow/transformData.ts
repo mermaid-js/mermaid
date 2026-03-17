@@ -25,6 +25,10 @@ const ALLOWED_SHAPES = new Set([
   'lin-doc',
   'lined-document',
   'procs',
+  // Collapsed container shape
+  'collapsedGroup',
+  // Type declaration shape
+  'typeDeclaration',
 ]);
 const DEFAULT_SHAPE = 'roundedRect';
 

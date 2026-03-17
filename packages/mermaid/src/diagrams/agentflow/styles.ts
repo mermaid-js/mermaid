@@ -148,6 +148,35 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke-dasharray: 8, 4;
   }
 
+  .node .collapsed-indicator {
+    fill: ${options.nodeBorder};
+    stroke: none;
+    stroke-width: 0;
+    opacity: 0.5;
+  }
+
+  .node .collapsed-separator {
+    stroke-width: 0.75px;
+  }
+
+  .types-cluster rect {
+    fill: ${options.tertiaryColor};
+    stroke: ${options.clusterBorder};
+    stroke-width: 0.75px;
+    stroke-dasharray: 4, 4;
+  }
+
+  .node .type-declaration-box path {
+    fill: ${options.mainBkg};
+    stroke: ${options.nodeBorder};
+    stroke-width: 1px;
+  }
+
+  .node .type-declaration-separator path {
+    stroke: ${options.nodeBorder};
+    stroke-width: 1px;
+  }
+
   .cluster text {
     fill: ${options.titleColor};
   }

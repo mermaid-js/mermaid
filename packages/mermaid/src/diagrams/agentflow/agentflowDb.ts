@@ -4,6 +4,7 @@ import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { isValidShape, type ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
+import type { ClusterShapeID } from '../../rendering-util/rendering-elements/clusters.js';
 import type { Edge, Node } from '../../rendering-util/types.js';
 import type { EdgeMetaData, NodeMetaData } from '../../types.js';
 import utils, { getEdgeId } from '../../utils.js';
@@ -38,10 +39,11 @@ interface LinkData {
 const MERMAID_DOM_ID_PREFIX = 'agentflow-';
 
 /** Maps subgraph container types to their cluster shape IDs. */
-const SUBGRAPH_TYPE_TO_SHAPE: Record<NonNullable<FlowSubGraph['type']>, string> = {
+const SUBGRAPH_TYPE_TO_SHAPE: Record<NonNullable<FlowSubGraph['type']>, ClusterShapeID> = {
   agent: 'agentGroup',
   flow: 'flowGroup',
   task: 'taskGroup',
+  types: 'typesGroup',
   subgraph: 'rect',
 };
 
@@ -936,28 +938,34 @@ You have to call mermaid.initialize.`
     let line = str.slice(0, -1);
     let type = 'arrow_open';
 
-    switch (str.slice(-1)) {
-      case 'x':
-        type = 'arrow_cross';
-        if (str.startsWith('x')) {
-          type = 'double_' + type;
-          line = line.slice(1);
-        }
-        break;
-      case '>':
-        type = 'arrow_point';
-        if (str.startsWith('<')) {
-          type = 'double_' + type;
-          line = line.slice(1);
-        }
-        break;
-      case 'o':
-        type = 'arrow_circle';
-        if (str.startsWith('o')) {
-          type = 'double_' + type;
-          line = line.slice(1);
-        }
-        break;
+    // Check for double-character arrow endings first
+    if (str.endsWith('>>')) {
+      type = 'arrow_hierarchy';
+      line = str.slice(0, -2);
+    } else {
+      switch (str.slice(-1)) {
+        case 'x':
+          type = 'arrow_cross';
+          if (str.startsWith('x')) {
+            type = 'double_' + type;
+            line = line.slice(1);
+          }
+          break;
+        case '>':
+          type = 'arrow_point';
+          if (str.startsWith('<')) {
+            type = 'double_' + type;
+            line = line.slice(1);
+          }
+          break;
+        case 'o':
+          type = 'arrow_circle';
+          if (str.startsWith('o')) {
+            type = 'double_' + type;
+            line = line.slice(1);
+          }
+          break;
+      }
     }
 
     let stroke = 'normal';
@@ -1079,6 +1087,7 @@ You have to call mermaid.initialize.`
       case 'arrow_point':
       case 'arrow_circle':
       case 'arrow_cross':
+      case 'arrow_hierarchy':
         arrowTypeEnd = type;
         break;
 
@@ -1215,7 +1224,11 @@ You have to call mermaid.initialize.`
       const isCollapsed = subGraph.metadata?.view === 'collapsed';
 
       if (isCollapsed) {
-        // Collapsed: render as an opaque node, not a group container
+        // Collapsed: render as a compact node with container-type styling and collapse indicator
+        const collapsedMetadata = {
+          ...subGraph.metadata,
+          containerType: subGraph.type,
+        };
         nodes.push({
           id: subGraph.id,
           label: subGraph.title,
@@ -1225,11 +1238,11 @@ You have to call mermaid.initialize.`
           padding: 8,
           cssCompiledStyles: this.getCompiledStyles(subGraph.classes),
           cssClasses: subGraph.classes.join(' '),
-          shape: 'roundedRect',
+          shape: 'collapsedGroup',
           dir: subGraph.dir,
           isGroup: false,
           look: config.look,
-          metadata: subGraph.metadata,
+          metadata: collapsedMetadata,
         });
       } else {
         nodes.push({
@@ -1245,6 +1258,7 @@ You have to call mermaid.initialize.`
           dir: subGraph.dir,
           isGroup: true,
           look: config.look,
+          metadata: subGraph.metadata,
         });
       }
     }
@@ -1257,6 +1271,46 @@ You have to call mermaid.initialize.`
       }
       this.addNodeFromVertex(vertex, nodes, parentDB, subGraphDB, config, config.look || 'classic');
     });
+
+    // -- Synthesize a "Types" group for type declarations --
+    const typeDecls = this.getTypeDeclarations();
+    if (typeDecls.length > 0) {
+      const typesGroupId = 'agentflow-types-group';
+
+      // Add the types container as a cluster node
+      nodes.push({
+        id: typesGroupId,
+        label: 'Types',
+        labelStyle: '',
+        labelType: 'text',
+        padding: 8,
+        cssCompiledStyles: [],
+        cssClasses: '',
+        shape: 'typesGroup',
+        isGroup: true,
+        look: config.look,
+      });
+
+      // Add each type declaration as a child node
+      for (const typeDecl of typeDecls) {
+        const typeNodeId = `agentflow-type-${typeDecl.name}`;
+        parentDB.set(typeNodeId, typesGroupId);
+        nodes.push({
+          id: typeNodeId,
+          label: typeDecl.name,
+          labelStyle: '',
+          labelType: 'text',
+          parentId: typesGroupId,
+          padding: 8,
+          cssCompiledStyles: [],
+          cssClasses: '',
+          shape: 'typeDeclaration',
+          isGroup: false,
+          look: config.look,
+          metadata: { typeDeclaration: typeDecl },
+        });
+      }
+    }
 
     const e = this.getEdges();
     e.forEach((rawEdge, index) => {
