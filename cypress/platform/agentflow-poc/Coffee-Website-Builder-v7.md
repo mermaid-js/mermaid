@@ -334,12 +334,12 @@ A reference node uses **either** `type` (inline type) or `src` (external diagram
 
 ---
 
-## What lives in `.pact` only
+## What lives in description fields
 
-| Pact element                        | Why it's not in the diagram                                                                                                                |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Agent `prompt: <<...>>`             | System prompts are prose instructions — not topology, not contracts.                                                                       |
-| Directive prose content (`<<...>>`) | The `lin-doc` node marks the directive's existence and its governance relationship. The instruction text itself is too long for a diagram. |
+| Pact element                        |                                                                                                                                                                            |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Agent `prompt: <<...>>`             | It lives in the agent's description field. If the text is too long the directive can be broken out to a separate agentflow diagram And referenced via `procs` + `src`.     |
+| Directive prose content (`<<...>>`) | It lives in the directive's description field. If the text is too long the directive can be broken out to a separate agentflow diagram And referenced via `procs` + `src`. |
 
 ---
 
