@@ -6,7 +6,7 @@ import { render } from '../../rendering-util/render.js';
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
 import type { LayoutData } from '../../rendering-util/types.js';
 import utils from '../../utils.js';
-import { CSS_DIAGRAM, DEFAULT_NESTED_DOC_DIR } from './stateCommon.js';
+import { CSS_DIAGRAM, DEFAULT_NESTED_DOC_DIR, normalizeSpacing } from './stateCommon.js';
 
 /**
  * Get the direction from the statement items.
@@ -61,8 +61,10 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   // TODO: Should we move these two to baseConfig? These types are not there in StateConfig.
 
-  data4Layout.nodeSpacing = conf?.nodeSpacing || 50;
-  data4Layout.rankSpacing = conf?.rankSpacing || 50;
+  const nodeSpacing = normalizeSpacing(conf?.nodeSpacing, 50);
+  const rankSpacing = normalizeSpacing(conf?.rankSpacing, 50);
+  data4Layout.nodeSpacing = nodeSpacing;
+  data4Layout.rankSpacing = rankSpacing;
   data4Layout.markers = ['barb'];
   data4Layout.diagramId = id;
   // console.log('REF1:', data4Layout);

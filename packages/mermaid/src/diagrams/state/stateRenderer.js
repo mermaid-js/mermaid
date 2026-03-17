@@ -4,6 +4,7 @@ import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger.js';
 import common from '../common/common.js';
 import { drawState, addTitleAndBox, drawEdge } from './shapes.js';
+import { normalizeSpacing } from './stateCommon.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 
@@ -92,6 +93,11 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
     compound: true,
     multigraph: true,
   });
+  const stateConf = getConfig().state || {};
+  const nodeSpacing = normalizeSpacing(stateConf.nodeSpacing, 50);
+  const fallbackRankSpacing =
+    typeof stateConf.edgeLengthFactor === 'number' ? stateConf.edgeLengthFactor : 50;
+  const rankSpacing = normalizeSpacing(stateConf.rankSpacing, fallbackRankSpacing);
 
   let i;
   let edgeFreeDoc = true;
@@ -110,8 +116,8 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
       compound: true,
       // acyclicer: 'greedy',
       ranker: 'tight-tree',
-      ranksep: edgeFreeDoc ? 1 : conf.edgeLengthFactor,
-      nodeSep: edgeFreeDoc ? 1 : 50,
+      ranksep: edgeFreeDoc ? 1 : rankSpacing,
+      nodesep: edgeFreeDoc ? 1 : nodeSpacing,
       isMultiGraph: true,
       // ranksep: 5,
       // nodesep: 1
@@ -124,8 +130,8 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
       // isCompound: true,
       // acyclicer: 'greedy',
       // ranker: 'longest-path'
-      ranksep: edgeFreeDoc ? 1 : conf.edgeLengthFactor,
-      nodeSep: edgeFreeDoc ? 1 : 50,
+      ranksep: edgeFreeDoc ? 1 : rankSpacing,
+      nodesep: edgeFreeDoc ? 1 : nodeSpacing,
       ranker: 'tight-tree',
       // ranker: 'network-simplex'
       isMultiGraph: true,

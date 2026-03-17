@@ -66,6 +66,19 @@ export const NOTE_ID = `${DOMID_TYPE_SPACER}${NOTE}`;
 export const PARENT_ID = `${DOMID_TYPE_SPACER}${PARENT}`;
 // --------------------------------------
 
+export const normalizeSpacing = (value: unknown, fallback: number) => {
+  if (typeof value !== 'number') {
+    return fallback;
+  }
+  if (value < 10) {
+    return 10;
+  }
+  if (value > 200) {
+    return 200;
+  }
+  return value;
+};
+
 export default {
   DEFAULT_DIAGRAM_DIRECTION,
   DEFAULT_NESTED_DOC_DIR,
@@ -107,4 +120,5 @@ export default {
   DOMID_TYPE_SPACER,
   NOTE_ID,
   PARENT_ID,
+  normalizeSpacing,
 };
