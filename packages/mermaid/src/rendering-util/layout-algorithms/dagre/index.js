@@ -304,6 +304,7 @@ export const render = async (data4Layout, svg) => {
   });
 
   log.debug('Edges:', data4Layout.edges);
+  const constraintFalseEdges = [];
   data4Layout.edges.forEach((edge) => {
     // Handle self-loops
     if (edge.start === edge.end) {
@@ -359,6 +360,10 @@ export const render = async (data4Layout, svg) => {
       graph.setEdge(nodeId, specialId1, edge1, nodeId + '-cyclic-special-0');
       graph.setEdge(specialId1, specialId2, edgeMid, nodeId + '-cyclic-special-1');
       graph.setEdge(specialId2, nodeId, edge2, nodeId + '-cyc<lic-special-2');
+    } else if (edge.constraint === false) {
+      // Exclude from dagre layout entirely so it doesn't affect rank assignment.
+      // Will be drawn manually after layout using node positions.
+      constraintFalseEdges.push({ ...edge });
     } else {
       graph.setEdge(edge.start, edge.end, { ...edge }, edge.id);
     }
@@ -368,7 +373,7 @@ export const render = async (data4Layout, svg) => {
   adjustClustersAndEdges(graph);
   log.warn('Graph after XAX:', JSON.stringify(graphlibJson.write(graph)));
   const siteConfig = getConfig();
-  await recursiveRender(
+  const { elem } = await recursiveRender(
     element,
     graph,
     data4Layout.type,
@@ -376,4 +381,35 @@ export const render = async (data4Layout, svg) => {
     undefined,
     siteConfig
   );
+
+  // Draw constraint:false edges after layout using the positioned node coordinates.
+  // These edges are purely visual and don't affect rank assignment.
+  if (constraintFalseEdges.length > 0) {
+    const edgePaths = elem.select('g.edgePaths');
+    const edgeLabels = elem.select('g.edgeLabels');
+    for (const edge of constraintFalseEdges) {
+      const startNode = graph.node(edge.start);
+      const endNode = graph.node(edge.end);
+      if (startNode && endNode) {
+        await insertEdgeLabel(edgeLabels, edge);
+        // Set edge.x/y to midpoint so positionEdgeLabel can use them if needed
+        edge.x = (startNode.x + endNode.x) / 2;
+        edge.y = (startNode.y + endNode.y) / 2;
+        edge.points = [
+          { x: startNode.x, y: startNode.y },
+          { x: endNode.x, y: endNode.y },
+        ];
+        const paths = insertEdge(
+          edgePaths,
+          edge,
+          clusterDb,
+          data4Layout.type,
+          startNode,
+          endNode,
+          data4Layout.diagramId
+        );
+        positionEdgeLabel(edge, paths);
+      }
+    }
+  }
 };

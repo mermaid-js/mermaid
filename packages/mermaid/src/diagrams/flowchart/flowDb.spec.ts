@@ -166,6 +166,44 @@ describe('flow db getData', () => {
   });
 });
 
+describe('flow db edge constraint annotation', () => {
+  let flowDb: FlowDB;
+  beforeEach(() => {
+    flowDb = new FlowDB();
+  });
+
+  it('should support setting constraint: false on an edge via edge id annotation', () => {
+    flowDb.addVertex('A', { text: 'A', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addVertex('B', { text: 'B', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addVertex('C', { text: 'C', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addLink(['B'], ['C'], { id: 'e1' });
+    // Simulate e1@{ constraint: false } — addVertex with edge id sets EdgeMetaData
+    flowDb.addVertex('e1', undefined, undefined, [], [], '', {}, ' constraint: false ');
+
+    const { edges } = flowDb.getData();
+    expect(edges[0].constraint).toBe(false);
+  });
+
+  it('should not create a vertex named after an edge id when annotating an edge', () => {
+    flowDb.addVertex('A', { text: 'A', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addVertex('B', { text: 'B', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addLink(['A'], ['B'], { id: 'e1' });
+    flowDb.addVertex('e1', undefined, undefined, [], [], '', {}, ' constraint: false ');
+
+    const { nodes } = flowDb.getData();
+    expect(nodes.find((n) => n.id === 'e1')).toBeUndefined();
+  });
+
+  it('should leave constraint undefined on edges without annotation', () => {
+    flowDb.addVertex('A', { text: 'A', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addVertex('B', { text: 'B', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addLink(['A'], ['B'], {});
+
+    const { edges } = flowDb.getData();
+    expect(edges[0].constraint).toBeUndefined();
+  });
+});
+
 describe('flow db direction', () => {
   let flowDb: FlowDB;
   beforeEach(() => {

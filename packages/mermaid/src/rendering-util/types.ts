@@ -139,6 +139,7 @@ export interface Edge {
   thickness?: 'normal' | 'thick' | 'invisible' | 'dotted';
   look?: string;
   isUserDefinedId?: boolean;
+  constraint?: boolean;
   points?: Point[];
   parentId?: string;
   dir?: string;
