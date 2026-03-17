@@ -4,6 +4,7 @@ import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger.js';
 import common from '../common/common.js';
 import { drawState, addTitleAndBox, drawEdge } from './shapes.js';
+import { normalizeSpacing } from './stateCommon.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 
@@ -11,19 +12,6 @@ import { configureSvgSize } from '../../setupGraphViewbox.js';
 let conf;
 
 const transformationLog = {};
-
-const normalizeSpacing = (value, fallback) => {
-  if (typeof value !== 'number') {
-    return fallback;
-  }
-  if (value < 10) {
-    return 10;
-  }
-  if (value > 200) {
-    return 200;
-  }
-  return value;
-};
 
 export const setConf = function () {
   //no-op
@@ -106,8 +94,10 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
     multigraph: true,
   });
   const stateConf = getConfig().state || {};
-  const nodeSpacing = normalizeSpacing(stateConf.nodeSpacing, 30);
-  const rankSpacing = normalizeSpacing(stateConf.rankSpacing, 30);
+  const nodeSpacing = normalizeSpacing(stateConf.nodeSpacing, 50);
+  const fallbackRankSpacing =
+    typeof stateConf.edgeLengthFactor === 'number' ? stateConf.edgeLengthFactor : 50;
+  const rankSpacing = normalizeSpacing(stateConf.rankSpacing, fallbackRankSpacing);
 
   let i;
   let edgeFreeDoc = true;
