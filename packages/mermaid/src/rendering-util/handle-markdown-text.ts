@@ -143,7 +143,7 @@ export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidCo
     } else if (node.type === 'link') {
       const href = sanitizeUrl(node.href);
       const text = node.tokens?.map(output).join('') ?? node.text;
-      const safeHref = href.replace(/&/g, '&').replace(/"/g, '"');
+      const safeHref = href.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
       return `<a href="${safeHref}" target="_blank">${text}</a>`;
     } else if (node.type === 'paragraph') {
       return `<p>${node.tokens?.map(output).join('')}</p>`;
