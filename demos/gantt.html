@@ -65,6 +65,33 @@
 
     <pre class="mermaid">
     gantt
+      title Weekend stripe fix demo (issue #6421) - last stripe should be visible
+      dateFormat YYYY-MM-DD
+      axisFormat %m-%d %a
+      excludes weekends
+
+      section Fixed-end task ending on Saturday
+      Planning (Mon-Fri)   :id1, 2025-06-30, 2025-07-05
+      Follow-up            :id2, after id1, 3d
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+    gantt
+      title Weekend stripe fix demo (issue #6421) - tickInterval with excludes weekends
+      dateFormat YYYY-MM-DD
+      axisFormat %b-%d-%y
+      tickInterval 1d
+      excludes weekends
+
+      section Tasks
+      Act1 :2025-06-30, 3d
+      Act2 :2025-07-09, 3d
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+    gantt
     title Exclusive end dates (Manual date should end on 3d)
     dateFormat YYYY-MM-DD
     axisFormat %d
