@@ -288,7 +288,7 @@ Used to register external diagram types.
 
 Array of [ExternalDiagramDefinition](ExternalDiagramDefinition.md).
 
-##### opts
+##### opts?
 
 If opts.lazyLoad is false, the diagrams will be loaded immediately.
 
@@ -402,7 +402,7 @@ Renders the mermaid diagrams
 
 #### Parameters
 
-##### options
+##### options?
 
 [`RunOptions`](RunOptions.md) = `...`
 
