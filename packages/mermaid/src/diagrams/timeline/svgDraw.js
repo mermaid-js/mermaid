@@ -1,4 +1,5 @@
 import { arc as d3arc, select } from 'd3';
+let nodeCount = 0;
 
 export const drawRect = function (elem, rectData) {
   const rectElem = elem.append('rect');
@@ -224,13 +225,13 @@ let taskCount = -1;
  * @param {any} task The task to render
  * @param {any} conf The global configuration
  */
-export const drawTask = function (elem, task, conf) {
+export const drawTask = function (elem, task, conf, diagramId) {
   const center = task.x + conf.width / 2;
   const g = elem.append('g');
   taskCount++;
   const maxHeight = 300 + 5 * 30;
   g.append('line')
-    .attr('id', 'task' + taskCount)
+    .attr('id', diagramId + '-task' + taskCount)
     .attr('x1', center)
     .attr('y1', task.y)
     .attr('x2', center)
@@ -432,11 +433,13 @@ const _drawTextCandidateFunc = (function () {
   };
 })();
 
-const initGraphics = function (graphics) {
+const initGraphics = function (graphics, id) {
+  nodeCount = 0;
+  taskCount = -1;
   graphics
     .append('defs')
     .append('marker')
-    .attr('id', 'arrowhead')
+    .attr('id', id + '-arrowhead')
     .attr('refX', 5)
     .attr('refY', 2)
     .attr('markerWidth', 6)
@@ -492,7 +495,7 @@ function wrap(text, width) {
   });
 }
 
-export const drawNode = function (elem, node, fullSection, conf, isEvent = false) {
+export const drawNode = function (elem, node, fullSection, conf, diagramId, isEvent = false) {
   const { theme, look } = conf;
   const isReduxTheme = theme?.includes('redux');
   const maxSections = conf?.themeVariables?.THEME_COLOR_LIMIT ?? 12;
@@ -531,7 +534,7 @@ export const drawNode = function (elem, node, fullSection, conf, isEvent = false
   }
 
   // Create the background element
-  defaultBkg(bkgElem, node, section, conf);
+  defaultBkg(bkgElem, node, section, diagramId, conf);
 
   if (look === 'neo') {
     nodeElem.attr('data-look', `neo`);
@@ -580,7 +583,7 @@ export const getVirtualNodeHeight = function (elem, node, conf) {
   return bbox.height + fontSize * 1.1 * 0.5 + node.padding;
 };
 
-const defaultBkg = function (elem, node, section, config) {
+const defaultBkg = function (elem, node, section, diagramId, config) {
   const { theme } = config;
   const r = theme?.includes('redux') ? 0 : 5;
   const rd = 5;
@@ -592,7 +595,7 @@ const defaultBkg = function (elem, node, section, config) {
       : `M0 ${node.height - rd} v${-(node.height - rd)} h${node.width} v${node.height} H0 Z`;
   elem
     .append('path')
-    .attr('id', 'node-' + node.id)
+    .attr('id', diagramId + '-node-' + nodeCount++)
     .attr('class', 'node-bkg node-' + node.type)
     .attr('d', d);
   if (!theme?.includes('redux')) {

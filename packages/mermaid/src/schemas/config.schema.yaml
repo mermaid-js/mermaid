@@ -54,6 +54,7 @@ required:
   - sankey
   - packet
   - block
+  - treeView
   - look
   - venn
 properties:
@@ -322,10 +323,14 @@ properties:
     $ref: '#/$defs/PacketDiagramConfig'
   block:
     $ref: '#/$defs/BlockDiagramConfig'
+  treeView:
+    $ref: '#/$defs/TreeViewDiagramConfig'
   radar:
     $ref: '#/$defs/RadarDiagramConfig'
   venn:
     $ref: '#/$defs/VennDiagramConfig'
+  wardley-beta:
+    $ref: '#/$defs/WardleyDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration
     description: Configuration options to pass to the `dompurify` library.
@@ -972,6 +977,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - padding
       - iconSize
       - fontSize
+      - randomize
     properties:
       padding:
         type: number
@@ -982,6 +988,13 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       fontSize:
         type: number
         default: 16
+      randomize:
+        description: |
+          Whether to randomize initial node positions before running the layout algorithm.
+          When false (default), the layout is deterministic and produces identical results on every render.
+          When true, nodes start at random positions, which may produce varied but potentially better-spaced layouts.
+        type: boolean
+        default: false
 
   MindmapDiagramConfig:
     title: Mindmap Diagram Config
@@ -1283,6 +1296,10 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         minimum: 0
       showDataLabel:
         description: Should show the value corresponding to the bar within the bar
+        type: boolean
+        default: false
+      showDataLabelOutsideBar:
+        description: If showing data label then show it outside the bar
         type: boolean
         default: false
       showTitle:
@@ -2315,6 +2332,34 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         minimum: 0
         default: 8
 
+  TreeViewDiagramConfig:
+    title: TreeView Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for treeView diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      rowIndent:
+        description: Horizontal distance between rows differing by one level
+        type: number
+        minimum: 0
+        default: 10
+      paddingX:
+        description: Horizontal padding of label
+        type: number
+        minimum: 0
+        default: 5
+      paddingY:
+        description: Vertical padding of label
+        type: number
+        minimum: 0
+        default: 5
+      lineThickness:
+        description: Thickness of the line
+        type: number
+        minimum: 0
+        default: 1
+
   RadarDiagramConfig:
     title: Radar Diagram Config
     allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
@@ -2391,6 +2436,53 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         minimum: 0
         default: 8
       useDebugLayout:
+        type: boolean
+        default: false
+
+  WardleyDiagramConfig:
+    title: Wardley Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for Wardley Maps diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      width:
+        description: The width of the Wardley diagram canvas.
+        type: number
+        minimum: 1
+        default: 900
+      height:
+        description: The height of the Wardley diagram canvas.
+        type: number
+        minimum: 1
+        default: 600
+      padding:
+        description: The padding around the Wardley diagram.
+        type: number
+        minimum: 0
+        default: 48
+      nodeRadius:
+        description: The radius of component nodes.
+        type: number
+        minimum: 0
+        default: 6
+      nodeLabelOffset:
+        description: The offset distance for node labels.
+        type: number
+        minimum: 0
+        default: 8
+      axisFontSize:
+        description: The font size for axis labels.
+        type: number
+        minimum: 0
+        default: 12
+      labelFontSize:
+        description: The font size for component labels.
+        type: number
+        minimum: 0
+        default: 10
+      showGrid:
+        description: Whether to display a background grid.
         type: boolean
         default: false
 

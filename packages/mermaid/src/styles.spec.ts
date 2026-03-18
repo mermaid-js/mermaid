@@ -29,6 +29,7 @@ import timeline from './diagrams/timeline/styles.js';
 import mindmap from './diagrams/mindmap/styles.js';
 import packet from './diagrams/packet/styles.js';
 import block from './diagrams/block/styles.js';
+import treeView from './diagrams/treeView/styles.js';
 import radar from './diagrams/radar/styles.js';
 import venn from './diagrams/venn/styles.js';
 import themes from './themes/index.js';
@@ -101,6 +102,7 @@ describe('styles', () => {
         block,
         timeline,
         packet,
+        treeView,
         radar,
         venn,
       })) {

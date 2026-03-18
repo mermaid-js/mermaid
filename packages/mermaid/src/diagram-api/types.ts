@@ -39,6 +39,7 @@ export interface DiagramDB {
   getDirection?: () => string | undefined;
   setDirection?: (dir: DiagramOrientation) => void;
   setDisplayMode?: (title: string) => void;
+  setDiagramId?: (svgElementId: string) => void;
   bindFunctions?: (element: Element) => void;
 }
 

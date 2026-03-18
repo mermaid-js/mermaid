@@ -25,6 +25,7 @@ interface TimelineTask {
   score: number;
   events: string[];
 }
+
 export const draw = function (text: string, id: string, version: string, diagObj: Diagram) {
   //1. Fetch the configuration
   const conf = getConfig();
@@ -57,7 +58,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
   log.debug('task', tasks);
 
   //5. Initialize the diagram
-  svgDraw.initGraphics(svg);
+  svgDraw.initGraphics(svg, id);
 
   // fetch Sections
   // @ts-expect-error - db not typed yet
@@ -152,7 +153,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
       };
       log.debug('sectionNode', sectionNode);
       const sectionNodeWrapper = svg.append('g');
-      const node = svgDraw.drawNode(sectionNodeWrapper, sectionNode, sectionNumber, conf);
+      const node = svgDraw.drawNode(sectionNodeWrapper, sectionNode, sectionNumber, conf, id);
       log.debug('sectionNode output', node);
 
       sectionNodeWrapper.attr('transform', `translate(${masterX}, ${sectionBeginY})`);
@@ -172,7 +173,8 @@ export const draw = function (text: string, id: string, version: string, diagObj
           maxEventCount,
           maxEventLineLength,
           maxSectionHeight,
-          false
+          false,
+          id
         );
       }
       // todo replace with total width of section and its tasks
@@ -195,7 +197,8 @@ export const draw = function (text: string, id: string, version: string, diagObj
       maxEventCount,
       maxEventLineLength,
       maxSectionHeight,
-      true
+      true,
+      id
     );
   }
 
@@ -225,7 +228,32 @@ export const draw = function (text: string, id: string, version: string, diagObj
     .attr('y2', depthY)
     .attr('stroke-width', 4)
     .attr('stroke', 'black')
-    .attr('marker-end', 'url(#arrowhead)');
+    .attr('marker-end', `url(#${id}-arrowhead)`);
+
+  if (look === 'neo' && useGradient) {
+    const existingDefs = svg.select('defs');
+    const defsEl = existingDefs.empty() ? svg.append('defs') : existingDefs;
+    const gradient = defsEl
+      .append('linearGradient')
+      .attr('id', svg.attr('id') + '-gradient')
+      .attr('gradientUnits', 'objectBoundingBox')
+      .attr('x1', '0%')
+      .attr('y1', '0%')
+      .attr('x2', '100%')
+      .attr('y2', '0%');
+
+    gradient
+      .append('stop')
+      .attr('offset', '0%')
+      .attr('stop-color', gradientStart)
+      .attr('stop-opacity', 1);
+
+    gradient
+      .append('stop')
+      .attr('offset', '100%')
+      .attr('stop-color', gradientStop)
+      .attr('stop-opacity', 1);
+  }
 
   if (look === 'neo' && useGradient) {
     const existingDefs = svg.select('defs');
@@ -274,7 +302,8 @@ export const drawTasks = function (
   maxEventCount: number,
   maxEventLineLength: number,
   maxSectionHeight: number,
-  isWithoutSections: boolean
+  isWithoutSections: boolean,
+  diagramId: string
 ) {
   // Draw the tasks
   for (const task of tasks) {
@@ -292,7 +321,7 @@ export const drawTasks = function (
     // create task wrapper
 
     const taskWrapper = diagram.append('g').attr('class', 'taskWrapper');
-    const node = svgDraw.drawNode(taskWrapper, taskNode, sectionColor, conf);
+    const node = svgDraw.drawNode(taskWrapper, taskNode, sectionColor, conf, diagramId);
     const taskHeight = node.height;
     //log task height
     log.debug('taskHeight after draw', taskHeight);
@@ -309,7 +338,8 @@ export const drawTasks = function (
       //add margin to task
       masterY += 100;
       lineLength =
-        lineLength + drawEvents(diagram, task.events, sectionColor, masterX, masterY, conf);
+        lineLength +
+        drawEvents(diagram, task.events, sectionColor, masterX, masterY, conf, diagramId);
       masterY -= 100;
 
       lineWrapper
@@ -320,7 +350,7 @@ export const drawTasks = function (
         .attr('y2', masterY + maxTaskHeight + 100 + maxEventLineLength + 100) // End at consistent depth with ample padding for visible dashed lines and arrowheads
         .attr('stroke-width', 2)
         .attr('stroke', 'black')
-        .attr('marker-end', 'url(#arrowhead)')
+        .attr('marker-end', `url(#${diagramId}-arrowhead)`)
         .attr('stroke-dasharray', '5,5');
     }
 
@@ -340,7 +370,8 @@ export const drawEvents = function (
   sectionColor: number,
   masterX: number,
   masterY: number,
-  conf: MermaidConfig
+  conf: MermaidConfig,
+  diagramId: string
 ) {
   let maxEventHeight = 0;
   const eventBeginY = masterY;
@@ -361,7 +392,7 @@ export const drawEvents = function (
     log.debug('eventNode', eventNode);
     // create event wrapper
     const eventWrapper = diagram.append('g').attr('class', 'eventWrapper');
-    const node = svgDraw.drawNode(eventWrapper, eventNode, sectionColor, conf, true);
+    const node = svgDraw.drawNode(eventWrapper, eventNode, sectionColor, conf, diagramId, true);
     const eventHeight = node.height;
     maxEventHeight = maxEventHeight + eventHeight;
     eventWrapper.attr('transform', `translate(${masterX}, ${masterY})`);

@@ -126,3 +126,22 @@ export function ensureNodeFromSelector(selector: string, parent: ParentNode = do
   expect(node).not.toBeNull();
   return node!;
 }
+
+/**
+ * Asserts that no element `id` attribute appears more than once within the given DOM subtree.
+ * Useful for verifying that multiple mermaid diagrams rendered into the same document
+ * do not produce colliding SVG element IDs.
+ */
+export function assertNoDuplicateIds(root: ParentNode): void {
+  const allElements = root.querySelectorAll('[id]');
+  const idMap = new Map<string, number>();
+  for (const el of allElements) {
+    const id = el.getAttribute('id')!;
+    idMap.set(id, (idMap.get(id) ?? 0) + 1);
+  }
+  const duplicates = [...idMap.entries()].filter(([, count]) => count > 1);
+  if (duplicates.length > 0) {
+    const details = duplicates.map(([id, count]) => `  "${id}" appears ${count} times`).join('\n');
+    expect.fail(`Found duplicate element IDs:\n${details}`);
+  }
+}

@@ -43,7 +43,7 @@ const getStyles = (options) => {
     stroke: ${options.signalColor};
   }
 
-  #arrowhead path {
+  [id$="-arrowhead"] path {
     fill: ${options.signalColor};
     stroke: ${options.signalColor};
   }
@@ -52,11 +52,11 @@ const getStyles = (options) => {
     fill: ${options.sequenceNumberColor};
   }
 
-  #sequencenumber {
+  [id$="-sequencenumber"] {
     fill: ${options.signalColor};
   }
 
-  #crosshead path {
+  [id$="-crosshead"] path {
     fill: ${options.signalColor};
     stroke: ${options.signalColor};
   }

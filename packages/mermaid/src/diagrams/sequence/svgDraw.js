@@ -716,7 +716,7 @@ const drawActorTypeQueue = function (elem, actor, conf, isFooter, actorIndexMap)
   return height;
 };
 
-const drawActorTypeControl = function (elem, actor, conf, isFooter, actorIndexMap) {
+const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 75;
@@ -768,7 +768,7 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, actorIndexMa
   actElem
     .append('defs')
     .append('marker')
-    .attr('id', 'filled-head-control')
+    .attr('id', diagramId + '-filled-head-control')
     .attr('refX', 11)
     .attr('refY', 5.8)
     .attr('markerWidth', 20)
@@ -790,7 +790,7 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, actorIndexMa
   // Draw looping arrow as arc path
   actElem
     .append('line')
-    .attr('marker-end', 'url(#filled-head-control)')
+    .attr('marker-end', 'url(#' + diagramId + '-filled-head-control)')
     .attr('transform', `translate(${cx}, ${cy - r})`);
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
@@ -1271,7 +1271,7 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap)
   return actor.height;
 };
 
-export const drawActor = async function (elem, actor, conf, isFooter, diagObj, actorIndexMap) {
+export const drawActor = async function (elem, actor, conf, isFooter, diagramId, diagObj, actorIndexMap) {
   const resolvedActorIndexMap =
     actorIndexMap ??
     new Map(
@@ -1286,7 +1286,7 @@ export const drawActor = async function (elem, actor, conf, isFooter, diagObj, a
     case 'boundary':
       return await drawActorTypeBoundary(elem, actor, conf, isFooter, resolvedActorIndexMap);
     case 'control':
-      return await drawActorTypeControl(elem, actor, conf, isFooter, resolvedActorIndexMap);
+      return await drawActorTypeControl(elem, actor, conf, isFooter, diagramId, resolvedActorIndexMap);
     case 'entity':
       return await drawActorTypeEntity(elem, actor, conf, isFooter, resolvedActorIndexMap);
     case 'database':
@@ -1484,11 +1484,11 @@ export const drawBackgroundRect = function (elem, bounds) {
   svgDrawCommon.drawBackgroundRect(elem, bounds);
 };
 
-export const insertDatabaseIcon = function (elem) {
+export const insertDatabaseIcon = function (elem, id) {
   elem
     .append('defs')
     .append('symbol')
-    .attr('id', 'database')
+    .attr('id', id + '-database')
     .attr('fill-rule', 'evenodd')
     .attr('clip-rule', 'evenodd')
     .append('path')
@@ -1499,11 +1499,11 @@ export const insertDatabaseIcon = function (elem) {
     );
 };
 
-export const insertComputerIcon = function (elem) {
+export const insertComputerIcon = function (elem, id) {
   elem
     .append('defs')
     .append('symbol')
-    .attr('id', 'computer')
+    .attr('id', id + '-computer')
     .attr('width', '24')
     .attr('height', '24')
     .append('path')
@@ -1514,11 +1514,11 @@ export const insertComputerIcon = function (elem) {
     );
 };
 
-export const insertClockIcon = function (elem) {
+export const insertClockIcon = function (elem, id) {
   elem
     .append('defs')
     .append('symbol')
-    .attr('id', 'clock')
+    .attr('id', id + '-clock')
     .attr('width', '24')
     .attr('height', '24')
     .append('path')
@@ -1534,11 +1534,11 @@ export const insertClockIcon = function (elem) {
  *
  * @param elem
  */
-export const insertArrowHead = function (elem) {
+export const insertArrowHead = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'arrowhead')
+    .attr('id', id + '-arrowhead')
     .attr('refX', 7.9)
     .attr('refY', 5)
     .attr('markerUnits', 'userSpaceOnUse')
@@ -1554,11 +1554,11 @@ export const insertArrowHead = function (elem) {
  *
  * @param {any} elem
  */
-export const insertArrowFilledHead = function (elem) {
+export const insertArrowFilledHead = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'filled-head')
+    .attr('id', id + '-filled-head')
     .attr('refX', 15.5)
     .attr('refY', 7)
     .attr('markerWidth', 20)
@@ -1573,11 +1573,11 @@ export const insertArrowFilledHead = function (elem) {
  *
  * @param {any} elem
  */
-export const insertSequenceNumber = function (elem) {
+export const insertSequenceNumber = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'sequencenumber')
+    .attr('id', id + '-sequencenumber')
     .attr('refX', 15)
     .attr('refY', 15)
     .attr('markerWidth', 60)
@@ -1595,11 +1595,11 @@ export const insertSequenceNumber = function (elem) {
  *
  * @param {any} elem
  */
-export const insertArrowCrossHead = function (elem) {
+export const insertArrowCrossHead = function (elem, id) {
   const defs = elem.append('defs');
   const marker = defs
     .append('marker')
-    .attr('id', 'crosshead')
+    .attr('id', id + '-crosshead')
     .attr('markerWidth', 15)
     .attr('markerHeight', 8)
     .attr('orient', 'auto')
@@ -1927,11 +1927,11 @@ const _drawMenuItemTextCandidateFunc = (function () {
  *
  * @param elem
  */
-export const insertSolidTopArrowHead = function (elem) {
+export const insertSolidTopArrowHead = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'solidTopArrowHead')
+    .attr('id', id + '-solidTopArrowHead')
     .attr('refX', 7.9)
     .attr('refY', 7.25)
     .attr('markerUnits', 'userSpaceOnUse')
@@ -1942,11 +1942,11 @@ export const insertSolidTopArrowHead = function (elem) {
     .attr('d', 'M 0 0 L 10 8 L 0 8 z'); // this is actual shape for arrowhead
 };
 
-export const insertSolidBottomArrowHead = function (elem) {
+export const insertSolidBottomArrowHead = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'solidBottomArrowHead')
+    .attr('id', id + '-solidBottomArrowHead')
     .attr('refX', 7.9)
     .attr('refY', 0.75)
     .attr('markerUnits', 'userSpaceOnUse')
@@ -1957,11 +1957,11 @@ export const insertSolidBottomArrowHead = function (elem) {
     .attr('d', 'M 0 0 L 10 0 L 0 8 z');
 };
 
-export const insertStickTopArrowHead = function (elem) {
+export const insertStickTopArrowHead = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'stickTopArrowHead')
+    .attr('id', id + '-stickTopArrowHead')
     .attr('refX', 7.5)
     .attr('refY', 7)
     .attr('markerUnits', 'userSpaceOnUse')
@@ -1975,11 +1975,11 @@ export const insertStickTopArrowHead = function (elem) {
     .attr('fill', 'none');
 };
 
-export const insertStickBottomArrowHead = function (elem) {
+export const insertStickBottomArrowHead = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'stickBottomArrowHead')
+    .attr('id', id + '-stickBottomArrowHead')
     .attr('refX', 7.5)
     .attr('refY', 0)
     .attr('markerUnits', 'userSpaceOnUse')
