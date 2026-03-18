@@ -42,6 +42,7 @@ export async function note<T extends SVGGraphicsElement>(
 
   const rect = shapeSvg.insert(() => noteShapeNode, ':first-child');
   rect.attr('class', 'basic label-container outer-path');
+  label.attr('class', 'label noteLabel');
 
   if (cssStyles && node.look !== 'handDrawn') {
     rect.selectAll('path').attr('style', cssStyles);
