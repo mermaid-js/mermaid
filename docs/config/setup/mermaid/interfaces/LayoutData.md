@@ -30,7 +30,7 @@ Defined in: [packages/mermaid/src/rendering-util/types.ts:172](https://github.co
 
 > `optional` **diagramId**: `string`
 
-Defined in: [packages/mermaid/src/rendering-util/types.ts:172](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L172)
+Defined in: [packages/mermaid/src/rendering-util/types.ts:173](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L173)
 
 ---
 
