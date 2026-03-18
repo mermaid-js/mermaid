@@ -21,6 +21,8 @@ const getStyles = (
     THEME_COLOR_LIMIT?: number;
     nodeBorder?: string;
     mainBkg?: string;
+    theme?: string;
+    look?: string;
     strokeWidth?: number;
   } & FlowChartStyleOptions,
   svgId: string
