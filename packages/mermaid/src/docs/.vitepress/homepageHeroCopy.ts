@@ -10,7 +10,7 @@ const LOG_PREFIX = '[MMD_DOCS_HERO]';
  * Note: index.md frontmatter is static, so this is applied via VitePress transformPageData.
  */
 export function applyHomePageHeroCopy(pageData: any, hostname: string): void {
-  if (!pageData || pageData.relativePath !== 'index.md') {
+  if (pageData?.relativePath !== 'index.md') {
     return;
   }
 
