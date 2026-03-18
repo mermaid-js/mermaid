@@ -258,17 +258,38 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   // Move the edge labels to the correct place after layout
   graph.edges().forEach(function (e) {
     const edge = graph.edge(e);
+    if (!edge) {
+      log.warn('Edge data missing for edge:', e);
+      return;
+    }
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
     edge.points.forEach((point) => (point.y += subGraphTitleTotalMargin / 2));
     const startNode = graph.node(e.v);
     var endNode = graph.node(e.w);
+    if (!startNode || !endNode) {
+      log.warn(
+        'Start or end node missing for edge:',
+        e.v,
+        '->',
+        e.w,
+        'start:',
+        !!startNode,
+        'end:',
+        !!endNode
+      );
+      return;
+    }
     const paths = insertEdge(edgePaths, edge, clusterDb, diagramType, startNode, endNode, id);
     positionEdgeLabel(edge, paths);
   });
 
   graph.nodes().forEach(function (v) {
     const n = graph.node(v);
+    if (!n) {
+      log.warn('Node data is undefined for node ID during diff calculation:', v);
+      return;
+    }
     log.info(v, n.type, n.diff);
     if (n.isGroup) {
       diff = n.diff;

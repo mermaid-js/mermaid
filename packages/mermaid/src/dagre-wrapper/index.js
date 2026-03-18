@@ -87,7 +87,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
           // Render as before
           log.info('Cluster - the non recursive path XXX', v, node.id, node, graph);
           log.info(findNonClusterChild(node.id, graph));
-          clusterDb[node.id] = { id: findNonClusterChild(node.id, graph), node };
+          clusterDb.set(node.id, { id: findNonClusterChild(node.id, graph), node });
           // insertCluster(clusters, graph.node(v));
         } else {
           log.info('Node - the non recursive path', v, node.id, node);
@@ -107,7 +107,16 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ', e, ' ', JSON.stringify(graph.edge(e)));
 
     // Check if link is either from or to a cluster
-    log.info('Fix', clusterDb, 'ids:', e.v, e.w, 'Translating: ', clusterDb[e.v], clusterDb[e.w]);
+    log.info(
+      'Fix',
+      clusterDb,
+      'ids:',
+      e.v,
+      e.w,
+      'Translating: ',
+      clusterDb.get(e.v),
+      clusterDb.get(e.w)
+    );
     await insertEdgeLabel(edgeLabels, edge);
   });
 
@@ -120,12 +129,26 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   log.info('#############################################');
   log.info(graph);
   dagreLayout(graph);
+
+  // Strip out any virtual ordering edges that were injected for edge-less
+  // clusters (see mermaid-graphlib.js). They must be removed before rendering
+  // so that no SVG edge path is drawn for them.
+  graph.edges().forEach(function (e) {
+    if (graph.edge(e)?._virtual) {
+      graph.removeEdge(e.v, e.w, e.name);
+    }
+  });
+
   log.info('Graph after layout:', JSON.stringify(graphlibJson.write(graph)));
   // Move the nodes to the correct place
   let diff = 0;
   const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
   for (const v of sortNodesByHierarchy(graph)) {
     const node = graph.node(v);
+    if (!node) {
+      log.warn('Node data is undefined during positioning for node ID:', v);
+      continue;
+    }
     log.info('Position ' + v + ': ' + JSON.stringify(graph.node(v)));
     log.info(
       'Position ' + v + ': (' + node.x,
@@ -146,7 +169,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         // positionCluster(node);
         node.height += subGraphTitleTotalMargin;
         await insertCluster(clusters, node);
-        clusterDb[node.id].node = node;
+        clusterDb.get(node.id).node = node;
       } else {
         node.y += subGraphTitleTotalMargin / 2;
         positionNode(node);
@@ -166,6 +189,10 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
 
   graph.nodes().forEach(function (v) {
     const n = graph.node(v);
+    if (!n) {
+      log.warn('Node data is undefined for node ID during diff calculation:', v);
+      return;
+    }
     log.info(v, n.type, n.diff);
     if (n.type === 'group') {
       diff = n.diff;

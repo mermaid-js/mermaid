@@ -409,17 +409,23 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
   }
 
   if (edge.toCluster) {
-    log.debug('to cluster abc88', clusterDb[edge.toCluster]);
-    points = cutPathAtIntersect(edge.points, clusterDb[edge.toCluster].node);
-
-    pointsHasChanged = true;
+    const clusterEntry = clusterDb.get(edge.toCluster);
+    if (!clusterEntry?.node) {
+      log.warn('insertEdge: missing cluster node for toCluster:', edge.toCluster);
+    } else {
+      points = cutPathAtIntersect(edge.points, clusterEntry.node);
+      pointsHasChanged = true;
+    }
   }
 
   if (edge.fromCluster) {
-    log.debug('from cluster abc88', clusterDb[edge.fromCluster]);
-    points = cutPathAtIntersect(points.reverse(), clusterDb[edge.fromCluster].node).reverse();
-
-    pointsHasChanged = true;
+    const clusterEntry = clusterDb.get(edge.fromCluster);
+    if (!clusterEntry?.node) {
+      log.warn('insertEdge: missing cluster node for fromCluster:', edge.fromCluster);
+    } else {
+      points = cutPathAtIntersect(points.reverse(), clusterEntry.node).reverse();
+      pointsHasChanged = true;
+    }
   }
 
   // The data for our line

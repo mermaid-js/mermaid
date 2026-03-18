@@ -573,8 +573,14 @@ export const insertEdge = function (
     edgeClassStyles.push(edge.cssCompiledStyles[key]);
   }
 
+  // Guard against missing nodes (should not happen normally, but prevents crashes)
+  if (!head || !tail) {
+    log.warn('insertEdge: missing start or end node for edge:', edge?.id);
+    return [];
+  }
+
   log.debug('UIO intersect check', edge.points, head.x, tail.x);
-  if (head.intersect && tail.intersect && !skipIntersect) {
+  if (head?.intersect && tail?.intersect && !skipIntersect) {
     points = points.slice(1, edge.points.length - 1);
     points.unshift(tail.intersect(points[0]));
     log.debug(
@@ -590,21 +596,23 @@ export const insertEdge = function (
   }
   const pointsStr = btoa(JSON.stringify(points));
   if (edge.toCluster) {
-    log.info('to cluster abc88', clusterDb.get(edge.toCluster));
-    points = cutPathAtIntersect(edge.points, clusterDb.get(edge.toCluster).node);
-
-    pointsHasChanged = true;
+    const clusterEntry = clusterDb.get(edge.toCluster);
+    if (!clusterEntry?.node) {
+      log.warn('insertEdge: missing cluster node for toCluster:', edge.toCluster);
+    } else {
+      points = cutPathAtIntersect(edge.points, clusterEntry.node);
+      pointsHasChanged = true;
+    }
   }
 
   if (edge.fromCluster) {
-    log.debug(
-      'from cluster abc88',
-      clusterDb.get(edge.fromCluster),
-      JSON.stringify(points, null, 2)
-    );
-    points = cutPathAtIntersect(points.reverse(), clusterDb.get(edge.fromCluster).node).reverse();
-
-    pointsHasChanged = true;
+    const clusterEntry = clusterDb.get(edge.fromCluster);
+    if (!clusterEntry?.node) {
+      log.warn('insertEdge: missing cluster node for fromCluster:', edge.fromCluster);
+    } else {
+      points = cutPathAtIntersect(points.reverse(), clusterEntry.node).reverse();
+      pointsHasChanged = true;
+    }
   }
 
   let lineData = points.filter((p) => !Number.isNaN(p.y));
