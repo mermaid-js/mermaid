@@ -68,7 +68,6 @@ class Theme {
       (this.darkMode ? darken(this.secondaryColor, 30) : this.secondaryColor);
     this.nodeTextColor = this.nodeTextColor || this.primaryTextColor;
     /* Sequence Diagram variables */
-    this.clusterBkg = '#FFFFF8';
 
     // this.actorBorder = lighten(this.border1, 0.5);
     this.actorBorder = this.actorBorder || this.primaryBorderColor;
