@@ -166,7 +166,7 @@ export const createUserStyles = (
   const allStyles = getStyles(
     graphType,
     userCSSstyles,
-    { ...config.themeVariables, look: config.look, theme: config.theme },
+    { ...config.themeVariables, theme: config.theme, look: config.look },
     svgId
   );
 
