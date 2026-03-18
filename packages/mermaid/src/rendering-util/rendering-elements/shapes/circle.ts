@@ -15,8 +15,12 @@ export async function circle<T extends SVGGraphicsElement>(
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
+
+  // Calculate radius based on look type
+  const labelPadding = 16;
   const padding = options?.padding ?? halfPadding;
-  const radius = bbox.width / 2 + padding;
+  const radius = node.look === 'neo' ? bbox.width / 2 + labelPadding * 2 : bbox.width / 2 + padding;
+
   let circleElem;
   const { cssStyles } = node;
 

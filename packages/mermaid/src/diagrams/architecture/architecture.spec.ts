@@ -108,6 +108,56 @@ describe('architecture diagrams', () => {
     });
   });
 
+  describe('randomize config', () => {
+    it('should default randomize to false', () => {
+      expect(db.getConfigField('randomize')).toBe(false);
+    });
+
+    it('should parse a complex deeply-nested diagram with randomize defaulting to false', async () => {
+      const str = `architecture-beta
+    group sub1(cloud)[Subscription A]
+    group vnet1(cloud)[VNet A] in sub1
+    service vm1(server)[VM] in vnet1
+
+    group sub2(cloud)[Subscription B]
+    group shared(cloud)[Shared] in sub2
+    service reg(database)[Registry] in shared
+
+    group env(cloud)[Environment] in sub2
+    group vnet(cloud)[VNet] in env
+    group snet1(cloud)[App Subnet] in vnet
+    service nsg(server)[NSG] in snet1
+    service asp(server)[App Plan] in snet1
+    service web(server)[Web App] in snet1
+
+    group snet2(cloud)[PE Subnet] in vnet
+    service pe1(server)[PE Blob] in snet2
+    service pe2(server)[PE Bus] in snet2
+
+    service storage(disk)[Storage] in env
+    service container(disk)[Container] in env
+    service bus(server)[Service Bus] in env
+    service dns(server)[DNS Zone] in env
+
+    service client(internet)[Client]
+
+    reg:B --> T:web
+    nsg:R --> L:asp
+    asp:R --> L:web
+    web:R --> L:pe1
+    pe1:R --> L:storage
+    storage:B --> T:container
+    web:B --> T:pe2
+    pe2:R --> L:bus
+    vm1:R --> L:pe2`;
+      await expect(parser.parse(str)).resolves.not.toThrow();
+      expect(db.getConfigField('randomize')).toBe(false);
+      expect(db.getServices()).toHaveLength(12);
+      expect(db.getGroups()).toHaveLength(8);
+      expect(db.getEdges()).toHaveLength(9);
+    });
+  });
+
   describe('addJunction validation', () => {
     it('should throw if junction id is already in use by a service', () => {
       db.addGroup({ id: 'g1', title: 'Group' });

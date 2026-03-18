@@ -1,6 +1,7 @@
 import * as commonDb from '../common/commonDb.js';
 let currentSection = '';
 let currentTaskId = 0;
+let direction = 'LR';
 
 const sections = [];
 const tasks = [];
@@ -13,7 +14,16 @@ export const clear = function () {
   tasks.length = 0;
   currentSection = '';
   rawTasks.length = 0;
+  direction = 'LR';
   commonDb.clear();
+};
+
+export const setDirection = function (dir) {
+  direction = dir;
+};
+
+export const getDirection = function () {
+  return direction;
 };
 
 export const addSection = function (txt) {
@@ -93,6 +103,8 @@ const compileTasks = function () {
 export default {
   clear,
   getCommonDb,
+  getDirection,
+  setDirection,
   addSection,
   getSections,
   getTasks,

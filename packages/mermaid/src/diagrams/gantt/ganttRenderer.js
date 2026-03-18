@@ -85,6 +85,8 @@ const MAX_TICK_COUNT = 10000;
 export const draw = function (text, id, version, diagObj) {
   const conf = getConfig().gantt;
 
+  diagObj.db.setDiagramId(id);
+
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
@@ -277,7 +279,7 @@ export const draw = function (text, id, version, diagObj) {
     rectangles
       .append('rect')
       .attr('id', function (d) {
-        return d.id;
+        return id + '-' + d.id;
       })
       .attr('rx', 3)
       .attr('ry', 3)
@@ -386,7 +388,7 @@ export const draw = function (text, id, version, diagObj) {
     rectangles
       .append('text')
       .attr('id', function (d) {
-        return d.id + '-text';
+        return id + '-' + d.id + '-text';
       })
       .text(function (d) {
         return d.task;
@@ -509,8 +511,8 @@ export const draw = function (text, id, version, diagObj) {
           return links.has(d.id);
         })
         .each(function (o) {
-          var taskRect = doc.querySelector('#' + o.id);
-          var taskText = doc.querySelector('#' + o.id + '-text');
+          var taskRect = doc.querySelector('#' + CSS.escape(id + '-' + o.id));
+          var taskText = doc.querySelector('#' + CSS.escape(id + '-' + o.id + '-text'));
           const oldParent = taskRect.parentNode;
           var Link = doc.createElement('a');
           Link.setAttribute('xlink:href', links.get(o.id));
@@ -585,7 +587,7 @@ export const draw = function (text, id, version, diagObj) {
 
     rectangles
       .append('rect')
-      .attr('id', (d) => 'exclude-' + d.start.format('YYYY-MM-DD'))
+      .attr('id', (d) => id + '-exclude-' + d.start.format('YYYY-MM-DD'))
       .attr('x', (d) => timeScale(d.start.startOf('day')) + theSidePad)
       .attr('y', conf.gridLineStartPadding)
       .attr('width', (d) => timeScale(d.end.endOf('day')) - timeScale(d.start.startOf('day')))

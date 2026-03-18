@@ -209,10 +209,12 @@ export class ErDB implements DiagramDB {
     const edges: Edge[] = [];
     const config = getConfig();
 
+    let colorIndex = 0;
     for (const entityKey of this.entities.keys()) {
       const entityNode = this.entities.get(entityKey);
       if (entityNode) {
         entityNode.cssCompiledStyles = this.getCompiledStyles(entityNode.cssClasses!.split(' '));
+        entityNode.colorIndex = colorIndex++;
         nodes.push(entityNode as unknown as Node);
       }
     }
