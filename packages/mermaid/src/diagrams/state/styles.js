@@ -27,12 +27,12 @@ g.stateGroup rect {
 
 g.stateGroup line {
   stroke: ${options.lineColor};
-  stroke-width: 1;
+  stroke-width: ${options.strokeWidth || 1};
 }
 
 .transition {
   stroke: ${options.transitionColor};
-  stroke-width: 1;
+  stroke-width: ${options.strokeWidth || 1};
   fill: none;
 }
 
@@ -117,12 +117,12 @@ g.stateGroup line {
 .node rect {
   fill: ${options.stateBkg || options.mainBkg};
   stroke: ${options.stateBorder || options.nodeBorder};
-  stroke-width: 1px;
+  stroke-width: ${options.strokeWidth || 1}px;
 }
 .node polygon {
   fill: ${options.mainBkg};
   stroke: ${options.stateBorder || options.nodeBorder};;
-  stroke-width: 1px;
+  stroke-width: ${options.strokeWidth || 1}px;
 }
 [id$="-barbEnd"] {
   fill: ${options.lineColor};
@@ -131,7 +131,7 @@ g.stateGroup line {
 .statediagram-cluster rect {
   fill: ${options.compositeTitleBackground};
   stroke: ${options.stateBorder || options.nodeBorder};
-  stroke-width: 1px;
+  stroke-width: ${options.strokeWidth || 1}px;
 }
 
 .cluster-label, .nodeLabel {
@@ -205,7 +205,7 @@ g.stateGroup line {
 [id$="-dependencyStart"], [id$="-dependencyEnd"] {
   fill: ${options.lineColor};
   stroke: ${options.lineColor};
-  stroke-width: 1;
+  stroke-width: ${options.strokeWidth || 1};
 }
 
 .statediagramTitleText {

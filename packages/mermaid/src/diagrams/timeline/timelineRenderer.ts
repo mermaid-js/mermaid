@@ -29,6 +29,8 @@ interface TimelineTask {
 export const draw = function (text: string, id: string, version: string, diagObj: Diagram) {
   //1. Fetch the configuration
   const conf = getConfig();
+  const { look, themeVariables } = conf;
+  const { useGradient, gradientStart, gradientStop } = themeVariables;
   const LEFT_MARGIN = conf.timeline?.leftMargin ?? 50;
 
   log.debug('timeline', diagObj.db);
@@ -208,7 +210,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
     svg
       .append('text')
       .text(title)
-      .attr('x', box.width / 2 - LEFT_MARGIN)
+      .attr('x', look === 'neo' ? box.x * 2 + LEFT_MARGIN : box.width / 2 - LEFT_MARGIN)
       .attr('font-size', '4ex')
       .attr('font-weight', 'bold')
       .attr('y', 20);
@@ -227,6 +229,56 @@ export const draw = function (text: string, id: string, version: string, diagObj
     .attr('stroke-width', 4)
     .attr('stroke', 'black')
     .attr('marker-end', `url(#${id}-arrowhead)`);
+
+  if (look === 'neo' && useGradient) {
+    const existingDefs = svg.select('defs');
+    const defsEl = existingDefs.empty() ? svg.append('defs') : existingDefs;
+    const gradient = defsEl
+      .append('linearGradient')
+      .attr('id', svg.attr('id') + '-gradient')
+      .attr('gradientUnits', 'objectBoundingBox')
+      .attr('x1', '0%')
+      .attr('y1', '0%')
+      .attr('x2', '100%')
+      .attr('y2', '0%');
+
+    gradient
+      .append('stop')
+      .attr('offset', '0%')
+      .attr('stop-color', gradientStart)
+      .attr('stop-opacity', 1);
+
+    gradient
+      .append('stop')
+      .attr('offset', '100%')
+      .attr('stop-color', gradientStop)
+      .attr('stop-opacity', 1);
+  }
+
+  if (look === 'neo' && useGradient) {
+    const existingDefs = svg.select('defs');
+    const defsEl = existingDefs.empty() ? svg.append('defs') : existingDefs;
+    const gradient = defsEl
+      .append('linearGradient')
+      .attr('id', svg.attr('id') + '-gradient')
+      .attr('gradientUnits', 'objectBoundingBox')
+      .attr('x1', '0%')
+      .attr('y1', '0%')
+      .attr('x2', '100%')
+      .attr('y2', '0%');
+
+    gradient
+      .append('stop')
+      .attr('offset', '0%')
+      .attr('stop-color', gradientStart)
+      .attr('stop-opacity', 1);
+
+    gradient
+      .append('stop')
+      .attr('offset', '100%')
+      .attr('stop-color', gradientStop)
+      .attr('stop-opacity', 1);
+  }
 
   // Setup the view box and size of the svg element
   setupGraphViewbox(
@@ -340,7 +392,7 @@ export const drawEvents = function (
     log.debug('eventNode', eventNode);
     // create event wrapper
     const eventWrapper = diagram.append('g').attr('class', 'eventWrapper');
-    const node = svgDraw.drawNode(eventWrapper, eventNode, sectionColor, conf, diagramId);
+    const node = svgDraw.drawNode(eventWrapper, eventNode, sectionColor, conf, diagramId, true);
     const eventHeight = node.height;
     maxEventHeight = maxEventHeight + eventHeight;
     eventWrapper.attr('transform', `translate(${masterX}, ${masterY})`);

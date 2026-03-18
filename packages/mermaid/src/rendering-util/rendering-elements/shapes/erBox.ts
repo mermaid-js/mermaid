@@ -13,12 +13,17 @@ import { calculateTextWidth } from '../../../utils.js';
 import type { MermaidConfig } from '../../../config.type.js';
 import type { D3Selection } from '../../../types.js';
 
+const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
+const REDUX_THEMES = new Set(['redux', 'redux-dark', 'redux-color', 'redux-dark-color']);
+
 export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   // Treat node as entityNode for certain entityNode checks
   const entityNode = node as unknown as EntityNode;
   if (entityNode.alias) {
     node.label = entityNode.alias;
   }
+  const { theme, themeVariables } = getConfig();
+  const { rowEven, rowOdd, nodeBorder, borderColorArray } = themeVariables;
 
   // Background shapes are drawn to fill in the background color and cover up the ER diagram edge markers.
   // Draw background shape once.
@@ -58,8 +63,13 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
       config.er!.minEntityWidth!
     ) {
       node.width = config.er!.minEntityWidth;
+      node.height = (config.er!.minEntityHeight ?? 0) + PADDING / 2;
     }
     const shapeSvg = await drawRect(parent, node, options);
+    if (theme != null && COLOR_THEMES.has(theme)) {
+      const colorIndex = entityNode.colorIndex ?? 0;
+      shapeSvg.attr('data-color-id', `color-${colorIndex % borderColorArray.length}`);
+    }
 
     // drawRect doesn't center non-htmlLabels correctly as of now, so translate label
     if (!evaluate(config.htmlLabels)) {
@@ -229,12 +239,16 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     .select('.name')
     .attr('transform', 'translate(' + -nameBBox.width / 2 + ', ' + (y + TEXT_PADDING / 2) + ')');
 
+  if (theme != null && COLOR_THEMES.has(theme)) {
+    const colorIndex = entityNode.colorIndex ?? 0;
+    shapeSvg.attr('data-color-id', `color-${colorIndex % borderColorArray.length}`);
+  }
   // Draw shape
   const roughRect = rc.rectangle(x, y, w, h, options);
-  const rect = shapeSvg.insert(() => roughRect, ':first-child').attr('style', cssStyles!.join(''));
-
-  const { themeVariables } = getConfig();
-  const { rowEven, rowOdd, nodeBorder } = themeVariables;
+  const rect = shapeSvg
+    .insert(() => roughRect, ':first-child')
+    .attr('class', 'outer-path')
+    .attr('style', cssStyles!.join(''));
 
   yOffsets.push(0);
   // Draw row rects
@@ -254,29 +268,38 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
 
   // Draw divider lines
   // Name line
-  let roughLine = rc.line(x, nameBBox.height + y, w + x, nameBBox.height + y, options);
+  const thickness = 0.0001;
+
+  // 1. Top horizontal line
+  let points = lineToPolygon(x, nameBBox.height + y, w + x, nameBBox.height + y, thickness);
+  let roughLine = rc.polygon(
+    points.map((p) => [p.x, p.y]),
+    options
+  );
   shapeSvg.insert(() => roughLine).attr('class', 'divider');
   // First line
-  roughLine = rc.line(maxTypeWidth + x, nameBBox.height + y, maxTypeWidth + x, h + y, options);
+  points = lineToPolygon(maxTypeWidth + x, nameBBox.height + y, maxTypeWidth + x, h + y, thickness);
+  roughLine = rc.polygon(
+    points.map((p) => [p.x, p.y]),
+    options
+  );
   shapeSvg.insert(() => roughLine).attr('class', 'divider');
   // Second line
   if (keysPresent) {
-    roughLine = rc.line(
-      maxTypeWidth + maxNameWidth + x,
-      nameBBox.height + y,
-      maxTypeWidth + maxNameWidth + x,
-      h + y,
+    const xCoord = maxTypeWidth + maxNameWidth + x;
+    points = lineToPolygon(xCoord, nameBBox.height + y, xCoord, h + y, thickness);
+    roughLine = rc.polygon(
+      points.map((p) => [p.x, p.y]),
       options
     );
     shapeSvg.insert(() => roughLine).attr('class', 'divider');
   }
   // Third line
   if (commentPresent) {
-    roughLine = rc.line(
-      maxTypeWidth + maxNameWidth + maxKeysWidth + x,
-      nameBBox.height + y,
-      maxTypeWidth + maxNameWidth + maxKeysWidth + x,
-      h + y,
+    const xCoord = maxTypeWidth + maxNameWidth + maxKeysWidth + x;
+    points = lineToPolygon(xCoord, nameBBox.height + y, xCoord, h + y, thickness);
+    roughLine = rc.polygon(
+      points.map((p) => [p.x, p.y]),
       options
     );
     shapeSvg.insert(() => roughLine).attr('class', 'divider');
@@ -284,11 +307,10 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
 
   // Attribute divider lines
   for (const yOffset of yOffsets) {
-    roughLine = rc.line(
-      x,
-      nameBBox.height + y + yOffset,
-      w + x,
-      nameBBox.height + y + yOffset,
+    const yCoord = nameBBox.height + y + yOffset;
+    points = lineToPolygon(x, yCoord, w + x, yCoord, thickness);
+    roughLine = rc.polygon(
+      points.map((p) => [p.x, p.y]),
       options
     );
     shapeSvg.insert(() => roughLine).attr('class', 'divider');
@@ -297,15 +319,19 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   updateNodeBounds(node, rect);
 
   if (nodeStyles && node.look !== 'handDrawn') {
-    const allStyle = nodeStyles.split(';');
-    const strokeStyles = allStyle
-      ?.filter((e) => {
-        return e.includes('stroke');
-      })
-      ?.map((s) => `${s}`)
-      .join('; ');
-    shapeSvg.selectAll('path').attr('style', strokeStyles ?? '');
-    shapeSvg.selectAll('.row-rect-even path').attr('style', nodeStyles);
+    if (theme != null && REDUX_THEMES.has(theme)) {
+      shapeSvg.selectAll('path').attr('style', nodeStyles);
+    } else {
+      const allStyle = nodeStyles.split(';');
+      const strokeStyles = allStyle
+        ?.filter((e) => {
+          return e.includes('stroke');
+        })
+        ?.map((s) => `${s}`)
+        .join('; ');
+      shapeSvg.selectAll('path').attr('style', strokeStyles ?? '');
+      shapeSvg.selectAll('.row-rect-even path').attr('style', nodeStyles);
+    }
   }
 
   node.intersect = function (point) {
@@ -371,4 +397,29 @@ async function addText<T extends SVGGraphicsElement>(
   }
 
   return bbox;
+}
+
+function lineToPolygon(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  thickness: number
+): { x: number; y: number }[] {
+  if (x1 === x2) {
+    // Vertical line
+    return [
+      { x: x1 - thickness / 2, y: y1 },
+      { x: x1 + thickness / 2, y: y1 },
+      { x: x2 + thickness / 2, y: y2 },
+      { x: x2 - thickness / 2, y: y2 },
+    ];
+  }
+  // Horizontal line (ER dividers are always axis-aligned)
+  return [
+    { x: x1, y: y1 - thickness / 2 },
+    { x: x1, y: y1 + thickness / 2 },
+    { x: x2, y: y2 + thickness / 2 },
+    { x: x2, y: y2 - thickness / 2 },
+  ];
 }
