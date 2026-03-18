@@ -1,6 +1,20 @@
 import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
 describe('XY Chart', () => {
+  it('should stack on top of each other, when stacked flagged', () => {
+    imgSnapshotTest(
+      `
+      xychart vertical
+        title "Test XY Chart"
+        x-axis "Months" ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        y-axis "Values" 0 --> 27 
+        bar stacked [10, 8, 12, 16, 10, 7, 4, 13, 6, 11, 18, 15]
+        bar stacked [2, 1, 3, 4, 2.5, 1.5, 1, 3, 2, 5, 6, 4]
+        line [12, 9, 15, 20, 12.5, 8.5, 5, 16, 8, 16, 24, 19]
+      `,
+      {}
+    );
+  });
   it('should render the simplest possible xy-beta chart', () => {
     imgSnapshotTest(
       `
