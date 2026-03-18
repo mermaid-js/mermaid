@@ -224,6 +224,24 @@ const circle = (elem, type, id) => {
     .attr('class', 'arrowMarkerPath')
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
+  elem
+    .append('marker')
+    .attr('id', id + '_' + type + '-circleEnd-margin')
+    .attr('class', 'marker ' + type)
+    .attr('viewBox', '0 0 10 10')
+    .attr('refY', 5)
+    .attr('refX', 12.25)
+    .attr('markerUnits', 'userSpaceOnUse')
+    .attr('markerWidth', 14)
+    .attr('markerHeight', 14)
+    .attr('orient', 'auto')
+    .append('circle')
+    .attr('cx', '5')
+    .attr('cy', '5')
+    .attr('r', '5')
+    .attr('class', 'arrowMarkerPath')
+    .style('stroke-width', 0)
+    .style('stroke-dasharray', '1,0');
 };
 const cross = (elem, type, id) => {
   elem
@@ -267,7 +285,7 @@ const barb = (elem, type, id) => {
     .append('defs')
     .append('marker')
     .attr('id', id + '_' + type + '-barbEnd')
-    .attr('refX', 19)
+    .attr('refX', 14)
     .attr('refY', 7)
     .attr('markerWidth', 20)
     .attr('markerHeight', 14)
@@ -275,6 +293,37 @@ const barb = (elem, type, id) => {
     .attr('orient', 'auto')
     .append('path')
     .attr('d', 'M 19,7 L9,13 L14,7 L9,1 Z');
+};
+const barbNeo = (elem, type, id) => {
+  const config = configApi.getConfig();
+  const { themeVariables } = config;
+  const { transitionColor } = themeVariables;
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', id + '_' + type + '-barbEnd')
+    .attr('refX', 19)
+    .attr('refY', 7)
+    .attr('markerWidth', 20)
+    .attr('markerHeight', 14)
+    .attr('markerUnits', 'strokeWidth')
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M 19,7 L11,14 L13,7 L11,0 Z');
+
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', id + '_' + type + '-barbEnd-margin')
+    .attr('refX', 17)
+    .attr('refY', 7)
+    .attr('markerWidth', 20)
+    .attr('markerHeight', 14)
+    .attr('markerUnits', 'userSpaceOnUse')
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M 19,7 L11,14 L13,7 L11,0 Z')
+    .attr('fill', `${transitionColor}`);
 };
 // erDiagram specific markers
 const only_one = (elem, type, id) => {
@@ -501,6 +550,7 @@ const markers = {
   circle,
   cross,
   barb,
+  barbNeo,
   only_one,
   zero_or_one,
   one_or_more,
