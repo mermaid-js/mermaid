@@ -73,7 +73,7 @@ const getStyles = (
   }
 
   & .edge-thickness-normal {
-    stroke-width: ${options.strokeWidth ?? 1}px;
+    stroke-width: ${(options.strokeWidth ?? 1) as number}px;
   }
   & .edge-thickness-thick {
     stroke-width: 3.5px
@@ -121,7 +121,7 @@ const getStyles = (
 
   [data-look="neo"].node path {
     stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
-    stroke-width: ${options.strokeWidth ?? 1};
+    stroke-width: ${(options.strokeWidth ?? 1) as number}px;
   }
 
   [data-look="neo"].node .outer-path {

@@ -804,7 +804,8 @@ export const drawActors = async function (
   diagram,
   actors,
   actorKeys,
-  isFooter, diagramId,
+  isFooter,
+  diagramId,
   diagObj,
   actorIndexMap
 ) {
@@ -822,7 +823,15 @@ export const drawActors = async function (
       if (!actor.stopy) {
         actor.stopy = bounds.getVerticalPos();
       }
-      const height = await svgDraw.drawActor(diagram, actor, conf, true, diagramId, diagObj, actorIndexMap);
+      const height = await svgDraw.drawActor(
+        diagram,
+        actor,
+        conf,
+        true,
+        diagramId,
+        diagObj,
+        actorIndexMap
+      );
       maxHeight = common.getMax(maxHeight, height);
     }
     bounds.bumpVerticalPos(maxHeight + conf.boxMargin);

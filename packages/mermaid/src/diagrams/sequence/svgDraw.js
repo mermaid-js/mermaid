@@ -1271,7 +1271,15 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap)
   return actor.height;
 };
 
-export const drawActor = async function (elem, actor, conf, isFooter, diagramId, diagObj, actorIndexMap) {
+export const drawActor = async function (
+  elem,
+  actor,
+  conf,
+  isFooter,
+  diagramId,
+  diagObj,
+  actorIndexMap
+) {
   const resolvedActorIndexMap =
     actorIndexMap ??
     new Map(
@@ -1286,7 +1294,14 @@ export const drawActor = async function (elem, actor, conf, isFooter, diagramId,
     case 'boundary':
       return await drawActorTypeBoundary(elem, actor, conf, isFooter, resolvedActorIndexMap);
     case 'control':
-      return await drawActorTypeControl(elem, actor, conf, isFooter, diagramId, resolvedActorIndexMap);
+      return await drawActorTypeControl(
+        elem,
+        actor,
+        conf,
+        isFooter,
+        diagramId,
+        resolvedActorIndexMap
+      );
     case 'entity':
       return await drawActorTypeEntity(elem, actor, conf, isFooter, resolvedActorIndexMap);
     case 'database':
