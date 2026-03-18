@@ -7,6 +7,9 @@ catmull
 compositTitleSize
 cose
 curv
+deaccelerator
+Deaccelerator
+deaccelerators
 doublecircle
 elem
 elems
@@ -33,10 +36,12 @@ ranksep
 rect
 rects
 sandboxed
+sentencepiece
 siebling
 statediagram
 substate
 unfixable
+Unmodelled
 Viewbox
 viewports
 visio

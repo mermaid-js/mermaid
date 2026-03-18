@@ -409,6 +409,7 @@ function layoutArchitecture(
     const layout = cy.layout({
       name: 'fcose',
       quality: 'proof',
+      randomize: db.getConfigField('randomize'),
       styleEnabled: false,
       animate: false,
       nodeDimensionsIncludeLabels: false,
