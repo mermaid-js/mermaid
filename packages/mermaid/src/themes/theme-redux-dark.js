@@ -278,6 +278,10 @@ class Theme {
     this.pieOuterStrokeColor = this.pieOuterStrokeColor || 'black';
     this.pieOpacity = this.pieOpacity || '0.7';
 
+    /* venn */
+    this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
+    this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
+
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;
     this.quadrant2Fill = this.quadrant2Fill || adjust(this.primaryColor, { r: 5, g: 5, b: 5 });

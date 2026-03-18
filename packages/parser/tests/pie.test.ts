@@ -15,7 +15,7 @@ describe('pie', () => {
     ])('should handle regular pie', (context: string) => {
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
-      expect(result.value.$type).toBe(Pie);
+      expect(result.value.$type).toBe(Pie.$type);
     });
 
     it.each([
@@ -28,7 +28,7 @@ describe('pie', () => {
     ])('should handle regular showData', (context: string) => {
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
-      expect(result.value.$type).toBe(Pie);
+      expect(result.value.$type).toBe(Pie.$type);
 
       const { showData } = result.value;
       expect(showData).toBeTruthy();
@@ -46,7 +46,7 @@ describe('pie', () => {
       ])('should handle regular pie + title in same line', (context: string) => {
         const result = parse(context);
         expectNoErrorsOrAlternatives(result);
-        expect(result.value.$type).toBe(Pie);
+        expect(result.value.$type).toBe(Pie.$type);
 
         const { title } = result.value;
         expect(title).toBe('sample title');
@@ -66,7 +66,7 @@ describe('pie', () => {
       ])('should handle regular pie + title in different line', (context: string) => {
         const result = parse(context);
         expectNoErrorsOrAlternatives(result);
-        expect(result.value.$type).toBe(Pie);
+        expect(result.value.$type).toBe(Pie.$type);
 
         const { title } = result.value;
         expect(title).toBe('sample title');
@@ -81,7 +81,7 @@ describe('pie', () => {
       ])('should handle regular pie + showData + title', (context: string) => {
         const result = parse(context);
         expectNoErrorsOrAlternatives(result);
-        expect(result.value.$type).toBe(Pie);
+        expect(result.value.$type).toBe(Pie.$type);
 
         const { showData, title } = result.value;
         expect(showData).toBeTruthy();
@@ -102,7 +102,7 @@ describe('pie', () => {
       ])('should handle regular showData + title in different line', (context: string) => {
         const result = parse(context);
         expectNoErrorsOrAlternatives(result);
-        expect(result.value.$type).toBe(Pie);
+        expect(result.value.$type).toBe(Pie.$type);
 
         const { showData, title } = result.value;
         expect(showData).toBeTruthy();
@@ -129,7 +129,7 @@ describe('pie', () => {
     ])('should handle regular sections', (context: string) => {
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
-      expect(result.value.$type).toBe(Pie);
+      expect(result.value.$type).toBe(Pie.$type);
 
       const { sections } = result.value;
       expect(sections[0].label).toBe('GitHub');
@@ -145,7 +145,7 @@ describe('pie', () => {
         "GitLab": 50`;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
-      expect(result.value.$type).toBe(Pie);
+      expect(result.value.$type).toBe(Pie.$type);
 
       const { showData, sections } = result.value;
       expect(showData).toBeTruthy();
@@ -163,7 +163,7 @@ describe('pie', () => {
         "GitLab": 50`;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
-      expect(result.value.$type).toBe(Pie);
+      expect(result.value.$type).toBe(Pie.$type);
 
       const { title, sections } = result.value;
       expect(title).toBe('sample wow');
@@ -181,7 +181,7 @@ describe('pie', () => {
         "bat": 40`;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
-      expect(result.value.$type).toBe(Pie);
+      expect(result.value.$type).toBe(Pie.$type);
 
       const { sections } = result.value;
       expect(sections[0].label).toBe('ash');
@@ -197,7 +197,7 @@ describe('pie', () => {
         "GitLab": 50`;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
-      expect(result.value.$type).toBe(Pie);
+      expect(result.value.$type).toBe(Pie.$type);
 
       const { accTitle, sections } = result.value;
       expect(accTitle).toBe('sample wow');
@@ -215,7 +215,7 @@ describe('pie', () => {
         "GitLab": 50`;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
-      expect(result.value.$type).toBe(Pie);
+      expect(result.value.$type).toBe(Pie.$type);
 
       const { accDescr, sections } = result.value;
       expect(accDescr).toBe('sample wow');
@@ -235,7 +235,7 @@ describe('pie', () => {
         "GitLab": 50`;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
-      expect(result.value.$type).toBe(Pie);
+      expect(result.value.$type).toBe(Pie.$type);
 
       const { accDescr, sections } = result.value;
       expect(accDescr).toBe('sample wow');

@@ -152,7 +152,7 @@ class Theme {
     this.taskTextOutsideColor = this.taskTextLightColor;
     this.gridColor = this.mainContrastColor;
     this.doneTaskBkgColor = this.mainContrastColor;
-    this.taskTextDarkColor = this.darkTextColor;
+    this.taskTextDarkColor = invert(this.doneTaskBkgColor);
 
     /* Architecture Diagram variables */
     this.archEdgeColor = this.lineColor;
@@ -240,16 +240,23 @@ class Theme {
       this['pie' + i] = this['cScale' + i];
     }
     this.pieTitleTextSize = this.pieTitleTextSize || '25px';
-    this.pieTitleTextColor = this.pieTitleTextColor || this.taskTextDarkColor;
+    this.pieTitleTextColor = this.pieTitleTextColor || this.mainContrastColor;
     this.pieSectionTextSize = this.pieSectionTextSize || '17px';
     this.pieSectionTextColor = this.pieSectionTextColor || this.textColor;
     this.pieLegendTextSize = this.pieLegendTextSize || '17px';
-    this.pieLegendTextColor = this.pieLegendTextColor || this.taskTextDarkColor;
+    this.pieLegendTextColor = this.pieLegendTextColor || this.mainContrastColor;
     this.pieStrokeColor = this.pieStrokeColor || 'black';
     this.pieStrokeWidth = this.pieStrokeWidth || '2px';
     this.pieOuterStrokeWidth = this.pieOuterStrokeWidth || '2px';
     this.pieOuterStrokeColor = this.pieOuterStrokeColor || 'black';
     this.pieOpacity = this.pieOpacity || '0.7';
+
+    /* venn */
+    for (let i = 0; i < 8; i++) {
+      this['venn' + (i + 1)] = this['venn' + (i + 1)] ?? lighten(this['cScale' + i], 30);
+    }
+    this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
+    this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
 
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;

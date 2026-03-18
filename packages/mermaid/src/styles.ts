@@ -22,6 +22,8 @@ const getStyles = (
     nodeBorder?: string;
     mainBkg?: string;
     strokeWidth?: number;
+    theme?: string;
+    look?: string;
   } & FlowChartStyleOptions,
   svgId: string
 ) => {
