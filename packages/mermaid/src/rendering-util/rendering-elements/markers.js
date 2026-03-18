@@ -420,7 +420,7 @@ const circle = (elem, type, id) => {
     .attr('id', id + '_' + type + '-circleEnd-margin')
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
-    .attr('refY', 5)
+    .attr('refY', 5) // Vertical center of viewBox (0 0 10 10)
     .attr('refX', 12.25)
     .attr('markerUnits', 'userSpaceOnUse')
     .attr('markerWidth', 14)
