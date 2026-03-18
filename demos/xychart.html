@@ -14,7 +14,7 @@
   </head>
 
   <body>
-    <h1>XY Charts demos</h1>
+    <h1>XY Charts Stacked</h1>
     <pre class="mermaid">
     xychart vertical
     title "Test XY Chart"
@@ -25,6 +25,18 @@
     line [12, 9, 15, 20, 12.5, 8.5, 5, 16, 8, 16, 24, 19]
     </pre>
     <hr />
+
+    <h1>XY Charts demos</h1>
+    <pre class="mermaid">
+    xychart
+    title "Sales Revenue (in $)"
+    x-axis [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
+    y-axis "Revenue (in $)" 4000 --> 11000
+    bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
+    line [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
+    </pre>
+    <hr />
+
     <h1>XY Charts horizontal</h1>
     <pre class="mermaid">
     xychart horizontal
