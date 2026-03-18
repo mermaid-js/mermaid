@@ -63,7 +63,9 @@ export function stateStart<T extends SVGGraphicsElement>(
   }
 
   if (node.width < 25 && nodeShadow && node.look !== 'handDrawn') {
-    circle.attr('style', 'filter:url(#drop-shadow-small)');
+    const svgId = parent.node()?.ownerSVGElement?.id ?? '';
+    const filterId = svgId ? `${svgId}-drop-shadow-small` : 'drop-shadow-small';
+    circle.attr('style', `filter:url(#${filterId})`);
   }
 
   updateNodeBounds(node, circle);

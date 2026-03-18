@@ -75,10 +75,12 @@ export const render = async (data4Layout: LayoutData, svg: SVG) => {
   const { theme, themeVariables } = data4Layout.config;
   const { useGradient, gradientStart, gradientStop } = themeVariables;
 
+  const svgId = svg.attr('id');
+
   svg
     .append('defs')
     .append('filter')
-    .attr('id', 'drop-shadow')
+    .attr('id', `${svgId}-drop-shadow`)
     .attr('height', '130%')
     .attr('width', '130%')
     .append('feDropShadow')
@@ -91,7 +93,7 @@ export const render = async (data4Layout: LayoutData, svg: SVG) => {
   svg
     .append('defs')
     .append('filter')
-    .attr('id', 'drop-shadow-small')
+    .attr('id', `${svgId}-drop-shadow-small`)
     .attr('height', '150%')
     .attr('width', '150%')
     .append('feDropShadow')
