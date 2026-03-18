@@ -213,7 +213,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
 
     // Calculate stage positions
     const stagePositions: { start: number; end: number }[] = [];
-    if (boundaries && boundaries.length === stages.length) {
+    if (boundaries?.length === stages.length) {
       // Use custom boundaries
       let prevBoundary = 0;
       boundaries.forEach((boundary) => {
