@@ -41,7 +41,7 @@
 
 "line"                                    { this.pushState("data"); return 'LINE'; }
 "bar"                                     { this.pushState("data"); return 'BAR'; }
-"stacked"                                 { return 'STACKED'; }
+"stacked"                                 { this.pushState("data"); return 'STACKED'; }
 <data>"["                                 { this.pushState("data_inner"); return 'SQUARE_BRACES_START'; }
 <axis_data,data_inner>[+-]?(?:\d+(?:\.\d+)?|\.\d+)   { return 'NUMBER_WITH_DECIMAL'; }
 <data_inner,axis_band_data>"]"            { this.popState(); return 'SQUARE_BRACES_END'; }
