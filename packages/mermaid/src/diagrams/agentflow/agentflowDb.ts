@@ -20,6 +20,9 @@ import {
 } from '../common/commonDb.js';
 import { createTooltip } from '../common/svgDrawCommon.js';
 import type {
+  AgentFlowTemplateDeclaration,
+  AgentFlowTemplateDeclarationsByName,
+  AgentFlowTemplateField,
   AgentFlowTypeDeclaration,
   AgentFlowTypeDeclarationsByName,
   AgentFlowTypeField,
@@ -37,6 +40,11 @@ interface LinkData {
 }
 
 const MERMAID_DOM_ID_PREFIX = 'agentflow-';
+const AGENTFLOW_TPL_VERSION = 'AGENTFLOW-TPL-V1.1';
+
+/** Pre-compiled regexes for field parsing */
+const RECORD_FIELD_RE = /^([A-Z_a-z]\w*)\s*:\s*(.+)$/;
+const TEMPLATE_FIELD_RE = /^([A-Z_a-z]\w*)\s*:\s*(\w+)(?:\s*\*\s*(\d+))?\s*<<([^>]*)>>$/;
 
 /** Maps subgraph container types to their cluster shape IDs. */
 const SUBGRAPH_TYPE_TO_SHAPE: Record<NonNullable<FlowSubGraph['type']>, ClusterShapeID> = {
@@ -44,6 +52,7 @@ const SUBGRAPH_TYPE_TO_SHAPE: Record<NonNullable<FlowSubGraph['type']>, ClusterS
   flow: 'flowGroup',
   task: 'taskGroup',
   types: 'typesGroup',
+  templates: 'templatesGroup',
   subgraph: 'rect',
 };
 
@@ -57,6 +66,8 @@ export class AgentFlowDB implements DiagramDB {
   private subGraphs: FlowSubGraph[] = [];
   private subGraphLookup = new Map<string, FlowSubGraph>();
   private typeDeclarations = new Map<string, AgentFlowTypeDeclaration>();
+  private templateDeclarations = new Map<string, AgentFlowTemplateDeclaration>();
+  private declarationGroupMetadata = new Map<string, Record<string, unknown>>();
   private tooltips = new Map<string, string>();
   private subCount = 0;
   private firstGraphFlag = true;
@@ -77,6 +88,7 @@ export class AgentFlowDB implements DiagramDB {
     this.setDirection = this.setDirection.bind(this);
     this.addSubGraph = this.addSubGraph.bind(this);
     this.addTypeDeclaration = this.addTypeDeclaration.bind(this);
+    this.addTemplateDeclaration = this.addTemplateDeclaration.bind(this);
     this.addLink = this.addLink.bind(this);
     this.setLink = this.setLink.bind(this);
     this.updateLink = this.updateLink.bind(this);
@@ -123,7 +135,7 @@ export class AgentFlowDB implements DiagramDB {
       .map((line) => line.trim())
       .filter((line) => line.length > 0)
       .map((line) => {
-        const fieldMatch = /^([A-Z_a-z]\w*)\s*:\s*(.+)$/.exec(line);
+        const fieldMatch = RECORD_FIELD_RE.exec(line);
         if (!fieldMatch) {
           throw new Error(`Invalid agentflow record field declaration: ${line}`);
         }
@@ -132,6 +144,50 @@ export class AgentFlowDB implements DiagramDB {
           name: fieldMatch[1],
           type: fieldMatch[2].trim(),
         };
+      });
+  }
+
+  private parseTemplateDeclaration(declaration: string): AgentFlowTemplateDeclaration {
+    const trimmed = declaration.trim();
+    // Match: template %name { ... } or template name { ... }
+    const match = /^template\s+%?([A-Z_a-z]\w*)\s*{([\S\s]*)}$/.exec(trimmed);
+    if (!match) {
+      throw new Error(`Invalid agentflow template declaration: ${trimmed}`);
+    }
+
+    const [, name, body] = match;
+    const fields = this.parseTemplateFields(body);
+    return { name, fields };
+  }
+
+  private parseTemplateFields(body: string): AgentFlowTemplateField[] {
+    const trimmedBody = body.trim();
+    if (trimmedBody.length === 0) {
+      return [];
+    }
+
+    return trimmedBody
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0)
+      .map((line) => {
+        // Match: NAME: Type [* N] <<description>>
+        const fieldMatch = TEMPLATE_FIELD_RE.exec(line);
+        if (!fieldMatch) {
+          throw new Error(`Invalid agentflow template field: ${line}`);
+        }
+
+        const result: AgentFlowTemplateField = {
+          name: fieldMatch[1],
+          type: fieldMatch[2].trim(),
+          description: fieldMatch[4].trim(),
+        };
+
+        if (fieldMatch[3]) {
+          result.multiplicity = parseInt(fieldMatch[3], 10);
+        }
+
+        return result;
       });
   }
 
@@ -218,6 +274,25 @@ export class AgentFlowDB implements DiagramDB {
     if (subGraph && doc) {
       subGraph.metadata = doc as unknown as Record<string, unknown>;
       return;
+    }
+
+    // Check if this is the types or templates group (e.g. types@{ view: "expanded" })
+    if (doc) {
+      if (id === 'types' || id === 'templates') {
+        this.declarationGroupMetadata.set(id, doc as unknown as Record<string, unknown>);
+        return;
+      }
+      // Check if this is an individual type or template declaration
+      const typeDecl = this.typeDeclarations.get(id);
+      if (typeDecl) {
+        typeDecl.metadata = doc as unknown as Record<string, unknown>;
+        return;
+      }
+      const templateDecl = this.templateDeclarations.get(id);
+      if (templateDecl) {
+        templateDecl.metadata = doc as unknown as Record<string, unknown>;
+        return;
+      }
     }
 
     // Check if this is an edge
@@ -710,6 +785,8 @@ You have to call mermaid.initialize.`
     this.subGraphs = [];
     this.subGraphLookup = new Map();
     this.typeDeclarations = new Map();
+    this.templateDeclarations = new Map();
+    this.declarationGroupMetadata = new Map();
     this.subCount = 0;
     this.tooltips = new Map();
     this.firstGraphFlag = true;
@@ -870,6 +947,24 @@ You have to call mermaid.initialize.`
     return parsedDeclaration.name;
   }
 
+  public addTemplateDeclaration(declaration: string) {
+    // eslint-disable-next-line no-console
+    console.log(
+      AGENTFLOW_TPL_VERSION + ': addTemplateDeclaration called',
+      declaration.slice(0, 80)
+    );
+    const parsedDeclaration = this.parseTemplateDeclaration(declaration);
+    // eslint-disable-next-line no-console
+    console.log(
+      AGENTFLOW_TPL_VERSION + ': parsed template',
+      parsedDeclaration.name,
+      parsedDeclaration.fields.length,
+      'fields'
+    );
+    this.templateDeclarations.set(parsedDeclaration.name, parsedDeclaration);
+    return parsedDeclaration.name;
+  }
+
   public getSubGraphs() {
     return this.subGraphs;
   }
@@ -880,6 +975,14 @@ You have to call mermaid.initialize.`
 
   public getTypeDeclarationsByName(): AgentFlowTypeDeclarationsByName {
     return Object.fromEntries(this.typeDeclarations.entries());
+  }
+
+  public getTemplateDeclarations() {
+    return [...this.templateDeclarations.values()];
+  }
+
+  public getTemplateDeclarationsByName(): AgentFlowTemplateDeclarationsByName {
+    return Object.fromEntries(this.templateDeclarations.entries());
   }
 
   public firstGraph() {
@@ -1184,7 +1287,7 @@ You have to call mermaid.initialize.`
     // Collect IDs hidden by collapsed subgraphs (the subgraph's descendants)
     const hiddenIds = new Set<string>();
     const collectDescendants = (sgId: string) => {
-      const sg = subGraphs.find((s) => s.id === sgId);
+      const sg = this.subGraphLookup.get(sgId);
       if (!sg) {
         return;
       }
@@ -1272,44 +1375,98 @@ You have to call mermaid.initialize.`
       this.addNodeFromVertex(vertex, nodes, parentDB, subGraphDB, config, config.look || 'classic');
     });
 
-    // -- Synthesize a "Types" group for type declarations --
+    // -- Synthesize declaration groups (types, templates) --
     const typeDecls = this.getTypeDeclarations();
-    if (typeDecls.length > 0) {
-      const typesGroupId = 'agentflow-types-group';
+    const templateDecls = this.getTemplateDeclarations();
+    // eslint-disable-next-line no-console
+    console.log(
+      AGENTFLOW_TPL_VERSION + ': getData() — types:',
+      typeDecls.length,
+      'templates:',
+      templateDecls.length
+    );
 
-      // Add the types container as a cluster node
-      nodes.push({
-        id: typesGroupId,
-        label: 'Types',
-        labelStyle: '',
-        labelType: 'text',
-        padding: 8,
-        cssCompiledStyles: [],
-        cssClasses: '',
-        shape: 'typesGroup',
-        isGroup: true,
-        look: config.look,
-      });
-
-      // Add each type declaration as a child node
-      for (const typeDecl of typeDecls) {
-        const typeNodeId = `agentflow-type-${typeDecl.name}`;
-        parentDB.set(typeNodeId, typesGroupId);
+    const synthesizeDeclarationGroup = (opts: {
+      groupId: string;
+      label: string;
+      expandedShape: string;
+      containerType: string;
+      childPrefix: string;
+      declarations: { name: string }[];
+      groupMetadata: Record<string, unknown> | undefined;
+    }) => {
+      const isExpanded = opts.groupMetadata?.view === 'expanded';
+      if (isExpanded) {
         nodes.push({
-          id: typeNodeId,
-          label: typeDecl.name,
+          id: opts.groupId,
+          label: opts.label,
           labelStyle: '',
           labelType: 'text',
-          parentId: typesGroupId,
           padding: 8,
           cssCompiledStyles: [],
           cssClasses: '',
-          shape: 'typeDeclaration',
+          shape: opts.expandedShape,
+          isGroup: true,
+          look: config.look,
+          metadata: opts.groupMetadata,
+        });
+        for (const decl of opts.declarations) {
+          const childId = `${opts.childPrefix}${decl.name}`;
+          parentDB.set(childId, opts.groupId);
+          nodes.push({
+            id: childId,
+            label: decl.name,
+            labelStyle: '',
+            labelType: 'text',
+            parentId: opts.groupId,
+            padding: 8,
+            cssCompiledStyles: [],
+            cssClasses: '',
+            shape: 'typeDeclaration',
+            isGroup: false,
+            look: config.look,
+            metadata: { typeDeclaration: decl },
+          });
+        }
+      } else {
+        nodes.push({
+          id: opts.groupId,
+          label: opts.label,
+          labelStyle: '',
+          labelType: 'text',
+          padding: 8,
+          cssCompiledStyles: [],
+          cssClasses: '',
+          shape: 'collapsedGroup',
           isGroup: false,
           look: config.look,
-          metadata: { typeDeclaration: typeDecl },
+          metadata: { containerType: opts.containerType, ...opts.groupMetadata },
         });
       }
+    };
+
+    if (typeDecls.length > 0) {
+      synthesizeDeclarationGroup({
+        groupId: 'agentflow-types-group',
+        label: 'Types',
+        expandedShape: 'typesGroup',
+        containerType: 'types',
+        childPrefix: 'agentflow-type-',
+        declarations: typeDecls,
+        groupMetadata: this.declarationGroupMetadata.get('types'),
+      });
+    }
+
+    if (templateDecls.length > 0) {
+      synthesizeDeclarationGroup({
+        groupId: 'agentflow-templates-group',
+        label: 'Templates',
+        expandedShape: 'templatesGroup',
+        containerType: 'templates',
+        childPrefix: 'agentflow-template-',
+        declarations: templateDecls,
+        groupMetadata: this.declarationGroupMetadata.get('templates'),
+      });
     }
 
     const e = this.getEdges();
@@ -1364,8 +1521,10 @@ You have to call mermaid.initialize.`
       edges,
       other: {},
       config,
-      types: this.getTypeDeclarations(),
-      typesByName: this.getTypeDeclarationsByName(),
+      types: typeDecls,
+      typesByName: Object.fromEntries(this.typeDeclarations.entries()),
+      templates: templateDecls,
+      templatesByName: Object.fromEntries(this.templateDeclarations.entries()),
     };
   }
 

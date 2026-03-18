@@ -768,13 +768,13 @@ const flowGroup = async (parent, node) => {
   });
 };
 
-/** Types group: container for type declarations. Light background, subtle border. */
-const typesGroup = async (parent, node) => {
+/** Factory for declaration group clusters (types, templates). Light background, subtle dashed border. */
+const createDeclarationGroup = (cssClass) => async (parent, node) => {
   const { themeVariables } = getConfig();
   const stroke = themeVariables.clusterBorder || themeVariables.secondaryBorderColor;
   const fill = themeVariables.tertiaryColor || '#f0f0f0';
   return createContainerGroup(parent, node, {
-    cssClass: 'types-cluster',
+    cssClass,
     rx: 6,
     fill,
     stroke,
@@ -783,6 +783,9 @@ const typesGroup = async (parent, node) => {
     strokeDash: [4, 4],
   });
 };
+
+const typesGroup = createDeclarationGroup('types-cluster');
+const templatesGroup = createDeclarationGroup('templates-cluster');
 
 const squareRect = rect;
 const shapes = {
@@ -796,6 +799,7 @@ const shapes = {
   agentGroup,
   flowGroup,
   typesGroup,
+  templatesGroup,
 };
 
 let clusterElems = new Map();

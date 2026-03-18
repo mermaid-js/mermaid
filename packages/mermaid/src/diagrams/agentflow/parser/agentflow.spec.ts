@@ -1365,4 +1365,90 @@ describe('parsing an agentflow diagram', function () {
       expect(data.nodes.find((n: { id: string }) => n.id === 'action1')).toBeUndefined();
     });
   });
+
+  describe('template declarations', function () {
+    it('should parse a simple template with fields and descriptions', function () {
+      agentflow.parser.parse(`agentflow TB
+        template %triage_result {
+          INCIDENT_ID: String <<generated incident ID>>
+          SEVERITY: String <<P0 through P4 with justification>>
+          TITLE: String <<concise incident title>>
+        }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      expect(data.templates).toHaveLength(1);
+      expect(data.templates[0].name).toBe('triage_result');
+      expect(data.templates[0].fields).toHaveLength(3);
+      expect(data.templates[0].fields[0]).toEqual({
+        name: 'INCIDENT_ID',
+        type: 'String',
+        description: 'generated incident ID',
+      });
+      expect(data.templates[0].fields[1]).toEqual({
+        name: 'SEVERITY',
+        type: 'String',
+        description: 'P0 through P4 with justification',
+      });
+    });
+
+    it('should parse template fields with multiplicity', function () {
+      agentflow.parser.parse(`agentflow TB
+        template %runbook_format {
+          OBJECTIVE: String <<what this runbook achieves>>
+          STEP: String * 8 <<Step # | Action | Command | Rollback>>
+          VERIFICATION: String <<how to confirm mitigation>>
+        }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      expect(data.templates).toHaveLength(1);
+      const tpl = data.templates[0];
+      expect(tpl.name).toBe('runbook_format');
+      expect(tpl.fields).toHaveLength(3);
+      expect(tpl.fields[1]).toEqual({
+        name: 'STEP',
+        type: 'String',
+        multiplicity: 8,
+        description: 'Step # | Action | Command | Rollback',
+      });
+    });
+
+    it('should parse multiple templates', function () {
+      agentflow.parser.parse(`agentflow TB
+        template %triage_result {
+          SEVERITY: String <<P0 through P4>>
+          TIMELINE: String * 3 <<Timestamp | Event | Source>>
+        }
+        template %investigation_report {
+          SUMMARY: String <<executive summary>>
+          ANOMALY: String * 5 <<Timestamp | Service | Metric | Expected | Actual>>
+        }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      expect(data.templates).toHaveLength(2);
+      expect(data.templatesByName['triage_result']).toBeDefined();
+      expect(data.templatesByName['investigation_report']).toBeDefined();
+      expect(data.templatesByName['triage_result'].fields).toHaveLength(2);
+      expect(data.templatesByName['investigation_report'].fields).toHaveLength(2);
+    });
+
+    it('should coexist with type declarations', function () {
+      agentflow.parser.parse(`agentflow TB
+        type Incident = Record {
+          id: String
+          severity: String
+        }
+        type Severity = P0 | P1 | P2
+        template %triage_result {
+          SEVERITY: String <<P0 through P4>>
+        }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      expect(data.types).toHaveLength(2);
+      expect(data.templates).toHaveLength(1);
+    });
+  });
 });

@@ -91,6 +91,7 @@ Function arguments are optional: 'call <callbackname>()' simply executes 'callba
 "interpolate"           return 'INTERPOLATE';
 "classDef"              return 'CLASSDEF';
 "class"                 return 'CLASS';
+"template"[\t ]+"%"?[A-Za-z_]\w*[\t ]*"{"[^}]*"}" return 'TEMPLATE_DECL';
 "type"[\t ]+[^\n;{]*"="[\t ]*"Record"[\t ]*"{"[^}]*"}" return 'TYPE_DECL';
 "type"[\t ]+[^\n;{]* return 'TYPE_DECL';
 
@@ -369,6 +370,8 @@ spaceList
 statement
     : typeDeclarationStatement separator
     {$$=[];}
+    | templateDeclarationStatement separator
+    {$$=[];}
     | vertexStatement separator
     { $$=$vertexStatement.nodes}
     | styleStatement separator
@@ -416,6 +419,11 @@ statement
 typeDeclarationStatement
     : TYPE_DECL
     { $$ = $TYPE_DECL; yy.addTypeDeclaration($TYPE_DECL); }
+    ;
+
+templateDeclarationStatement
+    : TEMPLATE_DECL
+    { $$ = $TEMPLATE_DECL; yy.addTemplateDeclaration($TEMPLATE_DECL); }
     ;
 
 separator: NEWLINE | SEMI | EOF ;

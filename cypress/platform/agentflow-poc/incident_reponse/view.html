@@ -101,190 +101,68 @@
 
       /*stroke-width:2;stroke-dasharray:10.000000,9.865639;stroke-dashoffset:-198.656393;animation:    4.932820s linear infinite;*/
       /* stroke-width:2;stroke-dasharray:10.000000,9.865639;stroke-dashoffset:-198.656393;animation: dashdraw 4.932820s linear infinite;*/
+      nav {
+        background: #f5f5f5;
+        padding: 8px 16px;
+        border-bottom: 1px solid #ddd;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        display: flex;
+        gap: 16px;
+        align-items: center;
+      }
+      nav a {
+        color: #0366d6;
+        text-decoration: none;
+        padding: 4px 8px;
+        border-radius: 4px;
+      }
+      nav a:hover {
+        background: #e1e4e8;
+      }
+      nav a.active {
+        background: #0366d6;
+        color: white;
+      }
+      nav .title {
+        font-weight: bold;
+        color: #333;
+        margin-right: 8px;
+      }
     </style>
   </head>
 
   <body>
+    <nav>
+      <span class="title">Incident Response</span>
+      <a href="detect_and_respond.html">Detect & Respond</a>
+      <a href="respond.html">Respond</a>
+      <a href="overview.html">Overview</a>
+      <a href="types.html">Types</a>
+      <a href="permit-tree.html">Permit Tree</a>
+      <a href="view.html" class="active">Sandbox</a>
+    </nav>
+
     <pre id="diagram4" class="mermaid">
 agentflow TB
-  type CoffeeCopy = Record {
-    hero_tagline: String
-    hero_subtitle: String
-    about: String
-    menu_item: String * 6
+apa
+template triage_result {
+    INCIDENT_ID: String           &lt;&lt;generated incident ID, e.g. INC-2026-0318-001&gt;&gt;
+    SEVERITY: String              &lt;&lt;P0 through P4 with justification&gt;&gt;
+    TITLE: String                 &lt;&lt;concise incident title&gt;&gt;
+    AFFECTED_SERVICES: String     &lt;&lt;comma-separated list of impacted services&gt;&gt;
+    BLAST_RADIUS: String          &lt;&lt;user-facing impact assessment&gt;&gt;
+    INITIAL_HYPOTHESIS: String    &lt;&lt;most likely failure mode based on alert signals&gt;&gt;
+    ESCALATION: String            &lt;&lt;who to page and why&gt;&gt;
+    TIMELINE: String * 3          &lt;&lt;Timestamp | Event | Source&gt;&gt;
   }
 
-  type BilingualPage = Record {
-    english: String
-    swedish: String
-  }
-
-  agent coffee_team["Coffee Team"]
-    flow build_site["Build Site"]
-      agent researcher["Researcher"]
-        task step1["Research Location"]
-          city["city"]
-          research_loc["research_location"]
-          brief["Research Brief"]
-          city --> research_loc --> brief
-        end
-        task step2["Write Copy"]
-          write_copy["write_copy"]
-          english_copy["English Copy"]
-          brief --> write_copy --> english_copy
-          write_copy --o coffee_copy_ref
-        end
-        step1 --> step2
-      end
-
-      agent translator["Translator"]
-        task step3["Translate to Swedish"]
-          translate_sv["translate_to_swedish"]
-          bilingual["Bilingual Page"]
-          english_copy --> translate_sv --> bilingual
-          translate_sv --o bilingual_page_ref
-        end
-      end
-
-      agent designer["Designer"]
-        task step4["Generate Website"]
-          gen_html["generate_html"]
-          html_out["HTML Website"]
-          bilingual --> gen_html --> html_out
-        end
-        nordic["nordic_design"]
-        glass["glassmorphism"]
-        scroll["scroll_animations"]
-        toggle["bilingual_toggle"]
-        gen_html --- nordic
-        gen_html --- glass
-        gen_html --- scroll
-        gen_html --- toggle
-      end
-    end
-  end
-
-  coffee_copy_ref["CoffeeCopy"]
-  bilingual_page_ref["BilingualPage"]
-  permit_ref["Permission Tree"]
-
-  city@{ shape: lean-right }
-  brief@{ shape: doc }
-  english_copy@{ shape: doc }
-  bilingual@{ shape: doc }
-  html_out@{ shape: doc }
-  nordic@{ shape: lin-doc }
-  glass@{ shape: lin-doc }
-  scroll@{ shape: lin-doc }
-  toggle@{ shape: lin-doc }
-  coffee_copy_ref@{ shape: procs, type: "CoffeeCopy" }
-  bilingual_page_ref@{ shape: procs, type: "BilingualPage" }
-  permit_ref@{ shape: procs, src: "./permit-tree.mmd" }
-
-
-  research_loc@{ shape: subroutine, returns: "String", requires: "^net.read", cache: "24h", description: "Research a city's coffee culture: local roasters, neighborhoods, demographics, and vibe" }
-  write_copy@{ shape: subroutine, returns: "CoffeeCopy", requires: "^llm.query", retry: 2, description: "Write vivid marketing copy for a coffee shop website" }
-  translate_sv@{ shape: subroutine, returns: "BilingualPage", requires: "^llm.query", description: "Translate marketing copy to Swedish using du-form" }
-  gen_html@{ shape: subroutine, returns: "String", requires: "^llm.query", description: "Generate a complete one-page HTML website with inline CSS and JS" }
-
-  researcher@{ model: "claude-sonnet-4-20250514", permits: "^net.read, ^llm.query" }
-  translator@{ model: "claude-sonnet-4-20250514", permits: "^llm.query" }
-  designer@{ model: "claude-sonnet-4-20250514", permits: "^llm.query" }
-
-  build_site@{ params: "city :: String", returns: "String" }
-    </pre>
-    <pre id="diagram4" class="mermaid2">
-agentflow LR
-    task t1["Step 1"]
-        n3("write_copy")
-        n7["website_copy<br>Coffee shop<br>(output)"]
-        A["Template <br>Website copy"]
-  end
- agent t2["Step 2"]
-        E("generate_html")
-        n9["scandinavian_design<br>(directive)"]
-        n19["Permissions"]
-        n10["website_html<br>(output)"]
-        n21["llmQuery"]
-        n22["netRead"]
-        n23["netWrite"]
-  end
-    n3 --- n7
-    E o--o n9 & n19
-    E --- n10
-    n3 o--o A
-    n19 --> n21 & n22
-    n19 --x n23
-    t1 --> t2
-    t1@{ view: collapsed }
-
-    n7@{ shape: doc}
-    A@{ shape: lin-doc}
-    n9@{ shape: in-out}
-    n19@{ shape: hex}
-    n10@{ shape: doc}
-    n21@{ shape: terminal}
-    n22@{ shape: terminal}
-    n23@{ shape: terminal}
-    classDef Class_01 stroke:#FFF9C4, fill:#FFF9C4
-
-    </pre>
-    <pre id="diagram4" class="mermaid2">
-agentflow LR
-    research_location["Research"]@{
-      description: "Research a city or location to gather useful local context for a business."
-      requires: ^net.read
-      source: ^search.duckduckgo(query)
-      params:
-        query: String
-      returns: String
-    }
-
-    write_copy["Write Copy"]@{
-      description: "Write the actual marketing copy for a coffee shop website."
-      requires: ^llm.query
-      params:
-        brief: String
-      returns: String
-    }
-
-    translate_to_swedish["Translate to Swedish"]@{
-      description: "Translate English marketing copy to Swedish. Output both versions."
-      requires: ^llm.query
-      params:
-        english_copy: String
-      returns: String
-    }
-
-    generate_html["Generate HTML"]@{
-      description: "Generate a complete one-page bilingual HTML website with inline CSS and JS."
-      requires: ^llm.query
-      params:
-        content: String
-      returns: String
-    }
-
-    subgraph researcher
-      research_location --> write_copy
-    end
-
-    subgraph translator
-      translate_to_swedish
-    end
-
-    subgraph designer
-      generate_html
-    end
-
-    %% Orchestration
-    write_copy --> translate_to_swedish
-    translate_to_swedish --> generate_html
 
     </pre>
 
     <script type="module">
-      import mermaid from './mermaid.esm.mjs';
-      import layouts from './mermaid-layout-elk.esm.mjs';
+      import mermaid from '/mermaid.esm.mjs';
+      import layouts from '/mermaid-layout-elk.esm.mjs';
 
       const staticBellIconPack = {
         prefix: 'fa6-regular',

@@ -45,6 +45,17 @@ function getContainerStyle(containerType: string | undefined) {
         cssClass: 'task-collapsed',
         separatorLine: false,
       };
+    case 'types':
+    case 'templates':
+      return {
+        rx: 6,
+        fill: themeVariables.tertiaryColor || '#f0f0f0',
+        stroke: themeVariables.clusterBorder || themeVariables.secondaryBorderColor,
+        strokeWidth: 0.75,
+        strokeDash: '4, 4',
+        cssClass: containerType === 'types' ? 'types-collapsed' : 'templates-collapsed',
+        separatorLine: false,
+      };
     default:
       return {
         rx: 5,

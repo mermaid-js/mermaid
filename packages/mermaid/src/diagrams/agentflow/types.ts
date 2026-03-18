@@ -83,7 +83,7 @@ export interface FlowSubGraph {
   labelType: string;
   nodes: string[];
   title: string;
-  type?: 'subgraph' | 'task' | 'agent' | 'flow' | 'types';
+  type?: 'subgraph' | 'task' | 'agent' | 'flow' | 'types' | 'templates';
   metadata?: Record<string, unknown>;
 }
 
@@ -99,20 +99,38 @@ export interface AgentFlowTypeField {
   type: string;
 }
 
+export interface AgentFlowTemplateField {
+  name: string;
+  type: string;
+  multiplicity?: number;
+  description: string;
+}
+
+export interface AgentFlowTemplateDeclaration {
+  name: string;
+  fields: AgentFlowTemplateField[];
+  metadata?: Record<string, unknown>;
+}
+
+export type AgentFlowTemplateDeclarationsByName = Record<string, AgentFlowTemplateDeclaration>;
+
 export type AgentFlowTypeDeclaration =
   | {
       name: string;
       kind: 'opaque';
+      metadata?: Record<string, unknown>;
     }
   | {
       name: string;
       kind: 'alias';
       expression: string;
+      metadata?: Record<string, unknown>;
     }
   | {
       name: string;
       kind: 'record';
       fields: AgentFlowTypeField[];
+      metadata?: Record<string, unknown>;
     };
 
 export type AgentFlowTypeDeclarationsByName = Record<string, AgentFlowTypeDeclaration>;

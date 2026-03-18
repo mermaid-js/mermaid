@@ -119,12 +119,14 @@ export async function typeDeclaration<T extends SVGGraphicsElement>(
   );
   accHeight += nameHeight;
 
+  // Add padding below the name before the separator
+  accHeight += PADDING / 2;
   const headerHeight = accHeight;
 
   // Fields (for record types)
   let fieldsHeight = 0;
   if (typeData?.kind === 'record' && typeData.fields.length > 0) {
-    accHeight += PADDING; // gap before fields
+    accHeight += PADDING * 1.5; // gap after separator before fields
     for (const field of typeData.fields) {
       const fieldText = `${field.name}: ${field.type}`;
       const fh = await addText(shapeSvg, fieldText, accHeight, node.labelStyle);
@@ -132,7 +134,7 @@ export async function typeDeclaration<T extends SVGGraphicsElement>(
       fieldsHeight += fh;
     }
   } else if (typeData?.kind === 'alias') {
-    accHeight += PADDING;
+    accHeight += PADDING * 1.5;
     const exprHeight = await addText(
       shapeSvg,
       `= ${(typeData as { expression: string }).expression}`,
@@ -185,7 +187,7 @@ export async function typeDeclaration<T extends SVGGraphicsElement>(
 
   // -- Separator line between header and fields --
   if (fieldsHeight > 0) {
-    const sepY = y + headerHeight + PADDING / 2;
+    const sepY = y + headerHeight - PADDING / 4;
     const roughLine = rc.line(x, sepY, x + totalWidth, sepY, options);
     const dividerLine = shapeSvg.insert(() => roughLine);
     dividerLine.attr('class', 'type-declaration-separator').attr('style', nodeStyles);
