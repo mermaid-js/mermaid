@@ -10,6 +10,7 @@ export const markerOffsets = {
   dependency: 6,
   lollipop: 13.5,
   arrow_point: 4,
+  arrow_barb: 5.5,
   //arrow_cross: 24,
 } as const;
 
@@ -17,7 +18,7 @@ export const markerOffsets = {
 // under any transparent markers.
 // The offsets are calculated from the markers' dimensions.
 export const markerOffsets2 = {
-  arrow_point: 9,
+  arrow_point: 4,
   arrow_cross: 12.5,
   arrow_circle: 12.5,
 } as const;

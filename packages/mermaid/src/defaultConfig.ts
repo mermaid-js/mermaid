@@ -261,6 +261,10 @@ const config: RequiredDeep<MermaidConfig> = {
   packet: {
     ...defaultConfigJson.packet,
   },
+  treeView: {
+    ...defaultConfigJson.treeView,
+    useWidth: undefined,
+  },
   radar: {
     ...defaultConfigJson.radar,
   },

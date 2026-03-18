@@ -1,5 +1,38 @@
-const getStyles = (options) => `
+import * as configApi from '../../config.js';
 
+const genColor = (options) => {
+  const config = configApi.getConfig();
+
+  const { themeVariables, look } = config;
+  const { bkgColorArray, borderColorArray } = themeVariables;
+  if (!borderColorArray?.length) {
+    return '';
+  }
+  let sections = '';
+
+  for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
+    sections += `
+
+    [data-look="${look}"][data-color-id="color-${i}"].node path {
+    stroke: ${borderColorArray[i]};
+    fill: ${bkgColorArray?.length ? bkgColorArray[i] : ''};
+    }
+
+    [data-look="${look}"][data-color-id="color-${i}"].node  rect {
+    stroke: ${borderColorArray[i]};
+    fill: ${bkgColorArray?.length ? bkgColorArray[i] : ''};
+     }
+    `;
+  }
+  return sections;
+};
+
+const getStyles = (options) => {
+  const config = configApi.getConfig();
+  const { look, themeVariables } = config;
+  const { requirementEdgeLabelBackground } = themeVariables;
+  return `
+  ${genColor(options)}
   marker {
     fill: ${options.relationColor};
     stroke: ${options.relationColor};
@@ -35,12 +68,12 @@ const getStyles = (options) => `
   }
   .relationshipLine {
     stroke: ${options.relationColor};
-    stroke-width: 1;
+    stroke-width: ${look === 'neo' ? options.strokeWidth : '1px'};
   }
   .relationshipLabel {
     fill: ${options.relationLabelColor};
   }
-  .edgeLabel {
+    .edgeLabel {
     background-color: ${options.edgeLabelBackground};
   }
   .edgeLabel .label rect {
@@ -62,9 +95,10 @@ const getStyles = (options) => `
     color: ${options.nodeTextColor || options.textColor};
   }
   .labelBkg {
-    background-color: ${options.edgeLabelBackground};
+    background-color: ${requirementEdgeLabelBackground ?? options.edgeLabelBackground};
   }
 
 `;
+};
 // fill', conf.rect_fill)
 export default getStyles;

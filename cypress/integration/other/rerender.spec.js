@@ -8,10 +8,10 @@ describe('Rerendering', () => {
   it('should be able to render and rerender a graph via API', () => {
     const url = '/rerender.html';
     cy.visit(url);
-    cy.get('#graph [id^=flowchart-A]').should('have.text', 'XMas');
+    cy.get('#graph [id*=flowchart-A]').should('have.text', 'XMas');
 
     cy.get('body').find('#rerender').click({ force: true });
 
-    cy.get('#graph [id^=flowchart-A]').should('have.text', 'Saturday');
+    cy.get('#graph [id*=flowchart-A]').should('have.text', 'Saturday');
   });
 });

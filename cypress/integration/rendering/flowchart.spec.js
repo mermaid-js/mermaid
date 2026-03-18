@@ -786,8 +786,8 @@ describe('Graph', () => {
       { screenshot: false }
     );
     // Verify animation classes are applied to both edges
-    cy.get('path#L_A_B_0').should('have.class', 'edge-animation-slow');
-    cy.get('path#L_B_D_0').should('have.class', 'edge-animation-fast');
+    cy.get('path[id$="-L_A_B_0"]').should('have.class', 'edge-animation-slow');
+    cy.get('path[id$="-L_B_D_0"]').should('have.class', 'edge-animation-fast');
   });
   it('58: handle styling with style expressions', () => {
     imgSnapshotTest(

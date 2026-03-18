@@ -1,5 +1,5 @@
 import { arc as d3arc, select } from 'd3';
-const MAX_SECTIONS = 12;
+let nodeCount = 0;
 
 export const drawRect = function (elem, rectData) {
   const rectElem = elem.append('rect');
@@ -225,13 +225,13 @@ let taskCount = -1;
  * @param {any} task The task to render
  * @param {any} conf The global configuration
  */
-export const drawTask = function (elem, task, conf) {
+export const drawTask = function (elem, task, conf, diagramId) {
   const center = task.x + conf.width / 2;
   const g = elem.append('g');
   taskCount++;
   const maxHeight = 300 + 5 * 30;
   g.append('line')
-    .attr('id', 'task' + taskCount)
+    .attr('id', diagramId + '-task' + taskCount)
     .attr('x1', center)
     .attr('y1', task.y)
     .attr('x2', center)
@@ -433,11 +433,13 @@ const _drawTextCandidateFunc = (function () {
   };
 })();
 
-const initGraphics = function (graphics) {
+const initGraphics = function (graphics, id) {
+  nodeCount = 0;
+  taskCount = -1;
   graphics
     .append('defs')
     .append('marker')
-    .attr('id', 'arrowhead')
+    .attr('id', id + '-arrowhead')
     .attr('refX', 5)
     .attr('refY', 2)
     .attr('markerWidth', 6)
@@ -493,8 +495,11 @@ function wrap(text, width) {
   });
 }
 
-export const drawNode = function (elem, node, fullSection, conf) {
-  const section = (fullSection % MAX_SECTIONS) - 1;
+export const drawNode = function (elem, node, fullSection, conf, diagramId, isEvent = false) {
+  const { theme, look } = conf;
+  const isReduxTheme = theme?.includes('redux');
+  const maxSections = conf?.themeVariables?.THEME_COLOR_LIMIT ?? 12;
+  const section = (fullSection % maxSections) - 1;
   const nodeElem = elem.append('g');
   node.section = section;
   nodeElem.attr(
@@ -521,9 +526,43 @@ export const drawNode = function (elem, node, fullSection, conf) {
   node.width = node.width + 2 * node.padding;
 
   textElem.attr('transform', 'translate(' + node.width / 2 + ', ' + node.padding / 2 + ')');
+  if (isReduxTheme) {
+    textElem.attr(
+      'transform',
+      `translate(${node.width / 2}, ${isEvent ? node.padding / 2 + 3 : node.padding})`
+    );
+  }
 
   // Create the background element
-  defaultBkg(bkgElem, node, section, conf);
+  defaultBkg(bkgElem, node, section, diagramId, conf);
+
+  if (look === 'neo') {
+    nodeElem.attr('data-look', `neo`);
+    if (isReduxTheme) {
+      const isDark = theme.includes('dark');
+      const rootSvgNode = elem.node()?.ownerSVGElement ?? elem.node();
+      const rootSvg = select(rootSvgNode);
+      const svgId = rootSvg.attr('id') ?? '';
+      const dropShadowId = svgId ? `${svgId}-drop-shadow` : 'drop-shadow';
+
+      // Only add the filter once per SVG to avoid duplicate definitions
+      if (rootSvg.select(`#${dropShadowId}`).empty()) {
+        const existingDefs = rootSvg.select('defs');
+        const defsEl = existingDefs.empty() ? rootSvg.append('defs') : existingDefs;
+        defsEl
+          .append('filter')
+          .attr('id', dropShadowId)
+          .attr('height', '130%')
+          .attr('width', '130%')
+          .append('feDropShadow')
+          .attr('dx', '4')
+          .attr('dy', '4')
+          .attr('stdDeviation', 0)
+          .attr('flood-opacity', isDark ? '0.2' : '0.06')
+          .attr('flood-color', isDark ? '#FFFFFF' : '#000000');
+      }
+    }
+  }
 
   return node;
 };
@@ -544,26 +583,30 @@ export const getVirtualNodeHeight = function (elem, node, conf) {
   return bbox.height + fontSize * 1.1 * 0.5 + node.padding;
 };
 
-const defaultBkg = function (elem, node, section) {
+const defaultBkg = function (elem, node, section, diagramId, config) {
+  const { theme } = config;
+  const r = theme?.includes('redux') ? 0 : 5;
   const rd = 5;
+  // When r=0 (redux themes), use straight line segments for sharp corners instead of
+  // degenerate quadratic bezier curves (q0,-0,0,-0) which are functionally a no-op.
+  const d =
+    r > 0
+      ? `M0 ${node.height - rd} v${-node.height + 2 * rd} q0,-${r},${r},-${r} h${node.width - 2 * rd} q${r},0,${r},${r} v${node.height - rd} H0 Z`
+      : `M0 ${node.height - rd} v${-(node.height - rd)} h${node.width} v${node.height} H0 Z`;
   elem
     .append('path')
-    .attr('id', 'node-' + node.id)
+    .attr('id', diagramId + '-node-' + nodeCount++)
     .attr('class', 'node-bkg node-' + node.type)
-    .attr(
-      'd',
-      `M0 ${node.height - rd} v${-node.height + 2 * rd} q0,-5 5,-5 h${
-        node.width - 2 * rd
-      } q5,0 5,5 v${node.height - rd} H0 Z`
-    );
-
-  elem
-    .append('line')
-    .attr('class', 'node-line-' + section)
-    .attr('x1', 0)
-    .attr('y1', node.height)
-    .attr('x2', node.width)
-    .attr('y2', node.height);
+    .attr('d', d);
+  if (!theme?.includes('redux')) {
+    elem
+      .append('line')
+      .attr('class', 'node-line-' + section)
+      .attr('x1', 0)
+      .attr('y1', node.height)
+      .attr('x2', node.width)
+      .attr('y2', node.height);
+  }
 };
 
 export default {

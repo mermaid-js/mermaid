@@ -85,6 +85,7 @@ interface BaseNode {
   radius?: number;
   taper?: number;
   stroke?: string;
+  colorIndex?: number;
 }
 
 /**
@@ -170,6 +171,7 @@ export interface LayoutData {
   nodes: Node[];
   edges: Edge[];
   config: MermaidConfig;
+  diagramId?: string;
   [key: string]: any; // Additional properties not yet defined
 }
 

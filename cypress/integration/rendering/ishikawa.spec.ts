@@ -155,7 +155,21 @@ describe('Ishikawa diagram', () => {
     });
   });
 
-  it('12: should render a very deep nested diagram', () => {
+  it('12: should render correctly when effect is indented more than causes', () => {
+    imgSnapshotTest(
+      `ishikawa-beta
+    Problem
+Cause A
+  Subcause A1
+  Subcause A2
+Cause B
+  Subcause B1
+Cause C
+      `
+    );
+  });
+
+  it('13: should render a very deep nested diagram', () => {
     imgSnapshotTest(
       `ishikawa-beta
     Very deep

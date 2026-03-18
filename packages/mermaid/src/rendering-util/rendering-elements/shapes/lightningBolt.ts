@@ -42,6 +42,7 @@ export function lightningBolt<T extends SVGGraphicsElement>(parent: D3Selection<
   const lineNode = rc.path(linePath, options);
 
   const lightningBolt = shapeSvg.insert(() => lineNode, ':first-child');
+  lightningBolt.attr('class', 'outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     lightningBolt.selectAll('path').attr('style', cssStyles);

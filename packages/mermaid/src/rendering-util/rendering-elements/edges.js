@@ -3,7 +3,7 @@ import { getEffectiveHtmlLabels } from '../../config.js';
 import { log } from '../../logger.js';
 import { createText } from '../createText.js';
 import { computeLabelTransform } from '../labelTransform.js';
-import utils from '../../utils.js';
+import utils, { handleUndefinedAttr } from '../../utils.js';
 import {
   getLineFunctionsWithOffset,
   markerOffsets,
@@ -552,9 +552,14 @@ export const insertEdge = function (
   diagramType,
   startNode,
   endNode,
-  id,
+  diagramId,
   skipIntersect = false
 ) {
+  if (!diagramId) {
+    throw new Error(
+      `insertEdge: missing diagramId for edge "${edge.id}" — edge IDs require a diagram prefix for uniqueness`
+    );
+  }
   const { handDrawnSeed } = getConfig();
   let points = edge.points;
   let pointsHasChanged = false;
@@ -715,7 +720,7 @@ export const insertEdge = function (
 
     svgPath = select(svgPathNode)
       .select('path')
-      .attr('id', edge.id)
+      .attr('id', `${diagramId}-${edge.id}`)
       .attr(
         'class',
         ' ' +
@@ -738,7 +743,7 @@ export const insertEdge = function (
     svgPath = elem
       .append('path')
       .attr('d', linePath)
-      .attr('id', edge.id)
+      .attr('id', `${diagramId}-${edge.id}`)
       .attr(
         'class',
         ' ' +
@@ -778,7 +783,8 @@ export const insertEdge = function (
   svgPath.attr('data-et', 'edge');
   svgPath.attr('data-id', edge.id);
   svgPath.attr('data-points', pointsStr);
-
+  // Add data attributes for neo look support
+  svgPath.attr('data-look', handleUndefinedAttr(edge.look));
   // DEBUG code, adds a red circle at each edge coordinate
   // cornerPoints.forEach((point) => {
   //   elem
@@ -814,7 +820,8 @@ export const insertEdge = function (
   log.info('arrowTypeStart', edge.arrowTypeStart);
   log.info('arrowTypeEnd', edge.arrowTypeEnd);
 
-  addEdgeMarkers(svgPath, edge, url, id, diagramType, strokeColor);
+  const useMargin = !animatedEdge && edge?.look === 'neo';
+  addEdgeMarkers(svgPath, edge, url, diagramId, diagramType, useMargin, strokeColor);
   const midIndex = Math.floor(points.length / 2);
   const point = points[midIndex];
   if (!utils.isLabelCoordinateInPath(point, svgPath.attr('d'))) {

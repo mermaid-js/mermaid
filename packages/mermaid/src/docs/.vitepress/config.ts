@@ -190,6 +190,8 @@ function sidebarSyntax() {
         { text: 'Radar 🔥', link: '/syntax/radar' },
         { text: 'Treemap 🔥', link: '/syntax/treemap' },
         { text: 'Venn 🔥', link: '/syntax/venn' },
+        { text: 'Ishikawa 🔥', link: '/syntax/ishikawa' },
+        { text: 'TreeView 🔥', link: '/syntax/treeView' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },

@@ -9,7 +9,9 @@ const { id, detector, loader } = architectureDetector;
 
 addDetector(id, detector, loader); // Add architecture schemas to Mermaid
 
-describe('architecture diagram SVGs', () => {
+// Cytoscape layout is CPU-intensive and can exceed the default 5s timeout
+// when running alongside the full test suite.
+describe('architecture diagram SVGs', { timeout: 15_000 }, () => {
   jsdomIt('should add ids', async () => {
     const svgNode = await drawDiagram(`
       architecture-beta
@@ -25,19 +27,25 @@ describe('architecture diagram SVGs', () => {
         disk2:T -- B:db
     `);
 
-    const nodesForGroup = svgNode.querySelectorAll(`#group-api`);
+    const nodesForGroup = svgNode.querySelectorAll(`#svg-group-api`);
     expect(nodesForGroup.length).toBe(1);
 
-    const serviceIds = [...svgNode.querySelectorAll(`[id^=service-]`)].map(({ id }) => id).sort();
+    const serviceIds = [...svgNode.querySelectorAll(`[id^=svg-service-]`)]
+      .map(({ id }) => id)
+      .sort();
     expect(serviceIds).toStrictEqual([
-      'service-db',
-      'service-disk1',
-      'service-disk2',
-      'service-server',
+      'svg-service-db',
+      'svg-service-disk1',
+      'svg-service-disk2',
+      'svg-service-server',
     ]);
 
-    const edgeIds = [...svgNode.querySelectorAll(`.edge[id^=L_]`)].map(({ id }) => id).sort();
-    expect(edgeIds).toStrictEqual(['L_db_server_0', 'L_disk1_server_0', 'L_disk2_db_0']);
+    const edgeIds = [...svgNode.querySelectorAll(`.edge[id^=svg-L_]`)].map(({ id }) => id).sort();
+    expect(edgeIds).toStrictEqual([
+      'svg-L_db_server_0',
+      'svg-L_disk1_server_0',
+      'svg-L_disk2_db_0',
+    ]);
   });
 });
 
