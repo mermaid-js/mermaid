@@ -2,7 +2,7 @@
 <img src="https://raw.githubusercontent.com/mermaid-js/mermaid/develop/docs/public/favicon.svg" height="150">
 </p>
 <h1 align="center">
-SAM
+Mermaid
 </h1>
 <p align="center">
 Generate diagrams from markdown-like text.
