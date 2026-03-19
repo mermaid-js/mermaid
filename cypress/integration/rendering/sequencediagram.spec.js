@@ -1216,4 +1216,34 @@ describe('Sequence diagram', () => {
       );
     });
   });
+
+  describe('Markdown links in messages and actor descriptions', () => {
+    it('should render a sequence message with a markdown link', () => {
+      imgSnapshotTest(
+        `
+sequenceDiagram
+    Alice->>Bob: Please check [the docs](https://mermaid.js.org) for more info
+    Bob-->>Alice: Thanks!`
+      );
+    });
+
+    it('should render a sequence message with multiple markdown links', () => {
+      imgSnapshotTest(
+        `
+sequenceDiagram
+    Client->>Server: POST /order (see [API spec](https://example.com/api))
+    Server-->>Client: 200 OK — see [dashboard](https://example.com/dashboard)`
+      );
+    });
+
+    it('should render an actor description with a markdown link', () => {
+      imgSnapshotTest(
+        `
+sequenceDiagram
+    participant U as [User Profile](https://example.com/profile)
+    participant A as Admin
+    U->>A: Hello`
+      );
+    });
+  });
 });

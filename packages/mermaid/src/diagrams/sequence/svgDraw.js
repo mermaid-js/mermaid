@@ -1613,7 +1613,7 @@ const _drawTextCandidateFunc = (function () {
           // Add the link
           const linkText = match[1];
           const linkHref = sanitizeUrl(match[2]);
-          const safeHref = linkHref.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+          const safeHref = linkHref.replace(/&/g, '&amp;').replace(/"/g, '&quot;'); // Sanitize the href to prevent XSS attacks
           const linkEl = textElem.append('a').attr('xlink:href', safeHref).attr('target', '_blank');
           linkEl.append('tspan').attr('text-decoration', 'underline').text(linkText);
           lastIndex = match.index + match[0].length;

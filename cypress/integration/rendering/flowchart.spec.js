@@ -1049,3 +1049,21 @@ it('70: should render subgraphs with markdown headings', () => {
     { fontFamily: 'courier' }
   );
 });
+it('71: should render flowchart node with a markdown link', () => {
+  imgSnapshotTest(
+    `
+flowchart LR
+    A["\`[Google](https://google.com)\`"] --> B["\`Visit [GitHub](https://github.com) for code\`"]
+    `,
+    { flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+  );
+});
+it('72: should render flowchart edge label with a markdown link', () => {
+  imgSnapshotTest(
+    `
+flowchart LR
+    A["\`[Google](https://google.com)\`"] -- "\`Click [here](https://example.com)\`" --> B["\`[GitHub](https://github.com)\`"]
+    `,
+    { flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+  );
+});
