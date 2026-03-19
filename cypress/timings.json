@@ -402,7 +402,10 @@
     {
       "spec": "cypress/integration/rendering/zenuml.spec.js",
       "duration": 3218
->>>>>>> develop
+    },
+    {
+      "spec": "cypress/integration/rendering/eventmodeling.spec.ts",
+      "duration": 10000
     }
   ]
 }
