@@ -38,7 +38,7 @@ rf 02 evt CartCreated
 rf 03 evt ItemAdded
 rf 04 evt ItemRemoved
 rf 05 evt CartCleared
-tf 01 rmo CartScreen >f 02 >f 03 >f 04 >f 05
+tf 01 rmo CartScreen ->> 02 ->> 03 ->> 04 ->> 05
 `;
 
 describe('eventmodeling diagrams', () => {
