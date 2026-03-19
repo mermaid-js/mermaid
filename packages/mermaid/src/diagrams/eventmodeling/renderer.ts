@@ -128,7 +128,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     throw new Error('EventModeling config not found');
   }
   const db = diagObj.db as EventModelingDB;
-  const { themeVariables } = getConfig();
+  const { themeVariables, eventmodeling: config } = getConfig();
 
   const diagram: Selection<BaseType, unknown, HTMLElement, any> = select(`[id="${id}"]`);
 
@@ -156,7 +156,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
 
   marker.append('polygon').attr('points', '0 0, 10 3.5, 0 7').attr('fill', arrowheadColor);
 
-  setupGraphViewbox(undefined, diagram, 30, undefined);
+  setupGraphViewbox(undefined, diagram, config?.padding ?? 30, config?.useMaxWidth);
 };
 
 export default {

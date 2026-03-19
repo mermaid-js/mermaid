@@ -1574,7 +1574,11 @@ export interface BlockDiagramConfig extends BaseDiagramConfig {
  */
 export interface EventModelingDiagramConfig extends BaseDiagramConfig {
   /**
-   * The height of each row in the packet diagram.
+   * The padding around the Event Modeling diagram.
+   */
+  padding?: number;
+  /**
+   * The height of each row in the Event Modeling diagram.
    */
   rowHeight?: number;
 }

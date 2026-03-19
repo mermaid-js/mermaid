@@ -2265,8 +2265,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     type: object
     unevaluatedProperties: false
     properties:
+      padding:
+        description: The padding around the Event Modeling diagram.
+        type: number
+        default: 30
       rowHeight:
-        description: The height of each row in the packet diagram.
+        description: The height of each row in the Event Modeling diagram.
         type: number
         minimum: 1
         default: 32
