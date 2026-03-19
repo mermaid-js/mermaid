@@ -12,6 +12,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
+import { sanitizeText } from '../common/common.js';
 
 import DEFAULT_CONFIG from '../../defaultConfig.js';
 
@@ -330,7 +331,8 @@ function calculateTextProps(
   dataEntities: EmDataEntity[],
   diagramProps: DiagramProps
 ): TextProps {
-  const name = extractName(frame.entityIdentifier);
+  const config = commonGetConfig();
+  const name = sanitizeText(extractName(frame.entityIdentifier) ?? '', config);
   let content = `<b>${name}</b>`;
   let dataToBeRendered = false;
   let toHtml;
@@ -339,6 +341,7 @@ function calculateTextProps(
     toHtml = frame.dataInlineValue;
     toHtml = toHtml.substring(toHtml.indexOf('{') + 1);
     toHtml = toHtml.substring(0, toHtml.lastIndexOf('}') - 1);
+    toHtml = sanitizeText(toHtml, config);
     dataToBeRendered = true;
   }
 
@@ -351,6 +354,7 @@ function calculateTextProps(
       toHtml = dataEntity.dataBlockValue;
       toHtml = toHtml.substring(toHtml.indexOf('{\n') + 2);
       toHtml = toHtml.substring(0, toHtml.lastIndexOf('}') - 1);
+      toHtml = sanitizeText(toHtml, config);
       toHtml = toHtml.replaceAll('\n', '<br/>');
       toHtml = toHtml.replaceAll(' ', '&nbsp;');
       toHtml += `<br/>`;
