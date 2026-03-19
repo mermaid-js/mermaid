@@ -1654,6 +1654,10 @@ export interface PacketDiagramConfig extends BaseDiagramConfig {
    * The vertical padding between the rows.
    */
   paddingY?: number;
+  /**
+   * Endianness of the packet bit ordering when displaying bit numbers and labels.
+   */
+  endianness?: string;
 }
 /**
  * The object containing configurations specific for block diagrams.

@@ -65,6 +65,23 @@ title UDP Packet
 64-95: "Data (variable length)"
 ```
 
+## Packet Endianness (v<MERMAID_RELEASE_VERSION>+)
+
+Packets have an endianness associated with them, which defines the order in which the bytes get transmitted or accessed.
+
+```mermaid-example
+---
+config:
+  packet:
+    showBits: true
+    endianness: little
+---
+packet
+0-15: "Source Port"
+16-31: "Destination Port"
+32-63: "Sequence Number"
+```
+
 ## Details of Syntax
 
 - **Ranges**: Each line after the title represents a different field in the packet. The range (e.g., `0-15`) indicates the bit positions in the packet.

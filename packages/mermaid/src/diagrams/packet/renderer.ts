@@ -37,12 +37,23 @@ const drawWord = (
   svg: SVG,
   word: PacketWord,
   rowNumber: number,
-  { rowHeight, paddingX, paddingY, bitWidth, bitsPerRow, showBits }: Required<PacketDiagramConfig>
+  {
+    rowHeight,
+    paddingX,
+    paddingY,
+    bitWidth,
+    bitsPerRow,
+    showBits,
+    endianness,
+  }: Required<PacketDiagramConfig>
 ) => {
   const group: SVGGroup = svg.append('g');
   const wordY = rowNumber * (rowHeight + paddingY) + paddingY;
+  const isLittleEndian = endianness === 'little';
   for (const block of word) {
-    const blockX = (block.start % bitsPerRow) * bitWidth + 1;
+    const blockX = isLittleEndian
+      ? (bitsPerRow - (block.end % bitsPerRow) - 1) * bitWidth + 1
+      : (block.start % bitsPerRow) * bitWidth + 1;
     const width = (block.end - block.start + 1) * bitWidth - paddingX;
     // Block rectangle
     group
@@ -69,14 +80,21 @@ const drawWord = (
     // Start byte count
     const isSingleBlock = block.end === block.start;
     const bitNumberY = wordY - 2;
+
+    const leftText = isLittleEndian ? block.end : block.start;
+    const leftClass = isLittleEndian ? 'packetByte end' : 'packetByte start';
+
+    const rightText = isLittleEndian ? block.start : block.end;
+    const rightClass = isLittleEndian ? 'packetByte start' : 'packetByte end';
+
     group
       .append('text')
       .attr('x', blockX + (isSingleBlock ? width / 2 : 0))
       .attr('y', bitNumberY)
-      .attr('class', 'packetByte start')
+      .attr('class', leftClass)
       .attr('dominant-baseline', 'auto')
       .attr('text-anchor', isSingleBlock ? 'middle' : 'start')
-      .text(block.start);
+      .text(leftText);
 
     // Draw end byte count if it is not the same as start byte count
     if (!isSingleBlock) {
@@ -84,10 +102,10 @@ const drawWord = (
         .append('text')
         .attr('x', blockX + width)
         .attr('y', bitNumberY)
-        .attr('class', 'packetByte end')
+        .attr('class', rightClass)
         .attr('dominant-baseline', 'auto')
         .attr('text-anchor', 'end')
-        .text(block.end);
+        .text(rightText);
     }
   }
 };

@@ -13,6 +13,7 @@ const defaultPacketStyleOptions: PacketStyleOptions = {
   blockStrokeColor: 'black',
   blockStrokeWidth: '1',
   blockFillColor: '#efefef',
+  endianness: 'big',
 };
 
 export const styles: DiagramStylesProvider = ({ packet }: { packet?: PacketStyleOptions } = {}) => {
