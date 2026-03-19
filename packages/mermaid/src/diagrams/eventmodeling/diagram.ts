@@ -1,4 +1,3 @@
-// @ts-ignore: JISON doesn't support types
 import { parser } from './parser.js';
 import { db } from './db.js';
 import renderer from './renderer.js';

@@ -47,19 +47,12 @@ import {
   RelationPositionedKind,
 } from './types.js';
 
-export const setOptions = function (rawOptString: string) {
-  log.debug('options str', rawOptString);
-  // rawOptString = rawOptString?.trim();
-  // rawOptString = rawOptString || '{}';
-  // try {
-  //   store.options = JSON.parse(rawOptString);
-  // } catch (e: any) {
-  //   log.error('error while parsing gitGraph options', e.message);
-  // }
+export const setOptions = function (_rawOptString: string) {
+  log.debug('options str', _rawOptString);
 };
 
 export const getOptions = function () {
-  // return store.options;
+  return {};
 };
 
 export const clear = function () {
@@ -72,8 +65,7 @@ function reset(): void {
 }
 
 export const getDirection = function () {
-  // return state.records.direction;
-  return 'the direction';
+  return 'LR';
 };
 
 const DEFAULT_EVENTMODELING_CONFIG: Required<EventModelingDiagramConfig> =
@@ -449,9 +441,8 @@ function evolveFramePositioned(state: Context, _event: Event): Context {
 
   const swimlaneProps = calculateSwimlaneProps(event.frame, state.swimlanes);
 
-  // const { frame } = event;
   let swimlane: Swimlane;
-  if (state.swimlanes.hasOwnProperty(swimlaneProps.index)) {
+  if (swimlaneProps.index in state.swimlanes) {
     swimlane = state.swimlanes[swimlaneProps.index];
   } else {
     swimlane = {
@@ -463,11 +454,6 @@ function evolveFramePositioned(state: Context, _event: Event): Context {
       maxHeight: diagramProps.swimlaneMinHeight,
     };
   }
-  // let previousSwimlane: Swimlane;
-  // const previousSwimlaneIndex = event.swimlaneIndex - 1;
-  // if (state.swimlanes.hasOwnProperty(previousSwimlaneIndex)) {
-  //   previousSwimlane = state.swimlanes[previousSwimlaneIndex];
-  // }
 
   const lastBox = state.boxes.length > 0 ? state.boxes[state.boxes.length - 1] : undefined;
   const previousSwimlane =
