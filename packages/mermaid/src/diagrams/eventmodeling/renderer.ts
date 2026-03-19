@@ -3,7 +3,6 @@ import { select } from 'd3';
 import { getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 import type { DrawDefinition } from '../../diagram-api/types.js';
-// import type d3 from 'd3';
 
 import type { EventModelingDB, Box, Relation, Swimlane, DiagramProps } from './types.js';
 
@@ -27,13 +26,6 @@ function renderD3Box(
       .attr('height', box.dimension.height)
       .attr('stroke', box.visual.stroke)
       .attr('fill', box.visual.fill);
-    // .attr('stroke', '#000');
-
-    // g.append('text')
-    //   .attr('font-weight', diagramProps.boxTextFontWeight)
-    //   .attr('x', box.x + 10)
-    //   .attr('y', box.y + 20)
-    //   .text(box.text);
 
     const f = g
       .append('foreignObject')
@@ -63,7 +55,8 @@ function dirUpwards(sourceY: number, targetY: number): boolean {
 
 function renderD3Relation(
   diagram: Selection<BaseType, unknown, HTMLElement, any>,
-  diagramProps: DiagramProps
+  diagramProps: DiagramProps,
+  arrowheadId: string
 ) {
   return (relation: Relation) => {
     const sourceBoxY = relation.sourceBox.swimlane.y + diagramProps.swimlanePadding;
@@ -95,7 +88,7 @@ function renderD3Relation(
       .attr('fill', relation.visual.fill)
       .attr('stroke', relation.visual.stroke)
       .attr('stroke-width', '1')
-      .attr('marker-end', 'url(#arrowhead)')
+      .attr('marker-end', `url(#${arrowheadId})`)
       .attr('d', `M${sourceX} ${sourceY} L${targetX} ${targetY}`);
   };
 }
@@ -103,10 +96,14 @@ function renderD3Relation(
 function renderD3Swimlane(
   diagram: Selection<BaseType, unknown, HTMLElement, any>,
   maxR: number,
-  diagramProps: DiagramProps
+  diagramProps: DiagramProps,
+  themeVariables: Record<string, string | undefined>
 ) {
   return (swimlane: Swimlane) => {
     const g = diagram.append('g').attr('class', 'em-swimlane');
+
+    const oddBackground = themeVariables.emSwimlaneBackgroundOdd ?? 'rgb(250,250,250)';
+    const backgroundStroke = themeVariables.emSwimlaneBackgroundStroke ?? 'rgb(240,240,240)';
 
     g.append('rect')
       .attr('x', 0)
@@ -114,9 +111,8 @@ function renderD3Swimlane(
       .attr('rx', '3')
       .attr('width', maxR + diagramProps.swimlanePadding)
       .attr('height', swimlane.height)
-      // .attr('stroke', box.visual.stroke)
-      .attr('fill', 'rgb(250,250,250)')
-      .attr('stroke', 'rgb(240,240,240)');
+      .attr('fill', oddBackground)
+      .attr('stroke', backgroundStroke);
 
     g.append('text')
       .attr('font-weight', diagramProps.swimlaneTextFontWeight)
@@ -131,38 +127,35 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
   if (!DEFAULT_EVENTMODELING_CONFIG) {
     throw new Error('EventModeling config not found');
   }
-  // const rotateCommitLabel = DEFAULT_GITGRAPH_CONFIG.rotateCommitLabel ?? false;
   const db = diagObj.db as EventModelingDB;
+  const { themeVariables } = getConfig();
 
   const diagram: Selection<BaseType, unknown, HTMLElement, any> = select(`[id="${id}"]`);
 
   const diagramProps = db.getDiagramProps();
   const state = db.getState();
 
-  state.sortedSwimlanesArray.forEach(renderD3Swimlane(diagram, state.maxR, diagramProps));
+  const arrowheadId = `em-arrowhead-${id}`;
+  const arrowheadColor = themeVariables.emArrowhead ?? '#000000';
+
+  state.sortedSwimlanesArray.forEach(
+    renderD3Swimlane(diagram, state.maxR, diagramProps, themeVariables)
+  );
   state.boxes.forEach(renderD3Box(diagram, diagramProps));
-  state.relations.forEach(renderD3Relation(diagram, diagramProps));
+  state.relations.forEach(renderD3Relation(diagram, diagramProps, arrowheadId));
 
   const marker = diagram
     .append('defs')
     .append('marker')
-    .attr('id', 'arrowhead')
+    .attr('id', arrowheadId)
     .attr('markerWidth', '10')
     .attr('markerHeight', '7')
     .attr('refX', '10')
     .attr('refY', '3.5')
     .attr('orient', 'auto');
 
-  marker.append('polygon').attr('points', '0 0, 10 3.5, 0 7').attr('fill', '#000');
+  marker.append('polygon').attr('points', '0 0, 10 3.5, 0 7').attr('fill', arrowheadColor);
 
-  // utils.insertTitle(
-  //   diagram,
-  //   'gitTitleText',
-  //   DEFAULT_GITGRAPH_CONFIG.titleTopMargin ?? 0,
-  //   db.getDiagramTitle()
-  // );
-  //
-  // Setup the view box and size of the svg element
   setupGraphViewbox(undefined, diagram, 30, undefined);
 };
 

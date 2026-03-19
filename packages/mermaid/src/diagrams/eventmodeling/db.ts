@@ -287,36 +287,37 @@ function calculateSwimlaneProps(
 }
 
 function calculateEntityVisualProps(frame: EmFrame): VisualProps {
+  const { themeVariables } = commonGetConfig();
   switch (frame.modelEntityType) {
     case 'scn':
     case 'screen':
       return {
-        fill: 'white',
-        stroke: '#dbdada',
+        fill: themeVariables.emScreenFill ?? 'white',
+        stroke: themeVariables.emScreenStroke ?? '#dbdada',
       };
     case 'pcr':
     case 'processor':
       return {
-        fill: '#edb3f6',
-        stroke: '#b88cbf',
+        fill: themeVariables.emProcessorFill ?? '#edb3f6',
+        stroke: themeVariables.emProcessorStroke ?? '#b88cbf',
       };
     case 'rmo':
     case 'readmodel':
       return {
-        fill: '#d3f1a2',
-        stroke: '#a3b732',
+        fill: themeVariables.emReadModelFill ?? '#d3f1a2',
+        stroke: themeVariables.emReadModelStroke ?? '#a3b732',
       };
     case 'cmd':
     case 'command':
       return {
-        fill: '#bcd6fe',
-        stroke: '#679ac3',
+        fill: themeVariables.emCommandFill ?? '#bcd6fe',
+        stroke: themeVariables.emCommandStroke ?? '#679ac3',
       };
     case 'evt':
     case 'event':
       return {
-        fill: '#ffb778',
-        stroke: '#c19a0f',
+        fill: themeVariables.emEventFill ?? '#ffb778',
+        stroke: themeVariables.emEventStroke ?? '#c19a0f',
       };
     default:
       return {
