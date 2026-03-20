@@ -46,8 +46,9 @@ const findCentralNodeLayer = (nodes: SankeyNodeWithLayer[]): number => {
   let centralLayer = 0;
 
   for (const node of nodes) {
-    if (node.value > maxValue) {
-      maxValue = node.value;
+    const value = node.value ?? 0;
+    if (value > maxValue) {
+      maxValue = value;
       centralLayer = node.layer ?? 0;
     }
   }
