@@ -17,6 +17,10 @@ export interface MindmapNode {
   y?: number;
   isRoot?: boolean;
   labelType?: string;
+  link?: string;
+  linkTarget?: string;
+  haveCallback?: boolean;
+  tooltip?: string;
 }
 
 export type FilledMindMapNode = RequiredDeep<MindmapNode>;

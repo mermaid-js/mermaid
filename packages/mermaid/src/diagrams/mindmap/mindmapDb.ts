@@ -8,6 +8,7 @@ import defaultConfig from '../../defaultConfig.js';
 import type { LayoutData, Node, Edge } from '../../rendering-util/types.js';
 import { getUserDefinedConfig } from '../../config.js';
 import { MAX_SECTIONS } from './svgDraw.js';
+import * as utils from '../../utils.js';
 
 // Extend Node type for mindmap-specific properties
 export type MindmapLayoutNode = Node & {
@@ -36,9 +37,11 @@ const nodeType = {
 
 export class MindmapDB {
   private nodes: MindmapNode[] = [];
+  private nodeMap = new Map<string, MindmapNode>();
   private count = 0;
   private elements: Record<number, D3Element> = {};
   private baseLevel?: number;
+  private funs: ((root: Element) => void)[] = [];
   public readonly nodeType: typeof nodeType;
 
   constructor() {
@@ -51,11 +54,17 @@ export class MindmapDB {
     this.getMindmap = this.getMindmap.bind(this);
     this.addNode = this.addNode.bind(this);
     this.decorateNode = this.decorateNode.bind(this);
+    this.setLink = this.setLink.bind(this);
+    this.setTooltip = this.setTooltip.bind(this);
+    this.setClickEvent = this.setClickEvent.bind(this);
+    this.bindFunctions = this.bindFunctions.bind(this);
   }
   public clear() {
     this.nodes = [];
+    this.nodeMap = new Map();
     this.count = 0;
     this.elements = {};
+    this.funs = [];
     this.baseLevel = undefined;
   }
 
@@ -113,9 +122,11 @@ export class MindmapDB {
     if (parent) {
       parent.children.push(node);
       this.nodes.push(node);
+      this.nodeMap.set(node.nodeId, node);
     } else {
       if (isRoot) {
         this.nodes.push(node);
+        this.nodeMap.set(node.nodeId, node);
       } else {
         throw new Error(
           `There can be only one root. No parent could be found for ("${node.descr}")`
@@ -164,6 +175,76 @@ export class MindmapDB {
     if (decoration.class) {
       node.class = sanitizeText(decoration.class, config);
     }
+  }
+
+  public setLink(nodeId: string, linkStr: string, target?: string): void {
+    const node = this.nodeMap.get(nodeId);
+    if (node !== undefined) {
+      node.link = utils.formatUrl(linkStr, getConfig());
+      node.linkTarget = target;
+    }
+  }
+
+  public setTooltip(nodeId: string, tooltip?: string): void {
+    if (tooltip === undefined) {
+      return;
+    }
+    const node = this.nodeMap.get(nodeId);
+    if (node !== undefined) {
+      node.tooltip = sanitizeText(tooltip, getConfig());
+    }
+  }
+
+  public setClickEvent(nodeId: string, functionName: string, functionArgs?: string): void {
+    if (getConfig().securityLevel !== 'loose') {
+      return;
+    }
+    if (functionName === undefined) {
+      return;
+    }
+
+    let argList: string[] = [];
+    if (typeof functionArgs === 'string') {
+      /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
+      argList = functionArgs.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+      for (let i = 0; i < argList.length; i++) {
+        let item = argList[i].trim();
+        /* Removes all double quotes at the start and end of an argument */
+        if (item.startsWith('"') && item.endsWith('"')) {
+          item = item.slice(1, -1);
+        }
+        argList[i] = item;
+      }
+    }
+
+    /* if no arguments passed into callback, default to passing in nodeId */
+    if (argList.length === 0) {
+      argList.push(nodeId);
+    }
+
+    const node = this.nodeMap.get(nodeId);
+    if (node !== undefined) {
+      node.haveCallback = true;
+      const domId = `node_${node.id}`;
+      this.funs.push((root: Element) => {
+        const elem = root.querySelector(`[id="${domId}"]`);
+        if (elem !== null) {
+          elem.addEventListener(
+            'click',
+            () => {
+              utils.runFunc(functionName, ...argList);
+            },
+            false
+          );
+        }
+      });
+    }
+  }
+
+  public bindFunctions(element: Element): void {
+    this.funs.forEach((fun) => {
+      fun(element);
+    });
   }
 
   type2Str(type: number): string {
@@ -273,6 +354,10 @@ export class MindmapDB {
       icon: node.icon,
       x: node.x,
       y: node.y,
+      link: node.link,
+      linkTarget: node.linkTarget,
+      haveCallback: node.haveCallback,
+      tooltip: node.tooltip,
       // Mindmap-specific properties
       level: node.level,
       nodeId: node.nodeId,
