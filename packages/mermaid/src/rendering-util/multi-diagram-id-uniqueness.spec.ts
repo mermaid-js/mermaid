@@ -178,6 +178,12 @@ union A, B`,
     Campfire Kettle -> Kettle
     Electric Kettle -> Kettle
     Smart Kettle -> Kettle`,
+
+  vsm: `vsm
+    from "Start" >> step1 >> to "End"
+
+    step1 "My Step"
+        cycletime 1s`,
 };
 
 async function renderTwoAndCheckIds(

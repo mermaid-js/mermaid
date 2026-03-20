@@ -13,7 +13,16 @@ import type {
   Vsm,
 } from './index.js';
 
-export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph | Radar | TreeView | Wardley | Vsm;
+export type DiagramAST =
+  | Info
+  | Packet
+  | Pie
+  | Architecture
+  | GitGraph
+  | Radar
+  | TreeView
+  | Wardley
+  | Vsm;
 
 const parsers: Record<string, LangiumParser> = {};
 const initializers = {
