@@ -35,8 +35,10 @@ export const sanitizeDirective = (args: any): void => {
       continue;
     }
 
-    // Recurse if an object
-    if (typeof args[key] === 'object') {
+    // Recurse if an object, but skip known dictionary-style configs
+    // that allow arbitrary keys (like nodeColors for sankey diagrams)
+    const dictionaryConfigKeys = ['nodeColors'];
+    if (typeof args[key] === 'object' && !dictionaryConfigKeys.includes(key)) {
       log.debug('sanitizing object', key);
       sanitizeDirective(args[key]);
       continue;

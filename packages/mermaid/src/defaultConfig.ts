@@ -271,6 +271,11 @@ const config: RequiredDeep<MermaidConfig> = {
   ishikawa: {
     ...defaultConfigJson.ishikawa,
   },
+  sankey: {
+    ...defaultConfigJson.sankey,
+    // Define nodeColors so it's included in configKeys (allows it through sanitizeDirective)
+    nodeColors: undefined,
+  },
   treemap: {
     useMaxWidth: true,
     padding: 10,

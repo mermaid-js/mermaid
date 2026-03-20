@@ -5,7 +5,7 @@ describe('Sankey Diagram', () => {
     imgSnapshotTest(
       `
       sankey-beta
-      
+
       sourceNode,targetNode,10
       `,
       {}
@@ -63,14 +63,14 @@ describe('Sankey Diagram', () => {
       cy.wrap(
         `
         sankey
-        
+
         a,b,8
         b,c,8
         c,d,8
         d,e,8
-        
+
         x,c,4
-        c,y,4  
+        c,y,4
         `
       ).as('graph');
     });
@@ -139,6 +139,223 @@ describe('Sankey Diagram', () => {
       cy.get('.node[id="node-7"]').should((node) => {
         expect(node.attr('x')).to.equal('300');
       });
+    });
+  });
+
+  describe('when given a labelStyle', function () {
+    this.beforeAll(() => {
+      cy.wrap(
+        `sankey
+        a,b,10
+        b,c,10
+        `
+      ).as('graph');
+    });
+
+    it('should render outlined labels by default', function () {
+      renderGraph(this.graph, { sankey: {} });
+
+      // Outlined style should create background and foreground label elements
+      cy.get('.node-labels .sankey-label-bg').should('exist');
+      cy.get('.node-labels .sankey-label-fg').should('exist');
+    });
+
+    it('should render default (plain) labels when labelStyle is default', function () {
+      renderGraph(this.graph, { sankey: { labelStyle: 'default' } });
+
+      // Default style should not have the outlined label classes
+      cy.get('.node-labels .sankey-label-bg').should('not.exist');
+      cy.get('.node-labels .sankey-label-fg').should('not.exist');
+      cy.get('.node-labels text').should('exist');
+    });
+
+    it('should render outlined labels when labelStyle is outlined', function () {
+      renderGraph(this.graph, { sankey: { labelStyle: 'outlined' } });
+
+      cy.get('.node-labels .sankey-label-bg').should('exist');
+      cy.get('.node-labels .sankey-label-fg').should('exist');
+    });
+  });
+
+  describe('when given nodeWidth and nodePadding', function () {
+    it('should respect custom nodeWidth', function () {
+      renderGraph(
+        `sankey
+        a,b,10
+        `,
+        { sankey: { nodeWidth: 20, useMaxWidth: false } }
+      );
+
+      cy.get('.node rect')
+        .first()
+        .should((node) => {
+          expect(parseFloat(node.attr('width') ?? '0')).to.equal(20);
+        });
+    });
+
+    it('should use default nodeWidth of 10', function () {
+      renderGraph(
+        `sankey
+        a,b,10
+        `,
+        { sankey: { useMaxWidth: false } }
+      );
+
+      cy.get('.node rect')
+        .first()
+        .should((node) => {
+          expect(parseFloat(node.attr('width') ?? '0')).to.equal(10);
+        });
+    });
+  });
+
+  describe('smart label positioning', function () {
+    it('should render labels with Apple-style outlined text', () => {
+      imgSnapshotTest(
+        `
+        sankey
+
+        iPhone,Products,205
+        Mac,Products,40
+        iPad,Products,29
+        Wearables,Products,41
+        Products,Revenue,315
+        Services,Revenue,78
+        Revenue,Cost of Revenue,223
+        Revenue,Gross Profit,170
+        Gross Profit,Op Expenses,51
+        Gross Profit,Op Profit,119
+        Op Profit,Tax,19
+        Op Profit,Net Profit,100
+        `,
+        { sankey: { width: 800, height: 500, labelStyle: 'outlined' } }
+      );
+    });
+
+    it('should position left-of-center labels on the left', () => {
+      // Multi-layer diagram where we can verify label positioning
+      renderGraph(
+        `sankey
+        a,b,10
+        b,c,10
+        c,d,10
+        `,
+        { sankey: { width: 400, useMaxWidth: false } }
+      );
+
+      // Node 'a' is at layer 0 (leftmost), should have label on left (text-anchor: end)
+      cy.get('.node-labels text')
+        .first()
+        .should((label) => {
+          expect(label.attr('text-anchor')).to.equal('end');
+        });
+
+      // Node 'd' is at layer 3 (rightmost), should have label on right (text-anchor: start)
+      cy.get('.node-labels text')
+        .last()
+        .should((label) => {
+          expect(label.attr('text-anchor')).to.equal('start');
+        });
+    });
+  });
+
+  describe('when given nodeColors', function () {
+    it('should use custom colors for specified nodes', function () {
+      renderGraph(
+        `sankey
+        a,b,10
+        b,c,10
+        `,
+        {
+          sankey: {
+            nodeColors: {
+              a: '#ff0000',
+              b: '#00ff00',
+              c: '#0000ff',
+            },
+          },
+        }
+      );
+
+      cy.get('.node[id="node-1"] rect').should((node) => {
+        expect(node.attr('fill')).to.equal('#ff0000');
+      });
+      cy.get('.node[id="node-2"] rect').should((node) => {
+        expect(node.attr('fill')).to.equal('#00ff00');
+      });
+      cy.get('.node[id="node-3"] rect').should((node) => {
+        expect(node.attr('fill')).to.equal('#0000ff');
+      });
+    });
+
+    it('should fall back to default color scheme for unspecified nodes', function () {
+      renderGraph(
+        `sankey
+        a,b,10
+        b,c,10
+        `,
+        {
+          sankey: {
+            nodeColors: {
+              a: '#ff0000',
+            },
+          },
+        }
+      );
+
+      cy.get('.node[id="node-1"] rect').should((node) => {
+        expect(node.attr('fill')).to.equal('#ff0000');
+      });
+      // Node 'b' should use default color scheme (not #ff0000)
+      cy.get('.node[id="node-2"] rect').should((node) => {
+        expect(node.attr('fill')).to.not.equal('#ff0000');
+      });
+    });
+
+    it('should render Apple-style financial diagram with custom colors', () => {
+      imgSnapshotTest(
+        `
+        sankey
+
+        iPhone,Products,205
+        Mac,Products,40
+        iPad,Products,29
+        Wearables,Products,41
+        Products,Revenue,315
+        Services,Revenue,78
+        Revenue,Cost of Revenue,223
+        Revenue,Gross Profit,170
+        Gross Profit,Op Expenses,51
+        Gross Profit,Op Profit,119
+        Op Profit,Tax,19
+        Op Profit,Net Profit,100
+        `,
+        {
+          sankey: {
+            width: 800,
+            height: 500,
+            labelStyle: 'outlined',
+            showValues: true,
+            prefix: '$',
+            suffix: 'B',
+            nodeColors: {
+              iPhone: '#6e6e73',
+              Mac: '#6e6e73',
+              iPad: '#6e6e73',
+              Wearables: '#6e6e73',
+              Products: '#6e6e73',
+              Services: '#6e6e73',
+              Revenue: '#424245',
+              'Cost of Revenue': '#ff3b30',
+              'Gross Profit': '#34c759',
+              'Op Expenses': '#ff3b30',
+              'Op Profit': '#34c759',
+              Tax: '#ff3b30',
+              'Net Profit': '#34c759',
+            },
+          },
+        }
+      );
     });
   });
 });
