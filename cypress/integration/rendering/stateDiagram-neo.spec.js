@@ -21,20 +21,16 @@ const stateFeatureSets = [
   {
     name: 'Special State Types',
     code: `stateDiagram-v2
-    [*] --> State1
-    State1 --> fork_state
     state fork_state <<fork>>
+    [*] --> fork_state
     fork_state --> State2
     fork_state --> State3
+
     state join_state <<join>>
     State2 --> join_state
     State3 --> join_state
-    join_state --> choice_state
-    state choice_state <<choice>>
-    choice_state --> State4
-    choice_state --> State5
-    State4 --> [*]
-    State5 --> [*]`,
+    join_state --> State4
+    State4 --> [*]`,
   },
   {
     name: 'Composite States',
