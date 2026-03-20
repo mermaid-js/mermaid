@@ -147,7 +147,7 @@ Available step attributes:
 
 ### Durations
 
-Durations can be a single value or a range. Both sides of a range must include the unit.
+Durations can be a single value or a range. Both sides of a range must include the unit. Values must be whole integers (e.g., `30m` not `0.5h`).
 
 Supported units: `s` (seconds), `m` (minutes), `h` (hours), `d` (days), `w` (weeks).
 

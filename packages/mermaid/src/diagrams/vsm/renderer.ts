@@ -3,7 +3,15 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramRenderer, DrawDefinition, SVG, SVGGroup } from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import type { VsmDB, VsmStep, VsmQueue, VsmFlowItem, VsmSummary, VsmDuration } from './types.js';
+import type {
+  VsmDB,
+  VsmStep,
+  VsmQueue,
+  VsmEndpoint,
+  VsmFlowItem,
+  VsmSummary,
+  VsmDuration,
+} from './types.js';
 import rough from 'roughjs';
 
 interface ShapeDrawer {
