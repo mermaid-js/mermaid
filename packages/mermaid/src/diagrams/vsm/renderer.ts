@@ -156,12 +156,18 @@ export function parseDurationToMinutes(val: string): number {
   }
 }
 
+type VsmElement =
+  | { type: 'endpoint'; data: VsmEndpoint }
+  | { type: 'step'; data: VsmStep }
+  | { type: 'queue'; data: VsmQueue }
+  | { type: 'arrow' };
+
 function buildOrderedElements(
   flow: VsmFlowItem[],
   steps: VsmStep[],
   queues: VsmQueue[]
-): { type: 'endpoint' | 'step' | 'queue' | 'arrow'; data?: any }[] {
-  const elements: { type: 'endpoint' | 'step' | 'queue' | 'arrow'; data?: any }[] = [];
+): VsmElement[] {
+  const elements: VsmElement[] = [];
   const stepMap = new Map(steps.map((s) => [s.name, s]));
   let queueIndex = 0;
 
