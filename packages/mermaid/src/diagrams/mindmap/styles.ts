@@ -97,10 +97,7 @@ const getStyles: DiagramStylesProvider = (options, svgId) => {
     fill: ${options.gitBranchLabel0};
   }
   .section-root span {
-    color: ${options.gitBranchLabel0};
-  }
-  .section-2 span {
-    color: ${options.gitBranchLabel0};
+    color: ${theme?.includes('redux') ? options.nodeBorder : options.gitBranchLabel0};
   }
   .icon-container {
     height:100%;
