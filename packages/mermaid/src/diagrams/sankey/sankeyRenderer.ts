@@ -18,6 +18,11 @@ import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import { Uid } from '../../rendering-util/uid.js';
 import type { SankeyNodeAlignment } from '../../config.type.js';
 
+/** d3-sankey computes `layer` at runtime but it's not in the type definitions */
+interface SankeyNodeWithLayer extends d3SankeyNode<{ id: string }, Record<string, unknown>> {
+  layer?: number;
+}
+
 // Map config options to alignment functions
 const alignmentsMap: Record<
   SankeyNodeAlignment,
@@ -36,7 +41,7 @@ const alignmentsMap: Record<
  * @param nodes - Array of nodes with layer information
  * @returns The layer number of the central (max value) node
  */
-const findCentralNodeLayer = (nodes: any[]): number => {
+const findCentralNodeLayer = (nodes: SankeyNodeWithLayer[]): number => {
   let maxValue = 0;
   let centralLayer = 0;
 
@@ -199,42 +204,23 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   // Create labels for nodes
   const labelsGroup = svg.append('g').attr('class', 'node-labels').attr('font-size', 14);
 
-  if (labelStyle === 'outlined') {
-    // Outlined style: render background stroke first, then foreground text for readability
-    // Background text with white stroke for readability
+  const appendLabel = (className?: string) =>
     labelsGroup
-      .selectAll('.sankey-label-bg')
+      .selectAll(className ? `.${className}` : 'text')
       .data(graph.nodes)
       .join('text')
-      .attr('class', 'sankey-label-bg')
+      .attr('class', className ?? null)
       .attr('x', (d: any) => getLabelPosition(d).x)
       .attr('y', (d: any) => (d.y1 + d.y0) / 2)
       .attr('dy', `${showValues ? '0' : '0.35'}em`)
       .attr('text-anchor', (d: any) => getLabelPosition(d).anchor)
       .text(getText);
 
-    // Foreground text
-    labelsGroup
-      .selectAll('.sankey-label-fg')
-      .data(graph.nodes)
-      .join('text')
-      .attr('class', 'sankey-label-fg')
-      .attr('x', (d: any) => getLabelPosition(d).x)
-      .attr('y', (d: any) => (d.y1 + d.y0) / 2)
-      .attr('dy', `${showValues ? '0' : '0.35'}em`)
-      .attr('text-anchor', (d: any) => getLabelPosition(d).anchor)
-      .text(getText);
+  if (labelStyle === 'outlined') {
+    appendLabel('sankey-label-bg');
+    appendLabel('sankey-label-fg');
   } else {
-    // Legacy style: single text element (original behavior)
-    labelsGroup
-      .selectAll('text')
-      .data(graph.nodes)
-      .join('text')
-      .attr('x', (d: any) => getLabelPosition(d).x)
-      .attr('y', (d: any) => (d.y1 + d.y0) / 2)
-      .attr('dy', `${showValues ? '0' : '0.35'}em`)
-      .attr('text-anchor', (d: any) => getLabelPosition(d).anchor)
-      .text(getText);
+    appendLabel();
   }
 
   // Creates the paths that represent the links.
