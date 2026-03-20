@@ -6,12 +6,115 @@ import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { VsmDB, VsmStep, VsmQueue, VsmFlowItem, VsmSummary, VsmDuration } from './types.js';
 import rough from 'roughjs';
 
-interface RoughContext {
-  roughSvg: ReturnType<typeof rough.svg>;
-  seed: number;
-  lineColor: string;
-  fillColor: string;
-  strokeWidth: number;
+interface ShapeDrawer {
+  rectangle(group: SVGGroup, x: number, y: number, w: number, h: number, cls: string): void;
+  line(
+    group: SVGGroup,
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    cls: string,
+    strokeWidth?: number
+  ): void;
+  path(group: SVGGroup, d: string, cls: string, opts?: { fill?: string; filled?: boolean }): void;
+}
+
+class ClassicDrawer implements ShapeDrawer {
+  rectangle(group: SVGGroup, x: number, y: number, w: number, h: number, cls: string): void {
+    group
+      .append('rect')
+      .attr('class', cls)
+      .attr('x', x)
+      .attr('y', y)
+      .attr('width', w)
+      .attr('height', h)
+      .attr('rx', 2);
+  }
+
+  line(group: SVGGroup, x1: number, y1: number, x2: number, y2: number, cls: string): void {
+    group
+      .append('line')
+      .attr('class', cls)
+      .attr('x1', x1)
+      .attr('y1', y1)
+      .attr('x2', x2)
+      .attr('y2', y2);
+  }
+
+  path(group: SVGGroup, d: string, cls: string, opts?: { fill?: string; filled?: boolean }): void {
+    const el = group.append('path').attr('class', cls).attr('d', d);
+    if (opts?.fill) {
+      el.attr('fill', opts.fill);
+    }
+  }
+}
+
+class RoughDrawer implements ShapeDrawer {
+  private readonly roughSvg: ReturnType<typeof rough.svg>;
+  private readonly seed: number;
+  private readonly lineColor: string;
+  private readonly fillColor: string;
+  private readonly baseStrokeWidth: number;
+
+  constructor(
+    svgNode: SVGSVGElement,
+    seed: number,
+    lineColor: string,
+    fillColor: string,
+    strokeWidth: number
+  ) {
+    this.roughSvg = rough.svg(svgNode);
+    this.seed = seed;
+    this.lineColor = lineColor;
+    this.fillColor = fillColor;
+    this.baseStrokeWidth = strokeWidth;
+  }
+
+  rectangle(group: SVGGroup, x: number, y: number, w: number, h: number, cls: string): void {
+    const node = this.roughSvg.rectangle(x, y, w, h, {
+      roughness: 0.7,
+      seed: this.seed,
+      fill: this.fillColor,
+      fillStyle: 'hachure',
+      fillWeight: 2,
+      hachureGap: 5,
+      stroke: this.lineColor,
+      strokeWidth: this.baseStrokeWidth,
+    });
+    group.append(() => node).attr('class', cls);
+  }
+
+  line(
+    group: SVGGroup,
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    cls: string,
+    strokeWidth?: number
+  ): void {
+    const node = this.roughSvg.line(x1, y1, x2, y2, {
+      roughness: 0.7,
+      seed: this.seed,
+      stroke: this.lineColor,
+      strokeWidth: strokeWidth ?? this.baseStrokeWidth,
+    });
+    group.append(() => node).attr('class', cls);
+  }
+
+  path(group: SVGGroup, d: string, cls: string, opts?: { fill?: string; filled?: boolean }): void {
+    const fillColor = opts?.filled ? this.lineColor : (opts?.fill ?? 'none');
+    const node = this.roughSvg.path(d, {
+      roughness: 0.7,
+      seed: this.seed,
+      fill: fillColor,
+      fillStyle: fillColor !== 'none' ? 'solid' : 'hachure',
+      stroke: this.lineColor,
+      strokeWidth: this.baseStrokeWidth,
+    });
+    group.append(() => node).attr('class', cls);
+  }
 }
 
 const STEP_WIDTH = 140;
@@ -89,29 +192,16 @@ function buildOrderedElements(
   return elements;
 }
 
-function drawEndpoint(g: SVGGroup, x: number, y: number, label: string, rc?: RoughContext): number {
+function drawEndpoint(
+  g: SVGGroup,
+  x: number,
+  y: number,
+  label: string,
+  shapes: ShapeDrawer
+): number {
   const group = g.append('g').attr('transform', `translate(${x}, ${y})`);
 
-  if (rc) {
-    const roughNode = rc.roughSvg.rectangle(0, 0, ENDPOINT_WIDTH, ENDPOINT_HEIGHT, {
-      roughness: 0.7,
-      seed: rc.seed,
-      fill: rc.fillColor,
-      fillStyle: 'hachure',
-      fillWeight: 2,
-      hachureGap: 5,
-      stroke: rc.lineColor,
-      strokeWidth: rc.strokeWidth,
-    });
-    group.append(() => roughNode).attr('class', 'vsm-endpoint');
-  } else {
-    group
-      .append('rect')
-      .attr('class', 'vsm-endpoint')
-      .attr('width', ENDPOINT_WIDTH)
-      .attr('height', ENDPOINT_HEIGHT)
-      .attr('rx', 5);
-  }
+  shapes.rectangle(group, 0, 0, ENDPOINT_WIDTH, ENDPOINT_HEIGHT, 'vsm-endpoint');
 
   group
     .append('text')
@@ -170,30 +260,11 @@ function drawStep(
   y: number,
   step: VsmStep,
   stepHeight: number,
-  rc?: RoughContext
+  shapes: ShapeDrawer
 ): number {
   const group = g.append('g').attr('transform', `translate(${x}, ${y})`);
 
-  if (rc) {
-    const roughNode = rc.roughSvg.rectangle(0, 0, STEP_WIDTH, stepHeight, {
-      roughness: 0.7,
-      seed: rc.seed,
-      fill: rc.fillColor,
-      fillStyle: 'hachure',
-      fillWeight: 2,
-      hachureGap: 5,
-      stroke: rc.lineColor,
-      strokeWidth: rc.strokeWidth,
-    });
-    group.append(() => roughNode).attr('class', 'vsm-step');
-  } else {
-    group
-      .append('rect')
-      .attr('class', 'vsm-step')
-      .attr('width', STEP_WIDTH)
-      .attr('height', stepHeight)
-      .attr('rx', 2);
-  }
+  shapes.rectangle(group, 0, 0, STEP_WIDTH, stepHeight, 'vsm-step');
 
   const titleText = group
     .append('text')
@@ -209,72 +280,32 @@ function drawStep(
   return STEP_WIDTH;
 }
 
-function drawQueue(g: SVGGroup, x: number, y: number, _queue: VsmQueue, rc?: RoughContext): number {
+function drawQueue(
+  g: SVGGroup,
+  x: number,
+  y: number,
+  _queue: VsmQueue,
+  shapes: ShapeDrawer
+): number {
   const group = g.append('g').attr('transform', `translate(${x}, ${y})`);
   const w = QUEUE_WIDTH;
   const h = 40;
   const r = 4;
 
   const pathD = `M0,0 L0,${h - r} Q0,${h} ${r},${h} L${w - r},${h} Q${w},${h} ${w},${h - r} L${w},0`;
-
-  if (rc) {
-    const roughNode = rc.roughSvg.path(pathD, {
-      roughness: 0.7,
-      seed: rc.seed,
-      fill: 'none',
-      stroke: rc.lineColor,
-      strokeWidth: rc.strokeWidth,
-    });
-    group.append(() => roughNode).attr('class', 'vsm-queue');
-  } else {
-    // Tray shape: U-shaped container with rounded bottom corners
-    group.append('path').attr('class', 'vsm-queue').attr('d', pathD).attr('fill', 'none');
-  }
+  shapes.path(group, pathD, 'vsm-queue', { fill: 'none' });
 
   return QUEUE_WIDTH;
 }
 
-function drawArrow(g: SVGGroup, x: number, y: number, height: number, rc?: RoughContext): number {
+function drawArrow(g: SVGGroup, x: number, y: number, height: number, shapes: ShapeDrawer): number {
   const group = g.append('g').attr('transform', `translate(${x}, ${y})`);
   const midY = height / 2;
 
-  if (rc) {
-    const roughLine = rc.roughSvg.line(0, midY, ARROW_WIDTH - 10, midY, {
-      roughness: 0.7,
-      seed: rc.seed,
-      stroke: rc.lineColor,
-      strokeWidth: rc.strokeWidth,
-    });
-    group.append(() => roughLine).attr('class', 'vsm-arrow');
+  shapes.line(group, 0, midY, ARROW_WIDTH - 10, midY, 'vsm-arrow');
 
-    const arrowPath = `M ${ARROW_WIDTH - 10} ${midY - 5} L ${ARROW_WIDTH} ${midY} L ${ARROW_WIDTH - 10} ${midY + 5} Z`;
-    const roughArrow = rc.roughSvg.path(arrowPath, {
-      roughness: 0.7,
-      seed: rc.seed,
-      fill: rc.lineColor,
-      fillStyle: 'solid',
-      stroke: rc.lineColor,
-      strokeWidth: 1,
-    });
-    group.append(() => roughArrow).attr('class', 'vsm-arrowhead');
-  } else {
-    group
-      .append('line')
-      .attr('class', 'vsm-arrow')
-      .attr('x1', 0)
-      .attr('y1', midY)
-      .attr('x2', ARROW_WIDTH - 10)
-      .attr('y2', midY);
-
-    // Arrowhead
-    group
-      .append('polygon')
-      .attr('class', 'vsm-arrowhead')
-      .attr(
-        'points',
-        `${ARROW_WIDTH - 10},${midY - 5} ${ARROW_WIDTH},${midY} ${ARROW_WIDTH - 10},${midY + 5}`
-      );
-  }
+  const arrowPath = `M ${ARROW_WIDTH - 10} ${midY - 5} L ${ARROW_WIDTH} ${midY} L ${ARROW_WIDTH - 10} ${midY + 5} Z`;
+  shapes.path(group, arrowPath, 'vsm-arrowhead', { filled: true });
 
   return ARROW_WIDTH;
 }
@@ -288,34 +319,18 @@ function drawTimeline(
   queues: VsmQueue[],
   stepPositions: { x: number; width: number }[],
   queuePositions: { x: number; width: number }[],
-  rc?: RoughContext
+  shapes: ShapeDrawer
 ): void {
   const group = g.append('g').attr('transform', `translate(0, ${y})`);
 
-  // Draw the stepped timeline line
-  if (rc) {
-    const roughLine = rc.roughSvg.line(
-      x,
-      TIMELINE_HEIGHT / 2,
-      x + totalWidth,
-      TIMELINE_HEIGHT / 2,
-      {
-        roughness: 0.7,
-        seed: rc.seed,
-        stroke: rc.lineColor,
-        strokeWidth: rc.strokeWidth,
-      }
-    );
-    group.append(() => roughLine).attr('class', 'vsm-timeline-line');
-  } else {
-    group
-      .append('line')
-      .attr('class', 'vsm-timeline-line')
-      .attr('x1', x)
-      .attr('y1', TIMELINE_HEIGHT / 2)
-      .attr('x2', x + totalWidth)
-      .attr('y2', TIMELINE_HEIGHT / 2);
-  }
+  shapes.line(
+    group,
+    x,
+    TIMELINE_HEIGHT / 2,
+    x + totalWidth,
+    TIMELINE_HEIGHT / 2,
+    'vsm-timeline-line'
+  );
 
   // Center queue durations under queue boxes
   for (const [i, queue] of queues.entries()) {
@@ -451,7 +466,7 @@ function drawSummary(
   summary: VsmSummary,
   steps: VsmStep[],
   queues: VsmQueue[],
-  rc?: RoughContext
+  shapes: ShapeDrawer
 ): number {
   const rows = buildSummaryRows(summary, steps, queues);
   const rowHeight = 18;
@@ -460,26 +475,7 @@ function drawSummary(
 
   const group = g.append('g').attr('transform', `translate(${x}, ${y})`);
 
-  if (rc) {
-    const roughRect = rc.roughSvg.rectangle(0, 0, SUMMARY_BOX_WIDTH, boxHeight, {
-      roughness: 0.7,
-      seed: rc.seed,
-      fill: rc.fillColor,
-      fillStyle: 'hachure',
-      fillWeight: 2,
-      hachureGap: 5,
-      stroke: rc.lineColor,
-      strokeWidth: rc.strokeWidth,
-    });
-    group.append(() => roughRect).attr('class', 'vsm-data-box');
-  } else {
-    group
-      .append('rect')
-      .attr('class', 'vsm-data-box')
-      .attr('width', SUMMARY_BOX_WIDTH)
-      .attr('height', boxHeight)
-      .attr('rx', 2);
-  }
+  shapes.rectangle(group, 0, 0, SUMMARY_BOX_WIDTH, boxHeight, 'vsm-data-box');
 
   for (let r = 0; r < rows.length; r++) {
     const rowY = 16 + r * rowHeight;
@@ -500,23 +496,7 @@ function drawSummary(
       .text(rows[r].value);
 
     if (r < rows.length - 1) {
-      if (rc) {
-        const roughLine = rc.roughSvg.line(4, rowY + 6, SUMMARY_BOX_WIDTH - 4, rowY + 6, {
-          roughness: 0.7,
-          seed: rc.seed,
-          stroke: rc.lineColor,
-          strokeWidth: 1,
-        });
-        group.append(() => roughLine).attr('class', 'vsm-data-divider');
-      } else {
-        group
-          .append('line')
-          .attr('class', 'vsm-data-divider')
-          .attr('x1', 4)
-          .attr('y1', rowY + 6)
-          .attr('x2', SUMMARY_BOX_WIDTH - 4)
-          .attr('y2', rowY + 6);
-      }
+      shapes.line(group, 4, rowY + 6, SUMMARY_BOX_WIDTH - 4, rowY + 6, 'vsm-data-divider', 1);
     }
   }
 
@@ -528,7 +508,7 @@ function drawDataBoxes(
   y: number,
   steps: VsmStep[],
   stepPositions: { x: number; width: number }[],
-  rc?: RoughContext
+  shapes: ShapeDrawer
 ): number {
   const rowHeight = 18;
   const rows = [
@@ -555,31 +535,11 @@ function drawDataBoxes(
     const pos = stepPositions[i];
     const group = g.append('g').attr('transform', `translate(${pos.x}, ${y})`);
 
-    if (rc) {
-      const roughRect = rc.roughSvg.rectangle(0, 0, pos.width, boxHeight, {
-        roughness: 0.7,
-        seed: rc.seed,
-        fill: rc.fillColor,
-        fillStyle: 'hachure',
-        fillWeight: 2,
-        hachureGap: 5,
-        stroke: rc.lineColor,
-        strokeWidth: rc.strokeWidth,
-      });
-      group.append(() => roughRect).attr('class', 'vsm-data-box');
-    } else {
-      group
-        .append('rect')
-        .attr('class', 'vsm-data-box')
-        .attr('width', pos.width)
-        .attr('height', boxHeight)
-        .attr('rx', 2);
-    }
+    shapes.rectangle(group, 0, 0, pos.width, boxHeight, 'vsm-data-box');
 
     for (let r = 0; r < rows.length; r++) {
       const rowY = 16 + r * rowHeight;
 
-      // Heading (bold, left-aligned)
       group
         .append('text')
         .attr('class', 'vsm-data-label')
@@ -587,7 +547,6 @@ function drawDataBoxes(
         .attr('y', rowY)
         .text(rows[r].label);
 
-      // Value (right-aligned)
       group
         .append('text')
         .attr('class', 'vsm-data-value')
@@ -596,25 +555,8 @@ function drawDataBoxes(
         .attr('text-anchor', 'end')
         .text(rows[r].getValue(step));
 
-      // Row separator (except after last row)
       if (r < rows.length - 1) {
-        if (rc) {
-          const roughLine = rc.roughSvg.line(4, rowY + 6, pos.width - 4, rowY + 6, {
-            roughness: 0.7,
-            seed: rc.seed,
-            stroke: rc.lineColor,
-            strokeWidth: 1,
-          });
-          group.append(() => roughLine).attr('class', 'vsm-data-divider');
-        } else {
-          group
-            .append('line')
-            .attr('class', 'vsm-data-divider')
-            .attr('x1', 4)
-            .attr('y1', rowY + 6)
-            .attr('x2', pos.width - 4)
-            .attr('y2', rowY + 6);
-        }
+        shapes.line(group, 4, rowY + 6, pos.width - 4, rowY + 6, 'vsm-data-divider', 1);
       }
     }
   }
@@ -631,20 +573,20 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const title = vsmDb.getDiagramTitle();
 
   const { look, handDrawnSeed, themeVariables } = getConfig();
-  const isHandDrawn = look === 'handDrawn';
 
   const svg: SVG = selectSvgElement(id);
   const g = svg.append('g').attr('class', 'vsm');
 
-  const roughContext: RoughContext | undefined = isHandDrawn
-    ? {
-        roughSvg: rough.svg(svg.node()!),
-        seed: handDrawnSeed ?? 0,
-        lineColor: themeVariables?.lineColor ?? '#333',
-        fillColor: themeVariables?.mainBkg ?? '#fff',
-        strokeWidth: 2,
-      }
-    : undefined;
+  const shapes: ShapeDrawer =
+    look === 'handDrawn'
+      ? new RoughDrawer(
+          svg.node()!,
+          handDrawnSeed ?? 0,
+          themeVariables?.lineColor ?? '#333',
+          themeVariables?.mainBkg ?? '#fff',
+          2
+        )
+      : new ClassicDrawer();
 
   // Measure step labels to compute dynamic step height based on text wrapping
   let maxLines = 1;
@@ -686,20 +628,20 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
             currentX,
             currentY + (stepHeight - ENDPOINT_HEIGHT) / 2,
             element.data.label,
-            roughContext
+            shapes
           ) + 5;
         break;
       case 'step':
         stepPositions.push({ x: currentX, width: STEP_WIDTH });
-        currentX += drawStep(g, currentX, currentY, element.data, stepHeight, roughContext) + 5;
+        currentX += drawStep(g, currentX, currentY, element.data, stepHeight, shapes) + 5;
         break;
       case 'queue':
         queuePositions.push({ x: currentX, width: QUEUE_WIDTH });
         currentX +=
-          drawQueue(g, currentX, currentY + (stepHeight - 55) / 2, element.data, roughContext) + 5;
+          drawQueue(g, currentX, currentY + (stepHeight - 55) / 2, element.data, shapes) + 5;
         break;
       case 'arrow':
-        currentX += drawArrow(g, currentX, currentY, stepHeight, roughContext) + 5;
+        currentX += drawArrow(g, currentX, currentY, stepHeight, shapes) + 5;
         break;
     }
   }
@@ -728,7 +670,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       queues,
       stepPositions,
       queuePositions,
-      roughContext
+      shapes
     );
     totalHeight += TIMELINE_HEIGHT + TIMELINE_Y_OFFSET;
   }
@@ -738,7 +680,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     (s) => s.changeover || s.uptime !== undefined || s.batch !== undefined || s.flowType
   );
   if (steps.length > 0 && hasExtraMetrics) {
-    const dataBoxHeight = drawDataBoxes(g, totalHeight, steps, stepPositions, roughContext);
+    const dataBoxHeight = drawDataBoxes(g, totalHeight, steps, stepPositions, shapes);
     if (dataBoxHeight > 0) {
       totalHeight += dataBoxHeight + PADDING;
     }
@@ -753,7 +695,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       summary,
       steps,
       queues,
-      roughContext
+      shapes
     );
     totalHeight += summaryHeight + PADDING;
   }
