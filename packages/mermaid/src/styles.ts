@@ -115,7 +115,7 @@ const getStyles = (
 
   [data-look="neo"].node rect, [data-look="neo"].cluster rect, [data-look="neo"].node polygon {
     stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
-    filter: ${options.dropShadow ?? 'none'};
+    filter: ${options.dropShadow ? options.dropShadow.replace('url(#drop-shadow)', `url(${svgId}-drop-shadow)`) : 'none'};
   }
 
 
@@ -125,7 +125,7 @@ const getStyles = (
   }
 
   [data-look="neo"].node .outer-path {
-    filter: ${options.dropShadow ?? 'none'};
+    filter: ${options.dropShadow ? options.dropShadow.replace('url(#drop-shadow)', `url(${svgId}-drop-shadow)`) : 'none'};
   }
 
   [data-look="neo"].node .neo-line path {
@@ -135,7 +135,7 @@ const getStyles = (
 
   [data-look="neo"].node circle{
     stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
-    filter: ${options.dropShadow ?? 'none'};
+    filter: ${options.dropShadow ? options.dropShadow.replace('url(#drop-shadow)', `url(${svgId}-drop-shadow)`) : 'none'};
   }
 
   [data-look="neo"].node circle .state-start{
@@ -144,12 +144,12 @@ const getStyles = (
 
   [data-look="neo"].icon-shape .icon {
     fill: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
-    filter: ${options.dropShadow ?? 'none'};
+    filter: ${options.dropShadow ? options.dropShadow.replace('url(#drop-shadow)', `url(${svgId}-drop-shadow)`) : 'none'};
   }
 
     [data-look="neo"].icon-shape .icon-neo path {
     stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
-    filter: ${options.dropShadow ?? 'none'};
+    filter: ${options.dropShadow ? options.dropShadow.replace('url(#drop-shadow)', `url(${svgId}-drop-shadow)`) : 'none'};
   }
 
   ${userStyles}
