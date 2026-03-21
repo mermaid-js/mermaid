@@ -1,12 +1,24 @@
-FROM node:22.12.0-alpine3.19@sha256:40dc4b415c17b85bea9be05314b4a753f45a4e1716bb31c01182e6c53d51a654
+FROM node:22-bullseye
 
 USER 0:0
 
-RUN corepack enable \
-    && corepack enable pnpm
+RUN corepack disable \
+    && npm install -g pnpm@10.30.3 --force
 
-RUN apk add --no-cache git~=2.43 \
+RUN apt-get update && apt-get install -y \
+    git \
+    python3 \
+    make \
+    g++ \
+    libcairo2-dev \
+    libpango1.0-dev \
+    libjpeg-dev \
+    libgif-dev \
+    librsvg2-dev \
+    && rm -rf /var/lib/apt/lists/* \
     && git config --add --system safe.directory /mermaid
+
+WORKDIR /mermaid
 
 ENV NODE_OPTIONS="--max_old_space_size=8192"
 
