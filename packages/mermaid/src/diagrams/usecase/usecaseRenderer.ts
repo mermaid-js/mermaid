@@ -1,5 +1,4 @@
 // cspell:ignore usecase usecases usecasediagram usecaserenderer arrowhead
-import { select } from 'd3';
 import { log } from '../../logger.js';
 import type { DiagramDefinition } from '../../diagram-api/types.js';
 import type { UseCaseModel, Connection, RelationshipType, UseCaseDB } from './usecaseDb.js';
@@ -18,6 +17,8 @@ interface LayoutData {
   boundaryLeft: number;
   boundaryWidth: number;
   centerX: number;
+  extLeft: number;   // left edge of external system column
+  extBoxW: number;   // width of each external system rect
 }
 
 const THEME = {
@@ -30,12 +31,9 @@ const THEME = {
   fontWeight: 'bold',
 };
 
-const ELLIPSE_RX   = 72;  
-const ELLIPSE_RY   = 28;  
-const UC_SPACING   = 70;  
-const ACTOR_HEAD_R = 7;    
-const ACTOR_TOP    = 57;  
-const ACTOR_BOT    = 14;  
+const ELLIPSE_RX = 72;
+const ELLIPSE_RY = 28;
+const UC_SPACING = 70;
 
 function wrapText(label: string, maxWidth = 120): string[] {
   const words = label.split(' ');
@@ -55,69 +53,52 @@ function wrapText(label: string, maxWidth = 120): string[] {
 }
 
 const tmpl = {
-
   actor(x: number, y: number, label: string): string {
-    return `
-    <g class="uc-actor">
-      <circle cx="${x}" cy="${y - 50}" r="${ACTOR_HEAD_R}" fill="none" stroke="${THEME.stroke}" stroke-width="1.5"/>
-      <line x1="${x}"      y1="${y - 43}" x2="${x}"      y2="${y - 18}" stroke="${THEME.stroke}" stroke-width="1.5"/>
+    return `<g class="uc-actor">
+      <circle cx="${x}" cy="${y - 50}" r="7" fill="none" stroke="${THEME.stroke}" stroke-width="1.5"/>
+      <line x1="${x}" y1="${y - 43}" x2="${x}" y2="${y - 18}" stroke="${THEME.stroke}" stroke-width="1.5"/>
       <line x1="${x - 16}" y1="${y - 34}" x2="${x + 16}" y2="${y - 34}" stroke="${THEME.stroke}" stroke-width="1.5"/>
-      <line x1="${x}"      y1="${y - 18}" x2="${x - 14}" y2="${y - 2}"  stroke="${THEME.stroke}" stroke-width="1.5"/>
-      <line x1="${x}"      y1="${y - 18}" x2="${x + 14}" y2="${y - 2}"  stroke="${THEME.stroke}" stroke-width="1.5"/>
-      <text x="${x}" y="${y + ACTOR_BOT}" text-anchor="middle" font-family="${THEME.font}" font-size="${THEME.fontSize}" font-weight="${THEME.fontWeight}" fill="${THEME.textColor}">${label}</text>
+      <line x1="${x}" y1="${y - 18}" x2="${x - 14}" y2="${y - 2}" stroke="${THEME.stroke}" stroke-width="1.5"/>
+      <line x1="${x}" y1="${y - 18}" x2="${x + 14}" y2="${y - 2}" stroke="${THEME.stroke}" stroke-width="1.5"/>
+      <text x="${x}" y="${y + 14}" text-anchor="middle" font-family="${THEME.font}" font-size="${THEME.fontSize}" font-weight="${THEME.fontWeight}" fill="${THEME.textColor}">${label}</text>
     </g>`;
   },
 
   useCase(x: number, y: number, label: string): string {
-    const lines  = wrapText(label, 120);
-    const lineH  = 14;
-    const totalH = lines.length * lineH;
-    const baseY  = y - totalH / 2 + lineH * 0.8;
-    const spans  = lines
-      .map((l, i) => `<tspan x="${x}" dy="${i === 0 ? 0 : lineH}">${l}</tspan>`)
-      .join('');
-    return `
-    <g class="uc-usecase">
+    const lines = wrapText(label, 120);
+    const lineH = 14;
+    const baseY = y - (lines.length * lineH) / 2 + lineH * 0.8;
+    const spans = lines.map((l, i) => `<tspan x="${x}" dy="${i === 0 ? 0 : lineH}">${l}</tspan>`).join('');
+    return `<g class="uc-usecase">
       <ellipse cx="${x}" cy="${y}" rx="${ELLIPSE_RX}" ry="${ELLIPSE_RY}" fill="${THEME.fill}" stroke="${THEME.stroke}" stroke-width="1.2"/>
       <text x="${x}" y="${baseY}" text-anchor="middle" font-family="${THEME.font}" font-size="${THEME.fontSize}" font-weight="${THEME.fontWeight}" fill="${THEME.textColor}">${spans}</text>
     </g>`;
   },
 
   systemBoundary(x: number, y: number, w: number, h: number, label: string): string {
-    return `
-    <g class="uc-system">
+    return `<g class="uc-system">
       <rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${THEME.systemFill}" stroke="${THEME.stroke}" stroke-width="2" rx="3"/>
       <text x="${x + w / 2}" y="${y + 24}" text-anchor="middle" dominant-baseline="middle" font-family="${THEME.font}" font-size="16px" font-weight="${THEME.fontWeight}" fill="${THEME.textColor}">${label}</text>
     </g>`;
   },
 
-  externalSystem(x: number, y: number, label: string): string {
-    const lines = wrapText(label, 140);
-    const boxH  = 40 + (lines.length - 1) * 15;
-    const rows  = lines
-      .map((l, i) => `<text x="${x + 80}" y="${y + 22 + i * 15}" text-anchor="middle"
-            font-family="${THEME.font}" font-size="${THEME.fontSize}"
-            font-weight="${THEME.fontWeight}" fill="${THEME.textColor}">${l}</text>`)
-      .join('');
-    return `
-    <g class="uc-external">
-      <rect x="${x}" y="${y - boxH / 2}" width="160" height="${boxH}" fill="${THEME.fill}" stroke="${THEME.stroke}" stroke-width="1.2" rx="3"/>
+  externalSystem(x: number, y: number, label: string, boxW = 150): string {
+    const lines = wrapText(label, boxW - 10);
+    const boxH  = Math.max(40 + (lines.length - 1) * 15, 40);
+    const rectX = x - boxW / 2;
+    const rows  = lines.map((l, i) => `<text x="${x}" y="${y - boxH / 2 + 22 + i * 15}" text-anchor="middle" font-family="${THEME.font}" font-size="${THEME.fontSize}" font-weight="${THEME.fontWeight}" fill="${THEME.textColor}">${l}</text>`).join('');
+    return `<g class="uc-external">
+      <rect x="${rectX}" y="${y - boxH / 2}" width="${boxW}" height="${boxH}" fill="${THEME.fill}" stroke="${THEME.stroke}" stroke-width="1.2" rx="3"/>
       ${rows}
     </g>`;
   },
 
-  connector(
-    x1: number, y1: number,
-    x2: number, y2: number,
-    type: RelationshipType,
-    layout: LayoutData,
-  ): string {
-    const { centerX, boundaryWidth } = layout;
-    const boundaryRight = centerX + boundaryWidth / 2;
+  connector(x1: number, y1: number, x2: number, y2: number, type: RelationshipType, layout: LayoutData): string {
+    const boundaryRight = layout.centerX + layout.boundaryWidth / 2;
 
-    const isDashed = ['include', 'extend', 'dependency', 'realization', 'anchor'].includes(type);
-    const isDotted = type === 'constraint';
-    const strokeDash = isDashed ? 'stroke-dasharray="6,4"' : isDotted ? 'stroke-dasharray="2,3"' : '';
+    const strokeDash =
+      ['include', 'extend', 'dependency', 'realization', 'anchor'].includes(type) ? 'stroke-dasharray="6,4"' :
+      type === 'constraint' ? 'stroke-dasharray="2,3"' : '';
 
     let markerId = 'uc-none';
     if (['include', 'extend', 'dependency'].includes(type))  { markerId = 'uc-arrow-open'; }
@@ -125,10 +106,7 @@ const tmpl = {
     if (type === 'containment')                              { markerId = 'uc-arrow-diamond'; }
     if (type === 'association')                              { markerId = 'uc-arrowhead'; }
 
-    const isCurved = [
-      'include', 'extend', 'dependency', 'realization',
-      'generalization', 'containment', 'constraint', 'anchor',
-    ].includes(type);
+    const isCurved = ['include', 'extend', 'dependency', 'realization', 'generalization', 'containment', 'constraint', 'anchor'].includes(type);
 
     let d: string;
     let labelX = 0;
@@ -139,23 +117,23 @@ const tmpl = {
       const endX   = x2 + ELLIPSE_RX;
       const ctrlX  = boundaryRight - 30;
       const ctrlY  = (y1 + y2) / 2;
-
       d = `M ${startX} ${y1} Q ${ctrlX} ${ctrlY} ${endX} ${y2}`;
-
       labelX = 0.25 * startX + 0.5 * ctrlX + 0.25 * endX + 4;
-      labelY = 0.25 * y1     + 0.5 * ctrlY + 0.25 * y2   - 4;
+      labelY = 0.25 * y1 + 0.5 * ctrlY + 0.25 * y2 - 4;
     } else {
-      const endX = x2 > x1 ? x2 - ELLIPSE_RX : x2 + ELLIPSE_RX;
-      d = `M ${x1} ${y1} L ${endX} ${y2}`;
+      const goingRight = x2 > x1;
+      // Start: from right edge of UC ellipse, or actor centre
+      const startX = (Math.abs(x1 - layout.centerX) < 2) ? x1 + ELLIPSE_RX : x1;
+      // End: at left edge of ext box (centre - half width), or left edge of UC ellipse
+      const isExtTarget = x2 > layout.centerX + layout.boundaryWidth / 2;
+      const endX = isExtTarget ? x2 - layout.extBoxW / 2 : (goingRight ? x2 - ELLIPSE_RX : x2 + ELLIPSE_RX);
+      d = `M ${startX} ${y1} L ${endX} ${y2}`;
     }
 
     const showLabel = type === 'include' || type === 'extend';
-
-    return `
-    <g class="uc-connector" data-type="${type}">
+    return `<g class="uc-connector" data-type="${type}">
       <path d="${d}" stroke="${THEME.stroke}" stroke-width="1.2" fill="none" ${strokeDash} marker-end="url(#${markerId})"/>
-      ${showLabel ? `
-      <text x="${labelX}" y="${labelY}" text-anchor="middle" font-family="${THEME.font}" font-size="10px" font-style="italic" font-weight="${THEME.fontWeight}" fill="${THEME.textColor}">«${type}»</text>` : ''}
+      ${showLabel ? `<text x="${labelX}" y="${labelY}" text-anchor="middle" font-family="${THEME.font}" font-size="10px" font-style="italic" font-weight="${THEME.fontWeight}" fill="${THEME.textColor}">«${type}»</text>` : ''}
     </g>`;
   },
 };
@@ -165,19 +143,22 @@ function layoutDiagram(model: UseCaseModel): LayoutData {
   const actors = Object.keys(model.actors);
   const exts   = Object.keys(model.externalSystems);
 
-  const BOUNDARY_WIDTH  = 300;
-  const BOUNDARY_LEFT_PAD = 160;  
-  const BOUNDARY_RIGHT_PAD = 160; 
-  const width      = BOUNDARY_LEFT_PAD + BOUNDARY_WIDTH + BOUNDARY_RIGHT_PAD;
-  const centerX    = BOUNDARY_LEFT_PAD + BOUNDARY_WIDTH / 2;
-  const actorX     = BOUNDARY_LEFT_PAD / 2;           
-  const extX       = BOUNDARY_LEFT_PAD + BOUNDARY_WIDTH + BOUNDARY_RIGHT_PAD / 2;
-  
-  const HEADER_H   = 50;   
-  const TOP_PAD    = 80;  
-  const BOT_PAD    = 80;  
+  const BOUNDARY_WIDTH     = 300;
+  const BOUNDARY_LEFT_PAD  = 160;
+  const EXT_BOX_W          = 150;
+  const EXT_MARGIN         = 24;   // gap between boundary right edge and ext box left edge
+  const EXT_RIGHT_PAD      = 20;   // space after ext box right edge before SVG edge
+  const BOUNDARY_RIGHT_PAD = EXT_MARGIN + EXT_BOX_W + EXT_RIGHT_PAD;
+  const HEADER_H           = 50;
+  const TOP_PAD            = 80;
+  const BOT_PAD            = 80;
 
-  const firstUCY   = TOP_PAD + HEADER_H + ELLIPSE_RY + 10; 
+  const width   = BOUNDARY_LEFT_PAD + BOUNDARY_WIDTH + BOUNDARY_RIGHT_PAD;
+  const centerX = BOUNDARY_LEFT_PAD + BOUNDARY_WIDTH / 2;
+  const actorX  = BOUNDARY_LEFT_PAD / 2;
+  const extLeft = BOUNDARY_LEFT_PAD + BOUNDARY_WIDTH + EXT_MARGIN;
+  const firstUCY = TOP_PAD + HEADER_H + ELLIPSE_RY + 10;
+
   const positions: Record<string, Position> = {};
 
   ucIds.forEach((id, i) => {
@@ -186,40 +167,26 @@ function layoutDiagram(model: UseCaseModel): LayoutData {
 
   const placeEntities = (entities: string[], xPos: number): void => {
     entities.forEach((id, idx) => {
-      const connectedYs = model.connections
+      const ys = model.connections
         .filter((c) => c.from === id || c.to === id)
         .map((c) => positions[c.from === id ? c.to : c.from]?.y)
         .filter((y): y is number => y !== undefined);
-      const y = connectedYs.length > 0
-        ? connectedYs.reduce((a, b) => a + b, 0) / connectedYs.length
-        : firstUCY + idx * UC_SPACING;
-      positions[id] = { x: xPos, y };
+      positions[id] = { x: xPos, y: ys.length > 0 ? ys.reduce((a, b) => a + b, 0) / ys.length : firstUCY + idx * UC_SPACING };
     });
   };
 
   placeEntities(actors, actorX);
-  placeEntities(exts,   extX);
+  placeEntities(exts, extLeft + EXT_BOX_W / 2);  // centre of ext box
 
   const systemHeight = Math.max(ucIds.length * UC_SPACING + HEADER_H + ELLIPSE_RY, HEADER_H + 60);
   const height       = TOP_PAD + systemHeight + BOT_PAD;
 
-  return {
-    positions,
-    width,
-    height,
-    systemHeight,
-    systemTop:    TOP_PAD,
-    boundaryLeft: BOUNDARY_LEFT_PAD,
-    boundaryWidth: BOUNDARY_WIDTH,
-    centerX,
-  };
+  return { positions, width, height, systemHeight, systemTop: TOP_PAD, boundaryLeft: BOUNDARY_LEFT_PAD, boundaryWidth: BOUNDARY_WIDTH, centerX, extLeft, extBoxW: EXT_BOX_W };
 }
-
 
 function buildDefs(): string {
   const s = THEME.stroke;
-  return `
-  <defs>
+  return `<defs>
     <marker id="uc-arrow-open" markerWidth="10" markerHeight="10" refX="10" refY="5" orient="auto">
       <path d="M 0 0 L 10 5 L 0 10" fill="none" stroke="${s}" stroke-width="1.2"/>
     </marker>
@@ -236,51 +203,35 @@ function buildDefs(): string {
 }
 
 function renderSVG(model: UseCaseModel, layout: LayoutData): string {
-  const {
-    positions, width, height,
-    systemHeight, systemTop, boundaryLeft, boundaryWidth,
-  } = layout;
-
-  let boundary   = '';
-  let connectors = '';
-  let nodes      = '';
+  const { positions, width, height, systemHeight, systemTop, boundaryLeft, boundaryWidth } = layout;
+  let boundary = '', connectors = '', nodes = '';
 
   if (model.system) {
-    boundary = tmpl.systemBoundary(
-      boundaryLeft, systemTop, boundaryWidth, systemHeight, model.system,
-    );
+    boundary = tmpl.systemBoundary(boundaryLeft, systemTop, boundaryWidth, systemHeight, model.system);
   }
 
   model.connections.forEach((conn: Connection) => {
     const p1 = positions[conn.from];
     const p2 = positions[conn.to];
-    if (!p1 || !p2) { return; }
-    connectors += tmpl.connector(p1.x, p1.y, p2.x, p2.y, conn.type, layout);
+    if (p1 && p2) { connectors += tmpl.connector(p1.x, p1.y, p2.x, p2.y, conn.type, layout); }
   });
 
-  const renderCollection = (
-    collection: Record<string, string>,
-    kind: 'usecase' | 'external' | 'actor',
-  ): void => {
+  const renderCollection = (collection: Record<string, string>, kind: 'usecase' | 'external' | 'actor'): void => {
     Object.keys(collection).forEach((id) => {
       const p = positions[id];
       if (!p) { return; }
       if (kind === 'usecase')  { nodes += tmpl.useCase(p.x, p.y, collection[id]); }
-      if (kind === 'external') { nodes += tmpl.externalSystem(p.x, p.y, collection[id]); }
+      if (kind === 'external') { nodes += tmpl.externalSystem(p.x, p.y, collection[id], layout.extBoxW); }
       if (kind === 'actor')    { nodes += tmpl.actor(p.x, p.y, collection[id]); }
     });
   };
 
-  renderCollection(model.usecases,        'usecase');
+  renderCollection(model.usecases, 'usecase');
   renderCollection(model.externalSystems, 'external');
-  renderCollection(model.actors,          'actor');
+  renderCollection(model.actors, 'actor');
 
-  return `<svg width="${width}" height="${height}"
-       viewBox="0 0 ${width} ${height}"
-       xmlns="http://www.w3.org/2000/svg"
-       style="background:white">${buildDefs()}${boundary}${connectors}${nodes}</svg>`;
+  return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" style="background:white">${buildDefs()}${boundary}${connectors}${nodes}</svg>`;
 }
-
 
 export const draw: DiagramDefinition['renderer']['draw'] = (text, id, _version, _diag) => {
   log.debug('usecaseRenderer.draw', id);
@@ -291,24 +242,23 @@ export const draw: DiagramDefinition['renderer']['draw'] = (text, id, _version, 
   const model  = ucDb.getModel();
   const layout = layoutDiagram(model);
   const svgStr = renderSVG(model, layout);
+
   const svgEl = document.getElementById(id) as SVGSVGElement | null;
   if (!svgEl) { return; }
 
   const innerContent = svgStr.slice(svgStr.indexOf('>') + 1, svgStr.lastIndexOf('<'));
   svgEl.innerHTML = innerContent;
-
   svgEl.setAttribute('width',   String(layout.width));
   svgEl.setAttribute('height',  String(layout.height));
   svgEl.setAttribute('viewBox', `0 0 ${layout.width} ${layout.height}`);
   svgEl.style.background = 'white';
 
   let el: HTMLElement | null = svgEl.parentElement;
-  while (el) {
+  while (el && el.tagName !== 'BODY') {
     el.style.width    = `${layout.width}px`;
     el.style.height   = `${layout.height}px`;
     el.style.overflow = 'visible';
     el = el.parentElement;
-    if (el?.tagName === 'BODY') { break; }
   }
 };
 
