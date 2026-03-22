@@ -527,6 +527,18 @@ flowchart TD
     A@{ shape: lean-l, label: "Output/Input" }
 ```
 
+### Datastore (Top and bottom border)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: datastore, label: "Datastore" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: datastore, label: "Datastore" }
+```
+
 ### Priority Action (Trapezoid Base Bottom)
 
 ```mermaid-example

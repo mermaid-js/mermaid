@@ -18,20 +18,7 @@
     flowchart LR
       accTitle: A simple linear flowchart.
       accDescr: A Database has input to a circle System has output to a square Customer.
-      DataStore[|borders:tb|Database] -->|input| Process((System)) -->|output| Entity[Customer];
-    </pre>
-
-    <hr />
-
-    <h2>Borders Example</h2>
-    <pre class="mermaid">
-    flowchart TD
-      allSides[ stroke all sides ];
-      allSides2[|borders:ltrb| stroke all sides ];
-      rbSides[|borders:rb| stroke right and bottom sides ];
-      ltSides[|borders:lt| stroke left and top sides ];
-      lrSides[|borders:lr| stroke left and right sides ];
-      noSide[|borders:no| stroke no side ];
+      DataStore@{shape: datastore, label: "Datastore"} -->|input| Process((System)) -->|output| Entity[Customer];
     </pre>
 
     <script type="module">
