@@ -66,8 +66,7 @@ Use double quotes and backticks "\` text \`" to enclose the markdown text.
 ```mermaid-example
 ---
 config:
-  flowchart:
-    htmlLabels: false
+  htmlLabels: false
 ---
 flowchart LR
     markdown["`This **is** _Markdown_`"]
@@ -590,11 +589,17 @@ flowchart TD
   - `b`
 - **w**: The width of the image. If not defined, this will default to the natural width of the image.
 - **h**: The height of the image. If not defined, this will default to the natural height of the image.
-- **constraint**: Determines if the image should constrain the node size. This setting also ensures the image maintains its original aspect ratio, adjusting the height (`h`) accordingly to the width (`w`). If not defined, this will default to `off` Possible values are:
+- **constraint**: Determines if the image should constrain the node size. This setting also ensures the image maintains its original aspect ratio, adjusting the width (`w`) accordingly to the height (`h`). If not defined, this will default to `off` Possible values are:
   - `on`
   - `off`
 
-These new shapes provide additional flexibility and visual appeal to your flowcharts, making them more informative and engaging.
+If you want to resize an image, but keep the same aspect ratio, set `h`, and set `constraint: on` to constrain the aspect ratio. E.g.
+
+```mermaid
+flowchart TD
+  %% My image with a constrained aspect ratio
+  A@{ img: "https://mermaid.js.org/favicon.svg", label: "My example image label", pos: "t", h: 60, constraint: "on" }
+```
 
 ## Links between nodes
 
@@ -982,8 +987,7 @@ The "Markdown Strings" feature enhances flowcharts and mind maps by offering a m
 ```mermaid-example
 ---
 config:
-  flowchart:
-    htmlLabels: false
+  htmlLabels: false
 ---
 flowchart LR
 subgraph "One"
@@ -1092,7 +1096,8 @@ Beginner's tip—a full example using interactive links in a html context:
     };
     const config = {
       startOnLoad: true,
-      flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'cardinal' },
+      htmlLabels: true,
+      flowchart: { useMaxWidth: true, curve: 'cardinal' },
       securityLevel: 'loose',
     };
     mermaid.initialize(config);
@@ -1156,7 +1161,7 @@ config:
 graph LR
 ```
 
-#### Edge level curve style using Edge IDs (v<MERMAID_RELEASE_VERSION>+)
+#### Edge level curve style using Edge IDs (v11.10.0+)
 
 You can assign IDs to [edges](#attaching-an-id-to-edges). After assigning an ID you can modify the line style by modifying the edge's `curve` property using the following syntax:
 

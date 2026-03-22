@@ -1,13 +1,13 @@
 import type { EventModelingDiagramConfig } from '../../config.type.js';
 import type { DiagramDBBase } from '../../diagram-api/types.js';
 
-import type { EmFrame, EventModeling } from '@mermaid-js/parser';
+import type { EmFrame, EventModel } from '@mermaid-js/parser';
 
 export interface EventModelingDB extends DiagramDBBase<EventModelingDiagramConfig> {
   setOptions: (rawOptString: string) => void;
   getOptions: () => any;
 
-  setAst: (ast: EventModeling) => void;
+  setAst: (ast: EventModel) => void;
 
   getDiagramProps: () => DiagramProps;
   getState: () => Context;

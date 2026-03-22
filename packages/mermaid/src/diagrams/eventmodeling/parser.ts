@@ -1,4 +1,4 @@
-import type { EventModeling } from '@mermaid-js/parser';
+import type { EventModel } from '@mermaid-js/parser';
 import { parse } from '@mermaid-js/parser';
 import type { ParserDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
@@ -7,7 +7,7 @@ import { db } from './db.js';
 
 export const parser: ParserDefinition = {
   parse: async (input: string): Promise<void> => {
-    const ast: EventModeling = await parse('eventmodeling', input);
+    const ast: EventModel = await parse('eventmodeling', input);
     log.debug(ast);
     db.setAst(ast);
     populateCommonDb(ast as any, db);

@@ -30,9 +30,9 @@ export async function hexagon<T extends SVGGraphicsElement>(parent: D3Selection<
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
   const f = 4;
-  const h = bbox.height + node.padding;
+  const h = bbox.height + (node.padding ?? 0);
   const m = h / f;
-  const w = bbox.width + 2 * m + node.padding;
+  const w = bbox.width + 2 * m + (node.padding ?? 0);
   const points = [
     { x: m, y: 0 },
     { x: w - m, y: 0 },

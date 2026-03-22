@@ -38,17 +38,17 @@ export function createEventModelingServices(
   context: DefaultSharedCoreModuleContext = EmptyFileSystem
 ): {
   shared: LangiumSharedCoreServices;
-  EventModeling: EventModelingServices;
+  EventModel: EventModelingServices;
 } {
   const shared: LangiumSharedCoreServices = inject(
     createDefaultSharedCoreModule(context),
     MermaidGeneratedSharedModule
   );
-  const EventModeling: EventModelingServices = inject(
+  const EventModel: EventModelingServices = inject(
     createDefaultCoreModule({ shared }),
     EventModelingGeneratedModule,
     EventModelingModule
   );
-  shared.ServiceRegistry.register(EventModeling);
-  return { shared, EventModeling };
+  shared.ServiceRegistry.register(EventModel);
+  return { shared, EventModel };
 }

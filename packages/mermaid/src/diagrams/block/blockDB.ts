@@ -19,6 +19,7 @@ const STYLECLASS_SEP = ',';
 const config = getConfig();
 
 let classes = new Map<string, ClassDef>();
+let diagramId = '';
 
 const sanitizeText = (txt: string) => common.sanitizeText(txt, config);
 
@@ -186,6 +187,7 @@ const clear = (): void => {
 
   edgeList = [];
   edgeCount = new Map();
+  diagramId = '';
 };
 
 export function typeStr2Type(typeStr: string) {
@@ -238,13 +240,15 @@ export function edgeTypeStr2Type(typeStr: string): string {
 }
 
 export function edgeStrToEdgeData(typeStr: string): string {
-  switch (typeStr.trim()) {
-    case '--x':
+  switch (typeStr.replace(/^[\s-]+|[\s-]+$/g, '')) {
+    case 'x':
       return 'arrow_cross';
-    case '--o':
+    case 'o':
       return 'arrow_circle';
-    default:
+    case '>':
       return 'arrow_point';
+    default:
+      return '';
   }
 }
 
@@ -300,6 +304,12 @@ const setBlock = (block: Block) => {
   blockDatabase.set(block.id, block);
 };
 
+const setDiagramId = (id: string) => {
+  diagramId = id;
+};
+
+const getDiagramId = () => diagramId;
+
 const getLogger = () => log;
 
 /**
@@ -325,6 +335,8 @@ const db = {
   getClasses,
   clear,
   generateId,
+  setDiagramId,
+  getDiagramId,
 } as const;
 
 export type BlockDB = typeof db & DiagramDB;

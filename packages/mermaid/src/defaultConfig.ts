@@ -24,6 +24,8 @@ const config: RequiredDeep<MermaidConfig> = {
     // mergeEdges is needed here to be considered
     mergeEdges: false,
     nodePlacementStrategy: 'BRANDES_KOEPF',
+    forceNodeModelOrder: false,
+    considerModelOrder: 'NODES_AND_EDGES',
   },
   themeCSS: undefined,
 
@@ -262,8 +264,15 @@ const config: RequiredDeep<MermaidConfig> = {
   eventmodeling: {
     ...defaultConfigJson.eventmodeling,
   },
+  treeView: {
+    ...defaultConfigJson.treeView,
+    useWidth: undefined,
+  },
   radar: {
     ...defaultConfigJson.radar,
+  },
+  ishikawa: {
+    ...defaultConfigJson.ishikawa,
   },
   treemap: {
     useMaxWidth: true,
@@ -276,6 +285,9 @@ const config: RequiredDeep<MermaidConfig> = {
     valueFontSize: 12,
     labelFontSize: 14,
     valueFormat: ',',
+  },
+  venn: {
+    ...defaultConfigJson.venn,
   },
 };
 

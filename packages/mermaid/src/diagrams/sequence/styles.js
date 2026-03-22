@@ -12,6 +12,11 @@ const getStyles = (options) =>
   .actor-line {
     stroke: ${options.actorLineColor};
   }
+  
+  .innerArc {
+    stroke-width: 1.5;
+    stroke-dasharray: none;
+  }
 
   .messageLine0 {
     stroke-width: 1.5;
@@ -25,7 +30,7 @@ const getStyles = (options) =>
     stroke: ${options.signalColor};
   }
 
-  #arrowhead path {
+  [id$="-arrowhead"] path {
     fill: ${options.signalColor};
     stroke: ${options.signalColor};
   }
@@ -34,11 +39,11 @@ const getStyles = (options) =>
     fill: ${options.sequenceNumberColor};
   }
 
-  #sequencenumber {
+  [id$="-sequencenumber"] {
     fill: ${options.signalColor};
   }
 
-  #crosshead path {
+  [id$="-crosshead"] path {
     fill: ${options.signalColor};
     stroke: ${options.signalColor};
   }
@@ -115,6 +120,7 @@ const getStyles = (options) =>
     fill: ${options.actorBkg};
     stroke-width: 2px;
   }
+
 `;
 
 export default getStyles;

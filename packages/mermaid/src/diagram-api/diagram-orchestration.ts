@@ -24,11 +24,15 @@ import sankey from '../diagrams/sankey/sankeyDetector.js';
 import { packet } from '../diagrams/packet/detector.js';
 import { radar } from '../diagrams/radar/detector.js';
 import block from '../diagrams/block/blockDetector.js';
+import treeView from '../diagrams/treeView/detector.js';
 import architecture from '../diagrams/architecture/architectureDetector.js';
 import eventmodeling from '../diagrams/eventmodeling/detector.js';
+import { ishikawa } from '../diagrams/ishikawa/ishikawaDetector.js';
+import venn from '../diagrams/venn/vennDetector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
 import { treemap } from '../diagrams/treemap/detector.js';
+import wardley from '../diagrams/wardley/wardleyDetector.js';
 import '../type.d.ts';
 
 let hasLoadedDiagrams = false;
@@ -73,7 +77,7 @@ export const addDiagrams = () => {
     }
   );
 
-  if (includeLargeFeatures) {
+  if (injected.includeLargeFeatures) {
     registerLazyLoadedDiagrams(flowchartElk, mindmap, architecture);
   }
 
@@ -102,7 +106,11 @@ export const addDiagrams = () => {
     xychart,
     block,
     eventmodeling,
+    treeView,
     radar,
-    treemap
+    ishikawa,
+    treemap,
+    venn,
+    wardley
   );
 };

@@ -4,6 +4,9 @@ import { internalHelpers } from '../internals.js';
 import { log } from '../logger.js';
 import type { LayoutData } from './types.js';
 
+// console.log('MUST be removed, this only for keeping dev server working');
+// import tmp from './layout-algorithms/dagre/index.js';
+
 export interface RenderOptions {
   algorithm?: string;
 }
@@ -39,6 +42,14 @@ const registerDefaultLayoutLoaders = () => {
       name: 'dagre',
       loader: async () => await import('./layout-algorithms/dagre/index.js'),
     },
+    ...(injected.includeLargeFeatures
+      ? [
+          {
+            name: 'cose-bilkent',
+            loader: async () => await import('./layout-algorithms/cose-bilkent/index.js'),
+          },
+        ]
+      : []),
   ]);
 };
 
@@ -47,6 +58,15 @@ registerDefaultLayoutLoaders();
 export const render = async (data4Layout: LayoutData, svg: SVG) => {
   if (!(data4Layout.layoutAlgorithm in layoutAlgorithms)) {
     throw new Error(`Unknown layout algorithm: ${data4Layout.layoutAlgorithm}`);
+  }
+
+  // Prefix all node domIds with the diagram's SVG element ID to ensure uniqueness
+  // across multiple diagrams on the same page.
+  if (data4Layout.diagramId) {
+    for (const node of data4Layout.nodes) {
+      const originalDomId = node.domId || node.id;
+      node.domId = `${data4Layout.diagramId}-${originalDomId}`;
+    }
   }
 
   const layoutDefinition = layoutAlgorithms[data4Layout.layoutAlgorithm];

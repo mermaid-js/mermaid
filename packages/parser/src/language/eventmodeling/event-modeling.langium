@@ -6,7 +6,7 @@ interface Common {
   title?: string;
 }
 
-entry EventModeling:
+entry EventModel:
     'eventmodeling'
     (accDescr=EM_ACC_DESCR | accTitle=EM_ACC_TITLE | title=EM_TITLE | modelEntities+=EmModelEntity | frames+=EmFrame | dataEntities+=EmDataEntity | noteEntities+=EmNoteEntity | gwtEntities+=EmGwt)*;
 

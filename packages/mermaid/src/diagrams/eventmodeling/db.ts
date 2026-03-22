@@ -17,7 +17,7 @@ import { sanitizeText } from '../common/common.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
 
 import type { EventModelingDiagramConfig } from '../../config.type.js';
-import type { EventModeling } from '@mermaid-js/parser';
+import type { EventModel } from '@mermaid-js/parser';
 import type { EmFrame, EmDataEntity } from '@mermaid-js/parser';
 import { isEmResetFrame } from '@mermaid-js/parser';
 
@@ -79,7 +79,7 @@ const getConfig = (): Required<EventModelingDiagramConfig> => {
 };
 
 interface EmStore {
-  ast?: EventModeling;
+  ast?: EventModel;
 }
 
 let store: EmStore = {};
@@ -90,7 +90,7 @@ function getState(): Context {
   const diagramProps = getDiagramProps();
 
   if (!ast) {
-    throw new Error('No data for EventModeling');
+    throw new Error('No data for EventModel');
   }
 
   ast.frames.forEach((frame: EmFrame, index: number) => {
@@ -136,7 +136,7 @@ function getState(): Context {
   return state;
 }
 
-function setAst(ast: EventModeling) {
+function setAst(ast: EventModel) {
   store.ast = ast;
 }
 

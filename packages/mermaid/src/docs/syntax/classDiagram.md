@@ -15,7 +15,7 @@ title: Animal example
 classDiagram
     note "From Duck till Zebra"
     Animal <|-- Duck
-    note for Duck "can fly\ncan swim\ncan dive\ncan help in debugging"
+    note for Duck "can fly<br>can swim<br>can dive<br>can help in debugging"
     Animal <|-- Fish
     Animal <|-- Zebra
     Animal : +int age
@@ -358,28 +358,14 @@ It is possible to annotate classes with markers to provide additional metadata a
 - `<<Service>>` To represent a service class
 - `<<Enumeration>>` To represent an enum
 
-Annotations are defined within the opening `<<` and closing `>>`. There are two ways to add an annotation to a class, and either way the output will be same:
+Annotations are defined within the opening `<<` and closing `>>`. There are three ways to add an annotation to a class, and in all cases the output will be the same:
 
-> **Tip:**  
-> In Mermaid class diagrams, annotations like `<<interface>>` can be attached in two ways:
->
-> - **Inline with the class definition** (Recommended for consistency):
->
->   ```mermaid-example
->   classDiagram
->     class Shape <<interface>>
->   ```
->
-> - **Separate line after the class definition**:
->
->   ```mermaid-example
->   classDiagram
->     class Shape
->     <<interface>> Shape
->   ```
->
-> Both methods are fully supported and produce identical diagrams.  
-> However, it is recommended to use the **inline style** for better readability and consistent formatting across diagrams.
+- **Inline** with the class definition:
+
+```mermaid-example
+classDiagram
+  class Shape <<interface>>
+```
 
 - In a **_separate line_** after a class is defined:
 
