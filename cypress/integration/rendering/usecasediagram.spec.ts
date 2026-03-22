@@ -1,10 +1,10 @@
 // cspell:ignore usecase usecases
-import { imgSnapshotTest } from '../../helpers/util';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('UseCase Diagram', () => {
   it('renders a minimal diagram', () => {
     imgSnapshotTest(
-      `useCase
+      `usecaseDiagram
       actor "User" as U
       system "App" {
         usecase "Login" as L;
@@ -17,7 +17,7 @@ describe('UseCase Diagram', () => {
 
   it('renders include and extend relationships', () => {
     imgSnapshotTest(
-      `useCase
+      `usecaseDiagram
       actor "Customer" as C
       actor "Admin" as A
       system "Shop" {
@@ -37,7 +37,7 @@ describe('UseCase Diagram', () => {
 
   it('renders external systems', () => {
     imgSnapshotTest(
-      `useCase
+      `usecaseDiagram
       actor "Customer" as C
       external "Barcode Reader" as BRS
       system "Warehouse" {
@@ -45,14 +45,14 @@ describe('UseCase Diagram', () => {
         "Move Items" as MI;
       }
       C --> SI; MI;
-      BRS --> SI;`,
+      dependency: BRS --> SI;`,
       {},
     );
   });
 
   it('renders generalization', () => {
     imgSnapshotTest(
-      `useCase
+      `usecaseDiagram
       actor "Admin" as A
       actor "Super Admin" as SA
       system "System" {
@@ -66,9 +66,82 @@ describe('UseCase Diagram', () => {
     );
   });
 
+  it('renders dependency and realization', () => {
+    imgSnapshotTest(
+      `usecaseDiagram
+      actor "User" as U
+      external "Payment API" as PAY
+      system "Payments" {
+        usecase "Process Payment" as PP;
+        "Verify Identity" as VI;
+      }
+      U --> PP;
+      dependency: PP-->PAY;
+      realization: PP-->VI;`,
+      {},
+    );
+  });
+
+  it('renders anchor (note linked to usecase)', () => {
+    imgSnapshotTest(
+      `usecaseDiagram
+      actor "User" as U
+      system "App" {
+        usecase "Login" as L;
+        "Biometric Login" as BL;
+      }
+      note "Requires 2FA" as N1
+      U --> L;
+      include: BL-->L;
+      anchor: N1-->L;`,
+      {},
+    );
+  });
+
+  it('renders constraint between usecases', () => {
+    imgSnapshotTest(
+      `usecaseDiagram
+      system "System" {
+        usecase "Place Order" as PO;
+        "Checkout" as CO;
+        "Verify Stock" as VS;
+      }
+      constraint: CO-->PO;
+      constraint: PO-->VS;`,
+      {},
+    );
+  });
+
+  it('renders containment (usecase inside usecase)', () => {
+    imgSnapshotTest(
+      `usecaseDiagram
+      system "System" {
+        usecase "Checkout" as CO;
+        "Internal Log" as IL;
+      }
+      containment: CO-->IL;`,
+      {},
+    );
+  });
+
+  it('renders collaboration (dashed oval)', () => {
+    imgSnapshotTest(
+      `usecaseDiagram
+      actor "User" as U
+      collaboration "Auth Flow" as AF
+      system "App" {
+        usecase "Login" as L;
+      }
+      U --> L;
+      association: AF-->L;
+      dependency: AF-->L;`,
+      {},
+    );
+  });
+
   it('renders all relationship types', () => {
     imgSnapshotTest(
-      `useCase
+      `usecaseDiagram
       actor "User" as U
       actor "Admin" as ADM
       external "Payment API" as PAY
@@ -80,22 +153,55 @@ describe('UseCase Diagram', () => {
         "Refund" as RF;
         "Audit Log" as AL;
         "Super Admin" as SA;
+        "Internal Log" as IL;
       }
+      note "Requires Auth" as N1
       U --> LG; PO;
       ADM --> AL; RF; SA;
-      PAY --> PY;
       include: PO-->LG; PO-->PY;
       extend: RF-->PO;
       generalization: SA-->ADM;
-      dependency: PY-->VID;
-      realization: AL-->LG;`,
+      dependency: PY-->PAY;
+      realization: AL-->LG;
+      anchor: N1-->LG;
+      constraint: IL-->PY;
+      containment: PO-->IL;`,
+      {},
+    );
+  });
+
+  it('renders the comprehensive test diagram', () => {
+    imgSnapshotTest(
+      `usecaseDiagram
+      actor "Customer" as C
+      actor "Premium User" as PU
+      external "Bank API" as B
+      system "Comprehensive Test" {
+        usecase "Login" as L;
+        usecase "Biometric Login" as BL;
+        usecase "Checkout" as CO;
+        usecase "Apply Discount" as AD;
+        usecase "Process Payment" as PP;
+        usecase "Internal Log" as IL;
+      }
+      note "Requires 2FA" as N1
+      C --> L;
+      generalization: PU-->C;
+      generalization: BL-->L;
+      include: CO-->L;
+      extend: L-->AD;
+      dependency: PP-->B;
+      realization: BL-->L;
+      anchor: N1-->L;
+      constraint: IL-->PP;
+      containment: CO-->IL;`,
       {},
     );
   });
 
   it('renders a large ACME diagram', () => {
     imgSnapshotTest(
-      `useCase
+      `usecaseDiagram
       actor "Customer" as C; "Office personnel" as OP; "Foreman" as F; "Warehouse Worker" as WW; "ForkLift Operator" as FO; "Truck Driver" as TD;
       external "Barcode Reader System" as BRS; "Radio Communication System" as RCS;
       system "ACME System" {
@@ -118,11 +224,66 @@ describe('UseCase Diagram', () => {
       WW --> UC8; UC9;
       FO --> UC10;
       TD --> UC11; UC12;
-      BRS --> UC9;
-      RCS --> UC11;
+      dependency: BRS-->UC9;
+      dependency: RCS-->UC11;
       include: UC4-->UC6; UC6-->UC10; UC8-->UC9; UC9-->UC10; UC11-->UC12;
       extend: UC5-->UC; UC2-->UC3;`,
       {},
     );
+  });
+
+  it('renders invalid connections silently without crashing', () => {
+    imgSnapshotTest(
+      `usecaseDiagram
+      actor "User" as U
+      external "API" as E
+      system "App" {
+        usecase "Login" as L;
+      }
+      U --> L;
+      association: E-->L;`,
+      {},
+    );
+  });
+
+  describe('theming', () => {
+    it('renders with default theme', () => {
+      imgSnapshotTest(
+        `usecaseDiagram
+        actor "User" as U
+        system "App" {
+          usecase "Login" as L;
+        }
+        U --> L;`,
+        {},
+      );
+    });
+
+    it('renders with custom themeVariables', () => {
+      imgSnapshotTest(
+        `%%{init: {'theme':'base','themeVariables':{'primaryColor':'#ffffce','secondaryColor':'#ffffff','primaryBorderColor':'#000000','lineColor':'#000000'}}}%%
+        usecaseDiagram
+        actor "User" as U
+        system "App" {
+          usecase "Login" as L;
+          "Dashboard" as D;
+        }
+        U --> L; D;`,
+        {},
+      );
+    });
+
+    it('renders with dark theme', () => {
+      imgSnapshotTest(
+        `%%{init: {'theme':'dark'}}%%
+        usecaseDiagram
+        actor "User" as U
+        system "App" {
+          usecase "Login" as L;
+        }
+        U --> L;`,
+        {},
+      );
+    });
   });
 });

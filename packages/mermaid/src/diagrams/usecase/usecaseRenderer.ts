@@ -169,8 +169,6 @@ const tmpl = {
     const toIsExt      = layout.extIds.has(toId);
     const fromIsExt    = layout.extIds.has(fromId);
 
-    // Curved only when BOTH endpoints are inside the system boundary (ellipse↔ellipse).
-    // If either endpoint is external (ext, actor, note) use a straight line instead.
     const bothInternal = !toIsActor && !fromIsActor && !toIsExt && !fromIsExt && !toIsNote && !fromIsNote;
     const isCurved = bothInternal && ['include', 'extend', 'dependency', 'realization', 'generalization', 'containment', 'constraint'].includes(type);
 
@@ -195,7 +193,6 @@ const tmpl = {
       const dx = x2 - x1;
       const dy = y2 - y1;
 
-      // --- start point ---
       let startX: number, startY: number;
       if (fromIsNote) {
         const fromHalfW = NOTE_W / 2;
@@ -205,7 +202,6 @@ const tmpl = {
         startX = x1 + ACTOR_HALF;
         startY = y1;
       } else if (fromIsExt) {
-        // exit from left or right edge of the external box
         startX = dx >= 0 ? x1 + layout.extBoxW / 2 : x1 - layout.extBoxW / 2;
         startY = y1;
       } else if (fromIsEllipse) {
@@ -216,7 +212,6 @@ const tmpl = {
         startY = y1;
       }
 
-      // --- end point ---
       let endX: number, endY: number;
       if (toIsNote) {
         endX = x2 - toHalfW;
@@ -230,7 +225,6 @@ const tmpl = {
         endX = dx >= 0 ? x2 - ACTOR_HALF : x2 + ACTOR_HALF;
         endY = y2;
       } else if (toIsExt) {
-        // enter the external box from left or right edge
         endX = dx >= 0 ? x2 - layout.extBoxW / 2 : x2 + layout.extBoxW / 2;
         endY = y2;
       } else if (toIsEllipse) {
