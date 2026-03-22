@@ -16,7 +16,7 @@ Defined in: [packages/mermaid/src/utils.ts:783](https://github.com/mermaid-js/me
 
 ### error?
 
-> `optional` **error**: `any`
+> `optional` **error?**: `any`
 
 Defined in: [packages/mermaid/src/utils.ts:788](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/utils.ts#L788)
 
@@ -32,7 +32,7 @@ Defined in: [packages/mermaid/src/utils.ts:786](https://github.com/mermaid-js/me
 
 ### message?
 
-> `optional` **message**: `string`
+> `optional` **message?**: `string`
 
 Defined in: [packages/mermaid/src/utils.ts:789](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/utils.ts#L789)
 

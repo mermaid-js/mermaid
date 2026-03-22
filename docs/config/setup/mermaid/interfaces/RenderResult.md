@@ -14,9 +14,9 @@ Defined in: [packages/mermaid/src/types.ts:116](https://github.com/mermaid-js/me
 
 ## Properties
 
-### bindFunctions()?
+### bindFunctions?
 
-> `optional` **bindFunctions**: (`element`) => `void`
+> `optional` **bindFunctions?**: (`element`) => `void`
 
 Defined in: [packages/mermaid/src/types.ts:134](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L134)
 
