@@ -8,7 +8,7 @@
 
 ---
 
-# Type Alias: ParseErrorFunction
+# Type Alias: ParseErrorFunction()
 
 > **ParseErrorFunction** = (`err`, `hash?`) => `void`
 

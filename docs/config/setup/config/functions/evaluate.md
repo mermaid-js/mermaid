@@ -20,9 +20,9 @@ Converts a string/boolean into a boolean
 
 ### val?
 
-`string` | `boolean` | `null`
-
 String or boolean to convert
+
+`string` | `boolean` | `null`
 
 ## Returns
 

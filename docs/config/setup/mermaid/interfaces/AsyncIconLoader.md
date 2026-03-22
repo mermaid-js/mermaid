@@ -14,7 +14,7 @@ Defined in: [packages/mermaid/src/rendering-util/icons.ts:8](https://github.com/
 
 ## Properties
 
-### loader
+### loader()
 
 > **loader**: () => `Promise`<`IconifyJSON`>
 

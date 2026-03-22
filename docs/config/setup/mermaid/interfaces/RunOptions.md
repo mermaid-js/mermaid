@@ -16,7 +16,7 @@ Defined in: [packages/mermaid/src/mermaid.ts:45](https://github.com/mermaid-js/m
 
 ### nodes?
 
-> `optional` **nodes?**: `ArrayLike`<`HTMLElement`>
+> `optional` **nodes**: `ArrayLike`<`HTMLElement`>
 
 Defined in: [packages/mermaid/src/mermaid.ts:53](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L53)
 
@@ -24,9 +24,9 @@ The nodes to render. If this is set, `querySelector` will be ignored.
 
 ---
 
-### postRenderCallback?
+### postRenderCallback()?
 
-> `optional` **postRenderCallback?**: (`id`) => `unknown`
+> `optional` **postRenderCallback**: (`id`) => `unknown`
 
 Defined in: [packages/mermaid/src/mermaid.ts:57](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L57)
 
@@ -46,7 +46,7 @@ A callback to call after each diagram is rendered.
 
 ### querySelector?
 
-> `optional` **querySelector?**: `string`
+> `optional` **querySelector**: `string`
 
 Defined in: [packages/mermaid/src/mermaid.ts:49](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L49)
 
@@ -56,7 +56,7 @@ The query selector to use when finding elements to render. Default: `".mermaid"`
 
 ### suppressErrors?
 
-> `optional` **suppressErrors?**: `boolean`
+> `optional` **suppressErrors**: `boolean`
 
 Defined in: [packages/mermaid/src/mermaid.ts:61](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L61)
 
