@@ -70,6 +70,11 @@ export const clear = () => {
   nodeElems.clear();
 };
 
+/** Returns a snapshot copy of the node→D3-element map captured after the current render.
+ *  Callers receive a frozen view; a subsequent render() does not mutate the returned Map.
+ */
+export const getNodeElements = (): ReadonlyMap<string, NodeElement> => new Map(nodeElems);
+
 export const positionNode = (node: ReturnType<graphlib.Graph['node']>) => {
   const el = nodeElems.get(node.id)!;
   log.trace(

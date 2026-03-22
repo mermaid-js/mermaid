@@ -132,6 +132,20 @@ export interface RenderResult {
    * ```
    */
   bindFunctions?: (element: Element) => void;
+  /**
+   * Update the inline style of a rendered node by its diagram-level node ID.
+   * Returns `true` if the node was found and styled, `false` if the ID is unknown.
+   * Only valid while the SVG produced by this render call is in the DOM.
+   * A subsequent `render()` for the same container invalidates the previous closure.
+   *
+   * ```js
+   * const { svg, bindFunctions, updateNodeStyle } = await mermaid.render('id1', 'graph TD;A-->B');
+   * div.innerHTML = svg;
+   * bindFunctions?.(div);
+   * updateNodeStyle('A', { stroke: '#68c8e8', fill: 'rgba(104,200,232,0.15)' });
+   * ```
+   */
+  updateNodeStyle: (nodeId: string, style: Record<string, string>) => boolean;
 }
 
 /**

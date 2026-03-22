@@ -25,6 +25,7 @@ import theme from './themes/index.js';
 import type { D3Element, ParseOptions, ParseResult, RenderResult } from './types.js';
 import { decodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
+import { getNodeElements } from './rendering-util/rendering-elements/nodes.js';
 
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
@@ -464,12 +465,36 @@ const render = async function (
     throw parseEncounteredException;
   }
 
+  // Capture node→D3-element snapshot *before* removeTempElements clears rendering state.
+  // The snapshot is a new Map so subsequent renders do not mutate a caller's closed-over copy.
+  const nodeSnapshot = getNodeElements();
+
+  const updateNodeStyle = (nodeId: string, style: Record<string, string>): boolean => {
+    const d3El = nodeSnapshot.get(nodeId);
+    if (!d3El) {
+      return false;
+    }
+    const groupEl = (d3El as any).node?.() as SVGElement | null;
+    if (!groupEl) {
+      return false;
+    }
+    // Target the primary shape inside the group; fall back to the group itself.
+    const shape =
+      (groupEl.querySelector('rect, polygon, circle, ellipse, path') as SVGElement | null) ??
+      groupEl;
+    for (const [prop, value] of Object.entries(style)) {
+      shape.style.setProperty(prop, value);
+    }
+    return true;
+  };
+
   removeTempElements();
 
   return {
     diagramType,
     svg: svgCode,
     bindFunctions: diag.db.bindFunctions,
+    updateNodeStyle,
   };
 };
 
