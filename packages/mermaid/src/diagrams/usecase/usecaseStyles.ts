@@ -1,49 +1,86 @@
 // cspell:ignore usecase usecases usecasediagram
 const getStyles = (options: Record<string, string>): string => {
-  const fill   = options.fillType0  ?? '#61c1ed';
-  const stroke = options.lineColor  ?? '#000000';
-  const font   = options.fontFamily ?? 'Helvetica, Arial, sans-serif';
-  const fontSize = options.fontSize ?? '12px';
+  const primaryColor       = options.primaryColor       ?? '#61c1ed';
+  const primaryTextColor   = options.primaryTextColor   ?? '#000000';
+  const primaryBorderColor = options.primaryBorderColor ?? '#000000';
+  const lineColor          = options.lineColor          ?? '#000000';
+  const secondaryColor     = options.secondaryColor     ?? '#daeef9';
+  const tertiaryColor      = options.tertiaryColor      ?? '#fffde7';
+  const fontFamily         = options.fontFamily         ?? 'Helvetica, Arial, sans-serif';
+  const fontSize           = options.fontSize           ?? '12px';
 
   return `
-  .usecase-diagram {
-    /* ── diagram-local CSS variables ── */
-    --uc-fill:        ${fill};
-    --uc-stroke:      ${stroke};
-    --uc-system-fill: #e8f4fb;
-    --uc-font:        ${font};
-    --uc-font-size:   ${fontSize};
+  .uc-actor circle,
+  .uc-actor line {
+    stroke: ${primaryBorderColor};
+    fill: none;
   }
-
-  /* ── shared label style ── */
-  .usecase-diagram .uc-label {
-    font-family: var(--uc-font);
-    font-size:   var(--uc-font-size);
+  .uc-actor text {
+    fill: ${primaryTextColor};
+    font-family: ${fontFamily};
+    font-size: ${fontSize};
     font-weight: bold;
-    fill:        #000;
   }
-
-  /* ── actor label sits below the figure ── */
-  .usecase-diagram .uc-actor-label {
-    font-size: 12px;
+  .uc-usecase ellipse {
+    fill: ${primaryColor};
+    stroke: ${primaryBorderColor};
   }
-
-  /* ── system boundary title ── */
-  .usecase-diagram .uc-system-label {
-    font-family: var(--uc-font);
-    font-size:   18px;
+  .uc-usecase text {
+    fill: ${primaryTextColor};
+    font-family: ${fontFamily};
+    font-size: ${fontSize};
     font-weight: bold;
-    fill:        #000;
   }
-
-  /* ── «include» / «extend» stereotype labels on curves ── */
-  .usecase-diagram .uc-rel-label {
-    font-family: var(--uc-font);
-    font-size:   10px;
-    font-style:  italic;
+  .uc-collaboration ellipse {
+    fill: none;
+    stroke: ${primaryBorderColor};
+    stroke-dasharray: 6,4;
+  }
+  .uc-collaboration text {
+    fill: ${primaryTextColor};
+    font-family: ${fontFamily};
+    font-size: ${fontSize};
     font-weight: bold;
-    fill:        #000;
-    text-anchor: start;
+  }
+  .uc-system rect {
+    fill: ${secondaryColor};
+    stroke: ${primaryBorderColor};
+  }
+  .uc-system text {
+    fill: ${primaryTextColor};
+    font-family: ${fontFamily};
+    font-size: 16px;
+    font-weight: bold;
+  }
+  .uc-external rect {
+    fill: ${primaryColor};
+    stroke: ${primaryBorderColor};
+  }
+  .uc-external text {
+    fill: ${primaryTextColor};
+    font-family: ${fontFamily};
+    font-size: ${fontSize};
+    font-weight: bold;
+  }
+  .uc-note path {
+    fill: ${tertiaryColor};
+    stroke: ${primaryBorderColor};
+  }
+  .uc-note text {
+    fill: ${primaryTextColor};
+    font-family: ${fontFamily};
+    font-size: 11px;
+  }
+  .uc-connector path {
+    stroke: ${lineColor};
+    fill: none;
+  }
+  .uc-connector text {
+    fill: ${primaryTextColor};
+    font-family: ${fontFamily};
+    font-size: 10px;
+    font-style: italic;
+    font-weight: bold;
   }
   `;
 };

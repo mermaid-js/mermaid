@@ -141,6 +141,7 @@ const ALLOWED: Partial<Record<RelationshipType, AllowedRule>> = {
   ],
   constraint: 'any',
   containment: [
+    ['usecase',       'usecase'      ],
     ['external',      'usecase'      ],
     ['collaboration', 'actor'        ],
     ['collaboration', 'note'         ],
@@ -152,11 +153,11 @@ const REL_HINTS: Partial<Record<RelationshipType, string>> = {
   include:        'include only connects usecase→usecase.',
   extend:         'extend only connects usecase→usecase.',
   generalization: 'generalization connects actor→actor, usecase→usecase, external→external, or collaboration→collaboration.',
-  dependency:     'dependency connects usecase→usecase, usecase→external, actor→usecase, external→usecase, or collaboration→(usecase|actor|external|collaboration).',
+  dependency:     'dependency connects usecase→(usecase|external), actor→usecase, external→usecase, or collaboration→(usecase|actor|external|collaboration).',
   realization:    'realization connects usecase→usecase, actor→(usecase|external|note), external→usecase, or collaboration→(usecase|actor|external|collaboration).',
   anchor:         'anchor must start from a note: note→(usecase|actor|external|collaboration). Did you swap the direction?',
   constraint:     'constraint is unrestricted — any pair should be accepted. If rejected, the entity may not be declared yet.',
-  containment:    'containment connects external→usecase, collaboration→actor, or collaboration→note.',
+  containment:    'containment connects usecase→usecase, external→usecase, collaboration→actor, or collaboration→note.',
 };
 
 function isAllowed(from: string, type: RelationshipType, to: string): boolean {

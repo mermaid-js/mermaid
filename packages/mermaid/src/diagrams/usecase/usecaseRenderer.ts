@@ -21,6 +21,8 @@ interface LayoutData {
   extBoxW: number;
   noteIds: Set<string>;
   collabIds: Set<string>;
+  actorIds: Set<string>;
+  extIds: Set<string>;
   noteBoxW: number;
   noteBoxH: (label: string) => number;
 }
@@ -29,6 +31,7 @@ const THEME = {
   fill:       '#61c1ed',
   stroke:     '#000000',
   systemFill: '#daeef9',
+  noteFill:   '#fffde7',
   textColor:  '#000000',
   font:       'Helvetica, Arial, sans-serif',
   fontSize:   '12px',
@@ -38,9 +41,9 @@ const THEME = {
 const ELLIPSE_RX = 72;
 const ELLIPSE_RY = 28;
 const UC_SPACING = 70;
-
-const NOTE_W    = 110;
-const NOTE_FOLD = 16;
+const NOTE_W     = 110;
+const NOTE_FOLD  = 16;
+const ACTOR_HALF = 16;
 
 function noteHeight(label: string): number {
   const lines = wrapText(label, 100);
@@ -118,13 +121,14 @@ const tmpl = {
 
   note(x: number, y: number, label: string): string {
     const lines = wrapText(label, 100);
-    const W = NOTE_W; const FOLD = NOTE_FOLD;
-    const H = noteHeight(label);
-    const rx = x - W / 2;
-    const ry = y - H / 2;
+    const W    = NOTE_W;
+    const FOLD = NOTE_FOLD;
+    const H    = noteHeight(label);
+    const rx   = x - W / 2;
+    const ry   = y - H / 2;
     const rows = lines.map((l, i) => `<text x="${x}" y="${ry + 20 + i * 14}" text-anchor="middle" font-family="${THEME.font}" font-size="11px" fill="${THEME.textColor}">${l}</text>`).join('');
     return `<g class="uc-note">
-      <path d="M ${rx} ${ry} L ${rx + W - FOLD} ${ry} L ${rx + W} ${ry + FOLD} L ${rx + W} ${ry + H} L ${rx} ${ry + H} Z" fill="#fffde7" stroke="${THEME.stroke}" stroke-width="1.2"/>
+      <path d="M ${rx} ${ry} L ${rx + W - FOLD} ${ry} L ${rx + W} ${ry + FOLD} L ${rx + W} ${ry + H} L ${rx} ${ry + H} Z" fill="${THEME.noteFill}" stroke="${THEME.stroke}" stroke-width="1.2"/>
       <path d="M ${rx + W - FOLD} ${ry} L ${rx + W - FOLD} ${ry + FOLD} L ${rx + W} ${ry + FOLD}" fill="none" stroke="${THEME.stroke}" stroke-width="1.2"/>
       ${rows}
     </g>`;
@@ -145,22 +149,33 @@ const tmpl = {
       ['include', 'extend', 'dependency', 'realization', 'anchor'].includes(type) ? 'stroke-dasharray="6,4"' :
       type === 'constraint' ? 'stroke-dasharray="2,3"' : '';
 
-    let markerId = 'uc-none';
-    if (['include', 'extend', 'dependency'].includes(type))  { markerId = 'uc-arrow-open'; }
-    if (['generalization', 'realization'].includes(type))    { markerId = 'uc-arrow-hollow'; }
-    if (type === 'containment')                              { markerId = 'uc-arrow-diamond'; }
-    if (type === 'association')                              { markerId = 'uc-arrowhead'; }
-    if (type === 'anchor')                                   { markerId = 'uc-none'; }
+    let markerEnd   = 'uc-none';
+    let markerStart = 'uc-none';
 
-    const isCurved = ['include', 'extend', 'dependency', 'realization', 'generalization', 'containment', 'constraint'].includes(type);
+    if (['include', 'extend', 'dependency'].includes(type)) { markerEnd = 'uc-arrow-open'; }
+    if (['generalization', 'realization'].includes(type))   { markerEnd = 'uc-arrow-hollow'; }
+    if (type === 'association')                             { markerEnd = 'uc-arrowhead'; }
+    if (type === 'containment') {
+      markerStart = 'uc-circle-cross';
+      markerEnd   = 'uc-none';
+    }
 
-    const toIsNote   = layout.noteIds.has(toId);
-    const fromIsNote = layout.noteIds.has(fromId);
+    const toIsNote     = layout.noteIds.has(toId);
+    const fromIsNote   = layout.noteIds.has(fromId);
     const toIsCollab   = layout.collabIds.has(toId);
     const fromIsCollab = layout.collabIds.has(fromId);
+    const toIsActor    = layout.actorIds.has(toId);
+    const fromIsActor  = layout.actorIds.has(fromId);
+    const toIsExt      = layout.extIds.has(toId);
+    const fromIsExt    = layout.extIds.has(fromId);
 
-    const toIsEllipse   = toIsCollab   || (!toIsNote   && !layout.collabIds.has(toId)   && !isBoxEntity(toId, layout));
-    const fromIsEllipse = fromIsCollab || (!fromIsNote && !layout.collabIds.has(fromId) && !isBoxEntity(fromId, layout));
+    // Curved only when BOTH endpoints are inside the system boundary (ellipse↔ellipse).
+    // If either endpoint is external (ext, actor, note) use a straight line instead.
+    const bothInternal = !toIsActor && !fromIsActor && !toIsExt && !fromIsExt && !toIsNote && !fromIsNote;
+    const isCurved = bothInternal && ['include', 'extend', 'dependency', 'realization', 'generalization', 'containment', 'constraint'].includes(type);
+
+    const toIsEllipse   = toIsCollab   || (!toIsNote && !toIsExt  && !toIsActor);
+    const fromIsEllipse = fromIsCollab || (!fromIsNote && !fromIsExt && !fromIsActor);
 
     let d: string;
     let labelX = 0;
@@ -177,23 +192,31 @@ const tmpl = {
     } else {
       const toHalfW = toIsNote ? NOTE_W / 2 : layout.extBoxW / 2;
       const toHalfH = toIsNote ? noteHeight(notes[toId] ?? toId) / 2 : Infinity;
-
       const dx = x2 - x1;
       const dy = y2 - y1;
 
+      // --- start point ---
       let startX: number, startY: number;
       if (fromIsNote) {
         const fromHalfW = NOTE_W / 2;
         startX = dx >= 0 ? x1 + fromHalfW : x1 - fromHalfW;
         startY = y1;
+      } else if (fromIsActor) {
+        startX = x1 + ACTOR_HALF;
+        startY = y1;
+      } else if (fromIsExt) {
+        // exit from left or right edge of the external box
+        startX = dx >= 0 ? x1 + layout.extBoxW / 2 : x1 - layout.extBoxW / 2;
+        startY = y1;
       } else if (fromIsEllipse) {
-        startX = x1 + ELLIPSE_RX;
+        startX = dx >= 0 ? x1 + ELLIPSE_RX : x1 - ELLIPSE_RX;
         startY = y1;
       } else {
         startX = x1 + layout.extBoxW / 2;
         startY = y1;
       }
 
+      // --- end point ---
       let endX: number, endY: number;
       if (toIsNote) {
         endX = x2 - toHalfW;
@@ -203,15 +226,18 @@ const tmpl = {
           const t = (endY - y1) / dy;
           endX = x1 + t * dx;
         }
+      } else if (toIsActor) {
+        endX = dx >= 0 ? x2 - ACTOR_HALF : x2 + ACTOR_HALF;
+        endY = y2;
+      } else if (toIsExt) {
+        // enter the external box from left or right edge
+        endX = dx >= 0 ? x2 - layout.extBoxW / 2 : x2 + layout.extBoxW / 2;
+        endY = y2;
       } else if (toIsEllipse) {
-        const isRightCol = x2 > layout.centerX + layout.boundaryWidth / 2;
-        const goingRight = dx > 0;
-        endX = isRightCol ? (x2 - ELLIPSE_RX) : (goingRight ? x2 - ELLIPSE_RX : x2 + ELLIPSE_RX);
+        endX = dx >= 0 ? x2 - ELLIPSE_RX : x2 + ELLIPSE_RX;
         endY = y2;
       } else {
-        const isRightCol = x2 > layout.centerX + layout.boundaryWidth / 2;
-        const goingRight = dx > 0;
-        endX = isRightCol ? (x2 - toHalfW) : (goingRight ? x2 - ELLIPSE_RX : x2 + ELLIPSE_RX);
+        endX = dx >= 0 ? x2 - toHalfW : x2 + toHalfW;
         endY = y2;
       }
 
@@ -220,27 +246,22 @@ const tmpl = {
 
     const showLabel = type === 'include' || type === 'extend';
     return `<g class="uc-connector" data-type="${type}">
-      <path d="${d}" stroke="${THEME.stroke}" stroke-width="1.2" fill="none" ${strokeDash} marker-end="url(#${markerId})"/>
+      <path d="${d}" stroke="${THEME.stroke}" stroke-width="1.2" fill="none" ${strokeDash} marker-start="url(#${markerStart})" marker-end="url(#${markerEnd})"/>
       ${showLabel ? `<text x="${labelX}" y="${labelY}" text-anchor="middle" font-family="${THEME.font}" font-size="10px" font-style="italic" font-weight="${THEME.fontWeight}" fill="${THEME.textColor}">«${type}»</text>` : ''}
     </g>`;
   },
 };
 
-function isBoxEntity(id: string, layout: LayoutData): boolean {
-  return !layout.noteIds.has(id) && !layout.collabIds.has(id);
-}
-
 function layoutDiagram(model: UseCaseModel): LayoutData {
-  const ucIds    = Object.keys(model.usecases);
-  const collabIds= Object.keys(model.collaborations);
-  const actors   = Object.keys(model.actors);
-  const exts     = Object.keys(model.externalSystems);
+  const ucIds     = Object.keys(model.usecases);
+  const collabIds = Object.keys(model.collaborations);
+  const actors    = Object.keys(model.actors);
+  const exts      = Object.keys(model.externalSystems);
 
   const BOUNDARY_WIDTH     = 300;
   const BOUNDARY_LEFT_PAD  = 160;
   const EXT_BOX_W          = 150;
-  const NOTE_BOX_W         = NOTE_W;
-  const RIGHT_COL_W        = Math.max(EXT_BOX_W, NOTE_BOX_W);
+  const RIGHT_COL_W        = Math.max(EXT_BOX_W, NOTE_W);
   const EXT_MARGIN         = 24;
   const EXT_RIGHT_PAD      = 24;
   const BOUNDARY_RIGHT_PAD = EXT_MARGIN + RIGHT_COL_W + EXT_RIGHT_PAD;
@@ -274,9 +295,11 @@ function layoutDiagram(model: UseCaseModel): LayoutData {
   placeEntities(actors, actorX);
   placeEntities(exts, extLeft + EXT_BOX_W / 2);
 
-  const noteIdSet  = new Set(Object.keys(model.notes));
-  const collabIdSet= new Set(Object.keys(model.collaborations));
-  const noteX      = extLeft + NOTE_W / 2;
+  const noteIdSet   = new Set(Object.keys(model.notes));
+  const collabIdSet = new Set(Object.keys(model.collaborations));
+  const actorIdSet  = new Set(Object.keys(model.actors));
+  const extIdSet    = new Set(Object.keys(model.externalSystems));
+  const noteX       = extLeft + NOTE_W / 2;
 
   Object.keys(model.notes).forEach((id, idx) => {
     const anchored = model.connections.find((c) => (c.from === id || c.to === id) && c.type === 'anchor');
@@ -285,8 +308,7 @@ function layoutDiagram(model: UseCaseModel): LayoutData {
     positions[id]  = { x: noteX, y: refPos ? refPos.y : firstUCY + idx * UC_SPACING };
   });
 
-  const totalCenterCount = allCenterIds.length;
-  const systemHeight = Math.max(totalCenterCount * UC_SPACING + HEADER_H + ELLIPSE_RY, HEADER_H + 60);
+  const systemHeight = Math.max(allCenterIds.length * UC_SPACING + HEADER_H + ELLIPSE_RY, HEADER_H + 60);
   const height       = TOP_PAD + systemHeight + BOT_PAD;
 
   return {
@@ -295,6 +317,8 @@ function layoutDiagram(model: UseCaseModel): LayoutData {
     centerX, extLeft, extBoxW: EXT_BOX_W,
     noteIds: noteIdSet,
     collabIds: collabIdSet,
+    actorIds: actorIdSet,
+    extIds: extIdSet,
     noteBoxW: NOTE_W,
     noteBoxH: noteHeight,
   };
@@ -303,8 +327,8 @@ function layoutDiagram(model: UseCaseModel): LayoutData {
 function buildDefs(): string {
   const s = THEME.stroke;
   return `<defs>
-    <marker id="uc-arrow-open" markerWidth="10" markerHeight="10" refX="10" refY="5" orient="auto">
-      <path d="M 0 0 L 10 5 L 0 10" fill="none" stroke="${s}" stroke-width="1.2"/>
+    <marker id="uc-arrow-open" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto">
+      <path d="M 1 1 L 11 6 L 1 11" fill="none" stroke="${s}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
     </marker>
     <marker id="uc-arrow-hollow" markerWidth="12" markerHeight="12" refX="12" refY="6" orient="auto">
       <path d="M 12 6 L 0 0 L 0 12 Z" fill="white" stroke="${s}" stroke-width="1"/>
@@ -312,8 +336,10 @@ function buildDefs(): string {
     <marker id="uc-arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
       <polygon points="0 0, 10 3.5, 0 7" fill="${s}"/>
     </marker>
-    <marker id="uc-arrow-diamond" markerWidth="14" markerHeight="14" refX="14" refY="7" orient="auto">
-      <path d="M 0 7 L 7 0 L 14 7 L 7 14 Z" fill="white" stroke="${s}" stroke-width="1"/>
+    <marker id="uc-circle-cross" markerWidth="14" markerHeight="14" refX="0" refY="7" orient="auto">
+      <circle cx="7" cy="7" r="6" fill="white" stroke="${s}" stroke-width="1.2"/>
+      <line x1="7" y1="1" x2="7" y2="13" stroke="${s}" stroke-width="1.2"/>
+      <line x1="1" y1="7" x2="13" y2="7" stroke="${s}" stroke-width="1.2"/>
     </marker>
   </defs>`;
 }
@@ -346,19 +372,19 @@ function renderSVG(model: UseCaseModel, layout: LayoutData): string {
     Object.keys(collection).forEach((id) => {
       const p = positions[id];
       if (!p) { return; }
-      if (kind === 'usecase')        { nodes += tmpl.useCase(p.x, p.y, collection[id]); }
-      if (kind === 'collaboration')  { nodes += tmpl.collaboration(p.x, p.y, collection[id]); }
-      if (kind === 'external')       { nodes += tmpl.externalSystem(p.x, p.y, collection[id], layout.extBoxW); }
-      if (kind === 'actor')          { nodes += tmpl.actor(p.x, p.y, collection[id]); }
-      if (kind === 'note')           { nodes += tmpl.note(p.x, p.y, collection[id]); }
+      if (kind === 'usecase')       { nodes += tmpl.useCase(p.x, p.y, collection[id]); }
+      if (kind === 'collaboration') { nodes += tmpl.collaboration(p.x, p.y, collection[id]); }
+      if (kind === 'external')      { nodes += tmpl.externalSystem(p.x, p.y, collection[id], layout.extBoxW); }
+      if (kind === 'actor')         { nodes += tmpl.actor(p.x, p.y, collection[id]); }
+      if (kind === 'note')          { nodes += tmpl.note(p.x, p.y, collection[id]); }
     });
   };
 
-  renderCollection(model.usecases, 'usecase');
-  renderCollection(model.collaborations, 'collaboration');
+  renderCollection(model.usecases,        'usecase');
+  renderCollection(model.collaborations,  'collaboration');
   renderCollection(model.externalSystems, 'external');
-  renderCollection(model.actors, 'actor');
-  renderCollection(model.notes, 'note');
+  renderCollection(model.actors,          'actor');
+  renderCollection(model.notes,           'note');
 
   return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" style="background:white">${buildDefs()}${boundary}${connectors}${nodes}</svg>`;
 }
