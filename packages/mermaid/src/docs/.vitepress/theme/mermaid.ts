@@ -3,10 +3,11 @@ import zenuml from '../../../../../mermaid-zenuml/dist/mermaid-zenuml.core.mjs';
 import tidyTreeLayout from '../../../../../mermaid-layout-tidy-tree/dist/mermaid-layout-tidy-tree.core.mjs';
 import layouts from '../../../../../mermaid-layout-elk/dist/mermaid-layout-elk.core.mjs';
 
+// Initialize registrations - mix of async and sync wrapped in promises
 const init = Promise.all([
   mermaid.registerExternalDiagrams([zenuml]),
-  mermaid.registerLayoutLoaders(layouts),
-  mermaid.registerLayoutLoaders(tidyTreeLayout),
+  Promise.resolve(mermaid.registerLayoutLoaders(layouts)),
+  Promise.resolve(mermaid.registerLayoutLoaders(tidyTreeLayout)),
 ]);
 mermaid.registerIconPacks([
   {

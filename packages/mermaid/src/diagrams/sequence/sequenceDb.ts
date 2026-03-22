@@ -192,7 +192,7 @@ export class SequenceDB implements DiagramDB {
       old.box = assignedBox;
 
       // Don't allow description nulling
-      if (old && name === old.name && description == null) {
+      if (old?.name === name && description == null) {
         return;
       }
     }
