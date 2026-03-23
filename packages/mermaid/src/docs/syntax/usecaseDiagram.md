@@ -3,7 +3,8 @@
 Mermaid can render Use Case Diagrams using the `usecaseDiagram` keyword.
 
 ## Syntax
-```
+
+```mermaid-example
 usecaseDiagram
     actor "Customer" as C
     system "Shop" {
@@ -39,8 +40,18 @@ usecaseDiagram
 | `constraint: N1 --> N2`    | constraint     | Connects notes or constrained elements |
 | `containment: UC1 --> UC2` | containment    | UC1 structurally contains UC2          |
 
-## Theming
+```note
+Only `anchor` and `constraint` may connect to a note on either end.
+Two notes can only be connected via `constraint`.
+Actors are not valid endpoints for `containment`.
 ```
+
+## Theming
+
+Use standard Mermaid theme variables to control colors. All elements
+derive from the same 6 keys — no diagram-specific keys are needed.
+
+```mermaid-example
 %%{init: { 'themeVariables': {
     'primaryColor': '#b3e5fc',
     'primaryBorderColor': '#01579b',
@@ -53,6 +64,20 @@ usecaseDiagram
     actor "Admin" as A
     system "Portal" {
         usecase "View Logs" as UC1
+        usecase "Audit Session" as UC2
     }
+    note "Only for SuperAdmins" as N1
     A --> UC1
+    A --> UC2
+    include: UC1 --> UC2
+    anchor: N1 --> UC1
 ```
+
+| Variable             | Controls                                      |
+| -------------------- | --------------------------------------------- |
+| `primaryColor`       | Actor head, usecase ovals, external system bg |
+| `primaryBorderColor` | All strokes and outlines                      |
+| `primaryTextColor`   | All text                                      |
+| `secondaryColor`     | System boundary background                    |
+| `tertiaryColor`      | Note background                               |
+| `lineColor`          | Connector lines and arrowheads                |
