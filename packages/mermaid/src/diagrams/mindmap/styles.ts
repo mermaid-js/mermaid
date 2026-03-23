@@ -83,8 +83,14 @@ const genGradient = (THEME_COLOR_LIMIT: number, svgId: string, mainBkg: string) 
 };
 
 // TODO: These options seem incorrect.
-const getStyles: DiagramStylesProvider = (options, svgId) => {
+const getStyles: DiagramStylesProvider = (options) => {
   const { theme } = options;
+  // svgId is passed inside options by the caller in packages/mermaid/src/styles.ts
+  // as `themes[type]({ ...options, svgId })`. The second parameter is never populated.
+  const svgId: string | undefined = options.svgId;
+  const scopedDropShadow = options.dropShadow
+    ? options.dropShadow.replace('url(#drop-shadow)', `url(${svgId}-drop-shadow)`)
+    : 'none';
   return `
   .edge {
     stroke-width: 3;
@@ -116,7 +122,7 @@ const getStyles: DiagramStylesProvider = (options, svgId) => {
     text-align: center;
   }
   [data-look="neo"].mindmap-node  {
-    filter: ${options.dropShadow ?? 'none'};
+    filter: ${scopedDropShadow};
   }
   [data-look="neo"].mindmap-node.section-root rect, [data-look="neo"].mindmap-node.section-root path, [data-look="neo"].mindmap-node.section-root circle, [data-look="neo"].mindmap-node.section-root polygon  {
     fill: ${theme?.includes('redux') ? options.mainBkg : options.git0};
