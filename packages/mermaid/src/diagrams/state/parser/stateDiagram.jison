@@ -57,14 +57,12 @@
 .*direction\s+RL[^\n]*                                      return 'direction_rl';
 .*direction\s+LR[^\n]*                                      return 'direction_lr';
 
-\%\%(?!\{)[^\n]*                                                /* skip comments */
-[^\}]\%\%[^\n]*                                                 /* skip comments */{ /*console.log('Crap after close');*/ }
 
 [\n]+                            return 'NL';
 [\s]+                              /* skip all whitespace */
 <ID,STATE,struct,LINE>((?!\n)\s)+       /* skip same-line whitespace */
+<INITIAL,ID,STATE,struct,LINE>[\n][ \t]*\%\%(?!\{).*     /* skip comments */
 <INITIAL,ID,STATE,struct,LINE>\#[^\n]*  /* skip comments */
-\%%[^\n]*                        /* skip comments */
 "scale"\s+            { this.pushState('SCALE'); /* console.log('Got scale', yytext);*/ return 'scale'; }
 <SCALE>\d+            return 'WIDTH';
 <SCALE>\s+"width"     { this.popState(); }
@@ -116,7 +114,6 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <STATE>[^\n\s\{]+          { /* console.log('COMPOSIT_STATE', yytext); */ return 'COMPOSIT_STATE'; }
 <STATE>\n                  { this.popState(); }
 <INITIAL,STATE>\{          { this.popState(); this.pushState('struct'); /* console.log('begin struct', yytext); */ return 'STRUCT_START'; }
-<struct>\%\%(?!\{)[^\n]*   /* skip comments inside state*/
 <struct>\}                 { /*console.log('Ending struct');*/ this.popState(); return 'STRUCT_STOP';} }
 <struct>[\n]               /* nothing */
 
