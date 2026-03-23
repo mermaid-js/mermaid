@@ -1,85 +1,100 @@
-// cspell:ignore usecase usecases usecasediagram
+// cspell:ignore usecase usecases usecasediagram usecaserenderer collab
 const getStyles = (options: Record<string, string>): string => {
-  const primaryColor       = options.primaryColor       ?? '#61c1ed';
-  const primaryTextColor   = options.primaryTextColor   ?? '#000000';
-  const primaryBorderColor = options.primaryBorderColor ?? '#000000';
-  const lineColor          = options.lineColor          ?? '#000000';
-  const secondaryColor     = options.secondaryColor     ?? '#daeef9';
-  const tertiaryColor      = options.tertiaryColor      ?? '#fffde7';
-  const fontFamily         = options.fontFamily         ?? 'Helvetica, Arial, sans-serif';
-  const fontSize           = options.fontSize           ?? '12px';
+  const pColor    = options.primaryColor       ?? '#add8e6';
+  const pText     = options.primaryTextColor   ?? '#000000';
+  const pBorder   = options.primaryBorderColor ?? pText;
+  const fontFamily = options.fontFamily        ?? 'Helvetica, Arial, sans-serif';
+  const fontSize   = options.fontSize          ?? '12px';
+
+  const sysFill  = options.secondaryColor ?? '#daeef9';
+  const noteFill = options.tertiaryColor  ?? '#fffde7';
+  const lineCol  = options.lineColor      ?? pBorder;
 
   return `
-  .uc-actor circle,
+  .uc-actor circle {
+    stroke-width: 1.5px;
+  }
   .uc-actor line {
-    stroke: ${primaryBorderColor};
-    fill: none;
+    stroke-width: 1.5px;
+    fill:         none;
   }
   .uc-actor text {
-    fill: ${primaryTextColor};
+    fill:        ${pText};
     font-family: ${fontFamily};
-    font-size: ${fontSize};
+    font-size:   ${fontSize};
     font-weight: bold;
   }
+
   .uc-usecase ellipse {
-    fill: ${primaryColor};
-    stroke: ${primaryBorderColor};
+    fill:         ${pColor};
+    stroke:       ${pBorder};
+    stroke-width: 1.2px;
   }
   .uc-usecase text {
-    fill: ${primaryTextColor};
+    fill:        ${pText};
     font-family: ${fontFamily};
-    font-size: ${fontSize};
+    font-size:   ${fontSize};
     font-weight: bold;
   }
+
   .uc-collaboration ellipse {
-    fill: none;
-    stroke: ${primaryBorderColor};
+    fill:             none;
+    stroke:           ${pBorder};
     stroke-dasharray: 6,4;
+    stroke-width:     1.2px;
   }
   .uc-collaboration text {
-    fill: ${primaryTextColor};
+    fill:        ${pText};
     font-family: ${fontFamily};
-    font-size: ${fontSize};
+    font-size:   ${fontSize};
     font-weight: bold;
   }
+
   .uc-system rect {
-    fill: ${secondaryColor};
-    stroke: ${primaryBorderColor};
+    fill:         ${sysFill};
+    stroke:       ${pBorder};
+    stroke-width: 2px;
   }
   .uc-system text {
-    fill: ${primaryTextColor};
+    fill:        ${pText};
     font-family: ${fontFamily};
-    font-size: 16px;
+    font-size:   16px;
     font-weight: bold;
   }
+
   .uc-external rect {
-    fill: ${primaryColor};
-    stroke: ${primaryBorderColor};
+    fill:         ${pColor};
+    stroke:       ${pBorder};
+    stroke-width: 1.2px;
   }
   .uc-external text {
-    fill: ${primaryTextColor};
+    fill:        ${pText};
     font-family: ${fontFamily};
-    font-size: ${fontSize};
+    font-size:   ${fontSize};
     font-weight: bold;
   }
+
   .uc-note path {
-    fill: ${tertiaryColor};
-    stroke: ${primaryBorderColor};
+    fill:         ${noteFill};
+    stroke:       ${pBorder};
+    stroke-width: 1.2px;
   }
   .uc-note text {
-    fill: ${primaryTextColor};
+    fill:        ${pText};
     font-family: ${fontFamily};
-    font-size: 11px;
+    font-size:   11px;
+    font-weight: bold;
   }
+
   .uc-connector path {
-    stroke: ${lineColor};
-    fill: none;
+    stroke:       ${lineCol};
+    stroke-width: 1.2px;
+    fill:         none;
   }
   .uc-connector text {
-    fill: ${primaryTextColor};
+    fill:        ${pText};
     font-family: ${fontFamily};
-    font-size: 10px;
-    font-style: italic;
+    font-size:   10px;
     font-weight: bold;
   }
   `;

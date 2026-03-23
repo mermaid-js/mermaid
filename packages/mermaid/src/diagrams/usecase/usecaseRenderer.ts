@@ -1,42 +1,47 @@
-// cspell:ignore usecase usecases usecasediagram usecaserenderer arrowhead tmpl collab
+// cspell:ignore usecase usecases usecasediagram usecaserenderer collab colour bbox
+import { select } from 'd3';
+import type { Selection } from 'd3';
 import { log } from '../../logger.js';
+import { getConfig } from '../../config.js';
 import type { DiagramDefinition } from '../../diagram-api/types.js';
-import type { UseCaseModel, Connection, RelationshipType, UseCaseDB } from './usecaseDb.js';
+import type { UseCaseModel, Connection, UseCaseDB } from './usecaseDb.js';
 import usecaseDb from './usecaseDb.js';
 
 const ucDb: UseCaseDB = usecaseDb;
 
+type D3Svg   = Selection<SVGSVGElement,  unknown, null, undefined>;
+type D3Group = Selection<SVGGElement,    unknown, null, undefined>;
+type D3Defs  = Selection<SVGDefsElement, unknown, null, undefined>;
+
 interface Position { x: number; y: number; }
 
 interface LayoutData {
-  positions: Record<string, Position>;
-  width: number;
-  height: number;
-  systemHeight: number;
-  systemTop: number;
-  boundaryLeft: number;
+  positions:     Record<string, Position>;
+  width:         number;
+  height:        number;
+  systemHeight:  number;
+  systemTop:     number;
+  boundaryLeft:  number;
   boundaryWidth: number;
-  centerX: number;
-  extLeft: number;
-  extBoxW: number;
-  noteIds: Set<string>;
-  collabIds: Set<string>;
-  actorIds: Set<string>;
-  extIds: Set<string>;
-  noteBoxW: number;
-  noteBoxH: (label: string) => number;
+  centerX:       number;
+  extLeft:       number;
+  extBoxW:       number;
+  noteIds:       Set<string>;
+  collabIds:     Set<string>;
+  actorIds:      Set<string>;
+  extIds:        Set<string>;
 }
 
-const THEME = {
-  fill:       '#61c1ed',
-  stroke:     '#000000',
-  systemFill: '#daeef9',
-  noteFill:   '#fffde7',
-  textColor:  '#000000',
-  font:       'Helvetica, Arial, sans-serif',
-  fontSize:   '12px',
-  fontWeight: 'bold',
-};
+interface Theme {
+  primaryColor:  string;
+  borderColor:   string;
+  textColor:     string; 
+  systemFill:    string; 
+  noteFill:      string; 
+  lineColor:     string; 
+  font:          string;
+  fontSize:      string;
+}
 
 const ELLIPSE_RX = 72;
 const ELLIPSE_RY = 28;
@@ -46,8 +51,7 @@ const NOTE_FOLD  = 16;
 const ACTOR_HALF = 16;
 
 function noteHeight(label: string): number {
-  const lines = wrapText(label, 100);
-  return Math.max(50 + (lines.length - 1) * 14, 50);
+  return Math.max(50 + (wrapText(label, 100).length - 1) * 14, 50);
 }
 
 function wrapText(label: string, maxWidth = 120): string[] {
@@ -63,188 +67,350 @@ function wrapText(label: string, maxWidth = 120): string[] {
       line = test;
     }
   });
-  if (line.trim().length > 0) { lines.push(line.trim()); }
+  if (line.trim()) { 
+    lines.push(line.trim()); 
+  }
   return lines;
 }
 
-const tmpl = {
-  actor(x: number, y: number, label: string): string {
-    return `<g class="uc-actor">
-      <circle cx="${x}" cy="${y - 50}" r="7" fill="none" stroke="${THEME.stroke}" stroke-width="1.5"/>
-      <line x1="${x}" y1="${y - 43}" x2="${x}" y2="${y - 18}" stroke="${THEME.stroke}" stroke-width="1.5"/>
-      <line x1="${x - 16}" y1="${y - 34}" x2="${x + 16}" y2="${y - 34}" stroke="${THEME.stroke}" stroke-width="1.5"/>
-      <line x1="${x}" y1="${y - 18}" x2="${x - 14}" y2="${y - 2}" stroke="${THEME.stroke}" stroke-width="1.5"/>
-      <line x1="${x}" y1="${y - 18}" x2="${x + 14}" y2="${y - 2}" stroke="${THEME.stroke}" stroke-width="1.5"/>
-      <text x="${x}" y="${y + 14}" text-anchor="middle" font-family="${THEME.font}" font-size="${THEME.fontSize}" font-weight="${THEME.fontWeight}" fill="${THEME.textColor}">${label}</text>
-    </g>`;
-  },
+function appendText(
+  parent:  D3Svg | D3Group,
+  attrs:   Record<string, string | number>,
+  t:       Theme,
+  content: string,
+  fontSize?: string,
+): SVGTextElement {
+  const node = parent.append('text').node() as SVGTextElement;
+  const el   = select(node);
+  Object.entries(attrs).forEach(([k, v]) => {
+    el.attr(k, v as string);
+  });
+  el.attr('font-family', t.font)
+    .attr('font-size',   fontSize ?? t.fontSize)
+    .attr('font-weight', 'bold')
+    .attr('fill',        t.textColor)
+    .text(content);
+  return node;
+}
 
-  useCase(x: number, y: number, label: string): string {
-    const lines = wrapText(label, 120);
-    const lineH = 14;
-    const baseY = y - (lines.length * lineH) / 2 + lineH * 0.8;
-    const spans = lines.map((l, i) => `<tspan x="${x}" dy="${i === 0 ? 0 : lineH}">${l}</tspan>`).join('');
-    return `<g class="uc-usecase">
-      <ellipse cx="${x}" cy="${y}" rx="${ELLIPSE_RX}" ry="${ELLIPSE_RY}" fill="${THEME.fill}" stroke="${THEME.stroke}" stroke-width="1.2"/>
-      <text x="${x}" y="${baseY}" text-anchor="middle" font-family="${THEME.font}" font-size="${THEME.fontSize}" font-weight="${THEME.fontWeight}" fill="${THEME.textColor}">${spans}</text>
-    </g>`;
-  },
+function resolveTheme(): Theme {
+  const cfg = getConfig();
+  const tv  = (cfg.themeVariables ?? {}) as Record<string, string>;
 
-  collaboration(x: number, y: number, label: string): string {
-    const lines = wrapText(label, 120);
-    const lineH = 14;
-    const baseY = y - (lines.length * lineH) / 2 + lineH * 0.8;
-    const spans = lines.map((l, i) => `<tspan x="${x}" dy="${i === 0 ? 0 : lineH}">${l}</tspan>`).join('');
-    return `<g class="uc-collaboration">
-      <ellipse cx="${x}" cy="${y}" rx="${ELLIPSE_RX}" ry="${ELLIPSE_RY}" fill="none" stroke="${THEME.stroke}" stroke-width="1.2" stroke-dasharray="6,4"/>
-      <text x="${x}" y="${baseY}" text-anchor="middle" font-family="${THEME.font}" font-size="${THEME.fontSize}" font-weight="${THEME.fontWeight}" fill="${THEME.textColor}">${spans}</text>
-    </g>`;
-  },
+  const primaryColor = tv.primaryColor   ?? '#add8e6';
+  const borderColor  = tv.primaryBorderColor ?? tv.primaryTextColor ?? '#000000';
+  const textColor    = tv.primaryTextColor   ?? '#000000';
 
-  systemBoundary(x: number, y: number, w: number, h: number, label: string): string {
-    return `<g class="uc-system">
-      <rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${THEME.systemFill}" stroke="${THEME.stroke}" stroke-width="2" rx="3"/>
-      <text x="${x + w / 2}" y="${y + 24}" text-anchor="middle" dominant-baseline="middle" font-family="${THEME.font}" font-size="16px" font-weight="${THEME.fontWeight}" fill="${THEME.textColor}">${label}</text>
-    </g>`;
-  },
+  return {
+    primaryColor,
+    borderColor,
+    textColor,
+    systemFill: tv.secondaryColor ?? '#daeef9',
+    noteFill:   tv.tertiaryColor  ?? '#fffde7',
+    lineColor:  tv.lineColor      ?? borderColor,
+    font:       tv.fontFamily     ?? 'Helvetica, Arial, sans-serif',
+    fontSize:   tv.fontSize       ?? '12px',
+  };
+}
 
-  externalSystem(x: number, y: number, label: string, boxW = 150): string {
-    const lines = wrapText(label, boxW - 10);
-    const boxH  = Math.max(40 + (lines.length - 1) * 15, 40);
-    const rectX = x - boxW / 2;
-    const rows  = lines.map((l, i) => `<text x="${x}" y="${y - boxH / 2 + 22 + i * 15}" text-anchor="middle" font-family="${THEME.font}" font-size="${THEME.fontSize}" font-weight="${THEME.fontWeight}" fill="${THEME.textColor}">${l}</text>`).join('');
-    return `<g class="uc-external">
-      <rect x="${rectX}" y="${y - boxH / 2}" width="${boxW}" height="${boxH}" fill="${THEME.fill}" stroke="${THEME.stroke}" stroke-width="1.2" rx="3"/>
-      ${rows}
-    </g>`;
-  },
+function buildDefs(defs: D3Defs, t: Theme): void {
+  const s = t.lineColor;
 
-  note(x: number, y: number, label: string): string {
-    const lines = wrapText(label, 100);
-    const W    = NOTE_W;
-    const FOLD = NOTE_FOLD;
-    const H    = noteHeight(label);
-    const rx   = x - W / 2;
-    const ry   = y - H / 2;
-    const rows = lines.map((l, i) => `<text x="${x}" y="${ry + 20 + i * 14}" text-anchor="middle" font-family="${THEME.font}" font-size="11px" fill="${THEME.textColor}">${l}</text>`).join('');
-    return `<g class="uc-note">
-      <path d="M ${rx} ${ry} L ${rx + W - FOLD} ${ry} L ${rx + W} ${ry + FOLD} L ${rx + W} ${ry + H} L ${rx} ${ry + H} Z" fill="${THEME.noteFill}" stroke="${THEME.stroke}" stroke-width="1.2"/>
-      <path d="M ${rx + W - FOLD} ${ry} L ${rx + W - FOLD} ${ry + FOLD} L ${rx + W} ${ry + FOLD}" fill="none" stroke="${THEME.stroke}" stroke-width="1.2"/>
-      ${rows}
-    </g>`;
-  },
+  const arrowOpen = defs.append('marker')
+    .attr('id', 'uc-arrow-open')
+    .attr('markerWidth', 12).attr('markerHeight', 12)
+    .attr('refX', 11).attr('refY', 6)
+    .attr('orient', 'auto');
+  arrowOpen.append('path')
+    .attr('d', 'M 1 1 L 11 6 L 1 11')
+    .attr('fill', 'none').attr('stroke', s)
+    .attr('stroke-width', 1.5)
+    .attr('stroke-linecap', 'round').attr('stroke-linejoin', 'round');
 
-  connector(
-    x1: number, y1: number,
-    x2: number, y2: number,
-    type: RelationshipType,
-    layout: LayoutData,
-    toId = '',
-    fromId = '',
-    notes: Record<string, string> = {},
-  ): string {
-    const boundaryRight = layout.centerX + layout.boundaryWidth / 2;
+  const arrowHollow = defs.append('marker')
+    .attr('id', 'uc-arrow-hollow')
+    .attr('markerWidth', 12).attr('markerHeight', 12)
+    .attr('refX', 12).attr('refY', 6)
+    .attr('orient', 'auto');
+  arrowHollow.append('path')
+    .attr('d', 'M 12 6 L 0 0 L 0 12 Z')
+    .attr('fill', 'white').attr('stroke', s).attr('stroke-width', 1);
 
-    const strokeDash =
-      ['include', 'extend', 'dependency', 'realization', 'anchor'].includes(type) ? 'stroke-dasharray="6,4"' :
-      type === 'constraint' ? 'stroke-dasharray="2,3"' : '';
+  const arrowhead = defs.append('marker')
+    .attr('id', 'uc-arrowhead')
+    .attr('markerWidth', 10).attr('markerHeight', 7)
+    .attr('refX', 9).attr('refY', 3.5)
+    .attr('orient', 'auto');
+  arrowhead.append('polygon')
+    .attr('points', '0 0, 10 3.5, 0 7')
+    .attr('fill', s);
 
-    let markerEnd   = 'uc-none';
-    let markerStart = 'uc-none';
+  const circleCross = defs.append('marker')
+    .attr('id', 'uc-circle-cross')
+    .attr('markerWidth', 14).attr('markerHeight', 14)
+    .attr('refX', 0).attr('refY', 7)
+    .attr('orient', 'auto');
+  circleCross.append('circle')
+    .attr('cx', 7).attr('cy', 7).attr('r', 6)
+    .attr('fill', 'white').attr('stroke', s).attr('stroke-width', 1.2);
+  circleCross.append('line')
+    .attr('x1', 7).attr('y1', 1).attr('x2', 7).attr('y2', 13)
+    .attr('stroke', s).attr('stroke-width', 1.2);
+  circleCross.append('line')
+    .attr('x1', 1).attr('y1', 7).attr('x2', 13).attr('y2', 7)
+    .attr('stroke', s).attr('stroke-width', 1.2);
+}
 
-    if (['include', 'extend', 'dependency'].includes(type)) { markerEnd = 'uc-arrow-open'; }
-    if (['generalization', 'realization'].includes(type))   { markerEnd = 'uc-arrow-hollow'; }
-    if (type === 'association')                             { markerEnd = 'uc-arrowhead'; }
-    if (type === 'containment') {
-      markerStart = 'uc-circle-cross';
-      markerEnd   = 'uc-none';
-    }
+function drawActor(parent: D3Svg | D3Group, x: number, y: number, label: string, t: Theme): void {
+  const g = parent.append('g').attr('class', 'uc-actor');
 
-    const toIsNote     = layout.noteIds.has(toId);
-    const fromIsNote   = layout.noteIds.has(fromId);
-    const toIsCollab   = layout.collabIds.has(toId);
-    const fromIsCollab = layout.collabIds.has(fromId);
-    const toIsActor    = layout.actorIds.has(toId);
-    const fromIsActor  = layout.actorIds.has(fromId);
-    const toIsExt      = layout.extIds.has(toId);
-    const fromIsExt    = layout.extIds.has(fromId);
+  g.append('circle')
+    .attr('cx', x).attr('cy', y - 50).attr('r', 7)
+    .attr('fill',          t.primaryColor)
+    .attr('stroke',        t.borderColor)
+    .attr('stroke-width', 1.5);
 
-    const bothInternal = !toIsActor && !fromIsActor && !toIsExt && !fromIsExt && !toIsNote && !fromIsNote;
-    const isCurved = bothInternal && ['include', 'extend', 'dependency', 'realization', 'generalization', 'containment', 'constraint'].includes(type);
+  const bodyLines: [number, number, number, number][] = [
+    [x,      y - 43, x,      y - 18],
+    [x - 16, y - 34, x + 16, y - 34],
+    [x,      y - 18, x - 14, y - 2 ],
+    [x,      y - 18, x + 14, y - 2 ],
+  ];
+  bodyLines.forEach(([x1, y1, x2, y2]) => {
+    g.append('line')
+      .attr('x1', x1).attr('y1', y1)
+      .attr('x2', x2).attr('y2', y2)
+      .attr('stroke',        t.borderColor)
+      .attr('stroke-width', 1.5)
+      .attr('fill',          'none');
+  });
 
-    const toIsEllipse   = toIsCollab   || (!toIsNote && !toIsExt  && !toIsActor);
-    const fromIsEllipse = fromIsCollab || (!fromIsNote && !fromIsExt && !fromIsActor);
+  appendText(g, { x, y: y + 14, 'text-anchor': 'middle' }, t, label);
+}
 
-    let d: string;
-    let labelX = 0;
-    let labelY = 0;
+function drawUseCase(parent: D3Svg | D3Group, x: number, y: number, label: string, t: Theme): void {
+  const g = parent.append('g').attr('class', 'uc-usecase');
+  g.append('ellipse')
+    .attr('cx', x).attr('cy', y)
+    .attr('rx', ELLIPSE_RX).attr('ry', ELLIPSE_RY)
+    .attr('fill',          t.primaryColor)
+    .attr('stroke',        t.borderColor)
+    .attr('stroke-width', 1.2);
+  appendWrappedText(g, x, y, label, t);
+}
 
-    if (isCurved) {
-      const startX = x1 + ELLIPSE_RX;
-      const endX   = x2 + ELLIPSE_RX;
-      const ctrlX  = boundaryRight - 30;
-      const ctrlY  = (y1 + y2) / 2;
-      d = `M ${startX} ${y1} Q ${ctrlX} ${ctrlY} ${endX} ${y2}`;
-      labelX = 0.25 * startX + 0.5 * ctrlX + 0.25 * endX + 4;
-      labelY = 0.25 * y1 + 0.5 * ctrlY + 0.25 * y2 - 4;
-    } else {
-      const toHalfW = toIsNote ? NOTE_W / 2 : layout.extBoxW / 2;
-      const toHalfH = toIsNote ? noteHeight(notes[toId] ?? toId) / 2 : Infinity;
-      const dx = x2 - x1;
-      const dy = y2 - y1;
+function drawCollaboration(parent: D3Svg | D3Group, x: number, y: number, label: string, t: Theme): void {
+  const g = parent.append('g').attr('class', 'uc-collaboration');
+  g.append('ellipse')
+    .attr('cx', x).attr('cy', y)
+    .attr('rx', ELLIPSE_RX).attr('ry', ELLIPSE_RY)
+    .attr('fill',              'none')
+    .attr('stroke',            t.borderColor)
+    .attr('stroke-width',      1.2)
+    .attr('stroke-dasharray', '6,4');
+  appendWrappedText(g, x, y, label, t);
+}
 
-      let startX: number, startY: number;
-      if (fromIsNote) {
-        const fromHalfW = NOTE_W / 2;
-        startX = dx >= 0 ? x1 + fromHalfW : x1 - fromHalfW;
-        startY = y1;
-      } else if (fromIsActor) {
-        startX = x1 + ACTOR_HALF;
-        startY = y1;
-      } else if (fromIsExt) {
-        startX = dx >= 0 ? x1 + layout.extBoxW / 2 : x1 - layout.extBoxW / 2;
-        startY = y1;
-      } else if (fromIsEllipse) {
-        startX = dx >= 0 ? x1 + ELLIPSE_RX : x1 - ELLIPSE_RX;
-        startY = y1;
-      } else {
-        startX = x1 + layout.extBoxW / 2;
-        startY = y1;
+function drawSystemBoundary(
+  parent: D3Svg | D3Group,
+  x: number, y: number, w: number, h: number,
+  label: string, t: Theme,
+): void {
+  const g = parent.append('g').attr('class', 'uc-system');
+  g.append('rect')
+    .attr('x', x).attr('y', y).attr('width', w).attr('height', h)
+    .attr('fill',          t.systemFill)
+    .attr('stroke',        t.borderColor)
+    .attr('stroke-width', 2).attr('rx', 3);
+  appendText(
+    g,
+    { x: x + w / 2, y: y + 24, 'text-anchor': 'middle', 'dominant-baseline': 'middle' },
+    t, label, '16px',
+  );
+}
+
+function drawExternalSystem(
+  parent: D3Svg | D3Group,
+  x: number, y: number,
+  label: string, boxW: number,
+  t: Theme,
+): void {
+  const lines = wrapText(label, boxW - 10);
+  const boxH  = Math.max(40 + (lines.length - 1) * 15, 40);
+  const g     = parent.append('g').attr('class', 'uc-external');
+  g.append('rect')
+    .attr('x', x - boxW / 2).attr('y', y - boxH / 2)
+    .attr('width', boxW).attr('height', boxH)
+    .attr('fill',          t.primaryColor)
+    .attr('stroke',        t.borderColor)
+    .attr('stroke-width', 1.2).attr('rx', 3);
+  lines.forEach((line, i) => {
+    appendText(g, { x, y: y - boxH / 2 + 22 + i * 15, 'text-anchor': 'middle' }, t, line);
+  });
+}
+
+function drawNote(parent: D3Svg | D3Group, x: number, y: number, label: string, t: Theme): void {
+  const lines = wrapText(label, 100);
+  const H     = noteHeight(label);
+  const rx    = x - NOTE_W / 2;
+  const ry    = y - H / 2;
+  const g     = parent.append('g').attr('class', 'uc-note');
+
+  g.append('path')
+    .attr('d',
+      `M ${rx} ${ry} ` +
+      `L ${rx + NOTE_W - NOTE_FOLD} ${ry} ` +
+      `L ${rx + NOTE_W} ${ry + NOTE_FOLD} ` +
+      `L ${rx + NOTE_W} ${ry + H} ` +
+      `L ${rx} ${ry + H} Z`,
+    )
+    .attr('fill', t.noteFill).attr('stroke', t.borderColor).attr('stroke-width', 1.2);
+
+  g.append('path')
+    .attr('d',
+      `M ${rx + NOTE_W - NOTE_FOLD} ${ry} ` +
+      `L ${rx + NOTE_W - NOTE_FOLD} ${ry + NOTE_FOLD} ` +
+      `L ${rx + NOTE_W} ${ry + NOTE_FOLD}`,
+    )
+    .attr('fill', 'none').attr('stroke', t.borderColor).attr('stroke-width', 1.2);
+
+  lines.forEach((line, i) => {
+    appendText(
+      g, 
+      { x, y: ry + 20 + i * 14, 'text-anchor': 'middle', 'font-weight': 'bold' }, 
+      t, 
+      line, 
+      '11px'
+    );
+  });
+}
+
+function appendWrappedText(g: D3Group, x: number, y: number, label: string, t: Theme): void {
+  const lines = wrapText(label, 120);
+  const lineH = 14;
+  const baseY = y - (lines.length * lineH) / 2 + lineH * 0.8;
+
+  const txtNode = g.append('text').node() as SVGTextElement;
+  const txt     = select(txtNode);
+
+  txt.attr('x', x).attr('y', baseY).attr('text-anchor', 'middle')
+    .attr('font-family', t.font)
+    .attr('font-size',   t.fontSize)
+    .attr('font-weight', 'bold')
+    .attr('fill',        t.textColor);
+
+  lines.forEach((line, i) => {
+    txt.append('tspan').attr('x', x).attr('dy', i === 0 ? 0 : lineH).text(line);
+  });
+}
+
+function drawConnector(
+  parent: D3Svg | D3Group,
+  x1: number, y1: number,
+  x2: number, y2: number,
+  conn: Connection,
+  layout: LayoutData,
+  notes: Record<string, string>,
+  t: Theme,
+): void {
+  const type = conn.type;
+  const boundaryRight = layout.centerX + layout.boundaryWidth / 2;
+
+  const dashArray: string | null =
+    ['include', 'extend', 'dependency', 'realization', 'anchor'].includes(type) ? '6,4' :
+    type === 'constraint' ? '2,3' : null;
+
+  let markerEnd   = '';
+  let markerStart = '';
+  if (['include', 'extend', 'dependency'].includes(type)) { markerEnd   = 'url(#uc-arrow-open)'; }
+  if (['generalization', 'realization'].includes(type))   { markerEnd   = 'url(#uc-arrow-hollow)'; }
+  if (type === 'association')                             { markerEnd   = 'url(#uc-arrowhead)'; }
+  if (type === 'containment')                             { markerStart = 'url(#uc-circle-cross)'; }
+
+  const toId = conn.to;
+  const fromId = conn.from;
+  const toIsNote     = layout.noteIds.has(toId);
+  const fromIsNote   = layout.noteIds.has(fromId);
+  const toIsActor     = layout.actorIds.has(toId);
+  const fromIsActor   = layout.actorIds.has(fromId);
+  const toIsExt       = layout.extIds.has(toId);
+  const fromIsExt     = layout.extIds.has(fromId);
+  const toIsCollab    = layout.collabIds.has(toId);
+  const fromIsCollab  = layout.collabIds.has(fromId);
+
+  const bothInternal =
+    !toIsActor && !fromIsActor && !toIsExt && !fromIsExt && !toIsNote && !fromIsNote;
+  const isCurved = bothInternal &&
+    ['include', 'extend', 'dependency', 'realization', 'generalization', 'containment', 'constraint'].includes(type);
+
+  const toIsEllipse   = toIsCollab   || (!toIsNote && !toIsExt  && !toIsActor);
+  const fromIsEllipse = fromIsCollab || (!fromIsNote && !fromIsExt && !fromIsActor);
+
+  let pathD: string;
+  let labelX = (x1 + x2) / 2;
+  let labelY = (y1 + y2) / 2;
+
+  if (isCurved) {
+    const startX = x1 + ELLIPSE_RX;
+    const endX   = x2 + ELLIPSE_RX;
+    const ctrlX  = boundaryRight - 30;
+    const ctrlY  = (y1 + y2) / 2;
+    pathD  = `M ${startX} ${y1} Q ${ctrlX} ${ctrlY} ${endX} ${y2}`;
+    labelX = 0.25 * startX + 0.5 * ctrlX + 0.25 * endX + 4;
+    labelY = 0.25 * y1 + 0.5 * ctrlY + 0.25 * y2 - 4;
+  } else {
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+
+    let startX: number, startY: number;
+    if (fromIsNote)         { startX = dx >= 0 ? x1 + NOTE_W / 2 : x1 - NOTE_W / 2; startY = y1; }
+    else if (fromIsActor)   { startX = dx >= 0 ? x1 + ACTOR_HALF : x1 - ACTOR_HALF; startY = y1 - 25; }
+    else if (fromIsExt)     { startX = dx >= 0 ? x1 + layout.extBoxW / 2 : x1 - layout.extBoxW / 2; startY = y1; }
+    else if (fromIsEllipse) { startX = dx >= 0 ? x1 + ELLIPSE_RX : x1 - ELLIPSE_RX; startY = y1; }
+    else                    { startX = x1; startY = y1; }
+
+    let endX: number, endY: number;
+    if (toIsNote) {
+      const hw = NOTE_W / 2;
+      const hh = noteHeight(notes[toId] ?? toId) / 2;
+      endX = dx >= 0 ? x2 - hw : x2 + hw; endY = y2;
+      if (Math.abs(dy) > hh) {
+        endY = dy > 0 ? y2 - hh : y2 + hh;
+        endX = startX + ((endY - startY) / (dy || 1)) * dx;
       }
+    } else if (toIsActor)   { endX = dx >= 0 ? x2 - ACTOR_HALF : x2 + ACTOR_HALF; endY = y2 - 25; }
+    else if (toIsExt)       { endX = dx >= 0 ? x2 - layout.extBoxW / 2 : x2 + layout.extBoxW / 2; endY = y2; }
+    else if (toIsEllipse)   { endX = dx >= 0 ? x2 - ELLIPSE_RX : x2 + ELLIPSE_RX; endY = y2; }
+    else                    { endX = x2; endY = y2; }
 
-      let endX: number, endY: number;
-      if (toIsNote) {
-        endX = x2 - toHalfW;
-        endY = y2;
-        if (Math.abs(dy) > toHalfH) {
-          endY = dy > 0 ? y2 - toHalfH : y2 + toHalfH;
-          const t = (endY - y1) / dy;
-          endX = x1 + t * dx;
-        }
-      } else if (toIsActor) {
-        endX = dx >= 0 ? x2 - ACTOR_HALF : x2 + ACTOR_HALF;
-        endY = y2;
-      } else if (toIsExt) {
-        endX = dx >= 0 ? x2 - layout.extBoxW / 2 : x2 + layout.extBoxW / 2;
-        endY = y2;
-      } else if (toIsEllipse) {
-        endX = dx >= 0 ? x2 - ELLIPSE_RX : x2 + ELLIPSE_RX;
-        endY = y2;
-      } else {
-        endX = dx >= 0 ? x2 - toHalfW : x2 + toHalfW;
-        endY = y2;
-      }
+    pathD = `M ${startX} ${startY} L ${endX} ${endY}`;
+    labelX = (startX + endX) / 2;
+    labelY = (startY + endY) / 2;
+  }
 
-      d = `M ${startX} ${startY} L ${endX} ${endY}`;
-    }
+  const g = parent.append('g').attr('class', 'uc-connector').attr('data-type', type);
 
-    const showLabel = type === 'include' || type === 'extend';
-    return `<g class="uc-connector" data-type="${type}">
-      <path d="${d}" stroke="${THEME.stroke}" stroke-width="1.2" fill="none" ${strokeDash} marker-start="url(#${markerStart})" marker-end="url(#${markerEnd})"/>
-      ${showLabel ? `<text x="${labelX}" y="${labelY}" text-anchor="middle" font-family="${THEME.font}" font-size="10px" font-style="italic" font-weight="${THEME.fontWeight}" fill="${THEME.textColor}">«${type}»</text>` : ''}
-    </g>`;
-  },
-};
+  const path = g.append('path')
+    .attr('d', pathD).attr('stroke', t.lineColor).attr('stroke-width', 1.2).attr('fill', 'none');
+
+  if (dashArray)   { path.attr('stroke-dasharray', dashArray); }
+  if (markerEnd)   { path.attr('marker-end',   markerEnd); }
+  if (markerStart) { path.attr('marker-start', markerStart); }
+
+  if (conn.label) {
+    const labelG = g.append('g');
+    const txt = appendText(
+      labelG,
+      { x: labelX, y: labelY - 5, 'text-anchor': 'middle', 'font-style': 'italic' },
+      t, conn.label, '10px',
+    );
+    const bbox = txt.getBBox();
+    labelG.insert('rect', 'text')
+      .attr('x', bbox.x - 2).attr('y', bbox.y)
+      .attr('width', bbox.width + 4).attr('height', bbox.height)
+      .attr('fill', 'white').attr('fill-opacity', 0.8);
+  }
+}
 
 function layoutDiagram(model: UseCaseModel): LayoutData {
   const ucIds     = Object.keys(model.usecases);
@@ -271,8 +437,7 @@ function layoutDiagram(model: UseCaseModel): LayoutData {
 
   const positions: Record<string, Position> = {};
 
-  const allCenterIds = [...ucIds, ...collabIds];
-  allCenterIds.forEach((id, i) => {
+  [...ucIds, ...collabIds].forEach((id, i) => {
     positions[id] = { x: centerX, y: firstUCY + i * UC_SPACING };
   });
 
@@ -282,105 +447,45 @@ function layoutDiagram(model: UseCaseModel): LayoutData {
         .filter((c) => c.from === id || c.to === id)
         .map((c) => positions[c.from === id ? c.to : c.from]?.y)
         .filter((y): y is number => y !== undefined);
-      positions[id] = { x: xPos, y: ys.length > 0 ? ys.reduce((a, b) => a + b, 0) / ys.length : firstUCY + idx * UC_SPACING };
+      positions[id] = {
+        x: xPos,
+        y: ys.length ? ys.reduce((a, b) => a + b, 0) / ys.length : firstUCY + idx * UC_SPACING,
+      };
     });
   };
 
   placeEntities(actors, actorX);
   placeEntities(exts, extLeft + EXT_BOX_W / 2);
 
-  const noteIdSet   = new Set(Object.keys(model.notes));
-  const collabIdSet = new Set(Object.keys(model.collaborations));
-  const actorIdSet  = new Set(Object.keys(model.actors));
-  const extIdSet    = new Set(Object.keys(model.externalSystems));
-  const noteX       = extLeft + NOTE_W / 2;
-
+  const noteX = extLeft + NOTE_W / 2;
   Object.keys(model.notes).forEach((id, idx) => {
-    const anchored = model.connections.find((c) => (c.from === id || c.to === id) && c.type === 'anchor');
+    const anchored = model.connections.find(
+      (c) => (c.from === id || c.to === id) && c.type === 'anchor',
+    );
     const anchorId = anchored ? (anchored.from === id ? anchored.to : anchored.from) : null;
     const refPos   = anchorId ? positions[anchorId] : null;
     positions[id]  = { x: noteX, y: refPos ? refPos.y : firstUCY + idx * UC_SPACING };
   });
 
-  const systemHeight = Math.max(allCenterIds.length * UC_SPACING + HEADER_H + ELLIPSE_RY, HEADER_H + 60);
-  const height       = TOP_PAD + systemHeight + BOT_PAD;
+  const allCenterCount = ucIds.length + collabIds.length;
+  const systemHeight   = Math.max(
+    allCenterCount * UC_SPACING + HEADER_H + ELLIPSE_RY,
+    HEADER_H + 60,
+  );
+  const height = TOP_PAD + systemHeight + BOT_PAD;
 
   return {
-    positions, width, height, systemHeight, systemTop: TOP_PAD,
-    boundaryLeft: BOUNDARY_LEFT_PAD, boundaryWidth: BOUNDARY_WIDTH,
+    positions,
+    width, height, systemHeight,
+    systemTop:     TOP_PAD,
+    boundaryLeft:  BOUNDARY_LEFT_PAD,
+    boundaryWidth: BOUNDARY_WIDTH,
     centerX, extLeft, extBoxW: EXT_BOX_W,
-    noteIds: noteIdSet,
-    collabIds: collabIdSet,
-    actorIds: actorIdSet,
-    extIds: extIdSet,
-    noteBoxW: NOTE_W,
-    noteBoxH: noteHeight,
+    noteIds:   new Set(Object.keys(model.notes)),
+    collabIds: new Set(Object.keys(model.collaborations)),
+    actorIds:  new Set(Object.keys(model.actors)),
+    extIds:    new Set(Object.keys(model.externalSystems)),
   };
-}
-
-function buildDefs(): string {
-  const s = THEME.stroke;
-  return `<defs>
-    <marker id="uc-arrow-open" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto">
-      <path d="M 1 1 L 11 6 L 1 11" fill="none" stroke="${s}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </marker>
-    <marker id="uc-arrow-hollow" markerWidth="12" markerHeight="12" refX="12" refY="6" orient="auto">
-      <path d="M 12 6 L 0 0 L 0 12 Z" fill="white" stroke="${s}" stroke-width="1"/>
-    </marker>
-    <marker id="uc-arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="${s}"/>
-    </marker>
-    <marker id="uc-circle-cross" markerWidth="14" markerHeight="14" refX="0" refY="7" orient="auto">
-      <circle cx="7" cy="7" r="6" fill="white" stroke="${s}" stroke-width="1.2"/>
-      <line x1="7" y1="1" x2="7" y2="13" stroke="${s}" stroke-width="1.2"/>
-      <line x1="1" y1="7" x2="13" y2="7" stroke="${s}" stroke-width="1.2"/>
-    </marker>
-  </defs>`;
-}
-
-function renderSVG(model: UseCaseModel, layout: LayoutData): string {
-  const { positions, width, height, systemHeight, systemTop, boundaryLeft, boundaryWidth } = layout;
-  let boundary = '', connectors = '', nodes = '';
-
-  if (model.system) {
-    boundary = tmpl.systemBoundary(boundaryLeft, systemTop, boundaryWidth, systemHeight, model.system);
-  }
-
-  model.connections.forEach((conn: Connection) => {
-    const p1 = positions[conn.from];
-    const p2 = positions[conn.to];
-    if (p1 && p2) {
-      connectors += tmpl.connector(
-        p1.x, p1.y,
-        p2.x, p2.y,
-        conn.type,
-        layout,
-        conn.to,
-        conn.from,
-        model.notes,
-      );
-    }
-  });
-
-  const renderCollection = (collection: Record<string, string>, kind: 'usecase' | 'collaboration' | 'external' | 'actor' | 'note'): void => {
-    Object.keys(collection).forEach((id) => {
-      const p = positions[id];
-      if (!p) { return; }
-      if (kind === 'usecase')       { nodes += tmpl.useCase(p.x, p.y, collection[id]); }
-      if (kind === 'collaboration') { nodes += tmpl.collaboration(p.x, p.y, collection[id]); }
-      if (kind === 'external')      { nodes += tmpl.externalSystem(p.x, p.y, collection[id], layout.extBoxW); }
-      if (kind === 'actor')         { nodes += tmpl.actor(p.x, p.y, collection[id]); }
-      if (kind === 'note')          { nodes += tmpl.note(p.x, p.y, collection[id]); }
-    });
-  };
-
-  renderCollection(model.usecases,        'usecase');
-  renderCollection(model.collaborations,  'collaboration');
-  renderCollection(model.externalSystems, 'external');
-  renderCollection(model.actors,          'actor');
-  renderCollection(model.notes,           'note');
-
-  return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" style="background:white">${buildDefs()}${boundary}${connectors}${nodes}</svg>`;
 }
 
 export const draw: DiagramDefinition['renderer']['draw'] = (text, id, _version, _diag) => {
@@ -391,19 +496,57 @@ export const draw: DiagramDefinition['renderer']['draw'] = (text, id, _version, 
 
   const model  = ucDb.getModel();
   const layout = layoutDiagram(model);
-  const svgStr = renderSVG(model, layout);
+  const t      = resolveTheme();
 
-  const svgEl = document.getElementById(id) as SVGSVGElement | null;
-  if (!svgEl) { return; }
+  const svg = select<SVGSVGElement, unknown>(`[id="${id}"]`);
+  svg
+    .attr('width',   layout.width)
+    .attr('height',  layout.height)
+    .attr('viewBox', `0 0 ${layout.width} ${layout.height}`)
+    .style('background', 'white');
 
-  const innerContent = svgStr.slice(svgStr.indexOf('>') + 1, svgStr.lastIndexOf('<'));
-  svgEl.innerHTML = innerContent;
-  svgEl.setAttribute('width',   String(layout.width));
-  svgEl.setAttribute('height',  String(layout.height));
-  svgEl.setAttribute('viewBox', `0 0 ${layout.width} ${layout.height}`);
-  svgEl.style.background = 'white';
+  const defs = svg.append('defs') as D3Defs;
+  buildDefs(defs, t);
 
-  let el: HTMLElement | null = svgEl.parentElement;
+  if (model.system) {
+    drawSystemBoundary(
+      svg,
+      layout.boundaryLeft, layout.systemTop,
+      layout.boundaryWidth, layout.systemHeight,
+      model.system, t,
+    );
+  }
+
+  model.connections.forEach((conn: Connection) => {
+    const p1 = layout.positions[conn.from];
+    const p2 = layout.positions[conn.to];
+    if (p1 && p2) {
+      drawConnector(svg, p1.x, p1.y, p2.x, p2.y, conn, layout, model.notes, t);
+    }
+  });
+
+  Object.entries(model.usecases).forEach(([ucId, label]) => {
+    const p = layout.positions[ucId];
+    if (p) { drawUseCase(svg, p.x, p.y, label, t); }
+  });
+  Object.entries(model.collaborations).forEach(([cId, label]) => {
+    const p = layout.positions[cId];
+    if (p) { drawCollaboration(svg, p.x, p.y, label, t); }
+  });
+  Object.entries(model.externalSystems).forEach(([eId, label]) => {
+    const p = layout.positions[eId];
+    if (p) { drawExternalSystem(svg, p.x, p.y, label, layout.extBoxW, t); }
+  });
+  Object.entries(model.actors).forEach(([aId, label]) => {
+    const p = layout.positions[aId];
+    if (p) { drawActor(svg, p.x, p.y, label, t); }
+  });
+  Object.entries(model.notes).forEach(([nId, label]) => {
+    const p = layout.positions[nId];
+    if (p) { drawNote(svg, p.x, p.y, label, t); }
+  });
+
+  let el: HTMLElement | null = (svg.node() as SVGSVGElement).parentElement;
   while (el && el.tagName !== 'BODY') {
     el.style.width    = `${layout.width}px`;
     el.style.height   = `${layout.height}px`;
