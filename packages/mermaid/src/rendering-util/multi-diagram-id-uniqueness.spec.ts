@@ -178,6 +178,16 @@ union A, B`,
     Campfire Kettle -> Kettle
     Electric Kettle -> Kettle
     Smart Kettle -> Kettle`,
+  
+  usecase: `usecaseDiagram
+    actor "User" as U
+    system "App" {
+      usecase "Login" as L
+      usecase "Dashboard" as D
+    }
+    U --> L
+    U --> D
+    include: D --> L`,
 };
 
 async function renderTwoAndCheckIds(

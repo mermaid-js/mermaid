@@ -1,3 +1,4 @@
+<!-- cspell:ignore usecase usecases usecasediagram cspell colors bg -->
 # Use Case Diagram (v<MERMAID_RELEASE_VERSION>+)
 
 Mermaid can render Use Case Diagrams using the `usecaseDiagram` keyword.

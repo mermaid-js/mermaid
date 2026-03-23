@@ -48,3 +48,6 @@ visio
 vitepress
 xlink
 xychart
+usecase
+usecases
+usecasediagram
