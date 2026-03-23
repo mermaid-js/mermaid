@@ -1,3 +1,4 @@
+// cspell:ignore usecase usecases usecasediagram usecaserenderer collab collabs colour bbox
 import { log } from '../../logger.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 
@@ -52,11 +53,11 @@ export interface UseCaseDB extends DiagramDB {
   getSystem: () => string | null;
 }
 
-const RE_SYSTEM         = /system\s+"(.+?)"/;
-const RE_LABEL_ALIAS    = /"(.+?)"\s+as\s+(\w+)/;
-const RE_REL_BLOCK      = /^(include|extend|generalization|dependency|realization|anchor|constraint|containment):/i;
-const RE_NOTE           = /^note\s+"(.+?)"\s+as\s+(\w+)/;
-const RE_COLLABORATION  = /^collaboration\s+/;
+const RE_SYSTEM        = /system\s+"(.+?)"/;
+const RE_LABEL_ALIAS   = /"(.+?)"\s+as\s+(\w+)/;
+const RE_REL_BLOCK     = /^(include|extend|generalization|dependency|realization|anchor|constraint|containment):/i;
+const RE_NOTE          = /^note\s+"(.+?)"\s+as\s+(\w+)/;
+const RE_COLLABORATION = /^collaboration\s+/;
 
 let model: UseCaseModel = createEmptyModel();
 
@@ -91,60 +92,149 @@ function kindOf(alias: string): EntityKind {
   return 'unknown';
 }
 
-type AllowedRule = [EntityKind, EntityKind][] | 'any';
+type AllowedRule = [EntityKind, EntityKind][];
 
-const ALLOWED: Partial<Record<RelationshipType, AllowedRule>> = {
-  association: [['actor','usecase'],['usecase','actor'],['usecase','usecase'],['usecase','collaboration'],['collaboration','usecase']],
-  include: [['usecase', 'usecase']],
-  extend: [['usecase', 'usecase']],
-  generalization: [['actor','actor'],['usecase','usecase'],['external','external'],['collaboration','collaboration']],
-  dependency: [['usecase','usecase'],['usecase','external'],['actor','usecase'],['external','usecase'],['collaboration','usecase'],['collaboration','actor'],['collaboration','external'],['collaboration','collaboration']],
-  realization: [['usecase','usecase'],['actor','usecase'],['actor','external'],['actor','note'],['external','usecase'],['collaboration','usecase'],['collaboration','actor'],['collaboration','external'],['collaboration','collaboration']],
-  anchor: [['note','usecase'],['note','actor'],['note','external'],['note','collaboration']],
-  constraint: 'any',
-  containment: [['usecase','usecase'],['external','usecase'],['collaboration','actor'],['collaboration','note']],
+const ALLOWED: Record<RelationshipType, AllowedRule> = {
+  association: [
+    ['actor',         'usecase'      ],
+    ['usecase',       'actor'        ],
+    ['usecase',       'usecase'      ],
+    ['usecase',       'collaboration'],
+    ['collaboration', 'usecase'      ],
+  ],
+
+  include: [
+    ['usecase', 'usecase'],
+  ],
+  extend: [
+    ['usecase', 'usecase'],
+  ],
+
+  generalization: [
+    ['actor',         'actor'        ],
+    ['usecase',       'usecase'      ],
+    ['external',      'external'     ],
+    ['collaboration', 'collaboration'],
+  ],
+
+  dependency: [
+    ['usecase',       'usecase'      ],
+    ['usecase',       'external'     ],
+    ['actor',         'usecase'      ],
+    ['external',      'usecase'      ],
+    ['collaboration', 'usecase'      ],
+    ['collaboration', 'actor'        ],
+    ['collaboration', 'external'     ],
+    ['collaboration', 'collaboration'],
+  ],
+
+  realization: [
+    ['usecase',       'usecase'      ],
+    ['actor',         'usecase'      ],
+    ['actor',         'external'     ],
+    ['external',      'usecase'      ],
+    ['collaboration', 'usecase'      ],
+    ['collaboration', 'actor'        ],
+    ['collaboration', 'external'     ],
+    ['collaboration', 'collaboration'],
+  ],
+
+  anchor: [
+    ['note', 'usecase'      ],
+    ['note', 'actor'        ],
+    ['note', 'external'     ],
+    ['note', 'collaboration'],
+  ],
+
+  constraint: [
+    ['note',          'note'         ],
+    ['note',          'usecase'      ],
+    ['note',          'actor'        ],
+    ['note',          'external'     ],
+    ['note',          'collaboration'],
+    ['usecase',       'note'         ],
+    ['actor',         'note'         ],
+    ['external',      'note'         ],
+    ['collaboration', 'note'         ],
+    ['usecase',       'usecase'      ],
+    ['usecase',       'actor'        ],
+    ['usecase',       'external'     ],
+    ['actor',         'usecase'      ],
+    ['actor',         'actor'        ],
+    ['actor',         'external'     ],
+    ['external',      'usecase'      ],
+    ['external',      'actor'        ],
+    ['external',      'external'     ],
+    ['collaboration', 'usecase'      ],
+    ['collaboration', 'actor'        ],
+    ['collaboration', 'external'     ],
+    ['collaboration', 'collaboration'],
+  ],
+
+  containment: [
+    ['usecase',       'usecase'      ],
+    ['external',      'usecase'      ],
+    ['collaboration', 'usecase'      ],
+    ['collaboration', 'note'         ],
+  ],
+};
+
+const REL_HINTS: Record<RelationshipType, string> = {
+  association:    'association: actor↔usecase, usecase↔usecase, usecase↔collaboration. No notes allowed.',
+  include:        'include: usecase→usecase only.',
+  extend:         'extend: usecase→usecase only.',
+  generalization: 'generalization: actor→actor, usecase→usecase, external→external, collaboration→collaboration. No notes, no cross-kind.',
+  dependency:     'dependency: usecase/actor/external/collaboration → usecase/external/collaboration. No notes on either end.',
+  realization:    'realization: usecase/actor/external/collaboration → usecase/external/collaboration. No notes on either end.',
+  anchor:         'anchor: note→(usecase|actor|external|collaboration) only. Two actors cannot connect via anchor. Two notes cannot connect via anchor — use constraint instead.',
+  constraint:     'constraint: the only rel that connects note↔note. Also connects note↔anything or anything↔note. Actor↔actor, usecase↔anything, external↔anything all valid.',
+  containment:    'containment: usecase→usecase, external→usecase, collaboration→(usecase|note). Actor is NOT valid on either end, regardless of what is at the other end.',
 };
 
 function isAllowed(from: string, type: RelationshipType, to: string): boolean {
   const rules = ALLOWED[type];
-  if (rules === undefined || rules === 'any') {
-    return true;
-  }
+  if (!rules) { return true; }
   const fk = kindOf(from);
   const tk = kindOf(to);
   return rules.some(([f, t]) => f === fk && t === tk);
 }
 
-export const addConnection = (from: string, type: RelationshipType, to: string, label?: string): void => {
+export const addConnection = (
+  from:   string,
+  type:   RelationshipType,
+  to:     string,
+  label?: string,
+): void => {
   if (!isAllowed(from, type, to)) {
-    log.warn(`usecase: skipped invalid connection — ${from} -[${type}]-> ${to}`);
+    const fk   = kindOf(from);
+    const tk   = kindOf(to);
+    const hint = REL_HINTS[type];
+    log.warn(
+      `usecase: skipped invalid connection — ` +
+      `${from} (${fk}) -[${type}]-> ${to} (${tk}). ` +
+      `Hint: ${hint}`,
+    );
     return;
   }
 
-  let finalLabel = label?.replace(/"/g, '').trim();
-  
-  if (type === 'include') {
-    finalLabel = '<<include>>';
-  } else if (type === 'extend') {
-    finalLabel = '<<extend>>';
-  }
+  let finalLabel = label?.replace(/"/g, '').trim() || undefined;
+  if (type === 'include') { finalLabel = '<<include>>'; }
+  if (type === 'extend')  { finalLabel = '<<extend>>'; }
 
-  model.connections.push({ 
-    from: from.trim(), 
-    type, 
-    to: to.trim(), 
-    label: finalLabel 
-  });
+  model.connections.push({ from: from.trim(), type, to: to.trim(), label: finalLabel });
 };
 
 const inferUseCases = (): void => {
   const seen = new Set<string>();
-  model.connections.forEach((c) => { 
-    seen.add(c.from); 
-    seen.add(c.to); 
-  });
+  model.connections.forEach((c) => { seen.add(c.from); seen.add(c.to); });
   seen.forEach((id) => {
-    if (!model.actors[id] && !model.externalSystems[id] && !model.usecases[id] && !model.collaborations[id] && !model.notes[id]) {
+    if (
+      !model.actors[id] &&
+      !model.externalSystems[id] &&
+      !model.usecases[id] &&
+      !model.collaborations[id] &&
+      !model.notes[id]
+    ) {
       model.usecases[id] = id;
     }
   });
@@ -165,7 +255,7 @@ export const parseDiagram = (code: string): void => {
       if (m) { setSystem(m[1]); }
       continue;
     }
-    
+
     if (line === '}') { mode = null; continue; }
 
     const noteM = RE_NOTE.exec(line);
@@ -173,24 +263,18 @@ export const parseDiagram = (code: string): void => {
 
     const relM = RE_REL_BLOCK.exec(line);
     if (relM) {
-      const type = relM[1].toLowerCase() as RelationshipType;
+      const type    = relM[1].toLowerCase() as RelationshipType;
       const content = line.slice(line.indexOf(':') + 1).trim();
-      
       content.split(';').forEach((pair) => {
-        const isAnchor = pair.includes('--') && !pair.includes('-->');
-        const sep = isAnchor ? '--' : '-->';
-        
+        const isAnchorStyle = pair.includes('--') && !pair.includes('-->');
+        const sep           = isAnchorStyle ? '--' : '-->';
         if (pair.includes(sep)) {
-          const parts = pair.split(sep);
-          const from = parts[0].trim();
-          const rest = parts[1].trim();
-          
-          const [to, ...labelParts] = rest.split(':');
-          const label = labelParts.join(':').trim(); 
-          
-          if (from && to) {
-            addConnection(from, type, to.trim(), label);
-          }
+          const parts             = pair.split(sep);
+          const from              = parts[0].trim();
+          const rest              = parts[1].trim();
+          const [to, ...lblParts] = rest.split(':');
+          const label             = lblParts.join(':').trim();
+          if (from && to) { addConnection(from, type, to.trim(), label); }
         }
       });
       continue;
@@ -218,17 +302,17 @@ export const parseDiagram = (code: string): void => {
     }
 
     if (line.includes('..>')) {
-      const [from, rest] = line.split('..>').map(s => s.trim());
-      const [to, label] = rest.split(':').map(s => s.trim());
+      const [from, rest] = line.split('..>').map((s) => s.trim());
+      const [to, label]  = rest.split(':').map((s) => s.trim());
       const type = label?.toLowerCase().includes('extend') ? 'extend' : 'include';
       addConnection(from, type, to, label);
       continue;
     }
 
     if (line.includes('-->')) {
-      const [from, targets] = line.split('-->').map(s => s.trim());
+      const [from, targets] = line.split('-->').map((s) => s.trim());
       targets.split(';').forEach((t) => {
-        const [to, label] = t.split(':').map(s => s.trim());
+        const [to, label] = t.split(':').map((s) => s.trim());
         if (to) { addConnection(from, 'association', to.trim(), label); }
       });
       continue;
@@ -236,29 +320,31 @@ export const parseDiagram = (code: string): void => {
 
     if (mode) { processDefinitions(line, mode); }
   }
+
   inferUseCases();
 };
 
-function processDefinitions(content: string, type: 'actor' | 'usecase' | 'external' | 'collaboration'): void {
+function processDefinitions(
+  content: string,
+  type: 'actor' | 'usecase' | 'external' | 'collaboration',
+): void {
   content.split(';').forEach((part) => {
     const p = part.trim();
-    if (!p || p.includes('-->') || p.includes('..>') || p.includes('--')) {
-      return;
-    }
+    if (!p || p.includes('-->') || p.includes('..>') || p.includes('--')) { return; }
     const m = RE_LABEL_ALIAS.exec(p);
     if (m) {
       const [, label, alias] = m;
-      if (type === 'actor') { addActor(alias, label); }
-      else if (type === 'external') { addExternal(alias, label); }
+      if (type === 'actor')              { addActor(alias, label); }
+      else if (type === 'external')      { addExternal(alias, label); }
       else if (type === 'collaboration') { addCollaboration(alias, label); }
-      else { addUseCase(alias, label); }
+      else                               { addUseCase(alias, label); }
     } else {
       const alias = p.split(/\s+/)[0];
       if (alias && alias !== '{') {
-        if (type === 'actor') { addActor(alias, alias); }
-        else if (type === 'external') { addExternal(alias, alias); }
+        if (type === 'actor')              { addActor(alias, alias); }
+        else if (type === 'external')      { addExternal(alias, alias); }
         else if (type === 'collaboration') { addCollaboration(alias, alias); }
-        else { addUseCase(alias, alias); }
+        else                               { addUseCase(alias, alias); }
       }
     }
   });

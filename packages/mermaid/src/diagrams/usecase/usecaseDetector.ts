@@ -1,4 +1,4 @@
-// cspell:ignore usecase usecasediagram
+// cspell:ignore usecase usecases usecasediagram usecaserenderer collab  collabs colour bbox
 import type { ExternalDiagramDefinition } from '../../diagram-api/types.js';
 
 const id = 'usecase';

@@ -1,4 +1,4 @@
-// cspell:ignore usecase usecases usecasediagram
+// cspell:ignore usecase usecases usecasediagram usecaserenderer collab collabs colour bbox
 import type { DiagramDefinition } from '../../diagram-api/types.js';
 import type { UseCaseDB } from './usecaseDb.js';
 import db from './usecaseDb.js';

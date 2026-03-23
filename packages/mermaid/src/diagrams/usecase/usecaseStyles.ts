@@ -1,4 +1,4 @@
-// cspell:ignore usecase usecases usecasediagram usecaserenderer collab
+// cspell:ignore usecase usecases usecasediagram usecaserenderer collab collabs colour bbox
 const getStyles = (options: Record<string, string>): string => {
   const pColor    = options.primaryColor       ?? '#add8e6';
   const pText     = options.primaryTextColor   ?? '#000000';
