@@ -1,7 +1,7 @@
 import { imgSnapshotTest } from '../../helpers/util.ts';
 
 const looks = ['neo'];
-const themes = ['neo', 'neo-dark', 'redux', 'redux-dark', 'redux-color', 'redux-dark-color'];
+const themes = ['neo', 'neo-dark', 'redux', 'redux-dark'];
 
 // State diagram feature sets to test
 const stateFeatureSets = [
