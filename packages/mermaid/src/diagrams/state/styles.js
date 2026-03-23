@@ -216,17 +216,13 @@ g.stateGroup line {
 
 [data-look="neo"].statediagram-cluster rect {
   fill: ${options.mainBkg};
-  stroke: url(${options.svgId}-gradient);
+  stroke: ${options.useGradient ? 'url(' + options.svgId + '-gradient)' : options.stateBorder || options.nodeBorder};
   stroke-width: ${options.strokeWidth ?? 1};
 }
 [data-look="neo"].statediagram-cluster rect.outer {
   rx: ${options.radius}px;
   ry: ${options.radius}px;
-  filter: ${options.dropShadow}
-}
-[data-look="neo"].statediagram-cluster .inner {
-  rx: ${options.radius}px;
-  ry: ${options.radius}px;
+  filter: ${options.dropShadow ? options.dropShadow.replace('url(#drop-shadow)', `url(${options.svgId}-drop-shadow)`) : 'none'}
 }
 `;
 
