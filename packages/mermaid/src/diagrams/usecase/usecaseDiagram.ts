@@ -5,7 +5,7 @@ import db from './usecaseDb.js';
 import renderer from './usecaseRenderer.js';
 import styles from './usecaseStyles.js';
 
-const ucDb = db as UseCaseDB;
+const ucDb: UseCaseDB = db;
 
 const parser = {
   parse: (text: string): void => {

@@ -1,4 +1,4 @@
-// cspell:ignore usecase usecases usecasediagram usecaserenderer collab collabs colour bbox 
+// cspell:ignore usecase usecases usecasediagram usecaserenderer collab collabs colour bbox
 import { select } from 'd3';
 import type { Selection } from 'd3';
 import { log } from '../../logger.js';
@@ -9,6 +9,7 @@ import usecaseDb from './usecaseDb.js';
 
 const ucDb: UseCaseDB = usecaseDb;
 
+// D3's select() queries the live DOM so the parent type is HTMLElement, not null.
 type D3Svg   = Selection<SVGSVGElement,  unknown, HTMLElement, any>;
 type D3Group = Selection<SVGGElement,    unknown, HTMLElement, any>;
 type D3Defs  = Selection<SVGDefsElement, unknown, HTMLElement, any>;
@@ -33,14 +34,14 @@ interface LayoutData {
 }
 
 interface Theme {
-  primaryColor:  string;
-  borderColor:   string;
-  textColor:     string;
-  systemFill:    string;
-  noteFill:      string;
-  lineColor:     string;
-  font:          string;
-  fontSize:      string;
+  primaryColor: string;
+  borderColor:  string;
+  textColor:    string;
+  systemFill:   string;
+  noteFill:     string;
+  lineColor:    string;
+  font:         string;
+  fontSize:     string;
 }
 
 const ELLIPSE_RX = 72;
@@ -48,7 +49,6 @@ const ELLIPSE_RY = 28;
 const UC_SPACING = 70;
 const NOTE_W     = 110;
 const NOTE_FOLD  = 16;
-const ACTOR_HALF = 16;
 
 function noteHeight(label: string): number {
   return Math.max(50 + (wrapText(label, 100).length - 1) * 14, 50);
@@ -80,8 +80,8 @@ function appendText(
   content:  string,
   fontSize?: string,
 ): SVGTextElement {
-  const node = parent.append('text').node() as SVGTextElement;
-  const el   = select(node);
+  const node = parent.append('text').node()!;
+  const el   = select(node as SVGTextElement);
   Object.entries(attrs).forEach(([k, v]) => {
     el.attr(k, v as string);
   });
@@ -90,7 +90,7 @@ function appendText(
     .attr('font-weight', 'bold')
     .attr('fill',        t.textColor)
     .text(content);
-  return node;
+  return node as SVGTextElement;
 }
 
 function resolveTheme(): Theme {
@@ -275,9 +275,7 @@ function drawNote(parent: D3Svg | D3Group, x: number, y: number, label: string, 
     appendText(
       g,
       { x, y: ry + 20 + i * 14, 'text-anchor': 'middle' },
-      t,
-      line,
-      '11px',
+      t, line, '11px',
     );
   });
 }
@@ -287,8 +285,8 @@ function appendWrappedText(g: D3Group, x: number, y: number, label: string, t: T
   const lineH = 14;
   const baseY = y - (lines.length * lineH) / 2 + lineH * 0.8;
 
-  const txtNode = g.append('text').node() as SVGTextElement;
-  const txt     = select(txtNode);
+  const txtNode = g.append('text').node()!;
+  const txt     = select(txtNode as SVGTextElement);
 
   txt.attr('x', x).attr('y', baseY).attr('text-anchor', 'middle')
     .attr('font-family', t.font)
@@ -310,7 +308,7 @@ function drawConnector(
   notes: Record<string, string>,
   t: Theme,
 ): void {
-  const type = conn.type;
+  const type            = conn.type;
   const systemRightEdge = layout.boundaryLeft + layout.boundaryWidth;
 
   const dashArray: string | null =
@@ -326,7 +324,8 @@ function drawConnector(
 
   const toId   = conn.to;
   const fromId = conn.from;
-  const isInternal     = (id: string) => !layout.actorIds.has(id) && !layout.extIds.has(id) && !layout.noteIds.has(id);
+  const isInternal     = (id: string) =>
+    !layout.actorIds.has(id) && !layout.extIds.has(id) && !layout.noteIds.has(id);
   const isInternalLink = isInternal(fromId) && isInternal(toId);
 
   let pathD:  string;
@@ -391,6 +390,7 @@ function drawConnector(
         .attr('fill',         'white')
         .attr('fill-opacity', 0.8);
     } catch (_) {
+      // getBBox() throws when SVG is not in a live document (e.g. during unit tests)
     }
   }
 }
@@ -445,7 +445,9 @@ function layoutDiagram(model: UseCaseModel): LayoutData {
   placeEntities(exts, extLeft + EXT_BOX_W / 2);
 
   Object.keys(model.notes).forEach((id, idx) => {
-    const anchored = model.connections.find((c) => (c.from === id || c.to === id) && c.type === 'anchor');
+    const anchored = model.connections.find(
+      (c) => (c.from === id || c.to === id) && c.type === 'anchor',
+    );
     const anchorId = anchored ? (anchored.from === id ? anchored.to : anchored.from) : null;
     const refPos   = anchorId ? positions[anchorId] : null;
     positions[id]  = { x: extLeft + NOTE_W / 2, y: refPos ? refPos.y : firstUCY + idx * UC_SPACING };
@@ -528,7 +530,7 @@ export const draw: DiagramDefinition['renderer']['draw'] = (text, id, _version, 
     if (p) { drawNote(svg, p.x, p.y, label, t); }
   });
 
-  let el: HTMLElement | null = (svg.node() as SVGSVGElement).parentElement;
+  let el: HTMLElement | null = (svg.node()! as SVGSVGElement).parentElement;
   while (el && el.tagName !== 'BODY') {
     el.style.width    = `${layout.width}px`;
     el.style.height   = `${layout.height}px`;
