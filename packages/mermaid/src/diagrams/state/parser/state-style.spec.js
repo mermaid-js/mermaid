@@ -204,6 +204,41 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
 
           expect(states.get('Moving').doc.length).toEqual(1);
         });
+
+        it('should handle comments correctly', function () {
+          let diagram = '';
+          diagram += 'stateDiagram-v2\n';
+          diagram += '%% initial comment\n';
+          diagram += '%not_a_comment\n';
+          diagram += '[*] --> Moving %%not_inline_comment\n';
+
+          stateDiagram.parser.parse(diagram);
+
+          const states = stateDiagram.parser.yy.getStates();
+
+          expect(states.get('%not_a_comment')).toBeDefined();
+          expect(states.get('%%not_inline_comment')).toBeDefined();
+        });
+
+        it('should handle comments correctly inside states', function () {
+          let diagram = '';
+          diagram += 'stateDiagram-v2\n';
+          diagram += 'state Moving {\n';
+          diagram += '%% comment inside state\n';
+          diagram += '%not_a_comment\n';
+          diagram += 'slow  --> fast %%not_inline_comment\n';
+          diagram += '}\n';
+
+          stateDiagram.parser.parse(diagram);
+
+          const states = stateDiagram.parser.yy.getStates();
+
+          const movingDoc = states.get('Moving').doc;
+          const state1 = movingDoc.find((d) => d.id === '%not_a_comment');
+          expect(state1).toBeDefined();
+          const state2 = movingDoc.find((d) => d.id === '%%not_inline_comment');
+          expect(state2).toBeDefined();
+        });
       });
     });
   });
