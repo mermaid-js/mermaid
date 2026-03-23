@@ -63,7 +63,6 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
       config.er!.minEntityWidth!
     ) {
       node.width = config.er!.minEntityWidth;
-      node.height = (config.er!.minEntityHeight ?? 0) + PADDING / 2;
     }
     const shapeSvg = await drawRect(parent, node, options);
     if (theme != null && COLOR_THEMES.has(theme)) {
