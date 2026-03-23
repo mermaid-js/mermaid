@@ -45,12 +45,12 @@ describe('UseCase Diagram', () => {
         "Move Items" as MI;
       }
       C --> SI; MI;
-      dependency: BRS --> SI;`,
+      dependency: BRS-->SI;`,
       {},
     );
   });
 
-  it('renders generalization', () => {
+  it('renders generalization between actors', () => {
     imgSnapshotTest(
       `usecaseDiagram
       actor "Admin" as A
@@ -98,6 +98,20 @@ describe('UseCase Diagram', () => {
     );
   });
 
+  it('renders anchor (note linked to actor)', () => {
+    imgSnapshotTest(
+      `usecaseDiagram
+      actor "User" as U
+      system "App" {
+        usecase "Login" as L;
+      }
+      note "Must be 18+" as N1
+      U --> L;
+      anchor: N1-->U;`,
+      {},
+    );
+  });
+
   it('renders constraint between usecases', () => {
     imgSnapshotTest(
       `usecaseDiagram
@@ -108,6 +122,20 @@ describe('UseCase Diagram', () => {
       }
       constraint: CO-->PO;
       constraint: PO-->VS;`,
+      {},
+    );
+  });
+
+  it('renders constraint connecting two notes', () => {
+    imgSnapshotTest(
+      `usecaseDiagram
+      system "System" {
+        usecase "Login" as L;
+      }
+      note "Note A" as NA
+      note "Note B" as NB
+      anchor: NA-->L;
+      constraint: NA-->NB;`,
       {},
     );
   });
@@ -133,8 +161,9 @@ describe('UseCase Diagram', () => {
         usecase "Login" as L;
       }
       U --> L;
-      association: AF-->L;
       dependency: AF-->L;`,
+      // association: AF-->L is not valid — 'association' is not a rel-block keyword.
+      // Use --> directly or dependency for collaboration→usecase.
       {},
     );
   });
@@ -232,16 +261,23 @@ describe('UseCase Diagram', () => {
     );
   });
 
-  it('renders invalid connections silently without crashing', () => {
+  it('silently skips invalid connections without crashing', () => {
     imgSnapshotTest(
       `usecaseDiagram
       actor "User" as U
       external "API" as E
+      note "A note" as N1
       system "App" {
         usecase "Login" as L;
       }
       U --> L;
-      association: E-->L;`,
+      include: U-->L;
+      anchor: L-->N1;
+      containment: U-->L;`,
+      // include: U→L (actor→usecase) — invalid, skipped
+      // anchor: L→N1 (usecase→note) — invalid, skipped (anchor must be note→target)
+      // containment: U→L (actor→usecase) — invalid, skipped (no actors in containment)
+      // Only U-->L association should render
       {},
     );
   });
