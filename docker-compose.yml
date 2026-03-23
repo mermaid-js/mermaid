@@ -14,7 +14,9 @@ services:
       - mermaid_node_modules:/mermaid/node_modules
       - pnpm_store:/root/.local/share/pnpm/store
       - root_cache:/root/.cache
+      - root_local:/root/.local
       - root_npm:/root/.npm
+      - /tmp:/tmp
     ports:
       - ${MERMAID_PORT}:${MERMAID_PORT}
       - 3333:3333
@@ -36,4 +38,5 @@ volumes:
   mermaid_node_modules:
   pnpm_store:
   root_cache:
+  root_local:
   root_npm:
