@@ -1,3 +1,4 @@
+// cspell:ignore usecase usecases usecasediagram gantt xychart mindmap sankey wardley
 import c4 from '../diagrams/c4/c4Detector.js';
 import flowchart from '../diagrams/flowchart/flowDetector.js';
 import flowchartV2 from '../diagrams/flowchart/flowDetector-v2.js';

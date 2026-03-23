@@ -1,3 +1,4 @@
+// cspell:ignore usecase usecases usecasediagram gantt xychart mindmap sankey wardley ishikawa treemap
 import type { DiagramMetadata } from './types.js';
 import flowChart from './examples/flowchart.js';
 import c4 from './examples/c4.js';

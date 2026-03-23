@@ -1,3 +1,4 @@
+// cspell:ignore usecase usecases usecasediagram
 import type { DiagramMetadata } from '../types.js';
 
 export default {

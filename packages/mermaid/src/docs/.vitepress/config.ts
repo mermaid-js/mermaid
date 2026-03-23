@@ -1,3 +1,4 @@
+// cspell:ignore usecase usecases usecasediagram shiki Gantt gitgraph mindmap Mindmaps zenuml treemap sankey ishikawa
 import type { MarkdownOptions } from 'vitepress';
 import { defineConfig } from 'vitepress';
 import packageJson from '../../../package.json' with { type: 'json' };
