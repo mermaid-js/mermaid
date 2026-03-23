@@ -112,6 +112,6 @@ export const addDiagrams = () => {
     treemap,
     venn,
     wardley,
-    usecase,
+    usecase
   );
 };

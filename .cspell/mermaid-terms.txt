@@ -42,12 +42,12 @@ statediagram
 substate
 unfixable
 Unmodelled
+usecase
+usecasediagram
+usecases
 Viewbox
 viewports
 visio
 vitepress
 xlink
 xychart
-usecase
-usecases
-usecasediagram

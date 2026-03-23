@@ -1,14 +1,14 @@
 // cspell:ignore usecase usecases usecasediagram usecaserenderer collab collabs colour bbox
 const getStyles = (options: Record<string, string>): string => {
-  const pColor    = options.primaryColor       ?? '#add8e6';
-  const pText     = options.primaryTextColor   ?? '#000000';
-  const pBorder   = options.primaryBorderColor ?? pText;
-  const fontFamily = options.fontFamily        ?? 'Helvetica, Arial, sans-serif';
-  const fontSize   = options.fontSize          ?? '12px';
+  const pColor = options.primaryColor ?? '#add8e6';
+  const pText = options.primaryTextColor ?? '#000000';
+  const pBorder = options.primaryBorderColor ?? pText;
+  const fontFamily = options.fontFamily ?? 'Helvetica, Arial, sans-serif';
+  const fontSize = options.fontSize ?? '12px';
 
-  const sysFill  = options.secondaryColor ?? '#daeef9';
-  const noteFill = options.tertiaryColor  ?? '#fffde7';
-  const lineCol  = options.lineColor      ?? pBorder;
+  const sysFill = options.secondaryColor ?? '#daeef9';
+  const noteFill = options.tertiaryColor ?? '#fffde7';
+  const lineCol = options.lineColor ?? pBorder;
 
   return `
   .uc-actor circle {

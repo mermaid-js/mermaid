@@ -11,7 +11,7 @@ describe('UseCase Diagram', () => {
         "Dashboard" as D;
       }
       U --> L; D;`,
-      {},
+      {}
     );
   });
 
@@ -31,7 +31,7 @@ describe('UseCase Diagram', () => {
       A --> MP;
       include: CO-->LG; AC-->LG;
       extend: BP-->AC;`,
-      {},
+      {}
     );
   });
 
@@ -46,7 +46,7 @@ describe('UseCase Diagram', () => {
       }
       C --> SI; MI;
       dependency: BRS-->SI;`,
-      {},
+      {}
     );
   });
 
@@ -62,7 +62,7 @@ describe('UseCase Diagram', () => {
       A --> MU;
       SA --> DU;
       generalization: SA-->A;`,
-      {},
+      {}
     );
   });
 
@@ -78,7 +78,7 @@ describe('UseCase Diagram', () => {
       U --> PP;
       dependency: PP-->PAY;
       realization: PP-->VI;`,
-      {},
+      {}
     );
   });
 
@@ -94,7 +94,7 @@ describe('UseCase Diagram', () => {
       U --> L;
       include: BL-->L;
       anchor: N1-->L;`,
-      {},
+      {}
     );
   });
 
@@ -108,7 +108,7 @@ describe('UseCase Diagram', () => {
       note "Must be 18+" as N1
       U --> L;
       anchor: N1-->U;`,
-      {},
+      {}
     );
   });
 
@@ -122,7 +122,7 @@ describe('UseCase Diagram', () => {
       }
       constraint: CO-->PO;
       constraint: PO-->VS;`,
-      {},
+      {}
     );
   });
 
@@ -136,7 +136,7 @@ describe('UseCase Diagram', () => {
       note "Note B" as NB
       anchor: NA-->L;
       constraint: NA-->NB;`,
-      {},
+      {}
     );
   });
 
@@ -148,7 +148,7 @@ describe('UseCase Diagram', () => {
         "Internal Log" as IL;
       }
       containment: CO-->IL;`,
-      {},
+      {}
     );
   });
 
@@ -164,7 +164,7 @@ describe('UseCase Diagram', () => {
       dependency: AF-->L;`,
       // association: AF-->L is not valid — 'association' is not a rel-block keyword.
       // Use --> directly or dependency for collaboration→usecase.
-      {},
+      {}
     );
   });
 
@@ -195,7 +195,7 @@ describe('UseCase Diagram', () => {
       anchor: N1-->LG;
       constraint: IL-->PY;
       containment: PO-->IL;`,
-      {},
+      {}
     );
   });
 
@@ -224,7 +224,7 @@ describe('UseCase Diagram', () => {
       anchor: N1-->L;
       constraint: IL-->PP;
       containment: CO-->IL;`,
-      {},
+      {}
     );
   });
 
@@ -257,7 +257,7 @@ describe('UseCase Diagram', () => {
       dependency: RCS-->UC11;
       include: UC4-->UC6; UC6-->UC10; UC8-->UC9; UC9-->UC10; UC11-->UC12;
       extend: UC5-->UC; UC2-->UC3;`,
-      {},
+      {}
     );
   });
 
@@ -278,7 +278,7 @@ describe('UseCase Diagram', () => {
       // anchor: L→N1 (usecase→note) — invalid, skipped (anchor must be note→target)
       // containment: U→L (actor→usecase) — invalid, skipped (no actors in containment)
       // Only U-->L association should render
-      {},
+      {}
     );
   });
 
@@ -291,7 +291,7 @@ describe('UseCase Diagram', () => {
           usecase "Login" as L;
         }
         U --> L;`,
-        {},
+        {}
       );
     });
 
@@ -305,7 +305,7 @@ describe('UseCase Diagram', () => {
           "Dashboard" as D;
         }
         U --> L; D;`,
-        {},
+        {}
       );
     });
 
@@ -318,7 +318,7 @@ describe('UseCase Diagram', () => {
           usecase "Login" as L;
         }
         U --> L;`,
-        {},
+        {}
       );
     });
   });

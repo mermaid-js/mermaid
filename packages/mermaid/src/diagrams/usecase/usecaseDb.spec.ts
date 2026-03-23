@@ -17,12 +17,22 @@ describe('usecaseDb parser', () => {
 
   it('parses association connections', () => {
     db.parseDiagram(`usecaseDiagram\nactor "User" as U\nusecase "Login" as L\nU --> L`);
-    expect(db.getConnections()).toContainEqual({ from: 'U', type: 'association', to: 'L', label: undefined });
+    expect(db.getConnections()).toContainEqual({
+      from: 'U',
+      type: 'association',
+      to: 'L',
+      label: undefined,
+    });
   });
 
   it('parses include rel-block', () => {
     db.parseDiagram(`usecaseDiagram\nusecase "A" as A\nusecase "B" as B\ninclude: A-->B`);
-    expect(db.getConnections()[0]).toMatchObject({ from: 'A', type: 'include', to: 'B', label: '<<include>>' });
+    expect(db.getConnections()[0]).toMatchObject({
+      from: 'A',
+      type: 'include',
+      to: 'B',
+      label: '<<include>>',
+    });
   });
 
   it('rejects invalid connection and does not crash', () => {

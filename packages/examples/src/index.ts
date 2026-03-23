@@ -55,5 +55,5 @@ export const diagramData: DiagramMetadata[] = [
   vennDiagram,
   treeViewDiagram,
   wardleyDiagram,
-  usecaseDiagram
+  usecaseDiagram,
 ];

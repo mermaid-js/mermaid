@@ -178,7 +178,7 @@ union A, B`,
     Campfire Kettle -> Kettle
     Electric Kettle -> Kettle
     Smart Kettle -> Kettle`,
-  
+
   usecase: `usecaseDiagram
     actor "User" as U
     system "App" {
