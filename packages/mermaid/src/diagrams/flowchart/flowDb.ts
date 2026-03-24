@@ -827,6 +827,10 @@ You have to call mermaid.initialize.`
         type = 'arrow_circle';
         str = str.slice(1);
         break;
+      case '~':
+        type = 'arrow_invisible';
+        str = str.slice(1);
+        break;
     }
 
     let stroke = 'normal';
@@ -870,6 +874,9 @@ You have to call mermaid.initialize.`
       case 'o':
         endArrowType = 'arrow_circle';
         break;
+      case '~':
+        endArrowType = 'arrow_invisible';
+        break;
     }
 
     // Determine start arrow type
@@ -886,6 +893,10 @@ You have to call mermaid.initialize.`
         break;
       case 'o':
         startArrowType = 'arrow_circle';
+        line = line.slice(1);
+        break;
+      case '~':
+        startArrowType = 'arrow_invisible';
         line = line.slice(1);
         break;
     }
@@ -1021,7 +1032,7 @@ You have to call mermaid.initialize.`
     return nodes.find((node) => node.id === id);
   }
   private destructEdgeType(type: string | undefined) {
-    let arrowTypeStart = 'none';
+    let arrowTypeStart = 'arrow_open';
     let arrowTypeEnd = 'arrow_point';
 
     // Check for mixed arrow types (e.g., arrow_circle_arrow_point)
@@ -1033,12 +1044,14 @@ You have to call mermaid.initialize.`
     }
 
     switch (type) {
+      case 'arrow_invisible':
       case 'arrow_point':
       case 'arrow_circle':
       case 'arrow_cross':
         arrowTypeEnd = type;
         break;
 
+      case 'double_arrow_invisible':
       case 'double_arrow_point':
       case 'double_arrow_circle':
       case 'double_arrow_cross':

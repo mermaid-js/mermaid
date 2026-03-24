@@ -38,6 +38,9 @@ const doubleEndedEdges = [
   { edgeStart: '<--', edgeEnd: '-->', stroke: 'normal', type: 'double_arrow_point' },
   { edgeStart: '<==', edgeEnd: '==>', stroke: 'thick', type: 'double_arrow_point' },
   { edgeStart: '<-.', edgeEnd: '.->', stroke: 'dotted', type: 'double_arrow_point' },
+  { edgeStart: '~--', edgeEnd: '--~', stroke: 'normal', type: 'double_arrow_invisible' },
+  { edgeStart: '~==', edgeEnd: '==~', stroke: 'thick', type: 'double_arrow_invisible' },
+  { edgeStart: '~-.', edgeEnd: '.-~', stroke: 'dotted', type: 'double_arrow_invisible' },
 ];
 
 // Mixed arrow types: different arrow heads on each end (issue #1665)
@@ -46,22 +49,53 @@ const mixedEndedEdges = [
   { edgeStart: 'o--', edgeEnd: '-->', stroke: 'normal', type: 'arrow_circle_arrow_point' },
   { edgeStart: 'o==', edgeEnd: '==>', stroke: 'thick', type: 'arrow_circle_arrow_point' },
   { edgeStart: 'o-.', edgeEnd: '.->', stroke: 'dotted', type: 'arrow_circle_arrow_point' },
+  // circle to cross
+  { edgeStart: 'o--', edgeEnd: '--x', stroke: 'normal', type: 'arrow_circle_arrow_cross' },
+  { edgeStart: 'o==', edgeEnd: '==x', stroke: 'thick', type: 'arrow_circle_arrow_cross' },
+  { edgeStart: 'o-.', edgeEnd: '.-x', stroke: 'dotted', type: 'arrow_circle_arrow_cross' },
+  // circle to invisible
+  { edgeStart: 'o--', edgeEnd: '--~', stroke: 'normal', type: 'arrow_circle_arrow_invisible' },
+  { edgeStart: 'o==', edgeEnd: '==~', stroke: 'thick', type: 'arrow_circle_arrow_invisible' },
+  { edgeStart: 'o-.', edgeEnd: '.-~', stroke: 'dotted', type: 'arrow_circle_arrow_invisible' },
   // cross to circle
   { edgeStart: 'x--', edgeEnd: '--o', stroke: 'normal', type: 'arrow_cross_arrow_circle' },
   { edgeStart: 'x==', edgeEnd: '==o', stroke: 'thick', type: 'arrow_cross_arrow_circle' },
   { edgeStart: 'x-.', edgeEnd: '.-o', stroke: 'dotted', type: 'arrow_cross_arrow_circle' },
+  // cross to point
+  { edgeStart: 'x--', edgeEnd: '-->', stroke: 'normal', type: 'arrow_cross_arrow_point' },
+  { edgeStart: 'x==', edgeEnd: '==>', stroke: 'thick', type: 'arrow_cross_arrow_point' },
+  { edgeStart: 'x-.', edgeEnd: '.->', stroke: 'dotted', type: 'arrow_cross_arrow_point' },
+  // cross to invisible
+  { edgeStart: 'x--', edgeEnd: '--~', stroke: 'normal', type: 'arrow_cross_arrow_invisible' },
+  { edgeStart: 'x==', edgeEnd: '==~', stroke: 'thick', type: 'arrow_cross_arrow_invisible' },
+  { edgeStart: 'x-.', edgeEnd: '.-~', stroke: 'dotted', type: 'arrow_cross_arrow_invisible' },
+  // point to circle
+  { edgeStart: '<--', edgeEnd: '--o', stroke: 'normal', type: 'arrow_point_arrow_circle' },
+  { edgeStart: '<==', edgeEnd: '==o', stroke: 'thick', type: 'arrow_point_arrow_circle' },
+  { edgeStart: '<-.', edgeEnd: '.-o', stroke: 'dotted', type: 'arrow_point_arrow_circle' },
   // point to cross
   { edgeStart: '<--', edgeEnd: '--x', stroke: 'normal', type: 'arrow_point_arrow_cross' },
   { edgeStart: '<==', edgeEnd: '==x', stroke: 'thick', type: 'arrow_point_arrow_cross' },
   { edgeStart: '<-.', edgeEnd: '.-x', stroke: 'dotted', type: 'arrow_point_arrow_cross' },
-  // circle to cross
-  { edgeStart: 'o--', edgeEnd: '--x', stroke: 'normal', type: 'arrow_circle_arrow_cross' },
-  // cross to point
-  { edgeStart: 'x--', edgeEnd: '-->', stroke: 'normal', type: 'arrow_cross_arrow_point' },
-  // point to circle
-  { edgeStart: '<--', edgeEnd: '--o', stroke: 'normal', type: 'arrow_point_arrow_circle' },
+  // point to invisible
+  { edgeStart: '<--', edgeEnd: '--~', stroke: 'normal', type: 'arrow_point_arrow_invisible' },
+  { edgeStart: '<==', edgeEnd: '==~', stroke: 'thick', type: 'arrow_point_arrow_invisible' },
+  { edgeStart: '<-.', edgeEnd: '.-~', stroke: 'dotted', type: 'arrow_point_arrow_invisible' },
+  // invisible to circle
+  { edgeStart: '~--', edgeEnd: '--o', stroke: 'normal', type: 'arrow_invisible_arrow_circle' },
+  { edgeStart: '~==', edgeEnd: '==o', stroke: 'thick', type: 'arrow_invisible_arrow_circle' },
+  { edgeStart: '~-.', edgeEnd: '.-o', stroke: 'dotted', type: 'arrow_invisible_arrow_circle' },
+  // invisible to cross
+  { edgeStart: '~--', edgeEnd: '--x', stroke: 'normal', type: 'arrow_invisible_arrow_cross' },
+  { edgeStart: '~==', edgeEnd: '==x', stroke: 'thick', type: 'arrow_invisible_arrow_cross' },
+  { edgeStart: '~-.', edgeEnd: '.-x', stroke: 'dotted', type: 'arrow_invisible_arrow_cross' },
+  // invisible to point
+  { edgeStart: '~--', edgeEnd: '-->', stroke: 'normal', type: 'arrow_invisible_arrow_point' },
+  { edgeStart: '~==', edgeEnd: '==>', stroke: 'thick', type: 'arrow_invisible_arrow_point' },
+  { edgeStart: '~-.', edgeEnd: '.->', stroke: 'dotted', type: 'arrow_invisible_arrow_point' },
 ];
 const regularEdges = [
+  { edgeStart: '--', edgeEnd: '--', stroke: 'normal', type: 'arrow_open' },
   { edgeStart: '--', edgeEnd: '--x', stroke: 'normal', type: 'arrow_cross' },
   { edgeStart: '==', edgeEnd: '==x', stroke: 'thick', type: 'arrow_cross' },
   { edgeStart: '-.', edgeEnd: '.-x', stroke: 'dotted', type: 'arrow_cross' },
@@ -71,6 +105,9 @@ const regularEdges = [
   { edgeStart: '--', edgeEnd: '-->', stroke: 'normal', type: 'arrow_point' },
   { edgeStart: '==', edgeEnd: '==>', stroke: 'thick', type: 'arrow_point' },
   { edgeStart: '-.', edgeEnd: '.->', stroke: 'dotted', type: 'arrow_point' },
+  { edgeStart: '--', edgeEnd: '--~', stroke: 'normal', type: 'arrow_invisible' },
+  { edgeStart: '==', edgeEnd: '==~', stroke: 'thick', type: 'arrow_invisible' },
+  { edgeStart: '-.', edgeEnd: '.-~', stroke: 'dotted', type: 'arrow_invisible' },
 
   { edgeStart: '--', edgeEnd: '----x', stroke: 'normal', type: 'arrow_cross' },
   { edgeStart: '==', edgeEnd: '====x', stroke: 'thick', type: 'arrow_cross' },
@@ -81,6 +118,9 @@ const regularEdges = [
   { edgeStart: '--', edgeEnd: '---->', stroke: 'normal', type: 'arrow_point' },
   { edgeStart: '==', edgeEnd: '====>', stroke: 'thick', type: 'arrow_point' },
   { edgeStart: '-.', edgeEnd: '...->', stroke: 'dotted', type: 'arrow_point' },
+  { edgeStart: '--', edgeEnd: '----~', stroke: 'normal', type: 'arrow_invisible' },
+  { edgeStart: '==', edgeEnd: '====~', stroke: 'thick', type: 'arrow_invisible' },
+  { edgeStart: '-.', edgeEnd: '...-~', stroke: 'dotted', type: 'arrow_invisible' },
 ];
 
 describe('[Edges] when parsing', () => {
@@ -103,11 +143,18 @@ describe('[Edges] when parsing', () => {
     expect(edges[0].type).toBe('arrow_cross');
   });
 
-  it('should handle open ended edges', function () {
+  it('should handle circle ended edges', function () {
     const res = flow.parser.parse('graph TD;A--oB;');
     const edges = flow.parser.yy.getEdges();
 
     expect(edges[0].type).toBe('arrow_circle');
+  });
+
+  it('should handle invisible ended edges', function () {
+    const res = flow.parser.parse('graph TD;A--~B;');
+    const edges = flow.parser.yy.getEdges();
+
+    expect(edges[0].type).toBe('arrow_invisible');
   });
 
   describe('edges with ids', function () {
