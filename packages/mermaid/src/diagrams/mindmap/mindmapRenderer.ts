@@ -72,6 +72,11 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   // Use the unified rendering system
   await render(data4Layout, svg);
 
+  // Bind click events after rendering
+  if (db.bindFunctions) {
+    db.bindFunctions(svg.node() as Element);
+  }
+
   // Setup the view box and size of the svg element using config from data4Layout
   setupViewPortForSVG(
     svg,

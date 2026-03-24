@@ -15,6 +15,11 @@
 %x NSTR2
 %x ICON
 %x CLASS
+%x CLICK_PSTATE
+%x CLICK_STMT
+%x STR_STATE
+%x CALLBACK_NAME_STATE
+%x CALLBACK_ARGS_STATE
 
 %%
 
@@ -40,6 +45,26 @@
 "["                { this.begin('NODE');return 'NODE_DSTART'; }
 [\s]+              return 'SPACELIST'                 /* skip all whitespace */    ;
 // !(-\()            return 'NODE_ID';
+"click"[\s]+       { yy.getLogger().trace('Click'); this.begin('CLICK_PSTATE'); }
+<CLICK_PSTATE>[\s]+                     { /* skip extra spaces */ }
+<CLICK_PSTATE>[^\s\n]+                  { this.popState(); this.begin('CLICK_STMT'); return 'CLICK'; }
+<CLICK_STMT>[ \t]+                      { /* skip whitespace in click statement */ }
+<CLICK_STMT>[\n]                        { this.popState(); return 'NL'; }
+<CLICK_STMT><<EOF>>                     { this.popState(); return 'EOF'; }
+<CLICK_STMT>"href"                      { return 'HREF'; }
+<CLICK_STMT>"_self"                     { return 'LINK_TARGET'; }
+<CLICK_STMT>"_blank"                    { return 'LINK_TARGET'; }
+<CLICK_STMT>"_parent"                   { return 'LINK_TARGET'; }
+<CLICK_STMT>"_top"                      { return 'LINK_TARGET'; }
+<CLICK_STMT>["]                         { this.begin('STR_STATE'); }
+<STR_STATE>[^"]+                        { return 'STR'; }
+<STR_STATE>["]                          { this.popState(); }
+<CLICK_STMT>"call"[ \t]+               { this.begin('CALLBACK_NAME_STATE'); }
+<CALLBACK_NAME_STATE>\([ \t]*\)         { this.popState(); }
+<CALLBACK_NAME_STATE>\(                 { this.popState(); this.begin('CALLBACK_ARGS_STATE'); }
+<CALLBACK_NAME_STATE>[^\(\s\n]+         { return 'CALLBACKNAME'; }
+<CALLBACK_ARGS_STATE>\)                 { this.popState(); }
+<CALLBACK_ARGS_STATE>[^\)]+             { return 'CALLBACKARGS'; }
 [^\(\[\n\)\{\}]+         return 'NODE_ID';
 <<EOF>>            return 'EOF';
 <NODE>["][`]          { this.begin("NSTR2");}
@@ -104,10 +129,20 @@ statement
 	| node					       { yy.getLogger().trace('Node: ',$1.id);yy.addNode(0, $1.id, $1.descr, $1.type);  }
 	| ICON                 { yy.decorateNode({icon: $1}); }
 	| CLASS                { yy.decorateNode({class: $1}); }
+  | SPACELIST clickStatement { }
+  | clickStatement           { }
   | SPACELIST
 	;
 
-
+clickStatement
+  : CLICK HREF STR                   { yy.setLink($1, $3); }
+  | CLICK HREF STR STR               { yy.setLink($1, $3); yy.setTooltip($1, $4); }
+  | CLICK HREF STR LINK_TARGET       { yy.setLink($1, $3, $4); }
+  | CLICK HREF STR STR LINK_TARGET   { yy.setLink($1, $3, $5); yy.setTooltip($1, $4); }
+  | CLICK CALLBACKNAME               { yy.setClickEvent($1, $2); }
+  | CLICK CALLBACKNAME STR           { yy.setClickEvent($1, $2); yy.setTooltip($1, $3); }
+  | CLICK CALLBACKNAME CALLBACKARGS  { yy.setClickEvent($1, $2, $3); }
+  ;
 
 node
   :nodeWithId
