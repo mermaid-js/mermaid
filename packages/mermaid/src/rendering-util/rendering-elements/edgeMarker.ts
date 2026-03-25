@@ -40,6 +40,7 @@ const arrowTypesMap = {
   arrow_cross: { type: 'cross', fill: false },
   arrow_point: { type: 'point', fill: true },
   arrow_barb: { type: 'barb', fill: true },
+  arrow_barb_neo: { type: 'barb', fill: true },
   arrow_circle: { type: 'circle', fill: false },
   aggregation: { type: 'aggregation', fill: false },
   extension: { type: 'extension', fill: false },
