@@ -446,4 +446,25 @@ describe('Block diagram', () => {
       {}
     );
   });
+
+  it('BL34: block arrow should span multiple columns when widthInColumns is set', () => {
+    imgSnapshotTest(
+      `block-beta
+columns 10
+
+  arrow<["span 10"]>(x):10
+  A
+  B
+  C
+  D
+  E
+  F
+  G
+  H
+  I
+  J
+`,
+      {}
+    );
+  });
 });
