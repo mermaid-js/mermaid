@@ -23,7 +23,7 @@ class Theme {
 
     // dark
 
-    this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
+    this.fontFamily = '"trebuchet ms", verdana, Arimo, sans-serif';
     this.fontSize = '16px';
   }
   updateColors() {

@@ -165,7 +165,7 @@ properties:
       Can be any possible CSS `font-family`.
       See https://developer.mozilla.org/en-US/docs/Web/CSS/font-family
     type: string
-    default: '"trebuchet ms", verdana, arial, sans-serif;'
+    default: '"trebuchet ms", verdana, Arimo, sans-serif;'
   altFontFamily:
     # TODO: seems to be unused, except for in tests
     type: string
@@ -1665,7 +1665,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       titleFontFamily:
         description: Font family to be used for the title text in Journey Diagrams
         type: string
-        default: '"trebuchet ms", verdana, arial, sans-serif'
+        default: '"trebuchet ms", verdana, Arimo, sans-serif'
       titleFontSize:
         description: Font size to be used for the title text in Journey Diagrams
         type: string
@@ -2042,7 +2042,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       noteFontFamily:
         description: This sets the font family of actor-attached notes
         type: string
-        default: '"trebuchet ms", verdana, arial, sans-serif'
+        default: '"trebuchet ms", verdana, Arimo, sans-serif'
       noteFontWeight:
         description: This sets the font weight of actor-attached notes
         type: ['string', 'number']
@@ -2060,7 +2060,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       messageFontFamily:
         description: This sets the font family of actor messages
         type: string
-        default: '"trebuchet ms", verdana, arial, sans-serif'
+        default: '"trebuchet ms", verdana, Arimo, sans-serif'
       messageFontWeight:
         description: This sets the font weight of actor messages
         type: ['string', 'number']

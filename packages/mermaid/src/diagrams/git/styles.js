@@ -5,7 +5,7 @@ const getStyles = (options) =>
   .branch-label {
     fill: lightgrey;
     color: lightgrey;
-    font-family: 'trebuchet ms', verdana, arial, sans-serif;
+    font-family: 'trebuchet ms', verdana, Arimo, sans-serif;
     font-family: var(--mermaid-font-family);
   }
   ${[0, 1, 2, 3, 4, 5, 6, 7]

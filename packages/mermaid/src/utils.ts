@@ -564,7 +564,7 @@ export const wrapLabel: (label: string, maxWidth: number, config: WrapLabelConfi
         return label;
       }
       config = Object.assign(
-        { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', joinWith: '<br/>' },
+        { fontSize: 12, fontWeight: 400, fontFamily: 'Arimo', joinWith: '<br/>' },
         config
       );
       if (common.lineBreakRegex.test(label)) {
@@ -616,7 +616,7 @@ const breakString: (
     config: WrapLabelConfig
   ): BreakStringOutput => {
     config = Object.assign(
-      { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 0 },
+      { fontSize: 12, fontWeight: 400, fontFamily: 'Arimo', margin: 0 },
       config
     );
     const characters = [...word];
@@ -688,7 +688,7 @@ export const calculateTextDimensions: (
   config: TextDimensionConfig
 ) => TextDimensions = memoize(
   (text: string, config: TextDimensionConfig): TextDimensions => {
-    const { fontSize = 12, fontFamily = 'Arial', fontWeight = 400 } = config;
+    const { fontSize = 12, fontFamily = 'Arimo', fontWeight = 400 } = config;
     if (!text) {
       return { width: 0, height: 0 };
     }
