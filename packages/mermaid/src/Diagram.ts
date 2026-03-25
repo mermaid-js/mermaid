@@ -16,7 +16,7 @@ export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: 
 export class Diagram {
   public static async fromText(text: string, metadata: Pick<DiagramMetadata, 'title'> = {}) {
     // eslint-disable-next-line no-console
-    console.log('Starting mermaid vx.1');
+    console.log('Starting mermaid vx.2');
     const config = configApi.getConfig();
     const type = detectType(text, config);
     text = encodeEntities(text) + '\n';

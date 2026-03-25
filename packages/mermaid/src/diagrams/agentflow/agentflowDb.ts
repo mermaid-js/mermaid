@@ -51,6 +51,9 @@ const SUBGRAPH_TYPE_TO_SHAPE: Record<NonNullable<FlowSubGraph['type']>, ClusterS
   agent: 'agentGroup',
   flow: 'flowGroup',
   task: 'taskGroup',
+  skill: 'skillGroup',
+  test: 'testGroup',
+  directive: 'directiveGroup',
   types: 'typesGroup',
   templates: 'templatesGroup',
   subgraph: 'rect',
@@ -171,6 +174,17 @@ export class AgentFlowDB implements DiagramDB {
       .map((line) => line.trim())
       .filter((line) => line.length > 0)
       .map((line) => {
+        // Check for section marker: "section NAME"
+        const sectionMatch = /^section\s+(\S+.*)$/.exec(line);
+        if (sectionMatch) {
+          return {
+            name: sectionMatch[1].trim(),
+            type: 'section',
+            description: '',
+            kind: 'section' as const,
+          };
+        }
+
         // Match: NAME: Type [* N] <<description>>
         const fieldMatch = TEMPLATE_FIELD_RE.exec(line);
         if (!fieldMatch) {
@@ -810,7 +824,7 @@ You have to call mermaid.initialize.`
     _id: { text: string },
     list: string[],
     _title: { text: string; type: string },
-    type?: 'subgraph' | 'task' | 'agent' | 'flow'
+    type?: 'subgraph' | 'task' | 'agent' | 'flow' | 'skill' | 'test' | 'directive'
   ) {
     let id: string | undefined = _id?.text?.trim();
     let title = _title?.text;

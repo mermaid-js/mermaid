@@ -25,6 +25,10 @@ const ALLOWED_SHAPES = new Set([
   'lin-doc',
   'lined-document',
   'procs',
+  // Directive/constraint shapes
+  'trapezoid',
+  'inv-trapezoid',
+  'double-circle',
   // Collapsed container shape
   'collapsedGroup',
   // Type declaration shape

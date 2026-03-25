@@ -773,6 +773,52 @@ const flowGroup = async (parent, node) => {
   });
 };
 
+/** Skill group: composed capability container. Pill-shaped (rx=20), filled, solid 1px. */
+const skillGroup = async (parent, node) => {
+  const { themeVariables } = getConfig();
+  const stroke = themeVariables.skillContainerStroke || themeVariables.primaryBorderColor;
+  const fill = themeVariables.skillContainerFill || themeVariables.primaryColor;
+  return createContainerGroup(parent, node, {
+    cssClass: 'skill-cluster',
+    rx: 20,
+    fill,
+    stroke,
+    strokeWidth: 1,
+    roughness: 0.5,
+    fillStyle: 'solid',
+  });
+};
+
+/** Test group: verification container. Thick solid 2px border, sharp corners (rx=0), no fill. */
+const testGroup = async (parent, node) => {
+  const { themeVariables } = getConfig();
+  const stroke = themeVariables.testContainerStroke || themeVariables.secondaryBorderColor;
+  return createContainerGroup(parent, node, {
+    cssClass: 'test-cluster',
+    rx: 0,
+    fill: 'none',
+    stroke,
+    strokeWidth: 2,
+    roughness: 0.3,
+  });
+};
+
+/** Directive group: behavioral constraint container. Dot-dash border, light fill, sharp corners. */
+const directiveGroup = async (parent, node) => {
+  const { themeVariables } = getConfig();
+  const stroke = themeVariables.directiveContainerStroke || themeVariables.tertiaryBorderColor;
+  const fill = themeVariables.directiveContainerFill || themeVariables.tertiaryColor || '#f0f0f0';
+  return createContainerGroup(parent, node, {
+    cssClass: 'directive-cluster',
+    rx: 2,
+    fill,
+    stroke,
+    strokeWidth: 1.5,
+    roughness: 0.7,
+    strokeDash: [8, 3, 2, 3],
+  });
+};
+
 /** Factory for declaration group clusters (types, templates). Light background, subtle dashed border. */
 const createDeclarationGroup = (cssClass) => async (parent, node) => {
   const { themeVariables } = getConfig();
@@ -803,6 +849,9 @@ const shapes = {
   taskGroup,
   agentGroup,
   flowGroup,
+  skillGroup,
+  testGroup,
+  directiveGroup,
   typesGroup,
   templatesGroup,
 };

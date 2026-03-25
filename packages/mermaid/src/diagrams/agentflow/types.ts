@@ -83,7 +83,16 @@ export interface FlowSubGraph {
   labelType: string;
   nodes: string[];
   title: string;
-  type?: 'subgraph' | 'task' | 'agent' | 'flow' | 'types' | 'templates';
+  type?:
+    | 'subgraph'
+    | 'task'
+    | 'agent'
+    | 'flow'
+    | 'types'
+    | 'templates'
+    | 'skill'
+    | 'test'
+    | 'directive';
   metadata?: Record<string, unknown>;
 }
 
@@ -104,6 +113,7 @@ export interface AgentFlowTemplateField {
   type: string;
   multiplicity?: number;
   description: string;
+  kind?: 'field' | 'section';
 }
 
 export interface AgentFlowTemplateDeclaration {

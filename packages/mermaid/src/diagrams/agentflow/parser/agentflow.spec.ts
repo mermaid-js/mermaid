@@ -1428,10 +1428,10 @@ describe('parsing an agentflow diagram', function () {
 
       const data = agentflow.parser.yy.getData();
       expect(data.templates).toHaveLength(2);
-      expect(data.templatesByName['triage_result']).toBeDefined();
-      expect(data.templatesByName['investigation_report']).toBeDefined();
-      expect(data.templatesByName['triage_result'].fields).toHaveLength(2);
-      expect(data.templatesByName['investigation_report'].fields).toHaveLength(2);
+      expect(data.templatesByName.triage_result).toBeDefined();
+      expect(data.templatesByName.investigation_report).toBeDefined();
+      expect(data.templatesByName.triage_result.fields).toHaveLength(2);
+      expect(data.templatesByName.investigation_report.fields).toHaveLength(2);
     });
 
     it('should coexist with type declarations', function () {
@@ -1449,6 +1449,413 @@ describe('parsing an agentflow diagram', function () {
       const data = agentflow.parser.yy.getData();
       expect(data.types).toHaveLength(2);
       expect(data.templates).toHaveLength(1);
+    });
+  });
+
+  describe('skill grouping', function () {
+    it('should parse a skill with a quoted label', function () {
+      agentflow.parser.parse(`agentflow LR
+        skill web_search["Web Search"]
+          A --> B
+        end
+      `);
+
+      const subGraphs = agentflow.parser.yy.getSubGraphs();
+      expect(subGraphs).toHaveLength(1);
+      expect(subGraphs[0].id).toBe('web_search');
+      expect(subGraphs[0].title).toBe('Web Search');
+      expect(subGraphs[0].type).toBe('skill');
+    });
+
+    it('should parse a skill without a label and produce empty title', function () {
+      agentflow.parser.parse(`agentflow LR
+        skill mySkill
+          A
+        end
+      `);
+
+      const subGraphs = agentflow.parser.yy.getSubGraphs();
+      expect(subGraphs).toHaveLength(1);
+      expect(subGraphs[0].id).toBe('mySkill');
+      expect(subGraphs[0].title).toBe('');
+      expect(subGraphs[0].type).toBe('skill');
+    });
+
+    it('should parse an empty skill', function () {
+      agentflow.parser.parse(`agentflow LR
+        skill s1["S"]
+        end
+      `);
+
+      const subGraphs = agentflow.parser.yy.getSubGraphs();
+      expect(subGraphs).toHaveLength(1);
+      expect(subGraphs[0].nodes).toHaveLength(0);
+      expect(subGraphs[0].type).toBe('skill');
+    });
+
+    it('should produce skillGroup shape in getData()', function () {
+      agentflow.parser.parse(`agentflow LR
+        skill s1["Search Skill"]
+          A --> B
+        end
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const skillNode = data.nodes.find((n: { id: string }) => n.id === 's1');
+      expect(skillNode).toBeDefined();
+      expect(skillNode?.isGroup).toBe(true);
+      expect(skillNode?.shape).toBe('skillGroup');
+    });
+
+    it('should assign correct parentId to child nodes', function () {
+      agentflow.parser.parse(`agentflow LR
+        skill s1["Search Skill"]
+          search_tool["Search"]
+          rank_tool["Rank"]
+          search_tool --> rank_tool
+        end
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const searchNode = data.nodes.find((n: { id: string }) => n.id === 'search_tool');
+      const rankNode = data.nodes.find((n: { id: string }) => n.id === 'rank_tool');
+      expect(searchNode?.parentId).toBe('s1');
+      expect(rankNode?.parentId).toBe('s1');
+    });
+
+    it('should support metadata (strategy, params, returns) on the container', function () {
+      agentflow.parser.parse(`agentflow LR
+        skill s1["Search Skill"]
+          A
+        end
+        s1@{ strategy: "parallel", params: "query :: String", returns: "Results" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const skillNode = data.nodes.find((n: { id: string }) => n.id === 's1');
+      expect(skillNode?.metadata?.strategy).toBe('parallel');
+      expect(skillNode?.metadata?.params).toBe('query :: String');
+      expect(skillNode?.metadata?.returns).toBe('Results');
+    });
+  });
+
+  describe('testCase grouping', function () {
+    it('should parse a testCase with a quoted label', function () {
+      agentflow.parser.parse(`agentflow LR
+        testCase verify_output["Verify Output"]
+          A --> B
+        end
+      `);
+
+      const subGraphs = agentflow.parser.yy.getSubGraphs();
+      expect(subGraphs).toHaveLength(1);
+      expect(subGraphs[0].id).toBe('verify_output');
+      expect(subGraphs[0].title).toBe('Verify Output');
+      expect(subGraphs[0].type).toBe('test');
+    });
+
+    it('should parse a testCase without a label', function () {
+      agentflow.parser.parse(`agentflow LR
+        testCase myTest
+          A
+        end
+      `);
+
+      const subGraphs = agentflow.parser.yy.getSubGraphs();
+      expect(subGraphs).toHaveLength(1);
+      expect(subGraphs[0].id).toBe('myTest');
+      expect(subGraphs[0].title).toBe('');
+      expect(subGraphs[0].type).toBe('test');
+    });
+
+    it('should produce testGroup shape in getData()', function () {
+      agentflow.parser.parse(`agentflow LR
+        testCase t1["Verify"]
+          A --> B
+        end
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const testNode = data.nodes.find((n: { id: string }) => n.id === 't1');
+      expect(testNode).toBeDefined();
+      expect(testNode?.isGroup).toBe(true);
+      expect(testNode?.shape).toBe('testGroup');
+    });
+
+    it('should support assert/expects metadata', function () {
+      agentflow.parser.parse(`agentflow LR
+        testCase t1["Verify Output"]
+          A
+        end
+        t1@{ assert: "output.length > 0", expects: "non-empty response" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const testNode = data.nodes.find((n: { id: string }) => n.id === 't1');
+      expect(testNode?.metadata?.assert).toBe('output.length > 0');
+      expect(testNode?.metadata?.expects).toBe('non-empty response');
+    });
+  });
+
+  describe('directive grouping', function () {
+    it('should parse a directive with a quoted label', function () {
+      agentflow.parser.parse(`agentflow LR
+        directive safety["Safety Constraint"]
+          A
+        end
+      `);
+
+      const subGraphs = agentflow.parser.yy.getSubGraphs();
+      expect(subGraphs).toHaveLength(1);
+      expect(subGraphs[0].id).toBe('safety');
+      expect(subGraphs[0].title).toBe('Safety Constraint');
+      expect(subGraphs[0].type).toBe('directive');
+    });
+
+    it('should parse a directive without a label', function () {
+      agentflow.parser.parse(`agentflow LR
+        directive myDirective
+          A
+        end
+      `);
+
+      const subGraphs = agentflow.parser.yy.getSubGraphs();
+      expect(subGraphs).toHaveLength(1);
+      expect(subGraphs[0].id).toBe('myDirective');
+      expect(subGraphs[0].title).toBe('');
+      expect(subGraphs[0].type).toBe('directive');
+    });
+
+    it('should produce directiveGroup shape in getData()', function () {
+      agentflow.parser.parse(`agentflow LR
+        directive d1["Safety"]
+          rule1["No PII"]
+        end
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const dirNode = data.nodes.find((n: { id: string }) => n.id === 'd1');
+      expect(dirNode).toBeDefined();
+      expect(dirNode?.isGroup).toBe(true);
+      expect(dirNode?.shape).toBe('directiveGroup');
+    });
+
+    it('should support metadata (params) on the container', function () {
+      agentflow.parser.parse(`agentflow LR
+        directive d1["Rate Limit"]
+          A
+        end
+        d1@{ params: "max_requests :: Int" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const dirNode = data.nodes.find((n: { id: string }) => n.id === 'd1');
+      expect(dirNode?.metadata?.params).toBe('max_requests :: Int');
+    });
+
+    it('should support dotted edge from tool to directive', function () {
+      agentflow.parser.parse(`agentflow LR
+        directive d1["Safety"]
+          A
+        end
+        tool1["Search"]
+        tool1 -.-> d1
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      expect(data.edges.length).toBeGreaterThanOrEqual(1);
+      const edge = data.edges.find(
+        (e: { start: string; end: string }) => e.start === 'tool1' && e.end === 'd1'
+      );
+      expect(edge).toBeDefined();
+    });
+  });
+
+  describe('new shape whitelist entries', function () {
+    it('should accept trapezoid shape via @{} metadata', function () {
+      agentflow.parser.parse(`agentflow LR
+        constraint1["No PII"]
+        constraint1@{ shape: trapezoid }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const node = data.nodes.find((n: { id: string }) => n.id === 'constraint1');
+      expect(node).toBeDefined();
+      expect(node?.shape).toBe('trapezoid');
+    });
+
+    it('should accept inv-trapezoid shape via @{} metadata', function () {
+      agentflow.parser.parse(`agentflow LR
+        node1["Inverted"]
+        node1@{ shape: inv-trapezoid }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const node = data.nodes.find((n: { id: string }) => n.id === 'node1');
+      expect(node).toBeDefined();
+      expect(node?.shape).toBe('inv-trapezoid');
+    });
+
+    it('should accept double-circle shape via @{} metadata', function () {
+      agentflow.parser.parse(`agentflow LR
+        assert1["Check"]
+        assert1@{ shape: double-circle }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const node = data.nodes.find((n: { id: string }) => n.id === 'assert1');
+      expect(node).toBeDefined();
+      expect(node?.shape).toBe('double-circle');
+    });
+  });
+
+  describe('template sections', function () {
+    it('should parse template with section markers', function () {
+      agentflow.parser.parse(`agentflow TB
+        template %clinical_note {
+          section DIAGNOSIS
+          PRIMARY_DX: String <<primary diagnosis>>
+          SECONDARY_DX: String * 3 <<secondary diagnoses>>
+          section MANAGEMENT
+          MEDICATION: String * 5 <<medication orders>>
+          FOLLOW_UP: String <<follow-up plan>>
+        }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      expect(data.templates).toHaveLength(1);
+      const tpl = data.templates[0];
+      expect(tpl.name).toBe('clinical_note');
+      expect(tpl.fields).toHaveLength(6);
+
+      // First section marker
+      expect(tpl.fields[0].kind).toBe('section');
+      expect(tpl.fields[0].name).toBe('DIAGNOSIS');
+      expect(tpl.fields[0].type).toBe('section');
+
+      // Fields between sections
+      expect(tpl.fields[1].name).toBe('PRIMARY_DX');
+      expect(tpl.fields[1].kind).toBeUndefined();
+
+      expect(tpl.fields[2].name).toBe('SECONDARY_DX');
+      expect(tpl.fields[2].multiplicity).toBe(3);
+
+      // Second section marker
+      expect(tpl.fields[3].kind).toBe('section');
+      expect(tpl.fields[3].name).toBe('MANAGEMENT');
+
+      // Fields in second section
+      expect(tpl.fields[4].name).toBe('MEDICATION');
+      expect(tpl.fields[5].name).toBe('FOLLOW_UP');
+    });
+
+    it('should parse template without sections (regression)', function () {
+      agentflow.parser.parse(`agentflow TB
+        template %simple {
+          NAME: String <<name field>>
+          VALUE: String <<value field>>
+        }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      expect(data.templates).toHaveLength(1);
+      const tpl = data.templates[0];
+      expect(tpl.fields).toHaveLength(2);
+      expect(tpl.fields[0].name).toBe('NAME');
+      expect(tpl.fields[0].kind).toBeUndefined();
+      expect(tpl.fields[1].name).toBe('VALUE');
+    });
+  });
+
+  describe('extended metadata fields', function () {
+    it('should store strategy on skill containers', function () {
+      agentflow.parser.parse(`agentflow LR
+        skill s1["Search"]
+          A
+        end
+        s1@{ strategy: "round-robin" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const node = data.nodes.find((n: { id: string }) => n.id === 's1');
+      expect(node?.metadata?.strategy).toBe('round-robin');
+    });
+
+    it('should store severity/context/rule on lesson nodes', function () {
+      agentflow.parser.parse(`agentflow LR
+        lesson1["Lesson Learned"]
+        lesson1@{ shape: lin-doc, severity: "high", context: "production outage", rule: "always verify backups" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const node = data.nodes.find((n: { id: string }) => n.id === 'lesson1');
+      expect(node?.shape).toBe('lin-doc');
+      expect(node?.metadata?.severity).toBe('high');
+      expect(node?.metadata?.context).toBe('production outage');
+      expect(node?.metadata?.rule).toBe('always verify backups');
+    });
+
+    it('should store transport/command on MCP tool nodes', function () {
+      agentflow.parser.parse(`agentflow LR
+        mcp_tool["MCP Tool"]
+        mcp_tool@{ shape: subroutine, transport: "stdio", command: "npx -y @modelcontextprotocol/server-github" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const node = data.nodes.find((n: { id: string }) => n.id === 'mcp_tool');
+      expect(node?.shape).toBe('subroutine');
+      expect(node?.metadata?.transport).toBe('stdio');
+      expect(node?.metadata?.command).toBe('npx -y @modelcontextprotocol/server-github');
+    });
+
+    it('should store validate on tool nodes', function () {
+      agentflow.parser.parse(`agentflow LR
+        search["Search"]
+        search@{ shape: subroutine, validate: "json-schema" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const node = data.nodes.find((n: { id: string }) => n.id === 'search');
+      expect(node?.metadata?.validate).toBe('json-schema');
+    });
+
+    it('should store memory on agent containers', function () {
+      agentflow.parser.parse(`agentflow LR
+        agent a1["My Agent"]
+          A
+        end
+        a1@{ memory: "episodic" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const node = data.nodes.find((n: { id: string }) => n.id === 'a1');
+      expect(node?.metadata?.memory).toBe('episodic');
+    });
+
+    it('should store execution on task containers', function () {
+      agentflow.parser.parse(`agentflow LR
+        task t1["Process"]
+          A
+        end
+        t1@{ execution: "sequential" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const node = data.nodes.find((n: { id: string }) => n.id === 't1');
+      expect(node?.metadata?.execution).toBe('sequential');
+    });
+
+    it('should store fallbacks on agent bundle containers', function () {
+      agentflow.parser.parse(`agentflow LR
+        agent bundle["Agent Bundle"]
+          A
+        end
+        bundle@{ fallbacks: "retry-3, escalate" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const node = data.nodes.find((n: { id: string }) => n.id === 'bundle');
+      expect(node?.metadata?.fallbacks).toBe('retry-3, escalate');
     });
   });
 });

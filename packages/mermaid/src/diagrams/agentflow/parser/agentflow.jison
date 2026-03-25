@@ -120,6 +120,9 @@ that id.
 "agent"                  return 'agent';
 "flow"                   return 'flow';
 "task"                   return 'task';
+"skill"                  return 'skill';
+"testCase"               return 'testCase';
+"directive"              return 'directive';
 "subgraph"               return 'subgraph';
 "end"\b\s*               return 'end';
 
@@ -410,6 +413,24 @@ statement
     {$$=yy.addSubGraph($textNoTags,$document,{text:'', type:'text'},'task');}
     | task separator document end
     {$$=yy.addSubGraph(undefined,$document,undefined,'task');}
+    | skill SPACE textNoTags SQS text SQE separator document end
+    {$$=yy.addSubGraph($textNoTags,$document,$text,'skill');}
+    | skill SPACE textNoTags separator document end
+    {$$=yy.addSubGraph($textNoTags,$document,{text:'', type:'text'},'skill');}
+    | skill separator document end
+    {$$=yy.addSubGraph(undefined,$document,undefined,'skill');}
+    | testCase SPACE textNoTags SQS text SQE separator document end
+    {$$=yy.addSubGraph($textNoTags,$document,$text,'test');}
+    | testCase SPACE textNoTags separator document end
+    {$$=yy.addSubGraph($textNoTags,$document,{text:'', type:'text'},'test');}
+    | testCase separator document end
+    {$$=yy.addSubGraph(undefined,$document,undefined,'test');}
+    | directive SPACE textNoTags SQS text SQE separator document end
+    {$$=yy.addSubGraph($textNoTags,$document,$text,'directive');}
+    | directive SPACE textNoTags separator document end
+    {$$=yy.addSubGraph($textNoTags,$document,{text:'', type:'text'},'directive');}
+    | directive separator document end
+    {$$=yy.addSubGraph(undefined,$document,undefined,'directive');}
     | direction
     | acc_title acc_title_value  { $$=$acc_title_value.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$acc_descr_value.trim();yy.setAccDescription($$); }
@@ -551,7 +572,7 @@ text: textToken
 
 
 keywords
-    : STYLE | LINKSTYLE | CLASSDEF | CLASS | CLICK | GRAPH | DIR | subgraph | agent | flow | task | end | DOWN | UP;
+    : STYLE | LINKSTYLE | CLASSDEF | CLASS | CLICK | GRAPH | DIR | subgraph | agent | flow | task | skill | testCase | directive | end | DOWN | UP;
 
 
 textNoTags: textNoTagsToken

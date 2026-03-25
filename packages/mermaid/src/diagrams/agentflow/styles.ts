@@ -148,6 +148,25 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke-dasharray: 8, 4;
   }
 
+  .skill-cluster rect {
+    fill: ${options.mainBkg};
+    stroke: ${options.nodeBorder};
+    stroke-width: 1px;
+  }
+
+  .test-cluster rect {
+    fill: none;
+    stroke: ${options.clusterBorder};
+    stroke-width: 2px;
+  }
+
+  .directive-cluster rect {
+    fill: ${options.tertiaryColor};
+    stroke: ${options.clusterBorder};
+    stroke-width: 1.5px;
+    stroke-dasharray: 8, 3, 2, 3;
+  }
+
   .node .collapsed-indicator {
     fill: ${options.nodeBorder};
     stroke: none;
