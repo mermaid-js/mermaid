@@ -14,6 +14,17 @@ describe('state parser can parse...', () => {
     stateDiagram.parser.yy.clear();
   });
 
+  describe('invalid name between state and curly bracket', () => {
+    it('should throw error when name has multiple words', () => {
+      const diagramText = `stateDiagram-v2
+      state invalid syntax { X }`;
+
+      expect(() => {
+        stateDiagram.parser.parse(diagramText);
+      }).toThrow('Error: State name must be a single word.');
+    });
+  });
+
   describe('states with id displayed as a (name)', () => {
     describe('syntax 1: stateID as "name in quotes"', () => {
       it('stateID as "some name"', () => {
@@ -55,8 +66,8 @@ describe('state parser can parse...', () => {
       const diagramText = `stateDiagram-v2
       assemble
       assemblies
-      state assemble
-      state assemblies
+      state assemble { innerState1 }
+      state assemblies {innerState2 }
       `;
       stateDiagram.parser.parse(diagramText);
       const states = stateDiagram.parser.yy.getStates();

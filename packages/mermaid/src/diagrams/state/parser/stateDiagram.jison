@@ -167,6 +167,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 /lex
 
 %left '^'
+%right COMPOSIT_STATE /* fix the shift/reduce conflicts from new rule */
 
 %start start
 
@@ -228,6 +229,11 @@ statement
     {
         // console.log('Adding document for state without id ', $1);
         $$={ stmt: 'state', id: $1, type: 'default', description: '', doc: $3 }
+    }
+    | COMPOSIT_STATE COMPOSIT_STATE STRUCT_START document STRUCT_STOP
+    {
+        /* Rejects invalid syntax: multiple words between 'state' and '{' */
+        throw new Error('Error: State name must be a single word.');
     }
     | STATE_DESCR AS ID {
         var id=$3;
