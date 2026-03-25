@@ -85,6 +85,7 @@ interface BaseNode {
   radius?: number;
   taper?: number;
   stroke?: string;
+  colorIndex?: number;
 }
 
 /**
