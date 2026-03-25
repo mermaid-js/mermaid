@@ -1,9 +1,12 @@
 /**
  * TreeView grammar for Langium
- * Converted from treemap grammar
+ *
+ * Supports both quoted labels ("my file") and bare labels (index.js).
+ * NODE_CONTENT captures the entire rest-of-line content; detailed parsing
+ * of annotations (:::class, icon(), ## description) happens in parser.ts.
  *
  * The ML_COMMENT and NL hidden terminals handle whitespace, comments, and newlines
- * before the treemap keyword, allowing for empty lines and comments before the
+ * before the treeView keyword, allowing for empty lines and comments before the
  * treeView declaration.
  */
 grammar TreeViewGrammar
@@ -37,9 +40,13 @@ hidden terminal ML_COMMENT: /\%\%[^\n]*/;
 hidden terminal NL: /\r?\n/;
 
 TreeNode: 
-    // actually contains the indent, but is converted to a length value by valueConverter
+    // indent is converted to a length value by valueConverter
     indent=INDENTATION?
-    name=STRING2
+    // Captures rest-of-line: name + optional :::class, icon(), ## description
+    // Detailed parsing of annotations happens in parser.ts
+    nodeContent=NODE_CONTENT
 ;
 
-terminal STRING2: /"[^"]*"|'[^']*'/;
+// Matches from the first non-whitespace character to end of line.
+// Must be declared AFTER ML_COMMENT so that %% comment lines take priority.
+terminal NODE_CONTENT: /[^ \t\n\r][^\n\r]*/;

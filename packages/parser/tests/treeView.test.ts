@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'vitest';
-import { expectNoErrorsOrAlternatives } from './test-util.js';
-import type { TreeView } from '../src/language/generated/ast.js';
 import type { LangiumParser } from 'langium';
+import { describe, expect, it } from 'vitest';
+import type { TreeView } from '../src/language/generated/ast.js';
 import { createTreeViewServices } from '../src/language/treeView/module.js';
+import { expectNoErrorsOrAlternatives } from './test-util.js';
 
 describe('TreeView Parser', () => {
   const services = createTreeViewServices().TreeView;
@@ -20,21 +20,21 @@ describe('TreeView Parser', () => {
       expect(result.value.nodes).toHaveLength(0);
     });
 
-    it('should parse a treeView with only a root node', () => {
+    it('should parse a treeView with a quoted root node', () => {
       const result = parse('treeView-beta\n"Root"');
       expectNoErrorsOrAlternatives(result);
       expect(result.value.$type).toBe('TreeView');
       expect(result.value.nodes).toHaveLength(1);
-      expect(result.value.nodes[0].name).toBe('Root');
+      expect(result.value.nodes[0].nodeContent).toBe('"Root"');
       expect(result.value.nodes[0].indent).toBe(undefined);
     });
 
-    it('should parse a treeView with multiple words within a node', () => {
+    it('should parse a treeView with multiple words within a quoted node', () => {
       const result = parse('treeView-beta\n"Multi Word Root"');
       expectNoErrorsOrAlternatives(result);
       expect(result.value.$type).toBe('TreeView');
       expect(result.value.nodes).toHaveLength(1);
-      expect(result.value.nodes[0].name).toBe('Multi Word Root');
+      expect(result.value.nodes[0].nodeContent).toBe('"Multi Word Root"');
       expect(result.value.nodes[0].indent).toBe(undefined);
     });
 
@@ -44,17 +44,60 @@ describe('TreeView Parser', () => {
       expect(result.value.$type).toBe('TreeView');
       expect(result.value.nodes).toHaveLength(4);
 
-      expect(result.value.nodes[0].name).toBe('Root');
+      expect(result.value.nodes[0].nodeContent).toBe('"Root"');
       expect(result.value.nodes[0].indent).toBe(undefined);
 
-      expect(result.value.nodes[1].name).toBe('Child1');
+      expect(result.value.nodes[1].nodeContent).toBe('"Child1"');
       expect(result.value.nodes[1].indent).toBe(4);
 
-      expect(result.value.nodes[2].name).toBe('Child2');
+      expect(result.value.nodes[2].nodeContent).toBe('"Child2"');
       expect(result.value.nodes[2].indent).toBe(4);
 
-      expect(result.value.nodes[3].name).toBe('Child3');
+      expect(result.value.nodes[3].nodeContent).toBe('"Child3"');
       expect(result.value.nodes[3].indent).toBe(8);
+    });
+
+    it('should parse bare (unquoted) labels', () => {
+      const result = parse('treeView-beta\nindex.js');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes).toHaveLength(1);
+      expect(result.value.nodes[0].nodeContent).toBe('index.js');
+    });
+
+    it('should parse bare labels with directory trailing slash', () => {
+      const result = parse('treeView-beta\nsrc/\n    index.js');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes).toHaveLength(2);
+      expect(result.value.nodes[0].nodeContent).toBe('src/');
+      expect(result.value.nodes[1].nodeContent).toBe('index.js');
+      expect(result.value.nodes[1].indent).toBe(4);
+    });
+
+    it('should parse bare labels with annotations', () => {
+      const result = parse('treeView-beta\nindex.js :::highlight icon(javascript) ## entry point');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes).toHaveLength(1);
+      expect(result.value.nodes[0].nodeContent).toBe(
+        'index.js :::highlight icon(javascript) ## entry point'
+      );
+    });
+
+    it('should parse quoted labels with annotations', () => {
+      const result = parse(
+        'treeView-beta\n"my file.js" :::highlight icon(javascript) ## entry point'
+      );
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes).toHaveLength(1);
+      expect(result.value.nodes[0].nodeContent).toBe(
+        '"my file.js" :::highlight icon(javascript) ## entry point'
+      );
+    });
+
+    it('should handle %% comments', () => {
+      const result = parse('treeView-beta\n%% this is a comment\nindex.js');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes).toHaveLength(1);
+      expect(result.value.nodes[0].nodeContent).toBe('index.js');
     });
   });
 

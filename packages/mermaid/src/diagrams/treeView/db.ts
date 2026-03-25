@@ -1,7 +1,8 @@
-import type { TreeViewDiagramConfig } from '../../config.type.js';
-import type { TreeViewDB, Node } from './types.js';
 import { getConfig as getCommonConfig } from '../../config.js';
+import type { TreeViewDiagramConfig } from '../../config.type.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
+import { cleanAndMerge } from '../../utils.js';
+import { ImperativeState } from '../../utils/imperativeState.js';
 import {
   clear as commonClear,
   getAccDescription,
@@ -11,8 +12,7 @@ import {
   setAccTitle,
   setDiagramTitle,
 } from '../common/commonDb.js';
-import { cleanAndMerge } from '../../utils.js';
-import { ImperativeState } from '../../utils/imperativeState.js';
+import type { Node, NodeType, TreeViewDB } from './types.js';
 
 interface TreeViewState {
   cnt: number;
@@ -26,6 +26,7 @@ const state = new ImperativeState<TreeViewState>(() => ({
       id: 0,
       level: -1,
       name: '/',
+      nodeType: 'directory' as NodeType,
       children: [],
     },
   ],
@@ -48,14 +49,25 @@ const getConfig = (): Required<TreeViewDiagramConfig> => {
   return cleanAndMerge(defaultConfig, getCommonConfig().treeView);
 };
 
-const addNode = (level: number, name: string) => {
+const addNode = (
+  level: number,
+  name: string,
+  nodeType: NodeType,
+  cssClass?: string,
+  iconId?: string,
+  description?: string
+) => {
   while (level <= state.records.stack[state.records.stack.length - 1].level) {
     state.records.stack.pop();
   }
-  const node = {
+  const node: Node = {
     id: state.records.cnt++,
     level,
     name,
+    nodeType,
+    iconId,
+    cssClass,
+    description,
     children: [],
   };
   state.records.stack[state.records.stack.length - 1].children.push(node);
