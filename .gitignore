@@ -7,7 +7,7 @@ coverage/
 .instructions/
 .claude
 .mcp.json
-
+.tmp
 dist
 v8-compile-cache-0
 

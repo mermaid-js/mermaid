@@ -276,13 +276,16 @@ export class AgentFlowDB implements DiagramDB {
       return;
     }
 
-    // Check if this is the types or templates group (e.g. types@{ view: "expanded" })
-    if (doc) {
-      if (id === 'types' || id === 'templates') {
+    // Reserve 'types' and 'templates' as declaration group IDs — never create vertices for them
+    if (id === 'types' || id === 'templates') {
+      if (doc) {
         this.declarationGroupMetadata.set(id, doc as unknown as Record<string, unknown>);
-        return;
       }
-      // Check if this is an individual type or template declaration
+      return;
+    }
+
+    // Check if this is an individual type or template declaration
+    if (doc) {
       const typeDecl = this.typeDeclarations.get(id);
       if (typeDecl) {
         typeDecl.metadata = doc as unknown as Record<string, unknown>;
@@ -1389,7 +1392,7 @@ You have to call mermaid.initialize.`
     const synthesizeDeclarationGroup = (opts: {
       groupId: string;
       label: string;
-      expandedShape: string;
+      expandedShape: ClusterShapeID;
       containerType: string;
       childPrefix: string;
       declarations: { name: string }[];

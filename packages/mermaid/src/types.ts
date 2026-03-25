@@ -132,6 +132,12 @@ export interface RenderResult {
    * ```
    */
   bindFunctions?: (element: Element) => void;
+  /**
+   * The layout data structure used during rendering. Contains nodes, edges,
+   * and diagram-specific metadata (types, templates, etc.).
+   * Currently populated by agentflow diagrams.
+   */
+  data?: Record<string, unknown>;
 }
 
 /**

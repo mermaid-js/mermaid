@@ -117,7 +117,7 @@ export type DrawDefinition = (
   id: string,
   version: string,
   diagramObject: Diagram
-) => void | Promise<void>;
+) => void | Promise<void> | Record<string, unknown> | Promise<Record<string, unknown>>;
 
 export interface ParserDefinition {
   parse: (text: string) => void | Promise<void>;

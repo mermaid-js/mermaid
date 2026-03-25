@@ -105,7 +105,7 @@
   </head>
 
   <body>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 agentflow TB
   type CoffeeCopy = Record {
     hero_tagline: String
@@ -193,92 +193,179 @@ agentflow TB
 
   build_site@{ params: "city :: String", returns: "String" }
     </pre>
-    <pre id="diagram4" class="mermaid2">
-agentflow LR
-    task t1["Step 1"]
-        n3("write_copy")
-        n7["website_copy<br>Coffee shop<br>(output)"]
-        A["Template <br>Website copy"]
+    <pre id="diagram4" class="mermaid">
+agentflow TB
+
+
+  type AcuityLevel = Resuscitation | Emergent | Urgent | LessUrgent | NonUrgent
+  type Disposition = Admit | Observe | Discharge | Transfer | AMA
+  type LabPriority = STAT | Urgent | Routine
+
+
+agent ed_team["Ed Team"]
+
+    agent triage_nurse["Triage Nurse"]
+        assess_vitals
+    end
+    triage_nurse@{
+        model: "claude-sonnet-4-20250514"
+        permits: "llm.query"
+        prompt: "You are an experienced emergency triage nurse with 20 years of experience. You assess patients rapidly and accurately using the Emergency Severity Index. You have an instinct for identifying sick patients who look well and well patients who look sick. Your acuity assignments are consistently accurate. You never downgrade acuity under pressure. IMPORTANT: You provide decision support only — a physician must confirm all assessments."
+    }
+
+    agent diagnostician["Diagnostician"]
+        generate_differential
+        recommend_workup
+        search_clinical_literature
+        rapid_assessment
+    end
+    diagnostician@{
+        model: "claude-sonnet-4-20250514"
+        permits: "llm.query, net.read, llm.embed"
+        prompt: "You are a board-certified emergency physician and diagnostician. You think in probabilistic differentials, not single diagnoses. You always include must-not-miss diagnoses (PE, MI, aortic dissection, ectopic pregnancy, meningitis) even when unlikely. You order tests strategically — each test should change management. You stay current with evidence-based guidelines. IMPORTANT: This is decision support — clinical judgment always supersedes."
+    }
+
+    agent attending["Attending"]
+        suggest_treatment
+    end
+    attending@{
+        model: "claude-sonnet-4-20250514"
+        permits: "llm.query"
+        prompt: "You are a senior attending physician. You create treatment plans that are safe, evidence-based, and practical. You always check drug interactions and allergies before recommending medications. You include clear discharge instructions and return precautions. You think about the whole patient — not just the chief complaint. IMPORTANT: All treatment recommendations require physician review before implementation."
+    }
+
+    agent records_agent["Records Agent"]
+        save_encounter
+    end
+    records_agent@{
+        permits: "db.write"
+        prompt: "You are a clinical documentation agent. You save encounter records to the EHR. Execute writes precisely and confirm completion. Never fabricate confirmations."
+    }
   end
- agent t2["Step 2"]
-        E("generate_html")
-        n9["scandinavian_design<br>(directive)"]
-        n19["Permissions"]
-        n10["website_html<br>(output)"]
-        n21["llmQuery"]
-        n22["netRead"]
-        n23["netWrite"]
-  end
-    n3 --- n7
-    E o--o n9 & n19
-    E --- n10
-    n3 o--o A
-    n19 --> n21 & n22
-    n19 --x n23
-    t1 --> t2
-    t1@{ view: collapsed }
+  ed_team@{
+    view: collapsed
+  }
 
-    n7@{ shape: doc}
-    A@{ shape: lin-doc}
-    n9@{ shape: in-out}
-    n19@{ shape: hex}
-    n10@{ shape: doc}
-    n21@{ shape: terminal}
-    n22@{ shape: terminal}
-    n23@{ shape: terminal}
-    classDef Class_01 stroke:#FFF9C4, fill:#FFF9C4
 
-    </pre>
-    <pre id="diagram4" class="mermaid2">
-agentflow LR
-    research_location["Research"]@{
-      description: "Research a city or location to gather useful local context for a business."
-      requires: ^net.read
-      source: ^search.duckduckgo(query)
-      params:
-        query: String
-      returns: String
-    }
+flow triage_patient["Triage Patient"]
+      direction TB
+      task Step1
+        direction TB
+         aTriage_nurse{{triage_nurse}}@{ agent: triage_nurse } --- assess_vitals@{ shape: subroutine }
+        aTriage_nurse --o acuity@{ shape: doc}
+      end
 
-    write_copy["Write Copy"]@{
-      description: "Write the actual marketing copy for a coffee shop website."
-      requires: ^llm.query
-      params:
-        brief: String
-      returns: String
-    }
+      task Step2
+        direction TB
+         aDiagnostician{{diagnostician}}@{ agent: diagnostician } --- generate_differential@{ shape: subroutine }
+        aDiagnostician --o differential@{ shape: doc}
+      end
 
-    translate_to_swedish["Translate to Swedish"]@{
-      description: "Translate English marketing copy to Swedish. Output both versions."
-      requires: ^llm.query
-      params:
-        english_copy: String
-      returns: String
-    }
+      task Step3
+        direction TB
+         aDiagnostician{{diagnostician}}@{ agent: diagnostician } --- search_clinical_literature@{ shape: subroutine }
+        aDiagnostician --o literature@{ shape: doc}
+      end
 
-    generate_html["Generate HTML"]@{
-      description: "Generate a complete one-page bilingual HTML website with inline CSS and JS."
-      requires: ^llm.query
-      params:
-        content: String
-      returns: String
-    }
+      task Step4
+        direction TB
+         aDiagnostician{{diagnostician}}@{ agent: diagnostician } --- recommend_workup@{ shape: subroutine }
+        aDiagnostician --o workup@{ shape: doc}
+      end
 
-    subgraph researcher
-      research_location --> write_copy
-    end
+      task Step5
+        direction TB
+         anAttending{{attending}}@{ agent: attending } --- suggest_treatment@{ shape: subroutine }
+        anAttending --o treatment@{ shape: doc}
+      end
 
-    subgraph translator
-      translate_to_swedish
-    end
+    Step1 -->|"acuity"| Step2
+    Step2 -->|"differential"| Step3
+    Step3 -->|"literature"| Step4
+    Step4 -->|"workup"| Step5
 
-    subgraph designer
-      generate_html
-    end
+    %% Fan-in for Step4
+    Step3 -->|"differential"| Step4
 
-    %% Orchestration
-    write_copy --> translate_to_swedish
-    translate_to_swedish --> generate_html
+    %% Fan-in for Step5
+    Step4 -->|"differential"| Step5
+end
+  triage_patient@{
+    params: "age: Int, chief_complaint: String, history: String, vitals: String"
+    returns: "String"
+  }
+
+flow route_by_acuity["Route By Acuity"]
+      direction TB
+      task Step1
+        direction TB
+         aTriage_nurse{{triage_nurse}}@{ agent: triage_nurse } --- assess_vitals@{ shape: subroutine }
+        aTriage_nurse --o acuity@{ shape: doc}
+      end
+
+end
+  route_by_acuity@{
+    params: "age: Int, chief_complaint: String, vitals: String"
+    returns: "String"
+  }
+
+flow quick_assess["Quick Assess"]
+      direction TB
+      task Step1
+        direction TB
+         aDiagnostician{{diagnostician}}@{ agent: diagnostician } --- generate_differential@{ shape: subroutine }
+        aDiagnostician --o result@{ shape: doc}
+      end
+
+end
+  quick_assess@{
+    params: "complaint: String, vitals: String"
+    returns: "String"
+  }
+
+template triage_note {
+
+    CHIEF_COMPLAINT: String           <<presenting complaint in patient's words>>
+    VITALS: String           <<HR | BP | RR | SpO2 | Temp | Pain>>
+    HPI: String           <<history of present illness narrative>>
+
+    ACUITY: String           <<ESI level with justification>>
+    PRIMARY_IMPRESSION: String           <<most likely diagnosis>>
+    DIFFERENTIAL: String * 5           <<Diagnosis | Likelihood | Key distinguishing feature>>
+
+    WORKUP: String * 4           <<Test | Priority | Rationale>>
+    DISPOSITION: String           <<recommended patient disposition>>
+  }
+
+template clinical_guideline {
+
+    CRITERIA: String * 3           <<Criterion | Met/Unmet | Evidence>>
+    SCORING: String           <<clinical decision rule score and interpretation>>
+
+    INTERVENTION: String * 4           <<Priority | Intervention | Timing | Monitoring>>
+    MEDICATION: String * 3           <<Drug | Dose | Route | Frequency | Duration>>
+
+    RED_FLAG: String * 3           <<Warning sign | Action required | Urgency>>
+    CONTRAINDICATION: String * 2           <<Medication/Procedure | Reason>>
+  }
+
+    assess_vitals -.-> clinical_reasoning
+    generate_differential -.-> triage_note
+    generate_differential -.-> clinical_reasoning
+    generate_differential -.-> patient_safety
+    recommend_workup -.-> clinical_reasoning
+    suggest_treatment -.-> clinical_guideline
+    suggest_treatment -.-> clinical_reasoning
+    suggest_treatment -.-> patient_safety
+
+%% ── Deferred node metadata ──
+assess_vitals@{ shape: subroutine, returns: "String", requires: "^llm.query" }
+generate_differential@{ shape: subroutine, returns: "String", requires: "^llm.query" }
+recommend_workup@{ shape: subroutine, returns: "String", requires: "^llm.query" }
+search_clinical_literature@{ shape: subroutine, returns: "String", requires: "^net.read, ^llm.embed", cache: "12h" }
+rapid_assessment@{ shape: stadium }
+suggest_treatment@{ shape: subroutine, returns: "String", requires: "^llm.query" }
+save_encounter@{ shape: subroutine, returns: "String", requires: "^db.write" }
 
     </pre>
 

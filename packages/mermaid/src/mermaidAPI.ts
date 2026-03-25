@@ -425,8 +425,12 @@ const render = async function (
 
   // -------------------------------------------------------------------------------
   // Draw the diagram with the renderer
+  let drawData: Record<string, unknown> | undefined;
   try {
-    await diag.renderer.draw(text, id, injected.version, diag);
+    const drawResult = await diag.renderer.draw(text, id, injected.version, diag);
+    if (drawResult && typeof drawResult === 'object') {
+      drawData = drawResult as Record<string, unknown>;
+    }
   } catch (e) {
     if (config.suppressErrorRendering) {
       removeTempElements();
@@ -475,6 +479,7 @@ const render = async function (
     diagramType,
     svg: svgCode,
     bindFunctions: diag.db.bindFunctions,
+    ...(drawData ? { data: drawData } : {}),
   };
 };
 
