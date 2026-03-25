@@ -9,7 +9,6 @@ import usecaseDb from './usecaseDb.js';
 
 const ucDb: UseCaseDB = usecaseDb;
 
-// D3's select() queries the live DOM so the parent type is HTMLElement, not null.
 type D3Svg = Selection<SVGSVGElement, unknown, HTMLElement, any>;
 type D3Group = Selection<SVGGElement, unknown, HTMLElement, any>;
 type D3Defs = Selection<SVGDefsElement, unknown, HTMLElement, any>;
@@ -116,12 +115,12 @@ function resolveTheme(): Theme {
   };
 }
 
-function buildDefs(defs: D3Defs, t: Theme): void {
+function buildDefs(defs: D3Defs, t: Theme, id: string): void {
   const s = t.lineColor;
 
   const arrowOpen = defs
     .append('marker')
-    .attr('id', 'uc-arrow-open')
+    .attr('id', id + 'uc-arrow-open')
     .attr('markerWidth', 12)
     .attr('markerHeight', 12)
     .attr('refX', 11)
@@ -138,7 +137,7 @@ function buildDefs(defs: D3Defs, t: Theme): void {
 
   const arrowHollow = defs
     .append('marker')
-    .attr('id', 'uc-arrow-hollow')
+    .attr('id', id + 'uc-arrow-hollow')
     .attr('markerWidth', 12)
     .attr('markerHeight', 12)
     .attr('refX', 12)
@@ -153,7 +152,7 @@ function buildDefs(defs: D3Defs, t: Theme): void {
 
   const arrowhead = defs
     .append('marker')
-    .attr('id', 'uc-arrowhead')
+    .attr('id', id + 'uc-arrowhead')
     .attr('markerWidth', 10)
     .attr('markerHeight', 7)
     .attr('refX', 9)
@@ -163,7 +162,7 @@ function buildDefs(defs: D3Defs, t: Theme): void {
 
   const circleCross = defs
     .append('marker')
-    .attr('id', 'uc-circle-cross')
+    .attr('id', id + 'uc-circle-cross')
     .attr('markerWidth', 14)
     .attr('markerHeight', 14)
     .attr('refX', 7)
@@ -382,7 +381,8 @@ function drawConnector(
   conn: Connection,
   layout: LayoutData,
   notes: Record<string, string>,
-  t: Theme
+  t: Theme,
+  id: string
 ): void {
   const type = conn.type;
   const systemRightEdge = layout.boundaryLeft + layout.boundaryWidth;
@@ -402,16 +402,16 @@ function drawConnector(
   let markerEnd = '';
   let markerStart = '';
   if (['include', 'extend', 'dependency'].includes(type)) {
-    markerEnd = 'url(#uc-arrow-open)';
+    markerEnd = `url(#${id}uc-arrow-open)`;
   }
   if (['generalization', 'realization'].includes(type)) {
-    markerEnd = 'url(#uc-arrow-hollow)';
+    markerEnd = `url(#${id}uc-arrow-hollow)`;
   }
   if (type === 'association') {
-    markerEnd = 'url(#uc-arrowhead)';
+    markerEnd = `url(#${id}uc-arrowhead)`;
   }
   if (type === 'containment') {
-    markerStart = 'url(#uc-circle-cross)';
+    markerStart = `url(#${id}uc-circle-cross)`;
   }
 
   const toId = conn.to;
@@ -601,7 +601,7 @@ export const draw: DiagramDefinition['renderer']['draw'] = (text, id, _version, 
     .style('background', 'white');
 
   const defs = svg.append('defs') as unknown as D3Defs;
-  buildDefs(defs, t);
+  buildDefs(defs, t, id);
 
   if (model.system) {
     drawSystemBoundary(
@@ -619,7 +619,7 @@ export const draw: DiagramDefinition['renderer']['draw'] = (text, id, _version, 
     const p1 = layout.positions[conn.from];
     const p2 = layout.positions[conn.to];
     if (p1 && p2) {
-      drawConnector(svg, p1.x, p1.y, p2.x, p2.y, conn, layout, model.notes, t);
+      drawConnector(svg, p1.x, p1.y, p2.x, p2.y, conn, layout, model.notes, t, id);
     }
   });
 

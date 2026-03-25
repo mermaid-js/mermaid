@@ -2,14 +2,28 @@ FROM node:22.12.0-alpine3.19@sha256:40dc4b415c17b85bea9be05314b4a753f45a4e1716bb
 
 USER 0:0
 
-RUN corepack disable \
-    && npm install -g pnpm@10.30.3 --force
+RUN corepack enable && corepack enable pnpm
 
-RUN apk add --no-cache git~=2.43 \
+RUN apk add --no-cache \
+    git~=2.43 \
+    python3 \
+    make \
+    g++ \
+    curl \
+    pixman-dev \
+    cairo-dev \
+    pango-dev \
+    libjpeg-turbo-dev \
+    giflib-dev \
     && git config --add --system safe.directory /mermaid
+
+RUN mkdir -p /root/.node-gyp/22.12.0 && \
+    curl -sSL https://nodejs.org/dist/v22.12.0/node-v22.12.0-headers.tar.gz | tar -xzf - -C /root/.node-gyp/22.12.0 --strip-components=1 && \
+    echo "9" > /root/.node-gyp/22.12.0/installVersion
 
 WORKDIR /mermaid
 
 ENV NODE_OPTIONS="--max_old_space_size=8192"
+ENV npm_config_nodedir="/root/.node-gyp/22.12.0"
 
 EXPOSE 9000 3333
