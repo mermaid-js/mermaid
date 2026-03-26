@@ -1,0 +1,23 @@
+// cspell:ignore usecase usecases usecasediagram usecaserenderer collab collabs colour bbox
+import type { DiagramDefinition } from '../../diagram-api/types.js';
+import type { UseCaseDB } from './usecaseDb.js';
+import db from './usecaseDb.js';
+import renderer from './usecaseRenderer.js';
+import styles from './usecaseStyles.js';
+
+const ucDb: UseCaseDB = db;
+
+const parser = {
+  parse: (text: string): void => {
+    ucDb.clear();
+    ucDb.parseDiagram(text);
+  },
+  yy: ucDb,
+};
+
+export const diagram: DiagramDefinition = {
+  db,
+  renderer,
+  parser,
+  styles,
+};
