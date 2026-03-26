@@ -4,7 +4,6 @@ import db from './usecaseDb.js';
 beforeEach(() => db.clear());
 
 describe('usecaseDb parser - Extended Suite', () => {
-  
   describe('Entity Definitions', () => {
     it('parses actors with and without quotes/aliases', () => {
       db.parseDiagram(`usecaseDiagram
@@ -65,8 +64,8 @@ describe('usecaseDb parser - Extended Suite', () => {
         association: A-->B`;
       db.parseDiagram(code);
       const connections = db.getConnections();
-      
-      const types = connections.map(c => c.type);
+
+      const types = connections.map((c) => c.type);
       expect(types).toContain('include');
       expect(types).toContain('extend');
       expect(types).toContain('generalization');

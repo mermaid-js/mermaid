@@ -326,7 +326,7 @@ properties:
     $ref: '#/$defs/BlockDiagramConfig'
   treeView:
     $ref: '#/$defs/TreeViewDiagramConfig'
-  usecase: 
+  usecase:
     $ref: '#/$defs/UsecaseDiagramConfig'
   radar:
     $ref: '#/$defs/RadarDiagramConfig'

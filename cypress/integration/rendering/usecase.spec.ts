@@ -109,11 +109,11 @@ describe('Usecase diagram', () => {
           usecase U
           A --> U
         `,
-        { 
-          usecase: { 
-            actorMargin: 100, 
-            useCaseMargin: 80 
-          } 
+        {
+          usecase: {
+            actorMargin: 100,
+            useCaseMargin: 80,
+          },
         }
       );
     });
