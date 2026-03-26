@@ -36,7 +36,7 @@ const injectIconDefs = (svg: D3SVGElement<SVGSVGElement>, root: Node, diagramId:
     defs
       .append('symbol')
       .attr('id', `tv-icon-${diagramId}-${iconId}`)
-      .attr('viewBox', '0 0 16 16')
+      .attr('viewBox', '0 0 24 24')
       .append('path')
       .attr('d', path);
   }
