@@ -23,7 +23,7 @@ interface RenderInfo {
 const injectIconDefs = (svg: D3SVGElement<SVGSVGElement>, root: Node, diagramId: string) => {
   const usedIcons = new Set<string>();
   const collect = (node: Node) => {
-    if (node.iconId) {
+    if (node.iconId && node.iconId !== 'none') {
       usedIcons.add(node.iconId);
     }
     node.children.forEach(collect);
@@ -59,9 +59,10 @@ const positionLabel = (
     cssClasses += ` ${node.cssClass}`;
   }
 
-  // Icon
+  // Icon — skip if iconId is 'none' or showIcons is disabled
   const iconOffset = ICON_SIZE + ICON_GAP;
-  if (node.iconId) {
+  const showIcon = config.showIcons !== false && node.iconId && node.iconId !== 'none';
+  if (showIcon) {
     nodeGroup
       .append('use')
       .attr('href', `#tv-icon-${diagramId}-${node.iconId}`)
@@ -80,12 +81,12 @@ const positionLabel = (
     .attr('class', cssClasses);
   const { height: labelHeight, width: labelWidth } = label.node()!.getBBox();
   const height = labelHeight + config.paddingY * 2;
-  const labelX = x + config.paddingX + (node.iconId ? iconOffset : 0);
+  const labelX = x + config.paddingX + (showIcon ? iconOffset : 0);
   label.attr('x', labelX);
   label.attr('y', y + height / 2);
 
   const labelRightEdge = labelX + labelWidth;
-  const width = labelWidth + config.paddingX * 2 + (node.iconId ? iconOffset : 0);
+  const width = labelWidth + config.paddingX * 2 + (showIcon ? iconOffset : 0);
   node.BBox = { x, y, width, height };
 
   // Highlight background rect (sized later in drawTree)
@@ -219,7 +220,9 @@ const draw: DrawDefinition = (text, id, _ver, diagObj) => {
   const svg = selectSvgElement(id);
 
   // Inject icon definitions (scoped to diagramId to avoid duplicates)
-  injectIconDefs(svg, root, id);
+  if (config.showIcons !== false) {
+    injectIconDefs(svg, root, id);
+  }
 
   const treeElem = svg.append('g');
   treeElem.attr('class', 'tree-view');

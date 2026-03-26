@@ -178,4 +178,33 @@ describe('parseNodeContent', () => {
       expect(result.iconId).toBe('folder');
     });
   });
+
+  describe('icon suppression', () => {
+    it('should set iconId to none for icon(none)', () => {
+      const result = parseNodeContent('index.js icon(none)');
+      expect(result.name).toBe('index.js');
+      expect(result.iconId).toBe('none');
+    });
+
+    it('should set iconId to none for empty icon()', () => {
+      const result = parseNodeContent('index.js icon()');
+      expect(result.name).toBe('index.js');
+      expect(result.iconId).toBe('none');
+    });
+
+    it('should suppress icon on a directory', () => {
+      const result = parseNodeContent('src/ icon(none)');
+      expect(result.name).toBe('src');
+      expect(result.nodeType).toBe('directory');
+      expect(result.iconId).toBe('none');
+    });
+
+    it('should combine icon(none) with other annotations', () => {
+      const result = parseNodeContent('app.ts icon(none) :::highlight ## entry point');
+      expect(result.name).toBe('app.ts');
+      expect(result.iconId).toBe('none');
+      expect(result.cssClass).toBe('highlight');
+      expect(result.description).toBe('entry point');
+    });
+  });
 });

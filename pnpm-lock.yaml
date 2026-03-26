@@ -302,6 +302,9 @@ importers:
       '@iconify/types':
         specifier: ^2.0.0
         version: 2.0.0
+      '@mdi/js':
+        specifier: ^7.4.47
+        version: 7.4.47
       '@types/cytoscape':
         specifier: ^3.21.9
         version: 3.21.9
@@ -2584,6 +2587,9 @@ packages:
 
   '@mdi/font@7.4.47':
     resolution: {integrity: sha512-43MtGpd585SNzHZPcYowu/84Vz2a2g31TvPMTm9uTiCSWzaheQySUcSyUH/46fPnuPQWof2yd0pGBtzee/IQWw==}
+
+  '@mdi/js@7.4.47':
+    resolution: {integrity: sha512-KPnNOtm5i2pMabqZxpUz7iQf+mfrYZyKCZ8QNz85czgEt7cuHcGorWfdzUMWYA0SD+a6Hn4FmJ+YhzzzjkTZrQ==}
 
   '@microsoft/tsdoc-config@0.17.1':
     resolution: {integrity: sha512-UtjIFe0C6oYgTnad4q1QP4qXwLhe6tIpNTRStJ2RZEPIkqQPREAwE5spzVxsdn9UaEMUqhh0AqSx3X4nWAKXWw==}
@@ -12482,6 +12488,8 @@ snapshots:
       read-yaml-file: 1.1.0
 
   '@mdi/font@7.4.47': {}
+
+  '@mdi/js@7.4.47': {}
 
   '@microsoft/tsdoc-config@0.17.1':
     dependencies:

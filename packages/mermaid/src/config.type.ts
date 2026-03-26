@@ -1645,6 +1645,10 @@ export interface TreeViewDiagramConfig extends BaseDiagramConfig {
    * Thickness of the line
    */
   lineThickness?: number;
+  /**
+   * Whether to show file/folder icons next to labels
+   */
+  showIcons?: boolean;
 }
 /**
  * The object containing configurations specific for radar diagrams.

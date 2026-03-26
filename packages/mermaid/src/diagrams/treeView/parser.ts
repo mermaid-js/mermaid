@@ -72,10 +72,10 @@ export function parseNodeContent(raw: string): ParsedNodeContent {
     remaining = remaining.replace(classMatch[0], '').trim();
   }
 
-  // Extract icon(name)
-  const iconMatch = /icon\(([\w-]+)\)/.exec(remaining);
+  // Extract icon(name) or icon(none) or icon() to suppress
+  const iconMatch = /icon\(([\w-]*)\)/.exec(remaining);
   if (iconMatch) {
-    iconId = iconMatch[1];
+    iconId = iconMatch[1] || 'none';
   }
 
   // Detect directory: trailing / on the name
