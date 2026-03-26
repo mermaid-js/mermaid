@@ -133,7 +133,7 @@ looks.forEach((look) => {
 
         it(`with classDef`, () => {
           let flowchartCode = `flowchart ${direction}\n`;
-          flowchartCode += `  classDef customClazz fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5\n`;
+          flowchartCode += `  classDef customClazz fill:#bbf,stroke:#f66,stroke-width:2px,color:#000,stroke-dasharray: 5 5\n`;
           newShapesSet.forEach((newShape, index) => {
             flowchartCode += `  n${index} --> n${index}${index}@{ shape: ${newShape}, label: 'new ${newShape} shape' }\n`;
             flowchartCode += `  n${index}${index}:::customClazz\n`;
