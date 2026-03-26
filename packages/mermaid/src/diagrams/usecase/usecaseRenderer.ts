@@ -11,7 +11,6 @@ const ucDb: UseCaseDB = usecaseDb;
 
 type D3Svg = Selection<SVGSVGElement, unknown, HTMLElement, any>;
 type D3Group = Selection<SVGGElement, unknown, HTMLElement, any>;
-type D3Defs = Selection<SVGDefsElement, unknown, HTMLElement, any>;
 
 interface Position {
   x: number;
@@ -115,12 +114,12 @@ function resolveTheme(): Theme {
   };
 }
 
-function buildDefs(defs: D3Defs, t: Theme, id: string): void {
+function buildDefs(defs: Selection<SVGDefsElement, unknown, HTMLElement, unknown>, t: Theme, diagramId: string): void {
   const s = t.lineColor;
 
   const arrowOpen = defs
     .append('marker')
-    .attr('id', id + 'uc-arrow-open')
+    .attr('id', `${diagramId}uc-arrow-open`)
     .attr('markerWidth', 12)
     .attr('markerHeight', 12)
     .attr('refX', 11)
@@ -137,7 +136,7 @@ function buildDefs(defs: D3Defs, t: Theme, id: string): void {
 
   const arrowHollow = defs
     .append('marker')
-    .attr('id', id + 'uc-arrow-hollow')
+    .attr('id', `${diagramId}uc-arrow-hollow`)
     .attr('markerWidth', 12)
     .attr('markerHeight', 12)
     .attr('refX', 12)
@@ -152,7 +151,7 @@ function buildDefs(defs: D3Defs, t: Theme, id: string): void {
 
   const arrowhead = defs
     .append('marker')
-    .attr('id', id + 'uc-arrowhead')
+    .attr('id', `${diagramId}uc-arrowhead`)
     .attr('markerWidth', 10)
     .attr('markerHeight', 7)
     .attr('refX', 9)
@@ -162,7 +161,7 @@ function buildDefs(defs: D3Defs, t: Theme, id: string): void {
 
   const circleCross = defs
     .append('marker')
-    .attr('id', id + 'uc-circle-cross')
+    .attr('id', `${diagramId}uc-circle-cross`)
     .attr('markerWidth', 14)
     .attr('markerHeight', 14)
     .attr('refX', 7)
@@ -380,9 +379,8 @@ function drawConnector(
   y2: number,
   conn: Connection,
   layout: LayoutData,
-  notes: Record<string, string>,
   t: Theme,
-  id: string
+  diagramId: string
 ): void {
   const type = conn.type;
   const systemRightEdge = layout.boundaryLeft + layout.boundaryWidth;
@@ -402,22 +400,24 @@ function drawConnector(
   let markerEnd = '';
   let markerStart = '';
   if (['include', 'extend', 'dependency'].includes(type)) {
-    markerEnd = `url(#${id}uc-arrow-open)`;
+    markerEnd = `url(#${diagramId}uc-arrow-open)`;
   }
   if (['generalization', 'realization'].includes(type)) {
-    markerEnd = `url(#${id}uc-arrow-hollow)`;
+    markerEnd = `url(#${diagramId}uc-arrow-hollow)`;
   }
   if (type === 'association') {
-    markerEnd = `url(#${id}uc-arrowhead)`;
+    markerEnd = `url(#${diagramId}uc-arrowhead)`;
   }
   if (type === 'containment') {
-    markerStart = `url(#${id}uc-circle-cross)`;
+    markerStart = `url(#${diagramId}uc-circle-cross)`;
   }
 
   const toId = conn.to;
   const fromId = conn.from;
-  const isInternal = (id: string) =>
-    !layout.actorIds.has(id) && !layout.extIds.has(id) && !layout.noteIds.has(id);
+  const isInternal = (nodeId: string) =>
+    !layout.actorIds.has(nodeId) &&
+    !layout.extIds.has(nodeId) &&
+    !layout.noteIds.has(nodeId);
   const isInternalLink = isInternal(fromId) && isInternal(toId);
 
   let pathD: string;
@@ -438,7 +438,13 @@ function drawConnector(
     const dy = y2 - y1;
     const angle = Math.atan2(dy, dx);
 
-    const getEllipsePoint = (cx: number, cy: number, rx: number, ry: number, reverse: boolean) => {
+    const getEllipsePoint = (
+      cx: number,
+      cy: number,
+      rx: number,
+      ry: number,
+      reverse: boolean
+    ) => {
       const a = reverse ? angle + Math.PI : angle;
       return { x: cx + rx * Math.cos(a), y: cy + ry * Math.sin(a) };
     };
@@ -597,10 +603,9 @@ export const draw: DiagramDefinition['renderer']['draw'] = (text, id, _version, 
   svg
     .attr('width', layout.width)
     .attr('height', layout.height)
-    .attr('viewBox', `0 0 ${layout.width} ${layout.height}`)
-    .style('background', 'white');
+    .attr('viewBox', `0 0 ${layout.width} ${layout.height}`);
 
-  const defs = svg.append('defs') as unknown as D3Defs;
+  const defs = svg.append('defs');
   buildDefs(defs, t, id);
 
   if (model.system) {
@@ -619,7 +624,7 @@ export const draw: DiagramDefinition['renderer']['draw'] = (text, id, _version, 
     const p1 = layout.positions[conn.from];
     const p2 = layout.positions[conn.to];
     if (p1 && p2) {
-      drawConnector(svg, p1.x, p1.y, p2.x, p2.y, conn, layout, model.notes, t, id);
+      drawConnector(svg, p1.x, p1.y, p2.x, p2.y, conn, layout, t, id);
     }
   });
 
@@ -654,12 +659,15 @@ export const draw: DiagramDefinition['renderer']['draw'] = (text, id, _version, 
     }
   });
 
-  let el: HTMLElement | null = svg.node()!.parentElement;
-  while (el && el.tagName !== 'BODY') {
-    el.style.width = `${layout.width}px`;
-    el.style.height = `${layout.height}px`;
-    el.style.overflow = 'visible';
-    el = el.parentElement;
+  const svgNode = svg.node();
+  if (svgNode) {
+    let el: HTMLElement | null = svgNode.parentElement;
+    while (el && el.tagName !== 'BODY') {
+      el.style.width = `${layout.width}px`;
+      el.style.height = `${layout.height}px`;
+      el.style.overflow = 'visible';
+      el = el.parentElement;
+    }
   }
 };
 
