@@ -9,13 +9,30 @@
       body {
         background-color: #0f172a; /* Dark mode for better contrast */
         color: #f8fafc;
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        font-family:
+          'Inter',
+          system-ui,
+          -apple-system,
+          sans-serif;
         padding: 40px;
         line-height: 1.6;
       }
-      .container { max-width: 1000px; margin: 0 auto; }
-      h1 { border-bottom: 2px solid #334155; padding-bottom: 10px; color: #38bdf8; }
-      h3 { margin-top: 40px; color: #94a3b8; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.05em; }
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      h1 {
+        border-bottom: 2px solid #334155;
+        padding-bottom: 10px;
+        color: #38bdf8;
+      }
+      h3 {
+        margin-top: 40px;
+        color: #94a3b8;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 0.05em;
+      }
       .mermaid {
         background: #1e293b;
         border: 1px solid #334155;
@@ -24,7 +41,11 @@
         margin-top: 10px;
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
       }
-      hr { border: 0; border-top: 1px solid #334155; margin: 40px 0; }
+      hr {
+        border: 0;
+        border-top: 1px solid #334155;
+        margin: 40px 0;
+      }
     </style>
   </head>
 
@@ -33,7 +54,9 @@
       <h1>Usecase Implementation: Edge Cases 🧪</h1>
 
       <h3>1. The "Spider Web" (Multi-Actor & Inheritance)</h3>
-      <p>Tests if markers point to the correct center-point of actors and handle overlapping lines.</p>
+      <p>
+        Tests if markers point to the correct center-point of actors and handle overlapping lines.
+      </p>
       <pre class="mermaid">
       usecaseDiagram
         actor "Guest" as G
@@ -131,7 +154,7 @@
           actorMargin: 50,
           useCaseMargin: 35,
           fill: '#38bdf8',
-          stroke: '#f8fafc'
+          stroke: '#f8fafc',
         },
         themeVariables: {
           primaryColor: '#38bdf8',
@@ -139,8 +162,8 @@
           primaryBorderColor: '#0ea5e9',
           lineColor: '#94a3b8',
           secondaryColor: '#1e293b',
-          tertiaryColor: '#334155'
-        }
+          tertiaryColor: '#334155',
+        },
       });
     </script>
   </body>

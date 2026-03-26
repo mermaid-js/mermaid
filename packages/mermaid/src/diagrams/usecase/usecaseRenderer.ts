@@ -114,7 +114,11 @@ function resolveTheme(): Theme {
   };
 }
 
-function buildDefs(defs: Selection<SVGDefsElement, unknown, HTMLElement, unknown>, t: Theme, diagramId: string): void {
+function buildDefs(
+  defs: Selection<SVGDefsElement, unknown, HTMLElement, unknown>,
+  t: Theme,
+  diagramId: string
+): void {
   const s = t.lineColor;
 
   const arrowOpen = defs
@@ -415,9 +419,7 @@ function drawConnector(
   const toId = conn.to;
   const fromId = conn.from;
   const isInternal = (nodeId: string) =>
-    !layout.actorIds.has(nodeId) &&
-    !layout.extIds.has(nodeId) &&
-    !layout.noteIds.has(nodeId);
+    !layout.actorIds.has(nodeId) && !layout.extIds.has(nodeId) && !layout.noteIds.has(nodeId);
   const isInternalLink = isInternal(fromId) && isInternal(toId);
 
   let pathD: string;
@@ -438,13 +440,7 @@ function drawConnector(
     const dy = y2 - y1;
     const angle = Math.atan2(dy, dx);
 
-    const getEllipsePoint = (
-      cx: number,
-      cy: number,
-      rx: number,
-      ry: number,
-      reverse: boolean
-    ) => {
+    const getEllipsePoint = (cx: number, cy: number, rx: number, ry: number, reverse: boolean) => {
       const a = reverse ? angle + Math.PI : angle;
       return { x: cx + rx * Math.cos(a), y: cy + ry * Math.sin(a) };
     };
