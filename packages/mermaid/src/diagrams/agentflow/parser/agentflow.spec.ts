@@ -1858,4 +1858,73 @@ describe('parsing an agentflow diagram', function () {
       expect(node?.metadata?.fallbacks).toBe('retry-3, escalate');
     });
   });
+
+  describe('group container', function () {
+    it('should parse a group with a quoted label', function () {
+      agentflow.parser.parse(`agentflow LR
+        group layout_group["My Group"]
+          A --> B
+        end
+      `);
+
+      const subGraphs = agentflow.parser.yy.getSubGraphs();
+      expect(subGraphs).toHaveLength(1);
+      expect(subGraphs[0].id).toBe('layout_group');
+      expect(subGraphs[0].title).toBe('My Group');
+      expect(subGraphs[0].type).toBe('group');
+    });
+
+    it('should parse a group without a label', function () {
+      agentflow.parser.parse(`agentflow LR
+        group myGroup
+          A
+        end
+      `);
+
+      const subGraphs = agentflow.parser.yy.getSubGraphs();
+      expect(subGraphs).toHaveLength(1);
+      expect(subGraphs[0].id).toBe('myGroup');
+      expect(subGraphs[0].title).toBe('');
+      expect(subGraphs[0].type).toBe('group');
+    });
+
+    it('should parse an anonymous group', function () {
+      agentflow.parser.parse(`agentflow LR
+        group
+          A
+        end
+      `);
+
+      const subGraphs = agentflow.parser.yy.getSubGraphs();
+      expect(subGraphs).toHaveLength(1);
+      expect(subGraphs[0].type).toBe('group');
+    });
+
+    it('should produce groupGroup shape in getData()', function () {
+      agentflow.parser.parse(`agentflow LR
+        group g1["Layout Group"]
+          A --> B
+        end
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const groupNode = data.nodes.find((n: { id: string }) => n.id === 'g1');
+      expect(groupNode).toBeDefined();
+      expect(groupNode?.isGroup).toBe(true);
+      expect(groupNode?.shape).toBe('groupGroup');
+    });
+
+    it('should support algorithm metadata on the container', function () {
+      agentflow.parser.parse(`agentflow LR
+        group g1["Stress Layout"]
+          A --> B
+        end
+        g1@{ algorithm: "elk.stress" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const groupNode = data.nodes.find((n: { id: string }) => n.id === 'g1');
+      expect(groupNode?.metadata?.algorithm).toBe('elk.stress');
+    });
+  });
 });

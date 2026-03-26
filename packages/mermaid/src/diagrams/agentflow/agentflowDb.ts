@@ -54,6 +54,7 @@ const SUBGRAPH_TYPE_TO_SHAPE: Record<NonNullable<FlowSubGraph['type']>, ClusterS
   skill: 'skillGroup',
   test: 'testGroup',
   directive: 'directiveGroup',
+  group: 'groupGroup',
   types: 'typesGroup',
   templates: 'templatesGroup',
   subgraph: 'rect',

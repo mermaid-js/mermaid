@@ -1,7 +1,7 @@
 import type { LayoutLoaderDefinition } from 'mermaid';
 
 const loader = async () => await import(`./render.js`);
-const algos = ['elk.stress', 'elk.force', 'elk.mrtree', 'elk.sporeOverlap'];
+const algos = ['elk.stress', 'elk.force', 'elk.mrtree', 'elk.sporeOverlap', 'elk.box'];
 
 const layouts: LayoutLoaderDefinition[] = [
   {

@@ -1,4 +1,33 @@
-# Agentflow Syntax Reference
+# Agentflow Syntax Specification
+
+|             |                                |
+| ----------- | ------------------------------ |
+| **Version** | 0.4.0                          |
+| **Status**  | Draft                          |
+| **Date**    | 2026-03-25                     |
+| **Authors** | Mermaid-Chart / Agentflow Team |
+
+## Revision History
+
+| Version | Date       | Summary                                                                                                                                                                                                                                                                                                                                                                                          |
+| ------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0.1.0   | 2026-03-14 | Initial syntax reference: `agent`, `flow`, `task` containers; node shapes; edge types; type declarations; templates; styling; accessibility; complete example.                                                                                                                                                                                                                                   |
+| 0.2.0   | 2026-03-16 | Add diamond shape for decisions; document inline `{text}` syntax; add Decision / Alternate Flow pattern.                                                                                                                                                                                                                                                                                         |
+| 0.3.0   | 2026-03-25 | Add `skill`, `testCase`, `directive` containers with theme support. Add `trapezoid`, `inv-trapezoid`, `double-circle` shapes. Add template sections. Extend metadata fields (strategy, assert, expects, severity, context, rule, validate, handler, directives, transport, command, memory, execution, fallbacks). Add Directive, Lesson, Fallback, MCP Connection, Parallel Execution patterns. |
+| 0.4.0   | 2026-03-25 | Add definition/instance pattern with 5 instance shapes (`tag-rect`, `delay`, `lin-rect`, `win-pane`, `curv-trap`). Add `def` core metadata field for instance-to-definition binding. Formalize as versioned specification with revision history.                                                                                                                                                 |
+
+## Specification Governance
+
+This document is a **contract**. Downstream teams build tooling, renderers, and diagram libraries against the semantic mappings defined here.
+
+**Rules:**
+
+1. **No semantic drift.** Once a shape, keyword, or edge type is assigned a meaning in a released version, that meaning is locked. It cannot be changed without a major version bump and explicit migration path.
+2. **Additive changes only** in minor versions. New shapes, keywords, fields, and patterns may be added. Existing definitions must not be altered.
+3. **Every change gets a revision entry.** No undocumented modifications.
+4. **`type` field is reserved** for type/template references (used by `procs` shape). Instance references use `def`.
+
+---
 
 Agentflow is a diagram type for describing multi-agent systems — who does what, what data flows where, what permissions govern the system, and what contracts bind the parts together.
 
@@ -180,6 +209,36 @@ Set explicitly via `@{ shape: <name> }`:
 | `double-circle` | `doublecircle`   | Double circle                 | A **test assertion node** — signals a verification checkpoint or assertion in a test flow. Note: inline syntax `(((...)))` produces the legacy alias `doublecircle`; prefer `@{ shape: double-circle }`.                             |
 | `rect`          | `squareRect`     | Square rectangle              | Remapped to `roundedRect` at render time. Equivalent to the default shape.                                                                                                                                                           |
 
+#### Instance Shapes
+
+Instance shapes represent a **reference to a defined element**. The element is defined once (as a container with full metadata) and then instantiated as a lightweight node elsewhere in the diagram. The instance inherits all metadata from its definition via the `def` field.
+
+Set via `@{ shape: <instance-shape>, def: "<definition-id>" }`:
+
+| Shape ID                 | Aliases     | Visual                   | Instance Of              | Semantic Meaning                                                                                                          |
+| ------------------------ | ----------- | ------------------------ | ------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| `tagged-rectangle`       | `tag-rect`  | Rectangle with a tag/tab | **Agent** definition     | An **agent instance** — a reference to an agent defined elsewhere. The tag signals "this is a labeled reference."         |
+| `half-rounded-rectangle` | `delay`     | Half-rounded rectangle   | **Flow** definition      | A **flow instance** — a reference to a flow defined elsewhere. The half-round echoes the flow container's rounded border. |
+| `lined-rectangle`        | `lin-rect`  | Lined/shaded rectangle   | **Skill** definition     | A **skill instance** — a reference to a skill defined elsewhere. The shading distinguishes it from plain nodes.           |
+| `window-pane`            | `win-pane`  | Four-pane window         | **Tool** definition      | A **tool instance** — a reference to a tool defined elsewhere. The grid suggests an API/interface surface.                |
+| `curved-trapezoid`       | `curv-trap` | Curved trapezoid         | **Directive** definition | A **directive instance** — a reference to a directive defined elsewhere. Echoes the trapezoid used for directive nodes.   |
+
+**Usage:**
+
+```
+agent researcher["Researcher"]
+  task step1["Research"]
+    search["search"]
+  end
+end
+researcher@{ model: "claude-sonnet-4-20250514", permits: "net.read, llm.query" }
+
+researcher_inst["Researcher"]
+researcher_inst@{ shape: tag-rect, def: "researcher" }
+```
+
+The instance node `researcher_inst` inherits all metadata (model, permits) from the `researcher` definition via `def`. No need to repeat it.
+
 ### Node Metadata Fields
 
 All metadata is set via `@{ key: value, ... }`:
@@ -201,6 +260,7 @@ These fields are interpreted by the rendering engine:
 | Field           | Purpose                                     | Example                           |
 | --------------- | ------------------------------------------- | --------------------------------- |
 | `shape`         | Override node shape                         | `subroutine`, `doc`, `lean-right` |
+| `def`           | Definition reference (for instance shapes)  | `"researcher"`, `"build_site"`    |
 | `view`          | Collapse/expand control                     | `"collapsed"`, `"expanded"`       |
 | `type`          | Type reference (for `procs` shape)          | `"CoffeeCopy"`                    |
 | `src`           | External file reference (for `procs` shape) | `"./permit-tree.mmd"`             |
@@ -602,6 +662,38 @@ flow pipeline["Pipeline"]
   a1 -- Result --> a2
 end
 ```
+
+### Definition / Instance Pattern
+
+Define an element once with full metadata, then place lightweight instances that reference the definition:
+
+```
+agent researcher["Researcher"]
+  task research["Research Task"]
+    search["search"]
+    search@{ shape: subroutine, returns: "String", requires: "net.read" }
+  end
+end
+researcher@{ model: "claude-sonnet-4-20250514", permits: "net.read, llm.query" }
+
+flow pipeline["Pipeline"]
+  r1["Researcher"]
+  r2["Researcher"]
+  r1 --> r2
+end
+r1@{ shape: tag-rect, def: "researcher" }
+r2@{ shape: tag-rect, def: "researcher" }
+```
+
+Both `r1` and `r2` inherit all metadata from the `researcher` definition. Each instance type has its own shape:
+
+| Definition container | Instance shape           | Instance aliases |
+| -------------------- | ------------------------ | ---------------- |
+| `agent ... end`      | `tagged-rectangle`       | `tag-rect`       |
+| `flow ... end`       | `half-rounded-rectangle` | `delay`          |
+| `skill ... end`      | `lined-rectangle`        | `lin-rect`       |
+| tool (`subroutine`)  | `window-pane`            | `win-pane`       |
+| `directive ... end`  | `curved-trapezoid`       | `curv-trap`      |
 
 ---
 

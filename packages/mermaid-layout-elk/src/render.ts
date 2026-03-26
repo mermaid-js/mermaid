@@ -836,6 +836,10 @@ export const render = async (
         node.layoutOptions['elk.algorithm'] = algo;
         node.layoutOptions['elk.hierarchyHandling'] = 'SEPARATE_CHILDREN';
         node.layoutOptions['elk.aspectRatio'] = '2.0';
+        node.layoutOptions['elk.contentAlignment'] = 'H_CENTER V_TOP';
+        node.layoutOptions['elk.expandNodes'] = 'true';
+        // Reserve top padding for the label so children don't overlap it
+        node.layoutOptions['elk.padding'] = `[top=${labelH + 15},left=15,bottom=15,right=15]`;
       } else if (node.dir) {
         // Directional subgraph without explicit algorithm — use the parent layered algorithm
         node.layoutOptions['elk.algorithm'] = algorithm;

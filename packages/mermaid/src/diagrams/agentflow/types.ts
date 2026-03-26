@@ -92,7 +92,8 @@ export interface FlowSubGraph {
     | 'templates'
     | 'skill'
     | 'test'
-    | 'directive';
+    | 'directive'
+    | 'group';
   metadata?: Record<string, unknown>;
 }
 

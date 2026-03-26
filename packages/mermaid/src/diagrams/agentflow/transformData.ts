@@ -29,6 +29,17 @@ const ALLOWED_SHAPES = new Set([
   'trapezoid',
   'inv-trapezoid',
   'double-circle',
+  // Instance shapes (references to definitions)
+  'tagged-rectangle',
+  'tag-rect',
+  'half-rounded-rectangle',
+  'delay',
+  'lined-rectangle',
+  'lin-rect',
+  'window-pane',
+  'win-pane',
+  'curved-trapezoid',
+  'curv-trap',
   // Collapsed container shape
   'collapsedGroup',
   // Type declaration shape
