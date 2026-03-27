@@ -947,7 +947,6 @@ const requirement_contains_neo = (elem, type, id) => {
   containsNode.append('line').attr('y1', 1).attr('y2', 19).attr('x1', 10).attr('x2', 10);
   containsNode.selectAll('*').attr('stroke-width', `${strokeWidth}`);
 };
-
 const hierarchy = (elem, type, id) => {
   elem
     .append('marker')
