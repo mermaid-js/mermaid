@@ -112,6 +112,21 @@ function kindOf(alias: string): EntityKind {
   if (model.notes[alias]) {
     return 'note';
   }
+  if (model.actors[alias]) {
+    return 'actor';
+  }
+  if (model.usecases[alias]) {
+    return 'usecase';
+  }
+  if (model.externalSystems[alias]) {
+    return 'external';
+  }
+  if (model.collaborations[alias]) {
+    return 'collaboration';
+  }
+  if (model.notes[alias]) {
+    return 'note';
+  }
   return 'unknown';
 }
 
@@ -190,10 +205,22 @@ export const addConnection = (
   to: string,
   label?: string
 ): void => {
+export const addConnection = (
+  from: string,
+  type: RelationshipType,
+  to: string,
+  label?: string
+): void => {
   if (!isAllowed(from, type, to)) {
     return;
   }
   let finalLabel = label?.replace(/"/g, '').trim() || undefined;
+  if (type === 'include') {
+    finalLabel = '<<include>>';
+  }
+  if (type === 'extend') {
+    finalLabel = '<<extend>>';
+  }
   if (type === 'include') {
     finalLabel = '<<include>>';
   }
@@ -205,6 +232,10 @@ export const addConnection = (
 
 const inferUseCases = (): void => {
   const seen = new Set<string>();
+  model.connections.forEach((c) => {
+    seen.add(c.from);
+    seen.add(c.to);
+  });
   model.connections.forEach((c) => {
     seen.add(c.from);
     seen.add(c.to);
@@ -232,9 +263,19 @@ export const parseDiagram = (code: string): void => {
     if (!line || line === 'usecaseDiagram' || line.startsWith('%%')) {
       continue;
     }
+    if (!line || line === 'usecaseDiagram' || line.startsWith('%%')) {
+      continue;
+    }
 
     if (line.startsWith('system')) {
       const m = RE_SYSTEM.exec(line);
+      if (m) {
+        setSystem(m[1].replace(/{$/, '').trim());
+      }
+      continue;
+    }
+    if (line === '}') {
+      mode = null;
       if (m) {
         setSystem(m[1].replace(/{$/, '').trim());
       }
@@ -260,6 +301,9 @@ export const parseDiagram = (code: string): void => {
         if (pair.includes(sep)) {
           const [from, rest] = pair.split(sep);
           const [to, ...lbl] = rest.split(':');
+          if (from.trim() && to.trim()) {
+            addConnection(from.trim(), type, to.trim(), lbl.join(':').trim());
+          }
           if (from.trim() && to.trim()) {
             addConnection(from.trim(), type, to.trim(), lbl.join(':').trim());
           }
@@ -301,6 +345,12 @@ export const parseDiagram = (code: string): void => {
         if (to) {
           addConnection(from, 'association', to, label);
         }
+      const [from, targets] = line.split('-->').map((s) => s.trim());
+      targets.split(';').forEach((t) => {
+        const [to, label] = t.split(':').map((s) => s.trim());
+        if (to) {
+          addConnection(from, 'association', to, label);
+        }
       });
       continue;
     }
@@ -316,8 +366,15 @@ function processDefinitions(
   content: string,
   type: 'actor' | 'usecase' | 'external' | 'collaboration'
 ): void {
+function processDefinitions(
+  content: string,
+  type: 'actor' | 'usecase' | 'external' | 'collaboration'
+): void {
   content.split(';').forEach((part) => {
     const p = part.trim();
+    if (!p || p === '{' || p.includes('-')) {
+      return;
+    }
     if (!p || p === '{' || p.includes('-')) {
       return;
     }
@@ -334,8 +391,26 @@ function processDefinitions(
       } else {
         addUseCase(alias, label);
       }
+      if (type === 'actor') {
+        addActor(alias, label);
+      } else if (type === 'external') {
+        addExternal(alias, label);
+      } else if (type === 'collaboration') {
+        addCollaboration(alias, label);
+      } else {
+        addUseCase(alias, label);
+      }
     } else {
       const alias = p.replace(/"/g, '');
+      if (type === 'actor') {
+        addActor(alias, alias);
+      } else if (type === 'external') {
+        addExternal(alias, alias);
+      } else if (type === 'collaboration') {
+        addCollaboration(alias, alias);
+      } else {
+        addUseCase(alias, alias);
+      }
       if (type === 'actor') {
         addActor(alias, alias);
       } else if (type === 'external') {
