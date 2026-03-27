@@ -129,10 +129,12 @@ const getStyles = (options) => {
   // Required to read the active theme at render time, since options alone does not expose the theme name needed to switch between redux and classic section generators.
   const { theme } = getConfig();
   const isReduxTheme = theme?.includes('redux');
+  const isNeutralTheme = theme === 'neutral';
   // options.svgId is the CSS selector (e.g. '#mermaid-0'), strip the leading '#' for use in url(#...)
   const rawSvgId = options.svgId?.replace(/^#/, '') ?? '';
   let gradientSections = '';
-  if (options.useGradient && rawSvgId && options.THEME_COLOR_LIMIT) {
+  // Don't apply gradient styling for neutral theme - it should maintain its grayscale color scheme
+  if (options.useGradient && rawSvgId && options.THEME_COLOR_LIMIT && !isNeutralTheme) {
     for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
       gradientSections += `
       .section-${i - 1}[data-look="neo"] rect,

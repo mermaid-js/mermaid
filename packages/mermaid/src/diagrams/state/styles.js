@@ -213,6 +213,17 @@ g.stateGroup line {
   font-size: 18px;
   fill: ${options.textColor};
 }
+
+[data-look="neo"].statediagram-cluster rect {
+  fill: ${options.mainBkg};
+  stroke: ${options.useGradient ? 'url(' + options.svgId + '-gradient)' : options.stateBorder || options.nodeBorder};
+  stroke-width: ${options.strokeWidth ?? 1};
+}
+[data-look="neo"].statediagram-cluster rect.outer {
+  rx: ${options.radius}px;
+  ry: ${options.radius}px;
+  filter: ${options.dropShadow ? options.dropShadow.replace('url(#drop-shadow)', `url(${options.svgId}-drop-shadow)`) : 'none'}
+}
 `;
 
 // todo: change composit to composite

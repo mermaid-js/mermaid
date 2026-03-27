@@ -5,14 +5,14 @@ const looks = ['neo'] as const;
 
 const complexSequenceDiagram = `
   sequenceDiagram
-    box rgb(200,220,255) Authentication
+    box rgb(40,150,150) Authentication
       actor User
       participant LoginUI@{ "type": "boundary" }
       participant AuthService@{ "type": "control" }
       participant UserDB@{ "type": "database" }
     end
 
-    box rgb(200,255,220) Order Processing
+    box rgb(200,55,22) Order Processing
       participant Order@{ "type": "entity" }
       participant OrderQueue@{ "type": "queue" }
       participant AuditLogs@{ "type": "collections" }

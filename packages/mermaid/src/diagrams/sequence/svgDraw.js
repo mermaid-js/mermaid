@@ -721,7 +721,7 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, a
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 75;
   const { look, theme, themeVariables } = conf;
-  const { bkgColorArray, borderColorArray, actorBorder } = themeVariables;
+  const { bkgColorArray, borderColorArray, actorBorder, actorBkg } = themeVariables;
 
   const line = elem.append('g').lower();
 
@@ -775,7 +775,6 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, a
     .attr('markerHeight', 28)
     .attr('orient', '172.5')
     .attr('stroke-width', 1.2)
-    .attr('stroke', !COLOR_THEMES.has(theme) ? 'transparent' : '')
     .append('path')
     .attr('d', 'M 14.4 5.6 L 7.2 10.4 L 8.8 5.6 L 7.2 0.8 Z');
 
@@ -799,7 +798,7 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, a
     actElem.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
   } else {
     actElem.style('stroke', actorBorder);
-    actElem.style('fill', 'none');
+    actElem.style('fill', actorBkg);
   }
   const bounds = actElem.node().getBBox();
   actor.height = bounds.height + 2 * (conf?.sequence?.labelBoxHeight ?? 0);

@@ -7,11 +7,7 @@ const examples = [
     // Covers: all three commit types (NORMAL/REVERSE/HIGHLIGHT); id+type+tag combined on one commit;
     // merge with id/tag/type override; cherry-pick with tag; rotateCommitLabel: false (horizontal labels)
     name: 'all commit types id tag and merge-override attributes with cherry-pick tag (LR)',
-    diagram: `---
-config:
-  gitGraph:
-    rotateCommitLabel: false
----
+    diagram: `
 gitGraph
   commit id: "init" tag: "v0.1"
   branch develop
@@ -29,12 +25,7 @@ gitGraph
     // Covers: showBranches: false (hides branch lines and labels);
     // showCommitLabel: false (hides all commit ID labels); NORMAL/HIGHLIGHT/REVERSE commits still present
     name: 'showBranches false and showCommitLabel false hiding branch lines and commit labels (LR)',
-    diagram: `---
-config:
-  gitGraph:
-    showBranches: false
-    showCommitLabel: false
----
+    diagram: `
 gitGraph
   commit id: "1"
   branch develop
@@ -57,7 +48,6 @@ config:
   gitGraph:
     parallelCommits: true
     mainBranchName: "production"
-    rotateCommitLabel: false
 ---
 gitGraph TB:
   commit id: "init" tag: "v0.1"
@@ -84,7 +74,6 @@ gitGraph TB:
 config:
   gitGraph:
     mainBranchOrder: 2
-    rotateCommitLabel: false
 ---
   gitGraph BT:
     commit id: "1"

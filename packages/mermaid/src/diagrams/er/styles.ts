@@ -12,12 +12,14 @@ const fade = (color: string, opacity: number) => {
   // @ts-ignore incorrect types from khroma
   return khroma.rgba(r, g, b, opacity);
 };
+const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
 
 const genColor: DiagramStylesProvider = (options) => {
   const { theme, look, bkgColorArray, borderColorArray } = options;
-  if (theme !== 'redux-color') {
+  if (!COLOR_THEMES.has(theme)) {
     return '';
   }
+  const hasBkgColors = bkgColorArray?.length > 0;
   let sections = '';
 
   for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
@@ -25,12 +27,12 @@ const genColor: DiagramStylesProvider = (options) => {
 
     [data-look="${look}"][data-color-id="color-${i}"].node path {
     stroke: ${borderColorArray[i]};
-    fill: ${bkgColorArray[i]};
+    ${hasBkgColors ? `fill: ${bkgColorArray[i]};` : ''}
     }
 
     [data-look="${look}"][data-color-id="color-${i}"].node  rect {
     stroke: ${borderColorArray[i]};
-    fill: ${bkgColorArray[i]};
+    ${hasBkgColors ? `fill: ${bkgColorArray[i]};` : ''}
      }
     `;
   }
@@ -56,14 +58,14 @@ const getStyles: DiagramStylesProvider = (options) => {
   }
 
   .labelBkg {
-    background-color: ${theme === 'redux-color' && erEdgeLabelBackground ? erEdgeLabelBackground : fade(options.tertiaryColor, 0.5)};
+    background-color: ${COLOR_THEMES.has(theme) && erEdgeLabelBackground ? erEdgeLabelBackground : fade(options.tertiaryColor, 0.5)};
   }
 
   .edgeLabel {
-    background-color: ${theme === 'redux-color' && erEdgeLabelBackground ? erEdgeLabelBackground : options.edgeLabelBackground};
+    background-color: ${COLOR_THEMES.has(theme) && erEdgeLabelBackground ? erEdgeLabelBackground : options.edgeLabelBackground};
   }
   .edgeLabel .label rect {
-    fill: ${theme === 'redux-color' && erEdgeLabelBackground ? erEdgeLabelBackground : options.edgeLabelBackground};
+    fill: ${COLOR_THEMES.has(theme) && erEdgeLabelBackground ? erEdgeLabelBackground : options.edgeLabelBackground};
   }
   .edgeLabel .label text {
     fill: ${options.textColor};

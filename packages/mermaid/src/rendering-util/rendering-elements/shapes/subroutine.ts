@@ -72,9 +72,9 @@ export async function subroutine<T extends SVGGraphicsElement>(parent: D3Selecti
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
 
-    const roughNode = rc.rectangle(x - 8, y, w + 16, h, options);
-    const l1 = rc.line(x, y, x, y + h, options);
-    const l2 = rc.line(x + w, y, x + w, y + h, options);
+    const roughNode = rc.rectangle(x, y, w + 16, h, options);
+    const l1 = rc.line(x + FRAME_WIDTH, y, x + FRAME_WIDTH, y + h, options);
+    const l2 = rc.line(x + FRAME_WIDTH + w, y, x + FRAME_WIDTH + w, y + h, options);
 
     shapeSvg.insert(() => l1, ':first-child');
     shapeSvg.insert(() => l2, ':first-child');

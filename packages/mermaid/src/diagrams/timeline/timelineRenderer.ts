@@ -29,7 +29,7 @@ interface TimelineTask {
 export const draw = function (text: string, id: string, version: string, diagObj: Diagram) {
   //1. Fetch the configuration
   const conf = getConfig();
-  const { look, themeVariables } = conf;
+  const { look, theme, themeVariables } = conf;
   const { useGradient, gradientStart, gradientStop } = themeVariables;
   const LEFT_MARGIN = conf.timeline?.leftMargin ?? 50;
 
@@ -230,32 +230,8 @@ export const draw = function (text: string, id: string, version: string, diagObj
     .attr('stroke', 'black')
     .attr('marker-end', `url(#${id}-arrowhead)`);
 
-  if (look === 'neo' && useGradient) {
-    const existingDefs = svg.select('defs');
-    const defsEl = existingDefs.empty() ? svg.append('defs') : existingDefs;
-    const gradient = defsEl
-      .append('linearGradient')
-      .attr('id', svg.attr('id') + '-gradient')
-      .attr('gradientUnits', 'objectBoundingBox')
-      .attr('x1', '0%')
-      .attr('y1', '0%')
-      .attr('x2', '100%')
-      .attr('y2', '0%');
-
-    gradient
-      .append('stop')
-      .attr('offset', '0%')
-      .attr('stop-color', gradientStart)
-      .attr('stop-opacity', 1);
-
-    gradient
-      .append('stop')
-      .attr('offset', '100%')
-      .attr('stop-color', gradientStop)
-      .attr('stop-opacity', 1);
-  }
-
-  if (look === 'neo' && useGradient) {
+  // Don't apply gradient for neutral theme - it should maintain its grayscale color scheme
+  if (look === 'neo' && useGradient && theme !== 'neutral') {
     const existingDefs = svg.select('defs');
     const defsEl = existingDefs.empty() ? svg.append('defs') : existingDefs;
     const gradient = defsEl

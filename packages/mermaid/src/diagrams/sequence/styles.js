@@ -1,5 +1,8 @@
+import { getConfig } from '../../diagram-api/diagramAPI.js';
+
 const getStyles = (options) => {
   const dropShadow = options.dropShadow ?? 'none';
+  const { look } = getConfig();
 
   return `.actor {
     stroke: ${options.actorBorder};
@@ -69,7 +72,7 @@ const getStyles = (options) => {
   .labelBox {
     stroke: ${options.labelBoxBorderColor};
     fill: ${options.labelBoxBkgColor};
-    filter: ${dropShadow};
+    filter: ${look === 'neo' ? dropShadow : 'none'};
   }
 
   .labelText, .labelText > tspan {
