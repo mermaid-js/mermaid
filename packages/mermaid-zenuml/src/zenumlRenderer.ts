@@ -1,41 +1,21 @@
 import { getConfig, log } from './mermaidUtils.js';
-import ZenUml from '@zenuml/core';
+import { renderToSvg } from '@zenuml/core';
 
 const regexp = /^\s*zenuml/;
 
-// Create a Zen UML container outside the svg first for rendering, otherwise the Zen UML diagram cannot be rendered properly
-function createTemporaryZenumlContainer(id: string) {
-  const container = document.createElement('div');
-  container.id = `container-${id}`;
-  container.style.display = 'flex';
-  container.innerHTML = `<div id="zenUMLApp-${id}"></div>`;
-  const app = container.querySelector(`#zenUMLApp-${id}`)!;
-  return { container, app };
-}
-
-// Create a foreignObject to wrap the Zen UML container in the svg
-function createForeignObject(id: string) {
-  const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
-  foreignObject.setAttribute('x', '0');
-  foreignObject.setAttribute('y', '0');
-  foreignObject.setAttribute('width', '100%');
-  foreignObject.setAttribute('height', '100%');
-  const { container, app } = createTemporaryZenumlContainer(id);
-  foreignObject.appendChild(container);
-  return { foreignObject, container, app };
-}
-
 /**
- * Draws a Zen UML in the tag with id: id based on the graph definition in text.
+ * Draws a ZenUML diagram in the SVG element with id: id based on the
+ * graph definition in text, using native SVG rendering.
  *
  * @param text - The text of the diagram
- * @param id - The id of the diagram which will be used as a DOM element id¨
+ * @param id - The id of the diagram which will be used as a DOM element id
  */
-export const draw = async function (text: string, id: string) {
-  log.info('draw with Zen UML renderer', ZenUml);
+export const draw = function (text: string, id: string): Promise<void> {
+  log.info('draw with ZenUML native SVG renderer');
 
-  text = text.replace(regexp, '');
+  const code = text.replace(regexp, '');
   const { securityLevel } = getConfig();
+
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement: HTMLIFrameElement | null = null;
   if (securityLevel === 'sandbox') {
@@ -43,23 +23,21 @@ export const draw = async function (text: string, id: string) {
   }
 
   const root = securityLevel === 'sandbox' ? sandboxElement?.contentWindow?.document : document;
+  const svgEl = root?.querySelector(`svg#${id}`) as SVGSVGElement | null;
 
-  const svgContainer = root?.querySelector(`svg#${id}`);
-
-  if (!root || !svgContainer) {
-    log.error('Cannot find root or svgContainer');
-    return;
+  if (!root || !svgEl) {
+    log.error('Cannot find root or svg element');
+    return Promise.resolve();
   }
 
-  const { foreignObject, container, app } = createForeignObject(id);
-  svgContainer.appendChild(foreignObject);
-  const zenuml = new ZenUml(app);
-  // default is a theme name. More themes to be added and will be configurable in the future
-  await zenuml.render(text, { theme: 'default', mode: 'static' });
+  const result = renderToSvg(code);
 
-  const { width, height } = window.getComputedStyle(container);
-  log.debug('zenuml diagram size', width, height);
-  svgContainer.setAttribute('style', `width: ${width}; height: ${height};`);
+  svgEl.setAttribute('width', String(result.width));
+  svgEl.setAttribute('height', String(result.height));
+  svgEl.setAttribute('viewBox', result.viewBox);
+  svgEl.innerHTML = result.innerSvg;
+
+  return Promise.resolve();
 };
 
 export default {
