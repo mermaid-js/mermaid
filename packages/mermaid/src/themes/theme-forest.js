@@ -34,6 +34,16 @@ class Theme {
     this.radius = 5;
     this.strokeWidth = 1;
 
+    /* UseCase Diagram variables */
+    this.usecaseBkg = this.usecaseBkg || this.mainBkg;
+    this.usecaseBorder = this.usecaseBorder || this.border1;
+    this.usecaseTextColor = this.usecaseTextColor || this.primaryTextColor;
+
+    // Actor styling for Forest theme
+    this.usecaseActorBkg = this.usecaseActorBkg || this.actorBkg;
+    this.usecaseActorBorder = this.usecaseActorBorder || this.actorBorder;
+    this.usecaseActorTextColor = this.usecaseActorTextColor || this.actorTextColor;
+
     /* Flowchart variables */
     this.nodeBkg = 'calculated';
     this.nodeBorder = 'calculated';

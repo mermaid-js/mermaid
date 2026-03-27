@@ -192,6 +192,7 @@ function sidebarSyntax() {
         { text: 'Venn 🔥', link: '/syntax/venn' },
         { text: 'Ishikawa 🔥', link: '/syntax/ishikawa' },
         { text: 'TreeView 🔥', link: '/syntax/treeView' },
+        { text: 'UseCase 🔥', link: '/syntax/usecase' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
