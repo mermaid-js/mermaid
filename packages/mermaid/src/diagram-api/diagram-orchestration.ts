@@ -83,6 +83,7 @@ export const addDiagrams = () => {
 
   // Ordering of detectors is important. The first one to return true will be used.
   registerLazyLoadedDiagrams(
+    usecase,
     c4,
     kanban,
     classDiagramV2,
@@ -111,6 +112,5 @@ export const addDiagrams = () => {
     treemap,
     venn,
     wardley,
-    usecase
   );
 };
