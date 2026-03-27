@@ -57,7 +57,7 @@ const RE_SYSTEM = /system\s+"?([^"{]+)"?/;
 const RE_LABEL_ALIAS = /"([^"]+)"(?:\s+as\s+(\w+))?/;
 const RE_REL_BLOCK =
   /^(include|extend|generalization|dependency|realization|anchor|constraint|containment|association):/i;
-const RE_NOTE = /note\s+"([\S\s]+?)"(?:\s+as\s+(\w+))?/;
+const RE_NOTE_GLOBAL = /note\s+"([\S\s]+?)"(?:\s+as\s+(\w+))?/g;
 const RE_COLLABORATION = /^collaboration\s+/;
 
 let model: UseCaseModel = createEmptyModel();
@@ -177,9 +177,10 @@ function isAllowed(from: string, type: RelationshipType, to: string): boolean {
   }
   const fk = kindOf(from);
   const tk = kindOf(to);
-  // For plain associations, unknown entities are OK — they get inferred as usecases later.
-  // For all explicitly typed relationships, both entities must already be declared
-  // and their kinds must satisfy the allow-list (no bypassing via 'unknown').
+  // FIX (Fail 2): plain 'association' may reference entities not yet declared — they will
+  // be inferred as usecases by inferUseCases() after parsing finishes. Allow unknown only
+  // for plain associations. All explicitly-typed relationships (anchor, include, etc.) must
+  // have both sides already declared so kindOf() returns a real kind, not 'unknown'.
   if (type === 'association' && (fk === 'unknown' || tk === 'unknown')) {
     return true;
   }
@@ -225,23 +226,20 @@ const inferUseCases = (): void => {
   });
 };
 
-const RE_NOTE_GLOBAL = /note\s+"([\S\s]+?)"(?:\s+as\s+(\w+))?/g;
-
 export const parseDiagram = (code: string): void => {
   const normalizedCode = code.replace(/\\n/g, '\n');
 
-  // Pre-scan for notes on the full code before line-splitting,
-  // so multi-line note content (e.g. "line1\nline2") is captured correctly.
   const noteLines = new Set<number>();
-  let noteMatch: RegExpExecArray | null;
   RE_NOTE_GLOBAL.lastIndex = 0;
+  let noteMatch: RegExpExecArray | null;
   while ((noteMatch = RE_NOTE_GLOBAL.exec(normalizedCode)) !== null) {
-    addNote(noteMatch[2] || noteMatch[1], noteMatch[1]);
-    // Mark all source lines covered by this match so we skip them in the main loop
-    const before = normalizedCode.slice(0, noteMatch.index);
-    const startLine = before.split('\n').length - 1;
-    const matchLines = noteMatch[0].split('\n').length;
-    for (let i = 0; i < matchLines; i++) {
+    const noteLabel = noteMatch[1];
+    const noteAlias = noteMatch[2] || noteLabel;
+    addNote(noteAlias, noteLabel);
+    const beforeMatch = normalizedCode.slice(0, noteMatch.index);
+    const startLine = beforeMatch.split('\n').length - 1;
+    const spanLines = noteMatch[0].split('\n').length;
+    for (let i = 0; i < spanLines; i++) {
       noteLines.add(startLine + i);
     }
   }
@@ -249,14 +247,13 @@ export const parseDiagram = (code: string): void => {
   const lines = normalizedCode.split('\n');
   let mode: 'actor' | 'usecase' | 'external' | 'collaboration' | null = null;
 
-  for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
-    const raw = lines[lineIdx];
+  for (const [lineIdx, raw] of lines.entries()) {
     const line = raw.trim();
+
     if (!line || line === 'usecaseDiagram' || line.startsWith('%%')) {
       continue;
     }
 
-    // Skip lines already consumed by the pre-scanned note pass
     if (noteLines.has(lineIdx)) {
       continue;
     }
@@ -273,13 +270,10 @@ export const parseDiagram = (code: string): void => {
       continue;
     }
 
-    // A line with a colon before any arrow is a typed relationship block.
-    // If the type isn't in RE_REL_BLOCK, it's unknown — drop it entirely
-    // so it never reaches the --> association handler below.
-    const colonIdx = line.indexOf(':');
-    const arrowIdx = line.indexOf('-->');
-    const hasTypedBlockSyntax = colonIdx !== -1 && (arrowIdx === -1 || colonIdx < arrowIdx);
-    if (hasTypedBlockSyntax && !RE_REL_BLOCK.test(line)) {
+    const firstColon = line.indexOf(':');
+    const firstArrow = line.indexOf('-->');
+    const hasTypedPrefix = firstColon !== -1 && (firstArrow === -1 || firstColon < firstArrow);
+    if (hasTypedPrefix && !RE_REL_BLOCK.test(line)) {
       continue;
     }
 
@@ -310,7 +304,6 @@ export const parseDiagram = (code: string): void => {
       mode = 'usecase';
       continue;
     }
-    // Bare-word note: `note Foo` (no quotes) — register using the word as both alias and label
     if (line.startsWith('note ') && !line.includes('"')) {
       const bareAlias = line.replace(/^note\s+/, '').trim();
       if (bareAlias) {
