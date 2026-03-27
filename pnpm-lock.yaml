@@ -477,8 +477,8 @@ importers:
   packages/mermaid-zenuml:
     dependencies:
       '@zenuml/core':
-        specifier: ^3.46.2
-        version: 3.46.2(@babel/core@7.29.0)(@babel/template@7.28.6)(tsx@4.20.6)(yaml@2.8.1)
+        specifier: ^3.46.3
+        version: 3.46.3(@babel/core@7.29.0)(@babel/template@7.28.6)(tsx@4.20.6)(yaml@2.8.1)
     devDependencies:
       mermaid:
         specifier: workspace:^
@@ -3874,8 +3874,8 @@ packages:
   '@xtuc/long@4.2.2':
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
 
-  '@zenuml/core@3.46.2':
-    resolution: {integrity: sha512-iKS61aDnjPzGw7Qvr1U205sL3AmBqr7M47Ri2qqm2iI46cZMSc0Ce5QdQ/5RZs7UExlVL4bZ1hzQ0UrbUsAl9w==}
+  '@zenuml/core@3.46.3':
+    resolution: {integrity: sha512-V5HhPYfavrEjR4VQzThVUtTK8ezR2TMuIK62M2V2ca1HHis7gwnoX80ekmaIP0RcyIT8Szmoc+Q9/nXBgFUONQ==}
     engines: {node: '>=20'}
 
   JSONSelect@0.4.0:
@@ -14093,7 +14093,7 @@ snapshots:
 
   '@xtuc/long@4.2.2': {}
 
-  '@zenuml/core@3.46.2(@babel/core@7.29.0)(@babel/template@7.28.6)(tsx@4.20.6)(yaml@2.8.1)':
+  '@zenuml/core@3.46.3(@babel/core@7.29.0)(@babel/template@7.28.6)(tsx@4.20.6)(yaml@2.8.1)':
     dependencies:
       '@floating-ui/react': 0.27.19(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@headlessui/react': 2.2.9(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
