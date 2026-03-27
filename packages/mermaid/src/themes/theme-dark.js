@@ -306,6 +306,35 @@ class Theme {
       legendFontSize: this.radar?.legendFontSize || 12,
     };
 
+    /* wardley */
+    this.wardley = {
+      genesisColor: this.wardley?.genesisColor || '#ff6b6b',
+      customColor: this.wardley?.customColor || '#ffa94d',
+      productColor: this.wardley?.productColor || '#74c0fc',
+      commodityColor: this.wardley?.commodityColor || '#51cf66',
+      stageBackground0: this.wardley?.stageBackground0 || '#2a1f1f',
+      stageBackground1: this.wardley?.stageBackground1 || '#2a2615',
+      stageBackground2: this.wardley?.stageBackground2 || '#1f252a',
+      stageBackground3: this.wardley?.stageBackground3 || '#1f2a1f',
+      axisColor: this.wardley?.axisColor || this.lineColor,
+      textColor: this.wardley?.textColor || this.textColor,
+      labelBackground: this.wardley?.labelBackground || '#2d2d30',
+      labelBorder: this.wardley?.labelBorder || '#555555',
+      edgeColor: this.wardley?.edgeColor || '#666666',
+      arrowColor: this.wardley?.arrowColor || '#999999',
+      componentStroke: this.wardley?.componentStroke || '#888888',
+      backgroundColor: this.wardley?.backgroundColor || this.background,
+      pipelineFill: this.wardley?.pipelineFill || '#2a2a2a',
+      inertiaColor: this.wardley?.inertiaColor || '#ff6b6b',
+      evolveArrowColor: this.wardley?.evolveArrowColor || '#ff6b6b',
+      flowColor: this.wardley?.flowColor || '#4dabf7',
+      constraintColor: this.wardley?.constraintColor || '#ffa94d',
+      pioneersColor: this.wardley?.pioneersColor || '#ff6b6b',
+      settlersColor: this.wardley?.settlersColor || '#51cf66',
+      townplannersColor: this.wardley?.townplannersColor || '#74c0fc',
+      interestColor: this.wardley?.interestColor || '#fcc419',
+    };
+
     /* class */
     this.classText = this.primaryTextColor;
 

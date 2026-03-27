@@ -9,6 +9,22 @@ export {
   GitGraph,
   Radar,
   Treemap,
+  Wardley,
+  WardleyAccelerator,
+  WardleyAnchor,
+  WardleyAnnotation,
+  WardleyArea,
+  WardleyComponent,
+  WardleyConstraintEdge,
+  WardleyEdge,
+  WardleyEvolve,
+  WardleyFlowEdge,
+  WardleyNote,
+  WardleyPipeline,
+  WardleyPipelineChild,
+  WardleySubmap,
+  WardleyXAxis,
+  WardleyYAxis,
   Branch,
   Commit,
   Merge,
@@ -21,6 +37,22 @@ export {
   isArchitecture,
   isGitGraph,
   isTreemap,
+  isWardley,
+  isWardleyAccelerator,
+  isWardleyAnchor,
+  isWardleyAnnotation,
+  isWardleyArea,
+  isWardleyComponent,
+  isWardleyConstraintEdge,
+  isWardleyEdge,
+  isWardleyEvolve,
+  isWardleyFlowEdge,
+  isWardleyNote,
+  isWardleyPipeline,
+  isWardleyPipelineChild,
+  isWardleySubmap,
+  isWardleyXAxis,
+  isWardleyYAxis,
   isBranch,
   isCommit,
   isMerge,
@@ -35,6 +67,7 @@ export {
   GitGraphGeneratedModule,
   RadarGeneratedModule,
   TreemapGeneratedModule,
+  WardleyGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';
@@ -45,3 +78,4 @@ export * from './pie/index.js';
 export * from './architecture/index.js';
 export * from './radar/index.js';
 export * from './treemap/index.js';
+export * from './wardley/index.js';

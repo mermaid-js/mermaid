@@ -35,6 +35,11 @@
       "id": "treemap",
       "grammar": "src/language/treemap/treemap.langium",
       "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "wardley",
+      "grammar": "src/language/wardley/wardley.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
     }
   ],
   "mode": "production",

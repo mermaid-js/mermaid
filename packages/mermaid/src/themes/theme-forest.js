@@ -280,6 +280,35 @@ class Theme {
       legendFontSize: this.radar?.legendFontSize || 12,
     };
 
+    /* wardley */
+    this.wardley = {
+      genesisColor: this.wardley?.genesisColor || '#d9534f',
+      customColor: this.wardley?.customColor || '#f0ad4e',
+      productColor: this.wardley?.productColor || '#5bc0de',
+      commodityColor: this.wardley?.commodityColor || '#5cb85c',
+      stageBackground0: this.wardley?.stageBackground0 || '#fdf2f2',
+      stageBackground1: this.wardley?.stageBackground1 || '#fdf6ed',
+      stageBackground2: this.wardley?.stageBackground2 || '#edf5fc',
+      stageBackground3: this.wardley?.stageBackground3 || '#edfced',
+      axisColor: this.wardley?.axisColor || this.lineColor,
+      textColor: this.wardley?.textColor || this.textColor,
+      labelBackground: this.wardley?.labelBackground || this.mainBkg,
+      labelBorder: this.wardley?.labelBorder || this.lineColor,
+      edgeColor: this.wardley?.edgeColor || '#999999',
+      arrowColor: this.wardley?.arrowColor || '#666666',
+      componentStroke: this.wardley?.componentStroke || '#555555',
+      backgroundColor: this.wardley?.backgroundColor || this.background,
+      pipelineFill: this.wardley?.pipelineFill || '#f0f0f0',
+      inertiaColor: this.wardley?.inertiaColor || '#cc0000',
+      evolveArrowColor: this.wardley?.evolveArrowColor || '#cc0000',
+      flowColor: this.wardley?.flowColor || '#0066cc',
+      constraintColor: this.wardley?.constraintColor || '#ff6600',
+      pioneersColor: this.wardley?.pioneersColor || '#d9534f',
+      settlersColor: this.wardley?.settlersColor || '#5cb85c',
+      townplannersColor: this.wardley?.townplannersColor || '#5bc0de',
+      interestColor: this.wardley?.interestColor || '#f0ad4e',
+    };
+
     /* xychart */
     this.xyChart = {
       backgroundColor: this.xyChart?.backgroundColor || this.background,

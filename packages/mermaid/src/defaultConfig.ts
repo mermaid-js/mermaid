@@ -264,6 +264,9 @@ const config: RequiredDeep<MermaidConfig> = {
   radar: {
     ...defaultConfigJson.radar,
   },
+  wardley: {
+    ...defaultConfigJson.wardley,
+  },
   treemap: {
     useMaxWidth: true,
     padding: 10,

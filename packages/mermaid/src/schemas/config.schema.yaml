@@ -56,6 +56,7 @@ required:
   - block
   - look
   - radar
+  - wardley
 properties:
   theme:
     description: |
@@ -310,6 +311,8 @@ properties:
     $ref: '#/$defs/BlockDiagramConfig'
   radar:
     $ref: '#/$defs/RadarDiagramConfig'
+  wardley:
+    $ref: '#/$defs/WardleyDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration
     description: Configuration options to pass to the `dompurify` library.
@@ -2328,6 +2331,49 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         minimum: 0
         maximum: 1
         default: 0.17
+
+  WardleyDiagramConfig:
+    title: Wardley Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for wardley diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      width:
+        description: The width of the wardley map.
+        type: number
+        minimum: 1
+        default: 1400
+      height:
+        description: The height of the wardley map.
+        type: number
+        minimum: 1
+        default: 800
+      marginTop:
+        description: The margin from the top of the wardley map.
+        type: number
+        minimum: 0
+        default: 40
+      marginRight:
+        description: The margin from the right of the wardley map.
+        type: number
+        minimum: 0
+        default: 25
+      marginBottom:
+        description: The margin from the bottom of the wardley map.
+        type: number
+        minimum: 0
+        default: 20
+      marginLeft:
+        description: The margin from the left of the wardley map.
+        type: number
+        minimum: 0
+        default: 25
+      componentRadius:
+        description: The radius of component circles.
+        type: number
+        minimum: 1
+        default: 8
 
   FontCalculator:
     title: Font Calculator

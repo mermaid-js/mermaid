@@ -210,6 +210,7 @@ export interface MermaidConfig {
   packet?: PacketDiagramConfig;
   block?: BlockDiagramConfig;
   radar?: RadarDiagramConfig;
+  wardley?: WardleyDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
@@ -1622,6 +1623,42 @@ export interface RadarDiagramConfig extends BaseDiagramConfig {
    * The tension factor for the Catmull-Rom spline conversion to cubic Bézier curves.
    */
   curveTension?: number;
+}
+/**
+ * The object containing configurations specific for wardley diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "WardleyDiagramConfig".
+ */
+export interface WardleyDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The width of the wardley map.
+   */
+  width?: number;
+  /**
+   * The height of the wardley map.
+   */
+  height?: number;
+  /**
+   * The margin from the top of the wardley map.
+   */
+  marginTop?: number;
+  /**
+   * The margin from the right of the wardley map.
+   */
+  marginRight?: number;
+  /**
+   * The margin from the bottom of the wardley map.
+   */
+  marginBottom?: number;
+  /**
+   * The margin from the left of the wardley map.
+   */
+  marginLeft?: number;
+  /**
+   * The radius of component circles.
+   */
+  componentRadius?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

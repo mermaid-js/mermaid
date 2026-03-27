@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wardley Map - Feature Test Suite</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      section {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+      .mermaid {
+        border: 2px solid #ddd;
+        border-radius: 4px;
+        padding: 20px;
+        background: #fafafa;
+        margin: 15px 0;
+      }
+      .error {
+        background: #ffebee;
+        border-left: 4px solid #f44336;
+        padding: 15px;
+        border-radius: 4px;
+        color: #c62828;
+        margin: 20px 0;
+      }
+      h2 {
+        color: #333;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 8px;
+      }
+      h3 {
+        color: #555;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Wardley Map - Feature Test Suite</h1>
+      <div id="error" class="error" style="display: none"></div>
+
+      <!-- Test 1: Basic Components & Edges -->
+      <section>
+        <h2>1. Basic Components & Dependency Edges</h2>
+        <!-- prettier-ignore -->
+        <pre class="mermaid">wardleyMap
+  accTitle: Basic Component Test
+  component user "User" [0.5, 0.95]
+  component webapp "Web App" [0.6, 0.7]
+  component api "API Layer" [0.65, 0.5]
+  component db "Database" [0.8, 0.3]
+  user -> webapp
+  webapp -> api
+  api -> db
+        </pre>
+      </section>
+
+      <!-- Test 2: Component Types -->
+      <section>
+        <h2>2. Component Types (Anchor, Market, Ecosystem)</h2>
+        <!-- prettier-ignore -->
+        <pre class="mermaid">wardleyMap
+  accTitle: Component Types Test
+  anchor customer "Customer Need" [0.3, 0.95]
+  component product "Product" [0.5, 0.7]
+  component mkt "Market" [0.7, 0.5] market
+  component eco "Ecosystem" [0.6, 0.3] ecosystem
+  customer -> product
+  product -> mkt
+  product -> eco
+        </pre>
+      </section>
+
+      <!-- Test 3: Sourcing & Inertia -->
+      <section>
+        <h2>3. Build/Buy/Outsource & Inertia</h2>
+        <!-- prettier-ignore -->
+        <pre class="mermaid">wardleyMap
+  accTitle: Sourcing and Inertia Test
+  component custom "Custom Platform" [0.35, 0.7] build inertia
+  component crm "CRM System" [0.6, 0.5] buy
+  component hosting "Cloud Hosting" [0.85, 0.3] outsource
+  component legacy "Legacy System" [0.3, 0.4] inertia
+  custom -> crm
+  custom -> legacy
+  crm -> hosting
+        </pre>
+      </section>
+
+      <!-- Test 4: Edge Types -->
+      <section>
+        <h2>4. Edge Types (Dependency, Flow, Constraint)</h2>
+        <!-- prettier-ignore -->
+        <pre class="mermaid">wardleyMap
+  accTitle: Edge Types Test
+  component frontend "Frontend" [0.5, 0.8]
+  component backend "Backend API" [0.6, 0.6]
+  component payments "Payment Service" [0.75, 0.4]
+  component compliance "Compliance" [0.3, 0.5]
+  frontend -> backend
+  backend +> payments
+  compliance => backend
+        </pre>
+      </section>
+
+      <!-- Test 5: Evolution -->
+      <section>
+        <h2>5. Evolution with Rename</h2>
+        <!-- prettier-ignore -->
+        <pre class="mermaid">wardleyMap
+  accTitle: Evolution Test
+  component monolith "Monolith" [0.3, 0.6]
+  component auth "Auth Service" [0.45, 0.4]
+  component storage "File Storage" [0.5, 0.3]
+  monolith -> auth
+  monolith -> storage
+  evolve monolith->microservices 0.65
+  evolve storage 0.85
+        </pre>
+      </section>
+
+      <!-- Test 6: Notes & Annotations -->
+      <section>
+        <h2>6. Notes & Annotations</h2>
+        <!-- prettier-ignore -->
+        <pre class="mermaid">wardleyMap
+  accTitle: Notes and Annotations Test
+  component svc "Core Service" [0.5, 0.7]
+  component infra "Infrastructure" [0.8, 0.3]
+  svc -> infra
+  note "Critical path" [0.55, 0.5]
+  annotation 1 "Needs investment" svc
+  annotation 2 "Commodity candidate" infra
+        </pre>
+      </section>
+
+      <!-- Test 7: Areas (PST) -->
+      <section>
+        <h2>7. Pioneers / Settlers / Town Planners</h2>
+        <!-- prettier-ignore -->
+        <pre class="mermaid">wardleyMap
+  accTitle: PST Area Test
+  component research "R&D" [0.15, 0.8]
+  component product "Product Dev" [0.45, 0.6]
+  component ops "Operations" [0.8, 0.4]
+  research -> product
+  product -> ops
+  pioneers [0.0, 0.0, 0.25, 1.0]
+  settlers [0.25, 0.0, 0.6, 1.0]
+  townplanners [0.6, 0.0, 1.0, 1.0]
+        </pre>
+      </section>
+
+      <!-- Test 8: Pipeline -->
+      <section>
+        <h2>8. Pipeline with Children</h2>
+        <!-- prettier-ignore -->
+        <pre class="mermaid">wardleyMap
+  accTitle: Pipeline Test
+  component user "User" [0.4, 0.95]
+  component kettle "Kettle" [0.5, 0.5]
+  user -> kettle
+  pipeline kettle "Kettle Types" [0.5, 0.3, 0.8] {
+    campfire "Campfire" [0.35]
+    electric "Electric" [0.65]
+  }
+        </pre>
+      </section>
+
+      <!-- Test 9: Full Kitchen Sink -->
+      <section>
+        <h2>9. Full-Featured Map</h2>
+        <!-- prettier-ignore -->
+        <pre class="mermaid">wardleyMap
+  accTitle: Full Featured Wardley Map
+  accDescr: A comprehensive wardley map testing all features
+  anchor customer "Customer" [0.3, 0.98]
+  component webapp "Web Application" [0.55, 0.82]
+  component api "API Gateway" [0.6, 0.65]
+  component auth "Authentication" [0.4, 0.5] build inertia
+  component cache "Cache Layer" [0.7, 0.45] buy
+  component db "Database" [0.75, 0.3] outsource
+  component logging "Logging" [0.85, 0.2] ecosystem
+  customer -> webapp
+  webapp -> api
+  api -> auth
+  api -> cache
+  api +> db
+  cache -> db
+  db -> logging
+  evolve auth->oauth 0.7
+  note "Performance bottleneck" [0.72, 0.38]
+  annotation 1 "Migrate to OAuth" auth
+  annotation 2 "Consider serverless" db
+        </pre>
+      </section>
+    </div>
+
+    <script type="module">
+      (async () => {
+        try {
+          const mermaid = await import('./dist/mermaid.esm.mjs');
+
+          mermaid.default.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+            logLevel: 'debug',
+          });
+
+          await mermaid.default.run();
+          console.log('All wardley maps rendered successfully!');
+        } catch (error) {
+          console.error('Rendering failed:', error);
+          const errorDiv = document.getElementById('error');
+          errorDiv.style.display = 'block';
+          errorDiv.innerHTML = `
+            <strong>Error rendering Wardley map:</strong><br/>
+            ${error.message}<br/>
+            <small>Check browser console for details</small>
+          `;
+        }
+      })();
+    </script>
+  </body>
+</html>
