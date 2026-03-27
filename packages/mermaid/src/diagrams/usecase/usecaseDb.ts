@@ -53,11 +53,11 @@ export interface UseCaseDB extends DiagramDB {
   getSystem: () => string | null;
 }
 
-const RE_SYSTEM = /system\s+"(.+?)"/;
-const RE_LABEL_ALIAS = /"(.+?)"\s+as\s+(\w+)/;
+const RE_SYSTEM = /system\s+"?(.+?)"?/;
+const RE_LABEL_ALIAS = /"(.+?)"(?:\s+as\s+(\w+))?/;
 const RE_REL_BLOCK =
   /^(include|extend|generalization|dependency|realization|anchor|constraint|containment):/i;
-const RE_NOTE = /^note\s+"(.+?)"\s+as\s+(\w+)/;
+const RE_NOTE = /^note\s+"(.+?)"(?:\s+as\s+(\w+))?/;
 const RE_COLLABORATION = /^collaboration\s+/;
 
 let model: UseCaseModel = createEmptyModel();
@@ -373,40 +373,23 @@ export const parseDiagram = (code: string): void => {
   inferUseCases();
 };
 
-function processDefinitions(
-  content: string,
-  type: 'actor' | 'usecase' | 'external' | 'collaboration'
-): void {
+function processDefinitions(content: string, type: string): void {
   content.split(';').forEach((part) => {
     const p = part.trim();
-    if (!p || p.includes('-->') || p.includes('..>') || p.includes('--')) {
-      return;
-    }
+    if (!p || p === '{' || p.includes('-')) return;
+
     const m = RE_LABEL_ALIAS.exec(p);
     if (m) {
-      const [, label, alias] = m;
-      if (type === 'actor') {
-        addActor(alias, label);
-      } else if (type === 'external') {
-        addExternal(alias, label);
-      } else if (type === 'collaboration') {
-        addCollaboration(alias, label);
-      } else {
-        addUseCase(alias, label);
-      }
+      const label = m[1];
+      const alias = m[2] || label; 
+      if (type === 'actor') addActor(alias, label);
+      else if (type === 'external') addExternal(alias, label);
+      else addUseCase(alias, label);
     } else {
-      const alias = p.split(/\s+/)[0];
-      if (alias && alias !== '{') {
-        if (type === 'actor') {
-          addActor(alias, alias);
-        } else if (type === 'external') {
-          addExternal(alias, alias);
-        } else if (type === 'collaboration') {
-          addCollaboration(alias, alias);
-        } else {
-          addUseCase(alias, alias);
-        }
-      }
+      const alias = p.replace(/"/g, '');
+      if (type === 'actor') addActor(alias, alias);
+      else if (type === 'external') addExternal(alias, alias);
+      else addUseCase(alias, alias);
     }
   });
 }
