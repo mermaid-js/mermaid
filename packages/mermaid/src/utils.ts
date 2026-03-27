@@ -755,13 +755,33 @@ export const calculateTextDimensions: (
 export class InitIDGenerator {
   private count = 0;
   public next: () => number;
+
   constructor(deterministic = false, seed?: string) {
-    // TODO: Seed is only used for length?
-    // v11: Use the actual value of seed string to generate an initial value for count.
-    this.count = seed ? seed.length : 0;
-    this.next = deterministic ? () => this.count++ : () => Date.now();
+    if (deterministic) {
+      // Keep backward-compatible behavior: initialize the counter from the seed length.
+      this.count = seed ? seed.length : 0;
+      this.next = () => this.count++;
+    } else {
+      // Non-deterministic: use a timestamp + per-ms nonce to avoid collisions
+      // when many calls happen in the same millisecond.
+      // We multiply timestamp by 1000 and add nonce, giving room for 1000
+      // calls in the same ms. This keeps the result numeric and monotonic.
+      let lastTs = 0;
+      let nonce = 0;
+      this.next = () => {
+        const now = Date.now();
+        if (now === lastTs) {
+          nonce++;
+        } else {
+          lastTs = now;
+          nonce = 0;
+        }
+        return now * 1000 + nonce;
+      };
+    }
   }
 }
+// Please note that the function still returns a number (as before), so the rest of the code (which concatenates it into mermaid-<id>) keeps working.
 
 let decoder: HTMLDivElement;
 
