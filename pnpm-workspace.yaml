@@ -1,4 +1,6 @@
 minimumReleaseAge: 4320 # 4320 minutes = 3 days
+minimumReleaseAgeExclude:
+  - '@zenuml/core'
 packages:
   - 'packages/*'
   - 'packages/mermaid/src/docs'
