@@ -287,7 +287,7 @@ export class AgentFlowDB implements DiagramDB {
     // Check if this is a subgraph (e.g. my_agent@{ view: "collapsed" })
     const subGraph = this.subGraphLookup.get(id);
     if (subGraph && doc) {
-      subGraph.metadata = doc as unknown as Record<string, unknown>;
+      subGraph.metadata = { ...subGraph.metadata, ...(doc as unknown as Record<string, unknown>) };
       return;
     }
 
@@ -381,7 +381,7 @@ export class AgentFlowDB implements DiagramDB {
     }
 
     if (doc !== undefined) {
-      vertex.metadata = doc as unknown as Record<string, unknown>;
+      vertex.metadata = { ...vertex.metadata, ...(doc as unknown as Record<string, unknown>) };
       if (doc.shape) {
         if (doc.shape !== doc.shape.toLowerCase() || doc.shape.includes('_')) {
           throw new Error(`No such shape: ${doc.shape}. Shape names should be lowercase.`);

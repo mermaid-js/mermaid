@@ -13,6 +13,25 @@ import {
   onBorder,
 } from './geometry.js';
 
+/**
+ * Shared layout options for elk.rectpacking — applied at both root level
+ * and per-group level to reduce wasted space.
+ * trybox: attempt box-like packing first for tighter results.
+ * SCANLINE: width approximation scans node sizes instead of using a fixed target.
+ * EQUAL_BETWEEN_STRUCTURES: distributes remaining whitespace evenly between children.
+ */
+const RECTPACKING_OPTIONS: Record<string, string | number> = {
+  'spacing.baseValue': 15,
+  'spacing.nodeNode': 15,
+  'elk.aspectRatio': '1.6',
+  'elk.expandNodes': 'true',
+  'elk.rectpacking.trybox': 'true',
+  'elk.rectpacking.packing.compaction.rowHeightReevaluation': 'true',
+  'elk.rectpacking.packing.compaction.iterations': 10,
+  'elk.rectpacking.whiteSpaceElimination.strategy': 'EQUAL_BETWEEN_STRUCTURES',
+  'elk.rectpacking.widthApproximation.strategy': 'SCANLINE',
+};
+
 type Node = LayoutData['nodes'][number];
 
 // Minimal structural type to avoid depending on d3 Selection typings
@@ -771,6 +790,14 @@ export const render = async (
     edges: [],
   };
 
+  // Optimize spacing when rectpacking is the root algorithm.
+  if (algorithm === 'elk.rectpacking') {
+    Object.assign(elkGraph.layoutOptions, RECTPACKING_OPTIONS, {
+      'elk.contentAlignment': 'H_CENTER V_TOP',
+      'elk.padding': '[top=15,left=15,bottom=15,right=15]',
+    });
+  }
+
   log.info('Drawing flowchart using v4 renderer', elk);
 
   // Set the direction of the graph based on the parsed information
@@ -840,6 +867,13 @@ export const render = async (
         node.layoutOptions['elk.expandNodes'] = 'true';
         // Reserve top padding for the label so children don't overlap it
         node.layoutOptions['elk.padding'] = `[top=${labelH + 15},left=15,bottom=15,right=15]`;
+
+        // Tighter spacing for rectpacking — uses smaller padding for nested containers.
+        if (algo === 'elk.rectpacking') {
+          Object.assign(node.layoutOptions, RECTPACKING_OPTIONS, {
+            'elk.padding': `[top=${labelH + 10},left=10,bottom=10,right=10]`,
+          });
+        }
       } else if (node.dir) {
         // Directional subgraph without explicit algorithm — use the parent layered algorithm
         node.layoutOptions['elk.algorithm'] = algorithm;

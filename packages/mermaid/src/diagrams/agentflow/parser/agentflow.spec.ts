@@ -1767,6 +1767,62 @@ describe('parsing an agentflow diagram', function () {
     });
   });
 
+  describe('metadata merging', function () {
+    it('should merge multiple metadata statements on the same vertex', function () {
+      agentflow.parser.parse(`agentflow
+        A["Node A"]
+        A@{ shape: subroutine }
+        A@{ params: "x :: Int" }
+      `);
+      const vert = agentflow.parser.yy.getVertices();
+      const a = vert.get('A');
+      expect(a.metadata.shape).toBe('subroutine');
+      expect(a.metadata.params).toBe('x :: Int');
+    });
+
+    it('should let later metadata overwrite conflicting keys', function () {
+      agentflow.parser.parse(`agentflow
+        B["Node B"]
+        B@{ shape: subroutine, params: "old" }
+        B@{ params: "new" }
+      `);
+      const vert = agentflow.parser.yy.getVertices();
+      const b = vert.get('B');
+      expect(b.metadata.shape).toBe('subroutine');
+      expect(b.metadata.params).toBe('new');
+    });
+
+    it('should merge multiple metadata statements on the same subgraph', function () {
+      agentflow.parser.parse(`agentflow
+        directive d1["Directive"]
+          X
+        end
+        d1@{ algorithm: elk.box }
+        d1@{ params: "max_requests :: Int" }
+      `);
+      const data = agentflow.parser.yy.getData();
+      delete data.config;
+      const d1Node = data.nodes.find((n: any) => n.id === 'd1');
+      expect(d1Node.metadata.algorithm).toBe('elk.box');
+      expect(d1Node.metadata.params).toBe('max_requests :: Int');
+    });
+
+    it('should let later subgraph metadata overwrite conflicting keys', function () {
+      agentflow.parser.parse(`agentflow
+        skill s1["Skill"]
+          Y
+        end
+        s1@{ algorithm: elk.box, strategy: "parallel" }
+        s1@{ strategy: "sequential" }
+      `);
+      const data = agentflow.parser.yy.getData();
+      delete data.config;
+      const s1Node = data.nodes.find((n: any) => n.id === 's1');
+      expect(s1Node.metadata.algorithm).toBe('elk.box');
+      expect(s1Node.metadata.strategy).toBe('sequential');
+    });
+  });
+
   describe('extended metadata fields', function () {
     it('should store strategy on skill containers', function () {
       agentflow.parser.parse(`agentflow LR
