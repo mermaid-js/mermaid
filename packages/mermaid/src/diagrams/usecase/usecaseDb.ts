@@ -141,7 +141,13 @@ const inferUseCases = (): void => {
   const seen = new Set<string>();
   model.connections.forEach((c) => { seen.add(c.from); seen.add(c.to); });
   seen.forEach((id) => {
-    if (!model.actors[id] && !model.externalSystems[id] && !model.usecases[id] && !model.collaborations[id] && !model.notes[id]) {
+    if (
+      !model.actors[id] &&
+      !model.externalSystems[id] &&
+      !model.usecases[id] &&
+      !model.collaborations[id] &&
+      !model.notes[id]
+    ) {
       model.usecases[id] = id;
     }
   });
@@ -237,14 +243,33 @@ export const getCollaborations = (): Record<string, string> => model.collaborati
 export const getNotes = (): Record<string, string> => model.notes;
 export const getConnections = (): Connection[] => model.connections;
 export const getSystem = (): string | null => model.system;
-export const clear = (): void => { model = createEmptyModel(); };
-export const setTitle = (title: string): void => { model.title = title; };
+export const clear = (): void => {
+  model = createEmptyModel();
+};
+export const setTitle = (title: string): void => {
+  model.title = title;
+};
 export const getTitle = (): string => model.title;
 
 const db: UseCaseDB = {
-  clear, setTitle, getTitle, parseDiagram, getModel, addActor, setSystem,
-  addExternal, addUseCase, addCollaboration, addNote, addConnection,
-  getActors, getUseCases, getExternalSystems, getCollaborations, getNotes,
-  getConnections, getSystem,
+  clear,
+  setTitle,
+  getTitle,
+  parseDiagram,
+  getModel,
+  addActor,
+  setSystem,
+  addExternal,
+  addUseCase,
+  addCollaboration,
+  addNote,
+  addConnection,
+  getActors,
+  getUseCases,
+  getExternalSystems,
+  getCollaborations,
+  getNotes,
+  getConnections,
+  getSystem,
 };
 export default db;
