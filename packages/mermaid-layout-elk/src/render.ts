@@ -13,6 +13,25 @@ import {
   onBorder,
 } from './geometry.js';
 
+/**
+ * Shared layout options for elk.rectpacking — applied at both root level
+ * and per-group level to reduce wasted space.
+ * trybox: attempt box-like packing first for tighter results.
+ * SCANLINE: width approximation scans node sizes instead of using a fixed target.
+ * EQUAL_BETWEEN_STRUCTURES: distributes remaining whitespace evenly between children.
+ */
+const RECTPACKING_OPTIONS: Record<string, string | number> = {
+  'spacing.baseValue': 15,
+  'spacing.nodeNode': 15,
+  'elk.aspectRatio': '1.6',
+  'elk.expandNodes': 'true',
+  'elk.rectpacking.trybox': 'true',
+  'elk.rectpacking.packing.compaction.rowHeightReevaluation': 'true',
+  'elk.rectpacking.packing.compaction.iterations': 10,
+  'elk.rectpacking.whiteSpaceElimination.strategy': 'EQUAL_BETWEEN_STRUCTURES',
+  'elk.rectpacking.widthApproximation.strategy': 'SCANLINE',
+};
+
 type Node = LayoutData['nodes'][number];
 
 // Minimal structural type to avoid depending on d3 Selection typings
@@ -106,8 +125,14 @@ export const render = async (
       await addVertices(nodeEl, nodeArr, child, node.id);
 
       if (node.label) {
+        // Measure label without width constraint so it matches the unconstrained
+        // rendering in createContainerGroup (which uses createLabel with infinite width).
+        // labelHelper falls back to flowchart.wrappingWidth (200px) when node.width is
+        // undefined, which artificially caps the measurement. Set a large width to prevent
+        // wrapping so ELK gets the true label width for sizing compound nodes.
+        const unconstrainedNode = { ...node, width: Number.POSITIVE_INFINITY };
         // @ts-ignore TODO: fix this
-        const { shapeSvg, bbox } = await labelHelper(nodeEl, node, undefined, true);
+        const { shapeSvg, bbox } = await labelHelper(nodeEl, unconstrainedNode, undefined, true);
         labelData.width = bbox.width;
         labelData.wrappingWidth = config.flowchart!.wrappingWidth;
         // Give some padding for elk
@@ -765,6 +790,14 @@ export const render = async (
     edges: [],
   };
 
+  // Optimize spacing when rectpacking is the root algorithm.
+  if (algorithm === 'elk.rectpacking') {
+    Object.assign(elkGraph.layoutOptions, RECTPACKING_OPTIONS, {
+      'elk.contentAlignment': 'H_CENTER V_TOP',
+      'elk.padding': '[top=15,left=15,bottom=15,right=15]',
+    });
+  }
+
   log.info('Drawing flowchart using v4 renderer', elk);
 
   // Set the direction of the graph based on the parsed information
@@ -807,21 +840,48 @@ export const render = async (
           height: node?.labelData?.height ?? 50,
         },
       ];
-      node.width = node.width + 2 * node.padding;
-      log.debug('UIO node label', node?.labelData?.width, node.padding);
+      // Compute label-based minimum width so ELK sizes compound nodes to fit their labels.
+      // We set nodeSize.minimum and keep width/height deleted so ELK computes from
+      // children but respects the label-derived floor.
+      const labelW = node?.labelData?.width ?? 0;
+      const pad = node.padding ?? 0;
+      const minWidth = labelW + 2 * pad;
+      const labelH = node?.labelData?.height ?? 0;
+      log.debug('UIO node label', labelW, pad, 'minWidth', minWidth);
       node.layoutOptions = {
         'spacing.baseValue': 30,
         'nodeLabels.placement': '[H_CENTER V_TOP, INSIDE]',
+        'nodeSize.constraints': '[MINIMUM_SIZE, NODE_LABELS]',
+        'nodeSize.minimum': `(${minWidth}, ${labelH})`,
       };
-      if (node.dir) {
-        node.layoutOptions = {
-          ...node.layoutOptions,
-          'elk.algorithm': algorithm,
-          'elk.direction': dir2ElkDirection(node.dir),
-          'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy,
-          'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
-          'elk.hierarchyHandling': 'SEPARATE_CHILDREN',
-        };
+
+      // Apply per-group algorithm from metadata (e.g. @{algorithm: elk.box}).
+      // SEPARATE_CHILDREN is required so the subgraph's algorithm actually
+      // runs instead of being swallowed by the root INCLUDE_CHILDREN policy.
+      const algo = node.metadata?.algorithm;
+      if (algo && typeof algo === 'string') {
+        node.layoutOptions['elk.algorithm'] = algo;
+        node.layoutOptions['elk.hierarchyHandling'] = 'SEPARATE_CHILDREN';
+        node.layoutOptions['elk.aspectRatio'] = '2.0';
+        node.layoutOptions['elk.contentAlignment'] = 'H_CENTER V_TOP';
+        node.layoutOptions['elk.expandNodes'] = 'true';
+        // Reserve top padding for the label so children don't overlap it
+        node.layoutOptions['elk.padding'] = `[top=${labelH + 15},left=15,bottom=15,right=15]`;
+
+        // Tighter spacing for rectpacking — uses smaller padding for nested containers.
+        if (algo === 'elk.rectpacking') {
+          Object.assign(node.layoutOptions, RECTPACKING_OPTIONS, {
+            'elk.padding': `[top=${labelH + 10},left=10,bottom=10,right=10]`,
+          });
+        }
+      } else if (node.dir) {
+        // Directional subgraph without explicit algorithm — use the parent layered algorithm
+        node.layoutOptions['elk.algorithm'] = algorithm;
+        node.layoutOptions['elk.direction'] = dir2ElkDirection(node.dir);
+        node.layoutOptions['nodePlacement.strategy'] =
+          data4Layout.config.elk?.nodePlacementStrategy;
+        node.layoutOptions['elk.layered.mergeEdges'] = data4Layout.config.elk?.mergeEdges;
+        node.layoutOptions['elk.hierarchyHandling'] = 'SEPARATE_CHILDREN';
       }
       delete node.x;
       delete node.y;
@@ -846,40 +906,14 @@ export const render = async (
     }
   });
 
-  log.debug('APA01 before');
-  log.debug('APA01 elkGraph structure:', JSON.stringify(elkGraph, null, 2));
-  log.debug('APA01 elkGraph.children length:', elkGraph.children?.length);
-  log.debug('APA01 elkGraph.edges length:', elkGraph.edges?.length);
-
-  // Validate that all edge references exist as nodes
-  elkGraph.edges?.forEach((edge: any, index: number) => {
-    log.debug(`APA01 validating edge ${index}:`, edge);
-    if (edge.sources) {
-      edge.sources.forEach((sourceId: any) => {
-        const sourceExists = elkGraph.children?.some((child: any) => child.id === sourceId);
-        log.debug(`APA01 source ${sourceId} exists:`, sourceExists);
-      });
-    }
-    if (edge.targets) {
-      edge.targets.forEach((targetId: any) => {
-        const targetExists = elkGraph.children?.some((child: any) => child.id === targetId);
-        log.debug(`APA01 target ${targetId} exists:`, targetExists);
-      });
-    }
-  });
-
   let g;
   try {
     g = await elk.layout(elkGraph);
-    log.debug('APA01 after - success');
-    log.info('APA01 layout result:', JSON.stringify(g, null, 2));
   } catch (error) {
-    log.error('APA01 ELK layout error:', error);
-    log.error('APA01 elkGraph that caused error:', JSON.stringify(elkGraph, null, 2));
+    log.error('ELK layout error:', error);
     throw error;
   }
 
-  // debugger;
   await drawNodes(0, 0, g.children, svg, subGraphsEl, 0);
 
   g.edges?.map(

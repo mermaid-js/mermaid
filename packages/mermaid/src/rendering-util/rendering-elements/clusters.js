@@ -838,6 +838,18 @@ const createDeclarationGroup = (cssClass) => async (parent, node) => {
 const typesGroup = createDeclarationGroup('types-cluster');
 const templatesGroup = createDeclarationGroup('templates-cluster');
 
+/** Group cluster: invisible container, purely for layout grouping. No fill, no stroke. */
+const groupGroup = async (parent, node) => {
+  return createContainerGroup(parent, node, {
+    cssClass: 'group-cluster',
+    rx: 0,
+    fill: 'none',
+    stroke: 'none',
+    strokeWidth: 0,
+    roughness: 0,
+  });
+};
+
 const squareRect = rect;
 const shapes = {
   rect,
@@ -852,6 +864,7 @@ const shapes = {
   skillGroup,
   testGroup,
   directiveGroup,
+  groupGroup,
   typesGroup,
   templatesGroup,
 };

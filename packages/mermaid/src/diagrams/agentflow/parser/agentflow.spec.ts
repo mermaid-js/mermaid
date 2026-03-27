@@ -1767,6 +1767,62 @@ describe('parsing an agentflow diagram', function () {
     });
   });
 
+  describe('metadata merging', function () {
+    it('should merge multiple metadata statements on the same vertex', function () {
+      agentflow.parser.parse(`agentflow
+        A["Node A"]
+        A@{ shape: subroutine }
+        A@{ params: "x :: Int" }
+      `);
+      const vert = agentflow.parser.yy.getVertices();
+      const a = vert.get('A');
+      expect(a.metadata.shape).toBe('subroutine');
+      expect(a.metadata.params).toBe('x :: Int');
+    });
+
+    it('should let later metadata overwrite conflicting keys', function () {
+      agentflow.parser.parse(`agentflow
+        B["Node B"]
+        B@{ shape: subroutine, params: "old" }
+        B@{ params: "new" }
+      `);
+      const vert = agentflow.parser.yy.getVertices();
+      const b = vert.get('B');
+      expect(b.metadata.shape).toBe('subroutine');
+      expect(b.metadata.params).toBe('new');
+    });
+
+    it('should merge multiple metadata statements on the same subgraph', function () {
+      agentflow.parser.parse(`agentflow
+        directive d1["Directive"]
+          X
+        end
+        d1@{ algorithm: elk.box }
+        d1@{ params: "max_requests :: Int" }
+      `);
+      const data = agentflow.parser.yy.getData();
+      delete data.config;
+      const d1Node = data.nodes.find((n: any) => n.id === 'd1');
+      expect(d1Node.metadata.algorithm).toBe('elk.box');
+      expect(d1Node.metadata.params).toBe('max_requests :: Int');
+    });
+
+    it('should let later subgraph metadata overwrite conflicting keys', function () {
+      agentflow.parser.parse(`agentflow
+        skill s1["Skill"]
+          Y
+        end
+        s1@{ algorithm: elk.box, strategy: "parallel" }
+        s1@{ strategy: "sequential" }
+      `);
+      const data = agentflow.parser.yy.getData();
+      delete data.config;
+      const s1Node = data.nodes.find((n: any) => n.id === 's1');
+      expect(s1Node.metadata.algorithm).toBe('elk.box');
+      expect(s1Node.metadata.strategy).toBe('sequential');
+    });
+  });
+
   describe('extended metadata fields', function () {
     it('should store strategy on skill containers', function () {
       agentflow.parser.parse(`agentflow LR
@@ -1856,6 +1912,75 @@ describe('parsing an agentflow diagram', function () {
       const data = agentflow.parser.yy.getData();
       const node = data.nodes.find((n: { id: string }) => n.id === 'bundle');
       expect(node?.metadata?.fallbacks).toBe('retry-3, escalate');
+    });
+  });
+
+  describe('group container', function () {
+    it('should parse a group with a quoted label', function () {
+      agentflow.parser.parse(`agentflow LR
+        group layout_group["My Group"]
+          A --> B
+        end
+      `);
+
+      const subGraphs = agentflow.parser.yy.getSubGraphs();
+      expect(subGraphs).toHaveLength(1);
+      expect(subGraphs[0].id).toBe('layout_group');
+      expect(subGraphs[0].title).toBe('My Group');
+      expect(subGraphs[0].type).toBe('group');
+    });
+
+    it('should parse a group without a label', function () {
+      agentflow.parser.parse(`agentflow LR
+        group myGroup
+          A
+        end
+      `);
+
+      const subGraphs = agentflow.parser.yy.getSubGraphs();
+      expect(subGraphs).toHaveLength(1);
+      expect(subGraphs[0].id).toBe('myGroup');
+      expect(subGraphs[0].title).toBe('');
+      expect(subGraphs[0].type).toBe('group');
+    });
+
+    it('should parse an anonymous group', function () {
+      agentflow.parser.parse(`agentflow LR
+        group
+          A
+        end
+      `);
+
+      const subGraphs = agentflow.parser.yy.getSubGraphs();
+      expect(subGraphs).toHaveLength(1);
+      expect(subGraphs[0].type).toBe('group');
+    });
+
+    it('should produce groupGroup shape in getData()', function () {
+      agentflow.parser.parse(`agentflow LR
+        group g1["Layout Group"]
+          A --> B
+        end
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const groupNode = data.nodes.find((n: { id: string }) => n.id === 'g1');
+      expect(groupNode).toBeDefined();
+      expect(groupNode?.isGroup).toBe(true);
+      expect(groupNode?.shape).toBe('groupGroup');
+    });
+
+    it('should support algorithm metadata on the container', function () {
+      agentflow.parser.parse(`agentflow LR
+        group g1["Stress Layout"]
+          A --> B
+        end
+        g1@{ algorithm: "elk.stress" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const groupNode = data.nodes.find((n: { id: string }) => n.id === 'g1');
+      expect(groupNode?.metadata?.algorithm).toBe('elk.stress');
     });
   });
 });

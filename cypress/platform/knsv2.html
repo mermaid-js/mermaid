@@ -106,96 +106,288 @@
 
   <body>
     <pre id="diagram4" class="mermaid2">
+      flowchart LR
+  subgraph TOP
+    direction TB
+    subgraph B1
+        direction RL
+        i1 -->f1
+    end
+    subgraph B2
+        direction BT
+        i2 -->f2
+    end
+  end
+  A --> TOP --> B
+  B1 --> B2
+  </pre
+    >
+    <pre id="diagram4" class="mermaid2">
+      agentflow TB
+  flow sample_flow["Flow: Composable Sequence"]
+    flow_a["Step A"]
+    flow_b["Step B"]
+    flow_a --&gt; flow_b
+  end
+  sample_flow@{algorithm: elk.box}
+    </pre>
+    <pre id="diagram4" class="mermaid">
+
 agentflow TB
-  type CoffeeCopy = Record {
-    hero_tagline: String
-    hero_subtitle: String
-    about: String
-    menu_item: String * 6
-  }
+group apa[" "]
+  flow sample_flow["Flow: Composable Sequence"]
+    flow_a["Step A"]
+    flow_b["Step B"]
+    flow_a --&gt; flow_b
+  end
 
-  type BilingualPage = Record {
-    english: String
-    swedish: String
-  }
+  skill sample_skill["Skill: Composed Capability"]
+    skill_search["search"]
+    skill_rank["rank"]
+    skill_search --&gt; skill_rank
+  end
+    directive sample_directive["Directive: Behavioral Constraint"]
+    dir_rule1["No PII in output"]
+    dir_rule2["Rate limit"]
+  end
+  directive sample_directive2["Directive: Behavioral Constraint"]
+    dir_rule3["No PII in output"]
+    dir_rule4["Rate limit"]
+  end
+end
+apa@{algorithm: elk.box}
+sample_directive@{algorithm: elk.box}
+sample_directive@{ params: "max_requests :: Int" }
+sample_directive2@{algorithm: elk.box}
+AnotherNode
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+agentflow TB
+group apa[" "]
+  %% ═══════════════════════════════════════
+  %% CONTAINER DEFINITIONS
+  %% ═══════════════════════════════════════
 
-  agent coffee_team["Coffee Team"]
-    flow build_site["Build Site"]
-      agent researcher["Researcher"]
-        task step1["Research Location"]
-          city["city"]
-          research_loc["research_location"]
-          brief["Research Brief"]
-          city --> research_loc --> brief
-        end
-        task step2["Write Copy"]
-          write_copy["write_copy"]
-          english_copy["English Copy"]
-          brief --> write_copy --> english_copy
-          write_copy --o coffee_copy_ref
-        end
-        step1 --> step2
-      end
-
-      agent translator["Translator"]
-        task step3["Translate to Swedish"]
-          translate_sv["translate_to_swedish"]
-          bilingual["Bilingual Page"]
-          english_copy --> translate_sv --> bilingual
-          translate_sv --o bilingual_page_ref
-        end
-      end
-
-      agent designer["Designer"]
-        task step4["Generate Website"]
-          gen_html["generate_html"]
-          html_out["HTML Website"]
-          bilingual --> gen_html --> html_out
-        end
-        nordic["nordic_design"]
-        glass["glassmorphism"]
-        scroll["scroll_animations"]
-        toggle["bilingual_toggle"]
-        gen_html --- nordic
-        gen_html --- glass
-        gen_html --- scroll
-        gen_html --- toggle
-      end
+  agent sample_agent["Agent: Autonomous Actor"]
+    task sample_task["Task: Unit of Work"]
+      task_input["Input parameter"]
+      task_tool["Callable tool"]
+      task_output["Data artifact"]
+      task_input --&gt; task_tool --&gt; task_output
+      task_tool --o type_ref["TaskResult"]
     end
   end
 
-  coffee_copy_ref["CoffeeCopy"]
-  bilingual_page_ref["BilingualPage"]
-  permit_ref["Permission Tree"]
+  flow sample_flow["Flow: Composable Sequence"]
+    flow_a["Step A"]
+    flow_b["Step B"]
+    flow_a --&gt; flow_b
+  end
 
-  city@{ shape: lean-right }
-  brief@{ shape: doc }
-  english_copy@{ shape: doc }
-  bilingual@{ shape: doc }
-  html_out@{ shape: doc }
-  nordic@{ shape: lin-doc }
-  glass@{ shape: lin-doc }
-  scroll@{ shape: lin-doc }
-  toggle@{ shape: lin-doc }
-  coffee_copy_ref@{ shape: procs, type: "CoffeeCopy" }
-  bilingual_page_ref@{ shape: procs, type: "BilingualPage" }
-  permit_ref@{ shape: procs, src: "./permit-tree.mmd" }
+  skill sample_skill["Skill: Composed Capability"]
+    skill_search["search"]
+    skill_rank["rank"]
+    skill_search --&gt; skill_rank
+  end
 
+  directive sample_directive["Directive: Behavioral Constraint"]
+    dir_rule1["No PII in output"]
+    dir_rule2["Rate limit"]
+  end
+  sample_directive@{ algorithm: elk.box }
 
-  research_loc@{ shape: subroutine, returns: "String", requires: "^net.read", cache: "24h", description: "Research a city's coffee culture: local roasters, neighborhoods, demographics, and vibe" }
-  write_copy@{ shape: subroutine, returns: "CoffeeCopy", requires: "^llm.query", retry: 2, description: "Write vivid marketing copy for a coffee shop website" }
-  translate_sv@{ shape: subroutine, returns: "BilingualPage", requires: "^llm.query", description: "Translate marketing copy to Swedish using du-form" }
-  gen_html@{ shape: subroutine, returns: "String", requires: "^llm.query", description: "Generate a complete one-page HTML website with inline CSS and JS" }
+  testCase sample_test["TestCase: Verification"]
+    test_step["Run assessment"]
+    test_assert["Assertion checkpoint"]
+    test_step --&gt; test_assert
+  end
 
-  researcher@{ model: "claude-sonnet-4-20250514", permits: "^net.read, ^llm.query" }
-  translator@{ model: "claude-sonnet-4-20250514", permits: "^llm.query" }
-  designer@{ model: "claude-sonnet-4-20250514", permits: "^llm.query" }
+  %% ═══════════════════════════════════════
+  %% NODE SHAPES
+  %% ═══════════════════════════════════════
 
-  build_site@{ params: "city :: String", returns: "String" }
+  subgraph node_shapes["Node Shapes"]
+    direction LR
+    ns_default["roundedRect: Default node"]
+    ns_subroutine["subroutine: Tool"]
+    ns_doc["doc: Data artifact"]
+    ns_input["lean-right: Input"]
+    ns_lindoc["lin-doc: Reference doc"]
+    ns_procs["procs: External ref"]
+    ns_stadium["stadium: Terminal"]
+    ns_hex["hexagon: Permission category"]
+    ns_circle["circle: Join point"]
+    ns_diamond{diamond: Decision}
+    ns_trapezoid["trapezoid: Constraint"]
+    ns_inv_trap["inv-trapezoid:<br>Inverted constraint"]
+    ns_dblcirc["double-circle:<br>Assertion"]
+  end
+  node_shapes@{ algorithm: elk.box }
+
+  %% ═══════════════════════════════════════
+  %% INSTANCE SHAPES
+  %% ═══════════════════════════════════════
+
+  subgraph instance_shapes["Instance Shapes"]
+    direction LR
+    is_agent["tag-rect: Agent instance"]
+    is_flow["delay: Flow instance"]
+    is_skill["lin-rect: Skill instance"]
+    is_tool["win-pane: Tool instance"]
+    is_directive["curv-trap: Directive instance"]
+  end
+  instance_shapes@{ algorithm: elk.box }
+  %% ═══════════════════════════════════════
+  %% EDGE TYPES
+  %% ═══════════════════════════════════════
+
+  subgraph edge_types["Edge Types"]
+    direction LR
+    e1a["Source"] --&gt; e1b["Target"]
+    e2a["Producer"] --o e2b["Type"]
+    e3a["Primary"] --x e3b["Fallback"]
+    e4a["Parent"] --&gt;&gt; e4b["Child"]
+    e5a["Peer A"] --- e5b["Peer B"]
+    e6a["Step 1"] ==&gt; e6b["Step 2"]
+    e7a["Tool"] -.-&gt; e7b["Constraint"]
+  end
+
+  %% ═══════════════════════════════════════
+  %% TYPE AND TEMPLATE DECLARATIONS
+  %% ═══════════════════════════════════════
+
+  type TaskResult = Record {
+    status: String
+    output: String
+    confidence: Float
+  }
+
+  type Severity = String
+
+  template %incident_report {
+    section HEADER
+    INCIDENT_ID: String        &lt;&lt;generated incident ID&gt;&gt;
+    SEVERITY: String           &lt;&lt;P0 through P4&gt;&gt;
+    section DETAILS
+    TITLE: String              &lt;&lt;concise incident title&gt;&gt;
+    BLAST_RADIUS: String       &lt;&lt;affected services&gt;&gt;
+    TIMELINE: String * 3       &lt;&lt;Timestamp | Event | Source&gt;&gt;
+  }
+
+  %% ═══════════════════════════════════════
+  %% SHAPE ASSIGNMENTS
+  %% ═══════════════════════════════════════
+
+  %% Container metadata
+  sample_agent@{ model: "claude-sonnet-4-20250514", permits: "net.read, llm.query" }
+  sample_flow@{ params: "input :: String", returns: "String" }
+  sample_skill@{ strategy: "parallel", params: "query :: String", returns: "Results" }
+  sample_directive@{ params: "max_requests :: Int" }
+  sample_test@{ assert: "result != null", expects: "non-null output" }
+
+  %% Task child shapes
+  task_input@{ shape: lean-right }
+  task_tool@{ shape: subroutine, returns: "TaskResult", requires: "llm.query" }
+  task_output@{ shape: doc }
+  type_ref@{ shape: procs, type: "TaskResult" }
+
+  %% Skill child shapes
+  skill_search@{ shape: subroutine }
+  skill_rank@{ shape: subroutine }
+
+  %% Directive child shapes
+  dir_rule1@{ shape: trapezoid, severity: "critical", rule: "Strip all PII before returning" }
+  dir_rule2@{ shape: trapezoid }
+
+  %% TestCase child shapes
+  test_assert@{ shape: double-circle }
+
+  %% Node shapes legend
+  ns_subroutine@{ shape: subroutine }
+  ns_doc@{ shape: doc }
+  ns_input@{ shape: lean-right }
+  ns_lindoc@{ shape: lin-doc }
+  ns_procs@{ shape: procs }
+  ns_stadium@{ shape: stadium }
+  ns_hex@{ shape: hex }
+  ns_circle@{ shape: circle }
+  ns_trapezoid@{ shape: trapezoid }
+  ns_inv_trap@{ shape: inv-trapezoid }
+  ns_dblcirc@{ shape: double-circle }
+
+  %% Instance shapes
+  is_agent@{ shape: tag-rect, def: "sample_agent" }
+  is_flow@{ shape: delay, def: "sample_flow" }
+  is_skill@{ shape: lin-rect, def: "sample_skill" }
+  is_tool@{ shape: win-pane, def: "task_tool" }
+  is_directive@{ shape: curv-trap, def: "sample_directive" }
+
+  %% Edge type node shapes
+  e1a@{ shape: lean-right }
+  e2b@{ shape: procs }
+  e3b@{ shape: stadium }
+  e4b@{ shape: stadium }
+  e7b@{ shape: trapezoid }
+end
+apa@{algorithm: elk.box}
+types@{
+    view: expanded
+}
+templates@{
+    view: expanded
+}
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
+    agentflow
+      agent diagnostician["Diagnostician"]
+        generate_differential
+        recommend_workup
+        search_clinical_literature
+        skill rapid_assessment["Rapid Assessment"]
+            #assess_vitals
+            #generate_differential
+        end
+        rapid_assessment@{
+          strategy: "Assess vitals first to determine acuity — if ESI 1 or 2, immediately generate differential with urgency flag"
+          params: "patient_data :: String"
+          returns: "String"
+        }
+    end
+    diagnostician@{
+        model: "claude-sonnet-4-20250514"
+        permits: "llm.query, net.read, llm.embed"
+        prompt: "You are a board-certified emergency physician and diagnostician. You think in probabilistic differentials, not single diagnoses. You always include must-not-miss diagnoses (PE, MI, aortic dissection, ectopic pregnancy, meningitis) even when unlikely. You order tests strategically — each test should change management. You stay current with evidence-based guidelines. IMPORTANT: This is decision support — clinical judgment always supersedes."
+        memory: "case_archive, guideline_updates"
+    }
+    </pre>
+    <pre id="diagram4" class="mermaid2">
 agentflow TB
+  type Patient = Record {
+    age: Int
+    allergies: List&lt;String&gt;
+    chief_complaint: String
+    current_medications: List&lt;String&gt;
+    id: String
+    medical_history: List&lt;String&gt;
+    sex: String
+    vitals: String
+  }
 
+  type TriageAssessment = Record {
+    acuity: String
+    differential: List&lt;String&gt;
+    disposition: String
+    primary_impression: String
+    recommended_workup: List&lt;String&gt;
+  }
+
+  type TreatmentPlan = Record {
+    diagnosis: String
+    follow_up: String
+    interventions: List&lt;String&gt;
+    medications: List&lt;String&gt;
+    red_flags: List&lt;String&gt;
+  }
 
   type AcuityLevel = Resuscitation | Emergent | Urgent | LessUrgent | NonUrgent
   type Disposition = Admit | Observe | Discharge | Transfer | AMA
@@ -217,12 +409,21 @@ agent ed_team["Ed Team"]
         generate_differential
         recommend_workup
         search_clinical_literature
-        rapid_assessment
+        skill rapid_assessment["Rapid Assessment"]
+            #assess_vitals
+            #generate_differential
+        end
+        rapid_assessment@{
+          strategy: "Assess vitals first to determine acuity — if ESI 1 or 2, immediately generate differential with urgency flag"
+          params: "patient_data :: String"
+          returns: "String"
+        }
     end
     diagnostician@{
         model: "claude-sonnet-4-20250514"
         permits: "llm.query, net.read, llm.embed"
         prompt: "You are a board-certified emergency physician and diagnostician. You think in probabilistic differentials, not single diagnoses. You always include must-not-miss diagnoses (PE, MI, aortic dissection, ectopic pregnancy, meningitis) even when unlikely. You order tests strategically — each test should change management. You stay current with evidence-based guidelines. IMPORTANT: This is decision support — clinical judgment always supersedes."
+        memory: "case_archive, guideline_updates"
     }
 
     agent attending["Attending"]
@@ -241,66 +442,83 @@ agent ed_team["Ed Team"]
         permits: "db.write"
         prompt: "You are a clinical documentation agent. You save encounter records to the EHR. Execute writes precisely and confirm completion. Never fabricate confirmations."
     }
+    triage_nurse --x diagnostician
+    diagnostician --x attending
+    attending --x records_agent
   end
   ed_team@{
     view: collapsed
+    fallbacks: "triage_nurse ?&gt; diagnostician ?&gt; attending ?&gt; records_agent"
   }
+
+clinical_reasoning["Clinical Reasoning"]
+clinical_reasoning@{ shape: trapezoid, params: "decision_tool :: String = Ottawa Ankle Rules, HEART Score, Wells Criteria" }
+
+patient_safety["Patient Safety"]
+patient_safety@{ shape: trapezoid, params: "high_risk_meds :: String = anticoagulants, opioids, insulin, chemotherapy, pediatric_age :: String = 18" }
+
+anchoring_bias["Anchoring Bias"]
+anchoring_bias@{ shape: lin-doc, severity: "error", context: "System anchored on initial diagnosis of musculoskeletal pain, missed subtle PE presentation", rule: "Always generate at least 5 differentials including one life-threatening diagnosis regardless of initial presentation — anchoring bias is the most dangerous diagnostic error" }
+medication_allergy_cross_reactivity["Medication Allergy Cross Reactivity"]
+medication_allergy_cross_reactivity@{ shape: lin-doc, severity: "error", context: "Patient with documented penicillin allergy received cephalosporin without cross-reactivity check", rule: "When patient has beta-lactam allergy, always assess cross-reactivity risk before recommending cephalosporins — 1-2% cross-reactivity rate is clinically significant" }
+vital_sign_trends["Vital Sign Trends"]
+vital_sign_trends@{ shape: lin-doc, severity: "warning", context: "Single normal vital sign reading masked a patient who was trending toward sepsis", rule: "Always request vital sign trends (at least 2 readings 15 min apart) for patients with infection concerns — single readings can be misleading" }
+
+llm --&gt;&gt; llm_query
+llm --&gt;&gt; llm_embed
+db --&gt;&gt; db_read
+db --&gt;&gt; db_write
+net --&gt;&gt; net_read
 
 
 flow triage_patient["Triage Patient"]
       direction TB
-      task Step1
-        direction TB
-         aTriage_nurse{{triage_nurse}}@{ agent: triage_nurse } --- assess_vitals@{ shape: subroutine }
-        aTriage_nurse --o acuity@{ shape: doc}
+      task triage_patient_step1["Step 1"]
+        triage_patient_agent_s1["triage_nurse"] --- triage_patient_assess_vitals_s1["assess_vitals"] --&gt; triage_patient_acuity_s1["acuity"]
       end
 
-      task Step2
-        direction TB
-         aDiagnostician{{diagnostician}}@{ agent: diagnostician } --- generate_differential@{ shape: subroutine }
-        aDiagnostician --o differential@{ shape: doc}
+      task triage_patient_step2["Step 2"]
+        triage_patient_agent_s2["diagnostician"] --- triage_patient_generate_differential_s2["generate_differential"] --&gt; triage_patient_differential_s2["differential"]
       end
 
-      task Step3
-        direction TB
-         aDiagnostician{{diagnostician}}@{ agent: diagnostician } --- search_clinical_literature@{ shape: subroutine }
-        aDiagnostician --o literature@{ shape: doc}
+      task triage_patient_step3["Step 3"]
+        triage_patient_agent_s3["diagnostician"] --- triage_patient_search_clinical_literature_s3["search_clinical_literature"] --&gt; triage_patient_literature_s3["literature"]
       end
 
-      task Step4
-        direction TB
-         aDiagnostician{{diagnostician}}@{ agent: diagnostician } --- recommend_workup@{ shape: subroutine }
-        aDiagnostician --o workup@{ shape: doc}
+      task triage_patient_step4["Step 4"]
+        triage_patient_agent_s4["diagnostician"] --- triage_patient_recommend_workup_s4["recommend_workup"] --&gt; triage_patient_workup_s4["workup"]
       end
 
-      task Step5
-        direction TB
-         anAttending{{attending}}@{ agent: attending } --- suggest_treatment@{ shape: subroutine }
-        anAttending --o treatment@{ shape: doc}
+      task triage_patient_step5["Step 5"]
+        triage_patient_agent_s5["attending"] --- triage_patient_suggest_treatment_s5["suggest_treatment"] --&gt; triage_patient_treatment_s5["treatment"]
       end
 
-    Step1 -->|"acuity"| Step2
-    Step2 -->|"differential"| Step3
-    Step3 -->|"literature"| Step4
-    Step4 -->|"workup"| Step5
-
-    %% Fan-in for Step4
-    Step3 -->|"differential"| Step4
-
-    %% Fan-in for Step5
-    Step4 -->|"differential"| Step5
+    triage_patient_step1 --&gt;|"acuity"| triage_patient_step2
+    triage_patient_step2 --&gt;|"differential"| triage_patient_step3
+    triage_patient_step3 --&gt;|"literature"| triage_patient_step4
+    triage_patient_step4 --&gt;|"workup"| triage_patient_step5
+    triage_patient_step3 --&gt;|"differential"| triage_patient_step4
+    triage_patient_step4 --&gt;|"differential"| triage_patient_step5
 end
   triage_patient@{
     params: "age: Int, chief_complaint: String, history: String, vitals: String"
     returns: "String"
   }
+triage_patient_assess_vitals_s1@{ shape: subroutine }
+triage_patient_acuity_s1@{ shape: doc }
+triage_patient_generate_differential_s2@{ shape: subroutine }
+triage_patient_differential_s2@{ shape: doc }
+triage_patient_search_clinical_literature_s3@{ shape: subroutine }
+triage_patient_literature_s3@{ shape: doc }
+triage_patient_recommend_workup_s4@{ shape: subroutine }
+triage_patient_workup_s4@{ shape: doc }
+triage_patient_suggest_treatment_s5@{ shape: subroutine }
+triage_patient_treatment_s5@{ shape: doc }
 
 flow route_by_acuity["Route By Acuity"]
       direction TB
-      task Step1
-        direction TB
-         aTriage_nurse{{triage_nurse}}@{ agent: triage_nurse } --- assess_vitals@{ shape: subroutine }
-        aTriage_nurse --o acuity@{ shape: doc}
+      task route_by_acuity_step1["Step 1"]
+        route_by_acuity_agent_s1["triage_nurse"] --- route_by_acuity_assess_vitals_s1["assess_vitals"] --&gt; route_by_acuity_acuity_s1["acuity"]
       end
 
 end
@@ -308,13 +526,13 @@ end
     params: "age: Int, chief_complaint: String, vitals: String"
     returns: "String"
   }
+route_by_acuity_assess_vitals_s1@{ shape: subroutine }
+route_by_acuity_acuity_s1@{ shape: doc }
 
 flow quick_assess["Quick Assess"]
       direction TB
-      task Step1
-        direction TB
-         aDiagnostician{{diagnostician}}@{ agent: diagnostician } --- generate_differential@{ shape: subroutine }
-        aDiagnostician --o result@{ shape: doc}
+      task quick_assess_step1["Step 1"]
+        quick_assess_agent_s1["diagnostician"] --- quick_assess_generate_differential_s1["generate_differential"] --&gt; quick_assess_result_s1["result"]
       end
 
 end
@@ -322,52 +540,75 @@ end
     params: "complaint: String, vitals: String"
     returns: "String"
   }
+quick_assess_generate_differential_s1@{ shape: subroutine }
+quick_assess_result_s1@{ shape: doc }
 
 template triage_note {
-
-    CHIEF_COMPLAINT: String           <<presenting complaint in patient's words>>
-    VITALS: String           <<HR | BP | RR | SpO2 | Temp | Pain>>
-    HPI: String           <<history of present illness narrative>>
-
-    ACUITY: String           <<ESI level with justification>>
-    PRIMARY_IMPRESSION: String           <<most likely diagnosis>>
-    DIFFERENTIAL: String * 5           <<Diagnosis | Likelihood | Key distinguishing feature>>
-
-    WORKUP: String * 4           <<Test | Priority | Rationale>>
-    DISPOSITION: String           <<recommended patient disposition>>
+    section PRESENTATION
+    CHIEF_COMPLAINT: String           &lt;&lt;presenting complaint in patient's words&gt;&gt;
+    VITALS: String           &lt;&lt;HR | BP | RR | SpO2 | Temp | Pain&gt;&gt;
+    HPI: String           &lt;&lt;history of present illness narrative&gt;&gt;
+    section ASSESSMENT
+    ACUITY: String           &lt;&lt;ESI level with justification&gt;&gt;
+    PRIMARY_IMPRESSION: String           &lt;&lt;most likely diagnosis&gt;&gt;
+    DIFFERENTIAL: String * 5           &lt;&lt;Diagnosis | Likelihood | Key distinguishing feature&gt;&gt;
+    section PLAN
+    WORKUP: String * 4           &lt;&lt;Test | Priority | Rationale&gt;&gt;
+    DISPOSITION: String           &lt;&lt;recommended patient disposition&gt;&gt;
   }
 
 template clinical_guideline {
-
-    CRITERIA: String * 3           <<Criterion | Met/Unmet | Evidence>>
-    SCORING: String           <<clinical decision rule score and interpretation>>
-
-    INTERVENTION: String * 4           <<Priority | Intervention | Timing | Monitoring>>
-    MEDICATION: String * 3           <<Drug | Dose | Route | Frequency | Duration>>
-
-    RED_FLAG: String * 3           <<Warning sign | Action required | Urgency>>
-    CONTRAINDICATION: String * 2           <<Medication/Procedure | Reason>>
+    section DIAGNOSIS
+    CRITERIA: String * 3           &lt;&lt;Criterion | Met/Unmet | Evidence&gt;&gt;
+    SCORING: String           &lt;&lt;clinical decision rule score and interpretation&gt;&gt;
+    section MANAGEMENT
+    INTERVENTION: String * 4           &lt;&lt;Priority | Intervention | Timing | Monitoring&gt;&gt;
+    MEDICATION: String * 3           &lt;&lt;Drug | Dose | Route | Frequency | Duration&gt;&gt;
+    section SAFETY
+    RED_FLAG: String * 3           &lt;&lt;Warning sign | Action required | Urgency&gt;&gt;
+    CONTRAINDICATION: String * 2           &lt;&lt;Medication/Procedure | Reason&gt;&gt;
   }
 
-    assess_vitals -.-> clinical_reasoning
-    generate_differential -.-> triage_note
-    generate_differential -.-> clinical_reasoning
-    generate_differential -.-> patient_safety
-    recommend_workup -.-> clinical_reasoning
-    suggest_treatment -.-> clinical_guideline
-    suggest_treatment -.-> clinical_reasoning
-    suggest_treatment -.-> patient_safety
+testCase test_1["vitals assessment assigns ESI level"]
+  test_1_assertion["assert"]
+end
+test_1_assertion@{ shape: double-circle }
+test_1@{
+    assert: "vitals assessment assigns ESI level"
+}
 
-%% ── Deferred node metadata ──
-assess_vitals@{ shape: subroutine, returns: "String", requires: "^llm.query" }
-generate_differential@{ shape: subroutine, returns: "String", requires: "^llm.query" }
-recommend_workup@{ shape: subroutine, returns: "String", requires: "^llm.query" }
-search_clinical_literature@{ shape: subroutine, returns: "String", requires: "^net.read, ^llm.embed", cache: "12h" }
-rapid_assessment@{ shape: stadium }
-suggest_treatment@{ shape: subroutine, returns: "String", requires: "^llm.query" }
-save_encounter@{ shape: subroutine, returns: "String", requires: "^db.write" }
+testCase test_2["differential includes must-not-miss diagnoses"]
+  test_2_assertion["assert"]
+end
+test_2_assertion@{ shape: double-circle }
+test_2@{
+    assert: "differential includes must-not-miss diagnoses"
+}
 
-    </pre>
+testCase test_3["treatment checks allergies"]
+  test_3_assertion["assert"]
+end
+test_3_assertion@{ shape: double-circle }
+test_3@{
+    assert: "treatment checks allergies"
+}
+
+testCase test_4["full triage pipeline completes"]
+  test_4_assertion["assert"]
+end
+test_4_assertion@{ shape: double-circle }
+test_4@{
+    assert: "full triage pipeline completes"
+}
+
+test_1 -.-&gt; triage_nurse
+test_2 --o APA
+%% diagnostician
+test_3 -.-&gt; attending
+test_4 -.-&gt; triage_patient
+
+</pre
+    >
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
@@ -407,12 +648,12 @@ save_encounter@{ shape: subroutine, returns: "String", requires: "^db.write" }
         alert('It worked');
       }
       await mermaid.initialize({
-        theme: 'base',
+        theme: 'redux',
         // theme: 'default',
         // theme: 'forest',
         // handDrawnSeed: 12,
-        look: 'classic',
-        // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
+        look: 'neo',
+        'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
         // layout: 'dagre',
         layout: 'elk',
         // layout: 'fixed',

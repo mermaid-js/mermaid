@@ -167,6 +167,12 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke-dasharray: 8, 3, 2, 3;
   }
 
+  .group-cluster rect {
+    fill: none;
+    stroke: none;
+    stroke-width: 0;
+  }
+
   .node .collapsed-indicator {
     fill: ${options.nodeBorder};
     stroke: none;

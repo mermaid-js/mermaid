@@ -123,6 +123,7 @@ that id.
 "skill"                  return 'skill';
 "testCase"               return 'testCase';
 "directive"              return 'directive';
+"group"                  return 'group';
 "subgraph"               return 'subgraph';
 "end"\b\s*               return 'end';
 
@@ -431,6 +432,12 @@ statement
     {$$=yy.addSubGraph($textNoTags,$document,{text:'', type:'text'},'directive');}
     | directive separator document end
     {$$=yy.addSubGraph(undefined,$document,undefined,'directive');}
+    | group SPACE textNoTags SQS text SQE separator document end
+    {$$=yy.addSubGraph($textNoTags,$document,$text,'group');}
+    | group SPACE textNoTags separator document end
+    {$$=yy.addSubGraph($textNoTags,$document,{text:'', type:'text'},'group');}
+    | group separator document end
+    {$$=yy.addSubGraph(undefined,$document,undefined,'group');}
     | direction
     | acc_title acc_title_value  { $$=$acc_title_value.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$acc_descr_value.trim();yy.setAccDescription($$); }
