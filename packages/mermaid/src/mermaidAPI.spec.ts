@@ -1151,4 +1151,37 @@ flowchart TD
       }
     );
   });
+
+  describe('gantt font-size scaling', () => {
+    const id = 'mermaid-gantt-font-size-test';
+
+    beforeEach(() => {
+      mermaidAPI.globalReset();
+    });
+
+    jsdomIt('uses themeVariables.fontSize and scales default gantt spacing', async () => {
+      mermaid.initialize({
+        theme: 'base',
+        themeVariables: { fontSize: '22px' },
+      });
+
+      const diagramText = `
+gantt
+  dateFormat YYYY-MM-DD
+  section A
+  Task 1 :a1, 2026-01-01, 1d
+`;
+
+      const { svg } = await mermaidAPI.render(id, diagramText);
+      const svgDoc = new JSDOM(svg).window.document;
+
+      const taskBar = ensureNodeFromSelector('rect.task', svgDoc);
+      const taskLabel = ensureNodeFromSelector('text[id$="-text"]', svgDoc);
+      const sectionRow = ensureNodeFromSelector('rect.section', svgDoc);
+
+      expect(Number(taskBar.getAttribute('height'))).toBeCloseTo(40, 5);
+      expect(Number(sectionRow.getAttribute('height'))).toBeCloseTo(48, 5);
+      expect(taskLabel.getAttribute('font-size')).toBe('22');
+    });
+  });
 });
