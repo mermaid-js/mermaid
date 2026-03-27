@@ -59,7 +59,7 @@ class Theme {
     this.usecaseBkg = this.usecaseBkg || this.primaryColor;
     this.usecaseBorder = this.usecaseBorder || this.primaryBorderColor;
     this.usecaseTextColor = this.usecaseTextColor || this.primaryTextColor;
-    
+
     // Actor styling (matching Sequence Diagram actors usually looks best)
     this.usecaseActorBkg = this.usecaseActorBkg || this.actorBkg;
     this.usecaseActorBorder = this.usecaseActorBorder || this.actorBorder;
