@@ -11,7 +11,7 @@ const loader = async () => {
   return { id, diagram };
 };
 
-const usecaseDetector: ExternalDiagramDefinition = { 
+const usecaseDetector: ExternalDiagramDefinition = {
   id,
   detector,
   loader,

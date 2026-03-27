@@ -13,7 +13,7 @@ export type RelationshipType =
   | 'constraint'
   | 'containment';
 
-export interface Connection { 
+export interface Connection {
   from: string;
   type: RelationshipType;
   to: string;

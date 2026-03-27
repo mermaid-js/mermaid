@@ -29,7 +29,7 @@ services:
       - DISPLAY
     volumes:
       - ./:/mermaid
-      - pnpm_store:/root/.local/share/pnpm 
+      - pnpm_store:/root/.local/share/pnpm
       - root_cache:/root/.cache
       - root_local:/root/.local
       - root_npm:/root/.npm

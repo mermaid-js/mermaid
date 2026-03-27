@@ -43,8 +43,8 @@ substate
 unfixable
 Unmodelled
 useCase
-useCases
 usecaseDiagram
+useCases
 Viewbox
 viewports
 visio
