@@ -1,11 +1,15 @@
 declare module '@zenuml/core' {
-  interface RenderOptions {
+  export interface RenderOptions {
     theme?: string;
-    mode?: string;
   }
 
-  export default class ZenUml {
-    constructor(container: Element);
-    render(text: string, options?: RenderOptions): Promise<void>;
+  export interface RenderResult {
+    svg: string;
+    innerSvg: string;
+    width: number;
+    height: number;
+    viewBox: string;
   }
+
+  export function renderToSvg(code: string, options?: RenderOptions): RenderResult;
 }
