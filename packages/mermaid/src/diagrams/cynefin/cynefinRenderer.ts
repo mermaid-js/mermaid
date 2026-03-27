@@ -229,12 +229,16 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
         .attr('width', textLen)
         .attr('height', itemHeight)
         .attr('rx', 4)
-        .attr('ry', 4);
+        .attr('ry', 4)
+        .attr('fill', '#ffffff')
+        .attr('stroke', '#cccccc')
+        .attr('stroke-width', 1)
+        .attr('fill-opacity', 0.9);
 
       g.append('text')
-        .attr('class', 'cynefinItem')
         .attr('x', textLen / 2)
         .attr('y', itemHeight / 2)
+        .attr('fill', '#333333')
         .attr('text-anchor', 'middle')
         .attr('dominant-baseline', 'central')
         .text(item.label);
@@ -257,7 +261,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       .attr('orient', 'auto-start-reverse')
       .append('path')
       .attr('d', 'M 0 0 L 10 5 L 0 10 z')
-      .attr('class', 'cynefinArrow');
+      .attr('class', 'cynefinArrowHead');
 
     const arrowGroup = root.append('g').attr('class', 'cynefin-arrows');
 
@@ -288,12 +292,11 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
 
       arrowGroup
         .append('path')
-        .attr('class', 'cynefinArrow')
+        .attr('class', 'cynefinArrowLine')
         .attr(
           'd',
           `M${fromLayout.cx},${fromLayout.cy} Q${cpx},${cpy} ${toLayout.cx},${toLayout.cy}`
         )
-        .attr('fill', 'none')
         .attr('marker-end', `url(#${markerId})`);
 
       // Optional label

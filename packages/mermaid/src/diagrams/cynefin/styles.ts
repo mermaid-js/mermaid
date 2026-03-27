@@ -89,10 +89,14 @@ export const styles: DiagramStylesProvider = ({
 	.cynefinConfusion {
 		stroke-dasharray: 4 2;
 	}
-	.cynefinArrow {
+	.cynefinArrowLine {
 		stroke: ${cynefinOptions.arrowColor};
 		stroke-width: ${cynefinOptions.arrowStrokeWidth};
+		fill: none;
+	}
+	.cynefinArrowHead {
 		fill: ${cynefinOptions.arrowColor};
+		stroke: none;
 	}
 	.cynefinArrowLabel {
 		font-size: ${cynefinOptions.arrowLabelFontSize}px;
