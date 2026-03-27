@@ -286,6 +286,9 @@ const config: RequiredDeep<MermaidConfig> = {
   venn: {
     ...defaultConfigJson.venn,
   },
+  cynefin: {
+    ...defaultConfigJson.cynefin,
+  },
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

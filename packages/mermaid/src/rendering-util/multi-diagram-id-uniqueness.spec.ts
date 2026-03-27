@@ -178,6 +178,17 @@ union A, B`,
     Campfire Kettle -> Kettle
     Electric Kettle -> Kettle
     Smart Kettle -> Kettle`,
+
+  cynefin: `cynefin-beta
+    title Incident Response
+    complex
+      "Investigate root cause"
+    complicated
+      "Analyze metrics"
+    clear
+      "Restart service"
+    chaotic
+      "Page oncall"`,
 };
 
 async function renderTwoAndCheckIds(

@@ -25,6 +25,7 @@ import treemapDiagram from './examples/treemap.js';
 import vennDiagram from './examples/venn.js';
 import treeViewDiagram from './examples/tree-view.js';
 import wardleyDiagram from './examples/wardley.js';
+import cynefinDiagram from './examples/cynefin.js';
 
 export const diagramData: DiagramMetadata[] = [
   flowChart,
@@ -53,4 +54,5 @@ export const diagramData: DiagramMetadata[] = [
   vennDiagram,
   treeViewDiagram,
   wardleyDiagram,
+  cynefinDiagram,
 ];

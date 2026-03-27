@@ -31,6 +31,7 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
   'architecture',
   'radar',
   'venn',
+  'cynefin',
 ] as const;
 
 /**
