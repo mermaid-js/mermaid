@@ -198,7 +198,7 @@ class Theme {
     this.usecaseActorBkg = this.usecaseActorBkg || this.actorBkg;
     this.usecaseActorBorder = this.usecaseActorBorder || this.actorBorder;
     this.usecaseActorTextColor = this.usecaseActorTextColor || this.actorTextColor;
-    
+
     /* Flowchart variables */
 
     this.nodeBkg = this.mainBkg;
