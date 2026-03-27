@@ -117,7 +117,7 @@ export function resolveIcon(label: string, nodeType: NodeType): string {
 /**
  * Inline SVG icon paths, keyed by icon ID.
  * Each value is an SVG path `d` attribute for a 24×24 viewBox.
- * Icon paths from Material Design Icons by Pictogrammers (Apache 2.0).
+ * Icon paths from Material Design Icons (Apache 2.0).
  * https://github.com/Templarian/MaterialDesign
  */
 export const ICON_PATHS: Record<string, string> = {
