@@ -57,7 +57,7 @@ const RE_SYSTEM = /system\s+"?([^"{]+)"?/;
 const RE_LABEL_ALIAS = /"([^"]+)"(?:\s+as\s+(\w+))?/;
 const RE_REL_BLOCK =
   /^(include|extend|generalization|dependency|realization|anchor|constraint|containment|association):/i;
-const RE_NOTE = /note\s+"([\S\s]+?)"(?:\s+as\s+(\w+))?$/;
+const RE_NOTE = /note\s+"([\S\s]+?)"(?:\s+as\s+(\w+))?/;
 const RE_COLLABORATION = /^collaboration\s+/;
 
 let model: UseCaseModel = createEmptyModel();
@@ -177,8 +177,10 @@ function isAllowed(from: string, type: RelationshipType, to: string): boolean {
   }
   const fk = kindOf(from);
   const tk = kindOf(to);
-  // Allow if unknown (will be inferred) or if rule matches
-  if (fk === 'unknown' || tk === 'unknown') {
+  // For plain associations, unknown entities are OK — they get inferred as usecases later.
+  // For all explicitly typed relationships, both entities must already be declared
+  // and their kinds must satisfy the allow-list (no bypassing via 'unknown').
+  if (type === 'association' && (fk === 'unknown' || tk === 'unknown')) {
     return true;
   }
   return rules.some(([f, t]) => f === fk && t === tk);
@@ -223,14 +225,39 @@ const inferUseCases = (): void => {
   });
 };
 
+const RE_NOTE_GLOBAL = /note\s+"([\S\s]+?)"(?:\s+as\s+(\w+))?/g;
+
 export const parseDiagram = (code: string): void => {
   const normalizedCode = code.replace(/\\n/g, '\n');
+
+  // Pre-scan for notes on the full code before line-splitting,
+  // so multi-line note content (e.g. "line1\nline2") is captured correctly.
+  const noteLines = new Set<number>();
+  let noteMatch: RegExpExecArray | null;
+  RE_NOTE_GLOBAL.lastIndex = 0;
+  while ((noteMatch = RE_NOTE_GLOBAL.exec(normalizedCode)) !== null) {
+    addNote(noteMatch[2] || noteMatch[1], noteMatch[1]);
+    // Mark all source lines covered by this match so we skip them in the main loop
+    const before = normalizedCode.slice(0, noteMatch.index);
+    const startLine = before.split('\n').length - 1;
+    const matchLines = noteMatch[0].split('\n').length;
+    for (let i = 0; i < matchLines; i++) {
+      noteLines.add(startLine + i);
+    }
+  }
+
   const lines = normalizedCode.split('\n');
   let mode: 'actor' | 'usecase' | 'external' | 'collaboration' | null = null;
 
-  for (const raw of lines) {
+  for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
+    const raw = lines[lineIdx];
     const line = raw.trim();
     if (!line || line === 'usecaseDiagram' || line.startsWith('%%')) {
+      continue;
+    }
+
+    // Skip lines already consumed by the pre-scanned note pass
+    if (noteLines.has(lineIdx)) {
       continue;
     }
 
@@ -246,9 +273,13 @@ export const parseDiagram = (code: string): void => {
       continue;
     }
 
-    const noteM = RE_NOTE.exec(line);
-    if (noteM) {
-      addNote(noteM[2] || noteM[1], noteM[1]);
+    // A line with a colon before any arrow is a typed relationship block.
+    // If the type isn't in RE_REL_BLOCK, it's unknown — drop it entirely
+    // so it never reaches the --> association handler below.
+    const colonIdx = line.indexOf(':');
+    const arrowIdx = line.indexOf('-->');
+    const hasTypedBlockSyntax = colonIdx !== -1 && (arrowIdx === -1 || colonIdx < arrowIdx);
+    if (hasTypedBlockSyntax && !RE_REL_BLOCK.test(line)) {
       continue;
     }
 
@@ -269,19 +300,22 @@ export const parseDiagram = (code: string): void => {
       continue;
     }
 
-    // Drop unknown blocks (e.g. unknown: U-->L) to prevent them being treated as definitions
-    if (line.includes(':') && !line.includes('-->') && !RE_REL_BLOCK.test(line)) {
-      continue;
-    }
-
     if (line.startsWith('actor')) {
-      processDefinitions(line.replace(/^actor/, ''), 'actor');
+      processDefinitions(line.replace(/^actor\s*/, ''), 'actor');
       mode = 'actor';
       continue;
     }
     if (line.startsWith('usecase')) {
-      processDefinitions(line.replace(/^usecase/, ''), 'usecase');
+      processDefinitions(line.replace(/^usecase\s*/, ''), 'usecase');
       mode = 'usecase';
+      continue;
+    }
+    // Bare-word note: `note Foo` (no quotes) — register using the word as both alias and label
+    if (line.startsWith('note ') && !line.includes('"')) {
+      const bareAlias = line.replace(/^note\s+/, '').trim();
+      if (bareAlias) {
+        addNote(bareAlias, bareAlias);
+      }
       continue;
     }
     if (line.startsWith('external')) {
