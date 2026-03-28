@@ -2906,5 +2906,55 @@ Bob->>Alice:Got it!
       const classes2 = diagram2.db.getClasses();
       expect(Object.keys(classes2).length).toBe(0);
     });
+
+    it('should handle style with complex CSS values', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant Alice
+      style Alice fill:#f9f,stroke:#333,stroke-width:2px,stroke-dasharray:5 3
+      Alice->>Alice: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Alice').styles).toContain('fill:#f9f');
+      expect(actors.get('Alice').styles).toContain('stroke-width:2px');
+      expect(actors.get('Alice').styles).toContain('stroke-dasharray:5 3');
+    });
+
+    it('should handle classDef with single property', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef simple fill:#f00
+      participant Alice
+      Alice->>Alice: test
+      `);
+      const classes = diagram.db.getClasses();
+      expect(classes.simple.styles.length).toBe(1);
+      expect(classes.simple.styles[0]).toBe('fill:#f00');
+    });
+
+    it('should not add styles to actors without style keyword', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant Alice
+      Alice->>Alice: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Alice').styles).toBeUndefined();
+    });
+
+    it('should handle style on multiple actors independently', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant Alice
+      participant Bob
+      style Alice fill:#00f
+      style Bob fill:#f00
+      Alice->>Bob: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Alice').styles).toContain('fill:#00f');
+      expect(actors.get('Bob').styles).toContain('fill:#f00');
+      expect(actors.get('Alice').styles).not.toContain('fill:#f00');
+    });
   });
 });
