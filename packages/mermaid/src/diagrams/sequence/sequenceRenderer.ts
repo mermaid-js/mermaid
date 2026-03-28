@@ -231,6 +231,8 @@ interface NoteModel {
   message: string;
   /** Set this with a custom width to override the default configured width. */
   width: number;
+  /** Custom inline styles for this note */
+  styles?: string[];
 }
 
 /**
@@ -253,6 +255,17 @@ const drawNote = async function (elem: any, noteModel: NoteModel, id: string) {
   g.attr('data-et', 'note');
   g.attr('data-id', 'i' + id);
   const rectElem = svgDraw.drawRect(g, rect);
+
+  // Apply custom inline styles from note styling
+  if (noteModel.styles && noteModel.styles.length > 0) {
+    for (const style of noteModel.styles) {
+      const [prop, ...valueParts] = style.split(':');
+      if (prop && valueParts.length > 0) {
+        rectElem.style(prop.trim(), valueParts.join(':').trim());
+      }
+    }
+  }
+
   const textObj = svgDrawCommon.getTextObj();
   textObj.x = noteModel.startx;
   textObj.y = noteModel.starty;

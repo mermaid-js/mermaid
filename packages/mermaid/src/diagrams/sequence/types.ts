@@ -101,4 +101,5 @@ export interface Note {
   placement: Message['placement'];
   message: string;
   wrap: boolean;
+  styles?: string[];
 }
