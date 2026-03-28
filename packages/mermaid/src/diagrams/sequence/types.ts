@@ -3,6 +3,7 @@ export interface Box {
   wrap: boolean;
   fill: string;
   actorKeys: string[];
+  styles?: string[];
 }
 
 export interface Actor {
@@ -17,6 +18,14 @@ export interface Actor {
   actorCnt: number | null;
   rectData: unknown;
   type: string;
+  styles?: string[];
+  classes?: string[];
+}
+
+export interface SequenceClass {
+  id: string;
+  styles: string[];
+  textStyles: string[];
 }
 
 export interface Message {

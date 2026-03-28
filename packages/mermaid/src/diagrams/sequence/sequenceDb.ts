@@ -13,7 +13,7 @@ import {
   setAccTitle,
   setDiagramTitle,
 } from '../common/commonDb.js';
-import type { Actor, AddMessageParams, Box, Message, Note } from './types.js';
+import type { Actor, AddMessageParams, Box, Message, Note, SequenceClass } from './types.js';
 import type { ParticipantMetaData } from '../../types.js';
 
 interface SequenceState {
@@ -29,6 +29,7 @@ interface SequenceState {
   currentBox?: Box;
   lastCreated?: Actor;
   lastDestroyed?: Actor;
+  classes: Map<string, SequenceClass>;
 }
 
 const LINETYPE = {
@@ -126,6 +127,7 @@ export class SequenceDB implements DiagramDB {
     currentBox: undefined,
     lastCreated: undefined,
     lastDestroyed: undefined,
+    classes: new Map(),
   }));
 
   constructor() {
@@ -150,6 +152,77 @@ export class SequenceDB implements DiagramDB {
       actorKeys: [],
     });
     this.state.records.currentBox = this.state.records.boxes.slice(-1)[0];
+  }
+
+  /**
+   * Define a reusable style class for sequence diagram elements.
+   * Follows the same pattern as flowchart classDef.
+   *
+   * Syntax: classDef className fill:#f9f,stroke:#333;
+   */
+  public addClass(ids: string, styleStr: string[]) {
+    const styles = styleStr
+      .join()
+      .replace(/\\,/g, '\u00a7\u00a7\u00a7')
+      .replace(/,/g, ';')
+      .replace(/\u00a7\u00a7\u00a7/g, ',')
+      .split(';');
+
+    const textStyles: string[] = [];
+    const elementStyles: string[] = [];
+
+    for (const s of styles) {
+      const prop = s.trim();
+      if (!prop) {
+        continue;
+      }
+      if (prop.startsWith('color:') || prop.startsWith('font-')) {
+        textStyles.push(prop);
+      } else {
+        elementStyles.push(prop);
+      }
+    }
+
+    for (const id of ids.split(',')) {
+      const trimmedId = id.trim();
+      if (trimmedId) {
+        this.state.records.classes.set(trimmedId, {
+          id: trimmedId,
+          styles: elementStyles,
+          textStyles,
+        });
+      }
+    }
+  }
+
+  /**
+   * Apply inline styles to a specific actor/participant.
+   *
+   * Syntax: style Alice fill:#f9f,stroke:#333;
+   */
+  public setActorStyle(actorId: string, styleStr: string[]) {
+    const actor = this.state.records.actors.get(actorId);
+    if (!actor) {
+      return;
+    }
+
+    const styles = styleStr
+      .join()
+      .replace(/\\,/g, '\u00a7\u00a7\u00a7')
+      .replace(/,/g, ';')
+      .replace(/\u00a7\u00a7\u00a7/g, ',')
+      .split(';')
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    actor.styles = [...(actor.styles || []), ...styles];
+  }
+
+  /**
+   * Get all defined classes.
+   */
+  public getClasses() {
+    return Object.fromEntries(this.state.records.classes);
   }
 
   public addActor(

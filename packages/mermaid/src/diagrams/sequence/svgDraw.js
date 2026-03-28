@@ -412,6 +412,16 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter, actorInd
     rectElem.attr('filter', 'url(#drop-shadow)');
   }
 
+  // Apply custom inline styles from `style` or `classDef` syntax
+  if (actor.styles && actor.styles.length > 0) {
+    for (const style of actor.styles) {
+      const [prop, ...valueParts] = style.split(':');
+      if (prop && valueParts.length > 0) {
+        rectElem.style(prop.trim(), valueParts.join(':').trim());
+      }
+    }
+  }
+
   actor.rectData = rect;
 
   if (actor.properties?.icon) {

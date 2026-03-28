@@ -56,6 +56,8 @@
 "option"                                                        { this.begin('LINE'); return 'option'; }
 "break"                                                         { this.begin('LINE'); return 'break'; }
 <LINE>(?:[:]?(?:no)?wrap:)?[^#\n;]*                             { this.popState(); return 'restOfLine'; }
+"classDef"                                                      { this.begin('LINE'); return 'classDef'; }
+"style"                                                         { this.begin('LINE'); return 'style'; }
 "end"                                                           return 'end';
 "left of"                                                       return 'left_of';
 "right of"                                                      return 'right_of';
@@ -188,6 +190,8 @@ statement
   | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
   | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
   | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }
+	| 'classDef' restOfLine { var parts = $2.trim().split(/\s+/, 2); yy.addClass(parts[0], [parts.slice(1).join(' ')]); }
+	| 'style' restOfLine { var parts = $2.trim().split(/\s+/, 2); yy.setActorStyle(parts[0], [parts.slice(1).join(' ')]); }
 	| 'loop' restOfLine document end
 	{
 		$3.unshift({type: 'loopStart', loopText:yy.parseMessage($2), signalType: yy.LINETYPE.LOOP_START});
