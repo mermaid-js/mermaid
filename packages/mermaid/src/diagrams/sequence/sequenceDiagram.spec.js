@@ -2817,4 +2817,94 @@ Bob->>Alice:Got it!
       expect(actors.get('C').description).toBe('C');
     });
   });
+
+  describe('styling', () => {
+    it('should parse classDef and store class definitions', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef highlighted fill:#f9f,stroke:#333
+      participant Alice
+      participant Bob
+      Alice->>Bob: Hello
+      `);
+      const classes = diagram.db.getClasses();
+      expect(classes.highlighted).toBeDefined();
+      expect(classes.highlighted.styles).toContain('fill:#f9f');
+      expect(classes.highlighted.styles).toContain('stroke:#333');
+    });
+
+    it('should parse style and apply to actor', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant Alice
+      participant Bob
+      style Alice fill:#bbf,stroke:#00f
+      Alice->>Bob: Hello
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Alice').styles).toBeDefined();
+      expect(actors.get('Alice').styles).toContain('fill:#bbf');
+      expect(actors.get('Alice').styles).toContain('stroke:#00f');
+    });
+
+    it('should not add styles to actors that do not exist', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant Alice
+      style NonExistent fill:#f00
+      Alice->>Alice: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('NonExistent')).toBeUndefined();
+    });
+
+    it('should separate text styles from element styles in classDef', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef myClass fill:#f9f,color:red,font-weight:bold
+      participant Alice
+      Alice->>Alice: test
+      `);
+      const classes = diagram.db.getClasses();
+      expect(classes.myClass.styles).toContain('fill:#f9f');
+      expect(classes.myClass.textStyles).toContain('color:red');
+      expect(classes.myClass.textStyles).toContain('font-weight:bold');
+    });
+
+    it('should handle multiple classDef definitions', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef primary fill:#bbf,stroke:#00f
+      classDef secondary fill:#fbb,stroke:#f00
+      participant Alice
+      participant Bob
+      Alice->>Bob: Hello
+      `);
+      const classes = diagram.db.getClasses();
+      expect(classes.primary).toBeDefined();
+      expect(classes.secondary).toBeDefined();
+      expect(classes.primary.styles).toContain('fill:#bbf');
+      expect(classes.secondary.styles).toContain('fill:#fbb');
+    });
+
+    it('should clear styles on diagram reset', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef test fill:#f00
+      participant Alice
+      Alice->>Alice: test
+      `);
+      const classes = diagram.db.getClasses();
+      expect(classes.test).toBeDefined();
+
+      // Parse a new diagram without styles
+      const diagram2 = await Diagram.fromText(`
+      sequenceDiagram
+      participant Bob
+      Bob->>Bob: test
+      `);
+      const classes2 = diagram2.db.getClasses();
+      expect(Object.keys(classes2).length).toBe(0);
+    });
+  });
 });
