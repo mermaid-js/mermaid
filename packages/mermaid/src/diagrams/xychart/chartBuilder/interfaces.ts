@@ -33,6 +33,7 @@ export interface LinePlotData {
   strokeFill: string;
   strokeWidth: number;
   data: SimplePlotDataType;
+  pointLabels?: string[];
 }
 
 export interface BarPlotData {
