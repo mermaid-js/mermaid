@@ -111,13 +111,20 @@ interface LabelPlacement {
   offset: number;
 }
 
+interface PlotBounds {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+}
+
 /**
  * Compute the best placement for a label on a vertical chart.
  *
  * Tries placing the label above the point first. If the adjacent line segments
- * collide with that bounding box, tries below. If both positions collide, retries
- * with increasing offsets (up to 3x the base). Returns the first collision-free
- * placement, or below at max offset as the least-bad fallback.
+ * collide with that bounding box, or the label would clip outside the plot area,
+ * tries below. Retries with increasing offsets (up to 3x the base). Returns the
+ * first collision-free, non-clipping placement, or above at base offset as fallback.
  *
  * The bounding box is expanded by strokeWidth / 2 on all sides to account for the
  * visual width of the line itself.
@@ -128,7 +135,8 @@ function computeLabelPlacementVertical(
   labelText: string,
   fontSize: number,
   baseOffset: number,
-  strokeWidth: number
+  strokeWidth: number,
+  plotBounds: PlotBounds
 ): LabelPlacement {
   const [px, py] = finalData[index];
   const textWidth = fontSize * labelText.length * CHAR_WIDTH_FACTOR;
@@ -142,18 +150,24 @@ function computeLabelPlacementVertical(
   for (const offset of [baseOffset, baseOffset * 2, baseOffset * 3]) {
     const aboveTop = py - offset - halfHeight - strokePad;
     const aboveBottom = py - offset + halfHeight + strokePad;
-    if (!adjacentSegmentsIntersectBox(finalData, index, boxLeft, boxRight, aboveTop, aboveBottom)) {
+    if (
+      aboveTop >= plotBounds.top &&
+      !adjacentSegmentsIntersectBox(finalData, index, boxLeft, boxRight, aboveTop, aboveBottom)
+    ) {
       return { flip: false, offset };
     }
 
     const belowTop = py + offset - halfHeight - strokePad;
     const belowBottom = py + offset + halfHeight + strokePad;
-    if (!adjacentSegmentsIntersectBox(finalData, index, boxLeft, boxRight, belowTop, belowBottom)) {
+    if (
+      belowBottom <= plotBounds.bottom &&
+      !adjacentSegmentsIntersectBox(finalData, index, boxLeft, boxRight, belowTop, belowBottom)
+    ) {
       return { flip: true, offset };
     }
   }
 
-  return { flip: true, offset: baseOffset * 3 };
+  return { flip: false, offset: baseOffset };
 }
 
 /**
@@ -163,6 +177,8 @@ function computeLabelPlacementVertical(
  * swaps them: svgX = yAxisScale (d[1]), svgY = xAxisScale (d[0]). Collision checks
  * are performed in SVG space. The default position is to the right of the point;
  * the flipped position is to the left.
+ *
+ * Also guards against the label clipping outside the plot's left or right boundary.
  */
 function computeLabelPlacementHorizontal(
   finalData: [number, number][],
@@ -170,7 +186,8 @@ function computeLabelPlacementHorizontal(
   labelText: string,
   fontSize: number,
   baseOffset: number,
-  strokeWidth: number
+  strokeWidth: number,
+  plotBounds: PlotBounds
 ): LabelPlacement {
   const [px, py] = finalData[index];
   const textWidth = fontSize * labelText.length * CHAR_WIDTH_FACTOR;
@@ -185,18 +202,24 @@ function computeLabelPlacementHorizontal(
   for (const offset of [baseOffset, baseOffset * 2, baseOffset * 3]) {
     const rightLeft = py + offset - strokePad;
     const rightRight = py + offset + textWidth + strokePad;
-    if (!adjacentSegmentsIntersectBox(svgPoints, index, rightLeft, rightRight, boxTop, boxBottom)) {
+    if (
+      rightRight <= plotBounds.right &&
+      !adjacentSegmentsIntersectBox(svgPoints, index, rightLeft, rightRight, boxTop, boxBottom)
+    ) {
       return { flip: false, offset };
     }
 
     const leftLeft = py - offset - textWidth - strokePad;
     const leftRight = py - offset + strokePad;
-    if (!adjacentSegmentsIntersectBox(svgPoints, index, leftLeft, leftRight, boxTop, boxBottom)) {
+    if (
+      leftLeft >= plotBounds.left &&
+      !adjacentSegmentsIntersectBox(svgPoints, index, leftLeft, leftRight, boxTop, boxBottom)
+    ) {
       return { flip: true, offset };
     }
   }
 
-  return { flip: true, offset: baseOffset * 3 };
+  return { flip: false, offset: baseOffset };
 }
 
 export class LinePlot {
@@ -247,6 +270,25 @@ export class LinePlot {
       const labelOffset = fontSize + 2;
       const textData: TextElem[] = [];
 
+      const [yRangeA, yRangeB] = this.yAxis.getRange();
+      const [xRangeA, xRangeB] = this.xAxis.getRange();
+      let plotBounds: PlotBounds;
+      if (this.chartConfig.chartOrientation === 'horizontal') {
+        plotBounds = {
+          top: Math.min(xRangeA, xRangeB),
+          bottom: Math.max(xRangeA, xRangeB),
+          left: Math.min(yRangeA, yRangeB),
+          right: Math.max(yRangeA, yRangeB),
+        };
+      } else {
+        plotBounds = {
+          top: Math.min(yRangeA, yRangeB),
+          bottom: Math.max(yRangeA, yRangeB),
+          left: Math.min(xRangeA, xRangeB),
+          right: Math.max(xRangeA, xRangeB),
+        };
+      }
+
       for (const [i, [px, py]] of finalData.entries()) {
         const label = this.plotData.pointLabels[i];
         if (!label) {
@@ -260,7 +302,8 @@ export class LinePlot {
             label,
             fontSize,
             labelOffset,
-            this.plotData.strokeWidth
+            this.plotData.strokeWidth,
+            plotBounds
           );
           textData.push({
             x: flip ? py - offset : py + offset,
@@ -279,7 +322,8 @@ export class LinePlot {
             label,
             fontSize,
             labelOffset,
-            this.plotData.strokeWidth
+            this.plotData.strokeWidth,
+            plotBounds
           );
           textData.push({
             x: px,

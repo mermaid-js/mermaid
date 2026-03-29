@@ -365,6 +365,24 @@ config:
       line [400 "High", 50 "Low", 450 "Peak", 30 "Bottom"]
     </pre>
 
+    <hr />
+    <h1>Axis bounds: label near bottom should not clip x-axis</h1>
+    <pre class="mermaid">
+    xychart
+      x-axis [Q1, Q2, Q3, Q4]
+      y-axis "Revenue ($M)" 0 --> 100
+      line [95 "Top", 5 "Bottom", 92 "Near Top", 8 "Near Bottom"]
+    </pre>
+
+    <hr />
+    <h1>Axis bounds: horizontal — label near right should not clip y-axis</h1>
+    <pre class="mermaid">
+    xychart horizontal
+      x-axis [Q1, Q2, Q3, Q4]
+      y-axis "Revenue ($M)" 0 --> 100
+      line [5 "Start", 95 "End", 8 "Low", 92 "High"]
+    </pre>
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
