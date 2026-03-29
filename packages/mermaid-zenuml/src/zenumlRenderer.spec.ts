@@ -38,6 +38,7 @@ describe('calculateSvgSizeAttrs', function () {
 
 describe('draw', () => {
   beforeEach(() => {
+    vi.clearAllMocks();
     document.body.innerHTML = '';
   });
 
@@ -79,7 +80,7 @@ describe('draw', () => {
 
     await draw('zenuml\n    A->B: msg', 'nonexistent');
 
-    expect(log.error).toHaveBeenCalledWith('Cannot find root or svg element');
+    expect(log.error).toHaveBeenCalledWith('Cannot find svg element');
   });
 
   it('should strip the zenuml prefix before rendering', async () => {

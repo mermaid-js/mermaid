@@ -21,6 +21,22 @@ export const calculateSvgSizeAttrs = (
   return attrs;
 };
 
+/**
+ * Resolves the root document and SVG element, handling sandbox mode.
+ * Follows the same pattern as mermaid's selectSvgElement utility.
+ */
+const selectSvgElement = (id: string): SVGSVGElement | null => {
+  const { securityLevel } = getConfig();
+  let root: Document = document;
+
+  if (securityLevel === 'sandbox') {
+    const sandboxElement = document.querySelector<HTMLIFrameElement>(`#i${id}`);
+    root = sandboxElement?.contentDocument ?? document;
+  }
+
+  return root.querySelector<SVGSVGElement>(`#${id}`);
+};
+
 const configureSvgSize = (
   svgEl: SVGSVGElement,
   width: number,
@@ -49,20 +65,12 @@ export const draw = function (text: string, id: string): Promise<void> {
 
   const code = text.replace(regexp, '');
   const config = getConfig();
-  const { securityLevel } = config;
   const useMaxWidth = config.sequence?.useMaxWidth ?? true;
 
-  // Handle root and Document for when rendering in sandbox mode
-  let sandboxElement: HTMLIFrameElement | null = null;
-  if (securityLevel === 'sandbox') {
-    sandboxElement = document.getElementById('i' + id) as HTMLIFrameElement;
-  }
+  const svgEl = selectSvgElement(id);
 
-  const root = securityLevel === 'sandbox' ? sandboxElement?.contentWindow?.document : document;
-  const svgEl = root?.querySelector(`svg#${id}`) as SVGSVGElement | null;
-
-  if (!root || !svgEl) {
-    log.error('Cannot find root or svg element');
+  if (!svgEl) {
+    log.error('Cannot find svg element');
     return Promise.resolve();
   }
 

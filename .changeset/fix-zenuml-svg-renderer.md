@@ -1,5 +1,6 @@
 ---
 'mermaid': patch
+'@mermaid-js/mermaid-zenuml': patch
 ---
 
 fix: update @zenuml/core to v3.46.11 with native SVG renderer
