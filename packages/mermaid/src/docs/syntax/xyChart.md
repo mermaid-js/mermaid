@@ -225,11 +225,19 @@ xychart
 
 Labels are optional per point — you can mix labeled and unlabeled values:
 
-```
-line [10 "Start", 20, 30 "End"]
+```mermaid-example
+xychart
+    title "Quarterly Performance"
+    x-axis [Q1, Q2, Q3, Q4]
+    y-axis "Revenue ($M)" 0 --> 100
+    line [25 "Launch", 45, 72, 90 "Target Hit"]
 ```
 
 Existing syntax without labels continues to work unchanged.
+
+```note
+Point labels use a fixed font size of 12px. In vertical charts, labels appear above each point. In horizontal charts, labels appear to the right.
+```
 
 ## Example on config and theme
 
