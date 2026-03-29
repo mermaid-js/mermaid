@@ -211,6 +211,26 @@ xychart
     bar [12,2,20,25,17,24]
 ```
 
+## Per-point text labels for line charts (v<MERMAID_RELEASE_VERSION>+)
+
+Each data point in a `line` can optionally include a quoted string label after the numeric value. Labels render above points in vertical orientation, or to the right in horizontal orientation, using the line's stroke color.
+
+```mermaid-example
+xychart
+    title "Smallest AI models scoring above 60% on MMLU"
+    x-axis "Date" ["Apr 2022", "Feb 2023", "Jul 2023", "Sep 2023", "Apr 2024"]
+    y-axis "Parameters (B)" 0 --> 600
+    line [540 "PaLM", 65 "LLaMA-65B", 34 "Llama 2 34B", 7 "Mistral 7B", 3.8 "Phi-3-mini"]
+```
+
+Labels are optional per point — you can mix labeled and unlabeled values:
+
+```
+line [10 "Start", 20, 30 "End"]
+```
+
+Existing syntax without labels continues to work unchanged.
+
 ## Example on config and theme
 
 ```mermaid-example
