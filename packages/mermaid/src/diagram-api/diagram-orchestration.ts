@@ -111,6 +111,6 @@ export const addDiagrams = () => {
     ishikawa,
     treemap,
     venn,
-    wardley,
+    wardley
   );
 };
