@@ -336,6 +336,25 @@ config:
       line [25 "Launch", 45, 72, 90 "Target Hit"]
     </pre>
 
+    <hr />
+    <h1>Label collision avoidance: steep descent</h1>
+    <pre class="mermaid">
+    xychart
+      title "Smallest AI models scoring above 60% on MMLU"
+      x-axis "Date" ["Apr 2022", "Feb 2023", "Jul 2023", "Sep 2023", "Apr 2024"]
+      y-axis "Parameters (B)" 0 --> 600
+      line [540 "PaLM", 65 "LLaMA-65B", 34 "Llama 2 34B", 7 "Mistral 7B", 3.8 "Phi-3-mini"]
+    </pre>
+
+    <hr />
+    <h1>Label collision avoidance: zigzag pattern</h1>
+    <pre class="mermaid">
+    xychart
+      x-axis ["P1", "P2", "P3", "P4"]
+      y-axis 0 --> 500
+      line [400 "High", 50 "Low", 450 "Peak", 30 "Bottom"]
+    </pre>
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({

@@ -932,4 +932,41 @@ describe('XY Chart', () => {
       {}
     );
   });
+
+  describe('Point label collision avoidance', () => {
+    it('should flip labels below line when steep descent causes collision', () => {
+      imgSnapshotTest(
+        `
+        xychart
+          title "Smallest AI models scoring above 60% on MMLU"
+          x-axis "Date" ["Apr 2022", "Feb 2023", "Jul 2023", "Sep 2023", "Apr 2024"]
+          y-axis "Parameters (B)" 0 --> 600
+          line [540 "PaLM", 65 "LLaMA-65B", 34 "Llama 2 34B", 7 "Mistral 7B", 3.8 "Phi-3-mini"]
+        `,
+        {}
+      );
+    });
+    it('should keep labels above line when no collision on gentle slope', () => {
+      imgSnapshotTest(
+        `
+        xychart
+          x-axis ["A", "B", "C"]
+          y-axis 0 --> 100
+          line [40 "Start", 50 "Mid", 45 "End"]
+        `,
+        {}
+      );
+    });
+    it('should handle mixed collision: some labels above, some below', () => {
+      imgSnapshotTest(
+        `
+        xychart
+          x-axis ["P1", "P2", "P3", "P4"]
+          y-axis 0 --> 500
+          line [400 "High", 50 "Low", 450 "Peak", 30 "Bottom"]
+        `,
+        {}
+      );
+    });
+  });
 });
