@@ -1,4 +1,14 @@
 import { vi } from 'vitest';
+
+vi.mock('../../config.js', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    getConfig: vi.fn(() => ({ look: 'classic' })),
+  };
+});
+
+import * as configApi from '../../config.js';
 import svgDraw from './svgDraw.js';
 
 // This is the only place that uses this mock
@@ -29,6 +39,35 @@ export const MockD3 = (name, parent) => {
 
 describe('svgDraw', function () {
   describe('drawRect', function () {
+    it('should read config at render time for each rect', function () {
+      vi.mocked(configApi.getConfig)
+        .mockReturnValueOnce({ look: 'classic' })
+        .mockReturnValueOnce({ look: 'neo' });
+
+      const svg = MockD3('svg');
+
+      svgDraw.drawRect(svg, {
+        x: 10,
+        y: 10,
+        fill: '#ccc',
+        stroke: 'red',
+        width: '20',
+        height: '20',
+      });
+      svgDraw.drawRect(svg, {
+        x: 30,
+        y: 30,
+        fill: '#ddd',
+        stroke: 'blue',
+        width: '40',
+        height: '40',
+      });
+
+      expect(configApi.getConfig).toHaveBeenCalledTimes(2);
+      expect(svg.__children[0].attr).not.toHaveBeenCalledWith('data-look', 'neo');
+      expect(svg.__children[1].attr).toHaveBeenCalledWith('data-look', 'neo');
+    });
+
     it('should append a rectangle', function () {
       const svg = MockD3('svg');
       svgDraw.drawRect(svg, {
