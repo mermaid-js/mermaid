@@ -166,6 +166,34 @@ describe('flow db getData', () => {
   });
 });
 
+describe('flow db getData with edge classDef', () => {
+  let flowDb: FlowDB;
+  beforeEach(() => {
+    flowDb = new FlowDB();
+  });
+
+  it('should include edge classDef class name in SVG classes string', () => {
+    flowDb.addVertex('A', { text: 'A', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addVertex('B', { text: 'B', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addLink(['A'], ['B'], { classes: ['myEdgeClass'] });
+    flowDb.addClass('myEdgeClass', ['stroke:red', 'stroke-width:3px']);
+
+    const { edges } = flowDb.getData();
+    expect(edges[0].classes).toContain('myEdgeClass');
+  });
+
+  it('should compile classDef styles into cssCompiledStyles for edges', () => {
+    flowDb.addVertex('A', { text: 'A', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addVertex('B', { text: 'B', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addLink(['A'], ['B'], { classes: ['myEdgeClass'] });
+    flowDb.addClass('myEdgeClass', ['stroke:red', 'stroke-width:3px']);
+
+    const { edges } = flowDb.getData();
+    expect(edges[0].cssCompiledStyles).toBeDefined();
+    expect(edges[0].cssCompiledStyles!.length).toBeGreaterThan(0);
+  });
+});
+
 describe('flow db direction', () => {
   let flowDb: FlowDB;
   beforeEach(() => {

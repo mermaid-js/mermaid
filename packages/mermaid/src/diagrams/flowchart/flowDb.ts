@@ -303,6 +303,9 @@ export class FlowDB implements DiagramDB {
       edge.stroke = type.stroke;
       edge.length = type.length > 10 ? 10 : type.length;
     }
+    if (type?.classes) {
+      edge.classes.push(...type.classes);
+    }
     if (id && !this.edges.some((e) => e.id === id)) {
       edge.id = id;
       edge.isUserDefinedId = true;
@@ -1150,7 +1153,8 @@ You have to call mermaid.initialize.`
         classes:
           rawEdge?.stroke === 'invisible'
             ? ''
-            : 'edge-thickness-normal edge-pattern-solid flowchart-link',
+            : 'edge-thickness-normal edge-pattern-solid flowchart-link' +
+              (rawEdge.classes.length > 0 ? ' ' + rawEdge.classes.join(' ') : ''),
         arrowTypeStart:
           rawEdge?.stroke === 'invisible' || rawEdge?.type === 'arrow_open'
             ? 'none'
