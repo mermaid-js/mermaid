@@ -326,15 +326,26 @@ function calculateTextProps(
 ): TextProps {
   const config = commonGetConfig();
   const name = sanitizeText(extractName(frame.entityIdentifier) ?? '', config);
-  let content = `<b>${name}</b>`;
   let dataToBeRendered = false;
-  let toHtml;
+  let toHtml: string;
+
+  const wrapLabelConfig = {
+    fontSize: 16,
+    fontWeight: 700,
+    fontFamily: '"trebuchet ms", verdana, arial, sans-serif',
+    joinWith: '<br/>',
+  };
+
+  const wrappedName = wrapLabel(name, diagramProps.textMaxWidth, wrapLabelConfig);
+  let content = `<b>${wrappedName}</b>`;
 
   if (frame.dataInlineValue) {
     toHtml = frame.dataInlineValue;
     toHtml = toHtml.substring(toHtml.indexOf('{') + 1);
     toHtml = toHtml.substring(0, toHtml.lastIndexOf('}') - 1);
     toHtml = sanitizeText(toHtml, config);
+    toHtml = wrapLabel(toHtml, diagramProps.textMaxWidth, wrapLabelConfig);
+    toHtml = toHtml.replaceAll(' ', '&nbsp;');
     dataToBeRendered = true;
   }
 
@@ -348,7 +359,7 @@ function calculateTextProps(
       toHtml = toHtml.substring(toHtml.indexOf('{\n') + 2);
       toHtml = toHtml.substring(0, toHtml.lastIndexOf('}') - 1);
       toHtml = sanitizeText(toHtml, config);
-      toHtml = toHtml.replaceAll('\n', '<br/>');
+      toHtml = wrapLabel(toHtml, diagramProps.textMaxWidth, wrapLabelConfig);
       toHtml = toHtml.replaceAll(' ', '&nbsp;');
       toHtml += `<br/>`;
       dataToBeRendered = true;
@@ -358,15 +369,6 @@ function calculateTextProps(
   if (dataToBeRendered) {
     content += `<br/><br/><code style="text-align: left; display: block;max-width:${diagramProps.textMaxWidth}px">${toHtml}</code>`;
   }
-
-  const wrapLabelConfig = {
-    fontSize: 16,
-    fontWeight: 700,
-    fontFamily: '"trebuchet ms", verdana, arial, sans-serif',
-    joinWith: '<br/>',
-  };
-
-  content = wrapLabel(content, diagramProps.textMaxWidth, wrapLabelConfig);
 
   const textDimensionConfig: TextDimensionConfig = {
     fontSize: wrapLabelConfig.fontSize,

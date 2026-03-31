@@ -56,7 +56,8 @@ function dirUpwards(sourceY: number, targetY: number): boolean {
 function renderD3Relation(
   diagram: Selection<BaseType, unknown, HTMLElement, any>,
   diagramProps: DiagramProps,
-  arrowheadId: string
+  arrowheadId: string,
+  themeVariables: Record<string, string | undefined>
 ) {
   return (relation: Relation) => {
     const sourceBoxY = relation.sourceBox.swimlane.y + diagramProps.swimlanePadding;
@@ -82,11 +83,13 @@ function renderD3Relation(
       targetY = targetBoxY;
     }
 
+    const relationStroke = themeVariables.emRelationStroke ?? relation.visual.stroke;
+
     diagram
       .append('path')
       .attr('class', 'em-relation')
       .attr('fill', relation.visual.fill)
-      .attr('stroke', relation.visual.stroke)
+      .attr('stroke', relationStroke)
       .attr('stroke-width', '1')
       .attr('marker-end', `url(#${arrowheadId})`)
       .attr('d', `M${sourceX} ${sourceY} L${targetX} ${targetY}`);
@@ -142,7 +145,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     renderD3Swimlane(diagram, state.maxR, diagramProps, themeVariables)
   );
   state.boxes.forEach(renderD3Box(diagram, diagramProps));
-  state.relations.forEach(renderD3Relation(diagram, diagramProps, arrowheadId));
+  state.relations.forEach(renderD3Relation(diagram, diagramProps, arrowheadId, themeVariables));
 
   const marker = diagram
     .append('defs')
