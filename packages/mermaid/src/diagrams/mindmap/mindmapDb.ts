@@ -7,6 +7,7 @@ import type { MindmapNode } from './mindmapTypes.js';
 import defaultConfig from '../../defaultConfig.js';
 import type { LayoutData, Node, Edge } from '../../rendering-util/types.js';
 import { getUserDefinedConfig } from '../../config.js';
+import { MAX_SECTIONS } from './svgDraw.js';
 
 // Extend Node type for mindmap-specific properties
 export type MindmapLayoutNode = Node & {
@@ -203,7 +204,7 @@ export class MindmapDB {
     // For other nodes, inherit parent's section number
     if (node.children) {
       for (const [index, child] of node.children.entries()) {
-        const childSectionNumber = node.level === 0 ? index : sectionNumber;
+        const childSectionNumber = node.level === 0 ? index % (MAX_SECTIONS - 1) : sectionNumber;
         this.assignSections(child, childSectionNumber);
       }
     }
@@ -215,6 +216,7 @@ export class MindmapDB {
    * @param processedNodes - Array to collect processed nodes
    */
   public flattenNodes(node: MindmapNode, processedNodes: MindmapLayoutNode[]): void {
+    const conf = getConfig();
     // Build CSS classes for the node
     const cssClasses = ['mindmap-node'];
 
@@ -235,6 +237,8 @@ export class MindmapDB {
 
     // Map mindmap node type to valid shape name
     const getShapeFromType = (type: number) => {
+      const theme = conf.theme?.toLowerCase() ?? '';
+      const isReduxTheme = theme.includes('redux');
       switch (type) {
         case nodeType.CIRCLE:
           return 'mindmapCircle';
@@ -249,7 +253,7 @@ export class MindmapDB {
         case nodeType.HEXAGON:
           return 'hexagon';
         case nodeType.DEFAULT:
-          return 'defaultMindmapNode';
+          return isReduxTheme ? 'rounded' : 'defaultMindmapNode';
         case nodeType.NO_BORDER:
         default:
           return 'rect';
@@ -260,6 +264,7 @@ export class MindmapDB {
       id: node.id.toString(),
       domId: 'node_' + node.id.toString(),
       label: node.descr,
+      labelType: 'markdown',
       isGroup: false,
       shape: getShapeFromType(node.type),
       width: node.width,
@@ -267,7 +272,7 @@ export class MindmapDB {
       padding: node.padding,
       cssClasses: classes,
       cssStyles: [],
-      look: 'default',
+      look: conf.look,
       icon: node.icon,
       x: node.x,
       y: node.y,
@@ -297,6 +302,7 @@ export class MindmapDB {
     if (!node.children) {
       return;
     }
+    const conf = getConfig();
     for (const child of node.children) {
       // Build CSS classes for the edge
       let edgeClasses = 'edge';
@@ -317,7 +323,7 @@ export class MindmapDB {
         type: 'normal',
         curve: 'basis',
         thickness: 'normal',
-        look: 'default',
+        look: conf.look,
         classes: edgeClasses,
         // Store mindmap-specific data
         depth: node.level,

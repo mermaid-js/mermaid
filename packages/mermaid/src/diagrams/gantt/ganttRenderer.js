@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import dayjsDuration from 'dayjs/plugin/duration.js';
 import { log } from '../../logger.js';
 import {
   select,
@@ -27,6 +28,8 @@ import {
 import common from '../common/common.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
+
+dayjs.extend(dayjsDuration);
 
 export const setConf = function () {
   log.debug('Something is calling, setConf, remove the call');
@@ -78,8 +81,11 @@ const getMaxIntersections = (tasks, orderOffset) => {
 };
 
 let w;
+const MAX_TICK_COUNT = 10000;
 export const draw = function (text, id, version, diagObj) {
   const conf = getConfig().gantt;
+
+  diagObj.db.setDiagramId(id);
 
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
@@ -273,7 +279,7 @@ export const draw = function (text, id, version, diagObj) {
     rectangles
       .append('rect')
       .attr('id', function (d) {
-        return d.id;
+        return id + '-' + d.id;
       })
       .attr('rx', 3)
       .attr('ry', 3)
@@ -382,7 +388,7 @@ export const draw = function (text, id, version, diagObj) {
     rectangles
       .append('text')
       .attr('id', function (d) {
-        return d.id + '-text';
+        return id + '-' + d.id + '-text';
       })
       .text(function (d) {
         return d.task;
@@ -505,8 +511,8 @@ export const draw = function (text, id, version, diagObj) {
           return links.has(d.id);
         })
         .each(function (o) {
-          var taskRect = doc.querySelector('#' + o.id);
-          var taskText = doc.querySelector('#' + o.id + '-text');
+          var taskRect = doc.querySelector('#' + CSS.escape(id + '-' + o.id));
+          var taskText = doc.querySelector('#' + CSS.escape(id + '-' + o.id + '-text'));
           const oldParent = taskRect.parentNode;
           var Link = doc.createElement('a');
           Link.setAttribute('xlink:href', links.get(o.id));
@@ -581,7 +587,7 @@ export const draw = function (text, id, version, diagObj) {
 
     rectangles
       .append('rect')
-      .attr('id', (d) => 'exclude-' + d.start.format('YYYY-MM-DD'))
+      .attr('id', (d) => id + '-exclude-' + d.start.format('YYYY-MM-DD'))
       .attr('x', (d) => timeScale(d.start.startOf('day')) + theSidePad)
       .attr('y', conf.gridLineStartPadding)
       .attr('width', (d) => timeScale(d.end.endOf('day')) - timeScale(d.start.startOf('day')))
@@ -600,6 +606,27 @@ export const draw = function (text, id, version, diagObj) {
         );
       })
       .attr('class', 'exclude-range');
+  }
+
+  /**
+   * Calculates the estimated number of ticks based on the time domain and tick interval.
+   * Returns the estimated number of ticks as a number.
+   * @param {Date} minTime - The minimum time in the domain
+   * @param {Date} maxTime - The maximum time in the domain
+   * @param {number} every - The interval count (e.g., 1 for "1second")
+   * @param {string} interval - The interval unit (e.g., "second", "day")
+   * @returns {number} The estimated number of ticks
+   */
+  function getEstimatedTickCount(minTime, maxTime, every, interval) {
+    if (every <= 0 || minTime > maxTime) {
+      return Infinity;
+    }
+    const timeDiffMs = maxTime - minTime;
+    const intervalMs = dayjs.duration({ [interval ?? 'day']: every }).asMilliseconds();
+    if (intervalMs <= 0) {
+      return Infinity;
+    }
+    return Math.ceil(timeDiffMs / intervalMs);
   }
 
   /**
@@ -630,32 +657,54 @@ export const draw = function (text, id, version, diagObj) {
     );
 
     if (resultTickInterval !== null) {
-      const every = resultTickInterval[1];
-      const interval = resultTickInterval[2];
-      const weekday = diagObj.db.getWeekday() || conf.weekday;
+      const every = parseInt(resultTickInterval[1], 10);
+      if (isNaN(every) || every <= 0) {
+        log.warn(
+          `Invalid tick interval value: "${resultTickInterval[1]}". Skipping custom tick interval.`
+        );
+        // Skip applying custom ticks
+      } else {
+        const interval = resultTickInterval[2];
+        const weekday = diagObj.db.getWeekday() || conf.weekday;
 
-      switch (interval) {
-        case 'millisecond':
-          bottomXAxis.ticks(timeMillisecond.every(every));
-          break;
-        case 'second':
-          bottomXAxis.ticks(timeSecond.every(every));
-          break;
-        case 'minute':
-          bottomXAxis.ticks(timeMinute.every(every));
-          break;
-        case 'hour':
-          bottomXAxis.ticks(timeHour.every(every));
-          break;
-        case 'day':
-          bottomXAxis.ticks(timeDay.every(every));
-          break;
-        case 'week':
-          bottomXAxis.ticks(mapWeekdayToTimeFunction[weekday].every(every));
-          break;
-        case 'month':
-          bottomXAxis.ticks(timeMonth.every(every));
-          break;
+        // Get the time domain to check tick count
+        const domain = timeScale.domain();
+        const minTime = domain[0];
+        const maxTime = domain[1];
+        const estimatedTicks = getEstimatedTickCount(minTime, maxTime, every, interval);
+
+        if (estimatedTicks > MAX_TICK_COUNT) {
+          log.warn(
+            `The tick interval "${every}${interval}" would generate ${estimatedTicks} ticks, ` +
+              `which exceeds the maximum allowed (${MAX_TICK_COUNT}). ` +
+              `This may indicate an invalid date or time range. Skipping custom tick interval.`
+          );
+          // D3 will use its default automatic tick generation
+        } else {
+          switch (interval) {
+            case 'millisecond':
+              bottomXAxis.ticks(timeMillisecond.every(every));
+              break;
+            case 'second':
+              bottomXAxis.ticks(timeSecond.every(every));
+              break;
+            case 'minute':
+              bottomXAxis.ticks(timeMinute.every(every));
+              break;
+            case 'hour':
+              bottomXAxis.ticks(timeHour.every(every));
+              break;
+            case 'day':
+              bottomXAxis.ticks(timeDay.every(every));
+              break;
+            case 'week':
+              bottomXAxis.ticks(mapWeekdayToTimeFunction[weekday].every(every));
+              break;
+            case 'month':
+              bottomXAxis.ticks(timeMonth.every(every));
+              break;
+          }
+        }
       }
     }
 
@@ -677,32 +726,48 @@ export const draw = function (text, id, version, diagObj) {
         .tickFormat(timeFormat(axisFormat));
 
       if (resultTickInterval !== null) {
-        const every = resultTickInterval[1];
-        const interval = resultTickInterval[2];
-        const weekday = diagObj.db.getWeekday() || conf.weekday;
+        const every = parseInt(resultTickInterval[1], 10);
+        if (isNaN(every) || every <= 0) {
+          log.warn(
+            `Invalid tick interval value: "${resultTickInterval[1]}". Skipping custom tick interval.`
+          );
+          // Skip applying custom ticks
+        } else {
+          const interval = resultTickInterval[2];
+          const weekday = diagObj.db.getWeekday() || conf.weekday;
 
-        switch (interval) {
-          case 'millisecond':
-            topXAxis.ticks(timeMillisecond.every(every));
-            break;
-          case 'second':
-            topXAxis.ticks(timeSecond.every(every));
-            break;
-          case 'minute':
-            topXAxis.ticks(timeMinute.every(every));
-            break;
-          case 'hour':
-            topXAxis.ticks(timeHour.every(every));
-            break;
-          case 'day':
-            topXAxis.ticks(timeDay.every(every));
-            break;
-          case 'week':
-            topXAxis.ticks(mapWeekdayToTimeFunction[weekday].every(every));
-            break;
-          case 'month':
-            topXAxis.ticks(timeMonth.every(every));
-            break;
+          // Get the time domain to check tick count
+          const domain = timeScale.domain();
+          const minTime = domain[0];
+          const maxTime = domain[1];
+          const estimatedTicks = getEstimatedTickCount(minTime, maxTime, every, interval);
+
+          // Only apply custom ticks if the count is reasonable
+          if (estimatedTicks <= MAX_TICK_COUNT) {
+            switch (interval) {
+              case 'millisecond':
+                topXAxis.ticks(timeMillisecond.every(every));
+                break;
+              case 'second':
+                topXAxis.ticks(timeSecond.every(every));
+                break;
+              case 'minute':
+                topXAxis.ticks(timeMinute.every(every));
+                break;
+              case 'hour':
+                topXAxis.ticks(timeHour.every(every));
+                break;
+              case 'day':
+                topXAxis.ticks(timeDay.every(every));
+                break;
+              case 'week':
+                topXAxis.ticks(mapWeekdayToTimeFunction[weekday].every(every));
+                break;
+              case 'month':
+                topXAxis.ticks(timeMonth.every(every));
+                break;
+            }
+          }
         }
       }
 

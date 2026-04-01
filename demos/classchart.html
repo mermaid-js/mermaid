@@ -184,6 +184,7 @@
       }
       Admin --> Report : generates
     </pre>
+    <hr />
     <pre class="mermaid">
     classDiagram
       namespace Company.Project.Module {
@@ -240,6 +241,20 @@
       Bike --> Square : "Logo Shape"
 
     </pre>
+    <hr />
+    <pre class="mermaid">
+      classDiagram
+        note "This is a outer note"
+        note for Class1 "This is a outer note for Class1"
+        namespace ns {
+          note "This is a inner note"
+          note for Class1 "This is a inner note for Class1"
+          class Class1
+          class Class2
+        }
+    </pre>
+    <hr />
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({

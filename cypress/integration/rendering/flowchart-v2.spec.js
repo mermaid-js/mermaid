@@ -63,6 +63,17 @@ describe('Flowchart v2', () => {
       {}
     );
   });
+  it('4b: Labeled open edges should not have arrowheads', () => {
+    imgSnapshotTest(
+      `flowchart TD
+      A -- label text --- B
+      C --- D
+      E -- open label --- F
+      G <-- bidirectional --> H
+      `,
+      {}
+    );
+  });
   it('5: should render escaped without html labels', () => {
     imgSnapshotTest(
       `flowchart TD
@@ -71,12 +82,44 @@ describe('Flowchart v2', () => {
       { htmlLabels: false, flowchart: { htmlLabels: false } }
     );
   });
+
+  it('5a: should render flowchart with edge labels centered when htmlLabels is false', () => {
+    imgSnapshotTest(
+      `flowchart TB
+        A[Start] -->|first| B[Middle]
+        B -->|second| C[End]
+      `,
+      { logLevel: 1, htmlLabels: false }
+    );
+  });
+
+  it('5b: angle brackets should be work without html labels', () => {
+    imgSnapshotTest(
+      `flowchart TD
+    a["**Plain text**:\n 5 > 3 && 2 < 4"]
+    b["\`**Markdown**:<br> 5 > 3 && 2 < 4\`"]
+    `,
+      { htmlLabels: false }
+    );
+  });
   it('6: should render non-escaped with html labels', () => {
     imgSnapshotTest(
       `flowchart TD
         a["<strong>Haiya</strong>"]===>b
       `,
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('6a: should render complex HTML in labels with sandbox security', () => {
+    imgSnapshotTest(
+      `flowchart TD
+    A[Christmas] -->|Get money| B(Go shopping)
+    B --> C{Let me think}
+    C -->|One| D[Laptop]
+    C -->|Two| E[iPhone]
+    C -->|Three| F[fa:fa-car Car]
+      `,
+      { securityLevel: 'sandbox', flowchart: { htmlLabels: true } }
     );
   });
   it('7: should render a flowchart when useMaxWidth is true (default)', () => {
@@ -1145,6 +1188,19 @@ end
     });
   });
 
+  it('7213: should render edges with rounded curve (right angles with rounded corners)', () => {
+    imgSnapshotTest(
+      `flowchart TD
+    A[Start] --> B{Decision}
+    B -->|Yes| C[Process 1]
+    B -->|No| D[Process 2]
+    C --> E[End]
+    D --> E
+    `,
+      { flowchart: { curve: 'rounded' } }
+    );
+  });
+
   it('6617: Per Link Curve Styling using edge Ids', () => {
     imgSnapshotTest(
       `flowchart TD
@@ -1174,8 +1230,8 @@ end
     end
     githost["Github, Gitlab, BitBucket, etc."]
     githost2["\`Github, Gitlab, BitBucket, etc.\`"]
-    a["1."]
-    b["- x"]
+    a["\`1.\`"]
+    b["\`- x\`"]
       `;
 
     it('should render raw strings', () => {
@@ -1198,5 +1254,33 @@ classDef myClass fill:#bbf,stroke:#f66,stroke-width:2px,color:white,stroke-dasha
 class link myClass
 `
     );
+  });
+
+  describe('Edge label autowrapping', () => {
+    it('should wrap edge labels', () => {
+      imgSnapshotTest(
+        [
+          {
+            markdownAutoWrap: true,
+            htmlLabels: true,
+          },
+          { markdownAutoWrap: true, htmlLabels: false },
+          { markdownAutoWrap: false, htmlLabels: true },
+          // TODO: currently broken
+          // {markdownAutoWrap: false, htmlLabels: false},
+        ].map(
+          ({ markdownAutoWrap, htmlLabels }) => `---
+config: ${JSON.stringify({ markdownAutoWrap, htmlLabels })}
+title: Testing with ${JSON.stringify({ markdownAutoWrap, htmlLabels })}
+---
+flowchart TD
+    A["This is a really long line of plain text that will autowrap and support \\n newlines too."]    
+    B["\`This is a really long line of **markdown** text that will autowrap, unless markdownAutoWrap:false is set.\`"]
+    A -- "Plain text **labels** in flowcharts will autowrap,like node labels. \\n Newline characters work too." --> B
+    B -- "\`**Markdown** edge labels will autowrap, unless markdownAutoWrap: false is set\`" --> C
+`
+        )
+      );
+    });
   });
 });

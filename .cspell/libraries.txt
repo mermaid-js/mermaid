@@ -64,10 +64,12 @@ rscratch
 shiki
 Slidev
 sparkline
+speccharts
 sphinxcontrib
 ssim
 stylis
 Swimm
+Tachi
 tsbuildinfo
 tseslint
 Tuleap

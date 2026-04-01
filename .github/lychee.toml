@@ -60,7 +60,22 @@ exclude = [
 "https://foswiki.org",
 "https://www.gnu.org",
 "https://redmine.org",
-"https://mermaid-preview.com"
+"https://mermaid-preview.com",
+
+# npmjs.com 403
+"https://(www.)?npmjs.com",
+
+# dokuwiki.org 402
+"https://(www.)?dokuwiki.org",
+
+# medium.com 403
+"https://medium.com",
+
+# appsource.microsoft.com 403
+"https://appsource.microsoft.com",
+
+# mermaid.ai 403
+"https://mermaid.ai"
 ]
 
 # Exclude all private IPs from checking.
