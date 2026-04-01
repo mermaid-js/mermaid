@@ -12,6 +12,12 @@
 
 - [#7387](https://github.com/mermaid-js/mermaid/pull/7387) [`acce4db`](https://github.com/mermaid-js/mermaid/commit/acce4db7a1bd8801666f1a9667a63e4010ec2020) Thanks [@exoego](https://github.com/exoego)! - feat: Add Ishikawa diagram (ishikawa-beta)
 
+- [#7425](https://github.com/mermaid-js/mermaid/pull/7425) [`f16bfbb`](https://github.com/mermaid-js/mermaid/commit/f16bfbbd3b4cf59f816913029760031bf778f41d) Thanks [@knsv](https://github.com/knsv)! - fix: replace smooth curve edges with rounded right-angle edges
+
+  The default flowchart edge curve changes from `basis` (smooth splines) to `rounded` (right-angle segments with rounded corners). This fixes ELK layout edges that were curving instead of routing at right angles (#7213) and applies consistently across all diagram types using the shared rendering pipeline.
+
+  To restore the previous smooth curve behavior, set `flowchart.curve: 'basis'` in your config.
+
 - [#6995](https://github.com/mermaid-js/mermaid/pull/6995) [`9745f32`](https://github.com/mermaid-js/mermaid/commit/9745f325cb9e1967640f0e85da193a2f820634f1) Thanks [@darshanr0107](https://github.com/darshanr0107)! - feat: Deprecate [`flowchart.htmlLabels`](https://mermaid.js.org/config/schema-docs/config-defs-flowchart-diagram-config.html#htmllabels) in favor of [root-level `htmlLabels`](https://mermaid.js.org/config/schema-docs/config.html#htmllabels) in Mermaid config
 
 - [#5814](https://github.com/mermaid-js/mermaid/pull/5814) [`2dd29be`](https://github.com/mermaid-js/mermaid/commit/2dd29bee254a5b89c00eb0b0da1bcf7fe96ce46c) Thanks [@kairi003](https://github.com/kairi003)! - feat: allow to put notes in namespaces on classDiagram

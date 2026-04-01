@@ -63,6 +63,17 @@ describe('Flowchart v2', () => {
       {}
     );
   });
+  it('4b: Labeled open edges should not have arrowheads', () => {
+    imgSnapshotTest(
+      `flowchart TD
+      A -- label text --- B
+      C --- D
+      E -- open label --- F
+      G <-- bidirectional --> H
+      `,
+      {}
+    );
+  });
   it('5: should render escaped without html labels', () => {
     imgSnapshotTest(
       `flowchart TD
@@ -82,6 +93,15 @@ describe('Flowchart v2', () => {
     );
   });
 
+  it('5b: angle brackets should be work without html labels', () => {
+    imgSnapshotTest(
+      `flowchart TD
+    a["**Plain text**:\n 5 > 3 && 2 < 4"]
+    b["\`**Markdown**:<br> 5 > 3 && 2 < 4\`"]
+    `,
+      { htmlLabels: false }
+    );
+  });
   it('6: should render non-escaped with html labels', () => {
     imgSnapshotTest(
       `flowchart TD

@@ -54,10 +54,10 @@ export async function cylinder<T extends SVGGraphicsElement>(parent: D3Selection
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = bbox.width + node.padding;
+  const w = bbox.width + (node.padding ?? 0);
   const rx = w / 2;
   const ry = rx / (2.5 + w / 50);
-  const h = bbox.height + ry + node.padding;
+  const h = bbox.height + ry + (node.padding ?? 0);
 
   let cylinder: D3Selection<SVGPathElement> | D3Selection<SVGGElement>;
   const { cssStyles } = node;
