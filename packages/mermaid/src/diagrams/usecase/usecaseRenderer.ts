@@ -597,7 +597,8 @@ export const draw: DiagramDefinition['renderer']['draw'] = (text, id, _version, 
 
   const svg = select<SVGSVGElement, unknown>(`[id="${id}"]`);
   svg
-    .attr('width', layout.width)
+    .attr('width', '100%')
+    .attr('style', `max-width: ${layout.width}px;`)
     .attr('height', layout.height)
     .attr('viewBox', `0 0 ${layout.width} ${layout.height}`);
 
@@ -655,17 +656,6 @@ export const draw: DiagramDefinition['renderer']['draw'] = (text, id, _version, 
       drawNote(svg, p.x, p.y, label, t);
     }
   });
-
-  const svgNode = svg.node();
-  if (svgNode) {
-    let el: HTMLElement | null = svgNode.parentElement;
-    while (el && el.tagName !== 'BODY') {
-      el.style.width = `${layout.width}px`;
-      el.style.height = `${layout.height}px`;
-      el.style.overflow = 'visible';
-      el = el.parentElement;
-    }
-  }
 };
 
 const renderer = { draw };
