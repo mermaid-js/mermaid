@@ -83,6 +83,9 @@ export const sanitizeText = (text: string, config: MermaidConfig): string => {
   if (!text) {
     return text;
   }
+  if (config.securityLevel === 'parseOnly') {
+    return text;
+  }
   if (config.dompurifyConfig) {
     text = DOMPurify.sanitize(sanitizeMore(text, config), config.dompurifyConfig).toString();
   } else {

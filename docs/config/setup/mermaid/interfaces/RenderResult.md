@@ -41,6 +41,18 @@ bindFunctions?.(div); // To call bindFunctions only if it's present.
 
 ---
 
+### data?
+
+> `optional` **data**: `Record`<`string`, `unknown`>
+
+Defined in: [packages/mermaid/src/types.ts:140](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L140)
+
+The layout data structure used during rendering. Contains nodes, edges,
+and diagram-specific metadata (types, templates, etc.).
+Currently populated by agentflow diagrams.
+
+---
+
 ### diagramType
 
 > **diagramType**: `string`

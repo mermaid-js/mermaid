@@ -734,6 +734,31 @@ graph TD;A--x|text including URL space|B;`)
     });
   });
 
+  describe('parseOnly security level', () => {
+    beforeEach(() => {
+      mermaidAPI.initialize({ securityLevel: 'parseOnly' });
+    });
+
+    afterEach(() => {
+      mermaidAPI.initialize({ securityLevel: 'strict' });
+    });
+
+    it('parses a valid diagram without requiring a DOM', async () => {
+      const result = await mermaidAPI.parse('graph TD;A-->B;');
+      expect(result).toMatchObject({ diagramType: 'flowchart-v2' });
+    });
+
+    it('rejects an invalid diagram', async () => {
+      await expect(mermaidAPI.parse('this is not valid')).rejects.toThrowError();
+    });
+
+    it('blocks rendering and returns a comment', async () => {
+      const result = await mermaidAPI.render('test-id', 'graph TD;A-->B;');
+      expect(result.svg).toBe('<!-- security level is parseOnly -->');
+      expect(result.diagramType).toBe('unknown');
+    });
+  });
+
   describe('render', () => {
     // These are more like integration tests right now because nothing is mocked.
     // But it is faster that a cypress test and there's no real reason to actually evaluate an image pixel by pixel.

@@ -320,6 +320,11 @@ const render = async function (
   const config = configApi.getConfig();
   log.debug(config);
 
+  if (config.securityLevel === 'parseOnly') {
+    log.warn('Cannot render diagram in parseOnly mode');
+    return { svg: '<!-- security level is parseOnly -->', diagramType: 'unknown' };
+  }
+
   // Check the maximum allowed text size
   if (text.length > (config?.maxTextSize ?? MAX_TEXTLENGTH)) {
     text = MAX_TEXTLENGTH_EXCEEDED_MSG;
@@ -429,7 +434,7 @@ const render = async function (
   try {
     const drawResult = await diag.renderer.draw(text, id, injected.version, diag);
     if (drawResult && typeof drawResult === 'object') {
-      drawData = drawResult as Record<string, unknown>;
+      drawData = drawResult;
     }
   } catch (e) {
     if (config.suppressErrorRendering) {

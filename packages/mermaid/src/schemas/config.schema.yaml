@@ -211,6 +211,7 @@ properties:
       - loose
       - antiscript
       - sandbox
+      - parseOnly
     meta:enum:
       strict: (**default**) HTML tags in the text are encoded and click functionality is disabled.
       antiscript: HTML tags in text are allowed (only script elements are removed), and click functionality is enabled.
@@ -219,6 +220,9 @@ properties:
         With this security level, all rendering takes place in a sandboxed iframe.
         This prevent any JavaScript from running in the context.
         This may hinder interactive functionality of the diagram, like scripts, popups in the sequence diagram, or links to other tabs or targets, etc.
+      parseOnly: |
+        Disables rendering and XSS sanitization entirely.
+        Only parsing is allowed. Safe for use in Node.js environments without a DOM.
     default: strict
   startOnLoad:
     description: Dictates whether mermaid starts on Page load
