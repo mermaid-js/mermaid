@@ -18,7 +18,7 @@
   "dependencies": {
     "@mdi/font": "^7.4.47",
     "@plausible-analytics/tracker": "^0.4.4",
-    "@vueuse/core": "^13.9.0",
+    "@vueuse/core": "^14.2.1",
     "font-awesome": "^4.7.0",
     "jiti": "^2.4.2",
     "mermaid": "workspace:^",
@@ -33,8 +33,8 @@
     "https-localhost": "^4.7.1",
     "pathe": "^2.0.3",
     "unocss": "^66.5.9",
-    "unplugin-vue-components": "^28.8.0",
-    "vite": "^7.0.8",
+    "unplugin-vue-components": "^32.0.0",
+    "vite": "^8.0.3",
     "vite-plugin-pwa": "^1.0.3",
     "vitepress": "1.6.4",
     "workbox-window": "^7.3.0"
