@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/syntax/treeView.md](../../packages/mermaid/src/docs/syntax/treeView.md).
 
-# TreeView Diagram (v\<MERMAID_RELEASE_VERSION>+)
+# TreeView Diagram (v11.14.0+)
 
 ## Introduction
 
