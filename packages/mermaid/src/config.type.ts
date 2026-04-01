@@ -51,6 +51,14 @@ export type SankeyNodeAlignment = 'left' | 'right' | 'center' | 'justify';
  */
 export type DOMPurifyConfiguration = import('dompurify').Config;
 /**
+ * The style of labels in the sankey diagram.
+ *
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "SankeyLabelStyle".
+ */
+export type SankeyLabelStyle = 'legacy' | 'outlined';
+/**
  * The font size to use
  */
 export type CSSFontSize = string | number;
@@ -61,14 +69,26 @@ export interface MermaidConfig {
    * You may also use `themeCSS` to override this value.
    *
    */
-  theme?: 'default' | 'base' | 'dark' | 'forest' | 'neutral' | 'null';
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
   themeVariables?: any;
   themeCSS?: string;
   /**
    * Defines which main look to use for the diagram.
    *
    */
-  look?: 'classic' | 'handDrawn';
+  look?: 'classic' | 'handDrawn' | 'neo';
   /**
    * Defines the seed to be used when using handDrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.
    *
@@ -1581,6 +1601,28 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
    *
    */
   suffix?: string;
+  /**
+   * The width of the nodes in the sankey diagram.
+   *
+   */
+  nodeWidth?: number;
+  /**
+   * The padding between nodes in the sankey diagram.
+   *
+   */
+  nodePadding?: number;
+  /**
+   * The style of labels in the sankey diagram. 'outlined' provides better readability with a white stroke behind the text.
+   *
+   */
+  labelStyle?: 'legacy' | 'outlined';
+  /**
+   * A mapping of node IDs to their colors. Nodes not specified will use the default color scheme.
+   *
+   */
+  nodeColors?: {
+    [k: string]: string;
+  };
 }
 /**
  * The object containing configurations specific for packet diagrams.
