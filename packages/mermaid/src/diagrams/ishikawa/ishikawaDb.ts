@@ -43,14 +43,18 @@ export class IshikawaDB implements DiagramDB {
     const label = common.sanitizeText(text, getConfig());
 
     if (!this.root) {
-      this.baseLevel = rawLevel;
       this.root = { text: label, children: [] };
       this.stack = [{ level: 0, node: this.root }];
       setDiagramTitle(label);
       return;
     }
 
-    let level = rawLevel - (this.baseLevel ?? 0);
+    // Set baseLevel from the first cause (not the effect/root line),
+    // so that relative indentation between causes is preserved
+    // even when the effect line is indented more than the causes.
+    this.baseLevel ??= rawLevel;
+
+    let level = rawLevel - this.baseLevel + 1;
     if (level <= 0) {
       level = 1;
     }

@@ -16,13 +16,23 @@ export const addEdgeMarkers = (
   url: string,
   id: string,
   diagramType: string,
+  useMargin = false,
   strokeColor?: string
 ) => {
   if (edge.arrowTypeStart) {
-    addEdgeMarker(svgPath, 'start', edge.arrowTypeStart, url, id, diagramType, strokeColor);
+    addEdgeMarker(
+      svgPath,
+      'start',
+      edge.arrowTypeStart,
+      url,
+      id,
+      diagramType,
+      useMargin,
+      strokeColor
+    );
   }
   if (edge.arrowTypeEnd) {
-    addEdgeMarker(svgPath, 'end', edge.arrowTypeEnd, url, id, diagramType, strokeColor);
+    addEdgeMarker(svgPath, 'end', edge.arrowTypeEnd, url, id, diagramType, useMargin, strokeColor);
   }
 };
 
@@ -30,6 +40,7 @@ const arrowTypesMap = {
   arrow_cross: { type: 'cross', fill: false },
   arrow_point: { type: 'point', fill: true },
   arrow_barb: { type: 'barb', fill: true },
+  arrow_barb_neo: { type: 'barb', fill: true },
   arrow_circle: { type: 'circle', fill: false },
   aggregation: { type: 'aggregation', fill: false },
   extension: { type: 'extension', fill: false },
@@ -44,6 +55,18 @@ const arrowTypesMap = {
   requirement_contains: { type: 'requirement_contains', fill: false },
 } as const;
 
+const arrowTypesWithMarginSupport = [
+  'cross',
+  'point',
+  'circle',
+  'lollipop',
+  'aggregation',
+  'extension',
+  'composition',
+  'dependency',
+  'barb',
+];
+
 const addEdgeMarker = (
   svgPath: SVG,
   position: 'start' | 'end',
@@ -51,9 +74,11 @@ const addEdgeMarker = (
   url: string,
   id: string,
   diagramType: string,
+  useMargin = false,
   strokeColor?: string
 ) => {
   const arrowTypeInfo = arrowTypesMap[arrowType as keyof typeof arrowTypesMap];
+  const marginSupport = arrowTypeInfo && arrowTypesWithMarginSupport.includes(arrowTypeInfo.type);
 
   if (!arrowTypeInfo) {
     log.warn(`Unknown arrow type: ${arrowType}`);
@@ -62,7 +87,9 @@ const addEdgeMarker = (
 
   const endMarkerType = arrowTypeInfo.type;
   const suffix = position === 'start' ? 'Start' : 'End';
-  const originalMarkerId = `${id}_${diagramType}-${endMarkerType}${suffix}`;
+
+  const offset = useMargin && marginSupport ? '-margin' : '';
+  const originalMarkerId = `${id}_${diagramType}-${endMarkerType}${suffix}${offset}`;
 
   // If stroke color is specified and non-empty, create or use a colored variant of the marker
   if (strokeColor && strokeColor.trim() !== '') {
