@@ -326,8 +326,7 @@ function calculateTextProps(
 ): TextProps {
   const config = commonGetConfig();
   const name = sanitizeText(extractName(frame.entityIdentifier) ?? '', config);
-  let dataToBeRendered = false;
-  let toHtml: string;
+  let toHtml: string | undefined;
 
   const wrapLabelConfig = {
     fontSize: 16,
@@ -346,7 +345,6 @@ function calculateTextProps(
     toHtml = sanitizeText(toHtml, config);
     toHtml = wrapLabel(toHtml, diagramProps.textMaxWidth, wrapLabelConfig);
     toHtml = toHtml.replaceAll(' ', '&nbsp;');
-    dataToBeRendered = true;
   }
 
   if (frame.dataReference) {
@@ -362,11 +360,12 @@ function calculateTextProps(
       toHtml = wrapLabel(toHtml, diagramProps.textMaxWidth, wrapLabelConfig);
       toHtml = toHtml.replaceAll(' ', '&nbsp;');
       toHtml += `<br/>`;
-      dataToBeRendered = true;
     }
   }
 
-  if (dataToBeRendered) {
+  const hasRenderedData = toHtml !== undefined;
+
+  if (hasRenderedData) {
     content += `<br/><br/><code style="text-align: left; display: block;max-width:${diagramProps.textMaxWidth}px">${toHtml}</code>`;
   }
 
@@ -378,7 +377,7 @@ function calculateTextProps(
   const dimensions = calculateTextDimensions(content, textDimensionConfig);
 
   /** this is a temporal workaround until a more complex dimension calculation is in place */
-  const calculatedWidthFix = dataToBeRendered ? dimensions.width / 3 : dimensions.width;
+  const calculatedWidthFix = hasRenderedData ? dimensions.width / 3 : dimensions.width;
 
   const props = {
     content,
