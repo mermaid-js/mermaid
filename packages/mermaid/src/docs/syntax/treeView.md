@@ -1,4 +1,4 @@
-# TreeView Diagram (v<MERMAID_RELEASE_VERSION>+)
+# TreeView Diagram (v11.14.0+)
 
 ## Introduction
 
