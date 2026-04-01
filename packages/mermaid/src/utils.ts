@@ -683,6 +683,18 @@ export function calculateTextWidth(
  *   the resulting size
  * @returns The dimensions for the given text
  */
+
+/**
+ * Checks if the text contains CJK (Chinese, Japanese, Korean) characters.
+ * CJK characters often require extra width buffer due to rendering differences
+ * between SVG and Canvas (used in PNG export).
+ */
+const hasCJKCharacters = (text: string): boolean => {
+  // CJK Unified Ideographs, Hangul, Hiragana, Katakana, and other CJK ranges
+  const cjkRegex = /[\u3040-\u30FF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\u9FFF\uAC00-\uD7AF]/;
+  return cjkRegex.test(text);
+};
+
 export const calculateTextDimensions: (
   text: string,
   config: TextDimensionConfig
@@ -747,7 +759,17 @@ export const calculateTextDimensions: (
         dims[0].lineHeight > dims[1].lineHeight)
         ? 0
         : 1;
-    return dims[index];
+
+    const result = dims[index];
+
+    // Apply width buffer for CJK characters to prevent truncation during PNG export.
+    // SVG getBBox() can underestimate CJK character widths, causing clipping when
+    // converting to canvas for PNG export.
+    if (hasCJKCharacters(text)) {
+      result.width = Math.ceil(result.width * 1.05);
+    }
+
+    return result;
   },
   (text, config) => `${text}${config.fontSize}${config.fontWeight}${config.fontFamily}`
 );
