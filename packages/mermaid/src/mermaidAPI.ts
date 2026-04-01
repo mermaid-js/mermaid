@@ -12,7 +12,7 @@
  */
 // @ts-ignore TODO: Investigate D3 issue
 import { select } from 'd3';
-import { compile, serialize, stringify } from 'stylis';
+import { compile, middleware, serialize, stringify } from 'stylis';
 // @ts-ignore: TODO Fix ts errors
 import { version } from '../package.json';
 import * as configApi from './config.js';
@@ -210,6 +210,50 @@ export const createCssStyles = (
   return cssString + cssStyleSheetToString(cssStyles);
 };
 
+/**
+ * Use `stylis` to compile the CSS to only apply to the given namespace.
+ *
+ * This will also remove some newer CSS features (e.g. nesting) to better
+ * support older browsers and does some minification.
+ *
+ * @internal
+ * @param namespace - the namespace to add in front of all the CSS styles, e.g. `#idOfSvgElement`
+ * @param css - the CSS styles to add the namespace to.
+ * @see https://github.com/thysultan/stylis
+ *
+ * @example
+ * // Returns `#id .class1{fill:red;}`
+ * compileCSS('#id', `.class1 { fill: red }`)
+ */
+const compileCSS = (namespace: `#${string}`, css: string) => {
+  return serialize(
+    compile(`${namespace}{${css}}`),
+    middleware([
+      function addNamespace(element, _index, _children, _callback) {
+        /**
+         * CSS normally automatically adds the `&` selector in front of each
+         * element. But, if there's already an `&` selector, it doesn't add this.
+         *
+         * This code will explicitly make sure it's always added, to ensure
+         * that the CSS never applies outside the SVG.
+         *
+         * E.g. `#svgId { .nested-class :not(&) { fill: red } }` will be
+         * transformed to `#svgId { & .nested-class :not(&) { fill: red } }`
+         */
+        if (element.type === 'rule' && Array.isArray(element.props)) {
+          element.props = element.props.map((prop) => {
+            if (!prop.startsWith(namespace)) {
+              return `${namespace} ${prop}`;
+            }
+            return prop;
+          });
+        }
+      },
+      stringify,
+    ])
+  );
+};
+
 export const createUserStyles = (
   config: MermaidConfig,
   graphType: string,
@@ -219,11 +263,7 @@ export const createUserStyles = (
 ): string => {
   const userCSSstyles = createCssStyles(config, classDefs);
   const allStyles = getStyles(graphType, userCSSstyles, config.themeVariables);
-
-  // Now turn all of the styles into a (compiled) string that starts with the id
-  // use the stylis library to compile the css, turn the results into a valid CSS string (serialize(...., stringify))
-  // @see https://github.com/thysultan/stylis
-  return serialize(compile(`${svgId}{${allStyles}}`), stringify);
+  return compileCSS(svgId, allStyles);
 };
 
 /**

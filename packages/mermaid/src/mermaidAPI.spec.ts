@@ -74,12 +74,13 @@ vi.mock('stylis', async (importOriginal) => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   const original: typeof import('stylis') = await importOriginal();
   return {
+    middleware: vi.fn().mockImplementation(original.middleware),
     stringify: vi.fn().mockImplementation(original.stringify),
     compile: vi.fn().mockImplementation(original.compile),
     serialize: vi.fn().mockImplementation(original.serialize),
   };
 });
-import { compile, serialize } from 'stylis';
+import { compile, middleware, serialize } from 'stylis';
 import { decodeEntities, encodeEntities } from './utils.js';
 import { Diagram } from './Diagram.js';
 
@@ -515,6 +516,21 @@ describe('mermaidAPI', () => {
       );
       expect(result).toEqual(
         '#someId .edge-pattern-dashed{stroke-dasharray:3;}#someId .default{color:red;}#someId .classDef2>*{color:purple;}#someId .classDef2 span{color:purple;}'
+      );
+    });
+
+    it('should handle `:not(&)` selectors in the CSS', () => {
+      const result = createUserStyles(
+        {
+          ...mockConfig,
+          themeCSS: ':not(&){background:green !important}',
+        },
+        'someDiagram',
+        {},
+        '#someId'
+      );
+      expect(result).toEqual(
+        '#someId .edge-pattern-dashed{stroke-dasharray:3;}#someId :not(#someId){background:green!important;}'
       );
     });
   });

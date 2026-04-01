@@ -41,4 +41,18 @@ describe('CSS injections', () => {
     );
     cy.get('body > div #pwned').should('not.exist');
   });
+  it('should prevent CSS namespace injection via :not(&)', () => {
+    imgSnapshotTest(
+      `---
+title: Green background CSS should not be able to escape the diagram using :not(&)
+config:
+  themeCSS: ':not(&){background:green !important}'
+---
+flowchart
+  A --> B
+     `,
+      { logLevel: 1 }
+    );
+    cy.get('body').should('not.have.css', 'background-color', 'rgb(0, 128, 0)');
+  });
 });
