@@ -7,3 +7,5 @@ packages:
 minimumReleaseAgeExclude:
   # Renovate security update: dompurify@3.3.2
   - dompurify@3.3.2
+  # Renovate security update: ajv@8.18.0
+  - ajv@8.18.0
