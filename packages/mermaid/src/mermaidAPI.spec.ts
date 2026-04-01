@@ -78,9 +78,14 @@ vi.mock('stylis', async (importOriginal) => {
     stringify: vi.fn().mockImplementation(original.stringify),
     compile: vi.fn().mockImplementation(original.compile),
     serialize: vi.fn().mockImplementation(original.serialize),
+    COMMENT: original.COMMENT,
+    KEYFRAMES: original.KEYFRAMES,
+    LAYER: original.LAYER,
+    MEDIA: original.MEDIA,
+    SUPPORTS: original.SUPPORTS,
   };
 });
-import { compile, middleware, serialize } from 'stylis';
+import { compile, serialize } from 'stylis';
 import { decodeEntities, encodeEntities } from './utils.js';
 import { Diagram } from './Diagram.js';
 
@@ -531,6 +536,34 @@ describe('mermaidAPI', () => {
       );
       expect(result).toEqual(
         '#someId .edge-pattern-dashed{stroke-dasharray:3;}#someId :not(#someId){background:green!important;}'
+      );
+    });
+
+    it('should remove unsupported at-rules from user CSS', () => {
+      const result = createUserStyles(
+        {
+          ...mockConfig,
+          themeCSS: `
+          @import url('https://example.test/styles.css');
+          @media (max-width: 600px) {
+            * {
+              background-color: lightblue;
+            }
+          }
+          @supports selector(h2 > p) {
+            h2 > p {
+              color: red;
+            }
+          }
+          `,
+        },
+        'someDiagram',
+        {},
+        '#someId'
+      );
+      // @import is removed, but @media and @supports are kept with their child rules namespaced
+      expect(result).toEqual(
+        '#someId .edge-pattern-dashed{stroke-dasharray:3;}@media (max-width: 600px){#someId *{background-color:lightblue;}}@supports selector(h2 > p){#someId h2>p{color:red;}}'
       );
     });
   });
