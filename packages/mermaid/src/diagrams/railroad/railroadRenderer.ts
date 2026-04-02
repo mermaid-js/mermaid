@@ -564,9 +564,10 @@ class RailroadRenderer {
 
     // Render definition
     const defGroup = group.append('g').attr('transform', `translate(${nameWidth + 20}, 0)`);
+    const previousSvg = this.svg;
     this.svg = defGroup;
     const result = this.renderExpression(rule.definition);
-    this.svg = group.parent();
+    this.svg = previousSvg;
 
     // End marker
     const endMarker = group.append('g').attr('class', 'railroad-end');

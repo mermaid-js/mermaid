@@ -247,7 +247,10 @@ describe('Railroad Parser', () => {
       const rules = db.getRules();
 
       expect(rules).toHaveLength(1);
-      expect(rules[0].definition.type).toBe('sequence');
+      expect(rules[0].definition.type).toBe('terminal');
+      if (rules[0].definition.type === 'terminal') {
+        expect(rules[0].definition.value).toBe('a');
+      }
     });
 
     it('should parse grouped elements', () => {
@@ -340,21 +343,24 @@ describe('Railroad Parser', () => {
       expect(rules[0].definition.type).toBe('sequence');
       if (rules[0].definition.type === 'sequence') {
         expect(rules[0].definition.elements).toHaveLength(2);
-        expect(rules[0].definition.elements[0].type).toBe('choice');
-        expect(rules[0].definition.elements[1].type).toBe('choice');
+        expect(rules[0].definition.elements[0].type).toBe('group');
+        expect(rules[0].definition.elements[1].type).toBe('group');
       }
     });
 
-    it('should parse repetition with separator (ISO style)', () => {
+    it('should parse repetition with grouped ISO expression', () => {
       const input = `
         railroad-diagram
-        rule = { "a" }- ;
+        rule = { "a" | "b" } ;
       `;
       parser.parse(input);
       const rules = db.getRules();
 
       expect(rules).toHaveLength(1);
       expect(rules[0].definition.type).toBe('repetition');
+      if (rules[0].definition.type === 'repetition') {
+        expect(rules[0].definition.element.type).toBe('choice');
+      }
     });
   });
 

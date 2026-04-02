@@ -553,7 +553,23 @@ class RailroadParser {
       this.advance();
       return {
         type: 'special',
-        text: token.value,
+        text: token.value.trim(),
+      };
+    }
+
+    // Special sequences with whitespace-delimited content: ? text ?
+    if (this.match(TokenType.QUESTION)) {
+      this.advance(); // opening ?
+      const parts: string[] = [];
+
+      while (!this.match(TokenType.QUESTION, TokenType.EOF)) {
+        parts.push(this.advance().value);
+      }
+
+      this.expect(TokenType.QUESTION);
+      return {
+        type: 'special',
+        text: parts.join(' ').trim(),
       };
     }
 

@@ -98,6 +98,9 @@ radar-beta
   max 100
   min 0`,
 
+  railroad: `railroad-diagram
+    rule = "a" | "b" ;`,
+
   treemap: `treemap-beta
 "Section 1"
     "Leaf 1.1": 12
