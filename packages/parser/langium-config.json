@@ -45,6 +45,11 @@
       "id": "wardley",
       "grammar": "src/language/wardley/wardley.langium",
       "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "vsm",
+      "grammar": "src/language/vsm/vsm.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
     }
   ],
   "mode": "production",

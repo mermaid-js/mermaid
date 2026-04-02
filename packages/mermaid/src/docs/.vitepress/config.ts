@@ -192,6 +192,7 @@ function sidebarSyntax() {
         { text: 'Venn 🔥', link: '/syntax/venn' },
         { text: 'Ishikawa 🔥', link: '/syntax/ishikawa' },
         { text: 'TreeView 🔥', link: '/syntax/treeView' },
+        { text: 'Value Stream Map 🔥', link: '/syntax/vsm' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },

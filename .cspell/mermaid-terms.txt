@@ -4,9 +4,11 @@ Bendpoints
 bmatrix
 braintree
 catmull
+changeover
 compositTitleSize
 cose
 curv
+cycletime
 deaccelerator
 Deaccelerator
 deaccelerators
@@ -18,6 +20,7 @@ gitgraph
 gzipped
 handDrawn
 kanban
+leadtime
 marginx
 marginy
 Markdownish
@@ -30,6 +33,7 @@ multigraph
 nodesep
 NOTEGROUP
 Pinterest
+processtime
 procs
 rankdir
 ranksep
