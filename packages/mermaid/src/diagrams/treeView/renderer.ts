@@ -65,7 +65,7 @@ const positionLabel = (
   if (showIcon) {
     nodeGroup
       .append('use')
-      .attr('href', `#tv-icon-${diagramId}-${node.iconId}`)
+      .attr('xlink:href', `#tv-icon-${diagramId}-${node.iconId}`)
       .attr('x', x + config.paddingX)
       .attr('y', y + config.paddingY)
       .attr('width', ICON_SIZE)
