@@ -66,8 +66,8 @@ describe('state parser can parse...', () => {
       const diagramText = `stateDiagram-v2
       assemble
       assemblies
-      state assemble { innerState1 }
-      state assemblies {innerState2 }
+      state assemble
+      state assemblies
       `;
       stateDiagram.parser.parse(diagramText);
       const states = stateDiagram.parser.yy.getStates();

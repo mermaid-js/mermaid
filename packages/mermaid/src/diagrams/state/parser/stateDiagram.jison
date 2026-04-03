@@ -131,7 +131,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <STATE_STRING>["]          { this.popState(); }
 <STATE_STRING>[^"]*        { /* console.log('Long description:', yytext); */ return "STATE_DESCR"; }
 <STATE>[^\n\s\{]+          { /* console.log('COMPOSIT_STATE', yytext); */ return 'COMPOSIT_STATE'; }
-<STATE>\n                  { this.popState(); }
+<STATE>\n                  { this.popState(); return 'NL'; }
 <INITIAL,STATE>\{          { this.popState(); this.pushState('struct'); /* console.log('begin struct', yytext); */ return 'STRUCT_START'; }
 <struct>\}                 { /*console.log('Ending struct');*/ this.popState(); return 'STRUCT_STOP';} }
 <struct>[\n]               /* nothing */
@@ -167,6 +167,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 /lex
 
 %left '^'
+%left NL
 %right COMPOSIT_STATE /* fix the shift/reduce conflicts from new rule */
 
 %start start
@@ -225,6 +226,10 @@ statement
     | HIDE_EMPTY
     | scale WIDTH
     | COMPOSIT_STATE
+    | COMPOSIT_STATE NL
+        {
+            $$={ stmt: 'state', id: $1, type: 'default', description: '', doc: [] }
+        }
     | COMPOSIT_STATE STRUCT_START document STRUCT_STOP
     {
         // console.log('Adding document for state without id ', $1);
