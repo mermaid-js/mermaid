@@ -130,6 +130,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <STATE_ID>[^\n\{]*         { if (!processId()) return; this.popState(); /* console.log('STATE_ID', yytext); */ return "ID"; }
 <STATE_STRING>["]          { this.popState(); }
 <STATE_STRING>[^"]*        { /* console.log('Long description:', yytext); */ return "STATE_DESCR"; }
+<STATE>\s+"state"\s+       { this.popState(); this.pushState('STATE'); yytext='state '; return 'NL'; }
 <STATE>[^\n\s\{]+          { /* console.log('COMPOSIT_STATE', yytext); */ return 'COMPOSIT_STATE'; }
 <STATE>\n                  { this.popState(); return 'NL'; }
 <INITIAL,STATE>\{          { this.popState(); this.pushState('struct'); /* console.log('begin struct', yytext); */ return 'STRUCT_START'; }
@@ -167,8 +168,6 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 /lex
 
 %left '^'
-%left NL
-%right COMPOSIT_STATE /* fix the shift/reduce conflicts from new rule */
 
 %start start
 
@@ -225,7 +224,6 @@ statement
         }
     | HIDE_EMPTY
     | scale WIDTH
-    | COMPOSIT_STATE
     | COMPOSIT_STATE NL
         {
             $$={ stmt: 'state', id: $1, type: 'default', description: '', doc: [] }
