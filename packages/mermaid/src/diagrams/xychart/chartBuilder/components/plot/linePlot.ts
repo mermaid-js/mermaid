@@ -79,98 +79,124 @@ function doesSegmentIntersectBox(
 }
 
 /**
- * Determine if a label placed above (vertical) or to the right (horizontal)
- * of a data point would collide with an adjacent line segment.
+ * Check whether either adjacent segment (prev→current or current→next) intersects
+ * the given bounding box. Points are provided in the coordinate system already
+ * expected by doesSegmentIntersectBox.
  */
-function shouldFlipLabelVertical(
-  finalData: [number, number][],
+function adjacentSegmentsIntersectBox(
+  points: [number, number][],
   index: number,
-  labelText: string,
-  fontSize: number,
-  labelOffset: number
+  boxLeft: number,
+  boxRight: number,
+  boxTop: number,
+  boxBottom: number
 ): boolean {
-  const [px, py] = finalData[index];
-  const textWidth = fontSize * labelText.length * CHAR_WIDTH_FACTOR;
-  const halfWidth = textWidth / 2;
-  const halfHeight = fontSize / 2;
-
-  // Bounding box of label placed above the point
-  const boxLeft = px - halfWidth;
-  const boxRight = px + halfWidth;
-  const boxTop = py - labelOffset - halfHeight;
-  const boxBottom = py - labelOffset + halfHeight;
-
-  // Check previous segment
   if (
     index > 0 &&
-    doesSegmentIntersectBox(
-      finalData[index - 1],
-      finalData[index],
-      boxLeft,
-      boxRight,
-      boxTop,
-      boxBottom
-    )
+    doesSegmentIntersectBox(points[index - 1], points[index], boxLeft, boxRight, boxTop, boxBottom)
   ) {
     return true;
   }
-  // Check next segment
   if (
-    index < finalData.length - 1 &&
-    doesSegmentIntersectBox(
-      finalData[index],
-      finalData[index + 1],
-      boxLeft,
-      boxRight,
-      boxTop,
-      boxBottom
-    )
+    index < points.length - 1 &&
+    doesSegmentIntersectBox(points[index], points[index + 1], boxLeft, boxRight, boxTop, boxBottom)
   ) {
     return true;
   }
   return false;
 }
 
-function shouldFlipLabelHorizontal(
+interface LabelPlacement {
+  flip: boolean;
+  offset: number;
+}
+
+/**
+ * Compute the best placement for a label on a vertical chart.
+ *
+ * Tries placing the label above the point first. If the adjacent line segments
+ * collide with that bounding box, tries below. If both positions collide, retries
+ * with increasing offsets (up to 3x the base). Returns the first collision-free
+ * placement, or below at max offset as the least-bad fallback.
+ *
+ * The bounding box is expanded by strokeWidth / 2 on all sides to account for the
+ * visual width of the line itself.
+ */
+function computeLabelPlacementVertical(
   finalData: [number, number][],
   index: number,
   labelText: string,
   fontSize: number,
-  labelOffset: number
-): boolean {
-  // In horizontal orientation, finalData is still [xScaled, yScaled] but
-  // the path uses y(d[0]) and x(d[1]), so pixel positions are swapped.
-  // px = xAxis.getScaleValue (maps to SVG y), py = yAxis.getScaleValue (maps to SVG x)
-  // Label is placed at SVG (py + labelOffset, px) — to the right of the point.
-  // We check if that box collides with adjacent segments in SVG space.
+  baseOffset: number,
+  strokeWidth: number
+): LabelPlacement {
+  const [px, py] = finalData[index];
+  const textWidth = fontSize * labelText.length * CHAR_WIDTH_FACTOR;
+  const halfWidth = textWidth / 2;
+  const halfHeight = fontSize / 2;
+  const strokePad = strokeWidth / 2;
+
+  const boxLeft = px - halfWidth - strokePad;
+  const boxRight = px + halfWidth + strokePad;
+
+  for (const offset of [baseOffset, baseOffset * 2, baseOffset * 3]) {
+    const aboveTop = py - offset - halfHeight - strokePad;
+    const aboveBottom = py - offset + halfHeight + strokePad;
+    if (!adjacentSegmentsIntersectBox(finalData, index, boxLeft, boxRight, aboveTop, aboveBottom)) {
+      return { flip: false, offset };
+    }
+
+    const belowTop = py + offset - halfHeight - strokePad;
+    const belowBottom = py + offset + halfHeight + strokePad;
+    if (!adjacentSegmentsIntersectBox(finalData, index, boxLeft, boxRight, belowTop, belowBottom)) {
+      return { flip: true, offset };
+    }
+  }
+
+  return { flip: true, offset: baseOffset * 3 };
+}
+
+/**
+ * Compute the best placement for a label on a horizontal chart.
+ *
+ * In horizontal orientation finalData is [xAxisScale, yAxisScale] but the SVG path
+ * swaps them: svgX = yAxisScale (d[1]), svgY = xAxisScale (d[0]). Collision checks
+ * are performed in SVG space. The default position is to the right of the point;
+ * the flipped position is to the left.
+ */
+function computeLabelPlacementHorizontal(
+  finalData: [number, number][],
+  index: number,
+  labelText: string,
+  fontSize: number,
+  baseOffset: number,
+  strokeWidth: number
+): LabelPlacement {
   const [px, py] = finalData[index];
   const textWidth = fontSize * labelText.length * CHAR_WIDTH_FACTOR;
   const halfHeight = fontSize / 2;
+  const strokePad = strokeWidth / 2;
 
-  // In SVG space for horizontal: svgX = py, svgY = px
-  // Label "to the right": svgX = py + labelOffset, svgY = px
-  // Box in SVG coords:
-  const boxLeft = py + labelOffset;
-  const boxRight = py + labelOffset + textWidth;
-  const boxTop = px - halfHeight;
-  const boxBottom = px + halfHeight;
+  const svgPoints = finalData.map((d): [number, number] => [d[1], d[0]]);
 
-  // Segments in SVG space: point i has svgX=py_i, svgY=px_i
-  const toSvg = (idx: number): [number, number] => [finalData[idx][1], finalData[idx][0]];
+  const boxTop = px - halfHeight - strokePad;
+  const boxBottom = px + halfHeight + strokePad;
 
-  if (
-    index > 0 &&
-    doesSegmentIntersectBox(toSvg(index - 1), toSvg(index), boxLeft, boxRight, boxTop, boxBottom)
-  ) {
-    return true;
+  for (const offset of [baseOffset, baseOffset * 2, baseOffset * 3]) {
+    const rightLeft = py + offset - strokePad;
+    const rightRight = py + offset + textWidth + strokePad;
+    if (!adjacentSegmentsIntersectBox(svgPoints, index, rightLeft, rightRight, boxTop, boxBottom)) {
+      return { flip: false, offset };
+    }
+
+    const leftLeft = py - offset - textWidth - strokePad;
+    const leftRight = py - offset + strokePad;
+    if (!adjacentSegmentsIntersectBox(svgPoints, index, leftLeft, leftRight, boxTop, boxBottom)) {
+      return { flip: true, offset };
+    }
   }
-  if (
-    index < finalData.length - 1 &&
-    doesSegmentIntersectBox(toSvg(index), toSvg(index + 1), boxLeft, boxRight, boxTop, boxBottom)
-  ) {
-    return true;
-  }
-  return false;
+
+  return { flip: true, offset: baseOffset * 3 };
 }
 
 export class LinePlot {
@@ -217,7 +243,7 @@ export class LinePlot {
     ];
 
     if (this.plotData.pointLabels && this.plotData.pointLabels.length > 0) {
-      const labelOffset = 10;
+      const labelOffset = 14;
       const fontSize = 12;
       const textData: TextElem[] = [];
 
@@ -228,9 +254,16 @@ export class LinePlot {
         }
 
         if (this.orientation === 'horizontal') {
-          const flip = shouldFlipLabelHorizontal(finalData, i, label, fontSize, labelOffset);
+          const { flip, offset } = computeLabelPlacementHorizontal(
+            finalData,
+            i,
+            label,
+            fontSize,
+            labelOffset,
+            this.plotData.strokeWidth
+          );
           textData.push({
-            x: flip ? py - labelOffset : py + labelOffset,
+            x: flip ? py - offset : py + offset,
             y: px,
             text: label,
             fill: this.plotData.strokeFill,
@@ -240,10 +273,17 @@ export class LinePlot {
             rotation: 0,
           });
         } else {
-          const flip = shouldFlipLabelVertical(finalData, i, label, fontSize, labelOffset);
+          const { flip, offset } = computeLabelPlacementVertical(
+            finalData,
+            i,
+            label,
+            fontSize,
+            labelOffset,
+            this.plotData.strokeWidth
+          );
           textData.push({
             x: px,
-            y: flip ? py + labelOffset : py - labelOffset,
+            y: flip ? py + offset : py - offset,
             text: label,
             fill: this.plotData.strokeFill,
             verticalPos: 'middle',
