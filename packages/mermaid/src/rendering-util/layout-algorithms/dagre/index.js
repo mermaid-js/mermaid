@@ -345,11 +345,17 @@ export const render = async (data4Layout, svg) => {
       const edge2 = structuredClone(edge);
       edge1.label = '';
       edge1.arrowTypeEnd = 'none';
+      edge1.endLabelLeft = '';
       edge1.id = nodeId + '-cyclic-special-1';
+      edgeMid.label = '';
+      edgeMid.startLabelRight = '';
+      edgeMid.endLabelLeft = '';
       edgeMid.arrowTypeStart = 'none';
       edgeMid.arrowTypeEnd = 'none';
       edgeMid.id = nodeId + '-cyclic-special-mid';
       edge2.label = '';
+      edge2.startLabelRight = '';
+      edge2.arrowTypeStart = 'none';
       if (node.isGroup) {
         edge1.fromCluster = nodeId;
         edge2.toCluster = nodeId;
