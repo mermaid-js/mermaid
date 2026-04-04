@@ -933,6 +933,19 @@ describe('XY Chart', () => {
     );
   });
 
+  it('should render reviewer example: label at 80 "target hit" does not collide with line', () => {
+    imgSnapshotTest(
+      `
+      xychart
+          title "Quarterly Performance"
+          x-axis [Q1, Q2, Q3, Q4]
+          y-axis "Revenue ($M)" 0 --> 100
+          line [25, 45, 80 "target hit", 90]
+      `,
+      {}
+    );
+  });
+
   describe('Point label collision avoidance', () => {
     it('should flip labels below line when steep descent causes collision', () => {
       imgSnapshotTest(
