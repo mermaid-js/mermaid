@@ -30,6 +30,20 @@ describe('Entity Relationship Diagram Unified', () => {
       );
     });
 
+    it(`${description}should render ER diagram with edge labels centered when htmlLabels is false`, () => {
+      imgSnapshotTest(
+        `
+      erDiagram
+          CUSTOMER ||--o{ ORDER : places
+          ORDER ||--|{ LINE-ITEM : contains
+          CUSTOMER ||--|{ ADDRESS : "invoiced at"
+          CUSTOMER ||--|{ ADDRESS : "receives goods at"
+          ORDER ||--o{ INVOICE : "liable for"
+        `,
+        { ...options, htmlLabels: false }
+      );
+    });
+
     it(`${description}should render an ER diagram with a recursive relationship`, () => {
       imgSnapshotTest(
         `

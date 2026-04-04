@@ -2,16 +2,18 @@
 
 ### Examples
 
-Please refer to the following PRs on how to use Langium to add a new diagram grammar.
-
-- https://github.com/mermaid-js/mermaid/pull/4839
-- https://github.com/mermaid-js/mermaid/pull/4751
-
 ```warning
 The below steps are a work in progress and will be updated soon.
 ```
 
 ### Step 1: Grammar & Parsing
+
+Please refer to the following PRs on how to use Langium to add a new diagram grammar.
+
+- https://github.com/mermaid-js/mermaid/pull/4839
+- https://github.com/mermaid-js/mermaid/pull/4751
+
+The grammar language is documented [here](https://langium.org/docs/reference/grammar-language/). The [Langium Playground](https://langium.org/playground/) can help you test your diagram grammar against real inputs.
 
 ### Step 2: Rendering
 
