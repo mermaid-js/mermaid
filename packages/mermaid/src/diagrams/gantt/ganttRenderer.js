@@ -82,36 +82,83 @@ const getMaxIntersections = (tasks, orderOffset) => {
 
 let w;
 const MAX_TICK_COUNT = 10000;
-export const draw = function (text, id, version, diagObj) {
-  const conf = getConfig().gantt;
+export const defaultGanttLayout = {
+  titleTopMargin: 25,
+  barHeight: 20,
+  barGap: 4,
+  topPadding: 50,
+  rightPadding: 75,
+  leftPadding: 75,
+  gridLineStartPadding: 35,
+  taskLabelOffset: 60,
+  sectionLabelX: 10,
+};
+
+export const computeGanttLayout = (conf, config = conf) => {
   const baseFontSize = 11;
   const scale = conf.fontSize / baseFontSize;
 
-  const defaultLayout = {
-    titleTopMargin: 25,
-    barHeight: 20,
-    barGap: 4,
-    topPadding: 50,
-    rightPadding: 75,
-    leftPadding: 75,
-    gridLineStartPadding: 35,
+  const scaleLayoutValue = (key, value, defaultValue, sourceConfig) => {
+    const isExplicit = sourceConfig?.[key] !== undefined;
+
+    if (isExplicit) {
+      return value;
+    }
+
+    return value * scale;
   };
 
-  const scaleLayoutValue = (value, defaultValue) =>
-    value === defaultValue ? value * scale : value;
-
-  const layout = {
-    titleTopMargin: scaleLayoutValue(conf.titleTopMargin, defaultLayout.titleTopMargin),
-    barHeight: scaleLayoutValue(conf.barHeight, defaultLayout.barHeight),
-    barGap: scaleLayoutValue(conf.barGap, defaultLayout.barGap),
-    topPadding: scaleLayoutValue(conf.topPadding, defaultLayout.topPadding),
-    rightPadding: scaleLayoutValue(conf.rightPadding, defaultLayout.rightPadding),
-    leftPadding: scaleLayoutValue(conf.leftPadding, defaultLayout.leftPadding),
+  return {
+    titleTopMargin: scaleLayoutValue(
+      'titleTopMargin',
+      conf.titleTopMargin,
+      defaultGanttLayout.titleTopMargin,
+      config
+    ),
+    barHeight: scaleLayoutValue('barHeight', conf.barHeight, defaultGanttLayout.barHeight, config),
+    barGap: scaleLayoutValue('barGap', conf.barGap, defaultGanttLayout.barGap, config),
+    topPadding: scaleLayoutValue(
+      'topPadding',
+      conf.topPadding,
+      defaultGanttLayout.topPadding,
+      config
+    ),
+    rightPadding: scaleLayoutValue(
+      'rightPadding',
+      conf.rightPadding,
+      defaultGanttLayout.rightPadding,
+      config
+    ),
+    leftPadding: scaleLayoutValue(
+      'leftPadding',
+      conf.leftPadding,
+      defaultGanttLayout.leftPadding,
+      config
+    ),
     gridLineStartPadding: scaleLayoutValue(
+      'gridLineStartPadding',
       conf.gridLineStartPadding,
-      defaultLayout.gridLineStartPadding
+      defaultGanttLayout.gridLineStartPadding,
+      config
+    ),
+    taskLabelOffset: scaleLayoutValue(
+      'taskLabelOffset',
+      defaultGanttLayout.taskLabelOffset,
+      defaultGanttLayout.taskLabelOffset,
+      config
+    ),
+    sectionLabelX: scaleLayoutValue(
+      'sectionLabelX',
+      defaultGanttLayout.sectionLabelX,
+      defaultGanttLayout.sectionLabelX,
+      config
     ),
   };
+};
+
+export const draw = function (text, id, version, diagObj) {
+  const conf = getConfig().gantt;
+  const layout = computeGanttLayout(conf, getConfig().gantt);
 
   diagObj.db.setDiagramId(id);
 
@@ -453,7 +500,7 @@ export const draw = function (text, id, version, diagObj) {
           return (
             layout.gridLineStartPadding +
             taskArray.length * (layout.barHeight + layout.barGap) +
-            60 * scale
+            layout.taskLabelOffset
           );
         }
         i = d.order;
@@ -841,7 +888,7 @@ export const draw = function (text, id, version, diagObj) {
         for (const [j, row] of rows.entries()) {
           const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
           tspan.setAttribute('alignment-baseline', 'central');
-          tspan.setAttribute('x', (10 * scale).toString());
+          tspan.setAttribute('x', layout.sectionLabelX.toString());
           if (j > 0) {
             tspan.setAttribute('dy', '1em');
           }
@@ -850,7 +897,7 @@ export const draw = function (text, id, version, diagObj) {
         }
         return svgLabel;
       })
-      .attr('x', 10 * scale)
+      .attr('x', layout.sectionLabelX)
       .attr('y', function (d, i) {
         if (i > 0) {
           for (let j = 0; j < i; j++) {
