@@ -347,7 +347,6 @@ export const render = async (data4Layout, svg) => {
       edge1.arrowTypeEnd = 'none';
       edge1.endLabelLeft = '';
       edge1.id = nodeId + '-cyclic-special-1';
-      edgeMid.label = '';
       edgeMid.startLabelRight = '';
       edgeMid.endLabelLeft = '';
       edgeMid.arrowTypeStart = 'none';
