@@ -59,16 +59,4 @@ vite.config.ts.timestamp-*
 
 # autogenereated by langium-cli
 generated/
-
-# generated type declarations from pnpm prepare
-packages/examples/src/**/*.d.ts
-
-/CLAUDE.md
-/AGENTS.md
-/assistant/
-/.claude/skills/
-packages/mermaid/src/diagrams/CLAUDE.md
-packages/parser/CLAUDE.md
-AGENTS.mermaid.md
-CLAUDE.mermaid.md
-.envrc
+7492.bundle
