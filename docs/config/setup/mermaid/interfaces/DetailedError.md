@@ -10,7 +10,7 @@
 
 # Interface: DetailedError
 
-Defined in: [packages/mermaid/src/utils.ts:783](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/utils.ts#L783)
+Defined in: [packages/mermaid/src/utils.ts:803](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/utils.ts#L803)
 
 ## Properties
 
@@ -18,7 +18,7 @@ Defined in: [packages/mermaid/src/utils.ts:783](https://github.com/mermaid-js/me
 
 > `optional` **error**: `any`
 
-Defined in: [packages/mermaid/src/utils.ts:788](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/utils.ts#L788)
+Defined in: [packages/mermaid/src/utils.ts:808](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/utils.ts#L808)
 
 ---
 
@@ -26,7 +26,7 @@ Defined in: [packages/mermaid/src/utils.ts:788](https://github.com/mermaid-js/me
 
 > **hash**: `any`
 
-Defined in: [packages/mermaid/src/utils.ts:786](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/utils.ts#L786)
+Defined in: [packages/mermaid/src/utils.ts:806](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/utils.ts#L806)
 
 ---
 
@@ -34,7 +34,7 @@ Defined in: [packages/mermaid/src/utils.ts:786](https://github.com/mermaid-js/me
 
 > `optional` **message**: `string`
 
-Defined in: [packages/mermaid/src/utils.ts:789](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/utils.ts#L789)
+Defined in: [packages/mermaid/src/utils.ts:809](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/utils.ts#L809)
 
 ---
 
@@ -42,4 +42,4 @@ Defined in: [packages/mermaid/src/utils.ts:789](https://github.com/mermaid-js/me
 
 > **str**: `string`
 
-Defined in: [packages/mermaid/src/utils.ts:784](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/utils.ts#L784)
+Defined in: [packages/mermaid/src/utils.ts:804](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/utils.ts#L804)
