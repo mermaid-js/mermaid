@@ -22,7 +22,7 @@ const rect = async (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'cluster ' + node.cssClasses)
-    .attr('id', node.id)
+    .attr('id', node.domId)
     .attr('data-look', node.look);
 
   const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
@@ -30,11 +30,17 @@ const rect = async (parent, node) => {
   // Create the label and insert it after the rect
   const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label ');
 
-  const text = await createText(labelEl, node.label, {
-    style: node.labelStyle,
-    useHtmlLabels,
-    isNode: true,
-  });
+  let text;
+  if (node.labelType === 'markdown') {
+    text = await createText(labelEl, node.label, {
+      style: node.labelStyle,
+      useHtmlLabels,
+      isNode: true,
+      width: node.width,
+    });
+  } else {
+    text = await createLabel(labelEl, node.label, node.labelStyle || '', false, true);
+  }
 
   // Get the size of the label
   let bbox = text.getBBox();
@@ -130,7 +136,7 @@ const rect = async (parent, node) => {
  */
 const noteGroup = (parent, node) => {
   // Add outer g element
-  const shapeSvg = parent.insert('g').attr('class', 'note-cluster').attr('id', node.id);
+  const shapeSvg = parent.insert('g').attr('class', 'note-cluster').attr('id', node.domId);
 
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
@@ -170,7 +176,7 @@ const roundedWithTitle = async (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', node.cssClasses)
-    .attr('id', node.id)
+    .attr('id', node.domId)
     .attr('data-id', node.id)
     .attr('data-look', node.look);
 
@@ -290,7 +296,7 @@ const kanbanSection = async (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'cluster ' + node.cssClasses)
-    .attr('id', node.id)
+    .attr('id', node.domId)
     .attr('data-look', node.look);
 
   const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
@@ -399,7 +405,7 @@ const divider = (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', node.cssClasses)
-    .attr('id', node.id)
+    .attr('id', node.domId)
     .attr('data-look', node.look);
 
   // add the rect
@@ -432,7 +438,12 @@ const divider = (parent, node) => {
     rect = shapeSvg.insert(() => roughOuterNode, ':first-child');
   } else {
     rect = outerRectG.insert('rect', ':first-child');
-    const outerRectClass = 'divider';
+    let outerRectClass = 'outer';
+    if (node.look === 'neo') {
+      outerRectClass = 'divider';
+    } else {
+      outerRectClass = 'divider';
+    }
 
     // center the rect around its coordinate
     rect

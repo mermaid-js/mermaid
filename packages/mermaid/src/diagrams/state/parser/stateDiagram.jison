@@ -140,11 +140,11 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <INITIAL,struct>"[*]"                   { /* console.log('EDGE_STATE=',yytext); */ return 'EDGE_STATE'; }
 <INITIAL,struct>[^:\n\s\-\{]+           { /* console.log('=>ID=',yytext); */ return 'ID'; }
 // <INITIAL,struct>\s*":"[^\+\->:\n;]+  { yytext = yytext.trim(); /* console.log('Descr = ', yytext); */ return 'DESCR'; }
-<INITIAL,struct>\s*":"[^:\n;]+          { yytext = yytext.trim(); /* console.log('Descr = ', yytext); */ return 'DESCR'; }
+<INITIAL,struct>\s*":"(?:[^:\n;]|":"[^:\n;])+  { yytext = yytext.trim(); /* console.log('Descr = ', yytext); */ return 'DESCR'; }
 
 <INITIAL,struct>"-->"             return '-->';
 <struct>"--"                      return 'CONCURRENT';
-":::"                             return 'STYLE_SEPARATOR';
+<INITIAL,struct>":::"             return 'STYLE_SEPARATOR';
 <<EOF>>                           return 'NL';
 .                                 return 'INVALID';
 
