@@ -346,14 +346,19 @@ export const render = async (data4Layout, svg) => {
       edge1.label = '';
       edge1.arrowTypeEnd = 'none';
       edge1.endLabelLeft = '';
+      edge1.endLabelRight = ''; // defensive
+      edge1.startLabelLeft = ''; // defensive
       edge1.id = nodeId + '-cyclic-special-1';
       edgeMid.startLabelRight = '';
+      edgeMid.startLabelLeft = ''; // defensive
       edgeMid.endLabelLeft = '';
+      edgeMid.endLabelRight = ''; // defensive
       edgeMid.arrowTypeStart = 'none';
       edgeMid.arrowTypeEnd = 'none';
       edgeMid.id = nodeId + '-cyclic-special-mid';
       edge2.label = '';
       edge2.startLabelRight = '';
+      edge2.startLabelLeft = ''; // defensive
       edge2.arrowTypeStart = 'none';
       if (node.isGroup) {
         edge1.fromCluster = nodeId;
