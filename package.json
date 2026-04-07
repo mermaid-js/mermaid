@@ -44,6 +44,7 @@
     "load:env": "dotenv -e .env",
     "test": "pnpm lint && vitest run",
     "test:watch": "vitest --watch",
+    "test:watch:em": "vitest --watch packages/parser/tests/eventmodeling.test.ts",
     "test:coverage": "vitest --coverage",
     "test:check:tsc": "tsx scripts/tsc-check.ts",
     "prepare": "husky && pnpm build",
@@ -147,7 +148,8 @@
     "onlyBuiltDependencies": [
       "canvas",
       "cypress",
-      "esbuild"
+      "esbuild",
+      "unrs-resolver"
     ],
     "ignoredBuiltDependencies": [
       "sharp",

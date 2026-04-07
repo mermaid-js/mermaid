@@ -188,6 +188,7 @@ function sidebarSyntax() {
         { text: 'Kanban 🔥', link: '/syntax/kanban' },
         { text: 'Architecture 🔥', link: '/syntax/architecture' },
         { text: 'Radar 🔥', link: '/syntax/radar' },
+        { text: 'Event Modeling 🔥', link: '/syntax/eventmodeling' },
         { text: 'Treemap 🔥', link: '/syntax/treemap' },
         { text: 'Venn 🔥', link: '/syntax/venn' },
         { text: 'Ishikawa 🔥', link: '/syntax/ishikawa' },
