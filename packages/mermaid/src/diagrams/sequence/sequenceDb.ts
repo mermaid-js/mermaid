@@ -14,6 +14,7 @@ import {
   setDiagramTitle,
 } from '../common/commonDb.js';
 import type { Actor, AddMessageParams, Box, Message, Note, SequenceClass } from './types.js';
+import type { DiagramStyleClassDef } from '../../diagram-api/types.js';
 import type { ParticipantMetaData } from '../../types.js';
 
 interface SequenceState {
@@ -159,8 +160,11 @@ export class SequenceDB implements DiagramDB {
    * Follows the same pattern as flowchart classDef.
    *
    * Syntax: classDef className fill:#f9f,stroke:#333;
+   *
+   * Arrow function property so JISON's yy can see it (JISON doesn't
+   * resolve prototype methods on the yy object).
    */
-  public addClass(ids: string, styleStr: string[]) {
+  public addClass = (ids: string, styleStr: string[]) => {
     const styles = styleStr
       .join()
       .replace(/\\,/g, '\u00a7\u00a7\u00a7')
@@ -193,14 +197,16 @@ export class SequenceDB implements DiagramDB {
         });
       }
     }
-  }
+  };
 
   /**
    * Apply inline styles to a specific actor/participant.
    *
    * Syntax: style Alice fill:#f9f,stroke:#333;
+   *
+   * Arrow function property for the same JISON reason as addClass.
    */
-  public setActorStyle(actorId: string, styleStr: string[]) {
+  public setActorStyle = (actorId: string, styleStr: string[]) => {
     const actor = this.state.records.actors.get(actorId);
     if (!actor) {
       return;
@@ -216,14 +222,42 @@ export class SequenceDB implements DiagramDB {
       .filter(Boolean);
 
     actor.styles = [...(actor.styles || []), ...styles];
-  }
+  };
 
   /**
-   * Get all defined classes.
+   * Get all defined classes, including generated classes for actors with
+   * inline styles. Returns a Map so mermaidAPI's createUserStyles() can
+   * compile them into scoped CSS instead of relying on inline .style() calls.
    */
-  public getClasses() {
-    return Object.fromEntries(this.state.records.classes);
-  }
+  public getClasses = (): Map<string, DiagramStyleClassDef> => {
+    const result = new Map<string, DiagramStyleClassDef>(this.state.records.classes);
+
+    // Turn per-actor inline styles ("style Alice fill:#f00") into CSS class
+    // entries so they go through the same stylis + DOMPurify pipeline as
+    // flowchart classDefs. The class name must match what svgDraw adds to
+    // the actor's SVG group element.
+    for (const [id, actor] of this.state.records.actors) {
+      if (actor.styles && actor.styles.length > 0) {
+        const textStyles: string[] = [];
+        const elementStyles: string[] = [];
+        for (const s of actor.styles) {
+          const prop = s.trim();
+          if (!prop) {
+            continue;
+          }
+          if (prop.startsWith('color:') || prop.startsWith('font-')) {
+            textStyles.push(prop);
+          } else {
+            elementStyles.push(prop);
+          }
+        }
+        const className = `actor-style-${id}`;
+        result.set(className, { id: className, styles: elementStyles, textStyles });
+      }
+    }
+
+    return result;
+  };
 
   public addActor(
     id: string,
@@ -289,6 +323,9 @@ export class SequenceDB implements DiagramDB {
       actorCnt: null,
       rectData: null,
       type: type ?? 'participant',
+      // Carry over styles if the actor was already styled (e.g. via "style Alice fill:#f9f")
+      // before being re-registered by a message line like "Alice->>Bob: Hello".
+      styles: old?.styles,
     });
     if (this.state.records.prevActor) {
       const prevActorInRecords = this.state.records.actors.get(this.state.records.prevActor);
@@ -785,6 +822,9 @@ export class SequenceDB implements DiagramDB {
           break;
         case 'breakEnd':
           this.addSignal(undefined, undefined, undefined, param.signalType);
+          break;
+        case 'applyStyle':
+          this.setActorStyle(param.actor, param.styleStr);
           break;
       }
     }

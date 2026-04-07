@@ -412,14 +412,12 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter, actorInd
     rectElem.attr('filter', 'url(#drop-shadow)');
   }
 
-  // Apply custom inline styles from `style` or `classDef` syntax
+  // User-defined styles are applied via a CSS class that gets compiled into the
+  // SVG's <style> tag by createUserStyles(). This routes through stylis scoping
+  // and DOMPurify sanitization instead of inline .style() calls, which would
+  // allow CSS injection (url(), expression(), etc.).
   if (actor.styles && actor.styles.length > 0) {
-    for (const style of actor.styles) {
-      const [prop, ...valueParts] = style.split(':');
-      if (prop && valueParts.length > 0) {
-        rectElem.style(prop.trim(), valueParts.join(':').trim());
-      }
-    }
+    g.attr('class', (g.attr('class') || '') + ' actor-style-' + actor.name);
   }
 
   actor.rectData = rect;

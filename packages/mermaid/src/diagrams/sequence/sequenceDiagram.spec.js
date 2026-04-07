@@ -2828,9 +2828,9 @@ Bob->>Alice:Got it!
       Alice->>Bob: Hello
       `);
       const classes = diagram.db.getClasses();
-      expect(classes.highlighted).toBeDefined();
-      expect(classes.highlighted.styles).toContain('fill:#f9f');
-      expect(classes.highlighted.styles).toContain('stroke:#333');
+      expect(classes.get('highlighted')).toBeDefined();
+      expect(classes.get('highlighted').styles).toContain('fill:#f9f');
+      expect(classes.get('highlighted').styles).toContain('stroke:#333');
     });
 
     it('should parse style and apply to actor', async () => {
@@ -2866,9 +2866,9 @@ Bob->>Alice:Got it!
       Alice->>Alice: test
       `);
       const classes = diagram.db.getClasses();
-      expect(classes.myClass.styles).toContain('fill:#f9f');
-      expect(classes.myClass.textStyles).toContain('color:red');
-      expect(classes.myClass.textStyles).toContain('font-weight:bold');
+      expect(classes.get('myClass').styles).toContain('fill:#f9f');
+      expect(classes.get('myClass').textStyles).toContain('color:red');
+      expect(classes.get('myClass').textStyles).toContain('font-weight:bold');
     });
 
     it('should handle multiple classDef definitions', async () => {
@@ -2881,10 +2881,10 @@ Bob->>Alice:Got it!
       Alice->>Bob: Hello
       `);
       const classes = diagram.db.getClasses();
-      expect(classes.primary).toBeDefined();
-      expect(classes.secondary).toBeDefined();
-      expect(classes.primary.styles).toContain('fill:#bbf');
-      expect(classes.secondary.styles).toContain('fill:#fbb');
+      expect(classes.get('primary')).toBeDefined();
+      expect(classes.get('secondary')).toBeDefined();
+      expect(classes.get('primary').styles).toContain('fill:#bbf');
+      expect(classes.get('secondary').styles).toContain('fill:#fbb');
     });
 
     it('should clear styles on diagram reset', async () => {
@@ -2895,7 +2895,7 @@ Bob->>Alice:Got it!
       Alice->>Alice: test
       `);
       const classes = diagram.db.getClasses();
-      expect(classes.test).toBeDefined();
+      expect(classes.get('test')).toBeDefined();
 
       // Parse a new diagram without styles
       const diagram2 = await Diagram.fromText(`
@@ -2904,7 +2904,7 @@ Bob->>Alice:Got it!
       Bob->>Bob: test
       `);
       const classes2 = diagram2.db.getClasses();
-      expect(Object.keys(classes2).length).toBe(0);
+      expect(classes2.size).toBe(0);
     });
 
     it('should handle style with complex CSS values', async () => {
@@ -2928,8 +2928,8 @@ Bob->>Alice:Got it!
       Alice->>Alice: test
       `);
       const classes = diagram.db.getClasses();
-      expect(classes.simple.styles.length).toBe(1);
-      expect(classes.simple.styles[0]).toBe('fill:#f00');
+      expect(classes.get('simple').styles.length).toBe(1);
+      expect(classes.get('simple').styles[0]).toBe('fill:#f00');
     });
 
     it('should not add styles to actors without style keyword', async () => {

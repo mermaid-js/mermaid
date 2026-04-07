@@ -14,7 +14,7 @@
 
 // Special states for recognizing aliases
 // A special state for grabbing text up to the first comment/newline
-%x ID ALIAS LINE CONFIG CONFIG_DATA
+%x ID ALIAS LINE STYLE_STMT CONFIG CONFIG_DATA
 
 %x acc_title
 %x acc_descr
@@ -56,8 +56,10 @@
 "option"                                                        { this.begin('LINE'); return 'option'; }
 "break"                                                         { this.begin('LINE'); return 'break'; }
 <LINE>(?:[:]?(?:no)?wrap:)?[^#\n;]*                             { this.popState(); return 'restOfLine'; }
-"classDef"                                                      { this.begin('LINE'); return 'classDef'; }
-"style"                                                         { this.begin('LINE'); return 'style'; }
+<STYLE_STMT>((?!\n)\s)+                                         /* skip same-line whitespace */
+<STYLE_STMT>[^\n;]*                                             { this.popState(); return 'styleRestOfLine'; }
+"classDef"                                                      { this.begin('STYLE_STMT'); return 'classDef'; }
+"style"                                                         { this.begin('STYLE_STMT'); return 'style'; }
 "end"                                                           return 'end';
 "left of"                                                       return 'left_of';
 "right of"                                                      return 'right_of';
@@ -190,8 +192,8 @@ statement
   | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
   | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
   | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }
-	| 'classDef' restOfLine { var parts = $2.trim().split(/\s+/, 2); yy.addClass(parts[0], [parts.slice(1).join(' ')]); }
-	| 'style' restOfLine { var parts = $2.trim().split(/\s+/, 2); yy.setActorStyle(parts[0], [parts.slice(1).join(' ')]); }
+	| 'classDef' styleRestOfLine { var m = $2.trim().match(/^(\S+)\s+([\s\S]*)/); if(m) { yy.addClass(m[1], [m[2]]); } }
+	| 'style' styleRestOfLine { var m = $2.trim().match(/^(\S+)\s+([\s\S]*)/); if(m) { $$ = {type: 'applyStyle', actor: m[1], styleStr: [m[2]]}; } }
 	| 'loop' restOfLine document end
 	{
 		$3.unshift({type: 'loopStart', loopText:yy.parseMessage($2), signalType: yy.LINETYPE.LOOP_START});
