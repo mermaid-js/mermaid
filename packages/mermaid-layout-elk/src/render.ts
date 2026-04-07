@@ -205,8 +205,8 @@ export const render = async (
             const subgraphEl = subgraphsEl.insert('g').attr('class', 'subgraph');
             // TODO use faster way of cloning
             const clusterNode = JSON.parse(JSON.stringify(node));
-            clusterNode.x = node.offset.posX + node.width / 2;
-            clusterNode.y = node.offset.posY + node.height / 2;
+            clusterNode.x = node.x + relX + node.width / 2;
+            clusterNode.y = node.y + relY + node.height / 2;
             clusterNode.width = Math.max(clusterNode.width, node.labelData.width);
             await insertCluster(subgraphEl, clusterNode);
 
@@ -528,6 +528,19 @@ export const render = async (
     if (node?.layoutOptions === undefined) {
       node.layoutOptions = {};
     }
+
+    // If this node has a user-specified custom algorithm (e.g. elk.box) with
+    // SEPARATE_CHILDREN, clear it — cross-boundary edges are incompatible with
+    // isolated layout algorithms.  Nodes using the default layered algorithm
+    // (set via the dir branch) keep theirs so they still lay out correctly.
+    if (
+      node.layoutOptions['elk.hierarchyHandling'] === 'SEPARATE_CHILDREN' &&
+      node.metadata?.algorithm
+    ) {
+      log.debug('Dropping explicit algorithm for node', node.id, 'due to cross-boundary edges');
+      delete node.layoutOptions['elk.algorithm'];
+    }
+
     node.layoutOptions['elk.hierarchyHandling'] = 'INCLUDE_CHILDREN';
     if (node.id !== ancestorId) {
       setIncludeChildrenPolicy(node.parentId, ancestorId);

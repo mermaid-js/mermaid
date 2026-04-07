@@ -892,8 +892,32 @@ You have to call mermaid.initialize.`
 
     // Remove the members in the new subgraph if they already belong to another subgraph
     subGraph.nodes = this.makeUniq(subGraph, this.subGraphs).nodes;
-    this.subGraphs.push(subGraph);
-    this.subGraphLookup.set(id, subGraph);
+
+    const existingPos = this.getPosForId(id);
+    if (existingPos !== -1) {
+      // Duplicate subgraph ID — merge children into the existing entry.
+      // First occurrence wins for hierarchy position.
+      const existing = this.subGraphs[existingPos];
+      for (const nodeId of subGraph.nodes) {
+        if (!existing.nodes.includes(nodeId)) {
+          existing.nodes.push(nodeId);
+        }
+      }
+      // Last occurrence wins for properties
+      if (subGraph.title) {
+        existing.title = subGraph.title;
+      }
+      if (subGraph.dir) {
+        existing.dir = subGraph.dir;
+      }
+      if (subGraph.type) {
+        existing.type = subGraph.type;
+      }
+      this.subGraphLookup.set(id, existing);
+    } else {
+      this.subGraphs.push(subGraph);
+      this.subGraphLookup.set(id, subGraph);
+    }
     return id;
   }
 
