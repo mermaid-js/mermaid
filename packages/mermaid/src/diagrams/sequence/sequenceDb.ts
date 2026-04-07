@@ -165,7 +165,7 @@ export class SequenceDB implements DiagramDB {
       .join()
       .replace(/\\,/g, '\u00a7\u00a7\u00a7')
       .replace(/,/g, ';')
-      .replace(/\u00a7\u00a7\u00a7/g, ',')
+      .replace(/\u00a7{3}/g, ',')
       .split(';');
 
     const textStyles: string[] = [];
@@ -210,7 +210,7 @@ export class SequenceDB implements DiagramDB {
       .join()
       .replace(/\\,/g, '\u00a7\u00a7\u00a7')
       .replace(/,/g, ';')
-      .replace(/\u00a7\u00a7\u00a7/g, ',')
+      .replace(/\u00a7{3}/g, ',')
       .split(';')
       .map((s) => s.trim())
       .filter(Boolean);
