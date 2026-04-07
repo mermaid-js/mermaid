@@ -440,9 +440,9 @@ The effective font size drives proportional scaling of default Gantt layout valu
 
 When both `themeVariables` and `gantt` config are present, explicit `gantt` values still have priority for each field:
 
-- `gantt.fontSize` takes precedence over `themeVariables.fontSize`.
-- Explicitly set layout values such as `gantt.barHeight` are used as-is.
-- Layout values left at defaults are scaled from the effective font size.
+- `gantt.fontSize` takes precedence over `themeVariables.fontSize`
+- Explicitly set layout values such as `gantt.barHeight` are used as-is
+- Layout values left at defaults are scaled from the effective font size
 
 ### Possible configuration params:
 
