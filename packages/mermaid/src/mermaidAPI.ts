@@ -194,11 +194,17 @@ export const createCssStyles = (
 
   let cssString = '';
   if (config.themeCSS !== undefined) {
-    /**
-     * Ideally we'd do a `CSSStyleSheet.replaceSync`, but it's not supported
-     * in some older browsers and in JSDOM.
-     */
-    cssString += `${config.themeCSS}\n`;
+    if (typeof cssStyles.replaceSync === 'function') {
+      const themeCssStyleSheet = new CSSStyleSheet();
+      themeCssStyleSheet.replaceSync(config.themeCSS);
+      cssString = cssStyleSheetToString(themeCssStyleSheet) + '\n';
+    } else {
+      /**
+       * Ideally we'd do a `CSSStyleSheet.replaceSync`, but it's not supported
+       * in some older browsers and in JSDOM.
+       */
+      cssString += `${config.themeCSS}\n`;
+    }
   }
 
   return cssString + cssStyleSheetToString(cssStyles);
