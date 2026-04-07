@@ -424,7 +424,7 @@ Lines can be solid or dotted, and can end with various types of arrowheads, cros
 | `-)`     | Solid line with an open arrow at the end (async)     |
 | `--)`    | Dotted line with a open arrow at the end (async)     |
 
-**Half-Arrows (v\<MERMAID_RELEASE_VERSION>+)**
+**Half-Arrows (v11.12.3+)**
 
 The following half-arrow types are supported for more expressive sequence diagrams. Both solid and dotted variants are available by increasing the number of dashes (`-` → `--`).
 
@@ -449,7 +449,7 @@ The following half-arrow types are supported for more expressive sequence diagra
 | `\\-`   | Solid line with reverse bottom stick half arrowhead  |
 | `\\--`  | Dotted line with reverse bottom stick half arrowhead |
 
-## Central Connections (v\<MERMAID_RELEASE_VERSION>+)
+## Central Connections (v11.12.3+)
 
 Mermaid sequence diagrams support **central lifeline connections** using a `()`.
 This is useful to represent messages or signals that connect to a central point, rather than from one actor directly to another.
@@ -969,6 +969,16 @@ sequenceDiagram
     John-->>Alice: Great!
     John->>Bob: How about you?
     Bob-->>John: Jolly good!
+```
+
+### Start and Increment values (v\<MERMAID_RELEASE_VERSION>+)
+
+It is possible to specify a starting value and an increment value for automatic numbering. Both the starting value and increment value can include decimals up to the hundredths place.
+
+Use the following syntax in your diagram definition:
+
+```
+autonumber <start> <increment>
 ```
 
 ## Actor Menus

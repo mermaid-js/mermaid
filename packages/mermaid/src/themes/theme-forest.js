@@ -31,6 +31,8 @@ class Theme {
     this.lineColor = invert(this.background);
     this.textColor = invert(this.background);
     this.THEME_COLOR_LIMIT = 12;
+    this.radius = 5;
+    this.strokeWidth = 1;
 
     /* Flowchart variables */
     this.nodeBkg = 'calculated';
@@ -94,11 +96,19 @@ class Theme {
     this.archGroupBorderColor = this.primaryBorderColor;
     this.archGroupBorderWidth = '2px';
 
+    this.noteFontWeight = 'normal';
+    this.fontWeight = 'normal';
+
     /* state colors */
     this.labelColor = 'black';
 
     this.errorBkgColor = '#552222';
     this.errorTextColor = '#552222';
+
+    this.useGradient = true;
+    this.gradientStart = this.primaryBorderColor;
+    this.gradientStop = this.secondaryBorderColor;
+    this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,0.5))';
   }
   updateColors() {
     /* Sequence Diagram variables */
@@ -232,6 +242,18 @@ class Theme {
     this.pieOuterStrokeColor = this.pieOuterStrokeColor || 'black';
     this.pieOpacity = this.pieOpacity || '0.7';
 
+    /* venn */
+    this.venn1 = this.venn1 ?? adjust(this.primaryColor, { l: -30 });
+    this.venn2 = this.venn2 ?? adjust(this.secondaryColor, { l: -30 });
+    this.venn3 = this.venn3 ?? adjust(this.tertiaryColor, { l: -30 });
+    this.venn4 = this.venn4 ?? adjust(this.primaryColor, { h: 60, l: -30 });
+    this.venn5 = this.venn5 ?? adjust(this.primaryColor, { h: -60, l: -30 });
+    this.venn6 = this.venn6 ?? adjust(this.secondaryColor, { h: 60, l: -30 });
+    this.venn7 = this.venn7 ?? adjust(this.primaryColor, { h: 120, l: -30 });
+    this.venn8 = this.venn8 ?? adjust(this.secondaryColor, { h: 120, l: -30 });
+    this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
+    this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
+
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;
     this.quadrant2Fill = this.quadrant2Fill || adjust(this.primaryColor, { r: 5, g: 5, b: 5 });
@@ -284,6 +306,7 @@ class Theme {
     this.xyChart = {
       backgroundColor: this.xyChart?.backgroundColor || this.background,
       titleColor: this.xyChart?.titleColor || this.primaryTextColor,
+      dataLabelColor: this.xyChart?.dataLabelColor || this.primaryTextColor,
       xAxisTitleColor: this.xyChart?.xAxisTitleColor || this.primaryTextColor,
       xAxisLabelColor: this.xyChart?.xAxisLabelColor || this.primaryTextColor,
       xAxisTickColor: this.xyChart?.xAxisTickColor || this.primaryTextColor,

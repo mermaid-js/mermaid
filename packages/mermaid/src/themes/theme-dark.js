@@ -29,6 +29,8 @@ class Theme {
     this.labelBackground = '#181818';
     this.textColor = '#ccc';
     this.THEME_COLOR_LIMIT = 12;
+    this.radius = 5;
+    this.strokeWidth = 1;
 
     /* Flowchart variables */
     this.nodeBkg = 'calculated';
@@ -57,6 +59,7 @@ class Theme {
     this.activationBorderColor = 'calculated';
     this.activationBkgColor = 'calculated';
     this.sequenceNumberColor = 'black';
+    this.clusterBkg = '#302F3D';
 
     /* Gantt chart variables */
 
@@ -101,6 +104,13 @@ class Theme {
 
     this.errorBkgColor = '#a44141';
     this.errorTextColor = '#ddd';
+    this.useGradient = true;
+    this.gradientStart = this.primaryBorderColor;
+    this.gradientStop = this.secondaryBorderColor;
+    this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,1))';
+
+    this.noteFontWeight = this.noteFontWeight || 'normal';
+    this.fontWeight = this.fontWeight || 'normal';
   }
   updateColors() {
     this.secondBkg = lighten(this.mainBkg, 16);
@@ -142,7 +152,7 @@ class Theme {
     this.taskTextOutsideColor = this.taskTextLightColor;
     this.gridColor = this.mainContrastColor;
     this.doneTaskBkgColor = this.mainContrastColor;
-    this.taskTextDarkColor = this.darkTextColor;
+    this.taskTextDarkColor = invert(this.doneTaskBkgColor);
 
     /* Architecture Diagram variables */
     this.archEdgeColor = this.lineColor;
@@ -230,16 +240,23 @@ class Theme {
       this['pie' + i] = this['cScale' + i];
     }
     this.pieTitleTextSize = this.pieTitleTextSize || '25px';
-    this.pieTitleTextColor = this.pieTitleTextColor || this.taskTextDarkColor;
+    this.pieTitleTextColor = this.pieTitleTextColor || this.mainContrastColor;
     this.pieSectionTextSize = this.pieSectionTextSize || '17px';
     this.pieSectionTextColor = this.pieSectionTextColor || this.textColor;
     this.pieLegendTextSize = this.pieLegendTextSize || '17px';
-    this.pieLegendTextColor = this.pieLegendTextColor || this.taskTextDarkColor;
+    this.pieLegendTextColor = this.pieLegendTextColor || this.mainContrastColor;
     this.pieStrokeColor = this.pieStrokeColor || 'black';
     this.pieStrokeWidth = this.pieStrokeWidth || '2px';
     this.pieOuterStrokeWidth = this.pieOuterStrokeWidth || '2px';
     this.pieOuterStrokeColor = this.pieOuterStrokeColor || 'black';
     this.pieOpacity = this.pieOpacity || '0.7';
+
+    /* venn */
+    for (let i = 0; i < 8; i++) {
+      this['venn' + (i + 1)] = this['venn' + (i + 1)] ?? lighten(this['cScale' + i], 30);
+    }
+    this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
+    this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
 
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;
@@ -270,6 +287,7 @@ class Theme {
     this.xyChart = {
       backgroundColor: this.xyChart?.backgroundColor || this.background,
       titleColor: this.xyChart?.titleColor || this.primaryTextColor,
+      dataLabelColor: this.xyChart?.dataLabelColor || this.primaryTextColor,
       xAxisTitleColor: this.xyChart?.xAxisTitleColor || this.primaryTextColor,
       xAxisLabelColor: this.xyChart?.xAxisLabelColor || this.primaryTextColor,
       xAxisTickColor: this.xyChart?.xAxisTickColor || this.primaryTextColor,

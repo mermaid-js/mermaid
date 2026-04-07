@@ -20,6 +20,12 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
 
   const svg = selectSvgElement(id);
 
+  // Prefix all node domIds with the diagram's SVG element ID to ensure uniqueness
+  // across multiple diagrams on the same page. This mirrors render.ts lines 63-70.
+  for (const node of data4Layout.nodes) {
+    node.domId = `${id}-${node.id}`;
+  }
+
   // Draw the graph and start with drawing the nodes without proper position
   // this gives us the size of the nodes and we can set the positions later
 
