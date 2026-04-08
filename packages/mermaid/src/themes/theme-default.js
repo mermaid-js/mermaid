@@ -30,6 +30,7 @@ class Theme {
     this.secondBkg = '#ffffde';
     this.lineColor = '#333333';
     this.border1 = '#9370DB';
+    this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
     this.border2 = '#aaaa33';
     this.arrowheadColor = '#333333';
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
@@ -37,7 +38,8 @@ class Theme {
     this.labelBackground = 'rgba(232,232,232, 0.8)';
     this.textColor = '#333';
     this.THEME_COLOR_LIMIT = 12;
-
+    this.radius = 5;
+    this.strokeWidth = 1;
     /* Flowchart variables */
 
     this.nodeBkg = 'calculated';
@@ -66,6 +68,7 @@ class Theme {
     this.activationBorderColor = '#666';
     this.activationBkgColor = '#f4f4f4';
     this.sequenceNumberColor = 'white';
+    this.clusterBkg = '#FBFBFF';
 
     /* Gantt chart variables */
 
@@ -110,6 +113,9 @@ class Theme {
     this.todayLineColor = 'red';
     this.vertLineColor = 'navy';
 
+    this.noteFontWeight = this.noteFontWeight || 'normal';
+    this.fontWeight = this.fontWeight || 'normal';
+
     /* C4 Context Diagram variables */
     this.personBorder = this.primaryBorderColor;
     this.personBkg = this.mainBkg;
@@ -129,6 +135,12 @@ class Theme {
     this.labelColor = 'black';
     this.errorBkgColor = '#552222';
     this.errorTextColor = '#552222';
+
+    // Neo-specific
+    this.useGradient = false;
+    this.gradientStart = this.primaryBorderColor;
+    this.gradientStop = this.secondaryBorderColor;
+    this.dropShadow = 'drop-shadow(1px 2px 2px rgba(185, 185, 185, 1))';
     this.updateColors();
   }
   updateColors() {
@@ -189,8 +201,7 @@ class Theme {
 
     /* Sequence Diagram variables */
 
-    // this.actorBorder = lighten(this.border1, 0.5);
-    this.actorBorder = lighten(this.border1, 23);
+    this.actorBorder = this.border1;
     this.actorBkg = this.mainBkg;
     this.labelBoxBkgColor = this.actorBkg;
     this.signalColor = this.textColor;
@@ -398,6 +409,24 @@ class Theme {
     this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
     this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
     this.commitLabelFontSize = this.commitLabelFontSize || '10px';
+
+    /* -------------------------------------------------- */
+    /* Event Modeling diagrams                             */
+
+    this.emScreenFill = this.emScreenFill || 'white';
+    this.emScreenStroke = this.emScreenStroke || '#dbdada';
+    this.emProcessorFill = this.emProcessorFill || '#edb3f6';
+    this.emProcessorStroke = this.emProcessorStroke || '#b88cbf';
+    this.emReadModelFill = this.emReadModelFill || '#d3f1a2';
+    this.emReadModelStroke = this.emReadModelStroke || '#a3b732';
+    this.emCommandFill = this.emCommandFill || '#bcd6fe';
+    this.emCommandStroke = this.emCommandStroke || '#679ac3';
+    this.emEventFill = this.emEventFill || '#ffb778';
+    this.emEventStroke = this.emEventStroke || '#c19a0f';
+    this.emSwimlaneBackgroundOdd = this.emSwimlaneBackgroundOdd || 'rgb(250,250,250)';
+    this.emSwimlaneBackgroundStroke = this.emSwimlaneBackgroundStroke || 'rgb(240,240,240)';
+    this.emArrowhead = this.emArrowhead || this.lineColor;
+    this.emRelationStroke = this.emRelationStroke || this.lineColor;
 
     /* -------------------------------------------------- */
     /* EntityRelationship diagrams                        */

@@ -31,6 +31,8 @@ class Theme {
     this.lineColor = invert(this.background);
     this.textColor = invert(this.background);
     this.THEME_COLOR_LIMIT = 12;
+    this.radius = 5;
+    this.strokeWidth = 1;
 
     /* Flowchart variables */
     this.nodeBkg = 'calculated';
@@ -94,11 +96,19 @@ class Theme {
     this.archGroupBorderColor = this.primaryBorderColor;
     this.archGroupBorderWidth = '2px';
 
+    this.noteFontWeight = 'normal';
+    this.fontWeight = 'normal';
+
     /* state colors */
     this.labelColor = 'black';
 
     this.errorBkgColor = '#552222';
     this.errorTextColor = '#552222';
+
+    this.useGradient = true;
+    this.gradientStart = this.primaryBorderColor;
+    this.gradientStop = this.secondaryBorderColor;
+    this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,0.5))';
   }
   updateColors() {
     /* Sequence Diagram variables */
@@ -371,6 +381,24 @@ class Theme {
     this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
     this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
     this.commitLabelFontSize = this.commitLabelFontSize || '10px';
+
+    /* -------------------------------------------------- */
+    /* Event Modeling diagrams                             */
+
+    this.emScreenFill = this.emScreenFill || 'white';
+    this.emScreenStroke = this.emScreenStroke || '#dbdada';
+    this.emProcessorFill = this.emProcessorFill || '#edb3f6';
+    this.emProcessorStroke = this.emProcessorStroke || '#b88cbf';
+    this.emReadModelFill = this.emReadModelFill || '#d3f1a2';
+    this.emReadModelStroke = this.emReadModelStroke || '#a3b732';
+    this.emCommandFill = this.emCommandFill || '#bcd6fe';
+    this.emCommandStroke = this.emCommandStroke || '#679ac3';
+    this.emEventFill = this.emEventFill || '#ffb778';
+    this.emEventStroke = this.emEventStroke || '#c19a0f';
+    this.emSwimlaneBackgroundOdd = this.emSwimlaneBackgroundOdd || 'rgb(250,250,250)';
+    this.emSwimlaneBackgroundStroke = this.emSwimlaneBackgroundStroke || 'rgb(240,240,240)';
+    this.emArrowhead = this.emArrowhead || this.lineColor;
+    this.emRelationStroke = this.emRelationStroke || this.lineColor;
 
     /* -------------------------------------------------- */
     /* EntityRelationship diagrams                        */
