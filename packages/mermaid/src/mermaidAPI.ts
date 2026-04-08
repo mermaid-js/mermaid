@@ -6,7 +6,7 @@
 import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
 import DOMPurify from 'dompurify';
-import isEmpty from 'lodash-es/isEmpty.js';
+import { isEmpty } from 'es-toolkit/compat';
 import { addSVGa11yTitleDescription, setA11yDiagramInfo } from './accessibility.js';
 import assignWithDepth from './assignWithDepth.js';
 import * as configApi from './config.js';
