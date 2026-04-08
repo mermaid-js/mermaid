@@ -1465,7 +1465,7 @@ export const drawLoop = async function (elem, loopModel, labelText, conf, msg) {
         txt.tspan = false;
         txt.fontFamily = fontFamily;
         txt.fontSize = fontSize;
-        txt.fontWeight = undefined;
+        txt.fontWeight = fontWeight;
         txt.wrap = loopModel.wrap;
 
         if (hasKatex(txt.text)) {

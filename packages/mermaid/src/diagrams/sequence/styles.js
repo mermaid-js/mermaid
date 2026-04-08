@@ -88,7 +88,6 @@ const getStyles = (options) => {
   .sectionTitle, .sectionTitle > tspan {
     fill: ${options.loopTextColor};
     stroke: none;
-    font-weight: bold;
   }
 
   .loopLine {
