@@ -188,6 +188,9 @@ if (import.meta.vitest) {
       const dummy: GitGraph = {
         $type: 'GitGraph',
         statements: [],
+        accDescr: '',
+        accTitle: '',
+        title: '',
       };
       const gitGraphAst: GitGraph = {
         $type: 'GitGraph',
@@ -227,6 +230,9 @@ if (import.meta.vitest) {
             parent: '2',
           },
         ],
+        accDescr: '',
+        accTitle: '',
+        title: '',
       };
 
       populate(gitGraphAst, mockDB);

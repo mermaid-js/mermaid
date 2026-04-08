@@ -1550,6 +1550,91 @@ gitGraph TB:
         {}
       );
     });
+    it('76: should render a BT gitGraph with branch ordering and merge from right branch | Regression #6593', () => {
+      imgSnapshotTest(
+        `gitGraph BT:
+    commit id: "A"
+    branch develop order: 3
+    checkout develop
+    commit id: "B"
+    branch release/1.0.0 order: 2
+    checkout release/1.0.0
+    commit id: "C"
+    commit id: "D"
+    checkout main
+    merge release/1.0.0 tag: "v1.0.0"
+    checkout develop`,
+        {}
+      );
+    });
+    it('77: should render a BT gitGraph with three branches and multiple merges | Regression #6593', () => {
+      imgSnapshotTest(
+        `gitGraph BT:
+  commit id: "1"
+  commit id: "2"
+  branch nice_feature
+  checkout main
+  commit id: "3"
+  checkout nice_feature
+  commit id: "4"
+  checkout main
+  branch very_nice_feature
+  checkout very_nice_feature
+  commit id: "5"
+  checkout main
+  commit id: "6"
+  checkout nice_feature
+  commit id: "7"
+  checkout main
+  merge nice_feature
+  checkout very_nice_feature
+  commit id: "8"
+  checkout main
+  merge very_nice_feature`,
+        {}
+      );
+    });
+    it('78: should render a BT gitGraph with cherry-pick | Regression #6593', () => {
+      imgSnapshotTest(
+        `gitGraph BT:
+  commit id: "ZERO"
+  branch develop
+  commit id:"A"
+  checkout main
+  commit id:"ONE"
+  checkout develop
+  commit id:"B"
+  checkout main
+  commit id:"TWO"
+  cherry-pick id:"A" tag: "cherry-picked"
+  commit id:"THREE"
+  checkout develop
+  commit id:"C"`,
+        {}
+      );
+    });
+    it('79: should render a BT gitGraph with two cherry-picks | Regression #6593', () => {
+      imgSnapshotTest(
+        `gitGraph BT:
+  commit id: "ZERO"
+  branch develop
+  commit id:"A"
+  checkout main
+  commit id:"ONE"
+  checkout develop
+  commit id:"B"
+  checkout main
+  commit id:"TWO"
+  cherry-pick id:"A"
+  commit id:"THREE"
+  checkout develop
+  commit id:"C"
+  checkout main
+  cherry-pick id:"C"
+  commit id:"FOUR"`,
+        {}
+      );
+    });
   });
   it('76: should render a gitGraph with multiple tags on a merge commit on left-to-right orientation', () => {
     imgSnapshotTest(
@@ -2079,7 +2164,21 @@ gitGraph TB:
       );
     });
   });
-  it('97: should render a gitgraph with commit click link', () => {
+  it('97: should render branch labels with multi-line text aligned with background in LR layout', () => {
+    imgSnapshotTest(
+      `gitGraph LR:
+         commit id: "1"
+         branch "Feature A\n(ongoing)"
+         commit id: "2"
+         commit id: "3"
+         checkout main
+         commit id: "4"
+         commit id: "5"
+      `,
+      {}
+    );
+  });
+  it('98: should render a gitgraph with commit click link', () => {
     imgSnapshotTest(
       `gitGraph
         commit id: "c1"
@@ -2089,7 +2188,7 @@ gitGraph TB:
       {}
     );
   });
-  it('98: should render a gitgraph with commit click link and tooltip', () => {
+  it('99: should render a gitgraph with commit click link and tooltip', () => {
     imgSnapshotTest(
       `gitGraph
         commit id: "c1"
@@ -2098,7 +2197,7 @@ gitGraph TB:
       {}
     );
   });
-  it('99: should render a gitgraph with multiple commits with click links', () => {
+  it('100: should render a gitgraph with multiple commits with click links', () => {
     imgSnapshotTest(
       `gitGraph
         commit id: "c1"
@@ -2111,7 +2210,7 @@ gitGraph TB:
       {}
     );
   });
-  it('100: should render a gitgraph with branches and commit click links', () => {
+  it('101: should render a gitgraph with branches and commit click links', () => {
     imgSnapshotTest(
       `gitGraph
         commit id: "init"
@@ -2125,7 +2224,7 @@ gitGraph TB:
       {}
     );
   });
-  it('101: should render a gitgraph with commit click link with special characters in commit id', () => {
+  it('102: should render a gitgraph with commit click link with special characters in commit id', () => {
     imgSnapshotTest(
       `gitGraph
         commit id: "v1.0.0-beta"
@@ -2134,7 +2233,7 @@ gitGraph TB:
       {}
     );
   });
-  it('102: should render a gitgraph with linked commit with tag', () => {
+  it('103: should render a gitgraph with linked commit with tag', () => {
     imgSnapshotTest(
       `gitGraph
         commit id: "release" tag: "v1.0"
@@ -2143,7 +2242,7 @@ gitGraph TB:
       {}
     );
   });
-  it('103: should render a gitgraph with linked HIGHLIGHT commit', () => {
+  it('104: should render a gitgraph with linked HIGHLIGHT commit', () => {
     imgSnapshotTest(
       `gitGraph
         commit id: "normal"
@@ -2154,7 +2253,7 @@ gitGraph TB:
       {}
     );
   });
-  it('104: should render a gitgraph with linked REVERSE commit', () => {
+  it('105: should render a gitgraph with linked REVERSE commit', () => {
     imgSnapshotTest(
       `gitGraph
         commit id: "normal"
@@ -2165,7 +2264,7 @@ gitGraph TB:
       {}
     );
   });
-  it('105: should render a complex gitgraph with mixed click links', () => {
+  it('106: should render a complex gitgraph with mixed click links', () => {
     imgSnapshotTest(
       `gitGraph
         commit id: "init"
