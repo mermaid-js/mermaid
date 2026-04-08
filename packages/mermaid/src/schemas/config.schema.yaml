@@ -222,6 +222,14 @@ properties:
         This prevent any JavaScript from running in the context.
         This may hinder interactive functionality of the diagram, like scripts, popups in the sequence diagram, or links to other tabs or targets, etc.
     default: strict
+  sandboxLinkBaseUrl:
+    description: |
+      Base URL used to resolve relative links when `securityLevel` is `sandbox`.
+
+      Sandbox rendering serializes the diagram into a `data:` URL iframe, which removes the
+      document context needed for links such as `./page.html` and `#section`.
+      Provide `sandboxLinkBaseUrl` to pre-resolve those links before the SVG is embedded.
+    type: string
   startOnLoad:
     description: Dictates whether mermaid starts on Page load
     type: boolean
@@ -246,6 +254,7 @@ properties:
         'maxTextSize',
         'suppressErrorRendering',
         'maxEdges',
+        'sandboxLinkBaseUrl',
       ]
     type: array
     items:
