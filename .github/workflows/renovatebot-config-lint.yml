@@ -1,0 +1,31 @@
+name: Renovatebot Config Lint
+
+on:
+  pull_request:
+    paths:
+      - 'renovate.json'
+      - '.github/workflows/renovatebot-config-lint.yml'
+  push:
+    branches-ignore:
+      # The Renovatebot App will warn us about issues on `develop`
+      # or `renovate/**` branches:
+      # See https://docs.renovatebot.com/config-validation/#validation-of-renovate-config-change-prs
+      - develop
+      - 'renovate/**'
+    paths:
+      - 'renovate.json'
+      - '.github/workflows/renovatebot-config-lint.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-slim
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      # no version specifier -> the latest version should be roughly equivalent
+      # to the Renovate app version (although maybe a few versions ahead)
+      - run: |
+          npx --yes --package renovate -- renovate-config-validator
