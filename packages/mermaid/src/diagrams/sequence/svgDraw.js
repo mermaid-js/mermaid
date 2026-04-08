@@ -1456,6 +1456,24 @@ export const drawLoop = async function (elem, loopModel, labelText, conf, msg) {
   if (loopModel.sectionTitles !== undefined) {
     for (const [idx, item] of Object.entries(loopModel.sectionTitles)) {
       if (item.message) {
+        // Draw a labelBox background behind the section title (e.g., "else")
+        let sectionLabelTxt = svgDrawCommon.getTextObj();
+        sectionLabelTxt.text = item.message;
+        sectionLabelTxt.x = loopModel.startx;
+        sectionLabelTxt.y = loopModel.sections[idx].y;
+        sectionLabelTxt.fontFamily = fontFamily;
+        sectionLabelTxt.fontSize = fontSize;
+        sectionLabelTxt.fontWeight = fontWeight;
+        sectionLabelTxt.anchor = 'middle';
+        sectionLabelTxt.valign = 'middle';
+        sectionLabelTxt.tspan = false;
+        sectionLabelTxt.width = Math.max(labelBoxWidth ?? 0, 50);
+        sectionLabelTxt.height = labelBoxHeight + (conf.look === 'neo' ? 15 : 0) || 20;
+        sectionLabelTxt.textMargin = boxTextMargin;
+        sectionLabelTxt.class = 'labelText';
+
+        drawLabel(g, sectionLabelTxt);
+
         txt.text = item.message;
         txt.x = loopModel.startx + (loopModel.stopx - loopModel.startx) / 2;
         txt.y = loopModel.sections[idx].y + boxMargin + boxTextMargin;

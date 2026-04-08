@@ -189,6 +189,145 @@ describe('svgDraw', function () {
       expect(text.style).toHaveBeenCalledWith('font-weight', '500');
     });
   });
+  describe('drawLoop', function () {
+    /**
+     * Extended MockD3 that supports getBBox (needed by drawLoop's text measurement).
+     */
+    const MockD3WithBBox = (name, parent) => {
+      const children = [];
+      const elem = {
+        get __children() {
+          return children;
+        },
+        get __name() {
+          return name;
+        },
+        get __parent() {
+          return parent;
+        },
+        _groups: [[{ getBBox: () => ({ x: 0, y: 0, width: 100, height: 20 }) }]],
+      };
+      elem.append = (childName) => {
+        const mockElem = MockD3WithBBox(childName, elem);
+        children.push(mockElem);
+        return mockElem;
+      };
+      elem.lower = vi.fn(() => elem);
+      elem.attr = vi.fn(() => elem);
+      elem.text = vi.fn(() => elem);
+      elem.style = vi.fn(() => elem);
+      elem.node = vi.fn(() => ({
+        querySelectorAll: (selector) => {
+          // Collect all matching children recursively
+          const results = [];
+          const walk = (node) => {
+            for (const child of node.__children || []) {
+              if (selector === '.labelBox' && child.__name === 'polygon') {
+                // Check if it was called with class labelBox
+                const calls = child.attr.mock.calls;
+                if (calls.some((c) => c[0] === 'class' && c[1] === 'labelBox')) {
+                  results.push(child);
+                }
+              }
+              walk(child);
+            }
+          };
+          walk(elem);
+          return results;
+        },
+      }));
+      return elem;
+    };
+
+    it('should create a labelBox polygon for the main loop label', async function () {
+      const svg = MockD3WithBBox('svg');
+      const loopModel = {
+        startx: 10,
+        starty: 10,
+        stopx: 200,
+        stopy: 200,
+        title: 'Yes',
+        wrap: false,
+        sectionTitles: [],
+        sections: [],
+      };
+      const conf = {
+        boxMargin: 10,
+        boxTextMargin: 5,
+        labelBoxHeight: 20,
+        labelBoxWidth: 50,
+        messageFontFamily: 'Arial',
+        messageFontSize: 12,
+        messageFontWeight: 'normal',
+      };
+      const msg = { id: 'test1' };
+
+      const g = await svgDraw.drawLoop(svg, loopModel, 'alt', conf, msg);
+      const labelBoxes = g.node().querySelectorAll('.labelBox');
+      expect(labelBoxes.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('should create labelBox polygons for section titles (else labels)', async function () {
+      const svg = MockD3WithBBox('svg');
+      const loopModel = {
+        startx: 10,
+        starty: 10,
+        stopx: 200,
+        stopy: 200,
+        title: 'Yes',
+        wrap: false,
+        sectionTitles: [{ message: 'else Command' }],
+        sections: [{ y: 100, height: 50 }],
+      };
+      const conf = {
+        boxMargin: 10,
+        boxTextMargin: 5,
+        labelBoxHeight: 20,
+        labelBoxWidth: 50,
+        messageFontFamily: 'Arial',
+        messageFontSize: 12,
+        messageFontWeight: 'normal',
+      };
+      const msg = { id: 'test2' };
+
+      const g = await svgDraw.drawLoop(svg, loopModel, 'alt', conf, msg);
+      const labelBoxes = g.node().querySelectorAll('.labelBox');
+      // Should have 2 labelBox elements: one for "alt" label, one for "else Command"
+      expect(labelBoxes.length).toBe(2);
+    });
+
+    it('should create labelBox for each section title when multiple exist', async function () {
+      const svg = MockD3WithBBox('svg');
+      const loopModel = {
+        startx: 10,
+        starty: 10,
+        stopx: 300,
+        stopy: 300,
+        title: 'Yes',
+        wrap: false,
+        sectionTitles: [{ message: 'else A' }, { message: 'else B' }],
+        sections: [
+          { y: 100, height: 50 },
+          { y: 200, height: 50 },
+        ],
+      };
+      const conf = {
+        boxMargin: 10,
+        boxTextMargin: 5,
+        labelBoxHeight: 20,
+        labelBoxWidth: 50,
+        messageFontFamily: 'Arial',
+        messageFontSize: 12,
+        messageFontWeight: 'normal',
+      };
+      const msg = { id: 'test3' };
+
+      const g = await svgDraw.drawLoop(svg, loopModel, 'alt', conf, msg);
+      const labelBoxes = g.node().querySelectorAll('.labelBox');
+      // 1 main label + 2 section titles = 3 labelBox elements
+      expect(labelBoxes.length).toBe(3);
+    });
+  });
   describe('drawBackgroundRect', function () {
     it('should append a rect before the previous element within a given bound', function () {
       const svg = MockD3('svg');
