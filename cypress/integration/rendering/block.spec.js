@@ -479,7 +479,7 @@ columns 10
       {}
     );
   });
-  
+
   it('BL35: mixed column spans should not shrink column widths (issue #7503)', () => {
     imgSnapshotTest(
       `block-beta
