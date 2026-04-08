@@ -83,6 +83,27 @@ describe('GitGraph Click Events', () => {
       const anchor = svg.select('a');
       expect(anchor.empty()).toBe(false);
     });
+
+    it('should override target to "_top" when securityLevel is sandbox', async () => {
+      setConfig({ securityLevel: 'sandbox' });
+      const diagram = `
+        gitGraph
+          commit id: "c1"
+          click commit "c1" "https://github.com" _blank
+      `;
+
+      await parser.parse(diagram);
+
+      const svg = select(container).append('svg').attr('id', 'gitGraph-security-sandbox');
+      const diagObj = { db, type: 'gitGraph' };
+
+      // @ts-ignore - partial diagram object for testing
+      await draw(diagram, 'gitGraph-security-sandbox', '1.0', diagObj);
+
+      const anchor = svg.select('a');
+      expect(anchor.empty()).toBe(false);
+      expect(anchor.attr('target')).toBe('_top');
+    });
   });
 
   describe('SVG anchor element creation', () => {
@@ -106,6 +127,48 @@ describe('GitGraph Click Events', () => {
       expect(anchor.empty()).toBe(false);
       expect(anchor.attr('href')).toBe('https://github.com/');
       expect(anchor.attr('rel')).toBe('noopener noreferrer');
+    });
+
+    it('should create SVG <a> elements for branches with links', async () => {
+      const diagram = `
+        gitGraph
+          branch develop
+          click branch "develop" "https://github.com"
+      `;
+
+      await parser.parse(diagram);
+
+      const svg = select(container).append('svg').attr('id', 'gitGraph-test-branch');
+      const diagObj = { db, type: 'gitGraph' };
+
+      // @ts-ignore - partial diagram object for testing
+      await draw(diagram, 'gitGraph-test-branch', '1.0', diagObj);
+
+      const anchor = svg.select('a');
+      expect(anchor.empty()).toBe(false);
+      expect(anchor.attr('href')).toBe('https://github.com/');
+      expect(svg.select('[data-branch-name="develop"]').classed('clickable')).toBe(true);
+    });
+
+    it('should create SVG <a> elements for tags with links', async () => {
+      const diagram = `
+        gitGraph
+          commit id: "c1" tag: "v1.0"
+          click tag "v1.0" "https://github.com"
+      `;
+
+      await parser.parse(diagram);
+
+      const svg = select(container).append('svg').attr('id', 'gitGraph-test-tag');
+      const diagObj = { db, type: 'gitGraph' };
+
+      // @ts-ignore - partial diagram object for testing
+      await draw(diagram, 'gitGraph-test-tag', '1.0', diagObj);
+
+      const anchor = svg.select('a');
+      expect(anchor.empty()).toBe(false);
+      expect(anchor.attr('href')).toBe('https://github.com/');
+      expect(svg.select('[data-tag-name="v1.0"]').classed('clickable')).toBe(true);
     });
 
     it('should set target attribute based on link configuration', async () => {
