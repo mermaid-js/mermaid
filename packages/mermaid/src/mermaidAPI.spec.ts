@@ -9,6 +9,7 @@ import { MockedD3 } from './tests/MockedD3.js';
 // Note: If running this directly from within an IDE, the mocks directory must be at packages/mermaid/mocks
 vi.mock('d3');
 vi.mock('dagre-d3');
+import { select } from 'd3';
 
 // mermaidAPI.spec.ts:
 import * as accessibility from './accessibility.js'; // Import it this way so we can use spyOn(accessibility,...)
@@ -216,31 +217,42 @@ describe('mermaidAPI', () => {
     });
 
     it('uses the height and appends px from the svgElement given', () => {
-      const faux_svgElement = {
-        viewBox: {
-          baseVal: {
-            height: 42,
-          },
+      const faux_svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      const dummyDomRect = {
+        x: NaN,
+        y: NaN,
+        width: NaN,
+        height: NaN,
+        bottom: NaN,
+        left: NaN,
+        right: NaN,
+        top: NaN,
+        toJSON() {
+          throw new Error('Not implemented');
         },
       };
+      // @ts-ignore -- JSDOM doesn't implement `viewBox`, so we can't spy on it
+      faux_svgElement.viewBox = { baseVal: dummyDomRect, animVal: dummyDomRect };
+      vi.spyOn(faux_svgElement.viewBox.baseVal, 'height', 'get').mockReturnValue(42);
 
       const result = putIntoIFrame(inputSvgCode, faux_svgElement);
       expect(result).toMatch(/style="(.*)height:42px;/);
     });
   });
 
-  const fauxParentNode = new MockedD3();
-  const fauxEnclosingDiv = new MockedD3();
-  const fauxSvgNode = new MockedD3();
+  const fauxParentNode = select(document.body);
+  const fauxEnclosingDiv = select(document.createElement('div'));
+  const fauxSvgNode = select(document.createElement('svg'));
 
   describe('appendDivSvgG', () => {
-    const fauxGNode = new MockedD3();
+    const fauxGNode = select(document.createElementNS('http://www.w3.org/2000/svg', 'g'));
+    // @ts-ignore -- d3 selection use generic types that don't work well with mocks
     const parent_append_spy = vi.spyOn(fauxParentNode, 'append').mockReturnValue(fauxEnclosingDiv);
+    // @ts-ignore -- d3 selection use generic types that don't work well with mocks
     const div_append_spy = vi.spyOn(fauxEnclosingDiv, 'append').mockReturnValue(fauxSvgNode);
-    // @ts-ignore @todo TODO why is this getting a type error?
     const div_attr_spy = vi.spyOn(fauxEnclosingDiv, 'attr').mockReturnValue(fauxEnclosingDiv);
+    // @ts-ignore -- d3 selection use generic types that don't work well with mocks
     const svg_append_spy = vi.spyOn(fauxSvgNode, 'append').mockReturnValue(fauxGNode);
-    // @ts-ignore @todo TODO why is this getting a type error?
     const svg_attr_spy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
 
     // cspell:ignore dthe
