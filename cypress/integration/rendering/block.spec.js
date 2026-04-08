@@ -458,6 +458,28 @@ columns 3
       {}
     );
   });
+
+  it('BL35: block arrow should span multiple columns when widthInColumns is set', () => {
+    imgSnapshotTest(
+      `block-beta
+columns 10
+
+  arrow<["span 10"]>(x):10
+  A
+  B
+  C
+  D
+  E
+  F
+  G
+  H
+  I
+  J
+  `,
+      {}
+    );
+  });
+
   it('BL35: mixed column spans should not shrink column widths (issue #7503)', () => {
     imgSnapshotTest(
       `block-beta
