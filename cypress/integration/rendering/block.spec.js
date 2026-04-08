@@ -458,4 +458,14 @@ columns 3
       {}
     );
   });
+  it('BL35: mixed column spans should not shrink column widths (issue #7503)', () => {
+    imgSnapshotTest(
+      `block-beta
+    columns 5
+    PA["Paid proceeds (actual) $613"]:1 DEF["Deficit $5,155"]:4
+    CA["Cash back (actual) $128"]:1 SPO["Spoilage (35 unsold) $5,640"]:4
+`,
+      {}
+    );
+  });
 });
