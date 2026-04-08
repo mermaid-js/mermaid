@@ -98,12 +98,13 @@ const setupDoc = (
             look,
             classes
           );
+          const isNeo = look === 'neo';
           const edgeData = {
             id: 'edge' + graphItemCount,
             start: item.state1.id,
             end: item.state2.id,
             arrowhead: 'normal',
-            arrowTypeEnd: 'arrow_barb',
+            arrowTypeEnd: isNeo ? 'arrow_barb_neo' : 'arrow_barb',
             style: G_EDGE_STYLE,
             labelStyle: '',
             label: common.sanitizeText(item.description ?? '', getConfig()),

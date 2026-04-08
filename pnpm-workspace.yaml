@@ -1,5 +1,13 @@
+minimumReleaseAge: 4320 # 4320 minutes = 3 days
 packages:
   - 'packages/*'
   - 'packages/mermaid/src/docs'
   - 'packages/mermaid/src/vitepress'
   - 'tests/*'
+minimumReleaseAgeExclude:
+  # Renovate security update: dompurify@3.3.2
+  - dompurify@3.3.2
+  # Renovate security update: ajv@8.18.0
+  - ajv@8.18.0
+  # Renovate security update: lodash-es@4.18.1
+  - lodash-es@4.18.1

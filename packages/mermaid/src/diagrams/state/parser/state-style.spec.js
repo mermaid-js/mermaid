@@ -186,6 +186,38 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         });
       });
 
+      describe('::: syntax inside composite states', () => {
+        it('can be applied to a state inside a composite state', () => {
+          let diagram = '';
+          diagram += 'stateDiagram-v2\n\n';
+          diagram += 'classDef exampleStyleClass background:#bbb,border:1px solid red;\n';
+          diagram += 'state A {\n';
+          diagram += '  a:::exampleStyleClass --> b\n';
+          diagram += '}\n';
+
+          stateDiagram.parser.parse(diagram);
+
+          const stateA = stateDiagram.parser.yy.getStates().get('A');
+          const relation = stateA.doc[0];
+          expect(relation.state1.classes[0]).toEqual('exampleStyleClass');
+        });
+
+        it('can be applied to a [*] state inside a composite state', () => {
+          let diagram = '';
+          diagram += 'stateDiagram-v2\n\n';
+          diagram += 'classDef exampleStyleClass background:#bbb,border:1px solid red;\n';
+          diagram += 'state A {\n';
+          diagram += '  [*]:::exampleStyleClass --> a\n';
+          diagram += '}\n';
+
+          stateDiagram.parser.parse(diagram);
+
+          const stateA = stateDiagram.parser.yy.getStates().get('A');
+          const relation = stateA.doc[0];
+          expect(relation.state1.classes[0]).toEqual('exampleStyleClass');
+        });
+      });
+
       describe('comments parsing', () => {
         it('working inside states', function () {
           let diagram = '';

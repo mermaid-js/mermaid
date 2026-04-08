@@ -2,7 +2,8 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { getEffectiveHtmlLabels } from '../../config.js';
 import { log } from '../../logger.js';
 import { createText } from '../createText.js';
-import utils from '../../utils.js';
+import { computeLabelTransform } from '../labelTransform.js';
+import utils, { handleUndefinedAttr } from '../../utils.js';
 import {
   getLineFunctionsWithOffset,
   markerOffsets,
@@ -94,14 +95,22 @@ export const insertEdgeLabel = async (elem, edge) => {
 
   // Center the label
   let bbox = labelElement.getBBox();
+  let transformBbox = bbox;
   if (useHtmlLabels) {
     const div = labelElement.children[0];
     const dv = select(labelElement);
     bbox = div.getBoundingClientRect();
+    transformBbox = bbox;
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
+  } else {
+    // For SVG labels, use text element's bbox so the text is centered on the edge
+    const textEl = select(labelElement).select('text').node();
+    if (textEl && typeof textEl.getBBox === 'function') {
+      transformBbox = textEl.getBBox();
+    }
   }
-  label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
+  label.attr('transform', computeLabelTransform(transformBbox, useHtmlLabels));
 
   // Make element accessible by id for positioning
   edgeLabels.set(edge.id, edgeLabel);
@@ -131,7 +140,7 @@ export const insertEdgeLabel = async (elem, edge) => {
       dv.attr('width', slBox.width);
       dv.attr('height', slBox.height);
     }
-    inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
+    inner.attr('transform', computeLabelTransform(slBox, useHtmlLabels));
     if (!terminalLabels.get(edge.id)) {
       terminalLabels.set(edge.id, {});
     }
@@ -159,7 +168,7 @@ export const insertEdgeLabel = async (elem, edge) => {
       dv.attr('width', slBox.width);
       dv.attr('height', slBox.height);
     }
-    inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
+    inner.attr('transform', computeLabelTransform(slBox, useHtmlLabels));
 
     if (!terminalLabels.get(edge.id)) {
       terminalLabels.set(edge.id, {});
@@ -187,7 +196,7 @@ export const insertEdgeLabel = async (elem, edge) => {
       dv.attr('width', slBox.width);
       dv.attr('height', slBox.height);
     }
-    inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
+    inner.attr('transform', computeLabelTransform(slBox, useHtmlLabels));
 
     endEdgeLabelLeft.node().appendChild(endLabelElement);
 
@@ -218,7 +227,7 @@ export const insertEdgeLabel = async (elem, edge) => {
       dv.attr('width', slBox.width);
       dv.attr('height', slBox.height);
     }
-    inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
+    inner.attr('transform', computeLabelTransform(slBox, useHtmlLabels));
 
     endEdgeLabelRight.node().appendChild(endLabelElement);
     if (!terminalLabels.get(edge.id)) {
@@ -543,9 +552,14 @@ export const insertEdge = function (
   diagramType,
   startNode,
   endNode,
-  id,
+  diagramId,
   skipIntersect = false
 ) {
+  if (!diagramId) {
+    throw new Error(
+      `insertEdge: missing diagramId for edge "${edge.id}" — edge IDs require a diagram prefix for uniqueness`
+    );
+  }
   const { handDrawnSeed } = getConfig();
   let points = edge.points;
   let pointsHasChanged = false;
@@ -706,7 +720,7 @@ export const insertEdge = function (
 
     svgPath = select(svgPathNode)
       .select('path')
-      .attr('id', edge.id)
+      .attr('id', `${diagramId}-${edge.id}`)
       .attr(
         'class',
         ' ' +
@@ -729,7 +743,7 @@ export const insertEdge = function (
     svgPath = elem
       .append('path')
       .attr('d', linePath)
-      .attr('id', edge.id)
+      .attr('id', `${diagramId}-${edge.id}`)
       .attr(
         'class',
         ' ' +
@@ -769,7 +783,8 @@ export const insertEdge = function (
   svgPath.attr('data-et', 'edge');
   svgPath.attr('data-id', edge.id);
   svgPath.attr('data-points', pointsStr);
-
+  // Add data attributes for neo look support
+  svgPath.attr('data-look', handleUndefinedAttr(edge.look));
   // DEBUG code, adds a red circle at each edge coordinate
   // cornerPoints.forEach((point) => {
   //   elem
@@ -805,7 +820,8 @@ export const insertEdge = function (
   log.info('arrowTypeStart', edge.arrowTypeStart);
   log.info('arrowTypeEnd', edge.arrowTypeEnd);
 
-  addEdgeMarkers(svgPath, edge, url, id, diagramType, strokeColor);
+  const useMargin = !animatedEdge && edge?.look === 'neo';
+  addEdgeMarkers(svgPath, edge, url, diagramId, diagramType, useMargin, strokeColor);
   const midIndex = Math.floor(points.length / 2);
   const point = points[midIndex];
   if (!utils.isLabelCoordinateInPath(point, svgPath.attr('d'))) {

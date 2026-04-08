@@ -61,36 +61,36 @@ describe('Interaction', () => {
     });
 
     it('should handle a click on a task with a bound URL clicking on the rect', () => {
-      cy.get('rect#cl1').click({ force: true });
+      cy.get('rect[id$="-cl1"]').click({ force: true });
       cy.location().should(({ href }) => {
         expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
 
     it('should handle a click on a task with a bound URL clicking on the text', () => {
-      cy.get('text#cl1-text').click({ force: true });
+      cy.get('text[id$="-cl1-text"]').click({ force: true });
       cy.location().should(({ href }) => {
         expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
 
     it('should handle a click on a task with a bound function without args', () => {
-      cy.get('rect#cl2').click({ force: true });
+      cy.get('rect[id$="-cl2"]').click({ force: true });
       cy.get('.created-by-gant-click').should('have.text', 'Clicked By Gant cl2');
     });
 
     it('should handle a click on a task with a bound function with args', () => {
-      cy.get('rect#cl3').click({ force: true });
+      cy.get('rect[id$="-cl3"]').click({ force: true });
       cy.get('.created-by-gant-click').should('have.text', 'Clicked By Gant test1 test2 test3');
     });
 
     it('should handle a click on a task with a bound function without args', () => {
-      cy.get('text#cl2-text').click({ force: true });
+      cy.get('text[id$="-cl2-text"]').click({ force: true });
       cy.get('.created-by-gant-click').should('have.text', 'Clicked By Gant cl2');
     });
 
     it('should handle a click on a task with a bound function with args ', () => {
-      cy.get('text#cl3-text').click({ force: true });
+      cy.get('text[id$="-cl3-text"]').click({ force: true });
       cy.get('.created-by-gant-click').should('have.text', 'Clicked By Gant test1 test2 test3');
     });
   });
@@ -124,26 +124,26 @@ describe('Interaction', () => {
     });
 
     it('should handle a click on a task with a bound URL clicking on the rect', () => {
-      cy.get('rect#cl1').click({ force: true });
+      cy.get('rect[id$="-cl1"]').click({ force: true });
       cy.location().should(({ href }) => {
         expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
 
     it('should handle a click on a task with a bound URL clicking on the text', () => {
-      cy.get('text#cl1-text').click({ force: true });
+      cy.get('text[id$="-cl1-text"]').click({ force: true });
       cy.location().should(({ href }) => {
         expect(href).to.eq(`${baseUrl}/empty.html`);
       });
     });
 
     it('should handle a click on a task with a bound function', () => {
-      cy.get('rect#cl2').click({ force: true });
+      cy.get('rect[id$="-cl2"]').click({ force: true });
       cy.get('.created-by-gant-click').should('not.exist');
     });
 
     it('should handle a click on a task with a bound function', () => {
-      cy.get('text#cl2-text').click({ force: true });
+      cy.get('text[id$="-cl2-text"]').click({ force: true });
       cy.get('.created-by-gant-click').should('not.exist');
     });
   });
@@ -171,12 +171,12 @@ describe('Interaction', () => {
     });
 
     it('should handle a click on a task with a bound function', () => {
-      cy.get('rect#cl2').click({ force: true });
+      cy.get('rect[id$="-cl2"]').click({ force: true });
       cy.get('.created-by-gant-click').should('not.exist');
     });
 
     it('should handle a click on a task with a bound function', () => {
-      cy.get('text#cl2-text').click({ force: true });
+      cy.get('text[id$="-cl2-text"]').click({ force: true });
       cy.get('.created-by-gant-click').should('not.exist');
     });
   });

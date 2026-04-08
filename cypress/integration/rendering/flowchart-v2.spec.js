@@ -63,6 +63,17 @@ describe('Flowchart v2', () => {
       {}
     );
   });
+  it('4b: Labeled open edges should not have arrowheads', () => {
+    imgSnapshotTest(
+      `flowchart TD
+      A -- label text --- B
+      C --- D
+      E -- open label --- F
+      G <-- bidirectional --> H
+      `,
+      {}
+    );
+  });
   it('5: should render escaped without html labels', () => {
     imgSnapshotTest(
       `flowchart TD
@@ -71,7 +82,18 @@ describe('Flowchart v2', () => {
       { htmlLabels: false, flowchart: { htmlLabels: false } }
     );
   });
-  it('5a: angle brackets should be work without html labels', () => {
+
+  it('5a: should render flowchart with edge labels centered when htmlLabels is false', () => {
+    imgSnapshotTest(
+      `flowchart TB
+        A[Start] -->|first| B[Middle]
+        B -->|second| C[End]
+      `,
+      { logLevel: 1, htmlLabels: false }
+    );
+  });
+
+  it('5b: angle brackets should be work without html labels', () => {
     imgSnapshotTest(
       `flowchart TD
     a["**Plain text**:\n 5 > 3 && 2 < 4"]

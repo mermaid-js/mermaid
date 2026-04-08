@@ -141,7 +141,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 
 <INITIAL,struct>"-->"             return '-->';
 <struct>"--"                      return 'CONCURRENT';
-":::"                             return 'STYLE_SEPARATOR';
+<INITIAL,struct>":::"             return 'STYLE_SEPARATOR';
 <<EOF>>                           return 'NL';
 .                                 return 'INVALID';
 

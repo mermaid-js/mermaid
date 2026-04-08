@@ -145,6 +145,26 @@ export const verifyScreenshot = (name: string): void => {
   }
 };
 
+/**
+ * Asserts that no element ID appears more than once in the current document.
+ * Use after rendering multiple mermaid diagrams on the same page.
+ */
+export const assertNoDuplicateIds = (): void => {
+  cy.document().then((doc) => {
+    const allElements = doc.querySelectorAll('[id]');
+    const idCounts: Record<string, number> = {};
+    for (const el of allElements) {
+      const id = el.getAttribute('id')!;
+      idCounts[id] = (idCounts[id] || 0) + 1;
+    }
+    const duplicates = Object.entries(idCounts).filter(([, count]) => count > 1);
+    expect(
+      duplicates,
+      `Duplicate IDs found: ${duplicates.map(([id, n]) => `${id} (${n}x)`).join(', ')}`
+    ).to.have.length(0);
+  });
+};
+
 export const verifyNumber = (value: number, expected: number, deltaPercent = 10): void => {
   expect(value).to.be.within(
     expected * (1 - deltaPercent / 100),
