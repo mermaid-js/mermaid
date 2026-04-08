@@ -1,7 +1,8 @@
+import { sanitizeUrl } from '@braintree/sanitize-url';
 import { select } from 'd3';
 import { getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
-import utils, { sanitizeUrl } from '../../utils.js';
+import utils from '../../utils.js';
 import { sanitizeText } from '../common/common.js';
 import type { DrawDefinition } from '../../diagram-api/types.js';
 import type d3 from 'd3';
@@ -1038,7 +1039,7 @@ const setupClickEvents = (
   securityLevel: string
 ): (() => void) | undefined => {
   const links = db.getLinks?.();
-  if (!links || links.size === 0) {
+  if (securityLevel === 'strict' || !links || links.size === 0) {
     return undefined;
   }
   return () => {
@@ -1069,7 +1070,7 @@ const setupClickEvents = (
 
       // Sanitize URL to prevent XSS
       const sanitizedUrl = sanitizeUrl(linkData.link);
-      if (!sanitizedUrl) {
+      if (!sanitizedUrl || sanitizedUrl === 'about:blank') {
         log.warn(`Invalid or dangerous URL "${linkData.link}" for ${linkData.type} "${id}"`);
         return;
       }
@@ -1078,11 +1079,15 @@ const setupClickEvents = (
       elements.each(function () {
         const element = select(this);
 
+        // Add clickable class to the element so that CSS styles (like cursor: pointer) are applied
+        element.classed('clickable', true);
+
         const link = doc.createElementNS('http://www.w3.org/2000/svg', 'a');
         link.setAttributeNS('http://www.w3.org/2000/svg', 'class', element.attr('class'));
         link.setAttributeNS('http://www.w3.org/1999/xlink', 'href', sanitizedUrl);
-        link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
+        link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener noreferrer');
         if (securityLevel === 'sandbox') {
+          log.debug(`Overriding ${linkData.type} "${id}" link target to "_top" for sandbox mode`);
           link.setAttributeNS('http://www.w3.org/2000/svg', 'target', '_top');
         } else if (linkData.target) {
           link.setAttributeNS('http://www.w3.org/2000/svg', 'target', linkData.target);
