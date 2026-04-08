@@ -458,7 +458,7 @@ describe('mermaidAPI', () => {
     it('gets the css styles created', () => {
       // @todo TODO if a single function in the module can be mocked, do it for createCssStyles and mock the results.
 
-      createUserStyles(mockConfig, 'flowchart-v2', { classDef1 }, 'someId');
+      createUserStyles(mockConfig, 'flowchart-v2', { classDef1 }, '#someId');
       const expectedStyles =
         '\ndefault' +
         '\n.classDef1 > * { style1-1 !important; }' +
@@ -469,15 +469,15 @@ describe('mermaidAPI', () => {
     });
 
     it('calls getStyles to get css for all graph, user css styles, and config theme variables', () => {
-      createUserStyles(mockConfig, 'someDiagram', {}, 'someId');
+      createUserStyles(mockConfig, 'someDiagram', {}, '#someId');
       expect(getStyles).toHaveBeenCalled();
     });
 
     it('returns the result of compiling, stringifying, and serializing the css code with stylis', () => {
-      const result = createUserStyles(mockConfig, 'someDiagram', {}, 'someId');
+      const result = createUserStyles(mockConfig, 'someDiagram', {}, '#someId');
       expect(compile).toHaveBeenCalled();
       expect(serialize).toHaveBeenCalled();
-      expect(result).toEqual('someId .edge-pattern-dashed{stroke-dasharray:3;}');
+      expect(result).toEqual('#someId .edge-pattern-dashed{stroke-dasharray:3;}');
     });
 
     it('should sanitize CSS to avoid unbalanced braces', () => {
@@ -495,10 +495,10 @@ describe('mermaidAPI', () => {
             },
           }).map(([id, value]) => [id, { ...value, id }])
         ),
-        'someId'
+        '#someId'
       );
       expect(result).toEqual(
-        'someId .edge-pattern-dashed{stroke-dasharray:3;}someId .classDef2>*{color:purple;}someId .classDef2 span{color:purple;}'
+        '#someId .edge-pattern-dashed{stroke-dasharray:3;}#someId .classDef2>*{color:purple;}#someId .classDef2 span{color:purple;}'
       );
     });
   });
