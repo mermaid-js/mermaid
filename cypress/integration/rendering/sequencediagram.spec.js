@@ -1228,4 +1228,26 @@ describe('Sequence diagram', () => {
       );
     });
   });
+
+  it('should render alt/else section titles with label box backgrounds', () => {
+    imgSnapshotTest(
+      `
+    sequenceDiagram
+      participant Alice
+      participant Bob
+      opt Outer
+        alt Command A
+          Alice->>Bob: Request A
+        else Command B
+          Alice->>Bob: Request B
+        else Command C
+          Alice->>Bob: Request C
+        end
+      end
+      `,
+      {
+        themeCSS: '.loopText { fill: #ffffff !important; } .labelBox { fill: red !important; }',
+      }
+    );
+  });
 });
