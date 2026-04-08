@@ -22,8 +22,8 @@ describe('GitGraph Click Events', () => {
     container.id = 'test-container';
     document.body.appendChild(container);
 
-    // Reset mermaid config
-    setConfig({ securityLevel: 'strict' });
+    // Reset mermaid config - use loose by default for functional tests
+    setConfig({ securityLevel: 'loose' });
 
     // Clear gitGraph state
     clear();
@@ -41,6 +41,48 @@ describe('GitGraph Click Events', () => {
   afterEach(() => {
     document.body.removeChild(container);
     vi.clearAllMocks();
+  });
+
+  describe('Security Levels', () => {
+    it('should NOT create anchor elements when securityLevel is strict', async () => {
+      setConfig({ securityLevel: 'strict' });
+      const diagram = `
+        gitGraph
+          commit id: "c1"
+          click commit "c1" "https://github.com"
+      `;
+
+      await parser.parse(diagram);
+
+      const svg = select(container).append('svg').attr('id', 'gitGraph-security-strict');
+      const diagObj = { db, type: 'gitGraph' };
+
+      // @ts-ignore - partial diagram object for testing
+      await draw(diagram, 'gitGraph-security-strict', '1.0', diagObj);
+
+      const anchor = svg.select('a');
+      expect(anchor.empty()).toBe(true);
+    });
+
+    it('should create anchor elements when securityLevel is loose', async () => {
+      setConfig({ securityLevel: 'loose' });
+      const diagram = `
+        gitGraph
+          commit id: "c1"
+          click commit "c1" "https://github.com"
+      `;
+
+      await parser.parse(diagram);
+
+      const svg = select(container).append('svg').attr('id', 'gitGraph-security-loose');
+      const diagObj = { db, type: 'gitGraph' };
+
+      // @ts-ignore - partial diagram object for testing
+      await draw(diagram, 'gitGraph-security-loose', '1.0', diagObj);
+
+      const anchor = svg.select('a');
+      expect(anchor.empty()).toBe(false);
+    });
   });
 
   describe('SVG anchor element creation', () => {
@@ -63,7 +105,7 @@ describe('GitGraph Click Events', () => {
       const anchor = svg.select('a');
       expect(anchor.empty()).toBe(false);
       expect(anchor.attr('href')).toBe('https://github.com/');
-      expect(anchor.attr('rel')).toBe('noopener');
+      expect(anchor.attr('rel')).toBe('noopener noreferrer');
     });
 
     it('should set target attribute based on link configuration', async () => {
@@ -176,9 +218,9 @@ describe('GitGraph Click Events', () => {
       // @ts-ignore - partial diagram object for testing
       await draw(diagram, 'gitGraph-test', '1.0', diagObj);
 
-      // sanitizeUrl should block javascript: URLs
+      // sanitizeUrl should block javascript: URLs (no anchor should be created)
       const anchor = svg.select('a');
-      expect(anchor.attr('href')).not.toContain('javascript:');
+      expect(anchor.empty()).toBe(true);
     });
 
     it('should allow valid https URLs', async () => {
