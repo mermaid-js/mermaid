@@ -240,7 +240,7 @@ describe('svgDraw', function () {
       return results;
     }
 
-    it('should use labelText class for section titles so custom loopText CSS does not hide them', async function () {
+    it('should use sectionTitle class for section titles so custom loopText/labelText CSS does not hide them', async function () {
       const svg = MockD3WithBBox('svg');
       const loopModel = {
         startx: 10,
@@ -265,9 +265,9 @@ describe('svgDraw', function () {
 
       const g = await svgDraw.drawLoop(svg, loopModel, 'alt', conf, msg);
 
-      // Section title text should use 'labelText' class, not 'loopText'
-      const labelTexts = findTextsByClass(g, 'labelText');
-      expect(labelTexts.length).toBeGreaterThanOrEqual(1);
+      // Section title text should use 'sectionTitle' class, not 'loopText'
+      const sectionTitles = findTextsByClass(g, 'sectionTitle');
+      expect(sectionTitles.length).toBeGreaterThanOrEqual(1);
 
       // The section title should NOT use loopText class
       const loopTexts = findTextsByClass(g, 'loopText');
