@@ -4,6 +4,11 @@ import type { DiagramStylesProvider } from './diagram-api/types.js';
 
 const themes: Record<string, DiagramStylesProvider> = {};
 
+export function cssStyleSheetToString(cssStyleSheet: CSSStyleSheet): string {
+  // @ts-ignore -- Typedoc is throwing Type 'CSSRuleList' must have a '[Symbol.iterator]()' method error
+  return [...cssStyleSheet.cssRules].map((rule) => rule.cssText).join('\n');
+}
+
 const getStyles = (
   type: string,
   userStyles: string,

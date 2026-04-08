@@ -51,9 +51,12 @@ import assignWithDepth from './assignWithDepth.js';
 // --------------
 // Mocks
 //   To mock a module, first define a mock for it, then (if used explicitly in the tests) import it. Be sure the path points to exactly the same file as is imported in mermaidAPI (the module being tested)
-vi.mock('./styles.js', () => {
+vi.mock('./styles.js', async (importOriginal) => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  const original: typeof import('./styles.js') = await importOriginal();
   return {
     addStylesForDiagram: vi.fn(),
+    cssStyleSheetToString: vi.fn().mockImplementation(original.cssStyleSheetToString),
     default: vi.fn().mockImplementation(
       (_type, userStyles, _options) => `
     & .edge-pattern-dashed{
@@ -305,7 +308,7 @@ describe('mermaidAPI', () => {
     const serif = 'serif';
     const sansSerif = 'sans-serif';
     const mocked_config_with_htmlLabels: MermaidConfig = {
-      themeCSS: 'default',
+      themeCSS: '.default {color: red;}',
       fontFamily: serif,
       altFontFamily: sansSerif,
       htmlLabels: true,
@@ -313,21 +316,30 @@ describe('mermaidAPI', () => {
 
     it('gets the cssStyles from the theme', () => {
       const styles = createCssStyles(mocked_config_with_htmlLabels, null);
-      expect(styles).toMatch(/^\ndefault(.*)/);
+      expect(styles).toContain('.default {color: red;}');
     });
+
     it('gets the fontFamily from the config', () => {
       const styles = createCssStyles(mocked_config_with_htmlLabels, {});
-      expect(styles).toMatch(/(.*)\n:root { --mermaid-font-family: serif(.*)/);
+      expect(styles).toMatch(/(.*)\n:root {--mermaid-font-family: serif(.*)/);
     });
+
     it('gets the alt fontFamily from the config', () => {
       const styles = createCssStyles(mocked_config_with_htmlLabels, undefined);
-      expect(styles).toMatch(/(.*)\n:root { --mermaid-alt-font-family: sans-serif(.*)/);
+      expect(styles).toMatch(/(.*)\n:root {--mermaid-alt-font-family: sans-serif(.*)/);
     });
 
     describe('there are some classDefs', () => {
-      const classDef1 = { id: 'classDef1', styles: ['style1-1', 'style1-2'], textStyles: [] };
-      const classDef2 = { id: 'classDef2', styles: [], textStyles: ['textStyle2-1'] };
-      const classDef3 = { id: 'classDef3', textStyles: ['textStyle3-1', 'textStyle3-2'] };
+      const classDef1 = {
+        id: 'classDef1',
+        styles: ['prop: style1-1', 'prop-2: style1-2'],
+        textStyles: [],
+      };
+      const classDef2 = { id: 'classDef2', styles: [], textStyles: ['prop: textStyle2-1'] };
+      const classDef3 = {
+        id: 'classDef3',
+        textStyles: ['prop: textStyle3-1', 'prop-2: textStyle3-2'],
+      };
       const classDefs = { classDef1, classDef2, classDef3 };
 
       describe('the graph supports classDefs', () => {
@@ -352,7 +364,7 @@ describe('mermaidAPI', () => {
             new RegExp(
               `\\.classDef1 ${escapeForRegexp(
                 htmlElement
-              )} \\{ style1-1 !important; style1-2 !important; }`
+              )} \\{prop: style1-1 !important; prop-2: style1-2 !important;}`
             )
           );
           // no CSS styles are created if there are no styles for a classDef
@@ -368,14 +380,14 @@ describe('mermaidAPI', () => {
         function expect_textStyles_matchesHtmlElements(textStyles: string, htmlElement: string) {
           expect(textStyles).toMatch(
             new RegExp(
-              `\\.classDef2 ${escapeForRegexp(htmlElement)} \\{ textStyle2-1 !important; }`
+              `\\.classDef2 ${escapeForRegexp(htmlElement)} \\{prop: textStyle2-1 !important;}`
             )
           );
           expect(textStyles).toMatch(
             new RegExp(
               `\\.classDef3 ${escapeForRegexp(
                 htmlElement
-              )} \\{ textStyle3-1 !important; textStyle3-2 !important; }`
+              )} \\{prop: textStyle3-1 !important; prop-2: textStyle3-2 !important;}`
             )
           );
 
@@ -448,21 +460,23 @@ describe('mermaidAPI', () => {
 
   describe('createUserStyles', () => {
     const mockConfig = {
-      themeCSS: 'default',
+      themeCSS: '.default {color: red;}',
       htmlLabels: true,
       themeVariables: { fontFamily: 'serif' },
     };
 
-    const classDef1 = { id: 'classDef1', styles: ['style1-1'], textStyles: [] };
+    const classDef1 = { id: 'classDef1', styles: ['prop: style1-1'], textStyles: [] };
+
+    const divElement = document.body.appendChild(document.createElement('div'));
 
     it('gets the css styles created', () => {
       // @todo TODO if a single function in the module can be mocked, do it for createCssStyles and mock the results.
 
       createUserStyles(mockConfig, 'flowchart-v2', { classDef1 }, '#someId');
       const expectedStyles =
-        '\ndefault' +
-        '\n.classDef1 > * { style1-1 !important; }' +
-        '\n.classDef1 span { style1-1 !important; }';
+        '.default {color: red;}' +
+        '\n.classDef1 > * {prop: style1-1 !important;}' +
+        '\n.classDef1 span {prop: style1-1 !important;}';
       expect(getStyles).toHaveBeenCalledWith('flowchart-v2', expectedStyles, {
         fontFamily: 'serif',
       });
@@ -477,7 +491,9 @@ describe('mermaidAPI', () => {
       const result = createUserStyles(mockConfig, 'someDiagram', {}, '#someId');
       expect(compile).toHaveBeenCalled();
       expect(serialize).toHaveBeenCalled();
-      expect(result).toEqual('#someId .edge-pattern-dashed{stroke-dasharray:3;}');
+      expect(result).toEqual(
+        '#someId .edge-pattern-dashed{stroke-dasharray:3;}#someId .default{color:red;}'
+      );
     });
 
     it('should sanitize CSS to avoid unbalanced braces', () => {
@@ -498,7 +514,7 @@ describe('mermaidAPI', () => {
         '#someId'
       );
       expect(result).toEqual(
-        '#someId .edge-pattern-dashed{stroke-dasharray:3;}#someId .classDef2>*{color:purple;}#someId .classDef2 span{color:purple;}'
+        '#someId .edge-pattern-dashed{stroke-dasharray:3;}#someId .default{color:red;}#someId .classDef2>*{color:purple;}#someId .classDef2 span{color:purple;}'
       );
     });
   });

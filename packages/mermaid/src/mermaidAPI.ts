@@ -21,7 +21,7 @@ import { Diagram, getDiagramFromText as getDiagramFromTextInternal } from './Dia
 import errorRenderer from './diagrams/error/errorRenderer.js';
 import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
-import getStyles from './styles.js';
+import getStyles, { cssStyleSheetToString } from './styles.js';
 import theme from './themes/index.js';
 import DOMPurify from 'dompurify';
 import type { MermaidConfig } from './config.type.js';
@@ -129,7 +129,7 @@ export const cssImportantStyles = (
   cssClasses: string[] = []
 ): string => {
   const declarationBlock = sanitizeCss(`{ ${cssClasses.join(' !important; ')} !important; }`);
-  return `\n.${cssClass} ${element} ${declarationBlock}`;
+  return `.${cssClass} ${element} ${declarationBlock}`;
 };
 
 /**
@@ -143,20 +143,22 @@ export const createCssStyles = (
   config: MermaidConfig,
   classDefs: Record<string, DiagramStyleClassDef> | null | undefined = {}
 ): string => {
-  let cssStyles = '';
+  const cssStyles = new CSSStyleSheet();
 
   // user provided theme CSS info
   // If you add more configuration driven data into the user styles make sure that the value is
   // sanitized by the sanitize CSS function TODO where is this method?  what should be used to replace it?  refactor so that it's always sanitized
-  if (config.themeCSS !== undefined) {
-    cssStyles += `\n${config.themeCSS}`;
-  }
-
   if (config.fontFamily !== undefined) {
-    cssStyles += `\n:root { --mermaid-font-family: ${config.fontFamily}}`;
+    cssStyles.insertRule(
+      `:root { --mermaid-font-family: ${config.fontFamily}}`,
+      cssStyles.cssRules.length
+    );
   }
   if (config.altFontFamily !== undefined) {
-    cssStyles += `\n:root { --mermaid-alt-font-family: ${config.altFontFamily}}`;
+    cssStyles.insertRule(
+      `:root { --mermaid-alt-font-family: ${config.altFontFamily}}`,
+      cssStyles.cssRules.length
+    );
   }
 
   // classDefs defined in the diagram text
@@ -174,16 +176,32 @@ export const createCssStyles = (
       // create the css styles for each cssElement and the styles (only if there are styles)
       if (!isEmpty(styleClassDef.styles)) {
         cssElements.forEach((cssElement) => {
-          cssStyles += cssImportantStyles(styleClassDef.id, cssElement, styleClassDef.styles);
+          cssStyles.insertRule(
+            cssImportantStyles(styleClassDef.id, cssElement, styleClassDef.styles),
+            cssStyles.cssRules.length
+          );
         });
       }
       // create the css styles for the tspan element and the text styles (only if there are textStyles)
       if (!isEmpty(styleClassDef.textStyles)) {
-        cssStyles += cssImportantStyles(styleClassDef.id, 'tspan', styleClassDef.textStyles);
+        cssStyles.insertRule(
+          cssImportantStyles(styleClassDef.id, 'tspan', styleClassDef.textStyles),
+          cssStyles.cssRules.length
+        );
       }
     }
   }
-  return cssStyles;
+
+  let cssString = '';
+  if (config.themeCSS !== undefined) {
+    /**
+     * Ideally we'd do a `CSSStyleSheet.replaceSync`, but it's not supported
+     * in some older browsers and in JSDOM.
+     */
+    cssString += `${config.themeCSS}\n`;
+  }
+
+  return cssString + cssStyleSheetToString(cssStyles);
 };
 
 export const createUserStyles = (
