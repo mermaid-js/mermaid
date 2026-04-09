@@ -192,12 +192,21 @@ segment = letter+ ;
 
 Railroad diagrams use distinct visual elements to represent different grammar constructs:
 
-- Terminals: Rounded rectangles with pale yellow background
-- Non-terminals: Regular rectangles with white background
-- Lines and Arrows: Black paths connecting elements
+- Terminals: Rounded rectangles that inherit the active Mermaid theme
+- Non-terminals: Regular rectangles that inherit the active Mermaid theme
+- Lines and Arrows: Theme-aware paths connecting elements
 - Start/End Markers: Small circles at the beginning and end of rules
 - Branches: Curved paths for choices
 - Loops: Backward paths for repetition
+
+## Theme Integration
+
+Railroad diagrams inherit colors and typography from the active Mermaid theme by default. You can still override individual railroad styles through the `railroad` config block when you need diagram-specific adjustments.
+
+## Limitations
+
+- The hand-drawn look (`look: handDrawn`) is not currently supported for railroad diagrams.
+- Railroad diagrams currently render left-to-right only, even if `orientation` is configured differently.
 
 ## Notation Reference
 
