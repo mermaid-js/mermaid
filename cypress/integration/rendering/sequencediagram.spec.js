@@ -242,6 +242,18 @@ describe('Sequence diagram', () => {
       `
     );
   });
+  it('should render a sequence diagram with sequence numbers that are decimals and increase by a decimal value', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+      autonumber 10.1 .01
+      Alice->Bob: Hello Bob, how are you?
+      Bob-->Alice: I am good thanks!
+      Alice->Bob: That is good to hear!
+      Bob->Alice: See you later!
+    `
+    );
+  });
   describe('font settings', () => {
     it('should render different note fonts when configured', () => {
       imgSnapshotTest(
@@ -1215,5 +1227,27 @@ describe('Sequence diagram', () => {
       Alice\\\\--John: Test`
       );
     });
+  });
+
+  it('should render alt/else section titles with label box backgrounds', () => {
+    imgSnapshotTest(
+      `
+    sequenceDiagram
+      participant Alice
+      participant Bob
+      opt Outer
+        alt Command A
+          Alice->>Bob: Request A
+        else Command B
+          Alice->>Bob: Request B
+        else Command C
+          Alice->>Bob: Request C
+        end
+      end
+      `,
+      {
+        themeCSS: '.loopText { fill: #ffffff !important; } .labelBox { fill: red !important; }',
+      }
+    );
   });
 });
