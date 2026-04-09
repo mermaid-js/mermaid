@@ -8,6 +8,23 @@ export {
   Architecture,
   GitGraph,
   Radar,
+  Railroad,
+  RailroadChoice,
+  RailroadExceptionPostfix,
+  RailroadGroup,
+  RailroadNonTerminal,
+  RailroadOneOrMorePostfix,
+  RailroadOptional,
+  RailroadOptionalPostfix,
+  RailroadPostfix,
+  RailroadPrimary,
+  RailroadRepetition,
+  RailroadRule,
+  RailroadSequence,
+  RailroadSpecial,
+  RailroadTerm,
+  RailroadTerminal,
+  RailroadZeroOrMorePostfix,
   Treemap,
   Wardley,
   Branch,
@@ -23,6 +40,7 @@ export {
   isPieSection,
   isArchitecture,
   isGitGraph,
+  isRailroad,
   isTreemap,
   isWardley,
   isBranch,
@@ -46,6 +64,7 @@ export {
   GitGraphGrammarGeneratedModule as GitGraphGeneratedModule,
   EventModelingGeneratedModule,
   RadarGrammarGeneratedModule as RadarGeneratedModule,
+  RailroadGrammarGeneratedModule as RailroadGeneratedModule,
   TreemapGrammarGeneratedModule as TreemapGeneratedModule,
   TreeViewGrammarGeneratedModule as TreeViewGeneratedModule,
   WardleyGrammarGeneratedModule as WardleyGeneratedModule,
@@ -60,5 +79,6 @@ export * from './treeView/index.js';
 export * from './architecture/index.js';
 export * from './eventmodeling/index.js';
 export * from './radar/index.js';
+export * from './railroad/index.js';
 export * from './treemap/index.js';
 export * from './wardley/index.js';

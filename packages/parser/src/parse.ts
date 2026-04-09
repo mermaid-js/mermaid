@@ -8,6 +8,7 @@ import type {
   GitGraph,
   EventModel,
   Radar,
+  Railroad,
   Treemap,
   TreeView,
   Wardley,
@@ -21,6 +22,8 @@ export type DiagramAST =
   | GitGraph
   | EventModel
   | Radar
+  | Railroad
+  | Treemap
   | TreeView
   | Wardley;
 
@@ -66,6 +69,11 @@ const initializers = {
     const parser = createRadarServices().Radar.parser.LangiumParser;
     parsers.radar = parser;
   },
+  railroad: async () => {
+    const { createRailroadServices } = await import('./language/railroad/index.js');
+    const parser = createRailroadServices().Railroad.parser.LangiumParser;
+    parsers.railroad = parser;
+  },
   treemap: async () => {
     const { createTreemapServices } = await import('./language/treemap/index.js');
     const parser = createTreemapServices().Treemap.parser.LangiumParser;
@@ -86,6 +94,7 @@ export async function parse(diagramType: 'architecture', text: string): Promise<
 export async function parse(diagramType: 'gitGraph', text: string): Promise<GitGraph>;
 export async function parse(diagramType: 'eventmodeling', text: string): Promise<EventModel>;
 export async function parse(diagramType: 'radar', text: string): Promise<Radar>;
+export async function parse(diagramType: 'railroad', text: string): Promise<Railroad>;
 export async function parse(diagramType: 'treemap', text: string): Promise<Treemap>;
 export async function parse(diagramType: 'wardley', text: string): Promise<Wardley>;
 

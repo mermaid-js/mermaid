@@ -50,6 +50,11 @@
       "id": "wardley",
       "grammar": "src/language/wardley/wardley.langium",
       "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "railroad",
+      "grammar": "src/language/railroad/railroad.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
     }
   ],
   "mode": "production",
