@@ -189,6 +189,94 @@ describe('svgDraw', function () {
       expect(text.style).toHaveBeenCalledWith('font-weight', '500');
     });
   });
+  describe('drawLoop', function () {
+    /**
+     * Extended MockD3 that supports getBBox (needed by drawLoop's text measurement).
+     */
+    const MockD3WithBBox = (name, parent) => {
+      const children = [];
+      const elem = {
+        get __children() {
+          return children;
+        },
+        get __name() {
+          return name;
+        },
+        get __parent() {
+          return parent;
+        },
+        _groups: [[{ getBBox: () => ({ x: 0, y: 0, width: 100, height: 20 }) }]],
+      };
+      elem.append = (childName) => {
+        const mockElem = MockD3WithBBox(childName, elem);
+        children.push(mockElem);
+        return mockElem;
+      };
+      elem.lower = vi.fn(() => elem);
+      elem.attr = vi.fn(() => elem);
+      elem.text = vi.fn(() => elem);
+      elem.style = vi.fn(() => elem);
+      return elem;
+    };
+
+    /**
+     * Walk the mock D3 tree and collect all text elements that were given a
+     * specific CSS class via `.attr('class', className)`.
+     */
+    function findTextsByClass(root, className) {
+      const results = [];
+      const walk = (node) => {
+        for (const child of node.__children || []) {
+          if (child.__name === 'text') {
+            const calls = child.attr.mock.calls;
+            if (calls.some((c) => c[0] === 'class' && c[1] === className)) {
+              results.push(child);
+            }
+          }
+          walk(child);
+        }
+      };
+      walk(root);
+      return results;
+    }
+
+    it('should use sectionTitle class for section titles so custom loopText/labelText CSS does not hide them', async function () {
+      const svg = MockD3WithBBox('svg');
+      const loopModel = {
+        startx: 10,
+        starty: 10,
+        stopx: 200,
+        stopy: 200,
+        title: 'Yes',
+        wrap: false,
+        sectionTitles: [{ message: 'else Command' }],
+        sections: [{ y: 100, height: 50 }],
+      };
+      const conf = {
+        boxMargin: 10,
+        boxTextMargin: 5,
+        labelBoxHeight: 20,
+        labelBoxWidth: 50,
+        messageFontFamily: 'Arial',
+        messageFontSize: 12,
+        messageFontWeight: 'normal',
+      };
+      const msg = { id: 'test1' };
+
+      const g = await svgDraw.drawLoop(svg, loopModel, 'alt', conf, msg);
+
+      // Section title text should use 'sectionTitle' class, not 'loopText'
+      const sectionTitles = findTextsByClass(g, 'sectionTitle');
+      expect(sectionTitles.length).toBeGreaterThanOrEqual(1);
+
+      // The section title should NOT use loopText class
+      const loopTexts = findTextsByClass(g, 'loopText');
+      const sectionTitleInLoopText = loopTexts.filter((t) =>
+        t.text.mock.calls.some((c) => c[0] === 'else Command')
+      );
+      expect(sectionTitleInLoopText.length).toBe(0);
+    });
+  });
   describe('drawBackgroundRect', function () {
     it('should append a rect before the previous element within a given bound', function () {
       const svg = MockD3('svg');

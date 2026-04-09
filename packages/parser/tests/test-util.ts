@@ -13,6 +13,8 @@ import type {
   PacketServices,
   GitGraph,
   GitGraphServices,
+  EventModel,
+  EventModelingServices,
   TreeView,
   TreeViewServices,
 } from '../src/language/index.js';
@@ -23,6 +25,7 @@ import {
   createRadarServices,
   createPacketServices,
   createGitGraphServices,
+  createEventModelingServices,
   createTreeViewServices,
 } from '../src/language/index.js';
 
@@ -109,6 +112,17 @@ export function createGitGraphTestServices() {
 }
 export const gitGraphParse = createGitGraphTestServices().parse;
 
+const eventModelingServices: EventModelingServices = createEventModelingServices().EventModel;
+const eventModelingParser: LangiumParser = eventModelingServices.parser.LangiumParser;
+
+export function createEventModelingTestServices() {
+  const parse = (input: string) => {
+    return eventModelingParser.parse<EventModel>(input);
+  };
+
+  return { services: gitGraphServices, parse };
+}
+export const eventModelingParse = createEventModelingTestServices().parse;
 const treeViewServices: TreeViewServices = createTreeViewServices().TreeView;
 const treeViewParser: LangiumParser = treeViewServices.parser.LangiumParser;
 export function createTreeViewTestServices() {
