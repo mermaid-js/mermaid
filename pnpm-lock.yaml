@@ -545,6 +545,70 @@ importers:
         specifier: ^7.3.0
         version: 7.3.0
 
+  packages/mermaid/src/vitepress:
+    dependencies:
+      '@mdi/font':
+        specifier: ^7.4.47
+        version: 7.4.47
+      '@plausible-analytics/tracker':
+        specifier: ^0.4.4
+        version: 0.4.4
+      '@vueuse/core':
+        specifier: ^13.9.0
+        version: 13.9.0(vue@3.5.25(typescript@5.9.2))
+      font-awesome:
+        specifier: ^4.7.0
+        version: 4.7.0
+      jiti:
+        specifier: ^2.4.2
+        version: 2.6.1
+      mermaid:
+        specifier: workspace:^
+        version: link:../..
+      vue:
+        specifier: ^3.5.25
+        version: 3.5.25(typescript@5.9.2)
+    devDependencies:
+      '@iconify-json/carbon':
+        specifier: ^1.2.14
+        version: 1.2.14
+      '@unocss/reset':
+        specifier: ^66.5.9
+        version: 66.5.9
+      '@vite-pwa/vitepress':
+        specifier: ^1.0.1
+        version: 1.0.1(vite-plugin-pwa@1.0.3(vite@7.3.2(@types/node@22.19.1)(jiti@2.6.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1))(workbox-build@7.3.0(@types/babel__core@7.20.5))(workbox-window@7.3.0))
+      '@vitejs/plugin-vue':
+        specifier: ^6.0.2
+        version: 6.0.2(vite@7.3.2(@types/node@22.19.1)(jiti@2.6.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1))(vue@3.5.25(typescript@5.9.2))
+      fast-glob:
+        specifier: ^3.3.3
+        version: 3.3.3
+      https-localhost:
+        specifier: ^4.7.1
+        version: 4.7.1
+      pathe:
+        specifier: ^2.0.3
+        version: 2.0.3
+      unocss:
+        specifier: ^66.5.9
+        version: 66.5.9(postcss@8.5.8)(vite@7.3.2(@types/node@22.19.1)(jiti@2.6.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1))
+      unplugin-vue-components:
+        specifier: ^28.8.0
+        version: 28.8.0(@babel/parser@7.29.2)(vue@3.5.25(typescript@5.9.2))
+      vite:
+        specifier: ^7.0.8
+        version: 7.3.2(@types/node@22.19.1)(jiti@2.6.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1)
+      vite-plugin-pwa:
+        specifier: ^1.0.3
+        version: 1.0.3(vite@7.3.2(@types/node@22.19.1)(jiti@2.6.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1))(workbox-build@7.3.0(@types/babel__core@7.20.5))(workbox-window@7.3.0)
+      vitepress:
+        specifier: 1.6.4
+        version: 1.6.4(@algolia/client-search@5.37.0)(@types/node@22.19.1)(axios@1.13.2)(change-case@5.4.4)(postcss@8.5.8)(search-insights@2.17.3)(terser@5.46.1)(typescript@5.9.2)
+      workbox-window:
+        specifier: ^7.3.0
+        version: 7.3.0
+
   packages/parser:
     dependencies:
       langium:
@@ -12560,7 +12624,7 @@ snapshots:
       '@antfu/install-pkg': 1.1.0
       '@antfu/utils': 9.2.0
       '@iconify/types': 2.0.0
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@8.1.1)
       globals: 15.15.0
       kolorist: 1.8.0
       local-pkg: 1.1.2
@@ -13779,6 +13843,14 @@ snapshots:
     optionalDependencies:
       vite: 7.3.2(@types/node@22.19.1)(jiti@2.5.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1)
 
+  '@unocss/astro@66.5.9(vite@7.3.2(@types/node@22.19.1)(jiti@2.6.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1))':
+    dependencies:
+      '@unocss/core': 66.5.9
+      '@unocss/reset': 66.5.9
+      '@unocss/vite': 66.5.9(vite@7.3.2(@types/node@22.19.1)(jiti@2.6.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1))
+    optionalDependencies:
+      vite: 7.3.2(@types/node@22.19.1)(jiti@2.6.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1)
+
   '@unocss/cli@66.5.9':
     dependencies:
       '@jridgewell/remapping': 2.3.5
@@ -13920,6 +13992,19 @@ snapshots:
       unplugin-utils: 0.3.1
       vite: 7.3.2(@types/node@22.19.1)(jiti@2.5.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1)
 
+  '@unocss/vite@66.5.9(vite@7.3.2(@types/node@22.19.1)(jiti@2.6.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1))':
+    dependencies:
+      '@jridgewell/remapping': 2.3.5
+      '@unocss/config': 66.5.9
+      '@unocss/core': 66.5.9
+      '@unocss/inspector': 66.5.9
+      chokidar: 3.6.0
+      magic-string: 0.30.21
+      pathe: 2.0.3
+      tinyglobby: 0.2.15
+      unplugin-utils: 0.3.1
+      vite: 7.3.2(@types/node@22.19.1)(jiti@2.6.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1)
+
   '@unrs/resolver-binding-android-arm-eabi@1.11.1':
     optional: true
 
@@ -13988,6 +14073,10 @@ snapshots:
     dependencies:
       vite-plugin-pwa: 1.0.3(vite@7.3.2(@types/node@22.19.1)(jiti@2.5.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1))(workbox-build@7.3.0(@types/babel__core@7.20.5))(workbox-window@7.3.0)
 
+  '@vite-pwa/vitepress@1.0.1(vite-plugin-pwa@1.0.3(vite@7.3.2(@types/node@22.19.1)(jiti@2.6.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1))(workbox-build@7.3.0(@types/babel__core@7.20.5))(workbox-window@7.3.0))':
+    dependencies:
+      vite-plugin-pwa: 1.0.3(vite@7.3.2(@types/node@22.19.1)(jiti@2.6.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1))(workbox-build@7.3.0(@types/babel__core@7.20.5))(workbox-window@7.3.0)
+
   '@vitejs/plugin-vue@5.2.4(vite@5.4.20(@types/node@22.19.1)(terser@5.46.1))(vue@3.5.25(typescript@5.7.3))':
     dependencies:
       vite: 5.4.20(@types/node@22.19.1)(terser@5.46.1)
@@ -14002,6 +14091,12 @@ snapshots:
     dependencies:
       '@rolldown/pluginutils': 1.0.0-beta.50
       vite: 7.3.2(@types/node@22.19.1)(jiti@2.5.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1)
+      vue: 3.5.25(typescript@5.9.2)
+
+  '@vitejs/plugin-vue@6.0.2(vite@7.3.2(@types/node@22.19.1)(jiti@2.6.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1))(vue@3.5.25(typescript@5.9.2))':
+    dependencies:
+      '@rolldown/pluginutils': 1.0.0-beta.50
+      vite: 7.3.2(@types/node@22.19.1)(jiti@2.6.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1)
       vue: 3.5.25(typescript@5.9.2)
 
   '@vitest/coverage-v8@3.2.4(vitest@3.2.4)':
@@ -14418,7 +14513,7 @@ snapshots:
 
   acorn-walk@8.3.4:
     dependencies:
-      acorn: 8.15.0
+      acorn: 8.16.0
 
   acorn@8.15.0: {}
 
@@ -15752,10 +15847,6 @@ snapshots:
     dependencies:
       ms: 2.1.3
 
-  debug@4.4.3:
-    dependencies:
-      ms: 2.1.3
-
   debug@4.4.3(supports-color@8.1.1):
     dependencies:
       ms: 2.1.3
@@ -16861,7 +16952,7 @@ snapshots:
 
   follow-redirects@1.15.11(debug@4.4.3):
     optionalDependencies:
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@8.1.1)
 
   font-awesome@4.7.0: {}
 
@@ -17275,7 +17366,7 @@ snapshots:
   http-proxy-agent@7.0.2:
     dependencies:
       agent-base: 7.1.4
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -17331,7 +17422,7 @@ snapshots:
   https-proxy-agent@7.0.6:
     dependencies:
       agent-base: 7.1.4
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -18808,7 +18899,7 @@ snapshots:
   micromark@4.0.2:
     dependencies:
       '@types/debug': 4.1.12
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@8.1.1)
       decode-named-character-reference: 1.2.0
       devlop: 1.1.0
       micromark-core-commonmark: 2.0.3
@@ -18892,7 +18983,7 @@ snapshots:
 
   mlly@1.8.0:
     dependencies:
-      acorn: 8.15.0
+      acorn: 8.16.0
       pathe: 2.0.3
       pkg-types: 1.3.1
       ufo: 1.6.1
@@ -20423,7 +20514,7 @@ snapshots:
       arg: 5.0.2
       bluebird: 3.7.2
       check-more-types: 2.24.0
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@8.1.1)
       execa: 5.1.1
       lazy-ass: 1.6.0
       ps-tree: 1.2.0
@@ -20708,7 +20799,7 @@ snapshots:
   terser@5.44.0:
     dependencies:
       '@jridgewell/source-map': 0.3.11
-      acorn: 8.15.0
+      acorn: 8.16.0
       commander: 2.20.3
       source-map-support: 0.5.21
 
@@ -21074,6 +21165,33 @@ snapshots:
       - postcss
       - supports-color
 
+  unocss@66.5.9(postcss@8.5.8)(vite@7.3.2(@types/node@22.19.1)(jiti@2.6.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1)):
+    dependencies:
+      '@unocss/astro': 66.5.9(vite@7.3.2(@types/node@22.19.1)(jiti@2.6.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1))
+      '@unocss/cli': 66.5.9
+      '@unocss/core': 66.5.9
+      '@unocss/postcss': 66.5.9(postcss@8.5.8)
+      '@unocss/preset-attributify': 66.5.9
+      '@unocss/preset-icons': 66.5.9
+      '@unocss/preset-mini': 66.5.9
+      '@unocss/preset-tagify': 66.5.9
+      '@unocss/preset-typography': 66.5.9
+      '@unocss/preset-uno': 66.5.9
+      '@unocss/preset-web-fonts': 66.5.9
+      '@unocss/preset-wind': 66.5.9
+      '@unocss/preset-wind3': 66.5.9
+      '@unocss/preset-wind4': 66.5.9
+      '@unocss/transformer-attributify-jsx': 66.5.9
+      '@unocss/transformer-compile-class': 66.5.9
+      '@unocss/transformer-directives': 66.5.9
+      '@unocss/transformer-variant-group': 66.5.9
+      '@unocss/vite': 66.5.9(vite@7.3.2(@types/node@22.19.1)(jiti@2.6.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1))
+    optionalDependencies:
+      vite: 7.3.2(@types/node@22.19.1)(jiti@2.6.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1)
+    transitivePeerDependencies:
+      - postcss
+      - supports-color
+
   unpipe@1.0.0: {}
 
   unplugin-utils@0.2.5:
@@ -21105,7 +21223,7 @@ snapshots:
   unplugin@2.3.10:
     dependencies:
       '@jridgewell/remapping': 2.3.5
-      acorn: 8.15.0
+      acorn: 8.16.0
       picomatch: 4.0.4
       webpack-virtual-modules: 0.6.2
 
@@ -21236,6 +21354,17 @@ snapshots:
       pretty-bytes: 6.1.1
       tinyglobby: 0.2.15
       vite: 7.3.2(@types/node@22.19.1)(jiti@2.5.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1)
+      workbox-build: 7.3.0(@types/babel__core@7.20.5)
+      workbox-window: 7.3.0
+    transitivePeerDependencies:
+      - supports-color
+
+  vite-plugin-pwa@1.0.3(vite@7.3.2(@types/node@22.19.1)(jiti@2.6.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1))(workbox-build@7.3.0(@types/babel__core@7.20.5))(workbox-window@7.3.0):
+    dependencies:
+      debug: 4.4.3(supports-color@8.1.1)
+      pretty-bytes: 6.1.1
+      tinyglobby: 0.2.15
+      vite: 7.3.2(@types/node@22.19.1)(jiti@2.6.1)(terser@5.46.1)(tsx@4.20.6)(yaml@2.8.1)
       workbox-build: 7.3.0(@types/babel__core@7.20.5)
       workbox-window: 7.3.0
     transitivePeerDependencies:

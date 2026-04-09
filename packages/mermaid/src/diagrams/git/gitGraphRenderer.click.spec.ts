@@ -94,11 +94,22 @@ describe('GitGraph Click Events', () => {
 
       await parser.parse(diagram);
 
-      const svg = select(container).append('svg').attr('id', 'gitGraph-security-sandbox');
+      const svgId = 'gitGraph-security-sandbox';
+      const svg = select(container).append('svg').attr('id', svgId);
+
+      // In sandbox mode, the renderer looks for an iframe with id 'i' + svgId
+      const iframe = document.createElement('iframe');
+      iframe.id = 'i' + svgId;
+      // Mock read-only contentDocument
+      Object.defineProperty(iframe, 'contentDocument', {
+        get: () => document,
+      });
+      container.appendChild(iframe);
+
       const diagObj = { db, type: 'gitGraph' };
 
       // @ts-ignore - partial diagram object for testing
-      await draw(diagram, 'gitGraph-security-sandbox', '1.0', diagObj);
+      await draw(diagram, svgId, '1.0', diagObj);
 
       const anchor = svg.select('a');
       expect(anchor.empty()).toBe(false);
