@@ -57,11 +57,11 @@
 .*direction\s+RL[^\n]*                                      return 'direction_rl';
 .*direction\s+LR[^\n]*                                      return 'direction_lr';
 
+<INITIAL,ID,STATE,struct,LINE>[\n]+[ \t]*\%\%(?!\{).*     /* skip comments */
 
 [\n]+                            return 'NL';
-[\s]+                              /* skip all whitespace */
+[^\S\n]+                            /* skip all whitespace except \n */
 <ID,STATE,struct,LINE>((?!\n)\s)+       /* skip same-line whitespace */
-<INITIAL,ID,STATE,struct,LINE>[\n][ \t]*\%\%(?!\{).*     /* skip comments */
 <INITIAL,ID,STATE,struct,LINE>\#[^\n]*  /* skip comments */
 "scale"\s+            { this.pushState('SCALE'); /* console.log('Got scale', yytext);*/ return 'scale'; }
 <SCALE>\d+            return 'WIDTH';
@@ -129,8 +129,8 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <NOTE_TEXT>\s*":"[^:\n;]+           { this.popState(); /* console.log('Got NOTE_TEXT for note',yytext);*/yytext = yytext.substr(2).trim(); return 'NOTE_TEXT'; }
 <NOTE_TEXT>[\s\S]*?\n\s*"end note"  { this.popState(); /* console.log('Got NOTE_TEXT for note',yytext);*/yytext = yytext.slice(0,-8).trim(); return 'NOTE_TEXT'; }
 
-"stateDiagram"\s+                   { /* console.log('Got state diagram', yytext,'#'); */ return 'SD'; }
-"stateDiagram-v2"\s+                { /* console.log('Got state diagram', yytext,'#'); */ return 'SD'; }
+"stateDiagram-v2"[^\S\n]*           { /* console.log('Got state diagram', yytext,'#'); */ return 'SD'; }
+"stateDiagram"[^\S\n]*              { /* console.log('Got state diagram', yytext,'#'); */ return 'SD'; }
 
 "hide empty description"      { /* console.log('HIDE_EMPTY', yytext,'#'); */ return 'HIDE_EMPTY'; }
 
