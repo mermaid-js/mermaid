@@ -527,12 +527,16 @@ function calculateEdgePositions(
     const midY = (startPos.y + endPos.y) / 2;
 
     const points = [startPos];
+    const isRootToRight = sourceNode.section === 'root' && targetNode.section === 'right';
+
+    const isRightToRoot = sourceNode.section === 'right' && targetNode.section === 'root';
+
     if (sourceNode.section === 'left' && targetNode.section !== 'root') {
       points.push({
         x: sourceNode.x - (sourceNode.width ?? 0) / 2 - intersectionShift,
         y: sourceNode.y,
       });
-    } else if (sourceNode.section === 'right' && targetNode.section !== 'root') {
+    } else if (sourceNode.section === 'right' && targetNode.section !== 'root' && !isRootToRight) {
       points.push({
         x: sourceNode.x + (sourceNode.width ?? 0) / 2 + intersectionShift,
         y: sourceNode.y,
@@ -543,7 +547,7 @@ function calculateEdgePositions(
         x: targetNode.x + (targetNode.width ?? 0) / 2 + intersectionShift,
         y: targetNode.y,
       });
-    } else if (targetNode.section === 'right' && sourceNode.section !== 'root') {
+    } else if (targetNode.section === 'right' && sourceNode.section !== 'root' && !isRightToRoot) {
       points.push({
         x: targetNode.x - (targetNode.width ?? 0) / 2 - intersectionShift,
         y: targetNode.y,

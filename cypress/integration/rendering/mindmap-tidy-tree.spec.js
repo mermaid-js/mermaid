@@ -77,3 +77,21 @@ describe('Mindmap Tidy Tree', () => {
     );
   });
 });
+it('5-tidy-tree: should render root edges correctly with many children', () => {
+  imgSnapshotTest(
+    `---
+config:
+  layout: tidy-tree
+---
+mindmap
+root((Central Idea))
+  Branch1
+  Branch2
+  Branch3
+  Branch4
+  Branch5
+  Branch6
+  Branch7
+`
+  );
+});
