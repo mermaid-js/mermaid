@@ -1,31 +1,46 @@
-import { describe, it, expect } from 'vitest';
+import { beforeEach, describe, it, expect } from 'vitest';
+import * as configApi from '../../config.js';
+import themes from '../../themes/index.js';
 import { getStyles } from './styles.js';
 
 describe('Railroad Styles', () => {
+  beforeEach(() => {
+    configApi.setSiteConfig({});
+  });
+
   describe('getStyles', () => {
     it('should generate default styles when no options provided', () => {
       const styles = getStyles();
 
-      expect(styles).toContain('font-family: monospace');
-      expect(styles).toContain('font-size: 14px');
+      expect(styles).toContain(`font-family: ${configApi.getConfig().themeVariables?.fontFamily}`);
+      expect(styles).toContain(`font-size: ${configApi.getConfig().themeVariables?.fontSize}`);
       expect(styles).toContain('.railroad-diagram');
       expect(styles).toContain('.railroad-terminal');
       expect(styles).toContain('.railroad-nonterminal');
       expect(styles).toContain('.railroad-line');
     });
 
+    it('should derive railroad colors from the provided theme variables', () => {
+      const darkThemeVariables = themes.dark.getThemeVariables();
+      const styles = getStyles(darkThemeVariables);
+
+      expect(styles).toContain(`fill: ${darkThemeVariables.secondBkg}`);
+      expect(styles).toContain(`stroke: ${darkThemeVariables.secondaryBorderColor}`);
+      expect(styles).not.toContain('fill: #FFFFC0');
+    });
+
     it('should use custom font family', () => {
       const styles = getStyles({ fontFamily: 'Arial' });
 
       expect(styles).toContain('font-family: Arial');
-      expect(styles).not.toContain('font-family: monospace');
+      expect(styles).not.toContain(`font-family: ${configApi.getConfig().themeVariables?.fontFamily}`);
     });
 
     it('should use custom font size', () => {
       const styles = getStyles({ fontSize: 18 });
 
       expect(styles).toContain('font-size: 18px');
-      expect(styles).not.toContain('font-size: 14px');
+      expect(styles).not.toContain(`font-size: ${configApi.getConfig().themeVariables?.fontSize}`);
     });
 
     it('should use custom terminal colors', () => {
@@ -141,6 +156,18 @@ describe('Railroad Styles', () => {
 
       expect(styles).toContain('text-anchor: middle');
       expect(styles).toContain('dominant-baseline: middle');
+    });
+
+    it('should fall back to safe defaults when css values are invalid', () => {
+      const styles = getStyles({
+        fontFamily: 'safe"} .railroad-terminal { display: none; } /*',
+        terminalFill: '#fff; stroke: red;',
+      });
+
+      expect(styles).not.toContain('display: none');
+      expect(styles).not.toContain('stroke: red;');
+      expect(styles).toContain(`font-family: ${configApi.getConfig().themeVariables?.fontFamily}`);
+      expect(styles).toContain(`fill: ${configApi.getConfig().themeVariables?.secondBkg}`);
     });
 
     it('should handle all options at once', () => {

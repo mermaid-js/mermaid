@@ -1,7 +1,8 @@
-import type { RailroadDB, RailroadRule } from './railroadTypes.js';
+import type { ASTNode, RailroadDB, RailroadRule } from './railroadTypes.js';
 import { log } from '../../logger.js';
 import { getConfig as getGlobalConfig } from '../../diagram-api/diagramAPI.js';
 import { clear as commonClear } from '../common/commonDb.js';
+import { sanitizeText as commonSanitizeText } from '../common/common.js';
 
 let title = '';
 let accTitle = '';
@@ -9,6 +10,41 @@ let accDescription = '';
 let diagramTitle = '';
 const rules: RailroadRule[] = [];
 const ruleMap = new Map<string, RailroadRule>();
+
+const sanitizeText = (text: string): string => {
+  return commonSanitizeText(text, getGlobalConfig());
+};
+
+const sanitizeAstNode = (node: ASTNode): ASTNode => {
+  switch (node.type) {
+    case 'terminal':
+      return { ...node, value: sanitizeText(node.value) };
+    case 'nonterminal':
+      return { ...node, name: sanitizeText(node.name) };
+    case 'sequence':
+      return { ...node, elements: node.elements.map(sanitizeAstNode) };
+    case 'choice':
+      return { ...node, alternatives: node.alternatives.map(sanitizeAstNode) };
+    case 'optional':
+      return { ...node, element: sanitizeAstNode(node.element) };
+    case 'repetition':
+      return {
+        ...node,
+        element: sanitizeAstNode(node.element),
+        separator: node.separator ? sanitizeAstNode(node.separator) : undefined,
+      };
+    case 'group':
+      return { ...node, element: sanitizeAstNode(node.element) };
+    case 'special':
+      return { ...node, text: sanitizeText(node.text) };
+    case 'exception':
+      return {
+        ...node,
+        base: sanitizeAstNode(node.base),
+        except: sanitizeAstNode(node.except),
+      };
+  }
+};
 
 /**
  * Clear all diagram state
@@ -28,7 +64,7 @@ const clear = (): void => {
  * Set diagram title
  */
 const setTitle = (text: string): void => {
-  title = text;
+  title = sanitizeText(text);
   log.debug('[Railroad] Title set:', text);
 };
 
@@ -43,15 +79,22 @@ const getTitle = (): string => {
  * Add a new rule to the diagram
  */
 const addRule = (rule: RailroadRule): void => {
-  log.debug('[Railroad] Adding rule:', rule.name);
+  const sanitizedRule: RailroadRule = {
+    ...rule,
+    name: sanitizeText(rule.name),
+    definition: sanitizeAstNode(rule.definition),
+    comment: rule.comment ? sanitizeText(rule.comment) : undefined,
+  };
+
+  log.debug('[Railroad] Adding rule:', sanitizedRule.name);
 
   // Check for duplicate rule names
-  if (ruleMap.has(rule.name)) {
-    log.warn(`[Railroad] Rule '${rule.name}' is already defined. Overwriting.`);
+  if (ruleMap.has(sanitizedRule.name)) {
+    log.warn(`[Railroad] Rule '${sanitizedRule.name}' is already defined. Overwriting.`);
   }
 
-  rules.push(rule);
-  ruleMap.set(rule.name, rule);
+  rules.push(sanitizedRule);
+  ruleMap.set(sanitizedRule.name, sanitizedRule);
 };
 
 /**
@@ -72,7 +115,7 @@ const getRule = (name: string): RailroadRule | undefined => {
  * Set accessibility title
  */
 const setAccTitle = (text: string): void => {
-  accTitle = text;
+  accTitle = sanitizeText(text).replace(/^\s+/g, '');
   log.debug('[Railroad] Accessibility title set:', text);
 };
 
@@ -87,7 +130,7 @@ const getAccTitle = (): string => {
  * Set accessibility description
  */
 const setAccDescription = (text: string): void => {
-  accDescription = text;
+  accDescription = sanitizeText(text).replace(/\n\s+/g, '\n');
   log.debug('[Railroad] Accessibility description set:', text);
 };
 
@@ -102,7 +145,7 @@ const getAccDescription = (): string => {
  * Set diagram title (alias for setTitle)
  */
 const setDiagramTitle = (text: string): void => {
-  diagramTitle = text;
+  diagramTitle = sanitizeText(text);
   log.debug('[Railroad] Diagram title set:', text);
 };
 
@@ -111,13 +154,6 @@ const setDiagramTitle = (text: string): void => {
  */
 const getDiagramTitle = (): string => {
   return diagramTitle || title;
-};
-
-/**
- * Get configuration
- */
-const _getRailroadConfig = () => {
-  return getGlobalConfig().railroad || {};
 };
 
 /**

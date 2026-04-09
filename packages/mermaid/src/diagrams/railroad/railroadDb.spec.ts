@@ -22,6 +22,12 @@ describe('Railroad Database', () => {
     expect(db.getTitle()).toBe('Test Title');
   });
 
+  it('should sanitize titles before storing them', () => {
+    db.setTitle('<script>alert(1)</script>Safe Title');
+    expect(db.getTitle()).not.toContain('<script>');
+    expect(db.getTitle()).toContain('Safe Title');
+  });
+
   it('should clear state', () => {
     db.setTitle('Test');
     db.addRule({
@@ -80,6 +86,23 @@ describe('Railroad Database', () => {
 
   it('should return undefined for non-existent rule', () => {
     expect(db.getRule('nonexistent')).toBeUndefined();
+  });
+
+  it('should sanitize rule names and terminal values at the db boundary', () => {
+    db.addRule({
+      name: 'rule<script>alert(1)</script>',
+      definition: { type: 'terminal', value: 'value<script>alert(1)</script>' },
+    });
+
+    const storedRule = db.getRules()[0];
+    expect(storedRule.name).not.toContain('<script>');
+    expect(storedRule.name).toContain('rule');
+
+    expect(storedRule.definition.type).toBe('terminal');
+    if (storedRule.definition.type === 'terminal') {
+      expect(storedRule.definition.value).not.toContain('<script>');
+      expect(storedRule.definition.value).toContain('value');
+    }
   });
 
   it('should clear all state including accessibility fields', () => {

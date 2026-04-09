@@ -1,10 +1,11 @@
 import type { DrawDefinition } from '../../diagram-api/types.js';
 import type { ASTNode, RailroadRule, RenderResult } from './railroadTypes.js';
 import { log } from '../../logger.js';
+import { getConfig as getConfigAPI } from '../../config.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { db } from './railroadDb.js';
-import { DEFAULT_RAILROAD_CONFIG } from './railroadTypes.js';
+import { buildRailroadStyleOptions } from './styles.js';
 
 /**
  * SVG Path builder utility
@@ -55,11 +56,12 @@ class PathBuilder {
  */
 class RailroadRenderer {
   private svg: any;
-  private config = DEFAULT_RAILROAD_CONFIG;
+  private config: ReturnType<typeof buildRailroadStyleOptions>;
   private textCache = new Map<string, { width: number; height: number }>();
 
-  constructor(svg: any) {
+  constructor(svg: any, config = buildRailroadStyleOptions()) {
     this.svg = svg;
+    this.config = config;
   }
 
   /**
@@ -635,20 +637,22 @@ const draw: DrawDefinition = (text, id, _version) => {
   try {
     const svg = selectSvgElement(id);
     svg.attr('class', 'railroad-diagram');
+    const railroadConfig = getConfigAPI().railroad;
+    const useMaxWidth = railroadConfig?.useMaxWidth ?? true;
 
     const rules = db.getRules();
     log.debug(`[Railroad] Rendering ${rules.length} rules`);
 
     if (rules.length === 0) {
       log.warn('[Railroad] No rules to render');
-      configureSvgSize(svg, 100, 200, true);
+      configureSvgSize(svg, 100, 200, useMaxWidth);
       return;
     }
 
-    const renderer = new RailroadRenderer(svg);
+    const renderer = new RailroadRenderer(svg, buildRailroadStyleOptions());
     const dimensions = renderer.renderDiagram(rules);
 
-    configureSvgSize(svg, dimensions.height, dimensions.width, true);
+    configureSvgSize(svg, dimensions.height, dimensions.width, useMaxWidth);
 
     log.debug('[Railroad] Render complete');
   } catch (error) {

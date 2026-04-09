@@ -50,6 +50,19 @@ describe('when working with site config', () => {
       updatedConfig.quadrantChart!.chartWidth
     );
   });
+  it('should retain railroad directives after sanitization', () => {
+    configApi.saveConfigFromInitialize({});
+    configApi.addDirective({
+      railroad: {
+        fontSize: 18,
+        fontFamily: 'Courier New',
+      },
+    });
+
+    const currentConfig = configApi.getConfig();
+    expect(currentConfig.railroad?.fontSize).toBe(18);
+    expect(currentConfig.railroad?.fontFamily).toBe('Courier New');
+  });
   it('should set reset config properly', () => {
     const config_0 = { fontFamily: 'foo-font', fontSize: 150 };
     configApi.setSiteConfig(config_0);
