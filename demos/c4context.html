@@ -65,43 +65,42 @@
     </pre>
     <hr />
     <pre class="mermaid">
-C4Container
-title Container diagram for Internet Banking System
+    C4Container
+    title Container diagram for Internet Banking System
 
-Person(customer, "Customer", "A bank user")
+    Person(customer, "Customer", "A bank user", $tags="v1.0")
 
-System_Ext(email_system, "E-Mail System", "Exchange")
-System_Ext(banking_system, "Mainframe Banking System", "Core banking")
+    System_Ext(email_system, "E-Mail System", "Exchange")
+    System_Ext(banking_system, "Mainframe Banking System", "Core banking")
 
-Container_Boundary(c1, "Internet Banking") {
+    Container_Boundary(c1, "Internet Banking") {
+        Container(web_app, "Web Application", "Java, Spring MVC", "Delivers the static content and the Internet Banking SPA")
+        Container(spa, "Single-Page App", "Angular", "Provides all internet banking functionality to customers via browser")
+        Container(mobile_app, "Mobile App", "Xamarin", "Provides a limited subset of internet banking functionality")
+        Container(api, "API Application", "Java, Docker", "Provides internet banking functionality via JSON/HTTPS API")
+        ContainerDb(db, "Database", "SQL", "Stores user registration information, authentication credentials and access logs")
+        Container_Ext(notif, "Notification Service", "SaaS", "Sends transactional notifications")
+        ContainerDb_Ext(audit_db, "Audit Store", "Managed DB", "Stores immutable audit trail")
+    }
 
-    Container(web_app, "Web Application", "Java, Spring MVC", "Delivers SPA")
+    Rel(customer, web_app, "Uses", "HTTPS")
+    Rel(customer, spa, "Uses", "HTTPS")
+    Rel(customer, mobile_app, "Uses", "HTTPS")
+    Rel(web_app, spa, "Delivers to", "sync, HTTPS")
+    Rel(spa, api, "Calls API", "async, JSON/HTTPS")
+    Rel(mobile_app, api, "Calls API", "sync, JSON/HTTPS")
+    Rel(api, db, "Reads/Writes", "sync, JDBC")
+    Rel(api, banking_system, "Uses", "sync, JDBC")
+    Rel(api, email_system, "Sends emails using", "SMTP")
+    Rel(api, notif, "Publishes events to", "async, HTTPS")
+    Rel(api, audit_db, "Writes audit records to", "sync, JDBC")
+    Rel_Back(email_system, customer, "Emails user", "SMTP")
 
-    Container(spa, "Single-Page App", "Angular", "Browser UI")
-
-    Container(mobile_app, "Mobile App", "Xamarin", "Mobile access")
-
-    Container(api, "API Application", "Java, Docker", "Backend logic")
-
-    ContainerDb(db, "Database", "SQL", "Stores data")
-}
-
-Rel(customer, web_app, "Uses")
-Rel(customer, spa, "Uses")
-Rel(customer, mobile_app, "Uses")
-
-Rel(web_app, spa, "Delivers")
-
-Rel(spa, api, "Calls API")
-Rel(mobile_app, api, "Calls API")
-
-Rel(api, db, "Reads/Writes")
-
-Rel(api, banking_system, "Uses")
-Rel(api, email_system, "Sends emails")
-Rel(email_system, customer, "Emails user")
-</pre
-    >
+    UpdateRelStyle(customer, web_app, $offsetX="-20", $offsetY="-15")
+    UpdateRelStyle(spa, api, $offsetX="40", $offsetY="-20")
+    UpdateRelStyle(mobile_app, api, $offsetX="-60", $offsetY="20")
+    UpdateRelStyle(api, audit_db, $offsetX="20", $offsetY="15")
+    </pre>
 
     <hr />
 

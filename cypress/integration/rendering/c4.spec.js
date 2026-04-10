@@ -138,4 +138,25 @@ describe('C4 diagram', () => {
       {}
     );
   });
+
+  it('C4.7 should render long relationship labels without manual offsets', () => {
+    imgSnapshotTest(
+      `
+      C4Container
+      title Long relationship labels should stay readable
+
+      Person(customer, "Customer", "A user of internet banking")
+      Container(frontend, "Frontend", "React", "Renders the UI and coordinates user requests")
+      Container(api, "API", "Node.js", "Handles orchestration and business logic")
+      ContainerDb(core_db, "Core Database", "PostgreSQL", "Stores account data and transaction history")
+      Container_Ext(audit_sink, "External Audit Service", "SaaS", "Stores immutable compliance records")
+
+      Rel(customer, frontend, "Uses the internet banking interface to authenticate and request account data over secure channels", "HTTPS")
+      Rel(frontend, api, "Submits authenticated requests and receives aggregated account and transaction payloads", "JSON/HTTPS")
+      Rel(api, core_db, "Reads and writes account balances, transaction entries, and user profile metadata", "sync, JDBC")
+      Rel(api, audit_sink, "Publishes compliance events for every successful and failed transaction with retry semantics", "async, JSON/HTTPS")
+      `,
+      {}
+    );
+  });
 });
