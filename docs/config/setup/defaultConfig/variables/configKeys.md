@@ -12,4 +12,4 @@
 
 > `const` **configKeys**: `Set`<`string`>
 
-Defined in: [packages/mermaid/src/defaultConfig.ts:305](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L305)
+Defined in: [packages/mermaid/src/defaultConfig.ts:313](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L313)

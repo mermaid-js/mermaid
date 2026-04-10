@@ -112,6 +112,7 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
     intersect: undefined,
     type: vertex.type,
     padding: padding ?? getConfig()?.block?.padding ?? 0,
+    widthInColumns: vertex.widthInColumns ?? 1,
   };
   return node;
 }

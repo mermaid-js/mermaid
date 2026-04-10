@@ -188,7 +188,13 @@ union A, B`,
     clear
       "Restart service"
     chaotic
-      "Page oncall"`,
+      "Page on-call"`,
+
+  eventmodeling: `eventmodeling
+    tf 01 evt Start
+    tf 02 evt End
+    rf 03 readmodel ReadModel01 ->> 01 ->> 02 { a: true }
+    rf 04 rmo ReadModel02 ->> 01 ->> 02`,
 };
 
 async function renderTwoAndCheckIds(
