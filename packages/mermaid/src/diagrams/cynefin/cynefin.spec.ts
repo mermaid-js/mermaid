@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
+import type { DomainBlock, Transition } from '@mermaid-js/parser';
 import { db } from './cynefinDb.js';
 import {
   seededRandom,
@@ -9,6 +10,14 @@ import {
   generateConfusionPath,
 } from './cynefinBoundaries.js';
 
+/** Test helper: build a partial DomainBlock with just the fields the DB reads. */
+const block = (domain: string, items: { label: string }[] = []): DomainBlock =>
+  ({ domain, items: items.map((i) => ({ label: i.label })) }) as unknown as DomainBlock;
+
+/** Test helper: build a partial Transition with just the fields the DB reads. */
+const tx = (from: string, to: string, label?: string): Transition =>
+  ({ from, to, label: label ?? '' }) as unknown as Transition;
+
 describe('Cynefin Database', () => {
   beforeEach(() => db.clear());
 
@@ -18,17 +27,14 @@ describe('Cynefin Database', () => {
   });
 
   it('should set domains from AST blocks', () => {
-    db.setDomains([
-      { domain: 'complex', items: [{ label: 'Test' }] },
-      { domain: 'clear', items: [] },
-    ]);
+    db.setDomains([block('complex', [{ label: 'Test' }]), block('clear')]);
     expect(db.getDomains().size).toBe(2);
     expect(db.getDomains().get('complex')!.items).toHaveLength(1);
     expect(db.getDomains().get('clear')!.items).toHaveLength(0);
   });
 
   it('should set transitions', () => {
-    db.setTransitions([{ from: 'complex', to: 'complicated', label: 'Pattern found' }]);
+    db.setTransitions([tx('complex', 'complicated', 'Pattern found')]);
     const transitions = db.getTransitions();
     expect(transitions).toHaveLength(1);
     expect(transitions[0].from).toBe('complex');
@@ -37,18 +43,18 @@ describe('Cynefin Database', () => {
   });
 
   it('should set transitions without labels', () => {
-    db.setTransitions([{ from: 'chaotic', to: 'complex' }]);
+    db.setTransitions([tx('chaotic', 'complex')]);
     expect(db.getTransitions()[0].label).toBeUndefined();
   });
 
   it('should handle null/undefined blocks', () => {
-    expect(() => db.setDomains(null as any)).not.toThrow();
-    expect(() => db.setTransitions(null as any)).not.toThrow();
+    expect(() => db.setDomains(null as unknown as DomainBlock[])).not.toThrow();
+    expect(() => db.setTransitions(null as unknown as Transition[])).not.toThrow();
   });
 
   it('should clear all data', () => {
-    db.setDomains([{ domain: 'complex', items: [{ label: 'A' }] }]);
-    db.setTransitions([{ from: 'complex', to: 'chaotic' }]);
+    db.setDomains([block('complex', [{ label: 'A' }])]);
+    db.setTransitions([tx('complex', 'chaotic')]);
     db.clear();
     expect(db.getDomains().size).toBe(0);
     expect(db.getTransitions().length).toBe(0);
@@ -56,21 +62,18 @@ describe('Cynefin Database', () => {
 
   it('should handle multiple domains', () => {
     db.setDomains([
-      { domain: 'complex', items: [] },
-      { domain: 'complicated', items: [] },
-      { domain: 'clear', items: [] },
-      { domain: 'chaotic', items: [] },
-      { domain: 'confusion', items: [] },
+      block('complex'),
+      block('complicated'),
+      block('clear'),
+      block('chaotic'),
+      block('confusion'),
     ]);
     expect(db.getDomains().size).toBe(5);
   });
 
   it('should handle domain with multiple items', () => {
     db.setDomains([
-      {
-        domain: 'complex',
-        items: [{ label: 'A' }, { label: 'B' }, { label: 'C' }, { label: 'D' }],
-      },
+      block('complex', [{ label: 'A' }, { label: 'B' }, { label: 'C' }, { label: 'D' }]),
     ]);
     expect(db.getDomains().get('complex')!.items).toHaveLength(4);
   });

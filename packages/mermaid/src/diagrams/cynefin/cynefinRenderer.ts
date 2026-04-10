@@ -3,6 +3,9 @@ import type { DiagramRenderer, DrawDefinition, SVG } from '../../diagram-api/typ
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { log } from '../../logger.js';
+import { getConfig as getConfigAPI } from '../../config.js';
+import { getThemeVariables } from '../../themes/theme-default.js';
+import { cleanAndMerge } from '../../utils.js';
 import type { CynefinDB, CynefinDomain, CynefinTransition, DomainName } from './types.js';
 import {
   generateFoldPath,
@@ -46,12 +49,29 @@ const getDomainLayouts = (width: number, height: number): Record<DomainName, Dom
   };
 };
 
-const DOMAIN_COLORS: Record<DomainName, string> = {
-  complex: '#6a9fb5',
-  complicated: '#8ab87a',
-  clear: '#c4a35a',
-  chaotic: '#b56a6a',
-  confusion: '#9b8ec4',
+/** Resolve cynefin theme variables from the mermaid theme system. */
+const getCynefinTheme = () => {
+  const defaultThemeVariables = getThemeVariables();
+  const currentConfig = getConfigAPI();
+  const themeVariables = cleanAndMerge(defaultThemeVariables, currentConfig.themeVariables);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (themeVariables as any).cynefin as {
+    domainFontSize: number;
+    itemFontSize: number;
+    boundaryColor: string;
+    boundaryWidth: number;
+    cliffColor: string;
+    cliffWidth: number;
+    arrowColor: string;
+    arrowWidth: number;
+    complexBg: string;
+    complicatedBg: string;
+    chaoticBg: string;
+    clearBg: string;
+    confusionBg: string;
+    textColor: string;
+    labelColor: string;
+  };
 };
 
 const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
@@ -61,14 +81,26 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const title = db.getDiagramTitle();
   const accTitle = db.getAccTitle();
   const accDescription = db.getAccDescription();
+  const config = db.getConfig();
+  const theme = getCynefinTheme();
 
   log.debug('Rendering Cynefin diagram');
 
-  const width = 800;
-  const height = 600;
-  const padding = 40;
+  const width = config.width;
+  const height = config.height;
+  const padding = config.padding;
+  const showDomainDescriptions = config.showDomainDescriptions;
+  const boundaryAmplitude = config.boundaryAmplitude;
   const totalWidth = width + padding * 2;
   const totalHeight = height + padding * 2;
+
+  const domainBg: Record<DomainName, string> = {
+    complex: theme.complexBg,
+    complicated: theme.complicatedBg,
+    clear: theme.clearBg,
+    chaotic: theme.chaoticBg,
+    confusion: theme.confusionBg,
+  };
 
   const svg: SVG = selectSvgElement(id);
 
@@ -100,8 +132,8 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       .attr('y', layout.y)
       .attr('width', layout.w)
       .attr('height', layout.h)
-      .attr('fill', DOMAIN_COLORS[domainName])
-      .attr('fill-opacity', 0.3)
+      .attr('fill', domainBg[domainName])
+      .attr('fill-opacity', 0.4)
       .attr('stroke', 'none');
   }
 
@@ -112,22 +144,28 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   boundaryGroup
     .append('path')
     .attr('class', 'cynefinBoundary')
-    .attr('d', generateFoldPath(width, height, seed))
-    .attr('fill', 'none');
+    .attr('d', generateFoldPath(width, height, seed, boundaryAmplitude))
+    .attr('fill', 'none')
+    .attr('stroke', theme.boundaryColor)
+    .attr('stroke-width', theme.boundaryWidth);
 
   // Horizontal boundary
   boundaryGroup
     .append('path')
     .attr('class', 'cynefinBoundary')
-    .attr('d', generateHorizontalBoundary(width, height, seed + 100))
-    .attr('fill', 'none');
+    .attr('d', generateHorizontalBoundary(width, height, seed + 100, boundaryAmplitude))
+    .attr('fill', 'none')
+    .attr('stroke', theme.boundaryColor)
+    .attr('stroke-width', theme.boundaryWidth);
 
   // 3. The cliff (thicker, between Clear and Chaotic at bottom-center)
   boundaryGroup
     .append('path')
     .attr('class', 'cynefinCliff')
     .attr('d', generateCliffPath(width, height))
-    .attr('fill', 'none');
+    .attr('fill', 'none')
+    .attr('stroke', theme.cliffColor)
+    .attr('stroke-width', theme.cliffWidth);
 
   // 4. Confusion ellipse (center overlay)
   const confusionRx = width * 0.1;
@@ -136,10 +174,11 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     .append('path')
     .attr('class', 'cynefinConfusion')
     .attr('d', generateConfusionPath(width / 2, height / 2, confusionRx, confusionRy))
-    .attr('fill', DOMAIN_COLORS.confusion)
-    .attr('fill-opacity', 0.35)
-    .attr('stroke', DOMAIN_COLORS.confusion)
-    .attr('stroke-width', 1.5);
+    .attr('fill', domainBg.confusion)
+    .attr('fill-opacity', 0.5)
+    .attr('stroke', theme.boundaryColor)
+    .attr('stroke-width', 1.5)
+    .attr('stroke-dasharray', '4 2');
 
   // 5. Domain name labels
   const labelGroup = root.append('g').attr('class', 'cynefin-labels');
@@ -149,9 +188,12 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       .append('text')
       .attr('class', 'cynefinDomainLabel')
       .attr('x', layout.cx)
-      .attr('y', layout.cy - 30)
+      .attr('y', showDomainDescriptions ? layout.cy - 30 : layout.cy)
       .attr('text-anchor', 'middle')
       .attr('dominant-baseline', 'middle')
+      .attr('font-size', theme.domainFontSize)
+      .attr('font-weight', 'bold')
+      .attr('fill', theme.labelColor)
       .text(domainName.charAt(0).toUpperCase() + domainName.slice(1));
   }
 
@@ -160,45 +202,59 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     .append('text')
     .attr('class', 'cynefinDomainLabel')
     .attr('x', width / 2)
-    .attr('y', height / 2 - 10)
+    .attr('y', showDomainDescriptions ? height / 2 - 10 : height / 2)
     .attr('text-anchor', 'middle')
     .attr('dominant-baseline', 'middle')
+    .attr('font-size', theme.domainFontSize)
+    .attr('font-weight', 'bold')
+    .attr('fill', theme.labelColor)
     .text('Confusion');
 
   // 6. Domain description subtitles (decision model + practice type)
-  const subtitleGroup = root.append('g').attr('class', 'cynefin-subtitles');
-  for (const domainName of quadrantDomains) {
-    const layout = layouts[domainName];
-    const meta = DOMAIN_META[domainName];
+  if (showDomainDescriptions) {
+    const subtitleGroup = root.append('g').attr('class', 'cynefin-subtitles');
+    for (const domainName of quadrantDomains) {
+      const layout = layouts[domainName];
+      const meta = DOMAIN_META[domainName];
 
+      subtitleGroup
+        .append('text')
+        .attr('class', 'cynefinSubtitle')
+        .attr('x', layout.cx)
+        .attr('y', layout.cy - 10)
+        .attr('text-anchor', 'middle')
+        .attr('dominant-baseline', 'middle')
+        .attr('font-size', theme.itemFontSize - 1)
+        .attr('font-style', 'italic')
+        .attr('fill', theme.textColor)
+        .text(meta.model);
+
+      subtitleGroup
+        .append('text')
+        .attr('class', 'cynefinSubtitle')
+        .attr('x', layout.cx)
+        .attr('y', layout.cy + 5)
+        .attr('text-anchor', 'middle')
+        .attr('dominant-baseline', 'middle')
+        .attr('font-size', theme.itemFontSize - 1)
+        .attr('font-style', 'italic')
+        .attr('fill', theme.textColor)
+        .text(meta.practice);
+    }
+
+    // Confusion subtitle
     subtitleGroup
       .append('text')
       .attr('class', 'cynefinSubtitle')
-      .attr('x', layout.cx)
-      .attr('y', layout.cy - 10)
+      .attr('x', width / 2)
+      .attr('y', height / 2 + 8)
       .attr('text-anchor', 'middle')
       .attr('dominant-baseline', 'middle')
-      .text(meta.model);
-
-    subtitleGroup
-      .append('text')
-      .attr('class', 'cynefinSubtitle')
-      .attr('x', layout.cx)
-      .attr('y', layout.cy + 5)
-      .attr('text-anchor', 'middle')
-      .attr('dominant-baseline', 'middle')
-      .text(meta.practice);
+      .attr('font-size', theme.itemFontSize - 1)
+      .attr('font-style', 'italic')
+      .attr('fill', theme.textColor)
+      .text(DOMAIN_META.confusion.practice);
   }
-
-  // Confusion subtitle
-  subtitleGroup
-    .append('text')
-    .attr('class', 'cynefinSubtitle')
-    .attr('x', width / 2)
-    .attr('y', height / 2 + 8)
-    .attr('text-anchor', 'middle')
-    .attr('dominant-baseline', 'middle')
-    .text(DOMAIN_META.confusion.practice);
 
   // 7. Items as text badges within each domain
   const itemGroup = root.append('g').attr('class', 'cynefin-items');
@@ -213,7 +269,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     }
 
     const layout = layouts[domainName];
-    const startY = layout.cy + 25;
+    const startY = layout.cy + (showDomainDescriptions ? 25 : 15);
 
     domain.items.forEach((item, idx) => {
       const itemY = startY + idx * (itemHeight + 4);
@@ -230,15 +286,16 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
         .attr('height', itemHeight)
         .attr('rx', 4)
         .attr('ry', 4)
-        .attr('fill', '#ffffff')
-        .attr('stroke', '#cccccc')
+        .attr('fill', domainBg[domainName])
+        .attr('stroke', theme.boundaryColor)
         .attr('stroke-width', 1)
-        .attr('fill-opacity', 0.9);
+        .attr('fill-opacity', 0.95);
 
       g.append('text')
         .attr('x', textLen / 2)
         .attr('y', itemHeight / 2)
-        .attr('fill', '#333333')
+        .attr('fill', theme.textColor)
+        .attr('font-size', theme.itemFontSize)
         .attr('text-anchor', 'middle')
         .attr('dominant-baseline', 'central')
         .text(item.label);
@@ -261,7 +318,8 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       .attr('orient', 'auto-start-reverse')
       .append('path')
       .attr('d', 'M 0 0 L 10 5 L 0 10 z')
-      .attr('class', 'cynefinArrowHead');
+      .attr('class', 'cynefinArrowHead')
+      .attr('fill', theme.arrowColor);
 
     const arrowGroup = root.append('g').attr('class', 'cynefin-arrows');
 
@@ -297,6 +355,9 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
           'd',
           `M${fromLayout.cx},${fromLayout.cy} Q${cpx},${cpy} ${toLayout.cx},${toLayout.cy}`
         )
+        .attr('fill', 'none')
+        .attr('stroke', theme.arrowColor)
+        .attr('stroke-width', theme.arrowWidth)
         .attr('marker-end', `url(#${markerId})`);
 
       // Optional label
@@ -308,6 +369,8 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
           .attr('y', cpy - 6)
           .attr('text-anchor', 'middle')
           .attr('dominant-baseline', 'auto')
+          .attr('font-size', theme.itemFontSize - 1)
+          .attr('fill', theme.textColor)
           .text(transition.label);
       }
     });
@@ -317,11 +380,14 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   if (title) {
     root
       .append('text')
-      .attr('class', 'cynefinDomainLabel')
+      .attr('class', 'cynefinTitle')
       .attr('x', width / 2)
       .attr('y', -padding / 2)
       .attr('text-anchor', 'middle')
       .attr('dominant-baseline', 'middle')
+      .attr('font-size', theme.domainFontSize + 2)
+      .attr('font-weight', 'bold')
+      .attr('fill', theme.labelColor)
       .text(title);
   }
 };

@@ -1,4 +1,6 @@
+import type { DomainBlock, Transition } from '@mermaid-js/parser';
 import { getConfig as commonGetConfig } from '../../config.js';
+import type { CynefinDiagramConfig } from '../../config.type.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
 import { cleanAndMerge } from '../../utils.js';
 import {
@@ -28,13 +30,13 @@ const getDomains = (): Map<DomainName, CynefinDomain> => data.domains;
 
 const getTransitions = (): CynefinTransition[] => data.transitions;
 
-const setDomains = (blocks: any[]) => {
+const setDomains = (blocks: DomainBlock[]) => {
   if (!blocks) {
     return;
   }
   for (const block of blocks) {
     const domainName = block.domain as DomainName;
-    const items = (block.items ?? []).map((item: { label: string }) => ({
+    const items = (block.items ?? []).map((item) => ({
       label: item.label,
     }));
     data.domains.set(domainName, {
@@ -44,23 +46,21 @@ const setDomains = (blocks: any[]) => {
   }
 };
 
-const setTransitions = (transitions: any[]) => {
+const setTransitions = (transitions: Transition[]) => {
   if (!transitions) {
     return;
   }
   data.transitions = transitions.map((t) => ({
     from: t.from as DomainName,
     to: t.to as DomainName,
-    label: t.label,
+    label: t.label || undefined,
   }));
 };
 
-const getConfig = (): Record<string, unknown> => {
-  const defaultCynefinConfig = (DEFAULT_CONFIG as any).cynefin ?? {};
-  const currentConfig = (commonGetConfig() as any).cynefin ?? {};
+const getConfig = (): Required<CynefinDiagramConfig> => {
   return cleanAndMerge({
-    ...defaultCynefinConfig,
-    ...currentConfig,
+    ...DEFAULT_CONFIG.cynefin,
+    ...commonGetConfig().cynefin,
   });
 };
 

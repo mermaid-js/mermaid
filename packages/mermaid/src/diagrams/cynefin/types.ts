@@ -1,3 +1,6 @@
+import type { DomainBlock, Transition } from '@mermaid-js/parser';
+import type { CynefinDiagramConfig } from '../../config.type.js';
+
 export type DomainName = 'complex' | 'complicated' | 'clear' | 'chaotic' | 'confusion';
 
 export interface CynefinItem {
@@ -25,7 +28,7 @@ export interface CynefinDB {
   setAccDescription(description: string): void;
   getDomains(): Map<DomainName, CynefinDomain>;
   getTransitions(): CynefinTransition[];
-  setDomains(blocks: any[]): void;
-  setTransitions(transitions: any[]): void;
-  getConfig(): Record<string, unknown>;
+  setDomains(blocks: DomainBlock[]): void;
+  setTransitions(transitions: Transition[]): void;
+  getConfig(): Required<CynefinDiagramConfig>;
 }

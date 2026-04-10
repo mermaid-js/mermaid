@@ -28,11 +28,17 @@ export function hashString(str: string): number {
  * @param width - diagram width
  * @param height - diagram height
  * @param seed - deterministic seed for variation
+ * @param amplitudeOverride - optional amplitude in pixels; falls back to 1.5% of width
  * @returns SVG path d attribute string
  */
-export function generateFoldPath(width: number, height: number, seed: number): string {
+export function generateFoldPath(
+  width: number,
+  height: number,
+  seed: number,
+  amplitudeOverride?: number
+): string {
   const cx = width / 2;
-  const amplitude = width * 0.015;
+  const amplitude = amplitudeOverride ?? width * 0.015;
   const segments = 7;
   const segHeight = height / segments;
   const points: { x: number; y: number }[] = [];
@@ -64,11 +70,17 @@ export function generateFoldPath(width: number, height: number, seed: number): s
  * @param width - diagram width
  * @param height - diagram height
  * @param seed - deterministic seed for variation
+ * @param amplitudeOverride - optional amplitude in pixels; falls back to 1.5% of height
  * @returns SVG path d attribute string
  */
-export function generateHorizontalBoundary(width: number, height: number, seed: number): string {
+export function generateHorizontalBoundary(
+  width: number,
+  height: number,
+  seed: number,
+  amplitudeOverride?: number
+): string {
   const cy = height / 2;
-  const amplitude = height * 0.015;
+  const amplitude = amplitudeOverride ?? height * 0.015;
   const segments = 7;
   const segWidth = width / segments;
   const points: { x: number; y: number }[] = [];
