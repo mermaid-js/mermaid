@@ -1158,6 +1158,58 @@ text.actor {
 }
 ```
 
+### Per-actor styling (v\<MERMAID_RELEASE_VERSION>+)
+
+Individual actors can be styled inline or by attaching a reusable class. This addresses [issue #523](https://github.com/mermaid-js/mermaid/issues/523), the long-standing request to support per-actor colors in sequence diagrams.
+
+**Inline `style` statement.** Apply styles to a single actor by name:
+
+```mermaid-example
+sequenceDiagram
+    participant Alice
+    participant Bob
+    style Alice fill:#f9f,stroke:#333,stroke-width:2px
+    Alice->>Bob: Hello
+    Bob-->>Alice: Hi back
+```
+
+```mermaid
+sequenceDiagram
+    participant Alice
+    participant Bob
+    style Alice fill:#f9f,stroke:#333,stroke-width:2px
+    Alice->>Bob: Hello
+    Bob-->>Alice: Hi back
+```
+
+**Reusable `classDef` and `class` statements.** Define a class once and attach it to one or more actors. This mirrors the `classDef` / `class` pattern used in flowchart diagrams:
+
+```mermaid-example
+sequenceDiagram
+    classDef important fill:#fbb,stroke:#f00,stroke-width:3px
+    participant Alice
+    participant Bob
+    participant Carol
+    class Alice,Carol important
+    Alice->>Bob: Hello
+    Bob->>Carol: Forwarding
+```
+
+```mermaid
+sequenceDiagram
+    classDef important fill:#fbb,stroke:#f00,stroke-width:3px
+    participant Alice
+    participant Bob
+    participant Carol
+    class Alice,Carol important
+    Alice->>Bob: Hello
+    Bob->>Carol: Forwarding
+```
+
+The supported declarations include `fill`, `stroke`, `stroke-width`, `stroke-dasharray`, `opacity`, and the `color` and `font-*` properties (which are routed to the actor's text element). Declarations are sanitized — values containing `url(...)`, `expression(...)`, `behavior:`, `javascript:`, `@import`, or rule terminators are dropped, so user-supplied styles cannot reach external resources or break out of the diagram's scoped stylesheet.
+
+This first release covers actor boxes only. Styling for arrows, notes, and loops is planned as a follow-up.
+
 ## Configuration
 
 It is possible to adjust the margins for rendering the sequence diagram.

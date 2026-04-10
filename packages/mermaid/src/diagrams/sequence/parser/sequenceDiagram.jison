@@ -58,8 +58,9 @@
 <LINE>(?:[:]?(?:no)?wrap:)?[^#\n;]*                             { this.popState(); return 'restOfLine'; }
 <STYLE_STMT>((?!\n)\s)+                                         /* skip same-line whitespace */
 <STYLE_STMT>[^\n;]*                                             { this.popState(); return 'styleRestOfLine'; }
-"classDef"                                                      { this.begin('STYLE_STMT'); return 'classDef'; }
-"style"                                                         { this.begin('STYLE_STMT'); return 'style'; }
+classDef(?=\s)                                                  { this.begin('STYLE_STMT'); return 'classDef'; }
+style(?=\s)                                                     { this.begin('STYLE_STMT'); return 'style'; }
+class(?=\s)                                                     { this.begin('STYLE_STMT'); return 'class'; }
 "end"                                                           return 'end';
 "left of"                                                       return 'left_of';
 "right of"                                                      return 'right_of';
@@ -194,6 +195,7 @@ statement
   | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }
 	| 'classDef' styleRestOfLine { var m = $2.trim().match(/^(\S+)\s+([\s\S]*)/); if(m) { yy.addClass(m[1], [m[2]]); } }
 	| 'style' styleRestOfLine { var m = $2.trim().match(/^(\S+)\s+([\s\S]*)/); if(m) { $$ = {type: 'applyStyle', actor: m[1], styleStr: [m[2]]}; } }
+	| 'class' styleRestOfLine { var m = $2.trim().match(/^(\S+)\s+([\s\S]+)/); if(m) { $$ = {type: 'applyClass', actor: m[1], className: m[2].trim()}; } }
 	| 'loop' restOfLine document end
 	{
 		$3.unshift({type: 'loopStart', loopText:yy.parseMessage($2), signalType: yy.LINETYPE.LOOP_START});

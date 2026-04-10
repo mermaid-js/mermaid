@@ -2956,5 +2956,140 @@ Bob->>Alice:Got it!
       expect(actors.get('Bob').styles).toContain('fill:#f00');
       expect(actors.get('Alice').styles).not.toContain('fill:#f00');
     });
+
+    it('should attach a previously defined class to an actor via "class" keyword', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef highlighted fill:#f9f,stroke:#333
+      participant Alice
+      class Alice highlighted
+      Alice->>Alice: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Alice').classes).toContain('highlighted');
+    });
+
+    it('should attach a class to multiple actors with comma-separated ids', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef important fill:#f00
+      participant Alice
+      participant Bob
+      class Alice,Bob important
+      Alice->>Bob: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Alice').classes).toContain('important');
+      expect(actors.get('Bob').classes).toContain('important');
+    });
+
+    it('should silently ignore class assignments to unknown actors', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef foo fill:#f00
+      participant Alice
+      class Bob foo
+      Alice->>Alice: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Bob')).toBeUndefined();
+      expect(actors.get('Alice').classes).toBeUndefined();
+    });
+
+    it('should not treat "style" as a keyword when used as an actor name in a message', async () => {
+      // Regression: before grammar scoping, "style->>Alice: Hi" would tokenize
+      // as the style statement and silently consume the rest of the line.
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      style->>Alice: Hi
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('style')).toBeDefined();
+      expect(actors.get('Alice')).toBeDefined();
+      const messages = diagram.db.getMessages();
+      expect(messages.length).toBeGreaterThan(0);
+      expect(messages[messages.length - 1].message).toBe('Hi');
+    });
+
+    it('should not treat "classDef" as a keyword when used as an actor name in a message', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef->>Alice: hello
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('classDef')).toBeDefined();
+      expect(actors.get('Alice')).toBeDefined();
+    });
+
+    it('should not treat "class" as a keyword when used as an actor name in a message', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      class->>Alice: hi
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('class')).toBeDefined();
+      expect(actors.get('Alice')).toBeDefined();
+    });
+
+    it('should keep CSS rule terminator stripping in classDef values', async () => {
+      // The JISON [^\n;]* capture stops at ';', so user input cannot embed
+      // a rule terminator that would close the scoped block prematurely.
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef evil fill:#f00;background:url(http://attacker)
+      participant Alice
+      Alice->>Alice: test
+      `);
+      const classes = diagram.db.getClasses();
+      const evil = classes.get('evil');
+      // The class entry exists, but sanitizeCssDeclaration() in sequenceDb
+      // strips any value containing url(), so the dangerous declaration is
+      // dropped before it can reach the rendered <style> tag.
+      expect(evil).toBeDefined();
+      expect(evil.styles.join(',')).not.toContain('url(');
+      expect(evil.styles.join(',')).not.toContain('attacker');
+    });
+
+    it('should reject classDef declarations containing dangerous CSS functions', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef bad1 fill:expression(alert(1))
+      classDef bad2 fill:#f00,background:url(http://attacker)
+      classDef bad3 fill:#f00,behavior:url(xss.htc)
+      classDef bad4 fill:#f00,xss:javascript:alert(1)
+      classDef bad5 fill:#f00,bg:</style><script>
+      classDef ok fill:#f00
+      participant Alice
+      Alice->>Alice: test
+      `);
+      const classes = diagram.db.getClasses();
+      // ok survives untouched
+      expect(classes.get('ok').styles).toContain('fill:#f00');
+      // bad1: expression() is stripped
+      expect(classes.get('bad1').styles.join(',')).not.toContain('expression');
+      // bad2: url() is stripped
+      expect(classes.get('bad2').styles.join(',')).not.toContain('url(');
+      expect(classes.get('bad2').styles.join(',')).not.toContain('attacker');
+      // bad3: behavior: is stripped
+      expect(classes.get('bad3').styles.join(',')).not.toContain('behavior');
+      // bad4: javascript: is stripped
+      expect(classes.get('bad4').styles.join(',')).not.toContain('javascript');
+      // bad5: < is stripped (guards against angle-bracket smuggling)
+      expect(classes.get('bad5').styles.join(',')).not.toContain('<');
+    });
+
+    it('should generate a CSS-safe class name for actors with non-identifier characters', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant A as Customer.Service
+      style A fill:#f00
+      A->>A: test
+      `);
+      const classes = diagram.db.getClasses();
+      // The generated class key must only contain CSS identifier chars.
+      const generated = [...classes.keys()].find((k) => k.startsWith('actor-style-'));
+      expect(generated).toBeDefined();
+      expect(generated).toMatch(/^[\w-]+$/);
+    });
   });
 });

@@ -20,6 +20,7 @@ export interface Actor {
   type: string;
   styles?: string[];
   classes?: string[];
+  styleClassName?: string;
 }
 
 export interface SequenceClass {

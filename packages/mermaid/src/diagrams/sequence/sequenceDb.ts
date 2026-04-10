@@ -155,22 +155,45 @@ export class SequenceDB implements DiagramDB {
     this.state.records.currentBox = this.state.records.boxes.slice(-1)[0];
   }
 
-  /**
-   * Define a reusable style class for sequence diagram elements.
-   * Follows the same pattern as flowchart classDef.
-   *
-   * Syntax: classDef className fill:#f9f,stroke:#333;
-   *
-   * Arrow function property so JISON's yy can see it (JISON doesn't
-   * resolve prototype methods on the yy object).
-   */
+  // Strip CSS declarations that could be used to exfiltrate data or break
+  // out of the scoped style tag. The upstream encodeEntities() in utils.ts
+  // already strips trailing ';' from classDef lines, which (as a side effect
+  // of its greedy regex) can merge values across an embedded ';'. This
+  // filter is the line of defense for whatever survives that step.
+  //
+  // Rejected patterns:
+  //   url(...)        - fetches external resources, leaks page state
+  //   expression(...) - legacy IE JS execution
+  //   behavior:       - legacy IE behavior loading
+  //   javascript:     - protocol injection
+  //   import at-rule  - pulls in arbitrary stylesheets
+  //   right brace     - rule terminator, would close the scoped block
+  //   left angle      - guards against angle-bracket smuggling
+  private sanitizeCssDeclaration(decl: string): string | null {
+    const lower = decl.toLowerCase();
+    if (
+      /url\s*\(/.test(lower) ||
+      /expression\s*\(/.test(lower) ||
+      lower.includes('behavior:') ||
+      lower.includes('javascript:') ||
+      lower.includes('@import') ||
+      decl.includes('}') ||
+      decl.includes('<')
+    ) {
+      return null;
+    }
+    return decl;
+  }
+
   public addClass = (ids: string, styleStr: string[]) => {
     const styles = styleStr
       .join()
       .replace(/\\,/g, '\u00a7\u00a7\u00a7')
       .replace(/,/g, ';')
       .replace(/\u00a7{3}/g, ',')
-      .split(';');
+      .split(';')
+      .map((s) => this.sanitizeCssDeclaration(s.trim()))
+      .filter((s): s is string => s !== null && s.length > 0);
 
     const textStyles: string[] = [];
     const elementStyles: string[] = [];
@@ -218,25 +241,56 @@ export class SequenceDB implements DiagramDB {
       .replace(/,/g, ';')
       .replace(/\u00a7{3}/g, ',')
       .split(';')
-      .map((s) => s.trim())
-      .filter(Boolean);
+      .map((s) => this.sanitizeCssDeclaration(s.trim()))
+      .filter((s): s is string => s !== null && s.length > 0);
 
     actor.styles = [...(actor.styles || []), ...styles];
   };
 
   /**
+   * Attach a previously-defined class (via classDef) to one or more actors.
+   *
+   * Syntax: class Alice,Bob highlighted
+   *
+   * Mirrors flowDb.setClass — splits ids on comma, looks up each actor,
+   * and pushes the className onto its classes array. Unknown actors are
+   * skipped silently to match flowchart behavior.
+   *
+   * Arrow function property so JISON's yy can find it.
+   */
+  public setCssClass = (ids: string, className: string) => {
+    for (const id of ids.split(',')) {
+      const trimmedId = id.trim();
+      if (!trimmedId) {
+        continue;
+      }
+      const actor = this.state.records.actors.get(trimmedId);
+      if (actor) {
+        actor.classes = [...(actor.classes ?? []), className];
+      }
+    }
+  };
+
+  /**
    * Get all defined classes, including generated classes for actors with
    * inline styles. Returns a Map so mermaidAPI's createUserStyles() can
-   * compile them into scoped CSS instead of relying on inline .style() calls.
+   * compile them into a scoped <style> tag via stylis instead of relying
+   * on inline .style() calls. The primary defense against CSS injection
+   * is sanitizeCssDeclaration() above, which is run on every declaration
+   * in addClass and setActorStyle before it lands here. stylis then
+   * scopes the resulting CSS to the diagram's SVG id, which limits the
+   * blast radius of anything that does slip through.
    */
   public getClasses = (): Map<string, DiagramStyleClassDef> => {
     const result = new Map<string, DiagramStyleClassDef>(this.state.records.classes);
 
     // Turn per-actor inline styles ("style Alice fill:#f00") into CSS class
-    // entries so they go through the same stylis + DOMPurify pipeline as
-    // flowchart classDefs. The class name must match what svgDraw adds to
-    // the actor's SVG group element.
-    for (const [id, actor] of this.state.records.actors) {
+    // entries so they go through the same createUserStyles + stylis pipeline
+    // as flowchart classDefs. The class name is stored on the actor itself
+    // so svgDraw and getClasses always read from a single source — they
+    // used to derive it independently from `id` vs `actor.name`, which
+    // worked only because addActor passes id===name today.
+    for (const [, actor] of this.state.records.actors) {
       if (actor.styles && actor.styles.length > 0) {
         const textStyles: string[] = [];
         const elementStyles: string[] = [];
@@ -251,13 +305,28 @@ export class SequenceDB implements DiagramDB {
             elementStyles.push(prop);
           }
         }
-        const className = `actor-style-${id}`;
-        result.set(className, { id: className, styles: elementStyles, textStyles });
+        if (!actor.styleClassName) {
+          actor.styleClassName = `actor-style-${this.cssEscape(actor.name)}`;
+        }
+        result.set(actor.styleClassName, {
+          id: actor.styleClassName,
+          styles: elementStyles,
+          textStyles,
+        });
       }
     }
 
     return result;
   };
+
+  /**
+   * Escape an actor id/name so it's safe to embed in a CSS class identifier.
+   * Replaces anything outside [A-Za-z0-9_-] with `_` so aliased participant
+   * names like "Customer Service.v2" produce a valid selector.
+   */
+  private cssEscape(value: string): string {
+    return value.replace(/[^\w-]/g, '_');
+  }
 
   public addActor(
     id: string,
@@ -323,9 +392,12 @@ export class SequenceDB implements DiagramDB {
       actorCnt: null,
       rectData: null,
       type: type ?? 'participant',
-      // Carry over styles if the actor was already styled (e.g. via "style Alice fill:#f9f")
+      // Carry over any styling state if the actor was already registered
+      // (e.g. via "style Alice fill:#f9f" or "class Alice highlighted")
       // before being re-registered by a message line like "Alice->>Bob: Hello".
       styles: old?.styles,
+      classes: old?.classes,
+      styleClassName: old?.styleClassName,
     });
     if (this.state.records.prevActor) {
       const prevActorInRecords = this.state.records.actors.get(this.state.records.prevActor);
@@ -825,6 +897,9 @@ export class SequenceDB implements DiagramDB {
           break;
         case 'applyStyle':
           this.setActorStyle(param.actor, param.styleStr);
+          break;
+        case 'applyClass':
+          this.setCssClass(param.actor, param.className);
           break;
       }
     }

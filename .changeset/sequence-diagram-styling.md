@@ -2,4 +2,4 @@
 'mermaid': minor
 ---
 
-feat(sequence): add style and classDef support for sequence diagram actors
+feat(sequence): add style, classDef, and class support for sequence diagram actors (#523)
