@@ -566,6 +566,21 @@ describe('mermaidAPI', () => {
         '#someId .edge-pattern-dashed{stroke-dasharray:3;}@media (max-width: 600px){#someId *{background-color:lightblue;}}@supports selector(h2 > p){#someId h2>p{color:red;}}'
       );
     });
+
+    it('should not namespace keyframe rules', () => {
+      const result = createUserStyles(
+        {
+          ...mockConfig,
+          themeCSS: '@keyframes dash { to { stroke-dashoffset: 1000; } }',
+        },
+        'someDiagram',
+        new Map(),
+        '#someId'
+      );
+      expect(result).toEqual(
+        '#someId .edge-pattern-dashed{stroke-dasharray:3;}@keyframes dash{to{stroke-dashoffset:1000;}}'
+      );
+    });
   });
 
   describe('removeExistingElements', () => {

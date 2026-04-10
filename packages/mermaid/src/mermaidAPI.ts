@@ -252,6 +252,12 @@ const compileCSS = (namespace: `#${string}`, css: string) => {
          * transformed to `#svgId { & .nested-class :not(&) { fill: red } }`
          */
         if (element.type === 'rule' && Array.isArray(element.props)) {
+          if (element.parent && element.parent.type === KEYFRAMES) {
+            /**
+             * Don't namespace CSSKeyframeRule, since they don't have selectors.
+             */
+            return;
+          }
           element.props = element.props.map((prop) => {
             if (!prop.startsWith(namespace)) {
               return `${namespace} ${prop}`;
