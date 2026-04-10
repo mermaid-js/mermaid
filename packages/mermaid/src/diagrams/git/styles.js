@@ -171,45 +171,6 @@ const getStyles = (options) => {
     fill: ${options.textColor};
   }
 
-  /* Clickable commit styles */
-  .commit.clickable {
-    cursor: pointer;
-  }
-
-  .commit.clickable:hover text.commit-label,
-  .commit.clickable:focus text.commit-label {
-    text-decoration: underline;
-  }
-
-  .commit.clickable:hover circle,
-  .commit.clickable:focus circle,
-  .commit.clickable:hover rect:not(.commit-label-bkg),
-  .commit.clickable:focus rect:not(.commit-label-bkg),
-  .commit.clickable:hover path,
-  .commit.clickable:focus path {
-    stroke-width: 1px !important;
-    stroke: ${options.textColor} !important;
-  }
-
-  /* Clickable branch label styles */
-  .branchLabel.clickable {
-    cursor: pointer;
-  }
-
-  .branchLabel.clickable:hover .label,
-  .branchLabel.clickable:focus .label {
-    text-decoration: underline;
-  }
-
-  /* Clickable tag styles */
-  .tag.clickable {
-    cursor: pointer;
-  }
-
-  .tag.clickable:hover text,
-  .tag.clickable:focus text {
-    text-decoration: underline;
-  }
 `;
 };
 
