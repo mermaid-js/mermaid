@@ -1,4 +1,4 @@
-import clone from 'lodash-es/clone.js';
+import { clone } from 'es-toolkit/compat';
 import * as configApi from '../../config.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
