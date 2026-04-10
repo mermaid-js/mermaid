@@ -568,14 +568,15 @@
       checkout branch-new-tab
       commit id: "no-click-3" tag: "tag-same-tab"
 
-      click commit "click-same-tab" "https://example.com/commit1" "same tab"
-      click commit "click-new-tab" "https://example.com/commit2" "new tab" _blank
+      click commit "click-same-tab" "https://example.com/click-same-tab" "same tab"
+      click commit "click-new-tab" "https://example.com/click-new-tab" "new tab" "_blank"
 
-      click branch "branch-same-tab" "https://example.com/branch1" "same tab"
-      click branch "branch-new-tab" "https://example.com/branch2" "new tab" _blank
+      click branch "branch-same-tab" "https://example.com/branch-same-tab" "same tab"
+      click branch "branch-new-tab" "https://example.com/branch-new-tab" "new tab" "_blank"
 
-      click tag "tag-same-tab" "https://example.com/tag1" "same tab"
-      click tag "tag-new-tab" "https://example.com/tag2" "new tab" _blank
+      click tag "tag-same-tab" "https://example.com/tag-same-tab" "same tab"
+      click tag "tag-new-tab" "https://example.com/tag-new-tab" "new tab" "_blank"
+
     </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';

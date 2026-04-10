@@ -89,7 +89,7 @@ describe('GitGraph Click Events', () => {
       const diagram = `
         gitGraph
           commit id: "c1"
-          click commit "c1" "https://github.com" _blank
+          click commit "c1" "https://github.com" "_blank"
       `;
 
       await parser.parse(diagram);
@@ -186,16 +186,16 @@ describe('GitGraph Click Events', () => {
       const diagram = `
         gitGraph
           commit id: "c1"
-          click commit "c1" "https://github.com" _blank
+          click commit "c1" "https://github.com" "tooltip" _blank
       `;
 
       await parser.parse(diagram);
-
-      const svg = select(container).append('svg').attr('id', 'gitGraph-test');
+      const svgId = 'gitGraph-target';
+      const svg = select(container).append('svg').attr('id', svgId);
       const diagObj = { db, type: 'gitGraph' };
 
       // @ts-ignore - partial diagram object for testing
-      await draw(diagram, 'gitGraph-test', '1.0', diagObj);
+      await draw(diagram, svgId, '1.0', diagObj);
 
       const anchor = svg.select('a');
       expect(anchor.attr('target')).toBe('_blank');
@@ -397,6 +397,29 @@ describe('GitGraph Click Events', () => {
 
       await parser.parse(diagram);
       expect(db.getLink('feature-login')).toBeDefined();
+    });
+
+    it('should handle hyphenated IDs and URLs in rendering', async () => {
+      const diagram = `
+        gitGraph
+          commit id: "fix-bug-123"
+          click commit "fix-bug-123" "https://example-docs.com/commit-1" "Commit Tooltip" "_blank"
+      `;
+
+      await parser.parse(diagram);
+      const svgId = 'gitGraph-hyphens';
+      const svg = select(container).append('svg').attr('id', svgId);
+      const diagObj = { db, type: 'gitGraph' };
+
+      // @ts-ignore - partial diagram object for testing
+      await draw(diagram, svgId, '1.0', diagObj);
+
+      const anchor = svg.select('a');
+      expect(anchor.empty()).toBe(false);
+      expect(anchor.attr('href')).toBe('https://example-docs.com/commit-1');
+      expect(anchor.attr('target')).toBe('_blank');
+      expect(anchor.select('title').text()).toBe('Commit Tooltip');
+      expect(svg.select('[data-commit-id="fix-bug-123"]').classed('clickable')).toBe(true);
     });
   });
 
