@@ -171,6 +171,24 @@ const getStyles = (options) => {
     fill: ${options.textColor};
   }
 
+  .clickable {
+    cursor: pointer;
+  }
+
+  .clickable:hover text,
+  .clickable:focus text {
+    text-decoration: underline;
+  }
+
+  .commit.clickable:hover circle,
+  .commit.clickable:focus circle,
+  .commit.clickable:hover rect:not(.commit-label-bkg),
+  .commit.clickable:focus rect:not(.commit-label-bkg),
+  .commit.clickable:hover path,
+  .commit.clickable:focus path {
+    stroke-width: 1px !important;
+    stroke: ${options.textColor} !important;
+  }
 `;
 };
 
