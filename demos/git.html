@@ -558,24 +558,24 @@
     <pre class="mermaid">
     gitGraph
       commit id: "no-click"
-      commit id: "cl-same"
-      commit id: "cl-new" tag: "tag-new"
-      branch br-same
-      checkout br-same
-      commit id: "nc-br"
+      commit id: "click-same-tab"
+      commit id: "click-new-tab" tag: "tag-new-tab"
+      branch branch-same-tab
+      checkout branch-same-tab
+      commit id: "no-click-2"
       checkout main
-      branch br-new
-      checkout br-new
-      commit id: "nc-one" tag: "tag-same"
+      branch branch-new-tab
+      checkout branch-new-tab
+      commit id: "no-click-3" tag: "tag-same-tab"
 
-      click commit "cl-same" "https://example.com/commit1" "same tab"
-      click commit "cl-new" "https://example.com/commit2" "new tab" _blank
+      click commit "click-same-tab" "https://example.com/commit1" "same tab"
+      click commit "click-new-tab" "https://example.com/commit2" "new tab" _blank
 
-      click branch "br-same" "https://example.com/branch1" "same tab"
-      click branch "br-new" "https://example.com/branch2" "new tab" _blank
+      click branch "branch-same-tab" "https://example.com/branch1" "same tab"
+      click branch "branch-new-tab" "https://example.com/branch2" "new tab" _blank
 
-      click tag "tag-same" "https://example.com/tag1" "same tab"
-      click tag "tag-new" "https://example.com/tag2" "new tab" _blank
+      click tag "tag-same-tab" "https://example.com/tag1" "same tab"
+      click tag "tag-new-tab" "https://example.com/tag2" "new tab" _blank
     </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
