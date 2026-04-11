@@ -141,6 +141,25 @@ describe('given a basic class diagram, ', function () {
       expect(namespaces.get('Outer')!.children.has('Outer.Inner')).toBe(true);
     });
 
+    it('should support custom labels on namespaces', () => {
+      const str = `classDiagram
+        namespace Auth["Authentication Service"] {
+          class UserService {
+            +login()
+          }
+        }`;
+
+      parser.parse(str);
+
+      const namespaces = classDb.getNamespaces();
+      const auth = namespaces.get('Auth')!;
+      expect(auth.id).toBe('Auth');
+      expect(auth.label).toBe('Authentication Service');
+
+      const userService = classDb.getClass('UserService');
+      expect(userService.parent).toBe('Auth');
+    });
+
     it('should handle accTitle and accDescr', function () {
       const str = `classDiagram
             accTitle: My Title
@@ -556,7 +575,7 @@ class C13["With Città foreign language"]
         {
           "annotations": [],
           "cssClasses": "default",
-          "domId": "classId-Student-143",
+          "domId": "classId-Student-144",
           "id": "Student",
           "label": "Student",
           "members": [

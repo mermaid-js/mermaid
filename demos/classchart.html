@@ -339,6 +339,29 @@
     </pre>
     <hr />
 
+    <h2>Namespace labels</h2>
+    <pre class="mermaid">
+    classDiagram
+      namespace Auth["Authentication Service"] {
+        class UserService {
+          +login()
+          +logout()
+        }
+        class TokenManager {
+          +generate()
+        }
+      }
+      namespace Store["Data Store"] {
+        class Repository {
+          +find()
+          +save()
+        }
+      }
+      UserService --> TokenManager : uses
+      UserService --> Repository : reads from
+    </pre>
+    <hr />
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
