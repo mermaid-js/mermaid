@@ -61,11 +61,11 @@ describe('gitGraph links', () => {
       expect(links.has('c2')).toBe(true);
     });
 
-    it('should return a copy (not original map)', () => {
+    it('should return the internal map (performance)', () => {
       db.setLink('c1', 'https://example.com', 'commit');
       const links1 = db.getLinks();
       const links2 = db.getLinks();
-      expect(links1).not.toBe(links2);
+      expect(links1).toBe(links2);
     });
   });
 

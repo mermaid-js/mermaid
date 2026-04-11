@@ -219,8 +219,7 @@ const addInteraction = (
   id: string,
   type: 'commit' | 'branch' | 'tag'
 ): d3.Selection<SVGGElement, unknown, HTMLElement, any> => {
-  const links = db.getLinks?.();
-  const linkData = links?.get(id);
+  const linkData = db.getLink?.(id);
 
   if (securityLevel === 'strict' || !linkData || linkData.type !== type) {
     return parent.append('g');

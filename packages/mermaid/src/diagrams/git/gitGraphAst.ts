@@ -505,8 +505,10 @@ export const setLink = (
   tooltip?: string,
   target?: '_self' | '_blank' | '_parent' | '_top'
 ): void => {
-  state.records.links.set(id, {
-    id,
+  const config = getConfig();
+  const sanitizedId = common.sanitizeText(id, config);
+  state.records.links.set(sanitizedId, {
+    id: sanitizedId,
     link,
     tooltip,
     target: target || '_self',
@@ -515,11 +517,13 @@ export const setLink = (
 };
 
 export const getLinks = (): Map<string, GitGraphLink> => {
-  return new Map(state.records.links);
+  return state.records.links;
 };
 
 export const getLink = (id: string): GitGraphLink | undefined => {
-  return state.records.links.get(id);
+  const config = getConfig();
+  const sanitizedId = common.sanitizeText(id, config);
+  return state.records.links.get(sanitizedId);
 };
 
 export const db: GitGraphDB = {
