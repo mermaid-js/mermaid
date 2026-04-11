@@ -177,6 +177,7 @@ export interface Interface {
 
 export interface NamespaceNode {
   id: string;
+  label: string;
   domId: string;
   classes: ClassMap;
   notes: ClassNoteMap;
