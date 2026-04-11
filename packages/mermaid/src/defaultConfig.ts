@@ -261,6 +261,9 @@ const config: RequiredDeep<MermaidConfig> = {
   packet: {
     ...defaultConfigJson.packet,
   },
+  railroad: {
+    ...defaultConfigJson.railroad,
+  },
   eventmodeling: {
     ...defaultConfigJson.eventmodeling,
   },

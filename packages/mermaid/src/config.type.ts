@@ -236,6 +236,7 @@ export interface MermaidConfig {
   c4?: C4DiagramConfig;
   sankey?: SankeyDiagramConfig;
   packet?: PacketDiagramConfig;
+  railroad?: RailroadDiagramConfig;
   block?: BlockDiagramConfig;
   eventmodeling?: EventModelingDiagramConfig;
   treeView?: TreeViewDiagramConfig;
@@ -1655,6 +1656,26 @@ export interface PacketDiagramConfig extends BaseDiagramConfig {
    * The vertical padding between the rows.
    */
   paddingY?: number;
+}
+/**
+ * Configuration for railroad (syntax diagram) diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "RailroadDiagramConfig".
+ */
+export interface RailroadDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Pixels per grid unit. Controls the overall scale of the diagram.
+   */
+  gridSize?: number;
+  /**
+   * Font size (px) for text inside boxes. Must match the rendered font for accurate box sizing.
+   */
+  fontSize?: number;
+  /**
+   * Font family for text inside boxes. Must match the rendered font for accurate box sizing.
+   */
+  fontFamily?: string;
 }
 /**
  * The object containing configurations specific for block diagrams.

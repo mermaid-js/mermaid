@@ -771,6 +771,7 @@ graph TD;A--x|text including URL space|B;`)
       { textDiagramType: 'treeView-beta', expectedType: 'treeView' },
       { textDiagramType: 'radar-beta', expectedType: 'radar' },
       { textDiagramType: 'architecture-beta', expectedType: 'architecture' },
+      { textDiagramType: 'railroad-beta', expectedType: 'railroad' },
     ];
 
     describe('accessibility', () => {

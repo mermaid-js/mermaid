@@ -35,6 +35,7 @@ describe('diagram-orchestration', () => {
       { text: 'gitGraph', expected: 'gitGraph' },
       { text: 'stateDiagram', expected: 'state' },
       { text: 'stateDiagram-v2', expected: 'stateDiagram' },
+      { text: 'railroad-beta', expected: 'railroad' },
     ])(
       'should $text be detected as $expected',
       ({ text, expected }: { text: string; expected: string }) => {

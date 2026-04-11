@@ -323,6 +323,8 @@ properties:
     $ref: '#/$defs/SankeyDiagramConfig'
   packet:
     $ref: '#/$defs/PacketDiagramConfig'
+  railroad:
+    $ref: '#/$defs/RailroadDiagramConfig'
   block:
     $ref: '#/$defs/BlockDiagramConfig'
   eventmodeling:
@@ -2355,6 +2357,28 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         minimum: 0
         default: 5
+
+  RailroadDiagramConfig:
+    title: Railroad Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: Configuration for railroad (syntax diagram) diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      gridSize:
+        description: Pixels per grid unit. Controls the overall scale of the diagram.
+        type: number
+        minimum: 8
+        default: 24
+      fontSize:
+        description: Font size (px) for text inside boxes. Must match the rendered font for accurate box sizing.
+        type: number
+        minimum: 6
+        default: 13
+      fontFamily:
+        description: Font family for text inside boxes. Must match the rendered font for accurate box sizing.
+        type: string
+        default: sans-serif
 
   BlockDiagramConfig:
     title: Block Diagram Config

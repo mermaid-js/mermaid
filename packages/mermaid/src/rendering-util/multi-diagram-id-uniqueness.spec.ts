@@ -89,6 +89,9 @@ const DIAGRAMS: Record<string, string> = {
     0-15: "Source Port"
     16-31: "Destination Port"`,
 
+  railroad: `railroad-beta
+    select := sequence(textBox("SELECT", "terminal"), textBox("table", "nonterminal"))`,
+
   radar: `---
 title: "Grades"
 ---

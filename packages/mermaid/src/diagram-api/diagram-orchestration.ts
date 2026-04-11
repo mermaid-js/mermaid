@@ -29,6 +29,7 @@ import architecture from '../diagrams/architecture/architectureDetector.js';
 import eventmodeling from '../diagrams/eventmodeling/detector.js';
 import { ishikawa } from '../diagrams/ishikawa/ishikawaDetector.js';
 import venn from '../diagrams/venn/vennDetector.js';
+import { railroad } from '../diagrams/railroad/detector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
 import { treemap } from '../diagrams/treemap/detector.js';
@@ -81,6 +82,7 @@ export const addDiagrams = () => {
     registerLazyLoadedDiagrams(flowchartElk, mindmap, architecture);
   }
 
+  // Added for railroad diagram integration request: register railroad as a lazy-loaded built-in diagram type.
   // Ordering of detectors is important. The first one to return true will be used.
   registerLazyLoadedDiagrams(
     c4,
@@ -109,6 +111,7 @@ export const addDiagrams = () => {
     treeView,
     radar,
     ishikawa,
+    railroad,
     treemap,
     venn,
     wardley
