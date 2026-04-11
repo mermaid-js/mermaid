@@ -65,6 +65,11 @@ export const addNamespaces = function (
     };
 
     g.setNode(vertex.id, node);
+
+    if (vertex.parent && g.hasNode(vertex.parent)) {
+      g.setParent(vertex.id, vertex.parent);
+    }
+
     addClasses(vertex.classes, g, _id, diagObj, vertex.id);
     const classes: ClassMap = diagObj.db.getClasses();
     const relations: ClassRelation[] = diagObj.db.getRelations();

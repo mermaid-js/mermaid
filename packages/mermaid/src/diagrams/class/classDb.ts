@@ -43,6 +43,7 @@ export class ClassDB implements DiagramDB {
   // private static classCounter = 0;
   private namespaces = new Map<string, NamespaceNode>();
   private namespaceCounter = 0;
+  private namespaceStack: string[] = [];
   private diagramId = '';
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
@@ -56,6 +57,7 @@ export class ClassDB implements DiagramDB {
     this.addRelation = this.addRelation.bind(this);
     this.addClassesToNamespace = this.addClassesToNamespace.bind(this);
     this.addNamespace = this.addNamespace.bind(this);
+    this.popNamespace = this.popNamespace.bind(this);
     this.setCssClass = this.setCssClass.bind(this);
     this.addMembers = this.addMembers.bind(this);
     this.addClass = this.addClass.bind(this);
@@ -177,6 +179,7 @@ export class ClassDB implements DiagramDB {
     this.functions.push(this.setupToolTips.bind(this));
     this.namespaces = new Map<string, NamespaceNode>();
     this.namespaceCounter = 0;
+    this.namespaceStack = [];
     this.diagramId = '';
     this.direction = 'TB';
     commonClear();
@@ -547,26 +550,70 @@ export class ClassDB implements DiagramDB {
     this.direction = dir;
   }
 
-  /**
-   * Function called by parser when a namespace definition has been found.
-   *
-   * @param id - ID of the namespace to add
-   * @public
-   */
-  public addNamespace(id: string) {
-    if (this.namespaces.has(id)) {
-      return;
-    }
+  private static resolveQualifiedId(id: string, stack: string[]): string {
+    const prefix = stack.at(-1);
+    return prefix ? `${prefix}.${id}` : id;
+  }
 
-    this.namespaces.set(id, {
-      id: id,
+  private static getAncestorIds(qualifiedId: string): string[] {
+    const parts = qualifiedId.split('.');
+    const ids: string[] = new Array(parts.length);
+    ids[0] = parts[0];
+    for (let i = 1; i < parts.length; i++) {
+      ids[i] = `${ids[i - 1]}.${parts[i]}`;
+    }
+    return ids;
+  }
+
+  private createNamespaceNode(id: string, parentId?: string): NamespaceNode {
+    return {
+      id,
       classes: new Map<string, ClassNode>(),
       notes: new Map<string, ClassNote>(),
       children: new Map<string, NamespaceNode>(),
-      domId: MERMAID_DOM_ID_PREFIX + id + '-' + this.namespaceCounter,
-    });
+      domId: MERMAID_DOM_ID_PREFIX + id + '-' + this.namespaceCounter++,
+      parent: parentId,
+    };
+  }
 
-    this.namespaceCounter++;
+  private linkParentChild(parentId: string, childId: string) {
+    const parent = this.namespaces.get(parentId);
+    const child = this.namespaces.get(childId);
+    if (!parent || !child) {
+      return;
+    }
+    if (!parent.children.has(childId)) {
+      parent.children.set(childId, child);
+    }
+    child.parent ??= parentId;
+  }
+
+  public addNamespace(id: string): string {
+    const qualifiedId = ClassDB.resolveQualifiedId(id, this.namespaceStack);
+    this.namespaceStack.push(qualifiedId);
+
+    if (this.namespaces.has(qualifiedId)) {
+      return qualifiedId;
+    }
+
+    const ancestorIds = ClassDB.getAncestorIds(qualifiedId);
+    for (let i = 0; i < ancestorIds.length; i++) {
+      const currentId = ancestorIds[i];
+      const parentId = i > 0 ? ancestorIds[i - 1] : undefined;
+
+      if (!this.namespaces.has(currentId)) {
+        this.namespaces.set(currentId, this.createNamespaceNode(currentId, parentId));
+      }
+      if (parentId) {
+        this.linkParentChild(parentId, currentId);
+      }
+    }
+
+    return qualifiedId;
+  }
+
+  public popNamespace() {
+    this.namespaceStack.pop();
   }
 
   public getNamespace(name: string): NamespaceNode {
@@ -661,6 +708,7 @@ export class ClassDB implements DiagramDB {
         shape: 'rect',
         cssStyles: [],
         look: config.look,
+        parentId: namespace.parent,
       };
       nodes.push(node);
     }
