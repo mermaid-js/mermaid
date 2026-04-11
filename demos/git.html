@@ -558,25 +558,31 @@
     <pre class="mermaid">
     gitGraph
       commit id: "no-click"
-      commit id: "click-same-tab"
-      commit id: "click-new-tab" tag: "tag-new-tab"
-      branch branch-same-tab
-      checkout branch-same-tab
-      commit id: "no-click-2"
+      commit id: "cl-same"
+      commit id: "cl-new" tag: "tg-new"
+      branch br-same
+      checkout br-same
+      commit id: "rev-type" type: REVERSE
       checkout main
-      branch branch-new-tab
-      checkout branch-new-tab
-      commit id: "no-click-3" tag: "tag-same-tab"
+      branch br-new
+      checkout br-new
+      commit id: "hi-type" type: HIGHLIGHT tag: "tg-same"
+      checkout main
+      merge br-same id: "merge-cl"
+      cherry-pick id: "hi-type" targetId: "cp-cl"
 
-      click commit "click-same-tab" "https://example.com/click-same-tab" "same tab"
-      click commit "click-new-tab" "https://example.com/click-new-tab" "new tab" "_blank"
+      click commit "cl-same" "https://example.com/cl-same" "same tab"
+      click commit "cl-new" "https://example.com/cl-new" "new tab" "_blank"
+      click commit "rev-type" "https://example.com/rev" "reverse"
+      click commit "hi-type" "https://example.com/hi" "highlight"
+      click commit "merge-cl" "https://example.com/merge" "merge"
+      click commit "cp-cl" "https://example.com/cp" "cherry-pick"
 
-      click branch "branch-same-tab" "https://example.com/branch-same-tab" "same tab"
-      click branch "branch-new-tab" "https://example.com/branch-new-tab" "new tab" "_blank"
+      click branch "br-same" "https://example.com/br-same" "same tab"
+      click branch "br-new" "https://example.com/br-new" "new tab" "_blank"
 
-      click tag "tag-same-tab" "https://example.com/tag-same-tab" "same tab"
-      click tag "tag-new-tab" "https://example.com/tag-new-tab" "new tab" "_blank"
-
+      click tag "tg-same" "https://example.com/tg-same" "same tab"
+      click tag "tg-new" "https://example.com/tg-new" "new tab" "_blank"
     </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
