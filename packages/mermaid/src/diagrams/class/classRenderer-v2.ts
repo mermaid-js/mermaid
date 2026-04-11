@@ -57,7 +57,7 @@ export const addNamespaces = function (
       shape: shape,
       id: vertex.id,
       domId: vertex.domId,
-      labelText: sanitizeText(vertex.id),
+      labelText: sanitizeText(vertex.label),
       labelStyle: '',
       style: 'fill: none; stroke: black',
       // TODO V10: Flowchart ? Keeping flowchart for backwards compatibility. Remove in next major release

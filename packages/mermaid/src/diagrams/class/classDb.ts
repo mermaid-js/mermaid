@@ -565,9 +565,10 @@ export class ClassDB implements DiagramDB {
     return ids;
   }
 
-  private createNamespaceNode(id: string, parentId?: string): NamespaceNode {
+  private createNamespaceNode(id: string, label: string, parentId?: string): NamespaceNode {
     return {
       id,
+      label,
       classes: new Map<string, ClassNode>(),
       notes: new Map<string, ClassNote>(),
       children: new Map<string, NamespaceNode>(),
@@ -596,13 +597,14 @@ export class ClassDB implements DiagramDB {
       return qualifiedId;
     }
 
+    const parts = qualifiedId.split('.');
     const ancestorIds = ClassDB.getAncestorIds(qualifiedId);
     for (let i = 0; i < ancestorIds.length; i++) {
       const currentId = ancestorIds[i];
       const parentId = i > 0 ? ancestorIds[i - 1] : undefined;
 
       if (!this.namespaces.has(currentId)) {
-        this.namespaces.set(currentId, this.createNamespaceNode(currentId, parentId));
+        this.namespaces.set(currentId, this.createNamespaceNode(currentId, parts[i], parentId));
       }
       if (parentId) {
         this.linkParentChild(parentId, currentId);
@@ -701,7 +703,7 @@ export class ClassDB implements DiagramDB {
     for (const namespace of this.namespaces.values()) {
       const node: Node = {
         id: namespace.id,
-        label: namespace.id,
+        label: namespace.label,
         isGroup: true,
         padding: config.class!.padding ?? 16,
         // parent node must be one of [rect, roundedWithTitle, noteGroup, divider]
