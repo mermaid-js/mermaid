@@ -86,6 +86,59 @@ describe('given a basic class diagram, ', function () {
       expect(relations[0].id1).toBe('Admin');
       expect(relations[0].id2).toBe('Report');
       expect(relations[0].title).toBe('generates');
+
+      // Verify intermediate namespaces were created with hierarchy
+      const namespaces = classDb.getNamespaces();
+      expect(namespaces.has('Company')).toBe(true);
+      expect(namespaces.has('Company.Project')).toBe(true);
+      expect(namespaces.has('Company.Project.Module')).toBe(true);
+      expect(namespaces.has('Company.Project.Module.SubModule')).toBe(true);
+
+      // Verify parent-child relationships
+      expect(namespaces.get('Company')!.parent).toBeUndefined();
+      expect(namespaces.get('Company.Project')!.parent).toBe('Company');
+      expect(namespaces.get('Company.Project.Module')!.parent).toBe('Company.Project');
+      expect(namespaces.get('Company.Project.Module.SubModule')!.parent).toBe(
+        'Company.Project.Module'
+      );
+
+      // Verify children maps
+      expect(namespaces.get('Company')!.children.has('Company.Project')).toBe(true);
+      expect(namespaces.get('Company.Project')!.children.has('Company.Project.Module')).toBe(true);
+      expect(
+        namespaces.get('Company.Project.Module')!.children.has('Company.Project.Module.SubModule')
+      ).toBe(true);
+    });
+
+    it('should handle syntactically nested namespace blocks', () => {
+      const str = `classDiagram
+        namespace Outer {
+          namespace Inner {
+            class Foo {
+              +bar()
+            }
+          }
+          class Baz {
+            +qux()
+          }
+        }`;
+
+      parser.parse(str);
+
+      const foo = classDb.getClass('Foo');
+      const baz = classDb.getClass('Baz');
+      const namespaces = classDb.getNamespaces();
+
+      // Foo should be in the qualified inner namespace
+      expect(foo.parent).toBe('Outer.Inner');
+      // Baz should be in the outer namespace
+      expect(baz.parent).toBe('Outer');
+
+      // Verify namespace hierarchy
+      expect(namespaces.has('Outer')).toBe(true);
+      expect(namespaces.has('Outer.Inner')).toBe(true);
+      expect(namespaces.get('Outer.Inner')!.parent).toBe('Outer');
+      expect(namespaces.get('Outer')!.children.has('Outer.Inner')).toBe(true);
     });
 
     it('should handle accTitle and accDescr', function () {
@@ -503,7 +556,7 @@ class C13["With Città foreign language"]
         {
           "annotations": [],
           "cssClasses": "default",
-          "domId": "classId-Student-141",
+          "domId": "classId-Student-143",
           "id": "Student",
           "label": "Student",
           "members": [

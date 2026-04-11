@@ -181,6 +181,7 @@ export interface NamespaceNode {
   classes: ClassMap;
   notes: ClassNoteMap;
   children: NamespaceMap;
+  parent?: string;
 }
 
 export interface StyleClass {
