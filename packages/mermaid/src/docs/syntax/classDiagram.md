@@ -320,6 +320,22 @@ namespace BaseShapes {
 }
 ```
 
+### Namespace Labels (v<MERMAID_RELEASE_VERSION>+)
+
+A namespace can be given a display label using square bracket syntax, similar to class labels:
+
+```mermaid-example
+classDiagram
+    namespace Auth["Authentication Service"] {
+        class UserService {
+            +login()
+            +logout()
+        }
+    }
+```
+
+The label replaces the namespace name in the rendered diagram, while the name is still used internally for relationships and nesting.
+
 ### Nested Namespaces (v<MERMAID_RELEASE_VERSION>+)
 
 Namespaces can be nested to represent hierarchical groupings. There are two ways to define nested namespaces:

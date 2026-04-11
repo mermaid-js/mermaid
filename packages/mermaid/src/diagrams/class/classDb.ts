@@ -589,11 +589,14 @@ export class ClassDB implements DiagramDB {
     child.parent ??= parentId;
   }
 
-  public addNamespace(id: string): string {
+  public addNamespace(id: string, label?: string): string {
     const qualifiedId = ClassDB.resolveQualifiedId(id, this.namespaceStack);
     this.namespaceStack.push(qualifiedId);
 
     if (this.namespaces.has(qualifiedId)) {
+      if (label) {
+        this.namespaces.get(qualifiedId)!.label = label;
+      }
       return qualifiedId;
     }
 
@@ -602,9 +605,11 @@ export class ClassDB implements DiagramDB {
     for (let i = 0; i < ancestorIds.length; i++) {
       const currentId = ancestorIds[i];
       const parentId = i > 0 ? ancestorIds[i - 1] : undefined;
+      const isLeaf = i === ancestorIds.length - 1;
+      const nodeLabel = isLeaf && label ? label : parts[i];
 
       if (!this.namespaces.has(currentId)) {
-        this.namespaces.set(currentId, this.createNamespaceNode(currentId, parts[i], parentId));
+        this.namespaces.set(currentId, this.createNamespaceNode(currentId, nodeLabel, parentId));
       }
       if (parentId) {
         this.linkParentChild(parentId, currentId);

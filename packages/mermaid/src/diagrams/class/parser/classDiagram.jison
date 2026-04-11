@@ -282,6 +282,7 @@ namespaceStatement
 
 namespaceIdentifier
     : NAMESPACE namespaceName { $$=yy.addNamespace($2); }
+    | NAMESPACE namespaceName classLabel { $$=yy.addNamespace($2, $3); }
     ;
 
 classStatements
