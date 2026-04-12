@@ -1,5 +1,27 @@
 # Railroad Diagram — Implementation Notes
 
+## Design rationale: why an expression language and not ABNF/EBNF
+
+The surface syntax of this diagram type is a functional expression language
+(`sequence(...)`, `stack(...)`, `bypass(...)`, etc.) rather than a grammar
+notation like ABNF or EBNF.
+
+Two reasons drove this decision:
+
+**1. Railroad diagrams are typically generated, not hand-authored.**
+Real-world use cases involve taking an existing grammar (ABNF, EBNF, PEG, etc.)
+and visualising it. The tool generating the mermaid source already understands
+the grammar formalism; it does not need mermaid to re-parse one. The expression
+language gives generators a stable, unambiguous target to emit.
+
+**2. The expression language operates at the abstraction level of the diagram,
+not the abstraction level of grammars.**
+ABNF describes language structure (what strings are valid). The expression
+language describes visual layout (how tracks, boxes, branches, and loops are
+composed). These are different concerns. Keeping them separate means the diagram
+type is not tied to any particular grammar formalism and can visualise things
+that are not grammars at all (state machines, protocol flows, decision trees).
+
 ## Three-phase design
 
 The rendering pipeline is split into three distinct phases, each with a clear responsibility boundary:
