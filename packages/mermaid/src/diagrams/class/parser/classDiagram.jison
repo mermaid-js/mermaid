@@ -102,9 +102,24 @@ line was introduced with 'click'.
 */
 <*>"href"                       return 'HREF';
 
-<generic>[~]                    this.popState();
-<generic>[^~]*                  return "GENERICTYPE";
-<*>"~"                          this.begin("generic");
+<generic>[^~]+                  %{ this._gContent += yytext; %}
+<generic>"~"                    %{
+    var nextCh = this._input.length > 0 ? this._input.charAt(0) : '';
+    if (/\w/.test(nextCh)) {
+        this._gDepth++;
+        this._gContent += '~';
+    } else {
+        this._gDepth--;
+        if (this._gDepth > 0) {
+            this._gContent += '~';
+        } else {
+            this.popState();
+            yytext = this._gContent;
+            if (this._gContent.length > 0) return "GENERICTYPE";
+        }
+    }
+%}
+<*>"~"                          %{ this.begin("generic"); this._gDepth = 1; this._gContent = ''; %}
 
 <bqstring>[`]                   this.popState();
 <bqstring>[^`]+                 return "BQUOTE_STR";

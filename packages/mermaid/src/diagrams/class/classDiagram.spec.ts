@@ -1223,6 +1223,45 @@ describe('given a class diagram with generics, ', function () {
       parser.parse(str);
     });
 
+    it('should handle nested generic class', function () {
+      const str = 'classDiagram\n' + 'class People~List~Person~~';
+
+      parser.parse(str);
+
+      const classNode = classDb.getClass('People');
+      expect(classNode.type).toBe('List~Person~');
+    });
+
+    it('should handle deeply nested generic class', function () {
+      const str = 'classDiagram\n' + 'class Container~List~List~String~~~';
+
+      parser.parse(str);
+
+      const classNode = classDb.getClass('Container');
+      expect(classNode.type).toBe('List~List~String~~');
+    });
+
+    it('should handle nested generic class with relationships', function () {
+      const str =
+        'classDiagram\n' + 'class People~List~Person~~\n' + 'People -- Person : contains >';
+
+      parser.parse(str);
+    });
+
+    it('should handle nested generic class with brackets', function () {
+      const str =
+        'classDiagram\n' +
+        'class People~List~Person~~ {\n' +
+        'String name\n' +
+        'void add()\n' +
+        '}';
+
+      parser.parse(str);
+
+      const classNode = classDb.getClass('People');
+      expect(classNode.type).toBe('List~Person~');
+    });
+
     it('should handle "namespace"', function () {
       const str = `classDiagram
 namespace Namespace1 { class Class1 }
