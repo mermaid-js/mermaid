@@ -63,7 +63,7 @@ export class BasePlot implements Plot {
               plot,
               this.xAxis,
               this.yAxis,
-              this.chartConfig.chartOrientation,
+              this.chartConfig,
               i
             );
             drawableElem.push(...linePlot.getDrawableElement());

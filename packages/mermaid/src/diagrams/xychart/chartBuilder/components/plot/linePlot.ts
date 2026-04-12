@@ -204,7 +204,7 @@ export class LinePlot {
     private plotData: LinePlotData,
     private xAxis: Axis,
     private yAxis: Axis,
-    private orientation: XYChartConfig['chartOrientation'],
+    private chartConfig: XYChartConfig,
     private plotIndex: number
   ) {}
 
@@ -215,7 +215,7 @@ export class LinePlot {
     ]);
 
     let path: string | null;
-    if (this.orientation === 'horizontal') {
+    if (this.chartConfig.chartOrientation === 'horizontal') {
       path = line()
         .y((d) => d[0])
         .x((d) => d[1])(finalData);
@@ -243,8 +243,8 @@ export class LinePlot {
     ];
 
     if (this.plotData.pointLabels && this.plotData.pointLabels.length > 0) {
-      const labelOffset = 14;
-      const fontSize = 12;
+      const fontSize = this.chartConfig.xAxis.labelFontSize;
+      const labelOffset = fontSize + 2;
       const textData: TextElem[] = [];
 
       for (const [i, [px, py]] of finalData.entries()) {
@@ -253,7 +253,7 @@ export class LinePlot {
           continue;
         }
 
-        if (this.orientation === 'horizontal') {
+        if (this.chartConfig.chartOrientation === 'horizontal') {
           const { flip, offset } = computeLabelPlacementHorizontal(
             finalData,
             i,
