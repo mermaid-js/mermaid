@@ -139,6 +139,8 @@ line was introduced with 'click'.
 <*>\w+                          return 'ALPHA';
 <*>"["                          return 'SQS';
 <*>"]"                          return 'SQE';
+<*>"("                          return 'LPAREN';
+<*>")"                          return 'RPAREN';
 <*>[!"#$%&'*+,-.`?\\/]          return 'PUNCTUATION';
 <*>[0-9]+                       return 'NUM';
 <*>[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
@@ -418,7 +420,7 @@ style
     | style styleComponent  {$$ = $style + $styleComponent;}
     ;
 
-styleComponent: ALPHA | NUM | COLON | UNIT | SPACE | BRKT | STYLE | PCT | LABEL;
+styleComponent: ALPHA | NUM | COLON | UNIT | SPACE | BRKT | STYLE | PCT | LABEL | MINUS | DOT | PLUS | PUNCTUATION | LPAREN | RPAREN;
 
 commentToken   : textToken | graphCodeTokens ;
 

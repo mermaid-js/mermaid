@@ -255,6 +255,44 @@
     </pre>
     <hr />
 
+    <pre class="mermaid">
+    classDiagram
+      class Controller {
+        +handleRequest()
+      }
+      class Service {
+        -List~String~ items
+        +process()
+      }
+      class Repository {
+        +save()
+        +find()
+      }
+      class Logger {
+        +log(message)
+      }
+      class Cache {
+        +get(key)
+        +set(key)
+      }
+      class Config {
+        +String env
+        +load()
+      }
+      Controller --> Service
+      Service --> Repository
+      Service --> Logger
+      Service --> Cache
+      Cache --> Config
+      style Controller fill:#f9f,font-family:Arial,font-size:14px
+      style Service fill:rgb(200 230 255),font-weight:bold
+      style Repository fill:#dfd,stroke:#393,stroke-width:2px
+      style Logger fill:#ffd,stroke-dasharray:5,stroke:#aa0,stroke-width:1.5px
+      style Cache fill:#eef,stroke:#33a,stroke-width:3px,opacity:0.85
+      style Config fill:#fee,font-style:italic,stroke:#a33,stroke-width:2px
+    </pre>
+    <hr />
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
