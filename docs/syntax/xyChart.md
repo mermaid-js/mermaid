@@ -312,7 +312,7 @@ xychart
 Existing syntax without labels continues to work unchanged.
 
 > **Note**
-> Point labels use a fixed font size of 12px. In vertical charts, labels appear above each point. In horizontal charts, labels appear to the right.
+> Point labels use a fixed font size of 12px. In vertical charts, labels appear above each point. In horizontal charts, labels appear to the right. Labels are currently supported on `line` plots only; the syntax is accepted on `bar` plots but labels are ignored.
 
 ## Example on config and theme
 

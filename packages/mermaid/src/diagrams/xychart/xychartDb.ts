@@ -165,7 +165,7 @@ interface ParsedDataPoint {
 
 function setLineData(title: NormalTextType, data: ParsedDataPoint[]) {
   const values = data.map((d) => d.value);
-  const labels = data.map((d) => d.label);
+  const labels = data.map((d) => (d.label ? textSanitizer(d.label) : ''));
   const plotData = transformDataWithoutCategory(values);
   const hasAnyLabel = labels.some((l) => l !== '');
   xyChartData.plots.push({
