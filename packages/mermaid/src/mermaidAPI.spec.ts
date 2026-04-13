@@ -1156,4 +1156,73 @@ flowchart TD
       }
     );
   });
+
+  describe('flowchart numeric subgraph ids', () => {
+    beforeEach(() => {
+      mermaidAPI.globalReset();
+      mermaid.initialize({
+        startOnLoad: false,
+        deterministicIds: true,
+        deterministicIDSeed: '',
+        flowchart: { htmlLabels: false },
+      });
+    });
+
+    jsdomIt('renders a flowchart with a numeric subgraph id', async () => {
+      const diagramText = `flowchart LR
+  subgraph 1 ["inner"]
+    A
+  end`;
+
+      await expect(mermaidAPI.render('numeric-subgraph-id', diagramText)).resolves.toMatchObject({
+        svg: expect.any(String),
+      });
+    });
+
+    jsdomIt('renders nested flowcharts with numeric subgraph ids', async () => {
+      const diagramText = `flowchart LR
+  subgraph 1 ["outer"]
+    subgraph 2 ["inner"]
+      A --> B
+    end
+  end
+  B --> C`;
+
+      await expect(
+        mermaidAPI.render('nested-numeric-subgraph-id', diagramText)
+      ).resolves.toMatchObject({
+        svg: expect.any(String),
+      });
+    });
+
+    jsdomIt('renders a flowchart when a numeric subgraph id has an outgoing edge', async () => {
+      const diagramText = `flowchart LR
+  subgraph 1 ["outer"]
+    subgraph 2 ["inner"]
+      A --> B
+    end
+  end
+  1 --> C`;
+
+      await expect(mermaidAPI.render('numeric-subgraph-edge', diagramText)).resolves.toMatchObject({
+        svg: expect.any(String),
+      });
+    });
+
+    jsdomIt('renders the alphabetic equivalent of the numeric subgraph edge case', async () => {
+      const diagramText = `flowchart LR
+  subgraph a ["outer"]
+    subgraph b ["inner"]
+      A --> B
+    end
+  end
+  a --> C`;
+
+      await expect(
+        mermaidAPI.render('alphabetic-subgraph-edge', diagramText)
+      ).resolves.toMatchObject({
+        svg: expect.any(String),
+      });
+    });
+  });
 });
