@@ -68,20 +68,15 @@ describe('Railroad Database', () => {
     expect(db.getAccDescription()).toBe('Accessible Description');
   });
 
-  it('should handle diagram title', () => {
+  it('should share state between setTitle and setDiagramTitle', () => {
     db.setDiagramTitle('Diagram Title');
     expect(db.getDiagramTitle()).toBe('Diagram Title');
+    expect(db.getTitle()).toBe('Diagram Title');
   });
 
-  it('should fall back to title when diagram title is not set', () => {
+  it('should return title via getDiagramTitle', () => {
     db.setTitle('Regular Title');
     expect(db.getDiagramTitle()).toBe('Regular Title');
-  });
-
-  it('should prioritize diagram title over regular title', () => {
-    db.setTitle('Regular Title');
-    db.setDiagramTitle('Diagram Title');
-    expect(db.getDiagramTitle()).toBe('Diagram Title');
   });
 
   it('should return undefined for non-existent rule', () => {
