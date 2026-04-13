@@ -1042,4 +1042,68 @@ class C13["With Città foreign language"]
       { logLevel: 1, htmlLabels: true }
     );
   });
+
+  it('should render nested namespaces with dot notation', () => {
+    imgSnapshotTest(`
+      classDiagram
+      namespace Company.Engineering.Backend {
+        class Developer {
+          +writeCode()
+        }
+      }
+      namespace Company.Engineering.Frontend {
+        class Designer {
+          +createMockup()
+        }
+      }
+      namespace Company.Engineering {
+        class TechLead {
+          +planSprint()
+        }
+      }
+      TechLead --> Developer : leads
+      TechLead --> Designer : leads
+    `);
+  });
+
+  it('should render syntactically nested namespaces', () => {
+    imgSnapshotTest(`
+      classDiagram
+      namespace Platform {
+        namespace Auth {
+          class UserService {
+            +login()
+            +logout()
+          }
+        }
+        namespace Data {
+          class Repository {
+            +find()
+            +save()
+          }
+        }
+        class Gateway {
+          +route()
+        }
+      }
+      Gateway --> UserService : delegates
+      Gateway --> Repository : delegates
+    `);
+  });
+
+  it('should render a namespace with a custom label', () => {
+    imgSnapshotTest(`
+      classDiagram
+      namespace Auth["Authentication Service"] {
+        class UserService {
+          +login()
+          +logout()
+        }
+        class TokenManager {
+          +generate()
+        }
+      }
+      UserService --> TokenManager : uses
+    `);
+  });
 });
