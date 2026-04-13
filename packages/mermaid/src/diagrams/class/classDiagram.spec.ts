@@ -1246,6 +1246,11 @@ describe('given a class diagram with generics, ', function () {
         'classDiagram\n' + 'class People~List~Person~~\n' + 'People -- Person : contains >';
 
       parser.parse(str);
+
+      const relations = classDb.getRelations();
+      expect(relations).toHaveLength(1);
+      expect(relations[0].id1).toBe('People');
+      expect(relations[0].id2).toBe('Person');
     });
 
     it('should handle nested generic class with brackets', function () {
@@ -1260,6 +1265,18 @@ describe('given a class diagram with generics, ', function () {
 
       const classNode = classDb.getClass('People');
       expect(classNode.type).toBe('List~Person~');
+    });
+
+    it('should handle empty generic class (no type parameter)', function () {
+      const str = 'classDiagram\n' + 'class Empty~~';
+
+      parser.parse(str);
+
+      // Empty generics (`~~`) produce no GENERICTYPE token, so the class
+      // is parsed without a type parameter — matching pre-existing behavior
+      const classNode = classDb.getClass('Empty');
+      expect(classNode).toBeDefined();
+      expect(classNode.type).toBe('');
     });
 
     it('should handle "namespace"', function () {
