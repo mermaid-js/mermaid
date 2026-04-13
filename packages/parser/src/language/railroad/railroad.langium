@@ -6,7 +6,10 @@ terminal ACC_DESCR: /accDescr(?:[\t ]*:([^\n\r]*?(?=%%)|[^\n\r]*)|\s*{([^}]*)})/
 
 terminal RR_ID returns string: /[A-Z_a-z][\w-]*/;
 terminal RR_STRING returns string: /"([^"\\]|\\.)*"|'([^'\\]|\\.)*'/;
-// Keep special sequences local to a rule so a postfix '?' does not consume across semicolons.
+// Special sequence: `? … ?` delimiters.
+// Lookahead requires at least one non-whitespace char between delimiters.
+// Semicolons are excluded so a special sequence cannot span rule boundaries
+// and the postfix `?` operator does not collide with the opening delimiter.
 terminal RR_SPECIAL_SEQUENCE returns string: /\?(?=[^?;]*[^?\s;][^?;]*\?)[^?;]*\?/;
 
 hidden terminal RR_WHITESPACE: /[\t \r\n]+/;
