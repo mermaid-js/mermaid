@@ -591,6 +591,7 @@ export class ClassDB implements DiagramDB {
 
   public addNamespace(id: string, label?: string): string {
     const qualifiedId = ClassDB.resolveQualifiedId(id, this.namespaceStack);
+    // Push first — grammar guarantees a matching popNamespace in all cases, including re-declarations
     this.namespaceStack.push(qualifiedId);
 
     if (this.namespaces.has(qualifiedId)) {
