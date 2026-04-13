@@ -7,7 +7,7 @@ import rough from 'roughjs';
 export async function datastore<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { cssClasses, labelPaddingX, labelPaddingY, padding, width, height } = node;
 
-  const options: RectOptions = {
+  const rectOptions: RectOptions = {
     rx: 0,
     ry: 0,
     classes: cssClasses ?? '',
@@ -15,23 +15,39 @@ export async function datastore<T extends SVGGraphicsElement>(parent: D3Selectio
     labelPaddingY: labelPaddingY ?? padding ?? 0,
   };
 
-  const rect = await drawRect(parent, node, options);
+  const rect = await drawRect(parent, node, rectOptions);
 
   if (node.look === 'handDrawn') {
     // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(rect);
-    const options = userNodeOverrides(node, {});
+    const nodeOverrideOptions = userNodeOverrides(node, {});
 
     const borderSelection = rect.select('.basic.label-container > path:nth-child(2)');
-    const borderPath = borderSelection.node() as SVGPathElement;
-    const bb = borderPath.getBBox();
+    const borderPath = borderSelection.node();
+    if (!borderPath) {
+      return rect;
+    }
+
+    let bbox: DOMRect | null = null;
+    if (borderPath instanceof SVGGraphicsElement) {
+      bbox = borderPath.getBBox();
+    } else {
+      return rect;
+    }
 
     rect.insert(
-      () => rc.line(bb.x, bb.y, bb.x + bb.width, bb.y, options),
+      () => rc.line(bbox.x, bbox.y, bbox.x + bbox.width, bbox.y, nodeOverrideOptions),
       '.basic.label-container g.label'
     );
     rect.insert(
-      () => rc.line(bb.x, bb.y + bb.height, bb.x + bb.width, bb.y + bb.height, options),
+      () =>
+        rc.line(
+          bbox.x,
+          bbox.y + bbox.height,
+          bbox.x + bbox.width,
+          bbox.y + bbox.height,
+          nodeOverrideOptions
+        ),
       '.basic.label-container g.label'
     );
     borderSelection.remove();
