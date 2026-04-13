@@ -3,11 +3,18 @@ import {
   createRailroadServices,
   type Railroad,
   type RailroadChoice,
+  type RailroadExceptionPostfix,
+  type RailroadGroup,
+  type RailroadNonTerminal,
+  type RailroadOptional,
   type RailroadPostfix,
   type RailroadPrimary,
+  type RailroadRepetition,
   type RailroadRule as LangiumRailroadRule,
   type RailroadSequence,
+  type RailroadSpecial,
   type RailroadTerm,
+  type RailroadTerminal,
 } from '@mermaid-js/parser';
 
 import type { ParserDefinition } from '../../../diagram-api/types.js';
@@ -49,32 +56,32 @@ const transformPrimary = (primary: RailroadPrimary): ASTNode => {
     case 'RailroadTerminal':
       return {
         type: 'terminal',
-        value: primary.value,
+        value: (primary as RailroadTerminal).value,
       };
     case 'RailroadNonTerminal':
       return {
         type: 'nonterminal',
-        name: primary.name,
+        name: (primary as RailroadNonTerminal).name,
       };
     case 'RailroadSpecial':
       return {
         type: 'special',
-        text: primary.text,
+        text: (primary as RailroadSpecial).text,
       };
     case 'RailroadGroup':
       return {
         type: 'group',
-        element: transformChoice(primary.element),
+        element: transformChoice((primary as RailroadGroup).element),
       };
     case 'RailroadOptional':
       return {
         type: 'optional',
-        element: transformChoice(primary.element),
+        element: transformChoice((primary as RailroadOptional).element),
       };
     case 'RailroadRepetition':
       return {
         type: 'repetition',
-        element: transformChoice(primary.element),
+        element: transformChoice((primary as RailroadRepetition).element),
         min: 0,
         max: Infinity,
       };
@@ -108,7 +115,7 @@ const transformPostfix = (node: ASTNode, postfix: RailroadPostfix): ASTNode => {
       return {
         type: 'exception',
         base: node,
-        except: transformPrimary(postfix.except),
+        except: transformPrimary((postfix as RailroadExceptionPostfix).except),
       };
     default:
       throw new Error(`Unsupported railroad postfix node: ${postfix.$type}`);
