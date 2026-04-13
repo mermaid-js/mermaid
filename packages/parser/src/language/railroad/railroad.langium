@@ -85,7 +85,7 @@ interface RailroadExceptionPostfix extends RailroadPostfix {
 }
 
 entry Railroad returns Railroad:
-    ('railroad-diagram' | 'railroad')
+    'railroad-diagram'
     ((title=TITLE | accTitle=ACC_TITLE | accDescr=ACC_DESCR))*
     rules+=RailroadRule*
 ;

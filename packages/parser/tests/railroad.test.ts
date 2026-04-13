@@ -14,8 +14,8 @@ describe('Railroad parser', () => {
     return parser.parse<Railroad>(input);
   };
 
-  it('should parse the railroad alias with title and accessibility metadata', () => {
-    const result = parse(`railroad
+  it('should parse title and accessibility metadata', () => {
+    const result = parse(`railroad-diagram
 title Example Grammar
 accTitle: Accessible Railroad
 accDescr: Railroad description
