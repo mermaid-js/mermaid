@@ -1825,10 +1825,6 @@ export interface WardleyDiagramConfig extends BaseDiagramConfig {
  */
 export interface RailroadDiagramConfig extends BaseDiagramConfig {
   /**
-   * Diagram orientation (left-to-right or top-to-bottom)
-   */
-  orientation?: 'LR' | 'TB';
-  /**
    * Use compact layout mode
    */
   compactMode?: boolean;

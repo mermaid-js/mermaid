@@ -80,7 +80,6 @@ export interface RailroadRule {
  */
 export interface RailroadStyleOptions {
   // Layout
-  orientation?: 'LR' | 'TB';
   compactMode?: boolean;
 
   // Spacing
@@ -135,7 +134,6 @@ export type RailroadDiagramConfig = RailroadStyleOptions;
  */
 export const DEFAULT_RAILROAD_CONFIG: Required<RailroadStyleOptions> = {
   // Layout
-  orientation: 'LR',
   compactMode: false,
 
   // Spacing

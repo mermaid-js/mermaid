@@ -2563,11 +2563,6 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     type: object
     unevaluatedProperties: false
     properties:
-      orientation:
-        description: Diagram orientation (left-to-right or top-to-bottom)
-        type: string
-        enum: ['LR', 'TB']
-        default: 'LR'
       compactMode:
         description: Use compact layout mode
         type: boolean
