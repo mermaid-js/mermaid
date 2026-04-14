@@ -56,6 +56,8 @@ required:
   - block
   - treeView
   - look
+  - eventmodeling
+  - radar
   - venn
 properties:
   theme:
@@ -323,6 +325,8 @@ properties:
     $ref: '#/$defs/PacketDiagramConfig'
   block:
     $ref: '#/$defs/BlockDiagramConfig'
+  eventmodeling:
+    $ref: '#/$defs/EventModelingDiagramConfig'
   treeView:
     $ref: '#/$defs/TreeViewDiagramConfig'
   radar:
@@ -2364,6 +2368,22 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         minimum: 0
         default: 8
 
+  EventModelingDiagramConfig:
+    title: Event Modeling Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for Event Modeling diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      padding:
+        description: The padding around the Event Modeling diagram.
+        type: number
+        default: 30
+      rowHeight:
+        description: The height of each row in the Event Modeling diagram.
+        type: number
+        minimum: 1
+        default: 32
   TreeViewDiagramConfig:
     title: TreeView Diagram Config
     allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]

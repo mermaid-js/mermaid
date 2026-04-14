@@ -446,4 +446,48 @@ describe('Block diagram', () => {
       {}
     );
   });
+
+  it('BL34: hexagon shape block should span correctly', () => {
+    imgSnapshotTest(
+      `block-beta
+columns 3
+  A1{{"Opening tag"}} space A3{{"Closing tag"}}
+  B1["&lt;tagname&gt;"] B2["content"] B3["&lt;/tagname&gt;"]
+  C{{"Element"}}:3
+`,
+      {}
+    );
+  });
+
+  it('BL35: block arrow should span multiple columns when widthInColumns is set', () => {
+    imgSnapshotTest(
+      `block-beta
+columns 10
+
+  arrow<["span 10"]>(x):10
+  A
+  B
+  C
+  D
+  E
+  F
+  G
+  H
+  I
+  J
+  `,
+      {}
+    );
+  });
+
+  it('BL35: mixed column spans should not shrink column widths (issue #7503)', () => {
+    imgSnapshotTest(
+      `block-beta
+    columns 5
+    PA["Paid proceeds (actual) $613"]:1 DEF["Deficit $5,155"]:4
+    CA["Cash back (actual) $128"]:1 SPO["Spoilage (35 unsold) $5,640"]:4
+`,
+      {}
+    );
+  });
 });

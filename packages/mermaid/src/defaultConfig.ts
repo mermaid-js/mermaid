@@ -261,6 +261,9 @@ const config: RequiredDeep<MermaidConfig> = {
   packet: {
     ...defaultConfigJson.packet,
   },
+  eventmodeling: {
+    ...defaultConfigJson.eventmodeling,
+  },
   treeView: {
     ...defaultConfigJson.treeView,
     useWidth: undefined,
