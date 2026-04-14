@@ -1,2 +1,27 @@
-#!/usr/bin/env sh
-NODE_OPTIONS="--max_old_space_size=8192" pnpm run pre-commit
+#!/bin/sh
+# crag:auto-start
+# Generated from governance.md by crag
+# Regenerate: crag compile --target husky
+set -e
+
+# lint
+npm run lint || exit 1
+npx tsc --noEmit || exit 1
+
+# test
+npm run test || exit 1
+
+# build
+npm run build || exit 1
+
+# ci (inferred from workflow)
+pnpm run --filter mermaid types:build-config || exit 1
+pnpm run docs:build || exit 1
+pnpm run build:viz || exit 1
+ERROR_MESSAGE+=' make sure your packages are up-to-date by running `pnpm install`.' || exit 1
+ERROR_MESSAGE+=' You may also need to delete your prettier cache by running' || exit 1
+ERROR_MESSAGE+=' `rm ./node_modules/.cache/prettier/.prettier-cache`.' || exit 1
+ERROR_MESSAGE+=' `pnpm run --filter mermaid types:build-config`' || exit 1
+ERROR_MESSAGE+=' Run `pnpm run --filter mermaid checkCircle` on your local machine' || exit 1
+
+# crag:auto-end

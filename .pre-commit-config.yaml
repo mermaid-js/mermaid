@@ -1,0 +1,80 @@
+# crag:auto-start
+# Generated from governance.md by crag
+# Regenerate: crag compile --target pre-commit
+repos:
+  - repo: local
+    hooks:
+      - id: gate-1
+        name: "lint: npm run lint"
+        entry: bash -c 'npm run lint'
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: gate-2
+        name: "lint: npx tsc --noEmit"
+        entry: bash -c 'npx tsc --noEmit'
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: gate-3
+        name: "test: npm run test"
+        entry: bash -c 'npm run test'
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: gate-4
+        name: "build: npm run build"
+        entry: bash -c 'npm run build'
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: gate-5
+        name: "ci (inferred from workflow): pnpm run --filter mermaid ty..."
+        entry: bash -c 'pnpm run --filter mermaid types:build-config'
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: gate-6
+        name: "ci (inferred from workflow): pnpm run docs:build"
+        entry: bash -c 'pnpm run docs:build'
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: gate-7
+        name: "ci (inferred from workflow): pnpm run build:viz"
+        entry: bash -c 'pnpm run build:viz'
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: gate-8
+        name: "ci (inferred from workflow): ERROR_MESSAGE+=' make sure y..."
+        entry: bash -c 'ERROR_MESSAGE+='\'' make sure your packages are up-to-date by running `pnpm install`.'\'''
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: gate-9
+        name: "ci (inferred from workflow): ERROR_MESSAGE+=' You may als..."
+        entry: bash -c 'ERROR_MESSAGE+='\'' You may also need to delete your prettier cache by running'\'''
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: gate-10
+        name: "ci (inferred from workflow): ERROR_MESSAGE+=' `rm ./node_..."
+        entry: bash -c 'ERROR_MESSAGE+='\'' `rm ./node_modules/.cache/prettier/.prettier-cache`.'\'''
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: gate-11
+        name: "ci (inferred from workflow): ERROR_MESSAGE+=' `pnpm run -..."
+        entry: bash -c 'ERROR_MESSAGE+='\'' `pnpm run --filter mermaid types:build-config`'\'''
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: gate-12
+        name: "ci (inferred from workflow): ERROR_MESSAGE+=' Run `pnpm r..."
+        entry: bash -c 'ERROR_MESSAGE+='\'' Run `pnpm run --filter mermaid checkCircle` on your local machine'\'''
+        language: system
+        pass_filenames: false
+        always_run: true
+
+# crag:auto-end

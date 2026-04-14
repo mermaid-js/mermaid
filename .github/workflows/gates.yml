@@ -1,0 +1,60 @@
+# crag:auto-start
+# Generated from governance.md by crag
+# Regenerate: crag compile --target github
+name: Governance Gates
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  gates:
+    name: Governance Gates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - name: "lint: npm run lint"
+        run: |
+          npm run lint
+      - name: "lint: npx tsc --noEmit"
+        run: |
+          npx tsc --noEmit
+      - name: "test: npm run test"
+        run: |
+          npm run test
+      - name: "build: npm run build"
+        run: |
+          npm run build
+      - name: "ci (inferred from workflow): pnpm run --filter mermaid types:build-config"
+        run: |
+          pnpm run --filter mermaid types:build-config
+      - name: "ci (inferred from workflow): pnpm run docs:build"
+        run: |
+          pnpm run docs:build
+      - name: "ci (inferred from workflow): pnpm run build:viz"
+        run: |
+          pnpm run build:viz
+      - name: "ci (inferred from workflow): ERROR_MESSAGE+=' make sure your packages are up-to-date b..."
+        run: |
+          ERROR_MESSAGE+=' make sure your packages are up-to-date by running `pnpm install`.'
+      - name: "ci (inferred from workflow): ERROR_MESSAGE+=' You may also need to delete your prettie..."
+        run: |
+          ERROR_MESSAGE+=' You may also need to delete your prettier cache by running'
+      - name: "ci (inferred from workflow): ERROR_MESSAGE+=' `rm ./node_modules/.cache/prettier/.pret..."
+        run: |
+          ERROR_MESSAGE+=' `rm ./node_modules/.cache/prettier/.prettier-cache`.'
+      - name: "ci (inferred from workflow): ERROR_MESSAGE+=' `pnpm run --filter mermaid types:build-c..."
+        run: |
+          ERROR_MESSAGE+=' `pnpm run --filter mermaid types:build-config`'
+      - name: "ci (inferred from workflow): ERROR_MESSAGE+=' Run `pnpm run --filter mermaid checkCirc..."
+        run: |
+          ERROR_MESSAGE+=' Run `pnpm run --filter mermaid checkCircle` on your local machine'
+
+# crag:auto-end
