@@ -97,16 +97,10 @@ export const insertEdgeLabel = async (elem, edge) => {
     setTerminalWidth(fo, edge.startLabelLeft);
   }
   if (edge.startLabelRight) {
-    // Create the actual text element
     const startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelRight.insert('g').attr('class', 'inner');
-    const startLabelElement = await createLabel(
-      startEdgeLabelRight,
-      edge.startLabelRight,
-      edge.labelStyle
-    );
+    const startLabelElement = await createLabel(inner, edge.startLabelRight, edge.labelStyle);
     fo = startLabelElement;
-    inner.node().appendChild(startLabelElement);
     let slBox = startLabelElement.getBBox();
     if (useHtmlLabels) {
       const div = startLabelElement.children[0];
@@ -124,7 +118,6 @@ export const insertEdgeLabel = async (elem, edge) => {
     setTerminalWidth(fo, edge.startLabelRight);
   }
   if (edge.endLabelLeft) {
-    // Create the actual text element
     const endEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelLeft.insert('g').attr('class', 'inner');
     const endLabelElement = await createLabel(inner, edge.endLabelLeft, edge.labelStyle);
@@ -139,8 +132,6 @@ export const insertEdgeLabel = async (elem, edge) => {
     }
     inner.attr('transform', computeLabelTransform(slBox, useHtmlLabels));
 
-    endEdgeLabelLeft.node().appendChild(endLabelElement);
-
     if (!terminalLabels[edge.id]) {
       terminalLabels[edge.id] = {};
     }
@@ -148,7 +139,6 @@ export const insertEdgeLabel = async (elem, edge) => {
     setTerminalWidth(fo, edge.endLabelLeft);
   }
   if (edge.endLabelRight) {
-    // Create the actual text element
     const endEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelRight.insert('g').attr('class', 'inner');
     const endLabelElement = await createLabel(inner, edge.endLabelRight, edge.labelStyle);
@@ -163,7 +153,6 @@ export const insertEdgeLabel = async (elem, edge) => {
     }
     inner.attr('transform', computeLabelTransform(slBox, useHtmlLabels));
 
-    endEdgeLabelRight.node().appendChild(endLabelElement);
     if (!terminalLabels[edge.id]) {
       terminalLabels[edge.id] = {};
     }
