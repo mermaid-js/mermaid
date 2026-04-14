@@ -153,6 +153,39 @@ architecture-beta
     bottom_gateway:T -- B:junctionRight
 ```
 
+## Configuration
+
+### `randomize` (v11.14.0+)
+
+By default, architecture diagrams produce a deterministic layout: the same diagram source always renders with the same node positions. This is because the `randomize` option defaults to `false`.
+
+Setting `randomize` to `true` randomizes initial node positions before running the layout algorithm, which may produce varied but potentially better-spaced layouts on each render.
+
+Via frontmatter:
+
+```
+%%{init: {"architecture": {"randomize": true}}}%%
+architecture-beta
+    group api(cloud)[API]
+    service db(database)[Database] in api
+    service server(server)[Server] in api
+    db:R --> L:server
+```
+
+Via `mermaid.initialize()`:
+
+```javascript
+mermaid.initialize({
+  architecture: {
+    randomize: true,
+  },
+});
+```
+
+| Option      | Type    | Default | Description                                                            |
+| ----------- | ------- | ------- | ---------------------------------------------------------------------- |
+| `randomize` | boolean | `false` | Whether to randomize initial node positions before running the layout. |
+
 ## Icons
 
 By default, architecture diagram supports the following icons: `cloud`, `database`, `disk`, `internet`, `server`.

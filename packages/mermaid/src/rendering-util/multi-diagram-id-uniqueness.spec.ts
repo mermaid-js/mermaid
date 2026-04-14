@@ -159,6 +159,31 @@ union A, B`,
     service api(cloud)[API]
     service db(database)[DB]
     api:R -- L:db`,
+
+  'wardley-beta': `wardley-beta
+    title Kettle Evolution Pipeline
+    size [1100, 800]
+
+    component Kettle [0.57, 0.45]
+    component Power [0.10, 0.70]
+
+    Kettle -> Power
+
+    pipeline Kettle {
+      component Campfire Kettle [0.35] label [-60, 35]
+      component Electric Kettle [0.53] label [-60, 35]
+      component Smart Kettle [0.72] label [-30, 35]
+    }
+
+    Campfire Kettle -> Kettle
+    Electric Kettle -> Kettle
+    Smart Kettle -> Kettle`,
+
+  eventmodeling: `eventmodeling
+    tf 01 evt Start
+    tf 02 evt End
+    rf 03 readmodel ReadModel01 ->> 01 ->> 02 { a: true }
+    rf 04 rmo ReadModel02 ->> 01 ->> 02`,
 };
 
 async function renderTwoAndCheckIds(

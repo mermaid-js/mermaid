@@ -63,6 +63,17 @@ describe('Flowchart v2', () => {
       {}
     );
   });
+  it('4b: Labeled open edges should not have arrowheads', () => {
+    imgSnapshotTest(
+      `flowchart TD
+      A -- label text --- B
+      C --- D
+      E -- open label --- F
+      G <-- bidirectional --> H
+      `,
+      {}
+    );
+  });
   it('5: should render escaped without html labels', () => {
     imgSnapshotTest(
       `flowchart TD

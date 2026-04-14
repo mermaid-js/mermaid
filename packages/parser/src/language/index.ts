@@ -9,6 +9,7 @@ export {
   GitGraph,
   Radar,
   Treemap,
+  Wardley,
   Branch,
   Commit,
   Merge,
@@ -23,9 +24,17 @@ export {
   isArchitecture,
   isGitGraph,
   isTreemap,
+  isWardley,
   isBranch,
   isCommit,
   isMerge,
+  EventModel,
+  EmDataEntity,
+  EmFrame,
+  EmDataType,
+  EmModelEntityType,
+  isEmModelEntityType,
+  isEmResetFrame,
 } from './generated/ast.js';
 
 export {
@@ -35,9 +44,11 @@ export {
   PieGrammarGeneratedModule as PieGeneratedModule,
   ArchitectureGrammarGeneratedModule as ArchitectureGeneratedModule,
   GitGraphGrammarGeneratedModule as GitGraphGeneratedModule,
+  EventModelingGeneratedModule,
   RadarGrammarGeneratedModule as RadarGeneratedModule,
   TreemapGrammarGeneratedModule as TreemapGeneratedModule,
   TreeViewGrammarGeneratedModule as TreeViewGeneratedModule,
+  WardleyGrammarGeneratedModule as WardleyGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';
@@ -47,5 +58,7 @@ export * from './packet/index.js';
 export * from './pie/index.js';
 export * from './treeView/index.js';
 export * from './architecture/index.js';
+export * from './eventmodeling/index.js';
 export * from './radar/index.js';
 export * from './treemap/index.js';
+export * from './wardley/index.js';
