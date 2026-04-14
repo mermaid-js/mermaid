@@ -244,7 +244,7 @@ export const drawText = function (elem, textData) {
       textElem.attr('dy', dy);
     }
 
-    const text = line || ZERO_WIDTH_SPACE;
+    const text = line ?? ZERO_WIDTH_SPACE;
     const linkRegex = /\[([^\]]+)]\(([^)]+)\)/g;
     const hasLinks = linkRegex.test(text);
 
@@ -259,7 +259,6 @@ export const drawText = function (elem, textData) {
           const beforeText = text.substring(lastIndex, match.index);
           if (textData.tspan) {
             const span = textElem.append('tspan');
-            span.attr('x', textData.x);
             if (textData.fill !== undefined) {
               span.attr('fill', textData.fill);
             }
@@ -273,18 +272,13 @@ export const drawText = function (elem, textData) {
         const linkHref = sanitizeUrl(match[2]);
         const safeHref = linkHref.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
         const linkEl = textElem.append('a').attr('xlink:href', safeHref).attr('target', '_blank');
-        linkEl
-          .append('tspan')
-          .attr('x', textData.x)
-          .attr('text-decoration', 'underline')
-          .text(linkText);
+        linkEl.append('tspan').attr('text-decoration', 'underline').text(linkText);
         lastIndex = match.index + match[0].length;
       }
       // Add remaining text after last link
       if (lastIndex < text.length) {
         if (textData.tspan) {
           const span = textElem.append('tspan');
-          span.attr('x', textData.x);
           if (textData.fill !== undefined) {
             span.attr('fill', textData.fill);
           }
@@ -308,7 +302,7 @@ export const drawText = function (elem, textData) {
       textData.textMargin !== undefined &&
       textData.textMargin > 0
     ) {
-      textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
+      textHeight += (textElem._groups ?? textElem)[0][0].getBBox().height;
       prevTextHeight = textHeight;
     }
 
