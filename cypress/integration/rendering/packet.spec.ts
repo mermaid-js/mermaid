@@ -82,4 +82,20 @@ describe('packet structure', () => {
       `
     );
   });
+
+  it('should render a packet with custom stroke and fill configs', () => {
+    imgSnapshotTest(
+      `packet-beta
+      0-13: "Test Block"
+      14-31: "Another Block"
+      32-40: "Final Block"`,
+      {
+        packet: {
+          blockStrokeWidth: '3',
+          blockFillColor: '#ffcccc',
+          blockStrokeColor: '#cc0000',
+        },
+      }
+    );
+  });
 });

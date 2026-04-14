@@ -1,9 +1,8 @@
 import type { Diagram } from '../../Diagram.js';
-import type { PacketDiagramConfig } from '../../config.type.js';
+import type { PacketDiagramConfig, PacketDB, PacketWord } from './types.js';
 import type { DiagramRenderer, DrawDefinition, SVG, SVGGroup } from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import type { PacketDB, PacketWord } from './types.js';
 
 const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const db = diagram.db as PacketDB;
@@ -37,21 +36,34 @@ const drawWord = (
   svg: SVG,
   word: PacketWord,
   rowNumber: number,
-  { rowHeight, paddingX, paddingY, bitWidth, bitsPerRow, showBits }: Required<PacketDiagramConfig>
+  config: Required<PacketDiagramConfig>
 ) => {
+  const { rowHeight, paddingX, paddingY, bitWidth, bitsPerRow, showBits } = config;
   const group: SVGGroup = svg.append('g');
   const wordY = rowNumber * (rowHeight + paddingY) + paddingY;
   for (const block of word) {
     const blockX = (block.start % bitsPerRow) * bitWidth + 1;
     const width = (block.end - block.start + 1) * bitWidth - paddingX;
+
     // Block rectangle
-    group
+    const rect = group
       .append('rect')
       .attr('x', blockX)
       .attr('y', wordY)
       .attr('width', width)
       .attr('height', rowHeight)
       .attr('class', 'packetBlock');
+
+    // Apply custom configurations if they exist
+    if (config.blockFillColor) {
+      rect.style('fill', config.blockFillColor);
+    }
+    if (config.blockStrokeColor) {
+      rect.style('stroke', config.blockStrokeColor);
+    }
+    if (config.blockStrokeWidth) {
+      rect.style('stroke-width', config.blockStrokeWidth);
+    }
 
     // Block label
     group
