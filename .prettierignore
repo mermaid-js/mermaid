@@ -1,4 +1,6 @@
 dist
+# Symlink to packages/mermaid/CHANGELOG.md — prettier must not add a trailing newline
+CHANGELOG.md
 cypress/platform/xss3.html
 .cache
 .pnpm-store
