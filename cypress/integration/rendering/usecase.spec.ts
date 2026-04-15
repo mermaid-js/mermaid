@@ -118,7 +118,7 @@ describe('Usecase diagram', () => {
       );
     });
 
-   it('should render dark theme via init directive', () => {
+    it('should render dark theme via init directive', () => {
       imgSnapshotTest(
         `
         %%{init: {'theme': 'dark', 'config': {'fontSize': 20}}}%%
@@ -129,7 +129,7 @@ describe('Usecase diagram', () => {
         `,
         {}
       );
-    }); 
+    });
 
     it('should render correctly with empty system boundaries', () => {
       imgSnapshotTest(
@@ -143,7 +143,7 @@ describe('Usecase diagram', () => {
         `,
         {}
       );
-    }); 
+    });
 
     it('should handle special characters in labels', () => {
       imgSnapshotTest(
