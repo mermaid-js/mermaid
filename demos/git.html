@@ -554,6 +554,36 @@
     commit id:"C"
     merge featureA
     </pre>
+    <h2>Click interaction tests (click nodes/branches/tags below)</h2>
+    <pre class="mermaid">
+    gitGraph
+      commit id: "no-click"
+      commit id: "cl-same"
+      commit id: "cl-new" tag: "tg-new"
+      branch br-same
+      checkout br-same
+      commit id: "rev-type" type: REVERSE
+      checkout main
+      branch br-new
+      checkout br-new
+      commit id: "hi-type" type: HIGHLIGHT tag: "tg-same"
+      checkout main
+      merge br-same id: "merge-cl"
+      cherry-pick id: "hi-type" targetId: "cp-cl"
+
+      click commit "cl-same" "https://example.com/cl-same" "same tab"
+      click commit "cl-new" "https://example.com/cl-new" "new tab" "_blank"
+      click commit "rev-type" "https://example.com/rev" "reverse"
+      click commit "hi-type" "https://example.com/hi" "highlight"
+      click commit "merge-cl" "https://example.com/merge" "merge"
+      click commit "cp-cl" "https://example.com/cp" "cherry-pick"
+
+      click branch "br-same" "https://example.com/br-same" "same tab"
+      click branch "br-new" "https://example.com/br-new" "new tab" "_blank"
+
+      click tag "tg-same" "https://example.com/tg-same" "same tab"
+      click tag "tg-new" "https://example.com/tg-new" "new tab" "_blank"
+    </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       const ALLOWED_TAGS = [
