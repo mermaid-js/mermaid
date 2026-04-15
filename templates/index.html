@@ -211,7 +211,7 @@
               ADD_ATTR: ['xmlns'],
             });
 
-            const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
+            const doc = new DOMParser().parseFromString(cleanSvg, 'image/svg+xml');
             preview.replaceChildren(doc.documentElement);
             return;
           }
