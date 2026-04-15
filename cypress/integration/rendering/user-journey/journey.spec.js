@@ -214,7 +214,7 @@ section Checkout from website
           $lines.each((index, el) => {
             const bbox = el.getBBox();
             expect(bbox.width).to.be.lte(320);
-            maxLineWidth = Math.max(maxLineWidth || 0, bbox.width);
+            maxLineWidth = Math.max(maxLineWidth ?? 0, bbox.width);
           });
 
           /** The expected margin between the diagram and the legend is 150px, as defined by

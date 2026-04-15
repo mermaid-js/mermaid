@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { detectScope, DIAGRAM_SPEC_MAP } from './e2e-diagram-scope.mjs';
+import { detectScope, SPEC_BASE_DIR } from './e2e-diagram-scope.mjs';
+
+// The tests run in the repo root, so the spec subfolders created by the file
+// reorganisation are present on disk — no mocking needed.
 
 describe('detectScope', () => {
   it('returns empty string for no changed files', () => {
@@ -11,9 +14,7 @@ describe('detectScope', () => {
       'packages/mermaid/src/diagrams/flowchart/flowchartDb.ts',
       'packages/mermaid/src/diagrams/flowchart/flowchartRenderer.ts',
     ]);
-    expect(result).not.toBe('');
-    expect(result.split(',')).toEqual(expect.arrayContaining(DIAGRAM_SPEC_MAP.flowchart));
-    expect(result.split(',').length).toBe(DIAGRAM_SPEC_MAP.flowchart.length);
+    expect(result).toBe(`${SPEC_BASE_DIR}/flowchart/**`);
   });
 
   it('falls back to full suite when rendering-util is touched', () => {
@@ -49,94 +50,66 @@ describe('detectScope', () => {
     expect(detectScope(['package.json'])).toBe('');
   });
 
-  it('combines specs from two different diagrams', () => {
+  it('combines patterns from two different diagrams', () => {
     const result = detectScope([
       'packages/mermaid/src/diagrams/gantt/ganttDb.ts',
       'packages/mermaid/src/diagrams/pie/pieDb.ts',
     ]);
-    expect(result).not.toBe('');
-    const specs = result.split(',');
-    expect(specs).toEqual(
-      expect.arrayContaining([...DIAGRAM_SPEC_MAP.gantt, ...DIAGRAM_SPEC_MAP.pie])
+    expect(result.split(',')).toEqual(
+      expect.arrayContaining([`${SPEC_BASE_DIR}/gantt/**`, `${SPEC_BASE_DIR}/pie/**`])
     );
   });
 
-  it('falls back to full suite for an unknown diagram folder', () => {
-    expect(detectScope(['packages/mermaid/src/diagrams/unknownDiagram/unknownDb.ts'])).toBe('');
+  it('falls back to full suite for a diagram with no spec subfolder', () => {
+    // Use a custom specBaseDir that has no subfolder for 'unknownDiagram'
+    expect(
+      detectScope(['packages/mermaid/src/diagrams/unknownDiagram/unknownDb.ts'], {
+        specBaseDir: SPEC_BASE_DIR,
+      })
+    ).toBe('');
   });
 
-  it('includes a directly modified spec file', () => {
-    const result = detectScope(['cypress/integration/rendering/gantt.spec.js']);
-    expect(result).toBe('cypress/integration/rendering/gantt.spec.js');
+  it('scopes to the subfolder when a spec file in that subfolder is modified', () => {
+    const result = detectScope([`${SPEC_BASE_DIR}/gantt/gantt.spec.js`]);
+    expect(result).toBe(`${SPEC_BASE_DIR}/gantt/**`);
   });
 
-  it('falls back to full suite when a cross-cutting spec is modified', () => {
-    expect(detectScope(['cypress/integration/rendering/theme.spec.js'])).toBe('');
+  it('falls back to full suite when a cross-cutting root spec is modified', () => {
+    expect(detectScope([`${SPEC_BASE_DIR}/theme.spec.js`])).toBe('');
   });
 
   it('falls back to full suite when a cypress/other spec is modified', () => {
     expect(detectScope(['cypress/integration/other/xss.spec.js'])).toBe('');
   });
 
-  it('combines a diagram change with a directly modified spec', () => {
+  it('deduplicates when diagram source and its spec subfolder both change', () => {
     const result = detectScope([
-      'packages/mermaid/src/diagrams/pie/pieDb.ts',
-      'cypress/integration/rendering/pie.spec.ts',
+      'packages/mermaid/src/diagrams/gantt/ganttDb.ts',
+      `${SPEC_BASE_DIR}/gantt/gantt.spec.js`,
     ]);
-    const specs = result.split(',');
-    expect(specs).toEqual(expect.arrayContaining(DIAGRAM_SPEC_MAP.pie));
-    // spec file is already in the map, so length should match map length
-    expect(specs.length).toBe(DIAGRAM_SPEC_MAP.pie.length);
+    // Both point to the same subfolder — should deduplicate
+    expect(result.split(',').filter((s) => s === `${SPEC_BASE_DIR}/gantt/**`).length).toBe(1);
   });
 });
 
-describe('DIAGRAM_SPEC_MAP', () => {
-  it('has an entry for every known diagram folder', () => {
-    const knownDiagrams = [
-      'architecture',
-      'block',
-      'c4',
-      'class',
-      'er',
-      'error',
-      'eventmodeling',
-      'flowchart',
-      'gantt',
-      'git',
-      'info',
-      'ishikawa',
-      'kanban',
-      'mindmap',
-      'packet',
-      'pie',
-      'quadrant-chart',
-      'radar',
-      'requirement',
-      'sankey',
-      'sequence',
-      'state',
-      'timeline',
-      'treeView',
-      'treemap',
-      'user-journey',
-      'venn',
-      'wardley',
-      'xychart',
-      'zenuml',
-    ];
-    for (const name of knownDiagrams) {
-      expect(DIAGRAM_SPEC_MAP).toHaveProperty(name);
-      expect(DIAGRAM_SPEC_MAP[name].length).toBeGreaterThan(0);
-    }
-  });
+describe('SPEC_BASE_DIR subfolder coverage', () => {
+  it('every known diagram folder has a matching spec subfolder', async () => {
+    const fs = await import('fs');
 
-  it('all spec paths start with cypress/integration/rendering/', () => {
-    for (const [diagram, specs] of Object.entries(DIAGRAM_SPEC_MAP)) {
-      for (const spec of specs) {
-        expect(spec, `${diagram}: ${spec}`).toMatch(
-          /^cypress\/integration\/rendering\/.+\.spec\.(js|ts)$/
-        );
-      }
-    }
+    const diagramsRoot = 'packages/mermaid/src/diagrams';
+    const diagramFolders = fs
+      .readdirSync(diagramsRoot, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory() && entry.name !== 'common')
+      .map((entry) => entry.name);
+
+    const specFolders = new Set(
+      fs
+        .readdirSync(SPEC_BASE_DIR, { withFileTypes: true })
+        .filter((entry) => entry.isDirectory())
+        .map((entry) => entry.name)
+    );
+
+    const missing = diagramFolders.filter((name) => !specFolders.has(name));
+    expect(missing, `Diagram folders without a spec subfolder: ${missing.join(', ')}`).toEqual([]);
   });
 });
