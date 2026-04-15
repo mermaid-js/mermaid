@@ -96,9 +96,9 @@ const hexagon = async (parent, node) => {
   );
 
   const f = 4;
-  const h = bbox.height + node.padding;
+  const h = node.positioned ? node.height : bbox.height + node.padding;
   const m = h / f;
-  const w = bbox.width + 2 * m + node.padding;
+  const w = node.positioned ? node.width : bbox.width + 2 * m + node.padding;
   const points = [
     { x: m, y: 0 },
     { x: w - m, y: 0 },
@@ -125,9 +125,12 @@ const block_arrow = async (parent, node) => {
   const f = 2;
   const h = bbox.height + 2 * node.padding;
   const m = h / f;
-  const w = bbox.width + 2 * m + node.padding;
+  const naturalW = bbox.width + 2 * m + node.padding;
+  // Only use the layout-computed width when the block explicitly spans multiple columns
+  const isSpanning = node.positioned && (node.widthInColumns ?? 1) > 1 && node.width > naturalW;
+  const w = isSpanning ? node.width : naturalW;
 
-  const points = getArrowPoints(node.directions, bbox, node);
+  const points = getArrowPoints(node.directions, bbox, node, w);
 
   const blockArrow = insertPolygonShape(shapeSvg, w, h, points);
   blockArrow.attr('style', node.style);

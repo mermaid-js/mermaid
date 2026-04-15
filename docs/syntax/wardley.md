@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/syntax/wardley.md](../../packages/mermaid/src/docs/syntax/wardley.md).
 
-# Wardley Maps (v\<MERMAID_RELEASE_VERSION>+)
+# Wardley Maps (v11.14.0+)
 
 > Wardley Maps are visual representations of business strategy that map value chains and component evolution. They help identify strategic opportunities, dependencies, and guide technology decisions.
 

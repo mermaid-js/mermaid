@@ -96,9 +96,11 @@ outdir
 Qcontrolx
 QSTR
 realization
+readmodel
 reinit
 rels
 reqs
+resetframe
 rewritelinks
 rgba
 RIGHTOF

@@ -261,6 +261,9 @@ const config: RequiredDeep<MermaidConfig> = {
   packet: {
     ...defaultConfigJson.packet,
   },
+  eventmodeling: {
+    ...defaultConfigJson.eventmodeling,
+  },
   treeView: {
     ...defaultConfigJson.treeView,
     useWidth: undefined,
@@ -270,6 +273,11 @@ const config: RequiredDeep<MermaidConfig> = {
   },
   ishikawa: {
     ...defaultConfigJson.ishikawa,
+  },
+  sankey: {
+    ...defaultConfigJson.sankey,
+    // Set so that `configKeys` includes this key for sanitizeDirective
+    nodeColors: undefined,
   },
   treemap: {
     useMaxWidth: true,
