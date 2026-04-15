@@ -12,6 +12,7 @@ import { curlyBraceRight } from './shapes/curlyBraceRight.js';
 import { curlyBraces } from './shapes/curlyBraces.js';
 import { curvedTrapezoid } from './shapes/curvedTrapezoid.js';
 import { cylinder } from './shapes/cylinder.js';
+import { datastore } from './shapes/datastore.js';
 import { dividedRectangle } from './shapes/dividedRect.js';
 import { doublecircle } from './shapes/doubleCircle.js';
 import { filledCircle } from './shapes/filledCircle.js';
@@ -130,6 +131,14 @@ export const shapesDefs = [
     description: 'Database storage',
     aliases: ['db', 'database', 'cylinder'],
     handler: cylinder,
+  },
+  {
+    semanticName: 'Data Store',
+    name: 'Data Store',
+    shortName: 'datastore',
+    description: 'Data flow diagram data store',
+    aliases: ['data-store'],
+    handler: datastore,
   },
   {
     semanticName: 'Start',

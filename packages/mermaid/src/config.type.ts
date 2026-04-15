@@ -237,6 +237,7 @@ export interface MermaidConfig {
   sankey?: SankeyDiagramConfig;
   packet?: PacketDiagramConfig;
   block?: BlockDiagramConfig;
+  eventmodeling?: EventModelingDiagramConfig;
   treeView?: TreeViewDiagramConfig;
   radar?: RadarDiagramConfig;
   venn?: VennDiagramConfig;
@@ -1663,6 +1664,22 @@ export interface PacketDiagramConfig extends BaseDiagramConfig {
  */
 export interface BlockDiagramConfig extends BaseDiagramConfig {
   padding?: number;
+}
+/**
+ * The object containing configurations specific for Event Modeling diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "EventModelingDiagramConfig".
+ */
+export interface EventModelingDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The padding around the Event Modeling diagram.
+   */
+  padding?: number;
+  /**
+   * The height of each row in the Event Modeling diagram.
+   */
+  rowHeight?: number;
 }
 /**
  * The object containing configurations specific for treeView diagrams.
