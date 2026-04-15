@@ -118,33 +118,32 @@ describe('Usecase diagram', () => {
       );
     });
 
-    it('should render dark theme via init directive', () => {
+   it('should render dark theme via init directive', () => {
       imgSnapshotTest(
         `
         %%{init: {'theme': 'dark', 'config': {'fontSize': 20}}}%%
         usecaseDiagram
-          actor Admin
-          usecase "Delete Records"
-          Admin --> "Delete Records"
+          actor Admin as A
+          usecase "Delete Records" as DR
+          A --> DR
         `,
         {}
       );
-    });
-  });
+    }); 
 
-  describe('Edge Cases', () => {
     it('should render correctly with empty system boundaries', () => {
       imgSnapshotTest(
         `
         usecaseDiagram
-          actor User
+          actor User as U
           system "Empty System" {
           }
-          User --> "Something Outside"
+          usecase "Something Outside" as SO
+          U --> SO
         `,
         {}
       );
-    });
+    }); 
 
     it('should handle special characters in labels', () => {
       imgSnapshotTest(
