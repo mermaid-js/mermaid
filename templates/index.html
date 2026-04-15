@@ -147,7 +147,13 @@
     </div>
 
     <script>
-      mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'dark',
+        flowchart: {
+          htmlLabels: false,
+        },
+      });
 
       let scale = 1;
       let panX = 0;
@@ -199,10 +205,26 @@
           preview.appendChild(iframe);
           iframeRef = iframe;
 
+          const parser = new DOMParser();
+          const parsed = parser.parseFromString(svg, 'image/svg+xml');
+
+          const svgEl = parsed.documentElement;
+
+          // sanitize
+          svgEl.querySelectorAll('*').forEach((el) => {
+            [...el.attributes].forEach((attr) => {
+              if (attr.name.startsWith('on')) {
+                el.removeAttribute(attr.name);
+              }
+            });
+          });
+
+          // вставка в iframe
           const doc = iframe.contentDocument;
           doc.open();
-          doc.write(svg);
-          doc.close();
+          doc.close(); // создаём пустой документ
+
+          doc.body.appendChild(doc.importNode(svgEl, true));
 
           setTimeout(() => {
             rebuildNavNodes();
@@ -229,11 +251,18 @@
         filter: drop-shadow(0 0 11px rgba(0, 170, 255, 0.6));
       }
 
-      g.node.selected-node rect,
+     g.node.selected-node rect,
       g.node.selected-node polygon,
       g.node.selected-node path {
-        fill: rgba(0, 170, 255, 0.28);
-        filter: drop-shadow(0 0 14px rgba(0, 170, 255, 0.9));
+        fill: rgba(0, 170, 255, 0.35) !important;
+        stroke: #00aaff !important;
+        stroke-width: 2px !important;
+        filter: drop-shadow(0 0 16px rgba(0, 170, 255, 1)) !important;
+      }
+
+      g.node.selected-node text {
+        fill: #ffffff !important;
+        font-weight: bold !important;
       }
 
       body {
