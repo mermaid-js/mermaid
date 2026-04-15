@@ -65,6 +65,11 @@
       "id": "railroadAbnf",
       "grammar": "src/language/railroad-abnf/railroad-abnf.langium",
       "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "railroadPeg",
+      "grammar": "src/language/railroad-peg/railroad-peg.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
     }
   ],
   "mode": "production",

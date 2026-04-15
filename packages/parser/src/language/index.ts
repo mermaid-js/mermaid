@@ -49,6 +49,18 @@ export {
   AbnfGroup,
   AbnfOptionalGroup,
   isRailroadAbnf,
+  RailroadPeg,
+  PegRule,
+  PegOrderedChoice,
+  PegSequence,
+  PegPrefix,
+  PegSuffix,
+  PegPrimary,
+  PegLiteral,
+  PegIdentifier,
+  PegGroup,
+  PegAny,
+  isRailroadPeg,
   Treemap,
   Wardley,
   Branch,
@@ -91,6 +103,7 @@ export {
   RailroadGrammarGeneratedModule as RailroadGeneratedModule,
   RailroadEbnfGrammarGeneratedModule as RailroadEbnfGeneratedModule,
   RailroadAbnfGrammarGeneratedModule as RailroadAbnfGeneratedModule,
+  RailroadPegGrammarGeneratedModule as RailroadPegGeneratedModule,
   TreemapGrammarGeneratedModule as TreemapGeneratedModule,
   TreeViewGrammarGeneratedModule as TreeViewGeneratedModule,
   WardleyGrammarGeneratedModule as WardleyGeneratedModule,
@@ -108,5 +121,6 @@ export * from './radar/index.js';
 export * from './railroad/index.js';
 export * from './railroad-ebnf/index.js';
 export * from './railroad-abnf/index.js';
+export * from './railroad-peg/index.js';
 export * from './treemap/index.js';
 export * from './wardley/index.js';
