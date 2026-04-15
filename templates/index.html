@@ -151,9 +151,14 @@
       mermaid.initialize({
         startOnLoad: false,
         theme: 'dark',
-        securityLevel: 'strict', // ВАЖНО
+        securityLevel: 'strict',
+
+        deterministicIds: true,
+        fontFamily: 'Arial',
+
         flowchart: {
           htmlLabels: false,
+          useMaxWidth: false,
         },
       });
 
@@ -194,7 +199,7 @@
 
       async function render() {
         try {
-          const { svg } = await mermaid.render('m1', src.value);
+          const { svg } = await mermaid.render('m' + Date.now(), src.value);
 
           preview.replaceChildren();
 
