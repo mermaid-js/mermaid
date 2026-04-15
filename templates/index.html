@@ -186,9 +186,29 @@
       async function render() {
         try {
           const { svg } = await mermaid.render('m1', src.value);
-          preview.innerHTML = svg;
+
+          // Clear the preview container safely (no innerHTML)
+          preview.replaceChildren();
+
+          // Parse SVG string into a real DOM element
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(svg, 'image/svg+xml');
+          const svgEl = doc.documentElement;
+
+          // Append parsed SVG to the preview
+          preview.appendChild(svgEl);
         } catch (e) {
-          preview.innerHTML = `<pre style="color:#ff6b6b">${e.message}</pre>`;
+          // Clear previous content
+          preview.replaceChildren();
+
+          // Create a safe text container for the error message
+          const pre = document.createElement('pre');
+          pre.style.color = '#ff6b6b';
+
+          // Use textContent to avoid HTML injection (XSS-safe)
+          pre.textContent = e.message;
+
+          preview.appendChild(pre);
         }
       }
 
