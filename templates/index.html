@@ -189,14 +189,16 @@
 
           preview.replaceChildren();
 
+          // create sandbox document
+          const sandbox = document.implementation.createHTMLDocument('');
+
           const parser = new DOMParser();
           const doc = parser.parseFromString(svg, 'image/svg+xml');
           const svgEl = doc.documentElement;
 
-          // Remove potentially dangerous elements
+          // sanitize
           svgEl.querySelectorAll('script, foreignObject').forEach((el) => el.remove());
 
-          // Remove inline event handlers (onload, onclick, etc.)
           svgEl.querySelectorAll('*').forEach((el) => {
             [...el.attributes].forEach((attr) => {
               if (attr.name.startsWith('on')) {
@@ -205,13 +207,10 @@
             });
           });
 
-          const wrapper = document.createElement('div');
-          wrapper.appendChild(svgEl);
+          // import node from safe document
+          const safeNode = sandbox.importNode(svgEl, true);
 
-          // move only safe nodes
-          while (wrapper.firstChild) {
-            preview.appendChild(wrapper.firstChild);
-          }
+          preview.appendChild(safeNode);
         } catch (e) {
           preview.replaceChildren();
 
