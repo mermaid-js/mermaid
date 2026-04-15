@@ -59,9 +59,7 @@ export const UsecaseModule: Module<
  * - The generated language-specific services from the Usecase grammar.
  * - The custom `UsecaseModule` which contributes the token builder and value converter.
  */
-export function createUsecaseServices(
-  context: DefaultSharedCoreModuleContext = EmptyFileSystem
-): {
+export function createUsecaseServices(context: DefaultSharedCoreModuleContext = EmptyFileSystem): {
   shared: LangiumSharedCoreServices;
   Usecase: UsecaseServices;
 } {

@@ -95,8 +95,8 @@ NSTR
 outdir
 Qcontrolx
 QSTR
-realization
 readmodel
+realization
 reinit
 rels
 reqs

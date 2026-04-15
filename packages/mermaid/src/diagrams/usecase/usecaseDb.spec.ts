@@ -152,7 +152,7 @@ describe('usecaseDb - State Management & Validation', () => {
       db.addActor('A', 'Super');
       const actors = db.getActors();
       expect(Object.keys(actors)).toHaveLength(1);
-      expect(actors['A']).toBe('Super');
+      expect(actors.A).toBe('Super');
     });
 
     it('clears state properly', () => {

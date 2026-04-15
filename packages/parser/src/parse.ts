@@ -24,10 +24,7 @@ export type DiagramAST =
   | TreeView
   | Wardley
   | Usecase
-  | EventModel
-  | Radar
-  | TreeView
-  | Wardley;
+  | EventModel;
 
 const parsers: Record<string, LangiumParser> = {};
 const initializers = {

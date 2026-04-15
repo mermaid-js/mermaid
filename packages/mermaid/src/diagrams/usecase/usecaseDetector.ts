@@ -3,7 +3,7 @@ import type { ExternalDiagramDefinition } from '../../diagram-api/types.js';
 
 const id = 'usecase';
 
-const detector = (text: string): boolean => /^\s*(usecaseDiagram|useCase)\b/i.test(text);
+const detector = (text: string): boolean => /^\s*(usecasediagram|usecase)\b/i.test(text);
 
 const loader = async () => {
   const { diagram } = await import('./usecaseDiagram.js');

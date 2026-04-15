@@ -18,24 +18,24 @@ const populate = (ast: Usecase) => {
       for (const item of stmt.items) {
         const alias = item.alias ?? item.label;
         if (alias) {
-          db.addActor(alias, (item.label ?? item.alias) as string);
+          db.addActor(alias, (item.label ?? item.alias)!);
         }
       }
     } else if (stmt.$type === 'ExternalStatement') {
       for (const item of stmt.items) {
         const alias = item.alias ?? item.label;
         if (alias) {
-          db.addExternal(alias, (item.label ?? item.alias) as string);
+          db.addExternal(alias, (item.label ?? item.alias)!);
         }
       }
     } else if (stmt.$type === 'SystemStatement') {
-      const systemLabel = (stmt.label ?? stmt.name ?? 'System') as string;
+      const systemLabel = stmt.label ?? stmt.name ?? 'System';
       db.setSystem(systemLabel);
       if (stmt.items) {
         for (const uc of stmt.items) {
           const alias = uc.alias ?? uc.label;
           if (alias) {
-            db.addUseCase(alias, (uc.label ?? uc.alias) as string);
+            db.addUseCase(alias, (uc.label ?? uc.alias)!);
           }
         }
       }
@@ -43,21 +43,21 @@ const populate = (ast: Usecase) => {
       for (const item of stmt.items) {
         const alias = item.alias ?? item.label;
         if (alias) {
-          db.addUseCase(alias, (item.label ?? item.alias) as string);
+          db.addUseCase(alias, (item.label ?? item.alias)!);
         }
       }
     } else if (stmt.$type === 'CollaborationStatement') {
       for (const item of stmt.items) {
         const alias = item.alias ?? item.label;
         if (alias) {
-          db.addCollaboration(alias, (item.label ?? item.alias) as string);
+          db.addCollaboration(alias, (item.label ?? item.alias)!);
         }
       }
     } else if (stmt.$type === 'NoteStatement') {
       for (const item of stmt.items) {
         const alias = item.alias ?? item.label;
         if (alias) {
-          db.addNote(alias, (item.label ?? item.alias) as string);
+          db.addNote(alias, (item.label ?? item.alias)!);
         }
       }
     } else if (stmt.$type === 'AssociationStatement') {
