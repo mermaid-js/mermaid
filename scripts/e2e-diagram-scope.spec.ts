@@ -74,8 +74,11 @@ describe('detectScope', () => {
     expect(result).toBe(`${SPEC_BASE_DIR}/gantt/**`);
   });
 
-  it('falls back to full suite when a cross-cutting root spec is modified', () => {
+  it('falls back to full suite for any spec at the rendering root (positional convention)', () => {
+    // Any *.spec.* at the root of SPEC_BASE_DIR is treated as cross-cutting —
+    // no explicit list needed.
     expect(detectScope([`${SPEC_BASE_DIR}/theme.spec.js`])).toBe('');
+    expect(detectScope([`${SPEC_BASE_DIR}/brandNewCrossCutting.spec.ts`])).toBe('');
   });
 
   it('falls back to full suite when a cypress/other spec is modified', () => {

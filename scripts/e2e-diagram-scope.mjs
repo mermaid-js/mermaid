@@ -65,24 +65,6 @@ const SHARED_PREFIXES = [
   'tsconfig',
 ];
 
-// Spec files at the root of SPEC_BASE_DIR that test cross-diagram concerns.
-// If one of these is directly modified, fall back to the full suite.
-const CROSS_CUTTING_SPECS = new Set([
-  `${SPEC_BASE_DIR}/multi_diagram_unique_ids.spec.js`,
-  `${SPEC_BASE_DIR}/theme.spec.js`,
-  `${SPEC_BASE_DIR}/conf-and-directives.spec.js`,
-  `${SPEC_BASE_DIR}/marker_unique_id.spec.js`,
-  `${SPEC_BASE_DIR}/current.spec.js`,
-  `${SPEC_BASE_DIR}/appli.spec.js`,
-  `${SPEC_BASE_DIR}/katex.spec.js`,
-  `${SPEC_BASE_DIR}/iconShape.spec.ts`,
-  `${SPEC_BASE_DIR}/imageShape.spec.ts`,
-  `${SPEC_BASE_DIR}/newShapes.spec.ts`,
-  `${SPEC_BASE_DIR}/oldShapes.spec.ts`,
-  `${SPEC_BASE_DIR}/newShapes-neo.spec.ts`,
-  `${SPEC_BASE_DIR}/oldShapes-neo.spec.ts`,
-]);
-
 // Regex: extract diagram name from paths like
 // packages/mermaid/src/diagrams/<name>/...
 const DIAGRAM_PATH_RE = /^packages\/mermaid\/src\/diagrams\/([^/]+)\//;
@@ -143,37 +125,26 @@ export function detectScope(files, options = {}) {
       continue;
     }
 
-    // File inside a diagram spec subfolder
+    // File under the spec base directory
     const specFolderPrefix = `${specBaseDir}/`;
     if (trimmed.startsWith(specFolderPrefix)) {
       const rest = trimmed.slice(specFolderPrefix.length);
       const slashIdx = rest.indexOf('/');
 
       if (slashIdx === -1) {
-        // File at the root of SPEC_BASE_DIR (cross-cutting or utility)
-        if (CROSS_CUTTING_SPECS.has(trimmed)) {
-          touchesShared = true;
-          break;
-        }
-        // A root-level spec that isn't cross-cutting (e.g. a new one) — be
-        // conservative and run full suite
+        // No subfolder separator → file sits at the root of SPEC_BASE_DIR.
+        // Root-level specs are cross-cutting by convention; full suite.
         touchesShared = true;
         break;
-      } else {
-        // File in a diagram subfolder — treat as directly changing that spec
-        const subFolder = rest.slice(0, slashIdx);
-        directlyChangedSpecs.push(`${specFolderPrefix}${subFolder}/**`);
       }
+
+      // File inside a diagram subfolder → scope to that subfolder.
+      const subFolder = rest.slice(0, slashIdx);
+      directlyChangedSpecs.push(`${specFolderPrefix}${subFolder}/**`);
       continue;
     }
 
-    // Cypress helpers or other integration tests
-    if (trimmed.startsWith('cypress/integration/other/')) {
-      touchesShared = true;
-      break;
-    }
-
-    // Anything else (root config, CI YAML, docs, etc.) → full suite
+    // Anything else (root config, CI YAML, docs, cypress/other, etc.) → full suite
     touchesShared = true;
     break;
   }
