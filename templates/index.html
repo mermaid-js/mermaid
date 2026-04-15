@@ -206,8 +206,12 @@
           preview.replaceChildren();
 
           if (IS_E2E) {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(svg, 'image/svg+xml');
+            const cleanSvg = DOMPurify.sanitize(svg, {
+              ADD_TAGS: ['foreignObject'],
+              ADD_ATTR: ['xmlns'],
+            });
+
+            const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
             preview.replaceChildren(doc.documentElement);
             return;
           }
