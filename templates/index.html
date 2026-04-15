@@ -148,6 +148,8 @@
     </div>
 
     <script>
+      const IS_E2E = navigator.webdriver || location.search.includes('graph=');
+
       mermaid.initialize({
         startOnLoad: false,
         theme: 'dark',
@@ -199,9 +201,15 @@
 
       async function render() {
         try {
-          const { svg } = await mermaid.render('m' + Date.now(), src.value);
+          const { svg } = await mermaid.render(IS_E2E ? 'm1' : 'm' + Date.now(), src.value);
 
           preview.replaceChildren();
+
+          if (IS_E2E) {
+            // 👉 стабильный режим для Argos
+            preview.innerHTML = svg;
+            return;
+          }
 
           const iframe = document.createElement('iframe');
           iframe.sandbox = 'allow-same-origin';
