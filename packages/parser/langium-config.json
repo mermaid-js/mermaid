@@ -55,6 +55,11 @@
       "id": "railroad",
       "grammar": "src/language/railroad/railroad.langium",
       "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "railroadEbnf",
+      "grammar": "src/language/railroad-ebnf/railroad-ebnf.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
     }
   ],
   "mode": "production",
