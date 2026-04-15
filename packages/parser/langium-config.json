@@ -60,6 +60,11 @@
       "id": "railroadEbnf",
       "grammar": "src/language/railroad-ebnf/railroad-ebnf.langium",
       "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "railroadAbnf",
+      "grammar": "src/language/railroad-abnf/railroad-abnf.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
     }
   ],
   "mode": "production",

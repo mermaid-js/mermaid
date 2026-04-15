@@ -1,6 +1,7 @@
 !viewbox
 # It should be viewBox
 # This file contains coding related terms
+ABNF
 ALPHANUM
 antiscript
 APPLYCLASS

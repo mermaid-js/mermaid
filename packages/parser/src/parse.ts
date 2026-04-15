@@ -10,6 +10,7 @@ import type {
   Radar,
   Railroad,
   RailroadEbnf,
+  RailroadAbnf,
   Treemap,
   TreeView,
   Wardley,
@@ -25,6 +26,7 @@ export type DiagramAST =
   | Radar
   | Railroad
   | RailroadEbnf
+  | RailroadAbnf
   | Treemap
   | TreeView
   | Wardley;
@@ -81,6 +83,11 @@ const initializers = {
     const parser = createRailroadEbnfServices().RailroadEbnf.parser.LangiumParser;
     parsers.railroadEbnf = parser;
   },
+  railroadAbnf: async () => {
+    const { createRailroadAbnfServices } = await import('./language/railroad-abnf/index.js');
+    const parser = createRailroadAbnfServices().RailroadAbnf.parser.LangiumParser;
+    parsers.railroadAbnf = parser;
+  },
   treemap: async () => {
     const { createTreemapServices } = await import('./language/treemap/index.js');
     const parser = createTreemapServices().Treemap.parser.LangiumParser;
@@ -103,6 +110,7 @@ export async function parse(diagramType: 'eventmodeling', text: string): Promise
 export async function parse(diagramType: 'radar', text: string): Promise<Radar>;
 export async function parse(diagramType: 'railroad', text: string): Promise<Railroad>;
 export async function parse(diagramType: 'railroadEbnf', text: string): Promise<RailroadEbnf>;
+export async function parse(diagramType: 'railroadAbnf', text: string): Promise<RailroadAbnf>;
 export async function parse(diagramType: 'treemap', text: string): Promise<Treemap>;
 export async function parse(diagramType: 'wardley', text: string): Promise<Wardley>;
 
