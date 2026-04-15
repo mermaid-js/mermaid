@@ -205,7 +205,13 @@
             });
           });
 
-          preview.appendChild(svgEl);
+          const wrapper = document.createElement('div');
+          wrapper.appendChild(svgEl);
+
+          // move only safe nodes
+          while (wrapper.firstChild) {
+            preview.appendChild(wrapper.firstChild);
+          }
         } catch (e) {
           preview.replaceChildren();
 
