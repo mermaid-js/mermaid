@@ -1,5 +1,6 @@
 ---
 'mermaid': minor
+'@mermaid-js/parser': minor
 ---
 
-feat: Add support for Railroad Diagrams (Syntax Diagrams) with EBNF notation. This new diagram type allows developers to visually document programming language grammars, DSL syntax, and formal language specifications using Extended Backus-Naur Form. Supports both W3C and ISO 14977 EBNF notation styles.
+feat: Add support for Railroad Diagrams (Syntax Diagrams) with four input syntaxes: IR (railroad-diagram), EBNF (railroad-ebnf), ABNF (railroad-abnf), and PEG (railroad-peg). The IR layer provides direct layout control via function-call primitives, while EBNF, ABNF, and PEG front-ends transform grammar notation into the shared IR for rendering.
