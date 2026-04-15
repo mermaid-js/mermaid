@@ -2,6 +2,10 @@
 /**
  * Detects which Cypress e2e spec files to run based on changed source files.
  *
+ * Convention: every diagram type has a matching subfolder under
+ * cypress/integration/rendering/<diagram-name>/. Adding a new spec file to
+ * that subfolder requires no configuration here — it is discovered at runtime.
+ *
  * CLI usage (reads changed file paths from stdin, one per line):
  *   git diff --name-only <base> HEAD | node scripts/e2e-diagram-scope.mjs
  *
@@ -10,18 +14,22 @@
  *   - An empty string if the full suite should run (shared code changed, or
  *     unable to confidently scope the change)
  *
- * Module usage (import detectScope):
+ * Module usage:
  *   import { detectScope } from './e2e-diagram-scope.mjs';
  *   const spec = detectScope(['packages/mermaid/src/diagrams/flowchart/flowchart.ts']);
- *   // => 'cypress/integration/rendering/flowchart.spec.js,...'
+ *   // => 'cypress/integration/rendering/flowchart/**'
  */
 
 import { createInterface } from 'readline';
+import { existsSync } from 'fs';
 import { fileURLToPath } from 'url';
+
+// Base directory where diagram spec subfolders live
+export const SPEC_BASE_DIR = 'cypress/integration/rendering';
 
 // ---------------------------------------------------------------------------
 // Paths: if ANY changed file matches one of these prefixes, fall back to the
-// full suite. Order matters — more specific prefixes should come first.
+// full suite.
 // ---------------------------------------------------------------------------
 const SHARED_PREFIXES = [
   // Shared diagram utilities (used by all diagram types)
@@ -57,104 +65,23 @@ const SHARED_PREFIXES = [
   'tsconfig',
 ];
 
-// Cypress spec files that test cross-diagram concerns. If one of these is
-// directly modified, fall back to the full suite.
+// Spec files at the root of SPEC_BASE_DIR that test cross-diagram concerns.
+// If one of these is directly modified, fall back to the full suite.
 const CROSS_CUTTING_SPECS = new Set([
-  'cypress/integration/rendering/multi_diagram_unique_ids.spec.js',
-  'cypress/integration/rendering/theme.spec.js',
-  'cypress/integration/rendering/conf-and-directives.spec.js',
-  'cypress/integration/rendering/marker_unique_id.spec.js',
-  'cypress/integration/rendering/current.spec.js',
-  'cypress/integration/rendering/appli.spec.js',
-  'cypress/integration/rendering/katex.spec.js',
-  'cypress/integration/rendering/iconShape.spec.ts',
-  'cypress/integration/rendering/imageShape.spec.ts',
-  'cypress/integration/rendering/newShapes.spec.ts',
-  'cypress/integration/rendering/oldShapes.spec.ts',
-  'cypress/integration/rendering/newShapes-neo.spec.ts',
-  'cypress/integration/rendering/oldShapes-neo.spec.ts',
+  `${SPEC_BASE_DIR}/multi_diagram_unique_ids.spec.js`,
+  `${SPEC_BASE_DIR}/theme.spec.js`,
+  `${SPEC_BASE_DIR}/conf-and-directives.spec.js`,
+  `${SPEC_BASE_DIR}/marker_unique_id.spec.js`,
+  `${SPEC_BASE_DIR}/current.spec.js`,
+  `${SPEC_BASE_DIR}/appli.spec.js`,
+  `${SPEC_BASE_DIR}/katex.spec.js`,
+  `${SPEC_BASE_DIR}/iconShape.spec.ts`,
+  `${SPEC_BASE_DIR}/imageShape.spec.ts`,
+  `${SPEC_BASE_DIR}/newShapes.spec.ts`,
+  `${SPEC_BASE_DIR}/oldShapes.spec.ts`,
+  `${SPEC_BASE_DIR}/newShapes-neo.spec.ts`,
+  `${SPEC_BASE_DIR}/oldShapes-neo.spec.ts`,
 ]);
-
-// ---------------------------------------------------------------------------
-// Mapping: diagram folder name → spec files that should run for that diagram.
-// Covers all files under cypress/integration/rendering/ that relate to the
-// diagram. When a diagram has multiple spec variants (ELK, hand-drawn, etc.),
-// all variants are included so a change to the base diagram is fully tested.
-// ---------------------------------------------------------------------------
-/** @type {Record<string, string[]>} */
-export const DIAGRAM_SPEC_MAP = {
-  architecture: ['cypress/integration/rendering/architecture.spec.ts'],
-  block: ['cypress/integration/rendering/block.spec.js'],
-  c4: ['cypress/integration/rendering/c4.spec.js'],
-  class: [
-    'cypress/integration/rendering/classDiagram.spec.js',
-    'cypress/integration/rendering/classDiagram-v2.spec.js',
-    'cypress/integration/rendering/classDiagram-v3.spec.js',
-    'cypress/integration/rendering/classDiagram-elk-v3.spec.js',
-    'cypress/integration/rendering/classDiagram-handDrawn-v3.spec.js',
-    'cypress/integration/rendering/classDiagram-neo.spec.js',
-  ],
-  er: [
-    'cypress/integration/rendering/erDiagram.spec.js',
-    'cypress/integration/rendering/erDiagram-unified.spec.js',
-    'cypress/integration/rendering/erDiagram-neo-look.spec.ts',
-  ],
-  error: ['cypress/integration/rendering/errorDiagram.spec.js'],
-  eventmodeling: ['cypress/integration/rendering/eventmodeling.spec.ts'],
-  flowchart: [
-    'cypress/integration/rendering/flowchart.spec.js',
-    'cypress/integration/rendering/flowchart-v2.spec.js',
-    'cypress/integration/rendering/flowchart-elk.spec.js',
-    'cypress/integration/rendering/flowchart-handDrawn.spec.js',
-    'cypress/integration/rendering/flowchart-icon.spec.js',
-    'cypress/integration/rendering/flowchart-shape-alias.spec.ts',
-    'cypress/integration/rendering/flowchart-shape-themes.spec.ts',
-  ],
-  gantt: ['cypress/integration/rendering/gantt.spec.js'],
-  git: [
-    'cypress/integration/rendering/gitGraph.spec.js',
-    'cypress/integration/rendering/gitGraph-neo-look.spec.js',
-  ],
-  info: ['cypress/integration/rendering/info.spec.ts'],
-  ishikawa: ['cypress/integration/rendering/ishikawa.spec.ts'],
-  kanban: ['cypress/integration/rendering/kanban.spec.ts'],
-  mindmap: [
-    'cypress/integration/rendering/mindmap.spec.ts',
-    'cypress/integration/rendering/mindmap-tidy-tree.spec.js',
-    'cypress/integration/rendering/mindmap-neo-look.spec.ts',
-  ],
-  packet: ['cypress/integration/rendering/packet.spec.ts'],
-  pie: ['cypress/integration/rendering/pie.spec.ts'],
-  'quadrant-chart': ['cypress/integration/rendering/quadrantChart.spec.js'],
-  radar: ['cypress/integration/rendering/radar.spec.js'],
-  requirement: [
-    'cypress/integration/rendering/requirement.spec.js',
-    'cypress/integration/rendering/requirementDiagram-unified.spec.js',
-    'cypress/integration/rendering/requirementDiagram-neo-themes.spec.ts',
-  ],
-  sankey: ['cypress/integration/rendering/sankey.spec.ts'],
-  sequence: [
-    'cypress/integration/rendering/sequencediagram.spec.js',
-    'cypress/integration/rendering/sequencediagram-v2.spec.js',
-    'cypress/integration/rendering/sequenceDiagram-redux-themes.spec.ts',
-  ],
-  state: [
-    'cypress/integration/rendering/stateDiagram.spec.js',
-    'cypress/integration/rendering/stateDiagram-v2.spec.js',
-    'cypress/integration/rendering/stateDiagram-neo.spec.js',
-  ],
-  timeline: [
-    'cypress/integration/rendering/timeline.spec.ts',
-    'cypress/integration/rendering/timeline-neo-look.spec.js',
-  ],
-  treeView: ['cypress/integration/rendering/treeView.spec.ts'],
-  treemap: ['cypress/integration/rendering/treemap.spec.ts'],
-  'user-journey': ['cypress/integration/rendering/journey.spec.js'],
-  venn: ['cypress/integration/rendering/venn.spec.ts'],
-  wardley: ['cypress/integration/rendering/wardley.spec.js'],
-  xychart: ['cypress/integration/rendering/xyChart.spec.js'],
-  zenuml: ['cypress/integration/rendering/zenuml.spec.js'],
-};
 
 // Regex: extract diagram name from paths like
 // packages/mermaid/src/diagrams/<name>/...
@@ -169,10 +96,17 @@ const DIAGRAM_PATH_RE = /^packages\/mermaid\/src\/diagrams\/([^/]+)\//;
  * comma-separated spec pattern to pass to `cypress run --spec`, or an empty
  * string if the full suite should run.
  *
+ * The function uses the filesystem to discover which diagram spec subfolders
+ * exist. No mapping table is maintained — adding a spec to a subfolder is
+ * sufficient.
+ *
  * @param {string[]} files - Changed file paths (relative to repo root)
+ * @param {{ specBaseDir?: string }} [options]
  * @returns {string} Spec pattern, or '' for full suite
  */
-export function detectScope(files) {
+export function detectScope(files, options = {}) {
+  const specBaseDir = options.specBaseDir ?? SPEC_BASE_DIR;
+
   if (files.length === 0) {
     return '';
   }
@@ -209,14 +143,34 @@ export function detectScope(files) {
       continue;
     }
 
-    // Directly modified spec file
-    if (trimmed.startsWith('cypress/integration/rendering/')) {
-      if (CROSS_CUTTING_SPECS.has(trimmed)) {
+    // File inside a diagram spec subfolder
+    const specFolderPrefix = `${specBaseDir}/`;
+    if (trimmed.startsWith(specFolderPrefix)) {
+      const rest = trimmed.slice(specFolderPrefix.length);
+      const slashIdx = rest.indexOf('/');
+
+      if (slashIdx === -1) {
+        // File at the root of SPEC_BASE_DIR (cross-cutting or utility)
+        if (CROSS_CUTTING_SPECS.has(trimmed)) {
+          touchesShared = true;
+          break;
+        }
+        // A root-level spec that isn't cross-cutting (e.g. a new one) — be
+        // conservative and run full suite
         touchesShared = true;
         break;
+      } else {
+        // File in a diagram subfolder — treat as directly changing that spec
+        const subFolder = rest.slice(0, slashIdx);
+        directlyChangedSpecs.push(`${specFolderPrefix}${subFolder}/**`);
       }
-      directlyChangedSpecs.push(trimmed);
       continue;
+    }
+
+    // Cypress helpers or other integration tests
+    if (trimmed.startsWith('cypress/integration/other/')) {
+      touchesShared = true;
+      break;
     }
 
     // Anything else (root config, CI YAML, docs, etc.) → full suite
@@ -228,18 +182,17 @@ export function detectScope(files) {
     return '';
   }
 
-  // Collect spec files from the diagram map
+  // Build spec patterns from diagram names using filesystem discovery
   const specs = new Set(directlyChangedSpecs);
 
   for (const name of diagramNames) {
-    const diagramSpecs = DIAGRAM_SPEC_MAP[name];
-    if (!diagramSpecs) {
-      // Unknown diagram — can't confidently scope, fall back to full suite
+    const folder = `${specBaseDir}/${name}`;
+    if (!existsSync(folder)) {
+      // No subfolder exists for this diagram — fall back to full suite so
+      // we don't silently skip tests for unsubfoldered diagrams
       return '';
     }
-    for (const s of diagramSpecs) {
-      specs.add(s);
-    }
+    specs.add(`${folder}/**`);
   }
 
   if (specs.size === 0) {
