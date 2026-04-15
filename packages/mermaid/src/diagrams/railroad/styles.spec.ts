@@ -33,7 +33,9 @@ describe('Railroad Styles', () => {
       const styles = getStyles({ fontFamily: 'Arial' });
 
       expect(styles).toContain('font-family: Arial');
-      expect(styles).not.toContain(`font-family: ${configApi.getConfig().themeVariables?.fontFamily}`);
+      expect(styles).not.toContain(
+        `font-family: ${configApi.getConfig().themeVariables?.fontFamily}`
+      );
     });
 
     it('should use custom font size', () => {

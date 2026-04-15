@@ -38,9 +38,7 @@ export const RailroadModule: Module<
   },
 };
 
-export function createRailroadServices(
-  context: DefaultSharedCoreModuleContext = EmptyFileSystem
-): {
+export function createRailroadServices(context: DefaultSharedCoreModuleContext = EmptyFileSystem): {
   shared: LangiumSharedCoreServices;
   Railroad: RailroadServices;
 } {
