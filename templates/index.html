@@ -206,8 +206,9 @@
           preview.replaceChildren();
 
           if (IS_E2E) {
-            // 👉 стабильный режим для Argos
-            preview.innerHTML = svg;
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(svg, 'image/svg+xml');
+            preview.replaceChildren(doc.documentElement);
             return;
           }
 
