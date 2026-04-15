@@ -6,18 +6,12 @@ terminal ACC_DESCR: /accDescr(?:[\t ]*:([^\n\r]*?(?=%%)|[^\n\r]*)|\s*{([^}]*)})/
 
 terminal RR_ID returns string: /[A-Z_a-z][\w-]*/;
 terminal RR_STRING returns string: /"([^"\\]|\\.)*"|'([^'\\]|\\.)*'/;
-// Special sequence: `? … ?` delimiters.
-// Lookahead requires at least one non-whitespace char between delimiters.
-// Semicolons are excluded so a special sequence cannot span rule boundaries
-// and the postfix `?` operator does not collide with the opening delimiter.
-terminal RR_SPECIAL_SEQUENCE returns string: /\?(?=[^?;]*[^?\s;][^?;]*\?)[^?;]*\?/;
 
 hidden terminal RR_WHITESPACE: /[\t \r\n]+/;
 hidden terminal RR_YAML: /---[\t ]*\r?\n(?:[\S\s]*?\r?\n)?---(?:\r?\n|(?!\S))/;
 hidden terminal RR_DIRECTIVE: /[\t ]*%%{[\S\s]*?}%%(?:\r?\n|(?!\S))/;
 hidden terminal RR_SINGLE_LINE_COMMENT: /[\t ]*%%[^\n\r]*/;
 hidden terminal RR_BLOCK_COMMENT: /\/\*[\s\S]*?\*\//;
-hidden terminal RR_ISO_COMMENT: /\(\*[\s\S]*?\*\)/;
 
 interface Railroad {
     title?: string
@@ -28,63 +22,41 @@ interface Railroad {
 
 interface RailroadRule {
     name: string
-    definition: RailroadChoice
+    definition: RailroadExpression
 }
 
-interface RailroadChoice {
-    alternatives: RailroadSequence[]
+interface RailroadExpression {}
+
+interface RailroadSequenceExpr extends RailroadExpression {
+    elements: RailroadExpression[]
 }
 
-interface RailroadSequence {
-    elements: RailroadTerm[]
+interface RailroadChoiceExpr extends RailroadExpression {
+    alternatives: RailroadExpression[]
 }
 
-interface RailroadTerm {
-    base: RailroadPrimary
-    postfixes: RailroadPostfix[]
+interface RailroadOptionalExpr extends RailroadExpression {
+    element: RailroadExpression
 }
 
-interface RailroadPrimary {}
-interface RailroadPostfix {}
+interface RailroadOneOrMoreExpr extends RailroadExpression {
+    element: RailroadExpression
+}
 
-interface RailroadTerminal extends RailroadPrimary {
+interface RailroadZeroOrMoreExpr extends RailroadExpression {
+    element: RailroadExpression
+}
+
+interface RailroadTerminalExpr extends RailroadExpression {
     value: string
 }
 
-interface RailroadNonTerminal extends RailroadPrimary {
+interface RailroadNonTerminalExpr extends RailroadExpression {
     name: string
 }
 
-interface RailroadSpecial extends RailroadPrimary {
+interface RailroadSpecialExpr extends RailroadExpression {
     text: string
-}
-
-interface RailroadGroup extends RailroadPrimary {
-    element: RailroadChoice
-}
-
-interface RailroadOptional extends RailroadPrimary {
-    element: RailroadChoice
-}
-
-interface RailroadRepetition extends RailroadPrimary {
-    element: RailroadChoice
-}
-
-interface RailroadOptionalPostfix extends RailroadPostfix {
-    operator: string
-}
-
-interface RailroadZeroOrMorePostfix extends RailroadPostfix {
-    operator: string
-}
-
-interface RailroadOneOrMorePostfix extends RailroadPostfix {
-    operator: string
-}
-
-interface RailroadExceptionPostfix extends RailroadPostfix {
-    except: RailroadPrimary
 }
 
 entry Railroad returns Railroad:
@@ -94,73 +66,48 @@ entry Railroad returns Railroad:
 ;
 
 RailroadRule returns RailroadRule:
-    name=RR_ID ('=' | '::=') definition=RailroadChoice ';'
+    name=RR_ID '=' definition=RailroadExpression ';'
 ;
 
-RailroadChoice returns RailroadChoice:
-    alternatives+=RailroadSequence ('|' alternatives+=RailroadSequence)*
+RailroadExpression returns RailroadExpression:
+    RailroadSequenceExpr
+    | RailroadChoiceExpr
+    | RailroadOptionalExpr
+    | RailroadOneOrMoreExpr
+    | RailroadZeroOrMoreExpr
+    | RailroadTerminalExpr
+    | RailroadNonTerminalExpr
+    | RailroadSpecialExpr
 ;
 
-RailroadSequence returns RailroadSequence:
-    elements+=RailroadTerm (','? elements+=RailroadTerm)*
+RailroadSequenceExpr returns RailroadSequenceExpr:
+    'sequence' '(' elements+=RailroadExpression (',' elements+=RailroadExpression)* ')'
 ;
 
-RailroadTerm returns RailroadTerm:
-    base=RailroadPrimary postfixes+=RailroadPostfix*
+RailroadChoiceExpr returns RailroadChoiceExpr:
+    'choice' '(' alternatives+=RailroadExpression (',' alternatives+=RailroadExpression)* ')'
 ;
 
-RailroadPrimary returns RailroadPrimary:
-    RailroadTerminal
-    | RailroadSpecial
-    | RailroadNonTerminal
-    | RailroadGroup
-    | RailroadOptional
-    | RailroadRepetition
+RailroadOptionalExpr returns RailroadOptionalExpr:
+    'optional' '(' element=RailroadExpression ')'
 ;
 
-RailroadTerminal returns RailroadTerminal:
-    value=RR_STRING
+RailroadOneOrMoreExpr returns RailroadOneOrMoreExpr:
+    'oneOrMore' '(' element=RailroadExpression ')'
 ;
 
-RailroadNonTerminal returns RailroadNonTerminal:
-    name=RR_ID
+RailroadZeroOrMoreExpr returns RailroadZeroOrMoreExpr:
+    'zeroOrMore' '(' element=RailroadExpression ')'
 ;
 
-RailroadSpecial returns RailroadSpecial:
-    text=RR_SPECIAL_SEQUENCE
+RailroadTerminalExpr returns RailroadTerminalExpr:
+    'terminal' '(' value=RR_STRING ')'
 ;
 
-RailroadGroup returns RailroadGroup:
-    '(' element=RailroadChoice ')'
+RailroadNonTerminalExpr returns RailroadNonTerminalExpr:
+    'nonterminal' '(' name=RR_STRING ')'
 ;
 
-RailroadOptional returns RailroadOptional:
-    '[' element=RailroadChoice ']'
-;
-
-RailroadRepetition returns RailroadRepetition:
-    '{' element=RailroadChoice '}'
-;
-
-RailroadPostfix returns RailroadPostfix:
-    RailroadOptionalPostfix
-    | RailroadZeroOrMorePostfix
-    | RailroadOneOrMorePostfix
-    | RailroadExceptionPostfix
-;
-
-RailroadOptionalPostfix returns RailroadOptionalPostfix:
-    operator='?'
-;
-
-RailroadZeroOrMorePostfix returns RailroadZeroOrMorePostfix:
-    operator='*'
-;
-
-RailroadOneOrMorePostfix returns RailroadOneOrMorePostfix:
-    operator='+'
-;
-
-RailroadExceptionPostfix returns RailroadExceptionPostfix:
-    '-' except=RailroadPrimary
+RailroadSpecialExpr returns RailroadSpecialExpr:
+    'special' '(' text=RR_STRING ')'
 ;

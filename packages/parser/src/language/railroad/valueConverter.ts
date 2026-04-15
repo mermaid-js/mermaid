@@ -63,10 +63,6 @@ export class RailroadValueConverter extends AbstractMermaidValueConverter {
       return decodeEscapedString(input);
     }
 
-    if (rule.name === 'RR_SPECIAL_SEQUENCE') {
-      return input.slice(1, -1).trim();
-    }
-
     return undefined;
   }
 }

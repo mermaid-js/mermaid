@@ -32,16 +32,8 @@ const sanitizeAstNode = (node: ASTNode): ASTNode => {
         element: sanitizeAstNode(node.element),
         separator: node.separator ? sanitizeAstNode(node.separator) : undefined,
       };
-    case 'group':
-      return { ...node, element: sanitizeAstNode(node.element) };
     case 'special':
       return { ...node, text: sanitizeText(node.text) };
-    case 'exception':
-      return {
-        ...node,
-        base: sanitizeAstNode(node.base),
-        except: sanitizeAstNode(node.except),
-      };
   }
 };
 

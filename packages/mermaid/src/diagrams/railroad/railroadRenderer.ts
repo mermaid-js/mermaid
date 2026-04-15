@@ -523,20 +523,8 @@ class RailroadRenderer {
       case 'repetition':
         return this.renderRepetition(parent, node.element, node.min);
 
-      case 'group':
-        return this.renderExpression(parent, node.element);
-
       case 'special':
         return this.renderSpecial(parent, node.text);
-
-      case 'exception':
-        // Renders exception as [base, "-", except] — a visual placeholder until
-        // a dedicated exception diagram element is designed (see #4252).
-        return this.renderSequence(parent, [
-          node.base,
-          { type: 'terminal', value: '-' },
-          node.except,
-        ]);
 
       default:
         throw new Error(`Unknown node type: ${(node as any).type}`);

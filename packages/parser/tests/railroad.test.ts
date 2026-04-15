@@ -1,7 +1,12 @@
 import type { LangiumParser } from 'langium';
 import { describe, expect, it } from 'vitest';
 
-import type { Railroad } from '../src/language/generated/ast.js';
+import type {
+  Railroad,
+  RailroadChoiceExpr,
+  RailroadSequenceExpr,
+  RailroadSpecialExpr,
+} from '../src/language/generated/ast.js';
 import { createRailroadServices } from '../src/language/railroad/module.js';
 import { MermaidParseError, parse as parseAsync } from '../src/parse.js';
 import { expectNoErrorsOrAlternatives } from './test-util.js';
@@ -19,7 +24,7 @@ describe('Railroad parser', () => {
 title Example Grammar
 accTitle: Accessible Railroad
 accDescr: Railroad description
-rule = "a" ;`);
+rule = terminal("a") ;`);
 
     expectNoErrorsOrAlternatives(result);
     expect(result.value.$type).toBe('Railroad');
@@ -29,46 +34,63 @@ rule = "a" ;`);
     expect(result.value.rules).toHaveLength(1);
   });
 
-  it('should parse grouped choices with postfix operators', () => {
+  it('should parse IR function expressions', () => {
     const result = parse(`railroad-diagram
-rule = ( "a" | "b" )+ ;`);
+rule = sequence(terminal("a"), nonterminal("b")) ;`);
 
     expectNoErrorsOrAlternatives(result);
-    const term = result.value.rules[0].definition.alternatives[0].elements[0];
-    expect(term.base.$type).toBe('RailroadGroup');
-    expect(term.postfixes[0].$type).toBe('RailroadOneOrMorePostfix');
-  });
-
-  it('should parse special sequences with spaced question-mark delimiters', () => {
-    const result = parse(`railroad-diagram
-rule = ? special ? ;`);
-
-    expectNoErrorsOrAlternatives(result);
-    const term = result.value.rules[0].definition.alternatives[0].elements[0];
-    expect(term.base.$type).toBe('RailroadSpecial');
-    if (term.base.$type === 'RailroadSpecial') {
-      expect(term.base.text).toBe('special');
+    const def = result.value.rules[0].definition;
+    expect(def.$type).toBe('RailroadSequenceExpr');
+    if (def.$type === 'RailroadSequenceExpr') {
+      const seq = def as RailroadSequenceExpr;
+      expect(seq.elements).toHaveLength(2);
+      expect(seq.elements[0].$type).toBe('RailroadTerminalExpr');
+      expect(seq.elements[1].$type).toBe('RailroadNonTerminalExpr');
     }
   });
 
-  it('should parse exception postfixes and BNF rule definitions', () => {
+  it('should parse choice expressions', () => {
     const result = parse(`railroad-diagram
-letter ::= consonant - vowel ;`);
+rule = choice(terminal("a"), terminal("b"), terminal("c")) ;`);
 
     expectNoErrorsOrAlternatives(result);
-    const term = result.value.rules[0].definition.alternatives[0].elements[0];
-    expect(term.base.$type).toBe('RailroadNonTerminal');
-    expect(term.postfixes[0].$type).toBe('RailroadExceptionPostfix');
-    if (term.postfixes[0].$type === 'RailroadExceptionPostfix') {
-      expect(term.postfixes[0].except.$type).toBe('RailroadNonTerminal');
+    const def = result.value.rules[0].definition;
+    expect(def.$type).toBe('RailroadChoiceExpr');
+    if (def.$type === 'RailroadChoiceExpr') {
+      expect((def as RailroadChoiceExpr).alternatives).toHaveLength(3);
     }
   });
 
-  it('should skip C-style and ISO comments', () => {
+  it('should parse optional, oneOrMore, and zeroOrMore', () => {
+    const result = parse(`railroad-diagram
+r1 = optional(terminal("a")) ;
+r2 = oneOrMore(terminal("b")) ;
+r3 = zeroOrMore(terminal("c")) ;`);
+
+    expectNoErrorsOrAlternatives(result);
+    expect(result.value.rules).toHaveLength(3);
+    expect(result.value.rules[0].definition.$type).toBe('RailroadOptionalExpr');
+    expect(result.value.rules[1].definition.$type).toBe('RailroadOneOrMoreExpr');
+    expect(result.value.rules[2].definition.$type).toBe('RailroadZeroOrMoreExpr');
+  });
+
+  it('should parse special expressions', () => {
+    const result = parse(`railroad-diagram
+rule = special("any character") ;`);
+
+    expectNoErrorsOrAlternatives(result);
+    const def = result.value.rules[0].definition;
+    expect(def.$type).toBe('RailroadSpecialExpr');
+    if (def.$type === 'RailroadSpecialExpr') {
+      expect((def as RailroadSpecialExpr).text).toBe('any character');
+    }
+  });
+
+  it('should skip C-style block comments', () => {
     const result = parse(`railroad-diagram
 /* comment before the first rule */
-rule = (* inline comment *) "a" ;
-next = rule ;`);
+rule = terminal("a") ;
+next = nonterminal("rule") ;`);
 
     expectNoErrorsOrAlternatives(result);
     expect(result.value.rules).toHaveLength(2);
@@ -81,7 +103,7 @@ next = rule ;`);
       parseAsync(
         'railroad',
         `railroad-diagram
-rule = "a"`
+rule = terminal("a")`
       )
     ).rejects.toBeInstanceOf(MermaidParseError);
   });
