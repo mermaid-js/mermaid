@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../../helpers/util.ts';
 
 const aliasSet1 = ['process', 'rect', 'proc', 'rectangle'] as const;
 

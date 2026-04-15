@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../../helpers/util.ts';
 
 describe('Mindmap Tidy Tree', () => {
   it('1-tidy-tree: should render a simple mindmap without children', () => {

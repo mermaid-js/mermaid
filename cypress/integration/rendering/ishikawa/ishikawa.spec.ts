@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util';
+import { imgSnapshotTest, renderGraph } from '../../../helpers/util';
 
 describe('Ishikawa diagram', () => {
   it('1: should render a simple ishikawa diagram', () => {

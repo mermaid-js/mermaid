@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../../helpers/util.ts';
 
 describe('Venn Diagram', () => {
   it('1: should render a simple two-set venn diagram', () => {

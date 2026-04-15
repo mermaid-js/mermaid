@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest, renderGraph } from '../../../helpers/util.ts';
 
 describe('Requirement diagram', () => {
   it('sample', () => {

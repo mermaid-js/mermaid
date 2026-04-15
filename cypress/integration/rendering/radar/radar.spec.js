@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util';
+import { imgSnapshotTest } from '../../../helpers/util';
 
 describe('radar structure', () => {
   it('should render a simple radar diagram', () => {

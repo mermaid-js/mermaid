@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest, renderGraph } from '../../../helpers/util.ts';
 
 describe('Flowchart HandDrawn', () => {
   it('FHD1: should render a simple flowchart no htmlLabels', () => {

@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../../helpers/util.ts';
 
 describe('Timeline - Look and Themes', () => {
   const spaceExplorationTimeline = `timeline
