@@ -141,8 +141,8 @@ Use case diagrams support multiple relationship types defined by specific keywor
 | Keyword         | Description    | Rendering                         |
 | --------------- | -------------- | --------------------------------- |
 | -->             | Association    | Solid line with arrow             |
-| include:        | Include        | Dashed arrow with <<include>>     |
-| extend:         | Extend         | Dashed arrow with <<extend>>      |
+| include:        | Include        | Dashed arrow with `<<include>>`   |
+| extend:         | Extend         | Dashed arrow with `<<extend>>`    |
 | generalization: | Generalization | Solid line with hollow arrowhead  |
 | dependency:     | Dependency     | Dashed arrow                      |
 | realization:    | Realization    | Dashed line with hollow arrowhead |
