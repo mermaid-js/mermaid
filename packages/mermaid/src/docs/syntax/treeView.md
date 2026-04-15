@@ -44,7 +44,7 @@ treeView-beta
     package.json
 ```
 
-### Inline descriptions with
+### Inline descriptions with `##`
 
 Add a visible description after `##` — rendered next to the label in italic:
 
@@ -131,22 +131,25 @@ treeView-beta
 
 ## Config Variables
 
-| Property      | Description               | Default Value |
-| ------------- | ------------------------- | ------------- |
-| rowIndent     | Indentation for each row  | 10            |
-| paddingX      | Horizontal padding of row | 5             |
-| paddingY      | Vertical padding of row   | 5             |
-| lineThickness | Thickness of the line     | 1             |
+| Property      | Description                       | Default Value |
+| ------------- | --------------------------------- | ------------- |
+| rowIndent     | Indentation for each row          | 10            |
+| paddingX      | Horizontal padding of row         | 5             |
+| paddingY      | Vertical padding of row           | 5             |
+| lineThickness | Thickness of the line             | 1             |
+| showIcons     | Whether to show file/folder icons | true          |
 
 ### Theme Variables
 
-| Property         | Description                  | Default Value |
-| ---------------- | ---------------------------- | ------------- |
-| labelFontSize    | Font size of the label       | '16px'        |
-| labelColor       | Color of the label           | 'black'       |
-| lineColor        | Color of the line            | 'black'       |
-| iconColor        | Color of file-type icons     | '#546e7a'     |
-| descriptionColor | Color of ## description text | '#999'        |
+| Property         | Description                    | Default Value        |
+| ---------------- | ------------------------------ | -------------------- |
+| labelFontSize    | Font size of the label         | '16px'               |
+| labelColor       | Color of the label             | 'black'              |
+| lineColor        | Color of the line              | 'black'              |
+| iconColor        | Color of file-type icons       | '#546e7a'            |
+| descriptionColor | Color of `##` description text | '#6a9955'            |
+| highlightBg      | Highlight background fill      | rgba(255,193,7,0.15) |
+| highlightStroke  | Highlight border stroke        | #ffc107              |
 
 ## Supported Icons
 

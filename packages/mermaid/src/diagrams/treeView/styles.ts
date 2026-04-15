@@ -8,6 +8,8 @@ const defaultTreeViewDiagramStyles: Required<TreeViewDiagramStyles> = {
   lineColor: 'black',
   iconColor: '#546e7a',
   descriptionColor: '#6a9955',
+  highlightBg: 'rgba(255, 193, 7, 0.15)',
+  highlightStroke: '#ffc107',
 };
 
 const styles: DiagramStylesProvider = ({
@@ -15,10 +17,15 @@ const styles: DiagramStylesProvider = ({
 }: {
   treeView?: TreeViewDiagramStyles;
 }): string => {
-  const { labelFontSize, labelColor, lineColor, iconColor, descriptionColor } = cleanAndMerge(
-    defaultTreeViewDiagramStyles,
-    treeView
-  );
+  const {
+    labelFontSize,
+    labelColor,
+    lineColor,
+    iconColor,
+    descriptionColor,
+    highlightBg,
+    highlightStroke,
+  } = cleanAndMerge(defaultTreeViewDiagramStyles, treeView);
   return `
     .treeView-node-label {
         font-size: ${labelFontSize};
@@ -39,8 +46,8 @@ const styles: DiagramStylesProvider = ({
         font-style: italic;
     }
     .treeView-highlight-bg {
-        fill: rgba(255, 193, 7, 0.15);
-        stroke: #ffc107;
+        fill: ${highlightBg};
+        stroke: ${highlightStroke};
         stroke-width: 1;
     }
     `;

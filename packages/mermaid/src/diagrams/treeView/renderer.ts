@@ -90,7 +90,7 @@ const positionLabel = (
   node.BBox = { x, y, width, height };
 
   // Highlight background rect (sized later in drawTree)
-  if (node.cssClass?.includes('highlight')) {
+  if (node.cssClass?.split(/\s+/).includes('highlight')) {
     nodeGroup
       .insert('rect', ':first-child')
       .attr('x', x)
@@ -196,7 +196,7 @@ const drawTree = (
 
   // Phase 3: Size highlight background rects to full tree width
   for (const ri of renderInfos) {
-    if (ri.node.cssClass?.includes('highlight')) {
+    if (ri.node.cssClass?.split(/\s+/).includes('highlight')) {
       const rect = ri.nodeGroup.select('.treeView-highlight-bg');
       if (!rect.empty()) {
         const rectWidth = totalWidth - ri.node.BBox!.x + 8;

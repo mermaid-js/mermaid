@@ -42,6 +42,8 @@ export interface TreeViewDiagramStyles {
   lineColor?: string;
   iconColor?: string;
   descriptionColor?: string;
+  highlightBg?: string;
+  highlightStroke?: string;
 }
 
 export type D3SVGElement<T extends SVGElement> = Selection<T, unknown, Element | null, unknown>;
