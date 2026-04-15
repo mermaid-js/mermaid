@@ -187,25 +187,30 @@
         try {
           const { svg } = await mermaid.render('m1', src.value);
 
-          // Clear the preview container safely (no innerHTML)
           preview.replaceChildren();
 
-          // Parse SVG string into a real DOM element
           const parser = new DOMParser();
           const doc = parser.parseFromString(svg, 'image/svg+xml');
           const svgEl = doc.documentElement;
 
-          // Append parsed SVG to the preview
+          // Remove potentially dangerous elements
+          svgEl.querySelectorAll('script, foreignObject').forEach((el) => el.remove());
+
+          // Remove inline event handlers (onload, onclick, etc.)
+          svgEl.querySelectorAll('*').forEach((el) => {
+            [...el.attributes].forEach((attr) => {
+              if (attr.name.startsWith('on')) {
+                el.removeAttribute(attr.name);
+              }
+            });
+          });
+
           preview.appendChild(svgEl);
         } catch (e) {
-          // Clear previous content
           preview.replaceChildren();
 
-          // Create a safe text container for the error message
           const pre = document.createElement('pre');
           pre.style.color = '#ff6b6b';
-
-          // Use textContent to avoid HTML injection (XSS-safe)
           pre.textContent = e.message;
 
           preview.appendChild(pre);
