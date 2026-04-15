@@ -63,7 +63,7 @@
         actor "Member" as M
         actor "Admin" as A
         
-        # Testing generalization markers (hollow arrows)
+        %% Testing generalization markers (hollow arrows)
         generalization: M --> G
         generalization: A --> M
 
@@ -79,7 +79,7 @@
         A --> UC3
         A --> UC4
         
-        # Cross-linking
+        %% Cross-linking
         M --> UC1
       </pre>
 
@@ -120,10 +120,10 @@
 
         SA --> AL
         
-        # Anchor (dashed line to element)
+        %% Anchor (dashed line to element)
         anchor: N1 --> AL
         
-        # Constraint (dotted line between notes)
+        %% Constraint (dotted line between notes)
         constraint: N1 --> N2
       </pre>
 
@@ -150,11 +150,12 @@
         theme: 'dark',
         securityLevel: 'loose', // Important for custom markers/IDs
         usecase: {
-          diagramPadding: 20,
-          actorMargin: 50,
-          useCaseMargin: 35,
-          fill: '#38bdf8',
-          stroke: '#f8fafc',
+          diagramMarginX: 50,
+          diagramMarginY: 10,
+          usecaseMargin: 35,
+          usecasePadding: 20,
+          wrap: true,
+          wrapPadding: 10,
         },
         themeVariables: {
           primaryColor: '#38bdf8',

@@ -10,9 +10,19 @@ import type {
   Treemap,
   TreeView,
   Wardley,
+  Usecase,
 } from './index.js';
 
-export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph | Radar | TreeView | Wardley;
+export type DiagramAST =
+  | Info
+  | Packet
+  | Pie
+  | Architecture
+  | GitGraph
+  | Radar
+  | TreeView
+  | Wardley
+  | Usecase;
 
 const parsers: Record<string, LangiumParser> = {};
 const initializers = {
@@ -61,6 +71,11 @@ const initializers = {
     const parser = createWardleyServices().Wardley.parser.LangiumParser;
     parsers.wardley = parser;
   },
+  usecase: async () => {
+    const { createUsecaseServices } = await import('./language/usecase/index.js');
+    const parser = createUsecaseServices().Usecase.parser.LangiumParser;
+    parsers.usecase = parser;
+  },
 } as const;
 
 export async function parse(diagramType: 'info', text: string): Promise<Info>;
@@ -72,6 +87,7 @@ export async function parse(diagramType: 'gitGraph', text: string): Promise<GitG
 export async function parse(diagramType: 'radar', text: string): Promise<Radar>;
 export async function parse(diagramType: 'treemap', text: string): Promise<Treemap>;
 export async function parse(diagramType: 'wardley', text: string): Promise<Wardley>;
+export async function parse(diagramType: 'usecase', text: string): Promise<Usecase>;
 
 export async function parse<T extends DiagramAST>(
   diagramType: keyof typeof initializers,

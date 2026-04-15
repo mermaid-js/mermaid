@@ -585,11 +585,8 @@ function layoutDiagram(model: UseCaseModel): LayoutData {
   };
 }
 
-export const draw: DiagramDefinition['renderer']['draw'] = (text, id, _version, _diag) => {
+export const draw: DiagramDefinition['renderer']['draw'] = (_text, id, _version, _diag) => {
   log.debug('usecaseRenderer.draw', id);
-
-  ucDb.clear();
-  ucDb.parseDiagram(text);
 
   const model = ucDb.getModel();
   const layout = layoutDiagram(model);
