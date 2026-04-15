@@ -1,10 +1,10 @@
 ---
 description: Governance rules for mermaid-monorepo — quality gates, security, conventions
 globs:
-  - "**/*.ts"
-  - "**/*.tsx"
-  - "**/*.js"
-  - "**/*.jsx"
+  - '**/*.ts'
+  - '**/*.tsx'
+  - '**/*.js'
+  - '**/*.jsx'
 alwaysApply: true
 ---
 
@@ -17,17 +17,22 @@ alwaysApply: true
 ## Quality Gates
 
 Run these checks in order before committing:
+
 ### Lint
+
 - `npm run lint`
 - `npx tsc --noEmit`
 
 ### Test
+
 - `npm run test`
 
 ### Build
+
 - `npm run build`
 
 ### Ci (inferred from workflow)
+
 - `pnpm run --filter mermaid types:build-config`
 - `pnpm run docs:build`
 - `pnpm run build:viz`
@@ -36,6 +41,7 @@ Run these checks in order before committing:
 - `ERROR_MESSAGE+=' `rm ./node_modules/.cache/prettier/.prettier-cache`.'`
 - `ERROR_MESSAGE+=' `pnpm run --filter mermaid types:build-config`'`
 - `ERROR_MESSAGE+=' Run `pnpm run --filter mermaid checkCircle` on your local machine'`
+
 ## Security
 
 - No hardcoded secrets — grep for sk_live, AKIA, password= before commit

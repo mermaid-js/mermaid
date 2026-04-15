@@ -1,4 +1,5 @@
 <!-- crag:auto-start -->
+
 # GEMINI.md
 
 > Generated from governance.md by crag. Regenerate: `crag compile --target gemini`

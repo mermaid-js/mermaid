@@ -1,4 +1,5 @@
 <!-- crag:auto-start -->
+
 # Amazon Q Rules — mermaid-monorepo
 
 > Generated from governance.md by crag. Regenerate: `crag compile --target amazonq`

@@ -1,4 +1,5 @@
 <!-- crag:auto-start -->
+
 # Copilot Instructions — mermaid-monorepo
 
 > Generated from governance.md by crag. Regenerate: `crag compile --target copilot`

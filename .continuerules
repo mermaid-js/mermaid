@@ -1,4 +1,5 @@
 <!-- crag:auto-start -->
+
 # Continue Rules — mermaid-monorepo
 
 > Generated from governance.md by crag. Regenerate: `crag compile --target continue`
@@ -27,18 +28,18 @@ Always follow these when generating or modifying code:
 
 ## Quality Gates
 
-  - npm run lint
-  - npx tsc --noEmit
-  - npm run test
-  - npm run build
-  - pnpm run --filter mermaid types:build-config
-  - pnpm run docs:build
-  - pnpm run build:viz
-  - ERROR_MESSAGE+=' make sure your packages are up-to-date by running `pnpm install`.'
-  - ERROR_MESSAGE+=' You may also need to delete your prettier cache by running'
-  - ERROR_MESSAGE+=' `rm ./node_modules/.cache/prettier/.prettier-cache`.'
-  - ERROR_MESSAGE+=' `pnpm run --filter mermaid types:build-config`'
-  - ERROR_MESSAGE+=' Run `pnpm run --filter mermaid checkCircle` on your local machine'
+- npm run lint
+- npx tsc --noEmit
+- npm run test
+- npm run build
+- pnpm run --filter mermaid types:build-config
+- pnpm run docs:build
+- pnpm run build:viz
+- ERROR_MESSAGE+=' make sure your packages are up-to-date by running `pnpm install`.'
+- ERROR_MESSAGE+=' You may also need to delete your prettier cache by running'
+- ERROR_MESSAGE+=' `rm ./node_modules/.cache/prettier/.prettier-cache`.'
+- ERROR_MESSAGE+=' `pnpm run --filter mermaid types:build-config`'
+- ERROR_MESSAGE+=' Run `pnpm run --filter mermaid checkCircle` on your local machine'
 
 ## Boundaries
 

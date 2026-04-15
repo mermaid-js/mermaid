@@ -1,4 +1,5 @@
 <!-- crag:auto-start -->
+
 # Cline Rules — mermaid-monorepo
 
 Generated from governance.md by crag. Regenerate with: `crag compile --target cline`
@@ -43,6 +44,7 @@ Run these in order, stop on first MANDATORY failure:
 ## Workflow
 
 For every task:
+
 1. Read the governance.md file first
 2. Understand which files need to change
 3. Make minimal, focused changes
