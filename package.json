@@ -15,9 +15,13 @@
     "git graph"
   ],
   "scripts": {
+    "clean": "rimraf packages/mermaid/dist",
+    "copy:index": "cpy templates/index.html packages/mermaid/dist/ --flat",
+    "serve:dist": "cd packages/mermaid/dist && python -m http.server 8080",
     "build": "pnpm build:esbuild && pnpm build:types",
     "build:esbuild": "pnpm run -r clean && tsx .esbuild/build.ts",
     "build:mermaid": "pnpm build:esbuild --mermaid",
+    "build:mermaid:full": "pnpm clean && pnpm build:mermaid && pnpm copy:index && pnpm serve:dist",
     "build:viz": "pnpm build:esbuild --visualize",
     "build:types": "pnpm --filter mermaid types:build-config && tsx .build/types.ts",
     "build:types:watch": "tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly --watch",

@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mermaid Local Editor</title>
+    <script src="./mermaid.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        display: grid;
+        grid-template-rows: 40px 1fr;
+        height: 100vh;
+        background: #0f1115;
+        color: #ddd;
+      }
+      #toolbar {
+        position: relative;
+        display: flex;
+        gap: 8px;
+        padding: 6px 10px;
+        background: #0b0d12;
+        border-bottom: 1px solid #222;
+        transition:
+          transform 0.25s ease,
+          opacity 0.2s ease,
+          height 0.25s ease;
+        will-change: transform, opacity, height;
+      }
+      #toolbar input,
+      #toolbar select,
+      #toolbar button {
+        background: #111;
+        color: #ddd;
+        border: 1px solid #333;
+        padding: 4px 8px;
+      }
+      #src {
+        z-index: 1000;
+      }
+      #src.collapsed {
+        transform: translateY(-100%);
+        opacity: 0;
+        height: 0;
+        padding: 0 8px;
+        overflow: hidden;
+      }
+
+      /* Подсветка прямоугольников нод */
+      svg .node rect,
+      svg .node polygon,
+      svg .node path {
+        transition:
+          fill 120ms ease,
+          filter 120ms ease;
+      }
+
+      svg .node:hover rect,
+      svg .node:hover polygon,
+      svg .node:hover path {
+        fill: rgba(0, 170, 255, 0.25); /* фон */
+        filter: drop-shadow(0 0 11px rgba(0, 170, 255, 0.6)); /* свечение */
+      }
+
+      /* Выбранная нода с клавиатуры */
+      svg g.node.selected-node rect,
+      svg g.node.selected-node polygon,
+      svg g.node.selected-node path {
+        fill: rgba(0, 170, 255, 0.28);
+        filter: drop-shadow(0 0 14px rgba(0, 170, 255, 0.9));
+        transition:
+          fill 120ms ease,
+          filter 120ms ease;
+      }
+
+      p,
+      div,
+      div > * {
+        user-select: none;
+      }
+
+      #toggleToolbar {
+        cursor: pointer;
+        background: #1f2020;
+        color: #ccc;
+        border: 1px solid #2a2a2a;
+        border-radius: 6px;
+        padding: 4px 8px;
+      }
+
+      #src.collapsed #toggleToolbar {
+        position: fixed;
+        top: 8px;
+        left: 8px;
+        transform: translateY(100%);
+        opacity: 1;
+        height: auto;
+        z-index: 9999;
+      }
+      #preview svg {
+        width: 100%;
+        height: auto;
+        padding: 12px;
+        position: relative;
+        overflow: visible;
+      }
+      #preview svg {
+        display: block; /* убирает inline-центрирование */
+        margin: 0; /* убирает авто-отступы */
+        transform-origin: 0 0; /* якорь трансформаций */
+      }
+      #preview svg g {
+        transform-origin: 0 0;
+      }
+      #main {
+        display: grid;
+        grid-template-columns: 0.5fr 1fr;
+        height: calc(100vh - 40px);
+        overflow: hidden;
+      }
+      textarea {
+        width: 100%;
+        height: 100%;
+        background: #0b0d12;
+        color: #e6e6e6;
+        border: none;
+        padding: 12px;
+        font-family: monospace;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="toolbar">
+      <button id="toggleToolbar" title="Toggle toolbar">☰</button>
+      <select id="diagrams"></select>
+      <input id="name" placeholder="Diagram name" />
+      <button id="save">💾 Save</button>
+      <button id="new">➕ New</button>
+      <button id="del">🗑 Delete</button>
+      <button id="resetView">↺ Reset View</button>
+      <button id="exportSvg">⬇ Export SVG</button>
+    </div>
+
+    <div id="main">
+      <textarea id="src"></textarea>
+      <div id="preview"></div>
+    </div>
+
+    <script>
+      mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+
+      let scale = 1;
+      let panX = 0;
+      let panY = 0;
+      let isPanning = false;
+      let startX = 0,
+        startY = 0;
+
+      const src = document.getElementById('src');
+      const preview = document.getElementById('preview');
+      const diagramsSelect = document.getElementById('diagrams');
+      const nameInput = document.getElementById('name');
+
+      let diagrams = JSON.parse(localStorage.getItem('mermaid-diagrams') || '{}');
+      let current = localStorage.getItem('mermaid-current') || 'main';
+
+      if (!diagrams[current]) {
+        diagrams[current] = {
+          src: `flowchart LR\n  UI --> RuntimeBus --> Orchestrator --> Agents`,
+          view: { scale: 1, panX: 0, panY: 0 },
+        };
+      }
+
+      function refreshList() {
+        diagramsSelect.innerHTML = '';
+        Object.keys(diagrams).forEach((k) => {
+          const opt = document.createElement('option');
+          opt.value = k;
+          opt.textContent = k;
+          diagramsSelect.appendChild(opt);
+        });
+        diagramsSelect.value = current;
+        nameInput.value = current;
+      }
+
+      async function render() {
+        try {
+          const { svg } = await mermaid.render('m1', src.value);
+          preview.innerHTML = svg;
+        } catch (e) {
+          preview.innerHTML = `<pre style="color:#ff6b6b">${e.message}</pre>`;
+        }
+      }
+
+      function load(name) {
+        current = name;
+        const d = diagrams[name];
+
+        src.value = d.src;
+
+        // restore the view
+        scale = d.view?.scale ?? 1;
+        panX = d.view?.panX ?? 0;
+        panY = d.view?.panY ?? 0;
+
+        localStorage.setItem('mermaid-current', name);
+        refreshList();
+        render();
+        requestAnimationFrame(applyTransform);
+      }
+
+      document.getElementById('save').onclick = () => {
+        const name = nameInput.value.trim();
+        if (!name) return;
+
+        diagrams[name] = diagrams[name] || {};
+        diagrams[name].src = src.value;
+        diagrams[name].view = { scale, panX, panY };
+
+        localStorage.setItem('mermaid-diagrams', JSON.stringify(diagrams));
+        current = name;
+        refreshList();
+      };
+
+      document.getElementById('new').onclick = () => {
+        const name = prompt('Enter diagram name');
+        if (!name) return;
+
+        diagrams[name] = {
+          src: 'flowchart LR\n  A --> B',
+          view: { scale: 1, panX: 0, panY: 0 },
+        };
+
+        localStorage.setItem('mermaid-diagrams', JSON.stringify(diagrams));
+        load(name);
+      };
+
+      document.getElementById('del').onclick = () => {
+        if (!confirm(`Delete diagram "${current}"?`)) return;
+
+        delete diagrams[current];
+        current = Object.keys(diagrams)[0] || 'main';
+        localStorage.setItem('mermaid-diagrams', JSON.stringify(diagrams));
+        load(current);
+      };
+
+      document.getElementById('resetView').onclick = () => {
+        scale = 1;
+        panX = 0;
+        panY = 0;
+        applyTransform(); // this will save the reset to diagrams[current].view
+      };
+
+      document.getElementById('exportSvg').onclick = () => {
+        const svg = preview.querySelector('svg');
+        if (!svg) return;
+        const blob = new Blob([svg.outerHTML], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${current}.svg`;
+        a.click();
+        URL.revokeObjectURL(url);
+      };
+
+      diagramsSelect.onchange = () => load(diagramsSelect.value);
+      src.addEventListener('input', render);
+
+      preview.addEventListener(
+        'wheel',
+        (e) => {
+          e.preventDefault();
+          scale += e.deltaY * -0.0015;
+          scale = Math.min(Math.max(0.2, scale), 4);
+          applyTransform();
+        },
+        { passive: false }
+      );
+
+      preview.addEventListener('mousedown', (e) => {
+        isPanning = true;
+        startX = e.clientX - panX;
+        startY = e.clientY - panY;
+        preview.style.cursor = 'grabbing';
+      });
+
+      window.addEventListener('mouseup', () => {
+        isPanning = false;
+        preview.style.cursor = 'default';
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isPanning) return;
+        panX = e.clientX - startX;
+        panY = e.clientY - startY;
+        applyTransform();
+      });
+
+      function getRootGroup() {
+        const svg = preview.querySelector('svg');
+        if (!svg) return null;
+
+        // mermaid's content is in the first <g>
+        return svg.querySelector('g');
+      }
+
+      function applyTransform() {
+        const svg = preview.querySelector('svg');
+        if (!svg) return;
+
+        // strict limits - so that it doesn't fly away
+        panY = Math.max(-20000, Math.min(20000, panY));
+        panX = Math.max(-20000, Math.min(20000, panX));
+
+        svg.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+
+        if (diagrams[current]) {
+          diagrams[current].view = { scale, panX, panY };
+          localStorage.setItem('mermaid-diagrams', JSON.stringify(diagrams));
+        }
+      }
+
+      let saveTimer;
+      src.addEventListener('input', () => {
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(() => {
+          if (diagrams[current]) {
+            diagrams[current].src = src.value;
+            localStorage.setItem('mermaid-diagrams', JSON.stringify(diagrams));
+          }
+        }, 300);
+      });
+
+      const toolbar = document.getElementById('src');
+      const toggleToolbarBtn = document.getElementById('toggleToolbar');
+
+      let toolbarCollapsed = localStorage.getItem('toolbar-collapsed') === '1';
+
+      function applyToolbarState() {
+        toolbar.classList.toggle('collapsed', toolbarCollapsed);
+        toggleToolbarBtn.textContent = toolbarCollapsed ? '☰' : '✕';
+        toggleToolbarBtn.title = toolbarCollapsed ? 'Показать панель' : 'Скрыть панель';
+      }
+
+      toggleToolbarBtn.onclick = () => {
+        toolbarCollapsed = !toolbarCollapsed;
+        localStorage.setItem('toolbar-collapsed', toolbarCollapsed ? '1' : '0');
+        applyToolbarState();
+      };
+
+      // ===== Stable node navigation (Up/Down to jump between nodes) =====
+      let navNodes = [];
+      let navIndex = 0;
+
+      function rebuildNavNodes() {
+        const svg = preview.querySelector('svg');
+        if (!svg) return;
+
+        navNodes = Array.from(svg.querySelectorAll('g.node'));
+        navIndex = 0;
+
+        if (navNodes.length) {
+          highlightCurrentNode();
+          centerCurrentNode();
+        }
+      }
+
+      function highlightCurrentNode() {
+        const svg = preview.querySelector('svg');
+        if (!svg) return;
+
+        svg
+          .querySelectorAll('g.node.selected-node')
+          .forEach((n) => n.classList.remove('selected-node'));
+
+        const node = navNodes[navIndex];
+        if (node) node.classList.add('selected-node');
+      }
+
+      function centerCurrentNode() {
+        const node = navNodes[navIndex];
+        if (!node) return;
+
+        const nodeRect = node.getBoundingClientRect();
+        const contRect = preview.getBoundingClientRect();
+
+        const nodeCenterY = nodeRect.top + nodeRect.height / 6;
+        const contCenterY = contRect.top + contRect.height / 6;
+
+        const deltaY = contCenterY - nodeCenterY;
+
+        const nodeCenterX = nodeRect.left + nodeRect.width / 6;
+        const contCenterX = contRect.left + contRect.width / 6;
+
+        const deltaX = contCenterX - nodeCenterX;
+
+        panX += deltaX;
+        panY += deltaY;
+
+        applyTransform();
+      }
+
+      function setupKeyboardNav() {
+        window.addEventListener('keydown', (e) => {
+          if (document.activeElement === src) return;
+
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (!navNodes.length) rebuildNavNodes();
+            navIndex = Math.min(navIndex + 1, navNodes.length - 1);
+            highlightCurrentNode();
+            centerCurrentNode();
+          }
+
+          if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (!navNodes.length) rebuildNavNodes();
+            navIndex = Math.max(navIndex - 1, 0);
+            highlightCurrentNode();
+            centerCurrentNode();
+          }
+        });
+      }
+
+      // rebuild the node list after each render
+      const _render = render;
+      render = async function () {
+        await _render();
+        requestAnimationFrame(rebuildNavNodes);
+      };
+
+      setupKeyboardNav();
+      // ===== end stable node navigation =====
+
+      applyToolbarState();
+      refreshList();
+      load(current);
+    </script>
+  </body>
+</html>
