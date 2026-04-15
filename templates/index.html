@@ -155,6 +155,7 @@
       let isPanning = false;
       let startX = 0,
         startY = 0;
+      let iframeRef = null;
 
       const src = document.getElementById('src');
       const preview = document.getElementById('preview');
@@ -189,28 +190,98 @@
 
           preview.replaceChildren();
 
-          // create sandbox document
-          const sandbox = document.implementation.createHTMLDocument('');
+          const iframe = document.createElement('iframe');
+          iframe.sandbox = 'allow-same-origin';
+          iframe.style.width = '100%';
+          iframe.style.height = '100%';
+          iframe.style.border = 'none';
 
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(svg, 'image/svg+xml');
-          const svgEl = doc.documentElement;
+          preview.appendChild(iframe);
+          iframeRef = iframe;
 
-          // sanitize
-          svgEl.querySelectorAll('script, foreignObject').forEach((el) => el.remove());
+          const doc = iframe.contentDocument;
+          doc.open();
+          doc.write(svg);
+          doc.close();
 
-          svgEl.querySelectorAll('*').forEach((el) => {
-            [...el.attributes].forEach((attr) => {
-              if (attr.name.startsWith('on')) {
-                el.removeAttribute(attr.name);
-              }
-            });
+          setTimeout(() => {
+            rebuildNavNodes();
+          }, 0);
+
+          requestAnimationFrame(() => {
+            const svgEl = iframe.contentDocument?.querySelector('svg');
+            if (!svgEl) return;
+
+            svgEl.style.transformOrigin = '0 0';
+            svgEl.style.display = 'block';
           });
 
-          // import node from safe document
-          const safeNode = sandbox.importNode(svgEl, true);
+          const style = doc.createElement('style');
+          style.textContent = `
+      .node rect, .node polygon, .node path {
+        transition: fill 120ms ease, filter 120ms ease;
+      }
 
-          preview.appendChild(safeNode);
+      .node:hover rect,
+      .node:hover polygon,
+      .node:hover path {
+        fill: rgba(0, 170, 255, 0.25);
+        filter: drop-shadow(0 0 11px rgba(0, 170, 255, 0.6));
+      }
+
+      g.node.selected-node rect,
+      g.node.selected-node polygon,
+      g.node.selected-node path {
+        fill: rgba(0, 170, 255, 0.28);
+        filter: drop-shadow(0 0 14px rgba(0, 170, 255, 0.9));
+      }
+
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+    `;
+          doc.head.appendChild(style);
+
+          iframe.addEventListener('load', () => {
+            window.focus();
+          });
+
+          // RESET handlers
+          doc.onwheel = null;
+          doc.onmousedown = null;
+          doc.onmouseup = null;
+          doc.onmousemove = null;
+
+          let isPanningLocal = false;
+          let startXLocal = 0;
+          let startYLocal = 0;
+
+          doc.onwheel = (e) => {
+            e.preventDefault();
+            scale += e.deltaY * -0.0015;
+            scale = Math.min(Math.max(0.2, scale), 4);
+            applyTransform();
+          };
+
+          doc.onmousedown = (e) => {
+            isPanningLocal = true;
+            startXLocal = e.clientX - panX;
+            startYLocal = e.clientY - panY;
+            doc.body.style.cursor = 'grabbing';
+          };
+
+          doc.onmouseup = () => {
+            isPanningLocal = false;
+            doc.body.style.cursor = 'default';
+          };
+
+          doc.onmousemove = (e) => {
+            if (!isPanningLocal) return;
+            panX = e.clientX - startXLocal;
+            panY = e.clientY - startYLocal;
+            applyTransform();
+          };
         } catch (e) {
           preview.replaceChildren();
 
@@ -282,52 +353,27 @@
       };
 
       document.getElementById('exportSvg').onclick = () => {
-        const svg = preview.querySelector('svg');
+        if (!iframeRef) return;
+
+        const svg = iframeRef.contentDocument?.querySelector('svg');
         if (!svg) return;
+
         const blob = new Blob([svg.outerHTML], { type: 'image/svg+xml' });
         const url = URL.createObjectURL(blob);
+
         const a = document.createElement('a');
         a.href = url;
         a.download = `${current}.svg`;
         a.click();
+
         URL.revokeObjectURL(url);
       };
 
       diagramsSelect.onchange = () => load(diagramsSelect.value);
       src.addEventListener('input', render);
 
-      preview.addEventListener(
-        'wheel',
-        (e) => {
-          e.preventDefault();
-          scale += e.deltaY * -0.0015;
-          scale = Math.min(Math.max(0.2, scale), 4);
-          applyTransform();
-        },
-        { passive: false }
-      );
-
-      preview.addEventListener('mousedown', (e) => {
-        isPanning = true;
-        startX = e.clientX - panX;
-        startY = e.clientY - panY;
-        preview.style.cursor = 'grabbing';
-      });
-
-      window.addEventListener('mouseup', () => {
-        isPanning = false;
-        preview.style.cursor = 'default';
-      });
-
-      window.addEventListener('mousemove', (e) => {
-        if (!isPanning) return;
-        panX = e.clientX - startX;
-        panY = e.clientY - startY;
-        applyTransform();
-      });
-
       function getRootGroup() {
-        const svg = preview.querySelector('svg');
+        const svg = iframeRef?.contentDocument?.querySelector('svg');
         if (!svg) return null;
 
         // mermaid's content is in the first <g>
@@ -335,10 +381,11 @@
       }
 
       function applyTransform() {
-        const svg = preview.querySelector('svg');
+        if (!iframeRef) return;
+
+        const svg = iframeRef.contentDocument?.querySelector('svg');
         if (!svg) return;
 
-        // strict limits - so that it doesn't fly away
         panY = Math.max(-20000, Math.min(20000, panY));
         panX = Math.max(-20000, Math.min(20000, panX));
 
@@ -383,7 +430,10 @@
       let navIndex = 0;
 
       function rebuildNavNodes() {
-        const svg = preview.querySelector('svg');
+        navNodes = [];
+        navIndex = 0;
+
+        const svg = iframeRef?.contentDocument?.querySelector('svg');
         if (!svg) return;
 
         navNodes = Array.from(svg.querySelectorAll('g.node'));
@@ -396,7 +446,7 @@
       }
 
       function highlightCurrentNode() {
-        const svg = preview.querySelector('svg');
+        const svg = iframeRef?.contentDocument?.querySelector('svg');
         if (!svg) return;
 
         svg
@@ -454,10 +504,6 @@
 
       // rebuild the node list after each render
       const _render = render;
-      render = async function () {
-        await _render();
-        requestAnimationFrame(rebuildNavNodes);
-      };
 
       setupKeyboardNav();
       // ===== end stable node navigation =====
