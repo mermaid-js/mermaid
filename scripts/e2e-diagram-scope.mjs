@@ -112,7 +112,7 @@ export function detectScope(files, options = {}) {
     }
 
     // File inside a diagram folder
-    const diagramMatch = trimmed.match(DIAGRAM_PATH_RE);
+    const diagramMatch = DIAGRAM_PATH_RE.exec(trimmed);
     if (diagramMatch) {
       const name = diagramMatch[1];
       // 'common' and 'globalStyles' are shared — already caught above,
@@ -160,7 +160,7 @@ export function detectScope(files, options = {}) {
     const folder = `${specBaseDir}/${name}`;
     if (!existsSync(folder)) {
       // No subfolder exists for this diagram — fall back to full suite so
-      // we don't silently skip tests for unsubfoldered diagrams
+      // we don't silently skip tests for diagrams with no spec subfolder
       return '';
     }
     specs.add(`${folder}/**`);

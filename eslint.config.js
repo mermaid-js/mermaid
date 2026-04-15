@@ -21,6 +21,7 @@ export default tseslint.config(
       '**/dist/',
       '**/node_modules/',
       '.git/',
+      '.claude/',
       '**/generated/',
       '**/coverage/',
       'packages/mermaid/src/config.type.ts',
