@@ -3,7 +3,6 @@
   <head>
     <meta charset="utf-8" />
     <title>Mermaid Local Editor</title>
-    <script src="https://unpkg.com/dompurify@3.0.6/dist/purify.min.js"></script>
     <script src="./mermaid.min.js"></script>
     <style>
       body {
@@ -208,11 +207,7 @@
 
           const parser = new DOMParser();
           // SAFE: SVG is parsed and sanitized before insertion (scripts and event handlers removed)
-          const cleanSvg = DOMPurify.sanitize(svg, {
-            USE_PROFILES: { svg: true, svgFilters: true },
-          });
-
-          const parsed = new DOMParser().parseFromString(cleanSvg, 'image/svg+xml');
+          const parsed = parser.parseFromString(svg, 'image/svg+xml');
 
           const svgEl = parsed.documentElement;
 
