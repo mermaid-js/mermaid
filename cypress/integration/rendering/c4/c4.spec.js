@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest, renderGraph } from '../../../helpers/util.ts';
 
 describe('C4 diagram', () => {
   it('C4.1 should render a simple C4Context diagram', () => {

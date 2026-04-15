@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../../helpers/util.ts';
 
 describe('Kanban diagram', () => {
   it('1: should render a kanban with a single section', () => {

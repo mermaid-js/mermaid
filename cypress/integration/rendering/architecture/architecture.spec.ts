@@ -1,4 +1,4 @@
-import { imgSnapshotTest, urlSnapshotTest } from '../../helpers/util.ts';
+import { imgSnapshotTest, urlSnapshotTest } from '../../../helpers/util.ts';
 
 describe('architecture diagram', () => {
   it('should render a simple architecture diagram with groups', () => {

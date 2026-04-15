@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../../helpers/util.ts';
 
 const looks = ['neo'];
 const themes = ['neo', 'neo-dark', 'redux', 'redux-dark'];

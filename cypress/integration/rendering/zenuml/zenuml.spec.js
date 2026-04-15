@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../../helpers/util.ts';
 
 describe('Zen UML', () => {
   it('Basic Zen UML diagram', () => {

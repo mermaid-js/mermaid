@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../../helpers/util.ts';
 describe('Class diagram V3 ELK', () => {
   it('ELK-0: should render a simple class diagram', () => {
     imgSnapshotTest(

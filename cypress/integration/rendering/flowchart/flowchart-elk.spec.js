@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph, verifyNumber } from '../../helpers/util.ts';
+import { imgSnapshotTest, renderGraph, verifyNumber } from '../../../helpers/util.ts';
 
 describe('Flowchart ELK', () => {
   it('1-elk: should render a simple flowchart', () => {

@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util';
+import { imgSnapshotTest } from '../../../helpers/util';
 
 describe('Error Diagrams', () => {
   beforeEach(() => {

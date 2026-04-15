@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../../helpers/util.ts';
 
 const reduxThemes = ['redux', 'redux-color', 'redux-dark', 'redux-dark-color'] as const;
 const looks = ['neo'] as const;

@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util';
+import { imgSnapshotTest } from '../../../helpers/util';
 /* eslint-disable no-useless-escape */
 describe('Block diagram', () => {
   it('BL1: should calculate the block widths', () => {

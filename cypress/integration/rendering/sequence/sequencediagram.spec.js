@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest, renderGraph } from '../../../helpers/util.ts';
 
 describe('Sequence diagram', () => {
   it('should render a sequence diagram with boxes', () => {
