@@ -3,7 +3,8 @@ import "../common/common";
 
 entry Cynefin:
     NEWLINE*
-    ('cynefin-beta' | 'cynefin-beta:' | 'cynefin-beta' ':')
+    // Accept bare keyword or colon-terminated form; both are equivalent
+    ('cynefin-beta' | 'cynefin-beta:')
     NEWLINE*
     (
         TitleAndAccessibilities

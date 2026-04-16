@@ -157,6 +157,37 @@ describe('cynefin framework', () => {
     );
   });
 
+  it('should render cynefin with confusion domain items without overflow', () => {
+    imgSnapshotTest(
+      `cynefin-beta
+        title Confusion Items
+
+        confusion
+          "Unknown A"
+          "Unknown B"
+          "Unknown C"
+          "Unknown D"
+          "Unknown E"
+      `
+    );
+  });
+
+  it('should render cynefin with self-loop transitions silently dropped', () => {
+    imgSnapshotTest(
+      `cynefin-beta
+        title Self-loop Handling
+
+        complex
+          "Emergent work"
+        complicated
+          "Expert work"
+
+        complex --> complicated : "Pattern found"
+        complex --> complex : "Self-loop (dropped)"
+      `
+    );
+  });
+
   it('should render cynefin with accessibility directives', () => {
     imgSnapshotTest(
       `cynefin-beta

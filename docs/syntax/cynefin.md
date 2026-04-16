@@ -257,6 +257,8 @@ Cynefin diagrams use the following theme variables, which can be overridden via 
 
 - Domain names are fixed keywords. Only `complex`, `complicated`, `clear`, `chaotic`, and `confusion` are recognized.
 - Domains can be declared in any order; their position in the diagram is always the same (Complex top-left, Complicated top-right, Chaotic bottom-left, Clear bottom-right, Confusion center).
+- The `confusion` domain has a compact center ellipse. Up to 3 items are shown inside it; if more are provided a `+N more` overflow badge is displayed. In practice, the confusion domain should contain very few items — its purpose is to surface unknowns so they can be moved to one of the four main domains.
+- Self-loop transitions (e.g. `complex --> complex`) are silently ignored. Transitions must connect two different domains.
 - Handdrawn mode is not currently supported.
 - The wavy boundary rendering is deterministic: the same input always produces the same diagram, so diffs are stable across builds.
 

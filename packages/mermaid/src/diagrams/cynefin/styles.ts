@@ -3,104 +3,91 @@ import { cleanAndMerge } from '../../utils.js';
 import { getThemeVariables } from '../../themes/theme-default.js';
 import { getConfig as getConfigAPI } from '../../config.js';
 
-export interface CynefinStyleOptions {
-  domainOpacity?: number;
-  boundaryColor?: string;
-  boundaryStrokeWidth?: number;
-  cliffColor?: string;
-  cliffStrokeWidth?: number;
-  confusionOpacity?: number;
-  labelFontSize?: number;
-  subtitleFontSize?: number;
-  itemFontSize?: number;
-  itemFill?: string;
-  itemStroke?: string;
-  arrowColor?: string;
-  arrowStrokeWidth?: number;
-  arrowLabelFontSize?: number;
-}
-
-export const buildCynefinStyleOptions = (cynefin?: CynefinStyleOptions) => {
+/**
+ * Resolve the cynefin-specific theme block from the current mermaid theme.
+ * All presentation values (colors, font sizes, stroke widths) are sourced from
+ * here rather than duplicated as inline SVG attributes in the renderer.
+ */
+const getCynefinTheme = () => {
   const defaultThemeVariables = getThemeVariables();
   const currentConfig = getConfigAPI();
-
   const themeVariables = cleanAndMerge(defaultThemeVariables, currentConfig.themeVariables);
-  const cynefinOptions: CynefinStyleOptions = cleanAndMerge(
-    {
-      domainOpacity: 0.3,
-      boundaryColor: themeVariables.lineColor ?? '#333',
-      boundaryStrokeWidth: 1.5,
-      cliffColor: themeVariables.lineColor ?? '#222',
-      cliffStrokeWidth: 3,
-      confusionOpacity: 0.35,
-      labelFontSize: 18,
-      subtitleFontSize: 11,
-      itemFontSize: 12,
-      itemFill: themeVariables.mainBkg ?? '#fff',
-      itemStroke: themeVariables.border1 ?? '#ccc',
-      arrowColor: themeVariables.lineColor ?? '#555',
-      arrowStrokeWidth: 2,
-      arrowLabelFontSize: 11,
-    } as CynefinStyleOptions,
-    cynefin
-  );
-
-  return { themeVariables, cynefinOptions };
+  return themeVariables.cynefin as {
+    domainFontSize: number;
+    itemFontSize: number;
+    boundaryColor: string;
+    boundaryWidth: number;
+    cliffColor: string;
+    cliffWidth: number;
+    arrowColor: string;
+    arrowWidth: number;
+    textColor: string;
+    labelColor: string;
+  };
 };
 
-export const styles: DiagramStylesProvider = ({
-  cynefin,
-}: { cynefin?: CynefinStyleOptions } = {}) => {
-  const { themeVariables, cynefinOptions } = buildCynefinStyleOptions(cynefin);
+export const styles: DiagramStylesProvider = () => {
+  const t = getCynefinTheme();
   return `
 	.cynefinDomain {
 		stroke: none;
 	}
 	.cynefinDomainLabel {
-		font-size: ${cynefinOptions.labelFontSize}px;
+		font-size: ${t.domainFontSize}px;
 		font-weight: bold;
-		fill: ${themeVariables.primaryTextColor ?? '#222'};
-		color: ${themeVariables.primaryTextColor ?? '#222'};
+		fill: ${t.labelColor};
 	}
 	.cynefinSubtitle {
-		font-size: ${cynefinOptions.subtitleFontSize}px;
-		fill: ${themeVariables.secondaryTextColor ?? '#555'};
-		color: ${themeVariables.secondaryTextColor ?? '#555'};
+		font-size: ${t.itemFontSize - 1}px;
+		fill: ${t.textColor};
 		font-style: italic;
 	}
-	.cynefinItem rect {
-		fill: ${cynefinOptions.itemFill};
-		stroke: ${cynefinOptions.itemStroke};
+	.cynefinItem {
+		fill-opacity: 0.95;
+		stroke: ${t.boundaryColor};
 		stroke-width: 1;
 	}
-	.cynefinItem text {
-		font-size: ${cynefinOptions.itemFontSize}px;
-		fill: ${themeVariables.primaryTextColor ?? '#222'};
+	.cynefinItemText {
+		font-size: ${t.itemFontSize}px;
+		fill: ${t.textColor};
+	}
+	.cynefinItemOverflow {
+		fill-opacity: 0.6;
+		stroke: ${t.boundaryColor};
+		stroke-width: 1;
+		stroke-dasharray: 3 2;
 	}
 	.cynefinBoundary {
-		stroke: ${cynefinOptions.boundaryColor};
-		stroke-width: ${cynefinOptions.boundaryStrokeWidth};
+		stroke: ${t.boundaryColor};
+		stroke-width: ${t.boundaryWidth};
 		stroke-dasharray: 6 3;
 	}
 	.cynefinCliff {
-		stroke: ${cynefinOptions.cliffColor};
-		stroke-width: ${cynefinOptions.cliffStrokeWidth};
+		stroke: ${t.cliffColor};
+		stroke-width: ${t.cliffWidth};
 	}
 	.cynefinConfusion {
+		stroke: ${t.boundaryColor};
+		stroke-width: 1.5;
 		stroke-dasharray: 4 2;
 	}
 	.cynefinArrowLine {
-		stroke: ${cynefinOptions.arrowColor};
-		stroke-width: ${cynefinOptions.arrowStrokeWidth};
+		stroke: ${t.arrowColor};
+		stroke-width: ${t.arrowWidth};
 		fill: none;
 	}
 	.cynefinArrowHead {
-		fill: ${cynefinOptions.arrowColor};
+		fill: ${t.arrowColor};
 		stroke: none;
 	}
 	.cynefinArrowLabel {
-		font-size: ${cynefinOptions.arrowLabelFontSize}px;
-		fill: ${themeVariables.primaryTextColor ?? '#333'};
+		font-size: ${t.itemFontSize - 1}px;
+		fill: ${t.textColor};
+	}
+	.cynefinTitle {
+		font-size: ${t.domainFontSize + 2}px;
+		font-weight: bold;
+		fill: ${t.labelColor};
 	}
 	`;
 };

@@ -7,7 +7,7 @@ import type {
 const id = 'cynefin';
 
 const detector: DiagramDetector = (txt) => {
-  return /^\s*cynefin-beta/.test(txt);
+  return /^\s*cynefin-beta(?:[\s:]|$)/.test(txt);
 };
 
 const loader: DiagramLoader = async () => {

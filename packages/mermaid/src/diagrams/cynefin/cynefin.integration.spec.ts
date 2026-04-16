@@ -212,6 +212,36 @@ describe('Cynefin Parsing - Complex diagram', () => {
   });
 });
 
+describe('Cynefin Parsing - Self-loop transitions', () => {
+  beforeEach(() => db.clear());
+
+  it('should drop self-loop transitions and keep valid ones', async () => {
+    await parser.parse(`cynefin-beta
+  complex
+    "A"
+  complicated
+    "B"
+  complex --> complex : "Self-reflection"
+  complex --> complicated : "Pattern found"
+  complicated --> complicated
+`);
+    const transitions = db.getTransitions();
+    expect(transitions).toHaveLength(1);
+    expect(transitions[0].from).toBe('complex');
+    expect(transitions[0].to).toBe('complicated');
+    expect(transitions[0].label).toBe('Pattern found');
+  });
+
+  it('should produce zero transitions when all are self-loops', async () => {
+    await parser.parse(`cynefin-beta
+  complex
+    "A"
+  complex --> complex
+`);
+    expect(db.getTransitions()).toHaveLength(0);
+  });
+});
+
 describe('Cynefin Parsing - Re-parse after clear', () => {
   beforeEach(() => db.clear());
 

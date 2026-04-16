@@ -2,6 +2,7 @@ import type { DomainBlock, Transition } from '@mermaid-js/parser';
 import { getConfig as commonGetConfig } from '../../config.js';
 import type { CynefinDiagramConfig } from '../../config.type.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
+import { log } from '../../logger.js';
 import { cleanAndMerge } from '../../utils.js';
 import {
   clear as commonClear,
@@ -50,11 +51,21 @@ const setTransitions = (transitions: Transition[]) => {
   if (!transitions) {
     return;
   }
-  data.transitions = transitions.map((t) => ({
-    from: t.from as DomainName,
-    to: t.to as DomainName,
-    label: t.label || undefined,
-  }));
+  data.transitions = transitions
+    .filter((t) => {
+      if (t.from === t.to) {
+        log.warn(
+          `Cynefin: self-loop transition on domain "${t.from}" is not meaningful and will be skipped.`
+        );
+        return false;
+      }
+      return true;
+    })
+    .map((t) => ({
+      from: t.from as DomainName,
+      to: t.to as DomainName,
+      label: t.label || undefined,
+    }));
 };
 
 const getConfig = (): Required<CynefinDiagramConfig> => {

@@ -47,6 +47,23 @@ describe('Cynefin Database', () => {
     expect(db.getTransitions()[0].label).toBeUndefined();
   });
 
+  it('should filter out self-loop transitions', () => {
+    db.setTransitions([
+      tx('complex', 'complex'),
+      tx('complex', 'complicated', 'Pattern found'),
+      tx('clear', 'clear'),
+    ]);
+    const transitions = db.getTransitions();
+    expect(transitions).toHaveLength(1);
+    expect(transitions[0].from).toBe('complex');
+    expect(transitions[0].to).toBe('complicated');
+  });
+
+  it('should handle a list of only self-loops gracefully', () => {
+    db.setTransitions([tx('complex', 'complex'), tx('chaotic', 'chaotic')]);
+    expect(db.getTransitions()).toHaveLength(0);
+  });
+
   it('should handle null/undefined blocks', () => {
     expect(() => db.setDomains(null as unknown as DomainBlock[])).not.toThrow();
     expect(() => db.setTransitions(null as unknown as Transition[])).not.toThrow();
