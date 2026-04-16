@@ -91,7 +91,7 @@ timeframe 01 event Start
   it('should parse qualified names in model', () => {
     const result = parse(`eventmodeling
 
-timeframe 02 screen Screen
+timeframe 02 ui UI
 tf 01 evt Product.PriceChanged
 tf 03 evt Cart.ItemAdded
 
@@ -111,7 +111,7 @@ tf 03 evt Cart.ItemAdded
   it('should parse both types of frames in model', () => {
     const result = parse(`eventmodeling
 
-tf 02 screen Screen
+tf 02 ui UI
 resetframe 01 evt Product.PriceChanged
 tf 03 evt Cart.ItemAdded
 
@@ -193,13 +193,13 @@ tf 03 evt Cart.ItemAdded
       expect(errors).toHaveLength(1);
     });
 
-    it('should allow cmd sourced from scn', () => {
-      const errors = collectErrors(makeFrame('cmd'), [makeFrame('scn')]);
+    it('should allow cmd sourced from ui', () => {
+      const errors = collectErrors(makeFrame('cmd'), [makeFrame('ui')]);
       expect(errors).toHaveLength(0);
     });
 
-    it('should allow command sourced from screen', () => {
-      const errors = collectErrors(makeFrame('command'), [makeFrame('screen')]);
+    it('should allow command sourced from ui', () => {
+      const errors = collectErrors(makeFrame('command'), [makeFrame('ui')]);
       expect(errors).toHaveLength(0);
     });
 
@@ -217,35 +217,35 @@ tf 03 evt Cart.ItemAdded
       const errors = collectErrors(makeFrame('cmd'), [makeFrame('cmd')]);
       expect(errors).toHaveLength(1);
       expect(errors[0]).toContain('command');
-      expect(errors[0]).toContain('screen or processor');
+      expect(errors[0]).toContain('ui or processor');
     });
 
     it('should reject cmd sourced from evt', () => {
       const errors = collectErrors(makeFrame('cmd'), [makeFrame('evt')]);
       expect(errors).toHaveLength(1);
       expect(errors[0]).toContain('command');
-      expect(errors[0]).toContain('screen or processor');
+      expect(errors[0]).toContain('ui or processor');
     });
 
-    it('should reject scn sourced from evt', () => {
-      const errors = collectErrors(makeFrame('scn'), [makeFrame('evt')]);
+    it('should reject ui sourced from evt', () => {
+      const errors = collectErrors(makeFrame('ui'), [makeFrame('evt')]);
       expect(errors).toHaveLength(1);
     });
 
-    it('should allow scn sourced from rmo', () => {
-      const errors = collectErrors(makeFrame('scn'), [makeFrame('rmo')]);
+    it('should allow ui sourced from rmo', () => {
+      const errors = collectErrors(makeFrame('ui'), [makeFrame('rmo')]);
       expect(errors).toHaveLength(0);
     });
 
-    it('should allow screen sourced from readmodel', () => {
-      const errors = collectErrors(makeFrame('screen'), [makeFrame('readmodel')]);
+    it('should allow ui sourced from readmodel', () => {
+      const errors = collectErrors(makeFrame('ui'), [makeFrame('readmodel')]);
       expect(errors).toHaveLength(0);
     });
 
-    it('should reject scn sourced from cmd', () => {
-      const errors = collectErrors(makeFrame('scn'), [makeFrame('cmd')]);
+    it('should reject ui sourced from cmd', () => {
+      const errors = collectErrors(makeFrame('ui'), [makeFrame('cmd')]);
       expect(errors).toHaveLength(1);
-      expect(errors[0]).toContain('screen');
+      expect(errors[0]).toContain('ui');
       expect(errors[0]).toContain('read model');
     });
 
@@ -253,7 +253,7 @@ tf 03 evt Cart.ItemAdded
       const errors = collectErrors(makeFrame('cmd'), [makeFrame('rmo')]);
       expect(errors).toHaveLength(1);
       expect(errors[0]).toContain('command');
-      expect(errors[0]).toContain('screen or processor');
+      expect(errors[0]).toContain('ui or processor');
     });
 
     it('should allow rmo sourced from evt', () => {
@@ -295,8 +295,8 @@ tf 03 evt Cart.ItemAdded
       expect(errors).toHaveLength(1);
     });
 
-    it('should reject rmo sourced from scn', () => {
-      const errors = collectErrors(makeFrame('rmo'), [makeFrame('scn')]);
+    it('should reject rmo sourced from ui', () => {
+      const errors = collectErrors(makeFrame('rmo'), [makeFrame('ui')]);
       expect(errors).toHaveLength(1);
     });
 
