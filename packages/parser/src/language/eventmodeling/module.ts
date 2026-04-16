@@ -14,11 +14,15 @@ import {
 import { CommonValueConverter } from '../common/valueConverter.js';
 import { MermaidGeneratedSharedModule, EventModelingGeneratedModule } from '../generated/module.js';
 import { EventModelingTokenBuilder } from './tokenBuilder.js';
+import { EventModelingValidator, registerValidationChecks } from './event-modeling-validator.js';
 
 interface EventModelingAddedServices {
   parser: {
     TokenBuilder: EventModelingTokenBuilder;
     ValueConverter: CommonValueConverter;
+  };
+  validation: {
+    EventModelingValidator: EventModelingValidator;
   };
 }
 
@@ -31,6 +35,9 @@ export const EventModelingModule: Module<
   parser: {
     TokenBuilder: () => new EventModelingTokenBuilder(),
     ValueConverter: () => new CommonValueConverter(),
+  },
+  validation: {
+    EventModelingValidator: () => new EventModelingValidator(),
   },
 };
 
@@ -50,5 +57,6 @@ export function createEventModelingServices(
     EventModelingModule
   );
   shared.ServiceRegistry.register(EventModel);
+  registerValidationChecks(EventModel);
   return { shared, EventModel };
 }
