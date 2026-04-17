@@ -28,7 +28,7 @@ export class Orchestrator {
   ) {
     this.componentStore = {
       title: getChartTitleComponent(chartConfig, chartData, chartThemeConfig, tmpSVGGroup),
-      plot: getPlotComponent(chartConfig, chartData, chartThemeConfig),
+      plot: getPlotComponent(chartConfig, chartData, chartThemeConfig, tmpSVGGroup),
       xAxis: getAxis(
         chartData.xAxis,
         chartConfig.xAxis,

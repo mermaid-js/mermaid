@@ -158,19 +158,29 @@ function getPlotColorFromPalette(plotIndex: number): string {
   return plotColorPalette[plotIndex === 0 ? 0 : plotIndex % plotColorPalette.length];
 }
 
-function setLineData(title: NormalTextType, data: number[]) {
-  const plotData = transformDataWithoutCategory(data);
+interface ParsedDataPoint {
+  value: number;
+  label: string;
+}
+
+function setLineData(title: NormalTextType, data: ParsedDataPoint[]) {
+  const values = data.map((d) => d.value);
+  const labels = data.map((d) => (d.label ? textSanitizer(d.label) : ''));
+  const plotData = transformDataWithoutCategory(values);
+  const hasAnyLabel = labels.some((l) => l !== '');
   xyChartData.plots.push({
     type: 'line',
     strokeFill: getPlotColorFromPalette(plotIndex),
     strokeWidth: 2,
     data: plotData,
+    ...(hasAnyLabel ? { pointLabels: labels } : {}),
   });
   plotIndex++;
 }
 
-function setBarData(title: NormalTextType, data: number[]) {
-  const plotData = transformDataWithoutCategory(data);
+function setBarData(title: NormalTextType, data: ParsedDataPoint[]) {
+  const values = data.map((d) => d.value);
+  const plotData = transformDataWithoutCategory(values);
   xyChartData.plots.push({
     type: 'bar',
     fill: getPlotColorFromPalette(plotIndex),

@@ -7,8 +7,10 @@ import type {
   XYChartThemeConfig,
   XYChartConfig,
 } from '../../interfaces.js';
+import type { SVGGroup } from '../../../../../diagram-api/types.js';
 import type { Axis } from '../axis/index.js';
 import type { ChartComponent } from '../../interfaces.js';
+import { TextDimensionCalculatorWithFont } from '../../textDimensionCalculator.js';
 import { LinePlot } from './linePlot.js';
 import { BarPlot } from './barPlot.js';
 
@@ -20,11 +22,13 @@ export class BasePlot implements Plot {
   private boundingRect: BoundingRect;
   private xAxis?: Axis;
   private yAxis?: Axis;
+  private textDimensionCalculator: TextDimensionCalculatorWithFont;
 
   constructor(
     private chartConfig: XYChartConfig,
     private chartData: XYChartData,
-    private chartThemeConfig: XYChartThemeConfig
+    private chartThemeConfig: XYChartThemeConfig,
+    tmpSVGGroup: SVGGroup
   ) {
     this.boundingRect = {
       x: 0,
@@ -32,6 +36,7 @@ export class BasePlot implements Plot {
       width: 0,
       height: 0,
     };
+    this.textDimensionCalculator = new TextDimensionCalculatorWithFont(tmpSVGGroup);
   }
   setAxes(xAxis: Axis, yAxis: Axis) {
     this.xAxis = xAxis;
@@ -63,8 +68,9 @@ export class BasePlot implements Plot {
               plot,
               this.xAxis,
               this.yAxis,
-              this.chartConfig.chartOrientation,
-              i
+              this.chartConfig,
+              i,
+              this.textDimensionCalculator
             );
             drawableElem.push(...linePlot.getDrawableElement());
           }
@@ -91,7 +97,8 @@ export class BasePlot implements Plot {
 export function getPlotComponent(
   chartConfig: XYChartConfig,
   chartData: XYChartData,
-  chartThemeConfig: XYChartThemeConfig
+  chartThemeConfig: XYChartThemeConfig,
+  tmpSVGGroup: SVGGroup
 ): Plot {
-  return new BasePlot(chartConfig, chartData, chartThemeConfig);
+  return new BasePlot(chartConfig, chartData, chartThemeConfig, tmpSVGGroup);
 }

@@ -316,6 +316,73 @@ config:
     </pre>
     <hr />
 
+    <hr />
+    <h1>Line chart with point labels</h1>
+    <pre class="mermaid">
+    xychart
+      title "Smallest AI models scoring above 60% on MMLU"
+      x-axis "Date" ["Apr 2022", "Feb 2023", "Jul 2023", "Sep 2023", "Apr 2024"]
+      y-axis "Parameters (B)" 0 --> 600
+      line [540 "PaLM", 65 "LLaMA-65B", 34 "Llama 2 34B", 7 "Mistral 7B", 3.8 "Phi-3-mini"]
+    </pre>
+
+    <hr />
+    <h1>Line chart with mixed labels (some points labeled, some not)</h1>
+    <pre class="mermaid">
+    xychart
+      title "Quarterly Performance"
+      x-axis [Q1, Q2, Q3, Q4]
+      y-axis "Revenue ($M)" 0 --> 100
+      line [25 "Launch", 45, 72, 90 "Target Hit"]
+    </pre>
+
+    <hr />
+    <h1>Reviewer's failing example: label at 80 "target hit"</h1>
+    <pre class="mermaid">
+    xychart
+        title "Quarterly Performance"
+        x-axis [Q1, Q2, Q3, Q4]
+        y-axis "Revenue ($M)" 0 --> 100
+        line [25, 45, 80 "target hit", 90]
+    </pre>
+
+    <hr />
+    <h1>Label collision avoidance: steep descent</h1>
+    <pre class="mermaid">
+    xychart
+      title "Smallest AI models scoring above 60% on MMLU"
+      x-axis "Date" ["Apr 2022", "Feb 2023", "Jul 2023", "Sep 2023", "Apr 2024"]
+      y-axis "Parameters (B)" 0 --> 600
+      line [540 "PaLM", 65 "LLaMA-65B", 34 "Llama 2 34B", 7 "Mistral 7B", 3.8 "Phi-3-mini"]
+    </pre>
+
+    <hr />
+    <h1>Label collision avoidance: zigzag pattern</h1>
+    <pre class="mermaid">
+    xychart
+      x-axis ["P1", "P2", "P3", "P4"]
+      y-axis 0 --> 500
+      line [400 "High", 50 "Low", 450 "Peak", 30 "Bottom"]
+    </pre>
+
+    <hr />
+    <h1>Axis bounds: label near bottom should not clip x-axis</h1>
+    <pre class="mermaid">
+    xychart
+      x-axis [Q1, Q2, Q3, Q4]
+      y-axis "Revenue ($M)" 0 --> 100
+      line [95 "Top", 5 "Bottom", 92 "Near Top", 8 "Near Bottom"]
+    </pre>
+
+    <hr />
+    <h1>Axis bounds: horizontal — label near right should not clip y-axis</h1>
+    <pre class="mermaid">
+    xychart horizontal
+      x-axis [Q1, Q2, Q3, Q4]
+      y-axis "Revenue ($M)" 0 --> 100
+      line [5 "Start", 95 "End", 8 "Low", 92 "High"]
+    </pre>
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({

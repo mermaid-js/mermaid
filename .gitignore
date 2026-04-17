@@ -49,6 +49,7 @@ stats/
 
 .env
 
+demos/mermaid.esm.mjs
 demos/dev/**
 !/demos/dev/example.html
 !/demos/dev/reload.js
