@@ -66,7 +66,7 @@ export function executeTidyTreeLayout(data: LayoutData): Promise<LayoutResult> {
         edges: positionedEdges,
       });
     } catch (error) {
-      reject(error);
+      reject(error instanceof Error ? error : new Error(String(error)));
     }
   });
 }
@@ -490,6 +490,19 @@ function calculateEdgePositions(
     const sourceCenter = { x: sourceNode.x, y: sourceNode.y };
     const targetCenter = { x: targetNode.x, y: targetNode.y };
 
+    // Dynamic offset instead of hardcoded value
+    let adjustedTargetCenter = targetCenter;
+
+    const isRootToRight = sourceNode.section === 'root' && targetNode.section === 'right';
+
+    if (isRootToRight) {
+      const verticalOffset = (targetNode.height ?? 50) * 0.1;
+      adjustedTargetCenter = {
+        ...targetCenter,
+        y: targetCenter.y - verticalOffset,
+      };
+    }
+
     const isSourceRound = ['circle', 'cloud', 'bang'].includes(
       sourceNode.originalNode?.shape ?? ''
     );
@@ -505,10 +518,10 @@ function calculateEdgePositions(
             width: sourceNode.width ?? 100,
             height: sourceNode.height ?? 100,
           },
-          targetCenter,
+          adjustedTargetCenter,
           sourceCenter
         )
-      : intersection(sourceNode, sourceCenter, targetCenter);
+      : intersection(sourceNode, sourceCenter, adjustedTargetCenter);
 
     let endPos = isTargetRound
       ? computeCircleEdgeIntersection(
@@ -527,7 +540,6 @@ function calculateEdgePositions(
     const midY = (startPos.y + endPos.y) / 2;
 
     const points = [startPos];
-    const isRootToRight = sourceNode.section === 'root' && targetNode.section === 'right';
 
     const isRightToRoot = sourceNode.section === 'right' && targetNode.section === 'root';
 
@@ -556,7 +568,11 @@ function calculateEdgePositions(
 
     points.push(endPos);
 
-    const secondPoint = points.length > 1 ? points[1] : targetCenter;
+    const secondPoint = isRootToRight
+      ? adjustedTargetCenter
+      : points.length > 1
+        ? points[1]
+        : targetCenter;
     startPos = isSourceRound
       ? computeCircleEdgeIntersection(
           {
