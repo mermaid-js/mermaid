@@ -10,6 +10,7 @@ describe('architecture diagrams', () => {
     parser.parser?.yy = db;
   });
 
+  // Added comment just to trigg test. REMOVE !!!
   describe('architecture diagram definitions', () => {
     it('should handle the architecture keyword', async () => {
       const str = `architecture-beta`;
