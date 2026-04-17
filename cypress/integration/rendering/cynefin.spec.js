@@ -100,7 +100,7 @@ describe('cynefin framework', () => {
         clear
           "Standard work"
       `,
-      { cynefin: { width: 1000, height: 700, boundaryAmplitude: 15 } }
+      { 'cynefin-beta': { width: 1000, height: 700, boundaryAmplitude: 15 } }
     );
   });
 
@@ -114,7 +114,7 @@ describe('cynefin framework', () => {
         clear
           "Item B"
       `,
-      { cynefin: { showDomainDescriptions: false } }
+      { 'cynefin-beta': { showDomainDescriptions: false } }
     );
   });
 
@@ -153,7 +153,7 @@ describe('cynefin framework', () => {
         chaotic
           "Item D"
       `,
-      { cynefin: { boundaryAmplitude: 0 } }
+      { 'cynefin-beta': { boundaryAmplitude: 0 } }
     );
   });
 

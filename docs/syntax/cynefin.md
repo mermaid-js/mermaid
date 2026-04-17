@@ -73,6 +73,8 @@ complex
   "Run chaos experiment"
 ```
 
+Keep per-domain item lists short — the quadrants have fixed layout and long lists can visually overflow their boxes. The confusion ellipse caps at three items and shows a `+N more` badge; the four quadrant domains do not clip, so prefer a handful of items each.
+
 ### Transitions
 
 Transitions represent movement of items between domains over time. They are declared at the top level using `-->` between two domain names, with an optional label.
@@ -212,7 +214,7 @@ cynefin-beta
 
 ## Configuration
 
-Cynefin diagrams accept the following configuration under the `cynefin` key in the mermaid config:
+Cynefin diagrams accept the following configuration under the `cynefin-beta` key in the mermaid config:
 
 | Option                   | Type    | Default | Description                                                                       |
 | ------------------------ | ------- | ------- | --------------------------------------------------------------------------------- |
@@ -225,7 +227,7 @@ Cynefin diagrams accept the following configuration under the `cynefin` key in t
 Example:
 
 ```
-%%{init: {'cynefin': {'width': 1000, 'showDomainDescriptions': false}}}%%
+%%{init: {'cynefin-beta': {'width': 1000, 'showDomainDescriptions': false}}}%%
 cynefin-beta
   complex
     "Adaptive work"

@@ -294,8 +294,8 @@ const config: RequiredDeep<MermaidConfig> = {
   venn: {
     ...defaultConfigJson.venn,
   },
-  cynefin: {
-    ...defaultConfigJson.cynefin,
+  'cynefin-beta': {
+    ...defaultConfigJson['cynefin-beta'],
   },
 };
 

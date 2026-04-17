@@ -242,7 +242,7 @@ export interface MermaidConfig {
   radar?: RadarDiagramConfig;
   venn?: VennDiagramConfig;
   'wardley-beta'?: WardleyDiagramConfig;
-  cynefin?: CynefinDiagramConfig;
+  'cynefin-beta'?: CynefinDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;

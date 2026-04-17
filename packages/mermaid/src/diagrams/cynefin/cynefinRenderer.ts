@@ -98,7 +98,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
 
   const svg: SVG = selectSvgElement(id);
 
-  configureSvgSize(svg, totalHeight, totalWidth, true);
+  configureSvgSize(svg, totalHeight, totalWidth, config.useMaxWidth ?? true);
   svg.attr('viewBox', `0 0 ${totalWidth} ${totalHeight}`);
 
   // Accessibility: use <title> element (W3C recommendation for SVG)
@@ -381,10 +381,11 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
         return;
       }
 
-      const x1 = fromLayout.cx + padding;
-      const y1 = fromLayout.cy + padding;
-      const x2 = toLayout.cx + padding;
-      const y2 = toLayout.cy + padding;
+      // All math in root-local (unpadded) coordinates to match the <g> transform.
+      const x1 = fromLayout.cx;
+      const y1 = fromLayout.cy;
+      const x2 = toLayout.cx;
+      const y2 = toLayout.cy;
 
       // Quadratic bezier with perpendicular offset
       const mx = (x1 + x2) / 2;
@@ -393,19 +394,15 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       const dy = y2 - y1;
       const len = Math.sqrt(dx * dx + dy * dy);
       const offsetAmount = len * 0.15;
-      // Perpendicular offset
       const nx = -dy / len;
       const ny = dx / len;
-      const cpx = mx + nx * offsetAmount - padding;
-      const cpy = my + ny * offsetAmount - padding;
+      const cpx = mx + nx * offsetAmount;
+      const cpy = my + ny * offsetAmount;
 
       arrowGroup
         .append('path')
         .attr('class', 'cynefinArrowLine')
-        .attr(
-          'd',
-          `M${fromLayout.cx},${fromLayout.cy} Q${cpx},${cpy} ${toLayout.cx},${toLayout.cy}`
-        )
+        .attr('d', `M${x1},${y1} Q${cpx},${cpy} ${x2},${y2}`)
         .attr('fill', 'none')
         .attr('marker-end', `url(#${markerId})`);
 

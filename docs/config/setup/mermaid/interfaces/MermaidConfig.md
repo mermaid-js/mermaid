@@ -65,9 +65,9 @@ Defined in: [packages/mermaid/src/config.type.ts:224](https://github.com/mermaid
 
 ---
 
-### cynefin?
+### cynefin-beta?
 
-> `optional` **cynefin**: `CynefinDiagramConfig`
+> `optional` **cynefin-beta**: `CynefinDiagramConfig`
 
 Defined in: [packages/mermaid/src/config.type.ts:245](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L245)
 

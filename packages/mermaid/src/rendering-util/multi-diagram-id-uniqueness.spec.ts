@@ -179,7 +179,7 @@ union A, B`,
     Electric Kettle -> Kettle
     Smart Kettle -> Kettle`,
 
-  cynefin: `cynefin-beta
+  'cynefin-beta': `cynefin-beta
     title Incident Response
     complex
       "Investigate root cause"
