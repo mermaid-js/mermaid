@@ -30,5 +30,25 @@ export default {
       +run()
     }`,
     },
+    {
+      title: 'Class Styling',
+      code: `classDiagram
+    class Controller {
+      +handleRequest()
+    }
+    class Service {
+      -List~String~ items
+      +process()
+    }
+    class Repository {
+      +save()
+      +find()
+    }
+    Controller --> Service
+    Service --> Repository
+    style Controller fill:#f9f,font-family:Arial,font-size:14px
+    style Service fill:rgb(200 230 255),opacity:0.9,font-weight:bold
+    style Repository fill:#dfd,stroke:#393,stroke-width:2px`,
+    },
   ],
 } satisfies DiagramMetadata;

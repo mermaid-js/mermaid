@@ -1992,6 +1992,95 @@ class C13["With Città foreign language"]
   });
 });
 
+describe('given a class diagram with inline styles, ', function () {
+  let classDb: ClassDB;
+
+  beforeEach(function () {
+    classDb = new ClassDB();
+    parser.yy = classDb;
+    classDb.clear();
+  });
+
+  it('should handle style with simple CSS properties', function () {
+    const str = `classDiagram
+class C1
+style C1 fill:#f9f`;
+
+    parser.parse(str);
+
+    const c1 = classDb.getClass('C1');
+    expect(c1.styles).toContain('fill:#f9f');
+  });
+
+  it('should handle style with dashed CSS property names', function () {
+    const str = `classDiagram
+class C1
+style C1 font-family:Arial`;
+
+    parser.parse(str);
+
+    const c1 = classDb.getClass('C1');
+    expect(c1.styles).toContain('font-family:Arial');
+  });
+
+  it('should handle style with multiple dashed CSS properties', function () {
+    const str = `classDiagram
+class C1
+style C1 font-family:Arial,font-size:14px,background-color:#fff`;
+
+    parser.parse(str);
+
+    const c1 = classDb.getClass('C1');
+    expect(c1.styles).toContain('font-family:Arial');
+    expect(c1.styles).toContain('font-size:14px');
+    expect(c1.styles).toContain('background-color:#fff');
+  });
+
+  it('should handle style with decimal values in CSS properties', function () {
+    const str = `classDiagram
+class C1
+style C1 opacity:0.5`;
+
+    parser.parse(str);
+
+    const c1 = classDb.getClass('C1');
+    expect(c1.styles).toContain('opacity:0.5');
+  });
+
+  it('should handle style with !important', function () {
+    const str = `classDiagram
+class C1
+style C1 fill:#f9f!important`;
+
+    parser.parse(str);
+
+    const c1 = classDb.getClass('C1');
+    expect(c1.styles).toContain('fill:#f9f!important');
+  });
+
+  it('should handle style with CSS functions like rgb()', function () {
+    const str = `classDiagram
+class C1
+style C1 fill:rgb(255 0 0)`;
+
+    parser.parse(str);
+
+    const c1 = classDb.getClass('C1');
+    expect(c1.styles).toContain('fill:rgb(255 0 0)');
+  });
+
+  it('should handle style with calc()', function () {
+    const str = `classDiagram
+class C1
+style C1 width:calc(100% - 20px)`;
+
+    parser.parse(str);
+
+    const c1 = classDb.getClass('C1');
+    expect(c1.styles).toContain('width:calc(100% - 20px)');
+  });
+});
+
 describe('class db class', () => {
   let classDb: ClassDB;
   beforeEach(() => {
