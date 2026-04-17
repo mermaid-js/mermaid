@@ -622,6 +622,64 @@ classDiagram
 
 Both approaches can be combined. Dot notation like `namespace A.B.C` will automatically create namespaces `A` and `A.B` as parents if they don't already exist.
 
+#### Compact rendering (`hierarchicalNamespaces: false`)
+
+By default (`hierarchicalNamespaces: true`), each segment of a dotted or syntactically-nested namespace name renders as its own cluster, producing a nested layout.
+
+Setting `hierarchicalNamespaces: false` in the class diagram config switches to **compact mode**: only namespaces the user explicitly declares are drawn — each as a single flat box labelled with its fully-qualified name. Auto-created intermediate ancestors are skipped, and classes inside them are moved to their nearest declared namespace.
+
+```mermaid-example
+---
+config:
+  class:
+    hierarchicalNamespaces: false
+---
+classDiagram
+    namespace Company.Engineering.Backend {
+        class Developer {
+            +writeCode()
+        }
+    }
+    namespace Company.Engineering.Frontend {
+        class Designer {
+            +createMockup()
+        }
+    }
+    namespace Company {
+        class CEO {
+            +makeDecisions()
+        }
+    }
+    CEO --> Developer : oversees
+    CEO --> Designer : oversees
+```
+
+```mermaid
+---
+config:
+  class:
+    hierarchicalNamespaces: false
+---
+classDiagram
+    namespace Company.Engineering.Backend {
+        class Developer {
+            +writeCode()
+        }
+    }
+    namespace Company.Engineering.Frontend {
+        class Designer {
+            +createMockup()
+        }
+    }
+    namespace Company {
+        class CEO {
+            +makeDecisions()
+        }
+    }
+    CEO --> Developer : oversees
+    CEO --> Designer : oversees
+```
+
 ## Cardinality / Multiplicity on relations
 
 Multiplicity or cardinality in class diagrams indicates the number of instances of one class that can be linked to an instance of the other class. For example, each company will have one or more employees (not zero), and each employee currently works for zero or one companies.

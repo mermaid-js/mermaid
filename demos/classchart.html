@@ -339,6 +339,70 @@
     </pre>
     <hr />
 
+    <h2>Compact mode (hierarchicalNamespaces: false)</h2>
+    <p>
+      Same source as the dot-notation demo above, rendered with
+      <code>hierarchicalNamespaces: false</code>. Only the three user-declared namespaces are
+      emitted as flat boxes using their full qualified name; intermediate ancestors (e.g.
+      <code>Company.Engineering</code> would only appear if declared) are skipped.
+    </p>
+    <pre class="mermaid">
+    ---
+    config:
+      class:
+        hierarchicalNamespaces: false
+    ---
+    classDiagram
+      namespace Company.Engineering.Backend {
+        class Developer {
+          +writeCode()
+          +reviewPR()
+        }
+      }
+      namespace Company.Engineering.Frontend {
+        class Designer {
+          +createMockup()
+          +buildUI()
+        }
+      }
+      namespace Company {
+        class CEO {
+          +makeDecisions()
+        }
+      }
+      CEO --> Developer : oversees
+      CEO --> Designer : oversees
+    </pre>
+    <hr />
+
+    <h2>Compact mode with syntactic nesting</h2>
+    <p>
+      Syntactic nesting in compact mode: nested <code>namespace</code> blocks still produce
+      fully-qualified names, but only the explicit leaf namespaces render as flat boxes.
+    </p>
+    <pre class="mermaid">
+    ---
+    config:
+      class:
+        hierarchicalNamespaces: false
+    ---
+    classDiagram
+      namespace Platform {
+        namespace Auth {
+          class UserService {
+            +login()
+          }
+        }
+        namespace Data {
+          class Repository {
+            +find()
+          }
+        }
+      }
+      UserService --> Repository : reads
+    </pre>
+    <hr />
+
     <h2>Namespace labels</h2>
     <pre class="mermaid">
     classDiagram
