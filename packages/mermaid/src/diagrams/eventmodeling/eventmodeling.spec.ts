@@ -12,7 +12,7 @@ describe('eventmodeling diagrams', () => {
 
   it('should handle a simple eventmodeling definition', async () => {
     const str = `eventmodeling
-    tf 01 scn Screen
+    tf 01 ui UI
     tf 02 cmd RunAction
     tf 03 evt ActionExecuted`;
     await expect(parser.parse(str)).resolves.not.toThrow();
@@ -39,7 +39,7 @@ data ItemAddedData
 
   it('should handle qualified names', async () => {
     const str = `eventmodeling
-    tf 01 scn CartScreen
+    tf 01 ui CartUI
     tf 02 cmd Inventory.AddItem
     tf 03 evt Inventory.ItemAdded`;
     await expect(parser.parse(str)).resolves.not.toThrow();
@@ -47,7 +47,7 @@ data ItemAddedData
 
   it('should handle multiple source frames', async () => {
     const str = `eventmodeling
-    tf 01 scn CartScreen
+    tf 01 ui CartUI
     tf 02 cmd AddItem
     tf 03 cmd RemoveItem
     tf 04 evt ItemChanged ->> 02 ->> 03`;
@@ -56,7 +56,7 @@ data ItemAddedData
 
   it('should handle reset frames', async () => {
     const str = `eventmodeling
-    rf 01 scn CartScreen
+    rf 01 ui CartUI
     rf 02 cmd AddItem
     rf 03 evt ItemAdded`;
     await expect(parser.parse(str)).resolves.not.toThrow();
@@ -64,8 +64,8 @@ data ItemAddedData
 
   it('should handle all entity types', async () => {
     const str = `eventmodeling
-    tf 01 scn Screen
-    tf 02 screen Screen2
+    tf 01 ui UI
+    tf 02 ui UI2
     tf 03 cmd Command
     tf 04 command Command2
     tf 05 evt Event

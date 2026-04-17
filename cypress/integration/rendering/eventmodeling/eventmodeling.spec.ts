@@ -18,7 +18,7 @@ describe('Event Modeling Diagram', () => {
     imgSnapshotTest(
       `eventmodeling
 
-tf 01 scn CartScreen
+tf 01 ui CartScreen
 tf 02 cmd AddItem
 tf 03 evt ItemAdded
     `,
@@ -32,7 +32,7 @@ tf 03 evt ItemAdded
     imgSnapshotTest(
       `eventmodeling
 
-tf 01 scn CartScreen
+tf 01 ui CartScreen
 tf 02 cmd AddItem
 tf 03 evt ItemAdded
 tf 04 cmd RemoveItem
@@ -48,7 +48,7 @@ tf 05 evt ItemRemoved
     imgSnapshotTest(
       `eventmodeling
 
-tf 01 scn CartScreen
+tf 01 ui CartScreen
 tf 02 cmd AddItem
 tf 03 evt ItemAdded
 tf 04 rmo CartItems ->> 03
@@ -64,7 +64,7 @@ tf 05 evt AccountingItemAdded
     imgSnapshotTest(
       `eventmodeling
 
-tf 01 scn CartScreen
+tf 01 ui CartScreen
 tf 02 cmd AddItem { productId: 7 }
 tf 03 evt ItemAdded [[ItemAddedData]]
 
@@ -84,7 +84,7 @@ data ItemAddedData
     imgSnapshotTest(
       `eventmodeling
 
-tf 01 scn CartScreen
+tf 01 ui CartScreen
 tf 02 cmd Inventory.AddItem
 tf 03 evt Inventory.ItemAdded
     `,
@@ -98,7 +98,7 @@ tf 03 evt Inventory.ItemAdded
     imgSnapshotTest(
       `eventmodeling
 
-tf 01 scn CartScreen
+tf 01 ui CartScreen
 tf 02 cmd AddItem
 tf 03 cmd RemoveItem
 tf 04 evt ItemChanged ->> 02 ->> 03
