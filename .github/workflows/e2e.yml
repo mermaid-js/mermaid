@@ -148,7 +148,7 @@ jobs:
           #E2E_SCOPE_BY_DIAGRAM: ${{ vars.E2E_SCOPE_BY_DIAGRAM || 'false' }}
            E2E_SCOPE_BY_DIAGRAM: >-
             ${{ vars.E2E_SCOPE_BY_DIAGRAM == 'true' ||
-            github.head_ref == 'feature-run-specific-e2e-on-change' }}
+            github.head_ref == 'chore/7593_run-scoped-e2e-tests' }}
 
 
   e2e:
