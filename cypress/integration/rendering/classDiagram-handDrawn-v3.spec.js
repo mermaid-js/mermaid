@@ -1111,4 +1111,30 @@ class C13["With Città foreign language"]
       { logLevel: 1, htmlLabels: true, look: 'handDrawn' }
     );
   });
+
+  it('HD: should render compact mode with hierarchicalNamespaces: false', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+      namespace Company.Engineering.Backend {
+        class Developer {
+          +writeCode()
+        }
+      }
+      namespace Company.Engineering.Frontend {
+        class Designer {
+          +createMockup()
+        }
+      }
+      namespace Company {
+        class CEO {
+          +makeDecisions()
+        }
+      }
+      CEO --> Developer : oversees
+      CEO --> Designer : oversees
+    `,
+      { class: { hierarchicalNamespaces: false } }
+    );
+  });
 });

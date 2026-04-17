@@ -565,7 +565,12 @@ export class ClassDB implements DiagramDB {
     return ids;
   }
 
-  private createNamespaceNode(id: string, label: string, parentId?: string): NamespaceNode {
+  private createNamespaceNode(
+    id: string,
+    label: string,
+    parentId?: string,
+    explicit = false
+  ): NamespaceNode {
     return {
       id,
       label,
@@ -574,6 +579,7 @@ export class ClassDB implements DiagramDB {
       children: new Map<string, NamespaceNode>(),
       domId: MERMAID_DOM_ID_PREFIX + id + '-' + this.namespaceCounter++,
       parent: parentId,
+      explicit,
     };
   }
 
@@ -595,8 +601,11 @@ export class ClassDB implements DiagramDB {
     this.namespaceStack.push(qualifiedId);
 
     if (this.namespaces.has(qualifiedId)) {
+      const existing = this.namespaces.get(qualifiedId)!;
+      // Re-declaration promotes an auto-created ancestor to explicit
+      existing.explicit = true;
       if (label) {
-        this.namespaces.get(qualifiedId)!.label = label;
+        existing.label = label;
       }
       return qualifiedId;
     }
@@ -610,7 +619,12 @@ export class ClassDB implements DiagramDB {
       const nodeLabel = isLeaf && label ? label : parts[i];
 
       if (!this.namespaces.has(currentId)) {
-        this.namespaces.set(currentId, this.createNamespaceNode(currentId, nodeLabel, parentId));
+        this.namespaces.set(
+          currentId,
+          this.createNamespaceNode(currentId, nodeLabel, parentId, isLeaf)
+        );
+      } else if (isLeaf) {
+        this.namespaces.get(currentId)!.explicit = true;
       }
       if (parentId) {
         this.linkParentChild(parentId, currentId);
@@ -701,38 +715,66 @@ export class ClassDB implements DiagramDB {
     return marker;
   }
 
+  /**
+   * Walks up the namespace tree from the given id and returns the nearest ancestor
+   * (or the id itself) that is marked as explicit. Used by compact rendering mode
+   * to reassign children to the nearest user-declared namespace.
+   */
+  private resolveExplicitAncestor(id: string | undefined): string | undefined {
+    let current = id;
+    while (current) {
+      const ns = this.namespaces.get(current);
+      if (!ns) {
+        return undefined;
+      }
+      if (ns.explicit) {
+        return current;
+      }
+      current = ns.parent;
+    }
+    return undefined;
+  }
+
   public getData() {
     const nodes: Node[] = [];
     const edges: Edge[] = [];
     const config = getConfig();
+    const hierarchical = config.class?.hierarchicalNamespaces ?? true;
 
     for (const namespace of this.namespaces.values()) {
+      if (!hierarchical && !namespace.explicit) {
+        continue;
+      }
       const node: Node = {
         id: namespace.id,
-        label: namespace.label,
+        label: hierarchical ? namespace.label : namespace.id,
         isGroup: true,
         padding: config.class!.padding ?? 16,
         // parent node must be one of [rect, roundedWithTitle, noteGroup, divider]
         shape: 'rect',
         cssStyles: [],
         look: config.look,
-        parentId: namespace.parent,
+        parentId: hierarchical ? namespace.parent : undefined,
       };
       nodes.push(node);
     }
 
     for (const classNode of this.classes.values()) {
+      const parentId = hierarchical
+        ? classNode.parent
+        : this.resolveExplicitAncestor(classNode.parent);
       const node: Node = {
         ...classNode,
         type: undefined,
         isGroup: false,
-        parentId: classNode.parent,
+        parentId,
         look: config.look,
       };
       nodes.push(node);
     }
 
     for (const note of this.notes.values()) {
+      const noteParentId = hierarchical ? note.parent : this.resolveExplicitAncestor(note.parent);
       const noteNode: Node = {
         id: note.id,
         label: note.text,
@@ -746,7 +788,7 @@ export class ClassDB implements DiagramDB {
           `stroke: ${config.themeVariables.noteBorderColor}`,
         ],
         look: config.look,
-        parentId: note.parent,
+        parentId: noteParentId,
         labelType: 'markdown',
       };
       nodes.push(noteNode);

@@ -1107,4 +1107,30 @@ class Class10
       { logLevel: 1, htmlLabels: true, layout: 'elk' }
     );
   });
+
+  it('ELK: should render compact mode with hierarchicalNamespaces: false', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+      namespace Company.Engineering.Backend {
+        class Developer {
+          +writeCode()
+        }
+      }
+      namespace Company.Engineering.Frontend {
+        class Designer {
+          +createMockup()
+        }
+      }
+      namespace Company {
+        class CEO {
+          +makeDecisions()
+        }
+      }
+      CEO --> Developer : oversees
+      CEO --> Designer : oversees
+    `,
+      { class: { hierarchicalNamespaces: false } }
+    );
+  });
 });
