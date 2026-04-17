@@ -820,6 +820,43 @@ describe('when parsing ER diagram it...', function () {
     expect(rels[0].relSpec.relType).toBe(erDb.Identification.IDENTIFYING);
   });
 
+  it('should allow numeric entity identifier "1" on left side with cardinality 1', function () {
+    // This should parse without throwing - the fix for #7472 broke left-side numeric identifiers
+    erDiagram.parser.parse('erDiagram\n1 1 to many SomeEntity: label');
+    const entities = erDb.getEntities();
+    const rels = erDb.getRelationships();
+
+    // Verify both entities were created
+    expect(entities.size).toBe(2);
+    expect(entities.has('1')).toBe(true);
+    expect(entities.has('SomeEntity')).toBe(true);
+
+    // Verify one relationship was created
+    expect(rels.length).toBe(1);
+
+    // For "1 1 to many SomeEntity:": first "1" is entity name, second "1" is cardinality (ONLY_ONE)
+    // So cardB = 1 (ONLY_ONE), cardA = many (ZERO_OR_MORE)
+    expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ZERO_OR_MORE); // "many"
+    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ONLY_ONE); // second "1"
+
+    // Verify relationship type: "to" means IDENTIFYING
+    expect(rels[0].relSpec.relType).toBe(erDb.Identification.IDENTIFYING);
+  });
+
+  it('should allow numeric entity identifier "1" on left side with many cardinality', function () {
+    erDiagram.parser.parse('erDiagram\n1 many to many SomeEntity: label');
+    const entities = erDb.getEntities();
+    const rels = erDb.getRelationships();
+
+    expect(entities.size).toBe(2);
+    expect(entities.has('1')).toBe(true);
+    expect(entities.has('SomeEntity')).toBe(true);
+    expect(rels.length).toBe(1);
+    expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ZERO_OR_MORE);
+    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ZERO_OR_MORE);
+    expect(rels[0].relSpec.relType).toBe(erDb.Identification.IDENTIFYING);
+  });
+
   it('should represent identifying relationships properly', function () {
     erDiagram.parser.parse('erDiagram\nHOUSE ||--|{ ROOM : contains');
     const rels = erDb.getRelationships();

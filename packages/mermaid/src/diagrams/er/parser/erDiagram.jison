@@ -67,8 +67,10 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 "one"                           return 'ONLY_ONE';
 "only one"                      return 'ONLY_ONE';
 [0-9]+\.[0-9]+                  return 'DECIMAL_NUM';
-"1"(?=\s+[A-Za-z_"'])           return 'ONLY_ONE';
-"1"(?=\s+[0-9])                 return 'ONLY_ONE';
+"1"(?=\s+(?:1|many|one|zero|only)\s+to\b) return 'ENTITY_ONE';
+"1"(?=\s+(?!(?:many|one|only|zero|optionally|to)\b)[A-Za-z_"'])           return 'ONLY_ONE';
+"1"(?=\s+to\b)                  return 'ONLY_ONE';
+"1"(?=\s+[0-9]+\s*:)            return 'ONLY_ONE';
 "1"(?=(\-\-|\.\.|\.\-|\-\.))    return 'ONLY_ONE';
 "1"                             return 'ENTITY_ONE';
 [0-9]+                          return 'NUM';
