@@ -146,7 +146,7 @@ jobs:
           # Toggle diagram-scoped e2e: set this repository variable to 'true'
           # (GitHub → Settings → Secrets and variables → Actions → Variables)
           #E2E_SCOPE_BY_DIAGRAM: ${{ vars.E2E_SCOPE_BY_DIAGRAM || 'false' }}
-           E2E_SCOPE_BY_DIAGRAM: >-
+          E2E_SCOPE_BY_DIAGRAM: >-
             ${{ vars.E2E_SCOPE_BY_DIAGRAM == 'true' ||
             github.head_ref == 'chore/7593_run-scoped-e2e-tests' }}
 
