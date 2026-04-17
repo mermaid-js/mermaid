@@ -19,7 +19,7 @@
     "copy:dompurify": "cpy node_modules/.pnpm/dompurify@*/node_modules/dompurify/dist/purify.min.js packages/mermaid/dist/mermaid-local-editor/vendor/ --flat",
     "copy:mermaid": "cpy packages/mermaid/dist/mermaid.min.js packages/mermaid/dist/mermaid-local-editor/vendor/ --flat",
     "copy:editor": "cpy \"packages/mermaid-local-editor/static/**/*\" packages/mermaid/dist/mermaid-local-editor",
-    "serve:dist": "sirv packages/mermaid/dist/mermaid-local-editor --port 8080 --dev --no-clear",
+    "serve:dist": "sirv packages/mermaid/dist/mermaid-local-editor --port 8081 --dev --no-clear",
     "build": "pnpm build:esbuild && pnpm build:types",
     "build:esbuild": "pnpm run -r clean && tsx .esbuild/build.ts",
     "build:mermaid": "pnpm build:esbuild --mermaid",
