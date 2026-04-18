@@ -1,23 +1,22 @@
 <!doctype html>
 <html lang="en" xmlns="http://www.w3.org/1999/html">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Sankey Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+  </head>
 
-<head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Sankey Mermaid Quick Test Page</title>
-  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
-</head>
+  <body>
+    <h1>Sankey diagram demos</h1>
 
-<body>
-  <h1>Sankey diagram demos</h1>
+    <h2>Apple-style Financial Flow (New Features)</h2>
+    <p>
+      Demonstrates the new Apple-style rendering with outlined labels, smart label positioning, and
+      custom node colors (grey for income, red for expenses, green for profits).
+    </p>
 
-  <h2>Apple-style Financial Flow (New Features)</h2>
-  <p>
-    Demonstrates the new Apple-style rendering with outlined labels, smart label positioning, and
-    custom node colors (grey for income, red for expenses, green for profits).
-  </p>
-
-  <pre class="mermaid">
+    <pre class="mermaid">
 ---
 config:
   sankey:
@@ -59,9 +58,9 @@ Op Profit,Tax,19
 Op Profit,Net Profit,100
     </pre>
 
-  <h2>FY20-21 Performance</h2>
+    <h2>FY20-21 Performance</h2>
 
-  <pre class="mermaid">
+    <pre class="mermaid">
 ---
 config:
   sankey:
@@ -82,9 +81,9 @@ x,c,4
 c,y,4
     </pre>
 
-  <h2>Energy flow</h2>
+    <h2>Energy flow</h2>
 
-  <pre class="mermaid">
+    <pre class="mermaid">
 ---
 config:
   sankey:
@@ -167,15 +166,14 @@ Wave,Electricity grid,19.013
 Wind,Electricity grid,289.366
     </pre>
 
-  <script type="module">
-    import mermaid from './mermaid.esm.mjs';
-    mermaid.initialize({
-      theme: 'default',
-      logLevel: 3,
-      securityLevel: 'loose',
-      startOnLoad: true,
-    });
-  </script>
-</body>
-
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({
+        theme: 'default',
+        logLevel: 3,
+        securityLevel: 'loose',
+        startOnLoad: true,
+      });
+    </script>
+  </body>
 </html>
