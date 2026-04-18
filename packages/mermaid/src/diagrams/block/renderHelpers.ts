@@ -220,8 +220,10 @@ export async function insertEdges(
         ];
         const prefixedEdgeId = id ? `${id}-${edge.id}` : edge.id;
 
-        const thicknessClass = edge.thickness === 'thick' ? 'edge-thickness-thick' : 'edge-thickness-normal';
-        const patternClass = edge.pattern === 'dotted' ? 'edge-pattern-dotted' : 'edge-pattern-solid';
+        const thicknessClass =
+          edge.thickness === 'thick' ? 'edge-thickness-thick' : 'edge-thickness-normal';
+        const patternClass =
+          edge.pattern === 'dotted' ? 'edge-pattern-dotted' : 'edge-pattern-solid';
         const dynamicClasses = `${thicknessClass} ${patternClass} flowchart-link LS-a1 LE-b1`;
 
         insertEdge(

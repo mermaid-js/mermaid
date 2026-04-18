@@ -30,7 +30,7 @@ const sanitizeText = (txt: string) => common.sanitizeText(txt, config);
  * @param id - the id of this (style) class
  * @param styleAttributes - the string with 1 or more style attributes (each separated by a comma)
  */
-export const addStyleClass = function(id: string, styleAttributes = '') {
+export const addStyleClass = function (id: string, styleAttributes = '') {
   // create a new style class object with this id
   let foundClass = classes.get(id);
   if (!foundClass) {
@@ -60,7 +60,7 @@ export const addStyleClass = function(id: string, styleAttributes = '') {
  * @param id - the id of the block to style
  * @param styles - the string with 1 or more style attributes (each separated by a comma)
  */
-export const addStyle2Node = function(id: string, styles = '') {
+export const addStyle2Node = function (id: string, styles = '') {
   const foundBlock = blockDatabase.get(id)!;
   if (styles !== undefined && styles !== null) {
     foundBlock.styles = styles.split(STYLECLASS_SEP);
@@ -75,8 +75,8 @@ export const addStyle2Node = function(id: string, styles = '') {
  * @param itemIds - The id or a list of ids of the item(s) to apply the css class to
  * @param cssClassName - CSS class name
  */
-export const setCssClass = function(itemIds: string, cssClassName: string) {
-  itemIds.split(',').forEach(function(id: string) {
+export const setCssClass = function (itemIds: string, cssClassName: string) {
+  itemIds.split(',').forEach(function (id: string) {
     let foundBlock = blockDatabase.get(id);
     if (foundBlock === undefined) {
       const trimmedId = id.trim();
@@ -341,7 +341,7 @@ const getLogger = () => log;
 /**
  * Return all of the style classes
  */
-export const getClasses = function() {
+export const getClasses = function () {
   return classes;
 };
 
