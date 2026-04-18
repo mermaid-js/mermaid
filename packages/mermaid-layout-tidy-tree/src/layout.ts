@@ -455,7 +455,7 @@ function intersection(node: PositionedNode, outsidePoint: Point, insidePoint: Po
 function calculateEdgePositions(
   edges: Edge[],
   positionedNodes: PositionedNode[],
-  intersectionShift: number
+  _intersectionShift: number
 ): PositionedEdge[] {
   const nodeInfo = new Map<string, PositionedNode>();
   positionedNodes.forEach((node) => {
@@ -490,19 +490,6 @@ function calculateEdgePositions(
     const sourceCenter = { x: sourceNode.x, y: sourceNode.y };
     const targetCenter = { x: targetNode.x, y: targetNode.y };
 
-    // Dynamic offset instead of hardcoded value
-    let adjustedTargetCenter = targetCenter;
-
-    const isRootToRight = sourceNode.section === 'root' && targetNode.section === 'right';
-
-    if (isRootToRight) {
-      const verticalOffset = (targetNode.height ?? 50) * 0.1;
-      adjustedTargetCenter = {
-        ...targetCenter,
-        y: targetCenter.y - verticalOffset,
-      };
-    }
-
     const isSourceRound = ['circle', 'cloud', 'bang'].includes(
       sourceNode.originalNode?.shape ?? ''
     );
@@ -510,7 +497,7 @@ function calculateEdgePositions(
       targetNode.originalNode?.shape ?? ''
     );
 
-    let startPos = isSourceRound
+    const startPos = isSourceRound
       ? computeCircleEdgeIntersection(
           {
             x: sourceNode.x,
@@ -518,12 +505,12 @@ function calculateEdgePositions(
             width: sourceNode.width ?? 100,
             height: sourceNode.height ?? 100,
           },
-          adjustedTargetCenter,
+          targetCenter,
           sourceCenter
         )
-      : intersection(sourceNode, sourceCenter, adjustedTargetCenter);
+      : intersection(sourceNode, targetCenter, sourceCenter);
 
-    let endPos = isTargetRound
+    const endPos = isTargetRound
       ? computeCircleEdgeIntersection(
           {
             x: targetNode.x,
@@ -534,73 +521,9 @@ function calculateEdgePositions(
           sourceCenter,
           targetCenter
         )
-      : intersection(targetNode, targetCenter, sourceCenter);
+      : intersection(targetNode, sourceCenter, targetCenter);
 
-    const midX = (startPos.x + endPos.x) / 2;
-    const midY = (startPos.y + endPos.y) / 2;
-
-    const points = [startPos];
-
-    const isRightToRoot = sourceNode.section === 'right' && targetNode.section === 'root';
-
-    if (sourceNode.section === 'left' && targetNode.section !== 'root') {
-      points.push({
-        x: sourceNode.x - (sourceNode.width ?? 0) / 2 - intersectionShift,
-        y: sourceNode.y,
-      });
-    } else if (sourceNode.section === 'right' && targetNode.section !== 'root' && !isRootToRight) {
-      points.push({
-        x: sourceNode.x + (sourceNode.width ?? 0) / 2 + intersectionShift,
-        y: sourceNode.y,
-      });
-    }
-    if (targetNode.section === 'left' && sourceNode.section !== 'root') {
-      points.push({
-        x: targetNode.x + (targetNode.width ?? 0) / 2 + intersectionShift,
-        y: targetNode.y,
-      });
-    } else if (targetNode.section === 'right' && sourceNode.section !== 'root' && !isRightToRoot) {
-      points.push({
-        x: targetNode.x - (targetNode.width ?? 0) / 2 - intersectionShift,
-        y: targetNode.y,
-      });
-    }
-
-    points.push(endPos);
-
-    const secondPoint = isRootToRight
-      ? adjustedTargetCenter
-      : points.length > 1
-        ? points[1]
-        : targetCenter;
-    startPos = isSourceRound
-      ? computeCircleEdgeIntersection(
-          {
-            x: sourceNode.x,
-            y: sourceNode.y,
-            width: sourceNode.width ?? 100,
-            height: sourceNode.height ?? 100,
-          },
-          secondPoint,
-          sourceCenter
-        )
-      : intersection(sourceNode, secondPoint, sourceCenter);
-    points[0] = startPos;
-
-    const secondLastPoint = points.length > 1 ? points[points.length - 2] : sourceCenter;
-    endPos = isTargetRound
-      ? computeCircleEdgeIntersection(
-          {
-            x: targetNode.x,
-            y: targetNode.y,
-            width: targetNode.width ?? 100,
-            height: targetNode.height ?? 100,
-          },
-          secondLastPoint,
-          targetCenter
-        )
-      : intersection(targetNode, secondLastPoint, targetCenter);
-    points[points.length - 1] = endPos;
+    const points = [startPos, endPos];
 
     return {
       id: edge.id,
@@ -608,17 +531,17 @@ function calculateEdgePositions(
       target: edge.end ?? '',
       startX: startPos.x,
       startY: startPos.y,
-      midX,
-      midY,
+      midX: (startPos.x + endPos.x) / 2,
+      midY: (startPos.y + endPos.y) / 2,
       endX: endPos.x,
       endY: endPos.y,
       points,
-      sourceSection: sourceNode?.section,
-      targetSection: targetNode?.section,
-      sourceWidth: sourceNode?.width,
-      sourceHeight: sourceNode?.height,
-      targetWidth: targetNode?.width,
-      targetHeight: targetNode?.height,
+      sourceSection: sourceNode.section,
+      targetSection: targetNode.section,
+      sourceWidth: sourceNode.width,
+      sourceHeight: sourceNode.height,
+      targetWidth: targetNode.width,
+      targetHeight: targetNode.height,
     };
   });
 }
