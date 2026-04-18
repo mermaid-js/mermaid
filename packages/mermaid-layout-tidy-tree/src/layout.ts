@@ -1,7 +1,7 @@
 interface LayoutData {
   nodes: Node[];
   edges: Edge[];
-  config?: Record<string, unknown>;
+  config?: MermaidConfig;
 }
 import type { Bounds, Point } from 'mermaid/src/types.js';
 import { BoundingBox, Layout } from 'non-layered-tidy-tree-layout';
@@ -13,6 +13,7 @@ import type {
   PositionedNode,
   TidyTreeNode,
 } from './types.js';
+import type { MermaidConfig } from '../../mermaid/src/config.type.js';
 
 /**
  * Execute the tidy-tree layout algorithm on generic layout data
