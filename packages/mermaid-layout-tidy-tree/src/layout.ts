@@ -13,7 +13,7 @@ import type {
   PositionedNode,
   TidyTreeNode,
 } from './types.js';
-import type { MermaidConfig } from '../../mermaid/src/config.type.js';
+import type { MermaidConfig } from 'mermaid';
 
 /**
  * Execute the tidy-tree layout algorithm on generic layout data
