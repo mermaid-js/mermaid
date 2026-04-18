@@ -1,4 +1,8 @@
-import type { LayoutData } from 'mermaid';
+interface LayoutData {
+  nodes: Node[];
+  edges: Edge[];
+  config?: Record<string, unknown>;
+}
 import type { Bounds, Point } from 'mermaid/src/types.js';
 import { BoundingBox, Layout } from 'non-layered-tidy-tree-layout';
 import type {
@@ -85,12 +89,12 @@ function convertToDualTreeFormat(data: LayoutData): {
   const { nodes, edges } = data;
 
   const nodeMap = new Map<string, Node>();
-  nodes.forEach((node) => nodeMap.set(node.id, node));
+  nodes.forEach((node: Node) => nodeMap.set(node.id, node));
 
   const children = new Map<string, string[]>();
   const parents = new Map<string, string>();
 
-  edges.forEach((edge) => {
+  edges.forEach((edge: Edge) => {
     const parentId = edge.start;
     const childId = edge.end;
 
@@ -103,7 +107,7 @@ function convertToDualTreeFormat(data: LayoutData): {
     }
   });
 
-  const rootNodeData = nodes.find((node) => !parents.has(node.id));
+  const rootNodeData = nodes.find((node: Node) => !parents.has(node.id));
   if (!rootNodeData && nodes.length === 0) {
     throw new Error('No nodes available to create tree');
   }
@@ -217,36 +221,40 @@ function combineAndPositionTrees(
   let rightTreeCenterY = 0;
 
   if (leftTreeNodes.length > 0) {
-    const leftTreeXPositions = [...new Set(leftTreeNodes.map((node) => node.x))].sort(
-      (a, b) => b - a
-    );
+    const leftTreeXPositions = [
+      ...new Set(leftTreeNodes.map((node: PositionedNode) => node.x)),
+    ].sort((a, b) => b - a);
     const firstLevelLeftX = leftTreeXPositions[0];
-    const firstLevelLeftNodes = leftTreeNodes.filter((node) => node.x === firstLevelLeftX);
+    const firstLevelLeftNodes = leftTreeNodes.filter(
+      (node: PositionedNode) => node.x === firstLevelLeftX
+    );
 
     if (firstLevelLeftNodes.length > 0) {
       const leftMinY = Math.min(
-        ...firstLevelLeftNodes.map((node) => node.y - (node.height ?? 50) / 2)
+        ...firstLevelLeftNodes.map((node: PositionedNode) => node.y - (node.height ?? 50) / 2)
       );
       const leftMaxY = Math.max(
-        ...firstLevelLeftNodes.map((node) => node.y + (node.height ?? 50) / 2)
+        ...firstLevelLeftNodes.map((node: PositionedNode) => node.y + (node.height ?? 50) / 2)
       );
       leftTreeCenterY = (leftMinY + leftMaxY) / 2;
     }
   }
 
   if (rightTreeNodes.length > 0) {
-    const rightTreeXPositions = [...new Set(rightTreeNodes.map((node) => node.x))].sort(
-      (a, b) => a - b
-    );
+    const rightTreeXPositions = [
+      ...new Set(rightTreeNodes.map((node: PositionedNode) => node.x)),
+    ].sort((a, b) => a - b);
     const firstLevelRightX = rightTreeXPositions[0];
-    const firstLevelRightNodes = rightTreeNodes.filter((node) => node.x === firstLevelRightX);
+    const firstLevelRightNodes = rightTreeNodes.filter(
+      (node: PositionedNode) => node.x === firstLevelRightX
+    );
 
     if (firstLevelRightNodes.length > 0) {
       const rightMinY = Math.min(
-        ...firstLevelRightNodes.map((node) => node.y - (node.height ?? 50) / 2)
+        ...firstLevelRightNodes.map((node: PositionedNode) => node.y - (node.height ?? 50) / 2)
       );
       const rightMaxY = Math.max(
-        ...firstLevelRightNodes.map((node) => node.y + (node.height ?? 50) / 2)
+        ...firstLevelRightNodes.map((node: PositionedNode) => node.y + (node.height ?? 50) / 2)
       );
       rightTreeCenterY = (rightMinY + rightMaxY) / 2;
     }
@@ -265,7 +273,7 @@ function combineAndPositionTrees(
     originalNode: rootNode._originalNode,
   });
 
-  const leftTreeNodesWithOffset = leftTreeNodes.map((node) => ({
+  const leftTreeNodesWithOffset = leftTreeNodes.map((node: PositionedNode) => ({
     id: node.id,
     x: node.x - (node.width ?? 0) / 2,
     y: node.y + leftTreeOffset + (node.height ?? 0) / 2,
@@ -275,7 +283,7 @@ function combineAndPositionTrees(
     originalNode: node.originalNode,
   }));
 
-  const rightTreeNodesWithOffset = rightTreeNodes.map((node) => ({
+  const rightTreeNodesWithOffset = rightTreeNodes.map((node: PositionedNode) => ({
     id: node.id,
     x: node.x + (node.width ?? 0) / 2,
     y: node.y + rightTreeOffset + (node.height ?? 0) / 2,
@@ -301,7 +309,7 @@ function positionLeftTreeBidirectional(
   offsetX: number,
   offsetY: number
 ): void {
-  nodes.forEach((node) => {
+  nodes.forEach((node: TidyTreeNode) => {
     const distanceFromRoot = node.y ?? 0;
     const verticalPosition = node.x ?? 0;
 
@@ -335,7 +343,7 @@ function positionRightTreeBidirectional(
   offsetX: number,
   offsetY: number
 ): void {
-  nodes.forEach((node) => {
+  nodes.forEach((node: TidyTreeNode) => {
     const distanceFromRoot = node.y ?? 0;
     const verticalPosition = node.x ?? 0;
 
@@ -458,11 +466,11 @@ function calculateEdgePositions(
   _intersectionShift: number
 ): PositionedEdge[] {
   const nodeInfo = new Map<string, PositionedNode>();
-  positionedNodes.forEach((node) => {
+  positionedNodes.forEach((node: PositionedNode) => {
     nodeInfo.set(node.id, node);
   });
 
-  return edges.map((edge) => {
+  return edges.map((edge: Edge) => {
     const sourceNode = nodeInfo.get(edge.start ?? '');
     const targetNode = nodeInfo.get(edge.end ?? '');
 
@@ -523,7 +531,23 @@ function calculateEdgePositions(
         )
       : intersection(targetNode, sourceCenter, targetCenter);
 
-    const points = [startPos, endPos];
+    const midX = (startPos.x + endPos.x) / 2;
+    const midY = (startPos.y + endPos.y) / 2;
+
+    // Add slight curvature based on tree side
+    const curveOffset = 12;
+
+    const controlPoint = {
+      x: midX,
+      y:
+        sourceNode.section === 'left'
+          ? midY - curveOffset
+          : sourceNode.section === 'right'
+            ? midY + curveOffset
+            : midY,
+    };
+
+    const points = [startPos, controlPoint, endPos];
 
     return {
       id: edge.id,
