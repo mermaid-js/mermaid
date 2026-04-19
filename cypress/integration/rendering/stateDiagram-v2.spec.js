@@ -831,4 +831,118 @@ State9_____________ --> State10_____________   : Transition9_____
       {}
     );
   });
+
+  describe('CJK Character Rendering Tests', () => {
+    it('should render Chinese characters without truncation', () => {
+      imgSnapshotTest(
+        `
+        ---
+        config:
+          look: classic
+          theme: neo-dark
+        ---
+        stateDiagram-v2
+            direction TB
+
+            COMPLETED: COMPLETED - 已完成
+            CLOSED: CLOSED - 已关闭
+            PENDING: PENDING - 待处理
+
+            [*] --> PENDING
+            PENDING --> COMPLETED
+            PENDING --> CLOSED
+            COMPLETED --> [*]
+            CLOSED --> [*]
+
+            classDef completedStyle fill:#0f0,color:white,font-weight:bold,stroke-width:2px,stroke:#0a0
+            classDef closedStyle fill:#f00,color:white,font-weight:bold,stroke-width:2px,stroke:yellow
+            classDef pendingStyle fill:#ff0,color:black,font-weight:bold,stroke-width:2px,stroke:#aa0
+            
+            class COMPLETED completedStyle
+            class CLOSED closedStyle
+            class PENDING pendingStyle
+        `,
+        { logLevel: 0, fontFamily: 'courier' }
+      );
+    });
+
+    it('should render Japanese characters without truncation', () => {
+      imgSnapshotTest(
+        `
+        stateDiagram-v2
+            direction TB
+            
+            S1: 完了 - かんりょう
+            S2: 処理中 - しょりちゅう
+            S3: エラー発生
+            
+            [*] --> S2
+            S2 --> S1
+            S2 --> S3
+            S1 --> [*]
+            S3 --> [*]
+        `,
+        { logLevel: 0, fontFamily: 'courier' }
+      );
+    });
+
+    it('should render Korean characters without truncation', () => {
+      imgSnapshotTest(
+        `
+        stateDiagram-v2
+            direction TB
+            
+            S1: 완료됨 - Completed
+            S2: 처리중 - Processing
+            S3: 대기중 - Waiting
+            
+            [*] --> S3
+            S3 --> S2
+            S2 --> S1
+            S1 --> [*]
+        `,
+        { logLevel: 0, fontFamily: 'courier' }
+      );
+    });
+
+    it('should render mixed CJK languages without truncation', () => {
+      imgSnapshotTest(
+        `
+        stateDiagram-v2
+            direction LR
+            
+            Chinese: 中文测试 - Chinese Test
+            Japanese: 日本語テスト - Japanese Test
+            Korean: 한국어 테스트 - Korean Test
+            Mixed: 混合Mix혼합 - All Together
+            
+            [*] --> Chinese
+            Chinese --> Japanese
+            Japanese --> Korean
+            Korean --> Mixed
+            Mixed --> [*]
+        `,
+        { logLevel: 0, fontFamily: 'courier' }
+      );
+    });
+
+    it('should render long Chinese text without truncation', () => {
+      imgSnapshotTest(
+        `
+        stateDiagram-v2
+            direction TB
+            
+            S1: 这是一个非常长的中文状态描述用于测试文本截断问题
+            S2: SHORT
+            S3: 另一个很长的测试文本确保最后一个字符不会被截断掉
+            
+            [*] --> S1
+            S1 --> S2: 转换到短文本
+            S2 --> S3: 转换到另一个长文本
+            S3 --> [*]
+        `,
+        { logLevel: 0, fontFamily: 'courier' }
+      );
+    });
+  });
 });
