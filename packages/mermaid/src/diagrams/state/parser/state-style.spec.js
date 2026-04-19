@@ -241,16 +241,17 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
           let diagram = '';
           diagram += 'stateDiagram-v2\n';
           diagram += '%%initial_comment\n';
-          diagram += '%not_a_comment\n';
-          diagram += '[*] --> Moving %%not_inline_comment\n';
+          diagram += '[*] --> Moving %%inline_comment\n';
+          diagram += '%%final_comment\n';
 
           stateDiagram.parser.parse(diagram);
 
           const states = stateDiagram.parser.yy.getStates();
 
+          expect(states.size).toEqual(2);
           expect(states.get('%%initial_comment')).toBeUndefined();
-          expect(states.get('%not_a_comment')).toBeDefined();
-          expect(states.get('%%not_inline_comment')).toBeDefined();
+          expect(states.get('%%inline_comment')).toBeUndefined();
+          expect(states.get('%%final_comment')).toBeUndefined();
         });
 
         it('should handle comments correctly inside states', function () {
@@ -258,8 +259,7 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
           diagram += 'stateDiagram-v2\n';
           diagram += 'state Moving {\n';
           diagram += '%%comment_inside_state\n';
-          diagram += '%not_a_comment\n';
-          diagram += 'slow  --> fast %%not_inline_comment\n';
+          diagram += 'slow  --> fast %%inline_comment\n';
           diagram += '}\n';
 
           stateDiagram.parser.parse(diagram);
@@ -269,18 +269,8 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
           const movingDoc = states.get('Moving').doc;
           const state1 = movingDoc.find((d) => d.id === '%%comment_inside_state');
           expect(state1).toBeUndefined();
-          const state2 = movingDoc.find((d) => d.id === '%not_a_comment');
-          expect(state2).toBeDefined();
-
-          /*
-           * NOTE: Enforcing Documented Rule
-           * Comments need to be on their own line.
-           * Any inline '%%' is not a comment trigger.
-           * It is instead captured as a literal string belonging to the state.
-           * This ensures inline content is parsed normally.
-           */
-          const state3 = movingDoc.find((d) => d.id === '%%not_inline_comment');
-          expect(state3).toBeDefined();
+          const state2 = movingDoc.find((d) => d.id === '%%inline_comment');
+          expect(state2).toBeUndefined();
         });
 
         it('should handle comments correctly after a blank line', () => {
@@ -292,8 +282,24 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
           diagram += 'Moving --> Still\n';
 
           stateDiagram.parser.parse(diagram);
+
           const states = stateDiagram.parser.yy.getStates();
+
           expect(states.size).toEqual(3);
+        });
+
+        it('should parse single % as normal syntax, not a comment', () => {
+          let diagram = '';
+          diagram += 'stateDiagram-v2\n';
+          diagram += '% not a comment\n';
+          diagram += 'Moving --> Still %inline\n';
+
+          stateDiagram.parser.parse(diagram);
+
+          const states = stateDiagram.parser.yy.getStates();
+
+          expect(states.size).toEqual(7);
+          expect(states.get('%inline')).toBeDefined();
         });
 
         it('should skip multiple consecutive comment lines', () => {
@@ -305,18 +311,9 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
           diagram += '[*] --> Moving\n';
 
           stateDiagram.parser.parse(diagram);
-          const states = stateDiagram.parser.yy.getStates();
-          expect(states.size).toEqual(2);
-        });
 
-        it('should handle a comment as the last line of input', () => {
-          let diagram = '';
-          diagram += 'stateDiagram-v2\n';
-          diagram += 'A --> Moving\n';
-          diagram += '%% last line comment\n';
-
-          stateDiagram.parser.parse(diagram);
           const states = stateDiagram.parser.yy.getStates();
+
           expect(states.size).toEqual(2);
         });
 
@@ -330,14 +327,28 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
           stateDiagram.parser.parse(diagram);
 
           const relationships = stateDiagram.parser.yy.getRelations();
+          const states = stateDiagram.parser.yy.getStates();
+
+          expect(states.size).toEqual(3);
           expect(relationships).toHaveLength(2);
           expect(relationships[0].id1).toEqual('Moving');
           expect(relationships[0].id2).toEqual('Crash');
           expect(relationships[1].id1).toEqual('Moving');
           expect(relationships[1].id2).toEqual('Still');
+        });
+
+        it('should correctly handle inline %% comments in state syntax', () => {
+          let diagram = '';
+          diagram += 'stateDiagram-v2\n';
+          diagram += '[*] --> Moving%% this is a comment\n';
+          diagram += 'Moving --> Still%Active\n';
+
+          stateDiagram.parser.parse(diagram);
 
           const states = stateDiagram.parser.yy.getStates();
-          expect(states.size).toEqual(3);
+
+          expect(states.get('Moving')).toBeDefined();
+          expect(states.get('Still%Active')).toBeDefined();
         });
       });
     });
