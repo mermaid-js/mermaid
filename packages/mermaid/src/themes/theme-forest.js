@@ -385,8 +385,8 @@ class Theme {
     /* -------------------------------------------------- */
     /* Event Modeling diagrams                             */
 
-    this.emScreenFill = this.emScreenFill || 'white';
-    this.emScreenStroke = this.emScreenStroke || '#dbdada';
+    this.emUiFill = this.emUiFill || 'white';
+    this.emUiStroke = this.emUiStroke || '#dbdada';
     this.emProcessorFill = this.emProcessorFill || '#edb3f6';
     this.emProcessorStroke = this.emProcessorStroke || '#b88cbf';
     this.emReadModelFill = this.emReadModelFill || '#d3f1a2';

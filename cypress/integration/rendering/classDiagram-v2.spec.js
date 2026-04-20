@@ -654,4 +654,94 @@ class C13["With Città foreign language"]
 
     imgSnapshotTest(diagramDefinition);
   });
+
+  it('renders nested namespaces with dot notation', () => {
+    imgSnapshotTest(`
+      classDiagram-v2
+      namespace Company.Engineering.Backend {
+        class Developer {
+          +writeCode()
+        }
+      }
+      namespace Company.Engineering.Frontend {
+        class Designer {
+          +createMockup()
+        }
+      }
+      namespace Company.Engineering {
+        class TechLead {
+          +planSprint()
+        }
+      }
+      TechLead --> Developer : leads
+      TechLead --> Designer : leads
+    `);
+  });
+
+  it('renders syntactically nested namespaces', () => {
+    imgSnapshotTest(`
+      classDiagram-v2
+      namespace Platform {
+        namespace Auth {
+          class UserService {
+            +login()
+            +logout()
+          }
+        }
+        namespace Data {
+          class Repository {
+            +find()
+            +save()
+          }
+        }
+        class Gateway {
+          +route()
+        }
+      }
+      Gateway --> UserService : delegates
+      Gateway --> Repository : delegates
+    `);
+  });
+
+  it('renders a namespace with a custom label', () => {
+    imgSnapshotTest(`
+      classDiagram-v2
+      namespace Auth["Authentication Service"] {
+        class UserService {
+          +login()
+          +logout()
+        }
+        class TokenManager {
+          +generate()
+        }
+      }
+      UserService --> TokenManager : uses
+    `);
+  });
+
+  it('renders compact mode with hierarchicalNamespaces: false', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+      namespace Company.Engineering.Backend {
+        class Developer {
+          +writeCode()
+        }
+      }
+      namespace Company.Engineering.Frontend {
+        class Designer {
+          +createMockup()
+        }
+      }
+      namespace Company {
+        class CEO {
+          +makeDecisions()
+        }
+      }
+      CEO --> Developer : oversees
+      CEO --> Designer : oversees
+    `,
+      { class: { hierarchicalNamespaces: false } }
+    );
+  });
 });

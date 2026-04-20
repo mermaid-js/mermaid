@@ -1034,4 +1034,103 @@ class Class10
       { logLevel: 1, htmlLabels: true, layout: 'elk' }
     );
   });
+
+  it('ELK: should render nested namespaces with dot notation', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+      namespace Company.Engineering.Backend {
+        class Developer {
+          +writeCode()
+        }
+      }
+      namespace Company.Engineering.Frontend {
+        class Designer {
+          +createMockup()
+        }
+      }
+      namespace Company.Engineering {
+        class TechLead {
+          +planSprint()
+        }
+      }
+      TechLead --> Developer : leads
+      TechLead --> Designer : leads
+    `,
+      { logLevel: 1, htmlLabels: true, layout: 'elk' }
+    );
+  });
+
+  it('ELK: should render syntactically nested namespaces', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+      namespace Platform {
+        namespace Auth {
+          class UserService {
+            +login()
+            +logout()
+          }
+        }
+        namespace Data {
+          class Repository {
+            +find()
+            +save()
+          }
+        }
+        class Gateway {
+          +route()
+        }
+      }
+      Gateway --> UserService : delegates
+      Gateway --> Repository : delegates
+    `,
+      { logLevel: 1, htmlLabels: true, layout: 'elk' }
+    );
+  });
+
+  it('ELK: should render a namespace with a custom label', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+      namespace Auth["Authentication Service"] {
+        class UserService {
+          +login()
+          +logout()
+        }
+        class TokenManager {
+          +generate()
+        }
+      }
+      UserService --> TokenManager : uses
+    `,
+      { logLevel: 1, htmlLabels: true, layout: 'elk' }
+    );
+  });
+
+  it('ELK: should render compact mode with hierarchicalNamespaces: false', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+      namespace Company.Engineering.Backend {
+        class Developer {
+          +writeCode()
+        }
+      }
+      namespace Company.Engineering.Frontend {
+        class Designer {
+          +createMockup()
+        }
+      }
+      namespace Company {
+        class CEO {
+          +makeDecisions()
+        }
+      }
+      CEO --> Developer : oversees
+      CEO --> Designer : oversees
+    `,
+      { class: { hierarchicalNamespaces: false } }
+    );
+  });
 });
