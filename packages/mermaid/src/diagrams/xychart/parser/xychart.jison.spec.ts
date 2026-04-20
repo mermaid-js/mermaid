@@ -335,7 +335,8 @@ describe('Testing xychart jison file', () => {
     expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'xAxisName', type: 'text' });
     expect(mockDB.setBarData).toHaveBeenCalledWith(
       { text: 'barTitle', type: 'text' },
-      [23, 45, 56.6, 0.22]
+      [23, 45, 56.6, 0.22],
+      false
     );
   });
   it('parse bar Data spaces and +,- symbol', () => {
@@ -346,7 +347,8 @@ describe('Testing xychart jison file', () => {
     expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'xAxisName', type: 'text' });
     expect(mockDB.setBarData).toHaveBeenCalledWith(
       { text: 'barTitle with space', type: 'text' },
-      [23, -45, 56.6]
+      [23, -45, 56.6],
+      false
     );
   });
   it('parse bar Data without plot title', () => {
@@ -354,7 +356,11 @@ describe('Testing xychart jison file', () => {
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'yAxisName', type: 'text' });
     expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'xAxisName', type: 'text' });
-    expect(mockDB.setBarData).toHaveBeenCalledWith({ text: '', type: 'text' }, [23, -45, 56.6]);
+    expect(mockDB.setBarData).toHaveBeenCalledWith(
+      { text: '', type: 'text' },
+      [23, -45, 56.6],
+      false
+    );
   });
   it('parse bar should throw for unbalanced brackets', () => {
     let str =
@@ -391,11 +397,13 @@ describe('Testing xychart jison file', () => {
     expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'xAxisName', type: 'text' });
     expect(mockDB.setBarData).toHaveBeenCalledWith(
       { text: 'barTitle1', type: 'text' },
-      [23, 45, 56.6]
+      [23, 45, 56.6],
+      false
     );
     expect(mockDB.setBarData).toHaveBeenCalledWith(
       { text: 'barTitle2', type: 'text' },
-      [13, 42, 56.89]
+      [13, 42, 56.89],
+      false
     );
     expect(mockDB.setLineData).toHaveBeenCalledWith(
       { text: 'lineTitle1', type: 'text' },
@@ -427,11 +435,13 @@ describe('Testing xychart jison file', () => {
     ]);
     expect(mockDB.setBarData).toHaveBeenCalledWith(
       { text: 'barTitle1', type: 'text' },
-      [23, 45, 56.6]
+      [23, 45, 56.6],
+      false
     );
     expect(mockDB.setBarData).toHaveBeenCalledWith(
       { text: 'barTitle2', type: 'text' },
-      [13, 42, 56.89]
+      [13, 42, 56.89],
+      false
     );
     expect(mockDB.setLineData).toHaveBeenCalledWith(
       { text: 'lineTitle1', type: 'text' },

@@ -38,6 +38,7 @@ export interface LinePlotData {
 export interface BarPlotData {
   type: 'bar';
   fill: string;
+  stacked: boolean;
   data: SimplePlotDataType;
 }
 

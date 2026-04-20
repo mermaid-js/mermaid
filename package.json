@@ -52,7 +52,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mermaid-js/mermaid"
+    "url": "git+https://github.com/mermaid-js/mermaid.git"
   },
   "author": "Knut Sveidqvist",
   "license": "MIT",
@@ -155,5 +155,14 @@
       "sharp",
       "vue-demi"
     ]
-  }
+  },
+  "main": "eslint.config.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "bugs": {
+    "url": "https://github.com/mermaid-js/mermaid/issues"
+  },
+  "homepage": "https://github.com/mermaid-js/mermaid#readme"
 }
