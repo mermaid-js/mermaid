@@ -62,7 +62,7 @@
 
     <pre class="mermaid">
     erDiagram
-      "HOSPITAL" {
+      "[HOSPITAL](http://www.fakeurl.com/HOSPITAL)" {
         int id PK
         int doctor_id FK
         string address UK
@@ -127,9 +127,9 @@
 
     <pre class="mermaid">
     erDiagram
-      p[Person] {
-          string firstName
-          string lastName
+      p["[Person](http://www.fakeurl.com/Person)"] {
+          string firstName "[The first name](http://www.fakeurl.com/TheFirstName)"
+          string lastName "[The last name](http://www.fakeurl.com/TheLastName)"
       }
       a["Customer Account"] {
           string email

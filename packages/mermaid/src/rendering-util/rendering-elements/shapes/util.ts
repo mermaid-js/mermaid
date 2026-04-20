@@ -43,9 +43,13 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
 
   const addBackground = !!node.icon || !!node.img;
   const isMarkdown = node.labelType === 'markdown';
+  // Sanitization is deferred to the rendering layer — markdownToLines/createText handle text safely via D3's .text() and sanitizeUrl() for href attributes.
+  const textContent = isMarkdown
+    ? decodeEntities(label)
+    : sanitizeText(decodeEntities(label), getConfig());
   const text = await createText(
     labelEl,
-    sanitizeText(decodeEntities(label), getConfig()),
+    textContent,
     {
       useHtmlLabels,
       width: node.width || getConfig().flowchart?.wrappingWidth,

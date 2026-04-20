@@ -1,4 +1,4 @@
-export type MarkdownWordType = 'normal' | 'strong' | 'em';
+export type MarkdownWordType = 'normal' | 'strong' | 'em' | 'link';
 import type { MermaidConfig } from '../config.type.js';
 import type { ClusterShapeID } from './rendering-elements/clusters.js';
 import type { ShapeID } from './rendering-elements/shapes.js';
@@ -6,6 +6,7 @@ import type { Bounds, Point } from '../types.js';
 export interface MarkdownWord {
   content: string;
   type: MarkdownWordType;
+  href?: string;
 }
 export type MarkdownLine = MarkdownWord[];
 /** Returns `true` if the line fits a constraint (e.g. it's under 𝑛 chars) */

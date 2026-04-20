@@ -49,7 +49,7 @@ export interface FlowVertex {
 
 export interface FlowText {
   text: string;
-  type: 'text';
+  type: 'markdown' | 'string' | 'text';
 }
 
 export interface FlowEdge {

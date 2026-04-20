@@ -244,8 +244,50 @@ export const drawText = function (elem, textData) {
       textElem.attr('dy', dy);
     }
 
-    const text = line || ZERO_WIDTH_SPACE;
-    if (textData.tspan) {
+    const text = line ?? ZERO_WIDTH_SPACE;
+    const linkRegex = /\[([^\]]+)]\(([^)]+)\)/g;
+    const hasLinks = linkRegex.test(text);
+
+    if (hasLinks) {
+      // Render text with inline markdown links as SVG <a> elements
+      linkRegex.lastIndex = 0;
+      let lastIndex = 0;
+      let match;
+      while ((match = linkRegex.exec(text)) !== null) {
+        // Add text before the link
+        if (match.index > lastIndex) {
+          const beforeText = text.substring(lastIndex, match.index);
+          if (textData.tspan) {
+            const span = textElem.append('tspan');
+            if (textData.fill !== undefined) {
+              span.attr('fill', textData.fill);
+            }
+            span.text(beforeText);
+          } else {
+            textElem.append('tspan').text(beforeText);
+          }
+        }
+        // Add the link
+        const linkText = match[1];
+        const linkHref = sanitizeUrl(match[2]);
+        const safeHref = linkHref.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+        const linkEl = textElem.append('a').attr('xlink:href', safeHref).attr('target', '_blank');
+        linkEl.append('tspan').attr('text-decoration', 'underline').text(linkText);
+        lastIndex = match.index + match[0].length;
+      }
+      // Add remaining text after last link
+      if (lastIndex < text.length) {
+        if (textData.tspan) {
+          const span = textElem.append('tspan');
+          if (textData.fill !== undefined) {
+            span.attr('fill', textData.fill);
+          }
+          span.text(text.substring(lastIndex));
+        } else {
+          textElem.append('tspan').text(text.substring(lastIndex));
+        }
+      }
+    } else if (textData.tspan) {
       const span = textElem.append('tspan');
       span.attr('x', textData.x);
       if (textData.fill !== undefined) {
@@ -260,7 +302,7 @@ export const drawText = function (elem, textData) {
       textData.textMargin !== undefined &&
       textData.textMargin > 0
     ) {
-      textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
+      textHeight += (textElem._groups ?? textElem)[0][0].getBBox().height;
       prevTextHeight = textHeight;
     }
 
@@ -803,16 +845,27 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, a
   const bounds = actElem.node().getBBox();
   actor.height = bounds.height + 2 * (conf?.sequence?.labelBoxHeight ?? 0);
 
-  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
-    actor.description,
-    actElem,
-    rect.x,
-    rect.y + r + (!isFooter ? 12 : 5),
-    rect.width,
-    rect.height,
-    { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
-    conf
-  );
+  if (hasKatex(actor.description)) {
+    void drawKatex(actElem, {
+      x: rect.x,
+      y: rect.y + r + (!isFooter ? 12 : 5),
+      width: rect.width,
+      height: rect.height,
+      text: actor.description,
+      class: `actor ${ACTOR_MAN_FIGURE_CLASS}`,
+    });
+  } else {
+    _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+      actor.description,
+      actElem,
+      rect.x,
+      rect.y + r + (!isFooter ? 12 : 5),
+      rect.width,
+      rect.height,
+      { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
+      conf
+    );
+  }
 
   if (!isFooter) {
     actElem.attr('data-et', 'participant');
@@ -902,16 +955,27 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, actorIndexMap
     actor.actorCnt = actorCnt;
   }
 
-  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
-    actor.description,
-    actElem,
-    rect.x,
-    rect.y + (!isFooter ? 30 : 15),
-    rect.width,
-    rect.height,
-    { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
-    conf
-  );
+  if (hasKatex(actor.description)) {
+    void drawKatex(actElem, {
+      x: rect.x,
+      y: rect.y + (!isFooter ? 30 : 15),
+      width: rect.width,
+      height: rect.height,
+      text: actor.description,
+      class: `actor ${ACTOR_MAN_FIGURE_CLASS}`,
+    });
+  } else {
+    _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+      actor.description,
+      actElem,
+      rect.x,
+      rect.y + (!isFooter ? 30 : 15),
+      rect.width,
+      rect.height,
+      { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
+      conf
+    );
+  }
 
   if (!isFooter) {
     actElem.attr('transform', `translate(${0}, ${r / 2 - 5})`);
@@ -1022,16 +1086,27 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter, actorIndexM
   // Both branches were identical — simplified to a single unconditional statement
   cylinderGroup.attr('transform', `translate(${w}, ${ry})`);
   actor.rectData = rect;
-  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
-    actor.description,
-    g,
-    rect.x,
-    rect.y + 35,
-    rect.width,
-    rect.height,
-    { class: `actor ${ACTOR_BOX_CLASS}` },
-    conf
-  );
+  if (hasKatex(actor.description)) {
+    void drawKatex(g, {
+      x: rect.x,
+      y: rect.y + 35,
+      width: rect.width,
+      height: rect.height,
+      text: actor.description,
+      class: `actor ${ACTOR_BOX_CLASS}`,
+    });
+  } else {
+    _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+      actor.description,
+      g,
+      rect.x,
+      rect.y + 35,
+      rect.width,
+      rect.height,
+      { class: `actor ${ACTOR_BOX_CLASS}` },
+      conf
+    );
+  }
 
   const lastPath = cylinderGroup.select('path:last-child');
   if (lastPath.node()) {
@@ -1129,16 +1204,27 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter, actorIndexM
   const bounds = actElem.node().getBBox();
   actor.height = bounds.height + (conf.sequence.labelBoxHeight ?? 0);
 
-  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
-    actor.description,
-    actElem,
-    rect.x,
-    rect.y + 15,
-    rect.width,
-    rect.height,
-    { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
-    conf
-  );
+  if (hasKatex(actor.description)) {
+    void drawKatex(actElem, {
+      x: rect.x,
+      y: rect.y + 15,
+      width: rect.width,
+      height: rect.height,
+      text: actor.description,
+      class: `actor ${ACTOR_MAN_FIGURE_CLASS}`,
+    });
+  } else {
+    _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+      actor.description,
+      actElem,
+      rect.x,
+      rect.y + 15,
+      rect.width,
+      rect.height,
+      { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
+      conf
+    );
+  }
 
   actElem.attr('transform', `translate(0,${radius / 2 + 10})`);
 
@@ -1714,7 +1800,7 @@ const _drawTextCandidateFunc = (function () {
     const lines = content.split(common.lineBreakRegex);
     for (let i = 0; i < lines.length; i++) {
       const dy = i * _actorFontSize - (_actorFontSize * (lines.length - 1)) / 2;
-      const text = g
+      const textElem = g
         .append('text')
         .attr('x', x + width / 2)
         .attr('y', y)
@@ -1722,18 +1808,48 @@ const _drawTextCandidateFunc = (function () {
         .style('font-size', _actorFontSizePx)
         .style('font-weight', actorFontWeight)
         .style('font-family', actorFontFamily);
-      text
-        .append('tspan')
-        .attr('x', x + width / 2)
-        .attr('dy', dy)
-        .text(lines[i]);
 
-      text
+      const line = lines[i];
+      const linkRegex = /\[([^\]]+)]\(([^)]+)\)/g;
+      const hasLinks = linkRegex.test(line);
+
+      if (hasLinks) {
+        // Render text with inline markdown links as SVG <a> elements
+        linkRegex.lastIndex = 0;
+        let lastIndex = 0;
+        let match;
+        while ((match = linkRegex.exec(line)) !== null) {
+          // Add text before the link
+          if (match.index > lastIndex) {
+            const beforeText = line.substring(lastIndex, match.index);
+            textElem.append('tspan').text(beforeText);
+          }
+          // Add the link
+          const linkText = match[1];
+          const linkHref = sanitizeUrl(match[2]);
+          const safeHref = linkHref.replace(/&/g, '&amp;').replace(/"/g, '&quot;'); // Sanitize the href to prevent XSS attacks
+          const linkEl = textElem.append('a').attr('xlink:href', safeHref).attr('target', '_blank');
+          linkEl.append('tspan').attr('text-decoration', 'underline').text(linkText);
+          lastIndex = match.index + match[0].length;
+        }
+        // Add remaining text after last link
+        if (lastIndex < line.length) {
+          textElem.append('tspan').text(line.substring(lastIndex));
+        }
+      } else {
+        textElem
+          .append('tspan')
+          .attr('x', x + width / 2)
+          .attr('dy', dy)
+          .text(lines[i]);
+      }
+
+      textElem
         .attr('y', y + height / 2.0)
         .attr('dominant-baseline', 'central')
         .attr('alignment-baseline', 'central');
 
-      _setTextAttrs(text, textAttrs);
+      _setTextAttrs(textElem, textAttrs);
     }
   }
 

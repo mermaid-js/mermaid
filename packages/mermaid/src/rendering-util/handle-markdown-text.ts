@@ -1,5 +1,6 @@
 import type { MarkedToken, Token } from 'marked';
 import { marked } from 'marked';
+import { sanitizeUrl } from '@braintree/sanitize-url';
 import { dedent } from 'ts-dedent';
 import type { MarkdownLine, MarkdownWordType } from './types.js';
 import type { MermaidConfig } from '../config.type.js';
@@ -68,6 +69,15 @@ export function markdownToLines(markdown: string, config: MermaidConfig = {}): M
       node.tokens.forEach((contentNode) => {
         processNode(contentNode as MarkedToken, node.type);
       });
+    } else if (node.type === 'link') {
+      const href = sanitizeUrl(node.href);
+      const linkText =
+        node.tokens?.map((t) => ('text' in t ? t.text : t.raw)).join('') || node.text;
+      linkText.split(' ').forEach((word) => {
+        if (word) {
+          lines[currentLine].push({ content: word, type: 'link', href });
+        }
+      });
     } else if (node.type === 'html') {
       lines[currentLine].push({ content: node.text, type: 'normal' });
     }
@@ -130,6 +140,11 @@ export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidCo
       return `<strong>${node.tokens?.map(output).join('')}</strong>`;
     } else if (node.type === 'em') {
       return `<em>${node.tokens?.map(output).join('')}</em>`;
+    } else if (node.type === 'link') {
+      const href = sanitizeUrl(node.href);
+      const text = node.tokens?.map(output).join('') ?? node.text;
+      const safeHref = href.replace(/&/g, '&amp;').replace(/"/g, '&quot;'); // Sanitize the href to prevent XSS attacks
+      return `<a href="${safeHref}" target="_blank">${text}</a>`;
     } else if (node.type === 'paragraph') {
       return `<p>${node.tokens?.map(output).join('')}</p>`;
     } else if (node.type === 'space') {

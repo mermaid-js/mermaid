@@ -593,6 +593,38 @@ sequenceDiagram
     Note over Alice,John: A typical interaction<br/>But now in two lines
 ```
 
+## Markdown Hyperlinks in Messages
+
+Message text supports inline Markdown hyperlinks using the standard `[text](url)` syntax. The link text will be rendered as a clickable, underlined element in the diagram.
+
+```mermaid-example
+sequenceDiagram
+    Alice->>Bob: Please check [the docs](https://mermaid.js.org)
+    Bob-->>Alice: Sure, see [API reference](https://mermaid.js.org/config/setup/modules/mermaidAPI.html)
+```
+
+```mermaid
+sequenceDiagram
+    Alice->>Bob: Please check [the docs](https://mermaid.js.org)
+    Bob-->>Alice: Sure, see [API reference](https://mermaid.js.org/config/setup/modules/mermaidAPI.html)
+```
+
+Links can be mixed with regular text on the same message line:
+
+```mermaid-example
+sequenceDiagram
+    Client->>Server: POST /order (see [API spec](https://example.com/api))
+    Server-->>Client: 200 OK — details at [dashboard](https://example.com/dashboard)
+```
+
+```mermaid
+sequenceDiagram
+    Client->>Server: POST /order (see [API spec](https://example.com/api))
+    Server-->>Client: 200 OK — details at [dashboard](https://example.com/dashboard)
+```
+
+> **Security note:** URLs are automatically sanitized. Dangerous schemes such as `javascript:` and `data:` are replaced with `about:blank`.
+
 ## Loops
 
 It is possible to express loops in a sequence diagram. This is done by the notation

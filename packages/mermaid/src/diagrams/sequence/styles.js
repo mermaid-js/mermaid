@@ -20,7 +20,7 @@ const getStyles = (options) => {
       filter: ${dropShadow};
   }
 
-  text.actor > tspan {
+  text.actor tspan {
     fill: ${options.actorTextColor};
     stroke: none;
   }
