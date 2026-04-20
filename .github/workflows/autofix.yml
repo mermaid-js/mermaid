@@ -42,4 +42,4 @@ jobs:
         working-directory: ./packages/mermaid
         run: pnpm run docs:build
 
-      - uses: autofix-ci/action@7a166d7532b277f34e16238930461bf77f9d7ed8 # main
+      - uses: autofix-ci/action@c5b2d67aa2274e7b5a18224e8171550871fc7e4a # main
