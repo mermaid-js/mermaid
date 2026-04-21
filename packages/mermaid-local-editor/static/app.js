@@ -6,7 +6,7 @@ import { createNavigation } from './js/navigation.js';
 
 initMermaid();
 
-const src = document.getElementById('src');
+const srcPanel = document.getElementById('srcPanel');
 const preview = document.getElementById('preview');
 const diagramsSelect = document.getElementById('diagrams');
 const nameInput = document.getElementById('name');
@@ -14,13 +14,13 @@ const storage = createStorage();
 const navigation = createNavigation({
   state,
   preview,
-  src,
+  srcPanel,
   applyTransform,
 });
 
 function render() {
   void renderDiagram({
-    srcValue: src.value,
+    srcValue: srcPanel.value,
     preview,
     state,
     IS_E2E,
@@ -33,7 +33,7 @@ function load(name) {
   storage.setCurrent(name);
   const d = storage.diagrams[name];
 
-  src.value = d.src;
+  srcPanel.value = d.src;
 
   // restore the view
   state.scale = d.view?.scale ?? 1;
@@ -66,7 +66,7 @@ function applyTransform() {
 }
 
 setupUI({
-  src,
+  src: srcPanel,
   diagramsSelect,
   nameInput,
   storage,

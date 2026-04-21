@@ -95,7 +95,7 @@ export function setupUI({
     }, 300);
   });
 
-  const toolbar = document.getElementById('src');
+  const toolbar = document.getElementById('srcPanel');
   const toggleToolbarBtn = document.getElementById('toggleToolbar');
 
   let toolbarCollapsed = localStorage.getItem('toolbar-collapsed') === '1';

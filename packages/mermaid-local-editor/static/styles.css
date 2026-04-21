@@ -27,10 +27,10 @@ body {
   border: 1px solid #333;
   padding: 4px 8px;
 }
-#src {
+#srcPanel {
   z-index: 1000;
 }
-#src.collapsed {
+#srcPanel.collapsed {
   transform: translateY(-100%);
   opacity: 0;
   height: 0;
@@ -80,15 +80,6 @@ div > * {
   padding: 4px 8px;
 }
 
-#src.collapsed #toggleToolbar {
-  position: fixed;
-  top: 8px;
-  left: 8px;
-  transform: translateY(100%);
-  opacity: 1;
-  height: auto;
-  z-index: 9999;
-}
 #preview svg {
   width: 100%;
   height: auto;

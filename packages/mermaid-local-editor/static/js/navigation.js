@@ -1,4 +1,4 @@
-export function createNavigation({ state, preview, src, applyTransform }) {
+export function createNavigation({ state, preview, srcPanel, applyTransform }) {
   let navNodes = [];
   let navIndex = 0;
 
@@ -63,7 +63,7 @@ export function createNavigation({ state, preview, src, applyTransform }) {
 
   function setupKeyboardNav() {
     window.addEventListener('keydown', (e) => {
-      if (document.activeElement === src) {
+      if (document.activeElement === srcPanel) {
         return;
       }
 
