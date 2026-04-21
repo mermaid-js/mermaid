@@ -85,9 +85,9 @@ describe('drawMessage (#3594)', () => {
     await drawMessage(diagram, msgModel, 100, diagObj, msg, 'test-id');
 
     expect(svgDraw.drawText).toHaveBeenCalled();
-    const messageTextCalls = vi.mocked(svgDraw.drawText).mock.calls.filter(
-      (call) => call[1]?.class === 'messageText'
-    );
+    const messageTextCalls = vi
+      .mocked(svgDraw.drawText)
+      .mock.calls.filter((call) => call[1]?.class === 'messageText');
     expect(messageTextCalls).toHaveLength(1);
     const textObj = messageTextCalls[0][1];
     expect(textObj.x).toBe(Math.min(startx, stopx));
