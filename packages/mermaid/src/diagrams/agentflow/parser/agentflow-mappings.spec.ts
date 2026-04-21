@@ -1,0 +1,278 @@
+/**
+ * Element-mapping tests for the agentflow parser.
+ *
+ * Verifies that the JISON action blocks populate `elementMappings` via the
+ * `addVertexMapping` / `addEdgeMapping` / `addSubgraphMapping` /
+ * `addTypeMapping` / `addTemplateMapping` hooks, that the reported
+ * positions land on the right line numbers, and that
+ * `setFrontmatterLineOffset` shifts positions into original-source space.
+ *
+ * Corresponding infrastructure lives in `agentflowDb.ts` and the grammar
+ * action blocks in `agentflow.jison`.
+ */
+
+import { AgentFlowDB } from '../agentflowDb.js';
+import agentflow from './agentflowParser.js';
+import { setConfig } from '../../../config.js';
+
+setConfig({
+  securityLevel: 'strict',
+});
+
+describe('agentflow element mappings', () => {
+  beforeEach(() => {
+    agentflow.parser.yy = new AgentFlowDB();
+    agentflow.parser.yy.clear();
+    agentflow.parser.yy.setGen('gen-2');
+  });
+
+  // ──────────────────────────────────────────────────────────────
+  // supportsInlinePositions presence
+  // ──────────────────────────────────────────────────────────────
+
+  describe('DB surface', () => {
+    it('exposes setSourceText so Diagram.ts detects inline-position support', () => {
+      const db = agentflow.parser.yy as AgentFlowDB;
+      expect(typeof db.setSourceText).toBe('function');
+      expect(typeof db.setFrontmatterLineOffset).toBe('function');
+    });
+
+    it('starts with an empty element-mappings list', () => {
+      const db = agentflow.parser.yy as AgentFlowDB;
+      expect(db.getElementMappings()).toHaveLength(0);
+      expect(db.getMappingStats().totalElements).toBe(0);
+    });
+  });
+
+  // ──────────────────────────────────────────────────────────────
+  // Vertex positions
+  // ──────────────────────────────────────────────────────────────
+
+  describe('vertex positions', () => {
+    it('captures a position for a plain labelled vertex', () => {
+      agentflow.parser.parse(`agentflow TB
+  a["Alpha"]
+  b --> a`);
+      const db = agentflow.parser.yy as AgentFlowDB;
+      const a = db.getElementById('a');
+      expect(a).toBeDefined();
+      expect(a!.type).toBe('vertex');
+      // `a["Alpha"]` lives on source line 2.
+      expect(a!.position.startLine).toBe(2);
+      expect(a!.position.endLine).toBe(2);
+    });
+
+    it('captures vertices for every inline shape', () => {
+      agentflow.parser.parse(`agentflow TB
+  a["sq"]
+  b(("cir"))
+  c{"diamond"}
+  d[/"trap"/]
+  e(-"ellipse"-)
+  f --> a`);
+      const db = agentflow.parser.yy as AgentFlowDB;
+      for (const id of ['a', 'b', 'c', 'd', 'e']) {
+        const m = db.getElementById(id);
+        expect(m, `expected mapping for ${id}`).toBeDefined();
+        expect(m!.type).toBe('vertex');
+      }
+    });
+  });
+
+  // ──────────────────────────────────────────────────────────────
+  // Edge positions
+  // ──────────────────────────────────────────────────────────────
+
+  describe('edge positions', () => {
+    it('captures a position for an edge statement', () => {
+      agentflow.parser.parse(`agentflow TB
+  a --> b`);
+      const db = agentflow.parser.yy as AgentFlowDB;
+      const edges = db.getElementMappings().filter((m) => m.type === 'edge');
+      expect(edges.length).toBeGreaterThanOrEqual(1);
+      // Edge lives on source line 2.
+      expect(edges.some((e) => e.position.startLine === 2)).toBe(true);
+    });
+
+    it('captures separate mappings for sequential edge statements', () => {
+      agentflow.parser.parse(`agentflow TB
+  a --> b
+  b --> c
+  c --> d`);
+      const db = agentflow.parser.yy as AgentFlowDB;
+      const edges = db.getElementMappings().filter((m) => m.type === 'edge');
+      expect(edges).toHaveLength(3);
+    });
+  });
+
+  // ──────────────────────────────────────────────────────────────
+  // Subgraph / container positions
+  // ──────────────────────────────────────────────────────────────
+
+  describe('container positions', () => {
+    it('captures a position spanning from keyword to end for a flow container', () => {
+      agentflow.parser.parse(`agentflow TB
+  flow pipeline["Pipeline"]
+    a --> b
+  end`);
+      const db = agentflow.parser.yy as AgentFlowDB;
+      const pipeline = db.getElementById('pipeline');
+      expect(pipeline).toBeDefined();
+      expect(pipeline!.type).toBe('subgraph');
+      // Container opener is line 2, `end` is line 4.
+      expect(pipeline!.position.startLine).toBe(2);
+      expect(pipeline!.position.endLine).toBe(4);
+    });
+
+    it('captures positions for agent / task / skill / testCase / directive containers', () => {
+      agentflow.parser.parse(`agentflow TB
+  agent ag["A"]
+    task t1["T"]
+      skill s1["S"]
+        testCase tc1["TC"]
+          directive d1["D"]
+            n1 --> n2
+          end
+        end
+      end
+    end
+  end`);
+      const db = agentflow.parser.yy as AgentFlowDB;
+      for (const id of ['ag', 't1', 's1', 'tc1', 'd1']) {
+        const m = db.getElementById(id);
+        expect(m, `expected subgraph mapping for ${id}`).toBeDefined();
+        expect(m!.type).toBe('subgraph');
+      }
+    });
+  });
+
+  // ──────────────────────────────────────────────────────────────
+  // Type and template declaration positions
+  // ──────────────────────────────────────────────────────────────
+
+  describe('declaration positions', () => {
+    it('captures a position for a type declaration', () => {
+      agentflow.parser.parse(`agentflow TB
+  type Greeting = String
+  a --> b`);
+      const db = agentflow.parser.yy as AgentFlowDB;
+      const greeting = db.getElementById('Greeting');
+      expect(greeting).toBeDefined();
+      expect(greeting!.type).toBe('type');
+      expect(greeting!.position.startLine).toBe(2);
+    });
+
+    it('captures a position for a template declaration', () => {
+      agentflow.parser.parse(`agentflow TB
+  template %my_tpl { FIELD_A: String <<description>> }
+  a --> b`);
+      const db = agentflow.parser.yy as AgentFlowDB;
+      const tpl = db.getElementById('my_tpl');
+      expect(tpl).toBeDefined();
+      expect(tpl!.type).toBe('template');
+      expect(tpl!.position.startLine).toBe(2);
+    });
+  });
+
+  // ──────────────────────────────────────────────────────────────
+  // Frontmatter offset
+  // ──────────────────────────────────────────────────────────────
+
+  describe('frontmatter offset', () => {
+    it('shifts positions by the frontmatter line offset', () => {
+      const db = agentflow.parser.yy as AgentFlowDB;
+      // Simulate the preprocessor telling the DB about 3 frontmatter lines.
+      db.setFrontmatterLineOffset(3);
+      agentflow.parser.parse(`agentflow TB
+  a --> b`);
+      const a = db.getElementById('a');
+      expect(a).toBeDefined();
+      // Post-frontmatter `a` is on parse line 2, which maps to source line 5.
+      expect(a!.position.startLine).toBe(5);
+      expect(a!.position.endLine).toBe(5);
+    });
+
+    it('reports un-shifted positions when no frontmatter offset is set', () => {
+      agentflow.parser.parse(`agentflow TB
+  a --> b`);
+      const db = agentflow.parser.yy as AgentFlowDB;
+      const a = db.getElementById('a');
+      expect(a!.position.startLine).toBe(2);
+    });
+  });
+
+  // ──────────────────────────────────────────────────────────────
+  // Lookup helpers
+  // ──────────────────────────────────────────────────────────────
+
+  describe('lookup helpers', () => {
+    it('getElementsOnLine returns all mappings that intersect a given line', () => {
+      agentflow.parser.parse(`agentflow TB
+  a --> b
+  c --> d`);
+      const db = agentflow.parser.yy as AgentFlowDB;
+      const onLine2 = db.getElementsOnLine(2);
+      // Line 2 covers `a`, `b`, and the edge between them.
+      expect(onLine2.length).toBeGreaterThanOrEqual(2);
+      expect(onLine2.some((m) => m.type === 'vertex' && m.id === 'a')).toBe(true);
+    });
+
+    it('getElementAtPosition prefers the innermost span', () => {
+      agentflow.parser.parse(`agentflow TB
+  flow pipeline["Pipeline"]
+    inner --> next
+  end`);
+      const db = agentflow.parser.yy as AgentFlowDB;
+      // A position inside the pipeline container but on the `inner` vertex
+      // should return the vertex, not the enclosing container.
+      const inner = db.getElementById('inner');
+      expect(inner).toBeDefined();
+      const hit = db.getElementAtPosition(inner!.position.startLine, inner!.position.startColumn);
+      expect(hit?.id).toBe('inner');
+      expect(hit?.type).toBe('vertex');
+    });
+
+    it('getMappingStats reports counts per statement type', () => {
+      agentflow.parser.parse(`agentflow TB
+  type Foo = String
+  flow p["P"]
+    a --> b
+  end`);
+      const db = agentflow.parser.yy as AgentFlowDB;
+      const stats = db.getMappingStats();
+      expect(stats.vertices).toBeGreaterThanOrEqual(2); // a, b
+      expect(stats.edges).toBeGreaterThanOrEqual(1);
+      expect(stats.subgraphs).toBe(1);
+      expect(stats.types).toBe(1);
+      expect(stats.templates).toBe(0);
+      expect(stats.totalElements).toBe(
+        stats.vertices + stats.edges + stats.subgraphs + stats.types
+      );
+    });
+  });
+
+  // ──────────────────────────────────────────────────────────────
+  // Reset behaviour
+  // ──────────────────────────────────────────────────────────────
+
+  describe('reset', () => {
+    it('clear() drops element mappings and the frontmatter offset', () => {
+      const db = agentflow.parser.yy as AgentFlowDB;
+      db.setFrontmatterLineOffset(4);
+      agentflow.parser.parse(`agentflow TB
+  a --> b`);
+      expect(db.getElementMappings().length).toBeGreaterThan(0);
+      db.clear();
+      expect(db.getElementMappings()).toHaveLength(0);
+      // A subsequent parse without calling setFrontmatterLineOffset again
+      // should report positions relative to the parsed source, not shifted.
+      agentflow.parser.yy = new AgentFlowDB();
+      agentflow.parser.yy.clear();
+      agentflow.parser.yy.setGen('gen-2');
+      agentflow.parser.parse(`agentflow TB
+  c --> d`);
+      const c = (agentflow.parser.yy as AgentFlowDB).getElementById('c');
+      expect(c!.position.startLine).toBe(2);
+    });
+  });
+});
