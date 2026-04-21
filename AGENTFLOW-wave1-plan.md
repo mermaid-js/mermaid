@@ -36,12 +36,12 @@ cd ../agentflow-wt/wave1
 ```bash
 # in the worktree, once PR 1 is pushed and under review
 git checkout docs/spec-0.5.0
-git checkout -b feature/4_hexagon-branch-warning   # PR 2 stacks on PR 1
+git checkout -b feature/frontmatter-line-offset-shared   # PR 1b stacks on PR 1
 
-# once PR 2 is pushed
-git checkout -b feature/12_semantic-model-projection   # PR 3 stacks on PR 2
+# once PR 1b is pushed
+git checkout -b fix/agentflow-jison-comment-handling     # PR 1c stacks on PR 1b
 
-# ... and so on
+# ... and so on through the nine-PR stack
 ```
 
 **Rebasing.** When an earlier PR merges to `agentflow`, rebase the remaining stack onto the new `agentflow` tip:
@@ -62,33 +62,78 @@ git push --force-with-lease
 
 ## PR decomposition
 
-One PR per tracking issue. Each PR is small enough for a single-pass review.
+Wave 1 lands as a stack of nine PRs. Each is small and reviewable on its own. PRs 1b, 1c, 2a, and 2b build the foundation so the behavioural PRs (2c, 3, 5) stay tight and focused.
 
 ### PR 1 — Spec v0.5.0 (docs)
 
 - Branch: `docs/spec-0.5.0`
 - Base: `agentflow`
+- Status: open — [#15](https://github.com/Mermaid-Chart/agentflow/pull/15).
 - Changes: `AGENTFLOW-SYNTAX.md` only. Adds the *What's New* block, introduces `tool` (§8) and `connector` (§9), renumbers §10–§20, adds §13 metadata applicability, §14 presentation-only, conformance appendix, etc.
 - Links: references #2, #3, #4, #5, #6, #7, #8, #9, #10, #11, #12, #13, #14 (spec text for each; validators land in later PRs).
 - Size: +432 / -170 vs v0.4.0 (single file).
 - Review focus: is the normative text correct? Code changes come later.
 
-### PR 2 — Hexagon branching warning (closes #4)
+### PR 1b — Port shared position-capture infrastructure
+
+- Branch: `feature/frontmatter-line-offset-shared`
+- Base: `docs/spec-0.5.0` (stacks on PR 1). Rebase onto `agentflow` once PR 1 merges.
+- Ports the shared cross-diagram pieces from `alana/flowchart_jison_highlight`:
+  - `packages/mermaid/src/preprocess.ts` — compute `frontmatterLineOffset` and return it on the `code` object.
+  - `packages/mermaid/src/Diagram.ts` — call `db.setFrontmatterLineOffset(offset)` when the diagram def declares `supportsInlinePositions: true`.
+  - `ExternalDiagramDefinition` type — add the `supportsInlinePositions?: boolean` flag.
+- No agentflow-specific changes yet; those follow in PR 2a.
+- **Ownership posture.** Since the alana branch's final home is undecided, this PR is the permanent home for the shared pieces in `Mermaid-Chart/agentflow`. If the alana branch also lands later, whichever merges first wins and the other rebases.
+
+### PR 1c — Mirror JISON comment-handling fix into `agentflow.jison`
+
+- Branch: `fix/agentflow-jison-comment-handling`
+- Base: `feature/frontmatter-line-offset-shared` (stacks on PR 1b). Rebase onto `agentflow` once PR 1b merges.
+- Mirrors the comment-handling fix from `alana/flowchart_jison_highlight` commit `dd77bb73b` into `agentflow.jison`:
+  - Move the `COMMENT` lexer rule above `NODE_STRING` so `%%comment` without a leading space tokenises correctly.
+  - Add `COMMENT` to the `separator` and `graphConfig` grammar rules.
+  - Silent comment skipping inside `<text>`, `<ellipseText>`, `<trapText>` lexer states.
+- Tests: adapted from the comment-parsing test suite added in flowchart commit `12a1c42`.
+
+### PR 2a — Element-mapping infrastructure on agentflow
+
+- Branch: `feature/agentflow-element-mappings`
+- Base: `fix/agentflow-jison-comment-handling` (stacks on PR 1c). Rebase onto `agentflow` once PR 1c merges.
+- Mirrors the flowchart pattern — method names identical so eventual shared-lift to `diagram-api/types.ts` is rename-free.
+- Changes:
+  - `types.ts` — `ElementPosition`, `AgentflowElementMapping`, and the `AgentflowAST`-style sync surface (`getElementAtPosition`, `getElementById`, `getElementsOnLine`, stats).
+  - `agentflowDb.ts` — optional `addVertexMapping` / `addEdgeMapping` / `addSubgraphMapping` / `addTypeMapping` / `addTemplateMapping` methods; `setFrontmatterLineOffset` to match the Diagram.ts hook from PR 1b; private `elementMappings` array.
+  - `agentflow.jison` — action blocks call the mapping methods alongside the existing add methods, guarded by `if (yy.xxxMapping)`. Signatures of existing add methods are unchanged.
+  - Agentflow diagram definition opts in with `supportsInlinePositions: true`.
+  - Tests: positions land on vertices, edges, subgraphs, types, templates; positions adjust correctly when a frontmatter block is present.
+- No warnings or diagnostics yet.
+
+### PR 2b — Diagnostic layer
+
+- Branch: `feature/agentflow-diagnostics`
+- Base: `feature/agentflow-element-mappings` (stacks on PR 2a). Rebase onto `agentflow` once PR 2a merges.
+- Changes:
+  - New `packages/mermaid/src/diagrams/agentflow/diagnostics.ts` — `AgentflowWarning` enum + `AgentflowDiagnostic` interface (with optional `nodeId`, `edgeId`, `position: ElementPosition`).
+  - `agentflowDb.ts` — `emitWarning(id, message, ctx?)` and `getDiagnostics()`; position resolves through the element-mapping layer from PR 2a.
+  - Migrate the one existing `log.warn` in `transformData.ts` to `emitWarning('SHAPE_UNSUPPORTED', ...)` so there is a single warning channel from the start.
+- Tests: `emitWarning` writes to both the diagnostics array and `log.warn`; `getDiagnostics()` returns structured entries; migrated `SHAPE_UNSUPPORTED` carries the vertex position.
+
+### PR 2c — Hexagon branching warning (closes #4)
 
 - Branch: `feature/4_hexagon-branch-warning`
-- Base: `docs/spec-0.5.0` (stacks on PR 1). Rebase onto `agentflow` once PR 1 merges.
+- Base: `feature/agentflow-diagnostics` (stacks on PR 2b). Rebase onto `agentflow` once PR 2b merges.
 - Changes:
-  - `agentflowDb.ts` — edge-resolution pass emits `HEXAGON_MULTI_BRANCH` warning when a `hexagon` has multiple branch-labelled outgoing edges.
-  - `agentflow.spec.ts` — ≥ 5 cases (single-branch hexagon OK, multi-branch hexagon warns, diamond always OK, unlabelled outgoing OK, multi-branch hexagon silenced behind config — if we add one).
+  - `agentflowDb.ts` — edge-resolution pass emits `HEXAGON_MULTI_BRANCH` when a `hexagon` has multiple branch-labelled outgoing edges. Uses `emitWarning` from PR 2b; position attached automatically.
+  - `agentflow.spec.ts` — ≥ 5 cases asserting on `getDiagnostics()` (single-branch hexagon OK, multi-branch hexagon warns, diamond always OK, unlabelled outgoing OK, position fields present).
 
 ### PR 3 — `getSemanticModel()` projection (closes #12)
 
 - Branch: `feature/12_semantic-model-projection`
-- Base: `feature/4_hexagon-branch-warning` (stacks on PR 2). Rebase onto `agentflow` once PR 2 merges.
+- Base: `feature/4_hexagon-branch-warning` (stacks on PR 2c). Rebase onto `agentflow` once PR 2c merges.
 - Changes:
-  - `agentflowDb.ts` — add `getSemanticModel()` alongside `getData()`; strip `view`, `class` / `style`, `icon`, `img`, `w`, `h`.
-  - `types.ts` — export the semantic-model shape (strip list documented in source comment).
-  - `agentflow.spec.ts` — ≥ 5 cases covering styled-vs-unstyled equivalence, collapsed-vs-expanded equivalence, presence of presentation fields in `getData()` but absence in `getSemanticModel()`.
+  - `agentflowDb.ts` — add `getSemanticModel()` alongside `getData()`; strip `view`, `class` / `style`, `icon`, `img`, `w`, `h`. Element mappings (positions, svgIds) are also excluded from the semantic export.
+  - `types.ts` — export the semantic-model shape.
+  - `agentflow.spec.ts` — ≥ 5 cases covering styled-vs-unstyled equivalence, collapsed-vs-expanded equivalence, presentation fields present in `getData()` but absent in `getSemanticModel()`.
 
 ### PR 4 — Conformance runner scaffolding (closes #13 scaffolding portion)
 
@@ -96,7 +141,7 @@ One PR per tracking issue. Each PR is small enough for a single-pass review.
 - Base: `feature/12_semantic-model-projection` (stacks on PR 3). Rebase onto `agentflow` once PR 3 merges.
 - Changes:
   - New directory `packages/mermaid/src/diagrams/agentflow/conformance/` with runner code.
-  - Fixture format: `<pattern>-<case>.agentflow` + `<pattern>-<case>.expected.json`. The JSON declares outcome (`valid` / `warning` / `error`) and, where applicable, message ID.
+  - Fixture format: `<pattern>-<case>.agentflow` + `<pattern>-<case>.expected.json`. The JSON declares outcome (`valid` / `warning` / `error`), optional message ID, and optional `line` / `nodeId` / `edgeId` that the runner matches against `getDiagnostics()`.
   - Wired into the existing vitest config so `pnpm --filter mermaid test` picks up fixtures.
   - One reference fixture (`smoke-valid`) proving the runner end-to-end.
 
@@ -105,7 +150,7 @@ One PR per tracking issue. Each PR is small enough for a single-pass review.
 - Branch: `feature/13b_wave1-fixtures`
 - Base: `feature/13a_conformance-runner` (stacks on PR 4). Rebase onto `agentflow` once PR 4 merges.
 - Changes:
-  - Fixtures exercising the wave-1 behaviours introduced in PRs 2 and 3 (hexagon warning; `getSemanticModel()` equivalence; existing v0.4.0 examples that continue to parse).
+  - Fixtures exercising the wave-1 behaviours introduced in PRs 2c and 3 (hexagon warning with position asserted; `getSemanticModel()` equivalence; existing v0.4.0 examples that continue to parse).
   - Every example in `AGENTFLOW-SYNTAX.md` §19 Semantic Patterns and §20 Complete Example ported into fixtures and verified.
 
 ### PR 6 — Changeset for the wave-1 release
@@ -127,6 +172,9 @@ Every PR runs:
 Additionally:
 
 - **PR 1** — visual check against the Complete Example in §20: render under `pnpm dev`, confirm no visual regression versus v0.4.0.
+- **PR 1b** — confirm no visual or behavioural regression on every diagram type that does **not** opt into `supportsInlinePositions`. The `Diagram.ts` change is guarded by the flag, but a smoke run across flowchart / sequence / class / state is prudent.
+- **PR 1c** — adapted flowchart comment tests must pass on agentflow.
+- **PR 2a** — positions round-trip through a sample diagram with and without frontmatter; offsets verified.
 - **PR 4 / 5** — conformance runner output is deterministic (run twice, diff should be empty).
 
 ---
@@ -151,7 +199,13 @@ Anything that would require grammar changes, new validators with hard-error effe
 ## Open questions
 
 1. **Spec enforcement-timing notation.** Current spec uses inline phrases ("warning in v0.5.0; error from v1.0"). Keep, or adopt RFC-style `MUST` / `SHOULD` / `MAY`? Proposed: keep inline notes.
-2. **Message IDs.** Introduce a minimal `AgentflowWarning` enum so conformance fixtures can match by ID rather than string. Proposed: yes, in PR 2 when the first warning lands.
-3. **Worktree root.** `../agentflow-wt/wave1` as a single shared worktree — confirm that placement is fine with the user's filesystem layout.
+2. **Alana branch trajectory.** The `flowchart_jison_highlight` branch in `Mermaid-Chart/alana-mermaid` may or may not merge upstream. PR 1b treats the ported shared pieces as the permanent home in `Mermaid-Chart/agentflow`; reconcile if alana later lands a divergent version.
 
-Raise these before PR 2 starts.
+Resolved during the design phase:
+
+- *Message IDs* — `AgentflowWarning` enum ships in PR 2b; conformance fixtures match by ID.
+- *Worktree root* — `../agentflow-wt/wave1` confirmed; PR 15 already opened from there.
+- *Method names* — identical to flowchart's (`addVertexMapping`, `addEdgeMapping`, `addSubgraphMapping`) so eventual lift to shared is rename-free.
+- *Full AST surface vs minimum* — full surface in PR 2a; positions for diagnostics come for free.
+
+Raise remaining questions before PR 1b starts.
