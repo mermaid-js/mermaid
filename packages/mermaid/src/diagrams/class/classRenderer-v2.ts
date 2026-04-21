@@ -48,8 +48,47 @@ export const addNamespaces = function (
   log.info('keys:', [...namespaces.keys()]);
   log.info(namespaces);
 
+  const hierarchical = getConfig().class?.hierarchicalNamespaces ?? true;
+  const classes: ClassMap = diagObj.db.getClasses();
+  const relations: ClassRelation[] = diagObj.db.getRelations();
+  const notes: ClassNoteMap = diagObj.db.getNotes();
+
+  // Walks up the namespace chain to the nearest ancestor (or self) flagged as
+  // user-declared. Used in compact mode to reassign descendants of implicit
+  // intermediate namespaces onto the nearest explicit box.
+  const resolveExplicitAncestor = (parentId?: string): string | undefined => {
+    let current = parentId;
+    while (current) {
+      const ns = namespaces.get(current);
+      if (!ns) {
+        return undefined;
+      }
+      if (ns.explicit) {
+        return current;
+      }
+      current = ns.parent;
+    }
+    return undefined;
+  };
+
+  // In compact mode, collapse each child's parent to its nearest explicit ancestor
+  // so addClasses/addNotes' filter-by-parent logic naturally groups them.
+  if (!hierarchical) {
+    classes.forEach((cls) => {
+      cls.parent = resolveExplicitAncestor(cls.parent);
+    });
+    notes.forEach((note) => {
+      note.parent = resolveExplicitAncestor(note.parent);
+    });
+  }
+
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
   namespaces.forEach(function (vertex) {
+    // Compact mode skips auto-created intermediate namespaces entirely
+    if (!hierarchical && !vertex.explicit) {
+      return;
+    }
+
     // parent node must be one of [rect, roundedWithTitle, noteGroup, divider]
     const shape = 'rect';
 
@@ -57,7 +96,7 @@ export const addNamespaces = function (
       shape: shape,
       id: vertex.id,
       domId: vertex.domId,
-      labelText: sanitizeText(vertex.id),
+      labelText: sanitizeText(hierarchical ? vertex.label : vertex.id),
       labelStyle: '',
       style: 'fill: none; stroke: black',
       // TODO V10: Flowchart ? Keeping flowchart for backwards compatibility. Remove in next major release
@@ -65,10 +104,20 @@ export const addNamespaces = function (
     };
 
     g.setNode(vertex.id, node);
-    addClasses(vertex.classes, g, _id, diagObj, vertex.id);
-    const classes: ClassMap = diagObj.db.getClasses();
-    const relations: ClassRelation[] = diagObj.db.getRelations();
-    addNotes(vertex.notes, g, relations.length + 1, classes, vertex.id);
+
+    if (hierarchical && vertex.parent && g.hasNode(vertex.parent)) {
+      g.setParent(vertex.id, vertex.parent);
+    }
+
+    if (hierarchical) {
+      addClasses(vertex.classes, g, _id, diagObj, vertex.id);
+      addNotes(vertex.notes, g, relations.length + 1, classes, vertex.id);
+    } else {
+      // Classes/notes have already been reassigned above; use the global maps so
+      // descendants of implicit ancestors get picked up here.
+      addClasses(classes, g, _id, diagObj, vertex.id);
+      addNotes(notes, g, relations.length + 1, classes, vertex.id);
+    }
 
     log.info('setNode', node);
   });
