@@ -25,7 +25,6 @@ export default tseslint.config(
       '**/coverage/',
       'packages/mermaid/src/config.type.ts',
       'packages/mermaid/src/docs/.vitepress/components.d.ts',
-      'packages/mermaid-local-editor/**',
     ],
   },
   {

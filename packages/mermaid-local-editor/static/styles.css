@@ -50,8 +50,8 @@ svg .node path {
 svg .node:hover rect,
 svg .node:hover polygon,
 svg .node:hover path {
-  fill: rgba(0, 170, 255, 0.25); /* фон */
-  filter: drop-shadow(0 0 11px rgba(0, 170, 255, 0.6)); /* свечение */
+  fill: rgba(0, 170, 255, 0.25); /* fon */
+  filter: drop-shadow(0 0 11px rgba(0, 170, 255, 0.6)); /* glow */
 }
 
 /* Keyboard-selected node styling */
@@ -95,11 +95,9 @@ div > * {
   padding: 12px;
   position: relative;
   overflow: visible;
-}
-#preview svg {
-  display: block; /* убирает inline-центрирование */
-  margin: 0; /* убирает авто-отступы */
-  transform-origin: 0 0; /* якорь трансформаций */
+  display: block; /* removes inline centering */
+  margin: 0; /* removes auto-indents */
+  transform-origin: 0 0; /* transformation anchor */
 }
 #preview svg g {
   transform-origin: 0 0;

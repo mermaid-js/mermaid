@@ -18,6 +18,9 @@
     "./demos/dev",
     "./vite.config.ts",
     "./vitest.workspace.js",
-    "eslint.config.js"
+    "eslint.config.js",
+    "packages/mermaid-local-editor/static/js/**/*.js",
+    "packages/mermaid-local-editor/**/*.js",
+    "packages/mermaid-local-editor/**/*.html"
   ]
 }

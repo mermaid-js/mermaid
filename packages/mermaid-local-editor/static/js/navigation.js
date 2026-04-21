@@ -7,9 +7,11 @@ export function createNavigation({ state, preview, src, applyTransform }) {
     navIndex = 0;
 
     const svg = state.iframeRef?.contentDocument?.querySelector('svg');
-    if (!svg) return;
+    if (!svg) {
+      return;
+    }
 
-    navNodes = Array.from(svg.querySelectorAll('g.node'));
+    navNodes = [...svg.querySelectorAll('g.node')];
     navIndex = 0;
 
     if (navNodes.length) {
@@ -20,19 +22,25 @@ export function createNavigation({ state, preview, src, applyTransform }) {
 
   function highlightCurrentNode() {
     const svg = state.iframeRef?.contentDocument?.querySelector('svg');
-    if (!svg) return;
+    if (!svg) {
+      return;
+    }
 
     svg
       .querySelectorAll('g.node.selected-node')
       .forEach((n) => n.classList.remove('selected-node'));
 
     const node = navNodes[navIndex];
-    if (node) node.classList.add('selected-node');
+    if (node) {
+      node.classList.add('selected-node');
+    }
   }
 
   function centerCurrentNode() {
     const node = navNodes[navIndex];
-    if (!node) return;
+    if (!node) {
+      return;
+    }
 
     const nodeRect = node.getBoundingClientRect();
     const contRect = preview.getBoundingClientRect();
@@ -41,6 +49,8 @@ export function createNavigation({ state, preview, src, applyTransform }) {
     const contCenterY = contRect.top + contRect.height / 6;
     const deltaY = contCenterY - nodeCenterY;
 
+    // Intentionally biased to upper-left instead of strict center,
+    // so forward nodes remain visible in LR / TD diagrams.
     const nodeCenterX = nodeRect.left + nodeRect.width / 6;
     const contCenterX = contRect.left + contRect.width / 6;
     const deltaX = contCenterX - nodeCenterX;
@@ -53,11 +63,15 @@ export function createNavigation({ state, preview, src, applyTransform }) {
 
   function setupKeyboardNav() {
     window.addEventListener('keydown', (e) => {
-      if (document.activeElement === src) return;
+      if (document.activeElement === src) {
+        return;
+      }
 
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        if (!navNodes.length) rebuildNavNodes();
+        if (!navNodes.length) {
+          rebuildNavNodes();
+        }
         navIndex = Math.min(navIndex + 1, navNodes.length - 1);
         highlightCurrentNode();
         centerCurrentNode();
@@ -65,7 +79,9 @@ export function createNavigation({ state, preview, src, applyTransform }) {
 
       if (e.key === 'ArrowUp') {
         e.preventDefault();
-        if (!navNodes.length) rebuildNavNodes();
+        if (!navNodes.length) {
+          rebuildNavNodes();
+        }
         navIndex = Math.max(navIndex - 1, 0);
         highlightCurrentNode();
         centerCurrentNode();

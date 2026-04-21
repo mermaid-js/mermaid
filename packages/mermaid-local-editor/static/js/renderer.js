@@ -1,3 +1,5 @@
+/* global mermaid, DOMPurify */
+
 export async function renderDiagram({
   srcValue,
   preview,
@@ -43,7 +45,7 @@ export async function renderDiagram({
 
     svgEl.querySelectorAll('*').forEach((el) => {
       [...el.attributes].forEach((attr) => {
-        if (attr.name.startsWith('on') || attr.name === 'href' || attr.name === 'xlink:href') {
+        if (attr.name.startsWith('on')) {
           el.removeAttribute(attr.name);
         }
       });
@@ -60,7 +62,9 @@ export async function renderDiagram({
 
     requestAnimationFrame(() => {
       const svgEl = iframe.contentDocument?.querySelector('svg');
-      if (!svgEl) return;
+      if (!svgEl) {
+        return;
+      }
 
       svgEl.style.transformOrigin = '0 0';
       svgEl.style.display = 'block';
@@ -134,7 +138,9 @@ export async function renderDiagram({
     };
 
     doc.onmousemove = (e) => {
-      if (!isPanningLocal) return;
+      if (!isPanningLocal) {
+        return;
+      }
       state.panX = e.clientX - startXLocal;
       state.panY = e.clientY - startYLocal;
       applyTransform();
