@@ -12,7 +12,7 @@ entry EventModel:
 
 
 EmModelEntityType returns string:
-    'rmo' | 'readmodel' | 'scn' | 'screen' | 'cmd' | 'command' | 'evt' | 'event' | 'pcr' | 'processor';
+    'rmo' | 'readmodel' | 'ui' | 'cmd' | 'command' | 'evt' | 'event' | 'pcr' | 'processor';
 
 EmDataType returns string:
     'json' | 'jsobj' | 'figma' | 'salt' | 'uri' | 'md' | 'html' | 'text';
