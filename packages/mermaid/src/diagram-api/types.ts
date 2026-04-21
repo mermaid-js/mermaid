@@ -10,6 +10,24 @@ export interface DiagramMetadata {
   config?: MermaidConfig;
 }
 
+/**
+ * Preprocessed code produced by `preprocessDiagram`. Ported from the shared
+ * position-capture infrastructure in `alana/flowchart_jison_highlight` — see
+ * `AGENTFLOW-wave1-plan.md` PR 1b. Diagrams that opt into inline-position
+ * capture read `withComments` and `frontmatterLineOffset` via the DB hooks;
+ * all other diagrams read `cleaned` and get today's behaviour.
+ */
+export interface DiagramCode {
+  /** Original source text, untouched. */
+  raw: string;
+  /** Fully processed text: CRLF normalised, frontmatter removed, directives removed, comments stripped. */
+  cleaned: string;
+  /** Text after frontmatter/directive removal but before comment cleanup. */
+  withComments?: string;
+  /** Number of lines occupied by YAML frontmatter (0 if none). */
+  frontmatterLineOffset?: number;
+}
+
 export interface InjectUtils {
   _log: any;
   _setLogLevel: any;
@@ -122,6 +140,11 @@ export type DrawDefinition = (
 export interface ParserDefinition {
   parse: (text: string) => void | Promise<void>;
   parser?: { yy: DiagramDB };
+  /** Opt-in feature flags consumed by `Diagram.fromText`. */
+  features?: {
+    /** Parse the raw text rather than the cleaned text — used by parsers that handle comments/frontmatter themselves. */
+    processRawText?: boolean;
+  };
 }
 
 export type HTML = d3.Selection<HTMLIFrameElement, unknown, Element | null, unknown>;
