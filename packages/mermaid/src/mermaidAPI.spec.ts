@@ -1224,5 +1224,36 @@ flowchart TD
         svg: expect.any(String),
       });
     });
+
+    jsdomIt(
+      'reproduces issue #7609 with the exact graph LR repro through the Dagre render path',
+      async () => {
+        mermaid.initialize({
+          startOnLoad: false,
+          deterministicIds: true,
+          deterministicIDSeed: '',
+          flowchart: { htmlLabels: false, defaultRenderer: 'dagre-wrapper' },
+        });
+
+        // Regression coverage only: this preserves the exact repro from #7609 and documents
+        // the current Dagre failure instead of claiming the numeric subgraph bug is fixed.
+        const diagramText = `graph LR
+    subgraph outer
+        subgraph 1 ["inner"]
+            external
+            subgraph sub
+                internal
+            end
+            sub-->external
+        end
+    end`;
+
+        const { svg } = await mermaidAPI.render('numeric-subgraph-issue-7609', diagramText);
+
+        expect(svg).toContain('class="cluster');
+        expect(svg).toContain('>inner<');
+        expect(svg).toContain('>external<');
+      }
+    );
   });
 });
