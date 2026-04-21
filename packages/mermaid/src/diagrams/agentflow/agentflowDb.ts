@@ -26,6 +26,9 @@ import type {
   AgentFlowTypeDeclaration,
   AgentFlowTypeDeclarationsByName,
   AgentFlowTypeField,
+  AgentflowElementMapping,
+  AgentflowStatementType,
+  ElementPosition,
   FlowClass,
   FlowEdge,
   FlowLink,
@@ -34,6 +37,19 @@ import type {
   FlowVertex,
   FlowVertexTypeParam,
 } from './types.js';
+
+/**
+ * Raw JISON `@$` location object. Produced by the jison-generated parser
+ * when location tracking is enabled (default). Only the line/column/range
+ * fields are used.
+ */
+interface JisonLocation {
+  first_line: number;
+  first_column: number;
+  last_line: number;
+  last_column: number;
+  range?: [number, number];
+}
 import DOMPurify from 'dompurify';
 interface LinkData {
   id: string;
@@ -80,6 +96,16 @@ export class AgentFlowDB implements DiagramDB {
   private secCount = -1;
   private posCrossRef: number[] = [];
 
+  // ── Element-mapping infrastructure (PR 2a) ───────────────────────────
+  // `setSourceText` is the signal Diagram.ts duck-types on to decide whether
+  // the DB opts into inline-position capture. `setFrontmatterLineOffset`
+  // receives the offset computed by `preprocessDiagram` so that captured
+  // JISON `@$` positions are reported in original-source space (including
+  // any YAML frontmatter the parser never saw).
+  private sourceText: string | undefined;
+  private frontmatterLineOffset = 0;
+  private elementMappings: AgentflowElementMapping[] = [];
+
   // Functions to be run after graph rendering
   private funs: ((element: Element) => void)[] = []; // cspell:ignore funs
 
@@ -104,6 +130,15 @@ export class AgentFlowDB implements DiagramDB {
     this.updateLinkInterpolate = this.updateLinkInterpolate.bind(this);
     this.setClickFun = this.setClickFun.bind(this);
     this.bindFunctions = this.bindFunctions.bind(this);
+
+    // Element-mapping hooks (see ./types.ts ElementPosition / AgentflowElementMapping)
+    this.setSourceText = this.setSourceText.bind(this);
+    this.setFrontmatterLineOffset = this.setFrontmatterLineOffset.bind(this);
+    this.addVertexMapping = this.addVertexMapping.bind(this);
+    this.addEdgeMapping = this.addEdgeMapping.bind(this);
+    this.addSubgraphMapping = this.addSubgraphMapping.bind(this);
+    this.addTypeMapping = this.addTypeMapping.bind(this);
+    this.addTemplateMapping = this.addTemplateMapping.bind(this);
 
     this.lex = {
       firstGraph: this.firstGraph.bind(this),
@@ -810,6 +845,9 @@ You have to call mermaid.initialize.`
     this.firstGraphFlag = true;
     this.version = ver;
     this.config = getConfig();
+    this.sourceText = undefined;
+    this.frontmatterLineOffset = 0;
+    this.elementMappings = [];
     commonClear();
   }
 
@@ -1573,6 +1611,208 @@ You have to call mermaid.initialize.`
   public defaultConfig() {
     return defaultConfig.flowchart;
   }
+
+  // ── Element-mapping infrastructure (PR 2a) ────────────────────────────
+  //
+  // JISON action blocks call the `add*Mapping` methods alongside the
+  // structural `add*` methods; see `agentflow.jison`. When a diagram DB
+  // does not expose these methods the JISON guard `if (yy.addVertexMapping)`
+  // simply skips them, so the mapping layer is opt-in and has no effect on
+  // diagrams that don't consume positions.
+  //
+  // `setSourceText` is both the presence signal Diagram.ts uses for inline-
+  // position capture AND a place for downstream tooling to read back the
+  // original source for render-to-source lookups.
+
+  public setSourceText(text: string): void {
+    this.sourceText = text;
+  }
+
+  public setFrontmatterLineOffset(offset: number): void {
+    this.frontmatterLineOffset = offset ?? 0;
+  }
+
+  private toElementPosition(loc: JisonLocation | undefined): ElementPosition {
+    // JISON always passes a location object when location tracking is
+    // enabled, but defend against a missing loc to keep the parser robust
+    // in the face of future grammar rules that forget `@$`.
+    const first_line = loc?.first_line ?? 0;
+    const first_column = loc?.first_column ?? 0;
+    const last_line = loc?.last_line ?? first_line;
+    const last_column = loc?.last_column ?? first_column;
+    const [startIndex, endIndex] = loc?.range ?? [0, 0];
+    return {
+      startLine: first_line + this.frontmatterLineOffset,
+      startColumn: first_column,
+      endLine: last_line + this.frontmatterLineOffset,
+      endColumn: last_column,
+      startIndex,
+      endIndex,
+    };
+  }
+
+  private pushMapping(id: string, type: AgentflowStatementType, loc: JisonLocation | undefined) {
+    if (!id) {
+      return;
+    }
+    this.elementMappings.push({
+      id,
+      type,
+      position: this.toElementPosition(loc),
+    });
+  }
+
+  public addVertexMapping(
+    id: string,
+    _text: unknown,
+    _shape: unknown,
+    loc: JisonLocation | undefined
+  ): void {
+    this.pushMapping(id, 'vertex', loc);
+  }
+
+  public addEdgeMapping(
+    _fromStmt: unknown,
+    toNodes: unknown,
+    _link: unknown,
+    loc: JisonLocation | undefined
+  ): void {
+    // JISON hands the edge's right-hand-side node list in; derive a stable
+    // identifier from the destination node IDs joined by `>`. This matches
+    // the fan-out shape (`A --> B & C` resolves to one edge statement with
+    // two destinations) and keeps the mapping lookup intuitive.
+    const ids = Array.isArray(toNodes)
+      ? toNodes.map((n) => (typeof n === 'string' ? n : (n?.id ?? ''))).filter(Boolean)
+      : [];
+    const edgeId = ids.length > 0 ? ids.join('>') : 'edge';
+    this.pushMapping(edgeId, 'edge', loc);
+  }
+
+  public addSubgraphMapping(
+    _id: unknown,
+    _title: unknown,
+    startLoc: JisonLocation | undefined,
+    endLoc: JisonLocation | undefined
+  ): void {
+    const id = (typeof _id === 'string' ? _id : (_id as { text?: string } | undefined)?.text) ?? '';
+    const start = this.toElementPosition(startLoc);
+    const end = endLoc ? this.toElementPosition(endLoc) : start;
+    if (!id) {
+      return;
+    }
+    this.elementMappings.push({
+      id,
+      type: 'subgraph',
+      // Range spans from the container keyword to its `end` — startLine from
+      // the opener, endLine from the closer.
+      position: {
+        startLine: start.startLine,
+        startColumn: start.startColumn,
+        endLine: end.endLine,
+        endColumn: end.endColumn,
+        startIndex: start.startIndex,
+        endIndex: end.endIndex,
+      },
+    });
+  }
+
+  /** Extract the declared name from a raw TYPE_DECL or TEMPLATE_DECL string. */
+  private extractDeclName(declStr: string, prefix: 'type' | 'template'): string {
+    // Matches `type Name ...` and `template Name ...` / `template %Name ...`.
+    const re = prefix === 'type' ? /^type\s+([A-Z_a-z]\w*)/ : /^template\s+%?([A-Z_a-z]\w*)/;
+    const match = re.exec(declStr);
+    return match ? match[1] : '';
+  }
+
+  public addTypeMapping(declStr: string, loc: JisonLocation | undefined): void {
+    this.pushMapping(this.extractDeclName(declStr, 'type'), 'type', loc);
+  }
+
+  public addTemplateMapping(declStr: string, loc: JisonLocation | undefined): void {
+    this.pushMapping(this.extractDeclName(declStr, 'template'), 'template', loc);
+  }
+
+  public getElementMappings(): readonly AgentflowElementMapping[] {
+    return this.elementMappings;
+  }
+
+  public getElementById(id: string): AgentflowElementMapping | undefined {
+    return this.elementMappings.find((m) => m.id === id);
+  }
+
+  public getElementsOnLine(line: number): AgentflowElementMapping[] {
+    return this.elementMappings.filter(
+      (m) => line >= m.position.startLine && line <= m.position.endLine
+    );
+  }
+
+  public getElementAtPosition(line: number, column: number): AgentflowElementMapping | undefined {
+    // Return the innermost (smallest span) match so nested subgraphs resolve
+    // to the deepest container that contains the point rather than the
+    // outermost one.
+    const candidates = this.elementMappings.filter((m) => {
+      const { startLine, startColumn, endLine, endColumn } = m.position;
+      if (line < startLine || line > endLine) {
+        return false;
+      }
+      if (line === startLine && column < startColumn) {
+        return false;
+      }
+      if (line === endLine && column > endColumn) {
+        return false;
+      }
+      return true;
+    });
+    if (candidates.length === 0) {
+      return undefined;
+    }
+    return candidates.reduce((smallest, cur) => {
+      const smallSpan =
+        (smallest.position.endLine - smallest.position.startLine) * 1000 +
+        (smallest.position.endColumn - smallest.position.startColumn);
+      const curSpan =
+        (cur.position.endLine - cur.position.startLine) * 1000 +
+        (cur.position.endColumn - cur.position.startColumn);
+      return curSpan < smallSpan ? cur : smallest;
+    });
+  }
+
+  public getMappingStats(): {
+    vertices: number;
+    edges: number;
+    subgraphs: number;
+    types: number;
+    templates: number;
+    totalElements: number;
+  } {
+    let vertices = 0;
+    let edges = 0;
+    let subgraphs = 0;
+    let types = 0;
+    let templates = 0;
+    for (const m of this.elementMappings) {
+      if (m.type === 'vertex') {
+        vertices++;
+      } else if (m.type === 'edge') {
+        edges++;
+      } else if (m.type === 'subgraph') {
+        subgraphs++;
+      } else if (m.type === 'type') {
+        types++;
+      } else if (m.type === 'template') {
+        templates++;
+      }
+    }
+    return {
+      vertices,
+      edges,
+      subgraphs,
+      types,
+      templates,
+      totalElements: this.elementMappings.length,
+    };
+  }
+
   public setAccTitle = setAccTitle;
   public setAccDescription = setAccDescription;
   public setDiagramTitle = setDiagramTitle;

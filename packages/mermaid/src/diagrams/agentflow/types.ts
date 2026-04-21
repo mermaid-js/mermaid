@@ -145,3 +145,32 @@ export type AgentFlowTypeDeclaration =
     };
 
 export type AgentFlowTypeDeclarationsByName = Record<string, AgentFlowTypeDeclaration>;
+
+// ───────────────────────────────────────────────────────────────────────────
+// Element-mapping infrastructure (PR 2a of the wave-1 readiness plan).
+//
+// Mirrors the shapes used by `alana/flowchart_jison_highlight`'s
+// FlowchartElementMapping so that when both diagram types reach a shared
+// home (planned lift to `diagram-api/types.ts`), the types are name-identical
+// and can be merged without a rename.
+// ───────────────────────────────────────────────────────────────────────────
+
+/** Position of an element in the original diagram source. */
+export interface ElementPosition {
+  startLine: number;
+  startColumn: number;
+  endLine: number;
+  endColumn: number;
+  startIndex: number;
+  endIndex: number;
+}
+
+/** The kinds of top-level statements agentflow currently emits mappings for. */
+export type AgentflowStatementType = 'vertex' | 'edge' | 'subgraph' | 'type' | 'template';
+
+/** A single element-to-position mapping. */
+export interface AgentflowElementMapping {
+  id: string;
+  type: AgentflowStatementType;
+  position: ElementPosition;
+}
