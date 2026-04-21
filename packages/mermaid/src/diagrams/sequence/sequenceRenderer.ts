@@ -457,7 +457,7 @@ async function boundMessage(_diagram, msgModel): Promise<number> {
  * @param lineStartY - The Y coordinate at which the message line starts
  * @param diagObj - The diagram object.
  */
-const drawMessage = async function (
+export const drawMessage = async function (
   diagram,
   msgModel,
   lineStartY: number,

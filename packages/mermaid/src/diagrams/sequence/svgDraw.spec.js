@@ -164,9 +164,6 @@ describe('svgDraw', function () {
       expect(text3.attr).toHaveBeenCalledWith('y', 10);
       expect(text3.text).toHaveBeenCalledWith('fine lines');
     });
-    // Covers issue #3594: messageAlign with right-to-left arrows
-    // sequenceRenderer normalizes x=min(startx,stopx) and width=abs(stopx-startx)
-    // so drawText always receives a non-negative width and x at the leftmost edge.
     describe('messageAlign anchor positioning', function () {
       const x = 100;
       const width = 200;
