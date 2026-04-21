@@ -54,7 +54,13 @@ function addLink(
   label?: string,
   flow?: 'forward' | 'backward' | 'bidirectional'
 ) {
-  builder.addLink({ source: sourceId, target: targetId, dashed, label: label ? textSanitizer(label) : undefined, flow });
+  builder.addLink({
+    source: sourceId,
+    target: targetId,
+    dashed,
+    label: label ? textSanitizer(label) : undefined,
+    flow,
+  });
 }
 
 function addTrend(nodeId: string, targetX: number, targetY: number) {
