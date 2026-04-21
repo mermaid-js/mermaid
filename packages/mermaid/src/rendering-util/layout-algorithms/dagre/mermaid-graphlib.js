@@ -40,6 +40,21 @@ const edgeInCluster = (edge, clusterId) => {
   );
 };
 
+const edgeLeavesCluster = (edge, clusterId) => {
+  const fromDescendant = isDescendant(edge.v, clusterId);
+  const toDescendant = isDescendant(edge.w, clusterId);
+
+  if (edge.v === clusterId) {
+    return !toDescendant;
+  }
+
+  if (edge.w === clusterId) {
+    return !fromDescendant;
+  }
+
+  return fromDescendant !== toDescendant;
+};
+
 const copy = (clusterId, graph, newGraph, rootId) => {
   log.warn(
     'Copying children of ',
@@ -226,10 +241,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
     if (children.length > 0) {
       log.debug('Cluster identified', id, descendants);
       edges.forEach((edge) => {
-        const d1 = isDescendant(edge.v, id);
-        const d2 = isDescendant(edge.w, id);
-
-        if (d1 ^ d2) {
+        if (edgeLeavesCluster(edge, id)) {
           log.warn('Edge: ', edge, ' leaves cluster ', id);
           log.warn('Descendants of XXX ', id, ': ', descendants.get(id));
           clusterDb.get(id).externalConnections = true;

@@ -1156,4 +1156,104 @@ flowchart TD
       }
     );
   });
+
+  describe('flowchart numeric subgraph ids', () => {
+    beforeEach(() => {
+      mermaidAPI.globalReset();
+      mermaid.initialize({
+        startOnLoad: false,
+        deterministicIds: true,
+        deterministicIDSeed: '',
+        flowchart: { htmlLabels: false },
+      });
+    });
+
+    jsdomIt('renders a flowchart with a numeric subgraph id', async () => {
+      const diagramText = `flowchart LR
+  subgraph 1 ["inner"]
+    A
+  end`;
+
+      await expect(mermaidAPI.render('numeric-subgraph-id', diagramText)).resolves.toMatchObject({
+        svg: expect.any(String),
+      });
+    });
+
+    jsdomIt('renders nested flowcharts with numeric subgraph ids', async () => {
+      const diagramText = `flowchart LR
+  subgraph 1 ["outer"]
+    subgraph 2 ["inner"]
+      A --> B
+    end
+  end
+  B --> C`;
+
+      await expect(
+        mermaidAPI.render('nested-numeric-subgraph-id', diagramText)
+      ).resolves.toMatchObject({
+        svg: expect.any(String),
+      });
+    });
+
+    jsdomIt('renders a flowchart when a numeric subgraph id has an outgoing edge', async () => {
+      const diagramText = `flowchart LR
+  subgraph 1 ["outer"]
+    subgraph 2 ["inner"]
+      A --> B
+    end
+  end
+  1 --> C`;
+
+      await expect(mermaidAPI.render('numeric-subgraph-edge', diagramText)).resolves.toMatchObject({
+        svg: expect.any(String),
+      });
+    });
+
+    jsdomIt('renders the alphabetic equivalent of the numeric subgraph edge case', async () => {
+      const diagramText = `flowchart LR
+  subgraph a ["outer"]
+    subgraph b ["inner"]
+      A --> B
+    end
+  end
+  a --> C`;
+
+      await expect(
+        mermaidAPI.render('alphabetic-subgraph-edge', diagramText)
+      ).resolves.toMatchObject({
+        svg: expect.any(String),
+      });
+    });
+
+    jsdomIt(
+      'reproduces issue #7609 with the exact graph LR repro through the Dagre render path',
+      async () => {
+        mermaid.initialize({
+          startOnLoad: false,
+          deterministicIds: true,
+          deterministicIDSeed: '',
+          flowchart: { htmlLabels: false, defaultRenderer: 'dagre-wrapper' },
+        });
+
+        // Regression coverage only: this preserves the exact repro from #7609 and documents
+        // the current Dagre failure instead of claiming the numeric subgraph bug is fixed.
+        const diagramText = `graph LR
+    subgraph outer
+        subgraph 1 ["inner"]
+            external
+            subgraph sub
+                internal
+            end
+            sub-->external
+        end
+    end`;
+
+        const { svg } = await mermaidAPI.render('numeric-subgraph-issue-7609', diagramText);
+
+        expect(svg).toContain('class="cluster');
+        expect(svg).toContain('>inner<');
+        expect(svg).toContain('>external<');
+      }
+    );
+  });
 });
