@@ -19,11 +19,12 @@ export function setupUI({
   render,
   load,
   applyTransform,
-  preview,
 }) {
   document.getElementById('save').onclick = () => {
     const name = nameInput.value.trim();
-    if (!name) return;
+    if (!name) {
+      return;
+    }
 
     storage.setCurrent(name);
     storage.updateCurrent({
@@ -35,14 +36,18 @@ export function setupUI({
 
   document.getElementById('new').onclick = () => {
     const name = prompt('Enter diagram name');
-    if (!name) return;
+    if (!name) {
+      return;
+    }
 
     storage.create(name);
     load(name);
   };
 
   document.getElementById('del').onclick = () => {
-    if (!confirm(`Delete diagram "${storage.current}"?`)) return;
+    if (!confirm(`Delete diagram "${storage.current}"?`)) {
+      return;
+    }
 
     storage.deleteCurrent();
     load(storage.current);
@@ -56,10 +61,14 @@ export function setupUI({
   };
 
   document.getElementById('exportSvg').onclick = () => {
-    if (!state.iframeRef) return;
+    if (!state.iframeRef) {
+      return;
+    }
 
     const svg = state.iframeRef.contentDocument?.querySelector('svg');
-    if (!svg) return;
+    if (!svg) {
+      return;
+    }
 
     const blob = new Blob([svg.outerHTML], { type: 'image/svg+xml' });
     const url = URL.createObjectURL(blob);

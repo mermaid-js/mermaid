@@ -1,3 +1,5 @@
+/* global mermaid */
+
 export const IS_E2E = navigator.webdriver || location.search.includes('graph=');
 
 export function initMermaid() {

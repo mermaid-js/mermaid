@@ -19,7 +19,7 @@ const navigation = createNavigation({
 });
 
 function render() {
-  renderDiagram({
+  void renderDiagram({
     srcValue: src.value,
     preview,
     state,
@@ -46,10 +46,14 @@ function load(name) {
 }
 
 function applyTransform() {
-  if (!state.iframeRef) return;
+  if (!state.iframeRef) {
+    return;
+  }
 
   const svg = state.iframeRef.contentDocument?.querySelector('svg');
-  if (!svg) return;
+  if (!svg) {
+    return;
+  }
 
   state.panY = Math.max(-20000, Math.min(20000, state.panY));
   state.panX = Math.max(-20000, Math.min(20000, state.panX));
@@ -70,7 +74,6 @@ setupUI({
   render,
   load,
   applyTransform,
-  preview,
 });
 
 navigation.setupKeyboardNav();
