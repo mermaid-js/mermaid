@@ -498,6 +498,188 @@ namespace BaseShapes {
 }
 ```
 
+### Namespace Labels (v\<MERMAID_RELEASE_VERSION>+)
+
+A namespace can be given a display label using square bracket syntax, similar to class labels:
+
+```mermaid-example
+classDiagram
+    namespace Auth["Authentication Service"] {
+        class UserService {
+            +login()
+            +logout()
+        }
+    }
+```
+
+```mermaid
+classDiagram
+    namespace Auth["Authentication Service"] {
+        class UserService {
+            +login()
+            +logout()
+        }
+    }
+```
+
+The label replaces the namespace name in the rendered diagram, while the name is still used internally for relationships and nesting.
+
+### Nested Namespaces (v\<MERMAID_RELEASE_VERSION>+)
+
+Namespaces can be nested to represent hierarchical groupings. There are two ways to define nested namespaces:
+
+**Dot notation** creates intermediate namespaces automatically:
+
+```mermaid-example
+classDiagram
+    namespace Company.Engineering.Backend {
+        class Developer {
+            +writeCode()
+        }
+    }
+    namespace Company.Engineering.Frontend {
+        class Designer {
+            +createMockup()
+        }
+    }
+    namespace Company.Engineering {
+        class TechLead {
+            +planSprint()
+        }
+    }
+    TechLead --> Developer : leads
+    TechLead --> Designer : leads
+```
+
+```mermaid
+classDiagram
+    namespace Company.Engineering.Backend {
+        class Developer {
+            +writeCode()
+        }
+    }
+    namespace Company.Engineering.Frontend {
+        class Designer {
+            +createMockup()
+        }
+    }
+    namespace Company.Engineering {
+        class TechLead {
+            +planSprint()
+        }
+    }
+    TechLead --> Developer : leads
+    TechLead --> Designer : leads
+```
+
+**Syntactic nesting** places namespace blocks inside other namespace blocks:
+
+```mermaid-example
+classDiagram
+    namespace Platform {
+        namespace Auth {
+            class UserService {
+                +login()
+                +logout()
+            }
+        }
+        namespace Data {
+            class Repository {
+                +find()
+                +save()
+            }
+        }
+        class Gateway {
+            +route()
+        }
+    }
+    Gateway --> UserService : delegates
+    Gateway --> Repository : delegates
+```
+
+```mermaid
+classDiagram
+    namespace Platform {
+        namespace Auth {
+            class UserService {
+                +login()
+                +logout()
+            }
+        }
+        namespace Data {
+            class Repository {
+                +find()
+                +save()
+            }
+        }
+        class Gateway {
+            +route()
+        }
+    }
+    Gateway --> UserService : delegates
+    Gateway --> Repository : delegates
+```
+
+Both approaches can be combined. Dot notation like `namespace A.B.C` will automatically create namespaces `A` and `A.B` as parents if they don't already exist.
+
+#### Compact rendering (`hierarchicalNamespaces: false`)
+
+By default (`hierarchicalNamespaces: true`), each segment of a dotted or syntactically-nested namespace name renders as its own cluster, producing a nested layout.
+
+Setting `hierarchicalNamespaces: false` in the class diagram config switches to **compact mode**: only namespaces the user explicitly declares are drawn — each as a single flat box labelled with its fully-qualified name. Auto-created intermediate ancestors are skipped, and classes inside them are moved to their nearest declared namespace.
+
+```mermaid-example
+---
+config:
+  class:
+    hierarchicalNamespaces: false
+---
+classDiagram
+    namespace Company.Engineering.Backend {
+        class Developer {
+            +writeCode()
+        }
+    }
+    namespace Company.Engineering.Frontend {
+        class Designer {
+            +createMockup()
+        }
+    }
+    namespace Company {
+        class CEO {
+            +makeDecisions()
+        }
+    }
+    CEO --> Developer : oversees
+    CEO --> Designer : oversees
+```
+
+```mermaid
+---
+config:
+  class:
+    hierarchicalNamespaces: false
+---
+classDiagram
+    namespace Company.Engineering.Backend {
+        class Developer {
+            +writeCode()
+        }
+    }
+    namespace Company.Engineering.Frontend {
+        class Designer {
+            +createMockup()
+        }
+    }
+    namespace Company {
+        class CEO {
+            +makeDecisions()
+        }
+    }
+    CEO --> Developer : oversees
+    CEO --> Designer : oversees
+```
+
 ## Cardinality / Multiplicity on relations
 
 Multiplicity or cardinality in class diagrams indicates the number of instances of one class that can be linked to an instance of the other class. For example, each company will have one or more employees (not zero), and each employee currently works for zero or one companies.

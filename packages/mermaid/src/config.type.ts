@@ -801,6 +801,15 @@ export interface ClassDiagramConfig extends BaseDiagramConfig {
   diagramPadding?: number;
   htmlLabels?: boolean;
   hideEmptyMembersBox?: boolean;
+  /**
+   * When true (default), nested namespaces render as hierarchical clusters,
+   * with each segment of a dotted name (e.g. `A.B.C`) becoming its own nested
+   * box. When false, namespaces render in compact mode: only explicitly
+   * declared namespaces are emitted and their full qualified name is used as
+   * a single flat label.
+   *
+   */
+  hierarchicalNamespaces?: boolean;
 }
 /**
  * The object containing configurations specific for entity relationship diagrams
