@@ -59,13 +59,7 @@ export class BasePlot implements Plot {
       switch (plot.type) {
         case 'line':
           {
-            const linePlot = new LinePlot(
-              plot,
-              this.xAxis,
-              this.yAxis,
-              this.chartConfig.chartOrientation,
-              i
-            );
+            const linePlot = new LinePlot(plot, this.xAxis, this.yAxis, this.chartConfig, i);
             drawableElem.push(...linePlot.getDrawableElement());
           }
           break;
