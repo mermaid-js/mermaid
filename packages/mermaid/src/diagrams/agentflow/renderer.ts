@@ -36,8 +36,10 @@ export const draw = async function (text: string, id: string, _version: string, 
   const data4Layout = diag.db.getData() as LayoutData;
   log.debug('Data: ', data4Layout);
 
-  // Apply agentflow-specific transformations to the layout data
-  transformData(data4Layout);
+  // Apply agentflow-specific transformations to the layout data.
+  // Passing the DB lets `transformData` emit SHAPE_UNSUPPORTED as a
+  // structured diagnostic (PR 2b) rather than just a log.warn.
+  transformData(data4Layout, diag.db);
 
   // Create the root SVG
   const svg = getDiagramElement(id, securityLevel);
