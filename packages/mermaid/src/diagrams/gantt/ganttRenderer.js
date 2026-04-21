@@ -28,6 +28,7 @@ import {
 import common from '../common/common.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
+import { getUserDefinedConfig } from '../../config.js';
 
 dayjs.extend(dayjsDuration);
 
@@ -94,12 +95,12 @@ export const defaultGanttLayout = {
   sectionLabelX: 10,
 };
 
-export const computeGanttLayout = (conf, config = conf) => {
+export const computeGanttLayout = (conf, userDefinedConfig = {}) => {
   const baseFontSize = 11;
   const scale = conf.fontSize / baseFontSize;
 
-  const scaleLayoutValue = (key, value, defaultValue, sourceConfig) => {
-    const isExplicit = sourceConfig?.[key] !== undefined;
+  const scaleLayoutValue = (key, value) => {
+    const isExplicit = Object.hasOwn(userDefinedConfig, key);
 
     if (isExplicit) {
       return value;
@@ -109,56 +110,22 @@ export const computeGanttLayout = (conf, config = conf) => {
   };
 
   return {
-    titleTopMargin: scaleLayoutValue(
-      'titleTopMargin',
-      conf.titleTopMargin,
-      defaultGanttLayout.titleTopMargin,
-      config
-    ),
-    barHeight: scaleLayoutValue('barHeight', conf.barHeight, defaultGanttLayout.barHeight, config),
-    barGap: scaleLayoutValue('barGap', conf.barGap, defaultGanttLayout.barGap, config),
-    topPadding: scaleLayoutValue(
-      'topPadding',
-      conf.topPadding,
-      defaultGanttLayout.topPadding,
-      config
-    ),
-    rightPadding: scaleLayoutValue(
-      'rightPadding',
-      conf.rightPadding,
-      defaultGanttLayout.rightPadding,
-      config
-    ),
-    leftPadding: scaleLayoutValue(
-      'leftPadding',
-      conf.leftPadding,
-      defaultGanttLayout.leftPadding,
-      config
-    ),
-    gridLineStartPadding: scaleLayoutValue(
-      'gridLineStartPadding',
-      conf.gridLineStartPadding,
-      defaultGanttLayout.gridLineStartPadding,
-      config
-    ),
-    taskLabelOffset: scaleLayoutValue(
-      'taskLabelOffset',
-      defaultGanttLayout.taskLabelOffset,
-      defaultGanttLayout.taskLabelOffset,
-      config
-    ),
-    sectionLabelX: scaleLayoutValue(
-      'sectionLabelX',
-      defaultGanttLayout.sectionLabelX,
-      defaultGanttLayout.sectionLabelX,
-      config
-    ),
+    titleTopMargin: scaleLayoutValue('titleTopMargin', conf.titleTopMargin),
+    barHeight: scaleLayoutValue('barHeight', conf.barHeight),
+    barGap: scaleLayoutValue('barGap', conf.barGap),
+    topPadding: scaleLayoutValue('topPadding', conf.topPadding),
+    rightPadding: scaleLayoutValue('rightPadding', conf.rightPadding),
+    leftPadding: scaleLayoutValue('leftPadding', conf.leftPadding),
+    gridLineStartPadding: scaleLayoutValue('gridLineStartPadding', conf.gridLineStartPadding),
+    taskLabelOffset: scaleLayoutValue('taskLabelOffset', defaultGanttLayout.taskLabelOffset),
+    sectionLabelX: scaleLayoutValue('sectionLabelX', defaultGanttLayout.sectionLabelX),
   };
 };
 
 export const draw = function (text, id, version, diagObj) {
   const conf = getConfig().gantt;
-  const layout = computeGanttLayout(conf, getConfig().gantt);
+  const userDefined = getUserDefinedConfig()?.gantt || {};
+  const layout = computeGanttLayout(conf, userDefined);
 
   diagObj.db.setDiagramId(id);
 
