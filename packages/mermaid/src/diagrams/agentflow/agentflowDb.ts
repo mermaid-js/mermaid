@@ -37,6 +37,11 @@ import type {
   FlowVertex,
   FlowVertexTypeParam,
 } from './types.js';
+import type {
+  AgentflowDiagnostic,
+  AgentflowDiagnosticContext,
+  AgentflowWarningId,
+} from './diagnostics.js';
 
 /**
  * Raw JISON `@$` location object. Produced by the jison-generated parser
@@ -106,6 +111,14 @@ export class AgentFlowDB implements DiagramDB {
   private frontmatterLineOffset = 0;
   private elementMappings: AgentflowElementMapping[] = [];
 
+  // ── Diagnostic layer (PR 2b) ──────────────────────────────────────────
+  // Structured warnings/errors emitted during parse, post-parse validation,
+  // and rendering. Consumed by conformance fixtures (issue #13) and by any
+  // downstream tooling that wants programmatic access to problems the DB
+  // found. `emitWarning` always also writes to `log.warn` so humans see
+  // warnings in the console; tests assert against `getDiagnostics()`.
+  private diagnostics: AgentflowDiagnostic[] = [];
+
   // Functions to be run after graph rendering
   private funs: ((element: Element) => void)[] = []; // cspell:ignore funs
 
@@ -139,6 +152,11 @@ export class AgentFlowDB implements DiagramDB {
     this.addSubgraphMapping = this.addSubgraphMapping.bind(this);
     this.addTypeMapping = this.addTypeMapping.bind(this);
     this.addTemplateMapping = this.addTemplateMapping.bind(this);
+
+    // Diagnostic hooks (see ./diagnostics.ts)
+    this.emitWarning = this.emitWarning.bind(this);
+    this.emitError = this.emitError.bind(this);
+    this.getDiagnostics = this.getDiagnostics.bind(this);
 
     this.lex = {
       firstGraph: this.firstGraph.bind(this),
@@ -848,6 +866,7 @@ You have to call mermaid.initialize.`
     this.sourceText = undefined;
     this.frontmatterLineOffset = 0;
     this.elementMappings = [];
+    this.diagnostics = [];
     commonClear();
   }
 
@@ -1811,6 +1830,60 @@ You have to call mermaid.initialize.`
       templates,
       totalElements: this.elementMappings.length,
     };
+  }
+
+  // ── Diagnostics (PR 2b) ────────────────────────────────────────────────
+  //
+  // `emitWarning` (and its error-severity counterpart `emitError`) record a
+  // structured diagnostic and also fire `log.warn` so humans see the
+  // message in the console. When the caller supplies a `nodeId` or
+  // `edgeId`, the position is looked up through the element-mapping layer
+  // added in PR 2a — so the diagnostic carries enough context for an
+  // editor to highlight the offending element.
+
+  private emitDiagnostic(
+    id: AgentflowWarningId,
+    severity: 'warning' | 'error',
+    message: string,
+    ctx?: AgentflowDiagnosticContext
+  ): void {
+    const anchorId = ctx?.nodeId ?? ctx?.edgeId;
+    const mapping = anchorId ? this.getElementById(anchorId) : undefined;
+    const diagnostic: AgentflowDiagnostic = {
+      id,
+      severity,
+      message,
+      ...(ctx?.nodeId ? { nodeId: ctx.nodeId } : {}),
+      ...(ctx?.edgeId && !ctx?.nodeId ? { edgeId: ctx.edgeId } : {}),
+      ...(mapping ? { position: mapping.position } : {}),
+    };
+    this.diagnostics.push(diagnostic);
+    const formatted = `agentflow[${id}]: ${message}`;
+    if (severity === 'error') {
+      log.error(formatted);
+    } else {
+      log.warn(formatted);
+    }
+  }
+
+  public emitWarning(
+    id: AgentflowWarningId,
+    message: string,
+    ctx?: AgentflowDiagnosticContext
+  ): void {
+    this.emitDiagnostic(id, 'warning', message, ctx);
+  }
+
+  public emitError(
+    id: AgentflowWarningId,
+    message: string,
+    ctx?: AgentflowDiagnosticContext
+  ): void {
+    this.emitDiagnostic(id, 'error', message, ctx);
+  }
+
+  public getDiagnostics(): readonly AgentflowDiagnostic[] {
+    return this.diagnostics;
   }
 
   public setAccTitle = setAccTitle;
