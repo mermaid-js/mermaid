@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
+    "@plausible-analytics/tracker": "^0.4.4",
     "@vueuse/core": "^13.9.0",
     "font-awesome": "^4.7.0",
     "jiti": "^2.4.2",

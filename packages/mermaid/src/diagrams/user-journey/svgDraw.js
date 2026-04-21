@@ -195,14 +195,15 @@ let taskCount = -1;
  * @param {any} elem The HTML element
  * @param {any} task The task to render
  * @param {any} conf The global configuration
+ * @param {string} diagramId The diagram's SVG element ID for scoping
  */
-export const drawTask = function (elem, task, conf) {
+export const drawTask = function (elem, task, conf, diagramId) {
   const center = task.x + conf.width / 2;
   const g = elem.append('g');
   taskCount++;
   const maxHeight = 300 + 5 * 30;
   g.append('line')
-    .attr('id', 'task' + taskCount)
+    .attr('id', diagramId + '-task' + taskCount)
     .attr('x1', center)
     .attr('y1', task.y)
     .attr('x2', center)
@@ -388,11 +389,12 @@ const _drawTextCandidateFunc = (function () {
   };
 })();
 
-const initGraphics = function (graphics) {
+const initGraphics = function (graphics, id) {
+  taskCount = -1;
   graphics
     .append('defs')
     .append('marker')
-    .attr('id', 'arrowhead')
+    .attr('id', id + '-arrowhead')
     .attr('refX', 5)
     .attr('refY', 2)
     .attr('markerWidth', 6)

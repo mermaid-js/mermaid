@@ -1,4 +1,4 @@
-import clone from 'lodash-es/clone.js';
+import { clone } from 'es-toolkit/compat';
 import * as configApi from '../../config.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
@@ -19,6 +19,7 @@ const STYLECLASS_SEP = ',';
 const config = getConfig();
 
 let classes = new Map<string, ClassDef>();
+let diagramId = '';
 
 const sanitizeText = (txt: string) => common.sanitizeText(txt, config);
 
@@ -186,6 +187,7 @@ const clear = (): void => {
 
   edgeList = [];
   edgeCount = new Map();
+  diagramId = '';
 };
 
 export function typeStr2Type(typeStr: string) {
@@ -302,6 +304,12 @@ const setBlock = (block: Block) => {
   blockDatabase.set(block.id, block);
 };
 
+const setDiagramId = (id: string) => {
+  diagramId = id;
+};
+
+const getDiagramId = () => diagramId;
+
 const getLogger = () => log;
 
 /**
@@ -327,6 +335,8 @@ const db = {
   getClasses,
   clear,
   generateId,
+  setDiagramId,
+  getDiagramId,
 } as const;
 
 export type BlockDB = typeof db & DiagramDB;

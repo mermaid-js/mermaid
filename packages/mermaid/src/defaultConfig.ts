@@ -57,6 +57,7 @@ const config: RequiredDeep<MermaidConfig> = {
   },
   class: {
     hideEmptyMembersBox: false,
+    hierarchicalNamespaces: true,
   },
   gantt: {
     ...defaultConfigJson.gantt,
@@ -261,11 +262,23 @@ const config: RequiredDeep<MermaidConfig> = {
   packet: {
     ...defaultConfigJson.packet,
   },
+  eventmodeling: {
+    ...defaultConfigJson.eventmodeling,
+  },
+  treeView: {
+    ...defaultConfigJson.treeView,
+    useWidth: undefined,
+  },
   radar: {
     ...defaultConfigJson.radar,
   },
   ishikawa: {
     ...defaultConfigJson.ishikawa,
+  },
+  sankey: {
+    ...defaultConfigJson.sankey,
+    // Set so that `configKeys` includes this key for sanitizeDirective
+    nodeColors: undefined,
   },
   treemap: {
     useMaxWidth: true,

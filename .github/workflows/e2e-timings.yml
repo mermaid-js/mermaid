@@ -58,7 +58,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Commit and create pull request
-        uses: peter-evans/create-pull-request@2271f1ddcf09437ed8f019733eb5cfba58ac76f0
+        uses: peter-evans/create-pull-request@d32e88dac789dcc7906e7d26f69f24116fa9c97d
         with:
           add-paths: |
             cypress/timings.json

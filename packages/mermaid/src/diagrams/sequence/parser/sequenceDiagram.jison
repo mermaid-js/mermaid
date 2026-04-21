@@ -27,7 +27,7 @@
 <INITIAL,ID,ALIAS,LINE>\#[^\n]*   															/* skip comments */
 \%%(?!\{)[^\n]*                                                 /* skip comments */
 [^\}]\%\%[^\n]*                                                 /* skip comments */
-[0-9]+(?=[ \n]+)       											return 'NUM';
+([0-9]+(\.[0-9]{1,2})?|\.[0-9]{1,2})(?=[ \n]+)    				return 'NUM';
 <ID>\@\{                                                        { this.begin('CONFIG'); return 'CONFIG_START'; }
 <CONFIG>[^\}]+                                                  { return 'CONFIG_CONTENT'; }
 <CONFIG>\}(?=\s+as\s)                                           { this.popState(); this.begin('ALIAS'); return 'CONFIG_END'; }
@@ -36,6 +36,7 @@
 <ID>[^<>:\n,;@\s]+(?=\s+as\s)                                   { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
 <ID>[^<>:\n,;@]+(?=\s*[\n;#]|$)                                 { yytext = yytext.trim(); this.popState(); return 'ACTOR'; }
 <ID>[^<>:\n,;@]*\<[^\n]*                                        { this.popState(); return 'INVALID'; }
+<ID>[^\n]+                                                      { yytext = yytext.trim(); this.popState(); return 'INVALID'; }
 "box"															{ this.begin('LINE'); return 'box'; }
 "participant"                                                   { this.begin('ID'); return 'participant'; }
 "actor"                                                   		{ this.begin('ID'); return 'participant_actor'; }
