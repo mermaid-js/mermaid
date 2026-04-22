@@ -9,7 +9,7 @@ describe('architecture diagrams', () => {
     // @ts-expect-error since type is set to undefined we will have error
     parser.parser?.yy = db;
   });
-  // TODO: Remove this later. Only for test of trigging CI
+
   describe('architecture diagram definitions', () => {
     it('should handle the architecture keyword', async () => {
       const str = `architecture-beta`;
