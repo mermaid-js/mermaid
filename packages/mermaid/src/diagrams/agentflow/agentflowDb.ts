@@ -119,6 +119,12 @@ export class AgentFlowDB implements DiagramDB {
   // warnings in the console; tests assert against `getDiagnostics()`.
   private diagnostics: AgentflowDiagnostic[] = [];
 
+  /**
+   * Post-parse validators that emit diagnostics run at most once per parse
+   * (idempotent `getData()` calls). Resettable via `clear()`.
+   */
+  private postParseValidationRun = false;
+
   // Functions to be run after graph rendering
   private funs: ((element: Element) => void)[] = []; // cspell:ignore funs
 
@@ -867,6 +873,7 @@ You have to call mermaid.initialize.`
     this.frontmatterLineOffset = 0;
     this.elementMappings = [];
     this.diagnostics = [];
+    this.postParseValidationRun = false;
     commonClear();
   }
 
@@ -1374,7 +1381,66 @@ You have to call mermaid.initialize.`
     return compiledStyles;
   }
 
+  /**
+   * Closes [#4](https://github.com/Mermaid-Chart/agentflow/issues/4).
+   *
+   * Per `AGENTFLOW-SYNTAX.md` §4.2, `diamond` is the only canonical
+   * branching vertex. A `hexagon` is a condition/classification source
+   * whose outgoing edges feed a branch; it is not itself the branching
+   * vertex. A hexagon with two-or-more branch-labelled outgoing edges is
+   * very likely a misuse, so we emit a `HEXAGON_MULTI_BRANCH` warning
+   * with the hexagon's id and source position.
+   *
+   * "Branch-labelled" = outgoing edge whose `text` is non-empty after
+   * trimming. Unlabelled outgoing edges (join-style connections) don't
+   * count. Both the canonical shape id (`hexagon`) and its alias (`hex`)
+   * are detected.
+   */
+  private validateHexagonBranching(): void {
+    const hexIds = new Set<string>();
+    for (const [id, v] of this.vertices) {
+      if (v.type === 'hexagon' || v.type === 'hex') {
+        hexIds.add(id);
+      }
+    }
+    if (hexIds.size === 0) {
+      return;
+    }
+
+    const labelledCounts = new Map<string, number>();
+    for (const edge of this.edges) {
+      if (!hexIds.has(edge.start)) {
+        continue;
+      }
+      const text = typeof edge.text === 'string' ? edge.text : '';
+      if (text.trim() === '') {
+        continue;
+      }
+      labelledCounts.set(edge.start, (labelledCounts.get(edge.start) ?? 0) + 1);
+    }
+
+    for (const [id, count] of labelledCounts) {
+      if (count >= 2) {
+        this.emitWarning(
+          'HEXAGON_MULTI_BRANCH',
+          `hexagon "${id}" has ${count} branch-labelled outgoing edges; use a diamond for branching (see AGENTFLOW-SYNTAX.md §4.2)`,
+          { nodeId: id }
+        );
+      }
+    }
+  }
+
+  /** Run every post-parse diagnostic validator once per parse. */
+  private runPostParseValidators(): void {
+    if (this.postParseValidationRun) {
+      return;
+    }
+    this.postParseValidationRun = true;
+    this.validateHexagonBranching();
+  }
+
   public getData() {
+    this.runPostParseValidators();
     const config = getConfig();
     const nodes: Node[] = [];
     const edges: Edge[] = [];
