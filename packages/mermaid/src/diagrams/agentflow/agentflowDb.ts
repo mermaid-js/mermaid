@@ -27,6 +27,7 @@ import type {
   AgentFlowTypeDeclarationsByName,
   AgentFlowTypeField,
   AgentflowElementMapping,
+  AgentflowSemanticModel,
   AgentflowStatementType,
   ElementPosition,
   FlowClass,
@@ -36,6 +37,9 @@ import type {
   FlowText,
   FlowVertex,
   FlowVertexTypeParam,
+  SemanticEdge,
+  SemanticSubGraph,
+  SemanticVertex,
 } from './types.js';
 import type {
   AgentflowDiagnostic,
@@ -66,6 +70,29 @@ const AGENTFLOW_TPL_VERSION = 'AGENTFLOW-TPL-V1.1';
 /** Pre-compiled regexes for field parsing */
 const RECORD_FIELD_RE = /^([A-Z_a-z]\w*)\s*:\s*(.+)$/;
 const TEMPLATE_FIELD_RE = /^([A-Z_a-z]\w*)\s*:\s*(\w+)(?:\s*\*\s*(\d+))?\s*<<([^>]*)>>$/;
+
+/**
+ * Metadata keys that are presentation-only per `AGENTFLOW-SYNTAX.md` §13 and
+ * therefore stripped from the semantic model projection (PR 3). Everything
+ * else in `@{...}` metadata — `model`, `permits`, `requires`, `deny`,
+ * `params`, `returns`, `strategy`, `protocol`, `connector`, etc. — carries
+ * semantic weight and flows through.
+ */
+const SEMANTIC_METADATA_SKIP_KEYS = new Set([
+  'view',
+  'icon',
+  'img',
+  'w',
+  'h',
+  'class',
+  'style',
+  'form',
+  'pos',
+  'labelType',
+  'animate',
+  'animation',
+  'curve',
+]);
 
 /** Maps subgraph container types to their cluster shape IDs. */
 const SUBGRAPH_TYPE_TO_SHAPE: Record<NonNullable<FlowSubGraph['type']>, ClusterShapeID> = {
@@ -1629,6 +1656,119 @@ You have to call mermaid.initialize.`
 
   public defaultConfig() {
     return defaultConfig.flowchart;
+  }
+
+  // ── Semantic-model projection (PR 3) ─────────────────────────────────
+  //
+  // `getSemanticModel()` returns a presentation-stripped view of the
+  // diagram state for downstream tooling. Per AGENTFLOW-SYNTAX.md §13
+  // `view`, `classDef` / `class` / `style` / `linkStyle`, `icon`, `img`,
+  // `w`, `h`, collapsed/expanded state, element mappings, and interactivity
+  // bindings are presentation-only and MUST NOT influence semantic
+  // interpretation — so none of them appear in the returned model. Fields
+  // that carry meaning (ids, labels, shape, domain metadata, edge
+  // arrow/stroke/label, subgraph membership, type/template declarations,
+  // diagnostics) are kept.
+
+  public getSemanticModel(): AgentflowSemanticModel {
+    // Subgraph ids sometimes also appear in `this.vertices` when metadata
+    // (`@{...}`) is attached to a container id — the metadata-attachment
+    // path creates a placeholder vertex record. Those are NOT semantic
+    // vertices; they're container descriptors and the semantic model
+    // exposes them via `subGraphs` instead.
+    const subGraphIds = new Set(this.subGraphs.map((sg) => sg.id));
+    const vertices: SemanticVertex[] = [];
+    for (const [id, v] of this.vertices) {
+      if (subGraphIds.has(id)) {
+        continue;
+      }
+      const vertex: SemanticVertex = { id };
+      if (v.text !== undefined) {
+        vertex.label = v.text;
+      }
+      if (v.type !== undefined) {
+        vertex.shape = v.type;
+      }
+      if (v.metadata && Object.keys(v.metadata).length > 0) {
+        // Strip presentation-only keys from metadata passthrough.
+        const meta: Record<string, unknown> = {};
+        for (const [key, value] of Object.entries(v.metadata)) {
+          if (SEMANTIC_METADATA_SKIP_KEYS.has(key)) {
+            continue;
+          }
+          meta[key] = value;
+        }
+        if (Object.keys(meta).length > 0) {
+          vertex.metadata = meta;
+        }
+        if (typeof v.metadata.def === 'string') {
+          vertex.def = v.metadata.def;
+        }
+      }
+      vertices.push(vertex);
+    }
+
+    const edges: SemanticEdge[] = this.edges.map((e) => {
+      const edge: SemanticEdge = { start: e.start, end: e.end };
+      if (e.id !== undefined) {
+        edge.id = e.id;
+      }
+      if (typeof e.text === 'string' && e.text.length > 0) {
+        edge.label = e.text;
+      }
+      if (e.type !== undefined) {
+        edge.type = e.type;
+      }
+      if (e.stroke !== undefined) {
+        edge.stroke = e.stroke;
+      }
+      if (e.length !== undefined) {
+        edge.length = e.length;
+      }
+      return edge;
+    });
+
+    const subGraphs: SemanticSubGraph[] = this.subGraphs.map((sg) => {
+      const out: SemanticSubGraph = {
+        id: sg.id,
+        nodes: [...sg.nodes],
+      };
+      if (sg.type !== undefined) {
+        out.type = sg.type;
+      }
+      if (sg.title !== undefined) {
+        out.title = sg.title;
+      }
+      if (sg.dir !== undefined) {
+        out.direction = sg.dir;
+      }
+      if (sg.metadata && Object.keys(sg.metadata).length > 0) {
+        const meta: Record<string, unknown> = {};
+        for (const [key, value] of Object.entries(sg.metadata)) {
+          if (SEMANTIC_METADATA_SKIP_KEYS.has(key)) {
+            continue;
+          }
+          meta[key] = value;
+        }
+        if (Object.keys(meta).length > 0) {
+          out.metadata = meta;
+        }
+      }
+      return out;
+    });
+
+    const model: AgentflowSemanticModel = {
+      vertices,
+      edges,
+      subGraphs,
+      typeDeclarations: [...this.typeDeclarations.values()],
+      templateDeclarations: [...this.templateDeclarations.values()],
+      diagnostics: this.diagnostics,
+    };
+    if (this.direction !== undefined) {
+      model.direction = this.direction;
+    }
+    return model;
   }
 
   // ── Element-mapping infrastructure (PR 2a) ────────────────────────────
