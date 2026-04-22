@@ -545,8 +545,7 @@ config:
       mermaid.registerIconPacks([
         {
           name: 'logos',
-          loader: () =>
-            Promise.resolve({ prefix: 'logos', icons: {}, width: 32, height: 32 }),
+          loader: () => Promise.resolve({ prefix: 'logos', icons: {}, width: 32, height: 32 }),
         },
         {
           name: 'fa',
