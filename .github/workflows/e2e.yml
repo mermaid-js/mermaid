@@ -208,6 +208,13 @@ jobs:
           # e.g. if this action was run from a fork
           record: ${{ env.RUN_VISUAL_TEST == 'true' && secrets.CYPRESS_RECORD_KEY != '' }}
         env:
+          # For scoped runs (only a subset of specs executed), mark the Argos
+          # build as a "subset build". This tells Argos to ignore missing
+          # screenshots (they were simply not run, not deleted) and only report
+          # changed/added screenshots. Subset builds are never used as a
+          # baseline, so the full-suite baseline on develop is always preserved.
+          # See: https://argos-ci.com/docs/subset-builds
+          ARGOS_SUBSET: "${{ needs.detect-scope.outputs.spec_pattern != '' }}"
           ARGOS_PARALLEL: ${{ env.RUN_VISUAL_TEST == 'true' }}
           ARGOS_PARALLEL_TOTAL: ${{ env.RUN_VISUAL_TEST == 'true' && strategy.job-total || 1 }}
           ARGOS_PARALLEL_INDEX: ${{ env.RUN_VISUAL_TEST == 'true' && matrix.containers || 1 }}
