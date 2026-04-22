@@ -1,10 +1,15 @@
 /**
  * Agentflow conformance runner — part 1 of issue #13.
  *
- * Drives a directory of paired `<case>.agentflow` + `<case>.expected.json`
- * fixtures through the parser and the diagnostic layer, comparing the
- * actual outcome (`valid` / `warning` / `error` / `parse-error`) and any
- * observed diagnostics against the expectations declared in JSON.
+ * Drives a directory of paired `<case>-agentflow.mmd` +
+ * `<case>-agentflow.expected.json` fixtures through the parser and the
+ * diagnostic layer, comparing the actual outcome (`valid` / `warning` /
+ * `error` / `parse-error`) and any observed diagnostics against the
+ * expectations declared in JSON.
+ *
+ * Files use Mermaid's standard `.mmd` extension. The `-agentflow` suffix
+ * identifies the diagram type so agentflow fixtures can share a
+ * conformance root with other diagram types later without collisions.
  *
  * The runner is intentionally small: fixture format, parse + drive, match.
  * PR 5 fills the `fixtures/` directory with the full wave-1 corpus and
@@ -13,9 +18,9 @@
  * Fixture format
  * --------------
  *
- * `<case>.agentflow` — the diagram source.
+ * `<case>-agentflow.mmd` — the diagram source.
  *
- * `<case>.expected.json`:
+ * `<case>-agentflow.expected.json`:
  *
  * ```json
  * {

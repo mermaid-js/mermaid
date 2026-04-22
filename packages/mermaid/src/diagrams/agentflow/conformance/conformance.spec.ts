@@ -1,10 +1,15 @@
 /**
  * Agentflow conformance suite — part 1 of issue #13.
  *
- * Discovers every `<case>.agentflow` file under `./fixtures/`, parses it,
- * runs the post-parse validators, and compares the outcome / diagnostics
- * to the paired `<case>.expected.json`. Adding a new case is a two-file
- * change with no test-code edits.
+ * Discovers every `<case>-agentflow.mmd` file under `./fixtures/`, parses
+ * it, runs the post-parse validators, and compares the outcome /
+ * diagnostics to the paired `<case>-agentflow.expected.json`. Adding a
+ * new case is a two-file change with no test-code edits.
+ *
+ * The `-agentflow` suffix lets agentflow conformance fixtures share a
+ * conformance root with other diagram types later without filename
+ * collisions — each diagram type would use its own `-<type>.mmd`
+ * suffix and discovery filter.
  *
  * PR 4 ships a minimal pair of fixtures proving the runner end-to-end.
  * PR 5 fills the directory with the full wave-1 corpus, including every
@@ -20,12 +25,13 @@ import type { FixtureExpectation } from './runner.js';
 
 const thisDir = dirname(fileURLToPath(import.meta.url));
 const FIXTURE_DIR = join(thisDir, 'fixtures');
+const FIXTURE_SUFFIX = '-agentflow.mmd';
 
 function discoverFixtures(): string[] {
   const entries = readdirSync(FIXTURE_DIR, { withFileTypes: true });
   return entries
-    .filter((e) => e.isFile() && e.name.endsWith('.agentflow'))
-    .map((e) => e.name.slice(0, -'.agentflow'.length))
+    .filter((e) => e.isFile() && e.name.endsWith(FIXTURE_SUFFIX))
+    .map((e) => e.name.slice(0, -FIXTURE_SUFFIX.length))
     .sort();
 }
 
@@ -41,9 +47,9 @@ describe('agentflow conformance suite', () => {
   // clear name in the reporter. Failures point at the fixture, not a
   // nested assertion inside a forEach.
   describe.each(fixtureNames)('%s', (name) => {
-    const source = readFileSync(join(FIXTURE_DIR, `${name}.agentflow`), 'utf8');
+    const source = readFileSync(join(FIXTURE_DIR, `${name}${FIXTURE_SUFFIX}`), 'utf8');
     const expected = JSON.parse(
-      readFileSync(join(FIXTURE_DIR, `${name}.expected.json`), 'utf8')
+      readFileSync(join(FIXTURE_DIR, `${name}-agentflow.expected.json`), 'utf8')
     ) as FixtureExpectation;
 
     it('matches its expected outcome and diagnostics', () => {
