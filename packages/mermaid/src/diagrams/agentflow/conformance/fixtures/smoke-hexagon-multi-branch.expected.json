@@ -1,0 +1,10 @@
+{
+  "outcome": "warning",
+  "diagnostics": [
+    {
+      "id": "HEXAGON_MULTI_BRANCH",
+      "nodeId": "h",
+      "line": 2
+    }
+  ]
+}
