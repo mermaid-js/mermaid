@@ -316,4 +316,30 @@ pipeline Data Store {
     expect(batch?.className).toBe('pipeline-component');
     expect(batch?.x).toBeCloseTo(70);
   });
+
+  it('accepts consecutive hyphens inside a name', async () => {
+    await parser.parse(
+      `wardley-beta
+component foo--bar [0.3, 0.4]`
+    );
+
+    const data = db.getWardleyData();
+    const node = data.nodes.find((n) => n.label === 'foo--bar');
+    expect(node).toBeDefined();
+    expect(node?.x).toBeCloseTo(40);
+    expect(node?.y).toBeCloseTo(30);
+  });
+
+  it('accepts a trailing hyphen in a name', async () => {
+    await parser.parse(
+      `wardley-beta
+component foo- [0.2, 0.3]`
+    );
+
+    const data = db.getWardleyData();
+    const node = data.nodes.find((n) => n.label === 'foo-');
+    expect(node).toBeDefined();
+    expect(node?.x).toBeCloseTo(30);
+    expect(node?.y).toBeCloseTo(20);
+  });
 });
