@@ -39,7 +39,39 @@ registerIconPacks([
     name: architectureIcons.prefix,
     icons: architectureIcons,
   },
+  {
+    name: 'aws',
+    loader: () =>
+      import('./awsIcons.json').then((module) => {
+        const rawIcons = module.default as Record<string, string>;
+
+        const icons: Record<string, { body: string; width: number; height: number }> = {};
+
+        for (const [name, svgString] of Object.entries(rawIcons)) {
+          const body = svgString
+            .replace(/<svg[^>]*>/, '')
+            .replace(/<\/svg>/, '')
+            .trim();
+          const viewBoxMatch = /viewBox="(?:[^"]*\s+){2}([^\s"]+)\s+([^\s"]+)"/.exec(svgString);
+          const width = viewBoxMatch ? parseFloat(viewBoxMatch[1]) : 24;
+          const height = viewBoxMatch ? parseFloat(viewBoxMatch[2]) : 24;
+          icons[name] = { body, width, height };
+        }
+
+        return {
+          prefix: 'aws',
+          icons,
+        };
+      }),
+  },
 ]);
+
+// registerIconPacks([
+//   {
+//     name: architectureIcons.prefix,
+//     icons: architectureIcons,
+//   },
+// ]);
 cytoscape.use(fcose as any);
 
 function addServices(services: ArchitectureService[], cy: cytoscape.Core, db: ArchitectureDB) {
