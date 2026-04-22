@@ -1,0 +1,12 @@
+%% Unsupported shape → `SHAPE_UNSUPPORTED` warning from transformData,
+%% routed through `emitWarning`. The runner calls transformData after
+%% getData() so the warning is reachable from conformance fixtures.
+%%
+%% `cylinder` is a valid shape in the generic rendering library (so the
+%% parser accepts it) but agentflow's narrower allow-list rejects it.
+%% That's exactly what SHAPE_UNSUPPORTED exists to flag.
+agentflow TB
+  x["X"]
+  y["Y"]
+  x@{ shape: "cylinder" }
+  x --> y

@@ -1,0 +1,12 @@
+%% §19.3 Permission Tree Pattern — hierarchy edges (-->>), hex categories, terminal leaves.
+agentflow TB
+  all -->> data
+  all -->> llm
+  data -->> data_read
+  data -->> data_write
+
+  all@{ shape: hex }
+  data@{ shape: hex }
+  llm@{ shape: hex }
+  data_read@{ shape: terminal }
+  data_write@{ shape: terminal }

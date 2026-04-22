@@ -45,6 +45,8 @@
 import { AgentFlowDB } from '../agentflowDb.js';
 import type { AgentflowDiagnostic } from '../diagnostics.js';
 import agentflow from '../parser/agentflowParser.js';
+import { transformData } from '../transformData.js';
+import type { LayoutData } from '../../../rendering-util/types.js';
 
 export interface ExpectedDiagnostic {
   /** Message ID — must match `AgentflowDiagnostic.id`. */
@@ -90,8 +92,11 @@ export function runFixture(source: string): FixtureResult {
       parseError: err instanceof Error ? err.message : String(err),
     };
   }
-  // Trigger post-parse validators (e.g. HEXAGON_MULTI_BRANCH).
-  db.getData();
+  // Trigger post-parse validators (e.g. HEXAGON_MULTI_BRANCH) and the
+  // render-time shape validation (SHAPE_UNSUPPORTED). Both funnel into
+  // the same diagnostic layer so fixtures can match either via `id`.
+  const data = db.getData() as LayoutData;
+  transformData(data, db);
   const diagnostics = db.getDiagnostics();
   const outcome = classify(diagnostics);
   return { outcome, diagnostics };
