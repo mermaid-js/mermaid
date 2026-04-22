@@ -307,7 +307,7 @@ class Theme {
       backgroundColor: this.wardley?.backgroundColor || this.background,
       axisColor: this.wardley?.axisColor || this.lineColor,
       axisTextColor: this.wardley?.axisTextColor || this.primaryTextColor,
-      gridColor: this.wardley?.gridColor || 'rgba(100, 100, 100, 0.2)',
+      gridColor: this.wardley?.gridColor || this.gridColor,
       componentFill: this.wardley?.componentFill || this.background,
       componentStroke: this.wardley?.componentStroke || this.lineColor,
       componentLabelColor: this.wardley?.componentLabelColor || this.primaryTextColor,

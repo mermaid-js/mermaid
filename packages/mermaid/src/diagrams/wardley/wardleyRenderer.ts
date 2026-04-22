@@ -8,6 +8,8 @@ import type { WardleyBuildResult, WardleyNode } from './wardleyBuilder.js';
 
 const DEFAULT_STAGES = ['Genesis', 'Custom Built', 'Product', 'Commodity'];
 
+type WardleyText = d3.Selection<SVGTextElement, unknown, Element | null, unknown>;
+
 interface WardleyTheme {
   backgroundColor: string;
   axisColor: string;
@@ -889,7 +891,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
         .sort((a, b) => a.number - b.number);
 
       // Draw text lines (temporarily to measure)
-      const textElements: d3.Selection<SVGTextElement, unknown, Element | null, unknown>[] = [];
+      const textElements: WardleyText[] = [];
       sortedAnnotations.forEach((annotation, idx) => {
         const text = textBoxGroup
           .append('text')
