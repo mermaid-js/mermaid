@@ -1,0 +1,9 @@
+{
+  "outcome": "warning",
+  "diagnostics": [
+    {
+      "id": "INSTANCE_KIND_MISMATCH",
+      "nodeId": "bad"
+    }
+  ]
+}

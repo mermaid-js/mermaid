@@ -1,0 +1,8 @@
+%% Instance of a tool definition — win-pane → subroutine. Asserts the
+%% resolved metadata merge per §11.3: inst inherits `returns` and
+%% `requires` from search_def; local `returns` override wins.
+agentflow TB
+  search_def["search"]
+  search_def@{ shape: subroutine, returns: "Result", requires: ["net.read"] }
+  inst["cached search"]
+  inst@{ shape: win-pane, def: "search_def", returns: "CachedResult" }

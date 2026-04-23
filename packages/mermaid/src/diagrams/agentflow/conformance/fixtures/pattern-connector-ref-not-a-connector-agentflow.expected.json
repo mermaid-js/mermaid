@@ -1,0 +1,9 @@
+{
+  "outcome": "warning",
+  "diagnostics": [
+    {
+      "id": "CONNECTOR_REF_NOT_A_CONNECTOR",
+      "nodeId": "create_issue"
+    }
+  ]
+}
