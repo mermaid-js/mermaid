@@ -267,6 +267,15 @@ const ALL_APPLICABILITY_KEYS: ReadonlySet<string> = new Set(
   Object.values(METADATA_APPLICABILITY).flatMap((s) => [...s])
 );
 
+/**
+ * Synthetic IDs reserved by the renderer per `AGENTFLOW-SYNTAX.md` §10.
+ * Authors who declare a vertex or container with one of these ids get a
+ * `RESERVED_SYNTHETIC_ID` warning. Auto-numbered subgraph ids
+ * (`subGraph0`, `subGraph1` …) are internal to the DB and never reach
+ * user declarations, so they are not listed here.
+ */
+const RESERVED_SYNTHETIC_IDS = new Set<string>(['typesGroup', 'templatesGroup']);
+
 /** Maps subgraph container types to their cluster shape IDs. */
 const SUBGRAPH_TYPE_TO_SHAPE: Record<NonNullable<FlowSubGraph['type']>, ClusterShapeID> = {
   agent: 'agentGroup',
@@ -293,6 +302,17 @@ export class AgentFlowDB implements DiagramDB {
   private typeDeclarations = new Map<string, AgentFlowTypeDeclaration>();
   private templateDeclarations = new Map<string, AgentFlowTemplateDeclaration>();
   private declarationGroupMetadata = new Map<string, Record<string, unknown>>();
+
+  // ── Identifier-resolution tracking (wave-3 PR B, §10) ────────────────
+  // Per-namespace sets of IDs that have received a **declarative** call.
+  // Implicit vertices created by edge resolution (e.g. the `a` in
+  // `a --> b`) are excluded; only named vertex declarations with label,
+  // shape, or container keyword register here. Duplicate detection emits
+  // DUPLICATE_ID_NODE / DUPLICATE_ID_TYPE / DUPLICATE_ID_TEMPLATE and
+  // RESERVED_SYNTHETIC_ID for authorial claims on renderer-reserved ids.
+  private seenDeclaredNodeIds = new Set<string>();
+  private seenTypeNames = new Set<string>();
+  private seenTemplateNames = new Set<string>();
   private tooltips = new Map<string, string>();
   private subCount = 0;
   private firstGraphFlag = true;
@@ -558,6 +578,15 @@ export class AgentFlowDB implements DiagramDB {
     if (subGraph && doc) {
       subGraph.metadata = { ...subGraph.metadata, ...(doc as unknown as Record<string, unknown>) };
       return;
+    }
+
+    // Identifier-resolution tracking (§10) — a "declarative" call is one
+    // where the author wrote a label or an inline shape keyword. Pure
+    // metadata attachments (`id@{ ... }`) and implicit vertices created
+    // by edge resolution (`a --> b`) do NOT count as declarations.
+    const isDeclarative = textObj !== undefined || type !== undefined;
+    if (isDeclarative && id) {
+      this.recordDeclaredNodeId(id);
     }
 
     // Reserve 'types' and 'templates' as declaration group IDs — never create vertices for them
@@ -1116,6 +1145,9 @@ You have to call mermaid.initialize.`
     this.diagnostics = [];
     this.postParseValidationRun = false;
     this.resolvedInstanceMetadata = new Map();
+    this.seenDeclaredNodeIds = new Set();
+    this.seenTypeNames = new Set();
+    this.seenTemplateNames = new Set();
     commonClear();
   }
 
@@ -1199,7 +1231,15 @@ You have to call mermaid.initialize.`
     // Remove the members in the new subgraph if they already belong to another subgraph
     subGraph.nodes = this.makeUniq(subGraph, this.subGraphs).nodes;
 
+    // Identifier-resolution tracking (§10) — record this container's id
+    // in the shared node-or-container namespace. Collisions with a prior
+    // declared vertex emit DUPLICATE_ID_NODE. Subgraph-subgraph "merge"
+    // collisions remain silent to preserve the wave-1 re-declaration
+    // pattern in existing documents.
     const existingPos = this.getPosForId(id);
+    if (existingPos === -1) {
+      this.recordDeclaredNodeId(id);
+    }
     if (existingPos !== -1) {
       // Duplicate subgraph ID — merge children into the existing entry.
       // First occurrence wins for hierarchy position.
@@ -1291,6 +1331,15 @@ You have to call mermaid.initialize.`
 
   public addTypeDeclaration(declaration: string) {
     const parsedDeclaration = this.parseTypeDeclaration(declaration);
+    if (this.seenTypeNames.has(parsedDeclaration.name)) {
+      this.emitWarning(
+        'DUPLICATE_ID_TYPE',
+        `duplicate type declaration "${parsedDeclaration.name}" (see AGENTFLOW-SYNTAX.md §10)`,
+        { nodeId: parsedDeclaration.name }
+      );
+    } else {
+      this.seenTypeNames.add(parsedDeclaration.name);
+    }
     this.typeDeclarations.set(parsedDeclaration.name, parsedDeclaration);
     return parsedDeclaration.name;
   }
@@ -1309,6 +1358,15 @@ You have to call mermaid.initialize.`
       parsedDeclaration.fields.length,
       'fields'
     );
+    if (this.seenTemplateNames.has(parsedDeclaration.name)) {
+      this.emitWarning(
+        'DUPLICATE_ID_TEMPLATE',
+        `duplicate template declaration "${parsedDeclaration.name}" (see AGENTFLOW-SYNTAX.md §10)`,
+        { nodeId: parsedDeclaration.name }
+      );
+    } else {
+      this.seenTemplateNames.add(parsedDeclaration.name);
+    }
     this.templateDeclarations.set(parsedDeclaration.name, parsedDeclaration);
     return parsedDeclaration.name;
   }
@@ -2063,6 +2121,71 @@ You have to call mermaid.initialize.`
     }
   }
 
+  /**
+   * Record a declarative claim on an id in the shared node-or-container
+   * namespace (§10). Emits `RESERVED_SYNTHETIC_ID` when the id is one of
+   * the renderer-reserved synthetics, and `DUPLICATE_ID_NODE` when an
+   * earlier declarative call already registered the same id.
+   */
+  private recordDeclaredNodeId(id: string): void {
+    if (!id) {
+      return;
+    }
+    if (RESERVED_SYNTHETIC_IDS.has(id)) {
+      this.emitWarning(
+        'RESERVED_SYNTHETIC_ID',
+        `identifier "${id}" is reserved for renderer synthetics (see AGENTFLOW-SYNTAX.md §10)`,
+        { nodeId: id }
+      );
+      return;
+    }
+    if (this.seenDeclaredNodeIds.has(id)) {
+      this.emitWarning(
+        'DUPLICATE_ID_NODE',
+        `duplicate declaration for id "${id}" in the node-or-container namespace (see AGENTFLOW-SYNTAX.md §10)`,
+        { nodeId: id }
+      );
+      return;
+    }
+    this.seenDeclaredNodeIds.add(id);
+  }
+
+  /**
+   * Per `AGENTFLOW-SYNTAX.md` §10.1: semantic references must resolve in
+   * their namespace. This pass handles `typeRef` and `templateRef`;
+   * `def` is covered by `resolveInstances()` with `INSTANCE_DEF_MISSING`
+   * so we skip it here to avoid double-firing. `src`, `click`, and
+   * `href` are hygiene-only — not validated for existence.
+   */
+  private resolveReferences(): void {
+    for (const [id, vertex] of this.vertices) {
+      const typeRef = vertex.metadata?.typeRef;
+      if (
+        typeof typeRef === 'string' &&
+        typeRef.length > 0 &&
+        !this.typeDeclarations.has(typeRef)
+      ) {
+        this.emitWarning(
+          'REFERENCE_UNRESOLVED',
+          `typeRef "${typeRef}" on node "${id}" does not match any declared type (see AGENTFLOW-SYNTAX.md §10.1)`,
+          { nodeId: id }
+        );
+      }
+      const templateRef = vertex.metadata?.templateRef;
+      if (
+        typeof templateRef === 'string' &&
+        templateRef.length > 0 &&
+        !this.templateDeclarations.has(templateRef)
+      ) {
+        this.emitWarning(
+          'REFERENCE_UNRESOLVED',
+          `templateRef "${templateRef}" on node "${id}" does not match any declared template (see AGENTFLOW-SYNTAX.md §10.1)`,
+          { nodeId: id }
+        );
+      }
+    }
+  }
+
   /** Run every post-parse diagnostic validator once per parse. */
   private runPostParseValidators(): void {
     if (this.postParseValidationRun) {
@@ -2073,6 +2196,7 @@ You have to call mermaid.initialize.`
     this.resolveInstances();
     this.validateConnectorReferences();
     this.validateMetadataApplicability();
+    this.resolveReferences();
   }
 
   public getData() {

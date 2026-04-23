@@ -73,6 +73,37 @@ export const AgentflowWarning = {
    * v0.5.0; error from v1.0.
    */
   METADATA_KEY_MISAPPLIED: 'METADATA_KEY_MISAPPLIED',
+  /**
+   * Two declarations in the node-or-container namespace (§10) share an
+   * id — e.g. two `a["..."]` vertex declarations, or a vertex and a
+   * container with the same id. Implicit vertices created by edge
+   * resolution do not count as declarations. Warn-only in v0.5.0;
+   * error from v1.0 behind `agentflow.strictIds`.
+   */
+  DUPLICATE_ID_NODE: 'DUPLICATE_ID_NODE',
+  /**
+   * Two `type` declarations (§10 types namespace) share a name.
+   * Warn-only in v0.5.0; error from v1.0.
+   */
+  DUPLICATE_ID_TYPE: 'DUPLICATE_ID_TYPE',
+  /**
+   * Two `template` declarations (§10 templates namespace) share a
+   * name. Warn-only in v0.5.0; error from v1.0.
+   */
+  DUPLICATE_ID_TEMPLATE: 'DUPLICATE_ID_TEMPLATE',
+  /**
+   * An author declared an id reserved for synthetic renderer output
+   * (§10 — `typesGroup`, `templatesGroup`). Warn-only in v0.5.0.
+   */
+  RESERVED_SYNTHETIC_ID: 'RESERVED_SYNTHETIC_ID',
+  /**
+   * A semantic reference (§10.1 — `typeRef`, `templateRef`) points to
+   * an id that doesn't resolve in the expected namespace. `def` is
+   * covered separately by `INSTANCE_DEF_MISSING`; `src` is hygiene-
+   * only and is not checked for existence. Warn-only in v0.5.0;
+   * error from v1.0.
+   */
+  REFERENCE_UNRESOLVED: 'REFERENCE_UNRESOLVED',
 } as const;
 
 export type AgentflowWarningId = (typeof AgentflowWarning)[keyof typeof AgentflowWarning];
