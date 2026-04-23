@@ -276,6 +276,40 @@ const ALL_APPLICABILITY_KEYS: ReadonlySet<string> = new Set(
  */
 const RESERVED_SYNTHETIC_IDS = new Set<string>(['typesGroup', 'templatesGroup']);
 
+/**
+ * Child kinds recognised by the §3.3 containment matrix. `node` is the
+ * catch-all for any plain vertex that isn't a typed container or a tool.
+ */
+type ContainmentChildKind =
+  | 'agent'
+  | 'flow'
+  | 'task'
+  | 'skill'
+  | 'directive'
+  | 'testCase'
+  | 'tool'
+  | 'node';
+
+/** Parent kinds that §3.3 constrains. Legacy `subgraph` and `group` are
+ *  the unrestricted escape hatches and are not listed. */
+type ContainmentParentKind = 'agent' | 'flow' | 'task' | 'skill' | 'directive' | 'testCase';
+
+/**
+ * §3.3 Containment Rules — allowed children per parent container kind.
+ * Tools are leaves (cannot be parents); `subgraph` and `group` are the
+ * legacy escape hatches and accept anything.
+ */
+const CONTAINMENT_ALLOWED_CHILDREN: Readonly<
+  Record<ContainmentParentKind, ReadonlySet<ContainmentChildKind>>
+> = {
+  agent: new Set(['flow', 'task', 'skill', 'directive', 'testCase', 'tool', 'node']),
+  flow: new Set(['task', 'agent', 'skill', 'directive', 'testCase', 'tool', 'node']),
+  task: new Set(['tool', 'directive', 'node']),
+  skill: new Set(['tool', 'flow', 'directive', 'node']),
+  directive: new Set(['node']),
+  testCase: new Set(['directive', 'node']),
+};
+
 /** Maps subgraph container types to their cluster shape IDs. */
 const SUBGRAPH_TYPE_TO_SHAPE: Record<NonNullable<FlowSubGraph['type']>, ClusterShapeID> = {
   agent: 'agentGroup',
@@ -2059,6 +2093,30 @@ You have to call mermaid.initialize.`
   }
 
   /**
+   * Classify a subgraph's `type` as a containment-parent kind. Returns
+   * `null` for `subgraph` / `group` (legacy unrestricted escape hatch)
+   * and for the synthetic declaration groups (`types`, `templates`).
+   */
+  private classifyContainmentParent(sg: FlowSubGraph): ContainmentParentKind | null {
+    switch (sg.type) {
+      case 'agent':
+        return 'agent';
+      case 'flow':
+        return 'flow';
+      case 'task':
+        return 'task';
+      case 'skill':
+        return 'skill';
+      case 'directive':
+        return 'directive';
+      case 'test':
+        return 'testCase';
+      default:
+        return null;
+    }
+  }
+
+  /**
    * Per `AGENTFLOW-SYNTAX.md` §13: for every classifiable element,
    * check each metadata key against the applicability table. A key
    * that is known (appears in any row) but not in this element's row
@@ -2247,6 +2305,73 @@ You have to call mermaid.initialize.`
     }
   }
 
+  /**
+   * Classify a child id for containment-matrix lookup. Subgraph children
+   * project their container kind; vertex children project `tool` when
+   * they meet `isToolDefinition()` or `node` otherwise.
+   */
+  private classifyContainmentChild(childId: string): ContainmentChildKind | null {
+    const childSub = this.subGraphLookup.get(childId);
+    if (childSub) {
+      switch (childSub.type) {
+        case 'agent':
+          return 'agent';
+        case 'flow':
+          return 'flow';
+        case 'task':
+          return 'task';
+        case 'skill':
+          return 'skill';
+        case 'directive':
+          return 'directive';
+        case 'test':
+          return 'testCase';
+        default:
+          // Legacy `subgraph` / `group` child — treat as `node` so
+          // containment rules apply; the escape hatch only releases
+          // the parent from validation, not the grandchildren.
+          return 'node';
+      }
+    }
+    const childVertex = this.vertices.get(childId);
+    if (!childVertex) {
+      return null;
+    }
+    if (this.isToolDefinition(childVertex)) {
+      return 'tool';
+    }
+    return 'node';
+  }
+
+  /**
+   * Per `AGENTFLOW-SYNTAX.md` §3.3: every typed container has a fixed
+   * allowed-children set. Violations emit `CONTAINMENT_VIOLATION` with
+   * the offending child's id. Legacy `subgraph` and `group` parents are
+   * unrestricted escape hatches and are skipped.
+   */
+  private validateContainment(): void {
+    for (const sg of this.subGraphs) {
+      const parentKind = this.classifyContainmentParent(sg);
+      if (parentKind === null) {
+        continue;
+      }
+      const allowed = CONTAINMENT_ALLOWED_CHILDREN[parentKind];
+      for (const childId of sg.nodes) {
+        const childKind = this.classifyContainmentChild(childId);
+        if (childKind === null) {
+          continue;
+        }
+        if (!allowed.has(childKind)) {
+          this.emitWarning(
+            'CONTAINMENT_VIOLATION',
+            `${parentKind} "${sg.id}" cannot contain ${childKind} "${childId}" (see AGENTFLOW-SYNTAX.md §3.3)`,
+            { nodeId: childId }
+          );
+        }
+      }
+    }
+  }
+
   /** Run every post-parse diagnostic validator once per parse. */
   private runPostParseValidators(): void {
     if (this.postParseValidationRun) {
@@ -2259,6 +2384,7 @@ You have to call mermaid.initialize.`
     this.validateMetadataApplicability();
     this.resolveReferences();
     this.validateReferenceKinds();
+    this.validateContainment();
   }
 
   public getData() {
