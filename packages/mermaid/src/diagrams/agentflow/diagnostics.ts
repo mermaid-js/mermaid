@@ -130,6 +130,14 @@ export const AgentflowWarning = {
    * Warn-only in v0.5.0; error from v1.0.
    */
   REF_KIND_LEGACY_UNRESOLVED: 'REF_KIND_LEGACY_UNRESOLVED',
+  /**
+   * A container's child violates the §3.3 containment matrix — e.g. a
+   * tool placed directly inside a directive, or an agent inside a
+   * task. The legacy `subgraph` / `group` escape hatches are
+   * unrestricted. Warn-only in v0.5.0; error from v1.0 behind the
+   * future `agentflow.strictContainment` flag.
+   */
+  CONTAINMENT_VIOLATION: 'CONTAINMENT_VIOLATION',
 } as const;
 
 export type AgentflowWarningId = (typeof AgentflowWarning)[keyof typeof AgentflowWarning];
