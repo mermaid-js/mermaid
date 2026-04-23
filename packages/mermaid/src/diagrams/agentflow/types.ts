@@ -54,6 +54,24 @@ export interface FlowText {
   type: 'text';
 }
 
+/**
+ * Canonical per-operator semantic per `AGENTFLOW-SYNTAX.md` §5.1. Populated
+ * on every edge whose operator appears in the §5.1 mapping table; left
+ * `undefined` for operators outside that table (e.g. `<-->`, `x--x`).
+ *
+ * Downstream tooling SHOULD prefer this field over `type` / `stroke` for
+ * semantic decisions. The latter remain for rendering continuity.
+ */
+export type EdgeSemantic =
+  | 'control'
+  | 'data'
+  | 'conformance'
+  | 'delegation'
+  | 'failure'
+  | 'association'
+  | 'governance'
+  | 'bidirectional';
+
 export interface FlowEdge {
   isUserDefinedId: boolean;
   start: string;
@@ -61,6 +79,8 @@ export interface FlowEdge {
   interpolate?: string;
   type?: string;
   stroke?: 'normal' | 'thick' | 'invisible' | 'dotted';
+  /** Canonical §5.1 semantic. See {@link EdgeSemantic}. */
+  edgeSemantic?: EdgeSemantic;
   style?: string[];
   length?: number;
   text: string;
@@ -215,6 +235,8 @@ export interface SemanticEdge {
   type?: string;
   /** Stroke classification: `normal`, `thick`, `dotted`, `invisible`. */
   stroke?: 'normal' | 'thick' | 'invisible' | 'dotted';
+  /** Canonical §5.1 semantic. See {@link EdgeSemantic}. */
+  edgeSemantic?: EdgeSemantic;
   /** Number of dashes/equals/dots in the operator — useful for layout but also semantic emphasis. */
   length?: number;
 }
