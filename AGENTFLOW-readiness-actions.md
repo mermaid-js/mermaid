@@ -19,12 +19,12 @@ The intent is that the original reviewer can read this top-to-bottom and say yes
 
 ## Revision history
 
-| Rev | Summary |
-|---|---|
-| 1 | Initial point-by-point response to the readiness review. |
-| 2 | Revisions from the plan review: `tool` becomes a leaf declaration; type and template namespaces split; explicit executing-agent resolution rule for capability validation; `src` treated as external/hygiene, not a semantic-resolution target; presentation-only controls stripped from the **semantic export model** rather than the internal render model; `==>` remap re-framed as a versioned semantic migration with first-class `edgeSemantic` shipped in wave 1; container-boundary label tightened to a parameter-name binding; `description` broadened beyond artifact nodes; explicit note that containment defines structural validity, not execution ownership. |
-| 3 | Final tightening from the plan review: distinguish `tool` **definition** from **invocation**, with capability validation applying only at invocation sites; containment enforcement now runs in both `addSubGraph()` and `addTool()`; `tool` becomes a **context-sensitive** declaration keyword recognised only at statement start; outgoing container data edges addressed (`returns` is single-valued at the boundary); action 1 wording aligned with the `typeRef`/`templateRef` vocabulary; action 10 table simplified by cross-cutting `description`. |
-| 4 | Polish: invocation-form list scoped to v0.x/1.0 rather than implied-forever; legacy `type` fallback in action 9 restated as three explicit cases (single match → warn and accept; both match → error as ambiguous; neither matches → error as unresolved). |
+| Rev | Summary                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Initial point-by-point response to the readiness review.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| 2   | Revisions from the plan review: `tool` becomes a leaf declaration; type and template namespaces split; explicit executing-agent resolution rule for capability validation; `src` treated as external/hygiene, not a semantic-resolution target; presentation-only controls stripped from the **semantic export model** rather than the internal render model; `==>` remap re-framed as a versioned semantic migration with first-class `edgeSemantic` shipped in wave 1; container-boundary label tightened to a parameter-name binding; `description` broadened beyond artifact nodes; explicit note that containment defines structural validity, not execution ownership. |
+| 3   | Final tightening from the plan review: distinguish `tool` **definition** from **invocation**, with capability validation applying only at invocation sites; containment enforcement now runs in both `addSubGraph()` and `addTool()`; `tool` becomes a **context-sensitive** declaration keyword recognised only at statement start; outgoing container data edges addressed (`returns` is single-valued at the boundary); action 1 wording aligned with the `typeRef`/`templateRef` vocabulary; action 10 table simplified by cross-cutting `description`.                                                                                                                  |
+| 4   | Polish: invocation-form list scoped to v0.x/1.0 rather than implied-forever; legacy `type` fallback in action 9 restated as three explicit cases (single match → warn and accept; both match → error as ambiguous; neither matches → error as unresolved).                                                                                                                                                                                                                                                                                                                                                                                                                   |
 
 ---
 
@@ -34,11 +34,11 @@ The review's conclusion is that the language is close to downstream-safe but lea
 
 Actions land in three waves so downstream teams can migrate:
 
-| Wave | Version | Character | Actions |
-|---|---|---|---|
-| 1 | 0.5.0 | spec + warnings; first-class `edgeSemantic` in the exported model (legacy interpretation preserved) | 3, 11, 12, warn-only variants of 1, 7, 9, 10; non-strict part of 2 |
-| 2 | 0.6.0 | first-class declarations (additive) | 5 (tool leaf declaration), 4 (instance binding + validation); conformance fixtures against the new edge semantics |
-| 3 | 1.0.0 | strict mode (breaking for non-conforming diagrams) | strict part of 2 (edge semantic contradictions become errors), 6 (container boundary), flip 1/7/8/9/10 to error |
+| Wave | Version | Character                                                                                           | Actions                                                                                                           |
+| ---- | ------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| 1    | 0.5.0   | spec + warnings; first-class `edgeSemantic` in the exported model (legacy interpretation preserved) | 3, 11, 12, warn-only variants of 1, 7, 9, 10; non-strict part of 2                                                |
+| 2    | 0.6.0   | first-class declarations (additive)                                                                 | 5 (tool leaf declaration), 4 (instance binding + validation); conformance fixtures against the new edge semantics |
+| 3    | 1.0.0   | strict mode (breaking for non-conforming diagrams)                                                  | strict part of 2 (edge semantic contradictions become errors), 6 (container boundary), flip 1/7/8/9/10 to error   |
 
 ---
 
@@ -46,7 +46,7 @@ Actions land in three waves so downstream teams can migrate:
 
 **Gap.** Duplicate IDs are accepted silently. No normative scope rule. Reference keys (`def`, `typeRef`, `templateRef`, `src`, `class`, `click`) are resolved opportunistically, with no distinction between semantic and external resolution.
 
-**Spec.** Add a new section *Identifier Resolution*:
+**Spec.** Add a new section _Identifier Resolution_:
 
 - All node and container IDs share a single diagram-wide namespace; they must be unique.
 - **Types** live in their own namespace.
@@ -64,6 +64,7 @@ Actions land in three waves so downstream teams can migrate:
 **Grammar (`agentflow.jison`).** No change.
 
 **DB (`agentflowDb.ts`).**
+
 - `addVertex`, `addSubGraph`, `addTypeDeclaration`, `addTemplateDeclaration`: track seen IDs per namespace and raise a validation error on intra-namespace collision (behind a config gate in wave 1, fatal in wave 3).
 - New `resolveReferences()` pass in `getData()`:
   - For each **semantic** reference, resolve the target in its namespace; unresolved → error.
@@ -83,22 +84,23 @@ The change is a real semantic migration — not merely a clarification — becau
 
 **Spec.** Adopt the review's canonical mapping verbatim and make it normative:
 
-| Operator | Primary semantic |
-|---|---|
-| `-->` | precedence / control sequence |
-| `==>` | data flow / artifact transfer |
-| `--o` | contract conformance |
-| `-->>` | delegation / spawn |
-| `--x` | failure / cancellation |
-| `---` | association (non-driving) |
-| `-.->` | governance / advisory |
-| `o--o` | bidirectional data sync |
+| Operator | Primary semantic              |
+| -------- | ----------------------------- |
+| `-->`    | precedence / control sequence |
+| `==>`    | data flow / artifact transfer |
+| `--o`    | contract conformance          |
+| `-->>`   | delegation / spawn            |
+| `--x`    | failure / cancellation        |
+| `---`    | association (non-driving)     |
+| `-.->`   | governance / advisory         |
+| `o--o`   | bidirectional data sync       |
 
 Stroke is a rendering property of a semantic, not an independent axis. An operator fixes the semantic; the language forbids arbitrary mix-and-match (e.g. "thick dotted" does not exist as a semantic).
 
 **Grammar.** No token change. Every operator already parses.
 
 **DB.**
+
 - **Wave 1.** Extend `destructLink()` to populate an `edgeSemantic` field on every edge alongside the existing `type` and `stroke`. A `legacyEdgeSemantics: true` interpretation is preserved so rendering does not change. The new field is additive in the exported model.
 - **Wave 2.** Ship conformance fixtures asserting the new mapping on every operator. Downstream consumers migrate against these fixtures.
 - **Wave 3.** Make the canonical mapping the default. Once action 10 lands, edges whose semantic contradicts endpoint kinds become errors — e.g. a `==>` into a container with no declared `params`. `legacyEdgeSemantics` remains available for one more release as an escape hatch before removal.
@@ -116,7 +118,7 @@ Stroke is a rendering property of a semantic, not an independent axis. An operat
 **Spec.** Add normative statements:
 
 - `diamond` is the only branching vertex. Alternate-flow routing, approval gates, and mutually exclusive outcomes originate from a `diamond`.
-- `hexagon` is a condition or classification *source*. Its outgoing edges feed a branch, they do not constitute one.
+- `hexagon` is a condition or classification _source_. Its outgoing edges feed a branch, they do not constitute one.
 
 **Grammar / DB.** No change.
 
@@ -132,7 +134,7 @@ Stroke is a rendering property of a semantic, not an independent axis. An operat
 
 **Gap.** The five instance shapes ship in the renderer but have no parser/DB tests and no `def` validation. Inheritance, override precedence, cycle handling, and structural expansion rules are unspecified.
 
-**Spec.** Add section *Definition / Instance Semantics*:
+**Spec.** Add section _Definition / Instance Semantics_:
 
 - **Target matrix:** `tag-rect` → `agent`, `delay` → `flow`, `lin-rect` → `skill`, `win-pane` → `tool`, `curv-trap` → `directive`.
 - Missing `def` is invalid.
@@ -180,6 +182,7 @@ tool <id>["Title"]
 **Definition vs invocation.** A `tool` declaration is a **definition**. It registers a reusable executable primitive in the diagram and by itself performs no work. Writing `tool search_web["Search Web"]` at the top level is valid and does not require an enclosing agent.
 
 An **invocation** is a use of a tool from flow/execution context. The invocation forms supported in v0.x / 1.0 are:
+
 - an edge (typically `-->` or `==>`) from a task, flow, or skill node into the tool's ID, and
 - a `win-pane` **instance** (action 4) whose `def` points at the tool, placed inside an executing container.
 
@@ -188,6 +191,7 @@ Additional invocation forms may be introduced in a later version under the spec'
 Capability validation (action 8) runs **only at invocation sites**, never at the definition site.
 
 **Grammar (`agentflow.jison`).**
+
 - Add a `"tool"` lexer token alongside `TYPE_DECL` / `TEMPLATE_DECL` — line numbers in the 94–96 region.
 - Add a `toolDeclarationStatement` production parallel to `typeDeclarationStatement`:
   - Parses `tool <idString> [SQS text SQE]`.
@@ -195,6 +199,7 @@ Capability validation (action 8) runs **only at invocation sites**, never at the
 - `tool` is a **context-sensitive declaration keyword** — recognised only when it appears as the first token of a statement. In any other position (node ID, label text, edge endpoint, etc.) it continues to parse as a regular identifier. This is achieved by anchoring the lexer rule to statement-start (the same technique `type` and `template` already use in `agentflow.jison`) rather than by adding `tool` to the globally reserved keyword list. Existing diagrams that use `tool` as a bare ID in non-declaration positions continue to parse unchanged.
 
 **DB.**
+
 - `addTool(id, label)` creates a tool-kind vertex and registers it in the node/container namespace (action 1).
 - Tool nodes render with the `subroutine` visual by default.
 - No containment rules on `tool` are needed because it is a leaf — the containment matrix (action 7) simply omits it as a parent.
@@ -209,7 +214,7 @@ Capability validation (action 8) runs **only at invocation sites**, never at the
 
 **Gap.** Edges can connect to containers, but the spec does not say what they bind to.
 
-**Spec.** Add section *Container Edges*:
+**Spec.** Add section _Container Edges_:
 
 - An incoming precedence edge (`-->`) to a container targets the container's **entry boundary**.
 - An outgoing precedence edge originates from the **completion boundary**.
@@ -235,16 +240,16 @@ Capability validation (action 8) runs **only at invocation sites**, never at the
 
 **Spec.** Add the containment matrix from the review verbatim (adjusted so that `tool`, now a leaf declaration, is a valid child but never a parent):
 
-| Parent | Allowed children |
-|---|---|
-| `agent` | `flow`, `task`, `skill`, `directive`, `testCase`, `tool`, node |
-| `flow` | `task`, `agent`, `skill`, `directive`, `testCase`, `tool`, node |
-| `task` | `tool`, `directive`, node |
-| `skill` | `tool`, `flow`, `directive`, node |
-| `directive` | node |
-| `testCase` | `directive`, node |
-| `tool` | *(leaf — cannot be a parent)* |
-| `subgraph` | unrestricted (legacy; documented as the generic escape hatch) |
+| Parent      | Allowed children                                                |
+| ----------- | --------------------------------------------------------------- |
+| `agent`     | `flow`, `task`, `skill`, `directive`, `testCase`, `tool`, node  |
+| `flow`      | `task`, `agent`, `skill`, `directive`, `testCase`, `tool`, node |
+| `task`      | `tool`, `directive`, node                                       |
+| `skill`     | `tool`, `flow`, `directive`, node                               |
+| `directive` | node                                                            |
+| `testCase`  | `directive`, node                                               |
+| `tool`      | _(leaf — cannot be a parent)_                                   |
+| `subgraph`  | unrestricted (legacy; documented as the generic escape hatch)   |
 
 Normative note: **containment defines structural validity, not execution ownership.** Execution ownership is resolved by the capability rules in action 8, and it can cross structural boundaries through delegation and instance references.
 
@@ -268,16 +273,16 @@ A shared helper inspects the current container stack and rejects disallowed plac
 
 **Gap.** `permits`, `requires`, `deny` are free-form strings. No validation algorithm and no rule for identifying the executing agent.
 
-**Spec.** Add section *Capability Evaluation*:
+**Spec.** Add section _Capability Evaluation_:
 
 - `permits` is the agent's effective capability set.
 - `requires` is the capability set required by a tool invocation.
 - `deny` is the set forbidden at that tool's execution site.
-- **Invocation sites.** Capability evaluation applies to **invocation sites only**, never to `tool` *definitions* (action 5). The invocation sites supported in v0.x / 1.0 are:
+- **Invocation sites.** Capability evaluation applies to **invocation sites only**, never to `tool` _definitions_ (action 5). The invocation sites supported in v0.x / 1.0 are:
   - an edge from a task, flow, or skill node into a tool's ID, or
   - a `win-pane` instance (action 4) whose `def` points at a tool and which is placed inside an executing container.
-  A bare top-level `tool` declaration is a definition and is not subject to capability evaluation. Additional invocation-site forms may be introduced in a later version.
-- **Executing-agent resolution.** At every invocation site, the executing agent is the **nearest enclosing `agent`** in the structural tree. If no such agent exists, the invocation is invalid. Delegation (`-->>`) transfers *work* ownership, not *capability* ownership — a delegated-to agent must independently satisfy the invocation's `requires` under its own `permits`.
+    A bare top-level `tool` declaration is a definition and is not subject to capability evaluation. Additional invocation-site forms may be introduced in a later version.
+- **Executing-agent resolution.** At every invocation site, the executing agent is the **nearest enclosing `agent`** in the structural tree. If no such agent exists, the invocation is invalid. Delegation (`-->>`) transfers _work_ ownership, not _capability_ ownership — a delegated-to agent must independently satisfy the invocation's `requires` under its own `permits`.
 - An invocation is valid iff every `requires` entry is in the executing agent's `permits` and none are in `deny`.
 
 **Representation.** `permits`, `requires`, `deny`, `fallbacks`, `directives` **must be YAML arrays**. Comma-separated strings are accepted in wave 1 with a deprecation warning, and removed in wave 3.
@@ -285,6 +290,7 @@ A shared helper inspects the current container stack and rejects disallowed plac
 **Grammar.** No change — YAML arrays already parse via `@{...}`.
 
 **DB.**
+
 - In metadata merge, normalise string-form lists to arrays and warn.
 - In `getData()`, enumerate invocation sites (incoming edges into a tool ID; `win-pane` instances inside executing containers) and for each:
   1. Walk up the structural tree to find the nearest enclosing `agent`; error if none.
@@ -311,6 +317,7 @@ Formalise both synthetic containers: `typesGroup` (already specified) and `templ
 **Grammar.** No change.
 
 **DB.**
+
 - Legacy `type` on a `procs` node → look up the ID in both the type namespace and the template namespace, then:
   - **exactly one match** → accept, treating it as the corresponding `typeRef` or `templateRef`, and emit a deprecation warning;
   - **both namespaces match** → error as ambiguous (the author must switch to explicit `typeRef` / `templateRef`);
@@ -328,19 +335,19 @@ Formalise both synthetic containers: `typesGroup` (already specified) and `templ
 
 **Gap.** Any YAML key is accepted on any element.
 
-**Spec.** Add section *Metadata Applicability* with the table below. Semantically meaningful keys are restricted to the element kinds listed.
+**Spec.** Add section _Metadata Applicability_ with the table below. Semantically meaningful keys are restricted to the element kinds listed.
 
-| Element | Valid metadata keys |
-|---|---|
-| `agent` | `model`, `permits`, `memory`, `fallbacks` |
-| `flow` | `params`, `returns` |
-| `task` | `execution`, `params`, `returns`, `fallbacks` |
-| `skill` | `strategy`, `params`, `returns`, `fallbacks` |
-| `tool` | `returns`, `requires`, `deny`, `retry`, `cache`, `validate`, `handler`, `transport`, `command` |
-| `directive` | `rule`, `severity`, `context`, `params` |
-| `testCase` | `assert`, `expects` |
-| artifact nodes (`doc`, etc.) | `output` |
-| reference nodes (`procs`) | `typeRef`, `templateRef`, `src` |
+| Element                      | Valid metadata keys                                                                            |
+| ---------------------------- | ---------------------------------------------------------------------------------------------- |
+| `agent`                      | `model`, `permits`, `memory`, `fallbacks`                                                      |
+| `flow`                       | `params`, `returns`                                                                            |
+| `task`                       | `execution`, `params`, `returns`, `fallbacks`                                                  |
+| `skill`                      | `strategy`, `params`, `returns`, `fallbacks`                                                   |
+| `tool`                       | `returns`, `requires`, `deny`, `retry`, `cache`, `validate`, `handler`, `transport`, `command` |
+| `directive`                  | `rule`, `severity`, `context`, `params`                                                        |
+| `testCase`                   | `assert`, `expects`                                                                            |
+| artifact nodes (`doc`, etc.) | `output`                                                                                       |
+| reference nodes (`procs`)    | `typeRef`, `templateRef`, `src`                                                                |
 
 **Cross-cutting rule.** `description` is valid on **any authored element** and is therefore omitted from the row-by-row restrictions above. A human-readable description never creates semantic ambiguity.
 
@@ -392,7 +399,7 @@ Presentation fields are not deleted from the DB. They are excluded from the expo
 - Template references must use `templateRef`.
 - Tool definitions must use the new leaf `tool` form (action 5).
 
-Add a *Conformance Tests* appendix naming the shipped fixture files.
+Add a _Conformance Tests_ appendix naming the shipped fixture files.
 
 **Grammar / DB.** No change.
 

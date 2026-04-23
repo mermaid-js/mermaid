@@ -1,4 +1,5 @@
 # Agentflow Downstream Readiness Review
+
 ## Semantic Consistency, Unambiguity, and Required Language Changes
 
 **Source reviewed:** `AGENTFLOW-SYNTAX.md`  
@@ -485,6 +486,7 @@ Also add a conformance suite with:
 This section restates the required changes as a concrete language-tightening proposal.
 
 ### A. Introduce first-class `tool`
+
 Add:
 
 ```agentflow
@@ -494,6 +496,7 @@ tool <id>["Title"]
 Use `tool` as the canonical executable primitive.
 
 ### B. Replace overloaded edge algebra
+
 Adopt:
 
 - `-->` precedence / control sequence
@@ -506,24 +509,30 @@ Adopt:
 - `o--o` bidirectional sync
 
 ### C. Canonicalize branching
+
 Adopt:
 
 - `diamond` = branching vertex
 - `hexagon` = condition/category/evaluable classification
 
 ### D. Add identifier-resolution rules
+
 Adopt diagram-wide uniqueness and explicit forward-reference support.
 
 ### E. Add containment matrix
+
 Define what each container kind may contain.
 
 ### F. Add container-edge boundary rules
+
 Define entry, completion, `params`, and `returns` binding.
 
 ### G. Add definition / instance semantics
+
 Define inheritance, precedence, invalid cases, and valid target matrix.
 
 ### H. Replace list-like strings with arrays
+
 Use YAML arrays for:
 
 - `permits`
@@ -533,6 +542,7 @@ Use YAML arrays for:
 - `directives`
 
 ### I. Separate reference kinds
+
 Require one of:
 
 - `typeRef`
@@ -540,12 +550,15 @@ Require one of:
 - `src`
 
 ### J. Add metadata applicability table
+
 Define allowed, warned, and invalid placements.
 
 ### K. Mark presentation-only features as non-semantic
+
 Make `view`, styling, and collapsed state explicitly non-semantic.
 
 ### L. Add conformance tests
+
 Ship valid and invalid examples as part of the spec.
 
 ---
