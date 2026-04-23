@@ -37,7 +37,7 @@ const options: LandingOption[] = [
     title: "Mermaid's full editor",
     description: 'Render existing diagrams or build with AI, code, drag-and-drop, or voice.',
     cta: 'Start free',
-    rowClass: 'border-[#f84594]',
+    rowClass: 'border-[#3f3959] shadow-[0_0_0_1px_rgba(63,57,89,0.16)]',
     icon: EditIcon,
   },
   {
@@ -45,7 +45,7 @@ const options: LandingOption[] = [
     title: 'Browse the docs',
     description: 'Mermaid syntax reference, diagram guides, and contributor docs.',
     cta: 'Read docs',
-    rowClass: 'border-[#2b2542]',
+    rowClass: 'border-[#3f3959] shadow-[0_0_0_1px_rgba(63,57,89,0.16)]',
     icon: DocsIcon,
   },
   {
@@ -53,7 +53,7 @@ const options: LandingOption[] = [
     title: 'Code in the live editor',
     description: 'Write Mermaid syntax with live preview — no account needed.',
     cta: 'Mermaid live',
-    rowClass: 'border-[#2b2542]',
+    rowClass: 'border-[#3f3959] shadow-[0_0_0_1px_rgba(63,57,89,0.16)]',
     icon: CodeIcon,
   },
 ];
@@ -133,7 +133,10 @@ onMounted(() => {
           </div>
 
           <div class="flex shrink-0 items-center gap-3 pl-2">
-            <span class="rounded-full bg-[#332a54] px-3 py-1 text-xs leading-4 text-white">
+            <span
+              class="rounded-full px-3 py-1 text-xs leading-4 text-white"
+              :class="option.choice === 'full-editor' ? 'bg-[#ff3670]' : 'bg-[#332a54]'"
+            >
               {{ option.cta }}
             </span>
             <ChevronIcon class="h-[11px] w-[11px] text-[#6b7280]" />
