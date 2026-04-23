@@ -356,7 +356,7 @@ These fields carry semantic meaning consumed by tooling but do not change how th
 | `returns`      | Output type contract                                       | `"CoffeeCopy"`, `"String"`              |
 | `requires`     | Required capabilities (YAML array)                         | `["net.read", "llm.query"]`             |
 | `deny`         | Denied capabilities (YAML array)                           | `["llm.query"]`                         |
-| `connectorRef` | Tool/node binding to a connector (§9.1)                    | `"github_mcp"`, `"github.create_issue"` |
+| `connectorRef` | Tool binding to a connector (§9.1; tool definitions only)  | `"github_mcp"`, `"github.create_issue"` |
 | `source`       | External source binding                                    | `"search.duckduckgo(query)"`            |
 | `params`       | Input parameters                                           | `"city :: String"`                      |
 | `retry`        | Retry count on failure                                     | `2`                                     |
@@ -642,7 +642,7 @@ Agentflow does not introduce a dedicated `connector` declaration keyword in this
 
 ### 9.1 Binding Metadata: `connectorRef`
 
-Tools (and other nodes that talk to external systems) bind to a connector via the **`connectorRef`** metadata key:
+A **tool definition** (§8) binds to a connector via the **`connectorRef`** metadata key. `connectorRef` is valid only on tool definitions in v0.5.0; widening it to other binding sites is an additive change reserved for a later version:
 
 ```
 save_diagram["save_diagram"]
@@ -657,12 +657,17 @@ The key name mirrors `typeRef` and `templateRef` (§10.2): all three are referen
 
 The string value's interpretation depends on its form (this is the weak-reference rule from §10.1):
 
-- A **bare id** (e.g. `"github_mcp"`) is treated as a weak in-diagram reference. The validator MAY warn if no node with that id is declared (`CONNECTOR_REF_UNRESOLVED`) — this catches typos.
+- A **bare id** (e.g. `"github_mcp"`) is treated as a weak in-diagram reference. The validator resolves it against the node namespace:
+  - **No node with that id exists** → emit `CONNECTOR_REF_UNRESOLVED` (warning in v0.5.0; error in v1.0). Catches typos.
+  - **Node exists and is a connector-designated node** (per §9.2) → resolves cleanly, no diagnostic.
+  - **Node exists but is NOT connector-designated** (it has no `protocol`/`endpoint`/`transport`/`command`/`auth`/`token_required` field) → emit `CONNECTOR_REF_NOT_A_CONNECTOR` (warning in v0.5.0; error in v1.0). The reference looked like an in-diagram resolution but landed on a node that isn't a connector.
 - A **dotted form** (`"github.create_issue"`) or a **URL-like string** is treated as opaque and is not validated. Downstream tooling interprets it as it sees fit (operation paths, endpoints, etc.).
 
 ### 9.2 Connector-Designated Nodes (optional)
 
-When a diagram benefits from naming connectors as first-class document elements — e.g. to attach configuration, hold a description, or visually group them — declare them using existing node and grouping constructs. The node's **own id is the connector's identity**; no self-tagging key is needed:
+A **connector-designated node** is any node that carries one or more **connector configuration fields**: `protocol`, `endpoint`, `transport`, `command`, `auth`, or `token_required`. The presence of any one of these fields is what designates the node. The node exports its **own node id** as the connector identity — no self-tagging key is needed.
+
+When a diagram benefits from naming connectors as first-class document elements — e.g. to attach configuration, hold a description, or visually group them — declare them using existing node and grouping constructs:
 
 ```
 subgraph connectors["Connectors"]
@@ -702,7 +707,7 @@ makes both roles explicit, mirrors `typeRef`/`templateRef`, and keeps the §10.1
 
 When a node represents a connector or binds to one, these metadata keys are available (see §13 _Metadata Applicability_ for the table):
 
-- **`connectorRef`** — on a tool or other binding node, references a connector by id, dotted operation form, or URL-like string. See §9.1.
+- **`connectorRef`** — on a tool definition (§8), references a connector by id, dotted operation form, or URL-like string. See §9.1.
 - `protocol` — on a connector-designated node, the integration protocol. Canonical values: `"mcp"`, `"http"`, `"grpc"`, `"sql"`, `"graphql"`, `"websocket"`, `"amqp"`, `"custom"`.
 - `endpoint` — URL, connection string, or endpoint identifier.
 - `transport` — transport for protocols that require one (e.g. MCP: `"stdio"`, `"sse"`).
@@ -748,7 +753,7 @@ These rules produce warnings in v0.5.0 (behind `agentflow.strictIds: false` by d
 Reference-style keys split into two groups:
 
 - **Semantic references** are resolved against the diagram model. Unresolved values are validation errors. Members: `def`, `typeRef`, `templateRef`.
-- **Weak references by convention.** The `connectorRef` metadata key (§9) is a weak reference: when its value is a **bare id** (matches the `[A-Za-z_]\w*` identifier shape with no dot), the validator MAY warn on an unresolved target — this catches typos. When the value is a **dotted form** (`<connector>.<operation>`) or a **URL-like string**, it is treated as opaque and is not validated. This matches the §9.5 rationale: bare ids look like in-diagram references and are guarded; richer forms are downstream-tooling territory.
+- **Weak references by convention.** The `connectorRef` metadata key (§9) is a weak reference: when its value is a **bare id** (matches the `[A-Za-z_]\w*` identifier shape with no dot), the validator resolves it against the node namespace and emits `CONNECTOR_REF_UNRESOLVED` if no node matches, or `CONNECTOR_REF_NOT_A_CONNECTOR` if the matching node lacks connector configuration fields (§9.1). Both are warnings in v0.5.0 and errors in v1.0. When the value is a **dotted form** (`<connector>.<operation>`) or a **URL-like string**, it is treated as opaque and is not validated. This matches the §9.5 rationale: bare ids look like in-diagram references and are guarded; richer forms are downstream-tooling territory.
 - **External / hygiene references** are validated for shape and allowed usage, but not for existence of the external target unless an import resolver is explicitly enabled. Members: `src`, `click` / `href` targets, and `class` / `style` references.
 
 ### 10.2 Legacy `type` on Reference Nodes
@@ -1307,7 +1312,7 @@ A conformance fixture set ships alongside this specification. Implementations SH
 The fixture directory `agentflow-conformance/` contains:
 
 - **Valid minimal examples** — one fixture per semantic pattern (container types, edge operators, instance shapes, tool definitions, connector bindings, type / template references, capability evaluation).
-- **Negative examples** — duplicate names, kind mismatches, cyclic `def`, invalid metadata placement, invalid capability sets, invalid containment, ambiguous reference resolution, malformed container-boundary cases, unresolved `connector` bindings.
+- **Negative examples** — duplicate names, kind mismatches, cyclic `def`, invalid metadata placement, invalid capability sets, invalid containment, ambiguous reference resolution, malformed container-boundary cases, unresolved `connectorRef` bindings, `connectorRef` resolving to a non-connector-designated node.
 - **Edge-semantics fixtures** asserting the canonical mapping on every operator.
 
 Each fixture declares its expected outcome: `valid`, `warning`, or `error`, plus the specific message identifier where applicable.

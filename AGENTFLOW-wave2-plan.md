@@ -80,11 +80,14 @@ Wave 2 lands as five PRs (plus the optional spec-doc PR 6 and the changeset PR 7
 - Base: `feature/agentflow-readiness-v0.5.0` (independent of PR 1; safe to open in parallel).
 - **No grammar change, no new keyword.** Per `AGENTFLOW-SYNTAX.md` §9 (revision 6), connectors are metadata bindings; this PR adds the optional reference-resolution validator on top.
 - Changes:
-  - `agentflowDb.ts` — extend the post-parse validator chain with `validateConnectorReferences()`. For every node tagged `@{ connector: "<id>" }`:
-    - If the value is a bare id (`"github_mcp"`), resolve it against the diagram's nodes. If unresolved AND the value also doesn't look like a dotted-operation form (`"github.create_issue"`) or URL-ish, emit `CONNECTOR_REF_UNRESOLVED`.
-    - The dotted form (`"<connector>.<operation>"`) is treated as opaque — downstream tooling parses it; the validator does not require the bare connector id to exist as a node either, since the convention is downstream-defined.
-    - Behaviour intentionally permissive in v0.6.0; the validator is a guard against typos in the bare-id case, not strict enforcement. The strict-flip lands in wave 3 only if `connector` graduates to a first-class category per §9.4.
-  - `diagnostics.ts` — new `CONNECTOR_REF_UNRESOLVED` warning ID. Warn-only.
+  - `agentflowDb.ts` — extend the post-parse validator chain with `validateConnectorReferences()`. For every tool definition (per §8) tagged `@{ connectorRef: "<value>" }`:
+    - If the value is a **bare id** (matches `[A-Za-z_]\w*` with no dot), resolve it against the diagram's nodes:
+      - no node with that id → emit `CONNECTOR_REF_UNRESOLVED`;
+      - matching node lacks any of the connector configuration fields (`protocol`, `endpoint`, `transport`, `command`, `auth`, `token_required`) → emit `CONNECTOR_REF_NOT_A_CONNECTOR`;
+      - matching node is connector-designated → resolves cleanly, no diagnostic.
+    - The **dotted form** (`"<connector>.<operation>"`) and **URL-like strings** are treated as opaque — downstream tooling parses them; the validator emits no diagnostic regardless of resolution.
+    - Behaviour intentionally permissive in v0.6.0; both warnings flip to errors in v1.0 per the spec's staged-rollout rule.
+  - `diagnostics.ts` — two new warning IDs: `CONNECTOR_REF_UNRESOLVED` and `CONNECTOR_REF_NOT_A_CONNECTOR`. Both warn-only in v0.6.0.
   - Tests: ≥ 8 cases — bare-id binding to an existing node (no warning), bare-id binding to a missing node (warn), dotted-operation form (no warning regardless of resolution), URL-ish value (no warning), connector node grouped in `subgraph connectors` resolves cleanly, dangling connector node with no bindings (no warning — connector nodes are valid standalone).
 
 ### PR 3 — _withdrawn_
@@ -120,8 +123,9 @@ PR 3 originally proposed `validateConnectorBindings()` as a strict-resolution va
 - Changes (in `packages/mermaid/src/diagrams/agentflow/conformance/fixtures/`):
   - **§19.1 Tool Call** — already covered in wave-1 corpus. Verify it asserts the derived `vertexKind: 'tool'` from PR 1.
   - **§19.5 Directive** — verify present in wave-1 corpus; if not, add.
-  - **§19.8 Connector** — uses the metadata-based connector form (subgraph + binding metadata). Asserts `CONNECTOR_REF_UNRESOLVED` does **not** fire on a valid binding.
-  - **`pattern-connector-ref-unresolved`** — tool with `@{ connector: "missing_node" }` (bare-id form) → asserts `CONNECTOR_REF_UNRESOLVED`.
+  - **§19.8 Connector** — uses the metadata-based connector form (subgraph + connector-designated nodes + tool `connectorRef` bindings). Asserts neither `CONNECTOR_REF_UNRESOLVED` nor `CONNECTOR_REF_NOT_A_CONNECTOR` fires on valid bindings.
+  - **`pattern-connector-ref-unresolved`** — tool with `@{ connectorRef: "missing_node" }` (bare-id form) → asserts `CONNECTOR_REF_UNRESOLVED`.
+  - **`pattern-connector-ref-not-a-connector`** — tool with `@{ connectorRef: "<existing-but-non-connector-node>" }` → asserts `CONNECTOR_REF_NOT_A_CONNECTOR`.
   - **`pattern-connector-dotted-form`** — tool with `@{ connector: "github.create_issue" }` (dotted-operation form) → asserts NO warning even when `github` isn't a declared node, per the spec's opaque-string treatment of the dotted form.
   - **`pattern-instance-tool`** — `win-pane` instance whose `def` points at a `shape: subroutine` node. Asserts inheritance and that structure is not cloned.
   - **`pattern-instance-mismatch-warn`** — `win-pane` whose `def` points at a non-tool node → asserts `INSTANCE_KIND_MISMATCH`.
@@ -155,7 +159,7 @@ Every PR runs:
 Additionally:
 
 - **PR 1** — render an existing `shape: subroutine` fixture; confirm zero behavioural change at the visual layer; only the diagnostic surface changes. Run the wave-1 conformance corpus and confirm no new warnings.
-- **PR 2** — confirm `CONNECTOR_REF_UNRESOLVED` surfaces on `getDiagnostics()` with `nodeId` populated for the bare-id miss case; confirm dotted-form bindings emit no warning.
+- **PR 2** — confirm `CONNECTOR_REF_UNRESOLVED` surfaces for the bare-id miss case; `CONNECTOR_REF_NOT_A_CONNECTOR` surfaces when the bare id resolves but the target lacks connector configuration fields; dotted-form and URL-like bindings emit no warning regardless of resolution.
 - **PR 4** — high-confidence test coverage matters because instance resolution touches metadata semantics; ≥ 50 cases per Action 4.
 - **PR 5** — runner output must be deterministic (run twice, diff empty).
 
