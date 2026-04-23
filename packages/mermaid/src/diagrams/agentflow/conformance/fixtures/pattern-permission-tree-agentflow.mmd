@@ -1,9 +1,11 @@
-%% §19.3 Permission Tree Pattern — hierarchy edges (-->>), hex categories, terminal leaves.
+%% §19.3 Capability Taxonomy Pattern — classification uses `---`
+%% (association), not delegation. Hex categories are classification
+%% sources (§4.2); terminal leaves are granular permissions.
 agentflow TB
-  all -->> data
-  all -->> llm
-  data -->> data_read
-  data -->> data_write
+  all --- data
+  all --- llm
+  data --- data_read
+  data --- data_write
 
   all@{ shape: hex }
   data@{ shape: hex }

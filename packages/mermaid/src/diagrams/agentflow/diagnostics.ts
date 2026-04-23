@@ -138,6 +138,20 @@ export const AgentflowWarning = {
    * future `agentflow.strictContainment` flag.
    */
   CONTAINMENT_VIOLATION: 'CONTAINMENT_VIOLATION',
+  /**
+   * An edge's §5.1 primary semantic is incompatible with the kinds of
+   * its endpoints. Three specific cases:
+   *   - `-->>` (delegation) source is not an agent container.
+   *   - `--x`  (failure)    source is not an agent container.
+   *   - `--o`  (conformance) target is not a reference node (`procs`).
+   *
+   * Container-boundary violations for `==>` (data into a container
+   * without a `params`/`returns` contract) are covered by PR E's
+   * `CONTAINER_EDGE_*` diagnostics and are NOT this ID. Warn-only in
+   * v0.5.0; error from v1.0 behind the future
+   * `agentflow.legacyEdgeSemantics` flag.
+   */
+  EDGE_SEMANTIC_CONTRADICTION: 'EDGE_SEMANTIC_CONTRADICTION',
 } as const;
 
 export type AgentflowWarningId = (typeof AgentflowWarning)[keyof typeof AgentflowWarning];
