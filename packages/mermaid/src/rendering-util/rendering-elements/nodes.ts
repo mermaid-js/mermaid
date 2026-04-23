@@ -20,7 +20,7 @@ export async function insertNode(
   let el;
 
   //special check for rect shape (with or without rounded corners)
-  if (node.shape === 'rect') {
+  if (node.shape && node.shape === 'rect') {
     if (node.rx && node.ry) {
       node.shape = 'roundedRect';
     } else {
