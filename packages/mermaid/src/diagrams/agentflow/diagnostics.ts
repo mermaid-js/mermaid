@@ -104,6 +104,32 @@ export const AgentflowWarning = {
    * error from v1.0.
    */
   REFERENCE_UNRESOLVED: 'REFERENCE_UNRESOLVED',
+  /**
+   * A `procs` reference node carries two or more of `typeRef`,
+   * `templateRef`, `src` — per §10.2, exactly one should be present.
+   * Warn-only in v0.5.0; error from v1.0.
+   */
+  REF_KIND_CONFLICT: 'REF_KIND_CONFLICT',
+  /**
+   * A `procs` reference node uses the generic legacy `type` metadata
+   * key. Per §10.2, authors should use explicit `typeRef` or
+   * `templateRef`. The legacy form is accepted for back-compat.
+   * Warn-only in v0.5.0; removed in v1.0.
+   */
+  REF_KIND_LEGACY_DEPRECATED: 'REF_KIND_LEGACY_DEPRECATED',
+  /**
+   * Legacy `type` on a `procs` node resolves to names declared in BOTH
+   * the type and template namespaces — §10.2 trichotomy's ambiguous
+   * case. The author must disambiguate with `typeRef` or `templateRef`.
+   * Warn-only in v0.5.0; error from v1.0.
+   */
+  REF_KIND_LEGACY_AMBIGUOUS: 'REF_KIND_LEGACY_AMBIGUOUS',
+  /**
+   * Legacy `type` on a `procs` node resolves to NEITHER the type nor
+   * the template namespace — §10.2 trichotomy's unresolved case.
+   * Warn-only in v0.5.0; error from v1.0.
+   */
+  REF_KIND_LEGACY_UNRESOLVED: 'REF_KIND_LEGACY_UNRESOLVED',
 } as const;
 
 export type AgentflowWarningId = (typeof AgentflowWarning)[keyof typeof AgentflowWarning];

@@ -2186,6 +2186,67 @@ You have to call mermaid.initialize.`
     }
   }
 
+  /**
+   * Per `AGENTFLOW-SYNTAX.md` §10.2: a `procs` reference node must carry
+   * at most one of `typeRef` / `templateRef` / `src`; multiple values
+   * emit `REF_KIND_CONFLICT`. The legacy `type` key is accepted with a
+   * deprecation warning and resolved through the three-case rule.
+   *
+   * The rule is scoped to the `procs` shape — `type` on a non-procs
+   * node is not a reference key and is not affected.
+   */
+  private validateReferenceKinds(): void {
+    for (const [id, vertex] of this.vertices) {
+      if (vertex.type !== 'procs') {
+        continue;
+      }
+      const metadata = vertex.metadata ?? {};
+      const hasTypeRef = typeof metadata.typeRef === 'string' && metadata.typeRef.length > 0;
+      const hasTemplateRef =
+        typeof metadata.templateRef === 'string' && metadata.templateRef.length > 0;
+      const hasSrc = typeof metadata.src === 'string' && metadata.src.length > 0;
+      const modernCount = Number(hasTypeRef) + Number(hasTemplateRef) + Number(hasSrc);
+      if (modernCount >= 2) {
+        this.emitWarning(
+          'REF_KIND_CONFLICT',
+          `reference node "${id}" has multiple of typeRef / templateRef / src set — pick exactly one (see AGENTFLOW-SYNTAX.md §10.2)`,
+          { nodeId: id }
+        );
+      }
+
+      const legacy = metadata.type;
+      if (typeof legacy !== 'string' || legacy.length === 0) {
+        continue;
+      }
+      this.emitWarning(
+        'REF_KIND_LEGACY_DEPRECATED',
+        `reference node "${id}" uses the legacy \`type\` key — use \`typeRef\` or \`templateRef\` instead (see AGENTFLOW-SYNTAX.md §10.2)`,
+        { nodeId: id }
+      );
+
+      // Trichotomy resolution only applies when the author has NOT also
+      // written a modern key — the modern key is authoritative.
+      if (modernCount > 0) {
+        continue;
+      }
+      const matchesType = this.typeDeclarations.has(legacy);
+      const matchesTemplate = this.templateDeclarations.has(legacy);
+      if (matchesType && matchesTemplate) {
+        this.emitWarning(
+          'REF_KIND_LEGACY_AMBIGUOUS',
+          `legacy \`type: "${legacy}"\` on "${id}" matches both a type and a template — use typeRef or templateRef to disambiguate (see AGENTFLOW-SYNTAX.md §10.2)`,
+          { nodeId: id }
+        );
+      } else if (!matchesType && !matchesTemplate) {
+        this.emitWarning(
+          'REF_KIND_LEGACY_UNRESOLVED',
+          `legacy \`type: "${legacy}"\` on "${id}" does not match any declared type or template (see AGENTFLOW-SYNTAX.md §10.2)`,
+          { nodeId: id }
+        );
+      }
+    }
+  }
+
   /** Run every post-parse diagnostic validator once per parse. */
   private runPostParseValidators(): void {
     if (this.postParseValidationRun) {
@@ -2197,6 +2258,7 @@ You have to call mermaid.initialize.`
     this.validateConnectorReferences();
     this.validateMetadataApplicability();
     this.resolveReferences();
+    this.validateReferenceKinds();
   }
 
   public getData() {
