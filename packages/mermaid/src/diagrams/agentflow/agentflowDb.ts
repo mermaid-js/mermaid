@@ -2443,6 +2443,171 @@ You have to call mermaid.initialize.`
     }
   }
 
+  /**
+   * Normalise a list-valued metadata key per §12.1. Returns an array
+   * regardless of whether the source was an array or a legacy
+   * comma-separated string. The legacy form emits
+   * `CAPABILITY_LIST_LEGACY_STRING` once per offending key per site.
+   * Returns `undefined` when the key is absent or empty.
+   */
+  private readCapabilityList(
+    siteId: string,
+    metadata: Record<string, unknown> | undefined,
+    key: 'permits' | 'requires' | 'deny' | 'fallbacks' | 'directives'
+  ): string[] | undefined {
+    if (!metadata) {
+      return undefined;
+    }
+    const raw = metadata[key];
+    if (Array.isArray(raw)) {
+      return raw.map((v) => String(v));
+    }
+    if (typeof raw === 'string' && raw.length > 0) {
+      this.emitWarning(
+        'CAPABILITY_LIST_LEGACY_STRING',
+        `\`${key}\` on "${siteId}" is a comma-separated string — use a YAML array (see AGENTFLOW-SYNTAX.md §12.1)`,
+        { nodeId: siteId }
+      );
+      return raw
+        .split(',')
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0);
+    }
+    return undefined;
+  }
+
+  /**
+   * Walk the structural parent chain of `id` (vertex or subgraph) to
+   * find the nearest enclosing `agent` subgraph. Returns that
+   * subgraph's id, or `undefined` when no ancestor agent exists.
+   */
+  private findEnclosingAgentId(id: string): string | undefined {
+    const parent = new Map<string, string>();
+    for (const sg of this.subGraphs) {
+      for (const childId of sg.nodes) {
+        parent.set(childId, sg.id);
+      }
+    }
+    let cursor: string | undefined = parent.get(id);
+    const seen = new Set<string>([id]);
+    while (cursor !== undefined && !seen.has(cursor)) {
+      seen.add(cursor);
+      const sg = this.subGraphLookup.get(cursor);
+      if (sg && sg.type === 'agent') {
+        return cursor;
+      }
+      cursor = parent.get(cursor);
+    }
+    return undefined;
+  }
+
+  /**
+   * Per `AGENTFLOW-SYNTAX.md` §12: for every tool invocation site,
+   * resolve the nearest enclosing agent and validate:
+   *
+   *     requires ⊆ permits  AND  requires ∩ deny = ∅
+   *
+   * Invocation sites are:
+   *   - vertices whose incoming edge terminates on a tool definition
+   *     (the edge's source is the invocation site for parent lookup);
+   *   - `win-pane` instance vertices whose resolved `def` chain (from
+   *     wave-2 `resolveInstances()`) lands on a tool.
+   *
+   * Tool definitions themselves are NOT invocation sites. Delegation
+   * (`-->>`) does not transfer capabilities — each invocation is
+   * checked against its own structural enclosing agent.
+   */
+  private validateCapabilities(): void {
+    const siteToTool: { siteId: string; toolId: string }[] = [];
+
+    // 1. Edges into a tool → the edge source is the invocation site.
+    for (const edge of this.edges) {
+      const target = this.vertices.get(edge.end);
+      if (!target || !this.isToolDefinition(target)) {
+        continue;
+      }
+      siteToTool.push({ siteId: edge.start, toolId: edge.end });
+    }
+
+    // 2. win-pane instances with a resolved tool def → the instance
+    //    is the invocation site; the tool is the chain's terminal.
+    for (const [id, vertex] of this.vertices) {
+      const shape = vertex.type as string | undefined;
+      if (shape !== 'win-pane' && shape !== 'window-pane') {
+        continue;
+      }
+      const def = vertex.metadata?.def;
+      if (typeof def !== 'string' || def.length === 0) {
+        continue;
+      }
+      const visited = new Set<string>([id]);
+      let cursor: string = def;
+      let toolId: string | undefined;
+      while (!visited.has(cursor)) {
+        visited.add(cursor);
+        const target = this.vertices.get(cursor);
+        if (!target) {
+          break;
+        }
+        if (this.isToolDefinition(target)) {
+          toolId = cursor;
+          break;
+        }
+        const next = target.metadata?.def;
+        if (typeof next !== 'string' || next.length === 0) {
+          break;
+        }
+        cursor = next;
+      }
+      if (toolId) {
+        siteToTool.push({ siteId: id, toolId });
+      }
+    }
+
+    for (const { siteId, toolId } of siteToTool) {
+      const tool = this.vertices.get(toolId);
+      if (!tool) {
+        continue;
+      }
+      const requires = this.readCapabilityList(toolId, tool.metadata, 'requires') ?? [];
+      const deny = this.readCapabilityList(toolId, tool.metadata, 'deny') ?? [];
+      if (requires.length === 0 && deny.length === 0) {
+        continue;
+      }
+
+      const agentId = this.findEnclosingAgentId(siteId);
+      if (agentId === undefined) {
+        this.emitWarning(
+          'CAPABILITY_INVOCATION_NO_AGENT',
+          `tool invocation at "${siteId}" has no enclosing agent (see AGENTFLOW-SYNTAX.md §12)`,
+          { nodeId: siteId }
+        );
+        continue;
+      }
+      const agentSub = this.subGraphLookup.get(agentId);
+      const permits = this.readCapabilityList(agentId, agentSub?.metadata, 'permits') ?? [];
+      const permitsSet = new Set(permits);
+      const denySet = new Set(deny);
+
+      for (const cap of requires) {
+        if (!permitsSet.has(cap)) {
+          this.emitWarning(
+            'CAPABILITY_MISSING',
+            `tool "${toolId}" requires "${cap}" but agent "${agentId}" does not grant it (see AGENTFLOW-SYNTAX.md §12)`,
+            { nodeId: siteId }
+          );
+        }
+        if (denySet.has(cap)) {
+          this.emitWarning(
+            'CAPABILITY_DENIED',
+            `tool "${toolId}" requires "${cap}" but its own deny list forbids it (see AGENTFLOW-SYNTAX.md §12)`,
+            { nodeId: siteId }
+          );
+        }
+      }
+    }
+  }
+
   /** Run every post-parse diagnostic validator once per parse. */
   private runPostParseValidators(): void {
     if (this.postParseValidationRun) {
@@ -2457,6 +2622,7 @@ You have to call mermaid.initialize.`
     this.validateReferenceKinds();
     this.validateContainment();
     this.validateEdgeEndpointKinds();
+    this.validateCapabilities();
   }
 
   public getData() {

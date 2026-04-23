@@ -152,6 +152,32 @@ export const AgentflowWarning = {
    * `agentflow.legacyEdgeSemantics` flag.
    */
   EDGE_SEMANTIC_CONTRADICTION: 'EDGE_SEMANTIC_CONTRADICTION',
+  /**
+   * A list-valued metadata key (`permits`, `requires`, `deny`,
+   * `fallbacks`, `directives`) was authored as a comma-separated
+   * string instead of a YAML array. Per §12.1 the array form is
+   * canonical. The string form is accepted and split on commas for
+   * validation. Warn-only in v0.5.0; removed in v1.0.
+   */
+  CAPABILITY_LIST_LEGACY_STRING: 'CAPABILITY_LIST_LEGACY_STRING',
+  /**
+   * A tool invocation's `requires` includes a capability not in the
+   * executing agent's `permits`. Per §12 requires MUST be a subset of
+   * permits. Warn-only in v0.5.0; error from v1.0.
+   */
+  CAPABILITY_MISSING: 'CAPABILITY_MISSING',
+  /**
+   * A tool's `requires` and its `deny` sets share a capability —
+   * invoking it would violate §12's `requires ∩ deny = ∅` rule.
+   * Warn-only in v0.5.0; error from v1.0.
+   */
+  CAPABILITY_DENIED: 'CAPABILITY_DENIED',
+  /**
+   * A tool invocation site has no enclosing `agent` container, so the
+   * §12 executing-agent rule cannot resolve permits. Warn-only in
+   * v0.5.0; error from v1.0.
+   */
+  CAPABILITY_INVOCATION_NO_AGENT: 'CAPABILITY_INVOCATION_NO_AGENT',
 } as const;
 
 export type AgentflowWarningId = (typeof AgentflowWarning)[keyof typeof AgentflowWarning];
