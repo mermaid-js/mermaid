@@ -68,6 +68,7 @@ export class ArchitectureDB implements DiagramDB {
     commonClear();
   }
 
+  // TODO: Remove comment later
   public addService({
     id,
     icon,
