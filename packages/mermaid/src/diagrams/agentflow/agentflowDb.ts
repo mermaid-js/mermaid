@@ -29,6 +29,7 @@ import type {
   AgentflowElementMapping,
   AgentflowSemanticModel,
   AgentflowStatementType,
+  EdgeSemantic,
   ElementPosition,
   FlowClass,
   FlowEdge,
@@ -546,6 +547,9 @@ export class AgentFlowDB implements DiagramDB {
       edge.type = type.type;
       edge.stroke = type.stroke;
       edge.length = type.length > 10 ? 10 : type.length;
+      if (type.edgeSemantic) {
+        edge.edgeSemantic = type.edgeSemantic;
+      }
     }
     if (id && !this.edges.some((e) => e.id === id)) {
       edge.id = id;
@@ -1126,6 +1130,49 @@ You have to call mermaid.initialize.`
     return false;
   }
 
+  /**
+   * Maps the post-`destructLink` `(type, stroke)` pair onto the canonical
+   * `edgeSemantic` value defined by `AGENTFLOW-SYNTAX.md` §5.1. Returns
+   * `undefined` for combinations not enumerated in the spec table (e.g.
+   * `<-->` → `double_arrow_point`/`normal`).
+   */
+  private computeEdgeSemantic(
+    type: string | undefined,
+    stroke: string | undefined
+  ): EdgeSemantic | undefined {
+    if (!type || !stroke) {
+      return undefined;
+    }
+    if (stroke === 'invisible') {
+      return undefined;
+    }
+    switch (type) {
+      case 'arrow_point':
+        if (stroke === 'normal') {
+          return 'control';
+        }
+        if (stroke === 'thick') {
+          return 'data';
+        }
+        if (stroke === 'dotted') {
+          return 'governance';
+        }
+        return undefined;
+      case 'arrow_circle':
+        return stroke === 'normal' ? 'conformance' : undefined;
+      case 'arrow_hierarchy':
+        return stroke === 'normal' ? 'delegation' : undefined;
+      case 'arrow_cross':
+        return stroke === 'normal' ? 'failure' : undefined;
+      case 'arrow_open':
+        return stroke === 'normal' ? 'association' : undefined;
+      case 'double_arrow_circle':
+        return stroke === 'normal' ? 'bidirectional' : undefined;
+      default:
+        return undefined;
+    }
+  }
+
   private destructStartLink(_str: string): FlowLink {
     let str = _str.trim();
     let type = 'arrow_open';
@@ -1252,10 +1299,16 @@ You have to call mermaid.initialize.`
       }
 
       startInfo.length = info.length;
-      return startInfo;
+      return {
+        ...startInfo,
+        edgeSemantic: this.computeEdgeSemantic(startInfo.type, startInfo.stroke),
+      };
     }
 
-    return info;
+    return {
+      ...info,
+      edgeSemantic: this.computeEdgeSemantic(info.type, info.stroke),
+    };
   }
 
   // Todo optimizer this by caching existing nodes
@@ -1787,6 +1840,9 @@ You have to call mermaid.initialize.`
       }
       if (e.stroke !== undefined) {
         edge.stroke = e.stroke;
+      }
+      if (e.edgeSemantic !== undefined) {
+        edge.edgeSemantic = e.edgeSemantic;
       }
       if (e.length !== undefined) {
         edge.length = e.length;

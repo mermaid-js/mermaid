@@ -548,9 +548,9 @@ link: linkStatement arrowText
     | linkStatement
     {$$ = $linkStatement;}
     | START_LINK edgeText LINK
-        {var inf = yy.destructLink($LINK, $START_LINK); $$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"text":$edgeText};}
+        {var inf = yy.destructLink($LINK, $START_LINK); $$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"edgeSemantic":inf.edgeSemantic,"text":$edgeText};}
     | LINK_ID START_LINK edgeText LINK
-        {var inf = yy.destructLink($LINK, $START_LINK); $$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"text":$edgeText, "id": $LINK_ID};}
+        {var inf = yy.destructLink($LINK, $START_LINK); $$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"edgeSemantic":inf.edgeSemantic,"text":$edgeText, "id": $LINK_ID};}
     ;
 
 edgeText: edgeTextToken
@@ -565,9 +565,9 @@ edgeText: edgeTextToken
 
 
 linkStatement: LINK
-        {var inf = yy.destructLink($LINK);$$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length};}
+        {var inf = yy.destructLink($LINK);$$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"edgeSemantic":inf.edgeSemantic};}
     | LINK_ID LINK
-        {var inf = yy.destructLink($LINK);$$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length, "id": $LINK_ID};}
+        {var inf = yy.destructLink($LINK);$$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"edgeSemantic":inf.edgeSemantic, "id": $LINK_ID};}
         ;
 
 arrowText:
