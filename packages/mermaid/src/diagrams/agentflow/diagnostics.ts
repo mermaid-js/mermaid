@@ -29,13 +29,28 @@ export const AgentflowWarning = {
    */
   HEXAGON_MULTI_BRANCH: 'HEXAGON_MULTI_BRANCH',
   /**
-   * A `win-pane` instance's `def` resolves to a node that is not a
-   * tool definition (§8 / §11.2). Per the spec, win-pane may
-   * reference only nodes whose resolved shape is `subroutine` (or an
-   * accepted alias). Wave-2 PR 4 will extend this validator to cover
-   * the other four instance shape→kind pairs.
+   * An instance shape's `def` resolves to a target whose kind does not
+   * match the §11.1 target matrix. Fires for all five shape→kind pairs:
+   *   tag-rect  → agent    container
+   *   delay     → flow     container
+   *   lin-rect  → skill    container
+   *   win-pane  → tool     definition (shape: subroutine)
+   *   curv-trap → directive container
+   *
+   * Warn-only in v0.6.0; error from v1.0.
    */
   INSTANCE_KIND_MISMATCH: 'INSTANCE_KIND_MISMATCH',
+  /**
+   * An instance shape has no resolvable `def`: the metadata key is absent
+   * or empty, or points to an identifier that matches neither a vertex nor
+   * a subgraph. Per §11.2. Warn-only in v0.6.0; error from v1.0.
+   */
+  INSTANCE_DEF_MISSING: 'INSTANCE_DEF_MISSING',
+  /**
+   * An instance's `def` chain cycles back on itself — self-loop or multi-
+   * hop. Per §11.2. Warn-only in v0.6.0; error from v1.0.
+   */
+  INSTANCE_DEF_CYCLE: 'INSTANCE_DEF_CYCLE',
   /**
    * A `connectorRef` metadata value (§9.1) is a bare id that doesn't
    * resolve to any node in the diagram. Catches typos. Warn-only in

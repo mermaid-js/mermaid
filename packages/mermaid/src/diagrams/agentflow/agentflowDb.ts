@@ -78,8 +78,15 @@ const TEMPLATE_FIELD_RE = /^([A-Z_a-z]\w*)\s*:\s*(\w+)(?:\s*\*\s*(\d+))?\s*<<([^
  * else in `@{...}` metadata — `model`, `permits`, `requires`, `deny`,
  * `params`, `returns`, `strategy`, `protocol`, `connector`, etc. — carries
  * semantic weight and flows through.
+ *
+ * `shape` is listed here (since wave-2 PR 4) because shape is surfaced as
+ * a first-class field on `SemanticVertex.shape`; keeping a duplicate under
+ * `metadata.shape` would just be noise. The same set is also consulted when
+ * merging inherited metadata on instance resolution (§11.3: shape does not
+ * inherit).
  */
 const SEMANTIC_METADATA_SKIP_KEYS = new Set([
+  'shape',
   'view',
   'icon',
   'img',
@@ -106,6 +113,38 @@ const SUBROUTINE_ALIASES = new Set<string>([
   'subproc',
   'framed-rectangle',
 ]);
+
+/**
+ * The five instance shapes and the kind of definition each must target per
+ * `AGENTFLOW-SYNTAX.md` §11.1. Each shape is listed with its canonical name
+ * and the spec-explicit alias; broader shape-registry aliases (e.g.
+ * `tag-proc`, `lined-process`) are deliberately not in scope until the spec
+ * names them. Kind `'tool'` resolves against the vertex namespace and is
+ * satisfied by `isToolDefinition()`; the four container kinds resolve
+ * against the subgraph namespace and are satisfied by a `FlowSubGraph`
+ * whose `type` matches.
+ */
+type InstanceDefKind = 'tool' | 'agent' | 'flow' | 'skill' | 'directive';
+const INSTANCE_SHAPE_TO_KIND: Readonly<Record<string, InstanceDefKind>> = {
+  'win-pane': 'tool',
+  'window-pane': 'tool',
+  'tag-rect': 'agent',
+  'tagged-rectangle': 'agent',
+  delay: 'flow',
+  'half-rounded-rectangle': 'flow',
+  'lin-rect': 'skill',
+  'lined-rectangle': 'skill',
+  'curv-trap': 'directive',
+  'curved-trapezoid': 'directive',
+};
+
+/**
+ * Metadata keys that never inherit through the def chain. `def` is
+ * excluded because it is structural wiring, not domain metadata; the
+ * other keys are the §13 presentation-only set reused from the semantic
+ * projection.
+ */
+const INSTANCE_INHERITANCE_SKIP_KEYS = new Set<string>([...SEMANTIC_METADATA_SKIP_KEYS, 'def']);
 
 /**
  * Metadata keys whose presence designates a node as a **connector** per
@@ -185,6 +224,16 @@ export class AgentFlowDB implements DiagramDB {
    * (idempotent `getData()` calls). Resettable via `clear()`.
    */
   private postParseValidationRun = false;
+
+  /**
+   * Populated by `resolveInstances()` per AGENTFLOW-SYNTAX.md §11.3 — keyed
+   * by the instance vertex id, value is the merged domain metadata (def
+   * chain inherited, local overrides applied). Surfaced by
+   * `getSemanticModel()` as `SemanticVertex.resolvedMetadata`. Only
+   * populated for instance-shape vertices whose chain fully resolved
+   * (no missing def, no cycle, no kind mismatch).
+   */
+  private resolvedInstanceMetadata = new Map<string, Record<string, unknown>>();
 
   // Functions to be run after graph rendering
   private funs: ((element: Element) => void)[] = []; // cspell:ignore funs
@@ -966,6 +1015,7 @@ You have to call mermaid.initialize.`
     this.elementMappings = [];
     this.diagnostics = [];
     this.postParseValidationRun = false;
+    this.resolvedInstanceMetadata = new Map();
     commonClear();
   }
 
@@ -1572,40 +1622,171 @@ You have to call mermaid.initialize.`
   }
 
   /**
-   * Per `AGENTFLOW-SYNTAX.md` §11.2: a `win-pane` instance's `def` MUST
-   * resolve to a tool definition (a node whose resolved shape is
-   * `subroutine` or an accepted alias). When the def resolves to a node
-   * that exists but is NOT a tool, emit `INSTANCE_KIND_MISMATCH`.
-   *
-   * Out of scope here (covered by PR 4): missing `def`
-   * (`INSTANCE_DEF_MISSING`), cyclic `def` chains (`INSTANCE_DEF_CYCLE`),
-   * and the kind validation for the other four instance shapes
-   * (`tag-rect` → agent, `delay` → flow, `lin-rect` → skill,
-   * `curv-trap` → directive).
+   * Returns a vertex's domain metadata — its authored metadata with the
+   * presentation-only and structural-wiring keys stripped per §11.3.
+   * Used both by the inheritance merge and the instance's own local layer.
    */
-  private validateInstanceTargets(): void {
+  private domainMetadataOfVertex(vertex: FlowVertex): Record<string, unknown> {
+    if (!vertex.metadata) {
+      return {};
+    }
+    const out: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(vertex.metadata)) {
+      if (INSTANCE_INHERITANCE_SKIP_KEYS.has(key)) {
+        continue;
+      }
+      out[key] = value;
+    }
+    return out;
+  }
+
+  private domainMetadataOfSubGraph(sg: FlowSubGraph): Record<string, unknown> {
+    if (!sg.metadata) {
+      return {};
+    }
+    const out: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(sg.metadata)) {
+      if (INSTANCE_INHERITANCE_SKIP_KEYS.has(key)) {
+        continue;
+      }
+      out[key] = value;
+    }
+    return out;
+  }
+
+  /**
+   * Per `AGENTFLOW-SYNTAX.md` §11: for every vertex carrying an instance
+   * shape (`tag-rect`, `delay`, `lin-rect`, `win-pane`, `curv-trap`),
+   * resolve its `def` chain and:
+   *
+   *   1. Emit `INSTANCE_DEF_MISSING` if `def` is absent, empty, or points
+   *      to an id that matches neither a vertex nor a subgraph.
+   *   2. Emit `INSTANCE_DEF_CYCLE` if the chain cycles (self-loop or
+   *      multi-hop). Suppresses kind and missing-def warnings for the
+   *      affected instance — the cycle is the root cause.
+   *   3. Emit `INSTANCE_KIND_MISMATCH` when the chain's terminal target
+   *      is the wrong kind for the instance shape per §11.1.
+   *   4. On clean resolution, compute the merged domain metadata
+   *      (deepest def → local, local wins on collision, presentation /
+   *      structural keys stripped per §11.3) and stash it under the
+   *      instance id for `getSemanticModel()` to surface.
+   *
+   * Structure is not cloned into the instance site (§11.3) — this pass
+   * touches metadata only.
+   */
+  private resolveInstances(): void {
     for (const [id, vertex] of this.vertices) {
       const shape = vertex.type as string | undefined;
-      if (shape !== 'win-pane' && shape !== 'window-pane') {
+      if (shape === undefined) {
         continue;
       }
+      const expectedKind = INSTANCE_SHAPE_TO_KIND[shape];
+      if (expectedKind === undefined) {
+        continue;
+      }
+
       const def = vertex.metadata?.def;
       if (typeof def !== 'string' || def.length === 0) {
-        // Missing def — PR 4 will handle with INSTANCE_DEF_MISSING.
-        continue;
-      }
-      const target = this.vertices.get(def);
-      if (!target) {
-        // Unresolved def — also PR 4's domain.
-        continue;
-      }
-      if (!this.isToolDefinition(target)) {
         this.emitWarning(
-          'INSTANCE_KIND_MISMATCH',
-          `win-pane instance "${id}" has def "${def}" which is not a tool definition (a tool definition is a node with shape: subroutine — see AGENTFLOW-SYNTAX.md §8)`,
+          'INSTANCE_DEF_MISSING',
+          `${shape} instance "${id}" has no def (see AGENTFLOW-SYNTAX.md §11.2)`,
           { nodeId: id }
         );
+        continue;
       }
+
+      // Walk the chain from the instance's def outward. Each step is
+      // either a vertex (which may itself be another instance and carry
+      // a def metadata to follow) or a subgraph (terminal — containers
+      // are not instances themselves).
+      //
+      // `accumulated` holds the inherited metadata so far with the
+      // deepest definition's domain on the bottom and each closer def
+      // layered on top; we apply the instance's local layer last.
+      const visited = new Set<string>([id]);
+      const chainMetadata: Record<string, unknown>[] = [];
+      let cursor: string = def;
+      let cycleDetected = false;
+      let missingDetected = false;
+      let terminalKind: InstanceDefKind | null = null;
+
+      while (true) {
+        if (visited.has(cursor)) {
+          this.emitWarning(
+            'INSTANCE_DEF_CYCLE',
+            `${shape} instance "${id}" has a cyclic def chain (see AGENTFLOW-SYNTAX.md §11.2)`,
+            { nodeId: id }
+          );
+          cycleDetected = true;
+          break;
+        }
+        visited.add(cursor);
+
+        const targetVertex = this.vertices.get(cursor);
+        const targetSub = this.subGraphLookup.get(cursor);
+
+        if (targetSub) {
+          // Containers are terminal — resolve kind against the subgraph type.
+          chainMetadata.push(this.domainMetadataOfSubGraph(targetSub));
+          const sgType = targetSub.type;
+          if (
+            sgType === 'agent' ||
+            sgType === 'flow' ||
+            sgType === 'skill' ||
+            sgType === 'directive'
+          ) {
+            terminalKind = sgType;
+          }
+          break;
+        }
+
+        if (!targetVertex) {
+          this.emitWarning(
+            'INSTANCE_DEF_MISSING',
+            `${shape} instance "${id}" references def "${cursor}" which does not match any vertex or container (see AGENTFLOW-SYNTAX.md §11.2)`,
+            { nodeId: id }
+          );
+          missingDetected = true;
+          break;
+        }
+
+        chainMetadata.push(this.domainMetadataOfVertex(targetVertex));
+
+        const nextDef = targetVertex.metadata?.def;
+        if (typeof nextDef === 'string' && nextDef.length > 0) {
+          // Intermediate instance — follow the chain.
+          cursor = nextDef;
+          continue;
+        }
+
+        // Leaf vertex — terminal. Resolve kind from the vertex.
+        if (this.isToolDefinition(targetVertex)) {
+          terminalKind = 'tool';
+        }
+        break;
+      }
+
+      if (cycleDetected || missingDetected) {
+        continue;
+      }
+
+      if (terminalKind !== expectedKind) {
+        this.emitWarning(
+          'INSTANCE_KIND_MISMATCH',
+          `${shape} instance "${id}" has def "${def}" which does not resolve to a ${expectedKind} definition (see AGENTFLOW-SYNTAX.md §11.1)`,
+          { nodeId: id }
+        );
+        continue;
+      }
+
+      // Merge: deepest def's domain metadata on the bottom, each closer
+      // def on top, the instance's own local domain last.
+      const merged: Record<string, unknown> = {};
+      for (let i = chainMetadata.length - 1; i >= 0; i--) {
+        Object.assign(merged, chainMetadata[i]);
+      }
+      Object.assign(merged, this.domainMetadataOfVertex(vertex));
+      this.resolvedInstanceMetadata.set(id, merged);
     }
   }
 
@@ -1672,7 +1853,7 @@ You have to call mermaid.initialize.`
     }
     this.postParseValidationRun = true;
     this.validateHexagonBranching();
-    this.validateInstanceTargets();
+    this.resolveInstances();
     this.validateConnectorReferences();
   }
 
@@ -1947,6 +2128,9 @@ You have to call mermaid.initialize.`
   // diagnostics) are kept.
 
   public getSemanticModel(): AgentflowSemanticModel {
+    // Run the post-parse validators so that the semantic export includes
+    // up-to-date diagnostics and resolved-instance metadata.
+    this.runPostParseValidators();
     // Subgraph ids sometimes also appear in `this.vertices` when metadata
     // (`@{...}`) is attached to a container id — the metadata-attachment
     // path creates a placeholder vertex record. Those are NOT semantic
@@ -1967,6 +2151,10 @@ You have to call mermaid.initialize.`
       }
       if (this.isToolDefinition(v)) {
         vertex.vertexKind = 'tool';
+      }
+      const resolved = this.resolvedInstanceMetadata.get(id);
+      if (resolved) {
+        vertex.resolvedMetadata = resolved;
       }
       if (v.metadata && Object.keys(v.metadata).length > 0) {
         // Strip presentation-only keys from metadata passthrough.
