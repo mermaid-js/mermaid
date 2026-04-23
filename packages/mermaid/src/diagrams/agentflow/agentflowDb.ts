@@ -2608,6 +2608,79 @@ You have to call mermaid.initialize.`
     }
   }
 
+  /**
+   * Per `AGENTFLOW-SYNTAX.md` §5.5: when a data edge (`==>`) touches a
+   * container, the container must declare the matching contract:
+   * `params` for incoming edges, `returns` for outgoing. A multi-param
+   * container's incoming edge MUST carry a label that names one of
+   * the declared parameters.
+   *
+   * Precedence edges (`-->`) are always valid at container boundaries
+   * — they target the entry boundary on incoming, the completion
+   * boundary on outgoing. Other semantics (association, governance,
+   * bidirectional, conformance, delegation, failure) are not subject
+   * to §5.5.
+   */
+  private validateContainerEdges(): void {
+    for (const edge of this.edges) {
+      if (edge.edgeSemantic !== 'data') {
+        continue;
+      }
+      const startSub = this.subGraphLookup.get(edge.start);
+      const endSub = this.subGraphLookup.get(edge.end);
+      if (endSub) {
+        // Incoming data edge — container needs `params`.
+        const rawParams = endSub.metadata?.params;
+        const params = Array.isArray(rawParams)
+          ? rawParams.map((p) => String(p))
+          : typeof rawParams === 'string' && rawParams.length > 0
+            ? [rawParams]
+            : [];
+        if (params.length === 0) {
+          this.emitWarning(
+            'CONTAINER_EDGE_NO_CONTRACT',
+            `incoming data edge to "${edge.end}" but container declares no \`params\` (see AGENTFLOW-SYNTAX.md §5.5)`,
+            { edgeId: edge.id }
+          );
+        } else {
+          const label = typeof edge.text === 'string' ? edge.text.trim() : '';
+          if (label.length === 0) {
+            if (params.length > 1) {
+              this.emitWarning(
+                'CONTAINER_EDGE_LABEL_REQUIRED',
+                `incoming data edge to "${edge.end}" has no label but container declares ${params.length} params — label one (see AGENTFLOW-SYNTAX.md §5.5)`,
+                { edgeId: edge.id }
+              );
+            }
+            // single-param + no label = implicit binding, OK.
+          } else if (!params.includes(label)) {
+            this.emitWarning(
+              'CONTAINER_EDGE_LABEL_UNRESOLVED',
+              `incoming data edge label "${label}" does not match any declared param of "${edge.end}" (see AGENTFLOW-SYNTAX.md §5.5)`,
+              { edgeId: edge.id }
+            );
+          }
+        }
+      }
+      if (startSub) {
+        // Outgoing data edge — container needs `returns`.
+        const returns = startSub.metadata?.returns;
+        const hasReturns =
+          returns !== undefined &&
+          returns !== null &&
+          !(typeof returns === 'string' && returns.length === 0) &&
+          !(Array.isArray(returns) && returns.length === 0);
+        if (!hasReturns) {
+          this.emitWarning(
+            'CONTAINER_EDGE_NO_CONTRACT',
+            `outgoing data edge from "${edge.start}" but container declares no \`returns\` (see AGENTFLOW-SYNTAX.md §5.5)`,
+            { edgeId: edge.id }
+          );
+        }
+      }
+    }
+  }
+
   /** Run every post-parse diagnostic validator once per parse. */
   private runPostParseValidators(): void {
     if (this.postParseValidationRun) {
@@ -2623,6 +2696,7 @@ You have to call mermaid.initialize.`
     this.validateContainment();
     this.validateEdgeEndpointKinds();
     this.validateCapabilities();
+    this.validateContainerEdges();
   }
 
   public getData() {

@@ -178,6 +178,26 @@ export const AgentflowWarning = {
    * v0.5.0; error from v1.0.
    */
   CAPABILITY_INVOCATION_NO_AGENT: 'CAPABILITY_INVOCATION_NO_AGENT',
+  /**
+   * A data edge (`==>`) touches a container that doesn't declare the
+   * matching contract key — `params` for incoming, `returns` for
+   * outgoing. Per §5.5 data edges on containers without contracts
+   * are invalid. Warn-only in v0.5.0; error from v1.0.
+   */
+  CONTAINER_EDGE_NO_CONTRACT: 'CONTAINER_EDGE_NO_CONTRACT',
+  /**
+   * An incoming data edge to a container with multiple declared
+   * `params` has no label. Per §5.5 the label is required for
+   * multi-param containers and must name one of the parameters.
+   * Warn-only in v0.5.0; error from v1.0.
+   */
+  CONTAINER_EDGE_LABEL_REQUIRED: 'CONTAINER_EDGE_LABEL_REQUIRED',
+  /**
+   * An incoming data edge to a container with declared `params` has
+   * a label that doesn't match any declared parameter name. Per §5.5.
+   * Warn-only in v0.5.0; error from v1.0.
+   */
+  CONTAINER_EDGE_LABEL_UNRESOLVED: 'CONTAINER_EDGE_LABEL_UNRESOLVED',
 } as const;
 
 export type AgentflowWarningId = (typeof AgentflowWarning)[keyof typeof AgentflowWarning];
