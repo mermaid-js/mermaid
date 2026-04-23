@@ -2,7 +2,7 @@
 
 **Responds to:** `AGENTFLOW-downstream-readiness-review.md`
 **Target spec:** `AGENTFLOW-SYNTAX.md` v0.4.0
-**Status:** Proposal — revision 4 (polish: invocation-form scoping, legacy `type` fallback wording)
+**Status:** Proposal — revision 5 (pushback on the `tool` keyword; tools are now shape-based per action 5)
 **Authors:** Mermaid-Chart / Agentflow Team
 
 ## Purpose
@@ -19,26 +19,27 @@ The intent is that the original reviewer can read this top-to-bottom and say yes
 
 ## Revision history
 
-| Rev | Summary                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Initial point-by-point response to the readiness review.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| 2   | Revisions from the plan review: `tool` becomes a leaf declaration; type and template namespaces split; explicit executing-agent resolution rule for capability validation; `src` treated as external/hygiene, not a semantic-resolution target; presentation-only controls stripped from the **semantic export model** rather than the internal render model; `==>` remap re-framed as a versioned semantic migration with first-class `edgeSemantic` shipped in wave 1; container-boundary label tightened to a parameter-name binding; `description` broadened beyond artifact nodes; explicit note that containment defines structural validity, not execution ownership. |
-| 3   | Final tightening from the plan review: distinguish `tool` **definition** from **invocation**, with capability validation applying only at invocation sites; containment enforcement now runs in both `addSubGraph()` and `addTool()`; `tool` becomes a **context-sensitive** declaration keyword recognised only at statement start; outgoing container data edges addressed (`returns` is single-valued at the boundary); action 1 wording aligned with the `typeRef`/`templateRef` vocabulary; action 10 table simplified by cross-cutting `description`.                                                                                                                  |
-| 4   | Polish: invocation-form list scoped to v0.x/1.0 rather than implied-forever; legacy `type` fallback in action 9 restated as three explicit cases (single match → warn and accept; both match → error as ambiguous; neither matches → error as unresolved).                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| Rev | Summary                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Initial point-by-point response to the readiness review.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| 2   | Revisions from the plan review: `tool` becomes a leaf declaration; type and template namespaces split; explicit executing-agent resolution rule for capability validation; `src` treated as external/hygiene, not a semantic-resolution target; presentation-only controls stripped from the **semantic export model** rather than the internal render model; `==>` remap re-framed as a versioned semantic migration with first-class `edgeSemantic` shipped in wave 1; container-boundary label tightened to a parameter-name binding; `description` broadened beyond artifact nodes; explicit note that containment defines structural validity, not execution ownership.                                                                                                                                                                                                                                                 |
+| 3   | Final tightening from the plan review: distinguish `tool` **definition** from **invocation**, with capability validation applying only at invocation sites; containment enforcement now runs in both `addSubGraph()` and `addTool()`; `tool` becomes a **context-sensitive** declaration keyword recognised only at statement start; outgoing container data edges addressed (`returns` is single-valued at the boundary); action 1 wording aligned with the `typeRef`/`templateRef` vocabulary; action 10 table simplified by cross-cutting `description`.                                                                                                                                                                                                                                                                                                                                                                  |
+| 4   | Polish: invocation-form list scoped to v0.x/1.0 rather than implied-forever; legacy `type` fallback in action 9 restated as three explicit cases (single match → warn and accept; both match → error as ambiguous; neither matches → error as unresolved).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| 5   | Pushback on the `tool` keyword. Revision 2 had introduced `tool` as a first-class leaf declaration peer to `type` and `template`; revision 5 reverses that decision. The language already expresses tools through `shape: subroutine` and `win-pane` — adding a keyword would create a second representation for the same concept. Action 5 is rewritten around a shape-based tool definition model: a tool is any named node whose resolved shape is `subroutine`, with normative rules for definition vs invocation, what `win-pane` may reference, the canonical metadata contract, and where capability validation applies. A future-extension note flags `params`/`value`/`example` as candidate additive metadata for v0.6.0. The `connector` keyword (action separately tracked under issue #14) is unchanged — it represents a concept the language has no existing shape for, and the same argument does not apply. |
 
 ---
 
 ## Summary of the approach
 
-The review's conclusion is that the language is close to downstream-safe but leaves interpretation choices open in edge semantics, branching, instances, tools, containers, capabilities, references, metadata, and identifier scope. Our response follows the review's strategic recommendation: **keep the surface small, tighten the core**. We do not propose new surface syntax beyond the one missing keyword (`tool`) the review explicitly requests, and we do not propose new shapes.
+The review's conclusion is that the language is close to downstream-safe but leaves interpretation choices open in edge semantics, branching, instances, tools, containers, capabilities, references, metadata, and identifier scope. Our response follows the review's strategic recommendation: **keep the surface small, tighten the core**. We do not propose new author-facing keywords (the earlier-proposed `tool` keyword has been withdrawn — see action 5), and we do not propose new shapes. The one author-facing addition is the `connector` keyword (action separately tracked under issue #14) for a concept the language has no existing representation for.
 
 Actions land in three waves so downstream teams can migrate:
 
-| Wave | Version | Character                                                                                           | Actions                                                                                                           |
-| ---- | ------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| 1    | 0.5.0   | spec + warnings; first-class `edgeSemantic` in the exported model (legacy interpretation preserved) | 3, 11, 12, warn-only variants of 1, 7, 9, 10; non-strict part of 2                                                |
-| 2    | 0.6.0   | first-class declarations (additive)                                                                 | 5 (tool leaf declaration), 4 (instance binding + validation); conformance fixtures against the new edge semantics |
-| 3    | 1.0.0   | strict mode (breaking for non-conforming diagrams)                                                  | strict part of 2 (edge semantic contradictions become errors), 6 (container boundary), flip 1/7/8/9/10 to error   |
+| Wave | Version | Character                                                                                           | Actions                                                                                                                         |
+| ---- | ------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | 0.5.0   | spec + warnings; first-class `edgeSemantic` in the exported model (legacy interpretation preserved) | 3, 11, 12, warn-only variants of 1, 7, 9, 10; non-strict part of 2                                                              |
+| 2    | 0.6.0   | additive validators + the connector keyword                                                         | 5 (shape-based tool model + validators), 4 (instance binding + validation); conformance fixtures against the new edge semantics |
+| 3    | 1.0.0   | strict mode (breaking for non-conforming diagrams)                                                  | strict part of 2 (edge semantic contradictions become errors), 6 (container boundary), flip 1/7/8/9/10 to error                 |
 
 ---
 
@@ -162,51 +163,73 @@ Stroke is a rendering property of a semantic, not an independent axis. An operat
 
 ## 5. Tool-definition model
 
-**Gap.** No `tool` keyword. Tools are modelled as `shape: subroutine` nodes.
+**Gap.** Tools are modelled as `shape: subroutine` nodes today, but the language has no normative rules for what counts as a tool definition vs an invocation, what `win-pane` may reference, what metadata belongs to a tool, or where capability validation applies.
 
-A container with `end` that is not allowed to contain anything fights its own syntax. The right shape for `tool` is a **first-class leaf declaration**, peer to `type` and `template` rather than to `agent`/`flow`/`task`.
+**Pushback on earlier revision.** Earlier revisions of this document proposed a first-class `tool` keyword peer to `type` and `template`. We have reversed that decision.
 
-**Spec.** Introduce `tool` as a leaf declaration:
+The Agentflow language already has the ingredients to model tools without a new keyword:
 
-```
-tool <id>["Title"]
-<id>@{ returns: "SearchResults", requires: ["net.read"], retry: 2, cache: "24h" }
-```
+- nodes are the place where leaf elements live;
+- `subroutine` already means **a callable tool or function**;
+- `win-pane` already conceptually refers to a **tool definition**;
+- metadata fields like `params`, `returns`, `requires`, `retry`, etc. can already live on nodes.
 
-- No `end`. `tool` declares a single executable primitive and nothing more.
-- Tool metadata: `returns`, `requires`, `deny`, `retry`, `cache`, `validate`, `handler`, `transport`, `command` (per action 10).
-- The rendered form of a `tool` declaration uses the existing subroutine visual.
-- The `win-pane` instance shape references a `tool` definition (action 4).
-- `shape: subroutine` remains valid as a **legacy rendering alias** during migration. It is deprecated in wave 2 and removable after a quiet period if adoption confirms the new form is preferred.
+A `tool` keyword would create a **second representation** for something the language already expresses. The right move is to keep tools shape-based and tighten the surrounding semantics.
 
-**Definition vs invocation.** A `tool` declaration is a **definition**. It registers a reusable executable primitive in the diagram and by itself performs no work. Writing `tool search_web["Search Web"]` at the top level is valid and does not require an enclosing agent.
+**Spec.** Add a section _Tool Definition Model_ to `AGENTFLOW-SYNTAX.md` §8 (replacing the keyword-based wording from the previous revision):
 
-An **invocation** is a use of a tool from flow/execution context. The invocation forms supported in v0.x / 1.0 are:
+- A **tool definition** is a named node whose resolved shape is `subroutine`. Resolution covers both the canonical name (`@{ shape: subroutine }`) and its aliases (`subprocess`, `subproc`, `framed-rectangle`).
+- A tool definition is a **leaf node** — it has no `end`, no children, and is not a container.
+- The `win-pane` instance shape (action 4) MAY reference only nodes that resolve to a tool definition. A `win-pane` whose `def` points at a non-tool node is a validation error.
+- Capability validation (action 8) runs **only at invocation sites**, never at the definition site.
+- The canonical contract fields for a tool definition (consumed by tooling and capability evaluation) are:
+  - `params` — declared input parameter set (additive, see _Future extension_ below)
+  - `returns` — declared output type
+  - `requires` — capabilities required to invoke
+  - `deny` — capabilities forbidden at the invocation site
+  - `retry` — retry count or policy
+  - `cache` — caching directive (e.g. `"24h"`)
+  - `validate` — output validation method
+  - `handler` — execution handler descriptor
+  - `transport` — transport for remote handlers
+  - `command` — command line for stdio-based handlers
+  - `description` — cross-cutting documentation field (also valid on other authored elements per action 10)
 
-- an edge (typically `-->` or `==>`) from a task, flow, or skill node into the tool's ID, and
-- a `win-pane` **instance** (action 4) whose `def` points at the tool, placed inside an executing container.
+**Definition vs invocation.** This distinction is normative.
 
-Additional invocation forms may be introduced in a later version under the spec's additive-change rule.
+A **tool definition**:
 
-Capability validation (action 8) runs **only at invocation sites**, never at the definition site.
+- is a named node with `shape: subroutine` (or one of its aliases);
+- by itself performs no work;
+- is valid at the top level or inside any container the matrix (action 7) permits.
 
-**Grammar (`agentflow.jison`).**
+A **tool invocation**:
 
-- Add a `"tool"` lexer token alongside `TYPE_DECL` / `TEMPLATE_DECL` — line numbers in the 94–96 region.
-- Add a `toolDeclarationStatement` production parallel to `typeDeclarationStatement`:
-  - Parses `tool <idString> [SQS text SQE]`.
-  - Calls `yy.addTool(id, label)`; any subsequent `@{...}` on the same id attaches metadata through the existing vertex-metadata path.
-- `tool` is a **context-sensitive declaration keyword** — recognised only when it appears as the first token of a statement. In any other position (node ID, label text, edge endpoint, etc.) it continues to parse as a regular identifier. This is achieved by anchoring the lexer rule to statement-start (the same technique `type` and `template` already use in `agentflow.jison`) rather than by adding `tool` to the globally reserved keyword list. Existing diagrams that use `tool` as a bare ID in non-declaration positions continue to parse unchanged.
+- is a use of that tool from execution context;
+- supported invocation forms in v0.x / 1.0:
+  - an incoming edge (typically `-->` or `==>`) from a task, flow, or skill node into the tool definition's ID;
+  - a `win-pane` **instance** (action 4) whose `def` points at the tool definition and which is placed inside an executing container.
+
+Additional invocation forms may be added in a later version under the spec's additive-change rule. Capability validation runs at **invocation sites only**.
+
+**Grammar (`agentflow.jison`).** No grammar change. `subroutine` already lex-resolves through the existing shape-metadata path (`@{ shape: subroutine }`), and bare nodes of any name already parse. The validators added below run on the parsed model.
 
 **DB.**
 
-- `addTool(id, label)` creates a tool-kind vertex and registers it in the node/container namespace (action 1).
-- Tool nodes render with the `subroutine` visual by default.
-- No containment rules on `tool` are needed because it is a leaf — the containment matrix (action 7) simply omits it as a parent.
+- A new `getTools()` (or equivalent semantic-model accessor) returns the set of vertices that resolve to a tool definition. This is a derived view over `vertices`, not a separate kind tag — `vertex.type === 'subroutine'` (modulo alias normalisation) is the source of truth.
+- `validateInstanceTargets()` (action 4) emits a diagnostic when a `win-pane` instance's `def` resolves to a non-tool node.
+- `validateCapabilityInvocations()` (action 8) walks invocation sites only; tool definitions in isolation never trigger it.
 
-**Backward compat.** Fully additive. Existing `shape: subroutine` usage remains legal and continues to render the same visual.
+**Backward compat.** Fully additive. Existing diagrams keep working unchanged. Authors who already use `shape: subroutine` are using the canonical form and need no migration.
 
-**Tests.** ≥ 15 cases — bare `tool` declaration, tool with every metadata field, tool declared inside an agent/flow/task/skill (structural placement, not container nesting), `win-pane` instance resolving to a tool, `win-pane` with a non-tool `def` (error), legacy `shape: subroutine` node co-existing with a `tool` declaration.
+**Future extension (additive, candidate for v0.6.0).** Two related but separately-scoped additions are tracked here for visibility but not required for this action:
+
+- **Tool `params`** — declarative input parameter set on a tool definition (parallel to the `params` field already used on container boundaries, §5.5). Lets tooling validate that an invocation provides the inputs the tool expects.
+- **Input-value semantics on data nodes** — `value` (literal) and `example` (illustrative) metadata keys on data-artifact nodes. Lets a diagram declare both _what flows_ (existing edge semantics) and _the value or example_ at a point (additive metadata).
+
+Both extensions are pure metadata additions. They do not introduce new keywords or new shapes and would land as a small follow-up, not as a prerequisite for this action.
+
+**Tests.** ≥ 15 cases — node with `shape: subroutine` recognised as a tool definition; alias names (`subprocess`, `subproc`, `framed-rectangle`) all resolve as tools; `win-pane` instance with `def` pointing at a tool resolves cleanly; `win-pane` with `def` pointing at a non-tool emits the validation error; capability validation fires at an edge-into-tool invocation site; capability validation does NOT fire on a bare tool definition with no incoming edges; tool nested inside an agent/flow/task/skill/directive container exercises the containment matrix; tool's `description` field flows through `getSemanticModel()`; `params`/`value`/`example` future-extension fields, if implemented, surface in the semantic model without breaking existing fixtures.
 
 ---
 
