@@ -6,6 +6,12 @@
 
 # Block Diagrams Documentation
 
+<script setup>
+import IconsNote from './icons-note.md' 
+</script>
+
+<IconsNote />
+
 ## Introduction to Block Diagrams
 
 ```mermaid-example
