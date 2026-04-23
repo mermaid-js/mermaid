@@ -1,5 +1,5 @@
 import { imgSnapshotTest, renderGraph } from '../../../helpers/util.ts';
-// Just for test. Remove later
+
 describe('pie chart', () => {
   it('should render a simple pie diagram', () => {
     imgSnapshotTest(
