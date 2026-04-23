@@ -65,6 +65,14 @@ export const AgentflowWarning = {
    * designated node per §9.2. Warn-only in v0.5.0; error from v1.0.
    */
   CONNECTOR_REF_NOT_A_CONNECTOR: 'CONNECTOR_REF_NOT_A_CONNECTOR',
+  /**
+   * A known domain metadata key appears on an element kind it isn't
+   * declared for per the §13 applicability table (e.g. `strategy` on
+   * `agent`, `model` on `tool`). Universal keys (`description` plus
+   * structural and presentation controls) are excluded. Warn-only in
+   * v0.5.0; error from v1.0.
+   */
+  METADATA_KEY_MISAPPLIED: 'METADATA_KEY_MISAPPLIED',
 } as const;
 
 export type AgentflowWarningId = (typeof AgentflowWarning)[keyof typeof AgentflowWarning];
