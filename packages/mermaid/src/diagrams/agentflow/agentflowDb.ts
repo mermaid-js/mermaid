@@ -107,6 +107,27 @@ const SUBROUTINE_ALIASES = new Set<string>([
   'framed-rectangle',
 ]);
 
+/**
+ * Metadata keys whose presence designates a node as a **connector** per
+ * `AGENTFLOW-SYNTAX.md` §9.2. Any node carrying one or more of these
+ * qualifies; the node's own id is the connector identity.
+ */
+const CONNECTOR_CONFIG_FIELDS = new Set<string>([
+  'protocol',
+  'endpoint',
+  'transport',
+  'command',
+  'auth',
+  'token_required',
+]);
+
+/**
+ * Bare-id matcher for `connectorRef` weak-reference resolution per §9.1
+ * and §10.1. Values that match this regex are resolved against the node
+ * namespace; values that don't (dotted forms, URL-likes) are opaque.
+ */
+const CONNECTOR_REF_BARE_ID = /^[A-Z_a-z]\w*$/;
+
 /** Maps subgraph container types to their cluster shape IDs. */
 const SUBGRAPH_TYPE_TO_SHAPE: Record<NonNullable<FlowSubGraph['type']>, ClusterShapeID> = {
   agent: 'agentGroup',
@@ -1588,6 +1609,62 @@ You have to call mermaid.initialize.`
     }
   }
 
+  /**
+   * Returns true when `vertex` is a **connector-designated node** per
+   * `AGENTFLOW-SYNTAX.md` §9.2 — its metadata carries one or more of
+   * the connector configuration fields. Used by
+   * `validateConnectorReferences()` for the not-a-connector check.
+   */
+  private isConnectorDesignated(vertex: FlowVertex): boolean {
+    if (!vertex.metadata) {
+      return false;
+    }
+    for (const key of Object.keys(vertex.metadata)) {
+      if (CONNECTOR_CONFIG_FIELDS.has(key)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Per `AGENTFLOW-SYNTAX.md` §9.1 (revision 8): for every node tagged
+   * `@{ connectorRef: "<value>" }`, classify the value:
+   *   - bare id matching `[A-Za-z_]\w*` → resolve against node namespace:
+   *       - no node                     → CONNECTOR_REF_UNRESOLVED
+   *       - node not connector-designated → CONNECTOR_REF_NOT_A_CONNECTOR
+   *       - connector-designated node   → no diagnostic
+   *   - dotted form / URL-like / anything else → opaque, no diagnostic
+   */
+  private validateConnectorReferences(): void {
+    for (const [id, vertex] of this.vertices) {
+      const ref = vertex.metadata?.connectorRef;
+      if (typeof ref !== 'string' || ref.length === 0) {
+        continue;
+      }
+      if (!CONNECTOR_REF_BARE_ID.test(ref)) {
+        // Dotted form, URL-like, or other non-bare value — opaque.
+        continue;
+      }
+      const target = this.vertices.get(ref);
+      if (!target) {
+        this.emitWarning(
+          'CONNECTOR_REF_UNRESOLVED',
+          `connectorRef "${ref}" on node "${id}" does not match any node in the diagram (see AGENTFLOW-SYNTAX.md §9.1)`,
+          { nodeId: id }
+        );
+        continue;
+      }
+      if (!this.isConnectorDesignated(target)) {
+        this.emitWarning(
+          'CONNECTOR_REF_NOT_A_CONNECTOR',
+          `connectorRef "${ref}" on node "${id}" resolves to node "${ref}" but it carries none of the connector configuration fields (protocol/endpoint/transport/command/auth/token_required) — see AGENTFLOW-SYNTAX.md §9.2`,
+          { nodeId: id }
+        );
+      }
+    }
+  }
+
   /** Run every post-parse diagnostic validator once per parse. */
   private runPostParseValidators(): void {
     if (this.postParseValidationRun) {
@@ -1596,6 +1673,7 @@ You have to call mermaid.initialize.`
     this.postParseValidationRun = true;
     this.validateHexagonBranching();
     this.validateInstanceTargets();
+    this.validateConnectorReferences();
   }
 
   public getData() {
