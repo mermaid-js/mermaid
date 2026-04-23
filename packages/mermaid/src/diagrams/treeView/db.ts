@@ -3,7 +3,6 @@ import type { TreeViewDB, Node } from './types.js';
 import { getConfig as getCommonConfig } from '../../config.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
 import {
-  clear as commonClear,
   getAccDescription,
   getAccTitle,
   getDiagramTitle,
@@ -31,9 +30,15 @@ const state = new ImperativeState<TreeViewState>(() => ({
   ],
 }));
 
-const clear = () => {
-  state.reset();
-  commonClear();
+const updateRootName = (config: Required<TreeViewDiagramConfig>) => {
+  const root = state.records.stack[0];
+  if (config.root === false) {
+    root.name = '';
+  } else if (typeof config.root === 'string') {
+    root.name = config.root;
+  } else {
+    root.name = '/';
+  }
 };
 
 const getRoot = () => {
@@ -45,7 +50,9 @@ const getCount = () => state.records.cnt;
 const defaultConfig: Required<TreeViewDiagramConfig> = DEFAULT_CONFIG.treeView;
 
 const getConfig = (): Required<TreeViewDiagramConfig> => {
-  return cleanAndMerge(defaultConfig, getCommonConfig().treeView);
+  const config = cleanAndMerge(defaultConfig, getCommonConfig().treeView);
+  updateRootName(config);
+  return config;
 };
 
 const addNode = (level: number, name: string) => {
@@ -63,10 +70,12 @@ const addNode = (level: number, name: string) => {
 };
 
 const db: TreeViewDB = {
-  clear,
   addNode,
   getRoot,
   getCount,
+  clear: () => {
+    state.reset();
+  },
   getConfig,
   getAccTitle,
   getAccDescription,

@@ -1713,6 +1713,14 @@ export interface TreeViewDiagramConfig extends BaseDiagramConfig {
    * Thickness of the line
    */
   lineThickness?: number;
+  /**
+   * Root node configuration for treeView diagrams.
+   * - string: Custom label for the root node
+   * - false: Hide the root node completely
+   * - undefined: Show default root node "/"
+   *
+   */
+  root?: string | boolean | null;
 }
 /**
  * The object containing configurations specific for radar diagrams.

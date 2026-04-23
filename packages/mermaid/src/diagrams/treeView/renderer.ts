@@ -79,6 +79,14 @@ const drawTree = (
   };
 
   const processNode = (node: Node, depth = 0) => {
+    // Skip rendering root node if root is false or name is empty
+    if (depth === 0 && (config.root === false || node.name === '')) {
+      node.children.forEach((child) => {
+        processNode(child, depth);
+      });
+      return;
+    }
+
     drawNode(elem, node, config, depth);
     node.children.forEach((child) => {
       processNode(child, depth + 1);
