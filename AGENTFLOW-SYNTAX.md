@@ -16,7 +16,7 @@ This section is for readers coming from v0.4.0. It names only the **author-visib
 ### TL;DR
 
 1. **Tool definitions formalised** — a tool is any named node whose resolved shape is `subroutine` (§8). No new keyword; the existing shape syntax is canonical.
-2. **New keyword: `connector`** — a leaf declaration for external integration points (§9).
+2. **Connectors formalised as metadata** — external integration points are bound via `@{ connector: "..." }` metadata; optionally grouped in a `subgraph connectors` block (§9). No new keyword.
 3. **New metadata keys: `typeRef`, `templateRef`** — replacing the overloaded `type` on `procs` reference nodes (§10.2).
 4. **List-valued metadata must be YAML arrays** — `permits`, `requires`, `deny`, `fallbacks`, `directives` (§12.1).
 5. **Edge operators canonicalised** — `-->` is control, `==>` is data flow; each operator carries a distinct `edgeSemantic` (§5.1).
@@ -32,13 +32,15 @@ This section is for readers coming from v0.4.0. It names only the **author-visib
   do_work["do_work"]
   do_work@{ shape: subroutine, returns: "OutputType", requires: ["llm.query"] }
 
-# connector is new; it replaces the "MCP-as-subroutine" workaround
-# v0.4.0:
-  github_mcp["GitHub MCP"]
-  github_mcp@{ shape: subroutine, transport: "stdio", command: "npx -y @mcp/github" }
+# connectors — no syntax change. Tools bind to external integration
+# points via @{ connector: "<id>" } metadata; optionally group connector
+# nodes in a `subgraph connectors` block when the document benefits from
+# naming them as first-class elements (§9).
 # v0.5.0:
-  connector github_mcp["GitHub MCP"]
-  github_mcp@{ protocol: "mcp", transport: "stdio", command: "npx -y @mcp/github" }
+  subgraph connectors["Connectors"]
+    github_mcp["GitHub MCP"]
+  end
+  github_mcp@{ connector: "github_mcp", protocol: "mcp", transport: "stdio", command: "npx -y @mcp/github" }
 
   create_issue["Create Issue"]
   create_issue@{ shape: subroutine, connector: "github_mcp", returns: "Issue", requires: ["net.write"] }
@@ -70,7 +72,7 @@ This section is for readers coming from v0.4.0. It names only the **author-visib
 
 - **Branching** — `diamond` is the sole branching vertex; `hexagon` is a classification source (§4.2).
 - **Identifier uniqueness** — three namespaces: node/container, type, template; each uniquely named (§10).
-- **Containment rules** — each container has an allowed-children set (§3.3); tool definitions (nodes with `shape: subroutine`) and `connector` declarations are leaves.
+- **Containment rules** — each container has an allowed-children set (§3.3); tool definitions (nodes with `shape: subroutine`) are leaves. Connectors (§9) are regular nodes — typically grouped in a `subgraph` for organisation — and are subject to the same node containment rules.
 - **Capability evaluation** — the executing agent for a tool invocation is the nearest enclosing `agent` (§12).
 - **Metadata applicability** — keys are restricted to the element kinds listed in §13.
 - **Presentation vs semantics** — `view`, styling, `icon`, `img`, `w`, `h` are stripped from the new `getSemanticModel()` projection (§14).
@@ -87,13 +89,13 @@ Rules marked "v0.5.0 warn / v1.0 error" are specified normatively now but the ru
 
 ## Revision History
 
-| Version | Date       | Summary                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| ------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0.1.0   | 2026-03-14 | Initial syntax reference: `agent`, `flow`, `task` containers; node shapes; edge types; type declarations; templates; styling; accessibility; complete example.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| 0.2.0   | 2026-03-16 | Add diamond shape for decisions; document inline `{text}` syntax; add Decision / Alternate Flow pattern.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| 0.3.0   | 2026-03-25 | Add `skill`, `testCase`, `directive` containers with theme support. Add `trapezoid`, `inv-trapezoid`, `double-circle` shapes. Add template sections. Extend metadata fields (strategy, assert, expects, severity, context, rule, validate, handler, directives, transport, command, memory, execution, fallbacks). Add Directive, Lesson, Fallback, MCP Connection, Parallel Execution patterns.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| 0.4.0   | 2026-03-25 | Add definition/instance pattern with 5 instance shapes (`tag-rect`, `delay`, `lin-rect`, `win-pane`, `curv-trap`). Add `def` core metadata field for instance-to-definition binding. Formalize as versioned specification with revision history.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| 0.5.0   | 2026-04-21 | Semantic tightening per the downstream-readiness review (`AGENTFLOW-readiness-actions.md`). Formalise the **shape-based tool definition model** (§8): a tool is any named node whose resolved shape is `subroutine`, with normative rules for definition vs invocation, what `win-pane` may reference, the canonical metadata contract, and where capability validation applies. Introduce `connector` (§9) as a leaf declaration for external integration points. Canonicalise edge semantics with a new first-class `edgeSemantic` field (§5). Formalise identifier resolution across three namespaces (§10). Define definition / instance inheritance (§11). Add container-edge boundary semantics with explicit parameter-name label binding (§5.5). Add capability evaluation with executing-agent resolution (§12). Add metadata applicability table (§13). Split `type` / `template` / `src` reference kinds into `typeRef`, `templateRef`, and `src`. Declare presentation-only controls explicitly non-semantic and introduce a `getSemanticModel()` export projection (§14). Audit examples and add a Conformance Tests appendix. Some rules are specified now and enforced from v1.0 onward per the three-wave rollout in `AGENTFLOW-readiness-actions.md`. |
+| Version | Date       | Summary                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0.1.0   | 2026-03-14 | Initial syntax reference: `agent`, `flow`, `task` containers; node shapes; edge types; type declarations; templates; styling; accessibility; complete example.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| 0.2.0   | 2026-03-16 | Add diamond shape for decisions; document inline `{text}` syntax; add Decision / Alternate Flow pattern.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| 0.3.0   | 2026-03-25 | Add `skill`, `testCase`, `directive` containers with theme support. Add `trapezoid`, `inv-trapezoid`, `double-circle` shapes. Add template sections. Extend metadata fields (strategy, assert, expects, severity, context, rule, validate, handler, directives, transport, command, memory, execution, fallbacks). Add Directive, Lesson, Fallback, MCP Connection, Parallel Execution patterns.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| 0.4.0   | 2026-03-25 | Add definition/instance pattern with 5 instance shapes (`tag-rect`, `delay`, `lin-rect`, `win-pane`, `curv-trap`). Add `def` core metadata field for instance-to-definition binding. Formalize as versioned specification with revision history.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| 0.5.0   | 2026-04-21 | Semantic tightening per the downstream-readiness review (`AGENTFLOW-readiness-actions.md`). Formalise the **shape-based tool definition model** (§8): a tool is any named node whose resolved shape is `subroutine`, with normative rules for definition vs invocation, what `win-pane` may reference, the canonical metadata contract, and where capability validation applies. Formalise **connectors as metadata** (§9): external integration points are bound via `@{ connector: "..." }` and optionally grouped in a `subgraph connectors` block — no new keyword, with a normative rationale for when one would be justified. Canonicalise edge semantics with a new first-class `edgeSemantic` field (§5). Formalise identifier resolution across three namespaces (§10). Define definition / instance inheritance (§11). Add container-edge boundary semantics with explicit parameter-name label binding (§5.5). Add capability evaluation with executing-agent resolution (§12). Add metadata applicability table (§13). Split `type` / `template` / `src` reference kinds into `typeRef`, `templateRef`, and `src`. Declare presentation-only controls explicitly non-semantic and introduce a `getSemanticModel()` export projection (§14). Audit examples and add a Conformance Tests appendix. Some rules are specified now and enforced from v1.0 onward per the three-wave rollout in `AGENTFLOW-readiness-actions.md`. |
 
 ## Specification Governance
 
@@ -165,7 +167,7 @@ Containers are the structural backbone of agentflow. They group nodes into seman
 end
 ```
 
-Leaf declarations `type` (§6), `template` (§7), and `connector` (§9) are **not** containers — they register standalone elements and do not use `end`. Tool definitions (§8) are likewise leaf nodes but are introduced through the existing shape syntax rather than a dedicated keyword.
+Leaf declarations `type` (§6) and `template` (§7) are **not** containers — they register standalone elements and do not use `end`. Tool definitions (§8) are likewise leaf nodes but are introduced through the existing shape syntax rather than a dedicated keyword. Connectors (§9) are not a separate construct at the grammar level; they are modelled as metadata bindings (and optionally as referenceable nodes grouped in a `subgraph`).
 
 ### 3.1 Container Types
 
@@ -207,17 +209,17 @@ Containment defines **structural validity**, not execution ownership. Execution 
 
 The following matrix lists allowed children for each parent container:
 
-| Parent      | Allowed children                                                             |
-| ----------- | ---------------------------------------------------------------------------- |
-| `agent`     | `flow`, `task`, `skill`, `directive`, `testCase`, `tool`, `connector`, node  |
-| `flow`      | `task`, `agent`, `skill`, `directive`, `testCase`, `tool`, `connector`, node |
-| `task`      | `tool`, `connector`, `directive`, node                                       |
-| `skill`     | `tool`, `connector`, `flow`, `directive`, node                               |
-| `directive` | node                                                                         |
-| `testCase`  | `directive`, node                                                            |
-| `subgraph`  | unrestricted (legacy escape hatch)                                           |
+| Parent      | Allowed children                                                |
+| ----------- | --------------------------------------------------------------- |
+| `agent`     | `flow`, `task`, `skill`, `directive`, `testCase`, `tool`, node  |
+| `flow`      | `task`, `agent`, `skill`, `directive`, `testCase`, `tool`, node |
+| `task`      | `tool`, `directive`, node                                       |
+| `skill`     | `tool`, `flow`, `directive`, node                               |
+| `directive` | node                                                            |
+| `testCase`  | `directive`, node                                               |
+| `subgraph`  | unrestricted (legacy escape hatch)                              |
 
-In the matrix above, `tool` denotes any node whose resolved shape is `subroutine` (§8) — it is a categorical kind, not a keyword. Tools and `connector` declarations are leaves; they cannot be parents. Connectors are typically declared at top level since they represent shared external infrastructure, but placement inside a container is legal. Placements outside this matrix produce a warning in v0.5.0 and become validation errors from v1.0.
+In the matrix above, `tool` denotes any node whose resolved shape is `subroutine` (§8) — it is a categorical kind, not a keyword. Tools are leaves; they cannot be parents. Connectors (§9) are regular nodes — typically grouped in a `subgraph connectors` block at top level — and fall under the `node` row of the matrix. Placements outside this matrix produce a warning in v0.5.0 and become validation errors from v1.0.
 
 ### 3.4 Nesting Example
 
@@ -270,7 +272,6 @@ Shapes carry semantic weight. They are set either automatically by the system or
 | ----------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `roundedRect`     | Default for all user-defined nodes                                          | Rounded rectangle                                                     | General-purpose step or data node. The default shape when no explicit annotation is provided.                                                                                                         |
 | `subroutine`      | Set via `@{ shape: subroutine }` — marks the node as a tool definition (§8) | Double-bordered rectangle                                             | A callable tool or executable primitive.                                                                                                                                                              |
-| `connector`       | Default for `connector` declarations (§9)                                   | Port / doubled-stadium                                                | An external integration point — MCP server, HTTP endpoint, database, event bus.                                                                                                                       |
 | `collapsedGroup`  | Container has `@{ view: "collapsed" }`                                      | Title + separator + ellipsis dots; border/fill matches container type | A container whose internals are hidden. Preserves the container's visual identity (agent/flow/task/skill/testCase/directive) while signalling that detail is elided. Used for progressive disclosure. |
 | `typeDeclaration` | For each `type` declaration                                                 | `<<kind>>` badge + bold name + separator + fields/expression          | A data contract defining the shape of information flowing between agents and tasks.                                                                                                                   |
 
@@ -278,22 +279,21 @@ Shapes carry semantic weight. They are set either automatically by the system or
 
 Set explicitly via `@{ shape: <name> }`:
 
-| Shape ID        | Aliases                                     | Visual                        | Semantic Meaning                                                                                                                                                                                           |
-| --------------- | ------------------------------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `subroutine`    | `subprocess`, `subproc`, `framed-rectangle` | Double-bordered rectangle     | A **callable tool or function**. The canonical form for a tool definition (§8). Any of the listed aliases marks the node as a tool.                                                                        |
-| `connector`     | —                                           | Port / doubled-stadium        | An **external integration point** visual. Applied automatically to `connector` declarations (§9); available as `@{ shape: connector }` on a plain node for the rare case of an inline connector reference. |
-| `doc`           | —                                           | Curled-corner document        | A **data artifact** — a document, report, or structured output produced or consumed by a step.                                                                                                             |
-| `lean-right`    | `in-out`                                    | Parallelogram (right-leaning) | An **input value or parameter** entering the flow from outside. The slant visually suggests data in motion.                                                                                                |
-| `lin-doc`       | `lined-document`                            | Lined document                | A **reference document or specification** — something read but not produced by the current flow (e.g., style guides, brand manuals, schemas).                                                              |
-| `procs`         | —                                           | Stacked process               | An **external reference** to a type, template, or another diagram. Uses `typeRef`, `templateRef`, or `src` metadata — exactly one; see §10.                                                                |
-| `stadium`       | `terminal`                                  | Stadium / pill shape          | A **terminal or boundary node** — an entry point, exit point, or named endpoint in the flow.                                                                                                               |
-| `hexagon`       | `hex`                                       | Hexagon                       | A **condition or classification source** (not a branching vertex; see §4.2).                                                                                                                               |
-| `circle`        | —                                           | Circle                        | A **join point, event, or signal** — a coordination primitive where multiple paths converge or an event is emitted.                                                                                        |
-| `diamond`       | —                                           | Diamond / rhombus             | A **decision gate or approval checkpoint** — the canonical branching vertex (§4.2).                                                                                                                        |
-| `trapezoid`     | —                                           | Trapezoid                     | A **behavioral directive or constraint** — a rule, policy, or guardrail that governs agent or tool behavior.                                                                                               |
-| `inv-trapezoid` | —                                           | Inverted trapezoid            | An **inverted directive** — alternate orientation for constraint nodes.                                                                                                                                    |
-| `double-circle` | `doublecircle`                              | Double circle                 | A **test assertion node** — signals a verification checkpoint or assertion in a test flow. Note: inline syntax `(((...)))` produces the legacy alias `doublecircle`; prefer `@{ shape: double-circle }`.   |
-| `rect`          | `squareRect`                                | Square rectangle              | Remapped to `roundedRect` at render time. Equivalent to the default shape.                                                                                                                                 |
+| Shape ID        | Aliases                                     | Visual                        | Semantic Meaning                                                                                                                                                                                         |
+| --------------- | ------------------------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `subroutine`    | `subprocess`, `subproc`, `framed-rectangle` | Double-bordered rectangle     | A **callable tool or function**. The canonical form for a tool definition (§8). Any of the listed aliases marks the node as a tool.                                                                      |
+| `doc`           | —                                           | Curled-corner document        | A **data artifact** — a document, report, or structured output produced or consumed by a step.                                                                                                           |
+| `lean-right`    | `in-out`                                    | Parallelogram (right-leaning) | An **input value or parameter** entering the flow from outside. The slant visually suggests data in motion.                                                                                              |
+| `lin-doc`       | `lined-document`                            | Lined document                | A **reference document or specification** — something read but not produced by the current flow (e.g., style guides, brand manuals, schemas).                                                            |
+| `procs`         | —                                           | Stacked process               | An **external reference** to a type, template, or another diagram. Uses `typeRef`, `templateRef`, or `src` metadata — exactly one; see §10.                                                              |
+| `stadium`       | `terminal`                                  | Stadium / pill shape          | A **terminal or boundary node** — an entry point, exit point, or named endpoint in the flow.                                                                                                             |
+| `hexagon`       | `hex`                                       | Hexagon                       | A **condition or classification source** (not a branching vertex; see §4.2).                                                                                                                             |
+| `circle`        | —                                           | Circle                        | A **join point, event, or signal** — a coordination primitive where multiple paths converge or an event is emitted.                                                                                      |
+| `diamond`       | —                                           | Diamond / rhombus             | A **decision gate or approval checkpoint** — the canonical branching vertex (§4.2).                                                                                                                      |
+| `trapezoid`     | —                                           | Trapezoid                     | A **behavioral directive or constraint** — a rule, policy, or guardrail that governs agent or tool behavior.                                                                                             |
+| `inv-trapezoid` | —                                           | Inverted trapezoid            | An **inverted directive** — alternate orientation for constraint nodes.                                                                                                                                  |
+| `double-circle` | `doublecircle`                              | Double circle                 | A **test assertion node** — signals a verification checkpoint or assertion in a test flow. Note: inline syntax `(((...)))` produces the legacy alias `doublecircle`; prefer `@{ shape: double-circle }`. |
+| `rect`          | `squareRect`                                | Square rectangle              | Remapped to `roundedRect` at render time. Equivalent to the default shape.                                                                                                                               |
 
 #### 4.3.3 Instance Shapes
 
@@ -371,8 +371,8 @@ These fields carry semantic meaning consumed by tooling but do not change how th
 | `validate`    | Validation method for tool output                          | `"json-schema"`, `"strict"`           |
 | `handler`     | External HTTP endpoint for tool execution                  | `"http POST https://api.example.com"` |
 | `directives`  | Prompt directive references, YAML array                    | `["clinical_reasoning", "safety"]`    |
-| `protocol`    | Integration protocol (connector declarations)              | `"mcp"`, `"http"`, `"sql"`            |
-| `endpoint`    | External endpoint (connector declarations)                 | `"https://api.example.com"`           |
+| `protocol`    | Integration protocol (on a connector node, §9)             | `"mcp"`, `"http"`, `"sql"`            |
+| `endpoint`    | External endpoint (on a connector node, §9)                | `"https://api.example.com"`           |
 | `transport`   | Transport for protocols that require one                   | `"stdio"`, `"sse"`                    |
 | `command`     | Command line for stdio-based servers                       | `"npx -y @mcp/server"`                |
 | `memory`      | Agent memory type                                          | `"episodic"`, `"semantic"`            |
@@ -599,62 +599,81 @@ Both additions are pure metadata. They land additively on the existing shape-bas
 
 ---
 
-## 9. Connector Declarations
+## 9. Connectors (Metadata-based)
 
-A `connector` declaration registers an **external integration point** — an MCP server, HTTP endpoint, database, event bus, or any other system outside the diagram that tools and agents interact with. Like tool definitions (§8), it is a **leaf** — no `end`, no children:
+A **connector** is a logical reference to an external integration point — an MCP server, HTTP endpoint, database, event bus, or any other system outside the diagram that tools and agents bind to.
+
+Agentflow does not introduce a dedicated `connector` declaration keyword in this revision. Connectors are modelled as **metadata bindings** and, where needed, as **referenceable nodes grouped using existing constructs** (typically `subgraph`). A `connector` keyword would only be justified if connectors were promoted into a distinct first-class category with identity, validation, and reference semantics beyond simple binding metadata — see §9.4 below.
+
+### 9.1 Connectors as Binding Metadata
+
+The simplest form is a metadata key on the tool definition (or any node that talks to the external system):
 
 ```
-connector github_mcp["GitHub MCP"]
-github_mcp@{
-  protocol: "mcp",
-  transport: "stdio",
-  command: "npx -y @modelcontextprotocol/server-github"
+save_diagram["save_diagram"]
+save_diagram@{
+  shape: subroutine,
+  connector: "mermaid.create_document",
+  description: "Save diagram to Mermaid Chart platform"
 }
 ```
 
-Connector declarations live in the node/container namespace (§10).
+The string value is opaque to the parser; downstream tooling interprets it (a flat connector id, a dotted `connector.operation` form, a URL-style key — implementation choice).
 
-### 9.1 Connector vs Tool
+### 9.2 Connectors as Referenceable Nodes (optional)
 
-- A **tool** (§8) is an _executable primitive_ authored inside the diagram — a node with `shape: subroutine`. When invoked, it does work.
-- A **connector** is a _reference to something outside the diagram_. It does not execute on its own — tools and agents **bind** to it.
-
-Use a tool definition when the unit of work is modelled by the diagram. Use `connector` when the unit of work lives in an external system (MCP server, REST API, SQL database, message bus).
-
-### 9.2 Binding Tools to Connectors
-
-A tool binds to a connector by setting the `connector` metadata key on the tool definition to the connector's ID:
+When a diagram benefits from naming connectors as first-class document elements — e.g. to attach configuration, hold a description, or visually group them — declare them using existing node and grouping constructs:
 
 ```
-connector github_mcp["GitHub MCP"]
-github_mcp@{ protocol: "mcp", transport: "stdio", command: "npx -y @mcp/github" }
+subgraph connectors["Connectors"]
+  mermaid["Mermaid Chart"]
+  github["GitHub"]
+end
+mermaid@{ connector: "mermaid", token_required: true }
+github@{ connector: "github", token_required: true }
+
+save_diagram["save_diagram"]
+save_diagram@{
+  shape: subroutine,
+  connector: "mermaid.create_document",
+  description: "Save diagram to Mermaid Chart platform"
+}
 
 create_issue["Create Issue"]
-create_issue@{ shape: subroutine, connector: "github_mcp", returns: "Issue", requires: ["net.write"] }
-
-close_issue["Close Issue"]
-close_issue@{ shape: subroutine, connector: "github_mcp", requires: ["net.write"] }
+create_issue@{
+  shape: subroutine,
+  connector: "github.create_issue",
+  requires: ["net.write"]
+}
 ```
 
-Multiple tools may bind to the same connector — this is the canonical way to model an MCP server or API that exposes several operations. `connector` is a **semantic reference** (§10.1); an unresolved target is a validation error.
+Tools bind by string. The grouping `subgraph` carries no special semantics — it's an organising hint to readers and to layout. Downstream tooling MAY treat any node tagged `@{ connector: "<id>" }` as a connector definition; that's a tooling-level convention, not a parser-level one.
 
-### 9.3 Metadata
+### 9.3 Connector-Related Metadata Keys
 
-Connector metadata keys (see §13 _Metadata Applicability_ for the full table):
+When a node represents a connector or binds to one, these metadata keys are available (see §13 _Metadata Applicability_ for the table):
 
-- `protocol` — the integration protocol. Canonical values: `"mcp"`, `"http"`, `"grpc"`, `"sql"`, `"graphql"`, `"websocket"`, `"amqp"`, `"custom"`.
+- `connector` — on a tool/node binding to an external system, the opaque connector reference (e.g. `"github_mcp"`, `"github.create_issue"`).
+- `protocol` — the integration protocol on a connector node. Canonical values: `"mcp"`, `"http"`, `"grpc"`, `"sql"`, `"graphql"`, `"websocket"`, `"amqp"`, `"custom"`.
 - `endpoint` — URL, connection string, or endpoint identifier.
 - `transport` — transport for protocols that require one (e.g. MCP: `"stdio"`, `"sse"`).
-- `command` — command line for stdio-based servers (e.g. MCP stdio).
-- `description` — cross-cutting (any authored element).
+- `command` — command line for stdio-based servers.
+- `token_required`, `auth`, etc. — environment-specific configuration.
+- `description` — cross-cutting documentation field.
 
-### 9.4 Rendering
+The set is intentionally non-exhaustive. New keys can be added as additive metadata without spec churn.
 
-A `connector` declaration renders with a port/interface visual (the `connector` shape — see §4.3.1). Authors may override with `@{ shape: ... }` but the connector declaration always registers the element in the connector namespace regardless of visual.
+### 9.4 When a Keyword Would Be Justified
 
-### 9.5 Grammar Note
+A future `connector` keyword should be introduced **only** if all of the following become true:
 
-`connector` is a **context-sensitive declaration keyword** — recognised only at the start of a statement. In any other position it parses as a regular identifier. Existing diagrams using `connector` as a bare ID continue to parse unchanged. (This is the only author-facing keyword introduced in v0.5.0; tool definitions reuse the existing shape syntax — see §8.)
+- connectors have their own declaration lifecycle (distinct from regular nodes);
+- connectors have their own namespace or distinct validation model;
+- tools/nodes refer to connectors by identity rather than by opaque string metadata;
+- shared auth/config/permissions live on the connector itself and propagate to bound tools;
+- downstream tooling must index, export, or validate connectors as first-class semantic objects.
+
+If any of these become a hard requirement in a later release, the keyword can land additively under the spec's additive-change rule. Until then, the metadata-based form above is canonical.
 
 ---
 
@@ -662,7 +681,7 @@ A `connector` declaration renders with a port/interface visual (the `connector` 
 
 Agentflow uses three **namespaces**:
 
-1. **Nodes and containers** — IDs declared by user-written node statements (including tool definitions per §8), container keywords (`agent`, `flow`, `task`, `skill`, `directive`, `testCase`, `subgraph`), and `connector` declarations (§9).
+1. **Nodes and containers** — IDs declared by user-written node statements (including tool definitions per §8 and any nodes used as connector references per §9), and container keywords (`agent`, `flow`, `task`, `skill`, `directive`, `testCase`, `subgraph`).
 2. **Types** — names declared by `type` statements (§6).
 3. **Templates** — names declared by `template` statements (§7).
 
@@ -679,7 +698,7 @@ These rules produce warnings in v0.5.0 (behind `agentflow.strictIds: false` by d
 
 Reference-style keys split into two groups:
 
-- **Semantic references** are resolved against the diagram model. Unresolved values are validation errors. Members: `def`, `typeRef`, `templateRef`, `connector`.
+- **Semantic references** are resolved against the diagram model. Unresolved values are validation errors. Members: `def`, `typeRef`, `templateRef`. The `connector` metadata key (§9) is a **soft semantic reference** — when its value is a bare id (no dotted operation suffix) the validator MAY warn on an unresolved target, but the string is treated as opaque by the parser.
 - **External / hygiene references** are validated for shape and allowed usage, but not for existence of the external target unless an import resolver is explicitly enabled. Members: `src`, `click` / `href` targets, and `class` / `style` references.
 
 ### 10.2 Legacy `type` on Reference Nodes
@@ -708,7 +727,7 @@ An instance shape is a reference to a definition. The definition is written once
 | `win-pane` (`window-pane`)         | `tool` definition      |
 | `curv-trap` (`curved-trapezoid`)   | `directive` definition |
 
-> **Connectors.** v0.5.0 does not define an instance shape for connectors. A connector is referenced from its binding context by ID (see §9.2 and §10.1). A future version may add a connector instance shape under the additive-change rule.
+> **Connectors.** v0.5.0 does not define an instance shape for connectors. A connector is referenced from its binding context by ID (see §9 and §10.1). A future version may add a connector instance shape under the additive-change rule, but only if connectors are promoted into a first-class category per §9.4.
 
 ### 11.2 Validity
 
@@ -774,18 +793,18 @@ An invocation is valid iff:
 
 Metadata keys are restricted to the element kinds listed. Keys outside this table are preserved for downstream tooling but produce a warning.
 
-| Element                      | Valid metadata keys                                                                                         |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `agent`                      | `model`, `permits`, `memory`, `fallbacks`                                                                   |
-| `flow`                       | `params`, `returns`                                                                                         |
-| `task`                       | `execution`, `params`, `returns`, `fallbacks`                                                               |
-| `skill`                      | `strategy`, `params`, `returns`, `fallbacks`                                                                |
-| `tool`                       | `returns`, `requires`, `deny`, `retry`, `cache`, `validate`, `handler`, `transport`, `command`, `connector` |
-| `connector`                  | `protocol`, `endpoint`, `transport`, `command`                                                              |
-| `directive`                  | `rule`, `severity`, `context`, `params`                                                                     |
-| `testCase`                   | `assert`, `expects`                                                                                         |
-| artifact nodes (`doc`, etc.) | `output`                                                                                                    |
-| reference nodes (`procs`)    | `typeRef`, `templateRef`, `src` (exactly one — §10)                                                         |
+| Element                      | Valid metadata keys                                                                                                   |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `agent`                      | `model`, `permits`, `memory`, `fallbacks`                                                                             |
+| `flow`                       | `params`, `returns`                                                                                                   |
+| `task`                       | `execution`, `params`, `returns`, `fallbacks`                                                                         |
+| `skill`                      | `strategy`, `params`, `returns`, `fallbacks`                                                                          |
+| `tool`                       | `params`, `returns`, `requires`, `deny`, `retry`, `cache`, `validate`, `handler`, `transport`, `command`, `connector` |
+| connector node (§9)          | `connector` (self-id), `protocol`, `endpoint`, `transport`, `command`, `auth`, `token_required`                       |
+| `directive`                  | `rule`, `severity`, `context`, `params`                                                                               |
+| `testCase`                   | `assert`, `expects`                                                                                                   |
+| artifact nodes (`doc`, etc.) | `output`                                                                                                              |
+| reference nodes (`procs`)    | `typeRef`, `templateRef`, `src` (exactly one — §10)                                                                   |
 
 ### 13.1 Cross-Cutting
 
@@ -1018,11 +1037,14 @@ primary --x fallback
 
 ### 19.8 Connector Pattern (MCP, HTTP, DB)
 
-A connector defines an external system; one or more tools bind to it:
+A connector references an external system; one or more tools bind to it via the `connector` metadata key. Group connector nodes in a `subgraph connectors` block when the document benefits from naming them as first-class elements (§9):
 
 ```
-connector github_mcp["GitHub MCP"]
+subgraph connectors["Connectors"]
+  github_mcp["GitHub MCP"]
+end
 github_mcp@{
+  connector: "github_mcp",
   protocol: "mcp",
   transport: "stdio",
   command: "npx -y @modelcontextprotocol/server-github"
@@ -1038,11 +1060,23 @@ close_issue@{ shape: subroutine, connector: "github_mcp", requires: ["net.write"
 For HTTP and database back-ends the `protocol` and `endpoint` fields carry the integration details:
 
 ```
-connector orders_api["Orders API"]
-orders_api@{ protocol: "http", endpoint: "https://api.example.com/orders" }
+subgraph connectors["Connectors"]
+  orders_api["Orders API"]
+  orders_db["Orders DB"]
+end
+orders_api@{ connector: "orders_api", protocol: "http", endpoint: "https://api.example.com/orders" }
+orders_db@{ connector: "orders_db", protocol: "sql", endpoint: "postgres://.../orders" }
+```
 
-connector orders_db["Orders DB"]
-orders_db@{ protocol: "sql", endpoint: "postgres://.../orders" }
+The minimal form is a tool with just the binding metadata — no connector node, no subgraph:
+
+```
+save_diagram["save_diagram"]
+save_diagram@{
+  shape: subroutine,
+  connector: "mermaid.create_document",
+  description: "Save diagram to Mermaid Chart platform"
+}
 ```
 
 ### 19.9 Parallel Execution Pattern
@@ -1125,8 +1159,10 @@ agentflow TB
     swedish: String
   }
 
-  connector llm_api["LLM API"]
-  llm_api@{ protocol: "http", endpoint: "https://api.example.com/chat" }
+  subgraph connectors["Connectors"]
+    llm_api["LLM API"]
+  end
+  llm_api@{ connector: "llm_api", protocol: "http", endpoint: "https://api.example.com/chat" }
 
   research_loc["research_location"]
   research_loc@{ shape: subroutine }
@@ -1204,7 +1240,7 @@ agentflow TB
 Notable v0.5.0 changes in this example versus v0.4.0:
 
 - Tools are declared at the top level as named nodes with `shape: subroutine` (§8). The shape-based form is the canonical and only form; no new keyword is introduced.
-- The shared LLM back-end is declared once with `connector`; the three LLM-using tools bind to it via `connector: "llm_api"` (§9).
+- The shared LLM back-end is declared as a node in a `subgraph connectors` block; the three LLM-using tools bind to it via `connector: "llm_api"` metadata (§9). No `connector` keyword is used.
 - Reference nodes use `typeRef` and `src` explicitly rather than the overloaded `type` key (§10.2).
 - `permits` and `requires` are YAML arrays (§12.1).
 
@@ -1216,7 +1252,7 @@ A conformance fixture set ships alongside this specification. Implementations SH
 
 The fixture directory `agentflow-conformance/` contains:
 
-- **Valid minimal examples** — one fixture per semantic pattern (container types, edge operators, instance shapes, tool declarations, connector declarations, type / template references, capability evaluation).
+- **Valid minimal examples** — one fixture per semantic pattern (container types, edge operators, instance shapes, tool definitions, connector bindings, type / template references, capability evaluation).
 - **Negative examples** — duplicate names, kind mismatches, cyclic `def`, invalid metadata placement, invalid capability sets, invalid containment, ambiguous reference resolution, malformed container-boundary cases, unresolved `connector` bindings.
 - **Edge-semantics fixtures** asserting the canonical mapping on every operator.
 

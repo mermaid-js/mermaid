@@ -5,20 +5,23 @@
 **Final merge target:** `agentflow` (the integration branch fast-forwards once both waves are ready)
 **Status:** Approved — execution plan for wave 2
 
-**Scope.** Wave 2 covers the additive validators and the one new keyword the v0.5.0 spec reserved:
+**Scope.** Wave 2 ships **additive validators only — no new keywords, no new shapes**:
 
-| Action | Title                                                       | Tracking issue                                                                                        | Milestone |
-| ------ | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | --------- |
-| 4      | Definition / instance binding + validation                  | [#5](https://github.com/Mermaid-Chart/agentflow/issues/5)                                             | 0.6.0     |
-| 5      | Shape-based tool definition model + validators              | [#6](https://github.com/Mermaid-Chart/agentflow/issues/6)                                             | 0.6.0     |
-| —      | `connector` as a first-class leaf declaration               | [#14](https://github.com/Mermaid-Chart/agentflow/issues/14)                                           | 0.6.0     |
-| 2      | Conformance fixtures asserting the canonical edge semantics | (part of [#13](https://github.com/Mermaid-Chart/agentflow/issues/13) follow-up; tracked in this plan) | 0.6.0     |
+| Action | Title                                                        | Tracking issue                                                                                        | Milestone |
+| ------ | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- | --------- |
+| 4      | Definition / instance binding + validation                   | [#5](https://github.com/Mermaid-Chart/agentflow/issues/5)                                             | 0.6.0     |
+| 5      | Shape-based tool definition model + validators               | [#6](https://github.com/Mermaid-Chart/agentflow/issues/6)                                             | 0.6.0     |
+| —      | Connector metadata bindings + (optional) reference validator | [#14](https://github.com/Mermaid-Chart/agentflow/issues/14)                                           | 0.6.0     |
+| 2      | Conformance fixtures asserting the canonical edge semantics  | (part of [#13](https://github.com/Mermaid-Chart/agentflow/issues/13) follow-up; tracked in this plan) | 0.6.0     |
 
 All four pieces are **fully additive**. Existing v0.5.0 diagrams continue to parse, render, and produce the same `getSemanticModel()` output.
 
-**Pushback recorded.** Earlier revisions of this plan introduced a first-class `tool` keyword as PR 1. That direction was withdrawn (`AGENTFLOW-readiness-actions.md` revision 5): the language already expresses tools through `shape: subroutine` and `win-pane`, so a keyword would create a second representation for the same concept. Wave-2 PR 1 is now **tool-definition validators** that interpret existing shape-based tool definitions, not a new keyword.
+**Pushback recorded — twice.** Earlier revisions of this plan introduced both a first-class `tool` keyword (revision 5 of `AGENTFLOW-readiness-actions.md`) and a first-class `connector` keyword (revision 6). Both were withdrawn:
 
-**`connector` is unaffected** by the pushback — it represents external integration points the language has no existing shape for.
+- **Tools** stay shape-based (`@{ shape: subroutine }`). The language already expresses tools through this shape and `win-pane`; a keyword would create a second representation.
+- **Connectors** stay metadata-based (`@{ connector: "<id>" }`), optionally grouped using existing `subgraph` constructs. The "this tool talks to X" relationship is metadata, not syntax. A future `connector` keyword would only be justified if connectors are promoted into a distinct first-class category — see `AGENTFLOW-SYNTAX.md` §9.4 for the conditions.
+
+Net effect on the wave-2 plan: there is no keyword PR. PR 1 ships shape-based tool validators; PR 2 ships an optional connector-reference validator that warns when `@{ connector: "<id>" }` references a node that doesn't exist in the diagram.
 
 ---
 
@@ -49,7 +52,7 @@ gh pr create --draft --base feature/agentflow-readiness-v0.5.0 --head <branch-pe
 
 ## PR decomposition
 
-Wave 2 lands as five PRs. PR 0 already shipped during early planning. PR 1 sets up the shape-based tool model; PR 2 adds the connector keyword; PR 3 layers binding validation on top; PR 4 is the heaviest behavioural change.
+Wave 2 lands as five PRs (plus the optional spec-doc PR 6 and the changeset PR 7). PR 0 already shipped during early planning. PR 1 ships shape-based tool validators; PR 2 ships a connector reference validator (no keyword); PR 4 is the heaviest behavioural change. PR 3 was withdrawn along with the connector keyword.
 
 ### PR 0 — `edgeSemantic` field on every edge ✅ shipped
 
@@ -71,24 +74,22 @@ Wave 2 lands as five PRs. PR 0 already shipped during early planning. PR 1 sets 
   - **No grammar changes**, no new keyword, no deprecation warning on `shape: subroutine`. Authors who already use the canonical form need no migration.
 - Tests: ≥ 12 cases — `shape: subroutine` recognised as a tool definition; each alias (`subprocess`, `subproc`, `framed-rectangle`) recognised; `win-pane` whose `def` points at a tool resolves cleanly; `win-pane` whose `def` points at a non-tool emits `INSTANCE_KIND_MISMATCH`; `getSemanticModel()` surfaces the derived tool kind; capability validation does NOT fire on a bare tool definition with no incoming edges (negative assertion); a tool nested inside agent/flow/task/skill/directive exercises the containment matrix.
 
-### PR 2 — `connector` declaration (closes #14)
+### PR 2 — Connector reference validator (closes #14)
 
-- Branch: `feature/14_connector-declaration`
+- Branch: `feature/14_connector-reference-validator`
 - Base: `feature/agentflow-readiness-v0.5.0` (independent of PR 1; safe to open in parallel).
+- **No grammar change, no new keyword.** Per `AGENTFLOW-SYNTAX.md` §9 (revision 6), connectors are metadata bindings; this PR adds the optional reference-resolution validator on top.
 - Changes:
-  - `agentflow.jison` — `"connector"` lexer token (statement-start anchored, mirroring `type`/`template`); new `connectorDeclarationStatement` production.
-  - `agentflowDb.ts` — `addConnector(decl)` registers a connector vertex in the node/container namespace. Uses a `vertexKind: 'connector'` tag — there is no existing shape that semantically means "external integration point", so the kind tag is the source of truth here (unlike tools, where the shape carries that meaning).
-  - Visual placeholder: `stadium` until a proper port / doubled-stadium shape lands in mermaid's shared shapes registry. Documented in code and in the PR body.
-  - Tests: ≥ 12 cases — bare declaration, all §9.3 metadata keys (`protocol`, `transport`, `command`, `endpoint`, `description`), `connector` as a metadata key on a tool still parses (the §9.2 binding pattern), multiple connectors, mixed with tools.
+  - `agentflowDb.ts` — extend the post-parse validator chain with `validateConnectorReferences()`. For every node tagged `@{ connector: "<id>" }`:
+    - If the value is a bare id (`"github_mcp"`), resolve it against the diagram's nodes. If unresolved AND the value also doesn't look like a dotted-operation form (`"github.create_issue"`) or URL-ish, emit `CONNECTOR_REF_UNRESOLVED`.
+    - The dotted form (`"<connector>.<operation>"`) is treated as opaque — downstream tooling parses it; the validator does not require the bare connector id to exist as a node either, since the convention is downstream-defined.
+    - Behaviour intentionally permissive in v0.6.0; the validator is a guard against typos in the bare-id case, not strict enforcement. The strict-flip lands in wave 3 only if `connector` graduates to a first-class category per §9.4.
+  - `diagnostics.ts` — new `CONNECTOR_REF_UNRESOLVED` warning ID. Warn-only.
+  - Tests: ≥ 8 cases — bare-id binding to an existing node (no warning), bare-id binding to a missing node (warn), dotted-operation form (no warning regardless of resolution), URL-ish value (no warning), connector node grouped in `subgraph connectors` resolves cleanly, dangling connector node with no bindings (no warning — connector nodes are valid standalone).
 
-### PR 3 — Tool→connector binding validation
+### PR 3 — _withdrawn_
 
-- Branch: `feature/connector-binding-validation`
-- Base: `feature/agentflow-readiness-v0.5.0` (cut after PRs 1 and 2 merge).
-- Changes:
-  - `agentflowDb.ts` — extend the post-parse validator chain with `validateConnectorBindings()`: every tool definition with a `connector` metadata key MUST resolve to a declared `connector` vertex. Unresolved → `CONNECTOR_REF_UNRESOLVED` diagnostic (warn in v0.6.0, error in v1.0 per the wave-3 strict-flip).
-  - `diagnostics.ts` — new `CONNECTOR_REF_UNRESOLVED` warning ID.
-  - Tests: ≥ 8 cases — valid binding, missing connector (warn), multiple tools binding the same connector, dangling connector with no tools (no warning — connectors are valid standalone), node that's `shape: subroutine` and has `connector:` set (treated as a tool binding even though it's not declared via a keyword).
+PR 3 originally proposed `validateConnectorBindings()` as a strict-resolution validator that depended on the now-withdrawn `connector` keyword. Its lighter-weight successor is folded into PR 2. The PR 3 slot is left blank rather than renumbered to keep cross-references stable.
 
 ### PR 4 — Definition / instance resolution (closes #5)
 
@@ -115,12 +116,13 @@ Wave 2 lands as five PRs. PR 0 already shipped during early planning. PR 1 sets 
 ### PR 5 — Conformance fixtures: wave-2 behaviours
 
 - Branch: `feature/wave2-fixtures`
-- Base: `feature/agentflow-readiness-v0.5.0` (cut after PRs 1, 2, 3, 4 all merge).
+- Base: `feature/agentflow-readiness-v0.5.0` (cut after PRs 1, 2, 4 all merge).
 - Changes (in `packages/mermaid/src/diagrams/agentflow/conformance/fixtures/`):
-  - **§19.1 Tool Call** — already covered in wave-1 corpus (`pattern-tool-call` if added, or as part of `complete-example`). Verify it asserts the derived `vertexKind` from PR 1.
+  - **§19.1 Tool Call** — already covered in wave-1 corpus. Verify it asserts the derived `vertexKind: 'tool'` from PR 1.
   - **§19.5 Directive** — verify present in wave-1 corpus; if not, add.
-  - **§19.8 Connector** — uses the new `connector` keyword + a tool binding. Asserts `CONNECTOR_REF_UNRESOLVED` does **not** fire on a valid binding.
-  - **`pattern-tool-binding-warn`** — tool with `connector: "missing"` → asserts `CONNECTOR_REF_UNRESOLVED`.
+  - **§19.8 Connector** — uses the metadata-based connector form (subgraph + binding metadata). Asserts `CONNECTOR_REF_UNRESOLVED` does **not** fire on a valid binding.
+  - **`pattern-connector-ref-unresolved`** — tool with `@{ connector: "missing_node" }` (bare-id form) → asserts `CONNECTOR_REF_UNRESOLVED`.
+  - **`pattern-connector-dotted-form`** — tool with `@{ connector: "github.create_issue" }` (dotted-operation form) → asserts NO warning even when `github` isn't a declared node, per the spec's opaque-string treatment of the dotted form.
   - **`pattern-instance-tool`** — `win-pane` instance whose `def` points at a `shape: subroutine` node. Asserts inheritance and that structure is not cloned.
   - **`pattern-instance-mismatch-warn`** — `win-pane` whose `def` points at a non-tool node → asserts `INSTANCE_KIND_MISMATCH`.
   - **`edge-semantics-control`**, **`edge-semantics-data`**, **`edge-semantics-conformance`**, **`edge-semantics-delegation`**, **`edge-semantics-failure`**, **`edge-semantics-association`**, **`edge-semantics-governance`**, **`edge-semantics-bidirectional`** — one fixture per spec operator, asserting the `edgeSemantic` value populated by PR 0.
@@ -153,8 +155,7 @@ Every PR runs:
 Additionally:
 
 - **PR 1** — render an existing `shape: subroutine` fixture; confirm zero behavioural change at the visual layer; only the diagnostic surface changes. Run the wave-1 conformance corpus and confirm no new warnings.
-- **PR 2** — render a `connector` declaration in the dev server; confirm the placeholder `stadium` visual appears and is visually distinct from a tool's `subroutine`.
-- **PR 3** — confirm `CONNECTOR_REF_UNRESOLVED` surfaces on `getDiagnostics()` with `nodeId` populated.
+- **PR 2** — confirm `CONNECTOR_REF_UNRESOLVED` surfaces on `getDiagnostics()` with `nodeId` populated for the bare-id miss case; confirm dotted-form bindings emit no warning.
 - **PR 4** — high-confidence test coverage matters because instance resolution touches metadata semantics; ≥ 50 cases per Action 4.
 - **PR 5** — runner output must be deterministic (run twice, diff empty).
 
@@ -196,7 +197,8 @@ Resolved:
 
 - _Wave-1 spillover (`edgeSemantic`)_ — handled as PR 0 of wave 2; merged.
 - _Tool keyword vs shape_ — withdrew the keyword (`AGENTFLOW-readiness-actions.md` revision 5). Wave 2 PR 1 ships validators on the existing shape-based form.
-- _Connector shape registration_ — picked `stadium` as a v0.6.0 placeholder. A proper port / doubled-stadium shape lands as a small follow-up after wave 2.
+- _Connector keyword vs metadata_ — withdrew the keyword (`AGENTFLOW-readiness-actions.md` revision 6). Wave 2 PR 2 ships an optional reference validator on top of the metadata-based binding form. The "connector shape registration" question is moot — there is no special connector shape; nodes used as connectors render with the default `roundedRect`.
 - _Tool/connector ordering_ — independent; can land in either order. Plan keeps tool validators (PR 1) before instance binding (PR 4) because PR 4's kind validation extends PR 1's `INSTANCE_KIND_MISMATCH`.
 - _Worktree naming_ — single worktree at `../agentflow-wt/wave1` covers both waves.
 - _Subroutine deprecation warning_ — withdrawn along with the tool keyword. `shape: subroutine` is now the canonical form, not deprecated.
+- _PR 3 (binding validation)_ — withdrawn along with the connector keyword. Lighter-weight successor folded into PR 2.
