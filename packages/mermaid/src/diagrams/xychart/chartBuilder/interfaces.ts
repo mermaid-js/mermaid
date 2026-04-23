@@ -86,6 +86,7 @@ export interface XYChartAxisConfig {
   tickWidth: number;
   showAxisLine: boolean;
   axisLineWidth: number;
+  forceZeroYStart?: boolean;
 }
 
 export interface XYChartConfig {
