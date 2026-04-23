@@ -1,0 +1,16 @@
+%% §19.1 Tool Call Pattern — a `shape: subroutine` tool invoked from a task.
+%% Asserts that the DB surfaces the derived vertexKind: 'tool' on do_work.
+agentflow TB
+  do_work["do_work"]
+  do_work@{ shape: subroutine, returns: "OutputType", requires: ["llm.query"] }
+
+  task step["Do Work"]
+    input["input"]
+    output["Output"]
+    input ==> do_work ==> output
+    do_work --o type_ref
+  end
+
+  input@{ shape: lean-right }
+  output@{ shape: doc }
+  type_ref@{ shape: procs, typeRef: "OutputType" }

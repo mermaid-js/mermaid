@@ -32,7 +32,16 @@
  *       "edgeId": "e1",         // optional
  *       "line": 2               // optional; matches `position.startLine`
  *     }
- *   ]
+ *   ],
+ *   "semanticAssertions": {    // optional; wave-2 PR 5 addition
+ *     "vertices": [
+ *       { "id": "do_work", "vertexKind": "tool",
+ *         "resolvedMetadata": { "returns": "OutputType" } }
+ *     ],
+ *     "edges": [
+ *       { "start": "a", "end": "b", "edgeSemantic": "control" }
+ *     ]
+ *   }
  * }
  * ```
  *
@@ -40,6 +49,10 @@
  * diagnostics without failing, but every listed expectation must match at
  * least one actual entry. Strict-match mode can be added later via an
  * `exact: true` flag — not needed for wave-1.
+ *
+ * `semanticAssertions` uses partial-subset matching: every listed
+ * vertex/edge must exist in the semantic model, and every listed field
+ * must match; unlisted vertices/edges/fields are ignored.
  */
 
 import { AgentFlowDB } from '../agentflowDb.js';
@@ -47,6 +60,7 @@ import type { AgentflowDiagnostic } from '../diagnostics.js';
 import agentflow from '../parser/agentflowParser.js';
 import { transformData } from '../transformData.js';
 import type { LayoutData } from '../../../rendering-util/types.js';
+import type { AgentflowSemanticModel } from '../types.js';
 
 export interface ExpectedDiagnostic {
   /** Message ID — must match `AgentflowDiagnostic.id`. */
@@ -59,14 +73,62 @@ export interface ExpectedDiagnostic {
   line?: number;
 }
 
+/**
+ * Semantic-model assertion on a single vertex. `id` is required and must
+ * match a `SemanticVertex.id`. Fields that are listed are checked; fields
+ * that are omitted are not. `resolvedMetadata` uses partial-subset
+ * matching — each listed key must appear with the listed value, but the
+ * actual map may carry additional keys.
+ */
+export interface ExpectedVertex {
+  id: string;
+  vertexKind?: 'tool';
+  /** Partial match: listed keys must equal, extras allowed. */
+  resolvedMetadata?: Record<string, unknown>;
+}
+
+/**
+ * Semantic-model assertion on a single edge. Either both `start` and
+ * `end` (for operator-keyed matching) or `id` (for author-assigned edge
+ * ids) must be provided. `edgeSemantic` checks against the §5.1 derived
+ * value populated by PR 0.
+ */
+export interface ExpectedEdge {
+  start?: string;
+  end?: string;
+  id?: string;
+  edgeSemantic?:
+    | 'control'
+    | 'data'
+    | 'conformance'
+    | 'delegation'
+    | 'failure'
+    | 'association'
+    | 'governance'
+    | 'bidirectional';
+}
+
+export interface ExpectedSemanticAssertions {
+  vertices?: ExpectedVertex[];
+  edges?: ExpectedEdge[];
+}
+
 export interface FixtureExpectation {
   outcome: 'valid' | 'warning' | 'error' | 'parse-error';
   diagnostics?: ExpectedDiagnostic[];
+  /**
+   * Optional assertions against `getSemanticModel()` output. Every listed
+   * vertex and edge must be present and every listed field must match;
+   * unlisted vertices/edges/fields are not constrained.
+   */
+  semanticAssertions?: ExpectedSemanticAssertions;
 }
 
 export interface FixtureResult {
   outcome: 'valid' | 'warning' | 'error' | 'parse-error';
   diagnostics: readonly AgentflowDiagnostic[];
+  /** Populated unless the JISON parser threw. */
+  semanticModel?: AgentflowSemanticModel;
   /** Populated when the JISON parser threw. */
   parseError?: string;
 }
@@ -98,8 +160,9 @@ export function runFixture(source: string): FixtureResult {
   const data = db.getData() as LayoutData;
   transformData(data, db);
   const diagnostics = db.getDiagnostics();
+  const semanticModel = db.getSemanticModel();
   const outcome = classify(diagnostics);
-  return { outcome, diagnostics };
+  return { outcome, diagnostics, semanticModel };
 }
 
 function classify(diagnostics: readonly AgentflowDiagnostic[]): 'valid' | 'warning' | 'error' {
@@ -113,7 +176,7 @@ function classify(diagnostics: readonly AgentflowDiagnostic[]): 'valid' | 'warni
 }
 
 export interface MatchFailure {
-  kind: 'outcome-mismatch' | 'missing-diagnostic';
+  kind: 'outcome-mismatch' | 'missing-diagnostic' | 'semantic-mismatch';
   message: string;
 }
 
@@ -143,7 +206,111 @@ export function matchExpected(result: FixtureResult, expected: FixtureExpectatio
       });
     }
   }
+  if (expected.semanticAssertions && result.semanticModel) {
+    failures.push(...matchSemanticAssertions(result.semanticModel, expected.semanticAssertions));
+  }
   return failures;
+}
+
+function matchSemanticAssertions(
+  model: AgentflowSemanticModel,
+  expected: ExpectedSemanticAssertions
+): MatchFailure[] {
+  const failures: MatchFailure[] = [];
+  for (const expectedVertex of expected.vertices ?? []) {
+    const actual = model.vertices.find((v) => v.id === expectedVertex.id);
+    if (!actual) {
+      failures.push({
+        kind: 'semantic-mismatch',
+        message: `expected vertex "${expectedVertex.id}" not found in semantic model`,
+      });
+      continue;
+    }
+    if (
+      expectedVertex.vertexKind !== undefined &&
+      actual.vertexKind !== expectedVertex.vertexKind
+    ) {
+      failures.push({
+        kind: 'semantic-mismatch',
+        message: `vertex "${expectedVertex.id}" expected vertexKind="${expectedVertex.vertexKind}" but got "${String(actual.vertexKind)}"`,
+      });
+    }
+    if (expectedVertex.resolvedMetadata !== undefined) {
+      const actualResolved = actual.resolvedMetadata ?? {};
+      for (const [key, expectedValue] of Object.entries(expectedVertex.resolvedMetadata)) {
+        const actualValue = actualResolved[key];
+        if (!deepEqual(actualValue, expectedValue)) {
+          failures.push({
+            kind: 'semantic-mismatch',
+            message: `vertex "${expectedVertex.id}" resolvedMetadata.${key} expected ${JSON.stringify(expectedValue)} but got ${JSON.stringify(actualValue)}`,
+          });
+        }
+      }
+    }
+  }
+  for (const expectedEdge of expected.edges ?? []) {
+    const actual = model.edges.find((e) => edgeMatches(e, expectedEdge));
+    if (!actual) {
+      failures.push({
+        kind: 'semantic-mismatch',
+        message: `expected edge ${describeEdge(expectedEdge)} not found in semantic model`,
+      });
+      continue;
+    }
+    if (
+      expectedEdge.edgeSemantic !== undefined &&
+      actual.edgeSemantic !== expectedEdge.edgeSemantic
+    ) {
+      failures.push({
+        kind: 'semantic-mismatch',
+        message: `edge ${describeEdge(expectedEdge)} expected edgeSemantic="${expectedEdge.edgeSemantic}" but got "${String(actual.edgeSemantic)}"`,
+      });
+    }
+  }
+  return failures;
+}
+
+function edgeMatches(
+  actual: AgentflowSemanticModel['edges'][number],
+  expected: ExpectedEdge
+): boolean {
+  if (expected.id !== undefined) {
+    return actual.id === expected.id;
+  }
+  if (expected.start !== undefined && actual.start !== expected.start) {
+    return false;
+  }
+  if (expected.end !== undefined && actual.end !== expected.end) {
+    return false;
+  }
+  return expected.start !== undefined || expected.end !== undefined;
+}
+
+function describeEdge(expected: ExpectedEdge): string {
+  if (expected.id !== undefined) {
+    return `{ id="${expected.id}" }`;
+  }
+  return `{ start="${expected.start ?? '?'}", end="${expected.end ?? '?'}" }`;
+}
+
+function deepEqual(a: unknown, b: unknown): boolean {
+  if (a === b) {
+    return true;
+  }
+  if (Array.isArray(a) && Array.isArray(b)) {
+    return a.length === b.length && a.every((v, i) => deepEqual(v, b[i]));
+  }
+  if (a && b && typeof a === 'object' && typeof b === 'object') {
+    const ka = Object.keys(a);
+    const kb = Object.keys(b);
+    if (ka.length !== kb.length) {
+      return false;
+    }
+    return ka.every((k) =>
+      deepEqual((a as Record<string, unknown>)[k], (b as Record<string, unknown>)[k])
+    );
+  }
+  return false;
 }
 
 function diagnosticMatches(actual: AgentflowDiagnostic, expected: ExpectedDiagnostic): boolean {
