@@ -2372,6 +2372,77 @@ You have to call mermaid.initialize.`
     }
   }
 
+  /**
+   * Returns true when an edge endpoint id refers to an `agent` subgraph
+   * or to an agent-instance vertex (`tag-rect` / `tagged-rectangle`).
+   * Used by the delegation and failure edge checks.
+   */
+  private isAgentEndpoint(id: string): boolean {
+    const sg = this.subGraphLookup.get(id);
+    if (sg && sg.type === 'agent') {
+      return true;
+    }
+    const vertex = this.vertices.get(id);
+    if (vertex && (vertex.type === 'tag-rect' || vertex.type === 'tagged-rectangle')) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Returns true when an edge endpoint id refers to a reference node
+   * per §13 applicability (`shape: procs`). Used by the conformance
+   * edge check.
+   */
+  private isReferenceEndpoint(id: string): boolean {
+    const vertex = this.vertices.get(id);
+    return vertex !== undefined && vertex.type === 'procs';
+  }
+
+  /**
+   * Per `AGENTFLOW-SYNTAX.md` §5.1: every edge operator has a primary
+   * semantic. When the semantic contradicts the endpoint kinds, emit
+   * `EDGE_SEMANTIC_CONTRADICTION`. Three specific rules:
+   *   - delegation (`-->>`) source must be an agent.
+   *   - failure    (`--x`)  source must be an agent.
+   *   - conformance (`--o`) target must be a reference node.
+   *
+   * Container-boundary contract violations for `==>` are covered by
+   * `validateContainerEdges()` (PR E) — not this pass.
+   */
+  private validateEdgeEndpointKinds(): void {
+    for (const edge of this.edges) {
+      const semantic = edge.edgeSemantic;
+      if (semantic === undefined) {
+        continue;
+      }
+      if (semantic === 'delegation' && !this.isAgentEndpoint(edge.start)) {
+        this.emitWarning(
+          'EDGE_SEMANTIC_CONTRADICTION',
+          `delegation edge source "${edge.start}" is not an agent (see AGENTFLOW-SYNTAX.md §5.1)`,
+          { edgeId: edge.id }
+        );
+        continue;
+      }
+      if (semantic === 'failure' && !this.isAgentEndpoint(edge.start)) {
+        this.emitWarning(
+          'EDGE_SEMANTIC_CONTRADICTION',
+          `failure edge source "${edge.start}" is not an agent (see AGENTFLOW-SYNTAX.md §5.1)`,
+          { edgeId: edge.id }
+        );
+        continue;
+      }
+      if (semantic === 'conformance' && !this.isReferenceEndpoint(edge.end)) {
+        this.emitWarning(
+          'EDGE_SEMANTIC_CONTRADICTION',
+          `conformance edge target "${edge.end}" is not a reference node (shape: procs) (see AGENTFLOW-SYNTAX.md §5.1)`,
+          { edgeId: edge.id }
+        );
+        continue;
+      }
+    }
+  }
+
   /** Run every post-parse diagnostic validator once per parse. */
   private runPostParseValidators(): void {
     if (this.postParseValidationRun) {
@@ -2385,6 +2456,7 @@ You have to call mermaid.initialize.`
     this.resolveReferences();
     this.validateReferenceKinds();
     this.validateContainment();
+    this.validateEdgeEndpointKinds();
   }
 
   public getData() {
