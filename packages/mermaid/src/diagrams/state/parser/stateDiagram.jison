@@ -130,9 +130,9 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <STATE_ID>[^\n\{]*         { if (!processId()) return; this.popState(); /* console.log('STATE_ID', yytext); */ return "ID"; }
 <STATE_STRING>["]          { this.popState(); }
 <STATE_STRING>[^"]*        { /* console.log('Long description:', yytext); */ return "STATE_DESCR"; }
-<STATE>\s+"state"\s+       { this.popState(); this.pushState('STATE'); yytext='state '; return 'NL'; }
+<STATE>\w+\s+\w+.*?\{      { throw new Error('Error: State name must be a single word. Found: "' + yytext.trim() + '"'); }
 <STATE>[^\n\s\{]+          { /* console.log('COMPOSIT_STATE', yytext); */ return 'COMPOSIT_STATE'; }
-<STATE>\n                  { this.popState(); return 'NL'; }
+<STATE>\n                  { this.popState(); }
 <INITIAL,STATE>\{          { this.popState(); this.pushState('struct'); /* console.log('begin struct', yytext); */ return 'STRUCT_START'; }
 <struct>\}                 { /*console.log('Ending struct');*/ this.popState(); return 'STRUCT_STOP';} }
 <struct>[\n]               /* nothing */
@@ -224,19 +224,11 @@ statement
         }
     | HIDE_EMPTY
     | scale WIDTH
-    | COMPOSIT_STATE NL
-        {
-            $$={ stmt: 'state', id: $1, type: 'default', description: '', doc: [] }
-        }
+    | COMPOSIT_STATE
     | COMPOSIT_STATE STRUCT_START document STRUCT_STOP
     {
         // console.log('Adding document for state without id ', $1);
         $$={ stmt: 'state', id: $1, type: 'default', description: '', doc: $3 }
-    }
-    | COMPOSIT_STATE COMPOSIT_STATE STRUCT_START document STRUCT_STOP
-    {
-        /* Rejects invalid syntax: multiple words between 'state' and '{' */
-        throw new Error('Error: State name must be a single word.');
     }
     | STATE_DESCR AS ID {
         var id=$3;

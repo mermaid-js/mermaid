@@ -17,7 +17,8 @@ describe('state parser can parse...', () => {
   describe('invalid name between state and curly bracket', () => {
     it('should throw error when name has multiple words', () => {
       const diagramText = `stateDiagram-v2
-      state invalid syntax { X }`;
+      state invalid syntax { X }
+      state invalid syntax with more than 2 words { Y }`;
 
       expect(() => {
         stateDiagram.parser.parse(diagramText);
