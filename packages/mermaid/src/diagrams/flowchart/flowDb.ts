@@ -31,7 +31,7 @@ import DOMPurify from 'dompurify';
 interface LinkData {
   id: string;
 }
-
+// TODO; Just for test. Remove later
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 
 // We are using arrow functions assigned to class instance fields instead of methods as they are required by flow JISON
