@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@iconify-json/carbon": "^1.2.14",
+    "@iconify-json/material-symbols": "^1.2.67",
     "@unocss/reset": "^66.5.9",
     "@vite-pwa/vitepress": "^1.0.1",
     "@vitejs/plugin-vue": "^6.0.2",
@@ -33,6 +34,7 @@
     "https-localhost": "^4.7.1",
     "pathe": "^2.0.3",
     "unocss": "^66.5.9",
+    "unplugin-icons": "^23.0.1",
     "unplugin-vue-components": "^28.8.0",
     "vite": "^7.0.8",
     "vite-plugin-pwa": "^1.0.3",
