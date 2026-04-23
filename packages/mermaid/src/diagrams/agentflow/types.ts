@@ -24,6 +24,14 @@ export type FlowVertexTypeParam =
   | 'lean_right'
   | 'lean_left';
 
+/**
+ * Derived semantic kind of a vertex. Currently the only value is `'tool'`,
+ * derived from the resolved shape (`subroutine` and its aliases per §8.2 of
+ * AGENTFLOW-SYNTAX.md). Surfaced on `SemanticVertex` so downstream consumers
+ * don't recompute the shape→kind mapping themselves.
+ */
+export type VertexKind = 'tool';
+
 export interface FlowVertex {
   classes: string[];
   dir?: string;
@@ -217,6 +225,8 @@ export interface SemanticVertex {
   label?: string;
   /** Shape carries meaning in agentflow (diamond ≠ hexagon ≠ subroutine etc.). */
   shape?: string;
+  /** Derived semantic kind (currently only `'tool'`). See {@link VertexKind}. */
+  vertexKind?: VertexKind;
   /** Domain metadata from `@{...}` blocks (permits, model, requires, etc.). */
   metadata?: Record<string, unknown>;
   /** Set when this vertex is an instance of a definition (§10). */
