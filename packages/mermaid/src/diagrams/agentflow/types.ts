@@ -227,8 +227,17 @@ export interface SemanticVertex {
   shape?: string;
   /** Derived semantic kind (currently only `'tool'`). See {@link VertexKind}. */
   vertexKind?: VertexKind;
-  /** Domain metadata from `@{...}` blocks (permits, model, requires, etc.). */
+  /** Domain metadata authored on this vertex (permits, model, requires, etc.). */
   metadata?: Record<string, unknown>;
+  /**
+   * Domain metadata after `def` resolution — the instance's own metadata
+   * layered on top of the transitive inheritance from its definition chain
+   * per §11.3. Populated only for instance-shape vertices (`tag-rect`,
+   * `delay`, `lin-rect`, `win-pane`, `curv-trap`) that fully resolve; left
+   * `undefined` for plain vertices and for instances whose resolution
+   * failed (missing def, cyclic chain, kind mismatch).
+   */
+  resolvedMetadata?: Record<string, unknown>;
   /** Set when this vertex is an instance of a definition (§10). */
   def?: string;
 }
