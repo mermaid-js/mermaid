@@ -167,6 +167,106 @@ const CONNECTOR_CONFIG_FIELDS = new Set<string>([
  */
 const CONNECTOR_REF_BARE_ID = /^[A-Z_a-z]\w*$/;
 
+/**
+ * Shapes that classify a node as an **artifact** per §13 applicability
+ * ("artifact nodes (`doc`, etc.)"). Canonical shape ids only; the spec
+ * is deliberately conservative about which shapes belong.
+ */
+const ARTIFACT_SHAPES = new Set<string>(['doc', 'lin-doc', 'lean-right', 'lean-left']);
+
+/**
+ * Shapes that classify a node as a **reference** per §13 applicability
+ * ("reference nodes (`procs`)"). Only the canonical shape id is listed.
+ */
+const REFERENCE_SHAPES = new Set<string>(['procs']);
+
+/**
+ * Metadata keys that are valid on **any** authored element per
+ * `AGENTFLOW-SYNTAX.md` §13.1 (cross-cutting) plus the structural and
+ * presentation controls tracked by the DB. These never surface a
+ * `METADATA_KEY_MISAPPLIED` warning regardless of element kind.
+ */
+const UNIVERSAL_METADATA_KEYS = new Set<string>([
+  // §13.1 cross-cutting
+  'description',
+  // Structural wiring exposed via metadata
+  'shape',
+  'label',
+  'labelType',
+  'def',
+  // Presentation (§14) — also excluded from inheritance in §11.3
+  'view',
+  'icon',
+  'img',
+  'w',
+  'h',
+  'class',
+  'style',
+  'form',
+  'pos',
+  'animate',
+  'animation',
+  'curve',
+  'constraint',
+]);
+
+/**
+ * The element kinds the §13 applicability table addresses. Plain
+ * unclassified vertices and the legacy `subgraph` / `group` containers
+ * are unrestricted and never reach this lookup.
+ */
+type MetadataApplicabilityKind =
+  | 'agent'
+  | 'flow'
+  | 'task'
+  | 'skill'
+  | 'tool'
+  | 'connector'
+  | 'directive'
+  | 'testCase'
+  | 'artifact'
+  | 'reference';
+
+/**
+ * §13 Metadata Applicability — the normative allowed-key set per element
+ * kind. `description` and universal keys are handled separately via
+ * `UNIVERSAL_METADATA_KEYS`, so they do not appear here.
+ */
+const METADATA_APPLICABILITY: Readonly<Record<MetadataApplicabilityKind, ReadonlySet<string>>> = {
+  agent: new Set(['model', 'permits', 'memory', 'fallbacks']),
+  flow: new Set(['params', 'returns']),
+  task: new Set(['execution', 'params', 'returns', 'fallbacks']),
+  skill: new Set(['strategy', 'params', 'returns', 'fallbacks']),
+  tool: new Set([
+    'params',
+    'returns',
+    'requires',
+    'deny',
+    'retry',
+    'cache',
+    'validate',
+    'handler',
+    'transport',
+    'command',
+    'connectorRef',
+  ]),
+  connector: new Set(['protocol', 'endpoint', 'transport', 'command', 'auth', 'token_required']),
+  directive: new Set(['rule', 'severity', 'context', 'params']),
+  testCase: new Set(['assert', 'expects']),
+  artifact: new Set(['output']),
+  reference: new Set(['typeRef', 'templateRef', 'src']),
+};
+
+/**
+ * Union of every key that appears in any row of the applicability
+ * table. Used to distinguish "known domain key on the wrong element"
+ * (warn) from "unknown key" (preserved silently in this PR). Computed
+ * once at module load.
+ */
+const ALL_APPLICABILITY_KEYS: ReadonlySet<string> = new Set(
+  Object.values(METADATA_APPLICABILITY).flatMap((s) => [...s])
+);
+
 /** Maps subgraph container types to their cluster shape IDs. */
 const SUBGRAPH_TYPE_TO_SHAPE: Record<NonNullable<FlowSubGraph['type']>, ClusterShapeID> = {
   agent: 'agentGroup',
@@ -1846,6 +1946,123 @@ You have to call mermaid.initialize.`
     }
   }
 
+  /**
+   * Classify a vertex against the §13 applicability rows. Returns
+   * `null` for unclassified / plain vertices — those have no
+   * applicability restrictions and are skipped by the validator.
+   *
+   * Classification priority matters when a vertex could match multiple
+   * rows: a tool (shape: subroutine) that also carries connector
+   * configuration fields uses the tool row, not the connector row.
+   * The spec's tool row already lists `transport` and `command`, so
+   * this priority preserves the tool's richer allowed set.
+   */
+  private classifyVertexForApplicability(vertex: FlowVertex): MetadataApplicabilityKind | null {
+    if (this.isToolDefinition(vertex)) {
+      return 'tool';
+    }
+    if (this.isConnectorDesignated(vertex)) {
+      return 'connector';
+    }
+    const shape = vertex.type as string | undefined;
+    if (shape !== undefined) {
+      if (REFERENCE_SHAPES.has(shape)) {
+        return 'reference';
+      }
+      if (ARTIFACT_SHAPES.has(shape)) {
+        return 'artifact';
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Classify a subgraph against the §13 applicability rows. Returns
+   * `null` for the legacy unrestricted containers (`subgraph`, `group`)
+   * and for the synthetic declaration groups (`types`, `templates`).
+   */
+  private classifySubGraphForApplicability(sg: FlowSubGraph): MetadataApplicabilityKind | null {
+    switch (sg.type) {
+      case 'agent':
+        return 'agent';
+      case 'flow':
+        return 'flow';
+      case 'task':
+        return 'task';
+      case 'skill':
+        return 'skill';
+      case 'directive':
+        return 'directive';
+      case 'test':
+        return 'testCase';
+      default:
+        return null;
+    }
+  }
+
+  /**
+   * Per `AGENTFLOW-SYNTAX.md` §13: for every classifiable element,
+   * check each metadata key against the applicability table. A key
+   * that is known (appears in any row) but not in this element's row
+   * — and isn't universal / cross-cutting — emits
+   * `METADATA_KEY_MISAPPLIED`. Unknown keys are preserved on the raw
+   * metadata without a warning; that follow-up diagnostic is out of
+   * scope for this PR.
+   */
+  private validateMetadataApplicability(): void {
+    const check = (
+      id: string,
+      metadata: Record<string, unknown>,
+      kind: MetadataApplicabilityKind
+    ) => {
+      const allowed = METADATA_APPLICABILITY[kind];
+      for (const key of Object.keys(metadata)) {
+        if (UNIVERSAL_METADATA_KEYS.has(key)) {
+          continue;
+        }
+        if (allowed.has(key)) {
+          continue;
+        }
+        if (!ALL_APPLICABILITY_KEYS.has(key)) {
+          // Unknown key — preserved, no warning in this PR.
+          continue;
+        }
+        this.emitWarning(
+          'METADATA_KEY_MISAPPLIED',
+          `metadata key "${key}" is not valid on ${kind} "${id}" (see AGENTFLOW-SYNTAX.md §13)`,
+          { nodeId: id }
+        );
+      }
+    };
+
+    const subGraphIds = new Set(this.subGraphs.map((sg) => sg.id));
+    for (const [id, vertex] of this.vertices) {
+      if (subGraphIds.has(id)) {
+        // Container metadata lives on the subgraph entry; the vertex
+        // record is a metadata-attachment placeholder — skip.
+        continue;
+      }
+      if (!vertex.metadata) {
+        continue;
+      }
+      const kind = this.classifyVertexForApplicability(vertex);
+      if (kind === null) {
+        continue;
+      }
+      check(id, vertex.metadata, kind);
+    }
+    for (const sg of this.subGraphs) {
+      if (!sg.metadata) {
+        continue;
+      }
+      const kind = this.classifySubGraphForApplicability(sg);
+      if (kind === null) {
+        continue;
+      }
+      check(sg.id, sg.metadata, kind);
+    }
+  }
+
   /** Run every post-parse diagnostic validator once per parse. */
   private runPostParseValidators(): void {
     if (this.postParseValidationRun) {
@@ -1855,6 +2072,7 @@ You have to call mermaid.initialize.`
     this.validateHexagonBranching();
     this.resolveInstances();
     this.validateConnectorReferences();
+    this.validateMetadataApplicability();
   }
 
   public getData() {
