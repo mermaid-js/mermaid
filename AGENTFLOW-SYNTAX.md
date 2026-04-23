@@ -219,7 +219,9 @@ The following matrix lists allowed children for each parent container:
 | `testCase`  | `directive`, node                                               |
 | `subgraph`  | unrestricted (legacy escape hatch)                              |
 
-In the matrix above, `tool` denotes any node whose resolved shape is `subroutine` (§8) — it is a categorical kind, not a keyword. Tools are leaves; they cannot be parents. Connectors (§9) are regular nodes — typically grouped in a `subgraph connectors` block at top level — and fall under the `node` row of the matrix. Placements outside this matrix produce a warning in v0.5.0 and become validation errors from v1.0.
+> **`tool` in this matrix is a categorical kind, not a keyword.** It denotes any node whose resolved shape is `subroutine` (or one of its aliases — see §8). Authors do not write a literal `tool` keyword anywhere.
+
+Tools are leaves; they cannot be parents. Connectors (§9) are regular nodes — typically grouped in a `subgraph connectors` block at top level — and fall under the `node` row of the matrix. Placements outside this matrix produce a warning in v0.5.0 and become validation errors from v1.0.
 
 ### 3.4 Nesting Example
 
@@ -230,7 +232,7 @@ agent dev_team["Development Team"]
       task design["Design System"]
         requirements["requirements"]
         design_system["design_system"]
-        requirements --> design_system
+        requirements ==> design_system
       end
     end
   end
@@ -268,12 +270,11 @@ Shapes carry semantic weight. They are set either automatically by the system or
 
 #### 4.3.1 System-Assigned Shapes
 
-| Shape ID          | Assigned When                                                               | Visual                                                                | Semantic Meaning                                                                                                                                                                                      |
-| ----------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `roundedRect`     | Default for all user-defined nodes                                          | Rounded rectangle                                                     | General-purpose step or data node. The default shape when no explicit annotation is provided.                                                                                                         |
-| `subroutine`      | Set via `@{ shape: subroutine }` — marks the node as a tool definition (§8) | Double-bordered rectangle                                             | A callable tool or executable primitive.                                                                                                                                                              |
-| `collapsedGroup`  | Container has `@{ view: "collapsed" }`                                      | Title + separator + ellipsis dots; border/fill matches container type | A container whose internals are hidden. Preserves the container's visual identity (agent/flow/task/skill/testCase/directive) while signalling that detail is elided. Used for progressive disclosure. |
-| `typeDeclaration` | For each `type` declaration                                                 | `<<kind>>` badge + bold name + separator + fields/expression          | A data contract defining the shape of information flowing between agents and tasks.                                                                                                                   |
+| Shape ID          | Assigned When                          | Visual                                                                | Semantic Meaning                                                                                                                                                                                      |
+| ----------------- | -------------------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `roundedRect`     | Default for all user-defined nodes     | Rounded rectangle                                                     | General-purpose step or data node. The default shape when no explicit annotation is provided.                                                                                                         |
+| `collapsedGroup`  | Container has `@{ view: "collapsed" }` | Title + separator + ellipsis dots; border/fill matches container type | A container whose internals are hidden. Preserves the container's visual identity (agent/flow/task/skill/testCase/directive) while signalling that detail is elided. Used for progressive disclosure. |
+| `typeDeclaration` | For each `type` declaration            | `<<kind>>` badge + bold name + separator + fields/expression          | A data contract defining the shape of information flowing between agents and tasks.                                                                                                                   |
 
 #### 4.3.2 User-Annotated Shapes
 
@@ -407,10 +408,10 @@ Each operator has one **primary semantic**. Stroke is a rendering property of th
 Labels are placed between pipe characters or inline:
 
 ```
-A |"label text"| B
+A -->|"label text"| B
 A -- label text --> B
 sentinel --alert--> monitor
-writer -- Article Draft --> editor
+writer == Article Draft ==> editor
 ```
 
 When the edge targets a container boundary, the label has a specific semantic role defined in §5.5.
@@ -424,7 +425,7 @@ Stroke presentation follows the operator: thick is the rendering of `==>`, dotte
 Send one output to multiple targets:
 
 ```
-classifier -- Classification Report --> processor & auditor
+classifier == Classification Report ==> processor & auditor
 ```
 
 The `&` operator is used only in edge fan-out, not in node declarations.
@@ -571,12 +572,12 @@ Tool metadata keys are listed in §13 _Metadata Applicability_ under the `tool` 
 
 A tool **definition** registers a reusable executable primitive and performs no work by itself. Writing a bare tool definition at the top level (or inside any container the matrix in §3.3 permits) is valid.
 
-An **invocation** is a use of a tool from execution context. The invocation forms supported in v0.x / 1.0 are:
+An **invocation** is a use of a tool definition from execution context. The invocation forms supported in v0.x / 1.0 are:
 
-- an edge (typically `-->` or `==>`) from a task, flow, or skill node into the tool definition's ID; or
+- an edge (typically `==>` for data flow into the tool, or `-->` for control sequencing) from any node that is structurally inside a `task`, `flow`, or `skill` container — including input nodes (`lean-right`), data-artifact nodes (`doc`, etc.), and other regular nodes within those containers — into the tool definition's ID; or
 - a `win-pane` instance (§11) whose `def` points at the tool definition, placed inside an executing container.
 
-Additional invocation forms may be added in a later version under the additive-change rule.
+A bare tool definition at the top level — with no incoming edges from inside an executing container — is a definition only and is **not** invoked. Additional invocation forms may be added in a later version under the additive-change rule.
 
 Capability evaluation (§12) runs **only at invocation sites**, never at the definition site.
 
@@ -588,14 +589,21 @@ Tool definitions render with the `subroutine` visual. The `subroutine` shape is 
 
 Earlier drafts of this spec proposed a first-class `tool` keyword. That direction was withdrawn in revision 5 of `AGENTFLOW-readiness-actions.md`: the language already expresses tools through `shape: subroutine` and `win-pane`, and a keyword would create a second representation for the same concept. The shape-based form is the canonical and only form.
 
-### 8.4 Future Extensions (Additive)
+### 8.4 Tool `params` and Future Extensions
 
-Two related metadata additions are flagged for a future v0.6.x release. Neither is required for v0.5.0 and neither introduces new keywords or shapes:
+Tool `params` is part of v0.5.0. It is a declarative input parameter set on a tool definition, parallel to the `params` field already used on container boundaries (§5.5). It appears on the `tool` row of the §13 metadata applicability table and lets downstream tooling validate that an invocation provides the inputs the tool expects.
 
-- **Tool `params`** — a declarative input parameter set on a tool definition, parallel to the `params` field already used on container boundaries (§5.5). Lets tooling validate that an invocation provides the inputs the tool expects.
-- **Input-value semantics on data nodes** — `value` (literal value at a point in the flow) and `example` (illustrative value for documentation) metadata keys on data-artifact nodes.
+```
+search_web["search_web"]
+search_web@{
+  shape: subroutine,
+  params: "query :: String",
+  returns: "SearchResults",
+  requires: ["net.read"]
+}
+```
 
-Both additions are pure metadata. They land additively on the existing shape-based model.
+A future v0.6.x release will add **input-value semantics on data nodes** — `value` (literal value at a point in the flow) and `example` (illustrative value for documentation) metadata keys on data-artifact nodes. This is a pure metadata addition; no new keywords or shapes.
 
 ---
 
@@ -618,7 +626,10 @@ save_diagram@{
 }
 ```
 
-The string value is opaque to the parser; downstream tooling interprets it (a flat connector id, a dotted `connector.operation` form, a URL-style key — implementation choice).
+The string value's interpretation depends on its form (this is the weak-reference rule from §10.1):
+
+- A **bare id** (e.g. `"github_mcp"`) is treated as a weak in-diagram reference. The validator MAY warn if no node with that id is declared (`CONNECTOR_REF_UNRESOLVED`) — this catches typos.
+- A **dotted form** (`"github.create_issue"`) or a **URL-like string** is treated as opaque and is not validated. Downstream tooling interprets it as it sees fit (operation paths, endpoints, etc.).
 
 ### 9.2 Connectors as Referenceable Nodes (optional)
 
@@ -698,7 +709,8 @@ These rules produce warnings in v0.5.0 (behind `agentflow.strictIds: false` by d
 
 Reference-style keys split into two groups:
 
-- **Semantic references** are resolved against the diagram model. Unresolved values are validation errors. Members: `def`, `typeRef`, `templateRef`. The `connector` metadata key (§9) is a **soft semantic reference** — when its value is a bare id (no dotted operation suffix) the validator MAY warn on an unresolved target, but the string is treated as opaque by the parser.
+- **Semantic references** are resolved against the diagram model. Unresolved values are validation errors. Members: `def`, `typeRef`, `templateRef`.
+- **Weak references by convention.** The `connector` metadata key (§9) is a weak reference: when its value is a **bare id** (matches the `[A-Za-z_]\w*` identifier shape with no dot), the validator MAY warn on an unresolved target — this catches typos. When the value is a **dotted form** (`<connector>.<operation>`) or a **URL-like string**, it is treated as opaque and is not validated. This matches the §9.4 rationale: bare ids look like in-diagram references and are guarded; richer forms are downstream-tooling territory.
 - **External / hygiene references** are validated for shape and allowed usage, but not for existence of the external target unless an import resolver is explicitly enabled. Members: `src`, `click` / `href` targets, and `class` / `style` references.
 
 ### 10.2 Legacy `type` on Reference Nodes
@@ -767,12 +779,12 @@ Comma-separated string form is accepted in v0.5.0 with a deprecation warning and
 
 ### 12.2 Invocation Sites
 
-Capability evaluation applies to **invocation sites only**, never to `tool` definitions (§8). The invocation sites supported in v0.x / 1.0 are:
+Capability evaluation applies to **invocation sites only**, never to tool definitions (§8). The invocation sites supported in v0.x / 1.0 are:
 
-- an edge from a task, flow, or skill node into a tool's ID, or
-- a `win-pane` instance whose `def` points at a tool and is placed inside an executing container.
+- an edge from any node structurally inside a `task`, `flow`, or `skill` container — including input nodes (`lean-right`), data-artifact nodes (`doc`, etc.), and other regular nodes within those containers — into a tool definition's ID; or
+- a `win-pane` instance whose `def` points at a tool definition and is placed inside an executing container.
 
-A bare top-level `tool` declaration is a definition and is not subject to capability evaluation. Additional invocation-site forms may be introduced in a later version.
+A bare top-level tool definition with no incoming edges from inside an executing container is a definition only and is not subject to capability evaluation. Additional invocation-site forms may be introduced in a later version.
 
 ### 12.3 Executing-Agent Resolution
 
@@ -927,7 +939,7 @@ do_work@{ shape: subroutine, returns: "OutputType", requires: ["llm.query"] }
 task step["Do Work"]
   input["input"]
   output["Output"]
-  input --> do_work --> output
+  input ==> do_work ==> output
   do_work --o type_ref
 end
 
@@ -948,9 +960,9 @@ gen_html --- style_guide
 style_guide@{ shape: lin-doc }
 ```
 
-### 19.3 Permission Tree Pattern
+### 19.3 Capability Taxonomy Pattern
 
-Hierarchy edges (`-->>`) with hexagon categories and terminal leaves:
+A hierarchy of capability or permission categories rooted at a top-level grouping. Hexagon categories are classification sources (per §4.2); terminal leaves are the granular permissions. Hierarchy edges use `-->>` (delegation):
 
 ```
 all -->> data
@@ -1179,11 +1191,11 @@ agentflow TB
         task step1["Research Location"]
           city["city"]
           brief["Research Brief"]
-          city --> research_loc --> brief
+          city ==> research_loc ==> brief
         end
         task step2["Write Copy"]
           english_copy["English Copy"]
-          brief --> write_copy --> english_copy
+          brief ==> write_copy ==> english_copy
           write_copy --o coffee_copy_ref
         end
         step1 --> step2
@@ -1192,7 +1204,7 @@ agentflow TB
       agent translator["Translator"]
         task step3["Translate to Swedish"]
           bilingual["Bilingual Page"]
-          english_copy --> translate_sv --> bilingual
+          english_copy ==> translate_sv ==> bilingual
           translate_sv --o bilingual_page_ref
         end
       end
@@ -1200,7 +1212,7 @@ agentflow TB
       agent designer["Designer"]
         task step4["Generate Website"]
           html_out["HTML Website"]
-          bilingual --> gen_html --> html_out
+          bilingual ==> gen_html ==> html_out
         end
         nordic["nordic_design"]
         glass["glassmorphism"]
@@ -1241,6 +1253,8 @@ Notable v0.5.0 changes in this example versus v0.4.0:
 
 - Tools are declared at the top level as named nodes with `shape: subroutine` (§8). The shape-based form is the canonical and only form; no new keyword is introduced.
 - The shared LLM back-end is declared as a node in a `subgraph connectors` block; the three LLM-using tools bind to it via `connector: "llm_api"` metadata (§9). No `connector` keyword is used.
+- Data flow uses `==>` (§5.1). Edges that move artifacts between nodes — input → tool → output, tool → reference binding via `--o` — are explicitly typed as data, not as the legacy thick-control form.
+- Control sequencing (`step1 --> step2`) uses `-->`. Reference attachments use `---`.
 - Reference nodes use `typeRef` and `src` explicitly rather than the overloaded `type` key (§10.2).
 - `permits` and `requires` are YAML arrays (§12.1).
 
