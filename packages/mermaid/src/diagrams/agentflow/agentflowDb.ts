@@ -95,6 +95,18 @@ const SEMANTIC_METADATA_SKIP_KEYS = new Set([
   'curve',
 ]);
 
+/**
+ * Shape ids that mark a node as a tool definition per `AGENTFLOW-SYNTAX.md`
+ * §8.2: the canonical name plus the accepted aliases. Membership in this
+ * set is the source of truth for `isToolDefinition()`.
+ */
+const SUBROUTINE_ALIASES = new Set<string>([
+  'subroutine',
+  'subprocess',
+  'subproc',
+  'framed-rectangle',
+]);
+
 /** Maps subgraph container types to their cluster shape IDs. */
 const SUBGRAPH_TYPE_TO_SHAPE: Record<NonNullable<FlowSubGraph['type']>, ClusterShapeID> = {
   agent: 'agentGroup',
@@ -842,6 +854,34 @@ You have to call mermaid.initialize.`
   }
 
   /**
+   * Returns true when `vertex` is a **tool definition** per
+   * `AGENTFLOW-SYNTAX.md` §8 — its resolved shape is `subroutine` or one
+   * of the accepted aliases (`subprocess`, `subproc`, `framed-rectangle`).
+   *
+   * This is the source of truth for "is this a tool?" — there is no
+   * separate kind tag stored on the vertex; tool-ness is derived from
+   * shape on every check. Downstream consumers reading the semantic model
+   * see this surfaced as `vertexKind: 'tool'` (see `getSemanticModel`).
+   */
+  public isToolDefinition(vertex: FlowVertex): boolean {
+    return SUBROUTINE_ALIASES.has(vertex.type as string);
+  }
+
+  /**
+   * Returns every vertex that is a tool definition (per `isToolDefinition`).
+   * Derived view; not cached.
+   */
+  public getTools(): FlowVertex[] {
+    const tools: FlowVertex[] = [];
+    for (const vertex of this.vertices.values()) {
+      if (this.isToolDefinition(vertex)) {
+        tools.push(vertex);
+      }
+    }
+    return tools;
+  }
+
+  /**
    * Retrieval function for fetching the found class definitions after parsing has completed.
    *
    */
@@ -1510,6 +1550,44 @@ You have to call mermaid.initialize.`
     }
   }
 
+  /**
+   * Per `AGENTFLOW-SYNTAX.md` §11.2: a `win-pane` instance's `def` MUST
+   * resolve to a tool definition (a node whose resolved shape is
+   * `subroutine` or an accepted alias). When the def resolves to a node
+   * that exists but is NOT a tool, emit `INSTANCE_KIND_MISMATCH`.
+   *
+   * Out of scope here (covered by PR 4): missing `def`
+   * (`INSTANCE_DEF_MISSING`), cyclic `def` chains (`INSTANCE_DEF_CYCLE`),
+   * and the kind validation for the other four instance shapes
+   * (`tag-rect` → agent, `delay` → flow, `lin-rect` → skill,
+   * `curv-trap` → directive).
+   */
+  private validateInstanceTargets(): void {
+    for (const [id, vertex] of this.vertices) {
+      const shape = vertex.type as string | undefined;
+      if (shape !== 'win-pane' && shape !== 'window-pane') {
+        continue;
+      }
+      const def = vertex.metadata?.def;
+      if (typeof def !== 'string' || def.length === 0) {
+        // Missing def — PR 4 will handle with INSTANCE_DEF_MISSING.
+        continue;
+      }
+      const target = this.vertices.get(def);
+      if (!target) {
+        // Unresolved def — also PR 4's domain.
+        continue;
+      }
+      if (!this.isToolDefinition(target)) {
+        this.emitWarning(
+          'INSTANCE_KIND_MISMATCH',
+          `win-pane instance "${id}" has def "${def}" which is not a tool definition (a tool definition is a node with shape: subroutine — see AGENTFLOW-SYNTAX.md §8)`,
+          { nodeId: id }
+        );
+      }
+    }
+  }
+
   /** Run every post-parse diagnostic validator once per parse. */
   private runPostParseValidators(): void {
     if (this.postParseValidationRun) {
@@ -1517,6 +1595,7 @@ You have to call mermaid.initialize.`
     }
     this.postParseValidationRun = true;
     this.validateHexagonBranching();
+    this.validateInstanceTargets();
   }
 
   public getData() {
@@ -1807,6 +1886,9 @@ You have to call mermaid.initialize.`
       }
       if (v.type !== undefined) {
         vertex.shape = v.type;
+      }
+      if (this.isToolDefinition(v)) {
+        vertex.vertexKind = 'tool';
       }
       if (v.metadata && Object.keys(v.metadata).length > 0) {
         // Strip presentation-only keys from metadata passthrough.

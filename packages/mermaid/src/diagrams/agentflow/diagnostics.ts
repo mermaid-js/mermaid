@@ -28,6 +28,14 @@ export const AgentflowWarning = {
    * Emitted by PR 2c; reserved here.
    */
   HEXAGON_MULTI_BRANCH: 'HEXAGON_MULTI_BRANCH',
+  /**
+   * A `win-pane` instance's `def` resolves to a node that is not a
+   * tool definition (§8 / §11.2). Per the spec, win-pane may
+   * reference only nodes whose resolved shape is `subroutine` (or an
+   * accepted alias). Wave-2 PR 4 will extend this validator to cover
+   * the other four instance shape→kind pairs.
+   */
+  INSTANCE_KIND_MISMATCH: 'INSTANCE_KIND_MISMATCH',
 } as const;
 
 export type AgentflowWarningId = (typeof AgentflowWarning)[keyof typeof AgentflowWarning];
