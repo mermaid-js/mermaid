@@ -36,6 +36,20 @@ export const AgentflowWarning = {
    * the other four instance shape→kind pairs.
    */
   INSTANCE_KIND_MISMATCH: 'INSTANCE_KIND_MISMATCH',
+  /**
+   * A `connectorRef` metadata value (§9.1) is a bare id that doesn't
+   * resolve to any node in the diagram. Catches typos. Warn-only in
+   * v0.5.0; error from v1.0.
+   */
+  CONNECTOR_REF_UNRESOLVED: 'CONNECTOR_REF_UNRESOLVED',
+  /**
+   * A `connectorRef` metadata value (§9.1) is a bare id that resolves
+   * to an existing node, but that node carries none of the connector
+   * configuration fields (`protocol`, `endpoint`, `transport`,
+   * `command`, `auth`, `token_required`) so it isn't a connector-
+   * designated node per §9.2. Warn-only in v0.5.0; error from v1.0.
+   */
+  CONNECTOR_REF_NOT_A_CONNECTOR: 'CONNECTOR_REF_NOT_A_CONNECTOR',
 } as const;
 
 export type AgentflowWarningId = (typeof AgentflowWarning)[keyof typeof AgentflowWarning];
