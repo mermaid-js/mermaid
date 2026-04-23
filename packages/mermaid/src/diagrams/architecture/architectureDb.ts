@@ -67,7 +67,7 @@ export class ArchitectureDB implements DiagramDB {
     this.diagramId = '';
     commonClear();
   }
-  // TODO: Remove later when tested
+
   public addService({
     id,
     icon,

@@ -125,11 +125,24 @@ jobs:
             exit 0
           fi
 
-          # Fetch the base commit so git diff can compare against it.
-          git fetch origin "$BASE" --depth=1 2>/dev/null || true
+          # Fetch the target branch so we can find the true merge-base.
+          # Using merge-base rather than the raw base SHA from the event payload
+          # avoids picking up commits that landed on the base branch after the
+          # PR was last synchronized (which would widen the diff incorrectly).
+          git fetch origin develop --depth=1 2>/dev/null || true
+          MERGE_BASE=$(git merge-base HEAD origin/develop 2>/dev/null || echo "")
+
+          if [ -z "$MERGE_BASE" ]; then
+            echo "spec_pattern=" >> "$GITHUB_OUTPUT"
+            echo "matrix=${FULL_MATRIX}" >> "$GITHUB_OUTPUT"
+            echo "[detect-scope] Could not determine merge-base — full suite."
+            exit 0
+          fi
+
+          echo "[detect-scope] merge-base: ${MERGE_BASE}"
 
           # Get changed files and run the detection script.
-          SPEC=$(git diff --name-only "$BASE" HEAD 2>/dev/null \
+          SPEC=$(git diff --name-only "$MERGE_BASE" HEAD 2>/dev/null \
                  | node scripts/e2e-diagram-scope.mjs \
                  || echo "")
 
