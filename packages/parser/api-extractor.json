@@ -37,7 +37,19 @@
    *
    *   "bundledPackages": [ "@my-company/*" ],
    */
-  "bundledPackages": [],
+  "bundledPackages": [
+    "langium",
+    // Dependencies of langium
+    "chevrotain",
+    // Skip bundling `@chevrotain/types` since api-extractor doesn't like it
+    "chevrotain-allstar",
+    "vscode-languageserver",
+    "vscode-languageserver-textdocument",
+    "vscode-uri",
+    "vscode-jsonrpc",
+    "vscode-languageserver-types",
+    "vscode-languageserver-protocol"
+  ],
 
   /**
    * Specifies what type of newlines API Extractor should use when writing output files.  By default, the output files
@@ -226,7 +238,11 @@
      */
     "tsdocMessageReporting": {
       "default": {
-        "logLevel": "warning"
+        /**
+         * We have lots of TSDoc warnings in bundled types that we don't have
+         * control over.
+         */
+        "logLevel": "none"
       }
     }
   }

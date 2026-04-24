@@ -547,9 +547,9 @@ importers:
 
   packages/parser:
     dependencies:
-      langium:
-        specifier: ^4.0.0
-        version: 4.2.0
+      '@chevrotain/types':
+        specifier: ~11.1.1
+        version: 11.1.1
     devDependencies:
       '@microsoft/api-extractor':
         specifier: ^7.57.0
@@ -557,6 +557,9 @@ importers:
       chevrotain:
         specifier: ~11.1.1
         version: 11.1.1
+      langium:
+        specifier: ^4.0.0
+        version: 4.2.0
 
   packages/tiny: {}
 
