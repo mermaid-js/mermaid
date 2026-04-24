@@ -2364,6 +2364,10 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         minimum: 0
         default: 5
+      endianness:
+        description: Endianness of the packet bit ordering when displaying bit numbers and labels.
+        type: string
+        default: 'big'
 
   BlockDiagramConfig:
     title: Block Diagram Config
