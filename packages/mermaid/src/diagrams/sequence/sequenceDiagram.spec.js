@@ -2286,10 +2286,9 @@ end`;
 
   it('should set actor stopy for all actors in a tall diagram (non-mirrorActors)', async () => {
     // Generate enough back-and-forth messages to push the diagram height past
-    // the hardcoded y2=2000 that is used when life lines are initially drawn.
-    // This exposes the bug where actor.stopy was never set for non-mirrorActors
-    // diagrams, leaving fixLifeLineHeights to skip the update so life lines
-    // stopped at y=2000 while the diagram content continued below.
+    // the hardcoded y2=2000. This exposes the bug where actor.stopy was never
+    // set for non-mirrorActors diagrams, leaving fixLifeLineHeights to skip
+    // the update so life lines stopped at y=2000 while the diagram content continued below.
     const messages = Array.from(
       { length: 100 },
       (_, i) => `Alice->Bob: message ${i}\nBob->Alice: reply ${i}`
