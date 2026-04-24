@@ -1,0 +1,4 @@
+{
+  "outcome": "warning",
+  "diagnostics": [{ "id": "REF_KIND_LEGACY_DEPRECATED", "nodeId": "r" }]
+}

@@ -1,0 +1,4 @@
+{
+  "outcome": "warning",
+  "diagnostics": [{ "id": "RESERVED_SYNTHETIC_ID", "nodeId": "typesGroup" }]
+}
