@@ -489,6 +489,9 @@ You have to call mermaid.initialize.`
   private setClickFun(id: string, functionName: string, functionArgs: string) {
     // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (getConfig().securityLevel !== 'loose') {
+      log.warn(
+        `"click" event bindings are only supported when securityLevel is set to "loose". Current securityLevel: "${getConfig().securityLevel}". Not binding click event for node "${id}".`
+      );
       return;
     }
     if (functionName === undefined) {
