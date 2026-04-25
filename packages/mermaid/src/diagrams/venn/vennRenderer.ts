@@ -411,7 +411,7 @@ function ensurePairwiseSubsets(subsets: VennData[]): VennData[] {
           const sizeB = subsets.find((s) => s.sets.length === 1 && s.sets[0] === pair[1])?.size;
           const pairSize =
             sizeA !== undefined && sizeB !== undefined ? Math.min(sizeA, sizeB) / 4 : 2.5;
-          synthetic.push({ sets: pair, size: pairSize });
+          synthetic.push({ sets: pair, size: pairSize, label: '' });
         }
       }
     }
