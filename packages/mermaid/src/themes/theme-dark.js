@@ -373,6 +373,25 @@ class Theme {
     this.commitLabelFontSize = this.commitLabelFontSize || '10px';
 
     /* -------------------------------------------------- */
+    /* Event Modeling diagrams                             */
+
+    this.emUiFill = this.emUiFill || '#2d2d2d';
+    this.emUiStroke = this.emUiStroke || '#555';
+    this.emProcessorFill = this.emProcessorFill || lighten('#5a3d5c', 10);
+    this.emProcessorStroke = this.emProcessorStroke || '#8a6d8c';
+    this.emReadModelFill = this.emReadModelFill || lighten('#3d5a2d', 10);
+    this.emReadModelStroke = this.emReadModelStroke || '#6d8c5c';
+    this.emCommandFill = this.emCommandFill || lighten('#2d3d5a', 10);
+    this.emCommandStroke = this.emCommandStroke || '#5c6d8c';
+    this.emEventFill = this.emEventFill || lighten('#5a452d', 10);
+    this.emEventStroke = this.emEventStroke || '#8c755c';
+    this.emSwimlaneBackgroundOdd = this.emSwimlaneBackgroundOdd || lighten(this.background, 5);
+    this.emSwimlaneBackgroundStroke =
+      this.emSwimlaneBackgroundStroke || lighten(this.background, 12);
+    this.emArrowhead = this.emArrowhead || this.lineColor;
+    this.emRelationStroke = this.emRelationStroke || this.lineColor;
+
+    /* -------------------------------------------------- */
     /* EntityRelationship diagrams                        */
 
     this.attributeBackgroundColorOdd =

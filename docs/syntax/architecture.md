@@ -193,7 +193,7 @@ architecture-beta
 
 ## Configuration
 
-### `randomize` (v\<MERMAID_RELEASE_VERSION>+)
+### `randomize` (v11.14.0+)
 
 By default, architecture diagrams produce a deterministic layout: the same diagram source always renders with the same node positions. This is because the `randomize` option defaults to `false`.
 

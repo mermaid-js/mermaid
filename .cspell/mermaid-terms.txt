@@ -13,10 +13,12 @@ deaccelerators
 doublecircle
 elem
 elems
+eventmodeling
 gantt
 gitgraph
 gzipped
 handDrawn
+jsobj
 kanban
 marginx
 marginy

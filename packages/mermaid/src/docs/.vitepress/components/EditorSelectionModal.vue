@@ -7,19 +7,7 @@ interface Feature {
   featureName: string;
 }
 
-interface EditorColumn {
-  id: string;
-  title: string;
-  description: string;
-  redBarText?: string;
-  buttonUrl: string;
-  buttonText: string;
-  buttonClasses: string;
-  highlighted?: boolean;
-  features: Feature[];
-}
-
-const mermaidChartFeatures: Feature[] = [
+const mermaidPlusFeatures: Feature[] = [
   { iconUrl: '/icons/whiteboard.svg', featureName: 'Visual editor' },
   { iconUrl: '/icons/ai-diagram.svg', featureName: '300 AI credits' },
   { iconUrl: '/icons/folder.svg', featureName: 'Unlimited diagram storage' },
@@ -34,32 +22,32 @@ const openSourceFeatures: Feature[] = [
   { iconUrl: '/icons/version-history.svg', featureName: 'Version history' },
 ];
 
-const editorColumns: EditorColumn[] = [
-  {
-    id: 'mermaid-plus',
-    title: 'Mermaid Plus',
-    description: 'Unlock AI, storage and collaboration',
-    highlighted: true,
-    redBarText: 'Recommended',
-    buttonText: 'Start free trial',
-    buttonUrl:
-      'https://mermaid.ai/app/sign-up?utm_source=mermaid_js&utm_medium=2_editor_selection&utm_campaign=start_plus&redirect=%2Fapp%2Fuser%2Fbilling%2Fcheckout%3FisFromMermaid%3Dtrue%26tier%3Dplus',
-    buttonClasses: 'text-white bg-[#E0095F] hover:bg-[#B0134A]',
-    features: mermaidChartFeatures,
-  },
-  {
-    id: 'open-source',
-    title: 'Open Source',
-    description: 'Code only, no login',
-    buttonText: 'Start free',
-    buttonUrl: 'https://mermaid.live/edit',
-    buttonClasses:
-      'bg-[#BEDDE3] hover:bg-[#5CA3B4] text-[#1E1A2E] hover:text-white hover:shadow-md',
-    features: openSourceFeatures,
-  },
-];
-
 const isVisible = ref(false);
+
+const close = () => {
+  isVisible.value = false;
+};
+
+const handleStartTrial = () => {
+  void trackPlausibleEvent('editor-pick', { props: { choice: 'mermaid-plus' } });
+  close();
+  window.open(
+    'https://mermaid.ai/app/sign-up?utm_source=mermaid_js&utm_medium=2_editor_selection&utm_campaign=start_plus&redirect=%2Fapp%2Fuser%2Fbilling%2Fcheckout%3FisFromMermaid%3Dtrue%26tier%3Dplus',
+    '_blank'
+  );
+};
+
+const handleStartFree = () => {
+  void trackPlausibleEvent('editor-pick', { props: { choice: 'open-source' } });
+  close();
+  window.open('https://mermaid.live/edit', '_blank');
+};
+
+const handleContinueToNewHome = () => {
+  void trackPlausibleEvent('editor-pick', { props: { choice: 'new-home' } });
+  close();
+  window.open('https://mermaid.ai/live/edit', '_blank');
+};
 
 const handleMouseDown = (e: MouseEvent) => {
   const target = e.target as HTMLElement;
@@ -86,56 +74,109 @@ onUnmounted(() => {
   <div
     v-if="isVisible"
     class="fixed top-0 left-0 z-50 flex h-screen w-screen backdrop-blur-sm items-center justify-center bg-[#8585A4]/40"
-    @click.self="isVisible = false"
+    @click.self="close"
   >
     <div
-      class="flex flex-col sm:flex-row rounded-3xl shadow relative gap-5 pt-10 sm:pt-20 pb-10 px-4 sm:px-10 bg-[#F1F8FA] overflow-y-auto max-h-full"
+      class="flex max-w-2xl flex-col gap-6 bg-[#FFF1F2] p-6 rounded-3xl shadow overflow-y-auto max-h-full"
     >
-      <div
-        v-for="column in editorColumns"
-        :key="column.title"
-        class="sm:w-96 flex relative flex-col justify-start items-center p-6 sm:p-8 text-gray-800 shadow w-full"
-        :class="
-          column.highlighted ? 'bg-white rounded-b-3xl mt-10 sm:mt-0' : 'bg-[#DCEEF1] rounded-3xl'
-        "
-      >
+      <!-- Header -->
+      <div class="text-center">
+        <h2 class="text-2xl font-semibold text-[#1E1A2E]">Choose your editor</h2>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <!-- Mermaid Plus Card -->
         <div
-          v-if="column.highlighted"
-          class="absolute -top-10 w-full rounded-t-3xl bg-[#E0095F] py-2 flex justify-center"
+          class="relative flex flex-col overflow-hidden rounded-xl border-2 border-[#E0095F] bg-white shadow"
         >
-          <p class="text-lg font-semibold text-white">{{ column.redBarText }}</p>
+          <div class="bg-[#E0095F] px-6 py-2 text-center text-sm font-semibold text-white">
+            Recommended
+          </div>
+
+          <div class="flex flex-col gap-4 p-6">
+            <div>
+              <h3 class="text-xl font-bold text-[#1E1A2E]">Mermaid Plus</h3>
+              <p class="text-sm text-[#6B7280]">Unlock AI, storage and collaboration</p>
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <div class="flex justify-center">
+                <span
+                  class="rounded-full bg-[#FCE7F3] px-3 py-0.5 text-xs font-semibold text-[#BE185D]"
+                >
+                  10% off with code JS26
+                </span>
+              </div>
+
+              <button
+                class="inline-flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 bg-[#E0095F] text-white hover:bg-[#B0134A] shadow-sm h-9 px-4 py-2 cursor-pointer"
+                @click="handleStartTrial"
+              >
+                Start free trial
+              </button>
+            </div>
+
+            <ul class="space-y-3 text-sm text-[#1E1A2E]">
+              <li
+                v-for="{ iconUrl, featureName } in mermaidPlusFeatures"
+                :key="featureName"
+                class="flex items-center gap-2"
+              >
+                <img :src="iconUrl" :alt="featureName" class="size-4 shrink-0 opacity-60" />
+                {{ featureName }}
+              </li>
+            </ul>
+          </div>
         </div>
 
-        <header class="mb-6 w-full text-start space-y-1">
-          <p class="text-2xl font-medium text-[#1E1A2E]">{{ column.title }}</p>
-          <p class="text-sm text-gray-600">{{ column.description }}</p>
-        </header>
+        <!-- Open Source Card -->
+        <div class="flex flex-col gap-4 rounded-xl border border-[#E5E7EB] bg-white p-6 shadow">
+          <div class="flex flex-col pt-9">
+            <h3 class="text-xl font-bold text-[#1E1A2E]">Open Source</h3>
+            <p class="text-sm text-[#6B7280]">Code only, no login, always free</p>
+          </div>
 
+          <div class="flex flex-col gap-2">
+            <p class="mt-2 text-sm text-[#6B7280]">Mermaid has a new home</p>
+            <button
+              class="inline-flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 border-solid border border-[#E0095F] bg-white text-[#1E1A2E] hover:bg-[#E0095F] hover:text-white shadow-sm h-9 px-4 py-2 cursor-pointer"
+              @click="handleContinueToNewHome"
+            >
+              Continue to mermaid.ai/live
+              <svg class="size-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+              </svg>
+            </button>
+            <button
+              class="inline-flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 border-solid border border-[#E5E7EB] bg-white text-[#1E1A2E] hover:bg-[#E0095F] hover:text-white shadow-md h-9 px-4 py-2 cursor-pointer"
+              @click="handleStartFree"
+            >
+              Stay on mermaid.live
+            </button>
+          </div>
+
+          <ul class="space-y-3 text-sm text-[#1E1A2E]">
+            <li
+              v-for="{ iconUrl, featureName } in openSourceFeatures"
+              :key="featureName"
+              class="flex items-center gap-2"
+            >
+              <img :src="iconUrl" :alt="featureName" class="size-4 shrink-0 opacity-60" />
+              {{ featureName }}
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Privacy Policy Link -->
+      <div class="text-center">
         <a
-          :href="column.buttonUrl"
+          href="https://mermaid.ai/privacy-policy"
           target="_blank"
-          :class="[
-            'mb-6 flex h-10 w-full items-center justify-center rounded-xl',
-            column.buttonClasses,
-            'plausible-event-name=editorPick',
-            `plausible-event-type=${column.id}`,
-          ]"
+          class="text-sm text-[#1E1A2E] underline hover:text-[#E0095F]"
         >
-          {{ column.buttonText }}
+          mermaid.ai Privacy Policy
         </a>
-
-        <div class="h-px w-full bg-[#bedde3] mb-6"></div>
-
-        <ul class="w-full space-y-2">
-          <li
-            v-for="{ iconUrl, featureName } in column.features"
-            :key="featureName"
-            class="flex items-center gap-2"
-          >
-            <img :src="iconUrl" :alt="featureName" class="inline-block size-5" />
-            <span>{{ featureName }}</span>
-          </li>
-        </ul>
       </div>
     </div>
   </div>

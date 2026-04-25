@@ -21,7 +21,7 @@ hero:
       rel: external
     - theme: alt
       text: Get started
-      link: /intro/
+      link: https://mermaid.ai/open-source/intro/
 
 features:
   - icon:

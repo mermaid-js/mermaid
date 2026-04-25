@@ -1,4 +1,4 @@
-# Venn diagrams (v\11.12.3+)
+# Venn diagrams (v11.12.3+)
 
 Venn diagrams show relationships between sets using overlapping circles.
 

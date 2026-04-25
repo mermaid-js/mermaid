@@ -35,10 +35,22 @@ export const sanitizeDirective = (args: any): void => {
       continue;
     }
 
-    // Recurse if an object
+    // Recurse if an object, but handle dictionary-style configs specially
+    // (like nodeColors for sankey diagrams) by validating values as CSS colors
     if (typeof args[key] === 'object') {
-      log.debug('sanitizing object', key);
-      sanitizeDirective(args[key]);
+      if (key === 'nodeColors') {
+        // Validate each value is a valid CSS color
+        const colorPattern = /^#[\da-f]{3,8}$|^rgb\([\d\s%,.]+\)$|^hsl\([\d\s%,.]+\)$|^[a-z]+$/i;
+        for (const colorKey of Object.keys(args[key])) {
+          if (typeof args[key][colorKey] !== 'string' || !colorPattern.test(args[key][colorKey])) {
+            log.debug('sanitize deleting invalid color:', colorKey, args[key][colorKey]);
+            delete args[key][colorKey];
+          }
+        }
+      } else {
+        log.debug('sanitizing object', key);
+        sanitizeDirective(args[key]);
+      }
       continue;
     }
 

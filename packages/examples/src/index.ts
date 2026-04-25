@@ -22,6 +22,7 @@ import quadrantChart from './examples/quadrant-chart.js';
 import packetDiagram from './examples/packet.js';
 import blockDiagram from './examples/block.js';
 import treemapDiagram from './examples/treemap.js';
+import eventmodelingDiagram from './examples/eventmodeling.js';
 import vennDiagram from './examples/venn.js';
 import treeViewDiagram from './examples/tree-view.js';
 import wardleyDiagram from './examples/wardley.js';
@@ -50,6 +51,7 @@ export const diagramData: DiagramMetadata[] = [
   packetDiagram,
   blockDiagram,
   treemapDiagram,
+  eventmodelingDiagram,
   vennDiagram,
   treeViewDiagram,
   wardleyDiagram,
