@@ -264,6 +264,7 @@ class Theme {
     };
 
     /* wardley */
+    this.wardleyEvolutionColor = this.wardleyEvolutionColor || '#dc3545';
     this.wardley = {
       backgroundColor: this.wardley?.backgroundColor || this.background,
       axisColor: this.wardley?.axisColor || this.lineColor,
@@ -273,7 +274,7 @@ class Theme {
       componentStroke: this.wardley?.componentStroke || this.lineColor,
       componentLabelColor: this.wardley?.componentLabelColor || this.primaryTextColor,
       linkStroke: this.wardley?.linkStroke || this.lineColor,
-      evolutionStroke: this.wardley?.evolutionStroke || '#dc3545',
+      evolutionStroke: this.wardley?.evolutionStroke || this.wardleyEvolutionColor,
       annotationStroke: this.wardley?.annotationStroke || this.lineColor,
       annotationTextColor: this.wardley?.annotationTextColor || this.primaryTextColor,
       annotationFill: this.wardley?.annotationFill || this.background,
