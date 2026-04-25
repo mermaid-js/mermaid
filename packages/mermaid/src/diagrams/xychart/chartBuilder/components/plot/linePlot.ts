@@ -1,8 +1,13 @@
 import { line } from 'd3';
-import type { DrawableElem, LinePlotData, TextElem, XYChartConfig } from '../../interfaces.js';
+import type {
+  Dimension,
+  DrawableElem,
+  LinePlotData,
+  TextElem,
+  XYChartConfig,
+} from '../../interfaces.js';
+import type { TextDimensionCalculator } from '../../textDimensionCalculator.js';
 import type { Axis } from '../axis/index.js';
-
-const CHAR_WIDTH_FACTOR = 0.7;
 
 /**
  * Interpolate a line segment's y-value at a given x.
@@ -132,16 +137,14 @@ interface PlotBounds {
 function computeLabelPlacementVertical(
   finalData: [number, number][],
   index: number,
-  labelText: string,
-  fontSize: number,
+  textDim: Dimension,
   baseOffset: number,
   strokeWidth: number,
   plotBounds: PlotBounds
 ): LabelPlacement {
   const [px, py] = finalData[index];
-  const textWidth = fontSize * labelText.length * CHAR_WIDTH_FACTOR;
-  const halfWidth = textWidth / 2;
-  const halfHeight = fontSize / 2;
+  const halfWidth = textDim.width / 2;
+  const halfHeight = textDim.height / 2;
   const strokePad = strokeWidth / 2;
 
   const boxLeft = px - halfWidth - strokePad;
@@ -183,15 +186,13 @@ function computeLabelPlacementVertical(
 function computeLabelPlacementHorizontal(
   finalData: [number, number][],
   index: number,
-  labelText: string,
-  fontSize: number,
+  textDim: Dimension,
   baseOffset: number,
   strokeWidth: number,
   plotBounds: PlotBounds
 ): LabelPlacement {
   const [px, py] = finalData[index];
-  const textWidth = fontSize * labelText.length * CHAR_WIDTH_FACTOR;
-  const halfHeight = fontSize / 2;
+  const halfHeight = textDim.height / 2;
   const strokePad = strokeWidth / 2;
 
   const svgPoints = finalData.map((d): [number, number] => [d[1], d[0]]);
@@ -201,7 +202,7 @@ function computeLabelPlacementHorizontal(
 
   for (const offset of [baseOffset, baseOffset * 2, baseOffset * 3]) {
     const rightLeft = py + offset - strokePad;
-    const rightRight = py + offset + textWidth + strokePad;
+    const rightRight = py + offset + textDim.width + strokePad;
     if (
       rightRight <= plotBounds.right &&
       !adjacentSegmentsIntersectBox(svgPoints, index, rightLeft, rightRight, boxTop, boxBottom)
@@ -209,7 +210,7 @@ function computeLabelPlacementHorizontal(
       return { flip: false, offset };
     }
 
-    const leftLeft = py - offset - textWidth - strokePad;
+    const leftLeft = py - offset - textDim.width - strokePad;
     const leftRight = py - offset + strokePad;
     if (
       leftLeft >= plotBounds.left &&
@@ -227,8 +228,9 @@ export class LinePlot {
     private plotData: LinePlotData,
     private xAxis: Axis,
     private yAxis: Axis,
-    private orientation: XYChartConfig['chartOrientation'],
-    private plotIndex: number
+    private chartConfig: XYChartConfig,
+    private plotIndex: number,
+    private textDimensionCalculator: TextDimensionCalculator
   ) {}
 
   getDrawableElement(): DrawableElem[] {
@@ -238,7 +240,7 @@ export class LinePlot {
     ]);
 
     let path: string | null;
-    if (this.orientation === 'horizontal') {
+    if (this.chartConfig.chartOrientation === 'horizontal') {
       path = line()
         .y((d) => d[0])
         .x((d) => d[1])(finalData);
@@ -266,14 +268,14 @@ export class LinePlot {
     ];
 
     if (this.plotData.pointLabels && this.plotData.pointLabels.length > 0) {
-      const labelOffset = 14;
-      const fontSize = 12;
+      const fontSize = this.chartConfig.xAxis.labelFontSize;
+      const labelOffset = fontSize + 2;
       const textData: TextElem[] = [];
 
       const [yRangeA, yRangeB] = this.yAxis.getRange();
       const [xRangeA, xRangeB] = this.xAxis.getRange();
       let plotBounds: PlotBounds;
-      if (this.orientation === 'horizontal') {
+      if (this.chartConfig.chartOrientation === 'horizontal') {
         plotBounds = {
           top: Math.min(xRangeA, xRangeB),
           bottom: Math.max(xRangeA, xRangeB),
@@ -295,12 +297,13 @@ export class LinePlot {
           continue;
         }
 
-        if (this.orientation === 'horizontal') {
+        const textDim = this.textDimensionCalculator.getMaxDimension([label], fontSize);
+
+        if (this.chartConfig.chartOrientation === 'horizontal') {
           const { flip, offset } = computeLabelPlacementHorizontal(
             finalData,
             i,
-            label,
-            fontSize,
+            textDim,
             labelOffset,
             this.plotData.strokeWidth,
             plotBounds
@@ -319,8 +322,7 @@ export class LinePlot {
           const { flip, offset } = computeLabelPlacementVertical(
             finalData,
             i,
-            label,
-            fontSize,
+            textDim,
             labelOffset,
             this.plotData.strokeWidth,
             plotBounds
