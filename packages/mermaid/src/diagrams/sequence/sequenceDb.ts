@@ -170,13 +170,15 @@ export class SequenceDB implements DiagramDB {
   //   right brace     - rule terminator, would close the scoped block
   //   left angle      - guards against angle-bracket smuggling
   private sanitizeCssDeclaration(decl: string): string | null {
-    const lower = decl.toLowerCase();
+    // Strip CSS comments before checking — url/* comment */(evil) is valid
+    // CSS but would bypass a naive /url\s*\(/ check.
+    const stripped = decl.toLowerCase().replace(/\/\*[\S\s]*?\*\//g, '');
     if (
-      /url\s*\(/.test(lower) ||
-      /expression\s*\(/.test(lower) ||
-      lower.includes('behavior:') ||
-      lower.includes('javascript:') ||
-      lower.includes('@import') ||
+      /url\s*\(/.test(stripped) ||
+      /expression\s*\(/.test(stripped) ||
+      /\bbehavior\s*:/.test(stripped) ||
+      /\bjavascript\s*:/.test(stripped) ||
+      stripped.includes('@import') ||
       decl.includes('}') ||
       decl.includes('<')
     ) {
@@ -185,7 +187,7 @@ export class SequenceDB implements DiagramDB {
     return decl;
   }
 
-  public addClass = (ids: string, styleStr: string[]) => {
+  public addClass = (id: string, styleStr: string[]) => {
     const styles = styleStr
       .join()
       .replace(/\\,/g, '\u00a7\u00a7\u00a7')
@@ -210,15 +212,13 @@ export class SequenceDB implements DiagramDB {
       }
     }
 
-    for (const id of ids.split(',')) {
-      const trimmedId = id.trim();
-      if (trimmedId) {
-        this.state.records.classes.set(trimmedId, {
-          id: trimmedId,
-          styles: elementStyles,
-          textStyles,
-        });
-      }
+    const trimmedId = id.trim();
+    if (trimmedId) {
+      this.state.records.classes.set(trimmedId, {
+        id: trimmedId,
+        styles: elementStyles,
+        textStyles,
+      });
     }
   };
 

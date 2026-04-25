@@ -3078,6 +3078,50 @@ Bob->>Alice:Got it!
       expect(classes.get('bad5').styles.join(',')).not.toContain('<');
     });
 
+    it('should reject behavior: and javascript: with whitespace before colon', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef bad1 fill:#f00,behavior :url(xss.htc)
+      classDef bad2 fill:#f00,xss:javascript :void(0)
+      classDef ok fill:#f00
+      participant Alice
+      Alice->>Alice: test
+      `);
+      const classes = diagram.db.getClasses();
+      expect(classes.get('ok').styles).toContain('fill:#f00');
+      expect(classes.get('bad1').styles.join(',')).not.toContain('behavior');
+      expect(classes.get('bad2').styles.join(',')).not.toContain('javascript');
+    });
+
+    it('should reject dangerous patterns hidden inside CSS comments', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef bad1 fill:url/* comment */(http://evil)
+      classDef bad2 fill:expression/* comment */(alert(1))
+      classDef ok fill:#f00
+      participant Alice
+      Alice->>Alice: test
+      `);
+      const classes = diagram.db.getClasses();
+      expect(classes.get('ok').styles).toContain('fill:#f00');
+      expect(classes.get('bad1').styles.join(',')).not.toContain('url');
+      expect(classes.get('bad2').styles.join(',')).not.toContain('expression');
+    });
+
+    it('should silently drop style applied to an actor not yet declared', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      style Alice fill:#f00
+      Alice->>Bob: Hello
+      `);
+      const actors = diagram.db.getActors();
+      const alice = actors.get('Alice');
+      // Alice is auto-created by the message line, but the style line ran
+      // before Alice existed in the actors map — so the style is dropped.
+      expect(alice).toBeDefined();
+      expect(alice.styles || []).toHaveLength(0);
+    });
+
     it('should generate a CSS-safe class name for actors with non-identifier characters', async () => {
       const diagram = await Diagram.fromText(`
       sequenceDiagram

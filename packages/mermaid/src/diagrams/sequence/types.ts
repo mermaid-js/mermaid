@@ -3,7 +3,6 @@ export interface Box {
   wrap: boolean;
   fill: string;
   actorKeys: string[];
-  styles?: string[];
 }
 
 export interface Actor {
