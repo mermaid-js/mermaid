@@ -1,54 +1,35 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Mermaid Subgraph Direction Test (Issue #4648)</title>
-  <script type="module">
-    import mermaid from '../../packages/mermaid/dist/mermaid.esm.mjs';
-    mermaid.initialize({ startOnLoad: true });
-  </script>
-  <style>
-    body { font-family: sans-serif; margin: 2em; }
-    .mermaid { background: #f9f9f9; border: 1px solid #ccc; padding: 1em; }
-  </style>
-</head>
-<body>
-  <h1>Test: Subgraph Direction with/without External Connections</h1>
-  <div class="mermaid">
-flowchart TD
-  subgraph Group1
-    direction TB
-    A1 --> A2
-    A2 --> A3
-  end
-
-  subgraph Group2
-    direction LR
-    B1 --> B2
-    B2 --> B3
-  end
-
-  subgraph Group3
-    direction LR
-    C1 --> C2
-    C2 --> C3
-  end
-
-  %% External connections between subgraphs
-  A3 --- B1
-  B3 --- C1
-
-  %% Wrapper workaround
-  subgraph Wrapper
-    direction LR
-    subgraph Inner
-      D1 --> D2
-      D2 --> D3
-    end
-  end
-  </div>
-  <p>
-    <strong>Expected:</strong> Group1 is vertical (TB), Group2 and Group3 are horizontal (LR) even with external connections, Wrapper/Inner is horizontal (LR).
-  </p>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Mermaid Subgraph Direction Test (Issue #4648)</title>
+    <script type="module">
+      import mermaid from '../../packages/mermaid/dist/mermaid.esm.mjs';
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 2em;
+      }
+      .mermaid {
+        background: #f9f9f9;
+        border: 1px solid #ccc;
+        padding: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Test: Subgraph Direction with/without External Connections</h1>
+    <div class="mermaid">
+      flowchart TD subgraph Group1 direction TB A1 --> A2 A2 --> A3 end subgraph Group2 direction LR
+      B1 --> B2 B2 --> B3 end subgraph Group3 direction LR C1 --> C2 C2 --> C3 end %% External
+      connections between subgraphs A3 --- B1 B3 --- C1 %% Wrapper workaround subgraph Wrapper
+      direction LR subgraph Inner D1 --> D2 D2 --> D3 end end
+    </div>
+    <p>
+      <strong>Expected:</strong> Group1 is vertical (TB), Group2 and Group3 are horizontal (LR) even
+      with external connections, Wrapper/Inner is horizontal (LR).
+    </p>
+  </body>
 </html>
