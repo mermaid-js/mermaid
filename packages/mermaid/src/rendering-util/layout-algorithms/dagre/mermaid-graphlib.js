@@ -329,6 +329,7 @@ export const extractor = (graph, depth) => {
       graph.children(node) &&
       graph.children(node).length > 0
     ) {
+      // Original: cluster with no external connections, use its own subgraph and direction
       log.warn(
         'Cluster without external connections, without a parent and with children',
         node,
@@ -368,6 +369,51 @@ export const extractor = (graph, depth) => {
       });
       log.warn('New graph after copy node: (', node, ')', graphlibJson.write(clusterGraph));
       log.debug('Old graph after copy', graphlibJson.write(graph));
+    } else if (
+      clusterDb.get(node).externalConnections &&
+      clusterDb.get(node)?.clusterData?.dir &&
+      graph.children(node) &&
+      graph.children(node).length > 0
+    ) {
+      // NEW: cluster with external connections and explicit dir, create a virtual subgraph for children
+      log.warn(
+        'Cluster with external connections and explicit dir, creating virtual subgraph for children',
+        node,
+        depth
+      );
+
+      const dir = clusterDb.get(node).clusterData.dir;
+      const clusterGraph = new graphlib.Graph({
+        multigraph: true,
+        compound: true,
+      })
+        .setGraph({
+          rankdir: dir,
+          nodesep: 50,
+          ranksep: 50,
+          marginx: 8,
+          marginy: 8,
+        })
+        .setDefaultEdgeLabel(function () {
+          return {};
+        });
+
+      // Only copy children, not the cluster node itself
+      const children = graph.children(node);
+      for (const child of children) {
+        copy(child, graph, clusterGraph, child);
+      }
+      // Attach the virtual subgraph to the cluster node for internal layout
+      const clusterNodeData = graph.node(node) || {};
+      graph.setNode(node, {
+        ...clusterNodeData,
+        clusterNode: true,
+        id: node,
+        clusterData: clusterDb.get(node).clusterData,
+        label: clusterDb.get(node).label,
+        graph: clusterGraph,
+      });
+      log.warn('Virtual subgraph for cluster with external connections created:', node, graphlibJson.write(clusterGraph));
     } else {
       log.warn(
         'Cluster ** ',
