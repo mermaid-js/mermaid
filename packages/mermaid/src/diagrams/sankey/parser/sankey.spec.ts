@@ -47,34 +47,45 @@ describe('Sankey diagram', function () {
       );
     });
 
-    it('handles special characters in node names with sankey-beta syntax', function () {
-      // Test for issue #7528: Sankey Diagram Parsing Failure with Special Characters
-      sankey.parser.parse(
-        prepareTextForParsing(`sankey-beta
+    const issue7528PerformanceDiagram = `
       Agricultural 'waste',Bio-conversion,124.729
-      Electricity grid,Lighting & appliances,90.008
-      Electricity grid,Over generation / exports,104.453
+      Bio-conversion,Liquid,0.597
+      Bio-conversion,Losses,26.862
+      Bio-conversion,Solid,280.322
+      Bio-conversion,Gas,81.144
+      Biofuel imports,Liquid,35
+      Biomass imports,Solid,35
+      Coal imports,Coal,11.606
+      Coal reserves,Coal,63.965
+      Coal,Solid,75.571
+      District heating,Industry,10.639
       District heating,Heating and cooling - homes,22.505
-      `)
-      );
-      const graph = sankey.parser.yy.getGraph();
-      expect(graph.nodes).toHaveLength(7);
-      expect(graph.links).toHaveLength(4);
-    });
+      District heating,Heating and cooling - commercial,46.184
+      Electricity grid,Over generation / exports,104.453
+      Electricity grid,Lighting & appliances - commercial,113.726
+      Electricity grid,Lighting & appliances - homes,27.14
+      `;
 
-    it('handles special characters in node names with sankey syntax', function () {
-      // Test for issue #7528: Sankey Diagram Parsing Failure with Special Characters
-      sankey.parser.parse(
-        prepareTextForParsing(`sankey
-      Agricultural 'waste',Bio-conversion,124.729
-      Electricity grid,Lighting & appliances,90.008
-      Electricity grid,Over generation / exports,104.453
-      District heating,Heating and cooling - homes,22.505
-      `)
-      );
-      const graph = sankey.parser.yy.getGraph();
-      expect(graph.nodes).toHaveLength(7);
-      expect(graph.links).toHaveLength(4);
-    });
+    const issue7528SpecialCharacterNodes = [
+      "Agricultural 'waste'",
+      'Heating and cooling - homes',
+      'Heating and cooling - commercial',
+      'Over generation / exports',
+      'Lighting & appliances - commercial',
+      'Lighting & appliances - homes',
+    ];
+
+    for (const syntax of ['sankey-beta', 'sankey'] as const) {
+      it(`parses the issue #7528 sample with ${syntax} syntax`, function () {
+        sankey.parser.parse(prepareTextForParsing(`${syntax}${issue7528PerformanceDiagram}`));
+
+        const graph = sankey.parser.yy.getGraph();
+        expect(graph.nodes).toHaveLength(19);
+        expect(graph.links).toHaveLength(16);
+        expect(graph.nodes).toEqual(
+          expect.arrayContaining(issue7528SpecialCharacterNodes.map((id) => ({ id })))
+        );
+      });
+    }
   });
 });
