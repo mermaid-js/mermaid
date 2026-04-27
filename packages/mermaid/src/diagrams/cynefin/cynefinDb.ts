@@ -70,8 +70,8 @@ const setTransitions = (transitions: Transition[]) => {
 
 const getConfig = (): Required<CynefinDiagramConfig> => {
   return cleanAndMerge({
-    ...DEFAULT_CONFIG['cynefin-beta'],
-    ...commonGetConfig()['cynefin-beta'],
+    ...DEFAULT_CONFIG.cynefin,
+    ...commonGetConfig().cynefin,
   });
 };
 

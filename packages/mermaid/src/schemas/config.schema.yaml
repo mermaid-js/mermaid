@@ -335,7 +335,7 @@ properties:
     $ref: '#/$defs/VennDiagramConfig'
   wardley-beta:
     $ref: '#/$defs/WardleyDiagramConfig'
-  cynefin-beta:
+  cynefin:
     $ref: '#/$defs/CynefinDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration

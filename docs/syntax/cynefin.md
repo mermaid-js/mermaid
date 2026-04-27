@@ -214,7 +214,7 @@ cynefin-beta
 
 ## Configuration
 
-Cynefin diagrams accept the following configuration under the `cynefin-beta` key in the mermaid config:
+Cynefin diagrams accept the following configuration under the `cynefin` key in the mermaid config:
 
 | Option                   | Type    | Default | Description                                                                       |
 | ------------------------ | ------- | ------- | --------------------------------------------------------------------------------- |
@@ -227,7 +227,7 @@ Cynefin diagrams accept the following configuration under the `cynefin-beta` key
 Example:
 
 ```
-%%{init: {'cynefin-beta': {'width': 1000, 'showDomainDescriptions': false}}}%%
+%%{init: {'cynefin': {'width': 1000, 'showDomainDescriptions': false}}}%%
 cynefin-beta
   complex
     "Adaptive work"

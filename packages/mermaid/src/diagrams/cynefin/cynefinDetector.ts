@@ -4,7 +4,7 @@ import type {
   DiagramLoader,
 } from '../../diagram-api/types.js';
 
-const id = 'cynefin-beta';
+const id = 'cynefin';
 
 const detector: DiagramDetector = (txt) => {
   return /^\s*cynefin-beta(?:[\s:]|$)/.test(txt);
