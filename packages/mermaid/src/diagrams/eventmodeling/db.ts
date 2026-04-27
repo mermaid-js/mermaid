@@ -228,8 +228,7 @@ function calculateSwimlaneProps(
   const sw = findSwimlaneByNamespace(swimlanes, namespace);
 
   switch (frame.modelEntityType) {
-    case 'scn':
-    case 'screen':
+    case 'ui':
     case 'pcr':
     case 'processor':
       if (sw) {
@@ -281,11 +280,10 @@ function calculateSwimlaneProps(
 function calculateEntityVisualProps(frame: EmFrame): VisualProps {
   const { themeVariables } = commonGetConfig();
   switch (frame.modelEntityType) {
-    case 'scn':
-    case 'screen':
+    case 'ui':
       return {
-        fill: themeVariables.emScreenFill ?? 'white',
-        stroke: themeVariables.emScreenStroke ?? '#dbdada',
+        fill: themeVariables.emUiFill ?? 'white',
+        stroke: themeVariables.emUiStroke ?? '#dbdada',
       };
     case 'pcr':
     case 'processor':

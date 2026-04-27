@@ -52,7 +52,7 @@ jobs:
 
       - name: Find existing lockfile validation comment
         if: always()
-        uses: peter-evans/find-comment@v3
+        uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3
         id: find-comment
         with:
           issue-number: ${{ github.event.pull_request.number }}
@@ -61,7 +61,7 @@ jobs:
 
       - name: Comment on PR if validation failed
         if: failure()
-        uses: peter-evans/create-or-update-comment@v5
+        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
