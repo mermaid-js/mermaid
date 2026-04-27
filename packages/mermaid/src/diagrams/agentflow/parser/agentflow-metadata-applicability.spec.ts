@@ -17,7 +17,8 @@
  *   |                                 | auth, token_required                     |
  *   | directive                       | rule, severity, context, params          |
  *   | testCase                        | assert, expects                          |
- *   | artifact nodes (`doc`, etc.)    | output                                   |
+ *   | input nodes (`lean-right`)      | value, example                           |
+ *   | artifact nodes (`doc`, etc.)    | output, value, example                   |
  *   | reference nodes (`procs`)       | typeRef, templateRef, src                |
  *
  * `description` (§13.1) is cross-cutting — valid on any authored element.
@@ -149,6 +150,33 @@ describe('agentflow metadata applicability (§13)', () => {
       expect(diagnosticsFor(db, 'METADATA_KEY_MISAPPLIED')).toHaveLength(0);
     });
 
+    it('input node (`lean-right`) accepts value (v0.6.0 §8.4.2)', () => {
+      agentflow.parser.parse(`agentflow TB
+  file_path["file_path"]
+  file_path@{ shape: lean-right, value: "src/HelloWorld.java" }`);
+      const db = agentflow.parser.yy as AgentFlowDB;
+      db.getData();
+      expect(diagnosticsFor(db, 'METADATA_KEY_MISAPPLIED')).toHaveLength(0);
+    });
+
+    it('artifact node (`doc`) accepts value and example (v0.6.0 §8.4.2)', () => {
+      agentflow.parser.parse(`agentflow TB
+  a["a"]
+  a@{ shape: doc, value: "concrete payload", example: "illustrative payload" }`);
+      const db = agentflow.parser.yy as AgentFlowDB;
+      db.getData();
+      expect(diagnosticsFor(db, 'METADATA_KEY_MISAPPLIED')).toHaveLength(0);
+    });
+
+    it('artifact node (`lin-doc`) accepts value and example (v0.6.0 §8.4.2)', () => {
+      agentflow.parser.parse(`agentflow TB
+  a["a"]
+  a@{ shape: lin-doc, value: "vref", example: "vex" }`);
+      const db = agentflow.parser.yy as AgentFlowDB;
+      db.getData();
+      expect(diagnosticsFor(db, 'METADATA_KEY_MISAPPLIED')).toHaveLength(0);
+    });
+
     it('reference node (`procs`) accepts typeRef, templateRef, src', () => {
       agentflow.parser.parse(`agentflow TB
   r1["r1"]
@@ -219,6 +247,17 @@ describe('agentflow metadata applicability (§13)', () => {
       const db = agentflow.parser.yy as AgentFlowDB;
       db.getData();
       expect(diagnosticsFor(db, 'METADATA_KEY_MISAPPLIED')).toHaveLength(1);
+    });
+
+    it('tool with `value` (artifact key) warns (v0.6.0 §8.4.2)', () => {
+      agentflow.parser.parse(`agentflow TB
+  search["search"]
+  search@{ shape: subroutine, value: "literal" }`);
+      const db = agentflow.parser.yy as AgentFlowDB;
+      db.getData();
+      const warns = diagnosticsFor(db, 'METADATA_KEY_MISAPPLIED');
+      expect(warns).toHaveLength(1);
+      expect(warns[0].nodeId).toBe('search');
     });
 
     it('reference node with `model` (agent key) warns', () => {

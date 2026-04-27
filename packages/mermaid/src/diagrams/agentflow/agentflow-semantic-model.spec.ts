@@ -136,6 +136,21 @@ describe('agentflow getSemanticModel()', () => {
       expect(triage?.fields).toEqual([{ name: 'TITLE', type: 'String', description: 't' }]);
     });
 
+    it('keeps `value` and `example` on input/artifact vertices (v0.6.0 §14.1)', () => {
+      const db = parse(`agentflow TB
+  file_path["file_path"]
+  file_path@{ shape: lean-right, value: "src/HelloWorld.java", example: "src/Sample.java" }
+  payload["payload"]
+  payload@{ shape: doc, value: "concrete", example: "illustrative" }`);
+      const model = db.getSemanticModel();
+      const filePath = model.vertices.find((v) => v.id === 'file_path');
+      expect(filePath?.metadata?.value).toBe('src/HelloWorld.java');
+      expect(filePath?.metadata?.example).toBe('src/Sample.java');
+      const payload = model.vertices.find((v) => v.id === 'payload');
+      expect(payload?.metadata?.value).toBe('concrete');
+      expect(payload?.metadata?.example).toBe('illustrative');
+    });
+
     it('keeps edge type / stroke / label', () => {
       const db = parse(`agentflow TB
   a -- yes --> b
