@@ -125,11 +125,24 @@ jobs:
             exit 0
           fi
 
-          # Fetch the base commit so git diff can compare against it.
-          git fetch origin "$BASE" --depth=1 2>/dev/null || true
+          # Fetch the target branch so we can find the true merge-base.
+          # Using merge-base rather than the raw base SHA from the event payload
+          # avoids picking up commits that landed on the base branch after the
+          # PR was last synchronized (which would widen the diff incorrectly).
+          git fetch origin develop --depth=1 2>/dev/null || true
+          MERGE_BASE=$(git merge-base HEAD origin/develop 2>/dev/null || echo "")
+
+          if [ -z "$MERGE_BASE" ]; then
+            echo "spec_pattern=" >> "$GITHUB_OUTPUT"
+            echo "matrix=${FULL_MATRIX}" >> "$GITHUB_OUTPUT"
+            echo "[detect-scope] Could not determine merge-base — full suite."
+            exit 0
+          fi
+
+          echo "[detect-scope] merge-base: ${MERGE_BASE}"
 
           # Get changed files and run the detection script.
-          SPEC=$(git diff --name-only "$BASE" HEAD 2>/dev/null \
+          SPEC=$(git diff --name-only "$MERGE_BASE" HEAD 2>/dev/null \
                  | node scripts/e2e-diagram-scope.mjs \
                  || echo "")
 
@@ -145,7 +158,7 @@ jobs:
         env:
           # Toggle diagram-scoped e2e: set this repository variable to 'true'
           # (GitHub → Settings → Secrets and variables → Actions → Variables)
-          E2E_SCOPE_BY_DIAGRAM: "${{ vars.E2E_SCOPE_BY_DIAGRAM == 'true' || github.head_ref == 'chore/7593_run-scoped-e2e-tests' }}"
+          E2E_SCOPE_BY_DIAGRAM: "${{ vars.E2E_SCOPE_BY_DIAGRAM == 'true' }}"
 
   e2e:
     runs-on: ubuntu-latest
@@ -208,6 +221,13 @@ jobs:
           # e.g. if this action was run from a fork
           record: ${{ env.RUN_VISUAL_TEST == 'true' && secrets.CYPRESS_RECORD_KEY != '' }}
         env:
+          # For scoped runs (only a subset of specs executed), mark the Argos
+          # build as a "subset build". This tells Argos to ignore missing
+          # screenshots (they were simply not run, not deleted) and only report
+          # changed/added screenshots. Subset builds are never used as a
+          # baseline, so the full-suite baseline on develop is always preserved.
+          # See: https://argos-ci.com/docs/subset-builds
+          ARGOS_SUBSET: "${{ needs.detect-scope.outputs.spec_pattern != '' }}"
           ARGOS_PARALLEL: ${{ env.RUN_VISUAL_TEST == 'true' }}
           ARGOS_PARALLEL_TOTAL: ${{ env.RUN_VISUAL_TEST == 'true' && strategy.job-total || 1 }}
           ARGOS_PARALLEL_INDEX: ${{ env.RUN_VISUAL_TEST == 'true' && matrix.containers || 1 }}

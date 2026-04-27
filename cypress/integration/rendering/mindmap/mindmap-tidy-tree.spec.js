@@ -76,4 +76,21 @@ describe('Mindmap Tidy Tree', () => {
       `
     );
   });
+  it('5-tidy-tree: should keep root edges connected to a rectangular root (issue #7572)', () => {
+    imgSnapshotTest(
+      ` ---
+      config:
+        layout: tidy-tree
+      ---
+      mindmap
+          A
+              B
+              C
+              D
+              E
+              F
+              G
+      `
+    );
+  });
 });

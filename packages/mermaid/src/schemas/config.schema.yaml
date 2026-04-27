@@ -2508,6 +2508,13 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     description: The object containing configurations specific for Wardley Maps diagrams.
     type: object
     unevaluatedProperties: false
+    required:
+      - width
+      - height
+      - padding
+      - nodeRadius
+      - labelFontSize
+      - axisFontSize
     properties:
       width:
         description: The width of the Wardley diagram canvas.
