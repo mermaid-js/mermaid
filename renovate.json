@@ -1,8 +1,10 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base",
     ":rebaseStalePrs",
     "schedule:earlyMondays",
+    "security:minimumReleaseAgeNpm",
     ":automergeMinor",
     ":automergeTesters",
     ":automergeLinters",
@@ -10,6 +12,12 @@
     ":automergePatch"
   ],
   "packageRules": [
+    {
+      "description": "minimumReleaseAge is normally not supported for digest/other update types",
+      "matchManagers": ["github-actions", "dockerfile", "devcontainer", "docker-compose"],
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "minimumReleaseAge": "3 days"
+    },
     {
       "matchUpdateTypes": ["minor", "patch", "digest"],
       "automerge": true
@@ -39,8 +47,13 @@
     {
       "groupName": "dompurify",
       "matchPackagePatterns": ["dompurify"]
+    },
+    {
+      "matchPackageNames": ["chokidar"],
+      "enabled": false
     }
   ],
   "dependencyDashboard": false,
-  "dependencyDashboardAutoclose": true
+  "dependencyDashboardAutoclose": true,
+  "rangeStrategy": "bump"
 }

@@ -18,7 +18,7 @@ config:
   sankey:
     showValues: false
 ---
-sankey-beta
+sankey
 
 Agricultural 'waste',Bio-conversion,124.729
 Bio-conversion,Liquid,0.597
@@ -92,7 +92,7 @@ Wind,Electricity grid,289.366
 
 ## Syntax
 
-The idea behind syntax is that a user types `sankey-beta` keyword first, then pastes raw CSV below and get the result.
+The idea behind syntax is that a user types `sankey` keyword first, then pastes raw CSV below and get the result.
 
 It implements CSV standard as [described here](https://www.ietf.org/rfc/rfc4180.txt) with subtle **differences**:
 
@@ -104,7 +104,7 @@ It implements CSV standard as [described here](https://www.ietf.org/rfc/rfc4180.
 It is implied that 3 columns inside CSV should represent `source`, `target` and `value` accordingly:
 
 ```mermaid-example
-sankey-beta
+sankey
 
 %% source,target,value
 Electricity grid,Over generation / exports,104.453
@@ -117,7 +117,7 @@ Electricity grid,H2 conversion,27.14
 CSV does not support empty lines without comma delimiters by default. But you can add them if needed:
 
 ```mermaid-example
-sankey-beta
+sankey
 
 Bio-conversion,Losses,26.862
 
@@ -131,7 +131,7 @@ Bio-conversion,Gas,81.144
 If you need to have a comma, wrap it in double quotes:
 
 ```mermaid-example
-sankey-beta
+sankey
 
 Pumped heat,"Heating and cooling, homes",193.026
 Pumped heat,"Heating and cooling, commercial",70.672
@@ -142,7 +142,7 @@ Pumped heat,"Heating and cooling, commercial",70.672
 If you need to have double quote, put a pair of them inside quoted string:
 
 ```mermaid-example
-sankey-beta
+sankey
 
 Pumped heat,"Heating and cooling, ""homes""",193.026
 Pumped heat,"Heating and cooling, ""commercial""",70.672
@@ -185,5 +185,69 @@ Graph layout can be changed by setting `nodeAlignment` to:
 - `center`
 - `left`
 - `right`
+
+### Label Style (v<MERMAID_RELEASE_VERSION>+)
+
+You can change how node labels are rendered by setting `labelStyle`:
+
+- `legacy` (default) - plain text labels, positioned based on node x-coordinate
+- `outlined` - labels with a background stroke for improved readability, positioned based on node layer relative to the central node
+
+```mermaid-example
+---
+config:
+  sankey:
+    showValues: false
+    labelStyle: outlined
+---
+sankey
+
+Electricity grid,Heating and cooling - homes,113.726
+Electricity grid,Industry,342.165
+Electricity grid,Losses,56.691
+```
+
+### Node Width and Padding (v<MERMAID_RELEASE_VERSION>+)
+
+You can customize the node dimensions:
+
+- `nodeWidth` - width of the node rectangles in pixels (default: `10`)
+- `nodePadding` - vertical padding between nodes in pixels (default: `12`)
+
+```mermaid-example
+---
+config:
+  sankey:
+    showValues: false
+    nodeWidth: 15
+    nodePadding: 20
+---
+sankey
+
+Electricity grid,Heating and cooling - homes,113.726
+Electricity grid,Industry,342.165
+Electricity grid,Losses,56.691
+```
+
+### Custom Node Colors (v<MERMAID_RELEASE_VERSION>+)
+
+You can assign specific colors to nodes using the `nodeColors` map. Nodes not listed will use the default color scheme. Values must be valid CSS colors (hex, `rgb()`, `hsl()`, or named colors).
+
+```mermaid-example
+---
+config:
+  sankey:
+    showValues: false
+    nodeColors:
+      Electricity grid: "#4e79a7"
+      Industry: "#e15759"
+      Losses: "#bab0ab"
+---
+sankey
+
+Electricity grid,Heating and cooling - homes,113.726
+Electricity grid,Industry,342.165
+Electricity grid,Losses,56.691
+```
 
 <!--- cspell:ignore Ngas bioenergy biofuel --->

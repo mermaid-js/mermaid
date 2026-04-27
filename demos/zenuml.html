@@ -10,16 +10,20 @@
     <h1>Zenuml demos</h1>
     <pre class="mermaid">
 		zenuml
-      title Sync Messages (Design Pattern: Adapter)
-			@Starter(Client)
-      Adapter.interfaceMethod() {
-        translateParameter(parameter)
-
-        result = Implementation.implementationMethod()
-
-        translateResult()
-        return translatedResult
-      }
+BookLibService.Borrow(id) {
+  User = Session.GetUser()
+  if(User.isActive) {
+    try {
+      BookRepository.Update(id, onLoan, User)
+      receipt = new Receipt(id, dueDate)
+    } catch (BookNotFoundException) {
+      ErrorService.onException(BookNotFoundException)
+    } finally {
+      Connection.close()
+    }
+  }
+  return receipt
+}
     </pre>
     <pre class="mermaid">
 		zenuml

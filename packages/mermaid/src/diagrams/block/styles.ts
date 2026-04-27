@@ -1,4 +1,5 @@
 import * as khroma from 'khroma';
+import { getIconStyles } from '../globalStyles.js';
 
 /** Returns the styles given options */
 export interface BlockChartStyleOptions {
@@ -90,6 +91,17 @@ const getStyles = (options: BlockChartStyleOptions) =>
 
   .edgeLabel {
     background-color: ${options.edgeLabelBackground};
+    /*
+     * This is for backward compatibility with existing code that didn't
+     * add a \`<p>\` around edge labels.
+     *
+     * TODO: We should probably remove this in a future release.
+     */
+    p {
+      margin: 0;
+      padding: 0;
+      display: inline;
+    }
     rect {
       opacity: 0.5;
       background-color: ${options.edgeLabelBackground};
@@ -100,8 +112,7 @@ const getStyles = (options: BlockChartStyleOptions) =>
 
   /* For html labels only */
   .labelBkg {
-    background-color: ${fade(options.edgeLabelBackground, 0.5)};
-    // background-color:
+    background-color: ${options.edgeLabelBackground};
   }
 
   .node .cluster {
@@ -142,6 +153,7 @@ const getStyles = (options: BlockChartStyleOptions) =>
     font-size: 18px;
     fill: ${options.textColor};
   }
+  ${getIconStyles()}
 `;
 
 export default getStyles;

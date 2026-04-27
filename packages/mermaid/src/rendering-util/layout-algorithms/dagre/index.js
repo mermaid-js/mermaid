@@ -345,15 +345,27 @@ export const render = async (data4Layout, svg) => {
       const edge2 = structuredClone(edge);
       edge1.label = '';
       edge1.arrowTypeEnd = 'none';
+      edge1.endLabelLeft = '';
+      edge1.endLabelRight = ''; // defensive
+      edge1.startLabelLeft = ''; // defensive
       edge1.id = nodeId + '-cyclic-special-1';
+      edgeMid.startLabelRight = '';
+      edgeMid.startLabelLeft = ''; // defensive
+      edgeMid.endLabelLeft = '';
+      edgeMid.endLabelRight = ''; // defensive
+      edgeMid.arrowTypeStart = 'none';
       edgeMid.arrowTypeEnd = 'none';
       edgeMid.id = nodeId + '-cyclic-special-mid';
       edge2.label = '';
+      edge2.startLabelRight = '';
+      edge2.startLabelLeft = ''; // defensive
+      edge2.arrowTypeStart = 'none';
       if (node.isGroup) {
         edge1.fromCluster = nodeId;
         edge2.toCluster = nodeId;
       }
       edge2.id = nodeId + '-cyclic-special-2';
+      edge2.arrowTypeStart = 'none';
       graph.setEdge(nodeId, specialId1, edge1, nodeId + '-cyclic-special-0');
       graph.setEdge(specialId1, specialId2, edgeMid, nodeId + '-cyclic-special-1');
       graph.setEdge(specialId2, nodeId, edge2, nodeId + '-cyc<lic-special-2');

@@ -60,8 +60,9 @@ const getMaxChildSize = (block: Block) => {
     if (child.type === 'space') {
       continue;
     }
-    if (width > maxWidth) {
-      maxWidth = width / (block.widthInColumns ?? 1);
+    const normalizedWidth = width / (child.widthInColumns ?? 1);
+    if (normalizedWidth > maxWidth) {
+      maxWidth = normalizedWidth;
     }
     if (height > maxHeight) {
       maxHeight = height;
@@ -77,7 +78,7 @@ function setBlockSizes(block: Block, db: BlockDB, siblingWidth = 0, siblingHeigh
     block?.size?.x,
     'block width =',
     block?.size,
-    'sieblingWidth',
+    'siblingWidth',
     siblingWidth
   );
   if (!block?.size?.width) {
@@ -141,7 +142,7 @@ function setBlockSizes(block: Block, db: BlockDB, siblingWidth = 0, siblingHeigh
     // If maxWidth
     if (width < siblingWidth) {
       log.debug(
-        `Detected to small siebling: abc95 ${block.id} sieblingWidth ${siblingWidth} sieblingHeight ${siblingHeight} width ${width}`
+        `Detected to small sibling: abc95 ${block.id} siblingWidth ${siblingWidth} siblingHeight ${siblingHeight} width ${width}`
       );
       width = siblingWidth;
       height = siblingHeight;
@@ -216,6 +217,36 @@ function layoutBlocks(block: Block, db: BlockDB) {
 
     log.debug('widthOfChildren 88', widthOfChildren, 'posX');
 
+    // Pre-compute per-row max heights so y-positioning accounts for rows of different heights
+    const rowHeights = new Map<number, number>();
+    {
+      let colPos = 0;
+      for (const child of block.children) {
+        if (!child.size) {
+          continue;
+        }
+        const { py } = calculateBlockPosition(columns, colPos);
+        const currentMax = rowHeights.get(py) ?? 0;
+        if (child.size.height > currentMax) {
+          rowHeights.set(py, child.size.height);
+        }
+        let filled = child?.widthInColumns ?? 1;
+        if (columns > 0) {
+          filled = Math.min(filled, columns - (colPos % columns));
+        }
+        colPos += filled;
+      }
+    }
+    const rowYOffsets = new Map<number, number>();
+    {
+      let offset = 0;
+      const rows = [...rowHeights.keys()].sort((a, b) => a - b);
+      for (const row of rows) {
+        rowYOffsets.set(row, offset);
+        offset += (rowHeights.get(row) ?? 0) + padding;
+      }
+    }
+
     // let first = true;
     let columnPos = 0;
     log.debug('abc91 block?.size?.x', block.id, block?.size?.x);
@@ -256,8 +287,10 @@ function layoutBlocks(block: Block, db: BlockDB) {
 
         startingPosX = child.size.x + halfWidth;
 
+        const rowYOffset = rowYOffsets.get(py) ?? 0;
+        const rowHeight = rowHeights.get(py) ?? height;
         child.size.y =
-          parent.size.y - parent.size.height / 2 + py * (height + padding) + height / 2 + padding;
+          parent.size.y - parent.size.height / 2 + rowYOffset + rowHeight / 2 + padding;
 
         log.debug(
           `abc88 layout blocks (calc) px, pyid:${
@@ -270,7 +303,12 @@ function layoutBlocks(block: Block, db: BlockDB) {
       if (child.children) {
         layoutBlocks(child, db);
       }
-      columnPos += child?.widthInColumns ?? 1;
+      let columnsFilled = child?.widthInColumns ?? 1;
+      if (columns > 0) {
+        // Make sure overflowing lines do not affect later lines
+        columnsFilled = Math.min(columnsFilled, columns - (columnPos % columns));
+      }
+      columnPos += columnsFilled;
       log.debug('abc88 columnsPos', child, columnPos);
     }
   }

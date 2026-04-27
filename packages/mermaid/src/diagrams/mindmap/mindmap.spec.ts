@@ -1,16 +1,16 @@
 // @ts-expect-error No types available for JISON
 import { parser as mindmap } from './parser/mindmap.jison';
-import mindmapDB from './mindmapDb.js';
+import { MindmapDB } from './mindmapDb.js';
 // Todo fix utils functions for tests
 import { setLogLevel } from '../../diagram-api/diagramAPI.js';
 
 describe('when parsing a mindmap ', function () {
   beforeEach(function () {
-    mindmap.yy = mindmapDB;
+    mindmap.yy = new MindmapDB();
     mindmap.yy.clear();
     setLogLevel('trace');
   });
-  describe('hiearchy', function () {
+  describe('hierarchy', function () {
     it('MMP-1 should handle a simple root definition abc122', function () {
       const str = `mindmap
     root`;
@@ -19,7 +19,7 @@ describe('when parsing a mindmap ', function () {
       // console.log('Time for checks', mindmap.yy.getMindmap().descr);
       expect(mindmap.yy.getMindmap().descr).toEqual('root');
     });
-    it('MMP-2 should handle a hierachial mindmap definition', function () {
+    it('MMP-2 should handle a hierarchical mindmap definition', function () {
       const str = `mindmap
     root
       child1
@@ -43,7 +43,7 @@ describe('when parsing a mindmap ', function () {
       expect(mindmap.yy.getMindmap().descr).toEqual('root');
     });
 
-    it('MMP-4 should handle a deeper hierachial mindmap definition', function () {
+    it('MMP-4 should handle a deeper hierarchical mindmap definition', function () {
       const str = `mindmap
     root
       child1

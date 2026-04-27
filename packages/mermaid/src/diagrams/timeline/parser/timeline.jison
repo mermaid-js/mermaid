@@ -17,6 +17,8 @@
 \s+                     /* skip whitespace */
 \#[^\n]*                /* skip comments */
 
+"timeline"[ \t]+LR       return 'timeline_lr';
+"timeline"[ \t]+TD       return 'timeline_td';
 "timeline"               return 'timeline';
 "title"\s[^\n]+       return 'title';
 accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
@@ -29,7 +31,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 "section"\s[^:\n]+    return 'section';
 
 // event starting with "==>" keyword
-":"\s[^:\n]+        return 'event';
+":"\s(?:[^:\n]|":"(?!\s))+        return 'event';
 [^#:\n]+               return 'period';
 
 
@@ -45,7 +47,13 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 %% /* language grammar */
 
 start
-	: timeline document 'EOF' { return $2; }
+	: timeline_header document 'EOF' { return $2; }
+	;
+
+timeline_header
+	: timeline
+	| timeline_lr { yy.setDirection('LR'); }
+	| timeline_td { yy.setDirection('TD'); }
 	;
 
 document

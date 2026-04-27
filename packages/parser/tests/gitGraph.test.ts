@@ -63,6 +63,12 @@ describe('Parsing Branch Statements', () => {
     expect(branch.name).toBe('master');
   });
 
+  it('should parse a branch name starting with numbers', () => {
+    const result = parse(`gitGraph\n commit\n branch 1.0.1\n`);
+    const branch = result.value.statements[1] as Branch;
+    expect(branch.name).toBe('1.0.1');
+  });
+
   it('should parse a branch with an order property', () => {
     const result = parse(`gitGraph\n commit\n  branch feature order:1\n`);
     const branch = result.value.statements[1] as Branch;

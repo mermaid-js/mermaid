@@ -26,6 +26,7 @@ dompurify
 elkjs
 fcose
 fontawesome
+Fonticons
 Forgejo
 Foswiki
 Gitea
@@ -63,10 +64,12 @@ rscratch
 shiki
 Slidev
 sparkline
+speccharts
 sphinxcontrib
 ssim
 stylis
 Swimm
+Tachi
 tsbuildinfo
 tseslint
 Tuleap

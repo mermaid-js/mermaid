@@ -1,4 +1,4 @@
-import clone from 'lodash-es/clone.js';
+import { clone } from 'es-toolkit/compat';
 import * as configApi from '../../config.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
@@ -19,6 +19,7 @@ const STYLECLASS_SEP = ',';
 const config = getConfig();
 
 let classes = new Map<string, ClassDef>();
+let diagramId = '';
 
 const sanitizeText = (txt: string) => common.sanitizeText(txt, config);
 
@@ -92,7 +93,20 @@ export const setCssClass = function (itemIds: string, cssClassName: string) {
 const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
   const blockList = _blockList.flat();
   const children = [];
+  const columnSettingBlock = blockList.find((b) => b?.type === 'column-setting');
+  const column = columnSettingBlock?.columns ?? -1;
   for (const block of blockList) {
+    if (
+      typeof column === 'number' &&
+      column > 0 &&
+      block.type !== 'column-setting' &&
+      typeof block.widthInColumns === 'number' &&
+      block.widthInColumns > column
+    ) {
+      log.warn(
+        `Block ${block.id} width ${block.widthInColumns} exceeds configured column width ${column}`
+      );
+    }
     if (block.label) {
       block.label = sanitizeText(block.label);
     }
@@ -173,6 +187,7 @@ const clear = (): void => {
 
   edgeList = [];
   edgeCount = new Map();
+  diagramId = '';
 };
 
 export function typeStr2Type(typeStr: string) {
@@ -225,14 +240,42 @@ export function edgeTypeStr2Type(typeStr: string): string {
 }
 
 export function edgeStrToEdgeData(typeStr: string): string {
-  switch (typeStr.trim()) {
-    case '--x':
+  const lastChar = typeStr.trim().slice(-1);
+  switch (lastChar) {
+    case 'x':
       return 'arrow_cross';
-    case '--o':
+    case 'o':
       return 'arrow_circle';
-    default:
+    case '>':
       return 'arrow_point';
+    default:
+      return '';
   }
+}
+
+export function edgeStrToEdgeStartData(typeStr: string): string {
+  const firstChar = typeStr.trim().charAt(0);
+  switch (firstChar) {
+    case 'x':
+      return 'arrow_cross';
+    case 'o':
+      return 'arrow_circle';
+    case '<':
+      return 'arrow_point';
+    default:
+      return 'arrow_open';
+  }
+}
+
+export function edgeStrToThickness(typeStr: string): string {
+  return typeStr.includes('==') ? 'thick' : 'normal';
+}
+
+export function edgeStrToPattern(typeStr: string): string {
+  if (typeStr.includes('.-')) {
+    return 'dotted';
+  }
+  return 'solid';
 }
 
 let cnt = 0;
@@ -287,7 +330,13 @@ const setBlock = (block: Block) => {
   blockDatabase.set(block.id, block);
 };
 
-const getLogger = () => console;
+const setDiagramId = (id: string) => {
+  diagramId = id;
+};
+
+const getDiagramId = () => diagramId;
+
+const getLogger = () => log;
 
 /**
  * Return all of the style classes
@@ -301,6 +350,9 @@ const db = {
   typeStr2Type: typeStr2Type,
   edgeTypeStr2Type: edgeTypeStr2Type,
   edgeStrToEdgeData,
+  edgeStrToEdgeStartData,
+  edgeStrToThickness,
+  edgeStrToPattern,
   getLogger,
   getBlocksFlat,
   getBlocks,
@@ -312,6 +364,8 @@ const db = {
   getClasses,
   clear,
   generateId,
+  setDiagramId,
+  getDiagramId,
 } as const;
 
 export type BlockDB = typeof db & DiagramDB;

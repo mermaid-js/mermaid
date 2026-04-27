@@ -205,7 +205,7 @@ graph TD
   });
   describe('when rendering several diagrams', () => {
     it('diagrams should not taint later diagrams', () => {
-      const url = 'http://localhost:9000/theme-directives.html';
+      const url = '/theme-directives.html';
       urlSnapshotTest(url, {});
     });
   });

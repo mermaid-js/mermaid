@@ -95,7 +95,7 @@ $(bold xhost +local:)
 EOF
 )
 
-echo -n -e "$usage"
+echo -n -e "$usage\n"
 ;;
 
 *)

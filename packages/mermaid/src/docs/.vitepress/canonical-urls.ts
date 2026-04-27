@@ -1,0 +1,146 @@
+import type { PageData } from 'vitepress';
+import { canonicalConfig } from './canonical-config.js';
+
+/**
+ * Configuration for canonical URL generation
+ */
+export interface CanonicalUrlConfig {
+  /** Base URL for the site (e.g., 'https://mermaid.js.org') */
+  baseUrl: string;
+  /** Whether to automatically generate canonical URLs for pages without explicit ones */
+  autoGenerate: boolean;
+  /** Pages to exclude from automatic canonical URL generation (glob patterns supported) */
+  excludePatterns?: string[];
+  /** Custom URL transformations */
+  transformations?: {
+    /** Remove index.md from URLs */
+    removeIndex?: boolean;
+    /** Remove .md extension from URLs */
+    removeMarkdownExtension?: boolean;
+    /** Custom path transformations */
+    customTransforms?: {
+      pattern: RegExp;
+      replacement: string;
+    }[];
+  };
+}
+
+/**
+ * Default configuration for canonical URLs
+ */
+const defaultConfig: CanonicalUrlConfig = {
+  baseUrl: 'https://mermaid.js.org',
+  autoGenerate: true,
+  excludePatterns: [
+    // Exclude the home page as it's handled separately
+    'index.md',
+    // Exclude any temporary or draft files
+    '**/draft-*',
+    '**/temp-*',
+  ],
+  transformations: {
+    removeIndex: true,
+    removeMarkdownExtension: true,
+    customTransforms: [
+      // Transform any special cases here
+      // Example: { pattern: /^old-path\//, replacement: 'new-path/' }
+    ],
+  },
+};
+
+/**
+ * Transform a relative path to a canonical URL path
+ */
+export function transformPath(relativePath: string, config: CanonicalUrlConfig): string {
+  let transformedPath = relativePath;
+
+  // Apply built-in transformations
+  if (config.transformations?.removeMarkdownExtension) {
+    transformedPath = transformedPath.replace(/\.md$/, '.html');
+  }
+
+  if (config.transformations?.removeIndex) {
+    transformedPath = transformedPath.replace(/\/index$/, '/');
+    if (transformedPath === 'index') {
+      transformedPath = '';
+    }
+  }
+
+  // Apply custom transformations
+  if (config.transformations?.customTransforms) {
+    for (const transform of config.transformations.customTransforms) {
+      transformedPath = transformedPath.replace(transform.pattern, transform.replacement);
+    }
+  }
+
+  // Ensure path starts with /
+  if (transformedPath && !transformedPath.startsWith('/')) {
+    transformedPath = '/' + transformedPath;
+  }
+
+  // Handle root path
+  if (!transformedPath) {
+    transformedPath = '/';
+  }
+
+  return transformedPath;
+}
+
+/**
+ * Generate a canonical URL for a page
+ */
+function generateCanonicalUrl(relativePath: string, config: CanonicalUrlConfig): string {
+  const transformedPath = transformPath(relativePath, config);
+  return config.baseUrl + transformedPath;
+}
+
+/**
+ * VitePress transformPageData hook to add canonical URLs
+ */
+export function addCanonicalUrls(pageData: PageData): void {
+  const config = canonicalConfig;
+
+  // Generate canonical URL
+  const canonicalUrl = generateCanonicalUrl(pageData.relativePath, config);
+  transformPath(pageData.relativePath, config);
+  addCanonicalToHead(pageData, canonicalUrl);
+}
+
+/**
+ * Add canonical URL to page head
+ */
+function addCanonicalToHead(pageData: PageData, canonicalUrl: string): void {
+  // Initialize head array if it doesn't exist
+  pageData.frontmatter.head = pageData.frontmatter.head || [];
+
+  // Check if canonical link already exists
+  const hasCanonical = pageData.frontmatter.head.some(
+    (item: any) => Array.isArray(item) && item[0] === 'link' && item[1]?.rel === 'canonical'
+  );
+
+  // Add canonical link if it doesn't exist
+  if (!hasCanonical) {
+    pageData.frontmatter.head.push(['link', { rel: 'canonical', href: canonicalUrl }]);
+  }
+}
+
+/**
+ * Utility function to create a custom configuration
+ * This can be used to override the default configuration
+ */
+export function createCanonicalUrlConfig(
+  customConfig: Partial<CanonicalUrlConfig>
+): CanonicalUrlConfig {
+  return {
+    ...defaultConfig,
+    ...customConfig,
+    transformations: {
+      ...defaultConfig.transformations,
+      ...customConfig.transformations,
+      customTransforms: [
+        ...(defaultConfig.transformations?.customTransforms || []),
+        ...(customConfig.transformations?.customTransforms || []),
+      ],
+    },
+  };
+}

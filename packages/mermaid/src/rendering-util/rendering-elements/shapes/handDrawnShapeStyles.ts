@@ -16,11 +16,15 @@ export const solidStateFill = (color: string) => {
 };
 
 export const compileStyles = (node: Node) => {
-  // node.cssCompiledStyles is an array of strings in the form of 'key: value' where jey is the css property and value is the value
-  // the array is the styles of node node from the classes it is using
+  // node.cssCompiledStyles is an array of strings in the form of 'key: value' where key is the css property and value is the value
+  // the array is the styles of node from the classes it is using
   // node.cssStyles is an array of styles directly set on the node
   // concat the arrays and remove duplicates such that the values from node.cssStyles are used if there are duplicates
-  const stylesMap = styles2Map([...(node.cssCompiledStyles || []), ...(node.cssStyles || [])]);
+  const stylesMap = styles2Map([
+    ...(node.cssCompiledStyles || []),
+    ...(node.cssStyles || []),
+    ...(node.labelStyle || []),
+  ]);
   return { stylesMap, stylesArray: [...stylesMap] };
 };
 
@@ -104,8 +108,23 @@ export const userNodeOverrides = (node: Node, options: any) => {
       seed: handDrawnSeed,
       strokeWidth: stylesMap.get('stroke-width')?.replace('px', '') || 1.3,
       fillLineDash: [0, 0],
+      strokeLineDash: getStrokeDashArray(stylesMap.get('stroke-dasharray')),
     },
     options
   );
   return result;
+};
+
+const getStrokeDashArray = (strokeDasharrayStyle?: string) => {
+  if (!strokeDasharrayStyle) {
+    return [0, 0];
+  }
+  const dashArray = strokeDasharrayStyle.trim().split(/\s+/).map(Number);
+  if (dashArray.length === 1) {
+    const val = isNaN(dashArray[0]) ? 0 : dashArray[0];
+    return [val, val];
+  }
+  const first = isNaN(dashArray[0]) ? 0 : dashArray[0];
+  const second = isNaN(dashArray[1]) ? 0 : dashArray[1];
+  return [first, second];
 };

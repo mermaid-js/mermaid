@@ -2,10 +2,11 @@
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
  * functionality and to render the diagrams to svg code!
  */
+import type { AsyncIconLoader, IconLoader, SyncIconLoader } from './rendering-util/icons.js';
 import { registerIconPacks } from './rendering-util/icons.js';
 import { dedent } from 'ts-dedent';
 import type { MermaidConfig } from './config.type.js';
-import { detectType, registerLazyLoadedDiagrams } from './diagram-api/detectType.js';
+import { detectType, detectors, registerLazyLoadedDiagrams } from './diagram-api/detectType.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import { loadRegisteredDiagrams } from './diagram-api/loadDiagram.js';
 import type { ExternalDiagramDefinition, SVG, SVGGroup } from './diagram-api/types.js';
@@ -22,8 +23,10 @@ import type { DetailedError } from './utils.js';
 import utils, { isDetailedError } from './utils.js';
 
 export type {
+  AsyncIconLoader,
   DetailedError,
   ExternalDiagramDefinition,
+  IconLoader,
   InternalHelpers,
   LayoutData,
   LayoutLoaderDefinition,
@@ -35,6 +38,7 @@ export type {
   RenderResult,
   SVG,
   SVGGroup,
+  SyncIconLoader,
   UnknownDiagramError,
 };
 
@@ -367,7 +371,7 @@ const parse: typeof mermaidAPI.parse = async (text, parseOptions) => {
 };
 
 /**
- * Function that renders an svg with a graph from a chart definition. Usage example below.
+ * Function that renders an SVG with a graph from a chart definition. Usage example below.
  *
  * ```javascript
  *  element = document.querySelector('#graphDiv');
@@ -415,6 +419,17 @@ const render: typeof mermaidAPI.render = (id, text, container) => {
   });
 };
 
+/**
+ * Gets the metadata for all registered diagrams.
+ * Currently only the id is returned.
+ * @returns An array of objects with the id of the diagram.
+ */
+const getRegisteredDiagramsMetadata = (): Pick<ExternalDiagramDefinition, 'id'>[] => {
+  return Object.keys(detectors).map((id) => ({
+    id,
+  }));
+};
+
 export interface Mermaid {
   startOnLoad: boolean;
   parseError?: ParseErrorFunction;
@@ -437,6 +452,7 @@ export interface Mermaid {
   setParseErrorHandler: typeof setParseErrorHandler;
   detectType: typeof detectType;
   registerIconPacks: typeof registerIconPacks;
+  getRegisteredDiagramsMetadata: typeof getRegisteredDiagramsMetadata;
 }
 
 const mermaid: Mermaid = {
@@ -454,6 +470,7 @@ const mermaid: Mermaid = {
   setParseErrorHandler,
   detectType,
   registerIconPacks,
+  getRegisteredDiagramsMetadata,
 };
 
 export default mermaid;

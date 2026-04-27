@@ -42,6 +42,8 @@ class Theme {
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
     this.fontSize = '16px';
     this.THEME_COLOR_LIMIT = 12;
+    this.radius = 5;
+    this.strokeWidth = 1;
 
     /* Flowchart variables */
 
@@ -93,10 +95,49 @@ class Theme {
     this.critBkgColor = 'calculated';
     this.critBorderColor = 'calculated';
     this.todayLineColor = 'calculated';
+    this.vertLineColor = 'calculated';
 
     /* C4 Context Diagram variables */
-    this.personBorder = this.primaryBorderColor;
-    this.personBkg = this.mainBkg;
+    this.personBorder = this.personBorder || this.primaryBorderColor;
+    this.personBkg = this.personBkg || this.mainBkg;
+    this.personExtBorder = this.personExtBorder || this.primaryBorderColor;
+    this.personExtBkg = this.personExtBkg || this.mainBkg;
+    this.systemBorder = this.systemBorder || this.primaryBorderColor;
+    this.systemBkg = this.systemBkg || this.mainBkg;
+    this.systemDbBorder = this.systemDbBorder || this.primaryBorderColor;
+    this.systemDbBkg = this.systemDbBkg || this.mainBkg;
+    this.systemQueueBorder = this.systemQueueBorder || this.primaryBorderColor;
+    this.systemQueueBkg = this.systemQueueBkg || this.mainBkg;
+    this.systemExtBorder = this.systemExtBorder || this.primaryBorderColor;
+    this.systemExtBkg = this.systemExtBkg || this.mainBkg;
+    this.systemExtDbBorder = this.systemExtDbBorder || this.primaryBorderColor;
+    this.systemExtDbBkg = this.systemExtDbBkg || this.mainBkg;
+    this.systemExtQueueBorder = this.systemExtQueueBorder || this.primaryBorderColor;
+    this.systemExtQueueBkg = this.systemExtQueueBkg || this.mainBkg;
+    this.containerBorder = this.containerBorder || this.primaryBorderColor;
+    this.containerBkg = this.containerBkg || this.mainBkg;
+    this.containerDbBorder = this.containerDbBorder || this.primaryBorderColor;
+    this.containerDbBkg = this.containerDbBkg || this.mainBkg;
+    this.containerQueueBorder = this.containerQueueBorder || this.primaryBorderColor;
+    this.containerQueueBkg = this.containerQueueBkg || this.mainBkg;
+    this.containerExtBorder = this.containerExtBorder || this.primaryBorderColor;
+    this.containerExtBkg = this.containerExtBkg || this.mainBkg;
+    this.containerExtDbBorder = this.containerExtDbBorder || this.primaryBorderColor;
+    this.containerExtDbBkg = this.containerExtDbBkg || this.mainBkg;
+    this.containerExtQueueBorder = this.containerExtQueueBorder || this.primaryBorderColor;
+    this.containerExtQueueBkg = this.containerExtQueueBkg || this.mainBkg;
+    this.componentBorder = this.componentBorder || this.primaryBorderColor;
+    this.componentBkg = this.componentBkg || this.mainBkg;
+    this.componentDbBorder = this.componentDbBorder || this.primaryBorderColor;
+    this.componentDbBkg = this.componentDbBkg || this.mainBkg;
+    this.componentQueueBorder = this.componentQueueBorder || this.primaryBorderColor;
+    this.componentQueueBkg = this.componentQueueBkg || this.mainBkg;
+    this.componentExtBorder = this.componentExtBorder || this.primaryBorderColor;
+    this.componentExtBkg = this.componentExtBkg || this.mainBkg;
+    this.componentExtDbBorder = this.componentExtDbBorder || this.primaryBorderColor;
+    this.componentExtDbBkg = this.componentExtDbBkg || this.mainBkg;
+    this.componentExtQueueBorder = this.componentExtQueueBorder || this.primaryBorderColor;
+    this.componentExtQueueBkg = this.componentExtQueueBkg || this.mainBkg;
 
     /* Architecture Diagram variables */
     this.archEdgeColor = 'calculated';
@@ -105,11 +146,22 @@ class Theme {
     this.archGroupBorderColor = this.primaryBorderColor;
     this.archGroupBorderWidth = '2px';
 
+    this.noteFontWeight = 'normal';
+    this.fontWeight = 'normal';
+
+    /* ER diagram */
+    this.rowOdd = this.rowOdd || lighten(this.mainBkg, 75) || '#ffffff';
+    this.rowEven = this.rowEven || '#f4f4f4';
+
     /* state colors */
     this.labelColor = 'black';
 
     this.errorBkgColor = '#552222';
     this.errorTextColor = '#552222';
+    this.useGradient = true;
+    this.gradientStart = this.primaryBorderColor;
+    this.gradientStop = this.secondaryBorderColor;
+    this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,1))';
   }
   updateColors() {
     this.secondBkg = lighten(this.contrast, 55);
@@ -205,6 +257,7 @@ class Theme {
     this.critBorderColor = darken(this.critBkgColor, 10);
 
     this.todayLineColor = this.critBkgColor;
+    this.vertLineColor = this.critBkgColor;
 
     /* Architecture Diagram variables */
     this.archEdgeColor = this.lineColor;
@@ -257,6 +310,13 @@ class Theme {
     this.pieOuterStrokeColor = this.pieOuterStrokeColor || 'black';
     this.pieOpacity = this.pieOpacity || '0.7';
 
+    /* venn */
+    for (let i = 0; i < 8; i++) {
+      this['venn' + (i + 1)] = this['venn' + (i + 1)] ?? this['cScale' + i];
+    }
+    this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
+    this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
+
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;
     this.quadrant2Fill = this.quadrant2Fill || adjust(this.primaryColor, { r: 5, g: 5, b: 5 });
@@ -286,6 +346,7 @@ class Theme {
     this.xyChart = {
       backgroundColor: this.xyChart?.backgroundColor || this.background,
       titleColor: this.xyChart?.titleColor || this.primaryTextColor,
+      dataLabelColor: this.xyChart?.dataLabelColor || this.primaryTextColor,
       xAxisTitleColor: this.xyChart?.xAxisTitleColor || this.primaryTextColor,
       xAxisLabelColor: this.xyChart?.xAxisLabelColor || this.primaryTextColor,
       xAxisTickColor: this.xyChart?.xAxisTickColor || this.primaryTextColor,
@@ -297,6 +358,20 @@ class Theme {
       plotColorPalette:
         this.xyChart?.plotColorPalette ||
         '#EEE,#6BB8E4,#8ACB88,#C7ACD6,#E8DCC2,#FFB2A8,#FFF380,#7E8D91,#FFD8B1,#FAF3E0',
+    };
+
+    /* radar */
+    this.radar = {
+      axisColor: this.radar?.axisColor || this.lineColor,
+      axisStrokeWidth: this.radar?.axisStrokeWidth || 2,
+      axisLabelFontSize: this.radar?.axisLabelFontSize || 12,
+      curveOpacity: this.radar?.curveOpacity || 0.5,
+      curveStrokeWidth: this.radar?.curveStrokeWidth || 2,
+      graticuleColor: this.radar?.graticuleColor || '#DEDEDE',
+      graticuleStrokeWidth: this.radar?.graticuleStrokeWidth || 1,
+      graticuleOpacity: this.radar?.graticuleOpacity || 0.3,
+      legendBoxSize: this.radar?.legendBoxSize || 12,
+      legendFontSize: this.radar?.legendFontSize || 12,
     };
 
     /* requirement-diagram */
@@ -344,6 +419,24 @@ class Theme {
     this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
     this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
     this.commitLabelFontSize = this.commitLabelFontSize || '10px';
+
+    /* -------------------------------------------------- */
+    /* Event Modeling diagrams                             */
+
+    this.emUiFill = this.emUiFill || 'white';
+    this.emUiStroke = this.emUiStroke || '#dbdada';
+    this.emProcessorFill = this.emProcessorFill || '#edb3f6';
+    this.emProcessorStroke = this.emProcessorStroke || '#b88cbf';
+    this.emReadModelFill = this.emReadModelFill || '#d3f1a2';
+    this.emReadModelStroke = this.emReadModelStroke || '#a3b732';
+    this.emCommandFill = this.emCommandFill || '#bcd6fe';
+    this.emCommandStroke = this.emCommandStroke || '#679ac3';
+    this.emEventFill = this.emEventFill || '#ffb778';
+    this.emEventStroke = this.emEventStroke || '#c19a0f';
+    this.emSwimlaneBackgroundOdd = this.emSwimlaneBackgroundOdd || 'rgb(250,250,250)';
+    this.emSwimlaneBackgroundStroke = this.emSwimlaneBackgroundStroke || 'rgb(240,240,240)';
+    this.emArrowhead = this.emArrowhead || this.lineColor;
+    this.emRelationStroke = this.emRelationStroke || this.lineColor;
 
     /* -------------------------------------------------- */
     /* EntityRelationship diagrams                        */

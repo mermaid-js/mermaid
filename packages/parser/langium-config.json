@@ -17,6 +17,11 @@
       "fileExtensions": [".mmd", ".mermaid"]
     },
     {
+      "id": "treeView",
+      "grammar": "src/language/treeView/treeView.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
       "id": "architecture",
       "grammar": "src/language/architecture/architecture.langium",
       "fileExtensions": [".mmd", ".mermaid"]
@@ -24,6 +29,26 @@
     {
       "id": "gitGraph",
       "grammar": "src/language/gitGraph/gitGraph.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "eventmodeling",
+      "grammar": "src/language/eventmodeling/event-modeling.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "radar",
+      "grammar": "src/language/radar/radar.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "treemap",
+      "grammar": "src/language/treemap/treemap.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "wardley",
+      "grammar": "src/language/wardley/wardley.langium",
       "fileExtensions": [".mmd", ".mermaid"]
     }
   ],

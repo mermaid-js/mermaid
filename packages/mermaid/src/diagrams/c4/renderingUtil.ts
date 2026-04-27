@@ -62,25 +62,25 @@ export async function addIcons(svgId: string, data4Layout: LayoutData) {
   await Promise.all(
     data4Layout.edges.map(async (edge: Edge) => {
       const edgeElem = select(`#${svgId}`).select(`#${edge.id}`);
-      const labelElem = select(
-        (
-          select(`#${svgId}`)
-            .selectAll('.edgeLabel')
-            .filter(function () {
-              const style = select(this).attr('style') || '';
-              if (data4Layout.config.layout === 'elk') {
-                return style.includes(edge.id.slice(0, -2));
-              }
-              return style.includes(edge.id);
-            })
-            .node() as HTMLElement
-        ).closest('.label')
-      );
-      const width = (labelElem?.node() as SVGGraphicsElement)?.getBBox().width || 0;
-
-      if (!edgeElem.node() || !labelElem) {
+      const edgeLabelNode = select(`#${svgId}`)
+        .selectAll('.edgeLabel')
+        .filter(function () {
+          const style = select(this).attr('style') || '';
+          if (data4Layout.config.layout === 'elk') {
+            return style.includes(edge.id.slice(0, -2));
+          }
+          return style.includes(edge.id);
+        })
+        .node() as HTMLElement | null;
+      if (!edgeElem.node() || !edgeLabelNode) {
         return;
       }
+      const closestLabel = edgeLabelNode.closest('.label');
+      if (!closestLabel) {
+        return;
+      }
+      const labelElem = select(closestLabel);
+      const width = (labelElem.node() as SVGGraphicsElement | null)?.getBBox().width ?? 0;
 
       if (edge.icon) {
         const svgGroup = labelElem.append('g').attr('class', 'sprite');

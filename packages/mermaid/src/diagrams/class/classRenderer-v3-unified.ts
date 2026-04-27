@@ -46,6 +46,9 @@ export const draw = async function (text: string, id: string, _version: string, 
   // Not related to the refactoring, but this is the first step in the rendering process
   // diag.db.extract(diag.db.getRootDocV2());
 
+  // Set the diagram ID for DOM element uniqueness across multiple diagrams
+  diag.db.setDiagramId(id);
+
   // The getData method provided in all supported diagrams is used to extract the data from the parsed structure
   // into the Layout data format
   const data4Layout = diag.db.getData() as LayoutData;

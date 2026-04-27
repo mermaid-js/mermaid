@@ -15,7 +15,7 @@ title: Animal example
 classDiagram
     note "From Duck till Zebra"
     Animal <|-- Duck
-    note for Duck "can fly\ncan swim\ncan dive\ncan help in debugging"
+    note for Duck "can fly<br>can swim<br>can dive<br>can help in debugging"
     Animal <|-- Fish
     Animal <|-- Zebra
     Animal : +int age
@@ -248,7 +248,7 @@ classE o-- classF : aggregation
 
 Relations can logically represent an N:M association:
 
-```mermaid
+```mermaid-example
 classDiagram
     Animal <|--|> Zebra
 ```
@@ -320,6 +320,108 @@ namespace BaseShapes {
 }
 ```
 
+### Namespace Labels (v<MERMAID_RELEASE_VERSION>+)
+
+A namespace can be given a display label using square bracket syntax, similar to class labels:
+
+```mermaid-example
+classDiagram
+    namespace Auth["Authentication Service"] {
+        class UserService {
+            +login()
+            +logout()
+        }
+    }
+```
+
+The label replaces the namespace name in the rendered diagram, while the name is still used internally for relationships and nesting.
+
+### Nested Namespaces (v<MERMAID_RELEASE_VERSION>+)
+
+Namespaces can be nested to represent hierarchical groupings. There are two ways to define nested namespaces:
+
+**Dot notation** creates intermediate namespaces automatically:
+
+```mermaid-example
+classDiagram
+    namespace Company.Engineering.Backend {
+        class Developer {
+            +writeCode()
+        }
+    }
+    namespace Company.Engineering.Frontend {
+        class Designer {
+            +createMockup()
+        }
+    }
+    namespace Company.Engineering {
+        class TechLead {
+            +planSprint()
+        }
+    }
+    TechLead --> Developer : leads
+    TechLead --> Designer : leads
+```
+
+**Syntactic nesting** places namespace blocks inside other namespace blocks:
+
+```mermaid-example
+classDiagram
+    namespace Platform {
+        namespace Auth {
+            class UserService {
+                +login()
+                +logout()
+            }
+        }
+        namespace Data {
+            class Repository {
+                +find()
+                +save()
+            }
+        }
+        class Gateway {
+            +route()
+        }
+    }
+    Gateway --> UserService : delegates
+    Gateway --> Repository : delegates
+```
+
+Both approaches can be combined. Dot notation like `namespace A.B.C` will automatically create namespaces `A` and `A.B` as parents if they don't already exist.
+
+#### Compact rendering (`hierarchicalNamespaces: false`)
+
+By default (`hierarchicalNamespaces: true`), each segment of a dotted or syntactically-nested namespace name renders as its own cluster, producing a nested layout.
+
+Setting `hierarchicalNamespaces: false` in the class diagram config switches to **compact mode**: only namespaces the user explicitly declares are drawn — each as a single flat box labelled with its fully-qualified name. Auto-created intermediate ancestors are skipped, and classes inside them are moved to their nearest declared namespace.
+
+```mermaid-example
+---
+config:
+  class:
+    hierarchicalNamespaces: false
+---
+classDiagram
+    namespace Company.Engineering.Backend {
+        class Developer {
+            +writeCode()
+        }
+    }
+    namespace Company.Engineering.Frontend {
+        class Designer {
+            +createMockup()
+        }
+    }
+    namespace Company {
+        class CEO {
+            +makeDecisions()
+        }
+    }
+    CEO --> Developer : oversees
+    CEO --> Designer : oversees
+```
+
 ## Cardinality / Multiplicity on relations
 
 Multiplicity or cardinality in class diagrams indicates the number of instances of one class that can be linked to an instance of the other class. For example, each company will have one or more employees (not zero), and each employee currently works for zero or one companies.
@@ -358,7 +460,14 @@ It is possible to annotate classes with markers to provide additional metadata a
 - `<<Service>>` To represent a service class
 - `<<Enumeration>>` To represent an enum
 
-Annotations are defined within the opening `<<` and closing `>>`. There are two ways to add an annotation to a class, and either way the output will be same:
+Annotations are defined within the opening `<<` and closing `>>`. There are three ways to add an annotation to a class, and in all cases the output will be the same:
+
+- **Inline** with the class definition:
+
+```mermaid-example
+classDiagram
+  class Shape <<interface>>
+```
 
 - In a **_separate line_** after a class is defined:
 
@@ -527,7 +636,7 @@ Beginner's tip—a full example using interactive links in an HTML page:
       +run()
       }
 
-      callback Duck callback "Tooltip"
+      callback Duck "callback" "Tooltip"
       link Zebra "https://www.github.com" "This is a link"
   </pre>
 

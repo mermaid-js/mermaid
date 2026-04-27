@@ -46,7 +46,7 @@ line was introduced with 'click'.
 /*
 ---interactivity command---
 'call' adds a callback to the specified task. 'call' can only be specified when
-the line was introdcued with 'click'.
+the line was introduced with 'click'.
 'call <callbackname>(<args>)' attaches the function 'callbackname' with the specified
 arguments to the task that was specified by 'click'.
 Function arguments are optional: 'call <callbackname>()' simply executes 'callbackname' without any arguments.

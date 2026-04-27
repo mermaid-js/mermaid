@@ -1,17 +1,32 @@
 import type { LangiumParser, ParseResult } from 'langium';
 import { expect, vi } from 'vitest';
 import type {
+  Architecture,
+  ArchitectureServices,
   Info,
   InfoServices,
   Pie,
   PieServices,
+  Radar,
+  RadarServices,
+  Packet,
+  PacketServices,
   GitGraph,
   GitGraphServices,
+  EventModel,
+  EventModelingServices,
+  TreeView,
+  TreeViewServices,
 } from '../src/language/index.js';
 import {
+  createArchitectureServices,
   createInfoServices,
   createPieServices,
+  createRadarServices,
+  createPacketServices,
   createGitGraphServices,
+  createEventModelingServices,
+  createTreeViewServices,
 } from '../src/language/index.js';
 
 const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined);
@@ -23,9 +38,10 @@ const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined)
  * @param result - the result `parse` function.
  */
 export function expectNoErrorsOrAlternatives(result: ParseResult) {
-  expect(result.lexerErrors).toHaveLength(0);
-  expect(result.parserErrors).toHaveLength(0);
-
+  expect.soft(result.lexerErrors).toHaveLength(0);
+  expect.soft(result.parserErrors).toHaveLength(0);
+  // To see what the error is, in the logs.
+  expect(result.lexerErrors[0]).toBeUndefined();
   expect(consoleMock).not.toHaveBeenCalled();
   consoleMock.mockReset();
 }
@@ -41,6 +57,17 @@ export function createInfoTestServices() {
 }
 export const infoParse = createInfoTestServices().parse;
 
+const architectureServices: ArchitectureServices = createArchitectureServices().Architecture;
+const architectureParser: LangiumParser = architectureServices.parser.LangiumParser;
+export function createArchitectureTestServices() {
+  const parse = (input: string) => {
+    return architectureParser.parse<Architecture>(input);
+  };
+
+  return { services: architectureServices, parse };
+}
+export const architectureParse = createArchitectureTestServices().parse;
+
 const pieServices: PieServices = createPieServices().Pie;
 const pieParser: LangiumParser = pieServices.parser.LangiumParser;
 export function createPieTestServices() {
@@ -52,6 +79,28 @@ export function createPieTestServices() {
 }
 export const pieParse = createPieTestServices().parse;
 
+const packetServices: PacketServices = createPacketServices().Packet;
+const packetParser: LangiumParser = packetServices.parser.LangiumParser;
+export function createPacketTestServices() {
+  const parse = (input: string) => {
+    return packetParser.parse<Packet>(input);
+  };
+
+  return { services: packetServices, parse };
+}
+export const packetParse = createPacketTestServices().parse;
+
+const radarServices: RadarServices = createRadarServices().Radar;
+const radarParser: LangiumParser = radarServices.parser.LangiumParser;
+export function createRadarTestServices() {
+  const parse = (input: string) => {
+    return radarParser.parse<Radar>(input);
+  };
+
+  return { services: radarServices, parse };
+}
+export const radarParse = createRadarTestServices().parse;
+
 const gitGraphServices: GitGraphServices = createGitGraphServices().GitGraph;
 const gitGraphParser: LangiumParser = gitGraphServices.parser.LangiumParser;
 export function createGitGraphTestServices() {
@@ -62,3 +111,25 @@ export function createGitGraphTestServices() {
   return { services: gitGraphServices, parse };
 }
 export const gitGraphParse = createGitGraphTestServices().parse;
+
+const eventModelingServices: EventModelingServices = createEventModelingServices().EventModel;
+const eventModelingParser: LangiumParser = eventModelingServices.parser.LangiumParser;
+
+export function createEventModelingTestServices() {
+  const parse = (input: string) => {
+    return eventModelingParser.parse<EventModel>(input);
+  };
+
+  return { services: gitGraphServices, parse };
+}
+export const eventModelingParse = createEventModelingTestServices().parse;
+const treeViewServices: TreeViewServices = createTreeViewServices().TreeView;
+const treeViewParser: LangiumParser = treeViewServices.parser.LangiumParser;
+export function createTreeViewTestServices() {
+  const parse = (input: string) => {
+    return treeViewParser.parse<TreeView>(input);
+  };
+
+  return { services: treeViewServices, parse };
+}
+export const treeViewParse = createTreeViewTestServices().parse;

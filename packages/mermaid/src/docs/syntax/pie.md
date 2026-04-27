@@ -24,6 +24,11 @@ Drawing a pie chart is really simple in mermaid.
   - Followed by `:` colon as separator
   - Followed by `positive numeric value` (supported up to two decimal places)
 
+**Note:**
+
+> Pie chart values must be **positive numbers greater than zero**.
+> **Negative values are not allowed** and will result in an error.
+
 [pie] [showData] (OPTIONAL)
 [title] [titlevalue] (OPTIONAL)
 "[datakey1]" : [dataValue1]
@@ -35,7 +40,13 @@ Drawing a pie chart is really simple in mermaid.
 ## Example
 
 ```mermaid-example
-%%{init: {"pie": {"textPosition": 0.5}, "themeVariables": {"pieOuterStrokeWidth": "5px"}} }%%
+---
+config:
+  pie:
+    textPosition: 0.5
+  themeVariables:
+    pieOuterStrokeWidth: "5px"
+---
 pie showData
     title Key elements in Product X
     "Calcium" : 42.96

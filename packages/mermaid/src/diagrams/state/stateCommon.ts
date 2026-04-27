@@ -13,6 +13,10 @@ export const STMT_DIRECTION = 'dir';
 
 // parsed statement type for a state
 export const STMT_STATE = 'state';
+
+// parsed statement type for a root
+export const STMT_ROOT = 'root';
+
 // parsed statement type for a relation
 export const STMT_RELATION = 'relation';
 // parsed statement type for a classDef
@@ -28,7 +32,7 @@ export const DIVIDER_TYPE = 'divider';
 export const G_EDGE_STYLE = 'fill:none';
 export const G_EDGE_ARROWHEADSTYLE = 'fill: #333';
 export const G_EDGE_LABELPOS = 'c';
-export const G_EDGE_LABELTYPE = 'text';
+export const G_EDGE_LABELTYPE = 'markdown';
 export const G_EDGE_THICKNESS = 'normal';
 
 export const SHAPE_STATE = 'rect';

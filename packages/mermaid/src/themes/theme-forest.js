@@ -31,6 +31,8 @@ class Theme {
     this.lineColor = invert(this.background);
     this.textColor = invert(this.background);
     this.THEME_COLOR_LIMIT = 12;
+    this.radius = 5;
+    this.strokeWidth = 1;
 
     /* Flowchart variables */
     this.nodeBkg = 'calculated';
@@ -81,10 +83,49 @@ class Theme {
     this.critBorderColor = '#ff8888';
     this.critBkgColor = 'red';
     this.todayLineColor = 'red';
+    this.vertLineColor = '#00BFFF';
 
     /* C4 Context Diagram variables */
-    this.personBorder = this.primaryBorderColor;
-    this.personBkg = this.mainBkg;
+    this.personBorder = this.personBorder || this.primaryBorderColor;
+    this.personBkg = this.personBkg || this.mainBkg;
+    this.personExtBorder = this.personExtBorder || this.primaryBorderColor;
+    this.personExtBkg = this.personExtBkg || this.mainBkg;
+    this.systemBorder = this.systemBorder || this.primaryBorderColor;
+    this.systemBkg = this.systemBkg || this.mainBkg;
+    this.systemDbBorder = this.systemDbBorder || this.primaryBorderColor;
+    this.systemDbBkg = this.systemDbBkg || this.mainBkg;
+    this.systemQueueBorder = this.systemQueueBorder || this.primaryBorderColor;
+    this.systemQueueBkg = this.systemQueueBkg || this.mainBkg;
+    this.systemExtBorder = this.systemExtBorder || this.primaryBorderColor;
+    this.systemExtBkg = this.systemExtBkg || this.mainBkg;
+    this.systemExtDbBorder = this.systemExtDbBorder || this.primaryBorderColor;
+    this.systemExtDbBkg = this.systemExtDbBkg || this.mainBkg;
+    this.systemExtQueueBorder = this.systemExtQueueBorder || this.primaryBorderColor;
+    this.systemExtQueueBkg = this.systemExtQueueBkg || this.mainBkg;
+    this.containerBorder = this.containerBorder || this.primaryBorderColor;
+    this.containerBkg = this.containerBkg || this.mainBkg;
+    this.containerDbBorder = this.containerDbBorder || this.primaryBorderColor;
+    this.containerDbBkg = this.containerDbBkg || this.mainBkg;
+    this.containerQueueBorder = this.containerQueueBorder || this.primaryBorderColor;
+    this.containerQueueBkg = this.containerQueueBkg || this.mainBkg;
+    this.containerExtBorder = this.containerExtBorder || this.primaryBorderColor;
+    this.containerExtBkg = this.containerExtBkg || this.mainBkg;
+    this.containerExtDbBorder = this.containerExtDbBorder || this.primaryBorderColor;
+    this.containerExtDbBkg = this.containerExtDbBkg || this.mainBkg;
+    this.containerExtQueueBorder = this.containerExtQueueBorder || this.primaryBorderColor;
+    this.containerExtQueueBkg = this.containerExtQueueBkg || this.mainBkg;
+    this.componentBorder = this.componentBorder || this.primaryBorderColor;
+    this.componentBkg = this.componentBkg || this.mainBkg;
+    this.componentDbBorder = this.componentDbBorder || this.primaryBorderColor;
+    this.componentDbBkg = this.componentDbBkg || this.mainBkg;
+    this.componentQueueBorder = this.componentQueueBorder || this.primaryBorderColor;
+    this.componentQueueBkg = this.componentQueueBkg || this.mainBkg;
+    this.componentExtBorder = this.componentExtBorder || this.primaryBorderColor;
+    this.componentExtBkg = this.componentExtBkg || this.mainBkg;
+    this.componentExtDbBorder = this.componentExtDbBorder || this.primaryBorderColor;
+    this.componentExtDbBkg = this.componentExtDbBkg || this.mainBkg;
+    this.componentExtQueueBorder = this.componentExtQueueBorder || this.primaryBorderColor;
+    this.componentExtQueueBkg = this.componentExtQueueBkg || this.mainBkg;
 
     /* Architecture Diagram variables */
     this.archEdgeColor = 'calculated';
@@ -93,11 +134,19 @@ class Theme {
     this.archGroupBorderColor = this.primaryBorderColor;
     this.archGroupBorderWidth = '2px';
 
+    this.noteFontWeight = 'normal';
+    this.fontWeight = 'normal';
+
     /* state colors */
     this.labelColor = 'black';
 
     this.errorBkgColor = '#552222';
     this.errorTextColor = '#552222';
+
+    this.useGradient = true;
+    this.gradientStart = this.primaryBorderColor;
+    this.gradientStop = this.secondaryBorderColor;
+    this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,0.5))';
   }
   updateColors() {
     /* Sequence Diagram variables */
@@ -173,6 +222,10 @@ class Theme {
     this.archEdgeColor = this.lineColor;
     this.archEdgeArrowColor = this.lineColor;
 
+    /* ER diagram */
+    this.rowOdd = this.rowOdd || lighten(this.mainBkg, 75) || '#ffffff';
+    this.rowEven = this.rowEven || lighten(this.mainBkg, 20);
+
     /* state colors */
     this.transitionColor = this.transitionColor || this.lineColor;
     this.transitionLabelColor = this.transitionLabelColor || this.textColor;
@@ -227,6 +280,18 @@ class Theme {
     this.pieOuterStrokeColor = this.pieOuterStrokeColor || 'black';
     this.pieOpacity = this.pieOpacity || '0.7';
 
+    /* venn */
+    this.venn1 = this.venn1 ?? adjust(this.primaryColor, { l: -30 });
+    this.venn2 = this.venn2 ?? adjust(this.secondaryColor, { l: -30 });
+    this.venn3 = this.venn3 ?? adjust(this.tertiaryColor, { l: -30 });
+    this.venn4 = this.venn4 ?? adjust(this.primaryColor, { h: 60, l: -30 });
+    this.venn5 = this.venn5 ?? adjust(this.primaryColor, { h: -60, l: -30 });
+    this.venn6 = this.venn6 ?? adjust(this.secondaryColor, { h: 60, l: -30 });
+    this.venn7 = this.venn7 ?? adjust(this.primaryColor, { h: 120, l: -30 });
+    this.venn8 = this.venn8 ?? adjust(this.secondaryColor, { h: 120, l: -30 });
+    this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
+    this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
+
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;
     this.quadrant2Fill = this.quadrant2Fill || adjust(this.primaryColor, { r: 5, g: 5, b: 5 });
@@ -261,10 +326,25 @@ class Theme {
       blockFillColor: this.mainBkg,
     };
 
+    /* radar */
+    this.radar = {
+      axisColor: this.radar?.axisColor || this.lineColor,
+      axisStrokeWidth: this.radar?.axisStrokeWidth || 2,
+      axisLabelFontSize: this.radar?.axisLabelFontSize || 12,
+      curveOpacity: this.radar?.curveOpacity || 0.5,
+      curveStrokeWidth: this.radar?.curveStrokeWidth || 2,
+      graticuleColor: this.radar?.graticuleColor || '#DEDEDE',
+      graticuleStrokeWidth: this.radar?.graticuleStrokeWidth || 1,
+      graticuleOpacity: this.radar?.graticuleOpacity || 0.3,
+      legendBoxSize: this.radar?.legendBoxSize || 12,
+      legendFontSize: this.radar?.legendFontSize || 12,
+    };
+
     /* xychart */
     this.xyChart = {
       backgroundColor: this.xyChart?.backgroundColor || this.background,
       titleColor: this.xyChart?.titleColor || this.primaryTextColor,
+      dataLabelColor: this.xyChart?.dataLabelColor || this.primaryTextColor,
       xAxisTitleColor: this.xyChart?.xAxisTitleColor || this.primaryTextColor,
       xAxisLabelColor: this.xyChart?.xAxisLabelColor || this.primaryTextColor,
       xAxisTickColor: this.xyChart?.xAxisTickColor || this.primaryTextColor,
@@ -339,6 +419,24 @@ class Theme {
     this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
     this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
     this.commitLabelFontSize = this.commitLabelFontSize || '10px';
+
+    /* -------------------------------------------------- */
+    /* Event Modeling diagrams                             */
+
+    this.emUiFill = this.emUiFill || 'white';
+    this.emUiStroke = this.emUiStroke || '#dbdada';
+    this.emProcessorFill = this.emProcessorFill || '#edb3f6';
+    this.emProcessorStroke = this.emProcessorStroke || '#b88cbf';
+    this.emReadModelFill = this.emReadModelFill || '#d3f1a2';
+    this.emReadModelStroke = this.emReadModelStroke || '#a3b732';
+    this.emCommandFill = this.emCommandFill || '#bcd6fe';
+    this.emCommandStroke = this.emCommandStroke || '#679ac3';
+    this.emEventFill = this.emEventFill || '#ffb778';
+    this.emEventStroke = this.emEventStroke || '#c19a0f';
+    this.emSwimlaneBackgroundOdd = this.emSwimlaneBackgroundOdd || 'rgb(250,250,250)';
+    this.emSwimlaneBackgroundStroke = this.emSwimlaneBackgroundStroke || 'rgb(240,240,240)';
+    this.emArrowhead = this.emArrowhead || this.lineColor;
+    this.emRelationStroke = this.emRelationStroke || this.lineColor;
 
     /* -------------------------------------------------- */
     /* EntityRelationship diagrams                        */

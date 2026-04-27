@@ -15,27 +15,57 @@ export const addEdgeMarkers = (
   edge: Pick<EdgeData, 'arrowTypeStart' | 'arrowTypeEnd'>,
   url: string,
   id: string,
-  diagramType: string
+  diagramType: string,
+  useMargin = false,
+  strokeColor?: string
 ) => {
   if (edge.arrowTypeStart) {
-    addEdgeMarker(svgPath, 'start', edge.arrowTypeStart, url, id, diagramType);
+    addEdgeMarker(
+      svgPath,
+      'start',
+      edge.arrowTypeStart,
+      url,
+      id,
+      diagramType,
+      useMargin,
+      strokeColor
+    );
   }
   if (edge.arrowTypeEnd) {
-    addEdgeMarker(svgPath, 'end', edge.arrowTypeEnd, url, id, diagramType);
+    addEdgeMarker(svgPath, 'end', edge.arrowTypeEnd, url, id, diagramType, useMargin, strokeColor);
   }
 };
 
 const arrowTypesMap = {
-  arrow_cross: 'cross',
-  arrow_point: 'point',
-  arrow_barb: 'barb',
-  arrow_circle: 'circle',
-  aggregation: 'aggregation',
-  extension: 'extension',
-  composition: 'composition',
-  dependency: 'dependency',
-  lollipop: 'lollipop',
+  arrow_cross: { type: 'cross', fill: false },
+  arrow_point: { type: 'point', fill: true },
+  arrow_barb: { type: 'barb', fill: true },
+  arrow_barb_neo: { type: 'barb', fill: true },
+  arrow_circle: { type: 'circle', fill: false },
+  aggregation: { type: 'aggregation', fill: false },
+  extension: { type: 'extension', fill: false },
+  composition: { type: 'composition', fill: true },
+  dependency: { type: 'dependency', fill: true },
+  lollipop: { type: 'lollipop', fill: false },
+  only_one: { type: 'onlyOne', fill: false },
+  zero_or_one: { type: 'zeroOrOne', fill: false },
+  one_or_more: { type: 'oneOrMore', fill: false },
+  zero_or_more: { type: 'zeroOrMore', fill: false },
+  requirement_arrow: { type: 'requirement_arrow', fill: false },
+  requirement_contains: { type: 'requirement_contains', fill: false },
 } as const;
+
+const arrowTypesWithMarginSupport = [
+  'cross',
+  'point',
+  'circle',
+  'lollipop',
+  'aggregation',
+  'extension',
+  'composition',
+  'dependency',
+  'barb',
+];
 
 const addEdgeMarker = (
   svgPath: SVG,
@@ -43,15 +73,59 @@ const addEdgeMarker = (
   arrowType: string,
   url: string,
   id: string,
-  diagramType: string
+  diagramType: string,
+  useMargin = false,
+  strokeColor?: string
 ) => {
-  const endMarkerType = arrowTypesMap[arrowType as keyof typeof arrowTypesMap];
+  const arrowTypeInfo = arrowTypesMap[arrowType as keyof typeof arrowTypesMap];
+  const marginSupport = arrowTypeInfo && arrowTypesWithMarginSupport.includes(arrowTypeInfo.type);
 
-  if (!endMarkerType) {
+  if (!arrowTypeInfo) {
     log.warn(`Unknown arrow type: ${arrowType}`);
     return; // unknown arrow type, ignore
   }
 
+  const endMarkerType = arrowTypeInfo.type;
   const suffix = position === 'start' ? 'Start' : 'End';
-  svgPath.attr(`marker-${position}`, `url(${url}#${id}_${diagramType}-${endMarkerType}${suffix})`);
+
+  const offset = useMargin && marginSupport ? '-margin' : '';
+  const originalMarkerId = `${id}_${diagramType}-${endMarkerType}${suffix}${offset}`;
+
+  // If stroke color is specified and non-empty, create or use a colored variant of the marker
+  if (strokeColor && strokeColor.trim() !== '') {
+    // Create a sanitized color value for use in IDs
+    const colorId = strokeColor.replace(/[^\dA-Za-z]/g, '_');
+    const coloredMarkerId = `${originalMarkerId}_${colorId}`;
+
+    // Check if the colored marker already exists
+    if (!document.getElementById(coloredMarkerId)) {
+      // Get the original marker
+      const originalMarker = document.getElementById(originalMarkerId);
+      if (originalMarker) {
+        // Clone the marker and create colored version
+        const coloredMarker = originalMarker.cloneNode(true) as Element;
+        coloredMarker.id = coloredMarkerId;
+
+        // Apply colors to the paths inside the marker
+        const paths = coloredMarker.querySelectorAll('path, circle, line');
+        paths.forEach((path) => {
+          path.setAttribute('stroke', strokeColor);
+
+          // Apply fill only to markers that should be filled
+          if (arrowTypeInfo.fill) {
+            path.setAttribute('fill', strokeColor);
+          }
+        });
+
+        // Add the new colored marker to the defs section
+        originalMarker.parentNode?.appendChild(coloredMarker);
+      }
+    }
+
+    // Use the colored marker
+    svgPath.attr(`marker-${position}`, `url(${url}#${coloredMarkerId})`);
+  } else {
+    // Always use the original marker for unstyled edges
+    svgPath.attr(`marker-${position}`, `url(${url}#${originalMarkerId})`);
+  }
 };

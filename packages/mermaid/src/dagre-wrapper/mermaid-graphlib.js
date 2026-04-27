@@ -306,7 +306,16 @@ export const adjustClustersAndEdges = (graph, depth) => {
       const edge2 = structuredClone(edge);
       edge1.label = '';
       edge1.arrowTypeEnd = 'none';
+      // Clear multiplicity labels on edge1 (start->mid segment) - keep startLabelRight if needed, clear others
+      edge1.startLabelLeft = '';
+      edge1.endLabelRight = '';
+      edge1.endLabelLeft = '';
       edge2.label = '';
+      edge2.arrowTypeStart = 'none';
+      // Clear multiplicity labels on edge2 (mid->end segment) - keep endLabelLeft if needed, clear others
+      edge2.startLabelRight = '';
+      edge2.startLabelLeft = '';
+      edge2.endLabelRight = '';
       edge1.fromCluster = e.v;
       edge2.toCluster = e.v;
 
@@ -351,7 +360,7 @@ export const extractor = (graph, depth) => {
     return;
   }
   // For clusters without incoming and/or outgoing edges, create a new cluster-node
-  // containing the nodes and edges in the custer in a new graph
+  // containing the nodes and edges in the cluster in a new graph
   // for (let i = 0;)
   let nodes = graph.nodes();
   let hasChildren = false;

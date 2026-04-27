@@ -1,14 +1,16 @@
-import { log } from '../logger.js';
 import type { ExtendedIconifyIcon, IconifyIcon, IconifyJSON } from '@iconify/types';
 import type { IconifyIconCustomisations } from '@iconify/utils';
 import { getIconData, iconToHTML, iconToSVG, replaceIDs, stringToIcon } from '@iconify/utils';
+import { getConfig } from '../config.js';
+import { sanitizeText } from '../diagrams/common/common.js';
+import { log } from '../logger.js';
 
-interface AsyncIconLoader {
+export interface AsyncIconLoader {
   name: string;
   loader: () => Promise<IconifyJSON>;
 }
 
-interface SyncIconLoader {
+export interface SyncIconLoader {
   name: string;
   icons: IconifyJSON;
 }
@@ -85,7 +87,8 @@ export const isIconAvailable = async (iconName: string) => {
 
 export const getIconSVG = async (
   iconName: string,
-  customisations?: IconifyIconCustomisations & { fallbackPrefix?: string }
+  customisations?: IconifyIconCustomisations & { fallbackPrefix?: string },
+  extraAttributes?: Record<string, string>
 ) => {
   let iconData: ExtendedIconifyIcon;
   try {
@@ -95,6 +98,9 @@ export const getIconSVG = async (
     iconData = unknownIcon;
   }
   const renderData = iconToSVG(iconData, customisations);
-  const svg = iconToHTML(replaceIDs(renderData.body), renderData.attributes);
-  return svg;
+  const svg = iconToHTML(replaceIDs(renderData.body), {
+    ...renderData.attributes,
+    ...extraAttributes,
+  });
+  return sanitizeText(svg, getConfig());
 };

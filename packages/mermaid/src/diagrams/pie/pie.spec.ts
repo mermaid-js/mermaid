@@ -139,6 +139,32 @@ describe('pie', () => {
       }).rejects.toThrowError();
     });
 
+    it('should handle simple pie with zero slice value', async () => {
+      await parser.parse(`pie title Default text position: Animal adoption
+        accTitle: simple pie char demo
+        accDescr: pie chart with 3 sections: dogs, cats, rats. Most are dogs.
+         "dogs" : 0
+        "rats" : 40.12
+      `);
+
+      const sections = db.getSections();
+      expect(sections.get('dogs')).toBe(0);
+      expect(sections.get('rats')).toBe(40.12);
+    });
+
+    it('should handle simple pie with negative slice value', async () => {
+      await expect(async () => {
+        await parser.parse(`pie title Default text position: Animal adoption
+        accTitle: simple pie char demo
+        accDescr: pie chart with 3 sections: dogs, cats, rats. Most are dogs.
+         "dogs" : -60.67
+        "rats" : 40.12
+    `);
+      }).rejects.toThrowError(
+        '"dogs" has invalid value: -60.67. Negative values are not allowed in pie charts. All slice values must be >= 0.'
+      );
+    });
+
     it('should handle unsafe properties', async () => {
       await expect(
         parser.parse(`pie title Unsafe props test

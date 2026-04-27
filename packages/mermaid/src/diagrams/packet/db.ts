@@ -1,6 +1,7 @@
 import { getConfig as commonGetConfig } from '../../config.js';
 import type { PacketDiagramConfig } from '../../config.type.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
+import type { DiagramDB } from '../../diagram-api/types.js';
 import { cleanAndMerge } from '../../utils.js';
 import {
   clear as commonClear,
@@ -11,49 +12,42 @@ import {
   setAccTitle,
   setDiagramTitle,
 } from '../common/commonDb.js';
-import type { PacketDB, PacketData, PacketWord } from './types.js';
-
-const defaultPacketData: PacketData = {
-  packet: [],
-};
-
-let data: PacketData = structuredClone(defaultPacketData);
-
+import type { PacketWord } from './types.js';
 const DEFAULT_PACKET_CONFIG: Required<PacketDiagramConfig> = DEFAULT_CONFIG.packet;
 
-const getConfig = (): Required<PacketDiagramConfig> => {
-  const config = cleanAndMerge({
-    ...DEFAULT_PACKET_CONFIG,
-    ...commonGetConfig().packet,
-  });
-  if (config.showBits) {
-    config.paddingY += 10;
+export class PacketDB implements DiagramDB {
+  private packet: PacketWord[] = [];
+
+  public getConfig() {
+    const config = cleanAndMerge({
+      ...DEFAULT_PACKET_CONFIG,
+      ...commonGetConfig().packet,
+    });
+    if (config.showBits) {
+      config.paddingY += 10;
+    }
+    return config;
   }
-  return config;
-};
 
-const getPacket = (): PacketWord[] => data.packet;
-
-const pushWord = (word: PacketWord) => {
-  if (word.length > 0) {
-    data.packet.push(word);
+  public getPacket() {
+    return this.packet;
   }
-};
 
-const clear = () => {
-  commonClear();
-  data = structuredClone(defaultPacketData);
-};
+  public pushWord(word: PacketWord) {
+    if (word.length > 0) {
+      this.packet.push(word);
+    }
+  }
 
-export const db: PacketDB = {
-  pushWord,
-  getPacket,
-  getConfig,
-  clear,
-  setAccTitle,
-  getAccTitle,
-  setDiagramTitle,
-  getDiagramTitle,
-  getAccDescription,
-  setAccDescription,
-};
+  public clear() {
+    commonClear();
+    this.packet = [];
+  }
+
+  public setAccTitle = setAccTitle;
+  public getAccTitle = getAccTitle;
+  public setDiagramTitle = setDiagramTitle;
+  public getDiagramTitle = getDiagramTitle;
+  public getAccDescription = getAccDescription;
+  public setAccDescription = setAccDescription;
+}

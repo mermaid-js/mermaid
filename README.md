@@ -12,10 +12,10 @@ Generate diagrams from markdown-like text.
 <p>
 
 <p align="center">
-<a href="https://mermaid.live/"><b>Live Editor!</b></a>
+<a href="https://mermaid.ai/live/"><b>Live Editor!</b></a>
 </p>
 <p align="center">
- <a href="https://mermaid.js.org">📖 Documentation</a> | <a href="https://mermaid.js.org/intro/">🚀 Getting Started</a> | <a href="https://www.jsdelivr.com/package/npm/mermaid">🌐 CDN</a> | <a href="https://discord.gg/AgrbSrBer3" title="Discord invite">🙌 Join Us</a>
+ <a href="https://mermaid.ai/open-source/">📖 Documentation</a> | <a href="https://mermaid.ai/open-source/intro/">🚀 Getting Started</a> | <a href="https://www.jsdelivr.com/package/npm/mermaid">🌐 CDN</a> | <a href="https://discord.gg/sKeNQX4Wtj" title="Discord invite">🙌 Join Us</a>
 </p>
 <p align="center">
 <a href="./README.zh-CN.md">简体中文</a>
@@ -33,7 +33,7 @@ Try Live Editor previews of future releases: <a href="https://develop.git.mermai
 [![Coverage Status](https://codecov.io/github/mermaid-js/mermaid/branch/develop/graph/badge.svg)](https://app.codecov.io/github/mermaid-js/mermaid/tree/develop)
 [![CDN Status](https://img.shields.io/jsdelivr/npm/hm/mermaid)](https://www.jsdelivr.com/package/npm/mermaid)
 [![NPM Downloads](https://img.shields.io/npm/dm/mermaid)](https://www.npmjs.com/package/mermaid)
-[![Join our Discord!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=discord&label=discord)](https://discord.gg/AgrbSrBer3)
+[![Join our Discord!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=discord&label=discord)](https://discord.gg/sKeNQX4Wtj)
 [![Twitter Follow](https://img.shields.io/badge/Social-mermaidjs__-blue?style=social&logo=X)](https://twitter.com/mermaidjs_)
 [![Covered by Argos Visual Testing](https://argos-ci.com/badge.svg)](https://argos-ci.com?utm_source=mermaid&utm_campaign=oss)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/mermaid-js/mermaid/badge)](https://securityscorecards.dev/viewer/?uri=github.com/mermaid-js/mermaid)
@@ -44,7 +44,7 @@ Try Live Editor previews of future releases: <a href="https://develop.git.mermai
 
 **Thanks to all involved, people committing pull requests, people answering questions! 🙏**
 
-<a href="https://mermaid.js.org/landing/"><img src="https://github.com/mermaid-js/mermaid/blob/master/docs/intro/img/book-banner-post-release.jpg" alt="Explore Mermaid.js in depth, with real-world examples, tips & tricks from the creator... The first official book on Mermaid is available for purchase. Check it out!"></a>
+<a href="https://mermaid.js.org/landing/"><img src="https://github.com/mermaid-js/mermaid/blob/master/docs/intro/img/book-banner-post-release.jpg" alt='Banner for "The Official Guide to Mermaid.js" book'></a>
 
 ## Table of content
 
@@ -94,10 +94,6 @@ In our release process we rely heavily on visual regression tests using [applito
 </a>
 
 <!-- </Main description> -->
-
-## Mermaid AI Bot
-
-[Mermaid](https://codeparrot.ai/oracle?owner=mermaid-js&repo=mermaid) Bot will help you understand this repository better. You can ask for code examples, installation guide, debugging help and much more.
 
 ## Examples
 
@@ -451,7 +447,7 @@ For public sites, it can be precarious to retrieve text from users on the intern
 
 As an extra level of security for sites with external users we are happy to introduce a new security level in which the diagram is rendered in a sandboxed iframe preventing javascript in the code from being executed. This is a great step forward for better security.
 
-_Unfortunately you can not have a cake and eat it at the same time which in this case means that some of the interactive functionality gets blocked along with the possible malicious code._
+_Unfortunately you cannot have a cake and eat it at the same time which in this case means that some of the interactive functionality gets blocked along with the possible malicious code._
 
 ## Reporting vulnerabilities
 

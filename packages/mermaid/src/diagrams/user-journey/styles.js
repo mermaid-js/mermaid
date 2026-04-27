@@ -1,3 +1,5 @@
+import { getIconStyles } from '../globalStyles.js';
+
 const getStyles = (options) =>
   `.label {
     font-family: ${options.fontFamily};
@@ -131,6 +133,7 @@ const getStyles = (options) =>
   .actor-5 {
     ${options.actor5 ? `fill: ${options.actor5}` : ''};
   }
+  ${getIconStyles()}
 `;
 
 export default getStyles;

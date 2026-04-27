@@ -278,7 +278,7 @@ stateDiagram-v2
     }
 ```
 
-_You can not define transitions between internal states belonging to different composite states_
+_You cannot define transitions between internal states belonging to different composite states_
 
 ## Choice
 
@@ -437,9 +437,7 @@ stateDiagram
 
 ## Comments
 
-Comments can be entered within a state diagram chart, which will be ignored by the parser. Comments need to be on their
-own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next
-newline will be treated as a comment, including any diagram syntax
+Comments can be entered within a state diagram chart, which will be ignored by the parser. Comments must be prefaced with `%%` (double percent signs) and any text after their start to the next newline will be treated as a comment, including any diagram syntax. They can be on their own line or at the end of a statement.
 
 ```mermaid-example
 stateDiagram-v2

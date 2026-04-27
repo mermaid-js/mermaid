@@ -6,6 +6,7 @@ interface CypressConfig {
   listUrl?: boolean;
   listId?: string;
   name?: string;
+  screenshot?: boolean;
 }
 type CypressMermaidConfig = MermaidConfig & CypressConfig;
 
@@ -14,7 +15,7 @@ interface CodeObject {
   mermaid: CypressMermaidConfig;
 }
 
-const utf8ToB64 = (str: string): string => {
+export const utf8ToB64 = (str: string): string => {
   return Buffer.from(decodeURIComponent(encodeURIComponent(str))).toString('base64');
 };
 
@@ -22,7 +23,7 @@ const batchId: string =
   'mermaid-batch-' +
   (Cypress.env('useAppli')
     ? Date.now().toString()
-    : Cypress.env('CYPRESS_COMMIT') || Date.now().toString());
+    : (Cypress.env('CYPRESS_COMMIT') ?? Date.now().toString()));
 
 export const mermaidUrl = (
   graphStr: string | string[],
@@ -35,9 +36,9 @@ export const mermaidUrl = (
     mermaid: options,
   };
   const objStr: string = JSON.stringify(codeObject);
-  let url = `http://localhost:9000/e2e.html?graph=${utf8ToB64(objStr)}`;
+  let url = `/e2e.html?graph=${utf8ToB64(objStr)}`;
   if (api && typeof graphStr === 'string') {
-    url = `http://localhost:9000/xss.html?graph=${graphStr}`;
+    url = `/xss.html?graph=${graphStr}`;
   }
 
   if (options.listUrl) {
@@ -61,9 +62,7 @@ export const imgSnapshotTest = (
     sequence: {
       ...(_options.sequence ?? {}),
       actorFontFamily: 'courier',
-      noteFontFamily: _options.sequence?.noteFontFamily
-        ? _options.sequence.noteFontFamily
-        : 'courier',
+      noteFontFamily: _options.sequence?.noteFontFamily ?? 'courier',
       messageFontFamily: 'courier',
     },
   };
@@ -92,20 +91,33 @@ export const renderGraph = (
 
 export const openURLAndVerifyRendering = (
   url: string,
-  options: CypressMermaidConfig,
+  { screenshot = true, ...options }: CypressMermaidConfig,
   validation?: any
 ): void => {
   const name: string = (options.name ?? cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
 
   cy.visit(url);
   cy.window().should('have.property', 'rendered', true);
-  cy.get('svg').should('be.visible');
 
-  if (validation) {
-    cy.get('svg').should(validation);
+  // Handle sandbox mode where SVG is inside an iframe
+  if (options.securityLevel === 'sandbox') {
+    cy.get('iframe').should('be.visible');
+    if (validation) {
+      cy.get('iframe').should(validation);
+    }
+  } else {
+    cy.get('svg').should('be.visible');
+    // cspell:ignore viewbox
+    cy.get('svg').should('not.have.attr', 'viewbox');
+
+    if (validation) {
+      cy.get('svg').should(validation);
+    }
   }
 
-  verifyScreenshot(name);
+  if (screenshot) {
+    verifyScreenshot(name);
+  }
 };
 
 export const verifyScreenshot = (name: string): void => {
@@ -131,6 +143,26 @@ export const verifyScreenshot = (name: string): void => {
   } else {
     cy.matchImageSnapshot(name);
   }
+};
+
+/**
+ * Asserts that no element ID appears more than once in the current document.
+ * Use after rendering multiple mermaid diagrams on the same page.
+ */
+export const assertNoDuplicateIds = (): void => {
+  cy.document().then((doc) => {
+    const allElements = doc.querySelectorAll('[id]');
+    const idCounts: Record<string, number> = {};
+    for (const el of allElements) {
+      const id = el.getAttribute('id')!;
+      idCounts[id] = (idCounts[id] || 0) + 1;
+    }
+    const duplicates = Object.entries(idCounts).filter(([, count]) => count > 1);
+    expect(
+      duplicates,
+      `Duplicate IDs found: ${duplicates.map(([id, n]) => `${id} (${n}x)`).join(', ')}`
+    ).to.have.length(0);
+  });
 };
 
 export const verifyNumber = (value: number, expected: number, deltaPercent = 10): void => {

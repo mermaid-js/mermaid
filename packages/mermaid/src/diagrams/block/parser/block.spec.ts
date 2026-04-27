@@ -1,9 +1,10 @@
 // @ts-ignore: jison doesn't export types
 import block from './block.jison';
 import db from '../blockDB.js';
+import { log } from '../../../logger.js';
 
 describe('Block diagram', function () {
-  describe('when parsing an block diagram graph it should handle > ', function () {
+  describe('when parsing a block diagram graph it should handle > ', function () {
     beforeEach(function () {
       block.parser.yy = db;
       block.parser.yy.clear();
@@ -22,7 +23,7 @@ describe('Block diagram', function () {
       expect(blocks[0].label).toBe('id');
     });
     it('a node with a square shape and a label', () => {
-      const str = `block-beta
+      const str = `block
           id["A label"]
           `;
 
@@ -34,7 +35,7 @@ describe('Block diagram', function () {
       expect(blocks[0].type).toBe('square');
     });
     it('a diagram with multiple nodes', () => {
-      const str = `block-beta
+      const str = `block
           id1
           id2
       `;
@@ -50,7 +51,7 @@ describe('Block diagram', function () {
       expect(blocks[1].type).toBe('na');
     });
     it('a diagram with multiple nodes', () => {
-      const str = `block-beta
+      const str = `block
           id1
           id2
           id3
@@ -71,7 +72,7 @@ describe('Block diagram', function () {
     });
 
     it('a node with a square shape and a label', () => {
-      const str = `block-beta
+      const str = `block
           id["A label"]
           id2`;
 
@@ -86,7 +87,7 @@ describe('Block diagram', function () {
       expect(blocks[1].type).toBe('na');
     });
     it('a diagram with multiple nodes with edges abc123', () => {
-      const str = `block-beta
+      const str = `block
           id1["first"]  -->   id2["second"]
       `;
 
@@ -100,7 +101,7 @@ describe('Block diagram', function () {
       expect(edges[0].arrowTypeEnd).toBe('arrow_point');
     });
     it('a diagram with multiple nodes with edges abc123', () => {
-      const str = `block-beta
+      const str = `block
           id1["first"]  -- "a label" -->   id2["second"]
       `;
 
@@ -115,7 +116,7 @@ describe('Block diagram', function () {
       expect(edges[0].label).toBe('a label');
     });
     it('a diagram with column statements', () => {
-      const str = `block-beta
+      const str = `block
           columns 2
           block1["Block 1"]
       `;
@@ -125,8 +126,8 @@ describe('Block diagram', function () {
       const blocks = db.getBlocks();
       expect(blocks.length).toBe(1);
     });
-    it('a diagram withput column statements', () => {
-      const str = `block-beta
+    it('a diagram without column statements', () => {
+      const str = `block
           block1["Block 1"]
       `;
 
@@ -136,7 +137,7 @@ describe('Block diagram', function () {
       expect(blocks.length).toBe(1);
     });
     it('a diagram with auto column statements', () => {
-      const str = `block-beta
+      const str = `block
           columns auto
           block1["Block 1"]
       `;
@@ -148,7 +149,7 @@ describe('Block diagram', function () {
     });
 
     it('blocks next to each other', () => {
-      const str = `block-beta
+      const str = `block
           columns 2
           block1["Block 1"]
           block2["Block 2"]
@@ -162,7 +163,7 @@ describe('Block diagram', function () {
     });
 
     it('blocks on top of each other', () => {
-      const str = `block-beta
+      const str = `block
           columns 1
           block1["Block 1"]
           block2["Block 2"]
@@ -176,7 +177,7 @@ describe('Block diagram', function () {
     });
 
     it('compound blocks 2', () => {
-      const str = `block-beta
+      const str = `block
           block
             aBlock["ABlock"]
             bBlock["BBlock"]
@@ -204,7 +205,7 @@ describe('Block diagram', function () {
       expect(bBlock.type).toBe('square');
     });
     it('compound blocks of compound blocks', () => {
-      const str = `block-beta
+      const str = `block
           block
             aBlock["ABlock"]
             block
@@ -239,7 +240,7 @@ describe('Block diagram', function () {
       expect(bBlock.type).toBe('square');
     });
     it('compound blocks with title', () => {
-      const str = `block-beta
+      const str = `block
           block:compoundBlock["Compound block"]
             columns 1
             block2["Block 2"]
@@ -264,7 +265,7 @@ describe('Block diagram', function () {
       expect(block2.type).toBe('square');
     });
     it('blocks mixed with compound blocks', () => {
-      const str = `block-beta
+      const str = `block
           columns 1
           block1["Block 1"]
 
@@ -291,7 +292,7 @@ describe('Block diagram', function () {
     });
 
     it('Arrow blocks', () => {
-      const str = `block-beta
+      const str = `block
         columns 3
         block1["Block 1"]
         blockArrow<["&nbsp;&nbsp;&nbsp;"]>(right)
@@ -315,7 +316,7 @@ describe('Block diagram', function () {
       expect(blockArrow.directions).toContain('right');
     });
     it('Arrow blocks with multiple points', () => {
-      const str = `block-beta
+      const str = `block
         columns 1
         A
         blockArrow<["&nbsp;&nbsp;&nbsp;"]>(up, down)
@@ -338,7 +339,7 @@ describe('Block diagram', function () {
       expect(blockArrow.directions).not.toContain('right');
     });
     it('blocks with different widths', () => {
-      const str = `block-beta
+      const str = `block
         columns 3
         one["One Slot"]
         two["Two slots"]:2
@@ -353,7 +354,7 @@ describe('Block diagram', function () {
       expect(two.widthInColumns).toBe(2);
     });
     it('empty blocks', () => {
-      const str = `block-beta
+      const str = `block
         columns 3
         space
         middle["In the middle"]
@@ -372,7 +373,7 @@ describe('Block diagram', function () {
       expect(middle.label).toBe('In the middle');
     });
     it('classDef statements applied to a block', () => {
-      const str = `block-beta
+      const str = `block
         classDef black color:#ffffff, fill:#000000;
 
         mc["Memcache"]
@@ -390,7 +391,7 @@ describe('Block diagram', function () {
       expect(black.styles[0]).toEqual('color:#ffffff');
     });
     it('style statements applied to a block', () => {
-      const str = `block-beta
+      const str = `block
 columns 1
     B["A wide one in the middle"]
   style B fill:#f9F,stroke:#333,stroke-width:4px
@@ -402,13 +403,32 @@ columns 1
       const B = blocks[0];
       expect(B.styles).toContain('fill:#f9F');
     });
+    it('should log a warning when block width exceeds column width', () => {
+      const str = `block-beta
+  columns 1
+  A:1
+  B:2
+  C:3
+  D:4
+  E:3
+  F:2
+  G:1`;
+
+      const logWarnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+
+      block.parse(str);
+
+      expect(logWarnSpy).toHaveBeenCalledWith('Block B width 2 exceeds configured column width 1');
+
+      logWarnSpy.mockRestore();
+    });
   });
 
   describe('prototype properties', function () {
     function validateProperty(prop: string) {
-      expect(() => block.parse(`block-beta\n${prop}`)).not.toThrow();
+      expect(() => block.parse(`block\n${prop}`)).not.toThrow();
       expect(() =>
-        block.parse(`block-beta\nA; classDef ${prop} color:#ffffff,fill:#000000; class A ${prop}`)
+        block.parse(`block\nA; classDef ${prop} color:#ffffff,fill:#000000; class A ${prop}`)
       ).not.toThrow();
     }
 

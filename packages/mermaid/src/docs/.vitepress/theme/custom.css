@@ -1,22 +1,25 @@
 @import 'font-awesome/css/font-awesome.min.css';
 @import '@mdi/font/css/materialdesignicons.min.css';
 
+/* Colors: Brand */
 :root {
-  --vp-c-brand: #ff3670;
-  --vp-c-brand-light: #ff5e8c;
-  --vp-c-brand-lighter: #ff85a8;
-  --vp-c-brand-lightest: #ff9bb7;
-  --vp-c-brand-dark: #bd34fe;
-  --vp-c-brand-darker: #9339bd;
-  --vp-c-brand-dimm: rgba(100, 108, 255, 0.08);
+  /* use for colored text */
+  --vp-c-pink-1: #e0095f;
+
+  /* use for hover state of button */
+  --vp-c-pink-2: #b0134a;
+
+  /* use for background button color */
+  --vp-c-pink-3: #e0095f;
+
+  /* use for custom container or badges */
+  --vp-c-pink-4: rgba(159, 122, 234, 0.14);
 }
 
 :root {
-  --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #bd34fe 30%, #ff3670);
-
-  --vp-home-hero-image-background-image: linear-gradient(-45deg, #bd34fe 50%, #ff3670 50%);
-  --vp-home-hero-image-filter: blur(72px);
+  --vp-c-brand-1: var(--vp-c-pink-1);
+  --vp-c-brand-2: var(--vp-c-pink-2);
+  --vp-c-brand-3: var(--vp-c-pink-3);
 }
 
 .vp-doc > div {

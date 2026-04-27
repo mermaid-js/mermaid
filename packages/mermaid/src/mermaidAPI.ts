@@ -5,13 +5,12 @@
 // @ts-ignore TODO: Investigate D3 issue
 import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
-// @ts-ignore: TODO Fix ts errors
 import DOMPurify from 'dompurify';
-import isEmpty from 'lodash-es/isEmpty.js';
-import { version } from '../package.json';
+import { isEmpty } from 'es-toolkit/compat';
 import { addSVGa11yTitleDescription, setA11yDiagramInfo } from './accessibility.js';
 import assignWithDepth from './assignWithDepth.js';
 import * as configApi from './config.js';
+import { getEffectiveHtmlLabels } from './config.js';
 import type { MermaidConfig } from './config.type.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
@@ -129,7 +128,7 @@ export const createCssStyles = (
 
   // classDefs defined in the diagram text
   if (classDefs instanceof Map) {
-    const htmlLabels = config.htmlLabels ?? config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?
+    const htmlLabels = getEffectiveHtmlLabels(config);
 
     const cssHtmlElements = ['> *', 'span']; // TODO make a constant
     const cssShapeElements = ['rect', 'polygon', 'ellipse', 'circle', 'path']; // TODO make a constant
@@ -164,7 +163,12 @@ export const createUserStyles = (
   svgId: string
 ): string => {
   const userCSSstyles = createCssStyles(config, classDefs);
-  const allStyles = getStyles(graphType, userCSSstyles, config.themeVariables);
+  const allStyles = getStyles(
+    graphType,
+    userCSSstyles,
+    { ...config.themeVariables, theme: config.theme, look: config.look },
+    svgId
+  );
 
   // Now turn all of the styles into a (compiled) string that starts with the id
   // use the stylis library to compile the css, turn the results into a valid CSS string (serialize(...., stringify))
@@ -422,12 +426,12 @@ const render = async function (
   // -------------------------------------------------------------------------------
   // Draw the diagram with the renderer
   try {
-    await diag.renderer.draw(text, id, version, diag);
+    await diag.renderer.draw(text, id, injected.version, diag);
   } catch (e) {
     if (config.suppressErrorRendering) {
       removeTempElements();
     } else {
-      errorRenderer.draw(text, id, version);
+      errorRenderer.draw(text, id, injected.version);
     }
     throw e;
   }

@@ -1,4 +1,4 @@
-grammar Info
+grammar InfoGrammar
 import "../common/common";
 
 entry Info:

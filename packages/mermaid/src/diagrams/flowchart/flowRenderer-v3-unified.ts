@@ -1,4 +1,3 @@
-import { select } from 'd3';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramStyleClassDef } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
@@ -20,14 +19,8 @@ export const draw = async function (text: string, id: string, _version: string, 
   log.info('Drawing state diagram (v2)', id);
   const { securityLevel, flowchart: conf, layout } = getConfig();
 
-  // Handle root and document for when rendering in sandbox mode
-  let sandboxElement;
-  if (securityLevel === 'sandbox') {
-    sandboxElement = select('#i' + id);
-  }
-
-  // @ts-ignore - document is always available
-  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+  // Set the diagram ID for DOM element uniqueness across multiple diagrams
+  diag.db.setDiagramId(id);
 
   // The getData method provided in all supported diagrams is used to extract the data from the parsed structure
   // into the Layout data format
@@ -61,40 +54,6 @@ export const draw = async function (text: string, id: string, _version: string, 
     diag.db.getDiagramTitle()
   );
   setupViewPortForSVG(svg, padding, 'flowchart', conf?.useMaxWidth || false);
-
-  // If node has a link, wrap it in an anchor SVG object.
-  for (const vertex of data4Layout.nodes) {
-    const node = select(`#${id} [id="${vertex.id}"]`);
-    if (!node || !vertex.link) {
-      continue;
-    }
-    const link = doc.createElementNS('http://www.w3.org/2000/svg', 'a');
-    link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.cssClasses);
-    link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
-    if (securityLevel === 'sandbox') {
-      link.setAttributeNS('http://www.w3.org/2000/svg', 'target', '_top');
-    } else if (vertex.linkTarget) {
-      link.setAttributeNS('http://www.w3.org/2000/svg', 'target', vertex.linkTarget);
-    }
-
-    const linkNode = node.insert(function () {
-      return link;
-    }, ':first-child');
-
-    const shape = node.select('.label-container');
-    if (shape) {
-      linkNode.append(function () {
-        return shape.node();
-      });
-    }
-
-    const label = node.select('.label');
-    if (label) {
-      linkNode.append(function () {
-        return label.node();
-      });
-    }
-  }
 };
 
 export default {

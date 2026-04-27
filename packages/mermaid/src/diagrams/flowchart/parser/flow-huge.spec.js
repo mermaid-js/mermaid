@@ -14,7 +14,7 @@ describe('[Text] when parsing', () => {
 
   describe('it should handle huge files', function () {
     // skipped because this test takes like 2 minutes or more!
-    it.skip('it should handlehuge diagrams', function () {
+    it.skip('it should handle huge diagrams', function () {
       const nodes = ('A-->B;B-->A;'.repeat(415) + 'A-->B;').repeat(57) + 'A-->B;B-->A;'.repeat(275);
       flow.parser.parse(`graph LR;${nodes}`);
 

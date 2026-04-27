@@ -16,4 +16,4 @@ This helps the team know the relative interest in something and helps them set p
 
 You have not found anything that already addresses your request, or maybe you have come up with the new idea? Feel free to open a new issue or discussion.
 
-Log in to [GitHub.com](https://www.github.com), and use [GitHub issue tracker of the mermaid-js repository](https://github.com/mermaid-js/mermaid/issues). Press [https://github.com/mermaid-js/mermaid/issues/new/choose] issue, select the appropriate template and describe your problem.
+Log in to [GitHub.com](https://www.github.com), and use [GitHub issue tracker of the mermaid-js repository](https://github.com/mermaid-js/mermaid/issues). Press [issue, select the appropriate template](https://github.com/mermaid-js/mermaid/issues/new/choose) and describe your problem.

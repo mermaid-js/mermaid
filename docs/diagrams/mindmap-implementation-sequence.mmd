@@ -1,0 +1,180 @@
+---
+references:
+  - "File: /packages/mermaid/src/diagrams/mindmap/mindmap-definition.ts"
+  - "File: /packages/mermaid/src/diagrams/mindmap/mindmapDb.ts"
+  - "File: /packages/mermaid/src/diagrams/mindmap/detector.ts"
+  - "File: /packages/mermaid/src/diagrams/mindmap/mindmapTypes.ts"
+  - "File: /packages/mermaid/src/diagrams/mindmap/mindmapRenderer.ts"
+  - "File: /packages/mermaid/src/diagrams/mindmap/styles.ts"
+  - "File: /packages/mermaid/src/diagrams/mindmap/svgDraw.ts"
+generationTime: 2025-01-28T16:00:00.000Z
+---
+sequenceDiagram
+    participant User as User Input Text
+    participant Detector as detector.ts
+    participant Loader as DiagramLoader
+    participant Definition as mindmap-definition.ts
+    participant Parser as parser/mindmap.jison
+    participant DB as MindmapDB
+    participant Renderer as mindmapRenderer.ts
+    participant Cytoscape as cytoscape.js
+    participant SVGDraw as svgDraw.ts
+    participant Styles as styles.ts
+    participant Output as Final SVG
+
+    Note over User, Output: Mindmap Implementation Flow
+
+    %% Detection Phase
+    User->>Detector: /^\s*mindmap/ text input
+    activate Detector
+    Detector->>Detector: detector(txt) validates pattern
+    Detector->>Loader: loader() function called
+    deactivate Detector
+    
+    activate Loader
+    Loader->>Definition: import mindmap-definition.js
+    deactivate Loader
+
+    %% Core Structure Setup
+    activate Definition
+    Definition->>DB: get db() → new MindmapDB()
+    Definition->>Renderer: setup renderer
+    Definition->>Parser: setup parser
+    Definition->>Styles: setup styles
+    deactivate Definition
+
+    %% Database Initialization
+    activate DB
+    Note over DB: MindmapDB Constructor
+    DB->>DB: initialize nodes array
+    DB->>DB: setup nodeType constants
+    DB->>DB: bind methods
+    DB->>DB: clear() state
+    
+    %% Parsing Phase
+    activate Parser
+    User->>Parser: mindmap syntax text
+    
+    loop For each node in hierarchy
+        Parser->>DB: addNode(level, id, descr, type)
+        activate DB
+        DB->>DB: sanitizeText(id, descr)
+        DB->>DB: getType(startStr, endStr)
+        Note right of DB: Shape Detection:<br/>[ → RECT<br/>( → ROUNDED_RECT<br/>(( → CIRCLE<br/>)) → BANG<br/>{{ → HEXAGON
+        DB->>DB: getParent(level)
+        DB->>DB: create MindmapNode
+        DB->>DB: add to hierarchy
+        deactivate DB
+    end
+
+    opt Icon/Class Decoration
+        Parser->>DB: decorateNode(decoration)
+        DB->>DB: set icon/class properties
+    end
+    deactivate Parser
+
+    %% Data Preparation
+    Renderer->>DB: getData() for layout
+    activate DB
+    DB->>DB: collect all nodes
+    DB->>DB: build parent-child relationships
+    DB-->>Renderer: return node hierarchy
+    deactivate DB
+
+    %% Rendering Pipeline
+    activate Renderer
+    Note over Renderer: Rendering Phase
+    
+    Renderer->>Cytoscape: initialize cytoscape
+    activate Cytoscape
+    
+    loop For each node in mindmap
+        Renderer->>Cytoscape: addNodes(mindmap, cy, conf, level)
+        Cytoscape->>Cytoscape: create node data
+        Cytoscape->>Cytoscape: set position (x, y)
+    end
+
+    loop For parent-child relationships
+        Renderer->>Cytoscape: add edges
+        Cytoscape->>Cytoscape: create edge data
+    end
+
+    Renderer->>Cytoscape: configure cose-bilkent layout
+    Cytoscape->>Cytoscape: calculate optimal positions
+    Cytoscape-->>Renderer: return positioned graph
+    deactivate Cytoscape
+
+    %% SVG Generation
+    Renderer->>SVGDraw: drawNodes(db, svg, mindmap, section, conf)
+    activate SVGDraw
+    
+    loop For each node recursively
+        SVGDraw->>SVGDraw: select shape function
+        
+        alt Default Shape
+            SVGDraw->>SVGDraw: defaultBkg() - rounded rectangle
+        else Rectangle Shape
+            SVGDraw->>SVGDraw: rectBkg() - sharp corners
+        else Circle Shape
+            SVGDraw->>SVGDraw: circleBkg() - perfect circle
+        else Cloud Shape
+            SVGDraw->>SVGDraw: cloudBkg() - organic curves
+        else Bang Shape
+            SVGDraw->>SVGDraw: bangBkg() - explosion style
+        else Hexagon Shape
+            SVGDraw->>SVGDraw: hexagonBkg() - six sides
+        end
+        
+        SVGDraw->>SVGDraw: create SVG elements
+        SVGDraw->>SVGDraw: add text labels
+        SVGDraw->>SVGDraw: position node
+        
+        opt Node has children
+            SVGDraw->>SVGDraw: drawNodes() recursive call
+        end
+    end
+    deactivate SVGDraw
+
+    %% Edge Rendering
+    Renderer->>Renderer: drawEdges(edgesEl, cy)
+    loop For each edge
+        Renderer->>Renderer: extract edge bounds
+        Renderer->>Renderer: draw SVG path
+    end
+
+    %% Styling Application
+    Renderer->>Styles: getStyles(options)
+    activate Styles
+    
+    Styles->>Styles: genSections(options)
+    loop For THEME_COLOR_LIMIT sections
+        Styles->>Styles: generate color scale
+        Styles->>Styles: create CSS rules
+        Note right of Styles: .section-X fills<br/>.edge-depth-X widths<br/>.node-icon-X colors
+    end
+    
+    Styles->>Styles: apply theme integration
+    Styles-->>Renderer: return compiled CSS
+    deactivate Styles
+
+    %% Final Assembly
+    Renderer->>Output: selectSvgElement()
+    Renderer->>Output: setupGraphViewbox()
+    Renderer->>Output: apply styles
+    Renderer->>Output: add interactive elements
+    deactivate Renderer
+
+    activate Output
+    Note over Output: Final Mindmap Features
+    Output->>Output: responsive layout
+    Output->>Output: accessibility attributes
+    Output->>Output: hover effects
+    Output->>Output: click handling
+    Output-->>User: rendered mindmap
+    deactivate Output
+
+    %% Configuration Details
+    Note over DB, Styles: Configuration Options
+    Note right of DB: Padding Calculations:<br/>Base padding from config<br/>RECT: ×2 padding<br/>ROUNDED_RECT: ×2 padding<br/>HEXAGON: ×2 padding
+    Note right of Styles: Section Management:<br/>MAX_SECTIONS = 12<br/>Dynamic color generation<br/>Git theme integration
+    Note right of Renderer: Layout Parameters:<br/>Cytoscape configuration<br/>coseBilkent settings<br/>Node spacing rules 

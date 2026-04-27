@@ -10,12 +10,15 @@ const buildType = (packageName: string) => {
       console.log(out.toString());
     }
   } catch (e) {
-    console.error(e);
     if (e.stdout.length > 0) {
       console.error(e.stdout.toString());
     }
     if (e.stderr.length > 0) {
       console.error(e.stderr.toString());
+    }
+    // Exit the build process if we are in CI
+    if (process.env.CI) {
+      throw new Error(`Failed to build types for ${packageName}`);
     }
   }
 };

@@ -15,5 +15,5 @@ markComment: >
   If you are still interested in this issue and it is still relevant you can comment to revive it.
 # Comment to post when closing a stale issue. Set to `false` to disable
 closeComment: >
-  This issue has been been automatically closed due to a lack of activity. 
+  This issue has been automatically closed due to a lack of activity. 
   This is done to maintain a clean list of issues that the community is interested in developing.

@@ -9,7 +9,7 @@ const parserFnConstructor = (str: string) => {
   };
 };
 
-const mockDB: Record<string, Mock<any, any>> = {
+const mockDB: Record<string, Mock<any>> = {
   setQuadrant1Text: vi.fn(),
   setQuadrant2Text: vi.fn(),
   setQuadrant3Text: vi.fn(),
@@ -160,20 +160,20 @@ describe('Testing quadrantChart jison file', () => {
   });
 
   it('should be able to parse quadrant3 text', () => {
-    let str = 'quadrantChart\nquadrant-3 deligate';
+    let str = 'quadrantChart\nquadrant-3 delegate';
     expect(parserFnConstructor(str)).not.toThrow();
-    expect(mockDB.setQuadrant3Text).toHaveBeenCalledWith({ text: 'deligate', type: 'text' });
+    expect(mockDB.setQuadrant3Text).toHaveBeenCalledWith({ text: 'delegate', type: 'text' });
 
     clearMocks();
-    str = 'QuadRantChart   \n     QuaDrant-3 Deligate    ';
+    str = 'QuadRantChart   \n     QuaDrant-3 Delegate    ';
     expect(parserFnConstructor(str)).not.toThrow();
-    expect(mockDB.setQuadrant3Text).toHaveBeenCalledWith({ text: 'Deligate    ', type: 'text' });
+    expect(mockDB.setQuadrant3Text).toHaveBeenCalledWith({ text: 'Delegate    ', type: 'text' });
 
     clearMocks();
-    str = 'QuadRantChart   \n     QuaDrant-3 "Deligate(* +=[❤"';
+    str = 'QuadRantChart   \n     QuaDrant-3 "Delegate(* +=[❤"';
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.setQuadrant3Text).toHaveBeenCalledWith({
-      text: 'Deligate(* +=[❤',
+      text: 'Delegate(* +=[❤',
       type: 'text',
     });
   });

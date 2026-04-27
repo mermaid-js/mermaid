@@ -4,7 +4,7 @@ import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 /**
- * Draws a an info picture in the tag with id: id based on the graph definition in text.
+ * Draws an info picture in the tag with id: id based on the graph definition in text.
  *
  * @param text - The text of the diagram.
  * @param id - The id of the diagram which will be used as a DOM element id.
