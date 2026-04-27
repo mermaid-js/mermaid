@@ -276,6 +276,7 @@ Communication tools and platforms
   - [reveal.js-mermaid-plugin](https://github.com/ludwick/reveal.js-mermaid-plugin)
 - [Reveal CK](https://github.com/jedcn/reveal-ck)
   - [reveal-ck-mermaid-plugin](https://github.com/tmtm/reveal-ck-mermaid-plugin)
+- [SchemaCrawler - Generate Mermaid diagrams from your database](https://dev.to/sualeh/how-to-generate-mermaid-diagrams-for-your-database-33bn)
 - [speccharts: Turn your test suites into specification diagrams](https://github.com/arnaudrenaud/speccharts)
 - [Vitepress Plugin](https://github.com/sametcn99/vitepress-mermaid-renderer)
 
