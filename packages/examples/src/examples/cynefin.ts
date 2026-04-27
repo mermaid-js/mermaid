@@ -1,7 +1,7 @@
 import type { DiagramMetadata } from '../types.js';
 
 export default {
-  id: 'cynefin',
+  id: 'cynefin-beta',
   name: 'Cynefin Framework',
   description: 'Decision-making framework for categorizing problems by complexity',
   examples: [
