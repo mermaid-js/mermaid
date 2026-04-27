@@ -253,7 +253,12 @@ const METADATA_APPLICABILITY: Readonly<Record<MetadataApplicabilityKind, Readonl
   connector: new Set(['protocol', 'endpoint', 'transport', 'command', 'auth', 'token_required']),
   directive: new Set(['rule', 'severity', 'context', 'params']),
   testCase: new Set(['assert', 'expects']),
-  artifact: new Set(['output']),
+  // §13 separates input nodes (`lean-right`) from artifact nodes (`doc`,
+  // `lin-doc`) into two rows that both accept v0.6.0 `value`/`example`.
+  // ARTIFACT_SHAPES (above) currently lumps both rows under `artifact`;
+  // the allowed-key set is identical so the union is correct for v0.6.0.
+  // A future split into a separate `input` kind is purely additive.
+  artifact: new Set(['output', 'value', 'example']),
   reference: new Set(['typeRef', 'templateRef', 'src']),
 };
 

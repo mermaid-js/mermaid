@@ -2,10 +2,43 @@
 
 |             |                                |
 | ----------- | ------------------------------ |
-| **Version** | 0.5.0                          |
+| **Version** | 0.6.0                          |
 | **Status**  | Draft                          |
-| **Date**    | 2026-04-21                     |
+| **Date**    | 2026-04-27                     |
 | **Authors** | Mermaid-Chart / Agentflow Team |
+
+---
+
+## What's New in v0.6.0
+
+This section is for readers coming from v0.5.0. v0.6.0 is a **purely additive** release under the additive-change rule (§Specification Governance, rule 2). No keywords, shapes, or edge operators change.
+
+### TL;DR
+
+1. **Input-value metadata** — input and artifact nodes (`lean-right`, `doc`, `lin-doc`) accept two new metadata keys: `value` (the literal value at this point in the flow) and `example` (an illustrative value for documentation). See §4.4.2 and §8.4.2.
+2. **Metadata applicability extended** — §13 lists `value` and `example` on input and artifact nodes.
+3. **Semantic export coverage** — both keys are semantic, not presentation, and are retained by `getSemanticModel()` (§14.1).
+
+### Before / after
+
+```text
+# v0.5.0 — no concrete-value field; authors had to encode values into description
+file_path["file_path"]@{
+  shape: lean-right,
+  description: "Path to file: src/HelloWorld.java"
+}
+
+# v0.6.0 — value is data, description stays prose
+file_path["file_path"]@{
+  shape: lean-right,
+  description: "Path to the file in the GitHub repository to visualize",
+  value: "src/HelloWorld.java"
+}
+```
+
+### Compatibility
+
+A v0.5.0 implementation reading a v0.6.0 diagram preserves the new keys with an "unknown key" warning (§13.2) — no breaking change. A v0.6.0 implementation reading a v0.5.0 diagram is fully compatible.
 
 ---
 
@@ -84,7 +117,7 @@ Container keywords, inline shape syntaxes (`{text}`, `(((text)))`, `[[text]]`, e
 
 ### Staged rollout
 
-Rules marked "v0.5.0 warn / v1.0 error" are specified normatively now but the runtime emits warnings rather than validation errors until v1.0. See `AGENTFLOW-readiness-actions.md` for the three-wave schedule.
+Rules marked "warn before v1.0 / error in v1.0" are specified normatively now but the runtime emits warnings rather than validation errors until v1.0. See `AGENTFLOW-readiness-actions.md` for the three-wave schedule.
 
 ---
 
@@ -97,6 +130,7 @@ Rules marked "v0.5.0 warn / v1.0 error" are specified normatively now but the ru
 | 0.3.0   | 2026-03-25 | Add `skill`, `testCase`, `directive` containers with theme support. Add `trapezoid`, `inv-trapezoid`, `double-circle` shapes. Add template sections. Extend metadata fields (strategy, assert, expects, severity, context, rule, validate, handler, directives, transport, command, memory, execution, fallbacks). Add Directive, Lesson, Fallback, MCP Connection, Parallel Execution patterns.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | 0.4.0   | 2026-03-25 | Add definition/instance pattern with 5 instance shapes (`tag-rect`, `delay`, `lin-rect`, `win-pane`, `curv-trap`). Add `def` core metadata field for instance-to-definition binding. Formalize as versioned specification with revision history.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | 0.5.0   | 2026-04-21 | Semantic tightening per the downstream-readiness review (`AGENTFLOW-readiness-actions.md`). Formalise the **shape-based tool definition model** (§8): a tool is any named node whose resolved shape is `subroutine`, with normative rules for definition vs invocation, what `win-pane` may reference, the canonical metadata contract, and where capability validation applies. Formalise **connectors as metadata** (§9): tools bind via the new `connectorRef` key (mirrors `typeRef`/`templateRef`); connector-designated nodes are optionally grouped in a `subgraph connectors` block — no new keyword, with a normative rationale for when one would be justified. Canonicalise edge semantics with a new first-class `edgeSemantic` field (§5). Formalise identifier resolution across three namespaces (§10). Define definition / instance inheritance (§11). Add container-edge boundary semantics with explicit parameter-name label binding (§5.5). Add capability evaluation with executing-agent resolution (§12). Add metadata applicability table (§13). Split `type` / `template` / `src` reference kinds into `typeRef`, `templateRef`, and `src`. Declare presentation-only controls explicitly non-semantic and introduce a `getSemanticModel()` export projection (§14). Audit examples and add a Conformance Tests appendix. Some rules are specified now and enforced from v1.0 onward per the three-wave rollout in `AGENTFLOW-readiness-actions.md`. |
+| 0.6.0   | 2026-04-27 | Add input-value metadata: `value` and `example` keys on data-artifact nodes (`lean-right`, `doc`, `lin-doc`). `value` is the literal value at a point in the flow; `example` is an illustrative value for documentation. Both keys are semantic and retained by `getSemanticModel()`. Purely additive under the additive-change rule — no keywords, shapes, or edge operators change. §4.4.2, §8.4.2, §13 updated.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 
 ## Specification Governance
 
@@ -222,7 +256,7 @@ The following matrix lists allowed children for each parent container:
 
 > **`tool` in this matrix is a categorical kind, not a keyword.** It denotes any node whose resolved shape is `subroutine` (or one of its aliases — see §8). Authors do not write a literal `tool` keyword anywhere.
 
-Tools are leaves; they cannot be parents. Connectors (§9) are regular nodes — typically grouped in a `subgraph connectors` block at top level — and fall under the `node` row of the matrix. Placements outside this matrix produce a warning in v0.5.0 and become validation errors from v1.0.
+Tools are leaves; they cannot be parents. Connectors (§9) are regular nodes — typically grouped in a `subgraph connectors` block at top level — and fall under the `node` row of the matrix. Placements outside this matrix produce a warning before v1.0 and become validation errors in v1.0.
 
 ### 3.4 Nesting Example
 
@@ -350,36 +384,40 @@ All metadata is set via `@{ key: value, ... }`. Which keys are valid on which el
 
 These fields carry semantic meaning consumed by tooling but do not change how the node renders. The `@{}` mechanism accepts any valid YAML key; §13 defines which keys are valid on which kinds.
 
-| Field          | Purpose                                                    | Example                                 |
-| -------------- | ---------------------------------------------------------- | --------------------------------------- |
-| `description`  | Human-readable description (valid on any authored element) | `"Classify data sensitivity"`           |
-| `returns`      | Output type contract                                       | `"CoffeeCopy"`, `"String"`              |
-| `requires`     | Required capabilities (YAML array)                         | `["net.read", "llm.query"]`             |
-| `deny`         | Denied capabilities (YAML array)                           | `["llm.query"]`                         |
-| `connectorRef` | Tool binding to a connector (§9.1; tool definitions only)  | `"github_mcp"`, `"github.create_issue"` |
-| `source`       | External source binding                                    | `"search.duckduckgo(query)"`            |
-| `params`       | Input parameters                                           | `"city :: String"`                      |
-| `retry`        | Retry count on failure                                     | `2`                                     |
-| `cache`        | Cache duration                                             | `"30s"`, `"24h"`                        |
-| `output`       | Template conformance                                       | `"triage_result"`                       |
-| `model`        | LLM model binding (containers)                             | `"claude-opus-4-6"`                     |
-| `permits`      | Granted capabilities, YAML array (containers)              | `["net.read", "llm.query"]`             |
-| `strategy`     | Orchestration strategy (skill containers)                  | `"parallel"`, `"round-robin"`           |
-| `assert`       | Assertion expression (testCase containers)                 | `"output.length > 0"`                   |
-| `expects`      | Expected behavior (testCase containers)                    | `"non-empty response"`                  |
-| `severity`     | Impact level (directive / lesson nodes)                    | `"high"`, `"critical"`                  |
-| `context`      | Situational context                                        | `"production outage"`                   |
-| `rule`         | Behavioral rule text                                       | `"always verify backups"`               |
-| `validate`     | Validation method for tool output                          | `"json-schema"`, `"strict"`             |
-| `handler`      | External HTTP endpoint for tool execution                  | `"http POST https://api.example.com"`   |
-| `directives`   | Prompt directive references, YAML array                    | `["clinical_reasoning", "safety"]`      |
-| `protocol`     | Integration protocol (on a connector-designated node, §9)  | `"mcp"`, `"http"`, `"sql"`              |
-| `endpoint`     | External endpoint (on a connector-designated node, §9)     | `"https://api.example.com"`             |
-| `transport`    | Transport for protocols that require one                   | `"stdio"`, `"sse"`                      |
-| `command`      | Command line for stdio-based servers                       | `"npx -y @mcp/server"`                  |
-| `memory`       | Agent memory type                                          | `"episodic"`, `"semantic"`              |
-| `execution`    | Task execution mode                                        | `"sequential"`, `"parallel"`            |
-| `fallbacks`    | Fallback strategy, YAML array                              | `["retry-3", "escalate"]`               |
+| Field            | Purpose                                                            | Example                                 |
+| ---------------- | ------------------------------------------------------------------ | --------------------------------------- |
+| `description`    | Human-readable description (valid on any authored element)         | `"Classify data sensitivity"`           |
+| `value`          | Literal value at a point in the flow (data-artifact nodes, §8.4.2) | `"src/HelloWorld.java"`, `42`           |
+| `example`        | Illustrative value for documentation (data-artifact nodes, §8.4.2) | `"./input.csv"`                         |
+| `returns`        | Output type contract                                               | `"CoffeeCopy"`, `"String"`              |
+| `requires`       | Required capabilities (YAML array)                                 | `["net.read", "llm.query"]`             |
+| `deny`           | Denied capabilities (YAML array)                                   | `["llm.query"]`                         |
+| `connectorRef`   | Tool binding to a connector (§9.1; tool definitions only)          | `"github_mcp"`, `"github.create_issue"` |
+| `source`         | External source binding                                            | `"search.duckduckgo(query)"`            |
+| `params`         | Input parameters                                                   | `"city :: String"`                      |
+| `retry`          | Retry count on failure                                             | `2`                                     |
+| `cache`          | Cache duration                                                     | `"30s"`, `"24h"`                        |
+| `output`         | Template conformance                                               | `"triage_result"`                       |
+| `model`          | LLM model binding (containers)                                     | `"claude-opus-4-6"`                     |
+| `permits`        | Granted capabilities, YAML array (containers)                      | `["net.read", "llm.query"]`             |
+| `strategy`       | Orchestration strategy (skill containers)                          | `"parallel"`, `"round-robin"`           |
+| `assert`         | Assertion expression (testCase containers)                         | `"output.length > 0"`                   |
+| `expects`        | Expected behavior (testCase containers)                            | `"non-empty response"`                  |
+| `severity`       | Impact level (directive / lesson nodes)                            | `"high"`, `"critical"`                  |
+| `context`        | Situational context                                                | `"production outage"`                   |
+| `rule`           | Behavioral rule text                                               | `"always verify backups"`               |
+| `validate`       | Validation method for tool output                                  | `"json-schema"`, `"strict"`             |
+| `handler`        | External HTTP endpoint for tool execution                          | `"http POST https://api.example.com"`   |
+| `directives`     | Prompt directive references, YAML array                            | `["clinical_reasoning", "safety"]`      |
+| `protocol`       | Integration protocol (on a connector-designated node, §9)          | `"mcp"`, `"http"`, `"sql"`              |
+| `endpoint`       | External endpoint (on a connector-designated node, §9)             | `"https://api.example.com"`             |
+| `transport`      | Transport for protocols that require one                           | `"stdio"`, `"sse"`                      |
+| `command`        | Command line for stdio-based servers                               | `"npx -y @mcp/server"`                  |
+| `auth`           | Authentication mode (on a connector-designated node, §9)           | `"bearer"`, `"oauth2"`, `"none"`        |
+| `token_required` | Whether a token is required (on a connector-designated node, §9)   | `true`, `false`                         |
+| `memory`         | Agent memory type                                                  | `"episodic"`, `"semantic"`              |
+| `execution`      | Task execution mode                                                | `"sequential"`, `"parallel"`            |
+| `fallbacks`      | Fallback strategy, YAML array                                      | `["retry-3", "escalate"]`               |
 
 ---
 
@@ -412,7 +450,7 @@ Labels are placed between pipe characters or inline:
 A -->|"label text"| B
 A -- label text --> B
 sentinel --alert--> monitor
-writer == Article Draft ==> editor
+writer ==>|Article Draft| editor
 input ==>|query| search_web
 ```
 
@@ -427,7 +465,7 @@ Stroke presentation follows the operator: thick is the rendering of `==>`, dotte
 Send one output to multiple targets:
 
 ```
-classifier == Classification Report ==> processor & auditor
+classifier ==>|Classification Report| processor & auditor
 ```
 
 The `&` operator is used only in edge fan-out, not in node declarations.
@@ -450,7 +488,7 @@ On an incoming data edge, the edge label is interpreted as a **parameter name**,
 
 `returns` is single-valued at the container boundary; outgoing data edges do not require label binding, and any label on such an edge is decorative. A future version may introduce multiple named return channels, at which point the same parameter-name label rule would apply to outgoing edges.
 
-These rules produce warnings in v0.5.0 and become validation errors in v1.0.
+These rules produce warnings before v1.0 and become validation errors in v1.0.
 
 ---
 
@@ -628,9 +666,41 @@ top_k_node ==>|top_k| search_web
 
 Control edges (`-->`) into a tool sequence the invocation but do not bind parameters; their labels are decorative.
 
-#### 8.4.2 Future Extensions
+#### 8.4.2 Input-Value Metadata (v0.6.0)
 
-A future v0.6.x release will add **input-value semantics on data nodes** — `value` (literal value at a point in the flow) and `example` (illustrative value for documentation) metadata keys on data-artifact nodes. This is a pure metadata addition; no new keywords or shapes.
+> **Scope note.** These keys live on **data nodes**, not on tool definitions. They are described here because their primary use is providing concrete inputs into parameterised tools (§8.4.1). The metadata applicability is canonical in §13; the field rows are listed in §4.4.2.
+
+Input and artifact nodes accept two metadata keys for carrying concrete or illustrative values:
+
+| Key       | Purpose                                                          |
+| --------- | ---------------------------------------------------------------- |
+| `value`   | The literal value at this point in the flow.                     |
+| `example` | An illustrative value used for documentation, not for execution. |
+
+Both are valid on input nodes (`lean-right`) and artifact nodes (`doc`, `lin-doc`). Both accept any YAML scalar, list, or mapping. They are NOT valid on tool definitions, container nodes, or reference nodes.
+
+```
+file_path["file_path"]@{
+  shape: lean-right,
+  description: "Path to the file in the GitHub repository to visualize",
+  value: "src/HelloWorld.java"
+}
+```
+
+**Required vs optional.** Both keys are optional. A data node without either is fully valid. Authors SHOULD prefer `value` for inputs that have a concrete chosen value, and `example` for documentation cases where the value shown is illustrative. When both appear on the same node, `value` is authoritative for execution; `example` is documentation only.
+
+**Edge-binding interaction.** `value` does not change parameter-binding rules (§5.5, §8.4.1). When an input node carrying a `value` flows into a parameterised tool or container, the binding still resolves by edge label (or the single-parameter implicit rule). `value` is the data being bound, not the binding mechanism.
+
+```
+file_path["file_path"]@{ shape: lean-right, value: "src/HelloWorld.java" }
+read_file["read_file"]@{ shape: subroutine, params: "path :: String" }
+
+file_path ==>|path| read_file
+```
+
+**Semantic export.** Both `value` and `example` are semantic fields, not presentation. They are retained by the `getSemanticModel()` projection (§14.1).
+
+**Out of scope for v0.6.0.** Type-conformance of `value` against a node's declared type is not validated in v0.6.0 — the value is recorded as inert metadata. A future version may add conformance checking under the additive-change rule.
 
 ---
 
@@ -642,7 +712,7 @@ Agentflow does not introduce a dedicated `connector` declaration keyword in this
 
 ### 9.1 Binding Metadata: `connectorRef`
 
-A **tool definition** (§8) binds to a connector via the **`connectorRef`** metadata key. `connectorRef` is valid only on tool definitions in v0.5.0; widening it to other binding sites is an additive change reserved for a later version:
+A **tool definition** (§8) binds to a connector via the **`connectorRef`** metadata key. `connectorRef` is valid only on tool definitions; widening it to other binding sites is an additive change reserved for a later version:
 
 ```
 save_diagram["save_diagram"]
@@ -658,9 +728,9 @@ The key name mirrors `typeRef` and `templateRef` (§10.2): all three are referen
 The string value's interpretation depends on its form (this is the weak-reference rule from §10.1):
 
 - A **bare id** (e.g. `"github_mcp"`) is treated as a weak in-diagram reference. The validator resolves it against the node namespace:
-  - **No node with that id exists** → emit `CONNECTOR_REF_UNRESOLVED` (warning in v0.5.0; error in v1.0). Catches typos.
+  - **No node with that id exists** → emit `CONNECTOR_REF_UNRESOLVED` (warning before v1.0; error in v1.0). Catches typos.
   - **Node exists and is a connector-designated node** (per §9.2) → resolves cleanly, no diagnostic.
-  - **Node exists but is NOT connector-designated** (it has no `protocol`/`endpoint`/`transport`/`command`/`auth`/`token_required` field) → emit `CONNECTOR_REF_NOT_A_CONNECTOR` (warning in v0.5.0; error in v1.0). The reference looked like an in-diagram resolution but landed on a node that isn't a connector.
+  - **Node exists but is NOT connector-designated** (it has no `protocol`/`endpoint`/`transport`/`command`/`auth`/`token_required` field) → emit `CONNECTOR_REF_NOT_A_CONNECTOR` (warning before v1.0; error in v1.0). The reference looked like an in-diagram resolution but landed on a node that isn't a connector.
 - A **dotted form** (`"github.create_issue"`) or a **URL-like string** is treated as opaque and is not validated. Downstream tooling interprets it as it sees fit (operation paths, endpoints, etc.).
 
 ### 9.2 Connector-Designated Nodes (optional)
@@ -674,8 +744,8 @@ subgraph connectors["Connectors"]
   mermaid["Mermaid Chart"]
   github["GitHub"]
 end
-mermaid@{ protocol: "https", endpoint: "https://mermaid.live", token_required: true }
-github@{ protocol: "https", endpoint: "https://api.github.com", token_required: true }
+mermaid@{ protocol: "http", endpoint: "https://mermaid.live", token_required: true }
+github@{ protocol: "http", endpoint: "https://api.github.com", token_required: true }
 
 save_diagram["save_diagram"]
 save_diagram@{
@@ -746,14 +816,14 @@ Rules:
 - Forward references are permitted in every namespace.
 - Synthetic IDs emitted by the renderer (`typesGroup`, `templatesGroup`, auto-numbered subgraphs) are reserved and MUST NOT be declared by authors.
 
-These rules produce warnings in v0.5.0 (behind `agentflow.strictIds: false` by default) and become validation errors in v1.0.
+These rules produce warnings before v1.0 (behind `agentflow.strictIds: false` by default) and become validation errors in v1.0.
 
 ### 10.1 Reference Categories
 
 Reference-style keys split into two groups:
 
 - **Semantic references** are resolved against the diagram model. Unresolved values are validation errors. Members: `def`, `typeRef`, `templateRef`.
-- **Weak references by convention.** The `connectorRef` metadata key (§9) is a weak reference: when its value is a **bare id** (matches the `[A-Za-z_]\w*` identifier shape with no dot), the validator resolves it against the node namespace and emits `CONNECTOR_REF_UNRESOLVED` if no node matches, or `CONNECTOR_REF_NOT_A_CONNECTOR` if the matching node lacks connector configuration fields (§9.1). Both are warnings in v0.5.0 and errors in v1.0. When the value is a **dotted form** (`<connector>.<operation>`) or a **URL-like string**, it is treated as opaque and is not validated. This matches the §9.5 rationale: bare ids look like in-diagram references and are guarded; richer forms are downstream-tooling territory.
+- **Weak references by convention.** The `connectorRef` metadata key (§9) is a weak reference: when its value is a **bare id** (matches the `[A-Za-z_]\w*` identifier shape with no dot), the validator resolves it against the node namespace and emits `CONNECTOR_REF_UNRESOLVED` if no node matches, or `CONNECTOR_REF_NOT_A_CONNECTOR` if the matching node lacks connector configuration fields (§9.1). Both are warnings before v1.0 and errors in v1.0. When the value is a **dotted form** (`<connector>.<operation>`) or a **URL-like string**, it is treated as opaque and is not validated. This matches the §9.5 rationale: bare ids look like in-diagram references and are guarded; richer forms are downstream-tooling territory.
 - **External / hygiene references** are validated for shape and allowed usage, but not for existence of the external target unless an import resolver is explicitly enabled. Members: `src`, `click` / `href` targets, and `class` / `style` references.
 
 ### 10.2 Legacy `type` on Reference Nodes
@@ -782,7 +852,7 @@ An instance shape is a reference to a definition. The definition is written once
 | `win-pane` (`window-pane`)         | `tool` definition      |
 | `curv-trap` (`curved-trapezoid`)   | `directive` definition |
 
-> **Connectors.** v0.5.0 does not define an instance shape for connectors. A connector is referenced from its binding context by `connectorRef` (see §9.1 and §10.1). A future version may add a connector instance shape under the additive-change rule, but only if connectors are promoted into a first-class category per §9.5.
+> **Connectors.** Agentflow does not currently define an instance shape for connectors. A connector is referenced from its binding context by `connectorRef` (see §9.1 and §10.1). A future version may add a connector instance shape under the additive-change rule, but only if connectors are promoted into a first-class category per §9.5.
 
 ### 11.2 Validity
 
@@ -818,7 +888,7 @@ end
 researcher@{ permits: ["net.read", "llm.query"] }
 ```
 
-Comma-separated string form is accepted in v0.5.0 with a deprecation warning and removed in v1.0.
+Comma-separated string form is accepted with a deprecation warning before v1.0 and removed in v1.0.
 
 ### 12.2 Invocation Sites
 
@@ -848,18 +918,19 @@ An invocation is valid iff:
 
 Metadata keys are restricted to the element kinds listed. Keys outside this table are preserved for downstream tooling but produce a warning.
 
-| Element                        | Valid metadata keys                                                                                                      |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
-| `agent`                        | `model`, `permits`, `memory`, `fallbacks`                                                                                |
-| `flow`                         | `params`, `returns`                                                                                                      |
-| `task`                         | `execution`, `params`, `returns`, `fallbacks`                                                                            |
-| `skill`                        | `strategy`, `params`, `returns`, `fallbacks`                                                                             |
-| `tool`                         | `params`, `returns`, `requires`, `deny`, `retry`, `cache`, `validate`, `handler`, `transport`, `command`, `connectorRef` |
-| connector-designated node (§9) | `protocol`, `endpoint`, `transport`, `command`, `auth`, `token_required`                                                 |
-| `directive`                    | `rule`, `severity`, `context`, `params`                                                                                  |
-| `testCase`                     | `assert`, `expects`                                                                                                      |
-| artifact nodes (`doc`, etc.)   | `output`                                                                                                                 |
-| reference nodes (`procs`)      | `typeRef`, `templateRef`, `src` (exactly one — §10)                                                                      |
+| Element                           | Valid metadata keys                                                                                                      |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `agent`                           | `model`, `permits`, `memory`, `fallbacks`                                                                                |
+| `flow`                            | `params`, `returns`                                                                                                      |
+| `task`                            | `execution`, `params`, `returns`, `fallbacks`                                                                            |
+| `skill`                           | `strategy`, `params`, `returns`, `fallbacks`                                                                             |
+| `tool`                            | `params`, `returns`, `requires`, `deny`, `retry`, `cache`, `validate`, `handler`, `transport`, `command`, `connectorRef` |
+| connector-designated node (§9)    | `protocol`, `endpoint`, `transport`, `command`, `auth`, `token_required`                                                 |
+| `directive`                       | `rule`, `severity`, `context`, `params`                                                                                  |
+| `testCase`                        | `assert`, `expects`                                                                                                      |
+| input nodes (`lean-right`)        | `value`, `example`                                                                                                       |
+| artifact nodes (`doc`, `lin-doc`) | `output`, `value`, `example`                                                                                             |
+| reference nodes (`procs`)         | `typeRef`, `templateRef`, `src` (exactly one — §10)                                                                      |
 
 ### 13.1 Cross-Cutting
 
@@ -870,7 +941,7 @@ Metadata keys are restricted to the element kinds listed. Keys outside this tabl
 - Known key on allowed element → valid.
 - `description` on any authored element → valid.
 - Unknown key → preserved, warning emitted.
-- Known key on wrong element → warning in v0.5.0; validation error from v1.0.
+- Known key on wrong element → warning before v1.0; validation error in v1.0.
 
 ---
 
@@ -1196,6 +1267,42 @@ Both `r1` and `r2` inherit all domain metadata from the `researcher` definition 
 | `skill ... end`                                      | `lined-rectangle`        | `lin-rect`       |
 | Tool definition (§8 — node with `shape: subroutine`) | `window-pane`            | `win-pane`       |
 | `directive ... end`                                  | `curved-trapezoid`       | `curv-trap`      |
+
+### 19.12 Input-Value Pattern (v0.6.0)
+
+Carry a concrete input value into a parameterised tool. The input node uses `value` for the literal data; the edge label resolves the parameter binding (§5.5, §8.4.1):
+
+```
+file_path["file_path"]
+file_path@{
+  shape: lean-right,
+  description: "Path to the file in the GitHub repository to visualize",
+  value: "src/HelloWorld.java"
+}
+
+read_file["read_file"]
+read_file@{
+  shape: subroutine,
+  params: "path :: String",
+  returns: "String",
+  requires: ["fs.read"]
+}
+
+file_path ==>|path| read_file
+```
+
+`value` is the data; the edge label `path` is the binding. For documentation diagrams where the value shown is illustrative rather than authoritative, prefer `example`:
+
+```
+sample_input["sample_input"]
+sample_input@{
+  shape: doc,
+  description: "Example payload — not used at execution time",
+  example: { user_id: "u_123", region: "eu-west-1" }
+}
+```
+
+Both keys are retained by `getSemanticModel()` (§14.1) — downstream tooling that simulates or validates the flow can read them as data.
 
 ---
 
