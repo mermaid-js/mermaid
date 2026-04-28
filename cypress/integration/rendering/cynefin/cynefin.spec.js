@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util';
+import { imgSnapshotTest } from '../../../helpers/util';
 
 describe('cynefin framework', () => {
   it('should render a simple cynefin diagram with all five domains', () => {
