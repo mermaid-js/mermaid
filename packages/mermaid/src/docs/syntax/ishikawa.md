@@ -12,25 +12,37 @@ This is a new diagram type in Mermaid. Its syntax may evolve in future versions.
 
 ```mermaid
 ishikawa-beta
-    Blurry Photo
-    Process
-        Out of focus
-        Shutter speed too slow
-        Protective film not removed
-        Beautification filter applied
-    User
-        Shaky hands
-    Equipment
-        LENS
-            Inappropriate lens
-            Damaged lens
-            Dirty lens
-        SENSOR
-            Damaged sensor
-            Dirty sensor
-    Environment
-        Subject moved too quickly
-        Too dark
+   OSA Lotus's
+    Man
+        Customer cancels orders / refuses delivery
+    Machine
+        Forecasting tools
+        Customer stock data
+        Routing tools
+    Material
+        Insufficient product availability
+        Insufficient transportation capacity
+        Incorrect system stock records
+    Method
+        Data Collection - KPI Measurement
+            Incomplete data
+            No clear KPI defined
+        Inaccurate suggestion logic
+            Insufficient input data
+        Product quota limitation
+        Non-optimized load consol.
+        Transportation design
+            Delivery frequency
+            Volume per trip
+    Measurement
+        No clear KPI for OSA 
+        No tracking of forecast accuracy
+        No monitoring of replenishment performance
+    Mother Nature
+        Demand fluctuation
+        Traffic causing delivery delays
+        Fuel price changes
+
 ```
 
 - The first line is the event (problem) of the diagram.
