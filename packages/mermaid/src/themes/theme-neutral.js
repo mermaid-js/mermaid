@@ -189,6 +189,16 @@ class Theme {
         this['surfacePeer' + i] || adjust(this.mainBkg, { l: -(8 + i * 5) });
     }
 
+    /* UseCase Diagram variables */
+    this.usecaseBkg = this.usecaseBkg || this.primaryColor;
+    this.usecaseBorder = this.usecaseBorder || this.primaryBorderColor;
+    this.usecaseTextColor = this.usecaseTextColor || this.primaryTextColor;
+
+    // Actor styling (matching the Sequence Diagram logic in this file)
+    this.usecaseActorBkg = this.usecaseActorBkg || this.actorBkg;
+    this.usecaseActorBorder = this.usecaseActorBorder || this.actorBorder;
+    this.usecaseActorTextColor = this.usecaseActorTextColor || this.actorTextColor;
+
     /* Flowchart variables */
 
     this.nodeBkg = this.mainBkg;

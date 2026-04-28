@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Usecase Diagram - Ultimate Stress Test</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      body {
+        background-color: #0f172a; /* Dark mode for better contrast */
+        color: #f8fafc;
+        font-family:
+          'Inter',
+          system-ui,
+          -apple-system,
+          sans-serif;
+        padding: 40px;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      h1 {
+        border-bottom: 2px solid #334155;
+        padding-bottom: 10px;
+        color: #38bdf8;
+      }
+      h3 {
+        margin-top: 40px;
+        color: #94a3b8;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 0.05em;
+      }
+      .mermaid {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 10px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid #334155;
+        margin: 40px 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Usecase Implementation: Edge Cases 🧪</h1>
+
+      <h3>1. The "Spider Web" (Multi-Actor & Inheritance)</h3>
+      <p>
+        Tests if markers point to the correct center-point of actors and handle overlapping lines.
+      </p>
+      <pre class="mermaid">
+      usecaseDiagram
+        actor "Guest" as G
+        actor "Member" as M
+        actor "Admin" as A
+        
+        %% Testing generalization markers (hollow arrows)
+        generalization: M --> G
+        generalization: A --> M
+
+        system "Streaming Platform" {
+          usecase "Browse Catalog" as UC1
+          usecase "Play Video" as UC2
+          usecase "Upload Content" as UC3
+          usecase "Delete User" as UC4
+        }
+
+        G --> UC1
+        M --> UC2
+        A --> UC3
+        A --> UC4
+        
+        %% Cross-linking
+        M --> UC1
+      </pre>
+
+      <hr />
+
+      <h3>2. The "Logic Flow" (Include & Extend Inside System)</h3>
+      <p>Checks if internal system links use the correct markers and curved pathing logic.</p>
+      <pre class="mermaid">
+      usecaseDiagram
+        actor "Customer" as C
+        external "Stripe API" as Stripe
+
+        system "Checkout System" {
+          usecase "Place Order" as PO
+          usecase "Apply Coupon" as AC
+          usecase "Process Payment" as PP
+          usecase "Authorize Card" as Auth
+        }
+
+        C --> PO
+        include: PO --> PP
+        extend: PO --> AC
+        include: PP --> Auth
+        dependency: Auth --> Stripe
+      </pre>
+
+      <hr />
+
+      <h3>3. The "Meta Data" (Notes, Anchors & Constraints)</h3>
+      <p>Stress tests label wrapping and line-types for non-functional elements.</p>
+      <pre class="mermaid">
+      usecaseDiagram
+        actor "Security Auditor" as SA
+        usecase "Audit Logs" as AL
+        
+        note "This process must be<br/>encrypted at rest" as N1
+        note "Check GDPR compliance" as N2
+
+        SA --> AL
+        
+        %% Anchor (dashed line to element)
+        anchor: N1 --> AL
+        
+        %% Constraint (dotted line between notes)
+        constraint: N1 --> N2
+      </pre>
+
+      <hr />
+
+      <h3>4. Layout Stress Test (Long Text & Multi-Line)</h3>
+      <p>Checks if your SVG foreignObject/text-wrap logic handles extreme widths.</p>
+      <pre class="mermaid">
+      usecaseDiagram
+        actor "Very Long Named<br/>System Administrator" as VLSA
+        
+        system "Legacy Enterprise Environment" {
+          usecase "Execute Monthly Financial Reconcilliation and Data Integrity Verification" as LONG_UC
+        }
+        
+        VLSA --> LONG_UC
+      </pre>
+    </div>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+        securityLevel: 'loose', // Important for custom markers/IDs
+        usecase: {
+          diagramMarginX: 50,
+          diagramMarginY: 10,
+          usecaseMargin: 35,
+          usecasePadding: 20,
+          wrap: true,
+          wrapPadding: 10,
+        },
+        themeVariables: {
+          primaryColor: '#38bdf8',
+          primaryTextColor: '#f8fafc',
+          primaryBorderColor: '#0ea5e9',
+          lineColor: '#94a3b8',
+          secondaryColor: '#1e293b',
+          tertiaryColor: '#334155',
+        },
+      });
+    </script>
+  </body>
+</html>

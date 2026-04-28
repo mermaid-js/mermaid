@@ -239,6 +239,7 @@ export interface MermaidConfig {
   block?: BlockDiagramConfig;
   eventmodeling?: EventModelingDiagramConfig;
   treeView?: TreeViewDiagramConfig;
+  usecase?: UseCaseDiagramConfig;
   radar?: RadarDiagramConfig;
   venn?: VennDiagramConfig;
   'wardley-beta'?: WardleyDiagramConfig;
@@ -1713,6 +1714,58 @@ export interface TreeViewDiagramConfig extends BaseDiagramConfig {
    * Thickness of the line
    */
   lineThickness?: number;
+}
+/**
+ * The object containing configurations specific for use case diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "UsecaseDiagramConfig".
+ */
+export interface UseCaseDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Margin to the right and left of the diagram, must be a positive value.
+   */
+  diagramMarginX?: number;
+  /**
+   * Margin above and below the diagram, must be a positive value.
+   */
+  diagramMarginY?: number;
+  /**
+   * Margin between use case bubbles.
+   */
+  usecaseMargin?: number;
+  /**
+   * Internal padding within use case bubbles.
+   */
+  usecasePadding?: number;
+  /**
+   * Sets the font size for the Actor labels.
+   */
+  actorFontSize?: string | number;
+  /**
+   * Sets the font family for Actor labels.
+   */
+  actorFontFamily?: string;
+  /**
+   * Sets the font weight for Actor labels.
+   */
+  actorFontWeight?: string | number;
+  /**
+   * Sets the font size for text inside Use Case bubbles.
+   */
+  usecaseFontSize?: string | number;
+  /**
+   * Sets the font family for Use Case bubbles.
+   */
+  usecaseFontFamily?: string;
+  /**
+   * Enables or disables auto-wrapping for text.
+   */
+  wrap?: boolean;
+  /**
+   * Sets the internal wrap padding.
+   */
+  wrapPadding?: number;
 }
 /**
  * The object containing configurations specific for radar diagrams.

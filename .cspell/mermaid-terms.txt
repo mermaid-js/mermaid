@@ -44,6 +44,9 @@ statediagram
 substate
 unfixable
 Unmodelled
+useCase
+usecaseDiagram
+useCases
 Viewbox
 viewports
 visio

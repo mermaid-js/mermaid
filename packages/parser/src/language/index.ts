@@ -28,6 +28,19 @@ export {
   isBranch,
   isCommit,
   isMerge,
+  Usecase,
+  ActorStatement,
+  ExternalStatement,
+  SystemStatement,
+  UsecaseStatement,
+  CollaborationStatement,
+  NoteStatement,
+  AssociationStatement,
+  RelationshipStatement,
+  DefinitionItem,
+  SystemUsecase,
+  AssocTarget,
+  RelPair,
   EventModel,
   EmDataEntity,
   EmFrame,
@@ -49,6 +62,7 @@ export {
   TreemapGrammarGeneratedModule as TreemapGeneratedModule,
   TreeViewGrammarGeneratedModule as TreeViewGeneratedModule,
   WardleyGrammarGeneratedModule as WardleyGeneratedModule,
+  UsecaseGrammarGeneratedModule as UsecaseGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';
@@ -62,3 +76,4 @@ export * from './eventmodeling/index.js';
 export * from './radar/index.js';
 export * from './treemap/index.js';
 export * from './wardley/index.js';
+export * from './usecase/index.js';

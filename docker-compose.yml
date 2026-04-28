@@ -29,10 +29,16 @@ services:
       - DISPLAY
     volumes:
       - ./:/mermaid
+      - pnpm_store:/root/.local/share/pnpm
+      - root_cache:/root/.cache
+      - root_local:/root/.local
+      - root_npm:/root/.npm
+      - /tmp:/tmp
       - /tmp/.X11-unix:/tmp/.X11-unix
     network_mode: host
 
 volumes:
+  pnpm_store:
   root_cache:
   root_local:
   root_npm:

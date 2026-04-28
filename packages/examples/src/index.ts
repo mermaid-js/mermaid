@@ -26,8 +26,10 @@ import eventmodelingDiagram from './examples/eventmodeling.js';
 import vennDiagram from './examples/venn.js';
 import treeViewDiagram from './examples/tree-view.js';
 import wardleyDiagram from './examples/wardley.js';
+import usecase from './examples/usecase.js';
 
 export const diagramData: DiagramMetadata[] = [
+  usecase,
   flowChart,
   c4,
   ishikawaDiagram,

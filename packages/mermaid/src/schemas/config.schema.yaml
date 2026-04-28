@@ -59,6 +59,7 @@ required:
   - eventmodeling
   - radar
   - venn
+  - usecase
 properties:
   theme:
     description: |
@@ -329,6 +330,8 @@ properties:
     $ref: '#/$defs/EventModelingDiagramConfig'
   treeView:
     $ref: '#/$defs/TreeViewDiagramConfig'
+  usecase:
+    $ref: '#/$defs/UsecaseDiagramConfig'
   radar:
     $ref: '#/$defs/RadarDiagramConfig'
   venn:
@@ -2420,6 +2423,70 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         minimum: 0
         default: 1
+
+  UsecaseDiagramConfig:
+    title: Use Case Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for use case diagrams
+    type: object
+    unevaluatedProperties: false
+    required:
+      - diagramMarginX
+      - diagramMarginY
+      - usecaseMargin
+      - usecasePadding
+      - actorFontSize
+      - actorFontFamily
+    properties:
+      diagramMarginX:
+        description: Margin to the right and left of the diagram, must be a positive value.
+        type: integer
+        default: 50
+        minimum: 0
+      diagramMarginY:
+        description: Margin above and below the diagram, must be a positive value.
+        type: integer
+        default: 10
+        minimum: 0
+      usecaseMargin:
+        description: Margin between use case bubbles.
+        type: integer
+        default: 50
+        minimum: 0
+      usecasePadding:
+        description: Internal padding within use case bubbles.
+        type: integer
+        default: 20
+        minimum: 0
+      actorFontSize:
+        description: Sets the font size for the Actor labels.
+        type: ['string', 'number']
+        default: 14
+      actorFontFamily:
+        description: Sets the font family for Actor labels.
+        type: string
+        default: '"Open Sans", sans-serif'
+      actorFontWeight:
+        description: Sets the font weight for Actor labels.
+        type: ['string', 'number']
+        default: normal
+      usecaseFontSize:
+        description: Sets the font size for text inside Use Case bubbles.
+        type: ['string', 'number']
+        default: 14
+      usecaseFontFamily:
+        description: Sets the font family for Use Case bubbles.
+        type: string
+        default: '"Open Sans", sans-serif'
+      # --- Wrap Settings ---
+      wrap:
+        description: Enables or disables auto-wrapping for text.
+        type: boolean
+        default: true
+      wrapPadding:
+        description: Sets the internal wrap padding.
+        type: number
+        default: 10
 
   RadarDiagramConfig:
     title: Radar Diagram Config

@@ -33,6 +33,7 @@ import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
 import { treemap } from '../diagrams/treemap/detector.js';
 import wardley from '../diagrams/wardley/wardleyDetector.js';
+import usecase from '../diagrams/usecase/usecaseDetector.js';
 import '../type.d.ts';
 
 let hasLoadedDiagrams = false;
@@ -83,6 +84,7 @@ export const addDiagrams = () => {
 
   // Ordering of detectors is important. The first one to return true will be used.
   registerLazyLoadedDiagrams(
+    usecase,
     c4,
     kanban,
     classDiagramV2,

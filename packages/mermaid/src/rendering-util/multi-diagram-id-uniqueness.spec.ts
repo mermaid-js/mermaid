@@ -160,6 +160,13 @@ union A, B`,
     service db(database)[DB]
     api:R -- L:db`,
 
+  usecase: `usecaseDiagram
+    actor Admin
+    system Shop {
+      usecase "Checkout" as UC1
+    }
+    Admin --> UC1`,
+
   'wardley-beta': `wardley-beta
     title Kettle Evolution Pipeline
     size [1100, 800]

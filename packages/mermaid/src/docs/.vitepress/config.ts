@@ -194,6 +194,7 @@ function sidebarSyntax() {
         { text: 'Ishikawa 🔥', link: '/syntax/ishikawa' },
         { text: 'Wardley 🔥', link: '/syntax/wardley' },
         { text: 'TreeView 🔥', link: '/syntax/treeView' },
+        { text: 'UseCase 🔥', link: '/syntax/usecase' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
