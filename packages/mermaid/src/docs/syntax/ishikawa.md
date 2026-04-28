@@ -12,7 +12,7 @@ This is a new diagram type in Mermaid. Its syntax may evolve in future versions.
 
 ```mermaid
 ishikawa-beta
-   OSA Lotus's
+   OSA
     Man
         Customer cancels orders / refuses delivery
     Machine
