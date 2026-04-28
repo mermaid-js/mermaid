@@ -325,23 +325,14 @@ export const extractor = (graph, depth) => {
     if (!clusterDb.has(node)) {
       log.debug('Not a cluster', node, depth);
     } else if (
-      !clusterDb.get(node).externalConnections &&
+      clusterDb.get(node)?.clusterData?.dir &&
       graph.children(node) &&
       graph.children(node).length > 0
     ) {
-      log.warn(
-        'Cluster without external connections, without a parent and with children',
-        node,
-        depth
-      );
+      // Always create a dagre subgraph for every subgraph with an explicit direction
+      log.warn('Cluster with explicit dir, creating subgraph for children', node, depth);
 
-      const graphSettings = graph.graph();
-      let dir = graphSettings.rankdir === 'TB' ? 'LR' : 'TB';
-      if (clusterDb.get(node)?.clusterData?.dir) {
-        dir = clusterDb.get(node).clusterData.dir;
-        log.warn('Fixing dir', clusterDb.get(node).clusterData.dir, dir);
-      }
-
+      const dir = clusterDb.get(node).clusterData.dir;
       const clusterGraph = new graphlib.Graph({
         multigraph: true,
         compound: true,
@@ -357,26 +348,32 @@ export const extractor = (graph, depth) => {
           return {};
         });
 
-      log.warn('Old graph before copy', graphlibJson.write(graph));
-      copy(node, graph, clusterGraph, node);
+      // Copy all children into the subgraph
+      const children = graph.children(node);
+      for (const child of children) {
+        copy(child, graph, clusterGraph, child);
+      }
+      // Attach the subgraph to the cluster node for internal layout
+      const clusterNodeData = graph.node(node) || {};
       graph.setNode(node, {
+        ...clusterNodeData,
         clusterNode: true,
         id: node,
         clusterData: clusterDb.get(node).clusterData,
         label: clusterDb.get(node).label,
         graph: clusterGraph,
       });
-      log.warn('New graph after copy node: (', node, ')', graphlibJson.write(clusterGraph));
-      log.debug('Old graph after copy', graphlibJson.write(graph));
+      log.warn(
+        'Subgraph for cluster with explicit dir created:',
+        node,
+        graphlibJson.write(clusterGraph)
+      );
     } else {
       log.warn(
         'Cluster ** ',
         node,
-        ' **not meeting the criteria !externalConnections:',
-        !clusterDb.get(node).externalConnections,
-        ' no parent: ',
-        !graph.parent(node),
-        ' children ',
+        ' **not meeting the criteria (no explicit dir or no children)',
+        clusterDb.get(node)?.clusterData?.dir,
         graph.children(node) && graph.children(node).length > 0,
         graph.children('D'),
         depth
