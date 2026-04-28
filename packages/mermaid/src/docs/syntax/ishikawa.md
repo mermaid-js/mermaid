@@ -14,7 +14,7 @@ This is a new diagram type in Mermaid. Its syntax may evolve in future versions.
 ishikawa-beta
    OSA
     Man
-        Customer cancels orders / refuses delivery
+        Customer cancels orders
     Machine
         Forecasting tools
         Customer stock data
@@ -37,7 +37,7 @@ ishikawa-beta
     Measurement
         No clear KPI for OSA 
         No tracking of forecast accuracy
-        No monitoring of replenishment performance
+        No monitoring of performance
     Mother Nature
         Demand fluctuation
         Traffic causing delivery delays
