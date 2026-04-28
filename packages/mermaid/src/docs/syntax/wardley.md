@@ -96,6 +96,18 @@ component Database [0.40, 0.85] label [-50, 10]
 component "Custom Service" [0.55, 0.35]
 ```
 
+Names may contain hyphens (`real-time processing`, `end-user`) without quoting. Quote a name only if it begins with a non-letter or contains a character the grammar does not otherwise accept.
+
+```mermaid-example
+wardley-beta
+title Hyphenated Names
+
+component real-time processing [0.55, 0.40]
+component end-user [0.90, 0.95]
+
+end-user -> real-time processing
+```
+
 #### Anchors
 
 Anchors represent users or customers with bold labels:
