@@ -2420,6 +2420,10 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         minimum: 0
         default: 1
+      showIcons:
+        description: Whether to show file/folder icons next to labels
+        type: boolean
+        default: true
 
   RadarDiagramConfig:
     title: Radar Diagram Config
