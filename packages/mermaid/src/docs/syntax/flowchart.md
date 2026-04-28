@@ -1027,6 +1027,8 @@ graph LR
 
 ## Interaction
 
+Slow clicking a node would highlight the node and its directly connected edges with drop shadows. Try dragging the node as well!
+
 It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab.
 
 ```note

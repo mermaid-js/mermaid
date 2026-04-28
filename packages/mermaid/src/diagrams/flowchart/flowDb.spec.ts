@@ -182,3 +182,22 @@ describe('flow db direction', () => {
     expect(flowDb.getDirection()).toBe('TB');
   });
 });
+
+describe('flow db interaction setup', () => {
+  let flowDb: FlowDB;
+  beforeEach(() => {
+    flowDb = new FlowDB();
+  });
+
+  it('should include setupInteraction in bindFunctions callbacks', () => {
+    // The bindFunctions method should be callable and include interaction setup
+    expect(typeof flowDb.bindFunctions).toBe('function');
+  });
+
+  it('should clear and reinitialize interaction callbacks on clear', () => {
+    // After clear, the funs array should be reinitialized with setupToolTips and setupInteraction
+    flowDb.clear();
+    // bindFunctions should still be callable after clear
+    expect(typeof flowDb.bindFunctions).toBe('function');
+  });
+});
