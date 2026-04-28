@@ -59,6 +59,7 @@ vite.config.ts.timestamp-*
 
 # autogenereated by langium-cli
 generated/
+7492.bundle
 
 # generated type declarations from pnpm prepare
 packages/examples/src/**/*.d.ts
