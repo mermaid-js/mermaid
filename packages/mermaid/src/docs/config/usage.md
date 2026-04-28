@@ -132,6 +132,24 @@ mermaid.initialize({
 });
 ```
 
+### `sandboxLinkBaseUrl` (v<MERMAID_RELEASE_VERSION>+)
+
+When `securityLevel` is set to `sandbox`, Mermaid renders the diagram into a sandboxed `data:` iframe. Relative links such as `./details.html` and `#section` no longer have the page URL as their base in that environment.
+
+Use `sandboxLinkBaseUrl` to resolve clickable relative links before Mermaid embeds the SVG into the sandboxed iframe:
+
+- Only applies when `securityLevel: 'sandbox'` is used.
+- Relative links such as `./details.html`, `../docs/page.html`, and `#section` are resolved against the configured base URL.
+- Absolute URLs remain unchanged.
+- Only clickable links are rewritten; Mermaid does not rewrite internal SVG references such as markers or symbols.
+
+```javascript
+mermaid.initialize({
+  securityLevel: 'sandbox',
+  sandboxLinkBaseUrl: window.location.href,
+});
+```
+
 ### Labels out of bounds
 
 If you use dynamically loaded fonts that are loaded through CSS, such as fonts, mermaid should wait for the whole page to load (dom + assets, particularly the fonts file).

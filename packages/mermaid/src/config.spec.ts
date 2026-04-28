@@ -19,6 +19,7 @@ describe('when working with site config', () => {
     const config_0: MermaidConfig = {
       fontFamily: 'foo-font',
       securityLevel: 'strict', // can't be changed
+      sandboxLinkBaseUrl: 'https://example.com/docs/',
       fontSize: 12345, // can't be changed
       secure: [...configApi.defaultConfig.secure!, 'fontSize'],
     };
@@ -28,11 +29,16 @@ describe('when working with site config', () => {
       // fontSize and securityLevel shouldn't be changed
       fontSize: 54321,
       securityLevel: 'loose',
+      sandboxLinkBaseUrl: 'https://malicious.example/override/',
     };
     const cfg: MermaidConfig = configApi.updateCurrentConfig(config_0, [directive]);
     expect(cfg.fontFamily).toEqual(directive.fontFamily);
     expect(cfg.fontSize).toBe(config_0.fontSize);
     expect(cfg.securityLevel).toBe(config_0.securityLevel);
+    expect(cfg.sandboxLinkBaseUrl).toBe(config_0.sandboxLinkBaseUrl);
+  });
+  it('should keep sandboxLinkBaseUrl in the default secure keys', () => {
+    expect(configApi.defaultConfig.secure).toContain('sandboxLinkBaseUrl');
   });
   it('should allow setting partial options', () => {
     const defaultConfig = configApi.getConfig();
