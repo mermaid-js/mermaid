@@ -271,6 +271,49 @@ xychart
     bar [12,2,20,25,17,24]
 ```
 
+## Per-point text labels for line charts (v\<MERMAID_RELEASE_VERSION>+)
+
+Each data point in a `line` can optionally include a quoted string label after the numeric value. Labels render above points in vertical orientation, or to the right in horizontal orientation, using the line's stroke color.
+
+```mermaid-example
+xychart
+    title "Smallest AI models scoring above 60% on MMLU"
+    x-axis "Date" ["Apr 2022", "Feb 2023", "Jul 2023", "Sep 2023", "Apr 2024"]
+    y-axis "Parameters (B)" 0 --> 600
+    line [540 "PaLM", 65 "LLaMA-65B", 34 "Llama 2 34B", 7 "Mistral 7B", 3.8 "Phi-3-mini"]
+```
+
+```mermaid
+xychart
+    title "Smallest AI models scoring above 60% on MMLU"
+    x-axis "Date" ["Apr 2022", "Feb 2023", "Jul 2023", "Sep 2023", "Apr 2024"]
+    y-axis "Parameters (B)" 0 --> 600
+    line [540 "PaLM", 65 "LLaMA-65B", 34 "Llama 2 34B", 7 "Mistral 7B", 3.8 "Phi-3-mini"]
+```
+
+Labels are optional per point — you can mix labeled and unlabeled values:
+
+```mermaid-example
+xychart
+    title "Quarterly Performance"
+    x-axis [Q1, Q2, Q3, Q4]
+    y-axis "Revenue ($M)" 0 --> 100
+    line [25 "Launch", 45, 72, 90 "Target Hit"]
+```
+
+```mermaid
+xychart
+    title "Quarterly Performance"
+    x-axis [Q1, Q2, Q3, Q4]
+    y-axis "Revenue ($M)" 0 --> 100
+    line [25 "Launch", 45, 72, 90 "Target Hit"]
+```
+
+Existing syntax without labels continues to work unchanged.
+
+> **Note**
+> Point labels use a fixed font size of 12px. In vertical charts, labels appear above each point. In horizontal charts, labels appear to the right. Labels are currently supported on `line` plots only; the syntax is accepted on `bar` plots but labels are ignored.
+
 ## Example on config and theme
 
 ```mermaid-example
