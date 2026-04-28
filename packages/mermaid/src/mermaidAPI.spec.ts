@@ -4,6 +4,7 @@ import assignWithDepth from './assignWithDepth.js';
 import type { MermaidConfig } from './config.type.js';
 import mermaid from './mermaid.js';
 import mermaidAPI, {
+  addXlinkNamespaceIfNeeded,
   appendDivSvgG,
   cleanUpSvgCode,
   createCssStyles,
@@ -145,6 +146,34 @@ describe('mermaidAPI', () => {
     it('replaces old style br tags with new style', () => {
       const result = cleanUpSvgCode('<br> brrrr<br>', true, true);
       expect(result).toEqual('<br/> brrrr<br/>');
+    });
+  });
+
+  describe('addXlinkNamespaceIfNeeded', () => {
+    it('adds xmlns:xlink when xlink:href is present and namespace is missing', () => {
+      const svg = '<svg xmlns="http://www.w3.org/2000/svg"><image xlink:href="#a" /></svg>';
+      const result = addXlinkNamespaceIfNeeded(svg);
+      expect(result).toContain('xmlns:xlink="http://www.w3.org/1999/xlink"');
+    });
+
+    it('does not duplicate xmlns:xlink when already present v1', () => {
+      const svg =
+        '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><image xlink:href="#a" /></svg>';
+      const result = addXlinkNamespaceIfNeeded(svg);
+      expect(result).toBe(svg);
+    });
+
+    it('does not duplicate xmlns:xlink when already present v2', () => {
+      const svg =
+        '<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"><image xlink:href="#a" /></svg>';
+      const result = addXlinkNamespaceIfNeeded(svg);
+      expect(result).toBe(svg);
+    });
+
+    it('does not add xmlns:xlink when xlink:href is absent', () => {
+      const svg = '<svg xmlns="http://www.w3.org/2000/svg"><g /></svg>';
+      const result = addXlinkNamespaceIfNeeded(svg);
+      expect(result).toBe(svg);
     });
   });
 
