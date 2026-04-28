@@ -1615,6 +1615,21 @@
         B
         D
       end
+     </pre
+    >
+    <hr />
+
+    <h2>Edge classDef styling with @::: syntax</h2>
+    <pre class="mermaid">
+flowchart TD
+    Start:::nodeRed --> Process
+    Process okLink@:::edgeRed-->|OK| Approve
+    Process @:::edgeRed-->|Error| Retry
+    Approve @:::edgeRed--> End
+    Retry --> Process
+
+    classDef nodeRed fill:green,stroke:red
+    classDef edgeRed stroke:red,stroke-width:3px
     </pre>
     <hr />
 

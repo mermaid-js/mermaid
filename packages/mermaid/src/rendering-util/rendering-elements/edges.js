@@ -558,11 +558,12 @@ export const insertEdge = function (
   const tail = startNode;
   var head = endNode;
   const edgeClassStyles = [];
-  for (const key in edge.cssCompiledStyles) {
+  for (const style of edge.cssCompiledStyles ?? []) {
+    const key = style.split(':')[0]?.trim();
     if (isLabelStyle(key)) {
       continue;
     }
-    edgeClassStyles.push(edge.cssCompiledStyles[key]);
+    edgeClassStyles.push(style);
   }
 
   log.debug('UIO intersect check', edge.points, head.x, tail.x);

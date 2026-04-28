@@ -1294,7 +1294,67 @@ In this snippet:
 - `class e1 animate` applies the `animate` class to the edge `e1`.
 
 **Note on Escaping Commas:**
-When setting the `stroke-dasharray` property, remember to escape commas as `\,` since commas are used as delimiters in Mermaid’s style definitions.
+When setting the `stroke-dasharray` property, remember to escape commas as `\,` since commas are used as delimiters in Mermaid's style definitions.
+
+### Applying classDef styles inline with @:::
+
+You can apply a `classDef` class directly on an edge using the `@:::className` inline syntax, without needing a separate `class` statement. This mirrors how `:::className` works for nodes.
+
+**Class only (no edge ID):**
+
+```mermaid-example
+flowchart LR
+    A @:::myEdgeClass--> B
+    classDef myEdgeClass stroke:red,stroke-width:3px
+```
+
+```mermaid
+flowchart LR
+    A @:::myEdgeClass--> B
+    classDef myEdgeClass stroke:red,stroke-width:3px
+```
+
+**With an edge ID and a class:**
+
+```mermaid-example
+flowchart LR
+    A myLink@:::myEdgeClass--> B
+    classDef myEdgeClass stroke:red,stroke-width:3px
+```
+
+```mermaid
+flowchart LR
+    A myLink@:::myEdgeClass--> B
+    classDef myEdgeClass stroke:red,stroke-width:3px
+```
+
+Both forms also work with labeled edges:
+
+```mermaid-example
+flowchart TD
+    Start:::nodeStyle --> Process
+    Process okLink@:::edgeStyle-->|OK| Approve
+    Process @:::edgeStyle-->|Error| Retry
+    Approve @:::edgeStyle--> End
+    Retry --> Process
+
+    classDef nodeStyle fill:green,stroke:red
+    classDef edgeStyle stroke:red,stroke-width:3px
+```
+
+```mermaid
+flowchart TD
+    Start:::nodeStyle --> Process
+    Process okLink@:::edgeStyle-->|OK| Approve
+    Process @:::edgeStyle-->|Error| Retry
+    Approve @:::edgeStyle--> End
+    Retry --> Process
+
+    classDef nodeStyle fill:green,stroke:red
+    classDef edgeStyle stroke:red,stroke-width:3px
+```
+
+The `@:::className` token must appear between the source node and the arrow. The class is applied to the edge path, label, and arrowhead.
 
 ## New arrow types
 

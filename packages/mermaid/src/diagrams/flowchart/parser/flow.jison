@@ -142,6 +142,8 @@ that id.
 .*direction\s+LR[^\n]*       return 'direction_lr';
 .*direction\s+TD[^\n]*       return 'direction_td';
 
+[^\s\"]+\@":::"[^\s\-=.~]+    { return 'LINK_ID_CLASS'; }
+\@":::"[^\s\-=.~]+            { return 'LINK_CLASS'; }
 [^\s\"]+\@(?=[^\{\"])               { return 'LINK_ID'; }
 [0-9]+                       return 'NUM';
 \#                           return 'BRKT';
@@ -478,6 +480,12 @@ link: linkStatement arrowText
         {var inf = yy.destructLink($LINK, $START_LINK); $$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"text":$edgeText};}
     | LINK_ID START_LINK edgeText LINK
         {var inf = yy.destructLink($LINK, $START_LINK); $$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"text":$edgeText, "id": $LINK_ID};}
+    | LINK_ID_CLASS START_LINK edgeText LINK
+        {var parts = $LINK_ID_CLASS.split('@:::'); var id = parts[0]+'@'; var cls = parts[1];
+         var inf = yy.destructLink($LINK, $START_LINK); $$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"text":$edgeText, "id": id, "classes": [cls]};}
+    | LINK_CLASS START_LINK edgeText LINK
+        {var cls = $LINK_CLASS.substring(4);
+         var inf = yy.destructLink($LINK, $START_LINK); $$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"text":$edgeText, "classes": [cls]};}
     ;
 
 edgeText: edgeTextToken
@@ -495,6 +503,12 @@ linkStatement: LINK
         {var inf = yy.destructLink($LINK);$$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length};}
     | LINK_ID LINK
         {var inf = yy.destructLink($LINK);$$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length, "id": $LINK_ID};}
+    | LINK_ID_CLASS LINK
+        {var parts = $LINK_ID_CLASS.split('@:::'); var id = parts[0]+'@'; var cls = parts[1];
+         var inf = yy.destructLink($LINK);$$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length, "id": id, "classes": [cls]};}
+    | LINK_CLASS LINK
+        {var cls = $LINK_CLASS.substring(4);
+         var inf = yy.destructLink($LINK);$$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length, "classes": [cls]};}
         ;
 
 arrowText:
