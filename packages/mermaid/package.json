@@ -104,7 +104,6 @@
     "@types/katex": "^0.16.7",
     "@types/micromatch": "^4.0.10",
     "@types/stylis": "^4.2.7",
-    "@types/uuid": "^10.0.0",
     "ajv": "^8.17.1",
     "canvas": "^3.2.0",
     "chokidar": "3.6.0",
