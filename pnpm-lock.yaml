@@ -254,7 +254,7 @@ importers:
         specifier: ^2.2.0
         version: 2.2.0
       uuid:
-        specifier: ^9.0.0
+        specifier: ^9.0.0 || ^10 || ^11.1.0 || ^12 || ^13 || ^14.0.0
         version: 9.0.1
       web-worker:
         specifier: ^1.2.0
