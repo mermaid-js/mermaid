@@ -1,4 +1,4 @@
-import c4Db from '../c4Db.js';
+import { C4DB } from '../c4Db.js';
 import c4 from './c4Diagram.jison';
 import { setConfig } from '../../../config.js';
 
@@ -8,7 +8,7 @@ setConfig({
 
 describe('parsing a C4 diagram', function () {
   beforeEach(function () {
-    c4.parser.yy = c4Db;
+    c4.parser.yy = new C4DB();
     c4.parser.yy.clear();
   });
 
@@ -27,15 +27,15 @@ title title
 Person(Person, "Person", "Person")`);
 
     const yy = c4.parser.yy;
-    expect(yy.getTitle()).toBe('title');
+    expect(yy.getDiagramTitle()).toBe('title');
 
-    const shapes = yy.getC4ShapeArray();
-    expect(shapes.length).toBe(1);
-    const onlyShape = shapes[0];
+    const nodes = yy.getNodes();
+    expect(nodes.size).toBe(1);
+    const node = nodes.get('Person');
 
-    expect(onlyShape.alias).toBe('Person');
-    expect(onlyShape.descr.text).toBe('Person');
-    expect(onlyShape.label.text).toBe('Person');
+    expect(node.alias).toBe('Person');
+    expect(node.descr).toBe('Person');
+    expect(node.label).toBe('Person');
   });
 
   it('should allow default in the parameters', function () {
@@ -44,12 +44,29 @@ Person(default, "default", "default")`);
 
     const yy = c4.parser.yy;
 
-    const shapes = yy.getC4ShapeArray();
-    expect(shapes.length).toBe(1);
-    const onlyShape = shapes[0];
+    const nodes = yy.getNodes();
+    expect(nodes.size).toBe(1);
+    const node = nodes.get('default');
 
-    expect(onlyShape.alias).toBe('default');
-    expect(onlyShape.descr.text).toBe('default');
-    expect(onlyShape.label.text).toBe('default');
+    expect(node.alias).toBe('default');
+    expect(node.descr).toBe('default');
+    expect(node.label).toBe('default');
+  });
+
+  it('should parse the direction statement', function () {
+    c4.parser.parse(`C4Context\ndirection RL\n`);
+
+    expect(c4.parser.yy.getDirection()).toBe('RL');
+  });
+
+  it('should parse legend statements', function () {
+    c4.parser.parse(`C4Context\nSHOW_LEGEND()\nUPDATE_LEGEND_TITLE("My Legend Title")\n`);
+
+    expect(c4.parser.yy.getLegendData()).toMatchObject({
+      title: ['My Legend Title'],
+      items: [],
+    });
+
+    expect(c4.parser.yy.shouldShowLegend()).toBe(true);
   });
 });

@@ -770,6 +770,26 @@ export const insertEdge = function (
     }
   }
 
+  if (edge.link) {
+    const clickable = elem
+      .insert('a')
+      .attr('xlink:href', edge.link)
+      .attr('target', edge.linkTarget || '_blank');
+
+    // Add invisible wider path for better click target
+    clickable
+      .append('path')
+      .attr('d', linePath)
+      .attr('class', 'clickable-path')
+      .style('stroke-width', '20px')
+      .style('stroke', 'transparent')
+      .style('fill', 'none')
+      .style('cursor', 'pointer');
+
+    // Append original path on top
+    clickable.node().append(svgPath.node());
+  }
+
   // MC Special
   svgPath.attr('data-edge', true);
   svgPath.attr('data-et', 'edge');
