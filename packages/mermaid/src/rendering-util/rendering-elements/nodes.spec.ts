@@ -34,6 +34,11 @@ describe('Test Alias for shapes', function () {
     expect(shapes.cyl).toBe(shapes.cylinder);
   });
 
+  // datastore | data-store
+  it('should support alias for datastore shape ', function () {
+    expect(shapes['data-store']).toBe(shapes.datastore);
+  });
+
   // diam | decision | diamond
   it('should support alias for diamond shape ', function () {
     expect(shapes.diam).toBe(shapes.decision);

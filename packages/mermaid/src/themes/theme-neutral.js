@@ -336,6 +336,23 @@ class Theme {
       legendFontSize: this.radar?.legendFontSize || 12,
     };
 
+    /* wardley */
+    this.wardleyEvolutionColor = this.wardleyEvolutionColor || '#dc3545';
+    this.wardley = {
+      backgroundColor: this.wardley?.backgroundColor || this.background,
+      axisColor: this.wardley?.axisColor || this.lineColor,
+      axisTextColor: this.wardley?.axisTextColor || this.primaryTextColor,
+      gridColor: this.wardley?.gridColor || this.gridColor,
+      componentFill: this.wardley?.componentFill || this.background,
+      componentStroke: this.wardley?.componentStroke || this.lineColor,
+      componentLabelColor: this.wardley?.componentLabelColor || this.primaryTextColor,
+      linkStroke: this.wardley?.linkStroke || this.lineColor,
+      evolutionStroke: this.wardley?.evolutionStroke || this.wardleyEvolutionColor,
+      annotationStroke: this.wardley?.annotationStroke || this.lineColor,
+      annotationTextColor: this.wardley?.annotationTextColor || this.primaryTextColor,
+      annotationFill: this.wardley?.annotationFill || this.background,
+    };
+
     /* requirement-diagram */
     this.requirementBackground = this.requirementBackground || this.primaryColor;
     this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;
@@ -385,8 +402,8 @@ class Theme {
     /* -------------------------------------------------- */
     /* Event Modeling diagrams                             */
 
-    this.emScreenFill = this.emScreenFill || 'white';
-    this.emScreenStroke = this.emScreenStroke || '#dbdada';
+    this.emUiFill = this.emUiFill || 'white';
+    this.emUiStroke = this.emUiStroke || '#dbdada';
     this.emProcessorFill = this.emProcessorFill || '#edb3f6';
     this.emProcessorStroke = this.emProcessorStroke || '#b88cbf';
     this.emReadModelFill = this.emReadModelFill || '#d3f1a2';

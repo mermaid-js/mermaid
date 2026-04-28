@@ -1540,6 +1540,15 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       hideEmptyMembersBox:
         type: boolean
         default: false
+      hierarchicalNamespaces:
+        type: boolean
+        default: true
+        description: |
+          When true (default), nested namespaces render as hierarchical clusters,
+          with each segment of a dotted name (e.g. `A.B.C`) becoming its own nested
+          box. When false, namespaces render in compact mode: only explicitly
+          declared namespaces are emitted and their full qualified name is used as
+          a single flat label.
 
   JourneyDiagramConfig:
     title: Journey Diagram Config
@@ -2497,6 +2506,13 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     description: The object containing configurations specific for Wardley Maps diagrams.
     type: object
     unevaluatedProperties: false
+    required:
+      - width
+      - height
+      - padding
+      - nodeRadius
+      - labelFontSize
+      - axisFontSize
     properties:
       width:
         description: The width of the Wardley diagram canvas.

@@ -334,6 +334,7 @@ Below is a comprehensive list of the newly introduced shapes and their correspon
 | Comment with braces on both sides | Curly Braces           | `braces`       | Adds a comment                 |                                                                  |
 | Data Input/Output                 | Lean Right             | `lean-r`       | Represents input or output     | `in-out`, `lean-right`                                           |
 | Data Input/Output                 | Lean Left              | `lean-l`       | Represents output or input     | `lean-left`, `out-in`                                            |
+| Data Store                        | Data Store             | `datastore`    | Data flow diagram data store   | `data-store`                                                     |
 | Database                          | Cylinder               | `cyl`          | Database storage               | `cylinder`, `database`, `db`                                     |
 | Decision                          | Diamond                | `diam`         | Decision-making step           | `decision`, `diamond`, `question`                                |
 | Delay                             | Half-Rounded Rectangle | `delay`        | Represents a delay             | `half-rounded-rectangle`                                         |
@@ -524,6 +525,18 @@ flowchart TD
 ```mermaid
 flowchart TD
     A@{ shape: lean-l, label: "Output/Input" }
+```
+
+### Datastore (Top and bottom border)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: datastore, label: "Datastore" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: datastore, label: "Datastore" }
 ```
 
 ### Priority Action (Trapezoid Base Bottom)

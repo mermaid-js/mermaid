@@ -57,6 +57,7 @@ const config: RequiredDeep<MermaidConfig> = {
   },
   class: {
     hideEmptyMembersBox: false,
+    hierarchicalNamespaces: true,
   },
   gantt: {
     ...defaultConfigJson.gantt,
