@@ -19,7 +19,8 @@
   "scripts": {
     "clean": "rimraf dist src/language/generated",
     "langium:generate": "langium generate",
-    "langium:watch": "langium generate --watch"
+    "langium:watch": "langium generate --watch",
+    "prepack": "./scripts/prepack.ts"
   },
   "repository": {
     "type": "git",
@@ -33,10 +34,12 @@
     "ast"
   ],
   "dependencies": {
-    "langium": "^4.0.0"
+    "@chevrotain/types": "~11.1.1"
   },
   "devDependencies": {
-    "chevrotain": "~11.1.1"
+    "@microsoft/api-extractor": "^7.57.0",
+    "chevrotain": "~11.1.1",
+    "langium": "^4.0.0"
   },
   "files": [
     "dist/"
