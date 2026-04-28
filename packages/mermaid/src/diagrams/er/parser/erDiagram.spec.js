@@ -346,6 +346,19 @@ describe('when parsing ER diagram it...', function () {
     expect(entities.get(entity).attributes[1].type).toBe('varchar(5)');
   });
 
+  it('should allow an entity with a nullable attribute type', function () {
+    const entity = 'BOOK';
+    const attribute1 = 'string? alias';
+    const attribute2 = 'int? id PK';
+
+    erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute1}\n${attribute2}\n}`);
+    const entities = erDb.getEntities();
+    expect(entities.size).toBe(1);
+    expect(entities.get(entity).attributes.length).toBe(2);
+    expect(entities.get(entity).attributes[0].type).toBe('string?');
+    expect(entities.get(entity).attributes[1].type).toBe('int?');
+  });
+
   it('should allow an entity with multiple attributes to be defined', function () {
     const entity = 'BOOK';
     const attribute1 = 'string title';
