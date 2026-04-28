@@ -204,7 +204,15 @@ export const cleanUpSvgCode = (
   // replace old br tags with newer style
   cleanedUpSvg = cleanedUpSvg.replace(/<br>/g, '<br/>');
 
-  return cleanedUpSvg;
+  return addXlinkNamespaceIfNeeded(cleanedUpSvg);
+};
+
+export const addXlinkNamespaceIfNeeded = (svgCode = ''): string => {
+  if (!svgCode.includes('xlink:href=') || svgCode.includes('xmlns:xlink=')) {
+    return svgCode;
+  }
+
+  return svgCode.replace(/<svg\b([^>]*)>/, `<svg$1 xmlns:xlink="${XMLNS_XLINK_STD}">`);
 };
 
 /**
