@@ -99,7 +99,7 @@ In our release process we rely heavily on visual regression tests using [applito
 
 Mermaid provides a complete diagramming solution with:
 
-- **8+ Diagram Types**: Flowchart, Sequence, Gantt, Class, State, Pie, Git, C4
+- **25+ Diagram Types**: Flowchart, Sequence, Gantt, Class, State, Pie, Git, C4, and more
 - **Simple Syntax**: Markdown-like text—easy to learn and read
 - **No Designer Needed**: Create professional diagrams without design skills
 - **Live Editor**: Try instantly at [mermaid.live](https://mermaid.live/)
@@ -107,8 +107,8 @@ Mermaid provides a complete diagramming solution with:
 - **GitHub Ready**: Diagrams render directly in markdown files
 - **Highly Customizable**: Colors, fonts, themes, and styling
 - **Secure**: Built-in input sanitization and sandboxed rendering
-- **Lightweight**: ~100KB gzipped—minimal bundle impact
-- **Active Community**: Regular updates and thousands of contributors
+- **Lightweight**: Minimal bundle impact—bundle size varies by build target
+- **Active Community**: Regular updates and hundreds of contributors
 - **Open Source**: MIT licensed—use freely anywhere
 
 ## Examples
