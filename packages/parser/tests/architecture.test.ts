@@ -19,6 +19,64 @@ describe('architecture', () => {
     });
   });
 
+  describe('should handle services', () => {
+    it('should handle service with icon', () => {
+      const context = `architecture-beta
+        service TH(disk)
+      `;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Architecture);
+      expect(result.value.services).toHaveLength(1);
+      expect(result.value.services?.[0].id).toBe('TH');
+      expect(result.value.services?.[0].icon).toBe('disk');
+    });
+
+    it('should handle service with icon starting with arrow direction letters', () => {
+      const context = `architecture-beta
+        service T(disk)
+        service TH(database)
+        service L(server)
+        service R(cloud)
+        service B(internet)
+        service TOP(disk)
+        service LEFT(disk)
+        service RIGHT(disk)
+        service BOTTOM(disk)
+      `;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Architecture);
+      expect(result.value.services).toHaveLength(9);
+    });
+
+    it('should handle service with icon and title', () => {
+      const context = `architecture-beta
+        service db(database)[Database]
+      `;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Architecture);
+      expect(result.value.services).toHaveLength(1);
+      expect(result.value.services?.[0].id).toBe('db');
+      expect(result.value.services?.[0].icon).toBe('database');
+      expect(result.value.services?.[0].title).toBe('Database');
+    });
+
+    it('should handle service in a group', () => {
+      const context = `architecture-beta
+        group api(cloud)[API]
+        service db(database)[Database] in api
+      `;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Architecture);
+      expect(result.value.services).toHaveLength(1);
+      expect(result.value.services?.[0].id).toBe('db');
+      expect(result.value.services?.[0].in).toBe('api');
+    });
+  });
+
   describe('should handle TitleAndAccessibilities', () => {
     it.each([
       `architecture-beta title sample title`,
