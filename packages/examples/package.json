@@ -22,7 +22,7 @@
     "url": "https://github.com/mermaid-js/mermaid"
   },
   "scripts": {
-    "clean": "rimraf dist"
+    "clean": "rimraf dist tsconfig.tsbuildinfo"
   },
   "dependencies": {},
   "devDependencies": {

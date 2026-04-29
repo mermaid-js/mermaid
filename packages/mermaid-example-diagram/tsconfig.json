@@ -1,9 +1,15 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "./src",
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "composite": true
   },
-  "include": ["./src/**/*.ts"],
-  "typeRoots": ["./src/types"]
+  "include": ["./src/**/*.ts", "./src/**/*.js"],
+  "typeRoots": ["./src/types"],
+  "references": [
+    {
+      "path": "../mermaid"
+    }
+  ]
 }

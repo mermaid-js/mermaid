@@ -426,6 +426,14 @@ class Theme {
     this.gradientStart = this.primaryBorderColor;
     this.gradientStop = this.secondaryBorderColor;
   }
+
+  /**
+   * @typedef {Partial<Record<keyof Theme, Theme[keyof Theme]>>} ThemeOverrides
+   */
+
+  /**
+   * @param {ThemeOverrides} [overrides] - Optional overrides.
+   */
   calculate(overrides) {
     if (typeof overrides !== 'object') {
       // Calculate colors form base colors
@@ -449,6 +457,9 @@ class Theme {
   }
 }
 
+/**
+ * @param {ThemeOverrides} [overrides] - Optional overrides.
+ */
 export const getThemeVariables = (userOverrides) => {
   const theme = new Theme();
   theme.calculate(userOverrides);

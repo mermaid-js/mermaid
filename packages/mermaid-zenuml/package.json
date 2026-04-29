@@ -19,7 +19,7 @@
     "mermaid"
   ],
   "scripts": {
-    "clean": "rimraf dist"
+    "clean": "rimraf dist tsconfig.tsbuildinfo"
   },
   "repository": {
     "type": "git",

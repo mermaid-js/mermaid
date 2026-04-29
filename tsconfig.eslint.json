@@ -1,6 +1,6 @@
 {
   // extend your base config to share compilerOptions, etc
-  "extends": "./tsconfig.json",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
     // ensure that nobody can accidentally use this config for a build
     "noEmit": true,
@@ -10,7 +10,7 @@
     "./.build/*.ts",
     "./.esbuild/*.ts",
     "./.vite/*.ts",
-    "./cypress.config.ts",
+    "./cypress.config.cjs",
     "./tests",
     "./scripts",
     "./cypress",
@@ -19,5 +19,10 @@
     "./vite.config.ts",
     "./vitest.workspace.js",
     "eslint.config.js"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.json"
+    }
   ]
 }
