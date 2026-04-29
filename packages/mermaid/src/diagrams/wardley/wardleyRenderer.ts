@@ -134,6 +134,20 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('fill', theme.linkStroke)
     .attr('stroke', 'none');
 
+  // Diagonal hatch pattern for ecosystem components
+  const hatchPattern = defs
+    .append('pattern')
+    .attr('id', `diagonalHatch-${id}`)
+    .attr('patternUnits', 'userSpaceOnUse')
+    .attr('width', 4)
+    .attr('height', 4);
+  hatchPattern
+    .append('path')
+    .attr('d', 'M 3,-1 l 2,2 M 0,0 l 4,4 M -1,3 l 2,2')
+    .attr('stroke', theme.componentStroke)
+    .attr('stroke-width', 1)
+    .attr('opacity', 0.5);
+
   root
     .append('rect')
     .attr('class', 'wardley-background')
@@ -161,6 +175,53 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
 
   const projectX = (value: number) => configValues.padding + (value / 100) * chartWidth;
   const projectY = (value: number) => height - configValues.padding - (value / 100) * chartHeight;
+
+  // Render attitude zones (pioneers/settlers/townplanners) behind axes/grid/components
+  if (data.attitudes.length > 0) {
+    const attitudeStyles: Record<
+      'pioneers' | 'settlers' | 'townplanners',
+      { stroke: string; fill: string; label: string }
+    > = {
+      pioneers: { stroke: '#3490dd', fill: '#3ccaf8', label: 'Pioneers' },
+      settlers: { stroke: '#396dc0', fill: '#599afa', label: 'Settlers' },
+      townplanners: { stroke: '#4768c8', fill: '#936ff9', label: 'Town Planners' },
+    };
+    const attitudesGroup = root.append('g').attr('class', 'wardley-attitudes');
+    data.attitudes.forEach((attitude) => {
+      const style = attitudeStyles[attitude.kind];
+      const px1 = projectX(attitude.x1);
+      const px2 = projectX(attitude.x2);
+      const py1 = projectY(attitude.y1);
+      const py2 = projectY(attitude.y2);
+      const rectX = Math.min(px1, px2);
+      const rectY = Math.min(py1, py2);
+      const rectW = Math.abs(px2 - px1);
+      const rectH = Math.abs(py2 - py1);
+      const group = attitudesGroup
+        .append('g')
+        .attr('class', `wardley-attitude wardley-attitude--${attitude.kind}`);
+      group
+        .append('rect')
+        .attr('x', rectX)
+        .attr('y', rectY)
+        .attr('width', rectW)
+        .attr('height', rectH)
+        .attr('fill', style.fill)
+        .attr('fill-opacity', 0.4)
+        .attr('stroke', style.stroke)
+        .attr('stroke-opacity', 0.7)
+        .attr('stroke-width', 2);
+      group
+        .append('text')
+        .attr('x', rectX + rectW / 2)
+        .attr('y', rectY + 16)
+        .attr('text-anchor', 'middle')
+        .attr('font-size', configValues.axisFontSize)
+        .attr('font-weight', 'bold')
+        .attr('fill', style.stroke)
+        .text(style.label);
+    });
+  }
 
   const axisGroup = root.append('g').attr('class', 'wardley-axes');
   axisGroup
@@ -640,11 +701,14 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('stroke', theme.componentStroke)
     .attr('stroke-width', 1);
 
-  // Render circles for normal nodes and pipeline child components (exclude market components and anchors)
+  // Render circles for normal nodes and pipeline child components (exclude market/ecosystem components and anchors)
   nodeEnter
     .filter(
       (node) =>
-        !node.isPipelineParent && node.sourceStrategy !== 'market' && node.className !== 'anchor'
+        !node.isPipelineParent &&
+        node.sourceStrategy !== 'market' &&
+        node.sourceStrategy !== 'ecosystem' &&
+        node.className !== 'anchor'
     )
     .append('circle')
     .attr('cx', (node) => positions.get(node.id)!.x)
@@ -724,6 +788,54 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('fill', 'white')
     .attr('stroke', theme.componentStroke)
     .attr('stroke-width', 2);
+
+  // Render ecosystem symbol (concentric circles with diagonal hatch fill)
+  const ecosystemNodes = nodeEnter.filter((node) => node.sourceStrategy === 'ecosystem');
+  const ecoOuterRadius = configValues.nodeRadius * 2;
+  const ecoMiddleRadius = configValues.nodeRadius * 1.65;
+  const ecoInnerRadius = configValues.nodeRadius * 0.65;
+
+  // Outer filled circle
+  ecosystemNodes
+    .append('circle')
+    .attr('class', 'wardley-ecosystem-outer')
+    .attr('cx', (node) => positions.get(node.id)!.x)
+    .attr('cy', (node) => positions.get(node.id)!.y)
+    .attr('r', ecoOuterRadius)
+    .attr('fill', '#d7d7d7')
+    .attr('stroke', theme.componentStroke)
+    .attr('stroke-width', 1);
+
+  // Middle white circle
+  ecosystemNodes
+    .append('circle')
+    .attr('class', 'wardley-ecosystem-middle')
+    .attr('cx', (node) => positions.get(node.id)!.x)
+    .attr('cy', (node) => positions.get(node.id)!.y)
+    .attr('r', ecoMiddleRadius)
+    .attr('fill', 'white')
+    .attr('stroke', theme.componentStroke)
+    .attr('stroke-width', 1);
+
+  // Hatch overlay over middle circle
+  ecosystemNodes
+    .append('circle')
+    .attr('class', 'wardley-ecosystem-hatch')
+    .attr('cx', (node) => positions.get(node.id)!.x)
+    .attr('cy', (node) => positions.get(node.id)!.y)
+    .attr('r', ecoMiddleRadius)
+    .attr('fill', `url(#diagonalHatch-${id})`);
+
+  // Inner white circle
+  ecosystemNodes
+    .append('circle')
+    .attr('class', 'wardley-ecosystem-inner')
+    .attr('cx', (node) => positions.get(node.id)!.x)
+    .attr('cy', (node) => positions.get(node.id)!.y)
+    .attr('r', ecoInnerRadius)
+    .attr('fill', 'white')
+    .attr('stroke', theme.componentStroke)
+    .attr('stroke-width', 1);
 
   // Render squares for pipeline parent nodes
   nodeEnter
