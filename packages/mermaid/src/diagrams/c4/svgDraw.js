@@ -72,8 +72,10 @@ export const drawRels = (elem, rels, conf, diagramId) => {
       }
     }
 
-    const midX = Math.min(rel.startPoint.x, rel.endPoint.x) + Math.abs(rel.endPoint.x - rel.startPoint.x) / 2;
-    const midY = Math.min(rel.startPoint.y, rel.endPoint.y) + Math.abs(rel.endPoint.y - rel.startPoint.y) / 2;
+    const midX =
+      Math.min(rel.startPoint.x, rel.endPoint.x) + Math.abs(rel.endPoint.x - rel.startPoint.x) / 2;
+    const midY =
+      Math.min(rel.startPoint.y, rel.endPoint.y) + Math.abs(rel.endPoint.y - rel.startPoint.y) / 2;
     const labelPosition = getRelLabelPosition(rel, midX, midY, offsetX, offsetY, conf);
 
     let messageConf = conf.messageFont();
