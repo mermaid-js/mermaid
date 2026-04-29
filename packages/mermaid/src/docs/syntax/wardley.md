@@ -59,7 +59,7 @@ size [width, height]
 
 ### Coordinate System
 
-**IMPORTANT**: Wardley Maps use the OnlineWardleyMaps (OWM) format: `[visibility, evolution]`
+**IMPORTANT**: Wardley Maps use the OWM format: `[visibility, evolution]`
 
 - **First value (Visibility)**: 0.0-1.0 (bottom to top) - Y-axis position
 - **Second value (Evolution)**: 0.0-1.0 (left to right) - X-axis position
@@ -145,25 +145,54 @@ Legacy System -> New Platform
 
 Indicate build/buy/outsource decisions:
 
-- `(build)` - Triangle symbol
-- `(buy)` - Diamond symbol
-- `(outsource)` - Square symbol
-- `(market)` - Circle symbol
+- `(build)` - Light grey overlay circle with black border (in-house build)
+- `(buy)` - Light grey overlay circle (off-the-shelf purchase)
+- `(outsource)` - Dark grey overlay circle (outsourced delivery)
+- `(market)` - Outline circle with three small connected circles in a triangle (commodity market)
+- `(ecosystem)` - Concentric circles with a diagonal-hatch ring (ecosystem play)
 
 ```mermaid-example
 wardley-beta
 title Sourcing Strategy
 
-anchor Customer [0.80, 0.95]
-component Custom App [0.45, 0.85] (build)
-component Off-the-shelf Tool [0.85, 0.65] (buy)
-component Managed Service [0.60, 0.40] (outsource)
-component Cloud Platform [0.95, 0.25] (market)
+anchor Customer [0.97, 0.43]
+component Custom App [0.71, 0.35] (build)
+component "Off-the-shelf Tool" [0.85, 0.65] (buy)
+component Managed Service [0.58, 0.60] (outsource)
+component Cloud Platform [0.04, 0.84] (market)
+component ML Service [0.10, 0.50] (market)
+component Developer Marketplace [0.26, 0.85] (ecosystem)
 
 Customer -> Custom App
-Custom App -> Off-the-shelf Tool
+Custom App -> "Off-the-shelf Tool"
 Custom App -> Managed Service
-Off-the-shelf Tool -> Cloud Platform
+Custom App -> ML Service
+"Off-the-shelf Tool" -> Cloud Platform
+Managed Service -> Cloud Platform
+Custom App -> Developer Marketplace
+```
+
+### Attitude Zones
+
+Highlight rectangular regions of the map with the **Pioneers / Settlers / Town Planners** framing. Each zone is defined by two opposing corners (top-left and bottom-right) inside a single bracket: `[visibility1, maturity1, visibility2, maturity2]`.
+
+- `pioneers` - Light blue zone, typically over the genesis / custom-built area
+- `settlers` - Medium blue zone, typically over the product / rental area
+- `townplanners` - Purple zone, typically over the commodity / utility area
+- `explorers` - Alias for `pioneers`
+- `villagers` - Alias for `settlers`
+
+```mermaid-example
+wardley-beta
+title Pioneers, Settlers, Town Planners
+
+pioneers [0.95, 0.05, 0.55, 0.30]
+settlers [0.95, 0.35, 0.55, 0.65]
+townplanners [0.95, 0.70, 0.55, 0.95]
+
+component Custom Research [0.80, 0.15]
+component Product [0.55, 0.50]
+component Commodity Service [0.30, 0.85]
 ```
 
 ### Links and Dependencies
@@ -431,9 +460,8 @@ Wardley Maps support Mermaid's theme system. Use standard Mermaid configuration 
 ## Resources
 
 - [Wardley Mapping Book](https://medium.com/wardleymaps) by Simon Wardley
-- [OnlineWardleyMaps](https://onlinewardleymaps.com/) - Interactive mapping tool
+- [Create Wardley Maps](https://create.wardleymaps.ai/) - Interactive mapping tool
 - [Wardley Maps Community](https://community.wardleymaps.com/)
-- [Learn Wardley Mapping](https://learnwardleymapping.com/)
 
 ## Syntax Summary
 

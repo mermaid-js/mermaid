@@ -113,6 +113,7 @@ const populateDb = (ast: Wardley, db: WardleyDB) => {
       | 'buy'
       | 'outsource'
       | 'market'
+      | 'ecosystem'
       | undefined;
 
     db.addNode(
@@ -223,6 +224,27 @@ const populateDb = (ast: Wardley, db: WardleyDB) => {
       `Deaccelerator "${deaccelerator.name}"`
     );
     db.addDeaccelerator(deaccelerator.name, coords.x, coords.y);
+  });
+
+  // Add attitudes (pioneers/settlers/townplanners; explorers and villagers are aliases)
+  ast.attitudes.forEach((attitude) => {
+    const c1 = toCoordinates(
+      attitude.visibility,
+      attitude.evolution,
+      `Attitude "${attitude.kind}"`
+    );
+    const c2 = toCoordinates(
+      attitude.visibility2,
+      attitude.evolution2,
+      `Attitude "${attitude.kind}"`
+    );
+    const kind =
+      attitude.kind === 'explorers'
+        ? 'pioneers'
+        : attitude.kind === 'villagers'
+          ? 'settlers'
+          : (attitude.kind as 'pioneers' | 'settlers' | 'townplanners');
+    db.addAttitude(kind, c1.x, c1.y, c2.x, c2.y);
   });
 };
 

@@ -268,4 +268,40 @@ note "Voting members: Adobe, Amazon, Apple, Google, Meta, Microsoft, Netflix, Sa
       {}
     );
   });
+
+  it('should render component sourcing strategies including market and ecosystem', () => {
+    imgSnapshotTest(
+      `
+wardley-beta
+title Sourcing Strategies
+size [1100, 800]
+
+component Custom Built [0.80, 0.20] (build)
+component Off The Shelf [0.65, 0.45] (buy)
+component Outsourced Service [0.50, 0.65] (outsource)
+component Marketplace [0.35, 0.80] (market)
+component Platform [0.20, 0.92] (ecosystem)
+      `,
+      {}
+    );
+  });
+
+  it('should render pioneers/settlers/townplanners attitude zones', () => {
+    imgSnapshotTest(
+      `
+wardley-beta
+title Pioneers, Settlers, Town Planners
+size [1100, 800]
+
+pioneers [0.95, 0.05, 0.55, 0.30]
+settlers [0.95, 0.35, 0.55, 0.65]
+townplanners [0.95, 0.70, 0.55, 0.95]
+
+component Custom Research [0.80, 0.15]
+component Product [0.55, 0.50]
+component Commodity Service [0.30, 0.85]
+      `,
+      {}
+    );
+  });
 });
