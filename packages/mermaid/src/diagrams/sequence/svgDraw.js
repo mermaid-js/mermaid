@@ -412,6 +412,28 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter, actorInd
     rectElem.attr('filter', 'url(#drop-shadow)');
   }
 
+  // User-defined styles ("style Alice ...") and class assignments
+  // ("class Alice highlighted") are applied via CSS classes that get
+  // compiled into the SVG's <style> tag by createUserStyles(). The
+  // protection against CSS injection is layered: addClass and
+  // setActorStyle in sequenceDb run sanitizeCssDeclaration() against
+  // each declaration, which drops anything containing url(),
+  // expression(), behavior:, javascript:, @import, or rule terminators.
+  // stylis then scopes the surviving CSS to the diagram's SVG id, which
+  // limits the blast radius of anything that does slip through.
+  // DOMPurify is NOT a CSS sanitizer and does not strip declarations
+  // inside <style> tags, so it cannot be relied on for this.
+  const extraClasses = [];
+  if (actor.styles && actor.styles.length > 0 && actor.styleClassName) {
+    extraClasses.push(actor.styleClassName);
+  }
+  if (actor.classes && actor.classes.length > 0) {
+    extraClasses.push(...actor.classes);
+  }
+  if (extraClasses.length > 0) {
+    g.attr('class', ((g.attr('class') || '') + ' ' + extraClasses.join(' ')).trim());
+  }
+
   actor.rectData = rect;
 
   if (actor.properties?.icon) {

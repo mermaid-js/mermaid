@@ -10,6 +10,7 @@ import assignWithDepth from '../../assignWithDepth.js';
 import utils from '../../utils.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { Diagram } from '../../Diagram.js';
+import type { DiagramStyleClassDef } from '../../diagram-api/types.js';
 import { PARTICIPANT_TYPE } from './sequenceDb.js';
 
 let conf = {};
@@ -253,6 +254,7 @@ const drawNote = async function (elem: any, noteModel: NoteModel, id: string) {
   g.attr('data-et', 'note');
   g.attr('data-id', 'i' + id);
   const rectElem = svgDraw.drawRect(g, rect);
+
   const textObj = svgDrawCommon.getTextObj();
   textObj.x = noteModel.startx;
   textObj.y = noteModel.starty;
@@ -2130,10 +2132,24 @@ const calculateLoopBounds = async function (messages, actors, _maxWidthPerActor,
   return loops;
 };
 
+/**
+ * Return class definitions so mermaidAPI can compile them into a scoped
+ * <style> tag via createUserStyles(). Without this, user-defined styles
+ * would have to be applied as inline .style() calls, which bypasses
+ * DOMPurify and opens up CSS injection.
+ */
+export const getClasses = function (
+  text: string,
+  diagramObj: any
+): Map<string, DiagramStyleClassDef> {
+  return diagramObj.db.getClasses();
+};
+
 export default {
   bounds,
   drawActors,
   drawActorsPopup,
   setConf,
+  getClasses,
   draw,
 };

@@ -1250,4 +1250,110 @@ describe('Sequence diagram', () => {
       }
     );
   });
+
+  describe('actor styling and classDef', () => {
+    it('should render an actor with an inline style', () => {
+      imgSnapshotTest(
+        `
+      sequenceDiagram
+        participant Alice
+        participant Bob
+        style Alice fill:#f9f,stroke:#333,stroke-width:2px
+        Alice->>Bob: Hello
+        Bob-->>Alice: Hi back
+      `
+      );
+    });
+
+    it('should render multiple actors with independent inline styles', () => {
+      imgSnapshotTest(
+        `
+      sequenceDiagram
+        participant Alice
+        participant Bob
+        participant Carol
+        style Alice fill:#bbf,stroke:#00f
+        style Bob fill:#fbb,stroke:#f00
+        style Carol fill:#bfb,stroke:#0f0
+        Alice->>Bob: One
+        Bob->>Carol: Two
+        Carol-->>Alice: Three
+      `
+      );
+    });
+
+    it('should render a classDef defined but not yet attached without changing layout', () => {
+      // Defining a classDef but never attaching it should be a no-op visually,
+      // matching how flowchart classDef works.
+      imgSnapshotTest(
+        `
+      sequenceDiagram
+        classDef highlighted fill:#f9f,stroke:#333,stroke-width:2px
+        participant Alice
+        participant Bob
+        Alice->>Bob: Hello
+      `
+      );
+    });
+
+    it('should render a classDef attached via the class keyword', () => {
+      imgSnapshotTest(
+        `
+      sequenceDiagram
+        classDef highlighted fill:#f9f,stroke:#333,stroke-width:2px
+        participant Alice
+        participant Bob
+        class Alice highlighted
+        Alice->>Bob: Hello
+        Bob-->>Alice: Hi
+      `
+      );
+    });
+
+    it('should render a class attached to multiple actors', () => {
+      imgSnapshotTest(
+        `
+      sequenceDiagram
+        classDef important fill:#fbb,stroke:#f00,stroke-width:3px
+        participant Alice
+        participant Bob
+        participant Carol
+        class Alice,Carol important
+        Alice->>Bob: Hello
+        Bob->>Carol: Forwarding
+      `
+      );
+    });
+
+    it('should render styled actors inside a box', () => {
+      imgSnapshotTest(
+        `
+      sequenceDiagram
+        box Customer Side
+        participant Alice
+        participant Bob
+        end
+        style Alice fill:#bbf,stroke:#00f
+        style Bob fill:#fbb,stroke:#f00
+        Alice->>Bob: Inside the box
+      `
+      );
+    });
+
+    it('should render styled actors with the dark theme', () => {
+      imgSnapshotTest(
+        `
+      %%{init: {'theme': 'dark'}}%%
+      sequenceDiagram
+        classDef highlighted fill:#665,stroke:#fa0,stroke-width:2px
+        participant Alice
+        participant Bob
+        class Alice highlighted
+        style Bob fill:#446,stroke:#88f
+        Alice->>Bob: Hello in dark mode
+        Bob-->>Alice: Hi back
+      `
+      );
+    });
+  });
 });
