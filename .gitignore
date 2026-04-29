@@ -5,6 +5,8 @@ coverage/
 .idea/
 .pnpm-store/
 .instructions/
+.claude
+.mcp.json
 
 dist
 v8-compile-cache-0
@@ -45,11 +47,28 @@ stats/
 .pnpm-store
 .nyc_output
 
+.env
+
 demos/dev/**
 !/demos/dev/example.html
 !/demos/dev/reload.js
+!/demos/dev/architecture-randomize.html
 tsx-0/**
+node-compile-cache/
 vite.config.ts.timestamp-*
 
 # autogenereated by langium-cli
 generated/
+
+# generated type declarations from pnpm prepare
+packages/examples/src/**/*.d.ts
+
+/CLAUDE.md
+/AGENTS.md
+/assistant/
+/.claude/skills/
+packages/mermaid/src/diagrams/CLAUDE.md
+packages/parser/CLAUDE.md
+AGENTS.mermaid.md
+CLAUDE.mermaid.md
+.envrc
