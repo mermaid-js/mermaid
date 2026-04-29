@@ -242,6 +242,7 @@ export interface MermaidConfig {
   radar?: RadarDiagramConfig;
   venn?: VennDiagramConfig;
   'wardley-beta'?: WardleyDiagramConfig;
+  cynefin?: CynefinDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
@@ -1815,6 +1816,34 @@ export interface WardleyDiagramConfig extends BaseDiagramConfig {
    * Whether to display a background grid.
    */
   showGrid?: boolean;
+}
+/**
+ * Configuration for Cynefin framework diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "CynefinDiagramConfig".
+ */
+export interface CynefinDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The width of the Cynefin diagram.
+   */
+  width?: number;
+  /**
+   * The height of the Cynefin diagram.
+   */
+  height?: number;
+  /**
+   * Padding around the diagram.
+   */
+  padding?: number;
+  /**
+   * Show decision model and practice type labels.
+   */
+  showDomainDescriptions?: boolean;
+  /**
+   * Waviness amplitude of domain boundaries (0 for straight).
+   */
+  boundaryAmplitude?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

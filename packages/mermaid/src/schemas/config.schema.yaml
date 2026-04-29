@@ -335,6 +335,8 @@ properties:
     $ref: '#/$defs/VennDiagramConfig'
   wardley-beta:
     $ref: '#/$defs/WardleyDiagramConfig'
+  cynefin:
+    $ref: '#/$defs/CynefinDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration
     description: Configuration options to pass to the `dompurify` library.
@@ -2553,6 +2555,39 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: Whether to display a background grid.
         type: boolean
         default: false
+
+  CynefinDiagramConfig:
+    title: Cynefin Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: Configuration for Cynefin framework diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      width:
+        description: The width of the Cynefin diagram.
+        type: number
+        minimum: 1
+        default: 800
+      height:
+        description: The height of the Cynefin diagram.
+        type: number
+        minimum: 1
+        default: 600
+      padding:
+        description: Padding around the diagram.
+        type: number
+        minimum: 0
+        default: 40
+      showDomainDescriptions:
+        description: Show decision model and practice type labels.
+        type: boolean
+        default: true
+      boundaryAmplitude:
+        description: Waviness amplitude of domain boundaries (0 for straight).
+        type: number
+        minimum: 0
+        maximum: 50
+        default: 8
 
   FontCalculator:
     title: Font Calculator
