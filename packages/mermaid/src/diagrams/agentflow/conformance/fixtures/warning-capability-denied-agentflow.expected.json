@@ -1,0 +1,4 @@
+{
+  "outcome": "warning",
+  "diagnostics": [{ "id": "CAPABILITY_DENIED" }]
+}

@@ -13,11 +13,13 @@ Mermaid Workflows introduces **agentflow** — a diagram type purpose-built for 
 Agentflow extends Mermaid with a semantic model designed for AI agent specifications. Every visual element carries meaning:
 
 **Containers** define organizational boundaries:
+
 - **`agent`** — an autonomous entity bound to an LLM model with a permission set
 - **`flow`** — a composable pipeline with typed input/output contracts
 - **`task`** — a discrete unit of work grouping tool calls and data transforms
 
-**Node shapes** encode what things *are*:
+**Node shapes** encode what things _are_:
+
 - **`subroutine`** (double-bordered) — a tool invocation: API call, LLM query, external service
 - **`doc`** (wavy bottom) — a data artifact produced or consumed by a step
 - **`lean-right`** (parallelogram) — an input parameter entering from outside
@@ -25,12 +27,14 @@ Agentflow extends Mermaid with a semantic model designed for AI agent specificat
 - **`procs`** (stacked rectangles) — a cross-reference to a type definition or external diagram
 
 **Edge types** encode relationships:
+
 - **`-->`** data flow — information passes from A to B
 - **`---`** governs — a directive constrains or guides a tool
 - **`--o`** output binding — a tool's output conforms to a template schema
 - **`-->>`** hierarchy — permission scoping (parent delegates to child)
 
 **Typed metadata** (`@{ key: value }`) attaches machine-readable properties to any element:
+
 - Agents carry `model`, `permits`
 - Flows carry `params`, `returns`
 - Tools carry `returns`, `requires`, `retry`, `cache`, `description`
@@ -43,9 +47,9 @@ This is not a flowchart with annotations. It's a specification language where th
 
 ## 1. AI-Powered Software Development
 
-**The problem:** Tools like Lovable, Cursor, and Bolt let anyone build software with AI — but they all suffer from the same failure mode: context loss. Users spend hours re-prompting, correcting drift, and fighting hallucinations. There is no structured way to tell an AI agent *exactly* what to build, in what order, with what constraints.
+**The problem:** Tools like Lovable, Cursor, and Bolt let anyone build software with AI — but they all suffer from the same failure mode: context loss. Users spend hours re-prompting, correcting drift, and fighting hallucinations. There is no structured way to tell an AI agent _exactly_ what to build, in what order, with what constraints.
 
-**How agentflow solves it:** The developer specifies a multi-agent build pipeline as a diagram. Each agent has an explicit model binding and permission set. Tools are typed subroutines with defined inputs, outputs, and retry policies. Data contracts (type declarations) ensure agents produce structured, validated output — not free-form text. The diagram *is* the specification; an executor consumes it directly.
+**How agentflow solves it:** The developer specifies a multi-agent build pipeline as a diagram. Each agent has an explicit model binding and permission set. Tools are typed subroutines with defined inputs, outputs, and retry policies. Data contracts (type declarations) ensure agents produce structured, validated output — not free-form text. The diagram _is_ the specification; an executor consumes it directly.
 
 **Example — a full-stack app generator with three specialized agents:**
 
@@ -233,9 +237,9 @@ agentflow TB
   process_request@{ params: "request :: DataRequest", returns: "String" }
 ```
 
-**What agentflow adds beyond a flowchart:** The classifier agent *cannot* write data — it only has `^data.read` and `^data.classify`. The processor *can* access PII but *cannot* send notifications. The auditor *can* write but *cannot* read PII. These constraints are visible in the diagram, machine-parseable, and enforceable at runtime. The permission tree defines the full hierarchy; each agent's `permits` field is a subset. An auditor reading the diagram can verify least-privilege without reading code.
+**What agentflow adds beyond a flowchart:** The classifier agent _cannot_ write data — it only has `^data.read` and `^data.classify`. The processor _can_ access PII but _cannot_ send notifications. The auditor _can_ write but _cannot_ read PII. These constraints are visible in the diagram, machine-parseable, and enforceable at runtime. The permission tree defines the full hierarchy; each agent's `permits` field is a subset. An auditor reading the diagram can verify least-privilege without reading code.
 
-**Why it matters to investors:** Enterprise AI governance is an unsolved problem at scale. Agentflow offers "compliance by design" — the diagram topology *enforces* the rules. This is how Mermaid Chart breaks into regulated enterprise segments with 6-figure ACVs.
+**Why it matters to investors:** Enterprise AI governance is an unsolved problem at scale. Agentflow offers "compliance by design" — the diagram topology _enforces_ the rules. This is how Mermaid Chart breaks into regulated enterprise segments with 6-figure ACVs.
 
 ---
 
@@ -419,7 +423,7 @@ agentflow TB
   detect_and_respond@{ params: "region :: String", returns: "String" }
 ```
 
-**What agentflow adds beyond a flowchart:** The `template` declarations define *exactly* what a triage result and runbook must contain — field names, types, multiplicity (`* 3` = at least 3 entries), and human-readable descriptions (`<<Timestamp | Event | Source>>`). The `--o` edges bind tool outputs to these templates. An executor validates that `triage_alert`'s output actually conforms to `triage_result` before passing it downstream. The sentinel agent has `^net.read` (can poll endpoints) while the monitor has only `^llm.query` (can reason but can't access the network). This is enforceable, not advisory.
+**What agentflow adds beyond a flowchart:** The `template` declarations define _exactly_ what a triage result and runbook must contain — field names, types, multiplicity (`* 3` = at least 3 entries), and human-readable descriptions (`<<Timestamp | Event | Source>>`). The `--o` edges bind tool outputs to these templates. An executor validates that `triage_alert`'s output actually conforms to `triage_result` before passing it downstream. The sentinel agent has `^net.read` (can poll endpoints) while the monitor has only `^llm.query` (can reason but can't access the network). This is enforceable, not advisory.
 
 **Why it matters to investors:** DevOps teams already use Mermaid for documentation. Making runbooks executable — with typed outputs, template validation, and permission-scoped agents — is a natural upgrade path. Every SaaS tool with an API becomes a callable `subroutine` node. The diagram is the runbook, the specification, and the audit trail in one artifact.
 
@@ -429,7 +433,7 @@ agentflow TB
 
 **The problem:** Strategy consultants and operations teams think in flowcharts. They draw process diagrams for customer journeys, approval workflows, and onboarding sequences. But those diagrams are dead artifacts. The gap between "here's the process" and "here's the process running" requires an engineering team and months of development.
 
-**How agentflow solves it:** The process diagram becomes the automation — but with structure. Type declarations define the data contracts between steps. Templates with field-level descriptions (`<<...>>`) let business users specify *exactly* what each step should produce. Collapsed views hide agent internals, showing stakeholders a clean process map; engineers expand to see tools and data flow.
+**How agentflow solves it:** The process diagram becomes the automation — but with structure. Type declarations define the data contracts between steps. Templates with field-level descriptions (`<<...>>`) let business users specify _exactly_ what each step should produce. Collapsed views hide agent internals, showing stakeholders a clean process map; engineers expand to see tools and data flow.
 
 **Example — a customer onboarding flow with typed data contracts:**
 
@@ -509,7 +513,7 @@ agentflow TB
   onboard_customer@{ params: "customer_data :: Customer", returns: "String" }
 ```
 
-**What agentflow adds beyond a flowchart:** A product manager reads the diagram and understands the flow. An engineer reads the `@{}` metadata and understands the tool contracts. The `template welcome_package` with `<<...>>` descriptions specifies *exactly* what the welcome email must contain — in business language, not code. The collapsed view (`onboarding_team@{ view: "collapsed" }`) shows executives a single "Onboarding Team" box; expanding it reveals the full three-agent pipeline.
+**What agentflow adds beyond a flowchart:** A product manager reads the diagram and understands the flow. An engineer reads the `@{}` metadata and understands the tool contracts. The `template welcome_package` with `<<...>>` descriptions specifies _exactly_ what the welcome email must contain — in business language, not code. The collapsed view (`onboarding_team@{ view: "collapsed" }`) shows executives a single "Onboarding Team" box; expanding it reveals the full three-agent pipeline.
 
 **Why it matters to investors:** This is the BPMN replacement story. BPMN has a 500-page specification and requires specialist tools. Agentflow is simple enough that any LLM can generate it, any developer can read it, and any business user can understand the collapsed view. By making process diagrams executable with typed data contracts, we collapse the gap between "process design" and "process automation" — a $15B+ TAM dominated by ServiceNow, Zapier, and Power Automate. Unlike those tools, agentflow specifications are version-controlled, diffable, and AI-native from day one.
 
@@ -519,20 +523,20 @@ agentflow TB
 
 Every use case shares the same structural advantages — rooted in agentflow's semantic model:
 
-| Property | Agentflow | Chat-based alternatives |
-|---|---|---|
-| **Agent identity** | Named agents with model binding and permission sets | Anonymous, unbounded AI with full access |
-| **Tool contracts** | Typed subroutines with `returns`, `requires`, `retry`, `cache` | Free-form function calls, no validation |
-| **Data contracts** | `type` declarations and `template` schemas with `<<descriptions>>` | Unstructured text, hope for the best |
-| **Permission model** | Hierarchical permission tree, per-agent least-privilege | No permission concept; all or nothing |
-| **Audit trail** | Diagram topology *is* the execution trace — every edge, every node | Buried in chat history |
-| **Progressive disclosure** | Collapsed/expanded views for different audiences | Single-level, all-or-nothing |
-| **Cross-agent data flow** | Typed edges crossing container boundaries | Manual data passing between prompts |
-| **Portability** | Works with any LLM / agent framework; LLMs understand Mermaid natively | Vendor-locked prompt formats |
-| **Version control** | Text-based, diffable, mergeable | Binary exports or opaque configs |
+| Property                   | Agentflow                                                              | Chat-based alternatives                  |
+| -------------------------- | ---------------------------------------------------------------------- | ---------------------------------------- |
+| **Agent identity**         | Named agents with model binding and permission sets                    | Anonymous, unbounded AI with full access |
+| **Tool contracts**         | Typed subroutines with `returns`, `requires`, `retry`, `cache`         | Free-form function calls, no validation  |
+| **Data contracts**         | `type` declarations and `template` schemas with `<<descriptions>>`     | Unstructured text, hope for the best     |
+| **Permission model**       | Hierarchical permission tree, per-agent least-privilege                | No permission concept; all or nothing    |
+| **Audit trail**            | Diagram topology _is_ the execution trace — every edge, every node     | Buried in chat history                   |
+| **Progressive disclosure** | Collapsed/expanded views for different audiences                       | Single-level, all-or-nothing             |
+| **Cross-agent data flow**  | Typed edges crossing container boundaries                              | Manual data passing between prompts      |
+| **Portability**            | Works with any LLM / agent framework; LLMs understand Mermaid natively | Vendor-locked prompt formats             |
+| **Version control**        | Text-based, diffable, mergeable                                        | Binary exports or opaque configs         |
 
 The diagram is the specification. The shapes carry semantics. The metadata is machine-parseable. The type system is enforceable. Every use case expands the addressable market beyond diagramming into **structured agent orchestration** — where the real enterprise value lives.
 
 ---
 
-*Mermaid Chart — mermaidchart.com*
+_Mermaid Chart — mermaidchart.com_

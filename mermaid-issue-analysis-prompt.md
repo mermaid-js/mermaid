@@ -287,7 +287,7 @@ The classifier builds the Outcome-Solution Tree bottom-up. Because ~1396 summari
 
 Spawn a classifier agent with this prompt:
 
-```
+````
 You are an outcome classifier building an Outcome-Solution Tree (OST) for the Mermaid diagramming library's open-source roadmap.
 
 Read `all_summaries.json` and process issues 0-697 (first half).
@@ -359,9 +359,10 @@ Output TWO files:
     { "number": 9999, "outcome_raw": "...", "reason": "Unique edge case" }
   ]
 }
-```
+````
 
 **File 2: `personas_v1.json`**
+
 ```json
 [
   {
@@ -380,6 +381,7 @@ Output TWO files:
 ```
 
 Rules:
+
 - AIM FOR 5-8 top-level themes. Not 3, not 20.
 - Each mid-level outcome should have at least 3 issues to be a cluster (otherwise it's unclustered)
 - Be specific: "Rendering" alone is too vague as a leaf. "SVG export preserves font styling" is good.
@@ -389,6 +391,7 @@ Rules:
 - weighted_impact matters for prioritization: a theme with 20 high-engagement issues may outrank one with 40 silent issues
 - Propagate flags upward: if any leaf has "regression", the mid-level and theme should note it
 - demand_profile at mid/theme level = sum of leaf demand_profiles
+
 ```
 
 ### Pass 2: Second Half + Taxonomy Refinement
@@ -396,14 +399,17 @@ Rules:
 After Pass 1 completes, spawn the second classifier:
 
 ```
+
 You are an outcome classifier continuing the OST construction for the Mermaid diagramming library.
 
 Read these files:
+
 - `all_summaries.json` (process issues 698 to end, the second half)
 - `ost_draft_v1.json` (the taxonomy from Pass 1)
 - `personas_v1.json` (persona registry from Pass 1)
 
 Your job:
+
 1. Classify each issue in the second half into the EXISTING taxonomy where it fits
 2. Create NEW leaf/mid-level/top-level nodes where existing ones don't fit
 3. MERGE or SPLIT categories if the second half reveals they were too broad or too narrow
@@ -418,6 +424,7 @@ Output TWO files:
 **`personas_final.json`** : same schema as personas_v1.json but complete
 
 Quality checks before writing:
+
 - Every issue from all_summaries.json appears exactly once (in a leaf or unclustered)
 - Sum of all leaf issue_counts + unclustered count = total issues
 - No leaf has fewer than 2 issues (merge small leaves up)
@@ -426,6 +433,7 @@ Quality checks before writing:
 - weighted_impact totals are consistent (sum of leaves = mid-level, sum of mid = theme)
 - demand_profiles sum correctly upward through the tree
 - flags propagate upward (regression, contribution-ready)
+
 ```
 
 ---
@@ -437,9 +445,11 @@ Quality checks before writing:
 Spawn a synthesis agent:
 
 ```
+
 You are a product strategist synthesizing issue analysis into a roadmap-ready document.
 
 Read:
+
 - `ost_final.json`
 - `personas_final.json`
 - `all_summaries.json` (for reference/examples)
@@ -449,13 +459,16 @@ Produce a markdown file `mermaid_ost_roadmap.md` with this structure:
 # Mermaid OST: Issue-Driven Roadmap Analysis
 
 ## Executive Summary
+
 - Total open issues analyzed: N
 - Number of top-level themes: N
 - Top 3 themes by weighted impact (not just count: community engagement matters)
 - Key insight (1-2 sentences)
 
 ## Personas
+
 For each persona (sorted by weighted_impact descending):
+
 - Name, issue count, weighted impact, percentage of total weighted impact
 - Source breakdown: how often they appear as issue author vs commenter (commenters-only personas are important: they represent affected users who don't file issues)
 - Key needs (2-3 sentences, not bullets)
@@ -466,6 +479,7 @@ For each persona (sorted by weighted_impact descending):
 For each top-level theme (sorted by weighted_impact descending):
 
 ### Theme Name (N issues, weighted impact: X, Y% of total)
+
 Description of the theme.
 
 **Demand Profile:** silent: N, noticed: N, wanted: N, heated: N
@@ -473,6 +487,7 @@ Description of the theme.
 
 **Key Outcomes:**
 For each mid-level outcome:
+
 - Outcome name (N issues, impact: X)
   - Leaf outcomes listed concisely
   - Affected diagram types
@@ -486,6 +501,7 @@ For each mid-level outcome:
 **Roadmap Signal:** 2-3 sentences on what this theme means for prioritization. Call out if this theme has "contribution-ready" leaves (community might help land these).
 
 ## Cross-Cutting Patterns
+
 - Which diagram types have the most issues (by count AND by weighted impact)?
 - Which pain categories dominate?
 - Are there clusters that span multiple themes?
@@ -494,7 +510,9 @@ For each mid-level outcome:
 - Which outcomes have "regression" flags? (These are trust-eroding: things that used to work.)
 
 ## Recommended Roadmap Themes
+
 Based on the analysis, suggest 5-8 high-level roadmap items ranked by:
+
 1. Weighted impact (community engagement, not just raw count)
 2. Demand intensity profile (themes with many "heated" issues rank higher)
 3. Severity distribution (how many blocking vs cosmetic)
@@ -504,11 +522,13 @@ Based on the analysis, suggest 5-8 high-level roadmap items ranked by:
 For each: theme name, issue count, weighted impact, demand profile summary, key personas, flags, suggested priority tier (P0/P1/P2).
 
 ## Appendix: Unclustered Issues
+
 List issues that didn't fit any category, with brief notes on why.
 
 Write to `mermaid_ost_roadmap.md`.
 Keep the tone concise and technical. This is for a CTO and open-source maintainer.
 Use ":" instead of "—" for separators.
+
 ```
 
 ### 3B: Tagged Spreadsheet (CSV)
@@ -516,9 +536,11 @@ Use ":" instead of "—" for separators.
 Spawn another agent in parallel:
 
 ```
+
 You are a data engineer producing a tagged issue spreadsheet.
 
 Read:
+
 - `all_summaries.json`
 - `ost_final.json`
 
@@ -529,6 +551,7 @@ Produce a CSV file `mermaid_issues_tagged.csv` with these columns:
 issue_number, title, diagram_types, outcome_raw, pain_category, personas, severity_hint, comment_count, unique_commenters, demand_intensity, comment_themes, weighted_impact, leaf_outcome, mid_level_outcome, top_level_theme
 
 Rules:
+
 - diagram_types should be semicolon-separated if multiple
 - personas should be semicolon-separated (all detected personas from persona_signals array)
 - comment_themes should be semicolon-separated
@@ -538,7 +561,8 @@ Rules:
 - weighted_impact per issue = unique_commenters + demand_bonus(silent=0,noticed=0,wanted=1,heated=3) + severity_bonus(cosmetic=0,functional=1,blocking=2)
 
 Write to `mermaid_issues_tagged.csv`.
-```
+
+````
 
 ---
 
@@ -602,7 +626,7 @@ for p in sorted(personas, key=lambda x: -x.get("weighted_impact", x["issue_count
     print(f"  {p['persona']}: {p['issue_count']} issues, impact: {p.get('weighted_impact', 'N/A')}")
     if "source_breakdown" in p:
         print(f"    as author: {p['source_breakdown'].get('as_author', '?')}, as commenter: {p['source_breakdown'].get('as_commenter', '?')}")
-```
+````
 
 If there are discrepancies, fix them before considering the task complete.
 
@@ -610,15 +634,16 @@ If there are discrepancies, fix them before considering the task complete.
 
 ## Execution Summary
 
-| Phase | What | Agents | Parallelism |
-|-------|------|--------|-------------|
-| 0 | Extract issues + comments via `gh` | 0 (you do it) | - |
-| 1 | Summarize issues (with comment analysis) | ~28 workers | 5-6 per wave, ~5 waves |
-| 2 | Build OST taxonomy with weighted personas | 2 classifiers | Sequential (pass 2 depends on pass 1) |
-| 3 | Produce deliverables | 2 (markdown + CSV) | Parallel |
-| 4 | Verify outputs | 0 (you do it) | - |
+| Phase | What                                      | Agents             | Parallelism                           |
+| ----- | ----------------------------------------- | ------------------ | ------------------------------------- |
+| 0     | Extract issues + comments via `gh`        | 0 (you do it)      | -                                     |
+| 1     | Summarize issues (with comment analysis)  | ~28 workers        | 5-6 per wave, ~5 waves                |
+| 2     | Build OST taxonomy with weighted personas | 2 classifiers      | Sequential (pass 2 depends on pass 1) |
+| 3     | Produce deliverables                      | 2 (markdown + CSV) | Parallel                              |
+| 4     | Verify outputs                            | 0 (you do it)      | -                                     |
 
 **Expected output files:**
+
 - `mermaid_ost_roadmap.md`: Strategic OST document for roadmap planning
 - `mermaid_issues_tagged.csv`: Every issue tagged with outcome/theme/persona/engagement (convertible to .xlsx)
 - `ost_final.json` + `personas_final.json`: Machine-readable intermediate data
@@ -628,7 +653,7 @@ If there are discrepancies, fix them before considering the task complete.
 
 **Weighting system recap:**
 
-  weighted_impact = unique_commenters + demand_bonus + severity_bonus
+weighted_impact = unique_commenters + demand_bonus + severity_bonus
 
 - unique_commenters: distinct people on the thread (min 1). Primary signal: more people = more interest.
 - demand_bonus: silent=0, noticed=0, wanted=1, heated=3. Qualitative signal from what commenters actually say.

@@ -430,12 +430,12 @@ shared_schemas@{ shape: procs, src: "./shared/schemas.pact" }
 
 PACT tools have several fields not currently mappable to agentflow node metadata:
 
-| PACT Field | Purpose | Example | Agentflow Status |
-|------------|---------|---------|-----------------|
-| `validate: strict` | Output validation mode | `validate: strict` | Not in spec |
-| `handler: "http POST ..."` | External HTTP endpoint | `handler: "http POST https://api.example.com"` | Could use `source` metadata |
-| `directives: [%name]` | Prompt directive references | `directives: [%clinical_reasoning]` | Not in spec |
-| `output: %template` | Template conformance | `output: %triage_note` | Supported via `output` metadata |
+| PACT Field                 | Purpose                     | Example                                        | Agentflow Status                |
+| -------------------------- | --------------------------- | ---------------------------------------------- | ------------------------------- |
+| `validate: strict`         | Output validation mode      | `validate: strict`                             | Not in spec                     |
+| `handler: "http POST ..."` | External HTTP endpoint      | `handler: "http POST https://api.example.com"` | Could use `source` metadata     |
+| `directives: [%name]`      | Prompt directive references | `directives: [%clinical_reasoning]`            | Not in spec                     |
+| `output: %template`        | Template conformance        | `output: %triage_note`                         | Supported via `output` metadata |
 
 **Proposed:** Add `validate`, `handler`, and `directives` to the node metadata field table.
 
@@ -473,21 +473,21 @@ diagnostician@{
 
 ## Summary Table
 
-| PACT Feature | Agentflow Status | Priority |
-|-------------|-----------------|----------|
-| Directives | Not supported | High — safety-critical |
-| Lessons | Not supported | Medium |
-| Skills | Partial (shape only) | Medium |
-| Agent Bundles / Fallbacks | Partial (no fallback chain) | Medium |
-| Permission Trees | Pattern only, no first-class keyword | Medium |
-| MCP Connections | Not supported | Low |
-| Template Sections | Parser rejects them | High — currently breaking |
-| Parallel Execution | Not supported | High |
-| Match / Conditional | Partial (diamond nodes) | Medium |
-| Fallback Expressions | Not supported | Medium |
-| On Error | Not supported | Medium |
-| Pipeline Operator | Partial (`==>` edges) | Low |
-| Tests | Not supported | Low |
-| Imports | Not supported | Low |
-| Tool metadata (`validate`, `handler`, `directives`) | Partial | Medium |
-| Agent `memory` field | Not supported | Low |
+| PACT Feature                                        | Agentflow Status                     | Priority                  |
+| --------------------------------------------------- | ------------------------------------ | ------------------------- |
+| Directives                                          | Not supported                        | High — safety-critical    |
+| Lessons                                             | Not supported                        | Medium                    |
+| Skills                                              | Partial (shape only)                 | Medium                    |
+| Agent Bundles / Fallbacks                           | Partial (no fallback chain)          | Medium                    |
+| Permission Trees                                    | Pattern only, no first-class keyword | Medium                    |
+| MCP Connections                                     | Not supported                        | Low                       |
+| Template Sections                                   | Parser rejects them                  | High — currently breaking |
+| Parallel Execution                                  | Not supported                        | High                      |
+| Match / Conditional                                 | Partial (diamond nodes)              | Medium                    |
+| Fallback Expressions                                | Not supported                        | Medium                    |
+| On Error                                            | Not supported                        | Medium                    |
+| Pipeline Operator                                   | Partial (`==>` edges)                | Low                       |
+| Tests                                               | Not supported                        | Low                       |
+| Imports                                             | Not supported                        | Low                       |
+| Tool metadata (`validate`, `handler`, `directives`) | Partial                              | Medium                    |
+| Agent `memory` field                                | Not supported                        | Low                       |

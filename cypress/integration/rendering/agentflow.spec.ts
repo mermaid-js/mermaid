@@ -73,6 +73,29 @@ describe('Agentflow diagram', () => {
     );
   });
 
+  it('4b: should render input-value pattern with `value`/`example` (v0.6.0 §19.12)', () => {
+    imgSnapshotTest(
+      `agentflow TB
+        file_path["file_path"]
+        file_path@{ shape: lean-right, description: "Path to the file in the GitHub repository to visualize", value: "src/HelloWorld.java" }
+
+        sample_payload["sample_payload"]
+        sample_payload@{ shape: doc, example: "illustrative payload" }
+
+        read_file["read_file"]
+        read_file@{ shape: subroutine, params: "path :: String", returns: "String", requires: ["fs.read"] }
+
+        agent runner["Runner"]
+          task step["Read"]
+            file_path ==>|path| read_file
+          end
+        end
+        runner@{ permits: ["fs.read"] }
+      `,
+      {}
+    );
+  });
+
   it('5: should render various node shapes', () => {
     imgSnapshotTest(
       `agentflow TB

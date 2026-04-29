@@ -26,6 +26,11 @@ import type {
   AgentFlowTypeDeclaration,
   AgentFlowTypeDeclarationsByName,
   AgentFlowTypeField,
+  AgentflowElementMapping,
+  AgentflowSemanticModel,
+  AgentflowStatementType,
+  EdgeSemantic,
+  ElementPosition,
   FlowClass,
   FlowEdge,
   FlowLink,
@@ -33,7 +38,28 @@ import type {
   FlowText,
   FlowVertex,
   FlowVertexTypeParam,
+  SemanticEdge,
+  SemanticSubGraph,
+  SemanticVertex,
 } from './types.js';
+import type {
+  AgentflowDiagnostic,
+  AgentflowDiagnosticContext,
+  AgentflowWarningId,
+} from './diagnostics.js';
+
+/**
+ * Raw JISON `@$` location object. Produced by the jison-generated parser
+ * when location tracking is enabled (default). Only the line/column/range
+ * fields are used.
+ */
+interface JisonLocation {
+  first_line: number;
+  first_column: number;
+  last_line: number;
+  last_column: number;
+  range?: [number, number];
+}
 import DOMPurify from 'dompurify';
 interface LinkData {
   id: string;
@@ -45,6 +71,249 @@ const AGENTFLOW_TPL_VERSION = 'AGENTFLOW-TPL-V1.1';
 /** Pre-compiled regexes for field parsing */
 const RECORD_FIELD_RE = /^([A-Z_a-z]\w*)\s*:\s*(.+)$/;
 const TEMPLATE_FIELD_RE = /^([A-Z_a-z]\w*)\s*:\s*(\w+)(?:\s*\*\s*(\d+))?\s*<<([^>]*)>>$/;
+
+/**
+ * Metadata keys that are presentation-only per `AGENTFLOW-SYNTAX.md` §13 and
+ * therefore stripped from the semantic model projection (PR 3). Everything
+ * else in `@{...}` metadata — `model`, `permits`, `requires`, `deny`,
+ * `params`, `returns`, `strategy`, `protocol`, `connector`, etc. — carries
+ * semantic weight and flows through.
+ *
+ * `shape` is listed here (since wave-2 PR 4) because shape is surfaced as
+ * a first-class field on `SemanticVertex.shape`; keeping a duplicate under
+ * `metadata.shape` would just be noise. The same set is also consulted when
+ * merging inherited metadata on instance resolution (§11.3: shape does not
+ * inherit).
+ */
+const SEMANTIC_METADATA_SKIP_KEYS = new Set([
+  'shape',
+  'view',
+  'icon',
+  'img',
+  'w',
+  'h',
+  'class',
+  'style',
+  'form',
+  'pos',
+  'labelType',
+  'animate',
+  'animation',
+  'curve',
+]);
+
+/**
+ * Shape ids that mark a node as a tool definition per `AGENTFLOW-SYNTAX.md`
+ * §8.2: the canonical name plus the accepted aliases. Membership in this
+ * set is the source of truth for `isToolDefinition()`.
+ */
+const SUBROUTINE_ALIASES = new Set<string>([
+  'subroutine',
+  'subprocess',
+  'subproc',
+  'framed-rectangle',
+]);
+
+/**
+ * The five instance shapes and the kind of definition each must target per
+ * `AGENTFLOW-SYNTAX.md` §11.1. Each shape is listed with its canonical name
+ * and the spec-explicit alias; broader shape-registry aliases (e.g.
+ * `tag-proc`, `lined-process`) are deliberately not in scope until the spec
+ * names them. Kind `'tool'` resolves against the vertex namespace and is
+ * satisfied by `isToolDefinition()`; the four container kinds resolve
+ * against the subgraph namespace and are satisfied by a `FlowSubGraph`
+ * whose `type` matches.
+ */
+type InstanceDefKind = 'tool' | 'agent' | 'flow' | 'skill' | 'directive';
+const INSTANCE_SHAPE_TO_KIND: Readonly<Record<string, InstanceDefKind>> = {
+  'win-pane': 'tool',
+  'window-pane': 'tool',
+  'tag-rect': 'agent',
+  'tagged-rectangle': 'agent',
+  delay: 'flow',
+  'half-rounded-rectangle': 'flow',
+  'lin-rect': 'skill',
+  'lined-rectangle': 'skill',
+  'curv-trap': 'directive',
+  'curved-trapezoid': 'directive',
+};
+
+/**
+ * Metadata keys that never inherit through the def chain. `def` is
+ * excluded because it is structural wiring, not domain metadata; the
+ * other keys are the §13 presentation-only set reused from the semantic
+ * projection.
+ */
+const INSTANCE_INHERITANCE_SKIP_KEYS = new Set<string>([...SEMANTIC_METADATA_SKIP_KEYS, 'def']);
+
+/**
+ * Metadata keys whose presence designates a node as a **connector** per
+ * `AGENTFLOW-SYNTAX.md` §9.2. Any node carrying one or more of these
+ * qualifies; the node's own id is the connector identity.
+ */
+const CONNECTOR_CONFIG_FIELDS = new Set<string>([
+  'protocol',
+  'endpoint',
+  'transport',
+  'command',
+  'auth',
+  'token_required',
+]);
+
+/**
+ * Bare-id matcher for `connectorRef` weak-reference resolution per §9.1
+ * and §10.1. Values that match this regex are resolved against the node
+ * namespace; values that don't (dotted forms, URL-likes) are opaque.
+ */
+const CONNECTOR_REF_BARE_ID = /^[A-Z_a-z]\w*$/;
+
+/**
+ * Shapes that classify a node as an **artifact** per §13 applicability
+ * ("artifact nodes (`doc`, etc.)"). Canonical shape ids only; the spec
+ * is deliberately conservative about which shapes belong.
+ */
+const ARTIFACT_SHAPES = new Set<string>(['doc', 'lin-doc', 'lean-right', 'lean-left']);
+
+/**
+ * Shapes that classify a node as a **reference** per §13 applicability
+ * ("reference nodes (`procs`)"). Only the canonical shape id is listed.
+ */
+const REFERENCE_SHAPES = new Set<string>(['procs']);
+
+/**
+ * Metadata keys that are valid on **any** authored element per
+ * `AGENTFLOW-SYNTAX.md` §13.1 (cross-cutting) plus the structural and
+ * presentation controls tracked by the DB. These never surface a
+ * `METADATA_KEY_MISAPPLIED` warning regardless of element kind.
+ */
+const UNIVERSAL_METADATA_KEYS = new Set<string>([
+  // §13.1 cross-cutting
+  'description',
+  // Structural wiring exposed via metadata
+  'shape',
+  'label',
+  'labelType',
+  'def',
+  // Presentation (§14) — also excluded from inheritance in §11.3
+  'view',
+  'icon',
+  'img',
+  'w',
+  'h',
+  'class',
+  'style',
+  'form',
+  'pos',
+  'animate',
+  'animation',
+  'curve',
+  'constraint',
+]);
+
+/**
+ * The element kinds the §13 applicability table addresses. Plain
+ * unclassified vertices and the legacy `subgraph` / `group` containers
+ * are unrestricted and never reach this lookup.
+ */
+type MetadataApplicabilityKind =
+  | 'agent'
+  | 'flow'
+  | 'task'
+  | 'skill'
+  | 'tool'
+  | 'connector'
+  | 'directive'
+  | 'testCase'
+  | 'artifact'
+  | 'reference';
+
+/**
+ * §13 Metadata Applicability — the normative allowed-key set per element
+ * kind. `description` and universal keys are handled separately via
+ * `UNIVERSAL_METADATA_KEYS`, so they do not appear here.
+ */
+const METADATA_APPLICABILITY: Readonly<Record<MetadataApplicabilityKind, ReadonlySet<string>>> = {
+  agent: new Set(['model', 'permits', 'memory', 'fallbacks']),
+  flow: new Set(['params', 'returns']),
+  task: new Set(['execution', 'params', 'returns', 'fallbacks']),
+  skill: new Set(['strategy', 'params', 'returns', 'fallbacks']),
+  tool: new Set([
+    'params',
+    'returns',
+    'requires',
+    'deny',
+    'retry',
+    'cache',
+    'validate',
+    'handler',
+    'transport',
+    'command',
+    'connectorRef',
+  ]),
+  connector: new Set(['protocol', 'endpoint', 'transport', 'command', 'auth', 'token_required']),
+  directive: new Set(['rule', 'severity', 'context', 'params']),
+  testCase: new Set(['assert', 'expects']),
+  // §13 separates input nodes (`lean-right`) from artifact nodes (`doc`,
+  // `lin-doc`) into two rows that both accept v0.6.0 `value`/`example`.
+  // ARTIFACT_SHAPES (above) currently lumps both rows under `artifact`;
+  // the allowed-key set is identical so the union is correct for v0.6.0.
+  // A future split into a separate `input` kind is purely additive.
+  artifact: new Set(['output', 'value', 'example']),
+  reference: new Set(['typeRef', 'templateRef', 'src']),
+};
+
+/**
+ * Union of every key that appears in any row of the applicability
+ * table. Used to distinguish "known domain key on the wrong element"
+ * (warn) from "unknown key" (preserved silently in this PR). Computed
+ * once at module load.
+ */
+const ALL_APPLICABILITY_KEYS: ReadonlySet<string> = new Set(
+  Object.values(METADATA_APPLICABILITY).flatMap((s) => [...s])
+);
+
+/**
+ * Synthetic IDs reserved by the renderer per `AGENTFLOW-SYNTAX.md` §10.
+ * Authors who declare a vertex or container with one of these ids get a
+ * `RESERVED_SYNTHETIC_ID` warning. Auto-numbered subgraph ids
+ * (`subGraph0`, `subGraph1` …) are internal to the DB and never reach
+ * user declarations, so they are not listed here.
+ */
+const RESERVED_SYNTHETIC_IDS = new Set<string>(['typesGroup', 'templatesGroup']);
+
+/**
+ * Child kinds recognised by the §3.3 containment matrix. `node` is the
+ * catch-all for any plain vertex that isn't a typed container or a tool.
+ */
+type ContainmentChildKind =
+  | 'agent'
+  | 'flow'
+  | 'task'
+  | 'skill'
+  | 'directive'
+  | 'testCase'
+  | 'tool'
+  | 'node';
+
+/** Parent kinds that §3.3 constrains. Legacy `subgraph` and `group` are
+ *  the unrestricted escape hatches and are not listed. */
+type ContainmentParentKind = 'agent' | 'flow' | 'task' | 'skill' | 'directive' | 'testCase';
+
+/**
+ * §3.3 Containment Rules — allowed children per parent container kind.
+ * Tools are leaves (cannot be parents); `subgraph` and `group` are the
+ * legacy escape hatches and accept anything.
+ */
+const CONTAINMENT_ALLOWED_CHILDREN: Readonly<
+  Record<ContainmentParentKind, ReadonlySet<ContainmentChildKind>>
+> = {
+  agent: new Set(['flow', 'task', 'skill', 'directive', 'testCase', 'tool', 'node']),
+  flow: new Set(['task', 'agent', 'skill', 'directive', 'testCase', 'tool', 'node']),
+  task: new Set(['tool', 'directive', 'node']),
+  skill: new Set(['tool', 'flow', 'directive', 'node']),
+  directive: new Set(['node']),
+  testCase: new Set(['directive', 'node']),
+};
 
 /** Maps subgraph container types to their cluster shape IDs. */
 const SUBGRAPH_TYPE_TO_SHAPE: Record<NonNullable<FlowSubGraph['type']>, ClusterShapeID> = {
@@ -72,6 +341,17 @@ export class AgentFlowDB implements DiagramDB {
   private typeDeclarations = new Map<string, AgentFlowTypeDeclaration>();
   private templateDeclarations = new Map<string, AgentFlowTemplateDeclaration>();
   private declarationGroupMetadata = new Map<string, Record<string, unknown>>();
+
+  // ── Identifier-resolution tracking (wave-3 PR B, §10) ────────────────
+  // Per-namespace sets of IDs that have received a **declarative** call.
+  // Implicit vertices created by edge resolution (e.g. the `a` in
+  // `a --> b`) are excluded; only named vertex declarations with label,
+  // shape, or container keyword register here. Duplicate detection emits
+  // DUPLICATE_ID_NODE / DUPLICATE_ID_TYPE / DUPLICATE_ID_TEMPLATE and
+  // RESERVED_SYNTHETIC_ID for authorial claims on renderer-reserved ids.
+  private seenDeclaredNodeIds = new Set<string>();
+  private seenTypeNames = new Set<string>();
+  private seenTemplateNames = new Set<string>();
   private tooltips = new Map<string, string>();
   private subCount = 0;
   private firstGraphFlag = true;
@@ -79,6 +359,40 @@ export class AgentFlowDB implements DiagramDB {
   private version: string | undefined; // As in graph
   private secCount = -1;
   private posCrossRef: number[] = [];
+
+  // ── Element-mapping infrastructure (PR 2a) ───────────────────────────
+  // `setSourceText` is the signal Diagram.ts duck-types on to decide whether
+  // the DB opts into inline-position capture. `setFrontmatterLineOffset`
+  // receives the offset computed by `preprocessDiagram` so that captured
+  // JISON `@$` positions are reported in original-source space (including
+  // any YAML frontmatter the parser never saw).
+  private sourceText: string | undefined;
+  private frontmatterLineOffset = 0;
+  private elementMappings: AgentflowElementMapping[] = [];
+
+  // ── Diagnostic layer (PR 2b) ──────────────────────────────────────────
+  // Structured warnings/errors emitted during parse, post-parse validation,
+  // and rendering. Consumed by conformance fixtures (issue #13) and by any
+  // downstream tooling that wants programmatic access to problems the DB
+  // found. `emitWarning` always also writes to `log.warn` so humans see
+  // warnings in the console; tests assert against `getDiagnostics()`.
+  private diagnostics: AgentflowDiagnostic[] = [];
+
+  /**
+   * Post-parse validators that emit diagnostics run at most once per parse
+   * (idempotent `getData()` calls). Resettable via `clear()`.
+   */
+  private postParseValidationRun = false;
+
+  /**
+   * Populated by `resolveInstances()` per AGENTFLOW-SYNTAX.md §11.3 — keyed
+   * by the instance vertex id, value is the merged domain metadata (def
+   * chain inherited, local overrides applied). Surfaced by
+   * `getSemanticModel()` as `SemanticVertex.resolvedMetadata`. Only
+   * populated for instance-shape vertices whose chain fully resolved
+   * (no missing def, no cycle, no kind mismatch).
+   */
+  private resolvedInstanceMetadata = new Map<string, Record<string, unknown>>();
 
   // Functions to be run after graph rendering
   private funs: ((element: Element) => void)[] = []; // cspell:ignore funs
@@ -104,6 +418,20 @@ export class AgentFlowDB implements DiagramDB {
     this.updateLinkInterpolate = this.updateLinkInterpolate.bind(this);
     this.setClickFun = this.setClickFun.bind(this);
     this.bindFunctions = this.bindFunctions.bind(this);
+
+    // Element-mapping hooks (see ./types.ts ElementPosition / AgentflowElementMapping)
+    this.setSourceText = this.setSourceText.bind(this);
+    this.setFrontmatterLineOffset = this.setFrontmatterLineOffset.bind(this);
+    this.addVertexMapping = this.addVertexMapping.bind(this);
+    this.addEdgeMapping = this.addEdgeMapping.bind(this);
+    this.addSubgraphMapping = this.addSubgraphMapping.bind(this);
+    this.addTypeMapping = this.addTypeMapping.bind(this);
+    this.addTemplateMapping = this.addTemplateMapping.bind(this);
+
+    // Diagnostic hooks (see ./diagnostics.ts)
+    this.emitWarning = this.emitWarning.bind(this);
+    this.emitError = this.emitError.bind(this);
+    this.getDiagnostics = this.getDiagnostics.bind(this);
 
     this.lex = {
       firstGraph: this.firstGraph.bind(this),
@@ -291,6 +619,15 @@ export class AgentFlowDB implements DiagramDB {
       return;
     }
 
+    // Identifier-resolution tracking (§10) — a "declarative" call is one
+    // where the author wrote a label or an inline shape keyword. Pure
+    // metadata attachments (`id@{ ... }`) and implicit vertices created
+    // by edge resolution (`a --> b`) do NOT count as declarations.
+    const isDeclarative = textObj !== undefined || type !== undefined;
+    if (isDeclarative && id) {
+      this.recordDeclaredNodeId(id);
+    }
+
     // Reserve 'types' and 'templates' as declaration group IDs — never create vertices for them
     if (id === 'types' || id === 'templates') {
       if (doc) {
@@ -460,6 +797,9 @@ export class AgentFlowDB implements DiagramDB {
       edge.type = type.type;
       edge.stroke = type.stroke;
       edge.length = type.length > 10 ? 10 : type.length;
+      if (type.edgeSemantic) {
+        edge.edgeSemantic = type.edgeSemantic;
+      }
     }
     if (id && !this.edges.some((e) => e.id === id)) {
       edge.id = id;
@@ -752,6 +1092,34 @@ You have to call mermaid.initialize.`
   }
 
   /**
+   * Returns true when `vertex` is a **tool definition** per
+   * `AGENTFLOW-SYNTAX.md` §8 — its resolved shape is `subroutine` or one
+   * of the accepted aliases (`subprocess`, `subproc`, `framed-rectangle`).
+   *
+   * This is the source of truth for "is this a tool?" — there is no
+   * separate kind tag stored on the vertex; tool-ness is derived from
+   * shape on every check. Downstream consumers reading the semantic model
+   * see this surfaced as `vertexKind: 'tool'` (see `getSemanticModel`).
+   */
+  public isToolDefinition(vertex: FlowVertex): boolean {
+    return SUBROUTINE_ALIASES.has(vertex.type as string);
+  }
+
+  /**
+   * Returns every vertex that is a tool definition (per `isToolDefinition`).
+   * Derived view; not cached.
+   */
+  public getTools(): FlowVertex[] {
+    const tools: FlowVertex[] = [];
+    for (const vertex of this.vertices.values()) {
+      if (this.isToolDefinition(vertex)) {
+        tools.push(vertex);
+      }
+    }
+    return tools;
+  }
+
+  /**
    * Retrieval function for fetching the found class definitions after parsing has completed.
    *
    */
@@ -810,6 +1178,15 @@ You have to call mermaid.initialize.`
     this.firstGraphFlag = true;
     this.version = ver;
     this.config = getConfig();
+    this.sourceText = undefined;
+    this.frontmatterLineOffset = 0;
+    this.elementMappings = [];
+    this.diagnostics = [];
+    this.postParseValidationRun = false;
+    this.resolvedInstanceMetadata = new Map();
+    this.seenDeclaredNodeIds = new Set();
+    this.seenTypeNames = new Set();
+    this.seenTemplateNames = new Set();
     commonClear();
   }
 
@@ -893,7 +1270,15 @@ You have to call mermaid.initialize.`
     // Remove the members in the new subgraph if they already belong to another subgraph
     subGraph.nodes = this.makeUniq(subGraph, this.subGraphs).nodes;
 
+    // Identifier-resolution tracking (§10) — record this container's id
+    // in the shared node-or-container namespace. Collisions with a prior
+    // declared vertex emit DUPLICATE_ID_NODE. Subgraph-subgraph "merge"
+    // collisions remain silent to preserve the wave-1 re-declaration
+    // pattern in existing documents.
     const existingPos = this.getPosForId(id);
+    if (existingPos === -1) {
+      this.recordDeclaredNodeId(id);
+    }
     if (existingPos !== -1) {
       // Duplicate subgraph ID — merge children into the existing entry.
       // First occurrence wins for hierarchy position.
@@ -985,6 +1370,15 @@ You have to call mermaid.initialize.`
 
   public addTypeDeclaration(declaration: string) {
     const parsedDeclaration = this.parseTypeDeclaration(declaration);
+    if (this.seenTypeNames.has(parsedDeclaration.name)) {
+      this.emitWarning(
+        'DUPLICATE_ID_TYPE',
+        `duplicate type declaration "${parsedDeclaration.name}" (see AGENTFLOW-SYNTAX.md §10)`,
+        { nodeId: parsedDeclaration.name }
+      );
+    } else {
+      this.seenTypeNames.add(parsedDeclaration.name);
+    }
     this.typeDeclarations.set(parsedDeclaration.name, parsedDeclaration);
     return parsedDeclaration.name;
   }
@@ -1003,6 +1397,15 @@ You have to call mermaid.initialize.`
       parsedDeclaration.fields.length,
       'fields'
     );
+    if (this.seenTemplateNames.has(parsedDeclaration.name)) {
+      this.emitWarning(
+        'DUPLICATE_ID_TEMPLATE',
+        `duplicate template declaration "${parsedDeclaration.name}" (see AGENTFLOW-SYNTAX.md §10)`,
+        { nodeId: parsedDeclaration.name }
+      );
+    } else {
+      this.seenTemplateNames.add(parsedDeclaration.name);
+    }
     this.templateDeclarations.set(parsedDeclaration.name, parsedDeclaration);
     return parsedDeclaration.name;
   }
@@ -1033,6 +1436,49 @@ You have to call mermaid.initialize.`
       return true;
     }
     return false;
+  }
+
+  /**
+   * Maps the post-`destructLink` `(type, stroke)` pair onto the canonical
+   * `edgeSemantic` value defined by `AGENTFLOW-SYNTAX.md` §5.1. Returns
+   * `undefined` for combinations not enumerated in the spec table (e.g.
+   * `<-->` → `double_arrow_point`/`normal`).
+   */
+  private computeEdgeSemantic(
+    type: string | undefined,
+    stroke: string | undefined
+  ): EdgeSemantic | undefined {
+    if (!type || !stroke) {
+      return undefined;
+    }
+    if (stroke === 'invisible') {
+      return undefined;
+    }
+    switch (type) {
+      case 'arrow_point':
+        if (stroke === 'normal') {
+          return 'control';
+        }
+        if (stroke === 'thick') {
+          return 'data';
+        }
+        if (stroke === 'dotted') {
+          return 'governance';
+        }
+        return undefined;
+      case 'arrow_circle':
+        return stroke === 'normal' ? 'conformance' : undefined;
+      case 'arrow_hierarchy':
+        return stroke === 'normal' ? 'delegation' : undefined;
+      case 'arrow_cross':
+        return stroke === 'normal' ? 'failure' : undefined;
+      case 'arrow_open':
+        return stroke === 'normal' ? 'association' : undefined;
+      case 'double_arrow_circle':
+        return stroke === 'normal' ? 'bidirectional' : undefined;
+      default:
+        return undefined;
+    }
   }
 
   private destructStartLink(_str: string): FlowLink {
@@ -1161,10 +1607,16 @@ You have to call mermaid.initialize.`
       }
 
       startInfo.length = info.length;
-      return startInfo;
+      return {
+        ...startInfo,
+        edgeSemantic: this.computeEdgeSemantic(startInfo.type, startInfo.stroke),
+      };
     }
 
-    return info;
+    return {
+      ...info,
+      edgeSemantic: this.computeEdgeSemantic(info.type, info.stroke),
+    };
   }
 
   // Todo optimizer this by caching existing nodes
@@ -1317,7 +1769,943 @@ You have to call mermaid.initialize.`
     return compiledStyles;
   }
 
+  /**
+   * Closes [#4](https://github.com/Mermaid-Chart/agentflow/issues/4).
+   *
+   * Per `AGENTFLOW-SYNTAX.md` §4.2, `diamond` is the only canonical
+   * branching vertex. A `hexagon` is a condition/classification source
+   * whose outgoing edges feed a branch; it is not itself the branching
+   * vertex. A hexagon with two-or-more branch-labelled outgoing edges is
+   * very likely a misuse, so we emit a `HEXAGON_MULTI_BRANCH` warning
+   * with the hexagon's id and source position.
+   *
+   * "Branch-labelled" = outgoing edge whose `text` is non-empty after
+   * trimming. Unlabelled outgoing edges (join-style connections) don't
+   * count. Both the canonical shape id (`hexagon`) and its alias (`hex`)
+   * are detected.
+   */
+  private validateHexagonBranching(): void {
+    const hexIds = new Set<string>();
+    for (const [id, v] of this.vertices) {
+      if (v.type === 'hexagon' || v.type === 'hex') {
+        hexIds.add(id);
+      }
+    }
+    if (hexIds.size === 0) {
+      return;
+    }
+
+    const labelledCounts = new Map<string, number>();
+    for (const edge of this.edges) {
+      if (!hexIds.has(edge.start)) {
+        continue;
+      }
+      const text = typeof edge.text === 'string' ? edge.text : '';
+      if (text.trim() === '') {
+        continue;
+      }
+      labelledCounts.set(edge.start, (labelledCounts.get(edge.start) ?? 0) + 1);
+    }
+
+    for (const [id, count] of labelledCounts) {
+      if (count >= 2) {
+        this.emitWarning(
+          'HEXAGON_MULTI_BRANCH',
+          `hexagon "${id}" has ${count} branch-labelled outgoing edges; use a diamond for branching (see AGENTFLOW-SYNTAX.md §4.2)`,
+          { nodeId: id }
+        );
+      }
+    }
+  }
+
+  /**
+   * Returns a vertex's domain metadata — its authored metadata with the
+   * presentation-only and structural-wiring keys stripped per §11.3.
+   * Used both by the inheritance merge and the instance's own local layer.
+   */
+  private domainMetadataOfVertex(vertex: FlowVertex): Record<string, unknown> {
+    if (!vertex.metadata) {
+      return {};
+    }
+    const out: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(vertex.metadata)) {
+      if (INSTANCE_INHERITANCE_SKIP_KEYS.has(key)) {
+        continue;
+      }
+      out[key] = value;
+    }
+    return out;
+  }
+
+  private domainMetadataOfSubGraph(sg: FlowSubGraph): Record<string, unknown> {
+    if (!sg.metadata) {
+      return {};
+    }
+    const out: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(sg.metadata)) {
+      if (INSTANCE_INHERITANCE_SKIP_KEYS.has(key)) {
+        continue;
+      }
+      out[key] = value;
+    }
+    return out;
+  }
+
+  /**
+   * Per `AGENTFLOW-SYNTAX.md` §11: for every vertex carrying an instance
+   * shape (`tag-rect`, `delay`, `lin-rect`, `win-pane`, `curv-trap`),
+   * resolve its `def` chain and:
+   *
+   *   1. Emit `INSTANCE_DEF_MISSING` if `def` is absent, empty, or points
+   *      to an id that matches neither a vertex nor a subgraph.
+   *   2. Emit `INSTANCE_DEF_CYCLE` if the chain cycles (self-loop or
+   *      multi-hop). Suppresses kind and missing-def warnings for the
+   *      affected instance — the cycle is the root cause.
+   *   3. Emit `INSTANCE_KIND_MISMATCH` when the chain's terminal target
+   *      is the wrong kind for the instance shape per §11.1.
+   *   4. On clean resolution, compute the merged domain metadata
+   *      (deepest def → local, local wins on collision, presentation /
+   *      structural keys stripped per §11.3) and stash it under the
+   *      instance id for `getSemanticModel()` to surface.
+   *
+   * Structure is not cloned into the instance site (§11.3) — this pass
+   * touches metadata only.
+   */
+  private resolveInstances(): void {
+    for (const [id, vertex] of this.vertices) {
+      const shape = vertex.type as string | undefined;
+      if (shape === undefined) {
+        continue;
+      }
+      const expectedKind = INSTANCE_SHAPE_TO_KIND[shape];
+      if (expectedKind === undefined) {
+        continue;
+      }
+
+      const def = vertex.metadata?.def;
+      if (typeof def !== 'string' || def.length === 0) {
+        this.emitWarning(
+          'INSTANCE_DEF_MISSING',
+          `${shape} instance "${id}" has no def (see AGENTFLOW-SYNTAX.md §11.2)`,
+          { nodeId: id }
+        );
+        continue;
+      }
+
+      // Walk the chain from the instance's def outward. Each step is
+      // either a vertex (which may itself be another instance and carry
+      // a def metadata to follow) or a subgraph (terminal — containers
+      // are not instances themselves).
+      //
+      // `accumulated` holds the inherited metadata so far with the
+      // deepest definition's domain on the bottom and each closer def
+      // layered on top; we apply the instance's local layer last.
+      const visited = new Set<string>([id]);
+      const chainMetadata: Record<string, unknown>[] = [];
+      let cursor: string = def;
+      let cycleDetected = false;
+      let missingDetected = false;
+      let terminalKind: InstanceDefKind | null = null;
+
+      while (true) {
+        if (visited.has(cursor)) {
+          this.emitWarning(
+            'INSTANCE_DEF_CYCLE',
+            `${shape} instance "${id}" has a cyclic def chain (see AGENTFLOW-SYNTAX.md §11.2)`,
+            { nodeId: id }
+          );
+          cycleDetected = true;
+          break;
+        }
+        visited.add(cursor);
+
+        const targetVertex = this.vertices.get(cursor);
+        const targetSub = this.subGraphLookup.get(cursor);
+
+        if (targetSub) {
+          // Containers are terminal — resolve kind against the subgraph type.
+          chainMetadata.push(this.domainMetadataOfSubGraph(targetSub));
+          const sgType = targetSub.type;
+          if (
+            sgType === 'agent' ||
+            sgType === 'flow' ||
+            sgType === 'skill' ||
+            sgType === 'directive'
+          ) {
+            terminalKind = sgType;
+          }
+          break;
+        }
+
+        if (!targetVertex) {
+          this.emitWarning(
+            'INSTANCE_DEF_MISSING',
+            `${shape} instance "${id}" references def "${cursor}" which does not match any vertex or container (see AGENTFLOW-SYNTAX.md §11.2)`,
+            { nodeId: id }
+          );
+          missingDetected = true;
+          break;
+        }
+
+        chainMetadata.push(this.domainMetadataOfVertex(targetVertex));
+
+        const nextDef = targetVertex.metadata?.def;
+        if (typeof nextDef === 'string' && nextDef.length > 0) {
+          // Intermediate instance — follow the chain.
+          cursor = nextDef;
+          continue;
+        }
+
+        // Leaf vertex — terminal. Resolve kind from the vertex.
+        if (this.isToolDefinition(targetVertex)) {
+          terminalKind = 'tool';
+        }
+        break;
+      }
+
+      if (cycleDetected || missingDetected) {
+        continue;
+      }
+
+      if (terminalKind !== expectedKind) {
+        this.emitWarning(
+          'INSTANCE_KIND_MISMATCH',
+          `${shape} instance "${id}" has def "${def}" which does not resolve to a ${expectedKind} definition (see AGENTFLOW-SYNTAX.md §11.1)`,
+          { nodeId: id }
+        );
+        continue;
+      }
+
+      // Merge: deepest def's domain metadata on the bottom, each closer
+      // def on top, the instance's own local domain last.
+      const merged: Record<string, unknown> = {};
+      for (let i = chainMetadata.length - 1; i >= 0; i--) {
+        Object.assign(merged, chainMetadata[i]);
+      }
+      Object.assign(merged, this.domainMetadataOfVertex(vertex));
+      this.resolvedInstanceMetadata.set(id, merged);
+    }
+  }
+
+  /**
+   * Returns true when `vertex` is a **connector-designated node** per
+   * `AGENTFLOW-SYNTAX.md` §9.2 — its metadata carries one or more of
+   * the connector configuration fields. Used by
+   * `validateConnectorReferences()` for the not-a-connector check.
+   */
+  private isConnectorDesignated(vertex: FlowVertex): boolean {
+    if (!vertex.metadata) {
+      return false;
+    }
+    for (const key of Object.keys(vertex.metadata)) {
+      if (CONNECTOR_CONFIG_FIELDS.has(key)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Per `AGENTFLOW-SYNTAX.md` §9.1 (revision 8): for every node tagged
+   * `@{ connectorRef: "<value>" }`, classify the value:
+   *   - bare id matching `[A-Za-z_]\w*` → resolve against node namespace:
+   *       - no node                     → CONNECTOR_REF_UNRESOLVED
+   *       - node not connector-designated → CONNECTOR_REF_NOT_A_CONNECTOR
+   *       - connector-designated node   → no diagnostic
+   *   - dotted form / URL-like / anything else → opaque, no diagnostic
+   */
+  private validateConnectorReferences(): void {
+    for (const [id, vertex] of this.vertices) {
+      const ref = vertex.metadata?.connectorRef;
+      if (typeof ref !== 'string' || ref.length === 0) {
+        continue;
+      }
+      if (!CONNECTOR_REF_BARE_ID.test(ref)) {
+        // Dotted form, URL-like, or other non-bare value — opaque.
+        continue;
+      }
+      const target = this.vertices.get(ref);
+      if (!target) {
+        this.emitWarning(
+          'CONNECTOR_REF_UNRESOLVED',
+          `connectorRef "${ref}" on node "${id}" does not match any node in the diagram (see AGENTFLOW-SYNTAX.md §9.1)`,
+          { nodeId: id }
+        );
+        continue;
+      }
+      if (!this.isConnectorDesignated(target)) {
+        this.emitWarning(
+          'CONNECTOR_REF_NOT_A_CONNECTOR',
+          `connectorRef "${ref}" on node "${id}" resolves to node "${ref}" but it carries none of the connector configuration fields (protocol/endpoint/transport/command/auth/token_required) — see AGENTFLOW-SYNTAX.md §9.2`,
+          { nodeId: id }
+        );
+      }
+    }
+  }
+
+  /**
+   * Classify a vertex against the §13 applicability rows. Returns
+   * `null` for unclassified / plain vertices — those have no
+   * applicability restrictions and are skipped by the validator.
+   *
+   * Classification priority matters when a vertex could match multiple
+   * rows: a tool (shape: subroutine) that also carries connector
+   * configuration fields uses the tool row, not the connector row.
+   * The spec's tool row already lists `transport` and `command`, so
+   * this priority preserves the tool's richer allowed set.
+   */
+  private classifyVertexForApplicability(vertex: FlowVertex): MetadataApplicabilityKind | null {
+    if (this.isToolDefinition(vertex)) {
+      return 'tool';
+    }
+    if (this.isConnectorDesignated(vertex)) {
+      return 'connector';
+    }
+    const shape = vertex.type as string | undefined;
+    if (shape !== undefined) {
+      if (REFERENCE_SHAPES.has(shape)) {
+        return 'reference';
+      }
+      if (ARTIFACT_SHAPES.has(shape)) {
+        return 'artifact';
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Classify a subgraph against the §13 applicability rows. Returns
+   * `null` for the legacy unrestricted containers (`subgraph`, `group`)
+   * and for the synthetic declaration groups (`types`, `templates`).
+   */
+  private classifySubGraphForApplicability(sg: FlowSubGraph): MetadataApplicabilityKind | null {
+    switch (sg.type) {
+      case 'agent':
+        return 'agent';
+      case 'flow':
+        return 'flow';
+      case 'task':
+        return 'task';
+      case 'skill':
+        return 'skill';
+      case 'directive':
+        return 'directive';
+      case 'test':
+        return 'testCase';
+      default:
+        return null;
+    }
+  }
+
+  /**
+   * Classify a subgraph's `type` as a containment-parent kind. Returns
+   * `null` for `subgraph` / `group` (legacy unrestricted escape hatch)
+   * and for the synthetic declaration groups (`types`, `templates`).
+   */
+  private classifyContainmentParent(sg: FlowSubGraph): ContainmentParentKind | null {
+    switch (sg.type) {
+      case 'agent':
+        return 'agent';
+      case 'flow':
+        return 'flow';
+      case 'task':
+        return 'task';
+      case 'skill':
+        return 'skill';
+      case 'directive':
+        return 'directive';
+      case 'test':
+        return 'testCase';
+      default:
+        return null;
+    }
+  }
+
+  /**
+   * Per `AGENTFLOW-SYNTAX.md` §13: for every classifiable element,
+   * check each metadata key against the applicability table. A key
+   * that is known (appears in any row) but not in this element's row
+   * — and isn't universal / cross-cutting — emits
+   * `METADATA_KEY_MISAPPLIED`. Unknown keys are preserved on the raw
+   * metadata without a warning; that follow-up diagnostic is out of
+   * scope for this PR.
+   */
+  private validateMetadataApplicability(): void {
+    const check = (
+      id: string,
+      metadata: Record<string, unknown>,
+      kind: MetadataApplicabilityKind
+    ) => {
+      const allowed = METADATA_APPLICABILITY[kind];
+      for (const key of Object.keys(metadata)) {
+        if (UNIVERSAL_METADATA_KEYS.has(key)) {
+          continue;
+        }
+        if (allowed.has(key)) {
+          continue;
+        }
+        if (!ALL_APPLICABILITY_KEYS.has(key)) {
+          // Unknown key — preserved, no warning in this PR.
+          continue;
+        }
+        this.emitWarning(
+          'METADATA_KEY_MISAPPLIED',
+          `metadata key "${key}" is not valid on ${kind} "${id}" (see AGENTFLOW-SYNTAX.md §13)`,
+          { nodeId: id }
+        );
+      }
+    };
+
+    const subGraphIds = new Set(this.subGraphs.map((sg) => sg.id));
+    for (const [id, vertex] of this.vertices) {
+      if (subGraphIds.has(id)) {
+        // Container metadata lives on the subgraph entry; the vertex
+        // record is a metadata-attachment placeholder — skip.
+        continue;
+      }
+      if (!vertex.metadata) {
+        continue;
+      }
+      const kind = this.classifyVertexForApplicability(vertex);
+      if (kind === null) {
+        continue;
+      }
+      check(id, vertex.metadata, kind);
+    }
+    for (const sg of this.subGraphs) {
+      if (!sg.metadata) {
+        continue;
+      }
+      const kind = this.classifySubGraphForApplicability(sg);
+      if (kind === null) {
+        continue;
+      }
+      check(sg.id, sg.metadata, kind);
+    }
+  }
+
+  /**
+   * Record a declarative claim on an id in the shared node-or-container
+   * namespace (§10). Emits `RESERVED_SYNTHETIC_ID` when the id is one of
+   * the renderer-reserved synthetics, and `DUPLICATE_ID_NODE` when an
+   * earlier declarative call already registered the same id.
+   */
+  private recordDeclaredNodeId(id: string): void {
+    if (!id) {
+      return;
+    }
+    if (RESERVED_SYNTHETIC_IDS.has(id)) {
+      this.emitWarning(
+        'RESERVED_SYNTHETIC_ID',
+        `identifier "${id}" is reserved for renderer synthetics (see AGENTFLOW-SYNTAX.md §10)`,
+        { nodeId: id }
+      );
+      return;
+    }
+    if (this.seenDeclaredNodeIds.has(id)) {
+      this.emitWarning(
+        'DUPLICATE_ID_NODE',
+        `duplicate declaration for id "${id}" in the node-or-container namespace (see AGENTFLOW-SYNTAX.md §10)`,
+        { nodeId: id }
+      );
+      return;
+    }
+    this.seenDeclaredNodeIds.add(id);
+  }
+
+  /**
+   * Per `AGENTFLOW-SYNTAX.md` §10.1: semantic references must resolve in
+   * their namespace. This pass handles `typeRef` and `templateRef`;
+   * `def` is covered by `resolveInstances()` with `INSTANCE_DEF_MISSING`
+   * so we skip it here to avoid double-firing. `src`, `click`, and
+   * `href` are hygiene-only — not validated for existence.
+   */
+  private resolveReferences(): void {
+    for (const [id, vertex] of this.vertices) {
+      const typeRef = vertex.metadata?.typeRef;
+      if (
+        typeof typeRef === 'string' &&
+        typeRef.length > 0 &&
+        !this.typeDeclarations.has(typeRef)
+      ) {
+        this.emitWarning(
+          'REFERENCE_UNRESOLVED',
+          `typeRef "${typeRef}" on node "${id}" does not match any declared type (see AGENTFLOW-SYNTAX.md §10.1)`,
+          { nodeId: id }
+        );
+      }
+      const templateRef = vertex.metadata?.templateRef;
+      if (
+        typeof templateRef === 'string' &&
+        templateRef.length > 0 &&
+        !this.templateDeclarations.has(templateRef)
+      ) {
+        this.emitWarning(
+          'REFERENCE_UNRESOLVED',
+          `templateRef "${templateRef}" on node "${id}" does not match any declared template (see AGENTFLOW-SYNTAX.md §10.1)`,
+          { nodeId: id }
+        );
+      }
+    }
+  }
+
+  /**
+   * Per `AGENTFLOW-SYNTAX.md` §10.2: a `procs` reference node must carry
+   * at most one of `typeRef` / `templateRef` / `src`; multiple values
+   * emit `REF_KIND_CONFLICT`. The legacy `type` key is accepted with a
+   * deprecation warning and resolved through the three-case rule.
+   *
+   * The rule is scoped to the `procs` shape — `type` on a non-procs
+   * node is not a reference key and is not affected.
+   */
+  private validateReferenceKinds(): void {
+    for (const [id, vertex] of this.vertices) {
+      if (vertex.type !== 'procs') {
+        continue;
+      }
+      const metadata = vertex.metadata ?? {};
+      const hasTypeRef = typeof metadata.typeRef === 'string' && metadata.typeRef.length > 0;
+      const hasTemplateRef =
+        typeof metadata.templateRef === 'string' && metadata.templateRef.length > 0;
+      const hasSrc = typeof metadata.src === 'string' && metadata.src.length > 0;
+      const modernCount = Number(hasTypeRef) + Number(hasTemplateRef) + Number(hasSrc);
+      if (modernCount >= 2) {
+        this.emitWarning(
+          'REF_KIND_CONFLICT',
+          `reference node "${id}" has multiple of typeRef / templateRef / src set — pick exactly one (see AGENTFLOW-SYNTAX.md §10.2)`,
+          { nodeId: id }
+        );
+      }
+
+      const legacy = metadata.type;
+      if (typeof legacy !== 'string' || legacy.length === 0) {
+        continue;
+      }
+      this.emitWarning(
+        'REF_KIND_LEGACY_DEPRECATED',
+        `reference node "${id}" uses the legacy \`type\` key — use \`typeRef\` or \`templateRef\` instead (see AGENTFLOW-SYNTAX.md §10.2)`,
+        { nodeId: id }
+      );
+
+      // Trichotomy resolution only applies when the author has NOT also
+      // written a modern key — the modern key is authoritative.
+      if (modernCount > 0) {
+        continue;
+      }
+      const matchesType = this.typeDeclarations.has(legacy);
+      const matchesTemplate = this.templateDeclarations.has(legacy);
+      if (matchesType && matchesTemplate) {
+        this.emitWarning(
+          'REF_KIND_LEGACY_AMBIGUOUS',
+          `legacy \`type: "${legacy}"\` on "${id}" matches both a type and a template — use typeRef or templateRef to disambiguate (see AGENTFLOW-SYNTAX.md §10.2)`,
+          { nodeId: id }
+        );
+      } else if (!matchesType && !matchesTemplate) {
+        this.emitWarning(
+          'REF_KIND_LEGACY_UNRESOLVED',
+          `legacy \`type: "${legacy}"\` on "${id}" does not match any declared type or template (see AGENTFLOW-SYNTAX.md §10.2)`,
+          { nodeId: id }
+        );
+      }
+    }
+  }
+
+  /**
+   * Classify a child id for containment-matrix lookup. Subgraph children
+   * project their container kind; vertex children project `tool` when
+   * they meet `isToolDefinition()` or `node` otherwise.
+   */
+  private classifyContainmentChild(childId: string): ContainmentChildKind | null {
+    const childSub = this.subGraphLookup.get(childId);
+    if (childSub) {
+      switch (childSub.type) {
+        case 'agent':
+          return 'agent';
+        case 'flow':
+          return 'flow';
+        case 'task':
+          return 'task';
+        case 'skill':
+          return 'skill';
+        case 'directive':
+          return 'directive';
+        case 'test':
+          return 'testCase';
+        default:
+          // Legacy `subgraph` / `group` child — treat as `node` so
+          // containment rules apply; the escape hatch only releases
+          // the parent from validation, not the grandchildren.
+          return 'node';
+      }
+    }
+    const childVertex = this.vertices.get(childId);
+    if (!childVertex) {
+      return null;
+    }
+    if (this.isToolDefinition(childVertex)) {
+      return 'tool';
+    }
+    return 'node';
+  }
+
+  /**
+   * Per `AGENTFLOW-SYNTAX.md` §3.3: every typed container has a fixed
+   * allowed-children set. Violations emit `CONTAINMENT_VIOLATION` with
+   * the offending child's id. Legacy `subgraph` and `group` parents are
+   * unrestricted escape hatches and are skipped.
+   */
+  private validateContainment(): void {
+    for (const sg of this.subGraphs) {
+      const parentKind = this.classifyContainmentParent(sg);
+      if (parentKind === null) {
+        continue;
+      }
+      const allowed = CONTAINMENT_ALLOWED_CHILDREN[parentKind];
+      for (const childId of sg.nodes) {
+        const childKind = this.classifyContainmentChild(childId);
+        if (childKind === null) {
+          continue;
+        }
+        if (!allowed.has(childKind)) {
+          this.emitWarning(
+            'CONTAINMENT_VIOLATION',
+            `${parentKind} "${sg.id}" cannot contain ${childKind} "${childId}" (see AGENTFLOW-SYNTAX.md §3.3)`,
+            { nodeId: childId }
+          );
+        }
+      }
+    }
+  }
+
+  /**
+   * Returns true when an edge endpoint id refers to an `agent` subgraph
+   * or to an agent-instance vertex (`tag-rect` / `tagged-rectangle`).
+   * Used by the delegation and failure edge checks.
+   */
+  private isAgentEndpoint(id: string): boolean {
+    const sg = this.subGraphLookup.get(id);
+    if (sg && sg.type === 'agent') {
+      return true;
+    }
+    const vertex = this.vertices.get(id);
+    if (vertex && (vertex.type === 'tag-rect' || vertex.type === 'tagged-rectangle')) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Returns true when an edge endpoint id refers to a reference node
+   * per §13 applicability (`shape: procs`). Used by the conformance
+   * edge check.
+   */
+  private isReferenceEndpoint(id: string): boolean {
+    const vertex = this.vertices.get(id);
+    return vertex !== undefined && vertex.type === 'procs';
+  }
+
+  /**
+   * Per `AGENTFLOW-SYNTAX.md` §5.1: every edge operator has a primary
+   * semantic. When the semantic contradicts the endpoint kinds, emit
+   * `EDGE_SEMANTIC_CONTRADICTION`. Three specific rules:
+   *   - delegation (`-->>`) source must be an agent.
+   *   - failure    (`--x`)  source must be an agent.
+   *   - conformance (`--o`) target must be a reference node.
+   *
+   * Container-boundary contract violations for `==>` are covered by
+   * `validateContainerEdges()` (PR E) — not this pass.
+   */
+  private validateEdgeEndpointKinds(): void {
+    for (const edge of this.edges) {
+      const semantic = edge.edgeSemantic;
+      if (semantic === undefined) {
+        continue;
+      }
+      if (semantic === 'delegation' && !this.isAgentEndpoint(edge.start)) {
+        this.emitWarning(
+          'EDGE_SEMANTIC_CONTRADICTION',
+          `delegation edge source "${edge.start}" is not an agent (see AGENTFLOW-SYNTAX.md §5.1)`,
+          { edgeId: edge.id }
+        );
+        continue;
+      }
+      if (semantic === 'failure' && !this.isAgentEndpoint(edge.start)) {
+        this.emitWarning(
+          'EDGE_SEMANTIC_CONTRADICTION',
+          `failure edge source "${edge.start}" is not an agent (see AGENTFLOW-SYNTAX.md §5.1)`,
+          { edgeId: edge.id }
+        );
+        continue;
+      }
+      if (semantic === 'conformance' && !this.isReferenceEndpoint(edge.end)) {
+        this.emitWarning(
+          'EDGE_SEMANTIC_CONTRADICTION',
+          `conformance edge target "${edge.end}" is not a reference node (shape: procs) (see AGENTFLOW-SYNTAX.md §5.1)`,
+          { edgeId: edge.id }
+        );
+        continue;
+      }
+    }
+  }
+
+  /**
+   * Normalise a list-valued metadata key per §12.1. Returns an array
+   * regardless of whether the source was an array or a legacy
+   * comma-separated string. The legacy form emits
+   * `CAPABILITY_LIST_LEGACY_STRING` once per offending key per site.
+   * Returns `undefined` when the key is absent or empty.
+   */
+  private readCapabilityList(
+    siteId: string,
+    metadata: Record<string, unknown> | undefined,
+    key: 'permits' | 'requires' | 'deny' | 'fallbacks' | 'directives'
+  ): string[] | undefined {
+    if (!metadata) {
+      return undefined;
+    }
+    const raw = metadata[key];
+    if (Array.isArray(raw)) {
+      return raw.map((v) => String(v));
+    }
+    if (typeof raw === 'string' && raw.length > 0) {
+      this.emitWarning(
+        'CAPABILITY_LIST_LEGACY_STRING',
+        `\`${key}\` on "${siteId}" is a comma-separated string — use a YAML array (see AGENTFLOW-SYNTAX.md §12.1)`,
+        { nodeId: siteId }
+      );
+      return raw
+        .split(',')
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0);
+    }
+    return undefined;
+  }
+
+  /**
+   * Walk the structural parent chain of `id` (vertex or subgraph) to
+   * find the nearest enclosing `agent` subgraph. Returns that
+   * subgraph's id, or `undefined` when no ancestor agent exists.
+   */
+  private findEnclosingAgentId(id: string): string | undefined {
+    const parent = new Map<string, string>();
+    for (const sg of this.subGraphs) {
+      for (const childId of sg.nodes) {
+        parent.set(childId, sg.id);
+      }
+    }
+    let cursor: string | undefined = parent.get(id);
+    const seen = new Set<string>([id]);
+    while (cursor !== undefined && !seen.has(cursor)) {
+      seen.add(cursor);
+      const sg = this.subGraphLookup.get(cursor);
+      if (sg && sg.type === 'agent') {
+        return cursor;
+      }
+      cursor = parent.get(cursor);
+    }
+    return undefined;
+  }
+
+  /**
+   * Per `AGENTFLOW-SYNTAX.md` §12: for every tool invocation site,
+   * resolve the nearest enclosing agent and validate:
+   *
+   *     requires ⊆ permits  AND  requires ∩ deny = ∅
+   *
+   * Invocation sites are:
+   *   - vertices whose incoming edge terminates on a tool definition
+   *     (the edge's source is the invocation site for parent lookup);
+   *   - `win-pane` instance vertices whose resolved `def` chain (from
+   *     wave-2 `resolveInstances()`) lands on a tool.
+   *
+   * Tool definitions themselves are NOT invocation sites. Delegation
+   * (`-->>`) does not transfer capabilities — each invocation is
+   * checked against its own structural enclosing agent.
+   */
+  private validateCapabilities(): void {
+    const siteToTool: { siteId: string; toolId: string }[] = [];
+
+    // 1. Edges into a tool → the edge source is the invocation site.
+    for (const edge of this.edges) {
+      const target = this.vertices.get(edge.end);
+      if (!target || !this.isToolDefinition(target)) {
+        continue;
+      }
+      siteToTool.push({ siteId: edge.start, toolId: edge.end });
+    }
+
+    // 2. win-pane instances with a resolved tool def → the instance
+    //    is the invocation site; the tool is the chain's terminal.
+    for (const [id, vertex] of this.vertices) {
+      const shape = vertex.type as string | undefined;
+      if (shape !== 'win-pane' && shape !== 'window-pane') {
+        continue;
+      }
+      const def = vertex.metadata?.def;
+      if (typeof def !== 'string' || def.length === 0) {
+        continue;
+      }
+      const visited = new Set<string>([id]);
+      let cursor: string = def;
+      let toolId: string | undefined;
+      while (!visited.has(cursor)) {
+        visited.add(cursor);
+        const target = this.vertices.get(cursor);
+        if (!target) {
+          break;
+        }
+        if (this.isToolDefinition(target)) {
+          toolId = cursor;
+          break;
+        }
+        const next = target.metadata?.def;
+        if (typeof next !== 'string' || next.length === 0) {
+          break;
+        }
+        cursor = next;
+      }
+      if (toolId) {
+        siteToTool.push({ siteId: id, toolId });
+      }
+    }
+
+    for (const { siteId, toolId } of siteToTool) {
+      const tool = this.vertices.get(toolId);
+      if (!tool) {
+        continue;
+      }
+      const requires = this.readCapabilityList(toolId, tool.metadata, 'requires') ?? [];
+      const deny = this.readCapabilityList(toolId, tool.metadata, 'deny') ?? [];
+      if (requires.length === 0 && deny.length === 0) {
+        continue;
+      }
+
+      const agentId = this.findEnclosingAgentId(siteId);
+      if (agentId === undefined) {
+        this.emitWarning(
+          'CAPABILITY_INVOCATION_NO_AGENT',
+          `tool invocation at "${siteId}" has no enclosing agent (see AGENTFLOW-SYNTAX.md §12)`,
+          { nodeId: siteId }
+        );
+        continue;
+      }
+      const agentSub = this.subGraphLookup.get(agentId);
+      const permits = this.readCapabilityList(agentId, agentSub?.metadata, 'permits') ?? [];
+      const permitsSet = new Set(permits);
+      const denySet = new Set(deny);
+
+      for (const cap of requires) {
+        if (!permitsSet.has(cap)) {
+          this.emitWarning(
+            'CAPABILITY_MISSING',
+            `tool "${toolId}" requires "${cap}" but agent "${agentId}" does not grant it (see AGENTFLOW-SYNTAX.md §12)`,
+            { nodeId: siteId }
+          );
+        }
+        if (denySet.has(cap)) {
+          this.emitWarning(
+            'CAPABILITY_DENIED',
+            `tool "${toolId}" requires "${cap}" but its own deny list forbids it (see AGENTFLOW-SYNTAX.md §12)`,
+            { nodeId: siteId }
+          );
+        }
+      }
+    }
+  }
+
+  /**
+   * Per `AGENTFLOW-SYNTAX.md` §5.5: when a data edge (`==>`) touches a
+   * container, the container must declare the matching contract:
+   * `params` for incoming edges, `returns` for outgoing. A multi-param
+   * container's incoming edge MUST carry a label that names one of
+   * the declared parameters.
+   *
+   * Precedence edges (`-->`) are always valid at container boundaries
+   * — they target the entry boundary on incoming, the completion
+   * boundary on outgoing. Other semantics (association, governance,
+   * bidirectional, conformance, delegation, failure) are not subject
+   * to §5.5.
+   */
+  private validateContainerEdges(): void {
+    for (const edge of this.edges) {
+      if (edge.edgeSemantic !== 'data') {
+        continue;
+      }
+      const startSub = this.subGraphLookup.get(edge.start);
+      const endSub = this.subGraphLookup.get(edge.end);
+      if (endSub) {
+        // Incoming data edge — container needs `params`.
+        const rawParams = endSub.metadata?.params;
+        const params = Array.isArray(rawParams)
+          ? rawParams.map((p) => String(p))
+          : typeof rawParams === 'string' && rawParams.length > 0
+            ? [rawParams]
+            : [];
+        if (params.length === 0) {
+          this.emitWarning(
+            'CONTAINER_EDGE_NO_CONTRACT',
+            `incoming data edge to "${edge.end}" but container declares no \`params\` (see AGENTFLOW-SYNTAX.md §5.5)`,
+            { edgeId: edge.id }
+          );
+        } else {
+          const label = typeof edge.text === 'string' ? edge.text.trim() : '';
+          if (label.length === 0) {
+            if (params.length > 1) {
+              this.emitWarning(
+                'CONTAINER_EDGE_LABEL_REQUIRED',
+                `incoming data edge to "${edge.end}" has no label but container declares ${params.length} params — label one (see AGENTFLOW-SYNTAX.md §5.5)`,
+                { edgeId: edge.id }
+              );
+            }
+            // single-param + no label = implicit binding, OK.
+          } else if (!params.includes(label)) {
+            this.emitWarning(
+              'CONTAINER_EDGE_LABEL_UNRESOLVED',
+              `incoming data edge label "${label}" does not match any declared param of "${edge.end}" (see AGENTFLOW-SYNTAX.md §5.5)`,
+              { edgeId: edge.id }
+            );
+          }
+        }
+      }
+      if (startSub) {
+        // Outgoing data edge — container needs `returns`.
+        const returns = startSub.metadata?.returns;
+        const hasReturns =
+          returns !== undefined &&
+          returns !== null &&
+          !(typeof returns === 'string' && returns.length === 0) &&
+          !(Array.isArray(returns) && returns.length === 0);
+        if (!hasReturns) {
+          this.emitWarning(
+            'CONTAINER_EDGE_NO_CONTRACT',
+            `outgoing data edge from "${edge.start}" but container declares no \`returns\` (see AGENTFLOW-SYNTAX.md §5.5)`,
+            { edgeId: edge.id }
+          );
+        }
+      }
+    }
+  }
+
+  /** Run every post-parse diagnostic validator once per parse. */
+  private runPostParseValidators(): void {
+    if (this.postParseValidationRun) {
+      return;
+    }
+    this.postParseValidationRun = true;
+    this.validateHexagonBranching();
+    this.resolveInstances();
+    this.validateConnectorReferences();
+    this.validateMetadataApplicability();
+    this.resolveReferences();
+    this.validateReferenceKinds();
+    this.validateContainment();
+    this.validateEdgeEndpointKinds();
+    this.validateCapabilities();
+    this.validateContainerEdges();
+  }
+
   public getData() {
+    this.runPostParseValidators();
     const config = getConfig();
     const nodes: Node[] = [];
     const edges: Edge[] = [];
@@ -1573,6 +2961,388 @@ You have to call mermaid.initialize.`
   public defaultConfig() {
     return defaultConfig.flowchart;
   }
+
+  // ── Semantic-model projection (PR 3) ─────────────────────────────────
+  //
+  // `getSemanticModel()` returns a presentation-stripped view of the
+  // diagram state for downstream tooling. Per AGENTFLOW-SYNTAX.md §13
+  // `view`, `classDef` / `class` / `style` / `linkStyle`, `icon`, `img`,
+  // `w`, `h`, collapsed/expanded state, element mappings, and interactivity
+  // bindings are presentation-only and MUST NOT influence semantic
+  // interpretation — so none of them appear in the returned model. Fields
+  // that carry meaning (ids, labels, shape, domain metadata, edge
+  // arrow/stroke/label, subgraph membership, type/template declarations,
+  // diagnostics) are kept.
+
+  public getSemanticModel(): AgentflowSemanticModel {
+    // Run the post-parse validators so that the semantic export includes
+    // up-to-date diagnostics and resolved-instance metadata.
+    this.runPostParseValidators();
+    // Subgraph ids sometimes also appear in `this.vertices` when metadata
+    // (`@{...}`) is attached to a container id — the metadata-attachment
+    // path creates a placeholder vertex record. Those are NOT semantic
+    // vertices; they're container descriptors and the semantic model
+    // exposes them via `subGraphs` instead.
+    const subGraphIds = new Set(this.subGraphs.map((sg) => sg.id));
+    const vertices: SemanticVertex[] = [];
+    for (const [id, v] of this.vertices) {
+      if (subGraphIds.has(id)) {
+        continue;
+      }
+      const vertex: SemanticVertex = { id };
+      if (v.text !== undefined) {
+        vertex.label = v.text;
+      }
+      if (v.type !== undefined) {
+        vertex.shape = v.type;
+      }
+      if (this.isToolDefinition(v)) {
+        vertex.vertexKind = 'tool';
+      }
+      const resolved = this.resolvedInstanceMetadata.get(id);
+      if (resolved) {
+        vertex.resolvedMetadata = resolved;
+      }
+      if (v.metadata && Object.keys(v.metadata).length > 0) {
+        // Strip presentation-only keys from metadata passthrough.
+        const meta: Record<string, unknown> = {};
+        for (const [key, value] of Object.entries(v.metadata)) {
+          if (SEMANTIC_METADATA_SKIP_KEYS.has(key)) {
+            continue;
+          }
+          meta[key] = value;
+        }
+        if (Object.keys(meta).length > 0) {
+          vertex.metadata = meta;
+        }
+        if (typeof v.metadata.def === 'string') {
+          vertex.def = v.metadata.def;
+        }
+      }
+      vertices.push(vertex);
+    }
+
+    const edges: SemanticEdge[] = this.edges.map((e) => {
+      const edge: SemanticEdge = { start: e.start, end: e.end };
+      if (e.id !== undefined) {
+        edge.id = e.id;
+      }
+      if (typeof e.text === 'string' && e.text.length > 0) {
+        edge.label = e.text;
+      }
+      if (e.type !== undefined) {
+        edge.type = e.type;
+      }
+      if (e.stroke !== undefined) {
+        edge.stroke = e.stroke;
+      }
+      if (e.edgeSemantic !== undefined) {
+        edge.edgeSemantic = e.edgeSemantic;
+      }
+      if (e.length !== undefined) {
+        edge.length = e.length;
+      }
+      return edge;
+    });
+
+    const subGraphs: SemanticSubGraph[] = this.subGraphs.map((sg) => {
+      const out: SemanticSubGraph = {
+        id: sg.id,
+        nodes: [...sg.nodes],
+      };
+      if (sg.type !== undefined) {
+        out.type = sg.type;
+      }
+      if (sg.title !== undefined) {
+        out.title = sg.title;
+      }
+      if (sg.dir !== undefined) {
+        out.direction = sg.dir;
+      }
+      if (sg.metadata && Object.keys(sg.metadata).length > 0) {
+        const meta: Record<string, unknown> = {};
+        for (const [key, value] of Object.entries(sg.metadata)) {
+          if (SEMANTIC_METADATA_SKIP_KEYS.has(key)) {
+            continue;
+          }
+          meta[key] = value;
+        }
+        if (Object.keys(meta).length > 0) {
+          out.metadata = meta;
+        }
+      }
+      return out;
+    });
+
+    const model: AgentflowSemanticModel = {
+      vertices,
+      edges,
+      subGraphs,
+      typeDeclarations: [...this.typeDeclarations.values()],
+      templateDeclarations: [...this.templateDeclarations.values()],
+      diagnostics: this.diagnostics,
+    };
+    if (this.direction !== undefined) {
+      model.direction = this.direction;
+    }
+    return model;
+  }
+
+  // ── Element-mapping infrastructure (PR 2a) ────────────────────────────
+  //
+  // JISON action blocks call the `add*Mapping` methods alongside the
+  // structural `add*` methods; see `agentflow.jison`. When a diagram DB
+  // does not expose these methods the JISON guard `if (yy.addVertexMapping)`
+  // simply skips them, so the mapping layer is opt-in and has no effect on
+  // diagrams that don't consume positions.
+  //
+  // `setSourceText` is both the presence signal Diagram.ts uses for inline-
+  // position capture AND a place for downstream tooling to read back the
+  // original source for render-to-source lookups.
+
+  public setSourceText(text: string): void {
+    this.sourceText = text;
+  }
+
+  public setFrontmatterLineOffset(offset: number): void {
+    this.frontmatterLineOffset = offset ?? 0;
+  }
+
+  private toElementPosition(loc: JisonLocation | undefined): ElementPosition {
+    // JISON always passes a location object when location tracking is
+    // enabled, but defend against a missing loc to keep the parser robust
+    // in the face of future grammar rules that forget `@$`.
+    const first_line = loc?.first_line ?? 0;
+    const first_column = loc?.first_column ?? 0;
+    const last_line = loc?.last_line ?? first_line;
+    const last_column = loc?.last_column ?? first_column;
+    const [startIndex, endIndex] = loc?.range ?? [0, 0];
+    return {
+      startLine: first_line + this.frontmatterLineOffset,
+      startColumn: first_column,
+      endLine: last_line + this.frontmatterLineOffset,
+      endColumn: last_column,
+      startIndex,
+      endIndex,
+    };
+  }
+
+  private pushMapping(id: string, type: AgentflowStatementType, loc: JisonLocation | undefined) {
+    if (!id) {
+      return;
+    }
+    this.elementMappings.push({
+      id,
+      type,
+      position: this.toElementPosition(loc),
+    });
+  }
+
+  public addVertexMapping(
+    id: string,
+    _text: unknown,
+    _shape: unknown,
+    loc: JisonLocation | undefined
+  ): void {
+    this.pushMapping(id, 'vertex', loc);
+  }
+
+  public addEdgeMapping(
+    _fromStmt: unknown,
+    toNodes: unknown,
+    _link: unknown,
+    loc: JisonLocation | undefined
+  ): void {
+    // JISON hands the edge's right-hand-side node list in; derive a stable
+    // identifier from the destination node IDs joined by `>`. This matches
+    // the fan-out shape (`A --> B & C` resolves to one edge statement with
+    // two destinations) and keeps the mapping lookup intuitive.
+    const ids = Array.isArray(toNodes)
+      ? toNodes.map((n) => (typeof n === 'string' ? n : (n?.id ?? ''))).filter(Boolean)
+      : [];
+    const edgeId = ids.length > 0 ? ids.join('>') : 'edge';
+    this.pushMapping(edgeId, 'edge', loc);
+  }
+
+  public addSubgraphMapping(
+    _id: unknown,
+    _title: unknown,
+    startLoc: JisonLocation | undefined,
+    endLoc: JisonLocation | undefined
+  ): void {
+    const id = (typeof _id === 'string' ? _id : (_id as { text?: string } | undefined)?.text) ?? '';
+    const start = this.toElementPosition(startLoc);
+    const end = endLoc ? this.toElementPosition(endLoc) : start;
+    if (!id) {
+      return;
+    }
+    this.elementMappings.push({
+      id,
+      type: 'subgraph',
+      // Range spans from the container keyword to its `end` — startLine from
+      // the opener, endLine from the closer.
+      position: {
+        startLine: start.startLine,
+        startColumn: start.startColumn,
+        endLine: end.endLine,
+        endColumn: end.endColumn,
+        startIndex: start.startIndex,
+        endIndex: end.endIndex,
+      },
+    });
+  }
+
+  /** Extract the declared name from a raw TYPE_DECL or TEMPLATE_DECL string. */
+  private extractDeclName(declStr: string, prefix: 'type' | 'template'): string {
+    // Matches `type Name ...` and `template Name ...` / `template %Name ...`.
+    const re = prefix === 'type' ? /^type\s+([A-Z_a-z]\w*)/ : /^template\s+%?([A-Z_a-z]\w*)/;
+    const match = re.exec(declStr);
+    return match ? match[1] : '';
+  }
+
+  public addTypeMapping(declStr: string, loc: JisonLocation | undefined): void {
+    this.pushMapping(this.extractDeclName(declStr, 'type'), 'type', loc);
+  }
+
+  public addTemplateMapping(declStr: string, loc: JisonLocation | undefined): void {
+    this.pushMapping(this.extractDeclName(declStr, 'template'), 'template', loc);
+  }
+
+  public getElementMappings(): readonly AgentflowElementMapping[] {
+    return this.elementMappings;
+  }
+
+  public getElementById(id: string): AgentflowElementMapping | undefined {
+    return this.elementMappings.find((m) => m.id === id);
+  }
+
+  public getElementsOnLine(line: number): AgentflowElementMapping[] {
+    return this.elementMappings.filter(
+      (m) => line >= m.position.startLine && line <= m.position.endLine
+    );
+  }
+
+  public getElementAtPosition(line: number, column: number): AgentflowElementMapping | undefined {
+    // Return the innermost (smallest span) match so nested subgraphs resolve
+    // to the deepest container that contains the point rather than the
+    // outermost one.
+    const candidates = this.elementMappings.filter((m) => {
+      const { startLine, startColumn, endLine, endColumn } = m.position;
+      if (line < startLine || line > endLine) {
+        return false;
+      }
+      if (line === startLine && column < startColumn) {
+        return false;
+      }
+      if (line === endLine && column > endColumn) {
+        return false;
+      }
+      return true;
+    });
+    if (candidates.length === 0) {
+      return undefined;
+    }
+    return candidates.reduce((smallest, cur) => {
+      const smallSpan =
+        (smallest.position.endLine - smallest.position.startLine) * 1000 +
+        (smallest.position.endColumn - smallest.position.startColumn);
+      const curSpan =
+        (cur.position.endLine - cur.position.startLine) * 1000 +
+        (cur.position.endColumn - cur.position.startColumn);
+      return curSpan < smallSpan ? cur : smallest;
+    });
+  }
+
+  public getMappingStats(): {
+    vertices: number;
+    edges: number;
+    subgraphs: number;
+    types: number;
+    templates: number;
+    totalElements: number;
+  } {
+    let vertices = 0;
+    let edges = 0;
+    let subgraphs = 0;
+    let types = 0;
+    let templates = 0;
+    for (const m of this.elementMappings) {
+      if (m.type === 'vertex') {
+        vertices++;
+      } else if (m.type === 'edge') {
+        edges++;
+      } else if (m.type === 'subgraph') {
+        subgraphs++;
+      } else if (m.type === 'type') {
+        types++;
+      } else if (m.type === 'template') {
+        templates++;
+      }
+    }
+    return {
+      vertices,
+      edges,
+      subgraphs,
+      types,
+      templates,
+      totalElements: this.elementMappings.length,
+    };
+  }
+
+  // ── Diagnostics (PR 2b) ────────────────────────────────────────────────
+  //
+  // `emitWarning` (and its error-severity counterpart `emitError`) record a
+  // structured diagnostic and also fire `log.warn` so humans see the
+  // message in the console. When the caller supplies a `nodeId` or
+  // `edgeId`, the position is looked up through the element-mapping layer
+  // added in PR 2a — so the diagnostic carries enough context for an
+  // editor to highlight the offending element.
+
+  private emitDiagnostic(
+    id: AgentflowWarningId,
+    severity: 'warning' | 'error',
+    message: string,
+    ctx?: AgentflowDiagnosticContext
+  ): void {
+    const anchorId = ctx?.nodeId ?? ctx?.edgeId;
+    const mapping = anchorId ? this.getElementById(anchorId) : undefined;
+    const diagnostic: AgentflowDiagnostic = {
+      id,
+      severity,
+      message,
+      ...(ctx?.nodeId ? { nodeId: ctx.nodeId } : {}),
+      ...(ctx?.edgeId && !ctx?.nodeId ? { edgeId: ctx.edgeId } : {}),
+      ...(mapping ? { position: mapping.position } : {}),
+    };
+    this.diagnostics.push(diagnostic);
+    const formatted = `agentflow[${id}]: ${message}`;
+    if (severity === 'error') {
+      log.error(formatted);
+    } else {
+      log.warn(formatted);
+    }
+  }
+
+  public emitWarning(
+    id: AgentflowWarningId,
+    message: string,
+    ctx?: AgentflowDiagnosticContext
+  ): void {
+    this.emitDiagnostic(id, 'warning', message, ctx);
+  }
+
+  public emitError(
+    id: AgentflowWarningId,
+    message: string,
+    ctx?: AgentflowDiagnosticContext
+  ): void {
+    this.emitDiagnostic(id, 'error', message, ctx);
+  }
+
+  public getDiagnostics(): readonly AgentflowDiagnostic[] {
+    return this.diagnostics;
+  }
+
   public setAccTitle = setAccTitle;
   public setAccDescription = setAccDescription;
   public setDiagramTitle = setDiagramTitle;

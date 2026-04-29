@@ -1,5 +1,6 @@
 import { log } from '../../logger.js';
 import type { LayoutData } from '../../rendering-util/types.js';
+import type { AgentFlowDB } from './agentflowDb.js';
 
 /**
  * Shapes allowed in agentflow diagrams.
@@ -50,8 +51,15 @@ const DEFAULT_SHAPE = 'roundedRect';
 /**
  * Transform flowchart-generated LayoutData into agentflow-specific form.
  * Called after the db produces layout data but before it reaches the renderer.
+ *
+ * `db` is optional so callers can invoke `transformData` standalone (e.g.
+ * in focused tests). When supplied, unsupported-shape warnings are emitted
+ * as structured `AgentflowDiagnostic`s through `db.emitWarning` so
+ * conformance fixtures and editor tooling can match on the
+ * `SHAPE_UNSUPPORTED` message ID. When absent, the warning still reaches
+ * the logger for console visibility.
  */
-export function transformData(data: LayoutData): void {
+export function transformData(data: LayoutData, db?: AgentFlowDB): void {
   for (const node of data.nodes) {
     // Group/cluster nodes use specific cluster shapes — don't override
     if (node.isGroup) {
@@ -65,7 +73,12 @@ export function transformData(data: LayoutData): void {
 
     // Enforce allowed shapes
     if (!ALLOWED_SHAPES.has(node.shape)) {
-      log.warn(`agentflow: shape "${node.shape}" is not supported, using "${DEFAULT_SHAPE}"`);
+      const msg = `shape "${node.shape}" is not supported, using "${DEFAULT_SHAPE}"`;
+      if (db?.emitWarning) {
+        db.emitWarning('SHAPE_UNSUPPORTED', msg, { nodeId: node.id });
+      } else {
+        log.warn(`agentflow: ${msg}`);
+      }
       node.shape = DEFAULT_SHAPE;
     }
   }

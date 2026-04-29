@@ -1,0 +1,4 @@
+{
+  "outcome": "warning",
+  "diagnostics": [{ "id": "METADATA_KEY_MISAPPLIED", "nodeId": "search" }]
+}

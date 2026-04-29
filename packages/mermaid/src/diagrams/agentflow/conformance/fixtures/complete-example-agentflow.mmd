@@ -1,0 +1,43 @@
+%% §20 Complete Example — condensed for wave-1. Uses `shape: subroutine`
+%% rather than the wave-2 `tool` keyword, and `typeRef` metadata on procs
+%% reference nodes. Otherwise faithful to the spec's Coffee-Team example:
+%% nested agent > flow > agent > task, type declarations, doc artifacts,
+%% reference binding via `--o`.
+agentflow TB
+  type CoffeeCopy = Record {
+    hero_tagline: String
+    hero_subtitle: String
+  }
+
+  agent coffee_team["Coffee Team"]
+    flow build_site["Build Site"]
+      agent researcher["Researcher"]
+        task step1["Research Location"]
+          city["city"]
+          research_loc["research_location"]
+          brief["Research Brief"]
+          city --> research_loc --> brief
+        end
+        task step2["Write Copy"]
+          write_copy["write_copy"]
+          english_copy["English Copy"]
+          brief --> write_copy --> english_copy
+          write_copy --o coffee_copy_ref
+        end
+        step1 --> step2
+      end
+    end
+  end
+
+  coffee_copy_ref["CoffeeCopy"]
+
+  city@{ shape: lean-right }
+  brief@{ shape: doc }
+  english_copy@{ shape: doc }
+  coffee_copy_ref@{ shape: procs, typeRef: "CoffeeCopy" }
+
+  research_loc@{ shape: subroutine, returns: "String", requires: ["net.read"], cache: "24h" }
+  write_copy@{ shape: subroutine, returns: "CoffeeCopy", requires: ["llm.query"], retry: 2 }
+
+  researcher@{ model: "claude-sonnet-4-20250514", permits: ["net.read", "llm.query"] }
+  build_site@{ params: "city :: String", returns: "String" }
