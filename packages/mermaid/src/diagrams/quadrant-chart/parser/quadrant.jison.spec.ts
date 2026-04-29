@@ -433,4 +433,145 @@ describe('Testing quadrantChart jison file', () => {
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.addClass).toHaveBeenCalledWith('constructor', ['fill:#ff0000']);
   });
+
+  describe('Unicode support (CJK + Emoji)', () => {
+    it('should be able to parse Chinese text in quadrant labels', () => {
+      let str = 'quadrantChart\nquadrant-1 需要扩展';
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.setQuadrant1Text).toHaveBeenCalledWith({
+        text: '需要扩展',
+        type: 'text',
+      });
+
+      clearMocks();
+      str = 'quadrantChart\nquadrant-2 需要推广\nquadrant-3 重新评估\nquadrant-4 可以改进';
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.setQuadrant2Text).toHaveBeenCalledWith({
+        text: '需要推广',
+        type: 'text',
+      });
+      expect(mockDB.setQuadrant3Text).toHaveBeenCalledWith({
+        text: '重新评估',
+        type: 'text',
+      });
+      expect(mockDB.setQuadrant4Text).toHaveBeenCalledWith({
+        text: '可以改进',
+        type: 'text',
+      });
+    });
+
+    it('should be able to parse Chinese text in x-axis', () => {
+      const str = 'quadrantChart\nx-axis 低覆盖率 --> 高覆盖率';
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.setXAxisLeftText).toHaveBeenCalledWith({
+        text: '低覆盖率',
+        type: 'text',
+      });
+      expect(mockDB.setXAxisRightText).toHaveBeenCalledWith({
+        text: '高覆盖率',
+        type: 'text',
+      });
+    });
+
+    it('should be able to parse Chinese text in y-axis', () => {
+      const str = 'quadrantChart\ny-axis 低参与度 --> 高参与度';
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.setYAxisBottomText).toHaveBeenCalledWith({
+        text: '低参与度',
+        type: 'text',
+      });
+      expect(mockDB.setYAxisTopText).toHaveBeenCalledWith({
+        text: '高参与度',
+        type: 'text',
+      });
+    });
+
+    it('should be able to parse Chinese point names', () => {
+      const str = 'quadrantChart\n产品A: [0.3, 0.6]';
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.addPoint).toHaveBeenCalledWith(
+        { text: '产品A', type: 'text' },
+        '',
+        '0.3',
+        '0.6',
+        []
+      );
+    });
+
+    it('should be able to parse a full chart with Chinese', () => {
+      const str = `quadrantChart
+title 分析象限图
+x-axis 低覆盖率 --> 高覆盖率
+y-axis 低参与度 --> 高参与度
+quadrant-1 需要扩展
+quadrant-2 需要推广
+quadrant-3 重新评估
+quadrant-4 可以改进
+产品A: [0.3, 0.6]
+产品B: [0.45, 0.23]`;
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.setDiagramTitle).toHaveBeenCalledWith('分析象限图');
+      expect(mockDB.setXAxisLeftText).toHaveBeenCalledWith({
+        text: '低覆盖率',
+        type: 'text',
+      });
+      expect(mockDB.setXAxisRightText).toHaveBeenCalledWith({
+        text: '高覆盖率',
+        type: 'text',
+      });
+      expect(mockDB.setYAxisBottomText).toHaveBeenCalledWith({
+        text: '低参与度',
+        type: 'text',
+      });
+      expect(mockDB.setYAxisTopText).toHaveBeenCalledWith({
+        text: '高参与度',
+        type: 'text',
+      });
+      expect(mockDB.setQuadrant1Text).toHaveBeenCalledWith({
+        text: '需要扩展',
+        type: 'text',
+      });
+      expect(mockDB.addPoint).toHaveBeenCalledWith(
+        { text: '产品A', type: 'text' },
+        '',
+        '0.3',
+        '0.6',
+        []
+      );
+      expect(mockDB.addPoint).toHaveBeenCalledWith(
+        { text: '产品B', type: 'text' },
+        '',
+        '0.45',
+        '0.23',
+        []
+      );
+    });
+
+    it('should be able to parse Japanese text', () => {
+      const str = 'quadrantChart\nquadrant-1 拡張が必要\nx-axis 低い --> 高い';
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.setQuadrant1Text).toHaveBeenCalledWith({
+        text: '拡張が必要',
+        type: 'text',
+      });
+    });
+
+    it('should be able to parse Korean text', () => {
+      const str = 'quadrantChart\nx-axis 낮음 --> 높음';
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.setXAxisLeftText).toHaveBeenCalledWith({
+        text: '낮음',
+        type: 'text',
+      });
+    });
+
+    it('should be able to parse emoji in text', () => {
+      const str = 'quadrantChart\nquadrant-2 🚀Growth';
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.setQuadrant2Text).toHaveBeenCalledWith({
+        text: '🚀Growth',
+        type: 'text',
+      });
+    });
+  });
 });

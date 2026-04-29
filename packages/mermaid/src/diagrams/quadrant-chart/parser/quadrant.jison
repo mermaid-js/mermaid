@@ -57,6 +57,7 @@ accDescr\s*"{"\s*                        { this.begin("acc_descr_multiline");}
 " "*"quadrantChart"" "*		                   return 'QUADRANT';
 
 [A-Za-z]+                                return 'ALPHA';
+[\u0080-\uFFFF]+                         return 'UNICODE_TEXT';
 ":"                                      return 'COLON';
 \+                                       return 'PLUS';
 ","                                      return 'COMMA';
@@ -180,7 +181,7 @@ alphaNum
     ;
 
 
-alphaNumToken  : PUNCTUATION | AMP | NUM| ALPHA | COMMA | PLUS | EQUALS | MULT | DOT | BRKT| UNDERSCORE ;
+alphaNumToken  : PUNCTUATION | AMP | NUM| ALPHA | COMMA | PLUS | EQUALS | MULT | DOT | BRKT| UNDERSCORE | UNICODE_TEXT;
 
 textNoTagsToken: alphaNumToken | SPACE | MINUS;
 
