@@ -349,6 +349,25 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    *
    */
   inheritDir?: boolean;
+  /**
+   * Enables automatic wrapping of long linear chains into a multi-row structure.
+   * When enabled, linear chains longer than wrapThreshold will be split into multiple rows.
+   * Currently a configuration placeholder; wrapping implementation is planned for future releases.
+   *
+   */
+  wrapLinearChains?: boolean;
+  /**
+   * Minimum number of nodes in a linear chain before wrapping is considered.
+   * Chains with fewer nodes than this value will not be wrapped.
+   *
+   */
+  wrapThreshold?: number;
+  /**
+   * Maximum number of nodes to place in each row when wrapping linear chains.
+   * For example, a chain of 12 nodes with wrapRowSize=4 would be arranged into 3 rows.
+   *
+   */
+  wrapRowSize?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

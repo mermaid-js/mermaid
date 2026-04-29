@@ -2221,6 +2221,28 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           If true, subgraphs without explicit direction will inherit the global graph direction
           (e.g., LR, TB, RL, BT). Defaults to false to preserve legacy layout behavior.
 
+      wrapLinearChains:
+        type: boolean
+        default: false
+        description: |
+          Enables automatic wrapping of long linear chains into a multi-row structure.
+          When enabled, linear chains longer than wrapThreshold will be split into multiple rows.
+          Currently a configuration placeholder; wrapping implementation is planned for future releases.
+
+      wrapThreshold:
+        type: number
+        default: 6
+        description: |
+          Minimum number of nodes in a linear chain before wrapping is considered.
+          Chains with fewer nodes than this value will not be wrapped.
+
+      wrapRowSize:
+        type: number
+        default: 4
+        description: |
+          Maximum number of nodes to place in each row when wrapping linear chains.
+          For example, a chain of 12 nodes with wrapRowSize=4 would be arranged into 3 rows.
+
   SankeyLinkColor:
     description: |
       Picks the color of the sankey diagram links, using the colors of the source and/or target of the links.
