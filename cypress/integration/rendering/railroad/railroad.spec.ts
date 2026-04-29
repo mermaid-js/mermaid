@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../../helpers/util.ts';
 
 function shouldHaveRailroadContent($svg: JQuery<SVGSVGElement>) {
   const svgElement = $svg[0];
