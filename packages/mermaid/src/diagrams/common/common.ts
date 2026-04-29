@@ -84,11 +84,13 @@ export const sanitizeText = (text: string, config: MermaidConfig): string => {
     return text;
   }
   if (config.dompurifyConfig) {
-    text = DOMPurify.sanitize(sanitizeMore(text, config), config.dompurifyConfig).toString();
+    text = String(DOMPurify.sanitize(sanitizeMore(text, config), config.dompurifyConfig));
   } else {
-    text = DOMPurify.sanitize(sanitizeMore(text, config), {
-      FORBID_TAGS: ['style'],
-    }).toString();
+    text = String(
+      DOMPurify.sanitize(sanitizeMore(text, config), {
+        FORBID_TAGS: ['style'],
+      })
+    );
   }
   return text;
 };
