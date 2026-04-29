@@ -103,9 +103,41 @@ line was introduced with 'click'.
 */
 <*>"href"                       return 'HREF';
 
-<generic>[~]                    this.popState();
-<generic>[^~]*                  return "GENERICTYPE";
-<*>"~"                          this.begin("generic");
+/*
+  Nested generic type support: track depth so `List~List~Person~~` is captured
+  as a single GENERICTYPE token with content `List~Person~`.
+
+  On each `~` inside the generic state, peek at the next character to decide:
+    - word char (\w) → opening a nested generic, increment depth
+    - anything else  → closing current level, decrement depth
+  When depth hits 0, pop state and emit the accumulated content.
+
+  This heuristic assumes generic type parameters contain identifier-like content.
+  Leading whitespace or punctuation inside generics (e.g. `Map~ Key~`) will close
+  the type prematurely — matching pre-existing behavior.
+
+  Empty generics (`~~`) intentionally skip emitting a GENERICTYPE token since the
+  grammar's className rule requires content between the tildes. An empty generic
+  simply produces no token and the class name is parsed without a type parameter.
+*/
+<generic>[^~]+                  %{ this._gContent += yytext; %}
+<generic>"~"                    %{
+    var nextCh = this._input.length > 0 ? this._input.charAt(0) : '';
+    if (/\w/.test(nextCh)) {
+        this._gDepth++;
+        this._gContent += '~';
+    } else {
+        this._gDepth--;
+        if (this._gDepth > 0) {
+            this._gContent += '~';
+        } else {
+            this.popState();
+            yytext = this._gContent;
+            if (this._gContent.length > 0) return "GENERICTYPE";
+        }
+    }
+%}
+<*>"~"                          %{ this.begin("generic"); this._gDepth = 1; this._gContent = ''; %}
 
 <bqstring>[`]                   this.popState();
 <bqstring>[^`]+                 return "BQUOTE_STR";
