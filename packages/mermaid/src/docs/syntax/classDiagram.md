@@ -175,6 +175,7 @@ To describe the visibility (or encapsulation) of an attribute or method/function
 >
 > - `*` Abstract e.g.: `someAbstractMethod()*` or `someAbstractMethod() int*`
 > - `$` Static e.g.: `someStaticMethod()$` or `someStaticMethod() String$`
+> - `$*` OR `*$` Both e.g: `someAbstractStaticMethod()$*` or `someAbstractStaticMethod() int$*`
 
 > _note_ you can also include additional _classifiers_ to a field definition by adding the following notation to the very end:
 >
