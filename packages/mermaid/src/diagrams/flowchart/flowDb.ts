@@ -827,6 +827,10 @@ You have to call mermaid.initialize.`
         type = 'arrow_circle';
         str = str.slice(1);
         break;
+      case '~':
+        type = 'arrow_invisible';
+        str = str.slice(1);
+        break;
     }
 
     let stroke = 'normal';
@@ -858,28 +862,59 @@ You have to call mermaid.initialize.`
     let line = str.slice(0, -1);
     let type = 'arrow_open';
 
+    // Determine end arrow type
+    let endArrowType: string | null = null;
     switch (str.slice(-1)) {
       case 'x':
-        type = 'arrow_cross';
-        if (str.startsWith('x')) {
-          type = 'double_' + type;
-          line = line.slice(1);
-        }
+        endArrowType = 'arrow_cross';
         break;
       case '>':
-        type = 'arrow_point';
-        if (str.startsWith('<')) {
-          type = 'double_' + type;
-          line = line.slice(1);
-        }
+        endArrowType = 'arrow_point';
         break;
       case 'o':
-        type = 'arrow_circle';
-        if (str.startsWith('o')) {
-          type = 'double_' + type;
-          line = line.slice(1);
-        }
+        endArrowType = 'arrow_circle';
         break;
+      case '~':
+        endArrowType = 'arrow_invisible';
+        break;
+    }
+
+    // Determine start arrow type
+    let startArrowType: string | null = null;
+    const firstChar = str[0];
+    switch (firstChar) {
+      case 'x':
+        startArrowType = 'arrow_cross';
+        line = line.slice(1);
+        break;
+      case '<':
+        startArrowType = 'arrow_point';
+        line = line.slice(1);
+        break;
+      case 'o':
+        startArrowType = 'arrow_circle';
+        line = line.slice(1);
+        break;
+      case '~':
+        startArrowType = 'arrow_invisible';
+        line = line.slice(1);
+        break;
+    }
+
+    // Set the type based on start and end arrow types
+    if (endArrowType) {
+      if (startArrowType) {
+        if (startArrowType === endArrowType) {
+          // Same type on both ends: e.g., x----x, o----o
+          type = 'double_' + endArrowType;
+        } else {
+          // Mixed types: e.g., x----o, o---->
+          type = `${startArrowType}_${endArrowType}`;
+        }
+      } else {
+        // Only end type: e.g., ---->
+        type = endArrowType;
+      }
     }
 
     let stroke = 'normal';
@@ -917,12 +952,14 @@ You have to call mermaid.initialize.`
         // -- xyz -->  - take arrow type from ending
         startInfo.type = info.type;
       } else {
-        // x-- xyz -->  - not supported
         if (startInfo.type !== info.type) {
-          return { type: 'INVALID', stroke: 'INVALID' };
+          // Mixed arrow types: e.g., o-- xyz --> (circle to point)
+          // Create a combined type format: startType_endType
+          startInfo.type = `${startInfo.type}_${info.type}`;
+        } else {
+          // Same type on both ends: e.g., o-- xyz --o (circle to circle)
+          startInfo.type = 'double_' + startInfo.type;
         }
-
-        startInfo.type = 'double_' + startInfo.type;
       }
 
       if (startInfo.type === 'double_arrow') {
@@ -995,15 +1032,26 @@ You have to call mermaid.initialize.`
     return nodes.find((node) => node.id === id);
   }
   private destructEdgeType(type: string | undefined) {
-    let arrowTypeStart = 'none';
+    let arrowTypeStart = 'arrow_open';
     let arrowTypeEnd = 'arrow_point';
+
+    // Check for mixed arrow types (e.g., arrow_circle_arrow_point)
+    const mixedTypeMatch = type?.match(/^(arrow_\w+)_(arrow_\w+)$/);
+    if (mixedTypeMatch) {
+      arrowTypeStart = mixedTypeMatch[1];
+      arrowTypeEnd = mixedTypeMatch[2];
+      return { arrowTypeStart, arrowTypeEnd };
+    }
+
     switch (type) {
+      case 'arrow_invisible':
       case 'arrow_point':
       case 'arrow_circle':
       case 'arrow_cross':
         arrowTypeEnd = type;
         break;
 
+      case 'double_arrow_invisible':
       case 'double_arrow_point':
       case 'double_arrow_circle':
       case 'double_arrow_cross':
