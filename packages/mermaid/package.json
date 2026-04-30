@@ -5,6 +5,7 @@
   "type": "module",
   "module": "./dist/mermaid.core.mjs",
   "types": "./dist/mermaid.d.ts",
+  "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist/mermaid.d.ts",
