@@ -480,7 +480,7 @@ columns 10
     );
   });
 
-  it('BL35: mixed column spans should not shrink column widths (issue #7503)', () => {
+  it('BL36: mixed column spans should not shrink column widths (issue #7503)', () => {
     imgSnapshotTest(
       `block-beta
     columns 5
@@ -488,6 +488,32 @@ columns 10
     CA["Cash back (actual) $128"]:1 SPO["Spoilage (35 unsold) $5,640"]:4
 `,
       {}
+    );
+  });
+
+  it('BL37: should render all arrow types in 9 columns grid', () => {
+    imgSnapshotTest(
+      `block-beta
+      columns 9
+      A space B
+      C space D
+      E space F
+      G space H
+      I space J
+      K space L
+      M space N
+      O space P
+      Q space R
+      A --- B
+      C --> D
+      E <--> F
+      G === H
+      I ==> J
+      K <==> L
+      M -.- N
+      O -.-> P
+      Q <-.-> R
+    `
     );
   });
 });

@@ -167,13 +167,30 @@ export class WardleyBuilder {
     return this.nodes.get(id);
   }
 
+  /**
+   * Resolve a name to a node ID. Tries exact ID match first,
+   * then falls back to finding a node whose label matches the name
+   * (handles pipeline components which have synthetic IDs like "Parent_Child").
+   */
+  public resolveNodeId(name: string): string {
+    if (this.nodes.has(name)) {
+      return name;
+    }
+    for (const [id, node] of this.nodes) {
+      if (node.label === name) {
+        return id;
+      }
+    }
+    return name;
+  }
+
   public build(): WardleyBuildResult {
     const nodes: WardleyNode[] = [];
     for (const node of this.nodes.values()) {
       if (typeof node.x !== 'number' || typeof node.y !== 'number') {
         throw new Error(`Node "${node.label}" is missing coordinates`);
       }
-      nodes.push(node as Required<WardleyNode>);
+      nodes.push(node as WardleyNode & { x: number; y: number });
     }
     return {
       nodes,

@@ -1,3 +1,4 @@
+import type * as d3 from 'd3';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { Diagram } from '../../Diagram.js';
 import { log } from '../../logger.js';
@@ -6,6 +7,8 @@ import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { WardleyBuildResult, WardleyNode } from './wardleyBuilder.js';
 
 const DEFAULT_STAGES = ['Genesis', 'Custom Built', 'Product', 'Commodity'];
+
+type WardleyText = d3.Selection<SVGTextElement, unknown, Element | null, unknown>;
 
 interface WardleyTheme {
   backgroundColor: string;
@@ -888,7 +891,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
         .sort((a, b) => a.number - b.number);
 
       // Draw text lines (temporarily to measure)
-      const textElements: any[] = [];
+      const textElements: WardleyText[] = [];
       sortedAnnotations.forEach((annotation, idx) => {
         const text = textBoxGroup
           .append('text')
@@ -907,7 +910,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
         let maxWidth = 0;
         let maxHeight = 0;
         textElements.forEach((text) => {
-          const textNode = text.node() as SVGTextElement;
+          const textNode = text.node()!;
           // Use getComputedTextLength for more accurate width measurement
           const textWidth = textNode.getComputedTextLength();
           maxWidth = Math.max(maxWidth, textWidth);
