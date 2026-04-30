@@ -1,6 +1,8 @@
+import { vi } from 'vitest';
 import { FlowDB } from '../flowDb.js';
 import flow from './flowParser.ts';
 import { setConfig } from '../../../config.js';
+import { log } from '../../../logger.js';
 
 setConfig({
   securityLevel: 'strict',
@@ -350,6 +352,23 @@ describe('[Style] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges[0].type).toBe('arrow_point');
+  });
+
+  it('should warn when style targets a non-existent node', function () {
+    const warnSpy = vi.spyOn(log, 'warn');
+    const res = flow.parser.parse('graph TD;\nAA-->BB;\nstyle A fill:#f00;');
+
+    const vert = flow.parser.yy.getVertices();
+
+    // Node A should still be created for backward compat, but a warning should be logged
+    expect(vert.get('A')).toBeDefined();
+    expect(vert.get('A').styles[0]).toBe('fill:#f00');
+    // AA and BB exist from the edge definition
+    expect(vert.get('AA')).toBeDefined();
+    expect(vert.get('BB')).toBeDefined();
+    // A warning should have been logged about the non-existent node
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('A'));
+    warnSpy.mockRestore();
   });
 
   it('should handle multiple vertices with style', function () {

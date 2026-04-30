@@ -734,6 +734,92 @@ describe('when parsing ER diagram it...', function () {
     expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ZERO_OR_MORE);
   });
 
+  it('should handle "1" alias directly followed by identifying relationship operator "--"', function () {
+    erDiagram.parser.parse('erDiagram\nCUSTOMER 1--one or more DELIVERY-ADDRESS : has');
+    const rels = erDb.getRelationships();
+
+    expect(erDb.getEntities().size).toBe(2);
+    expect(rels.length).toBe(1);
+    expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ONE_OR_MORE);
+    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ONLY_ONE);
+    expect(rels[0].relSpec.relType).toBe(erDb.Identification.IDENTIFYING);
+  });
+
+  it('should handle "1" alias directly followed by non-identifying relationship operator ".."', function () {
+    erDiagram.parser.parse('erDiagram\nCUSTOMER 1..one or more DELIVERY-ADDRESS : has');
+    const rels = erDb.getRelationships();
+
+    expect(erDb.getEntities().size).toBe(2);
+    expect(rels.length).toBe(1);
+    expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ONE_OR_MORE);
+    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ONLY_ONE);
+    expect(rels[0].relSpec.relType).toBe(erDb.Identification.NON_IDENTIFYING);
+  });
+
+  it('should handle "1" alias directly followed by mixed relationship operator ".-"', function () {
+    erDiagram.parser.parse('erDiagram\nCUSTOMER 1.-one or more DELIVERY-ADDRESS : has');
+    const rels = erDb.getRelationships();
+
+    expect(erDb.getEntities().size).toBe(2);
+    expect(rels.length).toBe(1);
+    expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ONE_OR_MORE);
+    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ONLY_ONE);
+    // ".-" is dotted-to-solid, which is NON_IDENTIFYING on the left side
+    expect(rels[0].relSpec.relType).toBe(erDb.Identification.NON_IDENTIFYING);
+  });
+
+  it('should handle "1" alias directly followed by mixed relationship operator "-."', function () {
+    erDiagram.parser.parse('erDiagram\nCUSTOMER 1-.one or more DELIVERY-ADDRESS : has');
+    const rels = erDb.getRelationships();
+
+    expect(erDb.getEntities().size).toBe(2);
+    expect(rels.length).toBe(1);
+    expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ONE_OR_MORE);
+    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ONLY_ONE);
+    // "-." is solid-to-dotted, which is NON_IDENTIFYING per the grammar
+    expect(rels[0].relSpec.relType).toBe(erDb.Identification.NON_IDENTIFYING);
+  });
+
+  it('should allow numeric entity identifier "1" on right side with cardinality 1 (issue #7472)', function () {
+    // This should parse without throwing - the bug was that second "1" in "1 1:" was mis-tokenized
+    erDiagram.parser.parse('erDiagram\na many to 1 1: label');
+    const entities = erDb.getEntities();
+    const rels = erDb.getRelationships();
+
+    // Verify both entities were created
+    expect(entities.size).toBe(2);
+    expect(entities.has('a')).toBe(true);
+    expect(entities.has('1')).toBe(true);
+
+    // Verify one relationship was created
+    expect(rels.length).toBe(1);
+
+    // Grammar note: In relSpec cardinality relType cardinality,
+    // cardA = second cardinality (after relType), cardB = first cardinality (before relType)
+    // For "a many to 1 1:": first "1" is cardinality (ONLY_ONE), second "1" is entity name
+    // So cardB = many (ZERO_OR_MORE), cardA = 1 (ONLY_ONE)
+    expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ONLY_ONE); // second cardinality "1"
+    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ZERO_OR_MORE); // "many"
+
+    // Verify relationship type: "to" means IDENTIFYING
+    expect(rels[0].relSpec.relType).toBe(erDb.Identification.IDENTIFYING);
+  });
+
+  it('should allow numeric entity identifier "12" on right side with cardinality 1 (issue #7472 boundary test)', function () {
+    // Test with multi-digit numeric entity name to ensure lookahead works for any digit sequence
+    erDiagram.parser.parse('erDiagram\na many to 1 12: label');
+    const entities = erDb.getEntities();
+    const rels = erDb.getRelationships();
+
+    expect(entities.size).toBe(2);
+    expect(entities.has('a')).toBe(true);
+    expect(entities.has('12')).toBe(true);
+    expect(rels.length).toBe(1);
+    expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ONLY_ONE);
+    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ZERO_OR_MORE);
+    expect(rels[0].relSpec.relType).toBe(erDb.Identification.IDENTIFYING);
+  });
+
   it('should represent identifying relationships properly', function () {
     erDiagram.parser.parse('erDiagram\nHOUSE ||--|{ ROOM : contains');
     const rels = erDb.getRelationships();

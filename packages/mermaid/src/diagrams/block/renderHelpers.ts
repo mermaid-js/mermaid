@@ -91,6 +91,7 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
   const vertexText = vertex.label;
 
   const bounds = vertex.size ?? { width: 0, height: 0, x: 0, y: 0 };
+  const dbDiagramId = db.getDiagramId();
   // Add the node
   const node = {
     labelStyle: styles.labelStyle,
@@ -101,6 +102,7 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
     class: classStr,
     style: styles.style,
     id: vertex.id,
+    domId: dbDiagramId ? `${dbDiagramId}-${vertex.id}` : vertex.id,
     directions: vertex.directions,
     width: bounds.width,
     height: bounds.height,
@@ -110,6 +112,7 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
     intersect: undefined,
     type: vertex.type,
     padding: padding ?? getConfig()?.block?.padding ?? 0,
+    widthInColumns: vertex.widthInColumns ?? 1,
   };
   return node;
 }
@@ -215,16 +218,24 @@ export async function insertEdges(
           { x: start.x + (end.x - start.x) / 2, y: start.y + (end.y - start.y) / 2 },
           { x: end.x, y: end.y },
         ];
-        // edge.points = points;
+        const prefixedEdgeId = id ? `${id}-${edge.id}` : edge.id;
+
+        const thicknessClass =
+          edge.thickness === 'thick' ? 'edge-thickness-thick' : 'edge-thickness-normal';
+        const patternClass =
+          edge.pattern === 'dotted' ? 'edge-pattern-dotted' : 'edge-pattern-solid';
+        const dynamicClasses = `${thicknessClass} ${patternClass} flowchart-link LS-a1 LE-b1`;
+
         insertEdge(
           elem,
-          { v: edge.start, w: edge.end, name: edge.id },
+          { v: edge.start, w: edge.end, name: prefixedEdgeId },
           {
             ...edge,
+            id: prefixedEdgeId,
             arrowTypeEnd: edge.arrowTypeEnd,
             arrowTypeStart: edge.arrowTypeStart,
             points,
-            classes: 'edge-thickness-normal edge-pattern-solid flowchart-link LS-a1 LE-b1',
+            classes: dynamicClasses,
           },
           undefined,
           'block',
@@ -239,7 +250,7 @@ export async function insertEdges(
             arrowTypeEnd: edge.arrowTypeEnd,
             arrowTypeStart: edge.arrowTypeStart,
             points,
-            classes: 'edge-thickness-normal edge-pattern-solid flowchart-link LS-a1 LE-b1',
+            classes: dynamicClasses,
           });
           positionEdgeLabel(
             { ...edge, x: points[1].x, y: points[1].y },

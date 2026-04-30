@@ -59,10 +59,12 @@ export const createStadiumPathD = (
 export async function stadium<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? 20 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-
-  const h = bbox.height + node.padding;
-  const w = bbox.width + h / 4 + node.padding;
+  const h = bbox.height + (node.look === 'neo' ? labelPaddingY * 2 : labelPaddingY);
+  const w = bbox.width + h / 4 + (node.look === 'neo' ? labelPaddingX * 2 : labelPaddingX);
 
   const radius = h / 2;
   const { cssStyles } = node;

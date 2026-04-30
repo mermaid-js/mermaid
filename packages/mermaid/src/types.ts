@@ -11,6 +11,7 @@ export interface NodeMetaData {
   priority: 'Very High' | 'High' | 'Medium' | 'Low' | 'Very Low';
   assigned?: string;
   ticket?: string;
+  labelType?: string;
 }
 
 export interface ParticipantMetaData {

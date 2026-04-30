@@ -202,7 +202,7 @@ The following code snippet changes flowchart config:
 Here we are overriding only the flowchart config, and not the general config, setting `htmlLabels` to `true` and `curve` to `linear`.
 
 ```warning
-**Deprecated:** `flowchart.htmlLabels` has been deprecated from (v<MERMAID_RELEASE_VERSION>+). Use the global `htmlLabels` configuration instead. For example, instead of `"flowchart": { "htmlLabels": true }`, use `"htmlLabels": true` at the top level.
+**Deprecated:** `flowchart.htmlLabels` has been deprecated from (v11.12.3+). Use the global `htmlLabels` configuration instead. For example, instead of `"flowchart": { "htmlLabels": true }`, use `"htmlLabels": true` at the top level.
 ```
 
 ```mermaid-example

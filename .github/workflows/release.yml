@@ -32,7 +32,9 @@ jobs:
           node-version-file: '.node-version'
 
       - name: Install Packages
-        run: pnpm install --frozen-lockfile
+        run: |
+          pnpm install --frozen-lockfile
+          npm install -g npm@11
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets

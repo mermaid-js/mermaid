@@ -22,7 +22,7 @@ We're thrilled to announce that Mermaid Chart has successfully raised $7.5 milli
 
 We are incredibly excited about the future and are grateful to the community, our team, and our investors for being part of this journey. Together, we're not just creating diagrams; we're designing the future of collaboration.
 
-🌐 Learn more about our groundbreaking tools and what's next for Mermaid Chart by visiting [our website](https://www.mermaidchart.com/blog/posts/mermaid-chart-raises-7.5m-to-reinvent-visual-collaoration-for-enterprises).
+🌐 Learn more about our groundbreaking tools and what's next for Mermaid Chart by visiting [our website](https://mermaid.ai/blog/posts/mermaid-chart-raises-7.5m-to-reinvent-visual-collaoration-for-enterprises).
 
 Thank you for being part of our story. Here's to creating, innovating, and collaborating on a global scale!
 
@@ -35,12 +35,12 @@ The Mermaid Chart team is excited to introduce a new Visual Editor for Flowchart
 Learn more:
 
 - Visual Editor For Flowcharts
-  - [Blog post](https://www.mermaidchart.com/blog/posts/mermaid-chart-releases-new-visual-editor-for-flowcharts)
+  - [Blog post](https://mermaid.ai/blog/posts/mermaid-chart-releases-new-visual-editor-for-flowcharts)
 
   - [Demo video](https://www.youtube.com/watch?v=5aja0gijoO0)
 
 - Visual Editor For Sequence diagrams
-  - [Blog post](https://www.mermaidchart.com/blog/posts/mermaid-chart-unveils-visual-editor-for-sequence-diagrams)
+  - [Blog post](https://mermaid.ai/blog/posts/mermaid-chart-unveils-visual-editor-for-sequence-diagrams)
 
   - [Demo video](https://youtu.be/imc2u5_N6Dc)
 

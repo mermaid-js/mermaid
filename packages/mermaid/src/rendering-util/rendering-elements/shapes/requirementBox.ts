@@ -22,6 +22,8 @@ export async function requirementBox<T extends SVGGraphicsElement>(
   const gap = 20;
   const isRequirementNode = 'verifyMethod' in node;
   const classes = getNodeClasses(node);
+  const { themeVariables } = getConfig();
+  const { borderColorArray, requirementEdgeLabelBackground } = themeVariables;
 
   // Add outer g element
   const shapeSvg = parent
@@ -116,7 +118,12 @@ export async function requirementBox<T extends SVGGraphicsElement>(
   const roughRect = rc.rectangle(x, y, totalWidth, totalHeight, options);
 
   const rect = shapeSvg.insert(() => roughRect, ':first-child');
-  rect.attr('class', 'basic label-container').attr('style', nodeStyles);
+  rect.attr('class', 'basic label-container outer-path').attr('style', nodeStyles);
+
+  if (borderColorArray?.length) {
+    const colorIndex = node.colorIndex ?? 0;
+    shapeSvg.attr('data-color-id', `color-${colorIndex % borderColorArray.length}`);
+  }
 
   // Re-translate labels now that rect is centered
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -149,15 +156,22 @@ export async function requirementBox<T extends SVGGraphicsElement>(
 
   // Insert divider line if there is body text
   if (accumulativeHeight > typeHeight + nameHeight + gap) {
-    const roughLine = rc.line(
-      x,
-      y + typeHeight + nameHeight + gap,
-      x + totalWidth,
-      y + typeHeight + nameHeight + gap,
-      options
-    );
+    const lineY = y + typeHeight + nameHeight + gap;
+    let roughLine: SVGGElement;
+    if (node.look === 'neo') {
+      const thickness = 0.001;
+      const polygonPoints: [number, number][] = [
+        [x, lineY],
+        [x + totalWidth, lineY],
+        [x + totalWidth, lineY + thickness],
+        [x, lineY + thickness],
+      ];
+      roughLine = rc.polygon(polygonPoints, options);
+    } else {
+      roughLine = rc.line(x, lineY, x + totalWidth, lineY, options);
+    }
     const dividerLine = shapeSvg.insert(() => roughLine);
-    dividerLine.attr('style', nodeStyles);
+    dividerLine.attr('class', 'divider');
   }
 
   updateNodeBounds(node, rect);
@@ -165,6 +179,14 @@ export async function requirementBox<T extends SVGGraphicsElement>(
   node.intersect = function (point) {
     return intersect.rect(node, point);
   };
+
+  if (
+    nodeStyles &&
+    node.look !== 'handDrawn' &&
+    (requirementEdgeLabelBackground || borderColorArray?.length)
+  ) {
+    shapeSvg.selectAll('path').attr('style', nodeStyles);
+  }
 
   return shapeSvg;
 }
@@ -198,12 +220,11 @@ async function addText<T extends SVGGraphicsElement>(
   if (!useHtmlLabels) {
     const textChild = text.children[0];
     for (const child of textChild.children) {
-      child.textContent = child.textContent.replaceAll('&gt;', '>').replaceAll('&lt;', '<');
       if (style) {
         child.setAttribute('style', style);
       }
     }
-    // Get the bounding box after the text update
+    // Get the bounding box after the style update
     bbox = text.getBBox();
     // Add extra height so it is similar to the html labels
     bbox.height += 6;

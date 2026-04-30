@@ -20,6 +20,7 @@ export const draw = async function (
 ): Promise<void> {
   const { securityLevel, block: conf } = configApi.getConfig();
   const db = diagObj.db as BlockDB;
+  db.setDiagramId(id);
   let sandboxElement: any;
   if (securityLevel === 'sandbox') {
     sandboxElement = d3select('#i' + id);

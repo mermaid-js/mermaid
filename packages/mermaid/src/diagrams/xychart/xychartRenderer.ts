@@ -100,9 +100,13 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
           .attr('stroke-width', (data) => data.strokeWidth);
 
         if (chartConfig.showDataLabel) {
+          const showDataLabelOutsideBar = chartConfig.showDataLabelOutsideBar;
+
           if (chartConfig.chartOrientation === 'horizontal') {
             // Factor to approximate each character's width.
             const charWidthFactor = 0.7;
+
+            const rightMargin = 10;
 
             // Filter out bars that have zero width or height.
             const validItems = shape.data
@@ -115,7 +119,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
               // Approximate the text width.
               const textWidth: number = fontSize * label.length * charWidthFactor;
               // The available width is the bar's width minus a 10px right margin.
-              return textWidth <= data.width - 10;
+              return textWidth <= data.width - rightMargin;
             }
 
             // For each valid bar, start with an initial candidate font size (70% of the bar's height),
@@ -133,16 +137,24 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
             // Choose the smallest candidate font size across all valid bars for uniformity.
             const uniformFontSize = Math.floor(Math.min(...candidateFontSizes));
 
+            const determineLabelXPosition = (item: BarItem) => {
+              if (showDataLabelOutsideBar) {
+                return item.data.x + item.data.width + rightMargin;
+              } else {
+                return item.data.x + item.data.width - rightMargin;
+              }
+            };
+
             shapeGroup
               .selectAll('text')
               .data(validItems)
               .enter()
               .append('text')
-              .attr('x', (item) => item.data.x + item.data.width - 10)
+              .attr('x', determineLabelXPosition)
               .attr('y', (item) => item.data.y + item.data.height / 2)
-              .attr('text-anchor', 'end')
+              .attr('text-anchor', showDataLabelOutsideBar ? 'start' : 'end')
               .attr('dominant-baseline', 'middle')
-              .attr('fill', 'black')
+              .attr('fill', themeConfig.dataLabelColor)
               .attr('font-size', `${uniformFontSize}px`)
               .text((item) => item.label);
           } else {
@@ -190,6 +202,14 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
             // Choose the smallest candidate across all valid bars for uniformity.
             const uniformFontSize = Math.floor(Math.min(...candidateFontSizes));
 
+            const determineLabelYPosition = (item: BarItem) => {
+              if (showDataLabelOutsideBar) {
+                return item.data.y - yOffset;
+              } else {
+                return item.data.y + yOffset;
+              }
+            };
+
             // Render text only for valid items.
             shapeGroup
               .selectAll('text')
@@ -197,10 +217,10 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
               .enter()
               .append('text')
               .attr('x', (item) => item.data.x + item.data.width / 2)
-              .attr('y', (item) => item.data.y + yOffset)
+              .attr('y', determineLabelYPosition)
               .attr('text-anchor', 'middle')
-              .attr('dominant-baseline', 'hanging')
-              .attr('fill', 'black')
+              .attr('dominant-baseline', showDataLabelOutsideBar ? 'auto' : 'hanging')
+              .attr('fill', themeConfig.dataLabelColor)
               .attr('font-size', `${uniformFontSize}px`)
               .text((item) => item.label);
           }
@@ -220,6 +240,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
           .attr('text-anchor', (data) => getTextAnchor(data.horizontalPos))
           .attr('transform', (data) => getTextTransformation(data))
           .text((data) => data.text);
+
         break;
       case 'path':
         shapeGroup

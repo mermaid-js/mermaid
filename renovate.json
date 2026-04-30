@@ -4,6 +4,7 @@
     "config:base",
     ":rebaseStalePrs",
     "schedule:earlyMondays",
+    "security:minimumReleaseAgeNpm",
     ":automergeMinor",
     ":automergeTesters",
     ":automergeLinters",
@@ -11,6 +12,12 @@
     ":automergePatch"
   ],
   "packageRules": [
+    {
+      "description": "minimumReleaseAge is normally not supported for digest/other update types",
+      "matchManagers": ["github-actions", "dockerfile", "devcontainer", "docker-compose"],
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "minimumReleaseAge": "3 days"
+    },
     {
       "matchUpdateTypes": ["minor", "patch", "digest"],
       "automerge": true

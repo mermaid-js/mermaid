@@ -1,4 +1,4 @@
-grammar Radar
+grammar RadarGrammar
 import "../common/common";
 
 entry Radar:

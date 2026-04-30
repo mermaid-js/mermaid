@@ -1,4 +1,4 @@
-grammar Pie
+grammar PieGrammar
 import "../common/common";
 
 entry Pie:

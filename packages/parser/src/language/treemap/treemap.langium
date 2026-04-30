@@ -6,7 +6,7 @@
  * before the treemap keyword, allowing for empty lines and comments before the
  * treemap declaration.
  */
-grammar Treemap
+grammar TreemapGrammar
 
 
 
@@ -54,6 +54,9 @@ terminal STYLE_SEPARATOR: ':::';
 terminal SEPARATOR: ':';
 terminal COMMA: ',';
 
+// This should be processed before whitespace is ignored
+terminal INDENTATION: /[ \t]{1,}/;  // One or more spaces/tabs for indentation
+
 hidden terminal WS: /[ \t]+/;  // One or more spaces or tabs for hidden whitespace
 hidden terminal ML_COMMENT: /\%\%[^\n]*/;
 hidden terminal NL: /\r?\n/;
@@ -74,9 +77,6 @@ Section returns Section:
 
 Leaf returns Leaf:
     name=STRING2 INDENTATION? (SEPARATOR | COMMA) INDENTATION? value=MyNumber (STYLE_SEPARATOR classSelector=ID2)?;
-
-// This should be processed before whitespace is ignored
-terminal INDENTATION: /[ \t]{1,}/;  // One or more spaces/tabs for indentation
 
 // Keywords with fixed text patterns
 terminal ID2: /[a-zA-Z_][a-zA-Z0-9_]*/;

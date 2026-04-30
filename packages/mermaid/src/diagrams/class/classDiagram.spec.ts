@@ -86,6 +86,185 @@ describe('given a basic class diagram, ', function () {
       expect(relations[0].id1).toBe('Admin');
       expect(relations[0].id2).toBe('Report');
       expect(relations[0].title).toBe('generates');
+
+      // Verify intermediate namespaces were created with hierarchy
+      const namespaces = classDb.getNamespaces();
+      expect(namespaces.has('Company')).toBe(true);
+      expect(namespaces.has('Company.Project')).toBe(true);
+      expect(namespaces.has('Company.Project.Module')).toBe(true);
+      expect(namespaces.has('Company.Project.Module.SubModule')).toBe(true);
+
+      // Verify parent-child relationships
+      expect(namespaces.get('Company')!.parent).toBeUndefined();
+      expect(namespaces.get('Company.Project')!.parent).toBe('Company');
+      expect(namespaces.get('Company.Project.Module')!.parent).toBe('Company.Project');
+      expect(namespaces.get('Company.Project.Module.SubModule')!.parent).toBe(
+        'Company.Project.Module'
+      );
+
+      // Verify children maps
+      expect(namespaces.get('Company')!.children.has('Company.Project')).toBe(true);
+      expect(namespaces.get('Company.Project')!.children.has('Company.Project.Module')).toBe(true);
+      expect(
+        namespaces.get('Company.Project.Module')!.children.has('Company.Project.Module.SubModule')
+      ).toBe(true);
+
+      // Only the user-declared leaves are marked explicit; intermediate ancestors are not.
+      expect(namespaces.get('Company.Project.Module.SubModule')!.explicit).toBe(true);
+      expect(namespaces.get('Company.Project.Module')!.explicit).toBe(true);
+      expect(namespaces.get('Company.Project')!.explicit).toBe(false);
+      expect(namespaces.get('Company')!.explicit).toBe(false);
+    });
+
+    it('should handle syntactically nested namespace blocks', () => {
+      const str = `classDiagram
+        namespace Outer {
+          namespace Inner {
+            class Foo {
+              +bar()
+            }
+          }
+          class Baz {
+            +qux()
+          }
+        }`;
+
+      parser.parse(str);
+
+      const foo = classDb.getClass('Foo');
+      const baz = classDb.getClass('Baz');
+      const namespaces = classDb.getNamespaces();
+
+      // Foo should be in the qualified inner namespace
+      expect(foo.parent).toBe('Outer.Inner');
+      // Baz should be in the outer namespace
+      expect(baz.parent).toBe('Outer');
+
+      // Verify namespace hierarchy
+      expect(namespaces.has('Outer')).toBe(true);
+      expect(namespaces.has('Outer.Inner')).toBe(true);
+      expect(namespaces.get('Outer.Inner')!.parent).toBe('Outer');
+      expect(namespaces.get('Outer')!.children.has('Outer.Inner')).toBe(true);
+
+      // Both are explicitly declared via syntactic nesting, so both are `explicit`.
+      expect(namespaces.get('Outer')!.explicit).toBe(true);
+      expect(namespaces.get('Outer.Inner')!.explicit).toBe(true);
+    });
+
+    it('emits only explicit namespaces from getData() in compact mode', async () => {
+      const { setConfig } = await import('../../diagram-api/diagramAPI.js');
+      const { reset } = await import('../../config.js');
+      // setConfig merges into the live config; reset restores defaults.
+      // We only touch `class.hierarchicalNamespaces` here.
+      setConfig({ class: { hierarchicalNamespaces: false } });
+      try {
+        const str = `classDiagram
+          namespace Company.Engineering.Backend {
+            class Developer {
+              +writeCode()
+            }
+          }
+          namespace Company {
+            class CEO {
+              +makeDecisions()
+            }
+          }`;
+
+        parser.parse(str);
+
+        const { nodes } = classDb.getData();
+        const groups = nodes.filter((n) => n.isGroup);
+        const groupIds = groups.map((n) => n.id).sort();
+
+        // Only the two user-declared namespaces survive — the implicit
+        // ancestors (Company.Engineering) are elided.
+        expect(groupIds).toEqual(['Company', 'Company.Engineering.Backend']);
+
+        // Labels are the full qualified id in compact mode.
+        const backend = groups.find((n) => n.id === 'Company.Engineering.Backend')!;
+        expect(backend.label).toBe('Company.Engineering.Backend');
+        // Compact mode flattens: namespaces have no parent.
+        expect(backend.parentId).toBeUndefined();
+
+        // Classes remain parented to their own declared namespace (which is explicit here).
+        const developer = nodes.find((n) => n.id === 'Developer')!;
+        expect(developer.parentId).toBe('Company.Engineering.Backend');
+        const ceo = nodes.find((n) => n.id === 'CEO')!;
+        expect(ceo.parentId).toBe('Company');
+      } finally {
+        reset();
+      }
+    });
+
+    it('moves classes inside implicit namespaces to the nearest explicit ancestor in compact mode', async () => {
+      const { setConfig } = await import('../../diagram-api/diagramAPI.js');
+      const { reset } = await import('../../config.js');
+      setConfig({ class: { hierarchicalNamespaces: false } });
+      try {
+        // `Company` is declared; `Company.Engineering` is auto-created by the
+        // dotted leaf declaration and has no explicit declaration of its own.
+        const str = `classDiagram
+          namespace Company.Engineering.Backend {
+            class Developer
+          }
+          namespace Company {
+            class CEO
+          }`;
+
+        parser.parse(str);
+        // Precondition: the implicit ancestor exists and is not explicit.
+        const namespaces = classDb.getNamespaces();
+        expect(namespaces.get('Company.Engineering')!.explicit).toBe(false);
+
+        const { nodes } = classDb.getData();
+        const groupIds = nodes
+          .filter((n) => n.isGroup)
+          .map((n) => n.id)
+          .sort();
+        expect(groupIds).toEqual(['Company', 'Company.Engineering.Backend']);
+      } finally {
+        reset();
+      }
+    });
+
+    it('defaults to hierarchical rendering when hierarchicalNamespaces is unset', () => {
+      const str = `classDiagram
+        namespace A.B {
+          class Foo
+        }`;
+
+      parser.parse(str);
+
+      const { nodes } = classDb.getData();
+      const groupIds = nodes
+        .filter((n) => n.isGroup)
+        .map((n) => n.id)
+        .sort();
+      // Both the implicit ancestor `A` and the declared leaf `A.B` render.
+      expect(groupIds).toEqual(['A', 'A.B']);
+      const leaf = nodes.find((n) => n.id === 'A.B')!;
+      // In hierarchical mode, the namespace label is just the short segment.
+      expect(leaf.label).toBe('B');
+      expect(leaf.parentId).toBe('A');
+    });
+
+    it('should support custom labels on namespaces', () => {
+      const str = `classDiagram
+        namespace Auth["Authentication Service"] {
+          class UserService {
+            +login()
+          }
+        }`;
+
+      parser.parse(str);
+
+      const namespaces = classDb.getNamespaces();
+      const auth = namespaces.get('Auth')!;
+      expect(auth.id).toBe('Auth');
+      expect(auth.label).toBe('Authentication Service');
+
+      const userService = classDb.getClass('UserService');
+      expect(userService.parent).toBe('Auth');
     });
 
     it('should handle accTitle and accDescr', function () {
@@ -503,7 +682,7 @@ class C13["With Città foreign language"]
         {
           "annotations": [],
           "cssClasses": "default",
-          "domId": "classId-Student-141",
+          "domId": "classId-Student-149",
           "id": "Student",
           "label": "Student",
           "members": [
@@ -920,6 +1099,80 @@ foo()
       expect(actual.annotations.length).toBe(1);
       expect(actual.members.length).toBe(1);
       expect(actual.methods.length).toBe(1);
+      expect(actual.annotations[0]).toBe('interface');
+    });
+
+    it('should handle the docs example: separate line annotation with members', function () {
+      const str =
+        'classDiagram\n' +
+        'class Shape\n' +
+        '<<interface>> Shape\n' +
+        'Shape : noOfVertices\n' +
+        'Shape : draw()';
+      parser.parse(str);
+
+      const actual = parser.yy.getClass('Shape');
+      expect(actual.annotations.length).toBe(1);
+      expect(actual.annotations[0]).toBe('interface');
+      expect(actual.members.length).toBe(1);
+      expect(actual.methods.length).toBe(1);
+    });
+
+    it('should handle the docs example: nested annotation with enumeration', function () {
+      const str =
+        'classDiagram\n' +
+        'class Shape{\n' +
+        '    <<interface>>\n' +
+        '    noOfVertices\n' +
+        '    draw()\n' +
+        '}\n' +
+        'class Color{\n' +
+        '    <<enumeration>>\n' +
+        '    RED\n' +
+        '    BLUE\n' +
+        '    GREEN\n' +
+        '    WHITE\n' +
+        '    BLACK\n' +
+        '}';
+      parser.parse(str);
+
+      const shape = parser.yy.getClass('Shape');
+      expect(shape.annotations[0]).toBe('interface');
+      const color = parser.yy.getClass('Color');
+      expect(color.annotations[0]).toBe('enumeration');
+    });
+
+    it('should handle inline annotation syntax: class Shape <<interface>>', function () {
+      const str = 'classDiagram\n' + 'class Shape <<interface>>';
+      parser.parse(str);
+
+      const actual = parser.yy.getClass('Shape');
+      expect(actual.annotations.length).toBe(1);
+      expect(actual.annotations[0]).toBe('interface');
+    });
+
+    it('should handle inline annotation with members: class Shape <<interface>> { ... }', function () {
+      const str =
+        'classDiagram\n' +
+        'class Shape <<interface>> {\n' +
+        '    noOfVertices\n' +
+        '    draw()\n' +
+        '}';
+      parser.parse(str);
+
+      const actual = parser.yy.getClass('Shape');
+      expect(actual.annotations.length).toBe(1);
+      expect(actual.annotations[0]).toBe('interface');
+      expect(actual.members.length).toBe(1);
+      expect(actual.methods.length).toBe(1);
+    });
+
+    it('should handle inline annotation with empty body: class Shape <<interface>> {}', function () {
+      const str = 'classDiagram\n' + 'class Shape <<interface>> {\n' + '}';
+      parser.parse(str);
+
+      const actual = parser.yy.getClass('Shape');
+      expect(actual.annotations.length).toBe(1);
       expect(actual.annotations[0]).toBe('interface');
     });
   });

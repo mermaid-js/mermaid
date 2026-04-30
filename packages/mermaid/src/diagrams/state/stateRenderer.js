@@ -64,7 +64,8 @@ export const draw = function (text, id, _version, diagObj) {
   insertMarkers(diagram);
 
   const rootDoc = diagObj.db.getRootDoc();
-  renderDoc(rootDoc, diagram, undefined, false, root, doc, diagObj);
+  const rootG = diagram.append('g').attr('id', id + '-root');
+  renderDoc(rootDoc, rootG, undefined, false, root, doc, diagObj);
 
   const padding = conf.padding;
   const bounds = diagram.node().getBBox();

@@ -60,8 +60,72 @@ export const render = async (data4Layout: LayoutData, svg: SVG) => {
     throw new Error(`Unknown layout algorithm: ${data4Layout.layoutAlgorithm}`);
   }
 
+  // Prefix all node domIds with the diagram's SVG element ID to ensure uniqueness
+  // across multiple diagrams on the same page.
+  if (data4Layout.diagramId) {
+    for (const node of data4Layout.nodes) {
+      const originalDomId = node.domId || node.id;
+      node.domId = `${data4Layout.diagramId}-${originalDomId}`;
+    }
+  }
+
   const layoutDefinition = layoutAlgorithms[data4Layout.layoutAlgorithm];
   const layoutRenderer = await layoutDefinition.loader();
+
+  const { theme, themeVariables } = data4Layout.config;
+  const { useGradient, gradientStart, gradientStop } = themeVariables;
+
+  const svgId = svg.attr('id');
+
+  svg
+    .append('defs')
+    .append('filter')
+    .attr('id', `${svgId}-drop-shadow`)
+    .attr('height', '130%')
+    .attr('width', '130%')
+    .append('feDropShadow')
+    .attr('dx', '4')
+    .attr('dy', '4')
+    .attr('stdDeviation', 0)
+    .attr('flood-opacity', '0.06')
+    .attr('flood-color', `${theme?.includes('dark') ? '#FFFFFF' : '#000000'}`);
+
+  svg
+    .append('defs')
+    .append('filter')
+    .attr('id', `${svgId}-drop-shadow-small`)
+    .attr('height', '150%')
+    .attr('width', '150%')
+    .append('feDropShadow')
+    .attr('dx', '2')
+    .attr('dy', '2')
+    .attr('stdDeviation', 0)
+    .attr('flood-opacity', '0.06')
+    .attr('flood-color', `${theme?.includes('dark') ? '#FFFFFF' : '#000000'}`);
+
+  if (useGradient) {
+    const gradient = svg
+      .append('linearGradient')
+      .attr('id', svg.attr('id') + '-gradient')
+      .attr('gradientUnits', 'objectBoundingBox')
+      .attr('x1', '0%')
+      .attr('y1', '0%')
+      .attr('x2', '100%')
+      .attr('y2', '0%');
+
+    gradient
+      .append('svg:stop')
+      .attr('offset', '0%')
+      .attr('stop-color', gradientStart)
+      .attr('stop-opacity', 1);
+
+    gradient
+      .append('svg:stop')
+      .attr('offset', '100%')
+      .attr('stop-color', gradientStop)
+      .attr('stop-opacity', 1);
+  }
+
   return layoutRenderer.render(data4Layout, svg, internalHelpers, {
     algorithm: layoutDefinition.algorithm,
   });

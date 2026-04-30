@@ -1,4 +1,4 @@
-grammar GitGraph
+grammar GitGraphGrammar
 import "../common/common";
 import "reference";
 

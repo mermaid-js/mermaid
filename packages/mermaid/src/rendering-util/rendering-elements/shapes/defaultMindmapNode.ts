@@ -21,22 +21,41 @@ export async function defaultMindmapNode<T extends SVGGraphicsElement>(
   const h = bbox.height + 2 * halfPadding;
   const rd = 5;
 
-  const rectPath = `
+  // Neo look: rounded top corners only, flat bottom edge (tab-like shape).
+  const rectPath =
+    node.look === 'neo'
+      ? `
+    M${-w / 2} ${h / 2 - rd}
+    v${-h + 2 * rd}
+    q0,-${rd} ${rd},-${rd}
+    h${w - 2 * rd}
+    q${rd},0 ${rd},${rd}
+    v${h - rd}
+    H${-w / 2}
+    Z
+  `
+      : `
     M${-w / 2} ${h / 2 - rd}
     v${-h + 2 * rd}
     q0,-${rd} ${rd},-${rd}
     h${w - 2 * rd}
     q${rd},0 ${rd},${rd}
     v${h - 2 * rd}
-    q0,${rd} -${rd},${rd}
-    h${-w + 2 * rd}
-    q-${rd},0 -${rd},-${rd}
+    q0,${rd} ${-rd},${rd}
+    h${-(w - 2 * rd)}
+    q${-rd},0 ${-rd},${-rd}
     Z
   `;
 
+  if (!node.domId) {
+    throw new Error(
+      `defaultMindmapNode: node "${node.id}" is missing a domId — was render.ts domId prefixing skipped?`
+    );
+  }
+
   const bg = shapeSvg
     .append('path')
-    .attr('id', 'node-' + node.id)
+    .attr('id', node.domId)
     .attr('class', 'node-bkg node-' + node.type)
     .attr('style', nodeStyles)
     .attr('d', rectPath);

@@ -8,6 +8,7 @@ export interface XYChartAxisThemeConfig {
 export interface XYChartThemeConfig {
   backgroundColor: string;
   titleColor: string;
+  dataLabelColor: string;
   xAxisLabelColor: string;
   xAxisTitleColor: string;
   xAxisTickColor: string;
@@ -94,6 +95,7 @@ export interface XYChartConfig {
   titlePadding: number;
   showTitle: boolean;
   showDataLabel: boolean;
+  showDataLabelOutsideBar: boolean;
   xAxis: XYChartAxisConfig;
   yAxis: XYChartAxisConfig;
   chartOrientation: 'vertical' | 'horizontal';

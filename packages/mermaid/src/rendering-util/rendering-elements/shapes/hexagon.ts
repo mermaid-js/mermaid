@@ -26,13 +26,27 @@ export const createHexagonPathD = (
 
 export async function hexagon<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
+  const f = node.look === 'neo' ? 3.5 : 4;
   node.labelStyle = labelStyles;
+  const nodePadding = node.padding ?? 0;
+  const wa = 70;
+  const ha = 32;
+
+  const labelPaddingX = node.look === 'neo' ? wa : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? ha : nodePadding;
+  if (node.width || node.height) {
+    const originalHeight = node.height ?? 0;
+    const m = originalHeight / f;
+    node.width = (node?.width ?? 0) - 2 * m - labelPaddingY;
+    node.height = (node.height ?? 0) - labelPaddingX;
+  }
+
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const f = 4;
-  const h = bbox.height + node.padding;
+  const h = (node?.height ? node?.height : bbox.height) + labelPaddingX;
   const m = h / f;
-  const w = bbox.width + 2 * m + node.padding;
+
+  const w = (node?.width ? node?.width : bbox.width) + 2 * m + labelPaddingY;
   const points = [
     { x: m, y: 0 },
     { x: w - m, y: 0 },

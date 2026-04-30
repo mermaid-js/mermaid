@@ -42,10 +42,11 @@ export async function curlyBraceLeft<T extends SVGGraphicsElement>(
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = bbox.width + (node.padding ?? 0);
-  const h = bbox.height + (node.padding ?? 0);
+  const paddingX = node.look === 'neo' ? 18 : (node.padding ?? 0);
+  const paddingY = node.look === 'neo' ? 12 : (node.padding ?? 0);
+  const w = bbox.width + paddingX;
+  const h = bbox.height + paddingY;
   const radius = Math.max(5, h * 0.1);
-
   const { cssStyles } = node;
 
   const points = [

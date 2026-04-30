@@ -323,9 +323,14 @@ function layoutArchitecture(
           selector: 'edge',
           style: {
             'curve-style': 'straight',
-            label: 'data(label)',
             'source-endpoint': 'data(sourceEndpoint)',
             'target-endpoint': 'data(targetEndpoint)',
+          },
+        },
+        {
+          selector: 'edge[label]',
+          style: {
+            label: 'data(label)',
           },
         },
         {
@@ -404,6 +409,7 @@ function layoutArchitecture(
     const layout = cy.layout({
       name: 'fcose',
       quality: 'proof',
+      randomize: db.getConfigField('randomize'),
       styleEnabled: false,
       animate: false,
       nodeDimensionsIncludeLabels: false,
@@ -513,6 +519,7 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
   // TODO: Add title support for architecture diagrams
 
   const db = diagObj.db as ArchitectureDB;
+  db.setDiagramId(id);
 
   const services = db.getServices();
   const junctions = db.getJunctions();
@@ -531,13 +538,13 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
   const groupElem = svg.append('g');
   groupElem.attr('class', 'architecture-groups');
 
-  await drawServices(db, servicesElem, services);
-  drawJunctions(db, servicesElem, junctions);
+  await drawServices(db, servicesElem, services, id);
+  drawJunctions(db, servicesElem, junctions, id);
 
   const cy = await layoutArchitecture(services, junctions, groups, edges, db, ds);
 
-  await drawEdges(edgesElem, cy, db);
-  await drawGroups(groupElem, cy, db);
+  await drawEdges(edgesElem, cy, db, id);
+  await drawGroups(groupElem, cy, db, id);
   positionNodes(db, cy);
 
   setupGraphViewbox(undefined, svg, db.getConfigField('padding'), db.getConfigField('useMaxWidth'));

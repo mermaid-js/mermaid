@@ -33,15 +33,26 @@ export const createSubroutinePathD = (
   ].join(' ');
 };
 
+// width of the frame on the left and right side of the shape
+const FRAME_WIDTH = 8;
+
 export async function subroutine<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+
+  const nodePadding = node?.padding ?? 8;
+  const labelPaddingX = node.look === 'neo' ? 28 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
+
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const halfPadding = (node?.padding || 0) / 2;
-  const w = bbox.width + node.padding;
-  const h = bbox.height + node.padding;
-  const x = -bbox.width / 2 - halfPadding;
-  const y = -bbox.height / 2 - halfPadding;
+
+  const totalWidth = (node?.width ?? bbox.width) + 2 * FRAME_WIDTH + labelPaddingX;
+  const totalHeight = (node?.height ?? bbox.height) + labelPaddingY;
+
+  const w = totalWidth - 2 * FRAME_WIDTH;
+  const h = totalHeight;
+  const x = -totalWidth / 2;
+  const y = -totalHeight / 2;
 
   const points = [
     { x: 0, y: 0 },
@@ -61,9 +72,9 @@ export async function subroutine<T extends SVGGraphicsElement>(parent: D3Selecti
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
 
-    const roughNode = rc.rectangle(x - 8, y, w + 16, h, options);
-    const l1 = rc.line(x, y, x, y + h, options);
-    const l2 = rc.line(x + w, y, x + w, y + h, options);
+    const roughNode = rc.rectangle(x, y, w + 16, h, options);
+    const l1 = rc.line(x + FRAME_WIDTH, y, x + FRAME_WIDTH, y + h, options);
+    const l2 = rc.line(x + FRAME_WIDTH + w, y, x + FRAME_WIDTH + w, y + h, options);
 
     shapeSvg.insert(() => l1, ':first-child');
     shapeSvg.insert(() => l2, ':first-child');
