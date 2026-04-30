@@ -66,7 +66,7 @@ interface LinkData {
 }
 
 const MERMAID_DOM_ID_PREFIX = 'agentflow-';
-const AGENTFLOW_TPL_VERSION = 'AGENTFLOW-TPL-V1.1';
+const AGENTFLOW_TPL_VERSION = 'AGENTFLOW-TPL-V0.6.0';
 
 /** Pre-compiled regexes for field parsing */
 const RECORD_FIELD_RE = /^([A-Z_a-z]\w*)\s*:\s*(.+)$/;

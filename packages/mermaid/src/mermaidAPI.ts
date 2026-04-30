@@ -73,8 +73,8 @@ async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseRe
   addDiagrams();
   try {
     const { code, config } = processAndSetConfigs(text);
-    const diagram = await getDiagramFromText(code.cleaned);
-    return { diagramType: diagram.type, config };
+    const diagram = await getDiagramFromText(code.raw);
+    return { diagramType: diagram.type, config, db: diagram.db };
   } catch (error) {
     if (parseOptions?.suppressErrors) {
       return false;
@@ -484,6 +484,7 @@ const render = async function (
     diagramType,
     svg: svgCode,
     bindFunctions: diag.db.bindFunctions,
+    db: diag.db,
     ...(drawData ? { data: drawData } : {}),
   };
 };

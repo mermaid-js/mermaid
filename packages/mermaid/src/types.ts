@@ -104,6 +104,7 @@ export interface ParseResult {
    * The config passed as YAML frontmatter or directives
    */
   config: MermaidConfig;
+  db: unknown;
 }
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
 export type D3Element = any;
@@ -138,6 +139,7 @@ export interface RenderResult {
    * Currently populated by agentflow diagrams.
    */
   data?: Record<string, unknown>;
+  db?: unknown;
 }
 
 /**

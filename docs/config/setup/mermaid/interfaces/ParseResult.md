@@ -24,6 +24,14 @@ The config passed as YAML frontmatter or directives
 
 ---
 
+### db
+
+> **db**: `unknown`
+
+Defined in: [packages/mermaid/src/types.ts:107](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L107)
+
+---
+
 ### diagramType
 
 > **diagramType**: `string`
