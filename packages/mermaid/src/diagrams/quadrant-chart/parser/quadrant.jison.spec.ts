@@ -573,5 +573,31 @@ quadrant-4 可以改进
         type: 'text',
       });
     });
+
+    it('should parse Latin-1 accented text (French/Spanish/German)', () => {
+      const str = 'quadrantChart\nx-axis Café --> Größe';
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.setXAxisLeftText).toHaveBeenCalledWith({
+        text: 'Café',
+        type: 'text',
+      });
+      expect(mockDB.setXAxisRightText).toHaveBeenCalledWith({
+        text: 'Größe',
+        type: 'text',
+      });
+    });
+
+    it('should parse accented characters in quadrant labels', () => {
+      const str = 'quadrantChart\nquadrant-1 catégoría\nquadrant-2 naïve';
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.setQuadrant1Text).toHaveBeenCalledWith({
+        text: 'catégoría',
+        type: 'text',
+      });
+      expect(mockDB.setQuadrant2Text).toHaveBeenCalledWith({
+        text: 'naïve',
+        type: 'text',
+      });
+    });
   });
 });
