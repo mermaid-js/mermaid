@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mermaid Local Editor</title>
+
+    <link rel="stylesheet" href="./styles.css" />
+
+    <script src="./vendor/mermaid.min.js"></script>
+    <script src="./vendor/purify.min.js"></script>
+
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <div id="toolbar">
+      <button id="toggleToolbar" title="Toggle toolbar">☰</button>
+      <select id="diagrams"></select>
+      <input id="name" placeholder="Enter diagram name" />
+      <button id="save">💾 Save</button>
+      <button id="new">➕ New</button>
+      <button id="del">🗑 Delete</button>
+      <button id="resetView">↺ Reset View</button>
+      <button id="exportSvg">⬇ Export SVG</button>
+    </div>
+
+    <div id="main">
+      <textarea id="srcPanel"></textarea>
+      <div id="preview"></div>
+    </div>
+  </body>
+</html>

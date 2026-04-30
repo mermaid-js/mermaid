@@ -1,0 +1,111 @@
+body {
+  margin: 0;
+  display: grid;
+  grid-template-rows: 40px 1fr;
+  height: 100vh;
+  background: #0f1115;
+  color: #ddd;
+}
+#toolbar {
+  position: relative;
+  display: flex;
+  gap: 8px;
+  padding: 6px 10px;
+  background: #0b0d12;
+  border-bottom: 1px solid #222;
+  transition:
+    transform 0.25s ease,
+    opacity 0.2s ease,
+    height 0.25s ease;
+  will-change: transform, opacity, height;
+}
+#toolbar input,
+#toolbar select,
+#toolbar button {
+  background: #111;
+  color: #ddd;
+  border: 1px solid #333;
+  padding: 4px 8px;
+}
+#srcPanel {
+  z-index: 1000;
+}
+#srcPanel.collapsed {
+  transform: translateY(-100%);
+  opacity: 0;
+  height: 0;
+  padding: 0 8px;
+  overflow: hidden;
+}
+
+/* Node highlight styling */
+svg .node rect,
+svg .node polygon,
+svg .node path {
+  transition:
+    fill 120ms ease,
+    filter 120ms ease;
+}
+
+svg .node:hover rect,
+svg .node:hover polygon,
+svg .node:hover path {
+  fill: rgba(0, 170, 255, 0.25); /* fon */
+  filter: drop-shadow(0 0 11px rgba(0, 170, 255, 0.6)); /* glow */
+}
+
+/* Keyboard-selected node styling */
+svg g.node.selected-node rect,
+svg g.node.selected-node polygon,
+svg g.node.selected-node path {
+  fill: rgba(0, 170, 255, 0.28);
+  filter: drop-shadow(0 0 14px rgba(0, 170, 255, 0.9));
+  transition:
+    fill 120ms ease,
+    filter 120ms ease;
+}
+
+p,
+div,
+div > * {
+  user-select: none;
+}
+
+#toggleToolbar {
+  cursor: pointer;
+  background: #1f2020;
+  color: #ccc;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  padding: 4px 8px;
+}
+
+#preview svg {
+  width: 100%;
+  height: auto;
+  padding: 12px;
+  position: relative;
+  overflow: visible;
+  display: block; /* removes inline centering */
+  margin: 0; /* removes auto-indents */
+  transform-origin: 0 0; /* transformation anchor */
+}
+#preview svg g {
+  transform-origin: 0 0;
+}
+#main {
+  display: grid;
+  grid-template-columns: 0.5fr 1fr;
+  height: calc(100vh - 40px);
+  overflow: hidden;
+}
+textarea {
+  width: 100%;
+  height: 100%;
+  background: #0b0d12;
+  color: #e6e6e6;
+  border: none;
+  padding: 12px;
+  font-family: monospace;
+  font-size: 14px;
+}
