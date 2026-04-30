@@ -1381,6 +1381,19 @@ export const draw = async function (_text: string, id: string, _version: string,
     await drawActors(diagram, actors, actorKeys, true, id, diagObj, actorIndexMap);
   }
   backgrounds.forEach((e) => svgDraw.drawBackgroundRect(diagram, e));
+
+  // Ensure every actor has a stopy before fixLifeLineHeights runs.
+  // For non-mirrorActors diagrams the footer drawing phase is skipped, so
+  // actor.stopy is never set (unless the actor was destroyed). Without it,
+  // fixLifeLineHeights leaves the life line at the hardcoded y2=2000, which
+  // cuts off any diagram taller than ~2000px.
+  for (const actorKey of actorKeys) {
+    const actor = actors.get(actorKey);
+    if (!actor.stopy) {
+      actor.stopy = bounds.getVerticalPos();
+    }
+  }
+
   fixLifeLineHeights(diagram, actors, actorKeys, conf);
 
   for (const box of bounds.models.boxes) {
