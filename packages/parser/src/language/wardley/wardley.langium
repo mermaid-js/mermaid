@@ -133,10 +133,14 @@ terminal KW_DEACCELERATOR: 'deaccelerator';
 // NAME_WITH_SPACES must be defined LAST to avoid shadowing other terminals
 // Uses negative lookahead to exclude matching content that starts with reserved keywords
 // Matches names like "Campfire Kettle" and "byte pair encoding (BPE)"
-// Pattern: letter, then any combo of letters/digits/_()&, then optionally (space/tab + letter OR open-paren, then more chars) repeating
+// Pattern: letter, then any combo of letters/digits/_()& or hyphen not followed by `>`,
+// then optionally (space/tab + letter OR open-paren, then more chars) repeating.
+// The `-(?!>)` negative lookahead lets names contain hyphens ("real-time processing")
+// while preserving `->` as the ARROW terminal: in `A->B` the `-` is followed by `>`,
+// the lookahead fails, the name stops at `A`, and `->` tokenises as ARROW.
 // After a space, must start with letter [A-Za-z] or open paren [(] to allow both "Campfire Kettle" and "(BPE)"
 // Uses [ \t]+ instead of \s+ to avoid matching newlines
-terminal NAME_WITH_SPACES: /(?!title\s|accTitle|accDescr)[A-Za-z][A-Za-z0-9_()&]*(?:[ \t]+[A-Za-z(][A-Za-z0-9_()&]*)*/;
+terminal NAME_WITH_SPACES: /(?!title\s|accTitle|accDescr)[A-Za-z](?:[A-Za-z0-9_()&]|-(?!>))*(?:[ \t]+[A-Za-z(](?:[A-Za-z0-9_()&]|-(?!>))*)*/;
 // Removed EVOLUTION_NAME and COMPONENT_NAME terminals - they were too greedy
 // and shadowed imported terminals from common.langium (like TITLE)
 // Now using ID for evolution names and STRING for component names
