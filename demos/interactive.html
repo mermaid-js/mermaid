@@ -753,37 +753,59 @@ stateDiagram-v2
       // Collect all edge path/label elements whose source is nodeId.
       // nodeEl is required for the geometry fallback used when edge IDs are opaque
       // (e.g. stateDiagram produces "edge0", "edge1" — no source/target in ID).
-      function outgoingEdgeElements(svg, nodeId, nodeEl) {
+      function outgoingEdgeElements(svg, nodeId, nodeEl, downstreamNodes) {
+        // Build the full set of node IDs whose outgoing edges should be hidden:
+        // the collapsed node itself PLUS all downstream nodes.  Downstream element
+        // IDs follow "{diagramId}-{type}-{nodeId}-{counter}"; greedy regex to
+        // handle compound names (e.g. "OrderItem").
+        const hiddenSourceIds = new Set([nodeId]);
+        downstreamNodes.forEach((n) => {
+          const m = /-(?:flowchart|classId|state)-(.+)-\d+$/.exec(n.getAttribute('id') || '');
+          if (m) hiddenSourceIds.add(m[1]);
+        });
+
         const result = [];
         // Old renderer (g.edgePath / g.edgeLabel have an id attribute):
         svg.querySelectorAll('.edgePath[id], .edgeLabel[id]').forEach((el) => {
-          if (parseEdgeId(el.id)?.source === nodeId) result.push(el);
+          const p = parseEdgeId(el.id);
+          if (p && hiddenSourceIds.has(p.source)) result.push(el);
         });
         // Unified renderer edge paths:
         svg.querySelectorAll('[data-edge="true"][data-id]').forEach((el) => {
-          if (parseEdgeId(el.dataset.id)?.source === nodeId) result.push(el);
+          const p = parseEdgeId(el.dataset.id);
+          if (p && hiddenSourceIds.has(p.source)) result.push(el);
         });
         // Unified renderer edge labels (outer g.edgeLabel wrapper):
         svg.querySelectorAll('g.edgeLabel').forEach((labelGroup) => {
           const rawId = labelGroup.querySelector('g.label[data-id]')?.dataset?.id;
-          if (rawId && parseEdgeId(rawId)?.source === nodeId) result.push(labelGroup);
+          const p = rawId ? parseEdgeId(rawId) : null;
+          if (p && hiddenSourceIds.has(p.source)) result.push(labelGroup);
         });
 
-        // Geometry fallback: for diagram types with opaque edge IDs, find edges
-        // whose first data-point is near the node's center in SVG layout space.
-        // data-points is a base64-encoded JSON array of dagre layout coordinates;
-        // node transforms are also in that same coordinate space, so they compare
-        // directly without any additional matrix transformation.
+        // Geometry fallback: for diagram types with opaque edge IDs (e.g.
+        // stateDiagram uses "edge0", "edge1"), check pts[0] against the center
+        // of ANY hidden node (collapsed node + all downstream nodes).
         if (result.length === 0 && nodeEl) {
-          const center = getNodeCenter(nodeEl);
-          if (center) {
+          const hiddenCenters = [];
+          const c0 = getNodeCenter(nodeEl);
+          if (c0) hiddenCenters.push(c0);
+          downstreamNodes.forEach((n) => {
+            const nc = getNodeCenter(n);
+            if (nc) hiddenCenters.push(nc);
+          });
+          if (hiddenCenters.length > 0) {
             const tol = 60; // SVG layout units
             const matchedIds = new Set();
             svg.querySelectorAll('[data-edge="true"][data-points]').forEach((el) => {
               try {
                 const pts = JSON.parse(atob(el.getAttribute('data-points') || ''));
                 const p0 = pts?.[0];
-                if (p0 && Math.abs(p0.x - center.x) < tol && Math.abs(p0.y - center.y) < tol) {
+                if (
+                  p0 &&
+                  hiddenCenters.some(
+                    (hc) => Math.abs(p0.x - hc.x) < tol && Math.abs(p0.y - hc.y) < tol
+                  )
+                ) {
                   result.push(el);
                   const eid = el.getAttribute('data-id');
                   if (eid) matchedIds.add(eid);
@@ -940,7 +962,7 @@ stateDiagram-v2
         // Do NOT re-query inside setVisible — hidden elements return zero from
         // getBoundingClientRect, so any query-on-toggle will fail to find them.
         const downstreamNodes = findDownstreamNodes(svg, nodeEl, nodeId);
-        const outgoingEdges = outgoingEdgeElements(svg, nodeId, nodeEl);
+        const outgoingEdges = outgoingEdgeElements(svg, nodeId, nodeEl, downstreamNodes);
 
         const setVisible = (show) => {
           // Restore/hide only the specific downstream nodes — never the collapsible

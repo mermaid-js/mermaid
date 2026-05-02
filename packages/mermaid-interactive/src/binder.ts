@@ -242,31 +242,61 @@ function attachCollapsible(
   // Re-querying on each toggle fails for expand because hidden elements return
   // zero from getBoundingClientRect, preventing them from being found again.
   const downstreamNodes = findDownstreamNodes(svgRoot, nodeEl, nodeId);
-  // Collect outgoing edge elements from both renderers.
+  // Build the full set of node IDs whose outgoing edges should be hidden:
+  // the collapsed node itself PLUS all downstream nodes.  Downstream element
+  // IDs follow the pattern "{diagramId}-{type}-{nodeId}-{counter}"; we extract
+  // the nodeId segment with a greedy regex so compound names (e.g. "OrderItem")
+  // are captured correctly.
+  const hiddenSourceIds = new Set<string>([nodeId]);
+  downstreamNodes.forEach((n) => {
+    const m = /-(?:flowchart|classId|state)-(.+)-\d+$/.exec(n.getAttribute('id') ?? '');
+    if (m) {
+      hiddenSourceIds.add(m[1]);
+    }
+  });
+  // Collect ALL edge elements to be hidden: any edge whose source is the
+  // collapsed node or any of its downstream nodes.  This ensures nested edges
+  // (e.g. Confirmed→Processing when Pending is collapsed) are also hidden.
+  //
   // Old renderer: g.edgePath / g.edgeLabel carry the raw id directly.
   // Unified renderer: path carries raw id in data-id; edge labels are
   //   g.edgeLabel containing g.label[data-id].
   // Geometry fallback: for diagram types with opaque edge IDs (e.g. stateDiagram
-  //   uses "edge0", "edge1" with no source/target encoded), find edges whose
-  //   first data-point is close to the node's center in dagre layout space.
-  //   data-points is base64-encoded JSON; node transforms are in the same space.
+  //   uses "edge0", "edge1"), find edges whose first data-point is near the
+  //   center of ANY hidden node (collapsed node or downstream nodes).
   const outgoingEdges: SVGGElement[] = [
     ...svgRoot.querySelectorAll<SVGGElement>('.edgePath[id], .edgeLabel[id]'),
-  ].filter((el) => parseEdgeId(el.id)?.source === nodeId);
+  ].filter((el) => {
+    const p = parseEdgeId(el.id);
+    return p !== null && hiddenSourceIds.has(p.source);
+  });
   svgRoot.querySelectorAll<SVGGElement>('[data-edge="true"][data-id]').forEach((el) => {
-    if (parseEdgeId((el as HTMLElement).dataset.id ?? '')?.source === nodeId) {
+    const p = parseEdgeId((el as HTMLElement).dataset.id ?? '');
+    if (p !== null && hiddenSourceIds.has(p.source)) {
       outgoingEdges.push(el);
     }
   });
   svgRoot.querySelectorAll<SVGGElement>('g.edgeLabel').forEach((labelGroup) => {
     const rawId = labelGroup.querySelector<HTMLElement>('g.label[data-id]')?.dataset?.id;
-    if (rawId && parseEdgeId(rawId)?.source === nodeId) {
+    const p = rawId ? parseEdgeId(rawId) : null;
+    if (p !== null && hiddenSourceIds.has(p.source)) {
       outgoingEdges.push(labelGroup);
     }
   });
   if (outgoingEdges.length === 0) {
-    const center = getNodeCenter(nodeEl);
-    if (center) {
+    // Geometry fallback: check pts[0] against the center of ANY hidden node.
+    const hiddenCenters: { x: number; y: number }[] = [];
+    const c0 = getNodeCenter(nodeEl);
+    if (c0) {
+      hiddenCenters.push(c0);
+    }
+    downstreamNodes.forEach((n) => {
+      const nc = getNodeCenter(n);
+      if (nc) {
+        hiddenCenters.push(nc);
+      }
+    });
+    if (hiddenCenters.length > 0) {
       const tol = 60;
       const matchedIds = new Set<string>();
       svgRoot.querySelectorAll<SVGGElement>('[data-edge="true"][data-points]').forEach((el) => {
@@ -276,7 +306,10 @@ function attachCollapsible(
             y: number;
           }[];
           const p0 = pts?.[0];
-          if (p0 && Math.abs(p0.x - center.x) < tol && Math.abs(p0.y - center.y) < tol) {
+          if (
+            p0 &&
+            hiddenCenters.some((hc) => Math.abs(p0.x - hc.x) < tol && Math.abs(p0.y - hc.y) < tol)
+          ) {
             outgoingEdges.push(el);
             const eid = (el as HTMLElement).getAttribute('data-id');
             if (eid) {
