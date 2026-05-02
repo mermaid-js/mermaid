@@ -717,24 +717,74 @@ stateDiagram-v2
         return out;
       }
 
+      // Parse Mermaid edge-group IDs: "L-{source}-{target}-{n}"
+      function parseEdgeId(id) {
+        const m = /^L-(.+?)-(.+?)-\d+$/.exec(id);
+        return m ? { source: m[1], target: m[2] } : null;
+      }
+
       function findNode(svg, nodeId) {
-        // Flowchart / graph renderer
-        const byFlow = svg.querySelector(`[id*="flowchart-${nodeId}-"]`);
+        // Flowchart/graph: "flowchart-{nodeId}-{n}"
+        const byFlow = svg.querySelector(`[id^="flowchart-${nodeId}-"]`);
         if (byFlow) return byFlow;
-        // Class diagram renderer — IDs are "classId-{ClassName}-{n}"
-        const byClass = svg.querySelector(`[id*="classId-${nodeId}"]`);
+        // classDiagram: "classId-{ClassName}-{n}" — use ^= and exact boundary to
+        // avoid "classId-Order" matching "classId-OrderItem-0"
+        const byClass = svg.querySelector(`[id^="classId-${nodeId}-"]`);
         if (byClass) return byClass;
-        // State diagram renderer — state groups carry the state name as their id
-        const byState =
-          svg.querySelector(`g.state-group[id="${nodeId}"]`) ??
-          svg.querySelector(`g[id="${nodeId}"]`);
-        if (byState?.matches('g')) return byState;
-        // Generic fallback: search all node-like groups by visible text
-        for (const g of svg.querySelectorAll('g.node, g.actor, g.label-container, g.state')) {
+        // stateDiagram-v2: IDs are "state-{name}-{n}"; parent/note variants contain
+        // "----" (DOMID_TYPE_SPACER) so we exclude those with :not([id*="----"])
+        const byState = svg.querySelector(`g[id^="state-${nodeId}-"]:not([id*="----"])`);
+        if (byState) return byState;
+        // Generic text fallback for any other diagram type
+        for (const g of svg.querySelectorAll('g.node, g.actor, g.label-container, g.stateGroup')) {
           const textEl = g.querySelector('text');
           if (textEl?.textContent?.trim() === nodeId) return g;
         }
         return null;
+      }
+
+      function findCluster(svg, nodeId) {
+        return (
+          svg.querySelector(`[id="cluster_${nodeId}"]`) ??
+          svg.querySelector(`g.cluster[id$="_${nodeId}"]`) ??
+          null
+        );
+      }
+
+      // Resolve downstream nodes via Mermaid edge IDs at attach time.
+      // IMPORTANT: must be called while all nodes are visible — getBoundingClientRect
+      // returns zero on display:none elements so the Y-heuristic fallback would fail
+      // if called later during expand.
+      function findDownstreamNodes(svg, nodeEl, nodeId) {
+        const targetIds = new Set();
+        svg.querySelectorAll('.edgePath[id]').forEach((el) => {
+          const parsed = parseEdgeId(el.id);
+          if (parsed?.source === nodeId) targetIds.add(parsed.target);
+        });
+        if (targetIds.size > 0) {
+          return [...targetIds].flatMap((tid) => {
+            const el = svg.querySelector(`[id*="flowchart-${tid}-"]`);
+            return el ? [el] : [];
+          });
+        }
+        // Fallback: Y-position — only reliable at attach time while visible
+        const parentCy =
+          nodeEl.getBoundingClientRect().top + nodeEl.getBoundingClientRect().height / 2;
+        return [...svg.querySelectorAll('g.node')].filter((n) => {
+          if (n === nodeEl) return false;
+          const b = n.getBoundingClientRect();
+          return b.top + b.height / 2 > parentCy;
+        });
+      }
+
+      function findNodesInsideCluster(svg, clusterEl) {
+        const cb = clusterEl.getBoundingClientRect();
+        return [...svg.querySelectorAll('g.node')].filter((n) => {
+          const b = n.getBoundingClientRect();
+          const cx = b.left + b.width / 2;
+          const cy = b.top + b.height / 2;
+          return cx >= cb.left && cx <= cb.right && cy >= cb.top && cy <= cb.bottom;
+        });
       }
 
       function attachTooltip(el, text) {
@@ -757,11 +807,7 @@ stateDiagram-v2
         });
       }
 
-      function attachCollapsible(svg, nodeEl, defaultState) {
-        let expanded = defaultState !== 'collapsed';
-        nodeEl.style.cursor = 'pointer';
-
-        // Collapse toggle badge
+      function makeBadge(targetEl, expanded) {
         const badge = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         badge.setAttribute('class', 'mi-toggle');
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -781,26 +827,39 @@ stateDiagram-v2
         badge.appendChild(circle);
         badge.appendChild(icon);
         try {
-          const box = nodeEl.getBBox();
+          const box = targetEl.getBBox();
           badge.setAttribute(
             'transform',
             `translate(${box.x + box.width + 6},${box.y + box.height / 2})`
           );
         } catch {}
-        nodeEl.appendChild(badge);
+        targetEl.appendChild(badge);
+        return icon;
+      }
 
-        const parentCy = () =>
-          nodeEl.getBoundingClientRect().top + nodeEl.getBoundingClientRect().height / 2;
+      function attachCollapsible(svg, nodeEl, nodeId, defaultState) {
+        let expanded = defaultState !== 'collapsed';
+        nodeEl.style.cursor = 'pointer';
+        const icon = makeBadge(nodeEl, expanded);
+
+        // Cache at attach time while every element is visible.
+        // Do NOT re-query inside setVisible — hidden elements return zero from
+        // getBoundingClientRect, so any query-on-toggle will fail to find them.
+        const downstreamNodes = findDownstreamNodes(svg, nodeEl, nodeId);
+        const outgoingEdges = [...svg.querySelectorAll('.edgePath[id], .edgeLabel[id]')].filter(
+          (el) => parseEdgeId(el.id)?.source === nodeId
+        );
 
         const setVisible = (show) => {
-          const cy = parentCy();
-          svg.querySelectorAll('g.node').forEach((n) => {
-            if (n === nodeEl) return;
-            const ncy = n.getBoundingClientRect().top + n.getBoundingClientRect().height / 2;
-            if (ncy > cy) n.style.display = show ? '' : 'none';
+          // Restore/hide only the specific downstream nodes — never the collapsible
+          // node itself and never nodes that are upstream (e.g. Auth Service siblings).
+          downstreamNodes.forEach((n) => {
+            n.style.display = show ? '' : 'none';
           });
-          svg.querySelectorAll('.edgePaths path, .edgePath path').forEach((p) => {
-            p.style.display = show ? '' : 'none';
+          // Only outgoing edges from this node are toggled; incoming edges (A→B)
+          // are intentionally left untouched so the node stays connected to its parents.
+          outgoingEdges.forEach((el) => {
+            el.style.display = show ? '' : 'none';
           });
           icon.textContent = show ? '▼' : '▶';
         };
@@ -812,12 +871,58 @@ stateDiagram-v2
         });
       }
 
+      function attachClusterCollapsible(svg, clusterEl, nodeId, defaultState) {
+        let expanded = defaultState !== 'collapsed';
+        clusterEl.style.cursor = 'pointer';
+        const icon = makeBadge(clusterEl, expanded);
+
+        const internalNodes = findNodesInsideCluster(svg, clusterEl);
+        const internalIds = new Set(
+          internalNodes.map((n) => n.id?.match(/flowchart-(\w+)-/)?.[1]).filter(Boolean)
+        );
+        const relatedEdges = [...svg.querySelectorAll('.edgePath[id], .edgeLabel[id]')].filter(
+          (el) => {
+            const p = parseEdgeId(el.id);
+            return p && (internalIds.has(p.source) || internalIds.has(p.target));
+          }
+        );
+
+        const setVisible = (show) => {
+          internalNodes.forEach((n) => {
+            n.style.display = show ? '' : 'none';
+          });
+          relatedEdges.forEach((el) => {
+            el.style.display = show ? '' : 'none';
+          });
+          icon.textContent = show ? '▼' : '▶';
+        };
+
+        if (!expanded) setVisible(false);
+        clusterEl.addEventListener('click', () => {
+          expanded = !expanded;
+          setVisible(expanded);
+        });
+      }
+
       function bind(svgEl, diagramSrc) {
         for (const { nodeId, props } of parseInteractions(diagramSrc)) {
           const nodeEl = findNode(svgEl, nodeId);
-          if (!nodeEl) continue;
+          if (!nodeEl) {
+            if (props.collapsible) {
+              const clusterEl = findCluster(svgEl, nodeId);
+              if (clusterEl)
+                attachClusterCollapsible(
+                  svgEl,
+                  clusterEl,
+                  nodeId,
+                  props.defaultState ?? 'expanded'
+                );
+            }
+            continue;
+          }
           if (props.tooltip) attachTooltip(nodeEl, String(props.tooltip));
-          if (props.collapsible) attachCollapsible(svgEl, nodeEl, props.defaultState ?? 'expanded');
+          if (props.collapsible)
+            attachCollapsible(svgEl, nodeEl, nodeId, props.defaultState ?? 'expanded');
         }
       }
 
