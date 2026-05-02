@@ -127,9 +127,17 @@ function findDownstreamNodes(
 ): SVGGElement[] {
   const targetIds = new Set<string>();
 
-  // Primary: derive targets from Mermaid edge IDs
+  // Primary: derive targets from Mermaid edge IDs.
+  // Old renderer: g.edgePath[id="L-source-target-n"]
   svgRoot.querySelectorAll<SVGGElement>('.edgePath[id]').forEach((el) => {
     const parsed = parseEdgeId(el.id);
+    if (parsed?.source === nodeId) {
+      targetIds.add(parsed.target);
+    }
+  });
+  // Unified renderer: path[data-edge][data-id="L-source-target-n"]
+  svgRoot.querySelectorAll<SVGGElement>('[data-edge="true"][data-id]').forEach((el) => {
+    const parsed = parseEdgeId((el as HTMLElement).dataset.id ?? '');
     if (parsed?.source === nodeId) {
       targetIds.add(parsed.target);
     }
@@ -137,7 +145,11 @@ function findDownstreamNodes(
 
   if (targetIds.size > 0) {
     return [...targetIds].flatMap((tid) => {
-      const el = svgRoot.querySelector<SVGGElement>(`[id*="flowchart-${tid}-"]`);
+      // Node domIds are prefixed: "{diagramId}-{type}-{nodeId}-{counter}"
+      const el =
+        svgRoot.querySelector<SVGGElement>(`[id*="-flowchart-${tid}-"]`) ??
+        svgRoot.querySelector<SVGGElement>(`[id*="-classId-${tid}-"]`) ??
+        svgRoot.querySelector<SVGGElement>(`[id*="-state-${tid}-"]:not([id*="----"])`);
       return el ? [el] : [];
     });
   }
@@ -198,9 +210,24 @@ function attachCollapsible(
   // Re-querying on each toggle fails for expand because hidden elements return
   // zero from getBoundingClientRect, preventing them from being found again.
   const downstreamNodes = findDownstreamNodes(svgRoot, nodeEl, nodeId);
-  const outgoingEdges = [
+  // Collect outgoing edge elements from both renderers.
+  // Old renderer: g.edgePath / g.edgeLabel carry the raw id directly.
+  // Unified renderer: path carries id={diagramId}-{rawId} and data-id={rawId};
+  //   edge labels are g.edgeLabel containing g.label[data-id={rawId}].
+  const outgoingEdges: SVGGElement[] = [
     ...svgRoot.querySelectorAll<SVGGElement>('.edgePath[id], .edgeLabel[id]'),
   ].filter((el) => parseEdgeId(el.id)?.source === nodeId);
+  svgRoot.querySelectorAll<SVGGElement>('[data-edge="true"][data-id]').forEach((el) => {
+    if (parseEdgeId((el as HTMLElement).dataset.id ?? '')?.source === nodeId) {
+      outgoingEdges.push(el);
+    }
+  });
+  svgRoot.querySelectorAll<SVGGElement>('g.edgeLabel').forEach((labelGroup) => {
+    const rawId = labelGroup.querySelector<HTMLElement>('g.label[data-id]')?.dataset?.id;
+    if (rawId && parseEdgeId(rawId)?.source === nodeId) {
+      outgoingEdges.push(labelGroup);
+    }
+  });
 
   const setVisibility = (show: boolean) => {
     downstreamNodes.forEach((n) => {
