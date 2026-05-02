@@ -724,22 +724,36 @@ stateDiagram-v2
         return out;
       }
 
-      // Parse raw Mermaid edge IDs: "L-{source}-{target}-{n}"
+      // Parse raw Mermaid edge IDs.
+      //   flowchart:    "L-SOURCE-TARGET-N"    (prefix 'L', dash-delimited)
+      //   classDiagram: "id_SOURCE_TARGET_N"   (prefix 'id', underscore-delimited)
+      //   stateDiagram: "edge0", "edge1", ...  (opaque counter — no source/target)
       function parseEdgeId(id) {
-        const m = /^L-(.+?)-(.+?)-\d+$/.exec(id);
-        return m ? { source: m[1], target: m[2] } : null;
+        if (!id) return null;
+        // Flowchart
+        let m = /^L-(.+?)-(.+?)-\d+$/.exec(id);
+        if (m) return { source: m[1], target: m[2] };
+        // classDiagram — greedy first capture handles multi-word names like "OrderItem";
+        // non-greedy second capture then grabs the shortest remaining token before _\d+$
+        m = /^id_(.+)_(.+?)_\d+$/.exec(id);
+        if (m) return { source: m[1], target: m[2] };
+        return null;
       }
 
-      // Return the raw (un-prefixed) edge id from an SVG edge element.
-      // Old renderer:      g.edgePath / g.edgeLabel carry the raw id directly
-      // Unified renderer:  path or g carry raw id in data-id; actual id has the
-      //                    diagramId prefix prepended.
-      function rawEdgeId(el) {
-        return el.dataset?.id ?? el.id;
+      // Get the node's center in the SVG layout coordinate space.
+      // positionNode() always sets transform="translate(cx,cy)" on every unified-
+      // renderer node, where cx/cy is the dagre layout center of the node.
+      function getNodeCenter(nodeEl) {
+        const m = /translate\(\s*([\d.\-eE]+)[,\s]+([\d.\-eE]+)\s*\)/.exec(
+          nodeEl.getAttribute('transform') || ''
+        );
+        return m ? { x: parseFloat(m[1]), y: parseFloat(m[2]) } : null;
       }
 
-      // Collect all edge path/label elements that originate from nodeId.
-      function outgoingEdgeElements(svg, nodeId) {
+      // Collect all edge path/label elements whose source is nodeId.
+      // nodeEl is required for the geometry fallback used when edge IDs are opaque
+      // (e.g. stateDiagram produces "edge0", "edge1" — no source/target in ID).
+      function outgoingEdgeElements(svg, nodeId, nodeEl) {
         const result = [];
         // Old renderer (g.edgePath / g.edgeLabel have an id attribute):
         svg.querySelectorAll('.edgePath[id], .edgeLabel[id]').forEach((el) => {
@@ -754,6 +768,37 @@ stateDiagram-v2
           const rawId = labelGroup.querySelector('g.label[data-id]')?.dataset?.id;
           if (rawId && parseEdgeId(rawId)?.source === nodeId) result.push(labelGroup);
         });
+
+        // Geometry fallback: for diagram types with opaque edge IDs, find edges
+        // whose first data-point is near the node's center in SVG layout space.
+        // data-points is a base64-encoded JSON array of dagre layout coordinates;
+        // node transforms are also in that same coordinate space, so they compare
+        // directly without any additional matrix transformation.
+        if (result.length === 0 && nodeEl) {
+          const center = getNodeCenter(nodeEl);
+          if (center) {
+            const tol = 60; // SVG layout units
+            const matchedIds = new Set();
+            svg.querySelectorAll('[data-edge="true"][data-points]').forEach((el) => {
+              try {
+                const pts = JSON.parse(atob(el.getAttribute('data-points') || ''));
+                const p0 = pts?.[0];
+                if (p0 && Math.abs(p0.x - center.x) < tol && Math.abs(p0.y - center.y) < tol) {
+                  result.push(el);
+                  const eid = el.getAttribute('data-id');
+                  if (eid) matchedIds.add(eid);
+                }
+              } catch {}
+            });
+            if (matchedIds.size > 0) {
+              svg.querySelectorAll('g.edgeLabel').forEach((labelGroup) => {
+                const rawId = labelGroup.querySelector('g.label[data-id]')?.dataset?.id;
+                if (rawId && matchedIds.has(rawId)) result.push(labelGroup);
+              });
+            }
+          }
+        }
+
         return result;
       }
 
@@ -895,7 +940,7 @@ stateDiagram-v2
         // Do NOT re-query inside setVisible — hidden elements return zero from
         // getBoundingClientRect, so any query-on-toggle will fail to find them.
         const downstreamNodes = findDownstreamNodes(svg, nodeEl, nodeId);
-        const outgoingEdges = outgoingEdgeElements(svg, nodeId);
+        const outgoingEdges = outgoingEdgeElements(svg, nodeId, nodeEl);
 
         const setVisible = (show) => {
           // Restore/hide only the specific downstream nodes — never the collapsible

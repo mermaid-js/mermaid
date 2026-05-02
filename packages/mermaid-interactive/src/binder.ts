@@ -106,12 +106,44 @@ function attachTooltip(el: SVGGElement, text: string): void {
 // ---------------------------------------------------------------------------
 
 /**
- * Parse a Mermaid edge group ID of the form "L-SOURCE-TARGET-N".
- * Returns \{ source, target \} or null if the ID does not match.
+ * Parse a Mermaid edge ID to extract source and target node IDs.
+ *
+ * Supported formats:
+ * - flowchart:    `L-SOURCE-TARGET-N`   (dash-delimited, prefix `L`)
+ * - classDiagram: `id_SOURCE_TARGET_N`  (underscore-delimited, prefix `id`)
+ * - stateDiagram: `edge0`, `edge1`, …  (opaque counter — returns null)
+ *
+ * Returns \{ source, target \} or null if the ID does not match any known scheme.
  */
 function parseEdgeId(id: string): { source: string; target: string } | null {
-  const m = /^L-(.+?)-(.+?)-\d+$/.exec(id);
-  return m ? { source: m[1], target: m[2] } : null;
+  if (!id) {
+    return null;
+  }
+  // flowchart: "L-SOURCE-TARGET-N"
+  let m = /^L-(.+?)-(.+?)-\d+$/.exec(id);
+  if (m) {
+    return { source: m[1], target: m[2] };
+  }
+  // classDiagram: "id_SOURCE_TARGET_N"
+  // Greedy first capture handles compound names (e.g. "OrderItem");
+  // non-greedy second capture picks up the shortest token before _\d+$.
+  m = /^id_(.+)_(.+?)_\d+$/.exec(id);
+  if (m) {
+    return { source: m[1], target: m[2] };
+  }
+  return null;
+}
+
+/**
+ * Get the node's center coordinates in the SVG layout (dagre) coordinate space.
+ * The unified renderer always sets `transform="translate(cx,cy)"` on every node
+ * group via `positionNode()`, where \{cx,cy\} is the dagre layout centre.
+ */
+function getNodeCenter(nodeEl: SVGGElement): { x: number; y: number } | null {
+  const m = /translate\(\s*([\d.Ee-]+)[\s,]+([\d.Ee-]+)\s*\)/.exec(
+    nodeEl.getAttribute('transform') ?? ''
+  );
+  return m ? { x: parseFloat(m[1]), y: parseFloat(m[2]) } : null;
 }
 
 /**
@@ -212,8 +244,12 @@ function attachCollapsible(
   const downstreamNodes = findDownstreamNodes(svgRoot, nodeEl, nodeId);
   // Collect outgoing edge elements from both renderers.
   // Old renderer: g.edgePath / g.edgeLabel carry the raw id directly.
-  // Unified renderer: path carries id={diagramId}-{rawId} and data-id={rawId};
-  //   edge labels are g.edgeLabel containing g.label[data-id={rawId}].
+  // Unified renderer: path carries raw id in data-id; edge labels are
+  //   g.edgeLabel containing g.label[data-id].
+  // Geometry fallback: for diagram types with opaque edge IDs (e.g. stateDiagram
+  //   uses "edge0", "edge1" with no source/target encoded), find edges whose
+  //   first data-point is close to the node's center in dagre layout space.
+  //   data-points is base64-encoded JSON; node transforms are in the same space.
   const outgoingEdges: SVGGElement[] = [
     ...svgRoot.querySelectorAll<SVGGElement>('.edgePath[id], .edgeLabel[id]'),
   ].filter((el) => parseEdgeId(el.id)?.source === nodeId);
@@ -228,6 +264,39 @@ function attachCollapsible(
       outgoingEdges.push(labelGroup);
     }
   });
+  if (outgoingEdges.length === 0) {
+    const center = getNodeCenter(nodeEl);
+    if (center) {
+      const tol = 60;
+      const matchedIds = new Set<string>();
+      svgRoot.querySelectorAll<SVGGElement>('[data-edge="true"][data-points]').forEach((el) => {
+        try {
+          const pts = JSON.parse(atob((el as HTMLElement).getAttribute('data-points') ?? '')) as {
+            x: number;
+            y: number;
+          }[];
+          const p0 = pts?.[0];
+          if (p0 && Math.abs(p0.x - center.x) < tol && Math.abs(p0.y - center.y) < tol) {
+            outgoingEdges.push(el);
+            const eid = (el as HTMLElement).getAttribute('data-id');
+            if (eid) {
+              matchedIds.add(eid);
+            }
+          }
+        } catch {
+          /* ignore malformed data-points */
+        }
+      });
+      if (matchedIds.size > 0) {
+        svgRoot.querySelectorAll<SVGGElement>('g.edgeLabel').forEach((labelGroup) => {
+          const rawId = labelGroup.querySelector<HTMLElement>('g.label[data-id]')?.dataset?.id;
+          if (rawId && matchedIds.has(rawId)) {
+            outgoingEdges.push(labelGroup);
+          }
+        });
+      }
+    }
+  }
 
   const setVisibility = (show: boolean) => {
     downstreamNodes.forEach((n) => {
