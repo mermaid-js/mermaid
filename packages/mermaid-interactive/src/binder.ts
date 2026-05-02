@@ -29,28 +29,35 @@ export function parseInteractions(diagramSource: string): InteractionDef[] {
 // ---------------------------------------------------------------------------
 
 /**
- * Attempt to locate the SVG `<g>` element for a given Mermaid node ID.
- * Mermaid assigns IDs like `flowchart-{nodeId}-{n}` to node groups.
+ * Locate the SVG `<g>` element for a given Mermaid node ID.
+ *
+ * The unified renderer prefixes every node domId with the diagram SVG element
+ * id: `{diagramId}-{domType}-{nodeId}-{counter}`. We use substring search with
+ * a trailing dash to prevent partial matches ("Order" vs "OrderItem").
  */
 function findNodeElement(svgRoot: SVGSVGElement, nodeId: string): SVGGElement | null {
-  // Primary: id-based lookup (flowchart renderer)
-  const byId = svgRoot.querySelector<SVGGElement>(`[id*="flowchart-${nodeId}-"]`);
-  if (byId) {
-    return byId;
+  const byFlow = svgRoot.querySelector<SVGGElement>(`[id*="-flowchart-${nodeId}-"]`);
+  if (byFlow) {
+    return byFlow;
   }
-
-  // Secondary: class-based + text content match
-  const nodes = [...svgRoot.querySelectorAll<SVGGElement>('g.node')];
-  for (const node of nodes) {
-    const labelEl = node.querySelector<SVGTextElement | SVGForeignObjectElement>(
-      'text, foreignObject'
-    );
-    const text = labelEl?.textContent?.trim() ?? '';
-    if (text === nodeId) {
-      return node;
+  const byClass = svgRoot.querySelector<SVGGElement>(`[id*="-classId-${nodeId}-"]`);
+  if (byClass) {
+    return byClass;
+  }
+  // Exclude internal parent/note spacer variants (contain "----")
+  const byState = svgRoot.querySelector<SVGGElement>(`[id*="-state-${nodeId}-"]:not([id*="----"])`);
+  if (byState) {
+    return byState;
+  }
+  // Text fallback for older renderers or htmlLabels
+  for (const g of svgRoot.querySelectorAll<SVGGElement>(
+    'g.node, g.actor, g.label-container, g.stateGroup'
+  )) {
+    const label = g.querySelector<Element>('.nodeLabel, text');
+    if (label?.textContent?.trim() === nodeId) {
+      return g;
     }
   }
-
   return null;
 }
 
@@ -155,7 +162,8 @@ function getNodeCenter(nodeEl: SVGGElement): { x: number; y: number } | null {
 function findDownstreamNodes(
   svgRoot: SVGSVGElement,
   parentEl: SVGGElement,
-  nodeId: string
+  nodeId: string,
+  alwaysShowIds: Set<string>
 ): SVGGElement[] {
   // Build a complete source→targets adjacency map from every parsed edge ID.
   // This covers both flowchart ("L-S-T-N") and classDiagram ("id_S_T_N").
@@ -181,10 +189,19 @@ function findDownstreamNodes(
 
   if (adjacency.size > 0) {
     // BFS: collect the full transitive closure of nodes reachable from nodeId.
+    // Nodes in alwaysShowIds act as barriers: they are neither hidden nor
+    // recursed into, so their entire subtree stays visible.
     const visited = new Set<string>([nodeId]);
     const queue: string[] = [nodeId];
+    const toHide: string[] = [];
     while (queue.length > 0) {
       const current = queue.shift()!;
+      if (alwaysShowIds.has(current)) {
+        continue;
+      } // exempt — keep visible, stop branch
+      if (current !== nodeId) {
+        toHide.push(current);
+      }
       adjacency.get(current)?.forEach((target) => {
         if (!visited.has(target)) {
           visited.add(target);
@@ -192,8 +209,7 @@ function findDownstreamNodes(
         }
       });
     }
-    visited.delete(nodeId); // exclude the collapsed node itself
-    return [...visited].flatMap((tid) => {
+    return toHide.flatMap((tid) => {
       // Node domIds are prefixed: "{diagramId}-{type}-{nodeId}-{counter}"
       const el =
         svgRoot.querySelector<SVGGElement>(`[id*="-flowchart-${tid}-"]`) ??
@@ -216,12 +232,68 @@ function findDownstreamNodes(
   });
 }
 
+/**
+ * Refit the SVG viewBox and height to the bounding box of all currently
+ * visible nodes, so the diagram truly shrinks / expands on collapse / expand.
+ *
+ * Uses getBoundingClientRect (screen space) converted to SVG space via the
+ * inverse screen CTM — reliable across scroll positions and CSS transforms.
+ */
+function fitSvgToContent(svg: SVGSVGElement): void {
+  try {
+    const ctm = svg.getScreenCTM();
+    if (!ctm) {
+      return;
+    }
+    const inv = ctm.inverse();
+    const toSvg = (x: number, y: number): DOMPoint => {
+      const pt = svg.createSVGPoint();
+      pt.x = x;
+      pt.y = y;
+      return pt.matrixTransform(inv);
+    };
+
+    let minX = Infinity,
+      minY = Infinity,
+      maxX = -Infinity,
+      maxY = -Infinity;
+    svg.querySelectorAll<SVGGElement>('g.node, g.stateGroup, g.cluster, g.actor').forEach((el) => {
+      if (el.style.display === 'none') {
+        return;
+      }
+      const r = el.getBoundingClientRect();
+      if (!r.width && !r.height) {
+        return;
+      }
+      const tl = toSvg(r.left, r.top);
+      const br = toSvg(r.right, r.bottom);
+      minX = Math.min(minX, tl.x, br.x);
+      minY = Math.min(minY, tl.y, br.y);
+      maxX = Math.max(maxX, tl.x, br.x);
+      maxY = Math.max(maxY, tl.y, br.y);
+    });
+
+    if (minX === Infinity) {
+      return;
+    }
+    const pad = 16;
+    const vw = maxX - minX + pad * 2;
+    const vh = maxY - minY + pad * 2;
+    svg.setAttribute('viewBox', `${minX - pad} ${minY - pad} ${vw} ${vh}`);
+    svg.style.height = `${vh}px`;
+    svg.style.maxWidth = `${vw}px`;
+  } catch {
+    /* layout not ready */
+  }
+}
+
 /** Attach a collapse/expand toggle to a node. */
 function attachCollapsible(
   svgRoot: SVGSVGElement,
   nodeEl: SVGGElement,
   nodeId: string,
-  defaultState: 'expanded' | 'collapsed'
+  defaultState: 'expanded' | 'collapsed',
+  alwaysShowIds: Set<string> = new Set<string>()
 ): void {
   let expanded = defaultState !== 'collapsed';
 
@@ -258,12 +330,10 @@ function attachCollapsible(
   // Resolve targets once at attach time while everything is visible.
   // Re-querying on each toggle fails for expand because hidden elements return
   // zero from getBoundingClientRect, preventing them from being found again.
-  const downstreamNodes = findDownstreamNodes(svgRoot, nodeEl, nodeId);
+  const downstreamNodes = findDownstreamNodes(svgRoot, nodeEl, nodeId, alwaysShowIds);
+
   // Build the full set of node IDs whose outgoing edges should be hidden:
-  // the collapsed node itself PLUS all downstream nodes.  Downstream element
-  // IDs follow the pattern "{diagramId}-{type}-{nodeId}-{counter}"; we extract
-  // the nodeId segment with a greedy regex so compound names (e.g. "OrderItem")
-  // are captured correctly.
+  // the collapsed node itself PLUS all downstream nodes (not exempt ones).
   const hiddenSourceIds = new Set<string>([nodeId]);
   downstreamNodes.forEach((n) => {
     const m = /-(?:flowchart|classId|state)-(.+)-\d+$/.exec(n.getAttribute('id') ?? '');
@@ -271,37 +341,47 @@ function attachCollapsible(
       hiddenSourceIds.add(m[1]);
     }
   });
-  // Collect ALL edge elements to be hidden: any edge whose source is the
-  // collapsed node or any of its downstream nodes.  This ensures nested edges
-  // (e.g. Confirmed→Processing when Pending is collapsed) are also hidden.
-  //
-  // Old renderer: g.edgePath / g.edgeLabel carry the raw id directly.
-  // Unified renderer: path carries raw id in data-id; edge labels are
-  //   g.edgeLabel containing g.label[data-id].
-  // Geometry fallback: for diagram types with opaque edge IDs (e.g. stateDiagram
-  //   uses "edge0", "edge1"), find edges whose first data-point is near the
-  //   center of ANY hidden node (collapsed node or downstream nodes).
+
+  // Decide whether an edge should be hidden.
+  // Rules:
+  //   1. Source must be in hiddenSourceIds.
+  //   2. Target must NOT be in alwaysShowIds (edges leading to exempt nodes stay visible).
+  const shouldHideEdge = (parsed: { source: string; target: string } | null): boolean => {
+    if (!parsed) {
+      return false;
+    }
+    if (!hiddenSourceIds.has(parsed.source)) {
+      return false;
+    }
+    if (alwaysShowIds.has(parsed.target)) {
+      return false;
+    } // keep edge to exempt node
+    return true;
+  };
+
+  // Collect ALL edge elements to be hidden.  Three passes + geometry fallback:
+  //   Old renderer:  g.edgePath / g.edgeLabel carry the raw id directly.
+  //   Unified:       path carries raw id in data-id; labels are g.edgeLabel > g.label[data-id].
+  //   Geometry:      opaque edge IDs (stateDiagram "edge0" etc.) — match by first data-point.
   const outgoingEdges: SVGGElement[] = [
     ...svgRoot.querySelectorAll<SVGGElement>('.edgePath[id], .edgeLabel[id]'),
-  ].filter((el) => {
-    const p = parseEdgeId(el.id);
-    return p !== null && hiddenSourceIds.has(p.source);
-  });
+  ].filter((el) => shouldHideEdge(parseEdgeId(el.id)));
+
   svgRoot.querySelectorAll<SVGGElement>('[data-edge="true"][data-id]').forEach((el) => {
-    const p = parseEdgeId((el as HTMLElement).dataset.id ?? '');
-    if (p !== null && hiddenSourceIds.has(p.source)) {
+    if (shouldHideEdge(parseEdgeId((el as HTMLElement).dataset.id ?? ''))) {
       outgoingEdges.push(el);
     }
   });
+
   svgRoot.querySelectorAll<SVGGElement>('g.edgeLabel').forEach((labelGroup) => {
     const rawId = labelGroup.querySelector<HTMLElement>('g.label[data-id]')?.dataset?.id;
-    const p = rawId ? parseEdgeId(rawId) : null;
-    if (p !== null && hiddenSourceIds.has(p.source)) {
+    if (shouldHideEdge(rawId ? parseEdgeId(rawId) : null)) {
       outgoingEdges.push(labelGroup);
     }
   });
+
   if (outgoingEdges.length === 0) {
-    // Geometry fallback: check pts[0] against the center of ANY hidden node.
+    // Geometry fallback — match by pts[0] proximity to any hidden-node center.
     const hiddenCenters: { x: number; y: number }[] = [];
     const c0 = getNodeCenter(nodeEl);
     if (c0) {
@@ -311,6 +391,17 @@ function attachCollapsible(
       const nc = getNodeCenter(n);
       if (nc) {
         hiddenCenters.push(nc);
+      }
+    });
+    // Collect centers of exempt nodes so we can keep edges that reach them.
+    const exemptCenters: { x: number; y: number }[] = [];
+    alwaysShowIds.forEach((eid) => {
+      const eel = findNodeElement(svgRoot, eid);
+      if (eel) {
+        const nc = getNodeCenter(eel);
+        if (nc) {
+          exemptCenters.push(nc);
+        }
       }
     });
     if (hiddenCenters.length > 0) {
@@ -323,15 +414,29 @@ function attachCollapsible(
             y: number;
           }[];
           const p0 = pts?.[0];
-          if (
-            p0 &&
-            hiddenCenters.some((hc) => Math.abs(p0.x - hc.x) < tol && Math.abs(p0.y - hc.y) < tol)
-          ) {
-            outgoingEdges.push(el);
-            const eid = (el as HTMLElement).getAttribute('data-id');
-            if (eid) {
-              matchedIds.add(eid);
-            }
+          const pLast = pts?.[pts.length - 1];
+          if (!p0) {
+            return;
+          }
+          const srcMatch = hiddenCenters.some(
+            (hc) => Math.abs(p0.x - hc.x) < tol && Math.abs(p0.y - hc.y) < tol
+          );
+          if (!srcMatch) {
+            return;
+          }
+          // Don't hide edges whose last point is near an exempt node's center.
+          const tgtExempt =
+            pLast &&
+            exemptCenters.some(
+              (ec) => Math.abs(pLast.x - ec.x) < tol && Math.abs(pLast.y - ec.y) < tol
+            );
+          if (tgtExempt) {
+            return;
+          }
+          outgoingEdges.push(el);
+          const eid = (el as HTMLElement).getAttribute('data-id');
+          if (eid) {
+            matchedIds.add(eid);
           }
         } catch {
           /* ignore malformed data-points */
@@ -352,12 +457,14 @@ function attachCollapsible(
     downstreamNodes.forEach((n) => {
       n.style.display = show ? '' : 'none';
     });
-    // Only outgoing edges are toggled — incoming edges (e.g. A→B) stay
-    // visible so the collapsible node remains connected to its parents.
+    // Only outgoing edges from hidden nodes are toggled; incoming edges
+    // remain visible so the collapsed node stays connected to its parents.
     outgoingEdges.forEach((el) => {
       el.style.display = show ? '' : 'none';
     });
     icon.textContent = show ? '▼' : '▶';
+    // Refit the SVG canvas so the diagram truly collapses / expands.
+    fitSvgToContent(svgRoot);
   };
 
   if (!expanded) {
@@ -490,6 +597,15 @@ function attachClusterCollapsible(
 export function bind(svgElement: SVGSVGElement, diagramSource: string): void {
   const interactions = parseInteractions(diagramSource);
 
+  // Gather all node IDs that must always remain visible (alwaysShow / ignoreCollapse).
+  // These act as BFS barriers: downstream traversal stops at them, their edges
+  // leading to them are kept visible, and their own subtrees are never hidden.
+  const alwaysShowIds = new Set<string>(
+    interactions
+      .filter(({ props }) => props.alwaysShow === true || props.ignoreCollapse === true)
+      .map(({ nodeId }) => nodeId)
+  );
+
   for (const { nodeId, props } of interactions) {
     const nodeEl = findNodeElement(svgElement, nodeId);
 
@@ -511,7 +627,7 @@ export function bind(svgElement: SVGSVGElement, diagramSource: string): void {
 
     if (props.collapsible) {
       const state = props.defaultState! ?? 'expanded';
-      attachCollapsible(svgElement, nodeEl, nodeId, state);
+      attachCollapsible(svgElement, nodeEl, nodeId, state, alwaysShowIds);
     }
   }
 }
