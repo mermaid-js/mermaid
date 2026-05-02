@@ -464,8 +464,9 @@ flowchart LR
     <div class="example-card">
       <h2>Example 7: E-commerce Domain Model &mdash; classDiagram</h2>
       <p class="hint">
-        Class diagrams use a different SVG ID scheme (<code>classId-{Name}</code>). Tooltips are
-        resolved via that pattern. Hover each class for its domain role.
+        Class diagrams use a different SVG ID scheme (<code>classId-{Name}</code>). Click
+        <strong>Customer</strong> or <strong>Order</strong> to collapse their associated classes.
+        Hover any class for its domain role.
       </p>
       <div class="layout">
         <div>
@@ -508,9 +509,11 @@ classDiagram
 
   interaction Order {
     tooltip: "Purchase record. Status transitions: pending -> confirmed -> shipped -> delivered"
+    collapsible: true
   }
   interaction Customer {
     tooltip: "Registered buyer. Tier (standard/gold/platinum) affects pricing and SLA"
+    collapsible: true
   }
   interaction Product {
     tooltip: "Catalogue item. stock is decremented atomically on OrderItem creation"
@@ -537,8 +540,10 @@ classDiagram
     <div class="example-card">
       <h2>Example 8: Order Lifecycle &mdash; stateDiagram-v2</h2>
       <p class="hint">
-        State diagrams render states as labelled SVG groups. The binder resolves them by state-group
-        ID. Hover each state to see the business rule that governs it.
+        State diagrams render states as <code>g.stateGroup</code> SVG elements. Click
+        <strong>Pending</strong> to collapse the entire downstream lifecycle, or click
+        <strong>Shipped</strong> to collapse the post-dispatch branch. Hover any state for its
+        business rule.
       </p>
       <div class="layout">
         <div>
@@ -561,6 +566,7 @@ stateDiagram-v2
 
   interaction Pending {
     tooltip: "Awaiting payment. Auto-cancelled after 30 min via scheduled job."
+    collapsible: true
   }
   interaction Confirmed {
     tooltip: "Payment captured. Warehouse notified for stock allocation."
@@ -570,6 +576,7 @@ stateDiagram-v2
   }
   interaction Shipped {
     tooltip: "Carrier has collected. Tracking events streamed via webhook."
+    collapsible: true
   }
   interaction Delivered {
     tooltip: "Carrier confirmed delivery. 30-day return window starts."
@@ -767,10 +774,11 @@ stateDiagram-v2
             return el ? [el] : [];
           });
         }
-        // Fallback: Y-position — only reliable at attach time while visible
+        // Fallback: Y-position — only reliable at attach time while visible.
+        // 'g.node' covers flowchart/class; 'g.stateGroup' covers stateDiagram-v2.
         const parentCy =
           nodeEl.getBoundingClientRect().top + nodeEl.getBoundingClientRect().height / 2;
-        return [...svg.querySelectorAll('g.node')].filter((n) => {
+        return [...svg.querySelectorAll('g.node, g.stateGroup')].filter((n) => {
           if (n === nodeEl) return false;
           const b = n.getBoundingClientRect();
           return b.top + b.height / 2 > parentCy;

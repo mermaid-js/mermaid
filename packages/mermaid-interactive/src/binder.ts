@@ -142,10 +142,11 @@ function findDownstreamNodes(
     });
   }
 
-  // Fallback: Y-position heuristic (SVG without Mermaid-style edge IDs)
+  // Fallback: Y-position heuristic (SVG without Mermaid-style edge IDs).
+  // 'g.node' covers flowchart/classDiagram; 'g.stateGroup' covers stateDiagram-v2.
   const parentCy =
     parentEl.getBoundingClientRect().top + parentEl.getBoundingClientRect().height / 2;
-  return [...svgRoot.querySelectorAll<SVGGElement>('g.node')].filter((n) => {
+  return [...svgRoot.querySelectorAll<SVGGElement>('g.node, g.stateGroup')].filter((n) => {
     if (n === parentEl) {
       return false;
     }
