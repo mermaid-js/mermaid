@@ -157,26 +157,43 @@ function findDownstreamNodes(
   parentEl: SVGGElement,
   nodeId: string
 ): SVGGElement[] {
-  const targetIds = new Set<string>();
-
-  // Primary: derive targets from Mermaid edge IDs.
-  // Old renderer: g.edgePath[id="L-source-target-n"]
+  // Build a complete source→targets adjacency map from every parsed edge ID.
+  // This covers both flowchart ("L-S-T-N") and classDiagram ("id_S_T_N").
+  const adjacency = new Map<string, Set<string>>();
+  const addEdge = (src: string, tgt: string) => {
+    if (!adjacency.has(src)) {
+      adjacency.set(src, new Set());
+    }
+    adjacency.get(src)!.add(tgt);
+  };
   svgRoot.querySelectorAll<SVGGElement>('.edgePath[id]').forEach((el) => {
     const parsed = parseEdgeId(el.id);
-    if (parsed?.source === nodeId) {
-      targetIds.add(parsed.target);
+    if (parsed) {
+      addEdge(parsed.source, parsed.target);
     }
   });
-  // Unified renderer: path[data-edge][data-id="L-source-target-n"]
   svgRoot.querySelectorAll<SVGGElement>('[data-edge="true"][data-id]').forEach((el) => {
     const parsed = parseEdgeId((el as HTMLElement).dataset.id ?? '');
-    if (parsed?.source === nodeId) {
-      targetIds.add(parsed.target);
+    if (parsed) {
+      addEdge(parsed.source, parsed.target);
     }
   });
 
-  if (targetIds.size > 0) {
-    return [...targetIds].flatMap((tid) => {
+  if (adjacency.size > 0) {
+    // BFS: collect the full transitive closure of nodes reachable from nodeId.
+    const visited = new Set<string>([nodeId]);
+    const queue: string[] = [nodeId];
+    while (queue.length > 0) {
+      const current = queue.shift()!;
+      adjacency.get(current)?.forEach((target) => {
+        if (!visited.has(target)) {
+          visited.add(target);
+          queue.push(target);
+        }
+      });
+    }
+    visited.delete(nodeId); // exclude the collapsed node itself
+    return [...visited].flatMap((tid) => {
       // Node domIds are prefixed: "{diagramId}-{type}-{nodeId}-{counter}"
       const el =
         svgRoot.querySelector<SVGGElement>(`[id*="-flowchart-${tid}-"]`) ??

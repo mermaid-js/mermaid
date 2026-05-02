@@ -861,20 +861,37 @@ stateDiagram-v2
       // returns zero on display:none elements so the Y-heuristic fallback would fail
       // if called later during expand.
       function findDownstreamNodes(svg, nodeEl, nodeId) {
-        const targetIds = new Set();
-        // Old renderer: g.edgePath[id="L-nodeId-targetId-n"]
+        // Build a complete source→targets adjacency map from every parsed edge ID.
+        // This covers both flowchart ("L-S-T-N") and classDiagram ("id_S_T_N").
+        const adjacency = new Map();
+        const addEdge = (src, tgt) => {
+          if (!adjacency.has(src)) adjacency.set(src, new Set());
+          adjacency.get(src).add(tgt);
+        };
         svg.querySelectorAll('.edgePath[id]').forEach((el) => {
           const parsed = parseEdgeId(el.id);
-          if (parsed?.source === nodeId) targetIds.add(parsed.target);
+          if (parsed) addEdge(parsed.source, parsed.target);
         });
-        // Unified renderer: path[data-edge="true"][data-id="L-nodeId-targetId-n"]
         svg.querySelectorAll('[data-edge="true"][data-id]').forEach((el) => {
           const parsed = parseEdgeId(el.dataset.id);
-          if (parsed?.source === nodeId) targetIds.add(parsed.target);
+          if (parsed) addEdge(parsed.source, parsed.target);
         });
-        if (targetIds.size > 0) {
-          return [...targetIds].flatMap((tid) => {
-            // Node ids are {diagramId}-{domType}-{tid}-{counter}; use substring search.
+
+        if (adjacency.size > 0) {
+          // BFS: collect the full transitive closure of nodes reachable from nodeId.
+          const visited = new Set([nodeId]);
+          const queue = [nodeId];
+          while (queue.length > 0) {
+            const current = queue.shift();
+            adjacency.get(current)?.forEach((target) => {
+              if (!visited.has(target)) {
+                visited.add(target);
+                queue.push(target);
+              }
+            });
+          }
+          visited.delete(nodeId); // exclude the collapsed node itself
+          return [...visited].flatMap((tid) => {
             const el =
               svg.querySelector(`[id*="-flowchart-${tid}-"]`) ??
               svg.querySelector(`[id*="-classId-${tid}-"]`) ??
@@ -882,6 +899,7 @@ stateDiagram-v2
             return el ? [el] : [];
           });
         }
+
         // Fallback: Y-position — only reliable at attach time while visible.
         // All unified-renderer nodes have class 'node'; stateGroup is the old renderer.
         const parentCy =
