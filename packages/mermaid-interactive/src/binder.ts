@@ -106,31 +106,51 @@ function attachTooltip(el: SVGGElement, text: string): void {
 // ---------------------------------------------------------------------------
 
 /**
- * Find all node <g> elements that are direct children of a given node in the
- * diagram, by inspecting edge paths that originate from the parent node.
- *
- * Mermaid renders edges as `<path>` elements inside `.edgePaths`. Edge start
- * and end markers are placed relative to the source/target nodes. We resolve
- * child nodes by scanning all `g.node` elements and checking whether there
- * is an arrow edge that visually connects from the parent to that child.
- *
- * Because the SVG topology alone is ambiguous (node positions, not IDs, are
- * encoded in path `d` attributes), we use a bounding-box proximity heuristic
- * for the PoC: child candidates are those whose centre lies within the
- * downstream half of the diagram relative to the parent node.
+ * Parse a Mermaid edge group ID of the form "L-SOURCE-TARGET-N".
+ * Returns \{ source, target \} or null if the ID does not match.
  */
-function findChildNodes(svgRoot: SVGSVGElement, parentEl: SVGGElement): SVGGElement[] {
-  const parentBox = parentEl.getBoundingClientRect();
-  const parentCy = parentBox.top + parentBox.height / 2;
+function parseEdgeId(id: string): { source: string; target: string } | null {
+  const m = /^L-(.+?)-(.+?)-\d+$/.exec(id);
+  return m ? { source: m[1], target: m[2] } : null;
+}
 
+/**
+ * Find the direct downstream nodes of a collapsible node using Mermaid's
+ * edge ID scheme ("L-SOURCE-TARGET-N").
+ *
+ * Falls back to a Y-position heuristic when edge IDs are absent.
+ */
+function findDownstreamNodes(
+  svgRoot: SVGSVGElement,
+  parentEl: SVGGElement,
+  nodeId: string
+): SVGGElement[] {
+  const targetIds = new Set<string>();
+
+  // Primary: derive targets from Mermaid edge IDs
+  svgRoot.querySelectorAll<SVGGElement>('.edgePath[id]').forEach((el) => {
+    const parsed = parseEdgeId(el.id);
+    if (parsed?.source === nodeId) {
+      targetIds.add(parsed.target);
+    }
+  });
+
+  if (targetIds.size > 0) {
+    return [...targetIds].flatMap((tid) => {
+      const el = svgRoot.querySelector<SVGGElement>(`[id*="flowchart-${tid}-"]`);
+      return el ? [el] : [];
+    });
+  }
+
+  // Fallback: Y-position heuristic (SVG without Mermaid-style edge IDs)
+  const parentCy =
+    parentEl.getBoundingClientRect().top + parentEl.getBoundingClientRect().height / 2;
   return [...svgRoot.querySelectorAll<SVGGElement>('g.node')].filter((n) => {
     if (n === parentEl) {
       return false;
     }
     const box = n.getBoundingClientRect();
-    const cy = box.top + box.height / 2;
-    // Nodes that appear below the parent (TD graphs) are considered children
-    return cy > parentCy;
+    return box.top + box.height / 2 > parentCy;
   });
 }
 
@@ -138,6 +158,7 @@ function findChildNodes(svgRoot: SVGSVGElement, parentEl: SVGGElement): SVGGElem
 function attachCollapsible(
   svgRoot: SVGSVGElement,
   nodeEl: SVGGElement,
+  nodeId: string,
   defaultState: 'expanded' | 'collapsed'
 ): void {
   let expanded = defaultState !== 'collapsed';
@@ -172,14 +193,22 @@ function attachCollapsible(
   nodeEl.appendChild(badge);
   nodeEl.style.cursor = 'pointer';
 
+  // Resolve targets once at attach time while everything is visible.
+  // Re-querying on each toggle fails for expand because hidden elements return
+  // zero from getBoundingClientRect, preventing them from being found again.
+  const downstreamNodes = findDownstreamNodes(svgRoot, nodeEl, nodeId);
+  const outgoingEdges = [
+    ...svgRoot.querySelectorAll<SVGGElement>('.edgePath[id], .edgeLabel[id]'),
+  ].filter((el) => parseEdgeId(el.id)?.source === nodeId);
+
   const setVisibility = (show: boolean) => {
-    const childNodes = findChildNodes(svgRoot, nodeEl);
-    childNodes.forEach((n) => {
+    downstreamNodes.forEach((n) => {
       n.style.display = show ? '' : 'none';
     });
-    // Also hide connecting edge paths
-    svgRoot.querySelectorAll<SVGPathElement>('.edgePaths path, .edgePath path').forEach((p) => {
-      p.style.display = show ? '' : 'none';
+    // Only outgoing edges are toggled — incoming edges (e.g. A→B) stay
+    // visible so the collapsible node remains connected to its parents.
+    outgoingEdges.forEach((el) => {
+      el.style.display = show ? '' : 'none';
     });
     icon.textContent = show ? '▼' : '▶';
   };
@@ -194,6 +223,104 @@ function attachCollapsible(
   };
 
   nodeEl.addEventListener('click', toggle);
+  badge.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggle();
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Cluster (subgraph) support
+// ---------------------------------------------------------------------------
+
+/** Find a Mermaid cluster element by subgraph ID. */
+function findClusterElement(svgRoot: SVGSVGElement, nodeId: string): SVGGElement | null {
+  return (
+    svgRoot.querySelector<SVGGElement>(`[id="cluster_${nodeId}"]`) ??
+    svgRoot.querySelector<SVGGElement>(`g.cluster[id$="_${nodeId}"]`) ??
+    null
+  );
+}
+
+/** Return all node <g> elements whose centre falls inside a cluster's bounding box. */
+function findNodesInsideCluster(svgRoot: SVGSVGElement, clusterEl: SVGGElement): SVGGElement[] {
+  const cb = clusterEl.getBoundingClientRect();
+  return [...svgRoot.querySelectorAll<SVGGElement>('g.node')].filter((n) => {
+    const b = n.getBoundingClientRect();
+    const cx = b.left + b.width / 2;
+    const cy = b.top + b.height / 2;
+    return cx >= cb.left && cx <= cb.right && cy >= cb.top && cy <= cb.bottom;
+  });
+}
+
+/** Collapse/expand an entire subgraph cluster and all edges crossing its boundary. */
+function attachClusterCollapsible(
+  svgRoot: SVGSVGElement,
+  clusterEl: SVGGElement,
+  nodeId: string,
+  defaultState: 'expanded' | 'collapsed'
+): void {
+  let expanded = defaultState !== 'collapsed';
+
+  // Resolve at attach time while all elements are visible
+  const internalNodes = findNodesInsideCluster(svgRoot, clusterEl);
+  const internalIds = new Set(
+    internalNodes.map((n) => /flowchart-(\w+)-/.exec(n.id)?.[1]).filter(Boolean) as string[]
+  );
+  const relatedEdges = [
+    ...svgRoot.querySelectorAll<SVGGElement>('.edgePath[id], .edgeLabel[id]'),
+  ].filter((el) => {
+    const parsed = parseEdgeId(el.id);
+    return parsed && (internalIds.has(parsed.source) || internalIds.has(parsed.target));
+  });
+
+  const badge = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  badge.setAttribute('class', 'mermaid-interactive-toggle');
+  badge.style.cursor = 'pointer';
+
+  const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  circle.setAttribute('r', '7');
+  circle.setAttribute('cx', '0');
+  circle.setAttribute('cy', '0');
+  circle.setAttribute('fill', '#6366f1');
+
+  const icon = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  icon.setAttribute('text-anchor', 'middle');
+  icon.setAttribute('dominant-baseline', 'central');
+  icon.setAttribute('font-size', '9');
+  icon.setAttribute('fill', '#fff');
+  icon.setAttribute('pointer-events', 'none');
+  icon.textContent = expanded ? '▼' : '▶';
+
+  badge.appendChild(circle);
+  badge.appendChild(icon);
+  try {
+    const box = clusterEl.getBBox();
+    badge.setAttribute('transform', `translate(${box.x + box.width - 2},${box.y + 2})`);
+  } catch {}
+  clusterEl.appendChild(badge);
+  clusterEl.style.cursor = 'pointer';
+
+  const setVisibility = (show: boolean) => {
+    internalNodes.forEach((n) => {
+      n.style.display = show ? '' : 'none';
+    });
+    relatedEdges.forEach((el) => {
+      el.style.display = show ? '' : 'none';
+    });
+    icon.textContent = show ? '▼' : '▶';
+  };
+
+  if (!expanded) {
+    setVisibility(false);
+  }
+
+  const toggle = () => {
+    expanded = !expanded;
+    setVisibility(expanded);
+  };
+
+  clusterEl.addEventListener('click', toggle);
   badge.addEventListener('click', (e) => {
     e.stopPropagation();
     toggle();
@@ -218,7 +345,16 @@ export function bind(svgElement: SVGSVGElement, diagramSource: string): void {
 
   for (const { nodeId, props } of interactions) {
     const nodeEl = findNodeElement(svgElement, nodeId);
+
     if (!nodeEl) {
+      // Try cluster (subgraph) fallback when the ID matches a <g class="cluster">
+      if (props.collapsible) {
+        const clusterEl = findClusterElement(svgElement, nodeId);
+        if (clusterEl) {
+          const state = props.defaultState! ?? 'expanded';
+          attachClusterCollapsible(svgElement, clusterEl, nodeId, state);
+        }
+      }
       continue;
     }
 
@@ -228,7 +364,7 @@ export function bind(svgElement: SVGSVGElement, diagramSource: string): void {
 
     if (props.collapsible) {
       const state = props.defaultState! ?? 'expanded';
-      attachCollapsible(svgElement, nodeEl, state);
+      attachCollapsible(svgElement, nodeEl, nodeId, state);
     }
   }
 }

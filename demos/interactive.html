@@ -275,6 +275,326 @@ use microservice_group(
       </div>
     </div>
 
+    <!-- Example 4 — Subgraph with individual node interactions and cross-boundary edges -->
+    <div class="example-card">
+      <h2>Example 4: Subgraph with Individual Node Interactions</h2>
+      <p class="hint">
+        Node B is collapsible — clicking it hides C and D1 (and the outgoing lines) but preserves
+        the A&rarr;B connection. The A&rarr;D1 edge crosses the subgraph boundary. Hover each node
+        for its tooltip.
+      </p>
+      <div class="layout">
+        <div>
+          <div class="panel-label">Source (.mermid)</div>
+          <div class="source-panel">
+            <pre class="mermaid-interactive" data-example="4">
+graph TD
+  A[Client] --> B[Load Balancer]
+  B --> C[Auth Service]
+  B --> D1
+  A --> D1
+
+  subgraph SG1 [Backend Services]
+    D1[Order Service]
+    D2[Inventory Service]
+    D3[Notification Service]
+    D1 --> D2
+    D2 --> D3
+  end
+
+  interaction B {
+    collapsible: true
+    defaultState: expanded
+    tooltip: "Distributes incoming traffic"
+  }
+
+  interaction C {
+    tooltip: "Validates JWT tokens and API keys"
+  }
+
+  interaction D1 {
+    tooltip: "Order creation and management"
+  }
+
+  interaction D2 {
+    tooltip: "Tracks stock levels in real time"
+  }
+
+  interaction D3 {
+    tooltip: "Sends email and push notifications"
+  }</pre
+            >
+          </div>
+        </div>
+        <div>
+          <div class="panel-label">Rendered Output</div>
+          <div class="output-panel" id="output-4">
+            <span class="loading">Rendering&hellip;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Example 5 — Subgraph itself is the interaction target -->
+    <div class="example-card">
+      <h2>Example 5: Subgraph as Interaction Target</h2>
+      <p class="hint">
+        The interaction is attached to the subgraph group itself, not to individual nodes. Clicking
+        the subgraph boundary collapses all internal nodes and every edge crossing the boundary
+        &mdash; compare with Example 4 where only B&rsquo;s direct children collapse.
+      </p>
+      <div class="layout">
+        <div>
+          <div class="panel-label">Source (.mermid)</div>
+          <div class="source-panel">
+            <pre class="mermaid-interactive" data-example="5">
+graph TD
+  A[Client] --> B[Load Balancer]
+  B --> C[Auth Service]
+  B --> D1
+  A --> D1
+
+  subgraph SG1 [Backend Services]
+    D1[Order Service]
+    D2[Inventory Service]
+    D3[Notification Service]
+    D1 --> D2
+    D2 --> D3
+  end
+
+  interaction SG1 {
+    collapsible: true
+    defaultState: expanded
+    tooltip: "Backend Services group - click to collapse entire subgraph"
+  }
+
+  interaction B {
+    tooltip: "Distributes incoming traffic"
+  }
+
+  interaction C {
+    tooltip: "Validates JWT tokens and API keys"
+  }</pre
+            >
+          </div>
+        </div>
+        <div>
+          <div class="panel-label">Rendered Output</div>
+          <div class="output-panel" id="output-5">
+            <span class="loading">Rendering&hellip;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Example 6: CI/CD pipeline (flowchart LR, multi-stage, collapsible test suite) -->
+    <div class="example-card">
+      <h2>Example 6: CI/CD Pipeline &mdash; flowchart LR</h2>
+      <p class="hint">
+        Left-to-right pipeline. Click <strong>TEST</strong> to collapse the parallel test stages
+        while keeping the Lint &rarr; Test connection intact. Hover any stage for detail.
+      </p>
+      <div class="layout">
+        <div>
+          <div class="panel-label">Source (.mermid)</div>
+          <div class="source-panel">
+            <pre class="mermaid-interactive" data-example="6">
+flowchart LR
+  SRC[Source] --> LINT[Lint]
+  LINT --> TEST[Test Suite]
+  TEST --> UNIT[Unit Tests]
+  TEST --> INTG[Integration Tests]
+  TEST --> E2E[E2E Tests]
+  UNIT --> BUILD[Build]
+  INTG --> BUILD
+  E2E --> BUILD
+  BUILD --> IMG[Container Image]
+  IMG --> STAGING[Deploy Staging]
+  STAGING --> SMOKE[Smoke Tests]
+  SMOKE --> PROD[Deploy Production]
+
+  interaction SRC {
+    tooltip: "Git push or PR merge triggers the pipeline"
+  }
+  interaction LINT {
+    tooltip: "ESLint + Prettier — fails fast on style or type errors"
+  }
+  interaction TEST {
+    collapsible: true
+    defaultState: expanded
+    tooltip: "Parallel test matrix. Click to collapse all test stages."
+  }
+  interaction UNIT {
+    tooltip: "Vitest unit tests — ~2 min"
+  }
+  interaction INTG {
+    tooltip: "Docker Compose integration tests — ~5 min"
+  }
+  interaction E2E {
+    tooltip: "Playwright end-to-end tests against staging clone — ~12 min"
+  }
+  interaction BUILD {
+    tooltip: "esbuild + tsc — produces minified ESM and CJS bundles"
+  }
+  interaction IMG {
+    tooltip: "Multi-arch Docker image pushed to GHCR"
+  }
+  interaction STAGING {
+    tooltip: "Blue/green deploy to staging cluster via Helm"
+  }
+  interaction SMOKE {
+    tooltip: "Health checks and critical-path assertions post-deploy"
+  }
+  interaction PROD {
+    tooltip: "Canary release — 5% traffic, auto-promotes after 10 min with no errors"
+  }</pre
+            >
+          </div>
+        </div>
+        <div>
+          <div class="panel-label">Rendered Output</div>
+          <div class="output-panel" id="output-6">
+            <span class="loading">Rendering&hellip;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Example 7: Class diagram — e-commerce domain model -->
+    <div class="example-card">
+      <h2>Example 7: E-commerce Domain Model &mdash; classDiagram</h2>
+      <p class="hint">
+        Class diagrams use a different SVG ID scheme (<code>classId-{Name}</code>). Tooltips are
+        resolved via that pattern. Hover each class for its domain role.
+      </p>
+      <div class="layout">
+        <div>
+          <div class="panel-label">Source (.mermid)</div>
+          <div class="source-panel">
+            <pre class="mermaid-interactive" data-example="7">
+classDiagram
+  class Order {
+    +String id
+    +Date createdAt
+    +OrderStatus status
+    +calculateTotal() Float
+  }
+  class Customer {
+    +String id
+    +String email
+    +String tier
+    +placeOrder() Order
+  }
+  class Product {
+    +String sku
+    +String name
+    +Float price
+    +Int stock
+  }
+  class OrderItem {
+    +Int quantity
+    +Float unitPrice
+  }
+  class Payment {
+    +String provider
+    +String status
+    +confirm() Boolean
+  }
+
+  Customer "1" --> "0..*" Order : places
+  Order "1" *-- "1..*" OrderItem : contains
+  OrderItem "0..*" --> "1" Product : references
+  Order "1" --> "1" Payment : settled by
+
+  interaction Order {
+    tooltip: "Purchase record. Status transitions: pending -> confirmed -> shipped -> delivered"
+  }
+  interaction Customer {
+    tooltip: "Registered buyer. Tier (standard/gold/platinum) affects pricing and SLA"
+  }
+  interaction Product {
+    tooltip: "Catalogue item. stock is decremented atomically on OrderItem creation"
+  }
+  interaction OrderItem {
+    tooltip: "Line item. unitPrice is locked at purchase time, independent of Product.price changes"
+  }
+  interaction Payment {
+    tooltip: "Delegated to payment provider (Stripe/Adyen). confirm() is called by webhook"
+  }</pre
+            >
+          </div>
+        </div>
+        <div>
+          <div class="panel-label">Rendered Output</div>
+          <div class="output-panel" id="output-7">
+            <span class="loading">Rendering&hellip;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Example 8: State diagram — order lifecycle -->
+    <div class="example-card">
+      <h2>Example 8: Order Lifecycle &mdash; stateDiagram-v2</h2>
+      <p class="hint">
+        State diagrams render states as labelled SVG groups. The binder resolves them by state-group
+        ID. Hover each state to see the business rule that governs it.
+      </p>
+      <div class="layout">
+        <div>
+          <div class="panel-label">Source (.mermid)</div>
+          <div class="source-panel">
+            <pre class="mermaid-interactive" data-example="8">
+stateDiagram-v2
+  [*] --> Pending
+  Pending --> Confirmed : payment_received
+  Pending --> Cancelled : payment_timeout
+  Confirmed --> Processing : warehouse_allocated
+  Processing --> Shipped : dispatched
+  Shipped --> Delivered : delivery_confirmed
+  Shipped --> ReturnRequested : return_raised
+  Delivered --> ReturnRequested : return_raised
+  ReturnRequested --> Refunded : return_received
+  Cancelled --> [*]
+  Delivered --> [*]
+  Refunded --> [*]
+
+  interaction Pending {
+    tooltip: "Awaiting payment. Auto-cancelled after 30 min via scheduled job."
+  }
+  interaction Confirmed {
+    tooltip: "Payment captured. Warehouse notified for stock allocation."
+  }
+  interaction Processing {
+    tooltip: "Stock allocated. Pick-pack-ship workflow active in WMS."
+  }
+  interaction Shipped {
+    tooltip: "Carrier has collected. Tracking events streamed via webhook."
+  }
+  interaction Delivered {
+    tooltip: "Carrier confirmed delivery. 30-day return window starts."
+  }
+  interaction ReturnRequested {
+    tooltip: "Customer initiated return. RMA raised, prepaid label emailed."
+  }
+  interaction Refunded {
+    tooltip: "Return received and inspected. Refund posted within 3-5 business days."
+  }
+  interaction Cancelled {
+    tooltip: "Order void. If payment was captured it is automatically refunded."
+  }</pre
+            >
+          </div>
+        </div>
+        <div>
+          <div class="panel-label">Rendered Output</div>
+          <div class="output-panel" id="output-8">
+            <span class="loading">Rendering&hellip;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
 
@@ -398,11 +718,21 @@ use microservice_group(
       }
 
       function findNode(svg, nodeId) {
-        const byId = svg.querySelector(`[id*="flowchart-${nodeId}-"]`);
-        if (byId) return byId;
-        for (const g of svg.querySelectorAll('g.node')) {
-          const t = g.querySelector('text, foreignObject');
-          if (t?.textContent?.trim() === nodeId) return g;
+        // Flowchart / graph renderer
+        const byFlow = svg.querySelector(`[id*="flowchart-${nodeId}-"]`);
+        if (byFlow) return byFlow;
+        // Class diagram renderer — IDs are "classId-{ClassName}-{n}"
+        const byClass = svg.querySelector(`[id*="classId-${nodeId}"]`);
+        if (byClass) return byClass;
+        // State diagram renderer — state groups carry the state name as their id
+        const byState =
+          svg.querySelector(`g.state-group[id="${nodeId}"]`) ??
+          svg.querySelector(`g[id="${nodeId}"]`);
+        if (byState?.matches('g')) return byState;
+        // Generic fallback: search all node-like groups by visible text
+        for (const g of svg.querySelectorAll('g.node, g.actor, g.label-container, g.state')) {
+          const textEl = g.querySelector('text');
+          if (textEl?.textContent?.trim() === nodeId) return g;
         }
         return null;
       }
