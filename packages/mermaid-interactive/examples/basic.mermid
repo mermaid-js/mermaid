@@ -1,0 +1,18 @@
+%% Basic diagram with inline interaction blocks — no templates
+graph TD
+  A[Client] --> B[API Gateway]
+  B --> C[Service A]
+  B --> D[Service B]
+
+  interaction B {
+    collapsible: true
+    defaultState: expanded
+  }
+
+  interaction C {
+    tooltip: "Handles authentication logic"
+  }
+
+  interaction D {
+    tooltip: "Handles billing operations"
+  }

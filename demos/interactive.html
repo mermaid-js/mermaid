@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Interactive Mermaid Diagrams — Demo</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background: #f8fafc;
+        color: #1e293b;
+        margin: 0;
+        padding: 2rem;
+      }
+
+      h1 {
+        font-size: 1.75rem;
+        margin-bottom: 0.25rem;
+      }
+      .subtitle {
+        color: #64748b;
+        margin-bottom: 2rem;
+      }
+
+      .example-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+      }
+
+      .example-card h2 {
+        font-size: 1.1rem;
+        margin: 0 0 0.25rem;
+        color: #1e293b;
+      }
+
+      .example-card .hint {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        margin: 0 0 1.25rem;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+      }
+
+      .panel-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #94a3b8;
+        margin-bottom: 0.4rem;
+      }
+
+      .source-panel {
+        background: #0f172a;
+        border-radius: 8px;
+        padding: 1rem;
+        overflow: auto;
+      }
+
+      .source-panel pre {
+        margin: 0;
+        font-family: 'Fira Code', 'Consolas', monospace;
+        font-size: 0.78rem;
+        color: #e2e8f0;
+        white-space: pre;
+      }
+
+      .output-panel {
+        background: #f1f5f9;
+        border-radius: 8px;
+        padding: 1rem;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        min-height: 200px;
+      }
+
+      .diagram-output svg {
+        max-width: 100%;
+        height: auto;
+      }
+
+      .loading {
+        color: #94a3b8;
+        font-size: 0.875rem;
+        align-self: center;
+      }
+      .render-error {
+        color: #ef4444;
+        font-size: 0.8rem;
+        align-self: center;
+      }
+
+      /* Tooltip injected by binder */
+      .mermaid-tooltip {
+        position: fixed;
+        background: #1f2937;
+        color: #f9fafb;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        line-height: 1.5;
+        pointer-events: none;
+        z-index: 9999;
+        display: none;
+        max-width: 240px;
+        white-space: pre-wrap;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Interactive, Parameterised Mermaid Diagrams</h1>
+    <p class="subtitle">
+      A proof-of-concept for extended Mermaid syntax — combining reusable templates with declarative
+      interaction behaviours (tooltips, collapsible nodes).
+    </p>
+
+    <!-- Example 1 — Inline interactions, no template -->
+    <div class="example-card">
+      <h2>Example 1: Inline Interaction Blocks</h2>
+      <p class="hint">
+        Hover over Service A and Service B for tooltips. Click the API Gateway node to collapse its
+        children.
+      </p>
+      <div class="layout">
+        <div>
+          <div class="panel-label">Source (.mermid)</div>
+          <div class="source-panel">
+            <pre class="mermaid-interactive" data-example="1">
+graph TD
+  A[Client] --> B[API Gateway]
+  B --> C[Service A]
+  B --> D[Service B]
+
+  interaction B {
+    collapsible: true
+    defaultState: expanded
+  }
+
+  interaction C {
+    tooltip: "Handles authentication logic"
+  }
+
+  interaction D {
+    tooltip: "Handles billing operations"
+  }</pre
+            >
+          </div>
+        </div>
+        <div>
+          <div class="panel-label">Rendered Output</div>
+          <div class="output-panel" id="output-1">
+            <span class="loading">Rendering…</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Example 2 — Template invocation -->
+    <div class="example-card">
+      <h2>Example 2: Parameterised Template</h2>
+      <p class="hint">
+        The template is expanded before rendering. Hover endpoints for tooltips. Click the service
+        hub to collapse.
+      </p>
+      <div class="layout">
+        <div>
+          <div class="panel-label">Source (.mermid)</div>
+          <div class="source-panel">
+            <pre class="mermaid-interactive" data-example="2">
+template service_flow(serviceName, endpoints[]) {
+  graph TD
+    A[Client] --> B[serviceName]
+    B --> C[endpoints[0]]
+    B --> D[endpoints[1]]
+
+    interaction B {
+      collapsible: true
+      defaultState: expanded
+    }
+
+    interaction C {
+      tooltip: "Primary endpoint"
+    }
+
+    interaction D {
+      tooltip: "Secondary endpoint"
+    }
+}
+
+use service_flow(
+  serviceName="Auth API",
+  endpoints=["Login", "Token Refresh"]
+)</pre
+            >
+          </div>
+        </div>
+        <div>
+          <div class="panel-label">Rendered Output</div>
+          <div class="output-panel" id="output-2">
+            <span class="loading">Rendering…</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Example 3 — Combined template + collapsible microservice group -->
+    <div class="example-card">
+      <h2>Example 3: Combined Template + Collapsible Microservice Group</h2>
+      <p class="hint">
+        The hub starts collapsed. Click it to reveal the services. Hover each service node for its
+        tooltip.
+      </p>
+      <div class="layout">
+        <div>
+          <div class="panel-label">Source (.mermid)</div>
+          <div class="source-panel">
+            <pre class="mermaid-interactive" data-example="3">
+template microservice_group(name, services[]) {
+  graph TD
+    GW[Gateway] --> HUB[name]
+    HUB --> SVC0[services[0]]
+    HUB --> SVC1[services[1]]
+    HUB --> SVC2[services[2]]
+
+    interaction HUB {
+      collapsible: true
+      defaultState: collapsed
+    }
+
+    interaction SVC0 {
+      tooltip: "Core business service"
+    }
+
+    interaction SVC1 {
+      tooltip: "Secondary supporting service"
+    }
+
+    interaction SVC2 {
+      tooltip: "Background worker / async processor"
+    }
+}
+
+use microservice_group(
+  name="Order Platform",
+  services=["Order Service", "Inventory Service", "Notification Service"]
+)</pre
+            >
+          </div>
+        </div>
+        <div>
+          <div class="panel-label">Rendered Output</div>
+          <div class="output-panel" id="output-3">
+            <span class="loading">Rendering…</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+
+      // -----------------------------------------------------------------------
+      // Preprocessor — mirrors packages/mermaid-interactive/src/preprocessor.ts
+      // -----------------------------------------------------------------------
+
+      function parseParamDefs(raw) {
+        return raw
+          .split(',')
+          .map((p) => {
+            const trimmed = p.trim();
+            const isArray = trimmed.endsWith('[]');
+            return { name: isArray ? trimmed.slice(0, -2).trim() : trimmed, isArray };
+          })
+          .filter((p) => p.name.length > 0);
+      }
+
+      function extractTemplates(source) {
+        const templates = new Map();
+        let remaining = source;
+        const startRe = /^[ \t]*template\s+(\w+)\s*\(([^)]*)\)\s*\{/m;
+        let match;
+        while ((match = startRe.exec(remaining)) !== null) {
+          const name = match[1];
+          const params = parseParamDefs(match[2]);
+          const bodyStart = match.index + match[0].length;
+          let depth = 1,
+            pos = bodyStart;
+          while (pos < remaining.length && depth > 0) {
+            if (remaining[pos] === '{') depth++;
+            else if (remaining[pos] === '}') depth--;
+            pos++;
+          }
+          templates.set(name, { name, params, body: remaining.slice(bodyStart, pos - 1) });
+          remaining = remaining.slice(0, match.index) + remaining.slice(pos);
+        }
+        return { templates, remaining };
+      }
+
+      function parseUseArgs(raw) {
+        const args = new Map();
+        const re = /(\w+)\s*=\s*(?:\[([^\]]*)\]|"([^"]*)")/g;
+        let m;
+        while ((m = re.exec(raw)) !== null) {
+          args.set(
+            m[1],
+            m[2] !== undefined ? m[2].split(',').map((s) => s.trim().replace(/^"|"$/g, '')) : m[3]
+          );
+        }
+        return args;
+      }
+
+      function esc(s) {
+        return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      }
+
+      function expandBody(body, params, args) {
+        let result = body;
+        for (const p of params) {
+          const val = args.get(p.name);
+          if (val === undefined) continue;
+          if (p.isArray && Array.isArray(val)) {
+            val.forEach((v, i) => {
+              result = result.replace(new RegExp(esc(p.name) + '\\[' + i + '\\]', 'g'), v);
+            });
+          } else if (typeof val === 'string') {
+            result = result.replace(new RegExp('\\b' + esc(p.name) + '\\b', 'g'), val);
+          }
+        }
+        return result;
+      }
+
+      function parseInteractionProps(raw) {
+        const props = {};
+        for (const line of raw.split('\n')) {
+          const m = line.match(/^\s*(\w+)\s*:\s*(.+?)\s*$/);
+          if (!m) continue;
+          props[m[1]] =
+            m[2] === 'true' ? true : m[2] === 'false' ? false : m[2].replace(/^"|"$/g, '');
+        }
+        return props;
+      }
+
+      function preprocess(source) {
+        const { templates, remaining } = extractTemplates(source);
+        const interactions = [];
+        const expanded = remaining.replace(
+          /^[ \t]*use\s+(\w+)\s*\(([^)]*)\)[ \t]*$/gm,
+          (_, name, argsRaw) => {
+            const tmpl = templates.get(name);
+            if (!tmpl) return `%% [ERROR] Unknown template: ${name}`;
+            return expandBody(tmpl.body, tmpl.params, parseUseArgs(argsRaw)).trim();
+          }
+        );
+        const diagram = expanded.replace(
+          /^[ \t]*interaction\s+(\w+)\s*\{([^}]*)\}/gm,
+          (_, nodeId, propsRaw) => {
+            const props = parseInteractionProps(propsRaw);
+            interactions.push({ nodeId, props });
+            return `%% @interact ${nodeId} ${JSON.stringify(props)}`;
+          }
+        );
+        return { diagram: diagram.trimStart(), interactions };
+      }
+
+      // -----------------------------------------------------------------------
+      // Binder — mirrors packages/mermaid-interactive/src/binder.ts
+      // -----------------------------------------------------------------------
+
+      function parseInteractions(src) {
+        const out = [];
+        const re = /%% @interact (\w+) (\{[^\n]*\})/g;
+        let m;
+        while ((m = re.exec(src)) !== null) {
+          try {
+            out.push({ nodeId: m[1], props: JSON.parse(m[2]) });
+          } catch {}
+        }
+        return out;
+      }
+
+      function findNode(svg, nodeId) {
+        const byId = svg.querySelector(`[id*="flowchart-${nodeId}-"]`);
+        if (byId) return byId;
+        for (const g of svg.querySelectorAll('g.node')) {
+          const t = g.querySelector('text, foreignObject');
+          if (t?.textContent?.trim() === nodeId) return g;
+        }
+        return null;
+      }
+
+      function attachTooltip(el, text) {
+        const tip = document.createElement('div');
+        tip.className = 'mermaid-tooltip';
+        tip.textContent = text;
+        document.body.appendChild(tip);
+        el.style.cursor = 'help';
+        el.addEventListener('mouseenter', (e) => {
+          tip.style.display = 'block';
+          tip.style.left = `${e.clientX + 14}px`;
+          tip.style.top = `${e.clientY - 10}px`;
+        });
+        el.addEventListener('mousemove', (e) => {
+          tip.style.left = `${e.clientX + 14}px`;
+          tip.style.top = `${e.clientY - 10}px`;
+        });
+        el.addEventListener('mouseleave', () => {
+          tip.style.display = 'none';
+        });
+      }
+
+      function attachCollapsible(svg, nodeEl, defaultState) {
+        let expanded = defaultState !== 'collapsed';
+        nodeEl.style.cursor = 'pointer';
+
+        // Collapse toggle badge
+        const badge = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        badge.setAttribute('class', 'mi-toggle');
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('r', '8');
+        circle.setAttribute('cx', '0');
+        circle.setAttribute('cy', '0');
+        circle.setAttribute('fill', '#6366f1');
+        circle.setAttribute('stroke', '#fff');
+        circle.setAttribute('stroke-width', '1.5');
+        const icon = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        icon.setAttribute('text-anchor', 'middle');
+        icon.setAttribute('dominant-baseline', 'central');
+        icon.setAttribute('font-size', '10');
+        icon.setAttribute('fill', '#fff');
+        icon.setAttribute('pointer-events', 'none');
+        icon.textContent = expanded ? '▼' : '▶';
+        badge.appendChild(circle);
+        badge.appendChild(icon);
+        try {
+          const box = nodeEl.getBBox();
+          badge.setAttribute(
+            'transform',
+            `translate(${box.x + box.width + 6},${box.y + box.height / 2})`
+          );
+        } catch {}
+        nodeEl.appendChild(badge);
+
+        const parentCy = () =>
+          nodeEl.getBoundingClientRect().top + nodeEl.getBoundingClientRect().height / 2;
+
+        const setVisible = (show) => {
+          const cy = parentCy();
+          svg.querySelectorAll('g.node').forEach((n) => {
+            if (n === nodeEl) return;
+            const ncy = n.getBoundingClientRect().top + n.getBoundingClientRect().height / 2;
+            if (ncy > cy) n.style.display = show ? '' : 'none';
+          });
+          svg.querySelectorAll('.edgePaths path, .edgePath path').forEach((p) => {
+            p.style.display = show ? '' : 'none';
+          });
+          icon.textContent = show ? '▼' : '▶';
+        };
+
+        if (!expanded) setVisible(false);
+        nodeEl.addEventListener('click', () => {
+          expanded = !expanded;
+          setVisible(expanded);
+        });
+      }
+
+      function bind(svgEl, diagramSrc) {
+        for (const { nodeId, props } of parseInteractions(diagramSrc)) {
+          const nodeEl = findNode(svgEl, nodeId);
+          if (!nodeEl) continue;
+          if (props.tooltip) attachTooltip(nodeEl, String(props.tooltip));
+          if (props.collapsible) attachCollapsible(svgEl, nodeEl, props.defaultState ?? 'expanded');
+        }
+      }
+
+      // -----------------------------------------------------------------------
+      // Render all .mermaid-interactive blocks
+      // -----------------------------------------------------------------------
+
+      mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+
+      let idx = 0;
+      for (const pre of document.querySelectorAll('pre.mermaid-interactive')) {
+        const exampleId = pre.dataset.example;
+        const outputEl = document.getElementById(`output-${exampleId}`);
+        const rawSource = pre.textContent ?? '';
+
+        const { diagram } = preprocess(rawSource);
+        const id = `mi-diagram-${++idx}`;
+
+        try {
+          const { svg } = await mermaid.render(id, diagram);
+          const wrapper = document.createElement('div');
+          wrapper.className = 'diagram-output';
+          wrapper.innerHTML = svg;
+          if (outputEl) {
+            outputEl.innerHTML = '';
+            outputEl.appendChild(wrapper);
+          }
+
+          const svgEl = wrapper.querySelector('svg');
+          if (svgEl) bind(svgEl, diagram);
+        } catch (err) {
+          if (outputEl) {
+            outputEl.innerHTML = `<span class="render-error">Render error: ${err.message}</span>`;
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

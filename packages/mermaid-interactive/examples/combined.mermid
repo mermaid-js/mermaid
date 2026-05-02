@@ -1,0 +1,31 @@
+%% Combined template and interaction — microservice group pattern
+
+template microservice_group(name, services[]) {
+  graph TD
+    GW[Gateway] --> HUB[name]
+    HUB --> SVC0[services[0]]
+    HUB --> SVC1[services[1]]
+    HUB --> SVC2[services[2]]
+
+    interaction HUB {
+      collapsible: true
+      defaultState: collapsed
+    }
+
+    interaction SVC0 {
+      tooltip: "Core business service"
+    }
+
+    interaction SVC1 {
+      tooltip: "Secondary supporting service"
+    }
+
+    interaction SVC2 {
+      tooltip: "Background worker / async processor"
+    }
+}
+
+use microservice_group(
+  name="Order Platform",
+  services=["Order Service", "Inventory Service", "Notification Service"]
+)

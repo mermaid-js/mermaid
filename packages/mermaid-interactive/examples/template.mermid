@@ -1,0 +1,26 @@
+%% Reusable template — invoked twice with different parameters
+
+template service_flow(serviceName, endpoints[]) {
+  graph TD
+    A[Client] --> B[serviceName]
+    B --> C[endpoints[0]]
+    B --> D[endpoints[1]]
+
+    interaction B {
+      collapsible: true
+      defaultState: expanded
+    }
+
+    interaction C {
+      tooltip: "Primary endpoint"
+    }
+
+    interaction D {
+      tooltip: "Secondary endpoint"
+    }
+}
+
+use service_flow(
+  serviceName="Auth API",
+  endpoints=["Login", "Token Refresh"]
+)

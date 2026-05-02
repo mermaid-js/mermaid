@@ -1,0 +1,53 @@
+{
+  "name": "@mermaid-js/mermaid-interactive",
+  "version": "0.1.0",
+  "description": "Preprocessor and interaction binder for parameterised, interactive Mermaid diagrams",
+  "type": "module",
+  "module": "./dist/mermaid-interactive.core.mjs",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "mermaid-interactive": "./bin/mermaid-interactive.mjs"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/mermaid-interactive.core.mjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./binder": {
+      "import": "./dist/binder.mjs",
+      "types": "./dist/binder.d.ts"
+    },
+    "./*": "./*"
+  },
+  "keywords": [
+    "mermaid",
+    "diagram",
+    "interactive",
+    "template",
+    "preprocessor"
+  ],
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "tsc --project tsconfig.json",
+    "dev": "tsc --project tsconfig.json --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid",
+    "directory": "packages/mermaid-interactive"
+  },
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "mermaid": "workspace:^",
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "dist/",
+    "bin/",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
