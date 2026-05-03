@@ -36,16 +36,20 @@ export function parseInteractions(diagramSource: string): InteractionDef[] {
  * a trailing dash to prevent partial matches ("Order" vs "OrderItem").
  */
 function findNodeElement(svgRoot: SVGSVGElement, nodeId: string): SVGGElement | null {
-  const byFlow = svgRoot.querySelector<SVGGElement>(`[id*="-flowchart-${nodeId}-"]`);
+  // Exclude .cluster elements — subgraph clusters share the same ID format as
+  // regular nodes but must be routed to attachClusterCollapsible, not attachCollapsible.
+  const byFlow = svgRoot.querySelector<SVGGElement>(`[id*="-flowchart-${nodeId}-"]:not(.cluster)`);
   if (byFlow) {
     return byFlow;
   }
-  const byClass = svgRoot.querySelector<SVGGElement>(`[id*="-classId-${nodeId}-"]`);
+  const byClass = svgRoot.querySelector<SVGGElement>(`[id*="-classId-${nodeId}-"]:not(.cluster)`);
   if (byClass) {
     return byClass;
   }
-  // Exclude internal parent/note spacer variants (contain "----")
-  const byState = svgRoot.querySelector<SVGGElement>(`[id*="-state-${nodeId}-"]:not([id*="----"])`);
+  // Exclude internal parent/note spacer variants (contain "----") and clusters
+  const byState = svgRoot.querySelector<SVGGElement>(
+    `[id*="-state-${nodeId}-"]:not([id*="----"]):not(.cluster)`
+  );
   if (byState) {
     return byState;
   }
@@ -466,12 +470,16 @@ function attachCollapsible(
 
 /** Find a Mermaid cluster element by subgraph ID. */
 function findClusterElement(svgRoot: SVGSVGElement, nodeId: string): SVGGElement | null {
-  // Old renderer uses "cluster_SG1"; unified renderer uses "{diagramId}-SG1"
-  // (dash-separated, no "cluster_" prefix).  Check both formats.
+  // Unified renderer: cluster <g> elements carry the same domId format as
+  // regular nodes — "{diagramId}-{flowchart|classId|state}-{nodeId}-{counter}"
+  // — but with class="cluster" instead of class="node".
   return (
+    svgRoot.querySelector<SVGGElement>(`g.cluster[id*="-flowchart-${nodeId}-"]`) ??
+    svgRoot.querySelector<SVGGElement>(`g.cluster[id*="-classId-${nodeId}-"]`) ??
+    svgRoot.querySelector<SVGGElement>(`g.cluster[id*="-state-${nodeId}-"]`) ??
+    // Old renderer: "cluster_SG1" or ends-with separator variant
     svgRoot.querySelector<SVGGElement>(`[id="cluster_${nodeId}"]`) ??
     svgRoot.querySelector<SVGGElement>(`g.cluster[id$="_${nodeId}"]`) ??
-    svgRoot.querySelector<SVGGElement>(`g.cluster[id$="-${nodeId}"]`) ??
     null
   );
 }
@@ -559,7 +567,18 @@ function attachClusterCollapsible(
   clusterEl.appendChild(badge);
   clusterEl.style.cursor = 'pointer';
 
+  // Capture the cluster's own visual children (background rect, label) AFTER
+  // the badge is appended so we can exclude the badge from the toggle list.
+  // These are the elements that make the subgraph border/title visible; hiding
+  // them lets fitSvgToContent correctly shrink the SVG on collapse.
+  const clusterDecoration = [...clusterEl.children].filter(
+    (c) => !c.classList.contains('mermaid-interactive-toggle')
+  ) as SVGElement[];
+
   const setVisibility = (show: boolean) => {
+    clusterDecoration.forEach((c) => {
+      c.style.display = show ? '' : 'none';
+    });
     internalNodes.forEach((n) => {
       n.style.display = show ? '' : 'none';
     });

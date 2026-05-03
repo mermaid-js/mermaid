@@ -905,19 +905,15 @@ flowchart TD
       }
 
       function findNode(svg, nodeId) {
-        // The unified renderer prefixes every node's domId with the diagram's SVG
-        // element id: "{diagramId}-{domType}-{nodeId}-{counter}".
-        // We use substring ([id*=]) with a trailing dash to avoid partial name
-        // collisions (e.g. searching for "Order" must not match "OrderItem").
-        //  flowchart:     {diagramId}-flowchart-{nodeId}-{counter}
-        //  classDiagram:  {diagramId}-classId-{ClassName}-{counter}
-        //  stateDiagram:  {diagramId}-state-{name}-{counter}
-        const byFlow = svg.querySelector(`[id*="-flowchart-${nodeId}-"]`);
+        // Exclude .cluster elements — subgraph clusters share the same ID format as
+        // regular nodes but must be routed to attachClusterCollapsible, not attachCollapsible.
+        const byFlow = svg.querySelector(`[id*="-flowchart-${nodeId}-"]:not(.cluster)`);
         if (byFlow) return byFlow;
-        const byClass = svg.querySelector(`[id*="-classId-${nodeId}-"]`);
+        const byClass = svg.querySelector(`[id*="-classId-${nodeId}-"]:not(.cluster)`);
         if (byClass) return byClass;
-        // Exclude internal parent/note variants (contain "----" = DOMID_TYPE_SPACER)
-        const byState = svg.querySelector(`[id*="-state-${nodeId}-"]:not([id*="----"])`);
+        const byState = svg.querySelector(
+          `[id*="-state-${nodeId}-"]:not([id*="----"]):not(.cluster)`
+        );
         if (byState) return byState;
         // Text fallback: covers htmlLabels (span.nodeLabel) and SVG text
         for (const g of svg.querySelectorAll('g.node, g.actor, g.label-container, g.stateGroup')) {
@@ -929,11 +925,15 @@ flowchart TD
       }
 
       function findCluster(svg, nodeId) {
-        // Old renderer: "cluster_SG1"; unified renderer: "{diagramId}-SG1" (dash).
+        // Unified renderer cluster elements use the same domId format as nodes:
+        // "{diagramId}-{flowchart|classId|state}-{nodeId}-{counter}" with class="cluster".
         return (
+          svg.querySelector(`g.cluster[id*="-flowchart-${nodeId}-"]`) ??
+          svg.querySelector(`g.cluster[id*="-classId-${nodeId}-"]`) ??
+          svg.querySelector(`g.cluster[id*="-state-${nodeId}-"]`) ??
+          // Old renderer formats
           svg.querySelector(`[id="cluster_${nodeId}"]`) ??
           svg.querySelector(`g.cluster[id$="_${nodeId}"]`) ??
-          svg.querySelector(`g.cluster[id$="-${nodeId}"]`) ??
           null
         );
       }
@@ -1099,6 +1099,13 @@ flowchart TD
         clusterEl.style.cursor = 'pointer';
         const icon = makeBadge(clusterEl, expanded);
 
+        // Capture cluster decoration (rect, label) AFTER the badge is appended,
+        // so the badge is excluded. Hiding these lets getBBox() / fitSvgToContent
+        // correctly shrink the SVG when the cluster is collapsed.
+        const clusterDecoration = [...clusterEl.children].filter(
+          (c) => !c.classList.contains('mi-toggle')
+        );
+
         const internalNodes = findNodesInsideCluster(svg, clusterEl);
         // Extract the logical node id from a dom id of either renderer.
         const extractNodeId = (domId) =>
@@ -1125,6 +1132,9 @@ flowchart TD
         });
 
         const setVisible = (show) => {
+          clusterDecoration.forEach((c) => {
+            c.style.display = show ? '' : 'none';
+          });
           internalNodes.forEach((n) => {
             n.style.display = show ? '' : 'none';
           });
