@@ -12,10 +12,10 @@ Générez des diagrammes à partir de texte inspiré par Markdown.
 <p>
 
 <p align="center">
-<a href="https://mermaid.ai/live/"><b>Éditeur en direct !</b></a>
+<a href="https://mermaid.live/"><b>Éditeur en direct !</b></a>
 </p>
 <p align="center">
- <a href="https://mermaid.ai/open-source/">📖 Documentation</a> | <a href="https://mermaid.ai/open-source/intro/">🚀 Démarrage rapide</a> | <a href="https://www.jsdelivr.com/package/npm/mermaid">🌐 CDN</a> | <a href="https://discord.gg/sKeNQX4Wtj" title="Invitation Discord">🙌 Rejoignez-nous</a>
+ <a href="https://mermaid.js.org/">📖 Documentation</a> | <a href="https://mermaid.js.org/intro/">🚀 Démarrage rapide</a> | <a href="https://www.jsdelivr.com/package/npm/mermaid">🌐 CDN</a> | <a href="https://discord.gg/sKeNQX4Wtj" title="Invitation Discord">🙌 Rejoignez-nous</a>
 </p>
 <p align="center">
 <a href="./README.md">English</a> | <a href="./README.zh-CN.md">简体中文</a>
@@ -104,7 +104,7 @@ Dans notre processus de sortie, nous nous appuyons fortement sur les tests de r�
 ### Organigramme [<a href="https://mermaid.js.org/syntax/flowchart.html">docs</a> - <a href="https://mermaid.live/edit#pako:eNpNkMtqwzAQRX9FzKqFJK7t1km8KDQP6KJQSLOLvZhIY1tgS0GWmgbb_165IaFaiXvOFTPqgGtBkEJR6zOv0Fj2scsU8-ft8I5G5Gw6fe339GN7tnrYaafE45WvRsLW3Ya4bKVWwzVe_xU-FfVsc9hR62rLwvw_2591z7Y3FuUwgYZMg1L4ObrRzMBW1FAGqb8KKtCLGWRq8Ko7CbS0FdJqA2mBdUsTQGf110VxSK1xdJM2EkuDzd2qNQrypQ7s5TQuXcrW-ie5VoUsx9yZ2seVtac2DYIRz0ppK3eccd0ErRTjD1XfyyRIomSBUUzJPMaXOBb8GC4XRfQcFmL-FEYIwzD8AggvcHE">éditeur en direct</a>]
 
 ```
-organigramme LR
+flowchart LR
 
 A[Difficile] -->|Texte| B(Rond)
 B --> C{Décision}
@@ -124,12 +124,12 @@ C -->|Two| E[Result 2]
 ### Diagramme de séquence [<a href="https://mermaid.js.org/syntax/sequenceDiagram.html">docs</a> - <a href="https://mermaid.live/edit#pako:eNo9kMluwjAQhl_F-AykQMuSA1WrbuLQQ3v1ZbAnsVXHkzrjVhHi3etQwKfRv4w-z0FqMihL2eF3wqDxyUEdoVHhwTuNk-12RzaU4g29JzHMY2HpV0BE0VO6V8ETtdkGz1Zb1F8qiPyG5LX84mrLAmpwoWNh-5a0pWCiAxUwGBXeiVHEU4oq8V_6AHYUwAu2lLLTjVQ4bc1rT2yleI0IfJG320faZ9ABbk-Jz3hZnFxBduR9L2oiM5Jj2WBswJn8-cMArSRbbFDJMo8GK0ielVThmKOpNcD4bBxTlGUFvsOxhMT02QctS44JL6HzAS-iJzCYOwfJfTscunYd542aQuXqQU_RZ9kyt11ZFIM9rR3btJ9qaorOGQuR7c9mWSznyzXMF7hcLeBusTB6P9usq_ntrDKrm9kc5PF4_AMJE56Z">éditeur en direct</a>]
 
 ```
-diagrammeDeSéquence
+sequenceDiagram
 Alice->>John: Bonjour John, comment ça va ?
-boucle VérificationSanté
+loop VérificationSanté
     John->>John: Combattre l'hypocondrie
-fin
-Note à droite de John: Pensées rationnelles !
+end
+Note right of John: Pensées rationnelles !
 John-->>Alice: Bien !
 John->>Bob: Et toi ?
 Bob-->>John: Très bien !
@@ -174,18 +174,18 @@ gantt
 ### Diagramme de classe [<a href="https://mermaid.js.org/syntax/classDiagram.html">docs</a> - <a href="https://mermaid.live/edit#pako:eNpdkTFPwzAQhf-K5QlQ2zQJJG1UBaGWDYmBgYEwXO1LYuTEwXYqlZL_jt02asXm--690zvfgTLFkWaUSTBmI6DS0BTt2lfzkKx-p1PytEO9f1FtdaQkI2ulZNGuVqK1qEtgmOfk7BitSzKdOhg59XuNGgk0RDxed-_IOr6uf8cZ6UhTZ8bvHqS5ub1mr9svZPbjk6DEBlu7AQuXyBkx4gcvDk9cUMJq0XT_YaW0kNK5j-ufAoRzcihaQvLcoN4Jv50vvVxw_xrnD3RCG9QNCO4-8OgpqK1dpoJm7smxhF7agp6kfcfB4jMXVmmalW4tnFDorXrbt4xmVvc4is53GKFUwNF5DtTuO3-sShjrJjLVlqLyvNfS4drazmRB4NuzSti6386YagIjeA3a1rtlEiRRsoAoxiSN4SGOOduGy0UZ3YclT-dhBHQYhj8dc6_I">éditeur en direct</a>]
 
 ```
-diagrammeDeClasse
-Classe01 <|-- UneClasseTrèsLongue : Sympa
-<<Interface>> Classe01
-Classe09 --> C2 : Où suis-je ?
-Classe09 --* C3
-Classe09 --|> Classe07
-Classe07 : égale()
-Classe07 : Object[] donnéesÉlément
-Classe01 : taille()
-Classe01 : int chimpanzé
-Classe01 : int gorille
-classe Classe10 {
+classDiagram
+Class01 <|-- UneClasseTrèsLongue : Sympa
+<<Interface>> Class01
+Class09 --> C2 : Où suis-je ?
+Class09 --* C3
+Class09 --|> Class07
+Class07 : égale()
+Class07 : Object[] donnéesÉlément
+Class01 : taille()
+Class01 : int chimpanzé
+Class01 : int gorille
+class Class10 {
   <<service>>
   int id
   taille()
@@ -216,7 +216,7 @@ class Class10 {
 ### Diagramme d'état [<a href="https://mermaid.js.org/syntax/stateDiagram.html">docs</a> - <a href="https://mermaid.live/edit#pako:eNpdkEFvgzAMhf8K8nEqpYSNthx22Xbcqcexg0sCiZQQlDhIFeK_L8A6TfXp6fOz9ewJGssFVOAJSbwr7ByadGR1n8T6evpO0vQ1uZDSekOrXGFsPqJPO6q-2-imH8f_0TeHXm50lfelsAMjnEHFY6xpMdRAUhhRQxUlFy0GTTXU_RytYeAx-AdXZB1ULWovdoCB7OXWN1CRC-Ju-r3uz6UtchGHJqDbsPygU57iysb2reoWHpyOWBINvsqypb3vFMlw3TfWZF5xiY7keC6zkpUnZIUojwW-FAVvrvn51LLnvOXHQ84Q5nn-AVtLcwk">éditeur en direct</a>]
 
 ```
-diagrammeDétat-v2
+stateDiagram-v2
 [*] --> Immobile
 Immobile --> [*]
 Immobile --> Mouvement
@@ -238,7 +238,7 @@ Crash --> [*]
 ### Graphique circulaire [<a href="https://mermaid.js.org/syntax/pie.html">docs</a> - <a href="https://mermaid.live/edit#pako:eNo9jsFugzAMhl8F-VzBgEEh13Uv0F1zcYkTIpEEBadShXj3BU3dzf_n77e8wxQUgYDVkvQSbsFsEgpRtEN_5i_kvzx05XiC-xvUHVzAUXRoVe7v0heFBJ7JkQSRR0Ua08ISpD-ymlaFTN_KcoggNC4bXQATh5-Xn0BwTPSWbhZNRPdvLQEV5dIO_FrPZ43dOJ-cgtfWnDzFJeOZed1EVZ3r0lie06Ocgqs2q2aMPD_HvuqbfsCmpf7aYte2anrU46Cbz1qr60fdIBzH8QvW9lkl">éditeur en direct</a>]
 
 ```
-graphiquecirculaire
+pie
 "Chiens" : 386
 "Chats" : 85,9
 "Rats" : 15
@@ -254,15 +254,15 @@ pie
 ### Graphique Git [expérimental - <a href="https://mermaid.live/edit#pako:eNqNkMFugzAMhl8F-VyVAR1tOW_aA-zKxSSGRCMJCk6lCvHuNZPKZdM0n-zf3_8r8QIqaIIGMqnB8kfEybQ--y4VnLP8-9RF9Mpkmm40hmlnDKmvkPiH_kfS7nFo_VN0FAf6XwocQGgxa_nGsm1bYEOOWmik1dRjGrmF1q-Cpkkj07u2HCI0PY4zHQATh8-7V9BwTPSWbhZNRPdvLQEV5dIO_FrPZ43dOJ-cgtfWnDzFJeOZed1EVZ3r0lie06Ocgqs2q2aMPD_HvuqbfsCmpf7aYte2anrU46Cbz1qr60fdIBzH8QvW9lkl">éditeur en direct</a>]
 
 ```
-graphiquegit
+gitGraph
   commit
   commit
-  branche développer
-  vérifier développer
+  branch develop
+  checkout develop
   commit
   commit
-  vérifier principal
-  fusionner développer
+  checkout main
+  merge develop
   commit
   commit
 ```
@@ -322,8 +322,8 @@ gantt
 ### Diagramme de parcours utilisateur [<a href="https://mermaid.js.org/syntax/userJourney.html">docs</a> - <a href="https://mermaid.live/edit#pako:eNplkMFuwjAQRH9l5TMiTVIC-FqqnjhxzWWJN4khsSN7XRSh_HsdKBVt97R6Mzsj-yoqq0hIAXCywRkaSwNxWHNHsB_hYt1ZmwYUfiueKtbWwIcFtjf5zgH2eCZgQgkrCXt64GgMg2fUzkvIn5Xd_V5COtMFvCH_62ht_5yk7MU8sn61HDTfxD8VYiF6cj1qFd94nWkpuKWYKWRcFdUYOi5FaaZoDYNCpnel2Toha-w8LQQGtofRVEKyC_Qw7TQ2DvsfV2dRUTy6Ch6H-UMb7TlGVtbUupl5cF3ELfPgZZLM8rLR3IbjsrJ94rVq0XH7uS2SIis2mOVUrHNc5bmqjul2U2evaa3WL2mGYpqmL2BGiho">éditeur en direct</a>]
 
 ```
-  parcours
-    titre Ma journée de travail
+  journey
+    title Ma journée de travail
     section Aller travailler
       Faire du thé: 5: Moi
       Monter: 3: Moi
@@ -348,38 +348,38 @@ gantt
 ### Diagramme C4 [<a href="https://mermaid.js.org/syntax/c4.html">docs</a>]
 
 ```
-C4Contexte
-titre Diagramme de contexte du système pour le système de banque Internet
+C4Context
+title Diagramme de contexte du système pour le système de banque Internet
 
-Personne(clientA, "Client bancaire A", "Un client de la banque, avec des comptes bancaires personnels.")
-Personne(clientB, "Client bancaire B")
-PersonneExt(clientC, "Client bancaire C")
-Système(SystèmeAA, "Système de banque Internet", "Permet aux clients de consulter les informations relatives à leurs comptes bancaires et d'effectuer des paiements.")
+Person(customerA, "Client bancaire A", "Un client de la banque, avec des comptes bancaires personnels.")
+Person(customerB, "Client bancaire B")
+Person_Ext(customerC, "Client bancaire C")
+System(SystemAA, "Système de banque Internet", "Permet aux clients de consulter les informations relatives à leurs comptes bancaires et d'effectuer des paiements.")
 
-Personne(clientD, "Client bancaire D", "Un client de la banque, <br/> avec des comptes bancaires personnels.")
+Person(customerD, "Client bancaire D", "Un client de la banque, <br/> avec des comptes bancaires personnels.")
 
-LimiteFrontière(b1, "FrontièreBanque") {
+Enterprise_Boundary(b1, "FrontièreBanque") {
 
-  SystèmeBDD_Ext(SystèmeE, "Système bancaire de base", "Stocke toutes les informations bancaires essentielles sur les clients, les comptes, les transactions, etc.")
+  SystemDb_Ext(SystemE, "Système bancaire de base", "Stocke toutes les informations bancaires essentielles sur les clients, les comptes, les transactions, etc.")
 
-  LimiteSystème(b2, "FrontièreBanque2") {
-    Système(SystèmeA, "Système bancaire A")
-    Système(SystèmeB, "Système bancaire B", "Un système de la banque, avec des comptes bancaires personnels.")
+  System_Boundary(b2, "FrontièreBanque2") {
+    System(SystemA, "Système bancaire A")
+    System(SystemB, "Système bancaire B", "Un système de la banque, avec des comptes bancaires personnels.")
   }
 
-  SystèmeExt(SystèmeC, "Système de messagerie", "Le système de messagerie Microsoft Exchange interne.")
-  SystèmeBDD(SystèmeD, "Base de données du système bancaire D", "Un système de la banque, avec des comptes bancaires personnels.")
+  System_Ext(SystemC, "Système de messagerie", "Le système de messagerie Microsoft Exchange interne.")
+  SystemDb(SystemD, "Base de données du système bancaire D", "Un système de la banque, avec des comptes bancaires personnels.")
 
-  Limite(b3, "FrontièreBanque3", "limite") {
-    FileSystème(SystèmeF, "File d'attente du système bancaire F", "Un système de la banque, avec des comptes bancaires personnels.")
-    FileExterne(SystèmeG, "File d'attente du système bancaire G", "Un système de la banque, avec des comptes bancaires personnels.")
+  Boundary(b3, "FrontièreBanque3", "limite") {
+    SystemQueue(SystemF, "File d'attente du système bancaire F", "Un système de la banque, avec des comptes bancaires personnels.")
+    System_Ext(SystemG, "File d'attente du système bancaire G", "Un système de la banque, avec des comptes bancaires personnels.")
   }
 }
 
-RelBi(clientA, SystèmeAA, "Utilise")
-RelBi(SystèmeAA, SystèmeE, "Utilise")
-Rel(SystèmeAA, SystèmeC, "Envoie des e-mails", "SMTP")
-Rel(SystèmeC, clientA, "Envoie des e-mails à")
+BiRel(customerA, SystemAA, "Utilise")
+BiRel(SystemAA, SystemE, "Utilise")
+Rel(SystemAA, SystemC, "Envoie des e-mails", "SMTP")
+Rel(SystemC, customerA, "Envoie des e-mails à")
 ```
 
 ```mermaid

@@ -18,11 +18,7 @@ Generate diagrams from markdown-like text.
  <a href="https://mermaid.js.org">📖 Documentation</a> | <a href="https://mermaid.js.org/intro/">🚀 Getting Started</a> | <a href="https://www.jsdelivr.com/package/npm/mermaid">🌐 CDN</a> | <a href="https://discord.gg/sKeNQX4Wtj" title="Discord invite">🙌 Join Us</a>
 </p>
 <p align="center">
-<a href="./README.zh-CN.md">简体中文</a>
-</p>
-
-<p align="center">
-| <a href="./README.fr.md">Français</a>
+<a href="./README.fr.md">Français</a> | <a href="./README.zh-CN.md">简体中文</a>
 </p>
 
 <p align="center">
@@ -99,22 +95,6 @@ In our release process we rely heavily on visual regression tests using [applito
 </a>
 
 <!-- </Main description> -->
-
-## Features
-
-Mermaid provides a complete diagramming solution with:
-
-- **25+ Diagram Types**: Flowchart, Sequence, Gantt, Class, State, Pie, Git, C4, and more
-- **Simple Syntax**: Markdown-like text—easy to learn and read
-- **No Designer Needed**: Create professional diagrams without design skills
-- **Live Editor**: Try instantly at [mermaid.live](https://mermaid.live/)
-- **Version Control Friendly**: Keep diagrams in git with your code
-- **GitHub Ready**: Diagrams render directly in markdown files
-- **Highly Customizable**: Colors, fonts, themes, and styling
-- **Secure**: Built-in input sanitization and sandboxed rendering
-- **Lightweight**: Minimal bundle impact—bundle size varies by build target
-- **Active Community**: Regular updates and hundreds of contributors
-- **Open Source**: MIT licensed—use freely anywhere
 
 ## Examples
 
