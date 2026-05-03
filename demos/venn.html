@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+      .dark-sample {
+        background: #0d1117;
+        color: #e6edf3;
+        padding: 16px 20px;
+        border-radius: 12px;
+        margin: 24px 0;
+        border: 1px solid #30363d;
+      }
+      .dark-sample h2 {
+        margin: 0 0 12px;
+        font-size: 18px;
+      }
+      .dark-sample pre.mermaid {
+        background: transparent;
+        margin: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Venn diagram demo</h1>
+
+    <div class="diagrams">
+      <pre class="mermaid">
+      venn-beta
+        title Very Basic Venn Diagram
+        set A
+        set B
+        union A,B["AB"]
+      </pre>
+      <hr />
+      <pre class="mermaid">
+      venn-beta
+        title Three overlapping sets
+        set A
+        set B
+        set C
+        union A,B["AB"]
+        union B,C["BC"]
+        union A,C["AC"]
+        union A,B,C["ABC"]
+        style A,B fill:skyblue
+        style B,C fill:orange
+        style A,C fill:lightgreen
+        style A,B,C fill:white, color:red
+      </pre>
+
+      <hr />
+      <div class="dark-sample">
+        <h2>Dark mode sample</h2>
+        <pre class="mermaid">
+        %%{init: { 'theme': 'dark' } }%%
+        venn-beta
+          title Night Shift Sets
+          set A["Frontend"]
+            text d3
+            text react
+          set B["Backend"]
+          set C["Ops"]
+          union A,B["APIs"]
+          union B,C["Infra"]
+          union A,C["SRE"]
+          union A,B,C["Shared"]
+        </pre>
+      </div>
+      <hr />
+      <pre class="mermaid">
+      %%{init: { 'venn': { 'useDebugLayout': true } } }%%
+      venn-beta
+        title Four sets with all pairwise intersections
+        set A:18
+        set B:18
+        set C:18
+        set D:18
+        union A,B:5
+        union A,C:2.5
+        union A,D:5
+        union B,C:5
+        union B,D:2.5
+        union C,D:5
+      </pre>
+      <hr />
+      <pre class="mermaid">
+      venn-beta
+        title Three concatenated sets and one isolated set
+        set A["ALPHA"]:15
+        set B["BETA"]:5
+        set C:10
+        set D["DELTA"]:10
+        union A,B["AB"]:1
+        union B,D:1
+        style A,B fill:gold
+      </pre>
+      <hr />
+      <pre class="mermaid">
+      venn-beta
+        title Text nodes inside sets
+        set A["Colored texts"]:18
+          text rgba["rgba"]
+          text rgb["rgb"]
+          text hex["hex"]
+          text colorname["color name"]
+        set B["Default texts"]:12
+          text default["default color"]
+        union A,B["Common"]:5
+          text shared["shared note"]
+        style rgba color:rgba(255, 0, 0, 0.75)
+        style rgb color:rgb(255, 0, 128)
+        style hex color:#ff33cc
+        style colorname color:green
+      </pre>
+      <hr />
+      <pre class="mermaid">
+      %%{init: { 'venn': { 'useDebugLayout': true } } }%%
+      venn-beta
+        title Many text nodes in debug text layout mode
+        set A["Five nodes"]:18
+          text A1
+          text A2
+          text A3
+          text A4
+          text A5
+        set B["Nine nodes"]:18
+          text B1
+          text B2
+          text B3
+          text B4
+          text B5
+          text B6
+          text B7["Long label"]
+          text "B8 with a long label"
+          text "B9 with a loooooooong label"
+        union A,B["Common"]:3
+          text shared["shared note"]
+        style B4 color:red
+        style B7 color:green
+      </pre>
+      <hr />
+      <pre class="mermaid">
+      %%{init: { 'theme': 'forest' } }%%
+      venn-beta
+        title Forest Theme
+        set A["Flora"]
+        set B["Fauna"]
+        set C["Fungi"]
+        union A,B["Symbiosis"]
+        union B,C["Ecosystem"]
+        union A,C["Decomposition"]
+        union A,B,C["Biodiversity"]
+      </pre>
+      <hr />
+      <pre class="mermaid">
+      %%{init: { 'theme': 'neutral', 'themeVariables': { 'primaryColor': '#4a90d9', 'secondaryColor': '#d94a4a' } } }%%
+      venn-beta
+        title Neutral Theme with Custom Colors
+        set X["Design"]:15
+        set Y["Engineering"]:15
+        union X,Y["Product"]:5
+      </pre>
+      <hr />
+      <pre class="mermaid">
+      %%{init: { 'look': 'handDrawn', 'handDrawnSeed': 1 } }%%
+      venn-beta
+        title Hand-drawn Three Sets
+        set Frontend
+        set Backend
+        set DevOps
+        union Frontend,Backend["Fullstack"]
+        union Backend,DevOps["Infra"]
+        union Frontend,DevOps["SRE"]
+        union Frontend,Backend,DevOps["All"]
+      </pre>
+      <hr />
+      <pre class="mermaid">
+      %%{init: { 'look': 'handDrawn', 'handDrawnSeed': 1 } }%%
+      venn-beta
+        title Hand-drawn with Styles &amp; Text Nodes
+        set A
+          text "Item 1"
+          text "Item 2"
+        set B
+          text "Item 3"
+        union A,B
+          text "Shared"
+        style A fill:#ff6b6b
+        style B fill:#4ecdc4
+        style A,B fill:#ffe66d
+      </pre>
+      <hr />
+      <div class="dark-sample">
+        <h2>Hand-drawn dark mode</h2>
+        <pre class="mermaid">
+        %%{init: { 'theme': 'dark', 'look': 'handDrawn', 'handDrawnSeed': 2 } }%%
+        venn-beta
+          title Sketchy Night Sets
+          set A["Frontend"]
+          set B["Backend"]
+          set C["Ops"]
+          union A,B["APIs"]
+          union B,C["Infra"]
+          union A,C["SRE"]
+          union A,B,C["Core"]
+        </pre>
+      </div>
+    </div>
+    <script type="module">
+      import mermaid from '/mermaid.esm.mjs';
+      mermaid.initialize({
+        logLevel: 3,
+        securityLevel: 'loose',
+      });
+    </script>
+
+    <style>
+      pre {
+        /*width: 45vw;*/
+        /*padding: 2em;*/
+      }
+    </style>
+  </body>
+</html>

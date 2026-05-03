@@ -105,49 +105,45 @@
   </head>
 
   <body>
-    <pre id="diagram4" class="mermaid">
-      ---
-      config:
-        layout: elk
-      ---
-      mindmap
-      root((mindmap))
-        Origins
-          Long history
-          ::icon(fa fa-book)
-          Popularisation
-            British popular psychology author Tony Buzan
-        Research
-          On effectiveness&lt;br/>and features
-          On Automatic creation
-            Uses
-                Creative techniques
-                Strategic planning
-                Argument mapping
-        Tools
-              id)I am a cloud(
-                  id))I am a bang((
-                    Tools
+    <pre id="diagram4" class="mermaid2">
+      block
+columns 1
+  db(("DB"))
+  blockArrowId6<["&nbsp;&nbsp;&nbsp;"]>(down)
+  block:ID
+    A
+    B["A wide one in the middle"]
+    C
+  end
+  space
+  D
+  ID --> D
+  C --> D
+  style B fill:#969,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
-      ---
-      config:
-        layout: elk
-      ---
-      flowchart
-       aid0
+    <pre id="diagram4" class="mermaid2">
+block
+  columns 3
+  a["A label"] b:2 c:2 d
+
   </pre
     >
     <pre id="diagram4" class="mermaid">
-      ---
-      config:
-        layout: elk
-      ---
-      mindmap
-      aid0
+block
+  columns 3
+  a:3
+  block:group1:2
+    columns 2
+    h i j k
+  end
+  g
+  block:group2:3
+    %% columns auto (default)
+    l m n o p q r
+  end
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       ---
       config:
         layout: ogdc
@@ -169,7 +165,7 @@
 
 </pre
     >
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       ---
       config:
         layout: elk
@@ -190,7 +186,7 @@
 
 </pre
     >
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       ---
       config:
         layout: elk
@@ -212,7 +208,7 @@
 
 </pre
     >
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       ---
       config:
         layout: elk
@@ -227,7 +223,7 @@
 
 </pre
     >
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       ---
       config:
         layout: elk
@@ -261,7 +257,7 @@
       note for Class10 "Cool class\nI said it's very cool class!"
 </pre
     >
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       ---
       config:
         layout: elk
@@ -281,7 +277,7 @@
         test_entity - satisfies -> test_req
 </pre
     >
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       ---
       config:
         layout: elk
@@ -305,7 +301,7 @@
       %% nat --> internet
 </pre
     >
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       ---
       config:
         layout: elk
@@ -335,7 +331,7 @@
       subnet1 & subnet2 --> nat --> internet
 </pre
     >
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -351,7 +347,7 @@ config:
               b2 --> b3
               b1 --> b4</pre
     >
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 treemap
 "Section 1"
     "Leaf 1.1": 12
@@ -363,7 +359,7 @@ treemap
     "Leaf 2.3": 12
 
     </pre>
-    <pre id="diagram5" class="mermaid">
+    <pre id="diagram5" class="mermaid2">
       ---
       config:
         layout: elk
@@ -377,7 +373,7 @@ treemap
           I@{ shape: question}
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       ---
       config:
         layout: tidy-tree
@@ -401,7 +397,7 @@ treemap
           Mermaid
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       ---
       config:
         layout: elk
@@ -415,7 +411,7 @@ treemap
           %%B@{ shape: diamond}
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       ---
       config:
         layout: elk
@@ -429,7 +425,7 @@ treemap
           B@{ shape: diamond}
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       ---
       config:
         layout: elk
@@ -442,7 +438,7 @@ treemap
           D@{ shape: question}
           I@{ shape: question}
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       ---
       config:
         layout: elk
@@ -458,7 +454,7 @@ treemap
           D@{ shape: trap-b}
           I@{ shape: lean-l}
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -471,7 +467,7 @@ flowchart LR
 
     B --> C
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -484,7 +480,7 @@ flowchart LR
 A{A} --> B((Bo boo)) & B & B & B
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       ---
       config:
         layout: elk
@@ -504,7 +500,7 @@ A{A} --> B((Bo boo)) & B & B & B
           D --> I & E
           E --> I
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -529,7 +525,7 @@ config:
       end
       end
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -542,219 +538,7 @@ config:
       D-->I
       D-->I
     </pre>
-    <pre id="diagram4" class="mermaid">
----
-config:
-  layout: elk
----
-flowchart LR
- subgraph s1["Untitled subgraph"]
-        n1["Evaluate"]
-        n2["Option 1"]
-        n3["Option 2"]
-        n4["fa:fa-car Option 3"]
-  end
- subgraph s2["Untitled subgraph"]
-        n5["Evaluate"]
-        n6["Option 1"]
-        n7["Option 2"]
-        n8["fa:fa-car Option 3"]
-  end
-    A["Start"] -- Some text --> B("Continue")
-    B --> C{"Evaluate"}
-    C -- One --> D["Option 1"]
-    C -- Two --> E["Option 2"]
-    C -- Three --> F["fa:fa-car Option 3"]
-    n1 -- One --> n2
-    n1 -- Two --> n3
-    n1 -- Three --> n4
-    n5 -- One --> n6
-    n5 -- Two --> n7
-    n5 -- Three --> n8
-    n1@{ shape: diam}
-    n2@{ shape: rect}
-    n3@{ shape: rect}
-    n4@{ shape: rect}
-    n5@{ shape: diam}
-    n6@{ shape: rect}
-    n7@{ shape: rect}
-    n8@{ shape: rect}
 
-    </pre>
-    <pre id="diagram4" class="mermaid">
----
-config:
-  layout: elk
----
-flowchart LR
- subgraph s1["Untitled subgraph"]
-        n1["Evaluate"]
-        n2["Option 1"]
-  end
-    n1 -- One --> n2
-
-
-
-
-    </pre>
-    <pre id="diagram4" class="mermaid">
----
-config:
-  layout: elk
----
-flowchart LR
-    A{A} --> B & C
-</pre
-    >
-    <pre id="diagram4" class="mermaid">
----
-config:
-  layout: elk
----
-flowchart LR
-    A{A} --> B & C
-    subgraph "subbe"
-      A
-    end
-</pre
-    >
-    <pre id="diagram4" class="mermaid">
----
-config:
-  layout: elk
----
-flowchart LR
-    n2@{ shape: rect}
-    n3@{ shape: rect}
-    n4@{ shape: rect}
-    A["Start"] -- Some text --> B("Continue")
-    B --> C{"Evaluate"}
-    C -- One --> D["Option 1"]
-    C -- Two --> E["Option 2"]
-    C -- Three --> F["fa:fa-car Option 3"]
-    %% C@{ shape: hexagon}
-
-
-    </pre>
-    <pre id="diagram4" class="mermaid">
----
-config:
-  kanban:
-    ticketBaseUrl: 'https://github.com/your-repo/issues/#TICKET#'
----
-kanban
-  Backlog
-    task1[📝 Define project requirements]@{ ticket: a101 }
-  To Do
-    task2[🔍 Research technologies]@{ ticket: a102 }
-  Review
-    task4[🔍 Code review for login feature]@{ ticket: a104 }
-  Done
-    task5[✅ Deploy initial version]@{ ticket: a105 }
-  In Progress
-    task3[💻 Develop login feature]@{ ticket: 103 }
-
-    </pre>
-    <pre id="diagram4" class="mermaid">
-flowchart LR
-nA[Default] --> A@{ icon: 'fa:bell', form: 'rounded' }
-
-    </pre>
-    <pre id="diagram4" class="mermaid">
-flowchart LR
-nA[Style] --> A@{ icon: 'fa:bell', form: 'rounded' }
-style A fill:#f9f,stroke:#333,stroke-width:4px
-    </pre>
-    <pre id="diagram4" class="mermaid">
-flowchart LR
-nA[Class] --> A@{ icon: 'fa:bell', form: 'rounded' }
-A:::AClass
-classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
-    </pre>
-    <pre id="diagram4" class="mermaid">
-flowchart LR
-  nA[Class] --> A@{ icon: 'logos:aws', form: 'rounded' }
-
-    </pre>
-    <pre id="diagram4" class="mermaid">
-flowchart LR
-nA[Default] --> A@{ icon: 'fa:bell', form: 'square' }
-
-    </pre>
-    <pre id="diagram4" class="mermaid">
-flowchart LR
-nA[Style] --> A@{ icon: 'fa:bell', form: 'square' }
-style A fill:#f9f,stroke:#333,stroke-width:4px
-    </pre>
-    <pre id="diagram4" class="mermaid">
-flowchart LR
-nA[Class] --> A@{ icon: 'fa:bell', form: 'square' }
-A:::AClass
-classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
-    </pre>
-    <pre id="diagram4" class="mermaid">
-flowchart LR
-  nA[Class] --> A@{ icon: 'logos:aws', form: 'square' }
-
-    </pre>
-    <pre id="diagram4" class="mermaid">
-flowchart LR
-nA[Default] --> A@{ icon: 'fa:bell', form: 'circle' }
-
-    </pre>
-    <pre id="diagram4" class="mermaid">
-flowchart LR
-nA[Style] --> A@{ icon: 'fa:bell', form: 'circle' }
-style A fill:#f9f,stroke:#333,stroke-width:4px
-    </pre>
-    <pre id="diagram4" class="mermaid">
-flowchart LR
-nA[Class] --> A@{ icon: 'fa:bell', form: 'circle' }
-A:::AClass
-classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
-    </pre>
-    <pre id="diagram4" class="mermaid">
-flowchart LR
-  nA[Class] --> A@{ icon: 'logos:aws', form: 'circle' }
-  A:::AClass
-  classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
-    </pre>
-    <pre id="diagram4" class="mermaid">
-flowchart LR
-  nA[Style] --> A@{ icon: 'logos:aws', form: 'circle' }
-  style A fill:#f9f,stroke:#333,stroke-width:4px
-    </pre>
-    <pre id="diagram4" class="mermaid">
-kanban
-  id2[In progress]
-    docs[Create Blog about the new diagram]@{ priority: 'Very Low', ticket: MC-2037, assigned: 'knsv' }
-    </pre>
-    <pre id="diagram4" class="mermaid">
----
-config:
-  kanban:
-    ticketBaseUrl: 'https://mermaidchart.atlassian.net/browse/#TICKET#'
-    # sectionWidth: 300
----
-kanban
-  Todo
-    [Create Documentation]
-    docs[Create Blog about the new diagram]
-  id7[In progress]
-    id6[Create renderer so that it works in all cases. We also add some extra text here for testing purposes. And some more just for the extra flare.]
-  id9[Ready for deploy]
-    id8[Design grammar]@{ assigned: 'knsv' }
-  id10[Ready for test]
-    id4[Create parsing tests]@{ ticket: MC-2038, assigned: 'K.Sveidqvist', priority: 'High' }
-    id66[last item]@{ priority: 'Very Low', assigned: 'knsv' }
-  id11[Done]
-    id5[define getData]
-    id2[Title of diagram is more than 100 chars when user duplicates diagram with 100 char]@{ ticket: MC-2036, priority: 'Very High'}
-    id3[Update DB function]@{ ticket: MC-2037, assigned: knsv, priority: 'High' }
-
-  id12[Can't reproduce]
-    id3[Weird flickering in Firefox]
-    </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       import layouts from './mermaid-layout-elk.esm.mjs';

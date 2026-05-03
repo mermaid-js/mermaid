@@ -35,6 +35,7 @@ let currentSection = '';
 let displayMode = '';
 const tags = ['active', 'done', 'crit', 'milestone', 'vert'];
 let funs = [];
+let diagramId = '';
 let inclusiveEndDates = false;
 let topAxis = false;
 let weekday = 'sunday';
@@ -63,9 +64,14 @@ export const clear = function () {
   topAxis = false;
   lastOrder = 0;
   links = new Map();
+  diagramId = '';
   commonClear();
   weekday = 'sunday';
   weekend = 'saturday';
+};
+
+export const setDiagramId = function (id) {
+  diagramId = id;
 };
 
 export const setAxisFormat = function (txt) {
@@ -723,8 +729,8 @@ const setClickFun = function (id, functionName, functionArgs) {
 const pushFun = function (id, callbackFunction) {
   funs.push(
     function () {
-      // const elem = d3.select(element).select(`[id="${id}"]`)
-      const elem = document.querySelector(`[id="${id}"]`);
+      const prefixedId = diagramId ? `${diagramId}-${id}` : id;
+      const elem = document.querySelector(`[id="${prefixedId}"]`);
       if (elem !== null) {
         elem.addEventListener('click', function () {
           callbackFunction();
@@ -732,8 +738,8 @@ const pushFun = function (id, callbackFunction) {
       }
     },
     function () {
-      // const elem = d3.select(element).select(`[id="${id}-text"]`)
-      const elem = document.querySelector(`[id="${id}-text"]`);
+      const prefixedId = diagramId ? `${diagramId}-${id}` : id;
+      const elem = document.querySelector(`[id="${prefixedId}-text"]`);
       if (elem !== null) {
         elem.addEventListener('click', function () {
           callbackFunction();
@@ -787,6 +793,7 @@ export default {
   getAccTitle,
   setDiagramTitle,
   getDiagramTitle,
+  setDiagramId,
   setDisplayMode,
   getDisplayMode,
   setAccDescription,

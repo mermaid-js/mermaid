@@ -98,12 +98,13 @@ const setupDoc = (
             look,
             classes
           );
+          const isNeo = look === 'neo';
           const edgeData = {
             id: 'edge' + graphItemCount,
             start: item.state1.id,
             end: item.state2.id,
             arrowhead: 'normal',
-            arrowTypeEnd: 'arrow_barb',
+            arrowTypeEnd: isNeo ? 'arrow_barb_neo' : 'arrow_barb',
             style: G_EDGE_STYLE,
             labelStyle: '',
             label: common.sanitizeText(item.description ?? '', getConfig()),
@@ -291,6 +292,7 @@ export const dataFetcher = (
       rx: 10,
       ry: 10,
       look,
+      labelType: 'markdown',
     };
 
     // Clear the label for dividers who have no description
@@ -311,6 +313,7 @@ export const dataFetcher = (
         labelStyle: '',
         shape: SHAPE_NOTE,
         label: parsedItem.note.text,
+        labelType: 'markdown',
         cssClasses: CSS_DIAGRAM_NOTE,
         // useHtmlLabels: false,
         cssStyles: [],

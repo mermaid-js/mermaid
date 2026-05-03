@@ -91,9 +91,11 @@ NSTR
 outdir
 Qcontrolx
 QSTR
+readmodel
 reinit
 rels
 reqs
+resetframe
 rewritelinks
 rgba
 RIGHTOF

@@ -14,11 +14,24 @@ const getStyles = (
     errorBkgColor: string;
     errorTextColor: string;
     lineColor: string;
-  } & FlowChartStyleOptions
+    useGradient?: boolean;
+    dropShadow?: string;
+    primaryBorderColor?: string;
+    compositeTitleBackground?: string;
+    THEME_COLOR_LIMIT?: number;
+    nodeBorder?: string;
+    mainBkg?: string;
+    strokeWidth?: number;
+    theme?: string;
+    look?: string;
+  } & FlowChartStyleOptions,
+  svgId: string
 ) => {
   let diagramStyles = '';
   if (type in themes && themes[type]) {
-    diagramStyles = themes[type](options);
+    // Pass svgId through options so diagram-specific style functions can use it
+    // (e.g., for gradient URL references like url(svgId-gradient)).
+    diagramStyles = themes[type]({ ...options, svgId });
   } else {
     log.warn(`No theme found for ${type}`);
   }
@@ -60,7 +73,7 @@ const getStyles = (
   }
 
   & .edge-thickness-normal {
-    stroke-width: 1px;
+    stroke-width: ${(options.strokeWidth ?? 1) as number}px;
   }
   & .edge-thickness-thick {
     stroke-width: 3.5px
@@ -96,6 +109,48 @@ const getStyles = (
    }
 
   ${diagramStyles}
+  .node .neo-node {
+    stroke: ${options.nodeBorder};
+  }
+
+  [data-look="neo"].node rect, [data-look="neo"].cluster rect, [data-look="neo"].node polygon {
+    stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
+    filter: ${options.dropShadow ? options.dropShadow.replace('url(#drop-shadow)', `url(${svgId}-drop-shadow)`) : 'none'};
+  }
+
+
+  [data-look="neo"].node path {
+    stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
+    stroke-width: ${(options.strokeWidth ?? 1) as number}px;
+  }
+
+  [data-look="neo"].node .outer-path {
+    filter: ${options.dropShadow ? options.dropShadow.replace('url(#drop-shadow)', `url(${svgId}-drop-shadow)`) : 'none'};
+  }
+
+  [data-look="neo"].node .neo-line path {
+    stroke: ${options.nodeBorder};
+    filter: none;
+  }
+
+  [data-look="neo"].node circle{
+    stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
+    filter: ${options.dropShadow ? options.dropShadow.replace('url(#drop-shadow)', `url(${svgId}-drop-shadow)`) : 'none'};
+  }
+
+  [data-look="neo"].node circle .state-start{
+    fill: #000000;
+  }
+
+  [data-look="neo"].icon-shape .icon {
+    fill: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
+    filter: ${options.dropShadow ? options.dropShadow.replace('url(#drop-shadow)', `url(${svgId}-drop-shadow)`) : 'none'};
+  }
+
+    [data-look="neo"].icon-shape .icon-neo path {
+    stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
+    filter: ${options.dropShadow ? options.dropShadow.replace('url(#drop-shadow)', `url(${svgId}-drop-shadow)`) : 'none'};
+  }
 
   ${userStyles}
 `;

@@ -17,15 +17,15 @@ permissions:
 env:
   # For PRs and MergeQueues, the target commit is used, and for push events to non-develop branches, github.event.previous is used if available. Otherwise, 'develop' is used.
   targetHash: >-
-    ${{ 
-      github.event.pull_request.base.sha || 
-      github.event.merge_group.base_sha || 
+    ${{
+      github.event.pull_request.base.sha ||
+      github.event.merge_group.base_sha ||
       (
         (
-          (github.event_name == 'push' && github.ref == 'refs/heads/develop') || 
+          (github.event_name == 'push' && github.ref == 'refs/heads/develop') ||
           github.event.before == '0000000000000000000000000000000000000000'
         ) && 'develop'
-      ) || 
+      ) ||
       github.event.before
     }}
   RUN_VISUAL_TEST: >-
@@ -71,16 +71,105 @@ jobs:
           mkdir -p cypress/snapshots/stats/base
           mv stats cypress/snapshots/stats/base
 
+  # Detect which diagram(s) the PR touches and determine the minimal set of
+  # Cypress specs to run. Runs in parallel with the `cache` job so it does not
+  # add to the critical path.
+  #
+  # Feature flag: set the repository variable E2E_SCOPE_BY_DIAGRAM to 'true'
+  # (Settings → Variables → Actions) to enable diagram-scoped test selection.
+  # When the flag is not set or is 'false', the full 5-container matrix runs.
+  #
+  # When scoping is active and all changes are confined to a single diagram,
+  # only that diagram's specs run in a single container. Any change to shared
+  # rendering code, themes, config, or the parser falls back to the full suite.
+  detect-scope:
+    runs-on: ubuntu-latest
+    outputs:
+      spec_pattern: ${{ steps.scope.outputs.spec_pattern }}
+      matrix: ${{ steps.scope.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          # Need enough history to diff against the base commit.
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+        with:
+          node-version-file: '.node-version'
+
+      - name: Detect e2e scope
+        id: scope
+        # The detection script is pure Node.js ESM (no npm install required).
+        # It reads changed file paths from stdin and prints the --spec value.
+        run: |
+          FULL_MATRIX='[1,2,3,4,5]'
+          SCOPED_MATRIX='[1]'
+
+          # Feature flag off → always use full matrix
+          if [ "${E2E_SCOPE_BY_DIAGRAM}" != "true" ]; then
+            echo "spec_pattern=" >> "$GITHUB_OUTPUT"
+            echo "matrix=${FULL_MATRIX}" >> "$GITHUB_OUTPUT"
+            echo "[detect-scope] Feature flag disabled — full suite."
+            exit 0
+          fi
+
+          BASE="${{ env.targetHash }}"
+
+          # For direct pushes to the main development branch, always run the
+          # full suite (no PR diff to scope against).
+          if [ "$BASE" = "develop" ] || [ "$BASE" = "master" ]; then
+            echo "spec_pattern=" >> "$GITHUB_OUTPUT"
+            echo "matrix=${FULL_MATRIX}" >> "$GITHUB_OUTPUT"
+            echo "[detect-scope] Direct push to ${BASE} — full suite."
+            exit 0
+          fi
+
+          # Fetch the target branch so we can find the true merge-base.
+          # Using merge-base rather than the raw base SHA from the event payload
+          # avoids picking up commits that landed on the base branch after the
+          # PR was last synchronized (which would widen the diff incorrectly).
+          git fetch origin develop --depth=1 2>/dev/null || true
+          MERGE_BASE=$(git merge-base HEAD origin/develop 2>/dev/null || echo "")
+
+          if [ -z "$MERGE_BASE" ]; then
+            echo "spec_pattern=" >> "$GITHUB_OUTPUT"
+            echo "matrix=${FULL_MATRIX}" >> "$GITHUB_OUTPUT"
+            echo "[detect-scope] Could not determine merge-base — full suite."
+            exit 0
+          fi
+
+          echo "[detect-scope] merge-base: ${MERGE_BASE}"
+
+          # Get changed files and run the detection script.
+          SPEC=$(git diff --name-only "$MERGE_BASE" HEAD 2>/dev/null \
+                 | node scripts/e2e-diagram-scope.mjs \
+                 || echo "")
+
+          if [ -n "$SPEC" ]; then
+            echo "spec_pattern=${SPEC}" >> "$GITHUB_OUTPUT"
+            echo "matrix=${SCOPED_MATRIX}" >> "$GITHUB_OUTPUT"
+            echo "[detect-scope] Scoped to: ${SPEC}"
+          else
+            echo "spec_pattern=" >> "$GITHUB_OUTPUT"
+            echo "matrix=${FULL_MATRIX}" >> "$GITHUB_OUTPUT"
+            echo "[detect-scope] Cannot scope — full suite."
+          fi
+        env:
+          # Toggle diagram-scoped e2e: set this repository variable to 'true'
+          # (GitHub → Settings → Secrets and variables → Actions → Variables)
+          E2E_SCOPE_BY_DIAGRAM: "${{ vars.E2E_SCOPE_BY_DIAGRAM == 'true' }}"
+
   e2e:
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:node-20.16.0-chrome-127.0.6533.88-1-ff-128.0.3-edge-127.0.2651.74-1
       options: --user 1001
-    needs: cache
+    needs: [cache, detect-scope]
     strategy:
       fail-fast: false
       matrix:
-        containers: [1, 2, 3, 4, 5]
+        containers: ${{ fromJSON(needs.detect-scope.outputs.matrix) }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
@@ -115,7 +204,7 @@ jobs:
           npx tsx scripts/size.ts >> "$GITHUB_STEP_SUMMARY"
 
       # Install NPM dependencies, cache them correctly
-      # and run all Cypress tests
+      # and run all Cypress tests (or a scoped subset when detect-scope fires).
       - name: Cypress run
         uses: cypress-io/github-action@108b8684ae52e735ff7891524cbffbcd4be5b19f # v6.7.16
         id: cypress
@@ -124,10 +213,21 @@ jobs:
           start: pnpm run dev:coverage
           wait-on: 'http://localhost:9000'
           browser: chrome
+          # When detect-scope produced a pattern, run only those specs.
+          # An empty string means "run all specs" (cypress-io/github-action
+          # omits the --spec flag when the value is empty).
+          spec: ${{ needs.detect-scope.outputs.spec_pattern }}
           # Disable recording if we don't have an API key
           # e.g. if this action was run from a fork
           record: ${{ env.RUN_VISUAL_TEST == 'true' && secrets.CYPRESS_RECORD_KEY != '' }}
         env:
+          # For scoped runs (only a subset of specs executed), mark the Argos
+          # build as a "subset build". This tells Argos to ignore missing
+          # screenshots (they were simply not run, not deleted) and only report
+          # changed/added screenshots. Subset builds are never used as a
+          # baseline, so the full-suite baseline on develop is always preserved.
+          # See: https://argos-ci.com/docs/subset-builds
+          ARGOS_SUBSET: "${{ needs.detect-scope.outputs.spec_pattern != '' }}"
           ARGOS_PARALLEL: ${{ env.RUN_VISUAL_TEST == 'true' }}
           ARGOS_PARALLEL_TOTAL: ${{ env.RUN_VISUAL_TEST == 'true' && strategy.job-total || 1 }}
           ARGOS_PARALLEL_INDEX: ${{ env.RUN_VISUAL_TEST == 'true' && matrix.containers || 1 }}

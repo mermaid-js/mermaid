@@ -20,11 +20,14 @@ class Theme {
     this.noteTextColor = '#333';
 
     this.THEME_COLOR_LIMIT = 12;
-
+    this.radius = 5;
+    this.strokeWidth = 1;
     // dark
 
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
     this.fontSize = '16px';
+    this.useGradient = true;
+    this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,1))';
   }
   updateColors() {
     // The || is to make sure that if the variable has been defined by a user override that value is to be used
@@ -105,6 +108,9 @@ class Theme {
     this.taskTextColor = this.taskTextColor || this.primaryTextColor;
     this.taskTextDarkColor = this.taskTextDarkColor || this.textColor;
     this.taskTextClickableColor = this.taskTextClickableColor || '#003163';
+
+    this.noteFontWeight = this.noteFontWeight || 'normal';
+    this.fontWeight = this.fontWeight || 'normal';
 
     /* Sequence Diagram variables */
 
@@ -231,6 +237,18 @@ class Theme {
     this.pieOuterStrokeColor = this.pieOuterStrokeColor || 'black';
     this.pieOpacity = this.pieOpacity || '0.7';
 
+    /* venn */
+    this.venn1 = this.venn1 ?? adjust(this.primaryColor, { l: -30 });
+    this.venn2 = this.venn2 ?? adjust(this.secondaryColor, { l: -30 });
+    this.venn3 = this.venn3 ?? adjust(this.tertiaryColor, { l: -30 });
+    this.venn4 = this.venn4 ?? adjust(this.primaryColor, { h: 60, l: -30 });
+    this.venn5 = this.venn5 ?? adjust(this.primaryColor, { h: -60, l: -30 });
+    this.venn6 = this.venn6 ?? adjust(this.secondaryColor, { h: 60, l: -30 });
+    this.venn7 = this.venn7 ?? adjust(this.primaryColor, { h: 120, l: -30 });
+    this.venn8 = this.venn8 ?? adjust(this.secondaryColor, { h: 120, l: -30 });
+    this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
+    this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
+
     /* radar */
     this.radar = {
       axisColor: this.radar?.axisColor || this.lineColor,
@@ -243,6 +261,23 @@ class Theme {
       graticuleOpacity: this.radar?.graticuleOpacity || 0.3,
       legendBoxSize: this.radar?.legendBoxSize || 12,
       legendFontSize: this.radar?.legendFontSize || 12,
+    };
+
+    /* wardley */
+    this.wardleyEvolutionColor = this.wardleyEvolutionColor || '#dc3545';
+    this.wardley = {
+      backgroundColor: this.wardley?.backgroundColor || this.background,
+      axisColor: this.wardley?.axisColor || this.lineColor,
+      axisTextColor: this.wardley?.axisTextColor || this.primaryTextColor,
+      gridColor: this.wardley?.gridColor || this.gridColor,
+      componentFill: this.wardley?.componentFill || this.background,
+      componentStroke: this.wardley?.componentStroke || this.lineColor,
+      componentLabelColor: this.wardley?.componentLabelColor || this.primaryTextColor,
+      linkStroke: this.wardley?.linkStroke || this.lineColor,
+      evolutionStroke: this.wardley?.evolutionStroke || this.wardleyEvolutionColor,
+      annotationStroke: this.wardley?.annotationStroke || this.lineColor,
+      annotationTextColor: this.wardley?.annotationTextColor || this.primaryTextColor,
+      annotationFill: this.wardley?.annotationFill || this.background,
     };
 
     /* architecture */
@@ -281,6 +316,7 @@ class Theme {
     this.xyChart = {
       backgroundColor: this.xyChart?.backgroundColor || this.background,
       titleColor: this.xyChart?.titleColor || this.primaryTextColor,
+      dataLabelColor: this.xyChart?.dataLabelColor || this.primaryTextColor,
       xAxisTitleColor: this.xyChart?.xAxisTitleColor || this.primaryTextColor,
       xAxisLabelColor: this.xyChart?.xAxisLabelColor || this.primaryTextColor,
       xAxisTickColor: this.xyChart?.xAxisTickColor || this.primaryTextColor,
@@ -361,6 +397,24 @@ class Theme {
     this.commitLabelFontSize = this.commitLabelFontSize || '10px';
 
     /* -------------------------------------------------- */
+    /* Event Modeling diagrams                             */
+
+    this.emUiFill = this.emUiFill || 'white';
+    this.emUiStroke = this.emUiStroke || '#dbdada';
+    this.emProcessorFill = this.emProcessorFill || '#edb3f6';
+    this.emProcessorStroke = this.emProcessorStroke || '#b88cbf';
+    this.emReadModelFill = this.emReadModelFill || '#d3f1a2';
+    this.emReadModelStroke = this.emReadModelStroke || '#a3b732';
+    this.emCommandFill = this.emCommandFill || '#bcd6fe';
+    this.emCommandStroke = this.emCommandStroke || '#679ac3';
+    this.emEventFill = this.emEventFill || '#ffb778';
+    this.emEventStroke = this.emEventStroke || '#c19a0f';
+    this.emSwimlaneBackgroundOdd = this.emSwimlaneBackgroundOdd || 'rgb(250,250,250)';
+    this.emSwimlaneBackgroundStroke = this.emSwimlaneBackgroundStroke || 'rgb(240,240,240)';
+    this.emArrowhead = this.emArrowhead || this.lineColor;
+    this.emRelationStroke = this.emRelationStroke || this.lineColor;
+
+    /* -------------------------------------------------- */
     /* EntityRelationship diagrams                        */
 
     this.attributeBackgroundColorOdd =
@@ -368,6 +422,9 @@ class Theme {
     this.attributeBackgroundColorEven =
       this.attributeBackgroundColorEven || oldAttributeBackgroundColorEven;
     /* -------------------------------------------------- */
+
+    this.gradientStart = this.primaryBorderColor;
+    this.gradientStop = this.secondaryBorderColor;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

@@ -404,9 +404,14 @@ describe('mermaidAPI', () => {
         '\ndefault' +
         '\n.classDef1 > * { style1-1 !important; }' +
         '\n.classDef1 span { style1-1 !important; }';
-      expect(getStyles).toHaveBeenCalledWith('flowchart-v2', expectedStyles, {
-        fontFamily: 'serif',
-      });
+      expect(getStyles).toHaveBeenCalledWith(
+        'flowchart-v2',
+        expectedStyles,
+        {
+          fontFamily: 'serif',
+        },
+        'someId'
+      );
     });
 
     it('calls getStyles to get css for all graph, user css styles, and config theme variables', () => {
@@ -763,6 +768,7 @@ graph TD;A--x|text including URL space|B;`)
       { textDiagramType: 'requirementDiagram', expectedType: 'requirement' },
       { textDiagramType: 'sequenceDiagram', expectedType: 'sequence' },
       { textDiagramType: 'stateDiagram-v2', expectedType: 'stateDiagram' },
+      { textDiagramType: 'treeView-beta', expectedType: 'treeView' },
       { textDiagramType: 'radar-beta', expectedType: 'radar' },
       { textDiagramType: 'architecture-beta', expectedType: 'architecture' },
     ];
@@ -776,7 +782,7 @@ graph TD;A--x|text including URL space|B;`)
         describe(`${testedDiagram.textDiagramType}`, () => {
           const diagramType = testedDiagram.textDiagramType;
           const content = testedDiagram.content || '';
-          const diagramText = `${diagramType}\n accTitle: ${a11yTitle}\n accDescr: ${a11yDescr}\n ${content}`;
+          const diagramText = `${diagramType}\n accTitle: ${a11yTitle}\n accDescr: ${a11yDescr}\n${content}`;
           const expectedDiagramType = testedDiagram.expectedType;
 
           jsdomIt(

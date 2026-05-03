@@ -119,7 +119,7 @@ And, here is the diagram view from the above example:
 
 ## 2. Using the Mermaid Chart Editor
 
-Available at the [Mermaid Chart](https://www.mermaidchart.com/) website.
+Available at the [Mermaid Chart](https://mermaid.ai/) website.
 
 Mermaid Chart is a web-based diagram editor that allows you to create and edit diagrams in your browser. It is built by the team behind Mermaid.
 
@@ -132,7 +132,7 @@ Features include:
 
 To learn more, visit the [Mermaid Chart page](/ecosystem/mermaid-chart.html) in the Ecosystem section of the documentation.
 
-Or go to the [Mermaid Chart website](https://www.mermaidchart.com/app/sign-up) to sign up for a Free account.
+Or go to the [Mermaid Chart website](https://mermaid.ai/app/sign-up) to sign up for a Free account.
 
 ## 3. Using Mermaid Plugins
 
@@ -146,13 +146,13 @@ For a list of Mermaid Plugins and Integrations, visit the [Integrations page](..
 
 Mermaid Chart plugins are available for:
 
-- [ChatGPT](https://docs.mermaidchart.com/plugins/mermaid-chart-gpt)
-- [JetBrains IDE](https://docs.mermaidchart.com/plugins/jetbrains-ide)
-- [Microsoft PowerPoint](https://docs.mermaidchart.com/plugins/microsoft-powerpoint)
-- [Microsoft Word](https://docs.mermaidchart.com/plugins/microsoft-word)
-- [Visual Studio Code](https://docs.mermaidchart.com/plugins/visual-studio-code)
+- [ChatGPT](https://mermaid.ai/docs/plugins/mermaid-chart-gpt)
+- [JetBrains IDE](https://mermaid.ai/docs/plugins/jetbrains-ide)
+- [Microsoft PowerPoint](https://mermaid.ai/docs/plugins/microsoft-powerpoint)
+- [Microsoft Word](https://mermaid.ai/docs/plugins/microsoft-word)
+- [Visual Studio Code](https://mermaid.ai/docs/plugins/visual-studio-code)
 
-To learn more, visit the [Mermaid Chart Plugins](https://www.mermaidchart.com/plugins) page.
+To learn more, visit the [Mermaid Chart Plugins](https://mermaid.ai/plugins) page.
 
 ### Native Mermaid Support
 

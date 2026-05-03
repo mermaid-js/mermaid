@@ -48,11 +48,9 @@ export const canonicalConfig: CanonicalUrlConfig = {
 
     // Custom path transformations
     customTransforms: [
-      // Example: Redirect old paths to new paths
-      // { pattern: /^old-syntax\//, replacement: 'syntax/' },
-      // Example: Handle special cases
-      // { pattern: /^config\/setup\/README$/, replacement: 'config/setup/' },
-      // Add your custom transformations here
+      // Transform homepage index.html to /
+      // Note: transforms run *before* we ensure the path starts with '/'
+      { pattern: /^index\.html$/, replacement: '' },
     ],
   },
 };

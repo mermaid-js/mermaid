@@ -20,7 +20,7 @@ export async function taggedWaveEdgedRectangle<T extends SVGGraphicsElement>(
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
   const w = Math.max(bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
   const h = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
-  const waveAmplitude = h / 4;
+  const waveAmplitude = h / 8;
   const tagWidth = 0.2 * w;
   const tagHeight = 0.2 * h;
   const finalH = h + waveAmplitude;
@@ -54,15 +54,15 @@ export async function taggedWaveEdgedRectangle<T extends SVGGraphicsElement>(
   const y = -finalH / 2 - tagHeight * 0.4;
 
   const tagPoints = [
-    { x: x + w - tagWidth, y: (y + h) * 1.4 },
+    { x: x + w - tagWidth, y: (y + h) * 1.3 },
     { x: x + w, y: y + h - tagHeight },
     { x: x + w, y: (y + h) * 0.9 },
     ...generateFullSineWavePoints(
       x + w,
-      (y + h) * 1.3,
+      (y + h) * 1.25,
       x + w - tagWidth,
-      (y + h) * 1.5,
-      -h * 0.03,
+      (y + h) * 1.3,
+      -h * 0.02,
       0.5
     ),
   ];
@@ -79,7 +79,7 @@ export async function taggedWaveEdgedRectangle<T extends SVGGraphicsElement>(
   const waveEdgeRect = shapeSvg.insert(() => taggedWaveEdgeRectNode, ':first-child');
   waveEdgeRect.insert(() => waveEdgeRectNode, ':first-child');
 
-  waveEdgeRect.attr('class', 'basic label-container');
+  waveEdgeRect.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     waveEdgeRect.selectAll('path').attr('style', cssStyles);

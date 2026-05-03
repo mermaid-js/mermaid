@@ -1,4 +1,4 @@
-grammar Architecture
+grammar ArchitectureGrammar
 import "../common/common";
 import "arch";
 

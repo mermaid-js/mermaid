@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Ishikawa Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Ishikawa diagram demo</h1>
+    <pre class="mermaid">
+ishikawa-beta
+  Blurry Photo
+  Process
+    Out of focus
+    Shutter speed too slow
+    Protective film not removed
+    Beautification filter applied
+  User
+    Shaky hands
+  Equipment
+    LENS
+      Inappropriate lens
+      Damaged lens
+      Dirty lens
+    SENSOR
+      Damaged sensor
+      Dirty sensor
+  Environment
+    Subject moved too quickly
+    Too dark
+    </pre>
+
+    <pre class="mermaid">
+ishikawa-beta
+  Problem Only
+    </pre>
+
+    <pre class="mermaid">
+---
+config:
+  ishikawa:
+    diagramPadding: 100
+---
+ishikawa-beta
+  Very deep
+  Cause 1
+    1-1
+    1-2
+    1-3
+        1-3-1
+        1-3-2
+        1-3-3
+        1-3-4
+  Cause 2
+    2-1
+      2-1-1
+      2-1-2
+    2-2
+      2-2-1
+      2-2-2
+        2-2-2-1
+          2-2-2-1-1
+          2-2-2-1-2
+            2-2-2-1-2-1
+        2-2-2-1
+    2-3
+      2-3-1
+  Cause 3
+     3-1
+       3-1-1
+          3-1-1-1
+            3-1-1-1-1
+              3-1-1-1-1-1
+                3-1-1-1-1-1-1
+  Cause 4
+      4-1
+        4-1-1
+        4-1-2
+        4-1-3
+        4-1-4
+        4-1-5
+        4-1-6
+        4-1-7
+        4-1-8
+      4-2
+        4-2-1
+        4-2-2
+  Cause 5
+      5-1
+  Cause 6
+      6-1
+      6-2
+      6-3
+      6-4
+      6-5
+      6-6
+    </pre>
+
+    <h2>Hand-drawn mode</h2>
+    <pre class="mermaid">
+%%{init: { 'look': 'handDrawn', 'handDrawnSeed': 1 } }%%
+ishikawa-beta
+  Blurry Photo
+  Process
+    Out of focus
+    Shutter speed too slow
+  User
+    Shaky hands
+  Equipment
+    LENS
+      Dirty lens
+    SENSOR
+      Damaged sensor
+  Environment
+    Too dark
+    </pre>
+
+    <h2>Forest theme</h2>
+    <pre class="mermaid">
+%%{init: { 'theme': 'forest' } }%%
+ishikawa-beta
+  Low Test Coverage
+  People
+    Lack of training
+    Insufficient reviewers
+  Process
+    No CI pipeline
+    Skipping code review
+  Tools
+    Outdated test framework
+    Flaky test runner
+  Environment
+    Tight deadlines
+    Unclear requirements
+    </pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+
+      mermaid.initialize({
+        theme: 'base',
+        startOnLoad: true,
+        logLevel: 0,
+        useMaxWidth: true,
+      });
+    </script>
+  </body>
+</html>
