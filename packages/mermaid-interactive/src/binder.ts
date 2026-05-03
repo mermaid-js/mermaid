@@ -241,45 +241,22 @@ function findDownstreamNodes(
  */
 function fitSvgToContent(svg: SVGSVGElement): void {
   try {
-    const ctm = svg.getScreenCTM();
-    if (!ctm) {
+    // getBBox() on the root <g> returns the tight bounding box of ALL visible
+    // SVG content (modern browsers exclude display:none descendants per SVG2).
+    // This is simpler and more reliable than enumerating specific node classes,
+    // because it also captures edge paths, pseudo-states ([*]), markers, etc.
+    const rootG = svg.querySelector<SVGGElement>(':scope > g');
+    if (!rootG) {
       return;
     }
-    const inv = ctm.inverse();
-    const toSvg = (x: number, y: number): DOMPoint => {
-      const pt = svg.createSVGPoint();
-      pt.x = x;
-      pt.y = y;
-      return pt.matrixTransform(inv);
-    };
-
-    let minX = Infinity,
-      minY = Infinity,
-      maxX = -Infinity,
-      maxY = -Infinity;
-    svg.querySelectorAll<SVGGElement>('g.node, g.stateGroup, g.cluster, g.actor').forEach((el) => {
-      if (el.style.display === 'none') {
-        return;
-      }
-      const r = el.getBoundingClientRect();
-      if (!r.width && !r.height) {
-        return;
-      }
-      const tl = toSvg(r.left, r.top);
-      const br = toSvg(r.right, r.bottom);
-      minX = Math.min(minX, tl.x, br.x);
-      minY = Math.min(minY, tl.y, br.y);
-      maxX = Math.max(maxX, tl.x, br.x);
-      maxY = Math.max(maxY, tl.y, br.y);
-    });
-
-    if (minX === Infinity) {
+    const bbox = rootG.getBBox();
+    if (!bbox.width && !bbox.height) {
       return;
     }
     const pad = 16;
-    const vw = maxX - minX + pad * 2;
-    const vh = maxY - minY + pad * 2;
-    svg.setAttribute('viewBox', `${minX - pad} ${minY - pad} ${vw} ${vh}`);
+    const vw = bbox.width + pad * 2;
+    const vh = bbox.height + pad * 2;
+    svg.setAttribute('viewBox', `${bbox.x - pad} ${bbox.y - pad} ${vw} ${vh}`);
     svg.style.height = `${vh}px`;
     svg.style.maxWidth = `${vw}px`;
   } catch {
