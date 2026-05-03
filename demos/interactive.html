@@ -929,9 +929,11 @@ flowchart TD
       }
 
       function findCluster(svg, nodeId) {
+        // Old renderer: "cluster_SG1"; unified renderer: "{diagramId}-SG1" (dash).
         return (
           svg.querySelector(`[id="cluster_${nodeId}"]`) ??
           svg.querySelector(`g.cluster[id$="_${nodeId}"]`) ??
+          svg.querySelector(`g.cluster[id$="-${nodeId}"]`) ??
           null
         );
       }
@@ -1130,6 +1132,7 @@ flowchart TD
             el.style.display = show ? '' : 'none';
           });
           icon.textContent = show ? '▼' : '▶';
+          fitSvgToContent(svg);
         };
 
         if (!expanded) setVisible(false);

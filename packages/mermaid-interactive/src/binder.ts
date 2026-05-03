@@ -181,7 +181,7 @@ function findDownstreamNodes(
     }
   });
   svgRoot.querySelectorAll<SVGGElement>('[data-edge="true"][data-id]').forEach((el) => {
-    const parsed = parseEdgeId((el as HTMLElement).dataset.id ?? '');
+    const parsed = parseEdgeId(el.getAttribute('data-id') ?? '');
     if (parsed) {
       addEdge(parsed.source, parsed.target);
     }
@@ -345,13 +345,13 @@ function attachCollapsible(
   ].filter((el) => shouldHideEdge(parseEdgeId(el.id)));
 
   svgRoot.querySelectorAll<SVGGElement>('[data-edge="true"][data-id]').forEach((el) => {
-    if (shouldHideEdge(parseEdgeId((el as HTMLElement).dataset.id ?? ''))) {
+    if (shouldHideEdge(parseEdgeId(el.getAttribute('data-id') ?? ''))) {
       outgoingEdges.push(el);
     }
   });
 
   svgRoot.querySelectorAll<SVGGElement>('g.edgeLabel').forEach((labelGroup) => {
-    const rawId = labelGroup.querySelector<HTMLElement>('g.label[data-id]')?.dataset?.id;
+    const rawId = labelGroup.querySelector('g.label[data-id]')?.getAttribute('data-id');
     if (shouldHideEdge(rawId ? parseEdgeId(rawId) : null)) {
       outgoingEdges.push(labelGroup);
     }
@@ -386,7 +386,7 @@ function attachCollapsible(
       const matchedIds = new Set<string>();
       svgRoot.querySelectorAll<SVGGElement>('[data-edge="true"][data-points]').forEach((el) => {
         try {
-          const pts = JSON.parse(atob((el as HTMLElement).getAttribute('data-points') ?? '')) as {
+          const pts = JSON.parse(atob(el.getAttribute('data-points') ?? '')) as {
             x: number;
             y: number;
           }[];
@@ -411,7 +411,7 @@ function attachCollapsible(
             return;
           }
           outgoingEdges.push(el);
-          const eid = (el as HTMLElement).getAttribute('data-id');
+          const eid = el.getAttribute('data-id');
           if (eid) {
             matchedIds.add(eid);
           }
@@ -421,7 +421,7 @@ function attachCollapsible(
       });
       if (matchedIds.size > 0) {
         svgRoot.querySelectorAll<SVGGElement>('g.edgeLabel').forEach((labelGroup) => {
-          const rawId = labelGroup.querySelector<HTMLElement>('g.label[data-id]')?.dataset?.id;
+          const rawId = labelGroup.querySelector('g.label[data-id]')?.getAttribute('data-id');
           if (rawId && matchedIds.has(rawId)) {
             outgoingEdges.push(labelGroup);
           }
@@ -466,9 +466,12 @@ function attachCollapsible(
 
 /** Find a Mermaid cluster element by subgraph ID. */
 function findClusterElement(svgRoot: SVGSVGElement, nodeId: string): SVGGElement | null {
+  // Old renderer uses "cluster_SG1"; unified renderer uses "{diagramId}-SG1"
+  // (dash-separated, no "cluster_" prefix).  Check both formats.
   return (
     svgRoot.querySelector<SVGGElement>(`[id="cluster_${nodeId}"]`) ??
     svgRoot.querySelector<SVGGElement>(`g.cluster[id$="_${nodeId}"]`) ??
+    svgRoot.querySelector<SVGGElement>(`g.cluster[id$="-${nodeId}"]`) ??
     null
   );
 }
@@ -495,14 +498,38 @@ function attachClusterCollapsible(
 
   // Resolve at attach time while all elements are visible
   const internalNodes = findNodesInsideCluster(svgRoot, clusterEl);
+  // Extract the logical node ID from a unified-renderer domId:
+  // "{diagramId}-{flowchart|classId|state}-{nodeId}-{counter}"
   const internalIds = new Set(
-    internalNodes.map((n) => /flowchart-(\w+)-/.exec(n.id)?.[1]).filter(Boolean) as string[]
+    internalNodes
+      .map((n) => /-(?:flowchart|classId|state)-(.+?)-\d+$/.exec(n.id)?.[1])
+      .filter(Boolean) as string[]
   );
-  const relatedEdges = [
-    ...svgRoot.querySelectorAll<SVGGElement>('.edgePath[id], .edgeLabel[id]'),
-  ].filter((el) => {
+  const relatedEdges: SVGGElement[] = [];
+  // Old renderer:
+  svgRoot.querySelectorAll<SVGGElement>('.edgePath[id], .edgeLabel[id]').forEach((el) => {
     const parsed = parseEdgeId(el.id);
-    return parsed && (internalIds.has(parsed.source) || internalIds.has(parsed.target));
+    if (parsed && (internalIds.has(parsed.source) || internalIds.has(parsed.target))) {
+      relatedEdges.push(el);
+    }
+  });
+  // Unified renderer edge paths:
+  svgRoot.querySelectorAll<SVGGElement>('[data-edge="true"][data-id]').forEach((el) => {
+    const parsed = parseEdgeId(el.getAttribute('data-id') ?? '');
+    if (parsed && (internalIds.has(parsed.source) || internalIds.has(parsed.target))) {
+      relatedEdges.push(el);
+    }
+  });
+  // Unified renderer edge labels:
+  svgRoot.querySelectorAll<SVGGElement>('g.edgeLabel').forEach((labelGroup) => {
+    const rawId = labelGroup.querySelector('g.label[data-id]')?.getAttribute('data-id');
+    if (!rawId) {
+      return;
+    }
+    const parsed = parseEdgeId(rawId);
+    if (parsed && (internalIds.has(parsed.source) || internalIds.has(parsed.target))) {
+      relatedEdges.push(labelGroup);
+    }
   });
 
   const badge = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -540,6 +567,7 @@ function attachClusterCollapsible(
       el.style.display = show ? '' : 'none';
     });
     icon.textContent = show ? '▼' : '▶';
+    fitSvgToContent(svgRoot);
   };
 
   if (!expanded) {
@@ -591,7 +619,7 @@ export function bind(svgElement: SVGSVGElement, diagramSource: string): void {
       if (props.collapsible) {
         const clusterEl = findClusterElement(svgElement, nodeId);
         if (clusterEl) {
-          const state = props.defaultState! ?? 'expanded';
+          const state = props.defaultState ?? 'expanded';
           attachClusterCollapsible(svgElement, clusterEl, nodeId, state);
         }
       }
@@ -603,7 +631,7 @@ export function bind(svgElement: SVGSVGElement, diagramSource: string): void {
     }
 
     if (props.collapsible) {
-      const state = props.defaultState! ?? 'expanded';
+      const state = props.defaultState ?? 'expanded';
       attachCollapsible(svgElement, nodeEl, nodeId, state, alwaysShowIds);
     }
   }
