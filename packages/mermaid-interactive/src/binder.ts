@@ -365,16 +365,21 @@ function attachCollapsible(
   });
 
   if (outgoingEdges.length === 0) {
-    // Geometry fallback — match by pts[0] proximity to any hidden-node center.
+    // Geometry fallback — match by pts[0]/pLast proximity to hidden-node centers.
+    // srcMatch: p0 near any hidden node (includes collapsed node B itself).
+    // tgtMatch: pLast near a DOWNSTREAM (truly-hidden) node only — NOT nodeEl
+    //           because nodeEl stays visible, and we must not hide A→B.
     const hiddenCenters: { x: number; y: number }[] = [];
     const c0 = getNodeCenter(nodeEl);
     if (c0) {
       hiddenCenters.push(c0);
     }
+    const downstreamCenters: { x: number; y: number }[] = [];
     downstreamNodes.forEach((n) => {
       const nc = getNodeCenter(n);
       if (nc) {
         hiddenCenters.push(nc);
+        downstreamCenters.push(nc);
       }
     });
     // Collect centers of exempt nodes so we can keep edges that reach them.
@@ -405,9 +410,11 @@ function attachCollapsible(
           const srcMatch = hiddenCenters.some(
             (hc) => Math.abs(p0.x - hc.x) < tol && Math.abs(p0.y - hc.y) < tol
           );
+          // Use downstreamCenters (not hiddenCenters) for tgtMatch so we don't
+          // accidentally hide edges whose target is the collapsed node itself.
           const tgtMatch =
             pLast &&
-            hiddenCenters.some(
+            downstreamCenters.some(
               (hc) => Math.abs(pLast.x - hc.x) < tol && Math.abs(pLast.y - hc.y) < tol
             );
           if (!srcMatch && !tgtMatch) {

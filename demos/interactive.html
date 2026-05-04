@@ -855,6 +855,13 @@ flowchart TD
           });
           if (hiddenCenters.length > 0) {
             const tol = 60; // SVG layout units
+            // downstreamCenters: only truly-hidden nodes, not nodeEl itself.
+            // Used for tgtMatch to avoid hiding edges like A→B where B is visible.
+            const downstreamCenters = [];
+            downstreamNodes.forEach((n) => {
+              const nc = getNodeCenter(n);
+              if (nc) downstreamCenters.push(nc);
+            });
             const matchedIds = new Set();
             svg.querySelectorAll('[data-edge="true"][data-points]').forEach((el) => {
               try {
@@ -865,9 +872,11 @@ flowchart TD
                 const srcMatch = hiddenCenters.some(
                   (hc) => Math.abs(p0.x - hc.x) < tol && Math.abs(p0.y - hc.y) < tol
                 );
+                // Use downstreamCenters for tgtMatch — not hiddenCenters — so we
+                // don't hide A→B where B is the collapsing node (still visible).
                 const tgtMatch =
                   pLast &&
-                  hiddenCenters.some(
+                  downstreamCenters.some(
                     (hc) => Math.abs(pLast.x - hc.x) < tol && Math.abs(pLast.y - hc.y) < tol
                   );
                 if (!srcMatch && !tgtMatch) return;
