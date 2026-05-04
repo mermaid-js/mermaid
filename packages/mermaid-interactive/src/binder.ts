@@ -510,33 +510,41 @@ function findClusterElement(svgRoot: SVGSVGElement, nodeId: string): SVGGElement
 
 /** Return all node <g> elements whose centre falls inside a cluster's bounding box.
  *
- * Uses getBBox() (pure SVG coordinate space) so the comparison is immune to
- * viewport scroll position and CSS scaling.  Falls back to getBoundingClientRect
- * if getBBox() throws (element not in a rendered context).
+ * The cluster <g> has no SVG transform, so getBBox() on it gives coordinates in
+ * root SVG space.  Regular node <g> elements have transform="translate(cx,cy)"
+ * where (cx,cy) is the dagre layout centre — getBBox() on the <g> itself returns
+ * local coordinates, making the centre always (0,0) which is wrong.  We parse
+ * the translate() attribute via getNodeCenter() to get the node centre in root
+ * SVG space, enabling a correct comparison.
  */
 function findNodesInsideCluster(svgRoot: SVGSVGElement, clusterEl: SVGGElement): SVGGElement[] {
   try {
     const cb = clusterEl.getBBox();
-    return [...svgRoot.querySelectorAll<SVGGElement>('g.node')].filter((n) => {
-      try {
-        const b = n.getBBox();
-        const cx = b.x + b.width / 2;
-        const cy = b.y + b.height / 2;
-        return cx >= cb.x && cx <= cb.x + cb.width && cy >= cb.y && cy <= cb.y + cb.height;
-      } catch {
-        return false;
-      }
-    });
+    if (cb.width > 0 || cb.height > 0) {
+      return [...svgRoot.querySelectorAll<SVGGElement>('g.node')].filter((n) => {
+        const c = getNodeCenter(n);
+        if (c) {
+          return c.x >= cb.x && c.x <= cb.x + cb.width && c.y >= cb.y && c.y <= cb.y + cb.height;
+        }
+        // Node has no translate — fall back to viewport comparison
+        const cb2 = clusterEl.getBoundingClientRect();
+        const b = n.getBoundingClientRect();
+        const cx = b.left + b.width / 2;
+        const cy = b.top + b.height / 2;
+        return cx >= cb2.left && cx <= cb2.right && cy >= cb2.top && cy <= cb2.bottom;
+      });
+    }
   } catch {
-    // Fallback: viewport coordinates (getBBox unavailable)
-    const cb = clusterEl.getBoundingClientRect();
-    return [...svgRoot.querySelectorAll<SVGGElement>('g.node')].filter((n) => {
-      const b = n.getBoundingClientRect();
-      const cx = b.left + b.width / 2;
-      const cy = b.top + b.height / 2;
-      return cx >= cb.left && cx <= cb.right && cy >= cb.top && cy <= cb.bottom;
-    });
+    /* getBBox unavailable */
   }
+  // Final fallback: viewport coordinates
+  const cb = clusterEl.getBoundingClientRect();
+  return [...svgRoot.querySelectorAll<SVGGElement>('g.node')].filter((n) => {
+    const b = n.getBoundingClientRect();
+    const cx = b.left + b.width / 2;
+    const cy = b.top + b.height / 2;
+    return cx >= cb.left && cx <= cb.right && cy >= cb.top && cy <= cb.bottom;
+  });
 }
 
 /** Collapse/expand an entire subgraph cluster and all edges crossing its boundary. */

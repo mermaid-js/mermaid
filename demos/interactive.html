@@ -1000,29 +1000,37 @@ flowchart TD
       }
 
       function findNodesInsideCluster(svg, clusterEl) {
-        // Use getBBox() (SVG coordinate space) — immune to viewport scroll/scaling.
-        // Falls back to getBoundingClientRect if getBBox unavailable.
+        // The cluster <g> has no transform, so getBBox() is in root SVG space.
+        // Node <g> elements have transform="translate(cx,cy)"; their getBBox() is
+        // LOCAL (center ≈ (0,0)). Use getNodeCenter() to parse the translate
+        // attribute instead, giving the correct root-SVG position.
         try {
           const cb = clusterEl.getBBox();
-          return [...svg.querySelectorAll('g.node')].filter((n) => {
-            try {
-              const b = n.getBBox();
-              const cx = b.x + b.width / 2;
-              const cy = b.y + b.height / 2;
-              return cx >= cb.x && cx <= cb.x + cb.width && cy >= cb.y && cy <= cb.y + cb.height;
-            } catch {
-              return false;
-            }
-          });
-        } catch {
-          const cb = clusterEl.getBoundingClientRect();
-          return [...svg.querySelectorAll('g.node')].filter((n) => {
-            const b = n.getBoundingClientRect();
-            const cx = b.left + b.width / 2;
-            const cy = b.top + b.height / 2;
-            return cx >= cb.left && cx <= cb.right && cy >= cb.top && cy <= cb.bottom;
-          });
-        }
+          if (cb.width > 0 || cb.height > 0) {
+            return [...svg.querySelectorAll('g.node')].filter((n) => {
+              const c = getNodeCenter(n);
+              if (c) {
+                return (
+                  c.x >= cb.x && c.x <= cb.x + cb.width && c.y >= cb.y && c.y <= cb.y + cb.height
+                );
+              }
+              // Node has no translate — fall back to viewport comparison
+              const cb2 = clusterEl.getBoundingClientRect();
+              const b = n.getBoundingClientRect();
+              const cx = b.left + b.width / 2;
+              const cy = b.top + b.height / 2;
+              return cx >= cb2.left && cx <= cb2.right && cy >= cb2.top && cy <= cb2.bottom;
+            });
+          }
+        } catch {}
+        // Final fallback: viewport coordinates
+        const cb = clusterEl.getBoundingClientRect();
+        return [...svg.querySelectorAll('g.node')].filter((n) => {
+          const b = n.getBoundingClientRect();
+          const cx = b.left + b.width / 2;
+          const cy = b.top + b.height / 2;
+          return cx >= cb.left && cx <= cb.right && cy >= cb.top && cy <= cb.bottom;
+        });
       }
 
       function attachTooltip(el, text) {
