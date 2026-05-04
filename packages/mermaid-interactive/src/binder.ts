@@ -734,13 +734,13 @@ function attachClusterCollapsible(
   const origBadgeTransform = badge.getAttribute('transform') ?? '';
   // Measure the cluster label so the compact stub fits the title text.
   const labelGroupEl = clusterEl.querySelector<SVGGElement>('.cluster-label');
-  let compactW = 80,
-    compactH = 36;
+  let compactW = 140,
+    compactH = 60;
   if (labelGroupEl) {
     try {
       const lb = labelGroupEl.getBBox();
-      compactW = Math.max(lb.width + 24, 80);
-      compactH = Math.max(lb.height + 12, 32);
+      compactW = Math.max(lb.width + 44, 140);
+      compactH = Math.max(lb.height + 36, 60);
     } catch {
       /* getBBox unavailable */
     }
