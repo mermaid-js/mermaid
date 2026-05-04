@@ -450,26 +450,56 @@ function attachCollapsible(
   }
 
   // Collect g.edgeTerminals (multiplicity labels e.g. "1", "0..*").
-  // These have no data-id so ID-based passes miss them entirely.
-  // positionEdgeLabel() sets transform="translate(x,y)" on each g.edgeTerminals,
-  // so getNodeCenter() returns their SVG-space position for a clean proximity match.
+  // Strategy: extract the start/end SVG coordinates of already-hidden edge paths
+  // (from data-points) and match terminals whose transform position is within
+  // 40 units of those endpoints.  This is precise regardless of node size.
+  // Falls back to downstream node centres (tol 120) when no edge paths are found.
   {
-    const hiddenCentersForTerminals: { x: number; y: number }[] = [];
-    downstreamNodes.forEach((n) => {
-      const c = getNodeCenter(n);
-      if (c) {
-        hiddenCentersForTerminals.push(c);
+    const hiddenPathSet = new Set<Element>(outgoingEdges);
+    const edgeEndpoints: { x: number; y: number }[] = [];
+    svgRoot.querySelectorAll<SVGGElement>('[data-edge="true"][data-points]').forEach((el) => {
+      if (!hiddenPathSet.has(el)) {
+        return;
+      }
+      try {
+        const pts = JSON.parse(atob(el.getAttribute('data-points') ?? '')) as {
+          x: number;
+          y: number;
+        }[];
+        const p0 = pts?.[0];
+        const pLast = pts?.[pts.length - 1];
+        if (p0) {
+          edgeEndpoints.push(p0);
+        }
+        if (pLast) {
+          edgeEndpoints.push(pLast);
+        }
+      } catch {
+        /* ignore */
       }
     });
-    if (hiddenCentersForTerminals.length > 0) {
-      const tol = 120;
+
+    const searchPoints = edgeEndpoints;
+    let tol = 40;
+    if (searchPoints.length === 0) {
+      // Fallback: downstream node centres
+      downstreamNodes.forEach((n) => {
+        const c = getNodeCenter(n);
+        if (c) {
+          searchPoints.push(c);
+        }
+      });
+      tol = 120;
+    }
+
+    if (searchPoints.length > 0) {
       svgRoot.querySelectorAll<SVGGElement>('g.edgeTerminals').forEach((term) => {
         const tc = getNodeCenter(term);
         if (!tc) {
           return;
         }
-        const near = hiddenCentersForTerminals.some(
-          (c) => Math.abs(tc.x - c.x) < tol && Math.abs(tc.y - c.y) < tol
+        const near = searchPoints.some(
+          (ep) => Math.abs(tc.x - ep.x) < tol && Math.abs(tc.y - ep.y) < tol
         );
         if (near) {
           outgoingEdges.push(term);

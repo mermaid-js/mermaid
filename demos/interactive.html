@@ -901,23 +901,44 @@ flowchart TD
         }
 
         // Collect g.edgeTerminals (multiplicity labels "1", "0..*" etc.).
-        // These have no data-id; positionEdgeLabel() sets transform="translate(x,y)"
-        // so getNodeCenter() returns their SVG-space position.
-        const hiddenCentersForTerminals = [];
-        downstreamNodes.forEach((n) => {
-          const c = getNodeCenter(n);
-          if (c) hiddenCentersForTerminals.push(c);
-        });
-        if (hiddenCentersForTerminals.length > 0) {
-          const tol = 120;
-          svg.querySelectorAll('g.edgeTerminals').forEach((term) => {
-            const tc = getNodeCenter(term);
-            if (!tc) return;
-            const near = hiddenCentersForTerminals.some(
-              (c) => Math.abs(tc.x - c.x) < tol && Math.abs(tc.y - c.y) < tol
-            );
-            if (near) result.push(term);
+        // Match by proximity to start/end points of already-hidden edge paths
+        // (most precise). Falls back to downstream node centres if no edge
+        // paths carry data-points.
+        {
+          const hiddenPathSet = new Set(result);
+          const edgeEndpoints = [];
+          svg.querySelectorAll('[data-edge="true"][data-points]').forEach((el) => {
+            if (!hiddenPathSet.has(el)) return;
+            try {
+              const pts = JSON.parse(atob(el.getAttribute('data-points') || ''));
+              const p0 = pts?.[0],
+                pLast = pts?.[pts.length - 1];
+              if (p0) edgeEndpoints.push(p0);
+              if (pLast) edgeEndpoints.push(pLast);
+            } catch {}
           });
+
+          let searchPoints = edgeEndpoints;
+          let tol = 40;
+          if (searchPoints.length === 0) {
+            // Fallback: downstream node centres
+            downstreamNodes.forEach((n) => {
+              const c = getNodeCenter(n);
+              if (c) searchPoints.push(c);
+            });
+            tol = 120;
+          }
+
+          if (searchPoints.length > 0) {
+            svg.querySelectorAll('g.edgeTerminals').forEach((term) => {
+              const tc = getNodeCenter(term);
+              if (!tc) return;
+              const near = searchPoints.some(
+                (ep) => Math.abs(tc.x - ep.x) < tol && Math.abs(tc.y - ep.y) < tol
+              );
+              if (near) result.push(term);
+            });
+          }
         }
 
         return result;
