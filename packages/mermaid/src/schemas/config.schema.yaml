@@ -2420,6 +2420,14 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         minimum: 0
         default: 1
+      root:
+        description: |
+          Root node configuration for treeView diagrams.
+          - string: Custom label for the root node
+          - false: Hide the root node completely
+          - undefined: Show default root node "/"
+        type: [string, boolean, 'null']
+        default: 'null'
 
   RadarDiagramConfig:
     title: Radar Diagram Config

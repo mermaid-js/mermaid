@@ -72,4 +72,45 @@ treeView-beta
     `
     );
   });
+
+  it('should render treeView with default root "/" when no config is provided', () => {
+    imgSnapshotTest(
+      `treeView-beta
+            "file1.ts"`
+    );
+  });
+
+  it('should render treeView with custom root label', () => {
+    imgSnapshotTest(
+      `
+---
+config:
+  treeView:
+    root: "My Project"
+---
+treeView-beta
+      "folder1"
+          "file1.js"
+          "file2.ts"
+      "file7.ts"
+    `
+    );
+  });
+
+  it('should render treeView without root node when root is false', () => {
+    imgSnapshotTest(
+      `
+---
+config:
+  treeView:
+    root: false
+---
+treeView-beta
+      "folder1"
+          "file1.js"
+          "file2.ts"
+      "file7.ts"
+    `
+    );
+  });
 });
