@@ -741,6 +741,82 @@ flowchart LR
       </div>
     </div>
 
+    <!-- Example 12: Sequence diagram — SMTP email sending with interactive par blocks -->
+    <div class="example-card">
+      <h2>
+        Example 12: SMTP Email Delivery &mdash; sequenceDiagram with interactive
+        <code>par</code> blocks
+      </h2>
+      <p class="hint">
+        Every <code>par</code> box is automatically collapsible &mdash; no
+        <code>interaction</code> blocks required. Click the badge (or anywhere on the par border) to
+        collapse or expand that phase. The nested <code>par check_host()</code> inside
+        <code>par send_mail()</code> can be toggled independently.
+      </p>
+      <div class="layout">
+        <div>
+          <div class="panel-label">Source (.mermid)</div>
+          <div class="source-panel">
+            <pre class="mermaid-interactive" data-example="12">
+sequenceDiagram
+    box aliceblue Sender
+        participant SendingMTA as Sending MTA
+    end
+
+    participant DNS as Public DNS
+
+    box aliceblue Receiver
+        participant ReceivingMTA as Receiving MTA
+        actor RecipientMBX as Recipient's Mailbox
+    end
+
+    par check_mx()
+        Note over SendingMTA,DNS: (1) DNS Resolution (MX)
+        SendingMTA-->>DNS: Query for MX Record
+        DNS-->>SendingMTA: Recipient's Mail Servers IPs
+    end
+
+    par send_mail()
+        Note over SendingMTA,ReceivingMTA: (2) SMTP Handshake
+        SendingMTA-->>ReceivingMTA: ehlo servername.senderdomain.com
+        ReceivingMTA-->>SendingMTA: 250 servername.receivingdomain.com hello 1.2.3.4
+        SendingMTA-->>ReceivingMTA: mail from: user@senderdomain.com
+
+        par check_host()
+            Note over DNS,ReceivingMTA: (3) SPF Authorisation
+            ReceivingMTA-->>DNS: Query for SPF Record
+            DNS-->>ReceivingMTA: Returns Approved IPs
+        end
+
+        ReceivingMTA-->>SendingMTA: 250 2.1.0 Sender OK
+        SendingMTA-->>ReceivingMTA: rcpt to: user@receivingdomain.com
+        ReceivingMTA-->>SendingMTA: 250 2.1.5 Recipient OK
+        SendingMTA-->>ReceivingMTA: data
+        ReceivingMTA-->>SendingMTA: 354 Start mail input. End with a period (.)
+        SendingMTA-->>ReceivingMTA: subject: Test email
+        SendingMTA-->>ReceivingMTA: This is a plain-text email.
+        SendingMTA-->>ReceivingMTA: .
+        ReceivingMTA-->>SendingMTA: 250 2.6.0 Queued mail for delivery
+        SendingMTA-->>ReceivingMTA: quit
+        ReceivingMTA-->>SendingMTA: bye
+    end
+
+    par store_mail()
+        Note over ReceivingMTA,RecipientMBX: (4) Email Delivered to Recipient's Mailbox
+        ReceivingMTA->>RecipientMBX: Store Email
+    end</pre
+            >
+          </div>
+        </div>
+        <div>
+          <div class="panel-label">Rendered Output</div>
+          <div class="output-panel" id="output-12">
+            <span class="loading">Rendering&hellip;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
 
@@ -1506,6 +1582,140 @@ flowchart LR
         });
       }
 
+      // -----------------------------------------------------------------------
+      // Sequence diagram — automatic par/loop/alt block collapse
+      // No 'interaction' blocks needed: every g[data-et="control-structure"] gets
+      // a collapse badge automatically when this function is called.
+      // -----------------------------------------------------------------------
+
+      function attachSequenceParInteractivity(svgEl) {
+        const controlGroups = [...svgEl.querySelectorAll('g[data-et="control-structure"]')];
+        if (controlGroups.length === 0) return;
+
+        for (const ctrlGroup of controlGroups) {
+          const loopLines = [...ctrlGroup.querySelectorAll('line.loopLine')];
+          if (loopLines.length < 2) continue;
+
+          // Derive the y-range and x-range from the four border loopLines.
+          const ys = loopLines.flatMap((l) => [
+            parseFloat(l.getAttribute('y1') || '0'),
+            parseFloat(l.getAttribute('y2') || '0'),
+          ]);
+          const xs = loopLines.flatMap((l) => [
+            parseFloat(l.getAttribute('x1') || '0'),
+            parseFloat(l.getAttribute('x2') || '0'),
+          ]);
+          const starty = Math.min(...ys);
+          const stopy = Math.max(...ys);
+          const stopx = Math.max(...xs);
+          const eps = 4; // tolerance: avoids matching the border lines themselves
+
+          // Collect inner elements to hide on collapse.
+          const innerElements = new Set();
+
+          // The border loopLines themselves — hidden so the par box collapses to just
+          // its labelText/loopText header label.
+          loopLines.forEach((l) => innerElements.add(l));
+          // Section-separator dashed lines (also children of ctrlGroup).
+          ctrlGroup.querySelectorAll('line').forEach((l) => innerElements.add(l));
+
+          // Message arrow lines / paths.
+          svgEl.querySelectorAll('[data-et="message"]').forEach((el) => {
+            const y = parseFloat(el.getAttribute('y1') ?? el.getAttribute('y') ?? '0');
+            if (y > starty + eps && y < stopy - eps) innerElements.add(el);
+          });
+
+          // Message label texts.
+          svgEl.querySelectorAll('text.messageText').forEach((el) => {
+            const y = parseFloat(el.getAttribute('y') || '0');
+            if (y > starty + eps && y < stopy - eps) innerElements.add(el);
+          });
+
+          // Note rects and texts — use getBBox for centre-y comparison.
+          svgEl.querySelectorAll('rect.note, text.noteText').forEach((el) => {
+            try {
+              const bb = el.getBBox();
+              const cy = bb.y + bb.height / 2;
+              if (cy > starty + eps && cy < stopy - eps) innerElements.add(el);
+            } catch {}
+          });
+
+          // Activation boxes.
+          svgEl.querySelectorAll('rect.activation').forEach((el) => {
+            try {
+              const bb = el.getBBox();
+              const cy = bb.y + bb.height / 2;
+              if (cy > starty + eps && cy < stopy - eps) innerElements.add(el);
+            } catch {}
+          });
+
+          // Sequence-number labels.
+          svgEl.querySelectorAll('text.sequenceNumber').forEach((el) => {
+            const y = parseFloat(el.getAttribute('y') || '0');
+            if (y > starty + eps && y < stopy - eps) innerElements.add(el);
+          });
+
+          // Nested control-structure groups — identified by their own starty falling
+          // within this block's range. They collapse as a unit with the outer block.
+          svgEl.querySelectorAll('g[data-et="control-structure"]').forEach((inner) => {
+            if (inner === ctrlGroup) return;
+            const il = [...inner.querySelectorAll('line.loopLine')];
+            if (il.length < 2) return;
+            const iy = il.flatMap((l) => [
+              parseFloat(l.getAttribute('y1') || '0'),
+              parseFloat(l.getAttribute('y2') || '0'),
+            ]);
+            const innerStarty = Math.min(...iy);
+            if (innerStarty > starty + eps && innerStarty < stopy - eps) innerElements.add(inner);
+          });
+
+          let expanded = true;
+
+          // Badge — indigo pill placed just right of the par box top edge.
+          const badge = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+          badge.setAttribute('class', 'mi-toggle');
+          badge.style.cursor = 'pointer';
+          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          circle.setAttribute('r', '8');
+          circle.setAttribute('cx', '0');
+          circle.setAttribute('cy', '0');
+          circle.setAttribute('fill', '#6366f1');
+          circle.setAttribute('stroke', '#fff');
+          circle.setAttribute('stroke-width', '1.5');
+          const iconText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          iconText.setAttribute('text-anchor', 'middle');
+          iconText.setAttribute('dominant-baseline', 'central');
+          iconText.setAttribute('font-size', '10');
+          iconText.setAttribute('fill', '#fff');
+          iconText.setAttribute('pointer-events', 'none');
+          iconText.textContent = '\u25bc';
+          badge.appendChild(circle);
+          badge.appendChild(iconText);
+          badge.setAttribute('transform', `translate(${stopx + 12},${starty + 10})`);
+          ctrlGroup.appendChild(badge);
+          ctrlGroup.style.cursor = 'pointer';
+
+          const setVisible = (show) => {
+            innerElements.forEach((el) => {
+              el.style.display = show ? '' : 'none';
+            });
+            iconText.textContent = show ? '\u25bc' : '\u25b6';
+            fitSvgToContent(svgEl);
+          };
+
+          const toggle = () => {
+            expanded = !expanded;
+            setVisible(expanded);
+          };
+
+          ctrlGroup.addEventListener('click', toggle);
+          badge.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggle();
+          });
+        }
+      }
+
       function bind(svgEl, diagramSrc) {
         const interactions = parseInteractions(diagramSrc);
         // Gather all nodeIds that must stay visible (alwaysShow / ignoreCollapse).
@@ -1569,7 +1779,10 @@ flowchart LR
           }
 
           const svgEl = wrapper.querySelector('svg');
-          if (svgEl) bind(svgEl, diagram);
+          if (svgEl) {
+            bind(svgEl, diagram);
+            attachSequenceParInteractivity(svgEl);
+          }
         } catch (err) {
           if (outputEl) {
             outputEl.innerHTML = `<span class="render-error">Render error: ${err.message}</span>`;
