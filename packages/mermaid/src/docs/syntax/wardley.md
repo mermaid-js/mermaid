@@ -7,7 +7,7 @@
 Wardley Maps position components along two axes:
 
 - **Visibility** (Y-axis): How visible/valuable a component is to users (0.0 = infrastructure, 1.0 = user-facing)
-- **Evolution** (X-axis): How evolved/mature a component is (0.0 = genesis/novel, 1.0 = commodity/utility)
+- **Evolution** (X-axis): How evolved a component is (0.0 = genesis/novel, 1.0 = commodity/utility)
 
 This dual positioning enables strategic analysis of:
 
@@ -174,7 +174,7 @@ Custom App -> Developer Marketplace
 
 ### Attitude Zones
 
-Highlight rectangular regions of the map with the **Pioneers / Settlers / Town Planners** framing. Each zone is defined by two opposing corners (top-left and bottom-right) inside a single bracket: `[visibility1, maturity1, visibility2, maturity2]`.
+Highlight rectangular regions of the map with the **Pioneers / Settlers / Town Planners** framing. Each zone is defined by two opposing corners (top-left and bottom-right) inside a single bracket: `[visibility1, evolution1, visibility2, evolution2]`.
 
 - `pioneers` - Light blue zone, typically over the genesis / custom-built area
 - `settlers` - Medium blue zone, typically over the product / rental area
@@ -461,6 +461,7 @@ Wardley Maps support Mermaid's theme system. Use standard Mermaid configuration 
 
 - [Wardley Mapping Book](https://medium.com/wardleymaps) by Simon Wardley
 - [Create Wardley Maps](https://create.wardleymaps.ai/) - Interactive mapping tool
+- [Learn Wardley Mapping](https://learnwardleymapping.com/)
 - [Wardley Maps Community](https://community.wardleymaps.com/)
 
 ## Syntax Summary

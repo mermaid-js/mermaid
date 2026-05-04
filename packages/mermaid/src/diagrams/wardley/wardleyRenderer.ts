@@ -23,6 +23,15 @@ interface WardleyTheme {
   annotationStroke: string;
   annotationTextColor: string;
   annotationFill: string;
+  pioneersStroke: string;
+  pioneersFill: string;
+  settlersStroke: string;
+  settlersFill: string;
+  townplannersStroke: string;
+  townplannersFill: string;
+  ecosystemOuterFill: string;
+  ecosystemMiddleFill: string;
+  ecosystemInnerFill: string;
 }
 
 const getTheme = (): WardleyTheme => {
@@ -43,6 +52,15 @@ const getTheme = (): WardleyTheme => {
     annotationTextColor:
       themeVariables.wardley?.annotationTextColor ?? themeVariables.primaryTextColor ?? '#222',
     annotationFill: themeVariables.wardley?.annotationFill ?? themeVariables.background ?? '#fff',
+    pioneersStroke: themeVariables.wardley?.pioneersStroke ?? '#3490dd',
+    pioneersFill: themeVariables.wardley?.pioneersFill ?? '#3ccaf8',
+    settlersStroke: themeVariables.wardley?.settlersStroke ?? '#396dc0',
+    settlersFill: themeVariables.wardley?.settlersFill ?? '#599afa',
+    townplannersStroke: themeVariables.wardley?.townplannersStroke ?? '#4768c8',
+    townplannersFill: themeVariables.wardley?.townplannersFill ?? '#936ff9',
+    ecosystemOuterFill: themeVariables.wardley?.ecosystemOuterFill ?? '#d7d7d7',
+    ecosystemMiddleFill: themeVariables.wardley?.ecosystemMiddleFill ?? '#fff',
+    ecosystemInnerFill: themeVariables.wardley?.ecosystemInnerFill ?? '#fff',
   };
 };
 
@@ -182,9 +200,13 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
       'pioneers' | 'settlers' | 'townplanners',
       { stroke: string; fill: string; label: string }
     > = {
-      pioneers: { stroke: '#3490dd', fill: '#3ccaf8', label: 'Pioneers' },
-      settlers: { stroke: '#396dc0', fill: '#599afa', label: 'Settlers' },
-      townplanners: { stroke: '#4768c8', fill: '#936ff9', label: 'Town Planners' },
+      pioneers: { stroke: theme.pioneersStroke, fill: theme.pioneersFill, label: 'Pioneers' },
+      settlers: { stroke: theme.settlersStroke, fill: theme.settlersFill, label: 'Settlers' },
+      townplanners: {
+        stroke: theme.townplannersStroke,
+        fill: theme.townplannersFill,
+        label: 'Town Planners',
+      },
     };
     const attitudesGroup = root.append('g').attr('class', 'wardley-attitudes');
     data.attitudes.forEach((attitude) => {
@@ -211,10 +233,11 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
         .attr('stroke', style.stroke)
         .attr('stroke-opacity', 0.7)
         .attr('stroke-width', 2);
+      const labelY = Math.min(rectY + 16, rectY + Math.max(rectH - 4, rectH / 2));
       group
         .append('text')
         .attr('x', rectX + rectW / 2)
-        .attr('y', rectY + 16)
+        .attr('y', labelY)
         .attr('text-anchor', 'middle')
         .attr('font-size', configValues.axisFontSize)
         .attr('font-weight', 'bold')
@@ -802,7 +825,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('cx', (node) => positions.get(node.id)!.x)
     .attr('cy', (node) => positions.get(node.id)!.y)
     .attr('r', ecoOuterRadius)
-    .attr('fill', '#d7d7d7')
+    .attr('fill', theme.ecosystemOuterFill)
     .attr('stroke', theme.componentStroke)
     .attr('stroke-width', 1);
 
@@ -813,7 +836,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('cx', (node) => positions.get(node.id)!.x)
     .attr('cy', (node) => positions.get(node.id)!.y)
     .attr('r', ecoMiddleRadius)
-    .attr('fill', 'white')
+    .attr('fill', theme.ecosystemMiddleFill)
     .attr('stroke', theme.componentStroke)
     .attr('stroke-width', 1);
 
@@ -833,7 +856,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('cx', (node) => positions.get(node.id)!.x)
     .attr('cy', (node) => positions.get(node.id)!.y)
     .attr('r', ecoInnerRadius)
-    .attr('fill', 'white')
+    .attr('fill', theme.ecosystemInnerFill)
     .attr('stroke', theme.componentStroke)
     .attr('stroke-width', 1);
 
