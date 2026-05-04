@@ -934,6 +934,9 @@ flowchart TD
           // Old renderer formats
           svg.querySelector(`[id="cluster_${nodeId}"]`) ??
           svg.querySelector(`g.cluster[id$="_${nodeId}"]`) ??
+          // Unified renderer for subgraphs: subgraph nodes have no domId type
+          // prefix, so they render as "{diagramId}-{nodeId}" (e.g. "mermaid-4-SG1").
+          svg.querySelector(`g.cluster[id$="-${nodeId}"]`) ??
           null
         );
       }

@@ -480,6 +480,9 @@ function findClusterElement(svgRoot: SVGSVGElement, nodeId: string): SVGGElement
     // Old renderer: "cluster_SG1" or ends-with separator variant
     svgRoot.querySelector<SVGGElement>(`[id="cluster_${nodeId}"]`) ??
     svgRoot.querySelector<SVGGElement>(`g.cluster[id$="_${nodeId}"]`) ??
+    // Unified renderer for subgraphs: subgraph nodes have no domId type prefix,
+    // so they render as "{diagramId}-{nodeId}" (e.g. "mermaid-4-SG1").
+    svgRoot.querySelector<SVGGElement>(`g.cluster[id$="-${nodeId}"]`) ??
     null
   );
 }
