@@ -805,10 +805,18 @@ flowchart TD
           const m = /-(?:flowchart|classId|state)-(.+)-\d+$/.exec(n.getAttribute('id') || '');
           if (m) hiddenSourceIds.add(m[1]);
         });
+        // IDs of truly-hidden downstream nodes: catches inbound edges A→D1 etc.
+        const hiddenTargetIds = new Set();
+        downstreamNodes.forEach((n) => {
+          const m = /-(?:flowchart|classId|state)-(.+)-\d+$/.exec(n.getAttribute('id') || '');
+          if (m) hiddenTargetIds.add(m[1]);
+        });
 
-        // An edge should be hidden only if its source is dirty AND target is not exempt.
+        // Hide if source OR target is hidden, unless target is exempt.
         const shouldHide = (p) =>
-          p && hiddenSourceIds.has(p.source) && !alwaysShowIds.has(p.target);
+          p &&
+          !alwaysShowIds.has(p.target) &&
+          (hiddenSourceIds.has(p.source) || hiddenTargetIds.has(p.target));
 
         const result = [];
         // Old renderer (g.edgePath / g.edgeLabel have an id attribute):
@@ -857,7 +865,12 @@ flowchart TD
                 const srcMatch = hiddenCenters.some(
                   (hc) => Math.abs(p0.x - hc.x) < tol && Math.abs(p0.y - hc.y) < tol
                 );
-                if (!srcMatch) return;
+                const tgtMatch =
+                  pLast &&
+                  hiddenCenters.some(
+                    (hc) => Math.abs(pLast.x - hc.x) < tol && Math.abs(pLast.y - hc.y) < tol
+                  );
+                if (!srcMatch && !tgtMatch) return;
                 const tgtExempt =
                   pLast &&
                   exemptCenters.some(

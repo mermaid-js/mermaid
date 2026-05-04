@@ -322,22 +322,25 @@ function attachCollapsible(
       hiddenSourceIds.add(m[1]);
     }
   });
+  // IDs of downstream nodes that are truly hidden — used to catch inbound edges
+  // from external sources into hidden targets (e.g. A→D1 where D1 is hidden).
+  const hiddenTargetIds = new Set<string>();
+  downstreamNodes.forEach((n) => {
+    const m = /-(?:flowchart|classId|state)-(.+)-\d+$/.exec(n.getAttribute('id') ?? '');
+    if (m) {
+      hiddenTargetIds.add(m[1]);
+    }
+  });
 
-  // Decide whether an edge should be hidden.
-  // Rules:
-  //   1. Source must be in hiddenSourceIds.
-  //   2. Target must NOT be in alwaysShowIds (edges leading to exempt nodes stay visible).
+  // Hide an edge if its source OR target is in the hidden set, unless target is exempt.
   const shouldHideEdge = (parsed: { source: string; target: string } | null): boolean => {
     if (!parsed) {
       return false;
     }
-    if (!hiddenSourceIds.has(parsed.source)) {
-      return false;
-    }
     if (alwaysShowIds.has(parsed.target)) {
       return false;
-    } // keep edge to exempt node
-    return true;
+    }
+    return hiddenSourceIds.has(parsed.source) || hiddenTargetIds.has(parsed.target);
   };
 
   // Collect ALL edge elements to be hidden.  Three passes + geometry fallback:
@@ -402,7 +405,12 @@ function attachCollapsible(
           const srcMatch = hiddenCenters.some(
             (hc) => Math.abs(p0.x - hc.x) < tol && Math.abs(p0.y - hc.y) < tol
           );
-          if (!srcMatch) {
+          const tgtMatch =
+            pLast &&
+            hiddenCenters.some(
+              (hc) => Math.abs(pLast.x - hc.x) < tol && Math.abs(pLast.y - hc.y) < tol
+            );
+          if (!srcMatch && !tgtMatch) {
             return;
           }
           // Don't hide edges whose last point is near an exempt node's center.
