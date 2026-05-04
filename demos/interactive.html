@@ -1146,9 +1146,18 @@ flowchart TD
         return icon;
       }
 
-      function attachCollapsible(svg, nodeEl, nodeId, defaultState, alwaysShowIds = new Set()) {
+      function attachCollapsible(
+        svg,
+        nodeEl,
+        nodeId,
+        defaultState,
+        alwaysShowIds = new Set(),
+        props = {}
+      ) {
         let expanded = defaultState !== 'collapsed';
         nodeEl.style.cursor = 'pointer';
+        // Save original SVG transform so zoom can append scale() without losing the layout translate.
+        const origNodeTransform = nodeEl.getAttribute('transform') ?? '';
         const icon = makeBadge(nodeEl, expanded);
 
         // Cache at attach time while every element is visible.
@@ -1191,6 +1200,16 @@ flowchart TD
             });
           });
           icon.textContent = show ? '▼' : '▶';
+          // Apply visual props: opacity, zoom (scale), z-index.
+          const opacity = show ? (props.expandedOpacity ?? 1) : (props.collapsedOpacity ?? 1);
+          nodeEl.style.opacity = opacity !== 1 ? String(opacity) : '';
+          const zoom = show ? (props.expandedZoom ?? 1) : (props.collapsedZoom ?? 1);
+          nodeEl.setAttribute(
+            'transform',
+            zoom !== 1 ? `${origNodeTransform} scale(${zoom})`.trim() : origNodeTransform
+          );
+          const zIdx = show ? props.expandedZIndex : props.collapsedZIndex;
+          nodeEl.style.zIndex = zIdx != null ? String(zIdx) : '';
           // Refit the SVG canvas so the diagram truly collapses / expands.
           fitSvgToContent(svg);
         };
@@ -1202,9 +1221,11 @@ flowchart TD
         });
       }
 
-      function attachClusterCollapsible(svg, clusterEl, nodeId, defaultState) {
+      function attachClusterCollapsible(svg, clusterEl, nodeId, defaultState, props = {}) {
         let expanded = defaultState !== 'collapsed';
         clusterEl.style.cursor = 'pointer';
+        // Save original SVG transform so zoom can append scale() without losing position.
+        const origClusterTransform = clusterEl.getAttribute('transform') ?? '';
         const icon = makeBadge(clusterEl, expanded);
 
         // Capture cluster decoration (rect, label) AFTER the badge is appended,
@@ -1298,6 +1319,9 @@ flowchart TD
             compactH = Math.max(lb.height + 36, 60);
           } catch {}
         }
+        // Allow props to override the auto-calculated compact stub dimensions.
+        if (props.collapsedWidth != null) compactW = props.collapsedWidth;
+        if (props.collapsedHeight != null) compactH = props.collapsedHeight;
 
         const setVisible = (show) => {
           internalNodes.forEach((n) => {
@@ -1324,6 +1348,16 @@ flowchart TD
           }
           if (innerRect) innerRect.style.display = show ? '' : 'none';
           icon.textContent = show ? '▼' : '▶';
+          // Apply visual props: opacity, zoom (scale), z-index.
+          const opacity = show ? (props.expandedOpacity ?? 1) : (props.collapsedOpacity ?? 1);
+          clusterEl.style.opacity = opacity !== 1 ? String(opacity) : '';
+          const zoom = show ? (props.expandedZoom ?? 1) : (props.collapsedZoom ?? 1);
+          clusterEl.setAttribute(
+            'transform',
+            zoom !== 1 ? `${origClusterTransform} scale(${zoom})`.trim() : origClusterTransform
+          );
+          const zIdx = show ? props.expandedZIndex : props.collapsedZIndex;
+          clusterEl.style.zIndex = zIdx != null ? String(zIdx) : '';
           fitSvgToContent(svg);
         };
 
@@ -1352,7 +1386,8 @@ flowchart TD
                   svgEl,
                   clusterEl,
                   nodeId,
-                  props.defaultState ?? 'expanded'
+                  props.defaultState ?? 'expanded',
+                  props
                 );
             }
             continue;
@@ -1364,7 +1399,8 @@ flowchart TD
               nodeEl,
               nodeId,
               props.defaultState ?? 'expanded',
-              alwaysShowIds
+              alwaysShowIds,
+              props
             );
         }
       }

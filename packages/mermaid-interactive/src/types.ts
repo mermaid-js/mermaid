@@ -30,6 +30,22 @@ export interface InteractionProps {
   defaultState?: 'expanded' | 'collapsed';
   /** Tooltip text shown on hover */
   tooltip?: string;
+  /** Opacity (0–1) applied to the element when expanded */
+  expandedOpacity?: number;
+  /** Opacity (0–1) applied to the element when collapsed */
+  collapsedOpacity?: number;
+  /** Scale factor applied to the element when expanded */
+  expandedZoom?: number;
+  /** Scale factor applied to the element when collapsed */
+  collapsedZoom?: number;
+  /** CSS z-index applied to the element when expanded */
+  expandedZIndex?: number;
+  /** CSS z-index applied to the element when collapsed */
+  collapsedZIndex?: number;
+  /** Override compact stub width when collapsed (cluster only, px) */
+  collapsedWidth?: number;
+  /** Override compact stub height when collapsed (cluster only, px) */
+  collapsedHeight?: number;
   /** Allow arbitrary extension properties */
   [key: string]: unknown;
 }

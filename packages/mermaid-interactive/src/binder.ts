@@ -1,4 +1,4 @@
-import type { InteractionDef } from './types.js';
+import type { InteractionDef, InteractionProps } from './types.js';
 
 // ---------------------------------------------------------------------------
 // Metadata parsing
@@ -274,9 +274,21 @@ function attachCollapsible(
   nodeEl: SVGGElement,
   nodeId: string,
   defaultState: 'expanded' | 'collapsed',
-  alwaysShowIds: Set<string> = new Set<string>()
+  alwaysShowIds: Set<string> = new Set<string>(),
+  props: Pick<
+    InteractionProps,
+    | 'collapsedOpacity'
+    | 'expandedOpacity'
+    | 'collapsedZoom'
+    | 'expandedZoom'
+    | 'collapsedZIndex'
+    | 'expandedZIndex'
+  > = {}
 ): void {
   let expanded = defaultState !== 'collapsed';
+
+  // Save original SVG transform so zoom can append scale() without losing the layout translate.
+  const origNodeTransform = nodeEl.getAttribute('transform') ?? '';
 
   // Toggle indicator badge
   const badge = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -539,6 +551,16 @@ function attachCollapsible(
       });
     });
     icon.textContent = show ? '▼' : '▶';
+    // Apply visual props: opacity, zoom (scale), z-index.
+    const opacity = show ? (props.expandedOpacity ?? 1) : (props.collapsedOpacity ?? 1);
+    nodeEl.style.opacity = opacity !== 1 ? String(opacity) : '';
+    const zoom = show ? (props.expandedZoom ?? 1) : (props.collapsedZoom ?? 1);
+    nodeEl.setAttribute(
+      'transform',
+      zoom !== 1 ? `${origNodeTransform} scale(${zoom})`.trim() : origNodeTransform
+    );
+    const zIdx = show ? props.expandedZIndex : props.collapsedZIndex;
+    nodeEl.style.zIndex = zIdx != null ? String(zIdx) : '';
     // Refit the SVG canvas so the diagram truly collapses / expands.
     fitSvgToContent(svgRoot);
   };
@@ -626,9 +648,23 @@ function attachClusterCollapsible(
   svgRoot: SVGSVGElement,
   clusterEl: SVGGElement,
   nodeId: string,
-  defaultState: 'expanded' | 'collapsed'
+  defaultState: 'expanded' | 'collapsed',
+  props: Pick<
+    InteractionProps,
+    | 'collapsedOpacity'
+    | 'expandedOpacity'
+    | 'collapsedZoom'
+    | 'expandedZoom'
+    | 'collapsedZIndex'
+    | 'expandedZIndex'
+    | 'collapsedWidth'
+    | 'collapsedHeight'
+  > = {}
 ): void {
   let expanded = defaultState !== 'collapsed';
+
+  // Save original SVG transform so zoom can append scale() without losing position.
+  const origClusterTransform = clusterEl.getAttribute('transform') ?? '';
 
   // Resolve at attach time while all elements are visible
   const internalNodes = findNodesInsideCluster(svgRoot, clusterEl);
@@ -775,6 +811,13 @@ function attachClusterCollapsible(
       /* getBBox unavailable */
     }
   }
+  // Allow props to override the auto-calculated compact stub dimensions.
+  if (props.collapsedWidth != null) {
+    compactW = props.collapsedWidth;
+  }
+  if (props.collapsedHeight != null) {
+    compactH = props.collapsedHeight;
+  }
 
   const setVisibility = (show: boolean) => {
     internalNodes.forEach((n) => {
@@ -803,6 +846,16 @@ function attachClusterCollapsible(
       innerRect.style.display = show ? '' : 'none';
     }
     icon.textContent = show ? '▼' : '▶';
+    // Apply visual props: opacity, zoom (scale), z-index.
+    const opacity = show ? (props.expandedOpacity ?? 1) : (props.collapsedOpacity ?? 1);
+    clusterEl.style.opacity = opacity !== 1 ? String(opacity) : '';
+    const zoom = show ? (props.expandedZoom ?? 1) : (props.collapsedZoom ?? 1);
+    clusterEl.setAttribute(
+      'transform',
+      zoom !== 1 ? `${origClusterTransform} scale(${zoom})`.trim() : origClusterTransform
+    );
+    const zIdx = show ? props.expandedZIndex : props.collapsedZIndex;
+    clusterEl.style.zIndex = zIdx != null ? String(zIdx) : '';
     fitSvgToContent(svgRoot);
   };
 
@@ -856,7 +909,7 @@ export function bind(svgElement: SVGSVGElement, diagramSource: string): void {
         const clusterEl = findClusterElement(svgElement, nodeId);
         if (clusterEl) {
           const state = props.defaultState ?? 'expanded';
-          attachClusterCollapsible(svgElement, clusterEl, nodeId, state);
+          attachClusterCollapsible(svgElement, clusterEl, nodeId, state, props);
         }
       }
       continue;
@@ -868,7 +921,7 @@ export function bind(svgElement: SVGSVGElement, diagramSource: string): void {
 
     if (props.collapsible) {
       const state = props.defaultState ?? 'expanded';
-      attachCollapsible(svgElement, nodeEl, nodeId, state, alwaysShowIds);
+      attachCollapsible(svgElement, nodeEl, nodeId, state, alwaysShowIds, props);
     }
   }
 }
