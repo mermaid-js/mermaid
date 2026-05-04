@@ -149,8 +149,10 @@ function parseInteractionProps(raw: string): InteractionProps {
     } else if (val === 'false') {
       props[key] = false;
     } else {
-      // Strip surrounding quotes if present
-      props[key] = val.replace(/^"|"$/g, '');
+      // Strip surrounding quotes; bare numeric literals are coerced to numbers.
+      const unquoted = val.replace(/^"|"$/g, '');
+      const num = Number(unquoted);
+      props[key] = unquoted !== '' && !Number.isNaN(num) ? num : unquoted;
     }
   }
   return props;

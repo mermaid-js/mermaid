@@ -638,6 +638,109 @@ flowchart TD
       </div>
     </div>
 
+    <!-- Example 10: Visual props — collapsedOpacity and collapsedZoom on a node -->
+    <div class="example-card">
+      <h2>
+        Example 10: Node Visual Props &mdash; <code>collapsedOpacity</code> &amp;
+        <code>collapsedZoom</code>
+      </h2>
+      <p class="hint">
+        <strong>Gateway</strong> has <code>collapsedOpacity: 0.35</code> and
+        <code>collapsedZoom: 0.65</code>. When collapsed it dims and shrinks in place rather than
+        disappearing entirely, giving a visual cue that it is inactive but still present. Click the
+        badge (or the node) to toggle.
+      </p>
+      <div class="layout">
+        <div>
+          <div class="panel-label">Source (.mermid)</div>
+          <div class="source-panel">
+            <pre class="mermaid-interactive" data-example="10">
+flowchart TD
+  Client --> Gateway
+  Gateway --> AuthService
+  Gateway --> CatalogService
+  Gateway --> CartService
+  AuthService --> UserDB
+  CatalogService --> ProductDB
+  CartService --> CartDB
+
+  interaction Gateway {
+    tooltip: "API Gateway — routes all inbound traffic. Dims and shrinks when collapsed."
+    collapsible: true
+    collapsedOpacity: 0.35
+    collapsedZoom: 0.65
+  }
+  interaction AuthService { tooltip: "JWT validation + session management" }
+  interaction CatalogService { tooltip: "Product search and listing" }
+  interaction CartService { tooltip: "Shopping cart and checkout" }</pre
+            >
+          </div>
+        </div>
+        <div>
+          <div class="panel-label">Rendered Output</div>
+          <div class="output-panel" id="output-10">
+            <span class="loading">Rendering&hellip;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Example 11: Cluster visual props — collapsedWidth/Height + expandedWidth/Height + collapsedZIndex -->
+    <div class="example-card">
+      <h2>Example 11: Cluster Visual Props &mdash; Custom Sizes &amp; Z-Order</h2>
+      <p class="hint">
+        The <strong>Processing</strong> subgraph uses <code>collapsedWidth: 200</code> /
+        <code>collapsedHeight: 52</code> to override the auto-sized stub, and
+        <code>collapsedZIndex: 1</code> to bring it to the front of the SVG paint order when
+        collapsed (useful when stubs overlap). <strong>Validation</strong> uses
+        <code>collapsedOpacity: 0.5</code> + <code>collapsedZoom: 0.8</code>. Both start collapsed.
+      </p>
+      <div class="layout">
+        <div>
+          <div class="panel-label">Source (.mermid)</div>
+          <div class="source-panel">
+            <pre class="mermaid-interactive" data-example="11">
+flowchart LR
+  Intake --> Validation
+  Intake --> Processing
+  Processing --> Output
+  Validation --> Output
+
+  subgraph Validation ["Validation"]
+    SchemaCheck --> RuleEngine --> Sanitiser
+  end
+
+  subgraph Processing ["Processing"]
+    Parser --> Transformer --> Aggregator
+  end
+
+  interaction Validation {
+    collapsible: true
+    defaultState: collapsed
+    collapsedOpacity: 0.5
+    collapsedZoom: 0.8
+    tooltip: "Input validation pipeline — schema, rules, sanitisation"
+  }
+  interaction Processing {
+    collapsible: true
+    defaultState: collapsed
+    collapsedWidth: 200
+    collapsedHeight: 52
+    collapsedZIndex: 1
+    tooltip: "Data processing pipeline — parse, transform, aggregate"
+  }</pre
+            >
+          </div>
+        </div>
+        <div>
+          <div class="panel-label">Rendered Output</div>
+          <div class="output-panel" id="output-11">
+            <span class="loading">Rendering&hellip;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
 
@@ -716,8 +819,17 @@ flowchart TD
         for (const line of raw.split('\n')) {
           const m = line.match(/^\s*(\w+)\s*:\s*(.+?)\s*$/);
           if (!m) continue;
-          props[m[1]] =
-            m[2] === 'true' ? true : m[2] === 'false' ? false : m[2].replace(/^"|"$/g, '');
+          const val = m[2];
+          if (val === 'true') {
+            props[m[1]] = true;
+          } else if (val === 'false') {
+            props[m[1]] = false;
+          } else {
+            // Strip surrounding quotes; bare numeric literals become numbers.
+            const unquoted = val.replace(/^"|"$/g, '');
+            const num = Number(unquoted);
+            props[m[1]] = unquoted !== '' && !Number.isNaN(num) ? num : unquoted;
+          }
         }
         return props;
       }
@@ -1158,6 +1270,9 @@ flowchart TD
         nodeEl.style.cursor = 'pointer';
         // Save original SVG transform so zoom can append scale() without losing the layout translate.
         const origNodeTransform = nodeEl.getAttribute('transform') ?? '';
+        // Save DOM position for z-index reordering (CSS z-index is ignored on SVG elements).
+        const origNextSibling = nodeEl.nextSibling;
+        const origParent = nodeEl.parentElement;
         const icon = makeBadge(nodeEl, expanded);
 
         // Cache at attach time while every element is visible.
@@ -1200,7 +1315,7 @@ flowchart TD
             });
           });
           icon.textContent = show ? '▼' : '▶';
-          // Apply visual props: opacity, zoom (scale), z-index.
+          // Apply visual props: opacity, zoom (scale).
           const opacity = show ? (props.expandedOpacity ?? 1) : (props.collapsedOpacity ?? 1);
           nodeEl.style.opacity = opacity !== 1 ? String(opacity) : '';
           const zoom = show ? (props.expandedZoom ?? 1) : (props.collapsedZoom ?? 1);
@@ -1208,8 +1323,15 @@ flowchart TD
             'transform',
             zoom !== 1 ? `${origNodeTransform} scale(${zoom})`.trim() : origNodeTransform
           );
+          // Z-index via DOM reordering (CSS z-index is ignored on SVG elements).
           const zIdx = show ? props.expandedZIndex : props.collapsedZIndex;
-          nodeEl.style.zIndex = zIdx != null ? String(zIdx) : '';
+          if (origParent) {
+            if (zIdx != null && zIdx > 0) {
+              origParent.appendChild(nodeEl);
+            } else {
+              origParent.insertBefore(nodeEl, origNextSibling);
+            }
+          }
           // Refit the SVG canvas so the diagram truly collapses / expands.
           fitSvgToContent(svg);
         };
@@ -1226,6 +1348,9 @@ flowchart TD
         clusterEl.style.cursor = 'pointer';
         // Save original SVG transform so zoom can append scale() without losing position.
         const origClusterTransform = clusterEl.getAttribute('transform') ?? '';
+        // Save DOM position for z-index reordering.
+        const origNextSibling = clusterEl.nextSibling;
+        const origParent = clusterEl.parentElement;
         const icon = makeBadge(clusterEl, expanded);
 
         // Capture cluster decoration (rect, label) AFTER the badge is appended,
@@ -1332,8 +1457,14 @@ flowchart TD
           });
           if (bgRect && origBgAttrs) {
             if (show) {
-              bgRect.setAttribute('width', origBgAttrs.w);
-              bgRect.setAttribute('height', origBgAttrs.h);
+              bgRect.setAttribute(
+                'width',
+                props.expandedWidth != null ? String(props.expandedWidth) : origBgAttrs.w
+              );
+              bgRect.setAttribute(
+                'height',
+                props.expandedHeight != null ? String(props.expandedHeight) : origBgAttrs.h
+              );
               icon.parentElement?.setAttribute('transform', origBadgeTransform);
             } else {
               bgRect.setAttribute('width', String(compactW));
@@ -1348,7 +1479,7 @@ flowchart TD
           }
           if (innerRect) innerRect.style.display = show ? '' : 'none';
           icon.textContent = show ? '▼' : '▶';
-          // Apply visual props: opacity, zoom (scale), z-index.
+          // Apply visual props: opacity, zoom (scale).
           const opacity = show ? (props.expandedOpacity ?? 1) : (props.collapsedOpacity ?? 1);
           clusterEl.style.opacity = opacity !== 1 ? String(opacity) : '';
           const zoom = show ? (props.expandedZoom ?? 1) : (props.collapsedZoom ?? 1);
@@ -1356,8 +1487,15 @@ flowchart TD
             'transform',
             zoom !== 1 ? `${origClusterTransform} scale(${zoom})`.trim() : origClusterTransform
           );
+          // Z-index via DOM reordering (CSS z-index is ignored on SVG elements).
           const zIdx = show ? props.expandedZIndex : props.collapsedZIndex;
-          clusterEl.style.zIndex = zIdx != null ? String(zIdx) : '';
+          if (origParent) {
+            if (zIdx != null && zIdx > 0) {
+              origParent.appendChild(clusterEl);
+            } else {
+              origParent.insertBefore(clusterEl, origNextSibling);
+            }
+          }
           fitSvgToContent(svg);
         };
 

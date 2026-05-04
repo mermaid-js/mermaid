@@ -46,6 +46,10 @@ export interface InteractionProps {
   collapsedWidth?: number;
   /** Override compact stub height when collapsed (cluster only, px) */
   collapsedHeight?: number;
+  /** Override background rect width when expanded (cluster only, px) */
+  expandedWidth?: number;
+  /** Override background rect height when expanded (cluster only, px) */
+  expandedHeight?: number;
   /** Allow arbitrary extension properties */
   [key: string]: unknown;
 }

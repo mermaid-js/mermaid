@@ -289,6 +289,9 @@ function attachCollapsible(
 
   // Save original SVG transform so zoom can append scale() without losing the layout translate.
   const origNodeTransform = nodeEl.getAttribute('transform') ?? '';
+  // Save DOM position for z-index reordering (SVG paints in tree order; CSS z-index is ineffective).
+  const origNextSibling = nodeEl.nextSibling;
+  const origParent = nodeEl.parentElement;
 
   // Toggle indicator badge
   const badge = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -551,7 +554,7 @@ function attachCollapsible(
       });
     });
     icon.textContent = show ? '▼' : '▶';
-    // Apply visual props: opacity, zoom (scale), z-index.
+    // Apply visual props: opacity, zoom (scale).
     const opacity = show ? (props.expandedOpacity ?? 1) : (props.collapsedOpacity ?? 1);
     nodeEl.style.opacity = opacity !== 1 ? String(opacity) : '';
     const zoom = show ? (props.expandedZoom ?? 1) : (props.collapsedZoom ?? 1);
@@ -559,8 +562,16 @@ function attachCollapsible(
       'transform',
       zoom !== 1 ? `${origNodeTransform} scale(${zoom})`.trim() : origNodeTransform
     );
+    // Z-index via DOM reordering (CSS z-index is ignored on SVG elements).
+    // Positive value → bring to front (move to end of parent); restore otherwise.
     const zIdx = show ? props.expandedZIndex : props.collapsedZIndex;
-    nodeEl.style.zIndex = zIdx != null ? String(zIdx) : '';
+    if (origParent) {
+      if (zIdx != null && zIdx > 0) {
+        origParent.appendChild(nodeEl);
+      } else {
+        origParent.insertBefore(nodeEl, origNextSibling);
+      }
+    }
     // Refit the SVG canvas so the diagram truly collapses / expands.
     fitSvgToContent(svgRoot);
   };
@@ -659,12 +670,17 @@ function attachClusterCollapsible(
     | 'expandedZIndex'
     | 'collapsedWidth'
     | 'collapsedHeight'
+    | 'expandedWidth'
+    | 'expandedHeight'
   > = {}
 ): void {
   let expanded = defaultState !== 'collapsed';
 
   // Save original SVG transform so zoom can append scale() without losing position.
   const origClusterTransform = clusterEl.getAttribute('transform') ?? '';
+  // Save DOM position for z-index reordering.
+  const origNextSibling = clusterEl.nextSibling;
+  const origParent = clusterEl.parentElement;
 
   // Resolve at attach time while all elements are visible
   const internalNodes = findNodesInsideCluster(svgRoot, clusterEl);
@@ -827,11 +843,17 @@ function attachClusterCollapsible(
       el.style.display = show ? '' : 'none';
     });
     // Resize the background rect to a compact node-like stub when collapsed,
-    // restore the original dimensions when expanded.
+    // restore (or apply expandedWidth/Height override) when expanded.
     if (bgRect && origBgAttrs) {
       if (show) {
-        bgRect.setAttribute('width', origBgAttrs.w);
-        bgRect.setAttribute('height', origBgAttrs.h);
+        bgRect.setAttribute(
+          'width',
+          props.expandedWidth != null ? String(props.expandedWidth) : origBgAttrs.w
+        );
+        bgRect.setAttribute(
+          'height',
+          props.expandedHeight != null ? String(props.expandedHeight) : origBgAttrs.h
+        );
         badge.setAttribute('transform', origBadgeTransform);
       } else {
         bgRect.setAttribute('width', String(compactW));
@@ -846,7 +868,7 @@ function attachClusterCollapsible(
       innerRect.style.display = show ? '' : 'none';
     }
     icon.textContent = show ? '▼' : '▶';
-    // Apply visual props: opacity, zoom (scale), z-index.
+    // Apply visual props: opacity, zoom (scale).
     const opacity = show ? (props.expandedOpacity ?? 1) : (props.collapsedOpacity ?? 1);
     clusterEl.style.opacity = opacity !== 1 ? String(opacity) : '';
     const zoom = show ? (props.expandedZoom ?? 1) : (props.collapsedZoom ?? 1);
@@ -854,8 +876,15 @@ function attachClusterCollapsible(
       'transform',
       zoom !== 1 ? `${origClusterTransform} scale(${zoom})`.trim() : origClusterTransform
     );
+    // Z-index via DOM reordering (CSS z-index is ignored on SVG elements).
     const zIdx = show ? props.expandedZIndex : props.collapsedZIndex;
-    clusterEl.style.zIndex = zIdx != null ? String(zIdx) : '';
+    if (origParent) {
+      if (zIdx != null && zIdx > 0) {
+        origParent.appendChild(clusterEl);
+      } else {
+        origParent.insertBefore(clusterEl, origNextSibling);
+      }
+    }
     fitSvgToContent(svgRoot);
   };
 
