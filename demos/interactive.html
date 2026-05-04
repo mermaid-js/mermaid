@@ -1076,6 +1076,19 @@ flowchart TD
           alwaysShowIds
         );
 
+        // Find clusters that become entirely empty when downstreamNodes are
+        // hidden. Toggle their decoration (rect + label) alongside the nodes.
+        const hiddenNodeSet = new Set([nodeEl, ...downstreamNodes]);
+        const emptiedClusterDecorations = [];
+        svg.querySelectorAll('g.cluster').forEach((clusterEl) => {
+          const clusterNodes = findNodesInsideCluster(svg, clusterEl);
+          if (clusterNodes.length > 0 && clusterNodes.every((n) => hiddenNodeSet.has(n))) {
+            emptiedClusterDecorations.push(
+              [...clusterEl.children].filter((c) => !c.classList.contains('mi-toggle'))
+            );
+          }
+        });
+
         const setVisible = (show) => {
           downstreamNodes.forEach((n) => {
             n.style.display = show ? '' : 'none';
@@ -1084,6 +1097,11 @@ flowchart TD
           // visible so the collapsed node stays connected to its parents.
           outgoingEdges.forEach((el) => {
             el.style.display = show ? '' : 'none';
+          });
+          emptiedClusterDecorations.forEach((dec) => {
+            dec.forEach((c) => {
+              c.style.display = show ? '' : 'none';
+            });
           });
           icon.textContent = show ? '▼' : '▶';
           // Refit the SVG canvas so the diagram truly collapses / expands.

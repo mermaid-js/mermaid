@@ -434,6 +434,22 @@ function attachCollapsible(
     }
   }
 
+  // Find clusters that become entirely empty when downstreamNodes are hidden.
+  // Their decoration (background rect + label) should also be toggled so the
+  // cluster border doesn't float around with nothing inside it.
+  const hiddenNodeSet = new Set<SVGGElement>([nodeEl, ...downstreamNodes]);
+  const emptiedClusterDecorations: SVGElement[][] = [];
+  svgRoot.querySelectorAll<SVGGElement>('g.cluster').forEach((clusterEl) => {
+    const clusterNodes = findNodesInsideCluster(svgRoot, clusterEl);
+    if (clusterNodes.length > 0 && clusterNodes.every((n) => hiddenNodeSet.has(n))) {
+      emptiedClusterDecorations.push(
+        [...clusterEl.children].filter(
+          (c) => !c.classList.contains('mermaid-interactive-toggle')
+        ) as SVGElement[]
+      );
+    }
+  });
+
   const setVisibility = (show: boolean) => {
     downstreamNodes.forEach((n) => {
       n.style.display = show ? '' : 'none';
@@ -442,6 +458,11 @@ function attachCollapsible(
     // remain visible so the collapsed node stays connected to its parents.
     outgoingEdges.forEach((el) => {
       el.style.display = show ? '' : 'none';
+    });
+    emptiedClusterDecorations.forEach((dec) => {
+      dec.forEach((c) => {
+        c.style.display = show ? '' : 'none';
+      });
     });
     icon.textContent = show ? '▼' : '▶';
     // Refit the SVG canvas so the diagram truly collapses / expands.
