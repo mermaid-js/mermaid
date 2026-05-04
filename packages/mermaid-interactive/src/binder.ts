@@ -449,6 +449,35 @@ function attachCollapsible(
     }
   }
 
+  // Collect g.edgeTerminals (multiplicity labels e.g. "1", "0..*").
+  // These have no data-id so ID-based passes miss them entirely.
+  // positionEdgeLabel() sets transform="translate(x,y)" on each g.edgeTerminals,
+  // so getNodeCenter() returns their SVG-space position for a clean proximity match.
+  {
+    const hiddenCentersForTerminals: { x: number; y: number }[] = [];
+    downstreamNodes.forEach((n) => {
+      const c = getNodeCenter(n);
+      if (c) {
+        hiddenCentersForTerminals.push(c);
+      }
+    });
+    if (hiddenCentersForTerminals.length > 0) {
+      const tol = 120;
+      svgRoot.querySelectorAll<SVGGElement>('g.edgeTerminals').forEach((term) => {
+        const tc = getNodeCenter(term);
+        if (!tc) {
+          return;
+        }
+        const near = hiddenCentersForTerminals.some(
+          (c) => Math.abs(tc.x - c.x) < tol && Math.abs(tc.y - c.y) < tol
+        );
+        if (near) {
+          outgoingEdges.push(term);
+        }
+      });
+    }
+  }
+
   // Find clusters that become entirely empty when downstreamNodes are hidden.
   // Their decoration (background rect + label) should also be toggled so the
   // cluster border doesn't float around with nothing inside it.

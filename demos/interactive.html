@@ -900,6 +900,26 @@ flowchart TD
           }
         }
 
+        // Collect g.edgeTerminals (multiplicity labels "1", "0..*" etc.).
+        // These have no data-id; positionEdgeLabel() sets transform="translate(x,y)"
+        // so getNodeCenter() returns their SVG-space position.
+        const hiddenCentersForTerminals = [];
+        downstreamNodes.forEach((n) => {
+          const c = getNodeCenter(n);
+          if (c) hiddenCentersForTerminals.push(c);
+        });
+        if (hiddenCentersForTerminals.length > 0) {
+          const tol = 120;
+          svg.querySelectorAll('g.edgeTerminals').forEach((term) => {
+            const tc = getNodeCenter(term);
+            if (!tc) return;
+            const near = hiddenCentersForTerminals.some(
+              (c) => Math.abs(tc.x - c.x) < tol && Math.abs(tc.y - c.y) < tol
+            );
+            if (near) result.push(term);
+          });
+        }
+
         return result;
       }
 
