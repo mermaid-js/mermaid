@@ -508,15 +508,35 @@ function findClusterElement(svgRoot: SVGSVGElement, nodeId: string): SVGGElement
   );
 }
 
-/** Return all node <g> elements whose centre falls inside a cluster's bounding box. */
+/** Return all node <g> elements whose centre falls inside a cluster's bounding box.
+ *
+ * Uses getBBox() (pure SVG coordinate space) so the comparison is immune to
+ * viewport scroll position and CSS scaling.  Falls back to getBoundingClientRect
+ * if getBBox() throws (element not in a rendered context).
+ */
 function findNodesInsideCluster(svgRoot: SVGSVGElement, clusterEl: SVGGElement): SVGGElement[] {
-  const cb = clusterEl.getBoundingClientRect();
-  return [...svgRoot.querySelectorAll<SVGGElement>('g.node')].filter((n) => {
-    const b = n.getBoundingClientRect();
-    const cx = b.left + b.width / 2;
-    const cy = b.top + b.height / 2;
-    return cx >= cb.left && cx <= cb.right && cy >= cb.top && cy <= cb.bottom;
-  });
+  try {
+    const cb = clusterEl.getBBox();
+    return [...svgRoot.querySelectorAll<SVGGElement>('g.node')].filter((n) => {
+      try {
+        const b = n.getBBox();
+        const cx = b.x + b.width / 2;
+        const cy = b.y + b.height / 2;
+        return cx >= cb.x && cx <= cb.x + cb.width && cy >= cb.y && cy <= cb.y + cb.height;
+      } catch {
+        return false;
+      }
+    });
+  } catch {
+    // Fallback: viewport coordinates (getBBox unavailable)
+    const cb = clusterEl.getBoundingClientRect();
+    return [...svgRoot.querySelectorAll<SVGGElement>('g.node')].filter((n) => {
+      const b = n.getBoundingClientRect();
+      const cx = b.left + b.width / 2;
+      const cy = b.top + b.height / 2;
+      return cx >= cb.left && cx <= cb.right && cy >= cb.top && cy <= cb.bottom;
+    });
+  }
 }
 
 /** Collapse/expand an entire subgraph cluster and all edges crossing its boundary. */
@@ -563,6 +583,55 @@ function attachClusterCollapsible(
       relatedEdges.push(labelGroup);
     }
   });
+
+  // Geometry fallback: if ID-based passes found nothing (e.g. internalIds is empty
+  // because node domIds use an unrecognised format), collect edges whose first or
+  // last data-point is within tolerance of any internal node's layout centre.
+  if (relatedEdges.length === 0 && internalNodes.length > 0) {
+    const internalCenters = internalNodes.map((n) => getNodeCenter(n)).filter(Boolean) as {
+      x: number;
+      y: number;
+    }[];
+    if (internalCenters.length > 0) {
+      const tol = 60;
+      const matchedIds = new Set<string>();
+      svgRoot.querySelectorAll<SVGGElement>('[data-edge="true"][data-points]').forEach((el) => {
+        try {
+          const pts = JSON.parse(atob(el.getAttribute('data-points') ?? '')) as {
+            x: number;
+            y: number;
+          }[];
+          const p0 = pts?.[0];
+          const pLast = pts?.[pts.length - 1];
+          if (!p0) {
+            return;
+          }
+          const touchesInternal = internalCenters.some(
+            (c) =>
+              (Math.abs(p0.x - c.x) < tol && Math.abs(p0.y - c.y) < tol) ||
+              (pLast && Math.abs(pLast.x - c.x) < tol && Math.abs(pLast.y - c.y) < tol)
+          );
+          if (touchesInternal) {
+            relatedEdges.push(el);
+            const eid = el.getAttribute('data-id');
+            if (eid) {
+              matchedIds.add(eid);
+            }
+          }
+        } catch {
+          /* ignore malformed data-points */
+        }
+      });
+      if (matchedIds.size > 0) {
+        svgRoot.querySelectorAll<SVGGElement>('g.edgeLabel').forEach((labelGroup) => {
+          const rawId = labelGroup.querySelector('g.label[data-id]')?.getAttribute('data-id');
+          if (rawId && matchedIds.has(rawId)) {
+            relatedEdges.push(labelGroup);
+          }
+        });
+      }
+    }
+  }
 
   const badge = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   badge.setAttribute('class', 'mermaid-interactive-toggle');

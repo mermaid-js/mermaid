@@ -1000,13 +1000,29 @@ flowchart TD
       }
 
       function findNodesInsideCluster(svg, clusterEl) {
-        const cb = clusterEl.getBoundingClientRect();
-        return [...svg.querySelectorAll('g.node')].filter((n) => {
-          const b = n.getBoundingClientRect();
-          const cx = b.left + b.width / 2;
-          const cy = b.top + b.height / 2;
-          return cx >= cb.left && cx <= cb.right && cy >= cb.top && cy <= cb.bottom;
-        });
+        // Use getBBox() (SVG coordinate space) — immune to viewport scroll/scaling.
+        // Falls back to getBoundingClientRect if getBBox unavailable.
+        try {
+          const cb = clusterEl.getBBox();
+          return [...svg.querySelectorAll('g.node')].filter((n) => {
+            try {
+              const b = n.getBBox();
+              const cx = b.x + b.width / 2;
+              const cy = b.y + b.height / 2;
+              return cx >= cb.x && cx <= cb.x + cb.width && cy >= cb.y && cy <= cb.y + cb.height;
+            } catch {
+              return false;
+            }
+          });
+        } catch {
+          const cb = clusterEl.getBoundingClientRect();
+          return [...svg.querySelectorAll('g.node')].filter((n) => {
+            const b = n.getBoundingClientRect();
+            const cx = b.left + b.width / 2;
+            const cy = b.top + b.height / 2;
+            return cx >= cb.left && cx <= cb.right && cy >= cb.top && cy <= cb.bottom;
+          });
+        }
       }
 
       function attachTooltip(el, text) {
@@ -1151,6 +1167,40 @@ flowchart TD
           if (p && (internalIds.has(p.source) || internalIds.has(p.target)))
             relatedEdges.push(labelGroup);
         });
+
+        // Geometry fallback: if ID-based passes found nothing, use data-points
+        // proximity to internal node layout centres.
+        if (relatedEdges.length === 0 && internalNodes.length > 0) {
+          const internalCenters = internalNodes.map(getNodeCenter).filter(Boolean);
+          if (internalCenters.length > 0) {
+            const tol = 60;
+            const matchedIds = new Set();
+            svg.querySelectorAll('[data-edge="true"][data-points]').forEach((el) => {
+              try {
+                const pts = JSON.parse(atob(el.getAttribute('data-points') || ''));
+                const p0 = pts?.[0];
+                const pLast = pts?.[pts.length - 1];
+                if (!p0) return;
+                const touchesInternal = internalCenters.some(
+                  (c) =>
+                    (Math.abs(p0.x - c.x) < tol && Math.abs(p0.y - c.y) < tol) ||
+                    (pLast && Math.abs(pLast.x - c.x) < tol && Math.abs(pLast.y - c.y) < tol)
+                );
+                if (touchesInternal) {
+                  relatedEdges.push(el);
+                  const eid = el.getAttribute('data-id');
+                  if (eid) matchedIds.add(eid);
+                }
+              } catch {}
+            });
+            if (matchedIds.size > 0) {
+              svg.querySelectorAll('g.edgeLabel').forEach((labelGroup) => {
+                const rawId = labelGroup.querySelector('g.label[data-id]')?.dataset?.id;
+                if (rawId && matchedIds.has(rawId)) relatedEdges.push(labelGroup);
+              });
+            }
+          }
+        }
 
         const setVisible = (show) => {
           clusterDecoration.forEach((c) => {
