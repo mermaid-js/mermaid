@@ -10,7 +10,7 @@
 
 # Function: reset()
 
-> **reset**(`config`): `void`
+> **reset**(`config?`): `void`
 
 Defined in: [packages/mermaid/src/config.ts:230](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L230)
 
@@ -30,7 +30,7 @@ Defined in: [packages/mermaid/src/config.ts:230](https://github.com/mermaid-js/m
 
 ## Parameters
 
-### config
+### config?
 
 [`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md) = `siteConfig`
 

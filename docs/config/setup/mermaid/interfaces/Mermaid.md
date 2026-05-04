@@ -14,7 +14,7 @@ Defined in: [packages/mermaid/src/mermaid.ts:433](https://github.com/mermaid-js/
 
 ## Properties
 
-### contentLoaded()
+### contentLoaded
 
 > **contentLoaded**: () => `void`
 
@@ -30,7 +30,7 @@ page.
 
 ---
 
-### detectType()
+### detectType
 
 > **detectType**: (`text`, `config?`) => `string`
 
@@ -86,7 +86,7 @@ A graph definition key
 
 ---
 
-### getRegisteredDiagramsMetadata()
+### getRegisteredDiagramsMetadata
 
 > **getRegisteredDiagramsMetadata**: () => `Pick`<[`ExternalDiagramDefinition`](ExternalDiagramDefinition.md), `"id"`>\[]
 
@@ -103,7 +103,7 @@ An array of objects with the id of the diagram.
 
 ---
 
-### ~~init()~~
+### ~~init~~
 
 > **init**: (`config?`, `nodes?`, `callback?`) => `Promise`<`void`>
 
@@ -121,13 +121,13 @@ Defined in: [packages/mermaid/src/mermaid.ts:446](https://github.com/mermaid-js/
 
 ##### nodes?
 
+`string` | `HTMLElement` | `NodeListOf`<`HTMLElement`>
+
 **Default**: `.mermaid`. One of the following:
 
 - A DOM Node
 - An array of DOM nodes (as would come from a jQuery selector)
 - A W3C selector, a la `.mermaid`
-
-`string` | `HTMLElement` | `NodeListOf`<`HTMLElement`>
 
 ##### callback?
 
@@ -151,7 +151,7 @@ Use [initialize](#initialize) and [run](#run) instead.
 
 ---
 
-### initialize()
+### initialize
 
 > **initialize**: (`config`) => `void`
 
@@ -188,7 +188,7 @@ Use [parse](#parse) and [render](#render) instead. Please [open a discussion](ht
 
 ---
 
-### parse()
+### parse
 
 > **parse**: {(`text`, `parseOptions`): `Promise`<`false` | [`ParseResult`](ParseResult.md)>; (`text`, `parseOptions?`): `Promise`<[`ParseResult`](ParseResult.md)>; }
 
@@ -266,13 +266,13 @@ Error if the diagram is invalid and parseOptions.suppressErrors is false or not 
 
 ### parseError?
 
-> `optional` **parseError**: [`ParseErrorFunction`](../type-aliases/ParseErrorFunction.md)
+> `optional` **parseError?**: [`ParseErrorFunction`](../type-aliases/ParseErrorFunction.md)
 
 Defined in: [packages/mermaid/src/mermaid.ts:435](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L435)
 
 ---
 
-### registerExternalDiagrams()
+### registerExternalDiagrams
 
 > **registerExternalDiagrams**: (`diagrams`, `opts`) => `Promise`<`void`>
 
@@ -288,7 +288,7 @@ Used to register external diagram types.
 
 Array of [ExternalDiagramDefinition](ExternalDiagramDefinition.md).
 
-##### opts
+##### opts?
 
 If opts.lazyLoad is false, the diagrams will be loaded immediately.
 
@@ -302,7 +302,7 @@ If opts.lazyLoad is false, the diagrams will be loaded immediately.
 
 ---
 
-### registerIconPacks()
+### registerIconPacks
 
 > **registerIconPacks**: (`iconLoaders`) => `void`
 
@@ -320,7 +320,7 @@ Defined in: [packages/mermaid/src/mermaid.ts:454](https://github.com/mermaid-js/
 
 ---
 
-### registerLayoutLoaders()
+### registerLayoutLoaders
 
 > **registerLayoutLoaders**: (`loaders`) => `void`
 
@@ -338,7 +338,7 @@ Defined in: [packages/mermaid/src/mermaid.ts:448](https://github.com/mermaid-js/
 
 ---
 
-### render()
+### render
 
 > **render**: (`id`, `text`, `svgContainingElement?`) => `Promise`<[`RenderResult`](RenderResult.md)>
 
@@ -370,7 +370,7 @@ Deprecated for external use.
 
 ---
 
-### run()
+### run
 
 > **run**: (`options`) => `Promise`<`void`>
 
@@ -402,7 +402,7 @@ Renders the mermaid diagrams
 
 #### Parameters
 
-##### options
+##### options?
 
 [`RunOptions`](RunOptions.md) = `...`
 
@@ -414,7 +414,7 @@ Optional runtime configs
 
 ---
 
-### setParseErrorHandler()
+### setParseErrorHandler
 
 > **setParseErrorHandler**: (`parseErrorHandler`) => `void`
 

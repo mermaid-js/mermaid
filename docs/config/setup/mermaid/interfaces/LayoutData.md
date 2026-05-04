@@ -14,7 +14,7 @@ Defined in: [packages/mermaid/src/rendering-util/types.ts:169](https://github.co
 
 ## Indexable
 
-\[`key`: `string`]: `any`
+> \[`key`: `string`]: `any`
 
 ## Properties
 
@@ -28,7 +28,7 @@ Defined in: [packages/mermaid/src/rendering-util/types.ts:172](https://github.co
 
 ### diagramId?
 
-> `optional` **diagramId**: `string`
+> `optional` **diagramId?**: `string`
 
 Defined in: [packages/mermaid/src/rendering-util/types.ts:173](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L173)
 
