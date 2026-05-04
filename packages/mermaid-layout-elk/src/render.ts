@@ -812,6 +812,7 @@ export const render = async (
       node.layoutOptions = {
         'spacing.baseValue': 30,
         'nodeLabels.placement': '[H_CENTER V_TOP, INSIDE]',
+        'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
       };
       if (node.dir) {
         node.layoutOptions = {

@@ -56,6 +56,35 @@ describe('Flowchart ELK', () => {
     );
   });
 
+  it('4a-elk: should apply mergeEdges in subgraphs', () => {
+    imgSnapshotTest(
+      `---
+config:
+  layout: elk
+  elk:
+    mergeEdges: true
+---
+flowchart TD
+  A
+  B
+  C
+
+  subgraph S1
+    A & B --> C
+  end
+
+  subgraph S2
+    D
+    E
+    F
+  end
+
+  D & E --> F
+      `,
+      {}
+    );
+  });
+
   it('4-elk: Length of edges', () => {
     imgSnapshotTest(
       `flowchart-elk TD
