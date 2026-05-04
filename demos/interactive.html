@@ -1157,23 +1157,25 @@ flowchart TD
           domId?.match(/[-](?:flowchart|classId|state)[-](.+?)[-]\d+/)?.[1] ?? null;
         const internalIds = new Set(internalNodes.map((n) => extractNodeId(n.id)).filter(Boolean));
         const relatedEdges = [];
+        // Only hide edges whose SOURCE is inside the cluster.
+        // Inbound edges (source external, target internal) stay visible so the
+        // collapsed cluster stub remains connected to its parents.
         // Old renderer:
         svg.querySelectorAll('.edgePath[id], .edgeLabel[id]').forEach((el) => {
           const p = parseEdgeId(el.id);
-          if (p && (internalIds.has(p.source) || internalIds.has(p.target))) relatedEdges.push(el);
+          if (p && internalIds.has(p.source)) relatedEdges.push(el);
         });
         // Unified renderer edge paths:
         svg.querySelectorAll('[data-edge="true"][data-id]').forEach((el) => {
           const p = parseEdgeId(el.dataset.id);
-          if (p && (internalIds.has(p.source) || internalIds.has(p.target))) relatedEdges.push(el);
+          if (p && internalIds.has(p.source)) relatedEdges.push(el);
         });
         // Unified renderer edge labels:
         svg.querySelectorAll('g.edgeLabel').forEach((labelGroup) => {
           const rawId = labelGroup.querySelector('g.label[data-id]')?.dataset?.id;
           if (!rawId) return;
           const p = parseEdgeId(rawId);
-          if (p && (internalIds.has(p.source) || internalIds.has(p.target)))
-            relatedEdges.push(labelGroup);
+          if (p && internalIds.has(p.source)) relatedEdges.push(labelGroup);
         });
 
         // Geometry fallback: if ID-based passes found nothing, use data-points
@@ -1189,10 +1191,9 @@ flowchart TD
                 const p0 = pts?.[0];
                 const pLast = pts?.[pts.length - 1];
                 if (!p0) return;
+                // Only match edges whose source (p0) is near an internal node.
                 const touchesInternal = internalCenters.some(
-                  (c) =>
-                    (Math.abs(p0.x - c.x) < tol && Math.abs(p0.y - c.y) < tol) ||
-                    (pLast && Math.abs(pLast.x - c.x) < tol && Math.abs(pLast.y - c.y) < tol)
+                  (c) => Math.abs(p0.x - c.x) < tol && Math.abs(p0.y - c.y) < tol
                 );
                 if (touchesInternal) {
                   relatedEdges.push(el);
@@ -1210,16 +1211,55 @@ flowchart TD
           }
         }
 
+        // Background rect — resized to compact stub on collapse.
+        const bgRect =
+          clusterEl.querySelector(':scope > rect') ??
+          clusterEl.querySelector(':scope > g:first-child > rect:first-child');
+        const innerRect = clusterEl.querySelector('rect.inner');
+        const origBgAttrs = bgRect
+          ? {
+              x: bgRect.getAttribute('x') ?? '0',
+              y: bgRect.getAttribute('y') ?? '0',
+              w: bgRect.getAttribute('width') ?? '100',
+              h: bgRect.getAttribute('height') ?? '100',
+            }
+          : null;
+        const origBadgeTransform = icon.parentElement?.getAttribute('transform') ?? '';
+        const labelGroupEl = clusterEl.querySelector('.cluster-label');
+        let compactW = 80,
+          compactH = 36;
+        if (labelGroupEl) {
+          try {
+            const lb = labelGroupEl.getBBox();
+            compactW = Math.max(lb.width + 24, 80);
+            compactH = Math.max(lb.height + 12, 32);
+          } catch {}
+        }
+
         const setVisible = (show) => {
-          clusterDecoration.forEach((c) => {
-            c.style.display = show ? '' : 'none';
-          });
           internalNodes.forEach((n) => {
             n.style.display = show ? '' : 'none';
           });
           relatedEdges.forEach((el) => {
             el.style.display = show ? '' : 'none';
           });
+          if (bgRect && origBgAttrs) {
+            if (show) {
+              bgRect.setAttribute('width', origBgAttrs.w);
+              bgRect.setAttribute('height', origBgAttrs.h);
+              icon.parentElement?.setAttribute('transform', origBadgeTransform);
+            } else {
+              bgRect.setAttribute('width', String(compactW));
+              bgRect.setAttribute('height', String(compactH));
+              const bx = parseFloat(origBgAttrs.x);
+              const by = parseFloat(origBgAttrs.y);
+              icon.parentElement?.setAttribute(
+                'transform',
+                `translate(${bx + compactW - 2},${by + 2})`
+              );
+            }
+          }
+          if (innerRect) innerRect.style.display = show ? '' : 'none';
           icon.textContent = show ? '▼' : '▶';
           fitSvgToContent(svg);
         };

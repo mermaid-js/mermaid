@@ -566,17 +566,20 @@ function attachClusterCollapsible(
       .filter(Boolean) as string[]
   );
   const relatedEdges: SVGGElement[] = [];
+  // Only hide edges whose SOURCE is inside the cluster.
+  // Inbound edges (source external, target internal) stay visible so the
+  // collapsed cluster stub remains visually connected to its parents.
   // Old renderer:
   svgRoot.querySelectorAll<SVGGElement>('.edgePath[id], .edgeLabel[id]').forEach((el) => {
     const parsed = parseEdgeId(el.id);
-    if (parsed && (internalIds.has(parsed.source) || internalIds.has(parsed.target))) {
+    if (parsed && internalIds.has(parsed.source)) {
       relatedEdges.push(el);
     }
   });
   // Unified renderer edge paths:
   svgRoot.querySelectorAll<SVGGElement>('[data-edge="true"][data-id]').forEach((el) => {
     const parsed = parseEdgeId(el.getAttribute('data-id') ?? '');
-    if (parsed && (internalIds.has(parsed.source) || internalIds.has(parsed.target))) {
+    if (parsed && internalIds.has(parsed.source)) {
       relatedEdges.push(el);
     }
   });
@@ -587,7 +590,7 @@ function attachClusterCollapsible(
       return;
     }
     const parsed = parseEdgeId(rawId);
-    if (parsed && (internalIds.has(parsed.source) || internalIds.has(parsed.target))) {
+    if (parsed && internalIds.has(parsed.source)) {
       relatedEdges.push(labelGroup);
     }
   });
@@ -610,16 +613,15 @@ function attachClusterCollapsible(
             y: number;
           }[];
           const p0 = pts?.[0];
-          const pLast = pts?.[pts.length - 1];
           if (!p0) {
             return;
           }
-          const touchesInternal = internalCenters.some(
-            (c) =>
-              (Math.abs(p0.x - c.x) < tol && Math.abs(p0.y - c.y) < tol) ||
-              (pLast && Math.abs(pLast.x - c.x) < tol && Math.abs(pLast.y - c.y) < tol)
+          // Only hide edges whose source (p0) is near an internal node.
+          // Inbound edges whose endpoint is near an internal node stay visible.
+          const sourceIsInternal = internalCenters.some(
+            (c) => Math.abs(p0.x - c.x) < tol && Math.abs(p0.y - c.y) < tol
           );
-          if (touchesInternal) {
+          if (sourceIsInternal) {
             relatedEdges.push(el);
             const eid = el.getAttribute('data-id');
             if (eid) {
@@ -668,24 +670,64 @@ function attachClusterCollapsible(
   clusterEl.appendChild(badge);
   clusterEl.style.cursor = 'pointer';
 
-  // Capture the cluster's own visual children (background rect, label) AFTER
-  // the badge is appended so we can exclude the badge from the toggle list.
-  // These are the elements that make the subgraph border/title visible; hiding
-  // them lets fitSvgToContent correctly shrink the SVG on collapse.
-  const clusterDecoration = [...clusterEl.children].filter(
-    (c) => !c.classList.contains('mermaid-interactive-toggle')
-  ) as SVGElement[];
+  // Background rect — resized to a compact stub on collapse.
+  // For 'rect' clusters: direct <rect> child of clusterEl.
+  // For 'roundedWithTitle' clusters: <rect> inside the first child <g> (outerRectG).
+  const bgRect =
+    clusterEl.querySelector<SVGRectElement>(':scope > rect') ??
+    clusterEl.querySelector<SVGRectElement>(':scope > g:first-child > rect:first-child');
+  // Inner fill rect (roundedWithTitle only — classed 'inner') — hidden on collapse.
+  const innerRect = clusterEl.querySelector<SVGRectElement>('rect.inner');
+  // Save original bg-rect dimensions for restore on expand.
+  const origBgAttrs = bgRect
+    ? {
+        x: bgRect.getAttribute('x') ?? '0',
+        y: bgRect.getAttribute('y') ?? '0',
+        w: bgRect.getAttribute('width') ?? '100',
+        h: bgRect.getAttribute('height') ?? '100',
+      }
+    : null;
+  const origBadgeTransform = badge.getAttribute('transform') ?? '';
+  // Measure the cluster label so the compact stub fits the title text.
+  const labelGroupEl = clusterEl.querySelector<SVGGElement>('.cluster-label');
+  let compactW = 80,
+    compactH = 36;
+  if (labelGroupEl) {
+    try {
+      const lb = labelGroupEl.getBBox();
+      compactW = Math.max(lb.width + 24, 80);
+      compactH = Math.max(lb.height + 12, 32);
+    } catch {
+      /* getBBox unavailable */
+    }
+  }
 
   const setVisibility = (show: boolean) => {
-    clusterDecoration.forEach((c) => {
-      c.style.display = show ? '' : 'none';
-    });
     internalNodes.forEach((n) => {
       n.style.display = show ? '' : 'none';
     });
     relatedEdges.forEach((el) => {
       el.style.display = show ? '' : 'none';
     });
+    // Resize the background rect to a compact node-like stub when collapsed,
+    // restore the original dimensions when expanded.
+    if (bgRect && origBgAttrs) {
+      if (show) {
+        bgRect.setAttribute('width', origBgAttrs.w);
+        bgRect.setAttribute('height', origBgAttrs.h);
+        badge.setAttribute('transform', origBadgeTransform);
+      } else {
+        bgRect.setAttribute('width', String(compactW));
+        bgRect.setAttribute('height', String(compactH));
+        const bx = parseFloat(origBgAttrs.x);
+        const by = parseFloat(origBgAttrs.y);
+        badge.setAttribute('transform', `translate(${bx + compactW - 2},${by + 2})`);
+      }
+    }
+    // Hide secondary inner rect (roundedWithTitle) on collapse.
+    if (innerRect) {
+      innerRect.style.display = show ? '' : 'none';
+    }
     icon.textContent = show ? '▼' : '▶';
     fitSvgToContent(svgRoot);
   };
