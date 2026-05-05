@@ -18,3 +18,5 @@ demos/dev/**
 !/demos/dev/example.html
 # TODO: Lots of errors to fix
 cypress/platform/state-refactor.html
+# Custom mermaid diagram files (no prettier parser available)
+**/*.mermid
