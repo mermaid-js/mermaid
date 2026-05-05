@@ -1366,6 +1366,147 @@ describe('parsing an agentflow diagram', function () {
     });
   });
 
+  describe('cross-boundary edge redirection on collapse (#53)', function () {
+    // When a subgraph is collapsed, any edge that crosses the collapse
+    // boundary (one endpoint inside, one outside) should be redirected
+    // to terminate at the collapsed parent rather than be dropped.
+    it('should redirect an outside→inside edge to the collapsed parent', function () {
+      agentflow.parser.parse(`agentflow LR
+        outside["Outside"]
+        agent a1["Agent One"]
+          inside1["Inside 1"]
+          inside2["Inside 2"]
+        end
+        outside --> inside1
+        a1@{ view: "collapsed" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      // Original edge target was `inside1`, which is hidden — redirect to `a1`
+      expect(
+        data.edges.some(
+          (e: { start: string; end: string }) => e.start === 'outside' && e.end === 'a1'
+        )
+      ).toBe(true);
+      // Original edge with hidden endpoint must not be present
+      expect(
+        data.edges.some(
+          (e: { start: string; end: string }) => e.start === 'outside' && e.end === 'inside1'
+        )
+      ).toBe(false);
+    });
+
+    it('should redirect an inside→outside edge to leave from the collapsed parent', function () {
+      agentflow.parser.parse(`agentflow LR
+        agent a1["Agent One"]
+          inside1["Inside 1"]
+        end
+        outside["Outside"]
+        inside1 --> outside
+        a1@{ view: "collapsed" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      expect(
+        data.edges.some(
+          (e: { start: string; end: string }) => e.start === 'a1' && e.end === 'outside'
+        )
+      ).toBe(true);
+    });
+
+    it('should drop an edge whose endpoints both collapse to the same parent (self-loop)', function () {
+      agentflow.parser.parse(`agentflow LR
+        agent a1["Agent One"]
+          inside1["Inside 1"]
+          inside2["Inside 2"]
+          inside1 --> inside2
+        end
+        a1@{ view: "collapsed" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      // Internal edge becomes a1→a1 self-loop, must be dropped entirely
+      expect(
+        data.edges.some((e: { start: string; end: string }) => e.start === 'a1' && e.end === 'a1')
+      ).toBe(false);
+      // And the original edge with its hidden endpoints must be gone too
+      expect(
+        data.edges.some(
+          (e: { start: string; end: string }) => e.start === 'inside1' && e.end === 'inside2'
+        )
+      ).toBe(false);
+    });
+
+    it('should redirect both ends when both collapse to different parents', function () {
+      agentflow.parser.parse(`agentflow LR
+        agent a1["Agent One"]
+          inside1["Inside 1"]
+        end
+        agent a2["Agent Two"]
+          inside2["Inside 2"]
+        end
+        inside1 --> inside2
+        a1@{ view: "collapsed" }
+        a2@{ view: "collapsed" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      expect(
+        data.edges.some((e: { start: string; end: string }) => e.start === 'a1' && e.end === 'a2')
+      ).toBe(true);
+    });
+
+    it('should redirect to the outermost collapsed ancestor for nested collapse', function () {
+      // Both `a1` and `f1` are collapsed. `inside1` is deeply nested.
+      // Only `a1` is rendered; the redirect target is `a1`, not `f1`.
+      agentflow.parser.parse(`agentflow LR
+        outside["Outside"]
+        agent a1["Agent One"]
+          flow f1["Flow"]
+            inside1["Inside 1"]
+          end
+        end
+        outside --> inside1
+        a1@{ view: "collapsed" }
+        f1@{ view: "collapsed" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      expect(
+        data.edges.some(
+          (e: { start: string; end: string }) => e.start === 'outside' && e.end === 'a1'
+        )
+      ).toBe(true);
+      expect(
+        data.edges.some(
+          (e: { start: string; end: string }) => e.start === 'outside' && e.end === 'f1'
+        )
+      ).toBe(false);
+    });
+
+    it('should redirect edges crossing into the synthesized collapsed connectors-group', function () {
+      // Synthesis path from #52: `connectors@{ view: collapsed }` without a
+      // user-declared `subgraph connectors` hides connector vertices and
+      // emits `agentflow-connectors-group`. Edges to/from connector
+      // vertices should redirect to that synthesized id.
+      agentflow.parser.parse(`agentflow LR
+        consumer["Tool"]
+        github_api["GitHub API"]
+        github_api@{ protocol: "https", endpoint: "https://api.github.com" }
+        consumer --> github_api
+        connectors@{ view: "collapsed" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      expect(
+        data.edges.some(
+          (e: { start: string; end: string }) =>
+            e.start === 'consumer' && e.end === 'agentflow-connectors-group'
+        )
+      ).toBe(true);
+    });
+  });
+
   describe('connectors group synthesis', function () {
     // §9: connector-designated nodes carry one or more of
     // protocol/endpoint/transport/command/auth/token_required.

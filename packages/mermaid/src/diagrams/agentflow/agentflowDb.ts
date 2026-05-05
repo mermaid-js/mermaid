@@ -2734,22 +2734,30 @@ You have to call mermaid.initialize.`
     const parentDB = new Map<string, string>();
     const subGraphDB = new Map<string, boolean>();
 
-    // Collect IDs hidden by collapsed subgraphs (the subgraph's descendants)
+    // Collect IDs hidden by collapsed subgraphs (the subgraph's descendants).
+    // `collapsedAncestorMap` records the *outermost* collapsed ancestor for
+    // each hidden id so that cross-boundary edges can be redirected to the
+    // visible collapsed node (issue #53). Nested collapses resolve to the
+    // outermost ancestor because we process collapsed subgraphs in
+    // declaration order (outer first) and the ancestor parameter is held
+    // constant during recursion.
     const hiddenIds = new Set<string>();
-    const collectDescendants = (sgId: string) => {
+    const collapsedAncestorMap = new Map<string, string>();
+    const collectDescendants = (sgId: string, ancestor: string) => {
       const sg = this.subGraphLookup.get(sgId);
       if (!sg) {
         return;
       }
       for (const childId of sg.nodes) {
         hiddenIds.add(childId);
+        collapsedAncestorMap.set(childId, ancestor);
         // Recurse into child subgraphs
-        collectDescendants(childId);
+        collectDescendants(childId, ancestor);
       }
     };
     for (const sg of subGraphs) {
-      if (sg.metadata?.view === 'collapsed') {
-        collectDescendants(sg.id);
+      if (sg.metadata?.view === 'collapsed' && !hiddenIds.has(sg.id)) {
+        collectDescendants(sg.id, sg.id);
       }
     }
 
@@ -2837,6 +2845,7 @@ You have to call mermaid.initialize.`
         } else {
           for (const v of connectorVertices) {
             hiddenIds.add(v.id);
+            collapsedAncestorMap.set(v.id, 'agentflow-connectors-group');
           }
         }
       }
@@ -2979,8 +2988,13 @@ You have to call mermaid.initialize.`
 
     const e = this.getEdges();
     e.forEach((rawEdge, index) => {
-      // Skip edges where either endpoint is hidden by a collapsed subgraph
-      if (hiddenIds.has(rawEdge.start) || hiddenIds.has(rawEdge.end)) {
+      // Redirect cross-boundary edges to the outermost visible collapsed
+      // ancestor (issue #53). When both endpoints collapse to the same
+      // ancestor the edge would be a self-loop on the collapsed node and
+      // is dropped instead.
+      const startId = collapsedAncestorMap.get(rawEdge.start) ?? rawEdge.start;
+      const endId = collapsedAncestorMap.get(rawEdge.end) ?? rawEdge.end;
+      if (startId === endId) {
         return;
       }
       const { arrowTypeStart, arrowTypeEnd } = this.destructEdgeType(rawEdge.type);
@@ -2990,10 +3004,10 @@ You have to call mermaid.initialize.`
         styles.push(...rawEdge.style);
       }
       const edge: Edge = {
-        id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'L' }, rawEdge.id),
+        id: getEdgeId(startId, endId, { counter: index, prefix: 'L' }, rawEdge.id),
         isUserDefinedId: rawEdge.isUserDefinedId,
-        start: rawEdge.start,
-        end: rawEdge.end,
+        start: startId,
+        end: endId,
         type: rawEdge.type ?? 'normal',
         label: rawEdge.text,
         labelType: rawEdge.labelType,

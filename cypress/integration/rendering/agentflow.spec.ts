@@ -238,4 +238,34 @@ describe('Agentflow diagram', () => {
       {}
     );
   });
+
+  it('8: should redirect cross-boundary edges to the collapsed parent (#53)', () => {
+    imgSnapshotTest(
+      `agentflow TB
+        agent researcher["Research Agent"]
+          task research["Research"]
+            patterns["Pattern Research"]@{ shape: doc }
+          end
+        end
+
+        agent reviewer["Review Agent"]
+          task review["Review"]
+            validate["validate_patterns"]@{ shape: subroutine }
+            reviewed["Reviewed Patterns"]@{ shape: doc }
+            patterns --> validate --> reviewed
+          end
+        end
+
+        agent reporter["Report Agent"]
+          task generate["Generate"]
+            compile["compile_report"]@{ shape: subroutine }
+            reviewed --> compile
+          end
+        end
+
+        reviewer@{ view: "collapsed" }
+      `,
+      {}
+    );
+  });
 });
