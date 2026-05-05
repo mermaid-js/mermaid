@@ -185,7 +185,8 @@ const getStyles = (options: FlowChartStyleOptions) =>
   }
 
   .types-cluster rect,
-  .templates-cluster rect {
+  .templates-cluster rect,
+  .connectors-cluster rect {
     fill: ${options.tertiaryColor};
     stroke: ${options.clusterBorder};
     stroke-width: 0.75px;
