@@ -799,6 +799,16 @@ A future `connector` keyword should be introduced **only** if all of the followi
 
 If any of these become a hard requirement in a later release, the keyword can land additively under the spec's additive-change rule. Until then, the metadata-based form above is canonical.
 
+### 9.6 Toggling the Connectors Group (Editor Contract)
+
+Tools that consume the parsed model — notably the agentflow-editor — need a stable, predictable id to expand or collapse "the connectors group" without inspecting the document for the author's chosen subgraph name. Two equivalent paths are supported, mirroring the §15 view-hint mechanism:
+
+1. **User-declared subgraph.** When the author wraps connectors in `subgraph connectors[...]` per §9.2, the canonical id is `connectors`. Toggle the view by appending `connectors@{ view: "collapsed" }` or `connectors@{ view: "expanded" }` after the subgraph block. The standard subgraph view mechanism handles it; no synthesis occurs.
+
+2. **Synthesized group.** When the author leaves connector-designated nodes scattered (no `subgraph connectors`) but writes `connectors@{ view: "..." }`, the parser synthesizes a group node with the stable id **`agentflow-connectors-group`** (parallel to `agentflow-types-group` and `agentflow-templates-group`). Connector-designated vertices are re-parented into it when expanded, or hidden when collapsed.
+
+The synthesis is opt-in: a diagram with connector-designated nodes but no `connectors@{ ... }` metadata renders unchanged. This makes the feature additive — no existing diagram changes its visual output.
+
 ---
 
 ## 10. Identifier Resolution

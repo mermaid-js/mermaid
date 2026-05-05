@@ -837,6 +837,7 @@ const createDeclarationGroup = (cssClass) => async (parent, node) => {
 
 const typesGroup = createDeclarationGroup('types-cluster');
 const templatesGroup = createDeclarationGroup('templates-cluster');
+const connectorsGroup = createDeclarationGroup('connectors-cluster');
 
 /** Group cluster: invisible container, purely for layout grouping. No fill, no stroke. */
 const groupGroup = async (parent, node) => {
@@ -867,6 +868,7 @@ const shapes = {
   groupGroup,
   typesGroup,
   templatesGroup,
+  connectorsGroup,
 };
 
 let clusterElems = new Map();

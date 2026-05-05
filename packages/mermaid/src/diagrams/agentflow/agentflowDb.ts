@@ -628,8 +628,11 @@ export class AgentFlowDB implements DiagramDB {
       this.recordDeclaredNodeId(id);
     }
 
-    // Reserve 'types' and 'templates' as declaration group IDs — never create vertices for them
-    if (id === 'types' || id === 'templates') {
+    // Reserve 'types', 'templates', and 'connectors' as declaration group IDs.
+    // The subgraph branch above runs first, so a user-declared
+    // `subgraph connectors[...]` still owns the id `connectors`; the
+    // reserved-id path here only applies when no such subgraph exists.
+    if (id === 'types' || id === 'templates' || id === 'connectors') {
       if (doc) {
         this.declarationGroupMetadata.set(id, doc as unknown as Record<string, unknown>);
       }
@@ -2006,6 +2009,23 @@ You have to call mermaid.initialize.`
   }
 
   /**
+   * Returns all connector-designated vertices in declaration order. Used
+   * by the synthesized `agentflow-connectors-group` rendering path so the
+   * agentflow-editor can expand/collapse the connectors group with a
+   * stable id (parallel to `agentflow-types-group` /
+   * `agentflow-templates-group`).
+   */
+  public getConnectorDesignatedVertices(): FlowVertex[] {
+    const out: FlowVertex[] = [];
+    for (const vertex of this.vertices.values()) {
+      if (this.isConnectorDesignated(vertex)) {
+        out.push(vertex);
+      }
+    }
+    return out;
+  }
+
+  /**
    * Per `AGENTFLOW-SYNTAX.md` §9.1 (revision 8): for every node tagged
    * `@{ connectorRef: "<value>" }`, classify the value:
    *   - bare id matching `[A-Za-z_]\w*` → resolve against node namespace:
@@ -2796,6 +2816,32 @@ You have to call mermaid.initialize.`
       }
     }
 
+    // Synthesized connectors-group: opt-in via `connectors@{ view: ... }`,
+    // only when no user-declared `subgraph connectors` exists. Re-parents
+    // (expanded) or hides (collapsed) connector-designated vertices so the
+    // agentflow-editor can expand/collapse the connectors grouping via a
+    // stable id `agentflow-connectors-group`, parallel to types/templates.
+    const connectorsMeta = this.declarationGroupMetadata.get('connectors');
+    const userConnectorsSubgraph = this.subGraphLookup.get('connectors');
+    let synthesizeConnectorsGroup = false;
+    let connectorsGroupExpanded = false;
+    if (connectorsMeta && !userConnectorsSubgraph) {
+      const connectorVertices = this.getConnectorDesignatedVertices();
+      if (connectorVertices.length > 0) {
+        synthesizeConnectorsGroup = true;
+        connectorsGroupExpanded = connectorsMeta.view === 'expanded';
+        if (connectorsGroupExpanded) {
+          for (const v of connectorVertices) {
+            parentDB.set(v.id, 'agentflow-connectors-group');
+          }
+        } else {
+          for (const v of connectorVertices) {
+            hiddenIds.add(v.id);
+          }
+        }
+      }
+    }
+
     const n = this.getVertices();
     n.forEach((vertex) => {
       // Skip vertices hidden by collapsed subgraphs
@@ -2897,6 +2943,38 @@ You have to call mermaid.initialize.`
         declarations: templateDecls,
         groupMetadata: this.declarationGroupMetadata.get('templates'),
       });
+    }
+
+    if (synthesizeConnectorsGroup) {
+      if (connectorsGroupExpanded) {
+        nodes.push({
+          id: 'agentflow-connectors-group',
+          label: 'Connectors',
+          labelStyle: '',
+          labelType: 'text',
+          padding: 8,
+          cssCompiledStyles: [],
+          cssClasses: '',
+          shape: 'connectorsGroup',
+          isGroup: true,
+          look: config.look,
+          metadata: connectorsMeta,
+        });
+      } else {
+        nodes.push({
+          id: 'agentflow-connectors-group',
+          label: 'Connectors',
+          labelStyle: '',
+          labelType: 'text',
+          padding: 8,
+          cssCompiledStyles: [],
+          cssClasses: '',
+          shape: 'collapsedGroup',
+          isGroup: false,
+          look: config.look,
+          metadata: { containerType: 'connectors', ...connectorsMeta },
+        });
+      }
     }
 
     const e = this.getEdges();

@@ -1366,6 +1366,97 @@ describe('parsing an agentflow diagram', function () {
     });
   });
 
+  describe('connectors group synthesis', function () {
+    // §9: connector-designated nodes carry one or more of
+    // protocol/endpoint/transport/command/auth/token_required.
+    // The synthesized group node id is `agentflow-connectors-group`,
+    // toggled via `connectors@{ view: "collapsed" | "expanded" }`.
+    it('should synthesize agentflow-connectors-group as a cluster when expanded', function () {
+      agentflow.parser.parse(`agentflow LR
+        github_api["GitHub API"]
+        github_api@{ protocol: "https", endpoint: "https://api.github.com" }
+        slack_api["Slack API"]
+        slack_api@{ protocol: "https", endpoint: "https://slack.com/api" }
+        connectors@{ view: "expanded" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const groupNode = data.nodes.find(
+        (n: { id: string }) => n.id === 'agentflow-connectors-group'
+      );
+      expect(groupNode).toBeDefined();
+      expect(groupNode?.isGroup).toBe(true);
+      expect(groupNode?.shape).toBe('connectorsGroup');
+      // connector vertices are re-parented into the synthesized group
+      const githubNode = data.nodes.find((n: { id: string }) => n.id === 'github_api');
+      const slackNode = data.nodes.find((n: { id: string }) => n.id === 'slack_api');
+      expect(githubNode?.parentId).toBe('agentflow-connectors-group');
+      expect(slackNode?.parentId).toBe('agentflow-connectors-group');
+    });
+
+    it('should synthesize agentflow-connectors-group as collapsed and hide connector vertices', function () {
+      agentflow.parser.parse(`agentflow LR
+        github_api["GitHub API"]
+        github_api@{ protocol: "https", endpoint: "https://api.github.com" }
+        slack_api["Slack API"]
+        slack_api@{ protocol: "https", endpoint: "https://slack.com/api" }
+        connectors@{ view: "collapsed" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      const groupNode = data.nodes.find(
+        (n: { id: string }) => n.id === 'agentflow-connectors-group'
+      );
+      expect(groupNode).toBeDefined();
+      expect(groupNode?.isGroup).toBe(false);
+      expect(groupNode?.shape).toBe('collapsedGroup');
+      expect(groupNode?.metadata?.containerType).toBe('connectors');
+      // connector-designated vertices are hidden when the group is collapsed
+      expect(data.nodes.find((n: { id: string }) => n.id === 'github_api')).toBeUndefined();
+      expect(data.nodes.find((n: { id: string }) => n.id === 'slack_api')).toBeUndefined();
+    });
+
+    it('should leave a user-declared `subgraph connectors` untouched (subgraph branch wins)', function () {
+      // When the author already wraps connectors in `subgraph connectors[...]`,
+      // the existing subgraph view mechanism handles `connectors@{ view }` —
+      // no synthesized `agentflow-connectors-group` is emitted.
+      agentflow.parser.parse(`agentflow LR
+        subgraph connectors["Connectors"]
+          github_api["GitHub API"]
+          github_api@{ protocol: "https", endpoint: "https://api.github.com" }
+        end
+        connectors@{ view: "collapsed" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      // No synthesized group node
+      expect(
+        data.nodes.find((n: { id: string }) => n.id === 'agentflow-connectors-group')
+      ).toBeUndefined();
+      // Subgraph itself collapses via the existing mechanism
+      const subgraphNode = data.nodes.find((n: { id: string }) => n.id === 'connectors');
+      expect(subgraphNode).toBeDefined();
+      expect(subgraphNode?.shape).toBe('collapsedGroup');
+    });
+
+    it('should not synthesize the group when no `connectors@{}` metadata is set', function () {
+      // Default behavior is unchanged: connector-designated nodes render
+      // in their declared positions; no synthesis happens implicitly.
+      agentflow.parser.parse(`agentflow LR
+        github_api["GitHub API"]
+        github_api@{ protocol: "https", endpoint: "https://api.github.com" }
+      `);
+
+      const data = agentflow.parser.yy.getData();
+      expect(
+        data.nodes.find((n: { id: string }) => n.id === 'agentflow-connectors-group')
+      ).toBeUndefined();
+      const githubNode = data.nodes.find((n: { id: string }) => n.id === 'github_api');
+      expect(githubNode).toBeDefined();
+      expect(githubNode?.parentId).toBeUndefined();
+    });
+  });
+
   describe('template declarations', function () {
     it('should parse a simple template with fields and descriptions', function () {
       agentflow.parser.parse(`agentflow TB

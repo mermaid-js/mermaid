@@ -210,4 +210,32 @@ describe('Agentflow diagram', () => {
       {}
     );
   });
+
+  it('7a: should render synthesized connectors-group expanded (§9)', () => {
+    imgSnapshotTest(
+      `agentflow LR
+        github_api["GitHub API"]
+        github_api@{ protocol: "https", endpoint: "https://api.github.com" }
+        slack_api["Slack API"]
+        slack_api@{ protocol: "https", endpoint: "https://slack.com/api" }
+        connectors@{ view: "expanded" }
+      `,
+      {}
+    );
+  });
+
+  it('7b: should render synthesized connectors-group collapsed (§9)', () => {
+    imgSnapshotTest(
+      `agentflow LR
+        consumer["Tool"]
+        consumer@{ shape: subroutine, connectorRef: "github_api" }
+        github_api["GitHub API"]
+        github_api@{ protocol: "https", endpoint: "https://api.github.com" }
+        slack_api["Slack API"]
+        slack_api@{ protocol: "https", endpoint: "https://slack.com/api" }
+        connectors@{ view: "collapsed" }
+      `,
+      {}
+    );
+  });
 });
