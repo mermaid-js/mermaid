@@ -291,7 +291,8 @@ export const drawServices = async function (
         service.title,
         {
           useHtmlLabels: false,
-          width: iconSize * 1.5,
+          // Floor at 90px so long single-word labels don't wrap mid-character at small iconSize.
+          width: Math.max(iconSize * 1.5, 90),
           classes: 'architecture-service-label',
         },
         config
