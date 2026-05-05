@@ -130,8 +130,13 @@ function parseEdgeId(id: string): { source: string; target: string } | null {
   if (!id) {
     return null;
   }
-  // flowchart: "L-SOURCE-TARGET-N"
+  // flowchart — old dash format: "L-SOURCE-TARGET-N"
   let m = /^L-(.+?)-(.+?)-\d+$/.exec(id);
+  if (m) {
+    return { source: m[1], target: m[2] };
+  }
+  // flowchart — current underscore format from getEdgeId: "L_SOURCE_TARGET_N"
+  m = /^L_(.+?)_(.+?)_\d+$/.exec(id);
   if (m) {
     return { source: m[1], target: m[2] };
   }
@@ -225,14 +230,27 @@ function findDownstreamNodes(
 
   // Fallback: Y-position heuristic (SVG without Mermaid-style edge IDs).
   // 'g.node' covers flowchart/classDiagram; 'g.stateGroup' covers stateDiagram-v2.
+  // Respect alwaysShowIds: stop collecting once any barrier node's Y is reached,
+  // and never include a barrier node itself.
+  const barrierEls = new Set<SVGGElement>();
+  let minBarrierCy = Infinity;
+  alwaysShowIds.forEach((bid) => {
+    const bel = findNodeElement(svgRoot, bid);
+    if (bel) {
+      barrierEls.add(bel);
+      const bb = bel.getBoundingClientRect();
+      minBarrierCy = Math.min(minBarrierCy, bb.top + bb.height / 2);
+    }
+  });
   const parentCy =
     parentEl.getBoundingClientRect().top + parentEl.getBoundingClientRect().height / 2;
   return [...svgRoot.querySelectorAll<SVGGElement>('g.node, g.stateGroup')].filter((n) => {
-    if (n === parentEl) {
+    if (n === parentEl || barrierEls.has(n)) {
       return false;
     }
     const box = n.getBoundingClientRect();
-    return box.top + box.height / 2 > parentCy;
+    const cy = box.top + box.height / 2;
+    return cy > parentCy && cy < minBarrierCy;
   });
 }
 

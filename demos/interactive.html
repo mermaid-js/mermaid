@@ -817,6 +817,55 @@ sequenceDiagram
       </div>
     </div>
 
+    <!-- Example 13: C4 Context diagram — click-to-spotlight interactivity -->
+    <div class="example-card">
+      <h2>
+        Example 13: Online Shopping Platform &mdash; C4Context diagram with click-to-spotlight
+      </h2>
+      <p class="hint">
+        Click any shape to spotlight it and dim all others. Click the same shape again, or click an
+        empty area of the diagram, to restore full visibility. No <code>interaction</code> blocks
+        are needed &mdash; <code>attachC4Interactivity()</code> auto-wires every
+        <code>g.person-man</code> element emitted by the C4 renderer.
+      </p>
+      <div class="layout">
+        <div>
+          <div class="panel-label">Source (.mermid)</div>
+          <div class="source-panel">
+            <pre class="mermaid-interactive" data-example="13">
+C4Context
+    title System Context — Online Shopping Platform
+    Enterprise_Boundary(b0, "TechShop Platform") {
+        Person(shopper, "Shopper", "Browses catalogue and places orders online")
+        System(webApp, "Web / Mobile App", "React SPA + iOS & Android apps for browsing, cart and checkout")
+        SystemDb(orderDb, "Order &amp; Inventory DB", "PostgreSQL — persists orders, stock levels and customer profiles")
+        System(notifSvc, "Notification Service", "Sends order confirmations and shipping alerts by email and SMS")
+    }
+    Person_Ext(supportAgent, "Support Agent", "Handles customer complaints and refunds via admin portal")
+    System_Ext(paymentGw, "Payment Gateway", "Stripe — authorises and captures card and wallet payments")
+    System_Ext(shippingApi, "Shipping API", "FedEx / UPS — quotes rates and generates shipping labels")
+
+    Rel(shopper, webApp, "Shops on", "HTTPS")
+    Rel(supportAgent, webApp, "Manages orders via admin portal", "HTTPS")
+    Rel(webApp, orderDb, "Reads/writes orders and stock", "SQL/TLS")
+    Rel(webApp, paymentGw, "Authorises payments", "REST/HTTPS")
+    Rel(webApp, shippingApi, "Requests rates and labels", "REST/HTTPS")
+    Rel(webApp, notifSvc, "Enqueues notifications", "gRPC")
+    Rel(notifSvc, shopper, "Delivers receipts and alerts", "SMTP/SMS")
+
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")</pre
+            >
+          </div>
+        </div>
+        <div>
+          <div class="panel-label">Rendered Output</div>
+          <div class="output-panel" id="output-13">
+            <span class="loading">Rendering&hellip;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
 
@@ -954,8 +1003,11 @@ sequenceDiagram
       //   stateDiagram: "edge0", "edge1", ...  (opaque counter — no source/target)
       function parseEdgeId(id) {
         if (!id) return null;
-        // Flowchart
+        // Flowchart — old dash format: "L-SOURCE-TARGET-N"
         let m = /^L-(.+?)-(.+?)-\d+$/.exec(id);
+        if (m) return { source: m[1], target: m[2] };
+        // Flowchart — current underscore format from getEdgeId: "L_SOURCE_TARGET_N"
+        m = /^L_(.+?)_(.+?)_\d+$/.exec(id);
         if (m) return { source: m[1], target: m[2] };
         // classDiagram — greedy first capture handles multi-word names like "OrderItem";
         // non-greedy second capture then grabs the shortest remaining token before _\d+$
@@ -1241,12 +1293,25 @@ sequenceDiagram
 
         // Fallback: Y-position — only reliable at attach time while visible.
         // All unified-renderer nodes have class 'node'; stateGroup is the old renderer.
+        // Respect alwaysShowIds barriers: never include a barrier node itself, and
+        // stop collecting once the first barrier node's Y centre is reached.
+        const barrierEls = new Set();
+        let minBarrierCy = Infinity;
+        alwaysShowIds.forEach((bid) => {
+          const bel = findNode(svg, bid);
+          if (bel) {
+            barrierEls.add(bel);
+            const bb = bel.getBoundingClientRect();
+            minBarrierCy = Math.min(minBarrierCy, bb.top + bb.height / 2);
+          }
+        });
         const parentCy =
           nodeEl.getBoundingClientRect().top + nodeEl.getBoundingClientRect().height / 2;
         return [...svg.querySelectorAll('g.node, g.stateGroup')].filter((n) => {
-          if (n === nodeEl) return false;
+          if (n === nodeEl || barrierEls.has(n)) return false;
           const b = n.getBoundingClientRect();
-          return b.top + b.height / 2 > parentCy;
+          const cy = b.top + b.height / 2;
+          return cy > parentCy && cy < minBarrierCy;
         });
       }
 
@@ -1754,6 +1819,53 @@ sequenceDiagram
       }
 
       // -----------------------------------------------------------------------
+      // C4 diagram — automatic click-to-spotlight for all g.person-man shapes.
+      // The C4 renderer attaches class="person-man" to every shape element
+      // (person, system, container, component, etc.) regardless of type.
+      // Clicking a shape dims all others; clicking again (or clicking the
+      // background) restores full visibility.
+      // -----------------------------------------------------------------------
+
+      function attachC4Interactivity(svgEl) {
+        const shapes = [...svgEl.querySelectorAll('g.person-man')];
+        if (shapes.length === 0) return;
+
+        const DIMMED = '0.18';
+
+        shapes.forEach((shape) => {
+          shape.style.cursor = 'pointer';
+          shape.style.transition = 'opacity 0.25s ease';
+          shape.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const alreadyFocused = shape.dataset.c4Focus === '1';
+            // Reset all
+            shapes.forEach((s) => {
+              delete s.dataset.c4Focus;
+              s.style.opacity = '';
+            });
+            if (!alreadyFocused) {
+              // Spotlight the clicked shape
+              shape.dataset.c4Focus = '1';
+              shapes.forEach((s) => {
+                s.style.opacity = s === shape ? '1' : DIMMED;
+              });
+            }
+          });
+        });
+
+        // Click on empty SVG area to un-focus
+        svgEl.addEventListener('click', () => {
+          const anyFocused = shapes.some((s) => s.dataset.c4Focus === '1');
+          if (anyFocused) {
+            shapes.forEach((s) => {
+              delete s.dataset.c4Focus;
+              s.style.opacity = '';
+            });
+          }
+        });
+      }
+
+      // -----------------------------------------------------------------------
       // Render all .mermaid-interactive blocks
       // -----------------------------------------------------------------------
 
@@ -1782,6 +1894,7 @@ sequenceDiagram
           if (svgEl) {
             bind(svgEl, diagram);
             attachSequenceParInteractivity(svgEl);
+            attachC4Interactivity(svgEl);
           }
         } catch (err) {
           if (outputEl) {
