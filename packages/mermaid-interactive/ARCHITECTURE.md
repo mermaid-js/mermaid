@@ -1,4 +1,4 @@
-# Interactive, Parameterised Mermaid Diagrams: Requirements & Architecture
+﻿# Interactive, Parameterised Mermaid Diagrams: Requirements & Architecture
 
 ## Objective
 
