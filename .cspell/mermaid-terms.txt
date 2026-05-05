@@ -23,8 +23,10 @@ kanban
 marginx
 marginy
 Markdownish
+mermaid-interactive
 mermaidchart
 mermaidjs
+mermid
 mindmap
 mindmaps
 mrtree

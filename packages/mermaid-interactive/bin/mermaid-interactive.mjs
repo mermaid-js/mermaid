@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 /**
  * mermaid-interactive CLI
  *
@@ -10,10 +11,7 @@
  */
 
 import { readFileSync, writeFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
-
-const require = createRequire(import.meta.url);
 
 async function main() {
   const [, , inputArg, outputArg] = process.argv;
@@ -29,13 +27,13 @@ async function main() {
         'Reads extended Mermaid syntax from <input.mermid> and writes',
         'standard Mermaid (with encoded interaction metadata) to stdout',
         'or to [output.mmd] if provided.',
-      ].join('\n'),
+      ].join('\n')
     );
     process.exit(inputArg ? 0 : 1);
   }
 
   const inputPath = resolve(process.cwd(), inputArg);
-  let source: string;
+  let source;
   try {
     source = readFileSync(inputPath, 'utf8');
   } catch {
