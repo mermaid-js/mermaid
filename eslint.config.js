@@ -221,18 +221,12 @@ export default tseslint.config(
     },
     processor: 'markdown/markdown',
   },
-  // Disable type-aware rules for CLI bin scripts (.mjs/.cjs) that cannot
-  // be fully resolved by TypeScript (nodenext .js → .ts re-exporting).
-  // Without this, ESLint writes a corrupt cache entry on the first run and
-  // then crashes with "Cannot read properties of undefined (reading 'hashOfConfig')"
-  // on the retry. See: https://typescript-eslint.io/troubleshooting/#i-get-errors-from-the-parser-or-type-checker-for-files-not-in-my-project
+  // Disable type-aware rules for CLI bin scripts (.mjs/.cjs).
+  // These files are not included in any TypeScript project and should not
+  // be type-checked by ESLint. disableTypeChecked sets project: false,
+  // program: null, and projectService: false.
   {
     files: ['**/bin/**/*.mjs', '**/bin/**/*.cjs'],
     ...tseslint.configs.disableTypeChecked,
-    languageOptions: {
-      parserOptions: {
-        project: false,
-      },
-    },
   }
 );
