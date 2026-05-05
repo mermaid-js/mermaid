@@ -1898,7 +1898,11 @@ C4Context
           }
         } catch (err) {
           if (outputEl) {
-            outputEl.innerHTML = `<span class="render-error">Render error: ${err.message}</span>`;
+            const span = document.createElement('span');
+            span.className = 'render-error';
+            span.textContent = `Render error: ${err.message}`;
+            outputEl.innerHTML = '';
+            outputEl.appendChild(span);
           }
         }
       }
