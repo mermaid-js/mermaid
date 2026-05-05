@@ -229,5 +229,10 @@ export default tseslint.config(
   {
     files: ['**/bin/**/*.mjs', '**/bin/**/*.cjs'],
     ...tseslint.configs.disableTypeChecked,
+    languageOptions: {
+      parserOptions: {
+        project: false,
+      },
+    },
   }
 );
