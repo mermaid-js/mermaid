@@ -10,12 +10,13 @@
 
 # Class: MermaidDragEditor
 
-Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:47](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L47)
+Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:48](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L48)
 
-Mermaid 图表可视化微调主控制器。
+Mermaid diagram drag editor — the main orchestrator for interactive
+node repositioning.
 
-在不修改 Mermaid 核心源码的前提下，通过对 Mermaid 渲染后的 SVG DOM
-做二次增强，实现节点拖拽、位置持久化、撤销/重做等功能。
+Enhances a rendered Mermaid SVG DOM (without modifying Mermaid's core)
+to support node dragging, position persistence, undo/redo, and more.
 
 ## Example
 
@@ -33,7 +34,7 @@ await editor.enable();
 
 > **new MermaidDragEditor**(`options`): `MermaidDragEditor`
 
-Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:65](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L65)
+Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:66](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L66)
 
 #### Parameters
 
@@ -51,9 +52,9 @@ Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:65](https://g
 
 > **clearSelection**(): `void`
 
-Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:199](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L199)
+Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:191](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L191)
 
-清除所有选中
+Clears the current selection.
 
 #### Returns
 
@@ -65,9 +66,9 @@ Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:199](https://
 
 > **destroy**(): `void`
 
-Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:279](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L279)
+Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:265](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L265)
 
-销毁编辑器，解绑所有事件，清理资源
+Destroys the editor: unbinds events and cleans up resources.
 
 #### Returns
 
@@ -79,10 +80,10 @@ Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:279](https://
 
 > **disable**(): `void`
 
-Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:118](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L118)
+Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:119](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L119)
 
-禁用拖拽交互。
-解绑事件但保留样式和覆盖数据。
+Disables drag interaction.
+Unbinds events but retains styles and override data.
 
 #### Returns
 
@@ -94,10 +95,10 @@ Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:118](https://
 
 > **enable**(): `Promise`<`void`>
 
-Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:95](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L95)
+Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:96](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L96)
 
-启用拖拽交互。
-会自动注入样式、加载保存的覆盖数据，并绑定事件。
+Enables drag interaction.
+Injects styles, loads saved overrides, and binds events.
 
 #### Returns
 
@@ -109,9 +110,9 @@ Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:95](https://g
 
 > **getOverrides**(): [`OverrideData`](../interfaces/OverrideData.md)
 
-Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:206](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L206)
+Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:196](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L196)
 
-获取当前所有覆盖数据
+Returns all current override data.
 
 #### Returns
 
@@ -123,9 +124,9 @@ Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:206](https://
 
 > **importOverrides**(`data`): `Promise`<`void`>
 
-Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:220](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L220)
+Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:208](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L208)
 
-导入覆盖数据并立即应用到当前 SVG
+Imports override data and applies it to the current SVG immediately.
 
 #### Parameters
 
@@ -143,9 +144,9 @@ Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:220](https://
 
 > **redo**(): `void`
 
-Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:137](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L137)
+Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:134](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L134)
 
-重做被撤销的拖拽操作
+Redoes the previously undone drag operation.
 
 #### Returns
 
@@ -157,9 +158,10 @@ Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:137](https://
 
 > **resetLayout**(): `Promise`<`void`>
 
-Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:145](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L145)
+Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:143](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L143)
 
-恢复自动布局（清除所有覆盖，触发重新渲染）
+Resets to auto-layout (clears all overrides and triggers re-render if
+a renderFn was provided).
 
 #### Returns
 
@@ -171,9 +173,9 @@ Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:145](https://
 
 > **selectNode**(`nodeId`): `void`
 
-Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:185](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L185)
+Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:181](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L181)
 
-选中指定节点
+Selects a single node, clearing any previous selection.
 
 #### Parameters
 
@@ -191,9 +193,9 @@ Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:185](https://
 
 > **selectNodes**(`nodeIds`): `void`
 
-Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:192](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L192)
+Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:186](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L186)
 
-多选节点
+Selects multiple nodes.
 
 #### Parameters
 
@@ -211,9 +213,9 @@ Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:192](https://
 
 > **setNodeLocked**(`nodeId`, `locked`): `void`
 
-Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:260](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L260)
+Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:248](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L248)
 
-锁定/解锁节点
+Locks or unlocks a node.
 
 #### Parameters
 
@@ -221,13 +223,13 @@ Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:260](https://
 
 `string`
 
-节点 ID
+Node ID
 
 ##### locked
 
 `boolean`
 
-是否锁定
+Whether to lock the node
 
 #### Returns
 
@@ -239,9 +241,9 @@ Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:260](https://
 
 > **setNodePosition**(`nodeId`, `x`, `y`): `void`
 
-Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:236](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L236)
+Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:224](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L224)
 
-手动设置节点位置并持久化。
+Manually sets a node's position and persists it.
 
 #### Parameters
 
@@ -249,19 +251,19 @@ Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:236](https://
 
 `string`
 
-节点 ID
+Node ID
 
 ##### x
 
 `number`
 
-绝对 viewBox X 坐标
+Absolute viewBox X coordinate
 
 ##### y
 
 `number`
 
-绝对 viewBox Y 坐标
+Absolute viewBox Y coordinate
 
 #### Returns
 
@@ -273,9 +275,9 @@ Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:236](https://
 
 > **undo**(): `void`
 
-Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:129](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L129)
+Defined in: [packages/mermaid/src/interaction/MermaidDragEditor.ts:128](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/MermaidDragEditor.ts#L128)
 
-撤销上一步拖拽操作
+Undoes the last drag operation.
 
 #### Returns
 

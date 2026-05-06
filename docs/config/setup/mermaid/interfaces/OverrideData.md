@@ -10,9 +10,9 @@
 
 # Interface: OverrideData
 
-Defined in: [packages/mermaid/src/interaction/types.ts:24](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L24)
+Defined in: [packages/mermaid/src/interaction/types.ts:21](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L21)
 
-完整的覆盖数据持久化格式
+Complete override data persistence format.
 
 ## Properties
 
@@ -20,9 +20,9 @@ Defined in: [packages/mermaid/src/interaction/types.ts:24](https://github.com/me
 
 > **layout**: `string`
 
-Defined in: [packages/mermaid/src/interaction/types.ts:28](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L28)
+Defined in: [packages/mermaid/src/interaction/types.ts:25](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L25)
 
-使用的布局引擎名称
+Layout engine used for positioning.
 
 ---
 
@@ -30,9 +30,9 @@ Defined in: [packages/mermaid/src/interaction/types.ts:28](https://github.com/me
 
 > **overrides**: `object`
 
-Defined in: [packages/mermaid/src/interaction/types.ts:30](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L30)
+Defined in: [packages/mermaid/src/interaction/types.ts:27](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L27)
 
-节点覆盖数据，key 为用户定义的节点 ID
+Node and edge override data, keyed by user-defined ID.
 
 #### edges
 
@@ -48,6 +48,6 @@ Defined in: [packages/mermaid/src/interaction/types.ts:30](https://github.com/me
 
 > **version**: `number`
 
-Defined in: [packages/mermaid/src/interaction/types.ts:26](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L26)
+Defined in: [packages/mermaid/src/interaction/types.ts:23](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L23)
 
-格式版本号
+Schema version number.

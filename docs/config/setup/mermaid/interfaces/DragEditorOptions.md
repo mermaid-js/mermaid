@@ -10,9 +10,9 @@
 
 # Interface: DragEditorOptions
 
-Defined in: [packages/mermaid/src/interaction/types.ts:39](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L39)
+Defined in: [packages/mermaid/src/interaction/types.ts:34](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L34)
 
-MermaidDragEditor 配置选项
+MermaidDragEditor configuration options.
 
 ## Properties
 
@@ -20,9 +20,9 @@ MermaidDragEditor 配置选项
 
 > `optional` **maxUndoDepth**: `number`
 
-Defined in: [packages/mermaid/src/interaction/types.ts:47](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L47)
+Defined in: [packages/mermaid/src/interaction/types.ts:42](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L42)
 
-最大撤销步数，默认 50
+Maximum undo history depth. Defaults to 50.
 
 ---
 
@@ -30,9 +30,9 @@ Defined in: [packages/mermaid/src/interaction/types.ts:47](https://github.com/me
 
 > `optional` **mermaidCode**: `string`
 
-Defined in: [packages/mermaid/src/interaction/types.ts:43](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L43)
+Defined in: [packages/mermaid/src/interaction/types.ts:38](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L38)
 
-用户定义的 Mermaid 代码（用于 resetLayout 后重新渲染）
+User-defined Mermaid source code (used by resetLayout to re-render).
 
 ---
 
@@ -40,9 +40,9 @@ Defined in: [packages/mermaid/src/interaction/types.ts:43](https://github.com/me
 
 > `optional` **onLoad**: () => `Promise`<[`OverrideData`](OverrideData.md) | `null`>
 
-Defined in: [packages/mermaid/src/interaction/types.ts:51](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L51)
+Defined in: [packages/mermaid/src/interaction/types.ts:46](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L46)
 
-自定义加载回调，返回已保存的数据或 null
+Custom load callback. Should return saved data or null.
 
 #### Returns
 
@@ -54,9 +54,9 @@ Defined in: [packages/mermaid/src/interaction/types.ts:51](https://github.com/me
 
 > `optional` **onSave**: (`data`) => `Promise`<`void`>
 
-Defined in: [packages/mermaid/src/interaction/types.ts:49](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L49)
+Defined in: [packages/mermaid/src/interaction/types.ts:44](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L44)
 
-自定义保存回调，返回保存是否成功
+Custom save callback. Should return whether the save was successful.
 
 #### Parameters
 
@@ -74,9 +74,9 @@ Defined in: [packages/mermaid/src/interaction/types.ts:49](https://github.com/me
 
 > `optional` **renderFn**: (`code`) => `Promise`<`SVGElement`>
 
-Defined in: [packages/mermaid/src/interaction/types.ts:53](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L53)
+Defined in: [packages/mermaid/src/interaction/types.ts:48](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L48)
 
-自定义渲染函数：传入 mermaidCode，返回渲染后的 SVG 元素
+Custom render function: takes mermaidCode and returns a rendered SVG element.
 
 #### Parameters
 
@@ -94,9 +94,9 @@ Defined in: [packages/mermaid/src/interaction/types.ts:53](https://github.com/me
 
 > `optional` **storageKey**: `string`
 
-Defined in: [packages/mermaid/src/interaction/types.ts:45](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L45)
+Defined in: [packages/mermaid/src/interaction/types.ts:40](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L40)
 
-存储键名（用于 localStorage），默认使用 SVG 的 id
+Storage key for localStorage. Defaults to the SVG element's id.
 
 ---
 
@@ -104,6 +104,6 @@ Defined in: [packages/mermaid/src/interaction/types.ts:45](https://github.com/me
 
 > **svgElement**: `SVGElement`
 
-Defined in: [packages/mermaid/src/interaction/types.ts:41](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L41)
+Defined in: [packages/mermaid/src/interaction/types.ts:36](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/interaction/types.ts#L36)
 
-已渲染的 SVG 元素
+The rendered SVG element to attach drag behavior to.
