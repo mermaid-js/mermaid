@@ -117,6 +117,44 @@ Defined in: [packages/mermaid/src/config.type.ts:246](https://github.com/mermaid
 
 ---
 
+### dragEditor?
+
+> `optional` **dragEditor**: `boolean` | { `autoEnable?`: `boolean`; `maxUndoDepth?`: `number`; `storageKey?`: `string`; }
+
+Defined in: [packages/mermaid/src/config.type.ts:263](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L263)
+
+Enable interactive drag-and-drop node repositioning for flowcharts.
+When true, rendered flowchart nodes can be dragged to new positions
+using pointer events. Node positions can be persisted via localStorage
+or a custom save/load callback.
+
+#### Type Declaration
+
+`boolean`
+
+{ `autoEnable?`: `boolean`; `maxUndoDepth?`: `number`; `storageKey?`: `string`; }
+
+#### autoEnable?
+
+> `optional` **autoEnable**: `boolean`
+
+Whether to auto-enable the drag editor after rendering.
+
+#### maxUndoDepth?
+
+> `optional` **maxUndoDepth**: `number`
+
+Maximum undo history depth. Defaults to 50.
+
+#### storageKey?
+
+> `optional` **storageKey**: `string`
+
+Custom storage key for persisting drag overrides in localStorage.
+Defaults to the SVG element id.
+
+---
+
 ### elk?
 
 > `optional` **elk**: `object`

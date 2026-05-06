@@ -1041,7 +1041,15 @@ flowchart LR
 
         try {
           const { svg } = await mermaid.render(diagramId, code);
-          container.innerHTML = svg;
+          // Use DOMParser instead of innerHTML to prevent XSS from
+          // malicious SVG content (script tags, on* handlers, etc.)
+          const parser = new DOMParser();
+          const svgDoc = parser.parseFromString(svg, 'image/svg+xml');
+          const svgRoot = svgDoc.documentElement;
+          if (!(svgRoot instanceof SVGSVGElement)) {
+            throw new Error('Rendered result is not a valid SVG');
+          }
+          container.replaceChildren(svgRoot);
 
           svgElement = container.querySelector('svg');
           if (!svgElement) {
@@ -1081,8 +1089,11 @@ flowchart LR
             `渲染完成 — ${nodeMap.size} 个节点，拖拽调整位置 | Shift+点击多选 | Ctrl+Z 撤销`
           );
         } catch (err) {
-          container.innerHTML = `<div style="color:var(--danger);padding:20px;">渲染错误: ${err.message}</div>`;
-          setStatus('渲染失败：' + err.message);
+          const errorDiv = document.createElement('div');
+          errorDiv.style.cssText = 'color:var(--danger);padding:20px;';
+          errorDiv.textContent = '渲染错误: ' + (err as Error).message;
+          container.replaceChildren(errorDiv);
+          setStatus('渲染失败：' + (err as Error).message);
         }
       };
 
