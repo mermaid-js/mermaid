@@ -1,120 +1,105 @@
-/**
- * 单个节点的位置覆盖数据
- */
+/** Node position override data for a single node. */
 export interface NodeOverride {
-  /** 节点在 SVG viewBox 坐标系中的 X 锚点坐标 */
+  /** X anchor coordinate in SVG viewBox coordinates. */
   x: number;
-  /** 节点在 SVG viewBox 坐标系中的 Y 锚点坐标 */
+  /** Y anchor coordinate in SVG viewBox coordinates. */
   y: number;
-  /** 是否锁定该节点（锁定后不可拖拽） */
+  /** Whether the node is locked (prevents dragging). */
   locked?: boolean;
 }
 
 /**
- * 边的覆盖数据（MVP 阶段预留，暂不实现边的独立拖拽）
+ * Edge override data.
+ * Reserved for MVP — standalone edge dragging is not yet implemented.
  */
 export interface EdgeOverride {
-  /** 手动调整后的路径点列表 */
+  /** Manually adjusted path waypoints. */
   points?: { x: number; y: number }[];
 }
 
-/**
- * 完整的覆盖数据持久化格式
- */
+/** Complete override data persistence format. */
 export interface OverrideData {
-  /** 格式版本号 */
+  /** Schema version number. */
   version: number;
-  /** 使用的布局引擎名称 */
+  /** Layout engine used for positioning. */
   layout: string;
-  /** 节点覆盖数据，key 为用户定义的节点 ID */
+  /** Node and edge override data, keyed by user-defined ID. */
   overrides: {
     nodes: Record<string, NodeOverride>;
     edges: Record<string, EdgeOverride>;
   };
 }
 
-/**
- * MermaidDragEditor 配置选项
- */
+/** MermaidDragEditor configuration options. */
 export interface DragEditorOptions {
-  /** 已渲染的 SVG 元素 */
+  /** The rendered SVG element to attach drag behavior to. */
   svgElement: SVGElement;
-  /** 用户定义的 Mermaid 代码（用于 resetLayout 后重新渲染） */
+  /** User-defined Mermaid source code (used by resetLayout to re-render). */
   mermaidCode?: string;
-  /** 存储键名（用于 localStorage），默认使用 SVG 的 id */
+  /** Storage key for localStorage. Defaults to the SVG element's id. */
   storageKey?: string;
-  /** 最大撤销步数，默认 50 */
+  /** Maximum undo history depth. Defaults to 50. */
   maxUndoDepth?: number;
-  /** 自定义保存回调，返回保存是否成功 */
+  /** Custom save callback. Should return whether the save was successful. */
   onSave?: (data: OverrideData) => Promise<void>;
-  /** 自定义加载回调，返回已保存的数据或 null */
+  /** Custom load callback. Should return saved data or null. */
   onLoad?: () => Promise<OverrideData | null>;
-  /** 自定义渲染函数：传入 mermaidCode，返回渲染后的 SVG 元素 */
+  /** Custom render function: takes mermaidCode and returns a rendered SVG element. */
   renderFn?: (code: string) => Promise<SVGElement>;
 }
 
-/**
- * 节点在 SVG viewBox 坐标系中的位置
- */
+/** A node position in SVG viewBox coordinates. */
 export interface NodePosition {
   x: number;
   y: number;
 }
 
-/**
- * 扫描到的节点信息
- */
+/** Information about a scanned node in the SVG. */
 export interface ScannedNode {
-  /** 对应的 SVG <g> 元素 */
+  /** The corresponding SVG <g> element. */
   element: SVGGElement;
-  /** 用户定义的节点 ID（如 "A", "B", "node-A"） */
+  /** User-defined node ID (e.g. "A", "B", "node-A"). */
   userNodeId: string;
-  /** 当前在 viewBox 坐标系中的 X 锚点坐标 */
+  /** Current X anchor coordinate in viewBox space. */
   currentX: number;
-  /** 当前在 viewBox 坐标系中的 Y 锚点坐标 */
+  /** Current Y anchor coordinate in viewBox space. */
   currentY: number;
-  /** 节点宽度（viewBox 坐标），用于连接点计算 */
+  /** Node width in viewBox coordinates, used for connection point calculation. */
   nodeWidth: number;
-  /** 节点高度（viewBox 坐标），用于连接点计算 */
+  /** Node height in viewBox coordinates, used for connection point calculation. */
   nodeHeight: number;
-  /** 是否锁定该节点 */
+  /** Whether the node is locked. */
   locked: boolean;
 }
 
-/**
- * 撤销/重做历史条目
- */
+/** Undo/redo history entry. */
 export interface HistoryEntry {
-  /** 被移动的节点 ID 列表 */
+  /** The node IDs that were moved. */
   nodeIds: string[];
-  /** 移动前的覆盖数据快照 */
+  /** Snapshot of override data before the move. */
   before: Record<string, NodePosition>;
-  /** 移动后的覆盖数据快照 */
+  /** Snapshot of override data after the move. */
   after: Record<string, NodePosition>;
 }
 
-/**
- * 边模型：记录边的 source/target 节点映射与对应的 SVG path 元素
- */
+/** Edge model: records the source/target node mapping and the corresponding SVG path element. */
 export interface EdgeModel {
-  /** 边的逻辑 ID */
+  /** Logical edge ID. */
   id: string;
-  /** 边的源节点用户 ID */
+  /** Source node user ID. */
   source: string;
-  /** 边的目标节点用户 ID */
+  /** Target node user ID. */
   target: string;
-  /** 对应的 SVG <path> 元素 */
+  /** The corresponding SVG <path> element. */
   pathElement: SVGPathElement;
 }
 
-/**
- * 拖拽开始时的状态快照
- */
+/** Snapshot of drag state at the start of a drag operation. */
 export interface DragSnapshot {
-  /** 被拖拽节点在 viewBox 坐标中的原始位置 */
+  /** Original positions of dragged nodes in viewBox coordinates. */
   originalPositions: Map<string, NodePosition>;
-  /** pointerdown 时在 viewBox 坐标中的位置 */
+  /** Pointer position in viewBox coordinates at pointerdown. */
   startPoint: NodePosition;
-  /** 上一帧已经应用到边路径的位移量 */
+  /** Delta already applied to edge paths in the previous frame. */
   lastAppliedDelta: NodePosition;
 }

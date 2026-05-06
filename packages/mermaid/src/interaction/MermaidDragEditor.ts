@@ -6,7 +6,7 @@ import { OverrideStore } from './OverrideStore.js';
 import { UndoManager } from './UndoManager.js';
 import { EdgeUpdater } from './EdgeUpdater.js';
 
-/** 交互样式，注入到 SVG 的 <style> 中 */
+/** Interaction styles injected into a <style> element inside the SVG. */
 const INTERACTION_STYLES = `
 .node.draggable {
   cursor: grab;
@@ -30,10 +30,11 @@ const INTERACTION_STYLES = `
 `;
 
 /**
- * Mermaid 图表可视化微调主控制器。
+ * Mermaid diagram drag editor — the main orchestrator for interactive
+ * node repositioning.
  *
- * 在不修改 Mermaid 核心源码的前提下，通过对 Mermaid 渲染后的 SVG DOM
- * 做二次增强，实现节点拖拽、位置持久化、撤销/重做等功能。
+ * Enhances a rendered Mermaid SVG DOM (without modifying Mermaid's core)
+ * to support node dragging, position persistence, undo/redo, and more.
  *
  * @example
  * ```typescript
@@ -57,9 +58,9 @@ export class MermaidDragEditor {
   private dragHandler: DragHandler;
   private undoManager: UndoManager;
 
-  /** 节点映射（nodeId → 扫描结果） */
+  /** Node map (nodeId → scan result). */
   private nodeMap = new Map<string, ScannedNode>();
-  /** 自动布局下的基线位置（未应用任何覆盖） */
+  /** Base positions under auto-layout (before applying any overrides). */
   private basePositions = new Map<string, NodePosition>();
 
   constructor(options: DragEditorOptions) {
@@ -67,7 +68,7 @@ export class MermaidDragEditor {
     this.options = options;
 
     const storageKey = options.storageKey ?? this.svgElement.id ?? 'default';
-    const layout = 'dagre'; // 默认布局，后续可从 SVG 检测
+    const layout = 'dagre'; // Default layout; could be detected from SVG later
 
     this.converter = new CoordinateConverter(this.svgElement);
     this.scanner = new NodeScanner(this.svgElement);
@@ -89,8 +90,8 @@ export class MermaidDragEditor {
   }
 
   /**
-   * 启用拖拽交互。
-   * 会自动注入样式、加载保存的覆盖数据，并绑定事件。
+   * Enables drag interaction.
+   * Injects styles, loads saved overrides, and binds events.
    */
   async enable(): Promise<void> {
     if (this.enabled || this.destroyed) {
@@ -112,8 +113,8 @@ export class MermaidDragEditor {
   }
 
   /**
-   * 禁用拖拽交互。
-   * 解绑事件但保留样式和覆盖数据。
+   * Disables drag interaction.
+   * Unbinds events but retains styles and override data.
    */
   disable(): void {
     if (!this.enabled) {
@@ -123,24 +124,21 @@ export class MermaidDragEditor {
     this.enabled = false;
   }
 
-  /**
-   * 撤销上一步拖拽操作
-   */
+  /** Undoes the last drag operation. */
   undo(): void {
     this.undoManager.undo();
     void this.saveCurrentState();
   }
 
-  /**
-   * 重做被撤销的拖拽操作
-   */
+  /** Redoes the previously undone drag operation. */
   redo(): void {
     this.undoManager.redo();
     void this.saveCurrentState();
   }
 
   /**
-   * 恢复自动布局（清除所有覆盖，触发重新渲染）
+   * Resets to auto-layout (clears all overrides and triggers re-render if
+   * a renderFn was provided).
    */
   async resetLayout(): Promise<void> {
     this.store.clear();
@@ -151,13 +149,13 @@ export class MermaidDragEditor {
       this.disable();
       const newSvg = await this.options.renderFn(this.options.mermaidCode);
 
-      // 替换旧 SVG
+      // Replace the old SVG
       if (this.svgElement.parentNode) {
         this.svgElement.parentNode.replaceChild(newSvg, this.svgElement);
       }
 
       this.svgElement = newSvg;
-      // 重新初始化所有依赖 SVG 的模块
+      // Re-initialize all SVG-dependent modules
       this.converter = new CoordinateConverter(this.svgElement);
       this.scanner = new NodeScanner(this.svgElement);
       this.edgeUpdater = new EdgeUpdater(this.svgElement);
@@ -179,30 +177,22 @@ export class MermaidDragEditor {
     }
   }
 
-  /**
-   * 选中指定节点
-   */
+  /** Selects a single node, clearing any previous selection. */
   selectNode(nodeId: string): void {
     this.dragHandler.selectNode(nodeId);
   }
 
-  /**
-   * 多选节点
-   */
+  /** Selects multiple nodes. */
   selectNodes(nodeIds: string[]): void {
     this.dragHandler.replaceSelection(nodeIds);
   }
 
-  /**
-   * 清除所有选中
-   */
+  /** Clears the current selection. */
   clearSelection(): void {
     this.dragHandler.clearSelection();
   }
 
-  /**
-   * 获取当前所有覆盖数据
-   */
+  /** Returns all current override data. */
   getOverrides(): OverrideData {
     return {
       version: 1,
@@ -214,9 +204,7 @@ export class MermaidDragEditor {
     };
   }
 
-  /**
-   * 导入覆盖数据并立即应用到当前 SVG
-   */
+  /** Imports override data and applies it to the current SVG immediately. */
   async importOverrides(data: OverrideData): Promise<void> {
     this.store.replace(data);
     this.undoManager.clear();
@@ -227,11 +215,11 @@ export class MermaidDragEditor {
   }
 
   /**
-   * 手动设置节点位置并持久化。
+   * Manually sets a node's position and persists it.
    *
-   * @param nodeId - 节点 ID
-   * @param x - 绝对 viewBox X 坐标
-   * @param y - 绝对 viewBox Y 坐标
+   * @param nodeId - Node ID
+   * @param x - Absolute viewBox X coordinate
+   * @param y - Absolute viewBox Y coordinate
    */
   setNodePosition(nodeId: string, x: number, y: number): void {
     const scanned = this.nodeMap.get(nodeId);
@@ -252,10 +240,10 @@ export class MermaidDragEditor {
   }
 
   /**
-   * 锁定/解锁节点
+   * Locks or unlocks a node.
    *
-   * @param nodeId - 节点 ID
-   * @param locked - 是否锁定
+   * @param nodeId - Node ID
+   * @param locked - Whether to lock the node
    */
   setNodeLocked(nodeId: string, locked: boolean): void {
     const scanned = this.nodeMap.get(nodeId);
@@ -273,9 +261,7 @@ export class MermaidDragEditor {
     void this.store.save();
   }
 
-  /**
-   * 销毁编辑器，解绑所有事件，清理资源
-   */
+  /** Destroys the editor: unbinds events and cleans up resources. */
   destroy(): void {
     if (this.destroyed) {
       return;
@@ -286,10 +272,11 @@ export class MermaidDragEditor {
     this.destroyed = true;
   }
 
-  // ==================== 内部方法 ====================
+  // ==================== Internal methods ====================
 
   /**
-   * 拖拽完成后的处理：保存覆盖数据并推入历史
+   * Handler called after a drag completes: saves overrides and pushes to
+   * undo history.
    */
   private onDragFinished(updatedNodes: { nodeId: string; x: number; y: number }[]): void {
     if (updatedNodes.length === 0) {
@@ -318,19 +305,17 @@ export class MermaidDragEditor {
     void this.saveCurrentState();
   }
 
-  /**
-   * 获取节点的自动布局位置（从当前 SVG 中读取，优先读覆盖前的位置）
-   */
+  /** Gets a node's auto-layout position from the baseline snapshot. */
   private getAutoLayoutPosition(nodeId: string): NodePosition {
     return this.basePositions.get(nodeId) ?? { x: 0, y: 0 };
   }
 
   /**
-   * 将给定绝对位置应用到节点 DOM。
-   * undo/redo 和外部 restore 均通过此方法恢复节点位置。
+   * Applies absolute positions to node DOM elements.
+   * Used by undo, redo, and external restore operations.
    *
-   * @param positions - nodeId 到 (x, y) 的绝对 viewBox 坐标映射
-   * @param nodeMap - 当前节点映射
+   * @param positions - nodeId to (x, y) absolute viewBox coordinate mapping
+   * @param nodeMap - Current node map
    */
   private applyPositions(
     positions: Record<string, NodePosition>,
@@ -358,18 +343,14 @@ export class MermaidDragEditor {
     this.edgeUpdater.updateEdgesForNodes(updatedNodeIds);
   }
 
-  /**
-   * 刷新节点映射（重新扫描 SVG）
-   */
+  /** Refreshes the node map by re-scanning the SVG. */
   private refreshNodeMap(): void {
     this.nodeMap = this.scanner.scan();
     this.dragHandler?.updateNodeMap(this.nodeMap);
     this.undoManager?.updateNodeMap(this.nodeMap);
   }
 
-  /**
-   * 保存当前覆盖状态
-   */
+  /** Saves the current override state. */
   private async saveCurrentState(): Promise<void> {
     await this.store.save();
   }
@@ -434,9 +415,7 @@ export class MermaidDragEditor {
     this.store.set(nodeId, position.x, position.y, locked);
   }
 
-  /**
-   * 注入交互 CSS 样式到 SVG
-   */
+  /** Injects interaction CSS styles into the SVG. */
   private injectStyles(): void {
     const existing = this.svgElement.querySelector('style#mermaid-drag-styles');
     if (existing) {
@@ -455,18 +434,14 @@ export class MermaidDragEditor {
     }
   }
 
-  /**
-   * 给所有节点添加 draggable class
-   */
+  /** Adds the 'draggable' CSS class to all nodes. */
   private addDraggableClass(): void {
     for (const [, scanned] of [...this.nodeMap]) {
       scanned.element.classList.add('draggable');
     }
   }
 
-  /**
-   * 移除所有节点的 draggable class
-   */
+  /** Removes interaction CSS classes from all nodes. */
   private removeDraggableClass(): void {
     for (const [, scanned] of [...this.nodeMap]) {
       scanned.element.classList.remove('draggable', 'selected', 'dragging', 'locked');

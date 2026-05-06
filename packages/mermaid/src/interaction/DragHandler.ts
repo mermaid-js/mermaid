@@ -4,16 +4,16 @@ import type { NodeScanner } from './NodeScanner.js';
 import { getParentAccumulatedOffset } from './NodeScanner.js';
 import type { EdgeUpdater } from './EdgeUpdater.js';
 
-/** 判断鼠标是否发生了有效移动的阈值（像素） */
+/** Pixel threshold to distinguish a click from a drag. */
 const DRAG_THRESHOLD = 3;
 
 /**
- * 拖拽处理器 —— 管理 pointer 事件的绑定与拖拽状态。
+ * Drag handler - manages pointer event binding and drag state.
  *
- * 事件流：
- *   pointerdown → 记录起点，标记拖拽中，setPointerCapture
- *   pointermove → 计算偏移量，更新节点 transform 和关联边
- *   pointerup   → 记录终点，清理拖拽状态
+ * Event flow:
+ *   pointerdown → record start, mark dragging, setPointerCapture
+ *   pointermove → calc delta, update node transforms and connected edges
+ *   pointerup   → record end, clean up drag state
  */
 export class DragHandler {
   private svgElement: SVGElement;
@@ -21,20 +21,20 @@ export class DragHandler {
   private scanner: NodeScanner;
   private edgeUpdater: EdgeUpdater;
 
-  /** 节点映射（nodeId → 扫描结果） */
+  /** Node map (nodeId → scan result). */
   private nodeMap: Map<string, ScannedNode>;
-  /** 拖拽开始时的状态快照 */
+  /** Snapshot of drag state at start. */
   private dragSnapshot: DragSnapshot | null = null;
-  /** 当前选中的节点 ID 集合 */
+  /** Currently selected node IDs. */
   private selectedNodes = new Set<string>();
-  /** pointerdown 时的 pointerId */
+  /** Pointer ID from the pointerdown event. */
   private activePointerId: number | null = null;
-  /** 是否已经超过拖拽阈值 */
+  /** Whether the drag threshold has been exceeded. */
   private hasMoved = false;
-  /** requestAnimationFrame 的节流标志 */
+  /** requestAnimationFrame handle for throttling. */
   private rafId: number | null = null;
 
-  /** 拖拽结束回调，返回移动的节点及其新位置 */
+  /** Callback invoked on drag end with moved nodes and their new positions. */
   private onDragEnd?: (updatedNodes: { nodeId: string; x: number; y: number }[]) => void;
 
   constructor(
@@ -51,36 +51,28 @@ export class DragHandler {
     this.edgeUpdater = edgeUpdater;
   }
 
-  /**
-   * 设置拖拽结束回调
-   */
+  /** Sets the drag-end callback. */
   setOnDragEnd(cb: (updatedNodes: { nodeId: string; x: number; y: number }[]) => void): void {
     this.onDragEnd = cb;
   }
 
-  /**
-   * 更新节点映射（如 resetLayout 后）
-   */
+  /** Updates the node map reference (e.g. after resetLayout). */
   updateNodeMap(nodeMap: Map<string, ScannedNode>): void {
     this.nodeMap = nodeMap;
     this.selectedNodes = new Set([...this.selectedNodes].filter((nodeId) => nodeMap.has(nodeId)));
     this.applySelectionStyles();
   }
 
-  // ==================== 选中管理 ====================
+  // ==================== Selection management ====================
 
-  /**
-   * 选中指定节点
-   */
+  /** Selects a single node, clearing any previous selection. */
   selectNode(nodeId: string): void {
     this.clearSelection();
     this.selectedNodes.add(nodeId);
     this.applySelectionStyles();
   }
 
-  /**
-   * 用一组节点替换当前选中集
-   */
+  /** Replaces the current selection with a set of node IDs. */
   replaceSelection(nodeIds: Iterable<string>): void {
     this.selectedNodes.clear();
     for (const nodeId of nodeIds) {
@@ -91,22 +83,18 @@ export class DragHandler {
     this.applySelectionStyles();
   }
 
-  /**
-   * 清除所有选中
-   */
+  /** Clears the current selection. */
   clearSelection(): void {
     this.selectedNodes.clear();
     this.applySelectionStyles();
   }
 
-  /**
-   * 获取当前选中的节点集合
-   */
+  /** Returns the currently selected node IDs. */
   getSelectedNodes(): Set<string> {
     return this.selectedNodes;
   }
 
-  /** 应用选中样式 */
+  /** Applies CSS classes for selected nodes. */
   private applySelectionStyles(): void {
     for (const [nodeId, scanned] of [...this.nodeMap]) {
       if (this.selectedNodes.has(nodeId)) {
@@ -117,23 +105,19 @@ export class DragHandler {
     }
   }
 
-  // ==================== 事件绑定 ====================
+  // ==================== Event binding ====================
 
-  /**
-   * 绑定所有指针事件到 SVG 元素
-   */
+  /** Binds all pointer events to the SVG element. */
   bind(): void {
     this.svgElement.addEventListener('pointerdown', this.handlePointerDown);
     this.svgElement.addEventListener('pointermove', this.handlePointerMove);
     this.svgElement.addEventListener('pointerup', this.handlePointerUp);
     this.svgElement.addEventListener('pointercancel', this.handlePointerUp);
-    // 阻止浏览器默认的触摸滚动
+    // Prevent default touch scrolling
     this.svgElement.style.touchAction = 'none';
   }
 
-  /**
-   * 解绑所有指针事件
-   */
+  /** Unbinds all pointer events. */
   unbind(): void {
     this.svgElement.removeEventListener('pointerdown', this.handlePointerDown);
     this.svgElement.removeEventListener('pointermove', this.handlePointerMove);
@@ -146,7 +130,7 @@ export class DragHandler {
     }
   }
 
-  // ==================== 事件处理 ====================
+  // ==================== Event handlers ====================
 
   private handlePointerDown = (event: PointerEvent): void => {
     if (event.button !== 0) {
@@ -166,7 +150,7 @@ export class DragHandler {
       return;
     }
 
-    // Shift+点击 = 切换多选
+    // Shift+click toggles multi-select
     if (event.shiftKey) {
       if (this.selectedNodes.has(nodeId)) {
         this.selectedNodes.delete(nodeId);
@@ -180,7 +164,7 @@ export class DragHandler {
         return;
       }
     } else {
-      // 普通点击
+      // Regular click
       if (!this.selectedNodes.has(nodeId)) {
         this.selectedNodes.clear();
         this.selectedNodes.add(nodeId);
@@ -194,7 +178,7 @@ export class DragHandler {
 
     const viewBoxPoint = this.converter.clientToViewBox(event.clientX, event.clientY);
 
-    // 记录所有选中节点的原始位置
+    // Record original positions of all selected nodes
     const originalPositions = new Map<string, { x: number; y: number }>();
     for (const selId of [...this.selectedNodes]) {
       const selNode = this.nodeMap.get(selId);
@@ -218,10 +202,10 @@ export class DragHandler {
     try {
       this.svgElement.setPointerCapture(event.pointerId);
     } catch {
-      // 部分浏览器可能不支持 setPointerCapture on SVG
+      // Some browsers may not support setPointerCapture on SVG
     }
 
-    // 添加拖拽样式
+    // Add dragging style
     for (const selId of [...this.selectedNodes]) {
       const selNode = this.nodeMap.get(selId);
       if (selNode) {
@@ -240,13 +224,13 @@ export class DragHandler {
     const deltaX = viewBoxPoint.x - this.dragSnapshot.startPoint.x;
     const deltaY = viewBoxPoint.y - this.dragSnapshot.startPoint.y;
 
-    // 判断是否超过拖拽阈值
+    // Check if we've exceeded the drag threshold
     if (!this.hasMoved && Math.hypot(deltaX, deltaY) < DRAG_THRESHOLD) {
       return;
     }
     this.hasMoved = true;
 
-    // 使用 requestAnimationFrame 节流
+    // Throttle with requestAnimationFrame
     if (this.rafId !== null) {
       return;
     }
@@ -283,7 +267,7 @@ export class DragHandler {
       // ignore
     }
 
-    // 移除拖拽样式
+    // Remove dragging style
     for (const selId of [...this.selectedNodes]) {
       const selNode = this.nodeMap.get(selId);
       if (selNode) {
@@ -313,12 +297,14 @@ export class DragHandler {
   };
 
   /**
-   * 将位移应用到所有选中节点及其关联边。
+   * Applies the delta translation to all selected nodes and their
+   * connected edges.
    *
-   * 坐标转换说明：
-   *   - original.x/y（dragSnapshot 中）是 viewBox 绝对坐标
-   *   - 但节点 DOM 的 transform 是相对于其父级 <g> 的本地坐标
-   *   - 因此写入 DOM 前需要减去祖先累积偏移量
+   * Coordinate conversion note:
+   *   - original.x/y (from dragSnapshot) are viewBox absolute coordinates
+   *   - Node DOM transforms are local coordinates relative to the parent <g>
+   *   - Therefore we subtract ancestor accumulated offsets before writing
+   *     to the DOM
    */
   private applyDragTransform(deltaX: number, deltaY: number): void {
     if (!this.dragSnapshot) {
@@ -348,7 +334,7 @@ export class DragHandler {
       movedNodeIds.add(nodeId);
     }
 
-    // 节点位置已经在当前帧内落地，边直接按当前 nodeMap 重算即可。
+    // Node positions have been committed this frame; recompute edges directly
     this.edgeUpdater.updateEdgesForNodes(movedNodeIds);
 
     this.dragSnapshot.lastAppliedDelta = { x: deltaX, y: deltaY };

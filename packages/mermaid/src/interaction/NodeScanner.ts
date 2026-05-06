@@ -1,8 +1,5 @@
-import type { ScannedNode } from './types.js';
-
-/**
- * 从节点 SVG <g> 元素的 transform 属性中解析 translate 坐标。
- * 格式: "translate(123.45, 67.89)"
+/** Parses the translate coordinates from a node SVG <g> element's transform attribute.
+ * Format: "translate(123.45, 67.89)"
  */
 function parseTransform(element: SVGGElement): { x: number; y: number } | null {
   const transform = element.getAttribute('transform');
@@ -20,15 +17,12 @@ function parseTransform(element: SVGGElement): { x: number; y: number } | null {
 }
 
 /**
- * 从 SVG DOM ID 中提取用户定义的节点 ID。
+ * Extracts the user-defined node ID from an SVG DOM ID.
  *
- * DOM ID 格式: "diagramId-flowchart-nodeId-counter"
- * 例如: "mermaid-0-flowchart-A-0" → "A"
- *       "mermaid-0-flowchart-node-A-0" → "node-A"
- *
- * @param domId - SVG 元素的 DOM ID
- * @param diagramId - SVG 元素的 diagramId（如 "mermaid-0"）
- * @returns 用户节点 ID，如果无法提取则返回 null
+ * DOM ID format: "diagramId-flowchart-nodeId-counter"
+ * Examples:
+ *   "mermaid-0-flowchart-A-0"       → "A"
+ *   "mermaid-0-flowchart-node-A-0"  → "node-A"
  */
 export function extractUserNodeId(domId: string, diagramId: string): string | null {
   const directPrefix = `${diagramId}-flowchart-`;
@@ -55,15 +49,13 @@ export function extractUserNodeId(domId: string, diagramId: string): string | nu
 }
 
 /**
- * 累加从元素到 SVG 根元素之间所有祖先 <g> 的 translate 偏移。
+ * Accumulates the translate offset of all ancestor <g> elements between
+ * the given element and the SVG root.
  *
- * 这对于递归渲染的 cluster（子图）至关重要，因为 cluster 内的子节点
- * 坐标是相对于 cluster 自身的 transform 的，需要累加祖先偏移才能获得
- * 全局 viewBox 坐标。
- *
- * @param element - 要计算的元素
- * @param svgElement - SVG 根元素
- * @returns 所有祖先的累积 translate 偏移量
+ * This is critical for recursively rendered clusters (subgraphs), because
+ * child nodes inside a cluster are positioned relative to the cluster's
+ * own transform.  The ancestor offsets must be summed to obtain the
+ * absolute viewBox coordinate.
  */
 export function getParentAccumulatedOffset(
   element: SVGGElement,
@@ -88,14 +80,11 @@ export function getParentAccumulatedOffset(
 }
 
 /**
- * 获取节点的全局 viewBox 坐标（累加所有祖先 transform）。
+ * Gets a node's absolute viewBox coordinate by accumulating all ancestor
+ * transforms.
  *
- * 节点的自身 transform 加上所有祖先 <g> 的 translate 偏移，
- * 得到节点 en SVG viewBox 坐标系中的绝对位置。
- *
- * @param element - 节点 <g> 元素
- * @param svgElement - SVG 根元素
- * @returns 全局 viewBox 坐标，如果无法解析则返回 null
+ * The node's own transform plus all ancestor <g> translate offsets yields
+ * the node's absolute position in the SVG viewBox coordinate space.
  */
 export function getAccumulatedPosition(
   element: SVGGElement,
@@ -114,7 +103,8 @@ export function getAccumulatedPosition(
 }
 
 /**
- * SVG 节点扫描器 —— 扫描已渲染的 Mermaid SVG，提取所有可拖拽节点。
+ * SVG node scanner - scans a rendered Mermaid SVG and extracts all
+ * draggable node information.
  */
 export class NodeScanner {
   private svgElement: SVGElement;
@@ -124,13 +114,14 @@ export class NodeScanner {
   }
 
   /**
-   * 扫描 SVG 中所有节点，建立 nodeId → 节点信息的映射。
+   * Scans all nodes in the SVG and builds a nodeId → node-info map.
    *
-   * 定位逻辑：
-   *   - 遍历所有 <g class="nodes"> 容器（兼容递归渲染的 cluster）
-   *   - 遍历容器中所有带有 class "node" 的 <g> 子元素
-   *   - 使用 getAccumulatedPosition 获取全局 viewBox 坐标
-   *   - 按 userNodeId 去重，避免重复扫描
+   * Strategy:
+   *   - Iterates over all <g class="nodes"> containers (compatible with
+   *     recursively rendered clusters)
+   *   - Finds all <g> children with class "node" inside each container
+   *   - Uses getAccumulatedPosition to get the absolute viewBox coordinate
+   *   - Deduplicates by userNodeId
    */
   scan(): Map<string, ScannedNode> {
     const nodes = new Map<string, ScannedNode>();
@@ -174,7 +165,7 @@ export class NodeScanner {
             nodeHeight = bbox.height;
           }
         } catch {
-          // getBBox 失败时使用默认值
+          // Use defaults when getBBox fails
         }
 
         nodes.set(userNodeId, {
@@ -193,12 +184,9 @@ export class NodeScanner {
   }
 
   /**
-   * 根据指定的节点元素向上查找其所属的用户节点 ID。
-   * 用户可能点击了节点内部的 <rect>、<foreignObject> 等子元素。
-   *
-   * @param target - 用户交互的 DOM 目标元素
-   * @param _nodeMap - 当前节点映射（暂未使用）
-   * @returns 用户节点 ID，如果目标不在可拖拽节点内则返回 null
+   * Walks up the DOM tree from a target element to find the containing
+   * node's user ID.  Handles cases where the user clicks on a child
+   * element like <rect> or <foreignObject> inside the node <g>.
    */
   findNodeIdFromTarget(
     target: EventTarget | null,

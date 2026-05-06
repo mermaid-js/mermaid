@@ -6,11 +6,11 @@ const CURRENT_VERSION = 1;
 const LOCAL_STORAGE_PREFIX = 'mermaid-override-';
 
 /**
- * 覆盖数据存储管理器。
+ * Override data storage manager.
  *
- * 存储策略（两级回退）：
- *   1. 如果设置了 onSave / onLoad 回调，优先使用
- *   2. 否则使用 localStorage，key 为 "mermaid-override-storageKey"
+ * Storage strategy (two-level fallback):
+ *   1. If onSave / onLoad callbacks are provided, use them first.
+ *   2. Otherwise fall back to localStorage with key "mermaid-override-<storageKey>".
  */
 export class OverrideStore {
   private storageKey: string;
@@ -31,44 +31,32 @@ export class OverrideStore {
     this.onLoad = onLoad;
   }
 
-  /**
-   * 记录单个节点的覆盖坐标
-   */
+  /** Records the override coordinates for a single node. */
   set(nodeId: string, x: number, y: number, locked?: boolean): void {
     this.overrides[nodeId] = { x, y, locked };
   }
 
-  /**
-   * 获取单个节点的覆盖坐标
-   */
+  /** Gets the override coordinates for a single node. */
   get(nodeId: string): NodeOverride | null {
     return this.overrides[nodeId] ?? null;
   }
 
-  /**
-   * 获取所有覆盖数据
-   */
+  /** Returns a copy of all override data. */
   getAll(): Record<string, NodeOverride> {
     return { ...this.overrides };
   }
 
-  /**
-   * 删除单个节点的覆盖数据
-   */
+  /** Deletes the override data for a single node. */
   delete(nodeId: string): void {
     delete this.overrides[nodeId];
   }
 
-  /**
-   * 清除所有覆盖数据
-   */
+  /** Clears all override data. */
   clear(): void {
     this.overrides = {};
   }
 
-  /**
-   * 直接用外部数据替换当前覆盖数据
-   */
+  /** Replaces current overrides with external data. */
   replace(data: OverrideData | null): void {
     if (data?.overrides?.nodes) {
       this.overrides = { ...data.overrides.nodes };
@@ -79,9 +67,7 @@ export class OverrideStore {
     this.clear();
   }
 
-  /**
-   * 构建完整 OverrideData 对象
-   */
+  /** Builds a complete OverrideData object from the current state. */
   private buildOverrideData(): OverrideData {
     return {
       version: CURRENT_VERSION,
@@ -93,9 +79,7 @@ export class OverrideStore {
     };
   }
 
-  /**
-   * 持久化覆盖数据到存储
-   */
+  /** Persists override data to storage. */
   async save(): Promise<void> {
     const data = this.buildOverrideData();
 
@@ -111,9 +95,7 @@ export class OverrideStore {
     }
   }
 
-  /**
-   * 从存储加载覆盖数据
-   */
+  /** Loads override data from storage. */
   async load(): Promise<OverrideData | null> {
     let data: OverrideData | null = null;
 
@@ -136,16 +118,14 @@ export class OverrideStore {
   }
 
   /**
-   * 将已保存的覆盖数据应用到当前 SVG。
+   * Applies saved overrides to the current SVG.
    *
-   * 恢复逻辑：
-   *   1. 覆盖数据存储的是绝对 viewBox 坐标
-   *   2. 应用到 DOM 前需转换为节点自身的本地坐标（减去祖先偏移）
-   *   3. 如果源码中已删除该节点，忽略对应覆盖
-   *   4. 新增的节点（无覆盖数据）保留自动布局位置
-   *
-   * @param nodeMap - 当前节点映射
-   * @param svgElement - SVG 根元素（用于计算祖先偏移）
+   * Recovery logic:
+   *   1. Overrides store absolute viewBox coordinates
+   *   2. Convert to node-local coordinates (subtract ancestor offsets) before
+   *      applying to the DOM
+   *   3. Skip overrides for nodes that no longer exist in the source
+   *   4. New nodes (no override) retain their auto-layout position
    */
   applyTo(nodeMap: Map<string, ScannedNode>, svgElement: SVGElement): void {
     for (const [, scanned] of [...nodeMap]) {

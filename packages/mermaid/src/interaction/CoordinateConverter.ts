@@ -1,7 +1,7 @@
 /**
- * 坐标转换器 —— 在屏幕像素坐标和 SVG viewBox 坐标之间转换。
+ * Coordinate converter — translates between screen pixel coordinates and SVG viewBox coordinates.
  *
- * 核心公式：
+ * Core formula:
  *   viewBoxX = (clientX - svgRect.left) * (viewBox.width / svgRect.width) + viewBox.x
  *   viewBoxY = (clientY - svgRect.top)  * (viewBox.height / svgRect.height) + viewBox.y
  */
@@ -12,9 +12,7 @@ export class CoordinateConverter {
     this.svgElement = svgElement as SVGSVGElement;
   }
 
-  /**
-   * 将浏览器 clientX/clientY 转换为 SVG viewBox 坐标系中的坐标
-   */
+  /** Converts browser clientX/clientY to SVG viewBox coordinates. */
   clientToViewBox(clientX: number, clientY: number): { x: number; y: number } {
     const svgRect = this.svgElement.getBoundingClientRect();
     const viewBox = this.svgElement.viewBox.baseVal;
@@ -32,9 +30,7 @@ export class CoordinateConverter {
     };
   }
 
-  /**
-   * 将 SVG viewBox 坐标转换为屏幕 clientX/clientY
-   */
+  /** Converts SVG viewBox coordinates to screen clientX/clientY. */
   viewBoxToClient(viewBoxX: number, viewBoxY: number): { x: number; y: number } {
     const svgRect = this.svgElement.getBoundingClientRect();
     const viewBox = this.svgElement.viewBox.baseVal;

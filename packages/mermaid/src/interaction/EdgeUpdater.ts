@@ -9,14 +9,16 @@ interface EdgeParts {
 }
 
 /**
- * 从 class 属性中提取 LS_xxx / LS-xxx 或 LE_xxx / LE-xxx 对应的用户节点 ID。
+ * Extracts the user-defined node ID from LS_xxx / LS-xxx or LE_xxx / LE-xxx
+ * class markers.
  *
- * Mermaid 渲染后的 class 常见形态：
+ * Common rendered class forms:
  *   - "flowchart-link LS_A LE_B"
  *   - "flowchart-link LS-A LE-B"
  *   - "flowchart-link LS_A-0 LE_B-0"
  *
- * 末尾数字是 Mermaid 内部计数器，需要去除以恢复用户节点 ID。
+ * The trailing counter suffix is a Mermaid internal number and must be
+ * stripped to recover the user-defined node ID.
  */
 export function extractEdgeNodeId(rawId: string): string | null {
   if (!rawId) {
@@ -37,10 +39,12 @@ export function extractEdgeNodeId(rawId: string): string | null {
 }
 
 /**
- * 计算边连接到节点外框边缘的交点。
+ * Calculates the intersection point of an edge with the bounding box of a
+ * node.
  *
- * 这里使用节点中心到目标中心的射线，与节点外框做一次轻量相交计算。
- * 不做避障，也不依赖 Mermaid 布局引擎，只根据节点当前矩形范围推导。
+ * Uses a ray from the node center toward the target center and performs a
+ * lightweight intersection with the node's rectangular bounds.  No
+ * obstacle avoidance; does not depend on the Mermaid layout engine.
  */
 export function getConnectionPoint(
   from: { x: number; y: number; nodeWidth: number; nodeHeight: number },
@@ -69,7 +73,7 @@ export function getConnectionPoint(
   };
 }
 
-function buildEdgePathD(
+function buildEdgePathData(
   start: { x: number; y: number },
   end: { x: number; y: number },
   sourceCenter: { x: number; y: number },
@@ -85,16 +89,16 @@ function buildEdgePathD(
   const ux = edgeDx / edgeDist;
   const uy = edgeDy / edgeDist;
 
-  // 沿边方向的控制点距离（约 1/3 边长）
+  // Control point distance along the edge direction (~1/3 edge length)
   const cpDist = edgeDist * 0.35;
 
-  // 根据 center-to-center 方向决定弧线弯曲侧
+  // Determine curve direction from center-to-center vector cross product
   const ccDx = targetCenter.x - sourceCenter.x;
   const ccDy = targetCenter.y - sourceCenter.y;
   const cross = ux * ccDy - uy * ccDx;
   const sign = cross >= 0 ? 1 : -1;
 
-  // 轻微弧线偏移（沿垂直于边的方向）
+  // Slight arc offset perpendicular to the edge direction
   const curveOffset = Math.min(edgeDist * 0.1, 10) * sign;
   const px = -uy;
   const py = ux;
@@ -183,7 +187,7 @@ function resolveNodeId(rawId: string | null, nodeMap: Map<string, ScannedNode>):
     return extracted;
   }
 
-  // 尝试处理 dagre 内部前缀格式 (如 flowchart-A-0)
+  // Try to handle dagre internal prefix format (e.g. flowchart-A-0)
   const flowPrefix = 'flowchart-';
   if (extracted?.startsWith(flowPrefix)) {
     const inner = extracted.slice(flowPrefix.length);
@@ -295,26 +299,28 @@ function resolveEdgeEndpoints(
 }
 
 /**
- * SVG 边更新器 —— 基于节点当前位置重算受影响边的 path d。
+ * SVG edge updater — recomputes edge path data based on current node
+ * positions.
  *
- * 设计约束：
- * 1. 不重新渲染 Mermaid
- * 2. 不重新执行 layout
- * 3. 只修改现有 path 的 d 属性，保留 marker / stroke / class / style
+ * Design constraints:
+ * 1. Does not re-render the Mermaid diagram
+ * 2. Does not re-run layout
+ * 3. Only modifies the `d` attribute of existing paths; preserves
+ *    marker, stroke, class, and style attributes
  */
 export class EdgeUpdater {
   private svgElement: SVGElement;
-  /** edgeId -\> EdgeModel */
+  /** edgeId → EdgeModel */
   private edgeMap = new Map<string, EdgeModel>();
-  /** edgeId -\> 对应 path 元素 */
+  /** edgeId → corresponding SVG path element */
   private edgePathMap = new Map<string, SVGPathElement>();
-  /** nodeId -\> 相关 edgeId 集合 */
+  /** nodeId → set of connected edge IDs */
   private nodeToEdgesMap = new Map<string, Set<string>>();
-  /** 当前节点映射引用 */
+  /** Reference to the current node map. */
   private nodeMap: Map<string, ScannedNode> | null = null;
-  /** rAF 句柄 */
-  private rAFId: number | null = null;
-  /** 本帧待更新节点 */
+  /** Animation frame handle for throttling batch updates. */
+  private rafId: number | null = null;
+  /** Set of node IDs pending update this frame. */
   private pendingNodes = new Set<string>();
 
   constructor(svgElement: SVGElement) {
@@ -322,11 +328,13 @@ export class EdgeUpdater {
   }
 
   /**
-   * 从 Mermaid 渲染后的 SVG 构建边关系映射。
+   * Builds the edge relationship map from the rendered Mermaid SVG.
    *
-   * 优先读取 Mermaid 渲染时写入的 data-source / data-target。
-   * 兼容旧版 `LS_*` / `LE_*` 以及 `LS-*` / `LE-*` class，
-   * 最后回退解析自动生成的 `L_<source>_<target>_<counter>` 边 ID。
+   * Prefers the `data-source` / `data-target` attributes written during
+   * Mermaid rendering.  Falls back to legacy `LS_*` / `LE_*` and
+   * `LS-*` / `LE-*` class markers, and finally attempts to infer
+   * endpoints from auto-generated edge IDs of the form
+   * `L_<source>_<target>_<counter>`.
    */
   buildEdgeMap(nodeMap: Map<string, ScannedNode>): void {
     this.nodeMap = nodeMap;
@@ -373,9 +381,7 @@ export class EdgeUpdater {
     this.nodeToEdgesMap.get(nodeId)!.add(edgeId);
   }
 
-  /**
-   * 仅更新单条边的 d 属性。
-   */
+  /** Updates the `d` attribute of a single edge path. */
   updateEdgePath(edgeId: string): void {
     const edge = this.edgeMap.get(edgeId);
     const pathElement = this.edgePathMap.get(edgeId);
@@ -413,7 +419,7 @@ export class EdgeUpdater {
       sourceCenter
     );
 
-    pathElement.setAttribute('d', buildEdgePathD(start, end, sourceCenter, targetCenter));
+    pathElement.setAttribute('d', buildEdgePathData(start, end, sourceCenter, targetCenter));
     this.updateEdgeLabel(edge);
   }
 
@@ -459,9 +465,7 @@ export class EdgeUpdater {
     }
   }
 
-  /**
-   * 立即更新一组节点相关的全部边，自动去重。
-   */
+  /** Immediately updates all edges connected to the given nodes (deduplicated). */
   updateEdgesForNodes(nodeIds: Iterable<string>): void {
     const affectedEdgeIds = new Set<string>();
 
@@ -481,31 +485,25 @@ export class EdgeUpdater {
     }
   }
 
-  /**
-   * 全量更新所有边。
-   *
-   * 用于应用 override、撤销重做、恢复布局等场景。
-   */
+  /** Updates all edges. Used after applying overrides, undo/redo, or restoring layout. */
   updateAllEdges(): void {
     for (const edgeId of this.edgeMap.keys()) {
       this.updateEdgePath(edgeId);
     }
   }
 
-  /**
-   * 通过 rAF 节流边更新。
-   */
+  /** Schedules edge updates throttled via requestAnimationFrame. */
   scheduleEdgeUpdate(nodeIds: Iterable<string>): void {
     for (const nodeId of nodeIds) {
       this.pendingNodes.add(nodeId);
     }
 
-    if (this.rAFId !== null) {
+    if (this.rafId !== null) {
       return;
     }
 
-    this.rAFId = requestAnimationFrame(() => {
-      this.rAFId = null;
+    this.rafId = requestAnimationFrame(() => {
+      this.rafId = null;
       const pendingNodes = new Set(this.pendingNodes);
       this.pendingNodes.clear();
       this.updateEdgesForNodes(pendingNodes);
@@ -513,14 +511,13 @@ export class EdgeUpdater {
   }
 
   /**
-   * 立即刷新所有挂起的边更新。
-   *
-   * 主要用于 pointerup 时确保最后一帧边路径已经落地。
+   * Immediately flushes all pending edge updates.
+   * Used on pointerup to ensure the final frame's edge paths are committed.
    */
   flushScheduledUpdate(): void {
-    if (this.rAFId !== null) {
-      cancelAnimationFrame(this.rAFId);
-      this.rAFId = null;
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
     }
 
     if (this.pendingNodes.size === 0) {
@@ -533,7 +530,7 @@ export class EdgeUpdater {
   }
 
   /**
-   * 兼容旧调用名：现在语义是“先取消 rAF，再立刻刷新挂起更新”。
+   * Legacy name — now behaves identically to flushScheduledUpdate().
    */
   cancelScheduledUpdate(): void {
     this.flushScheduledUpdate();

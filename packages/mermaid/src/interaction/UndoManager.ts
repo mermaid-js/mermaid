@@ -1,9 +1,10 @@
 import type { HistoryEntry, NodePosition, ScannedNode } from './types.js';
 
 /**
- * 撤销/重做管理器。
+ * Undo/redo manager.
  *
- * 固定深度历史：当历史条目超过 maxDepth 时，从头部移除最旧条目。
+ * Fixed-depth history: when entries exceed maxDepth, the oldest entry is
+ * shifted from the front.
  */
 export class UndoManager {
   private history: HistoryEntry[] = [];
@@ -25,38 +26,31 @@ export class UndoManager {
     this.applyFn = applyFn;
   }
 
-  /**
-   * 是否有可撤销的操作
-   */
+  /** Whether there are any undoable operations. */
   canUndo(): boolean {
     return this.currentIndex >= 0;
   }
 
-  /**
-   * 是否有可重做的操作
-   */
+  /** Whether there are any operations to redo. */
   canRedo(): boolean {
     return this.currentIndex < this.history.length - 1;
   }
 
-  /**
-   * 更新节点映射（rescan 后调用）
-   */
+  /** Updates the node map reference (called after rescan). */
   updateNodeMap(nodeMap: Map<string, ScannedNode>): void {
     this.nodeMap = nodeMap;
   }
 
-  /**
-   * 清空撤销/重做历史
-   */
+  /** Clears all undo/redo history. */
   clear(): void {
     this.history = [];
     this.currentIndex = -1;
   }
 
   /**
-   * 推入新的拖拽操作到历史记录。
-   * 如果 currentIndex 不在末尾，丢弃后续历史（标准重做行为）。
+   * Pushes a new drag operation onto the history stack.
+   * If currentIndex is not at the end, subsequent history entries are
+   * discarded (standard redo-branching behavior).
    */
   push(entry: HistoryEntry): void {
     if (this.currentIndex < this.history.length - 1) {
@@ -72,9 +66,7 @@ export class UndoManager {
     }
   }
 
-  /**
-   * 撤销上一步操作
-   */
+  /** Undoes the last operation. */
   undo(): void {
     if (!this.canUndo()) {
       return;
@@ -85,9 +77,7 @@ export class UndoManager {
     this.currentIndex--;
   }
 
-  /**
-   * 重做被撤销的操作
-   */
+  /** Redoes the previously undone operation. */
   redo(): void {
     if (!this.canRedo()) {
       return;
