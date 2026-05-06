@@ -118,17 +118,56 @@ function escapeRegex(s: string): string {
 
 /** Expand all `use NAME(...)` invocations using the provided template map. */
 function expandUse(source: string, templates: Map<string, Template>): string {
-  return source.replace(
-    /^[\t ]*use\s+(\w+)\s*\(([^)]*)\)[\t ]*$/gm,
-    (_match, name: string, argsRaw: string) => {
-      const template = templates.get(name);
-      if (!template) {
-        return `%% [ERROR] Unknown template: ${name}`;
+  // Use a forward paren-counting scanner instead of `[^)]*` so that `)` inside
+  // quoted arg values (e.g. label="click (me)") does not prematurely close the
+  // arg list.
+  const useHeadRe = /^[\t ]*use\s+(\w+)\s*\(/gm;
+  let m: RegExpExecArray | null;
+  const parts: string[] = [];
+  let lastIndex = 0;
+
+  while ((m = useHeadRe.exec(source)) !== null) {
+    const lineStart = m.index;
+    const name = m[1];
+    const parenOpen = m.index + m[0].length;
+
+    // Walk forward counting parens to find the matching ')'
+    let depth = 1;
+    let pos = parenOpen;
+    while (pos < source.length && depth > 0) {
+      if (source[pos] === '(') {
+        depth++;
+      } else if (source[pos] === ')') {
+        depth--;
       }
-      const args = parseUseArgs(argsRaw);
-      return expandBody(template.body, template.params, args).trim();
+      pos++;
     }
-  );
+    // pos is now one past the closing ')'
+
+    // Only treat as a `use` statement when nothing but whitespace/tabs follows
+    // on the same line (mirrors the original `$` anchor).
+    const nlPos = source.indexOf('\n', pos);
+    const tail = nlPos === -1 ? source.slice(pos) : source.slice(pos, nlPos);
+    if (tail.trimEnd() !== '') {
+      // Not a standalone use line — skip and continue
+      useHeadRe.lastIndex = lineStart + 1;
+      continue;
+    }
+
+    const argsRaw = source.slice(parenOpen, pos - 1);
+    const template = templates.get(name);
+    const replacement = template
+      ? expandBody(template.body, template.params, parseUseArgs(argsRaw)).trim()
+      : `%% [ERROR] Unknown template: ${name}`;
+
+    parts.push(source.slice(lastIndex, lineStart));
+    parts.push(replacement);
+    lastIndex = nlPos === -1 ? source.length : nlPos + 1;
+    useHeadRe.lastIndex = lastIndex;
+  }
+
+  parts.push(source.slice(lastIndex));
+  return parts.join('');
 }
 
 // ---------------------------------------------------------------------------
@@ -161,20 +200,47 @@ function parseInteractionProps(raw: string): InteractionProps {
 /**
  * Extract all `interaction <nodeId> { ... }` blocks from source.
  * Encodes each as a `%% @interact` comment in the returned diagram text.
+ *
+ * Uses a brace-counting scanner (same approach as extractTemplates) so that
+ * `}` inside property string values does not prematurely close the block.
  */
 function extractInteractions(source: string): { diagram: string; interactions: InteractionDef[] } {
   const interactions: InteractionDef[] = [];
+  const headRe = /^[\t ]*interaction\s+(\w+)\s*{/gm;
+  let m: RegExpExecArray | null;
+  const parts: string[] = [];
+  let lastIndex = 0;
 
-  const diagram = source.replace(
-    /^[\t ]*interaction\s+(\w+)\s*{([^}]*)}/gm,
-    (_match, nodeId: string, propsRaw: string) => {
-      const props = parseInteractionProps(propsRaw);
-      interactions.push({ nodeId, props });
-      return `%% @interact ${nodeId} ${JSON.stringify(props)}`;
+  while ((m = headRe.exec(source)) !== null) {
+    const matchStart = m.index;
+    const nodeId = m[1];
+    const bodyStart = m.index + m[0].length;
+
+    // Walk forward counting braces to find the matching '}'
+    let depth = 1;
+    let pos = bodyStart;
+    while (pos < source.length && depth > 0) {
+      if (source[pos] === '{') {
+        depth++;
+      } else if (source[pos] === '}') {
+        depth--;
+      }
+      pos++;
     }
-  );
+    // pos is now one past the closing '}'
 
-  return { diagram, interactions };
+    const propsRaw = source.slice(bodyStart, pos - 1);
+    const props = parseInteractionProps(propsRaw);
+    interactions.push({ nodeId, props });
+
+    parts.push(source.slice(lastIndex, matchStart));
+    parts.push(`%% @interact ${nodeId} ${JSON.stringify(props)}`);
+    lastIndex = pos;
+    headRe.lastIndex = lastIndex;
+  }
+
+  parts.push(source.slice(lastIndex));
+  return { diagram: parts.join(''), interactions };
 }
 
 // ---------------------------------------------------------------------------

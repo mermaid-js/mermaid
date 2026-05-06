@@ -181,6 +181,20 @@ describe('preprocess()', () => {
     expect(diagram).toContain('X["text (note)"]');
   });
 
+  it('handles ) inside a use invocation arg value', () => {
+    // The `use` arg-list regex `([^)]*)` would stop at the first `)` inside a
+    // quoted arg value.  A paren-counting scanner must be used instead.
+    const src = [
+      'template T(label) {',
+      '  A[label]',
+      '}',
+      'flowchart LR',
+      '  use T(label="click (me)")',
+    ].join('\n');
+    const { diagram } = preprocess(src);
+    expect(diagram).toContain('A[click (me)]');
+  });
+
   it('handles node labels containing } without breaking interaction extraction', () => {
     // Interaction extraction uses a regex up to the first `}`. The label `}` in
     // a diagram node should be preserved (it never appears in an interaction block).
@@ -193,5 +207,22 @@ describe('preprocess()', () => {
     expect(diagram).toContain('A["{key: val}"]');
     expect(interactions).toHaveLength(1);
     expect(interactions[0].nodeId).toBe('B');
+  });
+
+  it('handles } inside an interaction prop value', () => {
+    // The interaction regex `{([^}]*)}` stops at the first `}` inside a prop
+    // value.  A brace-counting scanner must be used instead.
+    const src = [
+      'flowchart LR',
+      '  A --> B',
+      'interaction A {',
+      '  tooltip: "see {docs}"',
+      '  collapsible: true',
+      '}',
+    ].join('\n');
+    const { interactions } = preprocess(src);
+    expect(interactions).toHaveLength(1);
+    expect(interactions[0].props.tooltip).toBe('see {docs}');
+    expect(interactions[0].props.collapsible).toBe(true);
   });
 });
