@@ -1,3 +1,5 @@
+import type { ScannedNode } from './types.js';
+
 /** Parses the translate coordinates from a node SVG <g> element's transform attribute.
  * Format: "translate(123.45, 67.89)"
  */
