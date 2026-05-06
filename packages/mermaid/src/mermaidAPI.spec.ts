@@ -8,6 +8,7 @@ import mermaidAPI, {
   cleanUpSvgCode,
   createCssStyles,
   createUserStyles,
+  isElementNode,
   putIntoIFrame,
   removeExistingElements,
 } from './mermaidAPI.js';
@@ -189,6 +190,22 @@ describe('mermaidAPI', () => {
 
       const result = putIntoIFrame(inputSvgCode, faux_svgElement);
       expect(result).toMatch(/style="(.*)height:42px;/);
+    });
+  });
+
+  describe('isElementNode', () => {
+    it('accepts elements created in another window realm', () => {
+      const otherDom = new JSDOM('<body><svg xmlns="http://www.w3.org/2000/svg"></svg></body>');
+      const otherSvg = otherDom.window.document.querySelector('svg');
+
+      expect(otherSvg).not.toBeNull();
+      expect(otherSvg instanceof Element).toBe(false);
+      expect(isElementNode(otherSvg)).toBe(true);
+    });
+
+    it('rejects non-element values', () => {
+      expect(isElementNode(null)).toBe(false);
+      expect(isElementNode({ nodeType: 1 })).toBe(false);
     });
   });
 

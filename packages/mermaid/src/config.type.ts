@@ -167,6 +167,15 @@ export interface MermaidConfig {
    */
   securityLevel?: 'strict' | 'loose' | 'antiscript' | 'sandbox';
   /**
+   * Base URL used to resolve relative links when `securityLevel` is `sandbox`.
+   *
+   * Sandbox rendering serializes the diagram into a `data:` URL iframe, which removes the
+   * document context needed for links such as `./page.html` and `#section`.
+   * Provide `sandboxLinkBaseUrl` to pre-resolve those links before the SVG is embedded.
+   *
+   */
+  sandboxLinkBaseUrl?: string;
+  /**
    * Dictates whether mermaid starts on Page load
    */
   startOnLoad?: boolean;
