@@ -139,19 +139,22 @@ export function parseEdgeId(id: string): { source: string; target: string } | nu
     return null;
   }
   // flowchart — old dash format: "L-SOURCE-TARGET-N"
-  let m = /^L-(.+?)-(.+?)-\d+$/.exec(id);
+  // [^-]+ excludes the delimiter from captures, preventing polynomial backtracking.
+  let m = /^L-([^-]+)-([^-]+)-\d+$/.exec(id);
   if (m) {
     return { source: m[1], target: m[2] };
   }
   // flowchart — current underscore format from getEdgeId: "L_SOURCE_TARGET_N"
-  m = /^L_(.+?)_(.+?)_\d+$/.exec(id);
+  // Greedy source (.+) + non-underscore target ([^_]+) is O(n) and resolves
+  // ambiguity correctly when source node IDs contain underscores.
+  m = /^L_(.+)_([^_]+)_\d+$/.exec(id);
   if (m) {
     return { source: m[1], target: m[2] };
   }
   // classDiagram: "id_SOURCE_TARGET_N"
   // Greedy first capture handles compound names (e.g. "OrderItem");
-  // non-greedy second capture picks up the shortest token before _\d+$.
-  m = /^id_(.+)_(.+?)_\d+$/.exec(id);
+  // [^_]+ for the target excludes the delimiter, preventing polynomial backtracking.
+  m = /^id_(.+)_([^_]+)_\d+$/.exec(id);
   if (m) {
     return { source: m[1], target: m[2] };
   }
