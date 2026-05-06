@@ -14,6 +14,7 @@ import type { ParseErrorFunction } from './Diagram.js';
 import type { UnknownDiagramError } from './errors.js';
 import type { InternalHelpers } from './internals.js';
 import { log } from './logger.js';
+import { MermaidDragEditor } from './interaction/index.js';
 import { mermaidAPI } from './mermaidAPI.js';
 import type { LayoutLoaderDefinition, RenderOptions } from './rendering-util/render.js';
 import { registerLayoutLoaders } from './rendering-util/render.js';
@@ -21,6 +22,9 @@ import type { LayoutData } from './rendering-util/types.js';
 import type { ParseOptions, ParseResult, RenderResult } from './types.js';
 import type { DetailedError } from './utils.js';
 import utils, { isDetailedError } from './utils.js';
+
+export { MermaidDragEditor };
+export type { DragEditorOptions, OverrideData } from './interaction/types.js';
 
 export type {
   AsyncIconLoader,

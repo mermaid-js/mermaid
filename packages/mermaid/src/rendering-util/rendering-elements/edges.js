@@ -774,6 +774,8 @@ export const insertEdge = function (
   svgPath.attr('data-edge', true);
   svgPath.attr('data-et', 'edge');
   svgPath.attr('data-id', edge.id);
+  svgPath.attr('data-source', edge.start);
+  svgPath.attr('data-target', edge.end);
   svgPath.attr('data-points', pointsStr);
   // Add data attributes for neo look support
   svgPath.attr('data-look', handleUndefinedAttr(edge.look));
