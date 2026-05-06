@@ -458,7 +458,9 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     .attr('d', lineFunction(lineData))
     .attr('id', edge.id)
     .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
-    .attr('style', edge.style);
+    .attr('style', edge.style)
+    .attr('data-source', e.v)
+    .attr('data-target', e.w);
 
   // DEBUG code, adds a red circle at each edge coordinate
   // edge.points.forEach((point) => {
