@@ -1,0 +1,1093 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mermaid 图表可视化微调 Demo</title>
+    <style>
+      :root {
+        --bg: #f8f9fa;
+        --panel-bg: #ffffff;
+        --border: #dee2e6;
+        --text: #212529;
+        --text-secondary: #6c757d;
+        --accent: #4f46e5;
+        --accent-hover: #4338ca;
+        --danger: #dc3545;
+        --danger-hover: #bb2d3b;
+        --success: #198754;
+        --radius: 8px;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+      }
+
+      .app-header {
+        background: var(--panel-bg);
+        border-bottom: 1px solid var(--border);
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: var(--shadow);
+      }
+
+      .app-header h1 {
+        font-size: 18px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .app-header h1 span {
+        color: var(--text-secondary);
+        font-weight: 400;
+        font-size: 13px;
+      }
+
+      .main-layout {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        height: calc(100vh - 56px);
+        gap: 0;
+      }
+
+      .editor-panel {
+        background: var(--panel-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .editor-header {
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .editor-header label {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-secondary);
+      }
+
+      .btn {
+        padding: 6px 14px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        font-size: 13px;
+        cursor: pointer;
+        background: var(--panel-bg);
+        transition: all 0.15s;
+        font-weight: 500;
+      }
+
+      .btn:hover {
+        background: #f1f3f5;
+      }
+      .btn:active {
+        transform: scale(0.97);
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: white;
+        border-color: var(--accent);
+      }
+
+      .btn-primary:hover {
+        background: var(--accent-hover);
+      }
+
+      .btn-danger {
+        background: var(--danger);
+        color: white;
+        border-color: var(--danger);
+      }
+
+      .btn-danger:hover {
+        background: var(--danger-hover);
+      }
+
+      .toolbar {
+        display: flex;
+        gap: 8px;
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--border);
+        flex-wrap: wrap;
+        background: #fafbfc;
+      }
+
+      .toolbar-group {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+      }
+
+      .toolbar-divider {
+        width: 1px;
+        background: var(--border);
+        margin: 0 4px;
+        align-self: stretch;
+      }
+
+      textarea {
+        flex: 1;
+        border: none;
+        padding: 16px;
+        font-family: 'SF Mono', 'Fira Code', monospace;
+        font-size: 14px;
+        line-height: 1.6;
+        resize: none;
+        outline: none;
+        color: var(--text);
+        background: #fafbfc;
+      }
+
+      .preview-panel {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .preview-header {
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--border);
+        background: var(--panel-bg);
+      }
+
+      .preview-header label {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-secondary);
+      }
+
+      .preview-container {
+        flex: 1;
+        overflow: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: var(--bg);
+        position: relative;
+      }
+
+      .override-panel {
+        background: var(--panel-bg);
+        border-top: 1px solid var(--border);
+        padding: 12px 16px;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+
+      .override-panel h3 {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+      }
+
+      .override-panel pre {
+        font-size: 11px;
+        font-family: 'SF Mono', monospace;
+        color: var(--text);
+        white-space: pre-wrap;
+        margin: 0;
+      }
+
+      .status-bar {
+        background: #f0f9ff;
+        border: 1px solid #bae6fd;
+        border-radius: var(--radius);
+        padding: 8px 12px;
+        font-size: 12px;
+        color: #0369a1;
+        margin: 8px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+
+      .status-bar .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #0ea5e9;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      svg {
+        max-width: 100%;
+        height: auto;
+      }
+
+      /* 拖拽交互样式 */
+      .mermaid-draggable {
+        cursor: grab;
+      }
+
+      .mermaid-draggable:active {
+        cursor: grabbing;
+      }
+
+      .mermaid-selected > .nodeRect,
+      .mermaid-selected > .label-container > rect,
+      .mermaid-selected > rect {
+        stroke: var(--accent) !important;
+        stroke-width: 2.5px !important;
+        filter: drop-shadow(0 0 4px rgba(79, 70, 229, 0.3));
+      }
+
+      .mermaid-selected > .label {
+        font-weight: 700 !important;
+      }
+
+      /* 节点悬停效果 */
+      .mermaid-draggable:hover > .nodeRect,
+      .mermaid-draggable:hover > .label-container > rect,
+      .mermaid-draggable:hover > rect {
+        stroke: var(--accent);
+        stroke-width: 1.5px;
+        opacity: 0.7;
+      }
+
+      .control-group {
+        padding: 8px 16px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-header">
+      <h1>
+        Mermaid 图表可视化微调
+        <span>Drag & Drop Editor Demo</span>
+      </h1>
+      <div style="display: flex; gap: 8px">
+        <button class="btn btn-primary" onclick="renderDiagram()">渲染图表</button>
+      </div>
+    </div>
+
+    <div class="main-layout">
+      <div class="editor-panel">
+        <div class="editor-header">
+          <label>Mermaid 源码</label>
+        </div>
+        <textarea id="mermaidInput" spellcheck="false">
+flowchart LR
+  A[用户注册] --> B{验证信息}
+  B -->|通过| C[创建账户]
+  B -->|失败| D[显示错误]
+  C --> E[发送邮件]
+  E --> F[登录页面]
+  D --> A
+  C --> G[数据库存储]
+
+  subgraph 用户系统
+    A
+    B
+    D
+  end
+
+  subgraph 后台处理
+    C
+    G
+    E
+  end</textarea
+        >
+
+        <div class="toolbar">
+          <div class="toolbar-group">
+            <button class="btn" onclick="undoAction()" title="撤销 Ctrl+Z">↩ 撤销</button>
+            <button class="btn" onclick="redoAction()" title="重做 Ctrl+Shift+Z">↪ 重做</button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button class="btn btn-danger" onclick="resetLayout()" title="恢复自动布局">
+              ⟳ 恢复布局
+            </button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button class="btn" onclick="exportOverrides()" title="导出覆盖数据">
+              📋 导出数据
+            </button>
+            <button class="btn" onclick="importOverrides()" title="从剪贴板导入覆盖数据">
+              📥 导入数据
+            </button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button class="btn" onclick="clearOverrides()" title="清除所有覆盖">🗑 清除覆盖</button>
+          </div>
+        </div>
+
+        <div class="status-bar" id="statusBar">
+          <span class="dot"></span>
+          <span id="statusText">就绪 — 点击「渲染图表」开始</span>
+        </div>
+
+        <div class="override-panel">
+          <h3>当前覆盖数据 (localStorage: mermaid-override-drag-editor-demo)</h3>
+          <pre id="overrideDisplay">暂无覆盖数据</pre>
+        </div>
+      </div>
+
+      <div class="preview-panel">
+        <div class="preview-header">
+          <label>图表预览（拖拽节点调整位置）</label>
+        </div>
+        <div id="previewContainer" class="preview-container">
+          <div style="color: var(--text-secondary); font-size: 14px">点击「渲染图表」查看预览</div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
+      // ============================================================
+      // Mermaid 拖拽编辑器 — 行内 MVP 实现
+      // 完整版参见 packages/mermaid/src/interaction/
+      // ============================================================
+
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        flowchart: { useMaxWidth: true, htmlLabels: true },
+        securityLevel: 'loose',
+      });
+
+      // --- 全局状态 ---
+      const STORAGE_KEY = 'mermaid-override-drag-editor-demo';
+      let svgElement = null;
+      let nodeMap = new Map();
+      let selectedNodes = new Set();
+      let undoStack = [];
+      let redoStack = [];
+      let dragState = null;
+      let overrides = {};
+      let baseNodePositions = new Map();
+      let originalEdgePaths = new Map();
+      const MAX_UNDO = 50;
+
+      // --- 辅助函数 ---
+      function parseTranslate(transform) {
+        if (!transform) return null;
+        const m = transform.match(/translate\(\s*([\d.-]+)\s*,\s*([\d.-]+)\s*\)/);
+        if (!m) return null;
+        return { x: parseFloat(m[1]), y: parseFloat(m[2]) };
+      }
+
+      function extractNodeId(domId) {
+        if (!domId) return null;
+        const directPrefix = `${svgElement.id}-flowchart-`;
+        let rest = null;
+
+        if (domId.startsWith(directPrefix)) {
+          rest = domId.slice(directPrefix.length);
+        } else {
+          const match = domId.match(/(?:^|-)flowchart-(.+)$/);
+          if (match) rest = match[1];
+        }
+
+        if (!rest) return null;
+        const lastDash = rest.lastIndexOf('-');
+        return lastDash === -1 ? rest : rest.slice(0, lastDash);
+      }
+
+      function getParentOffset(element) {
+        let ox = 0,
+          oy = 0;
+        let cur = element.parentElement;
+        while (cur && cur !== svgElement) {
+          if (cur instanceof SVGGElement) {
+            const pos = parseTranslate(cur.getAttribute('transform'));
+            if (pos) {
+              ox += pos.x;
+              oy += pos.y;
+            }
+          }
+          cur = cur.parentElement;
+        }
+        return { x: ox, y: oy };
+      }
+
+      function getAccumulatedPos(element) {
+        const local = parseTranslate(element.getAttribute('transform'));
+        if (!local) return null;
+        const parent = getParentOffset(element);
+        return { x: local.x + parent.x, y: local.y + parent.y };
+      }
+
+      function getViewBox() {
+        const vb = svgElement.viewBox.baseVal;
+        return { x: vb.x, y: vb.y, w: vb.width, h: vb.height };
+      }
+
+      function clientToViewBox(clientX, clientY) {
+        const rect = svgElement.getBoundingClientRect();
+        const vb = getViewBox();
+        return {
+          x: ((clientX - rect.left) / rect.width) * vb.w + vb.x,
+          y: ((clientY - rect.top) / rect.height) * vb.h + vb.y,
+        };
+      }
+
+      // --- 节点扫描 ---
+      function scanNodes() {
+        nodeMap.clear();
+        const containers = svgElement.querySelectorAll('.nodes');
+        for (const container of containers) {
+          const nodes = container.querySelectorAll('g.node');
+          for (const el of nodes) {
+            const domId = el.getAttribute('id');
+            if (!domId) continue;
+            const nodeId = extractNodeId(domId);
+            if (!nodeId || nodeMap.has(nodeId)) continue;
+            const pos = getAccumulatedPos(el);
+            if (!pos) continue;
+            let nodeWidth = 100;
+            let nodeHeight = 50;
+            try {
+              const bbox = el.getBBox();
+              if (bbox.width > 0 && bbox.height > 0) {
+                nodeWidth = bbox.width;
+                nodeHeight = bbox.height;
+              }
+            } catch {
+              /* use defaults */
+            }
+            nodeMap.set(nodeId, {
+              element: el,
+              nodeId,
+              x: pos.x,
+              y: pos.y,
+              nodeWidth,
+              nodeHeight,
+            });
+          }
+        }
+      }
+
+      // --- 存储 ---
+      function loadOverrides() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) overrides = JSON.parse(raw).overrides?.nodes || {};
+        } catch {
+          overrides = {};
+        }
+      }
+
+      function saveOverrides() {
+        const payload = {
+          version: 1,
+          layout: 'dagre',
+          overrides: { nodes: overrides, edges: {} },
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        updateOverrideDisplay();
+      }
+
+      function applyOverrides() {
+        for (const [nodeId, override] of Object.entries(overrides)) {
+          const node = nodeMap.get(nodeId);
+          if (!node) continue;
+          const parent = getParentOffset(node.element);
+          node.element.setAttribute(
+            'transform',
+            `translate(${override.x - parent.x}, ${override.y - parent.y})`
+          );
+          node.x = override.x;
+          node.y = override.y;
+        }
+        updateAllEdges();
+      }
+
+      function saveSnapshot() {
+        const snap = {};
+        for (const [id, node] of nodeMap) {
+          snap[id] = { x: node.x, y: node.y };
+        }
+        return snap;
+      }
+
+      function applySnapshot(snap) {
+        for (const [nodeId, pos] of Object.entries(snap)) {
+          const node = nodeMap.get(nodeId);
+          if (!node) continue;
+          const parent = getParentOffset(node.element);
+          node.element.setAttribute(
+            'transform',
+            `translate(${pos.x - parent.x}, ${pos.y - parent.y})`
+          );
+          node.x = pos.x;
+          node.y = pos.y;
+          overrides[nodeId] = { x: pos.x, y: pos.y, locked: false };
+        }
+        saveOverrides();
+        updateAllEdges();
+        updateSelectionVisual();
+      }
+
+      function pushUndo(snap) {
+        undoStack.push(snap);
+        if (undoStack.length > MAX_UNDO) undoStack.shift();
+        redoStack = [];
+      }
+
+      // --- 边更新 ---
+
+      /**
+       * 从原始 ID 字符串提取用户节点 ID。
+       * 处理末尾 -N 数字后缀的情况（例如 "A-0" → "A"、"node-A-0" → "node-A"）。
+       */
+      function extractEdgeNodeId(rawId) {
+        if (!rawId) return null;
+        const lastDash = rawId.lastIndexOf('-');
+        if (lastDash === -1) return rawId;
+        const suffix = rawId.slice(lastDash + 1);
+        if (/^\d+$/.test(suffix)) return rawId.slice(0, lastDash);
+        return rawId;
+      }
+
+      /**
+       * 尝试将属性值解析为 nodeMap 中的节点 ID。
+       * 支持直接匹配、尾部数字剥离、以及 dagre 内部 ID 前缀剥离。
+       */
+      function resolveNodeId(rawId) {
+        if (!rawId) return null;
+        const trimmed = rawId.trim();
+        if (nodeMap.has(trimmed)) return trimmed;
+        const extracted = extractEdgeNodeId(trimmed);
+        if (extracted && nodeMap.has(extracted)) return extracted;
+        // 尝试处理 dagre 内部前缀格式 (如 flowchart-A-0)
+        const flowPrefix = 'flowchart-';
+        if (extracted && extracted.startsWith(flowPrefix)) {
+          const inner = extracted.slice(flowPrefix.length);
+          if (nodeMap.has(inner)) return inner;
+          const innerExtracted = extractEdgeNodeId(inner);
+          if (innerExtracted && nodeMap.has(innerExtracted)) return innerExtracted;
+        }
+        return null;
+      }
+
+      /**
+       * 从自动生成的边 ID (格式: L_<source>_<target>_<counter>) 逆向推断端点。
+       * 这是 Mermaid 的 getEdgeId() 的输出格式。
+       */
+      function inferEndpointFromEdgeId(edgeId) {
+        if (!edgeId) return null;
+        const nodeIds = Array.from(nodeMap.keys()).sort((a, b) => b.length - a.length);
+        for (const sep of ['_', '-']) {
+          const prefix = `L${sep}`;
+          if (!edgeId.startsWith(prefix)) continue;
+          const rest = edgeId.slice(prefix.length);
+          for (const source of nodeIds) {
+            const sourceStart = `${source}${sep}`;
+            if (!rest.startsWith(sourceStart)) continue;
+            const remainder = rest.slice(sourceStart.length);
+            for (const target of nodeIds) {
+              const targetMatch = `${target}`;
+              if (remainder === targetMatch || remainder.startsWith(`${targetMatch}${sep}`)) {
+                return { source, target };
+              }
+            }
+          }
+        }
+        return null;
+      }
+
+      /**
+       * 计算边连接到节点外框边缘的交点（射线-矩形相交算法）。
+       */
+      function getConnectionPoint(from, to) {
+        const dx = to.x - from.x;
+        const dy = to.y - from.y;
+        const halfW = Math.max(from.nodeWidth / 2, 1);
+        const halfH = Math.max(from.nodeHeight / 2, 1);
+        if (dx === 0 && dy === 0) return { x: from.x, y: from.y };
+        if (Math.abs(dx) / halfW > Math.abs(dy) / halfH) {
+          return {
+            x: from.x + Math.sign(dx || 1) * halfW,
+            y: from.y + dy * (halfW / Math.max(Math.abs(dx), 1)),
+          };
+        }
+        return {
+          x: from.x + dx * (halfH / Math.max(Math.abs(dy), 1)),
+          y: from.y + Math.sign(dy || 1) * halfH,
+        };
+      }
+
+      /**
+       * 生成边路径的贝塞尔曲线 d 属性。
+       *
+       * 控制点沿 sourceCenter → targetCenter 连线方向放置，
+       * 使箭头切线方向直接指向目标节点中心。
+       * 增加轻微垂直偏移实现自然弧线。
+       */
+      function buildEdgePathD(start, end, sourceCenter, targetCenter) {
+        const edgeDx = end.x - start.x;
+        const edgeDy = end.y - start.y;
+        const edgeDist = Math.hypot(edgeDx, edgeDy);
+        if (edgeDist < 1) return `M ${start.x} ${start.y} L ${end.x} ${end.y}`;
+
+        const ux = edgeDx / edgeDist;
+        const uy = edgeDy / edgeDist;
+
+        const cpDist = edgeDist * 0.35;
+
+        const ccDx = targetCenter.x - sourceCenter.x;
+        const ccDy = targetCenter.y - sourceCenter.y;
+        const cross = ux * ccDy - uy * ccDx;
+        const sign = cross >= 0 ? 1 : -1;
+
+        const curveOffset = Math.min(edgeDist * 0.1, 10) * sign;
+        const px = -uy;
+        const py = ux;
+
+        const cp1x = start.x + ux * cpDist + px * curveOffset;
+        const cp1y = start.y + uy * cpDist + py * curveOffset;
+        const cp2x = end.x - ux * cpDist + px * curveOffset;
+        const cp2y = end.y - uy * cpDist + py * curveOffset;
+
+        return `M ${start.x} ${start.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${end.x} ${end.y}`;
+      }
+
+      /**
+       * 在渲染后调用：扫描所有边路径，建立节点→边映射关系。
+       *
+       * 优先级：
+       *   1. 读取 Mermaid 渲染时写入的 data-source / data-target 属性（最可靠）
+       *   2. 回退解析自动生成的 L_<source>_<target>_<counter> 边 ID
+       */
+      function buildEdgeMap() {
+        originalEdgePaths.clear();
+        const edgeCandidates = svgElement.querySelectorAll(
+          '.edgePaths .flowchart-link, .edges .flowchart-link'
+        );
+        const seenPaths = new Set();
+        let edgeIndex = 0;
+
+        for (const candidate of edgeCandidates) {
+          const path =
+            candidate instanceof SVGPathElement ? candidate : candidate.querySelector('path');
+          if (!(path instanceof SVGPathElement) || seenPaths.has(path)) continue;
+          seenPaths.add(path);
+
+          // Priority 1: data-source / data-target 属性
+          let startNodeId = resolveNodeId(
+            path.getAttribute('data-source') ?? candidate.getAttribute('data-source')
+          );
+          let endNodeId = resolveNodeId(
+            path.getAttribute('data-target') ?? candidate.getAttribute('data-target')
+          );
+
+          // Priority 2: 边 ID 逆向解析
+          if (!startNodeId || !endNodeId) {
+            const edgeIdForInfer =
+              path.getAttribute('data-id') ??
+              candidate.getAttribute('data-id') ??
+              path.getAttribute('id') ??
+              candidate.getAttribute('id');
+            const inferred = inferEndpointFromEdgeId(edgeIdForInfer);
+            if (inferred) {
+              startNodeId = startNodeId ?? inferred.source;
+              endNodeId = endNodeId ?? inferred.target;
+            }
+          }
+
+          if (!startNodeId || !endNodeId) continue;
+
+          const edgeId =
+            path.getAttribute('data-id') ||
+            candidate.getAttribute('data-id') ||
+            path.getAttribute('id') ||
+            candidate.getAttribute('id') ||
+            `edge-${edgeIndex++}`;
+
+          originalEdgePaths.set(edgeId, {
+            id: edgeId,
+            pathEl: path,
+            startNodeId,
+            endNodeId,
+          });
+        }
+      }
+
+      /**
+       * 根据节点当前位置动态生成所有边的路径 d 属性。
+       * 同时更新边标签位置。
+       */
+      function updateAllEdges() {
+        for (const [, edgeData] of originalEdgePaths) {
+          const startNode = nodeMap.get(edgeData.startNodeId);
+          const endNode = nodeMap.get(edgeData.endNodeId);
+          if (!startNode || !endNode) continue;
+
+          const start = getConnectionPoint(startNode, endNode);
+          const end = getConnectionPoint(endNode, startNode);
+          const d = buildEdgePathD(
+            start,
+            end,
+            { x: startNode.x, y: startNode.y },
+            { x: endNode.x, y: endNode.y }
+          );
+
+          edgeData.pathEl.setAttribute('d', d);
+
+          // 同步移动边标签
+          updateEdgeLabel(edgeData.id, edgeData.pathEl);
+        }
+      }
+
+      /**
+       * 将边标签移动到当前路径的中点。
+       */
+      function updateEdgeLabel(edgeId, pathElement) {
+        const labelGroups = svgElement.querySelectorAll('.edgeLabel');
+        for (const group of labelGroups) {
+          const labels = group.querySelectorAll('.label');
+          for (const label of labels) {
+            if (label.getAttribute('data-id') === edgeId) {
+              try {
+                const totalLen = pathElement.getTotalLength();
+                const midPoint = pathElement.getPointAtLength(totalLen / 2);
+                group.setAttribute('transform', `translate(${midPoint.x}, ${midPoint.y})`);
+              } catch {
+                /* getTotalLength 可能因 path d 无效而失败 */
+              }
+              return;
+            }
+          }
+        }
+      }
+
+      // --- 选中视觉 ---
+      function updateSelectionVisual() {
+        for (const [, node] of nodeMap) {
+          node.element.classList.remove('mermaid-selected');
+        }
+        for (const nid of selectedNodes) {
+          const node = nodeMap.get(nid);
+          if (node) node.element.classList.add('mermaid-selected');
+        }
+      }
+
+      function updateOverrideDisplay() {
+        const display = document.getElementById('overrideDisplay');
+        if (Object.keys(overrides).length === 0) {
+          display.textContent = '暂无覆盖数据';
+        } else {
+          display.textContent = JSON.stringify(overrides, null, 2);
+        }
+      }
+
+      // --- 事件处理 ---
+      function onPointerDown(e) {
+        if (e.button !== 0) return;
+
+        // 向上查找节点
+        let target = e.target;
+        let nodeEl = null;
+        let nodeId = null;
+        while (target && target !== svgElement) {
+          if (target.classList && target.classList.contains('node')) {
+            nodeEl = target;
+            nodeId = extractNodeId(target.getAttribute('id'));
+            break;
+          }
+          target = target.parentElement;
+        }
+        if (!nodeEl || !nodeId) return;
+
+        e.preventDefault();
+
+        // 保存对捕获元素的引用，供 pointerup 释放
+        const captureTarget = nodeEl;
+        try {
+          captureTarget.setPointerCapture(e.pointerId);
+        } catch {}
+
+        // 选中逻辑
+        if (e.shiftKey) {
+          if (selectedNodes.has(nodeId)) {
+            selectedNodes.delete(nodeId);
+          } else {
+            selectedNodes.add(nodeId);
+          }
+        } else {
+          if (!selectedNodes.has(nodeId)) {
+            selectedNodes.clear();
+            selectedNodes.add(nodeId);
+          }
+        }
+        updateSelectionVisual();
+
+        // 拖拽起始
+        const originals = new Map();
+        for (const nid of selectedNodes) {
+          const node = nodeMap.get(nid);
+          if (node) originals.set(nid, { x: node.x, y: node.y });
+        }
+
+        dragState = {
+          pointerId: e.pointerId,
+          startX: e.clientX,
+          startY: e.clientY,
+          originals,
+          moved: false,
+          captureTarget,
+        };
+      }
+
+      function onPointerMove(e) {
+        if (!dragState || e.pointerId !== dragState.pointerId) return;
+
+        const dx = e.clientX - dragState.startX;
+        const dy = e.clientY - dragState.startY;
+
+        if (!dragState.moved && Math.abs(dx) < 3 && Math.abs(dy) < 3) return;
+        dragState.moved = true;
+
+        const vb = getViewBox();
+        const rect = svgElement.getBoundingClientRect();
+        const scaleX = vb.w / rect.width;
+        const scaleY = vb.h / rect.height;
+        const deltaX = dx * scaleX;
+        const deltaY = dy * scaleY;
+
+        for (const nid of selectedNodes) {
+          const orig = dragState.originals.get(nid);
+          const node = nodeMap.get(nid);
+          if (!orig || !node) continue;
+          const nx = orig.x + deltaX;
+          const ny = orig.y + deltaY;
+          const parent = getParentOffset(node.element);
+          node.element.setAttribute('transform', `translate(${nx - parent.x}, ${ny - parent.y})`);
+          node.x = nx;
+          node.y = ny;
+        }
+        updateAllEdges();
+      }
+
+      function onPointerUp(e) {
+        if (!dragState) return;
+
+        try {
+          dragState.captureTarget.releasePointerCapture(e.pointerId);
+        } catch {}
+
+        if (dragState.moved) {
+          const snapBefore = dragState.originals;
+          const snapObj = {};
+          for (const [nid, orig] of snapBefore) {
+            snapObj[nid] = { x: orig.x, y: orig.y };
+          }
+          pushUndo(snapObj);
+
+          for (const nid of selectedNodes) {
+            const node = nodeMap.get(nid);
+            if (node) {
+              overrides[nid] = { x: node.x, y: node.y, locked: false };
+            }
+          }
+          saveOverrides();
+          setStatus(`已保存 ${selectedNodes.size} 个节点位置`);
+        }
+
+        dragState = null;
+      }
+
+      function onKeyDown(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+          e.preventDefault();
+          if (e.shiftKey) {
+            redoAction();
+          } else {
+            undoAction();
+          }
+        }
+        if (e.key === 'Escape') {
+          selectedNodes.clear();
+          updateSelectionVisual();
+        }
+      }
+
+      // --- 公共动作 ---
+      function setStatus(msg) {
+        document.getElementById('statusText').textContent = msg;
+      }
+
+      window.undoAction = function () {
+        if (undoStack.length === 0) {
+          setStatus('没有可撤销的操作');
+          return;
+        }
+        const current = saveSnapshot();
+        redoStack.push(current);
+        const prev = undoStack.pop();
+        applySnapshot(prev);
+        setStatus('已撤销');
+      };
+
+      window.redoAction = function () {
+        if (redoStack.length === 0) {
+          setStatus('没有可重做的操作');
+          return;
+        }
+        const current = saveSnapshot();
+        undoStack.push(current);
+        const next = redoStack.pop();
+        applySnapshot(next);
+        setStatus('已重做');
+      };
+
+      window.resetLayout = function () {
+        if (confirm('确认恢复自动布局？所有手动调整将丢失。')) {
+          const current = saveSnapshot();
+          pushUndo(current);
+          overrides = {};
+          saveOverrides();
+          renderDiagram();
+          setStatus('已恢复自动布局');
+        }
+      };
+
+      window.exportOverrides = function () {
+        const payload = {
+          version: 1,
+          layout: 'dagre',
+          overrides: { nodes: overrides, edges: {} },
+        };
+        navigator.clipboard.writeText(JSON.stringify(payload, null, 2)).then(() => {
+          setStatus('覆盖数据已复制到剪贴板');
+        });
+      };
+
+      window.importOverrides = function () {
+        navigator.clipboard
+          .readText()
+          .then((text) => {
+            try {
+              const data = JSON.parse(text);
+              if (data.overrides?.nodes) {
+                overrides = data.overrides.nodes;
+                saveOverrides();
+                applyOverrides();
+                updateSelectionVisual();
+                setStatus('覆盖数据已导入并应用');
+              }
+            } catch {
+              setStatus('导入失败：无效的 JSON 格式');
+            }
+          })
+          .catch(() => {
+            setStatus('无法读取剪贴板，请手动粘贴');
+          });
+      };
+
+      window.clearOverrides = function () {
+        if (confirm('确认清除所有覆盖数据？')) {
+          overrides = {};
+          saveOverrides();
+          renderDiagram();
+          setStatus('已清除所有覆盖数据');
+        }
+      };
+
+      // --- 渲染 ---
+      window.renderDiagram = async function () {
+        const code = document.getElementById('mermaidInput').value;
+        const container = document.getElementById('previewContainer');
+        const diagramId = 'mermaid-drag-demo';
+
+        try {
+          const { svg } = await mermaid.render(diagramId, code);
+          container.innerHTML = svg;
+
+          svgElement = container.querySelector('svg');
+          if (!svgElement) {
+            setStatus('渲染失败：未找到 SVG');
+            return;
+          }
+
+          svgElement.style.touchAction = 'none';
+          svgElement.style.userSelect = 'none';
+
+          scanNodes();
+
+          // 保存自动布局的基线位置，后续边更新始终以此为准计算 delta
+          baseNodePositions.clear();
+          for (const [id, node] of nodeMap) {
+            baseNodePositions.set(id, { x: node.x, y: node.y });
+          }
+
+          // 扫描边路径，保存原始 d 属性
+          buildEdgeMap();
+
+          loadOverrides();
+          applyOverrides();
+          updateOverrideDisplay();
+
+          for (const [, node] of nodeMap) {
+            node.element.classList.add('mermaid-draggable');
+          }
+
+          svgElement.addEventListener('pointerdown', onPointerDown);
+          svgElement.addEventListener('pointermove', onPointerMove);
+          svgElement.addEventListener('pointerup', onPointerUp);
+          document.removeEventListener('keydown', onKeyDown);
+          document.addEventListener('keydown', onKeyDown);
+
+          setStatus(
+            `渲染完成 — ${nodeMap.size} 个节点，拖拽调整位置 | Shift+点击多选 | Ctrl+Z 撤销`
+          );
+        } catch (err) {
+          container.innerHTML = `<div style="color:var(--danger);padding:20px;">渲染错误: ${err.message}</div>`;
+          setStatus('渲染失败：' + err.message);
+        }
+      };
+
+      // 自动渲染
+      window.renderDiagram();
+    </script>
+  </body>
+</html>
