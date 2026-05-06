@@ -3,18 +3,18 @@
   "version": "0.1.0",
   "description": "Preprocessor and interaction binder for parameterised, interactive Mermaid diagrams",
   "type": "module",
-  "module": "./dist/mermaid-interactive.core.mjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
     "mermaid-interactive": "./bin/mermaid-interactive.mjs"
   },
   "exports": {
     ".": {
-      "import": "./dist/mermaid-interactive.core.mjs",
+      "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
     "./binder": {
-      "import": "./dist/binder.mjs",
+      "import": "./dist/binder.js",
       "types": "./dist/binder.d.ts"
     },
     "./*": "./*"

@@ -41,8 +41,8 @@ async function main() {
     process.exit(1);
   }
 
-  // Dynamically import the preprocessor (supports both compiled dist and tsx)
-  const { preprocess } = await import('../src/index.js');
+  // Dynamically import the preprocessor from compiled dist
+  const { preprocess } = await import('../dist/index.js');
   const { diagram, interactions } = preprocess(source);
 
   if (outputArg) {

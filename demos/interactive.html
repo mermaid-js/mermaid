@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Interactive Mermaid Diagrams — Demo</title>
+    <title>Interactive Mermaid Diagrams Ã¢â‚¬â€ Demo</title>
     <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
     <style>
       *,
@@ -129,11 +129,11 @@
   <body>
     <h1>Interactive, Parameterised Mermaid Diagrams</h1>
     <p class="subtitle">
-      A proof-of-concept for extended Mermaid syntax — combining reusable templates with declarative
-      interaction behaviours (tooltips, collapsible nodes).
+      A proof-of-concept for extended Mermaid syntax Ã¢â‚¬â€ combining reusable templates with
+      declarative interaction behaviours (tooltips, collapsible nodes).
     </p>
 
-    <!-- Example 1 — Inline interactions, no template -->
+    <!-- Example 1 Ã¢â‚¬â€ Inline interactions, no template -->
     <div class="example-card">
       <h2>Example 1: Inline Interaction Blocks</h2>
       <p class="hint">
@@ -168,13 +168,13 @@ graph TD
         <div>
           <div class="panel-label">Rendered Output</div>
           <div class="output-panel" id="output-1">
-            <span class="loading">Rendering…</span>
+            <span class="loading">RenderingÃ¢â‚¬Â¦</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Example 2 — Template invocation -->
+    <!-- Example 2 Ã¢â‚¬â€ Template invocation -->
     <div class="example-card">
       <h2>Example 2: Parameterised Template</h2>
       <p class="hint">
@@ -216,13 +216,13 @@ use service_flow(
         <div>
           <div class="panel-label">Rendered Output</div>
           <div class="output-panel" id="output-2">
-            <span class="loading">Rendering…</span>
+            <span class="loading">RenderingÃ¢â‚¬Â¦</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Example 3 — Combined template + collapsible microservice group -->
+    <!-- Example 3 Ã¢â‚¬â€ Combined template + collapsible microservice group -->
     <div class="example-card">
       <h2>Example 3: Combined Template + Collapsible Microservice Group</h2>
       <p class="hint">
@@ -269,19 +269,19 @@ use microservice_group(
         <div>
           <div class="panel-label">Rendered Output</div>
           <div class="output-panel" id="output-3">
-            <span class="loading">Rendering…</span>
+            <span class="loading">RenderingÃ¢â‚¬Â¦</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Example 4 — Subgraph with individual node interactions and cross-boundary edges -->
+    <!-- Example 4 Ã¢â‚¬â€ Subgraph with individual node interactions and cross-boundary edges -->
     <div class="example-card">
       <h2>Example 4: Subgraph with Individual Node Interactions</h2>
       <p class="hint">
-        Node B is collapsible — clicking it hides C and D1 (and the outgoing lines) but preserves
-        the A&rarr;B connection. The A&rarr;D1 edge crosses the subgraph boundary. Hover each node
-        for its tooltip.
+        Node B is collapsible Ã¢â‚¬â€ clicking it hides C and D1 (and the outgoing lines) but
+        preserves the A&rarr;B connection. The A&rarr;D1 edge crosses the subgraph boundary. Hover
+        each node for its tooltip.
       </p>
       <div class="layout">
         <div>
@@ -335,7 +335,7 @@ graph TD
       </div>
     </div>
 
-    <!-- Example 5 — Subgraph itself is the interaction target -->
+    <!-- Example 5 Ã¢â‚¬â€ Subgraph itself is the interaction target -->
     <div class="example-card">
       <h2>Example 5: Subgraph as Interaction Target</h2>
       <p class="hint">
@@ -417,7 +417,7 @@ flowchart LR
     tooltip: "Git push or PR merge triggers the pipeline"
   }
   interaction LINT {
-    tooltip: "ESLint + Prettier — fails fast on style or type errors"
+    tooltip: "ESLint + Prettier Ã¢â‚¬â€ fails fast on style or type errors"
   }
   interaction TEST {
     collapsible: true
@@ -425,16 +425,16 @@ flowchart LR
     tooltip: "Parallel test matrix. Click to collapse all test stages."
   }
   interaction UNIT {
-    tooltip: "Vitest unit tests — ~2 min"
+    tooltip: "Vitest unit tests Ã¢â‚¬â€ ~2 min"
   }
   interaction INTG {
-    tooltip: "Docker Compose integration tests — ~5 min"
+    tooltip: "Docker Compose integration tests Ã¢â‚¬â€ ~5 min"
   }
   interaction E2E {
-    tooltip: "Playwright end-to-end tests against staging clone — ~12 min"
+    tooltip: "Playwright end-to-end tests against staging clone Ã¢â‚¬â€ ~12 min"
   }
   interaction BUILD {
-    tooltip: "esbuild + tsc — produces minified ESM and CJS bundles"
+    tooltip: "esbuild + tsc Ã¢â‚¬â€ produces minified ESM and CJS bundles"
   }
   interaction IMG {
     tooltip: "Multi-arch Docker image pushed to GHCR"
@@ -446,7 +446,7 @@ flowchart LR
     tooltip: "Health checks and critical-path assertions post-deploy"
   }
   interaction PROD {
-    tooltip: "Canary release — 5% traffic, auto-promotes after 10 min with no errors"
+    tooltip: "Canary release Ã¢â‚¬â€ 5% traffic, auto-promotes after 10 min with no errors"
   }</pre
             >
           </div>
@@ -460,7 +460,7 @@ flowchart LR
       </div>
     </div>
 
-    <!-- Example 7: Class diagram — e-commerce domain model -->
+    <!-- Example 7: Class diagram Ã¢â‚¬â€ e-commerce domain model -->
     <div class="example-card">
       <h2>Example 7: E-commerce Domain Model &mdash; classDiagram</h2>
       <p class="hint">
@@ -536,7 +536,7 @@ classDiagram
       </div>
     </div>
 
-    <!-- Example 8: State diagram — order lifecycle -->
+    <!-- Example 8: State diagram Ã¢â‚¬â€ order lifecycle -->
     <div class="example-card">
       <h2>Example 8: Order Lifecycle &mdash; stateDiagram-v2</h2>
       <p class="hint">
@@ -638,7 +638,7 @@ flowchart TD
       </div>
     </div>
 
-    <!-- Example 10: Visual props — collapsedOpacity and collapsedZoom on a node -->
+    <!-- Example 10: Visual props Ã¢â‚¬â€ collapsedOpacity and collapsedZoom on a node -->
     <div class="example-card">
       <h2>
         Example 10: Node Visual Props &mdash; <code>collapsedOpacity</code> &amp;
@@ -665,7 +665,7 @@ flowchart TD
   CartService --> CartDB
 
   interaction Gateway {
-    tooltip: "API Gateway — routes all inbound traffic. Dims and shrinks when collapsed."
+    tooltip: "API Gateway Ã¢â‚¬â€ routes all inbound traffic. Dims and shrinks when collapsed."
     collapsible: true
     collapsedOpacity: 0.35
     collapsedZoom: 0.65
@@ -685,7 +685,7 @@ flowchart TD
       </div>
     </div>
 
-    <!-- Example 11: Cluster visual props — collapsedWidth/Height + expandedWidth/Height + collapsedZIndex -->
+    <!-- Example 11: Cluster visual props Ã¢â‚¬â€ collapsedWidth/Height + expandedWidth/Height + collapsedZIndex -->
     <div class="example-card">
       <h2>Example 11: Cluster Visual Props &mdash; Custom Sizes &amp; Z-Order</h2>
       <p class="hint">
@@ -719,7 +719,7 @@ flowchart LR
     defaultState: collapsed
     collapsedOpacity: 0.5
     collapsedZoom: 0.8
-    tooltip: "Input validation pipeline — schema, rules, sanitisation"
+    tooltip: "Input validation pipeline Ã¢â‚¬â€ schema, rules, sanitisation"
   }
   interaction Processing {
     collapsible: true
@@ -727,7 +727,7 @@ flowchart LR
     collapsedWidth: 200
     collapsedHeight: 52
     collapsedZIndex: 1
-    tooltip: "Data processing pipeline — parse, transform, aggregate"
+    tooltip: "Data processing pipeline Ã¢â‚¬â€ parse, transform, aggregate"
   }</pre
             >
           </div>
@@ -741,7 +741,7 @@ flowchart LR
       </div>
     </div>
 
-    <!-- Example 12: Sequence diagram — SMTP email sending with interactive par blocks -->
+    <!-- Example 12: Sequence diagram Ã¢â‚¬â€ SMTP email sending with interactive par blocks -->
     <div class="example-card">
       <h2>
         Example 12: SMTP Email Delivery &mdash; sequenceDiagram with interactive
@@ -817,7 +817,7 @@ sequenceDiagram
       </div>
     </div>
 
-    <!-- Example 13: C4 Context diagram — click-to-spotlight interactivity -->
+    <!-- Example 13: C4 Context diagram Ã¢â‚¬â€ click-to-spotlight interactivity -->
     <div class="example-card">
       <h2>
         Example 13: Online Shopping Platform &mdash; C4Context diagram with click-to-spotlight
@@ -834,16 +834,16 @@ sequenceDiagram
           <div class="source-panel">
             <pre class="mermaid-interactive" data-example="13">
 C4Context
-    title System Context — Online Shopping Platform
+    title System Context Ã¢â‚¬â€ Online Shopping Platform
     Enterprise_Boundary(b0, "TechShop Platform") {
         Person(shopper, "Shopper", "Browses catalogue and places orders online")
         System(webApp, "Web / Mobile App", "React SPA + iOS & Android apps for browsing, cart and checkout")
-        SystemDb(orderDb, "Order &amp; Inventory DB", "PostgreSQL — persists orders, stock levels and customer profiles")
+        SystemDb(orderDb, "Order &amp; Inventory DB", "PostgreSQL Ã¢â‚¬â€ persists orders, stock levels and customer profiles")
         System(notifSvc, "Notification Service", "Sends order confirmations and shipping alerts by email and SMS")
     }
     Person_Ext(supportAgent, "Support Agent", "Handles customer complaints and refunds via admin portal")
-    System_Ext(paymentGw, "Payment Gateway", "Stripe — authorises and captures card and wallet payments")
-    System_Ext(shippingApi, "Shipping API", "FedEx / UPS — quotes rates and generates shipping labels")
+    System_Ext(paymentGw, "Payment Gateway", "Stripe Ã¢â‚¬â€ authorises and captures card and wallet payments")
+    System_Ext(shippingApi, "Shipping API", "FedEx / UPS Ã¢â‚¬â€ quotes rates and generates shipping labels")
 
     Rel(shopper, webApp, "Shops on", "HTTPS")
     Rel(supportAgent, webApp, "Manages orders via admin portal", "HTTPS")
@@ -869,331 +869,13 @@ C4Context
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
 
-      // -----------------------------------------------------------------------
-      // Preprocessor — mirrors packages/mermaid-interactive/src/preprocessor.ts
-      // -----------------------------------------------------------------------
+      import { preprocess } from '../packages/mermaid-interactive/dist/preprocessor.js';
+      import { bind } from '../packages/mermaid-interactive/dist/binder.js';
 
-      function parseParamDefs(raw) {
-        return raw
-          .split(',')
-          .map((p) => {
-            const trimmed = p.trim();
-            const isArray = trimmed.endsWith('[]');
-            return { name: isArray ? trimmed.slice(0, -2).trim() : trimmed, isArray };
-          })
-          .filter((p) => p.name.length > 0);
-      }
-
-      function extractTemplates(source) {
-        const templates = new Map();
-        let remaining = source;
-        const startRe = /^[ \t]*template\s+(\w+)\s*\(([^)]*)\)\s*\{/m;
-        let match;
-        while ((match = startRe.exec(remaining)) !== null) {
-          const name = match[1];
-          const params = parseParamDefs(match[2]);
-          const bodyStart = match.index + match[0].length;
-          let depth = 1,
-            pos = bodyStart;
-          while (pos < remaining.length && depth > 0) {
-            if (remaining[pos] === '{') depth++;
-            else if (remaining[pos] === '}') depth--;
-            pos++;
-          }
-          templates.set(name, { name, params, body: remaining.slice(bodyStart, pos - 1) });
-          remaining = remaining.slice(0, match.index) + remaining.slice(pos);
-        }
-        return { templates, remaining };
-      }
-
-      function parseUseArgs(raw) {
-        const args = new Map();
-        const re = /(\w+)\s*=\s*(?:\[([^\]]*)\]|"([^"]*)")/g;
-        let m;
-        while ((m = re.exec(raw)) !== null) {
-          args.set(
-            m[1],
-            m[2] !== undefined ? m[2].split(',').map((s) => s.trim().replace(/^"|"$/g, '')) : m[3]
-          );
-        }
-        return args;
-      }
-
-      function esc(s) {
-        return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      }
-
-      function expandBody(body, params, args) {
-        let result = body;
-        for (const p of params) {
-          const val = args.get(p.name);
-          if (val === undefined) continue;
-          if (p.isArray && Array.isArray(val)) {
-            val.forEach((v, i) => {
-              result = result.replace(new RegExp(esc(p.name) + '\\[' + i + '\\]', 'g'), v);
-            });
-          } else if (typeof val === 'string') {
-            result = result.replace(new RegExp('\\b' + esc(p.name) + '\\b', 'g'), val);
-          }
-        }
-        return result;
-      }
-
-      function parseInteractionProps(raw) {
-        const props = {};
-        for (const line of raw.split('\n')) {
-          const m = line.match(/^\s*(\w+)\s*:\s*(.+?)\s*$/);
-          if (!m) continue;
-          const val = m[2];
-          if (val === 'true') {
-            props[m[1]] = true;
-          } else if (val === 'false') {
-            props[m[1]] = false;
-          } else {
-            // Strip surrounding quotes; bare numeric literals become numbers.
-            const unquoted = val.replace(/^"|"$/g, '');
-            const num = Number(unquoted);
-            props[m[1]] = unquoted !== '' && !Number.isNaN(num) ? num : unquoted;
-          }
-        }
-        return props;
-      }
-
-      function preprocess(source) {
-        const { templates, remaining } = extractTemplates(source);
-        const interactions = [];
-        const expanded = remaining.replace(
-          /^[ \t]*use\s+(\w+)\s*\(([^)]*)\)[ \t]*$/gm,
-          (_, name, argsRaw) => {
-            const tmpl = templates.get(name);
-            if (!tmpl) return `%% [ERROR] Unknown template: ${name}`;
-            return expandBody(tmpl.body, tmpl.params, parseUseArgs(argsRaw)).trim();
-          }
-        );
-        const diagram = expanded.replace(
-          /^[ \t]*interaction\s+(\w+)\s*\{([^}]*)\}/gm,
-          (_, nodeId, propsRaw) => {
-            const props = parseInteractionProps(propsRaw);
-            interactions.push({ nodeId, props });
-            return `%% @interact ${nodeId} ${JSON.stringify(props)}`;
-          }
-        );
-        return { diagram: diagram.trimStart(), interactions };
-      }
-
-      // -----------------------------------------------------------------------
-      // Binder — mirrors packages/mermaid-interactive/src/binder.ts
-      // -----------------------------------------------------------------------
-
-      function parseInteractions(src) {
-        const out = [];
-        const re = /%% @interact (\w+) (\{[^\n]*\})/g;
-        let m;
-        while ((m = re.exec(src)) !== null) {
-          try {
-            out.push({ nodeId: m[1], props: JSON.parse(m[2]) });
-          } catch {}
-        }
-        return out;
-      }
-
-      // Parse raw Mermaid edge IDs.
-      //   flowchart:    "L-SOURCE-TARGET-N"    (prefix 'L', dash-delimited)
-      //   classDiagram: "id_SOURCE_TARGET_N"   (prefix 'id', underscore-delimited)
-      //   stateDiagram: "edge0", "edge1", ...  (opaque counter — no source/target)
-      function parseEdgeId(id) {
-        if (!id) return null;
-        // Flowchart — old dash format: "L-SOURCE-TARGET-N"
-        let m = /^L-(.+?)-(.+?)-\d+$/.exec(id);
-        if (m) return { source: m[1], target: m[2] };
-        // Flowchart — current underscore format from getEdgeId: "L_SOURCE_TARGET_N"
-        m = /^L_(.+?)_(.+?)_\d+$/.exec(id);
-        if (m) return { source: m[1], target: m[2] };
-        // classDiagram — greedy first capture handles multi-word names like "OrderItem";
-        // non-greedy second capture then grabs the shortest remaining token before _\d+$
-        m = /^id_(.+)_(.+?)_\d+$/.exec(id);
-        if (m) return { source: m[1], target: m[2] };
-        return null;
-      }
-
-      // Get the node's center in the SVG layout coordinate space.
-      // positionNode() always sets transform="translate(cx,cy)" on every unified-
-      // renderer node, where cx/cy is the dagre layout center of the node.
-      function getNodeCenter(nodeEl) {
-        const m = /translate\(\s*([\d.\-eE]+)[,\s]+([\d.\-eE]+)\s*\)/.exec(
-          nodeEl.getAttribute('transform') || ''
-        );
-        return m ? { x: parseFloat(m[1]), y: parseFloat(m[2]) } : null;
-      }
-
-      // Collect all edge path/label elements whose source is nodeId.
-      // nodeEl is required for the geometry fallback used when edge IDs are opaque
-      // (e.g. stateDiagram produces "edge0", "edge1" — no source/target in ID).
-      function outgoingEdgeElements(
-        svg,
-        nodeId,
-        nodeEl,
-        downstreamNodes,
-        alwaysShowIds = new Set()
-      ) {
-        // Build the full set of node IDs whose outgoing edges should be hidden:
-        // the collapsed node itself PLUS all downstream nodes.  Downstream element
-        // IDs follow "{diagramId}-{type}-{nodeId}-{counter}"; greedy regex to
-        // handle compound names (e.g. "OrderItem").
-        const hiddenSourceIds = new Set([nodeId]);
-        downstreamNodes.forEach((n) => {
-          const m = /-(?:flowchart|classId|state)-(.+)-\d+$/.exec(n.getAttribute('id') || '');
-          if (m) hiddenSourceIds.add(m[1]);
-        });
-        // IDs of truly-hidden downstream nodes: catches inbound edges A→D1 etc.
-        const hiddenTargetIds = new Set();
-        downstreamNodes.forEach((n) => {
-          const m = /-(?:flowchart|classId|state)-(.+)-\d+$/.exec(n.getAttribute('id') || '');
-          if (m) hiddenTargetIds.add(m[1]);
-        });
-
-        // Hide if source OR target is hidden, unless target is exempt.
-        const shouldHide = (p) =>
-          p &&
-          !alwaysShowIds.has(p.target) &&
-          (hiddenSourceIds.has(p.source) || hiddenTargetIds.has(p.target));
-
-        const result = [];
-        // Old renderer (g.edgePath / g.edgeLabel have an id attribute):
-        svg.querySelectorAll('.edgePath[id], .edgeLabel[id]').forEach((el) => {
-          if (shouldHide(parseEdgeId(el.id))) result.push(el);
-        });
-        // Unified renderer edge paths:
-        svg.querySelectorAll('[data-edge="true"][data-id]').forEach((el) => {
-          if (shouldHide(parseEdgeId(el.dataset.id))) result.push(el);
-        });
-        // Unified renderer edge labels (outer g.edgeLabel wrapper):
-        svg.querySelectorAll('g.edgeLabel').forEach((labelGroup) => {
-          const rawId = labelGroup.querySelector('g.label[data-id]')?.dataset?.id;
-          if (shouldHide(rawId ? parseEdgeId(rawId) : null)) result.push(labelGroup);
-        });
-
-        // Geometry fallback: for diagram types with opaque edge IDs (e.g.
-        // stateDiagram uses "edge0", "edge1"), check pts[0] against the center
-        // of ANY hidden node (collapsed node + all downstream nodes).
-        if (result.length === 0 && nodeEl) {
-          const hiddenCenters = [];
-          const c0 = getNodeCenter(nodeEl);
-          if (c0) hiddenCenters.push(c0);
-          downstreamNodes.forEach((n) => {
-            const nc = getNodeCenter(n);
-            if (nc) hiddenCenters.push(nc);
-          });
-          // Centers of exempt nodes — skip edges whose last point is near these.
-          const exemptCenters = [];
-          alwaysShowIds.forEach((eid) => {
-            const eel = findNode(svg, eid);
-            if (eel) {
-              const nc = getNodeCenter(eel);
-              if (nc) exemptCenters.push(nc);
-            }
-          });
-          if (hiddenCenters.length > 0) {
-            const tol = 60; // SVG layout units
-            // downstreamCenters: only truly-hidden nodes, not nodeEl itself.
-            // Used for tgtMatch to avoid hiding edges like A→B where B is visible.
-            const downstreamCenters = [];
-            downstreamNodes.forEach((n) => {
-              const nc = getNodeCenter(n);
-              if (nc) downstreamCenters.push(nc);
-            });
-            const matchedIds = new Set();
-            svg.querySelectorAll('[data-edge="true"][data-points]').forEach((el) => {
-              try {
-                const pts = JSON.parse(atob(el.getAttribute('data-points') || ''));
-                const p0 = pts?.[0];
-                const pLast = pts?.[pts.length - 1];
-                if (!p0) return;
-                const srcMatch = hiddenCenters.some(
-                  (hc) => Math.abs(p0.x - hc.x) < tol && Math.abs(p0.y - hc.y) < tol
-                );
-                // Use downstreamCenters for tgtMatch — not hiddenCenters — so we
-                // don't hide A→B where B is the collapsing node (still visible).
-                const tgtMatch =
-                  pLast &&
-                  downstreamCenters.some(
-                    (hc) => Math.abs(pLast.x - hc.x) < tol && Math.abs(pLast.y - hc.y) < tol
-                  );
-                if (!srcMatch && !tgtMatch) return;
-                const tgtExempt =
-                  pLast &&
-                  exemptCenters.some(
-                    (ec) => Math.abs(pLast.x - ec.x) < tol && Math.abs(pLast.y - ec.y) < tol
-                  );
-                if (tgtExempt) return;
-                result.push(el);
-                const eid = el.getAttribute('data-id');
-                if (eid) matchedIds.add(eid);
-              } catch {}
-            });
-            if (matchedIds.size > 0) {
-              svg.querySelectorAll('g.edgeLabel').forEach((labelGroup) => {
-                const rawId = labelGroup.querySelector('g.label[data-id]')?.dataset?.id;
-                if (rawId && matchedIds.has(rawId)) result.push(labelGroup);
-              });
-            }
-          }
-        }
-
-        // Collect g.edgeTerminals (multiplicity labels "1", "0..*" etc.).
-        // Match by proximity to start/end points of already-hidden edge paths
-        // (most precise). Falls back to downstream node centres if no edge
-        // paths carry data-points.
-        {
-          const hiddenPathSet = new Set(result);
-          const edgeEndpoints = [];
-          svg.querySelectorAll('[data-edge="true"][data-points]').forEach((el) => {
-            if (!hiddenPathSet.has(el)) return;
-            try {
-              const pts = JSON.parse(atob(el.getAttribute('data-points') || ''));
-              const p0 = pts?.[0],
-                pLast = pts?.[pts.length - 1];
-              if (p0) edgeEndpoints.push(p0);
-              if (pLast) edgeEndpoints.push(pLast);
-            } catch {}
-          });
-
-          let searchPoints = edgeEndpoints;
-          let tol = 40;
-          if (searchPoints.length === 0) {
-            // Fallback: downstream node centres
-            downstreamNodes.forEach((n) => {
-              const c = getNodeCenter(n);
-              if (c) searchPoints.push(c);
-            });
-            tol = 120;
-          }
-
-          if (searchPoints.length > 0) {
-            svg.querySelectorAll('g.edgeTerminals').forEach((term) => {
-              const tc = getNodeCenter(term);
-              if (!tc) return;
-              const near = searchPoints.some(
-                (ep) => Math.abs(tc.x - ep.x) < tol && Math.abs(tc.y - ep.y) < tol
-              );
-              if (near) result.push(term);
-            });
-          }
-        }
-
-        return result;
-      }
-
-      /**
-       * Refit the SVG viewBox and element height to the bounding box of all
-       * currently visible nodes, so the diagram truly shrinks / expands.
-       */
+      // fitSvgToContent -- resize the SVG viewBox after collapsing/expanding
+      // sequence diagram control structures.  Not exposed by the package yet.
       function fitSvgToContent(svg) {
         try {
-          // getBBox() on the root <g> returns the tight bounding box of ALL
-          // visible SVG content (modern browsers exclude display:none descendants
-          // per SVG2). Simpler and more reliable than enumerating node classes,
-          // because it also captures edge paths, pseudo-states ([*]), etc.
           const rootG = svg.querySelector(':scope > g');
           if (!rootG) return;
           const bbox = rootG.getBBox();
@@ -1207,448 +889,8 @@ C4Context
         } catch {}
       }
 
-      function findNode(svg, nodeId) {
-        // Exclude .cluster elements — subgraph clusters share the same ID format as
-        // regular nodes but must be routed to attachClusterCollapsible, not attachCollapsible.
-        const byFlow = svg.querySelector(`[id*="-flowchart-${nodeId}-"]:not(.cluster)`);
-        if (byFlow) return byFlow;
-        const byClass = svg.querySelector(`[id*="-classId-${nodeId}-"]:not(.cluster)`);
-        if (byClass) return byClass;
-        const byState = svg.querySelector(
-          `[id*="-state-${nodeId}-"]:not([id*="----"]):not(.cluster)`
-        );
-        if (byState) return byState;
-        // Text fallback: covers htmlLabels (span.nodeLabel) and SVG text
-        for (const g of svg.querySelectorAll('g.node, g.actor, g.label-container, g.stateGroup')) {
-          if (g.querySelector('.nodeLabel')?.textContent?.trim() === nodeId) return g;
-          const textEl = g.querySelector('text');
-          if (textEl?.textContent?.trim() === nodeId) return g;
-        }
-        return null;
-      }
-
-      function findCluster(svg, nodeId) {
-        // Unified renderer cluster elements use the same domId format as nodes:
-        // "{diagramId}-{flowchart|classId|state}-{nodeId}-{counter}" with class="cluster".
-        return (
-          svg.querySelector(`g.cluster[id*="-flowchart-${nodeId}-"]`) ??
-          svg.querySelector(`g.cluster[id*="-classId-${nodeId}-"]`) ??
-          svg.querySelector(`g.cluster[id*="-state-${nodeId}-"]`) ??
-          // Old renderer formats
-          svg.querySelector(`[id="cluster_${nodeId}"]`) ??
-          svg.querySelector(`g.cluster[id$="_${nodeId}"]`) ??
-          // Unified renderer for subgraphs: subgraph nodes have no domId type
-          // prefix, so they render as "{diagramId}-{nodeId}" (e.g. "mermaid-4-SG1").
-          svg.querySelector(`g.cluster[id$="-${nodeId}"]`) ??
-          null
-        );
-      }
-
-      // Resolve downstream nodes via Mermaid edge IDs at attach time.
-      // IMPORTANT: must be called while all nodes are visible — getBoundingClientRect
-      // returns zero on display:none elements so the Y-heuristic fallback would fail
-      // if called later during expand.
-      function findDownstreamNodes(svg, nodeEl, nodeId, alwaysShowIds = new Set()) {
-        // Build a complete source→targets adjacency map from every parsed edge ID.
-        // This covers both flowchart ("L-S-T-N") and classDiagram ("id_S_T_N").
-        const adjacency = new Map();
-        const addEdge = (src, tgt) => {
-          if (!adjacency.has(src)) adjacency.set(src, new Set());
-          adjacency.get(src).add(tgt);
-        };
-        svg.querySelectorAll('.edgePath[id]').forEach((el) => {
-          const parsed = parseEdgeId(el.id);
-          if (parsed) addEdge(parsed.source, parsed.target);
-        });
-        svg.querySelectorAll('[data-edge="true"][data-id]').forEach((el) => {
-          const parsed = parseEdgeId(el.dataset.id);
-          if (parsed) addEdge(parsed.source, parsed.target);
-        });
-
-        if (adjacency.size > 0) {
-          // BFS: collect the full transitive closure of nodes reachable from nodeId.
-          // Nodes in alwaysShowIds are barriers: not hidden, not recursed past.
-          const visited = new Set([nodeId]);
-          const queue = [nodeId];
-          const toHide = [];
-          while (queue.length > 0) {
-            const current = queue.shift();
-            if (alwaysShowIds.has(current)) continue; // exempt — keep visible, stop branch
-            if (current !== nodeId) toHide.push(current);
-            adjacency.get(current)?.forEach((target) => {
-              if (!visited.has(target)) {
-                visited.add(target);
-                queue.push(target);
-              }
-            });
-          }
-          return toHide.flatMap((tid) => {
-            const el =
-              svg.querySelector(`[id*="-flowchart-${tid}-"]`) ??
-              svg.querySelector(`[id*="-classId-${tid}-"]`) ??
-              svg.querySelector(`[id*="-state-${tid}-"]:not([id*="----"])`);
-            return el ? [el] : [];
-          });
-        }
-
-        // Fallback: Y-position — only reliable at attach time while visible.
-        // All unified-renderer nodes have class 'node'; stateGroup is the old renderer.
-        // Respect alwaysShowIds barriers: never include a barrier node itself, and
-        // stop collecting once the first barrier node's Y centre is reached.
-        const barrierEls = new Set();
-        let minBarrierCy = Infinity;
-        alwaysShowIds.forEach((bid) => {
-          const bel = findNode(svg, bid);
-          if (bel) {
-            barrierEls.add(bel);
-            const bb = bel.getBoundingClientRect();
-            minBarrierCy = Math.min(minBarrierCy, bb.top + bb.height / 2);
-          }
-        });
-        const parentCy =
-          nodeEl.getBoundingClientRect().top + nodeEl.getBoundingClientRect().height / 2;
-        return [...svg.querySelectorAll('g.node, g.stateGroup')].filter((n) => {
-          if (n === nodeEl || barrierEls.has(n)) return false;
-          const b = n.getBoundingClientRect();
-          const cy = b.top + b.height / 2;
-          return cy > parentCy && cy < minBarrierCy;
-        });
-      }
-
-      function findNodesInsideCluster(svg, clusterEl) {
-        // The cluster <g> has no transform, so getBBox() is in root SVG space.
-        // Node <g> elements have transform="translate(cx,cy)"; their getBBox() is
-        // LOCAL (center ≈ (0,0)). Use getNodeCenter() to parse the translate
-        // attribute instead, giving the correct root-SVG position.
-        try {
-          const cb = clusterEl.getBBox();
-          if (cb.width > 0 || cb.height > 0) {
-            return [...svg.querySelectorAll('g.node')].filter((n) => {
-              const c = getNodeCenter(n);
-              if (c) {
-                return (
-                  c.x >= cb.x && c.x <= cb.x + cb.width && c.y >= cb.y && c.y <= cb.y + cb.height
-                );
-              }
-              // Node has no translate — fall back to viewport comparison
-              const cb2 = clusterEl.getBoundingClientRect();
-              const b = n.getBoundingClientRect();
-              const cx = b.left + b.width / 2;
-              const cy = b.top + b.height / 2;
-              return cx >= cb2.left && cx <= cb2.right && cy >= cb2.top && cy <= cb2.bottom;
-            });
-          }
-        } catch {}
-        // Final fallback: viewport coordinates
-        const cb = clusterEl.getBoundingClientRect();
-        return [...svg.querySelectorAll('g.node')].filter((n) => {
-          const b = n.getBoundingClientRect();
-          const cx = b.left + b.width / 2;
-          const cy = b.top + b.height / 2;
-          return cx >= cb.left && cx <= cb.right && cy >= cb.top && cy <= cb.bottom;
-        });
-      }
-
-      function attachTooltip(el, text) {
-        const tip = document.createElement('div');
-        tip.className = 'mermaid-tooltip';
-        tip.textContent = text;
-        document.body.appendChild(tip);
-        el.style.cursor = 'help';
-        el.addEventListener('mouseenter', (e) => {
-          tip.style.display = 'block';
-          tip.style.left = `${e.clientX + 14}px`;
-          tip.style.top = `${e.clientY - 10}px`;
-        });
-        el.addEventListener('mousemove', (e) => {
-          tip.style.left = `${e.clientX + 14}px`;
-          tip.style.top = `${e.clientY - 10}px`;
-        });
-        el.addEventListener('mouseleave', () => {
-          tip.style.display = 'none';
-        });
-      }
-
-      function makeBadge(targetEl, expanded) {
-        const badge = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        badge.setAttribute('class', 'mi-toggle');
-        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        circle.setAttribute('r', '8');
-        circle.setAttribute('cx', '0');
-        circle.setAttribute('cy', '0');
-        circle.setAttribute('fill', '#6366f1');
-        circle.setAttribute('stroke', '#fff');
-        circle.setAttribute('stroke-width', '1.5');
-        const icon = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        icon.setAttribute('text-anchor', 'middle');
-        icon.setAttribute('dominant-baseline', 'central');
-        icon.setAttribute('font-size', '10');
-        icon.setAttribute('fill', '#fff');
-        icon.setAttribute('pointer-events', 'none');
-        icon.textContent = expanded ? '▼' : '▶';
-        badge.appendChild(circle);
-        badge.appendChild(icon);
-        try {
-          const box = targetEl.getBBox();
-          badge.setAttribute(
-            'transform',
-            `translate(${box.x + box.width + 6},${box.y + box.height / 2})`
-          );
-        } catch {}
-        targetEl.appendChild(badge);
-        return icon;
-      }
-
-      function attachCollapsible(
-        svg,
-        nodeEl,
-        nodeId,
-        defaultState,
-        alwaysShowIds = new Set(),
-        props = {}
-      ) {
-        let expanded = defaultState !== 'collapsed';
-        nodeEl.style.cursor = 'pointer';
-        // Save original SVG transform so zoom can append scale() without losing the layout translate.
-        const origNodeTransform = nodeEl.getAttribute('transform') ?? '';
-        // Save DOM position for z-index reordering (CSS z-index is ignored on SVG elements).
-        const origNextSibling = nodeEl.nextSibling;
-        const origParent = nodeEl.parentElement;
-        const icon = makeBadge(nodeEl, expanded);
-
-        // Cache at attach time while every element is visible.
-        // Do NOT re-query inside setVisible — hidden elements return zero from
-        // getBoundingClientRect, so any query-on-toggle will fail to find them.
-        const downstreamNodes = findDownstreamNodes(svg, nodeEl, nodeId, alwaysShowIds);
-        const outgoingEdges = outgoingEdgeElements(
-          svg,
-          nodeId,
-          nodeEl,
-          downstreamNodes,
-          alwaysShowIds
-        );
-
-        // Find clusters that become entirely empty when downstreamNodes are
-        // hidden. Toggle their decoration (rect + label) alongside the nodes.
-        const hiddenNodeSet = new Set([nodeEl, ...downstreamNodes]);
-        const emptiedClusterDecorations = [];
-        svg.querySelectorAll('g.cluster').forEach((clusterEl) => {
-          const clusterNodes = findNodesInsideCluster(svg, clusterEl);
-          if (clusterNodes.length > 0 && clusterNodes.every((n) => hiddenNodeSet.has(n))) {
-            emptiedClusterDecorations.push(
-              [...clusterEl.children].filter((c) => !c.classList.contains('mi-toggle'))
-            );
-          }
-        });
-
-        const setVisible = (show) => {
-          downstreamNodes.forEach((n) => {
-            n.style.display = show ? '' : 'none';
-          });
-          // Only outgoing edges from hidden nodes are toggled; incoming edges remain
-          // visible so the collapsed node stays connected to its parents.
-          outgoingEdges.forEach((el) => {
-            el.style.display = show ? '' : 'none';
-          });
-          emptiedClusterDecorations.forEach((dec) => {
-            dec.forEach((c) => {
-              c.style.display = show ? '' : 'none';
-            });
-          });
-          icon.textContent = show ? '▼' : '▶';
-          // Apply visual props: opacity, zoom (scale).
-          const opacity = show ? (props.expandedOpacity ?? 1) : (props.collapsedOpacity ?? 1);
-          nodeEl.style.opacity = opacity !== 1 ? String(opacity) : '';
-          const zoom = show ? (props.expandedZoom ?? 1) : (props.collapsedZoom ?? 1);
-          nodeEl.setAttribute(
-            'transform',
-            zoom !== 1 ? `${origNodeTransform} scale(${zoom})`.trim() : origNodeTransform
-          );
-          // Z-index via DOM reordering (CSS z-index is ignored on SVG elements).
-          const zIdx = show ? props.expandedZIndex : props.collapsedZIndex;
-          if (origParent) {
-            if (zIdx != null && zIdx > 0) {
-              origParent.appendChild(nodeEl);
-            } else {
-              origParent.insertBefore(nodeEl, origNextSibling);
-            }
-          }
-          // Refit the SVG canvas so the diagram truly collapses / expands.
-          fitSvgToContent(svg);
-        };
-
-        if (!expanded) setVisible(false);
-        nodeEl.addEventListener('click', () => {
-          expanded = !expanded;
-          setVisible(expanded);
-        });
-      }
-
-      function attachClusterCollapsible(svg, clusterEl, nodeId, defaultState, props = {}) {
-        let expanded = defaultState !== 'collapsed';
-        clusterEl.style.cursor = 'pointer';
-        // Save original SVG transform so zoom can append scale() without losing position.
-        const origClusterTransform = clusterEl.getAttribute('transform') ?? '';
-        // Save DOM position for z-index reordering.
-        const origNextSibling = clusterEl.nextSibling;
-        const origParent = clusterEl.parentElement;
-        const icon = makeBadge(clusterEl, expanded);
-
-        // Capture cluster decoration (rect, label) AFTER the badge is appended,
-        // so the badge is excluded. Hiding these lets getBBox() / fitSvgToContent
-        // correctly shrink the SVG when the cluster is collapsed.
-        const clusterDecoration = [...clusterEl.children].filter(
-          (c) => !c.classList.contains('mi-toggle')
-        );
-
-        const internalNodes = findNodesInsideCluster(svg, clusterEl);
-        // Extract the logical node id from a dom id of either renderer.
-        const extractNodeId = (domId) =>
-          domId?.match(/[-](?:flowchart|classId|state)[-](.+?)[-]\d+/)?.[1] ?? null;
-        const internalIds = new Set(internalNodes.map((n) => extractNodeId(n.id)).filter(Boolean));
-        const relatedEdges = [];
-        // Only hide edges whose SOURCE is inside the cluster.
-        // Inbound edges (source external, target internal) stay visible so the
-        // collapsed cluster stub remains connected to its parents.
-        // Old renderer:
-        svg.querySelectorAll('.edgePath[id], .edgeLabel[id]').forEach((el) => {
-          const p = parseEdgeId(el.id);
-          if (p && internalIds.has(p.source)) relatedEdges.push(el);
-        });
-        // Unified renderer edge paths:
-        svg.querySelectorAll('[data-edge="true"][data-id]').forEach((el) => {
-          const p = parseEdgeId(el.dataset.id);
-          if (p && internalIds.has(p.source)) relatedEdges.push(el);
-        });
-        // Unified renderer edge labels:
-        svg.querySelectorAll('g.edgeLabel').forEach((labelGroup) => {
-          const rawId = labelGroup.querySelector('g.label[data-id]')?.dataset?.id;
-          if (!rawId) return;
-          const p = parseEdgeId(rawId);
-          if (p && internalIds.has(p.source)) relatedEdges.push(labelGroup);
-        });
-
-        // Geometry fallback: if ID-based passes found nothing, use data-points
-        // proximity to internal node layout centres.
-        if (relatedEdges.length === 0 && internalNodes.length > 0) {
-          const internalCenters = internalNodes.map(getNodeCenter).filter(Boolean);
-          if (internalCenters.length > 0) {
-            const tol = 60;
-            const matchedIds = new Set();
-            svg.querySelectorAll('[data-edge="true"][data-points]').forEach((el) => {
-              try {
-                const pts = JSON.parse(atob(el.getAttribute('data-points') || ''));
-                const p0 = pts?.[0];
-                const pLast = pts?.[pts.length - 1];
-                if (!p0) return;
-                // Only match edges whose source (p0) is near an internal node.
-                const touchesInternal = internalCenters.some(
-                  (c) => Math.abs(p0.x - c.x) < tol && Math.abs(p0.y - c.y) < tol
-                );
-                if (touchesInternal) {
-                  relatedEdges.push(el);
-                  const eid = el.getAttribute('data-id');
-                  if (eid) matchedIds.add(eid);
-                }
-              } catch {}
-            });
-            if (matchedIds.size > 0) {
-              svg.querySelectorAll('g.edgeLabel').forEach((labelGroup) => {
-                const rawId = labelGroup.querySelector('g.label[data-id]')?.dataset?.id;
-                if (rawId && matchedIds.has(rawId)) relatedEdges.push(labelGroup);
-              });
-            }
-          }
-        }
-
-        // Background rect — resized to compact stub on collapse.
-        const bgRect =
-          clusterEl.querySelector(':scope > rect') ??
-          clusterEl.querySelector(':scope > g:first-child > rect:first-child');
-        const innerRect = clusterEl.querySelector('rect.inner');
-        const origBgAttrs = bgRect
-          ? {
-              x: bgRect.getAttribute('x') ?? '0',
-              y: bgRect.getAttribute('y') ?? '0',
-              w: bgRect.getAttribute('width') ?? '100',
-              h: bgRect.getAttribute('height') ?? '100',
-            }
-          : null;
-        const origBadgeTransform = icon.parentElement?.getAttribute('transform') ?? '';
-        const labelGroupEl = clusterEl.querySelector('.cluster-label');
-        let compactW = 140,
-          compactH = 60;
-        if (labelGroupEl) {
-          try {
-            const lb = labelGroupEl.getBBox();
-            compactW = Math.max(lb.width + 44, 140);
-            compactH = Math.max(lb.height + 36, 60);
-          } catch {}
-        }
-        // Allow props to override the auto-calculated compact stub dimensions.
-        if (props.collapsedWidth != null) compactW = props.collapsedWidth;
-        if (props.collapsedHeight != null) compactH = props.collapsedHeight;
-
-        const setVisible = (show) => {
-          internalNodes.forEach((n) => {
-            n.style.display = show ? '' : 'none';
-          });
-          relatedEdges.forEach((el) => {
-            el.style.display = show ? '' : 'none';
-          });
-          if (bgRect && origBgAttrs) {
-            if (show) {
-              bgRect.setAttribute(
-                'width',
-                props.expandedWidth != null ? String(props.expandedWidth) : origBgAttrs.w
-              );
-              bgRect.setAttribute(
-                'height',
-                props.expandedHeight != null ? String(props.expandedHeight) : origBgAttrs.h
-              );
-              icon.parentElement?.setAttribute('transform', origBadgeTransform);
-            } else {
-              bgRect.setAttribute('width', String(compactW));
-              bgRect.setAttribute('height', String(compactH));
-              const bx = parseFloat(origBgAttrs.x);
-              const by = parseFloat(origBgAttrs.y);
-              icon.parentElement?.setAttribute(
-                'transform',
-                `translate(${bx + compactW - 2},${by + 2})`
-              );
-            }
-          }
-          if (innerRect) innerRect.style.display = show ? '' : 'none';
-          icon.textContent = show ? '▼' : '▶';
-          // Apply visual props: opacity, zoom (scale).
-          const opacity = show ? (props.expandedOpacity ?? 1) : (props.collapsedOpacity ?? 1);
-          clusterEl.style.opacity = opacity !== 1 ? String(opacity) : '';
-          const zoom = show ? (props.expandedZoom ?? 1) : (props.collapsedZoom ?? 1);
-          clusterEl.setAttribute(
-            'transform',
-            zoom !== 1 ? `${origClusterTransform} scale(${zoom})`.trim() : origClusterTransform
-          );
-          // Z-index via DOM reordering (CSS z-index is ignored on SVG elements).
-          const zIdx = show ? props.expandedZIndex : props.collapsedZIndex;
-          if (origParent) {
-            if (zIdx != null && zIdx > 0) {
-              origParent.appendChild(clusterEl);
-            } else {
-              origParent.insertBefore(clusterEl, origNextSibling);
-            }
-          }
-          fitSvgToContent(svg);
-        };
-
-        if (!expanded) setVisible(false);
-        clusterEl.addEventListener('click', () => {
-          expanded = !expanded;
-          setVisible(expanded);
-        });
-      }
-
       // -----------------------------------------------------------------------
-      // Sequence diagram — automatic par/loop/alt block collapse
+      // Sequence diagram Ã¢â‚¬â€ automatic par/loop/alt block collapse
       // No 'interaction' blocks needed: every g[data-et="control-structure"] gets
       // a collapse badge automatically when this function is called.
       // -----------------------------------------------------------------------
@@ -1678,7 +920,7 @@ C4Context
           // Collect inner elements to hide on collapse.
           const innerElements = new Set();
 
-          // The border loopLines themselves — hidden so the par box collapses to just
+          // The border loopLines themselves Ã¢â‚¬â€ hidden so the par box collapses to just
           // its labelText/loopText header label.
           loopLines.forEach((l) => innerElements.add(l));
           // Section-separator dashed lines (also children of ctrlGroup).
@@ -1696,7 +938,7 @@ C4Context
             if (y > starty + eps && y < stopy - eps) innerElements.add(el);
           });
 
-          // Note rects and texts — use getBBox for centre-y comparison.
+          // Note rects and texts Ã¢â‚¬â€ use getBBox for centre-y comparison.
           svgEl.querySelectorAll('rect.note, text.noteText').forEach((el) => {
             try {
               const bb = el.getBBox();
@@ -1720,7 +962,7 @@ C4Context
             if (y > starty + eps && y < stopy - eps) innerElements.add(el);
           });
 
-          // Nested control-structure groups — identified by their own starty falling
+          // Nested control-structure groups Ã¢â‚¬â€ identified by their own starty falling
           // within this block's range. They collapse as a unit with the outer block.
           svgEl.querySelectorAll('g[data-et="control-structure"]').forEach((inner) => {
             if (inner === ctrlGroup) return;
@@ -1736,7 +978,7 @@ C4Context
 
           let expanded = true;
 
-          // Badge — indigo pill placed just right of the par box top edge.
+          // Badge Ã¢â‚¬â€ indigo pill placed just right of the par box top edge.
           const badge = document.createElementNS('http://www.w3.org/2000/svg', 'g');
           badge.setAttribute('class', 'mi-toggle');
           badge.style.cursor = 'pointer';
@@ -1781,45 +1023,8 @@ C4Context
         }
       }
 
-      function bind(svgEl, diagramSrc) {
-        const interactions = parseInteractions(diagramSrc);
-        // Gather all nodeIds that must stay visible (alwaysShow / ignoreCollapse).
-        const alwaysShowIds = new Set(
-          interactions
-            .filter(({ props }) => props.alwaysShow === true || props.ignoreCollapse === true)
-            .map(({ nodeId }) => nodeId)
-        );
-        for (const { nodeId, props } of interactions) {
-          const nodeEl = findNode(svgEl, nodeId);
-          if (!nodeEl) {
-            if (props.collapsible) {
-              const clusterEl = findCluster(svgEl, nodeId);
-              if (clusterEl)
-                attachClusterCollapsible(
-                  svgEl,
-                  clusterEl,
-                  nodeId,
-                  props.defaultState ?? 'expanded',
-                  props
-                );
-            }
-            continue;
-          }
-          if (props.tooltip) attachTooltip(nodeEl, String(props.tooltip));
-          if (props.collapsible)
-            attachCollapsible(
-              svgEl,
-              nodeEl,
-              nodeId,
-              props.defaultState ?? 'expanded',
-              alwaysShowIds,
-              props
-            );
-        }
-      }
-
       // -----------------------------------------------------------------------
-      // C4 diagram — automatic click-to-spotlight for all g.person-man shapes.
+      // C4 diagram Ã¢â‚¬â€ automatic click-to-spotlight for all g.person-man shapes.
       // The C4 renderer attaches class="person-man" to every shape element
       // (person, system, container, component, etc.) regardless of type.
       // Clicking a shape dims all others; clicking again (or clicking the

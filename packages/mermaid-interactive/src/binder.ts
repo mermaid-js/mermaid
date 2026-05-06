@@ -69,8 +69,9 @@ function findNodeElement(svgRoot: SVGSVGElement, nodeId: string): SVGGElement | 
 // Tooltip
 // ---------------------------------------------------------------------------
 
-/** Create and attach a floating tooltip div to a node <g> element. */
-function attachTooltip(el: SVGGElement, text: string): void {
+/** Create and attach a floating tooltip div to a node <g> element.
+ * Returns a cleanup function that removes the tooltip and unbinds listeners. */
+function attachTooltip(el: SVGGElement, text: string): () => void {
   const tooltip = document.createElement('div');
   tooltip.className = 'mermaid-interactive-tooltip';
   tooltip.setAttribute('role', 'tooltip');
@@ -110,6 +111,13 @@ function attachTooltip(el: SVGGElement, text: string): void {
   el.addEventListener('mouseenter', show as EventListener);
   el.addEventListener('mousemove', move as EventListener);
   el.addEventListener('mouseleave', hide);
+
+  return () => {
+    el.removeEventListener('mouseenter', show as EventListener);
+    el.removeEventListener('mousemove', move as EventListener);
+    el.removeEventListener('mouseleave', hide);
+    tooltip.remove();
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -126,7 +134,7 @@ function attachTooltip(el: SVGGElement, text: string): void {
  *
  * Returns \{ source, target \} or null if the ID does not match any known scheme.
  */
-function parseEdgeId(id: string): { source: string; target: string } | null {
+export function parseEdgeId(id: string): { source: string; target: string } | null {
   if (!id) {
     return null;
   }
@@ -935,8 +943,16 @@ function attachClusterCollapsible(
  * @param svgElement - The root `<svg>` element produced by Mermaid
  * @param diagramSource - The original (preprocessed) diagram source text containing `%% @interact` comments
  */
-export function bind(svgElement: SVGSVGElement, diagramSource: string): void {
+/**
+ * Bind interactivity to a rendered Mermaid SVG element.
+ *
+ * @returns A teardown function. Call it to remove all tooltips and event
+ *   listeners added by this call — useful in SPAs and hot-reload environments
+ *   where the diagram is replaced without a full page reload.
+ */
+export function bind(svgElement: SVGSVGElement, diagramSource: string): () => void {
   const interactions = parseInteractions(diagramSource);
+  const cleanups: (() => void)[] = [];
 
   // Gather all node IDs that must always remain visible (alwaysShow / ignoreCollapse).
   // These act as BFS barriers: downstream traversal stops at them, their edges
@@ -963,7 +979,7 @@ export function bind(svgElement: SVGSVGElement, diagramSource: string): void {
     }
 
     if (props.tooltip) {
-      attachTooltip(nodeEl, String(props.tooltip));
+      cleanups.push(attachTooltip(nodeEl, String(props.tooltip)));
     }
 
     if (props.collapsible) {
@@ -971,4 +987,10 @@ export function bind(svgElement: SVGSVGElement, diagramSource: string): void {
       attachCollapsible(svgElement, nodeEl, nodeId, state, alwaysShowIds, props);
     }
   }
+
+  return () => {
+    for (const cleanup of cleanups) {
+      cleanup();
+    }
+  };
 }

@@ -10,7 +10,7 @@
 //   import { bind } from '@mermaid-js/mermaid-interactive/binder';
 
 export { preprocess } from './preprocessor.js';
-export { bind, parseInteractions } from './binder.js';
+export { bind, parseEdgeId, parseInteractions } from './binder.js';
 export type {
   InteractionDef,
   InteractionProps,

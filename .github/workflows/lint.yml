@@ -52,16 +52,6 @@ jobs:
               ERROR_MESSAGE+=' You may also need to delete your prettier cache by running'
               ERROR_MESSAGE+=' `rm ./node_modules/.cache/prettier/.prettier-cache`.'
               echo "::error title=Lint failure::${ERROR_MESSAGE}"
-              # Run sub-steps individually to identify which part failed
-              echo '::group::ESLint diagnostics'
-              eslint --quiet --stats --cache --cache-strategy content . || echo "ESLint FAILED with $?"
-              echo '::endgroup::'
-              echo '::group::jison lint diagnostics'
-              pnpm lint:jison || echo "jison lint FAILED with $?"
-              echo '::endgroup::'
-              echo '::group::prettier diagnostics'
-              prettier --no-cache --check . 2>&1 | head -50 || echo "prettier FAILED with $?"
-              echo '::endgroup::'
               # make sure to return an error exitcode so that GitHub actions shows a red-cross
               exit 1
           fi
