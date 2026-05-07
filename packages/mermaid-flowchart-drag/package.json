@@ -1,0 +1,31 @@
+{
+  "name": "@mermaid-js/mermaid-flowchart-drag",
+  "version": "0.1.0",
+  "description": "Drag-and-drop node positioning plugin for mermaid flowcharts — lets users freely rearrange nodes on rendered SVGs.",
+  "type": "module",
+  "module": "./dist/flowchart-drag.js",
+  "types": "./dist/flowchart-drag.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/flowchart-drag.js",
+      "types": "./dist/flowchart-drag.d.ts"
+    }
+  },
+  "keywords": [
+    "mermaid",
+    "flowchart",
+    "drag",
+    "diagram",
+    "plugin"
+  ],
+  "license": "MIT",
+  "files": ["dist"],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

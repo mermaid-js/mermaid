@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flowchart Drag Plugin — Basic Demo</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: #f5f7fa;
+        color: #1f2937;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      header {
+        background: linear-gradient(135deg, #1e3a5f, #2d5a87);
+        color: #fff;
+        padding: 20px 32px;
+      }
+      header h1 {
+        font-size: 22px;
+        font-weight: 600;
+      }
+      header p {
+        font-size: 14px;
+        opacity: 0.85;
+        margin-top: 4px;
+      }
+
+      .main {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 24px;
+        padding: 24px 32px;
+        flex: 1;
+        min-height: 0;
+      }
+
+      .diagram-panel {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 70px;
+        font-family: 'SFMono-Regular', Consolas, monospace;
+        font-size: 13px;
+        padding: 8px 10px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        resize: vertical;
+        margin-bottom: 10px;
+      }
+
+      .toolbar {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+      }
+      .toolbar button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        font-size: 13px;
+        cursor: pointer;
+        font-weight: 500;
+      }
+      .btn-primary {
+        background: #2563eb;
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: #1d4ed8;
+      }
+      .btn-secondary {
+        background: #e5e7eb;
+        color: #374151;
+      }
+      .btn-secondary:hover {
+        background: #d1d5db;
+      }
+      .btn-danger {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+      .btn-danger:hover {
+        background: #fecaca;
+      }
+
+      #container {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px dashed #d1d5db;
+        border-radius: 8px;
+        background: #fafbfc;
+        overflow: auto;
+        min-height: 400px;
+      }
+      #container svg {
+        max-width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .side {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        min-height: 0;
+        overflow-y: auto;
+      }
+      .card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        padding: 16px 20px;
+      }
+      .card h3 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 8px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      .stat-grid {
+        display: flex;
+        gap: 12px;
+      }
+      .stat-item {
+        flex: 1;
+        text-align: center;
+        padding: 8px 4px;
+        background: #f9fafb;
+        border-radius: 6px;
+      }
+      .stat-item .num {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1e3a5f;
+      }
+      .stat-item .label {
+        font-size: 11px;
+        color: #6b7280;
+      }
+      .status {
+        font-size: 12px;
+        color: #6b7280;
+        min-height: 18px;
+        margin-top: 8px;
+      }
+      .empty-msg {
+        color: #9ca3af;
+        font-size: 13px;
+        font-style: italic;
+        text-align: center;
+        padding: 12px 0;
+      }
+
+      @media (max-width: 700px) {
+        .main {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Flowchart Drag Plugin — Basic Demo</h1>
+      <p>
+        Drag any node to reposition it. Edges update automatically. Press <kbd>Ctrl+Z</kbd> /
+        <kbd>Ctrl+Shift+Z</kbd> to undo / redo.
+      </p>
+    </header>
+
+    <div class="main">
+      <div class="diagram-panel">
+        <textarea id="code" spellcheck="false">
+flowchart LR
+  A[Requirements] --> B[Design Review]
+  B --> C[Development]
+  C --> D[Code Review]
+  D --> E[Testing]
+  E --> F{Pass?}
+  F -->|Yes| G[Release]
+  F -->|No| C
+  B -.-> H[Research]
+  G --> I[Deploy]
+  I --> J[Monitor]
+  J --> K[Done]</textarea
+        >
+        <div class="toolbar">
+          <button class="btn-primary" id="render-btn">Render</button>
+          <button class="btn-secondary" id="reset-btn">Reset Layout</button>
+          <button class="btn-secondary" id="undo-btn">Undo</button>
+          <button class="btn-secondary" id="redo-btn">Redo</button>
+          <button class="btn-danger" id="toggle-btn">Disable Drag</button>
+        </div>
+        <div id="container">
+          <div class="empty-msg">Click «Render» to generate the flowchart</div>
+        </div>
+        <div class="status" id="status"></div>
+      </div>
+
+      <div class="side">
+        <div class="card">
+          <h3>Node Positions</h3>
+          <pre
+            id="positions"
+            style="
+              font-size: 11px;
+              font-family: monospace;
+              color: #6b7280;
+              max-height: 200px;
+              overflow-y: auto;
+            "
+          >
+—</pre
+          >
+        </div>
+        <div class="card">
+          <h3>Stats</h3>
+          <div class="stat-grid" id="stats"></div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import mermaid from '../../mermaid/dist/mermaid.esm.mjs';
+      import { FlowchartDrag } from '../dist/index.js';
+
+      mermaid.initialize({ startOnLoad: false, theme: 'base' });
+
+      // ── UI refs ──
+      const codeEl = document.getElementById('code');
+      const container = document.getElementById('container');
+      const statusEl = document.getElementById('status');
+      const renderBtn = document.getElementById('render-btn');
+      const resetBtn = document.getElementById('reset-btn');
+      const undoBtn = document.getElementById('undo-btn');
+      const redoBtn = document.getElementById('redo-btn');
+      const toggleBtn = document.getElementById('toggle-btn');
+      const positionsEl = document.getElementById('positions');
+
+      let drag = null;
+      let svgEl = null;
+
+      function setStatus(msg) {
+        statusEl.textContent = msg;
+      }
+
+      function updatePositions() {
+        if (!drag) return;
+        const pos = drag.getNodePositions();
+        positionsEl.textContent = Object.entries(pos)
+          .map(([id, p]) => `${id}: (${p.x.toFixed(0)}, ${p.y.toFixed(0)})`)
+          .join('\n');
+      }
+
+      function updateStats() {
+        document.getElementById('stats').innerHTML = drag
+          ? `<div class="stat-item"><div class="num">${Object.keys(drag.getNodePositions()).length}</div><div class="label">Nodes</div></div>`
+          : '';
+      }
+
+      async function render() {
+        const code = codeEl.value.trim();
+        if (!code) return;
+
+        container.innerHTML = '<div class="empty-msg">Rendering…</div>';
+        if (svgEl && drag) {
+          drag.destroy();
+          drag = null;
+          svgEl = null;
+        }
+
+        try {
+          const { svg } = await mermaid.render('flowchart-svg', code);
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(svg, 'image/svg+xml');
+          const root = doc.documentElement;
+          if (!(root instanceof SVGSVGElement)) throw new Error('Not an SVG');
+          container.replaceChildren(root);
+          svgEl = root;
+
+          // Attach drag plugin
+          drag = new FlowchartDrag(svgEl, {
+            onDragEnd: (id, pos) => {
+              updatePositions();
+              setStatus(`Moved ${id} to (${pos.x.toFixed(0)}, ${pos.y.toFixed(0)})`);
+            },
+          });
+          drag.enable();
+
+          toggleBtn.textContent = 'Disable Drag';
+          updatePositions();
+          updateStats();
+          setStatus(`Rendered — ${Object.keys(drag.getNodePositions()).length} nodes`);
+        } catch (err) {
+          container.innerHTML = `<div style="color:#dc2626;padding:20px;">Render failed: ${err.message}</div>`;
+          setStatus('Render failed');
+        }
+      }
+
+      async function reset() {
+        await render();
+      }
+
+      // ── Wire up ──
+      renderBtn.addEventListener('click', render);
+      resetBtn.addEventListener('click', reset);
+      undoBtn.addEventListener('click', () => {
+        drag?.undo();
+        updatePositions();
+      });
+      redoBtn.addEventListener('click', () => {
+        drag?.redo();
+        updatePositions();
+      });
+      toggleBtn.addEventListener('click', () => {
+        if (!drag) return;
+        if (toggleBtn.textContent === 'Disable Drag') {
+          drag.disable();
+          toggleBtn.textContent = 'Enable Drag';
+          setStatus('Drag disabled');
+        } else {
+          drag.enable();
+          toggleBtn.textContent = 'Disable Drag';
+          setStatus('Drag enabled');
+        }
+      });
+
+      // Initial render
+      render();
+    </script>
+  </body>
+</html>
