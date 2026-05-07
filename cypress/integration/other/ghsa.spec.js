@@ -1,4 +1,4 @@
-import { urlSnapshotTest, openURLAndVerifyRendering } from '../../helpers/util.ts';
+import { urlSnapshotTest, openURLAndVerifyRendering, imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('CSS injections', () => {
   it('should not allow CSS injections outside of the diagram', () => {
@@ -30,5 +30,15 @@ describe('CSS injections', () => {
       'background-image',
       'url("https://example.test/3.png")'
     );
+  });
+  it('should prevent HTML injection via class definitions', () => {
+    imgSnapshotTest(
+      `stateDiagram-v2
+  classDef xss fill:red</style></svg><style>*{x:x;y:y;overflow:visible!important;contain:none!important;transform:none!important;filter:none!important;clip-path:none!important}</style><div id="pwned" style="x:x;y:y;color:red;font:5em/1 monospace;display:grid;place-items:center;z-index:2147483647;width:100vw;height:100vh;position:fixed;top:0;left:0;background:black">HACKED</div><svg><style>a:b
+  [*] --> A:::xss
+     `,
+      { logLevel: 1 }
+    );
+    cy.get('body > div #pwned').should('not.exist');
   });
 });

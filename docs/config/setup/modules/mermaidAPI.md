@@ -25,7 +25,7 @@ Renames and re-exports [mermaidAPI](mermaidAPI.md#mermaidapi)
 
 #### Defined in
 
-[mermaidAPI.ts:65](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L65)
+[mermaidAPI.ts:66](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L66)
 
 ## Variables
 
@@ -96,13 +96,13 @@ mermaid.initialize(config);
 
 #### Defined in
 
-[mermaidAPI.ts:610](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L610)
+[mermaidAPI.ts:633](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L633)
 
 ## Functions
 
 ### appendDivSvgG
 
-▸ **appendDivSvgG**(`parentRoot`, `id`, `enclosingDivId`, `divStyle?`, `svgXlink?`): `any`
+▸ **appendDivSvgG**(`parentRoot`, `id`, `enclosingDivId`, `divStyle?`, `svgXlink?`): `D3HtmlSelection`<`HTMLElement`> | `D3HtmlSelection`<`Element`>
 
 Append an enclosing div, then svg, then g (group) to the d3 parentRoot. Set attributes.
 Only set the style attribute on the enclosing div if divStyle is given.
@@ -111,23 +111,23 @@ Return the last node appended
 
 #### Parameters
 
-| Name             | Type     | Description                                      |
-| :--------------- | :------- | :----------------------------------------------- |
-| `parentRoot`     | `any`    | the d3 node to append things to                  |
-| `id`             | `string` | the value to set the id attr to                  |
-| `enclosingDivId` | `string` | the id to set the enclosing div to               |
-| `divStyle?`      | `string` | if given, the style to set the enclosing div to  |
-| `svgXlink?`      | `string` | if given, the link to set the new svg element to |
+| Name             | Type                                                             | Description                                      |
+| :--------------- | :--------------------------------------------------------------- | :----------------------------------------------- |
+| `parentRoot`     | `D3HtmlSelection`<`HTMLElement`> \| `D3HtmlSelection`<`Element`> | the d3 node to append things to                  |
+| `id`             | `string`                                                         | the value to set the id attr to                  |
+| `enclosingDivId` | `string`                                                         | the id to set the enclosing div to               |
+| `divStyle?`      | `string`                                                         | if given, the style to set the enclosing div to  |
+| `svgXlink?`      | `string`                                                         | if given, the link to set the new svg element to |
 
 #### Returns
 
-`any`
+`D3HtmlSelection`<`HTMLElement`> | `D3HtmlSelection`<`Element`>
 
 - returns the parentRoot that had nodes appended
 
 #### Defined in
 
-[mermaidAPI.ts:265](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L265)
+[mermaidAPI.ts:285](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L285)
 
 ---
 
@@ -153,7 +153,7 @@ the cleaned up svgCode
 
 #### Defined in
 
-[mermaidAPI.ts:211](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L211)
+[mermaidAPI.ts:231](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L231)
 
 ---
 
@@ -178,7 +178,7 @@ the string with all the user styles
 
 #### Defined in
 
-[mermaidAPI.ts:141](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L141)
+[mermaidAPI.ts:142](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L142)
 
 ---
 
@@ -193,7 +193,7 @@ the string with all the user styles
 | `config`    | `MermaidConfig`                                           |
 | `graphType` | `string`                                                  |
 | `classDefs` | `undefined` \| `Record`<`string`, `DiagramStyleClassDef`> |
-| `svgId`     | `string`                                                  |
+| `svgId`     | \`#${string}\`                                            |
 
 #### Returns
 
@@ -201,7 +201,7 @@ the string with all the user styles
 
 #### Defined in
 
-[mermaidAPI.ts:188](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L188)
+[mermaidAPI.ts:207](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L207)
 
 ---
 
@@ -228,7 +228,7 @@ with an enclosing block that has each of the cssClasses followed by !important;
 
 #### Defined in
 
-[mermaidAPI.ts:125](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L125)
+[mermaidAPI.ts:126](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L126)
 
 ---
 
@@ -240,10 +240,10 @@ Put the svgCode into an iFrame. Return the iFrame code
 
 #### Parameters
 
-| Name          | Type     | Default value | Description                                                                  |
-| :------------ | :------- | :------------ | :--------------------------------------------------------------------------- |
-| `svgCode`     | `string` | `''`          | the svg code to put inside the iFrame                                        |
-| `svgElement?` | `any`    | `undefined`   | the d3 node that has the current svgElement so we can get the height from it |
+| Name          | Type            | Default value | Description                                                                  |
+| :------------ | :-------------- | :------------ | :--------------------------------------------------------------------------- |
+| `svgCode`     | `string`        | `''`          | the svg code to put inside the iFrame                                        |
+| `svgElement?` | `SVGSVGElement` | `undefined`   | the d3 node that has the current svgElement so we can get the height from it |
 
 #### Returns
 
@@ -254,7 +254,7 @@ Put the svgCode into an iFrame. Return the iFrame code
 
 #### Defined in
 
-[mermaidAPI.ts:242](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L242)
+[mermaidAPI.ts:262](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L262)
 
 ---
 
@@ -279,4 +279,4 @@ Remove any existing elements from the given document
 
 #### Defined in
 
-[mermaidAPI.ts:315](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L315)
+[mermaidAPI.ts:338](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L338)

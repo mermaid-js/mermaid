@@ -21,7 +21,7 @@ import { Diagram, getDiagramFromText as getDiagramFromTextInternal } from './Dia
 import errorRenderer from './diagrams/error/errorRenderer.js';
 import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
-import getStyles from './styles.js';
+import getStyles, { cssStyleSheetToString } from './styles.js';
 import theme from './themes/index.js';
 import DOMPurify from 'dompurify';
 import type { MermaidConfig } from './config.type.js';
@@ -30,6 +30,7 @@ import isEmpty from 'lodash-es/isEmpty.js';
 import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
 import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
 import { preprocessDiagram } from './preprocess.js';
+import type { D3HtmlSelection, D3Selection } from './types.js';
 import { decodeEntities } from './utils.js';
 import { sanitizeCss } from './utils/sanitizeDirective.js';
 
@@ -128,7 +129,7 @@ export const cssImportantStyles = (
   cssClasses: string[] = []
 ): string => {
   const declarationBlock = sanitizeCss(`{ ${cssClasses.join(' !important; ')} !important; }`);
-  return `\n.${cssClass} ${element} ${declarationBlock}`;
+  return `.${cssClass} ${element} ${declarationBlock}`;
 };
 
 /**
@@ -142,20 +143,22 @@ export const createCssStyles = (
   config: MermaidConfig,
   classDefs: Record<string, DiagramStyleClassDef> | null | undefined = {}
 ): string => {
-  let cssStyles = '';
+  const cssStyles = new CSSStyleSheet();
 
   // user provided theme CSS info
   // If you add more configuration driven data into the user styles make sure that the value is
   // sanitized by the sanitize CSS function TODO where is this method?  what should be used to replace it?  refactor so that it's always sanitized
-  if (config.themeCSS !== undefined) {
-    cssStyles += `\n${config.themeCSS}`;
-  }
-
   if (config.fontFamily !== undefined) {
-    cssStyles += `\n:root { --mermaid-font-family: ${config.fontFamily}}`;
+    cssStyles.insertRule(
+      `:root { --mermaid-font-family: ${config.fontFamily}}`,
+      cssStyles.cssRules.length
+    );
   }
   if (config.altFontFamily !== undefined) {
-    cssStyles += `\n:root { --mermaid-alt-font-family: ${config.altFontFamily}}`;
+    cssStyles.insertRule(
+      `:root { --mermaid-alt-font-family: ${config.altFontFamily}}`,
+      cssStyles.cssRules.length
+    );
   }
 
   // classDefs defined in the diagram text
@@ -173,23 +176,46 @@ export const createCssStyles = (
       // create the css styles for each cssElement and the styles (only if there are styles)
       if (!isEmpty(styleClassDef.styles)) {
         cssElements.forEach((cssElement) => {
-          cssStyles += cssImportantStyles(styleClassDef.id, cssElement, styleClassDef.styles);
+          cssStyles.insertRule(
+            cssImportantStyles(styleClassDef.id, cssElement, styleClassDef.styles),
+            cssStyles.cssRules.length
+          );
         });
       }
       // create the css styles for the tspan element and the text styles (only if there are textStyles)
       if (!isEmpty(styleClassDef.textStyles)) {
-        cssStyles += cssImportantStyles(styleClassDef.id, 'tspan', styleClassDef.textStyles);
+        cssStyles.insertRule(
+          cssImportantStyles(styleClassDef.id, 'tspan', styleClassDef.textStyles),
+          cssStyles.cssRules.length
+        );
       }
     }
   }
-  return cssStyles;
+
+  let cssString = '';
+  if (config.themeCSS !== undefined) {
+    if (typeof cssStyles.replaceSync === 'function') {
+      const themeCssStyleSheet = new CSSStyleSheet();
+      themeCssStyleSheet.replaceSync(config.themeCSS);
+      cssString = cssStyleSheetToString(themeCssStyleSheet) + '\n';
+    } else {
+      /**
+       * Ideally we'd do a `CSSStyleSheet.replaceSync`, but it's not supported
+       * in some older browsers and in JSDOM.
+       */
+      cssString += `${config.themeCSS}\n`;
+    }
+  }
+
+  return cssString + cssStyleSheetToString(cssStyles);
 };
 
 export const createUserStyles = (
   config: MermaidConfig,
   graphType: string,
   classDefs: Record<string, DiagramStyleClassDef> | undefined,
-  svgId: string
+  // CSS selector for the SVG element, e.g. `#idOfSvgElement`
+  svgId: `#${string}`
 ): string => {
   const userCSSstyles = createCssStyles(config, classDefs);
   const allStyles = getStyles(graphType, userCSSstyles, config.themeVariables);
@@ -239,7 +265,7 @@ export const cleanUpSvgCode = (
  * @returns  - the code with the iFrame that now contains the svgCode
  * TODO replace btoa(). Replace with  buf.toString('base64')?
  */
-export const putIntoIFrame = (svgCode = '', svgElement?: D3Element): string => {
+export const putIntoIFrame = (svgCode = '', svgElement?: SVGSVGElement): string => {
   const height = svgElement?.viewBox?.baseVal?.height
     ? svgElement.viewBox.baseVal.height + 'px'
     : IFRAME_HEIGHT;
@@ -263,12 +289,12 @@ export const putIntoIFrame = (svgCode = '', svgElement?: D3Element): string => {
  * @returns - returns the parentRoot that had nodes appended
  */
 export const appendDivSvgG = (
-  parentRoot: D3Element,
+  parentRoot: D3HtmlSelection<HTMLElement> | D3HtmlSelection<Element>,
   id: string,
   enclosingDivId: string,
   divStyle?: string,
   svgXlink?: string
-): D3Element => {
+) => {
   const enclosingDiv = parentRoot.append('div');
   enclosingDiv.attr('id', enclosingDivId);
   if (divStyle) {
@@ -296,7 +322,10 @@ export const appendDivSvgG = (
  * @param iFrameId - id to use for the iFrame
  * @returns the appended iframe d3 node
  */
-function sandboxedIframe(parentNode: D3Element, iFrameId: string): D3Element {
+function sandboxedIframe(
+  parentNode: D3HtmlSelection<Element> | D3HtmlSelection<HTMLElement>,
+  iFrameId: string
+) {
   return parentNode
     .append('iframe')
     .attr('id', iFrameId)
@@ -350,13 +379,13 @@ const render = async function (
     text = MAX_TEXTLENGTH_EXCEEDED_MSG;
   }
 
-  const idSelector = '#' + id;
+  const idSelector = `#${id}` as const;
   const iFrameID = 'i' + id;
   const iFrameID_selector = '#' + iFrameID;
   const enclosingDivID = 'd' + id;
   const enclosingDivID_selector = '#' + enclosingDivID;
 
-  let root: any = select('body');
+  let root: D3HtmlSelection<HTMLElement> | D3HtmlSelection<Element> = select(document.body);
 
   const isSandboxed = config.securityLevel === SECURITY_LVL_SANDBOX;
   const isLooseSecurityLevel = config.securityLevel === SECURITY_LVL_LOOSE;
@@ -375,8 +404,8 @@ const render = async function (
     if (isSandboxed) {
       // If we are in sandboxed mode, we do everything mermaid related in a (sandboxed )iFrame
       const iframe = sandboxedIframe(select(svgContainingElement), iFrameID);
-      root = select(iframe.nodes()[0]!.contentDocument!.body);
-      root.node().style.margin = 0;
+      root = select(iframe.nodes()[0].contentDocument!.body);
+      root.node()!.style.margin = '0';
     } else {
       root = select(svgContainingElement);
     }
@@ -392,9 +421,9 @@ const render = async function (
 
     if (isSandboxed) {
       // If we are in sandboxed mode, we do everything mermaid related in a (sandboxed) iFrame
-      const iframe = sandboxedIframe(select('body'), iFrameID);
-      root = select(iframe.nodes()[0]!.contentDocument!.body);
-      root.node().style.margin = 0;
+      const iframe = sandboxedIframe(select(document.body), iFrameID);
+      root = select(iframe.nodes()[0].contentDocument!.body);
+      root.node()!.style.margin = '0';
     } else {
       root = select('body');
     }
@@ -417,14 +446,14 @@ const render = async function (
   }
 
   // Get the temporary div element containing the svg
-  const element = root.select(enclosingDivID_selector).node();
+  const element = root.select<HTMLDivElement>(enclosingDivID_selector).node()!;
   const diagramType = diag.type;
 
   // -------------------------------------------------------------------------------
   // Create and insert the styles (user styles, theme styles, config styles)
 
   // Insert an element into svg. This is where we put the styles
-  const svg = element.firstChild;
+  const svg = element.firstChild!;
   const firstChild = svg.firstChild;
   const diagramClassDefs = diag.renderer.getClasses?.(text, diag);
 
@@ -444,7 +473,7 @@ const render = async function (
   }
 
   // This is the d3 node for the svg element
-  const svgNode = root.select(`${enclosingDivID_selector} svg`);
+  const svgNode = root.select<SVGSVGElement>(`${enclosingDivID_selector} svg`);
   const a11yTitle: string | undefined = diag.db.getAccTitle?.();
   const a11yDescr: string | undefined = diag.db.getAccDescription?.();
   addA11yInfo(diagramType, svgNode, a11yTitle, a11yDescr);
@@ -453,13 +482,13 @@ const render = async function (
   root.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', XMLNS_XHTML_STD);
 
   // Fix for when the base tag is used
-  let svgCode: string = root.select(enclosingDivID_selector).node().innerHTML;
+  let svgCode: string = root.select<HTMLDivElement>(enclosingDivID_selector).node()!.innerHTML;
 
   log.debug('config.arrowMarkerAbsolute', config.arrowMarkerAbsolute);
   svgCode = cleanUpSvgCode(svgCode, isSandboxed, evaluate(config.arrowMarkerAbsolute));
 
   if (isSandboxed) {
-    const svgEl = root.select(enclosingDivID_selector + ' svg').node();
+    const svgEl = root.select<SVGSVGElement>(enclosingDivID_selector + ' svg').node()!;
     svgCode = putIntoIFrame(svgCode, svgEl);
   } else if (!isLooseSecurityLevel) {
     // Sanitize the svgCode using DOMPurify
@@ -536,7 +565,7 @@ const getDiagramFromText = (text: string, metadata: Pick<DiagramMetadata, 'title
  */
 function addA11yInfo(
   diagramType: string,
-  svgNode: D3Element,
+  svgNode: D3Selection<SVGSVGElement>,
   a11yTitle?: string,
   a11yDescr?: string
 ): void {
