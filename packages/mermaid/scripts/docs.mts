@@ -38,6 +38,7 @@ import { default as buildMarkdownFromSchema } from '@adobe/jsonschema2md/lib/mar
 import { default as jsonSchemaReadmeBuilder } from '@adobe/jsonschema2md/lib/readmeBuilder.js';
 import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync, rmdirSync } from 'fs';
 import { exec } from 'child_process';
+import { fileURLToPath } from 'node:url';
 import { globby } from 'globby';
 import { JSDOM } from 'jsdom';
 import { dump, load, JSON_SCHEMA } from 'js-yaml';
@@ -58,8 +59,9 @@ import { visit } from 'unist-util-visit';
 register('./loadHook.mjs', import.meta.url);
 const { shapesDefs } = await import('../src/rendering-util/rendering-elements/shapes.js');
 
-export const MERMAID_RELEASE_VERSION = JSON.parse(readFileSync('../mermaid/package.json', 'utf8'))
-  .version as string;
+export const MERMAID_RELEASE_VERSION = JSON.parse(
+  readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../package.json'), 'utf8')
+).version as string;
 const MERMAID_MAJOR_VERSION = MERMAID_RELEASE_VERSION.split('.')[0];
 const CDN_URL = 'https://cdn.jsdelivr.net/npm'; // 'https://unpkg.com';
 

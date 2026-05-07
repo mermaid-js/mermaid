@@ -13,11 +13,20 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   eslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
-  ...tseslint.configs.stylisticTypeChecked,
+  // Type-aware linting only applies to .ts files — JS files are generated
+  // build artifacts alongside .ts sources and aren't in any tsconfig.
+  ...tseslint.configs.recommendedTypeChecked.map((config) => ({
+    ...config,
+    files: ['**/*.{ts,tsx,mts,cts}'],
+  })),
+  ...tseslint.configs.stylisticTypeChecked.map((config) => ({
+    ...config,
+    files: ['**/*.{ts,tsx,mts,cts}'],
+  })),
   {
     ignores: [
       '**/*.d.ts',
+      '**/*.d.mts',
       '**/dist/',
       '**/node_modules/',
       '.git/',
@@ -25,10 +34,13 @@ export default tseslint.config(
       '**/generated/',
       '**/coverage/',
       'packages/mermaid/src/config.type.ts',
+      'packages/mermaid/src/config.type.js',
       'packages/mermaid/src/docs/.vitepress/components.d.ts',
     ],
   },
+  // All @typescript-eslint rules are type-aware and only apply to .ts files
   {
+    files: ['**/*.{ts,tsx,mts,cts}'],
     languageOptions: {
       parserOptions: {
         project: [
@@ -39,34 +51,8 @@ export default tseslint.config(
         ],
         tsconfigRootDir: import.meta.dirname,
       },
-      globals: {
-        ...globals.browser,
-        ...globals.node,
-        ...globals.es2020,
-        ...globals.jest,
-        cy: 'readonly',
-        Cypress: 'readonly',
-      },
-    },
-  },
-  {
-    plugins: {
-      json,
-      '@cspell': cspell,
-      'no-only-tests': noOnlyTests,
-      lodash,
-      unicorn,
-      cypress,
-      markdown,
-      tsdoc,
-      jsdoc,
     },
     rules: {
-      curly: 'error',
-      'no-console': 'error',
-      'no-prototype-builtins': 'off',
-      'no-unused-vars': 'off',
-      'cypress/no-async-tests': 'off',
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-floating-promises': 'error',
@@ -115,6 +101,42 @@ export default tseslint.config(
       '@typescript-eslint/prefer-nullish-coalescing': 'warn',
       '@typescript-eslint/prefer-promise-reject-errors': 'warn',
       // END
+    },
+  },
+  {
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        ...globals.es2020,
+        ...globals.jest,
+        cy: 'readonly',
+        Cypress: 'readonly',
+        vi: 'readonly',
+        vitest: 'readonly',
+        injected: 'readonly',
+      },
+    },
+  },
+  {
+    plugins: {
+      '@typescript-eslint': tseslint.plugin,
+      json,
+      '@cspell': cspell,
+      'no-only-tests': noOnlyTests,
+      lodash,
+      unicorn,
+      cypress,
+      markdown,
+      tsdoc,
+      jsdoc,
+    },
+    rules: {
+      curly: 'error',
+      'no-console': 'error',
+      'no-prototype-builtins': 'off',
+      'no-unused-vars': 'off',
+      'cypress/no-async-tests': 'off',
       'json/*': ['error', 'allowComments'],
       '@cspell/spellchecker': [
         'error',
@@ -156,7 +178,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['cypress/**', 'demos/**'],
+    files: ['cypress/**', 'demos/**', 'scripts/**'],
     rules: {
       'no-console': 'off',
     },

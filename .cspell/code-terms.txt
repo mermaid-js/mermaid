@@ -74,6 +74,7 @@ LABELTYPE
 layoutstop
 lcov
 LEFTOF
+lerp
 Lexa
 linebreak
 LINETYPE
