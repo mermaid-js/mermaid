@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mermaid Edge Data Attributes Demo</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        background: #f5f7fa;
+        color: #1f2937;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ── Header ── */
+      header {
+        background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
+        color: #fff;
+        padding: 20px 32px;
+        flex-shrink: 0;
+      }
+      header h1 {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+      header p {
+        font-size: 14px;
+        opacity: 0.85;
+      }
+
+      /* ── Main layout ── */
+      .main-grid {
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 24px;
+        padding: 24px 32px;
+        flex: 1;
+        min-height: 0;
+      }
+
+      /* ── Flowchart panel ── */
+      .diagram-panel {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+      .diagram-panel h2 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: #374151;
+      }
+      #mermaid-container {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 400px;
+        border: 1px dashed #d1d5db;
+        border-radius: 8px;
+        background: #fafbfc;
+        overflow: auto;
+        padding: 16px;
+      }
+      #mermaid-container svg {
+        max-width: 100%;
+        height: auto;
+      }
+      .diagram-panel .editor-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      .diagram-panel .editor-row textarea {
+        flex: 1;
+        min-height: 80px;
+        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        font-size: 13px;
+        padding: 8px 10px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        resize: vertical;
+      }
+      .diagram-panel .editor-row button {
+        align-self: flex-start;
+        padding: 8px 20px;
+        background: #2563eb;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .diagram-panel .editor-row button:hover {
+        background: #1d4ed8;
+      }
+
+      /* ── Right sidebar ── */
+      .data-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        min-height: 0;
+        overflow-y: auto;
+      }
+      .data-panel section {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        padding: 16px 20px;
+      }
+      .data-panel section h3 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 10px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      /* ── Edge table ── */
+      .edge-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      .edge-table th {
+        text-align: left;
+        font-weight: 600;
+        color: #6b7280;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 4px 6px 6px 0;
+      }
+      .edge-table td {
+        padding: 5px 6px 5px 0;
+        border-top: 1px solid #f3f4f6;
+        font-family: 'SFMono-Regular', Consolas, monospace;
+        font-size: 12px;
+      }
+      .edge-table tr:first-child td {
+        border-top: none;
+      }
+      .edge-table .node-badge {
+        display: inline-block;
+        padding: 1px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 500;
+      }
+      .badge-source {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+      .badge-target {
+        background: #fce7f3;
+        color: #9d174d;
+      }
+
+      .empty-msg {
+        color: #9ca3af;
+        font-size: 13px;
+        font-style: italic;
+        text-align: center;
+        padding: 12px 0;
+      }
+
+      /* ── SVG attribute code block ── */
+      .attr-block {
+        background: #1f2937;
+        color: #d1d5db;
+        border-radius: 6px;
+        padding: 10px 12px;
+        font-family: 'SFMono-Regular', Consolas, monospace;
+        font-size: 11px;
+        line-height: 1.6;
+        overflow-x: auto;
+        white-space: pre;
+        max-height: 180px;
+        overflow-y: auto;
+      }
+      .attr-block .hl {
+        color: #93c5fd;
+      }
+      .attr-block .kv {
+        color: #fbbf24;
+      }
+      .attr-block .cm {
+        color: #6b7280;
+      }
+
+      /* ── Summary stats ── */
+      .summary-row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .summary-item {
+        flex: 1;
+        min-width: 80px;
+        text-align: center;
+        padding: 8px 4px;
+        background: #f9fafb;
+        border-radius: 6px;
+      }
+      .summary-item .num {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1e3a5f;
+      }
+      .summary-item .label {
+        font-size: 11px;
+        color: #6b7280;
+        margin-top: 2px;
+      }
+
+      /* ── Responsive ── */
+      @media (max-width: 820px) {
+        .main-grid {
+          grid-template-columns: 1fr;
+          padding: 16px;
+        }
+        header {
+          padding: 16px;
+        }
+        .diagram-panel .editor-row {
+          flex-direction: column;
+        }
+        .diagram-panel .editor-row button {
+          align-self: stretch;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Mermaid Edge Data Attributes</h1>
+      <p>
+        渲染完成后，SVG 连线（&lt;path&gt;）会自动携带 <code>data-source</code> 和
+        <code>data-target</code> 属性，便于外部工具获取节点映射关系。
+      </p>
+    </header>
+
+    <div class="main-grid">
+      <!-- ─── Left: Flowchart ─── -->
+      <div class="diagram-panel">
+        <h2>流程图编辑区</h2>
+        <div class="editor-row">
+          <textarea id="mermaid-code" spellcheck="false">
+flowchart LR
+  A[需求分析] --> B[设计评审]
+  B --> C[编码开发]
+  C --> D[代码审查]
+  D --> E[测试验证]
+  E --> F{通过?}
+  F -->|是| G[发布上线]
+  F -->|否| C
+  B -.-> H[技术调研]</textarea
+          >
+          <button id="render-btn">渲染</button>
+        </div>
+        <div id="mermaid-container">
+          <div class="empty-msg">点击「渲染」按钮生成流程图</div>
+        </div>
+      </div>
+
+      <!-- ─── Right: Data Panels ─── -->
+      <div class="data-panel">
+        <!-- Summary -->
+        <section>
+          <h3>概览</h3>
+          <div class="summary-row" id="summary-stats"></div>
+        </section>
+
+        <!-- Edge table -->
+        <section>
+          <h3>连线数据映射</h3>
+          <div id="edge-list"><div class="empty-msg">等待渲染…</div></div>
+        </section>
+
+        <!-- Raw SVG attributes for first edge -->
+        <section>
+          <h3>示例连线原始属性</h3>
+          <div id="edge-raw-attr"><div class="empty-msg">等待渲染…</div></div>
+        </section>
+      </div>
+    </div>
+
+    <script type="module">
+      // Try local dist first, fallback to CDN
+      let mermaidMod;
+      try {
+        mermaidMod = await import('../packages/mermaid/dist/mermaid.esm.mjs');
+      } catch {
+        mermaidMod = await import(
+          'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs'
+        );
+      }
+      const mermaid = mermaidMod.default;
+
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'base',
+        themeVariables: {
+          primaryColor: '#eff6ff',
+          lineColor: '#3b82f6',
+          tertiaryColor: '#f0fdf4',
+        },
+      });
+
+      const codeEl = document.getElementById('mermaid-code');
+      const container = document.getElementById('mermaid-container');
+      const btn = document.getElementById('render-btn');
+
+      // ── Helpers ──
+
+      function $(sel, parent = document) {
+        return parent.querySelector(sel);
+      }
+
+      function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      // ── Render ──
+
+      async function render() {
+        const code = codeEl.value.trim();
+        if (!code) return;
+
+        container.innerHTML = '<div class="empty-msg">渲染中…</div>';
+
+        try {
+          const { svg } = await mermaid.render('edge-demo-svg', code);
+          const parser = new DOMParser();
+          const svgDoc = parser.parseFromString(svg, 'image/svg+xml');
+          const svgRoot = svgDoc.documentElement;
+
+          if (!(svgRoot instanceof SVGSVGElement)) {
+            throw new Error('渲染结果不是有效的 SVG');
+          }
+
+          container.replaceChildren(svgRoot);
+          updateDataPanels(svgRoot);
+        } catch (err) {
+          container.innerHTML = `<div style="color:#dc2626;padding:20px;text-align:center;">
+            渲染失败: ${escapeHtml(err instanceof Error ? err.message : String(err))}</div>`;
+        }
+      }
+
+      // ── Update data panels ──
+
+      function updateDataPanels(svgEl) {
+        const edges = [...svgEl.querySelectorAll('path[data-source], path[data-target]')];
+
+        // Summary
+        const statsEl = document.getElementById('summary-stats');
+        const nodeIds = new Set();
+        edges.forEach((p) => {
+          const s = p.getAttribute('data-source');
+          const t = p.getAttribute('data-target');
+          if (s) nodeIds.add(s);
+          if (t) nodeIds.add(t);
+        });
+        statsEl.innerHTML = `
+          <div class="summary-item"><div class="num">${edges.length}</div><div class="label">连线</div></div>
+          <div class="summary-item"><div class="num">${nodeIds.size}</div><div class="label">节点</div></div>
+        `;
+
+        // Edge table
+        const edgeListEl = document.getElementById('edge-list');
+        if (edges.length === 0) {
+          edgeListEl.innerHTML =
+            '<div class="empty-msg">未找到包含 data-source / data-target 属性的连线</div>';
+        } else {
+          let tableHtml =
+            '<table class="edge-table"><thead><tr><th>#</th><th>data-source</th><th>data-target</th><th>data-id</th></tr></thead><tbody>';
+          edges.forEach((p, i) => {
+            const src = p.getAttribute('data-source') || '—';
+            const tgt = p.getAttribute('data-target') || '—';
+            const id = p.getAttribute('data-id') || p.getAttribute('id') || '—';
+            tableHtml += `
+              <tr>
+                <td style="color:#9ca3af;width:28px;">${i + 1}</td>
+                <td><span class="node-badge badge-source">${escapeHtml(src)}</span></td>
+                <td><span class="node-badge badge-target">${escapeHtml(tgt)}</span></td>
+                <td style="color:#6b7280;font-size:11px;">${escapeHtml(id)}</td>
+              </tr>`;
+          });
+          tableHtml += '</tbody></table>';
+          edgeListEl.innerHTML = tableHtml;
+        }
+
+        // Raw attributes from first edge
+        const rawEl = document.getElementById('edge-raw-attr');
+        const first = edges[0];
+        if (!first) {
+          rawEl.innerHTML = '<div class="empty-msg">等待渲染…</div>';
+        } else {
+          const relevant = [
+            'data-source',
+            'data-target',
+            'data-id',
+            'data-edge',
+            'data-et',
+            'data-look',
+            'id',
+            'class',
+            'style',
+            'd',
+          ];
+          const lines = [];
+          lines.push(`&lt;!-- <span class="cm">&lt;path&gt; 原始属性</span> --&gt;`);
+          for (const attr of relevant) {
+            const val = first.getAttribute(attr);
+            if (val !== null) {
+              lines.push(
+                ` <span class="hl">${escapeHtml(attr)}</span>=<span class="kv">"${escapeHtml(val)}"</span>`
+              );
+            }
+          }
+          rawEl.innerHTML = `<div class="attr-block">${lines.join('\n')}</div>`;
+        }
+      }
+
+      // ── Wire up ──
+      btn.addEventListener('click', render);
+      // Render on load
+      render();
+    </script>
+  </body>
+</html>
