@@ -10,21 +10,15 @@
 
 # mermaid
 
-## Classes
-
-- [MermaidDragEditor](classes/MermaidDragEditor.md)
-
 ## Interfaces
 
 - [AsyncIconLoader](interfaces/AsyncIconLoader.md)
 - [DetailedError](interfaces/DetailedError.md)
-- [DragEditorOptions](interfaces/DragEditorOptions.md)
 - [ExternalDiagramDefinition](interfaces/ExternalDiagramDefinition.md)
 - [LayoutData](interfaces/LayoutData.md)
 - [LayoutLoaderDefinition](interfaces/LayoutLoaderDefinition.md)
 - [Mermaid](interfaces/Mermaid.md)
 - [MermaidConfig](interfaces/MermaidConfig.md)
-- [OverrideData](interfaces/OverrideData.md)
 - [ParseOptions](interfaces/ParseOptions.md)
 - [ParseResult](interfaces/ParseResult.md)
 - [RenderOptions](interfaces/RenderOptions.md)

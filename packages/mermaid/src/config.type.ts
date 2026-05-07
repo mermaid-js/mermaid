@@ -253,33 +253,6 @@ export interface MermaidConfig {
    *
    */
   suppressErrorRendering?: boolean;
-  /**
-   * Enable interactive drag-and-drop node repositioning for flowcharts.
-   * When true, rendered flowchart nodes can be dragged to new positions
-   * using pointer events. Node positions can be persisted via localStorage
-   * or a custom save/load callback.
-   *
-   */
-  dragEditor?:
-    | boolean
-    | {
-        /**
-         * Whether to auto-enable the drag editor after rendering.
-         *
-         */
-        autoEnable?: boolean;
-        /**
-         * Custom storage key for persisting drag overrides in localStorage.
-         * Defaults to the SVG element id.
-         *
-         */
-        storageKey?: string;
-        /**
-         * Maximum undo history depth. Defaults to 50.
-         *
-         */
-        maxUndoDepth?: number;
-      };
 }
 /**
  * The object containing configurations specific for flowcharts

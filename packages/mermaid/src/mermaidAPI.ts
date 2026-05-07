@@ -25,7 +25,6 @@ import theme from './themes/index.js';
 import type { D3Element, ParseOptions, ParseResult, RenderResult } from './types.js';
 import { decodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
-import { MermaidDragEditor } from './interaction/index.js';
 
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
@@ -472,39 +471,10 @@ const render = async function (
 
   removeTempElements();
 
-  let bindFunctions = diag.db.bindFunctions;
-
-  if (config.dragEditor && (diagramType === 'flowchart-v2' || diagramType === 'flowchart')) {
-    const dragCfg =
-      typeof config.dragEditor === 'object' ? config.dragEditor : { autoEnable: true };
-    const mermaidCode = text;
-    const origBindFunctions = bindFunctions;
-    bindFunctions = (element: Element) => {
-      if (origBindFunctions) {
-        origBindFunctions(element);
-      }
-      const svgEl = element.querySelector('svg');
-      if (!svgEl) {
-        return;
-      }
-      try {
-        const editor = new MermaidDragEditor({
-          svgElement: svgEl as unknown as SVGElement,
-          mermaidCode,
-          storageKey: dragCfg.storageKey ?? id,
-          maxUndoDepth: dragCfg.maxUndoDepth,
-        });
-        void editor.enable();
-      } catch (e) {
-        log.warn('[MermaidDragEditor] Failed to auto-initialize:', e);
-      }
-    };
-  }
-
   return {
     diagramType,
     svg: svgCode,
-    bindFunctions,
+    bindFunctions: diag.db.bindFunctions,
   };
 };
 
