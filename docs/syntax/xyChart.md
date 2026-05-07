@@ -211,7 +211,7 @@ bar [15,25,20,30]
 line [5,15,25,35]
 ```
 
-## Displaying individual values on a bar chart (v\<MERMAID_RELEASE_VERSION>+)
+## Displaying individual values on a bar chart (v11.14.0+)
 
 To show the value corresponding to a bar specify `showDataLabel: true`.
 

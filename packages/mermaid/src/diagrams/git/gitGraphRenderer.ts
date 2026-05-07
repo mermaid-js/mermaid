@@ -35,6 +35,9 @@ const THEME_COLOR_LIMIT = 8;
  */
 const REDUX_GEOMETRY_THEMES = new Set(['redux', 'redux-dark', 'redux-color', 'redux-dark-color']);
 
+/** Vertical padding inside the LR branch label rect for redux themes (`drawBranches` `labelPaddingY`). */
+const REDUX_BRANCH_LABEL_PADDING_Y = 12;
+
 /**
  * Themes that use per-branch color cycling with a non-default first color
  * (avoidDefaultColor logic in calcColorIndex).
@@ -546,11 +549,16 @@ const getCommitPosition = (
   isParallelCommits: boolean
 ): CommitPositionOffset => {
   const posWithOffset = dir === 'BT' && isParallelCommits ? pos : pos + LAYOUT_OFFSET;
-  const y = dir === 'TB' || dir === 'BT' ? posWithOffset : branchPos.get(commit.branch)?.pos;
+  const branchY = branchPos.get(commit.branch)?.pos;
   const x = dir === 'TB' || dir === 'BT' ? branchPos.get(commit.branch)?.pos : posWithOffset;
-  if (x === undefined || y === undefined) {
+  if (x === undefined || branchY === undefined) {
     throw new Error(`Position were undefined for commit ${commit.id}`);
   }
+  const useReduxGeometry = REDUX_GEOMETRY_THEMES.has(getConfig().theme ?? '');
+  const y =
+    dir === 'TB' || dir === 'BT'
+      ? posWithOffset
+      : branchY + (useReduxGeometry ? REDUX_BRANCH_LABEL_PADDING_Y / 2 + 1 : -2);
   return { x, y, posWithOffset };
 };
 
@@ -878,11 +886,19 @@ const drawBranches = (
     if (pos === undefined) {
       throw new Error(`Position not found for branch ${branch.name}`);
     }
+    // LR spine Y: bkg rect center, dotted line, and commits all sit here.
+    // TB/BT use pos directly (their line attrs are overridden below).
+    const spineY =
+      dir === 'TB' || dir === 'BT'
+        ? pos
+        : useReduxGeometry
+          ? pos + REDUX_BRANCH_LABEL_PADDING_Y / 2 + 1
+          : pos - 2;
     const line = g.append('line');
     line.attr('x1', 0);
-    line.attr('y1', pos);
+    line.attr('y1', spineY);
     line.attr('x2', maxPos);
-    line.attr('y2', pos);
+    line.attr('y2', spineY);
     line.attr('class', 'branch branch' + adjustIndexForTheme);
 
     if (dir === 'TB') {
@@ -896,7 +912,7 @@ const drawBranches = (
       line.attr('y2', defaultPos);
       line.attr('x2', pos);
     }
-    lanes.push(pos);
+    lanes.push(spineY);
 
     const name = branch.name;
 
@@ -913,7 +929,7 @@ const drawBranches = (
     const bbox = labelElement.getBBox();
     const borderRadius = useReduxGeometry ? 0 : 4;
     const labelPaddingX = useReduxGeometry ? 16 : 0;
-    const labelPaddingY = useReduxGeometry ? 12 : 0;
+    const labelPaddingY = useReduxGeometry ? REDUX_BRANCH_LABEL_PADDING_Y : 0;
     if (look === 'neo') {
       bkg.attr('data-look', `neo`);
     }
@@ -927,7 +943,7 @@ const drawBranches = (
       .attr('rx', borderRadius)
       .attr('ry', borderRadius)
       .attr('x', -bbox.width - 4 - (gitGraphConfig.rotateCommitLabel === true ? 30 : 0))
-      .attr('y', -bbox.height / 2 + 8)
+      .attr('y', -bbox.height / 2 + 10)
       .attr('width', bbox.width + 18 + labelPaddingX)
       .attr('height', bbox.height + 4 + labelPaddingY);
     label.attr(
@@ -938,7 +954,7 @@ const drawBranches = (
           (gitGraphConfig.rotateCommitLabel === true ? 30 : 0) +
           labelPaddingX / 2) +
         ', ' +
-        (pos - bbox.height / 2 - 1 + labelPaddingY / 2) +
+        (spineY - bbox.height / 2 - 2) +
         ')'
     );
     if (dir === 'TB') {
@@ -962,7 +978,7 @@ const drawBranches = (
         );
       }
     } else {
-      bkg.attr('transform', 'translate(' + -19 + ', ' + (pos - 11) + ')');
+      bkg.attr('transform', 'translate(-19, ' + (spineY - 12 - labelPaddingY / 2) + ')');
     }
   });
 };

@@ -1,7 +1,8 @@
-import { it, describe, expect, vi } from 'vitest';
+import { it, describe, expect, vi, beforeEach, afterEach } from 'vitest';
 import cytoscape from 'cytoscape';
 import { parser } from './architectureParser.js';
 import { ArchitectureDB } from './architectureDb.js';
+import { setConfig, reset as resetConfig } from '../../config.js';
 describe('architecture diagrams', () => {
   let db: ArchitectureDB;
   beforeEach(() => {
@@ -155,6 +156,42 @@ describe('architecture diagrams', () => {
       expect(db.getServices()).toHaveLength(12);
       expect(db.getGroups()).toHaveLength(8);
       expect(db.getEdges()).toHaveLength(9);
+    });
+  });
+
+  describe('fcose layout config', () => {
+    afterEach(() => {
+      resetConfig();
+    });
+
+    it('should default the fcose knobs to documented values', () => {
+      expect(db.getConfigField('nodeSeparation')).toBe(75);
+      expect(db.getConfigField('idealEdgeLengthMultiplier')).toBe(1.5);
+      expect(db.getConfigField('edgeElasticity')).toBe(0.45);
+      expect(db.getConfigField('numIter')).toBe(2500);
+    });
+
+    it('should round-trip user-supplied fcose knobs', () => {
+      setConfig({
+        architecture: {
+          nodeSeparation: 120,
+          idealEdgeLengthMultiplier: 2,
+          edgeElasticity: 0.6,
+          numIter: 5000,
+        },
+      });
+      expect(db.getConfigField('nodeSeparation')).toBe(120);
+      expect(db.getConfigField('idealEdgeLengthMultiplier')).toBe(2);
+      expect(db.getConfigField('edgeElasticity')).toBe(0.6);
+      expect(db.getConfigField('numIter')).toBe(5000);
+    });
+
+    it('should leave defaults intact when only one knob is set', () => {
+      setConfig({ architecture: { nodeSeparation: 200 } });
+      expect(db.getConfigField('nodeSeparation')).toBe(200);
+      expect(db.getConfigField('idealEdgeLengthMultiplier')).toBe(1.5);
+      expect(db.getConfigField('edgeElasticity')).toBe(0.45);
+      expect(db.getConfigField('numIter')).toBe(2500);
     });
   });
 

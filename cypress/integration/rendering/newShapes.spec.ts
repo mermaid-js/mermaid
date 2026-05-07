@@ -20,6 +20,7 @@ const newShapesSet2 = [
   'lightning-bolt',
   'filled-circle',
   'window-pane',
+  'datastore',
 ] as const;
 
 const newShapesSet3 = [

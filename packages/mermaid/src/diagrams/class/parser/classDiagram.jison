@@ -63,10 +63,11 @@ Function arguments are optional: 'call <callback_name>()' simply executes 'callb
 "style"                         return 'STYLE';
 "classDef"                      return 'CLASSDEF';
 
-<INITIAL,namespace>"namespace"  { this.begin('namespace'); return 'NAMESPACE'; }
+<INITIAL,namespace,namespace-body>"namespace"  { this.begin('namespace'); return 'NAMESPACE'; }
 <namespace>\s*(\r?\n)+          { this.popState(); return 'NEWLINE'; }
 <namespace>\s+                  /* skip whitespace */
 <namespace>[{]                  { this.begin("namespace-body"); return 'STRUCT_START';}
+<namespace>[}]                  { this.popState(); this.less(0); }
 <namespace-body>[}]             { this.popState(); return 'STRUCT_STOP'; }
 <namespace-body><<EOF>>         return "EOF_IN_STRUCT";
 <namespace-body>\s*(\r?\n)+     return 'NEWLINE';
@@ -275,12 +276,13 @@ statement
     ;
 
 namespaceStatement
-    : namespaceIdentifier STRUCT_START classStatements STRUCT_STOP          { yy.addClassesToNamespace($1, $3[0], $3[1]); }
-    | namespaceIdentifier STRUCT_START NEWLINE classStatements STRUCT_STOP  { yy.addClassesToNamespace($1, $4[0], $4[1]); }
+    : namespaceIdentifier STRUCT_START classStatements STRUCT_STOP          { yy.addClassesToNamespace($1, $3[0], $3[1]); yy.popNamespace(); }
+    | namespaceIdentifier STRUCT_START NEWLINE classStatements STRUCT_STOP  { yy.addClassesToNamespace($1, $4[0], $4[1]); yy.popNamespace(); }
     ;
 
 namespaceIdentifier
-    : NAMESPACE namespaceName { $$=$2; yy.addNamespace($2); }
+    : NAMESPACE namespaceName { $$=yy.addNamespace($2); }
+    | NAMESPACE namespaceName classLabel { $$=yy.addNamespace($2, $3); }
     ;
 
 classStatements
@@ -290,6 +292,9 @@ classStatements
     | noteStatement                             {$$=[[], [$1]]}
     | noteStatement NEWLINE                     {$$=[[], [$1]]}
     | noteStatement NEWLINE classStatements     {$3[1].unshift($1); $$=$3}
+    | namespaceStatement                        {$$=[[], []]}
+    | namespaceStatement NEWLINE                {$$=[[], []]}
+    | namespaceStatement NEWLINE classStatements {$$=$3}
     ;
 
 classStatement

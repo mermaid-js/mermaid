@@ -6,13 +6,23 @@ import type {
   Pie,
   Architecture,
   GitGraph,
+  EventModel,
   Radar,
   Treemap,
   TreeView,
   Wardley,
 } from './index.js';
 
-export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph | Radar | TreeView | Wardley;
+export type DiagramAST =
+  | Info
+  | Packet
+  | Pie
+  | Architecture
+  | GitGraph
+  | EventModel
+  | Radar
+  | TreeView
+  | Wardley;
 
 const parsers: Record<string, LangiumParser> = {};
 const initializers = {
@@ -46,6 +56,11 @@ const initializers = {
     const parser = createGitGraphServices().GitGraph.parser.LangiumParser;
     parsers.gitGraph = parser;
   },
+  eventmodeling: async () => {
+    const { createEventModelingServices } = await import('./language/eventmodeling/index.js');
+    const parser = createEventModelingServices().EventModel.parser.LangiumParser;
+    parsers.eventmodeling = parser;
+  },
   radar: async () => {
     const { createRadarServices } = await import('./language/radar/index.js');
     const parser = createRadarServices().Radar.parser.LangiumParser;
@@ -69,6 +84,7 @@ export async function parse(diagramType: 'pie', text: string): Promise<Pie>;
 export async function parse(diagramType: 'treeView', text: string): Promise<TreeView>;
 export async function parse(diagramType: 'architecture', text: string): Promise<Architecture>;
 export async function parse(diagramType: 'gitGraph', text: string): Promise<GitGraph>;
+export async function parse(diagramType: 'eventmodeling', text: string): Promise<EventModel>;
 export async function parse(diagramType: 'radar', text: string): Promise<Radar>;
 export async function parse(diagramType: 'treemap', text: string): Promise<Treemap>;
 export async function parse(diagramType: 'wardley', text: string): Promise<Wardley>;

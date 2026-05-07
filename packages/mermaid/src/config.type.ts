@@ -51,6 +51,14 @@ export type SankeyNodeAlignment = 'left' | 'right' | 'center' | 'justify';
  */
 export type DOMPurifyConfiguration = import('dompurify').Config;
 /**
+ * The style of labels in the sankey diagram.
+ *
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "SankeyLabelStyle".
+ */
+export type SankeyLabelStyle = 'legacy' | 'outlined';
+/**
  * The font size to use
  */
 export type CSSFontSize = string | number;
@@ -229,6 +237,7 @@ export interface MermaidConfig {
   sankey?: SankeyDiagramConfig;
   packet?: PacketDiagramConfig;
   block?: BlockDiagramConfig;
+  eventmodeling?: EventModelingDiagramConfig;
   treeView?: TreeViewDiagramConfig;
   radar?: RadarDiagramConfig;
   venn?: VennDiagramConfig;
@@ -792,6 +801,15 @@ export interface ClassDiagramConfig extends BaseDiagramConfig {
   diagramPadding?: number;
   htmlLabels?: boolean;
   hideEmptyMembersBox?: boolean;
+  /**
+   * When true (default), nested namespaces render as hierarchical clusters,
+   * with each segment of a dotted name (e.g. `A.B.C`) becoming its own nested
+   * box. When false, namespaces render in compact mode: only explicitly
+   * declared namespaces are emitted and their full qualified name is used as
+   * a single flat label.
+   *
+   */
+  hierarchicalNamespaces?: boolean;
 }
 /**
  * The object containing configurations specific for entity relationship diagrams
@@ -1105,6 +1123,33 @@ export interface ArchitectureDiagramConfig extends BaseDiagramConfig {
    *
    */
   randomize?: boolean;
+  /**
+   * Minimum separation (in pixels) between sibling nodes in the same group, passed through to the
+   * underlying fcose layout. Increase to spread overlapping siblings apart when many edges share the
+   * same port direction.
+   *
+   */
+  nodeSeparation?: number;
+  /**
+   * Multiplier applied to `iconSize` to compute the ideal length of edges between nodes within the
+   * same group. Increase to add breathing room; decrease to pack the diagram tighter. Edges crossing
+   * group boundaries are unaffected and use a fixed shorter length.
+   *
+   */
+  idealEdgeLengthMultiplier?: number;
+  /**
+   * Spring elasticity (0–1) applied to edges between nodes within the same group, passed through to
+   * fcose. Higher values pull connected nodes closer together; lower values let the layout spread them
+   * out. Edges crossing group boundaries are unaffected.
+   *
+   */
+  edgeElasticity?: number;
+  /**
+   * Maximum number of iterations the fcose layout algorithm runs before stopping. Increase for higher
+   * quality on large or densely-connected diagrams at the cost of render time.
+   *
+   */
+  numIter?: number;
 }
 /**
  * The object containing configurations specific for mindmap diagrams
@@ -1592,6 +1637,28 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
    *
    */
   suffix?: string;
+  /**
+   * The width of the nodes in the sankey diagram.
+   *
+   */
+  nodeWidth?: number;
+  /**
+   * The padding between nodes in the sankey diagram.
+   *
+   */
+  nodePadding?: number;
+  /**
+   * The style of labels in the sankey diagram. 'outlined' provides better readability with a white stroke behind the text.
+   *
+   */
+  labelStyle?: 'legacy' | 'outlined';
+  /**
+   * A mapping of node IDs to their colors. Nodes not specified will use the default color scheme.
+   *
+   */
+  nodeColors?: {
+    [k: string]: string;
+  };
 }
 /**
  * The object containing configurations specific for packet diagrams.
@@ -1633,6 +1700,22 @@ export interface PacketDiagramConfig extends BaseDiagramConfig {
  */
 export interface BlockDiagramConfig extends BaseDiagramConfig {
   padding?: number;
+}
+/**
+ * The object containing configurations specific for Event Modeling diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "EventModelingDiagramConfig".
+ */
+export interface EventModelingDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The padding around the Event Modeling diagram.
+   */
+  padding?: number;
+  /**
+   * The height of each row in the Event Modeling diagram.
+   */
+  rowHeight?: number;
 }
 /**
  * The object containing configurations specific for treeView diagrams.

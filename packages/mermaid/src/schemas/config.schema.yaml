@@ -56,6 +56,8 @@ required:
   - block
   - treeView
   - look
+  - eventmodeling
+  - radar
   - venn
 properties:
   theme:
@@ -327,6 +329,8 @@ properties:
     $ref: '#/$defs/PacketDiagramConfig'
   block:
     $ref: '#/$defs/BlockDiagramConfig'
+  eventmodeling:
+    $ref: '#/$defs/EventModelingDiagramConfig'
   treeView:
     $ref: '#/$defs/TreeViewDiagramConfig'
   radar:
@@ -982,6 +986,10 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - iconSize
       - fontSize
       - randomize
+      - nodeSeparation
+      - idealEdgeLengthMultiplier
+      - edgeElasticity
+      - numIter
     properties:
       padding:
         type: number
@@ -999,6 +1007,33 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           When true, nodes start at random positions, which may produce varied but potentially better-spaced layouts.
         type: boolean
         default: false
+      nodeSeparation:
+        description: |
+          Minimum separation (in pixels) between sibling nodes in the same group, passed through to the
+          underlying fcose layout. Increase to spread overlapping siblings apart when many edges share the
+          same port direction.
+        type: number
+        default: 75
+      idealEdgeLengthMultiplier:
+        description: |
+          Multiplier applied to `iconSize` to compute the ideal length of edges between nodes within the
+          same group. Increase to add breathing room; decrease to pack the diagram tighter. Edges crossing
+          group boundaries are unaffected and use a fixed shorter length.
+        type: number
+        default: 1.5
+      edgeElasticity:
+        description: |
+          Spring elasticity (0–1) applied to edges between nodes within the same group, passed through to
+          fcose. Higher values pull connected nodes closer together; lower values let the layout spread them
+          out. Edges crossing group boundaries are unaffected.
+        type: number
+        default: 0.45
+      numIter:
+        description: |
+          Maximum number of iterations the fcose layout algorithm runs before stopping. Increase for higher
+          quality on large or densely-connected diagrams at the cost of render time.
+        type: number
+        default: 2500
 
   MindmapDiagramConfig:
     title: Mindmap Diagram Config
@@ -1540,6 +1575,15 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       hideEmptyMembersBox:
         type: boolean
         default: false
+      hierarchicalNamespaces:
+        type: boolean
+        default: true
+        description: |
+          When true (default), nested namespaces render as hierarchical clusters,
+          with each segment of a dotted name (e.g. `A.B.C`) becoming its own nested
+          box. When false, namespaces render in compact mode: only explicitly
+          declared namespaces are emitted and their full qualified name is used as
+          a single flat label.
 
   JourneyDiagramConfig:
     title: Journey Diagram Config
@@ -2225,6 +2269,17 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       target: Use the target of sankey link for the color of the link.
       gradient: Use a gradient of the source and target for the color of the link.
     default: gradient
+  SankeyLabelStyle:
+    description: |
+      The style of labels in the sankey diagram.
+    type: string
+    enum:
+      - legacy
+      - outlined
+    meta:enum:
+      legacy: Plain text labels (original style).
+      outlined: Labels with a white outline for better readability against colored backgrounds.
+    default: legacy
 
   SankeyNodeAlignment:
     description: |
@@ -2286,6 +2341,27 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           The suffix to use for values
         type: string
         default: ''
+      nodeWidth:
+        description: |
+          The width of the nodes in the sankey diagram.
+        type: number
+        default: 10
+      nodePadding:
+        description: |
+          The padding between nodes in the sankey diagram.
+        type: number
+        default: 12
+      labelStyle:
+        description: |
+          The style of labels in the sankey diagram. 'outlined' provides better readability with a white stroke behind the text.
+        $ref: '#/$defs/SankeyLabelStyle'
+        default: legacy
+      nodeColors:
+        description: |
+          A mapping of node IDs to their colors. Nodes not specified will use the default color scheme.
+        type: object
+        additionalProperties:
+          type: string
 
   PacketDiagramConfig:
     title: Packet Diagram Config
@@ -2336,6 +2412,22 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         minimum: 0
         default: 8
 
+  EventModelingDiagramConfig:
+    title: Event Modeling Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for Event Modeling diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      padding:
+        description: The padding around the Event Modeling diagram.
+        type: number
+        default: 30
+      rowHeight:
+        description: The height of each row in the Event Modeling diagram.
+        type: number
+        minimum: 1
+        default: 32
   TreeViewDiagramConfig:
     title: TreeView Diagram Config
     allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
@@ -2449,6 +2541,13 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     description: The object containing configurations specific for Wardley Maps diagrams.
     type: object
     unevaluatedProperties: false
+    required:
+      - width
+      - height
+      - padding
+      - nodeRadius
+      - labelFontSize
+      - axisFontSize
     properties:
       width:
         description: The width of the Wardley diagram canvas.

@@ -85,6 +85,11 @@ const getStyles = (options) => {
     stroke: none;
   }
 
+  .sectionTitle, .sectionTitle > tspan {
+    fill: ${options.loopTextColor};
+    stroke: none;
+  }
+
   .loopLine {
     stroke-width: 2px;
     stroke-dasharray: 2, 2;

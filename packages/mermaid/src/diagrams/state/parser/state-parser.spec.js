@@ -170,4 +170,44 @@ ${prop} --> [*]`);
       expect(states.get(prop)).not.toBeUndefined();
     });
   });
+
+  describe('note parsing (issue #7089)', () => {
+    it('should not terminate a note when "send note" appears within the note text', () => {
+      const diagramText = `stateDiagram-v2
+      State1
+      note right of State1
+        this sentence contains send note inside the note text
+      end note
+      State1 --> State2`;
+      stateDiagram.parser.parse(diagramText);
+
+      const relations = stateDiagram.parser.yy.getRelations();
+      expect(relations).toHaveLength(1);
+      expect(relations[0].id1).toEqual('State1');
+      expect(relations[0].id2).toEqual('State2');
+
+      const states = stateDiagram.parser.yy.getStates();
+      const noteState = states.get('State1');
+      expect(noteState?.note?.text).toContain('send note inside the note text');
+    });
+
+    it('should not treat "end note" as a closing keyword when it is part of the note text', () => {
+      const diagramText = `stateDiagram-v2
+      State1
+      note right of State1
+        this sentence contains end note as part of the note text
+      end note
+      State1 --> State2`;
+      stateDiagram.parser.parse(diagramText);
+
+      const relations = stateDiagram.parser.yy.getRelations();
+      expect(relations).toHaveLength(1);
+      expect(relations[0].id1).toEqual('State1');
+      expect(relations[0].id2).toEqual('State2');
+
+      const states = stateDiagram.parser.yy.getStates();
+      const noteState = states.get('State1');
+      expect(noteState?.note?.text).toContain('end note as part of the note text');
+    });
+  });
 });

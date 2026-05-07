@@ -185,7 +185,7 @@ export async function requirementBox<T extends SVGGraphicsElement>(
     node.look !== 'handDrawn' &&
     (requirementEdgeLabelBackground || borderColorArray?.length)
   ) {
-    shapeSvg.selectAll('.outer-path path').attr('style', nodeStyles);
+    shapeSvg.selectAll('path').attr('style', nodeStyles);
   }
 
   return shapeSvg;
