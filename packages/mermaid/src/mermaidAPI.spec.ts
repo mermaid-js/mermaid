@@ -574,7 +574,7 @@ describe('mermaidAPI', () => {
           themeCSS: '@keyframes dash { to { stroke-dashoffset: 1000; } }',
         },
         'someDiagram',
-        new Map(),
+        {},
         '#someId'
       );
       expect(result).toEqual(
