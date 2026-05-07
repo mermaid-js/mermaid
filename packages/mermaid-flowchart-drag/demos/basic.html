@@ -313,7 +313,10 @@ flowchart LR
           updateStats();
           setStatus(`Rendered — ${Object.keys(drag.getNodePositions()).length} nodes`);
         } catch (err) {
-          container.innerHTML = `<div style="color:#dc2626;padding:20px;">Render failed: ${err.message}</div>`;
+          const errDiv = document.createElement('div');
+          errDiv.style.cssText = 'color:#dc2626;padding:20px;';
+          errDiv.textContent = 'Render failed: ' + err.message;
+          container.replaceChildren(errDiv);
           setStatus('Render failed');
         }
       }

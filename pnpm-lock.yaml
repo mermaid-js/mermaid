@@ -439,6 +439,12 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1
 
+  packages/mermaid-flowchart-drag:
+    devDependencies:
+      typescript:
+        specifier: ^5.0.0
+        version: 5.8.3
+
   packages/mermaid-layout-elk:
     dependencies:
       d3:
