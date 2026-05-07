@@ -94,3 +94,5 @@ jobs:
         with:
           message: 'Update docs'
           add: 'docs/*'
+          committer_name: 'github-actions[bot]'
+          committer_email: '41898282+github-actions[bot]@users.noreply.github.com'
