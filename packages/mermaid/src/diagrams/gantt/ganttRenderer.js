@@ -563,7 +563,7 @@ export const draw = function (text, id, version, diagObj) {
     const dateFormat = diagObj.db.getDateFormat();
     const excludeRanges = [];
     let range = null;
-    let d = dayjs(minTime);
+    let d = dayjs(minTime).startOf('day');
     while (d.valueOf() <= maxTime) {
       if (diagObj.db.isInvalidDate(d, dateFormat, excludes, includes)) {
         if (!range) {
@@ -581,6 +581,9 @@ export const draw = function (text, id, version, diagObj) {
         }
       }
       d = d.add(1, 'd');
+    }
+    if (range) {
+      excludeRanges.push(range);
     }
 
     const rectangles = svg.append('g').selectAll('rect').data(excludeRanges).enter();

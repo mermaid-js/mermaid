@@ -282,6 +282,46 @@ describe('when using the ganttDb', function () {
     expect(tasks[0].task).toEqual('test1');
   });
 
+  it('should correctly identify weekend dates as invalid (issue #6421 reporter dates)', function () {
+    // Reporter's dates: tasks starting 2025-06-30 and 2025-07-09
+    // July 5-6 and July 12-13 should be weekends (Sat/Sun)
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.setExcludes('weekends');
+
+    const dateFormat = 'YYYY-MM-DD';
+    const excludes = ['weekends'];
+    const includes = [];
+
+    // Weekdays should NOT be invalid
+    expect(ganttDb.isInvalidDate(dayjs('2025-06-30'), dateFormat, excludes, includes)).toBe(false); // Mon
+    expect(ganttDb.isInvalidDate(dayjs('2025-07-04'), dateFormat, excludes, includes)).toBe(false); // Fri
+    expect(ganttDb.isInvalidDate(dayjs('2025-07-07'), dateFormat, excludes, includes)).toBe(false); // Mon
+
+    // Weekends SHOULD be invalid
+    expect(ganttDb.isInvalidDate(dayjs('2025-07-05'), dateFormat, excludes, includes)).toBe(true); // Sat
+    expect(ganttDb.isInvalidDate(dayjs('2025-07-06'), dateFormat, excludes, includes)).toBe(true); // Sun
+    expect(ganttDb.isInvalidDate(dayjs('2025-07-12'), dateFormat, excludes, includes)).toBe(true); // Sat
+    expect(ganttDb.isInvalidDate(dayjs('2025-07-13'), dateFormat, excludes, includes)).toBe(true); // Sun
+  });
+
+  it('should not extend endTime for a fixed-end task ending on Saturday (issue #6421)', function () {
+    // A task with a fixed end date (manualEndTime) ending on Saturday must keep that exact
+    // endTime — drawExcludeDays() must render the trailing weekend stripe for this range.
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.setExcludes('weekends');
+    ganttDb.addSection('fixed-end saturday test');
+    // Task ends on Saturday 2025-07-05
+    ganttDb.addTask('task1', 'id1,2025-06-30,2025-07-05');
+
+    const tasks = ganttDb.getTasks();
+
+    // endTime must stay at Saturday — NOT pushed forward past the weekend
+    expect(tasks[0].startTime).toEqual(dayjs('2025-06-30', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].endTime).toEqual(dayjs('2025-07-05', 'YYYY-MM-DD').toDate());
+    // renderEndTime is null for fixed-end tasks
+    expect(tasks[0].renderEndTime).toBeNull();
+  });
+
   it('should maintain the order in which tasks are created', function () {
     ganttDb.setAccTitle('Project Execution');
     ganttDb.setDateFormat('YYYY-MM-DD');
