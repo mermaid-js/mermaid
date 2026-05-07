@@ -2,7 +2,6 @@
  * Verify the as-built tarballs can be imported into a fresh, out-of-tree TypeScript project.
  */
 
-/* eslint-disable no-console */
 import { mkdtemp, mkdir, writeFile, readFile, readdir, copyFile, rm } from 'node:fs/promises';
 import { execFileSync } from 'child_process';
 import * as path from 'path';

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { readFile } from 'fs/promises';
 import { globby } from 'globby';
 import { ESLint } from 'eslint';

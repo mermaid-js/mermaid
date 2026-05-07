@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import type { Metafile } from 'esbuild';
 import { readFile } from 'fs/promises';
 import { globby } from 'globby';

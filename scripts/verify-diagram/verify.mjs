@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-/* eslint-disable no-console -- CLI tool, console output is intentional */
-
 /**
  * verify-diagram — Render a mermaid diagram via the dev server and save a screenshot.
  *

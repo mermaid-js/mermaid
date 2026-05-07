@@ -36,7 +36,6 @@ const TIMINGS_FILE = 'cypress/timings.json';
 const TIMINGS_PATH = path.join(process.cwd(), TIMINGS_FILE);
 
 function log(message: string): void {
-  // eslint-disable-next-line no-console
   console.log(message);
 }
 

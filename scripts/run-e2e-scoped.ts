@@ -22,25 +22,21 @@ try {
   const output = execSync(`git diff --name-only ${base} HEAD`, { encoding: 'utf8' });
   changedFiles = output.split('\n').filter(Boolean);
 } catch {
-  /* eslint-disable no-console */
   console.warn(`[e2e:scope] Could not diff against "${base}" — running full suite.`);
 }
 
 const spec = detectScope(changedFiles);
 
 if (spec === SKIP) {
-  /* eslint-disable no-console */
   console.log('[e2e:scope] Only docs/ignorable files changed — nothing to test.');
   process.exit(0);
 }
 
 const cypressArgs = ['run'];
 if (spec) {
-  /* eslint-disable no-console */
   console.log(`[e2e:scope] Scoped run:\n  ${spec.split(',').join('\n  ')}`);
   cypressArgs.push('--spec', spec);
 } else {
-  /* eslint-disable no-console */
   console.log('[e2e:scope] Running full e2e suite (shared code changed or scope undetermined).');
 }
 

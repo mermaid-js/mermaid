@@ -126,7 +126,6 @@ export const drawKatex = async function (elem, textData, msgModel = null) {
       stopx = temp;
     }
 
-    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
     textElem.attr('x', Math.round(startx + Math.abs(startx - stopx) / 2 - dim.width / 2));
     if (textData.class === 'loopText') {
       textElem.attr('y', Math.round(starty));

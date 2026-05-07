@@ -745,7 +745,6 @@ export const insertEdge = function (
       )
       .attr('style', pathStyle);
 
-    //eslint-disable-next-line @typescript-eslint/prefer-regexp-exec
     strokeColor = pathStyle.match(/stroke:([^;]+)/)?.[1];
 
     // Possible fix to remove eslint-disable-next-line

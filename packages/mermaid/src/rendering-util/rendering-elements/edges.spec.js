@@ -26,7 +26,7 @@ describe('resolveEdgeCurveType', () => {
 
   it('should fall back to config flowchart.curve when edge.curve is not a string (D3 function)', () => {
     // Class diagrams and other non-flowchart types may pass a D3 CurveFactory function
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
+
     const fakeCurveFactory = () => {};
     expect(resolveEdgeCurveType(fakeCurveFactory)).toBe('rounded');
   });
