@@ -34,7 +34,7 @@ jobs:
           fi
 
           # 3) Lockfile only changes when package.json changes
-          git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} > changed.txt
+          git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > changed.txt
           if grep -q '^pnpm-lock.yaml$' changed.txt && ! grep -q 'package.json' changed.txt; then
             issues+=("• pnpm-lock.yaml changed without any package.json modification")
           fi
