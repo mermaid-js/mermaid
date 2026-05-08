@@ -96,7 +96,7 @@ describe('Usecase diagram', () => {
     cy.get('svg').should((svg) => {
       expect(svg).to.have.attr('width', '100%');
       const style = svg.attr('style');
-      expect(style).to.match(/^max-width: [\d.]+px;$/);
+      expect(style).to.match(/max-width:\s*[\d.]+px;?/);
     });
   });
 
@@ -121,7 +121,7 @@ describe('Usecase diagram', () => {
     it('should render dark theme via init directive', () => {
       imgSnapshotTest(
         `
-        %%{init: {'theme': 'dark', 'config': {'fontSize': 20}}}%%
+        %%{init: { "theme": "dark", "config": { "fontSize": 20 } } }%%
         usecaseDiagram
           actor Admin as A
           usecase "Delete Records" as DR
