@@ -10,6 +10,14 @@ export {
   Radar,
   Treemap,
   Wardley,
+  Cynefin,
+  DomainBlock,
+  DomainItem,
+  Transition,
+  isCynefin,
+  isDomainBlock,
+  isDomainItem,
+  isTransition,
   Branch,
   Commit,
   Merge,
@@ -63,6 +71,7 @@ export {
   TreeViewGrammarGeneratedModule as TreeViewGeneratedModule,
   WardleyGrammarGeneratedModule as WardleyGeneratedModule,
   UsecaseGrammarGeneratedModule as UsecaseGeneratedModule,
+  CynefinGrammarGeneratedModule as CynefinGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';
@@ -77,3 +86,4 @@ export * from './radar/index.js';
 export * from './treemap/index.js';
 export * from './wardley/index.js';
 export * from './usecase/index.js';
+export * from './cynefin/index.js';

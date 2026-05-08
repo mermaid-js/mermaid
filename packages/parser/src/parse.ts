@@ -12,6 +12,7 @@ import type {
   TreeView,
   Wardley,
   Usecase,
+  Cynefin,
 } from './index.js';
 
 export type DiagramAST =
@@ -25,6 +26,7 @@ export type DiagramAST =
   | Wardley
   | Usecase
   | EventModel;
+  | Cynefin;
 
 const parsers: Record<string, LangiumParser> = {};
 const initializers = {
@@ -83,6 +85,11 @@ const initializers = {
     const parser = createUsecaseServices().Usecase.parser.LangiumParser;
     parsers.usecase = parser;
   },
+  cynefin: async () => {
+    const { createCynefinServices } = await import('./language/cynefin/index.js');
+    const parser = createCynefinServices().Cynefin.parser.LangiumParser;
+    parsers.cynefin = parser;
+  },
 } as const;
 
 export async function parse(diagramType: 'info', text: string): Promise<Info>;
@@ -96,6 +103,7 @@ export async function parse(diagramType: 'radar', text: string): Promise<Radar>;
 export async function parse(diagramType: 'treemap', text: string): Promise<Treemap>;
 export async function parse(diagramType: 'wardley', text: string): Promise<Wardley>;
 export async function parse(diagramType: 'usecase', text: string): Promise<Usecase>;
+export async function parse(diagramType: 'cynefin', text: string): Promise<Cynefin>;
 
 export async function parse<T extends DiagramAST>(
   diagramType: keyof typeof initializers,

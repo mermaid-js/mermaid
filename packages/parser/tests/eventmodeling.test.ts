@@ -1,5 +1,11 @@
 import { describe, expect, it, assert } from 'vitest';
 import { eventModelingParse as parse } from './test-util.js';
+import {
+  EventModelingValidator,
+  registerValidationChecks,
+} from '../src/language/eventmodeling/event-modeling-validator.js';
+import type { EventModelingServices } from '../src/language/eventmodeling/module.js';
+import type { EmModelEntityType, EmTimeFrame } from '../src/language/generated/ast.js';
 
 describe('Parse Event Model', () => {
   it('should parse complex model', () => {
@@ -85,7 +91,7 @@ timeframe 01 event Start
   it('should parse qualified names in model', () => {
     const result = parse(`eventmodeling
 
-timeframe 02 screen Screen
+timeframe 02 ui UI
 tf 01 evt Product.PriceChanged
 tf 03 evt Cart.ItemAdded
 
@@ -105,7 +111,7 @@ tf 03 evt Cart.ItemAdded
   it('should parse both types of frames in model', () => {
     const result = parse(`eventmodeling
 
-tf 02 screen Screen
+tf 02 ui UI
 resetframe 01 evt Product.PriceChanged
 tf 03 evt Cart.ItemAdded
 
@@ -122,6 +128,187 @@ tf 03 evt Cart.ItemAdded
     expect(frame.name).toBe('01');
     expect(frame.modelEntityType).toBe('evt');
     expect(frame.entityIdentifier).toBe('Product.PriceChanged');
+  });
+
+  describe('Validation', () => {
+    describe('registerValidationChecks', () => {
+      it('registers checks against the validation registry', () => {
+        const registered: unknown[] = [];
+        const mockServices = {
+          validation: {
+            EventModelingValidator: new EventModelingValidator(),
+            ValidationRegistry: { register: (...args: unknown[]) => registered.push(args) },
+          },
+        };
+        registerValidationChecks(mockServices as unknown as EventModelingServices);
+        expect(registered).toHaveLength(1);
+      });
+    });
+
+    const validator = new EventModelingValidator();
+
+    function makeFrame(modelEntityType: EmModelEntityType): EmTimeFrame {
+      return {
+        $type: 'EmTimeFrame',
+        $container: undefined as unknown as EmTimeFrame['$container'],
+        $containerProperty: undefined,
+        $containerIndex: undefined,
+        $cstNode: undefined,
+        name: '00',
+        entityIdentifier: 'Test',
+        modelEntityType,
+        sourceFrames: [],
+      };
+    }
+
+    function collectErrors(frame: EmTimeFrame, sources: EmTimeFrame[]): string[] {
+      const errors: string[] = [];
+      const frameWithSources: EmTimeFrame = {
+        ...frame,
+        sourceFrames: sources.map((s) => ({ $refText: s.name, ref: s, error: undefined })),
+      };
+      validator.checkSourceFrameTypes(frameWithSources, (_, message) => errors.push(message));
+      return errors;
+    }
+
+    it('should allow evt sourced from cmd', () => {
+      const errors = collectErrors(makeFrame('evt'), [makeFrame('cmd')]);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('should allow event sourced from command', () => {
+      const errors = collectErrors(makeFrame('event'), [makeFrame('command')]);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('should reject evt sourced from rmo', () => {
+      const errors = collectErrors(makeFrame('evt'), [makeFrame('rmo')]);
+      expect(errors).toHaveLength(1);
+      expect(errors[0]).toContain('event');
+      expect(errors[0]).toContain('command');
+    });
+
+    it('should reject evt sourced from pcr', () => {
+      const errors = collectErrors(makeFrame('evt'), [makeFrame('pcr')]);
+      expect(errors).toHaveLength(1);
+    });
+
+    it('should allow cmd sourced from ui', () => {
+      const errors = collectErrors(makeFrame('cmd'), [makeFrame('ui')]);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('should allow command sourced from ui', () => {
+      const errors = collectErrors(makeFrame('command'), [makeFrame('ui')]);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('should allow cmd sourced from pcr', () => {
+      const errors = collectErrors(makeFrame('cmd'), [makeFrame('pcr')]);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('should allow command sourced from processor', () => {
+      const errors = collectErrors(makeFrame('command'), [makeFrame('processor')]);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('should reject cmd sourced from cmd', () => {
+      const errors = collectErrors(makeFrame('cmd'), [makeFrame('cmd')]);
+      expect(errors).toHaveLength(1);
+      expect(errors[0]).toContain('command');
+      expect(errors[0]).toContain('ui or processor');
+    });
+
+    it('should reject cmd sourced from evt', () => {
+      const errors = collectErrors(makeFrame('cmd'), [makeFrame('evt')]);
+      expect(errors).toHaveLength(1);
+      expect(errors[0]).toContain('command');
+      expect(errors[0]).toContain('ui or processor');
+    });
+
+    it('should reject ui sourced from evt', () => {
+      const errors = collectErrors(makeFrame('ui'), [makeFrame('evt')]);
+      expect(errors).toHaveLength(1);
+    });
+
+    it('should allow ui sourced from rmo', () => {
+      const errors = collectErrors(makeFrame('ui'), [makeFrame('rmo')]);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('should allow ui sourced from readmodel', () => {
+      const errors = collectErrors(makeFrame('ui'), [makeFrame('readmodel')]);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('should reject ui sourced from cmd', () => {
+      const errors = collectErrors(makeFrame('ui'), [makeFrame('cmd')]);
+      expect(errors).toHaveLength(1);
+      expect(errors[0]).toContain('ui');
+      expect(errors[0]).toContain('read model');
+    });
+
+    it('should reject cmd sourced from rmo', () => {
+      const errors = collectErrors(makeFrame('cmd'), [makeFrame('rmo')]);
+      expect(errors).toHaveLength(1);
+      expect(errors[0]).toContain('command');
+      expect(errors[0]).toContain('ui or processor');
+    });
+
+    it('should allow rmo sourced from evt', () => {
+      const errors = collectErrors(makeFrame('rmo'), [makeFrame('evt')]);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('should allow readmodel sourced from event', () => {
+      const errors = collectErrors(makeFrame('readmodel'), [makeFrame('event')]);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('should allow pcr sourced from rmo', () => {
+      const errors = collectErrors(makeFrame('pcr'), [makeFrame('rmo')]);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('should allow processor sourced from readmodel', () => {
+      const errors = collectErrors(makeFrame('processor'), [makeFrame('readmodel')]);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('should reject rmo sourced directly from pcr', () => {
+      const errors = collectErrors(makeFrame('rmo'), [makeFrame('pcr')]);
+      expect(errors).toHaveLength(1);
+      expect(errors[0]).toContain('read model');
+      expect(errors[0]).toContain('event');
+    });
+
+    it('should reject pcr sourced directly from evt', () => {
+      const errors = collectErrors(makeFrame('pcr'), [makeFrame('evt')]);
+      expect(errors).toHaveLength(1);
+      expect(errors[0]).toContain('processor');
+      expect(errors[0]).toContain('read model');
+    });
+
+    it('should reject pcr sourced from cmd', () => {
+      const errors = collectErrors(makeFrame('pcr'), [makeFrame('cmd')]);
+      expect(errors).toHaveLength(1);
+    });
+
+    it('should reject rmo sourced from ui', () => {
+      const errors = collectErrors(makeFrame('rmo'), [makeFrame('ui')]);
+      expect(errors).toHaveLength(1);
+    });
+
+    it('should report an error for each invalid source', () => {
+      const errors = collectErrors(makeFrame('pcr'), [makeFrame('evt'), makeFrame('cmd')]);
+      expect(errors).toHaveLength(2);
+    });
+
+    it('should not validate frames with no sources', () => {
+      const errors = collectErrors(makeFrame('rmo'), []);
+      expect(errors).toHaveLength(0);
+    });
   });
 
   it('should parse multiple source frames model', () => {

@@ -9,62 +9,181 @@
       body {
         font-family: 'Montserrat', sans-serif;
         margin: 0 auto;
-        max-width: 900px;
+        max-width: 1200px;
         padding: 20px;
       }
-      .mermaid {
-        margin: 30px 0;
-      }
+
       h1,
       h2 {
         color: #333;
       }
-      pre {
-        background-color: #f5f5f5;
-        padding: 15px;
-        border-radius: 5px;
+
+      .demo {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 32px;
+        align-items: start;
+      }
+
+      .demo .source {
+        background: #fff;
+        color: #333;
+        border: 1px solid #e0e0e0;
+        padding: 16px;
+        border-radius: 6px;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 13px;
+        line-height: 1.5;
+        overflow-x: auto;
+        white-space: pre;
+        margin: 0;
+      }
+
+      .demo .rendered {
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 16px;
+        min-height: 80px;
+      }
+
+      .demo .rendered .mermaid {
+        margin: 0;
       }
     </style>
   </head>
+
   <body>
     <h1>TreeView Diagram Demo</h1>
+    <p>
+      Each example shows the <strong>input syntax</strong> (left) alongside the
+      <strong>rendered output</strong> (right).
+    </p>
 
-    <h2>Basic TreeView Example</h2>
-    <pre class="mermaid">
-    treeView-beta
-    "docs"
+    <h2>Basic TreeView (quoted labels)</h2>
+    <div class="demo">
+      <pre class="source"></pre>
+      <div class="rendered">
+        <pre class="mermaid">
+treeView-beta
+"docs"
+    "build"
+    "make.bat"
+    "Makefile"
+    "out"
+    "source"
         "build"
-        "make.bat"
-        "Makefile"
-        "out"
-        "source"
-            "build"
-            "static"
-                "_templates"
-                "div. Files"
-    </pre>
+        "static"
+            "_templates"
+            "div. Files"
+        </pre>
+      </div>
+    </div>
 
-    <h2>TreeView Config Example</h2>
-    <pre class="mermaid">
-    ---
-    config:
+    <h2>Bare Labels with Icons</h2>
+    <div class="demo">
+      <pre class="source"></pre>
+      <div class="rendered">
+        <pre class="mermaid">
+treeView-beta
+my-project/
+    src/
+        components/
+            Button.tsx
+            Header.tsx
+        App.tsx
+        index.js
+    .gitignore
+    package.json
+    README.md
+        </pre>
+      </div>
+    </div>
+
+    <h2>Annotations: :::class, icon(), ##</h2>
+    <div class="demo">
+      <pre class="source"></pre>
+      <div class="rendered">
+        <pre class="mermaid">
+treeView-beta
+my-project/
+    src/
+        App.tsx :::highlight icon(react) ## main component
+        index.js ## entry point
+        styles.css
+    data/
+        model.bin icon(database)
+    .env ## environment variables
+    Dockerfile
+    package.json
+        </pre>
+      </div>
+    </div>
+
+    <h2>Folder Names with Spaces</h2>
+    <div class="demo">
+      <pre class="source"></pre>
+      <div class="rendered">
+        <pre class="mermaid">
+treeView-beta
+My Project/
+    Source Files/
+        App.tsx :::highlight ## main component
+        index.js ## entry point
+    My Documents/
+        meeting notes.md
+        project plan.md ## Q3 roadmap
+    .gitignore
+    README.md
+        </pre>
+      </div>
+    </div>
+
+    <h2>Custom Config</h2>
+    <div class="demo">
+      <pre class="source"></pre>
+      <div class="rendered">
+        <pre class="mermaid">
+---
+config:
+    treeView:
+        rowIndent: 80
+        lineThickness: 3
+    themeVariables:
         treeView:
-            rowIndent: 80
-            lineThickness: 3
-        themeVariables:
-            treeView:
-                labelFontSize: '20px'
-                labelColor: '#FF0000'
-                lineColor: '#00FF00'
-    ---
-    treeView-beta
-    "packages"
-        "mermaid"
-            "src"
-        "parser"
-    </pre>
+            labelFontSize: '20px'
+            labelColor: '#FF0000'
+            lineColor: '#00FF00'
+---
+treeView-beta
+"packages"
+    "mermaid"
+        "src"
+    "parser"
+        </pre>
+      </div>
+    </div>
 
     <script type="module">
+      // Copy mermaid source text into the paired .source panel before mermaid runs
+      for (const demo of document.querySelectorAll('.demo')) {
+        const mermaidPre = demo.querySelector('.mermaid');
+        const sourcePre = demo.querySelector('.source');
+        if (mermaidPre && sourcePre) {
+          // Dedent: strip common leading whitespace
+          const raw = mermaidPre.textContent || '';
+          const lines = raw.split('\n');
+          // Drop leading/trailing empty lines
+          while (lines.length > 0 && lines[0].trim() === '') lines.shift();
+          while (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+          const minIndent = Math.min(
+            ...lines.filter((l) => l.trim()).map((l) => l.match(/^ */)[0].length)
+          );
+          sourcePre.textContent = lines.map((l) => l.slice(minIndent)).join('\n');
+        }
+      }
+
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
         logLevel: 1,

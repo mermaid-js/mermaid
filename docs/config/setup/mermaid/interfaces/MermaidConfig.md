@@ -65,6 +65,14 @@ Defined in: [packages/mermaid/src/config.type.ts:224](https://github.com/mermaid
 
 ---
 
+### cynefin?
+
+> `optional` **cynefin**: `CynefinDiagramConfig`
+
+Defined in: [packages/mermaid/src/config.type.ts:245](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L245)
+
+---
+
 ### darkMode?
 
 > `optional` **darkMode**: `boolean`

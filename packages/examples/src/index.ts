@@ -27,6 +27,7 @@ import vennDiagram from './examples/venn.js';
 import treeViewDiagram from './examples/tree-view.js';
 import wardleyDiagram from './examples/wardley.js';
 import usecase from './examples/usecase.js';
+import cynefinDiagram from './examples/cynefin.js';
 
 export const diagramData: DiagramMetadata[] = [
   usecase,
@@ -57,4 +58,5 @@ export const diagramData: DiagramMetadata[] = [
   vennDiagram,
   treeViewDiagram,
   wardleyDiagram,
+  cynefinDiagram,
 ];

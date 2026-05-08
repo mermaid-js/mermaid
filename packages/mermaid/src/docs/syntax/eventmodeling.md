@@ -8,7 +8,7 @@ You can read more at [Event Modeling web page](https://eventmodeling.org/).
 
 Event Modeling diagram is composed of a few main entities:
 
-- Trigger - Screen and Processor
+- Trigger - UI and Processor
 - Command
 - View / Read Model
 - Event
@@ -37,7 +37,7 @@ The timeline is the key part of the diagram and it is composed of **Time Frame**
 ```md
 eventmodeling
 
-tf 01 scn CartScreen
+tf 01 ui CartUI
 tf 02 cmd AddItem
 tf 03 evt ItemAdded
 ```
@@ -47,21 +47,21 @@ rendering to
 ```mermaid
 eventmodeling
 
-tf 01 scn CartScreen
+tf 01 ui CartUI
 tf 02 cmd AddItem
 tf 03 evt ItemAdded
 ```
 
 Each Time Frame is referenced by a **unique number** in order to distinguish one from another and also to be able to reference it when needed. Depending on the complexity of the diagram it should be enough to have just two digit number or more. Imagine you are typing a BASIC program on your ZX Spectrum always starting with a two digit number, but the order of the numbers does not matter, just the uniqueness in the whole timeline.
 
-The Time Frame also contains an **Entity Identifier**, e.g. in case of `01` Time Frame it is `CartScreen`. One Entity Identifier can be used multiple times in the timeline for example when you want to express invocations of the same event in different points in time.
+The Time Frame also contains an **Entity Identifier**, e.g. in case of `01` Time Frame it is `CartUI`. One Entity Identifier can be used multiple times in the timeline for example when you want to express invocations of the same event in different points in time.
 
 Relaxed notation would look like this:
 
 ```md
 eventmodeling
 
-timeframe 01 screen CartScreen
+timeframe 01 ui CartUI
 timeframe 02 command AddItem
 timeframe 03 event ItemAdded
 ```
@@ -75,7 +75,7 @@ Compact version:
 ```mermaid-example
 eventmodeling
 
-tf 01 scn CartScreen
+tf 01 ui CartUI
 tf 02 cmd AddItem { description: string }
 tf 03 evt ItemAdded { description: string }
 ```
@@ -85,7 +85,7 @@ Relaxed version:
 ```mermaid-example
 eventmodeling
 
-timeframe 01 screen CartScreen
+timeframe 01 ui CartUI
 timeframe 02 command AddItem { description: string }
 timeframe 03 event ItemAdded { description: string }
 ```
@@ -101,7 +101,7 @@ Compact version:
 ```mermaid-example
 eventmodeling
 
-tf 01 scn CartScreen
+tf 01 ui CartUI
 tf 02 cmd AddItem [[AddItem01]]
 tf 03 evt ItemAdded [[ItemAdded]]
 tf 04 cmd AddItem [[AddItem02]]
@@ -131,7 +131,7 @@ Relaxed version:
 ```mermaid-example
 eventmodeling
 
-timeframe 01 screen CartScreen
+timeframe 01 ui CartUI
 timeframe 02 command AddItem [[AddItem01]]
 timeframe 03 event ItemAdded [[ItemAdded]]
 timeframe 04 command AddItem [[AddItem02]]
@@ -165,7 +165,7 @@ Compact version:
 ```mermaid-example
 eventmodeling
 
-tf 01 scn CartScreen
+tf 01 ui CartUI
 tf 02 cmd AddItem
 tf 03 evt ItemAdded
 
@@ -180,7 +180,7 @@ Relaxed version:
 ```mermaid-example
 eventmodeling
 
-timeframe 01 screen CartScreen
+timeframe 01 ui CartUI
 timeframe 02 command AddItem
 timeframe 03 event ItemAdded
 
@@ -201,7 +201,7 @@ rf 02 evt CartCreated
 rf 03 evt ItemAdded
 rf 04 evt ItemRemoved
 rf 05 evt CartCleared
-tf 01 rmo CartScreen ->> 02 ->> 03 ->> 04 ->> 05
+tf 01 rmo CartUI ->> 02 ->> 03 ->> 04 ->> 05
 ```
 
 ## Event Modeling patterns
@@ -213,7 +213,7 @@ This chapter briefly summarizes each Event Modeling pattern.
 ```mermaid-example
 eventmodeling
 
-tf 01 scn CartScreen
+tf 01 ui CartUI
 tf 02 cmd AddItem
 tf 03 evt ItemAdded
 ```
@@ -225,7 +225,7 @@ eventmodeling
 
 tf 03 evt ItemAdded
 tf 02 rmo CartItems
-tf 04 scn CartScreen
+tf 04 ui CartUI
 ```
 
 ### Translation
@@ -261,7 +261,7 @@ Entities are assigned to default swimlanes unless a **Namespace** is specified i
 
 There are the following types available:
 
-- `scn` / `screen`: Screen - belongs to UI/Automation swimlane
+- `ui`: UI - belongs to UI/Automation swimlane
 - `pcr` / `processor`: Processor - belongs to UI/Automation swimlane
 - `cmd` / `command`: Command - belongs to Command/Read Model swimlane
 - `rmo` / `readmodel`: Read Model - belongs to Command/Read Model swimlane

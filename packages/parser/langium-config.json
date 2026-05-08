@@ -55,6 +55,11 @@
       "id": "usecase",
       "grammar": "src/language/usecase/usecase.langium",
       "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "cynefin",
+      "grammar": "src/language/cynefin/cynefin.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
     }
   ],
   "mode": "production",

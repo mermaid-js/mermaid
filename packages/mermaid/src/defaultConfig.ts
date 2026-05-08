@@ -57,6 +57,7 @@ const config: RequiredDeep<MermaidConfig> = {
   },
   class: {
     hideEmptyMembersBox: false,
+    hierarchicalNamespaces: true,
   },
   gantt: {
     ...defaultConfigJson.gantt,
@@ -293,6 +294,9 @@ const config: RequiredDeep<MermaidConfig> = {
   },
   venn: {
     ...defaultConfigJson.venn,
+  },
+  cynefin: {
+    ...defaultConfigJson.cynefin,
   },
 };
 

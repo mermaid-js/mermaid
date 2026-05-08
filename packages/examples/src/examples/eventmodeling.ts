@@ -11,7 +11,7 @@ export default {
       isDefault: true,
       code: `eventmodeling
 
-tf 01 scn CartScreen
+tf 01 ui CartUI
 tf 02 cmd AddItem
 tf 03 evt ItemAdded
 tf 04 rmo CartItems ->> 03

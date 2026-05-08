@@ -243,6 +243,7 @@ export interface MermaidConfig {
   radar?: RadarDiagramConfig;
   venn?: VennDiagramConfig;
   'wardley-beta'?: WardleyDiagramConfig;
+  cynefin?: CynefinDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
@@ -802,6 +803,15 @@ export interface ClassDiagramConfig extends BaseDiagramConfig {
   diagramPadding?: number;
   htmlLabels?: boolean;
   hideEmptyMembersBox?: boolean;
+  /**
+   * When true (default), nested namespaces render as hierarchical clusters,
+   * with each segment of a dotted name (e.g. `A.B.C`) becoming its own nested
+   * box. When false, namespaces render in compact mode: only explicitly
+   * declared namespaces are emitted and their full qualified name is used as
+   * a single flat label.
+   *
+   */
+  hierarchicalNamespaces?: boolean;
 }
 /**
  * The object containing configurations specific for entity relationship diagrams
@@ -1115,6 +1125,33 @@ export interface ArchitectureDiagramConfig extends BaseDiagramConfig {
    *
    */
   randomize?: boolean;
+  /**
+   * Minimum separation (in pixels) between sibling nodes in the same group, passed through to the
+   * underlying fcose layout. Increase to spread overlapping siblings apart when many edges share the
+   * same port direction.
+   *
+   */
+  nodeSeparation?: number;
+  /**
+   * Multiplier applied to `iconSize` to compute the ideal length of edges between nodes within the
+   * same group. Increase to add breathing room; decrease to pack the diagram tighter. Edges crossing
+   * group boundaries are unaffected and use a fixed shorter length.
+   *
+   */
+  idealEdgeLengthMultiplier?: number;
+  /**
+   * Spring elasticity (0–1) applied to edges between nodes within the same group, passed through to
+   * fcose. Higher values pull connected nodes closer together; lower values let the layout spread them
+   * out. Edges crossing group boundaries are unaffected.
+   *
+   */
+  edgeElasticity?: number;
+  /**
+   * Maximum number of iterations the fcose layout algorithm runs before stopping. Increase for higher
+   * quality on large or densely-connected diagrams at the cost of render time.
+   *
+   */
+  numIter?: number;
 }
 /**
  * The object containing configurations specific for mindmap diagrams
@@ -1705,6 +1742,10 @@ export interface TreeViewDiagramConfig extends BaseDiagramConfig {
    * Thickness of the line
    */
   lineThickness?: number;
+  /**
+   * Whether to show file/folder icons next to labels
+   */
+  showIcons?: boolean;
 }
 /**
  * The object containing configurations specific for use case diagrams
@@ -1859,6 +1900,34 @@ export interface WardleyDiagramConfig extends BaseDiagramConfig {
    * Whether to display a background grid.
    */
   showGrid?: boolean;
+}
+/**
+ * Configuration for Cynefin framework diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "CynefinDiagramConfig".
+ */
+export interface CynefinDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The width of the Cynefin diagram.
+   */
+  width?: number;
+  /**
+   * The height of the Cynefin diagram.
+   */
+  height?: number;
+  /**
+   * Padding around the diagram.
+   */
+  padding?: number;
+  /**
+   * Show decision model and practice type labels.
+   */
+  showDomainDescriptions?: boolean;
+  /**
+   * Waviness amplitude of domain boundaries (0 for straight).
+   */
+  boundaryAmplitude?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

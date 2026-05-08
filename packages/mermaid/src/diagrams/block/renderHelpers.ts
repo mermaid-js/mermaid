@@ -219,6 +219,13 @@ export async function insertEdges(
           { x: end.x, y: end.y },
         ];
         const prefixedEdgeId = id ? `${id}-${edge.id}` : edge.id;
+
+        const thicknessClass =
+          edge.thickness === 'thick' ? 'edge-thickness-thick' : 'edge-thickness-normal';
+        const patternClass =
+          edge.pattern === 'dotted' ? 'edge-pattern-dotted' : 'edge-pattern-solid';
+        const dynamicClasses = `${thicknessClass} ${patternClass} flowchart-link LS-a1 LE-b1`;
+
         insertEdge(
           elem,
           { v: edge.start, w: edge.end, name: prefixedEdgeId },
@@ -228,7 +235,7 @@ export async function insertEdges(
             arrowTypeEnd: edge.arrowTypeEnd,
             arrowTypeStart: edge.arrowTypeStart,
             points,
-            classes: 'edge-thickness-normal edge-pattern-solid flowchart-link LS-a1 LE-b1',
+            classes: dynamicClasses,
           },
           undefined,
           'block',
@@ -243,7 +250,7 @@ export async function insertEdges(
             arrowTypeEnd: edge.arrowTypeEnd,
             arrowTypeStart: edge.arrowTypeStart,
             points,
-            classes: 'edge-thickness-normal edge-pattern-solid flowchart-link LS-a1 LE-b1',
+            classes: dynamicClasses,
           });
           positionEdgeLabel(
             { ...edge, x: points[1].x, y: points[1].y },
