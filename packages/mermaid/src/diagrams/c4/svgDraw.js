@@ -72,16 +72,18 @@ export const drawRels = (elem, rels, conf, diagramId) => {
       }
     }
 
+    const midX =
+      Math.min(rel.startPoint.x, rel.endPoint.x) + Math.abs(rel.endPoint.x - rel.startPoint.x) / 2;
+    const midY =
+      Math.min(rel.startPoint.y, rel.endPoint.y) + Math.abs(rel.endPoint.y - rel.startPoint.y) / 2;
+    const labelPosition = getRelLabelPosition(rel, midX, midY, offsetX, offsetY, conf);
+
     let messageConf = conf.messageFont();
     _drawTextCandidateFunc(conf)(
       rel.label.text,
       relsElem,
-      Math.min(rel.startPoint.x, rel.endPoint.x) +
-        Math.abs(rel.endPoint.x - rel.startPoint.x) / 2 +
-        offsetX,
-      Math.min(rel.startPoint.y, rel.endPoint.y) +
-        Math.abs(rel.endPoint.y - rel.startPoint.y) / 2 +
-        offsetY,
+      labelPosition.x,
+      labelPosition.y,
       rel.label.width,
       rel.label.height,
       { fill: textColor },
@@ -93,14 +95,8 @@ export const drawRels = (elem, rels, conf, diagramId) => {
       _drawTextCandidateFunc(conf)(
         '[' + rel.techn.text + ']',
         relsElem,
-        Math.min(rel.startPoint.x, rel.endPoint.x) +
-          Math.abs(rel.endPoint.x - rel.startPoint.x) / 2 +
-          offsetX,
-        Math.min(rel.startPoint.y, rel.endPoint.y) +
-          Math.abs(rel.endPoint.y - rel.startPoint.y) / 2 +
-          conf.messageFontSize +
-          5 +
-          offsetY,
+        labelPosition.x,
+        labelPosition.y + conf.messageFontSize + 5,
         Math.max(rel.label.width, rel.techn.width),
         rel.techn.height,
         { fill: textColor, 'font-style': 'italic' },
@@ -108,6 +104,30 @@ export const drawRels = (elem, rels, conf, diagramId) => {
       );
     }
   }
+};
+
+const getRelLabelPosition = (rel, midX, midY, offsetX, offsetY, conf) => {
+  const manualOffsetProvided = rel.offsetX !== undefined || rel.offsetY !== undefined;
+  if (manualOffsetProvided) {
+    return { x: midX + offsetX, y: midY + offsetY };
+  }
+
+  const deltaX = rel.endPoint.x - rel.startPoint.x;
+  const deltaY = rel.endPoint.y - rel.startPoint.y;
+  const lineLength = Math.hypot(deltaX, deltaY);
+  if (lineLength === 0) {
+    return { x: midX + offsetX, y: midY + offsetY };
+  }
+
+  // Push labels away from the edge using the edge's normal vector.
+  const normalX = -deltaY / lineLength;
+  const normalY = deltaX / lineLength;
+  const minClearance = Math.max(conf.messageFontSize + 8, rel.label.height / 2 + 6);
+
+  return {
+    x: midX + normalX * minClearance + offsetX,
+    y: midY + normalY * minClearance + offsetY,
+  };
 };
 
 /**

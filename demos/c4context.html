@@ -64,45 +64,44 @@
       UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
     </pre>
     <hr />
-
     <pre class="mermaid">
     C4Container
     title Container diagram for Internet Banking System
 
-    System_Ext(email_system, "E-Mail System", "The internal Microsoft Exchange system", $tags="v1.0")
-    Person(customer, Customer, "A customer of the bank, with personal bank accounts", $tags="v1.0")
+    Person(customer, "Customer", "A bank user", $tags="v1.0")
+
+    System_Ext(email_system, "E-Mail System", "Exchange")
+    System_Ext(banking_system, "Mainframe Banking System", "Core banking")
 
     Container_Boundary(c1, "Internet Banking") {
-        Container(spa, "Single-Page App", "JavaScript, Angular", "Provides all the Internet banking functionality to customers via their web browser")
-        Container_Ext(mobile_app, "Mobile App", "C#, Xamarin", "Provides a limited subset of the Internet banking functionality to customers via their mobile device")
-        Container(web_app, "Web Application", "Java, Spring MVC", "Delivers the static content and the Internet banking SPA")
-        ContainerDb(database, "Database", "SQL Database", "Stores user registration information, hashed auth credentials, access logs, etc.")
-        ContainerDb_Ext(backend_api, "API Application", "Java, Docker Container", "Provides Internet banking functionality via API")
-
+        Container(web_app, "Web Application", "Java, Spring MVC", "Delivers the static content and the Internet Banking SPA")
+        Container(spa, "Single-Page App", "Angular", "Provides all internet banking functionality to customers via browser")
+        Container(mobile_app, "Mobile App", "Xamarin", "Provides a limited subset of internet banking functionality")
+        Container(api, "API Application", "Java, Docker", "Provides internet banking functionality via JSON/HTTPS API")
+        ContainerDb(db, "Database", "SQL", "Stores user registration information, authentication credentials and access logs")
+        Container_Ext(notif, "Notification Service", "SaaS", "Sends transactional notifications")
+        ContainerDb_Ext(audit_db, "Audit Store", "Managed DB", "Stores immutable audit trail")
     }
 
-    System_Ext(banking_system, "Mainframe Banking System", "Stores all of the core banking information about customers, accounts, transactions, etc.")
-
     Rel(customer, web_app, "Uses", "HTTPS")
-    UpdateRelStyle(customer, web_app, $offsetY="60", $offsetX="90")     
     Rel(customer, spa, "Uses", "HTTPS")
-    UpdateRelStyle(customer, spa, $offsetY="-40")    
-    Rel(customer, mobile_app, "Uses")
-    UpdateRelStyle(customer, mobile_app, $offsetY="-30") 
+    Rel(customer, mobile_app, "Uses", "HTTPS")
+    Rel(web_app, spa, "Delivers to", "sync, HTTPS")
+    Rel(spa, api, "Calls API", "async, JSON/HTTPS")
+    Rel(mobile_app, api, "Calls API", "sync, JSON/HTTPS")
+    Rel(api, db, "Reads/Writes", "sync, JDBC")
+    Rel(api, banking_system, "Uses", "sync, JDBC")
+    Rel(api, email_system, "Sends emails using", "SMTP")
+    Rel(api, notif, "Publishes events to", "async, HTTPS")
+    Rel(api, audit_db, "Writes audit records to", "sync, JDBC")
+    Rel_Back(email_system, customer, "Emails user", "SMTP")
 
-    Rel(web_app, spa, "Delivers")
-    UpdateRelStyle(web_app, spa, $offsetX="130") 
-    Rel(spa, backend_api, "Uses", "async, JSON/HTTPS")
-    Rel(mobile_app, backend_api, "Uses", "async, JSON/HTTPS")
-    Rel_Back(database, backend_api, "Reads from and writes to", "sync, JDBC")
-
-    Rel(email_system, customer, "Sends e-mails to")
-    UpdateRelStyle(email_system, customer, $offsetX="-45")    
-    Rel(backend_api, email_system, "Sends e-mails using", "sync, SMTP")
-    UpdateRelStyle(backend_api, email_system, $offsetY="-60")    
-    Rel(backend_api, banking_system, "Uses", "sync/async, XML/HTTPS")
-    UpdateRelStyle(backend_api, banking_system, $offsetY="-50", $offsetX="-140")
+    UpdateRelStyle(customer, web_app, $offsetX="-20", $offsetY="-15")
+    UpdateRelStyle(spa, api, $offsetX="40", $offsetY="-20")
+    UpdateRelStyle(mobile_app, api, $offsetX="-60", $offsetY="20")
+    UpdateRelStyle(api, audit_db, $offsetX="20", $offsetY="15")
     </pre>
+
     <hr />
 
     <pre class="mermaid">
