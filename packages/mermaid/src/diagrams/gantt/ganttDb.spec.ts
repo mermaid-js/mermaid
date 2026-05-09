@@ -538,5 +538,4 @@ describe('when using the ganttDb', function () {
     expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1));
     expect(tasks[0].endTime).toEqual(new Date(2013, 0, 3, 12));
   });
-
 });

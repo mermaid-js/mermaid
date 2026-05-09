@@ -282,6 +282,27 @@ The default input date format is `YYYY-MM-DD`. You can define your custom `dateF
 dateFormat YYYY-MM-DD
 ```
 
+### Workday Hours
+
+By default, hour-based task durations (for example `20h`) are interpreted using a 24-hour day.
+You can change this with `workdayhours` to represent business days such as 8 hours:
+
+```mermaid-example
+gantt
+  dateFormat YYYY-MM-DD
+  workdayhours 8
+  section Example
+  Task A :a1, 2024-01-01, 20h
+```
+
+```mermaid
+gantt
+  dateFormat YYYY-MM-DD
+  workdayhours 8
+  section Example
+  Task A :a1, 2024-01-01, 20h
+```
+
 The following formatting options are supported:
 
 | Input      | Example        | Description                                            |
@@ -546,6 +567,7 @@ mermaid.ganttConfig = {
   topAxis: true, // When this flag is set, date labels will be added to the top of the chart
   displayMode: 'compact', // Turns compact mode on
   weekday: 'sunday', // On which day a week-based interval should start
+  workdayhours: 24, // Work hours per day used for "h" durations
 };
 ```
 
