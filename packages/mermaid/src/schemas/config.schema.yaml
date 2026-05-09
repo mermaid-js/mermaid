@@ -1873,6 +1873,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - useMaxWidth
       - topAxis
       - weekday
+      - workdayhours
     properties:
       titleTopMargin:
         $ref: '#/$defs/GitGraphDiagramConfig/properties/titleTopMargin'
@@ -1973,6 +1974,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           - saturday
           - sunday
         default: sunday
+      workdayhours:
+        description: |
+          Number of work hours in a day to use when parsing task durations in hours (`h`).
+        type: number
+        exclusiveMinimum: 0
+        default: 24
 
   SequenceDiagramConfig:
     title: Sequence Diagram Config

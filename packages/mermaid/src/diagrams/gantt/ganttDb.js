@@ -40,6 +40,7 @@ let inclusiveEndDates = false;
 let topAxis = false;
 let weekday = 'sunday';
 let weekend = 'saturday';
+let workdayHours = 24;
 
 // The serial order of the task in the script
 let lastOrder = 0;
@@ -68,6 +69,7 @@ export const clear = function () {
   commonClear();
   weekday = 'sunday';
   weekend = 'saturday';
+  workdayHours = 24;
 };
 
 export const setDiagramId = function (id) {
@@ -202,6 +204,20 @@ export const getWeekday = function () {
 
 export const setWeekend = function (startDay) {
   weekend = startDay;
+};
+
+export const setWorkdayHours = function (hours) {
+  if (Number.isFinite(hours) && hours > 0) {
+    workdayHours = hours;
+  }
+};
+
+export const getWorkdayHours = function () {
+  const configuredHours = getConfig()?.workdayhours;
+  if (Number.isFinite(configuredHours) && configuredHours > 0) {
+    return configuredHours;
+  }
+  return workdayHours;
 };
 
 /**
@@ -403,7 +419,10 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   let endTime = dayjs(prevTime);
   const [durationValue, durationUnit] = parseDuration(str);
   if (!Number.isNaN(durationValue)) {
-    const newEndTime = endTime.add(durationValue, durationUnit);
+    const adjustedDuration =
+      durationUnit === 'h' ? (durationValue * 24) / getWorkdayHours() : durationValue;
+    const adjustedUnit = durationUnit === 'h' ? 'h' : durationUnit;
+    const newEndTime = endTime.add(adjustedDuration, adjustedUnit);
     if (newEndTime.isValid()) {
       endTime = newEndTime;
     }
@@ -817,6 +836,8 @@ export default {
   setWeekday,
   getWeekday,
   setWeekend,
+  setWorkdayHours,
+  getWorkdayHours,
 };
 
 /**

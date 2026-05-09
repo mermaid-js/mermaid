@@ -528,4 +528,15 @@ describe('when using the ganttDb', function () {
     // Second task will be parsed as year 202 (fallback to new Date())
     expect(tasks[1].startTime.getFullYear()).toBe(202);
   });
+
+  it('should use configurable workdayhours for hour durations', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.setWorkdayHours(8);
+    ganttDb.addSection('workday hours');
+    ganttDb.addTask('task1', 'id1,2013-01-01,20h');
+    const tasks = ganttDb.getTasks();
+    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1));
+    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 3, 12));
+  });
+
 });
