@@ -389,6 +389,20 @@ describe('Testing xychart jison file', () => {
       'xychart\nx-axis xAxisName\ny-axis yAxisName\n bar "barTitle with space"   [  +23 , -4aa5  , 56.6 ]   ';
     expect(parserFnConstructor(str)).toThrow();
   });
+  it('parse stacked bar without title', () => {
+    const str = 'xychart\nx-axis xAxisName\ny-axis yAxisName\n bar stacked [1, 2, 3]';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.setBarData).toHaveBeenCalledWith({ text: '', type: 'text' }, [1, 2, 3], true);
+  });
+  it('parse stacked bar with title', () => {
+    const str = 'xychart\nx-axis xAxisName\ny-axis yAxisName\n bar stacked "My Bar" [1, 2, 3]';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.setBarData).toHaveBeenCalledWith(
+      { text: 'My Bar', type: 'text' },
+      [1, 2, 3],
+      true
+    );
+  });
   it('parse multiple bar and line variant 1', () => {
     const str =
       'xychart\nx-axis xAxisName\ny-axis yAxisName\n bar barTitle1 [23, 45, 56.6] \n line lineTitle1 [11, 45.5, 67, 23] \n bar barTitle2 [13, 42, 56.89] \n line lineTitle2 [45, 99, 012]';

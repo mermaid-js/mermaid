@@ -84,6 +84,30 @@ A bar chart offers the capability to graphically depict bars.
 
 1. `bar [2.3, 45, .98, -3.4]` it can have all valid numeric values.
 
+#### Stacked bar chart
+
+Use `bar stacked` to stack multiple bar series on top of each other. Each `bar stacked` series is accumulated per category.
+
+**Syntax:**
+
+```
+bar stacked [<values>]
+bar stacked "Title" [<values>]
+```
+
+**Example:**
+
+```mermaid
+xychart-beta
+    title "Stacked Bar Example"
+    x-axis ["Q1", "Q2", "Q3", "Q4"]
+    y-axis 0 --> 50
+    bar stacked "Series A" [10, 20, 15, 25]
+    bar stacked "Series B" [5, 10, 8, 12]
+```
+
+> **Note:** When mixing `bar` and `bar stacked` in the same chart, the y-axis upper bound will accommodate the tallest non-stacked bar as well as the largest stacked cumulative total.
+
 #### Simplest example
 
 The only two things required are the chart name (`xychart`) and one data set. So you will be able to draw a chart with a simple config like

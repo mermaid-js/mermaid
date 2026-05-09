@@ -1,7 +1,7 @@
 import { imgSnapshotTest, renderGraph } from '../../../helpers/util.ts';
 
 describe('XY Chart', () => {
-  it('should stack on top of each other, when stacked flagged', () => {
+  it('renders stacked bar chart', () => {
     imgSnapshotTest(
       `
       xychart vertical

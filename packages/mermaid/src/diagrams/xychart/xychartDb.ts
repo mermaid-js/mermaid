@@ -144,12 +144,13 @@ function recalculateYAxisRangeForStackedBars() {
 
   const maxCumulative = Math.max(...cumulativeSums);
   const prevMinValue = isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.min : 0;
+  const prevMaxValue = isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.max : 0;
 
   xyChartData.yAxis = {
     type: 'linear',
     title: xyChartData.yAxis.title,
     min: Math.min(prevMinValue, 0),
-    max: maxCumulative,
+    max: Math.max(prevMaxValue, maxCumulative),
   };
 }
 
