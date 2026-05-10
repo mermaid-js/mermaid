@@ -1118,6 +1118,40 @@ end
         }
       );
     });
+    it('Should render labeled self-loops', () => {
+      imgSnapshotTest(
+        `flowchart TD
+          A[Start] -->|retry| A
+          B[Process] -->|again| B
+          A --> B
+        `,
+        {
+          htmlLabels: false,
+          flowchart: { htmlLabels: false },
+        }
+      );
+    });
+    it('Should render self-loops in non-TB directions', () => {
+      imgSnapshotTest(
+        `flowchart LR
+          A[LR loop] --> A
+          subgraph B[BT subgraph]
+            direction BT
+            B1[BT loop] --> B1
+          end
+          subgraph C[RL subgraph]
+            direction RL
+            C1[RL loop] --> C1
+          end
+          A --> B1
+          B1 --> C1
+        `,
+        {
+          htmlLabels: false,
+          flowchart: { htmlLabels: false },
+        }
+      );
+    });
   });
   describe('New @ syntax for node metadata edge cases', () => {
     it('should be possible to use @  syntax to add labels on multi nodes', () => {
