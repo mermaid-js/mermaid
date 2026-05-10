@@ -33,6 +33,7 @@ import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
 import { treemap } from '../diagrams/treemap/detector.js';
 import wardley from '../diagrams/wardley/wardleyDetector.js';
+import { cynefin } from '../diagrams/cynefin/cynefinDetector.js';
 import '../type.d.ts';
 
 let hasLoadedDiagrams = false;
@@ -111,6 +112,7 @@ export const addDiagrams = () => {
     ishikawa,
     treemap,
     venn,
-    wardley
+    wardley,
+    cynefin
   );
 };

@@ -335,6 +335,8 @@ properties:
     $ref: '#/$defs/VennDiagramConfig'
   wardley-beta:
     $ref: '#/$defs/WardleyDiagramConfig'
+  cynefin:
+    $ref: '#/$defs/CynefinDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration
     description: Configuration options to pass to the `dompurify` library.
@@ -982,6 +984,10 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - iconSize
       - fontSize
       - randomize
+      - nodeSeparation
+      - idealEdgeLengthMultiplier
+      - edgeElasticity
+      - numIter
     properties:
       padding:
         type: number
@@ -999,6 +1005,33 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           When true, nodes start at random positions, which may produce varied but potentially better-spaced layouts.
         type: boolean
         default: false
+      nodeSeparation:
+        description: |
+          Minimum separation (in pixels) between sibling nodes in the same group, passed through to the
+          underlying fcose layout. Increase to spread overlapping siblings apart when many edges share the
+          same port direction.
+        type: number
+        default: 75
+      idealEdgeLengthMultiplier:
+        description: |
+          Multiplier applied to `iconSize` to compute the ideal length of edges between nodes within the
+          same group. Increase to add breathing room; decrease to pack the diagram tighter. Edges crossing
+          group boundaries are unaffected and use a fixed shorter length.
+        type: number
+        default: 1.5
+      edgeElasticity:
+        description: |
+          Spring elasticity (0–1) applied to edges between nodes within the same group, passed through to
+          fcose. Higher values pull connected nodes closer together; lower values let the layout spread them
+          out. Edges crossing group boundaries are unaffected.
+        type: number
+        default: 0.45
+      numIter:
+        description: |
+          Maximum number of iterations the fcose layout algorithm runs before stopping. Increase for higher
+          quality on large or densely-connected diagrams at the cost of render time.
+        type: number
+        default: 2500
 
   MindmapDiagramConfig:
     title: Mindmap Diagram Config
@@ -2420,6 +2453,10 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         minimum: 0
         default: 1
+      showIcons:
+        description: Whether to show file/folder icons next to labels
+        type: boolean
+        default: true
 
   RadarDiagramConfig:
     title: Radar Diagram Config
@@ -2506,6 +2543,13 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     description: The object containing configurations specific for Wardley Maps diagrams.
     type: object
     unevaluatedProperties: false
+    required:
+      - width
+      - height
+      - padding
+      - nodeRadius
+      - labelFontSize
+      - axisFontSize
     properties:
       width:
         description: The width of the Wardley diagram canvas.
@@ -2546,6 +2590,39 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: Whether to display a background grid.
         type: boolean
         default: false
+
+  CynefinDiagramConfig:
+    title: Cynefin Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: Configuration for Cynefin framework diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      width:
+        description: The width of the Cynefin diagram.
+        type: number
+        minimum: 1
+        default: 800
+      height:
+        description: The height of the Cynefin diagram.
+        type: number
+        minimum: 1
+        default: 600
+      padding:
+        description: Padding around the diagram.
+        type: number
+        minimum: 0
+        default: 40
+      showDomainDescriptions:
+        description: Show decision model and practice type labels.
+        type: boolean
+        default: true
+      boundaryAmplitude:
+        description: Waviness amplitude of domain boundaries (0 for straight).
+        type: number
+        minimum: 0
+        maximum: 50
+        default: 8
 
   FontCalculator:
     title: Font Calculator
