@@ -155,6 +155,28 @@ component Database [0.40, 0.85] label [-50, 10]
 component "Custom Service" [0.55, 0.35]
 ```
 
+Names may contain hyphens (`real-time processing`, `end-user`) without quoting. Quote a name only if it begins with a non-letter or contains a character the grammar does not otherwise accept.
+
+```mermaid-example
+wardley-beta
+title Hyphenated Names
+
+component real-time processing [0.55, 0.40]
+component end-user [0.90, 0.95]
+
+end-user -> real-time processing
+```
+
+```mermaid
+wardley-beta
+title Hyphenated Names
+
+component real-time processing [0.55, 0.40]
+component end-user [0.90, 0.95]
+
+end-user -> real-time processing
+```
+
 #### Anchors
 
 Anchors represent users or customers with bold labels:
@@ -725,3 +747,7 @@ Wardley Maps support Mermaid's theme system. Use standard Mermaid configuration 
 | Strategy   | `(build\|buy\|outsource\|market)`   | `component API [0.6, 0.7] (buy)`    |
 | Pipeline   | `pipeline Parent { ... }`           | See pipeline example above          |
 | Evolution  | `evolution Stage1 -> Stage2 -> ...` | See evolution examples above        |
+
+## Limitations
+
+- Handdrawn/rough mode (`look: handDrawn`) is not currently supported for Wardley Maps. The diagram uses a custom D3 renderer rather than the shared shape system.

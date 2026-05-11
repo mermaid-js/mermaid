@@ -179,6 +179,17 @@ union A, B`,
     Electric Kettle -> Kettle
     Smart Kettle -> Kettle`,
 
+  cynefin: `cynefin-beta
+    title Incident Response
+    complex
+      "Investigate root cause"
+    complicated
+      "Analyze metrics"
+    clear
+      "Restart service"
+    chaotic
+      "Page on-call"`,
+
   eventmodeling: `eventmodeling
     tf 01 evt Start
     tf 02 evt End

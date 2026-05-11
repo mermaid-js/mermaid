@@ -54,7 +54,13 @@ function addLink(
   label?: string,
   flow?: 'forward' | 'backward' | 'bidirectional'
 ) {
-  builder.addLink({ source: sourceId, target: targetId, dashed, label, flow });
+  builder.addLink({
+    source: sourceId,
+    target: targetId,
+    dashed,
+    label: label ? textSanitizer(label) : undefined,
+    flow,
+  });
 }
 
 function addTrend(nodeId: string, targetX: number, targetY: number) {
@@ -130,6 +136,10 @@ function getNode(id: string) {
   return builder.getNode(id);
 }
 
+function resolveNodeId(name: string) {
+  return builder.resolveNodeId(name);
+}
+
 function getWardleyData() {
   return builder.build();
 }
@@ -154,6 +164,7 @@ export default {
   addPipelineComponent,
   updateAxes,
   getNode,
+  resolveNodeId,
   getWardleyData,
   clear,
   setAccTitle,

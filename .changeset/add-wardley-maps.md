@@ -2,7 +2,7 @@
 'mermaid': minor
 ---
 
-Add Wardley Maps diagram type (beta)
+feat: Add Wardley Maps diagram type (beta)
 
 Adds Wardley Maps as a new diagram type to Mermaid (available as `wardley-beta`). Wardley Maps are visual representations of business strategy that help map value chains and component evolution.
 

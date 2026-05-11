@@ -254,6 +254,25 @@ class Theme {
     this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
     this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
 
+    /* cynefin */
+    this.cynefin = {
+      domainFontSize: this.cynefin?.domainFontSize || 16,
+      itemFontSize: this.cynefin?.itemFontSize || 12,
+      boundaryColor: this.cynefin?.boundaryColor || this.lineColor,
+      boundaryWidth: this.cynefin?.boundaryWidth || 2,
+      cliffColor: this.cynefin?.cliffColor || '#8B4513',
+      cliffWidth: this.cynefin?.cliffWidth || 4,
+      arrowColor: this.cynefin?.arrowColor || this.lineColor,
+      arrowWidth: this.cynefin?.arrowWidth || 2,
+      complexBg: this.cynefin?.complexBg || '#C8E6C9',
+      complicatedBg: this.cynefin?.complicatedBg || '#DCEDC8',
+      chaoticBg: this.cynefin?.chaoticBg || '#FFE0B2',
+      clearBg: this.cynefin?.clearBg || '#FFF9C4',
+      confusionBg: this.cynefin?.confusionBg || '#D7CCC8',
+      textColor: this.cynefin?.textColor || this.textColor,
+      labelColor: this.cynefin?.labelColor || this.primaryTextColor,
+    };
+
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;
     this.quadrant2Fill = this.quadrant2Fill || adjust(this.primaryColor, { r: 5, g: 5, b: 5 });
@@ -300,6 +319,23 @@ class Theme {
       graticuleOpacity: this.radar?.graticuleOpacity || 0.3,
       legendBoxSize: this.radar?.legendBoxSize || 12,
       legendFontSize: this.radar?.legendFontSize || 12,
+    };
+
+    /* wardley */
+    this.wardleyEvolutionColor = this.wardleyEvolutionColor || '#dc3545';
+    this.wardley = {
+      backgroundColor: this.wardley?.backgroundColor || this.background,
+      axisColor: this.wardley?.axisColor || this.lineColor,
+      axisTextColor: this.wardley?.axisTextColor || this.primaryTextColor,
+      gridColor: this.wardley?.gridColor || this.gridColor,
+      componentFill: this.wardley?.componentFill || this.background,
+      componentStroke: this.wardley?.componentStroke || this.lineColor,
+      componentLabelColor: this.wardley?.componentLabelColor || this.primaryTextColor,
+      linkStroke: this.wardley?.linkStroke || this.lineColor,
+      evolutionStroke: this.wardley?.evolutionStroke || this.wardleyEvolutionColor,
+      annotationStroke: this.wardley?.annotationStroke || this.lineColor,
+      annotationTextColor: this.wardley?.annotationTextColor || this.primaryTextColor,
+      annotationFill: this.wardley?.annotationFill || this.background,
     };
 
     /* xychart */
