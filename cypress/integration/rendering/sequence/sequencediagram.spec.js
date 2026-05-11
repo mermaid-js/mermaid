@@ -1,0 +1,1253 @@
+import { imgSnapshotTest, renderGraph } from '../../../helpers/util.ts';
+
+describe('Sequence diagram', () => {
+  it('should render a sequence diagram with boxes', () => {
+    renderGraph(
+      `
+    sequenceDiagram
+      box LightGrey Alice and Bob
+      participant Alice
+      participant Bob
+      end
+      participant John as John<br/>Second Line
+      Alice ->> Bob: Hello Bob, how are you?
+      Bob-->>John: How about you John?
+      Bob--x Alice: I am good thanks!
+      Bob-x John: I am good thanks!
+      Note right of John: Bob thinks a long<br/>long time, so long<br/>that the text does<br/>not fit on a row.
+      Bob-->Alice: Checking with John...
+      alt either this
+        Alice->>John: Yes
+        else or this
+        Alice->>John: No
+        else or this will happen
+        Alice->John: Maybe
+      end
+      par this happens in parallel
+      Alice -->> Bob: Parallel message 1
+      and
+      Alice -->> John: Parallel message 2
+      end
+    `,
+      { sequence: { useMaxWidth: false } }
+    );
+    cy.get('svg').should((svg) => {
+      const width = parseFloat(svg.attr('width'));
+      expect(width).to.be.within(830 * 0.95, 830 * 1.05);
+      expect(svg).to.not.have.attr('style');
+    });
+  });
+  it('should render a simple sequence diagram', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+        participant Alice
+        participant Bob
+        participant John as John<br/>Second Line
+        Alice ->> Bob: Hello Bob, how are you?
+        Bob-->>John: How about you John?
+        Bob--x Alice: I am good thanks!
+        Bob-x John: I am good thanks!
+        Note right of John: Bob thinks a long<br/>long time, so long<br/>that the text does<br/>not fit on a row.
+        Bob-->Alice: Checking with John...
+        alt either this
+          Alice->>John: Yes
+          else or this
+          Alice->>John: No
+          else or this will happen
+          Alice->John: Maybe
+        end
+        par this happens in parallel
+        Alice -->> Bob: Parallel message 1
+        and
+        Alice -->> John: Parallel message 2
+        end
+      `,
+      { sequence: { actorFontFamily: 'courier' } }
+    );
+  });
+  it('should render bidirectional arrows', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+      Alice<<->>John: Hello John, how are you?
+      Alice<<-->>John: Hi Alice, I can hear you!
+      John<<->>Alice: This also works the other way
+      John<<-->>Alice: Yes
+      Alice->John: Test
+      John->>Alice: Still works
+      `
+    );
+  });
+  it('should handle different line breaks', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+      participant 1 as multiline<br>using #lt;br#gt;
+      participant 2 as multiline<br/>using #lt;br/#gt;
+      participant 3 as multiline<br />using #lt;br /#gt;
+      participant 4 as multiline<br \t/>using #lt;br \t/#gt;
+      1->>2: multiline<br>using #lt;br#gt;
+      note right of 2: multiline<br>using #lt;br#gt;
+      2->>3: multiline<br/>using #lt;br/#gt;
+      note right of 3: multiline<br/>using #lt;br/#gt;
+      3->>4: multiline<br />using #lt;br /#gt;
+      note right of 4: multiline<br />using #lt;br /#gt;
+      4->>1: multiline<br />using #lt;br /#gt;
+      note right of 1: multiline<br \t/>using #lt;br \t/#gt;
+    `,
+      {}
+    );
+  });
+  it('should handle empty lines', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+      Alice->>John: Hello John<br/>
+      John-->>Alice: Great<br/><br/>day!
+    `,
+      {}
+    );
+  });
+  it('should handle line breaks and wrap annotations', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+      participant Alice
+      participant Bob
+      participant John as John<br/>Second Line
+      Alice ->> Bob: Hello Bob, how are you?
+      Bob-->>John: How about you John?
+      Note right of John: John thinks a long<br/>long time, so long<br/>that the text does<br/>not fit on a row.
+      Bob-->Alice: Checking with John...
+      Note over John:wrap: John looks like he's still thinking, so Bob prods him a bit.
+      Bob-x John: Hey John -<br/>we're still waiting to know<br/>how you're doing
+      Note over John:nowrap: John's trying hard not to break his train of thought.
+      Bob-x John:wrap: John! Are you still debating about how you're doing? How long does it take??
+      Note over John: After a few more moments, John<br/>finally snaps out of it.
+    `,
+      {}
+    );
+  });
+  it('should render loops with a slight margin', () => {
+    imgSnapshotTest(
+      `
+        sequenceDiagram
+        Alice->>Bob: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+        loop Loopy
+            Bob->>Alice: Pasten
+        end      `,
+      {
+        sequence: {
+          wrap: true,
+        },
+      }
+    );
+  });
+  it('should render a sequence diagram with par_over', () => {
+    imgSnapshotTest(
+      `
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        participant John
+        par_over Section title
+          Alice ->> Bob: Message 1<br>Second line
+          Bob ->> John: Message 2
+        end
+        par_over Two line<br>section title
+          Note over Alice: Alice note
+          Note over Bob: Bob note<br>Second line
+          Note over John: John note
+        end
+        par_over Mixed section
+          Alice ->> Bob: Message 1
+          Note left of Bob: Alice/Bob Note
+        end
+      `
+    );
+  });
+  it('should render a sequence diagram with basic actor creation and destruction', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+      Alice ->> Bob: Hello Bob, how are you ?
+      Bob ->> Alice: Fine, thank you. And you?
+      create participant Polo
+      Alice ->> Polo: Hi Polo!
+      create actor Ola1 as Ola
+      Polo ->> Ola1: Hiii
+      Ola1 ->> Alice: Hi too
+      destroy Ola1
+      Alice --x Ola1: Bye!
+      Alice ->> Bob: And now?
+      create participant Ola2 as Ola
+      Alice ->> Ola2: Hello again
+      destroy Alice
+      Alice --x Ola2: Bye for me!
+      destroy Bob
+      Ola2 --> Bob: The end
+      `
+    );
+  });
+  it('should render a sequence diagram with actor creation and destruction coupled with backgrounds, loops and notes', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+			accTitle: test the accTitle
+			accDescr: Test a description
+
+			participant Alice
+      participant Bob
+			autonumber 10 10
+			rect rgb(200, 220, 100)
+			rect rgb(200, 255, 200)
+
+			Alice ->> Bob: Hello Bob, how are you?
+      create participant John as John<br />Second Line
+			Bob-->>John: How about you John?
+			end
+
+			Bob--x Alice: I am good thanks!
+			Bob-x John: I am good thanks!
+			Note right of John: John thinks a long<br />long time, so long<br />that the text does<br />not fit on a row.
+
+			Bob-->Alice: Checking with John...
+			Note over John:wrap: John looks like he's still thinking, so Bob prods him a bit.
+			Bob-x John: Hey John - we're still waiting to know<br />how you're doing
+			Note over John:nowrap: John's trying hard not to break his train of thought.
+      destroy John
+			Bob-x John: John! Cmon!
+			Note over John: After a few more moments, John<br />finally snaps out of it.
+			end
+
+			autonumber off
+			alt either this
+      create actor Lola
+			Alice->>+Lola: Yes
+			Lola-->>-Alice: OK
+			else or this
+			autonumber
+			Alice->>Lola: No
+			else or this will happen
+			Alice->Lola: Maybe
+			end
+			autonumber 200
+			par this happens in parallel
+      destroy Bob
+			Alice -->> Bob: Parallel message 1
+			and
+			Alice -->> Lola: Parallel message 2
+			end
+      `
+    );
+  });
+  it('should render a sequence diagram with sequence numbers that are decimals and increase by a decimal value', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+      autonumber 10.1 .01
+      Alice->Bob: Hello Bob, how are you?
+      Bob-->Alice: I am good thanks!
+      Alice->Bob: That is good to hear!
+      Bob->Alice: See you later!
+    `
+    );
+  });
+  describe('font settings', () => {
+    it('should render different note fonts when configured', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: I'm short
+        note left of Alice: I should have bigger fonts
+        Bob->>Alice: Short as well
+      `,
+        { sequence: { noteFontSize: 18, noteFontFamily: 'Arial' } }
+      );
+    });
+    it('should render different message fonts when configured', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: I'm short
+        Bob->>Alice: Short as well
+      `,
+        { sequence: { messageFontSize: 18, messageFontFamily: 'Arial' } }
+      );
+    });
+    it('should render different actor fonts when configured', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: I'm short
+        Bob->>Alice: Short as well
+      `,
+        { sequence: { actorFontSize: 18, actorFontFamily: 'times' } }
+      );
+    });
+    it('should render notes aligned to the left when configured', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: I'm short
+        note left of Alice: I am left aligned
+        Bob->>Alice: Short as well
+      `,
+        { sequence: { noteAlign: 'left' } }
+      );
+    });
+    it('should render multi-line notes aligned to the left when configured', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: I'm short
+        note left of Alice: I am left aligned<br>but also<br>multiline
+        Bob->>Alice: Short as well
+      `,
+        { sequence: { noteAlign: 'left' } }
+      );
+    });
+    it('should render notes aligned to the right when configured', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: I'm short
+        note left of Alice: I am right aligned
+        Bob->>Alice: Short as well
+      `,
+        { sequence: { noteAlign: 'right' } }
+      );
+    });
+    it('should render multi-line notes aligned to the right when configured', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: I'm short
+        note left of Alice: I am right aligned<br>but also<br>multiline
+        Bob->>Alice: Short as well
+      `,
+        { sequence: { noteAlign: 'right' } }
+      );
+    });
+    it('should render multi-line messages aligned to the left when configured', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: I'm short<br>but also<br>multiline
+        Bob->>Alice: Short as well<br>and also<br>multiline
+      `,
+        { sequence: { messageAlign: 'left' } }
+      );
+    });
+    it('should render multi-line messages aligned to the right when configured', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: I'm short<br>but also<br>multiline
+        Bob->>Alice: Short as well<br>and also<br>multiline
+      `,
+        { sequence: { messageAlign: 'right' } }
+      );
+    });
+  });
+  describe('auth width scaling', () => {
+    it('should render long actor descriptions', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        participant A as Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+        A->>Bob: Hola
+        Bob-->A: Pasten !
+      `,
+        { logLevel: 0 }
+      );
+    });
+    it('should wrap (inline) long actor descriptions', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        participant A as wrap:Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+        A->>Bob: Hola
+        Bob-->A: Pasten !
+      `,
+        { logLevel: 0 }
+      );
+    });
+    it('should wrap (directive) long actor descriptions', () => {
+      imgSnapshotTest(
+        `
+        %%{init: {'config': {'wrap': true }}}%%
+        sequenceDiagram
+        participant A as Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+        A->>Bob: Hola
+        Bob-->A: Pasten !
+      `,
+        {}
+      );
+    });
+    it('should be possible to use actor symbols instead of boxes', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+          actor Alice
+          actor Bob
+          Alice->>Bob: Hi Bob
+          Bob->>Alice: Hi Alice
+      `,
+        {}
+      );
+    });
+    it('should have actor-top and actor-bottom classes on top and bottom actor box and symbol and actor-box and actor-man classes for text tags', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+          actor Bob
+          Alice->>Bob: Hi Bob
+          Bob->>Alice: Hi Alice
+      `,
+        {}
+      );
+      cy.get('.actor').should('have.class', 'actor-top');
+      cy.get('.actor-man').should('have.class', 'actor-top');
+      cy.get('.actor.actor-top').should('not.have.class', 'actor-bottom');
+      cy.get('.actor-man.actor-top').should('not.have.class', 'actor-bottom');
+
+      cy.get('.actor').should('have.class', 'actor-bottom');
+      cy.get('.actor-man').should('have.class', 'actor-bottom');
+      cy.get('.actor.actor-bottom').should('not.have.class', 'actor-top');
+      cy.get('.actor-man.actor-bottom').should('not.have.class', 'actor-top');
+
+      cy.get('text.actor-box').should('include.text', 'Alice');
+      cy.get('text.actor-man').should('include.text', 'Bob');
+    });
+    it('should render long notes left of actor', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: Hola
+        Note left of Alice: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+        Bob->>Alice: I'm short though
+      `,
+        {}
+      );
+    });
+    it('should render long notes wrapped (inline) left of actor', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: Hola
+        Note left of Alice:wrap: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+        Bob->>Alice: I'm short though
+      `,
+        {}
+      );
+    });
+    it('should render long notes right of actor', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: Hola
+        Note right of Alice: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+        Bob->>Alice: I'm short though
+      `,
+        {}
+      );
+    });
+    it('should render long notes wrapped (inline) right of actor', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: Hola
+        Note right of Alice:wrap: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+        Bob->>Alice: I'm short though
+      `,
+        {}
+      );
+    });
+    it('should render long notes over actor', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: Hola
+        Note over Alice: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+        Bob->>Alice: I'm short though
+      `,
+        {}
+      );
+    });
+    it('should render long notes wrapped (inline) over actor', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: Hola
+        Note over Alice:wrap: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+        Bob->>Alice: I'm short though
+      `,
+        {}
+      );
+    });
+    it('should render notes over actors and participant', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        actor Alice
+        participant Charlie
+        note over Alice: some note
+        note over Charlie: other note
+      `,
+        {}
+      );
+    });
+    it('should render long messages from an actor to the left to one to the right', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+        Bob->>Alice: I'm short though
+      `,
+        {}
+      );
+    });
+    it('should render long messages wrapped (inline) from an actor to the left to one to the right', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob:wrap:Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+        Bob->>Alice: I'm short though
+      `,
+        {}
+      );
+    });
+    it('should render long messages from an actor to the right to one to the left', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: I'm short
+        Bob->>Alice: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+      `,
+        {}
+      );
+    });
+    it('should render long messages wrapped (inline) from an actor to the right to one to the left', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: I'm short
+        Bob->>Alice:wrap: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+      `,
+        {}
+      );
+    });
+  });
+  describe('background rects', () => {
+    it('should render a single and nested rects', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+          participant A
+          participant B
+          participant C
+          participant D
+          participant E
+          participant G
+
+          A ->>+ B: Task 1
+          rect rgb(178, 102, 255)
+            B ->>+ C: Task 2
+            C -->>- B: Return
+          end
+
+          A ->> D: Task 3
+          rect rgb(0, 128, 255)
+            D ->>+ E: Task 4
+            rect rgb(0, 204, 0)
+            E ->>+ G: Task 5
+            G -->>- E: Return
+            end
+            E ->> E: Task 6
+          end
+          D -->> A: Complete
+      `,
+        {}
+      );
+    });
+    it('should render a single and nested opt with long test overflowing', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+          participant A
+          participant B
+          participant C
+          participant D
+          participant E
+          participant G
+
+          A ->>+ B: Task 1
+          opt this is an opt with a long title that will overflow
+            B ->>+ C: Task 2
+            C -->>- B: Return
+          end
+
+          A ->> D: Task 3
+          opt this is another opt with a long title that will overflow
+            D ->>+ E: Task 4
+            opt this is a nested opt with a long title that will overflow
+            E ->>+ G: Task 5
+            G -->>- E: Return
+            end
+            E ->> E: Task 6
+          end
+          D -->> A: Complete
+      `,
+        {}
+      );
+    });
+    it('should render a single and nested opt with long test wrapping', () => {
+      imgSnapshotTest(
+        `
+        %%{init: { 'config': { 'wrap': true } } }%%
+        sequenceDiagram
+          participant A
+          participant B
+          participant C
+          participant D
+          participant E
+          participant G
+
+          A ->>+ B: Task 1
+          opt this is an opt with a long title that will overflow
+            B ->>+ C: Task 2
+            C -->>- B: Return
+          end
+
+          A ->> D: Task 3
+          opt this is another opt with a long title that will overflow
+            D ->>+ E: Task 4
+            opt this is a nested opt with a long title that will overflow
+            E ->>+ G: Task 5
+            G -->>- E: Return
+            end
+            E ->> E: Task 6
+          end
+          D -->> A: Complete
+      `,
+        {}
+      );
+    });
+    it('should render rect around and inside loops', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+          A ->> B: 1
+          rect rgb(204, 0, 102)
+            loop check C
+              C ->> C: Every 10 seconds
+            end
+          end
+          A ->> B: 2
+          loop check D
+            C ->> D: 3
+            rect rgb(153, 153, 255)
+            D -->> D: 5
+            D --> C: 4
+            end
+          end
+      `,
+        {}
+      );
+    });
+    it('should render rect around and inside alts', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+          A ->> B: 1
+          rect rgb(204, 0, 102)
+            alt yes
+              C ->> C: 1
+            else no
+              rect rgb(0, 204, 204)
+                C ->> C: 0
+              end
+            end
+          end
+          B ->> A: Return
+      `,
+        {}
+      );
+    });
+    it('should render rect around and inside opts', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+          A ->> B: 1
+          rect rgb(204, 0, 102)
+            opt maybe
+              C -->> D: Do something
+              rect rgb(0, 204, 204)
+                C ->> C: 0
+              end
+            end
+          end
+
+          opt possibly
+            rect rgb(0, 204, 204)
+              C ->> C: 0
+            end
+          end
+          B ->> A: Return
+      `,
+        {}
+      );
+    });
+    it('should render rect around and inside criticals', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+          A ->> B: 1
+          rect rgb(204, 0, 102)
+            critical yes
+              C ->> C: 1
+            option no
+              rect rgb(0, 204, 204)
+                C ->> C: 0
+              end
+            end
+          end
+          B ->> A: Return
+      `,
+        {}
+      );
+    });
+    it('should render rect around and inside breaks', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+          A ->> B: 1
+          rect rgb(204, 0, 102)
+            break yes
+              rect rgb(0, 204, 204)
+                C ->> C: 0
+              end
+            end
+          end
+          B ->> A: Return
+      `,
+        {}
+      );
+    });
+    it('should render autonumber when configured with such', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>John: Hello John, how are you?
+        loop Healthcheck
+            John->>John: Fight against hypochondria
+        end
+        Note right of John: Rational thoughts!
+        John-->>Alice: Great!
+        John->>Bob: How about you?
+        Bob-->>John: Jolly good!
+      `,
+        { sequence: { actorMargin: 50, showSequenceNumbers: true } }
+      );
+    });
+    it('should render autonumber when autonumber keyword is used', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        autonumber
+        Alice->>John: Hello John, how are you?
+        loop Healthcheck
+            John->>John: Fight against hypochondria
+        end
+        Note right of John: Rational thoughts!
+        John-->>Alice: Great!
+        John->>Bob: How about you?
+        Bob-->>John: Jolly good!
+      `,
+        {}
+      );
+    });
+    it('should render autonumber with different line breaks', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        autonumber
+        Alice->>John: Hello John,<br>how are you?
+        Alice->>John: John,<br/>can you hear me?
+        John-->>Alice: Hi Alice,<br />I can hear you!
+        John-->>Alice: I feel great!
+      `,
+        {}
+      );
+    });
+    it('should render dark theme from init directive and configure font size 24 font', () => {
+      imgSnapshotTest(
+        `
+        %%{init: {'theme': 'dark', 'config': {'fontSize': 24}}}%%
+        sequenceDiagram
+        Alice->>John: Hello John, how are you?
+        Alice->>John: John, can you hear me?
+        John-->>Alice: Hi Alice, I can hear you!
+        John-->>Alice: I feel great!
+      `,
+        {}
+      );
+    });
+    it('should render with wrapping enabled', () => {
+      imgSnapshotTest(
+        `
+        %%{init: { 'config': { 'wrap': true }}}%%
+        sequenceDiagram
+        participant A as Alice, the talkative one
+        A->>John: Hello John, how are you today? I'm feeling quite verbose today.
+        A->>John: John, can you hear me? If you are not available, we can talk later.
+        John-->>A: Hi Alice, I can hear you! I was finishing up an important meeting.
+        John-->>A: I feel great! I was not ignoring you. I am sorry you had to wait for a response.
+      `,
+        {}
+      );
+    });
+    it('should render with an init directive', () => {
+      imgSnapshotTest(
+        `%%{init: { "theme": "dark", 'config': { "fontFamily": "Menlo", "fontSize": 18, "fontWeight": 400, "wrap": true }}}%%
+          sequenceDiagram
+          Alice->>Bob: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!
+          Note left of Alice: Bob thinks
+          Bob->>Alice: Fine!`,
+        {}
+      );
+    });
+  });
+  describe('directives', () => {
+    it('should override config with directive settings', () => {
+      imgSnapshotTest(
+        `
+        %%{init: { "config": { "mirrorActors": true }}}%%
+        sequenceDiagram
+        Alice->>Bob: I'm short
+        note left of Alice: config set to mirrorActors: false<br/>directive set to mirrorActors: true
+        Bob->>Alice: Short as well
+      `,
+        {
+          logLevel: 0,
+          sequence: { mirrorActors: false, noteFontSize: 18, noteFontFamily: 'Arial' },
+        }
+      );
+    });
+    it('should override config with directive settings 2', () => {
+      imgSnapshotTest(
+        `
+        %%{init: { "config": { "mirrorActors": false, "wrap": true }}}%%
+        sequenceDiagram
+        Alice->>Bob: I'm short
+        note left of Alice: config: mirrorActors=true<br/>directive: mirrorActors=false
+        Bob->>Alice: Short as well
+      `,
+        {
+          logLevel: 0,
+          sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' },
+        }
+      );
+    });
+  });
+  describe('links', () => {
+    it('should support actor links', () => {
+      renderGraph(
+        `
+      sequenceDiagram
+        link Alice: Dashboard @ https://dashboard.contoso.com/alice
+        link Alice: Wiki @ https://wiki.contoso.com/alice
+        link John: Dashboard @ https://dashboard.contoso.com/john
+        link John: Wiki @ https://wiki.contoso.com/john
+        Alice->>John: Hello John<br/>
+        John-->>Alice: Great<br/><br/>day!
+      `,
+        { securityLevel: 'loose' }
+      );
+      cy.get('#actor0_popup').should((popupMenu) => {
+        const style = popupMenu.attr('style');
+        // expect(style).to.undefined;
+      });
+      cy.get('#root-0').click();
+      cy.get('#actor0_popup').should((popupMenu) => {
+        const style = popupMenu.attr('style');
+        expect(style).to.match(/^display: block;$/);
+      });
+      cy.get('#root-0').click();
+      cy.get('#actor0_popup').should((popupMenu) => {
+        const style = popupMenu.attr('style');
+        expect(style).to.match(/^display: none;$/);
+      });
+    });
+    it('should support actor links and properties EXPERIMENTAL: USE WITH CAUTION', () => {
+      //Be aware that the syntax for "properties" is likely to be changed.
+      imgSnapshotTest(
+        `
+        %%{init: { "config": { "mirrorActors": true, "forceMenus": true }}}%%
+        sequenceDiagram
+        participant a as Alice
+        participant j as John
+        note right of a: Hello world!
+        properties a: {"class": "internal-service-actor", "type": "@clock"}
+        properties j: {"class": "external-service-actor", "type": "@computer"}
+        links a: {"Repo": "https://www.contoso.com/repo", "Swagger": "https://www.contoso.com/swagger"}
+        links j: {"Repo": "https://www.contoso.com/repo"}
+        links a: {"Dashboard": "https://www.contoso.com/dashboard", "On-Call": "https://www.contoso.com/oncall"}
+        link a: Contacts @ https://contacts.contoso.com/?contact=alice@contoso.com
+        a->>j: Hello John, how are you?
+        j-->>a: Great!
+      `,
+        {
+          logLevel: 0,
+          sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' },
+        }
+      );
+    });
+
+    it('should handle bidirectional arrows with autonumber', () => {
+      imgSnapshotTest(`
+       sequenceDiagram
+       autonumber
+       participant A
+       participant B
+       A<<->>B: This is a bidirectional message
+       A->B: This is a normal message`);
+    });
+
+    it('should support actor links and properties when not mirrored EXPERIMENTAL: USE WITH CAUTION', () => {
+      //Be aware that the syntax for "properties" is likely to be changed.
+      imgSnapshotTest(
+        `
+        %%{init: { "config": { "mirrorActors": false, "forceMenus": true, "wrap": true }}}%%
+        sequenceDiagram
+        participant a as Alice
+        participant j as John
+        note right of a: Hello world!
+        properties a: {"class": "internal-service-actor", "type": "@clock"}
+        properties j: {"class": "external-service-actor", "type": "@computer"}
+        links a: {"Repo": "https://www.contoso.com/repo", "Swagger": "https://www.contoso.com/swagger"}
+        links j: {"Repo": "https://www.contoso.com/repo"}
+        links a: {"Dashboard": "https://www.contoso.com/dashboard", "On-Call": "https://www.contoso.com/oncall"}
+        a->>j: Hello John, how are you?
+        j-->>a: Great!
+      `,
+        {
+          logLevel: 0,
+          sequence: { mirrorActors: false, noteFontSize: 18, noteFontFamily: 'Arial' },
+        }
+      );
+    });
+    it("shouldn't display unused participants", () => {
+      //Be aware that the syntax for "properties" is likely to be changed.
+      imgSnapshotTest(
+        `
+        %%{init: { "config": { "sequence": {"hideUnusedParticipants": true }}}}%%
+        sequenceDiagram
+        participant a
+      `,
+        {
+          logLevel: 0,
+          sequence: { mirrorActors: false, noteFontSize: 18, noteFontFamily: 'Arial' },
+        }
+      );
+    });
+  });
+  describe('svg size', () => {
+    it('should render a sequence diagram when useMaxWidth is true (default)', () => {
+      renderGraph(
+        `
+      sequenceDiagram
+        participant Alice
+        participant Bob
+        participant John as John<br/>Second Line
+        Alice ->> Bob: Hello Bob, how are you?
+        Bob-->>John: How about you John?
+        Bob--x Alice: I am good thanks!
+        Bob-x John: I am good thanks!
+        Note right of John: Bob thinks a long<br/>long time, so long<br/>that the text does<br/>not fit on a row.
+        Bob-->Alice: Checking with John...
+        alt either this
+          Alice->>John: Yes
+          else or this
+          Alice->>John: No
+          else or this will happen
+          Alice->John: Maybe
+        end
+        par this happens in parallel
+        Alice -->> Bob: Parallel message 1
+        and
+        Alice -->> John: Parallel message 2
+        end
+      `,
+        { sequence: { useMaxWidth: true } }
+      );
+      cy.get('svg').should((svg) => {
+        expect(svg).to.have.attr('width', '100%');
+        // expect(svg).to.have.attr('height');
+        // const height = parseFloat(svg.attr('height'));
+        // expect(height).to.be.within(920, 971);
+        const style = svg.attr('style');
+        expect(style).to.match(/^max-width: [\d.]+px;$/);
+        const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
+        // use within because the absolute value can be slightly different depending on the environment ±5%
+        expect(maxWidthValue).to.be.within(820 * 0.95, 820 * 1.05);
+      });
+    });
+    it('should render a sequence diagram when useMaxWidth is false', () => {
+      renderGraph(
+        `
+      sequenceDiagram
+        participant Alice
+        participant Bob
+        participant John as John<br/>Second Line
+        Alice ->> Bob: Hello Bob, how are you?
+        Bob-->>John: How about you John?
+        Bob--x Alice: I am good thanks!
+        Bob-x John: I am good thanks!
+        Note right of John: Bob thinks a long<br/>long time, so long<br/>that the text does<br/>not fit on a row.
+        Bob-->Alice: Checking with John...
+        alt either this
+          Alice->>John: Yes
+          else or this
+          Alice->>John: No
+          else or this will happen
+          Alice->John: Maybe
+        end
+        par this happens in parallel
+        Alice -->> Bob: Parallel message 1
+        and
+        Alice -->> John: Parallel message 2
+        end
+      `,
+        { sequence: { useMaxWidth: false } }
+      );
+      cy.get('svg').should((svg) => {
+        // const height = parseFloat(svg.attr('height'));
+        const width = parseFloat(svg.attr('width'));
+        // expect(height).to.be.within(920, 971);
+        // use within because the absolute value can be slightly different depending on the environment ±5%
+        expect(width).to.be.within(820 * 0.95, 820 * 1.05);
+        expect(svg).to.not.have.attr('style');
+      });
+    });
+  });
+  describe('render after error', () => {
+    it('should render diagram after fixing destroy participant error', () => {
+      cy.on('uncaught:exception', (err) => {
+        return false;
+      });
+
+      renderGraph([
+        `sequenceDiagram
+    Alice->>Bob: Hello Bob, how are you ?
+    Bob->>Alice: Fine, thank you. And you?
+    create participant Carl
+    Alice->>Carl: Hi Carl!
+    create actor D as Donald
+    Carl->>D: Hi!
+    destroy Carl
+    Alice-xCarl: We are too many
+    destroy Bo
+    Bob->>Alice: I agree`,
+        `sequenceDiagram
+    Alice->>Bob: Hello Bob, how are you ?
+    Bob->>Alice: Fine, thank you. And you?
+    create participant Carl
+    Alice->>Carl: Hi Carl!
+    create actor D as Donald
+    Carl->>D: Hi!
+    destroy Carl
+    Alice-xCarl: We are too many
+    destroy Bob
+    Bob->>Alice: I agree`,
+      ]);
+    });
+  });
+  describe('render new arrow type', () => {
+    it('should render Solid half arrow top', () => {
+      imgSnapshotTest(
+        `
+    sequenceDiagram
+      Alice -|\\  John: Hello John, how are you? 
+      Alice-|\\  John: Hi Alice, I can hear you!
+      Alice -|\\  John: Test
+      `
+      );
+    });
+    it('should render Solid half arrow bottom', () => {
+      imgSnapshotTest(
+        `
+    sequenceDiagram
+      Alice-|/John: Hello John, how are you?
+      Alice-|/John: Hi Alice, I can hear you!
+      Alice-|/John: Test
+      `
+      );
+    });
+
+    it('should render Stick half arrow top ', () => {
+      imgSnapshotTest(
+        `
+     sequenceDiagram
+      Alice-\\\\John: Hello John, how are you?
+      Alice-\\\\John: Hi Alice, I can hear you!
+      Alice-\\\\John: Test
+      `
+      );
+    });
+    it('should render Stick half arrow bottom ', () => {
+      imgSnapshotTest(
+        `
+       sequenceDiagram
+      Alice-//John: Hello John, how are you?
+      Alice-//John: Hi Alice, I can hear you!
+      Alice-//John: Test
+      `
+      );
+    });
+    it('should render Solid half arrow top reverse ', () => {
+      imgSnapshotTest(
+        `
+       sequenceDiagram
+      Alice/|-John: Hello Alice, how are you?
+      Alice/|-John: Hi Alice, I can hear you!
+      Alice/|-John: Test
+
+      `
+      );
+    });
+
+    it('should render Solid half arrow bottom reverse ', () => {
+      imgSnapshotTest(
+        `sequenceDiagram
+        Alice \\|- John: Hello Alice, how are you?
+        Alice \\|- John: Hi Alice, I can hear you!
+        Alice \\|- John: Test`
+      );
+    });
+
+    it('should render Stick half arrow top reverse ', () => {
+      imgSnapshotTest(
+        `
+      sequenceDiagram
+      Alice //-John: Hello Alice, how are you?
+      Alice //-John: Hi Alice, I can hear you!
+      Alice //-John: Test`
+      );
+    });
+
+    it('should render Stick half arrow bottom reverse ', () => {
+      imgSnapshotTest(
+        `
+       sequenceDiagram
+      Alice \\\\-John: Hello Alice, how are you?
+      Alice \\\\-John: Hi Alice, I can hear you!
+      Alice \\\\-John: Test`
+      );
+    });
+
+    it('should render Solid half arrow top dotted', () => {
+      imgSnapshotTest(
+        `
+     sequenceDiagram
+      Alice --|\\John: Hello John, how are you?
+      Alice --|\\John: Hi Alice, I can hear you!
+      Alice --|\\John: Test`
+      );
+    });
+
+    it('should render Solid half arrow bottom dotted', () => {
+      imgSnapshotTest(
+        `
+     sequenceDiagram
+      Alice --|/John: Hello John, how are you?
+      Alice --|/John: Hi Alice, I can hear you!
+      Alice --|/John: Test`
+      );
+    });
+
+    it('should render Stick half arrow top dotted', () => {
+      imgSnapshotTest(
+        `
+     sequenceDiagram
+      Alice--\\\\John: Hello John, how are you?
+      Alice--\\\\John: Hi Alice, I can hear you!
+      Alice--\\\\John: Test`
+      );
+    });
+
+    it('should render Stick half arrow bottom dotted', () => {
+      imgSnapshotTest(
+        `
+     sequenceDiagram
+      Alice--//John: Hello John, how are you?
+      Alice--//John: Hi Alice, I can hear you!
+      Alice--//John: Test`
+      );
+    });
+
+    it('should render Solid half arrow top reverse dotted', () => {
+      imgSnapshotTest(
+        `
+  sequenceDiagram
+      Alice/|--John: Hello Alice, how are you?
+      Alice/|--John: Hi Alice, I can hear you!
+      Alice/|--John: Test`
+      );
+    });
+
+    it('should render Solid half arrow bottom reverse dotted', () => {
+      imgSnapshotTest(
+        `
+  sequenceDiagram
+      Alice\\|--John: Hello Alice, how are you?
+      Alice\\|--John: Hi Alice, I can hear you!
+      Alice\\|--John: Test`
+      );
+    });
+
+    it('should render Stick half arrow top reverse dotted ', () => {
+      imgSnapshotTest(
+        `
+  sequenceDiagram
+      Alice//--John: Hello Alice, how are you?
+      Alice//--John: Hi Alice, I can hear you!
+      Alice//--John: Test`
+      );
+    });
+
+    it('should render Stick half arrow bottom reverse dotted ', () => {
+      imgSnapshotTest(
+        `
+  sequenceDiagram
+      Alice\\\\--John: Hello Alice, how are you?
+      Alice\\\\--John: Hi Alice, I can hear you!
+      Alice\\\\--John: Test`
+      );
+    });
+  });
+
+  it('should render alt/else section titles with label box backgrounds', () => {
+    imgSnapshotTest(
+      `
+    sequenceDiagram
+      participant Alice
+      participant Bob
+      opt Outer
+        alt Command A
+          Alice->>Bob: Request A
+        else Command B
+          Alice->>Bob: Request B
+        else Command C
+          Alice->>Bob: Request C
+        end
+      end
+      `,
+      {
+        themeCSS: '.loopText { fill: #ffffff !important; } .labelBox { fill: red !important; }',
+      }
+    );
+  });
+});

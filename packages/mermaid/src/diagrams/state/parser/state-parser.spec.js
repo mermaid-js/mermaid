@@ -126,6 +126,40 @@ describe('state parser can parse...', () => {
     });
   });
 
+  describe('colons in transition descriptions (issue #7418)', () => {
+    it('should allow a colon inside transition text', () => {
+      const diagramText = `stateDiagram-v2
+        locked --> pending : recoverable error (ex: timeout)`;
+      stateDiagram.parser.parse(diagramText);
+
+      const relationships = stateDiagram.parser.yy.getRelations();
+      expect(relationships).toHaveLength(1);
+      expect(relationships[0].id1).toEqual('locked');
+      expect(relationships[0].id2).toEqual('pending');
+      expect(relationships[0].relationTitle).toEqual('recoverable error (ex: timeout)');
+    });
+
+    it('should allow multiple colons inside transition text', () => {
+      const diagramText = `stateDiagram-v2
+        A --> B : info: key: value`;
+      stateDiagram.parser.parse(diagramText);
+
+      const relationships = stateDiagram.parser.yy.getRelations();
+      expect(relationships).toHaveLength(1);
+      expect(relationships[0].relationTitle).toEqual('info: key: value');
+    });
+
+    it('should allow a colon inside state description text', () => {
+      const diagramText = `stateDiagram-v2
+        myState : status: active`;
+      stateDiagram.parser.parse(diagramText);
+
+      const states = stateDiagram.parser.yy.getStates();
+      expect(states.get('myState')).not.toBeUndefined();
+      expect(states.get('myState').descriptions.join(' ')).toEqual('status: active');
+    });
+  });
+
   describe('unsafe properties as state names', () => {
     it.each(['__proto__', 'constructor'])('should allow %s as a state name', function (prop) {
       stateDiagram.parser.parse(`
@@ -134,6 +168,46 @@ stateDiagram-v2
 ${prop} --> [*]`);
       const states = stateDiagram.parser.yy.getStates();
       expect(states.get(prop)).not.toBeUndefined();
+    });
+  });
+
+  describe('note parsing (issue #7089)', () => {
+    it('should not terminate a note when "send note" appears within the note text', () => {
+      const diagramText = `stateDiagram-v2
+      State1
+      note right of State1
+        this sentence contains send note inside the note text
+      end note
+      State1 --> State2`;
+      stateDiagram.parser.parse(diagramText);
+
+      const relations = stateDiagram.parser.yy.getRelations();
+      expect(relations).toHaveLength(1);
+      expect(relations[0].id1).toEqual('State1');
+      expect(relations[0].id2).toEqual('State2');
+
+      const states = stateDiagram.parser.yy.getStates();
+      const noteState = states.get('State1');
+      expect(noteState?.note?.text).toContain('send note inside the note text');
+    });
+
+    it('should not treat "end note" as a closing keyword when it is part of the note text', () => {
+      const diagramText = `stateDiagram-v2
+      State1
+      note right of State1
+        this sentence contains end note as part of the note text
+      end note
+      State1 --> State2`;
+      stateDiagram.parser.parse(diagramText);
+
+      const relations = stateDiagram.parser.yy.getRelations();
+      expect(relations).toHaveLength(1);
+      expect(relations[0].id1).toEqual('State1');
+      expect(relations[0].id2).toEqual('State2');
+
+      const states = stateDiagram.parser.yy.getStates();
+      const noteState = states.get('State1');
+      expect(noteState?.note?.text).toContain('end note as part of the note text');
     });
   });
 });

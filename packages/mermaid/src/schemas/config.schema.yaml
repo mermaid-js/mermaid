@@ -54,8 +54,11 @@ required:
   - sankey
   - packet
   - block
+  - treeView
   - look
+  - eventmodeling
   - radar
+  - venn
 properties:
   theme:
     description: |
@@ -68,6 +71,12 @@ properties:
       - dark
       - forest
       - neutral
+      - neo
+      - neo-dark
+      - redux
+      - redux-dark
+      - redux-color
+      - redux-dark-color
       - 'null' # should this be a `null`-type?
     meta:enum:
       'null': Can be set to disable any pre-defined mermaid theme
@@ -83,6 +92,7 @@ properties:
     enum:
       - classic
       - handDrawn
+      - neo
     default: 'classic'
   handDrawnSeed:
     description: |
@@ -301,6 +311,8 @@ properties:
     $ref: '#/$defs/ArchitectureDiagramConfig'
   mindmap:
     $ref: '#/$defs/MindmapDiagramConfig'
+  ishikawa:
+    $ref: '#/$defs/IshikawaDiagramConfig'
   kanban:
     $ref: '#/$defs/KanbanDiagramConfig'
   gitGraph:
@@ -313,8 +325,20 @@ properties:
     $ref: '#/$defs/PacketDiagramConfig'
   block:
     $ref: '#/$defs/BlockDiagramConfig'
+  eventmodeling:
+    $ref: '#/$defs/EventModelingDiagramConfig'
+  treeView:
+    $ref: '#/$defs/TreeViewDiagramConfig'
   radar:
     $ref: '#/$defs/RadarDiagramConfig'
+  venn:
+    $ref: '#/$defs/VennDiagramConfig'
+  wardley-beta:
+    $ref: '#/$defs/WardleyDiagramConfig'
+  cynefin:
+    $ref: '#/$defs/CynefinDiagramConfig'
+  railroad:
+    $ref: '#/$defs/RailroadDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration
     description: Configuration options to pass to the `dompurify` library.
@@ -961,6 +985,11 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - padding
       - iconSize
       - fontSize
+      - randomize
+      - nodeSeparation
+      - idealEdgeLengthMultiplier
+      - edgeElasticity
+      - numIter
     properties:
       padding:
         type: number
@@ -971,6 +1000,40 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       fontSize:
         type: number
         default: 16
+      randomize:
+        description: |
+          Whether to randomize initial node positions before running the layout algorithm.
+          When false (default), the layout is deterministic and produces identical results on every render.
+          When true, nodes start at random positions, which may produce varied but potentially better-spaced layouts.
+        type: boolean
+        default: false
+      nodeSeparation:
+        description: |
+          Minimum separation (in pixels) between sibling nodes in the same group, passed through to the
+          underlying fcose layout. Increase to spread overlapping siblings apart when many edges share the
+          same port direction.
+        type: number
+        default: 75
+      idealEdgeLengthMultiplier:
+        description: |
+          Multiplier applied to `iconSize` to compute the ideal length of edges between nodes within the
+          same group. Increase to add breathing room; decrease to pack the diagram tighter. Edges crossing
+          group boundaries are unaffected and use a fixed shorter length.
+        type: number
+        default: 1.5
+      edgeElasticity:
+        description: |
+          Spring elasticity (0–1) applied to edges between nodes within the same group, passed through to
+          fcose. Higher values pull connected nodes closer together; lower values let the layout spread them
+          out. Edges crossing group boundaries are unaffected.
+        type: number
+        default: 0.45
+      numIter:
+        description: |
+          Maximum number of iterations the fcose layout algorithm runs before stopping. Increase for higher
+          quality on large or densely-connected diagrams at the cost of render time.
+        type: number
+        default: 2500
 
   MindmapDiagramConfig:
     title: Mindmap Diagram Config
@@ -994,6 +1057,23 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: Layout algorithm to use for positioning mindmap nodes
         type: string
         default: 'cose-bilkent'
+
+  IshikawaDiagramConfig:
+    title: Ishikawa Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for ishikawa diagrams
+    type: object
+    properties:
+      diagramPadding:
+        description: |
+          The amount of padding around the diagram as a whole so that embedded
+          diagrams have margins, expressed in pixels.
+        type: integer
+        default: 20
+        minimum: 0
+      useMaxWidth:
+        type: boolean
+        default: false
 
   KanbanDiagramConfig:
     title: Kanban Diagram Config
@@ -1257,6 +1337,10 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: Should show the value corresponding to the bar within the bar
         type: boolean
         default: false
+      showDataLabelOutsideBar:
+        description: If showing data label then show it outside the bar
+        type: boolean
+        default: false
       showTitle:
         description: Should show the chart title
         type: boolean
@@ -1491,6 +1575,15 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       hideEmptyMembersBox:
         type: boolean
         default: false
+      hierarchicalNamespaces:
+        type: boolean
+        default: true
+        description: |
+          When true (default), nested namespaces render as hierarchical clusters,
+          with each segment of a dotted name (e.g. `A.B.C`) becoming its own nested
+          box. When false, namespaces render in compact mode: only explicitly
+          declared namespaces are emitted and their full qualified name is used as
+          a single flat label.
 
   JourneyDiagramConfig:
     title: Journey Diagram Config
@@ -2134,6 +2227,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
             'step',
             'stepAfter',
             'stepBefore',
+            'rounded',
           ]
         default: 'basis'
       padding:
@@ -2175,6 +2269,17 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       target: Use the target of sankey link for the color of the link.
       gradient: Use a gradient of the source and target for the color of the link.
     default: gradient
+  SankeyLabelStyle:
+    description: |
+      The style of labels in the sankey diagram.
+    type: string
+    enum:
+      - legacy
+      - outlined
+    meta:enum:
+      legacy: Plain text labels (original style).
+      outlined: Labels with a white outline for better readability against colored backgrounds.
+    default: legacy
 
   SankeyNodeAlignment:
     description: |
@@ -2236,6 +2341,27 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           The suffix to use for values
         type: string
         default: ''
+      nodeWidth:
+        description: |
+          The width of the nodes in the sankey diagram.
+        type: number
+        default: 10
+      nodePadding:
+        description: |
+          The padding between nodes in the sankey diagram.
+        type: number
+        default: 12
+      labelStyle:
+        description: |
+          The style of labels in the sankey diagram. 'outlined' provides better readability with a white stroke behind the text.
+        $ref: '#/$defs/SankeyLabelStyle'
+        default: legacy
+      nodeColors:
+        description: |
+          A mapping of node IDs to their colors. Nodes not specified will use the default color scheme.
+        type: object
+        additionalProperties:
+          type: string
 
   PacketDiagramConfig:
     title: Packet Diagram Config
@@ -2285,6 +2411,54 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         minimum: 0
         default: 8
+
+  EventModelingDiagramConfig:
+    title: Event Modeling Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for Event Modeling diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      padding:
+        description: The padding around the Event Modeling diagram.
+        type: number
+        default: 30
+      rowHeight:
+        description: The height of each row in the Event Modeling diagram.
+        type: number
+        minimum: 1
+        default: 32
+  TreeViewDiagramConfig:
+    title: TreeView Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for treeView diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      rowIndent:
+        description: Horizontal distance between rows differing by one level
+        type: number
+        minimum: 0
+        default: 10
+      paddingX:
+        description: Horizontal padding of label
+        type: number
+        minimum: 0
+        default: 5
+      paddingY:
+        description: Vertical padding of label
+        type: number
+        minimum: 0
+        default: 5
+      lineThickness:
+        description: Thickness of the line
+        type: number
+        minimum: 0
+        default: 1
+      showIcons:
+        description: Whether to show file/folder icons next to labels
+        type: boolean
+        default: true
 
   RadarDiagramConfig:
     title: Radar Diagram Config
@@ -2339,6 +2513,229 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         minimum: 0
         maximum: 1
         default: 0.17
+
+  VennDiagramConfig:
+    title: Venn Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for Venn diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      width:
+        description: The width of the Venn diagram.
+        type: number
+        minimum: 1
+        default: 800
+      height:
+        description: The height of the Venn diagram.
+        type: number
+        minimum: 1
+        default: 450
+      padding:
+        type: number
+        minimum: 0
+        default: 8
+      useDebugLayout:
+        type: boolean
+        default: false
+
+  WardleyDiagramConfig:
+    title: Wardley Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for Wardley Maps diagrams.
+    type: object
+    unevaluatedProperties: false
+    required:
+      - width
+      - height
+      - padding
+      - nodeRadius
+      - labelFontSize
+      - axisFontSize
+    properties:
+      width:
+        description: The width of the Wardley diagram canvas.
+        type: number
+        minimum: 1
+        default: 900
+      height:
+        description: The height of the Wardley diagram canvas.
+        type: number
+        minimum: 1
+        default: 600
+      padding:
+        description: The padding around the Wardley diagram.
+        type: number
+        minimum: 0
+        default: 48
+      nodeRadius:
+        description: The radius of component nodes.
+        type: number
+        minimum: 0
+        default: 6
+      nodeLabelOffset:
+        description: The offset distance for node labels.
+        type: number
+        minimum: 0
+        default: 8
+      axisFontSize:
+        description: The font size for axis labels.
+        type: number
+        minimum: 0
+        default: 12
+      labelFontSize:
+        description: The font size for component labels.
+        type: number
+        minimum: 0
+        default: 10
+      showGrid:
+        description: Whether to display a background grid.
+        type: boolean
+        default: false
+
+  CynefinDiagramConfig:
+    title: Cynefin Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: Configuration for Cynefin framework diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      width:
+        description: The width of the Cynefin diagram.
+        type: number
+        minimum: 1
+        default: 800
+      height:
+        description: The height of the Cynefin diagram.
+        type: number
+        minimum: 1
+        default: 600
+      padding:
+        description: Padding around the diagram.
+        type: number
+        minimum: 0
+        default: 40
+      showDomainDescriptions:
+        description: Show decision model and practice type labels.
+        type: boolean
+        default: true
+      boundaryAmplitude:
+        description: Waviness amplitude of domain boundaries (0 for straight).
+        type: number
+        minimum: 0
+        maximum: 50
+        default: 8
+
+  RailroadDiagramConfig:
+    title: Railroad Diagram Config
+    description: Configuration for Railroad (Syntax) Diagrams
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    type: object
+    unevaluatedProperties: false
+    properties:
+      compactMode:
+        description: Use compact layout mode
+        type: boolean
+        default: false
+      padding:
+        description: Padding around elements
+        type: number
+        minimum: 0
+        default: 10
+      verticalSeparation:
+        description: Vertical separation between elements
+        type: number
+        minimum: 0
+        default: 8
+      horizontalSeparation:
+        description: Horizontal separation between elements
+        type: number
+        minimum: 0
+        default: 10
+      arcRadius:
+        description: Radius for curved paths
+        type: number
+        minimum: 0
+        default: 10
+      fontSize:
+        description: Font size for text
+        type: number
+        minimum: 0
+        default: 14
+      fontFamily:
+        description: Font family for text
+        type: string
+        default: 'monospace'
+      terminalFill:
+        description: Fill color for terminal elements
+        type: string
+        default: '#FFFFC0'
+      terminalStroke:
+        description: Stroke color for terminal elements
+        type: string
+        default: '#000000'
+      terminalTextColor:
+        description: Text color for terminal elements
+        type: string
+        default: '#000000'
+      nonTerminalFill:
+        description: Fill color for non-terminal elements
+        type: string
+        default: '#FFFFFF'
+      nonTerminalStroke:
+        description: Stroke color for non-terminal elements
+        type: string
+        default: '#000000'
+      nonTerminalTextColor:
+        description: Text color for non-terminal elements
+        type: string
+        default: '#000000'
+      lineColor:
+        description: Color for connection lines
+        type: string
+        default: '#000000'
+      strokeWidth:
+        description: Width of strokes
+        type: number
+        minimum: 0
+        default: 2
+      markerFill:
+        description: Fill color for start/end markers
+        type: string
+        default: '#000000'
+      commentFill:
+        description: Fill color for comments
+        type: string
+        default: '#E8E8E8'
+      commentStroke:
+        description: Stroke color for comments
+        type: string
+        default: '#888888'
+      commentTextColor:
+        description: Text color for comments
+        type: string
+        default: '#666666'
+      specialFill:
+        description: Fill color for special sequences
+        type: string
+        default: '#F0E0FF'
+      specialStroke:
+        description: Stroke color for special sequences
+        type: string
+        default: '#8800CC'
+      ruleNameColor:
+        description: Color for rule names
+        type: string
+        default: '#000066'
+      showMarkers:
+        description: Show start/end markers
+        type: boolean
+        default: true
+      markerRadius:
+        description: Radius of start/end markers
+        type: number
+        minimum: 0
+        default: 5
 
   FontCalculator:
     title: Font Calculator

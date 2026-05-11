@@ -405,5 +405,43 @@ describe('Tidy-Tree Layout Algorithm', () => {
       const yDifference = Math.abs(tallChild!.y - shortChild!.y);
       expect(yDifference).toBeGreaterThanOrEqual(0);
     });
+
+    it('should route root-sourced edges out the side of the root facing the target (issue #7572)', async () => {
+      const result = await executeTidyTreeLayout(mockLayoutData);
+
+      const rootNode = result.nodes.find((node) => node.id === 'root');
+      expect(rootNode).toBeDefined();
+      expect(rootNode!.x).toBe(0);
+      expect(rootNode!.y).toBe(20);
+
+      const rootSourcedEdges = result.edges.filter((edge) => edge.sourceSection === 'root');
+      expect(rootSourcedEdges.length).toBeGreaterThan(0);
+
+      rootSourcedEdges.forEach((edge) => {
+        const targetNode = result.nodes.find((node) => node.id === edge.target);
+        expect(targetNode).toBeDefined();
+
+        expect(edge.points.length).toBeGreaterThanOrEqual(3);
+
+        const firstIntermediate = edge.points[1];
+        expect(firstIntermediate.y).toBe(rootNode!.y);
+
+        const intermediateOffset = firstIntermediate.x - rootNode!.x;
+        const targetOffset = targetNode!.x - rootNode!.x;
+        expect(Math.sign(intermediateOffset)).toBe(Math.sign(targetOffset));
+      });
+
+      const edgeToChild2 = result.edges.find((edge) => edge.id === 'root_child2');
+      expect(edgeToChild2).toBeDefined();
+      expect(edgeToChild2!.points.length).toBeGreaterThanOrEqual(3);
+      expect(edgeToChild2!.points[1].x).toBe(80);
+      expect(edgeToChild2!.points[1].y).toBe(20);
+
+      const edgeToChild1 = result.edges.find((edge) => edge.id === 'root_child1');
+      expect(edgeToChild1).toBeDefined();
+      expect(edgeToChild1!.points.length).toBeGreaterThanOrEqual(3);
+      expect(edgeToChild1!.points[1].x).toBe(-80);
+      expect(edgeToChild1!.points[1].y).toBe(20);
+    });
   });
 });

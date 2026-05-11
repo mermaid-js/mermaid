@@ -12,7 +12,10 @@ import {
   inject,
 } from 'langium';
 
-import { MermaidGeneratedSharedModule, TreemapGeneratedModule } from '../generated/module.js';
+import {
+  MermaidGeneratedSharedModule,
+  TreemapGrammarGeneratedModule as TreemapGeneratedModule,
+} from '../generated/module.js';
 import { TreemapTokenBuilder } from './tokenBuilder.js';
 import { TreemapValueConverter } from './valueConverter.js';
 import { TreemapValidator, registerValidationChecks } from './treemap-validator.js';

@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import { setupGraphViewbox } from '../../diagram-api/diagramAPI.js';
+import { getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 import utils from '../../utils.js';
 import type { DrawDefinition } from '../../diagram-api/types.js';
@@ -28,6 +28,41 @@ const PX = 4;
 const PY = 2;
 
 const THEME_COLOR_LIMIT = 8;
+
+/**
+ * Themes that use redux-style geometry — smaller commit bullets, sharper label edges.
+ * Note: neo themes are intentionally excluded; they use standard geometry.
+ */
+const REDUX_GEOMETRY_THEMES = new Set(['redux', 'redux-dark', 'redux-color', 'redux-dark-color']);
+
+/** Vertical padding inside the LR branch label rect for redux themes (`drawBranches` `labelPaddingY`). */
+const REDUX_BRANCH_LABEL_PADDING_Y = 12;
+
+/**
+ * Themes that use per-branch color cycling with a non-default first color
+ * (avoidDefaultColor logic in calcColorIndex).
+ */
+const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
+
+/** Themes rendered on a dark background. */
+const DARK_THEMES = new Set(['dark', 'redux-dark', 'redux-dark-color', 'neo-dark']);
+
+/**
+ * Map a raw branch index to a CSS color-class index.
+ * When avoidMainColor is true (redux-color / redux-dark-color themes only),
+ * non-main branches cycle through 1…(limit-1) so color 0 is never reused.
+ * For all other themes the plain modulo is used.
+ */
+export const calcColorIndex = (
+  rawIndex: number,
+  limit: number,
+  avoidDefaultColor = false
+): number => {
+  if (avoidDefaultColor && rawIndex > 0) {
+    return ((rawIndex - 1) % (limit - 1)) + 1;
+  }
+  return rawIndex % limit;
+};
 const branchPos = new Map<string, BranchPosition>();
 const commitPos = new Map<string, CommitPosition>();
 const defaultPos = 30;
@@ -196,47 +231,51 @@ const drawCommitBullet = (
   branchIndex: number,
   commitSymbolType: number
 ) => {
+  const { theme } = getConfig();
+  const useReduxGeometry = REDUX_GEOMETRY_THEMES.has(theme ?? '');
+  const useColorTheme = COLOR_THEMES.has(theme ?? '');
+  const isDark = DARK_THEMES.has(theme ?? '');
   if (commitSymbolType === commitType.HIGHLIGHT) {
     gBullets
       .append('rect')
-      .attr('x', commitPosition.x - 10)
-      .attr('y', commitPosition.y - 10)
-      .attr('width', 20)
-      .attr('height', 20)
+      .attr('x', commitPosition.x - 10 + (useReduxGeometry ? 3 : 0))
+      .attr('y', commitPosition.y - 10 + (useReduxGeometry ? 3 : 0))
+      .attr('width', useReduxGeometry ? 14 : 20)
+      .attr('height', useReduxGeometry ? 14 : 20)
       .attr(
         'class',
-        `commit ${commit.id} commit-highlight${branchIndex % THEME_COLOR_LIMIT} ${typeClass}-outer`
+        `commit ${commit.id} commit-highlight${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, useColorTheme)} ${typeClass}-outer`
       );
     gBullets
       .append('rect')
-      .attr('x', commitPosition.x - 6)
-      .attr('y', commitPosition.y - 6)
-      .attr('width', 12)
-      .attr('height', 12)
+      .attr('x', commitPosition.x - 6 + (useReduxGeometry ? 2 : 0))
+      .attr('y', commitPosition.y - 6 + (useReduxGeometry ? 2 : 0))
+      .attr('width', useReduxGeometry ? 8 : 12)
+      .attr('height', useReduxGeometry ? 8 : 12)
       .attr(
         'class',
-        `commit ${commit.id} commit${branchIndex % THEME_COLOR_LIMIT} ${typeClass}-inner`
+        `commit ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, useColorTheme)} ${typeClass}-inner`
       );
   } else if (commitSymbolType === commitType.CHERRY_PICK) {
     gBullets
       .append('circle')
       .attr('cx', commitPosition.x)
       .attr('cy', commitPosition.y)
-      .attr('r', 10)
+      .attr('r', useReduxGeometry ? 7 : 10)
       .attr('class', `commit ${commit.id} ${typeClass}`);
     gBullets
       .append('circle')
       .attr('cx', commitPosition.x - 3)
       .attr('cy', commitPosition.y + 2)
-      .attr('r', 2.75)
-      .attr('fill', '#fff')
+      .attr('r', useReduxGeometry ? 2.5 : 2.75)
+      .attr('fill', isDark ? '#000000' : '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
     gBullets
       .append('circle')
       .attr('cx', commitPosition.x + 3)
       .attr('cy', commitPosition.y + 2)
-      .attr('r', 2.75)
-      .attr('fill', '#fff')
+      .attr('r', useReduxGeometry ? 2.5 : 2.75)
+      .attr('fill', isDark ? '#000000' : '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
     gBullets
       .append('line')
@@ -244,7 +283,7 @@ const drawCommitBullet = (
       .attr('y1', commitPosition.y + 1)
       .attr('x2', commitPosition.x)
       .attr('y2', commitPosition.y - 5)
-      .attr('stroke', '#fff')
+      .attr('stroke', isDark ? '#000000' : '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
     gBullets
       .append('line')
@@ -252,32 +291,39 @@ const drawCommitBullet = (
       .attr('y1', commitPosition.y + 1)
       .attr('x2', commitPosition.x)
       .attr('y2', commitPosition.y - 5)
-      .attr('stroke', '#fff')
+      .attr('stroke', isDark ? '#000000' : '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
   } else {
     const circle = gBullets.append('circle');
     circle.attr('cx', commitPosition.x);
     circle.attr('cy', commitPosition.y);
-    circle.attr('r', commit.type === commitType.MERGE ? 9 : 10);
-    circle.attr('class', `commit ${commit.id} commit${branchIndex % THEME_COLOR_LIMIT}`);
+    circle.attr('r', useReduxGeometry ? 7 : 10);
+    circle.attr(
+      'class',
+      `commit ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, useColorTheme)}`
+    );
     if (commitSymbolType === commitType.MERGE) {
       const circle2 = gBullets.append('circle');
       circle2.attr('cx', commitPosition.x);
       circle2.attr('cy', commitPosition.y);
-      circle2.attr('r', 6);
+      circle2.attr('r', useReduxGeometry ? 5 : 6);
       circle2.attr(
         'class',
-        `commit ${typeClass} ${commit.id} commit${branchIndex % THEME_COLOR_LIMIT}`
+        `commit ${typeClass} ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, useColorTheme)}`
       );
     }
     if (commitSymbolType === commitType.REVERSE) {
       const cross = gBullets.append('path');
+      const constValue = useReduxGeometry ? 4 : 5;
       cross
         .attr(
           'd',
-          `M ${commitPosition.x - 5},${commitPosition.y - 5}L${commitPosition.x + 5},${commitPosition.y + 5}M${commitPosition.x - 5},${commitPosition.y + 5}L${commitPosition.x + 5},${commitPosition.y - 5}`
+          `M ${commitPosition.x - constValue},${commitPosition.y - constValue}L${commitPosition.x + constValue},${commitPosition.y + constValue}M${commitPosition.x - constValue},${commitPosition.y + constValue}L${commitPosition.x + constValue},${commitPosition.y - constValue}`
         )
-        .attr('class', `commit ${typeClass} ${commit.id} commit${branchIndex % THEME_COLOR_LIMIT}`);
+        .attr(
+          'class',
+          `commit ${typeClass} ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, useColorTheme)}`
+        );
     }
   }
 };
@@ -503,11 +549,16 @@ const getCommitPosition = (
   isParallelCommits: boolean
 ): CommitPositionOffset => {
   const posWithOffset = dir === 'BT' && isParallelCommits ? pos : pos + LAYOUT_OFFSET;
-  const y = dir === 'TB' || dir === 'BT' ? posWithOffset : branchPos.get(commit.branch)?.pos;
+  const branchY = branchPos.get(commit.branch)?.pos;
   const x = dir === 'TB' || dir === 'BT' ? branchPos.get(commit.branch)?.pos : posWithOffset;
-  if (x === undefined || y === undefined) {
+  if (x === undefined || branchY === undefined) {
     throw new Error(`Position were undefined for commit ${commit.id}`);
   }
+  const useReduxGeometry = REDUX_GEOMETRY_THEMES.has(getConfig().theme ?? '');
+  const y =
+    dir === 'TB' || dir === 'BT'
+      ? posWithOffset
+      : branchY + (useReduxGeometry ? REDUX_BRANCH_LABEL_PADDING_Y / 2 + 1 : -2);
   return { x, y, posWithOffset };
 };
 
@@ -605,6 +656,8 @@ const drawArrow = (
   commitB: Commit,
   allCommits: Map<string, Commit>
 ) => {
+  const { theme: arrowTheme } = getConfig();
+  const useColorTheme = COLOR_THEMES.has(arrowTheme ?? '');
   const p1 = commitPos.get(commitA.id); // arrowStart
   const p2 = commitPos.get(commitB.id); // arrowEnd
   if (p1 === undefined || p2 === undefined) {
@@ -745,7 +798,7 @@ const drawArrow = (
             p2.y
           } L ${p2.x} ${p2.y}`;
         } else {
-          lineDef = `M ${p1.x} ${p1.y} L ${p2.x - radius} ${p1.y} ${arc} ${p2.x} ${
+          lineDef = `M ${p1.x} ${p1.y} L ${p2.x + radius} ${p1.y} ${arc2} ${p2.x} ${
             p1.y - offset
           } L ${p2.x} ${p2.y}`;
         }
@@ -789,7 +842,10 @@ const drawArrow = (
   svg
     .append('path')
     .attr('d', lineDef)
-    .attr('class', 'arrow arrow' + (colorClassNum! % THEME_COLOR_LIMIT));
+    .attr(
+      'class',
+      'arrow arrow' + calcColorIndex(colorClassNum!, THEME_COLOR_LIMIT, useColorTheme)
+    );
 };
 
 const drawArrows = (
@@ -811,21 +867,38 @@ const drawArrows = (
 const drawBranches = (
   svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
   branches: { name: string }[],
-  gitGraphConfig: GitGraphDiagramConfig
+  gitGraphConfig: GitGraphDiagramConfig,
+  id: string
 ) => {
+  const { look, theme, themeVariables } = getConfig();
+  const { dropShadow, THEME_COLOR_LIMIT: themeColorLimit } = themeVariables;
+  const useReduxGeometry = REDUX_GEOMETRY_THEMES.has(theme ?? '');
+  const useColorTheme = COLOR_THEMES.has(theme ?? '');
   const g = svg.append('g');
   branches.forEach((branch, index) => {
-    const adjustIndexForTheme = index % THEME_COLOR_LIMIT;
+    const adjustIndexForTheme = calcColorIndex(
+      index,
+      useReduxGeometry ? themeColorLimit : THEME_COLOR_LIMIT,
+      useColorTheme
+    );
 
     const pos = branchPos.get(branch.name)?.pos;
     if (pos === undefined) {
       throw new Error(`Position not found for branch ${branch.name}`);
     }
+    // LR spine Y: bkg rect center, dotted line, and commits all sit here.
+    // TB/BT use pos directly (their line attrs are overridden below).
+    const spineY =
+      dir === 'TB' || dir === 'BT'
+        ? pos
+        : useReduxGeometry
+          ? pos + REDUX_BRANCH_LABEL_PADDING_Y / 2 + 1
+          : pos - 2;
     const line = g.append('line');
     line.attr('x1', 0);
-    line.attr('y1', pos);
+    line.attr('y1', spineY);
     line.attr('x2', maxPos);
-    line.attr('y2', pos);
+    line.attr('y2', spineY);
     line.attr('class', 'branch branch' + adjustIndexForTheme);
 
     if (dir === 'TB') {
@@ -839,7 +912,7 @@ const drawBranches = (
       line.attr('y2', defaultPos);
       line.attr('x2', pos);
     }
-    lanes.push(pos);
+    lanes.push(spineY);
 
     const name = branch.name;
 
@@ -854,30 +927,58 @@ const drawBranches = (
 
     label.node()!.appendChild(labelElement);
     const bbox = labelElement.getBBox();
+    const borderRadius = useReduxGeometry ? 0 : 4;
+    const labelPaddingX = useReduxGeometry ? 16 : 0;
+    const labelPaddingY = useReduxGeometry ? REDUX_BRANCH_LABEL_PADDING_Y : 0;
+    if (look === 'neo') {
+      bkg.attr('data-look', `neo`);
+    }
+
     bkg
       .attr('class', 'branchLabelBkg label' + adjustIndexForTheme)
-      .attr('rx', 4)
-      .attr('ry', 4)
+      .attr(
+        'style',
+        look === 'neo' ? `filter:${useReduxGeometry ? `url(#${id}-drop-shadow)` : dropShadow}` : ''
+      )
+      .attr('rx', borderRadius)
+      .attr('ry', borderRadius)
       .attr('x', -bbox.width - 4 - (gitGraphConfig.rotateCommitLabel === true ? 30 : 0))
-      .attr('y', -bbox.height / 2 + 8)
-      .attr('width', bbox.width + 18)
-      .attr('height', bbox.height + 4);
+      .attr('y', -bbox.height / 2 + 10)
+      .attr('width', bbox.width + 18 + labelPaddingX)
+      .attr('height', bbox.height + 4 + labelPaddingY);
     label.attr(
       'transform',
       'translate(' +
-        (-bbox.width - 14 - (gitGraphConfig.rotateCommitLabel === true ? 30 : 0)) +
+        (-bbox.width -
+          14 -
+          (gitGraphConfig.rotateCommitLabel === true ? 30 : 0) +
+          labelPaddingX / 2) +
         ', ' +
-        (pos - bbox.height / 2 - 1) +
+        (spineY - bbox.height / 2 - 2) +
         ')'
     );
     if (dir === 'TB') {
       bkg.attr('x', pos - bbox.width / 2 - 10).attr('y', 0);
       label.attr('transform', 'translate(' + (pos - bbox.width / 2 - 5) + ', ' + 0 + ')');
+      if (useReduxGeometry) {
+        bkg.attr('transform', `translate(${-labelPaddingX / 2 - 3}, ${-labelPaddingY - 10})`);
+        label.attr(
+          'transform',
+          'translate(' + (pos - bbox.width / 2 - 5) + ', ' + (-labelPaddingY * 2 + 7) + ')'
+        );
+      }
     } else if (dir === 'BT') {
       bkg.attr('x', pos - bbox.width / 2 - 10).attr('y', maxPos);
       label.attr('transform', 'translate(' + (pos - bbox.width / 2 - 5) + ', ' + maxPos + ')');
+      if (useReduxGeometry) {
+        bkg.attr('transform', `translate(${-labelPaddingX / 2 - 3}, ${labelPaddingY + 10})`);
+        label.attr(
+          'transform',
+          'translate(' + (pos - bbox.width / 2 - 5) + ', ' + (maxPos + labelPaddingY * 2 + 4) + ')'
+        );
+      }
     } else {
-      bkg.attr('transform', 'translate(' + -19 + ', ' + (pos - bbox.height / 2) + ')');
+      bkg.attr('transform', 'translate(-19, ' + (spineY - 12 - labelPaddingY / 2) + ')');
     }
   });
 };
@@ -909,6 +1010,50 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
   const branches = db.getBranchesAsObjArray();
   dir = db.getDirection();
   const diagram = select(`[id="${id}"]`);
+
+  // Add linearGradient for neo look — render.ts does this for layout-based diagrams,
+  // but gitGraph uses its own draw function so we must define it here.
+  const { look, theme, themeVariables } = getConfig();
+  const { useGradient, gradientStart, gradientStop, filterColor } = themeVariables;
+  if (useGradient) {
+    const gradient = diagram
+      .append('defs')
+      .append('linearGradient')
+      .attr('id', id + '-gradient')
+      .attr('gradientUnits', 'objectBoundingBox')
+      .attr('x1', '0%')
+      .attr('y1', '0%')
+      .attr('x2', '100%')
+      .attr('y2', '0%');
+    gradient
+      .append('stop')
+      .attr('offset', '0%')
+      .attr('stop-color', gradientStart)
+      .attr('stop-opacity', 1);
+    gradient
+      .append('stop')
+      .attr('offset', '100%')
+      .attr('stop-color', gradientStop)
+      .attr('stop-opacity', 1);
+  }
+
+  // Add drop-shadow SVG filter for neo+redux look. Defined once on the root <svg>
+  // with a diagram-unique ID to avoid collisions when multiple diagrams share the page.
+  if (look === 'neo' && REDUX_GEOMETRY_THEMES.has(theme ?? '')) {
+    diagram
+      .append('defs')
+      .append('filter')
+      .attr('id', id + '-drop-shadow')
+      .attr('height', '130%')
+      .attr('width', '130%')
+      .append('feDropShadow')
+      .attr('dx', '4')
+      .attr('dy', '4')
+      .attr('stdDeviation', 0)
+      .attr('flood-opacity', '0.06')
+      .attr('flood-color', filterColor);
+  }
+
   let pos = 0;
 
   branches.forEach((branch, index) => {
@@ -927,7 +1072,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
 
   drawCommits(diagram, allCommitsDict, false, gitGraphConfig);
   if (gitGraphConfig.showBranches) {
-    drawBranches(diagram, branches, gitGraphConfig);
+    drawBranches(diagram, branches, gitGraphConfig, id);
   }
   drawArrows(diagram, allCommitsDict);
   drawCommits(diagram, allCommitsDict, true, gitGraphConfig);

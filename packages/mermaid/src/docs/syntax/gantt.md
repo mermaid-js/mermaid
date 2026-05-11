@@ -95,6 +95,23 @@ After processing the tags, the remaining metadata items are interpreted as follo
 Support for keyword `until` was added in (v10.9.0+). This can be used to define a task which is running until some other specific task or milestone starts.
 ```
 
+#### Duration format
+
+When specifying a `<length>`, use a number followed by one of these unit suffixes:
+
+| Unit         | Suffix | Example |
+| ------------ | ------ | ------- |
+| Milliseconds | `ms`   | `500ms` |
+| Seconds      | `s`    | `30s`   |
+| Minutes      | `m`    | `30m`   |
+| Hours        | `h`    | `4h`    |
+| Days         | `d`    | `3d`    |
+| Weeks        | `w`    | `2w`    |
+| Months       | `M`    | `1M`    |
+| Years        | `y`    | `1y`    |
+
+Decimal values are also supported (e.g., `1.5d`). Invalid duration tokens (e.g., `3dX`) will be ignored and the task will default to zero duration.
+
 For simplicity, the table does not show the use of multiple tasks listed with the `after` keyword. Here is an example of how to use it and how it's interpreted:
 
 ```mermaid-example

@@ -16,7 +16,7 @@ describe('info', () => {
   ])('should handle empty info', (context: string) => {
     const result = parse(context);
     expectNoErrorsOrAlternatives(result);
-    expect(result.value.$type).toBe(Info);
+    expect(result.value.$type).toBe(Info.$type);
   });
 
   it.each([
@@ -43,6 +43,6 @@ describe('info', () => {
   ])('should handle showInfo', (context: string) => {
     const result = parse(context);
     expectNoErrorsOrAlternatives(result);
-    expect(result.value.$type).toBe(Info);
+    expect(result.value.$type).toBe(Info.$type);
   });
 });

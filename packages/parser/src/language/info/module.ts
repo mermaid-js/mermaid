@@ -13,7 +13,10 @@ import {
 } from 'langium';
 
 import { CommonValueConverter } from '../common/index.js';
-import { InfoGeneratedModule, MermaidGeneratedSharedModule } from '../generated/module.js';
+import {
+  InfoGrammarGeneratedModule as InfoGeneratedModule,
+  MermaidGeneratedSharedModule,
+} from '../generated/module.js';
 import { InfoTokenBuilder } from './tokenBuilder.js';
 
 /**

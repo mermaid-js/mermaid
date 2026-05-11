@@ -323,9 +323,14 @@ function layoutArchitecture(
           selector: 'edge',
           style: {
             'curve-style': 'straight',
-            label: 'data(label)',
             'source-endpoint': 'data(sourceEndpoint)',
             'target-endpoint': 'data(targetEndpoint)',
+          },
+        },
+        {
+          selector: 'edge[label]',
+          style: {
+            label: 'data(label)',
           },
         },
         {
@@ -401,9 +406,17 @@ function layoutArchitecture(
     // Create the relative constraints for fcose by using an inverse of the spatial map and performing BFS on it
     const relativePlacementConstraint = getRelativeConstraints(spatialMaps, db);
 
+    const iconSize = db.getConfigField('iconSize');
+    const sameGroupIdealLength = db.getConfigField('idealEdgeLengthMultiplier') * iconSize;
+    const crossGroupIdealLength = 0.5 * iconSize;
+    const sameGroupElasticity = db.getConfigField('edgeElasticity');
+
     const layout = cy.layout({
       name: 'fcose',
       quality: 'proof',
+      randomize: db.getConfigField('randomize'),
+      nodeSeparation: db.getConfigField('nodeSeparation'),
+      numIter: db.getConfigField('numIter'),
       styleEnabled: false,
       animate: false,
       nodeDimensionsIncludeLabels: false,
@@ -413,18 +426,13 @@ function layoutArchitecture(
         const [nodeA, nodeB] = edge.connectedNodes();
         const { parent: parentA } = nodeData(nodeA);
         const { parent: parentB } = nodeData(nodeB);
-        const elasticity =
-          parentA === parentB
-            ? 1.5 * db.getConfigField('iconSize')
-            : 0.5 * db.getConfigField('iconSize');
-        return elasticity;
+        return parentA === parentB ? sameGroupIdealLength : crossGroupIdealLength;
       },
       edgeElasticity(edge: EdgeSingular) {
         const [nodeA, nodeB] = edge.connectedNodes();
         const { parent: parentA } = nodeData(nodeA);
         const { parent: parentB } = nodeData(nodeB);
-        const elasticity = parentA === parentB ? 0.45 : 0.001;
-        return elasticity;
+        return parentA === parentB ? sameGroupElasticity : 0.001;
       },
       alignmentConstraint,
       relativePlacementConstraint,
@@ -513,6 +521,7 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
   // TODO: Add title support for architecture diagrams
 
   const db = diagObj.db as ArchitectureDB;
+  db.setDiagramId(id);
 
   const services = db.getServices();
   const junctions = db.getJunctions();
@@ -531,13 +540,13 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
   const groupElem = svg.append('g');
   groupElem.attr('class', 'architecture-groups');
 
-  await drawServices(db, servicesElem, services);
-  drawJunctions(db, servicesElem, junctions);
+  await drawServices(db, servicesElem, services, id);
+  drawJunctions(db, servicesElem, junctions, id);
 
   const cy = await layoutArchitecture(services, junctions, groups, edges, db, ds);
 
-  await drawEdges(edgesElem, cy, db);
-  await drawGroups(groupElem, cy, db);
+  await drawEdges(edgesElem, cy, db, id);
+  await drawGroups(groupElem, cy, db, id);
   positionNodes(db, cy);
 
   setupGraphViewbox(undefined, svg, db.getConfigField('padding'), db.getConfigField('useMaxWidth'));

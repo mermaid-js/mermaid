@@ -42,7 +42,8 @@ const contentLoaded = async function () {
     pos = pos + 7;
     const graphBase64 = document.location.href.substr(pos);
     const graphObj = JSON.parse(b64ToUtf8(graphBase64));
-    if (graphObj.mermaid && graphObj.mermaid.theme === 'dark') {
+    const darkThemes = ['dark', 'neo-dark', 'redux-dark', 'redux-dark-color'];
+    if (graphObj.mermaid && darkThemes.includes(graphObj.mermaid.theme)) {
       document.body.style.background = '#3f3f3f';
     }
     console.log(graphObj);
