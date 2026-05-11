@@ -1,0 +1,44 @@
+name: Release
+
+on:
+  push:
+    tags: v10.9.*
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+permissions: # added using https://github.com/step-security/secure-repo
+  contents: read
+
+jobs:
+  release:
+    if: github.repository == 'mermaid-js/mermaid'
+    permissions:
+      contents: read
+      id-token: write # OpenID Connect token needed for provenance
+
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+        with:
+          node-version-file: '.node-version'
+          registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false # never use caching in release builds
+
+      - name: Install Packages
+        run: |
+          pnpm install --frozen-lockfile
+          # npm v11 is required for OIDC/provenance support
+          npm install -g npm@11
+
+      - name: Publish to NPM
+        working-directory: packages/mermaid
+        # using `npm` since we don't have any `pnpm` specific features in `packages/mermaid`
+        run: |
+          npm publish --tag backport
