@@ -254,7 +254,7 @@ over any diagram-specific settings.
 
 > `optional` **icons**: `IconsConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:232](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L232)
+Defined in: [packages/mermaid/src/config.type.ts:257](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L257)
 
 ---
 
