@@ -29,10 +29,13 @@ const MERMAID_CONFIG_SUBSCHEMA_KEYS = [
   'sankey',
   'block',
   'packet',
+  'treeView',
   'architecture',
+  'eventmodeling',
   'radar',
   'icons',
   'venn',
+  'cynefin',
 ] as const;
 
 /**

@@ -1,7 +1,8 @@
-import { it, describe, expect, vi } from 'vitest';
+import { it, describe, expect, vi, beforeEach, afterEach } from 'vitest';
 import cytoscape from 'cytoscape';
 import { parser } from './architectureParser.js';
 import { ArchitectureDB } from './architectureDb.js';
+import { setConfig, reset as resetConfig } from '../../config.js';
 describe('architecture diagrams', () => {
   let db: ArchitectureDB;
   beforeEach(() => {
@@ -105,6 +106,92 @@ describe('architecture diagrams', () => {
       } finally {
         warnSpy.mockRestore();
       }
+    });
+  });
+
+  describe('randomize config', () => {
+    it('should default randomize to false', () => {
+      expect(db.getConfigField('randomize')).toBe(false);
+    });
+
+    it('should parse a complex deeply-nested diagram with randomize defaulting to false', async () => {
+      const str = `architecture-beta
+    group sub1(cloud)[Subscription A]
+    group vnet1(cloud)[VNet A] in sub1
+    service vm1(server)[VM] in vnet1
+
+    group sub2(cloud)[Subscription B]
+    group shared(cloud)[Shared] in sub2
+    service reg(database)[Registry] in shared
+
+    group env(cloud)[Environment] in sub2
+    group vnet(cloud)[VNet] in env
+    group snet1(cloud)[App Subnet] in vnet
+    service nsg(server)[NSG] in snet1
+    service asp(server)[App Plan] in snet1
+    service web(server)[Web App] in snet1
+
+    group snet2(cloud)[PE Subnet] in vnet
+    service pe1(server)[PE Blob] in snet2
+    service pe2(server)[PE Bus] in snet2
+
+    service storage(disk)[Storage] in env
+    service container(disk)[Container] in env
+    service bus(server)[Service Bus] in env
+    service dns(server)[DNS Zone] in env
+
+    service client(internet)[Client]
+
+    reg:B --> T:web
+    nsg:R --> L:asp
+    asp:R --> L:web
+    web:R --> L:pe1
+    pe1:R --> L:storage
+    storage:B --> T:container
+    web:B --> T:pe2
+    pe2:R --> L:bus
+    vm1:R --> L:pe2`;
+      await expect(parser.parse(str)).resolves.not.toThrow();
+      expect(db.getConfigField('randomize')).toBe(false);
+      expect(db.getServices()).toHaveLength(12);
+      expect(db.getGroups()).toHaveLength(8);
+      expect(db.getEdges()).toHaveLength(9);
+    });
+  });
+
+  describe('fcose layout config', () => {
+    afterEach(() => {
+      resetConfig();
+    });
+
+    it('should default the fcose knobs to documented values', () => {
+      expect(db.getConfigField('nodeSeparation')).toBe(75);
+      expect(db.getConfigField('idealEdgeLengthMultiplier')).toBe(1.5);
+      expect(db.getConfigField('edgeElasticity')).toBe(0.45);
+      expect(db.getConfigField('numIter')).toBe(2500);
+    });
+
+    it('should round-trip user-supplied fcose knobs', () => {
+      setConfig({
+        architecture: {
+          nodeSeparation: 120,
+          idealEdgeLengthMultiplier: 2,
+          edgeElasticity: 0.6,
+          numIter: 5000,
+        },
+      });
+      expect(db.getConfigField('nodeSeparation')).toBe(120);
+      expect(db.getConfigField('idealEdgeLengthMultiplier')).toBe(2);
+      expect(db.getConfigField('edgeElasticity')).toBe(0.6);
+      expect(db.getConfigField('numIter')).toBe(5000);
+    });
+
+    it('should leave defaults intact when only one knob is set', () => {
+      setConfig({ architecture: { nodeSeparation: 200 } });
+      expect(db.getConfigField('nodeSeparation')).toBe(200);
+      expect(db.getConfigField('idealEdgeLengthMultiplier')).toBe(1.5);
+      expect(db.getConfigField('edgeElasticity')).toBe(0.45);
+      expect(db.getConfigField('numIter')).toBe(2500);
     });
   });
 

@@ -60,8 +60,9 @@ const getMaxChildSize = (block: Block) => {
     if (child.type === 'space') {
       continue;
     }
-    if (width > maxWidth) {
-      maxWidth = width / (child.widthInColumns ?? 1);
+    const normalizedWidth = width / (child.widthInColumns ?? 1);
+    if (normalizedWidth > maxWidth) {
+      maxWidth = normalizedWidth;
     }
     if (height > maxHeight) {
       maxHeight = height;

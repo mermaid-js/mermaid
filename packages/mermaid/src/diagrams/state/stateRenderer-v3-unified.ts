@@ -63,7 +63,12 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   data4Layout.nodeSpacing = conf?.nodeSpacing || 50;
   data4Layout.rankSpacing = conf?.rankSpacing || 50;
-  data4Layout.markers = ['barb'];
+  const config = getConfig();
+  if (config.look === 'neo') {
+    data4Layout.markers = ['barbNeo'];
+  } else {
+    data4Layout.markers = ['barb'];
+  }
   data4Layout.diagramId = id;
   // console.log('REF1:', data4Layout);
   await render(data4Layout, svg);

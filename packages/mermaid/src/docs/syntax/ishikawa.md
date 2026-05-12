@@ -1,4 +1,4 @@
-# Ishikawa diagram (v<MERMAID_RELEASE_VERSION>+)
+# Ishikawa diagram (v11.12.3+)
 
 Ishikawa diagrams are used to represent causes of a specific event (or a problem).
 They are also known as fishbone diagrams, herringbone diagrams or cause-and-effect diagrams.

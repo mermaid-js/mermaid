@@ -119,6 +119,7 @@ xychart
 | chartOrientation         | 'vertical' or 'horizontal'                                    |  'vertical'   |
 | plotReservedSpacePercent | Minimum space plots will take inside the chart                |      50       |
 | showDataLabel            | Should show the value corresponding to the bar within the bar |     false     |
+| showDataLabelOutsideBar  | If showing data label then show it outside the bar.           |     false     |
 
 ### AxisConfig
 
@@ -153,6 +154,7 @@ config:
 | ---------------- | --------------------------------------------------------- |
 | backgroundColor  | Background color of the whole chart                       |
 | titleColor       | Color of the Title text                                   |
+| dataLabelColor   | Color of the Data labels (if shown)                       |
 | xAxisLabelColor  | Color of the x-axis labels                                |
 | xAxisTitleColor  | Color of the x-axis title                                 |
 | xAxisTickColor   | Color of the x-axis tick                                  |
@@ -207,6 +209,66 @@ bar [20,30,25,35]
 bar [15,25,20,30]
 %% Red line
 line [5,15,25,35]
+```
+
+## Displaying individual values on a bar chart (v11.14.0+)
+
+To show the value corresponding to a bar specify `showDataLabel: true`.
+
+```mermaid-example
+---
+config:
+    xyChart:
+        showDataLabel: true
+---
+xychart
+    title "Genres in top 100 book survey of 2025"
+    x-axis [comedy, romance, mystery, crime, "non fiction", other]
+    y-axis "Number of Books" 0 --> 30
+    bar [12,2,20,25,17,24]
+```
+
+```mermaid
+---
+config:
+    xyChart:
+        showDataLabel: true
+---
+xychart
+    title "Genres in top 100 book survey of 2025"
+    x-axis [comedy, romance, mystery, crime, "non fiction", other]
+    y-axis "Number of Books" 0 --> 30
+    bar [12,2,20,25,17,24]
+```
+
+Labels are shown within the bar by default. To show the labels outside the bar, specify `showDataLabelOutsideBar: true`.
+
+```mermaid-example
+---
+config:
+    xyChart:
+        showDataLabel: true
+        showDataLabelOutsideBar: true
+---
+xychart
+    title "Genres in top 100 book survey of 2025"
+    x-axis [comedy, romance, mystery, crime, "non fiction", other]
+    y-axis "Number of Books" 0 --> 30
+    bar [12,2,20,25,17,24]
+```
+
+```mermaid
+---
+config:
+    xyChart:
+        showDataLabel: true
+        showDataLabelOutsideBar: true
+---
+xychart
+    title "Genres in top 100 book survey of 2025"
+    x-axis [comedy, romance, mystery, crime, "non fiction", other]
+    y-axis "Number of Books" 0 --> 30
+    bar [12,2,20,25,17,24]
 ```
 
 ## Example on config and theme

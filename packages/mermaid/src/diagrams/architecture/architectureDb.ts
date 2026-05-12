@@ -43,9 +43,18 @@ export class ArchitectureDB implements DiagramDB {
   private registeredIds: Record<string, 'node' | 'group'> = {};
   private dataStructures?: ArchitectureState['dataStructures'];
   private elements: Record<string, D3Element> = {};
+  private diagramId = '';
 
   constructor() {
     this.clear();
+  }
+
+  public setDiagramId(id: string): void {
+    this.diagramId = id;
+  }
+
+  public getDiagramId(): string {
+    return this.diagramId;
   }
 
   public clear(): void {
@@ -55,6 +64,7 @@ export class ArchitectureDB implements DiagramDB {
     this.registeredIds = {};
     this.dataStructures = undefined;
     this.elements = {};
+    this.diagramId = '';
     commonClear();
   }
 

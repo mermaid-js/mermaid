@@ -9,6 +9,7 @@ export interface EntityNode {
   cssStyles?: string[];
   cssCompiledStyles?: string[];
   labelType?: string;
+  colorIndex?: number;
 }
 
 export interface Attribute {

@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/syntax/venn.md](../../packages/mermaid/src/docs/syntax/venn.md).
 
-# Venn diagrams (v\<MERMAID_RELEASE_VERSION>+)
+# Venn diagrams (v11.12.3+)
 
 Venn diagrams show relationships between sets using overlapping circles.
 

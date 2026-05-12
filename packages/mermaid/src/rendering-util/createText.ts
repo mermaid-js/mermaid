@@ -84,19 +84,25 @@ async function addHtmlSpan(
  * @param textElement - The parent text element to append the tspan element.
  * @param lineIndex - The index of the current line in the structuredText array.
  * @param lineHeight - The line height value for the text.
+ * @param centerText - The flag to determine if the text should be centered.
  * @returns The created tspan element.
  */
 function createTspan(
   textElement: D3Selection<SVGTextElement>,
   lineIndex: number,
-  lineHeight: number
+  lineHeight: number,
+  centerText = false
 ) {
-  return textElement
+  const tspan = textElement
     .append('tspan')
     .attr('class', 'text-outer-tspan')
     .attr('x', 0)
     .attr('y', lineIndex * lineHeight - 0.1 + 'em')
     .attr('dy', lineHeight + 'em');
+  if (centerText) {
+    tspan.attr('text-anchor', 'middle');
+  }
+  return tspan;
 }
 
 function computeWidthOfText(
@@ -135,17 +141,22 @@ export function computeDimensionOfText(
  * @param g - The parent group element to append the formatted text.
  * @param structuredText - The structured text data to format.
  * @param addBackground - Whether to add a background to the text.
+ * @param centerText - The flag to determine if the text should be centered.
  */
 function createFormattedText(
   width: number,
   g: D3Selection<SVGGElement>,
   structuredText: MarkdownWord[][],
-  addBackground = false
+  addBackground = false,
+  centerText = false
 ) {
   const lineHeight = 1.1;
   const labelGroup = g.append('g');
   const bkg = labelGroup.insert('rect').attr('class', 'background').attr('style', 'stroke: none');
   const textElement = labelGroup.append('text').attr('y', '-10.1');
+  if (centerText) {
+    textElement.attr('text-anchor', 'middle');
+  }
   let lineIndex = 0;
   for (const line of structuredText) {
     /**
@@ -157,7 +168,7 @@ function createFormattedText(
     const linesUnderWidth = checkWidth(line) ? [line] : splitLineToFitWidth(line, checkWidth);
     /** Add each prepared line as a tspan to the parent node */
     for (const preparedLine of linesUnderWidth) {
-      const tspan = createTspan(textElement, lineIndex, lineHeight);
+      const tspan = createTspan(textElement, lineIndex, lineHeight, centerText);
       updateTextContentAndStyles(tspan, preparedLine);
       lineIndex++;
     }
@@ -334,7 +345,8 @@ export const createText = async (
       width,
       el,
       structuredText,
-      text ? addSvgBackground : false
+      text ? addSvgBackground : false,
+      !isNode
     );
     if (isNode) {
       if (/stroke:/.exec(style)) {
