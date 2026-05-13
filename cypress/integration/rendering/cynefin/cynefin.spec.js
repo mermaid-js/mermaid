@@ -205,4 +205,25 @@ describe('cynefin framework', () => {
       `
     );
   });
+
+  it('should render cynefin deterministically with an explicit seed override', () => {
+    // Exercises the cynefin.seed config knob added for #7727. The default
+    // helper-injected seed is 1; using a different value here proves the
+    // config plumbing reaches the boundary RNG.
+    imgSnapshotTest(
+      `cynefin-beta
+        title Seeded Boundaries
+
+        complex
+          "Probe"
+        complicated
+          "Analyse"
+        clear
+          "Categorise"
+        chaotic
+          "Act"
+      `,
+      { cynefin: { seed: 42 } }
+    );
+  });
 });

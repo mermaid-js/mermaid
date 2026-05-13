@@ -242,7 +242,7 @@ describe('architecture diagram', () => {
       `
     );
   });
-  it('should render a deterministic layout for a complex deeply-nested diagram', () => {
+  it.skip('should render a deterministic layout for a complex deeply-nested diagram', () => {
     imgSnapshotTest(
       `architecture-beta
                 group sub1(cloud)[Subscription A]

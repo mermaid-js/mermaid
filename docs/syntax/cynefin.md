@@ -216,13 +216,14 @@ cynefin-beta
 
 Cynefin diagrams accept the following configuration under the `cynefin` key in the mermaid config:
 
-| Option                   | Type    | Default | Description                                                                       |
-| ------------------------ | ------- | ------- | --------------------------------------------------------------------------------- |
-| `width`                  | number  | `800`   | Width of the diagram in pixels                                                    |
-| `height`                 | number  | `600`   | Height of the diagram in pixels                                                   |
-| `padding`                | number  | `40`    | Padding around the diagram                                                        |
-| `showDomainDescriptions` | boolean | `true`  | Show decision model and practice type subtitles per domain                        |
-| `boundaryAmplitude`      | number  | `8`     | Waviness amplitude of domain boundaries in pixels (set to `0` for straight lines) |
+| Option                   | Type    | Default | Description                                                                                                                                                                                                                  |
+| ------------------------ | ------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `width`                  | number  | `800`   | Width of the diagram in pixels                                                                                                                                                                                               |
+| `height`                 | number  | `600`   | Height of the diagram in pixels                                                                                                                                                                                              |
+| `padding`                | number  | `40`    | Padding around the diagram                                                                                                                                                                                                   |
+| `showDomainDescriptions` | boolean | `true`  | Show decision model and practice type subtitles per domain                                                                                                                                                                   |
+| `boundaryAmplitude`      | number  | `8`     | Waviness amplitude of domain boundaries in pixels (set to `0` for straight lines)                                                                                                                                            |
+| `seed`                   | number  | `0`     | Deterministic seed for boundary waviness. `0` (default) hashes the diagram's SVG id so each diagram looks unique. Set any non-zero number to lock the waviness across renders — required for stable visual regression tests. |
 
 Example:
 

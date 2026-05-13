@@ -6,6 +6,9 @@ import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { WardleyBuildResult, WardleyNode } from './wardleyBuilder.js';
 
+// Wardley DB does not sanitize text, so we can only use `.text()` for labels.
+/* eslint no-restricted-properties: ["error", {"property": "html"}] */
+
 const DEFAULT_STAGES = ['Genesis', 'Custom Built', 'Product', 'Commodity'];
 
 type WardleyText = d3.Selection<SVGTextElement, unknown, Element | null, unknown>;

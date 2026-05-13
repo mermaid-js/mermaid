@@ -186,7 +186,7 @@ mermaid.initialize({
 | ----------- | ------- | ------- | ---------------------------------------------------------------------- |
 | `randomize` | boolean | `false` | Whether to randomize initial node positions before running the layout. |
 
-### Layout tuning (v<MERMAID_RELEASE_VERSION>+)
+### Layout tuning (v11.15.0+)
 
 The following options pass through to the underlying [fcose](https://github.com/iVis-at-Bilkent/cytoscape.js-fcose) layout so you can adjust spacing and density without changing your diagram source:
 

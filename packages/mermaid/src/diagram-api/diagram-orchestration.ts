@@ -34,6 +34,10 @@ import { registerDiagram } from './diagramAPI.js';
 import { treemap } from '../diagrams/treemap/detector.js';
 import wardley from '../diagrams/wardley/wardleyDetector.js';
 import { cynefin } from '../diagrams/cynefin/cynefinDetector.js';
+import { railroad } from '../diagrams/railroad/railroadDetector.js';
+import { railroadEbnf } from '../diagrams/railroad/ebnfDetector.js';
+import { railroadAbnf } from '../diagrams/railroad/abnfDetector.js';
+import { railroadPeg } from '../diagrams/railroad/pegDetector.js';
 import '../type.d.ts';
 
 let hasLoadedDiagrams = false;
@@ -111,6 +115,10 @@ export const addDiagrams = () => {
     radar,
     ishikawa,
     treemap,
+    railroad,
+    railroadEbnf,
+    railroadAbnf,
+    railroadPeg,
     venn,
     wardley,
     cynefin
