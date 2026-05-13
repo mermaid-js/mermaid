@@ -156,14 +156,14 @@ title Sourcing Strategy
 
 anchor Customer [0.80, 0.95]
 component Custom App [0.45, 0.85] (build)
-component Off-the-shelf Tool [0.85, 0.65] (buy)
+component Off the shelf Tool [0.85, 0.65] (buy)
 component Managed Service [0.60, 0.40] (outsource)
 component Cloud Platform [0.95, 0.25] (market)
 
 Customer -> Custom App
-Custom App -> Off-the-shelf Tool
+Custom App -> Off the shelf Tool
 Custom App -> Managed Service
-Off-the-shelf Tool -> Cloud Platform
+Off the shelf Tool -> Cloud Platform
 ```
 
 ### Links and Dependencies
