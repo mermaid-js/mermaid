@@ -2625,6 +2625,14 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         minimum: 0
         maximum: 50
         default: 8
+      seed:
+        description: |
+          Deterministic seed for boundary waviness. When 0 (default) the seed is derived
+          from the diagram's SVG element id, which varies per render. Set any non-zero
+          number to produce identical boundaries on every render — required for visual
+          regression tests to be stable.
+        type: number
+        default: 0
 
   RailroadDiagramConfig:
     title: Railroad Diagram Config

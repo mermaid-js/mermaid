@@ -4,6 +4,7 @@ import type { ParserDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { sanitizeText } from '../common/common.js';
 import { populateCommonDb } from '../common/populateCommonDb.js';
+import { preprocessBoxDrawing, remapErrorLines } from './boxDrawingPreprocessor.js';
 import db from './db.js';
 import { resolveIcon } from './icons.js';
 import type { NodeType } from './types.js';
@@ -46,8 +47,16 @@ const populate = (ast: TreeView) => {
 
 export const parser: ParserDefinition = {
   parse: async (input: string): Promise<void> => {
-    const ast = await parse('treeView', input);
-    log.debug(ast);
-    populate(ast);
+    const { text, lineMap } = preprocessBoxDrawing(input);
+    try {
+      const ast = await parse('treeView', text);
+      log.debug(ast);
+      populate(ast);
+    } catch (error) {
+      if (lineMap.size > 0 && error instanceof Error) {
+        error.message = remapErrorLines(error.message, lineMap);
+      }
+      throw error;
+    }
   },
 };

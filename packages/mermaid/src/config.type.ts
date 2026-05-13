@@ -1876,6 +1876,14 @@ export interface CynefinDiagramConfig extends BaseDiagramConfig {
    * Waviness amplitude of domain boundaries (0 for straight).
    */
   boundaryAmplitude?: number;
+  /**
+   * Deterministic seed for boundary waviness. When 0 (default) the seed is derived
+   * from the diagram's SVG element id, which varies per render. Set any non-zero
+   * number to produce identical boundaries on every render — required for visual
+   * regression tests to be stable.
+   *
+   */
+  seed?: number;
 }
 /**
  * Configuration for Railroad (Syntax) Diagrams
