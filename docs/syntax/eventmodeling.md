@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/syntax/eventmodeling.md](../../packages/mermaid/src/docs/syntax/eventmodeling.md).
 
-# Event Modeling Diagram (v\<MERMAID_RELEASE_VERSION>+)
+# Event Modeling Diagram (v11.15.0+)
 
 ## Introduction
 

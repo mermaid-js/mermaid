@@ -23,6 +23,16 @@ describe('themeCSS balancing, it', () => {
   });
 });
 
+it('themeCSS - should work', () => {
+  const themeCSS = `.nodeLabel {
+          font-variant-caps: petite-caps;
+  }`;
+  imgSnapshotTest("flowchart TD; A['Hello World']", {
+    themeCSS,
+  });
+  cy.get('.nodeLabel').should('have.css', 'font-variant-caps', 'petite-caps');
+});
+
 // TODO: Delete/Rename this describe, keeping the inner contents.
 describe('Pie Chart', () => {
   // beforeEach(()=>{

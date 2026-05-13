@@ -31,6 +31,9 @@ export const mermaidUrl = (
   api: boolean
 ): string => {
   options.handDrawnSeed = 1;
+  // Make Cynefin boundary waviness deterministic. Tests can still override
+  // by passing { cynefin: { seed: N } } in their own options.
+  options.cynefin = { seed: 1, ...(options.cynefin ?? {}) };
   const codeObject: CodeObject = {
     code: graphStr,
     mermaid: options,
