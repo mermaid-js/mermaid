@@ -27,14 +27,11 @@ import vennDiagram from './examples/venn.js';
 import treeViewDiagram from './examples/tree-view.js';
 import wardleyDiagram from './examples/wardley.js';
 import cynefinDiagram from './examples/cynefin.js';
-<<<<<<< HEAD
 import railroadDiagram from './examples/railroad.js';
 import railroadEbnfDiagram from './examples/railroad-ebnf.js';
 import railroadAbnfDiagram from './examples/railroad-abnf.js';
 import railroadPegDiagram from './examples/railroad-peg.js';
-=======
 import ditaaDiagram from './examples/ditaa.js';
->>>>>>> 49563a814 (resolve CI issues)
 
 export const diagramData: DiagramMetadata[] = [
   flowChart,
@@ -65,12 +62,9 @@ export const diagramData: DiagramMetadata[] = [
   treeViewDiagram,
   wardleyDiagram,
   cynefinDiagram,
-<<<<<<< HEAD
   railroadDiagram,
   railroadEbnfDiagram,
   railroadAbnfDiagram,
   railroadPegDiagram,
-=======
   ditaaDiagram,
->>>>>>> 49563a814 (resolve CI issues)
 ];
