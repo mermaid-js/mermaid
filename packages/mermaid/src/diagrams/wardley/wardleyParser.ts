@@ -183,7 +183,7 @@ const populateDb = (ast: Wardley, db: WardleyDB) => {
     const annotation = link.linkLabel;
     const label = flowLabel ?? annotation;
 
-    db.addLink(link.from, link.to, isDashed, label, flow);
+    db.addLink(db.resolveNodeId(link.from), db.resolveNodeId(link.to), isDashed, label, flow);
   });
 
   // Add evolves (trends)

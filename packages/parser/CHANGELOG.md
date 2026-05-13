@@ -1,5 +1,19 @@
 # @mermaid-js/parser
 
+## 1.1.1
+
+### Patch Changes
+
+- [#7642](https://github.com/mermaid-js/mermaid/pull/7642) [`7a8fb85`](https://github.com/mermaid-js/mermaid/commit/7a8fb8532c57ecc55b3711454ab0e505a4291445) Thanks [@tractorjuice](https://github.com/tractorjuice)! - fix(wardley): allow hyphens in unquoted component names
+
+  Multi-word names containing hyphens — e.g. `real-time processing`, `end-user`, `on-call engineer` — now parse without quoting, bringing the grammar in line with the OnlineWardleyMaps (OWM) convention. `A->B` (no-space arrow) still tokenises correctly.
+
+- [#7658](https://github.com/mermaid-js/mermaid/pull/7658) [`675a64c`](https://github.com/mermaid-js/mermaid/commit/675a64ca0e3cde8728ca715991623c3fc055ce88) Thanks [@aloisklink](https://github.com/aloisklink)! - fix(parser): bundle langium/chevrotain
+
+  This should silence warnings about lodash-es 4.17.23, which chevrotain@11.1.1 is pinned to, but is not vulnerable to.
+
+  And this avoids warnings when langium v4 is installed on Node.JS v20.0.
+
 ## 1.1.0
 
 ### Minor Changes

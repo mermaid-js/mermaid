@@ -971,7 +971,7 @@ sequenceDiagram
     Bob-->>John: Jolly good!
 ```
 
-### Start and Increment values (v\<MERMAID_RELEASE_VERSION>+)
+### Start and Increment values (v11.15.0+)
 
 It is possible to specify a starting value and an increment value for automatic numbering. Both the starting value and increment value can include decimals up to the hundredths place.
 

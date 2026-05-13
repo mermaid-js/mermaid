@@ -224,4 +224,122 @@ deaccelerator "Legacy Data" [0.40, 0.35]`
     expect(data.accelerators[0]).toMatchObject({ name: 'Cloud Native', x: 85, y: 20 });
     expect(data.deaccelerators[0]).toMatchObject({ name: 'Legacy Data', x: 35, y: 40 });
   });
+
+  it('accepts hyphens in unquoted component names', async () => {
+    await parser.parse(
+      `wardley-beta
+component real-time processing [0.5, 0.5]
+component end-user [0.8, 0.9]`
+    );
+
+    const data = db.getWardleyData();
+    const realtime = data.nodes.find((n) => n.label === 'real-time processing');
+    const enduser = data.nodes.find((n) => n.label === 'end-user');
+    expect(realtime?.x).toBeCloseTo(50);
+    expect(realtime?.y).toBeCloseTo(50);
+    expect(enduser?.x).toBeCloseTo(90);
+    expect(enduser?.y).toBeCloseTo(80);
+  });
+
+  it('accepts hyphens in link endpoints', async () => {
+    await parser.parse(
+      `wardley-beta
+component real-time processing [0.5, 0.5]
+component end-user [0.8, 0.9]
+real-time processing -> end-user`
+    );
+
+    const data = db.getWardleyData();
+    expect(data.links).toHaveLength(1);
+    expect(data.links[0].source).toBe('real-time processing');
+    expect(data.links[0].target).toBe('end-user');
+  });
+
+  it('accepts hyphens in anchor names', async () => {
+    await parser.parse(
+      `wardley-beta
+anchor on-call engineer [0.9, 0.95]`
+    );
+
+    const data = db.getWardleyData();
+    const anchor = data.nodes.find((n) => n.label === 'on-call engineer');
+    expect(anchor?.className).toBe('anchor');
+    expect(anchor?.x).toBeCloseTo(95);
+    expect(anchor?.y).toBeCloseTo(90);
+  });
+
+  it('still tokenises A->B as an arrow (no-space regression)', async () => {
+    await parser.parse(
+      `wardley-beta
+component A [0.1, 0.1]
+component B [0.2, 0.2]
+A->B`
+    );
+
+    const data = db.getWardleyData();
+    expect(data.links).toHaveLength(1);
+    expect(data.links[0].source).toBe('A');
+    expect(data.links[0].target).toBe('B');
+  });
+
+  it('parses foo-bar->baz as link from foo-bar to baz', async () => {
+    await parser.parse(
+      `wardley-beta
+component foo-bar [0.3, 0.3]
+component baz [0.6, 0.6]
+foo-bar->baz`
+    );
+
+    const data = db.getWardleyData();
+    expect(data.links).toHaveLength(1);
+    expect(data.links[0].source).toBe('foo-bar');
+    expect(data.links[0].target).toBe('baz');
+  });
+
+  it('accepts hyphens in pipeline component names with label overrides', async () => {
+    await parser.parse(
+      `wardley-beta
+component Data Store [0.5, 0.5]
+pipeline Data Store {
+  component real-time queue [0.3] label [-40, 20]
+  component batch-loader [0.7]
+}`
+    );
+
+    const data = db.getWardleyData();
+    const realtime = data.nodes.find((n) => n.label === 'real-time queue');
+    const batch = data.nodes.find((n) => n.label === 'batch-loader');
+    expect(realtime?.className).toBe('pipeline-component');
+    expect(realtime?.labelOffsetX).toBe(-40);
+    expect(realtime?.labelOffsetY).toBe(20);
+    expect(realtime?.x).toBeCloseTo(30);
+    expect(batch?.className).toBe('pipeline-component');
+    expect(batch?.x).toBeCloseTo(70);
+  });
+
+  it('accepts consecutive hyphens inside a name', async () => {
+    await parser.parse(
+      `wardley-beta
+component foo--bar [0.3, 0.4]`
+    );
+
+    const data = db.getWardleyData();
+    const node = data.nodes.find((n) => n.label === 'foo--bar');
+    expect(node).toBeDefined();
+    expect(node?.x).toBeCloseTo(40);
+    expect(node?.y).toBeCloseTo(30);
+  });
+
+  it('accepts a trailing hyphen in a name', async () => {
+    await parser.parse(
+      `wardley-beta
+component foo- [0.2, 0.3]`
+    );
+
+    const data = db.getWardleyData();
+    const node = data.nodes.find((n) => n.label === 'foo-');
+    expect(node).toBeDefined();
+    expect(node?.x).toBeCloseTo(30);
+    expect(node?.y).toBeCloseTo(20);
+  });
 });
