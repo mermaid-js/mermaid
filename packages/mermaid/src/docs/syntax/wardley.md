@@ -70,9 +70,9 @@ This is **opposite** of typical (x, y) notation!
 wardley-beta
 title Coordinate Examples
 
-component Infrastructure [0.30, 0.20]  
-component Product [0.70, 0.60]         
-component User Need [0.90, 0.95]      
+component Infrastructure [0.30, 0.20]
+component Product [0.70, 0.60]
+component User Need [0.90, 0.95]
 ```
 
 ### Components and Anchors

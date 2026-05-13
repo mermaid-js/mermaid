@@ -79,13 +79,13 @@ Every Wardley diagram starts with the `wardley-beta` keyword:
 ```mermaid-example
 wardley-beta
 title Your Map Title
-size [width, height]
+size [1100, 600]
 ```
 
 ```mermaid
 wardley-beta
 title Your Map Title
-size [width, height]
+size [1100, 600]
 ```
 
 - `wardley-beta` - Required diagram type identifier (beta release)
@@ -105,31 +105,25 @@ This is **opposite** of typical (x, y) notation!
 wardley-beta
 title Coordinate Examples
 
-component Infrastructure [0.30, 0.20]  # Low visibility, low evolution
-component Product [0.70, 0.60]         # High visibility, mid evolution
-component User Need [0.90, 0.95]       # High visibility, high evolution
+component Infrastructure [0.30, 0.20]
+component Product [0.70, 0.60]
+component User Need [0.90, 0.95]
 ```
 
 ```mermaid
 wardley-beta
 title Coordinate Examples
 
-component Infrastructure [0.30, 0.20]  # Low visibility, low evolution
-component Product [0.70, 0.60]         # High visibility, mid evolution
-component User Need [0.90, 0.95]       # High visibility, high evolution
+component Infrastructure [0.30, 0.20]
+component Product [0.70, 0.60]
+component User Need [0.90, 0.95]
 ```
 
 ### Components and Anchors
 
 #### Components
 
-```mermaid-example
-component Name [visibility, evolution]
-component Name [visibility, evolution] label [offsetX, offsetY]
-component Name [visibility, evolution] (decorator)
-```
-
-```mermaid
+```text
 component Name [visibility, evolution]
 component Name [visibility, evolution] label [offsetX, offsetY]
 component Name [visibility, evolution] (decorator)
@@ -276,18 +270,9 @@ Off the shelf Tool -> Cloud Platform
 
 ### Links and Dependencies
 
-```mermaid-example
-A -> B              # Basic dependency
-A -> B; label       # With annotation
-A +> B              # Flow (with arrow marker)
-A +< B              # Reverse flow
-A +<> B             # Bi-directional flow
-A +'text'> B        # Labeled flow
-```
-
-```mermaid
-A -> B              # Basic dependency
-A -> B; label       # With annotation
+```text
+A --> B              # Basic dependency
+A --> B; label       # With annotation
 A +> B              # Flow (with arrow marker)
 A +< B              # Reverse flow
 A +<> B             # Bi-directional flow
@@ -366,11 +351,7 @@ evolve API 0.80
 
 Show predicted future position:
 
-```mermaid-example
-Component -.- (x, y)
-```
-
-```mermaid
+```text
 Component -.- (x, y)
 ```
 
@@ -613,11 +594,7 @@ deaccelerator "Legacy Constraints" [0.15, 0.75]
 
 Fine-tune label placement:
 
-```mermaid-example
-component Name [visibility, evolution] label [offsetX, offsetY]
-```
-
-```mermaid
+```text
 component Name [visibility, evolution] label [offsetX, offsetY]
 ```
 
