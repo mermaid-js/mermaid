@@ -549,6 +549,22 @@ mermaid.ganttConfig = {
 };
 ```
 
+### Font size precedence and proportional scaling
+
+Gantt uses an effective font size in this order:
+
+1. `gantt.fontSize`
+2. `themeVariables.fontSize`
+3. default Gantt font size
+
+The effective font size drives proportional scaling of default Gantt layout values (for example `barHeight`, `barGap`, and paddings).
+
+When both `themeVariables` and `gantt` config are present, explicit `gantt` values still have priority for each field:
+
+- `gantt.fontSize` takes precedence over `themeVariables.fontSize`
+- Explicitly set layout values such as `gantt.barHeight` are used as-is
+- Layout values left at defaults are scaled from the effective font size
+
 ### Possible configuration params:
 
 | Param           | Description                                                                                                                                | Default value |

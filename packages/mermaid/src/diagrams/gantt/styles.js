@@ -267,7 +267,6 @@ const getStyles = (options) =>
   }
 
   .vertText {
-    font-size: 15px;
     text-anchor: middle;
     fill: ${options.vertLineColor} !important;
   }
@@ -281,7 +280,7 @@ const getStyles = (options) =>
 
   .titleText {
     text-anchor: middle;
-    font-size: 18px;
+    font-size: 1.125em;
     fill: ${options.titleColor || options.textColor};
     font-family: ${options.fontFamily};
   }

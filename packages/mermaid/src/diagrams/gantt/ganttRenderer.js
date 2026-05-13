@@ -26,7 +26,7 @@ import {
   timeMonth,
 } from 'd3';
 import common from '../common/common.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { defaultConfig, getConfig } from '../../diagram-api/diagramAPI.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 dayjs.extend(dayjsDuration);
@@ -82,12 +82,71 @@ const getMaxIntersections = (tasks, orderOffset) => {
 
 let w;
 const MAX_TICK_COUNT = 10000;
+const DEFAULT_GANTT_FONT_SIZE = 11;
+
+const parseFontSize = (value) => {
+  if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
+    return value;
+  }
+
+  if (typeof value === 'string') {
+    const parsed = parseFloat(value);
+    if (Number.isFinite(parsed) && parsed > 0) {
+      return parsed;
+    }
+  }
+
+  return undefined;
+};
+
+const scaleIfDefault = (current, fallback, scaleFactor) =>
+  current === fallback ? fallback * scaleFactor : current;
+
+const resolveGanttConfig = (fullConfig) => {
+  const conf = fullConfig.gantt;
+  const defaultGanttConfig = defaultConfig.gantt;
+
+  const defaultFontSize = parseFontSize(defaultGanttConfig.fontSize) ?? DEFAULT_GANTT_FONT_SIZE;
+  const configuredFontSize = parseFontSize(conf.fontSize) ?? defaultFontSize;
+  const themeFontSize = parseFontSize(fullConfig.themeVariables?.fontSize);
+
+  // Preserve explicit Gantt font configuration, but let themeVariables.fontSize drive defaults.
+  const usesDefaultGanttFontSize = conf.fontSize === defaultGanttConfig.fontSize;
+  const fontSize = usesDefaultGanttFontSize && themeFontSize ? themeFontSize : configuredFontSize;
+  const scaleFactor = fontSize / defaultFontSize;
+
+  return {
+    ...conf,
+    fontSize,
+    sectionFontSize:
+      conf.sectionFontSize === defaultGanttConfig.sectionFontSize ? fontSize : conf.sectionFontSize,
+    titleTopMargin: scaleIfDefault(
+      conf.titleTopMargin,
+      defaultGanttConfig.titleTopMargin,
+      scaleFactor
+    ),
+    barHeight: scaleIfDefault(conf.barHeight, defaultGanttConfig.barHeight, scaleFactor),
+    barGap: scaleIfDefault(conf.barGap, defaultGanttConfig.barGap, scaleFactor),
+    topPadding: scaleIfDefault(conf.topPadding, defaultGanttConfig.topPadding, scaleFactor),
+    rightPadding: scaleIfDefault(conf.rightPadding, defaultGanttConfig.rightPadding, scaleFactor),
+    leftPadding: scaleIfDefault(conf.leftPadding, defaultGanttConfig.leftPadding, scaleFactor),
+    gridLineStartPadding: scaleIfDefault(
+      conf.gridLineStartPadding,
+      defaultGanttConfig.gridLineStartPadding,
+      scaleFactor
+    ),
+  };
+};
+
 export const draw = function (text, id, version, diagObj) {
-  const conf = getConfig().gantt;
+  const fullConfig = getConfig();
+  const conf = resolveGanttConfig(fullConfig);
+  const axisLabelFontSize = (10 / DEFAULT_GANTT_FONT_SIZE) * conf.fontSize;
+  const vertTaskLabelOffset = (60 / DEFAULT_GANTT_FONT_SIZE) * conf.fontSize;
 
   diagObj.db.setDiagramId(id);
 
-  const securityLevel = getConfig().securityLevel;
+  const securityLevel = fullConfig.securityLevel;
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
@@ -422,7 +481,11 @@ export const draw = function (text, id, version, diagObj) {
       .attr('y', function (d, i) {
         // Ignore the incoming i value and use our order instead
         if (d.vert) {
-          return conf.gridLineStartPadding + taskArray.length * (conf.barHeight + conf.barGap) + 60;
+          return (
+            conf.gridLineStartPadding +
+            taskArray.length * (conf.barHeight + conf.barGap) +
+            vertTaskLabelOffset
+          );
         }
         i = d.order;
         return i * theGap + conf.barHeight / 2 + (conf.fontSize / 2 - 2) + theTopPad;
@@ -711,13 +774,13 @@ export const draw = function (text, id, version, diagObj) {
     svg
       .append('g')
       .attr('class', 'grid')
-      .attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')')
+      .attr('transform', 'translate(' + theSidePad + ', ' + (h - conf.topPadding) + ')')
       .call(bottomXAxis)
       .selectAll('text')
       .style('text-anchor', 'middle')
       .attr('fill', '#000')
       .attr('stroke', 'none')
-      .attr('font-size', 10)
+      .attr('font-size', axisLabelFontSize)
       .attr('dy', '1em');
 
     if (diagObj.db.topAxisEnabled() || conf.topAxis) {
@@ -780,7 +843,7 @@ export const draw = function (text, id, version, diagObj) {
         .style('text-anchor', 'middle')
         .attr('fill', '#000')
         .attr('stroke', 'none')
-        .attr('font-size', 10);
+        .attr('font-size', axisLabelFontSize);
       // .attr('dy', '1em');
     }
   }
