@@ -298,6 +298,14 @@ const config: RequiredDeep<MermaidConfig> = {
   cynefin: {
     ...defaultConfigJson.cynefin,
   },
+  ditaa: {
+    useMaxWidth: true,
+    cellWidth: 12,
+    cellHeight: 20,
+    padding: 10,
+    boxRounding: 4,
+    diagramPadding: 8,
+  },
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

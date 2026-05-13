@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mermaid Ditaa Diagram Demo</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <style>
+      body {
+        font-family: 'Montserrat', sans-serif;
+        margin: 0 auto;
+        max-width: 960px;
+        padding: 20px;
+        background: #f9f9f9;
+        color: #333;
+      }
+      h1,
+      h2 {
+        color: #2c3e50;
+      }
+      .mermaid {
+        margin: 24px 0;
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 16px;
+      }
+      pre.mermaid {
+        white-space: pre;
+        font-family: monospace;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Ditaa Diagram Demo</h1>
+    <p>
+      This page demonstrates the <strong>ditaa</strong> diagram type in Mermaid. Ditaa converts
+      ASCII art into polished box-and-arrow diagrams.
+    </p>
+
+    <h2>1 — Single Box</h2>
+    <pre class="mermaid">
+ditaa
++----------+
+|          |
+|  Client  |
+|          |
++----------+
+    </pre>
+
+    <h2>2 — Two Boxes with Arrow</h2>
+    <pre class="mermaid">
+ditaa
++----------+         +------------+
+|          |         |            |
+|  Client  | ------> |  Webserver |
+|          |         |            |
++----------+         +------------+
+    </pre>
+
+    <h2>3 — Bidirectional Arrow</h2>
+    <pre class="mermaid">
+ditaa
++----------+         +------------+
+|          |  https  |            |
+|  Client  | <-----> |  Webserver |
+|          |         |            |
++----------+         +------------+
+    </pre>
+
+    <h2>4 — Full Architecture Example (from the feature request)</h2>
+    <pre class="mermaid">
+ditaa
++----------+         +------------+         +-----------+
+|          |  https  |            |  http   |   ocis    |
+|  Client  | <-----> |  Webserver | <-----> |   proxy   |
+|          |         |            |         |  service  |
++----------+         +------------+         +-----------+
+                     ^                      ^
+                     |                      |
+                     |                      |
+                 Termination             Unsecured
+    </pre>
+
+    <h2>5 — Dashed Box (database / external service)</h2>
+    <pre class="mermaid">
+ditaa
++----------+         +======+
+|          |         |      |
+|   App    | ------> |  DB  |
+|          |         |      |
++----------+         +======+
+    </pre>
+
+    <h2>6 — Pipeline</h2>
+    <pre class="mermaid">
+ditaa
++-------+    +--------+    +--------+    +--------+
+| Input | -> | Parse  | -> | Build  | -> | Deploy |
++-------+    +--------+    +--------+    +--------+
+    </pre>
+
+    <h2>7 — Vertical Flow</h2>
+    <pre class="mermaid">
+ditaa
++----------+
+|  Browser |
++----------+
+      |
+      v
++----------+
+|   Load   |
+| Balancer |
++----------+
+      |
+      v
++----------+
+|  App     |
+|  Server  |
++----------+
+    </pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({
+        theme: 'default',
+        logLevel: 1,
+        securityLevel: 'loose',
+        startOnLoad: true,
+      });
+    </script>
+  </body>
+</html>

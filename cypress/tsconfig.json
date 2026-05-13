@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
     "target": "es2020",
-    "lib": ["es2020", "dom"],
-    "types": ["cypress", "node", "@argos-ci/cypress/support"],
+    "lib": ["es2020", "dom", "dom.iterable"],
+    "types": ["cypress", "node"],
     "allowImportingTsExtensions": true,
-    "noEmit": true
+    "noEmit": true,
+    "skipLibCheck": true
   },
   "include": ["**/*.ts"]
 }
