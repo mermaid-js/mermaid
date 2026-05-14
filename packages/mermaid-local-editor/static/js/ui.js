@@ -60,6 +60,59 @@ export function setupUI({
     applyTransform(); // this will save the reset to storage.diagrams[storage.current].view
   };
 
+  document.getElementById('exportPng').onclick = () => {
+    if (!state.iframeRef) {
+      return;
+    }
+
+    const svg = state.iframeRef.contentDocument?.querySelector('svg');
+    if (!svg) {
+      return;
+    }
+
+    const svgClone = svg.cloneNode(true);
+
+    // Strip CSS transform — export the full diagram at native size, not what's on screen
+    svgClone.style.transform = '';
+    svgClone.style.transformOrigin = '';
+
+    // Prefer viewBox dimensions; fall back to SVG width/height attributes
+    const vb = svg.viewBox.baseVal;
+    const width = vb.width || parseFloat(svg.getAttribute('width')) || 800;
+    const height = vb.height || parseFloat(svg.getAttribute('height')) || 600;
+
+    svgClone.setAttribute('width', width);
+    svgClone.setAttribute('height', height);
+    if (!vb.width) {
+      svgClone.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    }
+
+    const svgData = new XMLSerializer().serializeToString(svgClone);
+    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(svgBlob);
+
+    const img = new Image();
+    img.onload = () => {
+      const scale = 2; // 2× for retina sharpness
+      const canvas = document.createElement('canvas');
+      canvas.width = width * scale;
+      canvas.height = height * scale;
+
+      const ctx = canvas.getContext('2d');
+      ctx.scale(scale, scale);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, width, height);
+      ctx.drawImage(img, 0, 0, width, height);
+      URL.revokeObjectURL(url);
+
+      const a = document.createElement('a');
+      a.download = `${storage.current}.png`;
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    };
+    img.src = url;
+  };
+
   document.getElementById('exportSvg').onclick = () => {
     if (!state.iframeRef) {
       return;

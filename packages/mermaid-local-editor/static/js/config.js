@@ -5,7 +5,7 @@ export const IS_E2E = navigator.webdriver || location.search.includes('graph=');
 export function initMermaid() {
   mermaid.initialize({
     startOnLoad: false,
-    theme: 'dark',
+    theme: 'default',
     securityLevel: 'strict',
     deterministicIds: true,
     fontFamily: 'Arial',
@@ -21,4 +21,5 @@ export let state = {
   panX: 0,
   panY: 0,
   iframeRef: null,
+  abortController: null,
 };

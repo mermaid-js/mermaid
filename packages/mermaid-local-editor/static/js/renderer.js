@@ -11,26 +11,37 @@ export async function renderDiagram({
   try {
     const { svg } = await mermaid.render(IS_E2E ? 'm1' : 'm' + Date.now(), srcValue);
 
+    // Tear down previous render and all its event listeners
     preview.replaceChildren();
+    state.iframeRef = null;
+    if (state.abortController) {
+      state.abortController.abort();
+    }
+    state.abortController = new AbortController();
+    const { signal } = state.abortController;
 
     if (IS_E2E) {
       const cleanSvg = DOMPurify.sanitize(svg, {
         ADD_TAGS: ['foreignObject'],
         ADD_ATTR: ['xmlns'],
       });
-
       const doc = new DOMParser().parseFromString(cleanSvg, 'image/svg+xml');
       preview.replaceChildren(doc.documentElement);
       return;
     }
 
+    // iframe renders the SVG but never receives pointer events
     const iframe = document.createElement('iframe');
     iframe.sandbox = 'allow-same-origin';
-    iframe.style.width = '100%';
-    iframe.style.height = '100%';
-    iframe.style.border = 'none';
+    iframe.style.cssText = 'width:100%;height:100%;border:none;pointer-events:none;display:block;';
 
+    // Overlay sits on top and captures all mouse/wheel events in parent coordinate space
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:absolute;inset:0;z-index:10;cursor:default;';
+
+    preview.style.position = 'relative';
     preview.appendChild(iframe);
+    preview.appendChild(overlay);
     state.iframeRef = iframe;
 
     const cleanSvg = DOMPurify.sanitize(svg, {
@@ -40,9 +51,7 @@ export async function renderDiagram({
 
     const parsed = new DOMParser().parseFromString(cleanSvg, 'image/svg+xml');
     const svgEl = parsed.documentElement;
-
     svgEl.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-
     svgEl.querySelectorAll('*').forEach((el) => {
       [...el.attributes].forEach((attr) => {
         if (attr.name.startsWith('on')) {
@@ -56,102 +65,108 @@ export async function renderDiagram({
     doc.close();
     doc.body.appendChild(doc.importNode(svgEl, true));
 
-    setTimeout(() => {
-      rebuildNavNodes();
-    }, 0);
+    setTimeout(() => rebuildNavNodes(), 0);
 
     requestAnimationFrame(() => {
-      const svgEl = iframe.contentDocument?.querySelector('svg');
-      if (!svgEl) {
-        return;
+      const s = iframe.contentDocument?.querySelector('svg');
+      if (s) {
+        s.style.transformOrigin = '0 0';
+        s.style.display = 'block';
       }
-
-      svgEl.style.transformOrigin = '0 0';
-      svgEl.style.display = 'block';
     });
 
     const style = doc.createElement('style');
     style.textContent = `
-      text { fill: #e6e6e6 !important; }
       .node rect, .node polygon, .node path {
         transition: fill 120ms ease, filter 120ms ease;
       }
-
       .node:hover rect,
       .node:hover polygon,
       .node:hover path {
-        fill: rgba(0, 170, 255, 0.25);
-        filter: drop-shadow(0 0 11px rgba(0, 170, 255, 0.6));
+        filter: drop-shadow(0 0 8px rgba(0, 120, 220, 0.55));
       }
-
       g.node.selected-node rect,
       g.node.selected-node polygon,
       g.node.selected-node path {
-        fill: rgba(0, 170, 255, 0.35) !important;
-        stroke: #00aaff !important;
-        stroke-width: 2px !important;
-        filter: drop-shadow(0 0 16px rgba(0, 170, 255, 1)) !important;
+        stroke: #0078dc !important;
+        stroke-width: 2.5px !important;
+        filter: drop-shadow(0 0 12px rgba(0, 120, 220, 0.8)) !important;
       }
-
-      g.node.selected-node text {
-        fill: #ffffff !important;
-        font-weight: bold !important;
-      }
-
       body {
         margin: 0;
         overflow: hidden;
+        background: #ffffff;
       }
     `;
     doc.head.appendChild(style);
 
-    iframe.addEventListener('load', () => {
-      window.focus();
-    });
+    // ── Zoom (cursor-anchored, multiplicative) ────────────────────────────────
+    overlay.addEventListener(
+      'wheel',
+      (e) => {
+        e.preventDefault();
+        const rect = overlay.getBoundingClientRect();
+        const cx = e.clientX - rect.left;
+        const cy = e.clientY - rect.top;
 
-    doc.onwheel = null;
-    doc.onmousedown = null;
-    doc.onmouseup = null;
-    doc.onmousemove = null;
+        const oldScale = state.scale;
+        const factor = e.deltaY < 0 ? 1.1 : 1 / 1.1;
+        state.scale = Math.min(Math.max(0.05, oldScale * factor), 20);
 
-    let isPanningLocal = false;
-    let startXLocal = 0;
-    let startYLocal = 0;
+        const ratio = state.scale / oldScale;
+        state.panX = cx - ratio * (cx - state.panX);
+        state.panY = cy - ratio * (cy - state.panY);
 
-    doc.onwheel = (e) => {
-      e.preventDefault();
-      state.scale += e.deltaY * -0.0015;
-      state.scale = Math.min(Math.max(0.2, state.scale), 4);
-      applyTransform();
-    };
+        applyTransform();
+      },
+      { passive: false, signal }
+    );
 
-    doc.onmousedown = (e) => {
-      isPanningLocal = true;
-      startXLocal = e.clientX - state.panX;
-      startYLocal = e.clientY - state.panY;
-      doc.body.style.cursor = 'grabbing';
-    };
+    // ── Panning ───────────────────────────────────────────────────────────────
+    let isPanning = false;
+    let startX = 0;
+    let startY = 0;
 
-    doc.onmouseup = () => {
-      isPanningLocal = false;
-      doc.body.style.cursor = 'default';
-    };
+    overlay.addEventListener(
+      'mousedown',
+      (e) => {
+        isPanning = true;
+        startX = e.clientX - state.panX;
+        startY = e.clientY - state.panY;
+        overlay.style.cursor = 'grabbing';
+      },
+      { signal }
+    );
 
-    doc.onmousemove = (e) => {
-      if (!isPanningLocal) {
-        return;
-      }
-      state.panX = e.clientX - startXLocal;
-      state.panY = e.clientY - startYLocal;
-      applyTransform();
-    };
+    document.addEventListener(
+      'mouseup',
+      () => {
+        if (!isPanning) {
+          return;
+        }
+        isPanning = false;
+        overlay.style.cursor = 'default';
+      },
+      { signal }
+    );
+
+    document.addEventListener(
+      'mousemove',
+      (e) => {
+        if (!isPanning) {
+          return;
+        }
+        state.panX = e.clientX - startX;
+        state.panY = e.clientY - startY;
+        applyTransform();
+      },
+      { signal }
+    );
   } catch (e) {
     preview.replaceChildren();
-
     const pre = document.createElement('pre');
     pre.style.color = '#ff6b6b';
     pre.textContent = e.message;
-
     preview.appendChild(pre);
   }
 }

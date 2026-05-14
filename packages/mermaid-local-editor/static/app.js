@@ -55,8 +55,8 @@ function applyTransform() {
     return;
   }
 
-  state.panY = Math.max(-20000, Math.min(20000, state.panY));
-  state.panX = Math.max(-20000, Math.min(20000, state.panX));
+  state.panY = Math.max(-50000, Math.min(50000, state.panY));
+  state.panX = Math.max(-50000, Math.min(50000, state.panX));
 
   svg.style.transform = `translate(${state.panX}px, ${state.panY}px) scale(${state.scale})`;
 
