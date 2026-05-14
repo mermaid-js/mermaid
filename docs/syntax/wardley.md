@@ -271,8 +271,8 @@ Off the shelf Tool -> Cloud Platform
 ### Links and Dependencies
 
 ```text
-A --> B              # Basic dependency
-A --> B; label       # With annotation
+A -> B              # Basic dependency
+A -> B; label       # With annotation
 A +> B              # Flow (with arrow marker)
 A +< B              # Reverse flow
 A +<> B             # Bi-directional flow
