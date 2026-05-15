@@ -62,6 +62,7 @@ import { erBox } from './shapes/erBox.js';
 import { classBox } from './shapes/classBox.js';
 import { requirementBox } from './shapes/requirementBox.js';
 import { kanbanItem } from './shapes/kanbanItem.js';
+import { octagon } from './shapes/octagon.js';
 import { bang } from './shapes/bang.js';
 import { cloud } from './shapes/cloud.js';
 import { defaultMindmapNode } from './shapes/defaultMindmapNode.js';
@@ -510,6 +511,9 @@ const generateShapeMap = () => {
     defaultMindmapNode,
     // class diagram
     classBox,
+
+    // C4 diagram
+    octagon,
 
     // er diagram
     erBox,

@@ -161,8 +161,47 @@ class Theme {
 
     /* Sequence Diagram variables */
 
+    this.c4NodeTextColor = this.c4NodeTextColor || this.primaryTextColor;
     this.personBorder = this.personBorder || this.primaryBorderColor;
     this.personBkg = this.personBkg || this.mainBkg;
+    this.personExtBorder = this.personExtBorder || this.primaryBorderColor;
+    this.personExtBkg = this.personExtBkg || this.mainBkg;
+    this.systemBorder = this.systemBorder || this.primaryBorderColor;
+    this.systemBkg = this.systemBkg || this.mainBkg;
+    this.systemDbBorder = this.systemDbBorder || this.primaryBorderColor;
+    this.systemDbBkg = this.systemDbBkg || this.mainBkg;
+    this.systemQueueBorder = this.systemQueueBorder || this.primaryBorderColor;
+    this.systemQueueBkg = this.systemQueueBkg || this.mainBkg;
+    this.systemExtBorder = this.systemExtBorder || this.primaryBorderColor;
+    this.systemExtBkg = this.systemExtBkg || this.mainBkg;
+    this.systemExtDbBorder = this.systemExtDbBorder || this.primaryBorderColor;
+    this.systemExtDbBkg = this.systemExtDbBkg || this.mainBkg;
+    this.systemExtQueueBorder = this.systemExtQueueBorder || this.primaryBorderColor;
+    this.systemExtQueueBkg = this.systemExtQueueBkg || this.mainBkg;
+    this.containerBorder = this.containerBorder || this.primaryBorderColor;
+    this.containerBkg = this.containerBkg || this.mainBkg;
+    this.containerDbBorder = this.containerDbBorder || this.primaryBorderColor;
+    this.containerDbBkg = this.containerDbBkg || this.mainBkg;
+    this.containerQueueBorder = this.containerQueueBorder || this.primaryBorderColor;
+    this.containerQueueBkg = this.containerQueueBkg || this.mainBkg;
+    this.containerExtBorder = this.containerExtBorder || this.primaryBorderColor;
+    this.containerExtBkg = this.containerExtBkg || this.mainBkg;
+    this.containerExtDbBorder = this.containerExtDbBorder || this.primaryBorderColor;
+    this.containerExtDbBkg = this.containerExtDbBkg || this.mainBkg;
+    this.containerExtQueueBorder = this.containerExtQueueBorder || this.primaryBorderColor;
+    this.containerExtQueueBkg = this.containerExtQueueBkg || this.mainBkg;
+    this.componentBorder = this.componentBorder || this.primaryBorderColor;
+    this.componentBkg = this.componentBkg || this.mainBkg;
+    this.componentDbBorder = this.componentDbBorder || this.primaryBorderColor;
+    this.componentDbBkg = this.componentDbBkg || this.mainBkg;
+    this.componentQueueBorder = this.componentQueueBorder || this.primaryBorderColor;
+    this.componentQueueBkg = this.componentQueueBkg || this.mainBkg;
+    this.componentExtBorder = this.componentExtBorder || this.primaryBorderColor;
+    this.componentExtBkg = this.componentExtBkg || this.mainBkg;
+    this.componentExtDbBorder = this.componentExtDbBorder || this.primaryBorderColor;
+    this.componentExtDbBkg = this.componentExtDbBkg || this.mainBkg;
+    this.componentExtQueueBorder = this.componentExtQueueBorder || this.primaryBorderColor;
+    this.componentExtQueueBkg = this.componentExtQueueBkg || this.mainBkg;
 
     /* state colors */
     this.transitionColor = this.transitionColor || this.lineColor;

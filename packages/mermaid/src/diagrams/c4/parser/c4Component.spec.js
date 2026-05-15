@@ -1,4 +1,4 @@
-import c4Db from '../c4Db.js';
+import { C4DB } from '../c4Db.js';
 import c4 from './c4Diagram.jison';
 import { setConfig } from '../../../config.js';
 
@@ -15,7 +15,7 @@ describe.each([
   ['ComponentQueue_Ext', 'external_component_queue'],
 ])('parsing a C4 %s', function (macroName, elementName) {
   beforeEach(function () {
-    c4.parser.yy = c4Db;
+    c4.parser.yy = new C4DB();
     c4.parser.yy.clear();
   });
 
@@ -26,24 +26,16 @@ ${macroName}(ComponentAA, "Internet Banking Component", "Technology", "Allows cu
 
     const yy = c4.parser.yy;
 
-    const shapes = yy.getC4ShapeArray();
-    expect(shapes.length).toBe(1);
-    const onlyShape = shapes[0];
+    const nodes = yy.getNodes();
+    expect(nodes.size).toBe(1);
+    const node = nodes.get('ComponentAA');
 
-    expect(onlyShape).toMatchObject({
+    expect(node).toMatchObject({
       alias: 'ComponentAA',
-      descr: {
-        text: 'Allows customers to view information about their bank accounts, and make payments.',
-      },
-      label: {
-        text: 'Internet Banking Component',
-      },
-      techn: {
-        text: 'Technology',
-      },
-      typeC4Shape: {
-        text: elementName,
-      },
+      descr: 'Allows customers to view information about their bank accounts, and make payments.',
+      label: 'Internet Banking Component',
+      techn: 'Technology',
+      type: elementName,
     });
   });
 

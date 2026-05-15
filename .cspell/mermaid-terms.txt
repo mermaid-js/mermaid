@@ -1,6 +1,8 @@
 Adamiecki
 arrowend
 Bendpoints
+bigbank
+bigbankdb
 bmatrix
 braintree
 catmull
@@ -24,6 +26,7 @@ kanban
 marginx
 marginy
 Markdownish
+mbsfacade
 mermaidchart
 mermaidjs
 mindmap

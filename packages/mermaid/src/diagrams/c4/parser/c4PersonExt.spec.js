@@ -1,4 +1,4 @@
-import c4Db from '../c4Db.js';
+import { C4DB } from '../c4Db.js';
 import c4 from './c4Diagram.jison';
 import { setConfig } from '../../../config.js';
 
@@ -8,7 +8,7 @@ setConfig({
 
 describe('parsing a C4 Person_Ext', function () {
   beforeEach(function () {
-    c4.parser.yy = c4Db;
+    c4.parser.yy = new C4DB();
     c4.parser.yy.clear();
   });
 
@@ -19,27 +19,21 @@ Person_Ext(customerA, "Banking Customer A", "A customer of the bank, with person
 
     const yy = c4.parser.yy;
 
-    const shapes = yy.getC4ShapeArray();
-    expect(shapes.length).toBe(1);
-    const onlyShape = shapes[0];
+    const nodes = yy.getNodes();
+    expect(nodes.size).toBe(1);
+    const node = nodes.get('customerA');
 
-    expect(onlyShape).toEqual({
+    expect(node).toEqual({
       alias: 'customerA',
-      descr: {
-        text: 'A customer of the bank, with personal bank accounts.',
-      },
-      label: {
-        text: 'Banking Customer A',
-      },
-      // TODO: Why are link, sprite, and tags undefined instead of not appearing at all?
-      //       Compare to Person where they don't show up.
-      link: undefined,
-      sprite: undefined,
-      tags: undefined,
-      parentBoundary: 'global',
-      typeC4Shape: {
-        text: 'external_person',
-      },
+      classes: ['default'],
+      cssStyles: [],
+      isBoundary: false,
+      descr: 'A customer of the bank, with personal bank accounts.',
+      label: 'Banking Customer A',
+      link: '',
+      shape: 'rect',
+      parent: 'global',
+      type: 'external_person',
       wrap: false,
     });
   });
@@ -48,7 +42,7 @@ Person_Ext(customerA, "Banking Customer A", "A customer of the bank, with person
     c4.parser.parse(`C4Context
 Person_Ext(customerA, "Banking Customer A")`);
 
-    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+    expect(c4.parser.yy.getNodes().get('customerA')).toMatchObject({
       alias: 'customerA',
     });
   });
@@ -57,10 +51,8 @@ Person_Ext(customerA, "Banking Customer A")`);
     c4.parser.parse(`C4Context
 Person_Ext(customerA, "Banking Customer A")`);
 
-    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
-      label: {
-        text: 'Banking Customer A',
-      },
+    expect(c4.parser.yy.getNodes().get('customerA')).toMatchObject({
+      label: 'Banking Customer A',
     });
   });
 
@@ -68,10 +60,8 @@ Person_Ext(customerA, "Banking Customer A")`);
     c4.parser.parse(`C4Context
 Person_Ext(customerA, "", "A customer of the bank, with personal bank accounts.")`);
 
-    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
-      descr: {
-        text: 'A customer of the bank, with personal bank accounts.',
-      },
+    expect(c4.parser.yy.getNodes().get('customerA')).toMatchObject({
+      descr: 'A customer of the bank, with personal bank accounts.',
     });
   });
 
@@ -79,11 +69,9 @@ Person_Ext(customerA, "", "A customer of the bank, with personal bank accounts."
     c4.parser.parse(`C4Context
 Person_Ext(customerA, $sprite="users")`);
 
-    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+    expect(c4.parser.yy.getNodes().get('customerA')).toMatchObject({
       label: {
-        text: {
-          sprite: 'users',
-        },
+        sprite: 'users',
       },
     });
   });
@@ -92,11 +80,9 @@ Person_Ext(customerA, $sprite="users")`);
     c4.parser.parse(`C4Context
 Person_Ext(customerA, $link="https://github.com/mermaidjs")`);
 
-    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+    expect(c4.parser.yy.getNodes().get('customerA')).toMatchObject({
       label: {
-        text: {
-          link: 'https://github.com/mermaidjs',
-        },
+        link: 'https://github.com/mermaidjs',
       },
     });
   });
@@ -105,11 +91,9 @@ Person_Ext(customerA, $link="https://github.com/mermaidjs")`);
     c4.parser.parse(`C4Context
 Person_Ext(customerA, $tags="tag1,tag2")`);
 
-    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+    expect(c4.parser.yy.getNodes().get('customerA')).toMatchObject({
       label: {
-        text: {
-          tags: 'tag1,tag2',
-        },
+        tags: 'tag1,tag2',
       },
     });
   });

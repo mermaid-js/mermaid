@@ -1,4 +1,4 @@
-import c4Db from '../c4Db.js';
+import { C4DB } from '../c4Db.js';
 import c4 from './c4Diagram.jison';
 import { setConfig } from '../../../config.js';
 
@@ -8,7 +8,7 @@ setConfig({
 
 describe('parsing a C4 Person', function () {
   beforeEach(function () {
-    c4.parser.yy = c4Db;
+    c4.parser.yy = new C4DB();
     c4.parser.yy.clear();
   });
 
@@ -19,22 +19,21 @@ Person(customerA, "Banking Customer A", "A customer of the bank, with personal b
 
     const yy = c4.parser.yy;
 
-    const shapes = yy.getC4ShapeArray();
-    expect(shapes.length).toBe(1);
-    const onlyShape = shapes[0];
+    const nodes = yy.getNodes();
+    expect(nodes.size).toBe(1);
+    const node = nodes.get('customerA');
 
-    expect(onlyShape).toEqual({
+    expect(node).toEqual({
       alias: 'customerA',
-      descr: {
-        text: 'A customer of the bank, with personal bank accounts.',
-      },
-      label: {
-        text: 'Banking Customer A',
-      },
-      parentBoundary: 'global',
-      typeC4Shape: {
-        text: 'person',
-      },
+      classes: ['default'],
+      cssStyles: [],
+      isBoundary: false,
+      link: '',
+      shape: 'rect',
+      descr: 'A customer of the bank, with personal bank accounts.',
+      label: 'Banking Customer A',
+      parent: 'global',
+      type: 'person',
       wrap: false,
     });
   });
@@ -43,7 +42,7 @@ Person(customerA, "Banking Customer A", "A customer of the bank, with personal b
     c4.parser.parse(`C4Context
 Person(customerA, "Banking Customer A")`);
 
-    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+    expect(c4.parser.yy.getNodes().get('customerA')).toMatchObject({
       alias: 'customerA',
     });
   });
@@ -52,10 +51,8 @@ Person(customerA, "Banking Customer A")`);
     c4.parser.parse(`C4Context
 Person(customerA, "Banking Customer A")`);
 
-    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
-      label: {
-        text: 'Banking Customer A',
-      },
+    expect(c4.parser.yy.getNodes().get('customerA')).toMatchObject({
+      label: 'Banking Customer A',
     });
   });
 
@@ -63,10 +60,8 @@ Person(customerA, "Banking Customer A")`);
     c4.parser.parse(`C4Context
 Person(customerA, "", "A customer of the bank, with personal bank accounts.")`);
 
-    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
-      descr: {
-        text: 'A customer of the bank, with personal bank accounts.',
-      },
+    expect(c4.parser.yy.getNodes().get('customerA')).toMatchObject({
+      descr: 'A customer of the bank, with personal bank accounts.',
     });
   });
 
@@ -74,11 +69,9 @@ Person(customerA, "", "A customer of the bank, with personal bank accounts.")`);
     c4.parser.parse(`C4Context
 Person(customerA, $sprite="users")`);
 
-    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+    expect(c4.parser.yy.getNodes().get('customerA')).toMatchObject({
       label: {
-        text: {
-          sprite: 'users',
-        },
+        sprite: 'users',
       },
     });
   });
@@ -87,24 +80,20 @@ Person(customerA, $sprite="users")`);
     c4.parser.parse(`C4Context
 Person(customerA, $link="https://github.com/mermaidjs")`);
 
-    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+    expect(c4.parser.yy.getNodes().get('customerA')).toMatchObject({
       label: {
-        text: {
-          link: 'https://github.com/mermaidjs',
-        },
+        link: 'https://github.com/mermaidjs',
       },
     });
   });
 
   it('should parse tags', function () {
     c4.parser.parse(`C4Context
-Person(customerA, $tags="tag1,tag2")`);
+Person(customerA, $tags="tag1+tag2")`);
 
-    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+    expect(c4.parser.yy.getNodes().get('customerA')).toMatchObject({
       label: {
-        text: {
-          tags: 'tag1,tag2',
-        },
+        tags: 'tag1+tag2',
       },
     });
   });
