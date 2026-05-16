@@ -417,9 +417,8 @@ Let see an example:
 
 You can add clickable links to commits, branches, and tags. This allows you to navigate to external URLs when clicking on the corresponding element in the diagram.
 
-```note
-This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
-```
+> **Note**
+> This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
 
 Usage:
 
@@ -436,6 +435,24 @@ Links are opened in the same browser tab/window by default. It is possible to ch
 Example:
 
 ```mermaid-example
+gitGraph
+   commit id: "ONE"
+   commit id: "TWO" type: REVERSE
+   commit id: "THREE" type: HIGHLIGHT tag: "v1.0"
+   branch develop
+   commit id: "FOUR"
+   checkout main
+   merge develop id: "FIVE"
+
+   click commit "ONE" "https://github.com/mermaid-js/mermaid" "This is a link"
+   click commit "TWO" "https://www.wikipedia.org" "Open this in a new tab" _blank
+   click commit "THREE" "https://mermaid.js.org" "HIGHLIGHT type"
+   click commit "FIVE" "https://github.com/mermaid-js/mermaid/pulls" "MERGE type"
+   click branch "develop" "https://example.org"
+   click tag "v1.0" "https://github.com/mermaid-js/mermaid/releases" "Open this in a new tab" _blank
+```
+
+```mermaid
 gitGraph
    commit id: "ONE"
    commit id: "TWO" type: REVERSE
