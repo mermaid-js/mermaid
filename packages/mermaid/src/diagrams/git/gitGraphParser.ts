@@ -8,6 +8,7 @@ import { commitType } from './gitGraphTypes.js';
 import type {
   CheckoutAst,
   CherryPickingAst,
+  ClickAst,
   MergeAst,
   CommitAst,
   BranchAst,
@@ -37,6 +38,7 @@ const parseStatement = (statement: any, db: GitGraphDBParseProvider) => {
     Merge: (stmt) => db.merge(parseMerge(stmt)),
     Checkout: (stmt) => db.checkout(parseCheckout(stmt)),
     CherryPicking: (stmt) => db.cherryPick(parseCherryPicking(stmt)),
+    Click: (stmt) => parseClick(stmt, db),
   };
 
   const parser = parsers[statement.$type];
@@ -45,6 +47,10 @@ const parseStatement = (statement: any, db: GitGraphDBParseProvider) => {
   } else {
     log.error(`Unknown statement type: ${statement.$type}`);
   }
+};
+
+const parseClick = (click: ClickAst, db: GitGraphDBParseProvider) => {
+  db.setLink?.(click.id, click.href ?? '', click.type as any, click.tooltip, click.target as any);
 };
 
 const parseCommit = (commit: CommitAst): CommitDB => {
@@ -83,7 +89,6 @@ const parseCheckout = (checkout: CheckoutAst): string => {
 const parseCherryPicking = (cherryPicking: CherryPickingAst): CherryPickDB => {
   const cherryPickDB: CherryPickDB = {
     id: cherryPicking.id,
-    targetId: '',
     tags: cherryPicking.tags?.length === 0 ? undefined : cherryPicking.tags,
     parent: cherryPicking.parent,
   };
@@ -109,6 +114,7 @@ if (import.meta.vitest) {
     merge: vi.fn(),
     cherryPick: vi.fn(),
     checkout: vi.fn(),
+    setLink: vi.fn(),
   };
 
   describe('GitGraph Parser', () => {
@@ -165,16 +171,34 @@ if (import.meta.vitest) {
       const cherryPick = {
         $type: 'CherryPicking',
         id: '1',
-        tags: ['tag1', 'tag2'],
         parent: '2',
+        tags: ['tag1', 'tag2'],
       };
       parseStatement(cherryPick, mockDB);
       expect(mockDB.cherryPick).toHaveBeenCalledWith({
         id: '1',
-        targetId: '',
-        parent: '2',
         tags: ['tag1', 'tag2'],
+        parent: '2',
       });
+    });
+
+    it('should parse a click statement', () => {
+      const click = {
+        $type: 'Click',
+        type: 'commit',
+        id: 'c1',
+        href: 'https://example.com',
+        tooltip: 'Tooltip',
+        target: '_blank',
+      };
+      parseStatement(click, mockDB);
+      expect(mockDB.setLink).toHaveBeenCalledWith(
+        'c1',
+        'https://example.com',
+        'commit',
+        'Tooltip',
+        '_blank'
+      );
     });
 
     it('should parse a langium generated gitGraph ast', () => {
