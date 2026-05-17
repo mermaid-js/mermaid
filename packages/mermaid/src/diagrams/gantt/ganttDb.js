@@ -40,7 +40,7 @@ let inclusiveEndDates = false;
 let topAxis = false;
 let weekday = 'sunday';
 let weekend = 'saturday';
-let workdayHours = 24;
+let workdayHours;
 
 // The serial order of the task in the script
 let lastOrder = 0;
@@ -69,7 +69,7 @@ export const clear = function () {
   commonClear();
   weekday = 'sunday';
   weekend = 'saturday';
-  workdayHours = 24;
+  workdayHours = undefined;
 };
 
 export const setDiagramId = function (id) {
@@ -213,11 +213,16 @@ export const setWorkdayHours = function (hours) {
 };
 
 export const getWorkdayHours = function () {
-  const configuredHours = getConfig()?.workdayhours;
+  if (Number.isFinite(workdayHours) && workdayHours > 0) {
+    return workdayHours;
+  }
+
+  const configuredHours = getConfig()?.gantt?.workdayhours;
   if (Number.isFinite(configuredHours) && configuredHours > 0) {
     return configuredHours;
   }
-  return workdayHours;
+
+  return 24;
 };
 
 /**
