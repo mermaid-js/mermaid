@@ -518,7 +518,6 @@ const drawCommitTags = (
       yOffset += 20;
     }
 
-
     for (const { tag, hole, rect, yOffset } of tagElements) {
       const h2 = maxTagBboxHeight / 2;
       const ly = commitPosition.y - 19.2 - yOffset;
