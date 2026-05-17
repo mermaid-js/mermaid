@@ -207,25 +207,25 @@ const calculateCommitPosition = (commit: Commit): number => {
  * @param parent - The parent d3 selection to append to
  * @param id - The ID of the commit, branch, or tag
  * @param type - The type of the element ('commit', 'branch', or 'tag')
- * @returns The d3 selection (either the new <a> tag or the original parent)
+ * @returns The d3 selection (the new interactive group) or undefined if no interaction is needed
  */
 const addInteraction = (
   db: GitGraphDBRenderProvider,
   parent: d3.Selection<SVGGElement, unknown, HTMLElement, any>,
   id: string,
   type: 'commit' | 'branch' | 'tag'
-): d3.Selection<SVGGElement, unknown, HTMLElement, any> => {
+): d3.Selection<SVGGElement, unknown, HTMLElement, any> | undefined => {
   const config = getConfig();
   const { securityLevel } = config;
   const linkData = db.getLink?.(id);
 
   if (securityLevel === 'strict' || !linkData || linkData.type !== type) {
-    return parent.append('g');
+    return undefined;
   }
 
   const sanitizedUrl = sanitizeUrl(linkData.link);
   if (!sanitizedUrl || sanitizedUrl === 'about:blank') {
-    return parent.append('g');
+    return undefined;
   }
 
   const a = parent.append('a').attr('xlink:href', sanitizedUrl).attr('rel', 'noopener noreferrer');
@@ -287,12 +287,16 @@ const drawCommitBullet = (
   const useColorTheme = COLOR_THEMES.has(theme ?? '');
   const isDark = DARK_THEMES.has(theme ?? '');
 
-  const commitGroup = addInteraction(db, gBullets, commit.id, 'commit');
-  commitGroup.classed('commit', true);
-  commitGroup.attr('data-commit-id', commit.id);
+  const interactiveGroup = addInteraction(db, gBullets, commit.id, 'commit');
+  const parent = interactiveGroup || gBullets;
+
+  if (interactiveGroup) {
+    interactiveGroup.classed('commit', true);
+    interactiveGroup.attr('data-commit-id', commit.id);
+  }
 
   if (commitSymbolType === commitType.HIGHLIGHT) {
-    commitGroup
+    parent
       .append('rect')
       .attr('x', commitPosition.x - 10 + (useReduxGeometry ? 3 : 0))
       .attr('y', commitPosition.y - 10 + (useReduxGeometry ? 3 : 0))
@@ -302,7 +306,7 @@ const drawCommitBullet = (
         'class',
         `commit ${commit.id} commit-highlight${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, useColorTheme)} ${typeClass}-outer`
       );
-    commitGroup
+    parent
       .append('rect')
       .attr('x', commitPosition.x - 6 + (useReduxGeometry ? 2 : 0))
       .attr('y', commitPosition.y - 6 + (useReduxGeometry ? 2 : 0))
@@ -313,27 +317,27 @@ const drawCommitBullet = (
         `commit ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, useColorTheme)} ${typeClass}-inner`
       );
   } else if (commitSymbolType === commitType.CHERRY_PICK) {
-    commitGroup
+    parent
       .append('circle')
       .attr('cx', commitPosition.x)
       .attr('cy', commitPosition.y)
       .attr('r', useReduxGeometry ? 7 : 10)
       .attr('class', `commit ${commit.id} ${typeClass}`);
-    commitGroup
+    parent
       .append('circle')
       .attr('cx', commitPosition.x - 3)
       .attr('cy', commitPosition.y + 2)
       .attr('r', useReduxGeometry ? 2.5 : 2.75)
       .attr('fill', isDark ? '#000000' : '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
-    commitGroup
+    parent
       .append('circle')
       .attr('cx', commitPosition.x + 3)
       .attr('cy', commitPosition.y + 2)
       .attr('r', useReduxGeometry ? 2.5 : 2.75)
       .attr('fill', isDark ? '#000000' : '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
-    commitGroup
+    parent
       .append('line')
       .attr('x1', commitPosition.x + 3)
       .attr('y1', commitPosition.y + 1)
@@ -341,7 +345,7 @@ const drawCommitBullet = (
       .attr('y2', commitPosition.y - 5)
       .attr('stroke', isDark ? '#000000' : '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
-    commitGroup
+    parent
       .append('line')
       .attr('x1', commitPosition.x - 3)
       .attr('y1', commitPosition.y + 1)
@@ -350,7 +354,7 @@ const drawCommitBullet = (
       .attr('stroke', isDark ? '#000000' : '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
   } else {
-    const circle = commitGroup.append('circle');
+    const circle = parent.append('circle');
     circle.attr('cx', commitPosition.x);
     circle.attr('cy', commitPosition.y);
     circle.attr('r', useReduxGeometry ? 7 : 10);
@@ -359,7 +363,7 @@ const drawCommitBullet = (
       `commit ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, useColorTheme)}`
     );
     if (commitSymbolType === commitType.MERGE) {
-      const circle2 = commitGroup.append('circle');
+      const circle2 = parent.append('circle');
       circle2.attr('cx', commitPosition.x);
       circle2.attr('cy', commitPosition.y);
       circle2.attr('r', useReduxGeometry ? 5 : 6);
@@ -369,7 +373,7 @@ const drawCommitBullet = (
       );
     }
     if (commitSymbolType === commitType.REVERSE) {
-      const cross = commitGroup.append('path');
+      const cross = parent.append('path');
       const constValue = useReduxGeometry ? 4 : 5;
       cross
         .attr(
@@ -397,9 +401,13 @@ const drawCommitLabel = (
     ((commit.customId && commit.type === commitType.MERGE) || commit.type !== commitType.MERGE) &&
     gitGraphConfig.showCommitLabel
   ) {
-    const wrapper = addInteraction(db, gLabels, commit.id, 'commit');
-    wrapper.classed('commit', true);
-    wrapper.attr('data-commit-id', commit.id);
+    const interactiveGroup = addInteraction(db, gLabels, commit.id, 'commit');
+    const wrapper = interactiveGroup || gLabels.append('g');
+
+    if (interactiveGroup) {
+      wrapper.classed('commit', true);
+      wrapper.attr('data-commit-id', commit.id);
+    }
     const labelBkg = wrapper.insert('rect').attr('class', 'commit-label-bkg');
     const text = wrapper
       .append('text')
@@ -475,9 +483,13 @@ const drawCommitTags = (
 
     for (const tagValue of commit.tags.reverse()) {
       // Create a group for this tag to enable wrapping in anchor tags
-      const tagGroup = addInteraction(db, gLabels, tagValue, 'tag');
-      tagGroup.attr('data-tag-name', tagValue);
-      tagGroup.classed('tag', true);
+      const interactiveGroup = addInteraction(db, gLabels, tagValue, 'tag');
+      const tagGroup = interactiveGroup || gLabels.append('g');
+
+      if (interactiveGroup) {
+        tagGroup.attr('data-tag-name', tagValue);
+        tagGroup.classed('tag', true);
+      }
 
       const rect = tagGroup.insert('polygon');
       const hole = tagGroup.append('circle');
@@ -486,7 +498,6 @@ const drawCommitTags = (
         .attr('y', commitPosition.y - 16 - yOffset)
         .attr('class', 'tag-label')
         .text(tagValue);
-
       const tagBbox = tag.node()?.getBBox();
       if (!tagBbox) {
         throw new Error('Tag bbox not found');
@@ -506,6 +517,7 @@ const drawCommitTags = (
 
       yOffset += 20;
     }
+
 
     for (const { tag, hole, rect, yOffset } of tagElements) {
       const h2 = maxTagBboxHeight / 2;
@@ -995,9 +1007,13 @@ const drawBranches = (
     // Create the actual text element
     const labelElement = drawText(name);
 
-    const branchInteractionGroup = addInteraction(db, g, name, 'branch');
-    branchInteractionGroup.classed('branchLabel', true);
-    branchInteractionGroup.attr('data-branch-name', name);
+    const interactiveGroup = addInteraction(db, g, name, 'branch');
+    const branchInteractionGroup = interactiveGroup || g.append('g');
+
+    if (interactiveGroup) {
+      branchInteractionGroup.classed('branchLabel', true);
+      branchInteractionGroup.attr('data-branch-name', name);
+    }
 
     // Create outer rect and inner g (label), both inside the interaction group
     const bkg = branchInteractionGroup.insert('rect');
