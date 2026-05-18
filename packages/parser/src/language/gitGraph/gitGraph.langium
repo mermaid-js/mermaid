@@ -60,4 +60,4 @@ Click:
     'click' type=('commit' | 'branch' | 'tag') id=(STRING|REFERENCE) (href=STRING)? (tooltip=STRING)? (target=ClickTarget)? EOL;
 
 ClickTarget returns string:
-    STRING | '_blank' | '_self' | '_parent' | '_top';
+    '_blank' | '_self' | '_parent' | '_top';

@@ -139,4 +139,15 @@ describe('gitGraph parser - click statements', () => {
       expect(link!.link).toBe('https://example.com');
     });
   });
+
+  describe('invalid syntax', () => {
+    it('should fail to parse arbitrary strings as targets', async () => {
+      const invalidDiagram = `
+        gitGraph
+          commit id: "c1"
+          click commit "c1" "https://example.com" "Tooltip" "attacker-window"
+      `;
+      await expect(parser.parse(invalidDiagram)).rejects.toThrow();
+    });
+  });
 });
