@@ -233,7 +233,7 @@ const addInteraction = (
   if (securityLevel === 'sandbox') {
     log.debug('Overriding %s "%s" link target to "_top" for sandbox mode', type, id);
     a.attr('target', '_top');
-  } else if (linkData.target) {
+  } else if (linkData.target && ['_self', '_blank', '_parent', '_top'].includes(linkData.target)) {
     a.attr('target', linkData.target);
   }
 

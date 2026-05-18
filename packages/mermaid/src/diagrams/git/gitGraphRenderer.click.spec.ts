@@ -101,4 +101,24 @@ describe('GitGraph Click Events (Rendering)', () => {
     expect(svg.select('.branchLabel.clickable').empty()).toBe(false);
     expect(svg.select('.tag.clickable').empty()).toBe(false);
   });
+
+  it('should ignore invalid targets at runtime', async () => {
+    const diagram = `
+      gitGraph
+        commit id: "c1"
+        click commit "c1" "https://example.com"
+    `;
+    await parser.parse(diagram);
+
+    db.setLink('c1', 'https://example.com', 'commit', undefined, 'invalid-target' as any);
+
+    const svgId = 'gitgraph-invalid-target-test';
+    const svg = select(container).append('svg').attr('id', svgId);
+
+    // @ts-ignore - partial diagram object for testing
+    await draw(diagram, svgId, '1.0', { db, type: 'gitGraph' });
+
+    const anchor = svg.select('a');
+    expect(anchor.attr('target')).toBeNull();
+  });
 });
