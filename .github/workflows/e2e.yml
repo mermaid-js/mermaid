@@ -106,11 +106,13 @@ jobs:
           FULL_MATRIX='[1,2,3,4,5]'
           SCOPED_MATRIX='[1]'
 
-          # Feature flag off → always use full matrix
-          if [ "${E2E_SCOPE_BY_DIAGRAM}" != "true" ]; then
+          # Kill-switch: set the repo variable E2E_SCOPE_BY_DIAGRAM to 'false'
+          # to disable scoping.  Scoping is ON by default so that fork PRs
+          # (where repository variables are unavailable) still benefit from it.
+          if [ "${E2E_SCOPE_BY_DIAGRAM}" = "false" ]; then
             echo "spec_pattern=" >> "$GITHUB_OUTPUT"
             echo "matrix=${FULL_MATRIX}" >> "$GITHUB_OUTPUT"
-            echo "[detect-scope] Feature flag disabled — full suite."
+            echo "[detect-scope] Scoping disabled via kill-switch — full suite."
             exit 0
           fi
 
@@ -146,7 +148,11 @@ jobs:
                  | node scripts/e2e-diagram-scope.mjs \
                  || echo "")
 
-          if [ -n "$SPEC" ]; then
+          if [ "$SPEC" = "SKIP" ]; then
+            echo "spec_pattern=SKIP" >> "$GITHUB_OUTPUT"
+            echo "matrix=${SCOPED_MATRIX}" >> "$GITHUB_OUTPUT"
+            echo "[detect-scope] Only docs/ignorable files changed — e2e can be skipped."
+          elif [ -n "$SPEC" ]; then
             echo "spec_pattern=${SPEC}" >> "$GITHUB_OUTPUT"
             echo "matrix=${SCOPED_MATRIX}" >> "$GITHUB_OUTPUT"
             echo "[detect-scope] Scoped to: ${SPEC}"
@@ -156,11 +162,15 @@ jobs:
             echo "[detect-scope] Cannot scope — full suite."
           fi
         env:
-          # Toggle diagram-scoped e2e: set this repository variable to 'true'
-          # (GitHub → Settings → Secrets and variables → Actions → Variables)
-          E2E_SCOPE_BY_DIAGRAM: "${{ vars.E2E_SCOPE_BY_DIAGRAM == 'true' }}"
+          # Scoping is ON by default.  To disable, set this repository variable
+          # to 'false' (GitHub → Settings → Secrets and variables → Actions → Variables).
+          # Using == 'false' (instead of == 'true') ensures fork PRs — where
+          # repository variables are not exposed — still get scoped runs.
+          E2E_SCOPE_BY_DIAGRAM: "${{ vars.E2E_SCOPE_BY_DIAGRAM == 'false' && 'false' || 'true' }}"
 
   e2e:
+    # Skip the entire e2e job when only docs/ignorable files changed.
+    if: needs.detect-scope.outputs.spec_pattern != 'SKIP'
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:node-20.16.0-chrome-127.0.6533.88-1-ff-128.0.3-edge-127.0.2651.74-1

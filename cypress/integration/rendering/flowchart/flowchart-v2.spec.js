@@ -1118,6 +1118,40 @@ end
         }
       );
     });
+    it('Should render labeled self-loops', () => {
+      imgSnapshotTest(
+        `flowchart TD
+          A[Start] -->|retry| A
+          B[Process] -->|again| B
+          A --> B
+        `,
+        {
+          htmlLabels: false,
+          flowchart: { htmlLabels: false },
+        }
+      );
+    });
+    it('Should render self-loops in non-TB directions', () => {
+      imgSnapshotTest(
+        `flowchart LR
+          A[LR loop] --> A
+          subgraph B[BT subgraph]
+            direction BT
+            B1[BT loop] --> B1
+          end
+          subgraph C[RL subgraph]
+            direction RL
+            C1[RL loop] --> C1
+          end
+          A --> B1
+          B1 --> C1
+        `,
+        {
+          htmlLabels: false,
+          flowchart: { htmlLabels: false },
+        }
+      );
+    });
   });
   describe('New @ syntax for node metadata edge cases', () => {
     it('should be possible to use @  syntax to add labels on multi nodes', () => {
@@ -1256,6 +1290,37 @@ class link myClass
     );
   });
 
+  it('V2 - 18: should render nested subgraphs with edge from cluster containing extractable subgraph', () => {
+    imgSnapshotTest(
+      `flowchart TB
+    subgraph asub
+        aa
+    end
+   a
+    subgraph bsub
+        subgraph csub
+            subgraph dsub
+                da
+            end
+        end
+        subgraph esub
+            subgraph fsub
+                %%comment out subgraph below
+                subgraph gsub
+                    ga
+                    abc
+                    abcd
+                end
+            end
+        end
+    end
+    bsub-->a
+    da-->a
+      `,
+      {}
+    );
+  });
+
   describe('Edge label autowrapping', () => {
     it('should wrap edge labels', () => {
       imgSnapshotTest(
@@ -1274,7 +1339,7 @@ config: ${JSON.stringify({ markdownAutoWrap, htmlLabels })}
 title: Testing with ${JSON.stringify({ markdownAutoWrap, htmlLabels })}
 ---
 flowchart TD
-    A["This is a really long line of plain text that will autowrap and support \\n newlines too."]    
+    A["This is a really long line of plain text that will autowrap and support \\n newlines too."]
     B["\`This is a really long line of **markdown** text that will autowrap, unless markdownAutoWrap:false is set.\`"]
     A -- "Plain text **labels** in flowcharts will autowrap,like node labels. \\n Newline characters work too." --> B
     B -- "\`**Markdown** edge labels will autowrap, unless markdownAutoWrap: false is set\`" --> C

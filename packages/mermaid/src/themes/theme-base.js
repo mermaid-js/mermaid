@@ -249,6 +249,25 @@ class Theme {
     this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
     this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
 
+    /* cynefin */
+    this.cynefin = {
+      domainFontSize: this.cynefin?.domainFontSize || 16,
+      itemFontSize: this.cynefin?.itemFontSize || 12,
+      boundaryColor: this.cynefin?.boundaryColor || this.lineColor,
+      boundaryWidth: this.cynefin?.boundaryWidth || 2,
+      cliffColor: this.cynefin?.cliffColor || '#8B0000',
+      cliffWidth: this.cynefin?.cliffWidth || 4,
+      arrowColor: this.cynefin?.arrowColor || this.lineColor,
+      arrowWidth: this.cynefin?.arrowWidth || 2,
+      complexBg: this.cynefin?.complexBg || '#E8F5E9',
+      complicatedBg: this.cynefin?.complicatedBg || '#E3F2FD',
+      chaoticBg: this.cynefin?.chaoticBg || '#FBE9E7',
+      clearBg: this.cynefin?.clearBg || '#FFF8E1',
+      confusionBg: this.cynefin?.confusionBg || '#F3E5F5',
+      textColor: this.cynefin?.textColor || this.textColor,
+      labelColor: this.cynefin?.labelColor || this.primaryTextColor,
+    };
+
     /* radar */
     this.radar = {
       axisColor: this.radar?.axisColor || this.lineColor,

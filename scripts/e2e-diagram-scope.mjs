@@ -27,6 +27,40 @@ import { fileURLToPath } from 'url';
 // Base directory where diagram spec subfolders live
 export const SPEC_BASE_DIR = 'cypress/integration/rendering';
 
+// Sentinel value returned when all changed files are ignorable (e.g.
+// docs-only PRs).  Consumers should skip e2e entirely when they receive this.
+export const SKIP = 'SKIP';
+
+// ---------------------------------------------------------------------------
+// Ignorable paths: files that can NEVER affect rendered diagram output.
+// When a changed file matches one of these, it is silently skipped (continue)
+// rather than triggering the full suite.
+// ---------------------------------------------------------------------------
+const IGNORABLE_PREFIXES = [
+  // Documentation (source and generated)
+  'packages/mermaid/src/docs/',
+  'packages/mermaid/src/vitepress/',
+  'docs/',
+  // Changeset descriptions
+  '.changeset/',
+  // AI assistant / agent config
+  '.claude/',
+  'assistant/',
+  // GitHub metadata that doesn't affect rendering
+  '.github/workflows/build-docs.yml',
+  '.github/workflows/publish-docs.yml',
+  '.github/ISSUE_TEMPLATE/',
+  '.github/CODEOWNERS',
+  '.github/FUNDING.yml',
+  // Doc-related scripts
+  'packages/mermaid/scripts/docs',
+];
+
+// Files ending with these suffixes are ignorable UNLESS they live inside a
+// diagram source folder (where even a .md might be a samples file that
+// signals intent to test).
+const IGNORABLE_SUFFIXES = ['.md'];
+
 // ---------------------------------------------------------------------------
 // Paths: if ANY changed file matches one of these prefixes, fall back to the
 // full suite.
@@ -144,7 +178,19 @@ export function detectScope(files, options = {}) {
       continue;
     }
 
-    // Anything else (root config, CI YAML, docs, cypress/other, etc.) → full suite
+    // Ignorable files (docs, changesets, AI config, etc.) → skip silently.
+    // Guard: .md files inside a diagram source folder are NOT ignorable — they
+    // may be samples or signal intent, and their diagram folder was already
+    // handled by DIAGRAM_PATH_RE above.
+    if (
+      IGNORABLE_PREFIXES.some((prefix) => trimmed.startsWith(prefix)) ||
+      (IGNORABLE_SUFFIXES.some((suffix) => trimmed.endsWith(suffix)) &&
+        !DIAGRAM_PATH_RE.test(trimmed))
+    ) {
+      continue;
+    }
+
+    // Anything else (root config, CI YAML, cypress/other, etc.) → full suite
     touchesShared = true;
     break;
   }
@@ -167,7 +213,8 @@ export function detectScope(files, options = {}) {
   }
 
   if (specs.size === 0) {
-    return '';
+    // All files were either ignorable or empty — no e2e tests needed.
+    return SKIP;
   }
 
   return [...specs].join(',');

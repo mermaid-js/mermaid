@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Railroad diagram | Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Railroad diagram demos</h1>
+
+    <pre class="mermaid">
+railroad-diagram
+digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+railroad-diagram
+title "Identifier Grammar"
+
+identifier = letter ( letter | digit | "_" )* ;
+letter = "a" | "b" | "c" | "d" | "e" ;
+digit = "0" | "1" | "2" ;
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+railroad-diagram
+title "Optional Sign"
+
+sign = "+" | "-" ;
+number = sign? digit+ ;
+digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+railroad-diagram
+title "Expression Grammar"
+
+expression = term ( ( "+" | "-" ) term )* ;
+term = factor ( ( "*" | "/" ) factor )* ;
+factor = number | "(" expression ")" ;
+number = digit+ ;
+digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+railroad-diagram
+title "JSON Grammar"
+
+json = element ;
+element = object | array | string | number | "true" | "false" | "null" ;
+object = "{" [ member ( "," member )* ] "}" ;
+array = "[" [ element ( "," element )* ] "]" ;
+member = string ":" element ;
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+railroad-diagram
+title "URL Grammar"
+
+url = protocol "://" domain path? ;
+protocol = "http" | "https" | "ftp" ;
+domain = label ( "." label )* ;
+label = letter ( letter | digit | "-" )* ;
+path = "/" segment ( "/" segment )* ;
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+railroad-diagram
+title "ISO Style Notation"
+
+list = "[" element { "," element } "]" ;
+element = number | string ;
+number = digit { digit } ;
+digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+railroad-diagram
+title "BNF Style Definition"
+
+rule ::= "A" | "B" ;
+another ::= rule+ ;
+    </pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({
+        theme: 'default',
+        logLevel: 3,
+        securityLevel: 'loose',
+        railroad: {
+          fontSize: 14,
+          fontFamily: 'monospace',
+        },
+      });
+    </script>
+  </body>
+</html>

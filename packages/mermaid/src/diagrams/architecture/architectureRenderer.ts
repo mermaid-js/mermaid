@@ -1,6 +1,7 @@
 import type { LayoutOptions, Position } from 'cytoscape';
 import cytoscape from 'cytoscape';
 import fcose from 'cytoscape-fcose';
+import { withSeededRandom } from './architectureSeed.js';
 import { select } from 'd3';
 import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
 import type { Diagram } from '../../Diagram.js';
@@ -406,10 +407,20 @@ function layoutArchitecture(
     // Create the relative constraints for fcose by using an inverse of the spatial map and performing BFS on it
     const relativePlacementConstraint = getRelativeConstraints(spatialMaps, db);
 
+    const iconSize = db.getConfigField('iconSize');
+    const sameGroupIdealLength = db.getConfigField('idealEdgeLengthMultiplier') * iconSize;
+    const crossGroupIdealLength = 0.5 * iconSize;
+    const sameGroupElasticity = db.getConfigField('edgeElasticity');
+    // Wrap each layout.run() with withSeededRandom so fcose's internal
+    // Math.random() calls produce reproducible results. See architectureSeed.ts.
+    const seed = db.getConfigField('seed');
+
     const layout = cy.layout({
       name: 'fcose',
       quality: 'proof',
       randomize: db.getConfigField('randomize'),
+      nodeSeparation: db.getConfigField('nodeSeparation'),
+      numIter: db.getConfigField('numIter'),
       styleEnabled: false,
       animate: false,
       nodeDimensionsIncludeLabels: false,
@@ -419,18 +430,13 @@ function layoutArchitecture(
         const [nodeA, nodeB] = edge.connectedNodes();
         const { parent: parentA } = nodeData(nodeA);
         const { parent: parentB } = nodeData(nodeB);
-        const elasticity =
-          parentA === parentB
-            ? 1.5 * db.getConfigField('iconSize')
-            : 0.5 * db.getConfigField('iconSize');
-        return elasticity;
+        return parentA === parentB ? sameGroupIdealLength : crossGroupIdealLength;
       },
       edgeElasticity(edge: EdgeSingular) {
         const [nodeA, nodeB] = edge.connectedNodes();
         const { parent: parentA } = nodeData(nodeA);
         const { parent: parentB } = nodeData(nodeB);
-        const elasticity = parentA === parentB ? 0.45 : 0.001;
-        return elasticity;
+        return parentA === parentB ? sameGroupElasticity : 0.001;
       },
       alignmentConstraint,
       relativePlacementConstraint,
@@ -504,9 +510,9 @@ function layoutArchitecture(
         }
       }
       cy.endBatch();
-      layout.run();
+      withSeededRandom(seed, () => layout.run());
     });
-    layout.run();
+    withSeededRandom(seed, () => layout.run());
 
     cy.ready((e) => {
       log.info('Ready', e);
