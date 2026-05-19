@@ -50,7 +50,7 @@ const parseStatement = (statement: any, db: GitGraphDBParseProvider) => {
 };
 
 const parseClick = (click: ClickAst, db: GitGraphDBParseProvider) => {
-  db.setLink?.(click.id, click.href, click.type, click.tooltip, click.target);
+  db.setLink(click.id, click.href, click.type, click.tooltip, click.target);
 };
 
 const parseCommit = (commit: CommitAst): CommitDB => {
