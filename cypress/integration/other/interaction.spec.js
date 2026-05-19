@@ -93,12 +93,38 @@ describe('Interaction', () => {
       cy.get('text[id$="-cl3-text"]').click({ force: true });
       cy.get('.created-by-gant-click').should('have.text', 'Clicked By Gant test1 test2 test3');
     });
+
+    it('gitGraph: should handle a click on a commit with a bound url', () => {
+      cy.get('.commit.clickable').first().click();
+      cy.location().should(({ href }) => {
+        expect(href).to.eq(`${baseUrl}/empty.html`);
+      });
+    });
+
+    it('gitGraph: should handle a click on a branch with a bound url', () => {
+      cy.get('.branchLabel.clickable').first().click();
+      cy.location().should(({ href }) => {
+        expect(href).to.eq(`${baseUrl}/empty.html`);
+      });
+    });
+
+    it('gitGraph: should handle a click on a tag with a bound url', () => {
+      cy.get('.tag.clickable').first().click();
+      cy.location().should(({ href }) => {
+        expect(href).to.eq(`${baseUrl}/empty.html`);
+      });
+    });
   });
 
   describe('Interaction - security level tight', () => {
     beforeEach(() => {
       cy.visit('/click_security_strict.html');
     });
+
+    it('gitGraph: should handle a click on a commit with a bound url in strict mode', () => {
+      cy.get('.commit.clickable').should('not.exist');
+    });
+
     it('should handle a click on a node without a bound function', () => {
       cy.contains('Function1').parents('.node').click();
       cy.get('.created-by-click').should('not.exist');

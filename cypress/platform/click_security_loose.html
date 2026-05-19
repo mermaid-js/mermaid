@@ -123,6 +123,17 @@
         class ShapeCallback2
         click ShapeCallback2 call clickByClass(123) "This is a tooltip for a callback"
       </pre>
+
+      <pre class="mermaid">
+      gitGraph
+        commit id: "ONE"
+        commit id: "TWO" tag: "v1.0"
+        branch develop
+        commit id: "THREE"
+        click commit "ONE" "/empty.html" "Commit Tooltip"
+        click branch "develop" "/empty.html" "Branch Tooltip"
+        click tag "v1.0" "/empty.html" "Tag Tooltip"
+      </pre>
     </div>
 
     <script>
