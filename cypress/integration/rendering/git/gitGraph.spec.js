@@ -2179,4 +2179,21 @@ gitGraph TB:
       {}
     );
   });
+
+  it('98: should render gitGraph with click interactions', () => {
+    imgSnapshotTest(
+      `gitGraph
+       commit id: "ONE"
+       commit id: "TWO" tag: "v1.0"
+       branch develop
+       commit id: "THREE"
+       checkout main
+       merge develop id: "FOUR"
+       click commit "ONE" "https://example.com/commit" "Commit Tooltip"
+       click branch "develop" "https://example.com/branch" "Branch Tooltip"
+       click tag "v1.0" "https://example.com/tag" "Tag Tooltip"
+      `,
+      { securityLevel: 'loose' }
+    );
+  });
 });
