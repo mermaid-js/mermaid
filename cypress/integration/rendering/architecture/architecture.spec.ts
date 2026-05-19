@@ -242,7 +242,7 @@ describe('architecture diagram', () => {
       `
     );
   });
-  it.skip('should render a deterministic layout for a complex deeply-nested diagram', () => {
+  it('should render a deterministic layout for a complex deeply-nested diagram', () => {
     imgSnapshotTest(
       `architecture-beta
                 group sub1(cloud)[Subscription A]
@@ -282,6 +282,26 @@ describe('architecture diagram', () => {
                 vm1:R --> L:pe2
             `,
       { architecture: { randomize: false } }
+    );
+  });
+  it('should render a deterministic layout with an explicit seed override', () => {
+    // Exercises the architecture.seed config knob added for #7729. The default
+    // helper-injected seed is 1; using a different value here proves the config
+    // plumbing reaches the layout RNG.
+    imgSnapshotTest(
+      `architecture-beta
+        group sub1(cloud)[Subscription A]
+        group vnet1(cloud)[VNet A] in sub1
+        service vm1(server)[VM] in vnet1
+
+        group sub2(cloud)[Subscription B]
+        service web(server)[Web App] in sub2
+        service db(database)[Registry] in sub2
+
+        vm1:R --> L:web
+        web:R --> L:db
+      `,
+      { architecture: { seed: 42 } }
     );
   });
   it('should render edges at correct length', () => {

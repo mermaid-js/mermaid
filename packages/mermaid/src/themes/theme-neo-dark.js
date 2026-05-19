@@ -119,6 +119,7 @@ class Theme {
     this.activationBorderColor = this.activationBorderColor || darken(this.secondaryColor, 10);
     this.activationBkgColor = this.activationBkgColor || this.secondaryColor;
     this.sequenceNumberColor = this.sequenceNumberColor || invert(this.lineColor);
+    this.rectBkgColor = this.rectBkgColor || this.tertiaryColor;
 
     /* Gantt chart variables */
 

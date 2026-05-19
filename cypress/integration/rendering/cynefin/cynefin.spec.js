@@ -1,6 +1,6 @@
 import { imgSnapshotTest } from '../../../helpers/util';
 
-describe.skip('cynefin framework', () => {
+describe('cynefin framework', () => {
   it('should render a simple cynefin diagram with all five domains', () => {
     imgSnapshotTest(
       `cynefin-beta
@@ -203,6 +203,27 @@ describe.skip('cynefin framework', () => {
         chaotic
           "Incident"
       `
+    );
+  });
+
+  it('should render cynefin deterministically with an explicit seed override', () => {
+    // Exercises the cynefin.seed config knob added for #7727. The default
+    // helper-injected seed is 1; using a different value here proves the
+    // config plumbing reaches the boundary RNG.
+    imgSnapshotTest(
+      `cynefin-beta
+        title Seeded Boundaries
+
+        complex
+          "Probe"
+        complicated
+          "Analyse"
+        clear
+          "Categorise"
+        chaotic
+          "Act"
+      `,
+      { cynefin: { seed: 42 } }
     );
   });
 });

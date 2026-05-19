@@ -351,6 +351,55 @@ end
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
+  it('issue-4648: sibling subgraphs with different directions and external connections', () => {
+    imgSnapshotTest(
+      `flowchart TD
+
+subgraph Group1
+  direction TB
+  A1 --> A2
+  A2 --> A3
+end
+
+subgraph Group2
+  direction LR
+  B1 --> B2
+  B2 --> B3
+end
+
+subgraph Group3
+  direction LR
+  C1 --> C2
+  C2 --> C3
+end
+
+%% External connections between subgraphs
+A3 --- B1
+B3 --- C1
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+
+  it('issue-4648: nested subgraph with external connection', () => {
+    imgSnapshotTest(
+      `flowchart TD
+
+subgraph Wrapper
+  direction LR
+  subgraph Inner
+    D1 --> D2
+    D2 --> D3
+  end
+end
+
+%% External connection to nested subgraph
+D3 --- E1
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+
   it('57.x: handle nested subgraphs with outgoing links 5', () => {
     imgSnapshotTest(
       `%% this does not produce the desired result
@@ -1290,6 +1339,37 @@ class link myClass
     );
   });
 
+  it('V2 - 18: should render nested subgraphs with edge from cluster containing extractable subgraph', () => {
+    imgSnapshotTest(
+      `flowchart TB
+    subgraph asub
+        aa
+    end
+   a
+    subgraph bsub
+        subgraph csub
+            subgraph dsub
+                da
+            end
+        end
+        subgraph esub
+            subgraph fsub
+                %%comment out subgraph below
+                subgraph gsub
+                    ga
+                    abc
+                    abcd
+                end
+            end
+        end
+    end
+    bsub-->a
+    da-->a
+      `,
+      {}
+    );
+  });
+
   describe('Edge label autowrapping', () => {
     it('should wrap edge labels', () => {
       imgSnapshotTest(
@@ -1308,7 +1388,7 @@ config: ${JSON.stringify({ markdownAutoWrap, htmlLabels })}
 title: Testing with ${JSON.stringify({ markdownAutoWrap, htmlLabels })}
 ---
 flowchart TD
-    A["This is a really long line of plain text that will autowrap and support \\n newlines too."]    
+    A["This is a really long line of plain text that will autowrap and support \\n newlines too."]
     B["\`This is a really long line of **markdown** text that will autowrap, unless markdownAutoWrap:false is set.\`"]
     A -- "Plain text **labels** in flowcharts will autowrap,like node labels. \\n Newline characters work too." --> B
     B -- "\`**Markdown** edge labels will autowrap, unless markdownAutoWrap: false is set\`" --> C

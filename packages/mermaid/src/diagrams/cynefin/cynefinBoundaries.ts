@@ -23,6 +23,24 @@ export function hashString(str: string): number {
 }
 
 /**
+ * Resolve the boundary-waviness seed. A non-zero configured seed takes
+ * precedence so renders are reproducible (visual regression tests). When the
+ * configured seed is 0 or absent we fall back to hashing the SVG element id,
+ * which gives each rendered diagram its own waviness pattern at the cost of
+ * being unstable across renders.
+ */
+export function resolveSeed(configuredSeed: number | undefined, id: string): number {
+  if (
+    typeof configuredSeed === 'number' &&
+    Number.isFinite(configuredSeed) &&
+    configuredSeed !== 0
+  ) {
+    return configuredSeed;
+  }
+  return hashString(id);
+}
+
+/**
  * Generate a vertical wavy line (the "fold") through the center of the diagram.
  * Uses cubic bezier segments with alternating control point offsets.
  * @param width - diagram width

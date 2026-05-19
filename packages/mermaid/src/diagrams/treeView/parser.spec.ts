@@ -1,6 +1,6 @@
-import { describe, expect, it, beforeEach } from 'vitest';
-import { parser } from './parser.js';
+import { beforeEach, describe, expect, it } from 'vitest';
 import db from './db.js';
+import { parser } from './parser.js';
 
 /**
  * Integration tests for the treeView parser pipeline.
@@ -227,5 +227,152 @@ describe('treeView parser integration', () => {
       expect(node.cssClass).toBe('highlight');
       expect(node.description).toBe('entry point');
     });
+  });
+});
+
+/**
+ * AST equivalence tests: box-drawing input should produce the same tree
+ * as equivalent indent-based input.
+ */
+
+interface NodeSnapshot {
+  name: string;
+  nodeType: string;
+  level: number;
+  cssClass?: string;
+  iconId?: string;
+  description?: string;
+  children: NodeSnapshot[];
+}
+
+function collectNodes(node: {
+  name: string;
+  nodeType: string;
+  level: number;
+  cssClass?: string;
+  iconId?: string;
+  description?: string;
+  children: (typeof node)[];
+}): NodeSnapshot {
+  return {
+    name: node.name,
+    nodeType: node.nodeType,
+    level: node.level,
+    ...(node.cssClass ? { cssClass: node.cssClass } : {}),
+    ...(node.iconId ? { iconId: node.iconId } : {}),
+    ...(node.description ? { description: node.description } : {}),
+    children: node.children.map(collectNodes),
+  };
+}
+
+describe('box-drawing ↔ indent equivalence', () => {
+  beforeEach(() => {
+    db.clear();
+  });
+
+  it('flat list', async () => {
+    const indent = `treeView-beta
+    src/
+        index.js
+        App.tsx
+    package.json`;
+
+    const boxDraw = `treeView-beta
+├── src/
+│   ├── index.js
+│   └── App.tsx
+└── package.json`;
+
+    db.clear();
+    await parser.parse(indent);
+    const indentTree = collectNodes(db.getRoot());
+
+    db.clear();
+    await parser.parse(boxDraw);
+    const boxTree = collectNodes(db.getRoot());
+
+    expect(boxTree).toEqual(indentTree);
+  });
+
+  it('nested directories', async () => {
+    const indent = `treeView-beta
+    src/
+        components/
+            Button.tsx
+            Modal.tsx
+        utils/
+            helpers.ts
+    README.md`;
+
+    const boxDraw = `treeView-beta
+├── src/
+│   ├── components/
+│   │   ├── Button.tsx
+│   │   └── Modal.tsx
+│   └── utils/
+│       └── helpers.ts
+└── README.md`;
+
+    db.clear();
+    await parser.parse(indent);
+    const indentTree = collectNodes(db.getRoot());
+
+    db.clear();
+    await parser.parse(boxDraw);
+    const boxTree = collectNodes(db.getRoot());
+
+    expect(boxTree).toEqual(indentTree);
+  });
+
+  it('with annotations', async () => {
+    const indent = `treeView-beta
+    src/
+        App.tsx :::highlight ## main component
+        index.js ## entry point
+    package.json`;
+
+    const boxDraw = `treeView-beta
+├── src/
+│   ├── App.tsx :::highlight ## main component
+│   └── index.js ## entry point
+└── package.json`;
+
+    db.clear();
+    await parser.parse(indent);
+    const indentTree = collectNodes(db.getRoot());
+
+    db.clear();
+    await parser.parse(boxDraw);
+    const boxTree = collectNodes(db.getRoot());
+
+    expect(boxTree).toEqual(indentTree);
+  });
+
+  it('deeply nested (4 levels)', async () => {
+    const indent = `treeView-beta
+    a/
+        b/
+            c/
+                d.txt
+            e.txt
+        f.txt`;
+
+    const boxDraw = `treeView-beta
+└── a/
+    ├── b/
+    │   ├── c/
+    │   │   └── d.txt
+    │   └── e.txt
+    └── f.txt`;
+
+    db.clear();
+    await parser.parse(indent);
+    const indentTree = collectNodes(db.getRoot());
+
+    db.clear();
+    await parser.parse(boxDraw);
+    const boxTree = collectNodes(db.getRoot());
+
+    expect(boxTree).toEqual(indentTree);
   });
 });
