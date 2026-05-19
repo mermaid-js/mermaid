@@ -135,6 +135,7 @@ class Theme {
     this.actorBkg = this.mainBkg;
     this.actorTextColor = this.text;
     this.actorLineColor = this.actorBorder;
+    this.rectBkgColor = this.rectBkgColor || this.tertiaryColor;
     this.signalColor = this.text;
     this.signalTextColor = this.text;
     this.labelBoxBkgColor = this.actorBkg;
