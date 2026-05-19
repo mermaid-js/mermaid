@@ -40,7 +40,7 @@ describe('GitGraph Click Events (Rendering)', () => {
 
     const anchor = svg.select('a');
     expect(anchor.empty()).toBe(false);
-    expect(anchor.attr('xlink:href')).toBe('https://example.com/');
+    expect(anchor.attr('xlink:href')).toBe('https://example.com');
     expect(anchor.attr('rel')).toBe('noopener noreferrer');
     expect(anchor.select('title').text()).toBe('Tooltip');
     expect(svg.select('.commit.clickable').empty()).toBe(false);

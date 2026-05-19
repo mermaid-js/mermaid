@@ -1,4 +1,3 @@
-import { sanitizeUrl } from '@braintree/sanitize-url';
 import { select } from 'd3';
 import { getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
@@ -223,7 +222,7 @@ const addInteraction = (
     return undefined;
   }
 
-  const sanitizedUrl = sanitizeUrl(linkData.link);
+  const sanitizedUrl = utils.formatUrl(linkData.link, config);
   if (!sanitizedUrl || sanitizedUrl === 'about:blank') {
     return undefined;
   }
