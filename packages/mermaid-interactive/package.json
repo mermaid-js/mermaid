@@ -38,6 +38,9 @@
   },
   "license": "MIT",
   "dependencies": {},
+  "peerDependencies": {
+    "mermaid": ">=11.0.0"
+  },
   "devDependencies": {
     "mermaid": "workspace:^",
     "typescript": "^5.0.0"

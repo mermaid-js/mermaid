@@ -1074,7 +1074,7 @@ C4Context
       // Render all .mermaid-interactive blocks
       // -----------------------------------------------------------------------
 
-      mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+      mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'strict' });
 
       let idx = 0;
       for (const pre of document.querySelectorAll('pre.mermaid-interactive')) {
