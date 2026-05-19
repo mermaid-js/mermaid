@@ -1121,8 +1121,11 @@ export interface ArchitectureDiagramConfig extends BaseDiagramConfig {
   fontSize?: number;
   /**
    * Whether to randomize initial node positions before running the layout algorithm.
-   * When false (default), the layout is deterministic and produces identical results on every render.
-   * When true, nodes start at random positions, which may produce varied but potentially better-spaced layouts.
+   * When false (default), nodes start at deterministic seed positions. When true, nodes
+   * start at random positions, which may produce varied but potentially better-spaced
+   * layouts. Note: `randomize: false` alone does NOT guarantee identical renders, because
+   * the underlying fcose layout still uses `Math.random()` internally during its
+   * constraint solver — use the `seed` option for full determinism.
    *
    */
   randomize?: boolean;
@@ -1153,6 +1156,15 @@ export interface ArchitectureDiagramConfig extends BaseDiagramConfig {
    *
    */
   numIter?: number;
+  /**
+   * Deterministic seed for the fcose layout. Defaults to 1, which makes every render of the
+   * same diagram produce the same layout — required for visual regression tests to be stable.
+   * Set to 0 to opt out and use the unstubbed Math.random (the layout will still differ
+   * slightly between renders, matching pre-fix behavior). Any other number selects a
+   * different reproducible layout variant.
+   *
+   */
+  seed?: number;
 }
 /**
  * The object containing configurations specific for mindmap diagrams

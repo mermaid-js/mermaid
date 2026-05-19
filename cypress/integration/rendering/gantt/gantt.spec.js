@@ -375,6 +375,35 @@ describe('Gantt diagram', () => {
       `
     );
   });
+  it('should render vertical markers without creating extra rows and show their labels', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        dateFormat HH:mm
+        axisFormat %H:%M
+        Initial vert : vert, v1, 17:30, 2m
+        Initial vert : vert, v1, 17:30, 2m
+        Initial vert : vert, v1, 17:30, 2m
+        Initial vert : vert, v1, 17:30, 2m
+        Initial vert : vert, v1, 17:30, 2m
+        Initial vert : vert, v1, 17:30, 2m
+        Task A : 3m
+        Middle vert : vert, v3, 17:45, 2m
+        Middle vert : vert, v3, 17:45, 2m
+        Middle vert : vert, v3, 17:45, 2m
+        Middle vert : vert, v3, 17:45, 2m
+        Middle vert : vert, v3, 17:45, 2m
+        Middle vert : vert, v3, 17:45, 2m
+        Task B : 8m
+        Final vert : vert, v2, 17:58, 4m
+        Final vert : vert, v2, 17:58, 4m
+        Final vert : vert, v2, 17:58, 4m
+        Final vert : vert, v2, 17:58, 4m
+        Final vert : vert, v2, 17:58, 4m
+        Final vert : vert, v2, 17:58, 4m
+      `
+    );
+  });
   it('should render a gantt diagram with tick is 2 milliseconds', () => {
     imgSnapshotTest(
       `
