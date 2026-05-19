@@ -31,6 +31,12 @@ export const mermaidUrl = (
   api: boolean
 ): string => {
   options.handDrawnSeed = 1;
+  // Make the architecture fcose layout deterministic. Tests can still override
+  // by passing { architecture: { seed: N } } in their own options.
+  options.architecture = { seed: 1, ...(options.architecture ?? {}) };
+  // Make Cynefin boundary waviness deterministic. Tests can still override
+  // by passing { cynefin: { seed: N } } in their own options.
+  options.cynefin = { seed: 1, ...(options.cynefin ?? {}) };
   const codeObject: CodeObject = {
     code: graphStr,
     mermaid: options,

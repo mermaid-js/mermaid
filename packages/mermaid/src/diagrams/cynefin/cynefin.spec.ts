@@ -4,6 +4,7 @@ import { db } from './cynefinDb.js';
 import {
   seededRandom,
   hashString,
+  resolveSeed,
   generateFoldPath,
   generateHorizontalBoundary,
   generateCliffPath,
@@ -158,5 +159,33 @@ describe('Cynefin Boundaries', () => {
     expect(path).toContain('350'); // cx - rx = 400 - 50
     expect(path).toContain('450'); // cx + rx = 400 + 50
     expect(path).toContain('300'); // cy
+  });
+});
+
+describe('resolveSeed', () => {
+  it('returns the configured seed when it is a non-zero number', () => {
+    expect(resolveSeed(42, 'mermaid-1')).toBe(42);
+    expect(resolveSeed(-3, 'mermaid-2')).toBe(-3);
+  });
+
+  it('falls back to hashString(id) when the configured seed is 0', () => {
+    expect(resolveSeed(0, 'mermaid-1')).toBe(hashString('mermaid-1'));
+  });
+
+  it('falls back to hashString(id) when the configured seed is undefined', () => {
+    expect(resolveSeed(undefined, 'mermaid-1')).toBe(hashString('mermaid-1'));
+  });
+
+  it('ignores the id when an explicit seed is configured', () => {
+    expect(resolveSeed(7, 'a')).toBe(resolveSeed(7, 'b'));
+  });
+
+  it('produces different fallback seeds for different ids', () => {
+    expect(resolveSeed(0, 'mermaid-1')).not.toBe(resolveSeed(0, 'mermaid-2'));
+  });
+
+  it('treats NaN / Infinity as unconfigured and falls back to hashString(id)', () => {
+    expect(resolveSeed(Number.NaN, 'mermaid-1')).toBe(hashString('mermaid-1'));
+    expect(resolveSeed(Number.POSITIVE_INFINITY, 'mermaid-1')).toBe(hashString('mermaid-1'));
   });
 });

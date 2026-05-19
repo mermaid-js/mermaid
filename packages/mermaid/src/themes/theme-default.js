@@ -212,6 +212,7 @@ class Theme {
     this.noteBorderColor = this.border2;
     this.noteTextColor = this.actorTextColor;
     this.actorLineColor = this.actorBorder;
+    this.rectBkgColor = this.rectBkgColor || this.tertiaryColor;
 
     /* Gantt chart variables */
 

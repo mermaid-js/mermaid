@@ -1,6 +1,7 @@
 import type { LayoutOptions, Position } from 'cytoscape';
 import cytoscape from 'cytoscape';
 import fcose from 'cytoscape-fcose';
+import { withSeededRandom } from './architectureSeed.js';
 import { select } from 'd3';
 import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
 import type { Diagram } from '../../Diagram.js';
@@ -410,6 +411,9 @@ function layoutArchitecture(
     const sameGroupIdealLength = db.getConfigField('idealEdgeLengthMultiplier') * iconSize;
     const crossGroupIdealLength = 0.5 * iconSize;
     const sameGroupElasticity = db.getConfigField('edgeElasticity');
+    // Wrap each layout.run() with withSeededRandom so fcose's internal
+    // Math.random() calls produce reproducible results. See architectureSeed.ts.
+    const seed = db.getConfigField('seed');
 
     const layout = cy.layout({
       name: 'fcose',
@@ -506,9 +510,9 @@ function layoutArchitecture(
         }
       }
       cy.endBatch();
-      layout.run();
+      withSeededRandom(seed, () => layout.run());
     });
-    layout.run();
+    withSeededRandom(seed, () => layout.run());
 
     cy.ready((e) => {
       log.info('Ready', e);
