@@ -322,6 +322,23 @@ class Theme {
       legendFontSize: this.radar?.legendFontSize || 12,
     };
 
+    /* network */
+    this.network = {
+      nodeStrokeColor: this.network?.nodeStrokeColor || this.primaryBorderColor,
+      nodeStrokeWidth: this.network?.nodeStrokeWidth || '1.5',
+      nodeFillColor: this.network?.nodeFillColor || this.primaryColor,
+      linkColor: this.network?.linkColor || this.lineColor,
+      linkWidth: this.network?.linkWidth || '1.5',
+      labelColor: this.network?.labelColor || this.primaryTextColor,
+      linkLabelColor:
+        this.network?.linkLabelColor || this.secondaryTextColor || this.primaryTextColor,
+      titleColor: this.network?.titleColor || this.primaryTextColor,
+      titleFontSize: this.network?.titleFontSize || '16px',
+      subnetStrokeColor: this.network?.subnetStrokeColor || this.lineColor,
+      subnetFillColor: this.network?.subnetFillColor || 'transparent',
+      subnetLabelColor: this.network?.subnetLabelColor || this.primaryTextColor,
+    };
+
     /* wardley */
     this.wardleyEvolutionColor = this.wardleyEvolutionColor || '#dc3545';
     this.wardley = {

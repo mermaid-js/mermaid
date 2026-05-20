@@ -1,4 +1,4 @@
-import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation } from 'd3';
+import { forceCollide, forceLink, forceManyBody, forceSimulation, forceX, forceY } from 'd3';
 import type { Simulation, SimulationLinkDatum, SimulationNodeDatum } from 'd3';
 import type { Diagram } from '../../Diagram.js';
 import type { NetworkDiagramConfig } from '../../config.type.js';
@@ -88,16 +88,12 @@ const layout = (
     return;
   }
 
-  let seed = 1;
-  const rand = () => {
-    seed = (seed * 16807) % 2147483647;
-    return seed / 2147483647;
-  };
   const radius = Math.max(config.nodeSpacing, config.iconSize) * Math.sqrt(nodes.length);
-  for (const n of nodes) {
-    n.x = (rand() - 0.5) * radius * 2;
-    n.y = (rand() - 0.5) * radius * 2;
-  }
+  const angleStep = (2 * Math.PI) / nodes.length;
+  nodes.forEach((n, i) => {
+    n.x = Math.cos(i * angleStep) * radius;
+    n.y = Math.sin(i * angleStep) * radius;
+  });
 
   const sameSubnetLinks: SimulationLinkDatum<SimNode>[] = [];
   for (const subnet of subnets) {
@@ -127,7 +123,8 @@ const layout = (
         .strength(0.3)
     )
     .force('charge', forceManyBody<SimNode>().strength(-Math.max(400, config.nodeSpacing * 3)))
-    .force('center', forceCenter(0, 0))
+    .force('x', forceX<SimNode>(0).strength(0.04))
+    .force('y', forceY<SimNode>(0).strength(0.06))
     .force('collide', forceCollide<SimNode>(config.iconSize * 0.9))
     .stop();
 
@@ -202,6 +199,36 @@ const computeBounds = (
   return { minX, minY, width: maxX - minX, height: maxY - minY };
 };
 
+const ICON_HALF_EXTENTS: Record<string, { hw: number; hh: number; circular?: boolean }> = {
+  router: { hw: 0.5, hh: 0.5, circular: true },
+  cloud: { hw: 0.5, hh: 0.5, circular: true },
+  switch: { hw: 0.9, hh: 0.55 },
+  firewall: { hw: 0.9, hh: 0.7 },
+  server: { hw: 0.65, hh: 0.95 },
+  database: { hw: 0.7, hh: 0.9 },
+};
+const DEFAULT_HALF_EXTENT = { hw: 0.8, hh: 0.6 };
+
+const iconBoundaryDistance = (
+  nodeType: string,
+  ux: number,
+  uy: number,
+  iconSize: number
+): number => {
+  const ext = ICON_HALF_EXTENTS[nodeType] ?? DEFAULT_HALF_EXTENT;
+  const r = iconSize / 2;
+  if (ext.circular) {
+    return r;
+  }
+  const hw = ext.hw * iconSize;
+  const hh = ext.hh * iconSize;
+  const ax = Math.abs(ux);
+  const ay = Math.abs(uy);
+  const tx = ax > 1e-6 ? hw / ax : Infinity;
+  const ty = ay > 1e-6 ? hh / ay : Infinity;
+  return Math.min(tx, ty);
+};
+
 const defineMarkers = (svg: SVG, id: string) => {
   const defs = svg.append('defs');
   const make = (markerId: string, reverse: boolean) => {
@@ -265,11 +292,14 @@ const drawLinks = (
     const dx = x2 - x1;
     const dy = y2 - y1;
     const len = Math.hypot(dx, dy) || 1;
-    const r = config.iconSize / 2;
-    const tx1 = x1 + (dx / len) * r;
-    const ty1 = y1 + (dy / len) * r;
-    const tx2 = x2 - (dx / len) * r;
-    const ty2 = y2 - (dy / len) * r;
+    const ux = dx / len;
+    const uy = dy / len;
+    const t1 = iconBoundaryDistance(source.data.nodeType, ux, uy, config.iconSize);
+    const t2 = iconBoundaryDistance(target.data.nodeType, -ux, -uy, config.iconSize);
+    const tx1 = x1 + ux * t1;
+    const ty1 = y1 + uy * t1;
+    const tx2 = x2 - ux * t2;
+    const ty2 = y2 - uy * t2;
 
     const line = g
       .append('line')
