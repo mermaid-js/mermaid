@@ -103,15 +103,12 @@ jobs:
         # The detection script is pure Node.js ESM (no npm install required).
         # It reads changed file paths from stdin and prints the --spec value.
         run: |
-          FULL_MATRIX='[1,2,3,4,5]'
-          SCOPED_MATRIX='[1]'
-
           # Kill-switch: set the repo variable E2E_SCOPE_BY_DIAGRAM to 'false'
           # to disable scoping.  Scoping is ON by default so that fork PRs
           # (where repository variables are unavailable) still benefit from it.
           if [ "${E2E_SCOPE_BY_DIAGRAM}" = "false" ]; then
             echo "spec_pattern=" >> "$GITHUB_OUTPUT"
-            echo "matrix=${FULL_MATRIX}" >> "$GITHUB_OUTPUT"
+            echo "matrix=[1,2,3,4,5]" >> "$GITHUB_OUTPUT"
             echo "[detect-scope] Scoping disabled via kill-switch — full suite."
             exit 0
           fi
@@ -122,7 +119,7 @@ jobs:
           # full suite (no PR diff to scope against).
           if [ "$BASE" = "develop" ] || [ "$BASE" = "master" ]; then
             echo "spec_pattern=" >> "$GITHUB_OUTPUT"
-            echo "matrix=${FULL_MATRIX}" >> "$GITHUB_OUTPUT"
+            echo "matrix=[1,2,3,4,5]" >> "$GITHUB_OUTPUT"
             echo "[detect-scope] Direct push to ${BASE} — full suite."
             exit 0
           fi
@@ -136,7 +133,7 @@ jobs:
 
           if [ -z "$MERGE_BASE" ]; then
             echo "spec_pattern=" >> "$GITHUB_OUTPUT"
-            echo "matrix=${FULL_MATRIX}" >> "$GITHUB_OUTPUT"
+            echo "matrix=[1,2,3,4,5]" >> "$GITHUB_OUTPUT"
             echo "[detect-scope] Could not determine merge-base — full suite."
             exit 0
           fi
@@ -150,17 +147,18 @@ jobs:
 
           if [ "$SPEC" = "SKIP" ]; then
             echo "spec_pattern=SKIP" >> "$GITHUB_OUTPUT"
-            echo "matrix=${SCOPED_MATRIX}" >> "$GITHUB_OUTPUT"
+            echo "matrix=[1]" >> "$GITHUB_OUTPUT"
             echo "[detect-scope] Only docs/ignorable files changed — e2e can be skipped."
           elif [ -n "$SPEC" ]; then
             echo "spec_pattern=${SPEC}" >> "$GITHUB_OUTPUT"
-            echo "matrix=${SCOPED_MATRIX}" >> "$GITHUB_OUTPUT"
+            echo "matrix=[1]" >> "$GITHUB_OUTPUT"
             echo "[detect-scope] Scoped to: ${SPEC}"
           else
             echo "spec_pattern=" >> "$GITHUB_OUTPUT"
-            echo "matrix=${FULL_MATRIX}" >> "$GITHUB_OUTPUT"
+            echo "matrix=[1,2,3,4,5]" >> "$GITHUB_OUTPUT"
             echo "[detect-scope] Cannot scope — full suite."
           fi
+          echo "[detect-scope] matrix output: $(grep '^matrix=' "$GITHUB_OUTPUT" | tail -1)"
         env:
           # Scoping is ON by default.  To disable, set this repository variable
           # to 'false' (GitHub → Settings → Secrets and variables → Actions → Variables).

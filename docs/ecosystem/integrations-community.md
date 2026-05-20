@@ -48,7 +48,6 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [Forgejo](https://forgejo.org/) ✅
 - [GitBook](https://gitbook.com)
   - [Mermaid Plugin](https://github.com/JozoVilcek/gitbook-plugin-mermaid)
-  - [Mermaid plugin for GitBook](https://github.com/wwformat/gitbook-plugin-mermaid-pdf)
   - [Markdown with Mermaid CLI](https://github.com/miao1007/gitbook-plugin-mermaid-cli)
 - [Gitea](https://gitea.io) ✅
 - [GitHub](https://github.com) ✅

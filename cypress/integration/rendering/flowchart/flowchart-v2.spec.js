@@ -351,6 +351,55 @@ end
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
+  it('issue-4648: sibling subgraphs with different directions and external connections', () => {
+    imgSnapshotTest(
+      `flowchart TD
+
+subgraph Group1
+  direction TB
+  A1 --> A2
+  A2 --> A3
+end
+
+subgraph Group2
+  direction LR
+  B1 --> B2
+  B2 --> B3
+end
+
+subgraph Group3
+  direction LR
+  C1 --> C2
+  C2 --> C3
+end
+
+%% External connections between subgraphs
+A3 --- B1
+B3 --- C1
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+
+  it('issue-4648: nested subgraph with external connection', () => {
+    imgSnapshotTest(
+      `flowchart TD
+
+subgraph Wrapper
+  direction LR
+  subgraph Inner
+    D1 --> D2
+    D2 --> D3
+  end
+end
+
+%% External connection to nested subgraph
+D3 --- E1
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+
   it('57.x: handle nested subgraphs with outgoing links 5', () => {
     imgSnapshotTest(
       `%% this does not produce the desired result
