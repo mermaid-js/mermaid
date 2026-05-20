@@ -26,7 +26,7 @@ type LandingOption = {
 
 const links: Record<Exclude<LandingPopUpChoice, 'skip'>, string> = {
   'full-editor':
-    'https://mermaid.ai/app/sign_up?utm_source=mermaid_js&utm_medium=landing_pop_up&utm_campaign=editor_v1',
+    'https://mermaid.ai/app/sign-up?utm_source=mermaid_js&utm_medium=landing_pop_up&utm_campaign=editor_v1',
   'browse-docs':
     'https://mermaid.ai/open-source/intro/index.html?utm_source=mermaid_js&utm_medium=landing_pop_up&utm_campaign=docs_v1',
   'live-editor': 'https://mermaid.live',
