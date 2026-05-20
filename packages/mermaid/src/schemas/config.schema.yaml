@@ -337,6 +337,8 @@ properties:
     $ref: '#/$defs/WardleyDiagramConfig'
   cynefin:
     $ref: '#/$defs/CynefinDiagramConfig'
+  network:
+    $ref: '#/$defs/NetworkDiagramConfig'
   railroad:
     $ref: '#/$defs/RailroadDiagramConfig'
   dompurifyConfig:
@@ -2424,6 +2426,44 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         minimum: 0
         default: 8
+
+  NetworkDiagramConfig:
+    title: Network Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for network topology diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      padding:
+        description: Padding around the diagram in pixels.
+        type: number
+        minimum: 0
+        default: 20
+      nodeSpacing:
+        description: Target distance between connected nodes for the force-directed layout.
+        type: number
+        minimum: 10
+        default: 140
+      iconSize:
+        description: Visual size (width/height) of each network node icon in pixels.
+        type: number
+        minimum: 10
+        default: 60
+      labelFontSize:
+        description: Font size for node labels.
+        type: number
+        minimum: 4
+        default: 14
+      linkLabelFontSize:
+        description: Font size for link labels.
+        type: number
+        minimum: 4
+        default: 11
+      iterations:
+        description: Number of force-simulation ticks executed before rendering.
+        type: number
+        minimum: 1
+        default: 300
 
   EventModelingDiagramConfig:
     title: Event Modeling Diagram Config

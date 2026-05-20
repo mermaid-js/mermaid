@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Network Diagram Demo</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+  </head>
+
+  <body>
+    <h1>Network diagram demo</h1>
+
+    <div class="diagrams">
+      <pre class="mermaid">
+        ---
+        title: "Simple LAN"
+        ---
+        networkDiagram
+          node router : router "Router"
+          node sw1 : switch "Switch 1"
+          node sw2 : switch "Switch 2"
+          node server : server "Server"
+          router --- sw1
+          router --- sw2
+          sw1 --- server : "primary"
+          sw2 --- server : "secondary"
+      </pre>
+
+      <pre class="mermaid">
+        networkDiagram
+          title DMZ
+          node internet : cloud "Internet"
+          node fw : firewall "Edge Firewall"
+          node sw : switch "DMZ Switch"
+          node web : server "Web Server"
+          node db : database "Database"
+          internet --- fw
+          fw --- sw
+          sw --- web
+          web --- db
+      </pre>
+
+      <pre class="mermaid">
+        ---
+        config:
+          theme: forest
+        ---
+        networkDiagram
+          title Branch office (forest theme)
+          node hq : cloud "HQ"
+          node fw : firewall
+          node sw : switch
+          node a : server "Workstation A"
+          node b : server "Workstation B"
+          hq --- fw
+          fw --- sw
+          sw --- a
+          sw --- b
+      </pre>
+
+      <pre class="mermaid" style="background-color: black">
+        ---
+        config:
+          theme: dark
+        ---
+        networkDiagram
+          title Dark theme
+          node r : router
+          node s1 : switch
+          node s2 : switch
+          node srv : server
+          r --- s1
+          r --- s2
+          s1 --- srv
+          s2 --- srv
+      </pre>
+    </div>
+
+    <script type="module">
+      import mermaid from '/mermaid.esm.mjs';
+      mermaid.initialize({
+        logLevel: 3,
+        securityLevel: 'loose',
+      });
+    </script>
+
+    <style>
+      .diagrams {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      pre {
+        width: 45vw;
+        padding: 2em;
+      }
+    </style>
+  </body>
+</html>

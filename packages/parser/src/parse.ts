@@ -16,6 +16,7 @@ import type {
   TreeView,
   Wardley,
   Cynefin,
+  Network,
 } from './language/index.js';
 
 export type DiagramAST =
@@ -33,7 +34,8 @@ export type DiagramAST =
   | Treemap
   | TreeView
   | Wardley
-  | Cynefin;
+  | Cynefin
+  | Network;
 
 const parsers: Record<string, LangiumParser> = {};
 const initializers = {
@@ -112,6 +114,11 @@ const initializers = {
     const parser = createCynefinServices().Cynefin.parser.LangiumParser;
     parsers.cynefin = parser;
   },
+  network: async () => {
+    const { createNetworkServices } = await import('./language/network/index.js');
+    const parser = createNetworkServices().Network.parser.LangiumParser;
+    parsers.network = parser;
+  },
 } as const;
 
 export async function parse(diagramType: 'info', text: string): Promise<Info>;
@@ -129,6 +136,7 @@ export async function parse(diagramType: 'railroadPeg', text: string): Promise<R
 export async function parse(diagramType: 'treemap', text: string): Promise<Treemap>;
 export async function parse(diagramType: 'wardley', text: string): Promise<Wardley>;
 export async function parse(diagramType: 'cynefin', text: string): Promise<Cynefin>;
+export async function parse(diagramType: 'network', text: string): Promise<Network>;
 
 export async function parse<T extends DiagramAST>(
   diagramType: keyof typeof initializers,

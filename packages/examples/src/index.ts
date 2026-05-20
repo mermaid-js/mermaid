@@ -31,6 +31,7 @@ import railroadDiagram from './examples/railroad.js';
 import railroadEbnfDiagram from './examples/railroad-ebnf.js';
 import railroadAbnfDiagram from './examples/railroad-abnf.js';
 import railroadPegDiagram from './examples/railroad-peg.js';
+import networkDiagram from './examples/network.js';
 
 export const diagramData: DiagramMetadata[] = [
   flowChart,
@@ -65,4 +66,5 @@ export const diagramData: DiagramMetadata[] = [
   railroadEbnfDiagram,
   railroadAbnfDiagram,
   railroadPegDiagram,
+  networkDiagram,
 ];

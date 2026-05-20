@@ -17,6 +17,8 @@ import type {
   EventModelingServices,
   TreeView,
   TreeViewServices,
+  Network,
+  NetworkServices,
 } from '../src/language/index.js';
 import {
   createArchitectureServices,
@@ -27,6 +29,7 @@ import {
   createGitGraphServices,
   createEventModelingServices,
   createTreeViewServices,
+  createNetworkServices,
 } from '../src/language/index.js';
 
 const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined);
@@ -133,3 +136,14 @@ export function createTreeViewTestServices() {
   return { services: treeViewServices, parse };
 }
 export const treeViewParse = createTreeViewTestServices().parse;
+
+const networkServices: NetworkServices = createNetworkServices().Network;
+const networkParser: LangiumParser = networkServices.parser.LangiumParser;
+export function createNetworkTestServices() {
+  const parse = (input: string) => {
+    return networkParser.parse<Network>(input);
+  };
+
+  return { services: networkServices, parse };
+}
+export const networkParse = createNetworkTestServices().parse;

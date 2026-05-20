@@ -97,6 +97,16 @@ export {
   EmModelEntityType,
   isEmModelEntityType,
   isEmResetFrame,
+  Network,
+  NetworkNode,
+  NetworkLink,
+  NetworkNodeMeta,
+  NetworkSubnet,
+  isNetwork,
+  isNetworkNode,
+  isNetworkLink,
+  isNetworkNodeMeta,
+  isNetworkSubnet,
 } from './generated/ast.js';
 
 export {
@@ -116,6 +126,7 @@ export {
   TreeViewGrammarGeneratedModule as TreeViewGeneratedModule,
   WardleyGrammarGeneratedModule as WardleyGeneratedModule,
   CynefinGrammarGeneratedModule as CynefinGeneratedModule,
+  NetworkGrammarGeneratedModule as NetworkGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';
@@ -134,3 +145,4 @@ export * from './railroad-peg/index.js';
 export * from './treemap/index.js';
 export * from './wardley/index.js';
 export * from './cynefin/index.js';
+export * from './network/index.js';

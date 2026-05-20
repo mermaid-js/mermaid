@@ -243,6 +243,7 @@ export interface MermaidConfig {
   venn?: VennDiagramConfig;
   'wardley-beta'?: WardleyDiagramConfig;
   cynefin?: CynefinDiagramConfig;
+  network?: NetworkDiagramConfig;
   railroad?: RailroadDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
@@ -1896,6 +1897,38 @@ export interface CynefinDiagramConfig extends BaseDiagramConfig {
    *
    */
   seed?: number;
+}
+/**
+ * The object containing configurations specific for network topology diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "NetworkDiagramConfig".
+ */
+export interface NetworkDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Padding around the diagram in pixels.
+   */
+  padding?: number;
+  /**
+   * Target distance between connected nodes for the force-directed layout.
+   */
+  nodeSpacing?: number;
+  /**
+   * Visual size (width/height) of each network node icon in pixels.
+   */
+  iconSize?: number;
+  /**
+   * Font size for node labels.
+   */
+  labelFontSize?: number;
+  /**
+   * Font size for link labels.
+   */
+  linkLabelFontSize?: number;
+  /**
+   * Number of force-simulation ticks executed before rendering.
+   */
+  iterations?: number;
 }
 /**
  * Configuration for Railroad (Syntax) Diagrams

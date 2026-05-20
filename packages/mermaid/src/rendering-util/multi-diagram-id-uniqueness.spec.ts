@@ -207,6 +207,13 @@ union A, B`,
     tf 02 evt End
     rf 03 readmodel ReadModel01 ->> 01 ->> 02 { a: true }
     rf 04 rmo ReadModel02 ->> 01 ->> 02`,
+
+  network: `networkDiagram
+    node router : router "Router"
+    node sw1 : switch "Switch 1"
+    node srv : server "Server"
+    router --- sw1
+    sw1 --- srv : "primary"`,
 };
 
 async function renderTwoAndCheckIds(
