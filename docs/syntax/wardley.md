@@ -629,7 +629,7 @@ evolution Genesis@0.25 -> Custom@0.5 -> Product@0.75 -> Commodity@1.0
 anchor Customer [0.90, 0.95]
 
 component "Mobile App" [0.80, 0.85] (build)
-component "Web App" [0.75, 0.80] (build) label [-60, 10]
+component "Web App" [0.75, 0.80] label [-60, 10] (build)
 component "API Gateway" [0.70, 0.65] (buy)
 component "Auth Service" [0.60, 0.55] (outsource)
 component "Database" [0.50, 0.45] (buy) (inertia)
@@ -668,7 +668,7 @@ evolution Genesis@0.25 -> Custom@0.5 -> Product@0.75 -> Commodity@1.0
 anchor Customer [0.90, 0.95]
 
 component "Mobile App" [0.80, 0.85] (build)
-component "Web App" [0.75, 0.80] (build) label [-60, 10]
+component "Web App" [0.75, 0.80] label [-60, 10] (build)
 component "API Gateway" [0.70, 0.65] (buy)
 component "Auth Service" [0.60, 0.55] (outsource)
 component "Database" [0.50, 0.45] (buy) (inertia)
