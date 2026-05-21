@@ -1813,6 +1813,68 @@ It is also possible to add style to multiple links in a single statement, by sep
 linkStyle 1,2,7 color:blue;
 ```
 
+### Styling arrow text
+
+The `color` property in `linkStyle` controls the color of the text label on a link.
+
+#### Style all arrow labels at once
+
+Use `linkStyle default` to apply a color to every arrow label in the diagram:
+
+```mermaid-example
+flowchart LR
+    A -->|hello| B
+    B -->|world| C
+    linkStyle default color:red
+```
+
+```mermaid
+flowchart LR
+    A -->|hello| B
+    B -->|world| C
+    linkStyle default color:red
+```
+
+#### Style a specific arrow label
+
+Reference the link by its zero-based index (the order it appears in the diagram):
+
+```mermaid-example
+flowchart LR
+    A -->|first| B
+    B -->|second| C
+    linkStyle 1 color:blue
+```
+
+```mermaid
+flowchart LR
+    A -->|first| B
+    B -->|second| C
+    linkStyle 1 color:blue
+```
+
+In this example only the second arrow label ("second") is styled blue.
+
+#### Style individual arrow labels using Edge IDs (v11.10.0+)
+
+Assign an ID to an edge and use `classDef` to apply styles. This approach is more readable when targeting specific links in a complex diagram:
+
+```mermaid-example
+flowchart LR
+    classDef redLabel color:red,stroke:#f00,stroke-width:2px
+    A myEdge@-->|styled| B
+    A -->|unstyled| C
+    class myEdge redLabel
+```
+
+```mermaid
+flowchart LR
+    classDef redLabel color:red,stroke:#f00,stroke-width:2px
+    A myEdge@-->|styled| B
+    A -->|unstyled| C
+    class myEdge redLabel
+```
+
 ### Styling line curves
 
 It is possible to style the type of curve used for lines between items, if the default method does not meet your needs.
