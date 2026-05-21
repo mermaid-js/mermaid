@@ -5,8 +5,11 @@ import { log } from '../../logger.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { WardleyBuildResult, WardleyNode } from './wardleyBuilder.js';
+import { autoPlaceLabels, estimateLabelBox } from './wardleyLabelPlacement.js';
+import type { LabelBox, Obstacle, PlacedLabel, Rect } from './wardleyLabelPlacement.js';
 
 const DEFAULT_STAGES = ['Genesis', 'Custom Built', 'Product', 'Commodity'];
+const ANNOTATION_CIRCLE_RADIUS = 10;
 
 type WardleyText = d3.Selection<SVGTextElement, unknown, Element | null, unknown>;
 
@@ -75,8 +78,180 @@ const getConfigValues = () => {
     axisFontSize: wardleyConfig?.axisFontSize ?? 12,
     labelFontSize: wardleyConfig?.labelFontSize ?? 10,
     showGrid: wardleyConfig?.showGrid ?? false,
+    autoPlaceLabels: wardleyConfig?.autoPlaceLabels ?? false,
     useMaxWidth: wardleyConfig?.useMaxWidth ?? true,
   };
+};
+
+interface PlacementInput {
+  nodes: WardleyNode[];
+  positions: Map<string, { x: number; y: number; node: WardleyNode }>;
+  links: WardleyBuildResult['links'];
+  annotations: WardleyBuildResult['annotations'];
+  projectX: (value: number) => number;
+  projectY: (value: number) => number;
+  bounds: { x: number; y: number; width: number; height: number };
+  fontSize: number;
+  nodeRadius: number;
+  squareSize: number;
+  /** Pipeline box rectangles — obstacles labels must not be placed on top of. */
+  pipelineBoxes: Rect[];
+}
+
+/**
+ * Return the obstacle-circle radius for a node, mirroring the renderer's actual
+ * marker geometry so that auto-placed labels are kept clear of visible markers.
+ *
+ * - standard component:        nodeRadius           (plain filled circle)
+ * - outsource / buy / build:   nodeRadius * 2       (overlay circle behind main circle)
+ * - market:                    nodeRadius * 2       (outer circle of the triangle cluster)
+ * - ecosystem:                 nodeRadius * 2       (ecoOuterRadius = nodeRadius * 2)
+ * - pipeline parent (square):  squareSize           (square side; covers the marker extent)
+ */
+const markerRadius = (node: WardleyNode, nodeRadius: number, squareSize: number): number => {
+  if (node.isPipelineParent) {
+    return squareSize; // square side length as a conservative circle radius
+  }
+  if (
+    node.sourceStrategy === 'outsource' ||
+    node.sourceStrategy === 'buy' ||
+    node.sourceStrategy === 'build' ||
+    node.sourceStrategy === 'market' ||
+    node.sourceStrategy === 'ecosystem'
+  ) {
+    return nodeRadius * 2; // outer overlay circle radius for all special source strategies
+  }
+  return nodeRadius;
+};
+
+const buildPlacement = (input: PlacementInput): Map<string, PlacedLabel> => {
+  const labels: LabelBox[] = [];
+  const obstacles: Obstacle[] = [];
+  let priority = 0;
+
+  for (const node of input.nodes) {
+    const pos = input.positions.get(node.id);
+    if (!pos) {
+      continue;
+    }
+    const box = estimateLabelBox(node.label, input.fontSize);
+    // When the author specified `label [x, y]`, record that authored position
+    // as a rect so autoPlaceLabels can keep it if it is collision-free.
+    let manualRect: Rect | undefined;
+    if (node.labelOffsetX !== undefined && node.labelOffsetY !== undefined) {
+      const textX = pos.x + node.labelOffsetX;
+      const textY = pos.y + node.labelOffsetY;
+      if (node.className === 'anchor') {
+        // Currently unreachable: the wardley grammar has no label-offset
+        // production for anchor nodes, so labelOffsetX/Y are always undefined
+        // for anchors and the outer guard above never fires. Kept defensively
+        // to mirror the legacy anchor-offset render path.
+        // Anchor labels render text-anchor:middle, dominant-baseline:middle.
+        manualRect = {
+          x: textX - box.width / 2,
+          y: textY - box.height / 2,
+          width: box.width,
+          height: box.height,
+        };
+      } else {
+        // Component labels render text-anchor:start, dominant-baseline:auto (text sits
+        // above the baseline), so the rect's left edge is textX and its top
+        // edge is one line-height above textY.
+        // Note: this bounding box is estimate-based. When autoPlaceLabels keeps
+        // a collision-free manual label it renders at the rect's centre via
+        // dominant-baseline:middle, whereas the legacy path uses
+        // dominant-baseline:auto (baseline at textY). The kept label therefore
+        // renders roughly half a line-height higher than the authored baseline
+        // — a small systematic approximation consistent with the estimate-based
+        // geometry used throughout this feature.
+        manualRect = {
+          x: textX,
+          y: textY - box.height,
+          width: box.width,
+          height: box.height,
+        };
+      }
+    }
+    // Components inside a pipeline prefer their label underneath (the
+    // conventional pipeline-child placement); everything else defaults to NE.
+    const preferredDirection =
+      node.inPipeline && !node.isPipelineParent ? { x: 0, y: 1 } : undefined;
+    labels.push({
+      id: `node:${node.id}`,
+      anchor: { x: pos.x, y: pos.y },
+      width: box.width,
+      height: box.height,
+      kind: node.className === 'anchor' ? 'anchor' : 'component',
+      priority: priority++,
+      manualRect,
+      preferredDirection,
+    });
+    obstacles.push({
+      type: 'circle',
+      x: pos.x,
+      y: pos.y,
+      radius: markerRadius(node, input.nodeRadius, input.squareSize),
+    });
+  }
+
+  for (const link of input.links) {
+    const a = input.positions.get(link.source);
+    const b = input.positions.get(link.target);
+    if (!a || !b) {
+      continue;
+    }
+    obstacles.push({ type: 'segment', x1: a.x, y1: a.y, x2: b.x, y2: b.y });
+    if (link.label) {
+      const box = estimateLabelBox(link.label, input.fontSize);
+      const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+      labels.push({
+        id: `link:${link.source}->${link.target}`,
+        anchor: mid,
+        width: box.width,
+        height: box.height,
+        kind: 'link',
+        priority: priority++,
+        // preferredOffset is perpendicular to the link direction (both ± sides explored).
+        preferredOffset: { x: -(b.y - a.y), y: b.x - a.x },
+      });
+    }
+  }
+
+  for (let i = 0; i < input.annotations.length; i++) {
+    const ann = input.annotations[i];
+    // Each annotation may have multiple coordinates (connected points); use all
+    // as obstacles, and (if there is text) use the first coordinate as the label anchor.
+    for (const coord of ann.coordinates) {
+      const px = input.projectX(coord.x);
+      const py = input.projectY(coord.y);
+      obstacles.push({ type: 'circle', x: px, y: py, radius: ANNOTATION_CIRCLE_RADIUS }); // annotation circle radius
+    }
+    if (ann.text && ann.coordinates.length > 0) {
+      const firstCoord = ann.coordinates[0];
+      const box = estimateLabelBox(`${ann.number}. ${ann.text}`, input.fontSize);
+      labels.push({
+        id: `annotation:${i}`,
+        anchor: { x: input.projectX(firstCoord.x), y: input.projectY(firstCoord.y) },
+        width: box.width,
+        height: box.height,
+        kind: 'annotation',
+        priority: priority++,
+      });
+    }
+  }
+
+  // Pipeline boxes are obstacles so labels are not placed on top of them.
+  for (const box of input.pipelineBoxes) {
+    obstacles.push({ type: 'rect', x: box.x, y: box.y, width: box.width, height: box.height });
+  }
+
+  const placed = autoPlaceLabels(labels, obstacles, input.bounds, {
+    slotDistances: [12, 22, 36, 54],
+    leaderThreshold: 34,
+    refinementCount: 3,
+  });
+
+  return new Map(placed.map((p) => [p.id, p]));
 };
 
 export const draw = (text: string, id: string, _version: string, diagObj: Diagram) => {
@@ -384,6 +559,108 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     });
   });
 
+  // Reposition each pipeline's parent node (the square marker) to the
+  // horizontal centre of its child components, just above the pipeline box,
+  // and collect each pipeline's box rectangle. This must run before
+  // buildPlacement so an auto-placed pipeline label anchors to the square's
+  // final position, and so the boxes can be fed in as placement obstacles.
+  // The square and boxes are unchanged — they have always rendered here; only
+  // the timing of this computation moved earlier so label placement sees it.
+  const pipelineBoxes: Rect[] = [];
+  if (data.pipelines.length > 0) {
+    const pipelineBoxHeight = configValues.nodeRadius * 4;
+    const pipelineBoxPadding = 15;
+    data.pipelines.forEach((pipeline) => {
+      let minX = Infinity;
+      let maxX = -Infinity;
+      let y = 0;
+      pipeline.componentIds.forEach((componentId) => {
+        const pos = positions.get(componentId);
+        if (pos) {
+          minX = Math.min(minX, pos.x);
+          maxX = Math.max(maxX, pos.x);
+          y = pos.y;
+        }
+      });
+      if (minX === Infinity || maxX === -Infinity) {
+        return;
+      }
+      const parentPos = positions.get(pipeline.nodeId);
+      if (parentPos) {
+        // Position so 2/3 of the square is outside the box, 1/3 inside.
+        parentPos.x = (minX + maxX) / 2;
+        parentPos.y = y - pipelineBoxHeight / 2 - squareSize / 6;
+      }
+      pipelineBoxes.push({
+        x: minX - pipelineBoxPadding,
+        y: y - pipelineBoxHeight / 2,
+        width: maxX - minX + pipelineBoxPadding * 2,
+        height: pipelineBoxHeight,
+      });
+    });
+  }
+
+  const chartBounds = {
+    x: configValues.padding,
+    y: configValues.padding,
+    width: chartWidth,
+    height: chartHeight,
+  };
+  const placement = configValues.autoPlaceLabels
+    ? buildPlacement({
+        nodes: data.nodes,
+        positions,
+        links: data.links,
+        annotations: data.annotations,
+        projectX,
+        projectY,
+        bounds: chartBounds,
+        fontSize: configValues.labelFontSize,
+        nodeRadius: configValues.nodeRadius,
+        squareSize,
+        pipelineBoxes,
+      })
+    : undefined;
+
+  // Draw leader lines for auto-placed labels that were moved far from their anchor.
+  // Rendered before pipelines/links/nodes so lines sit underneath all markers and text.
+  if (placement && [...placement.values()].some((p) => p.needsLeader)) {
+    const leaderGroup = root.append('g').attr('class', 'wardley-leader-lines');
+    for (const placed of placement.values()) {
+      if (!placed.needsLeader) {
+        continue;
+      }
+      const cx = placed.rect.x + placed.rect.width / 2;
+      const cy = placed.rect.y + placed.rect.height / 2;
+      // Clamp the label end of the leader to the rect edge facing the anchor.
+      const dx = placed.anchor.x - cx;
+      const dy = placed.anchor.y - cy;
+      const halfW = placed.rect.width / 2;
+      const halfH = placed.rect.height / 2;
+      const scale =
+        Math.abs(dx) * halfH > Math.abs(dy) * halfW
+          ? halfW / (Math.abs(dx) || 1)
+          : halfH / (Math.abs(dy) || 1);
+      const edgeX = cx + dx * scale;
+      const edgeY = cy + dy * scale;
+      // Set stroke inline: the wardley diagram CSS class block is not reliably
+      // applied to the rendered SVG, so (like every other stroked element in
+      // this renderer) the leader line needs explicit stroke attributes to be
+      // visible. The class is kept for theming/targeting.
+      leaderGroup
+        .append('line')
+        .attr('x1', placed.anchor.x)
+        .attr('y1', placed.anchor.y)
+        .attr('x2', edgeX)
+        .attr('y2', edgeY)
+        .attr('class', 'wardley-leader-line')
+        .attr('stroke', theme.annotationStroke)
+        .attr('stroke-width', 1)
+        .attr('stroke-opacity', 0.6)
+        .attr('fill', 'none');
+    }
+  }
+
   // Render pipeline boxes and evolution links
   if (data.pipelines.length > 0) {
     const pipelineGroup = root.append('g').attr('class', 'wardley-pipelines');
@@ -436,13 +713,8 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
         const height = configValues.nodeRadius * 4; // Height of the pipeline box
         const boxTop = y - height / 2;
 
-        // Position the parent node at the top of the pipeline box, 2/3 outside, 1/3 inside
-        const parentPos = positions.get(pipeline.nodeId);
-        if (parentPos) {
-          const centerX = (minX + maxX) / 2;
-          parentPos.x = centerX;
-          parentPos.y = boxTop - squareSize / 6; // Position so 2/3 is outside, 1/3 inside
-        }
+        // The parent square was already repositioned to the pipeline centre
+        // before label auto-placement — see the pipeline pre-pass above.
 
         pipelineGroup
           .append('rect')
@@ -560,6 +832,10 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .append('text')
     .attr('class', 'wardley-link-label')
     .attr('x', (link) => {
+      const placed = placement?.get(`link:${link.source}->${link.target}`);
+      if (placed) {
+        return placed.rect.x + placed.rect.width / 2;
+      }
       const sourcePos = positions.get(link.source)!;
       const targetPos = positions.get(link.target)!;
       const midX = (sourcePos.x + targetPos.x) / 2;
@@ -572,6 +848,10 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
       return midX + perpX * offset;
     })
     .attr('y', (link) => {
+      const placed = placement?.get(`link:${link.source}->${link.target}`);
+      if (placed) {
+        return placed.rect.y + placed.rect.height / 2;
+      }
       const sourcePos = positions.get(link.source)!;
       const targetPos = positions.get(link.target)!;
       const midY = (sourcePos.y + targetPos.y) / 2;
@@ -588,6 +868,11 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('text-anchor', 'middle')
     .attr('dominant-baseline', 'middle')
     .attr('transform', (link) => {
+      const placed = placement?.get(`link:${link.source}->${link.target}`);
+      if (placed) {
+        // Auto-placed link labels render upright — no rotation needed.
+        return null;
+      }
       const sourcePos = positions.get(link.source)!;
       const targetPos = positions.get(link.target)!;
       const midX = (sourcePos.x + targetPos.x) / 2;
@@ -912,6 +1197,12 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .append('text')
     .attr('x', (node) => {
       const pos = positions.get(node.id)!;
+      const placed = placement?.get(`node:${node.id}`);
+      if (placed) {
+        // All placed labels use text-anchor:middle → return rect center x.
+        return placed.rect.x + placed.rect.width / 2;
+      }
+      // Fallback: original static-offset logic (flag-off path — unchanged behaviour).
       // Anchors have no offset, centered on position
       if (node.className === 'anchor') {
         return node.labelOffsetX !== undefined ? pos.x + node.labelOffsetX : pos.x;
@@ -926,6 +1217,12 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     })
     .attr('y', (node) => {
       const pos = positions.get(node.id)!;
+      const placed = placement?.get(`node:${node.id}`);
+      if (placed) {
+        // dominant-baseline is 'middle' when placed, so return the rect vertical center.
+        return placed.rect.y + placed.rect.height / 2;
+      }
+      // Fallback: original static-offset logic (flag-off path — unchanged behaviour).
       // Anchors have small upward offset, centered on position
       if (node.className === 'anchor') {
         return node.labelOffsetY !== undefined ? pos.y + node.labelOffsetY : pos.y - 3;
@@ -950,15 +1247,33 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     })
     .attr('font-size', configValues.labelFontSize)
     .attr('font-weight', (node) => (node.className === 'anchor' ? 'bold' : 'normal'))
-    .attr('text-anchor', (node) => (node.className === 'anchor' ? 'middle' : 'start'))
-    .attr('dominant-baseline', (node) => (node.className === 'anchor' ? 'middle' : 'auto'))
+    .attr('text-anchor', (node) => {
+      // When auto-placed, always center on the rect.
+      if (placement?.get(`node:${node.id}`)) {
+        return 'middle';
+      }
+      // Fallback: original static-offset logic (flag-off path — unchanged behaviour).
+      return node.className === 'anchor' ? 'middle' : 'start';
+    })
+    .attr('dominant-baseline', (node) => {
+      // When auto-placed, use 'middle' so the rect's vertical center aligns with the text baseline.
+      if (placement?.get(`node:${node.id}`)) {
+        return 'middle';
+      }
+      // Fallback: original logic (flag-off path — unchanged behaviour).
+      return node.className === 'anchor' ? 'middle' : 'auto';
+    })
     .text((node) => node.label);
 
   // Render annotations
   if (data.annotations.length > 0) {
     const annotationsGroup = root.append('g').attr('class', 'wardley-annotations');
 
-    data.annotations.forEach((annotation) => {
+    // Track which annotation indices were individually placed so the shared annotationsBox
+    // block can skip them and avoid rendering the same text twice.
+    const placedAnnotationIndices = new Set<number>();
+
+    data.annotations.forEach((annotation, annIdx) => {
       // Project all coordinates
       const projectedCoords = annotation.coordinates.map((coord) => ({
         x: projectX(coord.x),
@@ -990,7 +1305,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
           .append('circle')
           .attr('cx', coord.x)
           .attr('cy', coord.y)
-          .attr('r', 10)
+          .attr('r', ANNOTATION_CIRCLE_RADIUS)
           .attr('fill', 'white')
           .attr('stroke', theme.axisColor)
           .attr('stroke-width', 1.5);
@@ -1007,6 +1322,42 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
           .attr('font-weight', 'bold')
           .text(annotation.number);
       });
+
+      // When auto-placement is active, render each annotation's text label individually
+      // at the placed position (instead of relying solely on the shared annotationsBox block).
+      if (annotation.text && annotation.coordinates.length > 0) {
+        const annPlaced = placement?.get(`annotation:${annIdx}`);
+        if (annPlaced) {
+          placedAnnotationIndices.add(annIdx);
+          const annTextGroup = annotationsGroup
+            .append('g')
+            .attr('class', 'wardley-annotation-label');
+
+          // Background rect at placed position
+          annTextGroup
+            .append('rect')
+            .attr('x', annPlaced.rect.x)
+            .attr('y', annPlaced.rect.y)
+            .attr('width', annPlaced.rect.width)
+            .attr('height', annPlaced.rect.height)
+            .attr('fill', 'white')
+            .attr('stroke', theme.axisColor)
+            .attr('stroke-width', 1.5)
+            .attr('rx', 2)
+            .attr('ry', 2);
+
+          // Text label centered in the placed rect
+          annTextGroup
+            .append('text')
+            .attr('x', annPlaced.rect.x + annPlaced.rect.width / 2)
+            .attr('y', annPlaced.rect.y + annPlaced.rect.height / 2)
+            .attr('text-anchor', 'middle')
+            .attr('dominant-baseline', 'middle')
+            .attr('font-size', configValues.labelFontSize)
+            .attr('fill', theme.annotationTextColor)
+            .text(`${annotation.number}. ${annotation.text}`);
+        }
+      }
     });
 
     // Draw annotations text box if position is defined
@@ -1017,31 +1368,35 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
       const lineHeight = 16;
       const fontSize = 11;
 
-      // Create text box group
-      const textBoxGroup = annotationsGroup.append('g').attr('class', 'wardley-annotations-box');
-
-      // Sort annotations by number
+      // Sort annotations by number, excluding any that were individually auto-placed
+      // (to avoid rendering the same text twice when autoPlaceLabels is on).
       const sortedAnnotations = [...data.annotations]
-        .filter((a) => a.text)
+        .filter((a, idx) => a.text && !placedAnnotationIndices.has(idx))
         .sort((a, b) => a.number - b.number);
 
-      // Draw text lines (temporarily to measure)
-      const textElements: WardleyText[] = [];
-      sortedAnnotations.forEach((annotation, idx) => {
-        const text = textBoxGroup
-          .append('text')
-          .attr('x', boxX + padding)
-          .attr('y', boxY + padding + (idx + 1) * lineHeight)
-          .attr('font-size', fontSize)
-          .attr('fill', theme.axisTextColor)
-          .attr('text-anchor', 'start')
-          .attr('dominant-baseline', 'middle')
-          .text(`${annotation.number}. ${annotation.text}`);
-        textElements.push(text);
-      });
+      // Only create the text box group when there is actually content to render.
+      // When autoPlaceLabels is on and all annotations are individually placed,
+      // sortedAnnotations will be empty and no group should be emitted.
+      if (sortedAnnotations.length > 0) {
+        // Create text box group
+        const textBoxGroup = annotationsGroup.append('g').attr('class', 'wardley-annotations-box');
 
-      // Calculate box dimensions based on text
-      if (textElements.length > 0) {
+        // Draw text lines (temporarily to measure)
+        const textElements: WardleyText[] = [];
+        sortedAnnotations.forEach((annotation, idx) => {
+          const text = textBoxGroup
+            .append('text')
+            .attr('x', boxX + padding)
+            .attr('y', boxY + padding + (idx + 1) * lineHeight)
+            .attr('font-size', fontSize)
+            .attr('fill', theme.axisTextColor)
+            .attr('text-anchor', 'start')
+            .attr('dominant-baseline', 'middle')
+            .text(`${annotation.number}. ${annotation.text}`);
+          textElements.push(text);
+        });
+
+        // Calculate box dimensions based on text
         let maxWidth = 0;
         let maxHeight = 0;
         textElements.forEach((text) => {
