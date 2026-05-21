@@ -240,11 +240,11 @@ export const scoreCandidate = (
  * pipeline box), spills outside the chart bounds, or overlaps another manual
  * label's rect.
  *
- * Link-line crossings are deliberately NOT a disqualifier: link lines are
- * thin, an author who placed a label across one accepted that, and on dense
- * maps treating every clipped link as a collision re-places labels that
- * looked fine. Link segments are still a soft penalty for auto-placed labels
- * (see `scoreCandidate`).
+ * Crossing a link line does NOT, on its own, reject a manual label: link
+ * lines are thin, an author who placed a label across one accepted that, and
+ * on dense maps treating every clipped link as a collision re-places labels
+ * that looked fine. Link segments are still a soft penalty for auto-placed
+ * labels (see `scoreCandidate`).
  *
  * The label's OWN node marker — the circle centred on `label.anchor` — is
  * ignored: a normal label sits snugly against its own node, and counting that
@@ -274,10 +274,8 @@ export const isManualLabelKept = (
       if (circleRectOverlap(obstacle, rect)) {
         return false;
       }
-    } else if (obstacle.type === 'rect') {
-      if (rectsOverlapArea(rect, obstacle) > 0) {
-        return false;
-      }
+    } else if (obstacle.type === 'rect' && rectsOverlapArea(rect, obstacle) > 0) {
+      return false;
     }
     // Link segments are intentionally not checked — see the doc comment.
   }
