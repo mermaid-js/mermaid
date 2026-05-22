@@ -166,5 +166,8 @@
       "sharp",
       "vue-demi"
     ]
+  },
+  "dependencies": {
+    "glob": "10.5.0"
   }
 }
