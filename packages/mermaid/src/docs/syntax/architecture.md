@@ -125,6 +125,96 @@ creates an edge going out of `groupOne`, adjacent to `server`, and into `groupTw
 
 It's important to note that `groupId`s cannot be used for specifying edges and the `{group}` modifier can only be used for services within a group.
 
+### Aligning siblings (v<MERMAID_RELEASE_VERSION>+)
+
+When several services share similar edge topology (for example, three databases all connecting `R --> L:mcp`), the layout heuristic may collapse them onto the same coordinate so that two render on top of each other. The `align` directive declares that a set of services share a row (same y) or a column (same x), and forces them to spread along that axis.
+
+```
+align row {idA} {idB} {idC} ...
+align column {idA} {idB} ...
+```
+
+Members must already be declared as services or junctions, and at least two members are required. Each `align` directive lives on its own line.
+
+Pick the axis based on how the listed members are connected:
+
+- Use **`align column`** when the members connect to a common downstream node _via the same horizontal port pair_ (e.g. all use `R --> L:mcp`). They naturally form a vertical stack to one side, with parallel arrows reaching the downstream node.
+- Use **`align row`** when the members connect to a common downstream node _via the same vertical port pair_ (e.g. all use `B --> T:proc`). They naturally form a horizontal row above the downstream node.
+
+Three databases all feeding `mcp` via right-to-left edges → stack them in a column:
+
+```mermaid-example
+architecture-beta
+    group api(cloud)[API]
+    service db1(database)[DB1] in api
+    service db2(database)[DB2] in api
+    service db3(database)[DB3] in api
+    service mcp(server)[MCP] in api
+    db1:R --> L:mcp
+    db2:R --> L:mcp
+    db3:R --> L:mcp
+    align column db1 db2 db3
+```
+
+Three sources all feeding `proc` via top-to-bottom edges → arrange them in a row:
+
+```mermaid-example
+architecture-beta
+    service src1(server)[Source 1]
+    service src2(server)[Source 2]
+    service src3(server)[Source 3]
+    service proc(server)[Processor]
+    src1:B --> T:proc
+    src2:B --> T:proc
+    src3:B --> T:proc
+    align row src1 src2 src3
+```
+
+The order of members in the `align` directive determines their order along the axis. The gap between aligned members is controlled by `idealEdgeLengthMultiplier`.
+
+> **Note:** the declared order must not contradict the directions of edges between the listed members. For example, if the diagram contains `a:L --> R:b` (which places `a` to the right of `b`), then `align row a b` will conflict with that edge direction and the layout engine will fail to render. Use `align row b a` instead, or remove the conflicting edge.
+
+#### Grid layouts (combining `row` and `column`)
+
+`align row` only pins the y-coordinate of its members. To produce a clean grid where columns also align across tiers, pair each `align row` with one or more `align column` directives. The columns can span as many rows as you like — chain every node that should share an x-coordinate, even across groups.
+
+```mermaid-example
+architecture-beta
+    group sources(cloud)[Sources]
+        service src_a(server)[Source A] in sources
+        service src_b(server)[Source B] in sources
+        service src_c(server)[Source C] in sources
+
+    group storage(database)[Storage]
+        service db_one(database)[DB One] in storage
+        service db_two(database)[DB Two] in storage
+        service db_three(database)[DB Three] in storage
+
+    group output(disk)[Output]
+        service brief(disk)[Brief] in output
+        service analyst(server)[Analyst] in output
+        service delivery(cloud)[Delivery] in output
+
+    src_a:B --> T:db_one
+    src_b:B --> T:db_two
+    src_c:B --> T:db_three
+    db_two:B --> T:brief
+    brief:R --> L:analyst
+    analyst:R --> L:delivery
+
+    align row src_a src_b src_c
+    align row db_one db_two db_three
+    align row brief analyst delivery
+
+    align column src_a db_one
+    align column src_b db_two brief
+    align column src_c db_three
+```
+
+The result is three left-to-right tiers stacked vertically with a straight spine through the middle column. Edges between aligned nodes render as straight horizontal or vertical lines; cross-axis edges (e.g. `db_one:R --> T:hub`) get a single 90° elbow.
+
+> **Tip:** if a long single-word label is too wide to fit on one line at small `iconSize` values, increase `iconSize` (or use a shorter title) to keep it on one line.
+
 ### Junctions
 
 Junctions are a special type of node which acts as a potential 4-way split between edges.
