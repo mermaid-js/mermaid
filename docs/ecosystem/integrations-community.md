@@ -48,7 +48,6 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [Forgejo](https://forgejo.org/) ✅
 - [GitBook](https://gitbook.com)
   - [Mermaid Plugin](https://github.com/JozoVilcek/gitbook-plugin-mermaid)
-  - [Mermaid plugin for GitBook](https://github.com/wwformat/gitbook-plugin-mermaid-pdf)
   - [Markdown with Mermaid CLI](https://github.com/miao1007/gitbook-plugin-mermaid-cli)
 - [Gitea](https://gitea.io) ✅
 - [GitHub](https://github.com) ✅
@@ -281,6 +280,7 @@ Communication tools and platforms
   - [reveal.js-mermaid-plugin](https://github.com/ludwick/reveal.js-mermaid-plugin)
 - [Reveal CK](https://github.com/jedcn/reveal-ck)
   - [reveal-ck-mermaid-plugin](https://github.com/tmtm/reveal-ck-mermaid-plugin)
+- [SchemaCrawler - Generate Mermaid diagrams from your database](https://dev.to/sualeh/how-to-generate-mermaid-diagrams-for-your-database-33bn)
 - [speccharts: Turn your test suites into specification diagrams](https://github.com/arnaudrenaud/speccharts)
 - [Vitepress Plugin](https://github.com/sametcn99/vitepress-mermaid-renderer)
 
