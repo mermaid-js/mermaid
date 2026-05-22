@@ -86,7 +86,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       spec_pattern: ${{ steps.scope.outputs.spec_pattern }}
-      matrix: ${{ steps.scope.outputs.matrix }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -108,7 +107,6 @@ jobs:
           # (where repository variables are unavailable) still benefit from it.
           if [ "${E2E_SCOPE_BY_DIAGRAM}" = "false" ]; then
             echo "spec_pattern=" >> "$GITHUB_OUTPUT"
-            echo "matrix=[1,2,3,4,5]" >> "$GITHUB_OUTPUT"
             echo "[detect-scope] Scoping disabled via kill-switch — full suite."
             exit 0
           fi
@@ -119,7 +117,6 @@ jobs:
           # full suite (no PR diff to scope against).
           if [ "$BASE" = "develop" ] || [ "$BASE" = "master" ]; then
             echo "spec_pattern=" >> "$GITHUB_OUTPUT"
-            echo "matrix=[1,2,3,4,5]" >> "$GITHUB_OUTPUT"
             echo "[detect-scope] Direct push to ${BASE} — full suite."
             exit 0
           fi
@@ -133,7 +130,6 @@ jobs:
 
           if [ -z "$MERGE_BASE" ]; then
             echo "spec_pattern=" >> "$GITHUB_OUTPUT"
-            echo "matrix=[1,2,3,4,5]" >> "$GITHUB_OUTPUT"
             echo "[detect-scope] Could not determine merge-base — full suite."
             exit 0
           fi
@@ -147,18 +143,14 @@ jobs:
 
           if [ "$SPEC" = "SKIP" ]; then
             echo "spec_pattern=SKIP" >> "$GITHUB_OUTPUT"
-            echo "matrix=[1]" >> "$GITHUB_OUTPUT"
             echo "[detect-scope] Only docs/ignorable files changed — e2e can be skipped."
           elif [ -n "$SPEC" ]; then
             echo "spec_pattern=${SPEC}" >> "$GITHUB_OUTPUT"
-            echo "matrix=[1]" >> "$GITHUB_OUTPUT"
             echo "[detect-scope] Scoped to: ${SPEC}"
           else
             echo "spec_pattern=" >> "$GITHUB_OUTPUT"
-            echo "matrix=[1,2,3,4,5]" >> "$GITHUB_OUTPUT"
             echo "[detect-scope] Cannot scope — full suite."
           fi
-          echo "[detect-scope] matrix output: $(grep '^matrix=' "$GITHUB_OUTPUT" | tail -1)"
         env:
           # Scoping is ON by default.  To disable, set this repository variable
           # to 'false' (GitHub → Settings → Secrets and variables → Actions → Variables).
@@ -167,8 +159,14 @@ jobs:
           E2E_SCOPE_BY_DIAGRAM: "${{ vars.E2E_SCOPE_BY_DIAGRAM == 'false' && 'false' || 'true' }}"
 
   e2e:
-    # Skip the entire e2e job when only docs/ignorable files changed.
-    if: needs.detect-scope.outputs.spec_pattern != 'SKIP'
+    # Skip when only docs/ignorable files changed.
+    # For scoped runs (spec_pattern is set), only container 1 runs.
+    # Containers 2-5 are gated out via the matrix.containers condition rather
+    # than a dynamic fromJSON matrix, which has a known GHA bug with single-
+    # element arrays always spawning 5 instances regardless.
+    if: |
+      needs.detect-scope.outputs.spec_pattern != 'SKIP' &&
+      (needs.detect-scope.outputs.spec_pattern == '' || matrix.containers == 1)
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:node-20.16.0-chrome-127.0.6533.88-1-ff-128.0.3-edge-127.0.2651.74-1
@@ -177,7 +175,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: ${{ fromJSON(needs.detect-scope.outputs.matrix) }}
+        containers: [1, 2, 3, 4, 5]
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
