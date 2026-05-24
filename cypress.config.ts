@@ -31,6 +31,11 @@ export default eyesPlugin(
           registerArgosTask(on, config, {
             // Enable upload to Argos only when it runs on CI.
             uploadToArgos: !!process.env.CI,
+            // Mark as a subset build when only a scoped set of specs ran.
+            // This tells Argos to ignore missing screenshots (they were not
+            // run, not deleted) and prevents the baseline from being replaced
+            // by a partial run. Mirrors the ARGOS_SUBSET env var set in e2e.yml.
+            subset: process.env.ARGOS_SUBSET === 'true',
           });
         } else {
           addMatchImageSnapshotPlugin(on, config);

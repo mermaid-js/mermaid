@@ -240,7 +240,8 @@ export function edgeTypeStr2Type(typeStr: string): string {
 }
 
 export function edgeStrToEdgeData(typeStr: string): string {
-  switch (typeStr.replace(/^[\s-]+|[\s-]+$/g, '')) {
+  const lastChar = typeStr.trim().slice(-1);
+  switch (lastChar) {
     case 'x':
       return 'arrow_cross';
     case 'o':
@@ -250,6 +251,31 @@ export function edgeStrToEdgeData(typeStr: string): string {
     default:
       return '';
   }
+}
+
+export function edgeStrToEdgeStartData(typeStr: string): string {
+  const firstChar = typeStr.trim().charAt(0);
+  switch (firstChar) {
+    case 'x':
+      return 'arrow_cross';
+    case 'o':
+      return 'arrow_circle';
+    case '<':
+      return 'arrow_point';
+    default:
+      return 'arrow_open';
+  }
+}
+
+export function edgeStrToThickness(typeStr: string): string {
+  return typeStr.includes('==') ? 'thick' : 'normal';
+}
+
+export function edgeStrToPattern(typeStr: string): string {
+  if (typeStr.includes('.-')) {
+    return 'dotted';
+  }
+  return 'solid';
 }
 
 let cnt = 0;
@@ -324,6 +350,9 @@ const db = {
   typeStr2Type: typeStr2Type,
   edgeTypeStr2Type: edgeTypeStr2Type,
   edgeStrToEdgeData,
+  edgeStrToEdgeStartData,
+  edgeStrToThickness,
+  edgeStrToPattern,
   getLogger,
   getBlocksFlat,
   getBlocks,

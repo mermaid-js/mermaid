@@ -1,8 +1,10 @@
 BRANDES
+browserlist
 Buzan
 circo
 handDrawn
 KOEPF
 neato
 newbranch
+renovatebot
 validify

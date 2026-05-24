@@ -345,6 +345,18 @@ stateDiagram
       }
     );
   });
+  it('v2 should render a compact self-loop edge', () => {
+    imgSnapshotTest(
+      `
+stateDiagram-v2
+  [*] --> Node
+  Node --> Node: Self Edge
+    `,
+      {
+        logLevel: 0,
+      }
+    );
+  });
   it('v2 width of compound state should grow with title if title is wider', () => {
     imgSnapshotTest(
       `

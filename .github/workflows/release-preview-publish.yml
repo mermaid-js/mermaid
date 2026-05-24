@@ -5,6 +5,10 @@ on:
     branches:
       - 'release/**'
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   publish-preview:
     runs-on: ubuntu-latest
@@ -23,6 +27,8 @@ jobs:
 
       - name: Install Packages
         run: |
+          # Use hoisted mode to avoid `bundleDependencies` issues
+          echo 'nodeLinker: "hoisted"' >> pnpm-workspace.yaml
           pnpm install --frozen-lockfile
         env:
           CYPRESS_CACHE_FOLDER: .cache/Cypress
@@ -41,6 +47,11 @@ jobs:
           npm set registry https://npm.pkg.github.com/mermaid-js
           json -I -f package.json -e 'this.name="@mermaid-js/mermaid"' # Package name needs to be set to a scoped one because GitHub registry requires this
           json -I -f package.json -e 'this.repository="git://github.com/mermaid-js/mermaid"' # Repo url needs to have a specific format too
-          npm publish
+          # We don't publish a separate `@mermaid-js/parser` so bundle it instead
+          json -I -f package.json -e 'this.bundleDependencies??=[]' -e 'this.bundleDependencies.push("@mermaid-js/parser")'
+          pnpm pack
+          npm publish --tag preview *.tgz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Prevent `npm publish` from failing if the docs verification fails.
+          ONLY_WARN_ON_VERIFY_ERROR: 'true'

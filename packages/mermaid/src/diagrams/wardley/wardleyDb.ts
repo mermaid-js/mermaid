@@ -1,5 +1,4 @@
 import { getConfig as getGlobalConfig } from '../../diagram-api/diagramAPI.js';
-import { sanitizeText } from '../common/common.js';
 import {
   clear as commonClear,
   getAccDescription,
@@ -13,11 +12,6 @@ import type { WardleyAxesConfig } from './wardleyBuilder.js';
 import { WardleyBuilder } from './wardleyBuilder.js';
 
 const builder = new WardleyBuilder();
-
-function textSanitizer(text: string) {
-  const config = getGlobalConfig();
-  return sanitizeText(text.trim(), config);
-}
 
 function getConfig() {
   return getGlobalConfig()['wardley-beta'];
@@ -36,7 +30,7 @@ function addNode(
 ) {
   builder.addNode({
     id,
-    label: textSanitizer(label),
+    label,
     x,
     y,
     className,
@@ -54,7 +48,13 @@ function addLink(
   label?: string,
   flow?: 'forward' | 'backward' | 'bidirectional'
 ) {
-  builder.addLink({ source: sourceId, target: targetId, dashed, label, flow });
+  builder.addLink({
+    source: sourceId,
+    target: targetId,
+    dashed,
+    label,
+    flow,
+  });
 }
 
 function addTrend(nodeId: string, targetX: number, targetY: number) {
@@ -65,13 +65,13 @@ function addAnnotation(number: number, coordinates: { x: number; y: number }[], 
   builder.addAnnotation({
     number,
     coordinates,
-    text: text ? textSanitizer(text) : undefined,
+    text,
   });
 }
 
 function addNote(text: string, x: number, y: number) {
   builder.addNote({
-    text: textSanitizer(text),
+    text,
     x,
     y,
   });
@@ -79,7 +79,7 @@ function addNote(text: string, x: number, y: number) {
 
 function addAccelerator(name: string, x: number, y: number) {
   builder.addAccelerator({
-    name: textSanitizer(name),
+    name,
     x,
     y,
   });
@@ -87,7 +87,7 @@ function addAccelerator(name: string, x: number, y: number) {
 
 function addDeaccelerator(name: string, x: number, y: number) {
   builder.addDeaccelerator({
-    name: textSanitizer(name),
+    name,
     x,
     y,
   });
@@ -110,24 +110,15 @@ function addPipelineComponent(pipelineNodeId: string, componentId: string) {
 }
 
 function updateAxes(partial: WardleyAxesConfig) {
-  const sanitized: WardleyAxesConfig = {};
-  if (partial.xLabel) {
-    sanitized.xLabel = textSanitizer(partial.xLabel);
-  }
-  if (partial.yLabel) {
-    sanitized.yLabel = textSanitizer(partial.yLabel);
-  }
-  if (partial.stages) {
-    sanitized.stages = partial.stages.map((stage) => textSanitizer(stage));
-  }
-  if (partial.stageBoundaries) {
-    sanitized.stageBoundaries = partial.stageBoundaries;
-  }
-  builder.setAxes(sanitized);
+  builder.setAxes(partial);
 }
 
 function getNode(id: string) {
   return builder.getNode(id);
+}
+
+function resolveNodeId(name: string) {
+  return builder.resolveNodeId(name);
 }
 
 function getWardleyData() {
@@ -154,6 +145,7 @@ export default {
   addPipelineComponent,
   updateAxes,
   getNode,
+  resolveNodeId,
   getWardleyData,
   clear,
   setAccTitle,
