@@ -271,6 +271,11 @@ export const dataFetcher = (
       newNode.type = 'group';
       newNode.isGroup = true;
       newNode.dir = getDir(parsedItem);
+      // Set explicitDir only when the user actually wrote a 'direction X' keyword
+      // inside this state body.  mermaid-graphlib's Branch 1 checks explicitDir (not dir)
+      // so that state compound states without an explicit direction follow the original
+      // !externalConnections extraction path, while keeping dir for Branch 2's direction arithmetic.
+      newNode.explicitDir = parsedItem.doc.some((s) => s.stmt === 'dir');
       newNode.shape = parsedItem.type === DIVIDER_TYPE ? SHAPE_DIVIDER : SHAPE_GROUP;
       newNode.cssClasses = `${newNode.cssClasses} ${CSS_DIAGRAM_CLUSTER} ${altFlag ? CSS_DIAGRAM_CLUSTER_ALT : ''}`;
     }

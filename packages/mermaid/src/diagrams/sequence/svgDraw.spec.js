@@ -164,6 +164,57 @@ describe('svgDraw', function () {
       expect(text3.attr).toHaveBeenCalledWith('y', 10);
       expect(text3.text).toHaveBeenCalledWith('fine lines');
     });
+    describe('messageAlign anchor positioning', function () {
+      const x = 100;
+      const width = 200;
+      const textMargin = 10;
+
+      it('anchor "left" positions text at x + textMargin', function () {
+        const svg = MockD3('svg');
+        svgDraw.drawText(svg, {
+          x,
+          y: 20,
+          text: 'hello',
+          width,
+          anchor: 'left',
+          textMargin,
+        });
+        const text = svg.__children[0];
+        expect(text.attr).toHaveBeenCalledWith('x', x + textMargin);
+        expect(text.attr).toHaveBeenCalledWith('text-anchor', 'start');
+      });
+
+      it('anchor "center" positions text at x + width/2', function () {
+        const svg = MockD3('svg');
+        svgDraw.drawText(svg, {
+          x,
+          y: 20,
+          text: 'hello',
+          width,
+          anchor: 'center',
+          textMargin,
+        });
+        const text = svg.__children[0];
+        expect(text.attr).toHaveBeenCalledWith('x', x + width / 2);
+        expect(text.attr).toHaveBeenCalledWith('text-anchor', 'middle');
+      });
+
+      it('anchor "right" positions text at x + width - textMargin', function () {
+        const svg = MockD3('svg');
+        svgDraw.drawText(svg, {
+          x,
+          y: 20,
+          text: 'hello',
+          width,
+          anchor: 'right',
+          textMargin,
+        });
+        const text = svg.__children[0];
+        expect(text.attr).toHaveBeenCalledWith('x', x + width - textMargin);
+        expect(text.attr).toHaveBeenCalledWith('text-anchor', 'end');
+      });
+    });
+
     it('should work with numeral font sizes', function () {
       const svg = MockD3('svg');
       svgDraw.drawText(svg, {

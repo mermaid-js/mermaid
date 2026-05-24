@@ -1135,4 +1135,27 @@ flowchart LR
       {}
     );
   });
+
+  it('elk: should merge edges within subgraphs when elk.mergeEdges is true (#7659)', () => {
+    imgSnapshotTest(
+      `---
+config:
+    layout: elk
+    elk:
+        mergeEdges: true
+---
+flowchart TD
+    subgraph S1
+        A & B --> C
+    end
+    subgraph S2
+        D
+        E
+        F
+    end
+    D & E --> F
+      `,
+      {}
+    );
+  });
 });

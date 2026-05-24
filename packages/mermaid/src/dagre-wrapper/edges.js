@@ -119,8 +119,9 @@ export const insertEdgeLabel = async (elem, edge) => {
   }
   if (edge.endLabelLeft) {
     const endEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
+    // TODO: Remove? `inner` is not used
     const inner = endEdgeLabelLeft.insert('g').attr('class', 'inner');
-    const endLabelElement = await createLabel(inner, edge.endLabelLeft, edge.labelStyle);
+    const endLabelElement = await createLabel(endEdgeLabelLeft, edge.endLabelLeft, edge.labelStyle);
     fo = endLabelElement;
     let slBox = endLabelElement.getBBox();
     if (useHtmlLabels) {
@@ -140,8 +141,13 @@ export const insertEdgeLabel = async (elem, edge) => {
   }
   if (edge.endLabelRight) {
     const endEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
+    // TODO: Remove? `inner` is not used
     const inner = endEdgeLabelRight.insert('g').attr('class', 'inner');
-    const endLabelElement = await createLabel(inner, edge.endLabelRight, edge.labelStyle);
+    const endLabelElement = await createLabel(
+      endEdgeLabelRight,
+      edge.endLabelRight,
+      edge.labelStyle
+    );
     fo = endLabelElement;
     let slBox = endLabelElement.getBBox();
     if (useHtmlLabels) {

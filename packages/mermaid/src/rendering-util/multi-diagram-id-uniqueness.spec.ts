@@ -98,6 +98,18 @@ radar-beta
   max 100
   min 0`,
 
+  railroad: `railroad-diagram
+    rule = choice(terminal("a"), terminal("b")) ;`,
+
+  railroadEbnf: `railroad-ebnf
+    rule = "a" | "b" ;`,
+
+  railroadAbnf: `railroad-abnf
+    rule = "a" / "b" ;`,
+
+  railroadPeg: `railroad-peg
+    rule <- "a" / "b" ;`,
+
   treemap: `treemap-beta
 "Section 1"
     "Leaf 1.1": 12
@@ -178,6 +190,17 @@ union A, B`,
     Campfire Kettle -> Kettle
     Electric Kettle -> Kettle
     Smart Kettle -> Kettle`,
+
+  cynefin: `cynefin-beta
+    title Incident Response
+    complex
+      "Investigate root cause"
+    complicated
+      "Analyze metrics"
+    clear
+      "Restart service"
+    chaotic
+      "Page on-call"`,
 
   eventmodeling: `eventmodeling
     tf 01 evt Start

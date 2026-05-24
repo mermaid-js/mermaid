@@ -457,7 +457,7 @@ async function boundMessage(_diagram, msgModel): Promise<number> {
  * @param lineStartY - The Y coordinate at which the message line starts
  * @param diagObj - The diagram object.
  */
-const drawMessage = async function (
+export const drawMessage = async function (
   diagram,
   msgModel,
   lineStartY: number,
@@ -468,9 +468,9 @@ const drawMessage = async function (
   const { startx, stopx, starty, message, type, sequenceIndex, sequenceVisible } = msgModel;
   const textDims = utils.calculateTextDimensions(message, messageFont(conf));
   const textObj = svgDrawCommon.getTextObj();
-  textObj.x = startx;
+  textObj.x = Math.min(startx, stopx);
   textObj.y = starty + 10;
-  textObj.width = stopx - startx;
+  textObj.width = Math.abs(stopx - startx);
   textObj.class = 'messageText';
   textObj.dy = '1em';
   textObj.text = message;
@@ -1040,7 +1040,7 @@ function adjustCreatedDestroyedData(
  * @param diagObj - A standard diagram containing the db and the text and type etc of the diagram
  */
 export const draw = async function (_text: string, id: string, _version: string, diagObj: Diagram) {
-  const { securityLevel, sequence, look } = getConfig();
+  const { securityLevel, sequence, look, themeVariables } = getConfig();
   conf = sequence;
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
@@ -1179,9 +1179,20 @@ export const draw = async function (_text: string, id: string, _version: string,
         bounds.models.addLoop(loopModel);
         break;
       case diagObj.db.LINETYPE.RECT_START:
-        adjustLoopHeightForWrap(loopWidths, msg, conf.boxMargin, conf.boxMargin, (message) =>
-          bounds.newLoop(undefined, message.message)
-        );
+        adjustLoopHeightForWrap(loopWidths, msg, conf.boxMargin, conf.boxMargin, (message) => {
+          let fill = message.message;
+          if (!fill) {
+            // Apply a theme-aware default fill.
+            // Because the rect is rendered behind actors and text, it does not obscure them.
+            // Use theme background when no explicit color is given; the rect renders
+            // behind all content so any semi-transparent theme color is safe.
+            fill =
+              themeVariables?.rectBkgColor ||
+              themeVariables?.actorBkg ||
+              'rgba(128, 128, 128, 0.5)';
+          }
+          bounds.newLoop(undefined, fill);
+        });
         break;
       case diagObj.db.LINETYPE.RECT_END:
         loopModel = bounds.endLoop();

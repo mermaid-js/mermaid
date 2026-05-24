@@ -154,11 +154,14 @@ export const draw = function (text, id, version, diagObj) {
 
   const taskArray = diagObj.db.getTasks();
 
+  // Filter out vertical markers to ensure they don't take up rows
+  const tasksWithoutVert = taskArray.filter((task) => !task.vert);
+
   // Set height based on number of tasks
 
   let categories = [];
 
-  for (const element of taskArray) {
+  for (const element of tasksWithoutVert) {
     categories.push(element.type);
   }
 
@@ -168,7 +171,7 @@ export const draw = function (text, id, version, diagObj) {
   let h = 2 * layout.topPadding;
   if (diagObj.db.getDisplayMode() === 'compact' || conf.displayMode === 'compact') {
     const categoryElements = {};
-    for (const element of taskArray) {
+    for (const element of tasksWithoutVert) {
       if (categoryElements[element.section] === undefined) {
         categoryElements[element.section] = [element];
       } else {
@@ -184,9 +187,9 @@ export const draw = function (text, id, version, diagObj) {
       categoryHeights[category] = categoryHeight;
     }
   } else {
-    h += taskArray.length * (layout.barHeight + layout.barGap);
+    h += tasksWithoutVert.length * (conf.barHeight + conf.barGap);
     for (const category of categories) {
-      categoryHeights[category] = taskArray.filter((task) => task.type === category).length;
+      categoryHeights[category] = tasksWithoutVert.filter((task) => task.type === category).length;
     }
   }
 
@@ -281,9 +284,13 @@ export const draw = function (text, id, version, diagObj) {
   function drawRects(theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w) {
     // Sort theArray so that tasks with `vert` come last
     theArray.sort((a, b) => (a.vert === b.vert ? 0 : a.vert ? 1 : -1));
+    // Filter out vertical markers from background rects so that they don't take up rows
+    const tasksWithoutVert = theArray.filter((task) => !task.vert);
     // Get unique task orders. Required to draw the background rects when display mode is compact.
-    const uniqueTaskOrderIds = [...new Set(theArray.map((item) => item.order))];
-    const uniqueTasks = uniqueTaskOrderIds.map((id) => theArray.find((item) => item.order === id));
+    const uniqueTaskOrderIds = [...new Set(tasksWithoutVert.map((item) => item.order))];
+    const uniqueTasks = uniqueTaskOrderIds.map((id) =>
+      tasksWithoutVert.find((item) => item.order === id)
+    );
     // Draw background rects covering the entire width of the graph, these form the section rows.
     svg
       .append('g')
@@ -355,7 +362,7 @@ export const draw = function (text, id, version, diagObj) {
       })
       .attr('height', function (d) {
         if (d.vert) {
-          return taskArray.length * (layout.barHeight + layout.barGap) + layout.barHeight * 2;
+          return tasksWithoutVert.length * (conf.barHeight + conf.barGap) + conf.barHeight * 2;
         }
         return theBarHeight;
       })
@@ -468,6 +475,9 @@ export const draw = function (text, id, version, diagObj) {
             layout.gridLineStartPadding +
             taskArray.length * (layout.barHeight + layout.barGap) +
             layout.taskLabelOffset
+            conf.gridLineStartPadding +
+            tasksWithoutVert.length * (conf.barHeight + conf.barGap) +
+            60
           );
         }
         i = d.order;
