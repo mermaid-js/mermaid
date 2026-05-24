@@ -164,6 +164,18 @@ describe('flow db getData', () => {
     expect(edges[2].curve).toBe('catmullRom');
     expect(edges[3].curve).toBe('stepBefore');
   });
+
+  it('should return sibling subgraphs in declaration order', () => {
+    flowDb.addSubGraph({ text: 'SG1' }, ['a'], { text: '1', type: 'text' });
+    flowDb.addSubGraph({ text: 'SG2' }, ['b'], { text: '2', type: 'text' });
+    flowDb.addSubGraph({ text: 'SG3' }, ['c'], { text: '3', type: 'text' });
+    flowDb.addSubGraph({ text: 'OUTER' }, ['SG1', 'SG2', 'SG3'], { text: 'O', type: 'text' });
+
+    const { nodes } = flowDb.getData();
+    const subgraphIds = nodes.filter((n) => n.isGroup).map((n) => n.id);
+
+    expect(subgraphIds).toEqual(['SG1', 'SG2', 'SG3', 'OUTER']);
+  });
 });
 
 describe('flow db direction', () => {
