@@ -28,7 +28,7 @@ import { toBase64 } from './utils/base64.js';
 
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
-  'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
+  'graph TB;a["Diagram exceeds max text size (50,000 chars). Set maxTextSize in initialize config"];style a fill:#faa';
 
 const SECURITY_LVL_SANDBOX = 'sandbox';
 const SECURITY_LVL_LOOSE = 'loose';

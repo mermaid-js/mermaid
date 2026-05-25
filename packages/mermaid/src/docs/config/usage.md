@@ -377,6 +377,38 @@ The list of configuration objects are described [in the mermaidAPI documentation
 This is the preferred way of configuring mermaid.
 ```
 
+### Handling Large Diagrams
+
+By default, Mermaid limits diagram source text to 50,000 characters to ensure good performance and prevent browser slowdowns. If your diagram exceeds this limit, it will be replaced with an error diagram displaying "Maximum text size in diagram exceeded".
+
+You can increase this limit via `mermaid.initialize`:
+
+```javascript
+mermaid.initialize({
+  maxTextSize: 200000,
+});
+```
+
+To disable the limit entirely, set `maxTextSize` to `0`:
+
+```javascript
+mermaid.initialize({
+  maxTextSize: 0,
+});
+```
+
+| Parameter   | Description                                                | Type   | Default |
+| ----------- | ---------------------------------------------------------- | ------ | ------- |
+| maxTextSize | Maximum allowed size of diagram source text, in characters | Number | 50000   |
+
+```warning
+`maxTextSize` is a secure configuration key. It can only be changed via `mermaid.initialize` and cannot be overridden with frontmatter or directives.
+```
+
+```note
+Setting `maxTextSize` to `0` disables the limit entirely. Extremely large diagrams may impact browser performance and memory usage. For production use, test with your typical diagram sizes to find an optimal balance.
+```
+
 ### The following methods are deprecated and are kept only for backwards compatibility.
 
 ## Using the mermaid object
