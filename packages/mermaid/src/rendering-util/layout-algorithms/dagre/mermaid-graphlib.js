@@ -337,18 +337,27 @@ export const extractor = (graph, depth) => {
   }
   let nodes = graph.nodes();
   // graphlib backs nodes with a plain object, so integer-like string ids
-  // ("1") sort ahead of others ("outer") and reorder iteration. Process
-  // outer clusters first so nested extraction is order-independent. (#7609)
-  const nodeDepth = (v) => {
-    let d = 0;
-    let cur = graph.parent(v);
-    while (cur != null) {
-      d++;
-      cur = graph.parent(cur);
-    }
-    return d;
-  };
-  nodes = [...nodes].sort((a, b) => nodeDepth(a) - nodeDepth(b));
+  // ("1") sort ahead of others ("outer") and place a child before its parent
+  // in iteration. Only reorder when that invariant is actually broken so
+  // other diagrams (class, state, etc.) keep their existing iteration order
+  // and rendering. (#7609)
+  const indexOf = new Map(nodes.map((id, i) => [id, i]));
+  const needsResort = nodes.some((v) => {
+    const p = graph.parent(v);
+    return p != null && indexOf.get(p) > indexOf.get(v);
+  });
+  if (needsResort) {
+    const nodeDepth = (v) => {
+      let d = 0;
+      let cur = graph.parent(v);
+      while (cur != null) {
+        d++;
+        cur = graph.parent(cur);
+      }
+      return d;
+    };
+    nodes = [...nodes].sort((a, b) => nodeDepth(a) - nodeDepth(b));
+  }
   let hasChildren = false;
   for (const node of nodes) {
     const children = graph.children(node);

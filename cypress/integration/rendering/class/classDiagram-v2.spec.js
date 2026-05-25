@@ -744,4 +744,22 @@ class C13["With Città foreign language"]
       { class: { hierarchicalNamespaces: false } }
     );
   });
+
+  it('#7609: nested namespaces should be unaffected by the depth-sort guard', () => {
+    imgSnapshotTest(`
+      classDiagram-v2
+      namespace outer {
+        namespace inner {
+          class External {
+            +doExternal()
+          }
+          namespace sub {
+            class Internal {
+              +doInternal()
+            }
+          }
+        }
+      }
+    `);
+  });
 });
