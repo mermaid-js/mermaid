@@ -17,9 +17,11 @@ export default tseslint.config(
   ...tseslint.configs.stylisticTypeChecked,
   {
     ignores: [
+      '**/*.d.ts',
       '**/dist/',
       '**/node_modules/',
       '.git/',
+      '.claude/',
       '**/generated/',
       '**/coverage/',
       'packages/mermaid/src/config.type.ts',

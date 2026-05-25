@@ -3,6 +3,7 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { createText } from '../../rendering-util/createText.js';
 import { getIconSVG } from '../../rendering-util/icons.js';
 import type { D3Element } from '../../types.js';
+import { sanitizeText } from '../common/common.js';
 import type { ArchitectureDB } from './architectureDb.js';
 import { architectureIcons } from './architectureIcons.js';
 import {
@@ -19,11 +20,13 @@ import {
   type ArchitectureJunction,
   type ArchitectureService,
 } from './architectureTypes.js';
+import { getEdgeId } from '../../utils.js';
 
 export const drawEdges = async function (
   edgesEl: D3Element,
   cy: cytoscape.Core,
-  db: ArchitectureDB
+  db: ArchitectureDB,
+  diagramId: string
 ) {
   const padding = db.getConfigField('padding');
   const iconSize = db.getConfigField('iconSize');
@@ -90,7 +93,8 @@ export const drawEdges = async function (
 
         g.insert('path')
           .attr('d', `M ${startX},${startY} L ${midX},${midY} L${endX},${endY} `)
-          .attr('class', 'edge');
+          .attr('class', 'edge')
+          .attr('id', `${diagramId}-${getEdgeId(source, target, { prefix: 'L' })}`);
 
         if (sourceArrow) {
           const xShift = isArchitectureDirectionX(sourceDir)
@@ -189,7 +193,8 @@ export const drawEdges = async function (
 export const drawGroups = async function (
   groupsEl: D3Element,
   cy: cytoscape.Core,
-  db: ArchitectureDB
+  db: ArchitectureDB,
+  diagramId: string
 ) {
   const padding = db.getConfigField('padding');
   const groupIconSize = padding * 0.75;
@@ -205,8 +210,9 @@ export const drawGroups = async function (
       if (data.type === 'group') {
         const { h, w, x1, y1 } = node.boundingBox();
 
-        groupsEl
-          .append('rect')
+        const groupsNode = groupsEl.append('rect');
+        groupsNode
+          .attr('id', `${diagramId}-group-${data.id}`)
           .attr('x', x1 + halfIconSize)
           .attr('y', y1 + halfIconSize)
           .attr('width', w)
@@ -261,6 +267,7 @@ export const drawGroups = async function (
               ')'
           );
         }
+        db.setElementForId(data.id, groupsNode);
       }
     })
   );
@@ -269,8 +276,10 @@ export const drawGroups = async function (
 export const drawServices = async function (
   db: ArchitectureDB,
   elem: D3Element,
-  services: ArchitectureService[]
+  services: ArchitectureService[],
+  diagramId: string
 ): Promise<number> {
+  const config = getConfig();
   for (const service of services) {
     const serviceElem = elem.append('g');
     const iconSize = db.getConfigField('iconSize');
@@ -285,7 +294,7 @@ export const drawServices = async function (
           width: iconSize * 1.5,
           classes: 'architecture-service-label',
         },
-        getConfig()
+        config
       );
 
       textElem
@@ -320,7 +329,7 @@ export const drawServices = async function (
         .attr('class', 'node-icon-text')
         .attr('style', `height: ${iconSize}px;`)
         .append('div')
-        .html(service.iconText);
+        .html(sanitizeText(service.iconText, config));
       const fontSize =
         parseInt(
           window
@@ -333,16 +342,18 @@ export const drawServices = async function (
       bkgElem
         .append('path')
         .attr('class', 'node-bkg')
-        .attr('id', 'node-' + service.id)
+        .attr('id', `${diagramId}-node-${service.id}`)
         .attr(
           'd',
-          `M0 ${iconSize} v${-iconSize} q0,-5 5,-5 h${iconSize} q5,0 5,5 v${iconSize} H0 Z`
+          `M0,${iconSize} V5 Q0,0 5,0 H${iconSize - 5} Q${iconSize},0 ${iconSize},5 V${iconSize} Z`
         );
     }
 
-    serviceElem.attr('class', 'architecture-service');
+    serviceElem
+      .attr('id', `${diagramId}-service-${service.id}`)
+      .attr('class', 'architecture-service');
 
-    const { width, height } = serviceElem._groups[0][0].getBBox();
+    const { width, height } = serviceElem.node().getBBox();
     service.width = width;
     service.height = height;
     db.setElementForId(service.id, serviceElem);
@@ -353,7 +364,8 @@ export const drawServices = async function (
 export const drawJunctions = function (
   db: ArchitectureDB,
   elem: D3Element,
-  junctions: ArchitectureJunction[]
+  junctions: ArchitectureJunction[],
+  diagramId: string
 ) {
   junctions.forEach((junction) => {
     const junctionElem = elem.append('g');
@@ -362,7 +374,7 @@ export const drawJunctions = function (
     const bkgElem = junctionElem.append('g');
     bkgElem
       .append('rect')
-      .attr('id', 'node-' + junction.id)
+      .attr('id', `${diagramId}-node-${junction.id}`)
       .attr('fill-opacity', '0')
       .attr('width', iconSize)
       .attr('height', iconSize);

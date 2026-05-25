@@ -98,12 +98,13 @@ const setupDoc = (
             look,
             classes
           );
+          const isNeo = look === 'neo';
           const edgeData = {
             id: 'edge' + graphItemCount,
             start: item.state1.id,
             end: item.state2.id,
             arrowhead: 'normal',
-            arrowTypeEnd: 'arrow_barb',
+            arrowTypeEnd: isNeo ? 'arrow_barb_neo' : 'arrow_barb',
             style: G_EDGE_STYLE,
             labelStyle: '',
             label: common.sanitizeText(item.description ?? '', getConfig()),
@@ -270,6 +271,11 @@ export const dataFetcher = (
       newNode.type = 'group';
       newNode.isGroup = true;
       newNode.dir = getDir(parsedItem);
+      // Set explicitDir only when the user actually wrote a 'direction X' keyword
+      // inside this state body.  mermaid-graphlib's Branch 1 checks explicitDir (not dir)
+      // so that state compound states without an explicit direction follow the original
+      // !externalConnections extraction path, while keeping dir for Branch 2's direction arithmetic.
+      newNode.explicitDir = parsedItem.doc.some((s) => s.stmt === 'dir');
       newNode.shape = parsedItem.type === DIVIDER_TYPE ? SHAPE_DIVIDER : SHAPE_GROUP;
       newNode.cssClasses = `${newNode.cssClasses} ${CSS_DIAGRAM_CLUSTER} ${altFlag ? CSS_DIAGRAM_CLUSTER_ALT : ''}`;
     }
@@ -291,6 +297,7 @@ export const dataFetcher = (
       rx: 10,
       ry: 10,
       look,
+      labelType: 'markdown',
     };
 
     // Clear the label for dividers who have no description
@@ -311,6 +318,7 @@ export const dataFetcher = (
         labelStyle: '',
         shape: SHAPE_NOTE,
         label: parsedItem.note.text,
+        labelType: 'markdown',
         cssClasses: CSS_DIAGRAM_NOTE,
         // useHtmlLabels: false,
         cssStyles: [],

@@ -1,4 +1,5 @@
 import { sanitizeUrl } from '@braintree/sanitize-url';
+import { select } from 'd3';
 import type { SVG, SVGGroup } from '../../diagram-api/types.js';
 import { lineBreakRegex } from './common.js';
 import type {
@@ -134,4 +135,25 @@ export const getTextObj = (): TextObject => {
     tspan: true,
   };
   return testObject;
+};
+
+export const createTooltip = () => {
+  let tooltipElem = select<HTMLDivElement, unknown>('.mermaidTooltip');
+  if (tooltipElem.empty()) {
+    tooltipElem = select('body')
+      .append('div')
+      .attr('class', 'mermaidTooltip')
+      .style('opacity', 0)
+      .style('position', 'absolute')
+      .style('text-align', 'center')
+      .style('max-width', '200px')
+      .style('padding', '2px')
+      .style('font-size', '12px')
+      .style('background', '#ffffde')
+      .style('border', '1px solid #333')
+      .style('border-radius', '2px')
+      .style('pointer-events', 'none')
+      .style('z-index', '100');
+  }
+  return tooltipElem;
 };

@@ -62,6 +62,7 @@ export class ErDB implements DiagramDB {
         look: getConfig().look ?? 'default',
         cssClasses: 'default',
         cssStyles: [],
+        labelType: 'markdown',
       });
       log.info('Added new entity :', name);
     } else if (!this.entities.get(name)?.alias && alias) {
@@ -208,10 +209,12 @@ export class ErDB implements DiagramDB {
     const edges: Edge[] = [];
     const config = getConfig();
 
+    let colorIndex = 0;
     for (const entityKey of this.entities.keys()) {
       const entityNode = this.entities.get(entityKey);
       if (entityNode) {
         entityNode.cssCompiledStyles = this.getCompiledStyles(entityNode.cssClasses!.split(' '));
+        entityNode.colorIndex = colorIndex++;
         nodes.push(entityNode as unknown as Node);
       }
     }
@@ -235,6 +238,7 @@ export class ErDB implements DiagramDB {
         arrowTypeEnd: relationship.relSpec.cardA.toLowerCase(),
         pattern: relationship.relSpec.relType == 'IDENTIFYING' ? 'solid' : 'dashed',
         look: config.look,
+        labelType: 'markdown',
       };
       edges.push(edge);
     }

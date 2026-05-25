@@ -24,6 +24,8 @@ const config: RequiredDeep<MermaidConfig> = {
     // mergeEdges is needed here to be considered
     mergeEdges: false,
     nodePlacementStrategy: 'BRANDES_KOEPF',
+    forceNodeModelOrder: false,
+    considerModelOrder: 'NODES_AND_EDGES',
   },
   themeCSS: undefined,
 
@@ -55,6 +57,7 @@ const config: RequiredDeep<MermaidConfig> = {
   },
   class: {
     hideEmptyMembersBox: false,
+    hierarchicalNamespaces: true,
   },
   gantt: {
     ...defaultConfigJson.gantt,
@@ -259,8 +262,43 @@ const config: RequiredDeep<MermaidConfig> = {
   packet: {
     ...defaultConfigJson.packet,
   },
+  eventmodeling: {
+    ...defaultConfigJson.eventmodeling,
+  },
+  treeView: {
+    ...defaultConfigJson.treeView,
+    useWidth: undefined,
+  },
   radar: {
     ...defaultConfigJson.radar,
+  },
+  railroad: {
+    ...defaultConfigJson.railroad,
+    // Railroad colors and typography derive from the active theme unless explicitly overridden.
+    fontSize: undefined,
+    fontFamily: undefined,
+    terminalFill: undefined,
+    terminalStroke: undefined,
+    terminalTextColor: undefined,
+    nonTerminalFill: undefined,
+    nonTerminalStroke: undefined,
+    nonTerminalTextColor: undefined,
+    lineColor: undefined,
+    markerFill: undefined,
+    commentFill: undefined,
+    commentStroke: undefined,
+    commentTextColor: undefined,
+    specialFill: undefined,
+    specialStroke: undefined,
+    ruleNameColor: undefined,
+  },
+  ishikawa: {
+    ...defaultConfigJson.ishikawa,
+  },
+  sankey: {
+    ...defaultConfigJson.sankey,
+    // Set so that `configKeys` includes this key for sanitizeDirective
+    nodeColors: undefined,
   },
   treemap: {
     useMaxWidth: true,
@@ -273,6 +311,12 @@ const config: RequiredDeep<MermaidConfig> = {
     valueFontSize: 12,
     labelFontSize: 14,
     valueFormat: ',',
+  },
+  venn: {
+    ...defaultConfigJson.venn,
+  },
+  cynefin: {
+    ...defaultConfigJson.cynefin,
   },
 };
 

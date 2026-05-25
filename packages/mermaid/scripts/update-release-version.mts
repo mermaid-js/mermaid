@@ -17,6 +17,10 @@ import {
 
 const verifyOnly: boolean = process.argv.includes('--verify');
 const versionPlaceholder = '<MERMAID_RELEASE_VERSION>';
+/**
+ * This is so we can run `npm publish` for previews, without blocking the release.
+ */
+const onlyWarnOnVerifyError = process.env.ONLY_WARN_ON_VERIFY_ERROR === 'true';
 
 const verifyDocumentation = async () => {
   const fileContent = await readFile('./src/docs/community/contributing.md', 'utf-8');
@@ -51,7 +55,7 @@ const main = async () => {
     console.log(
       `${mdFilesWithPlaceholder.length} file(s) were found with the placeholder ${versionPlaceholder}. Run \`pnpm --filter mermaid docs:release-version\` to update them.`
     );
-    process.exit(1);
+    process.exit(onlyWarnOnVerifyError ? 0 : 1);
   }
 
   for (const mdFile of mdFilesWithPlaceholder) {

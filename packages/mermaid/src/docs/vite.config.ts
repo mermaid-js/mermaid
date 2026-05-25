@@ -13,6 +13,13 @@ const virtualModuleId = 'virtual:mermaid-config';
 const resolvedVirtualModuleId = '\0' + virtualModuleId;
 
 export default defineConfig({
+  define: {
+    __DOCS_HOSTNAME__: JSON.stringify(process.env.DOCS_HOSTNAME ?? 'mermaid.js.org'),
+  },
+  build: {
+    // Vite v7 changes the default target and drops old browser support
+    target: 'modules',
+  },
   optimizeDeps: {
     // vitepress is aliased with replacement `join(DIST_CLIENT_PATH, '/index')`
     // This needs to be excluded from optimization

@@ -2,6 +2,7 @@ import type { Diagram } from '../../Diagram.js';
 import type { RadarDiagramConfig } from '../../config.type.js';
 import type { DiagramRenderer, DrawDefinition, SVG, SVGGroup } from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { RadarDB, RadarAxis, RadarCurve } from './types.js';
 
 const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
@@ -53,11 +54,9 @@ const drawFrame = (svg: SVG, config: Required<RadarDiagramConfig>): SVGGroup => 
     x: config.marginLeft + config.width / 2,
     y: config.marginTop + config.height / 2,
   };
-  // Initialize the SVG
-  svg
-    .attr('viewbox', `0 0 ${totalWidth} ${totalHeight}`)
-    .attr('width', totalWidth)
-    .attr('height', totalHeight);
+  configureSvgSize(svg, totalHeight, totalWidth, config.useMaxWidth ?? true);
+
+  svg.attr('viewBox', `0 0 ${totalWidth} ${totalHeight}`);
   // g element to center the radar chart
   return svg.append('g').attr('transform', `translate(${center.x}, ${center.y})`);
 };

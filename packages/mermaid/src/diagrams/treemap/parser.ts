@@ -21,7 +21,7 @@ const populate = (ast: TreemapAst, db: TreemapDB) => {
     type: string;
     value?: number;
     classSelector?: string;
-    cssCompiledStyles?: string;
+    cssCompiledStyles?: string[];
   }[] = [];
 
   // Extract classes and styles from the treemap
@@ -44,7 +44,7 @@ const populate = (ast: TreemapAst, db: TreemapDB) => {
 
     // Get styles as a string if they exist
     const styles = item.classSelector ? db.getStylesForClass(item.classSelector) : [];
-    const cssCompiledStyles = styles.length > 0 ? styles.join(';') : undefined;
+    const cssCompiledStyles = styles.length > 0 ? styles : undefined;
 
     const itemData = {
       level,

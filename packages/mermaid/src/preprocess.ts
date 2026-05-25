@@ -26,6 +26,7 @@ const processFrontmatter = (code: string) => {
     }
     config.gantt.displayMode = displayMode;
   }
+
   return { title, config, text };
 };
 

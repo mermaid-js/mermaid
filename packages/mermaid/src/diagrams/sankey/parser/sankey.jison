@@ -29,6 +29,7 @@ UNICODE_TEXTDATA {UNICODE_EXCEPT_CONTROL_CODES_COMMA_DQUOTE}
 %%
 
 <INITIAL>"sankey-beta"                         { this.pushState('csv'); return 'SANKEY'; }
+<INITIAL>"sankey"                              { this.pushState('csv'); return 'SANKEY'; }
 <INITIAL,csv><<EOF>>                           { return 'EOF' } // match end of file
 <INITIAL,csv>({CRLF}|{LF})                     { return 'NEWLINE' }
 <INITIAL,csv>{COMMA}                           { return 'COMMA' }

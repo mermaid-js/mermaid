@@ -35,6 +35,7 @@ export interface Message {
   type?: number;
   activate?: boolean;
   placement?: string;
+  centralConnection?: number;
 }
 
 export interface AddMessageParams {
@@ -50,6 +51,8 @@ export interface AddMessageParams {
     | 'destroyParticipant'
     | 'activeStart'
     | 'activeEnd'
+    | 'centralConnection'
+    | 'centralConnectionReverse'
     | 'addNote'
     | 'addLinks'
     | 'addALink'
