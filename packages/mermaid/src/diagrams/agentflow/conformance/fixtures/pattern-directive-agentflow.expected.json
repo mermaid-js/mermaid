@@ -1,9 +1,0 @@
-{
-  "outcome": "valid",
-  "semanticAssertions": {
-    "edges": [
-      { "start": "search_tool", "end": "no_pii", "edgeSemantic": "governance" },
-      { "start": "search_tool", "end": "safety", "edgeSemantic": "governance" }
-    ]
-  }
-}

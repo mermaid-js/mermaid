@@ -1,9 +1,0 @@
-%% §19.7 Fallback Pattern — failure edge (`--x`) between agents for escalation.
-agentflow TB
-  agent primary["Primary Agent"]
-    A["A"]
-  end
-  agent fallback["Fallback Agent"]
-    B["B"]
-  end
-  primary --x fallback

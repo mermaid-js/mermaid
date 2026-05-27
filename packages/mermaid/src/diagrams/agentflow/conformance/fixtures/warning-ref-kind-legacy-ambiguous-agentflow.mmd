@@ -1,9 +1,0 @@
-%% §10.2 — legacy `type` value matches BOTH a type and a template
-%% declaration, so the trichotomy cannot resolve unambiguously.
-agentflow TB
-  type Report
-  template %Report {
-    TITLE: String <<x>>
-  }
-  r["r"]
-  r@{ shape: procs, type: "Report" }

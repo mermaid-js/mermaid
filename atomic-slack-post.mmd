@@ -1,0 +1,71 @@
+agentflow TB
+  %% ===== External integration point (connector) =====
+  connector slack["Slack"]
+  slack@{ protocol: "mcp", transport: "stdio", command: "slack mcp server", description: "default channel C0AHRPT37Q9 (bot-mermaid-aug)" }
+
+  %% ===== Atomic skill, modelled as a single agent =====
+  %% No model binding: posts exactly as received — no LLM rewriting/transformation.
+  agent atomic_slack_post["atomic-slack-post — Post to Slack"]
+
+    %% ---- Input: $ARGUMENTS = <channel_id> <message text> ----
+    arguments["$ARGUMENTS"]@{ shape: lean-right, type: String, value: "<channel_id> <message text>" }
+
+    %% ---- Step 1: Parse arguments ----
+    parse_args["Parse Arguments"]@{
+      description: "First whitespace token = channel_id (default C0AHRPT37Q9); remainder = message text",
+      reads: ["arguments"],
+      writes: ["channel_id", "message_text"]
+    }
+
+    %% ---- Validation branch: message text is required ----
+    has_text{Message text provided?}
+    error_stop["Error: No message text provided."]
+
+    %% ---- Step 2: Post to Slack (single message) ----
+    post_message["slack_post_message"]@{
+      shape: subroutine,
+      connectorRef: "slack",
+      requires: ["net.write"],
+      params: { channel_id: String, text: String },
+      returns: "SlackResponse",
+      reads: ["channel_id", "message_text"],
+      writes: ["ts"]
+    }
+
+    %% ---- Step 3: Confirm back to caller ----
+    confirm["Confirm"]@{
+      description: "Report Posted to #{channel_name} with a message preview and the ts value",
+      reads: ["channel_id", "message_text", "ts"]
+    }
+
+    %% ---- Threading capability (used by compound skills like comp-status) ----
+    %% Deferred tool: load via ToolSearch before use. Each reply < 3500 chars.
+    reply_to_thread["slack_reply_to_thread"]@{
+      shape: subroutine,
+      connectorRef: "slack",
+      requires: ["net.write"],
+      params: { channel_id: String, thread_ts: String, text: String },
+      description: "thread_ts is the ts from the parent message",
+      reads: ["channel_id", "ts"]
+    }
+
+    %% ---- Reference document (read, not produced) ----
+    threading_doc["Threaded posting pattern"]@{ shape: lin-doc }
+
+    %% ----- Sequencing (data travels via shared state, not these edges) -----
+    arguments --> parse_args --> has_text
+    has_text -- no --> error_stop
+    has_text -- yes --> post_message --> confirm
+
+    %% Optional threaded replies reuse the parent ts
+    post_message --> reply_to_thread
+
+    %% ----- Reference attachment (--- association, no label) -----
+    reply_to_thread --- threading_doc
+  end
+  atomic_slack_post@{
+    prompt: "Post a single message to a Slack channel, or reply to an existing thread. Post the message exactly as received — no rewriting, tone adjustment, or formatting changes.",
+    permits: ["net.write"],
+    params: { channel_id: String, message_text: String },
+    returns: "SlackResponse"
+  }

@@ -1,9 +1,0 @@
-{
-  "outcome": "valid",
-  "semanticAssertions": {
-    "vertices": [
-      { "id": "create_issue", "vertexKind": "tool" },
-      { "id": "close_issue", "vertexKind": "tool" }
-    ]
-  }
-}

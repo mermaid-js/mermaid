@@ -1,4 +1,0 @@
-{
-  "outcome": "warning",
-  "diagnostics": [{ "id": "REFERENCE_UNRESOLVED", "nodeId": "r" }]
-}

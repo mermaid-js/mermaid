@@ -1,26 +1,15 @@
 /**
- * Containment matrix validator (closes #8 — wave-3 PR F).
+ * Containment matrix validator (v0.8.1).
  *
- * Per AGENTFLOW-SYNTAX.md §3.3 each typed container has a fixed
- * allowed-children set. Legacy `subgraph` and `group` containers are
- * the escape hatch and accept anything.
+ * Per AGENTFLOW-SYNTAX.md §3.3 the only container in v0.8.1 is `flow`.
+ * Allowed children: `flow`, `tool`, `action`, `node`. Everything else is
+ * a violation.
  *
- *   | Parent      | Allowed children                                        |
- *   | ----------- | ------------------------------------------------------- |
- *   | agent       | flow, task, skill, directive, testCase, tool, node      |
- *   | flow        | task, agent, skill, directive, testCase, tool, node     |
- *   | task        | tool, directive, node                                   |
- *   | skill       | tool, flow, directive, node                             |
- *   | directive   | node                                                    |
- *   | testCase    | directive, node                                         |
- *   | subgraph    | unrestricted                                            |
+ *   | Parent | Allowed children          |
+ *   | ------ | ------------------------- |
+ *   | flow   | flow, tool, action, node  |
  *
- * Tools are leaves (cannot be parents). A "node" is any plain vertex
- * that isn't a typed container or a tool.
- *
- * Violations emit `CONTAINMENT_VIOLATION` at warning severity in v0.5.0;
- * the v1.0 strict-flip release promotes to error via the future
- * `agentflow.strictContainment` flag.
+ * Violations emit `CONTAINMENT_VIOLATION` at warning severity.
  */
 
 import { AgentFlowDB } from '../agentflowDb.js';
@@ -42,129 +31,61 @@ describe('agentflow containment matrix (§3.3)', () => {
     db.getDiagnostics().filter((d) => d.id === 'CONTAINMENT_VIOLATION');
 
   // ────────────────────────────────────────────────────────────────────
-  // A. Allowed child per row (one per matrix row)
+  // A. Allowed children
   // ────────────────────────────────────────────────────────────────────
-  describe('A. allowed children per row', () => {
-    it('agent may contain flow, task, skill, directive, testCase, tool, node', () => {
+  describe('A. flow accepts flow, tool, action, node', () => {
+    it('flow may contain a nested flow', () => {
       agentflow.parser.parse(`agentflow TB
-  agent outer["A"]
-    flow nestedFlow["F"]
-      fnode["f"]
+  flow outer["Outer"]
+    flow inner["Inner"]
+      leaf["leaf"]
     end
-    task nestedTask["T"]
-      tnode["t"]
-    end
-    skill nestedSkill["S"]
-      snode["s"]
-    end
-    directive nestedDir["D"]
-      dnode["d"]
-    end
-    testCase nestedTc["TC"]
-      tcnode["tc"]
-    end
-    nestedTool["tool"]
-    nestedTool@{ shape: subroutine }
-    leaf["leaf"]
   end`);
       const db = agentflow.parser.yy as AgentFlowDB;
       db.getData();
       expect(violations(db)).toHaveLength(0);
     });
 
-    it('flow may contain task, agent, skill, directive, testCase, tool, node', () => {
+    it('flow may contain a tool', () => {
       agentflow.parser.parse(`agentflow TB
-  flow outer["F"]
-    task nt["T"]
-      tnode["t"]
-    end
-    agent na["A"]
-      anode["a"]
-    end
-    skill ns["S"]
-      snode["s"]
-    end
-    directive nd["D"]
-      dnode["d"]
-    end
-    testCase ntc["TC"]
-      tcnode["tc"]
-    end
-    nestedTool["tool"]
-    nestedTool@{ shape: subroutine }
-    leaf["leaf"]
+  flow outer["Outer"]
+    t["t"]
+    t@{ shape: tool }
   end`);
       const db = agentflow.parser.yy as AgentFlowDB;
       db.getData();
       expect(violations(db)).toHaveLength(0);
     });
 
-    it('task may contain tool, directive, node', () => {
+    it('flow may contain an action', () => {
       agentflow.parser.parse(`agentflow TB
-  task outer["T"]
-    toolChild["c"]
-    toolChild@{ shape: subroutine }
-    directive nd["D"]
-      dnode["d"]
-    end
-    leaf["leaf"]
+  flow outer["Outer"]
+    a["a"]
+    a@{ shape: action }
   end`);
       const db = agentflow.parser.yy as AgentFlowDB;
       db.getData();
       expect(violations(db)).toHaveLength(0);
     });
 
-    it('skill may contain tool, flow, directive, node', () => {
+    it('flow may contain plain nodes', () => {
       agentflow.parser.parse(`agentflow TB
-  skill outer["S"]
-    toolChild["c"]
-    toolChild@{ shape: subroutine }
-    flow nf["F"]
-      fnode["f"]
-    end
-    directive nd["D"]
-      dnode["d"]
-    end
-    leaf["leaf"]
-  end`);
-      const db = agentflow.parser.yy as AgentFlowDB;
-      db.getData();
-      expect(violations(db)).toHaveLength(0);
-    });
-
-    it('directive may contain only plain nodes', () => {
-      agentflow.parser.parse(`agentflow TB
-  directive outer["D"]
+  flow outer["Outer"]
     a["a"]
     b["b"]
+    a --> b
   end`);
       const db = agentflow.parser.yy as AgentFlowDB;
       db.getData();
       expect(violations(db)).toHaveLength(0);
     });
 
-    it('testCase may contain directive and nodes', () => {
+    it('flow with multiple plain children emits no violation', () => {
       agentflow.parser.parse(`agentflow TB
-  testCase outer["TC"]
-    directive nd["D"]
-      dnode["d"]
-    end
-    leaf["leaf"]
-  end`);
-      const db = agentflow.parser.yy as AgentFlowDB;
-      db.getData();
-      expect(violations(db)).toHaveLength(0);
-    });
-
-    it('untyped `subgraph` is unrestricted (legacy escape hatch)', () => {
-      agentflow.parser.parse(`agentflow TB
-  subgraph outer["any"]
-    agent na["A"]
-      anode["a"]
-    end
-    tool_child["c"]
-    tool_child@{ shape: subroutine }
-    leaf["leaf"]
+  flow outer["O"]
+    a["a"]
+    b["b"]
+    c["c"]
   end`);
       const db = agentflow.parser.yy as AgentFlowDB;
       db.getData();
@@ -173,157 +94,14 @@ describe('agentflow containment matrix (§3.3)', () => {
   });
 
   // ────────────────────────────────────────────────────────────────────
-  // B. Forbidden pairs emit CONTAINMENT_VIOLATION
+  // B. Nested structural containment
   // ────────────────────────────────────────────────────────────────────
-  describe('B. forbidden pairs', () => {
-    it('task cannot contain agent', () => {
+  describe('B. nested structural containment', () => {
+    it('flow > flow > flow > leaf is a valid nesting', () => {
       agentflow.parser.parse(`agentflow TB
-  task outer["T"]
-    agent inner["A"]
-      inode["i"]
-    end
-  end`);
-      const db = agentflow.parser.yy as AgentFlowDB;
-      db.getData();
-      const warns = violations(db);
-      expect(warns.length).toBeGreaterThanOrEqual(1);
-      expect(warns.some((w) => w.nodeId === 'inner')).toBe(true);
-      expect(warns[0].severity).toBe('warning');
-    });
-
-    it('task cannot contain flow', () => {
-      agentflow.parser.parse(`agentflow TB
-  task outer["T"]
-    flow inner["F"]
-      inode["i"]
-    end
-  end`);
-      const db = agentflow.parser.yy as AgentFlowDB;
-      db.getData();
-      expect(violations(db).length).toBeGreaterThanOrEqual(1);
-    });
-
-    it('task cannot contain skill', () => {
-      agentflow.parser.parse(`agentflow TB
-  task outer["T"]
-    skill inner["S"]
-      inode["i"]
-    end
-  end`);
-      const db = agentflow.parser.yy as AgentFlowDB;
-      db.getData();
-      expect(violations(db).length).toBeGreaterThanOrEqual(1);
-    });
-
-    it('skill cannot contain task', () => {
-      agentflow.parser.parse(`agentflow TB
-  skill outer["S"]
-    task inner["T"]
-      inode["i"]
-    end
-  end`);
-      const db = agentflow.parser.yy as AgentFlowDB;
-      db.getData();
-      expect(violations(db).length).toBeGreaterThanOrEqual(1);
-    });
-
-    it('skill cannot contain agent', () => {
-      agentflow.parser.parse(`agentflow TB
-  skill outer["S"]
-    agent inner["A"]
-      inode["i"]
-    end
-  end`);
-      const db = agentflow.parser.yy as AgentFlowDB;
-      db.getData();
-      expect(violations(db).length).toBeGreaterThanOrEqual(1);
-    });
-
-    it('directive cannot contain tool', () => {
-      agentflow.parser.parse(`agentflow TB
-  directive outer["D"]
-    t["t"]
-    t@{ shape: subroutine }
-  end`);
-      const db = agentflow.parser.yy as AgentFlowDB;
-      db.getData();
-      const warns = violations(db);
-      expect(warns.length).toBeGreaterThanOrEqual(1);
-      expect(warns.some((w) => w.nodeId === 't')).toBe(true);
-    });
-
-    it('directive cannot contain a nested container', () => {
-      agentflow.parser.parse(`agentflow TB
-  directive outer["D"]
-    agent inner["A"]
-      inode["i"]
-    end
-  end`);
-      const db = agentflow.parser.yy as AgentFlowDB;
-      db.getData();
-      expect(violations(db).length).toBeGreaterThanOrEqual(1);
-    });
-
-    it('testCase cannot contain agent', () => {
-      agentflow.parser.parse(`agentflow TB
-  testCase outer["TC"]
-    agent inner["A"]
-      inode["i"]
-    end
-  end`);
-      const db = agentflow.parser.yy as AgentFlowDB;
-      db.getData();
-      expect(violations(db).length).toBeGreaterThanOrEqual(1);
-    });
-
-    it('testCase cannot contain tool', () => {
-      agentflow.parser.parse(`agentflow TB
-  testCase outer["TC"]
-    t["t"]
-    t@{ shape: subroutine }
-  end`);
-      const db = agentflow.parser.yy as AgentFlowDB;
-      db.getData();
-      expect(violations(db).length).toBeGreaterThanOrEqual(1);
-    });
-
-    it('testCase cannot contain flow', () => {
-      agentflow.parser.parse(`agentflow TB
-  testCase outer["TC"]
-    flow inner["F"]
-      inode["i"]
-    end
-  end`);
-      const db = agentflow.parser.yy as AgentFlowDB;
-      db.getData();
-      expect(violations(db).length).toBeGreaterThanOrEqual(1);
-    });
-  });
-
-  // ────────────────────────────────────────────────────────────────────
-  // C. Nested structural containment
-  // ────────────────────────────────────────────────────────────────────
-  describe('C. nested structural containment', () => {
-    it('agent > flow > task > tool is a valid 4-level nesting', () => {
-      agentflow.parser.parse(`agentflow TB
-  agent outer["A"]
-    flow f["F"]
-      task t["T"]
-        toolLeaf["tool"]
-        toolLeaf@{ shape: subroutine }
-      end
-    end
-  end`);
-      const db = agentflow.parser.yy as AgentFlowDB;
-      db.getData();
-      expect(violations(db)).toHaveLength(0);
-    });
-
-    it('agent > testCase > directive > node is valid', () => {
-      agentflow.parser.parse(`agentflow TB
-  agent outer["A"]
-    testCase tc["TC"]
-      directive d["D"]
+  flow outer["O"]
+    flow mid["M"]
+      flow inner["I"]
         leaf["leaf"]
       end
     end
@@ -332,61 +110,17 @@ describe('agentflow containment matrix (§3.3)', () => {
       db.getData();
       expect(violations(db)).toHaveLength(0);
     });
-
-    it('violation at any level emits a warning for the offending child', () => {
-      agentflow.parser.parse(`agentflow TB
-  agent outer["A"]
-    flow midFlow["F"]
-      task innerTask["T"]
-        flow badNested["bad"]
-          leaf["leaf"]
-        end
-      end
-    end
-  end`);
-      const db = agentflow.parser.yy as AgentFlowDB;
-      db.getData();
-      const warns = violations(db);
-      expect(warns.some((w) => w.nodeId === 'badNested')).toBe(true);
-    });
   });
 
   // ────────────────────────────────────────────────────────────────────
-  // D. Cross-cutting invariants
+  // C. Cross-cutting invariants
   // ────────────────────────────────────────────────────────────────────
-  describe('D. invariants', () => {
-    it('plain vertex as child is always allowed everywhere', () => {
+  describe('C. invariants', () => {
+    it('plain vertex as child is always allowed inside a flow', () => {
       agentflow.parser.parse(`agentflow TB
-  agent a["A"]
-    pa["p"]
-  end
   flow f["F"]
     pf["p"]
-  end
-  task t["T"]
-    pt["p"]
-  end
-  skill s["S"]
-    ps["p"]
-  end
-  directive d["D"]
-    pd["p"]
-  end
-  testCase tc["TC"]
-    ptc["p"]
   end`);
-      const db = agentflow.parser.yy as AgentFlowDB;
-      db.getData();
-      expect(violations(db)).toHaveLength(0);
-    });
-
-    it('synthetic declaration groups (types / templates) are not validated', () => {
-      agentflow.parser.parse(`agentflow TB
-  type Report
-  template %tri {
-    TITLE: String <<x>>
-  }
-  node["node"]`);
       const db = agentflow.parser.yy as AgentFlowDB;
       db.getData();
       expect(violations(db)).toHaveLength(0);
@@ -394,35 +128,14 @@ describe('agentflow containment matrix (§3.3)', () => {
 
     it('repeated getData() calls are idempotent', () => {
       agentflow.parser.parse(`agentflow TB
-  task outer["T"]
-    agent inner["A"]
-      i["i"]
-    end
+  flow outer["O"]
+    leaf["leaf"]
   end`);
       const db = agentflow.parser.yy as AgentFlowDB;
       db.getData();
       db.getData();
       db.getData();
-      const warns = violations(db);
-      // Exactly one violation for `inner` — re-running getData() does
-      // not duplicate it.
-      const forInner = warns.filter((w) => w.nodeId === 'inner');
-      expect(forInner).toHaveLength(1);
-    });
-
-    it('all containment violations are severity: "warning"', () => {
-      agentflow.parser.parse(`agentflow TB
-  directive outer["D"]
-    badTool["t"]
-    badTool@{ shape: subroutine }
-  end`);
-      const db = agentflow.parser.yy as AgentFlowDB;
-      db.getData();
-      const warns = violations(db);
-      expect(warns.length).toBeGreaterThanOrEqual(1);
-      for (const w of warns) {
-        expect(w.severity).toBe('warning');
-      }
+      expect(violations(db)).toHaveLength(0);
     });
   });
 });

@@ -1,7 +1,9 @@
-%% §19.9 Parallel Execution Pattern — `&` fan-out in edges only.
+%% §16 Parallel Execution Pattern — `&` fan-out in edges only.
 agentflow TB
+  query["query"]
+  query@{ shape: input }
   orchestrator["Orchestrate"]
   search["Search"]
   analyze["Analyze"]
   validate["Validate"]
-  orchestrator --> search & analyze & validate
+  query --> orchestrator --> search & analyze & validate

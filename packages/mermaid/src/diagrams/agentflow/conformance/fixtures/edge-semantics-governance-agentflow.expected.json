@@ -1,6 +1,0 @@
-{
-  "outcome": "valid",
-  "semanticAssertions": {
-    "edges": [{ "start": "a", "end": "b", "edgeSemantic": "governance" }]
-  }
-}

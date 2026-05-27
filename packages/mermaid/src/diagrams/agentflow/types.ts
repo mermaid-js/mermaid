@@ -3,7 +3,11 @@ import type { AgentflowDiagnostic } from './diagnostics.js';
 
 /**
  * Valid `type` args to `yy.addVertex` taken from
- * `packages/mermaid/src/diagrams/flowchart/parser/flow.jison`
+ * `packages/mermaid/src/diagrams/flowchart/parser/flow.jison`.
+ *
+ * v0.8.1: shapes the spec calls "removed" still appear here because the
+ * grammar continues to accept the inline syntax (e.g. `id((text))` for
+ * circle). The DB then rejects them with a `SHAPE_REMOVED` diagnostic.
  */
 export type FlowVertexTypeParam =
   | undefined
@@ -25,12 +29,25 @@ export type FlowVertexTypeParam =
   | 'lean_left';
 
 /**
- * Derived semantic kind of a vertex. Currently the only value is `'tool'`,
- * derived from the resolved shape (`subroutine` and its aliases per §8.2 of
- * AGENTFLOW-SYNTAX.md). Surfaced on `SemanticVertex` so downstream consumers
- * don't recompute the shape→kind mapping themselves.
+ * Derived semantic kind of a vertex. v0.8.1 values:
+ *
+ * - `'tool'` — resolved shape is `subroutine` (alias `tool`)
+ * - `'action'` — resolved shape is `hexagon` (alias `action`); call to
+ *   another flow exposed via MCP (§16.7).
+ * - `'input'` — resolved shape is `lean-right` (alias `input`).
+ * - `'refdoc'` — resolved shape is `lin-doc` (alias `refdoc`).
+ * - `'decision'` — resolved shape is `diamond` (alias `decision`).
+ * - `'connector'` — declared with the `connector` keyword.
+ * - `'task'` — default rounded-rectangle node.
  */
-export type VertexKind = 'tool';
+export type VertexKind =
+  | 'tool'
+  | 'action'
+  | 'input'
+  | 'refdoc'
+  | 'decision'
+  | 'connector'
+  | 'task';
 
 export interface FlowVertex {
   classes: string[];
@@ -53,8 +70,9 @@ export interface FlowVertex {
   assetHeight?: number;
   defaultWidth?: number;
   imageAspectRatio?: number;
-  constraint?: 'on' | 'off';
   metadata?: Record<string, unknown>;
+  /** Set by `addConnector` to mark a node declared with the `connector` keyword. */
+  isConnector?: boolean;
 }
 
 export interface FlowText {
@@ -63,22 +81,15 @@ export interface FlowText {
 }
 
 /**
- * Canonical per-operator semantic per `AGENTFLOW-SYNTAX.md` §5.1. Populated
- * on every edge whose operator appears in the §5.1 mapping table; left
- * `undefined` for operators outside that table (e.g. `<-->`, `x--x`).
+ * Canonical per-operator semantic per `AGENTFLOW-SYNTAX.md` §5.1 (v0.8.1).
+ * Populated on every edge produced by one of the three operators; left
+ * `undefined` only for malformed edges.
  *
- * Downstream tooling SHOULD prefer this field over `type` / `stroke` for
- * semantic decisions. The latter remain for rendering continuity.
+ * - `sequence` ← `-->` (execution order)
+ * - `reference` ← `-.-` (reference-doc attachment, non-directional)
+ * - `failure` ← `--x` (failure / cancellation / escalation)
  */
-export type EdgeSemantic =
-  | 'control'
-  | 'data'
-  | 'conformance'
-  | 'delegation'
-  | 'failure'
-  | 'association'
-  | 'governance'
-  | 'bidirectional';
+export type EdgeSemantic = 'sequence' | 'reference' | 'failure';
 
 export interface FlowEdge {
   isUserDefinedId: boolean;
@@ -97,6 +108,8 @@ export interface FlowEdge {
   id?: string;
   animation?: 'fast' | 'slow';
   animate?: boolean;
+  /** Per-edge metadata. v0.8.1 permits only `instruction`. */
+  metadata?: Record<string, unknown>;
 }
 
 export interface FlowClass {
@@ -112,17 +125,8 @@ export interface FlowSubGraph {
   labelType: string;
   nodes: string[];
   title: string;
-  type?:
-    | 'subgraph'
-    | 'task'
-    | 'agent'
-    | 'flow'
-    | 'types'
-    | 'templates'
-    | 'skill'
-    | 'test'
-    | 'directive'
-    | 'group';
+  /** v0.8.1: the only container kind is `flow`. */
+  type?: 'flow';
   metadata?: Record<string, unknown>;
 }
 
@@ -133,55 +137,8 @@ export interface FlowLink {
   text?: string;
 }
 
-export interface AgentFlowTypeField {
-  name: string;
-  type: string;
-}
-
-export interface AgentFlowTemplateField {
-  name: string;
-  type: string;
-  multiplicity?: number;
-  description: string;
-  kind?: 'field' | 'section';
-}
-
-export interface AgentFlowTemplateDeclaration {
-  name: string;
-  fields: AgentFlowTemplateField[];
-  metadata?: Record<string, unknown>;
-}
-
-export type AgentFlowTemplateDeclarationsByName = Record<string, AgentFlowTemplateDeclaration>;
-
-export type AgentFlowTypeDeclaration =
-  | {
-      name: string;
-      kind: 'opaque';
-      metadata?: Record<string, unknown>;
-    }
-  | {
-      name: string;
-      kind: 'alias';
-      expression: string;
-      metadata?: Record<string, unknown>;
-    }
-  | {
-      name: string;
-      kind: 'record';
-      fields: AgentFlowTypeField[];
-      metadata?: Record<string, unknown>;
-    };
-
-export type AgentFlowTypeDeclarationsByName = Record<string, AgentFlowTypeDeclaration>;
-
 // ───────────────────────────────────────────────────────────────────────────
 // Element-mapping infrastructure (PR 2a of the wave-1 readiness plan).
-//
-// Mirrors the shapes used by `alana/flowchart_jison_highlight`'s
-// FlowchartElementMapping so that when both diagram types reach a shared
-// home (planned lift to `diagram-api/types.ts`), the types are name-identical
-// and can be merged without a rename.
 // ───────────────────────────────────────────────────────────────────────────
 
 /** Position of an element in the original diagram source. */
@@ -195,7 +152,7 @@ export interface ElementPosition {
 }
 
 /** The kinds of top-level statements agentflow currently emits mappings for. */
-export type AgentflowStatementType = 'vertex' | 'edge' | 'subgraph' | 'type' | 'template';
+export type AgentflowStatementType = 'vertex' | 'edge' | 'subgraph' | 'connector';
 
 /** A single element-to-position mapping. */
 export interface AgentflowElementMapping {
@@ -205,17 +162,9 @@ export interface AgentflowElementMapping {
 }
 
 // ───────────────────────────────────────────────────────────────────────────
-// Semantic model (PR 3 of the wave-1 readiness plan).
-//
-// Purpose-built projection of the DB's state with presentation fields
-// removed. Downstream tooling consumes `AgentflowSemanticModel` when it
-// needs to understand *what the diagram means* without being influenced by
-// rendering choices. See `AGENTFLOW-SYNTAX.md` §13 for the normative list
-// of presentation-only controls. Element mappings, styles, classes, view
-// (collapsed/expanded), icon/img/w/h, and callback bindings are excluded;
-// structural identifiers, labels, shape semantics, domain metadata, edge
-// types/strokes/labels, subgraph membership, type/template declarations,
-// and diagnostics are kept.
+// Semantic model — purpose-built projection of the DB's state with
+// presentation fields removed. See `AGENTFLOW-SYNTAX.md` §11 for the
+// normative list of presentation-only controls.
 // ───────────────────────────────────────────────────────────────────────────
 
 /** A vertex as seen by downstream semantic tooling. */
@@ -225,45 +174,36 @@ export interface SemanticVertex {
   label?: string;
   /** Shape carries meaning in agentflow (diamond ≠ hexagon ≠ subroutine etc.). */
   shape?: string;
-  /** Derived semantic kind (currently only `'tool'`). See {@link VertexKind}. */
+  /** Derived semantic kind. See {@link VertexKind}. */
   vertexKind?: VertexKind;
-  /** Domain metadata authored on this vertex (permits, model, requires, etc.). */
+  /** Domain metadata authored on this vertex. */
   metadata?: Record<string, unknown>;
-  /**
-   * Domain metadata after `def` resolution — the instance's own metadata
-   * layered on top of the transitive inheritance from its definition chain
-   * per §11.3. Populated only for instance-shape vertices (`tag-rect`,
-   * `delay`, `lin-rect`, `win-pane`, `curv-trap`) that fully resolve; left
-   * `undefined` for plain vertices and for instances whose resolution
-   * failed (missing def, cyclic chain, kind mismatch).
-   */
-  resolvedMetadata?: Record<string, unknown>;
-  /** Set when this vertex is an instance of a definition (§10). */
-  def?: string;
 }
 
 /** An edge as seen by downstream semantic tooling. */
 export interface SemanticEdge {
   start: string;
   end: string;
-  /** Author-assigned edge id when present (e.g. `edge1@A --> B`). */
+  /** Author-assigned edge id when present (e.g. `e1@-->`). */
   id?: string;
-  /** Edge label (branch name for multi-param container edges; freeform otherwise). */
+  /** Edge label (branch outcome on `-->`). */
   label?: string;
-  /** Raw arrow kind — `arrow_point`, `arrow_hierarchy`, `arrow_circle`, `arrow_cross`, `arrow_open`, or double-prefixed variants. */
+  /** Raw arrow kind — `arrow_point`, `arrow_cross`, `arrow_open`. */
   type?: string;
-  /** Stroke classification: `normal`, `thick`, `dotted`, `invisible`. */
+  /** Stroke classification: `normal`, `dotted`. */
   stroke?: 'normal' | 'thick' | 'invisible' | 'dotted';
   /** Canonical §5.1 semantic. See {@link EdgeSemantic}. */
   edgeSemantic?: EdgeSemantic;
-  /** Number of dashes/equals/dots in the operator — useful for layout but also semantic emphasis. */
+  /** Number of dashes/dots in the operator. */
   length?: number;
+  /** Edge-level metadata (only `instruction` in v0.8.1). */
+  metadata?: Record<string, unknown>;
 }
 
-/** A container in semantic form: subgraph / agent / flow / task / skill / testCase / directive / group. */
+/** A container in semantic form. v0.8.1: only `flow`. */
 export interface SemanticSubGraph {
   id: string;
-  /** Container kind — `agent`, `flow`, `task`, `skill`, `test`, `directive`, `group`, `subgraph`, `types`, `templates`. */
+  /** Container kind — always `flow` in v0.8.1. */
   type?: string;
   title?: string;
   /** IDs of direct member elements. */
@@ -274,11 +214,18 @@ export interface SemanticSubGraph {
   direction?: string;
 }
 
+/** A connector declared with the `connector` keyword (§8). */
+export interface SemanticConnector {
+  id: string;
+  title?: string;
+  /** Domain metadata from `@{...}` on the connector. */
+  metadata?: Record<string, unknown>;
+}
+
 /**
- * The projection returned by `AgentFlowDB.getSemanticModel()`. This is the
- * shape downstream semantic tooling should depend on. Unlike `getData()`,
- * it omits element mappings, styles, classes, view (collapsed/expanded),
- * icons, images, and layout hints.
+ * The projection returned by `AgentFlowDB.getSemanticModel()`. v0.8.1
+ * removes `typeDeclarations` and `templateDeclarations` and adds
+ * `connectors` for the new keyword.
  */
 export interface AgentflowSemanticModel {
   /** Top-level diagram direction. */
@@ -286,14 +233,11 @@ export interface AgentflowSemanticModel {
   vertices: SemanticVertex[];
   edges: SemanticEdge[];
   subGraphs: SemanticSubGraph[];
-  typeDeclarations: AgentFlowTypeDeclaration[];
-  templateDeclarations: AgentFlowTemplateDeclaration[];
+  connectors: SemanticConnector[];
   /**
-   * Structured warnings/errors raised against this diagram. Diagnostics are
-   * semantic analysis output so they belong in the semantic export. Callers
-   * should invoke `getData()` (which runs post-parse validators) at least
-   * once before reading `getSemanticModel()` if they want the hexagon-
-   * branching and similar validators to have fired.
+   * Structured warnings/errors raised against this diagram. Callers should
+   * invoke `getData()` (which runs post-parse validators) at least once
+   * before reading `getSemanticModel()` so all validators have fired.
    */
   diagnostics: readonly AgentflowDiagnostic[];
 }

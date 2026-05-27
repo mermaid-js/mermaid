@@ -1,4 +1,7 @@
-%% §10 — `typesGroup` is reserved for the renderer's synthetic type
-%% container. Author declarations of this id warn.
+%% §9 — `connectors` is reserved for forward compat in v0.8.1. Author
+%% declarations of this id warn.
 agentflow TB
-  typesGroup["user claim"]
+  input["x"]
+  input@{ shape: input }
+  connectors["user claim"]
+  input --> connectors

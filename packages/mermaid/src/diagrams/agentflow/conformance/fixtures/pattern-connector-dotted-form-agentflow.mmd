@@ -1,6 +1,10 @@
-%% Connector reference validator — dotted-operation form is opaque per
-%% §9.1, so no CONNECTOR_REF_* warning should fire even though `github`
-%% is not a declared node.
+%% Connector reference validator — dotted-operation form uses
+%% prefix-before-first-dot for resolution. With a declared `github`
+%% connector, `github.create_issue` resolves cleanly.
 agentflow TB
+  connector github["GitHub"]
+  payload["payload"]
+  payload@{ shape: input }
   create_issue["Create Issue"]
-  create_issue@{ shape: subroutine, connectorRef: "github.create_issue" }
+  create_issue@{ shape: tool, connectorRef: "github.create_issue" }
+  payload --> create_issue

@@ -1,4 +1,0 @@
-{
-  "outcome": "warning",
-  "diagnostics": [{ "id": "CAPABILITY_INVOCATION_NO_AGENT" }]
-}

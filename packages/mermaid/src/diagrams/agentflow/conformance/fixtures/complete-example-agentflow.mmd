@@ -1,43 +1,35 @@
-%% §20 Complete Example — condensed for wave-1. Uses `shape: subroutine`
-%% rather than the wave-2 `tool` keyword, and `typeRef` metadata on procs
-%% reference nodes. Otherwise faithful to the spec's Coffee-Team example:
-%% nested agent > flow > agent > task, type declarations, doc artifacts,
-%% reference binding via `--o`.
+%% §17 Complete Example — Coffee Team coffee-website builder (v0.8.1).
 agentflow TB
-  type CoffeeCopy = Record {
-    hero_tagline: String
-    hero_subtitle: String
-  }
+  connector llm_api["LLM API"]
+  llm_api@{ protocol: "http", endpoint: "https://api.example.com/chat" }
 
-  agent coffee_team["Coffee Team"]
-    flow build_site["Build Site"]
-      agent researcher["Researcher"]
-        task step1["Research Location"]
-          city["city"]
-          research_loc["research_location"]
-          brief["Research Brief"]
-          city --> research_loc --> brief
-        end
-        task step2["Write Copy"]
-          write_copy["write_copy"]
-          english_copy["English Copy"]
-          brief --> write_copy --> english_copy
-          write_copy --o coffee_copy_ref
-        end
-        step1 --> step2
-      end
+  flow coffee_team["Coffee Team"]
+    city["city"]
+    city@{ shape: input, type: "String", value: "Stockholm" }
+
+    flow researcher["Researcher"]
+      research_loc["research_location"]
+      research_loc@{ shape: tool, params: "city :: String", returns: "String", cache: "24h" }
+      write_copy["write_copy"]
+      write_copy@{ shape: tool, connectorRef: "llm_api.chat", params: "brief :: String", returns: "CoffeeCopy", retry: 2 }
+      city --> research_loc --> write_copy
     end
+    researcher@{ model: "claude-sonnet-4-20250514", instruction: "Research the city and draft English coffee copy citing sources." }
+
+    flow translator["Translator"]
+      translate_sv["translate_to_swedish"]
+      translate_sv@{ shape: tool, connectorRef: "llm_api.chat", params: "english :: CoffeeCopy", returns: "BilingualPage" }
+    end
+    translator@{ model: "claude-sonnet-4-20250514" }
+
+    flow designer["Designer"]
+      gen_html["generate_html"]
+      gen_html@{ shape: tool, connectorRef: "llm_api.chat", params: "page :: BilingualPage", returns: "String" }
+      style_guide["Nordic Brand Guide"]
+      style_guide@{ shape: refdoc }
+      gen_html -.- style_guide
+    end
+    designer@{ model: "claude-sonnet-4-20250514", instruction: "Render the bilingual page as semantic HTML following the brand guide." }
+
+    researcher --> translator --> designer
   end
-
-  coffee_copy_ref["CoffeeCopy"]
-
-  city@{ shape: lean-right }
-  brief@{ shape: doc }
-  english_copy@{ shape: doc }
-  coffee_copy_ref@{ shape: procs, typeRef: "CoffeeCopy" }
-
-  research_loc@{ shape: subroutine, returns: "String", requires: ["net.read"], cache: "24h" }
-  write_copy@{ shape: subroutine, returns: "CoffeeCopy", requires: ["llm.query"], retry: 2 }
-
-  researcher@{ model: "claude-sonnet-4-20250514", permits: ["net.read", "llm.query"] }
-  build_site@{ params: "city :: String", returns: "String" }

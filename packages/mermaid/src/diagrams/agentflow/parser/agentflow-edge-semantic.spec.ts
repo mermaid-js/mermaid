@@ -1,24 +1,18 @@
 /**
- * `edgeSemantic` field tests (wave-2 PR 0 — wave-1 spillover).
+ * `edgeSemantic` field tests (v0.8.1).
  *
  * Per `AGENTFLOW-SYNTAX.md` §5.1, every edge operator carries a first-class
  * `edgeSemantic` value that downstream tooling reads as the authoritative
- * semantic. Wave-1 added the spec text but never wired the field; this PR
- * does. The mapping table is:
+ * semantic. The v0.8.1 mapping table is:
  *
- * | Operator | edgeSemantic   |
- * | -------- | -------------- |
- * | `-->`    | control        |
- * | `==>`    | data           |
- * | `--o`    | conformance    |
- * | `-->>`   | delegation     |
- * | `--x`    | failure        |
- * | `---`    | association    |
- * | `-.->`   | governance     |
- * | `o--o`   | bidirectional  |
+ * | Operator | edgeSemantic |
+ * | -------- | ------------ |
+ * | `-->`    | sequence     |
+ * | `-.-`    | reference    |
+ * | `--x`    | failure      |
  *
- * Operators outside the table (e.g. `<-->`, `x--x`, `-.->>`) leave
- * `edgeSemantic` as `undefined`. Existing `type` / `stroke` / `length`
+ * Operators outside the table leave `edgeSemantic` as `undefined` (or are
+ * outright rejected by the grammar). Existing `type` / `stroke` / `length`
  * fields are preserved unchanged so rendering is unaffected.
  */
 
@@ -49,93 +43,45 @@ describe('agentflow edge semantic', () => {
   };
 
   describe('canonical operator → edgeSemantic mapping', () => {
-    it('`-->` maps to control', () => {
+    it('`-->` maps to sequence', () => {
       const { edge } = parseAndGetEdge('-->');
-      expect(edge.edgeSemantic).toBe('control');
+      expect(edge.edgeSemantic).toBe('sequence');
     });
 
-    it('`==>` maps to data', () => {
-      const { edge } = parseAndGetEdge('==>');
-      expect(edge.edgeSemantic).toBe('data');
-    });
-
-    it('`--o` maps to conformance', () => {
-      const { edge } = parseAndGetEdge('--o');
-      expect(edge.edgeSemantic).toBe('conformance');
-    });
-
-    it('`-->>` maps to delegation', () => {
-      const { edge } = parseAndGetEdge('-->>');
-      expect(edge.edgeSemantic).toBe('delegation');
+    it('`-.-` maps to reference', () => {
+      const { edge } = parseAndGetEdge('-.-');
+      expect(edge.edgeSemantic).toBe('reference');
     });
 
     it('`--x` maps to failure', () => {
       const { edge } = parseAndGetEdge('--x');
       expect(edge.edgeSemantic).toBe('failure');
     });
-
-    it('`---` maps to association', () => {
-      const { edge } = parseAndGetEdge('---');
-      expect(edge.edgeSemantic).toBe('association');
-    });
-
-    it('`-.->` maps to governance', () => {
-      const { edge } = parseAndGetEdge('-.->');
-      expect(edge.edgeSemantic).toBe('governance');
-    });
-
-    it('`o--o` maps to bidirectional', () => {
-      const { edge } = parseAndGetEdge('o--o');
-      expect(edge.edgeSemantic).toBe('bidirectional');
-    });
   });
 
   describe('length-extended operators preserve semantic', () => {
-    it('`===>` (longer thick) is still data', () => {
-      const { edge } = parseAndGetEdge('===>');
-      expect(edge.edgeSemantic).toBe('data');
-    });
-
-    it('`---->` (longer normal) is still control', () => {
+    it('`---->` (longer normal) is still sequence', () => {
       const { edge } = parseAndGetEdge('---->');
-      expect(edge.edgeSemantic).toBe('control');
-    });
-
-    it('`-..->` (longer dotted) is still governance', () => {
-      const { edge } = parseAndGetEdge('-..->');
-      expect(edge.edgeSemantic).toBe('governance');
+      expect(edge.edgeSemantic).toBe('sequence');
     });
   });
 
-  describe('off-table operators', () => {
-    it('`<-->` (double_arrow_point, normal) leaves edgeSemantic undefined', () => {
-      const { edge } = parseAndGetEdge('<-->');
-      expect(edge.edgeSemantic).toBeUndefined();
-    });
-
-    it('`x--x` (double_arrow_cross, normal) leaves edgeSemantic undefined', () => {
-      const { edge } = parseAndGetEdge('x--x');
-      expect(edge.edgeSemantic).toBeUndefined();
-    });
-  });
-
-  describe('regression — type/stroke/length unchanged by the new field', () => {
+  describe('regression — type/stroke unchanged by the new field', () => {
     it('`-->` keeps {type: arrow_point, stroke: normal}', () => {
       const { edge } = parseAndGetEdge('-->');
       expect(edge.type).toBe('arrow_point');
       expect(edge.stroke).toBe('normal');
     });
 
-    it('`==>` keeps {type: arrow_point, stroke: thick}', () => {
-      const { edge } = parseAndGetEdge('==>');
-      expect(edge.type).toBe('arrow_point');
-      expect(edge.stroke).toBe('thick');
+    it('`-.-` keeps {stroke: dotted}', () => {
+      const { edge } = parseAndGetEdge('-.-');
+      expect(edge.stroke).toBe('dotted');
     });
 
-    it('`-.->` keeps {type: arrow_point, stroke: dotted}', () => {
-      const { edge } = parseAndGetEdge('-.->');
-      expect(edge.type).toBe('arrow_point');
-      expect(edge.stroke).toBe('dotted');
+    it('`--x` keeps {type: arrow_cross, stroke: normal}', () => {
+      const { edge } = parseAndGetEdge('--x');
+      expect(edge.type).toBe('arrow_cross');
+      expect(edge.stroke).toBe('normal');
     });
   });
 
@@ -146,23 +92,12 @@ describe('agentflow edge semantic', () => {
   b["B"]
   c["C"]
   a --> b
-  b ==> c`);
+  b --x c`);
       const db = agentflow.parser.yy as AgentFlowDB;
       const model = db.getSemanticModel();
       expect(model.edges).toHaveLength(2);
-      expect(model.edges[0].edgeSemantic).toBe('control');
-      expect(model.edges[1].edgeSemantic).toBe('data');
-    });
-
-    it('omits edgeSemantic from the semantic edge when source operator is off-table', () => {
-      agentflow.parser.parse(`agentflow TB
-  a["A"]
-  b["B"]
-  a <--> b`);
-      const db = agentflow.parser.yy as AgentFlowDB;
-      const model = db.getSemanticModel();
-      expect(model.edges).toHaveLength(1);
-      expect(model.edges[0].edgeSemantic).toBeUndefined();
+      expect(model.edges[0].edgeSemantic).toBe('sequence');
+      expect(model.edges[1].edgeSemantic).toBe('failure');
     });
   });
 });

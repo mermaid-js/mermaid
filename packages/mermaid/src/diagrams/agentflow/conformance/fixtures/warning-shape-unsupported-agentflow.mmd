@@ -1,12 +1,11 @@
-%% Unsupported shape → `SHAPE_UNSUPPORTED` warning from transformData,
-%% routed through `emitWarning`. The runner calls transformData after
-%% getData() so the warning is reachable from conformance fixtures.
-%%
-%% `cylinder` is a valid shape in the generic rendering library (so the
-%% parser accepts it) but agentflow's narrower allow-list rejects it.
-%% That's exactly what SHAPE_UNSUPPORTED exists to flag.
+%% A Mermaid-valid shape that's not in agentflow's v0.8.1 catalogue and
+%% not in the removed-shape blacklist emits a SHAPE_UNSUPPORTED warning
+%% from transformData. (Removed shapes like `cylinder`, `doc`, `procs`
+%% emit SHAPE_REMOVED at error tier — see those fixtures.)
 agentflow TB
+  input["q"]
+  input@{ shape: input }
   x["X"]
   y["Y"]
-  x@{ shape: "cylinder" }
-  x --> y
+  x@{ shape: "triangle" }
+  input --> x --> y

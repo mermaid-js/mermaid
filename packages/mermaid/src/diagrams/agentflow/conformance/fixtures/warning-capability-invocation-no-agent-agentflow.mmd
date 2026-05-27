@@ -1,7 +1,0 @@
-%% §12 — tool invocation with no enclosing `agent` container so the
-%% executing-agent rule cannot resolve permits.
-agentflow TB
-  caller["c"]
-  t["t"]
-  t@{ shape: subroutine, requires: ["net.read"] }
-  caller --> t

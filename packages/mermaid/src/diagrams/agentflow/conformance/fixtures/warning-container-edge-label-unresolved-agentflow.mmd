@@ -1,9 +1,0 @@
-%% §5.5 — container incoming data edge label doesn't match any
-%% declared param name.
-agentflow TB
-  caller["c"]
-  flow pipeline["P"]
-    step["s"]
-  end
-  pipeline@{ params: ["city", "query"] }
-  caller ==>|unknown| pipeline

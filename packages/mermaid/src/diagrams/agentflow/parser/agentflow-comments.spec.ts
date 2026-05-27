@@ -185,17 +185,16 @@ end
       expect(agentflow.parser.yy.getVertices().size).toBe(2);
     });
 
-    it('parses comments around type declarations', () => {
+    it('parses comments around connector declarations', () => {
       expect(() =>
         agentflow.parser.parse(`agentflow TB
-%% before type
-type MyRec = Record {
-  field1: String
-}
-%% after type
+%% before connector
+connector github["GitHub"]
+%% after connector
   a --> b`)
       ).not.toThrow();
-      expect(agentflow.parser.yy.getVertices().size).toBe(2);
+      // 3 = connector + 2 implicit edge endpoints
+      expect(agentflow.parser.yy.getVertices().size).toBe(3);
     });
   });
 });

@@ -1,4 +1,0 @@
-{
-  "outcome": "warning",
-  "diagnostics": [{ "id": "CONTAINMENT_VIOLATION", "nodeId": "t" }]
-}

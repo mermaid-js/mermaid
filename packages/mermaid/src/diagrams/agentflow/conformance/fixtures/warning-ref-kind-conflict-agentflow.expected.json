@@ -1,4 +1,0 @@
-{
-  "outcome": "warning",
-  "diagnostics": [{ "id": "REF_KIND_CONFLICT", "nodeId": "r" }]
-}

@@ -17,8 +17,6 @@
 %x ellipseText
 %x trapText
 %x edgeText
-%x thickEdgeText
-%x dottedEdgeText
 %x click
 %x href
 %x callbackname
@@ -91,9 +89,6 @@ Function arguments are optional: 'call <callbackname>()' simply executes 'callba
 "interpolate"           return 'INTERPOLATE';
 "classDef"              return 'CLASSDEF';
 "class"                 return 'CLASS';
-"template"[\t ]+"%"?[A-Za-z_]\w*[\t ]*"{"[^}]*"}" return 'TEMPLATE_DECL';
-"type"[\t ]+[^\n;{]*"="[\t ]*"Record"[\t ]*"{"[^}]*"}" return 'TYPE_DECL';
-"type"[\t ]+[^\n;{]* return 'TYPE_DECL';
 
 
 
@@ -117,14 +112,8 @@ that id.
 <click>[^\s\n]*          return 'CLICK';
 
 "agentflow"              {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
-"agent"                  return 'agent';
 "flow"                   return 'flow';
-"task"                   return 'task';
-"skill"                  return 'skill';
-"testCase"               return 'testCase';
-"directive"              return 'directive';
-"group"                  return 'group';
-"subgraph"               return 'subgraph';
+"connector"              return 'connector';
 "end"\b\s*               return 'end';
 
 "_self"                  return 'LINK_TARGET';
@@ -160,20 +149,11 @@ that id.
 ","                          return 'COMMA';
 "*"                          return 'MULT';
 
-<INITIAL,edgeText>\s*[xo<]?\-\-+[-xo>]\>?\s*        { this.popState(); return 'LINK'; }
-<INITIAL>\s*[xo<]?\-\-\s*                          { this.pushState("edgeText"); return 'START_LINK'; }
+<INITIAL,edgeText>\s*\-\-+[x>]\s*                  { this.popState(); return 'LINK'; }
+<INITIAL>\s*\-\-\s*                                { this.pushState("edgeText"); return 'START_LINK'; }
 <edgeText>[^-]|\-(?!\-)+                           return 'EDGE_TEXT';
 
-<INITIAL,thickEdgeText>\s*[xo<]?\=\=+[=xo>]\s*      { this.popState(); return 'LINK'; }
-<INITIAL>\s*[xo<]?\=\=\s*                           { this.pushState("thickEdgeText"); return 'START_LINK'; }
-<thickEdgeText>[^=]|\=(?!=)                         return 'EDGE_TEXT';
-
-<INITIAL,dottedEdgeText>\s*[xo<]?\-?\.+\-[xo>]?\s*   { this.popState(); return 'LINK'; }
-<INITIAL>\s*[xo<]?\-\.\s*                            { this.pushState("dottedEdgeText"); return 'START_LINK'; }
-<dottedEdgeText>[^\.]|\.(?!-)                        return 'EDGE_TEXT';
-
-
-<*>\s*\~\~[\~]+\s*              return 'LINK';
+<INITIAL>\s*\-\.+\-\s*                             { return 'LINK'; }
 
 <ellipseText>"%%"(?!\{)[^\n]*   { /* inline comment - skip */ }
 <ellipseText>[-/\)][\)]         { this.popState(); return '-)'; }
@@ -381,11 +361,7 @@ spaceList
     ;
 
 statement
-    : typeDeclarationStatement separator
-    {$$=[];}
-    | templateDeclarationStatement separator
-    {$$=[];}
-    | vertexStatement separator
+    : vertexStatement separator
     { $$=$vertexStatement.nodes}
     | styleStatement separator
     {$$=[];}
@@ -397,70 +373,20 @@ statement
     {$$=[];}
     | clickStatement separator
     {$$=[];}
-    | subgraph SPACE textNoTags SQS text SQE separator document end
-    {$$=yy.addSubGraph($textNoTags,$document,$text);if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,$text,@1,@9);}}
-    | subgraph SPACE textNoTags separator document end
-    {$$=yy.addSubGraph($textNoTags,$document,$textNoTags);if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,$textNoTags,@1,@6);}}
-    // | subgraph SPACE textNoTags separator document end
-    // {$$=yy.addSubGraph($textNoTags,$document,$textNoTags);if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,$textNoTags,@1,@6);}}
-    | subgraph separator document end
-    {$$=yy.addSubGraph(undefined,$document,undefined);if(yy.addSubgraphMapping){yy.addSubgraphMapping(undefined,undefined,@1,@4);}}
-    | agent SPACE textNoTags SQS text SQE separator document end
-    {$$=yy.addSubGraph($textNoTags,$document,$text,'agent');if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,$text,@1,@9);}}
-    | agent SPACE textNoTags separator document end
-    {$$=yy.addSubGraph($textNoTags,$document,{text:'', type:'text'},'agent');if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,{text:'', type:'text'},@1,@6);}}
-    | agent separator document end
-    {$$=yy.addSubGraph(undefined,$document,undefined,'agent');if(yy.addSubgraphMapping){yy.addSubgraphMapping(undefined,undefined,@1,@4);}}
     | flow SPACE textNoTags SQS text SQE separator document end
     {$$=yy.addSubGraph($textNoTags,$document,$text,'flow');if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,$text,@1,@9);}}
     | flow SPACE textNoTags separator document end
     {$$=yy.addSubGraph($textNoTags,$document,{text:'', type:'text'},'flow');if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,{text:'', type:'text'},@1,@6);}}
     | flow separator document end
     {$$=yy.addSubGraph(undefined,$document,undefined,'flow');if(yy.addSubgraphMapping){yy.addSubgraphMapping(undefined,undefined,@1,@4);}}
-    | task SPACE textNoTags SQS text SQE separator document end
-    {$$=yy.addSubGraph($textNoTags,$document,$text,'task');if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,$text,@1,@9);}}
-    | task SPACE textNoTags separator document end
-    {$$=yy.addSubGraph($textNoTags,$document,{text:'', type:'text'},'task');if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,{text:'', type:'text'},@1,@6);}}
-    | task separator document end
-    {$$=yy.addSubGraph(undefined,$document,undefined,'task');if(yy.addSubgraphMapping){yy.addSubgraphMapping(undefined,undefined,@1,@4);}}
-    | skill SPACE textNoTags SQS text SQE separator document end
-    {$$=yy.addSubGraph($textNoTags,$document,$text,'skill');if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,$text,@1,@9);}}
-    | skill SPACE textNoTags separator document end
-    {$$=yy.addSubGraph($textNoTags,$document,{text:'', type:'text'},'skill');if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,{text:'', type:'text'},@1,@6);}}
-    | skill separator document end
-    {$$=yy.addSubGraph(undefined,$document,undefined,'skill');if(yy.addSubgraphMapping){yy.addSubgraphMapping(undefined,undefined,@1,@4);}}
-    | testCase SPACE textNoTags SQS text SQE separator document end
-    {$$=yy.addSubGraph($textNoTags,$document,$text,'test');if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,$text,@1,@9);}}
-    | testCase SPACE textNoTags separator document end
-    {$$=yy.addSubGraph($textNoTags,$document,{text:'', type:'text'},'test');if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,{text:'', type:'text'},@1,@6);}}
-    | testCase separator document end
-    {$$=yy.addSubGraph(undefined,$document,undefined,'test');if(yy.addSubgraphMapping){yy.addSubgraphMapping(undefined,undefined,@1,@4);}}
-    | directive SPACE textNoTags SQS text SQE separator document end
-    {$$=yy.addSubGraph($textNoTags,$document,$text,'directive');if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,$text,@1,@9);}}
-    | directive SPACE textNoTags separator document end
-    {$$=yy.addSubGraph($textNoTags,$document,{text:'', type:'text'},'directive');if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,{text:'', type:'text'},@1,@6);}}
-    | directive separator document end
-    {$$=yy.addSubGraph(undefined,$document,undefined,'directive');if(yy.addSubgraphMapping){yy.addSubgraphMapping(undefined,undefined,@1,@4);}}
-    | group SPACE textNoTags SQS text SQE separator document end
-    {$$=yy.addSubGraph($textNoTags,$document,$text,'group');if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,$text,@1,@9);}}
-    | group SPACE textNoTags separator document end
-    {$$=yy.addSubGraph($textNoTags,$document,{text:'', type:'text'},'group');if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,{text:'', type:'text'},@1,@6);}}
-    | group separator document end
-    {$$=yy.addSubGraph(undefined,$document,undefined,'group');if(yy.addSubgraphMapping){yy.addSubgraphMapping(undefined,undefined,@1,@4);}}
+    | connector SPACE textNoTags SQS text SQE separator
+    {$$=yy.addConnector($textNoTags,$text);if(yy.addConnectorMapping){yy.addConnectorMapping($textNoTags,$text,@1,@7);}}
+    | connector SPACE textNoTags separator
+    {$$=yy.addConnector($textNoTags,{text:'', type:'text'});if(yy.addConnectorMapping){yy.addConnectorMapping($textNoTags,{text:'', type:'text'},@1,@4);}}
     | direction
     | acc_title acc_title_value  { $$=$acc_title_value.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$acc_descr_value.trim();yy.setAccDescription($$); }
     | acc_descr_multiline_value { $$=$acc_descr_multiline_value.trim();yy.setAccDescription($$); }
-    ;
-
-typeDeclarationStatement
-    : TYPE_DECL
-    { $$ = $TYPE_DECL; yy.addTypeDeclaration($TYPE_DECL); if(yy.addTypeMapping){yy.addTypeMapping($TYPE_DECL,@$);} }
-    ;
-
-templateDeclarationStatement
-    : TEMPLATE_DECL
-    { $$ = $TEMPLATE_DECL; yy.addTemplateDeclaration($TEMPLATE_DECL); if(yy.addTemplateMapping){yy.addTemplateMapping($TEMPLATE_DECL,@$);} }
     ;
 
 separator: NEWLINE | SEMI | EOF | COMMENT ;
@@ -588,7 +514,7 @@ text: textToken
 
 
 keywords
-    : STYLE | LINKSTYLE | CLASSDEF | CLASS | CLICK | GRAPH | DIR | subgraph | agent | flow | task | skill | testCase | directive | end | DOWN | UP;
+    : STYLE | LINKSTYLE | CLASSDEF | CLASS | CLICK | GRAPH | DIR | flow | connector | end | DOWN | UP;
 
 
 textNoTags: textNoTagsToken

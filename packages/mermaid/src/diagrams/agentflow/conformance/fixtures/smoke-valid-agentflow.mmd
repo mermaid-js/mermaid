@@ -1,4 +1,6 @@
 agentflow TB
+  input["x"]
+  input@{ shape: input }
   a["Alpha"]
   b["Beta"]
-  a --> b
+  input --> a --> b

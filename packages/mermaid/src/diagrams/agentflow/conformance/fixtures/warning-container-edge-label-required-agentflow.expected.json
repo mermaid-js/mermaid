@@ -1,4 +1,0 @@
-{
-  "outcome": "warning",
-  "diagnostics": [{ "id": "CONTAINER_EDGE_LABEL_REQUIRED" }]
-}

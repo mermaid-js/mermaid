@@ -1,11 +1,11 @@
 /**
- * Element-mapping tests for the agentflow parser.
+ * Element-mapping tests for the agentflow parser (v0.8.1).
  *
  * Verifies that the JISON action blocks populate `elementMappings` via the
  * `addVertexMapping` / `addEdgeMapping` / `addSubgraphMapping` /
- * `addTypeMapping` / `addTemplateMapping` hooks, that the reported
- * positions land on the right line numbers, and that
- * `setFrontmatterLineOffset` shifts positions into original-source space.
+ * `addConnectorMapping` hooks, that the reported positions land on the
+ * right line numbers, and that `setFrontmatterLineOffset` shifts positions
+ * into original-source space.
  *
  * Corresponding infrastructure lives in `agentflowDb.ts` and the grammar
  * action blocks in `agentflow.jison`.
@@ -62,16 +62,14 @@ describe('agentflow element mappings', () => {
       expect(a!.position.endLine).toBe(2);
     });
 
-    it('captures vertices for every inline shape', () => {
+    it('captures vertices for inline shapes', () => {
       agentflow.parser.parse(`agentflow TB
   a["sq"]
-  b(("cir"))
   c{"diamond"}
   d[/"trap"/]
-  e(-"ellipse"-)
   f --> a`);
       const db = agentflow.parser.yy as AgentFlowDB;
-      for (const id of ['a', 'b', 'c', 'd', 'e']) {
+      for (const id of ['a', 'c', 'd']) {
         const m = db.getElementById(id);
         expect(m, `expected mapping for ${id}`).toBeDefined();
         expect(m!.type).toBe('vertex');
@@ -124,53 +122,19 @@ describe('agentflow element mappings', () => {
       expect(pipeline!.position.endLine).toBe(4);
     });
 
-    it('captures positions for agent / task / skill / testCase / directive containers', () => {
+    it('captures positions for nested flow containers', () => {
       agentflow.parser.parse(`agentflow TB
-  agent ag["A"]
-    task t1["T"]
-      skill s1["S"]
-        testCase tc1["TC"]
-          directive d1["D"]
-            n1 --> n2
-          end
-        end
-      end
+  flow outer["Outer"]
+    flow inner["Inner"]
+      n1 --> n2
     end
   end`);
       const db = agentflow.parser.yy as AgentFlowDB;
-      for (const id of ['ag', 't1', 's1', 'tc1', 'd1']) {
+      for (const id of ['outer', 'inner']) {
         const m = db.getElementById(id);
         expect(m, `expected subgraph mapping for ${id}`).toBeDefined();
         expect(m!.type).toBe('subgraph');
       }
-    });
-  });
-
-  // ──────────────────────────────────────────────────────────────
-  // Type and template declaration positions
-  // ──────────────────────────────────────────────────────────────
-
-  describe('declaration positions', () => {
-    it('captures a position for a type declaration', () => {
-      agentflow.parser.parse(`agentflow TB
-  type Greeting = String
-  a --> b`);
-      const db = agentflow.parser.yy as AgentFlowDB;
-      const greeting = db.getElementById('Greeting');
-      expect(greeting).toBeDefined();
-      expect(greeting!.type).toBe('type');
-      expect(greeting!.position.startLine).toBe(2);
-    });
-
-    it('captures a position for a template declaration', () => {
-      agentflow.parser.parse(`agentflow TB
-  template %my_tpl { FIELD_A: String <<description>> }
-  a --> b`);
-      const db = agentflow.parser.yy as AgentFlowDB;
-      const tpl = db.getElementById('my_tpl');
-      expect(tpl).toBeDefined();
-      expect(tpl!.type).toBe('template');
-      expect(tpl!.position.startLine).toBe(2);
     });
   });
 
@@ -234,7 +198,6 @@ describe('agentflow element mappings', () => {
 
     it('getMappingStats reports counts per statement type', () => {
       agentflow.parser.parse(`agentflow TB
-  type Foo = String
   flow p["P"]
     a --> b
   end`);
@@ -243,10 +206,8 @@ describe('agentflow element mappings', () => {
       expect(stats.vertices).toBeGreaterThanOrEqual(2); // a, b
       expect(stats.edges).toBeGreaterThanOrEqual(1);
       expect(stats.subgraphs).toBe(1);
-      expect(stats.types).toBe(1);
-      expect(stats.templates).toBe(0);
       expect(stats.totalElements).toBe(
-        stats.vertices + stats.edges + stats.subgraphs + stats.types
+        stats.vertices + stats.edges + stats.subgraphs + stats.connectors
       );
     });
   });

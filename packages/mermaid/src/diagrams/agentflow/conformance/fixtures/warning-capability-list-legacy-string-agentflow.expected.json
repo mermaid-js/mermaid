@@ -1,4 +1,0 @@
-{
-  "outcome": "warning",
-  "diagnostics": [{ "id": "CAPABILITY_LIST_LEGACY_STRING" }]
-}

@@ -1,7 +1,7 @@
 /**
- * getSemanticModel() tests — closes #12.
+ * getSemanticModel() tests (v0.8.1).
  *
- * Verifies the presentation-only contract from AGENTFLOW-SYNTAX.md §13:
+ * Verifies the presentation-only contract from AGENTFLOW-SYNTAX.md §10:
  * styling, class membership, view/collapsed state, icons, images and
  * element-mapping positions MUST NOT influence the semantic export. The
  * semantic model is what downstream tooling consumes when it needs to
@@ -34,15 +34,14 @@ describe('agentflow getSemanticModel()', () => {
       expect(typeof db.getSemanticModel).toBe('function');
     });
 
-    it('returns a model with vertices, edges, subGraphs, typeDeclarations, templateDeclarations, diagnostics', () => {
+    it('returns a model with vertices, edges, subGraphs, connectors, diagnostics', () => {
       const db = parse(`agentflow TB
   a --> b`);
       const model = db.getSemanticModel();
       expect(Array.isArray(model.vertices)).toBe(true);
       expect(Array.isArray(model.edges)).toBe(true);
       expect(Array.isArray(model.subGraphs)).toBe(true);
-      expect(Array.isArray(model.typeDeclarations)).toBe(true);
-      expect(Array.isArray(model.templateDeclarations)).toBe(true);
+      expect(Array.isArray(model.connectors)).toBe(true);
       expect(Array.isArray(model.diagnostics)).toBe(true);
     });
   });
@@ -61,7 +60,7 @@ describe('agentflow getSemanticModel()', () => {
   });
 
   describe('collapsed-vs-expanded equivalence', () => {
-    it('collapsed and expanded flow containers produce identical semantic models', () => {
+    it('view: collapsed does not leak into the vertex/edge/subgraph semantics', () => {
       const expanded = parse(`agentflow TB
   flow pipeline["Pipeline"]
     a --> b
@@ -71,7 +70,18 @@ describe('agentflow getSemanticModel()', () => {
     a --> b
   end
   pipeline@{ view: "collapsed" }`);
-      expect(collapsed.getSemanticModel()).toEqual(expanded.getSemanticModel());
+      const e = expanded.getSemanticModel();
+      const c = collapsed.getSemanticModel();
+      // Strip diagnostics (which carry source positions that differ across
+      // the two inputs) and compare the semantic surface.
+      const stripDiag = (m: ReturnType<typeof expanded.getSemanticModel>) => ({
+        vertices: m.vertices,
+        edges: m.edges,
+        subGraphs: m.subGraphs,
+        connectors: m.connectors,
+        direction: m.direction,
+      });
+      expect(stripDiag(c)).toEqual(stripDiag(e));
     });
   });
 
@@ -91,7 +101,6 @@ describe('agentflow getSemanticModel()', () => {
       expect(seen.has('w')).toBe(false);
       expect(seen.has('h')).toBe(false);
       expect(seen.has('view')).toBe(false);
-      // No classes / styles leak either.
       expect(seen.has('class')).toBe(false);
       expect(seen.has('style')).toBe(false);
     });
@@ -108,81 +117,72 @@ describe('agentflow getSemanticModel()', () => {
   });
 
   describe('semantic fields preserved', () => {
-    it('keeps domain metadata on vertices (model, permits, requires, etc.)', () => {
+    it('keeps domain metadata on flow containers (model, memory)', () => {
       const db = parse(`agentflow TB
-  agent researcher["Researcher"]
+  flow researcher["Researcher"]
     a --> b
   end
-  researcher@{ model: "claude-opus-4-6", permits: ["net.read", "llm.query"] }`);
+  researcher@{ model: "claude-opus-4-6", memory: "shared" }`);
       const model = db.getSemanticModel();
       const researcher = model.subGraphs.find((sg) => sg.id === 'researcher');
       expect(researcher).toBeDefined();
       expect(researcher?.metadata?.model).toBe('claude-opus-4-6');
-      expect(researcher?.metadata?.permits).toEqual(['net.read', 'llm.query']);
-      expect(researcher?.type).toBe('agent');
+      expect(researcher?.metadata?.memory).toBe('shared');
+      expect(researcher?.type).toBe('flow');
     });
 
-    it('keeps type and template declarations verbatim', () => {
+    it('surfaces declared connectors in the connectors projection', () => {
       const db = parse(`agentflow TB
-  type Report = String
-  template %triage { TITLE: String <<t>> }
-  a --> b`);
+  connector github["GitHub"]
+  github@{ protocol: "mcp", transport: "stdio" }
+  connector slack["Slack"]
+  slack@{ protocol: "http" }`);
       const model = db.getSemanticModel();
-      const reportType = model.typeDeclarations.find((t) => t.name === 'Report');
-      expect(reportType).toBeDefined();
-      expect(reportType?.kind).toBe('alias');
-      const triage = model.templateDeclarations.find((t) => t.name === 'triage');
-      expect(triage).toBeDefined();
-      expect(triage?.fields).toEqual([{ name: 'TITLE', type: 'String', description: 't' }]);
+      const ids = model.connectors.map((c) => c.id).sort();
+      expect(ids).toEqual(['github', 'slack']);
+      const gh = model.connectors.find((c) => c.id === 'github');
+      expect(gh?.metadata?.protocol).toBe('mcp');
+      expect(gh?.metadata?.transport).toBe('stdio');
     });
 
-    it('keeps `value` and `example` on input/artifact vertices (v0.6.0 §14.1)', () => {
+    it('keeps `value` on input vertices', () => {
       const db = parse(`agentflow TB
   file_path["file_path"]
-  file_path@{ shape: lean-right, value: "src/HelloWorld.java", example: "src/Sample.java" }
-  payload["payload"]
-  payload@{ shape: doc, value: "concrete", example: "illustrative" }`);
+  file_path@{ shape: input, value: "src/HelloWorld.java" }`);
       const model = db.getSemanticModel();
       const filePath = model.vertices.find((v) => v.id === 'file_path');
       expect(filePath?.metadata?.value).toBe('src/HelloWorld.java');
-      expect(filePath?.metadata?.example).toBe('src/Sample.java');
-      const payload = model.vertices.find((v) => v.id === 'payload');
-      expect(payload?.metadata?.value).toBe('concrete');
-      expect(payload?.metadata?.example).toBe('illustrative');
+      expect(filePath?.vertexKind).toBe('input');
     });
 
     it('keeps edge type / stroke / label', () => {
       const db = parse(`agentflow TB
   a -- yes --> b
-  a ==> c
-  a -.-> d`);
+  a --x c
+  refdoc1["RefDoc"]
+  refdoc1@{ shape: refdoc }
+  a -.- refdoc1`);
       const model = db.getSemanticModel();
       const labelled = model.edges.find((e) => e.start === 'a' && e.end === 'b');
       expect(labelled?.label).toBe('yes');
-      expect(model.edges.find((e) => e.end === 'c')?.stroke).toBe('thick');
-      expect(model.edges.find((e) => e.end === 'd')?.stroke).toBe('dotted');
+      expect(model.edges.find((e) => e.end === 'c')?.edgeSemantic).toBe('failure');
+      expect(model.edges.find((e) => e.end === 'refdoc1')?.stroke).toBe('dotted');
     });
   });
 
   describe('diagnostics flow through', () => {
     it('includes diagnostics emitted during the render pipeline', () => {
-      // Exercise the SHAPE_UNSUPPORTED path from PR 2b via the existing
-      // transformData migration. A structured diagnostic on the DB should
-      // show up on the semantic export.
       const db = parse(`agentflow TB
   a --> b`);
-      // Directly emit a SHAPE_UNSUPPORTED diagnostic as if transformData had
-      // encountered an unknown shape. This is the simplest way to assert
-      // the projection includes diagnostics without relying on post-parse
-      // validators that land in later wave-1 PRs.
       db.emitWarning('SHAPE_UNSUPPORTED', 'shape "made-up" is not supported', {
         nodeId: 'a',
       });
       const model = db.getSemanticModel();
-      expect(model.diagnostics).toHaveLength(1);
-      expect(model.diagnostics[0].id).toBe('SHAPE_UNSUPPORTED');
-      expect(model.diagnostics[0].nodeId).toBe('a');
-      expect(model.diagnostics[0].position?.startLine).toBe(2);
+      expect(model.diagnostics.length).toBeGreaterThanOrEqual(1);
+      const shapeDiag = model.diagnostics.find((d) => d.id === 'SHAPE_UNSUPPORTED');
+      expect(shapeDiag).toBeDefined();
+      expect(shapeDiag?.nodeId).toBe('a');
+      expect(shapeDiag?.position?.startLine).toBe(2);
     });
   });
 });

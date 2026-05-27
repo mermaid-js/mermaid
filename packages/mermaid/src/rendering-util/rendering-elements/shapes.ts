@@ -7,7 +7,6 @@ import { card } from './shapes/card.js';
 import { choice } from './shapes/choice.js';
 import { circle } from './shapes/circle.js';
 import { collapsedGroup } from './shapes/collapsedGroup.js';
-import { typeDeclaration } from './shapes/typeDeclaration.js';
 import { crossedCircle } from './shapes/crossedCircle.js';
 import { curlyBraceLeft } from './shapes/curlyBraceLeft.js';
 import { curlyBraceRight } from './shapes/curlyBraceRight.js';
@@ -506,8 +505,6 @@ const generateShapeMap = () => {
 
     // Agentflow collapsed container
     collapsedGroup,
-    // Agentflow type declaration
-    typeDeclaration,
 
     // Kanban diagram
     kanbanItem,

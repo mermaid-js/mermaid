@@ -1,4 +1,0 @@
-{
-  "outcome": "warning",
-  "diagnostics": [{ "id": "REF_KIND_LEGACY_AMBIGUOUS", "nodeId": "r" }]
-}

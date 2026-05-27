@@ -1,9 +1,0 @@
-%% §5.5 — multi-param container incoming data edge without a label;
-%% the label is required to name the bound parameter.
-agentflow TB
-  caller["c"]
-  flow pipeline["P"]
-    step["s"]
-  end
-  pipeline@{ params: ["city", "query"] }
-  caller ==> pipeline

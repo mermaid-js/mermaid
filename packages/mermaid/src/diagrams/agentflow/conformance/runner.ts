@@ -76,36 +76,27 @@ export interface ExpectedDiagnostic {
 /**
  * Semantic-model assertion on a single vertex. `id` is required and must
  * match a `SemanticVertex.id`. Fields that are listed are checked; fields
- * that are omitted are not. `resolvedMetadata` uses partial-subset
- * matching — each listed key must appear with the listed value, but the
- * actual map may carry additional keys.
+ * that are omitted are not. `metadata` uses partial-subset matching —
+ * each listed key must appear with the listed value, but the actual map
+ * may carry additional keys.
  */
 export interface ExpectedVertex {
   id: string;
-  vertexKind?: 'tool';
+  vertexKind?: 'tool' | 'action' | 'input' | 'refdoc' | 'decision' | 'task';
   /** Partial match: listed keys must equal, extras allowed. */
-  resolvedMetadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
 }
 
 /**
  * Semantic-model assertion on a single edge. Either both `start` and
  * `end` (for operator-keyed matching) or `id` (for author-assigned edge
- * ids) must be provided. `edgeSemantic` checks against the §5.1 derived
- * value populated by PR 0.
+ * ids) must be provided. `edgeSemantic` is the v0.8.1 §5.1 derived value.
  */
 export interface ExpectedEdge {
   start?: string;
   end?: string;
   id?: string;
-  edgeSemantic?:
-    | 'control'
-    | 'data'
-    | 'conformance'
-    | 'delegation'
-    | 'failure'
-    | 'association'
-    | 'governance'
-    | 'bidirectional';
+  edgeSemantic?: 'sequence' | 'reference' | 'failure';
 }
 
 export interface ExpectedSemanticAssertions {
@@ -235,14 +226,14 @@ function matchSemanticAssertions(
         message: `vertex "${expectedVertex.id}" expected vertexKind="${expectedVertex.vertexKind}" but got "${String(actual.vertexKind)}"`,
       });
     }
-    if (expectedVertex.resolvedMetadata !== undefined) {
-      const actualResolved = actual.resolvedMetadata ?? {};
-      for (const [key, expectedValue] of Object.entries(expectedVertex.resolvedMetadata)) {
-        const actualValue = actualResolved[key];
+    if (expectedVertex.metadata !== undefined) {
+      const actualMetadata = (actual.metadata as Record<string, unknown> | undefined) ?? {};
+      for (const [key, expectedValue] of Object.entries(expectedVertex.metadata)) {
+        const actualValue = actualMetadata[key];
         if (!deepEqual(actualValue, expectedValue)) {
           failures.push({
             kind: 'semantic-mismatch',
-            message: `vertex "${expectedVertex.id}" resolvedMetadata.${key} expected ${JSON.stringify(expectedValue)} but got ${JSON.stringify(actualValue)}`,
+            message: `vertex "${expectedVertex.id}" metadata.${key} expected ${JSON.stringify(expectedValue)} but got ${JSON.stringify(actualValue)}`,
           });
         }
       }
