@@ -8,11 +8,12 @@ import { vi } from 'vitest';
 import { mermaidAPI as mAPI } from '../mermaidAPI.js';
 
 // original version cannot be modified since it was frozen with `Object.freeze()`
-export const mermaidAPI = {
+export const mermaidAPI: typeof mAPI = {
   render: vi.fn().mockResolvedValue({
     svg: '<svg></svg>',
   }),
   parse: mAPI.parse,
+  getDiagramFromText: mAPI.getDiagramFromText,
   initialize: vi.fn(),
   getConfig: configApi.getConfig,
   setConfig: configApi.setConfig,
