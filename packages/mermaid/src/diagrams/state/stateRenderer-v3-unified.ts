@@ -89,7 +89,7 @@ export const draw = async function (text: string, id: string, _version: string, 
         return;
       }
 
-      const allNodes = svg.node()?.querySelectorAll('g');
+      const allNodes = svg.node()?.querySelectorAll('g.node');
       let matchedElem: SVGGElement | undefined;
 
       allNodes?.forEach((g: SVGGElement) => {
@@ -117,6 +117,7 @@ export const draw = async function (text: string, id: string, _version: string, 
       if (linkInfo.tooltip) {
         const tooltip = linkInfo.tooltip.replace(/^"+|"+$/g, '');
         a.setAttribute('title', tooltip);
+        matchedElem.setAttribute('title', tooltip);
       }
 
       parent.replaceChild(a, matchedElem);
