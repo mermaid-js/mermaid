@@ -153,12 +153,18 @@ line
 
 box_section
 	: /* empty */ { $$ = [] }
-	| box_section box_line {$1.push($2);$$ = $1}
-	;
+	| box_section box_line { $$ = $1.concat($2); } /* Concatenate nested box lines so nested boxes */
+	;											   /* and participants inside a box are represented as one flattened list. */
 
 box_line
-	: SPACE participant_statement { $$ = $2 }
-	| participant_statement { $$ = $1 }
+	: participant_statement { $$ = $1 }
+	| 'box' restOfLine box_section end
+	{
+		$3.unshift({type: 'boxStart', boxData:yy.parseBoxData($2)}); /* Start new box scope, parse box header text, recurse into
+																		nested box_section inside. */
+		$3.push({type: 'boxEnd', boxText:$2});						 /* End of box scope after all nested lines have been parsed. */
+		$$ = $3;
+	}
 	| NEWLINE { $$=[]; }
 	;
 

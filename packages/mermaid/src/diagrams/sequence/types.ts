@@ -1,8 +1,16 @@
+/**
+ * Represents a box in a nested sequence diagram structure.
+ *
+ * A box may contain actors and child boxes, allowing recursive
+ * nesting of box structures (outer and inner scopes).
+ */
 export interface Box {
-  name: string;
-  wrap: boolean;
-  fill: string;
+  name?: string;
+  fill?: string;
+  wrap?: boolean;
   actorKeys: string[];
+  children: Box[];
+  parent?: Box;
 }
 
 export interface Actor {

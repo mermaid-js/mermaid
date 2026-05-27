@@ -762,7 +762,11 @@ const addActorRenderingData = function (
       if (!isFooter) {
         bounds.models.addBox(prevBox);
       }
-      prevMargin += conf.boxMargin + prevBox.margin;
+      let boxTransitionMargin = conf.boxMargin + prevBox.margin;
+      if (prevBox.parent && box?.parent && prevBox.parent !== box.parent) {
+        boxTransitionMargin += conf.boxMargin * 4;
+      }
+      prevMargin += boxTransitionMargin;
     }
 
     // new box
@@ -1080,6 +1084,11 @@ export const draw = async function (_text: string, id: string, _version: string,
     bounds.bumpVerticalPos(conf.boxMargin);
     if (hasBoxTitles) {
       bounds.bumpVerticalPos(boxes[0].textMaxHeight);
+      // Extra space for the parent box title row when nesting exists
+      const hasNestedBoxes = boxes.some((b) => b.children && b.children.length > 0);
+      if (hasNestedBoxes) {
+        bounds.bumpVerticalPos(boxes[0].textMaxHeight + conf.boxMargin);
+      }
     }
   }
 
@@ -1394,6 +1403,7 @@ export const draw = async function (_text: string, id: string, _version: string,
   backgrounds.forEach((e) => svgDraw.drawBackgroundRect(diagram, e));
   fixLifeLineHeights(diagram, actors, actorKeys, conf);
 
+  // Compute leaf box rendering coordinates
   for (const box of bounds.models.boxes) {
     box.height = bounds.getVerticalPos() - box.y;
     bounds.insert(box.x, box.y, box.x + box.width, box.height);
@@ -1403,7 +1413,58 @@ export const draw = async function (_text: string, id: string, _version: string,
     box.stopx = box.startx + box.width + 2 * boxPadding;
     box.stopy = box.starty + box.height + boxPadding * 0.75;
     box.stroke = 'rgb(0,0,0, 0.5)';
-    svgDraw.drawBox(diagram, box, conf);
+  }
+
+  // Compute parent box coordinates bottom-up so each parent wraps its children
+  const allBoxes = diagObj.db.getBoxes(); // DFS order: parent before children
+  for (const box of [...allBoxes].reverse()) {
+    if (!box.children || box.children.length === 0) {
+      continue;
+    }
+    let minStartx = Infinity,
+      maxStopx = -Infinity,
+      minStarty = Infinity,
+      maxStopy = -Infinity;
+    for (const child of box.children) {
+      if (child.startx !== undefined) {
+        minStartx = Math.min(minStartx, child.startx);
+        maxStopx = Math.max(maxStopx, child.stopx);
+        minStarty = Math.min(minStarty, child.starty);
+        maxStopy = Math.max(maxStopy, child.stopy);
+      }
+    }
+    if (minStartx === Infinity) {
+      continue;
+    }
+    const nestPaddingHoriz = conf.boxMargin * 2;
+    const nestPaddingTop = (box.textMaxHeight || 0) + conf.boxTextMargin + conf.boxMargin;
+    const nestPaddingBottom = conf.boxMargin * 3;
+    box.startx = minStartx - nestPaddingHoriz;
+    box.starty = minStarty - nestPaddingTop;
+    box.stopx = maxStopx + nestPaddingHoriz;
+    box.stopy = maxStopy + nestPaddingBottom;
+    // Center the label over the children's content area
+    let minChildX = Infinity,
+      maxChildRight = -Infinity;
+    for (const child of box.children) {
+      if (child.x !== undefined) {
+        minChildX = Math.min(minChildX, child.x);
+        maxChildRight = Math.max(maxChildRight, child.x + child.width);
+      }
+    }
+    box.x = minChildX !== Infinity ? minChildX : box.startx + nestPaddingHoriz;
+    box.width = minChildX !== Infinity ? maxChildRight - minChildX : box.stopx - box.startx;
+    box.y = box.starty;
+    box.stroke = 'rgb(0,0,0, 0.5)';
+    // Register with bounds so the SVG dimensions expand to include the full parent box
+    bounds.insert(box.startx, box.starty, box.stopx, box.stopy);
+  }
+
+  // Draw all boxes in DFS order — parents first so they render behind children
+  for (const box of allBoxes) {
+    if (box.startx !== undefined) {
+      svgDraw.drawBox(diagram, box, conf);
+    }
   }
 
   if (hasBoxes) {
@@ -1454,20 +1515,26 @@ export const draw = async function (_text: string, id: string, _version: string,
       .attr('y', -25);
   }
 
-  configureSvgSize(diagram, height, width, conf.useMaxWidth);
-
   const extraVertForTitle = title ? 40 : 0;
   const extraHeightForNeoActors = actors.size && look === 'neo' ? 30 : 0;
+
+  const hasNestedBoxes = allBoxes.some((b) => b.children && b.children.length > 0);
+  const extraTopForNesting = hasNestedBoxes
+    ? (boxes[0]?.textMaxHeight || 0) + conf.boxTextMargin + conf.boxMargin
+    : 0;
+
+  configureSvgSize(diagram, height + extraTopForNesting, width, conf.useMaxWidth);
+
   diagram.attr(
     'viewBox',
     box.startx -
       conf.diagramMarginX +
       ' -' +
-      (conf.diagramMarginY + extraVertForTitle) +
+      (conf.diagramMarginY + extraVertForTitle + extraTopForNesting) +
       ' ' +
       width +
       ' ' +
-      (height + extraVertForTitle + extraHeightForNeoActors)
+      (height + extraVertForTitle + extraHeightForNeoActors + extraTopForNesting)
   );
 
   log.debug(`models:`, bounds.models);
@@ -1662,6 +1729,9 @@ async function calculateActorMargins(
 
   let maxBoxHeight = 0;
   boxes.forEach((box) => {
+    if (!box.actorKeys || box.actorKeys.length === 0) {
+      return;
+    }
     const textFont = messageFont(conf);
     let totalWidth = box.actorKeys.reduce((total, aKey) => {
       return (total += actors.get(aKey).width + (actors.get(aKey).margin || 0));
