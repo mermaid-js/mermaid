@@ -11,6 +11,8 @@ cynefin
 deaccelerator
 Deaccelerator
 deaccelerators
+ditaa
+Ditaa
 doublecircle
 elem
 elems
@@ -32,6 +34,7 @@ mrtree
 multigraph
 nodesep
 NOTEGROUP
+ocis
 Pinterest
 procs
 rankdir
