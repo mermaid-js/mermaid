@@ -3,7 +3,7 @@ import "../common/common";
 
 entry Neuralnet:
   NEWLINE*
-  "neuralnet" (mode="sequential")? NEWLINE*
+  "neuralnet" (mode="sequential")? (renderStyle="neuron")? NEWLINE*
   (
     TitleAndAccessibilities
     | nodes+=NeuralNode

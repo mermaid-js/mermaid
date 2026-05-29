@@ -66,6 +66,7 @@ export type LayerCategory =
   | 'activation';
 
 export type NetworkMode = 'sequential' | 'graph';
+export type RenderStyle = 'block' | 'neuron';
 
 // ─── Data Structures ────────────────────────────────────────────────────────
 
@@ -121,6 +122,9 @@ export interface NeuralnetDB extends DiagramDB {
 
   setMode: (mode: NetworkMode) => void;
   getMode: () => NetworkMode;
+
+  setRenderStyle: (style: RenderStyle) => void;
+  getRenderStyle: () => RenderStyle;
 
   addNode: (node: NeuralNodeDef) => void;
   getNodes: () => Map<string, NeuralNodeDef>;

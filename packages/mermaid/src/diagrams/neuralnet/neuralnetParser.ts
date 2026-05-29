@@ -4,16 +4,13 @@ import { log } from '../../logger.js';
 import type { ParserDefinition } from '../../diagram-api/types.js';
 import { populateCommonDb } from '../common/populateCommonDb.js';
 import { db } from './neuralnetDb.js';
-import type { NeuralnetDB, LayerType, NetworkMode } from './neuralnetTypes.js';
+import type { NeuralnetDB, LayerType } from './neuralnetTypes.js';
 
 const populateDb = (ast: Neuralnet, db: NeuralnetDB): void => {
   populateCommonDb(ast, db);
 
-  if (ast.mode === 'sequential') {
-    db.setMode('sequential');
-  } else {
-    db.setMode('graph');
-  }
+  db.setMode(ast.mode === 'sequential' ? 'sequential' : 'graph');
+  db.setRenderStyle(ast.renderStyle === 'neuron' ? 'neuron' : 'block');
 
   // Register all layer nodes
   for (const node of ast.nodes) {

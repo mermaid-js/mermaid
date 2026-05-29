@@ -12,16 +12,19 @@ import type {
   NeuralNodeDef,
   NeuralEdgeDef,
   NetworkMode,
+  RenderStyle,
 } from './neuralnetTypes.js';
 
 let mode: NetworkMode = 'graph';
-let nodes: Map<string, NeuralNodeDef> = new Map();
+let renderStyle: RenderStyle = 'block';
+let nodes = new Map<string, NeuralNodeDef>();
 let nodeOrder: string[] = [];
 let edges: NeuralEdgeDef[] = [];
 let autoIdCounter = 0;
 
 const clear = (): void => {
   mode = 'graph';
+  renderStyle = 'block';
   nodes = new Map();
   nodeOrder = [];
   edges = [];
@@ -32,8 +35,12 @@ const clear = (): void => {
 const setMode = (m: NetworkMode): void => {
   mode = m;
 };
-
 const getMode = (): NetworkMode => mode;
+
+const setRenderStyle = (s: RenderStyle): void => {
+  renderStyle = s;
+};
+const getRenderStyle = (): RenderStyle => renderStyle;
 
 const addNode = (node: NeuralNodeDef): void => {
   const resolvedId = node.id || `_node${autoIdCounter++}`;
@@ -57,6 +64,8 @@ export const db: NeuralnetDB = {
 
   setMode,
   getMode,
+  setRenderStyle,
+  getRenderStyle,
 
   addNode,
   getNodes,
