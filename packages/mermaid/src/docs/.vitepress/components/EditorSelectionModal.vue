@@ -112,7 +112,7 @@ onUnmounted(() => {
           class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md border border-solid border-[#E5E7EB] bg-white px-4 py-2 text-sm font-medium text-[#1E1A2E] shadow-sm transition-colors hover:bg-[#E0095F] hover:text-white focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 cursor-pointer"
           @click="handleStayOnLive"
         >
-          Stay on mermaid.live
+          Go to mermaid.live
         </button>
       </div>
 
