@@ -126,6 +126,7 @@ export * from './pie/index.js';
 export * from './treeView/index.js';
 export * from './architecture/index.js';
 export * from './eventmodeling/index.js';
+export * from './neuralnet/index.js';
 export * from './radar/index.js';
 export * from './railroad/index.js';
 export * from './railroad-ebnf/index.js';

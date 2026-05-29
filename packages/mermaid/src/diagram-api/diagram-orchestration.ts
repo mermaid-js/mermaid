@@ -34,6 +34,7 @@ import { registerDiagram } from './diagramAPI.js';
 import { treemap } from '../diagrams/treemap/detector.js';
 import wardley from '../diagrams/wardley/wardleyDetector.js';
 import { cynefin } from '../diagrams/cynefin/cynefinDetector.js';
+import { neuralnet } from '../diagrams/neuralnet/neuralnetDetector.js';
 import { railroad } from '../diagrams/railroad/railroadDetector.js';
 import { railroadEbnf } from '../diagrams/railroad/ebnfDetector.js';
 import { railroadAbnf } from '../diagrams/railroad/abnfDetector.js';
@@ -121,6 +122,7 @@ export const addDiagrams = () => {
     railroadPeg,
     venn,
     wardley,
-    cynefin
+    cynefin,
+    neuralnet
   );
 };
