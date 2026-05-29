@@ -30,6 +30,7 @@ mindmap
 mindmaps
 mrtree
 multigraph
+neuralnet
 nodesep
 NOTEGROUP
 Pinterest

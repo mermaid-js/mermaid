@@ -15,11 +15,24 @@ import {
   MermaidGeneratedSharedModule,
   NeuralnetGrammarGeneratedModule as NeuralnetGeneratedModule,
 } from '../generated/module.js';
+import { CommonValueConverter } from '../common/index.js';
 
-// No custom token builder or value converter needed for neuralnet (simple grammar)
-export type NeuralnetServices = LangiumCoreServices;
+interface NeuralnetAddedServices {
+  parser: {
+    ValueConverter: CommonValueConverter;
+  };
+}
 
-export const NeuralnetModule: Module<NeuralnetServices, PartialLangiumCoreServices> = {};
+export type NeuralnetServices = LangiumCoreServices & NeuralnetAddedServices;
+
+export const NeuralnetModule: Module<
+  NeuralnetServices,
+  PartialLangiumCoreServices & NeuralnetAddedServices
+> = {
+  parser: {
+    ValueConverter: () => new CommonValueConverter(),
+  },
+};
 
 export function createNeuralnetServices(
   context: DefaultSharedCoreModuleContext = EmptyFileSystem

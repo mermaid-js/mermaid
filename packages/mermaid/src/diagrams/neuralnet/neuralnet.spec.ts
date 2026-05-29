@@ -7,6 +7,52 @@ setConfig({ securityLevel: 'strict' });
 describe('neuralnet', () => {
   beforeEach(() => db.clear());
 
+  // ── 4 targeted cases ────────────────────────────────────────────────────
+
+  describe('targeted parse cases', () => {
+    it('case 1: neuralnet sequential → mode is sequential', async () => {
+      await parser.parse(`neuralnet sequential
+        Input[1]
+      `);
+      expect(db.getMode()).toBe('sequential');
+    });
+
+    it('case 2: conv1: Conv2D[32, 3x3] → id=conv1, type=Conv2D, params=[32,3x3]', async () => {
+      await parser.parse(`neuralnet
+        conv1: Conv2D[32, 3x3]
+      `);
+      const nodes = db.getNodes();
+      expect(nodes.has('conv1')).toBe(true);
+      const n = nodes.get('conv1')!;
+      expect(n.layerType).toBe('Conv2D');
+      expect(n.params).toEqual(['32', '3x3']);
+    });
+
+    it('case 3: conv1 --> pool1 → edge registered', async () => {
+      await parser.parse(`neuralnet
+        conv1: Conv2D[32, 3x3]
+        pool1: MaxPool2D[2x2]
+        conv1 --> pool1
+      `);
+      const edges = db.getEdges();
+      expect(edges).toHaveLength(1);
+      expect(edges[0]).toEqual({ from: 'conv1', to: 'pool1' });
+    });
+
+    it('case 4: Flatten and Add with no params → empty params array', async () => {
+      await parser.parse(`neuralnet sequential
+        Flatten
+        Add
+      `);
+      const nodes = db.getNodes();
+      const order = db.getNodeOrder();
+      expect(nodes.get(order[0])!.layerType).toBe('Flatten');
+      expect(nodes.get(order[0])!.params).toEqual([]);
+      expect(nodes.get(order[1])!.layerType).toBe('Add');
+      expect(nodes.get(order[1])!.params).toEqual([]);
+    });
+  });
+
   // ── Sequential mode ─────────────────────────────────────────────────────
 
   describe('sequential mode', () => {
