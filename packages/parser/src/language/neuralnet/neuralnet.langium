@@ -27,8 +27,11 @@ NeuralEdge:
   from=NN_ID NN_ARROW to=NN_ID EOL
 ;
 
+// Accept NN_ID too — lowercase activation names (relu, tanh, softmax) are
+// tokenized as NN_ID because it is defined before NN_PARAM_VAL.
+// NN_TYPE_KW handles uppercase activation variants (ReLU, Tanh, GELU).
 NeuralParam:
-  value=NN_PARAM_VAL
+  value=(NN_PARAM_VAL | NN_ID | NN_TYPE_KW)
 ;
 
 // Layer type keywords — uppercase-starting, matched before NN_ID
