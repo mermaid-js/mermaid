@@ -1,0 +1,76 @@
+# Troubleshooting Mermaid Diagrams
+
+This guide helps resolve common Mermaid rendering, syntax, styling, and performance issues.
+
+## Common Issues and Solutions
+
+## Diagram Not Rendering
+
+### Symptoms  
+- Blank output
+- No error messages
+- Live Editor works but site doesn't
+
+### Solutions
+1. Check script is loaded:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+```
+2. Call `mermaid.contentLoaded()` after HTML loads
+3. Check for syntax errors using Live Editor
+4. Ensure `<div class="mermaid">` wraps diagram
+
+## Nested Boxes Not Working
+
+### Symptoms  
+- Nesting syntax doesn't render
+- Actors disappear
+- Boxes render flat
+
+### Solutions
+1. Ensure proper indentation
+2. Each level must have `box...end`
+3. Actors only at deepest level
+4. Test in Live Editor first
+
+## Colors Not Applying
+
+### Symptoms  
+- color:#XXXXXX not working
+- Styles from CSS ignored
+- Theme changes have no effect
+
+### Solutions
+1. Use hex format: `color:#FF6B6B` (not `color: red`)
+2. Verify 6-digit hex codes
+3. Check if theme overrides custom colors
+4. Ensure `classDef` applied correctly
+
+## Syntax Errors
+
+### Symptoms  
+- "Unexpected token" errors
+- Diagram won't render
+- Error message in console
+
+### Solutions
+1. Copy syntax from Live Editor
+2. Check matching brackets/quotes
+3. Use provided templates
+4. Validate in Live Editor first
+5. Check for special characters
+
+## Performance Issues
+
+### Symptoms  
+- Slow rendering
+- Browser lag
+- Freezes with large diagrams
+
+### Solutions
+1. Break into smaller diagrams
+2. Reduce complexity
+3. Use simple styling
+4. Update Mermaid to latest version
+5. Check browser console for errors
