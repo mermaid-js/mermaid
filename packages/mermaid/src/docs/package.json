@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@iconify-json/carbon": "^1.2.14",
+    "@iconify-json/logos": "^1.2.11",
     "@iconify-json/material-symbols": "^1.2.67",
     "@unocss/reset": "^66.5.9",
     "@vite-pwa/vitepress": "^1.0.1",
