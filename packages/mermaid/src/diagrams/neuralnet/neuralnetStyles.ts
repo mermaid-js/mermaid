@@ -12,11 +12,11 @@ const getStyles: DiagramStylesProvider = (options: NeuralnetStyleOptions) => `
   .neuralnet-diagram .node.pool rect     { fill: ${options.nnPoolFill ?? '#16A085'}; stroke: #0E6655; }
   .neuralnet-diagram .node.norm rect     { fill: ${options.nnNormFill ?? '#F39C12'}; stroke: #D68910; }
   .neuralnet-diagram .node.dropout rect  { fill: ${options.nnDropoutFill ?? '#95A5A6'}; stroke: #717D7E; stroke-dasharray: 5,3; }
-  .neuralnet-diagram .node.structural rect { fill: ${options.nnStructuralFill ?? '#BDC3C7'}; stroke: #95A5A6; }
+  .neuralnet-diagram .node.structural rect { fill: ${options.nnStructuralFill ?? (options.darkMode ? '#34495E' : '#BDC3C7')}; stroke: #95A5A6; }
   .neuralnet-diagram .node.recurrent rect { fill: ${options.nnRecurrentFill ?? '#C0392B'}; stroke: #96281B; }
   .neuralnet-diagram .node.merge rect    { fill: ${options.nnMergeFill ?? '#1ABC9C'}; stroke: #148F77; }
   .neuralnet-diagram .node.attention rect { fill: ${options.nnAttentionFill ?? '#2980B9'}; stroke: #1F618D; }
-  .neuralnet-diagram .node.activation rect { fill: ${options.nnActivationFill ?? '#D5D8DC'}; stroke: #AAB7B8; }
+  .neuralnet-diagram .node.activation rect { fill: ${options.nnActivationFill ?? (options.darkMode ? '#2C3E50' : '#D5D8DC')}; stroke: #AAB7B8; }
 
   .neuralnet-diagram .node text {
     font-family: ${options.fontFamily ?? 'sans-serif'};
@@ -34,7 +34,7 @@ const getStyles: DiagramStylesProvider = (options: NeuralnetStyleOptions) => `
   }
   .neuralnet-diagram .node.structural text,
   .neuralnet-diagram .node.activation text {
-    fill: #2C3E50;
+    fill: ${options.nnTextColor ?? (options.darkMode ? '#FFFFFF' : '#2C3E50')};
   }
 
   .neuralnet-diagram .edges .edge {
