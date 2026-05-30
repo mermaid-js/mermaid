@@ -97,6 +97,12 @@ export {
   EmModelEntityType,
   isEmModelEntityType,
   isEmResetFrame,
+  Neuralnet,
+  isNeuralnet,
+  NeuralNode,
+  isNeuralNode,
+  NeuralEdge,
+  isNeuralEdge,
 } from './generated/ast.js';
 
 export {
