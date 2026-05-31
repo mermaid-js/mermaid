@@ -7,6 +7,7 @@ import type {
   Architecture,
   GitGraph,
   EventModel,
+  Neuralnet,
   Radar,
   Railroad,
   RailroadEbnf,
@@ -25,6 +26,7 @@ export type DiagramAST =
   | Architecture
   | GitGraph
   | EventModel
+  | Neuralnet
   | Radar
   | Railroad
   | RailroadEbnf
@@ -71,6 +73,11 @@ const initializers = {
     const { createEventModelingServices } = await import('./language/eventmodeling/index.js');
     const parser = createEventModelingServices().EventModel.parser.LangiumParser;
     parsers.eventmodeling = parser;
+  },
+  neuralnet: async () => {
+    const { createNeuralnetServices } = await import('./language/neuralnet/index.js');
+    const parser = createNeuralnetServices().Neuralnet.parser.LangiumParser;
+    parsers.neuralnet = parser;
   },
   radar: async () => {
     const { createRadarServices } = await import('./language/radar/index.js');
@@ -121,6 +128,7 @@ export async function parse(diagramType: 'treeView', text: string): Promise<Tree
 export async function parse(diagramType: 'architecture', text: string): Promise<Architecture>;
 export async function parse(diagramType: 'gitGraph', text: string): Promise<GitGraph>;
 export async function parse(diagramType: 'eventmodeling', text: string): Promise<EventModel>;
+export async function parse(diagramType: 'neuralnet', text: string): Promise<Neuralnet>;
 export async function parse(diagramType: 'radar', text: string): Promise<Radar>;
 export async function parse(diagramType: 'railroad', text: string): Promise<Railroad>;
 export async function parse(diagramType: 'railroadEbnf', text: string): Promise<RailroadEbnf>;
