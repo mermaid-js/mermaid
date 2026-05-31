@@ -879,4 +879,57 @@ describe('XY Chart', () => {
       });
     });
   });
+
+  it('should render a line chart with point labels', () => {
+    imgSnapshotTest(
+      `
+      xychart
+        title "Smallest AI models scoring above 60% on MMLU"
+        x-axis "Date" ["Apr 2022", "Feb 2023", "Jul 2023", "Sep 2023", "Apr 2024"]
+        y-axis "Parameters (B)" 0 --> 600
+        line [540 "PaLM", 65 "LLaMA-65B", 34 "Llama 2 34B", 7 "Mistral 7B", 3.8 "Phi-3-mini"]
+      `,
+      {}
+    );
+  });
+
+  it('should render a line chart with mixed labels (some points labeled, some not)', () => {
+    imgSnapshotTest(
+      `
+      xychart
+        title "Quarterly Performance"
+        x-axis [Q1, Q2, Q3, Q4]
+        y-axis "Revenue ($M)" 0 --> 100
+        line [25 "Launch", 45, 72, 90 "Target Hit"]
+      `,
+      {}
+    );
+  });
+
+  it('should render a horizontal line chart with point labels', () => {
+    imgSnapshotTest(
+      `
+      xychart horizontal
+        title "Model Sizes"
+        x-axis ["Model A", "Model B", "Model C"]
+        y-axis "Parameters" 0 --> 100
+        line [20 "Small", 50 "Medium", 90 "Large"]
+      `,
+      {}
+    );
+  });
+
+  it('should render multiple lines where only one has labels', () => {
+    imgSnapshotTest(
+      `
+      xychart
+        title "Comparison"
+        x-axis [Q1, Q2, Q3, Q4]
+        y-axis "Value" 0 --> 100
+        line [20, 40, 60, 80]
+        line [30 "Start", 50, 70, 95 "Peak"]
+      `,
+      {}
+    );
+  });
 });

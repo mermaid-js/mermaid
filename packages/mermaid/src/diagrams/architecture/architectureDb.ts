@@ -20,6 +20,7 @@ import type {
   ArchitectureEdge,
   ArchitectureGroup,
   ArchitectureJunction,
+  ArchitectureLayoutHint,
   ArchitectureNode,
   ArchitectureService,
   ArchitectureSpatialMap,
@@ -40,6 +41,7 @@ export class ArchitectureDB implements DiagramDB {
   private nodes: Record<string, ArchitectureNode> = {};
   private groups: Record<string, ArchitectureGroup> = {};
   private edges: ArchitectureEdge[] = [];
+  private layoutHints: ArchitectureLayoutHint[] = [];
   private registeredIds: Record<string, 'node' | 'group'> = {};
   private dataStructures?: ArchitectureState['dataStructures'];
   private elements: Record<string, D3Element> = {};
@@ -61,6 +63,7 @@ export class ArchitectureDB implements DiagramDB {
     this.nodes = {};
     this.groups = {};
     this.edges = [];
+    this.layoutHints = [];
     this.registeredIds = {};
     this.dataStructures = undefined;
     this.elements = {};
@@ -252,6 +255,31 @@ export class ArchitectureDB implements DiagramDB {
 
   public getEdges(): ArchitectureEdge[] {
     return this.edges;
+  }
+
+  public addLayoutHint(hint: ArchitectureLayoutHint): void {
+    if (hint.members.length < 2) {
+      throw new Error(
+        `An align directive requires at least two members; got ${hint.members.length}`
+      );
+    }
+    const seen = new Set<string>();
+    hint.members.forEach((id) => {
+      if (this.registeredIds[id] !== 'node') {
+        throw new Error(
+          `align ${hint.direction} references [${id}], which is not a service or junction`
+        );
+      }
+      if (seen.has(id)) {
+        throw new Error(`align ${hint.direction} lists [${id}] more than once`);
+      }
+      seen.add(id);
+    });
+    this.layoutHints.push(hint);
+  }
+
+  public getLayoutHints(): ArchitectureLayoutHint[] {
+    return this.layoutHints;
   }
 
   /**

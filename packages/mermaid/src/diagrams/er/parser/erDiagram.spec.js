@@ -229,6 +229,43 @@ describe('when parsing ER diagram it...', function () {
         }).toThrow();
       });
     });
+
+    it('should allow special characters in a backtick-escaped attribute name', function () {
+      const entity = 'HOTEL';
+      const attribute = 'string `geo.accuracy`';
+
+      erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
+      const entities = erDb.getEntities();
+      expect(entities.size).toBe(1);
+      expect(entities.get(entity).attributes.length).toBe(1);
+      expect(entities.get(entity).attributes[0].type).toBe('string');
+      expect(entities.get(entity).attributes[0].name).toBe('geo.accuracy');
+    });
+
+    it('should allow a backtick-escaped attribute name together with a key and comment', function () {
+      const entity = 'HOTEL';
+      const attribute = 'string `geo.accuracy` PK "the comment"';
+
+      erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
+      const entities = erDb.getEntities();
+      expect(entities.size).toBe(1);
+      expect(entities.get(entity).attributes.length).toBe(1);
+      expect(entities.get(entity).attributes[0].name).toBe('geo.accuracy');
+      expect(entities.get(entity).attributes[0].keys).toContain('PK');
+      expect(entities.get(entity).attributes[0].comment).toBe('the comment');
+    });
+
+    it('should allow a backtick-escaped attribute type', function () {
+      const entity = 'HOTEL';
+      const attribute = '`my.type` address';
+
+      erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
+      const entities = erDb.getEntities();
+      expect(entities.size).toBe(1);
+      expect(entities.get(entity).attributes.length).toBe(1);
+      expect(entities.get(entity).attributes[0].type).toBe('my.type');
+      expect(entities.get(entity).attributes[0].name).toBe('address');
+    });
   });
 
   it('should allow an entity with a single attribute to be defined', function () {

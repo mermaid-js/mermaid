@@ -72,16 +72,7 @@ jobs:
           mv stats cypress/snapshots/stats/base
 
   # Detect which diagram(s) the PR touches and determine the minimal set of
-  # Cypress specs to run. Runs in parallel with the `cache` job so it does not
-  # add to the critical path.
-  #
-  # Feature flag: set the repository variable E2E_SCOPE_BY_DIAGRAM to 'true'
-  # (Settings → Variables → Actions) to enable diagram-scoped test selection.
-  # When the flag is not set or is 'false', the full 5-container matrix runs.
-  #
-  # When scoping is active and all changes are confined to a single diagram,
-  # only that diagram's specs run in a single container. Any change to shared
-  # rendering code, themes, config, or the parser falls back to the full suite.
+  # Cypress specs to run.
   detect-scope:
     runs-on: ubuntu-latest
     outputs:
@@ -100,8 +91,6 @@ jobs:
 
       - name: Detect e2e scope
         id: scope
-        # The detection script is pure Node.js ESM (no npm install required).
-        # It reads changed file paths from stdin and prints the --spec value.
         run: |
           # Kill-switch: set the repo variable E2E_SCOPE_BY_DIAGRAM to 'false'
           # to disable scoping.  Scoping is ON by default so that fork PRs
@@ -125,9 +114,6 @@ jobs:
           fi
 
           # Fetch the target branch so we can find the true merge-base.
-          # Using merge-base rather than the raw base SHA from the event payload
-          # avoids picking up commits that landed on the base branch after the
-          # PR was last synchronized (which would widen the diff incorrectly).
           git fetch origin develop --depth=1 2>/dev/null || true
           MERGE_BASE=$(git merge-base HEAD origin/develop 2>/dev/null || echo "")
 
@@ -145,6 +131,7 @@ jobs:
                  | node scripts/e2e-diagram-scope.mjs \
                  || echo "")
 
+          # Check and set required no of containers to run
           if [ "$SPEC" = "SKIP" ]; then
             echo "spec_pattern=SKIP" >> "$GITHUB_OUTPUT"
             echo "matrix=[1]" >> "$GITHUB_OUTPUT"
@@ -222,19 +209,13 @@ jobs:
           wait-on: 'http://localhost:9000'
           browser: chrome
           # When detect-scope produced a pattern, run only those specs.
-          # An empty string means "run all specs" (cypress-io/github-action
-          # omits the --spec flag when the value is empty).
           spec: ${{ needs.detect-scope.outputs.spec_pattern }}
           # Disable recording if we don't have an API key
           # e.g. if this action was run from a fork
           record: ${{ env.RUN_VISUAL_TEST == 'true' && secrets.CYPRESS_RECORD_KEY != '' }}
         env:
           # For scoped runs (only a subset of specs executed), mark the Argos
-          # build as a "subset build". This tells Argos to ignore missing
-          # screenshots (they were simply not run, not deleted) and only report
-          # changed/added screenshots. Subset builds are never used as a
-          # baseline, so the full-suite baseline on develop is always preserved.
-          # See: https://argos-ci.com/docs/subset-builds
+          # build as a "subset build".
           ARGOS_SUBSET: "${{ needs.detect-scope.outputs.spec_pattern != '' }}"
           ARGOS_PARALLEL: ${{ env.RUN_VISUAL_TEST == 'true' }}
           ARGOS_PARALLEL_TOTAL: ${{ env.RUN_VISUAL_TEST == 'true' && strategy.job-total || 1 }}
@@ -257,3 +238,27 @@ jobs:
           fail_ci_if_error: false
           verbose: true
           token: 6845cc80-77ee-4e17-85a1-026cd95e0766
+
+  e2e-required:
+    if: always()
+    needs: [detect-scope, e2e]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify e2e outcome
+        env:
+          E2E_RESULT: ${{ needs.e2e.result }}
+          SCOPE_RESULT: ${{ needs.detect-scope.result }}
+          SPEC_PATTERN: ${{ needs.detect-scope.outputs.spec_pattern }}
+        run: |
+          echo "detect-scope result: ${SCOPE_RESULT}"
+          echo "detect-scope spec_pattern: ${SPEC_PATTERN}"
+          echo "e2e result: ${E2E_RESULT}"
+          case "${E2E_RESULT}" in
+            success|skipped)
+              echo "OK — required check satisfied."
+              ;;
+            *)
+              echo "FAIL — e2e matrix did not complete successfully."
+              exit 1
+              ;;
+          esac

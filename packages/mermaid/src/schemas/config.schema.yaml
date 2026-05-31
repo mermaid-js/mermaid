@@ -1118,6 +1118,24 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: |
           Axial position of slice's label from zero at the center to 1 at the outside edges.
         default: 0.75
+      donutHole:
+        type: number
+        minimum: 0
+        maximum: 0.9
+        description: |
+          Donut hole ratio. Valid value are from 0 to 0.9. Default to 0.
+        default: 0
+      legendPosition:
+        type: string
+        enum: ['top', 'bottom', 'left', 'right', 'center']
+        description: |
+          Legend's position relative to the chart. Default to right.
+        default: 'right'
+      highlightSlice:
+        type: string
+        description: |
+          Highlight specific slice with matching label. Set to 'hover' to highlight hovered slice.
+        default: ''
 
   QuadrantChartConfig:
     title: Quadrant Chart Config

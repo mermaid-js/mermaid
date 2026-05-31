@@ -947,4 +947,21 @@ describe('Gantt diagram', () => {
       { theme: 'dark' }
     );
   });
+  it('should render multi-line excludes (issue #6270)', () => {
+    imgSnapshotTest(
+      `
+    gantt
+      dateFormat  YYYY-MM-DD
+      title Multi-line excludes
+      excludes weekends
+      %% mid-January closures
+      excludes 2014-01-15 2014-01-16
+      %% one-off holiday
+      excludes 2014-01-20
+
+      section A section
+      Task across closures :a1, 2014-01-13, 14d
+      `
+    );
+  });
 });
