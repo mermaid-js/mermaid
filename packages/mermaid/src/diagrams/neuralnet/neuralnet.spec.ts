@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { setConfig } from '../../diagram-api/diagramAPI.js';
 import { db } from './neuralnetDb.js';
 import { parser } from './neuralnetParser.js';
+import { neuralnet } from './neuralnetDetector.js';
 
 setConfig({ securityLevel: 'strict' });
 
@@ -180,6 +181,98 @@ describe('neuralnet', () => {
       expect(db.getEdges()).toHaveLength(0);
       expect(db.getNodeOrder()).toHaveLength(0);
       expect(db.getMode()).toBe('graph');
+    });
+  });
+
+  // ── DB direct method coverage ────────────────────────────────────────────
+
+  describe('db direct methods', () => {
+    it('setMode / getMode round-trips', () => {
+      db.setMode('sequential');
+      expect(db.getMode()).toBe('sequential');
+      db.setMode('graph');
+      expect(db.getMode()).toBe('graph');
+    });
+
+    it('setRenderStyle / getRenderStyle round-trips', () => {
+      db.setRenderStyle('neuron');
+      expect(db.getRenderStyle()).toBe('neuron');
+      db.setRenderStyle('block');
+      expect(db.getRenderStyle()).toBe('block');
+    });
+
+    it('addNode auto-generates id when empty', () => {
+      db.addNode({ id: '', layerType: 'Dense', params: ['128'] });
+      db.addNode({ id: '', layerType: 'Dense', params: ['64'] });
+      const order = db.getNodeOrder();
+      expect(order).toHaveLength(2);
+      expect(order[0]).toMatch(/^_node/);
+    });
+
+    it('addNode preserves explicit id', () => {
+      db.addNode({ id: 'myConv', layerType: 'Conv2D', params: ['32', '3x3'] });
+      expect(db.getNodes().has('myConv')).toBe(true);
+    });
+
+    it('addEdge / getEdges stores edges in order', () => {
+      db.addEdge({ from: 'a', to: 'b' });
+      db.addEdge({ from: 'b', to: 'c' });
+      expect(db.getEdges()).toEqual([
+        { from: 'a', to: 'b' },
+        { from: 'b', to: 'c' },
+      ]);
+    });
+
+    it('setDiagramTitle / getDiagramTitle', () => {
+      db.setDiagramTitle('My Net');
+      expect(db.getDiagramTitle()).toBe('My Net');
+    });
+
+    it('setAccTitle / getAccTitle', () => {
+      db.setAccTitle('accessibility title');
+      expect(db.getAccTitle()).toBe('accessibility title');
+    });
+
+    it('setAccDescription / getAccDescription', () => {
+      db.setAccDescription('description');
+      expect(db.getAccDescription()).toBe('description');
+    });
+  });
+
+  // ── Detector coverage ────────────────────────────────────────────────────
+
+  describe('neuralnet detector', () => {
+    it('detects "neuralnet" keyword at start', () => {
+      expect(neuralnet.detector('neuralnet sequential\n  Input[1]')).toBe(true);
+      expect(neuralnet.detector('  neuralnet\n')).toBe(true);
+    });
+
+    it('does not detect other diagram types', () => {
+      expect(neuralnet.detector('flowchart TD\n  A --> B')).toBe(false);
+      expect(neuralnet.detector('pie\n  "A": 1')).toBe(false);
+    });
+
+    it('has correct id', () => {
+      expect(neuralnet.id).toBe('neuralnet');
+    });
+  });
+
+  // ── neuron render style via parser ───────────────────────────────────────
+
+  describe('neuron render style', () => {
+    it('sets renderStyle=neuron when keyword present', async () => {
+      await parser.parse(`neuralnet sequential neuron
+        Input[3]
+        Dense[8, relu]
+      `);
+      expect(db.getRenderStyle()).toBe('neuron');
+    });
+
+    it('defaults to block when neuron keyword absent', async () => {
+      await parser.parse(`neuralnet sequential
+        Input[3]
+      `);
+      expect(db.getRenderStyle()).toBe('block');
     });
   });
 });
