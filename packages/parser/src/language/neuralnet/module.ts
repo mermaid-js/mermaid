@@ -11,6 +11,7 @@ import {
   createDefaultSharedCoreModule,
   inject,
 } from 'langium';
+import { CommonValueConverter } from '../common/valueConverter.js';
 import {
   MermaidGeneratedSharedModule,
   NeuralnetGrammarGeneratedModule as NeuralnetGeneratedModule,

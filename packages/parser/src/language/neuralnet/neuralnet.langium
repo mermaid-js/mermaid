@@ -18,31 +18,29 @@ entry Neuralnet:
 //   Conv2D[32, 3x3, relu]
 //   conv1: Conv2D[32, 3x3, relu]
 NeuralNode:
-  (id=NN_ID COLON)? type=NN_TYPE_KW ("[" (params+=NeuralParam ("," params+=NeuralParam)*)? "]")? EOL
+  (id=NN_WORD COLON)? type=NN_TYPE_KW ("[" (params+=NeuralParam ("," params+=NeuralParam)*)? "]")? EOL
 ;
 
 // Directed edge between two named nodes.
 // Example: conv1 --> pool1
 NeuralEdge:
-  from=NN_ID NN_ARROW to=NN_ID EOL
+  from=NN_WORD NN_ARROW to=NN_WORD EOL
 ;
 
-// Accept NN_ID too — lowercase activation names (relu, tanh, softmax) are
-// tokenized as NN_ID because it is defined before NN_PARAM_VAL.
-// NN_TYPE_KW handles uppercase activation variants (ReLU, Tanh, GELU).
+// NN_WORD covers IDs, numbers, dimensions (3x3), and activation names (relu).
+// NN_TYPE_KW takes precedence via terminal ordering, so layer keywords are never
+// captured here — only raw param values (32, 0.5, tanh, same, etc.).
 NeuralParam:
-  value=(NN_PARAM_VAL | NN_ID | NN_TYPE_KW)
+  value=NN_WORD
 ;
 
-// Layer type keywords — uppercase-starting, matched before NN_ID
+// Layer type keywords — matched before NN_WORD so they take precedence
 terminal NN_TYPE_KW returns string:
   /Input|Output|Dense|Linear|Conv1D|Conv2D|Conv3D|MaxPool1D|MaxPool2D|MaxPool3D|AvgPool1D|AvgPool2D|AvgPool3D|GlobalAvgPool|GlobalMaxPool|BatchNorm|LayerNorm|GroupNorm|Dropout|Flatten|Reshape|Embedding|LSTM|GRU|RNN|Bidirectional|Add|Concat|Multiply|Attention|MultiHeadAttention|Activation|ReLU|Sigmoid|Softmax|Tanh|GELU/;
 
-// Node IDs: lowercase-starting identifiers to avoid conflict with NN_TYPE_KW
-terminal NN_ID returns string: /[a-z][a-zA-Z0-9_]*/;
-
-// Parameter values: numbers (32, 0.5), dimensions (3x3, 2x2), activation names (relu, tanh)
-terminal NN_PARAM_VAL returns string: /[a-zA-Z0-9][a-zA-Z0-9._x]*/;
+// Single token for both node IDs (conv1, input) and param values (32, 3x3, relu, 0.5)
+// Declared after NN_TYPE_KW so layer keywords are never matched as NN_WORD
+terminal NN_WORD returns string: /[a-zA-Z0-9][a-zA-Z0-9._x]*/;
 
 terminal COLON: ':';
 terminal NN_ARROW: /-->/;

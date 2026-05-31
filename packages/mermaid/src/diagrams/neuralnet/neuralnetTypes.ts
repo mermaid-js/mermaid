@@ -99,6 +99,7 @@ export interface NeuralnetStyleOptions {
   primaryColor: string;
   primaryTextColor: string;
   lineColor: string;
+  darkMode?: boolean;
   // Per-category fill colours (theme-overridable)
   nnInputFill: string;
   nnOutputFill: string;
