@@ -141,6 +141,14 @@ function transformDataWithoutCategory(data: number[]): SimplePlotDataType {
     const prevMaxValue = isLinearAxisData(xyChartData.xAxis) ? xyChartData.xAxis.max : -Infinity;
     setXAxisRangeData(Math.min(prevMinValue, 1), Math.max(prevMaxValue, data.length));
   }
+
+  // When a band axis is defined, truncate data to match the number of categories
+  // to prevent orphaned bars/lines from rendering in unlabeled chart space.
+  // This also ensures the Y-axis range is computed only from visible data points.
+  if (isBandAxisData(xyChartData.xAxis) && data.length > xyChartData.xAxis.categories.length) {
+    data = data.slice(0, xyChartData.xAxis.categories.length);
+  }
+
   if (!hasSetYAxis) {
     setYAxisRangeFromPlotData(data);
   }

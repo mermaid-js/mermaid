@@ -70,6 +70,7 @@ ssim
 stylis
 Swimm
 Tachi
+termaid
 tsbuildinfo
 tseslint
 Tuleap
@@ -79,4 +80,5 @@ unplugin
 unstub
 vite
 vitest
+webtoolz
 Zune
