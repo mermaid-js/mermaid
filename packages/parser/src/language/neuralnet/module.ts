@@ -16,9 +16,11 @@ import {
   NeuralnetGrammarGeneratedModule as NeuralnetGeneratedModule,
 } from '../generated/module.js';
 import { CommonValueConverter } from '../common/index.js';
+import { NeuralnetTokenBuilder } from './tokenBuilder.js';
 
 interface NeuralnetAddedServices {
   parser: {
+    TokenBuilder: NeuralnetTokenBuilder;
     ValueConverter: CommonValueConverter;
   };
 }
@@ -30,6 +32,7 @@ export const NeuralnetModule: Module<
   PartialLangiumCoreServices & NeuralnetAddedServices
 > = {
   parser: {
+    TokenBuilder: () => new NeuralnetTokenBuilder(),
     ValueConverter: () => new CommonValueConverter(),
   },
 };
