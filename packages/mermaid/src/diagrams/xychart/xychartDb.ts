@@ -99,6 +99,15 @@ function setXAxisBand(categories: NormalTextType[]) {
     categories: categories.map((c) => textSanitizer(c.text)),
   };
   hasSetXAxis = true;
+
+  // if plots are already mapped before, re-map plots with newly set X Axis Band
+  if (xyChartData.plots?.length > 0) {
+    for (const plot of xyChartData.plots) {
+      plot.data.map((data, index) => {
+        data[0] = textSanitizer(categories[index]?.text);
+      });
+    }
+  }
 }
 function setYAxisTitle(title: NormalTextType) {
   xyChartData.yAxis.title = textSanitizer(title.text);
