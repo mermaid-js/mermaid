@@ -33,4 +33,70 @@ describe('Katex', () => {
   //     { fontFamily: 'courier' }
   //   );
   // });
+
+  describe('Katex with newlines (issue #7194)', () => {
+    it('5: should render newlines in plain text nodes with math', () => {
+      imgSnapshotTest(
+        `graph TD
+        plainmath["line 0
+        line 1
+        $$x=42$$
+        line 2"]`,
+        { fontFamily: 'courier' }
+      );
+    });
+
+    it('6: should render newlines in markdown nodes with math', () => {
+      imgSnapshotTest(
+        `graph TD
+        markdownmath["\`line 0
+        line 1
+        $$x=42$$
+        line 2\`"]`,
+        { fontFamily: 'courier' }
+      );
+    });
+
+    it('7: should render multiple math equations with newlines between them', () => {
+      imgSnapshotTest(
+        `graph TD
+        multimath["$$a=1$$
+        text between
+        $$b=2$$"]`,
+        { fontFamily: 'courier' }
+      );
+    });
+
+    it('8: should render newlines before and after math in markdown', () => {
+      imgSnapshotTest(
+        `graph TD
+        beforeafter["\`line before
+        $$x=42$$
+        line after\`"]`,
+        { fontFamily: 'courier' }
+      );
+    });
+
+    it('9: should render complex example with multiple nodes containing math and newlines', () => {
+      imgSnapshotTest(
+        `graph TD
+        plain["line 0
+        line 1"]
+        markdown["\`line 0
+        line 1\`"]
+        plainmath["line 0
+        line 1
+        $$x=42$$
+        line 2"]
+        markdownmath["\`line 0
+        line 1
+        $$x=42$$
+        \`"]
+        plain --> markdown
+        markdown --> plainmath
+        plainmath --> markdownmath`,
+        { fontFamily: 'courier' }
+      );
+    });
+  });
 });
