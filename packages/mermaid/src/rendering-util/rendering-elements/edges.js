@@ -362,6 +362,42 @@ const outsideNode = (node, point) => {
   return dx >= w || dy >= h;
 };
 
+// Swimlanes-only: when an edge's terminal approach segment is axis-aligned, clip
+// its endpoint to the node's bounding-box face PERPENDICULARLY — keeping the
+// approach-axis coordinate and snapping only the cross-axis one to the face.
+// `node.intersect` instead aims a ray at the node CENTRE, so an off-centre
+// orthogonal approach is bent into a diagonal final segment and the arrowhead
+// (`marker-end orient="auto"`) points sideways instead of straight into the
+// face. Returns undefined for a non-axis-aligned approach (or missing geometry)
+// so the caller falls back to the centre-aimed intersect.
+const perpendicularFaceClip = (node, approachPoint, endpoint) => {
+  if (
+    !node ||
+    typeof node.x !== 'number' ||
+    typeof node.y !== 'number' ||
+    typeof node.width !== 'number' ||
+    typeof node.height !== 'number' ||
+    !approachPoint ||
+    !endpoint
+  ) {
+    return undefined;
+  }
+  const AXIS_EPS = 0.5;
+  const halfW = node.width / 2;
+  const halfH = node.height / 2;
+  if (Math.abs(approachPoint.x - endpoint.x) < AXIS_EPS) {
+    // Vertical approach → top/bottom face; preserve the approach x.
+    const fromAbove = approachPoint.y < endpoint.y;
+    return { x: endpoint.x, y: fromAbove ? node.y - halfH : node.y + halfH };
+  }
+  if (Math.abs(approachPoint.y - endpoint.y) < AXIS_EPS) {
+    // Horizontal approach → left/right face; preserve the approach y.
+    const fromLeft = approachPoint.x < endpoint.x;
+    return { x: fromLeft ? node.x - halfW : node.x + halfW, y: endpoint.y };
+  }
+  return undefined;
+};
+
 export const intersection = (node, outsidePoint, insidePoint) => {
   log.debug(`intersection calc abc89:
   outsidePoint: ${JSON.stringify(outsidePoint)}
@@ -603,17 +639,30 @@ export const insertEdge = function (
   if (layout === 'swimlane') {
     if (head.intersect && tail.intersect && Array.isArray(points) && points.length >= 2) {
       if (points.length === 2) {
-        // Simple straight edge: just clip the two endpoints to the node boundaries.
-        points = [tail.intersect(points[0]), head.intersect(points[1])];
+        // Simple straight edge: clip the two endpoints to the node boundaries,
+        // preferring a perpendicular face clip so an axis-aligned straight edge
+        // keeps a square arrowhead.
+        const tailClip =
+          perpendicularFaceClip(tail, points[1], points[0]) ?? tail.intersect(points[0]);
+        const headClip =
+          perpendicularFaceClip(head, points[0], points[1]) ?? head.intersect(points[1]);
+        points = [tailClip, headClip];
       } else {
         // For multi-segment paths, keep the inner bend points and just adjust the entry/exit
         // segments near the nodes.
         const innerPoints = points.slice(1, -1);
         const firstInner = innerPoints[0];
         const lastInner = innerPoints[innerPoints.length - 1];
+        // The interior neighbour gives the approach axis; a perpendicular face
+        // clip keeps the entry/exit segment square so the arrowhead points
+        // straight into the node instead of toward its centre.
+        const firstApproach = innerPoints[1];
+        const lastApproach = innerPoints[innerPoints.length - 2];
 
-        const newFirst = tail.intersect(firstInner);
-        const newLast = head.intersect(lastInner);
+        const newFirst =
+          perpendicularFaceClip(tail, firstApproach, firstInner) ?? tail.intersect(firstInner);
+        const newLast =
+          perpendicularFaceClip(head, lastApproach, lastInner) ?? head.intersect(lastInner);
 
         // When the boundary intersection lands ~on the inner point, skip it to
         // avoid a zero-length final segment (keeps the entry/exit segment orthogonal).
