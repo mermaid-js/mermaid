@@ -1,0 +1,151 @@
+# Use Case Diagrams
+
+A Use Case Diagram is a UML diagram that shows the interactions between actors and a system, capturing functional requirements visually.
+
+Mermaid can render use case diagrams.
+
+```warning
+This is a new diagram type in Mermaid. Its syntax may evolve in future versions.
+```
+
+## Examples
+
+### Basic Use Case
+
+```mermaid
+usecaseDiagram
+    actor "Customer" as C
+    system "Shop System" {
+        usecase "Browse Products" as BP
+        usecase "Checkout" as CO
+        usecase "Login" as LG
+    }
+    C --> BP; CO
+    include: CO-->LG
+```
+
+## Syntax
+
+### Actors
+
+Actors represent external entities (users or systems) that interact with the system. Define them with the actor keyword.
+
+```
+usecaseDiagram
+    actor "Customer" as C
+    actor "Admin" as A
+    system "App" {
+        usecase "Login" as L
+    }
+    C --> L
+    A --> L
+```
+
+### Use Cases & System Boundary
+
+Use cases represent system functions. They are rendered as ellipses and can be declared inside a system {} boundary or inferred from connections where as the system boundary groups related use cases inside a labeled rectangle.
+
+```mermaid
+usecaseDiagram
+    actor "User" as U
+    system "App" {
+        usecase "Login" as L
+        usecase "Dashboard" as D
+    }
+    U --> L; D
+```
+
+### External Systems
+
+External systems are entities outside the main system boundary, rendered as rectangles. Use the external keyword.
+
+```mermaid
+usecaseDiagram
+    actor "Customer" as C
+    external "Payment API" as PAY
+    system "Shop" {
+        usecase "Checkout" as CO
+    }
+    C --> CO
+    dependency: CO-->PAY
+```
+
+### Notes
+
+Notes attach additional information to elements. Use anchor to link a note to an element.
+
+```mermaid
+usecaseDiagram
+    actor "User" as U
+    system "App" {
+        usecase "Login" as L
+    }
+    note "Requires 2FA" as N1
+    U --> L
+    anchor: N1-->L
+```
+
+## Relationship Types
+
+Use case diagrams support multiple relationship types defined by specific keywords:
+| Keyword | Description | Rendering |
+|-------------------|-----------------|----------------------------------------|
+| --> | Association | Solid line with arrow |
+| include: | Include | Dashed arrow with `<<include>>` |
+| extend: | Extend | Dashed arrow with `<<extend>>` |
+| generalization: | Generalization | Solid line with hollow arrowhead |
+| dependency: | Dependency | Dashed arrow |
+| realization: | Realization | Dashed line with hollow arrowhead |
+| anchor: | Anchor | Solid line (used for notes) |
+| constraint: | Constraint | Dotted line |
+| containment: | Containment | Line with circle-cross marker |
+
+### Relationship Example
+
+```mermaid
+usecaseDiagram
+    actor "User" as U
+    system "App" {
+        usecase "Checkout" as CO
+        usecase "Login" as L
+        usecase "Advanced Browse" as AB
+        usecase "Browse" as B
+    }
+    U --> B
+    include: CO-->L
+    extend: B-->AB
+    generalization: AB-->B
+```
+
+## Theming
+
+Use case diagrams respect Mermaid's standard theme variables.
+
+```mermaid
+%%{init:
+  {'theme':'base',
+   'themeVariables':{
+        'primaryColor':'#ffffce','secondaryColor':'#ffffff','primaryBorderColor':'#000000','lineColor':'#000000'
+    }
+  }
+}%%
+usecaseDiagram
+    actor "User" as U
+    system "App" {
+        usecase "Login" as L
+        usecase "Dashboard" as D
+    }
+    U --> L; D
+    include: D-->L
+```
+
+## Available theme variables
+
+| Variable           | Description                         |
+| ------------------ | ----------------------------------- |
+| primaryColor       | Fill color for actors and use cases |
+| primaryBorderColor | Border color for all elements       |
+| primaryTextColor   | Text color                          |
+| secondaryColor     | System boundary fill color          |
+| tertiaryColor      | Note fill color                     |
+| lineColor          | Connector and arrow color           |

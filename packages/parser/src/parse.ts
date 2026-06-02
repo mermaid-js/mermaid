@@ -15,6 +15,7 @@ import type {
   Treemap,
   TreeView,
   Wardley,
+  Usecase,
   Cynefin,
 } from './language/index.js';
 
@@ -24,7 +25,6 @@ export type DiagramAST =
   | Pie
   | Architecture
   | GitGraph
-  | EventModel
   | Radar
   | Railroad
   | RailroadEbnf
@@ -33,6 +33,8 @@ export type DiagramAST =
   | Treemap
   | TreeView
   | Wardley
+  | Usecase
+  | EventModel;
   | Cynefin;
 
 const parsers: Record<string, LangiumParser> = {};
@@ -107,6 +109,11 @@ const initializers = {
     const parser = createWardleyServices().Wardley.parser.LangiumParser;
     parsers.wardley = parser;
   },
+  usecase: async () => {
+    const { createUsecaseServices } = await import('./language/usecase/index.js');
+    const parser = createUsecaseServices().Usecase.parser.LangiumParser;
+    parsers.usecase = parser;
+  },
   cynefin: async () => {
     const { createCynefinServices } = await import('./language/cynefin/index.js');
     const parser = createCynefinServices().Cynefin.parser.LangiumParser;
@@ -128,6 +135,7 @@ export async function parse(diagramType: 'railroadAbnf', text: string): Promise<
 export async function parse(diagramType: 'railroadPeg', text: string): Promise<RailroadPeg>;
 export async function parse(diagramType: 'treemap', text: string): Promise<Treemap>;
 export async function parse(diagramType: 'wardley', text: string): Promise<Wardley>;
+export async function parse(diagramType: 'usecase', text: string): Promise<Usecase>;
 export async function parse(diagramType: 'cynefin', text: string): Promise<Cynefin>;
 
 export async function parse<T extends DiagramAST>(

@@ -381,7 +381,7 @@ Defined in: [packages/mermaid/src/config.type.ts:228](https://github.com/mermaid
 
 > `optional` **radar**: `RadarDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:242](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L242)
+Defined in: [packages/mermaid/src/config.type.ts:243](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L243)
 
 ---
 
@@ -511,11 +511,19 @@ Defined in: [packages/mermaid/src/config.type.ts:241](https://github.com/mermaid
 
 ---
 
+### usecase?
+
+> `optional` **usecase**: `UseCaseDiagramConfig`
+
+Defined in: [packages/mermaid/src/config.type.ts:242](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L242)
+
+---
+
 ### venn?
 
 > `optional` **venn**: `VennDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:243](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L243)
+Defined in: [packages/mermaid/src/config.type.ts:244](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L244)
 
 ---
 
@@ -523,7 +531,7 @@ Defined in: [packages/mermaid/src/config.type.ts:243](https://github.com/mermaid
 
 > `optional` **wardley-beta**: `WardleyDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:244](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L244)
+Defined in: [packages/mermaid/src/config.type.ts:245](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L245)
 
 ---
 

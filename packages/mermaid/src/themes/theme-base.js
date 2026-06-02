@@ -55,6 +55,16 @@ class Theme {
     // TODO: should this instead default to secondaryBorderColor?
     this.border2 = this.border2 || this.tertiaryBorderColor;
 
+    /* UseCase Diagram variables */
+    this.usecaseBkg = this.usecaseBkg || this.primaryColor;
+    this.usecaseBorder = this.usecaseBorder || this.primaryBorderColor;
+    this.usecaseTextColor = this.usecaseTextColor || this.primaryTextColor;
+
+    // Actor styling (matching Sequence Diagram actors usually looks best)
+    this.usecaseActorBkg = this.usecaseActorBkg || this.actorBkg;
+    this.usecaseActorBorder = this.usecaseActorBorder || this.actorBorder;
+    this.usecaseActorTextColor = this.usecaseActorTextColor || this.actorTextColor;
+
     /* Flowchart variables */
     this.nodeBkg = this.nodeBkg || this.primaryColor;
     this.mainBkg = this.mainBkg || this.primaryColor;

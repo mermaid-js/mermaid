@@ -90,6 +90,19 @@ export {
   isBranch,
   isCommit,
   isMerge,
+  Usecase,
+  ActorStatement,
+  ExternalStatement,
+  SystemStatement,
+  UsecaseStatement,
+  CollaborationStatement,
+  NoteStatement,
+  AssociationStatement,
+  RelationshipStatement,
+  DefinitionItem,
+  SystemUsecase,
+  AssocTarget,
+  RelPair,
   EventModel,
   EmDataEntity,
   EmFrame,
@@ -115,6 +128,7 @@ export {
   TreemapGrammarGeneratedModule as TreemapGeneratedModule,
   TreeViewGrammarGeneratedModule as TreeViewGeneratedModule,
   WardleyGrammarGeneratedModule as WardleyGeneratedModule,
+  UsecaseGrammarGeneratedModule as UsecaseGeneratedModule,
   CynefinGrammarGeneratedModule as CynefinGeneratedModule,
 } from './generated/module.js';
 
@@ -133,4 +147,5 @@ export * from './railroad-abnf/index.js';
 export * from './railroad-peg/index.js';
 export * from './treemap/index.js';
 export * from './wardley/index.js';
+export * from './usecase/index.js';
 export * from './cynefin/index.js';

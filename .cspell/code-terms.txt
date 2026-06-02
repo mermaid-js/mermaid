@@ -3,6 +3,7 @@
 # This file contains coding related terms
 ABNF
 ALPHANUM
+anchor
 antiscript
 APPLYCLASS
 ARROWHEADSTYLE
@@ -27,6 +28,8 @@ CODEOWNERS
 COLONSEP
 COMPOSIT_STATE
 concat
+constraint
+containment
 controlx
 controly
 CSSCLASS
@@ -58,6 +61,7 @@ forwardable
 frontmatter
 funs
 gantt
+generalization
 GENERICTYPE
 grammr
 graphtype
@@ -98,6 +102,7 @@ outdir
 Qcontrolx
 QSTR
 readmodel
+realization
 reinit
 rels
 reqs
