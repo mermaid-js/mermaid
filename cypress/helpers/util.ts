@@ -31,6 +31,12 @@ export const mermaidUrl = (
   api: boolean
 ): string => {
   options.handDrawnSeed = 1;
+  // Make the architecture fcose layout deterministic. Tests can still override
+  // by passing { architecture: { seed: N } } in their own options.
+  options.architecture = { seed: 1, ...(options.architecture ?? {}) };
+  // Make Cynefin boundary waviness deterministic. Tests can still override
+  // by passing { cynefin: { seed: N } } in their own options.
+  options.cynefin = { seed: 1, ...(options.cynefin ?? {}) };
   const codeObject: CodeObject = {
     code: graphStr,
     mermaid: options,
@@ -143,6 +149,26 @@ export const verifyScreenshot = (name: string): void => {
   } else {
     cy.matchImageSnapshot(name);
   }
+};
+
+/**
+ * Asserts that no element ID appears more than once in the current document.
+ * Use after rendering multiple mermaid diagrams on the same page.
+ */
+export const assertNoDuplicateIds = (): void => {
+  cy.document().then((doc) => {
+    const allElements = doc.querySelectorAll('[id]');
+    const idCounts: Record<string, number> = {};
+    for (const el of allElements) {
+      const id = el.getAttribute('id')!;
+      idCounts[id] = (idCounts[id] || 0) + 1;
+    }
+    const duplicates = Object.entries(idCounts).filter(([, count]) => count > 1);
+    expect(
+      duplicates,
+      `Duplicate IDs found: ${duplicates.map(([id, n]) => `${id} (${n}x)`).join(', ')}`
+    ).to.have.length(0);
+  });
 };
 
 export const verifyNumber = (value: number, expected: number, deltaPercent = 10): void => {

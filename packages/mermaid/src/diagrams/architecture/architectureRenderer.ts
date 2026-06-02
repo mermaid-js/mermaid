@@ -1,6 +1,7 @@
 import type { LayoutOptions, Position } from 'cytoscape';
 import cytoscape from 'cytoscape';
 import fcose from 'cytoscape-fcose';
+import { withSeededRandom } from './architectureSeed.js';
 import { select } from 'd3';
 import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
 import type { Diagram } from '../../Diagram.js';
@@ -15,6 +16,7 @@ import type {
   ArchitectureDataStructures,
   ArchitectureGroupAlignments,
   ArchitectureJunction,
+  ArchitectureLayoutHint,
   ArchitectureSpatialMap,
   EdgeSingular,
   EdgeSingularData,
@@ -152,7 +154,8 @@ function addEdges(edges: ArchitectureEdge[], cy: cytoscape.Core) {
 function getAlignments(
   db: ArchitectureDB,
   spatialMaps: ArchitectureSpatialMap[],
-  groupAlignments: ArchitectureGroupAlignments
+  groupAlignments: ArchitectureGroupAlignments,
+  layoutHints: ArchitectureLayoutHint[] = []
 ): fcose.FcoseAlignmentConstraint {
   /**
    * Flattens the alignment object so nodes in different groups will be in the same alignment array IFF their groups don't connect in a conflicting alignment
@@ -238,7 +241,7 @@ function getAlignments(
   });
 
   // Merge the alignment lists for each spatial map into one 2d array per axis
-  const [horizontal, vertical] = alignments.reduce(
+  const [horizontalRaw, verticalRaw] = alignments.reduce(
     ([prevHoriz, prevVert], { horiz, vert }) => {
       return [
         [...prevHoriz, ...horiz],
@@ -248,6 +251,30 @@ function getAlignments(
     [[] as string[][], [] as string[][]]
   );
 
+  // Drop any heuristic alignment group that contains a member of a declared layout hint.
+  // The user-declared hint takes precedence — keeping both produces conflicting constraints
+  // that fcose cannot satisfy and crashes on (RangeError in FDLayout.calcGrid).
+  const declaredMembers = new Set<string>();
+  layoutHints.forEach((hint) => hint.members.forEach((m) => declaredMembers.add(m)));
+  const dropOverlapping = (groups: string[][]) =>
+    groups.filter((group) => !group.some((id) => declaredMembers.has(id)));
+
+  const horizontal = dropOverlapping(horizontalRaw);
+  const vertical = dropOverlapping(verticalRaw);
+
+  // Append user-declared layout hints. `align row` shares a Y coord (horizontal axis),
+  // `align column` shares an X coord (vertical axis).
+  layoutHints.forEach((hint) => {
+    if (hint.members.length < 2) {
+      return;
+    }
+    if (hint.direction === 'row') {
+      horizontal.push([...hint.members]);
+    } else {
+      vertical.push([...hint.members]);
+    }
+  });
+
   return {
     horizontal,
     vertical,
@@ -256,9 +283,34 @@ function getAlignments(
 
 function getRelativeConstraints(
   spatialMaps: ArchitectureSpatialMap[],
-  db: ArchitectureDB
+  db: ArchitectureDB,
+  layoutHints: ArchitectureLayoutHint[] = []
 ): fcose.FcoseRelativePlacementConstraint[] {
   const relativeConstraints: fcose.FcoseRelativePlacementConstraint[] = [];
+
+  // Emit a chain of relative placements for each declared layout hint. This is what actually
+  // separates members along the axis — the alignment constraint alone only says "share a y/x"
+  // but does not order the nodes.
+  const iconSize = db.getConfigField('iconSize');
+  const idealMult = db.getConfigField('idealEdgeLengthMultiplier');
+  const hintGap = idealMult * iconSize;
+  // Track every (a,b) pair that the declared hints already constrain. The heuristic BFS
+  // below will skip any pair already covered to avoid double constraints that fcose cannot
+  // reconcile.
+  const declaredPairs = new Set<string>();
+  layoutHints.forEach((hint) => {
+    for (let i = 0; i < hint.members.length - 1; i++) {
+      const a = hint.members[i];
+      const b = hint.members[i + 1];
+      declaredPairs.add(`${a}|${b}`);
+      declaredPairs.add(`${b}|${a}`);
+      if (hint.direction === 'row') {
+        relativeConstraints.push({ left: a, right: b, gap: hintGap });
+      } else {
+        relativeConstraints.push({ top: a, bottom: b, gap: hintGap });
+      }
+    }
+  });
   const posToStr = (pos: number[]) => `${pos[0]},${pos[1]}`;
   const strToPos = (pos: string) => pos.split(',').map((p) => parseInt(p));
 
@@ -289,13 +341,20 @@ function getRelativeConstraints(
             // If there is an adjacent service to the current one and it has not yet been visited
             if (newId && !visited[newPos]) {
               queue.push(newPos);
+              // Skip the heuristic constraint if the user has already declared a relation
+              // between this pair via `align row|column`. Without this, fcose receives both
+              // a heuristic and a declared placement for the same pair, which can produce
+              // inconsistent solutions and crash the layout (RangeError in calcGrid).
+              if (declaredPairs.has(`${currId}|${newId}`)) {
+                return;
+              }
               // @ts-ignore cannot determine if left/right or top/bottom are paired together
               relativeConstraints.push({
                 [ArchitectureDirectionName[dir as ArchitectureDirection]]: newId,
                 [ArchitectureDirectionName[
                   getOppositeArchitectureDirection(dir as ArchitectureDirection)
                 ]]: currId,
-                gap: 1.5 * db.getConfigField('iconSize'),
+                gap: idealMult * iconSize,
               });
             }
           });
@@ -323,9 +382,14 @@ function layoutArchitecture(
           selector: 'edge',
           style: {
             'curve-style': 'straight',
-            label: 'data(label)',
             'source-endpoint': 'data(sourceEndpoint)',
             'target-endpoint': 'data(targetEndpoint)',
+          },
+        },
+        {
+          selector: 'edge[label]',
+          style: {
+            label: 'data(label)',
           },
         },
         {
@@ -395,15 +459,28 @@ function layoutArchitecture(
     addServices(services, cy, db);
     addJunctions(junctions, cy, db);
     addEdges(edges, cy);
-    // Use the spatial map to create alignment arrays for fcose
-    const alignmentConstraint = getAlignments(db, spatialMaps, groupAlignments);
+    const layoutHints = db.getLayoutHints();
+    // Use the spatial map to create alignment arrays for fcose, then merge in any
+    // user-declared `align row|column` hints.
+    const alignmentConstraint = getAlignments(db, spatialMaps, groupAlignments, layoutHints);
 
     // Create the relative constraints for fcose by using an inverse of the spatial map and performing BFS on it
-    const relativePlacementConstraint = getRelativeConstraints(spatialMaps, db);
+    const relativePlacementConstraint = getRelativeConstraints(spatialMaps, db, layoutHints);
+
+    const iconSize = db.getConfigField('iconSize');
+    const sameGroupIdealLength = db.getConfigField('idealEdgeLengthMultiplier') * iconSize;
+    const crossGroupIdealLength = 0.5 * iconSize;
+    const sameGroupElasticity = db.getConfigField('edgeElasticity');
+    // Wrap each layout.run() with withSeededRandom so fcose's internal
+    // Math.random() calls produce reproducible results. See architectureSeed.ts.
+    const seed = db.getConfigField('seed');
 
     const layout = cy.layout({
       name: 'fcose',
       quality: 'proof',
+      randomize: db.getConfigField('randomize'),
+      nodeSeparation: db.getConfigField('nodeSeparation'),
+      numIter: db.getConfigField('numIter'),
       styleEnabled: false,
       animate: false,
       nodeDimensionsIncludeLabels: false,
@@ -413,18 +490,13 @@ function layoutArchitecture(
         const [nodeA, nodeB] = edge.connectedNodes();
         const { parent: parentA } = nodeData(nodeA);
         const { parent: parentB } = nodeData(nodeB);
-        const elasticity =
-          parentA === parentB
-            ? 1.5 * db.getConfigField('iconSize')
-            : 0.5 * db.getConfigField('iconSize');
-        return elasticity;
+        return parentA === parentB ? sameGroupIdealLength : crossGroupIdealLength;
       },
       edgeElasticity(edge: EdgeSingular) {
         const [nodeA, nodeB] = edge.connectedNodes();
         const { parent: parentA } = nodeData(nodeA);
         const { parent: parentB } = nodeData(nodeB);
-        const elasticity = parentA === parentB ? 0.45 : 0.001;
-        return elasticity;
+        return parentA === parentB ? sameGroupElasticity : 0.001;
       },
       alignmentConstraint,
       relativePlacementConstraint,
@@ -498,9 +570,28 @@ function layoutArchitecture(
         }
       }
       cy.endBatch();
-      layout.run();
+      withSeededRandom(seed, () => layout.run());
     });
-    layout.run();
+    try {
+      withSeededRandom(seed, () => layout.run());
+    } catch (err) {
+      // fcose throws a raw `RangeError: Invalid array length` from inside
+      // FDLayout.calcGrid when the constraints it receives are unsatisfiable
+      // (e.g. an `align row|column` chain whose member order contradicts the
+      // edge directions, or two declared alignments that overlap on a node).
+      // Rethrow with actionable context so users don't have to chase the
+      // failure into fcose internals.
+      if (err instanceof RangeError && err.message.includes('Invalid array length')) {
+        throw new Error(
+          'Architecture layout failed: a declared `align row|column` directive ' +
+            'likely contradicts the edge directions, or two declared alignments ' +
+            'overlap on a shared node. Check that the order of members in each ' +
+            '`align` chain is consistent with the edges between them, and that ' +
+            'no node appears in two `align` directives along the same axis.'
+        );
+      }
+      throw err;
+    }
 
     cy.ready((e) => {
       log.info('Ready', e);
@@ -513,6 +604,7 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
   // TODO: Add title support for architecture diagrams
 
   const db = diagObj.db as ArchitectureDB;
+  db.setDiagramId(id);
 
   const services = db.getServices();
   const junctions = db.getJunctions();
@@ -531,13 +623,13 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
   const groupElem = svg.append('g');
   groupElem.attr('class', 'architecture-groups');
 
-  await drawServices(db, servicesElem, services);
-  drawJunctions(db, servicesElem, junctions);
+  await drawServices(db, servicesElem, services, id);
+  drawJunctions(db, servicesElem, junctions, id);
 
   const cy = await layoutArchitecture(services, junctions, groups, edges, db, ds);
 
-  await drawEdges(edgesElem, cy, db);
-  await drawGroups(groupElem, cy, db);
+  await drawEdges(edgesElem, cy, db, id);
+  await drawGroups(groupElem, cy, db, id);
   positionNodes(db, cy);
 
   setupGraphViewbox(undefined, svg, db.getConfigField('padding'), db.getConfigField('useMaxWidth'));

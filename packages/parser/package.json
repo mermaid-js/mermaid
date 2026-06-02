@@ -1,6 +1,6 @@
 {
   "name": "@mermaid-js/parser",
-  "version": "0.6.3",
+  "version": "1.1.1",
   "description": "MermaidJS parser",
   "author": "Yokozuna59",
   "contributors": [
@@ -19,7 +19,8 @@
   "scripts": {
     "clean": "rimraf dist src/language/generated",
     "langium:generate": "langium generate",
-    "langium:watch": "langium generate --watch"
+    "langium:watch": "langium generate --watch",
+    "prepack": "./scripts/prepack.ts"
   },
   "repository": {
     "type": "git",
@@ -33,10 +34,12 @@
     "ast"
   ],
   "dependencies": {
-    "langium": "3.3.1"
+    "@chevrotain/types": "~11.1.2"
   },
   "devDependencies": {
-    "chevrotain": "^11.0.3"
+    "@microsoft/api-extractor": "^7.57.8",
+    "chevrotain": "~11.1.2",
+    "langium": "^4.0.3"
   },
   "files": [
     "dist/"

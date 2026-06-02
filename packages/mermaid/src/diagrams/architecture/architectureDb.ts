@@ -20,6 +20,7 @@ import type {
   ArchitectureEdge,
   ArchitectureGroup,
   ArchitectureJunction,
+  ArchitectureLayoutHint,
   ArchitectureNode,
   ArchitectureService,
   ArchitectureSpatialMap,
@@ -40,21 +41,33 @@ export class ArchitectureDB implements DiagramDB {
   private nodes: Record<string, ArchitectureNode> = {};
   private groups: Record<string, ArchitectureGroup> = {};
   private edges: ArchitectureEdge[] = [];
+  private layoutHints: ArchitectureLayoutHint[] = [];
   private registeredIds: Record<string, 'node' | 'group'> = {};
   private dataStructures?: ArchitectureState['dataStructures'];
   private elements: Record<string, D3Element> = {};
+  private diagramId = '';
 
   constructor() {
     this.clear();
+  }
+
+  public setDiagramId(id: string): void {
+    this.diagramId = id;
+  }
+
+  public getDiagramId(): string {
+    return this.diagramId;
   }
 
   public clear(): void {
     this.nodes = {};
     this.groups = {};
     this.edges = [];
+    this.layoutHints = [];
     this.registeredIds = {};
     this.dataStructures = undefined;
     this.elements = {};
+    this.diagramId = '';
     commonClear();
   }
 
@@ -102,6 +115,25 @@ export class ArchitectureDB implements DiagramDB {
   }
 
   public addJunction({ id, in: parent }: Omit<ArchitectureJunction, 'edges'>): void {
+    if (this.registeredIds[id] !== undefined) {
+      throw new Error(
+        `The junction id [${id}] is already in use by another ${this.registeredIds[id]}`
+      );
+    }
+    if (parent !== undefined) {
+      if (id === parent) {
+        throw new Error(`The junction [${id}] cannot be placed within itself`);
+      }
+      if (this.registeredIds[parent] === undefined) {
+        throw new Error(
+          `The junction [${id}]'s parent does not exist. Please make sure the parent is created before this junction`
+        );
+      }
+      if (this.registeredIds[parent] === 'node') {
+        throw new Error(`The junction [${id}]'s parent is not a group`);
+      }
+    }
+
     this.registeredIds[id] = 'node';
 
     this.nodes[id] = {
@@ -223,6 +255,31 @@ export class ArchitectureDB implements DiagramDB {
 
   public getEdges(): ArchitectureEdge[] {
     return this.edges;
+  }
+
+  public addLayoutHint(hint: ArchitectureLayoutHint): void {
+    if (hint.members.length < 2) {
+      throw new Error(
+        `An align directive requires at least two members; got ${hint.members.length}`
+      );
+    }
+    const seen = new Set<string>();
+    hint.members.forEach((id) => {
+      if (this.registeredIds[id] !== 'node') {
+        throw new Error(
+          `align ${hint.direction} references [${id}], which is not a service or junction`
+        );
+      }
+      if (seen.has(id)) {
+        throw new Error(`align ${hint.direction} lists [${id}] more than once`);
+      }
+      seen.add(id);
+    });
+    this.layoutHints.push(hint);
+  }
+
+  public getLayoutHints(): ArchitectureLayoutHint[] {
+    return this.layoutHints;
   }
 
   /**

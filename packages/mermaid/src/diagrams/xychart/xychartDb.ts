@@ -132,6 +132,14 @@ function transformDataWithoutCategory(data: number[]): SimplePlotDataType {
     const prevMaxValue = isLinearAxisData(xyChartData.xAxis) ? xyChartData.xAxis.max : -Infinity;
     setXAxisRangeData(Math.min(prevMinValue, 1), Math.max(prevMaxValue, data.length));
   }
+
+  // When a band axis is defined, truncate data to match the number of categories
+  // to prevent orphaned bars/lines from rendering in unlabeled chart space.
+  // This also ensures the Y-axis range is computed only from visible data points.
+  if (isBandAxisData(xyChartData.xAxis) && data.length > xyChartData.xAxis.categories.length) {
+    data = data.slice(0, xyChartData.xAxis.categories.length);
+  }
+
   if (!hasSetYAxis) {
     setYAxisRangeFromPlotData(data);
   }
@@ -158,19 +166,29 @@ function getPlotColorFromPalette(plotIndex: number): string {
   return plotColorPalette[plotIndex === 0 ? 0 : plotIndex % plotColorPalette.length];
 }
 
-function setLineData(title: NormalTextType, data: number[]) {
-  const plotData = transformDataWithoutCategory(data);
+interface ParsedDataPoint {
+  value: number;
+  label: string;
+}
+
+function setLineData(title: NormalTextType, data: ParsedDataPoint[]) {
+  const values = data.map((d) => d.value);
+  const labels = data.map((d) => (d.label ? textSanitizer(d.label) : ''));
+  const plotData = transformDataWithoutCategory(values);
+  const hasAnyLabel = labels.some((l) => l !== '');
   xyChartData.plots.push({
     type: 'line',
     strokeFill: getPlotColorFromPalette(plotIndex),
     strokeWidth: 2,
     data: plotData,
+    ...(hasAnyLabel ? { pointLabels: labels } : {}),
   });
   plotIndex++;
 }
 
-function setBarData(title: NormalTextType, data: number[]) {
-  const plotData = transformDataWithoutCategory(data);
+function setBarData(title: NormalTextType, data: ParsedDataPoint[]) {
+  const values = data.map((d) => d.value);
+  const plotData = transformDataWithoutCategory(values);
   xyChartData.plots.push({
     type: 'bar',
     fill: getPlotColorFromPalette(plotIndex),

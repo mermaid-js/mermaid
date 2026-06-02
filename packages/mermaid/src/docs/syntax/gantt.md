@@ -95,6 +95,23 @@ After processing the tags, the remaining metadata items are interpreted as follo
 Support for keyword `until` was added in (v10.9.0+). This can be used to define a task which is running until some other specific task or milestone starts.
 ```
 
+#### Duration format
+
+When specifying a `<length>`, use a number followed by one of these unit suffixes:
+
+| Unit         | Suffix | Example |
+| ------------ | ------ | ------- |
+| Milliseconds | `ms`   | `500ms` |
+| Seconds      | `s`    | `30s`   |
+| Minutes      | `m`    | `30m`   |
+| Hours        | `h`    | `4h`    |
+| Days         | `d`    | `3d`    |
+| Weeks        | `w`    | `2w`    |
+| Months       | `M`    | `1M`    |
+| Years        | `y`    | `1y`    |
+
+Decimal values are also supported (e.g., `1.5d`). Invalid duration tokens (e.g., `3dX`) will be ignored and the task will default to zero duration.
+
 For simplicity, the table does not show the use of multiple tasks listed with the `after` keyword. Here is an example of how to use it and how it's interpreted:
 
 ```mermaid-example
@@ -113,6 +130,18 @@ The `title` is an _optional_ string to be displayed at the top of the Gantt char
 
 The `excludes` is an _optional_ attribute that accepts specific dates in YYYY-MM-DD format, days of the week ("sunday") or "weekends", but not the word "weekdays".
 These date will be marked on the graph, and be excluded from the duration calculation of tasks. Meaning that if there are excluded dates during a task interval, the number of 'skipped' days will be added to the end of the task to ensure the duration is as specified in the code.
+
+Multiple `excludes` lines are supported and their tokens are concatenated, so long exclusion lists can be split across grouped lines with comments:
+
+```
+gantt
+    dateFormat DD-MM-YYYY
+    excludes weekends
+    %% week 7 is winter break
+    excludes 10-02-2025 11-02-2025 12-02-2025 13-02-2025 14-02-2025
+    %% workers holiday 1 maj
+    excludes 01-05-2025
+```
 
 #### Weekend (v\11.0.0+)
 

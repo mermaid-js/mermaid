@@ -34,6 +34,46 @@ interface NodeWithVertex extends Omit<Node, 'domId'> {
   domId?: D3Selection<SVGAElement | SVGGElement>;
 }
 
+export function dir2ElkDirection(dir: unknown): 'RIGHT' | 'LEFT' | 'DOWN' | 'UP' {
+  switch (dir) {
+    case 'LR':
+      return 'RIGHT';
+    case 'RL':
+      return 'LEFT';
+    case 'TB':
+    case 'TD': // TD is an alias for TB in Mermaid
+      return 'DOWN';
+    case 'BT':
+      return 'UP';
+    default:
+      return 'DOWN';
+  }
+}
+
+interface ElkSubgraphConfig {
+  mergeEdges?: boolean;
+  nodePlacementStrategy?: string;
+}
+
+export function buildSubgraphLayoutOptions(
+  node: { dir?: string },
+  elkConfig: ElkSubgraphConfig | undefined,
+  algorithm: string | undefined
+): Record<string, unknown> {
+  const layoutOptions: Record<string, unknown> = {
+    'spacing.baseValue': 30,
+    'nodeLabels.placement': '[H_CENTER V_TOP, INSIDE]',
+    'elk.layered.mergeEdges': elkConfig?.mergeEdges,
+    'nodePlacement.strategy': elkConfig?.nodePlacementStrategy,
+  };
+  if (node.dir) {
+    layoutOptions['elk.algorithm'] = algorithm;
+    layoutOptions['elk.direction'] = dir2ElkDirection(node.dir);
+    layoutOptions['elk.hierarchyHandling'] = 'SEPARATE_CHILDREN';
+  }
+  return layoutOptions;
+}
+
 export const render = async (
   data4Layout: LayoutData,
   svg: SVG,
@@ -478,22 +518,6 @@ export const render = async (
     return graph;
   };
 
-  function dir2ElkDirection(dir: any) {
-    switch (dir) {
-      case 'LR':
-        return 'RIGHT';
-      case 'RL':
-        return 'LEFT';
-      case 'TB':
-      case 'TD': // TD is an alias for TB in Mermaid
-        return 'DOWN';
-      case 'BT':
-        return 'UP';
-      default:
-        return 'DOWN';
-    }
-  }
-
   function setIncludeChildrenPolicy(nodeId: string, ancestorId: string) {
     const node = nodeDb[nodeId];
 
@@ -809,20 +833,7 @@ export const render = async (
       ];
       node.width = node.width + 2 * node.padding;
       log.debug('UIO node label', node?.labelData?.width, node.padding);
-      node.layoutOptions = {
-        'spacing.baseValue': 30,
-        'nodeLabels.placement': '[H_CENTER V_TOP, INSIDE]',
-      };
-      if (node.dir) {
-        node.layoutOptions = {
-          ...node.layoutOptions,
-          'elk.algorithm': algorithm,
-          'elk.direction': dir2ElkDirection(node.dir),
-          'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy,
-          'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
-          'elk.hierarchyHandling': 'SEPARATE_CHILDREN',
-        };
-      }
+      node.layoutOptions = buildSubgraphLayoutOptions(node, data4Layout.config.elk, algorithm);
       delete node.x;
       delete node.y;
       delete node.width;
@@ -893,6 +904,7 @@ export const render = async (
       x: any;
       labels: { height: number; width: number; x: number; y: number }[];
       y: any;
+      curve?: any;
     }) => {
       // (elem, edge, clusterDb, diagramType, graph, id)
       const startNode = nodeDb[edge.sources[0]];
@@ -1069,6 +1081,9 @@ export const render = async (
           });
         }
         edge.points = deduped;
+        // ELK produces orthogonal edge routes — override the curve to 'rounded' (right-angle
+        // segments with rounded corners) so basis/smooth interpolation doesn't distort them.
+        edge.curve = 'rounded';
         const paths = insertEdge(
           edgesEl,
           edge,

@@ -107,22 +107,24 @@ xychart
 | chartOrientation         | 'vertical' or 'horizontal'                                    |  'vertical'   |
 | plotReservedSpacePercent | Minimum space plots will take inside the chart                |      50       |
 | showDataLabel            | Should show the value corresponding to the bar within the bar |     false     |
+| showDataLabelOutsideBar  | If showing data label then show it outside the bar.           |     false     |
 
 ### AxisConfig
 
-| Parameter     | Description                          | Default value |
-| ------------- | ------------------------------------ | :-----------: |
-| showLabel     | Show axis labels or tick values      |     true      |
-| labelFontSize | Font size of the label to be drawn   |      14       |
-| labelPadding  | Top and Bottom padding of the label  |       5       |
-| showTitle     | Axis title to be shown or not        |     true      |
-| titleFontSize | Axis title font size                 |      16       |
-| titlePadding  | Top and Bottom padding of Axis title |       5       |
-| showTick      | Tick to be shown or not              |     true      |
-| tickLength    | How long the tick will be            |       5       |
-| tickWidth     | How width the tick will be           |       2       |
-| showAxisLine  | Axis line to be shown or not         |     true      |
-| axisLineWidth | Thickness of the axis line           |       2       |
+| Parameter     | Description                                                  | Default value |
+| ------------- | ------------------------------------------------------------ | :-----------: |
+| showLabel     | Show axis labels or tick values                              |     true      |
+| labelFontSize | Font size of the label to be drawn                           |      14       |
+| labelPadding  | Top and Bottom padding of the label                          |       5       |
+| showTitle     | Axis title to be shown or not                                |     true      |
+| titleFontSize | Axis title font size                                         |      16       |
+| titlePadding  | Top and Bottom padding of Axis title                         |       5       |
+| showTick      | Tick to be shown or not                                      |     true      |
+| tickLength    | How long the tick will be                                    |       5       |
+| tickWidth     | How width the tick will be                                   |       2       |
+| showAxisLine  | Axis line to be shown or not                                 |     true      |
+| axisLineWidth | Thickness of the axis line                                   |       2       |
+| labelRotation | Label rotation in degrees (only applicable on bottom X axis) |       0       |
 
 ## Chart Theme Variables
 
@@ -141,6 +143,7 @@ config:
 | ---------------- | --------------------------------------------------------- |
 | backgroundColor  | Background color of the whole chart                       |
 | titleColor       | Color of the Title text                                   |
+| dataLabelColor   | Color of the Data labels (if shown)                       |
 | xAxisLabelColor  | Color of the x-axis labels                                |
 | xAxisTitleColor  | Color of the x-axis title                                 |
 | xAxisTickColor   | Color of the x-axis tick                                  |
@@ -174,6 +177,67 @@ bar [20,30,25,35]
 bar [15,25,20,30]
 %% Red line
 line [5,15,25,35]
+```
+
+## Displaying individual values on a bar chart (v11.14.0+)
+
+To show the value corresponding to a bar specify `showDataLabel: true`.
+
+```mermaid-example
+---
+config:
+    xyChart:
+        showDataLabel: true
+---
+xychart
+    title "Genres in top 100 book survey of 2025"
+    x-axis [comedy, romance, mystery, crime, "non fiction", other]
+    y-axis "Number of Books" 0 --> 30
+    bar [12,2,20,25,17,24]
+```
+
+Labels are shown within the bar by default. To show the labels outside the bar, specify `showDataLabelOutsideBar: true`.
+
+```mermaid-example
+---
+config:
+    xyChart:
+        showDataLabel: true
+        showDataLabelOutsideBar: true
+---
+xychart
+    title "Genres in top 100 book survey of 2025"
+    x-axis [comedy, romance, mystery, crime, "non fiction", other]
+    y-axis "Number of Books" 0 --> 30
+    bar [12,2,20,25,17,24]
+```
+
+## Per-point text labels for line charts (v<MERMAID_RELEASE_VERSION>+)
+
+Each data point in a `line` can optionally include a quoted string label after the numeric value. Labels render above points in vertical orientation, or to the right in horizontal orientation, using the line's stroke color.
+
+```mermaid-example
+xychart
+    title "Smallest AI models scoring above 60% on MMLU"
+    x-axis "Date" ["Apr 2022", "Feb 2023", "Jul 2023", "Sep 2023", "Apr 2024"]
+    y-axis "Parameters (B)" 0 --> 600
+    line [540 "PaLM", 65 "LLaMA-65B", 34 "Llama 2 34B", 7 "Mistral 7B", 3.8 "Phi-3-mini"]
+```
+
+Labels are optional per point — you can mix labeled and unlabeled values:
+
+```mermaid-example
+xychart
+    title "Quarterly Performance"
+    x-axis [Q1, Q2, Q3, Q4]
+    y-axis "Revenue ($M)" 0 --> 100
+    line [25 "Launch", 45, 72, 90 "Target Hit"]
+```
+
+Existing syntax without labels continues to work unchanged.
+
+```note
+Point labels use a fixed font size of 12px. In vertical charts, labels appear above each point. In horizontal charts, labels appear to the right. Labels are currently supported on `line` plots only; the syntax is accepted on `bar` plots but labels are ignored.
 ```
 
 ## Example on config and theme

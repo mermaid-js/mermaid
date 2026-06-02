@@ -1,6 +1,7 @@
 !viewbox
 # It should be viewBox
 # This file contains coding related terms
+ABNF
 ALPHANUM
 antiscript
 APPLYCLASS
@@ -22,6 +23,7 @@ classdef
 classdefid
 classentity
 classname
+CODEOWNERS
 COLONSEP
 COMPOSIT_STATE
 concat
@@ -45,6 +47,7 @@ DOUBLECIRCLEEND
 DOUBLECIRCLESTART
 DQUOTE
 DSTART
+EBNF
 edgesep
 EMPTYSTR
 enddate
@@ -81,23 +84,29 @@ LLABEL
 loglevel
 LOGMSG
 lookaheads
+LPAREN
 mdast
 metafile
 minlen
 Mstartx
 MULT
+Naur
 NODIR
+nonterminal
 NSTR
 outdir
 Qcontrolx
 QSTR
+readmodel
 reinit
 rels
 reqs
+resetframe
 rewritelinks
 rgba
 RIGHTOF
 roughjs
+RPAREN
 sankey
 sequencenumber
 shrc
@@ -148,6 +157,7 @@ urlsafe
 verifymethod
 VERIFYMTHD
 WARN_DOCSDIR_DOESNT_MATCH
+Wirth
 xhost
 yaxis
 yfunc

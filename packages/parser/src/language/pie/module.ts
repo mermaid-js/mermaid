@@ -12,7 +12,10 @@ import {
   inject,
 } from 'langium';
 
-import { MermaidGeneratedSharedModule, PieGeneratedModule } from '../generated/module.js';
+import {
+  MermaidGeneratedSharedModule,
+  PieGrammarGeneratedModule as PieGeneratedModule,
+} from '../generated/module.js';
 import { PieTokenBuilder } from './tokenBuilder.js';
 import { PieValueConverter } from './valueConverter.js';
 

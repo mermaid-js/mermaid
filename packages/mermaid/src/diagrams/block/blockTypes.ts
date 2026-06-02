@@ -35,6 +35,8 @@ export interface Block {
   end?: string;
   arrowTypeEnd?: string;
   arrowTypeStart?: string;
+  thickness?: string;
+  pattern?: string;
   width?: number;
   id: string;
   label?: string;

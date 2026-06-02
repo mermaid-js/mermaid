@@ -92,9 +92,30 @@ const copy = (clusterId, graph, newGraph, rootId) => {
         log.info('Edge data', data, rootId);
         try {
           if (edgeInCluster(edge, rootId)) {
-            log.info('Copying as ', edge.v, edge.w, data, edge.name);
-            newGraph.setEdge(edge.v, edge.w, data, edge.name);
-            log.info('newGraph edges ', newGraph.edges(), newGraph.edge(newGraph.edges()[0]));
+            // Determine whether BOTH endpoints are strictly inside the cluster.
+            // edgeInCluster uses OR logic (either endpoint inside), so a
+            // cross-boundary edge (one endpoint outside rootId) also passes.
+            // Copying such an edge into newGraph would auto-create the external
+            // node as an orphan with no layout data, crashing the renderer.
+            // Instead, rebind cross-boundary edges in the outer graph as
+            //   rootId → externalNode
+            // so the connection is preserved after the leaf is removed.
+            const rootDescendants = descendants.get(rootId) || [];
+            const vIn =
+              rootDescendants.includes(edge.v) || isDescendant(edge.v, rootId) || edge.v === rootId;
+            const wIn =
+              rootDescendants.includes(edge.w) || isDescendant(edge.w, rootId) || edge.w === rootId;
+            if (vIn && wIn) {
+              log.info('Copying as ', edge.v, edge.w, data, edge.name);
+              newGraph.setEdge(edge.v, edge.w, data, edge.name);
+              log.info('newGraph edges ', newGraph.edges(), newGraph.edge(newGraph.edges()[0]));
+            } else {
+              // Cross-boundary: rebind to the cluster root in the outer graph.
+              const newV = vIn ? rootId : edge.v;
+              const newW = wIn ? rootId : edge.w;
+              log.info('Rebinding cross-boundary edge as ', newV, newW, data, edge.name);
+              graph.setEdge(newV, newW, data, edge.name);
+            }
           } else {
             log.info(
               'Skipping copy of edge ',
@@ -247,6 +268,22 @@ export const adjustClustersAndEdges = (graph, depth) => {
     if (parent !== id && clusterDb.has(parent) && !clusterDb.get(parent).externalConnections) {
       clusterDb.get(id).id = parent;
     }
+    // When this cluster has a direct outgoing edge AND its current anchor sits inside
+    // a sibling subgraph that will be extracted (collapsed into a clusterNode), the
+    // anchor will disappear by render time and the edge endpoint becomes undefined.
+    // Re-anchor onto a node that survives extraction.
+    const hasDirectOutgoingEdge = graph.edges().some((edge) => edge.v === id);
+    if (
+      nonClusterChild &&
+      clusterDb.get(id)?.externalConnections &&
+      hasDirectOutgoingEdge &&
+      isNodeInExtractableCluster(graph, nonClusterChild, id)
+    ) {
+      const safeAnchor = findSafeAnchorNode(graph, id, graph.parent(nonClusterChild));
+      if (safeAnchor) {
+        clusterDb.get(id).id = safeAnchor;
+      }
+    }
   }
 
   graph.edges().forEach(function (e) {
@@ -325,10 +362,53 @@ export const extractor = (graph, depth) => {
     if (!clusterDb.has(node)) {
       log.debug('Not a cluster', node, depth);
     } else if (
+      clusterDb.get(node)?.clusterData?.explicitDir &&
+      graph.children(node) &&
+      graph.children(node).length > 0
+    ) {
+      // Cluster with an explicit direction keyword — always create a subgraph,
+      // even when it has external connections (fixes issue #4648).
+      log.warn('Cluster with explicit dir, creating subgraph for children', node, depth);
+
+      const dir = clusterDb.get(node).clusterData.dir;
+      const clusterGraph = new graphlib.Graph({
+        multigraph: true,
+        compound: true,
+      })
+        .setGraph({
+          rankdir: dir,
+          nodesep: 50,
+          ranksep: 50,
+          marginx: 8,
+          marginy: 8,
+        })
+        .setDefaultEdgeLabel(function () {
+          return {};
+        });
+
+      // Copy the cluster (and any nested sub-clusters) into the subgraph
+      copy(node, graph, clusterGraph, node);
+      // Attach the subgraph to the cluster node for internal layout
+      const clusterNodeData = graph.node(node) || {};
+      graph.setNode(node, {
+        ...clusterNodeData,
+        clusterNode: true,
+        id: node,
+        clusterData: clusterDb.get(node).clusterData,
+        label: clusterDb.get(node).label,
+        graph: clusterGraph,
+      });
+      log.warn(
+        'Subgraph for cluster with explicit dir created:',
+        node,
+        graphlibJson.write(clusterGraph)
+      );
+    } else if (
       !clusterDb.get(node).externalConnections &&
       graph.children(node) &&
       graph.children(node).length > 0
     ) {
+      // Original behaviour: cluster without external connections gets its own sub-graph.
       log.warn(
         'Cluster without external connections, without a parent and with children',
         node,
@@ -357,16 +437,16 @@ export const extractor = (graph, depth) => {
           return {};
         });
 
-      log.warn('Old graph before copy', graphlibJson.write(graph));
       copy(node, graph, clusterGraph, node);
+      const clusterNodeData = graph.node(node) || {};
       graph.setNode(node, {
+        ...clusterNodeData,
         clusterNode: true,
         id: node,
         clusterData: clusterDb.get(node).clusterData,
         label: clusterDb.get(node).label,
         graph: clusterGraph,
       });
-      log.warn('New graph after copy node: (', node, ')', graphlibJson.write(clusterGraph));
       log.debug('Old graph after copy', graphlibJson.write(graph));
     } else {
       log.warn(
@@ -411,3 +491,43 @@ const sorter = (graph, nodes) => {
 };
 
 export const sortNodesByHierarchy = (graph) => sorter(graph, graph.children());
+
+/** Checks if a node is inside a cluster that will be extracted (has no external connections). */
+const isNodeInExtractableCluster = (graph, node, rootId) => {
+  let parent = graph.parent(node);
+
+  while (parent && parent !== rootId) {
+    const cluster = clusterDb.get(parent);
+    if (cluster && !cluster.externalConnections) {
+      return true;
+    }
+    parent = graph.parent(parent);
+  }
+
+  return false;
+};
+
+/** Finds an alternative anchor node for a cluster that is not inside an extractable cluster. */
+const findSafeAnchorNode = (graph, clusterId, excludedCluster) => {
+  const children = graph.children(clusterId) ?? [];
+
+  for (const child of children) {
+    if (child === excludedCluster || isDescendant(child, excludedCluster)) {
+      continue;
+    }
+
+    // findNonClusterChild returns the leaf itself when child is a leaf, or drills
+    // into a subgraph to find a non-cluster descendant. A returned leaf sibling is
+    // a perfectly valid anchor — only skip when the lookup found nothing usable.
+    const candidate = findNonClusterChild(child, graph, clusterId);
+    if (!candidate) {
+      continue;
+    }
+
+    if (!isNodeInExtractableCluster(graph, candidate, clusterId)) {
+      return candidate;
+    }
+  }
+
+  return null;
+};

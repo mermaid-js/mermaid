@@ -85,6 +85,8 @@ const MAX_TICK_COUNT = 10000;
 export const draw = function (text, id, version, diagObj) {
   const conf = getConfig().gantt;
 
+  diagObj.db.setDiagramId(id);
+
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
@@ -110,11 +112,14 @@ export const draw = function (text, id, version, diagObj) {
 
   const taskArray = diagObj.db.getTasks();
 
+  // Filter out vertical markers to ensure they don't take up rows
+  const tasksWithoutVert = taskArray.filter((task) => !task.vert);
+
   // Set height based on number of tasks
 
   let categories = [];
 
-  for (const element of taskArray) {
+  for (const element of tasksWithoutVert) {
     categories.push(element.type);
   }
 
@@ -124,7 +129,7 @@ export const draw = function (text, id, version, diagObj) {
   let h = 2 * conf.topPadding;
   if (diagObj.db.getDisplayMode() === 'compact' || conf.displayMode === 'compact') {
     const categoryElements = {};
-    for (const element of taskArray) {
+    for (const element of tasksWithoutVert) {
       if (categoryElements[element.section] === undefined) {
         categoryElements[element.section] = [element];
       } else {
@@ -140,9 +145,9 @@ export const draw = function (text, id, version, diagObj) {
       categoryHeights[category] = categoryHeight;
     }
   } else {
-    h += taskArray.length * (conf.barHeight + conf.barGap);
+    h += tasksWithoutVert.length * (conf.barHeight + conf.barGap);
     for (const category of categories) {
-      categoryHeights[category] = taskArray.filter((task) => task.type === category).length;
+      categoryHeights[category] = tasksWithoutVert.filter((task) => task.type === category).length;
     }
   }
 
@@ -237,9 +242,13 @@ export const draw = function (text, id, version, diagObj) {
   function drawRects(theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w) {
     // Sort theArray so that tasks with `vert` come last
     theArray.sort((a, b) => (a.vert === b.vert ? 0 : a.vert ? 1 : -1));
+    // Filter out vertical markers from background rects so that they don't take up rows
+    const tasksWithoutVert = theArray.filter((task) => !task.vert);
     // Get unique task orders. Required to draw the background rects when display mode is compact.
-    const uniqueTaskOrderIds = [...new Set(theArray.map((item) => item.order))];
-    const uniqueTasks = uniqueTaskOrderIds.map((id) => theArray.find((item) => item.order === id));
+    const uniqueTaskOrderIds = [...new Set(tasksWithoutVert.map((item) => item.order))];
+    const uniqueTasks = uniqueTaskOrderIds.map((id) =>
+      tasksWithoutVert.find((item) => item.order === id)
+    );
     // Draw background rects covering the entire width of the graph, these form the section rows.
     svg
       .append('g')
@@ -277,7 +286,7 @@ export const draw = function (text, id, version, diagObj) {
     rectangles
       .append('rect')
       .attr('id', function (d) {
-        return d.id;
+        return id + '-' + d.id;
       })
       .attr('rx', 3)
       .attr('ry', 3)
@@ -311,7 +320,7 @@ export const draw = function (text, id, version, diagObj) {
       })
       .attr('height', function (d) {
         if (d.vert) {
-          return taskArray.length * (conf.barHeight + conf.barGap) + conf.barHeight * 2;
+          return tasksWithoutVert.length * (conf.barHeight + conf.barGap) + conf.barHeight * 2;
         }
         return theBarHeight;
       })
@@ -386,7 +395,7 @@ export const draw = function (text, id, version, diagObj) {
     rectangles
       .append('text')
       .attr('id', function (d) {
-        return d.id + '-text';
+        return id + '-' + d.id + '-text';
       })
       .text(function (d) {
         return d.task;
@@ -420,7 +429,11 @@ export const draw = function (text, id, version, diagObj) {
       .attr('y', function (d, i) {
         // Ignore the incoming i value and use our order instead
         if (d.vert) {
-          return conf.gridLineStartPadding + taskArray.length * (conf.barHeight + conf.barGap) + 60;
+          return (
+            conf.gridLineStartPadding +
+            tasksWithoutVert.length * (conf.barHeight + conf.barGap) +
+            60
+          );
         }
         i = d.order;
         return i * theGap + conf.barHeight / 2 + (conf.fontSize / 2 - 2) + theTopPad;
@@ -509,8 +522,8 @@ export const draw = function (text, id, version, diagObj) {
           return links.has(d.id);
         })
         .each(function (o) {
-          var taskRect = doc.querySelector('#' + o.id);
-          var taskText = doc.querySelector('#' + o.id + '-text');
+          var taskRect = doc.querySelector('#' + CSS.escape(id + '-' + o.id));
+          var taskText = doc.querySelector('#' + CSS.escape(id + '-' + o.id + '-text'));
           const oldParent = taskRect.parentNode;
           var Link = doc.createElement('a');
           Link.setAttribute('xlink:href', links.get(o.id));
@@ -585,7 +598,7 @@ export const draw = function (text, id, version, diagObj) {
 
     rectangles
       .append('rect')
-      .attr('id', (d) => 'exclude-' + d.start.format('YYYY-MM-DD'))
+      .attr('id', (d) => id + '-exclude-' + d.start.format('YYYY-MM-DD'))
       .attr('x', (d) => timeScale(d.start.startOf('day')) + theSidePad)
       .attr('y', conf.gridLineStartPadding)
       .attr('width', (d) => timeScale(d.end.endOf('day')) - timeScale(d.start.startOf('day')))
