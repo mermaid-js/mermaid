@@ -42,6 +42,7 @@ jsonschema
 katex
 khroma
 langium
+libavoid
 mathml
 matplotlib
 mdbook

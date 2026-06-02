@@ -153,7 +153,7 @@ export const render = async (
         // Give some padding for elk
         labelData.height = bbox.height - 2;
         labelData.labelNode = shapeSvg.node();
-        // We need the label hight to be able to size the subgraph;
+        // We need the label height to be able to size the subgraph;
         shapeSvg.remove();
       } else {
         // Subgraph without label

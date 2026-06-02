@@ -285,6 +285,8 @@ properties:
     type: string
   flowchart:
     $ref: '#/$defs/FlowchartDiagramConfig'
+  swimlane:
+    $ref: '#/$defs/SwimlaneDiagramConfig'
   sequence:
     $ref: '#/$defs/SequenceDiagramConfig'
   gantt:
@@ -2179,6 +2181,41 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       noteFont: { '$ref': '#/$defs/FontCalculator' }
       actorFont: { '$ref': '#/$defs/FontCalculator' }
 
+  SwimlaneDiagramConfig:
+    title: Swimlane Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: |
+      The object containing configurations specific for the swimlanes diagram type.
+
+      Swimlanes reuses the flowchart renderer and flowchart config for shared
+      options (curve, htmlLabels, spacing, …); this block holds the knobs that
+      only affect the swimlanes layout pipeline.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      lineHops:
+        description: |
+          Renders edge crossings as small arcs ("hops") or visible gaps so that
+          overlapping edges are easier to read. Set to `false` to disable. Edges
+          rendered as curves are skipped to avoid corrupting the geometry.
+        oneOf:
+          - type: boolean
+          - type: string
+            enum: ['arc', 'gap']
+        default: 'arc'
+      ignoreCrossLaneEdges:
+        description: |
+          Ignores edges that cross swimlane boundaries during swimlane layer
+          assignment. This can improve rank quality for diagrams with many
+          cross-lane links.
+        type: boolean
+        default: true
+      optimizeRanksByCrossings:
+        description: |
+          Enables a crossing-aware rank optimization pass for swimlane layouts.
+        type: boolean
+        default: true
+
   FlowchartDiagramConfig:
     title: Flowchart Diagram Config
     allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
@@ -2269,6 +2306,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
             'rounded',
           ]
         default: 'basis'
+
       padding:
         description: |
           Represents the padding between the labels and the shape

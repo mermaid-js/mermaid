@@ -1,0 +1,10 @@
+---
+config:
+  layout: elk
+---
+flowchart TB
+subgraph container_Beta
+  process_C
+end
+
+  process_B-->|via_AWSBatch|container_Beta

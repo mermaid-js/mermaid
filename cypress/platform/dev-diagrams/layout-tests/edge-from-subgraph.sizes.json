@@ -1,0 +1,39 @@
+{
+  "nodes": [
+    {
+      "id": "B2",
+      "isGroup": true
+    },
+    {
+      "id": "A",
+      "width": 41.34375,
+      "height": 45
+    },
+    {
+      "id": "B",
+      "width": 41.34375,
+      "height": 45
+    },
+    {
+      "id": "C",
+      "width": 42.125,
+      "height": 45
+    },
+    {
+      "id": "D",
+      "width": 42.125,
+      "height": 45
+    },
+    {
+      "id": "X",
+      "width": 41.34375,
+      "height": 45
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "f31152a1ff64dd397960f47e61fb70c072d38458baf365f4bd4eef257c52afb1",
+    "capturedAt": "2026-05-06T00:00:00.000Z",
+    "capturedFrom": "browser-dev layout-tests/edge-from-subgraph.mmd theme=default look=classic"
+  }
+}

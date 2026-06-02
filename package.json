@@ -25,6 +25,10 @@
     "build:mermaid": "pnpm build:esbuild --mermaid",
     "build:mermaid:full": "pnpm clean && pnpm build:mermaid && pnpm copy:editor && pnpm copy:mermaid && pnpm copy:dompurify && pnpm serve:dist",
     "build:viz": "pnpm build:esbuild --visualize",
+    "swimlanes:size": "tsx scripts/swimlanes-size.ts",
+    "swimlanes:size:baseline": "tsx scripts/swimlanes-size.ts --write-baseline",
+    "swimlanes:size:compare": "tsx scripts/swimlanes-size.ts --compare",
+    "swimlanes:size:check": "tsx scripts/swimlanes-size.ts --compare --fail-on-growth",
     "build:types": "pnpm --filter mermaid types:build-config && tsx .build/types.ts",
     "build:types:watch": "tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly --watch",
     "dev": "tsx .esbuild/server.ts",
@@ -81,10 +85,16 @@
     "@argos-ci/cypress": "^6.2.12",
     "@changesets/changelog-github": "^0.5.2",
     "@changesets/cli": "^2.29.8",
+    "@codemirror/commands": "^6.10.3",
+    "@codemirror/language": "^6.12.3",
+    "@codemirror/state": "^6.6.0",
+    "@codemirror/view": "^6.43.0",
     "@cspell/eslint-plugin": "^9.3.2",
     "@cypress/code-coverage": "^3.14.7",
     "@eslint/js": "^9.26.0",
+    "@lezer/highlight": "^1.2.3",
     "@rollup/plugin-typescript": "^12.1.4",
+    "@shoelace-style/shoelace": "^2.20.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/js-yaml": "^4.0.9",
@@ -98,6 +108,7 @@
     "@vitest/ui": "^3.2.4",
     "ajv": "^8.17.1",
     "chokidar": "3.6.0",
+    "codemirror-lang-mermaid": "^0.5.0",
     "concurrently": "^9.2.1",
     "cors": "^2.8.6",
     "cpy-cli": "^5.0.0",
@@ -131,6 +142,7 @@
     "jsdom": "^26.1.0",
     "langium-cli": "^4.2.1",
     "lint-staged": "^16.1.6",
+    "lit": "^3.3.2",
     "markdown-table": "^3.0.4",
     "nyc": "^17.1.0",
     "path-browserify": "^1.0.1",
@@ -153,6 +165,11 @@
     "report-dir": "coverage/cypress"
   },
   "pnpm": {
+    "overrides": {
+      "dependency-tree": "11.4.3",
+      "@isaacs/brace-expansion": "^5.0.1",
+      "minimatch@10": "^10.2.1"
+    },
     "patchedDependencies": {
       "roughjs": "patches/roughjs.patch"
     },

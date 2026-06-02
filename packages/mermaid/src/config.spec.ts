@@ -50,6 +50,13 @@ describe('when working with site config', () => {
       updatedConfig.quadrantChart!.chartWidth
     );
   });
+  it('should default swimlane layering options to true', () => {
+    const config = configApi.getConfig();
+
+    expect(config.swimlane?.ignoreCrossLaneEdges).toBe(true);
+    expect(config.swimlane?.optimizeRanksByCrossings).toBe(true);
+  });
+
   it('should retain railroad directives after sanitization', () => {
     configApi.saveConfigFromInitialize({});
     configApi.addDirective({
