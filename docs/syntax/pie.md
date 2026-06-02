@@ -37,6 +37,11 @@ Drawing a pie chart is really simple in mermaid.
   - Followed by `:` colon as separator
   - Followed by `positive numeric value` (supported up to two decimal places)
 
+**Note:**
+
+> Pie chart values must be **positive numbers greater than zero**.
+> **Negative values are not allowed** and will result in an error.
+
 \[pie] \[showData] (OPTIONAL)
 \[title] \[titlevalue] (OPTIONAL)
 "\[datakey1]" : \[dataValue1]
@@ -45,10 +50,30 @@ Drawing a pie chart is really simple in mermaid.
 .
 .
 
+## Donut chart diagram (v\<MERMAID_RELEASE_VERSION>+)
+
+By setting `donutHole` parameter on config, Mermaid can render Donut Chart Diagram.
+
+## Legend Position (v\<MERMAID_RELEASE_VERSION>+)
+
+By setting `legendPosition` parameter on config, you can set where the legend is positioned.
+
+## Highlight Slice (v\<MERMAID_RELEASE_VERSION>+)
+
+By setting `highlightSlice` parameter on config, you can highlight specific slice. You can also highlight slice by hovering on it.
+
 ## Example
 
 ```mermaid-example
-%%{init: {"pie": {"textPosition": 0.5}, "themeVariables": {"pieOuterStrokeWidth": "5px"}} }%%
+---
+config:
+  pie:
+    textPosition: 0.5
+    donutHole: 0.2
+    highlightSlice: Potassium
+  themeVariables:
+    pieOuterStrokeWidth: "5px"
+---
 pie showData
     title Key elements in Product X
     "Calcium" : 42.96
@@ -58,7 +83,15 @@ pie showData
 ```
 
 ```mermaid
-%%{init: {"pie": {"textPosition": 0.5}, "themeVariables": {"pieOuterStrokeWidth": "5px"}} }%%
+---
+config:
+  pie:
+    textPosition: 0.5
+    donutHole: 0.2
+    highlightSlice: Potassium
+  themeVariables:
+    pieOuterStrokeWidth: "5px"
+---
 pie showData
     title Key elements in Product X
     "Calcium" : 42.96
@@ -71,6 +104,9 @@ pie showData
 
 Possible pie diagram configuration parameters:
 
-| Parameter      | Description                                                                                                  | Default value |
-| -------------- | ------------------------------------------------------------------------------------------------------------ | ------------- |
-| `textPosition` | The axial position of the pie slice labels, from 0.0 at the center to 1.0 at the outside edge of the circle. | `0.75`        |
+| Parameter        | Description                                                                                                  | Default value |
+| ---------------- | ------------------------------------------------------------------------------------------------------------ | ------------- |
+| `textPosition`   | The axial position of the pie slice labels, from 0.0 at the center to 1.0 at the outside edge of the circle. | `0.75`        |
+| `donutHole`      | Donut hole ratio. Valid values are from `0` to `0.9`.                                                        | `0`           |
+| `legendPosition` | Legend's position relative to the chart. Valid values are `top`, `bottom`, `left`, `right`, and `center`.    | `right`       |
+| `highlightSlice` | Highlight specific slice with matching label. Set to 'hover' to highlight hovered slice.                     |               |

@@ -2,7 +2,7 @@
 
 This package provides a layout engine for Mermaid based on the [ELK](https://www.eclipse.org/elk/) layout engine.
 
-> [!NOTE]  
+> [!NOTE]
 > The ELK Layout engine will not be available in all providers that support mermaid by default.
 > The websites will have to install the `@mermaid-js/layout-elk` package to use the ELK layout engine.
 
@@ -54,7 +54,7 @@ mermaid.registerLayoutLoaders(elkLayouts);
 ```html
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-  import elkLayouts from 'https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@11/dist/mermaid-layout-elk.esm.min.mjs';
+  import elkLayouts from 'https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0/dist/mermaid-layout-elk.esm.min.mjs';
 
   mermaid.registerLayoutLoaders(elkLayouts);
 </script>
@@ -69,4 +69,4 @@ mermaid.registerLayoutLoaders(elkLayouts);
 - `elk.mrtree`: Multi-root tree layout
 - `elk.sporeOverlap`: Spore overlap layout
 
-<!-- TODO: Add images for these layouts, as GitHub doesn't support natively -->
+<!-- TODO: Add images for these layouts, as GitHub doesn't support natively. -->

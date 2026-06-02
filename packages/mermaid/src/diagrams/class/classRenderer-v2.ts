@@ -3,12 +3,13 @@ import { select, curveLinear } from 'd3';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { getEffectiveHtmlLabels } from '../../config.js';
 import { render } from '../../dagre-wrapper/index.js';
 import utils, { getEdgeId } from '../../utils.js';
 import { interpolateToCurve, getStylesFromArray } from '../../utils.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import common from '../common/common.js';
-import type { ClassRelation, ClassNote, ClassMap, NamespaceMap } from './classTypes.js';
+import type { ClassRelation, ClassMap, ClassNoteMap, NamespaceMap } from './classTypes.js';
 import type { EdgeData } from '../../types.js';
 
 const sanitizeText = (txt: string) => common.sanitizeText(txt, getConfig());
@@ -47,8 +48,47 @@ export const addNamespaces = function (
   log.info('keys:', [...namespaces.keys()]);
   log.info(namespaces);
 
+  const hierarchical = getConfig().class?.hierarchicalNamespaces ?? true;
+  const classes: ClassMap = diagObj.db.getClasses();
+  const relations: ClassRelation[] = diagObj.db.getRelations();
+  const notes: ClassNoteMap = diagObj.db.getNotes();
+
+  // Walks up the namespace chain to the nearest ancestor (or self) flagged as
+  // user-declared. Used in compact mode to reassign descendants of implicit
+  // intermediate namespaces onto the nearest explicit box.
+  const resolveExplicitAncestor = (parentId?: string): string | undefined => {
+    let current = parentId;
+    while (current) {
+      const ns = namespaces.get(current);
+      if (!ns) {
+        return undefined;
+      }
+      if (ns.explicit) {
+        return current;
+      }
+      current = ns.parent;
+    }
+    return undefined;
+  };
+
+  // In compact mode, collapse each child's parent to its nearest explicit ancestor
+  // so addClasses/addNotes' filter-by-parent logic naturally groups them.
+  if (!hierarchical) {
+    classes.forEach((cls) => {
+      cls.parent = resolveExplicitAncestor(cls.parent);
+    });
+    notes.forEach((note) => {
+      note.parent = resolveExplicitAncestor(note.parent);
+    });
+  }
+
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
   namespaces.forEach(function (vertex) {
+    // Compact mode skips auto-created intermediate namespaces entirely
+    if (!hierarchical && !vertex.explicit) {
+      return;
+    }
+
     // parent node must be one of [rect, roundedWithTitle, noteGroup, divider]
     const shape = 'rect';
 
@@ -56,7 +96,7 @@ export const addNamespaces = function (
       shape: shape,
       id: vertex.id,
       domId: vertex.domId,
-      labelText: sanitizeText(vertex.id),
+      labelText: sanitizeText(hierarchical ? vertex.label : vertex.id),
       labelStyle: '',
       style: 'fill: none; stroke: black',
       // TODO V10: Flowchart ? Keeping flowchart for backwards compatibility. Remove in next major release
@@ -64,7 +104,20 @@ export const addNamespaces = function (
     };
 
     g.setNode(vertex.id, node);
-    addClasses(vertex.classes, g, _id, diagObj, vertex.id);
+
+    if (hierarchical && vertex.parent && g.hasNode(vertex.parent)) {
+      g.setParent(vertex.id, vertex.parent);
+    }
+
+    if (hierarchical) {
+      addClasses(vertex.classes, g, _id, diagObj, vertex.id);
+      addNotes(vertex.notes, g, relations.length + 1, classes, vertex.id);
+    } else {
+      // Classes/notes have already been reassigned above; use the global maps so
+      // descendants of implicit ancestors get picked up here.
+      addClasses(classes, g, _id, diagObj, vertex.id);
+      addNotes(notes, g, relations.length + 1, classes, vertex.id);
+    }
 
     log.info('setNode', node);
   });
@@ -144,69 +197,74 @@ export const addClasses = function (
  * @param classes - Classes
  */
 export const addNotes = function (
-  notes: ClassNote[],
+  notes: ClassNoteMap,
   g: graphlib.Graph,
   startEdgeId: number,
-  classes: ClassMap
+  classes: ClassMap,
+  parent?: string
 ) {
   log.info(notes);
 
-  notes.forEach(function (note, i) {
-    const vertex = note;
+  [...notes.values()]
+    .filter((note) => note.parent === parent)
+    .forEach(function (vertex) {
+      const cssNoteStr = '';
 
-    const cssNoteStr = '';
+      const styles = { labelStyle: '', style: '' };
 
-    const styles = { labelStyle: '', style: '' };
+      const vertexText = vertex.text;
 
-    const vertexText = vertex.text;
+      const radius = 0;
+      const shape = 'note';
+      const node = {
+        labelStyle: styles.labelStyle,
+        shape: shape,
+        labelText: sanitizeText(vertexText),
+        noteData: vertex,
+        rx: radius,
+        ry: radius,
+        class: cssNoteStr,
+        style: styles.style,
+        id: vertex.id,
+        domId: vertex.id,
+        tooltip: '',
+        type: 'note',
+        // TODO V10: Flowchart ? Keeping flowchart for backwards compatibility. Remove in next major release
+        padding: getConfig().flowchart?.padding ?? getConfig().class?.padding,
+      };
+      g.setNode(vertex.id, node);
+      log.info('setNode', node);
 
-    const radius = 0;
-    const shape = 'note';
-    const node = {
-      labelStyle: styles.labelStyle,
-      shape: shape,
-      labelText: sanitizeText(vertexText),
-      noteData: vertex,
-      rx: radius,
-      ry: radius,
-      class: cssNoteStr,
-      style: styles.style,
-      id: vertex.id,
-      domId: vertex.id,
-      tooltip: '',
-      type: 'note',
-      // TODO V10: Flowchart ? Keeping flowchart for backwards compatibility. Remove in next major release
-      padding: getConfig().flowchart?.padding ?? getConfig().class?.padding,
-    };
-    g.setNode(vertex.id, node);
-    log.info('setNode', node);
+      if (parent) {
+        g.setParent(vertex.id, parent);
+      }
 
-    if (!vertex.class || !classes.has(vertex.class)) {
-      return;
-    }
-    const edgeId = startEdgeId + i;
+      if (!vertex.class || !classes.has(vertex.class)) {
+        return;
+      }
+      const edgeId = startEdgeId + vertex.index;
 
-    const edgeData: EdgeData = {
-      id: `edgeNote${edgeId}`,
-      //Set relationship style and line type
-      classes: 'relation',
-      pattern: 'dotted',
-      // Set link type for rendering
-      arrowhead: 'none',
-      //Set edge extra labels
-      startLabelRight: '',
-      endLabelLeft: '',
-      //Set relation arrow types
-      arrowTypeStart: 'none',
-      arrowTypeEnd: 'none',
-      style: 'fill:none',
-      labelStyle: '',
-      curve: interpolateToCurve(conf.curve, curveLinear),
-    };
+      const edgeData: EdgeData = {
+        id: `edgeNote${edgeId}`,
+        //Set relationship style and line type
+        classes: 'relation',
+        pattern: 'dotted',
+        // Set link type for rendering
+        arrowhead: 'none',
+        //Set edge extra labels
+        startLabelRight: '',
+        endLabelLeft: '',
+        //Set relation arrow types
+        arrowTypeStart: 'none',
+        arrowTypeEnd: 'none',
+        style: 'fill:none',
+        labelStyle: '',
+        curve: interpolateToCurve(conf.curve, curveLinear),
+      };
 
-    // Add the edge to the graph
-    g.setEdge(vertex.id, vertex.class, edgeData, edgeId);
-  });
+      // Add the edge to the graph
+      g.setEdge(vertex.id, vertex.class, edgeData, edgeId);
+    });
 };
 
 /**
@@ -259,8 +317,7 @@ export const addRelations = function (relations: ClassRelation[], g: graphlib.Gr
       edgeData.arrowheadStyle = 'fill: #333';
       edgeData.labelpos = 'c';
 
-      // TODO V10: Flowchart ? Keeping flowchart for backwards compatibility. Remove in next major release
-      if (getConfig().flowchart?.htmlLabels ?? getConfig().htmlLabels) {
+      if (getEffectiveHtmlLabels(getConfig())) {
         edgeData.labelType = 'html';
         edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
       } else {
@@ -329,7 +386,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   const namespaces: NamespaceMap = diagObj.db.getNamespaces();
   const classes: ClassMap = diagObj.db.getClasses();
   const relations: ClassRelation[] = diagObj.db.getRelations();
-  const notes: ClassNote[] = diagObj.db.getNotes();
+  const notes: ClassNoteMap = diagObj.db.getNotes();
   log.info(relations);
   addNamespaces(namespaces, g, id, diagObj);
   addClasses(classes, g, id, diagObj);

@@ -7,7 +7,7 @@ import type {
 const id = 'packet';
 
 const detector: DiagramDetector = (txt) => {
-  return /^\s*packet-beta/.test(txt);
+  return /^\s*packet(-beta)?/.test(txt);
 };
 
 const loader: DiagramLoader = async () => {

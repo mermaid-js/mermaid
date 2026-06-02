@@ -8,6 +8,7 @@ export interface XYChartAxisThemeConfig {
 export interface XYChartThemeConfig {
   backgroundColor: string;
   titleColor: string;
+  dataLabelColor: string;
   xAxisLabelColor: string;
   xAxisTitleColor: string;
   xAxisTickColor: string;
@@ -32,6 +33,7 @@ export interface LinePlotData {
   strokeFill: string;
   strokeWidth: number;
   data: SimplePlotDataType;
+  pointLabels?: string[];
 }
 
 export interface BarPlotData {
@@ -85,6 +87,7 @@ export interface XYChartAxisConfig {
   tickWidth: number;
   showAxisLine: boolean;
   axisLineWidth: number;
+  labelRotation: number;
 }
 
 export interface XYChartConfig {
@@ -93,6 +96,8 @@ export interface XYChartConfig {
   titleFontSize: number;
   titlePadding: number;
   showTitle: boolean;
+  showDataLabel: boolean;
+  showDataLabelOutsideBar: boolean;
   xAxis: XYChartAxisConfig;
   yAxis: XYChartAxisConfig;
   chartOrientation: 'vertical' | 'horizontal';

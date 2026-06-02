@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type * as d3 from 'd3';
-import type { SetRequired } from 'type-fest';
+import type { SetOptional, SetRequired } from 'type-fest';
 import type { Diagram } from '../Diagram.js';
 import type { BaseDiagramConfig, MermaidConfig } from '../config.type.js';
+import type { DiagramOrientation } from '../diagrams/git/gitGraphTypes.js';
 
 export interface DiagramMetadata {
   title?: string;
@@ -35,8 +36,10 @@ export interface DiagramDB {
   getAccTitle?: () => string;
   setAccDescription?: (description: string) => void;
   getAccDescription?: () => string;
-
+  getDirection?: () => string | undefined;
+  setDirection?: (dir: DiagramOrientation) => void;
   setDisplayMode?: (title: string) => void;
+  setDiagramId?: (svgElementId: string) => void;
   bindFunctions?: (element: Element) => void;
 }
 
@@ -61,7 +64,14 @@ export type DiagramDBBase<T extends BaseDiagramConfig> = {
 // It makes it clear we're working with a style class definition, even though defining the type is currently difficult.
 export interface DiagramStyleClassDef {
   id: string;
+  /**
+   * The styles to apply to the class for HTML rendering.
+   * These are expected to be CSS property declarations without a trailing semicolon, e.g. `color: red`.
+   */
   styles?: string[];
+  /**
+   * The styles to apply to `<tspan>` elements with the given class.
+   */
   textStyles?: string[];
 }
 
@@ -91,17 +101,13 @@ export interface DiagramDefinition {
   ) => void;
 }
 
-export interface DetectorRecord {
-  detector: DiagramDetector;
-  loader?: DiagramLoader;
-}
-
 export interface ExternalDiagramDefinition {
   id: string;
   detector: DiagramDetector;
   loader: DiagramLoader;
 }
 
+export type DetectorRecord = SetOptional<Omit<ExternalDiagramDefinition, 'id'>, 'loader'>;
 export type DiagramDetector = (text: string, config?: MermaidConfig) => boolean;
 export type DiagramLoader = () => Promise<{ id: string; diagram: DiagramDefinition }>;
 
@@ -131,4 +137,4 @@ export type SVG = d3.Selection<SVGSVGElement, unknown, Element | null, unknown>;
 
 export type SVGGroup = d3.Selection<SVGGElement, unknown, Element | null, unknown>;
 
-export type DiagramStylesProvider = (options?: any) => string;
+export type DiagramStylesProvider = (options?: any, svgId?: string) => string;

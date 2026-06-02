@@ -16,7 +16,7 @@ export const drawImage = function (elem, width, height, x, y, link) {
   imageElem.attr('xlink:href', sanitizedLink);
 };
 
-export const drawRels = (elem, rels, conf) => {
+export const drawRels = (elem, rels, conf, diagramId) => {
   const relsElem = elem.append('g');
   let i = 0;
   for (let rel of rels) {
@@ -37,10 +37,10 @@ export const drawRels = (elem, rels, conf) => {
       line.attr('stroke', strokeColor);
       line.style('fill', 'none');
       if (rel.type !== 'rel_b') {
-        line.attr('marker-end', 'url(' + url + '#arrowhead)');
+        line.attr('marker-end', 'url(' + url + '#' + diagramId + '-arrowhead)');
       }
       if (rel.type === 'birel' || rel.type === 'rel_b') {
-        line.attr('marker-start', 'url(' + url + '#arrowend)');
+        line.attr('marker-start', 'url(' + url + '#' + diagramId + '-arrowend)');
       }
       i = -1;
     } else {
@@ -65,10 +65,10 @@ export const drawRels = (elem, rels, conf) => {
             .replaceAll('stopy', rel.endPoint.y)
         );
       if (rel.type !== 'rel_b') {
-        line.attr('marker-end', 'url(' + url + '#arrowhead)');
+        line.attr('marker-end', 'url(' + url + '#' + diagramId + '-arrowhead)');
       }
       if (rel.type === 'birel' || rel.type === 'rel_b') {
-        line.attr('marker-start', 'url(' + url + '#arrowend)');
+        line.attr('marker-start', 'url(' + url + '#' + diagramId + '-arrowend)');
       }
     }
 
@@ -111,7 +111,7 @@ export const drawRels = (elem, rels, conf) => {
 };
 
 /**
- * Draws an boundary in the diagram
+ * Draws a boundary in the diagram
  *
  * @param {any} elem - The diagram we'll draw to.
  * @param {any} boundary - The boundary to draw.
@@ -397,11 +397,11 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
   return c4Shape.height;
 };
 
-export const insertDatabaseIcon = function (elem) {
+export const insertDatabaseIcon = function (elem, id) {
   elem
     .append('defs')
     .append('symbol')
-    .attr('id', 'database')
+    .attr('id', id + '-database')
     .attr('fill-rule', 'evenodd')
     .attr('clip-rule', 'evenodd')
     .append('path')
@@ -412,11 +412,11 @@ export const insertDatabaseIcon = function (elem) {
     );
 };
 
-export const insertComputerIcon = function (elem) {
+export const insertComputerIcon = function (elem, id) {
   elem
     .append('defs')
     .append('symbol')
-    .attr('id', 'computer')
+    .attr('id', id + '-computer')
     .attr('width', '24')
     .attr('height', '24')
     .append('path')
@@ -427,11 +427,11 @@ export const insertComputerIcon = function (elem) {
     );
 };
 
-export const insertClockIcon = function (elem) {
+export const insertClockIcon = function (elem, id) {
   elem
     .append('defs')
     .append('symbol')
-    .attr('id', 'clock')
+    .attr('id', id + '-clock')
     .attr('width', '24')
     .attr('height', '24')
     .append('path')
@@ -447,11 +447,11 @@ export const insertClockIcon = function (elem) {
  *
  * @param elem
  */
-export const insertArrowHead = function (elem) {
+export const insertArrowHead = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'arrowhead')
+    .attr('id', id + '-arrowhead')
     .attr('refX', 9)
     .attr('refY', 5)
     .attr('markerUnits', 'userSpaceOnUse')
@@ -462,11 +462,11 @@ export const insertArrowHead = function (elem) {
     .attr('d', 'M 0 0 L 10 5 L 0 10 z'); // this is actual shape for arrowhead
 };
 
-export const insertArrowEnd = function (elem) {
+export const insertArrowEnd = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'arrowend')
+    .attr('id', id + '-arrowend')
     .attr('refX', 1)
     .attr('refY', 5)
     .attr('markerUnits', 'userSpaceOnUse')
@@ -482,11 +482,11 @@ export const insertArrowEnd = function (elem) {
  *
  * @param {any} elem
  */
-export const insertArrowFilledHead = function (elem) {
+export const insertArrowFilledHead = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'filled-head')
+    .attr('id', id + '-filled-head')
     .attr('refX', 18)
     .attr('refY', 7)
     .attr('markerWidth', 20)
@@ -497,37 +497,15 @@ export const insertArrowFilledHead = function (elem) {
 };
 
 /**
- * Setup node number. The result is appended to the svg.
- *
- * @param {any} elem
- */
-export const insertDynamicNumber = function (elem) {
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', 'sequencenumber')
-    .attr('refX', 15)
-    .attr('refY', 15)
-    .attr('markerWidth', 60)
-    .attr('markerHeight', 40)
-    .attr('orient', 'auto')
-    .append('circle')
-    .attr('cx', 15)
-    .attr('cy', 15)
-    .attr('r', 6);
-  // .style("fill", '#f00');
-};
-
-/**
  * Setup arrow head and define the marker. The result is appended to the svg.
  *
  * @param {any} elem
  */
-export const insertArrowCrossHead = function (elem) {
+export const insertArrowCrossHead = function (elem, id) {
   const defs = elem.append('defs');
   const marker = defs
     .append('marker')
-    .attr('id', 'crosshead')
+    .attr('id', id + '-crosshead')
     .attr('markerWidth', 15)
     .attr('markerHeight', 8)
     .attr('orient', 'auto')
@@ -681,7 +659,6 @@ export default {
   insertArrowHead,
   insertArrowEnd,
   insertArrowFilledHead,
-  insertDynamicNumber,
   insertArrowCrossHead,
   insertDatabaseIcon,
   insertComputerIcon,

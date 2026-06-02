@@ -300,6 +300,7 @@ export class RequirementDB implements DiagramDB {
       node.cssClasses = requirement.classes.join(' ');
       node.shape = 'requirementBox';
       node.look = config.look;
+      node.colorIndex = nodes.length;
       nodes.push(node);
     }
 
@@ -310,7 +311,7 @@ export class RequirementDB implements DiagramDB {
       node.id = element.name;
       node.cssStyles = element.cssStyles;
       node.cssClasses = element.classes.join(' ');
-
+      node.colorIndex = nodes.length;
       nodes.push(node);
     }
 
@@ -328,8 +329,10 @@ export class RequirementDB implements DiagramDB {
         thickness: 'normal',
         type: 'normal',
         pattern: isContains ? 'normal' : 'dashed',
-        arrowTypeEnd: isContains ? 'requirement_contains' : 'requirement_arrow',
+        arrowTypeStart: isContains ? 'requirement_contains' : '',
+        arrowTypeEnd: isContains ? '' : 'requirement_arrow',
         look: config.look,
+        labelType: 'markdown',
       };
 
       edges.push(edge);

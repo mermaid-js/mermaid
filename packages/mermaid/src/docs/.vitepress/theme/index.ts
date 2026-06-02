@@ -1,36 +1,43 @@
 /* eslint-disable no-console */
 import DefaultTheme from 'vitepress/theme';
-import './custom.css';
-// @ts-ignore Type not available
-import Mermaid from './Mermaid.vue';
-// @ts-ignore Type not available
 import Contributors from '../components/Contributors.vue';
-// @ts-ignore Type not available
+import EditorSelectionModal from '../components/EditorSelectionModal.vue';
 import HomePage from '../components/HomePage.vue';
-// @ts-ignore Type not available
 import TopBar from '../components/TopBar.vue';
+import './custom.css';
+import Mermaid from './Mermaid.vue';
+import OssHomeHeroNameClipApplier from './OssHomeHeroNameClipApplier.js';
 import { getRedirect } from './redirect.js';
+import Tooltip from './Tooltip.vue';
 // @ts-ignore Type not available
 import 'uno.css';
 import type { EnhanceAppContext } from 'vitepress';
 import Theme from 'vitepress/theme';
 import { h } from 'vue';
 import '../style/main.css';
+import { initPlausible } from './plausible.js';
 
 export default {
   ...DefaultTheme,
   Layout() {
     return h(Theme.Layout, null, {
-      // Keeping this as comment as it took a lot of time to figure out how to add a component to the top bar.
-      'home-hero-before': () => h(TopBar),
       'home-features-after': () => h(HomePage),
+      'home-hero-before': () => h(TopBar),
+      'home-hero-after': () => h(OssHomeHeroNameClipApplier),
       'doc-before': () => h(TopBar),
+      'layout-bottom': () => h(Tooltip),
+      'layout-top': () => h(EditorSelectionModal),
     });
   },
   enhanceApp({ app, router }: EnhanceAppContext) {
+    if (typeof window !== 'undefined') {
+      void initPlausible();
+    }
+
     // register global components
     app.component('Mermaid', Mermaid);
     app.component('Contributors', Contributors);
+
     router.onBeforeRouteChange = (to) => {
       try {
         const url = new URL(window.location.origin + to);

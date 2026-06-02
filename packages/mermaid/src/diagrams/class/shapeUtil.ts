@@ -146,7 +146,7 @@ async function addText<T extends SVGGraphicsElement>(
     numberOfLines = text.children.length;
 
     const textChild = text.children[0];
-    if (text.textContent === '' || text.textContent.includes('&gt')) {
+    if (text.textContent === '' || text.textContent!.includes('&gt')) {
       textChild.textContent =
         textContent[0] +
         textContent.substring(1).replaceAll('&gt;', '>').replaceAll('&lt;', '<').trim();

@@ -191,6 +191,19 @@ const getStyles = (options) =>
     fill: ${options.taskTextDarkColor} !important;
   }
 
+  /* Done task text displayed outside the bar sits against the diagram background,
+     not against the done-task bar, so it must use the outside/contrast color. */
+  .doneText0.taskTextOutsideLeft,
+  .doneText0.taskTextOutsideRight,
+  .doneText1.taskTextOutsideLeft,
+  .doneText1.taskTextOutsideRight,
+  .doneText2.taskTextOutsideLeft,
+  .doneText2.taskTextOutsideRight,
+  .doneText3.taskTextOutsideLeft,
+  .doneText3.taskTextOutsideRight {
+    fill: ${options.taskTextOutsideColor} !important;
+  }
+
 
   /* Tasks on the critical line */
 
@@ -235,6 +248,28 @@ const getStyles = (options) =>
   .doneCritText2,
   .doneCritText3 {
     fill: ${options.taskTextDarkColor} !important;
+  }
+
+  /* Done-crit task text outside the bar — same reasoning as doneText above. */
+  .doneCritText0.taskTextOutsideLeft,
+  .doneCritText0.taskTextOutsideRight,
+  .doneCritText1.taskTextOutsideLeft,
+  .doneCritText1.taskTextOutsideRight,
+  .doneCritText2.taskTextOutsideLeft,
+  .doneCritText2.taskTextOutsideRight,
+  .doneCritText3.taskTextOutsideLeft,
+  .doneCritText3.taskTextOutsideRight {
+    fill: ${options.taskTextOutsideColor} !important;
+  }
+
+  .vert {
+    stroke: ${options.vertLineColor};
+  }
+
+  .vertText {
+    font-size: 15px;
+    text-anchor: middle;
+    fill: ${options.vertLineColor} !important;
   }
 
   .activeCritText0,

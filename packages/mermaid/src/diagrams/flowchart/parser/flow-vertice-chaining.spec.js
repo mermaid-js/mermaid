@@ -57,7 +57,7 @@ describe('when parsing flowcharts', function () {
     expect(edges[1].type).toBe('arrow_point');
     expect(edges[1].text).toBe('');
   });
-  it('should multiple vertices in link statement in the begining', function () {
+  it('should multiple vertices in link statement in the beginning', function () {
     const res = flow.parser.parse(`
     graph TD
       A-->B & C;

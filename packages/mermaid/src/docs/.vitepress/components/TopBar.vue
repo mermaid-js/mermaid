@@ -1,125 +1,80 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { useRoute } from 'vitepress';
+import { computed, onMounted, type Ref, ref } from 'vue';
 
 interface Taglines {
   label: string;
-  url: string;
+  campaign: string;
+  button: string;
+  params?: Record<string, string>;
 }
 
-const allTaglines: { [key: string]: { design: number; taglines: Taglines[] } } = {
-  A: {
-    design: 1,
-    taglines: [
-      {
-        label: 'Replace ChatGPT Pro, Mermaid.live, and Lucid Chart with Mermaid Chart',
-        url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=AIbundle_A',
-      },
-      {
-        label: 'Diagram live with teammates in Mermaid Chart',
-        url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=teams_A',
-      },
-      {
-        label: 'Use the Visual Editor in Mermaid Chart to design and build diagrams',
-        url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=visual_editor_A',
-      },
-      {
-        label: 'Explore the Mermaid Whiteboard from the creators of Mermaid',
-        url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=whiteboard_A',
-      },
-    ],
+const taglines: Taglines[] = [
+  {
+    label: 'Try Mermaid Advanced Editor — OSS users get 10% off with code JS26',
+    campaign: 'oss_coupon',
+    button: 'Get started',
+    params: { coupon: 'arDfyFT8' },
   },
-  B: {
-    design: 2,
-    taglines: [
-      {
-        label: 'Replace ChatGPT Pro, Mermaid.live, and Lucid Chart with Mermaid Chart',
-        url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=AIbundle_B',
-      },
-      {
-        label: 'Diagram live with teammates in Mermaid Chart',
-        url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=teams_B',
-      },
-      {
-        label: 'Use the Visual Editor in Mermaid Chart to design and build diagrams',
-        url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=visual_editor_B',
-      },
-      {
-        label: 'Explore the Mermaid Whiteboard from the creators of Mermaid',
-        url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=whiteboard_B',
-      },
-    ],
-  },
-  C: {
-    design: 1,
-    taglines: [
-      {
-        label: 'Replace ChatGPT Pro, Mermaid.live, and Lucid Chart with Mermaid Pro',
-        url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=AIbundle_C',
-      },
-      {
-        label: 'Diagram live with teammates in Mermaid Pro',
-        url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=teams_C',
-      },
-      {
-        label: 'Use the Visual Editor in Mermaid Pro to design and build diagrams',
-        url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=visual_editor_C',
-      },
-      {
-        label: 'Explore the Mermaid Whiteboard from the creators of Mermaid',
-        url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=whiteboard_A',
-      },
-    ],
-  },
-  D: {
-    design: 2,
-    taglines: [
-      {
-        label: 'Replace ChatGPT Pro, Mermaid.live, and Lucid Chart with Mermaid Pro',
-        url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=AIbundle_D',
-      },
-      {
-        label: 'Diagram live with teammates in Mermaid Pro',
-        url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=teams_D',
-      },
-      {
-        label: 'Use the Visual Editor in Mermaid Pro to design and build diagrams',
-        url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=visual_editor_D',
-      },
-      {
-        label: 'Explore the Mermaid Whiteboard from the creators of Mermaid',
-        url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=whiteboard_B',
-      },
-    ],
-  },
-};
+];
 
-const { design, taglines } =
-  Object.values(allTaglines)[Math.floor(Math.random() * Object.values(allTaglines).length)];
+const isRotationEnabled = false;
+const index: Ref<number> = ref(0);
+const isPaused: Ref<boolean> = ref(false);
+const isInitialized: Ref<boolean> = ref(false);
+const route = useRoute();
 
-let index = ref(Math.floor(Math.random() * taglines.length));
+const isHomePage = computed(() => {
+  return route.path === '/';
+});
+
+const currentUrl = computed(() => {
+  const isMermaidAi = window?.location.hostname.endsWith('mermaid.ai');
+  const params = new URLSearchParams({
+    utm_medium: 'banner_ad',
+    utm_campaign: taglines[index.value].campaign,
+    utm_source: isMermaidAi ? 'ai_open_source' : 'mermaid_js',
+    ...taglines[index.value].params,
+  });
+  return `https://mermaid.ai/app/user/billing/checkout?${params.toString()}`;
+});
+
 onMounted(() => {
-  setInterval(() => {
-    index.value = (index.value + 1) % taglines.length;
-  }, 5_000);
+  index.value = Math.floor(Math.random() * taglines.length);
+  isInitialized.value = true;
+
+  if (isRotationEnabled) {
+    setInterval(() => {
+      if (isPaused.value) {
+        return;
+      }
+      index.value = (index.value + 1) % taglines.length;
+    }, 5_000);
+  }
 });
 </script>
 
 <template>
   <div
-    :class="[design === 1 ? 'bg-gradient-to-r from-[#bd34fe] to-[#ff3670] ' : 'bg-[#E0095F]']"
-    class="mb-4 w-full top-bar flex p-2"
+    v-if="isInitialized"
+    class="mb-4 w-full top-bar flex p-2 bg-[#E0095F]"
+    @mouseenter="isPaused = true"
+    @mouseleave="isPaused = false"
   >
-    <p class="w-full tracking-wide fade-text">
+    <p class="w-full tracking-wide fade-text" :class="isHomePage ? 'text-lg' : 'text-sm'">
       <transition name="fade" mode="out-in">
         <a
           :key="index"
-          :href="taglines[index].url"
+          :href="currentUrl"
           target="_blank"
-          class="unstyled flex justify-center items-center gap-4 text-white tracking-wide plausible-event-name=bannerClick"
+          class="unstyled flex justify-center items-center gap-4 no-tooltip text-white tracking-wide plausible-event-name=bannerClick"
         >
           <span class="font-semibold">{{ taglines[index].label }}</span>
-          <button class="bg-[#1E1A2E] rounded-lg p-1.5 px-4 font-semibold tracking-wide">
-            Try now
+          <button
+            class="bg-[#1E1A2E] shrink-0 rounded-lg p-1.5 px-4 font-semibold tracking-wide"
+            :class="isHomePage ? 'text-lg' : 'text-sm'"
+          >
+            {{ taglines[index].button }}
           </button>
         </a>
       </transition>

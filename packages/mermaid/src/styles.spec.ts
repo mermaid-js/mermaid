@@ -29,6 +29,9 @@ import timeline from './diagrams/timeline/styles.js';
 import mindmap from './diagrams/mindmap/styles.js';
 import packet from './diagrams/packet/styles.js';
 import block from './diagrams/block/styles.js';
+import treeView from './diagrams/treeView/styles.js';
+import radar from './diagrams/radar/styles.js';
+import venn from './diagrams/venn/styles.js';
 import themes from './themes/index.js';
 
 function checkValidStylisCSSStyleSheet(stylisString: string) {
@@ -74,7 +77,7 @@ describe('styles', () => {
 
       addStylesForDiagram(diagramType, myTypeGetStylesFunc);
 
-      const styles = getStyles(diagramType, '', getConfig().themeVariables);
+      const styles = getStyles(diagramType, '', getConfig().themeVariables, '');
 
       checkValidStylisCSSStyleSheet(styles);
     });
@@ -99,6 +102,9 @@ describe('styles', () => {
         block,
         timeline,
         packet,
+        treeView,
+        radar,
+        venn,
       })) {
         test(`should return a valid style for diagram ${diagramId} and theme ${themeId}`, async () => {
           const { default: getStyles, addStylesForDiagram } = await import('./styles.js');
@@ -108,7 +114,8 @@ describe('styles', () => {
             diagramId,
             '',
             // @ts-expect-error This will probably be broken until we create a proper Themes type.
-            themes[themeId].getThemeVariables()
+            themes[themeId].getThemeVariables(),
+            ''
           );
 
           checkValidStylisCSSStyleSheet(styles);

@@ -3,7 +3,7 @@
  *  (c) 2014-2021 Knut Sveidqvist
  *  MIT license.
  *
- *  Based on js sequence diagrams jison grammr
+ *  Based on js sequence diagrams jison grammar
  *  https://bramp.github.io/js-sequence-diagrams/
  *  (c) 2012-2013 Andrew Brampton (bramp.net)
  *  Simplified BSD license.
@@ -44,7 +44,31 @@
 // A special state for grabbing text up to the first comment/newline
 %x LINE
 
+// Function to split ID from inline %% comment
+%{
+function processId() {
+    const idx = yytext.indexOf('%%');
+    if (idx === 0) {
+        return false;
+    }
+    if (idx > 0) {
+        const before = yytext.slice(0, idx);
+        const after = yytext.slice(idx);
+
+        if (after) {
+            yy.lexer.unput(after);
+        }
+        yytext = before;
+    }
+    return true;
+}
+%}
+
 %%
+
+"click"                     return 'CLICK';
+"href"                      return 'HREF';
+\"[^"]*\"                   return 'STRING';   
 
 "default"             return 'DEFAULT';
 
@@ -53,14 +77,11 @@
 .*direction\s+RL[^\n]*                                      return 'direction_rl';
 .*direction\s+LR[^\n]*                                      return 'direction_lr';
 
-\%\%(?!\{)[^\n]*                                                /* skip comments */
-[^\}]\%\%[^\n]*                                                 /* skip comments */{ /*console.log('Crap after close');*/ }
-
 [\n]+                            return 'NL';
 [\s]+                              /* skip all whitespace */
 <ID,STATE,struct,LINE>((?!\n)\s)+       /* skip same-line whitespace */
 <INITIAL,ID,STATE,struct,LINE>\#[^\n]*  /* skip comments */
-\%%[^\n]*                        /* skip comments */
+<INITIAL,ID,STATE,struct,LINE>\%\%(?!\{)[^\n]*          /* skip comments */
 "scale"\s+            { this.pushState('SCALE'); /* console.log('Got scale', yytext);*/ return 'scale'; }
 <SCALE>\d+            return 'WIDTH';
 <SCALE>\s+"width"     { this.popState(); }
@@ -106,13 +127,12 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 
 <STATE>["]                 { /* console.log('Starting STATE_STRING'); */ this.pushState("STATE_STRING"); }
 <STATE>\s*"as"\s+          { this.pushState('STATE_ID'); /* console.log('pushState(STATE_ID)'); */ return "AS"; }
-<STATE_ID>[^\n\{]*         { this.popState(); /* console.log('STATE_ID', yytext); */ return "ID"; }
+<STATE_ID>[^\n\{]*         { if (!processId()) return; this.popState(); /* console.log('STATE_ID', yytext); */ return "ID"; }
 <STATE_STRING>["]          { this.popState(); }
 <STATE_STRING>[^"]*        { /* console.log('Long description:', yytext); */ return "STATE_DESCR"; }
 <STATE>[^\n\s\{]+          { /* console.log('COMPOSIT_STATE', yytext); */ return 'COMPOSIT_STATE'; }
 <STATE>\n                  { this.popState(); }
 <INITIAL,STATE>\{          { this.popState(); this.pushState('struct'); /* console.log('begin struct', yytext); */ return 'STRUCT_START'; }
-<struct>\%\%(?!\{)[^\n]*   /* skip comments inside state*/
 <struct>\}                 { /*console.log('Ending struct');*/ this.popState(); return 'STRUCT_STOP';} }
 <struct>[\n]               /* nothing */
 
@@ -123,10 +143,10 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <FLOATING_NOTE>\s*"as"\s*           { this.popState(); this.pushState('FLOATING_NOTE_ID'); return "AS"; }
 <FLOATING_NOTE>["]                  /**/
 <FLOATING_NOTE>[^"]*                { /* console.log('Floating note text: ', yytext); */ return "NOTE_TEXT"; }
-<FLOATING_NOTE_ID>[^\n]*            { this.popState(); /* console.log('Floating note ID', yytext);*/ return "ID"; }
-<NOTE_ID>\s*[^:\n\s\-]+             { this.popState(); this.pushState('NOTE_TEXT'); /*console.log('Got ID for note', yytext);*/ return 'ID'; }
+<FLOATING_NOTE_ID>[^\n]*            { if (!processId()) return; this.popState(); /* console.log('Floating note ID', yytext);*/ return "ID"; }
+<NOTE_ID>\s*[^:\n\s\-]+             { if (!processId()) return; this.popState(); this.pushState('NOTE_TEXT'); /*console.log('Got ID for note', yytext);*/ return 'ID'; }
 <NOTE_TEXT>\s*":"[^:\n;]+           { this.popState(); /* console.log('Got NOTE_TEXT for note',yytext);*/yytext = yytext.substr(2).trim(); return 'NOTE_TEXT'; }
-<NOTE_TEXT>[\s\S]*?"end note"       { this.popState(); /* console.log('Got NOTE_TEXT for note',yytext);*/yytext = yytext.slice(0,-8).trim(); return 'NOTE_TEXT'; }
+<NOTE_TEXT>[\s\S]*?\n\s*"end note"  { this.popState(); /* console.log('Got NOTE_TEXT for note',yytext);*/yytext = yytext.slice(0,-8).trim(); return 'NOTE_TEXT'; }
 
 "stateDiagram"\s+                   { /* console.log('Got state diagram', yytext,'#'); */ return 'SD'; }
 "stateDiagram-v2"\s+                { /* console.log('Got state diagram', yytext,'#'); */ return 'SD'; }
@@ -134,13 +154,13 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 "hide empty description"      { /* console.log('HIDE_EMPTY', yytext,'#'); */ return 'HIDE_EMPTY'; }
 
 <INITIAL,struct>"[*]"                   { /* console.log('EDGE_STATE=',yytext); */ return 'EDGE_STATE'; }
-<INITIAL,struct>[^:\n\s\-\{]+           { /* console.log('=>ID=',yytext); */ return 'ID'; }
+<INITIAL,struct>[^:\n\s\-\{]+           { if (!processId()) return; /* console.log('=>ID=',yytext); */ return 'ID'; }
 // <INITIAL,struct>\s*":"[^\+\->:\n;]+  { yytext = yytext.trim(); /* console.log('Descr = ', yytext); */ return 'DESCR'; }
-<INITIAL,struct>\s*":"[^:\n;]+          { yytext = yytext.trim(); /* console.log('Descr = ', yytext); */ return 'DESCR'; }
+<INITIAL,struct>\s*":"(?:[^:\n;]|":"[^:\n;])+  { yytext = yytext.trim(); /* console.log('Descr = ', yytext); */ return 'DESCR'; }
 
 <INITIAL,struct>"-->"             return '-->';
 <struct>"--"                      return 'CONCURRENT';
-":::"                             return 'STYLE_SEPARATOR';
+<INITIAL,struct>":::"             return 'STYLE_SEPARATOR';
 <<EOF>>                           return 'NL';
 .                                 return 'INVALID';
 
@@ -246,8 +266,26 @@ statement
     | direction
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
-    | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }    ;
-
+    | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }    
+    | CLICK idStatement STRING STRING NL
+    {
+        $$ = {
+            stmt: "click",
+            id: $2,
+            url: $3,
+            tooltip: $4
+        };
+    }
+    | CLICK idStatement HREF STRING NL
+    {
+        $$ = {
+            stmt: "click",
+            id: $2,
+            url: $4,
+            tooltip: ""
+        };
+    }
+    ;
 
 classDefStatement
     : classDef CLASSDEF_ID CLASSDEF_STYLEOPTS {

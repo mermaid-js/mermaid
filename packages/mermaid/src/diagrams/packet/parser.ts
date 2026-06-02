@@ -3,33 +3,40 @@ import { parse } from '@mermaid-js/parser';
 import type { ParserDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { populateCommonDb } from '../common/populateCommonDb.js';
-import { db } from './db.js';
+import { PacketDB } from './db.js';
 import type { PacketBlock, PacketWord } from './types.js';
 
 const maxPacketSize = 10_000;
 
-const populate = (ast: Packet) => {
+const populate = (ast: Packet, db: PacketDB) => {
   populateCommonDb(ast, db);
-  let lastByte = -1;
+  let lastBit = -1;
   let word: PacketWord = [];
   let row = 1;
   const { bitsPerRow } = db.getConfig();
-  for (let { start, end, label } of ast.blocks) {
-    if (end && end < start) {
+
+  for (let { start, end, bits, label } of ast.blocks) {
+    if (start !== undefined && end !== undefined && end < start) {
       throw new Error(`Packet block ${start} - ${end} is invalid. End must be greater than start.`);
     }
-    if (start !== lastByte + 1) {
+    start ??= lastBit + 1;
+    if (start !== lastBit + 1) {
       throw new Error(
         `Packet block ${start} - ${end ?? start} is not contiguous. It should start from ${
-          lastByte + 1
+          lastBit + 1
         }.`
       );
     }
-    lastByte = end ?? start;
-    log.debug(`Packet block ${start} - ${lastByte} with label ${label}`);
+    if (bits === 0) {
+      throw new Error(`Packet block ${start} is invalid. Cannot have a zero bit field.`);
+    }
+    end ??= start + (bits ?? 1) - 1;
+    bits ??= end - start + 1;
+    lastBit = end;
+    log.debug(`Packet block ${start} - ${lastBit} with label ${label}`);
 
     while (word.length <= bitsPerRow + 1 && db.getPacket().length < maxPacketSize) {
-      const [block, nextBlock] = getNextFittingBlock({ start, end, label }, row, bitsPerRow);
+      const [block, nextBlock] = getNextFittingBlock({ start, end, bits, label }, row, bitsPerRow);
       word.push(block);
       if (block.end + 1 === row * bitsPerRow) {
         db.pushWord(word);
@@ -39,7 +46,7 @@ const populate = (ast: Packet) => {
       if (!nextBlock) {
         break;
       }
-      ({ start, end, label } = nextBlock);
+      ({ start, end, bits, label } = nextBlock);
     }
   }
   db.pushWord(word);
@@ -50,8 +57,11 @@ const getNextFittingBlock = (
   row: number,
   bitsPerRow: number
 ): [Required<PacketBlock>, PacketBlock | undefined] => {
+  if (block.start === undefined) {
+    throw new Error('start should have been set during first phase');
+  }
   if (block.end === undefined) {
-    block.end = block.start;
+    throw new Error('end should have been set during first phase');
   }
 
   if (block.start > block.end) {
@@ -62,24 +72,36 @@ const getNextFittingBlock = (
     return [block as Required<PacketBlock>, undefined];
   }
 
+  const rowEnd = row * bitsPerRow - 1;
+  const rowStart = row * bitsPerRow;
   return [
     {
       start: block.start,
-      end: row * bitsPerRow - 1,
+      end: rowEnd,
       label: block.label,
+      bits: rowEnd - block.start,
     },
     {
-      start: row * bitsPerRow,
+      start: rowStart,
       end: block.end,
       label: block.label,
+      bits: block.end - rowStart,
     },
   ];
 };
 
 export const parser: ParserDefinition = {
+  // @ts-expect-error - PacketDB is not assignable to DiagramDB
+  parser: { yy: undefined },
   parse: async (input: string): Promise<void> => {
     const ast: Packet = await parse('packet', input);
+    const db = parser.parser?.yy;
+    if (!(db instanceof PacketDB)) {
+      throw new Error(
+        'parser.parser?.yy was not a PacketDB. This is due to a bug within Mermaid, please report this issue at https://github.com/mermaid-js/mermaid/issues.'
+      );
+    }
     log.debug(ast);
-    populate(ast);
+    populate(ast, db);
   },
 };

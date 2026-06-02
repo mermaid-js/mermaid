@@ -16,7 +16,6 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     // TODO: should we move this to a mermaid-core package?
-    setupFiles: ['packages/mermaid/src/tests/setup.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
@@ -35,6 +34,9 @@ export default defineConfig({
     },
   },
   define: {
+    // Needs to be string
+    'injected.includeLargeFeatures': 'true',
     'import.meta.vitest': 'undefined',
+    packageVersion: "'0.0.0'",
   },
 });

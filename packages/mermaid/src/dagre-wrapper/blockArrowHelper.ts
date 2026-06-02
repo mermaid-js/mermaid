@@ -24,7 +24,8 @@ const expandAndDeduplicateDirections = (directions: Direction[]) => {
 export const getArrowPoints = (
   duplicatedDirections: Direction[],
   bbox: { width: number; height: number },
-  node: any
+  node: any,
+  totalWidth?: number
 ) => {
   // Expand and deduplicate the provided directions.
   // for instance: x, right => right, left
@@ -38,7 +39,8 @@ export const getArrowPoints = (
   // Midpoint calculation based on height.
   const midpoint = height / f;
   // Calculated width of the bounding box, accounting for additional width and node padding.
-  const width = bbox.width + 2 * midpoint + node.padding;
+  // When totalWidth is provided
+  const width = totalWidth ?? bbox.width + 2 * midpoint + node.padding;
   // Padding to use, half of the node padding.
   const padding = node.padding / 2;
 
@@ -133,7 +135,7 @@ export const getArrowPoints = (
     return [
       // Bottom center
       { x: width / 2, y: 0 },
-      // Left pont of bottom arrow
+      // Left point of bottom arrow
       { x: 0, y: -padding },
       { x: midpoint, y: -padding },
       // Left top over vertical section
@@ -229,7 +231,7 @@ export const getArrowPoints = (
     return [
       // Bottom center
       { x: width / 2, y: 0 },
-      // Left pont of bottom arrow
+      // Left point of bottom arrow
       { x: 0, y: -padding },
       { x: midpoint, y: -padding },
       // Left top over vertical section

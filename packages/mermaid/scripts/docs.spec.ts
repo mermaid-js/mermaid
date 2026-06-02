@@ -171,7 +171,9 @@ This Markdown should be kept.
       expect(buildShapeDoc()).toMatchInlineSnapshot(`
         "| **Semantic Name**                 | **Shape Name**         | **Short Name** | **Description**                | **Alias Supported**                                              |
         | --------------------------------- | ---------------------- | -------------- | ------------------------------ | ---------------------------------------------------------------- |
+        | Bang                              | Bang                   | \`bang\`         | Bang                           | \`bang\`                                                           |
         | Card                              | Notched Rectangle      | \`notch-rect\`   | Represents a card              | \`card\`, \`notched-rectangle\`                                      |
+        | Cloud                             | Cloud                  | \`cloud\`        | cloud                          | \`cloud\`                                                          |
         | Collate                           | Hourglass              | \`hourglass\`    | Represents a collate operation | \`collate\`, \`hourglass\`                                           |
         | Com Link                          | Lightning Bolt         | \`bolt\`         | Communication link             | \`com-link\`, \`lightning-bolt\`                                     |
         | Comment                           | Curly Brace            | \`brace\`        | Adds a comment                 | \`brace-l\`, \`comment\`                                             |
@@ -179,6 +181,7 @@ This Markdown should be kept.
         | Comment with braces on both sides | Curly Braces           | \`braces\`       | Adds a comment                 |                                                                  |
         | Data Input/Output                 | Lean Right             | \`lean-r\`       | Represents input or output     | \`in-out\`, \`lean-right\`                                           |
         | Data Input/Output                 | Lean Left              | \`lean-l\`       | Represents output or input     | \`lean-left\`, \`out-in\`                                            |
+        | Data Store                        | Data Store             | \`datastore\`    | Data flow diagram data store   | \`data-store\`                                                     |
         | Database                          | Cylinder               | \`cyl\`          | Database storage               | \`cylinder\`, \`database\`, \`db\`                                     |
         | Decision                          | Diamond                | \`diam\`         | Decision-making step           | \`decision\`, \`diamond\`, \`question\`                                |
         | Delay                             | Half-Rounded Rectangle | \`delay\`        | Represents a delay             | \`half-rounded-rectangle\`                                         |

@@ -1,0 +1,189 @@
+---
+references:
+  - "File: /packages/mermaid/src/diagrams/flowchart/flowDiagram.ts"
+  - "File: /packages/mermaid/src/diagrams/flowchart/flowDb.ts"
+  - "File: /packages/mermaid/src/diagrams/flowchart/flowDetector.ts"
+  - "File: /packages/mermaid/src/diagrams/flowchart/flowDetector-v2.ts"
+  - "File: /packages/mermaid/src/diagrams/flowchart/flowRenderer-v3-unified.ts"
+  - "File: /packages/mermaid/src/diagrams/flowchart/styles.ts"
+  - "File: /packages/mermaid/src/diagrams/flowchart/types.ts"
+  - "File: /packages/mermaid/src/diagrams/flowchart/flowChartShapes.js"
+  - "File: /packages/mermaid/src/diagrams/flowchart/parser/flowParser.ts"
+  - "File: /packages/mermaid/src/diagrams/flowchart/elk/detector.ts"
+generationTime: 2025-07-23T10:31:53.266Z
+---
+flowchart TD
+    %% Entry Points and Detection
+    Input["User Input Text"] --> Detection{Detection Phase}
+    
+    Detection --> flowDetector["flowDetector.ts<br/>detector(txt, config)"]
+    Detection --> flowDetectorV2["flowDetector-v2.ts<br/>detector(txt, config)"]
+    Detection --> elkDetector["elk/detector.ts<br/>detector(txt, config)"]
+    
+    flowDetector --> |"Checks /^\s*graph/"| DetectLegacy{Legacy Flowchart?}
+    flowDetectorV2 --> |"Checks /^\s*flowchart/"| DetectNew{New Flowchart?}
+    elkDetector --> |"Checks /^\s*flowchart-elk/"| DetectElk{ELK Layout?}
+    
+    DetectLegacy --> |Yes| LoadDiagram
+    DetectNew --> |Yes| LoadDiagram
+    DetectElk --> |Yes| LoadDiagram
+    
+    %% Loading Phase
+    LoadDiagram["loader() function"] --> flowDiagram["flowDiagram.ts<br/>diagram object"]
+    
+    flowDiagram --> DiagramStructure{Diagram Components}
+    DiagramStructure --> Parser["parser: flowParser"]
+    DiagramStructure --> Database["db: new FlowDB()"]
+    DiagramStructure --> Renderer["renderer: flowRenderer-v3-unified"]
+    DiagramStructure --> Styles["styles: flowStyles"]
+    DiagramStructure --> Init["init: (cnf: MermaidConfig)"]
+    
+    %% Parser Phase
+    Parser --> flowParser["parser/flowParser.ts<br/>newParser.parse(src)"]
+    flowParser --> |"Preprocesses src"| RemoveWhitespace["Remove trailing whitespace<br/>src.replace(/}\s*\n/g, '}\n')"]
+    RemoveWhitespace --> flowJison["parser/flow.jison<br/>flowJisonParser.parse(newSrc)"]
+    
+    flowJison --> ParseGraph["Parse Graph Structure"]
+    ParseGraph --> ParseVertices["Parse Vertices"]
+    ParseGraph --> ParseEdges["Parse Edges"]
+    ParseGraph --> ParseSubgraphs["Parse Subgraphs"]
+    ParseGraph --> ParseClasses["Parse Classes"]
+    ParseGraph --> ParseStyles["Parse Styles"]
+    
+    %% Database Phase - FlowDB Class
+    Database --> FlowDBClass["flowDb.ts<br/>FlowDB class"]
+    
+    FlowDBClass --> DBInit["constructor()<br/>- Initialize counters<br/>- Bind methods<br/>- Setup toolTips<br/>- Call clear()"]
+    
+    DBInit --> DBMethods{FlowDB Methods}
+    
+    DBMethods --> addVertex["addVertex(id, textObj, type, style,<br/>classes, dir, props, metadata)"]
+    DBMethods --> addLink["addLink(_start[], _end[], linkData)"]
+    DBMethods --> addSingleLink["addSingleLink(_start, _end, type, id)"]
+    DBMethods --> setDirection["setDirection(dir)"]
+    DBMethods --> addSubGraph["addSubGraph(nodes[], id, title)"]
+    DBMethods --> addClass["addClass(id, style)"]
+    DBMethods --> setClass["setClass(ids, className)"]
+    DBMethods --> setTooltip["setTooltip(ids, tooltip)"]
+    DBMethods --> setClickEvent["setClickEvent(id, functionName, args)"]
+    DBMethods --> setClickFun["setClickFun(id, functionName, args)"]
+    
+    %% Vertex Processing
+    addVertex --> VertexProcess{Vertex Processing}
+    VertexProcess --> CreateVertex["Create FlowVertex object<br/>- id, labelType, domId<br/>- styles[], classes[]"]
+    VertexProcess --> SanitizeText["sanitizeText(textObj.text)"]
+    VertexProcess --> ParseMetadata["Parse YAML metadata<br/>yaml.load(yamlData)"]
+    VertexProcess --> SetVertexProps["Set vertex properties<br/>- shape, label, icon, form<br/>- pos, img, constraint, w, h"]
+    
+    %% Edge Processing  
+    addSingleLink --> EdgeProcess{Edge Processing}
+    EdgeProcess --> CreateEdge["Create FlowEdge object<br/>- start, end, type, text<br/>- labelType, classes[]"]
+    EdgeProcess --> ProcessLinkText["Process link text<br/>- sanitizeText()<br/>- strip quotes"]
+    EdgeProcess --> SetEdgeProps["Set edge properties<br/>- type, stroke, length"]
+    EdgeProcess --> GenerateEdgeId["Generate edge ID<br/>getEdgeId(start, end, counter)"]
+    EdgeProcess --> ValidateEdgeLimit["Validate edge limit<br/>maxEdges check"]
+    
+    %% Data Collection
+    DBMethods --> GetData["getData()"]
+    GetData --> CollectNodes["Collect nodes[] from vertices"]
+    GetData --> CollectEdges["Collect edges[] from edges"]
+    GetData --> ProcessSubGraphs["Process subgraphs<br/>- parentDB Map<br/>- subGraphDB Map"]
+    GetData --> AddNodeFromVertex["addNodeFromVertex()<br/>for each vertex"]
+    GetData --> ProcessEdgeTypes["destructEdgeType()<br/>arrowTypeStart, arrowTypeEnd"]
+    
+    %% Node Creation
+    AddNodeFromVertex --> NodeCreation{Node Creation}
+    NodeCreation --> FindExistingNode["findNode(nodes, vertex.id)"]
+    NodeCreation --> CreateBaseNode["Create base node<br/>- id, label, parentId<br/>- cssStyles, cssClasses<br/>- shape, domId, tooltip"]
+    NodeCreation --> GetCompiledStyles["getCompiledStyles(classDefs)"]
+    NodeCreation --> GetTypeFromVertex["getTypeFromVertex(vertex)"]
+    
+    %% Rendering Phase
+    Renderer --> flowRendererV3["flowRenderer-v3-unified.ts<br/>draw(text, id, version, diag)"]
+    
+    flowRendererV3 --> RenderInit["Initialize rendering<br/>- getConfig()<br/>- handle securityLevel<br/>- getDiagramElement()"]
+    
+    RenderInit --> GetLayoutData["diag.db.getData()<br/>as LayoutData"]
+    GetLayoutData --> SetupLayoutData["Setup layout data<br/>- type, layoutAlgorithm<br/>- direction, spacing<br/>- markers, diagramId"]
+    
+    SetupLayoutData --> CallRender["render(data4Layout, svg)"]
+    CallRender --> SetupViewPort["setupViewPortForSVG(svg, padding)"]
+    SetupViewPort --> ProcessLinks["Process vertex links<br/>- create anchor elements<br/>- handle click events"]
+    
+    %% Shape Rendering
+    CallRender --> ShapeSystem["flowChartShapes.js<br/>Shape Functions"]
+    
+    ShapeSystem --> ShapeFunctions{Shape Functions}
+    ShapeFunctions --> question["question(parent, bbox, node)"]
+    ShapeFunctions --> hexagon["hexagon(parent, bbox, node)"]
+    ShapeFunctions --> rect_left_inv_arrow["rect_left_inv_arrow(parent, bbox, node)"]
+    ShapeFunctions --> lean_right["lean_right(parent, bbox, node)"]
+    ShapeFunctions --> lean_left["lean_left(parent, bbox, node)"]
+    
+    ShapeFunctions --> insertPolygonShape["insertPolygonShape(parent, w, h, points)"]
+    ShapeFunctions --> intersectPolygon["intersectPolygon(node, points, point)"]
+    ShapeFunctions --> intersectRect["intersectRect(node, point)"]
+    
+    %% Styling System
+    Styles --> stylesTS["styles.ts<br/>getStyles(options)"]
+    stylesTS --> StyleOptions["FlowChartStyleOptions<br/>- arrowheadColor, border2<br/>- clusterBkg, mainBkg<br/>- fontFamily, textColor"]
+    
+    StyleOptions --> GenerateCSS["Generate CSS styles<br/>- .label, .cluster-label<br/>- .node, .edgePath<br/>- .flowchart-link, .edgeLabel"]
+    GenerateCSS --> GetIconStyles["getIconStyles()"]
+    
+    %% Type System
+    Parser --> TypeSystem["types.ts<br/>Type Definitions"]
+    TypeSystem --> FlowVertex["FlowVertex interface"]
+    TypeSystem --> FlowEdge["FlowEdge interface"]
+    TypeSystem --> FlowClass["FlowClass interface"]
+    TypeSystem --> FlowSubGraph["FlowSubGraph interface"]
+    TypeSystem --> FlowVertexTypeParam["FlowVertexTypeParam<br/>Shape types"]
+    
+    %% Utility Functions
+    DBMethods --> UtilityFunctions{Utility Functions}
+    UtilityFunctions --> lookUpDomId["lookUpDomId(id)"]
+    UtilityFunctions --> getClasses["getClasses()"]
+    UtilityFunctions --> getDirection["getDirection()"]
+    UtilityFunctions --> getVertices["getVertices()"]
+    UtilityFunctions --> getEdges["getEdges()"]
+    UtilityFunctions --> getSubGraphs["getSubGraphs()"]
+    UtilityFunctions --> clear["clear()"]
+    UtilityFunctions --> defaultConfig["defaultConfig()"]
+    
+    %% Event Handling
+    ProcessLinks --> EventHandling{Event Handling}
+    EventHandling --> setupToolTips["setupToolTips(element)"]
+    EventHandling --> bindFunctions["bindFunctions(element)"]
+    EventHandling --> runFunc["utils.runFunc(functionName, args)"]
+    
+    %% Common Database Functions
+    DBMethods --> CommonDB["commonDb.js functions"]
+    CommonDB --> setAccTitle["setAccTitle()"]
+    CommonDB --> getAccTitle["getAccTitle()"]
+    CommonDB --> setAccDescription["setAccDescription()"]
+    CommonDB --> getAccDescription["getAccDescription()"]
+    CommonDB --> setDiagramTitle["setDiagramTitle()"]
+    CommonDB --> getDiagramTitle["getDiagramTitle()"]
+    CommonDB --> commonClear["clear()"]
+    
+    %% Final Output
+    ProcessLinks --> FinalSVG["Final SVG Output"]
+    
+    %% Layout Algorithm Selection
+    SetupLayoutData --> LayoutAlgorithm{Layout Algorithm}
+    LayoutAlgorithm --> Dagre["dagre<br/>(default)"]
+    LayoutAlgorithm --> DagreWrapper["dagre-wrapper<br/>(v2 renderer)"]
+    LayoutAlgorithm --> ELK["elk<br/>(external package)"]
+    
+    %% Testing Components
+    FlowDBClass --> TestFiles["Test Files"]
+    TestFiles --> flowDbSpec["flowDb.spec.ts"]
+    TestFiles --> flowChartShapesSpec["flowChartShapes.spec.js"]
+    TestFiles --> ParserTests["parser/*.spec.js files<br/>- flow-text.spec.js<br/>- flow-edges.spec.js<br/>- flow-style.spec.js<br/>- subgraph.spec.js"]
+    
+    %% Configuration
+    Init --> ConfigSetup["Configuration Setup"]
+    ConfigSetup --> FlowchartConfig["cnf.flowchart config"]
+    ConfigSetup --> ArrowMarkers["arrowMarkerAbsolute"]
+    ConfigSetup --> LayoutConfig["layout config"]
+    ConfigSetup --> SetConfig["setConfig() calls"]

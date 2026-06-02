@@ -705,6 +705,7 @@ export const getBoundaries = function (parentBoundary) {
   }
 };
 
+// cspell:ignore getBoundarys
 /**
  * @deprecated Use {@link getBoundaries} instead
  */

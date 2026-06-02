@@ -4,34 +4,39 @@ sidebar: false
 
 title: Mermaid
 titleTemplate: Diagramming and charting tool
-
 hero:
-  name: Mermaid
-  text: Diagramming and charting tool
-  tagline: JavaScript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically.
+  name: <span class="home-header">Mermaid.js now lives</span>
+  text: at <a href="https://Mermaid.ai/open-source?utm_medium=hero&utm_campaign=variant_a&utm_source=mermaid_js" class="home-link">mermaid.ai</a>
+  tagline: One home for the open-source library and the platform built around it. More resources for the project, a clearer path for contributors, and a team committed to keeping Mermaid open, always.
 
   image:
-    src: /mermaid-logo.svg
-    alt: Mermaid
+    light: /hero-chart.svg
+    dark: /hero-chart-dark.svg
+    alt: Mermaid diagram
   actions:
     - theme: brand
-      text: Get Started
-      link: /intro/
+      text: Try Editor
+      link: https://mermaid.live/edit
+      target: _blank
+      rel: external
     - theme: alt
-      text: View on GitHub
-      link: https://github.com/mermaid-js/mermaid
+      text: Get started
+      link: https://mermaid.ai/open-source/intro/
 
 features:
-  - title: ➕ Easy to use!
-    details: Easily create and render detailed diagrams and charts with the Mermaid Live Editor.
+  - icon:
+      src: /1-Callout-Easy.svg
+    title: Easy to use
+    details: Easily create diagrams and charts with the Mermaid Live Editor.
     link: https://mermaid.live/
-  - title: 🧩 Integrations available!
+  - icon:
+      src: /2-Callout-Integrations.svg
+    title: Integrations available
     details: Use Mermaid with your favorite applications, check out the integrations list.
     link: ../../ecosystem/integrations-community.md
-  - title: 🏆 Award winning!
+  - icon:
+      src: /3-Callout-Awards.svg
+    title: Award winning
     details: 2019 JavaScript Open Source Award winner for "The Most Exciting Use of Technology".
     link: https://osawards.com/javascript/2019
-  - title: 🥰 Mermaid + Mermaid Chart
-    details: Mermaid Chart is a major supporter of the Mermaid project.
-    link: https://www.mermaidchart.com/
 ---

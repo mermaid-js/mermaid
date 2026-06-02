@@ -10,6 +10,30 @@ describe('when parsing a timeline ', function () {
     setLogLevel('trace');
   });
   describe('Timeline', function () {
+    it('should default to LR direction when none is provided', function () {
+      let str = `timeline
+    section abc-123`;
+
+      timeline.parse(str);
+      expect(timelineDB.getDirection()).to.equal('LR');
+    });
+
+    it('should parse TD direction', function () {
+      let str = `timeline TD
+    section abc-123`;
+
+      timeline.parse(str);
+      expect(timelineDB.getDirection()).to.equal('TD');
+    });
+
+    it('should parse LR direction', function () {
+      let str = `timeline LR
+    section abc-123`;
+
+      timeline.parse(str);
+      expect(timelineDB.getDirection()).to.equal('LR');
+    });
+
     it('should handle a simple section definition abc-123', function () {
       let str = `timeline
     section abc-123`;
@@ -30,7 +54,7 @@ describe('when parsing a timeline ', function () {
       });
     });
 
-    it('should handle a two section and two coressponding tasks', function () {
+    it('should handle a two section and two corresponding tasks', function () {
       let str = `timeline
     section abc-123
     task1
@@ -63,6 +87,30 @@ describe('when parsing a timeline ', function () {
         switch (t.task.trim()) {
           case 'task1':
             expect(t.events).to.deep.equal(['event1']);
+            break;
+
+          case 'task2':
+            expect(t.events).to.deep.equal(['event2', 'event3']);
+            break;
+
+          default:
+            break;
+        }
+      });
+    });
+
+    it('should handle a section, and task and its events including markdown link', function () {
+      let str = `timeline
+    section abc-123
+      task1: [event1](http://example.com)
+      task2: event2: event3
+   `;
+      timeline.parse(str);
+      expect(timelineDB.getSections()[0]).to.deep.equal('abc-123');
+      timelineDB.getTasks().forEach((t) => {
+        switch (t.task.trim()) {
+          case 'task1':
+            expect(t.events).to.deep.equal(['[event1](http://example.com)']);
             break;
 
           case 'task2':

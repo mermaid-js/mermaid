@@ -33,4 +33,12 @@ describe('Katex', () => {
   //     { fontFamily: 'courier' }
   //   );
   // });
+  it('4: should render consecutive LaTeX equations separated by text', () => {
+    imgSnapshotTest(
+      `graph TD
+      A["From $$x(t)$$"] --> B{"$$\\tilde{x}(t)$$"};
+      C["From $$x(t)$$ to $$y(t)$$"] --> D{"$$\\tilde{x}(t)$$"};`,
+      { fontFamily: 'courier' }
+    );
+  });
 });
