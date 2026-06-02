@@ -1,0 +1,60 @@
+{
+  "nodes": [
+    {
+      "id": "A",
+      "width": 60.57062911987305,
+      "height": 45
+    },
+    {
+      "id": "B",
+      "width": 93.34375,
+      "height": 91
+    },
+    {
+      "id": "I",
+      "width": 42.11249923706055,
+      "height": 45
+    },
+    {
+      "id": "C",
+      "width": 94.11250305175781,
+      "height": 91
+    },
+    {
+      "id": "D",
+      "width": 94.11250305175781,
+      "height": 91
+    },
+    {
+      "id": "G",
+      "width": 42.89374923706055,
+      "height": 45
+    },
+    {
+      "id": "H",
+      "width": 42.11249923706055,
+      "height": 45
+    },
+    {
+      "id": "Sys1",
+      "width": 63.125,
+      "height": 45
+    },
+    {
+      "id": "E",
+      "width": 41.34375,
+      "height": 45
+    },
+    {
+      "id": "F",
+      "width": 40.556251525878906,
+      "height": 45
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "df138e33fe91ec84ad85b49c1346c9fcd14dd2881d24e44e6eca82b694712281",
+    "capturedAt": "2026-06-02T15:48:40.107Z",
+    "capturedFrom": "dev-explorer layout-tests/swimlanes/hexagons.mmd theme=redux-color look=neo layout=swimlane"
+  }
+}

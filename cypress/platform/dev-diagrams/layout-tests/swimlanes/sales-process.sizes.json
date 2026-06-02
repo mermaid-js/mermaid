@@ -1,0 +1,145 @@
+{
+  "nodes": [
+    {
+      "id": "C1",
+      "width": 256.4660949707031,
+      "height": 66
+    },
+    {
+      "id": "C2",
+      "width": 124.61250305175781,
+      "height": 45
+    },
+    {
+      "id": "Finished1",
+      "width": 104.1456298828125,
+      "height": 45
+    },
+    {
+      "id": "Finished2",
+      "width": 104.1456298828125,
+      "height": 45
+    },
+    {
+      "id": "S1",
+      "width": 122.59375,
+      "height": 122.59375
+    },
+    {
+      "id": "S2",
+      "width": 232,
+      "height": 66
+    },
+    {
+      "id": "T3",
+      "width": 171.25625610351562,
+      "height": 45
+    },
+    {
+      "id": "T5",
+      "width": 171.25625610351562,
+      "height": 45
+    },
+    {
+      "id": "T1",
+      "width": 115.58125305175781,
+      "height": 115.58125305175781
+    },
+    {
+      "id": "T2",
+      "width": 134.72500610351562,
+      "height": 45
+    },
+    {
+      "id": "T4",
+      "width": 228.0625,
+      "height": 45
+    },
+    {
+      "id": "T6",
+      "width": 134.72500610351562,
+      "height": 45
+    },
+    {
+      "id": "Te1",
+      "width": 117.5999984741211,
+      "height": 45
+    },
+    {
+      "id": "Te2",
+      "width": 187.1999969482422,
+      "height": 187.1999969482422
+    },
+    {
+      "id": "D4",
+      "width": 117.15625,
+      "height": 117.15625
+    },
+    {
+      "id": "D1",
+      "width": 103.57499694824219,
+      "height": 45
+    },
+    {
+      "id": "D2",
+      "width": 144.83749389648438,
+      "height": 45
+    },
+    {
+      "id": "D3",
+      "width": 110.5875015258789,
+      "height": 45
+    },
+    {
+      "id": "edge-label-S1-S2-L_S1_S2_0",
+      "width": 22.84375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-S1-T1-L_S1_T1_0",
+      "width": 17.899999618530273,
+      "height": 21
+    },
+    {
+      "id": "edge-label-T1-T2-L_T1_T2_0",
+      "width": 17.899999618530273,
+      "height": 21
+    },
+    {
+      "id": "edge-label-T1-Te1-L_T1_Te1_0",
+      "width": 22.84375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-Te2-D1-L_Te2_D1_0",
+      "width": 22.84375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-Te2-T4-L_Te2_T4_0",
+      "width": 17.899999618530273,
+      "height": 21
+    },
+    {
+      "id": "edge-label-T4-C2-L_T4_C2_0",
+      "width": 17.899999618530273,
+      "height": 21
+    },
+    {
+      "id": "edge-label-D4-D2-L_D4_D2_0",
+      "width": 17.899999618530273,
+      "height": 21
+    },
+    {
+      "id": "edge-label-D4-T6-L_D4_T6_0",
+      "width": 22.84375,
+      "height": 21
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "ee554ac7c81046caa6233477856b661d5be6b26920b9ba15122cda88bf9b95a4",
+    "capturedAt": "2026-06-02T15:49:24.602Z",
+    "capturedFrom": "dev-explorer layout-tests/swimlanes/sales-process.mmd theme=redux-color look=neo layout=swimlane"
+  }
+}

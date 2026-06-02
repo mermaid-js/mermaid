@@ -555,38 +555,74 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     }
   }
 
-  // ----- Step 6.2b: bimodal in/out de-collision for diamond nodes -----
+  // ----- Step 6.2b: bimodal in/out de-collision -----
   //
   // Paper backing: the BIMODAL drawing constraint (Eiglsperger, "Orthogonal
-  // Graph Drawing with Constraints" §3.1): a vertex's incoming and outgoing
-  // edges should occupy separate, non-intersecting intervals of its circular
-  // edge order — in practice, distinct sides. Step 6.2 only load-balances
-  // same-role siblings (multiple out-edges from one side), so an out-edge can
-  // still land on the very side an in-edge already uses. On a diamond each
-  // side collapses to a single pin at the vertex (6.3 gives diamonds only a
-  // 0.3·side port span), so an in-edge and an out-edge sharing a side resolve
-  // to the SAME pin — the detached-stub "shared projected port" defect
-  // (validateLayout: edge-shared-projected-port). Move the out-edge to its
-  // free secondary side to restore bimodality. Scoped to diamonds so
-  // rectangles — whose long sides hold multiple distinct pins — are untouched.
+  // Graph Drawing with Constraints" §3.1, NotebookLM `Papers` src 0fb2d84f):
+  // a vertex's incoming and outgoing edges must occupy separate,
+  // non-intersecting, strictly consecutive intervals of its circular edge
+  // order — "in practice … placed on opposite sides." Step 6.2 only
+  // load-balances same-role siblings (multiple out-edges from one side), so an
+  // out-edge can still land on the very side an in-edge already uses. The
+  // port-group build (6.3) keys by (node, side, ROLE), so a single out-edge and
+  // a single in-edge on the same side each independently center on the κ-th pin
+  // and resolve to the same attach point — the detached-stub defect (diamonds:
+  // edge-shared-projected-port; other shapes: edge-shared-attachment-point plus
+  // the border-hug the out-edge takes to dodge the in-edge's approach). Move the
+  // out-edge to its free secondary side to restore bimodality.
+  //
+  // Two cases trigger the move:
+  //   1. Diamonds — original scope, unchanged. Every diamond side collapses to
+  //      a single pin (6.3 gives diamonds only a 0.3·side port span), so any
+  //      shared side is a collision regardless of the node's degree.
+  //   2. Pass-through vertices of ANY shape — a node with exactly one in-edge
+  //      and one out-edge, from DISTINCT neighbors, that land on the same side
+  //      (e.g. hexagons.mmd's hexagon B, whose predecessor Sys1 and successor C
+  //      both sit below it). With degree 2 the bimodal intervals are one edge
+  //      each, so opposite-side placement is unambiguous and disturbs no sibling
+  //      routing. Relocating is the bend-minimal repair — Lemma 5.3 ("no pin
+  //      left issue") adds ≤1 bend vs. Lemma 5.2's 2 bends for an off-center
+  //      same-side pin. (A 2-cycle A⇄B is degree-(1,1) but NOT a pass-through —
+  //      see the in≠out guard below.)
+  // Higher-degree non-diamond nodes are deliberately excluded: their perimeter
+  // carries other edges whose ports a relocation would perturb (e.g.
+  // 10-node-placement's rectangle D2 has a second in-edge — the D4→D2 loopback
+  // — that relocating D2→D3 pushes into a near-endpoint band). For those, 6.3's
+  // multi-pin port spreading is the correct mechanism, not a side move.
   const isDiamondNode = (node: MermaidNode | undefined): boolean => {
     const shape = (node as { shape?: string } | undefined)?.shape;
     return shape === 'question' || shape === 'diamond';
   };
   const inSidesByNode = new Map<string, Set<SideT>>();
+  const inCountByNode = new Map<string, number>();
+  const outCountByNode = new Map<string, number>();
+  const inNeighborByNode = new Map<string, string>();
   for (const info of sideInfoByIdx.values()) {
     if (!inSidesByNode.has(info.dstId)) {
       inSidesByNode.set(info.dstId, new Set());
     }
     inSidesByNode.get(info.dstId)!.add(info.dstSide);
+    inCountByNode.set(info.dstId, (inCountByNode.get(info.dstId) ?? 0) + 1);
+    outCountByNode.set(info.srcId, (outCountByNode.get(info.srcId) ?? 0) + 1);
+    inNeighborByNode.set(info.dstId, info.srcId); // unique when in-degree is 1
   }
   for (const info of sideInfoByIdx.values()) {
-    if (!isDiamondNode(nodeById.get(info.srcId))) {
-      continue;
-    }
     const inSides = inSidesByNode.get(info.srcId);
     if (!inSides?.has(info.srcSide)) {
       continue; // no in-edge shares this out-edge's side → no bimodal clash
+    }
+    // A genuine pass-through vertex: exactly one in-edge and one out-edge, AND
+    // the predecessor differs from the successor. A 2-cycle (A⇄B, where the in-
+    // and out-edge connect the SAME neighbor — e.g. 9-edge-labels' Start⇄
+    // Process1) is degree-(1,1) but NOT a pass-through: relocating its out-edge
+    // does not separate two distinct neighbors, it just bends the mutual pair
+    // back across the node interior (edge-intersects-obstacle). Exclude it.
+    const isPassThrough =
+      (inCountByNode.get(info.srcId) ?? 0) === 1 &&
+      (outCountByNode.get(info.srcId) ?? 0) === 1 &&
+      inNeighborByNode.get(info.srcId) !== info.dstId;
+    if (!isDiamondNode(nodeById.get(info.srcId)) && !isPassThrough) {
+      continue; // only diamonds or degree-(1,1) pass-through vertices relocate
     }
     const secondary = secondarySide(info);
     // Only move to a side that no in-edge uses and that carries no committed
