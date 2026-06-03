@@ -310,6 +310,7 @@ export class AgentFlowDB implements DiagramDB {
     this.setSourceText = this.setSourceText.bind(this);
     this.setFrontmatterLineOffset = this.setFrontmatterLineOffset.bind(this);
     this.addVertexMapping = this.addVertexMapping.bind(this);
+    this.extendVertexMapping = this.extendVertexMapping.bind(this);
     this.addEdgeMapping = this.addEdgeMapping.bind(this);
     this.addSubgraphMapping = this.addSubgraphMapping.bind(this);
 
@@ -2336,6 +2337,38 @@ You have to call mermaid.initialize.`
     _shape: unknown,
     loc: JisonLocation | undefined
   ): void {
+    this.pushMapping(id, 'vertex', loc);
+  }
+
+  /**
+   * Extend a vertex's mapping end to cover a trailing inline metadata block
+   * (`id["..."]@{ ... }`). The node declaration already pushed a mapping
+   * spanning just the declaration; when the `@{ ... }` block reduces we widen
+   * that mapping's end to the block's closing `}` so editor cursors inside the
+   * block resolve to the node rather than the containing flow (issue #60).
+   * `loc` is the `shapeData` symbol's location, so only the end moves — the
+   * declaration start is preserved. Falls back to a fresh mapping if the node
+   * has none yet.
+   */
+  public extendVertexMapping(id: string, loc: JisonLocation | undefined): void {
+    if (!id || !loc) {
+      return;
+    }
+    const end = this.toElementPosition(loc);
+    for (let i = this.elementMappings.length - 1; i >= 0; i--) {
+      const m = this.elementMappings[i];
+      if (m.type === 'vertex' && m.id === id) {
+        const extendsPastEnd =
+          end.endLine > m.position.endLine ||
+          (end.endLine === m.position.endLine && end.endColumn > m.position.endColumn);
+        if (extendsPastEnd) {
+          m.position.endLine = end.endLine;
+          m.position.endColumn = end.endColumn;
+          m.position.endIndex = end.endIndex;
+        }
+        return;
+      }
+    }
     this.pushMapping(id, 'vertex', loc);
   }
 
