@@ -1,9 +1,0 @@
-{
-  "outcome": "warning",
-  "diagnostics": [
-    {
-      "id": "CONNECTOR_REF_UNRESOLVED",
-      "nodeId": "create_issue"
-    }
-  ]
-}

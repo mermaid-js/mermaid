@@ -227,7 +227,7 @@ function matchSemanticAssertions(
       });
     }
     if (expectedVertex.metadata !== undefined) {
-      const actualMetadata = (actual.metadata as Record<string, unknown> | undefined) ?? {};
+      const actualMetadata = actual.metadata ?? {};
       for (const [key, expectedValue] of Object.entries(expectedVertex.metadata)) {
         const actualValue = actualMetadata[key];
         if (!deepEqual(actualValue, expectedValue)) {

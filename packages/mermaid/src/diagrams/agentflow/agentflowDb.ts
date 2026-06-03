@@ -93,109 +93,12 @@ const SUBROUTINE_ALIASES = new Set<string>([
   'tool',
 ]);
 
-/**
- * Metadata keys that are valid on **any** authored element per
- * `AGENTFLOW-SYNTAX.md` §10.1 (cross-cutting) plus the structural and
- * presentation controls tracked by the DB. These never surface a
- * `METADATA_KEY_MISAPPLIED` warning regardless of element kind.
- */
-const UNIVERSAL_METADATA_KEYS = new Set<string>([
-  // §10.1 cross-cutting (valid on any authored element except edges)
-  'description',
-  'instruction',
-  // Structural wiring exposed via metadata
-  'shape',
-  'label',
-  'labelType',
-  // Presentation (§11) — never carry semantic meaning
-  'view',
-  'icon',
-  'img',
-  'w',
-  'h',
-  'class',
-  'style',
-]);
-
-/**
- * The element kinds the §10 applicability table addresses. Plain
- * unclassified vertices are unrestricted and never reach this lookup.
- */
-type MetadataApplicabilityKind =
-  | 'flow'
-  | 'task'
-  | 'tool'
-  | 'action'
-  | 'connector'
-  | 'input'
-  | 'refdoc'
-  | 'edge';
-
-/**
- * §10 Metadata Applicability (v0.8.1) — the normative allowed-key set per
- * element kind. `description` and universal keys are handled separately
- * via `UNIVERSAL_METADATA_KEYS`, so they do not appear here.
- */
-const METADATA_APPLICABILITY: Readonly<Record<MetadataApplicabilityKind, ReadonlySet<string>>> = {
-  flow: new Set(['model', 'memory', 'params', 'returns']),
-  task: new Set(['execution', 'params', 'returns']),
-  tool: new Set([
-    'params',
-    'returns',
-    'retry',
-    'cache',
-    'validate',
-    'handler',
-    'output',
-    'transport',
-    'command',
-    'connectorRef',
-  ]),
-  action: new Set(['params', 'returns', 'connectorRef']),
-  connector: new Set(['protocol', 'endpoint', 'transport', 'command', 'auth', 'token_required']),
-  input: new Set(['type', 'value']),
-  refdoc: new Set([]),
-  // Edges accept only the cross-cutting `instruction` (see
-  // `UNIVERSAL_METADATA_KEYS`); no element-specific keys.
-  edge: new Set([]),
-};
-
-/**
- * Union of every key that appears in any row of the applicability
- * table. Used to distinguish "known domain key on the wrong element"
- * (warn) from "unknown key" (preserved silently). Computed once at
- * module load.
- */
-const ALL_APPLICABILITY_KEYS: ReadonlySet<string> = new Set(
-  Object.values(METADATA_APPLICABILITY).flatMap((s) => [...s])
-);
-
-/**
- * Synthetic IDs reserved by the renderer per `AGENTFLOW-SYNTAX.md` §9.
- * Authors who declare a vertex or container with one of these ids get a
- * `RESERVED_SYNTHETIC_ID` warning. v0.8.1 keeps `connectors` reserved
- * for forward compat even though the synthesised group is gone.
- */
-const RESERVED_SYNTHETIC_IDS = new Set<string>(['connectors']);
-
-/**
- * Child kinds recognised by the §3.3 containment matrix (v0.8.1).
- * `node` is the catch-all for any plain vertex.
- */
-type ContainmentChildKind = 'flow' | 'tool' | 'action' | 'node';
-
-/** Parent kinds the §3.3 matrix constrains. v0.8.1: only `flow`. */
-type ContainmentParentKind = 'flow';
-
-/**
- * §3.3 Containment Rules (v0.8.1) — only `flow` is a container, and it
- * accepts nested `flow`, `tool`, `action`, or plain nodes.
- */
-const CONTAINMENT_ALLOWED_CHILDREN: Readonly<
-  Record<ContainmentParentKind, ReadonlySet<ContainmentChildKind>>
-> = {
-  flow: new Set(['flow', 'tool', 'action', 'node']),
-};
+// Property-level metadata validation (§10 applicability, connector-ref
+// resolution, §3.3 containment, reserved/synthetic ids) was removed from the
+// parser in v0.8.2 (issue #64) — those checks are semantic concerns and now
+// live in the semantics module. The parser keeps only structural parsing plus
+// `shape` and `view` handling. The associated lookup tables were removed with
+// the validators that consumed them.
 
 /** Maps subgraph container types to their cluster shape IDs. */
 const SUBGRAPH_TYPE_TO_SHAPE: Record<NonNullable<FlowSubGraph['type']>, ClusterShapeID> = {
@@ -239,16 +142,6 @@ export class AgentFlowDB implements DiagramDB {
   private subGraphs: FlowSubGraph[] = [];
   private subGraphLookup = new Map<string, FlowSubGraph>();
   private connectors = new Map<string, FlowVertex>();
-  private seenConnectorIds = new Set<string>();
-
-  // ── Identifier-resolution tracking (§9) ──────────────────────────────
-  // IDs that have received a **declarative** call. Implicit vertices
-  // created by edge resolution (e.g. the `a` in `a --> b`) are excluded;
-  // only named vertex declarations with label, shape, or container
-  // keyword register here. Duplicate detection emits DUPLICATE_ID_NODE
-  // and RESERVED_SYNTHETIC_ID for authorial claims on renderer-reserved
-  // ids.
-  private seenDeclaredNodeIds = new Set<string>();
   private tooltips = new Map<string, string>();
   private subCount = 0;
   private firstGraphFlag = true;
@@ -386,21 +279,6 @@ export class AgentFlowDB implements DiagramDB {
       doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
     }
 
-    // v0.8.1 §10.1 legacy: `prompt` was renamed to `instruction`. Accept
-    // `prompt` as an alias during the pre-1.0 window and warn the author.
-    if (doc && (doc as unknown as Record<string, unknown>).prompt !== undefined) {
-      const docRec = doc as unknown as Record<string, unknown>;
-      this.emitWarning(
-        'METADATA_KEY_LEGACY_PROMPT',
-        `metadata key "prompt" on "${id}" is renamed to "instruction" in v0.8.1 (see AGENTFLOW-SYNTAX.md §10.1)`,
-        { nodeId: id }
-      );
-      if (docRec.instruction === undefined) {
-        docRec.instruction = docRec.prompt;
-      }
-      delete docRec.prompt;
-    }
-
     // Resolve shape alias (§4.3.2) before any other shape handling.
     if (doc && typeof (doc as unknown as Record<string, unknown>).shape === 'string') {
       const docRec = doc as unknown as Record<string, unknown>;
@@ -429,15 +307,6 @@ export class AgentFlowDB implements DiagramDB {
       return;
     }
 
-    // Identifier-resolution tracking (§9) — a "declarative" call is one
-    // where the author wrote a label or an inline shape keyword. Pure
-    // metadata attachments (`id@{ ... }`) and implicit vertices created
-    // by edge resolution (`a --> b`) do NOT count as declarations.
-    const isDeclarative = textObj !== undefined || type !== undefined;
-    if (isDeclarative && id) {
-      this.recordDeclaredNodeId(id);
-    }
-
     // Reserve 'connectors' as a declaration group ID for forward compat
     // (the synthesised connectors group was removed in v0.8.1, but the
     // id stays reserved). The subgraph branch above runs first, so a
@@ -447,9 +316,10 @@ export class AgentFlowDB implements DiagramDB {
     }
 
     // Check if this is an edge — route metadata to the edge instead of
-    // creating a placeholder vertex. v0.8.1: only `instruction` (plus
-    // the cross-cutting `description`) is allowed on an edge; anything
-    // else emits METADATA_KEY_MISAPPLIED.
+    // creating a placeholder vertex. Presentation keys map to dedicated edge
+    // fields; all authored metadata is carried faithfully onto `edge.metadata`
+    // (which keys are valid on an edge is a semantic concern handled
+    // downstream — issue #64).
     const edge = this.edges.find((e) => e.id === id);
     if (edge) {
       const edgeDoc = doc as unknown as EdgeMetaData & Record<string, unknown>;
@@ -463,36 +333,7 @@ export class AgentFlowDB implements DiagramDB {
         edge.interpolate = edgeDoc.curve;
       }
       if (doc) {
-        const docRec = doc as unknown as Record<string, unknown>;
-        for (const key of Object.keys(docRec)) {
-          // Per §10.1, edges accept only `instruction` in v0.8.1. The
-          // cross-cutting `description` rule applies to every authored
-          // element *except* edges (spec §10.1 explicit carve-out).
-          if (key === 'instruction') {
-            continue;
-          }
-          // Allow purely presentational/structural keys to pass through
-          // silently (animate/animation/curve are edge presentation; the
-          // structural keys come in via UNIVERSAL_METADATA_KEYS).
-          if (key === 'animate' || key === 'animation' || key === 'curve') {
-            continue;
-          }
-          if (key === 'label' || key === 'labelType' || key === 'class' || key === 'style') {
-            continue;
-          }
-          this.emitWarning(
-            'METADATA_KEY_MISAPPLIED',
-            `metadata key "${key}" is not valid on edge "${id}" — edges accept only "instruction" in v0.8.1 (see AGENTFLOW-SYNTAX.md §10.1)`,
-            { edgeId: id }
-          );
-        }
-        const edgeMeta: Record<string, unknown> = { ...(edge.metadata ?? {}) };
-        if (docRec.instruction !== undefined) {
-          edgeMeta.instruction = docRec.instruction;
-        }
-        if (Object.keys(edgeMeta).length > 0) {
-          edge.metadata = edgeMeta;
-        }
+        edge.metadata = { ...edge.metadata, ...(doc as unknown as Record<string, unknown>) };
       }
       return;
     }
@@ -999,7 +840,6 @@ You have to call mermaid.initialize.`
     this.subGraphs = [];
     this.subGraphLookup = new Map();
     this.connectors = new Map();
-    this.seenConnectorIds = new Set();
     this.subCount = 0;
     this.tooltips = new Map();
     this.firstGraphFlag = true;
@@ -1010,7 +850,6 @@ You have to call mermaid.initialize.`
     this.elementMappings = [];
     this.diagnostics = [];
     this.postParseValidationRun = false;
-    this.seenDeclaredNodeIds = new Set();
     commonClear();
   }
 
@@ -1094,15 +933,9 @@ You have to call mermaid.initialize.`
     // Remove the members in the new subgraph if they already belong to another subgraph
     subGraph.nodes = this.makeUniq(subGraph, this.subGraphs).nodes;
 
-    // Identifier-resolution tracking (§10) — record this container's id
-    // in the shared node-or-container namespace. Collisions with a prior
-    // declared vertex emit DUPLICATE_ID_NODE. Subgraph-subgraph "merge"
-    // collisions remain silent to preserve the wave-1 re-declaration
-    // pattern in existing documents.
+    // Duplicate subgraph IDs merge children into the first occurrence
+    // (structural). Identifier-namespace diagnostics moved to semantics (#64).
     const existingPos = this.getPosForId(id);
-    if (existingPos === -1) {
-      this.recordDeclaredNodeId(id);
-    }
     if (existingPos !== -1) {
       // Duplicate subgraph ID — merge children into the existing entry.
       // First occurrence wins for hierarchy position.
@@ -1204,22 +1037,6 @@ You have to call mermaid.initialize.`
     if (!id) {
       return '';
     }
-    if (RESERVED_SYNTHETIC_IDS.has(id)) {
-      this.emitWarning(
-        'RESERVED_SYNTHETIC_ID',
-        `identifier "${id}" is reserved for renderer synthetics (see AGENTFLOW-SYNTAX.md §9)`,
-        { nodeId: id }
-      );
-    }
-    if (this.seenConnectorIds.has(id) || this.seenDeclaredNodeIds.has(id)) {
-      this.emitWarning(
-        'DUPLICATE_ID_NODE',
-        `duplicate declaration for id "${id}" in the node-or-container namespace (see AGENTFLOW-SYNTAX.md §9)`,
-        { nodeId: id }
-      );
-    }
-    this.seenConnectorIds.add(id);
-    this.seenDeclaredNodeIds.add(id);
 
     const title = titleObj?.text?.trim() ?? '';
     const resolvedTitle = title.length > 0 ? this.sanitizeText(title) : id;
@@ -1527,426 +1344,19 @@ You have to call mermaid.initialize.`
   }
 
   /**
-   * Per `AGENTFLOW-SYNTAX.md` §8.1: a `connectorRef` value either points
-   * at the connector id directly (`"github"`) or at a dotted form
-   * (`"github.create_issue"` — the prefix is the connector id). Resolve
-   * against `this.connectors`; emit `CONNECTOR_REF_UNRESOLVED` when the
-   * prefix doesn't match a declared connector, or
-   * `CONNECTOR_REF_NOT_A_CONNECTOR` when the id exists but as a vertex
-   * or subgraph instead.
+   * Post-parse hook. Property-level metadata validation and semantic checks
+   * (§10 applicability, connector-ref resolution, §3.3 containment, edge
+   * endpoint kinds, flow input, identifier namespace) were removed from the
+   * parser in v0.8.2 (issue #64) — they are semantic concerns owned by the
+   * semantics module. The parser keeps only structural parsing plus `shape`
+   * (unknown-shape errors, see `transformData`) and `view` handling. This hook
+   * remains as a no-op so downstream callers and the run-once guard are intact.
    */
-  private validateConnectorReferences(): void {
-    for (const [id, vertex] of this.vertices) {
-      // Skip connectors themselves.
-      if (vertex.isConnector) {
-        continue;
-      }
-      const ref = vertex.metadata?.connectorRef;
-      if (typeof ref !== 'string' || ref.length === 0) {
-        continue;
-      }
-      // Split on first dot for the dotted form. The prefix is the
-      // connector id; everything after the dot is opaque.
-      const connectorId = ref.includes('.') ? ref.slice(0, ref.indexOf('.')) : ref;
-      if (this.connectors.has(connectorId)) {
-        continue;
-      }
-      // Id exists in another namespace?
-      if (this.vertices.has(connectorId) || this.subGraphLookup.has(connectorId)) {
-        this.emitWarning(
-          'CONNECTOR_REF_NOT_A_CONNECTOR',
-          `connectorRef "${ref}" on node "${id}" resolves to id "${connectorId}" but it is not declared with the connector keyword (see AGENTFLOW-SYNTAX.md §8.1)`,
-          { nodeId: id }
-        );
-        continue;
-      }
-      this.emitWarning(
-        'CONNECTOR_REF_UNRESOLVED',
-        `connectorRef "${ref}" on node "${id}" does not match any declared connector (see AGENTFLOW-SYNTAX.md §8.1)`,
-        { nodeId: id }
-      );
-    }
-  }
-
-  /**
-   * Classify a vertex against the §10 applicability rows (v0.8.1).
-   * Returns the kind name; `task` is the default for plain rounded
-   * rectangles. Connectors are detected via the `isConnector` flag set
-   * by `addConnector()`.
-   */
-  private classifyVertexForApplicability(vertex: FlowVertex): MetadataApplicabilityKind {
-    if (vertex.isConnector) {
-      return 'connector';
-    }
-    if (this.isToolDefinition(vertex)) {
-      return 'tool';
-    }
-    const resolved = typeof vertex.type === 'string' ? resolveShapeAlias(vertex.type) : vertex.type;
-    if (resolved === 'hexagon' || resolved === 'hex') {
-      return 'action';
-    }
-    if (resolved === 'lean-right' || resolved === 'lean_right') {
-      return 'input';
-    }
-    if (resolved === 'lin-doc' || resolved === 'lined-document') {
-      return 'refdoc';
-    }
-    return 'task';
-  }
-
-  /**
-   * Classify a subgraph against the §10 applicability rows. v0.8.1: the
-   * only container kind is `flow`.
-   */
-  private classifySubGraphForApplicability(sg: FlowSubGraph): MetadataApplicabilityKind | null {
-    return sg.type === 'flow' ? 'flow' : null;
-  }
-
-  /**
-   * Classify a subgraph's `type` as a containment-parent kind. v0.8.1:
-   * only `flow` is a container.
-   */
-  private classifyContainmentParent(sg: FlowSubGraph): ContainmentParentKind | null {
-    return sg.type === 'flow' ? 'flow' : null;
-  }
-
-  /**
-   * Per `AGENTFLOW-SYNTAX.md` §13: for every classifiable element,
-   * check each metadata key against the applicability table. A key
-   * that is known (appears in any row) but not in this element's row
-   * — and isn't universal / cross-cutting — emits
-   * `METADATA_KEY_MISAPPLIED`. Unknown keys are preserved on the raw
-   * metadata without a warning; that follow-up diagnostic is out of
-   * scope for this PR.
-   */
-  private validateMetadataApplicability(): void {
-    const check = (
-      id: string,
-      metadata: Record<string, unknown>,
-      kind: MetadataApplicabilityKind
-    ) => {
-      const allowed = METADATA_APPLICABILITY[kind];
-      for (const key of Object.keys(metadata)) {
-        if (UNIVERSAL_METADATA_KEYS.has(key)) {
-          continue;
-        }
-        if (allowed.has(key)) {
-          continue;
-        }
-        if (!ALL_APPLICABILITY_KEYS.has(key)) {
-          // Unknown key — preserved, no warning in this PR.
-          continue;
-        }
-        this.emitWarning(
-          'METADATA_KEY_MISAPPLIED',
-          `metadata key "${key}" is not valid on ${kind} "${id}" (see AGENTFLOW-SYNTAX.md §10)`,
-          { nodeId: id }
-        );
-      }
-    };
-
-    const subGraphIds = new Set(this.subGraphs.map((sg) => sg.id));
-    for (const [id, vertex] of this.vertices) {
-      if (subGraphIds.has(id)) {
-        // Container metadata lives on the subgraph entry; the vertex
-        // record is a metadata-attachment placeholder — skip.
-        continue;
-      }
-      if (!vertex.metadata) {
-        continue;
-      }
-      const kind = this.classifyVertexForApplicability(vertex);
-      check(id, vertex.metadata, kind);
-    }
-    for (const sg of this.subGraphs) {
-      if (!sg.metadata) {
-        continue;
-      }
-      const kind = this.classifySubGraphForApplicability(sg);
-      if (kind === null) {
-        continue;
-      }
-      check(sg.id, sg.metadata, kind);
-    }
-  }
-
-  /**
-   * Record a declarative claim on an id in the shared node-or-container
-   * namespace (§10). Emits `RESERVED_SYNTHETIC_ID` when the id is one of
-   * the renderer-reserved synthetics, and `DUPLICATE_ID_NODE` when an
-   * earlier declarative call already registered the same id.
-   */
-  private recordDeclaredNodeId(id: string): void {
-    if (!id) {
-      return;
-    }
-    if (RESERVED_SYNTHETIC_IDS.has(id)) {
-      this.emitWarning(
-        'RESERVED_SYNTHETIC_ID',
-        `identifier "${id}" is reserved for renderer synthetics (see AGENTFLOW-SYNTAX.md §9)`,
-        { nodeId: id }
-      );
-      return;
-    }
-    if (this.seenDeclaredNodeIds.has(id)) {
-      this.emitWarning(
-        'DUPLICATE_ID_NODE',
-        `duplicate declaration for id "${id}" in the node-or-container namespace (see AGENTFLOW-SYNTAX.md §9)`,
-        { nodeId: id }
-      );
-      return;
-    }
-    this.seenDeclaredNodeIds.add(id);
-  }
-
-  /**
-   * v0.8.1 §8.1: only `connectorRef` is a semantic reference. Resolve
-   * each value (or dotted-form prefix) against the connector namespace
-   * and emit diagnostics as appropriate. Delegates to
-   * `validateConnectorReferences()`.
-   */
-  private resolveReferences(): void {
-    this.validateConnectorReferences();
-  }
-
-  /**
-   * Classify a child id for the v0.8.1 §3.3 containment-matrix lookup.
-   * Subgraph children project `flow`; vertex children project `tool`
-   * for tool definitions, `action` for hexagon-shaped nodes, or `node`
-   * otherwise.
-   */
-  private classifyContainmentChild(childId: string): ContainmentChildKind | null {
-    const childSub = this.subGraphLookup.get(childId);
-    if (childSub) {
-      return 'flow';
-    }
-    const childVertex = this.vertices.get(childId);
-    if (!childVertex) {
-      return null;
-    }
-    if (this.isToolDefinition(childVertex)) {
-      return 'tool';
-    }
-    const resolved =
-      typeof childVertex.type === 'string' ? resolveShapeAlias(childVertex.type) : childVertex.type;
-    if (resolved === 'hexagon' || resolved === 'hex') {
-      return 'action';
-    }
-    return 'node';
-  }
-
-  /**
-   * Per `AGENTFLOW-SYNTAX.md` §3.3: every typed container has a fixed
-   * allowed-children set. Violations emit `CONTAINMENT_VIOLATION` with
-   * the offending child's id. Legacy `subgraph` and `group` parents are
-   * unrestricted escape hatches and are skipped.
-   */
-  private validateContainment(): void {
-    for (const sg of this.subGraphs) {
-      const parentKind = this.classifyContainmentParent(sg);
-      if (parentKind === null) {
-        continue;
-      }
-      const allowed = CONTAINMENT_ALLOWED_CHILDREN[parentKind];
-      for (const childId of sg.nodes) {
-        const childKind = this.classifyContainmentChild(childId);
-        if (childKind === null) {
-          continue;
-        }
-        if (!allowed.has(childKind)) {
-          this.emitWarning(
-            'CONTAINMENT_VIOLATION',
-            `${parentKind} "${sg.id}" cannot contain ${childKind} "${childId}" (see AGENTFLOW-SYNTAX.md §3.3)`,
-            { nodeId: childId }
-          );
-        }
-      }
-    }
-  }
-
-  /**
-   * Returns true when an edge endpoint id refers to a `flow` subgraph.
-   * Used by the failure-edge check.
-   */
-  private isFlowEndpoint(id: string): boolean {
-    const sg = this.subGraphLookup.get(id);
-    return sg !== undefined && sg.type === 'flow';
-  }
-
-  /**
-   * Returns true when an edge endpoint id refers to a reference-doc
-   * node — a vertex whose resolved shape is `lin-doc` (alias `refdoc`).
-   * Used by the reference-edge check.
-   */
-  private isReferenceEndpoint(id: string): boolean {
-    const vertex = this.vertices.get(id);
-    if (!vertex) {
-      return false;
-    }
-    const resolved = typeof vertex.type === 'string' ? resolveShapeAlias(vertex.type) : vertex.type;
-    return resolved === 'lin-doc' || resolved === 'lined-document';
-  }
-
-  /**
-   * Per `AGENTFLOW-SYNTAX.md` §5.1 (v0.8.1): every edge operator has a
-   * primary semantic. When the semantic contradicts the endpoint kinds,
-   * emit `EDGE_SEMANTIC_CONTRADICTION`. Two specific rules:
-   *   - reference (`-.-`) — at least one endpoint should be a `refdoc`.
-   *   - failure   (`--x`) — source should be a `flow`.
-   *
-   * Reference edges are also non-directional and carry no label — labels
-   * are rejected with `REFERENCE_EDGE_LABEL_REJECTED` and cleared.
-   */
-  private validateEdgeEndpointKinds(): void {
-    for (const edge of this.edges) {
-      const semantic = edge.edgeSemantic;
-      if (semantic === undefined) {
-        continue;
-      }
-      if (semantic === 'reference') {
-        // Labels not permitted on reference edges (§5.2).
-        if (typeof edge.text === 'string' && edge.text.trim().length > 0) {
-          this.emitWarning(
-            'REFERENCE_EDGE_LABEL_REJECTED',
-            `reference edge "${edge.id ?? `${edge.start}-${edge.end}`}" carries a label; reference edges have no parameter/channel meaning (see AGENTFLOW-SYNTAX.md §5.2)`,
-            { edgeId: edge.id }
-          );
-          edge.text = '';
-        }
-        const startIsRef = this.isReferenceEndpoint(edge.start);
-        const endIsRef = this.isReferenceEndpoint(edge.end);
-        if (!startIsRef && !endIsRef) {
-          this.emitWarning(
-            'EDGE_SEMANTIC_CONTRADICTION',
-            `reference edge between "${edge.start}" and "${edge.end}" has no refdoc endpoint (see AGENTFLOW-SYNTAX.md §16.2)`,
-            { edgeId: edge.id }
-          );
-        }
-        continue;
-      }
-      if (semantic === 'failure' && !this.isFlowEndpoint(edge.start)) {
-        this.emitWarning(
-          'EDGE_SEMANTIC_CONTRADICTION',
-          `failure edge source "${edge.start}" is not a flow (see AGENTFLOW-SYNTAX.md §5.1)`,
-          { edgeId: edge.id }
-        );
-        continue;
-      }
-    }
-  }
-
-  /**
-   * Per `AGENTFLOW-SYNTAX.md` §10.2: every `flow` container (including
-   * the implicit top-level flow) must declare its required inputs as
-   * `lean-right`-shaped nodes (alias `input`). A flow that contains no
-   * input node anywhere in its descendant tree gets `FLOW_NO_INPUT`.
-   */
-  private validateFlowInput(): void {
-    const isInputNode = (id: string): boolean => {
-      const vertex = this.vertices.get(id);
-      if (!vertex) {
-        return false;
-      }
-      const resolved =
-        typeof vertex.type === 'string' ? resolveShapeAlias(vertex.type) : vertex.type;
-      return resolved === 'lean-right' || resolved === 'lean_right';
-    };
-
-    const collectDescendants = (sgId: string, acc: Set<string>): void => {
-      const sg = this.subGraphLookup.get(sgId);
-      if (!sg) {
-        return;
-      }
-      for (const childId of sg.nodes) {
-        if (acc.has(childId)) {
-          continue;
-        }
-        acc.add(childId);
-        if (this.subGraphLookup.has(childId)) {
-          collectDescendants(childId, acc);
-        }
-      }
-    };
-
-    // Identify *outermost* flow subgraphs — those not nested inside another
-    // flow. Inner flows inherit inputs from the ancestor that owns the
-    // user-supplied data, so per §10.2 the diagnostic only fires at the
-    // authoring boundary (the outermost flow). A child flow may carry no
-    // input of its own; that's expected — its inputs travel through the
-    // implicit shared state from its parent's upstream steps.
-    const nestedFlowIds = new Set<string>();
-    for (const sg of this.subGraphs) {
-      if (sg.type !== 'flow') {
-        continue;
-      }
-      for (const childId of sg.nodes) {
-        if (this.subGraphLookup.has(childId)) {
-          nestedFlowIds.add(childId);
-        }
-      }
-    }
-    for (const sg of this.subGraphs) {
-      if (sg.type !== 'flow' || nestedFlowIds.has(sg.id)) {
-        continue;
-      }
-      const descendants = new Set<string>();
-      collectDescendants(sg.id, descendants);
-      let found = false;
-      for (const childId of descendants) {
-        if (isInputNode(childId)) {
-          found = true;
-          break;
-        }
-      }
-      if (!found) {
-        this.emitWarning(
-          'FLOW_NO_INPUT',
-          `flow "${sg.id}" declares no input node (see AGENTFLOW-SYNTAX.md §10.2)`,
-          { nodeId: sg.id }
-        );
-      }
-    }
-
-    // Top-level *implicit* flow: any non-connector vertex when no explicit
-    // `flow` container is declared. With an explicit flow the input lives
-    // inside it; implicit vertices reached through edges (e.g. the target
-    // of `a --x b` when `b` is never explicitly declared inside the flow)
-    // are not authoring intent and don't move the input-check needle.
-    const hasAnyFlow = this.subGraphs.some((sg) => sg.type === 'flow');
-    if (hasAnyFlow) {
-      return;
-    }
-    let topLevelHasInput = false;
-    let topLevelHasContent = false;
-    for (const [id, vertex] of this.vertices) {
-      if (vertex.isConnector) {
-        continue;
-      }
-      topLevelHasContent = true;
-      if (isInputNode(id)) {
-        topLevelHasInput = true;
-        break;
-      }
-    }
-    if (topLevelHasContent && !topLevelHasInput) {
-      this.emitWarning(
-        'FLOW_NO_INPUT',
-        `top-level flow declares no input node (see AGENTFLOW-SYNTAX.md §10.2)`
-      );
-    }
-  }
-
-  /** Run every post-parse diagnostic validator once per parse. */
   private runPostParseValidators(): void {
     if (this.postParseValidationRun) {
       return;
     }
     this.postParseValidationRun = true;
-    this.resolveReferences();
-    this.validateMetadataApplicability();
-    this.validateContainment();
-    this.validateEdgeEndpointKinds();
-    this.validateFlowInput();
   }
 
   public getData() {

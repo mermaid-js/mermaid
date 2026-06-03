@@ -1,7 +1,0 @@
-%% Connector reference validator — bare id that resolves to a node, but
-%% that node carries none of the connector configuration fields. Asserts
-%% CONNECTOR_REF_NOT_A_CONNECTOR.
-agentflow TB
-  plain_node["plain"]
-  create_issue["Create Issue"]
-  create_issue@{ shape: subroutine, connectorRef: "plain_node" }

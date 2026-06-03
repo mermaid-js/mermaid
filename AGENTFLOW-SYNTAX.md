@@ -27,6 +27,12 @@ renamed. It adds one authoring convenience and lands a batch of parser/tooling f
 - **Editor position-mapping fixes.** Inline `@{ … }` blocks now map to their node rather
   than the enclosing flow, and sibling flow containers no longer report overlapping line
   spans. These affect editor/tooling cursor resolution only — no authoring change.
+- **Parser stops validating metadata properties.** The parser now carries all authored
+  metadata faithfully and only reacts to `shape` (unknown-shape) and `view` (collapsed);
+  property-level applicability (§10), connector-ref resolution (§8.1), containment (§3.3),
+  edge-endpoint semantics (§5.1), flow-input (§10.2), and identifier-namespace checks are
+  semantic concerns and now belong to the semantics layer. The §10 rules below still
+  describe the language — only the _enforcement layer_ moved.
 
 Full per-version history lives in `AGENTFLOW-CHANGELOG.md`.
 

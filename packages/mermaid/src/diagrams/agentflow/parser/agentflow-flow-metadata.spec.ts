@@ -16,8 +16,6 @@ const parse = (text: string) => {
 };
 
 const flow = (db: AgentFlowDB, id: string) => db.getSubGraphs().find((s) => s.id === id);
-const misapplied = (db: AgentFlowDB) =>
-  db.getDiagnostics().filter((d) => d.id === 'METADATA_KEY_MISAPPLIED');
 
 describe('issue #63: inline @{ } metadata on flow headers', () => {
   it('attaches multi-line inline metadata to the flow (issue example)', () => {
@@ -56,22 +54,19 @@ describe('issue #63: inline @{ } metadata on flow headers', () => {
     expect(sg?.metadata).toMatchObject({ model: 'claude-opus-4' });
   });
 
-  it('applies §10 metadata validation to inline form (invalid key warns)', () => {
+  it('carries inline metadata verbatim without validating it (issue #64)', () => {
     const db = parse(`agentflow TB
-  flow f@{ execution: "parallel" }
+  flow f@{ model: "m", memory: "shared", execution: "parallel", custom: 1 }
     a --> b
   end`);
     db.getData();
-    // `execution` is task-only — same warning the standalone form produces.
-    expect(misapplied(db)).toHaveLength(1);
-  });
-
-  it('valid flow keys on the inline form emit no warning', () => {
-    const db = parse(`agentflow TB
-  flow f@{ model: "m", memory: "shared", params: "x :: String", returns: "Out" }
-    a --> b
-  end`);
-    db.getData();
-    expect(misapplied(db)).toHaveLength(0);
+    // Parser carries every key as-authored; applicability is a semantic concern.
+    expect(flow(db, 'f')?.metadata).toMatchObject({
+      model: 'm',
+      memory: 'shared',
+      execution: 'parallel',
+      custom: 1,
+    });
+    expect(db.getDiagnostics()).toHaveLength(0);
   });
 });

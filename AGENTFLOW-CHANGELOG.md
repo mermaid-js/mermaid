@@ -44,6 +44,15 @@ A small, backward-compatible follow-up to v0.8.1. No syntax is removed or rename
   enclosing flow (#60), and sibling flow containers no longer report overlapping line
   spans (#59). Tooling/cursor-resolution only — no authoring change.
 
+**Parser / semantics boundary**
+
+- The parser no longer performs property-level metadata validation or semantic checks.
+  It carries all authored metadata faithfully and reacts only to `shape` (unknown-shape)
+  and `view` (collapsed). Applicability (§10), connector-ref resolution (§8.1),
+  containment (§3.3), edge-endpoint semantics (§5.1), flow-input (§10.2), and
+  identifier-namespace diagnostics move to the semantics module. The diagnostic IDs remain
+  the shared vocabulary; they are simply emitted downstream now, not by the parser. (#64)
+
 ## v0.8.1 — 2026-05-26
 
 v0.8.1 follows up on v0.8.0 with another round of cuts and renames driven by the

@@ -9,6 +9,15 @@
  * gone with them. New codes cover the v0.8.1 additions: removed-shape
  * usage, removed-operator usage, reference-edge label rejection,
  * flow-no-input validation, and `prompt`→`instruction` legacy detection.
+ *
+ * v0.8.2 (issue #64): the parser no longer performs property-level metadata
+ * validation or semantic checks. It still emits the structural `SHAPE_*`
+ * codes (and would emit `EDGE_OPERATOR_UNSUPPORTED`). The remaining IDs below
+ * stay part of the shared diagnostic vocabulary, but are now emitted by the
+ * **semantics module**, not the parser: `METADATA_KEY_MISAPPLIED`,
+ * `METADATA_KEY_LEGACY_PROMPT`, `CONNECTOR_REF_*`, `DUPLICATE_ID_NODE`,
+ * `RESERVED_SYNTHETIC_ID`, `CONTAINMENT_VIOLATION`, `EDGE_SEMANTIC_CONTRADICTION`,
+ * `REFERENCE_EDGE_LABEL_REJECTED`, and `FLOW_NO_INPUT`.
  */
 
 import type { ElementPosition } from './types.js';
