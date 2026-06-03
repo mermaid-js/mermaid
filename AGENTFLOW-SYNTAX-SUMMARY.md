@@ -31,10 +31,22 @@ flow <id>["Title"]
   ...children: nested flows, tasks, tools, actions, inputs, refdocs...
 end
 <id>@{ model: "claude-…", instruction: "…", memory: [...] }
+
+# Metadata may also be attached inline on the flow header (equivalent to the
+# standalone `<id>@{ ... }` form above):
+flow <id>@{ model: "claude-…" }
+  ...children...
+end
+flow <id>["Title"]@{ model: "claude-…" }
+  ...children...
+end
 ```
 
 - A `flow` is a named, composable unit of work. It may declare a `params` / `returns`
   contract and be exposed as an MCP-callable tool by the runtime.
+- Flow metadata may be attached either standalone (`<id>@{ ... }` after `end`) or
+  inline on the header (`flow <id>@{ ... }` / `flow <id>["Title"]@{ ... }`); both
+  resolve to the same subgraph metadata and obey the same §10 applicability rules.
 - Allowed children: nested `flow`, plus nodes. `agent` / `skill` / `testCase` /
   `directive` / `subgraph` no longer exist.
 
@@ -52,16 +64,16 @@ id{Decision}                      # diamond, inline
 Shape **is** semantic. v0.8.1 introduces **author-friendly aliases** alongside the
 Mermaid canonical names — both forms parse identically.
 
-| Alias       | Canonical (Mermaid)         | Means                                                        |
-| ----------- | --------------------------- | ------------------------------------------------------------ |
-| *(default)* | `roundedRect` / `rect`      | A **task** — a unit of work                                  |
-| `task`      | `roundedRect` / `rect`      | Same as default; explicit                                    |
-| `tool`      | `subroutine`                | A **tool** — native function the LLM may call (§7)           |
-| `input`     | `lean-right`                | An **input** value entering the flow                         |
-| `decision`  | `diamond`                   | A **decision gate** — branching vertex (also `id{Text}`)     |
-| `refdoc`    | `lin-doc`                   | A **reference document** (attach with `-.-`)                 |
-| `action`   | `hexagon`                   | A **action** call (another flow exposed via MCP) (§16.7)   |
-| `connector` | `connector`                 | An **external integration point** (declared with `connector`, §8) |
+| Alias       | Canonical (Mermaid)    | Means                                                             |
+| ----------- | ---------------------- | ----------------------------------------------------------------- |
+| _(default)_ | `roundedRect` / `rect` | A **task** — a unit of work                                       |
+| `task`      | `roundedRect` / `rect` | Same as default; explicit                                         |
+| `tool`      | `subroutine`           | A **tool** — native function the LLM may call (§7)                |
+| `input`     | `lean-right`           | An **input** value entering the flow                              |
+| `decision`  | `diamond`              | A **decision gate** — branching vertex (also `id{Text}`)          |
+| `refdoc`    | `lin-doc`              | A **reference document** (attach with `-.-`)                      |
+| `action`    | `hexagon`              | A **action** call (another flow exposed via MCP) (§16.7)          |
+| `connector` | `connector`            | An **external integration point** (declared with `connector`, §8) |
 
 Removed shapes (now hard syntax errors): `doc`, `stadium`/`terminal`, `circle`,
 `trapezoid`/`inv-trapezoid`, `double-circle`, `typeDeclaration`, `procs`, the five
@@ -70,11 +82,11 @@ classification source" (hexagon now means `action`).
 
 ## Edges — three operators (§5)
 
-| Operator | Meaning                                                                          |
-| -------- | ------------------------------------------------------------------------------- |
-| `-->`    | **sequence** — execution order. Labels OK (branch outcomes).                    |
-| `-.-`    | **reference** — reference-doc attachment. Dotted, **no labels, no direction**.  |
-| `--x`    | **failure** — failure / cancellation / escalation path.                          |
+| Operator | Meaning                                                                        |
+| -------- | ------------------------------------------------------------------------------ |
+| `-->`    | **sequence** — execution order. Labels OK (branch outcomes).                   |
+| `-.-`    | **reference** — reference-doc attachment. Dotted, **no labels, no direction**. |
+| `--x`    | **failure** — failure / cancellation / escalation path.                        |
 
 ```
 a --> b                       # then
@@ -171,16 +183,16 @@ No `type` / `template` declarations. Name them as strings in `params` / `returns
 Flat `@{ … }` — no `agentflow:` wrapper. **`description` and `instruction` are
 cross-cutting** — valid on any authored element.
 
-| Element                | Keys                                                                                            |
-| ---------------------- | ----------------------------------------------------------------------------------------------- |
-| `flow`                 | `model`, `memory`, `params`, `returns`                                                          |
-| task (default node)    | `execution`, `params`, `returns`                                                                |
-| tool (`shape: tool`)   | `params`, `returns`, `retry`, `cache`, `validate`, `handler`, `output`, `transport`, `command`, `connectorRef` |
-| action (`shape: action`) | `params`, `returns`, `connectorRef`                                                        |
-| `connector`            | `protocol`, `endpoint`, `transport`, `command`, `auth`, `token_required`                        |
-| input (`shape: input`) | `type`, `value`                                                                                 |
-| refdoc (`shape: refdoc`) | (presentation only; cross-cutting keys apply)                                                 |
-| edge                   | `instruction` (only)                                                                            |
+| Element                  | Keys                                                                                                           |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| `flow`                   | `model`, `memory`, `params`, `returns`                                                                         |
+| task (default node)      | `execution`, `params`, `returns`                                                                               |
+| tool (`shape: tool`)     | `params`, `returns`, `retry`, `cache`, `validate`, `handler`, `output`, `transport`, `command`, `connectorRef` |
+| action (`shape: action`) | `params`, `returns`, `connectorRef`                                                                            |
+| `connector`              | `protocol`, `endpoint`, `transport`, `command`, `auth`, `token_required`                                       |
+| input (`shape: input`)   | `type`, `value`                                                                                                |
+| refdoc (`shape: refdoc`) | (presentation only; cross-cutting keys apply)                                                                  |
+| edge                     | `instruction` (only)                                                                                           |
 
 `memory` MUST be a YAML array. Presentation keys (`shape`, `view`, `icon`, `class`,
 `style`, `w`, `h`, `img`) sit at the same flat level. Bare and quoted scalars are

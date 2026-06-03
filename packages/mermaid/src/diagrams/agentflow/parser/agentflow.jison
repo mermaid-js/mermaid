@@ -375,8 +375,12 @@ statement
     {$$=[];}
     | flow SPACE textNoTags SQS text SQE separator document end
     {$$=yy.addSubGraph($textNoTags,$document,$text,'flow');if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,$text,@1,@9);}}
+    | flow SPACE textNoTags SQS text SQE shapeData separator document end
+    {$$=yy.addSubGraph($textNoTags,$document,$text,'flow');yy.addVertex($$,undefined,undefined,undefined,undefined,undefined,undefined,$shapeData);if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,$text,@1,@10);}}
     | flow SPACE textNoTags separator document end
     {$$=yy.addSubGraph($textNoTags,$document,{text:'', type:'text'},'flow');if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,{text:'', type:'text'},@1,@6);}}
+    | flow SPACE textNoTags shapeData separator document end
+    {$$=yy.addSubGraph($textNoTags,$document,{text:'', type:'text'},'flow');yy.addVertex($$,undefined,undefined,undefined,undefined,undefined,undefined,$shapeData);if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,{text:'', type:'text'},@1,@7);}}
     | flow separator document end
     {$$=yy.addSubGraph(undefined,$document,undefined,'flow');if(yy.addSubgraphMapping){yy.addSubgraphMapping(undefined,undefined,@1,@4);}}
     | connector SPACE textNoTags SQS text SQE separator
