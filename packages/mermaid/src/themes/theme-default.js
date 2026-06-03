@@ -1,5 +1,5 @@
 import { invert, lighten, rgba, adjust, darken, isDark } from 'khroma';
-import { mkBorder } from './theme-helpers.js';
+import { getNeuralnetPalette, mkBorder } from './theme-helpers.js';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
@@ -291,6 +291,17 @@ class Theme {
     this.venn8 = this.venn8 ?? adjust(this.secondaryColor, { h: 120, l: -30 });
     this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
     this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
+
+    /* neuralnet */
+    {
+      const nnPalette = getNeuralnetPalette(this.darkMode);
+      for (const [key, value] of Object.entries(nnPalette)) {
+        this[key] = this[key] ?? value;
+      }
+      this.nnTextColor = this.nnTextColor ?? '#ffffff';
+      this.nnLabelTextColor = this.nnLabelTextColor ?? this.textColor;
+      this.nnEdgeColor = this.nnEdgeColor ?? this.lineColor;
+    }
 
     /* cynefin */
     this.cynefin = {

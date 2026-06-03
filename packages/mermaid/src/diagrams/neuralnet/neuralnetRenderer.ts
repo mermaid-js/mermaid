@@ -1,3 +1,4 @@
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
@@ -9,6 +10,80 @@ import type {
   NeuralnetDB,
 } from './neuralnetTypes.js';
 
+// ─── Theme-driven category colours ────────────────────────────────────────────
+
+interface CategoryColor {
+  fill: string;
+  stroke: string;
+  text: string;
+}
+
+// Hardcoded fallbacks used only when a theme does not define the variable.
+// The canonical source of truth is `themeVariables.nn*Fill / nn*Stroke`,
+// populated by getNeuralnetPalette() in the theme files.
+const FALLBACK_COLORS: Record<LayerCategory, CategoryColor> = {
+  input: { fill: '#4A90D9', stroke: '#2E6DA4', text: '#ffffff' },
+  output: { fill: '#27AE60', stroke: '#1E8449', text: '#ffffff' },
+  dense: { fill: '#8E44AD', stroke: '#6C3483', text: '#ffffff' },
+  conv: { fill: '#E67E22', stroke: '#CA6F1E', text: '#ffffff' },
+  pool: { fill: '#16A085', stroke: '#0E6655', text: '#ffffff' },
+  norm: { fill: '#F39C12', stroke: '#D68910', text: '#ffffff' },
+  dropout: { fill: '#95A5A6', stroke: '#717D7E', text: '#ffffff' },
+  structural: { fill: '#BDC3C7', stroke: '#95A5A6', text: '#2c3e50' },
+  recurrent: { fill: '#C0392B', stroke: '#96281B', text: '#ffffff' },
+  merge: { fill: '#1ABC9C', stroke: '#148F77', text: '#ffffff' },
+  attention: { fill: '#2980B9', stroke: '#1F618D', text: '#ffffff' },
+  activation: { fill: '#D5D8DC', stroke: '#AAB7B8', text: '#2c3e50' },
+};
+
+// Map a lowercase category to the capitalised theme-variable stem (nn<Stem>Fill)
+const CATEGORY_THEME_KEY: Record<LayerCategory, string> = {
+  input: 'Input',
+  output: 'Output',
+  dense: 'Dense',
+  conv: 'Conv',
+  pool: 'Pool',
+  norm: 'Norm',
+  dropout: 'Dropout',
+  structural: 'Structural',
+  recurrent: 'Recurrent',
+  merge: 'Merge',
+  attention: 'Attention',
+  activation: 'Activation',
+};
+
+/**
+ * Resolve the active category palette from theme variables, falling back to
+ * the built-in defaults when a theme does not define a given colour. This is
+ * what makes the diagram follow the active theme (and the dark/light variant)
+ * and lets users override any single category via `themeVariables`.
+ */
+function resolveCategoryColors(): Record<LayerCategory, CategoryColor> {
+  const tv = getConfig().themeVariables ?? {};
+  const out = {} as Record<LayerCategory, CategoryColor>;
+  for (const cat of Object.keys(FALLBACK_COLORS) as LayerCategory[]) {
+    const stem = CATEGORY_THEME_KEY[cat];
+    const fb = FALLBACK_COLORS[cat];
+    out[cat] = {
+      fill: tv[`nn${stem}Fill`] ?? fb.fill,
+      stroke: tv[`nn${stem}Stroke`] ?? fb.stroke,
+      // Light-fill categories keep dark text; saturated ones honour nnTextColor
+      text: fb.text === '#2c3e50' ? fb.text : (tv.nnTextColor ?? fb.text),
+    };
+  }
+  return out;
+}
+
+function getEdgeColor(): string {
+  const tv = getConfig().themeVariables ?? {};
+  return tv.nnEdgeColor ?? tv.lineColor ?? '#666';
+}
+
+function getLabelColor(): string {
+  const tv = getConfig().themeVariables ?? {};
+  return tv.nnLabelTextColor ?? tv.textColor ?? '#333';
+}
+
 // ─── Neuron mode constants ────────────────────────────────────────────────────
 
 const NEURON_R = 18; // circle radius
@@ -16,22 +91,6 @@ const NEURON_STEP = 50; // center-to-center vertical spacing
 const MAX_SHOW = 8; // max circles drawn per layer before truncation
 const LAYER_COL_GAP = 110; // horizontal gap between layer columns
 const NEURON_LABEL_H = 24; // height reserved for layer type label above column
-
-// Colors for neuron circles by category
-const NEURON_FILL: Record<LayerCategory, { fill: string; stroke: string; text: string }> = {
-  input: { fill: '#82c46e', stroke: '#4a8a3a', text: '#2c3e50' },
-  output: { fill: '#e07080', stroke: '#b04060', text: '#fff' },
-  dense: { fill: '#8080d0', stroke: '#5050a0', text: '#fff' },
-  conv: { fill: '#e0904a', stroke: '#b06020', text: '#fff' },
-  pool: { fill: '#40b0a0', stroke: '#208070', text: '#fff' },
-  norm: { fill: '#e0c040', stroke: '#b09010', text: '#2c3e50' },
-  dropout: { fill: '#a0a8b0', stroke: '#707880', text: '#fff' },
-  structural: { fill: '#c0c8d0', stroke: '#9098a0', text: '#2c3e50' },
-  recurrent: { fill: '#c04040', stroke: '#902020', text: '#fff' },
-  merge: { fill: '#40c8a8', stroke: '#209880', text: '#fff' },
-  attention: { fill: '#4090c8', stroke: '#206898', text: '#fff' },
-  activation: { fill: '#d0d8e0', stroke: '#a0a8b0', text: '#2c3e50' },
-};
 
 // ─── Neuron count extraction ──────────────────────────────────────────────────
 
@@ -79,6 +138,9 @@ function drawNeuronMode(
 ): { w: number; h: number } {
   const PADDING = 40;
   const TITLE_H = title ? 36 : 0;
+  const categoryColors = resolveCategoryColors();
+  const labelColor = getLabelColor();
+  const edgeColor = getEdgeColor();
 
   // Build ordered list of layers to render
   const layerIds = nodeOrder.filter((nid) => nodes.has(nid));
@@ -115,7 +177,7 @@ function drawNeuronMode(
       .attr('text-anchor', 'middle')
       .attr('font-size', '16px')
       .attr('font-weight', 'bold')
-      .attr('fill', '#333')
+      .attr('fill', labelColor)
       .text(title);
   }
 
@@ -132,7 +194,7 @@ function drawNeuronMode(
     .attr('orient', 'auto-start-reverse')
     .append('path')
     .attr('d', 'M 0 0 L 10 5 L 0 10 z')
-    .attr('fill', '#aaa');
+    .attr('fill', edgeColor);
 
   // ── Connections ──
   // In sequential mode auto-edges; in graph mode use explicit edges
@@ -165,9 +227,9 @@ function drawNeuronMode(
           .attr('y1', slotCy(fromSlots, fi))
           .attr('x2', x2)
           .attr('y2', slotCy(toSlots, ti))
-          .attr('stroke', '#bbb')
+          .attr('stroke', edgeColor)
           .attr('stroke-width', 0.8)
-          .attr('opacity', 0.6);
+          .attr('opacity', 0.4);
       }
     }
   }
@@ -175,7 +237,7 @@ function drawNeuronMode(
   // ── Layer columns ──
   layerSlots.forEach(({ nid, node, count, slots }, colIdx) => {
     const cat = getCategory(node.layerType);
-    const colors = NEURON_FILL[cat];
+    const colors = categoryColors[cat];
     const cx = colCx[colIdx];
     const layerG = svg.append('g').attr('class', `neuron-layer ${cat}`).attr('data-id', nid);
 
@@ -187,7 +249,7 @@ function drawNeuronMode(
       .attr('y', PADDING + TITLE_H + NEURON_LABEL_H - 6)
       .attr('text-anchor', 'middle')
       .attr('font-size', '11px')
-      .attr('fill', '#555')
+      .attr('fill', labelColor)
       .text(shortName);
 
     // Count badge below label
@@ -197,7 +259,8 @@ function drawNeuronMode(
       .attr('y', PADDING + TITLE_H + NEURON_LABEL_H + 8)
       .attr('text-anchor', 'middle')
       .attr('font-size', '10px')
-      .attr('fill', '#888')
+      .attr('fill', labelColor)
+      .attr('opacity', 0.7)
       .text(`(${count})`);
 
     // Draw circles
@@ -279,22 +342,6 @@ const CATEGORY_MAP: Partial<Record<LayerType, LayerCategory>> = {
   Softmax: 'activation',
   Tanh: 'activation',
   GELU: 'activation',
-};
-
-// Applied directly via D3 attributes so rendering doesn't depend on CSS injection
-const CATEGORY_COLORS: Record<LayerCategory, { fill: string; stroke: string; text: string }> = {
-  input: { fill: '#4A90D9', stroke: '#2E6DA4', text: '#ffffff' },
-  output: { fill: '#27AE60', stroke: '#1E8449', text: '#ffffff' },
-  dense: { fill: '#8E44AD', stroke: '#6C3483', text: '#ffffff' },
-  conv: { fill: '#E67E22', stroke: '#CA6F1E', text: '#ffffff' },
-  pool: { fill: '#16A085', stroke: '#0E6655', text: '#ffffff' },
-  norm: { fill: '#F39C12', stroke: '#D68910', text: '#ffffff' },
-  dropout: { fill: '#95A5A6', stroke: '#717D7E', text: '#ffffff' },
-  structural: { fill: '#BDC3C7', stroke: '#95A5A6', text: '#2c3e50' },
-  recurrent: { fill: '#C0392B', stroke: '#96281B', text: '#ffffff' },
-  merge: { fill: '#1ABC9C', stroke: '#148F77', text: '#ffffff' },
-  attention: { fill: '#2980B9', stroke: '#1F618D', text: '#ffffff' },
-  activation: { fill: '#D5D8DC', stroke: '#AAB7B8', text: '#2c3e50' },
 };
 
 function getCategory(type: LayerType): LayerCategory {
@@ -559,6 +606,11 @@ export const draw: DrawDefinition = (_text, id, _version, diagObj) => {
     return;
   }
 
+  // Resolve colours from the active theme (falls back to built-in palette)
+  const categoryColors = resolveCategoryColors();
+  const edgeColor = getEdgeColor();
+  const labelColor = getLabelColor();
+
   // Shape propagation (sequential only; graph shape inference is future work)
   if (mode === 'sequential') {
     const ordered = nodeOrder.map((nid) => nodes.get(nid)).filter(Boolean) as NeuralNodeDef[];
@@ -589,7 +641,7 @@ export const draw: DrawDefinition = (_text, id, _version, diagObj) => {
     .attr('orient', 'auto-start-reverse')
     .append('path')
     .attr('d', 'M 0 0 L 10 5 L 0 10 z')
-    .attr('fill', '#666');
+    .attr('fill', edgeColor);
 
   // Title
   if (title) {
@@ -600,6 +652,7 @@ export const draw: DrawDefinition = (_text, id, _version, diagObj) => {
       .attr('y', PADDING)
       .attr('text-anchor', 'middle')
       .attr('dominant-baseline', 'middle')
+      .attr('fill', labelColor)
       .text(title);
   }
 
@@ -624,7 +677,7 @@ export const draw: DrawDefinition = (_text, id, _version, diagObj) => {
       .attr('class', 'edge')
       .attr('d', `M ${x1} ${y1} C ${x1} ${cy}, ${x2} ${cy}, ${x2} ${y2}`)
       .attr('fill', 'none')
-      .attr('stroke', '#666')
+      .attr('stroke', edgeColor)
       .attr('stroke-width', 1.5)
       .attr('marker-end', `url(#${id}-arrowhead)`);
 
@@ -637,6 +690,7 @@ export const draw: DrawDefinition = (_text, id, _version, diagObj) => {
         .attr('x', (x1 + x2) / 2)
         .attr('y', cy - 4)
         .attr('text-anchor', 'middle')
+        .attr('fill', labelColor)
         .text(fmtShape(srcNode.outputShape));
     }
   }
@@ -646,7 +700,7 @@ export const draw: DrawDefinition = (_text, id, _version, diagObj) => {
 
   for (const { id: nodeId, x, y, node } of layout) {
     const cat = getCategory(node.layerType);
-    const colors = CATEGORY_COLORS[cat];
+    const colors = categoryColors[cat];
     const { main, sub } = getDisplayText(node);
     const hasSubLabel = sub.trim().length > 0;
 
