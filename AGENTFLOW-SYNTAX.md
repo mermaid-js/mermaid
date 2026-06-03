@@ -2,16 +2,37 @@
 
 |             |                                |
 | ----------- | ------------------------------ |
-| **Version** | 0.8.1                          |
+| **Version** | 0.8.2                          |
 | **Status**  | Draft                          |
-| **Date**    | 2026-05-26                     |
+| **Date**    | 2026-06-03                     |
 | **Authors** | Mermaid-Chart / Agentflow Team |
 
 ---
 
+## What's New in v0.8.2
+
+v0.8.2 is a small, backward-compatible follow-up to v0.8.1 — no syntax is removed or
+renamed. It adds one authoring convenience and lands a batch of parser/tooling fixes.
+
+### TL;DR — what changed since v0.8.1
+
+- **Inline metadata on flow headers.** Flow metadata may now be attached directly on
+  the declaration line — `flow <id>@{ … }` and `flow <id>["Title"]@{ … }` — as an
+  alternative to the standalone `<id>@{ … }` form after `end`. Both resolve to the same
+  subgraph metadata and obey the same §10 applicability rules (§3.2).
+- **Self-loop edges render.** A genuine self-loop authored as `a --> a` is no longer
+  dropped (§5).
+- **Edge `instruction` reaches the IR.** Edge metadata (§5.3) declared via an edge id is
+  now carried through to the rendered/compiled layout data, not just the parser DB.
+- **Editor position-mapping fixes.** Inline `@{ … }` blocks now map to their node rather
+  than the enclosing flow, and sibling flow containers no longer report overlapping line
+  spans. These affect editor/tooling cursor resolution only — no authoring change.
+
+Full per-version history lives in `AGENTFLOW-CHANGELOG.md`.
+
 ## What's New in v0.8.1
 
-v0.8.1 is the current pre-1.0 draft. It is a follow-up to v0.8.0 driven by the
+v0.8.1 is a pre-1.0 draft (superseded by v0.8.2). It is a follow-up to v0.8.0 driven by the
 2026-05-26 syntax meeting. The design premise is unchanged: Agentflow is a **canonical
 format an LLM authors and a human corrects**. Verbosity is acceptable; ambiguity and
 redundant, near-synonymous concepts are not. Where v0.8.0 collapsed the container zoo
@@ -28,7 +49,7 @@ preserved in the archived `AGENTFLOW-SYNTAX_0.7.0.md`.
    kind. `task` is still the default node (§3, §4.3).
 2. **`reads` / `writes` arrays removed.** No more shared-state bookkeeping in the
    syntax. Data passes between steps implicitly; if a step needs to assert what it
-   requires or produces, it says so in its `instruction`. The shared-state *model*
+   requires or produces, it says so in its `instruction`. The shared-state _model_
    survives in prose (§6); the bookkeeping syntax is gone.
 3. **`instance of` keyword removed.** Reuse happens through MCP — a flow exposed as an
    MCP-callable tool is invoked from another flow by an action node. No
@@ -108,7 +129,7 @@ e1@{ instruction: "If rejected, send back with reviewer comments inlined." }
 
 The following forms are **not** part of the language: the `agentflow: { … }` wrapper;
 the `agent` container keyword; the `flow` / `skill` / `testCase` / `directive` container
-keywords from v0.7.0 (`flow` returns as the *single* container in v0.8.1); the `task` /
+keywords from v0.7.0 (`flow` returns as the _single_ container in v0.8.1); the `task` /
 `tool` keywords as containers; the `type` / `template` keyword declarations; the
 `instance of` keyword (removed in v0.8.1); the `reads` / `writes` metadata arrays
 (removed in v0.8.1); the `==>`, `-.->`, `---`, `--o`, `-->>`, and `o--o` edge operators;
@@ -249,8 +270,8 @@ containers — they take no `end`.
 
 ### 3.1 The `flow` Container
 
-| Keyword | Shape ID    | Visual                                                         | Semantic Meaning                                                                                                                                                |
-| ------- | ----------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Keyword | Shape ID    | Visual                                                         | Semantic Meaning                                                                                                                                                                                                   |
+| ------- | ----------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `flow`  | `flowGroup` | Filled background, solid 1.5px border, rx=14, header separator | A **named, composable unit of work**. A flow owns the tasks it executes, may compose other flows, holds an optional model binding, and may declare a `params` / `returns` contract so it can be invoked as a unit. |
 
 A flow can be exposed as an MCP-callable tool by the runtime; another flow calls it
@@ -275,13 +296,35 @@ researcher@{
 }
 ```
 
+**Inline form (v0.8.2).** The metadata block may also be attached directly on the flow
+header, immediately after the id (or its `["Title"]`). This is equivalent to the
+standalone form above — it resolves to the same container metadata and obeys the same
+applicability rules:
+
+```
+flow researcher@{ model: "claude-sonnet-4-20250514" }
+  ...
+end
+
+flow researcher["Researcher"]@{
+  model: "claude-sonnet-4-20250514",
+  memory: ["episodic", "semantic"]
+}
+  ...
+end
+```
+
+Use whichever reads better: inline keeps the binding next to the declaration; the
+standalone form keeps long metadata blocks out of the header. The two forms merge, so a
+header block and a later `<id>@{ … }` for the same flow both contribute.
+
 Which keys are valid on which element kind is defined in §10 _Metadata Applicability_.
-The presentation-vs-semantic distinction is preserved at the level of *meaning* (§11),
+The presentation-vs-semantic distinction is preserved at the level of _meaning_ (§11),
 not through syntactic nesting: keys like `view`, `icon`, `style` are presentation;
 `model`, `params`, `instruction` are semantic. The `memory` key MUST be a YAML array.
 
 > **Bare vs quoted scalars.** YAML treats `memory: [episodic, semantic]` and `memory:
-> ["episodic", "semantic"]` as the same value. The same equivalence applies inside
+["episodic", "semantic"]` as the same value. The same equivalence applies inside
 > `params` value positions: `params: { city: String }` and `params: { city: "String" }`
 > parse identically. Authors may use either form. Identifier-like enum values
 > (`shape: tool`, `view: expanded`) conventionally appear bare; free-form strings
@@ -293,12 +336,12 @@ not through syntactic nesting: keys like `view`, `icon`, `style` are presentatio
 Containment defines **structural validity**, not execution ownership. With the
 container set reduced to `flow`, the matrix is small:
 
-| Parent | Allowed children                          |
-| ------ | ----------------------------------------- |
-| `flow` | `flow` (nested), node (task, tool, etc.)  |
+| Parent | Allowed children                         |
+| ------ | ---------------------------------------- |
+| `flow` | `flow` (nested), node (task, tool, etc.) |
 
-> **`tool` and `task` are node categories, not keywords.** A *tool* is any node whose
-> resolved shape is `tool` / `subroutine` (§7). A *task* is the default node (§4.3).
+> **`tool` and `task` are node categories, not keywords.** A _tool_ is any node whose
+> resolved shape is `tool` / `subroutine` (§7). A _task_ is the default node (§4.3).
 > Authors do not write a literal `tool` or `task` keyword.
 
 Tools, tasks, and other leaf nodes cannot be parents. A `connector` declaration (§8) is
@@ -348,17 +391,17 @@ edge itself can be given an `instruction` via the edge-metadata mechanism (§5.3
 
 ### 4.3 Node Shapes
 
-Shapes carry semantic weight: a node's shape *is* part of its meaning. Shapes are set
+Shapes carry semantic weight: a node's shape _is_ part of its meaning. Shapes are set
 automatically (the default) or explicitly via `@{ shape: … }`. v0.8.1 introduces a set
 of **author-friendly aliases** alongside the canonical Mermaid shape IDs.
 
 #### 4.3.1 The Default Shape — a Task
 
-| Shape (alias / canonical)         | Assigned When                       | Visual                                                                | Semantic Meaning                                                                                                                  |
-| --------------------------------- | ----------------------------------- | --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `task` / `roundedRect`            | Default for all user-defined nodes  | Rounded rectangle                                                     | A **task** — a discrete unit of work performed by the enclosing flow.                                                            |
-| `task` / `rect`                   | `@{ shape: rect }` (alias `squareRect`) | Square rectangle                                                  | Also a **task**. Remapped to `roundedRect` at render time; semantically identical to the default.                                 |
-| `collapsedGroup`                  | Flow has `@{ view: "collapsed" }`   | Title + separator + ellipsis dots; border/fill matches the flow style | A flow whose internals are hidden. Preserves the flow's visual identity while signalling elided detail (progressive disclosure). |
+| Shape (alias / canonical) | Assigned When                           | Visual                                                                | Semantic Meaning                                                                                                                 |
+| ------------------------- | --------------------------------------- | --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `task` / `roundedRect`    | Default for all user-defined nodes      | Rounded rectangle                                                     | A **task** — a discrete unit of work performed by the enclosing flow.                                                            |
+| `task` / `rect`           | `@{ shape: rect }` (alias `squareRect`) | Square rectangle                                                      | Also a **task**. Remapped to `roundedRect` at render time; semantically identical to the default.                                |
+| `collapsedGroup`          | Flow has `@{ view: "collapsed" }`       | Title + separator + ellipsis dots; border/fill matches the flow style | A flow whose internals are hidden. Preserves the flow's visual identity while signalling elided detail (progressive disclosure). |
 
 #### 4.3.2 Shape Aliases
 
@@ -366,15 +409,15 @@ The aliases below are the **recommended authoring names** in v0.8.1. The canonic
 Mermaid shape IDs (right column) remain accepted equivalents — `shape: tool` and
 `shape: subroutine` parse identically.
 
-| Alias       | Canonical (Mermaid) | Visual                            | Semantic Meaning                                                                                                                                                                  |
-| ----------- | ------------------- | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `task`      | `roundedRect`       | Rounded rectangle (default)       | A discrete unit of work performed by the enclosing flow.                                                                                                                          |
-| `tool`      | `subroutine`        | Double-bordered rectangle         | A **tool** — a native function definition, external to the LLM, whose signature is provided so it can call it on command (§7). Invoked via a `-->` sequence into the tool node.   |
-| `input`     | `lean-right`        | Parallelogram (right-leaning)     | An **input value or parameter** entering the flow from outside. Slant suggests data in motion.                                                                                    |
-| `decision`  | `diamond`           | Diamond / rhombus                 | A **decision gate** — the canonical branching vertex (§4.2). Inline form `id{Text}` is equivalent.                                                                                |
-| `refdoc`    | `lin-doc`           | Lined document                    | A **reference document or specification** — something read but not produced (style guides, brand manuals, schemas). Attached by a `-.-` reference edge (§5.1, §16.2).             |
-| `action`   | `hexagon`           | Hexagon                           | A **call to another flow exposed via MCP** (§16.7). Visually distinct from a low-level `tool` so authors and readers can tell an action call from a primitive function call.    |
-| `connector` | `connector`         | Connector node (rounded badge)    | An **external integration point** — declared with the `connector` keyword (§8). Replaces the v0.7.0 `circle` shape.                                                              |
+| Alias       | Canonical (Mermaid) | Visual                         | Semantic Meaning                                                                                                                                                                |
+| ----------- | ------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `task`      | `roundedRect`       | Rounded rectangle (default)    | A discrete unit of work performed by the enclosing flow.                                                                                                                        |
+| `tool`      | `subroutine`        | Double-bordered rectangle      | A **tool** — a native function definition, external to the LLM, whose signature is provided so it can call it on command (§7). Invoked via a `-->` sequence into the tool node. |
+| `input`     | `lean-right`        | Parallelogram (right-leaning)  | An **input value or parameter** entering the flow from outside. Slant suggests data in motion.                                                                                  |
+| `decision`  | `diamond`           | Diamond / rhombus              | A **decision gate** — the canonical branching vertex (§4.2). Inline form `id{Text}` is equivalent.                                                                              |
+| `refdoc`    | `lin-doc`           | Lined document                 | A **reference document or specification** — something read but not produced (style guides, brand manuals, schemas). Attached by a `-.-` reference edge (§5.1, §16.2).           |
+| `action`    | `hexagon`           | Hexagon                        | A **call to another flow exposed via MCP** (§16.7). Visually distinct from a low-level `tool` so authors and readers can tell an action call from a primitive function call.    |
+| `connector` | `connector`         | Connector node (rounded badge) | An **external integration point** — declared with the `connector` keyword (§8). Replaces the v0.7.0 `circle` shape.                                                             |
 
 #### 4.3.3 Removed Shapes
 
@@ -400,13 +443,13 @@ valid on which element kind is specified in §10 _Metadata Applicability_.
 
 #### 4.4.1 Presentation Fields (affect rendering)
 
-| Field           | Purpose                                              | Example                            |
-| --------------- | ---------------------------------------------------- | ---------------------------------- |
-| `shape`         | Set node shape (semantic; see §4.3 and §11)          | `tool`, `input`, `refdoc`, `action` |
-| `view`          | Collapse/expand control (presentation-only; §11)     | `"collapsed"`, `"expanded"`        |
-| `icon`          | Icon identifier (presentation-only; §11)             | Icon name string                   |
-| `img`, `w`, `h` | Image and dimensions (presentation-only; §11)        | URL, pixel values                  |
-| `class`, `style` | Styling hooks (presentation-only; §13)              | class name, CSS string             |
+| Field            | Purpose                                          | Example                             |
+| ---------------- | ------------------------------------------------ | ----------------------------------- |
+| `shape`          | Set node shape (semantic; see §4.3 and §11)      | `tool`, `input`, `refdoc`, `action` |
+| `view`           | Collapse/expand control (presentation-only; §11) | `"collapsed"`, `"expanded"`         |
+| `icon`           | Icon identifier (presentation-only; §11)         | Icon name string                    |
+| `img`, `w`, `h`  | Image and dimensions (presentation-only; §11)    | URL, pixel values                   |
+| `class`, `style` | Styling hooks (presentation-only; §13)           | class name, CSS string              |
 
 #### 4.4.2 Domain Fields (semantic)
 
@@ -414,29 +457,29 @@ These carry meaning consumed by tooling. §10 defines which keys are valid on wh
 element kinds. Two keys are **cross-cutting** — valid on any authored element:
 `description` and `instruction` (§10.1).
 
-| Field            | Purpose                                                                                          | Example                                            |
-| ---------------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| `description`    | Human-readable description (cross-cutting)                                                      | `"Classify data sensitivity"`                      |
-| `instruction`    | Free-form guidance compiled into the prompt that triggers this element (cross-cutting)          | `"You are a careful researcher. Always cite sources."` |
-| `model`          | LLM model binding (flows; optional — runtime default if omitted)                                | `"claude-opus-4-6"`                                |
-| `memory`         | Flow memory categories, YAML array (flows)                                                      | `["episodic", "semantic"]`                         |
-| `params`         | Input parameters as a YAML mapping (name → type expression) (flows, tasks, tools)               | `{ city: String, top_k: Int? }`                    |
-| `returns`        | Output type contract (flows, tasks, tools)                                                      | `"CoffeeCopy"`, `"String"`                         |
-| `execution`      | Execution mode (tasks)                                                                          | `"sequential"`, `"parallel"`                       |
-| `retry`          | Retry count on failure (tools)                                                                  | `2`                                                |
-| `cache`          | Cache duration (tools)                                                                          | `"30s"`, `"24h"`                                   |
-| `validate`       | Validation method for tool output (tools)                                                       | `"json-schema"`, `"strict"`                        |
-| `handler`        | External HTTP endpoint for tool execution (tools)                                               | `"http POST https://api.example.com"`              |
-| `output`         | Template the output conforms to (tools)                                                         | `"triage_result"`                                  |
-| `connectorRef`   | Tool / action binding to a connector (§8.1; dotted form canonical)                            | `"github.create_issue"`, `"llm_api.chat"`          |
-| `type`           | Type expression for an input value (input nodes only)                                           | `String`, `Int?`, `"CoffeeCopy"`                   |
-| `value`          | Literal value at this point in the flow (input nodes only). Any YAML scalar, list, or mapping.  | `"src/HelloWorld.java"`, `42`, `{ city: "Sthlm" }` |
-| `protocol`       | Integration protocol (connector nodes, §8)                                                      | `"mcp"`, `"http"`, `"sql"`                          |
-| `endpoint`       | External endpoint (connector nodes, §8)                                                         | `"https://api.example.com"`                        |
-| `transport`      | Transport for protocols that require one (connector / tool nodes)                               | `"stdio"`, `"sse"`                                  |
-| `command`        | Command line for stdio-based servers (connector / tool nodes)                                   | `"npx -y @mcp/server"`                             |
-| `auth`           | Authentication mode (connector nodes, §8)                                                       | `"bearer"`, `"oauth2"`, `"none"`                    |
-| `token_required` | Whether a token is required (connector nodes, §8)                                               | `true`, `false`                                    |
+| Field            | Purpose                                                                                        | Example                                                |
+| ---------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `description`    | Human-readable description (cross-cutting)                                                     | `"Classify data sensitivity"`                          |
+| `instruction`    | Free-form guidance compiled into the prompt that triggers this element (cross-cutting)         | `"You are a careful researcher. Always cite sources."` |
+| `model`          | LLM model binding (flows; optional — runtime default if omitted)                               | `"claude-opus-4-6"`                                    |
+| `memory`         | Flow memory categories, YAML array (flows)                                                     | `["episodic", "semantic"]`                             |
+| `params`         | Input parameters as a YAML mapping (name → type expression) (flows, tasks, tools)              | `{ city: String, top_k: Int? }`                        |
+| `returns`        | Output type contract (flows, tasks, tools)                                                     | `"CoffeeCopy"`, `"String"`                             |
+| `execution`      | Execution mode (tasks)                                                                         | `"sequential"`, `"parallel"`                           |
+| `retry`          | Retry count on failure (tools)                                                                 | `2`                                                    |
+| `cache`          | Cache duration (tools)                                                                         | `"30s"`, `"24h"`                                       |
+| `validate`       | Validation method for tool output (tools)                                                      | `"json-schema"`, `"strict"`                            |
+| `handler`        | External HTTP endpoint for tool execution (tools)                                              | `"http POST https://api.example.com"`                  |
+| `output`         | Template the output conforms to (tools)                                                        | `"triage_result"`                                      |
+| `connectorRef`   | Tool / action binding to a connector (§8.1; dotted form canonical)                             | `"github.create_issue"`, `"llm_api.chat"`              |
+| `type`           | Type expression for an input value (input nodes only)                                          | `String`, `Int?`, `"CoffeeCopy"`                       |
+| `value`          | Literal value at this point in the flow (input nodes only). Any YAML scalar, list, or mapping. | `"src/HelloWorld.java"`, `42`, `{ city: "Sthlm" }`     |
+| `protocol`       | Integration protocol (connector nodes, §8)                                                     | `"mcp"`, `"http"`, `"sql"`                             |
+| `endpoint`       | External endpoint (connector nodes, §8)                                                        | `"https://api.example.com"`                            |
+| `transport`      | Transport for protocols that require one (connector / tool nodes)                              | `"stdio"`, `"sse"`                                     |
+| `command`        | Command line for stdio-based servers (connector / tool nodes)                                  | `"npx -y @mcp/server"`                                 |
+| `auth`           | Authentication mode (connector nodes, §8)                                                      | `"bearer"`, `"oauth2"`, `"none"`                       |
+| `token_required` | Whether a token is required (connector nodes, §8)                                              | `true`, `false`                                        |
 
 ---
 
@@ -447,11 +490,11 @@ property of the operator, not an independent axis.
 
 ### 5.1 Edge Operators
 
-| Operator | Semantic      | Primary meaning                                                                          | Marker                  |
-| -------- | ------------- | --------------------------------------------------------------------------------------- | ----------------------- |
-| `-->`    | `sequence`    | precedence / execution order — "this happens, then that". Labels OK (branch outcomes).  | single arrow            |
-| `-.-`    | `reference`   | non-directional reference — primarily **reference-document attachment** (§16.2). **No labels, no direction.** | dotted line, no arrow   |
-| `--x`    | `failure`     | failure / cancellation / escalation path                                                | X endpoint              |
+| Operator | Semantic    | Primary meaning                                                                                               | Marker                |
+| -------- | ----------- | ------------------------------------------------------------------------------------------------------------- | --------------------- |
+| `-->`    | `sequence`  | precedence / execution order — "this happens, then that". Labels OK (branch outcomes).                        | single arrow          |
+| `-.-`    | `reference` | non-directional reference — primarily **reference-document attachment** (§16.2). **No labels, no direction.** | dotted line, no arrow |
+| `--x`    | `failure`   | failure / cancellation / escalation path                                                                      | X endpoint            |
 
 **Removed in v0.8.1 / kept removed:** `---` (replaced by `-.-`); `==>` (data flow —
 data passes implicitly through state, §6); `-.->` (instance binding — the `instance of`
@@ -712,16 +755,16 @@ no separate reference node for types or templates.
 Metadata keys are restricted to the element kinds listed. Keys outside this table are
 preserved for downstream tooling but produce a warning.
 
-| Element                    | Valid metadata keys                                                                                                            |
-| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `flow`                     | `model` (optional), `memory`, `params`, `returns`                                                                              |
-| task (default node)        | `execution`, `params`, `returns`                                                                                               |
-| tool (`shape: tool`)       | `params`, `returns`, `retry`, `cache`, `validate`, `handler`, `output`, `transport`, `command`, `connectorRef`                 |
-| action (`shape: action`) | `params`, `returns`, `connectorRef`                                                                                           |
-| connector (`connector`)    | `protocol`, `endpoint`, `transport`, `command`, `auth`, `token_required`                                                       |
-| input (`shape: input`)     | `type`, `value`                                                                                                                |
-| reference doc (`shape: refdoc`) | (presentation only; cross-cutting keys apply)                                                                              |
-| edge                       | `instruction` (only)                                                                                                            |
+| Element                         | Valid metadata keys                                                                                            |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `flow`                          | `model` (optional), `memory`, `params`, `returns`                                                              |
+| task (default node)             | `execution`, `params`, `returns`                                                                               |
+| tool (`shape: tool`)            | `params`, `returns`, `retry`, `cache`, `validate`, `handler`, `output`, `transport`, `command`, `connectorRef` |
+| action (`shape: action`)        | `params`, `returns`, `connectorRef`                                                                            |
+| connector (`connector`)         | `protocol`, `endpoint`, `transport`, `command`, `auth`, `token_required`                                       |
+| input (`shape: input`)          | `type`, `value`                                                                                                |
+| reference doc (`shape: refdoc`) | (presentation only; cross-cutting keys apply)                                                                  |
+| edge                            | `instruction` (only)                                                                                           |
 
 ### 10.1 Cross-Cutting
 
@@ -756,7 +799,7 @@ separate diagnostics/conformance specification (Appendix A), not here.
 ## 11. Presentation vs Semantic Fields
 
 The presentation/semantic split survives the v0.7.0 flattening — it is now a property
-of each *key's meaning*, not of a syntactic wrapper.
+of each _key's meaning_, not of a syntactic wrapper.
 
 **Presentation-only** controls MUST NOT influence semantic interpretation or
 validation:

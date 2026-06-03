@@ -1,4 +1,4 @@
-# Agentflow Syntax — Quick Reference (v0.8.1)
+# Agentflow Syntax — Quick Reference (v0.8.2)
 
 > A condensed outline of the language. The normative document is `AGENTFLOW-SYNTAX.md`;
 > section references (§) point there. Version history is in `AGENTFLOW-CHANGELOG.md`.
