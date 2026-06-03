@@ -8,6 +8,7 @@ catmull
 compositTitleSize
 cose
 curv
+cynefin
 deaccelerator
 Deaccelerator
 deaccelerators

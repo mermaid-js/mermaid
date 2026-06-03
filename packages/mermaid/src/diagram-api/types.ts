@@ -129,6 +129,30 @@ export type DetectorRecord = SetOptional<Omit<ExternalDiagramDefinition, 'id'>, 
 export type DiagramDetector = (text: string, config?: MermaidConfig) => boolean;
 export type DiagramLoader = () => Promise<{ id: string; diagram: DiagramDefinition }>;
 
+/* Types for the positions used in the free layout engine */
+interface Point {
+  x: number;
+  y: number;
+}
+
+export interface IntersectionPoint extends Point {
+  pos: 't' | 'b' | 'l' | 'r';
+}
+
+export interface NodePosition extends Point {
+  width?: number;
+  height?: number;
+}
+
+export interface EdgePoints {
+  points: Point[];
+}
+
+export interface Positions {
+  nodes: Record<string, NodePosition>;
+  edges: Record<string, EdgePoints>;
+}
+
 /**
  * Type for function draws diagram in the tag with id: id based on the graph definition in text.
  *
@@ -141,7 +165,8 @@ export type DrawDefinition = (
   text: string,
   id: string,
   version: string,
-  diagramObject: Diagram
+  diagramObject: Diagram,
+  positions?: Positions
 ) => void | Promise<void> | Record<string, unknown> | Promise<Record<string, unknown>>;
 
 export interface ParserDefinition {

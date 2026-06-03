@@ -129,6 +129,47 @@ describe('Sequence diagram', () => {
       {}
     );
   });
+  it('should render sequence rect with theme-aware default background', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+        rect
+          Alice->>John: Hello John, how are you?
+          Alice->>John: John, can you hear me?
+          John-->>Alice: Hi Alice, I can hear you!
+          John-->>Alice: I feel great!
+        end
+      `
+    );
+  });
+  it('should render sequence rect with theme-aware default background (base theme)', () => {
+    imgSnapshotTest(
+      `
+      %%{init: {'theme': 'base'}}%%
+      sequenceDiagram
+        rect
+          Alice->>John: Hello John, how are you?
+          Alice->>John: John, can you hear me?
+          John-->>Alice: Hi Alice, I can hear you!
+          John-->>Alice: I feel great!
+        end
+      `
+    );
+  });
+  it('should render sequence rect with theme-aware default background (dark theme)', () => {
+    imgSnapshotTest(
+      `
+      %%{init: {'theme': 'dark'}}%%
+      sequenceDiagram
+        rect
+          Alice->>John: Hello John, how are you?
+          Alice->>John: John, can you hear me?
+          John-->>Alice: Hi Alice, I can hear you!
+          John-->>Alice: I feel great!
+        end
+      `
+    );
+  });
   it('should render loops with a slight margin', () => {
     imgSnapshotTest(
       `

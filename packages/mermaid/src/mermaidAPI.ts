@@ -4,7 +4,18 @@
  */
 // @ts-ignore TODO: Investigate D3 issue
 import { select } from 'd3';
-import { compile, serialize, stringify } from 'stylis';
+import {
+  COMMENT,
+  compile,
+  KEYFRAMES,
+  LAYER,
+  MEDIA,
+  middleware,
+  SCOPE,
+  serialize,
+  stringify,
+  SUPPORTS,
+} from 'stylis';
 import DOMPurify from 'dompurify';
 import { isEmpty } from 'es-toolkit/compat';
 import { addSVGa11yTitleDescription, setA11yDiagramInfo } from './accessibility.js';
@@ -188,6 +199,85 @@ export const createCssStyles = (
   return cssString + cssStyleSheetToString(cssStyles);
 };
 
+/**
+ * Use `stylis` to compile the CSS to only apply to the given namespace.
+ *
+ * This will also remove some newer CSS features (e.g. nesting) to better
+ * support older browsers and does some minification. It also removes some
+ * at-rules that can't be namespaced.
+ *
+ * @internal
+ * @param namespace - the namespace to add in front of all the CSS styles, e.g. `#idOfSvgElement`
+ * @param css - the CSS styles to add the namespace to.
+ * @see https://github.com/thysultan/stylis
+ *
+ * @example
+ * // Returns `#id .class1{fill:red;}`
+ * compileCSS('#id', `.class1 { fill: red }`)
+ */
+const compileCSS = (namespace: `#${string}`, css: string) => {
+  return serialize(
+    compile(`${namespace}{${css}}`),
+    middleware([
+      function addNamespace(element, _index, _children, _callback) {
+        /**
+         * CSS normally automatically adds the `&` selector in front of each
+         * element. But, if there's already an `&` selector, it doesn't add this.
+         *
+         * This code will explicitly make sure it's always added, to ensure
+         * that the CSS never applies outside the SVG.
+         *
+         * E.g. `#svgId { .nested-class :not(&) { fill: red } }` will be
+         * transformed to `#svgId { & .nested-class :not(&) { fill: red } }`
+         */
+        if (element.type === 'rule' && Array.isArray(element.props)) {
+          if (element.parent && element.parent.type === KEYFRAMES) {
+            /**
+             * Don't namespace CSSKeyframeRule, since they don't have selectors.
+             */
+            return;
+          }
+          element.props = element.props.map((prop) => {
+            if (!prop.startsWith(namespace)) {
+              return `${namespace} ${prop}`;
+            }
+            return prop;
+          });
+        } else if (element.type.startsWith('@')) {
+          // Only allow certain at-rules to avoid namespace escape.
+          //
+          // Nested ones are allowed, since they'd get namespaced appropriately.
+          // @keyframes are required for Mermaid's animation features, even
+          // if they can potentially pollute the page.
+
+          /**
+           * At-rules that contain nested rules.
+           *
+           * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@container}
+           */
+          const nestedAtRules = [
+            MEDIA,
+            SUPPORTS,
+            LAYER,
+            SCOPE,
+            '@container',
+            '@starting-style',
+          ] as const;
+          const allowedAtRules = [
+            ...nestedAtRules,
+            KEYFRAMES, // needed for Mermaid's animation feature
+          ] as const;
+          if (!allowedAtRules.includes(element.type as (typeof allowedAtRules)[number])) {
+            log.warn(`Removing unsupported at-rule ${element.type} from CSS`);
+            element.type = COMMENT;
+          }
+        }
+      },
+      stringify,
+    ])
+  );
+};
+
 export const createUserStyles = (
   config: MermaidConfig,
   graphType: string,
@@ -202,11 +292,7 @@ export const createUserStyles = (
     { ...config.themeVariables, theme: config.theme, look: config.look },
     svgId
   );
-
-  // Now turn all of the styles into a (compiled) string that starts with the id
-  // use the stylis library to compile the css, turn the results into a valid CSS string (serialize(...., stringify))
-  // @see https://github.com/thysultan/stylis
-  return serialize(compile(`${svgId}{${allStyles}}`), stringify);
+  return compileCSS(svgId, allStyles);
 };
 
 /**

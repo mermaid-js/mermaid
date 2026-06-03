@@ -173,6 +173,19 @@ erDiagram
 
 The `type` values must begin with an alphabetic character and may contain digits, hyphens, underscores, parentheses and square brackets. The `name` values follow a similar format to `type`, but may start with an asterisk as another option to indicate an attribute is a primary key. Other than that, there are no restrictions, and there is no implicit set of valid data types.
 
+#### Optional attribute types (v<MERMAID_RELEASE_VERSION>+)
+
+Attribute `type` values may end with `?` to indicate an optional or nullable type.
+
+```mermaid-example
+erDiagram
+    PERSON {
+        string firstName
+        string? middleName
+        string lastName
+    }
+```
+
 ### Entity Name Aliases
 
 An alias can be added to an entity using square brackets. If provided, the alias will be showed in the diagram instead of the entity name. Alias names follow all of the same rules as entity names.

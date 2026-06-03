@@ -84,6 +84,14 @@ onMounted(async () => {
 
 onUnmounted(() => mut.disconnect());
 
+// Detect the diagram type keyword, skipping an optional YAML frontmatter
+// block and/or `%%{init: ...}%%` directives that may precede it.
+const getDiagramType = (source) => {
+  const withoutFrontmatter = source.replace(/^\s*---[\s\S]*?---\s*/, '');
+  const withoutDirectives = withoutFrontmatter.replace(/^\s*(?:%%\{[\s\S]*?\}%%\s*)*/, '');
+  return withoutDirectives.trimStart().split(/\s|\n/, 1)[0] ?? '';
+};
+
 const renderChart = async () => {
   console.log('rendering chart' + props.id + code.value);
   const hasDarkClass = document.documentElement.classList.contains('dark');
@@ -92,6 +100,19 @@ const renderChart = async () => {
     startOnLoad: false,
     theme: hasDarkClass ? 'dark' : 'default',
   };
+  // Swimlanes examples use the Neo look and follow the page's light/dark mode:
+  // Redux in light mode, Redux Dark in dark mode.
+  if (getDiagramType(code.value) === 'swimlanes') {
+    mermaidConfig.theme = hasDarkClass ? 'redux-dark' : 'redux';
+    mermaidConfig.look = 'neo';
+    mermaidConfig.flowchart = {
+      titleTopMargin: 10,
+    };
+    mermaidConfig.swimlanes = {
+      ignoreCrossLaneEdges: true,
+      optimizeRanksByCrossings: true,
+    };
+  }
   let svgCode = await render(props.id, code.value, mermaidConfig);
   // This is a hack to force v-html to re-render, otherwise the diagram disappears
   // when **switching themes** or **reloading the page**.

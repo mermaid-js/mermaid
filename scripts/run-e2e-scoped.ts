@@ -13,7 +13,7 @@
  */
 
 import { execSync, spawn } from 'child_process';
-import { detectScope } from './e2e-diagram-scope.mjs';
+import { detectScope, SKIP } from './e2e-diagram-scope.mjs';
 
 const base = process.argv[2] ?? process.env.E2E_BASE_REF ?? 'develop';
 
@@ -27,6 +27,12 @@ try {
 }
 
 const spec = detectScope(changedFiles);
+
+if (spec === SKIP) {
+  /* eslint-disable no-console */
+  console.log('[e2e:scope] Only docs/ignorable files changed — nothing to test.');
+  process.exit(0);
+}
 
 const cypressArgs = ['run'];
 if (spec) {

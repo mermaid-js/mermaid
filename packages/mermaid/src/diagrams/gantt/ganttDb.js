@@ -130,15 +130,23 @@ export const getDateFormat = function () {
   return dateFormat;
 };
 
+const mergeTokens = (existing, txt) => {
+  const tokens = txt
+    .toLowerCase()
+    .split(/[\s,]+/)
+    .filter((t) => t !== '');
+  return [...new Set([...existing, ...tokens])];
+};
+
 export const setIncludes = function (txt) {
-  includes = txt.toLowerCase().split(/[\s,]+/);
+  includes = mergeTokens(includes, txt);
 };
 
 export const getIncludes = function () {
   return includes;
 };
 export const setExcludes = function (txt) {
-  excludes = txt.toLowerCase().split(/[\s,]+/);
+  excludes = mergeTokens(excludes, txt);
 };
 
 export const getExcludes = function () {
@@ -567,9 +575,13 @@ export const addTask = function (descr, data) {
   rawTask.crit = taskInfo.crit;
   rawTask.milestone = taskInfo.milestone;
   rawTask.vert = taskInfo.vert;
-  rawTask.order = lastOrder;
 
-  lastOrder++;
+  if (rawTask.vert) {
+    rawTask.order = -1;
+  } else {
+    rawTask.order = lastOrder;
+    lastOrder++;
+  }
 
   const pos = rawTasks.push(rawTask);
 

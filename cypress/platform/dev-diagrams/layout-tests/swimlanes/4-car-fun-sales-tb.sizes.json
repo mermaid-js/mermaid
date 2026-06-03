@@ -1,0 +1,90 @@
+{
+  "nodes": [
+    {
+      "id": "edge-label-I-J-L_I_J_0",
+      "width": 22.84375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-I-K-L_I_K_0",
+      "width": 10.1171875,
+      "height": 21
+    },
+    {
+      "id": "A",
+      "width": 41.34375,
+      "height": 45
+    },
+    {
+      "id": "B",
+      "width": 41.34375,
+      "height": 45
+    },
+    {
+      "id": "C",
+      "width": 42.1171875,
+      "height": 45
+    },
+    {
+      "id": "D",
+      "width": 42.1171875,
+      "height": 45
+    },
+    {
+      "id": "E",
+      "width": 41.34375,
+      "height": 45
+    },
+    {
+      "id": "F",
+      "width": 40.5546875,
+      "height": 45
+    },
+    {
+      "id": "G",
+      "width": 42.890625,
+      "height": 45
+    },
+    {
+      "id": "H",
+      "width": 42.1171875,
+      "height": 45
+    },
+    {
+      "id": "I",
+      "width": 35.890625,
+      "height": 45
+    },
+    {
+      "id": "J",
+      "width": 39,
+      "height": 45
+    },
+    {
+      "id": "K",
+      "width": 41.34375,
+      "height": 45
+    },
+    {
+      "id": "L",
+      "width": 39.7890625,
+      "height": 45
+    },
+    {
+      "id": "M",
+      "width": 43.6640625,
+      "height": 45
+    },
+    {
+      "id": "N",
+      "width": 42.1171875,
+      "height": 45
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "2e3daf42a3ae6af442c5964285d122054528c39521de776aaa0b570a287d35de",
+    "capturedAt": "2026-05-06T00:00:00.000Z",
+    "capturedFrom": "browser-dev layout-tests/swimlanes/4-car-fun-sales-tb.mmd theme=default look=classic"
+  }
+}

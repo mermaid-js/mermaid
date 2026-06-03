@@ -42,6 +42,7 @@ jsonschema
 katex
 khroma
 langium
+libavoid
 mathml
 matplotlib
 mdbook
@@ -72,6 +73,7 @@ ssim
 stylis
 Swimm
 Tachi
+termaid
 trybox
 tsbuildinfo
 tseslint
@@ -82,4 +84,5 @@ unplugin
 unstub
 vite
 vitest
+webtoolz
 Zune

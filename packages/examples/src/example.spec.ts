@@ -19,6 +19,7 @@ describe('examples', () => {
       'flowchart-elk',
       'flowchart',
       'state',
+      'swimlane', // reuses flowchart parser/db/renderer; examples covered by flowchart
     ];
     const diagrams = mermaid
       .getRegisteredDiagramsMetadata()

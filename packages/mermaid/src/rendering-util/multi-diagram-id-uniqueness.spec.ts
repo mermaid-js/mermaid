@@ -98,6 +98,18 @@ radar-beta
   max 100
   min 0`,
 
+  railroad: `railroad-diagram
+    rule = choice(terminal("a"), terminal("b")) ;`,
+
+  railroadEbnf: `railroad-ebnf
+    rule = "a" | "b" ;`,
+
+  railroadAbnf: `railroad-abnf
+    rule = "a" / "b" ;`,
+
+  railroadPeg: `railroad-peg
+    rule <- "a" / "b" ;`,
+
   treemap: `treemap-beta
 "Section 1"
     "Leaf 1.1": 12
@@ -184,6 +196,17 @@ union A, B`,
     Electric Kettle -> Kettle
     Smart Kettle -> Kettle`,
 
+  cynefin: `cynefin-beta
+    title Incident Response
+    complex
+      "Investigate root cause"
+    complicated
+      "Analyze metrics"
+    clear
+      "Restart service"
+    chaotic
+      "Page on-call"`,
+
   eventmodeling: `eventmodeling
     tf 01 evt Start
     tf 02 evt End
@@ -263,6 +286,7 @@ describe('Multi-diagram ID uniqueness', () => {
     'state', // legacy alias, covered by stateDiagram
     'flowchart-elk', // ELK layout variant, same renderer as flowchart-v2
     'mindmap', // uses unified pipeline (IDs are prefixed), but cytoscape crashes in JSDOM
+    'swimlane', // reuses the flowchart renderer (createFlowDiagram); IDs covered by flowchart-v2
   ]);
 
   it('"journey" — task line IDs are scoped with the diagram ID', async () => {

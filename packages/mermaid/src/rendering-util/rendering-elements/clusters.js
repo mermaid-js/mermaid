@@ -9,6 +9,7 @@ import intersectRect from '../rendering-elements/intersect/intersect-rect.js';
 import createLabel from './createLabel.js';
 import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
 import { styles2String, userNodeOverrides } from './shapes/handDrawnShapeStyles.js';
+import { swimlane } from './clusters/swimlane.js';
 
 const rect = async (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
@@ -869,6 +870,7 @@ const shapes = {
   typesGroup,
   templatesGroup,
   connectorsGroup,
+  swimlane,
 };
 
 let clusterElems = new Map();

@@ -156,6 +156,7 @@ class Theme {
     this.noteTextColor = this.secondaryTextColor;
     this.activationBorderColor = this.border1;
     this.activationBkgColor = this.secondBkg;
+    this.rectBkgColor = this.rectBkgColor || this.tertiaryColor;
 
     /* Gantt chart variables */
 
@@ -271,6 +272,25 @@ class Theme {
     }
     this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
     this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
+
+    /* cynefin */
+    this.cynefin = {
+      domainFontSize: this.cynefin?.domainFontSize || 16,
+      itemFontSize: this.cynefin?.itemFontSize || 12,
+      boundaryColor: this.cynefin?.boundaryColor || this.lineColor,
+      boundaryWidth: this.cynefin?.boundaryWidth || 2,
+      cliffColor: this.cynefin?.cliffColor || '#FF6B6B',
+      cliffWidth: this.cynefin?.cliffWidth || 4,
+      arrowColor: this.cynefin?.arrowColor || this.lineColor,
+      arrowWidth: this.cynefin?.arrowWidth || 2,
+      complexBg: this.cynefin?.complexBg || '#1B5E20',
+      complicatedBg: this.cynefin?.complicatedBg || '#0D47A1',
+      chaoticBg: this.cynefin?.chaoticBg || '#BF360C',
+      clearBg: this.cynefin?.clearBg || '#F57F17',
+      confusionBg: this.cynefin?.confusionBg || '#4A148C',
+      textColor: this.cynefin?.textColor || this.textColor,
+      labelColor: this.cynefin?.labelColor || this.primaryTextColor,
+    };
 
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;

@@ -83,18 +83,19 @@ export const draw = async function (text: string, id: string, _version: string, 
 
     links.forEach((linkInfo, key: StateKey) => {
       const stateId = typeof key === 'string' ? key : typeof key?.id === 'string' ? key.id : '';
+      const stateNode = data4Layout.nodes.find((node) => node.id === stateId);
 
       if (!stateId) {
         log.warn('⚠️ Invalid or missing stateId from key:', JSON.stringify(key));
         return;
       }
 
-      const allNodes = svg.node()?.querySelectorAll('g');
+      const allNodes = svg.node()?.querySelectorAll<SVGGElement>('g.node, g.rough-node');
       let matchedElem: SVGGElement | undefined;
 
       allNodes?.forEach((g: SVGGElement) => {
         const text = g.textContent?.trim();
-        if (text === stateId) {
+        if (g.id === stateNode?.domId || text === stateId) {
           matchedElem = g;
         }
       });
@@ -117,6 +118,7 @@ export const draw = async function (text: string, id: string, _version: string, 
       if (linkInfo.tooltip) {
         const tooltip = linkInfo.tooltip.replace(/^"+|"+$/g, '');
         a.setAttribute('title', tooltip);
+        matchedElem.setAttribute('title', tooltip);
       }
 
       parent.replaceChild(a, matchedElem);

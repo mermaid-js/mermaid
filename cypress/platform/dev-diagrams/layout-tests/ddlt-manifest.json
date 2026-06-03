@@ -1,0 +1,24 @@
+{
+  "fixtures": [
+    {
+      "id": "Company",
+      "profile": "flowchart-domus",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "multiple-edges",
+      "profile": "flowchart-domus",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "edge-types",
+      "profile": "flowchart-domus",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "swimlanes/commant",
+      "profile": "swimlanes",
+      "allowLevel1Failure": true
+    }
+  ]
+}
