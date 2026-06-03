@@ -14,6 +14,7 @@ const SWIMLANE_FIXTURES = [
   '8-query-process-2.mmd',
   '9-edge-labels.mmd',
   'commant.mmd',
+  'hexagons.mmd',
   'intake-review-complete.mmd',
   'mermaid-work.mmd',
   'query-process.mmd',
