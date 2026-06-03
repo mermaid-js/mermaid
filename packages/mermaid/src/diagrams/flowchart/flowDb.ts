@@ -699,10 +699,18 @@ You have to call mermaid.initialize.`
 
     const result = uniq(list.flat());
     const nodeList = result.nodeList;
-    let dir = result.dir;
+    // Preserve the raw user-authored direction value (e.g. 'TD') on the subGraph
+    // object so that tests and callers see what the user actually wrote.
+    // Normalization to dagre's canonical 'TB' happens in getData() when the dir
+    // is consumed by the layout engine.
+    const rawDir = result.dir;
+    // Capture whether the user explicitly wrote a direction keyword BEFORE any
+    // inheritDir override, so that explicitDir is true only for user-authored
+    // direction statements.
+    const hasExplicitDir = rawDir !== undefined;
     const flowchartConfig = getConfig().flowchart ?? {};
-    dir =
-      dir ??
+    const dir =
+      rawDir ??
       (flowchartConfig.inheritDir
         ? (this.getDirection() ?? (getConfig() as any).direction ?? undefined)
         : undefined);
@@ -724,6 +732,7 @@ You have to call mermaid.initialize.`
       title: title.trim(),
       classes: [],
       dir,
+      hasExplicitDir,
       labelType: this.sanitizeNodeLabelType(_title?.type),
     };
 
@@ -1117,7 +1126,8 @@ You have to call mermaid.initialize.`
         cssCompiledStyles: this.getCompiledStyles(subGraph.classes),
         cssClasses: subGraph.classes.join(' '),
         shape: 'rect',
-        dir: subGraph.dir,
+        dir: subGraph.dir === 'TD' ? 'TB' : subGraph.dir, // normalize TD→TB for dagre
+        explicitDir: subGraph.hasExplicitDir, // true only when the user wrote an explicit 'direction X' keyword
         isGroup: true,
         look: config.look,
       });

@@ -33,6 +33,7 @@ export interface LinePlotData {
   strokeFill: string;
   strokeWidth: number;
   data: SimplePlotDataType;
+  pointLabels?: string[];
 }
 
 export interface BarPlotData {
@@ -86,6 +87,7 @@ export interface XYChartAxisConfig {
   tickWidth: number;
   showAxisLine: boolean;
   axisLineWidth: number;
+  labelRotation: number;
 }
 
 export interface XYChartConfig {

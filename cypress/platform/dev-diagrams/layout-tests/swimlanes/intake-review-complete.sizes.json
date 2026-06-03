@@ -1,0 +1,45 @@
+{
+  "nodes": [
+    {
+      "id": "start",
+      "width": 53.550254821777344,
+      "height": 36
+    },
+    {
+      "id": "decision",
+      "width": 99.25625610351562,
+      "height": 99.25625610351562
+    },
+    {
+      "id": "done",
+      "width": 48.46875,
+      "height": 48.46875
+    },
+    {
+      "id": "edge-label-decision-done-L_decision_done_0",
+      "width": 22.84375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-decision-fix-L_decision_fix_0",
+      "width": 17.899999618530273,
+      "height": 21
+    },
+    {
+      "id": "task",
+      "width": 111.3499984741211,
+      "height": 51
+    },
+    {
+      "id": "fix",
+      "width": 122.23750305175781,
+      "height": 51
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "ff52d9063be4e293f5db4e34e06cc9b7a96a3ce29f2927a416ee04ed711f5a22",
+    "capturedAt": "2026-05-29T10:37:56.108Z",
+    "capturedFrom": "dev-explorer layout-tests/swimlanes/intake-review-complete.mmd theme=redux-dark look=classic layout=swimlane"
+  }
+}

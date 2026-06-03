@@ -135,7 +135,7 @@ export const getArrowPoints = (
     return [
       // Bottom center
       { x: width / 2, y: 0 },
-      // Left pont of bottom arrow
+      // Left point of bottom arrow
       { x: 0, y: -padding },
       { x: midpoint, y: -padding },
       // Left top over vertical section
@@ -231,7 +231,7 @@ export const getArrowPoints = (
     return [
       // Bottom center
       { x: width / 2, y: 0 },
-      // Left pont of bottom arrow
+      // Left point of bottom arrow
       { x: 0, y: -padding },
       { x: midpoint, y: -padding },
       // Left top over vertical section

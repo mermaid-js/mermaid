@@ -142,6 +142,7 @@ class Theme {
     this.noteTextColor = this.secondaryTextColor;
     this.activationBorderColor = this.border1;
     this.activationBkgColor = this.secondBkg;
+    this.rectBkgColor = this.rectBkgColor || this.tertiaryColor;
 
     /* Gantt chart variables */
 

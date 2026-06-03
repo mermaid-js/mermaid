@@ -34,6 +34,7 @@ interface BaseNode {
   domId?: string; // When you create the node in the getData function you do not have the domId yet
   // Rendering specific properties for both Flowchart and State Diagram nodes
   dir?: string; // Only relevant for isGroup true, i.e. a sub-graph or composite state.
+  explicitDir?: boolean; // true only when the user wrote an explicit 'direction X' keyword
   haveCallback?: boolean;
   link?: string;
   linkTarget?: string;
@@ -76,6 +77,8 @@ interface BaseNode {
   defaultWidth?: number;
   imageAspectRatio?: number;
   constraint?: 'on' | 'off';
+  layer?: number;
+  order?: number;
   children?: NodeChildren;
   nodeId?: string;
   level?: number;
@@ -95,10 +98,18 @@ export type NodeChildren = Node[];
 export interface ClusterNode extends BaseNode {
   shape?: ClusterShapeID;
   isGroup: true;
+  isEdgeLabel?: boolean;
+  edgeStart?: string;
+  edgeEnd?: string;
+  isDummy?: boolean;
 }
 export interface NonClusterNode extends BaseNode {
   shape?: ShapeID;
   isGroup: false;
+  isEdgeLabel?: boolean;
+  edgeStart?: string;
+  edgeEnd?: string;
+  isDummy?: boolean;
 }
 
 // Common properties for any node in the system
@@ -140,12 +151,27 @@ export interface Edge {
   thickness?: 'normal' | 'thick' | 'invisible' | 'dotted';
   look?: string;
   isUserDefinedId?: boolean;
+  showPoints?: boolean;
   points?: Point[];
   parentId?: string;
   dir?: string;
   source?: string;
   target?: string;
   depth?: number;
+  isLabelEdge?: boolean;
+  /**
+   * Label-as-waypoint marker: when set, the edge's polyline is routed through
+   * the center of the label node with this id. Used by the swimlane router to
+   * thread an original labelled edge through its `edge-label-*` node without
+   * splitting the edge into two rendered sub-edges.
+   */
+  labelNodeId?: string;
+  /**
+   * Layout-only virtual edge: exists solely to feed Sugiyama layering /
+   * ordering (e.g. A→label, label→B for swimlane label placement). Consumers
+   * that route or render edges must skip any edge with `isLayoutOnly: true`.
+   */
+  isLayoutOnly?: boolean;
 }
 
 export interface RectOptions {

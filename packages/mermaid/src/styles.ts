@@ -4,6 +4,10 @@ import type { DiagramStylesProvider } from './diagram-api/types.js';
 
 const themes: Record<string, DiagramStylesProvider> = {};
 
+export function cssStyleSheetToString(cssStyleSheet: CSSStyleSheet): string {
+  return [...cssStyleSheet.cssRules].map((rule) => rule.cssText).join('\n');
+}
+
 const getStyles = (
   type: string,
   userStyles: string,
@@ -25,7 +29,7 @@ const getStyles = (
     theme?: string;
     look?: string;
   } & FlowChartStyleOptions,
-  svgId: string
+  svgId: `${string}`
 ) => {
   let diagramStyles = '';
   if (type in themes && themes[type]) {
@@ -116,6 +120,9 @@ const getStyles = (
   [data-look="neo"].node rect, [data-look="neo"].cluster rect, [data-look="neo"].node polygon {
     stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
     filter: ${options.dropShadow ? options.dropShadow.replace('url(#drop-shadow)', `url(${svgId}-drop-shadow)`) : 'none'};
+  }
+  [data-look="neo"].swimlane.cluster rect {
+    filter: none;
   }
 
 

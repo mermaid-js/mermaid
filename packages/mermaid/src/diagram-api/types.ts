@@ -64,7 +64,14 @@ export type DiagramDBBase<T extends BaseDiagramConfig> = {
 // It makes it clear we're working with a style class definition, even though defining the type is currently difficult.
 export interface DiagramStyleClassDef {
   id: string;
+  /**
+   * The styles to apply to the class for HTML rendering.
+   * These are expected to be CSS property declarations without a trailing semicolon, e.g. `color: red`.
+   */
   styles?: string[];
+  /**
+   * The styles to apply to `<tspan>` elements with the given class.
+   */
   textStyles?: string[];
 }
 
@@ -104,6 +111,30 @@ export type DetectorRecord = SetOptional<Omit<ExternalDiagramDefinition, 'id'>, 
 export type DiagramDetector = (text: string, config?: MermaidConfig) => boolean;
 export type DiagramLoader = () => Promise<{ id: string; diagram: DiagramDefinition }>;
 
+/* Types for the positions used in the free layout engine */
+interface Point {
+  x: number;
+  y: number;
+}
+
+export interface IntersectionPoint extends Point {
+  pos: 't' | 'b' | 'l' | 'r';
+}
+
+export interface NodePosition extends Point {
+  width?: number;
+  height?: number;
+}
+
+export interface EdgePoints {
+  points: Point[];
+}
+
+export interface Positions {
+  nodes: Record<string, NodePosition>;
+  edges: Record<string, EdgePoints>;
+}
+
 /**
  * Type for function draws diagram in the tag with id: id based on the graph definition in text.
  *
@@ -116,7 +147,8 @@ export type DrawDefinition = (
   text: string,
   id: string,
   version: string,
-  diagramObject: Diagram
+  diagramObject: Diagram,
+  positions?: Positions
 ) => void | Promise<void>;
 
 export interface ParserDefinition {

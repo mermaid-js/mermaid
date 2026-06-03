@@ -12,7 +12,7 @@ import {
   generateHorizontalBoundary,
   generateCliffPath,
   generateConfusionPath,
-  hashString,
+  resolveSeed,
 } from './cynefinBoundaries.js';
 
 interface DomainMeta {
@@ -112,7 +112,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const root = svg.append('g').attr('transform', `translate(${padding}, ${padding})`);
 
   const layouts = getDomainLayouts(width, height);
-  const seed = hashString(id);
+  const seed = resolveSeed(config.seed, id);
 
   // 1. Domain background rectangles
   const bgGroup = root.append('g').attr('class', 'cynefin-backgrounds');

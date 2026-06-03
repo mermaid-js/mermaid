@@ -879,4 +879,132 @@ describe('XY Chart', () => {
       });
     });
   });
+
+  it('should render xy-chart with rotated label on x-axis', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        xAxis:
+          showLabel: true
+          labelRotation: 45
+    ---
+    xychart
+      title "Git Commits per Month"
+      x-axis "Date" [ 2023-04, 2023-05, 2023-06, 2023-07, 2023-08, 2023-09, 2023-10, 2023-11, 2023-12, 2024-01, 2024-02, 2024-03, 2024-04, 2024-05, 2024-06, 2024-07, 2024-08, 2024-09, 2024-10 ]
+      y-axis "Number of Commits"
+      bar    [ 344, 523, 81, 7, 3, 3, 5, 17, 5, 2, 7, 6, 4, 2, 9, 31, 79, 70, 50 ]
+    `,
+      {}
+    );
+
+    cy.get('g.bottom-axis > g.label > text').each(($text) => {
+      const transform = $text.attr('transform');
+      expect(transform).to.contains('rotate(45)');
+    });
+  });
+
+  it('should render xy-chart with normal rotation on x-axis when labelRotation value is greater than limit', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        xAxis:
+          showLabel: true
+          labelRotation: 120
+    ---
+    xychart
+      title "Items Sold"
+      x-axis "Item" [ Monitor, Mouse, Keyboard ]
+      y-axis "Number of Sales"
+      bar    [ 51, 72, 36 ]
+    `,
+      {}
+    );
+
+    cy.get('g.bottom-axis > g.label > text').each(($text) => {
+      const transform = $text.attr('transform');
+      expect(transform).to.contains('rotate(0)');
+    });
+  });
+
+  it('should render xy-chart with normal rotation on x-axis when labelRotation value is less than limit', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        xAxis:
+          showLabel: true
+          labelRotation: -100
+    ---
+    xychart
+      title "Items Sold"
+      x-axis "Item" [ Monitor, Mouse, Keyboard ]
+      y-axis "Number of Sales"
+      bar    [ 51, 72, 36 ]
+    `,
+      {}
+    );
+
+    cy.get('g.bottom-axis > g.label > text').each(($text) => {
+      const transform = $text.attr('transform');
+      expect(transform).to.contains('rotate(0)');
+    });
+  });
+
+  it('should render a line chart with point labels', () => {
+    imgSnapshotTest(
+      `
+      xychart
+        title "Smallest AI models scoring above 60% on MMLU"
+        x-axis "Date" ["Apr 2022", "Feb 2023", "Jul 2023", "Sep 2023", "Apr 2024"]
+        y-axis "Parameters (B)" 0 --> 600
+        line [540 "PaLM", 65 "LLaMA-65B", 34 "Llama 2 34B", 7 "Mistral 7B", 3.8 "Phi-3-mini"]
+      `,
+      {}
+    );
+  });
+
+  it('should render a line chart with mixed labels (some points labeled, some not)', () => {
+    imgSnapshotTest(
+      `
+      xychart
+        title "Quarterly Performance"
+        x-axis [Q1, Q2, Q3, Q4]
+        y-axis "Revenue ($M)" 0 --> 100
+        line [25 "Launch", 45, 72, 90 "Target Hit"]
+      `,
+      {}
+    );
+  });
+
+  it('should render a horizontal line chart with point labels', () => {
+    imgSnapshotTest(
+      `
+      xychart horizontal
+        title "Model Sizes"
+        x-axis ["Model A", "Model B", "Model C"]
+        y-axis "Parameters" 0 --> 100
+        line [20 "Small", 50 "Medium", 90 "Large"]
+      `,
+      {}
+    );
+  });
+
+  it('should render multiple lines where only one has labels', () => {
+    imgSnapshotTest(
+      `
+      xychart
+        title "Comparison"
+        x-axis [Q1, Q2, Q3, Q4]
+        y-axis "Value" 0 --> 100
+        line [20, 40, 60, 80]
+        line [30 "Start", 50, 70, 95 "Peak"]
+      `,
+      {}
+    );
+  });
 });
