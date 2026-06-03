@@ -90,7 +90,9 @@ describe('parsing an agentflow diagram', function () {
   b --> b`);
       const data = agentflow.parser.yy.getData();
       expect(data.edges).toHaveLength(2);
-      expect(data.edges.some((e) => e.start === 'b' && e.end === 'b')).toBe(true);
+      expect(
+        data.edges.some((e: { start?: string; end?: string }) => e.start === 'b' && e.end === 'b')
+      ).toBe(true);
     });
 
     it('still drops collapse-induced self-loops (issue #53 invariant)', function () {
@@ -269,7 +271,10 @@ describe('parsing an agentflow diagram', function () {
   connector github["GitHub"]
   connector slack["Slack"]`);
       const db = agentflow.parser.yy as AgentFlowDB;
-      const ids = db.getConnectors().map((c) => c.id).sort();
+      const ids = db
+        .getConnectors()
+        .map((c) => c.id)
+        .sort();
       expect(ids).toEqual(['github', 'slack']);
     });
   });
