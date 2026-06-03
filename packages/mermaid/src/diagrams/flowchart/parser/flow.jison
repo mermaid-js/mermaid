@@ -449,6 +449,8 @@ vertex:  idString SQS text SQE
         {$$ = $idString;yy.addVertex($idString,$text,'round');}
     | idString DIAMOND_START text DIAMOND_STOP
         {$$ = $idString;yy.addVertex($idString,$text,'diamond');}
+        | idString DIAMOND_START PS text PE DIAMOND_STOP
+        {$$ = $idString;yy.addVertex($idString,$text,'cylinder');}
     | idString DIAMOND_START DIAMOND_START text DIAMOND_STOP DIAMOND_STOP
         {$$ = $idString;yy.addVertex($idString,$text,'hexagon');}
     | idString TAGEND text SQE
