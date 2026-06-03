@@ -218,40 +218,6 @@ const SHAPE_ALIASES: ReadonlyMap<string, string> = new Map([
 ]);
 
 /**
- * v0.8.1 removed shapes (§4.3.3). Authoring one of these emits
- * `SHAPE_REMOVED` (error tier).
- */
-const REMOVED_SHAPES = new Set<string>([
-  'doc',
-  'stadium',
-  'terminal',
-  'circle',
-  'trapezoid',
-  'inv_trapezoid',
-  'inv-trapezoid',
-  'doublecircle',
-  'double-circle',
-  'typeDeclaration',
-  'procs',
-  'lean_left',
-  'lean-left',
-  'in-out',
-  'cylinder',
-  'ellipse',
-  'odd',
-  'tag-rect',
-  'tagged-rectangle',
-  'delay',
-  'half-rounded-rectangle',
-  'lin-rect',
-  'lined-rectangle',
-  'win-pane',
-  'window-pane',
-  'curv-trap',
-  'curved-trapezoid',
-]);
-
-/**
  * Resolve a v0.8.1 shape name (alias or canonical) to its canonical
  * Mermaid shape ID. Returns the input unchanged when no alias matches
  * (so existing canonical names are preserved).
@@ -1324,7 +1290,7 @@ You have to call mermaid.initialize.`
     // v0.8.1: only `-->`, `-.-`, `--x` are valid. Start-link forms (the
     // first half of a split arrow `a -- xyz -->`) only carry stroke/dot
     // information; the type comes from the end-link.
-    let type = 'arrow_open';
+    const type = 'arrow_open';
 
     let stroke = 'normal';
     if (str.includes('.')) {
@@ -1450,8 +1416,7 @@ You have to call mermaid.initialize.`
     }
     // Resolve v0.8.1 alias (e.g. `task` → `roundedRect`, `action` → `hexagon`)
     // before mapping to the canonical Mermaid shape id.
-    const resolved =
-      typeof vertex.type === 'string' ? resolveShapeAlias(vertex.type) : vertex.type;
+    const resolved = typeof vertex.type === 'string' ? resolveShapeAlias(vertex.type) : vertex.type;
     switch (resolved) {
       case 'square':
       case undefined:
@@ -1615,8 +1580,7 @@ You have to call mermaid.initialize.`
     if (this.isToolDefinition(vertex)) {
       return 'tool';
     }
-    const resolved =
-      typeof vertex.type === 'string' ? resolveShapeAlias(vertex.type) : vertex.type;
+    const resolved = typeof vertex.type === 'string' ? resolveShapeAlias(vertex.type) : vertex.type;
     if (resolved === 'hexagon' || resolved === 'hex') {
       return 'action';
     }
@@ -1763,9 +1727,7 @@ You have to call mermaid.initialize.`
       return 'tool';
     }
     const resolved =
-      typeof childVertex.type === 'string'
-        ? resolveShapeAlias(childVertex.type)
-        : childVertex.type;
+      typeof childVertex.type === 'string' ? resolveShapeAlias(childVertex.type) : childVertex.type;
     if (resolved === 'hexagon' || resolved === 'hex') {
       return 'action';
     }
@@ -1820,8 +1782,7 @@ You have to call mermaid.initialize.`
     if (!vertex) {
       return false;
     }
-    const resolved =
-      typeof vertex.type === 'string' ? resolveShapeAlias(vertex.type) : vertex.type;
+    const resolved = typeof vertex.type === 'string' ? resolveShapeAlias(vertex.type) : vertex.type;
     return resolved === 'lin-doc' || resolved === 'lined-document';
   }
 
@@ -2214,8 +2175,7 @@ You have to call mermaid.initialize.`
       if (v.text !== undefined) {
         vertex.label = v.text;
       }
-      const resolvedShape =
-        typeof v.type === 'string' ? resolveShapeAlias(v.type) : v.type;
+      const resolvedShape = typeof v.type === 'string' ? resolveShapeAlias(v.type) : v.type;
       if (resolvedShape !== undefined) {
         vertex.shape = resolvedShape;
       }
