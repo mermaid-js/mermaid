@@ -71,6 +71,41 @@ describe('parsing an agentflow diagram', function () {
     });
   });
 
+  describe('self-loop edges (issue #58)', function () {
+    it('renders a self-loop edge (a --> a)', function () {
+      agentflow.parser.parse(`agentflow TB
+  a["Alpha"]
+  a --> a`);
+      const data = agentflow.parser.yy.getData();
+      expect(data.edges).toHaveLength(1);
+      expect(data.edges[0].start).toBe('a');
+      expect(data.edges[0].end).toBe('a');
+    });
+
+    it('keeps a self-loop alongside a normal edge', function () {
+      agentflow.parser.parse(`agentflow TB
+  a["Alpha"]
+  b["Beta"]
+  a --> b
+  b --> b`);
+      const data = agentflow.parser.yy.getData();
+      expect(data.edges).toHaveLength(2);
+      expect(data.edges.some((e) => e.start === 'b' && e.end === 'b')).toBe(true);
+    });
+
+    it('still drops collapse-induced self-loops (issue #53 invariant)', function () {
+      // Both endpoints of the internal edge collapse to the same ancestor `p`,
+      // so the edge would become a p-->p self-loop and must be dropped.
+      agentflow.parser.parse(`agentflow TB
+  flow p["P"]
+    a --> b
+  end
+  p@{ view: "collapsed" }`);
+      const data = agentflow.parser.yy.getData();
+      expect(data.edges).toHaveLength(0);
+    });
+  });
+
   describe('flow containers', function () {
     it('parses a flow with a quoted label', function () {
       agentflow.parser.parse(`agentflow TB

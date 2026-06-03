@@ -39,6 +39,7 @@ rankdir
 ranksep
 rect
 rects
+refdoc
 sandboxed
 sentencepiece
 siebling

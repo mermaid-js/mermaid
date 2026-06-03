@@ -2099,12 +2099,13 @@ You have to call mermaid.initialize.`
     const e = this.getEdges();
     e.forEach((rawEdge, index) => {
       // Redirect cross-boundary edges to the outermost visible collapsed
-      // ancestor (issue #53). When both endpoints collapse to the same
-      // ancestor the edge would be a self-loop on the collapsed node and
-      // is dropped instead.
+      // ancestor (issue #53). When two *distinct* endpoints collapse to the
+      // same ancestor the edge would be a self-loop on the collapsed node and
+      // is dropped instead. Genuine self-loops authored as `a --> a` are kept
+      // (issue #58) — only collapse-induced self-loops are dropped.
       const startId = collapsedAncestorMap.get(rawEdge.start) ?? rawEdge.start;
       const endId = collapsedAncestorMap.get(rawEdge.end) ?? rawEdge.end;
-      if (startId === endId) {
+      if (startId === endId && rawEdge.start !== rawEdge.end) {
         return;
       }
       const { arrowTypeStart, arrowTypeEnd } = this.destructEdgeType(rawEdge.type);
