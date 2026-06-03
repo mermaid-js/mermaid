@@ -2105,6 +2105,9 @@ You have to call mermaid.initialize.`
         animate: rawEdge.animate,
         animation: rawEdge.animation,
         curve: rawEdge.interpolate || this.edges.defaultInterpolate || config.flowchart?.curve,
+        // §5.3 edge metadata (e.g. `instruction`) — carried to the IR so
+        // downstream tooling (dispatch compile) can read it (issue #62).
+        metadata: rawEdge.metadata,
       };
 
       edges.push(edge);
