@@ -114,7 +114,7 @@ that id.
 "agentflow"              {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "flow"                   return 'flow';
 "connector"              return 'connector';
-"end"\b\s*               return 'end';
+"end"\b[ \t]*            return 'end';
 
 "_self"                  return 'LINK_TARGET';
 "_blank"                 return 'LINK_TARGET';
