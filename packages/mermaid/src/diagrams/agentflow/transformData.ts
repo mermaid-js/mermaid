@@ -104,8 +104,8 @@ export function transformData(data: LayoutData, db?: AgentFlowDB): void {
       continue;
     }
 
-    // Map rect/squareRect/round to the canonical rounded default.
-    if (!node.shape || node.shape === 'squareRect' || node.shape === 'round') {
+    // Map rect/squareRect (incl. db-aliased `round` → `rect`) to the canonical rounded default.
+    if (!node.shape || node.shape === 'squareRect' || node.shape === 'rect') {
       node.shape = DEFAULT_SHAPE;
     }
 
