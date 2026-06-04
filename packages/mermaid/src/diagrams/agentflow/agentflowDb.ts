@@ -475,6 +475,13 @@ export class AgentFlowDB implements DiagramDB {
     if (!ex || ex.name !== 'YAMLException' || !ex.mark || !metadataLoc) {
       throw err;
     }
+    // Compute the whole translation into `translation` first, then commit it to
+    // `ex` in one assignment-only block. If anything in the computation throws,
+    // `translation` stays undefined and the original error is rethrown
+    // untouched — never a half-rewritten one.
+    let translation:
+      | { message: string; markLine: number; markColumn: number; hash: unknown }
+      | undefined;
     try {
       const isInline = !metadata.includes('\n');
       // Buffer the DB actually handed to yaml.load — kept in lock-step with the
@@ -535,25 +542,33 @@ export class AgentFlowDB implements DiagramDB {
         }
       }
 
-      ex.message = `${reason} (${src.line}:${src.column + 1})\n\n${snippet.join('\n')}`;
-      ex.mark.line = src.line - 1;
-      ex.mark.column = src.column;
-      // JISON-style hash so editors can consume source coordinates directly.
-      ex.hash = {
-        text: '',
-        token: null,
-        line: src.line - 1,
-        loc: {
-          first_line: src.line,
-          last_line: src.line,
-          first_column: src.column,
-          last_column: src.column + 1,
+      translation = {
+        message: `${reason} (${src.line}:${src.column + 1})\n\n${snippet.join('\n')}`,
+        markLine: src.line - 1,
+        markColumn: src.column,
+        // JISON-style hash so editors can consume source coordinates directly.
+        hash: {
+          text: '',
+          token: null,
+          line: src.line - 1,
+          loc: {
+            first_line: src.line,
+            last_line: src.line,
+            first_column: src.column,
+            last_column: src.column + 1,
+          },
+          expected: [],
         },
-        expected: [],
       };
     } catch {
-      // Translation failed — surface the original, untranslated error.
-      throw err;
+      // Translation failed — leave `ex` untouched and surface the original below.
+    }
+
+    if (translation) {
+      ex.message = translation.message;
+      ex.mark.line = translation.markLine;
+      ex.mark.column = translation.markColumn;
+      ex.hash = translation.hash;
     }
     throw ex;
   }

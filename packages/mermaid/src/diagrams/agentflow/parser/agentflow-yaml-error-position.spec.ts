@@ -70,6 +70,20 @@ describe('issue #56 part 2: YAML @{ } errors report source coordinates', () => {
     expect(err.hash?.loc.first_column).toBe(6);
   });
 
+  it('multi-line block: error on the @{ line itself maps with the content-column offset', () => {
+    // The block opens on source line 2 and spans to line 3, so the buffer is
+    // multi-line and the offending `*` sits on buffer line 0 — the tail of the
+    // `@{` line. That line's columns are offset by the `@{ ` prefix, unlike the
+    // verbatim later lines.
+    const err = parseExpectingError('agentflow TB\n  a["A"]@{ x: *,\n    y: 1 }');
+    expect(err.message).toContain('(2:16)');
+    expect(err.message).not.toContain('(1:');
+    // The excerpt shows the source `@{` line, renumbered to 2.
+    expect(err.message).toContain(' 2 |  x: *,');
+    expect(err.hash?.loc.first_line).toBe(2);
+    expect(err.hash?.loc.first_column).toBe(15);
+  });
+
   it('composes with the blank-line fold fix: a block below a @{ }+blank keeps its source line', () => {
     // `b@{ ... }` is on source line 4. With the fold bug this reported line 3.
     const err = parseExpectingError(
