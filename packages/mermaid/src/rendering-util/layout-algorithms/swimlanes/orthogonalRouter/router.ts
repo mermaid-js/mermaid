@@ -676,6 +676,23 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     }
   }
 
+  const edgeHasLabelNode = (edgeIdx: number): boolean =>
+    Boolean((edges[edgeIdx] as { labelNodeId?: string } | undefined)?.labelNodeId);
+
+  const faceHasLabelNode = (nodeId: string | undefined, side: SideT): boolean => {
+    if (!nodeId) {
+      return false;
+    }
+    return (
+      (portGroups.get(`${nodeId}:${side}:src`) ?? []).some(({ edgeIdx }) =>
+        edgeHasLabelNode(edgeIdx)
+      ) ||
+      (portGroups.get(`${nodeId}:${side}:dst`) ?? []).some(({ edgeIdx }) =>
+        edgeHasLabelNode(edgeIdx)
+      )
+    );
+  };
+
   // Helper to apply port offset to a base center port
   const applyPortOffset = (
     basePort: Point,
@@ -976,10 +993,16 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
       const faceContested = srcFaceTotal > 1 || dstFaceTotal > 1;
       const srcIncidentTotal = incidentEdgeTotals.get(e.start ?? '') ?? 0;
       const dstIncidentTotal = incidentEdgeTotals.get(e.end ?? '') ?? 0;
+      const contestedFaceHasLabel =
+        (srcFaceTotal > 1 && faceHasLabelNode(e.start, srcPortSide)) ||
+        (dstFaceTotal > 1 && faceHasLabelNode(e.end, dstPortSide));
       const srcContestAllowsCenteredStraight = srcFaceTotal <= 1 || srcIncidentTotal <= 2;
       const dstContestAllowsCenteredStraight = dstFaceTotal <= 1 || dstIncidentTotal <= 2;
       const canPreserveSimpleContestedStraight =
-        faceContested && srcContestAllowsCenteredStraight && dstContestAllowsCenteredStraight;
+        faceContested &&
+        !contestedFaceHasLabel &&
+        srcContestAllowsCenteredStraight &&
+        dstContestAllowsCenteredStraight;
       if (
         (anchorsSameX || anchorsSameY) &&
         !hasPortOffset &&
