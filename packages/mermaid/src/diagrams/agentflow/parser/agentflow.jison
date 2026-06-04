@@ -376,11 +376,11 @@ statement
     | flow SPACE textNoTags SQS text SQE separator document end
     {$$=yy.addSubGraph($textNoTags,$document,$text,'flow');if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,$text,@1,@9);}}
     | flow SPACE textNoTags SQS text SQE shapeData separator document end
-    {$$=yy.addSubGraph($textNoTags,$document,$text,'flow');yy.addVertex($$,undefined,undefined,undefined,undefined,undefined,undefined,$shapeData);if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,$text,@1,@10);}}
+    {$$=yy.addSubGraph($textNoTags,$document,$text,'flow');yy.addVertex($$,undefined,undefined,undefined,undefined,undefined,undefined,$shapeData,@7);if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,$text,@1,@10);}}
     | flow SPACE textNoTags separator document end
     {$$=yy.addSubGraph($textNoTags,$document,{text:'', type:'text'},'flow');if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,{text:'', type:'text'},@1,@6);}}
     | flow SPACE textNoTags shapeData separator document end
-    {$$=yy.addSubGraph($textNoTags,$document,{text:'', type:'text'},'flow');yy.addVertex($$,undefined,undefined,undefined,undefined,undefined,undefined,$shapeData);if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,{text:'', type:'text'},@1,@7);}}
+    {$$=yy.addSubGraph($textNoTags,$document,{text:'', type:'text'},'flow');yy.addVertex($$,undefined,undefined,undefined,undefined,undefined,undefined,$shapeData,@4);if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,{text:'', type:'text'},@1,@7);}}
     | flow separator document end
     {$$=yy.addSubGraph(undefined,$document,undefined,'flow');if(yy.addSubgraphMapping){yy.addSubgraphMapping(undefined,undefined,@1,@4);}}
     | connector SPACE textNoTags SQS text SQE separator
@@ -403,7 +403,7 @@ shapeData:
     ;
 
 vertexStatement: vertexStatement link node shapeData
-        { /* console.warn('vs shapeData',$vertexStatement.stmt,$node, $shapeData);*/ yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData); if(yy.extendVertexMapping){yy.extendVertexMapping($node[$node.length-1],@4);} yy.addLink($vertexStatement.stmt,$node,$link); if(yy.addEdgeMapping){yy.addEdgeMapping($vertexStatement.stmt,$node,$link,@$);} $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
+        { /* console.warn('vs shapeData',$vertexStatement.stmt,$node, $shapeData);*/ yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData,@4); if(yy.extendVertexMapping){yy.extendVertexMapping($node[$node.length-1],@4);} yy.addLink($vertexStatement.stmt,$node,$link); if(yy.addEdgeMapping){yy.addEdgeMapping($vertexStatement.stmt,$node,$link,@$);} $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
     | vertexStatement link node
         { /*console.warn('vs',$vertexStatement.stmt,$node);*/ yy.addLink($vertexStatement.stmt,$node,$link); if(yy.addEdgeMapping){yy.addEdgeMapping($vertexStatement.stmt,$node,$link,@$);} $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
     |  vertexStatement link node spaceList
@@ -411,7 +411,7 @@ vertexStatement: vertexStatement link node shapeData
     |node spaceList { /*console.warn('vertexStatement: node spaceList', $node);*/ $$ = {stmt: $node, nodes:$node }}
     |node shapeData {
         /*console.warn('vertexStatement: node shapeData', $node[0], $shapeData);*/
-        yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData);
+        yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData,@2);
         if(yy.extendVertexMapping){yy.extendVertexMapping($node[$node.length-1],@2);}
         $$ = {stmt: $node, nodes:$node, shapeData: $shapeData}
     }
@@ -421,7 +421,7 @@ vertexStatement: vertexStatement link node shapeData
 node: styledVertex
         { /*console.warn('nod', $styledVertex);*/ $$ = [$styledVertex];}
     | node shapeData spaceList AMP spaceList styledVertex
-        {  yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData); if(yy.extendVertexMapping){yy.extendVertexMapping($node[$node.length-1],@2);} $$ = $node.concat($styledVertex); /*console.warn('pip2', $node[0], $styledVertex, $$);*/  }
+        {  yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData,@2); if(yy.extendVertexMapping){yy.extendVertexMapping($node[$node.length-1],@2);} $$ = $node.concat($styledVertex); /*console.warn('pip2', $node[0], $styledVertex, $$);*/  }
     | node spaceList AMP spaceList styledVertex
         { $$ = $node.concat($styledVertex); /*console.warn('pip', $node[0], $styledVertex, $$);*/  }
     ;
