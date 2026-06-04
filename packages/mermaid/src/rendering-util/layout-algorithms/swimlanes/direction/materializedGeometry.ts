@@ -247,6 +247,31 @@ export function separateSharedRenderedTerminalLanes(
     return [...before, shiftedRailEnd, shiftedBoundary];
   };
 
+  const laneIsStraightCollinearConnector = (lane: TerminalLane): boolean => {
+    const points = dedupeConsecutivePoints((lane.edge as { points?: PointLite[] }).points ?? []);
+    if (points.length !== 2) {
+      return false;
+    }
+    const startId = (lane.edge as { start?: string }).start;
+    const endId = (lane.edge as { end?: string }).end;
+    const start = startId ? nodeByIdMap.get(startId) : undefined;
+    const end = endId ? nodeByIdMap.get(endId) : undefined;
+    if (!start || !end) {
+      return false;
+    }
+
+    const startX = (start as { x?: number }).x ?? 0;
+    const startY = (start as { y?: number }).y ?? 0;
+    const endX = (end as { x?: number }).x ?? 0;
+    const endY = (end as { y?: number }).y ?? 0;
+    const [a, b] = points;
+
+    return (
+      (sameY(a, b, EPS_LOCAL) && Math.abs(startY - endY) < 1 && Math.abs(startX - endX) > 1) ||
+      (sameX(a, b, EPS_LOCAL) && Math.abs(startX - endX) < 1 && Math.abs(startY - endY) > 1)
+    );
+  };
+
   const shifts = [
     -TRACK_SHIFT,
     TRACK_SHIFT,
@@ -275,7 +300,14 @@ export function separateSharedRenderedTerminalLanes(
         }
 
         const fixingNearConflict = !exactTerminalLaneConflict(first, second);
-        const candidates = [first, second].sort((a, b) => Number(!b.atStart) - Number(!a.atStart));
+        const candidates = [first, second].sort((a, b) => {
+          const aPreservesStraight = laneIsStraightCollinearConnector(a);
+          const bPreservesStraight = laneIsStraightCollinearConnector(b);
+          if (aPreservesStraight !== bPreservesStraight) {
+            return Number(aPreservesStraight) - Number(bPreservesStraight);
+          }
+          return Number(!b.atStart) - Number(!a.atStart);
+        });
         for (const lane of candidates) {
           for (const shift of shifts) {
             const candidate = shiftedCandidate(lane, shift);
