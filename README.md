@@ -52,6 +52,8 @@ Try Live Editor previews of future releases: <a href="https://develop.git.mermai
 <summary>Expand contents</summary>
 
 - [About](#about)
+- [Installation](#installation)
+- [Your First Diagram](#your-first-diagram)
 - [Examples](#examples)
 - [Release](#release)
 - [Related projects](#related-projects)
@@ -94,6 +96,58 @@ In our release process we rely heavily on visual regression tests using [applito
 </a>
 
 <!-- </Main description> -->
+
+## Installation
+
+**NPM**
+
+```bash
+npm install mermaid
+```
+
+**Yarn**
+
+```bash
+yarn add mermaid
+```
+
+**PNPM**
+
+```bash
+pnpm add mermaid
+```
+
+**CDN**
+
+```html
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>
+```
+
+## Your First Diagram
+
+Add a `<pre class="mermaid">` block anywhere in your HTML and Mermaid renders it automatically:
+
+```html
+<!doctype html>
+<html>
+  <body>
+    <pre class="mermaid">
+      flowchart LR
+        A[Start] --> B{Is it working?}
+        B -- Yes --> C[Great!]
+        B -- No  --> D[Debug] --> A
+    </pre>
+
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+  </body>
+</html>
+```
 
 ## Examples
 
