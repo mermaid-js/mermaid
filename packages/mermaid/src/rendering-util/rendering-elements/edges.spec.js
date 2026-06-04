@@ -1,14 +1,17 @@
 import { describe, it, expect, vi } from 'vitest';
+import { select } from 'd3';
 
 // Mock getConfig to control flowchart.curve
 vi.mock('../../diagram-api/diagramAPI.js', () => ({
   getConfig: vi.fn(() => ({
-    flowchart: { curve: 'rounded' },
+    layout: 'swimlane',
+    flowchart: { curve: 'rounded', arrowMarkerAbsolute: false },
+    state: { arrowMarkerAbsolute: false },
     handDrawnSeed: 0,
   })),
 }));
 
-import { resolveEdgeCurveType } from './edges.js';
+import { insertEdge, resolveEdgeCurveType } from './edges.js';
 import { computeLabelTransform } from '../labelTransform.js';
 
 describe('resolveEdgeCurveType', () => {
@@ -61,5 +64,83 @@ describe('computeLabelTransform', () => {
     expect(computeLabelTransform({ x: 999, y: 999, width: 40, height: 20 }, true)).toBe(
       'translate(-20, -10)'
     );
+  });
+});
+
+describe('insertEdge swimlane endpoint clipping', () => {
+  it('honors duplicated endpoint pins instead of recomputing polygon intersections', () => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    const pinnedEnd = { x: -100, y: 53 };
+    const edge = {
+      id: 'L_Sys1_B_0',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'rounded',
+      look: 'neo',
+      arrowTypeEnd: 'arrow_point',
+      points: [
+        { x: 0, y: 0 },
+        { x: 0, y: 0 },
+        { x: 0, y: 20 },
+        { x: -100, y: 20 },
+        pinnedEnd,
+        { ...pinnedEnd },
+      ],
+    };
+    const tail = {
+      intersect: vi.fn((point) => point),
+    };
+    const head = {
+      intersect: vi.fn(() => ({ x: -101, y: 54 })),
+    };
+
+    insertEdge(svg, edge, null, 'swimlane', tail, head, 'diagram');
+
+    const path = svg.select('path');
+    const renderedPoints = JSON.parse(atob(path.attr('data-points')));
+
+    expect(head.intersect).not.toHaveBeenCalled();
+    expect(renderedPoints.at(-1)).toEqual(pinnedEnd);
+  });
+
+  it('still clips source endpoints to the rendered shape boundary', () => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    const clippedStart = { x: 8, y: 12 };
+    const edge = {
+      id: 'L_A2_E_0',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'rounded',
+      look: 'neo',
+      arrowTypeEnd: 'arrow_point',
+      points: [
+        { x: 10, y: 14 },
+        { x: 10, y: 14 },
+        { x: 10, y: 60 },
+        { x: 90, y: 60 },
+      ],
+    };
+    const tail = {
+      intersect: vi.fn(() => clippedStart),
+    };
+    const head = {
+      intersect: vi.fn((point) => point),
+    };
+
+    insertEdge(svg, edge, null, 'swimlane', tail, head, 'diagram');
+
+    const path = svg.select('path');
+    const renderedPoints = JSON.parse(atob(path.attr('data-points')));
+
+    expect(tail.intersect).toHaveBeenCalledWith({ x: 10, y: 14 });
+    expect(renderedPoints[0]).toEqual(clippedStart);
   });
 });
