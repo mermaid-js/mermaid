@@ -260,7 +260,8 @@ export class AgentFlowDB implements DiagramDB {
     classes: string[],
     dir: string,
     props = {},
-    metadata: any
+    metadata: any,
+    metadataLoc?: JisonLocation
   ) {
     if (!id || id.trim().length === 0) {
       return;
@@ -276,7 +277,15 @@ export class AgentFlowDB implements DiagramDB {
       } else {
         yamlData = metadata + '\n';
       }
-      doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
+      try {
+        doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
+      } catch (err) {
+        // js-yaml reports the failure position relative to the `@{ ... }` block
+        // buffer, not the source. Translate it into absolute source coordinates
+        // before it propagates so error banners and editor markers land on the
+        // right line/column (issue #56 part 2). Always throws.
+        this.rethrowMetadataYamlError(err, metadata, metadataLoc);
+      }
     }
 
     // Resolve shape alias (§4.3.2) before any other shape handling.
@@ -429,6 +438,139 @@ export class AgentFlowDB implements DiagramDB {
         vertex.assetHeight = Number(doc.h);
       }
     }
+  }
+
+  /**
+   * Translate a js-yaml failure raised while parsing an `<id>@{ ... }` block
+   * from block-relative coordinates into absolute source coordinates, then
+   * rethrow (issue #56 part 2).
+   *
+   * js-yaml's `mark.line` / `mark.column` (and the `(R:C)` reference plus the
+   * `N |` excerpt prefixes baked into `message`) count from the start of the
+   * block buffer the DB hands it — either the synthetic `{\n … \n}` wrapper
+   * (single-line `@{ … }`) or the verbatim multi-line body. Neither matches
+   * the line the user sees. Using the `shapeData` symbol's JISON location
+   * (`@{`'s position) plus the frontmatter offset, we map the reported
+   * coordinate back to source space, rewrite the message's `(R:C)` and excerpt
+   * prefixes, update `mark`, and attach a JISON-style `hash.loc` so downstream
+   * tooling can read source coordinates structurally instead of re-deriving
+   * them from the buffer.
+   *
+   * Defensive: if the error isn't a positioned js-yaml exception, or we lack
+   * the block location, the original error propagates untouched — translation
+   * never makes a failure harder to read than it already was.
+   */
+  private rethrowMetadataYamlError(
+    err: unknown,
+    metadata: string,
+    metadataLoc: JisonLocation | undefined
+  ): never {
+    const ex = err as {
+      name?: string;
+      reason?: string;
+      message?: string;
+      mark?: { line: number; column: number; buffer?: string; position?: number };
+      hash?: unknown;
+    };
+    if (!ex || ex.name !== 'YAMLException' || !ex.mark || !metadataLoc) {
+      throw err;
+    }
+    // Compute the whole translation into `translation` first, then commit it to
+    // `ex` in one assignment-only block. If anything in the computation throws,
+    // `translation` stays undefined and the original error is rethrown
+    // untouched — never a half-rewritten one.
+    let translation:
+      | { message: string; markLine: number; markColumn: number; hash: unknown }
+      | undefined;
+    try {
+      const isInline = !metadata.includes('\n');
+      // Buffer the DB actually handed to yaml.load — kept in lock-step with the
+      // `addVertex` wrapping above.
+      const buffer = isInline ? '{\n' + metadata + '\n}' : metadata + '\n';
+      // `@{`'s source position. Content begins two columns later (after `@{`).
+      const blockLine = metadataLoc.first_line + this.frontmatterLineOffset;
+      const contentColumn = metadataLoc.first_column + 2;
+
+      // Map a 0-based (line, column) in the block buffer to 0-based source
+      // coordinates. For the single-line wrapper only buffer line 1 holds real
+      // content (lines 0 and 2 are the synthetic braces) and it lives on the
+      // block's own source line. For a multi-line body, buffer line 0 is the
+      // tail of the `@{` line and every later line is a verbatim source line,
+      // so its columns already match source.
+      const toSource = (line: number, column: number): { line: number; column: number } => {
+        if (isInline) {
+          return { line: blockLine, column: contentColumn + (line === 1 ? column : 0) };
+        }
+        return {
+          line: blockLine + line,
+          column: line === 0 ? contentColumn + column : column,
+        };
+      };
+
+      const src = toSource(ex.mark.line, ex.mark.column);
+      const reason =
+        ex.reason ?? (ex.message ?? '').split('\n')[0].replace(/\s*\(\d+:\d+\)\s*$/, '');
+
+      // Rebuild the excerpt in source-line space. Show the offending buffer
+      // line (skipping the synthetic braces for the inline form) with a caret
+      // under the failure column; tabs render as `→` exactly as js-yaml does so
+      // the caret stays aligned.
+      const bufferLines = buffer.split('\n');
+      const display: number[] = [];
+      if (isInline) {
+        display.push(1);
+      } else {
+        for (let i = ex.mark.line - 1; i <= ex.mark.line + 1; i++) {
+          if (i < 0 || i >= bufferLines.length) {
+            continue;
+          }
+          // Drop the trailing empty line our `+ '\n'` appended.
+          if (i === bufferLines.length - 1 && bufferLines[i] === '' && i !== ex.mark.line) {
+            continue;
+          }
+          display.push(i);
+        }
+      }
+      const gutterWidth = Math.max(...display.map((i) => String(toSource(i, 0).line).length));
+      const snippet: string[] = [];
+      for (const i of display) {
+        const lineNo = toSource(i, 0).line;
+        const prefix = ` ${String(lineNo).padStart(gutterWidth)} | `;
+        snippet.push(prefix + bufferLines[i].replace(/\t/g, '→'));
+        if (i === ex.mark.line) {
+          snippet.push('-'.repeat(prefix.length + ex.mark.column) + '^');
+        }
+      }
+
+      translation = {
+        message: `${reason} (${src.line}:${src.column + 1})\n\n${snippet.join('\n')}`,
+        markLine: src.line - 1,
+        markColumn: src.column,
+        // JISON-style hash so editors can consume source coordinates directly.
+        hash: {
+          text: '',
+          token: null,
+          line: src.line - 1,
+          loc: {
+            first_line: src.line,
+            last_line: src.line,
+            first_column: src.column,
+            last_column: src.column + 1,
+          },
+          expected: [],
+        },
+      };
+    } catch {
+      // Translation failed — leave `ex` untouched and surface the original below.
+    }
+
+    if (translation) {
+      ex.message = translation.message;
+      ex.mark.line = translation.markLine;
+      ex.mark.column = translation.markColumn;
+      ex.hash = translation.hash;
+    }
+    throw ex;
   }
 
   /**
