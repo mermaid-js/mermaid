@@ -78,6 +78,9 @@ export function anchorLabelsToPolyline(edges: Edge[], nodeByIdMap: Map<string, N
   // no chosen placement will trigger the hug check. 3u preserves the buffer
   // used by the old pre-label detour pass.
   const LABEL_PLACEMENT_BUFFER = 3;
+  // Mermaid's point marker occupies roughly 10u at the edge endpoint; keep
+  // labels a little farther away so the arrowhead remains visually readable.
+  const LABEL_ENDPOINT_CLEARANCE = 12;
 
   const labelOverlapsAnything = (labelId: string, edgeId: string, rect: RectLite): boolean => {
     const buffered = inflateRect(rect, LABEL_PLACEMENT_BUFFER);
@@ -213,13 +216,15 @@ export function anchorLabelsToPolyline(edges: Edge[], nodeByIdMap: Map<string, N
     //
     // Per-segment, if the midpoint (t=0.5) collides with a foreign edge
     // or label, walk along the segment at additional parametric positions
-    // t ∈ {0.25, 0.75, 0.15, 0.85} before moving on. Helmers diss.pdf
+    // t ∈ {0.25, 0.75, 0.15, 0.85, 0.1, 0.9} before moving on. Helmers diss.pdf
     // §118 requires "one of e's middle segments" but is silent on the
     // exact anchor position along that segment, so along-segment shift is
     // consistent with the paper (Mermaid adaptation). Paper-adjacent to
     // Wybrow-Marriott alley-midpoint centering (src `e8804c93`), which
     // picks the placement with widest clearance to foreign geometry.
-    const ALONG_SEGMENT_TS = [0.5, 0.25, 0.75, 0.15, 0.85];
+    const firstVisibleSegment = segments[0];
+    const lastVisibleSegment = segments[segments.length - 1];
+    const ALONG_SEGMENT_TS = [0.5, 0.25, 0.75, 0.15, 0.85, 0.1, 0.9];
     const anchorAtT = (seg: SegmentCandidate, t: number): { midX: number; midY: number } => {
       const a = pts[seg.idx];
       const b = pts[seg.idx + 1];
@@ -228,6 +233,34 @@ export function anchorLabelsToPolyline(edges: Edge[], nodeByIdMap: Map<string, N
         midY: a.y + (b.y - a.y) * t,
       };
     };
+    const distanceAlongSegment = (
+      seg: SegmentCandidate,
+      anchor: { midX: number; midY: number },
+      endpoint: { x: number; y: number }
+    ): number =>
+      seg.orientation === 'horizontal'
+        ? Math.abs(anchor.midX - endpoint.x)
+        : Math.abs(anchor.midY - endpoint.y);
+    const labelClearsTerminalEndpoints = (
+      seg: SegmentCandidate,
+      anchor: { midX: number; midY: number }
+    ): boolean => {
+      const labelHalfExtent = seg.orientation === 'horizontal' ? lw / 2 : lh / 2;
+      const requiredDistance = labelHalfExtent + LABEL_ENDPOINT_CLEARANCE;
+      if (seg === firstVisibleSegment) {
+        const start = pts[seg.idx];
+        if (distanceAlongSegment(seg, anchor, start) + EPS < requiredDistance) {
+          return false;
+        }
+      }
+      if (seg === lastVisibleSegment) {
+        const end = pts[seg.idx + 1];
+        if (distanceAlongSegment(seg, anchor, end) + EPS < requiredDistance) {
+          return false;
+        }
+      }
+      return true;
+    };
     const tryPool = (
       pool: SegmentCandidate[]
     ): { laneId: string; anchor: { midX: number; midY: number } } | undefined => {
@@ -235,6 +268,9 @@ export function anchorLabelsToPolyline(edges: Edge[], nodeByIdMap: Map<string, N
       for (const seg of rankedPool) {
         for (const t of ALONG_SEGMENT_TS) {
           const anchor = anchorAtT(seg, t);
+          if (!labelClearsTerminalEndpoints(seg, anchor)) {
+            continue;
+          }
           const rect = rectFromCenterSize(anchor.midX, anchor.midY, lw, lh);
           const laneId = findContainingLane(rect);
           if (!laneId) {
@@ -252,14 +288,19 @@ export function anchorLabelsToPolyline(edges: Edge[], nodeByIdMap: Map<string, N
     };
 
     const findLaneContainingFallback = (
-      pool: SegmentCandidate[]
+      pool: SegmentCandidate[],
+      requireEndpointClearance: boolean
     ): { laneId: string; anchor: { midX: number; midY: number } } | undefined => {
       const rankedPool = rankSegments(pool);
       for (const seg of rankedPool) {
+        const anchor = { midX: seg.midX, midY: seg.midY };
+        if (requireEndpointClearance && !labelClearsTerminalEndpoints(seg, anchor)) {
+          continue;
+        }
         const rect = rectFromCenterSize(seg.midX, seg.midY, lw, lh);
         const laneId = findContainingLane(rect);
         if (laneId && !overlapsPlacedLabel(labelId, rect)) {
-          return { laneId, anchor: { midX: seg.midX, midY: seg.midY } };
+          return { laneId, anchor };
         }
       }
       return undefined;
@@ -268,7 +309,8 @@ export function anchorLabelsToPolyline(edges: Edge[], nodeByIdMap: Map<string, N
     const chosen =
       tryPool(poolBase) ??
       (poolBase.length < segments.length ? tryPool(segments) : undefined) ??
-      findLaneContainingFallback(segments);
+      findLaneContainingFallback(segments, true) ??
+      findLaneContainingFallback(segments, false);
 
     if (chosen) {
       labelNode.x = chosen.anchor.midX;

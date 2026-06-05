@@ -663,6 +663,48 @@ export function resolveRenderedOrthogonalCrossings(
       });
   };
 
+  const terminalPreservingOuterTrackCandidates = (edge: any): PointLite[][] => {
+    const srcId = (edge as { start?: string }).start;
+    const dstId = (edge as { end?: string }).end;
+    const dstNode = dstId ? nodeInfoById.get(dstId) : undefined;
+    if (!srcId || !dstNode) {
+      return [];
+    }
+
+    const points = dedupeConsecutivePoints((edge as { points?: PointLite[] }).points ?? []);
+    if (points.length < 4) {
+      return [];
+    }
+
+    const first = points[0];
+    const departure = points[1];
+    if (!sameX(first, departure, EPS_LOCAL) && !sameY(first, departure, EPS_LOCAL)) {
+      return [];
+    }
+
+    // Track-swapping adaptation: keep the already-safe source departure
+    // segment, then move the long middle run into an outer lane. This covers
+    // long return edges whose original departure dodged a nearby obstacle but
+    // whose later vertical rail still crosses a straight sibling connector.
+    const candidates: PointLite[][] = [];
+    const targetSides: RectSide[] = ['left', 'right'];
+    for (const side of targetSides) {
+      const dst = portForRectSide(dstNode, side);
+      const track = side === 'left' ? outsideTracks.left : outsideTracks.right;
+      candidates.push(
+        dedupeConsecutivePoints([
+          first,
+          departure,
+          { x: track, y: departure.y },
+          { x: track, y: dst.y },
+          dst,
+        ])
+      );
+    }
+
+    return candidates;
+  };
+
   const candidatePathsFor = (edge: any): PointLite[][] => {
     const srcId = (edge as { start?: string }).start;
     const dstId = (edge as { end?: string }).end;
@@ -681,6 +723,7 @@ export function resolveRenderedOrthogonalCrossings(
         );
       }
     }
+    candidates.push(...terminalPreservingOuterTrackCandidates(edge));
     return candidates;
   };
 
@@ -696,12 +739,19 @@ export function resolveRenderedOrthogonalCrossings(
     let bestBends = Number.POSITIVE_INFINITY;
 
     for (const edge of visibleEdges) {
+      const currentEdgeBends = countOrthogonalBends(pointsFor(edge), EPS_LOCAL);
       for (const candidate of candidatePathsFor(edge)) {
         if (pathHitsNode(candidate) || pathHasSegmentConflict(edge, candidate)) {
           continue;
         }
         const candidateCrossings = crossingCount(edge, candidate);
         const candidateBends = countOrthogonalBends(candidate, EPS_LOCAL);
+        const improvesCurrentEdge =
+          candidateCrossings < currentCrossings ||
+          (candidateCrossings === currentCrossings && candidateBends < currentEdgeBends);
+        if (!improvesCurrentEdge) {
+          continue;
+        }
         if (
           candidateCrossings > bestCrossings ||
           (candidateCrossings === bestCrossings && candidateBends >= bestBends)
