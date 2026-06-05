@@ -69,6 +69,10 @@ const getMaxChildSize = (block: Block) => {
   return { width: maxWidth, height: maxHeight };
 };
 
+function isComposite(child: Block): boolean {
+  return !!(child.children && child.children.length > 0);
+}
+
 function setBlockSizes(
   block: Block,
   db: BlockDB,
@@ -112,9 +116,13 @@ function setBlockSizes(
         log.debug(
           `abc95 Setting size of children of ${block.id} id=${child.id} ${maxWidth} ${maxHeight} ${JSON.stringify(child.size)}`
         );
-        child.size.width =
+        const gridWidth =
           maxWidth * (child.widthInColumns ?? 1) + padding * ((child.widthInColumns ?? 1) - 1);
-        child.size.height = maxHeight;
+        // For composite blocks, ensure they can expand to fit their column allocation
+        child.size.width = Math.max(child.size.width, gridWidth);
+        if (!isComposite(child)) {
+          child.size.height = maxHeight;
+        }
         child.size.x = 0;
         child.size.y = 0;
 
@@ -141,15 +149,36 @@ function setBlockSizes(
 
     const ySize = Math.ceil(numItems / xSize);
 
+    // Compute per-row max heights so that rows containing tall composite
+    // blocks are sized correctly instead of using a single uniform maxHeight.
+    const rowMaxHeights = new Map<number, number>();
+    {
+      let colPos = 0;
+      for (const child of block.children) {
+        const childCols = child.widthInColumns ?? 1;
+        const { py } = calculateBlockPosition(columns > 0 ? columns : numItems, colPos);
+        const h = child.size?.height ?? maxHeight;
+        const cur = rowMaxHeights.get(py) ?? 0;
+        if (h > cur) {
+          rowMaxHeights.set(py, h);
+        }
+        colPos += childCols;
+      }
+    }
+
     let width = xSize * (maxWidth + padding) + padding;
-    let height = ySize * (maxHeight + padding) + padding;
+    let height = 0;
+    for (const rh of rowMaxHeights.values()) {
+      height += rh + padding;
+    }
+    height += padding;
     // If maxWidth
     if (width < siblingWidth) {
       log.debug(
         `Detected to small sibling: abc95 ${block.id} siblingWidth ${siblingWidth} siblingHeight ${siblingHeight} width ${width}`
       );
       width = siblingWidth;
-      height = siblingHeight;
+      height = Math.max(height, siblingHeight);
       const childWidth = (siblingWidth - xSize * padding - padding) / xSize;
       const childHeight = (siblingHeight - ySize * padding - padding) / ySize;
       // cspell:ignore indata
@@ -160,8 +189,11 @@ function setBlockSizes(
       // set width of block to max width of children
       for (const child of block.children) {
         if (child.size) {
-          child.size.width = childWidth;
-          child.size.height = childHeight;
+          const childCols = child.widthInColumns ?? 1;
+          child.size.width = childWidth * childCols + padding * (childCols - 1);
+          if (!isComposite(child)) {
+            child.size.height = childHeight;
+          }
           child.size.x = 0;
           child.size.y = 0;
         }
@@ -177,13 +209,14 @@ function setBlockSizes(
       width = block?.size?.width || 0;
 
       // Grow children to fit
-      const num = columns > 0 ? Math.min(block.children.length, columns) : block.children.length;
-      if (num > 0) {
-        const childWidth = (width - num * padding - padding) / num;
-        log.debug('abc95 (growing to fit) width', block.id, width, block.size?.width, childWidth);
+      const numCols = columns > 0 ? columns : block.children.reduce((sum, child) => sum + (child.widthInColumns ?? 1), 0);
+      if (numCols > 0) {
+        const cellWidth = (width - numCols * padding - padding) / numCols;
+        log.debug('abc95 (growing to fit) width', block.id, width, block.size?.width, cellWidth);
         for (const child of block.children) {
           if (child.size) {
-            child.size.width = childWidth;
+            const childCols = child.widthInColumns ?? 1;
+            child.size.width = cellWidth * childCols + padding * (childCols - 1);
           }
         }
       }
