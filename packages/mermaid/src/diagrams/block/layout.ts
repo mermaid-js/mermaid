@@ -209,7 +209,10 @@ function setBlockSizes(
       width = block?.size?.width || 0;
 
       // Grow children to fit
-      const numCols = columns > 0 ? columns : block.children.reduce((sum, child) => sum + (child.widthInColumns ?? 1), 0);
+      const numCols =
+        columns > 0
+          ? columns
+          : block.children.reduce((sum, child) => sum + (child.widthInColumns ?? 1), 0);
       if (numCols > 0) {
         const cellWidth = (width - numCols * padding - padding) / numCols;
         log.debug('abc95 (growing to fit) width', block.id, width, block.size?.width, cellWidth);
