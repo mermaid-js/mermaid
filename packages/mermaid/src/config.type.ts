@@ -120,6 +120,12 @@ export interface MermaidConfig {
      */
     nodePlacementStrategy?: 'SIMPLE' | 'NETWORK_SIMPLEX' | 'LINEAR_SEGMENTS' | 'BRANDES_KOEPF';
     /**
+     * Elk specific option affecting Brandes-Koepf node placement alignment.
+     * NONE picks the alignment with the smallest height.
+     *
+     */
+    nodePlacementAlignment?: 'NONE' | 'LEFTUP' | 'LEFTDOWN' | 'RIGHTUP' | 'RIGHTDOWN' | 'BALANCED';
+    /**
      * This strategy decides how to find cycles in the graph and deciding which edges need adjustment to break loops.
      *
      */

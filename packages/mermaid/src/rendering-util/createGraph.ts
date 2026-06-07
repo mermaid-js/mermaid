@@ -2,7 +2,9 @@ import type { Selection } from 'd3';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import type { LayoutData } from './types.js';
 import { getConfig } from '../diagram-api/diagramAPI.js';
+import { hasEdgeLabel, insertEdgeLabel } from './rendering-elements/edges.js';
 import { insertNode } from './rendering-elements/nodes.js';
+import { labelHelper } from './rendering-elements/shapes/util.js';
 
 // Update type:
 type D3Selection<T extends SVGElement = SVGElement> = Selection<
@@ -64,6 +66,15 @@ export async function createGraphWithElements(
   await Promise.all(
     data4Layout.nodes.map(async (node) => {
       if (node.isGroup) {
+        if (hasDom) {
+          if (node.label) {
+            const { shapeSvg, bbox } = await labelHelper(nodesGroup, node);
+            node.labelBBox = { width: bbox.width, height: bbox.height };
+            shapeSvg.remove();
+          } else {
+            node.labelBBox = { width: 0, height: 0 };
+          }
+        }
         graph.setNode(node.id, { ...node });
       } else {
         if (hasDom) {
@@ -80,6 +91,9 @@ export async function createGraphWithElements(
   // Add edges to the graph.
 
   for (const edge of edgesToProcess) {
+    if (hasDom && hasEdgeLabel(edge)) {
+      await insertEdgeLabel(edgeLabels, edge);
+    }
     graph.setEdge(edge.start!, edge.end!, { ...edge }, edge.id);
     const edgeExists = data4Layout.edges.some((existingEdge) => existingEdge.id === edge.id);
     if (!edgeExists) {

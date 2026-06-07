@@ -1,5 +1,5 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import type { DiagramStyleClassDef, Positions } from '../../diagram-api/types.js';
+import type { DiagramStyleClassDef } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { getDiagramElement } from '../../rendering-util/insertElementsForSize.js';
 import { getRegisteredLayoutAlgorithm, render } from '../../rendering-util/render.js';
@@ -14,13 +14,7 @@ export const getClasses = function (
   return diagramObj.db.getClasses();
 };
 
-export const draw = async function (
-  text: string,
-  id: string,
-  _version: string,
-  diag: any,
-  positions?: Positions
-) {
+export const draw = async function (text: string, id: string, _version: string, diag: any) {
   log.info('REF0:');
   log.info('Drawing state diagram (v2)', id);
   const { securityLevel, flowchart: conf, layout } = getConfig();
@@ -51,7 +45,7 @@ export const draw = async function (
 
   data4Layout.diagramId = id;
   log.debug('REF1:', data4Layout);
-  await render(data4Layout, svg, positions);
+  await render(data4Layout, svg);
   const padding = data4Layout.config.flowchart?.diagramPadding ?? 8;
   utils.insertTitle(
     svg,

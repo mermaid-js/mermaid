@@ -132,6 +132,19 @@ properties:
           - LINEAR_SEGMENTS
           - BRANDES_KOEPF
         default: BRANDES_KOEPF
+      nodePlacementAlignment:
+        description: |
+          Elk specific option affecting Brandes-Koepf node placement alignment.
+          NONE picks the alignment with the smallest height.
+        type: string
+        enum:
+          - NONE
+          - LEFTUP
+          - LEFTDOWN
+          - RIGHTUP
+          - RIGHTDOWN
+          - BALANCED
+        default: NONE
       cycleBreakingStrategy:
         description: |
           This strategy decides how to find cycles in the graph and deciding which edges need adjustment to break loops.
