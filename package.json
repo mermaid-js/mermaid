@@ -159,7 +159,7 @@
     "typescript-eslint": "^8.38.0",
     "vite": "^7.3.3",
     "vite-plugin-istanbul": "^7.0.0",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.0"
   },
   "nyc": {
     "report-dir": "coverage/cypress"

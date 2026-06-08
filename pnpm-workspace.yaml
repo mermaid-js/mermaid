@@ -13,3 +13,5 @@ minimumReleaseAgeExclude:
   - lodash-es@4.18.1
   # Renovate security update: vite@7.3.2
   - vite@7.3.2
+  # Renovate security update: vitest@4.1.0
+  - vitest@4.1.0
