@@ -12,19 +12,20 @@ const setupDom = () => {
   const dom = new JSDOM('<html lang="en"><body><div id="container"></div></body></html>', {
     resources: 'usable',
     beforeParse(window) {
-      window.Element.prototype.getBBox = () => ({
-        x: 0,
-        y: 0,
-        width: 100,
-        height: 50,
-      });
-      window.Element.prototype.getComputedTextLength = () => 50;
+      (window.Element.prototype as SVGGraphicsElement).getBBox = () =>
+        ({
+          x: 0,
+          y: 0,
+          width: 100,
+          height: 50,
+        }) as DOMRect;
+      (window.Element.prototype as SVGTextContentElement).getComputedTextLength = () => 50;
     },
   });
 
-  globalThis.window = dom.window;
+  globalThis.window = dom.window as unknown as typeof globalThis.window;
   globalThis.document = dom.window.document;
-  globalThis.MutationObserver = undefined;
+  globalThis.MutationObserver = undefined as unknown as typeof MutationObserver;
 
   return () => {
     globalThis.window = oldWindow;
