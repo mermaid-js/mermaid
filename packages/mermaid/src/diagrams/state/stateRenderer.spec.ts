@@ -1,4 +1,7 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
+import type { Diagram } from '../../Diagram.js';
+import type { D3Selection } from '../../types.js';
+import type { StateShapeDef } from './shapes.js';
 
 // Mock dagre layout so it doesn't attempt real SVG measurement
 vi.mock('dagre-d3-es/src/dagre/index.js', () => ({
@@ -7,11 +10,11 @@ vi.mock('dagre-d3-es/src/dagre/index.js', () => ({
 
 // Mock shapes so drawState appends a real <g> without needing full SVG rendering
 vi.mock('./shapes.js', () => ({
-  drawState: vi.fn((diagram, stateDef) => {
+  drawState: vi.fn((diagram: D3Selection<SVGGElement>, stateDef: StateShapeDef) => {
     diagram.append('g').attr('id', stateDef.id).attr('class', 'stateGroup');
     return { id: stateDef.id, width: 50, height: 30 };
   }),
-  addTitleAndBox: vi.fn((sub) => sub),
+  addTitleAndBox: vi.fn((sub: D3Selection<SVGGElement>) => sub),
   drawEdge: vi.fn(),
 }));
 
@@ -41,7 +44,9 @@ describe('stateRenderer v1 draw()', () => {
   beforeEach(() => {
     document.body.innerHTML = `<svg id="${DIAGRAM_ID}"></svg>`;
     // jsdom does not implement SVGElement.getBBox — stub it
-    SVGElement.prototype.getBBox = vi.fn(() => ({ x: 0, y: 0, width: 100, height: 50 }));
+    (SVGElement.prototype as SVGGraphicsElement).getBBox = vi.fn(
+      () => ({ x: 0, y: 0, width: 100, height: 50 }) as DOMRect
+    );
   });
 
   it('places all state elements under a single <g id="…-root"> wrapper, not directly on <svg>', () => {
@@ -55,11 +60,11 @@ describe('stateRenderer v1 draw()', () => {
         }),
         getRelations: () => [],
       },
-    };
+    } as unknown as Diagram;
 
-    draw('stateDiagram\nState1\nState2', DIAGRAM_ID, '1.0.0', diagObj);
+    void draw('stateDiagram\nState1\nState2', DIAGRAM_ID, '1.0.0', diagObj);
 
-    const svg = document.getElementById(DIAGRAM_ID);
+    const svg = document.getElementById(DIAGRAM_ID)!;
 
     // The SVG should have exactly one direct <g> child: the root wrapper
     const directGChildren = [...svg.children].filter((el) => el.tagName.toLowerCase() === 'g');
@@ -69,7 +74,7 @@ describe('stateRenderer v1 draw()', () => {
     // State nodes must live inside the wrapper, not on the SVG directly
     const rootWrapper = svg.querySelector(`g#${DIAGRAM_ID}-root`);
     expect(rootWrapper).not.toBeNull();
-    expect(rootWrapper.querySelector('#State1')).not.toBeNull();
-    expect(rootWrapper.querySelector('#State2')).not.toBeNull();
+    expect(rootWrapper!.querySelector('#State1')).not.toBeNull();
+    expect(rootWrapper!.querySelector('#State2')).not.toBeNull();
   });
 });

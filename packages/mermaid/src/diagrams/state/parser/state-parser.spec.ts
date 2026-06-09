@@ -1,4 +1,5 @@
 import { StateDB } from '../stateDb.js';
+// @ts-ignore: JISON doesn't support types
 import stateDiagram from './stateDiagram.jison';
 import { setConfig } from '../../../config.js';
 
@@ -7,7 +8,7 @@ setConfig({
 });
 
 describe('state parser can parse...', () => {
-  let stateDb;
+  let stateDb: StateDB;
   beforeEach(function () {
     stateDb = new StateDB(2);
     stateDiagram.parser.yy = stateDb;

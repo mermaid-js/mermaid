@@ -1,9 +1,11 @@
+// @ts-ignore: JISON doesn't support types
 import { parser } from './parser/stateDiagram.jison';
 import { StateDB } from './stateDb.js';
+import type { ClickStmt } from './stateDb.js';
 
 describe('state diagram, ', function () {
   describe('when parsing an info graph it', function () {
-    let stateDb;
+    let stateDb: StateDB;
     beforeEach(function () {
       stateDb = new StateDB(1);
       parser.yy = stateDb;
@@ -401,13 +403,13 @@ describe('state diagram, ', function () {
     });
   });
   describe('click directive', function () {
-    let stateDb;
+    let stateDb: StateDB;
     beforeEach(function () {
       stateDb = new StateDB(1);
     });
 
     it('should store links from click statements manually passed to extract()', function () {
-      const clickStmt = {
+      const clickStmt: ClickStmt = {
         stmt: 'click',
         id: 'S1',
         url: 'https://example.com',
@@ -421,7 +423,7 @@ describe('state diagram, ', function () {
 
       const links = stateDb.getLinks();
       expect(links.has('S1')).toBe(true);
-      const link = links.get('S1');
+      const link = links.get('S1')!;
       expect(link.url).toBe('https://example.com');
       expect(link.tooltip).toBe('Go to Example');
     });

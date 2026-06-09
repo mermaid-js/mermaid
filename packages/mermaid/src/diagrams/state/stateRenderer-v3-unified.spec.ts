@@ -1,4 +1,6 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
+import type { SVG } from '../../diagram-api/types.js';
+import type { NodeData } from './stateDb.js';
 
 const renderState = vi.hoisted(() => ({
   nodeClass: 'node',
@@ -19,7 +21,7 @@ vi.mock('../../diagram-api/diagramAPI.js', () => ({
 }));
 
 vi.mock('../../rendering-util/render.js', () => ({
-  render: vi.fn((data, svg) => {
+  render: vi.fn((data: { nodes: NodeData[] }, svg: SVG) => {
     const layoutNode = data.nodes.find((node) => node.id === 'A') ?? data.nodes[0];
     if (layoutNode) {
       layoutNode.domId = `${svg.attr('id')}-${layoutNode.id}`;
@@ -34,7 +36,7 @@ vi.mock('../../rendering-util/render.js', () => ({
       : (layoutNode?.label ?? 'Google');
     node.appendChild(label);
 
-    svg.node().appendChild(node);
+    svg.node()!.appendChild(node);
   }),
 }));
 
@@ -58,6 +60,7 @@ describe('stateRenderer v3 clickable links', () => {
       renderState.nodeClass = nodeClass;
 
       const stateDb = new StateDB(1);
+      // @ts-expect-error -- intentionally-minimal test statement: the required 'type' field is omitted (defaulted at runtime)
       stateDb.setRootDoc([{ stmt: 'state', id: 'A', description: 'Google' }]);
       stateDb.addLink('A', '"https://google.com"', '"Visit Google"');
 
@@ -69,21 +72,21 @@ describe('stateRenderer v3 clickable links', () => {
       const node = document.querySelector(`svg#${DIAGRAM_ID} a > g.${nodeClass}`);
 
       expect(node).not.toBeNull();
-      expect(node.getAttribute('title')).toBe('Visit Google');
+      expect(node!.getAttribute('title')).toBe('Visit Google');
 
       stateDb.bindFunctions(document.body);
 
       const tooltip = document.querySelector('.mermaidTooltip');
       expect(tooltip).not.toBeNull();
 
-      node.dispatchEvent(new window.MouseEvent('mouseover', { bubbles: true }));
+      node!.dispatchEvent(new window.MouseEvent('mouseover', { bubbles: true }));
 
-      expect(tooltip.innerHTML).toBe('Visit Google');
-      expect(node.classList.contains('hover')).toBe(true);
+      expect(tooltip!.innerHTML).toBe('Visit Google');
+      expect(node!.classList.contains('hover')).toBe(true);
 
-      node.dispatchEvent(new window.MouseEvent('mouseout', { bubbles: true }));
+      node!.dispatchEvent(new window.MouseEvent('mouseout', { bubbles: true }));
 
-      expect(node.classList.contains('hover')).toBe(false);
+      expect(node!.classList.contains('hover')).toBe(false);
     }
   );
 });

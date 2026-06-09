@@ -1,5 +1,7 @@
 import { setConfig } from '../../../config.js';
 import { StateDB } from '../stateDb.js';
+import type { StateStmt } from '../stateDb.js';
+// @ts-ignore: JISON doesn't support types
 import stateDiagram from './stateDiagram.jison';
 
 setConfig({
@@ -7,7 +9,7 @@ setConfig({
 });
 
 describe('ClassDefs and classes when parsing a State diagram', () => {
-  let stateDb;
+  let stateDb: StateDB;
   beforeEach(function () {
     stateDb = new StateDB(2);
     stateDiagram.parser.yy = stateDb;
@@ -20,8 +22,8 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         stateDiagram.parser.parse('stateDiagram-v2\n classDef exampleClass background:#bbb;');
 
         const styleClasses = stateDb.getClasses();
-        expect(styleClasses.get('exampleClass').styles.length).toEqual(1);
-        expect(styleClasses.get('exampleClass').styles[0]).toEqual('background:#bbb');
+        expect(styleClasses.get('exampleClass')!.styles.length).toEqual(1);
+        expect(styleClasses.get('exampleClass')!.styles[0]).toEqual('background:#bbb');
       });
 
       it('can define multiple attributes separated by commas', function () {
@@ -30,10 +32,10 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         );
 
         const styleClasses = stateDb.getClasses();
-        expect(styleClasses.get('exampleClass').styles.length).toEqual(3);
-        expect(styleClasses.get('exampleClass').styles[0]).toEqual('background:#bbb');
-        expect(styleClasses.get('exampleClass').styles[1]).toEqual('font-weight:bold');
-        expect(styleClasses.get('exampleClass').styles[2]).toEqual('font-style:italic');
+        expect(styleClasses.get('exampleClass')!.styles.length).toEqual(3);
+        expect(styleClasses.get('exampleClass')!.styles[0]).toEqual('background:#bbb');
+        expect(styleClasses.get('exampleClass')!.styles[1]).toEqual('font-weight:bold');
+        expect(styleClasses.get('exampleClass')!.styles[2]).toEqual('font-style:italic');
       });
 
       // need to look at what the lexer is doing
@@ -80,13 +82,13 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         stateDiagram.parser.parse(diagram);
 
         const classes = stateDb.getClasses();
-        expect(classes.get('exampleStyleClass').styles.length).toEqual(2);
-        expect(classes.get('exampleStyleClass').styles[0]).toEqual('background:#bbb');
-        expect(classes.get('exampleStyleClass').styles[1]).toEqual('border:1px solid red');
+        expect(classes.get('exampleStyleClass')!.styles.length).toEqual(2);
+        expect(classes.get('exampleStyleClass')!.styles[0]).toEqual('background:#bbb');
+        expect(classes.get('exampleStyleClass')!.styles[1]).toEqual('border:1px solid red');
 
         const state_a = stateDb.getState('a');
-        expect(state_a.classes.length).toEqual(1);
-        expect(state_a.classes[0]).toEqual('exampleStyleClass');
+        expect(state_a!.classes!.length).toEqual(1);
+        expect(state_a!.classes![0]).toEqual('exampleStyleClass');
       });
 
       it('can be applied to a state with an id containing _', function () {
@@ -154,8 +156,8 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
           diagram += 'class a,b exampleStyleClass';
 
           stateDiagram.parser.parse(diagram);
-          let classes = stateDiagram.parser.yy.getClasses();
-          let states = stateDiagram.parser.yy.getStates();
+          const classes = stateDiagram.parser.yy.getClasses();
+          const states = stateDiagram.parser.yy.getStates();
 
           expect(classes.get('exampleStyleClass').styles.length).toEqual(2);
           expect(classes.get('exampleStyleClass').styles[0]).toEqual('background:#bbb');
@@ -267,9 +269,9 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
           const states = stateDiagram.parser.yy.getStates();
 
           const movingDoc = states.get('Moving').doc;
-          const state1 = movingDoc.find((d) => d.id === '%%comment_inside_state');
+          const state1 = movingDoc.find((d: StateStmt) => d.id === '%%comment_inside_state');
           expect(state1).toBeUndefined();
-          const state2 = movingDoc.find((d) => d.id === '%%inline_comment');
+          const state2 = movingDoc.find((d: StateStmt) => d.id === '%%inline_comment');
           expect(state2).toBeUndefined();
         });
 

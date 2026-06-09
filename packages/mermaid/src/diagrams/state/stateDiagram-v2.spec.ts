@@ -1,12 +1,13 @@
+// @ts-ignore: JISON doesn't support types
 import stateDiagram, { parser } from './parser/stateDiagram.jison';
 import { DEFAULT_DIAGRAM_DIRECTION } from './stateCommon.js';
 import { StateDB } from './stateDb.js';
+import type { StateStmt } from './stateDb.js';
 
 describe('state diagram V2, ', function () {
   // TODO - these examples should be put into ./parser/stateDiagram.spec.js
   describe('when parsing an info graph it', function () {
-    /** @type {StateDB} */
-    let stateDb;
+    let stateDb: StateDB;
     beforeEach(function () {
       stateDb = new StateDB(2);
       parser.yy = stateDb;
@@ -133,11 +134,11 @@ describe('state diagram V2, ', function () {
 
         const rels = stateDb.getRelations();
         const rel_1_2 = rels.find((rel) => rel.id1 === 'State1' && rel.id2 === 'State2');
-        expect(rel_1_2.relationTitle).toEqual('Transition 1');
+        expect(rel_1_2!.relationTitle).toEqual('Transition 1');
         const rel_1_3 = rels.find((rel) => rel.id1 === 'State1' && rel.id2 === 'State3');
-        expect(rel_1_3.relationTitle).toEqual('Transition 2');
+        expect(rel_1_3!.relationTitle).toEqual('Transition 2');
         const rel_1_4 = rels.find((rel) => rel.id1 === 'State1' && rel.id2 === 'State4');
-        expect(rel_1_4.relationTitle).toEqual('Transition 3');
+        expect(rel_1_4!.relationTitle).toEqual('Transition 3');
       });
     });
 
@@ -348,13 +349,13 @@ describe('state diagram V2, ', function () {
       `;
 
       parser.parse(str);
-      expect(stateDb.getState('Active').note).toMatchInlineSnapshot(`
+      expect(stateDb.getState('Active')!.note).toMatchInlineSnapshot(`
         {
           "position": "left of",
           "text": "this is a short<br>note",
         }
       `);
-      expect(stateDb.getState('Inactive').note).toMatchInlineSnapshot(`
+      expect(stateDb.getState('Inactive')!.note).toMatchInlineSnapshot(`
         {
           "position": "right of",
           "text": "A note can also
@@ -372,7 +373,7 @@ describe('state diagram V2, ', function () {
       `;
 
       parser.parse(str);
-      expect(stateDb.getStates().get('State1').note).toMatchInlineSnapshot(`
+      expect(stateDb.getStates().get('State1')!.note).toMatchInlineSnapshot(`
         {
           "position": "right of",
           "text": "Line1<br>Line2<br>Line3<br>Line4<br>Line5",
@@ -410,7 +411,7 @@ describe('state diagram V2, ', function () {
       `;
 
       parser.parse(str);
-      expect(stateDb.getState('NotShooting').note).toMatchInlineSnapshot(`
+      expect(stateDb.getState('NotShooting')!.note).toMatchInlineSnapshot(`
         {
           "position": "right of",
           "text": "This is a note on a composite state",
@@ -431,13 +432,13 @@ describe('state diagram V2, ', function () {
       stateDiagram.parser.parse(diagram);
 
       const states = stateDb.getStates();
-      expect(states.get('Active').doc[0].id).toEqual('Idle');
+      expect((states.get('Active')!.doc![0] as StateStmt).id).toEqual('Idle');
 
       const rels = stateDb.getRelations();
       const rel_Inactive_Idle = rels.find((rel) => rel.id1 === 'Inactive' && rel.id2 === 'Idle');
-      expect(rel_Inactive_Idle.relationTitle).toEqual('ACT');
+      expect(rel_Inactive_Idle!.relationTitle).toEqual('ACT');
       const rel_Active_Active = rels.find((rel) => rel.id1 === 'Active' && rel.id2 === 'Active');
-      expect(rel_Active_Active.relationTitle).toEqual('LOG');
+      expect(rel_Active_Active!.relationTitle).toEqual('LOG');
     });
 
     it('should check default diagram direction', () => {

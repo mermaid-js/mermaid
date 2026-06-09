@@ -1,16 +1,45 @@
 import { select } from 'd3';
+import type { Selection } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger.js';
 import common from '../common/common.js';
 import { drawState, addTitleAndBox, drawEdge } from './shapes.js';
+import type { StateInfo, StateShapeDef } from './shapes.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
+import type { DrawDefinition } from '../../diagram-api/types.js';
+import type { StateDiagramConfig } from '../../config.type.js';
+import type { D3HtmlSelection, D3Selection } from '../../types.js';
+import type { StateStmt, Stmt } from './stateDb.js';
+
+/** A state definition, as consumed by the legacy (v1) renderer. */
+interface V1StateDef extends StateStmt {
+  parentId?: string;
+}
+
+/** A relation between two states, as consumed by the legacy (v1) renderer. */
+interface V1Relation {
+  id1: string;
+  id2: string;
+  title?: string;
+}
+
+/** The parts of the diagram database that the legacy (v1) renderer uses. */
+interface V1DiagramDb {
+  getRootDoc: () => Stmt[];
+  getStates: () => Record<string, V1StateDef>;
+  getRelations: () => V1Relation[];
+}
+
+interface V1DiagramObj {
+  db: V1DiagramDb;
+}
 
 // TODO Move conf object to main conf in mermaidAPI
-let conf;
+let conf: Required<StateDiagramConfig>;
 
-const transformationLog = {};
+const transformationLog: Record<string, { y: number }> = {};
 
 export const setConf = function () {
   //no-op
@@ -19,9 +48,9 @@ export const setConf = function () {
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  *
- * @param {any} elem
+ * @param elem - The svg element to append the marker to
  */
-const insertMarkers = function (elem) {
+const insertMarkers = function (elem: D3Selection<SVGSVGElement>) {
   elem
     .append('defs')
     .append('marker')
@@ -38,37 +67,37 @@ const insertMarkers = function (elem) {
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
  *
- * @param {any} text
- * @param {any} id
- * @param _version
- * @param diagObj
+ * @param text - The text of the diagram
+ * @param id - The id of the element to draw the diagram into
+ * @param _version - The version of mermaid
+ * @param diagObj - The diagram object
  */
-export const draw = function (text, id, _version, diagObj) {
-  conf = getConfig().state;
+export const draw: DrawDefinition = function (text, id, _version, diagObj) {
+  conf = getConfig().state as Required<StateDiagramConfig>;
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
-  let sandboxElement;
+  let sandboxElement: Selection<HTMLIFrameElement, unknown, HTMLElement, unknown> | undefined;
   if (securityLevel === 'sandbox') {
-    sandboxElement = select('#i' + id);
+    sandboxElement = select<HTMLIFrameElement, unknown>('#i' + id);
   }
-  const root =
+  const root: D3HtmlSelection<HTMLElement> =
     securityLevel === 'sandbox'
-      ? select(sandboxElement.nodes()[0].contentDocument.body)
-      : select('body');
-  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+      ? select(sandboxElement!.nodes()[0].contentDocument!.body)
+      : select<HTMLElement, unknown>('body');
+  const doc = securityLevel === 'sandbox' ? sandboxElement!.nodes()[0].contentDocument! : document;
 
   log.debug('Rendering diagram ' + text);
 
   // Fetch the default direction, use TD if none was found
-  const diagram = root.select(`[id='${id}']`);
+  const diagram = root.select<SVGSVGElement>(`[id='${id}']`);
   insertMarkers(diagram);
 
-  const rootDoc = diagObj.db.getRootDoc();
+  const rootDoc = (diagObj as unknown as V1DiagramObj).db.getRootDoc();
   const rootG = diagram.append('g').attr('id', id + '-root');
-  renderDoc(rootDoc, rootG, undefined, false, root, doc, diagObj);
+  renderDoc(rootDoc, rootG, undefined, false, root, doc, diagObj as unknown as V1DiagramObj);
 
   const padding = conf.padding;
-  const bounds = diagram.node().getBBox();
+  const bounds = diagram.node()!.getBBox();
 
   const width = bounds.width + padding * 2;
   const height = bounds.height + padding * 2;
@@ -82,11 +111,19 @@ export const draw = function (text, id, _version, diagObj) {
     `${bounds.x - conf.padding}  ${bounds.y - conf.padding} ` + width + ' ' + height
   );
 };
-const getLabelWidth = (text) => {
+const getLabelWidth = (text?: string): number => {
   return text ? text.length * conf.fontSizeFactor : 1;
 };
 
-const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) => {
+const renderDoc = (
+  doc: Stmt[],
+  diagram: D3Selection<SVGGElement>,
+  parentId: string | undefined,
+  altBkg: boolean,
+  root: D3HtmlSelection<HTMLElement>,
+  domDocument: Document,
+  diagObj: V1DiagramObj
+): StateInfo => {
   // Layout graph, Create a new directed graph
   const graph = new graphlib.Graph({
     compound: true,
@@ -142,7 +179,7 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
 
   const keys = Object.keys(states);
 
-  let first = true;
+  const first = true;
 
   for (const key of keys) {
     const stateDef = states[key];
@@ -151,7 +188,7 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
       stateDef.parentId = parentId;
     }
 
-    let node;
+    let node: StateInfo;
     if (stateDef.doc) {
       let sub = diagram.append('g').attr('id', stateDef.id).attr('class', 'stateGroup');
       node = renderDoc(stateDef.doc, sub, stateDef.id, !altBkg, root, domDocument, diagObj);
@@ -159,30 +196,30 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
       if (first) {
         // first = false;
         sub = addTitleAndBox(sub, stateDef, altBkg);
-        let boxBounds = sub.node().getBBox();
+        const boxBounds = sub.node()!.getBBox();
         node.width = boxBounds.width;
         node.height = boxBounds.height + conf.padding / 2;
         transformationLog[stateDef.id] = { y: conf.compositTitleSize };
       } else {
         // sub = addIdAndBox(sub, stateDef);
-        let boxBounds = sub.node().getBBox();
+        const boxBounds = sub.node()!.getBBox();
         node.width = boxBounds.width;
         node.height = boxBounds.height;
         // transformationLog[stateDef.id] = { y: conf.compositTitleSize };
       }
     } else {
-      node = drawState(diagram, stateDef, graph);
+      node = drawState(diagram, stateDef);
     }
 
     if (stateDef.note) {
       // Draw note note
-      const noteDef = {
+      const noteDef: StateShapeDef = {
         descriptions: [],
         id: stateDef.id + '-note',
         note: stateDef.note,
         type: 'note',
       };
-      const note = drawState(diagram, noteDef, graph);
+      const note = drawState(diagram, noteDef);
 
       // graph.setNode(node.id, node);
       if (stateDef.note.position === 'left of') {
@@ -221,10 +258,11 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
     );
   });
 
+  // @ts-expect-error -- dagre-d3-es types declare `opts` as required, but the implementation treats it as optional.
   dagreLayout(graph);
 
   log.debug('Graph after layout', graph.nodes());
-  const svgElem = diagram.node();
+  const svgElem = diagram.node()!;
 
   graph.nodes().forEach(function (v) {
     if (v !== undefined && graph.node(v) !== undefined) {
@@ -251,15 +289,15 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
         let pShift = 0;
         if (parent) {
           if (parent.parentElement) {
-            pWidth = parent.parentElement.getBBox().width;
+            pWidth = (parent.parentElement as unknown as SVGGraphicsElement).getBBox().width;
           }
-          pShift = parseInt(parent.getAttribute('data-x-shift'), 10);
+          pShift = parseInt(parent.getAttribute('data-x-shift')!, 10);
           if (Number.isNaN(pShift)) {
             pShift = 0;
           }
         }
-        divider.setAttribute('x1', 0 - pShift + 8);
-        divider.setAttribute('x2', pWidth - pShift - 8);
+        divider.setAttribute('x1', (0 - pShift + 8) as unknown as string);
+        divider.setAttribute('x2', (pWidth - pShift - 8) as unknown as string);
       });
     } else {
       log.debug('No Node ' + v + ': ' + JSON.stringify(graph.node(v)));
