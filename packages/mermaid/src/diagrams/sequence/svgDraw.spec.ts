@@ -1,7 +1,8 @@
 import { vi } from 'vitest';
+import type { Mock } from 'vitest';
 
 vi.mock('../../config.js', async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal<typeof configApi>();
   return {
     ...actual,
     getConfig: vi.fn(() => ({ look: 'classic' })),
@@ -10,10 +11,29 @@ vi.mock('../../config.js', async (importOriginal) => {
 
 import * as configApi from '../../config.js';
 import svgDraw from './svgDraw.js';
+import type { LoopModel, SvgDrawConfig } from './svgDraw.js';
+import type { RectData, Bound } from '../common/commonTypes.js';
+import type { SVG } from '../../diagram-api/types.js';
+
+/** The shape of the d3 selection mocks used by these tests. */
+interface MockElem {
+  readonly __children: MockElem[];
+  readonly __name: string;
+  readonly __parent: MockElem | undefined;
+  append: (name: string) => MockElem;
+  lower: Mock;
+  attr: Mock;
+  text: Mock;
+  style: Mock;
+  _groups?: { getBBox: () => { x: number; y: number; width: number; height: number } }[][];
+}
+
+/** Casts a mock element to the d3 selection type expected by svgDraw. */
+const asSvg = (elem: MockElem) => elem as unknown as SVG;
 
 // This is the only place that uses this mock
-export const MockD3 = (name, parent) => {
-  const children = [];
+export const MockD3 = (name: string, parent?: MockElem): MockElem => {
+  const children: MockElem[] = [];
   const elem = {
     get __children() {
       return children;
@@ -24,8 +44,8 @@ export const MockD3 = (name, parent) => {
     get __parent() {
       return parent;
     },
-  };
-  elem.append = (name) => {
+  } as MockElem;
+  elem.append = (name: string) => {
     const mockElem = MockD3(name, elem);
     children.push(mockElem);
     return mockElem;
@@ -46,22 +66,22 @@ describe('svgDraw', function () {
 
       const svg = MockD3('svg');
 
-      svgDraw.drawRect(svg, {
+      svgDraw.drawRect(asSvg(svg), {
         x: 10,
         y: 10,
         fill: '#ccc',
         stroke: 'red',
         width: '20',
         height: '20',
-      });
-      svgDraw.drawRect(svg, {
+      } as unknown as RectData);
+      svgDraw.drawRect(asSvg(svg), {
         x: 30,
         y: 30,
         fill: '#ddd',
         stroke: 'blue',
         width: '40',
         height: '40',
-      });
+      } as unknown as RectData);
 
       expect(configApi.getConfig).toHaveBeenCalledTimes(2);
       expect(svg.__children[0].attr).not.toHaveBeenCalledWith('data-look', 'neo');
@@ -70,7 +90,7 @@ describe('svgDraw', function () {
 
     it('should append a rectangle', function () {
       const svg = MockD3('svg');
-      svgDraw.drawRect(svg, {
+      svgDraw.drawRect(asSvg(svg), {
         x: 10,
         y: 10,
         fill: '#ccc',
@@ -80,7 +100,7 @@ describe('svgDraw', function () {
         rx: '10',
         ry: '10',
         class: 'unitTestRectangleClass',
-      });
+      } as unknown as RectData);
       expect(svg.__children.length).toBe(1);
       const rect = svg.__children[0];
       expect(rect.__name).toBe('rect');
@@ -96,7 +116,7 @@ describe('svgDraw', function () {
     });
     it('should not add the class attribute if a class is not provided', () => {
       const svg = MockD3('svg');
-      svgDraw.drawRect(svg, {
+      svgDraw.drawRect(asSvg(svg), {
         x: 10,
         y: 10,
         fill: '#ccc',
@@ -105,7 +125,7 @@ describe('svgDraw', function () {
         height: '20',
         rx: '10',
         ry: '10',
-      });
+      } as unknown as RectData);
       expect(svg.__children.length).toBe(1);
       const rect = svg.__children[0];
       expect(rect.__name).toBe('rect');
@@ -116,7 +136,7 @@ describe('svgDraw', function () {
   describe('drawText', function () {
     it('should append a single element', function () {
       const svg = MockD3('svg');
-      svgDraw.drawText(svg, {
+      svgDraw.drawText(asSvg(svg), {
         x: 10,
         y: 10,
         dy: '1em',
@@ -140,7 +160,7 @@ describe('svgDraw', function () {
     });
     it('should append a multiple elements', function () {
       const svg = MockD3('svg');
-      svgDraw.drawText(svg, {
+      svgDraw.drawText(asSvg(svg), {
         x: 10,
         y: 10,
         text: 'One fine text message<br>with multiple<br>fine lines',
@@ -171,7 +191,7 @@ describe('svgDraw', function () {
 
       it('anchor "left" positions text at x + textMargin', function () {
         const svg = MockD3('svg');
-        svgDraw.drawText(svg, {
+        svgDraw.drawText(asSvg(svg), {
           x,
           y: 20,
           text: 'hello',
@@ -186,7 +206,7 @@ describe('svgDraw', function () {
 
       it('anchor "center" positions text at x + width/2', function () {
         const svg = MockD3('svg');
-        svgDraw.drawText(svg, {
+        svgDraw.drawText(asSvg(svg), {
           x,
           y: 20,
           text: 'hello',
@@ -201,7 +221,7 @@ describe('svgDraw', function () {
 
       it('anchor "right" positions text at x + width - textMargin', function () {
         const svg = MockD3('svg');
-        svgDraw.drawText(svg, {
+        svgDraw.drawText(asSvg(svg), {
           x,
           y: 20,
           text: 'hello',
@@ -217,7 +237,7 @@ describe('svgDraw', function () {
 
     it('should work with numeral font sizes', function () {
       const svg = MockD3('svg');
-      svgDraw.drawText(svg, {
+      svgDraw.drawText(asSvg(svg), {
         x: 10,
         y: 10,
         dy: '1em',
@@ -244,8 +264,8 @@ describe('svgDraw', function () {
     /**
      * Extended MockD3 that supports getBBox (needed by drawLoop's text measurement).
      */
-    const MockD3WithBBox = (name, parent) => {
-      const children = [];
+    const MockD3WithBBox = (name: string, parent?: MockElem): MockElem => {
+      const children: MockElem[] = [];
       const elem = {
         get __children() {
           return children;
@@ -257,8 +277,8 @@ describe('svgDraw', function () {
           return parent;
         },
         _groups: [[{ getBBox: () => ({ x: 0, y: 0, width: 100, height: 20 }) }]],
-      };
-      elem.append = (childName) => {
+      } as MockElem;
+      elem.append = (childName: string) => {
         const mockElem = MockD3WithBBox(childName, elem);
         children.push(mockElem);
         return mockElem;
@@ -274,9 +294,9 @@ describe('svgDraw', function () {
      * Walk the mock D3 tree and collect all text elements that were given a
      * specific CSS class via `.attr('class', className)`.
      */
-    function findTextsByClass(root, className) {
-      const results = [];
-      const walk = (node) => {
+    function findTextsByClass(root: MockElem, className: string): MockElem[] {
+      const results: MockElem[] = [];
+      const walk = (node: MockElem) => {
         for (const child of node.__children || []) {
           if (child.__name === 'text') {
             const calls = child.attr.mock.calls;
@@ -293,7 +313,7 @@ describe('svgDraw', function () {
 
     it('should use sectionTitle class for section titles so custom loopText/labelText CSS does not hide them', async function () {
       const svg = MockD3WithBBox('svg');
-      const loopModel = {
+      const loopModel: LoopModel = {
         startx: 10,
         starty: 10,
         stopx: 200,
@@ -303,7 +323,7 @@ describe('svgDraw', function () {
         sectionTitles: [{ message: 'else Command' }],
         sections: [{ y: 100, height: 50 }],
       };
-      const conf = {
+      const conf: SvgDrawConfig = {
         boxMargin: 10,
         boxTextMargin: 5,
         labelBoxHeight: 20,
@@ -314,7 +334,13 @@ describe('svgDraw', function () {
       };
       const msg = { id: 'test1' };
 
-      const g = await svgDraw.drawLoop(svg, loopModel, 'alt', conf, msg);
+      const g = (await svgDraw.drawLoop(
+        asSvg(svg),
+        loopModel,
+        'alt',
+        conf,
+        msg
+      )) as unknown as MockElem;
 
       // Section title text should use 'sectionTitle' class, not 'loopText'
       const sectionTitles = findTextsByClass(g, 'sectionTitle');
@@ -339,7 +365,7 @@ describe('svgDraw', function () {
         title: undefined,
         fill: '#ccc',
       };
-      svgDraw.drawBackgroundRect(svg, boundingRect);
+      svgDraw.drawBackgroundRect(asSvg(svg), boundingRect as unknown as Bound);
       expect(svg.__children.length).toBe(1);
       const rect = svg.__children[0];
       expect(rect.__name).toBe('rect');

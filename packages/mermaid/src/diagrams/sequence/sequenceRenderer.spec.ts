@@ -1,8 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { Mock } from 'vitest';
 import { SequenceDB } from './sequenceDb.js';
+import type { Diagram } from '../../Diagram.js';
+import type * as utils from '../../utils.js';
 
 vi.mock('./svgDraw.js', async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal<typeof svgDraw>();
   return {
     ...actual,
     drawText: vi.fn(),
@@ -10,7 +13,7 @@ vi.mock('./svgDraw.js', async (importOriginal) => {
 });
 
 vi.mock('../../utils.js', async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal<typeof utils>();
   return {
     ...actual,
     default: {
@@ -23,14 +26,24 @@ vi.mock('../../utils.js', async (importOriginal) => {
 import * as svgDraw from './svgDraw.js';
 import { drawMessage, setConf } from './sequenceRenderer.js';
 
-function mockDiagram(name = 'svg') {
-  const children = [];
-  const elem = {
+interface MockElem {
+  readonly __children: MockElem[];
+  __name: string;
+  append: (n: string) => MockElem;
+  lower: Mock;
+  attr: Mock;
+  style: Mock;
+  text: Mock;
+}
+
+function mockDiagram(name = 'svg'): MockElem {
+  const children: MockElem[] = [];
+  const elem: MockElem = {
     get __children() {
       return children;
     },
     __name: name,
-    append(n) {
+    append(n: string) {
       const child = mockDiagram(n);
       children.push(child);
       return child;
@@ -62,7 +75,7 @@ describe('drawMessage (#3594)', () => {
     const startx = 320;
     const stopx = 80;
     const sequenceDb = new SequenceDB();
-    const diagObj = { db: sequenceDb };
+    const diagObj = { db: sequenceDb } as unknown as Diagram;
 
     const msgModel = {
       startx,

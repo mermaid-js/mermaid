@@ -7,6 +7,152 @@ import common, {
   renderKatexSanitized,
 } from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
+import type { Bound, RectData } from '../common/commonTypes.js';
+import type { SVG, SVGGroup } from '../../diagram-api/types.js';
+import type { D3HtmlSelection } from '../../types.js';
+import type { SequenceDiagramConfig } from '../../config.type.js';
+import type { Actor, Message } from './types.js';
+
+/** Theme variables accessed by the sequence diagram drawing helpers. */
+interface SequenceThemeVariables {
+  bkgColorArray: string[];
+  borderColorArray: string[];
+  actorBorder?: string;
+  actorBkg?: string;
+  mainBkg?: string;
+}
+
+/**
+ * The configuration object handed to the svgDraw helpers by the sequence renderer.
+ *
+ * It is the sequence diagram configuration merged (by `setConf` in the renderer)
+ * with a few top-level configuration keys such as `look`, `theme` and `themeVariables`.
+ */
+export interface SvgDrawConfig extends SequenceDiagramConfig {
+  look?: string;
+  theme?: string;
+  themeVariables?: SequenceThemeVariables;
+  sequence?: SequenceDiagramConfig;
+  textPlacement?: string;
+}
+
+/** An actor enriched with the layout/rendering data added by the sequence renderer. */
+export interface ActorRenderData extends Omit<Actor, 'links' | 'properties' | 'rectData'> {
+  links?: Record<string, string>;
+  properties?: Record<string, unknown> & { class?: string; icon?: string };
+  rectData?: RectData;
+  x: number;
+  width: number;
+  height: number;
+  starty?: number;
+  stopy?: number;
+  margin?: number;
+}
+
+/** A box enriched with the layout/rendering data added by the sequence renderer. */
+export interface BoxRenderData {
+  name?: string;
+  fill?: string;
+  x: number;
+  y: number;
+  width: number;
+  height?: number;
+  textMaxHeight?: number;
+  margin?: number;
+}
+
+/** The model of a loop/alt/opt/par/critical/break statement built by the renderer. */
+export interface LoopModel {
+  startx: number;
+  starty: number;
+  stopx: number;
+  stopy: number;
+  title?: string;
+  wrap?: boolean;
+  width?: number;
+  height?: number;
+  fill?: string;
+  overlap?: boolean;
+  sections?: { y: number; height: number }[];
+  sectionTitles?: { message?: string }[];
+}
+
+/** The model of an activation built by the renderer's bounds tracker. */
+export interface ActivationData {
+  startx: number;
+  starty: number;
+  stopx: number;
+  stopy?: number;
+  actor: string;
+  anchored: SVGGroup;
+}
+
+/** Text drawing options used by {@link drawText} and {@link drawKatex}. */
+export interface TextData {
+  x: number;
+  y: number;
+  text: string;
+  anchor?: string;
+  style?: string;
+  width?: number;
+  height?: number;
+  textMargin?: number;
+  rx?: number;
+  ry?: number;
+  tspan?: boolean;
+  valign?: string;
+  dominantBaseline?: string;
+  alignmentBaseline?: string;
+  fontFamily?: string;
+  fontSize?: string | number;
+  fontWeight?: string | number;
+  fill?: string;
+  class?: string;
+  dy?: string | number;
+  wrap?: boolean;
+}
+
+/** The part of a message model needed to position KaTeX text. */
+interface KatexMessageModel {
+  startx: number;
+  stopx: number;
+  starty: number;
+}
+
+/** The subset of the diagram object used to resolve actor indices. */
+interface SequenceDiagramObject {
+  db: {
+    getActors: () => Map<string, Actor>;
+  };
+}
+
+/**
+ * d3 selections store their nodes in the internal `_groups` field; the unit-test mocks
+ * emulate this shape, or expose the nodes directly via numeric indices.
+ */
+type SelectionWithGroups = SVGGraphicsElement[][] & { _groups?: SVGGraphicsElement[][] };
+
+/** Minimal structural interface for anything attributes can be applied to (selection or mock). */
+interface AttributableSelection {
+  attr(name: string, value: string | number): unknown;
+}
+
+type DrawTextElements = AttributableSelection[];
+
+/**
+ * A `drawText` implementation candidate; the conf parameter discriminates which one is used.
+ * The KaTeX variant is async, hence the `unknown` return type.
+ */
+type DrawTextCandidate = <T extends Element>(
+  content: string,
+  g: D3HtmlSelection<T>,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  textAttrs: Record<string, string | number>,
+  conf: SvgDrawConfig
+) => unknown;
 
 export const ACTOR_TYPE_WIDTH = 18 * 2;
 const TOP_ACTOR_CLASS = 'actor-top';
@@ -16,7 +162,7 @@ const ACTOR_MAN_FIGURE_CLASS = 'actor-man';
 
 /** Exact set of themes that use color arrays for actor styling */
 const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
-export const drawRect = function (elem, rectData) {
+export const drawRect = function (elem: SVG | SVGGroup, rectData: RectData) {
   const rectElement = svgDrawCommon.drawRect(elem, rectData);
   // Call getConfig() here (not at module level) so multi-diagram pages get fresh config
   if (configApi.getConfig().look === 'neo') {
@@ -25,16 +171,22 @@ export const drawRect = function (elem, rectData) {
   return rectElement;
 };
 
-export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMenus) {
+export const drawPopup = function (
+  elem: SVG | SVGGroup,
+  actor: ActorRenderData,
+  minMenuWidth: number,
+  textAttrs: SvgDrawConfig,
+  forceMenus?: boolean
+) {
   if (actor.links === undefined || actor.links === null || Object.keys(actor.links).length === 0) {
     return { height: 0, width: 0 };
   }
 
   const links = actor.links;
   const actorCnt = actor.actorCnt;
-  const rectData = actor.rectData;
+  const rectData = actor.rectData!;
 
-  var displayValue = 'none';
+  let displayValue = 'none';
   if (forceMenus) {
     displayValue = 'block !important';
   }
@@ -43,12 +195,12 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   g.attr('id', 'actor' + actorCnt + '_popup');
   g.attr('class', 'actorPopupMenu');
   g.attr('display', displayValue);
-  var actorClass = '';
+  let actorClass = '';
   if (rectData.class !== undefined) {
     actorClass = ' ' + rectData.class;
   }
 
-  let menuWidth = rectData.width > minMenuWidth ? rectData.width : minMenuWidth;
+  const menuWidth = rectData.width > minMenuWidth ? rectData.width : minMenuWidth;
 
   const rectElem = g.append('rect');
   rectElem.attr('class', 'actorPopupMenuPanel' + actorClass);
@@ -58,13 +210,14 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   rectElem.attr('stroke', rectData.stroke);
   rectElem.attr('width', menuWidth);
   rectElem.attr('height', rectData.height);
-  rectElem.attr('rx', rectData.rx);
-  rectElem.attr('ry', rectData.ry);
+  rectElem.attr('rx', rectData.rx!);
+  rectElem.attr('ry', rectData.ry!);
+  let linkY: number | undefined;
   if (links != null) {
-    var linkY = 20;
-    for (let key in links) {
-      var linkElem = g.append('a');
-      var sanitizedLink = sanitizeUrl(links[key]);
+    linkY = 20;
+    for (const key in links) {
+      const linkElem = g.append('a');
+      const sanitizedLink = sanitizeUrl(links[key]);
       linkElem.attr('xlink:href', sanitizedLink);
       linkElem.attr('target', '_blank');
 
@@ -83,12 +236,12 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
     }
   }
 
-  rectElem.attr('height', linkY);
+  rectElem.attr('height', linkY!);
 
-  return { height: rectData.height + linkY, width: menuWidth };
+  return { height: rectData.height + linkY!, width: menuWidth };
 };
 
-const popupMenuToggle = function (popId) {
+const popupMenuToggle = function (popId: string) {
   return (
     "var pu = document.getElementById('" +
     popId +
@@ -96,8 +249,12 @@ const popupMenuToggle = function (popId) {
   );
 };
 
-export const drawKatex = async function (elem, textData, msgModel = null) {
-  let textElem = elem.append('foreignObject');
+export const drawKatex = async function (
+  elem: SVG | SVGGroup,
+  textData: TextData,
+  msgModel: KatexMessageModel | null = null
+): Promise<DrawTextElements> {
+  const textElem = elem.append('foreignObject');
   const linesSanitized = await renderKatexSanitized(textData.text, configApi.getConfig());
 
   const divElem = textElem
@@ -105,28 +262,28 @@ export const drawKatex = async function (elem, textData, msgModel = null) {
     .attr('style', 'width: fit-content;')
     .attr('xmlns', 'http://www.w3.org/1999/xhtml')
     .html(linesSanitized);
-  const dim = divElem.node().getBoundingClientRect();
+  const dim = (divElem.node() as HTMLDivElement).getBoundingClientRect();
 
   textElem.attr('height', Math.round(dim.height)).attr('width', Math.round(dim.width));
 
   if (textData.class === 'noteText') {
-    const rectElem = elem.node().firstChild;
+    const rectElem = elem.node()!.firstChild as SVGRectElement;
 
-    rectElem.setAttribute('height', dim.height + 2 * textData.textMargin);
+    rectElem.setAttribute('height', (dim.height + 2 * textData.textMargin!) as unknown as string);
     const rectDim = rectElem.getBBox();
 
     textElem
       .attr('x', Math.round(rectDim.x + rectDim.width / 2 - dim.width / 2))
       .attr('y', Math.round(rectDim.y + rectDim.height / 2 - dim.height / 2));
   } else if (msgModel) {
-    let { startx, stopx, starty } = msgModel;
+    let { startx, stopx } = msgModel;
+    const { starty } = msgModel;
     if (startx > stopx) {
       const temp = startx;
       startx = stopx;
       stopx = temp;
     }
 
-    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
     textElem.attr('x', Math.round(startx + Math.abs(startx - stopx) / 2 - dim.width / 2));
     if (textData.class === 'loopText') {
       textElem.attr('y', Math.round(starty));
@@ -138,14 +295,14 @@ export const drawKatex = async function (elem, textData, msgModel = null) {
   return [textElem];
 };
 
-export const drawText = function (elem, textData) {
+export const drawText = function (elem: SVG | SVGGroup, textData: TextData): DrawTextElements {
   let prevTextHeight = 0;
   let textHeight = 0;
   const lines = textData.text.split(common.lineBreakRegex);
 
   const [_textFontSize, _textFontSizePx] = parseFontSize(textData.fontSize);
 
-  let textElems = [];
+  const textElems: DrawTextElements = [];
   let dy = 0;
   let yfunc = () => textData.y;
   if (
@@ -156,20 +313,20 @@ export const drawText = function (elem, textData) {
     switch (textData.valign) {
       case 'top':
       case 'start':
-        yfunc = () => Math.round(textData.y + textData.textMargin);
+        yfunc = () => Math.round(textData.y + textData.textMargin!);
         break;
       case 'middle':
       case 'center':
         yfunc = () =>
-          Math.round(textData.y + (prevTextHeight + textHeight + textData.textMargin) / 2);
+          Math.round(textData.y + (prevTextHeight + textHeight + textData.textMargin!) / 2);
         break;
       case 'bottom':
       case 'end':
         yfunc = () =>
           Math.round(
             textData.y +
-              (prevTextHeight + textHeight + 2 * textData.textMargin) -
-              textData.textMargin
+              (prevTextHeight + textHeight + 2 * textData.textMargin!) -
+              textData.textMargin!
           );
         break;
     }
@@ -205,7 +362,7 @@ export const drawText = function (elem, textData) {
     }
   }
 
-  for (let [i, line] of lines.entries()) {
+  for (const [i, line] of lines.entries()) {
     if (
       textData.textMargin !== undefined &&
       textData.textMargin === 0 &&
@@ -220,8 +377,8 @@ export const drawText = function (elem, textData) {
     if (textData.anchor !== undefined) {
       textElem
         .attr('text-anchor', textData.anchor)
-        .attr('dominant-baseline', textData.dominantBaseline)
-        .attr('alignment-baseline', textData.alignmentBaseline);
+        .attr('dominant-baseline', textData.dominantBaseline!)
+        .attr('alignment-baseline', textData.alignmentBaseline!);
     }
     if (textData.fontFamily !== undefined) {
       textElem.style('font-family', textData.fontFamily);
@@ -260,7 +417,8 @@ export const drawText = function (elem, textData) {
       textData.textMargin !== undefined &&
       textData.textMargin > 0
     ) {
-      textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
+      textHeight += ((textElem as unknown as SelectionWithGroups)._groups ||
+        (textElem as unknown as SelectionWithGroups))[0][0].getBBox().height;
       prevTextHeight = textHeight;
     }
 
@@ -270,16 +428,8 @@ export const drawText = function (elem, textData) {
   return textElems;
 };
 
-export const drawLabel = function (elem, txtObject) {
-  /**
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} cut
-   * @returns {any}
-   */
-  function genPoints(x, y, width, height, cut) {
+export const drawLabel = function (elem: SVG | SVGGroup, txtObject: TextData) {
+  function genPoints(x: number, y: number, width: number, height: number, cut: number) {
     return (
       x +
       ',' +
@@ -303,10 +453,13 @@ export const drawLabel = function (elem, txtObject) {
     );
   }
   const polygon = elem.append('polygon');
-  polygon.attr('points', genPoints(txtObject.x, txtObject.y, txtObject.width, txtObject.height, 7));
+  polygon.attr(
+    'points',
+    genPoints(txtObject.x, txtObject.y, txtObject.width!, txtObject.height!, 7)
+  );
   polygon.attr('class', 'labelBox');
 
-  txtObject.y = txtObject.y + txtObject.height / 2;
+  txtObject.y = txtObject.y + txtObject.height! / 2;
 
   drawText(elem, txtObject);
   return polygon;
@@ -314,17 +467,22 @@ export const drawLabel = function (elem, txtObject) {
 
 let actorCnt = -1;
 
-export const fixLifeLineHeights = (diagram, actors, actorKeys, conf) => {
+export const fixLifeLineHeights = (
+  diagram: SVG,
+  actors: Map<string, ActorRenderData>,
+  actorKeys: string[],
+  conf: SvgDrawConfig
+) => {
   if (!diagram.select) {
     return;
   }
   actorKeys.forEach((actorKey) => {
-    const actor = actors.get(actorKey);
+    const actor = actors.get(actorKey)!;
     const actorDOM = diagram.select('#actor' + actor.actorCnt);
     if (!conf.mirrorActors && actor.stopy) {
       actorDOM.attr('y2', actor.stopy + actor.height / 2);
     } else if (conf.mirrorActors) {
-      actorDOM.attr('y2', actor.stopy);
+      actorDOM.attr('y2', actor.stopy!);
     }
   });
 };
@@ -332,20 +490,26 @@ export const fixLifeLineHeights = (diagram, actors, actorKeys, conf) => {
 /**
  * Draws an actor in the diagram with the attached line
  *
- * @param {any} elem - The diagram we'll draw to.
- * @param {any} actor - The actor to draw.
- * @param {any} conf - DrawText implementation discriminator object
- * @param {boolean} isFooter - If the actor is the footer one
+ * @param elem - The diagram we'll draw to.
+ * @param actor - The actor to draw.
+ * @param conf - DrawText implementation discriminator object
+ * @param isFooter - If the actor is the footer one
  */
-const drawActorTypeParticipant = function (elem, actor, conf, isFooter, actorIndexMap) {
-  const actorY = isFooter ? actor.stopy : actor.starty;
+const drawActorTypeParticipant = function (
+  elem: SVG | SVGGroup,
+  actor: ActorRenderData,
+  conf: SvgDrawConfig,
+  isFooter: boolean,
+  actorIndexMap: Map<string, number>
+) {
+  const actorY = (isFooter ? actor.stopy : actor.starty)!;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + actor.height;
   const { look, theme, themeVariables } = conf;
-  const { bkgColorArray, borderColorArray } = themeVariables;
+  const { bkgColorArray, borderColorArray } = themeVariables!;
 
   const boxplusLineGroup = elem.append('g').lower();
-  var g = boxplusLineGroup;
+  let g = boxplusLineGroup;
 
   if (!isFooter) {
     actorCnt++;
@@ -377,7 +541,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter, actorInd
   }
 
   const rect = svgDrawCommon.getNoteRect();
-  var cssclass = 'actor';
+  let cssclass = 'actor';
   if (actor.properties?.class) {
     cssclass = actor.properties.class;
   } else {
@@ -404,7 +568,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter, actorInd
   const rectElem = drawRect(g, rect);
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
-  if (COLOR_THEMES.has(theme)) {
+  if (COLOR_THEMES.has(theme!)) {
     rectElem.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
     rectElem.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
   }
@@ -416,7 +580,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter, actorInd
 
   if (actor.properties?.icon) {
     const iconSrc = actor.properties.icon.trim();
-    if (iconSrc.charAt(0) === '@') {
+    if (iconSrc.startsWith('@')) {
       svgDrawCommon.drawEmbeddedImage(g, rect.x + rect.width - 20, rect.y + 10, iconSrc.substr(1));
     } else {
       svgDrawCommon.drawImage(g, rect.x + rect.width - 20, rect.y + 10, iconSrc);
@@ -444,7 +608,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter, actorInd
 
   let height = actor.height;
   if (rectElem.node) {
-    const bounds = rectElem.node().getBBox();
+    const bounds = rectElem.node()!.getBBox();
     actor.height = bounds.height;
     height = bounds.height;
   }
@@ -455,20 +619,26 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter, actorInd
 /**
  * Draws an actor in the diagram with the attached line
  *
- * @param {any} elem - The diagram we'll draw to.
- * @param {any} actor - The actor to draw.
- * @param {any} conf - DrawText implementation discriminator object
- * @param {boolean} isFooter - If the actor is the footer one
+ * @param elem - The diagram we'll draw to.
+ * @param actor - The actor to draw.
+ * @param conf - DrawText implementation discriminator object
+ * @param isFooter - If the actor is the footer one
  */
-const drawActorTypeCollections = function (elem, actor, conf, isFooter, actorIndexMap) {
-  const actorY = isFooter ? actor.stopy : actor.starty;
+const drawActorTypeCollections = function (
+  elem: SVG | SVGGroup,
+  actor: ActorRenderData,
+  conf: SvgDrawConfig,
+  isFooter: boolean,
+  actorIndexMap: Map<string, number>
+) {
+  const actorY = (isFooter ? actor.stopy : actor.starty)!;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + actor.height;
   const { look, theme, themeVariables } = conf;
-  const { bkgColorArray, borderColorArray } = themeVariables;
+  const { bkgColorArray, borderColorArray } = themeVariables!;
 
   const boxplusLineGroup = elem.append('g').lower();
-  var g = boxplusLineGroup;
+  let g = boxplusLineGroup;
 
   if (!isFooter) {
     actorCnt++;
@@ -500,7 +670,7 @@ const drawActorTypeCollections = function (elem, actor, conf, isFooter, actorInd
   }
 
   const rect = svgDrawCommon.getNoteRect();
-  var cssclass = 'actor';
+  let cssclass = 'actor';
   if (actor.properties?.class) {
     cssclass = actor.properties.class;
   } else {
@@ -535,7 +705,7 @@ const drawActorTypeCollections = function (elem, actor, conf, isFooter, actorInd
   }
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
-  if (COLOR_THEMES.has(theme)) {
+  if (COLOR_THEMES.has(theme!)) {
     rectElem.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
     rectElem.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
     stackedRect.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
@@ -544,7 +714,7 @@ const drawActorTypeCollections = function (elem, actor, conf, isFooter, actorInd
 
   if (actor.properties?.icon) {
     const iconSrc = actor.properties.icon.trim();
-    if (iconSrc.charAt(0) === '@') {
+    if (iconSrc.startsWith('@')) {
       svgDrawCommon.drawEmbeddedImage(g, rect.x + rect.width - 20, rect.y + 10, iconSrc.substr(1));
     } else {
       svgDrawCommon.drawImage(g, rect.x + rect.width - 20, rect.y + 10, iconSrc);
@@ -564,7 +734,7 @@ const drawActorTypeCollections = function (elem, actor, conf, isFooter, actorInd
 
   let height = actor.height;
   if (rectElem.node) {
-    const bounds = rectElem.node().getBBox();
+    const bounds = rectElem.node()!.getBBox();
     actor.height = bounds.height;
     height = bounds.height;
   }
@@ -578,12 +748,18 @@ const drawActorTypeCollections = function (elem, actor, conf, isFooter, actorInd
   return height;
 };
 
-const drawActorTypeQueue = function (elem, actor, conf, isFooter, actorIndexMap) {
-  const actorY = isFooter ? actor.stopy : actor.starty;
+const drawActorTypeQueue = function (
+  elem: SVG | SVGGroup,
+  actor: ActorRenderData,
+  conf: SvgDrawConfig,
+  isFooter: boolean,
+  actorIndexMap: Map<string, number>
+) {
+  const actorY = (isFooter ? actor.stopy : actor.starty)!;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + actor.height;
   const { look, theme, themeVariables } = conf;
-  const { bkgColorArray, borderColorArray } = themeVariables;
+  const { bkgColorArray, borderColorArray } = themeVariables!;
 
   const boxplusLineGroup = elem.append('g').lower();
   let g = boxplusLineGroup;
@@ -670,7 +846,7 @@ const drawActorTypeQueue = function (elem, actor, conf, isFooter, actorIndexMap)
   }
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
-  if (COLOR_THEMES.has(theme)) {
+  if (COLOR_THEMES.has(theme!)) {
     cylinderGroup.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
     cylinderGroup.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
     cylinderArc.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
@@ -681,7 +857,7 @@ const drawActorTypeQueue = function (elem, actor, conf, isFooter, actorIndexMap)
     const iconSrc = actor.properties.icon.trim();
     const iconX = rect.x + rect.width - 20;
     const iconY = rect.y + 10;
-    if (iconSrc.charAt(0) === '@') {
+    if (iconSrc.startsWith('@')) {
       svgDrawCommon.drawEmbeddedImage(g, iconX, iconY, iconSrc.substr(1));
     } else {
       svgDrawCommon.drawImage(g, iconX, iconY, iconSrc);
@@ -700,9 +876,9 @@ const drawActorTypeQueue = function (elem, actor, conf, isFooter, actorIndexMap)
   );
 
   let height = actor.height;
-  const lastPath = cylinderGroup.select('path:last-child');
+  const lastPath = cylinderGroup.select<SVGPathElement>('path:last-child');
   if (lastPath.node()) {
-    const bounds = lastPath.node().getBBox();
+    const bounds = lastPath.node()!.getBBox();
     actor.height = bounds.height;
     height = bounds.height;
   }
@@ -716,12 +892,19 @@ const drawActorTypeQueue = function (elem, actor, conf, isFooter, actorIndexMap)
   return height;
 };
 
-const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
-  const actorY = isFooter ? actor.stopy : actor.starty;
+const drawActorTypeControl = function (
+  elem: SVG | SVGGroup,
+  actor: ActorRenderData,
+  conf: SvgDrawConfig,
+  isFooter: boolean,
+  diagramId: string,
+  actorIndexMap: Map<string, number>
+) {
+  const actorY = (isFooter ? actor.stopy : actor.starty)!;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 75;
   const { look, theme, themeVariables } = conf;
-  const { bkgColorArray, borderColorArray, actorBorder, actorBkg } = themeVariables;
+  const { bkgColorArray, borderColorArray, actorBorder, actorBkg } = themeVariables!;
 
   const line = elem.append('g').lower();
 
@@ -793,14 +976,14 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, a
     .attr('transform', `translate(${cx}, ${cy - r})`);
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
-  if (COLOR_THEMES.has(theme)) {
+  if (COLOR_THEMES.has(theme!)) {
     actElem.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
     actElem.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
   } else {
-    actElem.style('stroke', actorBorder);
-    actElem.style('fill', actorBkg);
+    actElem.style('stroke', actorBorder!);
+    actElem.style('fill', actorBkg!);
   }
-  const bounds = actElem.node().getBBox();
+  const bounds = actElem.node()!.getBBox();
   actor.height = bounds.height + 2 * (conf?.sequence?.labelBoxHeight ?? 0);
 
   _drawTextCandidateFunc(conf, hasKatex(actor.description))(
@@ -823,12 +1006,18 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, a
   return actor.height;
 };
 
-const drawActorTypeEntity = function (elem, actor, conf, isFooter, actorIndexMap) {
-  const actorY = isFooter ? actor.stopy : actor.starty;
+const drawActorTypeEntity = function (
+  elem: SVG | SVGGroup,
+  actor: ActorRenderData,
+  conf: SvgDrawConfig,
+  isFooter: boolean,
+  actorIndexMap: Map<string, number>
+) {
+  const actorY = (isFooter ? actor.stopy : actor.starty)!;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 75;
   const { look, theme, themeVariables } = conf;
-  const { bkgColorArray, borderColorArray } = themeVariables;
+  const { bkgColorArray, borderColorArray } = themeVariables!;
 
   const line = elem.append('g').lower();
 
@@ -875,12 +1064,12 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, actorIndexMap
   }
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
-  if (COLOR_THEMES.has(theme)) {
+  if (COLOR_THEMES.has(theme!)) {
     actElem.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
     actElem.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
   }
 
-  const bounds = actElem.node().getBBox();
+  const bounds = actElem.node()!.getBBox();
   actor.height = bounds.height + (conf?.sequence?.labelBoxHeight ?? 0);
 
   if (!isFooter) {
@@ -925,12 +1114,18 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, actorIndexMap
   return actor.height;
 };
 
-const drawActorTypeDatabase = function (elem, actor, conf, isFooter, actorIndexMap) {
-  const actorY = isFooter ? actor.stopy : actor.starty;
+const drawActorTypeDatabase = function (
+  elem: SVG | SVGGroup,
+  actor: ActorRenderData,
+  conf: SvgDrawConfig,
+  isFooter: boolean,
+  actorIndexMap: Map<string, number>
+) {
+  const actorY = (isFooter ? actor.stopy : actor.starty)!;
   const center = actor.x + actor.width / 2;
-  const centerY = actorY + actor.height + 2 * conf.boxTextMargin;
+  const centerY = actorY + actor.height + 2 * conf.boxTextMargin!;
   const { theme, themeVariables, look } = conf;
-  const { bkgColorArray, borderColorArray, actorBorder } = themeVariables;
+  const { bkgColorArray, borderColorArray, actorBorder } = themeVariables!;
 
   const boxplusLineGroup = elem.append('g').lower();
   let g = boxplusLineGroup;
@@ -1012,11 +1207,11 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter, actorIndexM
     cylinderGroup.attr('filter', 'url(#drop-shadow)');
   }
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
-  if (COLOR_THEMES.has(theme)) {
+  if (COLOR_THEMES.has(theme!)) {
     cylinderGroup.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
     cylinderGroup.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
   } else {
-    cylinderGroup.style('stroke', actorBorder);
+    cylinderGroup.style('stroke', actorBorder!);
   }
 
   // Both branches were identical — simplified to a single unconditional statement
@@ -1033,10 +1228,10 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter, actorIndexM
     conf
   );
 
-  const lastPath = cylinderGroup.select('path:last-child');
+  const lastPath = cylinderGroup.select<SVGPathElement>('path:last-child');
   if (lastPath.node()) {
-    const bounds = lastPath.node().getBBox();
-    actor.height = bounds.height + (conf.sequence.labelBoxHeight ?? 0);
+    const bounds = lastPath.node()!.getBBox();
+    actor.height = bounds.height + (conf.sequence!.labelBoxHeight ?? 0);
   }
 
   if (!isFooter) {
@@ -1048,14 +1243,20 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter, actorIndexM
   return actor.height;
 };
 
-const drawActorTypeBoundary = function (elem, actor, conf, isFooter, actorIndexMap) {
-  const actorY = isFooter ? actor.stopy : actor.starty;
+const drawActorTypeBoundary = function (
+  elem: SVG | SVGGroup,
+  actor: ActorRenderData,
+  conf: SvgDrawConfig,
+  isFooter: boolean,
+  actorIndexMap: Map<string, number>
+) {
+  const actorY = (isFooter ? actor.stopy : actor.starty)!;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 80;
   const radius = 22;
   const line = elem.append('g').lower();
   const { look, theme, themeVariables } = conf;
-  const { bkgColorArray, borderColorArray, actorBorder } = themeVariables;
+  const { bkgColorArray, borderColorArray, actorBorder } = themeVariables!;
 
   if (!isFooter) {
     actorCnt++;
@@ -1120,14 +1321,14 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter, actorIndexM
   }
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
-  if (COLOR_THEMES.has(theme)) {
+  if (COLOR_THEMES.has(theme!)) {
     actElem.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
     actElem.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
   } else {
-    actElem.style('stroke', actorBorder);
+    actElem.style('stroke', actorBorder!);
   }
-  const bounds = actElem.node().getBBox();
-  actor.height = bounds.height + (conf.sequence.labelBoxHeight ?? 0);
+  const bounds = actElem.node()!.getBBox();
+  actor.height = bounds.height + (conf.sequence!.labelBoxHeight ?? 0);
 
   _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
@@ -1151,12 +1352,18 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter, actorIndexM
   return actor.height;
 };
 
-const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap) {
-  const actorY = isFooter ? actor.stopy : actor.starty;
+const drawActorTypeActor = function (
+  elem: SVG | SVGGroup,
+  actor: ActorRenderData,
+  conf: SvgDrawConfig,
+  isFooter: boolean,
+  actorIndexMap: Map<string, number>
+) {
+  const actorY = (isFooter ? actor.stopy : actor.starty)!;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 80;
   const { look, theme, themeVariables } = conf;
-  const { bkgColorArray, borderColorArray, actorBorder } = themeVariables;
+  const { bkgColorArray, borderColorArray, actorBorder } = themeVariables!;
 
   const line = elem.append('g').lower();
 
@@ -1234,7 +1441,7 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap)
   circle.attr('height', actor.height * scale);
 
   // Get the bounds of the stickman after scaling
-  const bounds = actElem.node().getBBox();
+  const bounds = actElem.node()!.getBBox();
   actor.height = bounds.height;
 
   // // Adjust the rect to match the scaled stickman
@@ -1249,11 +1456,11 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap)
   rect.ry = 3;
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
-  if (COLOR_THEMES.has(theme)) {
+  if (COLOR_THEMES.has(theme!)) {
     actElem.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
     actElem.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
   } else {
-    actElem.style('stroke', actorBorder);
+    actElem.style('stroke', actorBorder!);
   }
 
   _drawTextCandidateFunc(conf, hasKatex(actor.description))(
@@ -1270,14 +1477,15 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap)
   return actor.height;
 };
 
+// eslint-disable-next-line @typescript-eslint/require-await -- kept async to preserve the public API; callers await this function
 export const drawActor = async function (
-  elem,
-  actor,
-  conf,
-  isFooter,
-  diagramId,
-  diagObj,
-  actorIndexMap
+  elem: SVG | SVGGroup,
+  actor: ActorRenderData,
+  conf: SvgDrawConfig,
+  isFooter: boolean,
+  diagramId: string,
+  diagObj: SequenceDiagramObject,
+  actorIndexMap?: Map<string, number>
 ) {
   const resolvedActorIndexMap =
     actorIndexMap ??
@@ -1287,41 +1495,34 @@ export const drawActor = async function (
 
   switch (actor.type) {
     case 'actor':
-      return await drawActorTypeActor(elem, actor, conf, isFooter, resolvedActorIndexMap);
+      return drawActorTypeActor(elem, actor, conf, isFooter, resolvedActorIndexMap);
     case 'participant':
-      return await drawActorTypeParticipant(elem, actor, conf, isFooter, resolvedActorIndexMap);
+      return drawActorTypeParticipant(elem, actor, conf, isFooter, resolvedActorIndexMap);
     case 'boundary':
-      return await drawActorTypeBoundary(elem, actor, conf, isFooter, resolvedActorIndexMap);
+      return drawActorTypeBoundary(elem, actor, conf, isFooter, resolvedActorIndexMap);
     case 'control':
-      return await drawActorTypeControl(
-        elem,
-        actor,
-        conf,
-        isFooter,
-        diagramId,
-        resolvedActorIndexMap
-      );
+      return drawActorTypeControl(elem, actor, conf, isFooter, diagramId, resolvedActorIndexMap);
     case 'entity':
-      return await drawActorTypeEntity(elem, actor, conf, isFooter, resolvedActorIndexMap);
+      return drawActorTypeEntity(elem, actor, conf, isFooter, resolvedActorIndexMap);
     case 'database':
-      return await drawActorTypeDatabase(elem, actor, conf, isFooter, resolvedActorIndexMap);
+      return drawActorTypeDatabase(elem, actor, conf, isFooter, resolvedActorIndexMap);
     case 'collections':
-      return await drawActorTypeCollections(elem, actor, conf, isFooter, resolvedActorIndexMap);
+      return drawActorTypeCollections(elem, actor, conf, isFooter, resolvedActorIndexMap);
     case 'queue':
-      return await drawActorTypeQueue(elem, actor, conf, isFooter, resolvedActorIndexMap);
+      return drawActorTypeQueue(elem, actor, conf, isFooter, resolvedActorIndexMap);
   }
 };
 
-export const drawBox = function (elem, box, conf) {
+export const drawBox = function (elem: SVG | SVGGroup, box: BoxRenderData, conf: SvgDrawConfig) {
   const boxplusTextGroup = elem.append('g');
   const g = boxplusTextGroup;
-  drawBackgroundRect(g, box);
+  drawBackgroundRect(g, box as unknown as Bound);
   if (box.name) {
     _drawTextCandidateFunc(conf)(
       box.name,
       g,
       box.x,
-      box.y + conf.boxTextMargin + (box.textMaxHeight || 0) / 2,
+      box.y + conf.boxTextMargin! + (box.textMaxHeight || 0) / 2,
       box.width,
       0,
       { class: 'text' },
@@ -1331,30 +1532,30 @@ export const drawBox = function (elem, box, conf) {
   g.lower();
 };
 
-export const anchorElement = function (elem) {
+export const anchorElement = function (elem: SVG | SVGGroup) {
   return elem.append('g');
 };
 
 /**
  * Draws an activation in the diagram
  *
- * @param {any} elem - Element to append activation rect.
- * @param {any} bounds - Activation box bounds.
- * @param {any} verticalPos - Precise y coordinate of bottom activation box edge.
- * @param {any} conf - Sequence diagram config object.
- * @param {any} actorActivations - Number of activations on the actor.
+ * @param _elem - Element to append activation rect.
+ * @param bounds - Activation box bounds.
+ * @param verticalPos - Precise y coordinate of bottom activation box edge.
+ * @param conf - Sequence diagram config object.
+ * @param actorActivations - Number of activations on the actor.
  */
 export const drawActivation = function (
-  _elem,
-  bounds,
-  verticalPos,
-  conf,
-  actorActivations,
-  diagObj,
-  actorIndexMap
+  _elem: SVG | SVGGroup,
+  bounds: ActivationData,
+  verticalPos: number,
+  conf: SvgDrawConfig,
+  actorActivations: number,
+  diagObj: SequenceDiagramObject,
+  actorIndexMap?: Map<string, number>
 ) {
   const { theme, themeVariables } = conf;
-  const { bkgColorArray, borderColorArray, mainBkg } = themeVariables;
+  const { bkgColorArray, borderColorArray, mainBkg } = themeVariables!;
   const rect = svgDrawCommon.getNoteRect();
   const g = bounds.anchored;
   const actor = bounds.actor;
@@ -1371,22 +1572,27 @@ export const drawActivation = function (
       [...diagObj.db.getActors().values()].map((participant, index) => [participant.name, index])
     );
   const actorCount = resolvedActorIndexMap.get(actor) ?? 0;
-  if (COLOR_THEMES.has(theme)) {
+  if (COLOR_THEMES.has(theme!)) {
     rectElem.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
-    rectElem.style('fill', bkgColorArray[actorCount % borderColorArray.length] ?? mainBkg);
+    rectElem.style('fill', bkgColorArray[actorCount % borderColorArray.length] ?? mainBkg!);
   }
 };
 
 /**
  * Draws a loop in the diagram
  *
- * @param {any} elem - Element to append the loop to.
- * @param {any} loopModel - LoopModel of the given loop.
- * @param {any} labelText - Text within the loop.
- * @param {any} conf - Diagram configuration
- * @returns {any}
+ * @param elem - Element to append the loop to.
+ * @param loopModel - LoopModel of the given loop.
+ * @param labelText - Text within the loop.
+ * @param conf - Diagram configuration
  */
-export const drawLoop = async function (elem, loopModel, labelText, conf, msg) {
+export const drawLoop = async function (
+  elem: SVG | SVGGroup,
+  loopModel: LoopModel,
+  labelText: string,
+  conf: SvgDrawConfig,
+  msg: Pick<Message, 'id'>
+) {
   const {
     boxMargin,
     boxTextMargin,
@@ -1400,7 +1606,7 @@ export const drawLoop = async function (elem, loopModel, labelText, conf, msg) {
     .append('g')
     .attr('data-et', 'control-structure')
     .attr('data-id', 'i' + msg.id);
-  const drawLoopLine = function (startx, starty, stopx, stopy) {
+  const drawLoopLine = function (startx: number, starty: number, stopx: number, stopy: number) {
     return g
       .append('line')
       .attr('x1', startx)
@@ -1422,7 +1628,7 @@ export const drawLoop = async function (elem, loopModel, labelText, conf, msg) {
     });
   }
 
-  let txt = svgDrawCommon.getTextObj();
+  let txt = svgDrawCommon.getTextObj() as unknown as TextData;
   txt.text = labelText;
   txt.x = loopModel.startx;
   txt.y = loopModel.starty;
@@ -1433,15 +1639,15 @@ export const drawLoop = async function (elem, loopModel, labelText, conf, msg) {
   txt.valign = 'middle';
   txt.tspan = false;
   txt.width = Math.max(labelBoxWidth ?? 0, 50);
-  txt.height = labelBoxHeight + (conf.look === 'neo' ? 15 : 0) || 20;
+  txt.height = labelBoxHeight! + (conf.look === 'neo' ? 15 : 0) || 20;
   txt.textMargin = boxTextMargin;
   txt.class = 'labelText';
 
   drawLabel(g, txt);
-  txt = getTextObj();
-  txt.text = loopModel.title;
-  txt.x = loopModel.startx + labelBoxWidth / 2 + (loopModel.stopx - loopModel.startx) / 2;
-  txt.y = loopModel.starty + boxMargin + boxTextMargin;
+  txt = getTextObj() as TextData;
+  txt.text = loopModel.title!;
+  txt.x = loopModel.startx + labelBoxWidth! / 2 + (loopModel.stopx - loopModel.startx) / 2;
+  txt.y = loopModel.starty + boxMargin! + boxTextMargin!;
   txt.anchor = 'middle';
   txt.valign = 'middle';
   txt.textMargin = boxTextMargin;
@@ -1451,14 +1657,14 @@ export const drawLoop = async function (elem, loopModel, labelText, conf, msg) {
   txt.fontWeight = fontWeight;
   txt.wrap = true;
 
-  let textElem = hasKatex(txt.text) ? await drawKatex(g, txt, loopModel) : drawText(g, txt);
+  const textElem = hasKatex(txt.text) ? await drawKatex(g, txt, loopModel) : drawText(g, txt);
 
   if (loopModel.sectionTitles !== undefined) {
     for (const [idx, item] of Object.entries(loopModel.sectionTitles)) {
       if (item.message) {
         txt.text = item.message;
         txt.x = loopModel.startx + (loopModel.stopx - loopModel.startx) / 2;
-        txt.y = loopModel.sections[idx].y + boxMargin + boxTextMargin;
+        txt.y = loopModel.sections![idx as unknown as number].y + boxMargin! + boxTextMargin!;
         txt.class = 'sectionTitle';
         txt.anchor = 'middle';
         txt.valign = 'middle';
@@ -1469,17 +1675,22 @@ export const drawLoop = async function (elem, loopModel, labelText, conf, msg) {
         txt.wrap = loopModel.wrap;
 
         if (hasKatex(txt.text)) {
-          loopModel.starty = loopModel.sections[idx].y;
+          loopModel.starty = loopModel.sections![idx as unknown as number].y;
           await drawKatex(g, txt, loopModel);
         } else {
           drawText(g, txt);
         }
-        let sectionHeight = Math.round(
+        const sectionHeight = Math.round(
           textElem
-            .map((te) => (te._groups || te)[0][0].getBBox().height)
+            .map(
+              (te) =>
+                ((te as unknown as SelectionWithGroups)._groups ||
+                  (te as unknown as SelectionWithGroups))[0][0].getBBox().height
+            )
             .reduce((acc, curr) => acc + curr)
         );
-        loopModel.sections[idx].height += sectionHeight - (boxMargin + boxTextMargin);
+        loopModel.sections![idx as unknown as number].height +=
+          sectionHeight - (boxMargin! + boxTextMargin!);
       }
     }
   }
@@ -1491,14 +1702,14 @@ export const drawLoop = async function (elem, loopModel, labelText, conf, msg) {
 /**
  * Draws a background rectangle
  *
- * @param {any} elem Diagram (reference for bounds)
- * @param {any} bounds Shape of the rectangle
+ * @param elem - Diagram (reference for bounds)
+ * @param bounds - Shape of the rectangle
  */
-export const drawBackgroundRect = function (elem, bounds) {
+export const drawBackgroundRect = function (elem: SVG | SVGGroup, bounds: Bound) {
   svgDrawCommon.drawBackgroundRect(elem, bounds);
 };
 
-export const insertDatabaseIcon = function (elem, id) {
+export const insertDatabaseIcon = function (elem: SVG, id: string) {
   elem
     .append('defs')
     .append('symbol')
@@ -1513,7 +1724,7 @@ export const insertDatabaseIcon = function (elem, id) {
     );
 };
 
-export const insertComputerIcon = function (elem, id) {
+export const insertComputerIcon = function (elem: SVG, id: string) {
   elem
     .append('defs')
     .append('symbol')
@@ -1528,7 +1739,7 @@ export const insertComputerIcon = function (elem, id) {
     );
 };
 
-export const insertClockIcon = function (elem, id) {
+export const insertClockIcon = function (elem: SVG, id: string) {
   elem
     .append('defs')
     .append('symbol')
@@ -1546,9 +1757,10 @@ export const insertClockIcon = function (elem, id) {
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  *
- * @param elem
+ * @param elem - The svg to append the marker to.
+ * @param id - The diagram id, used to namespace the marker id.
  */
-export const insertArrowHead = function (elem, id) {
+export const insertArrowHead = function (elem: SVG, id: string) {
   elem
     .append('defs')
     .append('marker')
@@ -1566,9 +1778,10 @@ export const insertArrowHead = function (elem, id) {
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  *
- * @param {any} elem
+ * @param elem - The svg to append the marker to.
+ * @param id - The diagram id, used to namespace the marker id.
  */
-export const insertArrowFilledHead = function (elem, id) {
+export const insertArrowFilledHead = function (elem: SVG, id: string) {
   elem
     .append('defs')
     .append('marker')
@@ -1585,9 +1798,10 @@ export const insertArrowFilledHead = function (elem, id) {
 /**
  * Setup node number. The result is appended to the svg.
  *
- * @param {any} elem
+ * @param elem - The svg to append the marker to.
+ * @param id - The diagram id, used to namespace the marker id.
  */
-export const insertSequenceNumber = function (elem, id) {
+export const insertSequenceNumber = function (elem: SVG, id: string) {
   elem
     .append('defs')
     .append('marker')
@@ -1607,9 +1821,10 @@ export const insertSequenceNumber = function (elem, id) {
 /**
  * Setup cross head and define the marker. The result is appended to the svg.
  *
- * @param {any} elem
+ * @param elem - The svg to append the marker to.
+ * @param id - The diagram id, used to namespace the marker id.
  */
-export const insertArrowCrossHead = function (elem, id) {
+export const insertArrowCrossHead = function (elem: SVG, id: string) {
   const defs = elem.append('defs');
   const marker = defs
     .append('marker')
@@ -1630,7 +1845,7 @@ export const insertArrowCrossHead = function (elem, id) {
   // this is actual shape for arrowhead
 };
 
-export const insertDropShadow = function (elem, conf) {
+export const insertDropShadow = function (elem: SVG, conf: SvgDrawConfig) {
   const { theme } = conf;
   elem
     .append('defs')
@@ -1645,7 +1860,7 @@ export const insertDropShadow = function (elem, conf) {
     .attr('flood-opacity', '0.06')
     .attr('flood-color', `${theme === 'redux' || theme === 'redux-color' ? '#000000' : '#FFFFFF'}`);
 };
-export const getTextObj = function () {
+export const getTextObj = function (): Partial<TextData> {
   return {
     x: 0,
     y: 0,
@@ -1662,7 +1877,7 @@ export const getTextObj = function () {
   };
 };
 
-export const getNoteRect = function () {
+export const getNoteRect = function (): RectData {
   return {
     x: 0,
     y: 0,
@@ -1677,16 +1892,7 @@ export const getNoteRect = function () {
 };
 
 const _drawTextCandidateFunc = (function () {
-  /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   */
-  function byText(content, g, x, y, width, height, textAttrs) {
+  const byText: DrawTextCandidate = function (content, g, x, y, width, height, textAttrs) {
     const text = g
       .append('text')
       .attr('x', x + width / 2)
@@ -1694,22 +1900,12 @@ const _drawTextCandidateFunc = (function () {
       .style('text-anchor', 'middle')
       .text(content);
     _setTextAttrs(text, textAttrs);
-  }
+  };
 
-  /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   * @param {any} conf
-   */
-  function byTspan(content, g, x, y, width, height, textAttrs, conf) {
+  const byTspan: DrawTextCandidate = function (content, g, x, y, width, height, textAttrs, conf) {
     const { actorFontSize, actorFontFamily, actorFontWeight } = conf;
 
-    const [_actorFontSize, _actorFontSizePx] = parseFontSize(actorFontSize);
+    const [_actorFontSize, _actorFontSizePx] = parseFontSize(actorFontSize) as [number, string];
 
     const lines = content.split(common.lineBreakRegex);
     for (let i = 0; i < lines.length; i++) {
@@ -1720,8 +1916,8 @@ const _drawTextCandidateFunc = (function () {
         .attr('y', y)
         .style('text-anchor', 'middle')
         .style('font-size', _actorFontSizePx)
-        .style('font-weight', actorFontWeight)
-        .style('font-family', actorFontFamily);
+        .style('font-weight', actorFontWeight!)
+        .style('font-family', actorFontFamily!);
       text
         .append('tspan')
         .attr('x', x + width / 2)
@@ -1735,19 +1931,9 @@ const _drawTextCandidateFunc = (function () {
 
       _setTextAttrs(text, textAttrs);
     }
-  }
+  };
 
-  /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   * @param {any} conf
-   */
-  function byFo(content, g, x, y, width, height, textAttrs, conf) {
+  const byFo: DrawTextCandidate = function (content, g, x, y, width, height, textAttrs, conf) {
     const s = g.append('switch');
     const f = s
       .append('foreignObject')
@@ -1771,20 +1957,18 @@ const _drawTextCandidateFunc = (function () {
 
     byTspan(content, s, x, y, width, height, textAttrs, conf);
     _setTextAttrs(text, textAttrs);
-  }
+  };
 
-  /**
-   *
-   * @param content
-   * @param g
-   * @param x
-   * @param y
-   * @param width
-   * @param height
-   * @param textAttrs
-   * @param conf
-   */
-  async function byKatex(content, g, x, y, width, height, textAttrs, conf) {
+  const byKatex: DrawTextCandidate = async function (
+    content,
+    g,
+    x,
+    y,
+    width,
+    height,
+    textAttrs,
+    conf
+  ) {
     // TODO duplicate render calls, optimize
 
     const dim = await calculateMathMLDimensions(content, configApi.getConfig());
@@ -1806,13 +1990,12 @@ const _drawTextCandidateFunc = (function () {
 
     byTspan(content, s, x, y, width, height, textAttrs, conf);
     _setTextAttrs(text, textAttrs);
-  }
+  };
 
-  /**
-   * @param {any} toText
-   * @param {any} fromTextAttrsDict
-   */
-  function _setTextAttrs(toText, fromTextAttrsDict) {
+  function _setTextAttrs(
+    toText: AttributableSelection,
+    fromTextAttrsDict: Record<string, string | number>
+  ) {
     for (const key in fromTextAttrsDict) {
       if (fromTextAttrsDict.hasOwnProperty(key)) {
         toText.attr(key, fromTextAttrsDict[key]);
@@ -1820,7 +2003,7 @@ const _drawTextCandidateFunc = (function () {
     }
   }
 
-  return function (conf, hasKatex = false) {
+  return function (conf: SvgDrawConfig, hasKatex = false): DrawTextCandidate {
     if (hasKatex) {
       return byKatex;
     }
@@ -1829,16 +2012,7 @@ const _drawTextCandidateFunc = (function () {
 })();
 
 const _drawMenuItemTextCandidateFunc = (function () {
-  /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   */
-  function byText(content, g, x, y, width, height, textAttrs) {
+  const byText: DrawTextCandidate = function (content, g, x, y, width, height, textAttrs) {
     const text = g
       .append('text')
       .attr('x', x)
@@ -1846,32 +2020,23 @@ const _drawMenuItemTextCandidateFunc = (function () {
       .style('text-anchor', 'start')
       .text(content);
     _setTextAttrs(text, textAttrs);
-  }
+  };
 
-  /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   * @param {any} conf
-   */
-  function byTspan(content, g, x, y, width, height, textAttrs, conf) {
+  const byTspan: DrawTextCandidate = function (content, g, x, y, width, height, textAttrs, conf) {
     const { actorFontSize, actorFontFamily, actorFontWeight } = conf;
 
     const lines = content.split(common.lineBreakRegex);
     for (let i = 0; i < lines.length; i++) {
-      const dy = i * actorFontSize - (actorFontSize * (lines.length - 1)) / 2;
+      const dy =
+        i * (actorFontSize as number) - ((actorFontSize as number) * (lines.length - 1)) / 2;
       const text = g
         .append('text')
         .attr('x', x)
         .attr('y', y)
         .style('text-anchor', 'start')
-        .style('font-size', actorFontSize)
-        .style('font-weight', actorFontWeight)
-        .style('font-family', actorFontFamily);
+        .style('font-size', actorFontSize!)
+        .style('font-weight', actorFontWeight!)
+        .style('font-family', actorFontFamily!);
       text.append('tspan').attr('x', x).attr('dy', dy).text(lines[i]);
 
       text
@@ -1881,19 +2046,9 @@ const _drawMenuItemTextCandidateFunc = (function () {
 
       _setTextAttrs(text, textAttrs);
     }
-  }
+  };
 
-  /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   * @param {any} conf
-   */
-  function byFo(content, g, x, y, width, height, textAttrs, conf) {
+  const byFo: DrawTextCandidate = function (content, g, x, y, width, height, textAttrs, conf) {
     const s = g.append('switch');
     const f = s
       .append('foreignObject')
@@ -1917,13 +2072,12 @@ const _drawMenuItemTextCandidateFunc = (function () {
 
     byTspan(content, s, x, y, width, height, textAttrs, conf);
     _setTextAttrs(text, textAttrs);
-  }
+  };
 
-  /**
-   * @param {any} toText
-   * @param {any} fromTextAttrsDict
-   */
-  function _setTextAttrs(toText, fromTextAttrsDict) {
+  function _setTextAttrs(
+    toText: AttributableSelection,
+    fromTextAttrsDict: Record<string, string | number>
+  ) {
     for (const key in fromTextAttrsDict) {
       if (fromTextAttrsDict.hasOwnProperty(key)) {
         toText.attr(key, fromTextAttrsDict[key]);
@@ -1931,7 +2085,7 @@ const _drawMenuItemTextCandidateFunc = (function () {
     }
   }
 
-  return function (conf) {
+  return function (conf: SvgDrawConfig): DrawTextCandidate {
     return conf.textPlacement === 'fo' ? byFo : conf.textPlacement === 'old' ? byText : byTspan;
   };
 })();
@@ -1939,9 +2093,10 @@ const _drawMenuItemTextCandidateFunc = (function () {
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  *
- * @param elem
+ * @param elem - The svg to append the marker to.
+ * @param id - The diagram id, used to namespace the marker id.
  */
-export const insertSolidTopArrowHead = function (elem, id) {
+export const insertSolidTopArrowHead = function (elem: SVG, id: string) {
   elem
     .append('defs')
     .append('marker')
@@ -1956,7 +2111,7 @@ export const insertSolidTopArrowHead = function (elem, id) {
     .attr('d', 'M 0 0 L 10 8 L 0 8 z'); // this is actual shape for arrowhead
 };
 
-export const insertSolidBottomArrowHead = function (elem, id) {
+export const insertSolidBottomArrowHead = function (elem: SVG, id: string) {
   elem
     .append('defs')
     .append('marker')
@@ -1971,7 +2126,7 @@ export const insertSolidBottomArrowHead = function (elem, id) {
     .attr('d', 'M 0 0 L 10 0 L 0 8 z');
 };
 
-export const insertStickTopArrowHead = function (elem, id) {
+export const insertStickTopArrowHead = function (elem: SVG, id: string) {
   elem
     .append('defs')
     .append('marker')
@@ -1989,7 +2144,7 @@ export const insertStickTopArrowHead = function (elem, id) {
     .attr('fill', 'none');
 };
 
-export const insertStickBottomArrowHead = function (elem, id) {
+export const insertStickBottomArrowHead = function (elem: SVG, id: string) {
   elem
     .append('defs')
     .append('marker')
