@@ -1,0 +1,33 @@
+{
+  "nodes": [
+    {
+      "id": "two",
+      "isGroup": true
+    },
+    {
+      "id": "three",
+      "isGroup": true
+    },
+    {
+      "id": "b1",
+      "width": 75.578125,
+      "height": 51
+    },
+    {
+      "id": "c2",
+      "width": 74.796875,
+      "height": 51
+    },
+    {
+      "id": "note",
+      "width": 260,
+      "height": 72
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "2c034f215d6044c3ad93fae1d5b730532c6d1ba57a0eab9e005e78bce615f4d0",
+    "capturedAt": "2026-05-08T00:00:00.000Z",
+    "capturedFrom": "browser-dev layout-tests/subgraph-variation-2.mmd theme=default look=classic"
+  }
+}

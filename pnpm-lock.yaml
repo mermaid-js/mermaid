@@ -279,6 +279,9 @@ importers:
       '@upsetjs/venn.js':
         specifier: ^2.0.0
         version: 2.0.0
+      '@zsoerenm/libavoid':
+        specifier: 0.1.7
+        version: 0.1.7
       cytoscape:
         specifier: ^3.33.3
         version: 3.33.3
@@ -312,6 +315,9 @@ importers:
       khroma:
         specifier: ^2.1.0
         version: 2.1.0
+      libavoid-js:
+        specifier: 0.5.0-beta.5
+        version: 0.5.0-beta.5
       marked:
         specifier: ^16.3.0
         version: 16.3.0
@@ -1489,6 +1495,10 @@ packages:
     resolution: {integrity: sha512-HrcgcIESLm9aIR842yhJ5RWan/gebQUJ6E/E5+rf0y9o6oj7w0Br+sWuL6kEQ/o/AdfvR1Je9jG18/gnpwjEyA==}
     peerDependencies:
       '@babel/core': ^7.0.0-0 || ^8.0.0-0 <8.0.0
+
+  '@babel/runtime-corejs3@7.29.7':
+    resolution: {integrity: sha512-ppj9ouYku+RX0ljtgZd+KMO5mkM2bCqg8H2PYAFWnLsHEIKIdRojqbJ2i3eVHrisuxy7nOFCmngTDdWtUCdXUQ==}
+    engines: {node: '>=6.9.0'}
 
   '@babel/runtime@7.28.4':
     resolution: {integrity: sha512-Q/N6JNWvIvPnLDvjlE1OUBLPQHH6l3CltCEsHIujp45zQUSSh8K+gHnaEX45yAT1nyngnINhvWtzN+Nb9D8RAQ==}
@@ -4354,6 +4364,9 @@ packages:
     resolution: {integrity: sha512-5TAotLfdfBd6V6fLLp4pJW/PSeNi6tBUpxKnCB4Rpqp4vkG0a/pDehaMN1lMujRT89A3tPQayPXGgqLNWO3J1Q==}
     engines: {node: '>=20'}
 
+  '@zsoerenm/libavoid@0.1.7':
+    resolution: {integrity: sha512-qINA+rV1FOBOfbqMHmVV5DaDrK/GZJl+OLegSxbIduNIxF7XD3LbNNsBXcBOH0RSVh36g+j6jbbYyKxvnizvYw==}
+
   JSONSelect@0.4.0:
     resolution: {integrity: sha512-VRLR3Su35MH+XV2lrvh9O7qWoug/TUyj9tLDjn9rtpUCNnILLrHjgd/tB0KrhugCxUpj3UqoLqfYb3fLJdIQQQ==}
     engines: {node: '>=0.4.7'}
@@ -5256,6 +5269,9 @@ packages:
 
   core-js-compat@3.49.0:
     resolution: {integrity: sha512-VQXt1jr9cBz03b331DFDCCP90b3fanciLkgiOoy8SBHy06gNf+vQ1A3WFLqG7I8TipYIKeYK9wxd0tUrvHcOZA==}
+
+  core-js-pure@3.49.0:
+    resolution: {integrity: sha512-XM4RFka59xATyJv/cS3O3Kml72hQXUeGRuuTmMYFxwzc9/7C8OYTaIR/Ji+Yt8DXzsFLNhat15cE/JP15HrCgw==}
 
   core-util-is@1.0.2:
     resolution: {integrity: sha512-3lqz5YjWTYnW6dlDa5TLaTCcShfar1e40rmcJVwCBJC6mWlFuj0eCHIElmG1g5kyuJ/GD+8Wn4FFCcz4gJPfaQ==}
@@ -7637,6 +7653,9 @@ packages:
 
   lex-parser@0.1.4:
     resolution: {integrity: sha512-DuAEISsr1H4LOpmFLkyMc8YStiRWZCO8hMsoXAXSbgyfvs2WQhSt0+/FBv3ZU/JBFZMGcE+FWzEBSzwUU7U27w==}
+
+  libavoid-js@0.5.0-beta.5:
+    resolution: {integrity: sha512-jHkn6A10815TgFhZ1paUD/NDnQkg4C66qJc2Juj1NpmO/+QXnJ4UjIdKQarkXLmI/QgXhEO3RWDxMi3i+uHPwA==}
 
   light-my-request@6.6.0:
     resolution: {integrity: sha512-CHYbu8RtboSIoVsHZ6Ye4cj4Aw/yg2oAFimlF7mNvfDV192LR7nDiKtSIfCuLT7KokPSTn/9kfVLm5OGN0A28A==}
@@ -12065,6 +12084,10 @@ snapshots:
       '@babel/types': 7.29.0
       esutils: 2.0.3
 
+  '@babel/runtime-corejs3@7.29.7':
+    dependencies:
+      core-js-pure: 3.49.0
+
   '@babel/runtime@7.28.4': {}
 
   '@babel/runtime@7.29.2': {}
@@ -15198,6 +15221,11 @@ snapshots:
       - '@types/react'
       - ts-node
 
+  '@zsoerenm/libavoid@0.1.7':
+    dependencies:
+      '@babel/runtime-corejs3': 7.29.7
+      core-js-pure: 3.49.0
+
   JSONSelect@0.4.0: {}
 
   JSV@4.0.2: {}
@@ -16107,6 +16135,8 @@ snapshots:
   core-js-compat@3.49.0:
     dependencies:
       browserslist: 4.28.1
+
+  core-js-pure@3.49.0: {}
 
   core-util-is@1.0.2: {}
 
@@ -19112,6 +19142,8 @@ snapshots:
       type-check: 0.4.0
 
   lex-parser@0.1.4: {}
+
+  libavoid-js@0.5.0-beta.5: {}
 
   light-my-request@6.6.0:
     dependencies:
