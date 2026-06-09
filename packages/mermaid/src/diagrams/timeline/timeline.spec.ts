@@ -1,5 +1,6 @@
 import { setLogLevel } from '../../diagram-api/diagramAPI.js';
 import * as commonDb from '../common/commonDb.js';
+// @ts-ignore: JISON doesn't support types
 import { parser as timeline } from './parser/timeline.jison';
 import * as timelineDB from './timelineDb.js';
 
@@ -11,7 +12,7 @@ describe('when parsing a timeline ', function () {
   });
   describe('Timeline', function () {
     it('should default to LR direction when none is provided', function () {
-      let str = `timeline
+      const str = `timeline
     section abc-123`;
 
       timeline.parse(str);
@@ -19,7 +20,7 @@ describe('when parsing a timeline ', function () {
     });
 
     it('should parse TD direction', function () {
-      let str = `timeline TD
+      const str = `timeline TD
     section abc-123`;
 
       timeline.parse(str);
@@ -27,7 +28,7 @@ describe('when parsing a timeline ', function () {
     });
 
     it('should parse LR direction', function () {
-      let str = `timeline LR
+      const str = `timeline LR
     section abc-123`;
 
       timeline.parse(str);
@@ -35,7 +36,7 @@ describe('when parsing a timeline ', function () {
     });
 
     it('should handle a simple section definition abc-123', function () {
-      let str = `timeline
+      const str = `timeline
     section abc-123`;
 
       timeline.parse(str);
@@ -43,7 +44,7 @@ describe('when parsing a timeline ', function () {
     });
 
     it('should handle a simple section and only two tasks', function () {
-      let str = `timeline
+      const str = `timeline
     section abc-123
     task1
     task2`;
@@ -55,7 +56,7 @@ describe('when parsing a timeline ', function () {
     });
 
     it('should handle a two section and two corresponding tasks', function () {
-      let str = `timeline
+      const str = `timeline
     section abc-123
     task1
     task2
@@ -76,7 +77,7 @@ describe('when parsing a timeline ', function () {
     });
 
     it('should handle a section, and task and its events', function () {
-      let str = `timeline
+      const str = `timeline
     section abc-123
       task1: event1
       task2: event2: event3
@@ -100,7 +101,7 @@ describe('when parsing a timeline ', function () {
     });
 
     it('should handle a section, and task and its events including markdown link', function () {
-      let str = `timeline
+      const str = `timeline
     section abc-123
       task1: [event1](http://example.com)
       task2: event2: event3
@@ -124,7 +125,7 @@ describe('when parsing a timeline ', function () {
     });
 
     it('should handle a section, and task and its multi line events', function () {
-      let str = `timeline
+      const str = `timeline
     section abc-123
       task1: event1
       task2: event2: event3
@@ -149,7 +150,7 @@ describe('when parsing a timeline ', function () {
     });
 
     it('should handle a title, section, task, and events with semicolons', function () {
-      let str = `timeline
+      const str = `timeline
       title ;my;title;
       section ;a;bc-123;
       ;ta;sk1;: ;ev;ent1; : ;ev;ent2; : ;ev;ent3;
@@ -167,7 +168,7 @@ describe('when parsing a timeline ', function () {
     });
 
     it('should handle a title, section, task, and events with hashtags', function () {
-      let str = `timeline
+      const str = `timeline
       title #my#title#
       section #a#bc-123#
       task1: #ev#ent1# : #ev#ent2# : #ev#ent3#

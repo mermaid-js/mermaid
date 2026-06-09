@@ -1,7 +1,8 @@
+// @ts-ignore: JISON doesn't support types
 import { parser } from './journey.jison';
 import journeyDb from '../journeyDb.js';
 
-const parserFnConstructor = (str) => {
+const parserFnConstructor = (str: string) => {
   return () => {
     parser.parse(str);
   };

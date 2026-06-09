@@ -9,11 +9,29 @@ import {
   clear as commonClear,
 } from '../common/commonDb.js';
 
+export interface JourneyTask {
+  section: string;
+  type: string;
+  people: string[];
+  task: string;
+  score: number;
+  processed?: boolean;
+}
+
+export interface JourneyTaskOrg {
+  section: string;
+  type: string;
+  description: string;
+  task: string;
+  classes: string[];
+  people?: never;
+}
+
 let currentSection = '';
 
-const sections = [];
-const tasks = [];
-const rawTasks = [];
+const sections: string[] = [];
+const tasks: (JourneyTask | JourneyTaskOrg)[] = [];
+const rawTasks: JourneyTask[] = [];
 
 export const clear = function () {
   sections.length = 0;
@@ -23,7 +41,7 @@ export const clear = function () {
   commonClear();
 };
 
-export const addSection = function (txt) {
+export const addSection = function (txt: string) {
   currentSection = txt;
   sections.push(txt);
 };
@@ -47,7 +65,7 @@ export const getTasks = function () {
 };
 
 const updateActors = function () {
-  const tempActors = [];
+  const tempActors: string[] = [];
   tasks.forEach((task) => {
     if (task.people) {
       tempActors.push(...task.people);
@@ -58,11 +76,11 @@ const updateActors = function () {
   return [...unique].sort();
 };
 
-export const addTask = function (descr, taskData) {
+export const addTask = function (descr: string, taskData: string) {
   const pieces = taskData.substr(1).split(':');
 
   let score = 0;
-  let peeps = [];
+  let peeps: string[] = [];
   if (pieces.length === 1) {
     score = Number(pieces[0]);
     peeps = [];
@@ -72,7 +90,7 @@ export const addTask = function (descr, taskData) {
   }
   const peopleList = peeps.map((s) => s.trim());
 
-  const rawTask = {
+  const rawTask: JourneyTask = {
     section: currentSection,
     type: currentSection,
     people: peopleList,
@@ -83,8 +101,8 @@ export const addTask = function (descr, taskData) {
   rawTasks.push(rawTask);
 };
 
-export const addTaskOrg = function (descr) {
-  const newTask = {
+export const addTaskOrg = function (descr: string) {
+  const newTask: JourneyTaskOrg = {
     section: currentSection,
     type: currentSection,
     description: descr,
@@ -95,11 +113,11 @@ export const addTaskOrg = function (descr) {
 };
 
 const compileTasks = function () {
-  const compileTask = function (pos) {
+  const compileTask = function (pos: number) {
     return rawTasks[pos].processed;
   };
 
-  let allProcessed = true;
+  let allProcessed: boolean | undefined = true;
   for (const [i, rawTask] of rawTasks.entries()) {
     compileTask(i);
 

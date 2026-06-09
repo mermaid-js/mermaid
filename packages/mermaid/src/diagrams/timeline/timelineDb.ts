@@ -1,11 +1,31 @@
 import * as commonDb from '../common/commonDb.js';
+
+export interface TimelineTask {
+  id: number;
+  section: string;
+  type: string;
+  task: string;
+  score: number;
+  events: string[];
+  processed?: boolean;
+}
+
+export interface TimelineTaskOrg {
+  section: string;
+  type: string;
+  description: string;
+  task: string;
+  classes: string[];
+  events?: never;
+}
+
 let currentSection = '';
 let currentTaskId = 0;
 let direction = 'LR';
 
-const sections = [];
-const tasks = [];
-const rawTasks = [];
+const sections: string[] = [];
+const tasks: (TimelineTask | TimelineTaskOrg)[] = [];
+const rawTasks: TimelineTask[] = [];
 
 export const getCommonDb = () => commonDb;
 
@@ -18,7 +38,7 @@ export const clear = function () {
   commonDb.clear();
 };
 
-export const setDirection = function (dir) {
+export const setDirection = function (dir: string) {
   direction = dir;
 };
 
@@ -26,7 +46,7 @@ export const getDirection = function () {
   return direction;
 };
 
-export const addSection = function (txt) {
+export const addSection = function (txt: string) {
   currentSection = txt;
   sections.push(txt);
 };
@@ -49,8 +69,8 @@ export const getTasks = function () {
   return tasks;
 };
 
-export const addTask = function (period, length, event) {
-  const rawTask = {
+export const addTask = function (period: string, length: number, event: string) {
+  const rawTask: TimelineTask = {
     id: currentTaskId++,
     section: currentSection,
     type: currentSection,
@@ -62,15 +82,15 @@ export const addTask = function (period, length, event) {
   rawTasks.push(rawTask);
 };
 
-export const addEvent = function (event) {
+export const addEvent = function (event: string) {
   // fetch current task with currentTaskId
   const currentTask = rawTasks.find((task) => task.id === currentTaskId - 1);
   //add event to the events array
-  currentTask.events.push(event);
+  currentTask!.events.push(event);
 };
 
-export const addTaskOrg = function (descr) {
-  const newTask = {
+export const addTaskOrg = function (descr: string) {
+  const newTask: TimelineTaskOrg = {
     section: currentSection,
     type: currentSection,
     description: descr,
@@ -82,16 +102,14 @@ export const addTaskOrg = function (descr) {
 
 /**
  * Compiles the raw tasks into a list of tasks with events
- * @returns {boolean} true if all items are processed
- * @private
- * @memberof timelineDb
+ * @returns true if all items are processed
  */
 const compileTasks = function () {
-  const compileTask = function (pos) {
+  const compileTask = function (pos: number) {
     return rawTasks[pos].processed;
   };
 
-  let allProcessed = true;
+  let allProcessed: boolean | undefined = true;
   for (const [i, rawTask] of rawTasks.entries()) {
     compileTask(i);
 

@@ -21,7 +21,9 @@ describe('when using the journeyDb', function () {
       ${'getSections'} | ${[]}
       ${'getActors'}   | ${[]}
     `)('should clear $fn', ({ fn, expected }) => {
-      expect(journeyDb[fn]()).toEqual(expected);
+      expect(journeyDb[fn as 'getTasks' | 'getAccTitle' | 'getSections' | 'getActors']()).toEqual(
+        expected
+      );
     });
   });
 
@@ -39,7 +41,9 @@ describe('when using the journeyDb', function () {
       ${'getAccDescription'} | ${''}
       ${'getSections'}       | ${[]}
     `)('should clear $fn', ({ fn, expected }) => {
-      expect(journeyDb[fn]()).toEqual(expected);
+      expect(
+        journeyDb[fn as 'getTasks' | 'getAccTitle' | 'getAccDescription' | 'getSections']()
+      ).toEqual(expected);
     });
   });
 

@@ -1,11 +1,65 @@
+import type { Selection } from 'd3';
 import { arc as d3arc } from 'd3';
+import type { JourneyDiagramConfig } from '../../config.type.js';
+import type { SVG, SVGGroup } from '../../diagram-api/types.js';
+import type { Bound, RectData, TextData } from '../common/commonTypes.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
+import type { D3Selection } from '../../types.js';
 
-export const drawRect = function (elem, rectData) {
+export interface JourneyFaceData {
+  cx: number;
+  cy: number;
+  score: number;
+}
+
+export interface JourneyCircleData {
+  cx: number;
+  cy: number;
+  r: number;
+  pos: number;
+  fill: string;
+  stroke: string;
+  title?: string;
+}
+
+export interface JourneyLabelData extends TextData {
+  labelMargin: number;
+}
+
+export interface JourneySectionData {
+  x: number;
+  y: number;
+  text: string;
+  fill: string;
+  num: number;
+  colour: string;
+  taskCount: number;
+}
+
+export interface JourneyActor {
+  color: string;
+  position: number;
+}
+
+export interface JourneyTaskData {
+  x: number;
+  y: number;
+  task: string;
+  score: number;
+  fill: string;
+  num: number;
+  colour: string;
+  people: string[];
+  actors: Record<string, JourneyActor>;
+}
+
+type TextAttrs = Record<string, string>;
+
+export const drawRect = function (elem: SVG | SVGGroup, rectData: RectData) {
   return svgDrawCommon.drawRect(elem, rectData);
 };
 
-export const drawFace = function (element, faceData) {
+export const drawFace = function (element: SVG | SVGGroup, faceData: JourneyFaceData) {
   const radius = 15;
   const circleElement = element
     .append('circle')
@@ -38,9 +92,8 @@ export const drawFace = function (element, faceData) {
     .attr('fill', '#666')
     .attr('stroke', '#666');
 
-  /** @param {any} face */
-  function smile(face) {
-    const arc = d3arc()
+  function smile(face: SVGGroup) {
+    const arc = d3arc<unknown>()
       .startAngle(Math.PI / 2)
       .endAngle(3 * (Math.PI / 2))
       .innerRadius(radius / 2)
@@ -53,9 +106,8 @@ export const drawFace = function (element, faceData) {
       .attr('transform', 'translate(' + faceData.cx + ',' + (faceData.cy + 2) + ')');
   }
 
-  /** @param {any} face */
-  function sad(face) {
-    const arc = d3arc()
+  function sad(face: SVGGroup) {
+    const arc = d3arc<unknown>()
       .startAngle((3 * Math.PI) / 2)
       .endAngle(5 * (Math.PI / 2))
       .innerRadius(radius / 2)
@@ -68,8 +120,7 @@ export const drawFace = function (element, faceData) {
       .attr('transform', 'translate(' + faceData.cx + ',' + (faceData.cy + 7) + ')');
   }
 
-  /** @param {any} face */
-  function ambivalent(face) {
+  function ambivalent(face: SVGGroup) {
     face
       .append('line')
       .attr('class', 'mouth')
@@ -94,7 +145,7 @@ export const drawFace = function (element, faceData) {
   return circleElement;
 };
 
-export const drawCircle = function (element, circleData) {
+export const drawCircle = function (element: SVG | SVGGroup, circleData: JourneyCircleData) {
   const circleElement = element.append('circle');
   circleElement.attr('cx', circleData.cx);
   circleElement.attr('cy', circleData.cy);
@@ -103,8 +154,9 @@ export const drawCircle = function (element, circleData) {
   circleElement.attr('stroke', circleData.stroke);
   circleElement.attr('r', circleData.r);
 
-  if (circleElement.class !== undefined) {
-    circleElement.attr('class', circleElement.class);
+  const circleClass = (circleElement as unknown as { class?: string }).class;
+  if (circleClass !== undefined) {
+    circleElement.attr('class', circleClass);
   }
 
   if (circleData.title !== undefined) {
@@ -114,19 +166,12 @@ export const drawCircle = function (element, circleData) {
   return circleElement;
 };
 
-export const drawText = function (elem, textData) {
+export const drawText = function (elem: SVG | SVGGroup, textData: TextData) {
   return svgDrawCommon.drawText(elem, textData);
 };
 
-export const drawLabel = function (elem, txtObject) {
-  /**
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} cut
-   */
-  function genPoints(x, y, width, height, cut) {
+export const drawLabel = function (elem: SVG | SVGGroup, txtObject: JourneyLabelData) {
+  function genPoints(x: number, y: number, width: number, height: number, cut: number) {
     return (
       x +
       ',' +
@@ -158,7 +203,11 @@ export const drawLabel = function (elem, txtObject) {
   drawText(elem, txtObject);
 };
 
-export const drawSection = function (elem, section, conf) {
+export const drawSection = function (
+  elem: SVG | SVGGroup,
+  section: JourneySectionData,
+  conf: Required<JourneyDiagramConfig>
+) {
   const g = elem.append('g');
 
   const rect = svgDrawCommon.getNoteRect();
@@ -192,12 +241,17 @@ let taskCount = -1;
 /**
  * Draws an actor in the diagram with the attached line
  *
- * @param {any} elem The HTML element
- * @param {any} task The task to render
- * @param {any} conf The global configuration
- * @param {string} diagramId The diagram's SVG element ID for scoping
+ * @param elem - The HTML element
+ * @param task - The task to render
+ * @param conf - The global configuration
+ * @param diagramId - The diagram's SVG element ID for scoping
  */
-export const drawTask = function (elem, task, conf, diagramId) {
+export const drawTask = function (
+  elem: SVG | SVGGroup,
+  task: JourneyTaskData,
+  conf: Required<JourneyDiagramConfig>,
+  diagramId: string
+) {
   const center = task.x + conf.width / 2;
   const g = elem.append('g');
   taskCount++;
@@ -264,57 +318,68 @@ export const drawTask = function (elem, task, conf, diagramId) {
 /**
  * Draws a background rectangle
  *
- * @param {any} elem The html element
- * @param {any} bounds The bounds of the drawing
+ * @param elem - The html element
+ * @param bounds - The bounds of the drawing
  */
-export const drawBackgroundRect = function (elem, bounds) {
+export const drawBackgroundRect = function (elem: SVG | SVGGroup, bounds: Bound) {
   svgDrawCommon.drawBackgroundRect(elem, bounds);
 };
 
+type DrawTextFn = (
+  content: string,
+  g: SVGGroup,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  textAttrs: TextAttrs,
+  conf: Required<JourneyDiagramConfig>,
+  colour: string
+) => void;
+
 const _drawTextCandidateFunc = (function () {
-  /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   * @param {any} colour
-   */
-  function byText(content, g, x, y, width, height, textAttrs, colour) {
+  function byText(
+    content: string,
+    g: SVGGroup,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs,
+    colour: unknown
+  ) {
     const text = g
       .append('text')
       .attr('x', x + width / 2)
       .attr('y', y + height / 2 + 5)
-      .style('font-color', colour)
+      .style('font-color', colour as string)
       .style('text-anchor', 'middle')
       .text(content);
     _setTextAttrs(text, textAttrs);
   }
 
-  /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   * @param {any} conf
-   * @param {any} colour
-   */
-  function byTspan(content, g, x, y, width, height, textAttrs, conf, colour) {
+  function byTspan<T extends SVGElement>(
+    content: string,
+    g: D3Selection<T>,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs,
+    conf: Required<JourneyDiagramConfig>,
+    colour?: string
+  ) {
     const { taskFontSize, taskFontFamily } = conf;
+    const fontSize = taskFontSize as number;
 
     const lines = content.split(/<br\s*\/?>/gi);
     for (let i = 0; i < lines.length; i++) {
-      const dy = i * taskFontSize - (taskFontSize * (lines.length - 1)) / 2;
+      const dy = i * fontSize - (fontSize * (lines.length - 1)) / 2;
       const text = g
         .append('text')
         .attr('x', x + width / 2)
         .attr('y', y)
-        .attr('fill', colour)
+        .attr('fill', colour!)
         .style('text-anchor', 'middle')
         .style('font-size', taskFontSize)
         .style('font-family', taskFontFamily);
@@ -333,17 +398,16 @@ const _drawTextCandidateFunc = (function () {
     }
   }
 
-  /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   * @param {any} conf
-   */
-  function byFo(content, g, x, y, width, height, textAttrs, conf) {
+  function byFo(
+    content: string,
+    g: SVGGroup,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs,
+    conf: Required<JourneyDiagramConfig>
+  ) {
     const body = g.append('switch');
     const f = body
       .append('foreignObject')
@@ -354,7 +418,7 @@ const _drawTextCandidateFunc = (function () {
       .attr('position', 'fixed');
 
     const text = f
-      .append('xhtml:div')
+      .append<HTMLDivElement>('xhtml:div')
       .style('display', 'table')
       .style('height', '100%')
       .style('width', '100%');
@@ -371,11 +435,10 @@ const _drawTextCandidateFunc = (function () {
     _setTextAttrs(text, textAttrs);
   }
 
-  /**
-   * @param {any} toText
-   * @param {any} fromTextAttrsDict
-   */
-  function _setTextAttrs(toText, fromTextAttrsDict) {
+  function _setTextAttrs<T extends Element>(
+    toText: Selection<T, unknown, Element | null, unknown>,
+    fromTextAttrsDict: TextAttrs
+  ) {
     for (const key in fromTextAttrsDict) {
       if (key in fromTextAttrsDict) {
         // noinspection JSUnfilteredForInLoop
@@ -384,12 +447,12 @@ const _drawTextCandidateFunc = (function () {
     }
   }
 
-  return function (conf) {
+  return function (conf: Required<JourneyDiagramConfig>): DrawTextFn {
     return conf.textPlacement === 'fo' ? byFo : conf.textPlacement === 'old' ? byText : byTspan;
   };
 })();
 
-const initGraphics = function (graphics, id) {
+const initGraphics = function (graphics: SVG, id: string) {
   taskCount = -1;
   graphics
     .append('defs')

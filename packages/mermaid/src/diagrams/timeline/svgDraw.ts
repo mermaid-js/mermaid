@@ -1,16 +1,128 @@
+import type { Selection } from 'd3';
 import { arc as d3arc, select } from 'd3';
+import type { MermaidConfig, TimelineDiagramConfig } from '../../config.type.js';
+import type { SVG, SVGGroup } from '../../diagram-api/types.js';
+import type { D3Selection } from '../../types.js';
+import type { TimelineTask } from './timelineDb.js';
+
 let nodeCount = 0;
 
-export const drawRect = function (elem, rectData) {
+export interface TimelineRectData {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  fill?: string;
+  stroke?: string;
+  rx?: number;
+  ry?: number;
+  anchor?: string;
+  class?: string;
+}
+
+export interface TimelineFaceData {
+  cx: number;
+  cy: number;
+  score: number;
+}
+
+export interface TimelineCircleData {
+  cx: number;
+  cy: number;
+  r: number;
+  pos: number;
+  fill: string;
+  stroke: string;
+  title?: string;
+}
+
+export interface TimelineTextData {
+  x: number;
+  y: number;
+  text: string;
+  textMargin: number;
+  anchor?: string;
+  class?: string;
+}
+
+export interface TimelineLabelData extends TimelineTextData {
+  labelMargin: number;
+}
+
+export interface TimelineSectionData {
+  x: number;
+  y: number;
+  text: string;
+  fill: string;
+  num: number | string;
+  colour: string;
+}
+
+export interface TimelineTaskData {
+  x: number;
+  y: number;
+  task: string;
+  score: number;
+  fill: string;
+  num: number | string;
+  colour: string;
+}
+
+export interface TimelineTextObject {
+  x: number;
+  y: number;
+  fill?: string;
+  'text-anchor': string;
+  width: number;
+  height: number;
+  textMargin: number;
+  rx: number;
+  ry: number;
+}
+
+export interface TimelineBounds {
+  startx: number;
+  starty: number;
+  stopx: number;
+  stopy: number;
+  fill?: string;
+}
+
+export interface TimelineNode {
+  number: number | string;
+  descr: string;
+  section: number | string;
+  width: number;
+  padding: number;
+  maxHeight: number;
+  class?: string;
+  type?: string;
+  height?: number;
+}
+
+export type DrawnTimelineNode = TimelineNode & { height: number };
+
+export interface TimelineMeasureNode {
+  descr: string | TimelineTask;
+  width: number;
+  padding: number;
+  number?: number | string;
+  section?: number | string;
+  maxHeight?: number;
+}
+
+type TextAttrs = Record<string, string>;
+
+export const drawRect = function (elem: SVG | SVGGroup, rectData: TimelineRectData) {
   const rectElem = elem.append('rect');
   rectElem.attr('x', rectData.x);
   rectElem.attr('y', rectData.y);
-  rectElem.attr('fill', rectData.fill);
-  rectElem.attr('stroke', rectData.stroke);
+  rectElem.attr('fill', rectData.fill!);
+  rectElem.attr('stroke', rectData.stroke!);
   rectElem.attr('width', rectData.width);
   rectElem.attr('height', rectData.height);
-  rectElem.attr('rx', rectData.rx);
-  rectElem.attr('ry', rectData.ry);
+  rectElem.attr('rx', rectData.rx!);
+  rectElem.attr('ry', rectData.ry!);
 
   if (rectData.class !== undefined) {
     rectElem.attr('class', rectData.class);
@@ -19,7 +131,7 @@ export const drawRect = function (elem, rectData) {
   return rectElem;
 };
 
-export const drawFace = function (element, faceData) {
+export const drawFace = function (element: SVG | SVGGroup, faceData: TimelineFaceData) {
   const radius = 15;
   const circleElement = element
     .append('circle')
@@ -52,9 +164,8 @@ export const drawFace = function (element, faceData) {
     .attr('fill', '#666')
     .attr('stroke', '#666');
 
-  /** @param {any} face */
-  function smile(face) {
-    const arc = d3arc()
+  function smile(face: SVGGroup) {
+    const arc = d3arc<unknown>()
       .startAngle(Math.PI / 2)
       .endAngle(3 * (Math.PI / 2))
       .innerRadius(radius / 2)
@@ -67,9 +178,8 @@ export const drawFace = function (element, faceData) {
       .attr('transform', 'translate(' + faceData.cx + ',' + (faceData.cy + 2) + ')');
   }
 
-  /** @param {any} face */
-  function sad(face) {
-    const arc = d3arc()
+  function sad(face: SVGGroup) {
+    const arc = d3arc<unknown>()
       .startAngle((3 * Math.PI) / 2)
       .endAngle(5 * (Math.PI / 2))
       .innerRadius(radius / 2)
@@ -82,8 +192,7 @@ export const drawFace = function (element, faceData) {
       .attr('transform', 'translate(' + faceData.cx + ',' + (faceData.cy + 7) + ')');
   }
 
-  /** @param {any} face */
-  function ambivalent(face) {
+  function ambivalent(face: SVGGroup) {
     face
       .append('line')
       .attr('class', 'mouth')
@@ -108,7 +217,7 @@ export const drawFace = function (element, faceData) {
   return circleElement;
 };
 
-export const drawCircle = function (element, circleData) {
+export const drawCircle = function (element: SVG | SVGGroup, circleData: TimelineCircleData) {
   const circleElement = element.append('circle');
   circleElement.attr('cx', circleData.cx);
   circleElement.attr('cy', circleData.cy);
@@ -117,8 +226,9 @@ export const drawCircle = function (element, circleData) {
   circleElement.attr('stroke', circleData.stroke);
   circleElement.attr('r', circleData.r);
 
-  if (circleElement.class !== undefined) {
-    circleElement.attr('class', circleElement.class);
+  const circleClass = (circleElement as unknown as { class?: string }).class;
+  if (circleClass !== undefined) {
+    circleElement.attr('class', circleClass);
   }
 
   if (circleData.title !== undefined) {
@@ -128,7 +238,7 @@ export const drawCircle = function (element, circleData) {
   return circleElement;
 };
 
-export const drawText = function (elem, textData) {
+export const drawText = function (elem: SVG | SVGGroup, textData: TimelineTextData) {
   // Remove and ignore br:s
   const nText = textData.text.replace(/<br\s*\/?>/gi, ' ');
 
@@ -137,7 +247,7 @@ export const drawText = function (elem, textData) {
   textElem.attr('y', textData.y);
   textElem.attr('class', 'legend');
 
-  textElem.style('text-anchor', textData.anchor);
+  textElem.style('text-anchor', textData.anchor!);
 
   if (textData.class !== undefined) {
     textElem.attr('class', textData.class);
@@ -150,15 +260,8 @@ export const drawText = function (elem, textData) {
   return textElem;
 };
 
-export const drawLabel = function (elem, txtObject) {
-  /**
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} cut
-   */
-  function genPoints(x, y, width, height, cut) {
+export const drawLabel = function (elem: SVG | SVGGroup, txtObject: TimelineLabelData) {
+  function genPoints(x: number, y: number, width: number, height: number, cut: number) {
     return (
       x +
       ',' +
@@ -190,7 +293,11 @@ export const drawLabel = function (elem, txtObject) {
   drawText(elem, txtObject);
 };
 
-export const drawSection = function (elem, section, conf) {
+export const drawSection = function (
+  elem: SVG | SVGGroup,
+  section: TimelineSectionData,
+  conf: Required<TimelineDiagramConfig>
+) {
   const g = elem.append('g');
 
   const rect = getNoteRect();
@@ -221,11 +328,17 @@ let taskCount = -1;
 /**
  * Draws an actor in the diagram with the attached line
  *
- * @param {any} elem The HTML element
- * @param {any} task The task to render
- * @param {any} conf The global configuration
+ * @param elem - The HTML element
+ * @param task - The task to render
+ * @param conf - The global configuration
+ * @param diagramId - The diagram's SVG element ID
  */
-export const drawTask = function (elem, task, conf, diagramId) {
+export const drawTask = function (
+  elem: SVG | SVGGroup,
+  task: TimelineTaskData,
+  conf: Required<TimelineDiagramConfig>,
+  diagramId: string
+) {
   const center = task.x + conf.width / 2;
   const g = elem.append('g');
   taskCount++;
@@ -274,10 +387,10 @@ export const drawTask = function (elem, task, conf, diagramId) {
 /**
  * Draws a background rectangle
  *
- * @param {any} elem The html element
- * @param {any} bounds The bounds of the drawing
+ * @param elem - The html element
+ * @param bounds - The bounds of the drawing
  */
-export const drawBackgroundRect = function (elem, bounds) {
+export const drawBackgroundRect = function (elem: SVG | SVGGroup, bounds: TimelineBounds) {
   const rectElem = drawRect(elem, {
     x: bounds.startx,
     y: bounds.starty,
@@ -289,7 +402,7 @@ export const drawBackgroundRect = function (elem, bounds) {
   rectElem.lower();
 };
 
-export const getTextObj = function () {
+export const getTextObj = function (): TimelineTextObject {
   return {
     x: 0,
     y: 0,
@@ -303,7 +416,7 @@ export const getTextObj = function () {
   };
 };
 
-export const getNoteRect = function () {
+export const getNoteRect = function (): TimelineRectData {
   return {
     x: 0,
     y: 0,
@@ -315,50 +428,61 @@ export const getNoteRect = function () {
   };
 };
 
+type DrawTextFn = (
+  content: string,
+  g: SVGGroup,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  textAttrs: TextAttrs,
+  conf: Required<TimelineDiagramConfig>,
+  colour: string
+) => void;
+
 const _drawTextCandidateFunc = (function () {
-  /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   * @param {any} colour
-   */
-  function byText(content, g, x, y, width, height, textAttrs, colour) {
+  function byText(
+    content: string,
+    g: SVGGroup,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs,
+    colour: unknown
+  ) {
     const text = g
       .append('text')
       .attr('x', x + width / 2)
       .attr('y', y + height / 2 + 5)
-      .style('font-color', colour)
+      .style('font-color', colour as string)
       .style('text-anchor', 'middle')
       .text(content);
     _setTextAttrs(text, textAttrs);
   }
 
-  /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   * @param {any} conf
-   * @param {any} colour
-   */
-  function byTspan(content, g, x, y, width, height, textAttrs, conf, colour) {
+  function byTspan<T extends SVGElement>(
+    content: string,
+    g: D3Selection<T>,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs,
+    conf: Required<TimelineDiagramConfig>,
+    colour?: string
+  ) {
     const { taskFontSize, taskFontFamily } = conf;
+    const fontSize = taskFontSize as number;
 
     const lines = content.split(/<br\s*\/?>/gi);
     for (let i = 0; i < lines.length; i++) {
-      const dy = i * taskFontSize - (taskFontSize * (lines.length - 1)) / 2;
+      const dy = i * fontSize - (fontSize * (lines.length - 1)) / 2;
       const text = g
         .append('text')
         .attr('x', x + width / 2)
         .attr('y', y)
-        .attr('fill', colour)
+        .attr('fill', colour!)
         .style('text-anchor', 'middle')
         .style('font-size', taskFontSize)
         .style('font-family', taskFontFamily);
@@ -377,17 +501,16 @@ const _drawTextCandidateFunc = (function () {
     }
   }
 
-  /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   * @param {any} conf
-   */
-  function byFo(content, g, x, y, width, height, textAttrs, conf) {
+  function byFo(
+    content: string,
+    g: SVGGroup,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs,
+    conf: Required<TimelineDiagramConfig>
+  ) {
     const body = g.append('switch');
     const f = body
       .append('foreignObject')
@@ -398,7 +521,7 @@ const _drawTextCandidateFunc = (function () {
       .attr('position', 'fixed');
 
     const text = f
-      .append('xhtml:div')
+      .append<HTMLDivElement>('xhtml:div')
       .style('display', 'table')
       .style('height', '100%')
       .style('width', '100%');
@@ -415,11 +538,10 @@ const _drawTextCandidateFunc = (function () {
     _setTextAttrs(text, textAttrs);
   }
 
-  /**
-   * @param {any} toText
-   * @param {any} fromTextAttrsDict
-   */
-  function _setTextAttrs(toText, fromTextAttrsDict) {
+  function _setTextAttrs<T extends Element>(
+    toText: Selection<T, unknown, Element | null, unknown>,
+    fromTextAttrsDict: TextAttrs
+  ) {
     for (const key in fromTextAttrsDict) {
       if (key in fromTextAttrsDict) {
         // noinspection JSUnfilteredForInLoop
@@ -428,12 +550,12 @@ const _drawTextCandidateFunc = (function () {
     }
   }
 
-  return function (conf) {
+  return function (conf: Required<TimelineDiagramConfig>): DrawTextFn {
     return conf.textPlacement === 'fo' ? byFo : conf.textPlacement === 'old' ? byText : byTspan;
   };
 })();
 
-const initGraphics = function (graphics, id) {
+const initGraphics = function (graphics: SVG, id?: string) {
   nodeCount = 0;
   taskCount = -1;
   graphics
@@ -450,21 +572,21 @@ const initGraphics = function (graphics, id) {
 };
 
 /**
- * @param {string} text The text to be wrapped
- * @param {number} width The max width of the text
+ * @param text - The text to be wrapped
+ * @param width - The max width of the text
  */
-function wrap(text, width) {
+function wrap(text: D3Selection<SVGTextElement>, width: number) {
   text.each(function () {
-    var text = select(this),
+    const text = select(this),
       words = text
         .text()
         .split(/(\s+|<br>)/)
         .reverse(),
-      word,
-      line = [],
       lineHeight = 1.1, // ems
       y = text.attr('y'),
-      dy = parseFloat(text.attr('dy')),
+      dy = parseFloat(text.attr('dy'));
+    let word,
+      line: string[] = [],
       tspan = text
         .text(null)
         .append('tspan')
@@ -475,7 +597,7 @@ function wrap(text, width) {
       word = words[words.length - 1 - j];
       line.push(word);
       tspan.text(line.join(' ').trim());
-      if (tspan.node().getComputedTextLength() > width || word === '<br>') {
+      if (tspan.node()!.getComputedTextLength() > width || word === '<br>') {
         line.pop();
         tspan.text(line.join(' ').trim());
         if (word === '<br>') {
@@ -495,10 +617,17 @@ function wrap(text, width) {
   });
 }
 
-export const drawNode = function (elem, node, fullSection, conf, diagramId, isEvent = false) {
+export const drawNode = function (
+  elem: SVGGroup,
+  node: TimelineNode,
+  fullSection: number,
+  conf: MermaidConfig,
+  diagramId?: string,
+  isEvent = false
+): DrawnTimelineNode {
   const { theme, look } = conf;
   const isReduxTheme = theme?.includes('redux');
-  const maxSections = conf?.themeVariables?.THEME_COLOR_LIMIT ?? 12;
+  const maxSections: number = conf?.themeVariables?.THEME_COLOR_LIMIT ?? 12;
   const section = (fullSection % maxSections) - 1;
   const nodeElem = elem.append('g');
   node.section = section;
@@ -519,9 +648,12 @@ export const drawNode = function (elem, node, fullSection, conf, diagramId, isEv
     .attr('dominant-baseline', 'middle')
     .attr('text-anchor', 'middle')
     .call(wrap, node.width);
-  const bbox = txt.node().getBBox();
-  const fontSize = conf.fontSize?.replace ? conf.fontSize.replace('px', '') : conf.fontSize;
-  node.height = bbox.height + fontSize * 1.1 * 0.5 + node.padding;
+  const bbox = txt.node()!.getBBox();
+  const confFontSize = conf.fontSize as string | number | undefined;
+  const fontSize = (confFontSize as string)?.replace
+    ? (confFontSize as string).replace('px', '')
+    : confFontSize;
+  node.height = bbox.height + (fontSize as number) * 1.1 * 0.5 + node.padding;
   node.height = Math.max(node.height, node.maxHeight);
   node.width = node.width + 2 * node.padding;
 
@@ -534,12 +666,12 @@ export const drawNode = function (elem, node, fullSection, conf, diagramId, isEv
   }
 
   // Create the background element
-  defaultBkg(bkgElem, node, section, diagramId, conf);
+  defaultBkg(bkgElem, node as DrawnTimelineNode, section, diagramId, conf);
 
   if (look === 'neo') {
     nodeElem.attr('data-look', `neo`);
     if (isReduxTheme) {
-      const isDark = theme.includes('dark');
+      const isDark = theme!.includes('dark');
       const rootSvgNode = elem.node()?.ownerSVGElement ?? elem.node();
       const rootSvg = select(rootSvgNode);
       const svgId = rootSvg.attr('id') ?? '';
@@ -547,7 +679,7 @@ export const drawNode = function (elem, node, fullSection, conf, diagramId, isEv
 
       // Only add the filter once per SVG to avoid duplicate definitions
       if (rootSvg.select(`#${dropShadowId}`).empty()) {
-        const existingDefs = rootSvg.select('defs');
+        const existingDefs = rootSvg.select<SVGDefsElement>('defs');
         const defsEl = existingDefs.empty() ? rootSvg.append('defs') : existingDefs;
         defsEl
           .append('filter')
@@ -564,26 +696,39 @@ export const drawNode = function (elem, node, fullSection, conf, diagramId, isEv
     }
   }
 
-  return node;
+  return node as DrawnTimelineNode;
 };
 
-export const getVirtualNodeHeight = function (elem, node, conf) {
+export const getVirtualNodeHeight = function (
+  elem: SVG,
+  node: TimelineMeasureNode,
+  conf: MermaidConfig
+): number {
   const textElem = elem.append('g');
   const txt = textElem
     .append('text')
-    .text(node.descr)
+    .text(node.descr as string)
     .attr('dy', '1em')
     .attr('alignment-baseline', 'middle')
     .attr('dominant-baseline', 'middle')
     .attr('text-anchor', 'middle')
     .call(wrap, node.width);
-  const bbox = txt.node().getBBox();
-  const fontSize = conf.fontSize?.replace ? conf.fontSize.replace('px', '') : conf.fontSize;
+  const bbox = txt.node()!.getBBox();
+  const confFontSize = conf.fontSize as string | number | undefined;
+  const fontSize = (confFontSize as string)?.replace
+    ? (confFontSize as string).replace('px', '')
+    : confFontSize;
   textElem.remove();
-  return bbox.height + fontSize * 1.1 * 0.5 + node.padding;
+  return bbox.height + (fontSize as number) * 1.1 * 0.5 + node.padding;
 };
 
-const defaultBkg = function (elem, node, section, diagramId, config) {
+const defaultBkg = function (
+  elem: SVGGroup,
+  node: DrawnTimelineNode,
+  section: number,
+  diagramId: string | undefined,
+  config: MermaidConfig
+) {
   const { theme } = config;
   const r = theme?.includes('redux') ? 0 : 5;
   const rd = 5;
