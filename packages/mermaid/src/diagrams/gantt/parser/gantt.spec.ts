@@ -1,8 +1,9 @@
+// @ts-ignore: JISON doesn't support types
 import { parser } from './gantt.jison';
 import ganttDb from '../ganttDb.js';
 import { vi, it } from 'vitest';
 const spyOn = vi.spyOn;
-const parserFnConstructor = (str) => {
+const parserFnConstructor = (str: string) => {
   return () => {
     parser.parse(str);
   };

@@ -6,6 +6,7 @@ import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat.js';
 import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import utils from '../../utils.js';
+import type { GanttDiagramConfig } from '../../config.type.js';
 
 import {
   setAccTitle,
@@ -21,25 +22,121 @@ dayjs.extend(dayjsIsoWeek);
 dayjs.extend(dayjsCustomParseFormat);
 dayjs.extend(dayjsAdvancedFormat);
 
-const WEEKEND_START_DAY = { friday: 5, saturday: 6 };
+/**
+ * A gantt diagram task, as returned by {@link getTasks}.
+ */
+export interface Task {
+  id: string;
+  section: string;
+  type: string;
+  /** The label of the task (the text rendered next to the task bar). */
+  task: string;
+  /** Only set by the legacy {@link addTaskOrg} flow. */
+  description?: string;
+  startTime: Date;
+  endTime: Date;
+  /**
+   * The end time to render. May differ from `endTime` when dates are excluded
+   * via `excludes`. `null` when the end time is a manually fixed date.
+   */
+  renderEndTime?: Date | null;
+  /** `true` if the end date was set manually (a fixed `YYYY-MM-DD` date). */
+  manualEndTime?: boolean;
+  processed?: boolean;
+  /** The id of the task that came before this one in the diagram source. */
+  prevTaskId?: string;
+  /** CSS classes added via `setClass` (e.g. `clickable` for click bindings). */
+  classes: string[];
+  /** The serial order of the task in the script (`-1` for `vert` tasks). */
+  order: number;
+  active?: boolean;
+  done?: boolean;
+  crit?: boolean;
+  milestone?: boolean;
+  vert?: boolean;
+}
+
+/**
+ * The unprocessed start time of a task, as produced by the parser.
+ *
+ * Either the end time of the previous task (`prevTaskEnd`), or a date string
+ * that still needs to be parsed (`getStartDate`).
+ */
+export interface RawTaskStartTime {
+  type: 'prevTaskEnd' | 'getStartDate';
+  /** The id of the previous task (when `type` is `prevTaskEnd`). */
+  id?: string;
+  /** The date string to parse (when `type` is `getStartDate`). */
+  startData?: string;
+}
+
+/** The unprocessed end time of a task, as produced by the parser. */
+export interface RawTaskEndTime {
+  /** The end date string or duration string to parse. */
+  data: string;
+}
+
+/**
+ * A task as stored internally before (and while) being compiled by
+ * {@link getTasks}. `id`, `order`, `startTime` and `endTime` are filled in
+ * during parsing/compilation.
+ */
+export interface RawTask
+  extends Omit<Task, 'id' | 'order' | 'startTime' | 'endTime' | 'processed'> {
+  id?: string;
+  order?: number;
+  startTime?: Date;
+  endTime?: Date;
+  processed: boolean;
+  raw: {
+    data: string;
+    startTime?: RawTaskStartTime;
+    endTime?: RawTaskEndTime;
+  };
+}
+
+const tags = ['active', 'done', 'crit', 'milestone', 'vert'] as const;
+type TaskTag = (typeof tags)[number];
+type TaskTags = Partial<Record<TaskTag, boolean>>;
+
+/** The task data produced by the parser, before compilation. */
+interface ParsedTaskInfo extends TaskTags {
+  id?: string;
+  startTime?: RawTaskStartTime;
+  endTime?: RawTaskEndTime;
+}
+
+/** The task data produced by the legacy {@link addTaskOrg} flow. */
+interface CompiledTaskInfo extends TaskTags {
+  id?: string;
+  startTime?: Date;
+  endTime?: Date;
+  manualEndTime?: boolean;
+  renderEndTime?: Date | null;
+}
+
+export type Weekday = Exclude<GanttDiagramConfig['weekday'], undefined>;
+
+const WEEKEND_START_DAY = { friday: 5, saturday: 6 } as const;
+export type Weekend = keyof typeof WEEKEND_START_DAY;
+
 let dateFormat = '';
 let axisFormat = '';
-let tickInterval = undefined;
+let tickInterval: string | undefined = undefined;
 let todayMarker = '';
-let includes = [];
-let excludes = [];
-let links = new Map();
-let sections = [];
-let tasks = [];
+let includes: string[] = [];
+let excludes: string[] = [];
+let links = new Map<string, string>();
+let sections: string[] = [];
+let tasks: Task[] = [];
 let currentSection = '';
 let displayMode = '';
-const tags = ['active', 'done', 'crit', 'milestone', 'vert'];
-let funs = [];
+let funs: ((element: Element) => void)[] = [];
 let diagramId = '';
 let inclusiveEndDates = false;
 let topAxis = false;
-let weekday = 'sunday';
-let weekend = 'saturday';
+let weekday: Weekday = 'sunday';
+let weekend: Weekend = 'saturday';
 
 // The serial order of the task in the script
 let lastOrder = 0;
@@ -70,11 +167,11 @@ export const clear = function () {
   weekend = 'saturday';
 };
 
-export const setDiagramId = function (id) {
+export const setDiagramId = function (id: string) {
   diagramId = id;
 };
 
-export const setAxisFormat = function (txt) {
+export const setAxisFormat = function (txt: string) {
   axisFormat = txt;
 };
 
@@ -82,7 +179,7 @@ export const getAxisFormat = function () {
   return axisFormat;
 };
 
-export const setTickInterval = function (txt) {
+export const setTickInterval = function (txt: string) {
   tickInterval = txt;
 };
 
@@ -90,7 +187,7 @@ export const getTickInterval = function () {
   return tickInterval;
 };
 
-export const setTodayMarker = function (txt) {
+export const setTodayMarker = function (txt: string) {
   todayMarker = txt;
 };
 
@@ -98,7 +195,7 @@ export const getTodayMarker = function () {
   return todayMarker;
 };
 
-export const setDateFormat = function (txt) {
+export const setDateFormat = function (txt: string) {
   dateFormat = txt;
 };
 
@@ -118,7 +215,7 @@ export const topAxisEnabled = function () {
   return topAxis;
 };
 
-export const setDisplayMode = function (txt) {
+export const setDisplayMode = function (txt: string) {
   displayMode = txt;
 };
 
@@ -130,7 +227,7 @@ export const getDateFormat = function () {
   return dateFormat;
 };
 
-const mergeTokens = (existing, txt) => {
+const mergeTokens = (existing: string[], txt: string) => {
   const tokens = txt
     .toLowerCase()
     .split(/[\s,]+/)
@@ -138,14 +235,14 @@ const mergeTokens = (existing, txt) => {
   return [...new Set([...existing, ...tokens])];
 };
 
-export const setIncludes = function (txt) {
+export const setIncludes = function (txt: string) {
   includes = mergeTokens(includes, txt);
 };
 
 export const getIncludes = function () {
   return includes;
 };
-export const setExcludes = function (txt) {
+export const setExcludes = function (txt: string) {
   excludes = mergeTokens(excludes, txt);
 };
 
@@ -157,7 +254,7 @@ export const getLinks = function () {
   return links;
 };
 
-export const addSection = function (txt) {
+export const addSection = function (txt: string) {
   currentSection = txt;
   sections.push(txt);
 };
@@ -175,12 +272,17 @@ export const getTasks = function () {
     iterationCount++;
   }
 
-  tasks = rawTasks;
+  tasks = rawTasks as unknown as Task[];
 
   return tasks;
 };
 
-export const isInvalidDate = function (date, dateFormat, excludes, includes) {
+export const isInvalidDate = function (
+  date: dayjs.Dayjs,
+  dateFormat: string,
+  excludes: string[],
+  includes: string[]
+): boolean {
   const formattedDate = date.format(dateFormat.trim());
   const dateOnly = date.format('YYYY-MM-DD');
 
@@ -200,7 +302,7 @@ export const isInvalidDate = function (date, dateFormat, excludes, includes) {
   return excludes.includes(formattedDate) || excludes.includes(dateOnly);
 };
 
-export const setWeekday = function (txt) {
+export const setWeekday = function (txt: Weekday) {
   weekday = txt;
 };
 
@@ -208,23 +310,25 @@ export const getWeekday = function () {
   return weekday;
 };
 
-export const setWeekend = function (startDay) {
+export const setWeekend = function (startDay: Weekend) {
   weekend = startDay;
 };
 
 /**
  * TODO: fully document what this function does and what types it accepts
  *
- * @param {object} task - The task to check.
- * @param {string | Date} task.startTime - Might be a `Date` or a `string`.
- * TODO: is this always a Date?
- * @param {string | Date} task.endTime - Might be a `Date` or a `string`.
- * TODO: is this always a Date?
- * @param {string} dateFormat - Dayjs date format string.
- * @param {*} excludes
- * @param {*} includes
+ * @param task - The task to check. `task.startTime` and `task.endTime` might
+ * be a `Date` or a `string`. TODO: are they always a Date?
+ * @param dateFormat - Dayjs date format string.
+ * @param excludes - Dates or days to exclude.
+ * @param includes - Dates to always include, even if they match the excludes.
  */
-const checkTaskDates = function (task, dateFormat, excludes, includes) {
+const checkTaskDates = function (
+  task: Pick<RawTask, 'startTime' | 'endTime' | 'manualEndTime' | 'renderEndTime'>,
+  dateFormat: string,
+  excludes: string[],
+  includes: string[]
+) {
   if (!excludes.length || task.manualEndTime) {
     return;
   }
@@ -256,18 +360,24 @@ const checkTaskDates = function (task, dateFormat, excludes, includes) {
 /**
  * TODO: what does this function do?
  *
- * @param {dayjs.Dayjs} startTime - The start time.
- * @param {dayjs.Dayjs} endTime - The original end time (will return a different end time if it's invalid).
- * @param {string} dateFormat - Dayjs date format string.
- * @param {string[]} excludes - Dates or days to exclude.
- * @param {string[]} includes - Dates to always include, even if they match the excludes.
- * @returns {[endTime: dayjs.Dayjs, renderEndTime: Date | null]} The new `endTime`, and the end time to render.
+ * @param startTime - The start time.
+ * @param endTime - The original end time (will return a different end time if it's invalid).
+ * @param dateFormat - Dayjs date format string.
+ * @param excludes - Dates or days to exclude.
+ * @param includes - Dates to always include, even if they match the excludes.
+ * @returns The new `endTime`, and the end time to render.
  * `renderEndTime` may be `null` if `startTime` is newer than `endTime`.
- * @throws {Error} If a valid end time cannot be found after 10,000 iterations.
+ * @throws Error if a valid end time cannot be found after 10,000 iterations.
  */
-const fixTaskDates = function (startTime, endTime, dateFormat, excludes, includes) {
+const fixTaskDates = function (
+  startTime: dayjs.Dayjs,
+  endTime: dayjs.Dayjs,
+  dateFormat: string,
+  excludes: string[],
+  includes: string[]
+): [endTime: dayjs.Dayjs, renderEndTime: Date | null] {
   let invalid = false;
-  let renderEndTime = null;
+  let renderEndTime: Date | null = null;
   const maxEndTime = endTime.add(10000, 'd');
   while (startTime <= endTime) {
     if (!invalid) {
@@ -287,11 +397,11 @@ const fixTaskDates = function (startTime, endTime, dateFormat, excludes, include
   return [endTime, renderEndTime];
 };
 
-const getStartDate = function (prevTime, dateFormat, str) {
+const getStartDate = function (prevTime: Date | undefined, dateFormat: string, str: string): Date {
   str = str.trim();
 
   // Helper function to check if format is a timestamp format (x or X)
-  const isTimestampFormat = (format) => {
+  const isTimestampFormat = (format: string) => {
     const trimmedFormat = format.trim();
     return trimmedFormat === 'x' || trimmedFormat === 'X';
   };
@@ -306,16 +416,16 @@ const getStartDate = function (prevTime, dateFormat, str) {
 
   if (afterStatement !== null) {
     // check all after ids and take the latest
-    let latestTask = null;
-    for (const id of afterStatement.groups.ids.split(' ')) {
-      let task = findTaskById(id);
-      if (task !== undefined && (!latestTask || task.endTime > latestTask.endTime)) {
+    let latestTask: RawTask | null = null;
+    for (const id of afterStatement.groups!.ids.split(' ')) {
+      const task = findTaskById(id);
+      if (task !== undefined && (!latestTask || task.endTime! > latestTask.endTime!)) {
         latestTask = task;
       }
     }
 
     if (latestTask) {
-      return latestTask.endTime;
+      return latestTask.endTime!;
     }
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -323,7 +433,7 @@ const getStartDate = function (prevTime, dateFormat, str) {
   }
 
   // Check for actual date set using dayjs strict parsing
-  let mDate = dayjs(str, dateFormat.trim(), true);
+  const mDate = dayjs(str, dateFormat.trim(), true);
   if (mDate.isValid()) {
     return mDate.toDate();
   } else {
@@ -368,20 +478,25 @@ const getStartDate = function (prevTime, dateFormat, str) {
  * - `s` for seconds
  * - `ms` for milliseconds
  *
- * @param {string} str - A string representing the duration.
- * @returns {[value: number, unit: dayjs.ManipulateType]} Arguments to pass to `dayjs.add()`
+ * @param str - A string representing the duration.
+ * @returns Arguments to pass to `dayjs.add()`
  */
-const parseDuration = function (str) {
+const parseDuration = function (str: string): [value: number, unit: dayjs.ManipulateType] {
   // cspell:disable-next-line
   const statement = /^(\d+(?:\.\d+)?)([Mdhmswy]|ms)$/.exec(str.trim());
   if (statement !== null) {
-    return [Number.parseFloat(statement[1]), statement[2]];
+    return [Number.parseFloat(statement[1]), statement[2] as dayjs.ManipulateType];
   }
   // NaN means an invalid duration
   return [NaN, 'ms'];
 };
 
-const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
+const getEndDate = function (
+  prevTime: Date | undefined,
+  dateFormat: string,
+  str: string,
+  inclusive = false
+): Date {
   str = str.trim();
 
   // test for until
@@ -390,16 +505,16 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
 
   if (untilStatement !== null) {
     // check all until ids and take the earliest
-    let earliestTask = null;
-    for (const id of untilStatement.groups.ids.split(' ')) {
-      let task = findTaskById(id);
-      if (task !== undefined && (!earliestTask || task.startTime < earliestTask.startTime)) {
+    let earliestTask: RawTask | null = null;
+    for (const id of untilStatement.groups!.ids.split(' ')) {
+      const task = findTaskById(id);
+      if (task !== undefined && (!earliestTask || task.startTime! < earliestTask.startTime!)) {
         earliestTask = task;
       }
     }
 
     if (earliestTask) {
-      return earliestTask.startTime;
+      return earliestTask.startTime!;
     }
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -427,7 +542,7 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
 };
 
 let taskCnt = 0;
-const parseId = function (idStr) {
+const parseId = function (idStr?: string) {
   if (idStr === undefined) {
     taskCnt = taskCnt + 1;
     return 'task' + taskCnt;
@@ -445,7 +560,7 @@ const parseId = function (idStr) {
 // endDate
 // length
 
-const compileData = function (prevTask, dataStr) {
+const compileData = function (prevTask: Task, dataStr: string) {
   let ds;
 
   if (dataStr.substr(0, 1) === ':') {
@@ -456,7 +571,7 @@ const compileData = function (prevTask, dataStr) {
 
   const data = ds.split(',');
 
-  const task = {};
+  const task: CompiledTaskInfo = {};
 
   // Get tags like active, done, crit, milestone, and vert
   getTaskTags(data, task, tags);
@@ -494,7 +609,7 @@ const compileData = function (prevTask, dataStr) {
   return task;
 };
 
-const parseData = function (prevTaskId, dataStr) {
+const parseData = function (prevTaskId: string | undefined, dataStr: string) {
   let ds;
   if (dataStr.substr(0, 1) === ':') {
     ds = dataStr.substr(1, dataStr.length);
@@ -504,7 +619,7 @@ const parseData = function (prevTaskId, dataStr) {
 
   const data = ds.split(',');
 
-  const task = {};
+  const task: ParsedTaskInfo = {};
 
   // Get tags like active, done, crit, milestone, and vert
   getTaskTags(data, task, tags);
@@ -550,12 +665,12 @@ const parseData = function (prevTaskId, dataStr) {
   return task;
 };
 
-let lastTask;
-let lastTaskID;
-let rawTasks = [];
-const taskDb = {};
-export const addTask = function (descr, data) {
-  const rawTask = {
+let lastTask: Task | undefined;
+let lastTaskID: string | undefined;
+let rawTasks: RawTask[] = [];
+const taskDb: Record<string, number> = {};
+export const addTask = function (descr: string, data: string) {
+  const rawTask: RawTask = {
     section: currentSection,
     type: currentSection,
     processed: false,
@@ -587,23 +702,23 @@ export const addTask = function (descr, data) {
 
   lastTaskID = rawTask.id;
   // Store cross ref
-  taskDb[rawTask.id] = pos - 1;
+  taskDb[rawTask.id!] = pos - 1;
 };
 
-export const findTaskById = function (id) {
+export const findTaskById = function (id: string): RawTask | undefined {
   const pos = taskDb[id];
   return rawTasks[pos];
 };
 
-export const addTaskOrg = function (descr, data) {
-  const newTask = {
+export const addTaskOrg = function (descr: string, data: string) {
+  const newTask: Partial<Task> = {
     section: currentSection,
     type: currentSection,
     description: descr,
     task: descr,
     classes: [],
   };
-  const taskInfo = compileData(lastTask, data);
+  const taskInfo = compileData(lastTask!, data);
   newTask.startTime = taskInfo.startTime;
   newTask.endTime = taskInfo.endTime;
   newTask.id = taskInfo.id;
@@ -612,22 +727,22 @@ export const addTaskOrg = function (descr, data) {
   newTask.crit = taskInfo.crit;
   newTask.milestone = taskInfo.milestone;
   newTask.vert = taskInfo.vert;
-  lastTask = newTask;
-  tasks.push(newTask);
+  lastTask = newTask as Task;
+  tasks.push(newTask as Task);
 };
 
 const compileTasks = function () {
-  const compileTask = function (pos) {
+  const compileTask = function (pos: number) {
     const task = rawTasks[pos];
-    let startTime = '';
-    switch (rawTasks[pos].raw.startTime.type) {
+    let startTime: Date | '' = '';
+    switch (rawTasks[pos].raw.startTime!.type) {
       case 'prevTaskEnd': {
-        const prevTask = findTaskById(task.prevTaskId);
-        task.startTime = prevTask.endTime;
+        const prevTask = findTaskById(task.prevTaskId!);
+        task.startTime = prevTask!.endTime;
         break;
       }
       case 'getStartDate':
-        startTime = getStartDate(undefined, dateFormat, rawTasks[pos].raw.startTime.startData);
+        startTime = getStartDate(undefined, dateFormat, rawTasks[pos].raw.startTime!.startData!);
         if (startTime) {
           rawTasks[pos].startTime = startTime;
         }
@@ -638,13 +753,13 @@ const compileTasks = function () {
       rawTasks[pos].endTime = getEndDate(
         rawTasks[pos].startTime,
         dateFormat,
-        rawTasks[pos].raw.endTime.data,
+        rawTasks[pos].raw.endTime!.data,
         inclusiveEndDates
       );
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true;
         rawTasks[pos].manualEndTime = dayjs(
-          rawTasks[pos].raw.endTime.data,
+          rawTasks[pos].raw.endTime!.data,
           'YYYY-MM-DD',
           true
         ).isValid();
@@ -667,16 +782,16 @@ const compileTasks = function () {
 /**
  * Called by parser when a link is found. Adds the URL to the vertex data.
  *
- * @param ids Comma separated list of ids
- * @param _linkStr URL to create a link for
+ * @param ids - Comma separated list of ids
+ * @param _linkStr - URL to create a link for
  */
-export const setLink = function (ids, _linkStr) {
+export const setLink = function (ids: string, _linkStr: string) {
   let linkStr = _linkStr;
   if (getConfig().securityLevel !== 'loose') {
     linkStr = sanitizeUrl(_linkStr);
   }
   ids.split(',').forEach(function (id) {
-    let rawTask = findTaskById(id);
+    const rawTask = findTaskById(id);
     if (rawTask !== undefined) {
       pushFun(id, () => {
         window.open(linkStr, '_self');
@@ -690,19 +805,23 @@ export const setLink = function (ids, _linkStr) {
 /**
  * Called by parser when a special node is found, e.g. a clickable element.
  *
- * @param ids Comma separated list of ids
- * @param className Class to add
+ * @param ids - Comma separated list of ids
+ * @param className - Class to add
  */
-export const setClass = function (ids, className) {
+export const setClass = function (ids: string, className: string) {
   ids.split(',').forEach(function (id) {
-    let rawTask = findTaskById(id);
+    const rawTask = findTaskById(id);
     if (rawTask !== undefined) {
       rawTask.classes.push(className);
     }
   });
 };
 
-const setClickFun = function (id, functionName, functionArgs) {
+const setClickFun = function (
+  id: string,
+  functionName: string | undefined,
+  functionArgs: string | null
+) {
   if (getConfig().securityLevel !== 'loose') {
     return;
   }
@@ -710,7 +829,7 @@ const setClickFun = function (id, functionName, functionArgs) {
     return;
   }
 
-  let argList = [];
+  let argList: string[] = [];
   if (typeof functionArgs === 'string') {
     /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
     argList = functionArgs.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
@@ -730,7 +849,7 @@ const setClickFun = function (id, functionName, functionArgs) {
     argList.push(id);
   }
 
-  let rawTask = findTaskById(id);
+  const rawTask = findTaskById(id);
   if (rawTask !== undefined) {
     pushFun(id, () => {
       utils.runFunc(functionName, ...argList);
@@ -742,10 +861,10 @@ const setClickFun = function (id, functionName, functionArgs) {
  * The callbackFunction is executed in a click event bound to the task with the specified id or the
  * task's assigned text
  *
- * @param id The task's id
- * @param callbackFunction A function to be executed when clicked on the task or the task's text
+ * @param id - The task's id
+ * @param callbackFunction - A function to be executed when clicked on the task or the task's text
  */
-const pushFun = function (id, callbackFunction) {
+const pushFun = function (id: string, callbackFunction: () => void) {
   funs.push(
     function () {
       const prefixedId = diagramId ? `${diagramId}-${id}` : id;
@@ -771,11 +890,15 @@ const pushFun = function (id, callbackFunction) {
 /**
  * Called by parser when a click definition is found. Registers an event handler.
  *
- * @param ids Comma separated list of ids
- * @param functionName Function to be called on click
- * @param functionArgs Function args the function should be called with
+ * @param ids - Comma separated list of ids
+ * @param functionName - Function to be called on click
+ * @param functionArgs - Function args the function should be called with
  */
-export const setClickEvent = function (ids, functionName, functionArgs) {
+export const setClickEvent = function (
+  ids: string,
+  functionName: string,
+  functionArgs: string | null
+) {
   ids.split(',').forEach(function (id) {
     setClickFun(id, functionName, functionArgs);
   });
@@ -785,15 +908,15 @@ export const setClickEvent = function (ids, functionName, functionArgs) {
 /**
  * Binds all functions previously added to fun (specified through click) to the element
  *
- * @param element
+ * @param element - The element to bind the click event listeners to
  */
-export const bindFunctions = function (element) {
+export const bindFunctions = function (element: Element) {
   funs.forEach(function (fun) {
     fun(element);
   });
 };
 
-export default {
+const db = {
   getConfig: () => getConfig().gantt,
   clear,
   setDateFormat,
@@ -838,12 +961,19 @@ export default {
   setWeekend,
 };
 
+export type GanttDB = typeof db;
+
+export default db;
+
 /**
- * @param data
- * @param task
- * @param tags
+ * Sets the tags (e.g. `active`, `done`, `crit`, `milestone` or `vert`) that
+ * are found at the start of `data` on `task`, removing them from `data`.
+ *
+ * @param data - The comma-split task data.
+ * @param task - The task to set the tags on.
+ * @param tags - The tags to look for.
  */
-function getTaskTags(data, task, tags) {
+function getTaskTags(data: string[], task: TaskTags, tags: readonly TaskTag[]) {
   let matchFound = true;
   while (matchFound) {
     matchFound = false;
@@ -852,7 +982,7 @@ function getTaskTags(data, task, tags) {
       const regex = new RegExp(pattern);
       if (data[0].match(regex)) {
         task[t] = true;
-        data.shift(1);
+        data.shift();
         matchFound = true;
       }
     });
