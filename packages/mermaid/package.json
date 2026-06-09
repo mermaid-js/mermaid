@@ -48,7 +48,7 @@
     "docs:verify-version": "tsx scripts/update-release-version.mts --verify",
     "types:build-config": "tsx scripts/create-types-from-json-schema.mts",
     "types:verify-config": "tsx scripts/create-types-from-json-schema.mts --verify",
-    "checkCircle": "npx madge --circular ./src",
+    "checkCircle": "tsx scripts/checkCircle.mts",
     "prepublishOnly": "pnpm docs:verify-version"
   },
   "repository": {
@@ -114,6 +114,7 @@
     "js-base64": "^3.7.8",
     "jsdom": "^26.1.0",
     "json-schema-to-typescript": "^15.0.4",
+    "madge": "^8.0.0",
     "micromatch": "^4.0.8",
     "path-browserify": "^1.0.1",
     "prettier": "^3.6.2",
