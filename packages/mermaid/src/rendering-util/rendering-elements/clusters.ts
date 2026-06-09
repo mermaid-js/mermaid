@@ -4,14 +4,28 @@ import { log } from '../../logger.js';
 import { getSubGraphTitleMargins } from '../../utils/subGraphTitleMargins.js';
 import { select } from 'd3';
 import rough from 'roughjs';
-import { createText } from '../createText.ts';
+import { createText } from '../createText.js';
 import intersectRect from '../rendering-elements/intersect/intersect-rect.js';
 import createLabel from './createLabel.js';
-import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
+import { createRoundedRectPathD } from './shapes/roundedRectPath.js';
 import { styles2String, userNodeOverrides } from './shapes/handDrawnShapeStyles.js';
 import { swimlane } from './clusters/swimlane.js';
+import { handleUndefinedAttr } from '../../utils.js';
+import type { ClusterNode } from '../types.js';
+import type { D3Selection, Point } from '../../types.js';
 
-const rect = async (parent, node) => {
+/**
+ * A cluster node extended with the layout write-back properties the cluster
+ * shapes set while rendering (consumed by the layout engine when positioning
+ * subgraphs in their parents).
+ */
+type ClusterShapeNode = ClusterNode & {
+  diff?: number;
+  offsetX?: number;
+  offsetY?: number;
+};
+
+const rect = async (parent: D3Selection<SVGGElement>, node: ClusterShapeNode) => {
   log.info('Creating subgraph rect for ', node.id, node);
   const siteConfig = getConfig();
   const { themeVariables, handDrawnSeed } = siteConfig;
@@ -23,8 +37,8 @@ const rect = async (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'cluster ' + node.cssClasses)
-    .attr('id', node.domId)
-    .attr('data-look', node.look);
+    .attr('id', handleUndefinedAttr(node.domId))
+    .attr('data-look', handleUndefinedAttr(node.look));
 
   const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
 
@@ -54,16 +68,17 @@ const rect = async (parent, node) => {
     dv.attr('height', bbox.height);
   }
 
-  const width = node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width;
-  if (node.width <= bbox.width + node.padding) {
-    node.diff = (width - node.width) / 2 - node.padding;
+  const width =
+    node.width! <= bbox.width + node.padding! ? bbox.width + node.padding! : node.width!;
+  if (node.width! <= bbox.width + node.padding!) {
+    node.diff = (width - node.width!) / 2 - node.padding!;
   } else {
-    node.diff = -node.padding;
+    node.diff = -node.padding!;
   }
 
-  const height = node.height;
-  const x = node.x - width / 2;
-  const y = node.y - height / 2;
+  const height = node.height!;
+  const x = node.x! - width / 2;
+  const y = node.y! - height / 2;
 
   log.trace('Data ', node, JSON.stringify(node));
   let rect;
@@ -92,18 +107,18 @@ const rect = async (parent, node) => {
     // center the rect around its coordinate
     rect
       .attr('style', nodeStyles)
-      .attr('rx', node.rx)
-      .attr('ry', node.ry)
+      .attr('rx', handleUndefinedAttr(node.rx))
+      .attr('ry', handleUndefinedAttr(node.ry))
       .attr('x', x)
       .attr('y', y)
       .attr('width', width)
       .attr('height', height);
   }
-  const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
+  const { subGraphTitleTopMargin } = getSubGraphTitleMargins({ flowchart: siteConfig.flowchart! });
   labelEl.attr(
     'transform',
     // This puts the label on top of the box instead of inside it
-    `translate(${node.x - bbox.width / 2}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
+    `translate(${node.x! - bbox.width / 2}, ${node.y! - node.height! / 2 + subGraphTitleTopMargin})`
   );
 
   if (labelStyles) {
@@ -114,14 +129,14 @@ const rect = async (parent, node) => {
   }
   // Center the label
 
-  const rectBox = rect.node().getBBox();
+  const rectBox = rect.node()!.getBBox();
   node.offsetX = 0;
   node.width = rectBox.width;
   node.height = rectBox.height;
   // Used by layout engine to position subgraph in parent
-  node.offsetY = bbox.height - node.padding / 2;
+  node.offsetY = bbox.height - node.padding! / 2;
 
-  node.intersect = function (point) {
+  node.intersect = function (point: Point) {
     return intersectRect(node, point);
   };
 
@@ -131,42 +146,45 @@ const rect = async (parent, node) => {
 /**
  * Non visible cluster where the note is group with its
  *
- * @param {any} parent
- * @param {any} node
- * @returns {any} ShapeSvg
+ * @param parent - The parent element
+ * @param node - The cluster node
+ * @returns ShapeSvg
  */
-const noteGroup = (parent, node) => {
+const noteGroup = (parent: D3Selection<SVGGElement>, node: ClusterShapeNode) => {
   // Add outer g element
-  const shapeSvg = parent.insert('g').attr('class', 'note-cluster').attr('id', node.domId);
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', 'note-cluster')
+    .attr('id', handleUndefinedAttr(node.domId));
 
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
 
-  const padding = 0 * node.padding;
+  const padding = 0 * node.padding!;
   const halfPadding = padding / 2;
 
   // center the rect around its coordinate
   rect
-    .attr('rx', node.rx)
-    .attr('ry', node.ry)
-    .attr('x', node.x - node.width / 2 - halfPadding)
-    .attr('y', node.y - node.height / 2 - halfPadding)
-    .attr('width', node.width + padding)
-    .attr('height', node.height + padding)
+    .attr('rx', handleUndefinedAttr(node.rx))
+    .attr('ry', handleUndefinedAttr(node.ry))
+    .attr('x', node.x! - node.width! / 2 - halfPadding)
+    .attr('y', node.y! - node.height! / 2 - halfPadding)
+    .attr('width', node.width! + padding)
+    .attr('height', node.height! + padding)
     .attr('fill', 'none');
 
-  const rectBox = rect.node().getBBox();
+  const rectBox = rect.node()!.getBBox();
   node.width = rectBox.width;
   node.height = rectBox.height;
 
-  node.intersect = function (point) {
+  node.intersect = function (point: Point) {
     return intersectRect(node, point);
   };
 
   return { cluster: shapeSvg, labelBBox: { width: 0, height: 0 } };
 };
 
-const roundedWithTitle = async (parent, node) => {
+const roundedWithTitle = async (parent: D3Selection<SVGGElement>, node: ClusterShapeNode) => {
   const siteConfig = getConfig();
 
   const { themeVariables, handDrawnSeed } = siteConfig;
@@ -176,17 +194,17 @@ const roundedWithTitle = async (parent, node) => {
   // Add outer g element
   const shapeSvg = parent
     .insert('g')
-    .attr('class', node.cssClasses)
-    .attr('id', node.domId)
+    .attr('class', handleUndefinedAttr(node.cssClasses))
+    .attr('id', handleUndefinedAttr(node.domId))
     .attr('data-id', node.id)
-    .attr('data-look', node.look);
+    .attr('data-look', handleUndefinedAttr(node.look));
 
   // add the rect
   const outerRectG = shapeSvg.insert('g', ':first-child');
 
   // Create the label and insert it after the rect
   const label = shapeSvg.insert('g').attr('class', 'cluster-label');
-  let innerRect = shapeSvg.append('rect');
+  let innerRect: D3Selection<SVGRectElement> | D3Selection<SVGGElement> = shapeSvg.append('rect');
 
   const text = await createLabel(label, node.label, node.labelStyle, undefined, true);
 
@@ -202,29 +220,31 @@ const roundedWithTitle = async (parent, node) => {
   }
 
   // Rounded With Title
-  const padding = 0 * node.padding;
+  const padding = 0 * node.padding!;
   const halfPadding = padding / 2;
 
   const width =
-    (node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width) + padding;
-  if (node.width <= bbox.width + node.padding) {
-    node.diff = (width - node.width) / 2 - node.padding;
+    (node.width! <= bbox.width + node.padding! ? bbox.width + node.padding! : node.width!) +
+    padding;
+  if (node.width! <= bbox.width + node.padding!) {
+    node.diff = (width - node.width!) / 2 - node.padding!;
   } else {
-    node.diff = -node.padding;
+    node.diff = -node.padding!;
   }
 
-  const height = node.height + padding;
+  const height = node.height! + padding;
   // const height = node.height + padding;
-  const innerHeight = node.height + padding - bbox.height - 6;
-  const x = node.x - width / 2;
-  const y = node.y - height / 2;
+  const innerHeight = node.height! + padding - bbox.height - 6;
+  const x = node.x! - width / 2;
+  const y = node.y! - height / 2;
   node.width = width;
-  const innerY = node.y - node.height / 2 - halfPadding + bbox.height + 2;
+  const innerY = node.y! - node.height! / 2 - halfPadding + bbox.height + 2;
 
   // add the rect
   let rect;
   if (node.look === 'handDrawn') {
-    const isAlt = node.cssClasses.includes('statediagram-cluster-alt');
+    const isAlt = node.cssClasses!.includes('statediagram-cluster-alt');
+    // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const roughOuterNode =
       node.rx || node.ry
@@ -258,7 +278,7 @@ const roundedWithTitle = async (parent, node) => {
       .attr('y', y)
       .attr('width', width)
       .attr('height', height)
-      .attr('data-look', node.look);
+      .attr('data-look', handleUndefinedAttr(node.look));
     innerRect
       .attr('class', 'inner')
       .attr('x', x)
@@ -269,23 +289,23 @@ const roundedWithTitle = async (parent, node) => {
 
   label.attr(
     'transform',
-    `translate(${node.x - bbox.width / 2}, ${y + 1 - (getEffectiveHtmlLabels(siteConfig) ? 0 : 3)})`
+    `translate(${node.x! - bbox.width / 2}, ${y + 1 - (getEffectiveHtmlLabels(siteConfig) ? 0 : 3)})`
   );
 
-  const rectBox = rect.node().getBBox();
+  const rectBox = rect.node()!.getBBox();
   node.height = rectBox.height;
   node.offsetX = 0;
   // Used by layout engine to position subgraph in parent
-  node.offsetY = bbox.height - node.padding / 2;
+  node.offsetY = bbox.height - node.padding! / 2;
   node.labelBBox = bbox;
 
-  node.intersect = function (point) {
+  node.intersect = function (point: Point) {
     return intersectRect(node, point);
   };
 
   return { cluster: shapeSvg, labelBBox: bbox };
 };
-const kanbanSection = async (parent, node) => {
+const kanbanSection = async (parent: D3Selection<SVGGElement>, node: ClusterShapeNode) => {
   log.info('Creating subgraph rect for ', node.id, node);
   const siteConfig = getConfig();
   const { themeVariables, handDrawnSeed } = siteConfig;
@@ -297,8 +317,8 @@ const kanbanSection = async (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'cluster ' + node.cssClasses)
-    .attr('id', node.domId)
-    .attr('data-look', node.look);
+    .attr('id', handleUndefinedAttr(node.domId))
+    .attr('data-look', handleUndefinedAttr(node.look));
 
   const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
 
@@ -323,16 +343,17 @@ const kanbanSection = async (parent, node) => {
     dv.attr('height', bbox.height);
   }
 
-  const width = node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width;
-  if (node.width <= bbox.width + node.padding) {
-    node.diff = (width - node.width) / 2 - node.padding;
+  const width =
+    node.width! <= bbox.width + node.padding! ? bbox.width + node.padding! : node.width!;
+  if (node.width! <= bbox.width + node.padding!) {
+    node.diff = (width - node.width!) / 2 - node.padding!;
   } else {
-    node.diff = -node.padding;
+    node.diff = -node.padding!;
   }
 
-  const height = node.height;
-  const x = node.x - width / 2;
-  const y = node.y - height / 2;
+  const height = node.height!;
+  const x = node.x! - width / 2;
+  const y = node.y! - height / 2;
 
   log.trace('Data ', node, JSON.stringify(node));
   let rect;
@@ -347,7 +368,7 @@ const kanbanSection = async (parent, node) => {
       fillWeight: 4,
       seed: handDrawnSeed,
     });
-    const roughNode = rc.path(createRoundedRectPathD(x, y, width, height, node.rx), options);
+    const roughNode = rc.path(createRoundedRectPathD(x, y, width, height, node.rx!), options);
     rect = shapeSvg.insert(() => {
       log.debug('Rough node insert CXC', roughNode);
       return roughNode;
@@ -361,18 +382,18 @@ const kanbanSection = async (parent, node) => {
     // center the rect around its coordinate
     rect
       .attr('style', nodeStyles)
-      .attr('rx', node.rx)
-      .attr('ry', node.ry)
+      .attr('rx', handleUndefinedAttr(node.rx))
+      .attr('ry', handleUndefinedAttr(node.ry))
       .attr('x', x)
       .attr('y', y)
       .attr('width', width)
       .attr('height', height);
   }
-  const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
+  const { subGraphTitleTopMargin } = getSubGraphTitleMargins({ flowchart: siteConfig.flowchart! });
   labelEl.attr(
     'transform',
     // This puts the label on top of the box instead of inside it
-    `translate(${node.x - bbox.width / 2}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
+    `translate(${node.x! - bbox.width / 2}, ${node.y! - node.height! / 2 + subGraphTitleTopMargin})`
   );
 
   if (labelStyles) {
@@ -383,20 +404,20 @@ const kanbanSection = async (parent, node) => {
   }
   // Center the label
 
-  const rectBox = rect.node().getBBox();
+  const rectBox = rect.node()!.getBBox();
   node.offsetX = 0;
   node.width = rectBox.width;
   node.height = rectBox.height;
   // Used by layout engine to position subgraph in parent
-  node.offsetY = bbox.height - node.padding / 2;
+  node.offsetY = bbox.height - node.padding! / 2;
 
-  node.intersect = function (point) {
+  node.intersect = function (point: Point) {
     return intersectRect(node, point);
   };
 
   return { cluster: shapeSvg, labelBBox: bbox };
 };
-const divider = (parent, node) => {
+const divider = (parent: D3Selection<SVGGElement>, node: ClusterShapeNode) => {
   const siteConfig = getConfig();
 
   const { themeVariables, handDrawnSeed } = siteConfig;
@@ -405,28 +426,29 @@ const divider = (parent, node) => {
   // Add outer g element
   const shapeSvg = parent
     .insert('g')
-    .attr('class', node.cssClasses)
-    .attr('id', node.domId)
-    .attr('data-look', node.look);
+    .attr('class', handleUndefinedAttr(node.cssClasses))
+    .attr('id', handleUndefinedAttr(node.domId))
+    .attr('data-look', handleUndefinedAttr(node.look));
 
   // add the rect
   const outerRectG = shapeSvg.insert('g', ':first-child');
 
-  const padding = 0 * node.padding;
+  const padding = 0 * node.padding!;
 
-  const width = node.width + padding;
+  const width = node.width! + padding;
 
-  node.diff = -node.padding;
+  node.diff = -node.padding!;
 
-  const height = node.height + padding;
+  const height = node.height! + padding;
   // const height = node.height + padding;
-  const x = node.x - width / 2;
-  const y = node.y - height / 2;
+  const x = node.x! - width / 2;
+  const y = node.y! - height / 2;
   node.width = width;
 
   // add the rect
   let rect;
   if (node.look === 'handDrawn') {
+    // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const roughOuterNode = rc.rectangle(x, y, width, height, {
       fill: 'lightgrey',
@@ -453,20 +475,20 @@ const divider = (parent, node) => {
       .attr('y', y)
       .attr('width', width)
       .attr('height', height)
-      .attr('data-look', node.look);
+      .attr('data-look', handleUndefinedAttr(node.look));
   }
 
-  const rectBox = rect.node().getBBox();
+  const rectBox = rect.node()!.getBBox();
   node.height = rectBox.height;
   node.offsetX = 0;
   // Used by layout engine to position subgraph in parent
   node.offsetY = 0;
 
-  node.intersect = function (point) {
+  node.intersect = function (point: Point) {
     return intersectRect(node, point);
   };
 
-  return { cluster: shapeSvg, labelBBox: {} };
+  return { cluster: shapeSvg, labelBBox: {} as DOMRect };
 };
 
 const squareRect = rect;
@@ -480,27 +502,34 @@ const shapes = {
   swimlane,
 };
 
-let clusterElems = new Map();
+export type ClusterShapeID = keyof typeof shapes;
+
+type ClusterElement = Awaited<ReturnType<(typeof shapes)[ClusterShapeID]>>;
+
+let clusterElems = new Map<string, ClusterElement>();
 
 /**
- * @typedef {keyof typeof shapes} ClusterShapeID
+ * @param elem - The element to insert the cluster into
+ * @param node - Shape defaults to 'rect'
  */
-
-/**
- * @param {import('../types.js').ClusterNode} node - Shape defaults to 'rect'
- */
-export const insertCluster = async (elem, node) => {
+export const insertCluster = async (elem: D3Selection<SVGGElement>, node: ClusterNode) => {
   const shape = node.shape || 'rect';
   const cluster = await shapes[shape](elem, node);
   clusterElems.set(node.id, cluster);
   return cluster;
 };
 
-export const getClusterTitleWidth = (elem, node) => {
+export const getClusterTitleWidth = (elem: D3Selection<SVGGElement>, node: ClusterNode) => {
   // TODO: Doesn't this need an `await`?
-  const label = createLabel(elem, node.label, node.labelStyle, undefined, true);
+  const label = createLabel(
+    elem,
+    node.label,
+    node.labelStyle,
+    undefined,
+    true
+  ) as unknown as SVGGraphicsElement;
   const width = label.getBBox().width;
-  elem.node().removeChild(label);
+  elem.node()!.removeChild(label);
   return width;
 };
 
@@ -508,7 +537,7 @@ export const clear = () => {
   clusterElems = new Map();
 };
 
-export const positionCluster = (node) => {
+export const positionCluster = (node: ClusterNode) => {
   log.info(
     'Position cluster (' +
       node.id +
@@ -523,6 +552,6 @@ export const positionCluster = (node) => {
       ')',
     clusterElems.get(node.id)
   );
-  const el = clusterElems.get(node.id);
+  const el = clusterElems.get(node.id)!;
   el.cluster.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
 };

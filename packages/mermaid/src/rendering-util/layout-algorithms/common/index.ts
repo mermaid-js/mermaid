@@ -269,7 +269,7 @@ function positionRenderedEdgeLabel(edge: RenderedEdge, paths?: EdgeRenderPaths):
     flowchart: siteConfig.flowchart ?? {},
   });
   if (edge.label) {
-    const el = edgeLabels.get(edge.id);
+    const el = edgeLabels.get(edge.id)!;
     let x = edge.x;
     let y = edge.y;
     if (path) {
@@ -294,7 +294,7 @@ function positionRenderedEdgeLabel(edge: RenderedEdge, paths?: EdgeRenderPaths):
   }
 
   if (edge?.startLabelLeft) {
-    const el = terminalLabels.get(edge.id).startLeft;
+    const el = terminalLabels.get(edge.id)!.startLeft!;
     let x = edge?.x;
     let y = edge?.y;
     if (path) {
@@ -305,7 +305,7 @@ function positionRenderedEdgeLabel(edge: RenderedEdge, paths?: EdgeRenderPaths):
     el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.startLabelRight) {
-    const el = terminalLabels.get(edge.id).startRight;
+    const el = terminalLabels.get(edge.id)!.startRight!;
     let x = edge.x;
     let y = edge.y;
     if (path) {
@@ -320,7 +320,7 @@ function positionRenderedEdgeLabel(edge: RenderedEdge, paths?: EdgeRenderPaths):
     el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.endLabelLeft) {
-    const el = terminalLabels.get(edge.id).endLeft;
+    const el = terminalLabels.get(edge.id)!.endLeft!;
     let x = edge.x;
     let y = edge.y;
     if (path) {
@@ -331,7 +331,7 @@ function positionRenderedEdgeLabel(edge: RenderedEdge, paths?: EdgeRenderPaths):
     el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.endLabelRight) {
-    const el = terminalLabels.get(edge.id).endRight;
+    const el = terminalLabels.get(edge.id)!.endRight!;
     let x = edge.x;
     let y = edge.y;
     if (path) {

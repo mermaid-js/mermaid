@@ -1,15 +1,30 @@
 /** Setup arrow head and define the marker. The result is appended to the svg. */
+import type { BaseType, Selection } from 'd3';
 import { log } from '../../logger.js';
 import * as configApi from '../../config.js';
 
+/**
+ * Selection the markers are inserted into. Kept generic on purpose: the
+ * different renderers pass anything from `svg.select('g')` to a typed
+ * `D3Selection<SVGElement>`.
+ */
+type MarkerElement<T extends BaseType = BaseType> = Selection<T, unknown, Element | null, unknown>;
+
+export type MarkerName = keyof typeof markers;
+
 // Only add the number of markers that the diagram needs
-const insertMarkers = (elem, markerArray, type, id) => {
+const insertMarkers = <T extends BaseType>(
+  elem: MarkerElement<T>,
+  markerArray: MarkerName[],
+  type: string,
+  id?: string
+) => {
   markerArray.forEach((markerName) => {
-    markers[markerName](elem, type, id);
+    markers[markerName](elem, type, id!);
   });
 };
 
-const extension = (elem, type, id) => {
+const extension = <T extends BaseType>(elem: MarkerElement<T>, type: string, id: string) => {
   log.trace('Making markers for ', id);
   elem
     .append('defs')
@@ -72,7 +87,7 @@ const extension = (elem, type, id) => {
     .style('stroke-dasharray', '0');
 };
 
-const composition = (elem, type, id) => {
+const composition = <T extends BaseType>(elem: MarkerElement<T>, type: string, id: string) => {
   elem
     .append('defs')
     .append('marker')
@@ -130,7 +145,7 @@ const composition = (elem, type, id) => {
     .style('stroke-width', 0)
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 };
-const aggregation = (elem, type, id) => {
+const aggregation = <T extends BaseType>(elem: MarkerElement<T>, type: string, id: string) => {
   elem
     .append('defs')
     .append('marker')
@@ -187,7 +202,7 @@ const aggregation = (elem, type, id) => {
     .style('stroke-width', 2)
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 };
-const dependency = (elem, type, id) => {
+const dependency = <T extends BaseType>(elem: MarkerElement<T>, type: string, id: string) => {
   elem
     .append('defs')
     .append('marker')
@@ -243,7 +258,7 @@ const dependency = (elem, type, id) => {
     .style('stroke-width', 0)
     .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
 };
-const lollipop = (elem, type, id) => {
+const lollipop = <T extends BaseType>(elem: MarkerElement<T>, type: string, id: string) => {
   elem
     .append('defs')
     .append('marker')
@@ -311,7 +326,7 @@ const lollipop = (elem, type, id) => {
     .attr('r', 6)
     .attr('stroke-width', 2);
 };
-const point = (elem, type, id) => {
+const point = <T extends BaseType>(elem: MarkerElement<T>, type: string, id: string) => {
   elem
     .append('marker')
     .attr('id', id + '_' + type + '-pointEnd')
@@ -377,7 +392,7 @@ const point = (elem, type, id) => {
     .style('stroke-width', 0)
     .style('stroke-dasharray', '1,0');
 };
-const circle = (elem, type, id) => {
+const circle = <T extends BaseType>(elem: MarkerElement<T>, type: string, id: string) => {
   elem
     .append('marker')
     .attr('id', id + '_' + type + '-circleEnd')
@@ -453,7 +468,7 @@ const circle = (elem, type, id) => {
     .style('stroke-width', 0)
     .style('stroke-dasharray', '1,0');
 };
-const cross = (elem, type, id) => {
+const cross = <T extends BaseType>(elem: MarkerElement<T>, type: string, id: string) => {
   elem
     .append('marker')
     .attr('id', id + '_' + type + '-crossEnd')
@@ -522,7 +537,7 @@ const cross = (elem, type, id) => {
     .style('stroke-width', 2.5)
     .style('stroke-dasharray', '1,0');
 };
-const barb = (elem, type, id) => {
+const barb = <T extends BaseType>(elem: MarkerElement<T>, type: string, id: string) => {
   elem
     .append('defs')
     .append('marker')
@@ -536,7 +551,7 @@ const barb = (elem, type, id) => {
     .append('path')
     .attr('d', 'M 19,7 L9,13 L14,7 L9,1 Z');
 };
-const barbNeo = (elem, type, id) => {
+const barbNeo = <T extends BaseType>(elem: MarkerElement<T>, type: string, id: string) => {
   const config = configApi.getConfig();
   const { themeVariables } = config;
   const { transitionColor } = themeVariables;
@@ -568,7 +583,7 @@ const barbNeo = (elem, type, id) => {
     .attr('fill', `${transitionColor}`);
 };
 // erDiagram specific markers
-const only_one = (elem, type, id) => {
+const only_one = <T extends BaseType>(elem: MarkerElement<T>, type: string, id: string) => {
   elem
     .append('defs')
     .append('marker')
@@ -596,7 +611,7 @@ const only_one = (elem, type, id) => {
     .attr('d', 'M3,0 L3,18 M9,0 L9,18');
 };
 
-const zero_or_one = (elem, type, id) => {
+const zero_or_one = <T extends BaseType>(elem: MarkerElement<T>, type: string, id: string) => {
   const startMarker = elem
     .append('defs')
     .append('marker')
@@ -634,7 +649,7 @@ const zero_or_one = (elem, type, id) => {
   endMarker.append('path').attr('d', 'M21,0 L21,18');
 };
 
-const one_or_more = (elem, type, id) => {
+const one_or_more = <T extends BaseType>(elem: MarkerElement<T>, type: string, id: string) => {
   elem
     .append('defs')
     .append('marker')
@@ -662,7 +677,7 @@ const one_or_more = (elem, type, id) => {
     .attr('d', 'M3,9 L3,27 M9,18 Q27,0 45,18 Q27,36 9,18');
 };
 
-const zero_or_more = (elem, type, id) => {
+const zero_or_more = <T extends BaseType>(elem: MarkerElement<T>, type: string, id: string) => {
   const startMarker = elem
     .append('defs')
     .append('marker')
@@ -690,7 +705,7 @@ const zero_or_more = (elem, type, id) => {
   endMarker.append('path').attr('d', 'M21,18 Q39,0 57,18 Q39,36 21,18');
 };
 
-const only_one_neo = (elem, type, id) => {
+const only_one_neo = <T extends BaseType>(elem: MarkerElement<T>, type: string, id: string) => {
   const config = configApi.getConfig();
   const { themeVariables } = config;
   const { strokeWidth } = themeVariables;
@@ -726,7 +741,7 @@ const only_one_neo = (elem, type, id) => {
     .attr('stroke-width', `${strokeWidth}`);
 };
 
-const zero_or_one_neo = (elem, type, id) => {
+const zero_or_one_neo = <T extends BaseType>(elem: MarkerElement<T>, type: string, id: string) => {
   const config = configApi.getConfig();
   const { themeVariables } = config;
   const { strokeWidth, mainBkg } = themeVariables;
@@ -771,7 +786,7 @@ const zero_or_one_neo = (elem, type, id) => {
   endMarker.append('path').attr('d', 'M21,0 L21,18').attr('stroke-width', `${strokeWidth}`);
 };
 
-const one_or_more_neo = (elem, type, id) => {
+const one_or_more_neo = <T extends BaseType>(elem: MarkerElement<T>, type: string, id: string) => {
   const config = configApi.getConfig();
   const { themeVariables } = config;
   const { strokeWidth } = themeVariables;
@@ -806,7 +821,7 @@ const one_or_more_neo = (elem, type, id) => {
     .attr('stroke-width', `${strokeWidth}`);
 };
 
-const zero_or_more_neo = (elem, type, id) => {
+const zero_or_more_neo = <T extends BaseType>(elem: MarkerElement<T>, type: string, id: string) => {
   const config = configApi.getConfig();
   const { themeVariables } = config;
   const { strokeWidth, mainBkg } = themeVariables;
@@ -857,7 +872,11 @@ const zero_or_more_neo = (elem, type, id) => {
     .attr('stroke-width', `${strokeWidth}`);
 };
 
-const requirement_arrow = (elem, type, id) => {
+const requirement_arrow = <T extends BaseType>(
+  elem: MarkerElement<T>,
+  type: string,
+  id: string
+) => {
   elem
     .append('defs')
     .append('marker')
@@ -877,7 +896,11 @@ const requirement_arrow = (elem, type, id) => {
     );
 };
 
-const requirement_arrow_neo = (elem, type, id) => {
+const requirement_arrow_neo = <T extends BaseType>(
+  elem: MarkerElement<T>,
+  type: string,
+  id: string
+) => {
   const config = configApi.getConfig();
   const { themeVariables } = config;
   const { strokeWidth } = themeVariables;
@@ -905,7 +928,11 @@ const requirement_arrow_neo = (elem, type, id) => {
     .attr('stroke-linejoin', 'miter');
 };
 
-const requirement_contains = (elem, type, id) => {
+const requirement_contains = <T extends BaseType>(
+  elem: MarkerElement<T>,
+  type: string,
+  id: string
+) => {
   const containsNode = elem
     .append('defs')
     .append('marker')
@@ -924,7 +951,11 @@ const requirement_contains = (elem, type, id) => {
   containsNode.append('line').attr('y1', 1).attr('y2', 19).attr('x1', 10).attr('x2', 10);
 };
 
-const requirement_contains_neo = (elem, type, id) => {
+const requirement_contains_neo = <T extends BaseType>(
+  elem: MarkerElement<T>,
+  type: string,
+  id: string
+) => {
   const config = configApi.getConfig();
   const { themeVariables } = config;
   const { strokeWidth } = themeVariables;

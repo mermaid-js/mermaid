@@ -1,7 +1,9 @@
+import type { Point } from '../../../types.js';
+
 /**
  * Returns the point at which two lines, p and q, intersect or returns undefined if they do not intersect.
  */
-function intersectLine(p1, p2, q1, q2) {
+function intersectLine(p1: Point, p2: Point, q1: Point, q2: Point): Point | undefined {
   {
     // Algorithm from J. Avro, (ed.) Graphics Gems, No 2, Morgan Kaufmann, 1994,
     // p7 and p473.
@@ -61,7 +63,7 @@ function intersectLine(p1, p2, q1, q2) {
   }
 }
 
-function sameSign(r1, r2) {
+function sameSign(r1: number, r2: number): boolean {
   return r1 * r2 > 0;
 }
 

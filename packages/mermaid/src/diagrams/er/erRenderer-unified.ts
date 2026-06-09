@@ -48,7 +48,7 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   // Sets the background nodes to the same position as their original counterparts.
   // Background nodes are created when the look is handDrawn so the ER diagram markers do not show underneath.
-  const backgroundNodes = svg.selectAll('[id*="-background"]');
+  const backgroundNodes = svg.selectAll<SVGElement, unknown>('[id*="-background"]');
   // eslint-disable-next-line unicorn/prefer-spread
   if (Array.from(backgroundNodes).length > 0) {
     backgroundNodes.each(function (this: SVGElement) {

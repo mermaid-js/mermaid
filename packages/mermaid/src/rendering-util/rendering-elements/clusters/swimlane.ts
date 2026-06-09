@@ -3,16 +3,31 @@ import { evaluate } from '../../../config.js';
 import { log } from '../../../logger.js';
 import { select } from 'd3';
 import rough from 'roughjs';
-import { createText } from '../../createText.ts';
+import { createText } from '../../createText.js';
 import intersectRect from '../intersect/intersect-rect.js';
 import { styles2String, userNodeOverrides } from '../shapes/handDrawnShapeStyles.js';
+import { handleUndefinedAttr } from '../../../utils.js';
+import type { ClusterNode } from '../../types.js';
+import type { D3Selection, Point } from '../../../types.js';
+
+/**
+ * A cluster node with the extra properties that the swimlanes layout writes
+ * back onto its lane nodes before rendering.
+ */
+export type SwimlaneClusterNode = ClusterNode & {
+  direction?: string;
+  swimlaneContentTop?: number;
+  diff?: number;
+  offsetX?: number;
+  offsetY?: number;
+};
 
 /**
  * Swimlane cluster shape (lane). Extracted from the shared clusters.js so the
  * swimlane-specific rendering lives on its own; registered in the clusters.js
  * shape dispatch table. Supports LR/TB and the handdrawn (rough) look.
  */
-export const swimlane = async (parent, node) => {
+export const swimlane = async (parent: D3Selection<SVGGElement>, node: SwimlaneClusterNode) => {
   const siteConfig = getConfig();
   const { themeVariables, handDrawnSeed } = siteConfig;
   const { clusterBkg, clusterBorder } = themeVariables;
@@ -27,9 +42,9 @@ export const swimlane = async (parent, node) => {
     .attr('id', node.id)
     .attr('data-id', node.id)
     .attr('data-et', 'cluster')
-    .attr('data-look', node.look);
+    .attr('data-look', handleUndefinedAttr(node.look));
 
-  const useHtmlLabels = evaluate(siteConfig.flowchart.htmlLabels);
+  const useHtmlLabels = evaluate(siteConfig.flowchart!.htmlLabels);
 
   // Determine if this is a left-to-right layout (title on left, rotated)
   const isLR = node.direction === 'LR';
@@ -56,17 +71,17 @@ export const swimlane = async (parent, node) => {
   }
 
   const padding = node.padding ?? 0;
-  const width = node.width <= bbox.width + padding ? bbox.width + padding : node.width;
-  if (node.width <= bbox.width + padding) {
-    node.diff = (width - node.width) / 2 - padding;
+  const width = node.width! <= bbox.width + padding ? bbox.width + padding : node.width!;
+  if (node.width! <= bbox.width + padding) {
+    node.diff = (width - node.width!) / 2 - padding;
   } else {
     node.diff = -padding;
   }
 
-  const height = node.height;
-  const laneTop = node.y - height / 2;
-  const laneBottom = node.y + height / 2;
-  const laneLeft = node.x - width / 2;
+  const height = node.height!;
+  const laneTop = node.y! - height / 2;
+  const laneBottom = node.y! + height / 2;
+  const laneLeft = node.x! - width / 2;
 
   // Top of the content area across all lanes, computed in the swimlanes
   // layout write-back. This is the Y of the highest node in the pool.
@@ -160,7 +175,7 @@ export const swimlane = async (parent, node) => {
     const bodyY = laneTop + titleHeight;
     const contentHeight = Math.max(0, laneBottom - bodyY);
 
-    const x = node.x - width / 2;
+    const x = node.x! - width / 2;
 
     if (node.look === 'handDrawn') {
       // @ts-ignore TODO: Fix rough typings
@@ -212,7 +227,7 @@ export const swimlane = async (parent, node) => {
     }
 
     // Place the label centered within the title band
-    const labelX = node.x - bbox.width / 2;
+    const labelX = node.x! - bbox.width / 2;
     const labelY = laneTop + (titleHeight - bbox.height) / 2;
     labelEl.attr('transform', `translate(${labelX}, ${labelY})`);
   }
@@ -232,7 +247,7 @@ export const swimlane = async (parent, node) => {
   // Used by layout engine to position subgraph in parent
   node.offsetY = bbox.height - padding / 2;
 
-  node.intersect = function (point) {
+  node.intersect = function (point: Point) {
     return intersectRect(node, point);
   };
 

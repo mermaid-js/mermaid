@@ -27,31 +27,76 @@ import {
   line,
   select,
 } from 'd3';
+import type { CurveFactory } from 'd3';
 import rough from 'roughjs';
 import createLabel from './createLabel.js';
-import { addEdgeMarkers } from './edgeMarker.ts';
+import { addEdgeMarkers } from './edgeMarker.js';
 import { isLabelStyle, styles2String } from './shapes/handDrawnShapeStyles.js';
+import type { SVG } from '../../diagram-api/types.js';
+import type { D3Selection, EdgeData, Point } from '../../types.js';
+import type { Edge, Node } from '../types.js';
+import type { RectLikeNode } from './intersect/intersect-rect.js';
+
+/**
+ * An edge as consumed by the edge rendering helpers. This extends the abstract
+ * {@link Edge} with rendering-time properties that the layout algorithms attach
+ * before the edge is painted.
+ */
+export interface EdgeRenderData extends Omit<Edge, 'labelStyle' | 'curve'> {
+  /** `styles2String` writes the compiled label style string back onto the edge. */
+  labelStyle?: string | string[];
+  /** Either a curve name or a D3 `CurveFactory` (e.g. from class diagrams). */
+  curve?: string | CurveFactory;
+  startLabelLeft?: string;
+  endLabelRight?: string;
+  toCluster?: string;
+  fromCluster?: string;
+}
+
+/**
+ * A d3 selection edge elements are inserted into. Kept loose on purpose: the
+ * different renderers pass anything from `svg.select('g')` to a typed
+ * `D3Selection<SVGGElement>`.
+ */
+type EdgeContainer = D3Selection<SVGGElement>;
+
+/** A node-like object that may expose an `intersect` function after rendering. */
+export interface NodeWithIntersect {
+  intersect?: (point: Point) => Point;
+}
+
+export interface TerminalLabelGroups {
+  startLeft?: D3Selection<SVGGElement>;
+  startRight?: D3Selection<SVGGElement>;
+  endLeft?: D3Selection<SVGGElement>;
+  endRight?: D3Selection<SVGGElement>;
+}
+
+export interface EdgePaths {
+  updatedPath?: Point[];
+  originalPath?: Point[];
+}
 
 /**
  * Resolve the effective curve type for an edge.
  * If edge.curve is a string (e.g. 'rounded', 'linear'), use it directly.
  * Otherwise (undefined, null, or a D3 CurveFactory function), fall back to config.
- * @param {*} edgeCurve - The edge.curve value (string, function, or undefined/null)
- * @returns {string|undefined} - The resolved curve type string
+ * @param edgeCurve - The edge.curve value (string, function, or undefined/null)
+ * @returns The resolved curve type string
  */
-export const resolveEdgeCurveType = (edgeCurve) => {
+export const resolveEdgeCurveType = (edgeCurve: unknown): string | undefined => {
   return typeof edgeCurve === 'string' ? edgeCurve : getConfig()?.flowchart?.curve;
 };
 
-export const edgeLabels = new Map();
-export const terminalLabels = new Map();
+export const edgeLabels = new Map<string, D3Selection<SVGGElement>>();
+export const terminalLabels = new Map<string, TerminalLabelGroups>();
 
 export const clear = () => {
   edgeLabels.clear();
   terminalLabels.clear();
 };
 
-export const hasEdgeLabel = (edge) =>
+export const hasEdgeLabel = (edge: EdgeRenderData) =>
   Boolean(
     edge.label ||
       edge.startLabelLeft ||
@@ -60,7 +105,7 @@ export const hasEdgeLabel = (edge) =>
       edge.endLabelRight
   );
 
-export const getLabelStyles = (styleArray) => {
+export const getLabelStyles = (styleArray: string | string[] | undefined) => {
   if (!styleArray) {
     return '';
   }
@@ -70,17 +115,17 @@ export const getLabelStyles = (styleArray) => {
   return styleArray.reduce((acc, style) => acc + ';' + style, '');
 };
 
-export const insertEdgeLabel = async (elem, edge) => {
+export const insertEdgeLabel = async (elem: EdgeContainer, edge: EdgeRenderData) => {
   const config = getConfig();
-  let useHtmlLabels = getEffectiveHtmlLabels(config);
-  const { labelStyles } = styles2String(edge);
+  const useHtmlLabels = getEffectiveHtmlLabels(config);
+  const { labelStyles } = styles2String(edge as unknown as Node);
   edge.labelStyle = labelStyles;
 
   // Create outer g, edgeLabel, this will be positioned after graph layout
-  const edgeLabel = elem.insert('g').attr('class', 'edgeLabel');
+  const edgeLabel = elem.insert<SVGGElement>('g').attr('class', 'edgeLabel');
 
   // Create inner g, label, this will be positioned now for centering the text
-  const label = edgeLabel.insert('g').attr('class', 'label').attr('data-id', edge.id);
+  const label = edgeLabel.insert<SVGGElement>('g').attr('class', 'label').attr('data-id', edge.id);
 
   const isMarkdown = edge.labelType === 'markdown';
   const markdownWidth = undefined; // Use default width for markdown labels
@@ -99,7 +144,7 @@ export const insertEdgeLabel = async (elem, edge) => {
     config
   );
 
-  label.node().appendChild(labelElement);
+  label.node()!.appendChild(labelElement);
   log.info('abc82', edge, edge.labelType);
 
   // Center the label
@@ -114,7 +159,7 @@ export const insertEdgeLabel = async (elem, edge) => {
     dv.attr('height', bbox.height);
   } else {
     // For SVG labels, use text element's bbox so the text is centered on the edge
-    const textEl = select(labelElement).select('text').node();
+    const textEl = select(labelElement).select<SVGTextElement>('text').node();
     if (textEl && typeof textEl.getBBox === 'function') {
       transformBbox = textEl.getBBox();
     }
@@ -131,8 +176,8 @@ export const insertEdgeLabel = async (elem, edge) => {
   let fo;
   if (edge.startLabelLeft) {
     // Create the actual text element
-    const startEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
-    const inner = startEdgeLabelLeft.insert('g').attr('class', 'inner');
+    const startEdgeLabelLeft = elem.insert<SVGGElement>('g').attr('class', 'edgeTerminals');
+    const inner = startEdgeLabelLeft.insert<SVGGElement>('g').attr('class', 'inner');
     const startLabelElement = await createLabel(
       inner,
       edge.startLabelLeft,
@@ -153,12 +198,12 @@ export const insertEdgeLabel = async (elem, edge) => {
     if (!terminalLabels.get(edge.id)) {
       terminalLabels.set(edge.id, {});
     }
-    terminalLabels.get(edge.id).startLeft = startEdgeLabelLeft;
+    terminalLabels.get(edge.id)!.startLeft = startEdgeLabelLeft;
     setTerminalWidth(fo, edge.startLabelLeft);
   }
   if (edge.startLabelRight) {
-    const startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
-    const inner = startEdgeLabelRight.insert('g').attr('class', 'inner');
+    const startEdgeLabelRight = elem.insert<SVGGElement>('g').attr('class', 'edgeTerminals');
+    const inner = startEdgeLabelRight.insert<SVGGElement>('g').attr('class', 'inner');
     const startLabelElement = await createLabel(
       inner,
       edge.startLabelRight,
@@ -180,13 +225,13 @@ export const insertEdgeLabel = async (elem, edge) => {
     if (!terminalLabels.get(edge.id)) {
       terminalLabels.set(edge.id, {});
     }
-    terminalLabels.get(edge.id).startRight = startEdgeLabelRight;
+    terminalLabels.get(edge.id)!.startRight = startEdgeLabelRight;
     setTerminalWidth(fo, edge.startLabelRight);
   }
   if (edge.endLabelLeft) {
-    const endEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
+    const endEdgeLabelLeft = elem.insert<SVGGElement>('g').attr('class', 'edgeTerminals');
     // TODO: Remove? `inner` is not used
-    const inner = endEdgeLabelLeft.insert('g').attr('class', 'inner');
+    const inner = endEdgeLabelLeft.insert<SVGGElement>('g').attr('class', 'inner');
     const endLabelElement = await createLabel(
       endEdgeLabelLeft,
       edge.endLabelLeft,
@@ -208,13 +253,13 @@ export const insertEdgeLabel = async (elem, edge) => {
     if (!terminalLabels.get(edge.id)) {
       terminalLabels.set(edge.id, {});
     }
-    terminalLabels.get(edge.id).endLeft = endEdgeLabelLeft;
+    terminalLabels.get(edge.id)!.endLeft = endEdgeLabelLeft;
     setTerminalWidth(fo, edge.endLabelLeft);
   }
   if (edge.endLabelRight) {
-    const endEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
+    const endEdgeLabelRight = elem.insert<SVGGElement>('g').attr('class', 'edgeTerminals');
     // TODO: Remove? `inner` is not used
-    const inner = endEdgeLabelRight.insert('g').attr('class', 'inner');
+    const inner = endEdgeLabelRight.insert<SVGGElement>('g').attr('class', 'inner');
 
     const endLabelElement = await createLabel(
       endEdgeLabelRight,
@@ -237,30 +282,32 @@ export const insertEdgeLabel = async (elem, edge) => {
     if (!terminalLabels.get(edge.id)) {
       terminalLabels.set(edge.id, {});
     }
-    terminalLabels.get(edge.id).endRight = endEdgeLabelRight;
+    terminalLabels.get(edge.id)!.endRight = endEdgeLabelRight;
     setTerminalWidth(fo, edge.endLabelRight);
   }
   return labelElement;
 };
 
 /**
- * @param {any} fo
- * @param {any} value
+ * @param fo - The label element whose width should be set
+ * @param value - The label text the width is derived from
  */
-function setTerminalWidth(fo, value) {
+function setTerminalWidth(fo: SVGElement | undefined, value: string) {
   if (getEffectiveHtmlLabels(getConfig()) && fo) {
     fo.style.width = value.length * 9 + 'px';
     fo.style.height = '12px';
   }
 }
 
-export const positionEdgeLabel = (edge, paths) => {
+export const positionEdgeLabel = (edge: EdgeRenderData, paths: EdgePaths) => {
   log.debug('Moving label abc88 ', edge.id, edge.label, edgeLabels.get(edge.id), paths);
-  let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
+  const path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
   const siteConfig = getConfig();
-  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
+  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins({
+    flowchart: siteConfig.flowchart!,
+  });
   if (edge.label) {
-    const el = edgeLabels.get(edge.id);
+    const el = edgeLabels.get(edge.id)!;
     let x = edge.x;
     let y = edge.y;
     if (path) {
@@ -281,11 +328,11 @@ export const positionEdgeLabel = (edge, paths) => {
         y = pos.y;
       }
     }
-    el.attr('transform', `translate(${x}, ${y + subGraphTitleTotalMargin / 2})`);
+    el.attr('transform', `translate(${x}, ${y! + subGraphTitleTotalMargin / 2})`);
   }
 
   if (edge.startLabelLeft) {
-    const el = terminalLabels.get(edge.id).startLeft;
+    const el = terminalLabels.get(edge.id)!.startLeft!;
     let x = edge.x;
     let y = edge.y;
     if (path) {
@@ -296,7 +343,7 @@ export const positionEdgeLabel = (edge, paths) => {
     el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.startLabelRight) {
-    const el = terminalLabels.get(edge.id).startRight;
+    const el = terminalLabels.get(edge.id)!.startRight!;
     let x = edge.x;
     let y = edge.y;
     if (path) {
@@ -311,7 +358,7 @@ export const positionEdgeLabel = (edge, paths) => {
     el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.endLabelLeft) {
-    const el = terminalLabels.get(edge.id).endLeft;
+    const el = terminalLabels.get(edge.id)!.endLeft!;
     let x = edge.x;
     let y = edge.y;
     if (path) {
@@ -322,7 +369,7 @@ export const positionEdgeLabel = (edge, paths) => {
     el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.endLabelRight) {
-    const el = terminalLabels.get(edge.id).endRight;
+    const el = terminalLabels.get(edge.id)!.endRight!;
     let x = edge.x;
     let y = edge.y;
     if (path) {
@@ -337,7 +384,7 @@ export const positionEdgeLabel = (edge, paths) => {
 // Swimlanes-only helper, kept module-private: it self-gates to `-to-label` edges
 // (the swimlanes edge-label waypoint mechanism) and is called only from insertEdge's
 // `layout === 'swimlane'` branch, so it is a no-op for every other layout.
-const orthogonalizeToLabelClippedPoints = (edge, points) => {
+const orthogonalizeToLabelClippedPoints = (edge: EdgeRenderData, points: Point[]): Point[] => {
   if (!edge?.isLabelEdge || !edge?.id?.endsWith('-to-label') || !Array.isArray(points)) {
     return points;
   }
@@ -361,35 +408,35 @@ const orthogonalizeToLabelClippedPoints = (edge, points) => {
   return [start, { x: end.x, y: start.y }, end];
 };
 
-const outsideNode = (node, point) => {
-  const x = node.x;
-  const y = node.y;
+const outsideNode = (node: RectLikeNode, point: Point) => {
+  const x = node.x!;
+  const y = node.y!;
   const dx = Math.abs(point.x - x);
   const dy = Math.abs(point.y - y);
-  const w = node.width / 2;
-  const h = node.height / 2;
+  const w = node.width! / 2;
+  const h = node.height! / 2;
   return dx >= w || dy >= h;
 };
 
-export const intersection = (node, outsidePoint, insidePoint) => {
+export const intersection = (node: RectLikeNode, outsidePoint: Point, insidePoint: Point) => {
   log.debug(`intersection calc abc89:
   outsidePoint: ${JSON.stringify(outsidePoint)}
   insidePoint : ${JSON.stringify(insidePoint)}
   node        : x:${node.x} y:${node.y} w:${node.width} h:${node.height}`);
-  const x = node.x;
-  const y = node.y;
+  const x = node.x!;
+  const y = node.y!;
 
   const dx = Math.abs(x - insidePoint.x);
-  const w = node.width / 2;
+  const w = node.width! / 2;
   let r = insidePoint.x < outsidePoint.x ? w - dx : w + dx;
-  const h = node.height / 2;
+  const h = node.height! / 2;
 
   const Q = Math.abs(outsidePoint.y - insidePoint.y);
   const R = Math.abs(outsidePoint.x - insidePoint.x);
 
   if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h) {
     // Intersection is top or bottom of rect.
-    let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
+    const q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
     r = (R * q) / Q;
     const res = {
       x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x - R + r,
@@ -417,7 +464,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
     } else {
       r = x - w - outsidePoint.x;
     }
-    let q = (Q * r) / R;
+    const q = (Q * r) / R;
     let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - R + r;
     let _y = insidePoint.y < outsidePoint.y ? insidePoint.y + q : insidePoint.y - q;
     log.debug(`sides calc abc89, Q ${Q}, q ${q}, R ${R}, r ${r}`, { _x, _y });
@@ -436,9 +483,9 @@ export const intersection = (node, outsidePoint, insidePoint) => {
   }
 };
 
-const cutPathAtIntersect = (_points, boundaryNode) => {
+const cutPathAtIntersect = (_points: Point[], boundaryNode: RectLikeNode): Point[] => {
   log.warn('abc88 cutPathAtIntersect', _points, boundaryNode);
-  let points = [];
+  const points: Point[] = [];
   let lastPointOutside = _points[0];
   let isInside = false;
   _points.forEach((point) => {
@@ -472,9 +519,9 @@ const cutPathAtIntersect = (_points, boundaryNode) => {
   return points;
 };
 
-function extractCornerPoints(points) {
-  const cornerPoints = [];
-  const cornerPointPositions = [];
+function extractCornerPoints(points: Point[]) {
+  const cornerPoints: Point[] = [];
+  const cornerPointPositions: number[] = [];
   for (let i = 1; i < points.length - 1; i++) {
     const prev = points[i - 1];
     const curr = points[i];
@@ -500,7 +547,7 @@ function extractCornerPoints(points) {
   return { cornerPoints, cornerPointPositions };
 }
 
-const findAdjacentPoint = function (pointA, pointB, distance) {
+const findAdjacentPoint = function (pointA: Point, pointB: Point, distance: number): Point {
   const xDiff = pointB.x - pointA.x;
   const yDiff = pointB.y - pointA.y;
   const length = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
@@ -508,9 +555,9 @@ const findAdjacentPoint = function (pointA, pointB, distance) {
   return { x: pointB.x - ratio * xDiff, y: pointB.y - ratio * yDiff };
 };
 
-const fixCorners = function (lineData) {
+const fixCorners = function (lineData: Point[]): Point[] {
   const { cornerPointPositions } = extractCornerPoints(lineData);
-  const newLineData = [];
+  const newLineData: Point[] = [];
   for (let i = 0; i < lineData.length; i++) {
     if (cornerPointPositions.includes(i)) {
       const prevPoint = lineData[i - 1];
@@ -559,7 +606,7 @@ const fixCorners = function (lineData) {
   return newLineData;
 };
 
-const generateDashArray = (len, oValueS, oValueE) => {
+const generateDashArray = (len: number, oValueS: number, oValueE: number) => {
   const middleLength = len - oValueS - oValueE;
   const dashLength = 2; // Length of each dash
   const gapLength = 2; // Length of each gap
@@ -578,13 +625,13 @@ const generateDashArray = (len, oValueS, oValueE) => {
 };
 
 export const insertEdge = function (
-  elem,
-  edge,
-  clusterDb,
-  diagramType,
-  startNode,
-  endNode,
-  diagramId,
+  elem: EdgeContainer,
+  edge: EdgeRenderData,
+  clusterDb: Map<string, { node: RectLikeNode }> | object,
+  diagramType: string,
+  startNode: NodeWithIntersect | object,
+  endNode: NodeWithIntersect | object,
+  diagramId?: string,
   skipIntersect = false
 ) {
   if (!diagramId) {
@@ -593,16 +640,18 @@ export const insertEdge = function (
     );
   }
   const { handDrawnSeed, layout } = getConfig();
-  let points = edge.points;
+  let points = edge.points!;
   let pointsHasChanged = false;
-  const tail = startNode;
-  var head = endNode;
-  const edgeClassStyles = [];
+  const tail = startNode as NodeWithIntersect;
+  const head = endNode as NodeWithIntersect;
+  const clusterMap = clusterDb as Map<string, { node: RectLikeNode }>;
+  const edgeClassStyles: string[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-for-in-array -- legacy behavior kept as-is: iterates the array indices (isLabelStyle never matches them)
   for (const key in edge.cssCompiledStyles) {
     if (isLabelStyle(key)) {
       continue;
     }
-    edgeClassStyles.push(edge.cssCompiledStyles[key]);
+    edgeClassStyles.push((edge.cssCompiledStyles as unknown as Record<string, string>)[key]);
   }
 
   // Edge endpoint clipping. The swimlanes layout produces orthogonal edges whose
@@ -643,14 +692,14 @@ export const insertEdge = function (
     points = orthogonalizeToLabelClippedPoints(edge, points);
   } else if (head.intersect && tail.intersect && !skipIntersect) {
     // Original clipping — unchanged for dagre / ELK / every non-swimlanes layout.
-    points = points.slice(1, edge.points.length - 1);
+    points = points.slice(1, edge.points!.length - 1);
     points.unshift(tail.intersect(points[0]));
     points.push(head.intersect(points[points.length - 1]));
   }
   const pointsStr = btoa(JSON.stringify(points));
   if (edge.toCluster) {
-    log.info('to cluster abc88', clusterDb.get(edge.toCluster));
-    points = cutPathAtIntersect(edge.points, clusterDb.get(edge.toCluster).node);
+    log.info('to cluster abc88', clusterMap.get(edge.toCluster));
+    points = cutPathAtIntersect(edge.points!, clusterMap.get(edge.toCluster)!.node);
 
     pointsHasChanged = true;
   }
@@ -658,10 +707,10 @@ export const insertEdge = function (
   if (edge.fromCluster) {
     log.debug(
       'from cluster abc88',
-      clusterDb.get(edge.fromCluster),
+      clusterMap.get(edge.fromCluster),
       JSON.stringify(points, null, 2)
     );
-    points = cutPathAtIntersect(points.reverse(), clusterDb.get(edge.fromCluster).node).reverse();
+    points = cutPathAtIntersect(points.reverse(), clusterMap.get(edge.fromCluster)!.node).reverse();
 
     pointsHasChanged = true;
   }
@@ -674,7 +723,7 @@ export const insertEdge = function (
   if (edgeCurveType !== 'rounded') {
     lineData = fixCorners(lineData);
   }
-  let curve = curveLinear;
+  let curve: CurveFactory = curveLinear;
   switch (edgeCurveType) {
     case 'linear':
       curve = curveLinear;
@@ -719,8 +768,10 @@ export const insertEdge = function (
       curve = curveBasis;
   }
 
-  const { x, y } = getLineFunctionsWithOffset(edge);
-  const lineFunction = line().x(x).y(y).curve(curve);
+  const { x, y } = getLineFunctionsWithOffset(
+    edge as Pick<EdgeData, 'arrowTypeStart' | 'arrowTypeEnd'>
+  );
+  const lineFunction = line<Point>().x(x).y(y).curve(curve);
 
   let strokeClasses;
   switch (edge.thickness) {
@@ -750,7 +801,7 @@ export const insertEdge = function (
       strokeClasses += ' edge-pattern-solid';
   }
   let svgPath;
-  let linePath =
+  const linePath =
     edgeCurveType === 'rounded'
       ? generateRoundedPath(applyMarkerOffsetsToPoints(lineData, edge), 5)
       : lineFunction(lineData);
@@ -767,10 +818,11 @@ export const insertEdge = function (
 
   let animatedEdge = false;
   if (edge.look === 'handDrawn') {
+    // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(elem);
     Object.assign([], lineData);
 
-    const svgPathNode = rc.path(linePath, {
+    const svgPathNode = rc.path(linePath!, {
       roughness: 0.3,
       seed: handDrawnSeed,
     });
@@ -778,7 +830,7 @@ export const insertEdge = function (
     strokeClasses += ' transition';
 
     svgPath = select(svgPathNode)
-      .select('path')
+      .select<SVGPathElement>('path')
       .attr('id', `${diagramId}-${edge.id}`)
       .attr(
         'class',
@@ -787,20 +839,25 @@ export const insertEdge = function (
           (edge.classes ? ' ' + edge.classes : '') +
           (animationClass ? ' ' + animationClass : '')
       )
-      .attr('style', edgeStyles ? edgeStyles.reduce((acc, style) => acc + ';' + style, '') : '');
-    let d = svgPath.attr('d');
+      .attr(
+        'style',
+        edgeStyles ? edgeStyles.reduce((acc: string, style) => acc + ';' + style, '') : ''
+      );
+    const d = svgPath.attr('d');
     svgPath.attr('d', d);
-    elem.node().appendChild(svgPath.node());
+    elem.node()!.appendChild(svgPath.node()!);
   } else {
     const stylesFromClasses = edgeClassStyles.join(';');
-    const styles = edgeStyles ? edgeStyles.reduce((acc, style) => acc + style + ';', '') : '';
+    const styles = edgeStyles
+      ? edgeStyles.reduce((acc: string, style) => acc + style + ';', '')
+      : '';
 
     const pathStyle =
       (stylesFromClasses ? stylesFromClasses + ';' + styles + ';' : styles) +
       ';' +
-      (edgeStyles ? edgeStyles.reduce((acc, style) => acc + ';' + style, '') : '');
+      (edgeStyles ? edgeStyles.reduce((acc: string, style) => acc + ';' + style, '') : '');
     svgPath = elem
-      .append('path')
+      .append<SVGPathElement>('path')
       .attr('d', linePath)
       .attr('id', `${diagramId}-${edge.id}`)
       .attr(
@@ -820,10 +877,10 @@ export const insertEdge = function (
 
     animatedEdge =
       edge.animate === true || !!edge.animation || stylesFromClasses.includes('animation');
-    const pathNode = svgPath.node();
+    const pathNode = svgPath.node()!;
     const len = typeof pathNode.getTotalLength === 'function' ? pathNode.getTotalLength() : 0;
-    const oValueS = markerOffsets2[edge.arrowTypeStart] || 0;
-    const oValueE = markerOffsets2[edge.arrowTypeEnd] || 0;
+    const oValueS = markerOffsets2[edge.arrowTypeStart as keyof typeof markerOffsets2] || 0;
+    const oValueE = markerOffsets2[edge.arrowTypeEnd as keyof typeof markerOffsets2] || 0;
 
     if (edge.look === 'neo' && !animatedEdge) {
       const dashArray =
@@ -876,7 +933,7 @@ export const insertEdge = function (
   // });
 
   let url = '';
-  if (getConfig().flowchart.arrowMarkerAbsolute || getConfig().state.arrowMarkerAbsolute) {
+  if (getConfig().flowchart!.arrowMarkerAbsolute || getConfig().state!.arrowMarkerAbsolute) {
     url =
       window.location.protocol +
       '//' +
@@ -889,14 +946,22 @@ export const insertEdge = function (
   log.info('arrowTypeEnd', edge.arrowTypeEnd);
 
   const useMargin = !animatedEdge && edge?.look === 'neo';
-  addEdgeMarkers(svgPath, edge, url, diagramId, diagramType, useMargin, strokeColor);
+  addEdgeMarkers(
+    svgPath as unknown as SVG,
+    edge as Pick<EdgeData, 'arrowTypeStart' | 'arrowTypeEnd'>,
+    url,
+    diagramId,
+    diagramType,
+    useMargin,
+    strokeColor
+  );
   const midIndex = Math.floor(points.length / 2);
   const point = points[midIndex];
   if (!utils.isLabelCoordinateInPath(point, svgPath.attr('d'))) {
     pointsHasChanged = true;
   }
 
-  let paths = {};
+  const paths: EdgePaths = {};
   if (pointsHasChanged) {
     paths.updatedPath = points;
   }
@@ -906,11 +971,11 @@ export const insertEdge = function (
 
 /**
  * Generates SVG path data with rounded corners from an array of points.
- * @param {Array} points - Array of points in the format [{x: Number, y: Number}, ...]
- * @param {Number} radius - The radius of the rounded corners
- * @returns {String} - SVG path data string
+ * @param points - Array of points in the format [\{x: Number, y: Number\}, ...]
+ * @param radius - The radius of the rounded corners
+ * @returns SVG path data string
  */
-export function generateRoundedPath(points, radius) {
+export function generateRoundedPath(points: Point[], radius: number): string {
   if (points.length < 2) {
     return '';
   }
@@ -984,7 +1049,7 @@ export function generateRoundedPath(points, radius) {
   return path;
 }
 // Helper function to calculate delta and angle between two points
-function calculateDeltaAndAngle(point1, point2) {
+function calculateDeltaAndAngle(point1?: Point, point2?: Point) {
   if (!point1 || !point2) {
     return { angle: 0, deltaX: 0, deltaY: 0 };
   }
@@ -995,13 +1060,16 @@ function calculateDeltaAndAngle(point1, point2) {
 }
 
 // Function to adjust the first and last points of the points array
-export function applyMarkerOffsetsToPoints(points, edge) {
+export function applyMarkerOffsetsToPoints(
+  points: Point[],
+  edge: Pick<EdgeRenderData, 'arrowTypeStart' | 'arrowTypeEnd'>
+): Point[] {
   // Copy the points array to avoid mutating the original data
   const newPoints = points.map((point) => ({ ...point }));
 
   // Handle the first point (start of the edge)
-  if (points.length >= 2 && markerOffsets[edge.arrowTypeStart]) {
-    const offsetValue = markerOffsets[edge.arrowTypeStart];
+  if (points.length >= 2 && markerOffsets[edge.arrowTypeStart as keyof typeof markerOffsets]) {
+    const offsetValue = markerOffsets[edge.arrowTypeStart as keyof typeof markerOffsets];
 
     const point1 = points[0];
     const point2 = points[1];
@@ -1017,8 +1085,8 @@ export function applyMarkerOffsetsToPoints(points, edge) {
 
   // Handle the last point (end of the edge)
   const n = points.length;
-  if (n >= 2 && markerOffsets[edge.arrowTypeEnd]) {
-    const offsetValue = markerOffsets[edge.arrowTypeEnd];
+  if (n >= 2 && markerOffsets[edge.arrowTypeEnd as keyof typeof markerOffsets]) {
+    const offsetValue = markerOffsets[edge.arrowTypeEnd as keyof typeof markerOffsets];
 
     const point1 = points[n - 1];
     const point2 = points[n - 2];
