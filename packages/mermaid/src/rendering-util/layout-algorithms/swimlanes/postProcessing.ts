@@ -15,6 +15,7 @@ import {
 } from './direction/materializedGeometry.js';
 import { simplifyDetouredEdges } from './direction/detourSimplification.js';
 import { anchorLabelsToPolyline } from './direction/labelAnchoring.js';
+import { repairCornerAttachments } from './direction/cornerAttachmentRepair.js';
 import { straightenCollinearSiblingDetours } from './direction/siblingSharedFaceRouting.js';
 import { nudgeSharedInteriorSubpaths } from './direction/sharedTrackNudging.js';
 export { validateSwimlanesLayout } from './direction/validation.js';
@@ -99,6 +100,12 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   // preserving obstacle clearance and accepting only candidates that reduce the
   // rendered crossing count.
   resolveRenderedOrthogonalCrossings(edges, nodeByIdMap);
+
+  // Attachment points landing within a few px of a node corner read as
+  // corner-connected once rendered (validateLayout: edge-corner-connection).
+  // Slide the terminal rail inboard along the side; sibling-clearance and
+  // far-end checks keep the shift surgical.
+  repairCornerAttachments(edges, nodeByIdMap);
 
   // Re-anchor labels: the passes above reshaped several polylines after the
   // initial anchoring, so labels must be snapped to the final geometry.
