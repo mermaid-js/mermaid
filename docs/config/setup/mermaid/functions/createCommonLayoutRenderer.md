@@ -130,11 +130,11 @@ Splits on <br> tags
 
 ##### insertCluster
 
-(`elem`, `node`) => `Promise`<`any`>
+(`elem`, `node`) => `Promise`<{ `cluster`: `Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`>; `labelBBox`: `DOMRect`; } | { `cluster`: `Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`>; `labelBBox`: { `height`: `number`; `width`: `number`; }; }>
 
 ##### insertEdge
 
-(`elem`, `edge`, `clusterDb`, `diagramType`, `startNode`, `endNode`, `diagramId`, `skipIntersect`) => `object`
+(`elem`, `edge`, `clusterDb`, `diagramType`, `startNode`, `endNode`, `diagramId?`, `skipIntersect`) => `EdgePaths`
 
 ##### insertEdgeLabel
 
@@ -142,7 +142,7 @@ Splits on <br> tags
 
 ##### insertMarkers
 
-(`elem`, `markerArray`, `type`, `id`) => `void`
+<`T`>(`elem`, `markerArray`, `type`, `id?`) => `void`
 
 ##### insertNode
 

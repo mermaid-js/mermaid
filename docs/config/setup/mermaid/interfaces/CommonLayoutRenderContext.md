@@ -264,13 +264,15 @@ The currentConfig
 
 #### insertCluster()
 
-> **insertCluster**: (`elem`, `node`) => `Promise`<`any`>
+> **insertCluster**: (`elem`, `node`) => `Promise`<{ `cluster`: `Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`>; `labelBBox`: `DOMRect`; } | { `cluster`: `Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`>; `labelBBox`: { `height`: `number`; `width`: `number`; }; }>
 
 ##### Parameters
 
 ###### elem
 
-`any`
+`D3Selection`<`SVGGElement`>
+
+The element to insert the cluster into
 
 ###### node
 
@@ -280,57 +282,49 @@ Shape defaults to 'rect'
 
 ##### Returns
 
-`Promise`<`any`>
+`Promise`<{ `cluster`: `Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`>; `labelBBox`: `DOMRect`; } | { `cluster`: `Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`>; `labelBBox`: { `height`: `number`; `width`: `number`; }; }>
 
 #### insertEdge()
 
-> **insertEdge**: (`elem`, `edge`, `clusterDb`, `diagramType`, `startNode`, `endNode`, `diagramId`, `skipIntersect`) => `object`
+> **insertEdge**: (`elem`, `edge`, `clusterDb`, `diagramType`, `startNode`, `endNode`, `diagramId?`, `skipIntersect`) => `EdgePaths`
 
 ##### Parameters
 
 ###### elem
 
-`any`
+`EdgeContainer`
 
 ###### edge
 
-`any`
+`EdgeRenderData`
 
 ###### clusterDb
 
-`any`
+`object` | `Map`<`string`, { `node`: `RectLikeNode`; }>
 
 ###### diagramType
 
-`any`
+`string`
 
 ###### startNode
 
-`any`
+`object` | `NodeWithIntersect`
 
 ###### endNode
 
-`any`
+`object` | `NodeWithIntersect`
 
-###### diagramId
+###### diagramId?
 
-`any`
+`string`
 
-###### skipIntersect
+###### skipIntersect?
 
 `boolean` = `false`
 
 ##### Returns
 
-`object`
-
-###### originalPath
-
-> **originalPath**: `any`
-
-###### updatedPath
-
-> **updatedPath**: `any`
+`EdgePaths`
 
 #### insertEdgeLabel()
 
@@ -340,11 +334,11 @@ Shape defaults to 'rect'
 
 ###### elem
 
-`any`
+`EdgeContainer`
 
 ###### edge
 
-`any`
+`EdgeRenderData`
 
 ##### Returns
 
@@ -352,25 +346,31 @@ Shape defaults to 'rect'
 
 #### insertMarkers()
 
-> **insertMarkers**: (`elem`, `markerArray`, `type`, `id`) => `void`
+> **insertMarkers**: <`T`>(`elem`, `markerArray`, `type`, `id?`) => `void`
+
+##### Type Parameters
+
+###### T
+
+`T` _extends_ `BaseType`
 
 ##### Parameters
 
 ###### elem
 
-`any`
+`MarkerElement`<`T`>
 
 ###### markerArray
 
-`any`
+(`"circle"` | `"aggregation"` | `"extension"` | `"composition"` | `"dependency"` | `"lollipop"` | `"cross"` | `"point"` | `"barb"` | `"requirement_arrow"` | `"requirement_contains"` | `"only_one"` | `"zero_or_one"` | `"one_or_more"` | `"zero_or_more"` | `"barbNeo"` | `"only_one_neo"` | `"zero_or_one_neo"` | `"one_or_more_neo"` | `"zero_or_more_neo"` | `"requirement_arrow_neo"` | `"requirement_contains_neo"`)\[]
 
 ###### type
 
-`any`
+`string`
 
-###### id
+###### id?
 
-`any`
+`string`
 
 ##### Returns
 
@@ -464,11 +464,11 @@ The curve factory to use
 
 ###### edge
 
-`any`
+`EdgeRenderData`
 
 ###### paths
 
-`any`
+`EdgePaths`
 
 ##### Returns
 
