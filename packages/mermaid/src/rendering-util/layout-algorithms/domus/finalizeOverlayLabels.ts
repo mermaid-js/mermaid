@@ -520,8 +520,143 @@ export function finalizeDummyLabelNodesToOverlayLabels(layoutData: LayoutData): 
   // returned by the DOMUS layout wrapper.
   shortcutFinalLabelSideRailsWhenScoreImproves(layoutData);
 
+  // iter-61: overlay labels are invisible to the node-obstacle passes above
+  // (post-merge they are edge.x/y/width/height, not nodes), so a foreign
+  // edge can end up running through a label box. Routes are final at this
+  // point; slide the LABEL along its own polyline to a clear spot instead
+  // of disturbing any edge geometry.
+  relocateLabelOverlaysOffForeignEdgesWhenImproves(layoutData);
+
   // Paint should treat labels as overlay labels (not label nodes).
   (layoutData.config as any).isLabelNode = false;
+}
+
+/**
+ * iter-61: move an overlay label off foreign edges by sliding it along its
+ * own edge polyline. Candidates are sampled on the polyline (the label is
+ * painted over its own edge, which the validator permits), geometrically
+ * pre-filtered against all other edges' segments and all non-group node
+ * rects, then accepted only when the unified validator improves — score up,
+ * or (while invalid) strictly fewer issues.
+ */
+function relocateLabelOverlaysOffForeignEdgesWhenImproves(layoutData: LayoutData): void {
+  let current = validateLayout(layoutData);
+  const offenders = current.issues.filter(
+    (i) =>
+      i.type === 'edge-label-overlaps-foreign-edge' &&
+      typeof (i.details as { ownerEdgeId?: unknown })?.ownerEdgeId === 'string' &&
+      (i.details as { ownerEdgeId: string }).ownerEdgeId.length > 0
+  );
+  if (offenders.length === 0) {
+    return;
+  }
+
+  const edges = (layoutData.edges ?? []) as any[];
+  const edgesById = new Map<string, any>();
+  for (const e of edges) {
+    edgesById.set(String(e?.id ?? ''), e);
+  }
+  const nodeRects = ((layoutData.nodes ?? []) as any[])
+    .filter((n) => n?.id != null && !n.isGroup)
+    .map((n) => rectForNode(n));
+
+  const MAX_VALIDATIONS_PER_LABEL = 12;
+  const SAMPLE_STEP = 8;
+
+  for (const issue of offenders) {
+    const ownerId = (issue.details as { ownerEdgeId: string }).ownerEdgeId;
+    const owner = edgesById.get(ownerId);
+    const pts = owner?.points as { x: number; y: number }[] | undefined;
+    const w = Number(owner?.width);
+    const h = Number(owner?.height);
+    if (
+      !owner ||
+      !Array.isArray(pts) ||
+      pts.length < 2 ||
+      !Number.isFinite(w) ||
+      !Number.isFinite(h) ||
+      w <= 0 ||
+      h <= 0
+    ) {
+      continue;
+    }
+
+    const isClear = (cx: number, cy: number): boolean => {
+      const rect = { left: cx - w / 2, right: cx + w / 2, top: cy - h / 2, bottom: cy + h / 2 };
+      for (const e2 of edges) {
+        if (String(e2?.id ?? '') === ownerId) {
+          continue;
+        }
+        const p2 = e2?.points as { x: number; y: number }[] | undefined;
+        if (!Array.isArray(p2)) {
+          continue;
+        }
+        for (let i = 0; i < p2.length - 1; i++) {
+          if (segmentIntersectsRectInterior(p2[i], p2[i + 1], rect as any)) {
+            return false;
+          }
+        }
+      }
+      for (const nr of nodeRects) {
+        const apart =
+          rect.right <= nr.left ||
+          rect.left >= nr.right ||
+          rect.bottom <= nr.top ||
+          rect.top >= nr.bottom;
+        if (!apart) {
+          return false;
+        }
+      }
+      return true;
+    };
+
+    // Sample candidate anchors along the own polyline, nearest-first to the
+    // current anchor so the visual move is minimal.
+    const curX = Number(owner.x);
+    const curY = Number(owner.y);
+    const candidates: { x: number; y: number; dist: number }[] = [];
+    for (let i = 0; i < pts.length - 1; i++) {
+      const a = pts[i];
+      const b = pts[i + 1];
+      const len = Math.abs(b.x - a.x) + Math.abs(b.y - a.y);
+      const steps = Math.max(1, Math.floor(len / SAMPLE_STEP));
+      for (let k = 0; k <= steps; k++) {
+        const t = k / steps;
+        const x = a.x + (b.x - a.x) * t;
+        const y = a.y + (b.y - a.y) * t;
+        const dist =
+          Number.isFinite(curX) && Number.isFinite(curY)
+            ? Math.abs(x - curX) + Math.abs(y - curY)
+            : 0;
+        candidates.push({ x, y, dist });
+      }
+    }
+    candidates.sort((c1, c2) => c1.dist - c2.dist);
+
+    let validations = 0;
+    for (const c of candidates) {
+      if (validations >= MAX_VALIDATIONS_PER_LABEL) {
+        break;
+      }
+      if (!isClear(c.x, c.y)) {
+        continue;
+      }
+      const oldX = owner.x;
+      const oldY = owner.y;
+      owner.x = c.x;
+      owner.y = c.y;
+      validations += 1;
+      const next = validateLayout(layoutData);
+      const improved =
+        next.score > current.score || (!current.ok && next.issues.length < current.issues.length);
+      if (improved) {
+        current = next;
+        break;
+      }
+      owner.x = oldX;
+      owner.y = oldY;
+    }
+  }
 }
 
 function shortcutFinalLabelSideRailsWhenScoreImproves(layoutData: LayoutData): void {
