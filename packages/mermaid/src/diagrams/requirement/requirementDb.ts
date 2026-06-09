@@ -32,7 +32,8 @@ export class RequirementDB implements DiagramDB {
   private classes = new Map<string, RequirementClass>();
   private direction = 'TB';
 
-  private RequirementType = {
+  // Read by the JISON grammar (`yy.RequirementType`) and the parser spec at runtime.
+  public readonly RequirementType = {
     REQUIREMENT: 'Requirement',
     FUNCTIONAL_REQUIREMENT: 'Functional Requirement',
     INTERFACE_REQUIREMENT: 'Interface Requirement',
@@ -41,20 +42,23 @@ export class RequirementDB implements DiagramDB {
     DESIGN_CONSTRAINT: 'Design Constraint',
   };
 
-  private RiskLevel = {
+  // Read by the JISON grammar (`yy.RiskLevel`) and the parser spec at runtime.
+  public readonly RiskLevel = {
     LOW_RISK: 'Low',
     MED_RISK: 'Medium',
     HIGH_RISK: 'High',
   };
 
-  private VerifyType = {
+  // Read by the JISON grammar (`yy.VerifyType`) and the parser spec at runtime.
+  public readonly VerifyType = {
     VERIFY_ANALYSIS: 'Analysis',
     VERIFY_DEMONSTRATION: 'Demonstration',
     VERIFY_INSPECTION: 'Inspection',
     VERIFY_TEST: 'Test',
   };
 
-  private Relationships = {
+  // Read by the JISON grammar (`yy.Relationships`) and the parser spec at runtime.
+  public readonly Relationships = {
     CONTAINS: 'contains',
     COPIES: 'copies',
     DERIVES: 'derives',

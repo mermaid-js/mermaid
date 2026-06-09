@@ -1,5 +1,6 @@
 import { setConfig } from '../../../config.js';
 import { RequirementDB } from '../requirementDb.js';
+// @ts-ignore: JISON doesn't support types
 import reqDiagram from './requirementDiagram.jison';
 
 setConfig({
@@ -20,7 +21,7 @@ describe('when parsing requirement diagram it...', function () {
     const expectedRisk = requirementDb.RiskLevel.HIGH_RISK;
     const expectedVerifyMethod = requirementDb.VerifyType.VERIFY_ANALYSIS;
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `requirement ${expectedName} {`,
@@ -30,13 +31,13 @@ describe('when parsing requirement diagram it...', function () {
       `verifymethod: ${expectedVerifyMethod}`,
       `}`,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
     expect(requirementDb.getRequirements().size).toBe(1);
 
-    let foundReq = requirementDb.getRequirements().get(expectedName);
+    const foundReq = requirementDb.getRequirements().get(expectedName)!;
     expect(foundReq).toBeDefined();
     expect(foundReq.requirementId).toBe(expectedId);
     expect(foundReq.text).toBe(expectedText);
@@ -50,7 +51,7 @@ describe('when parsing requirement diagram it...', function () {
     const expectedType = 'test_type';
     const expectedDocRef = 'test_ref';
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `element ${expectedName} {`,
@@ -58,14 +59,14 @@ describe('when parsing requirement diagram it...', function () {
       `docref: ${expectedDocRef}`,
       `}`,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
     expect(requirementDb.getRequirements().size).toBe(0);
     expect(requirementDb.getElements().size).toBe(1);
 
-    let foundElement = requirementDb.getElements().get(expectedName);
+    const foundElement = requirementDb.getElements().get(expectedName)!;
     expect(foundElement).toBeDefined();
     expect(foundElement.type).toBe(expectedType);
     expect(foundElement.docRef).toBe(expectedDocRef);
@@ -117,8 +118,8 @@ line 2`;
     const expectedDest = 'b';
     const expectedType = requirementDb.Relationships.CONTAINS;
 
-    let lines = [`requirementDiagram`, ``, `${expectedSrc} - ${expectedType} -> ${expectedDest}`];
-    let doc = lines.join('\n');
+    const lines = [`requirementDiagram`, ``, `${expectedSrc} - ${expectedType} -> ${expectedDest}`];
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
@@ -126,7 +127,7 @@ line 2`;
     expect(requirementDb.getElements().size).toBe(0);
     expect(Object.keys(requirementDb.getRelationships()).length).toBe(1);
 
-    let foundRelationship = requirementDb.getRelationships()[0];
+    const foundRelationship = requirementDb.getRelationships()[0];
     expect(foundRelationship.src).toBe(expectedSrc);
     expect(foundRelationship.dst).toBe(expectedDest);
   });
@@ -139,7 +140,7 @@ line 2`;
     const expectedRisk = requirementDb.RiskLevel.HIGH_RISK;
     const expectedVerifyMethod = requirementDb.VerifyType.VERIFY_ANALYSIS;
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `requirement ${expectedName} {`,
@@ -149,11 +150,11 @@ line 2`;
       `verifymethod: ${expectedVerifyMethod}`,
       `}`,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements().get(expectedName);
+    const foundReq = requirementDb.getRequirements().get(expectedName)!;
     expect(foundReq).toBeDefined();
     expect(foundReq.type).toBe(expectedType);
   });
@@ -166,7 +167,7 @@ line 2`;
     const expectedRisk = requirementDb.RiskLevel.HIGH_RISK;
     const expectedVerifyMethod = requirementDb.VerifyType.VERIFY_ANALYSIS;
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `functionalRequirement ${expectedName} {`,
@@ -176,11 +177,11 @@ line 2`;
       `verifymethod: ${expectedVerifyMethod}`,
       `}`,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements().get(expectedName);
+    const foundReq = requirementDb.getRequirements().get(expectedName)!;
     expect(foundReq).toBeDefined();
     expect(foundReq.type).toBe(expectedType);
   });
@@ -193,7 +194,7 @@ line 2`;
     const expectedRisk = requirementDb.RiskLevel.HIGH_RISK;
     const expectedVerifyMethod = requirementDb.VerifyType.VERIFY_ANALYSIS;
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `interfaceRequirement ${expectedName} {`,
@@ -203,11 +204,11 @@ line 2`;
       `verifymethod: ${expectedVerifyMethod}`,
       `}`,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements().get(expectedName);
+    const foundReq = requirementDb.getRequirements().get(expectedName)!;
     expect(foundReq).toBeDefined();
     expect(foundReq.type).toBe(expectedType);
   });
@@ -220,7 +221,7 @@ line 2`;
     const expectedRisk = requirementDb.RiskLevel.HIGH_RISK;
     const expectedVerifyMethod = requirementDb.VerifyType.VERIFY_ANALYSIS;
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `performanceRequirement ${expectedName} {`,
@@ -230,11 +231,11 @@ line 2`;
       `verifymethod: ${expectedVerifyMethod}`,
       `}`,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements().get(expectedName);
+    const foundReq = requirementDb.getRequirements().get(expectedName)!;
     expect(foundReq).toBeDefined();
     expect(foundReq.type).toBe(expectedType);
   });
@@ -247,7 +248,7 @@ line 2`;
     const expectedRisk = requirementDb.RiskLevel.HIGH_RISK;
     const expectedVerifyMethod = requirementDb.VerifyType.VERIFY_ANALYSIS;
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `physicalRequirement ${expectedName} {`,
@@ -257,11 +258,11 @@ line 2`;
       `verifymethod: ${expectedVerifyMethod}`,
       `}`,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements().get(expectedName);
+    const foundReq = requirementDb.getRequirements().get(expectedName)!;
     expect(foundReq).toBeDefined();
     expect(foundReq.type).toBe(expectedType);
   });
@@ -274,7 +275,7 @@ line 2`;
     const expectedRisk = requirementDb.RiskLevel.HIGH_RISK;
     const expectedVerifyMethod = requirementDb.VerifyType.VERIFY_ANALYSIS;
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `designConstraint ${expectedName} {`,
@@ -284,11 +285,11 @@ line 2`;
       `verifymethod: ${expectedVerifyMethod}`,
       `}`,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements().get(expectedName);
+    const foundReq = requirementDb.getRequirements().get(expectedName)!;
     expect(foundReq).toBeDefined();
     expect(foundReq.type).toBe(expectedType);
   });
@@ -301,7 +302,7 @@ line 2`;
     const expectedRisk = requirementDb.RiskLevel.LOW_RISK;
     const expectedVerifyMethod = requirementDb.VerifyType.VERIFY_ANALYSIS;
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `${expectedType} ${expectedName} {`,
@@ -311,11 +312,11 @@ line 2`;
       `verifymethod: ${expectedVerifyMethod}`,
       `}`,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements().get(expectedName);
+    const foundReq = requirementDb.getRequirements().get(expectedName)!;
     expect(foundReq).toBeDefined();
     expect(foundReq.risk).toBe(expectedRisk);
   });
@@ -328,7 +329,7 @@ line 2`;
     const expectedRisk = requirementDb.RiskLevel.MED_RISK;
     const expectedVerifyMethod = requirementDb.VerifyType.VERIFY_ANALYSIS;
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `${expectedType} ${expectedName} {`,
@@ -338,11 +339,11 @@ line 2`;
       `verifymethod: ${expectedVerifyMethod}`,
       `}`,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements().get(expectedName);
+    const foundReq = requirementDb.getRequirements().get(expectedName)!;
     expect(foundReq).toBeDefined();
     expect(foundReq.risk).toBe(expectedRisk);
   });
@@ -355,7 +356,7 @@ line 2`;
     const expectedRisk = requirementDb.RiskLevel.HIGH_RISK;
     const expectedVerifyMethod = requirementDb.VerifyType.VERIFY_ANALYSIS;
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `${expectedType} ${expectedName} {`,
@@ -365,11 +366,11 @@ line 2`;
       `verifymethod: ${expectedVerifyMethod}`,
       `}`,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements().get(expectedName);
+    const foundReq = requirementDb.getRequirements().get(expectedName)!;
     expect(foundReq).toBeDefined();
     expect(foundReq.risk).toBe(expectedRisk);
   });
@@ -382,7 +383,7 @@ line 2`;
     const expectedRisk = requirementDb.RiskLevel.HIGH_RISK;
     const expectedVerifyMethod = requirementDb.VerifyType.VERIFY_ANALYSIS;
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `${expectedType} ${expectedName} {`,
@@ -392,11 +393,11 @@ line 2`;
       `verifymethod: ${expectedVerifyMethod}`,
       `}`,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements().get(expectedName);
+    const foundReq = requirementDb.getRequirements().get(expectedName)!;
     expect(foundReq).toBeDefined();
     expect(foundReq.verifyMethod).toBe(expectedVerifyMethod);
   });
@@ -409,7 +410,7 @@ line 2`;
     const expectedRisk = requirementDb.RiskLevel.HIGH_RISK;
     const expectedVerifyMethod = requirementDb.VerifyType.VERIFY_INSPECTION;
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `${expectedType} ${expectedName} {`,
@@ -419,11 +420,11 @@ line 2`;
       `verifymethod: ${expectedVerifyMethod}`,
       `}`,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements().get(expectedName);
+    const foundReq = requirementDb.getRequirements().get(expectedName)!;
     expect(foundReq).toBeDefined();
     expect(foundReq.verifyMethod).toBe(expectedVerifyMethod);
   });
@@ -436,7 +437,7 @@ line 2`;
     const expectedRisk = requirementDb.RiskLevel.HIGH_RISK;
     const expectedVerifyMethod = requirementDb.VerifyType.VERIFY_TEST;
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `${expectedType} ${expectedName} {`,
@@ -446,11 +447,11 @@ line 2`;
       `verifymethod: ${expectedVerifyMethod}`,
       `}`,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements().get(expectedName);
+    const foundReq = requirementDb.getRequirements().get(expectedName)!;
     expect(foundReq).toBeDefined();
     expect(foundReq.verifyMethod).toBe(expectedVerifyMethod);
   });
@@ -463,7 +464,7 @@ line 2`;
     const expectedRisk = requirementDb.RiskLevel.HIGH_RISK;
     const expectedVerifyMethod = requirementDb.VerifyType.VERIFY_DEMONSTRATION;
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `designConstraint ${expectedName} {`,
@@ -473,11 +474,11 @@ line 2`;
       `verifymethod: ${expectedVerifyMethod}`,
       `}`,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements().get(expectedName);
+    const foundReq = requirementDb.getRequirements().get(expectedName)!;
     expect(foundReq).toBeDefined();
     expect(foundReq.verifyMethod).toBe(expectedVerifyMethod);
   });
@@ -487,12 +488,12 @@ line 2`;
     const expectedDest = 'b';
     const expectedType = requirementDb.Relationships.CONTAINS;
 
-    let lines = [`requirementDiagram`, ``, `${expectedSrc} - ${expectedType} -> ${expectedDest}`];
-    let doc = lines.join('\n');
+    const lines = [`requirementDiagram`, ``, `${expectedSrc} - ${expectedType} -> ${expectedDest}`];
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundRelationship = requirementDb.getRelationships()[0];
+    const foundRelationship = requirementDb.getRelationships()[0];
     expect(foundRelationship.type).toBe(expectedType);
   });
 
@@ -501,12 +502,12 @@ line 2`;
     const expectedDest = 'b';
     const expectedType = requirementDb.Relationships.COPIES;
 
-    let lines = [`requirementDiagram`, ``, `${expectedSrc} - ${expectedType} -> ${expectedDest}`];
-    let doc = lines.join('\n');
+    const lines = [`requirementDiagram`, ``, `${expectedSrc} - ${expectedType} -> ${expectedDest}`];
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundRelationship = requirementDb.getRelationships()[0];
+    const foundRelationship = requirementDb.getRelationships()[0];
     expect(foundRelationship.type).toBe(expectedType);
   });
 
@@ -515,12 +516,12 @@ line 2`;
     const expectedDest = 'b';
     const expectedType = requirementDb.Relationships.DERIVES;
 
-    let lines = [`requirementDiagram`, ``, `${expectedSrc} - ${expectedType} -> ${expectedDest}`];
-    let doc = lines.join('\n');
+    const lines = [`requirementDiagram`, ``, `${expectedSrc} - ${expectedType} -> ${expectedDest}`];
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundRelationship = requirementDb.getRelationships()[0];
+    const foundRelationship = requirementDb.getRelationships()[0];
     expect(foundRelationship.type).toBe(expectedType);
   });
 
@@ -529,12 +530,12 @@ line 2`;
     const expectedDest = 'b';
     const expectedType = requirementDb.Relationships.SATISFIES;
 
-    let lines = [`requirementDiagram`, ``, `${expectedSrc} - ${expectedType} -> ${expectedDest}`];
-    let doc = lines.join('\n');
+    const lines = [`requirementDiagram`, ``, `${expectedSrc} - ${expectedType} -> ${expectedDest}`];
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundRelationship = requirementDb.getRelationships()[0];
+    const foundRelationship = requirementDb.getRelationships()[0];
     expect(foundRelationship.type).toBe(expectedType);
   });
 
@@ -543,12 +544,12 @@ line 2`;
     const expectedDest = 'b';
     const expectedType = requirementDb.Relationships.VERIFIES;
 
-    let lines = [`requirementDiagram`, ``, `${expectedSrc} - ${expectedType} -> ${expectedDest}`];
-    let doc = lines.join('\n');
+    const lines = [`requirementDiagram`, ``, `${expectedSrc} - ${expectedType} -> ${expectedDest}`];
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundRelationship = requirementDb.getRelationships()[0];
+    const foundRelationship = requirementDb.getRelationships()[0];
     expect(foundRelationship.type).toBe(expectedType);
   });
 
@@ -557,12 +558,12 @@ line 2`;
     const expectedDest = 'b';
     const expectedType = requirementDb.Relationships.REFINES;
 
-    let lines = [`requirementDiagram`, ``, `${expectedSrc} - ${expectedType} -> ${expectedDest}`];
-    let doc = lines.join('\n');
+    const lines = [`requirementDiagram`, ``, `${expectedSrc} - ${expectedType} -> ${expectedDest}`];
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundRelationship = requirementDb.getRelationships()[0];
+    const foundRelationship = requirementDb.getRelationships()[0];
     expect(foundRelationship.type).toBe(expectedType);
   });
 
@@ -571,12 +572,12 @@ line 2`;
     const expectedDest = 'b';
     const expectedType = requirementDb.Relationships.TRACES;
 
-    let lines = [`requirementDiagram`, ``, `${expectedSrc} - ${expectedType} -> ${expectedDest}`];
-    let doc = lines.join('\n');
+    const lines = [`requirementDiagram`, ``, `${expectedSrc} - ${expectedType} -> ${expectedDest}`];
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundRelationship = requirementDb.getRelationships()[0];
+    const foundRelationship = requirementDb.getRelationships()[0];
     expect(foundRelationship.type).toBe(expectedType);
   });
 
@@ -604,7 +605,7 @@ line 2`;
   it('will accept styling a requirement', function () {
     const expectedName = 'test_req';
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `requirement ${expectedName} {`,
@@ -612,11 +613,11 @@ line 2`;
       `style ${expectedName} fill:#f9f,stroke:#333,stroke-width:4px`,
       ``,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements().get(expectedName);
+    const foundReq = requirementDb.getRequirements().get(expectedName)!;
     const styles = foundReq.cssStyles;
     expect(styles).toEqual(['fill:#f9f', 'stroke:#333', 'stroke-width:4px']);
   });
@@ -624,7 +625,7 @@ line 2`;
   it('will accept styling an element', function () {
     const expectedName = 'test_element';
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `element ${expectedName} {`,
@@ -632,11 +633,11 @@ line 2`;
       `style ${expectedName} fill:#f9f,stroke:#333,stroke-width:4px`,
       ``,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundElement = requirementDb.getElements().get(expectedName);
+    const foundElement = requirementDb.getElements().get(expectedName)!;
     const styles = foundElement.cssStyles;
     expect(styles).toEqual(['fill:#f9f', 'stroke:#333', 'stroke-width:4px']);
   });
@@ -645,7 +646,7 @@ line 2`;
     const expectedRequirementName = 'test_requirement';
     const expectedElementName = 'test_element';
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `requirement ${expectedRequirementName} {`,
@@ -655,14 +656,14 @@ line 2`;
       `style ${expectedRequirementName},${expectedElementName} fill:#f9f,stroke:#333,stroke-width:4px`,
       ``,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundRequirement = requirementDb.getRequirements().get(expectedRequirementName);
+    const foundRequirement = requirementDb.getRequirements().get(expectedRequirementName)!;
     const requirementStyles = foundRequirement.cssStyles;
     expect(requirementStyles).toEqual(['fill:#f9f', 'stroke:#333', 'stroke-width:4px']);
-    let foundElement = requirementDb.getElements().get(expectedElementName);
+    const foundElement = requirementDb.getElements().get(expectedElementName)!;
     const elementStyles = foundElement.cssStyles;
     expect(elementStyles).toEqual(['fill:#f9f', 'stroke:#333', 'stroke-width:4px']);
   });
@@ -670,17 +671,17 @@ line 2`;
   it('will accept defining a class', function () {
     const expectedName = 'myClass';
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `classDef ${expectedName} fill:#f9f,stroke:#333,stroke-width:4px`,
       ``,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundClass = requirementDb.getClasses().get(expectedName);
+    const foundClass = requirementDb.getClasses().get(expectedName);
     expect(foundClass).toEqual({
       id: 'myClass',
       styles: ['fill:#f9f', 'stroke:#333', 'stroke-width:4px'],
@@ -692,23 +693,23 @@ line 2`;
     const firstName = 'firstClass';
     const secondName = 'secondClass';
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `classDef ${firstName},${secondName} fill:#f9f,stroke:#333,stroke-width:4px`,
       ``,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let firstClass = requirementDb.getClasses().get(firstName);
+    const firstClass = requirementDb.getClasses().get(firstName);
     expect(firstClass).toEqual({
       id: 'firstClass',
       styles: ['fill:#f9f', 'stroke:#333', 'stroke-width:4px'],
       textStyles: [],
     });
-    let secondClass = requirementDb.getClasses().get(secondName);
+    const secondClass = requirementDb.getClasses().get(secondName);
     expect(secondClass).toEqual({
       id: 'secondClass',
       styles: ['fill:#f9f', 'stroke:#333', 'stroke-width:4px'],
@@ -720,7 +721,7 @@ line 2`;
     const requirementName = 'myReq';
     const className = 'myClass';
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `requirement ${requirementName} {`,
@@ -729,11 +730,11 @@ line 2`;
       `class ${requirementName} ${className}`,
       ``,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundRequirement = requirementDb.getRequirements().get(requirementName);
+    const foundRequirement = requirementDb.getRequirements().get(requirementName)!;
     expect(foundRequirement.classes).toEqual(['default', className]);
   });
 
@@ -743,7 +744,7 @@ line 2`;
     const firstClassName = 'class1';
     const secondClassName = 'class2';
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `requirement ${requirementName} {`,
@@ -754,13 +755,13 @@ line 2`;
       `class ${requirementName},${elementName} ${firstClassName},${secondClassName}`,
       ``,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let requirement = requirementDb.getRequirements().get(requirementName);
+    const requirement = requirementDb.getRequirements().get(requirementName)!;
     expect(requirement.classes).toEqual(['default', firstClassName, secondClassName]);
-    let element = requirementDb.getElements().get(elementName);
+    const element = requirementDb.getElements().get(elementName)!;
     expect(element.classes).toEqual(['default', firstClassName, secondClassName]);
   });
 
@@ -768,7 +769,7 @@ line 2`;
     const requirementName = 'myReq';
     const className = 'myClass';
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `requirement ${requirementName} {`,
@@ -777,11 +778,11 @@ line 2`;
       `${requirementName}:::${className}`,
       ``,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundRequirement = requirementDb.getRequirements().get(requirementName);
+    const foundRequirement = requirementDb.getRequirements().get(requirementName)!;
     expect(foundRequirement.classes).toEqual(['default', className]);
   });
 
@@ -790,7 +791,7 @@ line 2`;
     const firstClassName = 'class1';
     const secondClassName = 'class2';
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `requirement ${requirementName} {`,
@@ -800,11 +801,11 @@ line 2`;
       `${requirementName}:::${firstClassName},${secondClassName}`,
       ``,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundRequirement = requirementDb.getRequirements().get(requirementName);
+    const foundRequirement = requirementDb.getRequirements().get(requirementName)!;
     expect(foundRequirement.classes).toEqual(['default', firstClassName, secondClassName]);
   });
 
@@ -814,7 +815,7 @@ line 2`;
     const firstClassName = 'class1';
     const secondClassName = 'class2';
 
-    let lines = [
+    const lines = [
       `requirementDiagram`,
       ``,
       `requirement ${requirementName}:::${firstClassName} {`,
@@ -826,13 +827,13 @@ line 2`;
       `classDef ${secondClassName} color:blue`,
       ``,
     ];
-    let doc = lines.join('\n');
+    const doc = lines.join('\n');
 
     reqDiagram.parser.parse(doc);
 
-    let foundRequirement = requirementDb.getRequirements().get(requirementName);
+    const foundRequirement = requirementDb.getRequirements().get(requirementName)!;
     expect(foundRequirement.classes).toEqual(['default', firstClassName]);
-    let foundElement = requirementDb.getElements().get(elementName);
+    const foundElement = requirementDb.getElements().get(elementName)!;
     expect(foundElement.classes).toEqual(['default', firstClassName, secondClassName]);
   });
 
