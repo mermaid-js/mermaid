@@ -1,11 +1,294 @@
+// @ts-expect-error Incorrect khroma types
 import { adjust, darken, invert, isDark, lighten } from 'khroma';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
 } from './erDiagram-oldHardcodedValues.js';
 import { mkBorder } from './theme-helpers.js';
+import type {
+  CynefinThemeVariables,
+  RadarThemeVariables,
+  WardleyThemeVariables,
+  XYChartThemeVariables,
+  PacketThemeVariables,
+} from './theme-helpers.js';
+
+type NumberedThemeKey<P extends string> = Extract<keyof Theme, `${P}${number}`>;
 
 class Theme {
+  background: string;
+  primaryColor: string;
+  secondaryColor: string;
+  mainBkg: string;
+  secondBkg: string;
+  lineColor: string;
+  border1: string;
+  border2: string;
+  arrowheadColor: string;
+  fontFamily: string;
+  fontSize: string;
+  tertiaryColor: string;
+  primaryBorderColor: string;
+  secondaryBorderColor: string;
+  tertiaryBorderColor: string;
+  primaryTextColor: string;
+  secondaryTextColor: string;
+  tertiaryTextColor: string;
+  textColor: string;
+  THEME_COLOR_LIMIT: number;
+  radius: number;
+  strokeWidth: number;
+  nodeBkg: string;
+  nodeBorder: string;
+  clusterBkg: string;
+  clusterBorder: string;
+  defaultLinkColor: string;
+  titleColor: string;
+  edgeLabelBackground: string;
+  actorBorder: string;
+  actorBkg: string;
+  actorTextColor: string;
+  actorLineColor: string;
+  signalColor: string;
+  signalTextColor: string;
+  labelBoxBkgColor: string;
+  labelBoxBorderColor: string;
+  labelTextColor: string;
+  loopTextColor: string;
+  noteBorderColor: string;
+  noteBkgColor: string;
+  noteTextColor: string;
+  activationBorderColor: string;
+  activationBkgColor: string;
+  sequenceNumberColor: string;
+  sectionBkgColor: string;
+  altSectionBkgColor: string;
+  sectionBkgColor2: string;
+  excludeBkgColor: string;
+  taskBorderColor: string;
+  taskBkgColor: string;
+  taskTextLightColor: string;
+  taskTextColor: string;
+  taskTextDarkColor: string;
+  taskTextOutsideColor: string;
+  taskTextClickableColor: string;
+  activeTaskBorderColor: string;
+  activeTaskBkgColor: string;
+  gridColor: string;
+  doneTaskBkgColor: string;
+  doneTaskBorderColor: string;
+  critBorderColor: string;
+  critBkgColor: string;
+  todayLineColor: string;
+  vertLineColor: string;
+  personBorder: string;
+  personBkg: string;
+  archEdgeColor: string;
+  archEdgeArrowColor: string;
+  archEdgeWidth: string;
+  archGroupBorderColor: string;
+  archGroupBorderWidth: string;
+  noteFontWeight: string;
+  fontWeight: string;
+  labelColor: string;
+  errorBkgColor: string;
+  errorTextColor: string;
+  useGradient: boolean;
+  gradientStart: string;
+  gradientStop: string;
+  dropShadow: string;
+  rectBkgColor!: string;
+  scaleLabelColor!: string;
+  rowOdd!: string;
+  rowEven!: string;
+  transitionColor!: string;
+  transitionLabelColor!: string;
+  stateLabelColor!: string;
+  stateBkg!: string;
+  labelBackgroundColor!: string;
+  compositeBackground!: string;
+  altBackground!: string;
+  compositeTitleBackground!: string;
+  compositeBorder!: string;
+  innerEndBackground!: string;
+  specialStateColor!: string;
+  classText!: string;
+  fillType0!: string;
+  fillType1!: string;
+  fillType2!: string;
+  fillType3!: string;
+  fillType4!: string;
+  fillType5!: string;
+  fillType6!: string;
+  fillType7!: string;
+  pie1!: string;
+  pie2!: string;
+  pie3!: string;
+  pie4!: string;
+  pie5!: string;
+  pie6!: string;
+  pie7!: string;
+  pie8!: string;
+  pie9!: string;
+  pie10!: string;
+  pie11!: string;
+  pie12!: string;
+  pieTitleTextSize!: string;
+  pieTitleTextColor!: string;
+  pieSectionTextSize!: string;
+  pieSectionTextColor!: string;
+  pieLegendTextSize!: string;
+  pieLegendTextColor!: string;
+  pieStrokeColor!: string;
+  pieStrokeWidth!: string;
+  pieOuterStrokeWidth!: string;
+  pieOuterStrokeColor!: string;
+  pieOpacity!: string;
+  venn1!: string;
+  venn2!: string;
+  venn3!: string;
+  venn4!: string;
+  venn5!: string;
+  venn6!: string;
+  venn7!: string;
+  venn8!: string;
+  vennTitleTextColor!: string;
+  vennSetTextColor!: string;
+  cynefin!: CynefinThemeVariables;
+  quadrant1Fill!: string;
+  quadrant2Fill!: string;
+  quadrant3Fill!: string;
+  quadrant4Fill!: string;
+  quadrant1TextFill!: string;
+  quadrant2TextFill!: string;
+  quadrant3TextFill!: string;
+  quadrant4TextFill!: string;
+  quadrantPointFill!: string;
+  quadrantPointTextFill!: string;
+  quadrantXAxisTextFill!: string;
+  quadrantYAxisTextFill!: string;
+  quadrantInternalBorderStrokeFill!: string;
+  quadrantExternalBorderStrokeFill!: string;
+  quadrantTitleFill!: string;
+  packet!: PacketThemeVariables;
+  radar!: RadarThemeVariables;
+  wardleyEvolutionColor!: string;
+  wardley!: WardleyThemeVariables;
+  xyChart!: XYChartThemeVariables;
+  requirementBackground!: string;
+  requirementBorderColor!: string;
+  requirementBorderSize!: string;
+  requirementTextColor!: string;
+  relationColor!: string;
+  relationLabelBackground!: string;
+  relationLabelColor!: string;
+  git0!: string;
+  git1!: string;
+  git2!: string;
+  git3!: string;
+  git4!: string;
+  git5!: string;
+  git6!: string;
+  git7!: string;
+  gitInv0!: string;
+  gitInv1!: string;
+  gitInv2!: string;
+  gitInv3!: string;
+  gitInv4!: string;
+  gitInv5!: string;
+  gitInv6!: string;
+  gitInv7!: string;
+  gitBranchLabel0!: string;
+  gitBranchLabel1!: string;
+  gitBranchLabel2!: string;
+  gitBranchLabel3!: string;
+  gitBranchLabel4!: string;
+  gitBranchLabel5!: string;
+  gitBranchLabel6!: string;
+  gitBranchLabel7!: string;
+  tagLabelColor!: string;
+  tagLabelBackground!: string;
+  tagLabelBorder!: string;
+  tagLabelFontSize!: string;
+  commitLabelColor!: string;
+  commitLabelBackground!: string;
+  commitLabelFontSize!: string;
+  emUiFill!: string;
+  emUiStroke!: string;
+  emProcessorFill!: string;
+  emProcessorStroke!: string;
+  emReadModelFill!: string;
+  emReadModelStroke!: string;
+  emCommandFill!: string;
+  emCommandStroke!: string;
+  emEventFill!: string;
+  emEventStroke!: string;
+  emSwimlaneBackgroundOdd!: string;
+  emSwimlaneBackgroundStroke!: string;
+  emArrowhead!: string;
+  emRelationStroke!: string;
+  attributeBackgroundColorOdd!: string;
+  attributeBackgroundColorEven!: string;
+  cScale0!: string;
+  cScale1!: string;
+  cScale2!: string;
+  cScale3!: string;
+  cScale4!: string;
+  cScale5!: string;
+  cScale6!: string;
+  cScale7!: string;
+  cScale8!: string;
+  cScale9!: string;
+  cScale10!: string;
+  cScale11!: string;
+  cScaleInv0!: string;
+  cScaleInv1!: string;
+  cScaleInv2!: string;
+  cScaleInv3!: string;
+  cScaleInv4!: string;
+  cScaleInv5!: string;
+  cScaleInv6!: string;
+  cScaleInv7!: string;
+  cScaleInv8!: string;
+  cScaleInv9!: string;
+  cScaleInv10!: string;
+  cScaleInv11!: string;
+  cScalePeer0!: string;
+  cScalePeer1!: string;
+  cScalePeer2!: string;
+  cScalePeer3!: string;
+  cScalePeer4!: string;
+  cScalePeer5!: string;
+  cScalePeer6!: string;
+  cScalePeer7!: string;
+  cScalePeer8!: string;
+  cScalePeer9!: string;
+  cScalePeer10!: string;
+  cScalePeer11!: string;
+  cScaleLabel0!: string;
+  cScaleLabel1!: string;
+  cScaleLabel2!: string;
+  cScaleLabel3!: string;
+  cScaleLabel4!: string;
+  cScaleLabel5!: string;
+  cScaleLabel6!: string;
+  cScaleLabel7!: string;
+  cScaleLabel8!: string;
+  cScaleLabel9!: string;
+  cScaleLabel10!: string;
+  cScaleLabel11!: string;
+  surface0!: string;
+  surface1!: string;
+  surface2!: string;
+  surface3!: string;
+  surface4!: string;
+  surfacePeer0!: string;
+  surfacePeer1!: string;
+  surfacePeer2!: string;
+  surfacePeer3!: string;
+  surfacePeer4!: string;
+  darkMode?: boolean;
+  tagBorder?: string;
   constructor() {
     /* Base vales */
     this.background = '#f4f4f4';
@@ -135,17 +418,26 @@ class Theme {
     this.cScale9 = this.cScale9 || adjust(this.primaryColor, { h: 270 });
     this.cScale10 = this.cScale10 || adjust(this.primaryColor, { h: 300 });
     this.cScale11 = this.cScale11 || adjust(this.primaryColor, { h: 330 });
-    this['cScalePeer' + 1] = this['cScalePeer' + 1] || darken(this.secondaryColor, 45);
-    this['cScalePeer' + 2] = this['cScalePeer' + 2] || darken(this.tertiaryColor, 40);
+    this[('cScalePeer' + 1) as NumberedThemeKey<'cScalePeer'>] =
+      this[('cScalePeer' + 1) as NumberedThemeKey<'cScalePeer'>] || darken(this.secondaryColor, 45);
+    this[('cScalePeer' + 2) as NumberedThemeKey<'cScalePeer'>] =
+      this[('cScalePeer' + 2) as NumberedThemeKey<'cScalePeer'>] || darken(this.tertiaryColor, 40);
     for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
       // Setup the peer color for the set, useful for borders
-      this['cScale' + i] = darken(this['cScale' + i], 10);
-      this['cScalePeer' + i] = this['cScalePeer' + i] || darken(this['cScale' + i], 25);
+      this[('cScale' + i) as NumberedThemeKey<'cScale'>] = darken(
+        this[('cScale' + i) as NumberedThemeKey<'cScale'>],
+        10
+      );
+      this[('cScalePeer' + i) as NumberedThemeKey<'cScalePeer'>] =
+        this[('cScalePeer' + i) as NumberedThemeKey<'cScalePeer'>] ||
+        darken(this[('cScale' + i) as NumberedThemeKey<'cScale'>], 25);
     }
 
     // Setup the inverted color for the set
     for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
-      this['cScaleInv' + i] = this['cScaleInv' + i] || adjust(this['cScale' + i], { h: 180 });
+      this[('cScaleInv' + i) as NumberedThemeKey<'cScaleInv'>] =
+        this[('cScaleInv' + i) as NumberedThemeKey<'cScaleInv'>] ||
+        adjust(this[('cScale' + i) as NumberedThemeKey<'cScale'>], { h: 180 });
     }
 
     // Setup the label color for the set
@@ -155,14 +447,17 @@ class Theme {
         : this.labelTextColor;
 
     for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
-      this['cScaleLabel' + i] = this['cScaleLabel' + i] || this.scaleLabelColor;
+      this[('cScaleLabel' + i) as NumberedThemeKey<'cScaleLabel'>] =
+        this[('cScaleLabel' + i) as NumberedThemeKey<'cScaleLabel'>] || this.scaleLabelColor;
     }
 
     for (let i = 0; i < 5; i++) {
-      this['surface' + i] =
-        this['surface' + i] || adjust(this.mainBkg, { h: 30, s: -30, l: -(5 + i * 5) });
-      this['surfacePeer' + i] =
-        this['surfacePeer' + i] || adjust(this.mainBkg, { h: 30, s: -30, l: -(8 + i * 5) });
+      this[('surface' + i) as NumberedThemeKey<'surface'>] =
+        this[('surface' + i) as NumberedThemeKey<'surface'>] ||
+        adjust(this.mainBkg, { h: 30, s: -30, l: -(5 + i * 5) });
+      this[('surfacePeer' + i) as NumberedThemeKey<'surfacePeer'>] =
+        this[('surfacePeer' + i) as NumberedThemeKey<'surfacePeer'>] ||
+        adjust(this.mainBkg, { h: 30, s: -30, l: -(8 + i * 5) });
     }
 
     /* Flowchart variables */
@@ -446,30 +741,30 @@ class Theme {
       this.attributeBackgroundColorEven || oldAttributeBackgroundColorEven;
     /* -------------------------------------------------- */
   }
-  calculate(overrides) {
+  calculate(overrides?: Partial<Theme>) {
     if (typeof overrides !== 'object') {
       // Calculate colors form base colors
       this.updateColors();
       return;
     }
 
-    const keys = Object.keys(overrides);
+    const keys = Object.keys(overrides) as (keyof Theme)[];
 
     // Copy values from overrides, this is mainly for base colors
     keys.forEach((k) => {
-      this[k] = overrides[k];
+      this[k] = overrides[k] as never;
     });
 
     // Calculate colors form base colors
     this.updateColors();
     // Copy values from overrides again in case of an override of derived value
     keys.forEach((k) => {
-      this[k] = overrides[k];
+      this[k] = overrides[k] as never;
     });
   }
 }
 
-export const getThemeVariables = (userOverrides) => {
+export const getThemeVariables = (userOverrides?: Partial<Theme>): Theme => {
   const theme = new Theme();
   theme.calculate(userOverrides);
   return theme;
