@@ -10,7 +10,7 @@ describe('given a string representing a class, ', function () {
         label: 'Car',
       };
 
-      let actual = svgDraw.getClassTitleString(classDef);
+      const actual = svgDraw.getClassTitleString(classDef);
       expect(actual).toBe('Car<T>');
     });
     it('should return correct text for nested generics', function () {
@@ -20,7 +20,7 @@ describe('given a string representing a class, ', function () {
         label: 'Car',
       };
 
-      let actual = svgDraw.getClassTitleString(classDef);
+      const actual = svgDraw.getClassTitleString(classDef);
       expect(actual).toBe('Car<T<T>>');
     });
   });

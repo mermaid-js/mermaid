@@ -20,7 +20,8 @@ export class ErDB implements DiagramDB {
   private classes = new Map<string, EntityClass>();
   private direction = 'TB';
 
-  private Cardinality = {
+  // Accessed via `yy.Cardinality` by the JISON parser, so it is part of the public API.
+  public readonly Cardinality = {
     ZERO_OR_ONE: 'ZERO_OR_ONE',
     ZERO_OR_MORE: 'ZERO_OR_MORE',
     ONE_OR_MORE: 'ONE_OR_MORE',
@@ -28,7 +29,8 @@ export class ErDB implements DiagramDB {
     MD_PARENT: 'MD_PARENT',
   };
 
-  private Identification = {
+  // Accessed via `yy.Identification` by the JISON parser, so it is part of the public API.
+  public readonly Identification = {
     NON_IDENTIFYING: 'NON_IDENTIFYING',
     IDENTIFYING: 'IDENTIFYING',
   };

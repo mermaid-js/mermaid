@@ -1,5 +1,6 @@
 import { setConfig } from '../../../config.js';
 import { ErDB } from '../erDb.js';
+// @ts-ignore: JISON doesn't support types
 import erDiagram from './erDiagram.jison'; // jison file
 
 setConfig({
@@ -97,6 +98,7 @@ describe('when parsing ER diagram it...', function () {
       expect(() => {
         erDiagram.parser.parse(`erDiagram\n "Blo%rf"\n`);
         const entities = erDb.getEntities();
+        // @ts-expect-error -- `name` refers to the global `window.name` here; the check is never reached as parse() throws first.
         expect(entities.has(name)).toBe(false);
       }).toThrow();
     });
@@ -104,6 +106,7 @@ describe('when parsing ER diagram it...', function () {
       expect(() => {
         erDiagram.parser.parse(`erDiagram\n "Blo\\rf"\n`);
         const entities = erDb.getEntities();
+        // @ts-expect-error -- `name` refers to the global `window.name` here; the check is never reached as parse() throws first.
         expect(entities.has(name)).toBe(false);
       }).toThrow();
     });
@@ -141,7 +144,7 @@ describe('when parsing ER diagram it...', function () {
       erDiagram.parser.parse(`erDiagram\n${entity}["${alias}"]\n`);
       const entities = erDb.getEntities();
       expect(entities.has(entity)).toBe(true);
-      expect(entities.get(entity).alias).toBe(alias);
+      expect(entities.get(entity)!.alias).toBe(alias);
     });
 
     it('can have an alias even if the relationship is defined before buzz', function () {
@@ -154,8 +157,8 @@ describe('when parsing ER diagram it...', function () {
       const entities = erDb.getEntities();
       expect(entities.has(firstEntity)).toBe(true);
       expect(entities.has(secondEntity)).toBe(true);
-      expect(entities.get(firstEntity).alias).toBe(alias);
-      expect(entities.get(secondEntity).alias).toBe('');
+      expect(entities.get(firstEntity)!.alias).toBe(alias);
+      expect(entities.get(secondEntity)!.alias).toBe('');
     });
 
     it('can have an alias even if the relationship is defined after buzz', function () {
@@ -168,8 +171,8 @@ describe('when parsing ER diagram it...', function () {
       const entities = erDb.getEntities();
       expect(entities.has(firstEntity)).toBe(true);
       expect(entities.has(secondEntity)).toBe(true);
-      expect(entities.get(firstEntity).alias).toBe(alias);
-      expect(entities.get(secondEntity).alias).toBe('');
+      expect(entities.get(firstEntity)!.alias).toBe(alias);
+      expect(entities.get(secondEntity)!.alias).toBe('');
     });
 
     it('can start with an underscore', function () {
@@ -193,10 +196,10 @@ describe('when parsing ER diagram it...', function () {
       const entities = erDb.getEntities();
 
       expect(entities.size).toBe(1);
-      expect(entities.get(entity).attributes.length).toBe(3);
-      expect(entities.get(entity).attributes[0].name).toBe('myBookTitle');
-      expect(entities.get(entity).attributes[1].name).toBe('MYBOOKSUBTITLE_1');
-      expect(entities.get(entity).attributes[2].name).toBe('author-ref[name](1)');
+      expect(entities.get(entity)!.attributes.length).toBe(3);
+      expect(entities.get(entity)!.attributes[0].name).toBe('myBookTitle');
+      expect(entities.get(entity)!.attributes[1].name).toBe('MYBOOKSUBTITLE_1');
+      expect(entities.get(entity)!.attributes[2].name).toBe('author-ref[name](1)');
     });
 
     it('should allow asterisk at the start of attribute name', function () {
@@ -206,7 +209,7 @@ describe('when parsing ER diagram it...', function () {
       erDiagram.parser.parse(`erDiagram\n${entity}{\n${attribute}}`);
       const entities = erDb.getEntities();
       expect(entities.size).toBe(1);
-      expect(entities.get(entity).attributes.length).toBe(1);
+      expect(entities.get(entity)!.attributes.length).toBe(1);
     });
 
     it('should allow asterisks at the start of attribute declared with type and name', () => {
@@ -216,7 +219,7 @@ describe('when parsing ER diagram it...', function () {
       erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}}`);
       const entities = erDb.getEntities();
       expect(entities.size).toBe(1);
-      expect(entities.get(entity).attributes.length).toBe(1);
+      expect(entities.get(entity)!.attributes.length).toBe(1);
     });
 
     it('should allow commas within an attribute type', () => {
@@ -228,9 +231,9 @@ describe('when parsing ER diagram it...', function () {
       erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}}`);
       const entities = erDb.getEntities();
       expect(entities.size).toBe(1);
-      expect(entities.get(entity).attributes.length).toBe(1);
-      expect(entities.get(entity).attributes[0].type).toBe(type);
-      expect(entities.get(entity).attributes[0].name).toBe(name);
+      expect(entities.get(entity)!.attributes.length).toBe(1);
+      expect(entities.get(entity)!.attributes[0].type).toBe(type);
+      expect(entities.get(entity)!.attributes[0].name).toBe(name);
     });
 
     it('should not allow leading numbers, dashes or brackets', function () {
@@ -251,9 +254,9 @@ describe('when parsing ER diagram it...', function () {
       erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
       const entities = erDb.getEntities();
       expect(entities.size).toBe(1);
-      expect(entities.get(entity).attributes.length).toBe(1);
-      expect(entities.get(entity).attributes[0].type).toBe('string');
-      expect(entities.get(entity).attributes[0].name).toBe('geo.accuracy');
+      expect(entities.get(entity)!.attributes.length).toBe(1);
+      expect(entities.get(entity)!.attributes[0].type).toBe('string');
+      expect(entities.get(entity)!.attributes[0].name).toBe('geo.accuracy');
     });
 
     it('should allow a backtick-escaped attribute name together with a key and comment', function () {
@@ -263,10 +266,10 @@ describe('when parsing ER diagram it...', function () {
       erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
       const entities = erDb.getEntities();
       expect(entities.size).toBe(1);
-      expect(entities.get(entity).attributes.length).toBe(1);
-      expect(entities.get(entity).attributes[0].name).toBe('geo.accuracy');
-      expect(entities.get(entity).attributes[0].keys).toContain('PK');
-      expect(entities.get(entity).attributes[0].comment).toBe('the comment');
+      expect(entities.get(entity)!.attributes.length).toBe(1);
+      expect(entities.get(entity)!.attributes[0].name).toBe('geo.accuracy');
+      expect(entities.get(entity)!.attributes[0].keys).toContain('PK');
+      expect(entities.get(entity)!.attributes[0].comment).toBe('the comment');
     });
 
     it('should allow a backtick-escaped attribute type', function () {
@@ -276,9 +279,9 @@ describe('when parsing ER diagram it...', function () {
       erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
       const entities = erDb.getEntities();
       expect(entities.size).toBe(1);
-      expect(entities.get(entity).attributes.length).toBe(1);
-      expect(entities.get(entity).attributes[0].type).toBe('my.type');
-      expect(entities.get(entity).attributes[0].name).toBe('address');
+      expect(entities.get(entity)!.attributes.length).toBe(1);
+      expect(entities.get(entity)!.attributes[0].type).toBe('my.type');
+      expect(entities.get(entity)!.attributes[0].name).toBe('address');
     });
 
     it('should allow a question mark suffix on an attribute type', function () {
@@ -288,9 +291,9 @@ describe('when parsing ER diagram it...', function () {
       erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
       const entities = erDb.getEntities();
       expect(entities.size).toBe(1);
-      expect(entities.get(entity).attributes.length).toBe(1);
-      expect(entities.get(entity).attributes[0].type).toBe('string?');
-      expect(entities.get(entity).attributes[0].name).toBe('alias');
+      expect(entities.get(entity)!.attributes.length).toBe(1);
+      expect(entities.get(entity)!.attributes[0].type).toBe('string?');
+      expect(entities.get(entity)!.attributes[0].name).toBe('alias');
     });
 
     it('should allow a question mark suffix on an attribute type with a key and comment', function () {
@@ -300,10 +303,10 @@ describe('when parsing ER diagram it...', function () {
       erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
       const entities = erDb.getEntities();
       expect(entities.size).toBe(1);
-      expect(entities.get(entity).attributes.length).toBe(1);
-      expect(entities.get(entity).attributes[0].type).toBe('string?');
-      expect(entities.get(entity).attributes[0].keys).toEqual(['UK']);
-      expect(entities.get(entity).attributes[0].comment).toBe('optional display name');
+      expect(entities.get(entity)!.attributes.length).toBe(1);
+      expect(entities.get(entity)!.attributes[0].type).toBe('string?');
+      expect(entities.get(entity)!.attributes[0].keys).toEqual(['UK']);
+      expect(entities.get(entity)!.attributes[0].comment).toBe('optional display name');
     });
   });
 
@@ -314,7 +317,7 @@ describe('when parsing ER diagram it...', function () {
     erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
     const entities = erDb.getEntities();
     expect(entities.size).toBe(1);
-    expect(entities.get(entity).attributes.length).toBe(1);
+    expect(entities.get(entity)!.attributes.length).toBe(1);
   });
 
   it('should allow an entity with a single attribute to be defined with a key', function () {
@@ -324,7 +327,7 @@ describe('when parsing ER diagram it...', function () {
     erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
     const entities = erDb.getEntities();
     expect(entities.size).toBe(1);
-    expect(entities.get(entity).attributes.length).toBe(1);
+    expect(entities.get(entity)!.attributes.length).toBe(1);
   });
 
   it('should allow an entity with a single attribute to be defined with a comment', function () {
@@ -334,8 +337,8 @@ describe('when parsing ER diagram it...', function () {
     erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
     const entities = erDb.getEntities();
     expect(entities.size).toBe(1);
-    expect(entities.get(entity).attributes.length).toBe(1);
-    expect(entities.get(entity).attributes[0].comment).toBe('comment');
+    expect(entities.get(entity)!.attributes.length).toBe(1);
+    expect(entities.get(entity)!.attributes[0].comment).toBe('comment');
   });
 
   it('should allow an entity with a single attribute to be defined with a key and a comment', function () {
@@ -345,7 +348,7 @@ describe('when parsing ER diagram it...', function () {
     erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
     const entities = erDb.getEntities();
     expect(entities.size).toBe(1);
-    expect(entities.get(entity).attributes.length).toBe(1);
+    expect(entities.get(entity)!.attributes.length).toBe(1);
   });
 
   it('should allow an entity with attribute starting with fk, pk or uk and a comment', function () {
@@ -359,7 +362,7 @@ describe('when parsing ER diagram it...', function () {
       `erDiagram\n${entity} {\n${attribute1} \n\n${attribute2}\n${attribute3}\n${attribute4}\n}`
     );
     const entities = erDb.getEntities();
-    expect(entities.get(entity).attributes.length).toBe(4);
+    expect(entities.get(entity)!.attributes.length).toBe(4);
   });
 
   it('should allow an entity with attributes that have many constraints and comments', function () {
@@ -374,14 +377,14 @@ describe('when parsing ER diagram it...', function () {
       `erDiagram\n${entity} {\n${attribute1}\n${attribute2}\n${attribute3}\n${attribute4}\n${attribute5}\n}`
     );
     const entities = erDb.getEntities();
-    expect(entities.get(entity).attributes[0].keys).toEqual(['PK', 'FK']);
-    expect(entities.get(entity).attributes[0].comment).toBe('comment1');
-    expect(entities.get(entity).attributes[1].keys).toEqual(['PK', 'UK', 'FK']);
-    expect(entities.get(entity).attributes[2].keys).toEqual(['PK', 'UK']);
-    expect(entities.get(entity).attributes[2].comment).toBe('comment3');
-    expect(entities.get(entity).attributes[3].keys).toEqual([]);
-    expect(entities.get(entity).attributes[4].keys).toEqual([]);
-    expect(entities.get(entity).attributes[4].comment).toBe('comment5');
+    expect(entities.get(entity)!.attributes[0].keys).toEqual(['PK', 'FK']);
+    expect(entities.get(entity)!.attributes[0].comment).toBe('comment1');
+    expect(entities.get(entity)!.attributes[1].keys).toEqual(['PK', 'UK', 'FK']);
+    expect(entities.get(entity)!.attributes[2].keys).toEqual(['PK', 'UK']);
+    expect(entities.get(entity)!.attributes[2].comment).toBe('comment3');
+    expect(entities.get(entity)!.attributes[3].keys).toEqual([]);
+    expect(entities.get(entity)!.attributes[4].keys).toEqual([]);
+    expect(entities.get(entity)!.attributes[4].comment).toBe('comment5');
   });
 
   it('should allow an entity with attribute that has a generic type', function () {
@@ -395,7 +398,7 @@ describe('when parsing ER diagram it...', function () {
     );
     const entities = erDb.getEntities();
     expect(entities.size).toBe(1);
-    expect(entities.get(entity).attributes.length).toBe(3);
+    expect(entities.get(entity)!.attributes.length).toBe(3);
   });
 
   it('should allow an entity with attribute that is an array', function () {
@@ -406,7 +409,7 @@ describe('when parsing ER diagram it...', function () {
     erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute1}\n${attribute2}\n}`);
     const entities = erDb.getEntities();
     expect(entities.size).toBe(1);
-    expect(entities.get(entity).attributes.length).toBe(2);
+    expect(entities.get(entity)!.attributes.length).toBe(2);
   });
 
   it('should allow an entity with attribute that is a limited length string', function () {
@@ -417,9 +420,9 @@ describe('when parsing ER diagram it...', function () {
     erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute1}\n${attribute2}\n}`);
     const entities = erDb.getEntities();
     expect(entities.size).toBe(1);
-    expect(entities.get(entity).attributes.length).toBe(2);
-    expect(entities.get(entity).attributes[0].type).toBe('character(10)');
-    expect(entities.get(entity).attributes[1].type).toBe('varchar(5)');
+    expect(entities.get(entity)!.attributes.length).toBe(2);
+    expect(entities.get(entity)!.attributes[0].type).toBe('character(10)');
+    expect(entities.get(entity)!.attributes[1].type).toBe('varchar(5)');
   });
 
   it('should allow an entity with multiple attributes to be defined', function () {
@@ -432,7 +435,7 @@ describe('when parsing ER diagram it...', function () {
       `erDiagram\n${entity} {\n${attribute1}\n${attribute2}\n${attribute3}\n}`
     );
     const entities = erDb.getEntities();
-    expect(entities.get(entity).attributes.length).toBe(3);
+    expect(entities.get(entity)!.attributes.length).toBe(3);
   });
 
   it('should allow attribute definitions to be split into multiple blocks', function () {
@@ -445,7 +448,7 @@ describe('when parsing ER diagram it...', function () {
       `erDiagram\n${entity} {\n${attribute1}\n}\n${entity} {\n${attribute2}\n${attribute3}\n}`
     );
     const entities = erDb.getEntities();
-    expect(entities.get(entity).attributes.length).toBe(3);
+    expect(entities.get(entity)!.attributes.length).toBe(3);
   });
 
   it('should allow an empty attribute block', function () {
@@ -454,7 +457,7 @@ describe('when parsing ER diagram it...', function () {
     erDiagram.parser.parse(`erDiagram\n${entity} {}`);
     const entities = erDb.getEntities();
     expect(entities.has('BOOK')).toBe(true);
-    expect(entities.get(entity).attributes.length).toBe(0);
+    expect(entities.get(entity)!.attributes.length).toBe(0);
   });
 
   it('should allow an attribute block to start immediately after the entity name', function () {
@@ -463,7 +466,7 @@ describe('when parsing ER diagram it...', function () {
     erDiagram.parser.parse(`erDiagram\n${entity}{}`);
     const entities = erDb.getEntities();
     expect(entities.has('BOOK')).toBe(true);
-    expect(entities.get(entity).attributes.length).toBe(0);
+    expect(entities.get(entity)!.attributes.length).toBe(0);
   });
 
   it('should allow an attribute block to be separated from the entity name by spaces', function () {
@@ -472,7 +475,7 @@ describe('when parsing ER diagram it...', function () {
     erDiagram.parser.parse(`erDiagram\n${entity}         {}`);
     const entities = erDb.getEntities();
     expect(entities.has('BOOK')).toBe(true);
-    expect(entities.get(entity).attributes.length).toBe(0);
+    expect(entities.get(entity)!.attributes.length).toBe(0);
   });
 
   it('should allow whitespace before and after attribute definitions', function () {
@@ -482,7 +485,7 @@ describe('when parsing ER diagram it...', function () {
     erDiagram.parser.parse(`erDiagram\n${entity} {\n  \n\n  ${attribute}\n\n  \n}`);
     const entities = erDb.getEntities();
     expect(entities.size).toBe(1);
-    expect(entities.get(entity).attributes.length).toBe(1);
+    expect(entities.get(entity)!.attributes.length).toBe(1);
   });
 
   it('should allow no whitespace before and after attribute definitions', function () {
@@ -492,7 +495,7 @@ describe('when parsing ER diagram it...', function () {
     erDiagram.parser.parse(`erDiagram\n${entity}{${attribute}}`);
     const entities = erDb.getEntities();
     expect(entities.size).toBe(1);
-    expect(entities.get(entity).attributes.length).toBe(1);
+    expect(entities.get(entity)!.attributes.length).toBe(1);
   });
 
   it('should associate two entities correctly', function () {
@@ -934,7 +937,7 @@ describe('when parsing ER diagram it...', function () {
         style ${entityName} color:red
       `);
 
-    expect(erDb.getEntity(entityName).cssStyles).toEqual(['color:red']);
+    expect(erDb.getEntity(entityName)!.cssStyles).toEqual(['color:red']);
   });
 
   it('should be possible to apply multiple styles to an entity at the same time', function () {
@@ -946,7 +949,11 @@ describe('when parsing ER diagram it...', function () {
       `
     );
 
-    expect(erDb.getEntity(entityName).cssStyles).toEqual(['color:red', 'stroke:blue', 'fill:#f9f']);
+    expect(erDb.getEntity(entityName)!.cssStyles).toEqual([
+      'color:red',
+      'stroke:blue',
+      'fill:#f9f',
+    ]);
   });
 
   it('should be possible to apply multiple separately defined styles', function () {
@@ -959,14 +966,14 @@ describe('when parsing ER diagram it...', function () {
       `
     );
 
-    expect(erDb.getEntity(entityName).cssStyles).toEqual(['color:red', 'fill:#f9f']);
+    expect(erDb.getEntity(entityName)!.cssStyles).toEqual(['color:red', 'fill:#f9f']);
   });
 
   it('should be possible to assign a class to an entity', function () {
     const entityName = 'CUSTOMER';
     erDiagram.parser.parse(`erDiagram\n${entityName}\nclass ${entityName} myClass`);
 
-    expect(erDb.getEntity(entityName).cssClasses).toBe('default myClass');
+    expect(erDb.getEntity(entityName)!.cssClasses).toBe('default myClass');
   });
 
   it('should be possible to assign multiple classes to an entity at the same time', function () {
@@ -975,7 +982,9 @@ describe('when parsing ER diagram it...', function () {
       `erDiagram\n${entityName}\nclass ${entityName} firstClass, secondClass, thirdClass`
     );
 
-    expect(erDb.getEntity(entityName).cssClasses).toBe('default firstClass secondClass thirdClass');
+    expect(erDb.getEntity(entityName)!.cssClasses).toBe(
+      'default firstClass secondClass thirdClass'
+    );
   });
 
   it('should be possible to assign multiple separately defined classes to an entity', function () {
@@ -984,7 +993,7 @@ describe('when parsing ER diagram it...', function () {
       `erDiagram\n${entityName}\nclass ${entityName} firstClass\nclass ${entityName} secondClass`
     );
 
-    expect(erDb.getEntity(entityName).cssClasses).toBe('default firstClass secondClass');
+    expect(erDb.getEntity(entityName)!.cssClasses).toBe('default firstClass secondClass');
   });
 
   it('should be possible to configure the default class and have it apply to each entity', function () {
@@ -1009,8 +1018,8 @@ describe('when parsing ER diagram it...', function () {
       ],
     ]);
 
-    expect(erDb.getEntity(firstEntity).cssClasses).toBe('default');
-    expect(erDb.getEntity(secondEntity).cssClasses).toBe('default');
+    expect(erDb.getEntity(firstEntity)!.cssClasses).toBe('default');
+    expect(erDb.getEntity(secondEntity)!.cssClasses).toBe('default');
     expect(erDb.getClasses()).toEqual(expectedOutput);
   });
 
@@ -1074,7 +1083,7 @@ describe('when parsing ER diagram it...', function () {
     const className = 'myClass';
     erDiagram.parser.parse(`erDiagram\n${entityName}:::${className}`);
 
-    expect(erDb.getEntity(entityName).cssClasses).toBe('default myClass');
+    expect(erDb.getEntity(entityName)!.cssClasses).toBe('default myClass');
   });
 
   it('should be possible to assign a class using the shorthand syntax with empty block', function () {
@@ -1082,7 +1091,7 @@ describe('when parsing ER diagram it...', function () {
     const className = 'myClass';
     erDiagram.parser.parse(`erDiagram\n${entityName}:::${className} {}`);
 
-    expect(erDb.getEntity(entityName).cssClasses).toBe('default myClass');
+    expect(erDb.getEntity(entityName)!.cssClasses).toBe('default myClass');
   });
 
   it('should be possible to assign a class using the shorthand syntax with block of attributes', function () {
@@ -1090,7 +1099,7 @@ describe('when parsing ER diagram it...', function () {
     const className = 'myClass';
     erDiagram.parser.parse(`erDiagram\n${entityName}:::${className} {\nstring name\n}`);
 
-    expect(erDb.getEntity(entityName).cssClasses).toBe('default myClass');
+    expect(erDb.getEntity(entityName)!.cssClasses).toBe('default myClass');
   });
 
   it('should be possible to assign multiple classes using the shorthand syntax', function () {
@@ -1099,7 +1108,7 @@ describe('when parsing ER diagram it...', function () {
     const secondClass = 'secondClass';
     erDiagram.parser.parse(`erDiagram\n${entityName}:::${firstClass},${secondClass}`);
 
-    expect(erDb.getEntity(entityName).cssClasses).toBe('default firstClass secondClass');
+    expect(erDb.getEntity(entityName)!.cssClasses).toBe('default firstClass secondClass');
   });
 
   it('should be possible to assign classes using the shorthand syntax after defining an alias', function () {
@@ -1108,8 +1117,8 @@ describe('when parsing ER diagram it...', function () {
     const myClass = 'myClass';
     erDiagram.parser.parse(`erDiagram\n${entityName}[${entityAlias}]:::${myClass}`);
 
-    expect(erDb.getEntity(entityName).alias).toBe(entityAlias);
-    expect(erDb.getEntity(entityName).cssClasses).toBe('default myClass');
+    expect(erDb.getEntity(entityName)!.alias).toBe(entityAlias);
+    expect(erDb.getEntity(entityName)!.cssClasses).toBe('default myClass');
   });
 
   it('should be possible to assign classes using the shorthand syntax while defining a relationship', function () {
@@ -1120,8 +1129,8 @@ describe('when parsing ER diagram it...', function () {
       `erDiagram\n${entityName}:::${myClass} ||--o{ ${otherEntity}:::${myClass} : allows`
     );
 
-    expect(erDb.getEntity(entityName).cssClasses).toBe('default myClass');
-    expect(erDb.getEntity(otherEntity).cssClasses).toBe('default myClass');
+    expect(erDb.getEntity(entityName)!.cssClasses).toBe('default myClass');
+    expect(erDb.getEntity(otherEntity)!.cssClasses).toBe('default myClass');
   });
 
   describe('relationship labels', function () {

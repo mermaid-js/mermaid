@@ -1,21 +1,28 @@
 import { select } from 'd3';
+import type { Selection } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger.js';
 import svgDraw from './svgDraw.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import type { D3HtmlSelection, D3Selection } from '../../types.js';
+import type { ClassNote } from './classTypes.js';
+import type { ClassDiagramObj, ClassDrawInfo, NoteDrawInfo, SvgDrawConfig } from './svgDraw.js';
 
-let idCache = {};
+/** A class or note that has been drawn into the diagram (notes have no `label`). */
+type DrawnNodeInfo = (ClassDrawInfo | NoteDrawInfo) & { label?: string };
+
+let idCache: Record<string, DrawnNodeInfo> = {};
 const padding = 20;
 
 /**
  * Gets the ID with the same label as in the cache
  *
- * @param {string} label The label to look for
- * @returns {string} The resulting ID
+ * @param label - The label to look for
+ * @returns The resulting ID
  */
-const getGraphId = function (label) {
+const getGraphId = function (label: string) {
   const foundEntry = Object.entries(idCache).find((entry) => entry[1].label === label);
 
   if (foundEntry) {
@@ -26,9 +33,9 @@ const getGraphId = function (label) {
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  *
- * @param {SVGSVGElement} elem The SVG element to append to
+ * @param elem - The SVG element to append to
  */
-const insertMarkers = function (elem) {
+const insertMarkers = function (elem: D3Selection<SVGSVGElement>) {
   elem
     .append('defs')
     .append('marker')
@@ -133,30 +140,37 @@ const insertMarkers = function (elem) {
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
  *
- * @param {string} text
- * @param {string} id
- * @param {any} _version
- * @param diagObj
+ * @param text - The text of the diagram
+ * @param id - The unique id of the DOM node that contains the diagram
+ * @param _version - Mermaid version
+ * @param diagObj - The diagram object
  */
-export const draw = function (text, id, _version, diagObj) {
-  const conf = getConfig().class;
+export const draw = function (
+  text: string,
+  id: string,
+  _version: string,
+  diagObj: ClassDiagramObj
+) {
+  const conf = getConfig().class as SvgDrawConfig;
   idCache = {};
 
   log.info('Rendering diagram ' + text);
 
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
-  let sandboxElement;
+  let sandboxElement: Selection<HTMLIFrameElement, unknown, HTMLElement, unknown> | undefined;
   if (securityLevel === 'sandbox') {
-    sandboxElement = select('#i' + id);
+    sandboxElement = select<HTMLIFrameElement, unknown>('#i' + id);
   }
-  const root =
+  const root: D3HtmlSelection<HTMLElement> =
     securityLevel === 'sandbox'
-      ? select(sandboxElement.nodes()[0].contentDocument.body)
-      : select('body');
+      ? (select(
+          sandboxElement!.nodes()[0].contentDocument!.body
+        ) as unknown as D3HtmlSelection<HTMLElement>)
+      : (select('body') as unknown as D3HtmlSelection<HTMLElement>);
 
   // Fetch the default direction, use TD if none was found
-  const diagram = root.select(`[id='${id}']`);
+  const diagram = root.select<SVGSVGElement>(`[id='${id}']`);
   insertMarkers(diagram);
 
   // Layout graph, Create a new directed graph
@@ -178,7 +192,7 @@ export const draw = function (text, id, _version, diagObj) {
   const keys = [...classes.keys()];
 
   for (const key of keys) {
-    const classDef = classes.get(key);
+    const classDef = classes.get(key)!;
     const node = svgDraw.drawClass(diagram, classDef, conf, diagObj);
     idCache[node.id] = node;
 
@@ -197,8 +211,8 @@ export const draw = function (text, id, _version, diagObj) {
       'tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation)
     );
     g.setEdge(
-      getGraphId(relation.id1),
-      getGraphId(relation.id2),
+      getGraphId(relation.id1)!,
+      getGraphId(relation.id2)!,
       {
         relation: relation,
       },
@@ -206,7 +220,8 @@ export const draw = function (text, id, _version, diagObj) {
     );
   });
 
-  const notes = diagObj.db.getNotes().values();
+  // The iterator-helper `forEach` used below is not available in the TS `ES2022` lib.
+  const notes = diagObj.db.getNotes().values() as unknown as ClassNote[];
   notes.forEach(function (note) {
     log.debug(`Adding note: ${JSON.stringify(note)}`);
     const node = svgDraw.drawNote(diagram, note, conf, diagObj);
@@ -219,7 +234,7 @@ export const draw = function (text, id, _version, diagObj) {
     if (note.class && classes.has(note.class)) {
       g.setEdge(
         note.id,
-        getGraphId(note.class),
+        getGraphId(note.class)!,
         {
           relation: {
             id1: note.id,
@@ -236,6 +251,7 @@ export const draw = function (text, id, _version, diagObj) {
     }
   });
 
+  // @ts-expect-error -- dagre-d3-es types declare `opts` as required, but the implementation treats it as optional.
   dagreLayout(g);
   g.nodes().forEach(function (v) {
     if (v !== undefined && g.node(v) !== undefined) {
@@ -260,7 +276,7 @@ export const draw = function (text, id, _version, diagObj) {
     }
   });
 
-  const svgBounds = diagram.node().getBBox();
+  const svgBounds = diagram.node()!.getBBox();
   const width = svgBounds.width + padding * 2;
   const height = svgBounds.height + padding * 2;
 

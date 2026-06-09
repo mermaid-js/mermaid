@@ -2,10 +2,64 @@ import { line, curveBasis } from 'd3';
 import utils from '../../utils.js';
 import { log } from '../../logger.js';
 import { parseGenericTypes, getUrl } from '../common/common.js';
+import type { ClassDiagramConfig } from '../../config.type.js';
+import type { D3Selection, Point } from '../../types.js';
+import type { ClassMember, ClassNode, ClassNote, ClassRelation } from './classTypes.js';
+import type { ClassDB } from './classDb.js';
+
+/** The class diagram config, with all the renderer-relevant values filled in. */
+export type SvgDrawConfig = Required<ClassDiagramConfig>;
+
+/** The part of the diagram object that the svgDraw helpers rely on. */
+export interface ClassDiagramObj {
+  db: ClassDB;
+}
+
+/**
+ * The relation data attached to an edge in the layout graph. Besides the parsed
+ * {@link ClassRelation}s this also covers the synthetic note-to-class relations created by the
+ * renderer (which have `'none'` relation types and no titles).
+ */
+export type RelationEdgeData = Pick<ClassRelation, 'id1' | 'id2'> &
+  Partial<Pick<ClassRelation, 'title' | 'relationTitle1' | 'relationTitle2'>> & {
+    relation: {
+      type1: number | 'none';
+      type2: number | 'none';
+      lineType: number;
+    };
+  };
+
+/** The path of an edge, as calculated by the dagre layout. */
+export interface EdgePathData {
+  points: Point[];
+}
+
+/** Bounding box information of a class that was drawn into the diagram. */
+export interface ClassDrawInfo {
+  id: string;
+  label: string;
+  width: number;
+  height: number;
+}
+
+/** Bounding box information of a note that was drawn into the diagram. */
+export interface NoteDrawInfo {
+  id: string;
+  text: string;
+  width: number;
+  height: number;
+}
 
 let edgeCount = 0;
-export const drawEdge = function (elem, path, relation, conf, diagObj) {
-  const getRelationType = function (type) {
+
+export const drawEdge = function (
+  elem: D3Selection<SVGSVGElement>,
+  path: EdgePathData,
+  relation: RelationEdgeData,
+  conf: SvgDrawConfig,
+  diagObj: ClassDiagramObj
+) {
+  const getRelationType = function (type: number | 'none') {
     switch (type) {
       case diagObj.db.relationType.AGGREGATION:
         return 'aggregation';
@@ -26,7 +80,7 @@ export const drawEdge = function (elem, path, relation, conf, diagObj) {
   const lineData = path.points;
 
   // This is the accessor function we talked about above
-  const lineFunction = line()
+  const lineFunction = line<Point>()
     .x(function (d) {
       return d.x;
     })
@@ -64,23 +118,22 @@ export const drawEdge = function (elem, path, relation, conf, diagObj) {
     );
   }
 
-  let x, y;
   const l = path.points.length;
   // Calculate Label position
-  let labelPosition = utils.calcLabelPosition(path.points);
-  x = labelPosition.x;
-  y = labelPosition.y;
+  const labelPosition = utils.calcLabelPosition(path.points);
+  const x = labelPosition.x;
+  const y = labelPosition.y;
 
-  let p1_card_x, p1_card_y;
-  let p2_card_x, p2_card_y;
+  let p1_card_x: number | undefined, p1_card_y: number | undefined;
+  let p2_card_x: number | undefined, p2_card_y: number | undefined;
 
   if (l % 2 !== 0 && l > 1) {
-    let cardinality_1_point = utils.calcCardinalityPosition(
+    const cardinality_1_point = utils.calcCardinalityPosition(
       relation.relation.type1 !== 'none',
       path.points,
       path.points[0]
     );
-    let cardinality_2_point = utils.calcCardinalityPosition(
+    const cardinality_2_point = utils.calcCardinalityPosition(
       relation.relation.type2 !== 'none',
       path.points,
       path.points[l - 1]
@@ -106,8 +159,8 @@ export const drawEdge = function (elem, path, relation, conf, diagObj) {
       .attr('text-anchor', 'middle')
       .text(relation.title);
 
-    window.label = label;
-    const bounds = label.node().getBBox();
+    (window as Window & { label?: typeof label }).label = label;
+    const bounds = label.node()!.getBBox();
 
     g.insert('rect', ':first-child')
       .attr('class', 'box')
@@ -122,8 +175,8 @@ export const drawEdge = function (elem, path, relation, conf, diagObj) {
     const g = elem.append('g').attr('class', 'cardinality');
     g.append('text')
       .attr('class', 'type1')
-      .attr('x', p1_card_x)
-      .attr('y', p1_card_y)
+      .attr('x', p1_card_x!)
+      .attr('y', p1_card_y!)
       .attr('fill', 'black')
       .attr('font-size', '6')
       .text(relation.relationTitle1);
@@ -132,8 +185,8 @@ export const drawEdge = function (elem, path, relation, conf, diagObj) {
     const g = elem.append('g').attr('class', 'cardinality');
     g.append('text')
       .attr('class', 'type2')
-      .attr('x', p2_card_x)
-      .attr('y', p2_card_y)
+      .attr('x', p2_card_x!)
+      .attr('y', p2_card_y!)
       .attr('fill', 'black')
       .attr('font-size', '6')
       .text(relation.relationTitle2);
@@ -145,17 +198,22 @@ export const drawEdge = function (elem, path, relation, conf, diagObj) {
 /**
  * Renders a class diagram
  *
- * @param {SVGSVGElement} elem The element to draw it into
- * @param classDef
- * @param conf
- * @param diagObj
- * @todo Add more information in the JSDOC here
+ * @param elem - The element to draw it into
+ * @param classDef - The class being rendered
+ * @param conf - The class diagram configuration
+ * @param diagObj - The diagram object
+ * TODO: Add more information in the JSDOC here
  */
-export const drawClass = function (elem, classDef, conf, diagObj) {
+export const drawClass = function (
+  elem: D3Selection<SVGSVGElement>,
+  classDef: ClassNode,
+  conf: SvgDrawConfig,
+  diagObj: ClassDiagramObj
+): ClassDrawInfo {
   log.debug('Rendering class ', classDef, conf);
 
   const id = classDef.id;
-  const classInfo = {
+  const classInfo: ClassDrawInfo = {
     id: id,
     label: classDef.id,
     width: 0,
@@ -170,7 +228,7 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
     title = g
       .append('svg:a')
       .attr('xlink:href', classDef.link)
-      .attr('target', classDef.linkTarget)
+      .attr('target', classDef.linkTarget!)
       .append('text')
       .attr('y', conf.textHeight + conf.padding)
       .attr('x', 0);
@@ -191,7 +249,7 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
     isFirst = false;
   });
 
-  let classTitleString = getClassTitleString(classDef);
+  const classTitleString = getClassTitleString(classDef);
 
   const classTitle = title.append('tspan').text(classTitleString).attr('class', 'title');
 
@@ -200,9 +258,9 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
     classTitle.attr('dy', conf.textHeight);
   }
 
-  const titleHeight = title.node().getBBox().height;
+  const titleHeight = title.node()!.getBBox().height;
   let membersLine;
-  let membersBox;
+  let membersBox: DOMRect | undefined;
   let methodsLine;
 
   // don't draw box if no members
@@ -226,7 +284,7 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
       isFirst = false;
     });
 
-    membersBox = members.node().getBBox();
+    membersBox = members.node()!.getBBox();
   }
 
   // don't draw box if no methods
@@ -234,13 +292,13 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
     methodsLine = g
       .append('line') // text label for the x axis
       .attr('x1', 0)
-      .attr('y1', conf.padding + titleHeight + conf.dividerMargin + membersBox.height)
-      .attr('y2', conf.padding + titleHeight + conf.dividerMargin + membersBox.height);
+      .attr('y1', conf.padding + titleHeight + conf.dividerMargin + membersBox!.height)
+      .attr('y2', conf.padding + titleHeight + conf.dividerMargin + membersBox!.height);
 
     const methods = g
       .append('text') // text label for the x axis
       .attr('x', conf.padding)
-      .attr('y', titleHeight + 2 * conf.dividerMargin + membersBox.height + conf.textHeight)
+      .attr('y', titleHeight + 2 * conf.dividerMargin + membersBox!.height + conf.textHeight)
       .attr('fill', 'white')
       .attr('class', 'classText');
 
@@ -252,11 +310,13 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
     });
   }
 
-  const classBox = g.node().getBBox();
-  var cssClassStr = ' ';
+  const classBox = g.node()!.getBBox();
+  let cssClassStr = ' ';
 
   if (classDef.cssClasses.length > 0) {
-    cssClassStr = cssClassStr + classDef.cssClasses.join(' ');
+    // Note: in the current ClassDB `cssClasses` is a space-separated string, while this legacy
+    // renderer was written against the old array shape. The cast keeps the code as-is.
+    cssClassStr = cssClassStr + (classDef.cssClasses as unknown as string[]).join(' ');
   }
 
   const rect = g
@@ -267,12 +327,13 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
     .attr('height', classBox.height + conf.padding + 0.5 * conf.dividerMargin)
     .attr('class', cssClassStr);
 
-  const rectWidth = rect.node().getBBox().width;
+  const rectWidth = rect.node()!.getBBox().width;
 
   // Center title
   // We subtract the width of each text element from the class box width and divide it by 2
-  title.node().childNodes.forEach(function (x) {
-    x.setAttribute('x', (rectWidth - x.getBBox().width) / 2);
+  title.node()!.childNodes.forEach(function (x: ChildNode) {
+    const textElement = x as SVGTSpanElement;
+    textElement.setAttribute('x', `${(rectWidth - textElement.getBBox().width) / 2}`);
   });
 
   if (classDef.tooltip) {
@@ -292,7 +353,7 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
   return classInfo;
 };
 
-export const getClassTitleString = function (classDef) {
+export const getClassTitleString = function (classDef: Pick<ClassNode, 'id' | 'type'>) {
   let classTitleString = classDef.id;
 
   if (classDef.type) {
@@ -305,17 +366,22 @@ export const getClassTitleString = function (classDef) {
 /**
  * Renders a note diagram
  *
- * @param {SVGSVGElement} elem The element to draw it into
- * @param {{id: string; text: string; class: string;}} note
- * @param conf
- * @param _diagObj
- * @todo Add more information in the JSDOC here
+ * @param elem - The element to draw it into
+ * @param note - The note to draw
+ * @param conf - The class diagram configuration
+ * @param _diagObj - The diagram object
+ * TODO: Add more information in the JSDOC here
  */
-export const drawNote = function (elem, note, conf, _diagObj) {
+export const drawNote = function (
+  elem: D3Selection<SVGSVGElement>,
+  note: ClassNote,
+  conf: SvgDrawConfig,
+  _diagObj?: ClassDiagramObj
+): NoteDrawInfo {
   log.debug('Rendering note ', note, conf);
 
   const id = note.id;
-  const noteInfo = {
+  const noteInfo: NoteDrawInfo = {
     id: id,
     text: note.text,
     width: 0,
@@ -326,19 +392,19 @@ export const drawNote = function (elem, note, conf, _diagObj) {
   const g = elem.append('g').attr('id', id).attr('class', 'classGroup');
 
   // add text
-  let text = g
+  const text = g
     .append('text')
     .attr('y', conf.textHeight + conf.padding)
     .attr('x', 0);
 
-  const lines = JSON.parse(`"${note.text}"`).split('\n');
+  const lines = (JSON.parse(`"${note.text}"`) as string).split('\n');
 
   lines.forEach(function (line) {
     log.debug(`Adding line: ${line}`);
     text.append('tspan').text(line).attr('class', 'title').attr('dy', conf.textHeight);
   });
 
-  const noteBox = g.node().getBBox();
+  const noteBox = g.node()!.getBBox();
 
   const rect = g
     .insert('rect', ':first-child')
@@ -350,12 +416,13 @@ export const drawNote = function (elem, note, conf, _diagObj) {
       noteBox.height + lines.length * conf.textHeight + conf.padding + 0.5 * conf.dividerMargin
     );
 
-  const rectWidth = rect.node().getBBox().width;
+  const rectWidth = rect.node()!.getBBox().width;
 
   // Center title
   // We subtract the width of each text element from the class box width and divide it by 2
-  text.node().childNodes.forEach(function (x) {
-    x.setAttribute('x', (rectWidth - x.getBBox().width) / 2);
+  text.node()!.childNodes.forEach(function (x: ChildNode) {
+    const textElement = x as SVGTSpanElement;
+    textElement.setAttribute('x', `${(rectWidth - textElement.getBBox().width) / 2}`);
   });
 
   noteInfo.width = rectWidth;
@@ -366,14 +433,19 @@ export const drawNote = function (elem, note, conf, _diagObj) {
 };
 
 /**
- * Adds a <tspan> for a member in a diagram
+ * Adds a tspan for a member in a diagram
  *
- * @param {SVGElement} textEl The element to append to
- * @param {string} member The member
- * @param {boolean} isFirst
- * @param {{ padding: string; textHeight: string }} conf The configuration for the member
+ * @param textEl - The text element to append to
+ * @param member - The member
+ * @param isFirst - Whether the member is the first one in its section
+ * @param conf - The configuration for the member
  */
-const addTspan = function (textEl, member, isFirst, conf) {
+const addTspan = function (
+  textEl: D3Selection<SVGTextElement>,
+  member: ClassMember,
+  isFirst: boolean,
+  conf: SvgDrawConfig
+) {
   const { displayText, cssStyle } = member.getDisplayDetails();
   const tSpan = textEl.append('tspan').attr('x', conf.padding).text(displayText);
 

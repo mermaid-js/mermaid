@@ -1,5 +1,7 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
+import type { Graph } from 'dagre-d3-es/src/graphlib/index.js';
 import { line, curveBasis, select } from 'd3';
+import type { Selection } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
@@ -8,46 +10,108 @@ import erMarkers from './erMarkers.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { parseGenericTypes, getUrl } from '../common/common.js';
 import { v5 as uuid5 } from 'uuid';
+import type { ErDiagramConfig } from '../../config.type.js';
+import type { D3HtmlSelection, D3Selection, Point } from '../../types.js';
+import type { Relationship } from './erTypes.js';
+
+/**
+ * An entity attribute, in the legacy shape this renderer was written against (the current `ErDB`
+ * uses `type`/`name`/`keys`/`comment` instead).
+ */
+interface LegacyAttribute {
+  attributeType: string;
+  attributeName: string;
+  attributeKeyTypeList?: string[];
+  attributeComment?: string;
+}
+
+/** An entity, in the legacy shape this renderer was written against. */
+interface LegacyEntityNode {
+  alias?: string;
+  attributes: LegacyAttribute[];
+}
+
+/** The legacy ER db API that this renderer relies on. */
+interface LegacyErDb {
+  getEntities: () => Map<string, LegacyEntityNode>;
+  getRelationships: () => Relationship[];
+  getDiagramTitle: () => string;
+  Cardinality: {
+    ZERO_OR_ONE: string;
+    ZERO_OR_MORE: string;
+    ONE_OR_MORE: string;
+    ONLY_ONE: string;
+    MD_PARENT: string;
+  };
+  Identification: {
+    NON_IDENTIFYING: string;
+    IDENTIFYING: string;
+  };
+}
+
+/** The part of the diagram object that this renderer relies on. */
+interface ErDiagramObj {
+  db: LegacyErDb;
+}
+
+/** The d3 text nodes and row height of a single drawn attribute. */
+interface AttributeNode {
+  tn: D3Selection<SVGTextElement>;
+  nn: D3Selection<SVGTextElement>;
+  kn?: D3Selection<SVGTextElement>;
+  cn?: D3Selection<SVGTextElement>;
+  height: number;
+}
+
+/**
+ * The renderer-local config. `arrowMarkerAbsolute` is not part of {@link ErDiagramConfig}, but may
+ * be injected through {@link setConf} from the top-level config.
+ */
+type ErRendererConfig = Required<ErDiagramConfig> & { arrowMarkerAbsolute?: boolean };
 
 /** Regex used to remove chars from the entity name so the result can be used in an id */
 const BAD_ID_CHARS_REGEXP = /[^\dA-Za-z](\W)*/g;
 
 // Configuration
-let conf = {};
+let conf: ErRendererConfig = {} as ErRendererConfig;
 
 // Map so we can look up the id of an entity based on the name
-let entityNameIds = new Map();
+const entityNameIds = new Map<string, string>();
 
 /**
  * Allows the top-level API module to inject config specific to this renderer, storing it in the
  * local conf object. Note that generic config still needs to be retrieved using getConfig()
  * imported from the config module
  *
- * @param cnf
+ * @param cnf - The renderer-specific configuration to apply
  */
-export const setConf = function (cnf) {
-  const keys = Object.keys(cnf);
+export const setConf = function (cnf: ErDiagramConfig) {
+  const keys = Object.keys(cnf) as (keyof ErDiagramConfig)[];
   for (const key of keys) {
-    conf[key] = cnf[key];
+    (conf as Record<string, unknown>)[key] = cnf[key];
   }
 };
 
 /**
  * Draw attributes for an entity
  *
- * @param groupNode The svg group node for the entity
- * @param entityTextNode The svg node for the entity label text
- * @param attributes An array of attributes defined for the entity (each attribute has a type and a
+ * @param groupNode - The svg group node for the entity
+ * @param entityTextNode - The svg node for the entity label text
+ * @param attributes - An array of attributes defined for the entity (each attribute has a type and a
  *   name)
- * @returns {object} The bounding box of the entity, after attributes have been added. The bounding
+ * @returns The bounding box of the entity, after attributes have been added. The bounding
  *   box has a .width and .height
  */
-const drawAttributes = (groupNode, entityTextNode, attributes) => {
+const drawAttributes = (
+  groupNode: D3Selection<SVGGElement>,
+  entityTextNode: D3Selection<SVGTextElement>,
+  attributes: LegacyAttribute[]
+) => {
   const heightPadding = conf.entityPadding / 3; // Padding internal to attribute boxes
   const widthPadding = conf.entityPadding / 3; // Ditto
   const attrFontSize = conf.fontSize * 0.85;
-  const labelBBox = entityTextNode.node().getBBox();
-  const attributeNodes = []; // Intermediate storage for attribute nodes created so that we can do a second pass
+  const labelBBox = entityTextNode.node()!.getBBox();
+  const attributeNodes: AttributeNode[] = []; // Intermediate storage for attribute nodes created so that we can do a second pass
   let hasKeyType = false;
   let hasComment = false;
   let maxTypeWidth = 0;
@@ -69,7 +133,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
   });
 
   attributes.forEach((item) => {
-    const attrPrefix = `${entityTextNode.node().id}-attr-${attrNum}`;
+    const attrPrefix = `${entityTextNode.node()!.id}-attr-${attrNum}`;
     let nodeHeight = 0;
 
     const attributeType = parseGenericTypes(item.attributeType);
@@ -83,7 +147,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
       .attr('y', 0)
       .style('dominant-baseline', 'middle')
       .style('text-anchor', 'left')
-      .style('font-family', getConfig().fontFamily)
+      .style('font-family', getConfig().fontFamily!)
       .style('font-size', attrFontSize + 'px')
       .text(attributeType);
 
@@ -96,16 +160,16 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
       .attr('y', 0)
       .style('dominant-baseline', 'middle')
       .style('text-anchor', 'left')
-      .style('font-family', getConfig().fontFamily)
+      .style('font-family', getConfig().fontFamily!)
       .style('font-size', attrFontSize + 'px')
       .text(item.attributeName);
 
-    const attributeNode = {};
+    const attributeNode = {} as AttributeNode;
     attributeNode.tn = typeNode;
     attributeNode.nn = nameNode;
 
-    const typeBBox = typeNode.node().getBBox();
-    const nameBBox = nameNode.node().getBBox();
+    const typeBBox = typeNode.node()!.getBBox();
+    const nameBBox = nameNode.node()!.getBBox();
     maxTypeWidth = Math.max(maxTypeWidth, typeBBox.width);
     maxNameWidth = Math.max(maxNameWidth, nameBBox.width);
 
@@ -123,12 +187,12 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
         .attr('y', 0)
         .style('dominant-baseline', 'middle')
         .style('text-anchor', 'left')
-        .style('font-family', getConfig().fontFamily)
+        .style('font-family', getConfig().fontFamily!)
         .style('font-size', attrFontSize + 'px')
         .text(keyTypeNodeText);
 
       attributeNode.kn = keyTypeNode;
-      const keyTypeBBox = keyTypeNode.node().getBBox();
+      const keyTypeBBox = keyTypeNode.node()!.getBBox();
       maxKeyWidth = Math.max(maxKeyWidth, keyTypeBBox.width);
       nodeHeight = Math.max(nodeHeight, keyTypeBBox.height);
     }
@@ -142,12 +206,12 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
         .attr('y', 0)
         .style('dominant-baseline', 'middle')
         .style('text-anchor', 'left')
-        .style('font-family', getConfig().fontFamily)
+        .style('font-family', getConfig().fontFamily!)
         .style('font-size', attrFontSize + 'px')
         .text(item.attributeComment || '');
 
       attributeNode.cn = commentNode;
-      const commentNodeBBox = commentNode.node().getBBox();
+      const commentNodeBBox = commentNode.node()!.getBBox();
       maxCommentWidth = Math.max(maxCommentWidth, commentNodeBBox.width);
       nodeHeight = Math.max(nodeHeight, commentNodeBBox.height);
     }
@@ -211,7 +275,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
       // TODO Handle spareWidth in attr('width')
       // Insert a rectangle for the type
       const typeRect = groupNode
-        .insert('rect', '#' + attributeNode.tn.node().id)
+        .insert('rect', '#' + attributeNode.tn.node()!.id)
         .classed(`er ${attribStyle}`, true)
         .attr('x', 0)
         .attr('y', heightOffset)
@@ -228,7 +292,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
 
       // Insert a rectangle for the name
       const nameRect = groupNode
-        .insert('rect', '#' + attributeNode.nn.node().id)
+        .insert('rect', '#' + attributeNode.nn.node()!.id)
         .classed(`er ${attribStyle}`, true)
         .attr('x', nameXOffset)
         .attr('y', heightOffset)
@@ -240,14 +304,14 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
 
       if (hasKeyType) {
         // Position the key type attribute
-        attributeNode.kn.attr(
+        attributeNode.kn!.attr(
           'transform',
           'translate(' + (keyTypeAndCommentXOffset + widthPadding) + ',' + alignY + ')'
         );
 
         // Insert a rectangle for the key type
         const keyTypeRect = groupNode
-          .insert('rect', '#' + attributeNode.kn.node().id)
+          .insert('rect', '#' + attributeNode.kn!.node()!.id)
           .classed(`er ${attribStyle}`, true)
           .attr('x', keyTypeAndCommentXOffset)
           .attr('y', heightOffset)
@@ -260,15 +324,17 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
 
       if (hasComment) {
         // Position the comment attribute
-        attributeNode.cn.attr(
+        attributeNode.cn!.attr(
           'transform',
           'translate(' + (keyTypeAndCommentXOffset + widthPadding) + ',' + alignY + ')'
         );
 
         // Insert a rectangle for the comment
         groupNode
-          .insert('rect', '#' + attributeNode.cn.node().id)
-          .classed(`er ${attribStyle}`, 'true')
+          .insert('rect', '#' + attributeNode.cn!.node()!.id)
+          // Note: the original JS code passed the string 'true' here rather than a boolean; this
+          // is kept as-is (it behaves like `true` at runtime) to preserve behavior.
+          .classed(`er ${attribStyle}`, 'true' as unknown as boolean)
           .attr('x', keyTypeAndCommentXOffset)
           .attr('y', heightOffset)
           .attr('width', maxCommentWidth + widthPadding * 2 + spareColumnWidth)
@@ -295,14 +361,18 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
 /**
  * Use D3 to construct the svg elements for the entities
  *
- * @param svgNode The svg node that contains the diagram
- * @param {Map<string, object>} entities The entities to be drawn
- * @param graph The graph that contains the vertex and edge definitions post-layout
- * @returns {object} The first entity that was inserted
+ * @param svgNode - The svg node that contains the diagram
+ * @param entities - The entities to be drawn
+ * @param graph - The graph that contains the vertex and edge definitions post-layout
+ * @returns The first entity that was inserted
  */
-const drawEntities = function (svgNode, entities, graph) {
+const drawEntities = function (
+  svgNode: D3Selection<SVGSVGElement>,
+  entities: Map<string, LegacyEntityNode>,
+  graph: Graph
+) {
   const keys = [...entities.keys()];
-  let firstOne;
+  let firstOne: string | undefined;
 
   keys.forEach(function (entityName) {
     const entityId = generateId(entityName, 'entity');
@@ -324,14 +394,14 @@ const drawEntities = function (svgNode, entities, graph) {
       .attr('y', 0)
       .style('dominant-baseline', 'middle')
       .style('text-anchor', 'middle')
-      .style('font-family', getConfig().fontFamily)
+      .style('font-family', getConfig().fontFamily!)
       .style('font-size', conf.fontSize + 'px')
-      .text(entities.get(entityName).alias ?? entityName);
+      .text(entities.get(entityName)!.alias ?? entityName);
 
     const { width: entityWidth, height: entityHeight } = drawAttributes(
       groupNode,
       textNode,
-      entities.get(entityName).attributes
+      entities.get(entityName)!.attributes
     );
 
     // Draw the rectangle - insert it before the text so that the text is not obscured
@@ -343,7 +413,7 @@ const drawEntities = function (svgNode, entities, graph) {
       .attr('width', entityWidth)
       .attr('height', entityHeight);
 
-    const rectBBox = rectNode.node().getBBox();
+    const rectBBox = rectNode.node()!.getBBox();
 
     // Add the entity to the graph using the entityId
     graph.setNode(entityId, {
@@ -356,7 +426,7 @@ const drawEntities = function (svgNode, entities, graph) {
   return firstOne;
 }; // drawEntities
 
-const adjustEntities = function (svgNode, graph) {
+const adjustEntities = function (svgNode: D3Selection<SVGSVGElement>, graph: Graph) {
   graph.nodes().forEach(function (v) {
     if (v !== undefined && graph.node(v) !== undefined) {
       svgNode
@@ -379,24 +449,24 @@ const adjustEntities = function (svgNode, graph) {
  *
  * @param rel - A (parsed) relationship (e.g. one of the objects in the list returned by
  *   erDb.getRelationships)
- * @returns {string}
+ * @returns The name of the edge
  */
-const getEdgeName = function (rel) {
+const getEdgeName = function (rel: Relationship) {
   return (rel.entityA + rel.roleA + rel.entityB).replace(/\s/g, '');
 };
 
 /**
  * Add each relationship to the graph
  *
- * @param relationships The relationships to be added
- * @param g The graph
- * @returns {Array} The array of relationships
+ * @param relationships - The relationships to be added
+ * @param g - The graph
+ * @returns The array of relationships
  */
-const addRelationships = function (relationships, g) {
+const addRelationships = function (relationships: Relationship[], g: Graph) {
   relationships.forEach(function (r) {
     g.setEdge(
-      entityNameIds.get(r.entityA),
-      entityNameIds.get(r.entityB),
+      entityNameIds.get(r.entityA)!,
+      entityNameIds.get(r.entityB)!,
       { relationship: r },
       getEdgeName(r)
     );
@@ -408,25 +478,31 @@ let relCnt = 0;
 /**
  * Draw a relationship using edge information from the graph
  *
- * @param svg The svg node
- * @param rel The relationship to draw in the svg
- * @param g The graph containing the edge information
- * @param insert The insertion point in the svg DOM (because relationships have markers that need to
+ * @param svg - The svg node
+ * @param rel - The relationship to draw in the svg
+ * @param g - The graph containing the edge information
+ * @param insert - The insertion point in the svg DOM (because relationships have markers that need to
  *   sit 'behind' opaque entity boxes)
- * @param diagObj
+ * @param diagObj - The diagram object
  */
-const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
+const drawRelationshipFromLayout = function (
+  svg: D3Selection<SVGSVGElement>,
+  rel: Relationship,
+  g: Graph,
+  insert: string | undefined,
+  diagObj: ErDiagramObj
+) {
   relCnt++;
 
   // Find the edge relating to this relationship
   const edge = g.edge(
-    entityNameIds.get(rel.entityA),
-    entityNameIds.get(rel.entityB),
+    entityNameIds.get(rel.entityA)!,
+    entityNameIds.get(rel.entityB)!,
     getEdgeName(rel)
   );
 
   // Get a function that will generate the line path
-  const lineFunction = line()
+  const lineFunction = line<Point>()
     .x(function (d) {
       return d.x;
     })
@@ -506,8 +582,8 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
   // Now label the relationship
 
   // Find the half-way point
-  const len = svgPath.node().getTotalLength();
-  const labelPoint = svgPath.node().getPointAtLength(len * 0.5);
+  const len = svgPath.node()!.getTotalLength();
+  const labelPoint = svgPath.node()!.getPointAtLength(len * 0.5);
 
   // Append a text node containing the label
   const labelId = 'rel' + relCnt;
@@ -522,7 +598,7 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
     .attr('y', labelPoint.y)
     .style('text-anchor', 'middle')
     .style('dominant-baseline', 'middle')
-    .style('font-family', getConfig().fontFamily)
+    .style('font-family', getConfig().fontFamily!)
     .style('font-size', conf.fontSize + 'px');
 
   if (labelText.length == 1) {
@@ -539,7 +615,7 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
   }
 
   // Figure out how big the opaque 'container' rectangle needs to be
-  const labelBBox = labelNode.node().getBBox();
+  const labelBBox = labelNode.node()!.getBBox();
 
   // Insert the opaque rectangle before the text label
   svg
@@ -554,28 +630,30 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
 /**
  * Draw en E-R diagram in the tag with id: id based on the text definition of the diagram
  *
- * @param text The text of the diagram
- * @param id The unique id of the DOM node that contains the diagram
- * @param _version
- * @param diagObj
+ * @param text - The text of the diagram
+ * @param id - The unique id of the DOM node that contains the diagram
+ * @param _version - Mermaid version
+ * @param diagObj - The diagram object
  */
-export const draw = function (text, id, _version, diagObj) {
-  conf = getConfig().er;
+export const draw = function (text: string, id: string, _version: string, diagObj: ErDiagramObj) {
+  conf = getConfig().er as ErRendererConfig;
   log.info('Drawing ER diagram');
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
-  let sandboxElement;
+  let sandboxElement: Selection<HTMLIFrameElement, unknown, HTMLElement, unknown> | undefined;
   if (securityLevel === 'sandbox') {
-    sandboxElement = select('#i' + id);
+    sandboxElement = select<HTMLIFrameElement, unknown>('#i' + id);
   }
-  const root =
+  const root: D3HtmlSelection<HTMLElement> =
     securityLevel === 'sandbox'
-      ? select(sandboxElement.nodes()[0].contentDocument.body)
-      : select('body');
+      ? (select(
+          sandboxElement!.nodes()[0].contentDocument!.body
+        ) as unknown as D3HtmlSelection<HTMLElement>)
+      : (select('body') as unknown as D3HtmlSelection<HTMLElement>);
   // const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
   // Get a reference to the svg node that contains the text
-  const svg = root.select(`[id='${id}']`);
+  const svg = root.select<SVGSVGElement>(`[id='${id}']`);
 
   // Add cardinality marker definitions to the svg
   erMarkers.insertMarkers(svg, conf);
@@ -595,14 +673,12 @@ export const draw = function (text, id, _version, diagObj) {
   // ---
 
   // Create the graph
-  let g;
-
   // TODO: Explore directed vs undirected graphs, and how the layout is affected
   // An E-R diagram could be said to be undirected, but there is merit in setting
   // the direction from parent to child in a one-to-many as this influences graphlib to
   // put the parent above the child (does it?), which is intuitive.  Most relationships
   // in ER diagrams are one-to-many.
-  g = new graphlib.Graph({
+  const g = new graphlib.Graph({
     multigraph: true,
     directed: true,
     compound: false,
@@ -628,6 +704,7 @@ export const draw = function (text, id, _version, diagObj) {
   // Add all the relationships to the graph
   const relationships = addRelationships(diagObj.db.getRelationships(), g);
 
+  // @ts-expect-error -- dagre-d3-es types declare `opts` as required, but the implementation treats it as optional.
   dagreLayout(g); // Node and edge positions will be updated
 
   // Adjust the positions of the entities so that they adhere to the layout
@@ -642,7 +719,7 @@ export const draw = function (text, id, _version, diagObj) {
 
   utils.insertTitle(svg, 'entityTitleText', conf.titleTopMargin, diagObj.db.getDiagramTitle());
 
-  const svgBounds = svg.node().getBBox();
+  const svgBounds = svg.node()!.getBBox();
   const width = svgBounds.width + padding * 2;
   const height = svgBounds.height + padding * 2;
 
@@ -672,9 +749,9 @@ const MERMAID_ERDIAGRAM_UUID = '28e9f9db-3c8d-5aa5-9faf-44286ae5937c';
  * Although the official XML standard for ids says that many more characters are valid in the id,
  * this keeps things simple by accepting only A-Za-z0-9.
  *
- * @param {string} str Given string to use as the basis for the id. Default is `''`
- * @param {string} prefix String to put at the start, followed by '-'. Default is `''`
- * @returns {string}
+ * @param str - Given string to use as the basis for the id. Default is `''`
+ * @param prefix - String to put at the start, followed by '-'. Default is `''`
+ * @returns A unique id based on the given string
  * @see https://www.w3.org/TR/xml/#NT-Name
  */
 export function generateId(str = '', prefix = '') {
@@ -689,9 +766,9 @@ export function generateId(str = '', prefix = '') {
 /**
  * Append a hyphen to a string only if the string isn't empty
  *
- * @param {string} str
- * @returns {string}
- * @todo This could be moved into a string utility file/class.
+ * @param str - The string to append a hyphen to
+ * @returns The string with a hyphen appended, if the string isn't empty
+ * TODO: This could be moved into a string utility file/class.
  */
 function strWithHyphen(str = '') {
   return str.length > 0 ? `${str}-` : '';

@@ -1,3 +1,6 @@
+import type { ErDiagramConfig } from '../../config.type.js';
+import type { D3Selection } from '../../types.js';
+
 const ERMarkers = {
   ONLY_ONE_START: 'ONLY_ONE_START',
   ONLY_ONE_END: 'ONLY_ONE_END',
@@ -9,15 +12,20 @@ const ERMarkers = {
   ZERO_OR_MORE_END: 'ZERO_OR_MORE_END',
   MD_PARENT_END: 'MD_PARENT_END',
   MD_PARENT_START: 'MD_PARENT_START',
-};
+} as const;
+
+export type ErMarkerName = (typeof ERMarkers)[keyof typeof ERMarkers];
 
 /**
  * Put the markers into the svg DOM for later use with edge paths
  *
- * @param elem
- * @param conf
+ * @param elem - The svg element to insert the markers into
+ * @param conf - The ER diagram configuration
  */
-const insertMarkers = function (elem, conf) {
+const insertMarkers = function <T extends SVGElement>(
+  elem: D3Selection<T>,
+  conf: Pick<Required<ErDiagramConfig>, 'stroke'>
+) {
   let marker;
 
   elem

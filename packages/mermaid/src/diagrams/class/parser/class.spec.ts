@@ -1,8 +1,9 @@
+// @ts-ignore: JISON doesn't support types
 import { parser } from './classDiagram.jison';
 import { ClassDB } from '../classDb.js';
 
 describe('class diagram', function () {
-  let classDb;
+  let classDb: ClassDB;
   beforeEach(function () {
     classDb = new ClassDB();
     parser.yy = classDb;
