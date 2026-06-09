@@ -1,6 +1,29 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 
-const getStyles = (options) => {
+export interface SequenceStyleOptions {
+  dropShadow?: string;
+  actorBorder: string;
+  actorBkg: string;
+  strokeWidth?: string | number;
+  noteBorderColor: string;
+  noteBkgColor: string;
+  actorTextColor: string;
+  actorLineColor: string;
+  signalColor: string;
+  sequenceNumberColor: string;
+  signalTextColor: string;
+  labelBoxBorderColor: string;
+  labelBoxBkgColor: string;
+  labelTextColor: string;
+  loopTextColor: string;
+  noteTextColor: string;
+  noteFontWeight?: string;
+  activationBkgColor: string;
+  activationBorderColor: string;
+  nodeBorder: string;
+}
+
+const getStyles = (options: SequenceStyleOptions) => {
   const dropShadow = options.dropShadow ?? 'none';
   const { look } = getConfig();
 

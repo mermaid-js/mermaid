@@ -1,4 +1,33 @@
-const getStyles = (options) =>
+export interface StateStyleOptions {
+  transitionColor: string;
+  nodeBorder: string;
+  textColor: string;
+  stateLabelColor: string;
+  mainBkg: string;
+  lineColor: string;
+  strokeWidth?: string | number;
+  background: string;
+  noteBorderColor: string;
+  noteBkgColor: string;
+  noteTextColor: string;
+  labelBackgroundColor: string;
+  edgeLabelBackground: string;
+  transitionLabelColor: string;
+  tertiaryTextColor: string;
+  specialStateColor: string;
+  innerEndBackground: string;
+  compositeBackground: string;
+  stateBkg: string;
+  stateBorder: string;
+  compositeTitleBackground: string;
+  altBackground?: string;
+  useGradient?: boolean;
+  svgId?: string;
+  radius?: string | number;
+  dropShadow?: string;
+}
+
+const getStyles = (options: StateStyleOptions) =>
   `
 defs [id$="-barbEnd"] {
     fill: ${options.transitionColor};

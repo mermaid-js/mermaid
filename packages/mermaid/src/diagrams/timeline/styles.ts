@@ -1,7 +1,30 @@
+// @ts-expect-error Incorrect khroma types
 import { darken, lighten, isDark } from 'khroma';
 import { getConfig } from './../../config.js';
 
-const genReduxSections = (options) => {
+interface TimelineBaseStyleOptions {
+  svgId?: string;
+  dropShadow?: string;
+  THEME_COLOR_LIMIT: number;
+  mainBkg: string;
+  nodeBorder: string;
+  strokeWidth?: string | number;
+  fontWeight?: string | number;
+  tertiaryColor?: string;
+  clusterBorder?: string;
+  borderColorArray: string[];
+  useGradient?: boolean;
+  git0: string;
+  gitBranchLabel0: string;
+}
+
+// The intersection adds the dynamically accessed theme variables such as
+// cScale0..cScale11, cScaleInv0..cScaleInv11, cScaleLabel0..cScaleLabel11 and
+// lineColor0..lineColor11.
+export type TimelineStyleOptions = TimelineBaseStyleOptions &
+  Record<string, string | number | boolean | undefined>;
+
+const genReduxSections = (options: TimelineStyleOptions) => {
   const { theme } = getConfig();
   //Required to read the active theme at render time,
   // since options alone does not expose the theme name needed to switch between redux and classic section generators.
@@ -72,7 +95,7 @@ const genReduxSections = (options) => {
   return sections;
 };
 
-const genSections = (options) => {
+const genSections = (options: TimelineStyleOptions) => {
   let sections = '';
 
   for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
@@ -125,7 +148,7 @@ const genSections = (options) => {
   return sections;
 };
 
-const getStyles = (options) => {
+const getStyles = (options: TimelineStyleOptions) => {
   // Required to read the active theme at render time, since options alone does not expose the theme name needed to switch between redux and classic section generators.
   const { theme } = getConfig();
   const isReduxTheme = theme?.includes('redux');

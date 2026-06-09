@@ -1,6 +1,21 @@
 import { getIconStyles } from '../globalStyles.js';
 
-const getStyles = (options) =>
+export interface ClassStyleOptions {
+  nodeBorder: string;
+  classText: string;
+  fontFamily: string;
+  titleColor: string;
+  clusterBkg: string;
+  clusterBorder: string;
+  noteTextColor: string;
+  mainBkg: string;
+  strokeWidth: string;
+  lineColor: string;
+  textColor: string;
+  edgeLabelBackground: string;
+}
+
+const getStyles = (options: ClassStyleOptions) =>
   `g.classGroup text {
   fill: ${options.nodeBorder || options.classText};
   stroke: none;

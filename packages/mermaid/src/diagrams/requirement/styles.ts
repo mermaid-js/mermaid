@@ -1,6 +1,25 @@
 import * as configApi from '../../config.js';
 
-const genColor = (options) => {
+export interface RequirementStyleOptions {
+  THEME_COLOR_LIMIT: number;
+  relationColor: string;
+  lineColor: string;
+  fontFamily: string;
+  fontSize: string | number;
+  requirementBackground: string;
+  requirementBorderColor: string;
+  requirementBorderSize: string | number;
+  requirementTextColor: string;
+  relationLabelBackground: string;
+  relationLabelColor: string;
+  strokeWidth?: string | number;
+  edgeLabelBackground: string;
+  nodeBorder: string;
+  nodeTextColor?: string;
+  textColor: string;
+}
+
+const genColor = (options: RequirementStyleOptions) => {
   const config = configApi.getConfig();
 
   const { themeVariables, look } = config;
@@ -27,7 +46,7 @@ const genColor = (options) => {
   return sections;
 };
 
-const getStyles = (options) => {
+const getStyles = (options: RequirementStyleOptions) => {
   const config = configApi.getConfig();
   const { look, themeVariables } = config;
   const { requirementEdgeLabelBackground } = themeVariables;

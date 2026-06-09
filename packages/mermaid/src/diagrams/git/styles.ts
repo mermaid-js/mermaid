@@ -1,11 +1,19 @@
 import * as configApi from '../../config.js';
+import type { MermaidConfig } from '../../config.type.js';
 const GIT_NAMED_COLOR_COUNT = 8;
 
-const REDUX_GEOMETRY_THEMES = new Set(['redux', 'redux-dark', 'redux-color', 'redux-dark-color']);
-const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
-const NEO_THEMES = new Set(['neo', 'neo-dark']);
-const DARK_THEMES = new Set(['dark', 'redux-dark', 'redux-dark-color', 'neo-dark']);
-const NEO_COLOR_GEN_THEMES = new Set([
+type Theme = MermaidConfig['theme'];
+
+const REDUX_GEOMETRY_THEMES = new Set<Theme>([
+  'redux',
+  'redux-dark',
+  'redux-color',
+  'redux-dark-color',
+]);
+const COLOR_THEMES = new Set<Theme>(['redux-color', 'redux-dark-color']);
+const NEO_THEMES = new Set<Theme>(['neo', 'neo-dark']);
+const DARK_THEMES = new Set<Theme>(['dark', 'redux-dark', 'redux-dark-color', 'neo-dark']);
+const NEO_COLOR_GEN_THEMES = new Set<Theme>([
   'redux',
   'redux-dark',
   'redux-color',
@@ -14,7 +22,32 @@ const NEO_COLOR_GEN_THEMES = new Set([
   'neo-dark',
 ]);
 
-const genGitGraphGradient = (options) => {
+export interface GitStyleOptions {
+  svgId?: string;
+  useGradient?: boolean;
+  THEME_COLOR_LIMIT: number;
+  mainBkg: string;
+  strokeWidth?: string | number;
+  nodeBorder: string;
+  noteFontWeight?: string;
+  commitLineColor?: string;
+  lineColor: string;
+  commitLabelFontSize: string | number;
+  commitLabelColor: string;
+  commitLabelBackground: string;
+  tagLabelFontSize: string | number;
+  tagLabelColor: string;
+  tagLabelBackground: string;
+  tagLabelBorder: string;
+  dropShadow?: string;
+  textColor: string;
+  primaryColor: string;
+  // Dynamically accessed theme variables such as git0..git7, gitInv0..gitInv7 and
+  // gitBranchLabel0..gitBranchLabel7.
+  [key: string]: string | number | boolean | undefined;
+}
+
+const genGitGraphGradient = (options: GitStyleOptions) => {
   const { svgId } = options;
   let sections = '';
   if (options.useGradient && svgId) {
@@ -27,7 +60,7 @@ const genGitGraphGradient = (options) => {
   return sections;
 };
 
-const genColor = (options) => {
+const genColor = (options: GitStyleOptions) => {
   const config = configApi.getConfig();
   const { theme, themeVariables } = config;
   const { borderColorArray } = themeVariables;
@@ -100,7 +133,7 @@ const genColor = (options) => {
   }
 };
 
-const normalTheme = (options) => {
+const normalTheme = (options: GitStyleOptions) => {
   return `${Array.from({ length: options.THEME_COLOR_LIMIT }, (_, i) => i)
     .map((i) => {
       // Wrap index to stay within the range of defined git color variables (git0..git7).
@@ -115,7 +148,7 @@ const normalTheme = (options) => {
     })
     .join('\n')}`;
 };
-const getStyles = (options) => {
+const getStyles = (options: GitStyleOptions) => {
   const config = configApi.getConfig();
   const { theme } = config;
   const useNeoColorGen = NEO_COLOR_GEN_THEMES.has(theme);

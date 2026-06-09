@@ -1,6 +1,34 @@
 import { getIconStyles } from '../globalStyles.js';
 
-const getStyles = (options) =>
+export interface JourneyStyleOptions {
+  fontFamily: string;
+  textColor: string;
+  faceColor?: string;
+  mainBkg: string;
+  nodeBorder: string;
+  arrowheadColor: string;
+  lineColor: string;
+  edgeLabelBackground: string;
+  titleColor: string;
+  tertiaryColor: string;
+  border2: string;
+  fillType0?: string;
+  fillType1?: string;
+  fillType2?: string;
+  fillType3?: string;
+  fillType4?: string;
+  fillType5?: string;
+  fillType6?: string;
+  fillType7?: string;
+  actor0?: string;
+  actor1?: string;
+  actor2?: string;
+  actor3?: string;
+  actor4?: string;
+  actor5?: string;
+}
+
+const getStyles = (options: JourneyStyleOptions) =>
   `.label {
     font-family: ${options.fontFamily};
     color: ${options.textColor};

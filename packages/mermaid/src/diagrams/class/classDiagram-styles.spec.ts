@@ -1,9 +1,10 @@
+// @ts-expect-error Jison doesn't export types
 import { parser } from './parser/classDiagram.jison';
 import { ClassDB } from './classDb.js';
 
 describe('class diagram, ', function () {
   describe('when parsing data from a classDiagram it', function () {
-    let classDb;
+    let classDb: ClassDB;
     beforeEach(function () {
       classDb = new ClassDB();
       parser.yy = classDb;

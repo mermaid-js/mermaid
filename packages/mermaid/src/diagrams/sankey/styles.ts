@@ -1,4 +1,11 @@
-const getStyles = (options) =>
+export interface SankeyStyleOptions {
+  fontFamily: string;
+  mainBkg?: string;
+  background?: string;
+  textColor: string;
+}
+
+const getStyles = (options: SankeyStyleOptions) =>
   `.label {
     font-family: ${options.fontFamily};
   }

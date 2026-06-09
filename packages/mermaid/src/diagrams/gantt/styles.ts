@@ -1,4 +1,29 @@
-const getStyles = (options) =>
+export interface GanttStyleOptions {
+  fontFamily: string;
+  excludeBkgColor: string;
+  sectionBkgColor: string;
+  sectionBkgColor2: string;
+  altSectionBkgColor: string;
+  titleColor: string;
+  gridColor: string;
+  textColor: string;
+  todayLineColor: string;
+  taskTextDarkColor: string;
+  taskTextClickableColor: string;
+  taskTextColor: string;
+  taskBkgColor: string;
+  taskBorderColor: string;
+  taskTextOutsideColor: string;
+  activeTaskBkgColor: string;
+  activeTaskBorderColor: string;
+  doneTaskBorderColor: string;
+  doneTaskBkgColor: string;
+  critBorderColor: string;
+  critBkgColor: string;
+  vertLineColor: string;
+}
+
+const getStyles = (options: GanttStyleOptions) =>
   `
   .mermaid-main-font {
         font-family: ${options.fontFamily};
