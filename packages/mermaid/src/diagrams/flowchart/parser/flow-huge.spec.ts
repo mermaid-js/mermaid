@@ -1,5 +1,6 @@
 import { FlowDB } from '../flowDb.js';
-import flow from './flowParser.ts';
+import type { FlowVertex, FlowEdge } from '../types.js';
+import flow from './flowParser.js';
 import { setConfig } from '../../../config.js';
 
 setConfig({
@@ -18,8 +19,8 @@ describe('[Text] when parsing', () => {
       const nodes = ('A-->B;B-->A;'.repeat(415) + 'A-->B;').repeat(57) + 'A-->B;B-->A;'.repeat(275);
       flow.parser.parse(`graph LR;${nodes}`);
 
-      const vert = flow.parser.yy.getVertices();
-      const edges = flow.parser.yy.getEdges();
+      const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+      const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
       expect(edges[0].type).toBe('arrow_point');
       expect(edges.length).toBe(47917);

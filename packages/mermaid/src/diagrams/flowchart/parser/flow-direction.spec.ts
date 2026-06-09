@@ -1,5 +1,6 @@
 import { FlowDB } from '../flowDb.js';
-import flow from './flowParser.ts';
+import type { FlowSubGraph } from '../types.js';
+import flow from './flowParser.js';
 import { setConfig } from '../../../config.js';
 
 setConfig({
@@ -19,7 +20,7 @@ describe('when parsing directions', function () {
       a --> b
     end`);
 
-    const subgraphs = flow.parser.yy.getSubGraphs();
+    const subgraphs: FlowSubGraph[] = flow.parser.yy.getSubGraphs();
     expect(subgraphs.length).toBe(1);
     const subgraph = subgraphs[0];
     expect(subgraph.nodes.length).toBe(2);
@@ -35,7 +36,7 @@ describe('when parsing directions', function () {
       a --> b
     end`);
 
-    const subgraphs = flow.parser.yy.getSubGraphs();
+    const subgraphs: FlowSubGraph[] = flow.parser.yy.getSubGraphs();
     expect(subgraphs.length).toBe(1);
     const subgraph = subgraphs[0];
     expect(subgraph.nodes.length).toBe(2);
@@ -52,7 +53,7 @@ describe('when parsing directions', function () {
       direction RL
     end`);
 
-    const subgraphs = flow.parser.yy.getSubGraphs();
+    const subgraphs: FlowSubGraph[] = flow.parser.yy.getSubGraphs();
     expect(subgraphs.length).toBe(1);
     const subgraph = subgraphs[0];
     expect(subgraph.nodes.length).toBe(2);
@@ -75,11 +76,11 @@ describe('when parsing directions', function () {
       c
     end`);
 
-    const subgraphs = flow.parser.yy.getSubGraphs();
+    const subgraphs: FlowSubGraph[] = flow.parser.yy.getSubGraphs();
     expect(subgraphs.length).toBe(2);
 
-    const subgraphA = subgraphs.find((o) => o.id === 'A');
-    const subgraphB = subgraphs.find((o) => o.id === 'B');
+    const subgraphA = subgraphs.find((o) => o.id === 'A')!;
+    const subgraphB = subgraphs.find((o) => o.id === 'B')!;
 
     expect(subgraphB.nodes[0]).toBe('c');
     expect(subgraphB.dir).toBe('LR');

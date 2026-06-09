@@ -1,12 +1,39 @@
 import { intersectPolygon } from 'dagre-d3-es/src/dagre-js/intersect/intersect-polygon.js';
 import { intersectRect } from 'dagre-d3-es/src/dagre-js/intersect/intersect-rect.js';
+import type { Selection } from 'd3';
+import type { Point } from '../../types.js';
+
+/** Bounding box of the node label, used to size the shape. */
+export interface ShapeBBox {
+  width: number;
+  height: number;
+}
+
+/** Dagre node a shape is rendered for. Each shape attaches its `intersect` handler to it. */
+export interface ShapeNode extends Point {
+  width: number;
+  height: number;
+  intersect?: (point: Point) => Point;
+}
+
+/** The d3 selection of the node group element a shape is inserted into. */
+export type ShapeParent = Selection<SVGGElement, unknown, Element | null, unknown>;
 
 /**
- * @param parent
- * @param bbox
- * @param node
+ * A shape renderer: inserts the shape into the parent selection and returns the
+ * inserted selection. The return type is `unknown` because each shape returns a
+ * d3 selection of a different SVG element type (polygon, rect or path).
  */
-function question(parent, bbox, node) {
+export type ShapeFunction = (parent: ShapeParent, bbox: ShapeBBox, node: ShapeNode) => unknown;
+
+/** A dagre-d3 render object exposing its shape map. */
+export interface RenderWithShapes {
+  shapes: () => Record<string, ShapeFunction>;
+}
+
+export type AddShapeFunction = (shapes: Record<string, ShapeFunction>) => void;
+
+function question(parent: ShapeParent, bbox: ShapeBBox, node: ShapeNode) {
   const w = bbox.width;
   const h = bbox.height;
   const s = (w + h) * 0.9;
@@ -18,17 +45,12 @@ function question(parent, bbox, node) {
   ];
   const shapeSvg = insertPolygonShape(parent, s, s, points);
   node.intersect = function (point) {
-    return intersectPolygon(node, points, point);
+    return intersectPolygon(node, points, point) as Point;
   };
   return shapeSvg;
 }
 
-/**
- * @param parent
- * @param bbox
- * @param node
- */
-function hexagon(parent, bbox, node) {
+function hexagon(parent: ShapeParent, bbox: ShapeBBox, node: ShapeNode) {
   const f = 4;
   const h = bbox.height;
   const m = h / f;
@@ -43,17 +65,12 @@ function hexagon(parent, bbox, node) {
   ];
   const shapeSvg = insertPolygonShape(parent, w, h, points);
   node.intersect = function (point) {
-    return intersectPolygon(node, points, point);
+    return intersectPolygon(node, points, point) as Point;
   };
   return shapeSvg;
 }
 
-/**
- * @param parent
- * @param bbox
- * @param node
- */
-function rect_left_inv_arrow(parent, bbox, node) {
+function rect_left_inv_arrow(parent: ShapeParent, bbox: ShapeBBox, node: ShapeNode) {
   const w = bbox.width;
   const h = bbox.height;
   const points = [
@@ -65,17 +82,12 @@ function rect_left_inv_arrow(parent, bbox, node) {
   ];
   const shapeSvg = insertPolygonShape(parent, w, h, points);
   node.intersect = function (point) {
-    return intersectPolygon(node, points, point);
+    return intersectPolygon(node, points, point) as Point;
   };
   return shapeSvg;
 }
 
-/**
- * @param parent
- * @param bbox
- * @param node
- */
-function lean_right(parent, bbox, node) {
+function lean_right(parent: ShapeParent, bbox: ShapeBBox, node: ShapeNode) {
   const w = bbox.width;
   const h = bbox.height;
   const points = [
@@ -86,17 +98,12 @@ function lean_right(parent, bbox, node) {
   ];
   const shapeSvg = insertPolygonShape(parent, w, h, points);
   node.intersect = function (point) {
-    return intersectPolygon(node, points, point);
+    return intersectPolygon(node, points, point) as Point;
   };
   return shapeSvg;
 }
 
-/**
- * @param parent
- * @param bbox
- * @param node
- */
-function lean_left(parent, bbox, node) {
+function lean_left(parent: ShapeParent, bbox: ShapeBBox, node: ShapeNode) {
   const w = bbox.width;
   const h = bbox.height;
   const points = [
@@ -107,17 +114,12 @@ function lean_left(parent, bbox, node) {
   ];
   const shapeSvg = insertPolygonShape(parent, w, h, points);
   node.intersect = function (point) {
-    return intersectPolygon(node, points, point);
+    return intersectPolygon(node, points, point) as Point;
   };
   return shapeSvg;
 }
 
-/**
- * @param parent
- * @param bbox
- * @param node
- */
-function trapezoid(parent, bbox, node) {
+function trapezoid(parent: ShapeParent, bbox: ShapeBBox, node: ShapeNode) {
   const w = bbox.width;
   const h = bbox.height;
   const points = [
@@ -128,17 +130,12 @@ function trapezoid(parent, bbox, node) {
   ];
   const shapeSvg = insertPolygonShape(parent, w, h, points);
   node.intersect = function (point) {
-    return intersectPolygon(node, points, point);
+    return intersectPolygon(node, points, point) as Point;
   };
   return shapeSvg;
 }
 
-/**
- * @param parent
- * @param bbox
- * @param node
- */
-function inv_trapezoid(parent, bbox, node) {
+function inv_trapezoid(parent: ShapeParent, bbox: ShapeBBox, node: ShapeNode) {
   const w = bbox.width;
   const h = bbox.height;
   const points = [
@@ -149,17 +146,12 @@ function inv_trapezoid(parent, bbox, node) {
   ];
   const shapeSvg = insertPolygonShape(parent, w, h, points);
   node.intersect = function (point) {
-    return intersectPolygon(node, points, point);
+    return intersectPolygon(node, points, point) as Point;
   };
   return shapeSvg;
 }
 
-/**
- * @param parent
- * @param bbox
- * @param node
- */
-function rect_right_inv_arrow(parent, bbox, node) {
+function rect_right_inv_arrow(parent: ShapeParent, bbox: ShapeBBox, node: ShapeNode) {
   const w = bbox.width;
   const h = bbox.height;
   const points = [
@@ -171,17 +163,12 @@ function rect_right_inv_arrow(parent, bbox, node) {
   ];
   const shapeSvg = insertPolygonShape(parent, w, h, points);
   node.intersect = function (point) {
-    return intersectPolygon(node, points, point);
+    return intersectPolygon(node, points, point) as Point;
   };
   return shapeSvg;
 }
 
-/**
- * @param parent
- * @param bbox
- * @param node
- */
-function stadium(parent, bbox, node) {
+function stadium(parent: ShapeParent, bbox: ShapeBBox, node: ShapeNode) {
   const h = bbox.height;
   const w = bbox.width + h / 4;
 
@@ -195,17 +182,12 @@ function stadium(parent, bbox, node) {
     .attr('height', h);
 
   node.intersect = function (point) {
-    return intersectRect(node, point);
+    return intersectRect(node, point) as Point;
   };
   return shapeSvg;
 }
 
-/**
- * @param parent
- * @param bbox
- * @param node
- */
-function subroutine(parent, bbox, node) {
+function subroutine(parent: ShapeParent, bbox: ShapeBBox, node: ShapeNode) {
   const w = bbox.width;
   const h = bbox.height;
   const points = [
@@ -222,17 +204,12 @@ function subroutine(parent, bbox, node) {
   ];
   const shapeSvg = insertPolygonShape(parent, w, h, points);
   node.intersect = function (point) {
-    return intersectPolygon(node, points, point);
+    return intersectPolygon(node, points, point) as Point;
   };
   return shapeSvg;
 }
 
-/**
- * @param parent
- * @param bbox
- * @param node
- */
-function cylinder(parent, bbox, node) {
+function cylinder(parent: ShapeParent, bbox: ShapeBBox, node: ShapeNode) {
   const w = bbox.width;
   const rx = w / 2;
   const ry = rx / (2.5 + w / 50);
@@ -271,7 +248,7 @@ function cylinder(parent, bbox, node) {
     .attr('transform', 'translate(' + -w / 2 + ',' + -(h / 2 + ry) + ')');
 
   node.intersect = function (point) {
-    const pos = intersectRect(node, point);
+    const pos = intersectRect(node, point) as Point;
     const x = pos.x - node.x;
 
     if (
@@ -299,8 +276,7 @@ function cylinder(parent, bbox, node) {
   return shapeSvg;
 }
 
-/** @param render */
-export function addToRender(render) {
+export function addToRender(render: RenderWithShapes) {
   render.shapes().question = question;
   render.shapes().hexagon = hexagon;
   render.shapes().stadium = stadium;
@@ -326,8 +302,7 @@ export function addToRender(render) {
   render.shapes().rect_right_inv_arrow = rect_right_inv_arrow;
 }
 
-/** @param addShape */
-export function addToRenderV2(addShape) {
+export function addToRenderV2(addShape: AddShapeFunction) {
   addShape({ question });
   addShape({ hexagon });
   addShape({ stadium });
@@ -353,13 +328,7 @@ export function addToRenderV2(addShape) {
   addShape({ rect_right_inv_arrow });
 }
 
-/**
- * @param parent
- * @param w
- * @param h
- * @param points
- */
-function insertPolygonShape(parent, w, h, points) {
+function insertPolygonShape(parent: ShapeParent, w: number, h: number, points: Point[]) {
   return parent
     .insert('polygon', ':first-child')
     .attr(

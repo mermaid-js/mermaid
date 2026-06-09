@@ -1,5 +1,6 @@
 import { FlowDB } from '../flowDb.js';
-import flow from './flowParser.ts';
+import type { FlowVertex, FlowEdge } from '../types.js';
+import flow from './flowParser.js';
 import { setConfig } from '../../../config.js';
 
 setConfig({
@@ -69,21 +70,21 @@ describe('[Edges] when parsing', () => {
 
   it('should handle open ended edges', function () {
     const res = flow.parser.parse('graph TD;A---B;');
-    const edges = flow.parser.yy.getEdges();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
     expect(edges[0].type).toBe('arrow_open');
   });
 
   it('should handle cross ended edges', function () {
     const res = flow.parser.parse('graph TD;A--xB;');
-    const edges = flow.parser.yy.getEdges();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
     expect(edges[0].type).toBe('arrow_cross');
   });
 
   it('should handle open ended edges', function () {
     const res = flow.parser.parse('graph TD;A--oB;');
-    const edges = flow.parser.yy.getEdges();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
     expect(edges[0].type).toBe('arrow_circle');
   });
@@ -95,10 +96,10 @@ describe('[Edges] when parsing', () => {
           const res = flow.parser.parse(
             `flowchart TD;\nA e1@${edgeType.edgeStart}${edgeType.edgeEnd} B;`
           );
-          const vert = flow.parser.yy.getVertices();
-          const edges = flow.parser.yy.getEdges();
-          expect(vert.get('A').id).toBe('A');
-          expect(vert.get('B').id).toBe('B');
+          const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+          const edges: FlowEdge[] = flow.parser.yy.getEdges();
+          expect(vert.get('A')!.id).toBe('A');
+          expect(vert.get('B')!.id).toBe('B');
           expect(edges.length).toBe(1);
           expect(edges[0].id).toBe('e1');
           expect(edges[0].start).toBe('A');
@@ -111,10 +112,10 @@ describe('[Edges] when parsing', () => {
           const res = flow.parser.parse(
             `flowchart TD;\nA e1@${edgeType.edgeStart}${edgeType.edgeEnd} B;`
           );
-          const vert = flow.parser.yy.getVertices();
-          const edges = flow.parser.yy.getEdges();
-          expect(vert.get('A').id).toBe('A');
-          expect(vert.get('B').id).toBe('B');
+          const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+          const edges: FlowEdge[] = flow.parser.yy.getEdges();
+          expect(vert.get('A')!.id).toBe('A');
+          expect(vert.get('B')!.id).toBe('B');
           expect(edges.length).toBe(1);
           expect(edges[0].id).toBe('e1');
           expect(edges[0].start).toBe('A');
@@ -129,7 +130,7 @@ describe('[Edges] when parsing', () => {
 A id1@-->B
 A@{ shape: 'rect' }
 `);
-        const edges = flow.parser.yy.getEdges();
+        const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
         expect(edges[0].id).toBe('id1');
       });
@@ -140,10 +141,10 @@ A@{ shape: 'rect' }
           const res = flow.parser.parse(
             `flowchart TD;\nA e1@${edgeType.edgeStart} label ${edgeType.edgeEnd} B;`
           );
-          const vert = flow.parser.yy.getVertices();
-          const edges = flow.parser.yy.getEdges();
-          expect(vert.get('A').id).toBe('A');
-          expect(vert.get('B').id).toBe('B');
+          const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+          const edges: FlowEdge[] = flow.parser.yy.getEdges();
+          expect(vert.get('A')!.id).toBe('A');
+          expect(vert.get('B')!.id).toBe('B');
           expect(edges.length).toBe(1);
           expect(edges[0].id).toBe('e1');
           expect(edges[0].start).toBe('A');
@@ -161,11 +162,11 @@ A@{ shape: 'rect' }
       it(`should handle ${edgeType.stroke} ${edgeType.type} with no text`, function () {
         const res = flow.parser.parse(`graph TD;\nA ${edgeType.edgeStart}${edgeType.edgeEnd} B;`);
 
-        const vert = flow.parser.yy.getVertices();
-        const edges = flow.parser.yy.getEdges();
+        const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+        const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-        expect(vert.get('A').id).toBe('A');
-        expect(vert.get('B').id).toBe('B');
+        expect(vert.get('A')!.id).toBe('A');
+        expect(vert.get('B')!.id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -179,11 +180,11 @@ A@{ shape: 'rect' }
           `graph TD;\nA ${edgeType.edgeStart} text ${edgeType.edgeEnd} B;`
         );
 
-        const vert = flow.parser.yy.getVertices();
-        const edges = flow.parser.yy.getEdges();
+        const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+        const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-        expect(vert.get('A').id).toBe('A');
-        expect(vert.get('B').id).toBe('B');
+        expect(vert.get('A')!.id).toBe('A');
+        expect(vert.get('B')!.id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -199,11 +200,11 @@ A@{ shape: 'rect' }
             `graph TD;\nA ${edgeType.edgeStart} ${keyword} ${edgeType.edgeEnd} B;`
           );
 
-          const vert = flow.parser.yy.getVertices();
-          const edges = flow.parser.yy.getEdges();
+          const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+          const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-          expect(vert.get('A').id).toBe('A');
-          expect(vert.get('B').id).toBe('B');
+          expect(vert.get('A')!.id).toBe('A');
+          expect(vert.get('B')!.id).toBe('B');
           expect(edges.length).toBe(1);
           expect(edges[0].start).toBe('A');
           expect(edges[0].end).toBe('B');
@@ -219,11 +220,11 @@ A@{ shape: 'rect' }
     const res = flow.parser.parse(
       'graph TD;A---|This is the 123 s text|B;\nA---|This is the second edge|B;'
     );
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-    expect(vert.get('A').id).toBe('A');
-    expect(vert.get('B').id).toBe('B');
+    expect(vert.get('A')!.id).toBe('A');
+    expect(vert.get('B')!.id).toBe('B');
     expect(edges.length).toBe(2);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
@@ -244,11 +245,11 @@ A@{ shape: 'rect' }
       it(`should handle normal edges with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA -${'-'.repeat(length)}- B;`);
 
-        const vert = flow.parser.yy.getVertices();
-        const edges = flow.parser.yy.getEdges();
+        const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+        const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-        expect(vert.get('A').id).toBe('A');
-        expect(vert.get('B').id).toBe('B');
+        expect(vert.get('A')!.id).toBe('A');
+        expect(vert.get('B')!.id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -263,11 +264,11 @@ A@{ shape: 'rect' }
       it(`should handle normal labelled edges with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA -- Label -${'-'.repeat(length)}- B;`);
 
-        const vert = flow.parser.yy.getVertices();
-        const edges = flow.parser.yy.getEdges();
+        const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+        const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-        expect(vert.get('A').id).toBe('A');
-        expect(vert.get('B').id).toBe('B');
+        expect(vert.get('A')!.id).toBe('A');
+        expect(vert.get('B')!.id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -282,11 +283,11 @@ A@{ shape: 'rect' }
       it(`should handle normal edges with arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA -${'-'.repeat(length)}> B;`);
 
-        const vert = flow.parser.yy.getVertices();
-        const edges = flow.parser.yy.getEdges();
+        const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+        const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-        expect(vert.get('A').id).toBe('A');
-        expect(vert.get('B').id).toBe('B');
+        expect(vert.get('A')!.id).toBe('A');
+        expect(vert.get('B')!.id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -301,11 +302,11 @@ A@{ shape: 'rect' }
       it(`should handle normal labelled edges with arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA -- Label -${'-'.repeat(length)}> B;`);
 
-        const vert = flow.parser.yy.getVertices();
-        const edges = flow.parser.yy.getEdges();
+        const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+        const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-        expect(vert.get('A').id).toBe('A');
-        expect(vert.get('B').id).toBe('B');
+        expect(vert.get('A')!.id).toBe('A');
+        expect(vert.get('B')!.id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -320,11 +321,11 @@ A@{ shape: 'rect' }
       it(`should handle normal edges with double arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA <-${'-'.repeat(length)}> B;`);
 
-        const vert = flow.parser.yy.getVertices();
-        const edges = flow.parser.yy.getEdges();
+        const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+        const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-        expect(vert.get('A').id).toBe('A');
-        expect(vert.get('B').id).toBe('B');
+        expect(vert.get('A')!.id).toBe('A');
+        expect(vert.get('B')!.id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -339,11 +340,11 @@ A@{ shape: 'rect' }
       it(`should handle normal labelled edges with double arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA <-- Label -${'-'.repeat(length)}> B;`);
 
-        const vert = flow.parser.yy.getVertices();
-        const edges = flow.parser.yy.getEdges();
+        const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+        const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-        expect(vert.get('A').id).toBe('A');
-        expect(vert.get('B').id).toBe('B');
+        expect(vert.get('A')!.id).toBe('A');
+        expect(vert.get('B')!.id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -358,11 +359,11 @@ A@{ shape: 'rect' }
       it(`should handle thick edges with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA =${'='.repeat(length)}= B;`);
 
-        const vert = flow.parser.yy.getVertices();
-        const edges = flow.parser.yy.getEdges();
+        const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+        const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-        expect(vert.get('A').id).toBe('A');
-        expect(vert.get('B').id).toBe('B');
+        expect(vert.get('A')!.id).toBe('A');
+        expect(vert.get('B')!.id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -377,11 +378,11 @@ A@{ shape: 'rect' }
       it(`should handle thick labelled edges with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA == Label =${'='.repeat(length)}= B;`);
 
-        const vert = flow.parser.yy.getVertices();
-        const edges = flow.parser.yy.getEdges();
+        const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+        const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-        expect(vert.get('A').id).toBe('A');
-        expect(vert.get('B').id).toBe('B');
+        expect(vert.get('A')!.id).toBe('A');
+        expect(vert.get('B')!.id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -396,11 +397,11 @@ A@{ shape: 'rect' }
       it(`should handle thick edges with arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA =${'='.repeat(length)}> B;`);
 
-        const vert = flow.parser.yy.getVertices();
-        const edges = flow.parser.yy.getEdges();
+        const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+        const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-        expect(vert.get('A').id).toBe('A');
-        expect(vert.get('B').id).toBe('B');
+        expect(vert.get('A')!.id).toBe('A');
+        expect(vert.get('B')!.id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -415,11 +416,11 @@ A@{ shape: 'rect' }
       it(`should handle thick labelled edges with arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA == Label =${'='.repeat(length)}> B;`);
 
-        const vert = flow.parser.yy.getVertices();
-        const edges = flow.parser.yy.getEdges();
+        const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+        const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-        expect(vert.get('A').id).toBe('A');
-        expect(vert.get('B').id).toBe('B');
+        expect(vert.get('A')!.id).toBe('A');
+        expect(vert.get('B')!.id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -434,11 +435,11 @@ A@{ shape: 'rect' }
       it(`should handle thick edges with double arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA <=${'='.repeat(length)}> B;`);
 
-        const vert = flow.parser.yy.getVertices();
-        const edges = flow.parser.yy.getEdges();
+        const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+        const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-        expect(vert.get('A').id).toBe('A');
-        expect(vert.get('B').id).toBe('B');
+        expect(vert.get('A')!.id).toBe('A');
+        expect(vert.get('B')!.id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -453,11 +454,11 @@ A@{ shape: 'rect' }
       it(`should handle thick labelled edges with double arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA <== Label =${'='.repeat(length)}> B;`);
 
-        const vert = flow.parser.yy.getVertices();
-        const edges = flow.parser.yy.getEdges();
+        const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+        const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-        expect(vert.get('A').id).toBe('A');
-        expect(vert.get('B').id).toBe('B');
+        expect(vert.get('A')!.id).toBe('A');
+        expect(vert.get('B')!.id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -472,11 +473,11 @@ A@{ shape: 'rect' }
       it(`should handle dotted edges with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA -${'.'.repeat(length)}- B;`);
 
-        const vert = flow.parser.yy.getVertices();
-        const edges = flow.parser.yy.getEdges();
+        const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+        const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-        expect(vert.get('A').id).toBe('A');
-        expect(vert.get('B').id).toBe('B');
+        expect(vert.get('A')!.id).toBe('A');
+        expect(vert.get('B')!.id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -491,11 +492,11 @@ A@{ shape: 'rect' }
       it(`should handle dotted labelled edges with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA -. Label ${'.'.repeat(length)}- B;`);
 
-        const vert = flow.parser.yy.getVertices();
-        const edges = flow.parser.yy.getEdges();
+        const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+        const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-        expect(vert.get('A').id).toBe('A');
-        expect(vert.get('B').id).toBe('B');
+        expect(vert.get('A')!.id).toBe('A');
+        expect(vert.get('B')!.id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -510,11 +511,11 @@ A@{ shape: 'rect' }
       it(`should handle dotted edges with arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA -${'.'.repeat(length)}-> B;`);
 
-        const vert = flow.parser.yy.getVertices();
-        const edges = flow.parser.yy.getEdges();
+        const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+        const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-        expect(vert.get('A').id).toBe('A');
-        expect(vert.get('B').id).toBe('B');
+        expect(vert.get('A')!.id).toBe('A');
+        expect(vert.get('B')!.id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -529,11 +530,11 @@ A@{ shape: 'rect' }
       it(`should handle dotted labelled edges with arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA -. Label ${'.'.repeat(length)}-> B;`);
 
-        const vert = flow.parser.yy.getVertices();
-        const edges = flow.parser.yy.getEdges();
+        const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+        const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-        expect(vert.get('A').id).toBe('A');
-        expect(vert.get('B').id).toBe('B');
+        expect(vert.get('A')!.id).toBe('A');
+        expect(vert.get('B')!.id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -548,11 +549,11 @@ A@{ shape: 'rect' }
       it(`should handle dotted edges with double arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA <-${'.'.repeat(length)}-> B;`);
 
-        const vert = flow.parser.yy.getVertices();
-        const edges = flow.parser.yy.getEdges();
+        const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+        const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-        expect(vert.get('A').id).toBe('A');
-        expect(vert.get('B').id).toBe('B');
+        expect(vert.get('A')!.id).toBe('A');
+        expect(vert.get('B')!.id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
@@ -567,11 +568,11 @@ A@{ shape: 'rect' }
       it(`should handle dotted edges with double arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA <-. Label ${'.'.repeat(length)}-> B;`);
 
-        const vert = flow.parser.yy.getVertices();
-        const edges = flow.parser.yy.getEdges();
+        const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+        const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-        expect(vert.get('A').id).toBe('A');
-        expect(vert.get('B').id).toBe('B');
+        expect(vert.get('A')!.id).toBe('A');
+        expect(vert.get('B')!.id).toBe('B');
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');

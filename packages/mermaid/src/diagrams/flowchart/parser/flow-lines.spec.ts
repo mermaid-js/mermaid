@@ -1,5 +1,6 @@
 import { FlowDB } from '../flowDb.js';
-import flow from './flowParser.ts';
+import type { FlowVertex, FlowEdge } from '../types.js';
+import flow from './flowParser.js';
 import { setConfig } from '../../../config.js';
 
 setConfig({
@@ -15,8 +16,8 @@ describe('[Lines] when parsing', () => {
   it('should handle line interpolation default definitions', function () {
     const res = flow.parser.parse('graph TD\n' + 'A-->B\n' + 'linkStyle default interpolate basis');
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] & { defaultInterpolate?: string } = flow.parser.yy.getEdges();
 
     expect(edges.defaultInterpolate).toBe('basis');
   });
@@ -30,8 +31,8 @@ describe('[Lines] when parsing', () => {
         'linkStyle 1 interpolate cardinal'
     );
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] & { defaultInterpolate?: string } = flow.parser.yy.getEdges();
 
     expect(edges[0].interpolate).toBe('basis');
     expect(edges[1].interpolate).toBe('cardinal');
@@ -46,8 +47,8 @@ describe('[Lines] when parsing', () => {
         'uniqueName@{curve: cardinal}'
     );
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] & { defaultInterpolate?: string } = flow.parser.yy.getEdges();
 
     expect(edges[0].interpolate).toBe('basis');
     expect(edges[1].interpolate).toBe('cardinal');
@@ -62,8 +63,8 @@ describe('[Lines] when parsing', () => {
         'e1@{curve: stepAfter}'
     );
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] & { defaultInterpolate?: string } = flow.parser.yy.getEdges();
 
     expect(edges[0].interpolate).toBe('stepAfter');
     expect(edges.defaultInterpolate).toBe('linear');
@@ -80,8 +81,8 @@ describe('[Lines] when parsing', () => {
         'e4@{curve: stepBefore}'
     );
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] & { defaultInterpolate?: string } = flow.parser.yy.getEdges();
 
     expect(edges[0].interpolate).toBe('monotoneX');
     expect(edges[1].interpolate).toBe('basis');
@@ -95,8 +96,8 @@ describe('[Lines] when parsing', () => {
       'graph TD\n' + 'A-->B\n' + 'A-->C\n' + 'linkStyle 0,1 interpolate basis'
     );
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] & { defaultInterpolate?: string } = flow.parser.yy.getEdges();
 
     expect(edges[0].interpolate).toBe('basis');
     expect(edges[1].interpolate).toBe('basis');
@@ -107,8 +108,8 @@ describe('[Lines] when parsing', () => {
       'graph TD\n' + 'A-->B\n' + 'linkStyle default interpolate basis stroke-width:1px;'
     );
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] & { defaultInterpolate?: string } = flow.parser.yy.getEdges();
 
     expect(edges.defaultInterpolate).toBe('basis');
   });
@@ -122,8 +123,8 @@ describe('[Lines] when parsing', () => {
         'linkStyle 1 interpolate cardinal stroke-width:1px;'
     );
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] & { defaultInterpolate?: string } = flow.parser.yy.getEdges();
 
     expect(edges[0].interpolate).toBe('basis');
     expect(edges[1].interpolate).toBe('cardinal');
@@ -134,8 +135,8 @@ describe('[Lines] when parsing', () => {
       'graph TD\n' + 'A-->B\n' + 'A-->C\n' + 'linkStyle 0,1 interpolate basis stroke-width:1px;'
     );
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] & { defaultInterpolate?: string } = flow.parser.yy.getEdges();
 
     expect(edges[0].interpolate).toBe('basis');
     expect(edges[1].interpolate).toBe('basis');
@@ -145,8 +146,8 @@ describe('[Lines] when parsing', () => {
     it('should handle regular lines', function () {
       const res = flow.parser.parse('graph TD;A-->B;');
 
-      const vert = flow.parser.yy.getVertices();
-      const edges = flow.parser.yy.getEdges();
+      const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+      const edges: FlowEdge[] & { defaultInterpolate?: string } = flow.parser.yy.getEdges();
 
       expect(edges[0].stroke).toBe('normal');
     });
@@ -154,8 +155,8 @@ describe('[Lines] when parsing', () => {
     it('should handle dotted lines', function () {
       const res = flow.parser.parse('graph TD;A-.->B;');
 
-      const vert = flow.parser.yy.getVertices();
-      const edges = flow.parser.yy.getEdges();
+      const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+      const edges: FlowEdge[] & { defaultInterpolate?: string } = flow.parser.yy.getEdges();
 
       expect(edges[0].stroke).toBe('dotted');
     });
@@ -163,8 +164,8 @@ describe('[Lines] when parsing', () => {
     it('should handle dotted lines', function () {
       const res = flow.parser.parse('graph TD;A==>B;');
 
-      const vert = flow.parser.yy.getVertices();
-      const edges = flow.parser.yy.getEdges();
+      const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+      const edges: FlowEdge[] & { defaultInterpolate?: string } = flow.parser.yy.getEdges();
 
       expect(edges[0].stroke).toBe('thick');
     });

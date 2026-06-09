@@ -1,5 +1,6 @@
 import { FlowDB } from '../flowDb.js';
-import flow from './flowParser.ts';
+import type { FlowVertex, FlowEdge, FlowClass } from '../types.js';
+import flow from './flowParser.js';
 import { setConfig } from '../../../config.js';
 
 setConfig({
@@ -19,12 +20,12 @@ describe('when parsing flowcharts', function () {
       A-->B-->C;
     `);
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-    expect(vert.get('A').id).toBe('A');
-    expect(vert.get('B').id).toBe('B');
-    expect(vert.get('C').id).toBe('C');
+    expect(vert.get('A')!.id).toBe('A');
+    expect(vert.get('B')!.id).toBe('B');
+    expect(vert.get('C')!.id).toBe('C');
     expect(edges.length).toBe(2);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
@@ -41,12 +42,12 @@ describe('when parsing flowcharts', function () {
       A & B --> C;
     `);
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-    expect(vert.get('A').id).toBe('A');
-    expect(vert.get('B').id).toBe('B');
-    expect(vert.get('C').id).toBe('C');
+    expect(vert.get('A')!.id).toBe('A');
+    expect(vert.get('B')!.id).toBe('B');
+    expect(vert.get('C')!.id).toBe('C');
     expect(edges.length).toBe(2);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('C');
@@ -63,12 +64,12 @@ describe('when parsing flowcharts', function () {
       A-->B & C;
     `);
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-    expect(vert.get('A').id).toBe('A');
-    expect(vert.get('B').id).toBe('B');
-    expect(vert.get('C').id).toBe('C');
+    expect(vert.get('A')!.id).toBe('A');
+    expect(vert.get('B')!.id).toBe('B');
+    expect(vert.get('C')!.id).toBe('C');
     expect(edges.length).toBe(2);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
@@ -85,13 +86,13 @@ describe('when parsing flowcharts', function () {
       A & B--> C & D;
     `);
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-    expect(vert.get('A').id).toBe('A');
-    expect(vert.get('B').id).toBe('B');
-    expect(vert.get('C').id).toBe('C');
-    expect(vert.get('D').id).toBe('D');
+    expect(vert.get('A')!.id).toBe('A');
+    expect(vert.get('B')!.id).toBe('B');
+    expect(vert.get('C')!.id).toBe('C');
+    expect(vert.get('D')!.id).toBe('D');
     expect(edges.length).toBe(4);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('C');
@@ -116,13 +117,13 @@ describe('when parsing flowcharts', function () {
       A & B--> C & D;
     `);
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-    expect(vert.get('A').id).toBe('A');
-    expect(vert.get('B').id).toBe('B');
-    expect(vert.get('C').id).toBe('C');
-    expect(vert.get('D').id).toBe('D');
+    expect(vert.get('A')!.id).toBe('A');
+    expect(vert.get('B')!.id).toBe('B');
+    expect(vert.get('C')!.id).toBe('C');
+    expect(vert.get('D')!.id).toBe('D');
     expect(edges.length).toBe(4);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('C');
@@ -147,14 +148,14 @@ describe('when parsing flowcharts', function () {
       A --> B & B2 & C --> D2;
     `);
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-    expect(vert.get('A').id).toBe('A');
-    expect(vert.get('B').id).toBe('B');
-    expect(vert.get('B2').id).toBe('B2');
-    expect(vert.get('C').id).toBe('C');
-    expect(vert.get('D2').id).toBe('D2');
+    expect(vert.get('A')!.id).toBe('A');
+    expect(vert.get('B')!.id).toBe('B');
+    expect(vert.get('B2')!.id).toBe('B2');
+    expect(vert.get('C')!.id).toBe('C');
+    expect(vert.get('D2')!.id).toBe('D2');
     expect(edges.length).toBe(6);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
@@ -188,19 +189,19 @@ describe('when parsing flowcharts', function () {
       classDef exClass background:#bbb,border:1px solid red;
     `);
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-    const classes = flow.parser.yy.getClasses();
+    const classes: Map<string, FlowClass> = flow.parser.yy.getClasses();
 
-    expect(classes.get('exClass').styles.length).toBe(2);
-    expect(classes.get('exClass').styles[0]).toBe('background:#bbb');
-    expect(classes.get('exClass').styles[1]).toBe('border:1px solid red');
-    expect(vert.get('A').id).toBe('A');
-    expect(vert.get('B').id).toBe('B');
-    expect(vert.get('B').classes[0]).toBe('exClass');
-    expect(vert.get('C').id).toBe('C');
-    expect(vert.get('D').id).toBe('D');
+    expect(classes.get('exClass')!.styles.length).toBe(2);
+    expect(classes.get('exClass')!.styles[0]).toBe('background:#bbb');
+    expect(classes.get('exClass')!.styles[1]).toBe('border:1px solid red');
+    expect(vert.get('A')!.id).toBe('A');
+    expect(vert.get('B')!.id).toBe('B');
+    expect(vert.get('B')!.classes[0]).toBe('exClass');
+    expect(vert.get('C')!.id).toBe('C');
+    expect(vert.get('D')!.id).toBe('D');
     expect(edges.length).toBe(4);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');

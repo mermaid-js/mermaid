@@ -1,5 +1,6 @@
 import { FlowDB } from '../flowDb.js';
-import flow from './flowParser.ts';
+import type { FlowVertex, FlowEdge, FlowClass } from '../types.js';
+import flow from './flowParser.js';
 import { cleanupComments } from '../../../diagram-api/comments.js';
 import { setConfig } from '../../../config.js';
 
@@ -16,11 +17,11 @@ describe('parsing a flow chart', function () {
   it('should handle a trailing whitespaces after statements', function () {
     const res = flow.parser.parse(cleanupComments('graph TD;\n\n\n %% Comment\n A-->B; \n B-->C;'));
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-    expect(vert.get('A').id).toBe('A');
-    expect(vert.get('B').id).toBe('B');
+    expect(vert.get('A')!.id).toBe('A');
+    expect(vert.get('B')!.id).toBe('B');
     expect(edges.length).toBe(2);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
@@ -31,12 +32,12 @@ describe('parsing a flow chart', function () {
   it('should accept swimlane as a graph keyword', function () {
     flow.parser.parse('swimlane LR;A-->B;');
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
     expect(flow.parser.yy.getDirection()).toBe('LR');
-    expect(vert.get('A').id).toBe('A');
-    expect(vert.get('B').id).toBe('B');
+    expect(vert.get('A')!.id).toBe('A');
+    expect(vert.get('B')!.id).toBe('B');
     expect(edges.length).toBe(1);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
@@ -45,11 +46,11 @@ describe('parsing a flow chart', function () {
   it('should handle node names with "end" substring', function () {
     const res = flow.parser.parse('graph TD\nendpoint --> sender');
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-    expect(vert.get('endpoint').id).toBe('endpoint');
-    expect(vert.get('sender').id).toBe('sender');
+    expect(vert.get('endpoint')!.id).toBe('endpoint');
+    expect(vert.get('sender')!.id).toBe('sender');
     expect(edges[0].start).toBe('endpoint');
     expect(edges[0].end).toBe('sender');
   });
@@ -57,11 +58,11 @@ describe('parsing a flow chart', function () {
   it('should handle node names ending with keywords', function () {
     const res = flow.parser.parse('graph TD\nblend --> monograph');
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-    expect(vert.get('blend').id).toBe('blend');
-    expect(vert.get('monograph').id).toBe('monograph');
+    expect(vert.get('blend')!.id).toBe('blend');
+    expect(vert.get('monograph')!.id).toBe('monograph');
     expect(edges[0].start).toBe('blend');
     expect(edges[0].end).toBe('monograph');
   });
@@ -69,28 +70,28 @@ describe('parsing a flow chart', function () {
   it('should allow default in the node name/id', function () {
     const res = flow.parser.parse('graph TD\ndefault --> monograph');
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-    expect(vert.get('default').id).toBe('default');
-    expect(vert.get('monograph').id).toBe('monograph');
+    expect(vert.get('default')!.id).toBe('default');
+    expect(vert.get('monograph')!.id).toBe('monograph');
     expect(edges[0].start).toBe('default');
     expect(edges[0].end).toBe('monograph');
   });
 
   describe('special characters should be handled.', function () {
-    const charTest = function (char, result) {
+    const charTest = function (char: string, result?: string) {
       const res = flow.parser.parse('graph TD;A(' + char + ')-->B;');
 
-      const vert = flow.parser.yy.getVertices();
-      const edges = flow.parser.yy.getEdges();
+      const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+      const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
-      expect(vert.get('A').id).toBe('A');
-      expect(vert.get('B').id).toBe('B');
+      expect(vert.get('A')!.id).toBe('A');
+      expect(vert.get('B')!.id).toBe('B');
       if (result) {
-        expect(vert.get('A').text).toBe(result);
+        expect(vert.get('A')!.text).toBe(result);
       } else {
-        expect(vert.get('A').text).toBe(char);
+        expect(vert.get('A')!.text).toBe(char);
       }
       flow.parser.yy.clear();
     };
@@ -147,9 +148,9 @@ describe('parsing a flow chart', function () {
     statement = statement + '  node1TB\n';
 
     const res = flow.parser.parse(statement);
-    const vertices = flow.parser.yy.getVertices();
-    const classes = flow.parser.yy.getClasses();
-    expect(vertices.get('node1TB').id).toBe('node1TB');
+    const vertices: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const classes: Map<string, FlowClass> = flow.parser.yy.getClasses();
+    expect(vertices.get('node1TB')!.id).toBe('node1TB');
   });
 
   it('should be possible to use direction in node ids', function () {
@@ -157,9 +158,9 @@ describe('parsing a flow chart', function () {
 
     statement = statement + 'graph TD;A--x|text including URL space|B;';
     const res = flow.parser.parse(statement);
-    const vertices = flow.parser.yy.getVertices();
-    const classes = flow.parser.yy.getClasses();
-    expect(vertices.get('A').id).toBe('A');
+    const vertices: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const classes: Map<string, FlowClass> = flow.parser.yy.getClasses();
+    expect(vertices.get('A')!.id).toBe('A');
   });
 
   it('should be possible to use numbers as labels', function () {
@@ -167,9 +168,9 @@ describe('parsing a flow chart', function () {
 
     statement = statement + 'graph TB;subgraph "number as labels";1;end;';
     const res = flow.parser.parse(statement);
-    const vertices = flow.parser.yy.getVertices();
+    const vertices: Map<string, FlowVertex> = flow.parser.yy.getVertices();
 
-    expect(vertices.get('1').id).toBe('1');
+    expect(vertices.get('1')!.id).toBe('1');
   });
 
   it('should add accTitle and accDescr to flow chart', function () {

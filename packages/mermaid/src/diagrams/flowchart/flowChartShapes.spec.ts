@@ -1,13 +1,35 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { addToRender } from './flowChartShapes.js';
+import type { RenderWithShapes } from './flowChartShapes.js';
+
+type SizeFunction = (w: number, h: number) => number;
+
+interface MockSvgElement {
+  readonly __args: unknown[];
+  readonly __tag: string | undefined;
+  readonly __children: MockSvgElement[];
+  readonly __attrs: Record<string, unknown>;
+  insert: (tag?: string, ...args: unknown[]) => MockSvgElement;
+  attr: (name: string, value: unknown) => MockSvgElement;
+}
+
+type MockShapeFunction = (
+  parent: MockSvgElement,
+  bbox: { width: number; height: number },
+  node: Record<string, unknown>
+) => MockSvgElement;
+
+interface MockedRender {
+  shapes: () => Record<string, MockShapeFunction>;
+}
 
 describe('flowchart shapes', function () {
   // rect-based shapes
-  [['stadium', useWidth, useHeight]].forEach(function ([shapeType, getW, getH]) {
+  const rectShapes: [string, SizeFunction, SizeFunction][] = [['stadium', useWidth, useHeight]];
+  rectShapes.forEach(function ([shapeType, getW, getH]) {
     it(`should add a ${shapeType} shape that renders a properly positioned rect element`, function () {
       const mockRender = MockRender();
       const mockSvg = MockSvg();
-      addToRender(mockRender);
+      addToRender(mockRender as unknown as RenderWithShapes);
 
       [
         [100, 100],
@@ -27,11 +49,12 @@ describe('flowchart shapes', function () {
   });
 
   // path-based shapes
-  [['cylinder', useWidth, useHeight]].forEach(function ([shapeType, getW, getH]) {
+  const pathShapes: [string, SizeFunction, SizeFunction][] = [['cylinder', useWidth, useHeight]];
+  pathShapes.forEach(function ([shapeType]) {
     it(`should add a ${shapeType} shape that renders a properly positioned path element`, function () {
       const mockRender = MockRender();
       const mockSvg = MockSvg();
-      addToRender(mockRender);
+      addToRender(mockRender as unknown as RenderWithShapes);
 
       [
         [100, 100],
@@ -46,7 +69,7 @@ describe('flowchart shapes', function () {
   });
 
   // polygon-based shapes
-  [
+  const polygonShapes: [string, number, SizeFunction, SizeFunction][] = [
     [
       'question',
       4,
@@ -72,11 +95,12 @@ describe('flowchart shapes', function () {
     ['trapezoid', 4, useWidth, useHeight],
     ['inv_trapezoid', 4, useWidth, useHeight],
     ['subroutine', 10, useWidth, useHeight],
-  ].forEach(function ([shapeType, expectedPointCount, getW, getH]) {
+  ];
+  polygonShapes.forEach(function ([shapeType, expectedPointCount, getW, getH]) {
     it(`should add a ${shapeType} shape that renders a properly translated polygon element`, function () {
       const mockRender = MockRender();
       const mockSvg = MockSvg();
-      addToRender(mockRender);
+      addToRender(mockRender as unknown as RenderWithShapes);
 
       [
         [100, 100],
@@ -86,7 +110,7 @@ describe('flowchart shapes', function () {
         const shape = mockRender.shapes()[shapeType](mockSvg, { width, height }, {});
         const dx = -getW(width, height) / 2;
         const dy = getH(width, height) / 2;
-        const points = shape.__attrs.points.split(' ');
+        const points = (shape.__attrs.points as string).split(' ');
         expect(shape.__tag).toEqual('polygon');
         expect(shape.__attrs).toHaveProperty('transform', `translate(${dx},${dy})`);
         expect(points).toHaveLength(expectedPointCount);
@@ -95,11 +119,8 @@ describe('flowchart shapes', function () {
   });
 });
 
-/**
- *
- */
-function MockRender() {
-  const shapes = {};
+function MockRender(): MockedRender {
+  const shapes: Record<string, MockShapeFunction> = {};
   return {
     shapes() {
       return shapes;
@@ -107,14 +128,9 @@ function MockRender() {
   };
 }
 
-/**
- *
- * @param tag
- * @param {...any} args
- */
-function MockSvg(tag, ...args) {
-  const children = [];
-  const attributes = {};
+function MockSvg(tag?: string, ...args: unknown[]): MockSvgElement {
+  const children: MockSvgElement[] = [];
+  const attributes: Record<string, unknown> = {};
   return {
     get __args() {
       return args;
@@ -128,31 +144,22 @@ function MockSvg(tag, ...args) {
     get __attrs() {
       return attributes;
     },
-    insert: function (tag, ...args) {
+    insert: function (tag?: string, ...args: unknown[]) {
       const child = MockSvg(tag, ...args);
       children.push(child);
       return child;
     },
-    attr(name, value) {
+    attr(name: string, value: unknown) {
       this.__attrs[name] = value;
       return this;
     },
   };
 }
 
-/**
- * @param w
- * @param h
- */
-function useWidth(w, h) {
+function useWidth(w: number, _h: number): number {
   return w;
 }
 
-/**
- *
- * @param w
- * @param h
- */
-function useHeight(w, h) {
+function useHeight(_w: number, h: number): number {
   return h;
 }

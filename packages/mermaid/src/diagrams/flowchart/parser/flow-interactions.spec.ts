@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/unbound-method -- Broken for Vitest mocks, see https://github.com/vitest-dev/eslint-plugin-vitest/pull/286 */
 import { FlowDB } from '../flowDb.js';
-import flow from './flowParser.ts';
+import type { FlowVertex, FlowEdge } from '../types.js';
+import flow from './flowParser.js';
 import { setConfig } from '../../../config.js';
 import { vi } from 'vitest';
 const spyOn = vi.spyOn;
@@ -9,7 +11,7 @@ setConfig({
 });
 
 describe('[Interactions] when parsing', () => {
-  let flowDb;
+  let flowDb: FlowDB;
   beforeEach(function () {
     flowDb = new FlowDB();
     flow.parser.yy = flowDb;
@@ -20,8 +22,8 @@ describe('[Interactions] when parsing', () => {
     spyOn(flowDb, 'setClickEvent');
     const res = flow.parser.parse('graph TD\nA-->B\nclick A callback');
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
     expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', 'callback');
   });
@@ -30,8 +32,8 @@ describe('[Interactions] when parsing', () => {
     spyOn(flowDb, 'setClickEvent');
     const res = flow.parser.parse('graph TD\nA-->B\nclick A call callback()');
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
     expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', 'callback');
   });
@@ -41,8 +43,8 @@ describe('[Interactions] when parsing', () => {
     spyOn(flowDb, 'setTooltip');
     const res = flow.parser.parse('graph TD\nA-->B\nclick A callback "tooltip"');
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
     expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', 'callback');
     expect(flowDb.setTooltip).toHaveBeenCalledWith('A', 'tooltip');
@@ -53,8 +55,8 @@ describe('[Interactions] when parsing', () => {
     spyOn(flowDb, 'setTooltip');
     const res = flow.parser.parse('graph TD\nA-->B\nclick A call callback() "tooltip"');
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
     expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', 'callback');
     expect(flowDb.setTooltip).toHaveBeenCalledWith('A', 'tooltip');
@@ -64,8 +66,8 @@ describe('[Interactions] when parsing', () => {
     spyOn(flowDb, 'setClickEvent');
     const res = flow.parser.parse('graph TD\nA-->B\nclick A call callback("test0", test1, test2)');
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
     expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', 'callback', '"test0", test1, test2');
   });
@@ -74,8 +76,8 @@ describe('[Interactions] when parsing', () => {
     spyOn(flowDb, 'setLink');
     const res = flow.parser.parse('graph TD\nA-->B\nclick A "click.html"');
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
     expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html');
   });
@@ -84,8 +86,8 @@ describe('[Interactions] when parsing', () => {
     spyOn(flowDb, 'setLink');
     const res = flow.parser.parse('graph TD\nA-->B\nclick A href "click.html"');
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
     expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html');
   });
@@ -95,8 +97,8 @@ describe('[Interactions] when parsing', () => {
     spyOn(flowDb, 'setTooltip');
     const res = flow.parser.parse('graph TD\nA-->B\nclick A "click.html" "tooltip"');
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
     expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html');
     expect(flowDb.setTooltip).toHaveBeenCalledWith('A', 'tooltip');
@@ -107,8 +109,8 @@ describe('[Interactions] when parsing', () => {
     spyOn(flowDb, 'setTooltip');
     const res = flow.parser.parse('graph TD\nA-->B\nclick A href "click.html" "tooltip"');
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
     expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html');
     expect(flowDb.setTooltip).toHaveBeenCalledWith('A', 'tooltip');
@@ -118,8 +120,8 @@ describe('[Interactions] when parsing', () => {
     spyOn(flowDb, 'setLink');
     const res = flow.parser.parse('graph TD\nA-->B\nclick A "click.html" _blank');
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
     expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html', '_blank');
   });
@@ -128,8 +130,8 @@ describe('[Interactions] when parsing', () => {
     spyOn(flowDb, 'setLink');
     const res = flow.parser.parse('graph TD\nA-->B\nclick A href "click.html" _blank');
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
     expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html', '_blank');
   });
@@ -139,8 +141,8 @@ describe('[Interactions] when parsing', () => {
     spyOn(flowDb, 'setTooltip');
     const res = flow.parser.parse('graph TD\nA-->B\nclick A "click.html" "tooltip" _blank');
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
     expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html', '_blank');
     expect(flowDb.setTooltip).toHaveBeenCalledWith('A', 'tooltip');
@@ -151,8 +153,8 @@ describe('[Interactions] when parsing', () => {
     spyOn(flowDb, 'setTooltip');
     const res = flow.parser.parse('graph TD\nA-->B\nclick A href "click.html" "tooltip" _blank');
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert: Map<string, FlowVertex> = flow.parser.yy.getVertices();
+    const edges: FlowEdge[] = flow.parser.yy.getEdges();
 
     expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html', '_blank');
     expect(flowDb.setTooltip).toHaveBeenCalledWith('A', 'tooltip');
