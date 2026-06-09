@@ -1,7 +1,17 @@
 {
   "fixtures": [
     {
+      "id": "Company-simp",
+      "profile": "flowchart-domus",
+      "allowLevel1Failure": true
+    },
+    {
       "id": "Company",
+      "profile": "flowchart-domus",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "deploy-pipeline",
       "profile": "flowchart-domus",
       "allowLevel1Failure": true
     },

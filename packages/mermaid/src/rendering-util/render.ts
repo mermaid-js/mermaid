@@ -46,6 +46,10 @@ const registerDefaultLayoutLoaders = () => {
       name: 'swimlane',
       loader: async () => await import('./layout-algorithms/swimlanes/index.js'),
     },
+    {
+      name: 'domus',
+      loader: async () => await import('./layout-algorithms/domus/index.js'),
+    },
     ...(injected.includeLargeFeatures
       ? [
           {

@@ -1,24 +1,13 @@
 import type { LayoutData } from '../../types.js';
+import { layout as runDomusBrowserLayout } from '../domus/index.js';
 import { createEdgeLabelNodes } from '../swimlanes/edgeLabelNodes.js';
 import { prepareLayoutForSwimlanes } from '../swimlanes/helpers.js';
 import { runSwimlaneLayoutCore } from '../swimlanes/layoutCore.js';
 import type { LayoutTestBackend, LayoutTestBackendId, OrthogonalTrace } from './types.js';
 import { applyFixtureContentSizesStrict, applyFixtureLabelSizesStrict } from './fixtureSizes.js';
+import { injectDomusEdgeLabelNodes } from './domusEdgeLabelInject.js';
 import { parseMmdFileToLayoutData } from './parseToLayoutData.js';
 import type { DdltFixtureProfile, SizesFixture } from './types.js';
-
-/**
- * The `domus-orthogonal` backend is not available on this branch — the domus
- * subtree (`../domus/`) lands on its own branch. The swimlane-improve-loop
- * only exercises the `'swimlanes'` backend path. When domus merges, replace
- * this stub with the byte-equivalent pair (`runDomusBrowserLayout`,
- * `preloadLibavoidAdapterForLayout`, `injectDomusEdgeLabelNodes`).
- */
-function domusBackendUnavailable(): never {
-  throw new Error(
-    "DDLT: domus-orthogonal backend not available on this branch — only 'swimlanes' is supported"
-  );
-}
 
 function topUpSwimlaneFlowchartConfig(layout: LayoutData): void {
   const cfg = (layout.config ??= {} as LayoutData['config']);
@@ -28,15 +17,16 @@ function topUpSwimlaneFlowchartConfig(layout: LayoutData): void {
 }
 
 /**
- * DOMUS orthogonal routing + overlay finalize. **Not available on this branch.**
- * Throws on call so any accidental usage of the domus backend surfaces as a
- * loud error rather than a silent no-op.
+ * DOMUS orthogonal layout via the same DOM-free entry point the browser calls.
+ * Caller must already have injected label dummy nodes and applied fixture sizes
+ * when using DDLT.
  */
 export async function runDomusOrthogonalDdlt(
-  _layout: LayoutData,
+  layout: LayoutData,
   _options?: { trace?: OrthogonalTrace }
 ): Promise<void> {
-  domusBackendUnavailable();
+  (layout as { layoutAlgorithm?: string }).layoutAlgorithm = 'domus';
+  runDomusBrowserLayout(layout);
 }
 
 /**
@@ -70,20 +60,34 @@ export async function parseApplySizesAndLayout(
   mmdPath: string,
   sizes: SizesFixture,
   backendId: LayoutTestBackendId,
-  _options?: { trace?: OrthogonalTrace }
+  options?: { trace?: OrthogonalTrace }
 ): Promise<LayoutData> {
-  if (backendId !== 'swimlanes') {
-    domusBackendUnavailable();
-  }
   const layout = await parseMmdFileToLayoutData(mmdPath, { stampFlowchartRendererFields: true });
-  (layout as { layoutAlgorithm?: string }).layoutAlgorithm = 'swimlane';
-  runSwimlanesDdlt(layout, sizes);
+
+  if (backendId === 'swimlanes') {
+    (layout as { layoutAlgorithm?: string }).layoutAlgorithm = 'swimlane';
+    runSwimlanesDdlt(layout, sizes);
+    return layout;
+  }
+
+  (layout as { layoutAlgorithm?: string }).layoutAlgorithm = 'domus';
+  applyFixtureContentSizesStrict(layout, sizes);
+  injectDomusEdgeLabelNodes(layout);
+  applyFixtureLabelSizesStrict(layout, sizes);
+  await runDomusOrthogonalDdlt(layout, options);
   return layout;
 }
 
-/** Returns a DOM-free layout runner. `swimlanes` must use `parseApplySizesAndLayout()` (needs fixture sizes mid-pipeline); `domus-orthogonal` throws. */
-export function getLayoutTestBackend(_id: LayoutTestBackendId): LayoutTestBackend {
-  domusBackendUnavailable();
+/** Returns a DOM-free layout runner. `swimlanes` must use `parseApplySizesAndLayout()` (needs fixture sizes mid-pipeline). */
+export function getLayoutTestBackend(id: LayoutTestBackendId): LayoutTestBackend {
+  if (id === 'domus-orthogonal') {
+    return (layout) => {
+      void runDomusOrthogonalDdlt(layout);
+    };
+  }
+  throw new Error(
+    'DDLT: getLayoutTestBackend("swimlanes") is not supported — call parseApplySizesAndLayout(..., "swimlanes")'
+  );
 }
 
 export function backendsForProfile(profile: DdltFixtureProfile): LayoutTestBackendId[] {
