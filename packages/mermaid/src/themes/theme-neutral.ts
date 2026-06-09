@@ -1,12 +1,6 @@
 // @ts-expect-error Incorrect khroma types
 import { invert, darken, lighten, adjust, isDark } from 'khroma';
 import { mkBorder } from './theme-helpers.js';
-import type {
-  CynefinThemeVariables,
-  RadarThemeVariables,
-  WardleyThemeVariables,
-  XYChartThemeVariables,
-} from './theme-helpers.js';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
@@ -15,288 +9,24 @@ import {
 // const Color = require ( 'khroma/dist/color' ).default
 // Color.format.hex.stringify(Color.parse('hsl(210, 66.6666666667%, 95%)')); // => "#EAF2FB"
 
-type NumberedThemeKey<P extends string> = Extract<keyof Theme, `${P}${number}`>;
+import type { NumberedThemeKey, ClassicThemeVariables } from './theme-types.js';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type, @typescript-eslint/no-unsafe-declaration-merging -- the interface merges the shared theme variable declarations into the class, type-only
+interface Theme extends ClassicThemeVariables {}
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging -- see above
 class Theme {
-  primaryColor: string;
   contrast: string;
-  secondaryColor: string;
-  background: string;
-  tertiaryColor: string;
-  primaryBorderColor: string;
-  secondaryBorderColor: string;
-  tertiaryBorderColor: string;
-  noteBorderColor: string;
-  primaryTextColor: string;
-  secondaryTextColor: string;
-  tertiaryTextColor: string;
-  lineColor: string;
-  textColor: string;
-  altBackground!: string;
-  mainBkg: string;
   secondBkg: string;
   border1: string;
-  border2: string;
   note: string;
   text: string;
   critical: string;
   done: string;
-  arrowheadColor: string;
-  fontFamily: string;
-  fontSize: string;
-  THEME_COLOR_LIMIT: number;
-  radius: number;
-  strokeWidth: number;
-  nodeBkg: string;
-  nodeBorder: string;
-  clusterBkg: string;
-  clusterBorder: string;
-  defaultLinkColor: string;
-  titleColor: string;
-  edgeLabelBackground: string;
-  actorBorder: string;
-  actorBkg: string;
-  actorTextColor: string;
-  actorLineColor: string;
-  signalColor: string;
-  signalTextColor: string;
-  labelBoxBkgColor: string;
-  labelBoxBorderColor: string;
-  labelTextColor: string;
-  loopTextColor: string;
-  noteBkgColor: string;
-  noteTextColor: string;
-  activationBorderColor: string;
-  activationBkgColor: string;
-  sequenceNumberColor: string;
-  sectionBkgColor: string;
-  altSectionBkgColor: string;
-  sectionBkgColor2: string;
-  excludeBkgColor: string;
-  taskBorderColor: string;
-  taskBkgColor: string;
-  taskTextLightColor: string;
-  taskTextColor: string;
-  taskTextDarkColor: string;
-  taskTextOutsideColor: string;
-  taskTextClickableColor: string;
-  activeTaskBorderColor: string;
-  activeTaskBkgColor: string;
-  gridColor: string;
-  doneTaskBkgColor: string;
-  doneTaskBorderColor: string;
-  critBkgColor: string;
-  critBorderColor: string;
-  todayLineColor: string;
-  vertLineColor: string;
-  personBorder: string;
-  personBkg: string;
-  archEdgeColor: string;
-  archEdgeArrowColor: string;
-  archEdgeWidth: string;
-  archGroupBorderColor: string;
-  archGroupBorderWidth: string;
-  noteFontWeight: string;
-  fontWeight: string;
-  rowOdd!: string;
-  rowEven!: string;
   labelColor: string;
-  errorBkgColor: string;
-  errorTextColor: string;
-  useGradient: boolean;
-  gradientStart: string;
-  gradientStop: string;
-  dropShadow: string;
-  rectBkgColor!: string;
-  scaleLabelColor!: string;
-  transitionColor!: string;
-  transitionLabelColor!: string;
-  stateLabelColor!: string;
-  stateBkg!: string;
-  labelBackgroundColor!: string;
-  compositeBackground!: string;
-  compositeTitleBackground!: string;
   stateBorder!: string;
-  innerEndBackground!: string;
-  specialStateColor!: string;
-  classText!: string;
-  fillType0!: string;
-  fillType1!: string;
-  fillType2!: string;
-  fillType3!: string;
-  fillType4!: string;
-  fillType5!: string;
-  fillType6!: string;
-  fillType7!: string;
   pie12!: string;
-  pieTitleTextSize!: string;
-  pieTitleTextColor!: string;
-  pieSectionTextSize!: string;
-  pieSectionTextColor!: string;
-  pieLegendTextSize!: string;
-  pieLegendTextColor!: string;
-  pieStrokeColor!: string;
-  pieStrokeWidth!: string;
-  pieOuterStrokeWidth!: string;
-  pieOuterStrokeColor!: string;
-  pieOpacity!: string;
-  vennTitleTextColor!: string;
-  vennSetTextColor!: string;
-  cynefin!: CynefinThemeVariables;
-  quadrant1Fill!: string;
-  quadrant2Fill!: string;
-  quadrant3Fill!: string;
-  quadrant4Fill!: string;
-  quadrant1TextFill!: string;
-  quadrant2TextFill!: string;
-  quadrant3TextFill!: string;
-  quadrant4TextFill!: string;
-  quadrantPointFill!: string;
-  quadrantPointTextFill!: string;
-  quadrantXAxisTextFill!: string;
-  quadrantYAxisTextFill!: string;
-  quadrantInternalBorderStrokeFill!: string;
-  quadrantExternalBorderStrokeFill!: string;
-  quadrantTitleFill!: string;
-  xyChart!: XYChartThemeVariables;
-  radar!: RadarThemeVariables;
-  wardleyEvolutionColor!: string;
-  wardley!: WardleyThemeVariables;
-  requirementBackground!: string;
-  requirementBorderColor!: string;
-  requirementBorderSize!: string;
-  requirementTextColor!: string;
-  relationColor!: string;
-  relationLabelBackground!: string;
-  relationLabelColor!: string;
-  git0!: string;
-  git1!: string;
-  git2!: string;
-  git3!: string;
-  git4!: string;
-  git5!: string;
-  git6!: string;
-  git7!: string;
-  gitInv0!: string;
-  gitInv1!: string;
-  gitInv2!: string;
-  gitInv3!: string;
-  gitInv4!: string;
-  gitInv5!: string;
-  gitInv6!: string;
-  gitInv7!: string;
   branchLabelColor!: string;
-  gitBranchLabel0!: string;
-  gitBranchLabel1!: string;
-  gitBranchLabel2!: string;
-  gitBranchLabel3!: string;
-  gitBranchLabel4!: string;
-  gitBranchLabel5!: string;
-  gitBranchLabel6!: string;
-  gitBranchLabel7!: string;
-  tagLabelColor!: string;
-  tagLabelBackground!: string;
-  tagLabelBorder!: string;
-  tagLabelFontSize!: string;
-  commitLabelColor!: string;
-  commitLabelBackground!: string;
-  commitLabelFontSize!: string;
-  emUiFill!: string;
-  emUiStroke!: string;
-  emProcessorFill!: string;
-  emProcessorStroke!: string;
-  emReadModelFill!: string;
-  emReadModelStroke!: string;
-  emCommandFill!: string;
-  emCommandStroke!: string;
-  emEventFill!: string;
-  emEventStroke!: string;
-  emSwimlaneBackgroundOdd!: string;
-  emSwimlaneBackgroundStroke!: string;
-  emArrowhead!: string;
-  emRelationStroke!: string;
-  attributeBackgroundColorOdd!: string;
-  attributeBackgroundColorEven!: string;
-  cScale0!: string;
-  cScale1!: string;
-  cScale2!: string;
-  cScale3!: string;
-  cScale4!: string;
-  cScale5!: string;
-  cScale6!: string;
-  cScale7!: string;
-  cScale8!: string;
-  cScale9!: string;
-  cScale10!: string;
-  cScale11!: string;
-  cScaleInv0!: string;
-  cScaleInv1!: string;
-  cScaleInv2!: string;
-  cScaleInv3!: string;
-  cScaleInv4!: string;
-  cScaleInv5!: string;
-  cScaleInv6!: string;
-  cScaleInv7!: string;
-  cScaleInv8!: string;
-  cScaleInv9!: string;
-  cScaleInv10!: string;
-  cScaleInv11!: string;
-  cScalePeer0!: string;
-  cScalePeer1!: string;
-  cScalePeer2!: string;
-  cScalePeer3!: string;
-  cScalePeer4!: string;
-  cScalePeer5!: string;
-  cScalePeer6!: string;
-  cScalePeer7!: string;
-  cScalePeer8!: string;
-  cScalePeer9!: string;
-  cScalePeer10!: string;
-  cScalePeer11!: string;
-  cScaleLabel0!: string;
-  cScaleLabel1!: string;
-  cScaleLabel2!: string;
-  cScaleLabel3!: string;
-  cScaleLabel4!: string;
-  cScaleLabel5!: string;
-  cScaleLabel6!: string;
-  cScaleLabel7!: string;
-  cScaleLabel8!: string;
-  cScaleLabel9!: string;
-  cScaleLabel10!: string;
-  cScaleLabel11!: string;
-  surface0!: string;
-  surface1!: string;
-  surface2!: string;
-  surface3!: string;
-  surface4!: string;
-  surfacePeer0!: string;
-  surfacePeer1!: string;
-  surfacePeer2!: string;
-  surfacePeer3!: string;
-  surfacePeer4!: string;
   pie0!: string;
-  pie1!: string;
-  pie2!: string;
-  pie3!: string;
-  pie4!: string;
-  pie5!: string;
-  pie6!: string;
-  pie7!: string;
-  pie8!: string;
-  pie9!: string;
-  pie10!: string;
-  pie11!: string;
-  venn1!: string;
-  venn2!: string;
-  venn3!: string;
-  venn4!: string;
-  venn5!: string;
-  venn6!: string;
-  venn7!: string;
-  venn8!: string;
-  darkMode?: boolean;
-  tagBorder?: string;
   constructor() {
     this.primaryColor = '#eee';
     this.contrast = '#707070';
@@ -452,20 +182,20 @@ class Theme {
 
     // Setup the inverted color for the set
     for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
-      this[('cScaleInv' + i) as NumberedThemeKey<'cScaleInv'>] =
-        this[('cScaleInv' + i) as NumberedThemeKey<'cScaleInv'>] ||
-        invert(this[('cScale' + i) as NumberedThemeKey<'cScale'>]);
+      this[('cScaleInv' + i) as NumberedThemeKey<Theme, 'cScaleInv'>] =
+        this[('cScaleInv' + i) as NumberedThemeKey<Theme, 'cScaleInv'>] ||
+        invert(this[('cScale' + i) as NumberedThemeKey<Theme, 'cScale'>]);
     }
     // Setup the peer color for the set, useful for borders
     for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
       if (this.darkMode) {
-        this[('cScalePeer' + i) as NumberedThemeKey<'cScalePeer'>] =
-          this[('cScalePeer' + i) as NumberedThemeKey<'cScalePeer'>] ||
-          lighten(this[('cScale' + i) as NumberedThemeKey<'cScale'>], 10);
+        this[('cScalePeer' + i) as NumberedThemeKey<Theme, 'cScalePeer'>] =
+          this[('cScalePeer' + i) as NumberedThemeKey<Theme, 'cScalePeer'>] ||
+          lighten(this[('cScale' + i) as NumberedThemeKey<Theme, 'cScale'>], 10);
       } else {
-        this[('cScalePeer' + i) as NumberedThemeKey<'cScalePeer'>] =
-          this[('cScalePeer' + i) as NumberedThemeKey<'cScalePeer'>] ||
-          darken(this[('cScale' + i) as NumberedThemeKey<'cScale'>], 10);
+        this[('cScalePeer' + i) as NumberedThemeKey<Theme, 'cScalePeer'>] =
+          this[('cScalePeer' + i) as NumberedThemeKey<Theme, 'cScalePeer'>] ||
+          darken(this[('cScale' + i) as NumberedThemeKey<Theme, 'cScale'>], 10);
       }
     }
 
@@ -475,16 +205,16 @@ class Theme {
     this.cScaleLabel0 = this.cScaleLabel0 || this.cScale1;
     this.cScaleLabel2 = this.cScaleLabel2 || this.cScale1;
     for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
-      this[('cScaleLabel' + i) as NumberedThemeKey<'cScaleLabel'>] =
-        this[('cScaleLabel' + i) as NumberedThemeKey<'cScaleLabel'>] || this.scaleLabelColor;
+      this[('cScaleLabel' + i) as NumberedThemeKey<Theme, 'cScaleLabel'>] =
+        this[('cScaleLabel' + i) as NumberedThemeKey<Theme, 'cScaleLabel'>] || this.scaleLabelColor;
     }
 
     for (let i = 0; i < 5; i++) {
-      this[('surface' + i) as NumberedThemeKey<'surface'>] =
-        this[('surface' + i) as NumberedThemeKey<'surface'>] ||
+      this[('surface' + i) as NumberedThemeKey<Theme, 'surface'>] =
+        this[('surface' + i) as NumberedThemeKey<Theme, 'surface'>] ||
         adjust(this.mainBkg, { l: -(5 + i * 5) });
-      this[('surfacePeer' + i) as NumberedThemeKey<'surfacePeer'>] =
-        this[('surfacePeer' + i) as NumberedThemeKey<'surfacePeer'>] ||
+      this[('surfacePeer' + i) as NumberedThemeKey<Theme, 'surfacePeer'>] =
+        this[('surfacePeer' + i) as NumberedThemeKey<Theme, 'surfacePeer'>] ||
         adjust(this.mainBkg, { l: -(8 + i * 5) });
     }
 
@@ -556,8 +286,8 @@ class Theme {
     // /* pie */
     /* Pie diagram */
     for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
-      this[('pie' + i) as NumberedThemeKey<'pie'>] =
-        this[('cScale' + i) as NumberedThemeKey<'cScale'>];
+      this[('pie' + i) as NumberedThemeKey<Theme, 'pie'>] =
+        this[('cScale' + i) as NumberedThemeKey<Theme, 'cScale'>];
     }
     this.pie12 = this.pie0;
     this.pieTitleTextSize = this.pieTitleTextSize || '25px';
@@ -574,9 +304,9 @@ class Theme {
 
     /* venn */
     for (let i = 0; i < 8; i++) {
-      this[('venn' + (i + 1)) as NumberedThemeKey<'venn'>] =
-        this[('venn' + (i + 1)) as NumberedThemeKey<'venn'>] ??
-        this[('cScale' + i) as NumberedThemeKey<'cScale'>];
+      this[('venn' + (i + 1)) as NumberedThemeKey<Theme, 'venn'>] =
+        this[('venn' + (i + 1)) as NumberedThemeKey<Theme, 'venn'>] ??
+        this[('cScale' + i) as NumberedThemeKey<Theme, 'cScale'>];
     }
     this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
     this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
