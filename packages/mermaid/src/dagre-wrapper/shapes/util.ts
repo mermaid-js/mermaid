@@ -6,8 +6,15 @@ import { select } from 'd3';
 import { sanitizeText } from '../../diagrams/common/common.js';
 import { decodeEntities } from '../../utils.js';
 import { configureLabelImages } from '../../rendering-util/rendering-elements/shapes/labelImageUtils.js';
+import type { D3Selection, Point } from '../../types.js';
+import type { Node } from '../nodes.js';
 
-export const labelHelper = async (parent, node, _classes, isNode) => {
+export const labelHelper = async <T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  node: Node,
+  _classes?: string,
+  isNode?: boolean
+) => {
   const config = getConfig();
   let classes;
   const useHtmlLabels = node.useHtmlLabels || getEffectiveHtmlLabels(config);
@@ -34,19 +41,21 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
     labelText = typeof node.labelText === 'string' ? node.labelText : node.labelText[0];
   }
 
-  let text;
+  let text: SVGGraphicsElement;
   if (node.labelType === 'markdown') {
     // text = textNode;
+    // TODO: createText returns a `Promise`, but the original (pre-TypeScript)
+    // code never awaited it; the cast preserves that behavior.
     text = createText(
       label,
       sanitizeText(decodeEntities(labelText), config),
       {
         useHtmlLabels,
-        width: node.width || config.flowchart.wrappingWidth,
+        width: node.width || config.flowchart!.wrappingWidth,
         classes: 'markdown-node-label',
       },
       config
-    );
+    ) as unknown as SVGGraphicsElement;
   } else {
     text = await createLabel(
       label,
@@ -61,7 +70,7 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
   const halfPadding = node.padding / 2;
 
   if (getEffectiveHtmlLabels(config)) {
-    const div = text.children[0];
+    const div = text.children[0] as HTMLElement;
     const dv = select(text);
 
     // if there are images, need to wait for them to load before getting the bounding box
@@ -86,19 +95,21 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
   return { shapeSvg, bbox, halfPadding, label };
 };
 
-export const updateNodeBounds = (node, element) => {
-  const bbox = element.node().getBBox();
+export const updateNodeBounds = <T extends SVGGraphicsElement>(
+  node: Node,
+  element: D3Selection<T>
+) => {
+  const bbox = element.node()!.getBBox();
   node.width = bbox.width;
   node.height = bbox.height;
 };
 
-/**
- * @param parent
- * @param w
- * @param h
- * @param points
- */
-export function insertPolygonShape(parent, w, h, points) {
+export function insertPolygonShape(
+  parent: D3Selection<SVGGElement>,
+  w: number,
+  h: number,
+  points: Point[]
+) {
   return parent
     .insert('polygon', ':first-child')
     .attr(

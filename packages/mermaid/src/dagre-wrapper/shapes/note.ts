@@ -3,8 +3,10 @@ import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { getEffectiveHtmlLabels } from '../../config.js';
 import intersect from '../intersect/index.js';
+import type { D3Selection } from '../../types.js';
+import type { Node } from '../nodes.js';
 
-const note = async (parent, node) => {
+const note = async (parent: D3Selection<SVGGElement>, node: Node) => {
   const useHtmlLabels = node.useHtmlLabels || getEffectiveHtmlLabels(getConfig());
   if (!useHtmlLabels) {
     node.centerLabel = true;

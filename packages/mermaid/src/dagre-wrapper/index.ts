@@ -15,8 +15,19 @@ import { insertEdgeLabel, positionEdgeLabel, insertEdge, clear as clearEdges } f
 import { log } from '../logger.js';
 import { getSubGraphTitleMargins } from '../utils/subGraphTitleMargins.js';
 import { getConfig } from '../diagram-api/diagramAPI.js';
+import type { Graph } from 'dagre-d3-es/src/graphlib/index.js';
+import type { MermaidConfig } from '../config.type.js';
+import type { D3Element } from '../types.js';
+import type { Node } from './nodes.js';
 
-const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, siteConfig) => {
+const recursiveRender = async (
+  _elem: D3Element,
+  graph: Graph,
+  diagramType: string,
+  id: string,
+  parentCluster: Node | undefined,
+  siteConfig: MermaidConfig
+) => {
   log.info('Graph in recursive render: XXX', graphlibJson.write(graph), parentCluster);
   const dir = graph.graph().rankdir;
   log.trace('Dir in recursive render - dir:', dir);
@@ -47,6 +58,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         graph.setNode(parentCluster.id, data);
         if (!graph.parent(v)) {
           log.trace('Setting parent', v, parentCluster.id);
+          // @ts-expect-error - graphlib's setParent() takes two arguments; the legacy code passes a third one, which is ignored at runtime.
           graph.setParent(v, parentCluster.id, data);
         }
       }
@@ -78,7 +90,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
 
         log.warn('Recursive render complete ', newEl, node);
       } else {
-        if (graph.children(v).length > 0) {
+        if (graph.children(v)!.length > 0) {
           // This is a cluster but not to be rendered recursively
           // Render as before
           log.info('Cluster - the non recursive path XXX', v, node.id, node, graph);
@@ -97,6 +109,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   // Also figure out which edges point to/from clusters and adjust them accordingly
   // Edges from/to clusters really points to the first child in the cluster.
   // TODO: pick optimal child in the cluster to us as link anchor
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises -- the original (pre-TypeScript) code never awaited these promises
   graph.edges().forEach(async function (e) {
     const edge = graph.edge(e.v, e.w, e.name);
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
@@ -115,11 +128,14 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   log.info('###                Layout                 ###');
   log.info('#############################################');
   log.info(graph);
+  // @ts-expect-error -- dagre-d3-es types declare `opts` as required, but the implementation treats it as optional.
   dagreLayout(graph);
   log.info('Graph after layout:', JSON.stringify(graphlibJson.write(graph)));
   // Move the nodes to the correct place
   let diff = 0;
-  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
+  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins({
+    flowchart: siteConfig.flowchart!,
+  });
   for (const v of sortNodesByHierarchy(graph)) {
     const node = graph.node(v);
     log.info('Position ' + v + ': ' + JSON.stringify(graph.node(v)));
@@ -137,7 +153,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
       positionNode(node);
     } else {
       // Non cluster node
-      if (graph.children(v).length > 0) {
+      if (graph.children(v)!.length > 0) {
         // A cluster in the non-recursive way
         // positionCluster(node);
         node.height += subGraphTitleTotalMargin;
@@ -155,7 +171,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
     const edge = graph.edge(e);
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
-    edge.points.forEach((point) => (point.y += subGraphTitleTotalMargin / 2));
+    edge.points.forEach((point: { y: number }) => (point.y += subGraphTitleTotalMargin / 2));
     const paths = insertEdge(edgePaths, e, edge, clusterDb, diagramType, graph, id);
     positionEdgeLabel(edge, paths);
   });
@@ -170,7 +186,13 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   return { elem, diff };
 };
 
-export const render = async (elem, graph, markers, diagramType, id) => {
+export const render = async (
+  elem: D3Element,
+  graph: Graph,
+  markers: string[],
+  diagramType: string,
+  id: string
+) => {
   insertMarkers(elem, markers, diagramType, id);
   clearNodes();
   clearEdges();

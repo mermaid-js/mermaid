@@ -1,13 +1,14 @@
 import { getEffectiveHtmlLabels } from '../config.js';
 import { getConfig } from '../diagram-api/diagramAPI.js';
 import { createText } from '../rendering-util/createText.js';
+import type { D3Selection } from '../types.js';
 
 /**
- * @param {import('../types.js').D3Selection<SVGGElement>} element - The parent element to which the label will be appended.
- * @param {string | [string] | undefined} _vertexText - The text content of the label.
- * @param {string} style
- * @param {boolean} [isTitle] - If `true`, style this as a title label, else as a normal label.
- * @param {boolean} [isNode] - If `true`, style this as a node label, else as an edge label.
+ * @param element - The parent element to which the label will be appended.
+ * @param _vertexText - The text content of the label.
+ * @param style - Css styles for the label.
+ * @param isTitle - If `true`, style this as a title label, else as a normal label.
+ * @param isNode - If `true`, style this as a node label, else as an edge label.
  * @deprecated svg-util/createText instead
  *
  * @example
@@ -28,7 +29,13 @@ import { createText } from '../rendering-util/createText.js';
  * parent.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
  * ```
  */
-const createLabel = async (element, _vertexText, style, isTitle = false, isNode = false) => {
+const createLabel = async (
+  element: D3Selection<SVGGElement>,
+  _vertexText: string | string[] | undefined,
+  style?: string,
+  isTitle = false,
+  isNode = false
+) => {
   let vertexText = _vertexText || '';
   if (typeof vertexText === 'object') {
     vertexText = vertexText[0];

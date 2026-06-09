@@ -9,7 +9,7 @@ import {
 import { setLogLevel, log } from '../logger.js';
 
 describe('Graphlib decorations', () => {
-  let g;
+  let g: graphlib.Graph;
   beforeEach(function () {
     setLogLevel(1);
     g = new graphlib.Graph({
@@ -401,7 +401,7 @@ flowchart TB
   });
 });
 describe('extractDescendants', function () {
-  let g;
+  let g: graphlib.Graph;
   beforeEach(function () {
     setLogLevel(1);
     g = new graphlib.Graph({
@@ -453,7 +453,7 @@ describe('extractDescendants', function () {
   });
 });
 describe('sortNodesByHierarchy', function () {
-  let g;
+  let g: graphlib.Graph;
   beforeEach(function () {
     setLogLevel(1);
     g = new graphlib.Graph({

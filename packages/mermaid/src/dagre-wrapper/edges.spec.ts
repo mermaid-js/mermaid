@@ -1,8 +1,9 @@
 import { intersection } from './edges.js';
 import { setLogLevel } from '../logger.js';
+import type { Bounds } from '../types.js';
 
 describe('Graphlib decorations', () => {
-  let node;
+  let node: Bounds;
   beforeEach(function () {
     setLogLevel(1);
     node = { x: 171, y: 100, width: 210, height: 184 };

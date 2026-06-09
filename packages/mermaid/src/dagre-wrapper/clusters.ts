@@ -6,8 +6,15 @@ import { select } from 'd3';
 import { getConfig } from '../diagram-api/diagramAPI.js';
 import { getEffectiveHtmlLabels } from '../config.js';
 import { getSubGraphTitleMargins } from '../utils/subGraphTitleMargins.js';
+import type { D3Selection } from '../types.js';
+import type { Node } from './nodes.js';
 
-const rect = async (parent, node) => {
+type ClusterShapeFunction = (
+  parent: D3Selection<SVGGElement>,
+  node: Node
+) => D3Selection<SVGGElement> | Promise<D3Selection<SVGGElement>>;
+
+const rect: ClusterShapeFunction = async (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
   const siteConfig = getConfig();
 
@@ -28,7 +35,12 @@ const rect = async (parent, node) => {
   // TODO: the createText function returns a `Promise`, so I'm guessing it never runs?
   const text =
     node.labelType === 'markdown'
-      ? createText(label, node.labelText, { style: node.labelStyle, useHtmlLabels }, siteConfig)
+      ? (createText(
+          label,
+          node.labelText as string,
+          { style: node.labelStyle, useHtmlLabels },
+          siteConfig
+        ) as unknown as SVGGraphicsElement)
       : await createLabel(label, node.labelText, node.labelStyle, undefined, true);
 
   // Get the size of the label
@@ -63,7 +75,9 @@ const rect = async (parent, node) => {
     .attr('width', width)
     .attr('height', node.height + padding);
 
-  const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
+  const { subGraphTitleTopMargin } = getSubGraphTitleMargins({
+    flowchart: siteConfig.flowchart!,
+  });
   if (useHtmlLabels) {
     label.attr(
       'transform',
@@ -79,7 +93,7 @@ const rect = async (parent, node) => {
   }
   // Center the label
 
-  const rectBox = rect.node().getBBox();
+  const rectBox = rect.node()!.getBBox();
   node.width = rectBox.width;
   node.height = rectBox.height;
 
@@ -93,11 +107,9 @@ const rect = async (parent, node) => {
 /**
  * Non visible cluster where the note is group with its
  *
- * @param {any} parent
- * @param {any} node
- * @returns {any} ShapeSvg
+ * @returns ShapeSvg
  */
-const noteGroup = (parent, node) => {
+const noteGroup: ClusterShapeFunction = (parent, node) => {
   // Add outer g element
   const shapeSvg = parent.insert('g').attr('class', 'note-cluster').attr('id', node.id);
 
@@ -117,7 +129,7 @@ const noteGroup = (parent, node) => {
     .attr('height', node.height + padding)
     .attr('fill', 'none');
 
-  const rectBox = rect.node().getBBox();
+  const rectBox = rect.node()!.getBBox();
   node.width = rectBox.width;
   node.height = rectBox.height;
 
@@ -127,11 +139,11 @@ const noteGroup = (parent, node) => {
 
   return shapeSvg;
 };
-const roundedWithTitle = async (parent, node) => {
+const roundedWithTitle: ClusterShapeFunction = async (parent, node) => {
   const siteConfig = getConfig();
 
   // Add outer g element
-  const shapeSvg = parent.insert('g').attr('class', node.classes).attr('id', node.id);
+  const shapeSvg = parent.insert('g').attr('class', node.classes!).attr('id', node.id);
 
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
@@ -176,7 +188,9 @@ const roundedWithTitle = async (parent, node) => {
     .attr('width', width + padding)
     .attr('height', node.height + padding - bbox.height - 3);
 
-  const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
+  const { subGraphTitleTopMargin } = getSubGraphTitleMargins({
+    flowchart: siteConfig.flowchart!,
+  });
   // Center the label
   label.attr(
     'transform',
@@ -189,7 +203,7 @@ const roundedWithTitle = async (parent, node) => {
     })`
   );
 
-  const rectBox = rect.node().getBBox();
+  const rectBox = rect.node()!.getBBox();
   node.height = rectBox.height;
 
   node.intersect = function (point) {
@@ -199,9 +213,9 @@ const roundedWithTitle = async (parent, node) => {
   return shapeSvg;
 };
 
-const divider = (parent, node) => {
+const divider: ClusterShapeFunction = (parent, node) => {
   // Add outer g element
-  const shapeSvg = parent.insert('g').attr('class', node.classes).attr('id', node.id);
+  const shapeSvg = parent.insert('g').attr('class', node.classes!).attr('id', node.id);
 
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
@@ -217,7 +231,7 @@ const divider = (parent, node) => {
     .attr('width', node.width + padding)
     .attr('height', node.height + padding);
 
-  const rectBox = rect.node().getBBox();
+  const rectBox = rect.node()!.getBBox();
   node.width = rectBox.width;
   node.height = rectBox.height;
   node.diff = -node.padding / 2;
@@ -228,19 +242,24 @@ const divider = (parent, node) => {
   return shapeSvg;
 };
 
-const shapes = { rect, roundedWithTitle, noteGroup, divider };
+const shapes: Record<string, ClusterShapeFunction> = {
+  rect,
+  roundedWithTitle,
+  noteGroup,
+  divider,
+};
 
-let clusterElems = {};
+let clusterElems: Record<string, D3Selection<SVGGElement>> = {};
 
-export const insertCluster = async (elem, node) => {
+export const insertCluster = async (elem: D3Selection<SVGGElement>, node: Node) => {
   log.trace('Inserting cluster');
   const shape = node.shape || 'rect';
   clusterElems[node.id] = await shapes[shape](elem, node);
 };
-export const getClusterTitleWidth = async (elem, node) => {
+export const getClusterTitleWidth = async (elem: D3Selection<SVGGElement>, node: Node) => {
   const label = await createLabel(elem, node.labelText, node.labelStyle, undefined, true);
   const width = label.getBBox().width;
-  elem.node().removeChild(label);
+  elem.node()!.removeChild(label);
   return width;
 };
 
@@ -248,7 +267,7 @@ export const clear = () => {
   clusterElems = {};
 };
 
-export const positionCluster = (node) => {
+export const positionCluster = (node: Node) => {
   log.info('Position cluster (' + node.id + ', ' + node.x + ', ' + node.y + ')');
   const el = clusterElems[node.id];
 

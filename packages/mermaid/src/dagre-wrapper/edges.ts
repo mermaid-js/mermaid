@@ -3,6 +3,7 @@ import createLabel from './createLabel.js';
 import { createText } from '../rendering-util/createText.js';
 import { computeLabelTransform } from '../rendering-util/labelTransform.js';
 import { line, curveBasis, select } from 'd3';
+import type { CurveFactory } from 'd3';
 import { getConfig } from '../diagram-api/diagramAPI.js';
 import { getEffectiveHtmlLabels } from '../config.js';
 import utils from '../utils.js';
@@ -10,16 +11,67 @@ import { getUrl } from '../diagrams/common/common.js';
 import { getLineFunctionsWithOffset } from '../utils/lineWithOffset.js';
 import { getSubGraphTitleMargins } from '../utils/subGraphTitleMargins.js';
 import { addEdgeMarkers } from './edgeMarker.js';
+import type { Graph } from 'dagre-d3-es/src/graphlib/index.js';
+import type { SVG } from '../diagram-api/types.js';
+import type { Bounds, D3Selection, EdgeData, Point } from '../types.js';
+import type { ClusterInfo } from './mermaid-graphlib.js';
 
-let edgeLabels = {};
-let terminalLabels = {};
+/**
+ * The mutable edge object used by the (legacy) dagre-wrapper when rendering edges.
+ *
+ * See `GraphObjects.md` in this directory for a description of the properties.
+ */
+export interface Edge {
+  id: string;
+  label?: string;
+  labelType?: string;
+  labelStyle?: string;
+  startLabelLeft?: string;
+  startLabelRight?: string;
+  endLabelLeft?: string;
+  endLabelRight?: string;
+  arrowTypeStart?: string;
+  arrowTypeEnd?: string;
+  style?: string;
+  classes?: string;
+  pattern?: string;
+  thickness?: string;
+  curve?: CurveFactory;
+  points?: Point[];
+  /** Id of the cluster that the edge (visually) points to. */
+  toCluster?: string;
+  /** Id of the cluster that the edge (visually) comes from. */
+  fromCluster?: string;
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+}
+
+/** The paths that an edge was rendered with, returned by {@link insertEdge}. */
+export interface Paths {
+  updatedPath?: Point[];
+  originalPath?: Point[];
+}
+
+type LabelElement = Awaited<ReturnType<typeof createLabel>>;
+
+interface TerminalLabels {
+  startLeft?: D3Selection<SVGGElement>;
+  startRight?: D3Selection<SVGGElement>;
+  endLeft?: D3Selection<SVGGElement>;
+  endRight?: D3Selection<SVGGElement>;
+}
+
+let edgeLabels: Record<string, D3Selection<SVGGElement>> = {};
+let terminalLabels: Record<string, TerminalLabels> = {};
 
 export const clear = () => {
   edgeLabels = {};
   terminalLabels = {};
 };
 
-export const insertEdgeLabel = async (elem, edge) => {
+export const insertEdgeLabel = async (elem: D3Selection<SVGGElement>, edge: Edge) => {
   const config = getConfig();
   const useHtmlLabels = getEffectiveHtmlLabels(config);
 
@@ -48,7 +100,7 @@ export const insertEdgeLabel = async (elem, edge) => {
     config
   );
 
-  label.node().appendChild(labelElement);
+  label.node()!.appendChild(labelElement);
 
   let bbox = labelElement.getBBox();
   let transformBbox = bbox;
@@ -60,7 +112,7 @@ export const insertEdgeLabel = async (elem, edge) => {
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   } else {
-    const textEl = select(labelElement).select('text').node();
+    const textEl = select(labelElement).select<SVGTextElement>('text').node();
     if (textEl && typeof textEl.getBBox === 'function') {
       transformBbox = textEl.getBBox();
     }
@@ -168,26 +220,39 @@ export const insertEdgeLabel = async (elem, edge) => {
   return labelElement;
 };
 
-/**
- * @param {any} fo
- * @param {any} value
- */
-function setTerminalWidth(fo, value) {
+function setTerminalWidth(fo: LabelElement | undefined, value: string) {
   if (getEffectiveHtmlLabels(getConfig()) && fo) {
     fo.style.width = value.length * 9 + 'px';
     fo.style.height = '12px';
   }
 }
 
-export const positionEdgeLabel = (edge, paths) => {
+export const positionEdgeLabel = (
+  edge: Pick<
+    Edge,
+    | 'id'
+    | 'label'
+    | 'x'
+    | 'y'
+    | 'startLabelLeft'
+    | 'startLabelRight'
+    | 'endLabelLeft'
+    | 'endLabelRight'
+    | 'arrowTypeStart'
+    | 'arrowTypeEnd'
+  >,
+  paths: Paths
+) => {
   log.debug('Moving label abc88 ', edge.id, edge.label, edgeLabels[edge.id], paths);
-  let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
+  const path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
   const siteConfig = getConfig();
-  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
+  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins({
+    flowchart: siteConfig.flowchart!,
+  });
   if (edge.label) {
     const el = edgeLabels[edge.id];
-    let x = edge.x;
-    let y = edge.y;
+    let x = edge.x!;
+    let y = edge.y!;
     if (path) {
       //   // debugger;
       const pos = utils.calcLabelPosition(path);
@@ -212,9 +277,9 @@ export const positionEdgeLabel = (edge, paths) => {
 
   //let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
   if (edge.startLabelLeft) {
-    const el = terminalLabels[edge.id].startLeft;
-    let x = edge.x;
-    let y = edge.y;
+    const el = terminalLabels[edge.id].startLeft!;
+    let x = edge.x!;
+    let y = edge.y!;
     if (path) {
       // debugger;
       const pos = utils.calcTerminalLabelPosition(edge.arrowTypeStart ? 10 : 0, 'start_left', path);
@@ -224,9 +289,9 @@ export const positionEdgeLabel = (edge, paths) => {
     el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.startLabelRight) {
-    const el = terminalLabels[edge.id].startRight;
-    let x = edge.x;
-    let y = edge.y;
+    const el = terminalLabels[edge.id].startRight!;
+    let x = edge.x!;
+    let y = edge.y!;
     if (path) {
       // debugger;
       const pos = utils.calcTerminalLabelPosition(
@@ -240,9 +305,9 @@ export const positionEdgeLabel = (edge, paths) => {
     el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.endLabelLeft) {
-    const el = terminalLabels[edge.id].endLeft;
-    let x = edge.x;
-    let y = edge.y;
+    const el = terminalLabels[edge.id].endLeft!;
+    let x = edge.x!;
+    let y = edge.y!;
     if (path) {
       // debugger;
       const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_left', path);
@@ -252,9 +317,9 @@ export const positionEdgeLabel = (edge, paths) => {
     el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.endLabelRight) {
-    const el = terminalLabels[edge.id].endRight;
-    let x = edge.x;
-    let y = edge.y;
+    const el = terminalLabels[edge.id].endRight!;
+    let x = edge.x!;
+    let y = edge.y!;
     if (path) {
       // debugger;
       const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_right', path);
@@ -265,7 +330,7 @@ export const positionEdgeLabel = (edge, paths) => {
   }
 };
 
-const outsideNode = (node, point) => {
+const outsideNode = (node: Bounds, point: Point) => {
   const x = node.x;
   const y = node.y;
   const dx = Math.abs(point.x - x);
@@ -278,7 +343,7 @@ const outsideNode = (node, point) => {
   return false;
 };
 
-export const intersection = (node, outsidePoint, insidePoint) => {
+export const intersection = (node: Bounds, outsidePoint: Point, insidePoint: Point): Point => {
   log.debug(`intersection calc abc89:
   outsidePoint: ${JSON.stringify(outsidePoint)}
   insidePoint : ${JSON.stringify(insidePoint)}
@@ -297,7 +362,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
 
   if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h) {
     // Intersection is top or bottom of rect.
-    let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
+    const q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
     r = (R * q) / Q;
     const res = {
       x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x - R + r,
@@ -326,7 +391,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
       // r = outsidePoint.x - w - x;
       r = x - w - outsidePoint.x;
     }
-    let q = (Q * r) / R;
+    const q = (Q * r) / R;
     //  OK let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w;
     // OK let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : outsidePoint.x + r;
     let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - R + r;
@@ -351,13 +416,11 @@ export const intersection = (node, outsidePoint, insidePoint) => {
  * This function will page a path and node where the last point(s) in the path is inside the node
  * and return an update path ending by the border of the node.
  *
- * @param {Array} _points
- * @param {any} boundaryNode
- * @returns {Array} Points
+ * @returns Points
  */
-const cutPathAtIntersect = (_points, boundaryNode) => {
+const cutPathAtIntersect = (_points: Point[], boundaryNode: Bounds): Point[] => {
   log.debug('abc88 cutPathAtIntersect', _points, boundaryNode);
-  let points = [];
+  const points: Point[] = [];
   let lastPointOutside = _points[0];
   let isInside = false;
   _points.forEach((point) => {
@@ -390,29 +453,37 @@ const cutPathAtIntersect = (_points, boundaryNode) => {
   return points;
 };
 
-export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph, id) {
-  let points = edge.points;
+export const insertEdge = function (
+  elem: D3Selection<SVGGElement>,
+  e: { v: string; w: string; name?: string | number },
+  edge: Edge,
+  clusterDb: Record<string, ClusterInfo> | undefined,
+  diagramType: string,
+  graph: Graph,
+  id: string
+) {
+  let points = edge.points!;
   log.debug('abc88 InsertEdge: edge=', edge, 'e=', e);
   let pointsHasChanged = false;
   const tail = graph.node(e.v);
-  var head = graph.node(e.w);
+  const head = graph.node(e.w);
 
   if (head?.intersect && tail?.intersect) {
-    points = points.slice(1, edge.points.length - 1);
+    points = points.slice(1, edge.points!.length - 1);
     points.unshift(tail.intersect(points[0]));
     points.push(head.intersect(points[points.length - 1]));
   }
 
   if (edge.toCluster) {
-    log.debug('to cluster abc88', clusterDb[edge.toCluster]);
-    points = cutPathAtIntersect(edge.points, clusterDb[edge.toCluster].node);
+    log.debug('to cluster abc88', clusterDb![edge.toCluster]);
+    points = cutPathAtIntersect(edge.points!, clusterDb![edge.toCluster].node!);
 
     pointsHasChanged = true;
   }
 
   if (edge.fromCluster) {
-    log.debug('from cluster abc88', clusterDb[edge.fromCluster]);
-    points = cutPathAtIntersect(points.reverse(), clusterDb[edge.fromCluster].node).reverse();
+    log.debug('from cluster abc88', clusterDb![edge.fromCluster]);
+    points = cutPathAtIntersect(points.reverse(), clusterDb![edge.fromCluster].node!).reverse();
 
     pointsHasChanged = true;
   }
@@ -429,8 +500,10 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     curve = edge.curve;
   }
 
-  const { x, y } = getLineFunctionsWithOffset(edge);
-  const lineFunction = line().x(x).y(y).curve(curve);
+  const { x, y } = getLineFunctionsWithOffset(
+    edge as Pick<EdgeData, 'arrowTypeStart' | 'arrowTypeEnd'>
+  );
+  const lineFunction = line<Point>().x(x).y(y).curve(curve);
 
   // Construct stroke classes based on properties
   let strokeClasses;
@@ -464,7 +537,7 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     .attr('d', lineFunction(lineData))
     .attr('id', edge.id)
     .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
-    .attr('style', edge.style);
+    .attr('style', edge.style!);
 
   // DEBUG code, adds a red circle at each edge coordinate
   // edge.points.forEach((point) => {
@@ -479,13 +552,19 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
 
   let url = '';
   // // TODO: Can we load this config only from the rendered graph type?
-  if (getConfig().flowchart.arrowMarkerAbsolute || getConfig().state.arrowMarkerAbsolute) {
+  if (getConfig().flowchart!.arrowMarkerAbsolute || getConfig().state!.arrowMarkerAbsolute) {
     url = getUrl(true);
   }
 
-  addEdgeMarkers(svgPath, edge, url, id, diagramType);
+  addEdgeMarkers(
+    svgPath as unknown as SVG,
+    edge as Pick<EdgeData, 'arrowTypeStart' | 'arrowTypeEnd'>,
+    url,
+    id,
+    diagramType
+  );
 
-  let paths = {};
+  const paths: Paths = {};
   if (pointsHasChanged) {
     paths.updatedPath = points;
   }

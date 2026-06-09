@@ -1,15 +1,27 @@
 /** Setup arrow head and define the marker. The result is appended to the svg. */
 
 import { log } from '../logger.js';
+import type { D3Selection } from '../types.js';
+
+type MarkerFunction = <T extends SVGElement>(
+  elem: D3Selection<T>,
+  type: string,
+  id: string
+) => void;
 
 // Only add the number of markers that the diagram needs
-const insertMarkers = (elem, markerArray, type, id) => {
+const insertMarkers = <T extends SVGElement>(
+  elem: D3Selection<T>,
+  markerArray: string[],
+  type: string,
+  id: string
+) => {
   markerArray.forEach((markerName) => {
     markers[markerName](elem, type, id);
   });
 };
 
-const extension = (elem, type, id) => {
+const extension: MarkerFunction = (elem, type, id) => {
   log.trace('Making markers for ', id);
   elem
     .append('defs')
@@ -38,7 +50,7 @@ const extension = (elem, type, id) => {
     .attr('d', 'M 1,1 V 13 L18,7 Z'); // this is actual shape for arrowhead
 };
 
-const composition = (elem, type, id) => {
+const composition: MarkerFunction = (elem, type, id) => {
   elem
     .append('defs')
     .append('marker')
@@ -65,7 +77,7 @@ const composition = (elem, type, id) => {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 };
-const aggregation = (elem, type, id) => {
+const aggregation: MarkerFunction = (elem, type, id) => {
   elem
     .append('defs')
     .append('marker')
@@ -92,7 +104,7 @@ const aggregation = (elem, type, id) => {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 };
-const dependency = (elem, type, id) => {
+const dependency: MarkerFunction = (elem, type, id) => {
   elem
     .append('defs')
     .append('marker')
@@ -119,7 +131,7 @@ const dependency = (elem, type, id) => {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
 };
-const lollipop = (elem, type, id) => {
+const lollipop: MarkerFunction = (elem, type, id) => {
   elem
     .append('defs')
     .append('marker')
@@ -154,7 +166,7 @@ const lollipop = (elem, type, id) => {
     .attr('cy', 7)
     .attr('r', 6);
 };
-const point = (elem, type, id) => {
+const point: MarkerFunction = (elem, type, id) => {
   elem
     .append('marker')
     .attr('id', id + '_' + type + '-pointEnd')
@@ -188,7 +200,7 @@ const point = (elem, type, id) => {
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
 };
-const circle = (elem, type, id) => {
+const circle: MarkerFunction = (elem, type, id) => {
   elem
     .append('marker')
     .attr('id', id + '_' + type + '-circleEnd')
@@ -227,7 +239,7 @@ const circle = (elem, type, id) => {
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
 };
-const cross = (elem, type, id) => {
+const cross: MarkerFunction = (elem, type, id) => {
   elem
     .append('marker')
     .attr('id', id + '_' + type + '-crossEnd')
@@ -264,7 +276,7 @@ const cross = (elem, type, id) => {
     .style('stroke-width', 2)
     .style('stroke-dasharray', '1,0');
 };
-const barb = (elem, type, id) => {
+const barb: MarkerFunction = (elem, type, id) => {
   elem
     .append('defs')
     .append('marker')
@@ -280,7 +292,7 @@ const barb = (elem, type, id) => {
 };
 
 // TODO rename the class diagram markers to something shape descriptive and semantic free
-const markers = {
+const markers: Record<string, MarkerFunction> = {
   extension,
   composition,
   aggregation,
