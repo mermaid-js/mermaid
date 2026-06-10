@@ -115,7 +115,8 @@ export type LayoutIssueType =
   | 'edge-endpoint-inside-node'
   | 'edge-label-overlaps-foreign-edge'
   | 'edge-label-overlaps-own-arrowhead'
-  | 'edge-label-overlaps-group-border';
+  | 'edge-label-overlaps-group-border'
+  | 'edge-label-overlaps-node';
 
 export interface Issue {
   type: LayoutIssueType;
@@ -1192,6 +1193,42 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
         }
         if (hit) {
           break; // one foreign-edge issue per label
+        }
+      }
+
+      // edge-label-overlaps-node: the label rect sits on top of a leaf node's
+      // interior. An edge label belongs in the routing channel, not over a box;
+      // covering a node hides both the node's text and the label's. Checked
+      // against every leaf node (groups and label dummies excluded) including
+      // the label's own endpoints — a label covering even its own source/target
+      // is a real visual defect. A small overlap margin avoids border-touch
+      // noise from sub-pixel sizes.
+      {
+        const EPS_LABEL_NODE_OVERLAP = 2;
+        for (const n of nodes) {
+          if (n?.id == null || n.isGroup || isLabelDummy(n)) {
+            continue;
+          }
+          const nr = nodeRects.get(String(n.id));
+          if (!nr) {
+            continue;
+          }
+          const ov = rectsOverlap(labelRect, nr);
+          if (ov && ov.overlapX > EPS_LABEL_NODE_OVERLAP && ov.overlapY > EPS_LABEL_NODE_OVERLAP) {
+            issues.push({
+              type: 'edge-label-overlaps-node',
+              message: `Label ${who} overlaps node "${String(n.id)}"`,
+              edgeId: ownerEdgeId || undefined,
+              nodeIds: labelNodeId ? [labelNodeId, String(n.id)] : [String(n.id)],
+              details: {
+                nodeId: String(n.id),
+                labelRect,
+                overlapX: ov.overlapX,
+                overlapY: ov.overlapY,
+              },
+            });
+            break; // one node-overlap issue per label
+          }
         }
       }
 

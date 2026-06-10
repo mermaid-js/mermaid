@@ -846,6 +846,50 @@ describe('validateLayout new geometric issues', () => {
     expect(types).not.toContain('edge-label-overlaps-foreign-edge');
   });
 
+  it('flags edge-label-overlaps-node when an overlay label sits on a node box', () => {
+    // A -> B with an intervening node C the label is dropped on top of.
+    const a = mkNode('A', 0, 0);
+    const b = mkNode('B', 0, 300);
+    const c = mkNode('C', 0, 150, 80, 60); // rect [-40,120 .. 40,180]
+    const e = {
+      ...mkEdge('e', 'A', 'B', [
+        { x: 0, y: a.y! + 20 },
+        { x: 0, y: b.y! - 20 },
+      ]),
+      label: 'On The Node',
+      x: 0,
+      y: 150, // label center coincides with C's center -> overlap
+      width: 56,
+      height: 21,
+    } as unknown as Edge;
+    const layout: LayoutData = { nodes: [a, b, c], edges: [e], config: {} as any };
+
+    const res = validateLayout(layout);
+    const issue = res.issues.find((i) => i.type === 'edge-label-overlaps-node');
+    expect(issue, 'expected edge-label-overlaps-node').toBeTruthy();
+    expect(issue?.nodeIds).toContain('C');
+    expect(res.ok).toBe(false);
+  });
+
+  it('does NOT flag edge-label-overlaps-node when the label sits in a clear gap', () => {
+    const a = mkNode('A', 0, 0);
+    const b = mkNode('B', 0, 300);
+    const e = {
+      ...mkEdge('e', 'A', 'B', [
+        { x: 0, y: a.y! + 20 },
+        { x: 0, y: b.y! - 20 },
+      ]),
+      label: 'In The Gap',
+      x: 0,
+      y: 150,
+      width: 56,
+      height: 21,
+    } as unknown as Edge;
+    const layout: LayoutData = { nodes: [a, b], edges: [e], config: {} as any };
+
+    expect(getIssueTypes(layout)).not.toContain('edge-label-overlaps-node');
+  });
+
   it('flags edge-label-overlaps-own-arrowhead when an overlay label covers its end marker', () => {
     const a = mkNode('A', 0, 0);
     const b = mkNode('B', 200, 0);
