@@ -17,6 +17,49 @@ import { rebuildPathologicalLabelEdges } from './pipeline/labelDetourRebuild.js'
 import { repairShortEndpointStubs } from './pipeline/endpointStubRepair.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
 
+/** Arc-length midpoint of an orthogonal polyline (the point halfway along its
+ * total length). Returns null for a polyline with fewer than 2 finite points. */
+function polylineMidpoint(points: { x: number; y: number }[]): { x: number; y: number } | null {
+  const pts = (points ?? []).filter((p) => p && Number.isFinite(p.x) && Number.isFinite(p.y));
+  if (pts.length < 2) {
+    return pts.length === 1 ? { x: pts[0].x, y: pts[0].y } : null;
+  }
+  let total = 0;
+  for (let i = 0; i < pts.length - 1; i++) {
+    total += Math.abs(pts[i + 1].x - pts[i].x) + Math.abs(pts[i + 1].y - pts[i].y);
+  }
+  if (total <= 0) {
+    return { x: pts[0].x, y: pts[0].y };
+  }
+  const half = total / 2;
+  let travelled = 0;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const segLen = Math.abs(pts[i + 1].x - pts[i].x) + Math.abs(pts[i + 1].y - pts[i].y);
+    if (travelled + segLen >= half) {
+      const t = segLen <= 0 ? 0 : (half - travelled) / segLen;
+      return {
+        x: pts[i].x + (pts[i + 1].x - pts[i].x) * t,
+        y: pts[i].y + (pts[i + 1].y - pts[i].y) * t,
+      };
+    }
+    travelled += segLen;
+  }
+  return { x: pts[pts.length - 1].x, y: pts[pts.length - 1].y };
+}
+
+/** The merged label's authoritative anchor: the DOMUS-placed label-node centre
+ * when finite, else the polyline midpoint, else undefined. */
+function anchorForMergedLabel(
+  ln: { x?: unknown; y?: unknown },
+  points: { x: number; y: number }[]
+): { x: number | undefined; y: number | undefined } {
+  if (Number.isFinite(ln.x) && Number.isFinite(ln.y)) {
+    return { x: ln.x as number, y: ln.y as number };
+  }
+  const mid = polylineMidpoint(points);
+  return mid ? { x: mid.x, y: mid.y } : { x: undefined, y: undefined };
+}
+
 /**
  * Convert internal "label-as-node" representation back into overlay labels for paint.
  *
@@ -28,7 +71,7 @@ import { validateLayout } from '../layout-utils/validateLayout.js';
  * - `edge.label` restored (from the label node),
  * - `edge.points` concatenated,
  * - `edge.width/edge.height` populated from the measured label node size,
- * - `edge.x/edge.y` set to the label node position when available (as a paint hint),
+ * - `edge.x/edge.y` set to the authoritative label anchor (see anchorForMergedLabel),
  * and removes the dummy label nodes from `layoutData.nodes`.
  *
  * This is DOM-free and should be called as the final step of the orthogonal layout,
@@ -131,9 +174,13 @@ export function finalizeDummyLabelNodesToOverlayLabels(layoutData: LayoutData): 
       // Preserve measured label size from the label node so paint can position it predictably.
       width: ln.width,
       height: ln.height,
-      // Hint for paint-time label placement (adjustLayout falls back to edge.x/edge.y).
-      x: Number.isFinite(ln.x) ? ln.x : undefined,
-      y: Number.isFinite(ln.y) ? ln.y : undefined,
+      // Authoritative label anchor — single source of truth for validate + paint.
+      // Normally the DOMUS-placed label-node centre (finite). As a defensive
+      // fallback (should a dummy ever lack a placement), use the merged
+      // polyline's arc-length midpoint so the anchor is ALWAYS finite: a missing
+      // anchor makes validateLayout skip the label and forces paint onto a
+      // different position, re-introducing the very divergence A fixed.
+      ...anchorForMergedLabel(ln, points),
       points,
       isLabelEdge: false,
     });

@@ -22,7 +22,7 @@ export type { SyntheticSizesOptions } from './fixtureSizes.js';
 export { parseMmdFileToLayoutData } from './parseToLayoutData.js';
 export type { ParseToLayoutDataOptions } from './parseToLayoutData.js';
 export { discoverLayoutTestFixtures } from './discoverFixtures.js';
-export { injectDomusEdgeLabelNodes } from './domusEdgeLabelInject.js';
+export { injectDomusEdgeLabelNodes } from '../domus/injectEdgeLabelNodes.js';
 export {
   parseApplySizesAndLayout,
   runDomusOrthogonalDdlt,

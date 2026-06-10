@@ -5,7 +5,7 @@ import { prepareLayoutForSwimlanes } from '../swimlanes/helpers.js';
 import { runSwimlaneLayoutCore } from '../swimlanes/layoutCore.js';
 import type { LayoutTestBackend, LayoutTestBackendId, OrthogonalTrace } from './types.js';
 import { applyFixtureContentSizesStrict, applyFixtureLabelSizesStrict } from './fixtureSizes.js';
-import { injectDomusEdgeLabelNodes } from './domusEdgeLabelInject.js';
+import { injectDomusEdgeLabelNodes } from '../domus/injectEdgeLabelNodes.js';
 import { parseMmdFileToLayoutData } from './parseToLayoutData.js';
 import type { DdltFixtureProfile, SizesFixture } from './types.js';
 

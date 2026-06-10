@@ -23,7 +23,7 @@ import { sugiyamaLayout } from '../swimlanes/pipeline.js';
 import { FlowDB } from '../../../diagrams/flowchart/flowDb.js';
 import flow from '../../../diagrams/flowchart/parser/flowParser.js';
 import { applySyntheticContentSizes, applySyntheticLabelSizes } from '../ddlt/fixtureSizes.js';
-import { injectDomusEdgeLabelNodes } from '../ddlt/domusEdgeLabelInject.js';
+import { injectDomusEdgeLabelNodes } from './injectEdgeLabelNodes.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
 
 interface Point {

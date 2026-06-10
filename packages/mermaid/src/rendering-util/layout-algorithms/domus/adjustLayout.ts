@@ -97,23 +97,17 @@ function positionEdgeLabel(edge: any, paths: any) {
     const el = edgeLabels.get(edge.id);
     let x = edge.x;
     let y = edge.y;
-    if (path) {
+    // DOMUS computes an authoritative label anchor (edge.x/edge.y) that
+    // validateLayout scores. Honor it so the painted label sits exactly where
+    // it was validated. Only fall back to the path midpoint when no finite
+    // anchor exists. (This branch previously ran on `if (paths)` — always
+    // truthy — so the label was ALWAYS placed at the midpoint and never at
+    // edge.x/edge.y, diverging paint from validation.)
+    if ((!Number.isFinite(x) || !Number.isFinite(y)) && path) {
       const pos = utils.calcLabelPosition(path);
-      log.debug(
-        'Moving label ' + edge.label + ' from (',
-        x,
-        ',',
-        y,
-        ') to (',
-        pos.x,
-        ',',
-        pos.y,
-        ') abc88'
-      );
-      if (paths) {
-        x = pos.x;
-        y = pos.y;
-      }
+      log.debug('Label ' + edge.label + ' has no finite anchor; using path midpoint abc88', pos);
+      x = pos.x;
+      y = pos.y;
     }
     el.attr('transform', `translate(${x}, ${y + subGraphTitleTotalMargin / 2})`);
   }

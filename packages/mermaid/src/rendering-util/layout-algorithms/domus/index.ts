@@ -1,6 +1,7 @@
 import type { SVG } from '../../../mermaid.js';
 import type { D3Selection } from '../../../types.js';
 import { createGraphWithElements } from '../../createGraph.js';
+import { injectDomusEdgeLabelNodes } from './injectEdgeLabelNodes.js';
 import insertMarkers from '../../rendering-elements/markers.js';
 import { log } from '../../../logger.js';
 import { clear as clearGraphlib } from '../dagre/mermaid-graphlib.js';
@@ -344,13 +345,21 @@ export interface DomusRenderContext {
  */
 export async function measure(data4Layout: LayoutData, svg: SVG): Promise<DomusRenderContext> {
   (data4Layout as any).layoutAlgorithm = 'domus';
-  // R12: `createGraphWithElements` gates edge-label dummy-node injection on
-  // `config.isLabelNode`. Default is `false` per `config.schema.yaml`; without
-  // this DOMUS would compact the flanking primary nodes without reserving
-  // space for label widths. `finalizeDummyLabelNodesToOverlayLabels` resets
-  // the flag to `false` so paint draws labels as overlays (not nodes).
   (data4Layout as any).config ??= {};
   (data4Layout as any).config.isLabelNode = true;
+
+  // Inject edge-label dummy nodes + split labeled edges into
+  // start->label->end BEFORE measuring. This is the SAME structure DDLT builds
+  // via `injectDomusEdgeLabelNodes`, so the browser layout reserves space for
+  // labels and produces an authoritative `edge.x/edge.y` anchor — exactly what
+  // the DDLT sweep validates. Each dummy renders as a `labelRect` carrying the
+  // edge's label text, so `createGraphWithElements` below measures it via
+  // `getBBox` (the dummy's 0×0 placeholder size is overwritten by the real
+  // text bbox). Without this, the browser shipped raw labels at a guessed path
+  // midpoint that `validateLayout` never checked. `finalizeDummyLabelNodes-
+  // ToOverlayLabels` merges the dummies back into overlay labels for paint and
+  // resets `isLabelNode` to false.
+  injectDomusEdgeLabelNodes(data4Layout);
 
   const element = svg.select('g') as unknown as D3Selection<SVGElement>;
   // Reset all module-level renderer state from any previous render before we

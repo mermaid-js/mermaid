@@ -6,7 +6,7 @@ import { setLogLevel } from '../../../logger.js';
 import { parseApplySizesAndLayout } from '../ddlt/backends.js';
 import { parseMmdFileToLayoutData } from '../ddlt/parseToLayoutData.js';
 import { applySyntheticContentSizes, applySyntheticLabelSizes } from '../ddlt/fixtureSizes.js';
-import { injectDomusEdgeLabelNodes } from '../ddlt/domusEdgeLabelInject.js';
+import { injectDomusEdgeLabelNodes } from './injectEdgeLabelNodes.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
 import { layout as runDomusLayout } from './index.js';
 
