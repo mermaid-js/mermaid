@@ -3,7 +3,8 @@ import { StateDB } from './stateDb.js';
 import type { StateStmt } from './stateDb.js';
 import utils from '../../utils.js';
 import common, { getUrl } from '../common/common.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { getRequiredConfig } from '../../diagram-api/requiredConfig.js';
+import { requiredNode } from '../../utils/guards.js';
 import { log } from '../../logger.js';
 import type { D3Selection, Point } from '../../types.js';
 
@@ -43,31 +44,37 @@ interface TextData {
  *
  * @param g - The d3 svg object to add the state to
  */
-export const drawStartState = (g: D3Selection<SVGGElement>) =>
-  g
-    .append('circle')
-    // .style('stroke', 'black')
-    // .style('fill', 'black')
-    .attr('class', 'start-state')
-    .attr('r', getConfig().state!.sizeUnit!)
-    .attr('cx', getConfig().state!.padding! + getConfig().state!.sizeUnit!)
-    .attr('cy', getConfig().state!.padding! + getConfig().state!.sizeUnit!);
+export const drawStartState = (g: D3Selection<SVGGElement>) => {
+  const conf = getRequiredConfig('state');
+  return (
+    g
+      .append('circle')
+      // .style('stroke', 'black')
+      // .style('fill', 'black')
+      .attr('class', 'start-state')
+      .attr('r', conf.sizeUnit)
+      .attr('cx', conf.padding + conf.sizeUnit)
+      .attr('cy', conf.padding + conf.sizeUnit)
+  );
+};
 
 /**
  * Draws a start state as a black circle
  *
  * @param g - The d3 svg object to add the divider to
  */
-export const drawDivider = (g: D3Selection<SVGGElement>) =>
-  g
+export const drawDivider = (g: D3Selection<SVGGElement>) => {
+  const conf = getRequiredConfig('state');
+  return g
     .append('line')
     .style('stroke', 'grey')
     .style('stroke-dasharray', '3')
-    .attr('x1', getConfig().state!.textHeight!)
+    .attr('x1', conf.textHeight)
     .attr('class', 'divider')
-    .attr('x2', getConfig().state!.textHeight! * 2)
+    .attr('x2', conf.textHeight * 2)
     .attr('y1', 0)
     .attr('y2', 0);
+};
 
 /**
  * Draws an end state as a black circle
@@ -76,21 +83,22 @@ export const drawDivider = (g: D3Selection<SVGGElement>) =>
  * @param stateDef - The state definition to draw
  */
 export const drawSimpleState = (g: D3Selection<SVGGElement>, stateDef: StateShapeDef) => {
+  const conf = getRequiredConfig('state');
   const state = g
     .append('text')
-    .attr('x', 2 * getConfig().state!.padding!)
-    .attr('y', getConfig().state!.textHeight! + 2 * getConfig().state!.padding!)
-    .attr('font-size', getConfig().state!.fontSize!)
+    .attr('x', 2 * conf.padding)
+    .attr('y', conf.textHeight + 2 * conf.padding)
+    .attr('font-size', conf.fontSize)
     .attr('class', 'state-title')
     .text(stateDef.id);
 
-  const classBox = state.node()!.getBBox();
+  const classBox = requiredNode(state, 'simple state title text').getBBox();
   g.insert('rect', ':first-child')
-    .attr('x', getConfig().state!.padding!)
-    .attr('y', getConfig().state!.padding!)
-    .attr('width', classBox.width + 2 * getConfig().state!.padding!)
-    .attr('height', classBox.height + 2 * getConfig().state!.padding!)
-    .attr('rx', getConfig().state!.radius!);
+    .attr('x', conf.padding)
+    .attr('y', conf.padding)
+    .attr('width', classBox.width + 2 * conf.padding)
+    .attr('height', classBox.height + 2 * conf.padding)
+    .attr('rx', conf.radius);
 
   return state;
 };
@@ -103,41 +111,37 @@ export const drawSimpleState = (g: D3Selection<SVGGElement>, stateDef: StateShap
  * @returns The d3 svg state
  */
 export const drawDescrState = (g: D3Selection<SVGGElement>, stateDef: StateShapeDef) => {
+  const conf = getRequiredConfig('state');
   const addTspan = function (textEl: D3Selection<SVGTextElement>, txt: string, isFirst: boolean) {
     const tSpan = textEl
       .append('tspan')
-      .attr('x', 2 * getConfig().state!.padding!)
+      .attr('x', 2 * conf.padding)
       .text(txt);
     if (!isFirst) {
-      tSpan.attr('dy', getConfig().state!.textHeight!);
+      tSpan.attr('dy', conf.textHeight);
     }
   };
+  const descriptions = stateDef.descriptions!;
   const title = g
     .append('text')
-    .attr('x', 2 * getConfig().state!.padding!)
-    .attr('y', getConfig().state!.textHeight! + 1.3 * getConfig().state!.padding!)
-    .attr('font-size', getConfig().state!.fontSize!)
+    .attr('x', 2 * conf.padding)
+    .attr('y', conf.textHeight + 1.3 * conf.padding)
+    .attr('font-size', conf.fontSize)
     .attr('class', 'state-title')
-    .text(stateDef.descriptions![0]);
+    .text(descriptions[0]);
 
-  const titleBox = title.node()!.getBBox();
+  const titleBox = requiredNode(title, 'state title text').getBBox();
   const titleHeight = titleBox.height;
 
   const description = g
     .append('text') // text label for the x axis
-    .attr('x', getConfig().state!.padding!)
-    .attr(
-      'y',
-      titleHeight +
-        getConfig().state!.padding! * 0.4 +
-        getConfig().state!.dividerMargin! +
-        getConfig().state!.textHeight!
-    )
+    .attr('x', conf.padding)
+    .attr('y', titleHeight + conf.padding * 0.4 + conf.dividerMargin + conf.textHeight)
     .attr('class', 'state-description');
 
   let isFirst = true;
   let isSecond = true;
-  stateDef.descriptions!.forEach(function (descr) {
+  descriptions.forEach(function (descr) {
     if (!isFirst) {
       addTspan(description, descr, isSecond);
       isSecond = false;
@@ -147,22 +151,22 @@ export const drawDescrState = (g: D3Selection<SVGGElement>, stateDef: StateShape
 
   const descrLine = g
     .append('line') // text label for the x axis
-    .attr('x1', getConfig().state!.padding!)
-    .attr('y1', getConfig().state!.padding! + titleHeight + getConfig().state!.dividerMargin! / 2)
-    .attr('y2', getConfig().state!.padding! + titleHeight + getConfig().state!.dividerMargin! / 2)
+    .attr('x1', conf.padding)
+    .attr('y1', conf.padding + titleHeight + conf.dividerMargin / 2)
+    .attr('y2', conf.padding + titleHeight + conf.dividerMargin / 2)
     .attr('class', 'descr-divider');
-  const descrBox = description.node()!.getBBox();
+  const descrBox = requiredNode(description, 'state description text').getBBox();
   const width = Math.max(descrBox.width, titleBox.width);
 
-  descrLine.attr('x2', width + 3 * getConfig().state!.padding!);
+  descrLine.attr('x2', width + 3 * conf.padding);
   // const classBox = title.node().getBBox();
 
   g.insert('rect', ':first-child')
-    .attr('x', getConfig().state!.padding!)
-    .attr('y', getConfig().state!.padding!)
-    .attr('width', width + 2 * getConfig().state!.padding!)
-    .attr('height', descrBox.height + titleHeight + 2 * getConfig().state!.padding!)
-    .attr('rx', getConfig().state!.radius!);
+    .attr('x', conf.padding)
+    .attr('y', conf.padding)
+    .attr('width', width + 2 * conf.padding)
+    .attr('height', descrBox.height + titleHeight + 2 * conf.padding)
+    .attr('rx', conf.radius);
 
   return g;
 };
@@ -181,21 +185,22 @@ export const addTitleAndBox = (
   stateDef: StateShapeDef,
   altBkg?: boolean
 ) => {
-  const pad = getConfig().state!.padding!;
-  const dblPad = 2 * getConfig().state!.padding!;
-  const orgBox = g.node()!.getBBox();
+  const conf = getRequiredConfig('state');
+  const pad = conf.padding;
+  const dblPad = 2 * conf.padding;
+  const orgBox = requiredNode(g, 'composite state group').getBBox();
   const orgWidth = orgBox.width;
   const orgX = orgBox.x;
 
   const title = g
     .append('text')
     .attr('x', 0)
-    .attr('y', getConfig().state!.titleShift!)
-    .attr('font-size', getConfig().state!.fontSize!)
+    .attr('y', conf.titleShift)
+    .attr('font-size', conf.fontSize)
     .attr('class', 'state-title')
     .text(stateDef.id);
 
-  const titleBox = title.node()!.getBBox();
+  const titleBox = requiredNode(title, 'composite state title text').getBBox();
   const titleWidth = titleBox.width + dblPad;
   let width = Math.max(titleWidth, orgWidth); // + dblPad;
   if (width === orgWidth) {
@@ -210,7 +215,7 @@ export const addTitleAndBox = (
   //   .attr('y2', lineY)
   //   .attr('class', 'descr-divider');
 
-  const graphBox = g.node()!.getBBox();
+  const graphBox = requiredNode(g, 'composite state group').getBBox();
   // descrLine.attr('x2', graphBox.width + getConfig().state.padding);
 
   if (stateDef.doc) {
@@ -237,17 +242,14 @@ export const addTitleAndBox = (
     startX = orgX - (titleWidth - orgWidth) / 2;
   }
 
-  const lineY = 1 - getConfig().state!.textHeight!;
+  const lineY = 1 - conf.textHeight;
   // White color
   g.insert('rect', ':first-child')
     .attr('x', startX)
     .attr('y', lineY)
     .attr('class', altBkg ? 'alt-composit' : 'composit') // cspell:disable-line
     .attr('width', width)
-    .attr(
-      'height',
-      graphBox.height + getConfig().state!.textHeight! + getConfig().state!.titleShift! + 1
-    )
+    .attr('height', graphBox.height + conf.textHeight + conf.titleShift + 1)
     .attr('rx', '0');
 
   title.attr('x', startX + pad);
@@ -258,43 +260,32 @@ export const addTitleAndBox = (
   // Title background
   g.insert('rect', ':first-child')
     .attr('x', startX)
-    .attr(
-      'y',
-      getConfig().state!.titleShift! - getConfig().state!.textHeight! - getConfig().state!.padding!
-    )
+    .attr('y', conf.titleShift - conf.textHeight - conf.padding)
     .attr('width', width)
     // Just needs to be higher then the descr line, will be clipped by the white color box
-    .attr('height', getConfig().state!.textHeight! * 3)
-    .attr('rx', getConfig().state!.radius!);
+    .attr('height', conf.textHeight * 3)
+    .attr('rx', conf.radius);
 
   // Full background
   g.insert('rect', ':first-child')
     .attr('x', startX)
-    .attr(
-      'y',
-      getConfig().state!.titleShift! - getConfig().state!.textHeight! - getConfig().state!.padding!
-    )
+    .attr('y', conf.titleShift - conf.textHeight - conf.padding)
     .attr('width', width)
-    .attr('height', graphBox.height + 3 + 2 * getConfig().state!.textHeight!)
-    .attr('rx', getConfig().state!.radius!);
+    .attr('height', graphBox.height + 3 + 2 * conf.textHeight)
+    .attr('rx', conf.radius);
 
   return g;
 };
 
 const drawEndState = (g: D3Selection<SVGGElement>) => {
+  const conf = getRequiredConfig('state');
   g.append('circle')
     // .style('stroke', 'black')
     // .style('fill', 'white')
     .attr('class', 'end-state-outer')
-    .attr('r', getConfig().state!.sizeUnit! + getConfig().state!.miniPadding!)
-    .attr(
-      'cx',
-      getConfig().state!.padding! + getConfig().state!.sizeUnit! + getConfig().state!.miniPadding!
-    )
-    .attr(
-      'cy',
-      getConfig().state!.padding! + getConfig().state!.sizeUnit! + getConfig().state!.miniPadding!
-    );
+    .attr('r', conf.sizeUnit + conf.miniPadding)
+    .attr('cx', conf.padding + conf.sizeUnit + conf.miniPadding)
+    .attr('cy', conf.padding + conf.sizeUnit + conf.miniPadding);
 
   return (
     g
@@ -302,14 +293,15 @@ const drawEndState = (g: D3Selection<SVGGElement>) => {
       // .style('stroke', 'black')
       // .style('fill', 'black')
       .attr('class', 'end-state-inner')
-      .attr('r', getConfig().state!.sizeUnit!)
-      .attr('cx', getConfig().state!.padding! + getConfig().state!.sizeUnit! + 2)
-      .attr('cy', getConfig().state!.padding! + getConfig().state!.sizeUnit! + 2)
+      .attr('r', conf.sizeUnit)
+      .attr('cx', conf.padding + conf.sizeUnit + 2)
+      .attr('cy', conf.padding + conf.sizeUnit + 2)
   );
 };
 const drawForkJoinState = (g: D3Selection<SVGGElement>, stateDef: StateShapeDef) => {
-  let width = getConfig().state!.forkWidth!;
-  let height = getConfig().state!.forkHeight!;
+  const conf = getRequiredConfig('state');
+  let width = conf.forkWidth;
+  let height = conf.forkHeight;
 
   if (stateDef.parentId) {
     const tmp = width;
@@ -322,8 +314,8 @@ const drawForkJoinState = (g: D3Selection<SVGGElement>, stateDef: StateShapeDef)
     .style('fill', 'black')
     .attr('width', width)
     .attr('height', height)
-    .attr('x', getConfig().state!.padding!)
-    .attr('y', getConfig().state!.padding!);
+    .attr('x', conf.padding)
+    .attr('y', conf.padding);
 };
 
 export const drawText = function (elem: D3Selection<SVGGElement>, textData: TextData) {
@@ -348,6 +340,7 @@ export const drawText = function (elem: D3Selection<SVGGElement>, textData: Text
 };
 
 const _drawLongText = (_text: string, x: number, y: number, g: D3Selection<SVGGElement>) => {
+  const conf = getRequiredConfig('state');
   let textHeight = 0;
 
   const textElem = g.append('text');
@@ -358,7 +351,7 @@ const _drawLongText = (_text: string, x: number, y: number, g: D3Selection<SVGGE
   text = text.replace(/\n/g, '<br/>');
   const lines = text.split(common.lineBreakRegex);
 
-  let tHeight = 1.25 * getConfig().state!.noteMargin!;
+  let tHeight = 1.25 * conf.noteMargin;
   for (const line of lines) {
     const txt = line.trim();
 
@@ -366,15 +359,15 @@ const _drawLongText = (_text: string, x: number, y: number, g: D3Selection<SVGGE
       const span = textElem.append('tspan');
       span.text(txt);
       if (tHeight === 0) {
-        const textBounds = span.node()!.getBBox();
+        const textBounds = requiredNode(span, 'note text tspan').getBBox();
         tHeight += textBounds.height;
       }
       textHeight += tHeight;
-      span.attr('x', x + getConfig().state!.noteMargin!);
-      span.attr('y', y + textHeight + 1.25 * getConfig().state!.noteMargin!);
+      span.attr('x', x + conf.noteMargin);
+      span.attr('y', y + textHeight + 1.25 * conf.noteMargin);
     }
   }
-  return { textWidth: textElem.node()!.getBBox().width, textHeight };
+  return { textWidth: requiredNode(textElem, 'note text').getBBox().width, textHeight };
 };
 
 /**
@@ -385,13 +378,14 @@ const _drawLongText = (_text: string, x: number, y: number, g: D3Selection<SVGGE
  */
 
 export const drawNote = (text: string, g: D3Selection<SVGGElement>) => {
+  const conf = getRequiredConfig('state');
   g.attr('class', 'state-note');
-  const note = g.append('rect').attr('x', 0).attr('y', getConfig().state!.padding!);
+  const note = g.append('rect').attr('x', 0).attr('y', conf.padding);
   const rectElem = g.append('g');
 
   const { textWidth, textHeight } = _drawLongText(text, 0, 0, rectElem);
-  note.attr('height', textHeight + 2 * getConfig().state!.noteMargin!);
-  note.attr('width', textWidth + getConfig().state!.noteMargin! * 2);
+  note.attr('height', textHeight + 2 * conf.noteMargin);
+  note.attr('width', textWidth + conf.noteMargin * 2);
 
   return note;
 };
@@ -408,6 +402,7 @@ export const drawState = function (
   elem: D3Selection<SVGGElement>,
   stateDef: StateShapeDef
 ): StateInfo {
+  const conf = getRequiredConfig('state');
   const id = stateDef.id;
   const stateInfo = {
     id: id,
@@ -433,16 +428,17 @@ export const drawState = function (
   if (stateDef.type === 'divider') {
     drawDivider(g);
   }
-  if (stateDef.type === 'default' && stateDef.descriptions!.length === 0) {
-    drawSimpleState(g, stateDef);
-  }
-  if (stateDef.type === 'default' && stateDef.descriptions!.length > 0) {
-    drawDescrState(g, stateDef);
+  if (stateDef.type === 'default') {
+    if (stateDef.descriptions!.length === 0) {
+      drawSimpleState(g, stateDef);
+    } else {
+      drawDescrState(g, stateDef);
+    }
   }
 
-  const stateBox = g.node()!.getBBox();
-  stateInfo.width = stateBox.width + 2 * getConfig().state!.padding!;
-  stateInfo.height = stateBox.height + 2 * getConfig().state!.padding!;
+  const stateBox = requiredNode(g, 'state group').getBBox();
+  stateInfo.width = stateBox.width + 2 * conf.padding;
+  stateInfo.height = stateBox.height + 2 * conf.padding;
 
   return stateInfo;
 };
@@ -453,6 +449,7 @@ export const drawEdge = function (
   path: { points: Point[] },
   relation: { title?: string }
 ) {
+  const conf = getRequiredConfig('state');
   const getRelationType = function (type: number) {
     switch (type) {
       case StateDB.relationType.AGGREGATION:
@@ -487,7 +484,7 @@ export const drawEdge = function (
     .attr('id', 'edge' + edgeCount)
     .attr('class', 'transition');
   let url = '';
-  if (getConfig().state!.arrowMarkerAbsolute) {
+  if (conf.arrowMarkerAbsolute) {
     url = getUrl(true);
   }
 
@@ -516,14 +513,14 @@ export const drawEdge = function (
         .attr('x', x)
         .attr('y', y + titleHeight);
 
-      const boundsTmp = title.node()!.getBBox();
+      const boundsTmp = requiredNode(title, 'edge label text').getBBox();
       maxWidth = Math.max(maxWidth, boundsTmp.width);
       minX = Math.min(minX, boundsTmp.x);
 
       log.info(boundsTmp.x, x, y + titleHeight);
 
       if (titleHeight === 0) {
-        const titleBox = title.node()!.getBBox();
+        const titleBox = requiredNode(title, 'edge label text').getBBox();
         titleHeight = titleBox.height;
         log.info('Title height', titleHeight, y);
       }
@@ -538,15 +535,15 @@ export const drawEdge = function (
       boxHeight = titleHeight * rows.length;
     }
 
-    const bounds = label.node()!.getBBox();
+    const bounds = requiredNode(label, 'edge label group').getBBox();
 
     label
       .insert('rect', ':first-child')
       .attr('class', 'box')
-      .attr('x', x - maxWidth / 2 - getConfig().state!.padding! / 2)
-      .attr('y', y - boxHeight / 2 - getConfig().state!.padding! / 2 - 3.5)
-      .attr('width', maxWidth + getConfig().state!.padding!)
-      .attr('height', boxHeight + getConfig().state!.padding!);
+      .attr('x', x - maxWidth / 2 - conf.padding / 2)
+      .attr('y', y - boxHeight / 2 - conf.padding / 2 - 3.5)
+      .attr('width', maxWidth + conf.padding)
+      .attr('height', boxHeight + conf.padding);
 
     log.info(bounds);
 

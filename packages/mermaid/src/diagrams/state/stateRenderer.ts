@@ -1,5 +1,3 @@
-import { select } from 'd3';
-import type { Selection } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger.js';
@@ -7,6 +5,9 @@ import common from '../common/common.js';
 import { drawState, addTitleAndBox, drawEdge } from './shapes.js';
 import type { StateInfo, StateShapeDef } from './shapes.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { getRequiredConfig } from '../../diagram-api/requiredConfig.js';
+import { getDiagramRoot } from '../../utils/diagramRoot.js';
+import { requiredNode } from '../../utils/guards.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { DrawDefinition } from '../../diagram-api/types.js';
 import type { StateDiagramConfig } from '../../config.type.js';
@@ -73,18 +74,10 @@ const insertMarkers = function (elem: D3Selection<SVGSVGElement>) {
  * @param diagObj - The diagram object
  */
 export const draw: DrawDefinition = function (text, id, _version, diagObj) {
-  conf = getConfig().state as Required<StateDiagramConfig>;
+  conf = getRequiredConfig('state');
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
-  let sandboxElement: Selection<HTMLIFrameElement, unknown, HTMLElement, unknown> | undefined;
-  if (securityLevel === 'sandbox') {
-    sandboxElement = select<HTMLIFrameElement, unknown>('#i' + id);
-  }
-  const root: D3HtmlSelection<HTMLElement> =
-    securityLevel === 'sandbox'
-      ? select(sandboxElement!.nodes()[0].contentDocument!.body)
-      : select<HTMLElement, unknown>('body');
-  const doc = securityLevel === 'sandbox' ? sandboxElement!.nodes()[0].contentDocument! : document;
+  const { root, doc } = getDiagramRoot(id, securityLevel);
 
   log.debug('Rendering diagram ' + text);
 
@@ -92,12 +85,13 @@ export const draw: DrawDefinition = function (text, id, _version, diagObj) {
   const diagram = root.select<SVGSVGElement>(`[id='${id}']`);
   insertMarkers(diagram);
 
-  const rootDoc = (diagObj as unknown as V1DiagramObj).db.getRootDoc();
+  const v1DiagObj = diagObj as unknown as V1DiagramObj;
+  const rootDoc = v1DiagObj.db.getRootDoc();
   const rootG = diagram.append('g').attr('id', id + '-root');
-  renderDoc(rootDoc, rootG, undefined, false, root, doc, diagObj as unknown as V1DiagramObj);
+  renderDoc(rootDoc, rootG, undefined, false, root, doc, v1DiagObj);
 
   const padding = conf.padding;
-  const bounds = diagram.node()!.getBBox();
+  const bounds = requiredNode(diagram, 'state diagram svg').getBBox();
 
   const width = bounds.width + padding * 2;
   const height = bounds.height + padding * 2;
@@ -196,13 +190,13 @@ const renderDoc = (
       if (first) {
         // first = false;
         sub = addTitleAndBox(sub, stateDef, altBkg);
-        const boxBounds = sub.node()!.getBBox();
+        const boxBounds = requiredNode(sub, 'composite state group').getBBox();
         node.width = boxBounds.width;
         node.height = boxBounds.height + conf.padding / 2;
         transformationLog[stateDef.id] = { y: conf.compositTitleSize };
       } else {
         // sub = addIdAndBox(sub, stateDef);
-        const boxBounds = sub.node()!.getBBox();
+        const boxBounds = requiredNode(sub, 'composite state group').getBBox();
         node.width = boxBounds.width;
         node.height = boxBounds.height;
         // transformationLog[stateDef.id] = { y: conf.compositTitleSize };
@@ -262,7 +256,7 @@ const renderDoc = (
   dagreLayout(graph);
 
   log.debug('Graph after layout', graph.nodes());
-  const svgElem = diagram.node()!;
+  const svgElem = requiredNode(diagram, 'state diagram group');
 
   graph.nodes().forEach(function (v) {
     if (v !== undefined && graph.node(v) !== undefined) {
@@ -296,8 +290,8 @@ const renderDoc = (
             pShift = 0;
           }
         }
-        divider.setAttribute('x1', (0 - pShift + 8) as unknown as string);
-        divider.setAttribute('x2', (pWidth - pShift - 8) as unknown as string);
+        divider.setAttribute('x1', String(0 - pShift + 8));
+        divider.setAttribute('x2', String(pWidth - pShift - 8));
       });
     } else {
       log.debug('No Node ' + v + ': ' + JSON.stringify(graph.node(v)));
