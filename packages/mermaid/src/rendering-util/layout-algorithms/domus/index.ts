@@ -13,6 +13,7 @@ import { layoutOrthogonalNodes } from './pipeline.js';
 import { runRP1OrthogonalPipeline } from './rp1Pipeline.js';
 import { ORTHO_DEBUG } from './debug.js';
 import { finalizeDummyLabelNodesToOverlayLabels } from './finalizeOverlayLabels.js';
+import { simplifyEdgeJogsWhenScoreImproves } from './pipeline/simplifyEdgeJogs.js';
 import { isEdgeLabelNodeId } from './core/labels.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
 import { reduceCrossingsWithPortSideCandidatesWhenScoreImproves } from './pipeline/crossingPortRepair.js';
@@ -434,6 +435,11 @@ export function layout(data4Layout: LayoutData): void {
   // semantic edge per `(start, end)` pair.
   finalizeDummyLabelNodesToOverlayLabels(data4Layout);
   tryLayeredFallbackCandidateWhenScoreImproves(data4Layout, preFinalizeLayout);
+
+  // iter-62: generic jog simplification. Runs last, on the final geometry,
+  // for labeled and unlabeled layouts alike — the finalize tail above is
+  // label-gated and never sees unlabeled fixtures.
+  simplifyEdgeJogsWhenScoreImproves(data4Layout);
 }
 
 /**
