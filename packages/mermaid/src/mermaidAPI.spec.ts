@@ -757,6 +757,14 @@ describe('mermaidAPI', () => {
         }
       `);
     });
+    it('resolves swimlanes as its own diagram type', async () => {
+      await expect(mermaidAPI.parse('swimlane TD;A-->B;')).resolves.toMatchInlineSnapshot(`
+        {
+          "config": {},
+          "diagramType": "swimlane",
+        }
+      `);
+    });
     it('returns config when defined in frontmatter', async () => {
       await expect(
         mermaidAPI.parse(`---

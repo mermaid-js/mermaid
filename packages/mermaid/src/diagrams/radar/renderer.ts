@@ -56,7 +56,7 @@ const drawFrame = (svg: SVG, config: Required<RadarDiagramConfig>): SVGGroup => 
   };
   configureSvgSize(svg, totalHeight, totalWidth, config.useMaxWidth ?? true);
 
-  svg.attr('viewBox', `0 0 ${totalWidth} ${totalHeight}`);
+  svg.attr('viewBox', `0 0 ${totalWidth} ${totalHeight}`).attr('overflow', 'visible');
   // g element to center the radar chart
   return svg.append('g').attr('transform', `translate(${center.x}, ${center.y})`);
 };
@@ -103,16 +103,31 @@ const drawAxes = (
   for (let i = 0; i < numAxes; i++) {
     const label = axes[i].label;
     const angle = (2 * i * Math.PI) / numAxes - Math.PI / 2;
+    const cosA = Math.cos(angle);
+    const sinA = Math.sin(angle);
+
     g.append('line')
       .attr('x1', 0)
       .attr('y1', 0)
-      .attr('x2', radius * config.axisScaleFactor * Math.cos(angle))
-      .attr('y2', radius * config.axisScaleFactor * Math.sin(angle))
+      .attr('x2', radius * config.axisScaleFactor * cosA)
+      .attr('y2', radius * config.axisScaleFactor * sinA)
       .attr('class', 'radarAxisLine');
+
+    // Anchor labels based on their angular position so that text extends
+    // away from the chart center rather than overflowing the viewBox.
+    const textAnchor = cosA > 0.01 ? 'start' : cosA < -0.01 ? 'end' : 'middle';
+    const dominantBaseline = sinA > 0.01 ? 'hanging' : sinA < -0.01 ? 'auto' : 'central';
+
+    // Small pixel offset to push labels slightly outward from the axis endpoint,
+    // giving extra clearance so text doesn't sit right at the chart boundary.
+    const labelPad = 4;
+
     g.append('text')
       .text(label)
-      .attr('x', radius * config.axisLabelFactor * Math.cos(angle))
-      .attr('y', radius * config.axisLabelFactor * Math.sin(angle))
+      .attr('x', radius * config.axisLabelFactor * cosA + labelPad * cosA)
+      .attr('y', radius * config.axisLabelFactor * sinA + labelPad * sinA)
+      .attr('text-anchor', textAnchor)
+      .attr('dominant-baseline', dominantBaseline)
       .attr('class', 'radarAxisLabel');
   }
 };

@@ -2,6 +2,7 @@
 
 %options case-insensitive
 %x block
+%x block_bq
 %x acc_title
 %x acc_descr
 %x acc_descr_multiline
@@ -34,7 +35,10 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <block>\s+                      /* skip whitespace in block */
 <block>\b((?:PK)|(?:FK)|(?:UK))\b      return 'ATTRIBUTE_KEY'
 <block>([^\s]*)[~].*[~]([^\s]*)        return 'ATTRIBUTE_WORD';
-<block>([\*A-Za-z_\u00C0-\uFFFF][A-Za-z0-9\-\_\[\]\(\)\u00C0-\uFFFF\*]*)  return 'ATTRIBUTE_WORD';
+<block>([\*A-Za-z_\u00C0-\uFFFF][A-Za-z0-9\-\_\[\]\(\)\.,\u00C0-\uFFFF\*]*)  return 'ATTRIBUTE_WORD';
+<block>[`]                      { this.begin("block_bq"); }
+<block_bq>[^`]+                 return 'ATTRIBUTE_WORD';
+<block_bq>[`]                   { this.popState(); }
 <block>\"[^"]*\"                return 'COMMENT';
 <block>[\n]+                    /* nothing */
 <block>"}"                      { this.popState(); return 'BLOCK_STOP'; }
@@ -255,6 +259,7 @@ attribute
 
 attributeType
     : ATTRIBUTE_WORD { $$=$1; }
+    | ATTRIBUTE_WORD '?' { $$=$1 + $2; }
     ;
 
 attributeName

@@ -28,6 +28,20 @@ describe('parsing a flow chart', function () {
     expect(edges[0].text).toBe('');
   });
 
+  it('should accept swimlane as a graph keyword', function () {
+    flow.parser.parse('swimlane LR;A-->B;');
+
+    const vert = flow.parser.yy.getVertices();
+    const edges = flow.parser.yy.getEdges();
+
+    expect(flow.parser.yy.getDirection()).toBe('LR');
+    expect(vert.get('A').id).toBe('A');
+    expect(vert.get('B').id).toBe('B');
+    expect(edges.length).toBe(1);
+    expect(edges[0].start).toBe('A');
+    expect(edges[0].end).toBe('B');
+  });
+
   it('should handle node names with "end" substring', function () {
     const res = flow.parser.parse('graph TD\nendpoint --> sender');
 

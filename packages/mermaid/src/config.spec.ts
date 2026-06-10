@@ -50,6 +50,19 @@ describe('when working with site config', () => {
       updatedConfig.quadrantChart!.chartWidth
     );
   });
+  it('should default swimlane layering options to true', () => {
+    const config = configApi.getConfig();
+
+    expect(config.swimlane?.ignoreCrossLaneEdges).toBe(true);
+    expect(config.swimlane?.optimizeRanksByCrossings).toBe(true);
+  });
+
+  it('should default ELK node placement alignment to NONE', () => {
+    const config = configApi.getConfig();
+
+    expect(config.elk?.nodePlacementAlignment).toBe('NONE');
+  });
+
   it('should retain railroad directives after sanitization', () => {
     configApi.saveConfigFromInitialize({});
     configApi.addDirective({

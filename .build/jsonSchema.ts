@@ -10,6 +10,7 @@ import type { MermaidConfig, BaseDiagramConfig } from '../packages/mermaid/src/c
  */
 const MERMAID_CONFIG_SUBSCHEMA_KEYS = [
   'flowchart',
+  'swimlane',
   'sequence',
   'gantt',
   'journey',

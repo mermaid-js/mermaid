@@ -66,7 +66,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
     const dv = select(text);
 
     // if there are images, need to wait for them to load before getting the bounding box
-    await configureLabelImages(div, label);
+    await configureLabelImages(div);
 
     bbox = div.getBoundingClientRect();
     dv.attr('width', bbox.width);

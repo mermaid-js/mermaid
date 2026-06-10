@@ -1,6 +1,7 @@
 import c4 from '../diagrams/c4/c4Detector.js';
 import flowchart from '../diagrams/flowchart/flowDetector.js';
 import flowchartV2 from '../diagrams/flowchart/flowDetector-v2.js';
+import swimlanes from '../diagrams/swimlanes/detector.js';
 import er from '../diagrams/er/erDetector.js';
 import git from '../diagrams/git/gitGraphDetector.js';
 import gantt from '../diagrams/gantt/ganttDetector.js';
@@ -98,6 +99,7 @@ export const addDiagrams = () => {
     pie,
     requirement,
     sequence,
+    swimlanes,
     flowchartV2,
     flowchart,
     timeline,

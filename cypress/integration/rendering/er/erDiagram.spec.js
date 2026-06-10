@@ -220,6 +220,44 @@ describe('Entity Relationship Diagram', () => {
     );
   });
 
+  it('should render entities with backtick-escaped attribute names containing special characters', () => {
+    imgSnapshotTest(
+      `
+    erDiagram
+        HOTEL {
+          string      address
+          string      \`geo.accuracy\`
+          string      \`check-in date\` PK "ISO 8601"
+        }
+        HOTEL ||--o{ ROOM : has
+        ROOM {
+          int         \`room.number\`
+          string      \`bed.type\`
+        }
+        `,
+      { loglevel: 1 }
+    );
+  });
+
+  it('should render entities with unescaped attribute names or types containing commas or periods', () => {
+    imgSnapshotTest(
+      `
+    erDiagram
+        HOTEL {
+          string               address
+          GEOMETRY(point,4326) location
+          DECIMAL(10,2)        price_per_night
+        }
+        HOTEL ||--o{ ROOM : has
+        ROOM {
+          int room.number
+          string bed.type
+        }
+        `,
+      { loglevel: 1 }
+    );
+  });
+
   it('should render entities with keys', () => {
     renderGraph(
       `
