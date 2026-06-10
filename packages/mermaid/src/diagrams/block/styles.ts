@@ -1,4 +1,4 @@
-import * as khroma from 'khroma';
+import { channel, rgba } from 'khroma';
 import { getIconStyles } from '../globalStyles.js';
 
 /** Returns the styles given options */
@@ -19,15 +19,11 @@ export interface BlockChartStyleOptions {
 }
 
 const fade = (color: string, opacity: number) => {
-  // @ts-ignore TODO: incorrect types from khroma
-  const channel = khroma.channel;
-
   const r = channel(color, 'r');
   const g = channel(color, 'g');
   const b = channel(color, 'b');
 
-  // @ts-ignore incorrect types from khroma
-  return khroma.rgba(r, g, b, opacity);
+  return rgba(r, g, b, opacity);
 };
 
 const getStyles = (options: BlockChartStyleOptions) =>

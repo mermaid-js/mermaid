@@ -1,4 +1,3 @@
-// @ts-expect-error Incorrect khroma types
 import { adjust, darken, invert, isDark, lighten } from 'khroma';
 import {
   oldAttributeBackgroundColorEven,

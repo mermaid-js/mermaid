@@ -1,4 +1,3 @@
-// @ts-expect-error Incorrect khroma types
 import { adjust } from 'khroma';
 
 export const mkBorder = (col: string, darkMode?: boolean): string =>

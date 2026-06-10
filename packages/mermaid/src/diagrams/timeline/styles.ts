@@ -1,4 +1,3 @@
-// @ts-expect-error Incorrect khroma types
 import { darken, lighten, isDark } from 'khroma';
 import { getConfig } from './../../config.js';
 
@@ -100,10 +99,10 @@ const genSections = (options: TimelineStyleOptions) => {
 
   for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
     options['lineColor' + i] = options['lineColor' + i] || options['cScaleInv' + i];
-    if (isDark(options['lineColor' + i])) {
-      options['lineColor' + i] = lighten(options['lineColor' + i], 20);
+    if (isDark(options['lineColor' + i] as string)) {
+      options['lineColor' + i] = lighten(options['lineColor' + i] as string, 20);
     } else {
-      options['lineColor' + i] = darken(options['lineColor' + i], 20);
+      options['lineColor' + i] = darken(options['lineColor' + i] as string, 20);
     }
   }
 

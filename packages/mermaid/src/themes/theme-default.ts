@@ -1,4 +1,3 @@
-// @ts-expect-error Incorrect khroma types
 import { invert, lighten, rgba, adjust, darken, isDark } from 'khroma';
 import { mkBorder } from './theme-helpers.js';
 import {

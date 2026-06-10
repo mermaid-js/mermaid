@@ -4,7 +4,6 @@ import type { DiagramRenderer, DrawDefinition } from '../../diagram-api/types.js
 import type { VennDiagramConfig } from '../../config.type.js';
 import type { Selection } from 'd3';
 import { select as d3select } from 'd3';
-// @ts-expect-error Incorrect khroma types
 import { isDark, lighten, darken, transparentize } from 'khroma';
 import { getConfig } from '../../config.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
