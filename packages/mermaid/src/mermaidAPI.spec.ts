@@ -748,8 +748,17 @@ describe('mermaidAPI', () => {
         mermaidAPI.parse('this is not a mermaid diagram definition', { suppressErrors: true })
       ).resolves.toBe(false);
     });
+    // `parse` also returns the diagram's `db` (an agentflow extension). The db is
+    // a live class instance, so these tests assert its presence separately and
+    // snapshot only the serializable rest of the result.
+    const parseWithoutDb = async (text: string) => {
+      const { db, ...rest } = await mermaidAPI.parse(text);
+      expect(db).toBeDefined();
+      return rest;
+    };
+
     it('resolves for valid definition', async () => {
-      await expect(mermaidAPI.parse('graph TD;A--x|text including URL space|B;')).resolves
+      await expect(parseWithoutDb('graph TD;A--x|text including URL space|B;')).resolves
         .toMatchInlineSnapshot(`
         {
           "config": {},
@@ -758,7 +767,7 @@ describe('mermaidAPI', () => {
       `);
     });
     it('resolves swimlanes as its own diagram type', async () => {
-      await expect(mermaidAPI.parse('swimlane TD;A-->B;')).resolves.toMatchInlineSnapshot(`
+      await expect(parseWithoutDb('swimlane TD;A-->B;')).resolves.toMatchInlineSnapshot(`
         {
           "config": {},
           "diagramType": "swimlane",
@@ -767,7 +776,7 @@ describe('mermaidAPI', () => {
     });
     it('returns config when defined in frontmatter', async () => {
       await expect(
-        mermaidAPI.parse(`---
+        parseWithoutDb(`---
 config:
   theme: base
   flowchart:
@@ -789,7 +798,7 @@ graph TD;A--x|text including URL space|B;`)
 
     it('returns config when defined in directive', async () => {
       await expect(
-        mermaidAPI.parse(`%%{init: { 'theme': 'base' } }%%
+        parseWithoutDb(`%%{init: { 'theme': 'base' } }%%
 graph TD;A--x|text including URL space|B;`)
       ).resolves.toMatchInlineSnapshot(`
   {
@@ -803,7 +812,7 @@ graph TD;A--x|text including URL space|B;`)
 
     it('returns merged config when defined in frontmatter and directive', async () => {
       await expect(
-        mermaidAPI.parse(`---
+        parseWithoutDb(`---
 config:
   theme: forest
   flowchart:
@@ -825,9 +834,15 @@ graph TD;A--x|text including URL space|B;`)
     });
 
     it('returns true for valid definition with silent option', async () => {
-      await expect(
-        mermaidAPI.parse('graph TD;A--x|text including URL space|B;', { suppressErrors: true })
-      ).resolves.toMatchInlineSnapshot(`
+      const result = await mermaidAPI.parse('graph TD;A--x|text including URL space|B;', {
+        suppressErrors: true,
+      });
+      if (result === false) {
+        throw new Error('expected parse to succeed');
+      }
+      const { db, ...rest } = result;
+      expect(db).toBeDefined();
+      expect(rest).toMatchInlineSnapshot(`
           {
             "config": {},
             "diagramType": "flowchart-v2",
