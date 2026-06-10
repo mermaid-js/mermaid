@@ -12,7 +12,7 @@
 
 > **reset**(`config`): `void`
 
-Defined in: [packages/mermaid/src/config.ts:230](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L230)
+Defined in: [packages/mermaid/src/config.ts:276](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L276)
 
 ## reset
 
@@ -32,7 +32,7 @@ Defined in: [packages/mermaid/src/config.ts:230](https://github.com/mermaid-js/m
 
 ### config
 
-[`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md) = `siteConfig`
+[`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md) = `store.siteConfig`
 
 base set of values, which currentConfig could be **reset** to.
 Defaults to the current siteConfig (e.g returned by [getSiteConfig](getSiteConfig.md)).

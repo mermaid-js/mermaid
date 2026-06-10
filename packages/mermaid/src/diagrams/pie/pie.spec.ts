@@ -1,5 +1,5 @@
 import { parser } from './pieParser.js';
-import { DEFAULT_PIE_DB, db } from './pieDb.js';
+import { DEFAULT_PIE_DB, PieDB } from './pieDb.js';
 import { setConfig } from '../../diagram-api/diagramAPI.js';
 
 setConfig({
@@ -7,7 +7,12 @@ setConfig({
 });
 
 describe('pie', () => {
-  beforeEach(() => db.clear());
+  let db: PieDB;
+  beforeEach(() => {
+    db = new PieDB();
+    // @ts-expect-error - PieDB is not assignable to DiagramDB
+    parser.parser.yy = db;
+  });
 
   describe('parse', () => {
     it('should handle very simple pie', async () => {

@@ -4,15 +4,7 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 import { generateId } from '../../utils.js';
 import common from '../common/common.js';
-import {
-  clear as commonClear,
-  getAccDescription,
-  getAccTitle,
-  getDiagramTitle,
-  setAccDescription,
-  setAccTitle,
-  setDiagramTitle,
-} from '../common/commonDb.js';
+import { CommonDB } from '../common/commonDb.js';
 import { createTooltip } from '../common/svgDrawCommon.js';
 import { dataFetcher, reset as resetDataFetcher } from './dataFetcher.js';
 import { getDir } from './stateRenderer-v3-unified.js';
@@ -199,6 +191,7 @@ const newDoc = (): Document => ({
 const clone = <T>(o: T): T => JSON.parse(JSON.stringify(o));
 
 export class StateDB {
+  private readonly common = new CommonDB();
   private nodes: NodeData[] = [];
   private edges: Edge[] = [];
   private rootDoc: Stmt[] = [];
@@ -468,7 +461,7 @@ export class StateDB {
     this.classes = newClassesList();
     if (!saveCommon) {
       this.links = new Map(); // <-- add here
-      commonClear();
+      this.common.clear();
     }
   }
 
@@ -765,10 +758,10 @@ export class StateDB {
     return getConfig().state;
   }
 
-  getAccTitle = getAccTitle;
-  setAccTitle = setAccTitle;
-  getAccDescription = getAccDescription;
-  setAccDescription = setAccDescription;
-  setDiagramTitle = setDiagramTitle;
-  getDiagramTitle = getDiagramTitle;
+  getAccTitle = this.common.getAccTitle;
+  setAccTitle = this.common.setAccTitle;
+  getAccDescription = this.common.getAccDescription;
+  setAccDescription = this.common.setAccDescription;
+  setDiagramTitle = this.common.setDiagramTitle;
+  getDiagramTitle = this.common.getDiagramTitle;
 }

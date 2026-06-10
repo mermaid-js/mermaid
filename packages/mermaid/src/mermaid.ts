@@ -167,9 +167,11 @@ const runThrowsErrors = async function (
   // generate the id of the diagram
   const idGenerator = new utils.InitIDGenerator(conf.deterministicIds, conf.deterministicIDSeed);
 
-  let txt: string;
   const errors: DetailedError[] = [];
 
+  // First pass, fully synchronous: claim the elements to process and assign
+  // their ids, so concurrent calls to run() never pick up the same element.
+  const renderJobs: { element: HTMLElement; id: string; txt: string }[] = [];
   // element is the current div with mermaid class
   // eslint-disable-next-line unicorn/prefer-spread
   for (const element of Array.from(nodesToProcess)) {
@@ -183,7 +185,7 @@ const runThrowsErrors = async function (
     const id = `mermaid-${idGenerator.next()}`;
 
     // Fetch the graph definition including tags
-    txt = element.innerHTML;
+    let txt: string = element.innerHTML;
 
     // transforms the html to pure text
     txt = dedent(utils.entityDecode(txt)) // removes indentation, required for YAML parsing
@@ -194,16 +196,32 @@ const runThrowsErrors = async function (
     if (init) {
       log.debug('Detected early reinit: ', init);
     }
-    try {
-      const { svg, bindFunctions } = await render(id, txt, element);
-      element.innerHTML = svg;
-      if (postRenderCallback) {
-        await postRenderCallback(id);
+    renderJobs.push({ element, id, txt });
+  }
+
+  // Render all diagrams concurrently. Renders that would interfere with each
+  // other (conflicting configurations or shared diagram internals) are
+  // serialized internally by mermaidAPI.
+  const jobErrors: unknown[] = new Array<unknown>(renderJobs.length);
+  await Promise.all(
+    renderJobs.map(async ({ element, id, txt }, index) => {
+      try {
+        const { svg, bindFunctions } = await render(id, txt, element);
+        element.innerHTML = svg;
+        if (postRenderCallback) {
+          await postRenderCallback(id);
+        }
+        if (bindFunctions) {
+          bindFunctions(element);
+        }
+      } catch (error) {
+        jobErrors[index] = error;
       }
-      if (bindFunctions) {
-        bindFunctions(element);
-      }
-    } catch (error) {
+    })
+  );
+  // Report errors in document order, like the previous sequential implementation.
+  for (const error of jobErrors) {
+    if (error !== undefined) {
       handleError(error, errors, mermaid.parseError);
     }
   }
@@ -318,32 +336,17 @@ const setParseErrorHandler = function (parseErrorHandler: (err: any, hash: any) 
   mermaid.parseError = parseErrorHandler;
 };
 
-const executionQueue: (() => Promise<unknown>)[] = [];
-let executionQueueRunning = false;
-const executeQueue = async () => {
-  if (executionQueueRunning) {
-    return;
-  }
-  executionQueueRunning = true;
-  while (executionQueue.length > 0) {
-    const f = executionQueue.shift();
-    if (f) {
-      try {
-        await f();
-      } catch (e) {
-        log.error('Error executing queue', e);
-      }
-    }
-  }
-  executionQueueRunning = false;
-};
-
 /**
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
  * @param parseOptions - Options for parsing. @see {@link ParseOptions}
  * @returns If valid, {@link ParseResult} otherwise `false` if parseOptions.suppressErrors is `true`.
  * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false or not set.
+ *
+ * @remarks
+ * Concurrent calls are safe: each parse runs against its own diagram state,
+ * and calls only wait for each other when they need conflicting
+ * configurations or shared diagram internals.
  *
  * @example
  * ```js
@@ -358,29 +361,13 @@ const executeQueue = async () => {
  * ```
  */
 const parse: typeof mermaidAPI.parse = async (text, parseOptions) => {
-  return new Promise((resolve, reject) => {
-    // This promise will resolve when the render call is done.
-    // It will be queued first and will be executed when it is first in line
-    const performCall = () =>
-      new Promise((res, rej) => {
-        mermaidAPI.parse(text, parseOptions).then(
-          (r) => {
-            // This resolves for the promise for the queue handling
-            res(r);
-            // This fulfills the promise sent to the value back to the original caller
-            resolve(r);
-          },
-          (e) => {
-            log.error('Error parsing', e);
-            mermaid.parseError?.(e);
-            rej(e);
-            reject(e);
-          }
-        );
-      });
-    executionQueue.push(performCall);
-    executeQueue().catch(reject);
-  });
+  try {
+    return await mermaidAPI.parse(text, parseOptions);
+  } catch (e) {
+    log.error('Error parsing', e);
+    mermaid.parseError?.(e);
+    throw e;
+  }
 };
 
 /**
@@ -395,7 +382,10 @@ const parse: typeof mermaidAPI.parse = async (text, parseOptions) => {
  * ```
  *
  * @remarks
- * Multiple calls to this function will be enqueued to run serially.
+ * Concurrent calls are safe and run in parallel where possible: every render
+ * works on its own diagram state, and renders only wait for each other when
+ * they need conflicting configurations or shared diagram internals. Each call
+ * must still use a unique `id`.
  *
  * @param id - The id for the SVG element (the element to be rendered)
  * @param text - The text for the graph definition
@@ -406,30 +396,14 @@ const parse: typeof mermaidAPI.parse = async (text, parseOptions) => {
  *   element will be removed when rendering is completed.
  * @returns Returns the SVG Definition and BindFunctions.
  */
-const render: typeof mermaidAPI.render = (id, text, container) => {
-  return new Promise((resolve, reject) => {
-    // This promise will resolve when the mermaidAPI.render call is done.
-    // It will be queued first and will be executed when it is first in line
-    const performCall = () =>
-      new Promise((res, rej) => {
-        mermaidAPI.render(id, text, container).then(
-          (r) => {
-            // This resolves for the promise for the queue handling
-            res(r);
-            // This fulfills the promise sent to the value back to the original caller
-            resolve(r);
-          },
-          (e) => {
-            log.error('Error parsing', e);
-            mermaid.parseError?.(e);
-            rej(e);
-            reject(e);
-          }
-        );
-      });
-    executionQueue.push(performCall);
-    executeQueue().catch(reject);
-  });
+const render: typeof mermaidAPI.render = async (id, text, container) => {
+  try {
+    return await mermaidAPI.render(id, text, container);
+  } catch (e) {
+    log.error('Error parsing', e);
+    mermaid.parseError?.(e);
+    throw e;
+  }
 };
 
 /**

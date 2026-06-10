@@ -8,15 +8,7 @@ import type { Edge, Node } from '../../rendering-util/types.js';
 import type { EdgeMetaData, NodeMetaData } from '../../types.js';
 import utils, { getEdgeId } from '../../utils.js';
 import common from '../common/common.js';
-import {
-  setAccTitle,
-  getAccTitle,
-  getAccDescription,
-  setAccDescription,
-  clear as commonClear,
-  setDiagramTitle,
-  getDiagramTitle,
-} from '../common/commonDb.js';
+import { CommonDB } from '../common/commonDb.js';
 import { createTooltip } from '../common/svgDrawCommon.js';
 import type {
   FlowClass,
@@ -36,6 +28,7 @@ const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 
 // We are using arrow functions assigned to class instance fields instead of methods as they are required by flow JISON
 export class FlowDB implements DiagramDB {
+  private readonly common = new CommonDB();
   private vertexCounter = 0;
   private config = getConfig();
   private diagramId = '';
@@ -651,7 +644,7 @@ You have to call mermaid.initialize.`
     this.firstGraphFlag = true;
     this.version = ver;
     this.config = getConfig();
-    commonClear();
+    this.common.clear();
   }
 
   public setGen(ver: string) {
@@ -1187,10 +1180,10 @@ You have to call mermaid.initialize.`
   public defaultConfig() {
     return defaultConfig.flowchart;
   }
-  public setAccTitle = setAccTitle;
-  public setAccDescription = setAccDescription;
-  public setDiagramTitle = setDiagramTitle;
-  public getAccTitle = getAccTitle;
-  public getAccDescription = getAccDescription;
-  public getDiagramTitle = getDiagramTitle;
+  public setAccTitle = this.common.setAccTitle;
+  public setAccDescription = this.common.setAccDescription;
+  public setDiagramTitle = this.common.setDiagramTitle;
+  public getAccTitle = this.common.getAccTitle;
+  public getAccDescription = this.common.getAccDescription;
+  public getDiagramTitle = this.common.getDiagramTitle;
 }

@@ -4,15 +4,7 @@ import DEFAULT_CONFIG from '../../defaultConfig.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 import type { D3Element } from '../../types.js';
 import { cleanAndMerge } from '../../utils.js';
-import {
-  clear as commonClear,
-  getAccDescription,
-  getAccTitle,
-  getDiagramTitle,
-  setAccDescription,
-  setAccTitle,
-  setDiagramTitle,
-} from '../common/commonDb.js';
+import { CommonDB } from '../common/commonDb.js';
 import type {
   ArchitectureAlignment,
   ArchitectureDirectionPair,
@@ -38,6 +30,7 @@ import {
 const DEFAULT_ARCHITECTURE_CONFIG: Required<ArchitectureDiagramConfig> =
   DEFAULT_CONFIG.architecture;
 export class ArchitectureDB implements DiagramDB {
+  private readonly common = new CommonDB();
   private nodes: Record<string, ArchitectureNode> = {};
   private groups: Record<string, ArchitectureGroup> = {};
   private edges: ArchitectureEdge[] = [];
@@ -68,7 +61,7 @@ export class ArchitectureDB implements DiagramDB {
     this.dataStructures = undefined;
     this.elements = {};
     this.diagramId = '';
-    commonClear();
+    this.common.clear();
   }
 
   public addService({
@@ -402,12 +395,12 @@ export class ArchitectureDB implements DiagramDB {
     return this.getConfig()[field];
   }
 
-  public setAccTitle = setAccTitle;
-  public getAccTitle = getAccTitle;
-  public setDiagramTitle = setDiagramTitle;
-  public getDiagramTitle = getDiagramTitle;
-  public getAccDescription = getAccDescription;
-  public setAccDescription = setAccDescription;
+  public setAccTitle = this.common.setAccTitle;
+  public getAccTitle = this.common.getAccTitle;
+  public setDiagramTitle = this.common.setDiagramTitle;
+  public getDiagramTitle = this.common.getDiagramTitle;
+  public getAccDescription = this.common.getAccDescription;
+  public setAccDescription = this.common.setAccDescription;
 }
 
 /**

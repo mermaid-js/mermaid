@@ -3,19 +3,12 @@ import type { PacketDiagramConfig } from '../../config.type.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 import { cleanAndMerge } from '../../utils.js';
-import {
-  clear as commonClear,
-  getAccDescription,
-  getAccTitle,
-  getDiagramTitle,
-  setAccDescription,
-  setAccTitle,
-  setDiagramTitle,
-} from '../common/commonDb.js';
+import { CommonDB } from '../common/commonDb.js';
 import type { PacketWord } from './types.js';
 const DEFAULT_PACKET_CONFIG: Required<PacketDiagramConfig> = DEFAULT_CONFIG.packet;
 
 export class PacketDB implements DiagramDB {
+  private readonly common = new CommonDB();
   private packet: PacketWord[] = [];
 
   public getConfig() {
@@ -40,14 +33,14 @@ export class PacketDB implements DiagramDB {
   }
 
   public clear() {
-    commonClear();
+    this.common.clear();
     this.packet = [];
   }
 
-  public setAccTitle = setAccTitle;
-  public getAccTitle = getAccTitle;
-  public setDiagramTitle = setDiagramTitle;
-  public getDiagramTitle = getDiagramTitle;
-  public getAccDescription = getAccDescription;
-  public setAccDescription = setAccDescription;
+  public setAccTitle = this.common.setAccTitle;
+  public getAccTitle = this.common.getAccTitle;
+  public setDiagramTitle = this.common.setDiagramTitle;
+  public getDiagramTitle = this.common.getDiagramTitle;
+  public getAccDescription = this.common.getAccDescription;
+  public setAccDescription = this.common.setAccDescription;
 }

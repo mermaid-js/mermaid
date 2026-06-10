@@ -3,15 +3,7 @@ import type { DiagramDB } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import type { Node, Edge } from '../../rendering-util/types.js';
 
-import {
-  setAccTitle,
-  getAccTitle,
-  getAccDescription,
-  setAccDescription,
-  clear as commonClear,
-  setDiagramTitle,
-  getDiagramTitle,
-} from '../common/commonDb.js';
+import { CommonDB } from '../common/commonDb.js';
 import type {
   Element,
   Relation,
@@ -24,6 +16,7 @@ import type {
 } from './types.js';
 
 export class RequirementDB implements DiagramDB {
+  private readonly common = new CommonDB();
   private relations: Relation[] = [];
   private latestRequirement: Requirement = this.getInitialRequirement();
   private requirements = new Map<string, Requirement>();
@@ -220,7 +213,7 @@ export class RequirementDB implements DiagramDB {
     this.resetLatestElement();
     this.elements = new Map();
     this.classes = new Map();
-    commonClear();
+    this.common.clear();
   }
 
   public setCssStyle(ids: string[], styles: string[]) {
@@ -341,11 +334,11 @@ export class RequirementDB implements DiagramDB {
     return { nodes, edges, other: {}, config, direction: this.getDirection() };
   }
 
-  public setAccTitle = setAccTitle;
-  public getAccTitle = getAccTitle;
-  public setAccDescription = setAccDescription;
-  public getAccDescription = getAccDescription;
-  public setDiagramTitle = setDiagramTitle;
-  public getDiagramTitle = getDiagramTitle;
+  public setAccTitle = this.common.setAccTitle;
+  public getAccTitle = this.common.getAccTitle;
+  public setAccDescription = this.common.setAccDescription;
+  public getAccDescription = this.common.getAccDescription;
+  public setDiagramTitle = this.common.setDiagramTitle;
+  public getDiagramTitle = this.common.getDiagramTitle;
   public getConfig = () => getConfig().requirement;
 }

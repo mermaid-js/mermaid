@@ -16,10 +16,56 @@ export const defaultConfig: MermaidConfig = Object.freeze(config);
 export const evaluate = (val?: string | boolean | null): boolean =>
   val === false || ['false', 'null', '0'].includes(String(val).trim().toLowerCase()) ? false : true;
 
-let siteConfig: MermaidConfig = assignWithDepth({}, defaultConfig);
-let configFromInitialize: MermaidConfig;
-let directives: MermaidConfig[] = [];
-let currentConfig: MermaidConfig = assignWithDepth({}, defaultConfig);
+interface ConfigStore {
+  siteConfig: MermaidConfig;
+  configFromInitialize?: MermaidConfig;
+  directives: MermaidConfig[];
+  currentConfig: MermaidConfig;
+}
+
+const createConfigStore = (): ConfigStore => ({
+  siteConfig: assignWithDepth({}, defaultConfig),
+  configFromInitialize: undefined,
+  directives: [],
+  currentConfig: assignWithDepth({}, defaultConfig),
+});
+
+/**
+ * The global configuration state.
+ *
+ * All exported functions in this module operate on this store, so that
+ * {@link evaluateConfigInIsolation} can temporarily swap in a scratch copy.
+ */
+let store: ConfigStore = createConfigStore();
+
+/**
+ * Runs `fn` against a scratch copy of the global configuration state and
+ * restores the real state afterwards, returning `fn`'s result.
+ *
+ * This makes it possible to compute the effective configuration of a diagram
+ * (including `reset()`, `addDirective()` and the side effects a diagram's
+ * `init()` applies through `setConfig()`) without mutating the configuration
+ * observed by other, concurrently running renders.
+ *
+ * `fn` must be synchronous: the scratch state is shared module state, so an
+ * `await` inside `fn` would leak it to interleaved callers.
+ */
+export const evaluateConfigInIsolation = <T>(fn: () => T): T => {
+  const realStore = store;
+  store = {
+    siteConfig: assignWithDepth({}, realStore.siteConfig),
+    configFromInitialize: realStore.configFromInitialize
+      ? assignWithDepth({}, realStore.configFromInitialize)
+      : undefined,
+    directives: [...realStore.directives],
+    currentConfig: assignWithDepth({}, realStore.currentConfig),
+  };
+  try {
+    return fn();
+  } finally {
+    store = realStore;
+  }
+};
 
 export const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: MermaidConfig[]) => {
   // start with config being the siteConfig
@@ -37,7 +83,7 @@ export const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: Mermaid
   cfg = assignWithDepth(cfg, sumOfDirectives);
 
   if (sumOfDirectives.theme && sumOfDirectives.theme in theme) {
-    const tmpConfigFromInitialize = assignWithDepth({}, configFromInitialize);
+    const tmpConfigFromInitialize = assignWithDepth({}, store.configFromInitialize);
     const themeVariables = assignWithDepth(
       tmpConfigFromInitialize.themeVariables || {},
       sumOfDirectives.themeVariables
@@ -47,9 +93,9 @@ export const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: Mermaid
     }
   }
 
-  currentConfig = cfg;
-  checkConfig(currentConfig);
-  return currentConfig;
+  store.currentConfig = cfg;
+  checkConfig(store.currentConfig);
+  return store.currentConfig;
 };
 
 /**
@@ -68,28 +114,28 @@ export const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: Mermaid
  * @returns The new siteConfig
  */
 export const setSiteConfig = (conf: MermaidConfig): MermaidConfig => {
-  siteConfig = assignWithDepth({}, defaultConfig);
-  siteConfig = assignWithDepth(siteConfig, conf);
+  store.siteConfig = assignWithDepth({}, defaultConfig);
+  store.siteConfig = assignWithDepth(store.siteConfig, conf);
 
   // @ts-ignore: TODO Fix ts errors
   if (conf.theme && theme[conf.theme]) {
     // @ts-ignore: TODO Fix ts errors
-    siteConfig.themeVariables = theme[conf.theme].getThemeVariables(conf.themeVariables);
+    store.siteConfig.themeVariables = theme[conf.theme].getThemeVariables(conf.themeVariables);
   }
 
-  updateCurrentConfig(siteConfig, directives);
-  return siteConfig;
+  updateCurrentConfig(store.siteConfig, store.directives);
+  return store.siteConfig;
 };
 
 export const saveConfigFromInitialize = (conf: MermaidConfig): void => {
-  configFromInitialize = assignWithDepth({}, conf);
+  store.configFromInitialize = assignWithDepth({}, conf);
 };
 
 export const updateSiteConfig = (conf: MermaidConfig): MermaidConfig => {
-  siteConfig = assignWithDepth(siteConfig, conf);
-  updateCurrentConfig(siteConfig, directives);
+  store.siteConfig = assignWithDepth(store.siteConfig, conf);
+  updateCurrentConfig(store.siteConfig, store.directives);
 
-  return siteConfig;
+  return store.siteConfig;
 };
 /**
  * ## getSiteConfig
@@ -103,7 +149,7 @@ export const updateSiteConfig = (conf: MermaidConfig): MermaidConfig => {
  * @returns The siteConfig
  */
 export const getSiteConfig = (): MermaidConfig => {
-  return assignWithDepth({}, siteConfig);
+  return assignWithDepth({}, store.siteConfig);
 };
 /**
  * ## setConfig
@@ -121,7 +167,7 @@ export const getSiteConfig = (): MermaidConfig => {
  */
 export const setConfig = (conf: MermaidConfig): MermaidConfig => {
   checkConfig(conf);
-  assignWithDepth(currentConfig, conf);
+  assignWithDepth(store.currentConfig, conf);
 
   return getConfig();
 };
@@ -138,7 +184,7 @@ export const setConfig = (conf: MermaidConfig): MermaidConfig => {
  * @returns The currentConfig
  */
 export const getConfig = (): MermaidConfig => {
-  return assignWithDepth({}, currentConfig);
+  return assignWithDepth({}, store.currentConfig);
 };
 /**
  * ## sanitize
@@ -157,7 +203,7 @@ export const sanitize = (options: any) => {
     return;
   }
   // Checking that options are not in the list of excluded options
-  ['secure', ...(siteConfig.secure ?? [])].forEach((key) => {
+  ['secure', ...(store.siteConfig.secure ?? [])].forEach((key) => {
     if (Object.hasOwn(options, key)) {
       // DO NOT attempt to print options[key] within `${}` as a malicious script
       // can exploit the logger's attempt to stringify the value and execute arbitrary code
@@ -205,8 +251,8 @@ export const addDirective = (directive: MermaidConfig) => {
     };
   }
 
-  directives.push(directive);
-  updateCurrentConfig(siteConfig, directives);
+  store.directives.push(directive);
+  updateCurrentConfig(store.siteConfig, store.directives);
 };
 
 /**
@@ -227,10 +273,10 @@ export const addDirective = (directive: MermaidConfig) => {
  * @param config - base set of values, which currentConfig could be **reset** to.
  * Defaults to the current siteConfig (e.g returned by {@link getSiteConfig}).
  */
-export const reset = (config = siteConfig): void => {
+export const reset = (config = store.siteConfig): void => {
   // Replace current config with siteConfig
-  directives = [];
-  updateCurrentConfig(config, directives);
+  store.directives = [];
+  updateCurrentConfig(config, store.directives);
 };
 
 const ConfigWarning = {
@@ -263,11 +309,11 @@ const checkConfig = (config: MermaidConfig) => {
 export const getUserDefinedConfig = (): MermaidConfig => {
   let userConfig: MermaidConfig = {};
 
-  if (configFromInitialize) {
-    userConfig = assignWithDepth(userConfig, configFromInitialize);
+  if (store.configFromInitialize) {
+    userConfig = assignWithDepth(userConfig, store.configFromInitialize);
   }
 
-  for (const d of directives) {
+  for (const d of store.directives) {
     userConfig = assignWithDepth(userConfig, d);
   }
 

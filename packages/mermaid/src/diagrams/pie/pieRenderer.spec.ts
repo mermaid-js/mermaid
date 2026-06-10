@@ -1,11 +1,14 @@
 import { draw } from './pieRenderer.js';
 import { parser } from './pieParser.js';
-import { db } from './pieDb.js';
+import { PieDB } from './pieDb.js';
 
 describe('pieRenderer', () => {
+  let db: PieDB;
   beforeEach(() => {
     document.body.innerHTML = '<svg id="my-svg"></svg>';
-    db.clear();
+    db = new PieDB();
+    // @ts-expect-error - PieDB is not assignable to DiagramDB
+    parser.parser.yy = db;
   });
 
   it('should render slices in input order (not sorted by size)', async () => {

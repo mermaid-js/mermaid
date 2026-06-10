@@ -1,15 +1,7 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 import common from '../common/common.js';
-import {
-  clear as commonClear,
-  getAccDescription,
-  getAccTitle,
-  getDiagramTitle,
-  setAccDescription,
-  setAccTitle,
-  setDiagramTitle,
-} from '../common/commonDb.js';
+import { CommonDB } from '../common/commonDb.js';
 import type { IshikawaNode } from './ishikawaTypes.js';
 
 interface StackEntry {
@@ -18,6 +10,7 @@ interface StackEntry {
 }
 
 export class IshikawaDB implements DiagramDB {
+  private readonly common = new CommonDB();
   private root?: IshikawaNode;
   private stack: StackEntry[] = [];
   private baseLevel?: number;
@@ -32,7 +25,7 @@ export class IshikawaDB implements DiagramDB {
     this.root = undefined;
     this.stack = [];
     this.baseLevel = undefined;
-    commonClear();
+    this.common.clear();
   }
 
   getRoot(): IshikawaNode | undefined {
@@ -45,7 +38,7 @@ export class IshikawaDB implements DiagramDB {
     if (!this.root) {
       this.root = { text: label, children: [] };
       this.stack = [{ level: 0, node: this.root }];
-      setDiagramTitle(label);
+      this.common.setDiagramTitle(label);
       return;
     }
 
@@ -71,26 +64,26 @@ export class IshikawaDB implements DiagramDB {
   }
 
   getAccTitle(): string {
-    return getAccTitle();
+    return this.common.getAccTitle();
   }
 
   setAccTitle(title: string): void {
-    setAccTitle(title);
+    this.common.setAccTitle(title);
   }
 
   getAccDescription(): string {
-    return getAccDescription();
+    return this.common.getAccDescription();
   }
 
   setAccDescription(description: string): void {
-    setAccDescription(description);
+    this.common.setAccDescription(description);
   }
 
   getDiagramTitle(): string {
-    return getDiagramTitle();
+    return this.common.getDiagramTitle();
   }
 
   setDiagramTitle(title: string): void {
-    setDiagramTitle(title);
+    this.common.setDiagramTitle(title);
   }
 }

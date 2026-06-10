@@ -1,14 +1,6 @@
 import { log } from '../../logger.js';
-import {
-  setAccTitle,
-  getAccTitle,
-  setDiagramTitle,
-  getDiagramTitle,
-  getAccDescription,
-  setAccDescription,
-  clear as commonClear,
-} from '../common/commonDb.js';
-import type { PieFields, PieDB, Sections, D3Section } from './pieTypes.js';
+import { CommonDB } from '../common/commonDb.js';
+import type { PieFields, PieDB as PieDBBase, Sections, D3Section } from './pieTypes.js';
 import type { RequiredDeep } from 'type-fest';
 import type { PieDiagramConfig } from '../../config.type.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
@@ -21,51 +13,44 @@ export const DEFAULT_PIE_DB: RequiredDeep<PieFields> = {
   config: DEFAULT_PIE_CONFIG,
 } as const;
 
-let sections: Sections = DEFAULT_PIE_DB.sections;
-let showData: boolean = DEFAULT_PIE_DB.showData;
-const config: Required<PieDiagramConfig> = structuredClone(DEFAULT_PIE_CONFIG);
+export class PieDB implements PieDBBase {
+  private readonly common = new CommonDB();
+  private sections: Sections = new Map();
+  private showData: boolean = DEFAULT_PIE_DB.showData;
+  private readonly config: Required<PieDiagramConfig> = structuredClone(DEFAULT_PIE_CONFIG);
 
-const getConfig = (): Required<PieDiagramConfig> => structuredClone(config);
+  public getConfig = (): Required<PieDiagramConfig> => structuredClone(this.config);
 
-const clear = (): void => {
-  sections = new Map();
-  showData = DEFAULT_PIE_DB.showData;
-  commonClear();
-};
+  public clear = (): void => {
+    this.sections = new Map();
+    this.showData = DEFAULT_PIE_DB.showData;
+    this.common.clear();
+  };
 
-const addSection = ({ label, value }: D3Section): void => {
-  if (value < 0) {
-    throw new Error(
-      `"${label}" has invalid value: ${value}. Negative values are not allowed in pie charts. All slice values must be >= 0.`
-    );
-  }
-  if (!sections.has(label)) {
-    sections.set(label, value);
-    log.debug(`added new section: ${label}, with value: ${value}`);
-  }
-};
+  public addSection = ({ label, value }: D3Section): void => {
+    if (value < 0) {
+      throw new Error(
+        `"${label}" has invalid value: ${value}. Negative values are not allowed in pie charts. All slice values must be >= 0.`
+      );
+    }
+    if (!this.sections.has(label)) {
+      this.sections.set(label, value);
+      log.debug(`added new section: ${label}, with value: ${value}`);
+    }
+  };
 
-const getSections = (): Sections => sections;
+  public getSections = (): Sections => this.sections;
 
-const setShowData = (toggle: boolean): void => {
-  showData = toggle;
-};
+  public setShowData = (toggle: boolean): void => {
+    this.showData = toggle;
+  };
 
-const getShowData = (): boolean => showData;
+  public getShowData = (): boolean => this.showData;
 
-export const db: PieDB = {
-  getConfig,
-
-  clear,
-  setDiagramTitle,
-  getDiagramTitle,
-  setAccTitle,
-  getAccTitle,
-  setAccDescription,
-  getAccDescription,
-
-  addSection,
-  getSections,
-  setShowData,
-  getShowData,
-};
+  public setDiagramTitle = this.common.setDiagramTitle;
+  public getDiagramTitle = this.common.getDiagramTitle;
+  public setAccTitle = this.common.setAccTitle;
+  public getAccTitle = this.common.getAccTitle;
+  public setAccDescription = this.common.setAccDescription;
+  public getAccDescription = this.common.getAccDescription;
+}

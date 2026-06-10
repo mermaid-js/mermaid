@@ -2287,7 +2287,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           top: 0
           bottom: 0
       arrowMarkerAbsolute:
-        type: boolean # TODO, is this actually used here (it has no default value but was in types)
+        type: boolean # TODO, is this actually used here?
+        # Matches the root `arrowMarkerAbsolute` default. The flowchart `init()`
+        # always copies the root value here before rendering; having the same
+        # default keeps the effective config of a flowchart render structurally
+        # identical to that of other diagrams, so they can render concurrently.
+        default: false
       diagramPadding:
         $ref: '#/$defs/ErDiagramConfig/properties/diagramPadding'
         default: 8

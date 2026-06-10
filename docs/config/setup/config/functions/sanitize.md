@@ -12,7 +12,7 @@
 
 > **sanitize**(`options`): `void`
 
-Defined in: [packages/mermaid/src/config.ts:155](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L155)
+Defined in: [packages/mermaid/src/config.ts:201](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L201)
 
 ## sanitize
 
