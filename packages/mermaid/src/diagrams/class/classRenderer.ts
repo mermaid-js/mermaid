@@ -1,14 +1,14 @@
-import { select } from 'd3';
-import type { Selection } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger.js';
 import svgDraw from './svgDraw.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import type { D3HtmlSelection, D3Selection } from '../../types.js';
-import type { ClassNote } from './classTypes.js';
-import type { ClassDiagramObj, ClassDrawInfo, NoteDrawInfo, SvgDrawConfig } from './svgDraw.js';
+import { getRequiredConfig } from '../../diagram-api/requiredConfig.js';
+import { getDiagramRoot } from '../../utils/diagramRoot.js';
+import { requiredGet, requiredNode } from '../../utils/guards.js';
+import type { D3Selection } from '../../types.js';
+import type { ClassDiagramObj, ClassDrawInfo, NoteDrawInfo } from './svgDraw.js';
 
 /** A class or note that has been drawn into the diagram (notes have no `label`). */
 type DrawnNodeInfo = (ClassDrawInfo | NoteDrawInfo) & { label?: string };
@@ -151,23 +151,14 @@ export const draw = function (
   _version: string,
   diagObj: ClassDiagramObj
 ) {
-  const conf = getConfig().class as SvgDrawConfig;
+  const conf = getRequiredConfig('class');
   idCache = {};
 
   log.info('Rendering diagram ' + text);
 
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
-  let sandboxElement: Selection<HTMLIFrameElement, unknown, HTMLElement, unknown> | undefined;
-  if (securityLevel === 'sandbox') {
-    sandboxElement = select<HTMLIFrameElement, unknown>('#i' + id);
-  }
-  const root: D3HtmlSelection<HTMLElement> =
-    securityLevel === 'sandbox'
-      ? (select(
-          sandboxElement!.nodes()[0].contentDocument!.body
-        ) as unknown as D3HtmlSelection<HTMLElement>)
-      : (select('body') as unknown as D3HtmlSelection<HTMLElement>);
+  const { root } = getDiagramRoot(id, securityLevel);
 
   // Fetch the default direction, use TD if none was found
   const diagram = root.select<SVGSVGElement>(`[id='${id}']`);
@@ -192,7 +183,7 @@ export const draw = function (
   const keys = [...classes.keys()];
 
   for (const key of keys) {
-    const classDef = classes.get(key)!;
+    const classDef = requiredGet(classes, key, 'class definition');
     const node = svgDraw.drawClass(diagram, classDef, conf, diagObj);
     idCache[node.id] = node;
 
@@ -206,13 +197,21 @@ export const draw = function (
 
   const relations = diagObj.db.getRelations();
   relations.forEach(function (relation) {
+    const graphId1 = getGraphId(relation.id1);
+    const graphId2 = getGraphId(relation.id2);
     log.info(
       // cspell:ignore tjoho
-      'tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation)
+      'tjoho' + graphId1 + graphId2 + JSON.stringify(relation)
     );
+    if (graphId1 === undefined || graphId2 === undefined) {
+      // Previously the undefined ids were passed to graphlib, breaking the layout.
+      throw new Error(
+        `Cannot add relation between classes "${relation.id1}" and "${relation.id2}": one of them has not been drawn`
+      );
+    }
     g.setEdge(
-      getGraphId(relation.id1)!,
-      getGraphId(relation.id2)!,
+      graphId1,
+      graphId2,
       {
         relation: relation,
       },
@@ -220,9 +219,7 @@ export const draw = function (
     );
   });
 
-  // The iterator-helper `forEach` used below is not available in the TS `ES2022` lib.
-  const notes = diagObj.db.getNotes().values() as unknown as ClassNote[];
-  notes.forEach(function (note) {
+  for (const note of diagObj.db.getNotes().values()) {
     log.debug(`Adding note: ${JSON.stringify(note)}`);
     const node = svgDraw.drawNote(diagram, note, conf, diagObj);
     idCache[node.id] = node;
@@ -232,9 +229,14 @@ export const draw = function (
     // our nodes.
     g.setNode(node.id, node);
     if (note.class && classes.has(note.class)) {
+      const classGraphId = getGraphId(note.class);
+      if (classGraphId === undefined) {
+        // Previously the undefined id was passed to graphlib, breaking the layout.
+        throw new Error(`Cannot attach note "${note.id}": class "${note.class}" was not drawn`);
+      }
       g.setEdge(
         note.id,
-        getGraphId(note.class)!,
+        classGraphId,
         {
           relation: {
             id1: note.id,
@@ -249,7 +251,7 @@ export const draw = function (
         'DEFAULT'
       );
     }
-  });
+  }
 
   // @ts-expect-error -- dagre-d3-es types declare `opts` as required, but the implementation treats it as optional.
   dagreLayout(g);
@@ -276,7 +278,7 @@ export const draw = function (
     }
   });
 
-  const svgBounds = diagram.node()!.getBBox();
+  const svgBounds = requiredNode(diagram, 'class diagram svg node').getBBox();
   const width = svgBounds.width + padding * 2;
   const height = svgBounds.height + padding * 2;
 

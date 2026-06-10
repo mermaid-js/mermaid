@@ -62,13 +62,17 @@ export interface Task {
  * Either the end time of the previous task (`prevTaskEnd`), or a date string
  * that still needs to be parsed (`getStartDate`).
  */
-export interface RawTaskStartTime {
-  type: 'prevTaskEnd' | 'getStartDate';
-  /** The id of the previous task (when `type` is `prevTaskEnd`). */
-  id?: string;
-  /** The date string to parse (when `type` is `getStartDate`). */
-  startData?: string;
-}
+export type RawTaskStartTime =
+  | {
+      type: 'prevTaskEnd';
+      /** The id of the previous task. */
+      id?: string;
+    }
+  | {
+      type: 'getStartDate';
+      /** The date string to parse. */
+      startData: string;
+    };
 
 /** The unprocessed end time of a task, as produced by the parser. */
 export interface RawTaskEndTime {
@@ -417,14 +421,26 @@ const getStartDate = function (prevTime: Date | undefined, dateFormat: string, s
   if (afterStatement !== null) {
     // check all after ids and take the latest
     let latestTask: RawTask | null = null;
+    // The `ids` named group always exists on a successful match.
     for (const id of afterStatement.groups!.ids.split(' ')) {
       const task = findTaskById(id);
-      if (task !== undefined && (!latestTask || task.endTime! > latestTask.endTime!)) {
+      // The explicit `undefined` checks mirror the original comparison, where a
+      // comparison against a not-yet-compiled (undefined) end time was false.
+      if (
+        task !== undefined &&
+        (!latestTask ||
+          (task.endTime !== undefined &&
+            latestTask.endTime !== undefined &&
+            task.endTime > latestTask.endTime))
+      ) {
         latestTask = task;
       }
     }
 
     if (latestTask) {
+      // The referenced task may not have been compiled yet, in which case the
+      // original code returned `undefined` here (so the caller retries on the
+      // next compile pass). The assertion preserves that behavior.
       return latestTask.endTime!;
     }
     const today = new Date();
@@ -506,14 +522,26 @@ const getEndDate = function (
   if (untilStatement !== null) {
     // check all until ids and take the earliest
     let earliestTask: RawTask | null = null;
+    // The `ids` named group always exists on a successful match.
     for (const id of untilStatement.groups!.ids.split(' ')) {
       const task = findTaskById(id);
-      if (task !== undefined && (!earliestTask || task.startTime! < earliestTask.startTime!)) {
+      // The explicit `undefined` checks mirror the original comparison, where a
+      // comparison against a not-yet-compiled (undefined) start time was false.
+      if (
+        task !== undefined &&
+        (!earliestTask ||
+          (task.startTime !== undefined &&
+            earliestTask.startTime !== undefined &&
+            task.startTime < earliestTask.startTime))
+      ) {
         earliestTask = task;
       }
     }
 
     if (earliestTask) {
+      // The referenced task may not have been compiled yet, in which case the
+      // original code returned `undefined` here (so the caller retries on the
+      // next compile pass). The assertion preserves that behavior.
       return earliestTask.startTime!;
     }
     const today = new Date();
@@ -701,8 +729,10 @@ export const addTask = function (descr: string, data: string) {
   const pos = rawTasks.push(rawTask);
 
   lastTaskID = rawTask.id;
-  // Store cross ref
-  taskDb[rawTask.id!] = pos - 1;
+  // Store cross ref (the id is only missing for unparsable task data)
+  if (rawTask.id !== undefined) {
+    taskDb[rawTask.id] = pos - 1;
+  }
 };
 
 export const findTaskById = function (id: string): RawTask | undefined {
@@ -718,6 +748,9 @@ export const addTaskOrg = function (descr: string, data: string) {
     task: descr,
     classes: [],
   };
+  // `lastTask` is undefined for the first task; the legacy flow assumes the
+  // first task's data always contains an explicit start date (and crashed
+  // otherwise), so the assertion preserves the original behavior.
   const taskInfo = compileData(lastTask!, data);
   newTask.startTime = taskInfo.startTime;
   newTask.endTime = taskInfo.endTime;
@@ -734,40 +767,45 @@ export const addTaskOrg = function (descr: string, data: string) {
 const compileTasks = function () {
   const compileTask = function (pos: number) {
     const task = rawTasks[pos];
-    let startTime: Date | '' = '';
-    switch (rawTasks[pos].raw.startTime!.type) {
+    const rawStartTime = task.raw.startTime;
+    if (rawStartTime === undefined) {
+      // Only happens for unparsable task data, which previously crashed here.
+      throw new Error(`Gantt task "${task.task}" is missing its start time data`);
+    }
+    switch (rawStartTime.type) {
       case 'prevTaskEnd': {
-        const prevTask = findTaskById(task.prevTaskId!);
-        task.startTime = prevTask!.endTime;
+        const prevTask = task.prevTaskId === undefined ? undefined : findTaskById(task.prevTaskId);
+        if (prevTask === undefined) {
+          // Previously crashed with a TypeError when there was no previous task.
+          throw new Error(`Cannot find the previous task of gantt task "${task.task}"`);
+        }
+        task.startTime = prevTask.endTime;
         break;
       }
-      case 'getStartDate':
-        startTime = getStartDate(undefined, dateFormat, rawTasks[pos].raw.startTime!.startData!);
+      case 'getStartDate': {
+        const startTime = getStartDate(undefined, dateFormat, rawStartTime.startData);
         if (startTime) {
-          rawTasks[pos].startTime = startTime;
+          task.startTime = startTime;
         }
         break;
-    }
-
-    if (rawTasks[pos].startTime) {
-      rawTasks[pos].endTime = getEndDate(
-        rawTasks[pos].startTime,
-        dateFormat,
-        rawTasks[pos].raw.endTime!.data,
-        inclusiveEndDates
-      );
-      if (rawTasks[pos].endTime) {
-        rawTasks[pos].processed = true;
-        rawTasks[pos].manualEndTime = dayjs(
-          rawTasks[pos].raw.endTime!.data,
-          'YYYY-MM-DD',
-          true
-        ).isValid();
-        checkTaskDates(rawTasks[pos], dateFormat, excludes, includes);
       }
     }
 
-    return rawTasks[pos].processed;
+    if (task.startTime) {
+      const rawEndTime = task.raw.endTime;
+      if (rawEndTime === undefined) {
+        // The parser always sets the raw start and end time data together.
+        throw new Error(`Gantt task "${task.task}" is missing its end time data`);
+      }
+      task.endTime = getEndDate(task.startTime, dateFormat, rawEndTime.data, inclusiveEndDates);
+      if (task.endTime) {
+        task.processed = true;
+        task.manualEndTime = dayjs(rawEndTime.data, 'YYYY-MM-DD', true).isValid();
+        checkTaskDates(task, dateFormat, excludes, includes);
+      }
+    }
+
+    return task.processed;
   };
 
   let allProcessed = true;

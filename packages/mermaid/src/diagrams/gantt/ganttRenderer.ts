@@ -3,7 +3,6 @@ import dayjsDuration from 'dayjs/plugin/duration.js';
 import type { DurationUnitsObjectType } from 'dayjs/plugin/duration.js';
 import { log } from '../../logger.js';
 import {
-  select,
   scaleTime,
   min,
   max,
@@ -26,22 +25,17 @@ import {
   timeSunday,
   timeMonth,
 } from 'd3';
-import type { CountableTimeInterval, ScaleLinear, Selection, ValueFn } from 'd3';
+import type { CountableTimeInterval, ScaleLinear } from 'd3';
 import common from '../common/common.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { getRequiredConfig } from '../../diagram-api/requiredConfig.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
+import { getDiagramRoot } from '../../utils/diagramRoot.js';
+import { requiredGet } from '../../utils/guards.js';
 import type { DrawDefinition } from '../../diagram-api/types.js';
-import type { GanttDiagramConfig } from '../../config.type.js';
 import type { GanttDB, Task, Weekday } from './ganttDb.js';
 
 dayjs.extend(dayjsDuration);
-
-/**
- * The gantt diagram config, after default values have been applied.
- * Only `useWidth` has no default value.
- */
-type EffectiveGanttDiagramConfig = Required<Omit<GanttDiagramConfig, 'useWidth'>> &
-  Pick<GanttDiagramConfig, 'useWidth'>;
 
 /** A range of consecutive excluded days, used to draw the exclude rects. */
 interface ExcludeRange {
@@ -65,6 +59,21 @@ const mapWeekdayToTimeFunction: Record<Weekday, CountableTimeInterval> = {
   friday: timeFriday,
   saturday: timeSaturday,
   sunday: timeSunday,
+};
+
+/**
+ * Maps the non-week tick interval units accepted in `tickInterval` to the
+ * corresponding d3-time interval (weeks are resolved via
+ * {@link mapWeekdayToTimeFunction} instead, as they depend on the configured
+ * weekday).
+ */
+const mapIntervalToTimeFunction: Partial<Record<string, CountableTimeInterval>> = {
+  millisecond: timeMillisecond,
+  second: timeSecond,
+  minute: timeMinute,
+  hour: timeHour,
+  day: timeDay,
+  month: timeMonth,
 };
 
 /**
@@ -103,29 +112,21 @@ const getMaxIntersections = (tasks: Task[], orderOffset: number) => {
 let w: number | undefined;
 const MAX_TICK_COUNT = 10000;
 export const draw: DrawDefinition = function (text, id, version, diagObj) {
-  const conf = getConfig().gantt as EffectiveGanttDiagramConfig;
+  const conf = getRequiredConfig('gantt');
   const db = diagObj.db as GanttDB;
 
   db.setDiagramId(id);
 
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
-  let sandboxElement: Selection<HTMLIFrameElement, unknown, HTMLElement, unknown> | undefined;
-  if (securityLevel === 'sandbox') {
-    sandboxElement = select<HTMLIFrameElement, unknown>('#i' + id);
-  }
-  const root =
-    securityLevel === 'sandbox'
-      ? select(sandboxElement!.nodes()[0].contentDocument!.body)
-      : (select('body') as unknown as Selection<HTMLElement, unknown, null, undefined>);
-  const doc = securityLevel === 'sandbox' ? sandboxElement!.nodes()[0].contentDocument! : document;
+  const { root, doc } = getDiagramRoot(id, securityLevel);
 
-  const elem = doc.getElementById(id)!;
-  w = elem.parentElement!.offsetWidth;
-
-  if (w === undefined) {
-    w = 1200;
+  const elem = doc.getElementById(id);
+  if (!elem) {
+    throw new Error(`Gantt diagram element with id "${id}" not found`);
   }
+  w = elem.parentElement?.offsetWidth;
+  w ??= 1200;
 
   if (conf.useWidth !== undefined) {
     w = conf.useWidth;
@@ -177,6 +178,9 @@ export const draw: DrawDefinition = function (text, id, version, diagObj) {
   const svg = root.select<SVGSVGElement>(`[id="${id}"]`);
 
   // Set timescale
+  // The non-null assertions match the previous runtime behavior: `min`/`max`
+  // only return `undefined` for an empty task array, in which case the
+  // undefined domain values were (and are) passed to d3 as-is.
   const timeScale = scaleTime()
     .domain([
       min(taskArray, function (d) {
@@ -275,11 +279,15 @@ export const draw: DrawDefinition = function (text, id, version, diagObj) {
     theArray.sort((a, b) => (a.vert === b.vert ? 0 : a.vert ? 1 : -1));
     // Filter out vertical markers from background rects so that they don't take up rows
     const tasksWithoutVert = theArray.filter((task) => !task.vert);
-    // Get unique task orders. Required to draw the background rects when display mode is compact.
-    const uniqueTaskOrderIds = [...new Set(tasksWithoutVert.map((item) => item.order))];
-    const uniqueTasks = uniqueTaskOrderIds.map(
-      (id) => tasksWithoutVert.find((item) => item.order === id)!
-    );
+    // Get the first task of each unique task order. Required to draw the background rects when
+    // display mode is compact.
+    const firstTaskPerOrder = new Map<number, Task>();
+    for (const item of tasksWithoutVert) {
+      if (!firstTaskPerOrder.has(item.order)) {
+        firstTaskPerOrder.set(item.order, item);
+      }
+    }
+    const uniqueTasks = [...firstTaskPerOrder.values()];
     // Draw background rects covering the entire width of the graph, these form the section rows.
     svg
       .append('g')
@@ -540,23 +548,21 @@ export const draw: DrawDefinition = function (text, id, version, diagObj) {
         }
       });
 
-    const securityLevel = getConfig().securityLevel;
-
     // Wrap the tasks in a tag for working links without javascript
     if (securityLevel === 'sandbox') {
-      const sandboxElement = select<HTMLIFrameElement, unknown>('#i' + id);
-      const doc = sandboxElement.nodes()[0].contentDocument!;
-
       rectangles
         .filter(function (d) {
           return links.has(d.id);
         })
         .each(function (o) {
-          const taskRect = doc.querySelector('#' + CSS.escape(id + '-' + o.id))!;
-          const taskText = doc.querySelector('#' + CSS.escape(id + '-' + o.id + '-text'))!;
-          const oldParent = taskRect.parentNode!;
+          const taskRect = doc.querySelector('#' + CSS.escape(id + '-' + o.id));
+          const taskText = doc.querySelector('#' + CSS.escape(id + '-' + o.id + '-text'));
+          if (!taskRect?.parentNode || !taskText) {
+            throw new Error(`Expected drawn gantt task "${o.id}" to exist in the document`);
+          }
+          const oldParent = taskRect.parentNode;
           const Link = doc.createElement('a');
-          Link.setAttribute('xlink:href', links.get(o.id)!);
+          Link.setAttribute('xlink:href', requiredGet(links, o.id, 'gantt task link'));
           Link.setAttribute('target', '_top');
           oldParent.appendChild(Link);
           Link.appendChild(taskRect);
@@ -731,28 +737,13 @@ export const draw: DrawDefinition = function (text, id, version, diagObj) {
           );
           // D3 will use its default automatic tick generation
         } else {
-          switch (interval) {
-            case 'millisecond':
-              bottomXAxis.ticks(timeMillisecond.every(every)!);
-              break;
-            case 'second':
-              bottomXAxis.ticks(timeSecond.every(every)!);
-              break;
-            case 'minute':
-              bottomXAxis.ticks(timeMinute.every(every)!);
-              break;
-            case 'hour':
-              bottomXAxis.ticks(timeHour.every(every)!);
-              break;
-            case 'day':
-              bottomXAxis.ticks(timeDay.every(every)!);
-              break;
-            case 'week':
-              bottomXAxis.ticks(mapWeekdayToTimeFunction[weekday].every(every)!);
-              break;
-            case 'month':
-              bottomXAxis.ticks(timeMonth.every(every)!);
-              break;
+          const timeFunction =
+            interval === 'week'
+              ? mapWeekdayToTimeFunction[weekday]
+              : mapIntervalToTimeFunction[interval];
+          const tickInterval = timeFunction?.every(every);
+          if (tickInterval) {
+            bottomXAxis.ticks(tickInterval);
           }
         }
       }
@@ -794,28 +785,13 @@ export const draw: DrawDefinition = function (text, id, version, diagObj) {
 
           // Only apply custom ticks if the count is reasonable
           if (estimatedTicks <= MAX_TICK_COUNT) {
-            switch (interval) {
-              case 'millisecond':
-                topXAxis.ticks(timeMillisecond.every(every)!);
-                break;
-              case 'second':
-                topXAxis.ticks(timeSecond.every(every)!);
-                break;
-              case 'minute':
-                topXAxis.ticks(timeMinute.every(every)!);
-                break;
-              case 'hour':
-                topXAxis.ticks(timeHour.every(every)!);
-                break;
-              case 'day':
-                topXAxis.ticks(timeDay.every(every)!);
-                break;
-              case 'week':
-                topXAxis.ticks(mapWeekdayToTimeFunction[weekday].every(every)!);
-                break;
-              case 'month':
-                topXAxis.ticks(timeMonth.every(every)!);
-                break;
+            const timeFunction =
+              interval === 'week'
+                ? mapWeekdayToTimeFunction[weekday]
+                : mapIntervalToTimeFunction[interval];
+            const tickInterval = timeFunction?.every(every);
+            if (tickInterval) {
+              topXAxis.ticks(tickInterval);
             }
           }
         }
@@ -882,15 +858,14 @@ export const draw: DrawDefinition = function (text, id, version, diagObj) {
       })
       .attr('x', 10)
       .attr('y', function (d, i) {
+        // The original code looped `for (let j = 0; j < i; j++)` here, but always
+        // returned on the first iteration, so it was equivalent to this `if`.
         if (i > 0) {
-          for (let j = 0; j < i; j++) {
-            prevGap += numOccurrences[i - 1][1];
-            return (d[1] * theGap) / 2 + prevGap * theGap + theTopPad;
-          }
-        } else {
-          return (d[1] * theGap) / 2 + theTopPad;
+          prevGap += numOccurrences[i - 1][1];
+          return (d[1] * theGap) / 2 + prevGap * theGap + theTopPad;
         }
-      } as ValueFn<SVGTextElement, [string, number], number>)
+        return (d[1] * theGap) / 2 + theTopPad;
+      })
       .attr('font-size', conf.sectionFontSize)
       .attr('class', function (d) {
         for (const [i, category] of categories.entries()) {

@@ -2,6 +2,7 @@ import { line, curveBasis } from 'd3';
 import utils from '../../utils.js';
 import { log } from '../../logger.js';
 import { parseGenericTypes, getUrl } from '../common/common.js';
+import { requiredNode } from '../../utils/guards.js';
 import type { ClassDiagramConfig } from '../../config.type.js';
 import type { D3Selection, Point } from '../../types.js';
 import type { ClassMember, ClassNode, ClassNote, ClassRelation } from './classTypes.js';
@@ -160,7 +161,7 @@ export const drawEdge = function (
       .text(relation.title);
 
     (window as Window & { label?: typeof label }).label = label;
-    const bounds = label.node()!.getBBox();
+    const bounds = requiredNode(label, 'relation label node').getBBox();
 
     g.insert('rect', ':first-child')
       .attr('class', 'box')
@@ -171,12 +172,15 @@ export const drawEdge = function (
   }
 
   log.info('Rendering relation ' + JSON.stringify(relation));
+  // The cardinality positions are only calculated for odd point counts; like
+  // the original code (which passed `undefined`), `null` makes d3 skip the
+  // attribute when they are missing.
   if (relation.relationTitle1 !== undefined && relation.relationTitle1 !== 'none') {
     const g = elem.append('g').attr('class', 'cardinality');
     g.append('text')
       .attr('class', 'type1')
-      .attr('x', p1_card_x!)
-      .attr('y', p1_card_y!)
+      .attr('x', p1_card_x ?? null)
+      .attr('y', p1_card_y ?? null)
       .attr('fill', 'black')
       .attr('font-size', '6')
       .text(relation.relationTitle1);
@@ -185,8 +189,8 @@ export const drawEdge = function (
     const g = elem.append('g').attr('class', 'cardinality');
     g.append('text')
       .attr('class', 'type2')
-      .attr('x', p2_card_x!)
-      .attr('y', p2_card_y!)
+      .attr('x', p2_card_x ?? null)
+      .attr('y', p2_card_y ?? null)
       .attr('fill', 'black')
       .attr('font-size', '6')
       .text(relation.relationTitle2);
@@ -228,7 +232,9 @@ export const drawClass = function (
     title = g
       .append('svg:a')
       .attr('xlink:href', classDef.link)
-      .attr('target', classDef.linkTarget!)
+      // Like the original code (which passed `undefined`), `null` makes d3
+      // skip the attribute when there is no link target.
+      .attr('target', classDef.linkTarget ?? null)
       .append('text')
       .attr('y', conf.textHeight + conf.padding)
       .attr('x', 0);
@@ -258,7 +264,7 @@ export const drawClass = function (
     classTitle.attr('dy', conf.textHeight);
   }
 
-  const titleHeight = title.node()!.getBBox().height;
+  const titleHeight = requiredNode(title, 'class title text node').getBBox().height;
   let membersLine;
   let membersBox: DOMRect | undefined;
   let methodsLine;
@@ -284,21 +290,27 @@ export const drawClass = function (
       isFirst = false;
     });
 
-    membersBox = members.node()!.getBBox();
+    membersBox = requiredNode(members, 'class members text node').getBBox();
   }
 
   // don't draw box if no methods
   if (classDef.methods.length > 0) {
+    if (membersBox === undefined) {
+      // The members box is only drawn when there are members; like the
+      // original code (which crashed with a TypeError here), methods cannot be
+      // drawn without it.
+      throw new Error(`Cannot draw methods of class "${classDef.id}" without a members box`);
+    }
     methodsLine = g
       .append('line') // text label for the x axis
       .attr('x1', 0)
-      .attr('y1', conf.padding + titleHeight + conf.dividerMargin + membersBox!.height)
-      .attr('y2', conf.padding + titleHeight + conf.dividerMargin + membersBox!.height);
+      .attr('y1', conf.padding + titleHeight + conf.dividerMargin + membersBox.height)
+      .attr('y2', conf.padding + titleHeight + conf.dividerMargin + membersBox.height);
 
     const methods = g
       .append('text') // text label for the x axis
       .attr('x', conf.padding)
-      .attr('y', titleHeight + 2 * conf.dividerMargin + membersBox!.height + conf.textHeight)
+      .attr('y', titleHeight + 2 * conf.dividerMargin + membersBox.height + conf.textHeight)
       .attr('fill', 'white')
       .attr('class', 'classText');
 
@@ -310,7 +322,7 @@ export const drawClass = function (
     });
   }
 
-  const classBox = g.node()!.getBBox();
+  const classBox = requiredNode(g, 'class group node').getBBox();
   let cssClassStr = ' ';
 
   if (classDef.cssClasses.length > 0) {
@@ -327,11 +339,11 @@ export const drawClass = function (
     .attr('height', classBox.height + conf.padding + 0.5 * conf.dividerMargin)
     .attr('class', cssClassStr);
 
-  const rectWidth = rect.node()!.getBBox().width;
+  const rectWidth = requiredNode(rect, 'class rect node').getBBox().width;
 
   // Center title
   // We subtract the width of each text element from the class box width and divide it by 2
-  title.node()!.childNodes.forEach(function (x: ChildNode) {
+  requiredNode(title, 'class title text node').childNodes.forEach(function (x: ChildNode) {
     const textElement = x as SVGTSpanElement;
     textElement.setAttribute('x', `${(rectWidth - textElement.getBBox().width) / 2}`);
   });
@@ -404,7 +416,7 @@ export const drawNote = function (
     text.append('tspan').text(line).attr('class', 'title').attr('dy', conf.textHeight);
   });
 
-  const noteBox = g.node()!.getBBox();
+  const noteBox = requiredNode(g, 'note group node').getBBox();
 
   const rect = g
     .insert('rect', ':first-child')
@@ -416,11 +428,11 @@ export const drawNote = function (
       noteBox.height + lines.length * conf.textHeight + conf.padding + 0.5 * conf.dividerMargin
     );
 
-  const rectWidth = rect.node()!.getBBox().width;
+  const rectWidth = requiredNode(rect, 'note rect node').getBBox().width;
 
   // Center title
   // We subtract the width of each text element from the class box width and divide it by 2
-  text.node()!.childNodes.forEach(function (x: ChildNode) {
+  requiredNode(text, 'note text node').childNodes.forEach(function (x: ChildNode) {
     const textElement = x as SVGTSpanElement;
     textElement.setAttribute('x', `${(rectWidth - textElement.getBBox().width) / 2}`);
   });
