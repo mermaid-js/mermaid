@@ -3,7 +3,7 @@
 // faithfully (so the semantics module can validate downstream) and only still
 // reacts to `shape` (unknown-shape) and `view` (collapsed). It must NOT emit:
 // METADATA_KEY_MISAPPLIED, CONNECTOR_REF_*, CONTAINMENT_VIOLATION,
-// DUPLICATE_ID_NODE, RESERVED_SYNTHETIC_ID, FLOW_NO_INPUT, METADATA_KEY_LEGACY_PROMPT.
+// DUPLICATE_ID_NODE, RESERVED_SYNTHETIC_ID, FLOW_NO_INPUT.
 import { describe, it, expect } from 'vitest';
 import { AgentFlowDB } from '../agentflowDb.js';
 import agentflow from './agentflowParser.js';
@@ -62,12 +62,15 @@ describe('issue #64: parser does not validate metadata (semantics owns it)', () 
       expect(diags(db)).toHaveLength(0);
     });
 
-    it('carries legacy `prompt` as-is (no rename, no warning)', () => {
+    it('carries `prompt` as an ordinary unknown key (no alias, no rename, no warning)', () => {
       const db = parse(`agentflow TB
   a["A"]
   a@{ prompt: "do the thing" }`);
-      // Parser no longer renames prompt→instruction; semantics handles the alias.
+      // `prompt` is not an agentflow key (canonical is `instruction`, issue #66).
+      // The parser carries it as-is like any unknown key; downstream semantics
+      // flags it as METADATA_UNKNOWN_KEY.
       expect(vertex(db, 'a')?.metadata?.prompt).toBe('do the thing');
+      expect(vertex(db, 'a')?.metadata?.instruction).toBeUndefined();
       expect(diags(db)).toHaveLength(0);
     });
   });

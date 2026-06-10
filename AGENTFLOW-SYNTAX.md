@@ -33,6 +33,10 @@ renamed. It adds one authoring convenience and lands a batch of parser/tooling f
   edge-endpoint semantics (§5.1), flow-input (§10.2), and identifier-namespace checks are
   semantic concerns and now belong to the semantics layer. The §10 rules below still
   describe the language — only the _enforcement layer_ moved.
+- **Legacy `prompt` vocabulary dropped.** The v0.8.1 `prompt` → `instruction` rename is
+  final: `prompt` is not a metadata key and has no alias behavior. An authored `prompt`
+  is an ordinary unknown key — preserved, and flagged by downstream validation (§10.1).
+  The dead `METADATA_KEY_LEGACY_PROMPT` diagnostic id is removed.
 
 Full per-version history lives in `AGENTFLOW-CHANGELOG.md`.
 
@@ -780,6 +784,12 @@ from the per-row restrictions above.
 
 `description` documents the element; `instruction` is the free-form guidance the
 runtime compiles into the prompt that triggers the element.
+
+`prompt` is **not** an agentflow metadata key. v0.8.1 renamed it to `instruction`
+(change 9 in the v0.8.1 list above) and the alias did not survive the rename: an
+authored `prompt` is treated like any other unknown key — preserved as raw metadata
+and flagged by downstream validation (§10.2). There is no parser-level aliasing,
+warning, or rejection.
 
 Edges are the one exception: an edge accepts **`instruction` only** in v0.8.1 (see the
 "edge" row in the table above). Other keys, including `description`, are not permitted
