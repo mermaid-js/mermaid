@@ -42,7 +42,20 @@ export function finalizeDummyLabelNodesToOverlayLabels(layoutData: LayoutData): 
     (n) => Boolean(n?.isEdgeLabel) && String(n?.id ?? '').startsWith('edge-label-')
   );
   if (labelNodes.length === 0) {
-    // Nothing to merge; ensure paint treats labels as overlay labels.
+    // No edge labels to merge — but the generic, label-independent geometry
+    // cleanup still applies. Historically this early-returned, so label-less
+    // diagrams (e.g. plain subgraph flowcharts) skipped every post-routing
+    // pass and shipped raw shape-walk routes (obstacle cuts, shared subpaths,
+    // sub-threshold stubs).
+    //
+    // Run the cleanup only as REMEDIATION — when the route set is invalid.
+    // An already-valid label-less layout (e.g. multiple-edges) is left for the
+    // gentle score-gated simplifyEdgeJogs pass in index.ts; perturbing its
+    // clean routes here can strand it in a worse local optimum that the later
+    // pass cannot recover.
+    if (!validateLayout(layoutData).ok) {
+      runGenericOrthogonalCleanup(layoutData, 10);
+    }
     (layoutData.config as any).isLabelNode = false;
     return;
   }
@@ -539,6 +552,68 @@ export function finalizeDummyLabelNodesToOverlayLabels(layoutData: LayoutData): 
  * rects, then accepted only when the unified validator improves — score up,
  * or (while invalid) strictly fewer issues.
  */
+/**
+ * Generic, label-independent orthogonal-route cleanup. These passes operate on
+ * `layoutData.edges` against node obstacles and never touch label geometry, so
+ * they apply equally to labeled and label-less diagrams. The labeled path runs
+ * them inline (interleaved with label-specific passes); the label-less early
+ * return calls this so plain subgraph flowcharts get the same cleanup instead
+ * of shipping raw shape-walk routes.
+ */
+function runGenericOrthogonalCleanup(layoutData: LayoutData, spacing: number): void {
+  const nodesByIdNoGroups = new Map<string, any>();
+  for (const n of (layoutData.nodes ?? []) as any[]) {
+    if (n?.id && !n.isGroup) {
+      nodesByIdNoGroups.set(String(n.id), n);
+    }
+  }
+
+  // Snapshot every edge's polyline so the whole cleanup can be reverted as a
+  // unit. Some constituent passes (obstacle-lift, shared-subpath, stub repair)
+  // apply unconditionally rather than score-gated, so on an already-clean route
+  // they can trade one clean shape for a different-but-worse one. Guarding the
+  // batch keeps the net effect monotone: cleanup only ships when it does not
+  // lower the unified validator score.
+  const before = validateLayout(layoutData);
+  const snapshot = new Map<any, { x: number; y: number }[]>();
+  for (const e of (layoutData.edges ?? []) as any[]) {
+    if (Array.isArray(e?.points)) {
+      snapshot.set(
+        e,
+        e.points.map((p: any) => ({ x: p.x, y: p.y }))
+      );
+    }
+  }
+
+  // Obstacle clearance first: shift, then detour-insert for tight cases.
+  liftObstacleIntersectingSegments(layoutData, { spacing });
+  applyObstacleDetourInsertPass(layoutData, { spacing });
+
+  // Separate coincident rails, then expand sub-threshold endpoint stubs; repeat
+  // once because stub expansion can reintroduce a shared rail. All idempotent.
+  applySharedSubpathNudge(layoutData, { spacing });
+  repairShortEndpointStubs(layoutData, { minLength: spacing });
+  applySharedSubpathNudge(layoutData, { spacing, preferShorter: true });
+  repairShortEndpointStubs(layoutData, { minLength: spacing });
+  applySharedSubpathNudge(layoutData, { spacing, preferShorter: true });
+
+  // Score-gated refinements (each reverts unless the unified validator improves).
+  nudgeFirstDoglegRailsWhenScoreImproves(layoutData, spacing);
+  snapCrossingRailsWhenScoreImproves(layoutData, spacing);
+  straightenCenterAlignedVerticalEdgesWhenScoreImproves(layoutData, nodesByIdNoGroups);
+  snapPortsToCenterWhenPaintDiagonal(layoutData, { spacing });
+
+  const after = validateLayout(layoutData);
+  if (after.score < before.score) {
+    for (const e of (layoutData.edges ?? []) as any[]) {
+      const orig = snapshot.get(e);
+      if (orig) {
+        e.points = orig;
+      }
+    }
+  }
+}
+
 function relocateLabelOverlaysOffForeignEdgesWhenImproves(layoutData: LayoutData): void {
   let current = validateLayout(layoutData);
   const offenders = current.issues.filter(
