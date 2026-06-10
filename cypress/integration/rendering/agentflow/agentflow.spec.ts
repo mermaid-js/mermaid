@@ -1,22 +1,27 @@
 import { imgSnapshotTest } from '../../../helpers/util.ts';
 
+// Diagrams below use agentflow v0.8.2 syntax (AGENTFLOW-SYNTAX.md): `flow` is
+// the single container kind; the edge set is `-->` (sequence), `-.-`
+// (reference), `--x` (failure); shapes are authored via the v0.8.1 aliases
+// (task, tool, input, decision, refdoc, action); connectors are declared with
+// the `connector` keyword.
 describe('Agentflow diagram', () => {
-  it('1: should render basic agent/flow/task with nested containers', () => {
+  it('1: should render nested flow containers', () => {
     imgSnapshotTest(
       `agentflow LR
-        agent a1["Code Review Agent"]
-          flow f1["Review Pipeline"]
-            task t1["Extract Changes"]
+        flow review_agent["Code Review Agent"]
+          flow pipeline["Review Pipeline"]
+            flow extract["Extract Changes"]
               receive_pr("Receive PR")
               analysis["Code Analysis"]
               receive_pr --> analysis
             end
-            task t2["Assess Risk"]
+            flow assess["Assess Risk"]
               evaluate("Evaluate")
               risk["Risk Assessment"]
               evaluate --> risk
             end
-            t1 --> t2
+            extract --> assess
           end
         end
       `,
@@ -24,32 +29,27 @@ describe('Agentflow diagram', () => {
     );
   });
 
-  it('2: should render all four edge types', () => {
+  it('2: should render all three edge types plus a labeled branch', () => {
     imgSnapshotTest(
       `agentflow TB
         A["Data Source"] --> B["Process"]
-        B --o C["Schema Ref"]
-        B --- D["Style Guide"]
-        E["Category"] -->> F["Subcategory"]
+        B -.- C["Schema Ref"]
+        B --x D["Failure Handler"]
+        E["Decision"] -- yes --> F["Approved"]
+        C@{ shape: refdoc }
+        E@{ shape: decision }
       `,
       {}
     );
   });
 
-  it('3: should render permit tree with -->> hierarchy edges', () => {
+  it('3: should render a decision with labeled branches', () => {
     imgSnapshotTest(
       `agentflow TB
-        llm["llm"]
-        llm_query["llm.query"]
-        net["net"]
-        net_read["net.read"]
-        llm -->> llm_query
-        net -->> net_read
-
-        llm@{ shape: hex }
-        llm_query@{ shape: terminal }
-        net@{ shape: hex }
-        net_read@{ shape: terminal }
+        triage["Triage"]@{ shape: decision }
+        triage -- bug --> bugfix["Bug Fix"]
+        triage -- feature --> feature_work["Feature Work"]
+        triage -- question --> answer["Answer"]
       `,
       {}
     );
@@ -58,152 +58,102 @@ describe('Agentflow diagram', () => {
   it('4: should render collapsed view', () => {
     imgSnapshotTest(
       `agentflow LR
-        agent a1["Agent One"]
+        flow f1["Flow One"]
           step1["Step 1"]
           step2["Step 2"]
           step1 --> step2
         end
-        agent a2["Agent Two"]
+        flow f2["Flow Two"]
           step3["Step 3"]
         end
-        a1@{ view: "collapsed" }
-        a1 --> a2
+        f1@{ view: "collapsed" }
+        f1 --> f2
       `,
       {}
     );
   });
 
-  it('4b: should render input-value pattern with `value`/`example` (v0.6.0 §19.12)', () => {
+  it('4b: should render the input-value pattern (§10, input nodes)', () => {
     imgSnapshotTest(
       `agentflow TB
         file_path["file_path"]
-        file_path@{ shape: lean-right, description: "Path to the file in the GitHub repository to visualize", value: "src/HelloWorld.java" }
-
-        sample_payload["sample_payload"]
-        sample_payload@{ shape: doc, example: "illustrative payload" }
+        file_path@{ shape: input, description: "Path to the file in the GitHub repository to visualize", value: "src/HelloWorld.java" }
 
         read_file["read_file"]
-        read_file@{ shape: subroutine, params: "path :: String", returns: "String", requires: ["fs.read"] }
+        read_file@{ shape: tool, params: "path :: String", returns: "String" }
 
-        agent runner["Runner"]
-          task step["Read"]
-            file_path ==>|path| read_file
-          end
+        flow runner["Runner"]
+          file_path --> read_file
         end
-        runner@{ permits: ["fs.read"] }
       `,
       {}
     );
   });
 
-  it('5: should render various node shapes', () => {
+  it('5: should render the v0.8 node shapes', () => {
     imgSnapshotTest(
       `agentflow TB
-        input["City Input"]
-        tool["research_location"]
-        output["Research Brief"]
+        city["City Input"]
+        research["research_location"]
+        brief["Research Brief"]
         style_ref["Nordic Design"]
-        type_ref["CoffeeCopy"]
+        check["Quality OK?"]
+        post["post_results"]
 
-        input --> tool --> output
-        tool --- style_ref
-        tool --o type_ref
+        city --> research --> brief
+        research -.- style_ref
+        brief --> check
+        check -- yes --> post
 
-        input@{ shape: lean-right }
-        tool@{ shape: subroutine }
-        output@{ shape: doc }
-        style_ref@{ shape: lin-doc }
-        type_ref@{ shape: procs }
+        city@{ shape: input }
+        research@{ shape: tool }
+        style_ref@{ shape: refdoc }
+        check@{ shape: decision }
+        post@{ shape: action }
       `,
       {}
     );
   });
 
-  it('6: should render the v7 Coffee Website Builder diagram', () => {
+  it('6: should render the Coffee Website Builder diagram (v0.8 canonical form)', () => {
     imgSnapshotTest(
       `agentflow TB
-        type CoffeeCopy = Record {
-          hero_tagline: String
-          hero_subtitle: String
-          about: String
-          menu_item: String * 6
-        }
+        flow build_site["Build Site"]
+          flow researcher["Researcher"]
+            city["city"]
+            research_loc["research_location"]
+            brief["Research Brief"]
+            city --> research_loc --> brief
+            write_copy["write_copy"]
+            english_copy["English Copy"]
+            brief --> write_copy --> english_copy
+          end
 
-        type BilingualPage = Record {
-          english: String
-          swedish: String
-        }
+          flow translator["Translator"]
+            translate_sv["translate_to_swedish"]
+            bilingual["Bilingual Page"]
+            english_copy --> translate_sv --> bilingual
+          end
 
-        agent coffee_team["Coffee Team"]
-          flow build_site["Build Site"]
-            agent researcher["Researcher"]
-              task step1["Research Location"]
-                city["city"]
-                research_loc["research_location"]
-                brief["Research Brief"]
-                city --> research_loc --> brief
-              end
-              task step2["Write Copy"]
-                write_copy["write_copy"]
-                english_copy["English Copy"]
-                brief --> write_copy --> english_copy
-                write_copy --o coffee_copy_ref
-              end
-              step1 --> step2
-            end
-
-            agent translator["Translator"]
-              task step3["Translate to Swedish"]
-                translate_sv["translate_to_swedish"]
-                bilingual["Bilingual Page"]
-                english_copy --> translate_sv --> bilingual
-                translate_sv --o bilingual_page_ref
-              end
-            end
-
-            agent designer["Designer"]
-              task step4["Generate Website"]
-                gen_html["generate_html"]
-                html_out["HTML Website"]
-                bilingual --> gen_html --> html_out
-              end
-              nordic["nordic_design"]
-              glass["glassmorphism"]
-              scroll["scroll_animations"]
-              toggle["bilingual_toggle"]
-              gen_html --- nordic
-              gen_html --- glass
-              gen_html --- scroll
-              gen_html --- toggle
-            end
+          flow designer["Designer"]
+            gen_html["generate_html"]
+            html_out["HTML Website"]
+            bilingual --> gen_html --> html_out
+            nordic["nordic_design"]
+            gen_html -.- nordic
           end
         end
 
-        coffee_copy_ref["CoffeeCopy"]
-        bilingual_page_ref["BilingualPage"]
-        permit_ref["Permission Tree"]
+        city@{ shape: input, value: "Stockholm" }
+        research_loc@{ shape: tool, returns: "String" }
+        write_copy@{ shape: tool, returns: "CoffeeCopy" }
+        translate_sv@{ shape: tool, returns: "BilingualPage" }
+        gen_html@{ shape: tool, returns: "String" }
+        nordic@{ shape: refdoc }
 
-        city@{ shape: lean-right }
-        brief@{ shape: doc }
-        english_copy@{ shape: doc }
-        bilingual@{ shape: doc }
-        html_out@{ shape: doc }
-        nordic@{ shape: lin-doc }
-        glass@{ shape: lin-doc }
-        scroll@{ shape: lin-doc }
-        toggle@{ shape: lin-doc }
-        coffee_copy_ref@{ shape: procs, type: "CoffeeCopy" }
-        bilingual_page_ref@{ shape: procs, type: "BilingualPage" }
-        permit_ref@{ shape: procs, src: "./permit-tree.mmd" }
-
-        research_loc@{ shape: subroutine, returns: "String", requires: "^net.read" }
-        write_copy@{ shape: subroutine, returns: "CoffeeCopy", requires: "^llm.query" }
-        translate_sv@{ shape: subroutine, returns: "BilingualPage", requires: "^llm.query" }
-        gen_html@{ shape: subroutine, returns: "String", requires: "^llm.query" }
-
-        researcher@{ model: "claude-sonnet-4-20250514", permits: "^net.read, ^llm.query" }
-        translator@{ model: "claude-sonnet-4-20250514", permits: "^llm.query" }
-        designer@{ model: "claude-sonnet-4-20250514", permits: "^llm.query" }
+        researcher@{ model: "claude-sonnet-4-20250514", instruction: "Research the location and write the copy." }
+        translator@{ model: "claude-sonnet-4-20250514" }
+        designer@{ model: "claude-sonnet-4-20250514" }
 
         build_site@{ params: "city :: String", returns: "String" }
       `,
@@ -211,29 +161,35 @@ describe('Agentflow diagram', () => {
     );
   });
 
-  it('7a: should render synthesized connectors-group expanded (§9)', () => {
+  it('7a: should render a connector declaration with a bound tool (§8)', () => {
     imgSnapshotTest(
       `agentflow LR
-        github_api["GitHub API"]
-        github_api@{ protocol: "https", endpoint: "https://api.github.com" }
-        slack_api["Slack API"]
-        slack_api@{ protocol: "https", endpoint: "https://slack.com/api" }
-        connectors@{ view: "expanded" }
+        connector github["GitHub API"]
+        github@{ protocol: "http", endpoint: "https://api.github.com", token_required: true }
+
+        query["query"]
+        query@{ shape: input }
+        fetch_issues["fetch_issues"]
+        fetch_issues@{ shape: tool, connectorRef: "github.list_issues" }
+        query --> fetch_issues
       `,
       {}
     );
   });
 
-  it('7b: should render synthesized connectors-group collapsed (§9)', () => {
+  it('7b: should render multiple connector declarations', () => {
     imgSnapshotTest(
       `agentflow LR
-        consumer["Tool"]
-        consumer@{ shape: subroutine, connectorRef: "github_api" }
-        github_api["GitHub API"]
-        github_api@{ protocol: "https", endpoint: "https://api.github.com" }
-        slack_api["Slack API"]
-        slack_api@{ protocol: "https", endpoint: "https://slack.com/api" }
-        connectors@{ view: "collapsed" }
+        connector github["GitHub API"]
+        github@{ protocol: "http", endpoint: "https://api.github.com" }
+        connector slack["Slack API"]
+        slack@{ protocol: "http", endpoint: "https://slack.com/api" }
+
+        notify["notify_channel"]
+        notify@{ shape: action, connectorRef: "slack.post_message" }
+        create_issue["create_issue"]
+        create_issue@{ shape: tool, connectorRef: "github.create_issue" }
+        create_issue --> notify
       `,
       {}
     );
@@ -242,25 +198,19 @@ describe('Agentflow diagram', () => {
   it('8: should redirect cross-boundary edges to the collapsed parent (#53)', () => {
     imgSnapshotTest(
       `agentflow TB
-        agent researcher["Research Agent"]
-          task research["Research"]
-            patterns["Pattern Research"]@{ shape: doc }
-          end
+        flow researcher["Research Agent"]
+          patterns["Pattern Research"]@{ shape: refdoc }
         end
 
-        agent reviewer["Review Agent"]
-          task review["Review"]
-            validate["validate_patterns"]@{ shape: subroutine }
-            reviewed["Reviewed Patterns"]@{ shape: doc }
-            patterns --> validate --> reviewed
-          end
+        flow reviewer["Review Agent"]
+          validate["validate_patterns"]@{ shape: tool }
+          reviewed["Reviewed Patterns"]
+          patterns --> validate --> reviewed
         end
 
-        agent reporter["Report Agent"]
-          task generate["Generate"]
-            compile["compile_report"]@{ shape: subroutine }
-            reviewed --> compile
-          end
+        flow reporter["Report Agent"]
+          compile["compile_report"]@{ shape: tool }
+          reviewed --> compile
         end
 
         reviewer@{ view: "collapsed" }
