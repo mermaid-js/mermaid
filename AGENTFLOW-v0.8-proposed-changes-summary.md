@@ -16,7 +16,7 @@ instancing into one mechanism.
 
 One notable override of the review: where the reviewer said "keep things," the human
 comments frequently said "cut." The biggest example — the review's Critical Issue 2 said
-*keep* the `agentflow: {}` wrapper; the comment says **remove it** (CMT6).
+_keep_ the `agentflow: {}` wrapper; the comment says **remove it** (CMT6).
 
 ---
 
@@ -27,7 +27,7 @@ comments frequently said "cut." The biggest example — the review's Critical Is
   change.
 - **`shape` is semantic — and that's accepted.** The review listed "semantic meaning
   hidden in visual shape" as bad; the comment **disagrees** (CMT3 "Don't agree with
-  this"). So Critical Issue 1 is resolved by *admitting* shape carries Agentflow
+  this"). So Critical Issue 1 is resolved by _admitting_ shape carries Agentflow
   semantics rather than fighting it.
 
 ## 2. Remove `type` and `template` as syntax
@@ -42,48 +42,48 @@ comments frequently said "cut." The biggest example — the review's Critical Is
 The container table got the most decisive cut — on the `agent` row:
 **"Keep, delete the rest"** (CMT22).
 
-| Container   | Decision |
-| ----------- | -------- |
-| `agent`     | **Keep** — the group/container kind. Can render as a group shape *or* an instance (CMT20). |
-| `flow`      | **Contested → likely folded into agent.** CMT9 "keep flow as a group shape," but CMT10 "skip flow and call it an agent instead," and CMT22 "delete the rest." ⚠️ *Needs explicit resolution.* |
-| `task`      | **Demoted from a group to a node** — it becomes the default square/rounded-rect node, not a container (CMT9, CMT25 "A task", CMT38 "task"). |
-| `skill`     | **Removed** (CMT11 "we will also skip skills," CMT9). |
-| `testCase`  | **Removed as a container** (CMT22). |
-| `directive` | **Container removed** (CMT22) and the `trapezoid` directive shape skipped (CMT35). ⚠️ *Constraint concept survives in the core list but its representation is unresolved — likely metadata.* |
-| `subgraph`  | Dropped from the core (legacy). |
+| Container   | Decision                                                                                                                                                                                      |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `agent`     | **Keep** — the group/container kind. Can render as a group shape _or_ an instance (CMT20).                                                                                                    |
+| `flow`      | **Contested → likely folded into agent.** CMT9 "keep flow as a group shape," but CMT10 "skip flow and call it an agent instead," and CMT22 "delete the rest." ⚠️ _Needs explicit resolution._ |
+| `task`      | **Demoted from a group to a node** — it becomes the default square/rounded-rect node, not a container (CMT9, CMT25 "A task", CMT38 "task").                                                   |
+| `skill`     | **Removed** (CMT11 "we will also skip skills," CMT9).                                                                                                                                         |
+| `testCase`  | **Removed as a container** (CMT22).                                                                                                                                                           |
+| `directive` | **Container removed** (CMT22) and the `trapezoid` directive shape skipped (CMT35). ⚠️ _Constraint concept survives in the core list but its representation is unresolved — likely metadata._  |
+| `subgraph`  | Dropped from the core (legacy).                                                                                                                                                               |
 
 Net: the "too many near-synonymous containers" complaint (CMT4 "Agree") is addressed by
 reducing to **agent (group)** + **task (node)**.
 
 ## 4. Node shapes: keep/skip decisions (§4.3 table)
 
-| Shape                       | Decision |
-| --------------------------- | -------- |
-| `roundedRect` / `rect`      | **Keep** — this *is* a task now (CMT25, CMT38) |
-| `subroutine` (tool)         | **Keep.** Tool = classic native function definition with a signature provided to the LLM to call on command, external to the LLM, via the reference mechanism (CMT27) |
-| `lean-right` (input)        | **Keep** (CMT29) |
-| `lin-doc` (ref doc)         | **Keep** (CMT30) |
-| `procs` (external file)     | **Keep** (CMT31) |
-| `hexagon`                   | **Keep** (CMT32) |
-| `diamond`                   | **Keep** (CMT34) |
-| `circle`                    | **Replace with `connector`** (CMT33 "connector instead") |
-| `doc`                       | **Skip** (CMT28) |
-| `trapezoid` / `inv-trapezoid` | **Skip** (CMT35, CMT36) |
-| `double-circle`             | **Skip** (CMT37) |
-| `typeDeclaration`           | **Delete** (CMT26) |
+| Shape                         | Decision                                                                                                                                                              |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `roundedRect` / `rect`        | **Keep** — this _is_ a task now (CMT25, CMT38)                                                                                                                        |
+| `subroutine` (tool)           | **Keep.** Tool = classic native function definition with a signature provided to the LLM to call on command, external to the LLM, via the reference mechanism (CMT27) |
+| `lean-right` (input)          | **Keep** (CMT29)                                                                                                                                                      |
+| `lin-doc` (ref doc)           | **Keep** (CMT30)                                                                                                                                                      |
+| `procs` (external file)       | **Keep** (CMT31)                                                                                                                                                      |
+| `hexagon`                     | **Keep** (CMT32)                                                                                                                                                      |
+| `diamond`                     | **Keep** (CMT34)                                                                                                                                                      |
+| `circle`                      | **Replace with `connector`** (CMT33 "connector instead")                                                                                                              |
+| `doc`                         | **Skip** (CMT28)                                                                                                                                                      |
+| `trapezoid` / `inv-trapezoid` | **Skip** (CMT35, CMT36)                                                                                                                                               |
+| `double-circle`               | **Skip** (CMT37)                                                                                                                                                      |
+| `typeDeclaration`             | **Delete** (CMT26)                                                                                                                                                    |
 
 ## 5. Edges: cut to four operators
 
-| Operator                  | Decision |
-| ------------------------- | -------- |
-| `-->`                     | **Keep** — reframed as **sequence** (CMT40) |
-| `--x` failure             | **Keep** (CMT44) |
-| `---` association         | **Keep**, main use = **reference of documents**; labels rejected — "the labels will not mean anything" (CMT7, CMT8, CMT45) |
-| `-.->` instance binding   | **Keep** (CMT46) — but see open question on ref syntax |
-| `==>` data flow           | **REMOVE** — "instead we share data via a stateful object" (CMT41) |
-| `--o` conformance         | **Skip** (CMT42) |
-| `-->>` delegation         | **Skip** (CMT43) |
-| `o--o` bidirectional      | **Skip** (CMT47) |
+| Operator                | Decision                                                                                                                   |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `-->`                   | **Keep** — reframed as **sequence** (CMT40)                                                                                |
+| `--x` failure           | **Keep** (CMT44)                                                                                                           |
+| `---` association       | **Keep**, main use = **reference of documents**; labels rejected — "the labels will not mean anything" (CMT7, CMT8, CMT45) |
+| `-.->` instance binding | **Keep** (CMT46) — but see open question on ref syntax                                                                     |
+| `==>` data flow         | **REMOVE** — "instead we share data via a stateful object" (CMT41)                                                         |
+| `--o` conformance       | **Skip** (CMT42)                                                                                                           |
+| `-->>` delegation       | **Skip** (CMT43)                                                                                                           |
+| `o--o` bidirectional    | **Skip** (CMT47)                                                                                                           |
 
 ⭐ **Architectural shift:** there are no data-flow edges anymore. Agents/tasks
 **share data through a shared stateful object**, not `==>` artifact-transfer edges. This
@@ -132,52 +132,52 @@ is the most consequential single change.
 
 ## Appendix: raw comment-to-decision map
 
-| CMT | Anchored on | Decision |
-| --- | ----------- | -------- |
-| 1   | "Implementations SHOULD provide autocomplete, validation… AI repair" | ✅ reaction — accept authoring model |
-| 2   | "…correct it without reading the full spec" | "I fully agree with this statement!" |
-| 3   | "semantic meaning hidden in visual shape" (a "bad" item) | "Dont agree with this" → shape may be semantic |
-| 4   | "too many near-synonymous containers" (a "bad" item) | "Agree with this!" |
-| 5   | "historical migration clutter in the main authoring document" | "We can remove this" |
-| 6   | "Critical Issue 2: Keep agentflow: {…}" | "remove agentflow" (drop the wrapper) |
-| 7   | "Critical Issue 3: Reduce --- Ambiguity" | "we keep this, and we keep the main use for the reference of documents" |
-| 8   | "prefer labels for AI output" on `---` | "The Labels will not mean anything." |
-| 9   | "Critical Issue 4: …Remove skill" | keep flow as group; task demoted to square node; skill removed |
-| 10  | skill distinction list | "We will skip flow and call it an agent instead." |
-| 11  | skill distinction list | "we will also skip skills" |
-| 12  | "Option B: Remove skill From v1 Core" | "This could work but are there other options?" |
-| 13  | `connector github[...]` example | "This makes more sense syntactically, can Pact handle it?" |
-| 14  | "introduce a real connector declaration" | "we decided on this option… the real connector keyword" |
-| 15  | "Critical Issue 6: Defer Broad Instance Binding" | keep instances; unify via `@{ ref: 'id' }`, not edges |
-| 16  | "Critical Issue 6…" | "yet to decide the final syntax for references" (ref: vs binding) |
-| 17  | "defer agent/flow/skill/directive instance inheritance" | "will it work? (I am tempted)" |
-| 18  | "Create a separate diagnostics/conformance spec" | "I like this" |
-| 19  | "spec currently starts with long historical sections" | "removed when we reach 1.0.0; for us it is valuable" |
-| 20  | "Actor: agent" | "group shape or an instance" |
-| 21  | end of v1 core concepts | "Remove types and templates… now parts of the metadata" |
-| 22  | container table, `agent` row | "Keep, delete the rest" |
-| 23  | `typesGroup` (synthetic) | "Delete" |
-| 24  | `templatesGroup` (synthetic) | "Delete" |
-| 25  | `roundedRect` | "A task" |
-| 26  | `typeDeclaration` | "deleted" |
-| 27  | `subroutine` | keep; classic native function w/ signature, called by the LLM, via reference mechanism |
-| 28  | `doc` | "skip" |
-| 29  | `lean-right` | "keep" |
-| 30  | `lin-doc` | "keep" |
-| 31  | `procs` | "Keep" |
-| 32  | `hexagon` | "keep" |
-| 33  | `circle` | "connector instead" |
-| 34  | `diamond` | "keep" |
-| 35  | `trapezoid` | "skip" |
-| 36  | `inv-trapezoid` | "skip" |
-| 37  | `double-circle` | "skip" |
-| 38  | `rect` | "task" |
-| 39  | "4.3.3 Instance Shapes" | instances without specific shape; visual shows "instance of what" |
-| 40  | `-->` control | "sequence" |
-| 41  | `==>` data | "skip — instead we share data via a stateful object" |
-| 42  | `--o` conformance | "Skip" |
-| 43  | `-->>` delegation | "Skip" |
-| 44  | `--x` failure | "keep" |
-| 45  | `---` association | "keep" |
-| 46  | `-.->` instance binding | "keep" |
-| 47  | `o--o` bidirectional | "skip" |
+| CMT | Anchored on                                                          | Decision                                                                               |
+| --- | -------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| 1   | "Implementations SHOULD provide autocomplete, validation… AI repair" | ✅ reaction — accept authoring model                                                   |
+| 2   | "…correct it without reading the full spec"                          | "I fully agree with this statement!"                                                   |
+| 3   | "semantic meaning hidden in visual shape" (a "bad" item)             | "Dont agree with this" → shape may be semantic                                         |
+| 4   | "too many near-synonymous containers" (a "bad" item)                 | "Agree with this!"                                                                     |
+| 5   | "historical migration clutter in the main authoring document"        | "We can remove this"                                                                   |
+| 6   | "Critical Issue 2: Keep agentflow: {…}"                              | "remove agentflow" (drop the wrapper)                                                  |
+| 7   | "Critical Issue 3: Reduce --- Ambiguity"                             | "we keep this, and we keep the main use for the reference of documents"                |
+| 8   | "prefer labels for AI output" on `---`                               | "The Labels will not mean anything."                                                   |
+| 9   | "Critical Issue 4: …Remove skill"                                    | keep flow as group; task demoted to square node; skill removed                         |
+| 10  | skill distinction list                                               | "We will skip flow and call it an agent instead."                                      |
+| 11  | skill distinction list                                               | "we will also skip skills"                                                             |
+| 12  | "Option B: Remove skill From v1 Core"                                | "This could work but are there other options?"                                         |
+| 13  | `connector github[...]` example                                      | "This makes more sense syntactically, can Pact handle it?"                             |
+| 14  | "introduce a real connector declaration"                             | "we decided on this option… the real connector keyword"                                |
+| 15  | "Critical Issue 6: Defer Broad Instance Binding"                     | keep instances; unify via `@{ ref: 'id' }`, not edges                                  |
+| 16  | "Critical Issue 6…"                                                  | "yet to decide the final syntax for references" (ref: vs binding)                      |
+| 17  | "defer agent/flow/skill/directive instance inheritance"              | "will it work? (I am tempted)"                                                         |
+| 18  | "Create a separate diagnostics/conformance spec"                     | "I like this"                                                                          |
+| 19  | "spec currently starts with long historical sections"                | "removed when we reach 1.0.0; for us it is valuable"                                   |
+| 20  | "Actor: agent"                                                       | "group shape or an instance"                                                           |
+| 21  | end of v1 core concepts                                              | "Remove types and templates… now parts of the metadata"                                |
+| 22  | container table, `agent` row                                         | "Keep, delete the rest"                                                                |
+| 23  | `typesGroup` (synthetic)                                             | "Delete"                                                                               |
+| 24  | `templatesGroup` (synthetic)                                         | "Delete"                                                                               |
+| 25  | `roundedRect`                                                        | "A task"                                                                               |
+| 26  | `typeDeclaration`                                                    | "deleted"                                                                              |
+| 27  | `subroutine`                                                         | keep; classic native function w/ signature, called by the LLM, via reference mechanism |
+| 28  | `doc`                                                                | "skip"                                                                                 |
+| 29  | `lean-right`                                                         | "keep"                                                                                 |
+| 30  | `lin-doc`                                                            | "keep"                                                                                 |
+| 31  | `procs`                                                              | "Keep"                                                                                 |
+| 32  | `hexagon`                                                            | "keep"                                                                                 |
+| 33  | `circle`                                                             | "connector instead"                                                                    |
+| 34  | `diamond`                                                            | "keep"                                                                                 |
+| 35  | `trapezoid`                                                          | "skip"                                                                                 |
+| 36  | `inv-trapezoid`                                                      | "skip"                                                                                 |
+| 37  | `double-circle`                                                      | "skip"                                                                                 |
+| 38  | `rect`                                                               | "task"                                                                                 |
+| 39  | "4.3.3 Instance Shapes"                                              | instances without specific shape; visual shows "instance of what"                      |
+| 40  | `-->` control                                                        | "sequence"                                                                             |
+| 41  | `==>` data                                                           | "skip — instead we share data via a stateful object"                                   |
+| 42  | `--o` conformance                                                    | "Skip"                                                                                 |
+| 43  | `-->>` delegation                                                    | "Skip"                                                                                 |
+| 44  | `--x` failure                                                        | "keep"                                                                                 |
+| 45  | `---` association                                                    | "keep"                                                                                 |
+| 46  | `-.->` instance binding                                              | "keep"                                                                                 |
+| 47  | `o--o` bidirectional                                                 | "skip"                                                                                 |
