@@ -34,7 +34,7 @@ describe('Sub-pixel endpoint snap (deploy-pipeline)', () => {
   beforeAll(() => {
     setLogLevel(process.env.ORTHO_TEST_DEBUG ? 'debug' : 'fatal');
     addDiagrams();
-    const fx = discoverLayoutTestFixtures().find((f) => f.id === 'deploy-pipeline');
+    const fx = discoverLayoutTestFixtures().find((f) => f.id === 'domus/deploy-pipeline');
     if (!fx) {
       throw new Error('deploy-pipeline fixture not found in DDLT manifest');
     }

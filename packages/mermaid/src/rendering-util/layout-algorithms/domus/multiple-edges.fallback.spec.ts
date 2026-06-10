@@ -34,7 +34,7 @@ describe('Cyclic-path placement-failure fallback (multiple-edges)', () => {
   beforeAll(() => {
     setLogLevel(process.env.ORTHO_TEST_DEBUG ? 'debug' : 'fatal');
     addDiagrams();
-    const fx = discoverLayoutTestFixtures().find((f) => f.id === 'multiple-edges');
+    const fx = discoverLayoutTestFixtures().find((f) => f.id === 'domus/multiple-edges');
     if (!fx) {
       throw new Error('multiple-edges fixture not found in DDLT manifest');
     }

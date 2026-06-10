@@ -14,7 +14,7 @@ describe('Domus DDLT — project-sox2 labelled dogleg cleanup', () => {
     'shortcuts the L_F_K_0 label-side rail while preserving validity',
     { timeout: 120_000 },
     async () => {
-      const fixture = discoverLayoutTestFixtures().find((fx) => fx.id === 'project-sox2');
+      const fixture = discoverLayoutTestFixtures().find((fx) => fx.id === 'domus/project-sox2');
       expect(fixture).toBeTruthy();
 
       const layout = await parseApplySizesAndLayout(

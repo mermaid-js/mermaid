@@ -43,7 +43,7 @@ describe('Orthogonal layout regression: Company.mmd', () => {
 
     try {
       const diagram = readFileSync(
-        resolve(process.cwd(), 'cypress/platform/dev-diagrams/layout-tests/Company.mmd'),
+        resolve(process.cwd(), 'cypress/platform/dev-diagrams/layout-tests/domus/Company.mmd'),
         'utf8'
       );
 
@@ -154,7 +154,7 @@ describe('Orthogonal layout regression: Company.mmd', () => {
 
     try {
       const diagram = readFileSync(
-        resolve(process.cwd(), 'cypress/platform/dev-diagrams/layout-tests/Company.mmd'),
+        resolve(process.cwd(), 'cypress/platform/dev-diagrams/layout-tests/domus/Company.mmd'),
         'utf8'
       );
 
@@ -201,7 +201,7 @@ describe('Orthogonal layout regression: Company.mmd', () => {
 
     try {
       const diagram = readFileSync(
-        resolve(process.cwd(), 'cypress/platform/dev-diagrams/layout-tests/Company.mmd'),
+        resolve(process.cwd(), 'cypress/platform/dev-diagrams/layout-tests/domus/Company.mmd'),
         'utf8'
       );
 
@@ -287,7 +287,7 @@ describe('Orthogonal layout regression: Company.mmd', () => {
 
     try {
       const diagram = readFileSync(
-        resolve(process.cwd(), 'cypress/platform/dev-diagrams/layout-tests/Company.mmd'),
+        resolve(process.cwd(), 'cypress/platform/dev-diagrams/layout-tests/domus/Company.mmd'),
         'utf8'
       );
 
@@ -332,7 +332,7 @@ describe('Orthogonal layout regression: Company.mmd', () => {
 
     try {
       const diagram = readFileSync(
-        resolve(process.cwd(), 'cypress/platform/dev-diagrams/layout-tests/Company.mmd'),
+        resolve(process.cwd(), 'cypress/platform/dev-diagrams/layout-tests/domus/Company.mmd'),
         'utf8'
       );
 
@@ -392,7 +392,7 @@ describe('Orthogonal layout regression: Company.mmd', () => {
 
     try {
       const diagram = readFileSync(
-        resolve(process.cwd(), 'cypress/platform/dev-diagrams/layout-tests/Company.mmd'),
+        resolve(process.cwd(), 'cypress/platform/dev-diagrams/layout-tests/domus/Company.mmd'),
         'utf8'
       );
 
@@ -452,7 +452,7 @@ describe('Orthogonal layout regression: Company.mmd', () => {
 
     try {
       const diagram = readFileSync(
-        resolve(process.cwd(), 'cypress/platform/dev-diagrams/layout-tests/Company.mmd'),
+        resolve(process.cwd(), 'cypress/platform/dev-diagrams/layout-tests/domus/Company.mmd'),
         'utf8'
       );
 
@@ -495,7 +495,7 @@ describe('Orthogonal layout regression: Company.mmd', () => {
 
     try {
       const diagram = readFileSync(
-        resolve(process.cwd(), 'cypress/platform/dev-diagrams/layout-tests/Company.mmd'),
+        resolve(process.cwd(), 'cypress/platform/dev-diagrams/layout-tests/domus/Company.mmd'),
         'utf8'
       );
 
@@ -539,7 +539,7 @@ describe('Orthogonal layout regression: Company.mmd', () => {
 
     try {
       const diagram = readFileSync(
-        resolve(process.cwd(), 'cypress/platform/dev-diagrams/layout-tests/Company.mmd'),
+        resolve(process.cwd(), 'cypress/platform/dev-diagrams/layout-tests/domus/Company.mmd'),
         'utf8'
       );
 

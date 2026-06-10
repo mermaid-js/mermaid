@@ -14,7 +14,7 @@ describe('Domus DDLT — Company crossing cleanup', () => {
     'removes the reciprocal Company crossing without invalidating the layout',
     { timeout: 120_000 },
     async () => {
-      const fixture = discoverLayoutTestFixtures().find((fx) => fx.id === 'Company');
+      const fixture = discoverLayoutTestFixtures().find((fx) => fx.id === 'domus/Company');
       expect(fixture).toBeTruthy();
 
       const layout = await parseApplySizesAndLayout(
