@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../../helpers/util.ts';
 
 describe('Agentflow diagram', () => {
   it('1: should render basic agent/flow/task with nested containers', () => {
