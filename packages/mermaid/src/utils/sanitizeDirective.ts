@@ -36,7 +36,24 @@ export const sanitizeDirective = (args: any): void => {
     }
 
     if (key === 'icons') {
-      // Skip icons key as it is handled by the registerDiagramIconPacks function
+      // Only `packs` and `cdnTemplate` may come from diagram text — fetched URLs
+      // are validated against `allowedHosts`, which (like maxFileSizeMB and
+      // timeout) is site-level only so untrusted text cannot widen it.
+      // Pack names are user-defined, so the generic key sanitization below
+      // cannot be applied to the icons object.
+      const icons = args[key];
+      if (typeof icons !== 'object' || Array.isArray(icons)) {
+        log.debug('sanitize deleting invalid icons config');
+        delete args[key];
+        continue;
+      }
+      const textConfigurableIconKeys = ['packs', 'cdnTemplate'];
+      for (const iconKey of Object.keys(icons)) {
+        if (!textConfigurableIconKeys.includes(iconKey)) {
+          log.debug('sanitize deleting icons key: ', iconKey);
+          delete icons[iconKey];
+        }
+      }
       continue;
     }
 

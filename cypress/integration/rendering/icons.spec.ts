@@ -44,14 +44,29 @@ flowchart TB
   });
 
   it('should use different allowed hosts', () => {
+    imgSnapshotTest(
+      `flowchart TB
+  A[Start] --> B@{ icon: 'logos:aws', label: 'AWS' }
+`,
+      {
+        icons: {
+          packs: { logos: '@iconify-json/logos@1' },
+          allowedHosts: ['cdn.jsdelivr.net', 'unpkg.com'],
+        },
+      }
+    );
+  });
+
+  it('should ignore allowedHosts from diagram text', () => {
+    // The frontmatter allowlist must be stripped — if it were applied, the
+    // default CDN host would be rejected and the icon would fail to render.
     imgSnapshotTest(`---
 config:
   icons:
     packs:
       logos: "@iconify-json/logos@1"
     allowedHosts:
-      - cdn.jsdelivr.net
-      - unpkg.com
+      - evil.example.com
 ---
 flowchart TB
   A[Start] --> B@{ icon: 'logos:aws', label: 'AWS' }
@@ -189,17 +204,18 @@ flowchart TB
   });
 
   it('should handle timeouts gracefully', () => {
-    imgSnapshotTest(`---
-config:
-  icons:
-    timeout: 1
-    packs:
-      logos: "@iconify-json/logos@1"
----
-flowchart TB
+    imgSnapshotTest(
+      `flowchart TB
   A[Start] --> B@{ icon: 'logos:aws', label: 'Timeout' }
   B --> C[End]
-`);
+`,
+      {
+        icons: {
+          timeout: 1,
+          packs: { logos: '@iconify-json/logos@1' },
+        },
+      }
+    );
   });
 
   it('should handle missing pack gracefully', () => {

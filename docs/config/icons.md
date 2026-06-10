@@ -86,6 +86,7 @@ icons:
 - **Host allowlisting**: Only fetch from hosts in `allowedHosts`
 - **Size limits**: Maximum file size enforced via `maxFileSizeMB`
 - **Timeouts**: Network requests timeout after specified milliseconds
+- **Site-only settings**: `allowedHosts`, `maxFileSizeMB`, and `timeout` can only be set via `mermaid.initialize` — values in diagram frontmatter or directives are ignored, so untrusted diagram text cannot widen the allowlist. Only `packs` and `cdnTemplate` are configurable from diagram text, and `cdnTemplate` URLs are still validated against the site-level allowlist.
 - **HTTPS only**: All remote fetches occur over HTTPS
 - **Version pinning**: Package specs must include version for reproducibility
 
