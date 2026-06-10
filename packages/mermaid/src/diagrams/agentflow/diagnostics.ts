@@ -7,17 +7,23 @@
  * template declarations, the `procs` reference shape, and `==>`-based
  * container-edge data flow are all removed. Their diagnostic codes are
  * gone with them. New codes cover the v0.8.1 additions: removed-shape
- * usage, removed-operator usage, reference-edge label rejection,
- * flow-no-input validation, and `prompt`→`instruction` legacy detection.
+ * usage, removed-operator usage, reference-edge label rejection, and
+ * flow-no-input validation.
  *
  * v0.8.2 (issue #64): the parser no longer performs property-level metadata
  * validation or semantic checks. It still emits the structural `SHAPE_*`
  * codes (and would emit `EDGE_OPERATOR_UNSUPPORTED`). The remaining IDs below
  * stay part of the shared diagnostic vocabulary, but are now emitted by the
  * **semantics module**, not the parser: `METADATA_KEY_MISAPPLIED`,
- * `METADATA_KEY_LEGACY_PROMPT`, `CONNECTOR_REF_*`, `DUPLICATE_ID_NODE`,
- * `RESERVED_SYNTHETIC_ID`, `CONTAINMENT_VIOLATION`, `EDGE_SEMANTIC_CONTRADICTION`,
+ * `CONNECTOR_REF_*`, `DUPLICATE_ID_NODE`, `RESERVED_SYNTHETIC_ID`,
+ * `CONTAINMENT_VIOLATION`, `EDGE_SEMANTIC_CONTRADICTION`,
  * `REFERENCE_EDGE_LABEL_REJECTED`, and `FLOW_NO_INPUT`.
+ *
+ * v0.8.2 (issue #66): `METADATA_KEY_LEGACY_PROMPT` is removed from the
+ * vocabulary. `prompt` is not an agentflow metadata key — the canonical key
+ * is `instruction` — and nothing aliases, warns about, or rejects it. An
+ * authored `prompt` is carried as-is like any other unknown key and surfaces
+ * downstream as `METADATA_UNKNOWN_KEY` from the semantics module.
  */
 
 import type { ElementPosition } from './types.js';
@@ -75,13 +81,6 @@ export const AgentflowWarning = {
    * excluded. Warn pre-1.0; error from v1.0.
    */
   METADATA_KEY_MISAPPLIED: 'METADATA_KEY_MISAPPLIED',
-  /**
-   * The legacy `prompt` metadata key was authored. v0.8.1 renamed it to
-   * `instruction` and promoted it to a cross-cutting key. The DB still
-   * accepts `prompt` for the pre-1.0 window and treats it as an alias of
-   * `instruction`. Warn-only; removed in v1.0.
-   */
-  METADATA_KEY_LEGACY_PROMPT: 'METADATA_KEY_LEGACY_PROMPT',
   /**
    * Two declarations in the node-or-container namespace (§9) share an
    * id — e.g. two `a["..."]` vertex declarations, or a vertex and a
