@@ -4,15 +4,7 @@ import type { DiagramDB } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { ImperativeState } from '../../utils/imperativeState.js';
 import { sanitizeText } from '../common/common.js';
-import {
-  clear as commonClear,
-  getAccDescription,
-  getAccTitle,
-  getDiagramTitle,
-  setAccDescription,
-  setAccTitle,
-  setDiagramTitle,
-} from '../common/commonDb.js';
+import { CommonDB } from '../common/commonDb.js';
 import type { Actor, AddMessageParams, Box, Message, Note } from './types.js';
 import type { ParticipantMetaData } from '../../types.js';
 
@@ -113,6 +105,8 @@ export const PARTICIPANT_TYPE = {
 } as const;
 
 export class SequenceDB implements DiagramDB {
+  private readonly common = new CommonDB();
+
   private readonly state = new ImperativeState<SequenceState>(() => ({
     prevActor: undefined,
     actors: new Map(),
@@ -374,7 +368,7 @@ export class SequenceDB implements DiagramDB {
 
   public clear() {
     this.state.reset();
-    commonClear();
+    this.common.clear();
   }
 
   public parseMessage(str: string) {
@@ -687,7 +681,7 @@ export class SequenceDB implements DiagramDB {
           this.addSignal(undefined, undefined, undefined, param.signalType);
           break;
         case 'setAccTitle':
-          setAccTitle(param.text);
+          this.setAccTitle(param.text);
           break;
         case 'parStart':
           this.addSignal(undefined, undefined, param.parText, param.signalType);
@@ -717,12 +711,12 @@ export class SequenceDB implements DiagramDB {
     }
   }
 
-  public setAccTitle = setAccTitle;
-  public setAccDescription = setAccDescription;
-  public setDiagramTitle = setDiagramTitle;
-  public getAccTitle = getAccTitle;
-  public getAccDescription = getAccDescription;
-  public getDiagramTitle = getDiagramTitle;
+  public setAccTitle = this.common.setAccTitle;
+  public setAccDescription = this.common.setAccDescription;
+  public setDiagramTitle = this.common.setDiagramTitle;
+  public getAccTitle = this.common.getAccTitle;
+  public getAccDescription = this.common.getAccDescription;
+  public getDiagramTitle = this.common.getDiagramTitle;
   public getConfig() {
     return getConfig().sequence;
   }

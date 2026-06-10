@@ -23,16 +23,24 @@ import assignWithDepth from './assignWithDepth.js';
 import * as configApi from './config.js';
 import { getEffectiveHtmlLabels } from './config.js';
 import type { MermaidConfig } from './config.type.js';
+import { detectType, getDiagramLoader } from './diagram-api/detectType.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
-import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
+import { getDiagram, registerDiagram } from './diagram-api/diagramAPI.js';
+import type {
+  DiagramDefinition,
+  DiagramMetadata,
+  DiagramStyleClassDef,
+} from './diagram-api/types.js';
 import { Diagram } from './Diagram.js';
 import { evaluate } from './diagrams/common/common.js';
 import errorRenderer from './diagrams/error/errorRenderer.js';
+import { UnknownDiagramError } from './errors.js';
 import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
 import { preprocessDiagram } from './preprocess.js';
 import getStyles, { cssStyleSheetToString } from './styles.js';
 import theme from './themes/index.js';
+import { RenderCoordinator } from './utils/renderCoordinator.js';
 import type {
   D3HtmlSelection,
   D3Selection,
@@ -68,12 +76,222 @@ const IFRAME_NOT_SUPPORTED_MSG = 'The "iframe" tag is not supported by your brow
 const DOMPURIFY_TAGS = ['foreignobject'];
 const DOMPURIFY_ATTR = ['dominant-baseline'];
 
-function processAndSetConfigs(text: string) {
-  const processed = preprocessDiagram(text);
-  configApi.reset();
-  configApi.addDirective(processed.config ?? {});
-  return processed;
+/**
+ * Resource held by every diagram type that has not (yet) been audited for
+ * concurrent execution: types with module-scoped (singleton) DBs, the shared
+ * legacy `commonDb` accessibility state, or renderer-level module state.
+ * All of these are serialized with each other, which matches the behavior the
+ * former global execution queue provided.
+ */
+const LEGACY_STATE_RESOURCE = 'mermaid/legacy-shared-state';
+
+/**
+ * Resource representing the module-scoped scratch state of the unified
+ * layout/rendering pipeline in `rendering-util` (dagre/ELK cluster
+ * bookkeeping, edge-label maps, …). Only one diagram can be drawn through
+ * that pipeline at a time.
+ */
+const LAYOUT_PIPELINE_RESOURCE = 'mermaid/layout-pipeline';
+
+interface DiagramConcurrency {
+  /** Resources held for a full render (parse + draw). */
+  render: string[];
+  /** Resources held while only parsing. */
+  parse: string[];
 }
+
+/**
+ * Concurrency contracts for diagram types that have been audited for
+ * concurrent execution.
+ *
+ * A diagram type may only be listed here when:
+ * - its {@link DiagramDefinition.db} is instantiated per render (the `get db()`
+ *   pattern), including instance-scoped accessibility state ({@link CommonDB}),
+ * - its parser populates the per-render db (JISON's synchronous `yy` wiring, or
+ *   a langium parser that captures `parser.parser.yy` before its first `await`),
+ * - its renderer — and any layout algorithm it uses — keeps no cross-render
+ *   module state, or every such state is declared below as a named resource.
+ *
+ * Types not listed here are conservatively serialized via
+ * {@link LEGACY_STATE_RESOURCE} (and {@link LAYOUT_PIPELINE_RESOURCE} while
+ * rendering), but still run concurrently with audited types.
+ */
+const AUDITED_DIAGRAM_CONCURRENCY: Record<string, DiagramConcurrency> = {
+  // Per-render PieDB; the renderer is plain d3 scoped to the diagram's own SVG.
+  pie: { render: [], parse: [] },
+  // Per-render SequenceDB; the renderer keeps its layout bounds in module
+  // scope, so only one sequence diagram can draw at a time.
+  sequence: { render: ['mermaid/diagram-sequence'], parse: [] },
+  // Per-render FlowDB; drawing goes through the unified layout pipeline.
+  flowchart: { render: [LAYOUT_PIPELINE_RESOURCE], parse: [] },
+  'flowchart-v2': { render: [LAYOUT_PIPELINE_RESOURCE], parse: [] },
+  // The built-in error diagram has a stateless renderer and no db.
+  error: { render: [], parse: [] },
+};
+
+const DEFAULT_DIAGRAM_CONCURRENCY: DiagramConcurrency = {
+  render: [LEGACY_STATE_RESOURCE, LAYOUT_PIPELINE_RESOURCE],
+  parse: [LEGACY_STATE_RESOURCE],
+};
+
+const getDiagramConcurrency = (type: string): DiagramConcurrency =>
+  AUDITED_DIAGRAM_CONCURRENCY[type] ?? DEFAULT_DIAGRAM_CONCURRENCY;
+
+/**
+ * Admits render/parse jobs so that only compatible jobs run concurrently.
+ * @see {@link RenderCoordinator}
+ */
+const coordinator = new RenderCoordinator();
+
+/** In-flight lazy diagram-definition loads, deduplicated per type. */
+const diagramLoadPromises = new Map<string, Promise<void>>();
+
+/**
+ * Makes sure the diagram definition for `type` is registered, lazy-loading it
+ * if necessary. Concurrent loads of the same type share one loader call.
+ */
+const ensureDiagramIsLoaded = async (type: string): Promise<void> => {
+  try {
+    getDiagram(type);
+    return;
+  } catch {
+    // Not registered yet, load it below.
+  }
+  let loading = diagramLoadPromises.get(type);
+  if (!loading) {
+    const loader = getDiagramLoader(type);
+    if (!loader) {
+      throw new UnknownDiagramError(`Diagram ${type} not found.`);
+    }
+    loading = (async () => {
+      try {
+        const { id, diagram } = await loader();
+        registerDiagram(id, diagram);
+      } finally {
+        diagramLoadPromises.delete(type);
+      }
+    })();
+    diagramLoadPromises.set(type, loading);
+  }
+  await loading;
+};
+
+interface PreparedJob {
+  /** Preprocessed diagram code (cleaned up, frontmatter and directives extracted). */
+  code: string;
+  /** Diagram title from the frontmatter, if any. */
+  title?: string;
+  /**
+   * The diagram's own configuration (frontmatter config merged with init
+   * directives). Replayed into the global config state when the job runs.
+   */
+  diagramConfig: MermaidConfig;
+  /**
+   * Admission key for the coordinator: the fully resolved configuration state
+   * this job will run under, including the effects of the diagram's `init()`.
+   */
+  configKey: unknown;
+  /** Resource locks for this job's diagram type. */
+  concurrency: DiagramConcurrency;
+  /**
+   * Failure from detecting or loading the diagram type. Not thrown here, so
+   * that rendering can produce the error diagram via its usual path.
+   */
+  detectError?: unknown;
+}
+
+/**
+ * Performs all the preparation a render/parse job needs before it can be
+ * admitted by the coordinator: preprocessing, computing the effective
+ * configuration (without touching global state) and loading the diagram
+ * definition.
+ */
+const prepareJob = async (
+  text: string,
+  { limitTextSize }: { limitTextSize: boolean }
+): Promise<PreparedJob> => {
+  addDiagrams();
+  const processed = preprocessDiagram(text);
+  const diagramConfig = processed.config ?? {};
+
+  // Resolve the configuration exactly as applying the diagram's directives
+  // would, but against a scratch copy, so the configuration that concurrently
+  // running jobs observe is never disturbed.
+  const preInitKey = configApi.evaluateConfigInIsolation(() => {
+    configApi.reset();
+    configApi.addDirective(diagramConfig);
+    return {
+      config: configApi.getConfig(),
+      userDefined: configApi.getUserDefinedConfig(),
+    };
+  });
+
+  let code = processed.code;
+  if (limitTextSize && code.length > (preInitKey.config?.maxTextSize ?? MAX_TEXTLENGTH)) {
+    code = MAX_TEXTLENGTH_EXCEEDED_MSG;
+  }
+
+  let definition: DiagramDefinition | undefined;
+  let type: string | undefined;
+  let detectError: unknown;
+  try {
+    type = detectType(code, preInitKey.config);
+    await ensureDiagramIsLoaded(type);
+    definition = getDiagram(type);
+  } catch (error) {
+    detectError = error;
+  }
+
+  if (definition === undefined || type === undefined) {
+    // The job will fail in `Diagram.fromText` and (for renders) produce the
+    // error diagram, which touches no shared diagram state.
+    return {
+      code,
+      title: processed.title,
+      diagramConfig,
+      configKey: preInitKey,
+      concurrency: getDiagramConcurrency('error'),
+      detectError,
+    };
+  }
+
+  // `init()` may adjust the global config (e.g. the flowchart init sets
+  // `layout`), so simulate it on the scratch copy to get the configuration
+  // state the job will actually run under.
+  const loadedDefinition = definition;
+  const configKey = configApi.evaluateConfigInIsolation(() => {
+    configApi.reset();
+    configApi.addDirective(diagramConfig);
+    loadedDefinition.init?.(configApi.getConfig());
+    return {
+      config: configApi.getConfig(),
+      userDefined: configApi.getUserDefinedConfig(),
+    };
+  });
+
+  return {
+    code,
+    title: processed.title,
+    diagramConfig,
+    configKey,
+    concurrency: getDiagramConcurrency(type),
+  };
+};
+
+/**
+ * Re-applies a prepared job's configuration to the global config state.
+ *
+ * The coordinator only admits jobs concurrently when their resolved
+ * configuration is identical, so replaying never disturbs other running jobs.
+ *
+ * IMPORTANT: the caller must reach the diagram's `init()` (run inside
+ * `Diagram.fromText`) without an intervening `await`, so concurrent jobs can
+ * never observe a half-applied configuration at a yield point.
+ */
+const replayJobConfig = (job: PreparedJob): void => {
+  configApi.reset();
+  configApi.addDirective(job.diagramConfig);
+};
 
 /**
  * Parse the text and validate the syntax.
@@ -90,9 +308,21 @@ async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseRe
 async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult | false> {
   addDiagrams();
   try {
-    const { code, config } = processAndSetConfigs(text);
-    const diagram = await getDiagramFromText(code);
-    return { diagramType: diagram.type, config };
+    const job = await prepareJob(text, { limitTextSize: false });
+    if (job.detectError) {
+      throw job.detectError;
+    }
+    const releaseSlot = await coordinator.acquire({
+      configKey: job.configKey,
+      resources: job.concurrency.parse,
+    });
+    try {
+      replayJobConfig(job);
+      const diagram = await Diagram.fromText(job.code);
+      return { diagramType: diagram.type, config: job.diagramConfig };
+    } finally {
+      releaseSlot();
+    }
   } catch (error) {
     if (parseOptions?.suppressErrors) {
       return false;
@@ -435,17 +665,31 @@ const render = async function (
   svgContainingElement?: Element
 ): Promise<RenderResult> {
   addDiagrams();
+  const job = await prepareJob(text, { limitTextSize: true });
+  const releaseSlot = await coordinator.acquire({
+    configKey: job.configKey,
+    resources: job.concurrency.render,
+  });
+  try {
+    return await performRender(id, job, svgContainingElement);
+  } finally {
+    releaseSlot();
+  }
+};
 
-  const processed = processAndSetConfigs(text);
-  text = processed.code;
+/**
+ * Runs the actual render pipeline for an admitted job.
+ */
+const performRender = async function (
+  id: string,
+  job: PreparedJob,
+  svgContainingElement?: Element
+): Promise<RenderResult> {
+  replayJobConfig(job);
+  const text = job.code;
 
   const config = configApi.getConfig();
   log.debug(config);
-
-  // Check the maximum allowed text size
-  if (text.length > (config?.maxTextSize ?? MAX_TEXTLENGTH)) {
-    text = MAX_TEXTLENGTH_EXCEEDED_MSG;
-  }
 
   const idSelector = `#${id}` as const;
   const iFrameID = 'i' + id;
@@ -517,7 +761,13 @@ const render = async function (
   let parseEncounteredException;
 
   try {
-    diag = await Diagram.fromText(text, { title: processed.title });
+    if (job.detectError) {
+      // Detecting/loading the diagram type already failed during preparation.
+      // Don't let `Diagram.fromText` retry: this job was admitted with the
+      // error diagram's resource locks, not those of a real diagram type.
+      throw job.detectError;
+    }
+    diag = await Diagram.fromText(text, { title: job.title });
   } catch (error) {
     if (config.suppressErrorRendering) {
       removeTempElements();

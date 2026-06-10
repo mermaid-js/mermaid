@@ -105,6 +105,52 @@ describe('when working with site config', () => {
   });
 });
 
+describe('evaluateConfigInIsolation', () => {
+  beforeEach(() => {
+    configApi.setSiteConfig({});
+  });
+
+  it('should return the result of the callback', () => {
+    expect(configApi.evaluateConfigInIsolation(() => 'result')).toBe('result');
+  });
+
+  it('should not leak config changes made inside the callback', () => {
+    const themeBefore = configApi.getConfig().theme;
+    const isolated = configApi.evaluateConfigInIsolation(() => {
+      configApi.reset();
+      configApi.addDirective({ theme: 'forest' });
+      configApi.setConfig({ fontFamily: 'isolated-font' });
+      return configApi.getConfig();
+    });
+    expect(isolated.theme).toBe('forest');
+    expect(isolated.fontFamily).toBe('isolated-font');
+
+    expect(configApi.getConfig().theme).toBe(themeBefore);
+    expect(configApi.getConfig().fontFamily).not.toBe('isolated-font');
+    expect(configApi.getUserDefinedConfig()).toEqual({});
+  });
+
+  it('should see the current global state inside the callback', () => {
+    configApi.addDirective({ theme: 'dark' });
+    const isolated = configApi.evaluateConfigInIsolation(() => configApi.getConfig());
+    expect(isolated.theme).toBe('dark');
+    // and the directive is still applied globally afterwards
+    expect(configApi.getConfig().theme).toBe('dark');
+    configApi.reset();
+  });
+
+  it('should restore the global state when the callback throws', () => {
+    expect(() =>
+      configApi.evaluateConfigInIsolation(() => {
+        configApi.addDirective({ theme: 'forest' });
+        throw new Error('boom');
+      })
+    ).toThrow('boom');
+    expect(configApi.getConfig().theme).not.toBe('forest');
+    expect(configApi.getUserDefinedConfig()).toEqual({});
+  });
+});
+
 describe('getUserDefinedConfig', () => {
   beforeEach(() => {
     configApi.reset();

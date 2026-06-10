@@ -18,6 +18,7 @@
 
 - [addDirective](functions/addDirective.md)
 - [evaluate](functions/evaluate.md)
+- [evaluateConfigInIsolation](functions/evaluateConfigInIsolation.md)
 - [getConfig](functions/getConfig.md)
 - [getEffectiveHtmlLabels](functions/getEffectiveHtmlLabels.md)
 - [getSiteConfig](functions/getSiteConfig.md)

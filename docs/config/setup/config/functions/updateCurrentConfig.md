@@ -12,7 +12,7 @@
 
 > **updateCurrentConfig**(`siteCfg`, `_directives`): [`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md)
 
-Defined in: [packages/mermaid/src/config.ts:24](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L24)
+Defined in: [packages/mermaid/src/config.ts:70](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L70)
 
 ## Parameters
 

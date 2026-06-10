@@ -3,15 +3,7 @@ import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
 import utils, { getEdgeId } from '../../utils.js';
-import {
-  setAccTitle,
-  getAccTitle,
-  getAccDescription,
-  setAccDescription,
-  clear as commonClear,
-  setDiagramTitle,
-  getDiagramTitle,
-} from '../common/commonDb.js';
+import { CommonDB } from '../common/commonDb.js';
 import { createTooltip } from '../common/svgDrawCommon.js';
 import { ClassMember } from './classTypes.js';
 import type {
@@ -35,6 +27,7 @@ let classCounter = 0;
 const sanitizeText = (txt: string) => common.sanitizeText(txt, getConfig());
 
 export class ClassDB implements DiagramDB {
+  private readonly common = new CommonDB();
   private relations: ClassRelation[] = [];
   private classes: ClassMap = new Map<string, ClassNode>();
   private readonly styleClasses = new Map<string, StyleClass>();
@@ -182,7 +175,7 @@ export class ClassDB implements DiagramDB {
     this.namespaceStack = [];
     this.diagramId = '';
     this.direction = 'TB';
-    commonClear();
+    this.common.clear();
   }
 
   public getClass(id: string): ClassNode {
@@ -870,11 +863,11 @@ export class ClassDB implements DiagramDB {
     return { nodes, edges, other: {}, config, direction: this.getDirection() };
   }
 
-  public setAccTitle = setAccTitle;
-  public getAccTitle = getAccTitle;
-  public setAccDescription = setAccDescription;
-  public getAccDescription = getAccDescription;
-  public setDiagramTitle = setDiagramTitle;
-  public getDiagramTitle = getDiagramTitle;
+  public setAccTitle = this.common.setAccTitle;
+  public getAccTitle = this.common.getAccTitle;
+  public setAccDescription = this.common.setAccDescription;
+  public getAccDescription = this.common.getAccDescription;
+  public setDiagramTitle = this.common.setDiagramTitle;
+  public getDiagramTitle = this.common.getDiagramTitle;
   public getConfig = () => getConfig().class;
 }

@@ -2,19 +2,12 @@ import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { Edge, Node } from '../../rendering-util/types.js';
 import type { EntityNode, Attribute, Relationship, EntityClass, RelSpec } from './erTypes.js';
-import {
-  setAccTitle,
-  getAccTitle,
-  getAccDescription,
-  setAccDescription,
-  clear as commonClear,
-  setDiagramTitle,
-  getDiagramTitle,
-} from '../common/commonDb.js';
+import { CommonDB } from '../common/commonDb.js';
 import { getEdgeId } from '../../utils.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 
 export class ErDB implements DiagramDB {
+  private readonly common = new CommonDB();
   private entities = new Map<string, EntityNode>();
   private relationships: Relationship[] = [];
   private classes = new Map<string, EntityClass>();
@@ -201,7 +194,7 @@ export class ErDB implements DiagramDB {
     this.entities = new Map();
     this.classes = new Map();
     this.relationships = [];
-    commonClear();
+    this.common.clear();
   }
 
   public getData() {
@@ -245,11 +238,11 @@ export class ErDB implements DiagramDB {
     return { nodes, edges, other: {}, config, direction: 'TB' };
   }
 
-  public setAccTitle = setAccTitle;
-  public getAccTitle = getAccTitle;
-  public setAccDescription = setAccDescription;
-  public getAccDescription = getAccDescription;
-  public setDiagramTitle = setDiagramTitle;
-  public getDiagramTitle = getDiagramTitle;
+  public setAccTitle = this.common.setAccTitle;
+  public getAccTitle = this.common.getAccTitle;
+  public setAccDescription = this.common.setAccDescription;
+  public getAccDescription = this.common.getAccDescription;
+  public setDiagramTitle = this.common.setDiagramTitle;
+  public getDiagramTitle = this.common.getDiagramTitle;
   public getConfig = () => getConfig().er;
 }

@@ -7,7 +7,7 @@ generationTime: 2025-01-28T16:30:00.000Z
 sequenceDiagram
     participant User as User/Browser
     participant Mermaid as mermaid.ts
-    participant Queue as executionQueue
+    participant Coordinator as RenderCoordinator
     participant API as mermaidAPI.ts
     participant Config as configApi
     participant Preprocessor as preprocessDiagram
@@ -71,39 +71,50 @@ sequenceDiagram
     
     loop For each diagram element
         Mermaid->>DOM: check element.getAttribute('data-processed')
-        
+
         opt not processed
             Mermaid->>DOM: element.setAttribute('data-processed', 'true')
             Mermaid->>Mermaid: generate unique id
             Mermaid->>DOM: get element.innerHTML
             Mermaid->>Mermaid: entityDecode and clean text
             Mermaid->>Mermaid: detectInit(txt)
-            
-            Mermaid->>Queue: render(id, txt, element)
         end
     end
-    
+
+    Note over Mermaid: All collected diagrams are rendered concurrently
+    Mermaid->>API: render(id, txt, element) for each diagram
+
     Mermaid-->>-User: processing initiated
 
-    %% Render Function (Queued)
-    activate Queue
-    Queue->>+API: mermaidAPI.render(id, text, container)
-    
+    %% Render Function (Coordinated)
+    activate API
+
     API->>DiagramAPI: addDiagrams()
-    API->>+Preprocessor: processAndSetConfigs(text)
-    
+
+    %% Job preparation (no global state is touched)
+    API->>+Preprocessor: prepareJob(text)
     Preprocessor->>Preprocessor: preprocessDiagram(text)
-    Preprocessor->>Config: reset()
-    Preprocessor->>Config: addDirective(processed.config)
-    Preprocessor-->>-API: { code, config }
-    
+    Preprocessor->>Config: evaluateConfigInIsolation(reset + addDirective + init)
+    Config-->>Preprocessor: effective config (scratch copy)
+
+    opt text length > maxTextSize
+        Preprocessor->>Preprocessor: code = MAX_TEXTLENGTH_EXCEEDED_MSG
+    end
+
+    Preprocessor->>DiagramAPI: detectType + lazy-load diagram definition
+    Preprocessor-->>-API: { code, configKey, concurrency }
+
+    %% Admission control
+    API->>+Coordinator: acquire({ configKey, resources })
+    Note over Coordinator: Jobs with equal configs run concurrently.<br/>Jobs needing conflicting configs or the same<br/>shared resources are serialized (FIFO).
+    Coordinator-->>-API: slot acquired
+
+    API->>Config: reset() + addDirective(diagram config)
+    Note over API, Config: replays this job's config — safe because every<br/>concurrently admitted job uses an identical config
+
     API->>Config: getConfig()
     Config-->>API: current configuration
-    
-    opt text length > maxTextSize
-        API->>API: text = MAX_TEXTLENGTH_EXCEEDED_MSG
-    end
-    
+
     API->>API: setup id selectors and element IDs
     API->>API: determine security level (sandbox/loose)
 
@@ -223,22 +234,24 @@ sequenceDiagram
     
     API->>API: attachFunctions()
     API->>API: removeTempElements()
-    
+
+    API->>Coordinator: release slot
+    Note over Coordinator: waiting compatible jobs are admitted (FIFO)
+
     opt parseEncounteredException
         API->>Mermaid: throw parseEncounteredException
     end
-    
-    API-->>-Queue: { diagramType, svg: svgCode, bindFunctions }
+
+    API-->>-Mermaid: { diagramType, svg: svgCode, bindFunctions }
 
     %% Return to Web Integration
     activate Mermaid
-    Queue-->>Mermaid: render result
     Mermaid->>DOM: element.innerHTML = svg
-    
+
     opt postRenderCallback
         Mermaid->>User: postRenderCallback(id)
     end
-    
+
     opt bindFunctions exist
         Mermaid->>DOM: bindFunctions(element)
     end
@@ -246,18 +259,20 @@ sequenceDiagram
 
     %% Parse Function Flow
     User->>+Mermaid: mermaid.parse(text, parseOptions)
-    activate Queue
-    
-    Queue->>+API: mermaidAPI.parse(text, parseOptions)
-    
+
+    Mermaid->>+API: mermaidAPI.parse(text, parseOptions)
+
     API->>DiagramAPI: addDiagrams()
-    API->>Preprocessor: processAndSetConfigs(text)
-    Preprocessor-->>API: { code, config }
-    API->>Diagram: getDiagramFromText(code)
+    API->>Preprocessor: prepareJob(text)
+    Preprocessor-->>API: { code, configKey, concurrency }
+    API->>Coordinator: acquire({ configKey, resources })
+    Coordinator-->>API: slot acquired
+    API->>Config: reset() + addDirective(diagram config)
+    API->>Diagram: Diagram.fromText(code)
     Diagram-->>API: diagram instance
-    API-->>-Queue: { diagramType: diagram.type, config }
-    
-    Queue-->>-Mermaid: parse result
+    API->>Coordinator: release slot
+    API-->>-Mermaid: { diagramType: diagram.type, config }
+
     Mermaid-->>-User: ParseResult or false
 
     %% External Diagram Registration
@@ -294,8 +309,11 @@ sequenceDiagram
     end
 
     %% Configuration Details
+    Note over Coordinator: Concurrency Control
+    Note right of Coordinator: Rules:<br/>- jobs with deeply equal configs run concurrently<br/>- conflicting configs are serialized (FIFO)<br/>- named resources act as mutexes<br/>(legacy shared state, layout pipeline, ...)
+
     Note over Config: Configuration Functions
-    Note right of Config: Functions:<br/>- reset()<br/>- getConfig()<br/>- setConfig()<br/>- getSiteConfig()<br/>- updateSiteConfig()<br/>- saveConfigFromInitialize()
+    Note right of Config: Functions:<br/>- reset()<br/>- getConfig()<br/>- setConfig()<br/>- getSiteConfig()<br/>- updateSiteConfig()<br/>- saveConfigFromInitialize()<br/>- evaluateConfigInIsolation()
     
     Note over Styles: CSS Generation
     Note right of Styles: Features:<br/>- createCssStyles()<br/>- createUserStyles()<br/>- cssImportantStyles()<br/>- Theme integration<br/>- Class definitions

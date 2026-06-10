@@ -94,13 +94,15 @@ export const parser: ParserDefinition = {
   // @ts-expect-error - PacketDB is not assignable to DiagramDB
   parser: { yy: undefined },
   parse: async (input: string): Promise<void> => {
-    const ast: Packet = await parse('packet', input);
+    // Capture the db before the first `await`, since `yy` may be reassigned
+    // by a concurrent parse before the AST parsing finishes.
     const db = parser.parser?.yy;
     if (!(db instanceof PacketDB)) {
       throw new Error(
         'parser.parser?.yy was not a PacketDB. This is due to a bug within Mermaid, please report this issue at https://github.com/mermaid-js/mermaid/issues.'
       );
     }
+    const ast: Packet = await parse('packet', input);
     log.debug(ast);
     populate(ast, db);
   },

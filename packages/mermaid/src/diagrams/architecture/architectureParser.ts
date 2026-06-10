@@ -23,14 +23,16 @@ export const parser: ParserDefinition = {
     yy: undefined,
   },
   parse: async (input: string): Promise<void> => {
-    const ast: Architecture = await parse('architecture', input);
-    log.debug(ast);
+    // Capture the db before the first `await`, since `yy` may be reassigned
+    // by a concurrent parse before the AST parsing finishes.
     const db = parser.parser?.yy;
     if (!(db instanceof ArchitectureDB)) {
       throw new Error(
         'parser.parser?.yy was not a ArchitectureDB. This is due to a bug within Mermaid, please report this issue at https://github.com/mermaid-js/mermaid/issues.'
       );
     }
+    const ast: Architecture = await parse('architecture', input);
+    log.debug(ast);
     populateDb(ast, db);
   },
 };

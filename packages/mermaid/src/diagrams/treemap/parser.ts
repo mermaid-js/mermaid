@@ -88,17 +88,19 @@ export const parser: ParserDefinition = {
   parser: { yy: undefined },
   parse: async (text: string): Promise<void> => {
     try {
-      // Use a generic parse that accepts any diagram type
-
-      const parseFunc = parse as (diagramType: string, text: string) => Promise<TreemapAst>;
-      const ast = await parseFunc('treemap', text);
-      log.debug('Treemap AST:', ast);
+      // Capture the db before the first `await`, since `yy` may be reassigned
+      // by a concurrent parse before the AST parsing finishes.
       const db = parser.parser?.yy;
       if (!(db instanceof TreeMapDB)) {
         throw new Error(
           'parser.parser?.yy was not a TreemapDB. This is due to a bug within Mermaid, please report this issue at https://github.com/mermaid-js/mermaid/issues.'
         );
       }
+      // Use a generic parse that accepts any diagram type
+
+      const parseFunc = parse as (diagramType: string, text: string) => Promise<TreemapAst>;
+      const ast = await parseFunc('treemap', text);
+      log.debug('Treemap AST:', ast);
       populate(ast, db);
     } catch (error) {
       log.error('Error parsing treemap:', error);

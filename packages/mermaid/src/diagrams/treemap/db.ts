@@ -5,16 +5,9 @@ import DEFAULT_CONFIG from '../../defaultConfig.js';
 import { getConfig as commonGetConfig } from '../../config.js';
 import { cleanAndMerge } from '../../utils.js';
 import { isLabelStyle } from '../../rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
-import {
-  clear as commonClear,
-  getAccDescription,
-  getAccTitle,
-  getDiagramTitle,
-  setAccDescription,
-  setAccTitle,
-  setDiagramTitle,
-} from '../common/commonDb.js';
+import { CommonDB } from '../common/commonDb.js';
 export class TreeMapDB implements DiagramDB {
+  private readonly common = new CommonDB();
   private nodes: TreemapNode[] = [];
   private levels: Map<TreemapNode, number> = new Map<TreemapNode, number>();
   private outerNodes: TreemapNode[] = [];
@@ -78,7 +71,7 @@ export class TreeMapDB implements DiagramDB {
   }
 
   public clear() {
-    commonClear();
+    this.common.clear();
     this.nodes = [];
     this.levels = new Map();
     this.outerNodes = [];
@@ -86,10 +79,10 @@ export class TreeMapDB implements DiagramDB {
     this.root = undefined;
   }
 
-  public setAccTitle = setAccTitle;
-  public getAccTitle = getAccTitle;
-  public setDiagramTitle = setDiagramTitle;
-  public getDiagramTitle = getDiagramTitle;
-  public getAccDescription = getAccDescription;
-  public setAccDescription = setAccDescription;
+  public setAccTitle = this.common.setAccTitle;
+  public getAccTitle = this.common.getAccTitle;
+  public setDiagramTitle = this.common.setDiagramTitle;
+  public getDiagramTitle = this.common.getDiagramTitle;
+  public getAccDescription = this.common.getAccDescription;
+  public setAccDescription = this.common.setAccDescription;
 }
