@@ -375,6 +375,51 @@ describe('validateLayout new geometric issues', () => {
     expect(getIssueTypes(layout)).toContain('edge-intersects-obstacle');
   });
 
+  it('flags edge-intersects-group-title when an edge crosses a group title section', () => {
+    const lane: Node = {
+      id: 'lane',
+      x: 0,
+      y: 0,
+      width: 200,
+      height: 120,
+      isGroup: true,
+      groupTitleRect: { left: -100, right: 100, top: -60, bottom: -30 },
+    } as any;
+    const e = mkEdge('e', undefined, undefined, [
+      { x: -120, y: -45 },
+      { x: 120, y: -45 },
+    ]);
+    const layout: LayoutData = { nodes: [lane], edges: [e], config: {} as any };
+
+    const res = validateLayout(layout);
+    expect(res.ok).toBe(false);
+    const issue = res.issues.find((i) => i.type === 'edge-intersects-group-title');
+    expect(issue).toBeDefined();
+    expect(issue?.nodeIds).toEqual(['lane']);
+  });
+
+  it('does NOT flag edge-intersects-group-title for an endpoint escaping its own group title', () => {
+    const lane: Node = {
+      id: 'lane',
+      x: 0,
+      y: 0,
+      width: 200,
+      height: 120,
+      isGroup: true,
+      groupTitleRect: { left: -100, right: 100, top: -60, bottom: -30 },
+    } as any;
+    const child = { ...mkNode('child', 0, 0), parentId: 'lane' } as Node;
+    const e = mkEdge('e', 'child', undefined, [
+      { x: 0, y: -20 },
+      { x: 0, y: -80 },
+      { x: 120, y: -80 },
+    ]);
+    const layout: LayoutData = { nodes: [lane, child], edges: [e], config: {} as any };
+
+    const types = getIssueTypes(layout);
+    expect(types).not.toContain('edge-intersects-group-title');
+  });
+
   it('flags edge-intersects-obstacle when an edge loops back through its OWN src node interior', () => {
     // User-reported case (real SVG from a swimlane fixture): the D→H edge
     // exits D's right-top at (96.45, 97.5), extends 20u east, drops 20u
@@ -484,6 +529,71 @@ describe('validateLayout new geometric issues', () => {
     expect(types).toContain('edge-shared-subpath');
   });
 
+  it('flags edge-parallel-segment-too-close for long nearby parallel sections', () => {
+    // Regression shape from swimlanes/12 before the rail-separation fix:
+    // `I -> exit` and `B -> exit` run vertically only ~1.94px apart over
+    // more than 80px of shared projected span.
+    const iExit = mkEdge('L_I_exit_0', undefined, undefined, [
+      { x: -113.64374732971191, y: 955 },
+      { x: 220.83124923706055, y: 955 },
+      { x: 220.83124923706055, y: 1083.5643920898438 },
+      { x: 240.546875, y: 1083.5643920898438 },
+    ]);
+    const bExit = mkEdge('L_B_exit_0', undefined, undefined, [
+      { x: -131.5906219482422, y: 192 },
+      { x: -131.5906219482422, y: 928 },
+      { x: 222.77187538146973, y: 928 },
+      { x: 222.77187538146973, y: 1038.0643920898438 },
+      { x: 258.328125, y: 1038.0643920898438 },
+      { x: 258.328125, y: 1058.0643920898438 },
+    ]);
+    const layout: LayoutData = { nodes: [], edges: [iExit, bExit], config: {} as any };
+
+    const res = validateLayout(layout);
+    const issue = res.issues.find((i) => i.type === 'edge-parallel-segment-too-close');
+    expect(issue).toBeDefined();
+    expect(issue?.details?.edgeIds).toEqual(['L_B_exit_0', 'L_I_exit_0']);
+    expect(issue?.details?.gap).toBeCloseTo(1.9406261444091797);
+  });
+
+  it('does NOT flag edge-parallel-segment-too-close after the sections are separated', () => {
+    const iExit = mkEdge('L_I_exit_0', undefined, undefined, [
+      { x: -131.5906219482422, y: 996 },
+      { x: -131.5906219482422, y: 1016 },
+      { x: 213.83124923706055, y: 1016 },
+      { x: 213.83124923706055, y: 1083.5643920898438 },
+      { x: 240.546875, y: 1083.5643920898438 },
+    ]);
+    const bExit = mkEdge('L_B_exit_0', undefined, undefined, [
+      { x: -131.5906219482422, y: 192 },
+      { x: -131.5906219482422, y: 928 },
+      { x: 222.77187538146973, y: 928 },
+      { x: 222.77187538146973, y: 1038.0643920898438 },
+      { x: 258.328125, y: 1038.0643920898438 },
+      { x: 258.328125, y: 1058.0643920898438 },
+    ]);
+    const layout: LayoutData = { nodes: [], edges: [iExit, bExit], config: {} as any };
+
+    const types = getIssueTypes(layout);
+    expect(types).not.toContain('edge-parallel-segment-too-close');
+  });
+
+  it('does NOT flag edge-parallel-segment-too-close for terminal stubs on a shared node', () => {
+    const first = mkEdge('first', 'D', 'E', [
+      { x: 0, y: 0 },
+      { x: 0, y: 20 },
+      { x: 80, y: 20 },
+    ]);
+    const second = mkEdge('second', 'D', 'H', [
+      { x: 4, y: 0 },
+      { x: 4, y: 50 },
+    ]);
+    const layout: LayoutData = { nodes: [], edges: [first, second], config: {} as any };
+
+    const types = getIssueTypes(layout);
+    expect(types).not.toContain('edge-parallel-segment-too-close');
+  });
+
   it('flags edge-border-hugging when an edge runs near a node border for a long distance', () => {
     // Node N is at (0, 0) with size 40x40, so rect is {left: -20, right: 20, top: -20, bottom: 20}
     // Edge runs OUTSIDE the node but very close to the top border (y=-20)
@@ -521,6 +631,31 @@ describe('validateLayout new geometric issues', () => {
 
     const types = getIssueTypes(layout);
     expect(types).toContain('edge-border-hugging');
+  });
+
+  it('flags node-border-hugging when a child touches its own swimlane border', () => {
+    const lane: Node = {
+      id: 'lane',
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 120,
+      isGroup: true,
+      shape: 'swimlane',
+    } as any;
+    const child: Node = {
+      id: 'A',
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 40,
+      parentId: 'lane',
+      isGroup: false,
+    } as any;
+    const layout: LayoutData = { nodes: [lane, child], edges: [], config: {} as any };
+
+    const types = getIssueTypes(layout);
+    expect(types).toContain('node-border-hugging');
   });
 
   it('flags edge-label-off-edge when a labelled edge polyline does not cross its own label node', () => {
@@ -709,5 +844,50 @@ describe('validateLayout new geometric issues', () => {
 
     const types = getIssueTypes(layout);
     expect(types).not.toContain('edge-label-overlaps-foreign-edge');
+  });
+
+  it('flags edge-label-overlaps-own-arrowhead when an overlay label covers its end marker', () => {
+    const a = mkNode('A', 0, 0);
+    const b = mkNode('B', 200, 0);
+    const e = {
+      ...mkEdge('e', 'A', 'B', [
+        { x: a.x! + 20, y: 0 },
+        { x: b.x! - 20, y: 0 },
+      ]),
+      arrowTypeEnd: 'arrow_point',
+      label: 'Disagree',
+      x: 176,
+      y: 0,
+      width: 56,
+      height: 21,
+    } as unknown as Edge;
+    const layout: LayoutData = { nodes: [a, b], edges: [e], config: {} as any };
+
+    const res = validateLayout(layout);
+    const markerIssue = res.issues.find((i) => i.type === 'edge-label-overlaps-own-arrowhead');
+    expect(markerIssue).toBeDefined();
+    expect(markerIssue?.edgeId).toBe('e');
+    expect(markerIssue?.details?.terminal).toBe('end');
+  });
+
+  it('does NOT flag edge-label-overlaps-own-arrowhead when an overlay label is clear of markers', () => {
+    const a = mkNode('A', 0, 0);
+    const b = mkNode('B', 200, 0);
+    const e = {
+      ...mkEdge('e', 'A', 'B', [
+        { x: a.x! + 20, y: 0 },
+        { x: b.x! - 20, y: 0 },
+      ]),
+      arrowTypeEnd: 'arrow_point',
+      label: 'Agree',
+      x: 100,
+      y: 0,
+      width: 40,
+      height: 21,
+    } as unknown as Edge;
+    const layout: LayoutData = { nodes: [a, b], edges: [e], config: {} as any };
+
+    const types = getIssueTypes(layout);
+    expect(types).not.toContain('edge-label-overlaps-own-arrowhead');
   });
 });

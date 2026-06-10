@@ -61,6 +61,9 @@ export function repairCornerAttachments(edges: any[], nodeByIdMap: Map<string, a
         continue;
       }
       const r = rectOfNodeBounds(node);
+      if (!r) {
+        continue;
+      }
       const endpoint = atStart ? pts[0] : pts[pts.length - 1];
       const att = attachmentFor(endpoint, r);
       if (!att) {
@@ -110,6 +113,9 @@ export function repairCornerAttachments(edges: any[], nodeByIdMap: Map<string, a
           continue;
         }
         const fr = rectOfNodeBounds(farNode);
+        if (!fr) {
+          continue;
+        }
         const farEndpoint = atStart ? pts[pts.length - 1] : pts[0];
         const farAtt = attachmentFor(farEndpoint, fr);
         if (!farAtt || farAtt.side !== att.side) {

@@ -404,6 +404,13 @@ export interface SwimlaneDiagramConfig extends BaseDiagramConfig {
    *
    */
   optimizeRanksByCrossings?: boolean;
+  /**
+   * Automatically reorders top-level swimlanes with a deterministic
+   * weighted-linear-arrangement heuristic. Disabled by default because
+   * source swimlane order can carry semantic meaning.
+   *
+   */
+  automaticLaneOrdering?: boolean;
 }
 /**
  * The object containing configurations specific for sequence diagrams

@@ -1,0 +1,40 @@
+{
+  "nodes": [
+    {
+      "id": "24",
+      "width": 232,
+      "height": 87
+    },
+    {
+      "id": "25",
+      "width": 232,
+      "height": 66
+    },
+    {
+      "id": "26",
+      "width": 232,
+      "height": 66
+    },
+    {
+      "id": "28",
+      "width": 232,
+      "height": 108
+    },
+    {
+      "id": "23",
+      "width": 232,
+      "height": 87
+    },
+    {
+      "id": "27",
+      "width": 232,
+      "height": 66
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "a6badaf541315a18019756fc4aa691ca05d3333d2b9919a319690646e8571e46",
+    "capturedAt": "2026-06-08T13:28:32.834Z",
+    "capturedFrom": "dev-explorer layout-tests/swimlanes/15-border-hugging-lr.mmd theme=redux look=neo layout=swimlane"
+  }
+}

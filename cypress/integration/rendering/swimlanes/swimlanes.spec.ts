@@ -2,24 +2,14 @@ import { imgSnapshotTest, renderGraph } from '../../../helpers/util.ts';
 
 const SWIMLANE_FIXTURE_DIR = 'cypress/platform/dev-diagrams/layout-tests/swimlanes';
 
-const SWIMLANE_FIXTURES = [
-  '1-simple.mmd',
-  '10-node-placement.mmd',
-  '2-decisions-lr.mmd',
-  '3-decisions-tb.mmd',
-  '4-car-fun-sales-tb.mmd',
-  '5-car-fun-sales-wide-tb.mmd',
-  '6-legal-constr-sales.mmd',
-  '7-car-sales-constr.mmd',
-  '8-query-process-2.mmd',
-  '9-edge-labels.mmd',
-  'commant.mmd',
-  'intake-review-complete.mmd',
-  'mermaid-work.mmd',
-  'query-process.mmd',
-  'sales-process.mmd',
-  'simple-2.mmd',
-];
+const readSwimlaneFixtures = (): string[] => {
+  const fixtures = Cypress.env('swimlaneFixtures');
+  return Array.isArray(fixtures) && fixtures.every((fixture) => typeof fixture === 'string')
+    ? fixtures
+    : [];
+};
+
+const SWIMLANE_FIXTURES = readSwimlaneFixtures();
 
 // A representative subset additionally rendered in handdrawn/rough mode. Swimlanes
 // inherits rough rendering from the flowchart node shapes and the shared cluster
@@ -101,6 +91,7 @@ const nodeShape = (label: string): Cypress.Chainable<JQuery<HTMLElement>> => {
 
 describe('Swimlanes diagram', () => {
   it('covers every swimlanes layout-test fixture', () => {
+    expect(SWIMLANE_FIXTURES.length, 'generated swimlane fixture inventory').to.be.greaterThan(0);
     cy.task('listSwimlaneFixtures').should('deep.equal', SWIMLANE_FIXTURES);
   });
 

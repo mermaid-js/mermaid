@@ -2228,6 +2228,13 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           Enables a crossing-aware rank optimization pass for swimlane layouts.
         type: boolean
         default: true
+      automaticLaneOrdering:
+        description: |
+          Automatically reorders top-level swimlanes with a deterministic
+          weighted-linear-arrangement heuristic. Disabled by default because
+          source swimlane order can carry semantic meaning.
+        type: boolean
+        default: false
 
   FlowchartDiagramConfig:
     title: Flowchart Diagram Config

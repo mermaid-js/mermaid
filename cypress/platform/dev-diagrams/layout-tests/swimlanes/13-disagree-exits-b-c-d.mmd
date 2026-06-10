@@ -1,0 +1,39 @@
+---
+config:
+  theme: redux
+  look: neo
+---
+
+swimlane TD
+subgraph X1
+  A(Start)
+  B{{B------}}
+  I[I]
+  id1[(Database)]
+end
+subgraph X3
+  Sys1
+  E
+end
+subgraph X2
+  C{{C------------}}
+  D{{D}}
+  F
+  G@{ shape: notch-pent }
+  H
+  exit(Exit)
+end
+  A --> Sys1
+  --> B
+  -->|Agree| C
+  -->|Agree| D
+  -->|Agree| E
+  --> F
+  --> G
+  --> H[H-]
+  --> I
+  --> exit
+
+  B -->|Disagree| exit
+  C -->|Disagree| exit
+  D -->|Disagree| exit
