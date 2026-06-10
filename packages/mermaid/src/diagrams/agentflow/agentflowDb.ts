@@ -1062,7 +1062,12 @@ You have to call mermaid.initialize.`
 
     const subGraph: FlowSubGraph = {
       id: id,
-      nodes: nodeList,
+      // A subgraph is never a member of itself. In-block edge endpoints are
+      // folded into the member list, so `a --> myFlow` written inside
+      // `flow myFlow … end` would otherwise make the flow its own member and
+      // self-parent, crashing the renderer with graphlib's "would create a
+      // cycle" (issue #70).
+      nodes: nodeList.filter((nodeId: string) => nodeId !== id),
       title: title.trim(),
       classes: [],
       dir,
