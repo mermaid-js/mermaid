@@ -372,6 +372,38 @@ describe('Graphlib decorations', () => {
       expect(cGraph.nodes().length).toBe(1);
       expect(bGraph.edges().length).toBe(0);
     });
+
+    it('adjustClustersAndEdges should rewrite edges from nested cluster nodes to descendant anchors GLB78', function () {
+      /*
+      subgraph outer
+        subgraph 1 [inner]
+          external
+          subgraph sub
+            internal
+          end
+          sub --> external
+        end
+      end
+      */
+      g.setNode('outer', { data: 1 });
+      g.setNode('1', { data: 2 });
+      g.setNode('sub', { data: 3 });
+      g.setNode('external', { data: 4 });
+      g.setNode('internal', { data: 5 });
+      g.setParent('1', 'outer');
+      g.setParent('external', '1');
+      g.setParent('sub', '1');
+      g.setParent('internal', 'sub');
+      g.setEdge('sub', 'external', { data: 'link1' }, '1');
+
+      adjustClustersAndEdges(g);
+
+      const outerGraph = g.node('outer').graph;
+      const innerGraph = outerGraph.node('1').graph;
+
+      expect(innerGraph.edges()).toEqual([{ v: 'internal', w: 'external', name: '1' }]);
+      expect(validate(innerGraph)).toBe(true);
+    });
   });
   it('adjustClustersAndEdges should handle nesting GLB77', function () {
     /*

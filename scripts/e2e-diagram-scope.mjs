@@ -211,6 +211,7 @@ export function detectScope(files, options = {}) {
       continue;
     }
 
+    // Anything else (root config, CI YAML, docs, cypress/other, etc.) → full suite
     // Ignorable files (docs, changesets, AI config, etc.) → skip silently.
     // Guard: .md files inside a diagram source folder are NOT ignorable — they
     // may be samples or signal intent, and their diagram folder was already

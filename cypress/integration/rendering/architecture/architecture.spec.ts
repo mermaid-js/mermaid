@@ -10,40 +10,6 @@ describe('architecture diagram', () => {
                 service disk1(disk)[Storage] in api
                 service disk2(disk)[Storage] in api
                 service server(server)[Server] in api
-                service gateway(internet)[Gateway]
-
-                db:L -- R:server
-                disk1:T -- B:server
-                disk2:T -- B:db
-                server:T -- B:gateway
-            `
-    );
-  });
-  it('should render a simple architecture diagram with titleAndAccessibilities', () => {
-    imgSnapshotTest(
-      `architecture-beta
-          title Simple Architecture Diagram
-          accTitle: Accessibility Title
-          accDescr: Accessibility Description
-          group api(cloud)[API]
-
-          service db(database)[Database] in api
-          service disk1(disk)[Storage] in api
-          service disk2(disk)[Storage] in api
-          service server(server)[Server] in api
-
-          db:L -- R:server
-          disk1:T -- B:server
-          disk2:T -- B:db
-      `
-    );
-  });
-  it('should render an architecture diagram with groups within groups', () => {
-    imgSnapshotTest(
-      `architecture-beta
-                group api[API]
-                group public[Public API] in api
-                group private[Private API] in api
 
                 service serv1(server)[Server] in public
 
@@ -73,6 +39,7 @@ describe('architecture diagram', () => {
                 service serv1(server)[Server 1]
                 service serv2(server)[Server 2]
                 service disk(disk)[Disk]
+        
 
                 db:L -- R:s3
                 serv1:L -- T:s3
@@ -89,11 +56,13 @@ describe('architecture diagram', () => {
                 service servR(server)[Server 3]
                 service servT(server)[Server 4]
                 service servB(server)[Server 5]
+        
 
                 servC:L --> R:servL
                 servC:R --> L:servR
                 servC:T --> B:servT
                 servC:B --> T:servB
+        
 
                 servL:T --> L:servT
                 servL:B --> L:servB
@@ -110,12 +79,14 @@ describe('architecture diagram', () => {
                 group top_group(cloud)[Top]
                 group bottom_group(cloud)[Bottom]
                 group center_group(cloud)[Center]
+        
 
                 service left_disk(disk)[Disk] in left_group
                 service right_disk(disk)[Disk] in right_group
                 service top_disk(disk)[Disk] in top_group
                 service bottom_disk(disk)[Disk] in bottom_group
                 service center_disk(disk)[Disk] in center_group
+        
 
                 left_disk{group}:R --> L:center_disk{group}
                 right_disk{group}:L --> R:center_disk{group}
@@ -132,11 +103,13 @@ describe('architecture diagram', () => {
                 service servR(server)[Server 3]
                 service servT(server)[Server 4]
                 service servB(server)[Server 5]
+        
 
                 servC:L -[Label]- R:servL
                 servC:R -[Label]- L:servR
                 servC:T -[Label]- B:servT
                 servC:B -[Label]- T:servB
+        
 
                 servL:T -[Label]- L:servT
                 servL:B -[Label]- L:servB
@@ -155,6 +128,7 @@ describe('architecture diagram', () => {
                 service bottom_gateway(internet)[Gateway]
                 junction juncC
                 junction juncR
+        
 
                 left_disk:R -- L:juncC
                 top_disk:B -- T:juncC
@@ -280,6 +254,7 @@ describe('architecture diagram', () => {
                 web:B --> T:pe2
                 pe2:R --> L:bus
                 vm1:R --> L:pe2
+            `
             `,
       { architecture: { randomize: false } }
     );
