@@ -207,7 +207,7 @@ describe('agentflow element mappings', () => {
       expect(stats.edges).toBeGreaterThanOrEqual(1);
       expect(stats.subgraphs).toBe(1);
       expect(stats.totalElements).toBe(
-        stats.vertices + stats.edges + stats.subgraphs + stats.connectors
+        stats.vertices + stats.edges + stats.subgraphs + stats.connectors + stats.attachments
       );
     });
   });

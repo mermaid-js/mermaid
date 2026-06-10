@@ -144,8 +144,15 @@ export interface ElementPosition {
   endIndex: number;
 }
 
-/** The kinds of top-level statements agentflow currently emits mappings for. */
-export type AgentflowStatementType = 'vertex' | 'edge' | 'subgraph' | 'connector';
+/**
+ * The kinds of top-level statements agentflow currently emits mappings for.
+ *
+ * `attachment` marks a standalone `id@{ ... }` metadata block on a bare
+ * reference — it annotates an element declared elsewhere rather than
+ * declaring one, so consumers can tell it apart from a declaration's
+ * `vertex` mapping (issue #75).
+ */
+export type AgentflowStatementType = 'vertex' | 'edge' | 'subgraph' | 'connector' | 'attachment';
 
 /** A single element-to-position mapping. */
 export interface AgentflowElementMapping {
