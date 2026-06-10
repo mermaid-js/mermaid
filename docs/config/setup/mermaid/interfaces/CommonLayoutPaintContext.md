@@ -10,7 +10,7 @@
 
 # Interface: CommonLayoutPaintContext\<PreparedLayout, MeasureResult>
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:45](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L45)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:41](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L41)
 
 ## Extends
 
@@ -32,7 +32,7 @@ Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.
 
 > **element**: `D3Selection`<`SVGElement`>
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:39](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L39)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:35](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L35)
 
 #### Inherited from
 
@@ -44,7 +44,7 @@ Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.
 
 > `optional` **helpers**: `object`
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:40](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L40)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:36](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L36)
 
 #### common
 
@@ -294,13 +294,19 @@ Shape defaults to 'rect'
 
 #### insertEdge()
 
-> **insertEdge**: (`elem`, `edge`, `clusterDb`, `diagramType`, `startNode`, `endNode`, `diagramId?`, `skipIntersect`) => `EdgePaths`
+> **insertEdge**: <`T`>(`elem`, `edge`, `clusterDb`, `diagramType`, `startNode`, `endNode`, `diagramId?`, `skipIntersect`) => `EdgePaths`
+
+##### Type Parameters
+
+###### T
+
+`T` _extends_ `SVGGraphicsElement`
 
 ##### Parameters
 
 ###### elem
 
-`EdgeContainer`
+`D3Selection`<`T`>
 
 ###### edge
 
@@ -336,13 +342,19 @@ Shape defaults to 'rect'
 
 #### insertEdgeLabel()
 
-> **insertEdgeLabel**: (`elem`, `edge`) => `Promise`<`SVGGElement`>
+> **insertEdgeLabel**: <`T`>(`elem`, `edge`) => `Promise`<`SVGGElement`>
+
+##### Type Parameters
+
+###### T
+
+`T` _extends_ `SVGGraphicsElement`
 
 ##### Parameters
 
 ###### elem
 
-`EdgeContainer`
+`D3Selection`<`T`>
 
 ###### edge
 
@@ -492,7 +504,7 @@ The curve factory to use
 
 > **measure**: `MeasureResult`
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:49](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L49)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:45](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L45)
 
 ---
 
@@ -500,7 +512,7 @@ Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.
 
 > `optional` **options**: [`RenderOptions`](RenderOptions.md)
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:41](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L41)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:37](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L37)
 
 #### Inherited from
 
@@ -512,7 +524,7 @@ Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.
 
 > `optional` **preparedLayout**: `PreparedLayout`
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:42](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L42)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:38](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L38)
 
 #### Inherited from
 

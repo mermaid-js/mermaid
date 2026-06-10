@@ -12,7 +12,7 @@
 
 > **createCommonLayoutRenderer**<`CoreResult`, `PreparedLayout`, `MeasureResult`>(`__namedParameters`): (`data4Layout`, `svg`, `helpers?`, `options?`) => `Promise`<`void`>
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:87](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L87)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:83](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L83)
 
 ## Type Parameters
 
@@ -134,11 +134,11 @@ Splits on <br> tags
 
 ##### insertEdge
 
-(`elem`, `edge`, `clusterDb`, `diagramType`, `startNode`, `endNode`, `diagramId?`, `skipIntersect`) => `EdgePaths`
+<`T`>(`elem`, `edge`, `clusterDb`, `diagramType`, `startNode`, `endNode`, `diagramId?`, `skipIntersect`) => `EdgePaths`
 
 ##### insertEdgeLabel
 
-(`elem`, `edge`) => `Promise`<`SVGGElement`>
+<`T`>(`elem`, `edge`) => `Promise`<`SVGGElement`>
 
 ##### insertMarkers
 
