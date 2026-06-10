@@ -10,8 +10,6 @@
       { "id": "gen_html", "vertexKind": "tool" },
       { "id": "style_guide", "vertexKind": "refdoc" }
     ],
-    "edges": [
-      { "start": "gen_html", "end": "style_guide", "edgeSemantic": "reference" }
-    ]
+    "edges": [{ "start": "gen_html", "end": "style_guide", "edgeSemantic": "reference" }]
   }
 }

@@ -1,13 +1,13 @@
 # Agentflow v0.8.1 — Implementation Plan
 
-|             |                                                                                                  |
-| ----------- | ------------------------------------------------------------------------------------------------ |
-| **Spec**    | `AGENTFLOW-SYNTAX.md` v0.8.1 (2026-05-26)                                                        |
-| **Code**    | `packages/mermaid/src/diagrams/agentflow/` — currently v0.7.0 baseline                            |
-| **Status**  | Draft — for review before any code is written                                                    |
-| **Gap**     | The code skipped the v0.8.0 round entirely; this plan brings it directly from v0.7.0 → v0.8.1.   |
+|            |                                                                                                |
+| ---------- | ---------------------------------------------------------------------------------------------- |
+| **Spec**   | `AGENTFLOW-SYNTAX.md` v0.8.1 (2026-05-26)                                                      |
+| **Code**   | `packages/mermaid/src/diagrams/agentflow/` — currently v0.7.0 baseline                         |
+| **Status** | Draft — for review before any code is written                                                  |
+| **Gap**    | The code skipped the v0.8.0 round entirely; this plan brings it directly from v0.7.0 → v0.8.1. |
 
-> No code changes have been made. This document is the *implementation contract* — once
+> No code changes have been made. This document is the _implementation contract_ — once
 > approved it becomes the work list.
 
 ---
@@ -28,8 +28,8 @@ The bulk of this work is **deletions, not additions**:
 - 5 instance shapes + the def-resolution machinery + 3 instance diagnostics go.
 - 4 type/template diagnostic codes go; the `type` and `template` declaration keywords go.
 - 4 capability-evaluation diagnostics + the validator + the spec file go.
-- 4 REF_KIND_* diagnostics go (with `procs`).
-- 3 CONTAINER_EDGE_* diagnostics go (with `==>` parameter binding).
+- 4 REF*KIND*\* diagnostics go (with `procs`).
+- 3 CONTAINER*EDGE*\* diagnostics go (with `==>` parameter binding).
 - The synthesized-connector logic goes; a real `connector` keyword arrives.
 
 The two real additions are:
@@ -71,12 +71,12 @@ parses identically and gets a `type` tag on `FlowSubGraph` in the DB.
 
 **Current.** Three lexer rules generate edges:
 
-| Lexer rule | What it matches | Examples produced |
-| ---------- | --------------- | ----------------- |
-| `[xo<]?\-\-+[-xo>]\>` | normal-stroke arrow family | `-->`, `--x`, `--o`, `<-->`, `o--o`, `-->>` |
-| `[xo<]?\=\=+[=xo>]\s*` | thick-stroke arrow family | `==>` |
-| `[xo<]?\-?\.+\-[xo>]?\s*` | dotted-stroke arrow family | `-.->`, dotted variants |
-| `\~\~[\~]+\s*` | invisible edge | `~~` |
+| Lexer rule                | What it matches            | Examples produced                           |
+| ------------------------- | -------------------------- | ------------------------------------------- |
+| `[xo<]?\-\-+[-xo>]\>`     | normal-stroke arrow family | `-->`, `--x`, `--o`, `<-->`, `o--o`, `-->>` |
+| `[xo<]?\=\=+[=xo>]\s*`    | thick-stroke arrow family  | `==>`                                       |
+| `[xo<]?\-?\.+\-[xo>]?\s*` | dotted-stroke arrow family | `-.->`, dotted variants                     |
+| `\~\~[\~]+\s*`            | invisible edge             | `~~`                                        |
 
 Semantic mapping (`computeEdgeSemantic()`, `agentflowDb.ts:1450–1485`) has eight cases:
 control / data / governance / conformance / delegation / failure / association /
@@ -84,11 +84,11 @@ bidirectional.
 
 **Required.** Three operators, three semantics:
 
-| Operator | Semantic   | Marker          |
-| -------- | ---------- | --------------- |
-| `-->`    | sequence   | single arrow    |
-| `-.-`    | reference  | dotted, no arrow|
-| `--x`    | failure    | X endpoint      |
+| Operator | Semantic  | Marker           |
+| -------- | --------- | ---------------- |
+| `-->`    | sequence  | single arrow     |
+| `-.-`    | reference | dotted, no arrow |
+| `--x`    | failure   | X endpoint       |
 
 **Change.**
 
@@ -145,16 +145,16 @@ No semantic aliases (`task`, `tool`, `input`, etc.).
 
 **Required.** Shape catalogue:
 
-| Alias (canonical) | Mermaid ID    | Role                             |
-| ----------------- | ------------- | -------------------------------- |
-| `task`            | `roundedRect` / `rect` | task (default)          |
-| `tool`            | `subroutine`  | tool node                        |
-| `input`           | `lean-right`  | input value                      |
-| `decision`        | `diamond`     | decision gate                    |
-| `refdoc`          | `lin-doc`     | reference document               |
-| `action`          | `hexagon`     | call to another flow via MCP     |
-| `connector`       | (Agentflow)   | connector keyword node           |
-| —                 | `collapsedGroup` | collapsed flow                |
+| Alias (canonical) | Mermaid ID             | Role                         |
+| ----------------- | ---------------------- | ---------------------------- |
+| `task`            | `roundedRect` / `rect` | task (default)               |
+| `tool`            | `subroutine`           | tool node                    |
+| `input`           | `lean-right`           | input value                  |
+| `decision`        | `diamond`              | decision gate                |
+| `refdoc`          | `lin-doc`              | reference document           |
+| `action`          | `hexagon`              | call to another flow via MCP |
+| `connector`       | (Agentflow)            | connector keyword node       |
+| —                 | `collapsedGroup`       | collapsed flow               |
 
 Everything else is a hard error.
 
@@ -183,16 +183,16 @@ kind. Cross-cutting / universal keys are listed at lines 189–211 (`description
 
 **Required.** Per spec §10:
 
-| Element                | Valid keys                                                                                        |
-| ---------------------- | ------------------------------------------------------------------------------------------------ |
-| `flow`                 | `model` (optional), `memory`, `params`, `returns`                                                |
-| task (default)         | `execution`, `params`, `returns`                                                                  |
-| tool (`shape: tool`)   | `params`, `returns`, `retry`, `cache`, `validate`, `handler`, `output`, `transport`, `command`, `connectorRef` |
-| action (`shape: action`) | `params`, `returns`, `connectorRef`                                                            |
-| connector              | `protocol`, `endpoint`, `transport`, `command`, `auth`, `token_required`                          |
-| input (`shape: input`) | `type`, `value`                                                                                   |
-| refdoc                 | (presentation only; cross-cutting keys apply)                                                     |
-| edge                   | `instruction` (only)                                                                              |
+| Element                  | Valid keys                                                                                                     |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| `flow`                   | `model` (optional), `memory`, `params`, `returns`                                                              |
+| task (default)           | `execution`, `params`, `returns`                                                                               |
+| tool (`shape: tool`)     | `params`, `returns`, `retry`, `cache`, `validate`, `handler`, `output`, `transport`, `command`, `connectorRef` |
+| action (`shape: action`) | `params`, `returns`, `connectorRef`                                                                            |
+| connector                | `protocol`, `endpoint`, `transport`, `command`, `auth`, `token_required`                                       |
+| input (`shape: input`)   | `type`, `value`                                                                                                |
+| refdoc                   | (presentation only; cross-cutting keys apply)                                                                  |
+| edge                     | `instruction` (only)                                                                                           |
 
 Cross-cutting (any authored element except edges for `description`): `description`,
 `instruction`.
@@ -238,7 +238,7 @@ Cross-cutting (any authored element except edges for `description`): `descriptio
 
 ### 2.7 `connector` keyword
 
-**Current.** No keyword. Connectors are *designated* — any node carrying connector
+**Current.** No keyword. Connectors are _designated_ — any node carrying connector
 metadata (`protocol`, `endpoint`, `transport`, `command`, `auth`, `token_required`)
 becomes one. The DB synthesises a `connectors` subgraph grouping
 (agentflowDb.ts:2832–2967).
@@ -342,7 +342,7 @@ are accepted (validated only as metadata applicability). No constraint evaluatio
 
 **Current.** `SHAPE_UNSUPPORTED` exists (probably as a warning).
 
-**Required.** Removed shapes are *hard errors* in v0.8.1, not permissive ignores.
+**Required.** Removed shapes are _hard errors_ in v0.8.1, not permissive ignores.
 
 **Change.**
 
@@ -370,7 +370,7 @@ any missing input values before execution.
 may or may not be informally tolerated.
 
 **Required.** `instruction` is valid on every authored element except edges (where
-it's the *only* permitted key — see §2.2.2).
+it's the _only_ permitted key — see §2.2.2).
 
 **Change.**
 
@@ -585,7 +585,7 @@ These need a decision before Phase 1 starts.
    - (a) Silently rename in the parser (`prompt: …` becomes `instruction: …`).
    - (b) Emit a deprecation warning (`METADATA_KEY_LEGACY_PROMPT`).
    - (c) Hard-error.
-   Recommend (b) for the pre-1.0 window, (c) at v1.0.
+     Recommend (b) for the pre-1.0 window, (c) at v1.0.
 
 4. **Flow-shape id naming.** `flowGroup` is the proposed shape id. Confirm no
    clash with the Mermaid flowchart diagram's internal shape ids.
@@ -608,7 +608,7 @@ These need a decision before Phase 1 starts.
 
 ---
 
-## 6. What is *not* changing
+## 6. What is _not_ changing
 
 For the record, so reviewers can confirm:
 
@@ -642,12 +642,12 @@ For the record, so reviewers can confirm:
 
 Rough order-of-magnitude. Each "day" = one engineer-day.
 
-| Phase | Effort |
-| ----- | ------ |
-| 1 — Grammar | 2 days |
-| 2 — DB model | 4 days |
-| 3 — Diagnostics + validators | 1.5 days |
-| 4 — Tests + conformance | 2 days |
-| **Total** | **~9.5 days** |
+| Phase                        | Effort        |
+| ---------------------------- | ------------- |
+| 1 — Grammar                  | 2 days        |
+| 2 — DB model                 | 4 days        |
+| 3 — Diagnostics + validators | 1.5 days      |
+| 4 — Tests + conformance      | 2 days        |
+| **Total**                    | **~9.5 days** |
 
 This excludes runtime / bridge work that depends on the spec.

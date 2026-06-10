@@ -40,14 +40,7 @@ export type FlowVertexTypeParam =
  * - `'connector'` — declared with the `connector` keyword.
  * - `'task'` — default rounded-rectangle node.
  */
-export type VertexKind =
-  | 'tool'
-  | 'action'
-  | 'input'
-  | 'refdoc'
-  | 'decision'
-  | 'connector'
-  | 'task';
+export type VertexKind = 'tool' | 'action' | 'input' | 'refdoc' | 'decision' | 'connector' | 'task';
 
 export interface FlowVertex {
   classes: string[];
