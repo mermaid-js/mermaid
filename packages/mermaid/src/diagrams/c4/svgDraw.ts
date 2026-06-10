@@ -47,9 +47,11 @@ export const drawRels = (elem: SVG, rels: C4Rel[], conf: C4DrawConfig, diagramId
   for (const rel of rels) {
     const textColor = rel.textColor ? rel.textColor : '#444444';
     const strokeColor = rel.lineColor ? rel.lineColor : '#444444';
-    // The offsets are already parsed to (integer) numbers by the C4 db.
-    const offsetX = rel.offsetX ? rel.offsetX : 0;
-    const offsetY = rel.offsetY ? rel.offsetY : 0;
+    // The parseInt is load-bearing: the JISON grammar passes $key="value" attributes
+    // positionally, so offsets that arrive in the textColor/lineColor parameter slots are
+    // stored by the db as raw strings and must be coerced here before coordinate arithmetic.
+    const offsetX = rel.offsetX ? parseInt(String(rel.offsetX)) : 0;
+    const offsetY = rel.offsetY ? parseInt(String(rel.offsetY)) : 0;
 
     const url = '';
     if (i === 0) {
