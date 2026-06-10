@@ -110,11 +110,15 @@ export interface C4Rel {
   endPoint: C4Point;
 }
 
-/** Font configuration as produced by the `*Font()` helpers of the C4 configuration. */
+/**
+ * Font configuration as produced by the `*Font()` helpers of the C4
+ * configuration. The helpers always populate family/size/weight from the
+ * (defaulted) config, so those fields are typed as present.
+ */
 export interface C4Font {
-  fontFamily?: string;
-  fontSize?: number;
-  fontWeight?: string | number;
+  fontFamily: string;
+  fontSize: number;
+  fontWeight: string | number;
   fontColor?: string;
 }
 

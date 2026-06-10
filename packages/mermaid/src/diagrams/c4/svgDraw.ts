@@ -47,8 +47,9 @@ export const drawRels = (elem: SVG, rels: C4Rel[], conf: C4DrawConfig, diagramId
   for (const rel of rels) {
     const textColor = rel.textColor ? rel.textColor : '#444444';
     const strokeColor = rel.lineColor ? rel.lineColor : '#444444';
-    const offsetX = rel.offsetX ? parseInt(rel.offsetX as unknown as string) : 0;
-    const offsetY = rel.offsetY ? parseInt(rel.offsetY as unknown as string) : 0;
+    // The offsets are already parsed to (integer) numbers by the C4 db.
+    const offsetX = rel.offsetX ? rel.offsetX : 0;
+    const offsetY = rel.offsetY ? rel.offsetY : 0;
 
     const url = '';
     if (i === 0) {
@@ -100,6 +101,8 @@ export const drawRels = (elem: SVG, rels: C4Rel[], conf: C4DrawConfig, diagramId
       }
     }
 
+    // The label was measured by the renderer before drawing.
+    const labelWidth = rel.label.width!;
     let messageConf = conf.messageFont();
     _drawTextCandidateFunc(conf)(
       rel.label.text,
@@ -110,7 +113,7 @@ export const drawRels = (elem: SVG, rels: C4Rel[], conf: C4DrawConfig, diagramId
       Math.min(rel.startPoint.y, rel.endPoint.y) +
         Math.abs(rel.endPoint.y - rel.startPoint.y) / 2 +
         offsetY,
-      rel.label.width!,
+      labelWidth,
       rel.label.height!,
       { fill: textColor },
       messageConf
@@ -129,7 +132,7 @@ export const drawRels = (elem: SVG, rels: C4Rel[], conf: C4DrawConfig, diagramId
           (conf.messageFontSize as number) +
           5 +
           offsetY,
-        Math.max(rel.label.width!, rel.techn.width!),
+        Math.max(labelWidth, rel.techn.width!),
         rel.techn.height!,
         { fill: textColor, 'font-style': 'italic' },
         messageConf
@@ -176,7 +179,7 @@ const drawBoundary = function (elem: SVG, boundary: C4Boundary, conf: C4DrawConf
   // draw label
   let boundaryConf = conf.boundaryFont();
   boundaryConf.fontWeight = 'bold';
-  boundaryConf.fontSize = boundaryConf.fontSize! + 2;
+  boundaryConf.fontSize = boundaryConf.fontSize + 2;
   boundaryConf.fontColor = fontColor;
   _drawTextCandidateFunc(conf)(
     boundary.label.text,
@@ -208,7 +211,7 @@ const drawBoundary = function (elem: SVG, boundary: C4Boundary, conf: C4DrawConf
   // draw descr
   if (boundary.descr && boundary.descr.text !== '') {
     boundaryConf = conf.boundaryFont();
-    boundaryConf.fontSize = boundaryConf.fontSize! - 2;
+    boundaryConf.fontSize = boundaryConf.fontSize - 2;
     boundaryConf.fontColor = fontColor;
     _drawTextCandidateFunc(conf)(
       boundary.descr.text,
@@ -340,15 +343,17 @@ export const drawC4Shape = function (elem: SVG, c4Shape: C4Shape, conf: C4DrawCo
 
   // draw type of c4Shape
   const c4ShapeFontConf = getC4ShapeFont(conf, c4Shape.typeC4Shape.text);
+  // The type text was measured by the renderer before drawing.
+  const typeC4ShapeWidth = c4Shape.typeC4Shape.width!;
   c4ShapeElem
     .append('text')
     .attr('fill', fontColor)
-    .attr('font-family', c4ShapeFontConf.fontFamily!)
-    .attr('font-size', c4ShapeFontConf.fontSize! - 2)
+    .attr('font-family', c4ShapeFontConf.fontFamily)
+    .attr('font-size', c4ShapeFontConf.fontSize - 2)
     .attr('font-style', 'italic')
     .attr('lengthAdjust', 'spacing')
-    .attr('textLength', c4Shape.typeC4Shape.width!)
-    .attr('x', c4Shape.x + c4Shape.width / 2 - c4Shape.typeC4Shape.width! / 2)
+    .attr('textLength', typeC4ShapeWidth)
+    .attr('x', c4Shape.x + c4Shape.width / 2 - typeC4ShapeWidth / 2)
     .attr('y', c4Shape.y + c4Shape.typeC4Shape.Y!)
     .text('<<' + c4Shape.typeC4Shape.text + '>>');
 
@@ -370,7 +375,7 @@ export const drawC4Shape = function (elem: SVG, c4Shape: C4Shape, conf: C4DrawCo
   // draw label
   let textFontConf = (conf[c4Shape.typeC4Shape.text + 'Font'] as () => C4Font)();
   textFontConf.fontWeight = 'bold';
-  textFontConf.fontSize = textFontConf.fontSize! + 2;
+  textFontConf.fontSize = textFontConf.fontSize + 2;
   textFontConf.fontColor = fontColor;
   _drawTextCandidateFunc(conf)(
     c4Shape.label.text,
@@ -600,16 +605,16 @@ const _drawTextCandidateFunc = (function () {
 
     const lines = content.split(common.lineBreakRegex);
     for (let i = 0; i < lines.length; i++) {
-      const dy = i * fontSize! - (fontSize! * (lines.length - 1)) / 2;
+      const dy = i * fontSize - (fontSize * (lines.length - 1)) / 2;
       const text = g
         .append('text')
         .attr('x', x + width / 2)
         .attr('y', y)
         .style('text-anchor', 'middle')
         .attr('dominant-baseline', 'middle')
-        .style('font-size', fontSize!)
-        .style('font-weight', fontWeight!)
-        .style('font-family', fontFamily!);
+        .style('font-size', fontSize)
+        .style('font-weight', fontWeight)
+        .style('font-family', fontFamily);
       text
         .append('tspan')
         // .attr('x', x + width / 2)

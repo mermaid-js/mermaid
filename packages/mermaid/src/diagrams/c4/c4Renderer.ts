@@ -1,5 +1,3 @@
-import { select } from 'd3';
-import type { Selection } from 'd3';
 import svgDraw from './svgDraw.js';
 import { log } from '../../logger.js';
 // @ts-ignore: JISON doesn't support types
@@ -7,14 +5,16 @@ import { parser } from './parser/c4Diagram.jison';
 import common from '../common/common.js';
 import c4Db from './c4Db.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { getRequiredConfig } from '../../diagram-api/requiredConfig.js';
 import assignWithDepth from '../../assignWithDepth.js';
 import { wrapLabel, calculateTextWidth, calculateTextHeight } from '../../utils.js';
+import { getDiagramRoot } from '../../utils/diagramRoot.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { Diagram } from '../../Diagram.js';
 import type { C4DiagramConfig } from '../../config.type.js';
 import type { SVG } from '../../diagram-api/types.js';
-import type { D3HtmlSelection, TextDimensionConfig } from '../../types.js';
-import type { C4Boundary, C4DrawConfig, C4Font, C4Rel, C4Shape } from './c4Types.js';
+import type { TextDimensionConfig } from '../../types.js';
+import type { C4Boundary, C4DrawConfig, C4Font, C4Rel, C4Shape, C4Text } from './c4Types.js';
 
 type C4DB = typeof c4Db;
 
@@ -40,6 +40,9 @@ interface NextBoundsData {
   stopy?: number;
   cnt: number;
 }
+
+/** A {@link C4Text} after measurement: the layout fields are populated. */
+type MeasuredC4Text = C4Text & { width: number; height: number; textLines: number };
 
 let globalBoundaryMaxX = 0,
   globalBoundaryMaxY = 0;
@@ -97,18 +100,17 @@ class Bounds {
 
   insert(c4Shape: C4Shape) {
     this.nextData.cnt = this.nextData.cnt + 1;
+    // `setData()` seeds the bounds before any `insert()` call.
+    const nextStopx = this.nextData.stopx!;
+    const widthLimit = this.data.widthLimit!;
     let _startx =
       this.nextData.startx === this.nextData.stopx
-        ? this.nextData.stopx! + c4Shape.margin
-        : this.nextData.stopx! + c4Shape.margin * 2;
+        ? nextStopx + c4Shape.margin
+        : nextStopx + c4Shape.margin * 2;
     let _stopx = _startx + c4Shape.width;
     let _starty = this.nextData.starty! + c4Shape.margin * 2;
     let _stopy = _starty + c4Shape.height;
-    if (
-      _startx >= this.data.widthLimit! ||
-      _stopx >= this.data.widthLimit! ||
-      this.nextData.cnt > c4ShapeInRow
-    ) {
+    if (_startx >= widthLimit || _stopx >= widthLimit || this.nextData.cnt > c4ShapeInRow) {
       _startx = this.nextData.startx! + c4Shape.margin + conf.nextLinePaddingX;
       _starty = this.nextData.stopy! + c4Shape.margin * 2;
 
@@ -160,14 +162,14 @@ class Bounds {
 export const setConf = function (cnf?: C4SetConfigParam) {
   assignWithDepth(conf, cnf);
 
-  if (cnf!.fontFamily) {
-    conf.personFontFamily = conf.systemFontFamily = conf.messageFontFamily = cnf!.fontFamily!;
+  if (cnf?.fontFamily) {
+    conf.personFontFamily = conf.systemFontFamily = conf.messageFontFamily = cnf.fontFamily;
   }
-  if (cnf!.fontSize) {
-    conf.personFontSize = conf.systemFontSize = conf.messageFontSize = cnf!.fontSize!;
+  if (cnf?.fontSize) {
+    conf.personFontSize = conf.systemFontSize = conf.messageFontSize = cnf.fontSize;
   }
-  if (cnf!.fontWeight) {
-    conf.personFontWeight = conf.systemFontWeight = conf.messageFontWeight = cnf!.fontWeight!;
+  if (cnf?.fontWeight) {
+    conf.personFontWeight = conf.systemFontWeight = conf.messageFontWeight = cnf.fontWeight;
   }
 };
 
@@ -201,9 +203,10 @@ function calcC4ShapeTextWH(
   c4ShapeTextWrap: boolean | undefined,
   textConf: C4Font,
   textLimitWidth: number
-) {
-  // `textType` is always one of the `C4Text` valued fields of `c4Shape`.
-  const textElement = c4Shape[textType] as NonNullable<C4Shape['label']>;
+): MeasuredC4Text {
+  // `textType` is always one of the `C4Text` valued fields of `c4Shape`, and
+  // the layout fields are populated below (or by an earlier measurement).
+  const textElement = c4Shape[textType] as MeasuredC4Text;
   if (!textElement.width) {
     if (c4ShapeTextWrap) {
       textElement.text = wrapLabel(
@@ -233,19 +236,23 @@ function calcC4ShapeTextWH(
       // c4Shapes[textType].height = c4Shapes[textType].textLines * textConf.fontSize;
     }
   }
+  return textElement;
 }
 
 export const drawBoundary = function (diagram: SVG, boundary: C4Boundary, bounds: Bounds) {
-  boundary.x = bounds.data.startx!;
-  boundary.y = bounds.data.starty!;
-  boundary.width = bounds.data.stopx! - bounds.data.startx!;
-  boundary.height = bounds.data.stopy! - bounds.data.starty!;
+  // The bounds are seeded via `setData()` before a boundary is drawn.
+  const startx = bounds.data.startx!;
+  const starty = bounds.data.starty!;
+  boundary.x = startx;
+  boundary.y = starty;
+  boundary.width = bounds.data.stopx! - startx;
+  boundary.height = bounds.data.stopy! - starty;
 
   boundary.label.y = conf.c4ShapeMargin - 35;
 
   const boundaryTextWrap = boundary.wrap && conf.wrap;
   const boundaryLabelConf = boundaryFont(conf);
-  boundaryLabelConf.fontSize = boundaryLabelConf.fontSize! + 2;
+  boundaryLabelConf.fontSize = boundaryLabelConf.fontSize + 2;
   boundaryLabelConf.fontWeight = 'bold';
   const textLimitWidth = calculateTextWidth(
     boundary.label.text,
@@ -267,12 +274,13 @@ export const drawC4ShapeArray = function (
   // Draw the c4ShapeArray
   for (const c4ShapeKey of c4ShapeKeys) {
     Y = 0;
-    const c4Shape = c4ShapeArray[c4ShapeKey as unknown as number];
+    // `c4ShapeKeys` are the (numeric string) indices of `c4ShapeArray`.
+    const c4Shape = c4ShapeArray[Number(c4ShapeKey)];
 
     // calc c4 shape type width and height
 
     const c4ShapeTypeConf = c4ShapeFont(conf, c4Shape.typeC4Shape.text);
-    c4ShapeTypeConf.fontSize = c4ShapeTypeConf.fontSize! - 2;
+    c4ShapeTypeConf.fontSize = c4ShapeTypeConf.fontSize - 2;
     c4Shape.typeC4Shape.width = calculateTextWidth(
       '«' + c4Shape.typeC4Shape.text + '»',
       c4ShapeTypeConf as TextDimensionConfig
@@ -309,37 +317,61 @@ export const drawC4ShapeArray = function (
     const textLimitWidth = conf.width - conf.c4ShapePadding * 2;
 
     const c4ShapeLabelConf = c4ShapeFont(conf, c4Shape.typeC4Shape.text);
-    c4ShapeLabelConf.fontSize = c4ShapeLabelConf.fontSize! + 2;
+    c4ShapeLabelConf.fontSize = c4ShapeLabelConf.fontSize + 2;
     c4ShapeLabelConf.fontWeight = 'bold';
-    calcC4ShapeTextWH('label', c4Shape, c4ShapeTextWrap, c4ShapeLabelConf, textLimitWidth);
-    c4Shape.label.Y = Y + 8;
-    Y = c4Shape.label.Y + c4Shape.label.height!;
+    const label = calcC4ShapeTextWH(
+      'label',
+      c4Shape,
+      c4ShapeTextWrap,
+      c4ShapeLabelConf,
+      textLimitWidth
+    );
+    label.Y = Y + 8;
+    Y = label.Y + label.height;
 
     if (c4Shape.type && c4Shape.type.text !== '') {
       c4Shape.type.text = '[' + c4Shape.type.text + ']';
       const c4ShapeTypeConf = c4ShapeFont(conf, c4Shape.typeC4Shape.text);
-      calcC4ShapeTextWH('type', c4Shape, c4ShapeTextWrap, c4ShapeTypeConf, textLimitWidth);
-      c4Shape.type.Y = Y + 5;
-      Y = c4Shape.type.Y + c4Shape.type.height!;
+      const type = calcC4ShapeTextWH(
+        'type',
+        c4Shape,
+        c4ShapeTextWrap,
+        c4ShapeTypeConf,
+        textLimitWidth
+      );
+      type.Y = Y + 5;
+      Y = type.Y + type.height;
     } else if (c4Shape.techn && c4Shape.techn.text !== '') {
       c4Shape.techn.text = '[' + c4Shape.techn.text + ']';
       const c4ShapeTechnConf = c4ShapeFont(conf, c4Shape.techn.text);
-      calcC4ShapeTextWH('techn', c4Shape, c4ShapeTextWrap, c4ShapeTechnConf, textLimitWidth);
-      c4Shape.techn.Y = Y + 5;
-      Y = c4Shape.techn.Y + c4Shape.techn.height!;
+      const techn = calcC4ShapeTextWH(
+        'techn',
+        c4Shape,
+        c4ShapeTextWrap,
+        c4ShapeTechnConf,
+        textLimitWidth
+      );
+      techn.Y = Y + 5;
+      Y = techn.Y + techn.height;
     }
 
     let rectHeight = Y;
-    let rectWidth = c4Shape.label.width!;
+    let rectWidth = label.width;
 
     if (c4Shape.descr && c4Shape.descr.text !== '') {
       const c4ShapeDescrConf = c4ShapeFont(conf, c4Shape.typeC4Shape.text);
-      calcC4ShapeTextWH('descr', c4Shape, c4ShapeTextWrap, c4ShapeDescrConf, textLimitWidth);
-      c4Shape.descr.Y = Y + 20;
-      Y = c4Shape.descr.Y + c4Shape.descr.height!;
+      const descr = calcC4ShapeTextWH(
+        'descr',
+        c4Shape,
+        c4ShapeTextWrap,
+        c4ShapeDescrConf,
+        textLimitWidth
+      );
+      descr.Y = Y + 20;
+      Y = descr.Y + descr.height;
 
-      rectWidth = Math.max(c4Shape.label.width!, c4Shape.descr.width!);
-      rectHeight = Y - c4Shape.descr.textLines! * 5;
+      rectWidth = Math.max(label.width, descr.width);
+      rectHeight = Y - descr.textLines * 5;
     }
 
     rectWidth = rectWidth + conf.c4ShapePadding;
@@ -470,12 +502,12 @@ export const drawRels = function (
   diagObj: Diagram,
   diagramId: string
 ) {
+  const diagramType = (diagObj.db as C4DB).getC4Type();
   let i = 0;
   for (const rel of rels) {
     i = i + 1;
     const relTextWrap = rel.wrap && conf.wrap;
     const relConf = messageFont(conf);
-    const diagramType = (diagObj.db as C4DB).getC4Type();
     if (diagramType === 'C4Dynamic') {
       rel.label.text = i + ': ' + rel.label.text;
     }
@@ -492,11 +524,19 @@ export const drawRels = function (
       calcC4ShapeTextWH('descr', rel, relTextWrap, relConf, textLimitWidth);
     }
 
-    const fromNode = getC4ShapeObj(rel.from)!;
-    const endNode = getC4ShapeObj(rel.to)!;
+    const fromNode = getC4ShapeObj(rel.from);
+    const endNode = getC4ShapeObj(rel.to);
+    if (!fromNode || !endNode) {
+      throw new Error(`C4 rel "${rel.from}" -> "${rel.to}" references an unknown shape`);
+    }
     const points = getIntersectPoints(fromNode, endNode);
-    rel.startPoint = points.startPoint!;
-    rel.endPoint = points.endPoint!;
+    if (!points.startPoint || !points.endPoint) {
+      throw new Error(
+        `Could not calculate intersection points for rel "${rel.from}" -> "${rel.to}"`
+      );
+    }
+    rel.startPoint = points.startPoint;
+    rel.endPoint = points.endPoint;
   }
   svgDraw.drawRels(diagram, rels, conf, diagramId);
 };
@@ -508,6 +548,7 @@ function drawInsideBoundary(
   currentBoundaries: C4Boundary[],
   diagObj: Diagram
 ) {
+  const db = diagObj.db as C4DB;
   const currentBounds = new Bounds(diagObj);
   // Calculate the width limit of the boundary.  label/type 的长度，
   currentBounds.data.widthLimit =
@@ -529,44 +570,44 @@ function drawInsideBoundary(
     const currentBoundaryTextWrap = currentBoundary.wrap && conf.wrap;
 
     const currentBoundaryLabelConf = boundaryFont(conf);
-    currentBoundaryLabelConf.fontSize = currentBoundaryLabelConf.fontSize! + 2;
+    currentBoundaryLabelConf.fontSize = currentBoundaryLabelConf.fontSize + 2;
     currentBoundaryLabelConf.fontWeight = 'bold';
-    calcC4ShapeTextWH(
+    const label = calcC4ShapeTextWH(
       'label',
       currentBoundary,
       currentBoundaryTextWrap,
       currentBoundaryLabelConf,
       currentBounds.data.widthLimit
     );
-    currentBoundary.label.Y = Y + 8;
-    Y = currentBoundary.label.Y + currentBoundary.label.height!;
+    label.Y = Y + 8;
+    Y = label.Y + label.height;
 
     if (currentBoundary.type && currentBoundary.type.text !== '') {
       currentBoundary.type.text = '[' + currentBoundary.type.text + ']';
       const currentBoundaryTypeConf = boundaryFont(conf);
-      calcC4ShapeTextWH(
+      const type = calcC4ShapeTextWH(
         'type',
         currentBoundary,
         currentBoundaryTextWrap,
         currentBoundaryTypeConf,
         currentBounds.data.widthLimit
       );
-      currentBoundary.type.Y = Y + 5;
-      Y = currentBoundary.type.Y + currentBoundary.type.height!;
+      type.Y = Y + 5;
+      Y = type.Y + type.height;
     }
 
     if (currentBoundary.descr && currentBoundary.descr.text !== '') {
       const currentBoundaryDescrConf = boundaryFont(conf);
-      currentBoundaryDescrConf.fontSize = currentBoundaryDescrConf.fontSize! - 2;
-      calcC4ShapeTextWH(
+      currentBoundaryDescrConf.fontSize = currentBoundaryDescrConf.fontSize - 2;
+      const descr = calcC4ShapeTextWH(
         'descr',
         currentBoundary,
         currentBoundaryTextWrap,
         currentBoundaryDescrConf,
         currentBounds.data.widthLimit
       );
-      currentBoundary.descr.Y = Y + 20;
-      Y = currentBoundary.descr.Y + currentBoundary.descr.height!;
+      descr.Y = Y + 20;
+      Y = descr.Y + descr.height;
     }
 
     if (i == 0 || i % c4BoundaryInRow === 0) {
@@ -586,8 +627,8 @@ function drawInsideBoundary(
       currentBounds.setData(_x, _x, _y, _y);
     }
     currentBounds.name = currentBoundary.alias;
-    const currentPersonOrSystemArray = (diagObj.db as C4DB).getC4ShapeArray(currentBoundary.alias);
-    const currentPersonOrSystemKeys = (diagObj.db as C4DB).getC4ShapeKeys(currentBoundary.alias);
+    const currentPersonOrSystemArray = db.getC4ShapeArray(currentBoundary.alias);
+    const currentPersonOrSystemKeys = db.getC4ShapeKeys(currentBoundary.alias);
 
     if (currentPersonOrSystemKeys.length > 0) {
       drawC4ShapeArray(
@@ -598,7 +639,7 @@ function drawInsideBoundary(
       );
     }
     parentBoundaryAlias = currentBoundary.alias;
-    const nextCurrentBoundaries = (diagObj.db as C4DB).getBoundaries(parentBoundaryAlias);
+    const nextCurrentBoundaries = db.getBoundaries(parentBoundaryAlias);
 
     if (nextCurrentBoundaries.length > 0) {
       // draw boundary inside currentBoundary
@@ -631,33 +672,21 @@ function drawInsideBoundary(
  * Draws a sequenceDiagram in the tag with id: id based on the graph definition in text.
  */
 export const draw = function (_text: string, id: string, _version: string, diagObj: Diagram) {
-  conf = getConfig().c4 as C4DrawConfig;
+  conf = getRequiredConfig('c4') as C4DrawConfig;
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
-  let sandboxElement: Selection<HTMLIFrameElement, unknown, HTMLElement, unknown> | undefined;
-  if (securityLevel === 'sandbox') {
-    sandboxElement = select<HTMLIFrameElement, unknown>('#i' + id);
-  }
-  const root: D3HtmlSelection<HTMLElement> =
-    securityLevel === 'sandbox'
-      ? (select(
-          sandboxElement!.nodes()[0].contentDocument!.body
-        ) as unknown as D3HtmlSelection<HTMLElement>)
-      : (select('body') as unknown as D3HtmlSelection<HTMLElement>);
+  const { root } = getDiagramRoot(id, securityLevel);
 
   const db = diagObj.db as C4DB;
 
-  (diagObj.db as C4DB).setWrap(conf.wrap);
+  db.setWrap(conf.wrap);
 
   c4ShapeInRow = db.getC4ShapeInRow();
   c4BoundaryInRow = db.getC4BoundaryInRow();
 
   log.debug(`C:${JSON.stringify(conf, null, 2)}`);
 
-  const diagram: SVG =
-    securityLevel === 'sandbox'
-      ? root.select<SVGSVGElement>(`[id="${id}"]`)
-      : (select(`[id="${id}"]`) as unknown as SVG);
+  const diagram: SVG = root.select<SVGSVGElement>(`[id="${id}"]`);
 
   svgDraw.insertComputerIcon(diagram, id);
   svgDraw.insertDatabaseIcon(diagram, id);
@@ -676,8 +705,8 @@ export const draw = function (_text: string, id: string, _version: string, diagO
   globalBoundaryMaxX = conf.diagramMarginX;
   globalBoundaryMaxY = conf.diagramMarginY;
 
-  const title = (diagObj.db as C4DB).getTitle();
-  const currentBoundaries = (diagObj.db as C4DB).getBoundaries('');
+  const title = db.getTitle();
+  const currentBoundaries = db.getBoundaries('');
   // switch (c4type) {
   //   case 'C4Context':
   drawInsideBoundary(diagram, '', screenBounds, currentBoundaries, diagObj);
@@ -690,28 +719,31 @@ export const draw = function (_text: string, id: string, _version: string, diagO
   svgDraw.insertArrowCrossHead(diagram, id);
   svgDraw.insertArrowFilledHead(diagram, id);
 
-  drawRels(diagram, (diagObj.db as C4DB).getRels(), (diagObj.db as C4DB).getC4Shape, diagObj, id);
+  drawRels(diagram, db.getRels(), db.getC4Shape, diagObj, id);
 
   screenBounds.data.stopx = globalBoundaryMaxX;
   screenBounds.data.stopy = globalBoundaryMaxY;
 
   const box = screenBounds.data;
+  // `setData()` above seeded the start coordinates.
+  const boxStartx = box.startx!;
+  const boxStarty = box.starty!;
 
   // Make sure the height of the diagram supports long menus.
-  const boxHeight = box.stopy! - box.starty!;
+  const boxHeight = globalBoundaryMaxY - boxStarty;
 
   const height = boxHeight + 2 * conf.diagramMarginY;
 
   // Make sure the width of the diagram supports wide menus.
-  const boxWidth = box.stopx! - box.startx!;
+  const boxWidth = globalBoundaryMaxX - boxStartx;
   const width = boxWidth + 2 * conf.diagramMarginX;
 
   if (title) {
     diagram
       .append('text')
       .text(title)
-      .attr('x', (box.stopx! - box.startx!) / 2 - 4 * conf.diagramMarginX)
-      .attr('y', box.starty! + conf.diagramMarginY);
+      .attr('x', boxWidth / 2 - 4 * conf.diagramMarginX)
+      .attr('y', boxStarty + conf.diagramMarginY);
   }
 
   configureSvgSize(diagram, height, width, conf.useMaxWidth);
@@ -719,7 +751,7 @@ export const draw = function (_text: string, id: string, _version: string, diagO
   const extraVertForTitle = title ? 60 : 0;
   diagram.attr(
     'viewBox',
-    box.startx! -
+    boxStartx -
       conf.diagramMarginX +
       ' -' +
       (conf.diagramMarginY + extraVertForTitle) +

@@ -1,4 +1,5 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { getRequiredConfig } from '../../diagram-api/requiredConfig.js';
 import { sanitizeText } from '../common/common.js';
 import {
   setAccTitle,
@@ -14,12 +15,8 @@ import type { C4Boundary, C4Rel, C4Shape } from './c4Types.js';
  */
 type ParserAttribute = string | Record<string, string>;
 
-let c4ShapeArray: C4Shape[] = [];
-let boundaryParseStack = [''];
-let currentBoundaryParse = 'global';
-let parentBoundaryParse = '';
-let boundaries: C4Boundary[] = [
-  {
+const createGlobalBoundary = (): C4Boundary =>
+  ({
     alias: 'global',
     label: { text: 'global' },
     type: { text: 'global' },
@@ -27,8 +24,13 @@ let boundaries: C4Boundary[] = [
     link: null,
     parentBoundary: '',
     // The layout fields are populated later by the renderer.
-  } as unknown as C4Boundary,
-];
+  }) as C4Boundary;
+
+let c4ShapeArray: C4Shape[] = [];
+let boundaryParseStack = [''];
+let currentBoundaryParse = 'global';
+let parentBoundaryParse = '';
+let boundaries: C4Boundary[] = [createGlobalBoundary()];
 let rels: C4Rel[] = [];
 let title = '';
 let wrapEnabled: boolean | undefined = false;
@@ -793,17 +795,7 @@ export const autoWrap = function () {
 
 export const clear = function () {
   c4ShapeArray = [];
-  boundaries = [
-    {
-      alias: 'global',
-      label: { text: 'global' },
-      type: { text: 'global' },
-      tags: null,
-      link: null,
-      parentBoundary: '',
-      // The layout fields are populated later by the renderer.
-    } as unknown as C4Boundary,
-  ];
+  boundaries = [createGlobalBoundary()];
   parentBoundaryParse = '';
   currentBoundaryParse = 'global';
   boundaryParseStack = [''];
@@ -888,7 +880,7 @@ export default {
   getAccTitle,
   getAccDescription,
   setAccDescription,
-  getConfig: () => getConfig().c4,
+  getConfig: () => getRequiredConfig('c4'),
   clear,
   LINETYPE,
   ARROWTYPE,
