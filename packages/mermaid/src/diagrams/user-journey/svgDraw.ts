@@ -2,37 +2,28 @@ import type { Selection } from 'd3';
 import { arc as d3arc } from 'd3';
 import type { JourneyDiagramConfig } from '../../config.type.js';
 import type { SVG, SVGGroup } from '../../diagram-api/types.js';
-import type { Bound, RectData, TextData } from '../common/commonTypes.js';
+import type {
+  Bound,
+  CircleData,
+  FaceData,
+  RectData,
+  SectionData,
+  TaskData,
+  TextData,
+} from '../common/commonTypes.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import type { D3Selection } from '../../types.js';
 
-export interface JourneyFaceData {
-  cx: number;
-  cy: number;
-  score: number;
-}
+export type JourneyFaceData = FaceData;
 
-export interface JourneyCircleData {
-  cx: number;
-  cy: number;
-  r: number;
-  pos: number;
-  fill: string;
-  stroke: string;
-  title?: string;
-}
+export type JourneyCircleData = CircleData;
 
 export interface JourneyLabelData extends TextData {
   labelMargin: number;
 }
 
-export interface JourneySectionData {
-  x: number;
-  y: number;
-  text: string;
-  fill: string;
+export interface JourneySectionData extends SectionData {
   num: number;
-  colour: string;
   taskCount: number;
 }
 
@@ -41,14 +32,8 @@ export interface JourneyActor {
   position: number;
 }
 
-export interface JourneyTaskData {
-  x: number;
-  y: number;
-  task: string;
-  score: number;
-  fill: string;
+export interface JourneyTaskData extends TaskData {
   num: number;
-  colour: string;
   people: string[];
   actors: Record<string, JourneyActor>;
 }
@@ -379,7 +364,7 @@ const _drawTextCandidateFunc = (function () {
         .append('text')
         .attr('x', x + width / 2)
         .attr('y', y)
-        .attr('fill', colour!)
+        .attr('fill', colour ?? null)
         .style('text-anchor', 'middle')
         .style('font-size', taskFontSize)
         .style('font-family', taskFontFamily);

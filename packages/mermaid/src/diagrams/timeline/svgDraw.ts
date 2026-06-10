@@ -3,10 +3,23 @@ import { arc as d3arc, select } from 'd3';
 import type { MermaidConfig, TimelineDiagramConfig } from '../../config.type.js';
 import type { SVG, SVGGroup } from '../../diagram-api/types.js';
 import type { D3Selection } from '../../types.js';
+import type {
+  CircleData,
+  FaceData,
+  SectionData,
+  TaskData,
+  TextObject,
+} from '../common/commonTypes.js';
+import { requiredNode } from '../../utils/guards.js';
 import type { TimelineTask } from './timelineDb.js';
 
 let nodeCount = 0;
 
+/**
+ * Unlike the shared `RectData` in commonTypes, `fill` and `stroke` are
+ * optional here: the timeline renderer draws rects without them (e.g.
+ * background rects), so this shape cannot extend the common one compatibly.
+ */
 export interface TimelineRectData {
   x: number;
   y: number;
@@ -20,22 +33,15 @@ export interface TimelineRectData {
   class?: string;
 }
 
-export interface TimelineFaceData {
-  cx: number;
-  cy: number;
-  score: number;
-}
+export type TimelineFaceData = FaceData;
 
-export interface TimelineCircleData {
-  cx: number;
-  cy: number;
-  r: number;
-  pos: number;
-  fill: string;
-  stroke: string;
-  title?: string;
-}
+export type TimelineCircleData = CircleData;
 
+/**
+ * Unlike the shared `TextData` in commonTypes, `anchor` is optional here (the
+ * timeline renderer draws texts without it), so this shape cannot extend the
+ * common one compatibly.
+ */
 export interface TimelineTextData {
   x: number;
   y: number;
@@ -49,37 +55,17 @@ export interface TimelineLabelData extends TimelineTextData {
   labelMargin: number;
 }
 
-export interface TimelineSectionData {
-  x: number;
-  y: number;
-  text: string;
-  fill: string;
-  num: number | string;
-  colour: string;
-}
+export type TimelineSectionData = SectionData;
 
-export interface TimelineTaskData {
-  x: number;
-  y: number;
-  task: string;
-  score: number;
-  fill: string;
-  num: number | string;
-  colour: string;
-}
+export type TimelineTaskData = TaskData;
 
-export interface TimelineTextObject {
-  x: number;
-  y: number;
-  fill?: string;
-  'text-anchor': string;
-  width: number;
-  height: number;
-  textMargin: number;
-  rx: number;
-  ry: number;
-}
+/** The shared `TextObject` without the fields the timeline never sets. */
+export type TimelineTextObject = Omit<TextObject, 'anchor' | 'style' | 'tspan' | 'valign'>;
 
+/**
+ * Unlike the shared `Bound` in commonTypes, `fill` is optional and `stroke`
+ * is absent, so this shape cannot extend the common one compatibly.
+ */
 export interface TimelineBounds {
   startx: number;
   starty: number;
@@ -117,12 +103,13 @@ export const drawRect = function (elem: SVG | SVGGroup, rectData: TimelineRectDa
   const rectElem = elem.append('rect');
   rectElem.attr('x', rectData.x);
   rectElem.attr('y', rectData.y);
-  rectElem.attr('fill', rectData.fill!);
-  rectElem.attr('stroke', rectData.stroke!);
+  // `?? null` keeps d3's "remove the attribute" semantics for undefined values
+  rectElem.attr('fill', rectData.fill ?? null);
+  rectElem.attr('stroke', rectData.stroke ?? null);
   rectElem.attr('width', rectData.width);
   rectElem.attr('height', rectData.height);
-  rectElem.attr('rx', rectData.rx!);
-  rectElem.attr('ry', rectData.ry!);
+  rectElem.attr('rx', rectData.rx ?? null);
+  rectElem.attr('ry', rectData.ry ?? null);
 
   if (rectData.class !== undefined) {
     rectElem.attr('class', rectData.class);
@@ -247,7 +234,9 @@ export const drawText = function (elem: SVG | SVGGroup, textData: TimelineTextDa
   textElem.attr('y', textData.y);
   textElem.attr('class', 'legend');
 
-  textElem.style('text-anchor', textData.anchor!);
+  if (textData.anchor !== undefined) {
+    textElem.style('text-anchor', textData.anchor);
+  }
 
   if (textData.class !== undefined) {
     textElem.attr('class', textData.class);
@@ -482,7 +471,7 @@ const _drawTextCandidateFunc = (function () {
         .append('text')
         .attr('x', x + width / 2)
         .attr('y', y)
-        .attr('fill', colour!)
+        .attr('fill', colour ?? null)
         .style('text-anchor', 'middle')
         .style('font-size', taskFontSize)
         .style('font-family', taskFontFamily);
@@ -597,7 +586,10 @@ function wrap(text: D3Selection<SVGTextElement>, width: number) {
       word = words[words.length - 1 - j];
       line.push(word);
       tspan.text(line.join(' ').trim());
-      if (tspan.node()!.getComputedTextLength() > width || word === '<br>') {
+      if (
+        requiredNode(tspan, 'timeline tspan').getComputedTextLength() > width ||
+        word === '<br>'
+      ) {
         line.pop();
         tspan.text(line.join(' ').trim());
         if (word === '<br>') {
@@ -648,7 +640,7 @@ export const drawNode = function (
     .attr('dominant-baseline', 'middle')
     .attr('text-anchor', 'middle')
     .call(wrap, node.width);
-  const bbox = txt.node()!.getBBox();
+  const bbox = requiredNode(txt, 'timeline node text').getBBox();
   const confFontSize = conf.fontSize as string | number | undefined;
   const fontSize = (confFontSize as string)?.replace
     ? (confFontSize as string).replace('px', '')
@@ -671,7 +663,8 @@ export const drawNode = function (
   if (look === 'neo') {
     nodeElem.attr('data-look', `neo`);
     if (isReduxTheme) {
-      const isDark = theme!.includes('dark');
+      // only reachable when `theme` is a redux theme, so it is always defined here
+      const isDark = theme?.includes('dark') ?? false;
       const rootSvgNode = elem.node()?.ownerSVGElement ?? elem.node();
       const rootSvg = select(rootSvgNode);
       const svgId = rootSvg.attr('id') ?? '';
@@ -713,7 +706,7 @@ export const getVirtualNodeHeight = function (
     .attr('dominant-baseline', 'middle')
     .attr('text-anchor', 'middle')
     .call(wrap, node.width);
-  const bbox = txt.node()!.getBBox();
+  const bbox = requiredNode(txt, 'timeline measurement text').getBBox();
   const confFontSize = conf.fontSize as string | number | undefined;
   const fontSize = (confFontSize as string)?.replace
     ? (confFontSize as string).replace('px', '')

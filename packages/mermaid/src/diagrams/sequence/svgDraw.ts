@@ -8,6 +8,7 @@ import common, {
 } from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import type { Bound, RectData } from '../common/commonTypes.js';
+import { requiredGet, requiredNode } from '../../utils/guards.js';
 import type { SVG, SVGGroup } from '../../diagram-api/types.js';
 import type { D3HtmlSelection } from '../../types.js';
 import type { SequenceDiagramConfig } from '../../config.type.js';
@@ -35,6 +36,24 @@ export interface SvgDrawConfig extends SequenceDiagramConfig {
   sequence?: SequenceDiagramConfig;
   textPlacement?: string;
 }
+
+/** The svgDraw config with every optional field marked present. */
+type ResolvedSvgDrawConfig = Required<SvgDrawConfig> & {
+  themeVariables: Required<SequenceThemeVariables>;
+};
+
+/**
+ * Narrows the renderer-supplied config so its fields can be read without
+ * non-null assertions.
+ *
+ * The sequence renderer's `setConf` merges the full `getConfig()` result
+ * (whose sequence section is fully populated from the default config) plus
+ * the top-level `theme`, `themeVariables` and `look` keys into the config
+ * object before the svgDraw helpers run, so every optional field is defined
+ * at runtime. The cast is type-level only and does not change runtime
+ * behavior.
+ */
+const requiredConf = (conf: SvgDrawConfig): ResolvedSvgDrawConfig => conf as ResolvedSvgDrawConfig;
 
 /** An actor enriched with the layout/rendering data added by the sequence renderer. */
 export interface ActorRenderData extends Omit<Actor, 'links' | 'properties' | 'rectData'> {
@@ -210,35 +229,34 @@ export const drawPopup = function (
   rectElem.attr('stroke', rectData.stroke);
   rectElem.attr('width', menuWidth);
   rectElem.attr('height', rectData.height);
-  rectElem.attr('rx', rectData.rx!);
-  rectElem.attr('ry', rectData.ry!);
-  let linkY: number | undefined;
-  if (links != null) {
-    linkY = 20;
-    for (const key in links) {
-      const linkElem = g.append('a');
-      const sanitizedLink = sanitizeUrl(links[key]);
-      linkElem.attr('xlink:href', sanitizedLink);
-      linkElem.attr('target', '_blank');
+  // `?? null` keeps d3's "remove the attribute" semantics for undefined values
+  rectElem.attr('rx', rectData.rx ?? null);
+  rectElem.attr('ry', rectData.ry ?? null);
+  // `links` is guaranteed non-empty by the early return above
+  let linkY = 20;
+  for (const key in links) {
+    const linkElem = g.append('a');
+    const sanitizedLink = sanitizeUrl(links[key]);
+    linkElem.attr('xlink:href', sanitizedLink);
+    linkElem.attr('target', '_blank');
 
-      _drawMenuItemTextCandidateFunc(textAttrs)(
-        key,
-        linkElem,
-        rectData.x + 10,
-        rectData.height + linkY,
-        menuWidth,
-        20,
-        { class: 'actor' },
-        textAttrs
-      );
+    _drawMenuItemTextCandidateFunc(textAttrs)(
+      key,
+      linkElem,
+      rectData.x + 10,
+      rectData.height + linkY,
+      menuWidth,
+      20,
+      { class: 'actor' },
+      textAttrs
+    );
 
-      linkY += 30;
-    }
+    linkY += 30;
   }
 
-  rectElem.attr('height', linkY!);
+  rectElem.attr('height', linkY);
 
-  return { height: rectData.height + linkY!, width: menuWidth };
+  return { height: rectData.height + linkY, width: menuWidth };
 };
 
 const popupMenuToggle = function (popId: string) {
@@ -267,7 +285,7 @@ export const drawKatex = async function (
   textElem.attr('height', Math.round(dim.height)).attr('width', Math.round(dim.width));
 
   if (textData.class === 'noteText') {
-    const rectElem = elem.node()!.firstChild as SVGRectElement;
+    const rectElem = requiredNode(elem, 'note element').firstChild as SVGRectElement;
 
     rectElem.setAttribute('height', (dim.height + 2 * textData.textMargin!) as unknown as string);
     const rectDim = rectElem.getBBox();
@@ -310,24 +328,20 @@ export const drawText = function (elem: SVG | SVGGroup, textData: TextData): Dra
     textData.textMargin !== undefined &&
     textData.textMargin > 0
   ) {
+    const textMargin = textData.textMargin;
     switch (textData.valign) {
       case 'top':
       case 'start':
-        yfunc = () => Math.round(textData.y + textData.textMargin!);
+        yfunc = () => Math.round(textData.y + textMargin);
         break;
       case 'middle':
       case 'center':
-        yfunc = () =>
-          Math.round(textData.y + (prevTextHeight + textHeight + textData.textMargin!) / 2);
+        yfunc = () => Math.round(textData.y + (prevTextHeight + textHeight + textMargin) / 2);
         break;
       case 'bottom':
       case 'end':
         yfunc = () =>
-          Math.round(
-            textData.y +
-              (prevTextHeight + textHeight + 2 * textData.textMargin!) -
-              textData.textMargin!
-          );
+          Math.round(textData.y + (prevTextHeight + textHeight + 2 * textMargin) - textMargin);
         break;
     }
   }
@@ -375,10 +389,11 @@ export const drawText = function (elem: SVG | SVGGroup, textData: TextData): Dra
     textElem.attr('x', textData.x);
     textElem.attr('y', yfunc());
     if (textData.anchor !== undefined) {
+      // `?? null` keeps d3's "remove the attribute" semantics for undefined values
       textElem
         .attr('text-anchor', textData.anchor)
-        .attr('dominant-baseline', textData.dominantBaseline!)
-        .attr('alignment-baseline', textData.alignmentBaseline!);
+        .attr('dominant-baseline', textData.dominantBaseline ?? null)
+        .attr('alignment-baseline', textData.alignmentBaseline ?? null);
     }
     if (textData.fontFamily !== undefined) {
       textElem.style('font-family', textData.fontFamily);
@@ -477,12 +492,13 @@ export const fixLifeLineHeights = (
     return;
   }
   actorKeys.forEach((actorKey) => {
-    const actor = actors.get(actorKey)!;
+    const actor = requiredGet(actors, actorKey, 'actor');
     const actorDOM = diagram.select('#actor' + actor.actorCnt);
     if (!conf.mirrorActors && actor.stopy) {
       actorDOM.attr('y2', actor.stopy + actor.height / 2);
     } else if (conf.mirrorActors) {
-      actorDOM.attr('y2', actor.stopy!);
+      // `?? null` keeps d3's "remove the attribute" semantics for undefined values
+      actorDOM.attr('y2', actor.stopy ?? null);
     }
   });
 };
@@ -505,8 +521,8 @@ const drawActorTypeParticipant = function (
   const actorY = (isFooter ? actor.stopy : actor.starty)!;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + actor.height;
-  const { look, theme, themeVariables } = conf;
-  const { bkgColorArray, borderColorArray } = themeVariables!;
+  const { look, theme, themeVariables } = requiredConf(conf);
+  const { bkgColorArray, borderColorArray } = themeVariables;
 
   const boxplusLineGroup = elem.append('g').lower();
   let g = boxplusLineGroup;
@@ -568,7 +584,7 @@ const drawActorTypeParticipant = function (
   const rectElem = drawRect(g, rect);
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
-  if (COLOR_THEMES.has(theme!)) {
+  if (COLOR_THEMES.has(theme)) {
     rectElem.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
     rectElem.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
   }
@@ -607,8 +623,9 @@ const drawActorTypeParticipant = function (
   );
 
   let height = actor.height;
-  if (rectElem.node) {
-    const bounds = rectElem.node()!.getBBox();
+  // the unit-test selection mocks do not implement node(), hence the typeof guard
+  if (typeof rectElem.node === 'function') {
+    const bounds = requiredNode(rectElem, 'actor rect').getBBox();
     actor.height = bounds.height;
     height = bounds.height;
   }
@@ -634,8 +651,8 @@ const drawActorTypeCollections = function (
   const actorY = (isFooter ? actor.stopy : actor.starty)!;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + actor.height;
-  const { look, theme, themeVariables } = conf;
-  const { bkgColorArray, borderColorArray } = themeVariables!;
+  const { look, theme, themeVariables } = requiredConf(conf);
+  const { bkgColorArray, borderColorArray } = themeVariables;
 
   const boxplusLineGroup = elem.append('g').lower();
   let g = boxplusLineGroup;
@@ -705,7 +722,7 @@ const drawActorTypeCollections = function (
   }
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
-  if (COLOR_THEMES.has(theme!)) {
+  if (COLOR_THEMES.has(theme)) {
     rectElem.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
     rectElem.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
     stackedRect.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
@@ -733,8 +750,9 @@ const drawActorTypeCollections = function (
   );
 
   let height = actor.height;
-  if (rectElem.node) {
-    const bounds = rectElem.node()!.getBBox();
+  // the unit-test selection mocks do not implement node(), hence the typeof guard
+  if (typeof rectElem.node === 'function') {
+    const bounds = requiredNode(rectElem, 'actor rect').getBBox();
     actor.height = bounds.height;
     height = bounds.height;
   }
@@ -758,8 +776,8 @@ const drawActorTypeQueue = function (
   const actorY = (isFooter ? actor.stopy : actor.starty)!;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + actor.height;
-  const { look, theme, themeVariables } = conf;
-  const { bkgColorArray, borderColorArray } = themeVariables!;
+  const { look, theme, themeVariables } = requiredConf(conf);
+  const { bkgColorArray, borderColorArray } = themeVariables;
 
   const boxplusLineGroup = elem.append('g').lower();
   let g = boxplusLineGroup;
@@ -846,7 +864,7 @@ const drawActorTypeQueue = function (
   }
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
-  if (COLOR_THEMES.has(theme!)) {
+  if (COLOR_THEMES.has(theme)) {
     cylinderGroup.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
     cylinderGroup.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
     cylinderArc.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
@@ -877,8 +895,9 @@ const drawActorTypeQueue = function (
 
   let height = actor.height;
   const lastPath = cylinderGroup.select<SVGPathElement>('path:last-child');
-  if (lastPath.node()) {
-    const bounds = lastPath.node()!.getBBox();
+  const lastPathNode = lastPath.node();
+  if (lastPathNode) {
+    const bounds = lastPathNode.getBBox();
     actor.height = bounds.height;
     height = bounds.height;
   }
@@ -903,8 +922,8 @@ const drawActorTypeControl = function (
   const actorY = (isFooter ? actor.stopy : actor.starty)!;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 75;
-  const { look, theme, themeVariables } = conf;
-  const { bkgColorArray, borderColorArray, actorBorder, actorBkg } = themeVariables!;
+  const { look, theme, themeVariables } = requiredConf(conf);
+  const { bkgColorArray, borderColorArray, actorBorder, actorBkg } = themeVariables;
 
   const line = elem.append('g').lower();
 
@@ -976,14 +995,14 @@ const drawActorTypeControl = function (
     .attr('transform', `translate(${cx}, ${cy - r})`);
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
-  if (COLOR_THEMES.has(theme!)) {
+  if (COLOR_THEMES.has(theme)) {
     actElem.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
     actElem.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
   } else {
-    actElem.style('stroke', actorBorder!);
-    actElem.style('fill', actorBkg!);
+    actElem.style('stroke', actorBorder);
+    actElem.style('fill', actorBkg);
   }
-  const bounds = actElem.node()!.getBBox();
+  const bounds = requiredNode(actElem, 'actor element').getBBox();
   actor.height = bounds.height + 2 * (conf?.sequence?.labelBoxHeight ?? 0);
 
   _drawTextCandidateFunc(conf, hasKatex(actor.description))(
@@ -1016,8 +1035,8 @@ const drawActorTypeEntity = function (
   const actorY = (isFooter ? actor.stopy : actor.starty)!;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 75;
-  const { look, theme, themeVariables } = conf;
-  const { bkgColorArray, borderColorArray } = themeVariables!;
+  const { look, theme, themeVariables } = requiredConf(conf);
+  const { bkgColorArray, borderColorArray } = themeVariables;
 
   const line = elem.append('g').lower();
 
@@ -1064,12 +1083,12 @@ const drawActorTypeEntity = function (
   }
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
-  if (COLOR_THEMES.has(theme!)) {
+  if (COLOR_THEMES.has(theme)) {
     actElem.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
     actElem.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
   }
 
-  const bounds = actElem.node()!.getBBox();
+  const bounds = requiredNode(actElem, 'actor element').getBBox();
   actor.height = bounds.height + (conf?.sequence?.labelBoxHeight ?? 0);
 
   if (!isFooter) {
@@ -1123,9 +1142,9 @@ const drawActorTypeDatabase = function (
 ) {
   const actorY = (isFooter ? actor.stopy : actor.starty)!;
   const center = actor.x + actor.width / 2;
-  const centerY = actorY + actor.height + 2 * conf.boxTextMargin!;
-  const { theme, themeVariables, look } = conf;
-  const { bkgColorArray, borderColorArray, actorBorder } = themeVariables!;
+  const centerY = actorY + actor.height + 2 * requiredConf(conf).boxTextMargin;
+  const { theme, themeVariables, look } = requiredConf(conf);
+  const { bkgColorArray, borderColorArray, actorBorder } = themeVariables;
 
   const boxplusLineGroup = elem.append('g').lower();
   let g = boxplusLineGroup;
@@ -1207,11 +1226,11 @@ const drawActorTypeDatabase = function (
     cylinderGroup.attr('filter', 'url(#drop-shadow)');
   }
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
-  if (COLOR_THEMES.has(theme!)) {
+  if (COLOR_THEMES.has(theme)) {
     cylinderGroup.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
     cylinderGroup.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
   } else {
-    cylinderGroup.style('stroke', actorBorder!);
+    cylinderGroup.style('stroke', actorBorder);
   }
 
   // Both branches were identical — simplified to a single unconditional statement
@@ -1229,9 +1248,10 @@ const drawActorTypeDatabase = function (
   );
 
   const lastPath = cylinderGroup.select<SVGPathElement>('path:last-child');
-  if (lastPath.node()) {
-    const bounds = lastPath.node()!.getBBox();
-    actor.height = bounds.height + (conf.sequence!.labelBoxHeight ?? 0);
+  const lastPathNode = lastPath.node();
+  if (lastPathNode) {
+    const bounds = lastPathNode.getBBox();
+    actor.height = bounds.height + (requiredConf(conf).sequence.labelBoxHeight ?? 0);
   }
 
   if (!isFooter) {
@@ -1255,8 +1275,8 @@ const drawActorTypeBoundary = function (
   const centerY = actorY + 80;
   const radius = 22;
   const line = elem.append('g').lower();
-  const { look, theme, themeVariables } = conf;
-  const { bkgColorArray, borderColorArray, actorBorder } = themeVariables!;
+  const { look, theme, themeVariables } = requiredConf(conf);
+  const { bkgColorArray, borderColorArray, actorBorder } = themeVariables;
 
   if (!isFooter) {
     actorCnt++;
@@ -1321,14 +1341,14 @@ const drawActorTypeBoundary = function (
   }
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
-  if (COLOR_THEMES.has(theme!)) {
+  if (COLOR_THEMES.has(theme)) {
     actElem.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
     actElem.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
   } else {
-    actElem.style('stroke', actorBorder!);
+    actElem.style('stroke', actorBorder);
   }
-  const bounds = actElem.node()!.getBBox();
-  actor.height = bounds.height + (conf.sequence!.labelBoxHeight ?? 0);
+  const bounds = requiredNode(actElem, 'actor element').getBBox();
+  actor.height = bounds.height + (requiredConf(conf).sequence.labelBoxHeight ?? 0);
 
   _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
@@ -1362,8 +1382,8 @@ const drawActorTypeActor = function (
   const actorY = (isFooter ? actor.stopy : actor.starty)!;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 80;
-  const { look, theme, themeVariables } = conf;
-  const { bkgColorArray, borderColorArray, actorBorder } = themeVariables!;
+  const { look, theme, themeVariables } = requiredConf(conf);
+  const { bkgColorArray, borderColorArray, actorBorder } = themeVariables;
 
   const line = elem.append('g').lower();
 
@@ -1441,7 +1461,7 @@ const drawActorTypeActor = function (
   circle.attr('height', actor.height * scale);
 
   // Get the bounds of the stickman after scaling
-  const bounds = actElem.node()!.getBBox();
+  const bounds = requiredNode(actElem, 'actor element').getBBox();
   actor.height = bounds.height;
 
   // // Adjust the rect to match the scaled stickman
@@ -1456,11 +1476,11 @@ const drawActorTypeActor = function (
   rect.ry = 3;
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
-  if (COLOR_THEMES.has(theme!)) {
+  if (COLOR_THEMES.has(theme)) {
     actElem.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
     actElem.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
   } else {
-    actElem.style('stroke', actorBorder!);
+    actElem.style('stroke', actorBorder);
   }
 
   _drawTextCandidateFunc(conf, hasKatex(actor.description))(
@@ -1522,7 +1542,7 @@ export const drawBox = function (elem: SVG | SVGGroup, box: BoxRenderData, conf:
       box.name,
       g,
       box.x,
-      box.y + conf.boxTextMargin! + (box.textMaxHeight || 0) / 2,
+      box.y + requiredConf(conf).boxTextMargin + (box.textMaxHeight || 0) / 2,
       box.width,
       0,
       { class: 'text' },
@@ -1554,8 +1574,8 @@ export const drawActivation = function (
   diagObj: SequenceDiagramObject,
   actorIndexMap?: Map<string, number>
 ) {
-  const { theme, themeVariables } = conf;
-  const { bkgColorArray, borderColorArray, mainBkg } = themeVariables!;
+  const { theme, themeVariables } = requiredConf(conf);
+  const { bkgColorArray, borderColorArray, mainBkg } = themeVariables;
   const rect = svgDrawCommon.getNoteRect();
   const g = bounds.anchored;
   const actor = bounds.actor;
@@ -1572,9 +1592,9 @@ export const drawActivation = function (
       [...diagObj.db.getActors().values()].map((participant, index) => [participant.name, index])
     );
   const actorCount = resolvedActorIndexMap.get(actor) ?? 0;
-  if (COLOR_THEMES.has(theme!)) {
+  if (COLOR_THEMES.has(theme)) {
     rectElem.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
-    rectElem.style('fill', bkgColorArray[actorCount % borderColorArray.length] ?? mainBkg!);
+    rectElem.style('fill', bkgColorArray[actorCount % borderColorArray.length] ?? mainBkg);
   }
 };
 
@@ -1601,7 +1621,7 @@ export const drawLoop = async function (
     messageFontFamily: fontFamily,
     messageFontSize: fontSize,
     messageFontWeight: fontWeight,
-  } = conf;
+  } = requiredConf(conf);
   const g = elem
     .append('g')
     .attr('data-et', 'control-structure')
@@ -1638,16 +1658,16 @@ export const drawLoop = async function (
   txt.anchor = 'middle';
   txt.valign = 'middle';
   txt.tspan = false;
-  txt.width = Math.max(labelBoxWidth ?? 0, 50);
-  txt.height = labelBoxHeight! + (conf.look === 'neo' ? 15 : 0) || 20;
+  txt.width = Math.max(labelBoxWidth, 50);
+  txt.height = labelBoxHeight + (conf.look === 'neo' ? 15 : 0) || 20;
   txt.textMargin = boxTextMargin;
   txt.class = 'labelText';
 
   drawLabel(g, txt);
   txt = getTextObj() as TextData;
   txt.text = loopModel.title!;
-  txt.x = loopModel.startx + labelBoxWidth! / 2 + (loopModel.stopx - loopModel.startx) / 2;
-  txt.y = loopModel.starty + boxMargin! + boxTextMargin!;
+  txt.x = loopModel.startx + labelBoxWidth / 2 + (loopModel.stopx - loopModel.startx) / 2;
+  txt.y = loopModel.starty + boxMargin + boxTextMargin;
   txt.anchor = 'middle';
   txt.valign = 'middle';
   txt.textMargin = boxTextMargin;
@@ -1664,7 +1684,7 @@ export const drawLoop = async function (
       if (item.message) {
         txt.text = item.message;
         txt.x = loopModel.startx + (loopModel.stopx - loopModel.startx) / 2;
-        txt.y = loopModel.sections![idx as unknown as number].y + boxMargin! + boxTextMargin!;
+        txt.y = loopModel.sections![idx as unknown as number].y + boxMargin + boxTextMargin;
         txt.class = 'sectionTitle';
         txt.anchor = 'middle';
         txt.valign = 'middle';
@@ -1690,7 +1710,7 @@ export const drawLoop = async function (
             .reduce((acc, curr) => acc + curr)
         );
         loopModel.sections![idx as unknown as number].height +=
-          sectionHeight - (boxMargin! + boxTextMargin!);
+          sectionHeight - (boxMargin + boxTextMargin);
       }
     }
   }
@@ -1903,7 +1923,7 @@ const _drawTextCandidateFunc = (function () {
   };
 
   const byTspan: DrawTextCandidate = function (content, g, x, y, width, height, textAttrs, conf) {
-    const { actorFontSize, actorFontFamily, actorFontWeight } = conf;
+    const { actorFontSize, actorFontFamily, actorFontWeight } = requiredConf(conf);
 
     const [_actorFontSize, _actorFontSizePx] = parseFontSize(actorFontSize) as [number, string];
 
@@ -1916,8 +1936,8 @@ const _drawTextCandidateFunc = (function () {
         .attr('y', y)
         .style('text-anchor', 'middle')
         .style('font-size', _actorFontSizePx)
-        .style('font-weight', actorFontWeight!)
-        .style('font-family', actorFontFamily!);
+        .style('font-weight', actorFontWeight)
+        .style('font-family', actorFontFamily);
       text
         .append('tspan')
         .attr('x', x + width / 2)
@@ -2023,7 +2043,7 @@ const _drawMenuItemTextCandidateFunc = (function () {
   };
 
   const byTspan: DrawTextCandidate = function (content, g, x, y, width, height, textAttrs, conf) {
-    const { actorFontSize, actorFontFamily, actorFontWeight } = conf;
+    const { actorFontSize, actorFontFamily, actorFontWeight } = requiredConf(conf);
 
     const lines = content.split(common.lineBreakRegex);
     for (let i = 0; i < lines.length; i++) {
@@ -2034,9 +2054,9 @@ const _drawMenuItemTextCandidateFunc = (function () {
         .attr('x', x)
         .attr('y', y)
         .style('text-anchor', 'start')
-        .style('font-size', actorFontSize!)
-        .style('font-weight', actorFontWeight!)
-        .style('font-family', actorFontFamily!);
+        .style('font-size', actorFontSize)
+        .style('font-weight', actorFontWeight)
+        .style('font-family', actorFontFamily);
       text.append('tspan').attr('x', x).attr('dy', dy).text(lines[i]);
 
       text
