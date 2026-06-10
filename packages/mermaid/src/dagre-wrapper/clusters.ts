@@ -4,8 +4,10 @@ import createLabel from './createLabel.js';
 import { createText } from '../rendering-util/createText.js';
 import { select } from 'd3';
 import { getConfig } from '../diagram-api/diagramAPI.js';
+import { getRequiredConfig } from '../diagram-api/requiredConfig.js';
 import { getEffectiveHtmlLabels } from '../config.js';
 import { getSubGraphTitleMargins } from '../utils/subGraphTitleMargins.js';
+import { requiredNode } from '../utils/guards.js';
 import type { D3Selection } from '../types.js';
 import type { Node } from './nodes.js';
 
@@ -76,7 +78,7 @@ const rect: ClusterShapeFunction = async (parent, node) => {
     .attr('height', node.height + padding);
 
   const { subGraphTitleTopMargin } = getSubGraphTitleMargins({
-    flowchart: siteConfig.flowchart!,
+    flowchart: getRequiredConfig('flowchart'),
   });
   if (useHtmlLabels) {
     label.attr(
@@ -93,7 +95,7 @@ const rect: ClusterShapeFunction = async (parent, node) => {
   }
   // Center the label
 
-  const rectBox = rect.node()!.getBBox();
+  const rectBox = requiredNode(rect, 'cluster rect').getBBox();
   node.width = rectBox.width;
   node.height = rectBox.height;
 
@@ -129,7 +131,7 @@ const noteGroup: ClusterShapeFunction = (parent, node) => {
     .attr('height', node.height + padding)
     .attr('fill', 'none');
 
-  const rectBox = rect.node()!.getBBox();
+  const rectBox = requiredNode(rect, 'note-cluster rect').getBBox();
   node.width = rectBox.width;
   node.height = rectBox.height;
 
@@ -143,7 +145,10 @@ const roundedWithTitle: ClusterShapeFunction = async (parent, node) => {
   const siteConfig = getConfig();
 
   // Add outer g element
-  const shapeSvg = parent.insert('g').attr('class', node.classes!).attr('id', node.id);
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', node.classes ?? null)
+    .attr('id', node.id);
 
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
@@ -189,7 +194,7 @@ const roundedWithTitle: ClusterShapeFunction = async (parent, node) => {
     .attr('height', node.height + padding - bbox.height - 3);
 
   const { subGraphTitleTopMargin } = getSubGraphTitleMargins({
-    flowchart: siteConfig.flowchart!,
+    flowchart: getRequiredConfig('flowchart'),
   });
   // Center the label
   label.attr(
@@ -203,7 +208,7 @@ const roundedWithTitle: ClusterShapeFunction = async (parent, node) => {
     })`
   );
 
-  const rectBox = rect.node()!.getBBox();
+  const rectBox = requiredNode(rect, 'cluster rect').getBBox();
   node.height = rectBox.height;
 
   node.intersect = function (point) {
@@ -215,7 +220,10 @@ const roundedWithTitle: ClusterShapeFunction = async (parent, node) => {
 
 const divider: ClusterShapeFunction = (parent, node) => {
   // Add outer g element
-  const shapeSvg = parent.insert('g').attr('class', node.classes!).attr('id', node.id);
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', node.classes ?? null)
+    .attr('id', node.id);
 
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
@@ -231,7 +239,7 @@ const divider: ClusterShapeFunction = (parent, node) => {
     .attr('width', node.width + padding)
     .attr('height', node.height + padding);
 
-  const rectBox = rect.node()!.getBBox();
+  const rectBox = requiredNode(rect, 'divider rect').getBBox();
   node.width = rectBox.width;
   node.height = rectBox.height;
   node.diff = -node.padding / 2;
@@ -259,7 +267,7 @@ export const insertCluster = async (elem: D3Selection<SVGGElement>, node: Node) 
 export const getClusterTitleWidth = async (elem: D3Selection<SVGGElement>, node: Node) => {
   const label = await createLabel(elem, node.labelText, node.labelStyle, undefined, true);
   const width = label.getBBox().width;
-  elem.node()!.removeChild(label);
+  requiredNode(elem, 'cluster title parent').removeChild(label);
   return width;
 };
 

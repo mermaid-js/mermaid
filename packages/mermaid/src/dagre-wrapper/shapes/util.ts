@@ -1,6 +1,8 @@
 import createLabel from '../createLabel.js';
 import { createText } from '../../rendering-util/createText.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { getRequiredConfig } from '../../diagram-api/requiredConfig.js';
+import { requiredNode } from '../../utils/guards.js';
 import { getEffectiveHtmlLabels } from '../../config.js';
 import { select } from 'd3';
 import { sanitizeText } from '../../diagrams/common/common.js';
@@ -51,7 +53,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
       sanitizeText(decodeEntities(labelText), config),
       {
         useHtmlLabels,
-        width: node.width || config.flowchart!.wrappingWidth,
+        width: node.width || getRequiredConfig('flowchart').wrappingWidth,
         classes: 'markdown-node-label',
       },
       config
@@ -99,7 +101,7 @@ export const updateNodeBounds = <T extends SVGGraphicsElement>(
   node: Node,
   element: D3Selection<T>
 ) => {
-  const bbox = element.node()!.getBBox();
+  const bbox = requiredNode(element, 'node shape element').getBBox();
   node.width = bbox.width;
   node.height = bbox.height;
 };

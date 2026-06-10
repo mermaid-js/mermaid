@@ -7,6 +7,7 @@ import {
   clusterDb,
   adjustClustersAndEdges,
   findNonClusterChild,
+  graphChildren,
   sortNodesByHierarchy,
 } from './mermaid-graphlib.js';
 import { insertNode, positionNode, clear as clearNodes, setNodeElem } from './nodes.js';
@@ -15,6 +16,7 @@ import { insertEdgeLabel, positionEdgeLabel, insertEdge, clear as clearEdges } f
 import { log } from '../logger.js';
 import { getSubGraphTitleMargins } from '../utils/subGraphTitleMargins.js';
 import { getConfig } from '../diagram-api/diagramAPI.js';
+import { getRequiredConfig } from '../diagram-api/requiredConfig.js';
 import type { Graph } from 'dagre-d3-es/src/graphlib/index.js';
 import type { MermaidConfig } from '../config.type.js';
 import type { D3Element } from '../types.js';
@@ -90,7 +92,7 @@ const recursiveRender = async (
 
         log.warn('Recursive render complete ', newEl, node);
       } else {
-        if (graph.children(v)!.length > 0) {
+        if (graphChildren(graph, v).length > 0) {
           // This is a cluster but not to be rendered recursively
           // Render as before
           log.info('Cluster - the non recursive path XXX', v, node.id, node, graph);
@@ -134,7 +136,7 @@ const recursiveRender = async (
   // Move the nodes to the correct place
   let diff = 0;
   const { subGraphTitleTotalMargin } = getSubGraphTitleMargins({
-    flowchart: siteConfig.flowchart!,
+    flowchart: getRequiredConfig('flowchart'),
   });
   for (const v of sortNodesByHierarchy(graph)) {
     const node = graph.node(v);
@@ -153,7 +155,7 @@ const recursiveRender = async (
       positionNode(node);
     } else {
       // Non cluster node
-      if (graph.children(v)!.length > 0) {
+      if (graphChildren(graph, v).length > 0) {
         // A cluster in the non-recursive way
         // positionCluster(node);
         node.height += subGraphTitleTotalMargin;

@@ -5,8 +5,10 @@ import { computeLabelTransform } from '../rendering-util/labelTransform.js';
 import { line, curveBasis, select } from 'd3';
 import type { CurveFactory } from 'd3';
 import { getConfig } from '../diagram-api/diagramAPI.js';
+import { getRequiredConfig } from '../diagram-api/requiredConfig.js';
 import { getEffectiveHtmlLabels } from '../config.js';
 import utils from '../utils.js';
+import { requiredNode } from '../utils/guards.js';
 import { getUrl } from '../diagrams/common/common.js';
 import { getLineFunctionsWithOffset } from '../utils/lineWithOffset.js';
 import { getSubGraphTitleMargins } from '../utils/subGraphTitleMargins.js';
@@ -66,6 +68,21 @@ interface TerminalLabels {
 let edgeLabels: Record<string, D3Selection<SVGGElement>> = {};
 let terminalLabels: Record<string, TerminalLabels> = {};
 
+/**
+ * Returns a terminal label inserted earlier by {@link insertEdgeLabel},
+ * throwing a descriptive error if the invariant is broken.
+ */
+const requiredTerminalLabel = (
+  edgeId: string,
+  side: keyof TerminalLabels
+): D3Selection<SVGGElement> => {
+  const el = terminalLabels[edgeId]?.[side];
+  if (!el) {
+    throw new Error(`Expected ${side} terminal label of edge "${edgeId}" to have been inserted`);
+  }
+  return el;
+};
+
 export const clear = () => {
   edgeLabels = {};
   terminalLabels = {};
@@ -100,7 +117,7 @@ export const insertEdgeLabel = async (elem: D3Selection<SVGGElement>, edge: Edge
     config
   );
 
-  label.node()!.appendChild(labelElement);
+  requiredNode(label, 'edge label group').appendChild(labelElement);
 
   let bbox = labelElement.getBBox();
   let transformBbox = bbox;
@@ -245,14 +262,16 @@ export const positionEdgeLabel = (
 ) => {
   log.debug('Moving label abc88 ', edge.id, edge.label, edgeLabels[edge.id], paths);
   const path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
-  const siteConfig = getConfig();
   const { subGraphTitleTotalMargin } = getSubGraphTitleMargins({
-    flowchart: siteConfig.flowchart!,
+    flowchart: getRequiredConfig('flowchart'),
   });
+  // edge.x and edge.y are set by the dagre layout before labels are positioned.
+  const edgeX = edge.x!;
+  const edgeY = edge.y!;
   if (edge.label) {
     const el = edgeLabels[edge.id];
-    let x = edge.x!;
-    let y = edge.y!;
+    let x = edgeX;
+    let y = edgeY;
     if (path) {
       //   // debugger;
       const pos = utils.calcLabelPosition(path);
@@ -277,9 +296,9 @@ export const positionEdgeLabel = (
 
   //let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
   if (edge.startLabelLeft) {
-    const el = terminalLabels[edge.id].startLeft!;
-    let x = edge.x!;
-    let y = edge.y!;
+    const el = requiredTerminalLabel(edge.id, 'startLeft');
+    let x = edgeX;
+    let y = edgeY;
     if (path) {
       // debugger;
       const pos = utils.calcTerminalLabelPosition(edge.arrowTypeStart ? 10 : 0, 'start_left', path);
@@ -289,9 +308,9 @@ export const positionEdgeLabel = (
     el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.startLabelRight) {
-    const el = terminalLabels[edge.id].startRight!;
-    let x = edge.x!;
-    let y = edge.y!;
+    const el = requiredTerminalLabel(edge.id, 'startRight');
+    let x = edgeX;
+    let y = edgeY;
     if (path) {
       // debugger;
       const pos = utils.calcTerminalLabelPosition(
@@ -305,9 +324,9 @@ export const positionEdgeLabel = (
     el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.endLabelLeft) {
-    const el = terminalLabels[edge.id].endLeft!;
-    let x = edge.x!;
-    let y = edge.y!;
+    const el = requiredTerminalLabel(edge.id, 'endLeft');
+    let x = edgeX;
+    let y = edgeY;
     if (path) {
       // debugger;
       const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_left', path);
@@ -317,9 +336,9 @@ export const positionEdgeLabel = (
     el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.endLabelRight) {
-    const el = terminalLabels[edge.id].endRight!;
-    let x = edge.x!;
-    let y = edge.y!;
+    const el = requiredTerminalLabel(edge.id, 'endRight');
+    let x = edgeX;
+    let y = edgeY;
     if (path) {
       // debugger;
       const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_right', path);
@@ -453,6 +472,21 @@ const cutPathAtIntersect = (_points: Point[], boundaryNode: Bounds): Point[] => 
   return points;
 };
 
+/**
+ * Returns the positioned node of a cluster that an edge points to/from,
+ * throwing a descriptive error if the cluster was never registered.
+ */
+const requiredClusterNode = (
+  clusterDb: Record<string, ClusterInfo> | undefined,
+  clusterId: string
+): NonNullable<ClusterInfo['node']> => {
+  const node = clusterDb?.[clusterId]?.node;
+  if (!node) {
+    throw new Error(`Expected cluster "${clusterId}" to have a positioned node`);
+  }
+  return node;
+};
+
 export const insertEdge = function (
   elem: D3Selection<SVGGElement>,
   e: { v: string; w: string; name?: string | number },
@@ -462,28 +496,33 @@ export const insertEdge = function (
   graph: Graph,
   id: string
 ) {
-  let points = edge.points!;
+  // edge.points is set by the dagre layout before edges are inserted.
+  const originalPoints = edge.points!;
+  let points = originalPoints;
   log.debug('abc88 InsertEdge: edge=', edge, 'e=', e);
   let pointsHasChanged = false;
   const tail = graph.node(e.v);
   const head = graph.node(e.w);
 
   if (head?.intersect && tail?.intersect) {
-    points = points.slice(1, edge.points!.length - 1);
+    points = points.slice(1, originalPoints.length - 1);
     points.unshift(tail.intersect(points[0]));
     points.push(head.intersect(points[points.length - 1]));
   }
 
   if (edge.toCluster) {
-    log.debug('to cluster abc88', clusterDb![edge.toCluster]);
-    points = cutPathAtIntersect(edge.points!, clusterDb![edge.toCluster].node!);
+    log.debug('to cluster abc88', clusterDb?.[edge.toCluster]);
+    points = cutPathAtIntersect(originalPoints, requiredClusterNode(clusterDb, edge.toCluster));
 
     pointsHasChanged = true;
   }
 
   if (edge.fromCluster) {
-    log.debug('from cluster abc88', clusterDb![edge.fromCluster]);
-    points = cutPathAtIntersect(points.reverse(), clusterDb![edge.fromCluster].node!).reverse();
+    log.debug('from cluster abc88', clusterDb?.[edge.fromCluster]);
+    points = cutPathAtIntersect(
+      points.reverse(),
+      requiredClusterNode(clusterDb, edge.fromCluster)
+    ).reverse();
 
     pointsHasChanged = true;
   }
@@ -537,7 +576,7 @@ export const insertEdge = function (
     .attr('d', lineFunction(lineData))
     .attr('id', edge.id)
     .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
-    .attr('style', edge.style!);
+    .attr('style', edge.style ?? null);
 
   // DEBUG code, adds a red circle at each edge coordinate
   // edge.points.forEach((point) => {
@@ -552,7 +591,10 @@ export const insertEdge = function (
 
   let url = '';
   // // TODO: Can we load this config only from the rendered graph type?
-  if (getConfig().flowchart!.arrowMarkerAbsolute || getConfig().state!.arrowMarkerAbsolute) {
+  if (
+    getRequiredConfig('flowchart').arrowMarkerAbsolute ||
+    getRequiredConfig('state').arrowMarkerAbsolute
+  ) {
     url = getUrl(true);
   }
 

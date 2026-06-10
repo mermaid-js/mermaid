@@ -7,6 +7,7 @@ import createLabel from './createLabel.js';
 import intersect from './intersect/index.js';
 import note from './shapes/note.js';
 import { insertPolygonShape, labelHelper, updateNodeBounds } from './shapes/util.js';
+import { requiredNode } from '../utils/guards.js';
 import type { Graph } from 'dagre-d3-es/src/graphlib/index.js';
 import type { MermaidConfig } from '../config.type.js';
 import type { Direction } from '../diagrams/block/blockTypes.js';
@@ -640,16 +641,17 @@ const rectWithTitle: ShapeFunction = async (parent, node) => {
 
   const label = shapeSvg.insert('g').attr('class', 'label');
 
-  const text2 = (node.labelText as string[]).flat
-    ? (node.labelText as string[]).flat()
-    : node.labelText;
+  // rectWithTitle is only used with labelText set, hence the single assertion.
+  const text2 = (
+    (node.labelText as string[]).flat ? (node.labelText as string[]).flat() : node.labelText
+  )!;
   // const text2 = typeof text2prim === 'object' ? text2prim[0] : text2prim;
 
   let title = '';
   if (typeof text2 === 'object') {
     title = text2[0];
   } else {
-    title = text2!;
+    title = text2;
   }
   log.info('Label text abc79', title, text2, typeof text2 === 'object');
 
@@ -663,7 +665,7 @@ const rectWithTitle: ShapeFunction = async (parent, node) => {
     dv.attr('height', bbox.height);
   }
   log.info('Text 2', text2);
-  const textRows = text2!.slice(1, text2!.length);
+  const textRows = text2.slice(1, text2.length);
   const titleBox = text.getBBox();
   const descr = await createLabel(
     label,
@@ -704,7 +706,7 @@ const rectWithTitle: ShapeFunction = async (parent, node) => {
   // Get the size of the label
 
   // Bounding box for title and text
-  bbox = label.node()!.getBBox();
+  bbox = requiredNode(label, 'rectWithTitle label group').getBBox();
 
   // Center the label
   label.attr(
@@ -808,7 +810,7 @@ const doublecircle: ShapeFunction = async (parent, node) => {
   const outerCircle = circleGroup.insert('circle');
   const innerCircle = circleGroup.insert('circle');
 
-  circleGroup.attr('class', node.class!);
+  circleGroup.attr('class', node.class ?? null);
 
   // center the circle around its coordinate
   outerCircle
@@ -946,6 +948,10 @@ const end: ShapeFunction = (parent, node) => {
 };
 
 const class_box: ShapeFunction = async (parent, node) => {
+  const { classData } = node;
+  if (!classData) {
+    throw new Error(`Expected class_box node "${node.id}" to have classData`);
+  }
   const halfPadding = node.padding / 2;
   const rowPadding = 4;
   const lineHeight = 8;
@@ -971,12 +977,10 @@ const class_box: ShapeFunction = async (parent, node) => {
 
   const labelContainer = shapeSvg.insert('g').attr('class', 'label');
   let verticalPos = 0;
-  const hasInterface = node.classData!.annotations?.[0];
+  const hasInterface = classData.annotations?.[0];
 
   // 1. Create the labels
-  const interfaceLabelText = node.classData!.annotations[0]
-    ? '«' + node.classData!.annotations[0] + '»'
-    : '';
+  const interfaceLabelText = classData.annotations[0] ? '«' + classData.annotations[0] + '»' : '';
   const interfaceLabel = await createLabel(
     labelContainer,
     interfaceLabelText,
@@ -992,18 +996,18 @@ const class_box: ShapeFunction = async (parent, node) => {
     dv.attr('width', interfaceBBox.width);
     dv.attr('height', interfaceBBox.height);
   }
-  if (node.classData!.annotations[0]) {
+  if (classData.annotations[0]) {
     maxHeight += interfaceBBox.height + rowPadding;
     maxWidth += interfaceBBox.width;
   }
 
-  let classTitleString = node.classData!.label;
+  let classTitleString = classData.label;
 
-  if (node.classData!.type !== undefined && node.classData!.type !== '') {
+  if (classData.type !== undefined && classData.type !== '') {
     if (getEffectiveHtmlLabels(getConfig())) {
-      classTitleString += '&lt;' + node.classData!.type + '&gt;';
+      classTitleString += '&lt;' + classData.type + '&gt;';
     } else {
-      classTitleString += '<' + node.classData!.type + '>';
+      classTitleString += '<' + classData.type + '>';
     }
   }
   const classTitleLabel = await createLabel(
@@ -1028,7 +1032,7 @@ const class_box: ShapeFunction = async (parent, node) => {
   }
   const classAttributes: SVGGraphicsElement[] = [];
   // eslint-disable-next-line @typescript-eslint/no-misused-promises -- the original (pre-TypeScript) code never awaited these promises
-  node.classData!.members.forEach(async (member) => {
+  classData.members.forEach(async (member) => {
     const parsedInfo = member.getDisplayDetails();
     let parsedText = parsedInfo.displayText;
     if (getEffectiveHtmlLabels(getConfig())) {
@@ -1060,7 +1064,7 @@ const class_box: ShapeFunction = async (parent, node) => {
 
   const classMethods: SVGGraphicsElement[] = [];
   // eslint-disable-next-line @typescript-eslint/no-misused-promises -- the original (pre-TypeScript) code never awaited these promises
-  node.classData!.methods.forEach(async (member) => {
+  classData.methods.forEach(async (member) => {
     const parsedInfo = member.getDisplayDetails();
     let displayText = parsedInfo.displayText;
     if (getEffectiveHtmlLabels(getConfig())) {
@@ -1223,7 +1227,7 @@ export const insertNode = async (
     newEl = elem
       .insert('svg:a')
       .attr('xlink:href', node.link)
-      .attr('target', target!) as unknown as D3Selection<SVGGElement>;
+      .attr('target', target ?? null) as unknown as D3Selection<SVGGElement>;
     el = await shapes[node.shape](newEl, node, renderOptions);
   } else {
     el = await shapes[node.shape](elem, node, renderOptions);
