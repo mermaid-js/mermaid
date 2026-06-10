@@ -8,8 +8,8 @@ function intersectEllipse(
 ): Point {
   // Formulae from: https://mathworld.wolfram.com/Ellipse-LineIntersection.html
 
-  const cx = node.x!;
-  const cy = node.y!;
+  // The layout engine has populated the node center before intersections are computed.
+  const { x: cx, y: cy } = node as Required<typeof node>;
 
   const px = cx - point.x;
   const py = cy - point.y;

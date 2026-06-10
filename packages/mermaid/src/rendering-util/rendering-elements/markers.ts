@@ -20,6 +20,8 @@ const insertMarkers = <T extends BaseType>(
   id?: string
 ) => {
   markerArray.forEach((markerName) => {
+    // Legacy behavior kept as-is: a missing id produces an "undefined_"-prefixed
+    // marker id rather than an error, matching the historical string concatenation.
     markers[markerName](elem, type, id!);
   });
 };

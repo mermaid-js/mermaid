@@ -10,11 +10,13 @@ import { clear as clearClusters, insertCluster } from '../../rendering-elements/
 import {
   clear as clearEdges,
   edgeLabels,
+  getTerminalLabel,
   hasEdgeLabel,
   insertEdge,
   insertEdgeLabel,
-  terminalLabels,
 } from '../../rendering-elements/edges.js';
+import type { EdgePaths } from '../../rendering-elements/edges.js';
+import { requiredGet } from '../../../utils/guards.js';
 import insertMarkers from '../../rendering-elements/markers.js';
 import { clear as clearNodes, positionNode } from '../../rendering-elements/nodes.js';
 import type { LayoutData, Edge } from '../../types.js';
@@ -28,12 +30,6 @@ type RenderedEdge = Edge & {
   startLabelLeft?: string;
   endLabelRight?: string;
 };
-type EdgeRenderPath = Parameters<typeof utils.calcLabelPosition>[0];
-
-interface EdgeRenderPaths {
-  originalPath?: EdgeRenderPath;
-  updatedPath?: EdgeRenderPath;
-}
 
 export interface CommonLayoutRenderContext<PreparedLayout = unknown> {
   element: D3Selection<SVGElement>;
@@ -112,7 +108,7 @@ export function createCommonLayoutRenderer<
     helpers?: InternalHelpers,
     options?: RenderOptions
   ): Promise<void> {
-    const element = svg.select('g') as unknown as D3Selection<SVGElement>;
+    const element = svg.select<SVGElement>('g');
     insertMarkers(element, data4Layout.markers, data4Layout.type, data4Layout.diagramId);
     clearLayoutRenderState();
 
@@ -239,7 +235,7 @@ async function paintLayoutEdge(
     getRenderedNode(edge.end, nodeById),
     data4Layout.diagramId,
     shouldSkipIntersect(edge, options)
-  ) as EdgeRenderPaths | undefined;
+  );
 
   if (hasEdgeLabel(edge)) {
     if (!edgeLabels.has(edge.id)) {
@@ -262,14 +258,14 @@ function shouldSkipIntersect(edge: Edge, options: CommonLayoutPaintOptions): boo
     : (options.skipIntersect ?? false);
 }
 
-function positionRenderedEdgeLabel(edge: RenderedEdge, paths?: EdgeRenderPaths): void {
+function positionRenderedEdgeLabel(edge: RenderedEdge, paths?: EdgePaths): void {
   const path = paths?.updatedPath ?? paths?.originalPath;
   const siteConfig = getConfig();
   const { subGraphTitleTotalMargin } = getSubGraphTitleMargins({
-    flowchart: siteConfig.flowchart ?? {},
+    flowchart: siteConfig.flowchart,
   });
   if (edge.label) {
-    const el = edgeLabels.get(edge.id)!;
+    const el = requiredGet(edgeLabels, edge.id, 'edge label');
     let x = edge.x;
     let y = edge.y;
     if (path) {
@@ -290,11 +286,12 @@ function positionRenderedEdgeLabel(edge: RenderedEdge, paths?: EdgeRenderPaths):
         y = pos.y;
       }
     }
+    // Legacy behavior kept as-is: an unset y intentionally yields NaN in the transform.
     el.attr('transform', `translate(${x}, ${y! + subGraphTitleTotalMargin / 2})`);
   }
 
   if (edge?.startLabelLeft) {
-    const el = terminalLabels.get(edge.id)!.startLeft!;
+    const el = getTerminalLabel(edge.id, 'startLeft');
     let x = edge?.x;
     let y = edge?.y;
     if (path) {
@@ -305,7 +302,7 @@ function positionRenderedEdgeLabel(edge: RenderedEdge, paths?: EdgeRenderPaths):
     el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.startLabelRight) {
-    const el = terminalLabels.get(edge.id)!.startRight!;
+    const el = getTerminalLabel(edge.id, 'startRight');
     let x = edge.x;
     let y = edge.y;
     if (path) {
@@ -320,7 +317,7 @@ function positionRenderedEdgeLabel(edge: RenderedEdge, paths?: EdgeRenderPaths):
     el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.endLabelLeft) {
-    const el = terminalLabels.get(edge.id)!.endLeft!;
+    const el = getTerminalLabel(edge.id, 'endLeft');
     let x = edge.x;
     let y = edge.y;
     if (path) {
@@ -331,7 +328,7 @@ function positionRenderedEdgeLabel(edge: RenderedEdge, paths?: EdgeRenderPaths):
     el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.endLabelRight) {
-    const el = terminalLabels.get(edge.id)!.endRight!;
+    const el = getTerminalLabel(edge.id, 'endRight');
     let x = edge.x;
     let y = edge.y;
     if (path) {

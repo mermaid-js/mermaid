@@ -70,6 +70,13 @@ vi.mock('../../rendering-elements/clusters.js', () => ({
 vi.mock('../../rendering-elements/edges.js', () => ({
   clear: mocks.clearEdges,
   edgeLabels: mocks.edgeLabels,
+  getTerminalLabel: (edgeId: string, position: string) => {
+    const label = mocks.terminalLabels.get(edgeId)?.[position];
+    if (!label) {
+      throw new Error(`Expected terminal label "${position}" for edge "${edgeId}" to exist`);
+    }
+    return label;
+  },
   hasEdgeLabel: (edge: Edge) => Boolean(edge.label || edge.startLabelRight || edge.endLabelLeft),
   insertEdge: mocks.insertEdge,
   insertEdgeLabel: mocks.insertEdgeLabel,

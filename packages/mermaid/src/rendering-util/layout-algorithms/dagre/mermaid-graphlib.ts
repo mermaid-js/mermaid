@@ -3,6 +3,7 @@ import { log } from '../../../logger.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import type { EdgeObj } from 'dagre-d3-es/src/graphlib/graph.js';
 import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
+import { requiredGet } from '../../../utils/guards.js';
 import type { Node } from '../../types.js';
 
 export interface ClusterDbEntry {
@@ -74,7 +75,7 @@ const copy = (
   log.warn('Copying (nodes) clusterId', clusterId, 'nodes', nodes);
 
   nodes.forEach((node) => {
-    if (graph.children(node)!.length > 0) {
+    if ((graph.children(node) ?? []).length > 0) {
       copy(node, graph, newGraph, rootId);
     } else {
       const data = graph.node(node);
@@ -155,7 +156,7 @@ const copy = (
 };
 
 export const extractDescendants = (id: string, graph: graphlib.Graph): string[] => {
-  const children = graph.children(id)!;
+  const children = graph.children(id) ?? [];
   let res = [...children];
 
   for (const child of children) {
@@ -170,11 +171,11 @@ export const validate = (graph: graphlib.Graph) => {
   const edges = graph.edges();
   log.trace('Edges: ', edges);
   for (const edge of edges) {
-    if (graph.children(edge.v)!.length > 0) {
+    if ((graph.children(edge.v) ?? []).length > 0) {
       log.trace('The node ', edge.v, ' is part of and edge even though it has children');
       return false;
     }
-    if (graph.children(edge.w)!.length > 0) {
+    if ((graph.children(edge.w) ?? []).length > 0) {
       log.trace('The node ', edge.w, ' is part of and edge even though it has children');
       return false;
     }
@@ -207,7 +208,7 @@ export const findNonClusterChild = (
   graph: graphlib.Graph,
   clusterId?: string
 ): string | undefined => {
-  const children = graph.children(id)!;
+  const children = graph.children(id) ?? [];
   log.trace('Searching children of id ', id, children);
   if (children.length < 1) {
     return id;
@@ -230,21 +231,17 @@ export const findNonClusterChild = (
 };
 
 const getAnchorId = (id: string): string => {
-  if (!clusterDb.has(id)) {
+  const entry = clusterDb.get(id);
+  if (!entry?.externalConnections) {
     return id;
   }
-  if (!clusterDb.get(id)!.externalConnections) {
-    return id;
-  }
-
-  if (clusterDb.has(id)) {
-    return clusterDb.get(id)!.id!;
-  }
-  return id;
+  // Anchor onto the recorded non-cluster child; fall back to the cluster id
+  // itself when no anchor was found.
+  return entry.id ?? id;
 };
 
-export const adjustClustersAndEdges = (graph: graphlib.Graph, depth?: number) => {
-  if (!graph || depth! > 10) {
+export const adjustClustersAndEdges = (graph: graphlib.Graph, depth = 0) => {
+  if (!graph || depth > 10) {
     log.debug('Opting out, no graph ');
     return;
   } else {
@@ -252,7 +249,7 @@ export const adjustClustersAndEdges = (graph: graphlib.Graph, depth?: number) =>
   }
 
   graph.nodes().forEach(function (id) {
-    const children = graph.children(id)!;
+    const children = graph.children(id) ?? [];
     if (children.length > 0) {
       log.warn(
         'Cluster identified',
@@ -266,7 +263,7 @@ export const adjustClustersAndEdges = (graph: graphlib.Graph, depth?: number) =>
   });
 
   graph.nodes().forEach(function (id) {
-    const children = graph.children(id)!;
+    const children = graph.children(id) ?? [];
     const edges = graph.edges();
     if (children.length > 0) {
       log.debug('Cluster identified', id, descendants);
@@ -274,10 +271,10 @@ export const adjustClustersAndEdges = (graph: graphlib.Graph, depth?: number) =>
         const d1 = isDescendant(edge.v, id);
         const d2 = isDescendant(edge.w, id);
 
-        if ((d1 as unknown as number) ^ (d2 as unknown as number)) {
+        if (d1 !== d2) {
           log.warn('Edge: ', edge, ' leaves cluster ', id);
           log.warn('Descendants of XXX ', id, ': ', descendants.get(id));
-          clusterDb.get(id)!.externalConnections = true;
+          requiredGet(clusterDb, id, 'cluster entry').externalConnections = true;
         }
       });
     } else {
@@ -285,12 +282,17 @@ export const adjustClustersAndEdges = (graph: graphlib.Graph, depth?: number) =>
     }
   });
 
-  for (const id of clusterDb.keys()) {
-    const nonClusterChild = clusterDb.get(id)!.id;
-    const parent = graph.parent(nonClusterChild!);
+  for (const [id, entry] of clusterDb.entries()) {
+    const nonClusterChild = entry.id;
+    const parent = nonClusterChild ? graph.parent(nonClusterChild) : undefined;
 
-    if (parent !== id && clusterDb.has(parent!) && !clusterDb.get(parent!)!.externalConnections) {
-      clusterDb.get(id)!.id = parent;
+    if (
+      parent !== undefined &&
+      parent !== id &&
+      clusterDb.has(parent) &&
+      !requiredGet(clusterDb, parent, 'cluster entry').externalConnections
+    ) {
+      entry.id = parent;
     }
     // When this cluster has a direct outgoing edge AND its current anchor sits inside
     // a sibling subgraph that will be extracted (collapsed into a clusterNode), the
@@ -299,13 +301,13 @@ export const adjustClustersAndEdges = (graph: graphlib.Graph, depth?: number) =>
     const hasDirectOutgoingEdge = graph.edges().some((edge) => edge.v === id);
     if (
       nonClusterChild &&
-      clusterDb.get(id)?.externalConnections &&
+      entry.externalConnections &&
       hasDirectOutgoingEdge &&
       isNodeInExtractableCluster(graph, nonClusterChild, id)
     ) {
       const safeAnchor = findSafeAnchorNode(graph, id, graph.parent(nonClusterChild));
       if (safeAnchor) {
-        clusterDb.get(id)!.id = safeAnchor;
+        entry.id = safeAnchor;
       }
     }
   }
@@ -334,13 +336,15 @@ export const adjustClustersAndEdges = (graph: graphlib.Graph, depth?: number) =>
       w = getAnchorId(e.w);
       graph.removeEdge(e.v, e.w, e.name);
       if (v !== e.v) {
-        const parent = graph.parent(v);
-        clusterDb.get(parent!)!.externalConnections = true;
+        // A rebound anchor always lives inside a registered cluster.
+        const parent = graph.parent(v)!;
+        requiredGet(clusterDb, parent, 'cluster entry').externalConnections = true;
         edge.fromCluster = e.v;
       }
       if (w !== e.w) {
-        const parent = graph.parent(w);
-        clusterDb.get(parent!)!.externalConnections = true;
+        // A rebound anchor always lives inside a registered cluster.
+        const parent = graph.parent(w)!;
+        requiredGet(clusterDb, parent, 'cluster entry').externalConnections = true;
         edge.toCluster = e.w;
       }
       log.warn('Fix Replacing with XXX', v, w, e.name);
@@ -362,7 +366,7 @@ export const extractor = (graph: graphlib.Graph, depth: number) => {
   let nodes = graph.nodes();
   let hasChildren = false;
   for (const node of nodes) {
-    const children = graph.children(node)!;
+    const children = graph.children(node) ?? [];
     hasChildren = hasChildren || children.length > 0;
   }
 
@@ -372,29 +376,26 @@ export const extractor = (graph: graphlib.Graph, depth: number) => {
   }
   log.debug('Nodes = ', nodes, depth);
   for (const node of nodes) {
+    const entry = clusterDb.get(node);
     log.debug(
       'Extracting node',
       node,
       clusterDb,
-      clusterDb.has(node) && !clusterDb.get(node)!.externalConnections,
+      entry !== undefined && !entry.externalConnections,
       !graph.parent(node),
       graph.node(node),
       graph.children('D'),
       ' Depth ',
       depth
     );
-    if (!clusterDb.has(node)) {
+    if (!entry) {
       log.debug('Not a cluster', node, depth);
-    } else if (
-      clusterDb.get(node)?.clusterData?.explicitDir &&
-      graph.children(node) &&
-      graph.children(node)!.length > 0
-    ) {
+    } else if (entry.clusterData?.explicitDir && (graph.children(node)?.length ?? 0) > 0) {
       // Cluster with an explicit direction keyword — always create a subgraph,
       // even when it has external connections (fixes issue #4648).
       log.warn('Cluster with explicit dir, creating subgraph for children', node, depth);
 
-      const dir = clusterDb.get(node)!.clusterData!.dir;
+      const dir = entry.clusterData.dir;
       const clusterGraph = new graphlib.Graph({
         multigraph: true,
         compound: true,
@@ -418,8 +419,8 @@ export const extractor = (graph: graphlib.Graph, depth: number) => {
         ...clusterNodeData,
         clusterNode: true,
         id: node,
-        clusterData: clusterDb.get(node)!.clusterData,
-        label: clusterDb.get(node)!.label,
+        clusterData: entry.clusterData,
+        label: entry.label,
         graph: clusterGraph,
       });
       log.warn(
@@ -427,11 +428,7 @@ export const extractor = (graph: graphlib.Graph, depth: number) => {
         node,
         graphlibJson.write(clusterGraph)
       );
-    } else if (
-      !clusterDb.get(node)!.externalConnections &&
-      graph.children(node) &&
-      graph.children(node)!.length > 0
-    ) {
+    } else if (!entry.externalConnections && (graph.children(node)?.length ?? 0) > 0) {
       // Original behaviour: cluster without external connections gets its own sub-graph.
       log.warn(
         'Cluster without external connections, without a parent and with children',
@@ -441,9 +438,10 @@ export const extractor = (graph: graphlib.Graph, depth: number) => {
 
       const graphSettings = graph.graph();
       let dir = graphSettings.rankdir === 'TB' ? 'LR' : 'TB';
-      if (clusterDb.get(node)?.clusterData?.dir) {
-        dir = clusterDb.get(node)!.clusterData!.dir!;
-        log.warn('Fixing dir', clusterDb.get(node)!.clusterData!.dir, dir);
+      const clusterDir = entry.clusterData?.dir;
+      if (clusterDir) {
+        dir = clusterDir;
+        log.warn('Fixing dir', clusterDir, dir);
       }
 
       const clusterGraph = new graphlib.Graph({
@@ -467,8 +465,8 @@ export const extractor = (graph: graphlib.Graph, depth: number) => {
         ...clusterNodeData,
         clusterNode: true,
         id: node,
-        clusterData: clusterDb.get(node)!.clusterData,
-        label: clusterDb.get(node)!.label,
+        clusterData: entry.clusterData,
+        label: entry.label,
         graph: clusterGraph,
       });
       log.debug('Old graph after copy', graphlibJson.write(graph));
@@ -477,11 +475,11 @@ export const extractor = (graph: graphlib.Graph, depth: number) => {
         'Cluster ** ',
         node,
         ' **not meeting the criteria !externalConnections:',
-        !clusterDb.get(node)!.externalConnections,
+        !entry.externalConnections,
         ' no parent: ',
         !graph.parent(node),
         ' children ',
-        graph.children(node) && graph.children(node)!.length > 0,
+        (graph.children(node)?.length ?? 0) > 0,
         graph.children('D'),
         depth
       );
@@ -506,7 +504,7 @@ const sorter = (graph: graphlib.Graph, nodes: string[]): string[] => {
   }
   let result: string[] = Object.assign([], nodes);
   nodes.forEach((node) => {
-    const children = graph.children(node)!;
+    const children = graph.children(node) ?? [];
     const sorted = sorter(graph, children);
     result = [...result, ...sorted];
   });
@@ -514,7 +512,8 @@ const sorter = (graph: graphlib.Graph, nodes: string[]): string[] => {
   return result;
 };
 
-export const sortNodesByHierarchy = (graph: graphlib.Graph) => sorter(graph, graph.children()!);
+export const sortNodesByHierarchy = (graph: graphlib.Graph) =>
+  sorter(graph, graph.children() ?? []);
 
 /** Checks if a node is inside a cluster that will be extracted (has no external connections). */
 const isNodeInExtractableCluster = (graph: graphlib.Graph, node: string, rootId: string) => {
@@ -540,7 +539,10 @@ const findSafeAnchorNode = (
   const children = graph.children(clusterId) ?? [];
 
   for (const child of children) {
-    if (child === excludedCluster || isDescendant(child, excludedCluster!)) {
+    if (
+      child === excludedCluster ||
+      (excludedCluster !== undefined && isDescendant(child, excludedCluster))
+    ) {
       continue;
     }
 

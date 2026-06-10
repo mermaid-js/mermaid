@@ -13,15 +13,15 @@ export interface RectLikeNode {
 }
 
 const intersectRect = (node: RectLikeNode, point: Point): Point => {
-  const x = node.x!;
-  const y = node.y!;
+  // The layout engine has populated the node geometry before intersections are computed.
+  const { x, y, width, height } = node as Required<RectLikeNode>;
 
   // Rectangle intersection algorithm from:
   // https://math.stackexchange.com/questions/108113/find-edge-between-two-boxes
   const dx = point.x - x;
   const dy = point.y - y;
-  let w = node.width! / 2;
-  let h = node.height! / 2;
+  let w = width / 2;
+  let h = height / 2;
 
   let sx, sy;
   if (Math.abs(dy) * w > Math.abs(dx) * h) {

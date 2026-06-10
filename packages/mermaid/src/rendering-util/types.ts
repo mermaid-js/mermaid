@@ -107,6 +107,15 @@ export interface ClusterNode extends BaseNode {
   edgeEnd?: string;
   isDummy?: boolean;
 }
+
+/**
+ * A {@link ClusterNode} after the layout engine has populated its geometry.
+ * Cluster shape renderers narrow to this type once at the top of the function
+ * instead of asserting `!` on every field access.
+ */
+export type PositionedClusterNode = ClusterNode &
+  Required<Pick<ClusterNode, 'width' | 'height' | 'x' | 'y' | 'padding'>>;
+
 export interface NonClusterNode extends BaseNode {
   shape?: ShapeID;
   isGroup: false;

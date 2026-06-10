@@ -7,8 +7,8 @@ import type { RectLikeNode } from './intersect-rect.js';
  * that it has the shape specified by polygon.
  */
 function intersectPolygon(node: RectLikeNode, polyPoints: Point[], point: Point): Point {
-  const x1 = node.x!;
-  const y1 = node.y!;
+  // The layout engine has populated the node geometry before intersections are computed.
+  const { x: x1, y: y1, width, height } = node as Required<RectLikeNode>;
 
   const intersections = [];
 
@@ -25,8 +25,8 @@ function intersectPolygon(node: RectLikeNode, polyPoints: Point[], point: Point)
     minY = Math.min(minY, singlePoint.y);
   }
 
-  const left = x1 - node.width! / 2 - minX;
-  const top = y1 - node.height! / 2 - minY;
+  const left = x1 - width / 2 - minX;
+  const top = y1 - height / 2 - minY;
 
   for (let i = 0; i < polyPoints.length; i++) {
     const p1 = polyPoints[i];

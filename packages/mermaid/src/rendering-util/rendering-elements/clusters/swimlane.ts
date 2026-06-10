@@ -7,7 +7,7 @@ import { createText } from '../../createText.js';
 import intersectRect from '../intersect/intersect-rect.js';
 import { styles2String, userNodeOverrides } from '../shapes/handDrawnShapeStyles.js';
 import { handleUndefinedAttr } from '../../../utils.js';
-import type { ClusterNode } from '../../types.js';
+import type { ClusterNode, PositionedClusterNode } from '../../types.js';
 import type { D3Selection, Point } from '../../../types.js';
 
 /**
@@ -44,7 +44,7 @@ export const swimlane = async (parent: D3Selection<SVGGElement>, node: SwimlaneC
     .attr('data-et', 'cluster')
     .attr('data-look', handleUndefinedAttr(node.look));
 
-  const useHtmlLabels = evaluate(siteConfig.flowchart!.htmlLabels);
+  const useHtmlLabels = evaluate(siteConfig.flowchart?.htmlLabels);
 
   // Determine if this is a left-to-right layout (title on left, rotated)
   const isLR = node.direction === 'LR';
@@ -70,18 +70,19 @@ export const swimlane = async (parent: D3Selection<SVGGElement>, node: SwimlaneC
     dv.attr('height', bbox.height);
   }
 
+  // The swimlanes layout has populated the lane geometry before rendering.
+  const { width: nodeWidth, height, x: nodeX, y: nodeY } = node as PositionedClusterNode;
   const padding = node.padding ?? 0;
-  const width = node.width! <= bbox.width + padding ? bbox.width + padding : node.width!;
-  if (node.width! <= bbox.width + padding) {
-    node.diff = (width - node.width!) / 2 - padding;
+  const width = nodeWidth <= bbox.width + padding ? bbox.width + padding : nodeWidth;
+  if (nodeWidth <= bbox.width + padding) {
+    node.diff = (width - nodeWidth) / 2 - padding;
   } else {
     node.diff = -padding;
   }
 
-  const height = node.height!;
-  const laneTop = node.y! - height / 2;
-  const laneBottom = node.y! + height / 2;
-  const laneLeft = node.x! - width / 2;
+  const laneTop = nodeY - height / 2;
+  const laneBottom = nodeY + height / 2;
+  const laneLeft = nodeX - width / 2;
 
   // Top of the content area across all lanes, computed in the swimlanes
   // layout write-back. This is the Y of the highest node in the pool.
@@ -175,7 +176,7 @@ export const swimlane = async (parent: D3Selection<SVGGElement>, node: SwimlaneC
     const bodyY = laneTop + titleHeight;
     const contentHeight = Math.max(0, laneBottom - bodyY);
 
-    const x = node.x! - width / 2;
+    const x = nodeX - width / 2;
 
     if (node.look === 'handDrawn') {
       // @ts-ignore TODO: Fix rough typings
@@ -227,7 +228,7 @@ export const swimlane = async (parent: D3Selection<SVGGElement>, node: SwimlaneC
     }
 
     // Place the label centered within the title band
-    const labelX = node.x! - bbox.width / 2;
+    const labelX = nodeX - bbox.width / 2;
     const labelY = laneTop + (titleHeight - bbox.height) / 2;
     labelEl.attr('transform', `translate(${labelX}, ${labelY})`);
   }

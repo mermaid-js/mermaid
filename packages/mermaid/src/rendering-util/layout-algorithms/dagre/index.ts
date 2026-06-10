@@ -15,6 +15,7 @@ import { insertEdgeLabel, positionEdgeLabel, insertEdge } from '../../rendering-
 import { log } from '../../../logger.js';
 import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
+import { requiredGet } from '../../../utils/guards.js';
 import type { CommonLayoutRenderContext } from '../common/index.js';
 import type { MermaidConfig } from '../../../config.type.js';
 import type { D3Selection, Point } from '../../../types.js';
@@ -39,6 +40,8 @@ export type DagreEdge = Edge & {
 
 interface SelfLoopSegment {
   edge: DagreEdge;
+  /** The self-loop bookkeeping of {@link edge}, guaranteed present for grouped segments. */
+  selfLoop: SelfLoopData;
   start: string;
   end: string;
 }
@@ -257,13 +260,15 @@ export const getEdgesToRender = (
   const rankdir = graph.graph()?.rankdir;
 
   graph.edges().forEach((e) => {
-    const edge = graph.edge(e);
-    if (mergeSelfLoops && edge.selfLoop) {
-      const key = edge.selfLoop.id;
-      if (!selfLoopEdgeGroups.has(key)) {
-        selfLoopEdgeGroups.set(key, []);
+    const edge = graph.edge(e) as DagreEdge;
+    const selfLoop = edge.selfLoop;
+    if (mergeSelfLoops && selfLoop) {
+      let group = selfLoopEdgeGroups.get(selfLoop.id);
+      if (!group) {
+        group = [];
+        selfLoopEdgeGroups.set(selfLoop.id, group);
       }
-      selfLoopEdgeGroups.get(key)!.push({ edge, start: e.v, end: e.w });
+      group.push({ edge, selfLoop, start: e.v, end: e.w });
     } else {
       edgesToRender.push({ edge, start: e.v, end: e.w });
     }
@@ -276,15 +281,16 @@ export const getEdgesToRender = (
       return;
     }
 
-    segments.sort((a, b) => a.edge.selfLoop!.order - b.edge.selfLoop!.order);
+    segments.sort((a, b) => a.selfLoop.order - b.selfLoop.order);
     const [firstSegment, middleSegment, lastSegment] = segments;
     const originalEdge =
       firstSegment.edge.originalEdge ??
       middleSegment.edge.originalEdge ??
       lastSegment.edge.originalEdge ??
       middleSegment.edge;
-    const node = graph.node(originalEdge.start!);
-    if (!node) {
+    const originalStart = originalEdge.start;
+    const node = originalStart ? graph.node(originalStart) : undefined;
+    if (!originalStart || !node) {
       segments.forEach((segment) => edgesToRender.push(segment));
       return;
     }
@@ -293,7 +299,7 @@ export const getEdgesToRender = (
       height: middleSegment.edge.height,
     };
     // Dagre uses the dummy route for layout; the SVG output should still be one logical edge.
-    const side = getSelfLoopSide(graph, node, segments, originalEdge.start!, rankdir);
+    const side = getSelfLoopSide(graph, node, segments, originalStart, rankdir);
     const points = getSelfLoopPoints(node, side, yOffset, label.width ?? 0);
     const labelPosition = getSelfLoopLabelPosition(node, points, side, yOffset, label);
     const mergedEdge = {
@@ -318,14 +324,19 @@ export const getEdgesToRender = (
     delete mergedEdge.selfLoop;
     delete mergedEdge.originalEdge;
 
-    edgesToRender.push({ edge: mergedEdge, start: mergedEdge.start!, end: mergedEdge.end! });
+    // A self-loop's endpoints coincide, so the original start anchors both ends.
+    edgesToRender.push({
+      edge: mergedEdge,
+      start: originalStart,
+      end: mergedEdge.end ?? originalStart,
+    });
   });
 
   return edgesToRender;
 };
 
-const measureAndRunDagreLayoutCore = async (
-  _elem: D3Selection<SVGElement>,
+const measureAndRunDagreLayoutCore = async <T extends SVGElement>(
+  _elem: D3Selection<T>,
   graph: graphlib.Graph,
   diagramType: string,
   id: string,
@@ -390,7 +401,7 @@ const measureAndRunDagreLayoutCore = async (
 
         // "o" will contain the full cluster not just the children
         const o = await recursiveRender(
-          nodes as unknown as D3Selection<SVGElement>,
+          nodes,
           node.graph,
           diagramType,
           id,
@@ -414,7 +425,7 @@ const measureAndRunDagreLayoutCore = async (
         );
         setNodeElem(newEl, node);
       } else {
-        if (graph.children(v)!.length > 0) {
+        if ((graph.children(v) ?? []).length > 0) {
           // This is a cluster but not to be rendered recursively
           // Render as before
           log.trace(
@@ -461,11 +472,11 @@ const measureAndRunDagreLayoutCore = async (
         }
         const segmentId = edge.id;
         edge.id = edge.selfLoop.id;
-        await insertEdgeLabel(edgeLabels as unknown as Parameters<typeof insertEdgeLabel>[0], edge);
+        await insertEdgeLabel(edgeLabels, edge);
         edge.id = segmentId;
         return;
       }
-      await insertEdgeLabel(edgeLabels as unknown as Parameters<typeof insertEdgeLabel>[0], edge);
+      await insertEdgeLabel(edgeLabels, edge);
     });
 
     await Promise.all(edgePromises);
@@ -484,9 +495,7 @@ const measureAndRunDagreLayoutCore = async (
 
   log.info('Graph after layout:', JSON.stringify(graphlibJson.write(graph)));
 
-  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(
-    siteConfig as Parameters<typeof getSubGraphTitleMargins>[0]
-  );
+  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
   return {
     elem,
     graph,
@@ -534,11 +543,11 @@ const paintDagreLayoutCore = async ({
           node.y,
           graph.parent(v)
         );
-        clusterDb.get(node.id)!.node = node;
+        requiredGet(clusterDb, node.id, 'cluster entry').node = node;
         positionNode(node);
       } else {
         // A tainted cluster node
-        if (graph.children(v)!.length > 0) {
+        if ((graph.children(v) ?? []).length > 0) {
           log.info(
             'A pure cluster node XBX1',
             v,
@@ -558,7 +567,7 @@ const paintDagreLayoutCore = async ({
           await insertCluster(clusters, node);
 
           // A cluster in the non-recursive way
-          clusterDb.get(node.id)!.node = node;
+          requiredGet(clusterDb, node.id, 'cluster entry').node = node;
         } else {
           // Regular node
           const parent = graph.node(node.parentId);
@@ -593,18 +602,10 @@ const paintDagreLayoutCore = async ({
   edgesToRender.forEach(function ({ edge, start, end }) {
     log.info('Edge ' + start + ' -> ' + end + ': ' + JSON.stringify(edge), edge);
 
-    edge.points!.forEach((point) => (point.y += edgeOffsetY));
+    edge.points?.forEach((point) => (point.y += edgeOffsetY));
     const startNode = graph.node(start);
     const endNode = graph.node(end);
-    const paths = insertEdge(
-      edgePaths as unknown as Parameters<typeof insertEdge>[0],
-      edge,
-      clusterDb,
-      diagramType,
-      startNode,
-      endNode,
-      id
-    );
+    const paths = insertEdge(edgePaths, edge, clusterDb, diagramType, startNode, endNode, id);
     positionEdgeLabel(edge, paths);
   });
 
@@ -619,8 +620,17 @@ const paintDagreLayoutCore = async ({
   return { elem, diff };
 };
 
-const recursiveRender = async (...args: Parameters<typeof measureAndRunDagreLayoutCore>) =>
-  await paintDagreLayoutCore(await measureAndRunDagreLayoutCore(...args));
+const recursiveRender = async <T extends SVGElement>(
+  elem: D3Selection<T>,
+  graph: graphlib.Graph,
+  diagramType: string,
+  id: string,
+  parentCluster: DagreNodeValue | undefined,
+  siteConfig: MermaidConfig
+) =>
+  await paintDagreLayoutCore(
+    await measureAndRunDagreLayoutCore(elem, graph, diagramType, id, parentCluster, siteConfig)
+  );
 
 export const prepareLayoutForDagre = (data4Layout: LayoutData): DagrePreparedLayout => {
   const graph = new graphlib.Graph({
@@ -653,9 +663,9 @@ export const prepareLayoutForDagre = (data4Layout: LayoutData): DagrePreparedLay
 
   log.debug('Edges:', data4Layout.edges);
   data4Layout.edges.forEach((edge) => {
-    if (edge.start === edge.end) {
+    if (edge.start !== undefined && edge.start === edge.end) {
       // Keep the dagre dummy-node workaround for layout, then merge these segments before rendering.
-      const nodeId = edge.start!;
+      const nodeId = edge.start;
       const specialId1 = nodeId + '---' + nodeId + '---1';
       const specialId2 = nodeId + '---' + nodeId + '---2';
       const node = graph.node(nodeId);
@@ -726,6 +736,7 @@ export const prepareLayoutForDagre = (data4Layout: LayoutData): DagrePreparedLay
       graph.setEdge(specialId1, specialId2, edgeMid, nodeId + '-cyclic-special-1');
       graph.setEdge(specialId2, nodeId, edge2, nodeId + '-cyclic-special-2');
     } else {
+      // Legacy behavior kept as-is: layout data always provides both endpoints here.
       graph.setEdge(edge.start!, edge.end!, { ...edge }, edge.id);
     }
   });
@@ -747,7 +758,8 @@ export const runDagreLayoutCore = async (
     element,
     graph,
     data4Layout.type,
-    data4Layout.diagramId!,
+    // insertEdge rejects a missing diagram id with a descriptive error either way.
+    data4Layout.diagramId ?? '',
     undefined,
     siteConfig
   );

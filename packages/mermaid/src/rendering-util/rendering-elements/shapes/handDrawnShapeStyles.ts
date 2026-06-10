@@ -15,7 +15,16 @@ export const solidStateFill = (color: string) => {
   };
 };
 
-export const compileStyles = (node: Node) => {
+/**
+ * The subset of {@link Node} styling fields that the style compilers read.
+ * `labelStyle` is widened to also accept the `string[]` form used by edges, so
+ * both nodes and edges can be passed without casting.
+ */
+export type StyledElement = Pick<Node, 'cssCompiledStyles' | 'cssStyles'> & {
+  labelStyle?: string | string[];
+};
+
+export const compileStyles = (node: StyledElement) => {
   // node.cssCompiledStyles is an array of strings in the form of 'key: value' where key is the css property and value is the value
   // the array is the styles of node from the classes it is using
   // node.cssStyles is an array of styles directly set on the node
@@ -58,7 +67,7 @@ export const isLabelStyle = (key: string) => {
     key === 'hyphens'
   );
 };
-export const styles2String = (node: Node) => {
+export const styles2String = (node: StyledElement) => {
   const { stylesArray } = compileStyles(node);
   const labelStyles: string[] = [];
   const nodeStyles: string[] = [];

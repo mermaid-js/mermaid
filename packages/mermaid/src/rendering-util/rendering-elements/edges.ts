@@ -10,6 +10,7 @@ import {
   markerOffsets2,
 } from '../../utils/lineWithOffset.js';
 import { getSubGraphTitleMargins } from '../../utils/subGraphTitleMargins.js';
+import { requiredGet, requiredNode } from '../../utils/guards.js';
 
 import {
   curveBasis,
@@ -34,7 +35,7 @@ import { addEdgeMarkers } from './edgeMarker.js';
 import { isLabelStyle, styles2String } from './shapes/handDrawnShapeStyles.js';
 import type { SVG } from '../../diagram-api/types.js';
 import type { D3Selection, EdgeData, Point } from '../../types.js';
-import type { Edge, Node } from '../types.js';
+import type { Edge } from '../types.js';
 import type { RectLikeNode } from './intersect/intersect-rect.js';
 
 /**
@@ -52,13 +53,6 @@ export interface EdgeRenderData extends Omit<Edge, 'labelStyle' | 'curve'> {
   toCluster?: string;
   fromCluster?: string;
 }
-
-/**
- * A d3 selection edge elements are inserted into. Kept loose on purpose: the
- * different renderers pass anything from `svg.select('g')` to a typed
- * `D3Selection<SVGGElement>`.
- */
-type EdgeContainer = D3Selection<SVGGElement>;
 
 /** A node-like object that may expose an `intersect` function after rendering. */
 export interface NodeWithIntersect {
@@ -96,6 +90,31 @@ export const clear = () => {
   terminalLabels.clear();
 };
 
+const getOrCreateTerminalLabels = (edgeId: string): TerminalLabelGroups => {
+  let groups = terminalLabels.get(edgeId);
+  if (!groups) {
+    groups = {};
+    terminalLabels.set(edgeId, groups);
+  }
+  return groups;
+};
+
+/**
+ * Returns the rendered terminal label group for an edge, throwing a
+ * descriptive error if it was never inserted (`insertEdgeLabel` must run
+ * before edge labels are positioned).
+ */
+export const getTerminalLabel = (
+  edgeId: string,
+  position: keyof TerminalLabelGroups
+): D3Selection<SVGGElement> => {
+  const label = requiredGet(terminalLabels, edgeId, 'terminal label group')[position];
+  if (!label) {
+    throw new Error(`Expected terminal label "${position}" for edge "${edgeId}" to exist`);
+  }
+  return label;
+};
+
 export const hasEdgeLabel = (edge: EdgeRenderData) =>
   Boolean(
     edge.label ||
@@ -115,10 +134,13 @@ export const getLabelStyles = (styleArray: string | string[] | undefined) => {
   return styleArray.reduce((acc, style) => acc + ';' + style, '');
 };
 
-export const insertEdgeLabel = async (elem: EdgeContainer, edge: EdgeRenderData) => {
+export const insertEdgeLabel = async <T extends SVGGraphicsElement>(
+  elem: D3Selection<T>,
+  edge: EdgeRenderData
+) => {
   const config = getConfig();
   const useHtmlLabels = getEffectiveHtmlLabels(config);
-  const { labelStyles } = styles2String(edge as unknown as Node);
+  const { labelStyles } = styles2String(edge);
   edge.labelStyle = labelStyles;
 
   // Create outer g, edgeLabel, this will be positioned after graph layout
@@ -130,7 +152,10 @@ export const insertEdgeLabel = async (elem: EdgeContainer, edge: EdgeRenderData)
   const isMarkdown = edge.labelType === 'markdown';
   const markdownWidth = undefined; // Use default width for markdown labels
   const labelElement = await createText(
-    elem,
+    // createText only uses this selection as an insertion point for the label
+    // element; its signature is narrower (SVGGElement) than the containers
+    // accepted here, so widen via a cast rather than constraining callers.
+    elem as unknown as D3Selection<SVGGElement>,
     edge.label,
     {
       style: getLabelStyles(edge.labelStyle),
@@ -144,7 +169,7 @@ export const insertEdgeLabel = async (elem: EdgeContainer, edge: EdgeRenderData)
     config
   );
 
-  label.node()!.appendChild(labelElement);
+  requiredNode(label, 'edge label group').appendChild(labelElement);
   log.info('abc82', edge, edge.labelType);
 
   // Center the label
@@ -195,10 +220,7 @@ export const insertEdgeLabel = async (elem: EdgeContainer, edge: EdgeRenderData)
       dv.attr('height', slBox.height);
     }
     inner.attr('transform', computeLabelTransform(slBox, useHtmlLabels));
-    if (!terminalLabels.get(edge.id)) {
-      terminalLabels.set(edge.id, {});
-    }
-    terminalLabels.get(edge.id)!.startLeft = startEdgeLabelLeft;
+    getOrCreateTerminalLabels(edge.id).startLeft = startEdgeLabelLeft;
     setTerminalWidth(fo, edge.startLabelLeft);
   }
   if (edge.startLabelRight) {
@@ -222,10 +244,7 @@ export const insertEdgeLabel = async (elem: EdgeContainer, edge: EdgeRenderData)
     }
     inner.attr('transform', computeLabelTransform(slBox, useHtmlLabels));
 
-    if (!terminalLabels.get(edge.id)) {
-      terminalLabels.set(edge.id, {});
-    }
-    terminalLabels.get(edge.id)!.startRight = startEdgeLabelRight;
+    getOrCreateTerminalLabels(edge.id).startRight = startEdgeLabelRight;
     setTerminalWidth(fo, edge.startLabelRight);
   }
   if (edge.endLabelLeft) {
@@ -250,10 +269,7 @@ export const insertEdgeLabel = async (elem: EdgeContainer, edge: EdgeRenderData)
     }
     inner.attr('transform', computeLabelTransform(slBox, useHtmlLabels));
 
-    if (!terminalLabels.get(edge.id)) {
-      terminalLabels.set(edge.id, {});
-    }
-    terminalLabels.get(edge.id)!.endLeft = endEdgeLabelLeft;
+    getOrCreateTerminalLabels(edge.id).endLeft = endEdgeLabelLeft;
     setTerminalWidth(fo, edge.endLabelLeft);
   }
   if (edge.endLabelRight) {
@@ -279,10 +295,7 @@ export const insertEdgeLabel = async (elem: EdgeContainer, edge: EdgeRenderData)
     }
     inner.attr('transform', computeLabelTransform(slBox, useHtmlLabels));
 
-    if (!terminalLabels.get(edge.id)) {
-      terminalLabels.set(edge.id, {});
-    }
-    terminalLabels.get(edge.id)!.endRight = endEdgeLabelRight;
+    getOrCreateTerminalLabels(edge.id).endRight = endEdgeLabelRight;
     setTerminalWidth(fo, edge.endLabelRight);
   }
   return labelElement;
@@ -304,10 +317,10 @@ export const positionEdgeLabel = (edge: EdgeRenderData, paths: EdgePaths) => {
   const path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
   const siteConfig = getConfig();
   const { subGraphTitleTotalMargin } = getSubGraphTitleMargins({
-    flowchart: siteConfig.flowchart!,
+    flowchart: siteConfig.flowchart,
   });
   if (edge.label) {
-    const el = edgeLabels.get(edge.id)!;
+    const el = requiredGet(edgeLabels, edge.id, 'edge label');
     let x = edge.x;
     let y = edge.y;
     if (path) {
@@ -328,11 +341,12 @@ export const positionEdgeLabel = (edge: EdgeRenderData, paths: EdgePaths) => {
         y = pos.y;
       }
     }
+    // Legacy behavior kept as-is: an unset y intentionally yields NaN in the transform.
     el.attr('transform', `translate(${x}, ${y! + subGraphTitleTotalMargin / 2})`);
   }
 
   if (edge.startLabelLeft) {
-    const el = terminalLabels.get(edge.id)!.startLeft!;
+    const el = getTerminalLabel(edge.id, 'startLeft');
     let x = edge.x;
     let y = edge.y;
     if (path) {
@@ -343,7 +357,7 @@ export const positionEdgeLabel = (edge: EdgeRenderData, paths: EdgePaths) => {
     el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.startLabelRight) {
-    const el = terminalLabels.get(edge.id)!.startRight!;
+    const el = getTerminalLabel(edge.id, 'startRight');
     let x = edge.x;
     let y = edge.y;
     if (path) {
@@ -358,7 +372,7 @@ export const positionEdgeLabel = (edge: EdgeRenderData, paths: EdgePaths) => {
     el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.endLabelLeft) {
-    const el = terminalLabels.get(edge.id)!.endLeft!;
+    const el = getTerminalLabel(edge.id, 'endLeft');
     let x = edge.x;
     let y = edge.y;
     if (path) {
@@ -369,7 +383,7 @@ export const positionEdgeLabel = (edge: EdgeRenderData, paths: EdgePaths) => {
     el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.endLabelRight) {
-    const el = terminalLabels.get(edge.id)!.endRight!;
+    const el = getTerminalLabel(edge.id, 'endRight');
     let x = edge.x;
     let y = edge.y;
     if (path) {
@@ -409,12 +423,12 @@ const orthogonalizeToLabelClippedPoints = (edge: EdgeRenderData, points: Point[]
 };
 
 const outsideNode = (node: RectLikeNode, point: Point) => {
-  const x = node.x!;
-  const y = node.y!;
+  // The layout engine has populated the node geometry before edges are clipped.
+  const { x, y, width, height } = node as Required<RectLikeNode>;
   const dx = Math.abs(point.x - x);
   const dy = Math.abs(point.y - y);
-  const w = node.width! / 2;
-  const h = node.height! / 2;
+  const w = width / 2;
+  const h = height / 2;
   return dx >= w || dy >= h;
 };
 
@@ -423,13 +437,13 @@ export const intersection = (node: RectLikeNode, outsidePoint: Point, insidePoin
   outsidePoint: ${JSON.stringify(outsidePoint)}
   insidePoint : ${JSON.stringify(insidePoint)}
   node        : x:${node.x} y:${node.y} w:${node.width} h:${node.height}`);
-  const x = node.x!;
-  const y = node.y!;
+  // The layout engine has populated the node geometry before edges are clipped.
+  const { x, y, width, height } = node as Required<RectLikeNode>;
 
   const dx = Math.abs(x - insidePoint.x);
-  const w = node.width! / 2;
+  const w = width / 2;
   let r = insidePoint.x < outsidePoint.x ? w - dx : w + dx;
-  const h = node.height! / 2;
+  const h = height / 2;
 
   const Q = Math.abs(outsidePoint.y - insidePoint.y);
   const R = Math.abs(outsidePoint.x - insidePoint.x);
@@ -624,8 +638,8 @@ const generateDashArray = (len: number, oValueS: number, oValueE: number) => {
   return dashArray;
 };
 
-export const insertEdge = function (
-  elem: EdgeContainer,
+export const insertEdge = function <T extends SVGGraphicsElement>(
+  elem: D3Selection<T>,
   edge: EdgeRenderData,
   clusterDb: Map<string, { node: RectLikeNode }> | object,
   diagramType: string,
@@ -639,8 +653,13 @@ export const insertEdge = function (
       `insertEdge: missing diagramId for edge "${edge.id}" — edge IDs require a diagram prefix for uniqueness`
     );
   }
+  // The layout algorithm attaches the routed points before the edge is painted.
+  const { points: layoutPoints } = edge;
+  if (!layoutPoints) {
+    throw new Error(`insertEdge: edge "${edge.id}" has no layout points`);
+  }
   const { handDrawnSeed, layout } = getConfig();
-  let points = edge.points!;
+  let points = layoutPoints;
   let pointsHasChanged = false;
   const tail = startNode as NodeWithIntersect;
   const head = endNode as NodeWithIntersect;
@@ -692,14 +711,17 @@ export const insertEdge = function (
     points = orthogonalizeToLabelClippedPoints(edge, points);
   } else if (head.intersect && tail.intersect && !skipIntersect) {
     // Original clipping — unchanged for dagre / ELK / every non-swimlanes layout.
-    points = points.slice(1, edge.points!.length - 1);
+    points = points.slice(1, layoutPoints.length - 1);
     points.unshift(tail.intersect(points[0]));
     points.push(head.intersect(points[points.length - 1]));
   }
   const pointsStr = btoa(JSON.stringify(points));
   if (edge.toCluster) {
     log.info('to cluster abc88', clusterMap.get(edge.toCluster));
-    points = cutPathAtIntersect(edge.points!, clusterMap.get(edge.toCluster)!.node);
+    points = cutPathAtIntersect(
+      layoutPoints,
+      requiredGet(clusterMap, edge.toCluster, 'cluster').node
+    );
 
     pointsHasChanged = true;
   }
@@ -710,7 +732,10 @@ export const insertEdge = function (
       clusterMap.get(edge.fromCluster),
       JSON.stringify(points, null, 2)
     );
-    points = cutPathAtIntersect(points.reverse(), clusterMap.get(edge.fromCluster)!.node).reverse();
+    points = cutPathAtIntersect(
+      points.reverse(),
+      requiredGet(clusterMap, edge.fromCluster, 'cluster').node
+    ).reverse();
 
     pointsHasChanged = true;
   }
@@ -822,6 +847,7 @@ export const insertEdge = function (
     const rc = rough.svg(elem);
     Object.assign([], lineData);
 
+    // d3's line() only returns null for empty point arrays, which layout never produces.
     const svgPathNode = rc.path(linePath!, {
       roughness: 0.3,
       seed: handDrawnSeed,
@@ -845,7 +871,7 @@ export const insertEdge = function (
       );
     const d = svgPath.attr('d');
     svgPath.attr('d', d);
-    elem.node()!.appendChild(svgPath.node()!);
+    requiredNode(elem, 'edge container').appendChild(requiredNode(svgPath, 'edge path'));
   } else {
     const stylesFromClasses = edgeClassStyles.join(';');
     const styles = edgeStyles
@@ -877,7 +903,7 @@ export const insertEdge = function (
 
     animatedEdge =
       edge.animate === true || !!edge.animation || stylesFromClasses.includes('animation');
-    const pathNode = svgPath.node()!;
+    const pathNode = requiredNode(svgPath, 'edge path');
     const len = typeof pathNode.getTotalLength === 'function' ? pathNode.getTotalLength() : 0;
     const oValueS = markerOffsets2[edge.arrowTypeStart as keyof typeof markerOffsets2] || 0;
     const oValueE = markerOffsets2[edge.arrowTypeEnd as keyof typeof markerOffsets2] || 0;
@@ -933,7 +959,7 @@ export const insertEdge = function (
   // });
 
   let url = '';
-  if (getConfig().flowchart!.arrowMarkerAbsolute || getConfig().state!.arrowMarkerAbsolute) {
+  if (getConfig().flowchart?.arrowMarkerAbsolute || getConfig().state?.arrowMarkerAbsolute) {
     url =
       window.location.protocol +
       '//' +

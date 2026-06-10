@@ -3,7 +3,8 @@ import type { FlowchartDiagramConfig } from '../config.type.js';
 export const getSubGraphTitleMargins = ({
   flowchart,
 }: {
-  flowchart: FlowchartDiagramConfig;
+  /** Optional: the body already falls back to `0` margins when absent. */
+  flowchart?: FlowchartDiagramConfig;
 }): {
   subGraphTitleTopMargin: number;
   subGraphTitleBottomMargin: number;

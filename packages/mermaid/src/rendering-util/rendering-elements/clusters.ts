@@ -11,7 +11,8 @@ import { createRoundedRectPathD } from './shapes/roundedRectPath.js';
 import { styles2String, userNodeOverrides } from './shapes/handDrawnShapeStyles.js';
 import { swimlane } from './clusters/swimlane.js';
 import { handleUndefinedAttr } from '../../utils.js';
-import type { ClusterNode } from '../types.js';
+import { requiredGet, requiredNode } from '../../utils/guards.js';
+import type { ClusterNode, PositionedClusterNode } from '../types.js';
 import type { D3Selection, Point } from '../../types.js';
 
 /**
@@ -23,6 +24,16 @@ type ClusterShapeNode = ClusterNode & {
   diff?: number;
   offsetX?: number;
   offsetY?: number;
+};
+
+/**
+ * Narrows a cluster node to its layout-populated geometry once, instead of
+ * asserting `!` on every access. Cluster shapes are only rendered after the
+ * layout engine has assigned position and size.
+ */
+const positionedGeometry = (node: ClusterShapeNode) => {
+  const { width, height, x, y, padding } = node as PositionedClusterNode;
+  return { width, height, x, y, padding };
 };
 
 const rect = async (parent: D3Selection<SVGGElement>, node: ClusterShapeNode) => {
@@ -68,17 +79,16 @@ const rect = async (parent: D3Selection<SVGGElement>, node: ClusterShapeNode) =>
     dv.attr('height', bbox.height);
   }
 
-  const width =
-    node.width! <= bbox.width + node.padding! ? bbox.width + node.padding! : node.width!;
-  if (node.width! <= bbox.width + node.padding!) {
-    node.diff = (width - node.width!) / 2 - node.padding!;
+  const { width: nodeWidth, height, x: nodeX, y: nodeY, padding } = positionedGeometry(node);
+  const width = nodeWidth <= bbox.width + padding ? bbox.width + padding : nodeWidth;
+  if (nodeWidth <= bbox.width + padding) {
+    node.diff = (width - nodeWidth) / 2 - padding;
   } else {
-    node.diff = -node.padding!;
+    node.diff = -padding;
   }
 
-  const height = node.height!;
-  const x = node.x! - width / 2;
-  const y = node.y! - height / 2;
+  const x = nodeX - width / 2;
+  const y = nodeY - height / 2;
 
   log.trace('Data ', node, JSON.stringify(node));
   let rect;
@@ -114,11 +124,11 @@ const rect = async (parent: D3Selection<SVGGElement>, node: ClusterShapeNode) =>
       .attr('width', width)
       .attr('height', height);
   }
-  const { subGraphTitleTopMargin } = getSubGraphTitleMargins({ flowchart: siteConfig.flowchart! });
+  const { subGraphTitleTopMargin } = getSubGraphTitleMargins({ flowchart: siteConfig.flowchart });
   labelEl.attr(
     'transform',
     // This puts the label on top of the box instead of inside it
-    `translate(${node.x! - bbox.width / 2}, ${node.y! - node.height! / 2 + subGraphTitleTopMargin})`
+    `translate(${nodeX - bbox.width / 2}, ${nodeY - height / 2 + subGraphTitleTopMargin})`
   );
 
   if (labelStyles) {
@@ -129,12 +139,12 @@ const rect = async (parent: D3Selection<SVGGElement>, node: ClusterShapeNode) =>
   }
   // Center the label
 
-  const rectBox = rect.node()!.getBBox();
+  const rectBox = requiredNode(rect, 'cluster rect').getBBox();
   node.offsetX = 0;
   node.width = rectBox.width;
   node.height = rectBox.height;
   // Used by layout engine to position subgraph in parent
-  node.offsetY = bbox.height - node.padding! / 2;
+  node.offsetY = bbox.height - padding / 2;
 
   node.intersect = function (point: Point) {
     return intersectRect(node, point);
@@ -160,20 +170,21 @@ const noteGroup = (parent: D3Selection<SVGGElement>, node: ClusterShapeNode) => 
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
 
-  const padding = 0 * node.padding!;
+  const { width, height, x, y, padding: nodePadding } = positionedGeometry(node);
+  const padding = 0 * nodePadding;
   const halfPadding = padding / 2;
 
   // center the rect around its coordinate
   rect
     .attr('rx', handleUndefinedAttr(node.rx))
     .attr('ry', handleUndefinedAttr(node.ry))
-    .attr('x', node.x! - node.width! / 2 - halfPadding)
-    .attr('y', node.y! - node.height! / 2 - halfPadding)
-    .attr('width', node.width! + padding)
-    .attr('height', node.height! + padding)
+    .attr('x', x - width / 2 - halfPadding)
+    .attr('y', y - height / 2 - halfPadding)
+    .attr('width', width + padding)
+    .attr('height', height + padding)
     .attr('fill', 'none');
 
-  const rectBox = rect.node()!.getBBox();
+  const rectBox = requiredNode(rect, 'note-cluster rect').getBBox();
   node.width = rectBox.width;
   node.height = rectBox.height;
 
@@ -220,30 +231,36 @@ const roundedWithTitle = async (parent: D3Selection<SVGGElement>, node: ClusterS
   }
 
   // Rounded With Title
-  const padding = 0 * node.padding!;
+  const {
+    width: nodeWidth,
+    height: nodeHeight,
+    x: nodeX,
+    y: nodeY,
+    padding: nodePadding,
+  } = positionedGeometry(node);
+  const padding = 0 * nodePadding;
   const halfPadding = padding / 2;
 
   const width =
-    (node.width! <= bbox.width + node.padding! ? bbox.width + node.padding! : node.width!) +
-    padding;
-  if (node.width! <= bbox.width + node.padding!) {
-    node.diff = (width - node.width!) / 2 - node.padding!;
+    (nodeWidth <= bbox.width + nodePadding ? bbox.width + nodePadding : nodeWidth) + padding;
+  if (nodeWidth <= bbox.width + nodePadding) {
+    node.diff = (width - nodeWidth) / 2 - nodePadding;
   } else {
-    node.diff = -node.padding!;
+    node.diff = -nodePadding;
   }
 
-  const height = node.height! + padding;
+  const height = nodeHeight + padding;
   // const height = node.height + padding;
-  const innerHeight = node.height! + padding - bbox.height - 6;
-  const x = node.x! - width / 2;
-  const y = node.y! - height / 2;
+  const innerHeight = nodeHeight + padding - bbox.height - 6;
+  const x = nodeX - width / 2;
+  const y = nodeY - height / 2;
   node.width = width;
-  const innerY = node.y! - node.height! / 2 - halfPadding + bbox.height + 2;
+  const innerY = nodeY - nodeHeight / 2 - halfPadding + bbox.height + 2;
 
   // add the rect
   let rect;
   if (node.look === 'handDrawn') {
-    const isAlt = node.cssClasses!.includes('statediagram-cluster-alt');
+    const isAlt = node.cssClasses?.includes('statediagram-cluster-alt');
     // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const roughOuterNode =
@@ -289,14 +306,14 @@ const roundedWithTitle = async (parent: D3Selection<SVGGElement>, node: ClusterS
 
   label.attr(
     'transform',
-    `translate(${node.x! - bbox.width / 2}, ${y + 1 - (getEffectiveHtmlLabels(siteConfig) ? 0 : 3)})`
+    `translate(${nodeX - bbox.width / 2}, ${y + 1 - (getEffectiveHtmlLabels(siteConfig) ? 0 : 3)})`
   );
 
-  const rectBox = rect.node()!.getBBox();
+  const rectBox = requiredNode(rect, 'cluster rect').getBBox();
   node.height = rectBox.height;
   node.offsetX = 0;
   // Used by layout engine to position subgraph in parent
-  node.offsetY = bbox.height - node.padding! / 2;
+  node.offsetY = bbox.height - nodePadding / 2;
   node.labelBBox = bbox;
 
   node.intersect = function (point: Point) {
@@ -343,17 +360,16 @@ const kanbanSection = async (parent: D3Selection<SVGGElement>, node: ClusterShap
     dv.attr('height', bbox.height);
   }
 
-  const width =
-    node.width! <= bbox.width + node.padding! ? bbox.width + node.padding! : node.width!;
-  if (node.width! <= bbox.width + node.padding!) {
-    node.diff = (width - node.width!) / 2 - node.padding!;
+  const { width: nodeWidth, height, x: nodeX, y: nodeY, padding } = positionedGeometry(node);
+  const width = nodeWidth <= bbox.width + padding ? bbox.width + padding : nodeWidth;
+  if (nodeWidth <= bbox.width + padding) {
+    node.diff = (width - nodeWidth) / 2 - padding;
   } else {
-    node.diff = -node.padding!;
+    node.diff = -padding;
   }
 
-  const height = node.height!;
-  const x = node.x! - width / 2;
-  const y = node.y! - height / 2;
+  const x = nodeX - width / 2;
+  const y = nodeY - height / 2;
 
   log.trace('Data ', node, JSON.stringify(node));
   let rect;
@@ -368,6 +384,7 @@ const kanbanSection = async (parent: D3Selection<SVGGElement>, node: ClusterShap
       fillWeight: 4,
       seed: handDrawnSeed,
     });
+    // Legacy behavior kept as-is: the kanban renderer always sets `rx` on sections.
     const roughNode = rc.path(createRoundedRectPathD(x, y, width, height, node.rx!), options);
     rect = shapeSvg.insert(() => {
       log.debug('Rough node insert CXC', roughNode);
@@ -389,11 +406,11 @@ const kanbanSection = async (parent: D3Selection<SVGGElement>, node: ClusterShap
       .attr('width', width)
       .attr('height', height);
   }
-  const { subGraphTitleTopMargin } = getSubGraphTitleMargins({ flowchart: siteConfig.flowchart! });
+  const { subGraphTitleTopMargin } = getSubGraphTitleMargins({ flowchart: siteConfig.flowchart });
   labelEl.attr(
     'transform',
     // This puts the label on top of the box instead of inside it
-    `translate(${node.x! - bbox.width / 2}, ${node.y! - node.height! / 2 + subGraphTitleTopMargin})`
+    `translate(${nodeX - bbox.width / 2}, ${nodeY - height / 2 + subGraphTitleTopMargin})`
   );
 
   if (labelStyles) {
@@ -404,12 +421,12 @@ const kanbanSection = async (parent: D3Selection<SVGGElement>, node: ClusterShap
   }
   // Center the label
 
-  const rectBox = rect.node()!.getBBox();
+  const rectBox = requiredNode(rect, 'kanban section rect').getBBox();
   node.offsetX = 0;
   node.width = rectBox.width;
   node.height = rectBox.height;
   // Used by layout engine to position subgraph in parent
-  node.offsetY = bbox.height - node.padding! / 2;
+  node.offsetY = bbox.height - padding / 2;
 
   node.intersect = function (point: Point) {
     return intersectRect(node, point);
@@ -433,16 +450,23 @@ const divider = (parent: D3Selection<SVGGElement>, node: ClusterShapeNode) => {
   // add the rect
   const outerRectG = shapeSvg.insert('g', ':first-child');
 
-  const padding = 0 * node.padding!;
+  const {
+    width: nodeWidth,
+    height: nodeHeight,
+    x: nodeX,
+    y: nodeY,
+    padding: nodePadding,
+  } = positionedGeometry(node);
+  const padding = 0 * nodePadding;
 
-  const width = node.width! + padding;
+  const width = nodeWidth + padding;
 
-  node.diff = -node.padding!;
+  node.diff = -nodePadding;
 
-  const height = node.height! + padding;
+  const height = nodeHeight + padding;
   // const height = node.height + padding;
-  const x = node.x! - width / 2;
-  const y = node.y! - height / 2;
+  const x = nodeX - width / 2;
+  const y = nodeY - height / 2;
   node.width = width;
 
   // add the rect
@@ -478,7 +502,7 @@ const divider = (parent: D3Selection<SVGGElement>, node: ClusterShapeNode) => {
       .attr('data-look', handleUndefinedAttr(node.look));
   }
 
-  const rectBox = rect.node()!.getBBox();
+  const rectBox = requiredNode(rect, 'divider rect').getBBox();
   node.height = rectBox.height;
   node.offsetX = 0;
   // Used by layout engine to position subgraph in parent
@@ -529,7 +553,7 @@ export const getClusterTitleWidth = (elem: D3Selection<SVGGElement>, node: Clust
     true
   ) as unknown as SVGGraphicsElement;
   const width = label.getBBox().width;
-  elem.node()!.removeChild(label);
+  requiredNode(elem, 'cluster title container').removeChild(label);
   return width;
 };
 
@@ -552,6 +576,6 @@ export const positionCluster = (node: ClusterNode) => {
       ')',
     clusterElems.get(node.id)
   );
-  const el = clusterElems.get(node.id)!;
+  const el = requiredGet(clusterElems, node.id, 'cluster element');
   el.cluster.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
 };
