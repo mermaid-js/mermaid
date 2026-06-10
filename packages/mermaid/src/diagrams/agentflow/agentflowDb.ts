@@ -159,6 +159,10 @@ export class AgentFlowDB implements DiagramDB {
   private sourceText: string | undefined;
   private frontmatterLineOffset = 0;
   private elementMappings: AgentflowElementMapping[] = [];
+  // Vertex mappings pushed for bare `id` references (no label/shape
+  // brackets). A trailing `@{ ... }` block retypes these to 'attachment'
+  // in `extendVertexMapping` (issue #75).
+  private bareVertexMappings = new WeakSet<AgentflowElementMapping>();
 
   // ── Diagnostic layer (PR 2b) ──────────────────────────────────────────
   // Structured warnings/errors emitted during parse, post-parse validation,
@@ -990,6 +994,7 @@ You have to call mermaid.initialize.`
     this.sourceText = undefined;
     this.frontmatterLineOffset = 0;
     this.elementMappings = [];
+    this.bareVertexMappings = new WeakSet();
     this.diagnostics = [];
     this.postParseValidationRun = false;
     commonClear();
@@ -1877,24 +1882,37 @@ You have to call mermaid.initialize.`
     };
   }
 
-  private pushMapping(id: string, type: AgentflowStatementType, loc: JisonLocation | undefined) {
+  private pushMapping(
+    id: string,
+    type: AgentflowStatementType,
+    loc: JisonLocation | undefined
+  ): AgentflowElementMapping | undefined {
     if (!id) {
-      return;
+      return undefined;
     }
-    this.elementMappings.push({
+    const mapping: AgentflowElementMapping = {
       id,
       type,
       position: this.toElementPosition(loc),
-    });
+    };
+    this.elementMappings.push(mapping);
+    return mapping;
   }
 
   public addVertexMapping(
     id: string,
     _text: unknown,
-    _shape: unknown,
+    shape: unknown,
     loc: JisonLocation | undefined
   ): void {
-    this.pushMapping(id, 'vertex', loc);
+    const mapping = this.pushMapping(id, 'vertex', loc);
+    // A bare `id` reference carries no shape (the bracketed declaration
+    // forms all pass one). Remember it so a trailing `@{ ... }` block can
+    // retype it to 'attachment' instead of leaving a second mapping that
+    // looks like a redeclaration (issue #75).
+    if (mapping && shape == null) {
+      this.bareVertexMappings.add(mapping);
+    }
   }
 
   /**
@@ -1906,6 +1924,12 @@ You have to call mermaid.initialize.`
    * `loc` is the `shapeData` symbol's location, so only the end moves — the
    * declaration start is preserved. Falls back to a fresh mapping if the node
    * has none yet.
+   *
+   * When the mapping being widened came from a bare `id` reference (no
+   * label/shape brackets), the statement is a standalone attachment
+   * (`id@{ ... }`) annotating an element declared elsewhere — retype it to
+   * 'attachment' so consumers can tell it apart from a declaration
+   * (issue #75).
    */
   public extendVertexMapping(id: string, loc: JisonLocation | undefined): void {
     if (!id || !loc) {
@@ -1915,6 +1939,10 @@ You have to call mermaid.initialize.`
     for (let i = this.elementMappings.length - 1; i >= 0; i--) {
       const m = this.elementMappings[i];
       if (m.type === 'vertex' && m.id === id) {
+        if (this.bareVertexMappings.has(m)) {
+          m.type = 'attachment';
+          this.bareVertexMappings.delete(m);
+        }
         const extendsPastEnd =
           end.endLine > m.position.endLine ||
           (end.endLine === m.position.endLine && end.endColumn > m.position.endColumn);
@@ -1926,7 +1954,9 @@ You have to call mermaid.initialize.`
         return;
       }
     }
-    this.pushMapping(id, 'vertex', loc);
+    // No vertex mapping to widen — the `@{ ... }` block stands alone, so
+    // record it as an attachment spanning just the block.
+    this.pushMapping(id, 'attachment', loc);
   }
 
   public addEdgeMapping(
@@ -2050,12 +2080,14 @@ You have to call mermaid.initialize.`
     edges: number;
     subgraphs: number;
     connectors: number;
+    attachments: number;
     totalElements: number;
   } {
     let vertices = 0;
     let edges = 0;
     let subgraphs = 0;
     let connectors = 0;
+    let attachments = 0;
     for (const m of this.elementMappings) {
       if (m.type === 'vertex') {
         vertices++;
@@ -2065,6 +2097,8 @@ You have to call mermaid.initialize.`
         subgraphs++;
       } else if (m.type === 'connector') {
         connectors++;
+      } else if (m.type === 'attachment') {
+        attachments++;
       }
     }
     return {
@@ -2072,6 +2106,7 @@ You have to call mermaid.initialize.`
       edges,
       subgraphs,
       connectors,
+      attachments,
       totalElements: this.elementMappings.length,
     };
   }
