@@ -646,9 +646,17 @@ export const insertEdge = function (
     points = orthogonalizeToLabelClippedPoints(edge, points);
   } else if (head.intersect && tail.intersect && !skipIntersect) {
     // Original clipping — unchanged for dagre / ELK / every non-swimlanes layout.
-    points = points.slice(1, edge.points.length - 1);
-    points.unshift(tail.intersect(points[0]));
-    points.push(head.intersect(points[points.length - 1]));
+    if (points.length <= 2) {
+      // Straight edge with no interior bend points (orthogonal layouts emit
+      // these). Slicing off the first and last point would leave an empty array
+      // and `intersect(undefined)` would crash, so clip each endpoint toward the
+      // other directly.
+      points = [tail.intersect(points[points.length - 1]), head.intersect(points[0])];
+    } else {
+      points = points.slice(1, edge.points.length - 1);
+      points.unshift(tail.intersect(points[0]));
+      points.push(head.intersect(points[points.length - 1]));
+    }
   }
   const pointsStr = btoa(JSON.stringify(points));
   if (edge.toCluster) {
