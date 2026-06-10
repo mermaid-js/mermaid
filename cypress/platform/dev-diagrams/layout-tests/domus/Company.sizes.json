@@ -2,74 +2,74 @@
   "nodes": [
     {
       "id": "Customer",
-      "width": 92.6875,
-      "height": 45
+      "width": 92.68891906738281,
+      "height": 44.994319915771484
     },
     {
       "id": "USCompany",
-      "width": 111.375,
-      "height": 45
+      "width": 111.3678970336914,
+      "height": 44.994319915771484
     },
     {
       "id": "HongKongCompany",
-      "width": 158.0833282470703,
-      "height": 45
+      "width": 158.08663940429688,
+      "height": 44.994319915771484
     },
     {
       "id": "Expenses",
-      "width": 93.48958587646484,
-      "height": 45
+      "width": 93.48436737060547,
+      "height": 44.994319915771484
     },
     {
       "id": "Income",
-      "width": 98.16666412353516,
-      "height": 45
+      "width": 96.171875,
+      "height": 50.99431610107422
     },
     {
       "id": "Tax1",
-      "width": 51.45833206176758,
-      "height": 45
+      "width": 49.453125,
+      "height": 50.99431610107422
     },
     {
       "id": "ExpensesHK",
       "width": 112.9375,
-      "height": 45
+      "height": 44.994319915771484
     },
     {
       "id": "Wages",
-      "width": 51.45833206176758,
-      "height": 45
+      "width": 49.453125,
+      "height": 50.99431610107422
     },
     {
       "id": "Incomehk",
-      "width": 92.69791412353516,
-      "height": 45
+      "width": 92.70311737060547,
+      "height": 44.994319915771484
     },
     {
       "id": "Tax",
-      "width": 98.16666412353516,
-      "height": 45
+      "width": 96.171875,
+      "height": 50.99431610107422
     },
     {
       "id": "edge-label-USCompany-HongKongCompany-L_USCompany_HongKongCompany_0",
       "width": 81.71875,
-      "height": 21
+      "height": 20.99431800842285
     },
     {
       "id": "edge-label-USCompany-Expenses-L_USCompany_Expenses_0",
-      "width": 9.34375,
-      "height": 21
+      "width": 9.33948802947998,
+      "height": 20.99431800842285
     },
     {
       "id": "edge-label-USCompany-Income-L_USCompany_Income_0",
-      "width": 7.7916669845581055,
-      "height": 21
+      "width": 7.791193008422852,
+      "height": 20.99431800842285
     }
   ],
   "metadata": {
     "captureVersion": 1,
     "sourceSha256": "6a704c68f330308345f700b719181a8123496ad6c1b74cae445fb523ad59c73c",
-    "capturedAt": "2026-05-06T00:00:00.000Z",
-    "capturedFrom": "browser-dev layout-tests/Company.mmd theme=default look=classic"
+    "capturedAt": "2026-06-10T07:00:31.413Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/Company.mmd theme=redux look=neo layout=swimlane"
   }
 }

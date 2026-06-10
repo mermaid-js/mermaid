@@ -1,34 +1,30 @@
 {
   "nodes": [
     {
-      "id": "hello",
-      "isGroup": true
-    },
-    {
       "id": "A",
-      "width": 41.34375,
-      "height": 45
+      "width": 41.3394889831543,
+      "height": 44.994319915771484
     },
     {
       "id": "B",
-      "width": 41.34375,
-      "height": 45
+      "width": 41.3394889831543,
+      "height": 44.994319915771484
     },
     {
       "id": "C",
-      "width": 42.1171875,
-      "height": 45
+      "width": 42.1136360168457,
+      "height": 44.994319915771484
     },
     {
       "id": "D",
-      "width": 42.1171875,
-      "height": 45
+      "width": 42.1136360168457,
+      "height": 44.994319915771484
     }
   ],
   "metadata": {
     "captureVersion": 1,
     "sourceSha256": "19bc5536f54ad3b7ef74bd10762254ce5e90f776f87b639e11df41765596940f",
-    "capturedAt": "2026-05-06T00:00:00.000Z",
-    "capturedFrom": "browser-dev layout-tests/decoupled-subgraph.mmd theme=default look=classic"
+    "capturedAt": "2026-06-10T07:00:33.488Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/decoupled-subgraph.mmd theme=redux look=neo layout=swimlane"
   }
 }

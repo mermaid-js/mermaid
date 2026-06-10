@@ -2,54 +2,54 @@
   "nodes": [
     {
       "id": "Customer",
-      "width": 92.6875,
-      "height": 45
+      "width": 92.68891906738281,
+      "height": 44.994319915771484
     },
     {
       "id": "USCompany",
-      "width": 111.3671875,
-      "height": 45
+      "width": 111.3678970336914,
+      "height": 44.994319915771484
     },
     {
       "id": "HongKongCompany",
-      "width": 158.0859375,
-      "height": 45
+      "width": 158.08663940429688,
+      "height": 44.994319915771484
     },
     {
       "id": "Expenses",
-      "width": 93.484375,
-      "height": 45
+      "width": 93.48436737060547,
+      "height": 44.994319915771484
     },
     {
       "id": "ExpensesHK",
       "width": 112.9375,
-      "height": 45
+      "height": 44.994319915771484
     },
     {
       "id": "Wages",
-      "width": 51.453125,
-      "height": 45
+      "width": 49.453125,
+      "height": 50.99431610107422
     },
     {
       "id": "Incomehk",
-      "width": 92.703125,
-      "height": 45
+      "width": 92.70311737060547,
+      "height": 44.994319915771484
     },
     {
       "id": "edge-label-USCompany-HongKongCompany-L_USCompany_HongKongCompany_0",
       "width": 81.71875,
-      "height": 21
+      "height": 20.99431800842285
     },
     {
       "id": "edge-label-USCompany-Expenses-L_USCompany_Expenses_0",
-      "width": 9.34375,
-      "height": 21
+      "width": 9.33948802947998,
+      "height": 20.99431800842285
     }
   ],
   "metadata": {
     "captureVersion": 1,
     "sourceSha256": "a90f6e785ac423264ebadcabda4467549dff8d31333c1d6293945711da432107",
-    "capturedAt": "2026-05-06T00:00:00.000Z",
-    "capturedFrom": "browser-dev layout-tests/Company-simp.mmd theme=default look=classic"
+    "capturedAt": "2026-06-10T07:00:29.365Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/Company-simp.mmd theme=redux look=neo layout=swimlane"
   }
 }

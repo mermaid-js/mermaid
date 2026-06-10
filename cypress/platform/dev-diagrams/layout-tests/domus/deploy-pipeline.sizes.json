@@ -1,94 +1,90 @@
 {
   "nodes": [
     {
-      "id": "subGraph0",
-      "isGroup": true
-    },
-    {
       "id": "A",
-      "width": 96.59375,
-      "height": 45
+      "width": 96.58806610107422,
+      "height": 44.994319915771484
     },
     {
       "id": "B",
-      "width": 131.609375,
-      "height": 45
+      "width": 131.60226440429688,
+      "height": 44.994319915771484
     },
     {
       "id": "C",
-      "width": 93.484375,
-      "height": 45
+      "width": 93.4772720336914,
+      "height": 44.994319915771484
     },
     {
       "id": "D",
-      "width": 151.0625,
-      "height": 151.0625
+      "width": 142.0454559326172,
+      "height": 142.0454559326172
     },
     {
       "id": "E",
-      "width": 135.5,
-      "height": 45
+      "width": 135.4943084716797,
+      "height": 44.994319915771484
     },
     {
       "id": "F",
-      "width": 154.171875,
-      "height": 45
+      "width": 154.1661834716797,
+      "height": 44.994319915771484
     },
     {
       "id": "G",
-      "width": 142.53125,
-      "height": 45
+      "width": 142.51846313476562,
+      "height": 44.994319915771484
     },
     {
       "id": "H",
-      "width": 164.046875,
-      "height": 45
+      "width": 164.0454559326172,
+      "height": 44.994319915771484
     },
     {
       "id": "I",
-      "width": 151.0625,
-      "height": 151.0625
+      "width": 142.0454559326172,
+      "height": 142.0454559326172
     },
     {
       "id": "J",
-      "width": 130.828125,
-      "height": 45
+      "width": 130.82101440429688,
+      "height": 44.994319915771484
     },
     {
       "id": "K",
-      "width": 161.96875,
-      "height": 45
+      "width": 161.97158813476562,
+      "height": 44.994319915771484
     },
     {
       "id": "L",
-      "width": 92.921875,
-      "height": 45
+      "width": 104.13739013671875,
+      "height": 44.99431610107422
     },
     {
       "id": "edge-label-D-E-L_D_E_0",
-      "width": 17.90625,
-      "height": 21
+      "width": 17.89772605895996,
+      "height": 20.99431800842285
     },
     {
       "id": "edge-label-D-F-L_D_F_0",
-      "width": 22.84375,
-      "height": 21
+      "width": 22.84090805053711,
+      "height": 20.99431800842285
     },
     {
       "id": "edge-label-I-J-L_I_J_0",
-      "width": 17.90625,
-      "height": 21
+      "width": 17.89772605895996,
+      "height": 20.99431800842285
     },
     {
       "id": "edge-label-I-K-L_I_K_0",
-      "width": 22.84375,
-      "height": 21
+      "width": 22.84090805053711,
+      "height": 20.99431800842285
     }
   ],
   "metadata": {
     "captureVersion": 1,
     "sourceSha256": "95343fb1ab1b25056bdd663b0550d6f5ccaadab75f1e7b2837cfa8e3c2fd442d",
-    "capturedAt": "2026-05-06T00:00:00.000Z",
-    "capturedFrom": "browser-dev layout-tests/deploy-pipeline.mmd theme=default look=classic"
+    "capturedAt": "2026-06-10T07:00:37.760Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/deploy-pipeline.mmd theme=redux look=neo layout=swimlane"
   }
 }

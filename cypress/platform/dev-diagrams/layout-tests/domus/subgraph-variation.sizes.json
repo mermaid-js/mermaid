@@ -1,0 +1,45 @@
+{
+  "nodes": [
+    {
+      "id": "P1",
+      "width": 49.130680084228516,
+      "height": 44.994319915771484
+    },
+    {
+      "id": "P2",
+      "width": 49.130680084228516,
+      "height": 44.994319915771484
+    },
+    {
+      "id": "P2.5",
+      "width": 73.33948516845703,
+      "height": 73.33948516845703
+    },
+    {
+      "id": "P3",
+      "width": 49.130680084228516,
+      "height": 44.994319915771484
+    },
+    {
+      "id": "P4",
+      "width": 49.130680084228516,
+      "height": 44.994319915771484
+    },
+    {
+      "id": "P6",
+      "width": 49.130680084228516,
+      "height": 44.994319915771484
+    },
+    {
+      "id": "P5",
+      "width": 49.130680084228516,
+      "height": 44.994319915771484
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "cabc90e760875f353b4b090455af788e34ad0aea5ce816dc94fd1dfd236b0106",
+    "capturedAt": "2026-06-10T07:01:06.078Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/subgraph-variation.mmd theme=redux look=neo layout=swimlane"
+  }
+}

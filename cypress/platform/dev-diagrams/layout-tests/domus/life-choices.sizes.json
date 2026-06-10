@@ -2,129 +2,129 @@
   "nodes": [
     {
       "id": "B",
-      "width": 246.890625,
-      "height": 91
+      "width": 266.88739013671875,
+      "height": 90.99431610107422
     },
     {
       "id": "n0",
-      "width": 63.390625,
-      "height": 45
+      "width": 61.377838134765625,
+      "height": 50.99431610107422
     },
     {
       "id": "nl",
-      "width": 54.578125,
-      "height": 45
+      "width": 52.578125,
+      "height": 50.99431610107422
     },
     {
       "id": "nm",
-      "width": 111.40625,
-      "height": 45
+      "width": 109.39629364013672,
+      "height": 50.99431610107422
     },
     {
       "id": "n3",
-      "width": 158.078125,
-      "height": 45
+      "width": 156.0724334716797,
+      "height": 50.99431610107422
     },
     {
       "id": "n4",
-      "width": 240,
-      "height": 66
+      "width": 256.4632568359375,
+      "height": 65.98863220214844
     },
     {
       "id": "no",
-      "width": 202.625,
-      "height": 45
+      "width": 213.83909606933594,
+      "height": 44.99431610107422
     },
     {
       "id": "nr",
-      "width": 152.828125,
-      "height": 45
+      "width": 164.0450439453125,
+      "height": 44.99431610107422
     },
     {
       "id": "nh",
-      "width": 183.953125,
-      "height": 45
+      "width": 195.17430114746094,
+      "height": 44.99431610107422
     },
     {
       "id": "n6",
-      "width": 180.859375,
-      "height": 45
+      "width": 192.0848388671875,
+      "height": 44.99431610107422
     },
     {
       "id": "nj",
-      "width": 126.375,
-      "height": 45
+      "width": 137.59619140625,
+      "height": 44.99431610107422
     },
     {
       "id": "nw",
-      "width": 132.625,
-      "height": 45
+      "width": 143.83909606933594,
+      "height": 44.99431610107422
     },
     {
       "id": "n1",
-      "width": 126.40625,
-      "height": 45
+      "width": 137.62460327148438,
+      "height": 44.99431610107422
     },
     {
       "id": "nb",
-      "width": 184.765625,
-      "height": 45
+      "width": 195.9910888671875,
+      "height": 44.99431610107422
     },
     {
       "id": "ne",
-      "width": 94.265625,
-      "height": 45
+      "width": 94.2585220336914,
+      "height": 44.994319915771484
     },
     {
       "id": "ni",
-      "width": 137.296875,
-      "height": 45
+      "width": 148.51239013671875,
+      "height": 44.99431610107422
     },
     {
       "id": "ns",
-      "width": 130.28125,
-      "height": 45
+      "width": 141.50244140625,
+      "height": 44.99431610107422
     },
     {
       "id": "n2",
-      "width": 177.75,
-      "height": 45
+      "width": 188.96693420410156,
+      "height": 44.99431610107422
     },
     {
       "id": "nq",
-      "width": 228.328125,
-      "height": 45
+      "width": 239.54930114746094,
+      "height": 44.99431610107422
     },
     {
       "id": "n8",
-      "width": 152.0625,
-      "height": 45
+      "width": 163.27801513671875,
+      "height": 44.99431610107422
     },
     {
       "id": "nk",
-      "width": 102.25,
-      "height": 45
+      "width": 113.46977996826172,
+      "height": 44.99431610107422
     },
     {
       "id": "nv",
-      "width": 240,
-      "height": 66
+      "width": 256.4632568359375,
+      "height": 65.98863220214844
     },
     {
       "id": "np",
-      "width": 221.328125,
-      "height": 45
+      "width": 232.54647827148438,
+      "height": 44.99431610107422
     },
     {
       "id": "n5",
-      "width": 197.171875,
-      "height": 45
+      "width": 208.38455200195312,
+      "height": 44.99431610107422
     }
   ],
   "metadata": {
     "captureVersion": 1,
     "sourceSha256": "9b1e423fb517a0155c912c9cdbc3c312623ee5f4ab64bc5c84fa862cee5fde37",
-    "capturedAt": "2026-05-06T00:00:00.000Z",
-    "capturedFrom": "browser-dev layout-tests/life-choices.mmd theme=default look=classic"
+    "capturedAt": "2026-06-10T07:00:46.326Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/life-choices.mmd theme=redux look=neo layout=swimlane"
   }
 }
