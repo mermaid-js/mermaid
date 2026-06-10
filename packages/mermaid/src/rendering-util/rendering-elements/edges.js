@@ -51,6 +51,15 @@ export const clear = () => {
   terminalLabels.clear();
 };
 
+export const hasEdgeLabel = (edge) =>
+  Boolean(
+    edge.label ||
+      edge.startLabelLeft ||
+      edge.startLabelRight ||
+      edge.endLabelLeft ||
+      edge.endLabelRight
+  );
+
 export const getLabelStyles = (styleArray) => {
   if (!styleArray) {
     return '';

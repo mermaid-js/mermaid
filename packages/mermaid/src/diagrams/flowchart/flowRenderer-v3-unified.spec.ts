@@ -42,7 +42,7 @@ describe('flowRenderer-v3-unified', () => {
       },
     };
 
-    await draw('graph TB; A', 'test-id', '1.0.0', diag, undefined);
+    await draw('graph TB; A', 'test-id', '1.0.0', diag);
     expect(setDiagramId).toHaveBeenCalledWith('test-id');
   });
 });

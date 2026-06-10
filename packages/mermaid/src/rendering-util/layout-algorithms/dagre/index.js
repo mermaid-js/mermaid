@@ -1,28 +1,17 @@
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
-import insertMarkers from '../../rendering-elements/markers.js';
+import { createCommonLayoutRenderer } from '../common/index.js';
 import { updateNodeBounds } from '../../rendering-elements/shapes/util.js';
 import {
-  clear as clearGraphlib,
   clusterDb,
   adjustClustersAndEdges,
   findNonClusterChild,
   sortNodesByHierarchy,
 } from './mermaid-graphlib.js';
-import {
-  insertNode,
-  positionNode,
-  clear as clearNodes,
-  setNodeElem,
-} from '../../rendering-elements/nodes.js';
-import { insertCluster, clear as clearClusters } from '../../rendering-elements/clusters.js';
-import {
-  insertEdgeLabel,
-  positionEdgeLabel,
-  insertEdge,
-  clear as clearEdges,
-} from '../../rendering-elements/edges.js';
+import { insertNode, positionNode, setNodeElem } from '../../rendering-elements/nodes.js';
+import { insertCluster } from '../../rendering-elements/clusters.js';
+import { insertEdgeLabel, positionEdgeLabel, insertEdge } from '../../rendering-elements/edges.js';
 import { log } from '../../../logger.js';
 import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
@@ -247,7 +236,14 @@ export const getEdgesToRender = (graph, yOffset = 0, { mergeSelfLoops = true } =
   return edgesToRender;
 };
 
-const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, siteConfig) => {
+const measureAndRunDagreLayoutCore = async (
+  _elem,
+  graph,
+  diagramType,
+  id,
+  parentCluster,
+  siteConfig
+) => {
   log.warn('Graph in recursive render:XAX', graphlibJson.write(graph), parentCluster);
   const dir = graph.graph().rankdir;
   log.trace('Dir in recursive render - dir:', dir);
@@ -397,9 +393,30 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   dagreLayout(graph);
 
   log.info('Graph after layout:', JSON.stringify(graphlibJson.write(graph)));
+
+  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
+  return {
+    elem,
+    graph,
+    groups: { clusters, edgePaths },
+    diagramType,
+    id,
+    mergeSelfLoops,
+    subGraphTitleTotalMargin,
+  };
+};
+
+const paintDagreLayoutCore = async ({
+  elem,
+  graph,
+  groups: { clusters, edgePaths },
+  diagramType,
+  id,
+  mergeSelfLoops,
+  subGraphTitleTotalMargin,
+}) => {
   // Move the nodes to the correct place
   let diff = 0;
-  let { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
   await Promise.all(
     sortNodesByHierarchy(graph).map(async function (v) {
       const node = graph.node(v);
@@ -502,7 +519,10 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   return { elem, diff };
 };
 
-export const render = async (data4Layout, svg) => {
+const recursiveRender = async (...args) =>
+  await paintDagreLayoutCore(await measureAndRunDagreLayoutCore(...args));
+
+export const prepareLayoutForDagre = (data4Layout) => {
   const graph = new graphlib.Graph({
     multigraph: true,
     compound: true,
@@ -523,12 +543,6 @@ export const render = async (data4Layout, svg) => {
     .setDefaultEdgeLabel(function () {
       return {};
     });
-  const element = svg.select('g');
-  insertMarkers(element, data4Layout.markers, data4Layout.type, data4Layout.diagramId);
-  clearNodes();
-  clearEdges();
-  clearClusters();
-  clearGraphlib();
 
   data4Layout.nodes.forEach((node) => {
     graph.setNode(node.id, { ...node });
@@ -619,8 +633,14 @@ export const render = async (data4Layout, svg) => {
   log.warn('Graph at first:', JSON.stringify(graphlibJson.write(graph)));
   adjustClustersAndEdges(graph);
   log.warn('Graph after XAX:', JSON.stringify(graphlibJson.write(graph)));
+
+  return { graph };
+};
+
+export const runDagreLayoutCore = async (data4Layout, { element, preparedLayout }) => {
+  const { graph } = preparedLayout ?? prepareLayoutForDagre(data4Layout);
   const siteConfig = getConfig();
-  await recursiveRender(
+  return await measureAndRunDagreLayoutCore(
     element,
     graph,
     data4Layout.type,
@@ -629,3 +649,16 @@ export const render = async (data4Layout, svg) => {
     siteConfig
   );
 };
+
+export const paintDagreLayout = async (_data4Layout, _context, coreResult) => {
+  await paintDagreLayoutCore(coreResult);
+};
+
+const measureDagreLayout = () => Promise.resolve(undefined);
+
+export const render = createCommonLayoutRenderer({
+  prepareLayout: prepareLayoutForDagre,
+  measureLayout: measureDagreLayout,
+  runLayoutCore: runDagreLayoutCore,
+  paintLayout: paintDagreLayout,
+});
