@@ -15,6 +15,7 @@ import { relocateLabelsForSimplification } from './pipeline/labelRelocationPass.
 import { snapPortsToCenterWhenPaintDiagonal } from './pipeline/snapPortToCenter.js';
 import { rebuildPathologicalLabelEdges } from './pipeline/labelDetourRebuild.js';
 import { repairShortEndpointStubs } from './pipeline/endpointStubRepair.js';
+import { nudgeSegmentsOffGroupBordersWhenScoreImproves } from './pipeline/groupBorderHugNudge.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
 
 /** Arc-length midpoint of an orthogonal polyline (the point halfway along its
@@ -587,6 +588,11 @@ export function finalizeDummyLabelNodesToOverlayLabels(layoutData: LayoutData): 
   // of disturbing any edge geometry.
   relocateLabelOverlaysOffForeignEdgesWhenImproves(layoutData);
 
+  // A long interior segment flush on a subgraph frame trips edge-border-hugging
+  // (e.g. deploy-pipeline K->L exiting the Deploy Pipeline subgraph). Nudge it
+  // off the frame, score-gated so it never makes any layout worse.
+  nudgeSegmentsOffGroupBordersWhenScoreImproves(layoutData, spacing);
+
   // Paint should treat labels as overlay labels (not label nodes).
   (layoutData.config as any).isLabelNode = false;
 }
@@ -649,6 +655,7 @@ function runGenericOrthogonalCleanup(layoutData: LayoutData, spacing: number): v
   snapCrossingRailsWhenScoreImproves(layoutData, spacing);
   straightenCenterAlignedVerticalEdgesWhenScoreImproves(layoutData, nodesByIdNoGroups);
   snapPortsToCenterWhenPaintDiagonal(layoutData, { spacing });
+  nudgeSegmentsOffGroupBordersWhenScoreImproves(layoutData, spacing);
 
   const after = validateLayout(layoutData);
   if (after.score < before.score) {
