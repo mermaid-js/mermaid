@@ -336,13 +336,17 @@ export const extractor = (graph, depth) => {
     return;
   }
   let nodes = graph.nodes();
-  // graphlib backs nodes with a plain object, so integer-like string ids
-  // ("1") sort ahead of others ("outer") and place a child before its parent
-  // in iteration. Only reorder when that invariant is actually broken so
-  // other diagrams (class, state, etc.) keep their existing iteration order
-  // and rendering. (#7609)
   const indexOf = new Map(nodes.map((id, i) => [id, i]));
+  // graphlib stores nodes in a plain object so purely-numeric ids (e.g. subgraph
+  // id "1") are iterated before string ids, placing a child before its parent.
+  // Only resort when a numeric-id child actually appears before its parent —
+  // the specific JS integer-key-ordering case that breaks extraction.
+  // Non-numeric ids are returned in insertion order and never need a resort.
+  // Keep in sync with dagre-wrapper/mermaid-graphlib.js (#7609).
   const needsResort = nodes.some((v) => {
+    if (!/^\d+$/.test(v)) {
+      return false;
+    }
     const p = graph.parent(v);
     return p != null && indexOf.get(p) > indexOf.get(v);
   });
