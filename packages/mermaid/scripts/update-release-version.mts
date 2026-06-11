@@ -10,16 +10,13 @@ import { posix } from 'path';
 import {
   getFilesFromGlobs,
   getGlobs,
-  MERMAID_RELEASE_VERSION,
   readSyncedUTF8file,
+  replaceVersionPlaceholder,
   SOURCE_DOCS_DIR,
 } from './docs.mjs';
 
 const verifyOnly: boolean = process.argv.includes('--verify');
 const versionPlaceholder = '<MERMAID_RELEASE_VERSION>';
-
-export const replaceVersionPlaceholder = (content: string): string =>
-  content.replaceAll(versionPlaceholder, MERMAID_RELEASE_VERSION);
 /**
  * This is so we can run `npm publish` for previews, without blocking the release.
  */
