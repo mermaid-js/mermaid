@@ -1011,4 +1011,105 @@ describe('validateLayout new geometric issues', () => {
     const types = getIssueTypes(layout);
     expect(types).not.toContain('edge-label-overlaps-own-arrowhead');
   });
+
+  // ---- edge-self-shared-subpath: an edge that doubles back along its own lane ----
+
+  it('flags edge-self-shared-subpath when an edge overlaps its own route on a shared lane', () => {
+    // A roundabout polyline (e.g. an A*/detour route never cleaned up): two
+    // NON-ADJACENT vertical segments both ride x=0 and overlap in y.
+    //   seg0: (0,0)->(0,100)  rides x=0, y[0,100]
+    //   seg4: (0,50)->(0,150) rides x=0, y[50,150]  -> overlaps seg0 by 50px
+    const e = mkEdge('selfish', undefined, undefined, [
+      { x: 0, y: 0 },
+      { x: 0, y: 100 },
+      { x: 60, y: 100 },
+      { x: 60, y: 50 },
+      { x: 0, y: 50 },
+      { x: 0, y: 150 },
+    ]);
+    const layout: LayoutData = { nodes: [], edges: [e], config: {} as any };
+
+    const res = validateLayout(layout);
+    const selfIssue = res.issues.find((i) => i.type === 'edge-self-shared-subpath');
+    expect(selfIssue).toBeDefined();
+    expect(selfIssue?.edgeId).toBe('selfish');
+    expect(selfIssue?.details?.overlapLength).toBeGreaterThanOrEqual(8);
+    // Self-overlap is a hard routing defect -> invalidates.
+    expect(res.ok).toBe(false);
+    expect(res.score).toBe(0);
+  });
+
+  it('does NOT flag edge-self-shared-subpath for a normal single-bend route', () => {
+    // A plain L: no two non-adjacent segments share a lane.
+    const e = mkEdge('clean', undefined, undefined, [
+      { x: 0, y: 0 },
+      { x: 0, y: 100 },
+      { x: 100, y: 100 },
+    ]);
+    const layout: LayoutData = { nodes: [], edges: [e], config: {} as any };
+
+    expect(getIssueTypes(layout)).not.toContain('edge-self-shared-subpath');
+  });
+
+  // ---- edge-bend-overlaps-arrowhead: a turn sitting inside the arrowhead (SOFT) ----
+
+  // Geometry mirrors a real valid fixture edge (edge-types L_R2_C_0): a 10px
+  // start stub then a turn, so the bend lands inside the start arrowhead marker.
+  function mkArrowheadBendLayout(withStartMarker: boolean): LayoutData {
+    const a = mkNode('A', 400, 390, 40, 40); // left edge at x=380
+    const c = mkNode('C', 316, 310, 42, 44); // right edge at x=337, y in [288,332]
+    const e = {
+      ...mkEdge('L_A_C_0', 'A', 'C', [
+        { x: 380, y: 390 }, // on A's left edge (start)
+        { x: 370, y: 390 }, // 10px stub -> turn lands in the start marker
+        { x: 370, y: 318 },
+        { x: 337, y: 318 }, // on C's right edge (end)
+      ]),
+      ...(withStartMarker ? { arrowTypeStart: 'arrow_point' } : {}),
+    } as unknown as Edge;
+    return { nodes: [a, c], edges: [e], config: {} as any };
+  }
+
+  it('flags edge-bend-overlaps-arrowhead as a SOFT issue (penalty, still valid)', () => {
+    const res = validateLayout(mkArrowheadBendLayout(true));
+    const bendIssue = res.issues.find((i) => i.type === 'edge-bend-overlaps-arrowhead');
+    expect(bendIssue).toBeDefined();
+    expect(bendIssue?.edgeId).toBe('L_A_C_0');
+    expect(bendIssue?.details?.terminal).toBe('start');
+    // Soft: the overlap penalizes the score but does NOT invalidate the layout.
+    expect(res.ok).toBe(true);
+    expect(res.score).toBeLessThan(1000);
+  });
+
+  it('charges exactly 50 for an arrowhead-overlapping bend and nothing more', () => {
+    const withMarker = validateLayout(mkArrowheadBendLayout(true));
+    const withoutMarker = validateLayout(mkArrowheadBendLayout(false));
+    // Identical geometry; the only difference is the start marker, so the score
+    // delta is exactly the soft penalty (50). Both stay valid.
+    expect(withMarker.ok).toBe(true);
+    expect(withoutMarker.ok).toBe(true);
+    expect(withoutMarker.issues).not.toContainEqual(
+      expect.objectContaining({ type: 'edge-bend-overlaps-arrowhead' })
+    );
+    expect(withoutMarker.score - withMarker.score).toBe(50);
+  });
+
+  it('does NOT flag edge-bend-overlaps-arrowhead when the terminal segment clears the marker', () => {
+    // Same shape but the start stub is 40px (> the 10px marker clearance), so the
+    // turn sits well outside the arrowhead.
+    const a = mkNode('A', 400, 390, 40, 40);
+    const c = mkNode('C', 316, 310, 42, 44);
+    const e = {
+      ...mkEdge('L_A_C_0', 'A', 'C', [
+        { x: 380, y: 390 },
+        { x: 340, y: 390 }, // 40px stub -> turn is clear of the marker
+        { x: 340, y: 318 },
+        { x: 337, y: 318 },
+      ]),
+      arrowTypeStart: 'arrow_point',
+    } as unknown as Edge;
+    const layout: LayoutData = { nodes: [a, c], edges: [e], config: {} as any };
+
+    expect(getIssueTypes(layout)).not.toContain('edge-bend-overlaps-arrowhead');
+  });
 });
