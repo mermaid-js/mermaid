@@ -17,6 +17,7 @@ import { finalizeDummyLabelNodesToOverlayLabels } from './finalizeOverlayLabels.
 import { simplifyEdgeJogsWhenScoreImproves } from './pipeline/simplifyEdgeJogs.js';
 import { clearArrowheadBendsWhenScoreImproves } from './pipeline/arrowheadBendClearance.js';
 import { repairPortDirectionMismatchWhenScoreImproves } from './pipeline/portDirectionRepair.js';
+import { relocateOffEdgeLabelsWhenScoreImproves } from './pipeline/offEdgeLabelRelocation.js';
 import { isEdgeLabelNodeId } from './core/labels.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
 import { reduceCrossingsWithPortSideCandidatesWhenScoreImproves } from './pipeline/crossingPortRepair.js';
@@ -461,6 +462,10 @@ export function layout(data4Layout: LayoutData): void {
   // (the soft edge-bend-overlaps-arrowhead penalty). Score-gated; runs after jog
   // simplification so it only sees stubs the simplifier could not already erase.
   clearArrowheadBendsWhenScoreImproves(data4Layout);
+
+  // Place any label the validator flags as off-edge back onto its (now final)
+  // polyline at a clear anchor. Score-gated; runs last so the route is settled.
+  relocateOffEdgeLabelsWhenScoreImproves(data4Layout);
 }
 
 /**
