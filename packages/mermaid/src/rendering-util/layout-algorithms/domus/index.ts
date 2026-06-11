@@ -18,6 +18,7 @@ import { simplifyEdgeJogsWhenScoreImproves } from './pipeline/simplifyEdgeJogs.j
 import { clearArrowheadBendsWhenScoreImproves } from './pipeline/arrowheadBendClearance.js';
 import { repairPortDirectionMismatchWhenScoreImproves } from './pipeline/portDirectionRepair.js';
 import { relocateOffEdgeLabelsWhenScoreImproves } from './pipeline/offEdgeLabelRelocation.js';
+import { remediateFlaggedEdgesWhenMonotone } from './pipeline/flaggedEdgeRemediation.js';
 import { isEdgeLabelNodeId } from './core/labels.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
 import { reduceCrossingsWithPortSideCandidatesWhenScoreImproves } from './pipeline/crossingPortRepair.js';
@@ -452,6 +453,11 @@ export function layout(data4Layout: LayoutData): void {
   // perpendicular side with a clean L. Runs before jog simplification so the new
   // route can be further straightened if that helps.
   repairPortDirectionMismatchWhenScoreImproves(data4Layout);
+
+  // General monotone remediation for multi-defect invalid layouts: chips one
+  // validator issue at a time (clean re-routes / rail shifts) until valid. A
+  // no-op on valid layouts; never adds an issue, so it cannot regress.
+  remediateFlaggedEdgesWhenMonotone(data4Layout);
 
   // iter-62: generic jog simplification. Runs last, on the final geometry,
   // for labeled and unlabeled layouts alike — the finalize tail above is
