@@ -109,6 +109,8 @@ export type LayoutIssueType =
   | 'edge-corner-connection'
   | 'edge-endpoint-detached-from-node'
   | 'edge-shared-subpath'
+  | 'edge-self-shared-subpath'
+  | 'edge-bend-overlaps-arrowhead'
   | 'edge-parallel-segment-too-close'
   | 'edge-border-hugging'
   | 'node-border-hugging'
@@ -1057,6 +1059,38 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
       }
     }
 
+    // Check edge-bend-overlaps-arrowhead (SOFT): a turn (interior bend) sitting
+    // inside the terminal arrowhead marker's footprint — the bend visually
+    // overlaps the arrowhead because the terminal segment is no longer than the
+    // marker body. A real but non-structural defect, so it is a soft penalty
+    // (see SOFT_PENALTY_BY_TYPE), not an invalidation.
+    if (points.length >= 3) {
+      for (const terminal of ['start', 'end'] as const) {
+        if (!hasTerminalMarker(e, terminal)) {
+          continue;
+        }
+        const markerRect = terminalMarkerClearanceRect(points, terminal);
+        if (!markerRect) {
+          continue;
+        }
+        const innerVertex = terminal === 'end' ? points[points.length - 2] : points[1];
+        const insideMarker =
+          innerVertex.x >= markerRect.left - EPS &&
+          innerVertex.x <= markerRect.right + EPS &&
+          innerVertex.y >= markerRect.top - EPS &&
+          innerVertex.y <= markerRect.bottom + EPS;
+        if (insideMarker) {
+          issues.push({
+            type: 'edge-bend-overlaps-arrowhead',
+            message: `Edge "${edgeId}" ${terminal} bend overlaps its arrowhead marker`,
+            edgeId,
+            details: { terminal, innerVertex, markerRect },
+          });
+          break;
+        }
+      }
+    }
+
     // Check edge-endpoint-inside-node: the start and end points of an edge
     // must attach at a node boundary, not be buried inside any node's
     // interior. A point is considered "inside" when it sits strictly within
@@ -1458,6 +1492,32 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
         isTerminalSegmentForNode(e1, s1, nodeId) && isTerminalSegmentForNode(e2, s2, nodeId)
     );
   };
+
+  // 4a) Self-shared subpath: an edge whose own polyline doubles back along the
+  // same lane (e.g. an A*/roundabout route never cleaned up). Two NON-ADJACENT
+  // segments of the SAME edge that are collinear and overlap mean the edge runs
+  // the same track twice — a routing defect the pairwise check below (which only
+  // compares DIFFERENT edges) cannot see.
+  for (const em of sortedEdges) {
+    const segs = em.normalized.segments;
+    let selfFlagged = false;
+    for (let a = 0; a < segs.length && !selfFlagged; a++) {
+      for (let b = a + 2; b < segs.length; b++) {
+        const overlap = collinearOverlap(segs[a], segs[b]);
+        if (overlap >= L_MIN_SHARED) {
+          issues.push({
+            type: 'edge-self-shared-subpath',
+            message: `Edge "${em.id}" overlaps its own route along a shared lane (length ${overlap.toFixed(1)})`,
+            edgeId: em.id,
+            details: { overlapLength: overlap, segmentIndices: [a, b] },
+          });
+          selfFlagged = true;
+          break;
+        }
+      }
+    }
+  }
+
   for (let i = 0; i < sortedEdges.length; i++) {
     for (let j = i + 1; j < sortedEdges.length; j++) {
       const e1 = sortedEdges[i];
@@ -1565,8 +1625,21 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
     pointsHistogram[key]++;
   }
 
-  const ok = issues.length === 0;
-  const rawScore = MAX_SCORE - totalBendPenalty - crossingPenalty;
+  // Soft issues are real defects that DON'T invalidate the layout but cost a
+  // fixed score penalty (a "warning"). Everything not listed here is HARD: a
+  // single occurrence sets ok=false and the score to 0. Keep this map small and
+  // explicit — promoting an issue to soft changes the headline score model.
+  const SOFT_PENALTY_BY_TYPE: Partial<Record<LayoutIssueType, number>> = {
+    'edge-bend-overlaps-arrowhead': 50,
+  };
+  const softPenalty = issues.reduce(
+    (sum, issue) => sum + (SOFT_PENALTY_BY_TYPE[issue.type] ?? 0),
+    0
+  );
+  const hardIssues = issues.filter((issue) => SOFT_PENALTY_BY_TYPE[issue.type] == null);
+
+  const ok = hardIssues.length === 0;
+  const rawScore = MAX_SCORE - totalBendPenalty - crossingPenalty - softPenalty;
   const score = ok ? Math.max(0, Math.min(MAX_SCORE, rawScore)) : 0;
 
   const breakdown = {
