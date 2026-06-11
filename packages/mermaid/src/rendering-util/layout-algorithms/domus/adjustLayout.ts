@@ -52,7 +52,11 @@ export async function adjustLayout(
       data4Layout.type,
       startNode,
       endNode,
-      data4Layout.diagramId
+      data4Layout.diagramId,
+      // DOMUS emits final, node-attached, validated polylines. Paint must not
+      // re-clip or re-cut them (that recomputed geometry the validator never saw
+      // and manufactured artifacts like border-hugging). Draw them verbatim.
+      true
     );
     if (edge.label && !(data4Layout.config as { isLabelNode?: boolean }).isLabelNode) {
       await insertEdgeLabel(groups.rootGroups, edge);

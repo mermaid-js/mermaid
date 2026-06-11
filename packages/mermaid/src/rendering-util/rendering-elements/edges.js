@@ -585,7 +585,14 @@ export const insertEdge = function (
   startNode,
   endNode,
   diagramId,
-  skipIntersect = false
+  // When true, `insertEdge` paints `edge.points` VERBATIM and performs no
+  // layout-stage geometry: no endpoint re-clipping against node boundaries and
+  // no cluster-boundary path cutting. Defaults to false so dagre / ELK / block /
+  // every existing caller keeps its current behavior — paint stays "smart" there.
+  // Layouts that already emit final, node-attached polylines (DOMUS) pass true so
+  // paint is dumb and draws exactly what was laid out (and validated). The legacy
+  // name `skipIntersect` is preserved as the parameter identity.
+  skipLayoutAdjustments = false
 ) {
   if (!diagramId) {
     throw new Error(
@@ -644,8 +651,9 @@ export const insertEdge = function (
       }
     }
     points = orthogonalizeToLabelClippedPoints(edge, points);
-  } else if (head.intersect && tail.intersect && !skipIntersect) {
+  } else if (head.intersect && tail.intersect && !skipLayoutAdjustments) {
     // Original clipping — unchanged for dagre / ELK / every non-swimlanes layout.
+    // Skipped entirely when skipLayoutAdjustments is set (DOMUS dumb paint).
     if (points.length <= 2) {
       // Straight edge with no interior bend points (orthogonal layouts emit
       // these). Slicing off the first and last point would leave an empty array
@@ -659,22 +667,28 @@ export const insertEdge = function (
     }
   }
   const pointsStr = btoa(JSON.stringify(points));
-  if (edge.toCluster) {
-    log.info('to cluster abc88', clusterDb.get(edge.toCluster));
-    points = cutPathAtIntersect(edge.points, clusterDb.get(edge.toCluster).node);
+  // Cluster-boundary path cutting is also layout-stage geometry, so it is part
+  // of what `skipLayoutAdjustments` turns off. (DOMUS never sets to/fromCluster,
+  // so this is a no-op for it today, but the flag's contract is "no layout logic
+  // at all".)
+  if (!skipLayoutAdjustments) {
+    if (edge.toCluster) {
+      log.info('to cluster abc88', clusterDb.get(edge.toCluster));
+      points = cutPathAtIntersect(edge.points, clusterDb.get(edge.toCluster).node);
 
-    pointsHasChanged = true;
-  }
+      pointsHasChanged = true;
+    }
 
-  if (edge.fromCluster) {
-    log.debug(
-      'from cluster abc88',
-      clusterDb.get(edge.fromCluster),
-      JSON.stringify(points, null, 2)
-    );
-    points = cutPathAtIntersect(points.reverse(), clusterDb.get(edge.fromCluster).node).reverse();
+    if (edge.fromCluster) {
+      log.debug(
+        'from cluster abc88',
+        clusterDb.get(edge.fromCluster),
+        JSON.stringify(points, null, 2)
+      );
+      points = cutPathAtIntersect(points.reverse(), clusterDb.get(edge.fromCluster).node).reverse();
 
-    pointsHasChanged = true;
+      pointsHasChanged = true;
+    }
   }
 
   let lineData = points.filter((p) => !Number.isNaN(p.y));
