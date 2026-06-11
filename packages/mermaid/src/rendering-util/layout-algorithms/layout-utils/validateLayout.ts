@@ -107,6 +107,7 @@ export type LayoutIssueType =
   | 'edge-shared-projected-port'
   | 'edge-bend-near-endpoint'
   | 'edge-corner-connection'
+  | 'edge-endpoint-detached-from-node'
   | 'edge-shared-subpath'
   | 'edge-parallel-segment-too-close'
   | 'edge-border-hugging'
@@ -1004,6 +1005,55 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
           nodeIds: [ownLabelId],
           details: { labelRect, points },
         });
+      }
+    } else {
+      // Post-finalize / overlay representation: the label lives on the edge as
+      // `edge.label` + `edge.x/y` + `edge.width/height` (no `labelNodeId`). The
+      // labelNodeId branch above never sees it, so a label anchored away from
+      // its own polyline (e.g. a broken edge whose label floats in empty space)
+      // was silently accepted. Apply the same off-edge test to the overlay rect.
+      const overlayRect = labelRectForEdge(e);
+      if (overlayRect && !polylineIntersectsRect(points, overlayRect)) {
+        issues.push({
+          type: 'edge-label-off-edge',
+          message: `Edge "${edgeId}" label does not sit on the edge polyline`,
+          edgeId,
+          details: { labelRect: overlayRect, points },
+        });
+      }
+    }
+
+    // Check edge-endpoint-detached-from-node: an edge's start/end point must
+    // attach to its start/end node. A point floating in empty space — more than
+    // EPS_DETACHED OUTSIDE the node (the opposite of edge-endpoint-inside-node) —
+    // means the edge does not actually connect that node, the most basic
+    // structural defect. Paint clips the dangling endpoint back onto the node,
+    // which renders as the edge hugging the node's border.
+    {
+      const EPS_DETACHED = 2;
+      const distOutsideRect = (p: Point, r: Rect): number => {
+        const dx = Math.max(r.left - p.x, 0, p.x - r.right);
+        const dy = Math.max(r.top - p.y, 0, p.y - r.bottom);
+        return Math.hypot(dx, dy);
+      };
+      const ends: [Node | undefined, string, Point | undefined, 'start' | 'end'][] = [
+        [sNode, startId, points[0], 'start'],
+        [tNode, endId, points[points.length - 1], 'end'],
+      ];
+      for (const [node, nodeId, endpoint, which] of ends) {
+        if (!node || !endpoint) {
+          continue;
+        }
+        const d = distOutsideRect(endpoint, rectForNode(node));
+        if (d > EPS_DETACHED) {
+          issues.push({
+            type: 'edge-endpoint-detached-from-node',
+            message: `Edge "${edgeId}" ${which} point is ${d.toFixed(1)}px from node "${nodeId}" (not attached)`,
+            edgeId,
+            nodeIds: [nodeId],
+            details: { which, distance: d, point: endpoint },
+          });
+        }
       }
     }
 

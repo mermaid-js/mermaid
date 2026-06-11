@@ -721,6 +721,83 @@ describe('validateLayout new geometric issues', () => {
     expect(types).not.toContain('edge-label-off-edge');
   });
 
+  it('flags edge-label-off-edge for an overlay label anchored off its own polyline', () => {
+    // Post-finalize / overlay representation: the label lives on the edge as
+    // edge.label + edge.x/y + edge.width/height (no labelNodeId). A label
+    // anchored away from its own polyline must still be flagged.
+    const a = mkNode('A', 0, 0);
+    const b = mkNode('B', 0, 200);
+    const e = {
+      ...mkEdge('e', 'A', 'B', [
+        { x: 0, y: a.y! + 20 },
+        { x: 0, y: b.y! - 20 },
+      ]),
+      label: 'X',
+      x: 120, // far to the right of the x=0 polyline
+      y: 100,
+      width: 30,
+      height: 20,
+    } as unknown as Edge;
+    const layout: LayoutData = { nodes: [a, b], edges: [e], config: {} as any };
+
+    const res = validateLayout(layout);
+    const off = res.issues.find((i) => i.type === 'edge-label-off-edge');
+    expect(off, 'expected edge-label-off-edge for the overlay label').toBeTruthy();
+    expect(off?.edgeId).toBe('e');
+    expect(res.ok).toBe(false);
+  });
+
+  it('does NOT flag edge-label-off-edge for an overlay label sitting on the polyline', () => {
+    const a = mkNode('A', 0, 0);
+    const b = mkNode('B', 0, 200);
+    const e = {
+      ...mkEdge('e', 'A', 'B', [
+        { x: 0, y: a.y! + 20 },
+        { x: 0, y: b.y! - 20 },
+      ]),
+      label: 'X',
+      x: 0, // on the x=0 polyline
+      y: 100,
+      width: 30,
+      height: 20,
+    } as unknown as Edge;
+    const layout: LayoutData = { nodes: [a, b], edges: [e], config: {} as any };
+
+    expect(getIssueTypes(layout)).not.toContain('edge-label-off-edge');
+  });
+
+  it('flags edge-endpoint-detached-from-node when an endpoint floats off its node', () => {
+    // Start point floats 80px right of A instead of attaching to its boundary
+    // (the opposite of edge-endpoint-inside-node — the endpoint is outside).
+    const a = mkNode('A', 0, 0);
+    const b = mkNode('B', 0, 200);
+    const e = mkEdge('e', 'A', 'B', [
+      { x: 100, y: 0 },
+      { x: 100, y: 180 },
+      { x: 0, y: 180 }, // end attaches to B's top border
+    ]);
+    const layout: LayoutData = { nodes: [a, b], edges: [e], config: {} as any };
+
+    const res = validateLayout(layout);
+    const det = res.issues.find((i) => i.type === 'edge-endpoint-detached-from-node');
+    expect(det, 'expected edge-endpoint-detached-from-node').toBeTruthy();
+    expect(det?.nodeIds).toContain('A');
+    expect((det?.details as { which?: string })?.which).toBe('start');
+    expect(res.ok).toBe(false);
+  });
+
+  it('does NOT flag edge-endpoint-detached-from-node when endpoints sit on node boundaries', () => {
+    const a = mkNode('A', 0, 0);
+    const b = mkNode('B', 0, 200);
+    const e = mkEdge('e', 'A', 'B', [
+      { x: 0, y: a.y! + 20 }, // on A's bottom border
+      { x: 0, y: b.y! - 20 }, // on B's top border
+    ]);
+    const layout: LayoutData = { nodes: [a, b], edges: [e], config: {} as any };
+
+    expect(getIssueTypes(layout)).not.toContain('edge-endpoint-detached-from-node');
+  });
+
   it('flags edge-endpoint-inside-node when an edge endpoint sits inside a non-endpoint node', () => {
     // Edge from S to T, but its end point lands inside an unrelated obstacle
     // node O rather than on T's boundary.
