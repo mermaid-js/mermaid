@@ -17,6 +17,9 @@ import {
 
 const verifyOnly: boolean = process.argv.includes('--verify');
 const versionPlaceholder = '<MERMAID_RELEASE_VERSION>';
+
+export const replaceVersionPlaceholder = (content: string): string =>
+  content.replaceAll(versionPlaceholder, MERMAID_RELEASE_VERSION);
 /**
  * This is so we can run `npm publish` for previews, without blocking the release.
  */
@@ -60,8 +63,7 @@ const main = async () => {
 
   for (const mdFile of mdFilesWithPlaceholder) {
     const content = readSyncedUTF8file(mdFile);
-    const newContent = content.replace(versionPlaceholder, MERMAID_RELEASE_VERSION);
-    await writeFile(mdFile, newContent);
+    await writeFile(mdFile, replaceVersionPlaceholder(content));
   }
 };
 
