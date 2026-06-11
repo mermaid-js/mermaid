@@ -15,6 +15,7 @@ import { runRP1OrthogonalPipeline } from './rp1Pipeline.js';
 import { ORTHO_DEBUG } from './debug.js';
 import { finalizeDummyLabelNodesToOverlayLabels } from './finalizeOverlayLabels.js';
 import { simplifyEdgeJogsWhenScoreImproves } from './pipeline/simplifyEdgeJogs.js';
+import { clearArrowheadBendsWhenScoreImproves } from './pipeline/arrowheadBendClearance.js';
 import { isEdgeLabelNodeId } from './core/labels.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
 import { reduceCrossingsWithPortSideCandidatesWhenScoreImproves } from './pipeline/crossingPortRepair.js';
@@ -449,6 +450,11 @@ export function layout(data4Layout: LayoutData): void {
   // for labeled and unlabeled layouts alike — the finalize tail above is
   // label-gated and never sees unlabeled fixtures.
   simplifyEdgeJogsWhenScoreImproves(data4Layout);
+
+  // Lengthen any terminal stub whose first bend sits inside its arrowhead marker
+  // (the soft edge-bend-overlaps-arrowhead penalty). Score-gated; runs after jog
+  // simplification so it only sees stubs the simplifier could not already erase.
+  clearArrowheadBendsWhenScoreImproves(data4Layout);
 }
 
 /**
