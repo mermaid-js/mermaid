@@ -26,6 +26,7 @@ export const addEdgeMarkers = (
 };
 
 const arrowTypesMap = {
+  arrow_invisible: 'invisible',
   arrow_cross: 'cross',
   arrow_point: 'point',
   arrow_barb: 'barb',

@@ -311,6 +311,12 @@ const lollipop = (elem, type, id) => {
     .attr('r', 6)
     .attr('stroke-width', 2);
 };
+const invisible = (elem, type, id) => {
+  elem
+    .append('marker')
+    .attr('id', id + '_' + type)
+    .attr('class', 'marker ' + type);
+};
 const point = (elem, type, id) => {
   elem
     .append('marker')
@@ -955,6 +961,7 @@ const markers = {
   aggregation,
   dependency,
   lollipop,
+  invisible,
   point,
   circle,
   cross,

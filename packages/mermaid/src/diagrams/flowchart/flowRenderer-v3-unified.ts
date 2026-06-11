@@ -41,7 +41,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   data4Layout.direction = direction;
   data4Layout.nodeSpacing = conf?.nodeSpacing || 50;
   data4Layout.rankSpacing = conf?.rankSpacing || 50;
-  data4Layout.markers = ['point', 'circle', 'cross'];
+  data4Layout.markers = ['point', 'circle', 'cross', 'invisible'];
 
   data4Layout.diagramId = id;
   log.debug('REF1:', data4Layout);
