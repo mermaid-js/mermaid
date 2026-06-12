@@ -166,21 +166,29 @@ export class C4BetaDB implements DiagramDB {
     this.validateKind();
 
     // Any element containing other elements is rendered as a boundary cluster.
+    // Deployment nodes are always clusters, even when they are empty.
     const boundaryIds = new Set(
-      this.elements
-        .map((element) => element.parentId)
-        .filter((parentId): parentId is string => parentId !== undefined)
+      this.elements.flatMap((element) => [
+        ...(element.kind === 'node' ? [element.id] : []),
+        ...(element.parentId === undefined ? [] : [element.parentId]),
+      ])
     );
 
     for (const element of this.elements) {
       if (boundaryIds.has(element.id)) {
+        const label =
+          element.kind === 'node'
+            ? escapeHtml(
+                `${element.name} [Node${element.technology ? `: ${element.technology}` : ''}]`
+              )
+            : escapeHtml(element.name);
         nodes.push({
           id: element.id,
-          label: escapeHtml(element.name),
+          label,
           parentId: element.parentId,
           isGroup: true,
           shape: 'rect',
-          cssClasses: 'c4-boundary',
+          cssClasses: element.kind === 'node' ? 'c4-boundary c4-node' : 'c4-boundary',
           cssStyles: [],
           padding: 8,
           look: config.look,
@@ -227,6 +235,11 @@ export class C4BetaDB implements DiagramDB {
     // an explicit `N:` prefix overrides the counter, which continues from it.
     let nextStep = 1;
     this.relationships.forEach((relationship, index) => {
+      if (boundaryIds.has(relationship.sourceId) && boundaryIds.has(relationship.targetId)) {
+        log.warn(
+          `c4-beta: relationship "${relationship.sourceId} ${relationship.arrow} ${relationship.targetId}" connects two clusters; relationships should connect leaf elements`
+        );
+      }
       let step: number | undefined;
       if (this.kind === 'dynamic') {
         step = relationship.step ?? nextStep;

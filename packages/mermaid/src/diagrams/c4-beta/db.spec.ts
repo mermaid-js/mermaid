@@ -317,6 +317,68 @@ describe('c4-beta db', () => {
       });
     });
 
+    describe('deployment diagrams', () => {
+      it('should render node elements as clusters even without children', async () => {
+        await populate(`c4-beta deployment
+          node empty "Empty Node" "" "Ubuntu 22.04"
+        `);
+        const { nodes } = db.getData();
+        expect(nodes[0].isGroup).toBe(true);
+        expect(nodes[0].cssClasses).toBe('c4-boundary c4-node');
+        expect(nodes[0].label).toBe('Empty Node [Node: Ubuntu 22.04]');
+      });
+
+      it('should omit the technology from the node label when absent', async () => {
+        await populate(`c4-beta deployment
+          node plain "Plain Node"
+        `);
+        const { nodes } = db.getData();
+        expect(nodes[0].label).toBe('Plain Node [Node]');
+      });
+
+      it('should support nesting three levels deep with containers as leaves', async () => {
+        await populate(`c4-beta deployment
+          node aws "AWS" "" "Amazon Web Services" {
+            node region "US-East-1" "" "AWS Region" {
+              node ecs "ECS Cluster" "" "AWS ECS" {
+                container api "API Application" "Handles requests" "Java"
+              }
+            }
+          }
+        `);
+        const { nodes } = db.getData();
+        const byId = new Map(nodes.map((n) => [n.id, n]));
+        expect(byId.get('aws')?.isGroup).toBe(true);
+        expect(byId.get('region')?.parentId).toBe('aws');
+        expect(byId.get('ecs')?.parentId).toBe('region');
+        const api = byId.get('api');
+        expect(api?.isGroup).toBe(false);
+        expect(api?.parentId).toBe('ecs');
+        expect(api?.shape).toBe('rect');
+      });
+
+      it('should warn about relationships connecting two clusters', async () => {
+        const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+        await populate(`c4-beta deployment
+          node a "A" {
+            container inner1 "Inner 1"
+          }
+          node b "B" {
+            container inner2 "Inner 2"
+          }
+          a --> b : "Cluster to cluster"
+          inner1 --> inner2 : "Leaf to leaf"
+        `);
+        const { edges } = db.getData();
+        expect(edges).toHaveLength(2);
+        expect(warnSpy).toHaveBeenCalledOnce();
+        expect(warnSpy).toHaveBeenCalledWith(
+          'c4-beta: relationship "a --> b" connects two clusters; relationships should connect leaf elements'
+        );
+        warnSpy.mockRestore();
+      });
+    });
+
     it('should include direction in the layout data', async () => {
       await populate(`c4-beta
         direction LR
