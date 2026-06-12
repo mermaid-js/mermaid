@@ -96,4 +96,17 @@ describe('C4 diagram (unified renderer)', () => {
         expect(height).to.be.lessThan(2200);
       });
   });
+  it('C4U.7 should style elements and rels via AddElementTag and AddRelTag', () => {
+    imgSnapshotTest(
+      `
+      C4Context
+      AddElementTag(deprecated, $bgColor="grey", $fontColor="white", $borderColor="red")
+      AddRelTag(async, $textColor="green", $lineColor="green")
+      Person(customerA, "Banking Customer A", "A customer of the bank.")
+      System(SystemAA, "Internet Banking System", "Allows customers to make payments.", $tags="deprecated")
+      Rel(customerA, SystemAA, "Uses", $tags="async")
+      `,
+      unified
+    );
+  });
 });

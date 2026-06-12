@@ -13,6 +13,8 @@ interface C4Text {
   text: string;
 }
 
+type C4Tags = string | C4Text | null;
+
 interface C4Shape {
   alias: string;
   label: C4Text;
@@ -24,6 +26,7 @@ interface C4Shape {
   fontColor?: string;
   borderColor?: string;
   link?: string;
+  tags?: C4Tags;
 }
 
 interface C4Boundary {
@@ -37,6 +40,7 @@ interface C4Boundary {
   fontColor?: string;
   borderColor?: string;
   link?: string | null;
+  tags?: C4Tags;
 }
 
 interface C4Rel {
@@ -48,12 +52,29 @@ interface C4Rel {
   descr?: C4Text;
   textColor?: string;
   lineColor?: string;
+  tags?: C4Tags;
+}
+
+export interface C4ElementTag {
+  tagName: string;
+  bgColor?: string;
+  fontColor?: string;
+  borderColor?: string;
+  shape?: string;
+}
+
+export interface C4RelTag {
+  tagName: string;
+  textColor?: string;
+  lineColor?: string;
 }
 
 interface C4Db {
   getC4ShapeArray: (parentBoundary?: string) => C4Shape[];
   getBoundaries: (parentBoundary?: string) => C4Boundary[];
   getRels: () => C4Rel[];
+  getElementTags: () => C4ElementTag[];
+  getRelTags: () => C4RelTag[];
 }
 
 const QUEUE_SHAPES = new Set([
@@ -150,6 +171,22 @@ const elementCssStyles = (
 };
 
 /**
+ * Tag names assigned to an element or rel via $tags. C4-PlantUML separates
+ * multiple tags with `+` (e.g. "v1.0+deprecated"); commas are accepted too.
+ * The legacy db stores the value either as a plain string or wrapped in a
+ * `{ text }` object depending on which positional slot the kv landed in.
+ */
+const parseTagNames = (tags?: C4Tags): string[] => {
+  const text = typeof tags === 'string' ? tags : (tags?.text ?? '');
+  return text
+    .split(/[+,]/)
+    .map((tag) => tag.trim())
+    .filter((tag) => tag.length > 0);
+};
+
+const tagCssClass = (tagName: string): string => `c4-tag-${tagName.replace(/[^\w-]/g, '-')}`;
+
+/**
  * Default fill/stroke for an element type from the c4 config color keys
  * (person_bg_color, external_system_border_color, ...), so the unified
  * renderer keeps the exact palette of the legacy renderer.
@@ -175,6 +212,19 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
   const boundaries = db.getBoundaries().filter((boundary) => boundary.alias !== 'global');
   const boundaryAliases = new Set(boundaries.map((boundary) => boundary.alias));
 
+  const elementTags = new Map(db.getElementTags().map((tag) => [tag.tagName, tag]));
+  const relTags = new Map(db.getRelTags().map((tag) => [tag.tagName, tag]));
+
+  /**
+   * Styles from AddElementTag definitions; applied after the per-type config
+   * palette but before per-element UpdateElementStyle overrides.
+   */
+  const elementTagStyles = (tagNames: string[]): string[] =>
+    tagNames.flatMap((tagName) => {
+      const tag = elementTags.get(tagName);
+      return tag ? elementCssStyles(tag) : [];
+    });
+
   const parentIdOf = (parentBoundary: string): string | undefined =>
     parentBoundary && parentBoundary !== 'global' && boundaryAliases.has(parentBoundary)
       ? parentBoundary
@@ -182,14 +232,18 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
 
   for (const boundary of boundaries) {
     const isDeploymentNode = boundary.nodeType !== undefined;
+    const tagNames = parseTagNames(boundary.tags);
     nodes.push({
       id: boundary.alias,
       label: buildBoundaryLabel(boundary),
       isGroup: true,
       shape: 'rect',
       parentId: parentIdOf(boundary.parentBoundary),
-      cssClasses: isDeploymentNode ? 'c4-boundary c4-deployment-node' : 'c4-boundary',
-      cssStyles: elementCssStyles(boundary),
+      cssClasses: [
+        isDeploymentNode ? 'c4-boundary c4-deployment-node' : 'c4-boundary',
+        ...tagNames.map(tagCssClass),
+      ].join(' '),
+      cssStyles: [...elementTagStyles(tagNames), ...elementCssStyles(boundary)],
       link: boundary.link ?? undefined,
       look: config.look,
     });
@@ -197,14 +251,22 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
 
   for (const shape of db.getC4ShapeArray()) {
     const type = shape.typeC4Shape.text;
+    const tagNames = parseTagNames(shape.tags);
     nodes.push({
       id: shape.alias,
       label: buildNodeLabel(shape),
       isGroup: false,
       shape: getNodeShape(type),
       parentId: parentIdOf(shape.parentBoundary),
-      cssClasses: `c4-shape c4-${type}${isExternal(type) ? ' c4-external' : ''}`,
-      cssStyles: [...configColorStyles(type, c4Config), ...elementCssStyles(shape)],
+      cssClasses: [
+        `c4-shape c4-${type}${isExternal(type) ? ' c4-external' : ''}`,
+        ...tagNames.map(tagCssClass),
+      ].join(' '),
+      cssStyles: [
+        ...configColorStyles(type, c4Config),
+        ...elementTagStyles(tagNames),
+        ...elementCssStyles(shape),
+      ],
       link: shape.link,
       look: config.look,
     });
@@ -215,6 +277,15 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
     const isBack = rel.type === 'rel_b';
     const style: string[] = [];
     const labelStyle: string[] = [];
+    for (const tagName of parseTagNames(rel.tags)) {
+      const tag = relTags.get(tagName);
+      if (tag?.lineColor) {
+        style.push(`stroke:${tag.lineColor}`);
+      }
+      if (tag?.textColor) {
+        labelStyle.push(`color:${tag.textColor}`);
+      }
+    }
     if (rel.lineColor) {
       style.push(`stroke:${rel.lineColor}`);
     }

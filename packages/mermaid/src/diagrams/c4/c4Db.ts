@@ -7,7 +7,7 @@ import {
   getAccDescription,
   setAccDescription,
 } from '../common/commonDb.js';
-import type { C4Boundary, C4Rel, C4Shape } from './c4Types.js';
+import type { C4Boundary, C4ElementTag, C4Rel, C4RelTag, C4Shape } from './c4Types.js';
 
 /**
  * The parser may pass a plain string or an object with a single
@@ -55,6 +55,8 @@ let currentBoundaryParse = 'global';
 let parentBoundaryParse = '';
 let boundaries: C4Boundary[] = [createGlobalBoundary()];
 let rels: C4Rel[] = [];
+let elementTags: C4ElementTag[] = [];
+let relTags: C4RelTag[] = [];
 let title = '';
 let wrapEnabled: boolean | undefined = false;
 let c4ShapeInRow = 4;
@@ -625,6 +627,74 @@ export const updateRelStyle = function (
   }
 };
 
+const assignTagAttribute = function (
+  tag: C4ElementTag | C4RelTag,
+  key: string,
+  value?: ParserAttribute | null
+) {
+  if (value === undefined || value === null) {
+    return;
+  }
+  if (typeof value === 'object') {
+    const [k, v] = Object.entries(value)[0];
+    tag[k] = v;
+  } else {
+    tag[key] = value;
+  }
+};
+
+const findOrCreateTag = function <T extends C4ElementTag | C4RelTag>(
+  tags: T[],
+  tagName: string
+): T {
+  let tag = tags.find((tag) => tag.tagName === tagName);
+  if (tag === undefined) {
+    tag = { tagName } as T;
+    tags.push(tag);
+  }
+  return tag;
+};
+
+//tagName, ?bgColor, ?fontColor, ?borderColor, ?shape
+export const addElementTag = function (
+  tagName: string | null | undefined,
+  bgColor?: ParserAttribute | null,
+  fontColor?: ParserAttribute | null,
+  borderColor?: ParserAttribute | null,
+  shape?: ParserAttribute | null
+) {
+  if (tagName === undefined || tagName === null) {
+    return;
+  }
+  const tag = findOrCreateTag(elementTags, tagName);
+  assignTagAttribute(tag, 'bgColor', bgColor);
+  assignTagAttribute(tag, 'fontColor', fontColor);
+  assignTagAttribute(tag, 'borderColor', borderColor);
+  assignTagAttribute(tag, 'shape', shape);
+};
+
+//tagName, ?textColor, ?lineColor
+export const addRelTag = function (
+  tagName: string | null | undefined,
+  textColor?: ParserAttribute | null,
+  lineColor?: ParserAttribute | null
+) {
+  if (tagName === undefined || tagName === null) {
+    return;
+  }
+  const tag = findOrCreateTag(relTags, tagName);
+  assignTagAttribute(tag, 'textColor', textColor);
+  assignTagAttribute(tag, 'lineColor', lineColor);
+};
+
+export const getElementTags = function () {
+  return elementTags;
+};
+
+export const getRelTags = function () {
+  return relTags;
+};
+
 //?c4ShapeInRow, ?c4BoundaryInRow
 export const updateLayoutConfig = function (
   typeC4Shape: string,
@@ -722,6 +792,8 @@ export const clear = function () {
   currentBoundaryParse = 'global';
   boundaryParseStack = [''];
   rels = [];
+  elementTags = [];
+  relTags = [];
 
   boundaryParseStack = [''];
   title = '';
@@ -781,6 +853,10 @@ export default {
   addDeploymentNode,
   popBoundaryParseStack,
   addRel,
+  addElementTag,
+  addRelTag,
+  getElementTags,
+  getRelTags,
   updateElStyle,
   updateRelStyle,
   updateLayoutConfig,

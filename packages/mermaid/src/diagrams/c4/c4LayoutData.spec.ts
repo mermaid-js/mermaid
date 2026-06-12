@@ -115,6 +115,58 @@ Person(p1, "Person")
     expect(nodes.find((n) => n.id === 'p1')?.shape).toBe('c4-person');
   });
 
+  it('applies tag styles after type defaults and before UpdateElementStyle', () => {
+    parse(`C4Context
+AddElementTag(v1.0, $bgColor="#111111", $fontColor="#eeeeee")
+Person(a, "A", "desc", $tags="v1.0")
+Person(b, "B", "desc", $tags="v1.0")
+UpdateElementStyle(b, $bgColor="#222222")
+`);
+    const { nodes } = getData(c4Db as any, { c4: { person_bg_color: '#000000' } } as any);
+    expect(nodes.find((n) => n.id === 'a')?.cssStyles).toEqual([
+      'fill:#000000',
+      'fill:#111111',
+      'color:#eeeeee',
+    ]);
+    expect(nodes.find((n) => n.id === 'b')?.cssStyles).toEqual([
+      'fill:#000000',
+      'fill:#111111',
+      'color:#eeeeee',
+      'fill:#222222',
+    ]);
+  });
+
+  it('adds sanitized c4-tag css classes for every tag on an element', () => {
+    parse(`C4Context
+Person(a, "A", "desc", $tags="v1.0+internal api")
+`);
+    const cssClasses = data().nodes.find((n) => n.id === 'a')?.cssClasses;
+    expect(cssClasses).toContain('c4-tag-v1-0');
+    expect(cssClasses).toContain('c4-tag-internal-api');
+  });
+
+  it('applies rel tag styles before UpdateRelStyle overrides', () => {
+    parse(`C4Context
+AddRelTag(async, $textColor="grey", $lineColor="grey")
+Person(a, "A")
+Person(b, "B")
+Rel(a, b, "Uses", $tags="async")
+UpdateRelStyle(a, b, $lineColor="green")
+`);
+    const { edges } = data();
+    expect(edges[0].style).toEqual(['stroke:grey', 'stroke:green']);
+    expect(edges[0].labelStyle).toEqual(['color:grey']);
+  });
+
+  it('ignores tags that have no AddElementTag definition', () => {
+    parse(`C4Context
+Person(a, "A", "desc", $tags="undefinedTag")
+`);
+    const a = data().nodes.find((n) => n.id === 'a');
+    expect(a?.cssStyles).toEqual([]);
+    expect(a?.cssClasses).toContain('c4-tag-undefinedTag');
+  });
+
   it('marks deployment nodes as group nodes', () => {
     parse(`C4Deployment
 Deployment_Node(n1, "AWS", "Cloud") {

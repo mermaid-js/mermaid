@@ -110,6 +110,26 @@ export interface C4Rel {
   endPoint: C4Point;
 }
 
+/** Style definition registered via `AddElementTag(tagName, ...)`. */
+export interface C4ElementTag {
+  /** The parser may set additional keys via `{ key: value }` shaped arguments. */
+  [key: string]: unknown;
+  tagName: string;
+  bgColor?: string;
+  fontColor?: string;
+  borderColor?: string;
+  shape?: string;
+}
+
+/** Style definition registered via `AddRelTag(tagName, ...)`. */
+export interface C4RelTag {
+  /** The parser may set additional keys via `{ key: value }` shaped arguments. */
+  [key: string]: unknown;
+  tagName: string;
+  textColor?: string;
+  lineColor?: string;
+}
+
 /**
  * Font configuration as produced by the `*Font()` helpers of the C4
  * configuration. The helpers always populate family/size/weight from the
