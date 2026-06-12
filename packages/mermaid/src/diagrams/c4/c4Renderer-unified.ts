@@ -24,7 +24,6 @@ export const draw = async function (_text: string, id: string, _version: string,
 
   data4Layout.type = diag.type;
   data4Layout.layoutAlgorithm = getRegisteredLayoutAlgorithm(layout);
-  data4Layout.direction = 'TB';
   data4Layout.nodeSpacing = c4Config?.c4ShapeMargin ?? 50;
   data4Layout.rankSpacing = c4Config?.c4ShapeMargin ?? 50;
   data4Layout.markers = ['point'];

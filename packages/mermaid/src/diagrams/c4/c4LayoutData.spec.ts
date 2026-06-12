@@ -115,6 +115,21 @@ Person(p1, "Person")
     expect(nodes.find((n) => n.id === 'p1')?.shape).toBe('c4-person');
   });
 
+  it('passes the diagram direction to the layout data', () => {
+    parse(`C4Context
+direction LR
+Person(a, "A")
+`);
+    expect(data().direction).toBe('LR');
+  });
+
+  it('defaults the layout direction to TB', () => {
+    parse(`C4Context
+Person(a, "A")
+`);
+    expect(data().direction).toBe('TB');
+  });
+
   it('marks deployment nodes as group nodes', () => {
     parse(`C4Deployment
 Deployment_Node(n1, "AWS", "Cloud") {

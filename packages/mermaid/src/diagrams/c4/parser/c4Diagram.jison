@@ -307,6 +307,7 @@ diagramStatement
     | UPDATE_EL_STYLE attributes {yy.updateElStyle('update_el_style', ...$2); $$=$2;}
     | UPDATE_REL_STYLE attributes {yy.updateRelStyle('update_rel_style', ...$2); $$=$2;}
     | UPDATE_LAYOUT_CONFIG attributes {yy.updateLayoutConfig('update_layout_config', ...$2); $$=$2;}
+    | direction
     ;
 
 attributes

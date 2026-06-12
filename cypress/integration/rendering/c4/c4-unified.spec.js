@@ -96,4 +96,18 @@ describe('C4 diagram (unified renderer)', () => {
         expect(height).to.be.lessThan(2200);
       });
   });
+  it('C4U.6 should lay out the diagram left-to-right with direction LR', () => {
+    imgSnapshotTest(
+      `
+      C4Context
+      direction LR
+      Person(customerA, "Banking Customer A", "A customer of the bank.")
+      System(SystemAA, "Internet Banking System", "Allows customers to make payments.")
+      System_Ext(SystemC, "E-mail system", "The internal e-mail system.")
+      Rel(customerA, SystemAA, "Uses")
+      Rel(SystemAA, SystemC, "Sends e-mails", "SMTP")
+      `,
+      unified
+    );
+  });
 });
