@@ -187,6 +187,82 @@ describe('c4-beta db', () => {
       warnSpy.mockRestore();
     });
 
+    describe('tag styles', () => {
+      it('should apply tag styles to elements after the built-in kind colors', async () => {
+        await populate(`c4-beta context
+          style web fill:#1F2937, stroke:#111827, color:#fff
+          system banking "Internet Banking System" :::web
+        `);
+        const { nodes } = db.getData();
+        expect(nodes[0].cssClasses).toBe('c4-shape c4-system c4-tag-web');
+        expect(nodes[0].cssStyles).toEqual([
+          'fill: #1168BD',
+          'stroke: #3C7FC0',
+          'fill: #1F2937',
+          'stroke: #111827',
+          'color: #fff',
+        ]);
+      });
+
+      it('should map shape:cylinder to the cylinder shape', async () => {
+        await populate(`c4-beta container
+          style database shape:cylinder
+          container db "Database" :::database
+        `);
+        const { nodes } = db.getData();
+        expect(nodes[0].shape).toBe('cylinder');
+      });
+
+      it('should apply tag styles and line pattern to relationships', async () => {
+        await populate(`c4-beta context
+          style async stroke:#0a0, color:#0a0, line:dashed
+          a --> b : "Calls" :::async
+        `);
+        const { edges } = db.getData();
+        expect(edges[0].classes).toBe('c4-rel c4-tag-async');
+        expect(edges[0].style).toEqual(['stroke: #0a0', 'color: #0a0']);
+        expect(edges[0].pattern).toBe('dashed');
+      });
+
+      it('should add tag classes even for tags without styles', async () => {
+        await populate(`c4-beta context
+          system a "A" :::critical
+          a --> b :::async
+        `);
+        const data = db.getData();
+        expect(data.nodes[0].cssClasses).toBe('c4-shape c4-system c4-tag-critical');
+        expect(data.edges[0].classes).toBe('c4-rel c4-tag-async');
+        expect(data.edges[0].pattern).toBe('solid');
+      });
+
+      it('should warn about and ignore unsupported style keys and values', async () => {
+        const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+        await populate(`c4-beta context
+          style odd border:#fff, shape:hexagon, line:wavy
+          system a "A" :::odd
+        `);
+        expect(warnSpy).toHaveBeenCalledTimes(3);
+        expect(warnSpy).toHaveBeenCalledWith(
+          'c4-beta: unsupported style "border:#fff" for tag "odd"; ignoring it'
+        );
+        const { nodes } = db.getData();
+        expect(nodes[0].shape).toBe('rect');
+        expect(nodes[0].cssStyles).toEqual(['fill: #1168BD', 'stroke: #3C7FC0']);
+        warnSpy.mockRestore();
+      });
+
+      it('should merge repeated style statements for the same tag', async () => {
+        await populate(`c4-beta context
+          style web fill:#111
+          style web stroke:#222
+          system a "A" :::web
+        `);
+        const { nodes } = db.getData();
+        expect(nodes[0].cssStyles).toContain('fill: #111');
+        expect(nodes[0].cssStyles).toContain('stroke: #222');
+      });
+    });
+
     describe('dynamic diagrams', () => {
       it('should auto-number relationships in declaration order', async () => {
         await populate(`c4-beta dynamic

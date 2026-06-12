@@ -14,9 +14,11 @@ import {
 import type {
   C4BetaElement,
   C4BetaRelationship,
+  C4BetaTagStyle,
   C4DiagramKind,
   C4Direction,
   C4ElementKind,
+  C4LinePattern,
 } from './types.js';
 
 interface ElementColors {
@@ -42,6 +44,11 @@ const UNEXPECTED_ELEMENT_KINDS: Record<C4DiagramKind, C4ElementKind[]> = {
   dynamic: ['node'],
   deployment: ['person'],
 };
+
+const LINE_PATTERNS: C4LinePattern[] = ['solid', 'dashed', 'dotted'];
+
+const isLinePattern = (value: string): value is C4LinePattern =>
+  (LINE_PATTERNS as string[]).includes(value);
 
 const escapeHtml = (text: string): string =>
   text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -84,6 +91,7 @@ const buildRelationshipLabel = (
 export class C4BetaDB implements DiagramDB {
   private elements: C4BetaElement[] = [];
   private relationships: C4BetaRelationship[] = [];
+  private styles = new Map<string, C4BetaTagStyle>();
   private direction: C4Direction = 'TB';
   private kind: C4DiagramKind = 'context';
 
@@ -101,6 +109,26 @@ export class C4BetaDB implements DiagramDB {
 
   public getRelationships(): C4BetaRelationship[] {
     return this.relationships;
+  }
+
+  public addStyle(tag: string, entries: { key: string; value: string }[]) {
+    const style: C4BetaTagStyle = this.styles.get(tag) ?? {};
+    for (const { key, value } of entries) {
+      if (key === 'fill' || key === 'stroke' || key === 'color') {
+        style[key] = value;
+      } else if (key === 'shape' && value === 'cylinder') {
+        style.shape = value;
+      } else if (key === 'line' && isLinePattern(value)) {
+        style.line = value;
+      } else {
+        log.warn(`c4-beta: unsupported style "${key}:${value}" for tag "${tag}"; ignoring it`);
+      }
+    }
+    this.styles.set(tag, style);
+  }
+
+  public getStyles(): Map<string, C4BetaTagStyle> {
+    return this.styles;
   }
 
   public setDirection(direction: C4Direction) {
@@ -160,14 +188,36 @@ export class C4BetaDB implements DiagramDB {
         continue;
       }
       const colors = element.external ? EXTERNAL_COLORS : ELEMENT_COLORS[element.kind];
+      const cssClasses = ['c4-shape', `c4-${element.kind}`];
+      if (element.external) {
+        cssClasses.push('c4-external');
+      }
+      const cssStyles = colors ? [`fill: ${colors.fill}`, `stroke: ${colors.stroke}`] : [];
+      let shape: Node['shape'] = element.kind === 'person' ? 'c4-person' : 'rect';
+      // Tag styles are pushed after the built-in kind colors so they override them.
+      for (const tag of element.tags) {
+        cssClasses.push(`c4-tag-${tag}`);
+        const style = this.styles.get(tag);
+        if (!style) {
+          continue;
+        }
+        for (const key of ['fill', 'stroke', 'color'] as const) {
+          if (style[key]) {
+            cssStyles.push(`${key}: ${style[key]}`);
+          }
+        }
+        if (style.shape) {
+          shape = style.shape;
+        }
+      }
       nodes.push({
         id: element.id,
         label: buildElementLabel(element),
         parentId: element.parentId,
         isGroup: false,
-        shape: element.kind === 'person' ? 'c4-person' : 'rect',
-        cssClasses: `c4-shape c4-${element.kind}` + (element.external ? ' c4-external' : ''),
-        cssStyles: colors ? [`fill: ${colors.fill}`, `stroke: ${colors.stroke}`] : [],
+        shape,
+        cssClasses: cssClasses.join(' '),
+        cssStyles,
         padding: 8,
         look: config.look,
       });
@@ -182,6 +232,25 @@ export class C4BetaDB implements DiagramDB {
         step = relationship.step ?? nextStep;
         nextStep = step + 1;
       }
+      const classes = ['c4-rel'];
+      const style: string[] = [];
+      let pattern = 'solid';
+      for (const tag of relationship.tags) {
+        classes.push(`c4-tag-${tag}`);
+        const tagStyle = this.styles.get(tag);
+        if (!tagStyle) {
+          continue;
+        }
+        if (tagStyle.stroke) {
+          style.push(`stroke: ${tagStyle.stroke}`);
+        }
+        if (tagStyle.color) {
+          style.push(`color: ${tagStyle.color}`);
+        }
+        if (tagStyle.line) {
+          pattern = tagStyle.line;
+        }
+      }
       edges.push({
         id: `c4-edge-${index}`,
         start: relationship.sourceId,
@@ -189,12 +258,13 @@ export class C4BetaDB implements DiagramDB {
         type: 'normal',
         label: buildRelationshipLabel(relationship, step),
         labelpos: 'c',
-        classes: 'c4-rel',
+        classes: classes.join(' '),
+        style,
         arrowTypeStart: relationship.arrow === '-->' ? 'none' : 'arrow_point',
         arrowTypeEnd: relationship.arrow === '<--' ? 'none' : 'arrow_point',
         arrowheadStyle: 'fill: #333',
         thickness: 'normal',
-        pattern: 'solid',
+        pattern,
         look: config.look,
       });
     });
@@ -206,6 +276,7 @@ export class C4BetaDB implements DiagramDB {
     commonClear();
     this.elements = [];
     this.relationships = [];
+    this.styles = new Map();
     this.direction = 'TB';
     this.kind = 'context';
   }

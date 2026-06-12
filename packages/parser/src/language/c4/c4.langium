@@ -14,6 +14,7 @@ entry C4:
 fragment Statement:
     elements+=C4Element
     | relationships+=C4Relationship
+    | styles+=C4Style
     | Direction
 ;
 
@@ -39,5 +40,14 @@ C4Relationship:
     EOL
 ;
 
+C4Style:
+    'style' tag=ID entries+=C4StyleEntry (',' entries+=C4StyleEntry)* EOL
+;
+
+C4StyleEntry:
+    key=ID ':' value=(C4_HEX_COLOR | ID)
+;
+
 terminal C4_ARROW: /<-->|<--|-->/;
 terminal C4_TAG: /:::[\w]([-\w]*\w)?/;
+terminal C4_HEX_COLOR: /#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})/;

@@ -168,6 +168,54 @@ describe('c4-beta', () => {
     });
   });
 
+  describe('styles', () => {
+    it('should handle a style statement with a single entry', () => {
+      const result = parse(`c4-beta context
+        style web fill:#1168BD
+      `);
+      expectNoErrorsOrAlternatives(result);
+      const style = result.value.styles[0];
+      expect(style.tag).toBe('web');
+      expect(style.entries).toHaveLength(1);
+      expect(style.entries[0].key).toBe('fill');
+      expect(style.entries[0].value).toBe('#1168BD');
+    });
+
+    it('should handle multiple comma-separated entries', () => {
+      const result = parse(`c4-beta context
+        style database fill:#438DD5, stroke:#3C7FC0, shape:cylinder
+      `);
+      expectNoErrorsOrAlternatives(result);
+      const style = result.value.styles[0];
+      expect(style.entries.map((e) => [e.key, e.value])).toEqual([
+        ['fill', '#438DD5'],
+        ['stroke', '#3C7FC0'],
+        ['shape', 'cylinder'],
+      ]);
+    });
+
+    it('should handle short hex colors and word values', () => {
+      const result = parse(`c4-beta context
+        style async line:dashed, color:#fff
+      `);
+      expectNoErrorsOrAlternatives(result);
+      const style = result.value.styles[0];
+      expect(style.entries.map((e) => [e.key, e.value])).toEqual([
+        ['line', 'dashed'],
+        ['color', '#fff'],
+      ]);
+    });
+
+    it('should handle several style statements', () => {
+      const result = parse(`c4-beta context
+        style web fill:#1168BD
+        style async line:dashed
+      `);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.styles.map((s) => s.tag)).toEqual(['web', 'async']);
+    });
+  });
+
   describe('full example', () => {
     it('should parse a complete context diagram', () => {
       const result = parse(`c4-beta context

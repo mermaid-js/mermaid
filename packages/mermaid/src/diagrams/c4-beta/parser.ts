@@ -33,6 +33,12 @@ export const populateDb = (ast: C4, db: C4BetaDB) => {
   for (const element of ast.elements) {
     addElement(db, element);
   }
+  for (const style of ast.styles) {
+    db.addStyle(
+      style.tag,
+      style.entries.map(({ key, value }) => ({ key, value }))
+    );
+  }
   for (const relationship of ast.relationships) {
     db.addRelationship({
       sourceId: relationship.sourceId,

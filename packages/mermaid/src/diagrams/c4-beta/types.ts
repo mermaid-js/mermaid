@@ -17,6 +17,16 @@ export interface C4BetaElement {
   parentId?: string;
 }
 
+export type C4LinePattern = 'solid' | 'dashed' | 'dotted';
+
+export interface C4BetaTagStyle {
+  shape?: 'cylinder';
+  fill?: string;
+  stroke?: string;
+  color?: string;
+  line?: C4LinePattern;
+}
+
 export interface C4BetaRelationship {
   sourceId: string;
   targetId: string;
