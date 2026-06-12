@@ -1,6 +1,7 @@
 import type { DiagramMetadata } from './types.js';
 import flowChart from './examples/flowchart.js';
 import c4 from './examples/c4.js';
+import c4Beta from './examples/c4-beta.js';
 import ishikawaDiagram from './examples/ishikawa.js';
 import kanban from './examples/kanban.js';
 import classDiagram from './examples/class.js';
@@ -35,6 +36,7 @@ import railroadPegDiagram from './examples/railroad-peg.js';
 export const diagramData: DiagramMetadata[] = [
   flowChart,
   c4,
+  c4Beta,
   ishikawaDiagram,
   kanban,
   classDiagram,

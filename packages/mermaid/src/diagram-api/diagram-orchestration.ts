@@ -1,4 +1,5 @@
 import c4 from '../diagrams/c4/c4Detector.js';
+import c4beta from '../diagrams/c4-beta/detector.js';
 import flowchart from '../diagrams/flowchart/flowDetector.js';
 import flowchartV2 from '../diagrams/flowchart/flowDetector-v2.js';
 import swimlanes from '../diagrams/swimlanes/detector.js';
@@ -89,6 +90,7 @@ export const addDiagrams = () => {
 
   // Ordering of detectors is important. The first one to return true will be used.
   registerLazyLoadedDiagrams(
+    c4beta,
     c4,
     kanban,
     classDiagramV2,
