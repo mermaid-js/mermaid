@@ -115,6 +115,32 @@ Person(p1, "Person")
     expect(nodes.find((n) => n.id === 'p1')?.shape).toBe('c4-person');
   });
 
+  it('maps $sprite to an icon node rendered with the icon shape', () => {
+    parse(`C4Context
+Person(a, "A", "desc", $sprite="logos:aws-lambda")
+System(b, "B")
+`);
+    const { nodes } = data();
+    expect(nodes.find((n) => n.id === 'a')).toMatchObject({
+      icon: 'logos:aws-lambda',
+      shape: 'iconRounded',
+    });
+    expect(nodes.find((n) => n.id === 'b')).toMatchObject({
+      icon: undefined,
+      shape: 'rect',
+    });
+  });
+
+  it('maps $sprite stored in an earlier positional slot', () => {
+    parse(`C4Context
+Person(a, "A", $sprite="logos:aws-lambda")
+`);
+    expect(data().nodes.find((n) => n.id === 'a')).toMatchObject({
+      icon: 'logos:aws-lambda',
+      shape: 'iconRounded',
+    });
+  });
+
   it('marks deployment nodes as group nodes', () => {
     parse(`C4Deployment
 Deployment_Node(n1, "AWS", "Cloud") {

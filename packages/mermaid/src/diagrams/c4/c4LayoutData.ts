@@ -13,6 +13,16 @@ interface C4Text {
   text: string;
 }
 
+/**
+ * The legacy db stores kv attribute values ($tags, $sprite, ...) either as a
+ * plain string or wrapped in a `{ text }` object depending on which
+ * positional slot the kv landed in.
+ */
+type C4Attribute = string | C4Text | null;
+
+const attributeText = (value?: C4Attribute): string | undefined =>
+  typeof value === 'string' ? value : value?.text;
+
 interface C4Shape {
   alias: string;
   label: C4Text;
@@ -24,6 +34,7 @@ interface C4Shape {
   fontColor?: string;
   borderColor?: string;
   link?: string;
+  sprite?: C4Attribute;
 }
 
 interface C4Boundary {
@@ -197,11 +208,16 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
 
   for (const shape of db.getC4ShapeArray()) {
     const type = shape.typeC4Shape.text;
+    // A $sprite switches the node to mermaid's icon rendering (icon above the
+    // label); the icon name resolves against icon packs registered with
+    // registerIconPacks.
+    const icon = attributeText(shape.sprite);
     nodes.push({
       id: shape.alias,
       label: buildNodeLabel(shape),
       isGroup: false,
-      shape: getNodeShape(type),
+      shape: icon ? 'iconRounded' : getNodeShape(type),
+      icon,
       parentId: parentIdOf(shape.parentBoundary),
       cssClasses: `c4-shape c4-${type}${isExternal(type) ? ' c4-external' : ''}`,
       cssStyles: [...configColorStyles(type, c4Config), ...elementCssStyles(shape)],
