@@ -187,6 +187,60 @@ describe('c4-beta db', () => {
       warnSpy.mockRestore();
     });
 
+    describe('dynamic diagrams', () => {
+      it('should auto-number relationships in declaration order', async () => {
+        await populate(`c4-beta dynamic
+          container spa "Single-Page App"
+          container api "API Application"
+          spa --> api : "Submits credentials to" "JSON/HTTPS"
+          api --> spa : "Sends back an auth token to"
+        `);
+        const { edges } = db.getData();
+        expect(edges[0].label).toBe(
+          '<b>1. Submits credentials to</b><br/><small><i>[JSON/HTTPS]</i></small>'
+        );
+        expect(edges[1].label).toBe('<b>2. Sends back an auth token to</b>');
+      });
+
+      it('should let an explicit step override the counter and continue from it', async () => {
+        await populate(`c4-beta dynamic
+          container a "A"
+          container b "B"
+          a --> b : "First"
+          a --> b : "Second"
+          5: a --> b : "Fifth"
+          a --> b : "Sixth"
+        `);
+        const { edges } = db.getData();
+        expect(edges.map((e) => e.label)).toEqual([
+          '<b>1. First</b>',
+          '<b>2. Second</b>',
+          '<b>5. Fifth</b>',
+          '<b>6. Sixth</b>',
+        ]);
+      });
+
+      it('should number relationships without a description', async () => {
+        await populate(`c4-beta dynamic
+          container a "A"
+          container b "B"
+          a --> b
+        `);
+        const { edges } = db.getData();
+        expect(edges[0].label).toBe('<b>1.</b>');
+      });
+
+      it('should ignore step numbers in non-dynamic diagrams', async () => {
+        await populate(`c4-beta context
+          system a "A"
+          system b "B"
+          3: a --> b : "Calls"
+        `);
+        const { edges } = db.getData();
+        expect(edges[0].label).toBe('<b>Calls</b>');
+      });
+    });
+
     it('should include direction in the layout data', async () => {
       await populate(`c4-beta
         direction LR

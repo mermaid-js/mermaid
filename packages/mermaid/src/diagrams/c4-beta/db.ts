@@ -60,11 +60,21 @@ const buildElementLabel = (element: C4BetaElement): string => {
   return lines.join('<br/>');
 };
 
-const buildRelationshipLabel = (relationship: C4BetaRelationship): string | undefined => {
-  if (!relationship.description) {
+const buildRelationshipLabel = (
+  relationship: C4BetaRelationship,
+  step?: number
+): string | undefined => {
+  if (!relationship.description && step === undefined) {
     return undefined;
   }
-  const lines: string[] = [`<b>${escapeHtml(relationship.description)}</b>`];
+  const titleParts: string[] = [];
+  if (step !== undefined) {
+    titleParts.push(`${step}.`);
+  }
+  if (relationship.description) {
+    titleParts.push(escapeHtml(relationship.description));
+  }
+  const lines: string[] = [`<b>${titleParts.join(' ')}</b>`];
   if (relationship.technology) {
     lines.push(`<small><i>[${escapeHtml(relationship.technology)}]</i></small>`);
   }
@@ -163,13 +173,21 @@ export class C4BetaDB implements DiagramDB {
       });
     }
 
+    // In dynamic diagrams relationships are numbered in declaration order;
+    // an explicit `N:` prefix overrides the counter, which continues from it.
+    let nextStep = 1;
     this.relationships.forEach((relationship, index) => {
+      let step: number | undefined;
+      if (this.kind === 'dynamic') {
+        step = relationship.step ?? nextStep;
+        nextStep = step + 1;
+      }
       edges.push({
         id: `c4-edge-${index}`,
         start: relationship.sourceId,
         end: relationship.targetId,
         type: 'normal',
-        label: buildRelationshipLabel(relationship),
+        label: buildRelationshipLabel(relationship, step),
         labelpos: 'c',
         classes: 'c4-rel',
         arrowTypeStart: relationship.arrow === '-->' ? 'none' : 'arrow_point',
