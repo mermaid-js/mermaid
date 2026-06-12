@@ -118,6 +118,7 @@ rgba
 RIGHTOF
 roughjs
 RPAREN
+rrggbb
 sankey
 sequencenumber
 shrc

@@ -1,9 +1,22 @@
-import { imgSnapshotTest } from '../../../helpers/util.ts';
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>C4 (beta) Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        /* font-family: 'trebuchet ms', verdana, arial; */
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
 
-describe('C4 diagram (beta)', () => {
-  it('C4B.1 should render a context diagram', () => {
-    imgSnapshotTest(
-      `
+  <body>
+    <h1>C4 diagram (beta) demo</h1>
+    <h2>System context diagram</h2>
+    <pre class="mermaid">
       c4-beta context
       title Internet Banking System - System Context
 
@@ -16,15 +29,14 @@ describe('C4 diagram (beta)', () => {
       banking --> mainframe : "Gets account information from" "XML/HTTPS"
       banking --> email : "Sends e-mail using" "SMTP"
       email --> customer : "Sends e-mails to"
-      `,
-      {}
-    );
-  });
-  it('C4B.2 should render a container diagram with a nested boundary', () => {
-    imgSnapshotTest(
-      `
+    </pre>
+    <hr />
+
+    <h2>Container diagram with a nested boundary</h2>
+    <pre class="mermaid">
       c4-beta container
       title Internet Banking System - Containers
+      direction LR
 
       person customer "Personal Banking Customer"
       system banking "Internet Banking System" {
@@ -38,27 +50,29 @@ describe('C4 diagram (beta)', () => {
       spa --> api : "Makes API calls to" "JSON/HTTPS"
       api --> db : "Reads from and writes to" "SQL/TCP"
       api --> mainframe : "Makes API calls to" "XML/HTTPS"
-      `,
-      {}
-    );
-  });
-  it('C4B.3 should render bidirectional relationships and tags syntax', () => {
-    imgSnapshotTest(
-      `
-      c4-beta context
-      person user "User"
-      system core "Core System" "Main system."
-      external system partner "Partner System" :::external
+    </pre>
+    <hr />
 
-      user --> core : "Uses"
-      core <--> partner : "Syncs with" "JSON/HTTPS"
-      `,
-      {}
-    );
-  });
-  it('C4B.4 should render a dynamic diagram with numbered steps', () => {
-    imgSnapshotTest(
-      `
+    <h2>Component diagram</h2>
+    <pre class="mermaid">
+      c4-beta component
+      title API Application - Components
+
+      container spa "Single-Page Application"
+      container api "API Application" {
+          component signin "Sign In Controller" "Allows users to sign in." "Spring MVC Controller"
+          component security "Security Component" "Provides authentication." "Spring Bean"
+      }
+      container db "Database"
+
+      spa --> signin : "Makes API calls to" "JSON/HTTPS"
+      signin --> security : "Uses"
+      security --> db : "Reads from" "SQL/TCP"
+    </pre>
+    <hr />
+
+    <h2>Dynamic diagram with numbered steps</h2>
+    <pre class="mermaid">
       c4-beta dynamic
       title Internet Banking System - Sign In
 
@@ -70,13 +84,11 @@ describe('C4 diagram (beta)', () => {
       api --> db : "Calls select * from users" "SQL/TCP"
       db --> api : "Returns user data to"
       4: api --> spa : "Sends back an authentication token to"
-      `,
-      {}
-    );
-  });
-  it('C4B.5 should render a deployment diagram with nested nodes', () => {
-    imgSnapshotTest(
-      `
+    </pre>
+    <hr />
+
+    <h2>Deployment diagram with nested nodes</h2>
+    <pre class="mermaid">
       c4-beta deployment
       title Internet Banking System - Deployment
 
@@ -92,13 +104,11 @@ describe('C4 diagram (beta)', () => {
       }
 
       api --> db : "Reads from and writes to" "SQL/TCP"
-      `,
-      {}
-    );
-  });
-  it('C4B.6 should render tag styles from style statements', () => {
-    imgSnapshotTest(
-      `
+    </pre>
+    <hr />
+
+    <h2>Tags and styles</h2>
+    <pre class="mermaid">
       c4-beta container
       style database shape:cylinder
       style async line:dashed
@@ -108,8 +118,15 @@ describe('C4 diagram (beta)', () => {
       container db "Database" "Stores user credentials." "Oracle 12c" :::database
 
       api --> db : "Reads from and writes to" "SQL/TCP" :::async
-      `,
-      {}
-    );
-  });
-});
+    </pre>
+    <hr />
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({
+        logLevel: 3,
+        securityLevel: 'loose',
+      });
+    </script>
+  </body>
+</html>
