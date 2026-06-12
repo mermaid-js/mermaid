@@ -250,6 +250,7 @@ export interface MermaidConfig {
   kanban?: KanbanDiagramConfig;
   gitGraph?: GitGraphDiagramConfig;
   c4?: C4DiagramConfig;
+  c4beta?: C4BetaDiagramConfig;
   sankey?: SankeyDiagramConfig;
   packet?: PacketDiagramConfig;
   block?: BlockDiagramConfig;
@@ -1705,6 +1706,20 @@ export interface C4DiagramConfig extends BaseDiagramConfig {
   external_component_queueFont?: FontCalculator;
   boundaryFont?: FontCalculator;
   messageFont?: FontCalculator;
+}
+/**
+ * The object containing configurations specific for c4-beta diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "C4BetaDiagramConfig".
+ */
+export interface C4BetaDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The amount of padding around the diagram as a whole so that embedded
+   * diagrams have margins, expressed in pixels.
+   *
+   */
+  diagramPadding?: number;
 }
 /**
  * The object containing configurations specific for sankey diagrams.

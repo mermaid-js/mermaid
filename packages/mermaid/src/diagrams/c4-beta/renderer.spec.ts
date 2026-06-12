@@ -125,6 +125,38 @@ spa --> api : "Calls"
     expect(matches).toHaveLength(2);
   });
 
+  jsdomIt('should use the c4beta config defaults for padding and max width', async () => {
+    const { svg } = await mermaidAPI.render(
+      'c4beta-render-config-1',
+      `c4-beta context
+person customer "Customer"
+`
+    );
+    // MOCKED_BBOX is 666x666; default diagramPadding is 10
+    expect(svg).toContain('viewBox="-10 -10 686 686"');
+    expect(svg).toContain('width="100%"');
+    expect(svg).toContain('style="max-width: 686px;"');
+  });
+
+  jsdomIt('should apply c4beta config overrides for padding and max width', async () => {
+    const { svg } = await mermaidAPI.render(
+      'c4beta-render-config-2',
+      `---
+config:
+  c4beta:
+    diagramPadding: 25
+    useMaxWidth: false
+---
+c4-beta context
+person customer "Customer"
+`
+    );
+    // MOCKED_BBOX is 666x666; overridden diagramPadding is 25
+    expect(svg).toContain('viewBox="-25 -25 716 716"');
+    expect(svg).toContain('width="716"');
+    expect(svg).not.toContain('style="max-width');
+  });
+
   jsdomIt('should render deployment nodes as clusters', async () => {
     const { svg } = await mermaidAPI.render(
       'c4beta-render-4',

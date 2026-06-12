@@ -25,6 +25,7 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
   'timeline',
   'gitGraph',
   'c4',
+  'c4beta',
   'sankey',
   'block',
   'packet',
