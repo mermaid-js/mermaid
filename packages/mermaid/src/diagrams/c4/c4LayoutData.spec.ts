@@ -167,6 +167,22 @@ Person(a, "A", "desc", $tags="undefinedTag")
     expect(a?.cssClasses).toContain('c4-tag-undefinedTag');
   });
 
+  it('maps $link on elements and boundaries to the node link', () => {
+    parse(`C4Context
+System_Boundary(b0, "Boundary", $link="https://example.com/boundary") {
+  Person(a, "A", "desc", $tags="v1.0", $link="https://example.com/a")
+}
+Person(b, "B", $link="https://example.com/b")
+Person(c, "C")
+`);
+    const { nodes } = data();
+    expect(nodes.find((n) => n.id === 'b0')?.link).toBe('https://example.com/boundary');
+    expect(nodes.find((n) => n.id === 'a')?.link).toBe('https://example.com/a');
+    // $link parsed into an earlier positional slot is stored as { text }
+    expect(nodes.find((n) => n.id === 'b')?.link).toBe('https://example.com/b');
+    expect(nodes.find((n) => n.id === 'c')?.link).toBeUndefined();
+  });
+
   it('marks deployment nodes as group nodes', () => {
     parse(`C4Deployment
 Deployment_Node(n1, "AWS", "Cloud") {

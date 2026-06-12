@@ -13,7 +13,15 @@ interface C4Text {
   text: string;
 }
 
-type C4Tags = string | C4Text | null;
+/**
+ * The legacy db stores kv attribute values ($tags, $link, ...) either as a
+ * plain string or wrapped in a `{ text }` object depending on which
+ * positional slot the kv landed in.
+ */
+type C4Attribute = string | C4Text | null;
+
+const attributeText = (value?: C4Attribute): string | undefined =>
+  typeof value === 'string' ? value : value?.text;
 
 interface C4Shape {
   alias: string;
@@ -25,8 +33,8 @@ interface C4Shape {
   bgColor?: string;
   fontColor?: string;
   borderColor?: string;
-  link?: string;
-  tags?: C4Tags;
+  link?: C4Attribute;
+  tags?: C4Attribute;
 }
 
 interface C4Boundary {
@@ -39,8 +47,8 @@ interface C4Boundary {
   bgColor?: string;
   fontColor?: string;
   borderColor?: string;
-  link?: string | null;
-  tags?: C4Tags;
+  link?: C4Attribute;
+  tags?: C4Attribute;
 }
 
 interface C4Rel {
@@ -52,7 +60,7 @@ interface C4Rel {
   descr?: C4Text;
   textColor?: string;
   lineColor?: string;
-  tags?: C4Tags;
+  tags?: C4Attribute;
 }
 
 export interface C4ElementTag {
@@ -173,11 +181,9 @@ const elementCssStyles = (
 /**
  * Tag names assigned to an element or rel via $tags. C4-PlantUML separates
  * multiple tags with `+` (e.g. "v1.0+deprecated"); commas are accepted too.
- * The legacy db stores the value either as a plain string or wrapped in a
- * `{ text }` object depending on which positional slot the kv landed in.
  */
-const parseTagNames = (tags?: C4Tags): string[] => {
-  const text = typeof tags === 'string' ? tags : (tags?.text ?? '');
+const parseTagNames = (tags?: C4Attribute): string[] => {
+  const text = attributeText(tags) ?? '';
   return text
     .split(/[+,]/)
     .map((tag) => tag.trim())
@@ -244,7 +250,7 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
         ...tagNames.map(tagCssClass),
       ].join(' '),
       cssStyles: [...elementTagStyles(tagNames), ...elementCssStyles(boundary)],
-      link: boundary.link ?? undefined,
+      link: attributeText(boundary.link),
       look: config.look,
     });
   }
@@ -267,7 +273,7 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
         ...elementTagStyles(tagNames),
         ...elementCssStyles(shape),
       ],
-      link: shape.link,
+      link: attributeText(shape.link),
       look: config.look,
     });
   }
