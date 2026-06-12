@@ -1365,6 +1365,13 @@ export interface C4DiagramConfig extends BaseDiagramConfig {
    */
   c4BoundaryInRow?: number;
   /**
+   * When true, the C4 diagram is rendered through the unified rendering
+   * pipeline with a proper layout algorithm (dagre by default) instead of
+   * the legacy row-based renderer.
+   *
+   */
+  useUnifiedRenderer?: boolean;
+  /**
    * This sets the font size of Person shape for the diagram
    */
   personFontSize?: string | number;
