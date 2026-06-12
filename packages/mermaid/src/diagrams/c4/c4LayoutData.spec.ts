@@ -101,16 +101,18 @@ System_Ext(b, "B")
     );
   });
 
-  it('maps db and queue element variants to dedicated shapes', () => {
+  it('maps element variants to dedicated shapes', () => {
     parse(`C4Context
 SystemDb(db1, "Database")
 SystemQueue(q1, "Queue")
 System(s1, "System")
+Person(p1, "Person")
 `);
     const { nodes } = data();
     expect(nodes.find((n) => n.id === 'db1')?.shape).toBe('cylinder');
     expect(nodes.find((n) => n.id === 'q1')?.shape).toBe('h-cyl');
     expect(nodes.find((n) => n.id === 's1')?.shape).toBe('rect');
+    expect(nodes.find((n) => n.id === 'p1')?.shape).toBe('c4-person');
   });
 
   it('marks deployment nodes as group nodes', () => {
