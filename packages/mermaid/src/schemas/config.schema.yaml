@@ -467,6 +467,13 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: integer
         default: 2
         minimum: 0
+      useUnifiedRenderer:
+        description: |
+          When true, the C4 diagram is rendered through the unified rendering
+          pipeline with a proper layout algorithm (dagre by default) instead of
+          the legacy row-based renderer.
+        type: boolean
+        default: false
 
       # --------------------------------------------------------------------- #
       # Default font values
