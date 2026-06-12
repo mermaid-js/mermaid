@@ -94,4 +94,34 @@ spa --> db : "Reads from"
     expect(svg).toContain('Single-Page Application');
     expect(svg).toContain('JavaScript');
   });
+
+  jsdomIt('should number relationships in dynamic diagrams', async () => {
+    const { svg } = await mermaidAPI.render(
+      'c4beta-render-3',
+      `c4-beta dynamic
+container spa "SPA"
+container api "API"
+spa --> api : "Submits credentials to"
+api --> spa : "Returns a token to"
+`
+    );
+    expect(svg).toContain('1. Submits credentials to');
+    expect(svg).toContain('2. Returns a token to');
+  });
+
+  jsdomIt('should render deployment nodes as clusters', async () => {
+    const { svg } = await mermaidAPI.render(
+      'c4beta-render-4',
+      `c4-beta deployment
+node aws "Amazon Web Services" "" "Cloud" {
+    node ec2 "EC2" {
+        container api "API Application" "Java"
+    }
+}
+`
+    );
+    expect(svg).toContain('c4-node');
+    expect(svg).toContain('Amazon Web Services');
+    expect(svg).toContain('API Application');
+  });
 });
