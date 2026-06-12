@@ -204,6 +204,43 @@ const configColorStyles = (typeC4Shape: string, c4Config: Record<string, any>): 
   return styles;
 };
 
+export interface C4LegendItem {
+  label: string;
+  fill?: string;
+  stroke?: string;
+}
+
+/**
+ * Data for the SHOW_LEGEND() legend: one entry per element type used in the
+ * diagram (with its configured palette) followed by one entry per defined
+ * element/rel tag. Rendering is left to the unified renderer.
+ */
+export const buildLegendData = (db: C4Db, config: MermaidConfig): C4LegendItem[] => {
+  const c4Config: Record<string, any> = config.c4 ?? {};
+  const items: C4LegendItem[] = [];
+
+  const seenTypes = new Set<string>();
+  for (const shape of db.getC4ShapeArray()) {
+    const type = shape.typeC4Shape.text;
+    if (seenTypes.has(type)) {
+      continue;
+    }
+    seenTypes.add(type);
+    items.push({
+      label: type.replace(/_/g, ' '),
+      fill: c4Config[`${type}_bg_color`],
+      stroke: c4Config[`${type}_border_color`],
+    });
+  }
+  for (const tag of db.getElementTags()) {
+    items.push({ label: tag.tagName, fill: tag.bgColor, stroke: tag.borderColor });
+  }
+  for (const tag of db.getRelTags()) {
+    items.push({ label: tag.tagName, fill: tag.lineColor, stroke: tag.lineColor });
+  }
+  return items;
+};
+
 export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
   const nodes: Node[] = [];
   const edges: Edge[] = [];

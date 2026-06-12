@@ -1,7 +1,7 @@
 // @ts-ignore: JISON doesn't support types
 import c4 from './parser/c4Diagram.jison';
 import c4Db from './c4Db.js';
-import { getData } from './c4LayoutData.js';
+import { buildLegendData, getData } from './c4LayoutData.js';
 import { setConfig } from '../../config.js';
 import type { MermaidConfig } from '../../config.type.js';
 
@@ -165,6 +165,29 @@ Person(a, "A", "desc", $tags="undefinedTag")
     const a = data().nodes.find((n) => n.id === 'a');
     expect(a?.cssStyles).toEqual([]);
     expect(a?.cssClasses).toContain('c4-tag-undefinedTag');
+  });
+
+  it('derives legend entries from used element types and defined tags', () => {
+    parse(`C4Context
+AddElementTag(deprecated, $bgColor="grey", $borderColor="red")
+AddRelTag(async, $lineColor="green")
+Person(a, "A")
+Person(b, "B")
+System_Ext(c, "C")
+Rel(a, c, "Uses", $tags="async")
+`);
+    const items = buildLegendData(
+      c4Db as any,
+      {
+        c4: { person_bg_color: '#08427B', external_system_bg_color: '#999999' },
+      } as any
+    );
+    expect(items).toEqual([
+      { label: 'person', fill: '#08427B', stroke: undefined },
+      { label: 'external system', fill: '#999999', stroke: undefined },
+      { label: 'deprecated', fill: 'grey', stroke: 'red' },
+      { label: 'async', fill: 'green', stroke: 'green' },
+    ]);
   });
 
   it('marks deployment nodes as group nodes', () => {

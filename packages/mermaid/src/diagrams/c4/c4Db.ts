@@ -58,6 +58,7 @@ let rels: C4Rel[] = [];
 let elementTags: C4ElementTag[] = [];
 let relTags: C4RelTag[] = [];
 let title = '';
+let showLegend = false;
 let wrapEnabled: boolean | undefined = false;
 let c4ShapeInRow = 4;
 let c4BoundaryInRow = 2;
@@ -777,6 +778,14 @@ export const getTitle = function () {
   return title;
 };
 
+export const setShowLegend = function (showLegendParam: boolean) {
+  showLegend = showLegendParam;
+};
+
+export const getShowLegend = function () {
+  return showLegend;
+};
+
 export const setWrap = function (wrapSetting?: boolean) {
   wrapEnabled = wrapSetting;
 };
@@ -797,6 +806,7 @@ export const clear = function () {
 
   boundaryParseStack = [''];
   title = '';
+  showLegend = false;
   wrapEnabled = false;
   c4ShapeInRow = 4;
   c4BoundaryInRow = 2;
@@ -871,6 +881,8 @@ export default {
   getParentBoundaryParse,
   getRels,
   getTitle,
+  setShowLegend,
+  getShowLegend,
   getC4Type,
   getC4ShapeInRow,
   getC4BoundaryInRow,

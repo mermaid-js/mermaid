@@ -109,4 +109,20 @@ describe('C4 diagram (unified renderer)', () => {
       unified
     );
   });
+  it('C4U.8 should render a legend with SHOW_LEGEND()', () => {
+    imgSnapshotTest(
+      `
+      C4Context
+      AddElementTag(deprecated, $bgColor="grey", $borderColor="red")
+      AddRelTag(async, $textColor="green", $lineColor="green")
+      Person(customerA, "Banking Customer A", "A customer of the bank.")
+      System(SystemAA, "Internet Banking System", "Allows customers to make payments.", $tags="deprecated")
+      System_Ext(SystemC, "E-mail system", "The internal e-mail system.")
+      Rel(customerA, SystemAA, "Uses", $tags="async")
+      Rel(SystemAA, SystemC, "Sends e-mails", "SMTP")
+      SHOW_LEGEND()
+      `,
+      unified
+    );
+  });
 });

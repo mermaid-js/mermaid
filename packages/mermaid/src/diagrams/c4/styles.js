@@ -90,6 +90,12 @@ const getStyles = (options) =>
     fill: ${options.textColor};
     font-family: ${options.fontFamily};
   }
+
+  .c4-legend text {
+    fill: ${options.textColor};
+    font-family: ${options.fontFamily};
+    font-size: 12px;
+  }
 `;
 
 export default getStyles;
