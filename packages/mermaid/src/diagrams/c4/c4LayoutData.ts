@@ -75,6 +75,9 @@ const DB_SHAPES = new Set([
 ]);
 
 const getNodeShape = (typeC4Shape: string): ShapeID => {
+  if (typeC4Shape === 'person' || typeC4Shape === 'external_person') {
+    return 'c4-person';
+  }
   if (DB_SHAPES.has(typeC4Shape)) {
     return 'cylinder';
   }
