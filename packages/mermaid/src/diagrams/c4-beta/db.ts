@@ -1,5 +1,6 @@
 import { getConfig } from '../../config.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
+import { log } from '../../logger.js';
 import type { Edge, LayoutData, Node } from '../../rendering-util/types.js';
 import {
   clear as commonClear,
@@ -31,6 +32,16 @@ const ELEMENT_COLORS: Partial<Record<C4ElementKind, ElementColors>> = {
 };
 
 const EXTERNAL_COLORS: ElementColors = { fill: '#999999', stroke: '#8A8A8A' };
+
+// Element kinds that are unexpected for a given diagram kind. They still
+// render (forgiving WYSIWYG), but we warn so authors can spot mistakes.
+const UNEXPECTED_ELEMENT_KINDS: Record<C4DiagramKind, C4ElementKind[]> = {
+  context: ['container', 'component', 'node'],
+  container: ['component', 'node'],
+  component: ['node'],
+  dynamic: ['node'],
+  deployment: ['person'],
+};
 
 const escapeHtml = (text: string): string =>
   text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -98,10 +109,23 @@ export class C4BetaDB implements DiagramDB {
     return this.kind;
   }
 
+  private validateKind() {
+    const unexpected = UNEXPECTED_ELEMENT_KINDS[this.kind];
+    for (const element of this.elements) {
+      if (unexpected.includes(element.kind)) {
+        log.warn(
+          `c4-beta: element "${element.id}" of kind "${element.kind}" is unexpected in a "${this.kind}" diagram; rendering it anyway`
+        );
+      }
+    }
+  }
+
   public getData(): LayoutData {
     const config = getConfig();
     const nodes: Node[] = [];
     const edges: Edge[] = [];
+
+    this.validateKind();
 
     // Any element containing other elements is rendered as a boundary cluster.
     const boundaryIds = new Set(
@@ -131,7 +155,7 @@ export class C4BetaDB implements DiagramDB {
         label: buildElementLabel(element),
         parentId: element.parentId,
         isGroup: false,
-        shape: 'rect',
+        shape: element.kind === 'person' ? 'c4-person' : 'rect',
         cssClasses: `c4-shape c4-${element.kind}` + (element.external ? ' c4-external' : ''),
         cssStyles: colors ? [`fill: ${colors.fill}`, `stroke: ${colors.stroke}`] : [],
         padding: 8,

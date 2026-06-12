@@ -1,6 +1,7 @@
 import { parse } from '@mermaid-js/parser';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { log } from '../../logger.js';
 import { C4BetaDB } from './db.js';
 import { populateDb } from './parser.js';
 
@@ -88,7 +89,7 @@ describe('c4-beta db', () => {
       const customer = nodes.find((n) => n.id === 'customer');
       expect(customer).toBeDefined();
       expect(customer?.isGroup).toBe(false);
-      expect(customer?.shape).toBe('rect');
+      expect(customer?.shape).toBe('c4-person');
       expect(customer?.cssClasses).toBe('c4-shape c4-person');
       expect(customer?.cssStyles).toEqual(['fill: #08427B', 'stroke: #073B6F']);
       expect(customer?.label).toBe(
@@ -152,6 +153,38 @@ describe('c4-beta db', () => {
       const bidirectional = edges[2];
       expect(bidirectional.arrowTypeStart).toBe('arrow_point');
       expect(bidirectional.arrowTypeEnd).toBe('arrow_point');
+    });
+
+    it('should map non-person elements to the rect shape', async () => {
+      await populate(exampleDiagram);
+      const { nodes } = db.getData();
+      expect(nodes.find((n) => n.id === 'banking')?.shape).toBe('rect');
+    });
+
+    it('should warn about element kinds unexpected for the diagram kind', async () => {
+      const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+      await populate(`c4-beta context
+        system banking "Internet Banking System"
+        container spa "Single-Page App"
+      `);
+      db.getData();
+      expect(warnSpy).toHaveBeenCalledOnce();
+      expect(warnSpy).toHaveBeenCalledWith(
+        'c4-beta: element "spa" of kind "container" is unexpected in a "context" diagram; rendering it anyway'
+      );
+      warnSpy.mockRestore();
+    });
+
+    it('should not warn when element kinds match the diagram kind', async () => {
+      const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+      await populate(`c4-beta container
+        person user "User"
+        system banking "Internet Banking System"
+        container spa "Single-Page App"
+      `);
+      db.getData();
+      expect(warnSpy).not.toHaveBeenCalled();
+      warnSpy.mockRestore();
     });
 
     it('should include direction in the layout data', async () => {
