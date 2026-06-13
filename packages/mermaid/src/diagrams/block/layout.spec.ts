@@ -46,4 +46,48 @@ describe('layout runtime config', () => {
     expect(result1).not.toEqual(result2);
     expect(result1!.width).toBeLessThan(result2!.width);
   });
+
+  it('should handle multi-level nested blocks with column spans (issue #7731)', () => {
+    // Nested composite blocks should stretch to fill their allocated column width
+    const makeRoot = (): Block => ({
+      id: 'root',
+      type: 'square',
+      columns: 5,
+      children: [
+        { id: 'was', type: 'square', children: [], widthInColumns: 5, size: { width: 0, height: 50, x: 0, y: 0 } },
+        {
+          id: 'app',
+          type: 'square',
+          columns: 4,
+          widthInColumns: 4,
+          children: [
+            { id: 'm1', type: 'square', children: [], widthInColumns: 2, size: { width: 0, height: 50, x: 0, y: 0 } },
+            { id: 'm2', type: 'square', children: [], widthInColumns: 2, size: { width: 0, height: 50, x: 0, y: 0 } },
+            {
+              id: 'dbconn',
+              type: 'square',
+              columns: 2,
+              widthInColumns: 2,
+              children: [
+                { id: 'vdb', type: 'square', children: [], widthInColumns: 2, size: { width: 0, height: 50, x: 0, y: 0 } },
+                { id: 'tb1', type: 'square', children: [], size: { width: 0, height: 50, x: 0, y: 0 } },
+              ],
+            },
+          ],
+          size: { width: 0, height: 0, x: 0, y: 0 },
+        },
+      ],
+    });
+
+    const makeDb = (root: Block): BlockDB =>
+      ({ getBlock: (id: string) => (id === 'root' ? root : undefined) }) as unknown as BlockDB;
+
+    vi.spyOn(diagramAPI, 'getConfig').mockReturnValue({ block: { padding: 8 } } as any);
+    const result = layout(makeDb(makeRoot()));
+
+    // The layout should succeed without errors
+    expect(result).toBeDefined();
+    expect(result!.width).toBeGreaterThan(0);
+    expect(result!.height).toBeGreaterThan(0);
+  });
 });

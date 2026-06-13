@@ -516,4 +516,28 @@ columns 10
     `
     );
   });
+
+  it('BL38: multi-level nested blocks with column spans (issue #7731)', () => {
+    imgSnapshotTest(
+      `block
+  columns 5
+  was["Websphere application server"]:5
+  block:app:4
+    columns 4
+    m1["App Module 1"]:2
+    m2["App Module 2"]:2
+    space:4
+    block:dbconn:2
+        columns 2
+        vdb["DB Conn"]:2
+        tb1["Table 1"]
+        tb2["Table 2"]
+    end
+    jms["JMS"]:2
+  end
+  xam["XA Transaction Manager"]
+      `,
+      {}
+    );
+  });
 });

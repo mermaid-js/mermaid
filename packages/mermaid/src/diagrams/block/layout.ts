@@ -131,8 +131,17 @@ function setBlockSizes(
         );
       }
     }
+    // Second pass: recursively size children with proper width constraints
     for (const child of block.children) {
-      setBlockSizes(child, db, maxWidth, maxHeight, padding);
+      // For composite blocks, pass the actual allocated width (gridWidth)
+      // instead of just the per-cell width (maxWidth)
+      if (isComposite(child)) {
+        const childCols = child.widthInColumns ?? 1;
+        const gridWidth = maxWidth * childCols + padding * (childCols - 1);
+        setBlockSizes(child, db, gridWidth, maxHeight, padding);
+      } else {
+        setBlockSizes(child, db, maxWidth, maxHeight, padding);
+      }
     }
 
     const columns = block.columns ?? -1;
@@ -156,13 +165,18 @@ function setBlockSizes(
       let colPos = 0;
       for (const child of block.children) {
         const childCols = child.widthInColumns ?? 1;
+        // Cap column spans to row boundaries, matching layoutBlocks behavior
+        let columnsFilled = childCols;
+        if (columns > 0) {
+          columnsFilled = Math.min(columnsFilled, columns - (colPos % columns));
+        }
         const { py } = calculateBlockPosition(columns > 0 ? columns : numItems, colPos);
         const h = child.size?.height ?? maxHeight;
         const cur = rowMaxHeights.get(py) ?? 0;
         if (h > cur) {
           rowMaxHeights.set(py, h);
         }
-        colPos += childCols;
+        colPos += columnsFilled;
       }
     }
 
@@ -198,6 +212,15 @@ function setBlockSizes(
           child.size.y = 0;
         }
       }
+
+      // Re-size composite children with stretched width and height constraints
+      for (const child of block.children) {
+        if (isComposite(child)) {
+          const childCols = child.widthInColumns ?? 1;
+          const stretchedWidth = childWidth * childCols + padding * (childCols - 1);
+          setBlockSizes(child, db, stretchedWidth, childHeight, padding);
+        }
+      }
     }
 
     log.debug(
@@ -220,6 +243,15 @@ function setBlockSizes(
           if (child.size) {
             const childCols = child.widthInColumns ?? 1;
             child.size.width = cellWidth * childCols + padding * (childCols - 1);
+          }
+        }
+
+        // Re-size composite children with new cell width constraint
+        for (const child of block.children) {
+          if (isComposite(child)) {
+            const childCols = child.widthInColumns ?? 1;
+            const stretchedWidth = cellWidth * childCols + padding * (childCols - 1);
+            setBlockSizes(child, db, stretchedWidth, maxHeight, padding);
           }
         }
       }
