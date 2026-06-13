@@ -16,8 +16,8 @@ title Internet Banking System - System Context
 
 person customer "Personal Banking Customer" "A customer of the bank."
 system banking "Internet Banking System" "Allows customers to view accounts and make payments."
-external system mainframe "Mainframe Banking System" "Stores core banking information."
-external system email "E-mail System" "The internal e-mail system."
+system mainframe "Mainframe Banking System" "Stores core banking information." :::external
+system email "E-mail System" "The internal e-mail system." :::external
 
 customer --> banking : "Views accounts using"
 banking --> mainframe : "Gets account information from" "XML/HTTPS"
@@ -38,10 +38,10 @@ The kind defaults to `context`. The kind is advisory: every element renders in e
 ### Elements
 
 ```
-(external)? person|system|container|component|group|node <id> "Name" ("Description" ("Technology")?)? (:::tag)*
+person|system|container|component|group|node <id> "Name" ("Description" ("Technology")?)? (:::tag)*
 ```
 
-- `external` renders the element in grey, marking it as outside the system under discussion.
+- `:::external` is a built-in convention tag that marks an element as outside the system under discussion. It renders the element in grey by default; override the look with a `style external ...` statement (see [Tags and styling](#tags-and-styling)).
 - `"Technology"` can only be given when a `"Description"` is present (use `""` for an empty description).
 - `person` elements render with the classic C4 person notation (head and body).
 
@@ -49,7 +49,7 @@ The kind defaults to `context`. The kind is advisory: every element renders in e
 c4-beta container
 person customer "Customer" "A customer of the bank."
 container spa "Single-Page Application" "Provides banking functionality." "JavaScript/Angular"
-external system mainframe "Mainframe Banking System"
+system mainframe "Mainframe Banking System" :::external
 ```
 
 ### Nesting and boundaries
@@ -81,7 +81,7 @@ api --> db : "Reads from and writes to" "SQL/TCP"
 ```mermaid-example
 c4-beta context
 system core "Core System"
-external system partner "Partner System"
+system partner "Partner System" :::external
 
 core <--> partner : "Syncs with" "JSON/HTTPS"
 ```

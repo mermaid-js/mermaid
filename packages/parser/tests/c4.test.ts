@@ -66,18 +66,17 @@ describe('c4-beta', () => {
       expect(element.id).toBe('customer');
       expect(element.name).toBe('Personal Banking Customer');
       expect(element.description).toBe('A customer of the bank.');
-      expect(element.external).toBeFalsy();
     });
 
-    it('should handle an external system', () => {
+    it('should mark an external element via the built-in external tag', () => {
       const result = parse(`c4-beta context
-        external system mainframe "Mainframe Banking System" "Stores core banking information."
+        system mainframe "Mainframe Banking System" "Stores core banking information." :::external
       `);
       expectNoErrorsOrAlternatives(result);
       const element = result.value.elements[0];
       expect(element.kind).toBe('system');
       expect(element.id).toBe('mainframe');
-      expect(element.external).toBe(true);
+      expect(element.tags).toContain('external');
     });
 
     it('should handle a container with technology', () => {
@@ -224,7 +223,7 @@ direction TB
 
 person customer "Personal Banking Customer" "A customer of the bank."
 system banking "Internet Banking System" "Allows customers to view accounts."
-external system mainframe "Mainframe Banking System" "Stores core banking information."
+system mainframe "Mainframe Banking System" "Stores core banking information." :::external
 system big "Big System" {
     container spa "Single-Page App" "Web UI" "JavaScript/Angular"
 }
@@ -240,7 +239,7 @@ banking <--> mainframe : "Syncs with"
       expect(ast.direction).toBe('TB');
       expect(ast.elements).toHaveLength(4);
       expect(ast.elements.map((e) => e.id)).toEqual(['customer', 'banking', 'mainframe', 'big']);
-      expect(ast.elements[2].external).toBe(true);
+      expect(ast.elements[2].tags).toContain('external');
       expect(ast.elements[3].children).toHaveLength(1);
       expect(ast.relationships).toHaveLength(3);
       expect(ast.relationships[2].arrow).toBe('<-->');

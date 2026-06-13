@@ -55,6 +55,13 @@ const getStyles = (options: C4BetaStyleOptions) =>
     font-size: 0.75em;
   }
 
+  .c4-external rect,
+  .c4-external path,
+  .c4-external circle {
+    fill: #999999;
+    stroke: #8A8A8A;
+  }
+
   path.c4-rel {
     fill: none;
     stroke: ${options.lineColor};

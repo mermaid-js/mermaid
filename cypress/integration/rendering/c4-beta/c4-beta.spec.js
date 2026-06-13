@@ -9,8 +9,8 @@ describe('C4 diagram (beta)', () => {
 
       person customer "Personal Banking Customer" "A customer of the bank."
       system banking "Internet Banking System" "Allows customers to view accounts and make payments."
-      external system mainframe "Mainframe Banking System" "Stores core banking information."
-      external system email "E-mail System" "The internal e-mail system."
+      system mainframe "Mainframe Banking System" "Stores core banking information." :::external
+      system email "E-mail System" "The internal e-mail system." :::external
 
       customer --> banking : "Views accounts using"
       banking --> mainframe : "Gets account information from" "XML/HTTPS"
@@ -32,7 +32,7 @@ describe('C4 diagram (beta)', () => {
           container api "API Application" "Provides a JSON/HTTPS API." "Java/Spring MVC"
           container db "Database" "Stores user credentials." "Oracle 12c"
       }
-      external system mainframe "Mainframe Banking System"
+      system mainframe "Mainframe Banking System" :::external
 
       customer --> spa : "Uses" "HTTPS"
       spa --> api : "Makes API calls to" "JSON/HTTPS"
@@ -48,7 +48,7 @@ describe('C4 diagram (beta)', () => {
       c4-beta context
       person user "User"
       system core "Core System" "Main system."
-      external system partner "Partner System" :::external
+      system partner "Partner System" :::external
 
       user --> core : "Uses"
       core <--> partner : "Syncs with" "JSON/HTTPS"

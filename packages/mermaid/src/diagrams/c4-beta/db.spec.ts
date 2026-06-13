@@ -11,7 +11,7 @@ direction TB
 
 person customer "Personal Banking Customer" "A customer of the bank."
 system banking "Internet Banking System" "Allows customers to view accounts."
-external system mainframe "Mainframe Banking System" "Stores core banking information."
+system mainframe "Mainframe Banking System" "Stores core banking information." :::external
 system big "Big System" {
     container spa "Single-Page App" "Web UI" "JavaScript/Angular"
 }
@@ -54,7 +54,7 @@ describe('c4-beta db', () => {
     expect(spa?.parentId).toBe('big');
     expect(spa?.technology).toBe('JavaScript/Angular');
     const mainframe = elements.find((e) => e.id === 'mainframe');
-    expect(mainframe?.external).toBe(true);
+    expect(mainframe?.tags).toContain('external');
   });
 
   it('should store relationships', async () => {
@@ -107,12 +107,25 @@ describe('c4-beta db', () => {
       expect(spa?.parentId).toBe('big');
     });
 
-    it('should override colors and classes for external elements', async () => {
+    it('should add the c4-external class for the built-in external tag without inline colors', async () => {
       await populate(exampleDiagram);
       const { nodes } = db.getData();
       const mainframe = nodes.find((n) => n.id === 'mainframe');
-      expect(mainframe?.cssClasses).toBe('c4-shape c4-system c4-external');
-      expect(mainframe?.cssStyles).toEqual(['fill: #999999', 'stroke: #8A8A8A']);
+      expect(mainframe?.cssClasses).toBe('c4-shape c4-system c4-external c4-tag-external');
+      // No inline kind colors: the default grey comes from the .c4-external CSS rule.
+      expect(mainframe?.cssStyles).toEqual([]);
+    });
+
+    it('should let a style statement override the built-in external tag', async () => {
+      await populate(`c4-beta context
+        style external fill:#123456
+        system mainframe "Mainframe" :::external
+      `);
+      const { nodes } = db.getData();
+      const mainframe = nodes.find((n) => n.id === 'mainframe');
+      expect(mainframe?.cssClasses).toBe('c4-shape c4-system c4-external c4-tag-external');
+      // Inline cssStyles beat the default .c4-external class rule.
+      expect(mainframe?.cssStyles).toContain('fill: #123456');
     });
 
     it('should render elements with children as boundary clusters', async () => {

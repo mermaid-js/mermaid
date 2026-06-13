@@ -1,0 +1,65 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        font-family: sans-serif;
+        background: #f0f0f0;
+      }
+      .panel {
+        display: inline-block;
+        vertical-align: top;
+        width: 48%;
+        padding: 4px;
+      }
+      .panel.dark {
+        background: #333;
+        color: #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="panel">
+      <h3>default theme</h3>
+      <pre class="mermaid">
+c4-beta context
+style critical stroke:#cc0000
+
+person customer "Personal Banking Customer"
+system banking "Internet Banking System"
+container spa "Single-Page App"
+component login "Login Controller"
+system mainframe "Mainframe Banking System" :::external
+
+customer --> banking : "Views accounts using"
+banking --> mainframe : "Gets account information from" :::critical
+      </pre>
+    </div>
+    <div class="panel dark">
+      <h3>dark theme</h3>
+      <pre class="mermaid">
+---
+config:
+  theme: dark
+---
+c4-beta context
+style critical stroke:#cc0000
+
+person customer "Personal Banking Customer"
+system banking "Internet Banking System"
+container spa "Single-Page App"
+component login "Login Controller"
+system mainframe "Mainframe Banking System" :::external
+
+customer --> banking : "Views accounts using"
+banking --> mainframe : "Gets account information from" :::critical
+      </pre>
+    </div>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({ startOnLoad: true, securityLevel: 'loose' });
+      await mermaid.run();
+      document.body.setAttribute('data-rendered', 'true');
+    </script>
+  </body>
+</html>

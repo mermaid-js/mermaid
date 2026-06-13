@@ -12,7 +12,6 @@ export interface C4BetaElement {
   name: string;
   description?: string;
   technology?: string;
-  external: boolean;
   tags: string[];
   parentId?: string;
 }

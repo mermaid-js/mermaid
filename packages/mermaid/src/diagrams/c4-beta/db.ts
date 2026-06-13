@@ -33,8 +33,6 @@ const ELEMENT_COLORS: Partial<Record<C4ElementKind, ElementColors>> = {
   component: { fill: '#85BBF0', stroke: '#78A8D8' },
 };
 
-const EXTERNAL_COLORS: ElementColors = { fill: '#999999', stroke: '#8A8A8A' };
-
 // Element kinds that are unexpected for a given diagram kind. They still
 // render (forgiving WYSIWYG), but we warn so authors can spot mistakes.
 const UNEXPECTED_ELEMENT_KINDS: Record<C4DiagramKind, C4ElementKind[]> = {
@@ -195,14 +193,18 @@ export class C4BetaDB implements DiagramDB {
         });
         continue;
       }
-      const colors = element.external ? EXTERNAL_COLORS : ELEMENT_COLORS[element.kind];
+      // `external` is a built-in convention tag: it adds the `c4-external` class
+      // (default grey comes from CSS, not inline styles) instead of the kind color.
+      const isExternal = element.tags.includes('external');
+      const colors = isExternal ? undefined : ELEMENT_COLORS[element.kind];
       const cssClasses = ['c4-shape', `c4-${element.kind}`];
-      if (element.external) {
+      if (isExternal) {
         cssClasses.push('c4-external');
       }
       const cssStyles = colors ? [`fill: ${colors.fill}`, `stroke: ${colors.stroke}`] : [];
       let shape: Node['shape'] = element.kind === 'person' ? 'c4-person' : 'rect';
       // Tag styles are pushed after the built-in kind colors so they override them.
+      // A user `style external fill:#...` therefore beats the default `.c4-external` rule.
       for (const tag of element.tags) {
         cssClasses.push(`c4-tag-${tag}`);
         const style = this.styles.get(tag);

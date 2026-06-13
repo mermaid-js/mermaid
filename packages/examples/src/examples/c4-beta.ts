@@ -13,8 +13,8 @@ title Internet Banking System - System Context
 
 person customer "Personal Banking Customer" "A customer of the bank."
 system banking "Internet Banking System" "Allows customers to view accounts and make payments."
-external system mainframe "Mainframe Banking System" "Stores core banking information."
-external system email "E-mail System" "The internal e-mail system."
+system mainframe "Mainframe Banking System" "Stores core banking information." :::external
+system email "E-mail System" "The internal e-mail system." :::external
 
 customer --> banking : "Views accounts using"
 banking --> mainframe : "Gets account information from" "XML/HTTPS"
@@ -32,7 +32,7 @@ system banking "Internet Banking System" {
     container api "API Application" "Provides a JSON/HTTPS API." "Java/Spring MVC"
     container db "Database" "Stores user credentials." "Oracle 12c"
 }
-external system mainframe "Mainframe Banking System"
+system mainframe "Mainframe Banking System" :::external
 
 customer --> spa : "Uses" "HTTPS"
 spa --> api : "Makes API calls to" "JSON/HTTPS"

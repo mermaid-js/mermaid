@@ -23,7 +23,6 @@ fragment Direction:
 ;
 
 C4Element:
-    (external?='external')?
     kind=('person' | 'system' | 'container' | 'component' | 'group' | 'node')
     id=ID
     name=STRING (description=STRING (technology=STRING)?)?

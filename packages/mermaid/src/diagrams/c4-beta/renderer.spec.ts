@@ -64,7 +64,7 @@ describe('c4-beta renderer', () => {
 title Internet Banking System - System Context
 person customer "Personal Banking Customer" "A customer of the bank."
 system banking "Internet Banking System" "Allows customers to view accounts."
-external system mainframe "Mainframe Banking System"
+system mainframe "Mainframe Banking System" :::external
 customer --> banking : "Views accounts using"
 banking <--> mainframe : "Syncs with" "XML/HTTPS"
 `
