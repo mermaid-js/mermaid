@@ -1169,4 +1169,35 @@ describe('validateLayout new geometric issues', () => {
     const layout: LayoutData = { nodes: [g, member], edges: [], config: {} as any };
     expect(getIssueTypes(layout)).not.toContain('node-too-close-to-group');
   });
+
+  // ---- edge-self-shared-subpath: adjacent-reversal backtrack spike (raw points) ----
+
+  it('flags edge-self-shared-subpath for an adjacent backtrack spike', () => {
+    // Out to x=140 then straight back to x=30 at the same y — a 110px reversal
+    // that mergeCollinear would erase, so it is only visible on the raw points.
+    const e = mkEdge('spike', undefined, undefined, [
+      { x: 0, y: 0 },
+      { x: 140, y: 0 },
+      { x: 30, y: 0 },
+      { x: 30, y: -100 },
+    ]);
+    const layout: LayoutData = { nodes: [], edges: [e], config: {} as any };
+
+    const res = validateLayout(layout);
+    const issue = res.issues.find((i) => i.type === 'edge-self-shared-subpath');
+    expect(issue).toBeDefined();
+    expect(issue?.message).toMatch(/backtracks/);
+    expect(issue?.details?.overlapLength).toBeCloseTo(110);
+    expect(res.ok).toBe(false); // hard
+  });
+
+  it('does NOT flag a clean L route as a backtrack', () => {
+    const e = mkEdge('clean', undefined, undefined, [
+      { x: 0, y: 0 },
+      { x: 100, y: 0 },
+      { x: 100, y: -100 },
+    ]);
+    const layout: LayoutData = { nodes: [], edges: [e], config: {} as any };
+    expect(getIssueTypes(layout)).not.toContain('edge-self-shared-subpath');
+  });
 });
