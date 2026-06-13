@@ -54,23 +54,52 @@ describe('layout runtime config', () => {
       type: 'square',
       columns: 5,
       children: [
-        { id: 'was', type: 'square', children: [], widthInColumns: 5, size: { width: 0, height: 50, x: 0, y: 0 } },
+        {
+          id: 'was',
+          type: 'square',
+          children: [],
+          widthInColumns: 5,
+          size: { width: 0, height: 50, x: 0, y: 0 },
+        },
         {
           id: 'app',
           type: 'square',
           columns: 4,
           widthInColumns: 4,
           children: [
-            { id: 'm1', type: 'square', children: [], widthInColumns: 2, size: { width: 0, height: 50, x: 0, y: 0 } },
-            { id: 'm2', type: 'square', children: [], widthInColumns: 2, size: { width: 0, height: 50, x: 0, y: 0 } },
+            {
+              id: 'm1',
+              type: 'square',
+              children: [],
+              widthInColumns: 2,
+              size: { width: 0, height: 50, x: 0, y: 0 },
+            },
+            {
+              id: 'm2',
+              type: 'square',
+              children: [],
+              widthInColumns: 2,
+              size: { width: 0, height: 50, x: 0, y: 0 },
+            },
             {
               id: 'dbconn',
               type: 'square',
               columns: 2,
               widthInColumns: 2,
               children: [
-                { id: 'vdb', type: 'square', children: [], widthInColumns: 2, size: { width: 0, height: 50, x: 0, y: 0 } },
-                { id: 'tb1', type: 'square', children: [], size: { width: 0, height: 50, x: 0, y: 0 } },
+                {
+                  id: 'vdb',
+                  type: 'square',
+                  children: [],
+                  widthInColumns: 2,
+                  size: { width: 0, height: 50, x: 0, y: 0 },
+                },
+                {
+                  id: 'tb1',
+                  type: 'square',
+                  children: [],
+                  size: { width: 0, height: 50, x: 0, y: 0 },
+                },
               ],
             },
           ],
