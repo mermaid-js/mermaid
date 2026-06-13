@@ -109,6 +109,22 @@ api --> spa : "Returns a token to"
     expect(svg).toContain('2. Returns a token to');
   });
 
+  jsdomIt('should give repeated step numbers the same label for parallel steps', async () => {
+    const { svg } = await mermaidAPI.render(
+      'c4beta-render-parallel',
+      `c4-beta dynamic
+container spa "SPA"
+container api "API"
+container db "DB"
+spa --> api : "Calls"
+2: api --> db : "Reads"
+2: api --> spa : "Notifies"
+`
+    );
+    const matches = svg.match(/2\. (Reads|Notifies)/g) ?? [];
+    expect(matches).toHaveLength(2);
+  });
+
   jsdomIt('should render deployment nodes as clusters', async () => {
     const { svg } = await mermaidAPI.render(
       'c4beta-render-4',

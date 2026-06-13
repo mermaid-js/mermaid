@@ -364,6 +364,25 @@ describe('c4-beta db', () => {
         expect(edges[0].label).toBe('<b>1.</b>');
       });
 
+      it('should mark repeated step numbers as parallel and resume from the max', async () => {
+        await populate(`c4-beta dynamic
+          container a "A"
+          container b "B"
+          container c "C"
+          a --> b : "First"
+          2: a --> b : "Parallel one"
+          2: a --> c : "Parallel two"
+          a --> c : "Next"
+        `);
+        const { edges } = db.getData();
+        expect(edges.map((e) => e.label)).toEqual([
+          '<b>1. First</b>',
+          '<b>2. Parallel one</b>',
+          '<b>2. Parallel two</b>',
+          '<b>3. Next</b>',
+        ]);
+      });
+
       it('should ignore step numbers in non-dynamic diagrams', async () => {
         await populate(`c4-beta context
           system a "A"

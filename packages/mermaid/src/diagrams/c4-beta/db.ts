@@ -242,9 +242,11 @@ export class C4BetaDB implements DiagramDB {
       });
     }
 
-    // In dynamic diagrams relationships are numbered in declaration order;
-    // an explicit `N:` prefix overrides the counter, which continues from it.
-    let nextStep = 1;
+    // In dynamic diagrams relationships are numbered in declaration order.
+    // An explicit `N:` prefix overrides the counter; a number repeated across
+    // several relationships marks them as parallel interactions (they all keep
+    // the same N). Auto-numbering then resumes from the highest number used + 1.
+    let maxStep = 0;
     this.relationships.forEach((relationship, index) => {
       if (boundaryIds.has(relationship.sourceId) && boundaryIds.has(relationship.targetId)) {
         log.warn(
@@ -253,8 +255,8 @@ export class C4BetaDB implements DiagramDB {
       }
       let step: number | undefined;
       if (this.kind === 'dynamic') {
-        step = relationship.step ?? nextStep;
-        nextStep = step + 1;
+        step = relationship.step ?? maxStep + 1;
+        maxStep = Math.max(maxStep, step);
       }
       const classes = ['c4-rel'];
       const style: string[] = [];

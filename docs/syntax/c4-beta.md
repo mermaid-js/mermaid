@@ -139,7 +139,9 @@ core <--> partner : "Syncs with" "JSON/HTTPS"
 
 ### Dynamic diagrams
 
-In a `dynamic` diagram, relationships are numbered in declaration order and the step number is rendered as a label prefix. An explicit `N:` prefix overrides the counter, and numbering continues from it:
+In a `dynamic` diagram, relationships are numbered in declaration order and the step number is rendered as a label prefix. An explicit `N:` prefix overrides the counter, and numbering continues from it.
+
+Repeating the same step number on consecutive relationships marks them as **parallel interactions** (v\<MERMAID_RELEASE_VERSION>+): they all render with that number, and auto-numbering resumes from the highest number used plus one. For example, steps `1`, `2:`, `2:` leave the next auto-numbered relationship as `3`:
 
 ```mermaid-example
 c4-beta dynamic
@@ -150,9 +152,10 @@ container api "API Application" "" "Java/Spring MVC"
 container db "Database" "" "Oracle 12c"
 
 spa --> api : "Submits credentials to" "JSON/HTTPS"
-api --> db : "Calls select * from users" "SQL/TCP"
+2: api --> db : "Calls select * from users" "SQL/TCP"
+2: api --> db : "Logs the attempt to" "SQL/TCP"
 db --> api : "Returns user data to"
-4: api --> spa : "Sends back an authentication token to"
+api --> spa : "Sends back an authentication token to"
 ```
 
 ```mermaid
@@ -164,9 +167,10 @@ container api "API Application" "" "Java/Spring MVC"
 container db "Database" "" "Oracle 12c"
 
 spa --> api : "Submits credentials to" "JSON/HTTPS"
-api --> db : "Calls select * from users" "SQL/TCP"
+2: api --> db : "Calls select * from users" "SQL/TCP"
+2: api --> db : "Logs the attempt to" "SQL/TCP"
 db --> api : "Returns user data to"
-4: api --> spa : "Sends back an authentication token to"
+api --> spa : "Sends back an authentication token to"
 ```
 
 ### Deployment diagrams
