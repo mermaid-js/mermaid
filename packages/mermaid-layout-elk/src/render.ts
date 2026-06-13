@@ -145,6 +145,137 @@ export function buildSubgraphLayoutOptions(
   return layoutOptions;
 }
 
+/**
+ * Identify the entry node of each recursive flow so it can be pinned to the top.
+ *
+ * `elk.layered` must break cycles before it can rank nodes, and its default
+ * cycle-breaking heuristic is purely degree-based — it has no notion of an
+ * "entry point". So as soon as a flow loops back on itself (recursion), the
+ * first-declared node can be ranked in the middle of the layout, scrambling the
+ * reading order and hiding where the flow starts.
+ *
+ * For each container (grouped by `parentId`) we look only at edges internal to
+ * that container and find its weakly-connected components. A component with no
+ * natural source — no node with in-degree 0 once self-loops are ignored — must
+ * contain a cycle, so we nominate its first node in declaration order as the
+ * entry. Acyclic components always have a source and nominate nothing, leaving
+ * their layout untouched. The caller pins each nominee to the first layer with
+ * `elk.layered.layering.layerConstraint = FIRST`.
+ *
+ * @param nodes - layout nodes in declaration order
+ * @param edges - layout edges referencing node ids via `source`/`target`
+ * @returns the ids of nodes to constrain to the first layer
+ */
+export function findCyclicEntryNodes(
+  nodes: { id: string; parentId?: string }[],
+  edges: { source?: string | number; target?: string | number }[]
+): Set<string> {
+  const entries = new Set<string>();
+
+  // Group node ids by container, preserving declaration order within each group.
+  const groups = new Map<string | undefined, string[]>();
+  for (const { id, parentId } of nodes) {
+    const group = groups.get(parentId);
+    if (group) {
+      group.push(id);
+    } else {
+      groups.set(parentId, [id]);
+    }
+  }
+
+  for (const ids of groups.values()) {
+    const idSet = new Set(ids);
+    const inDegree = new Map<string, number>(ids.map((id) => [id, 0]));
+    // Undirected adjacency, used only to find weakly-connected components.
+    const neighbors = new Map<string, string[]>(ids.map((id) => [id, []]));
+
+    for (const edge of edges) {
+      const source = edge.source == null ? undefined : String(edge.source);
+      const target = edge.target == null ? undefined : String(edge.target);
+      // Restrict to edges internal to this container; ignore self-loops.
+      if (!source || !target || source === target) {
+        continue;
+      }
+      if (!idSet.has(source) || !idSet.has(target)) {
+        continue;
+      }
+      inDegree.set(target, (inDegree.get(target) ?? 0) + 1);
+      neighbors.get(source)!.push(target);
+      neighbors.get(target)!.push(source);
+    }
+
+    // Label weakly-connected components.
+    const component = new Map<string, number>();
+    let componentCount = 0;
+    for (const id of ids) {
+      if (component.has(id)) {
+        continue;
+      }
+      const stack = [id];
+      component.set(id, componentCount);
+      while (stack.length > 0) {
+        const current = stack.pop()!;
+        for (const next of neighbors.get(current)!) {
+          if (!component.has(next)) {
+            component.set(next, componentCount);
+            stack.push(next);
+          }
+        }
+      }
+      componentCount++;
+    }
+
+    // A component with no in-degree-0 node necessarily contains a cycle.
+    // Nominate the first such node in declaration order as its entry.
+    const hasSource = new Array<boolean>(componentCount).fill(false);
+    for (const id of ids) {
+      if ((inDegree.get(id) ?? 0) === 0) {
+        hasSource[component.get(id)!] = true;
+      }
+    }
+    const nominated = new Array<boolean>(componentCount).fill(false);
+    for (const id of ids) {
+      const c = component.get(id)!;
+      if (!hasSource[c] && !nominated[c]) {
+        entries.add(id);
+        nominated[c] = true;
+      }
+    }
+  }
+
+  return entries;
+}
+
+/**
+ * When `elk.keepEntryNodeOnTop` is enabled, pin each recursive flow's entry node
+ * to the first layer so the diagram reads from its entry instead of an arbitrary
+ * point in the loop. No-op when the option is off or the graph is acyclic, so
+ * existing ELK diagrams are unaffected unless they opt in.
+ */
+function applyCyclicEntryConstraint(
+  data4Layout: LayoutData,
+  nodeDb: Record<string, NodeWithVertex>
+): void {
+  if (!data4Layout.config.elk?.keepEntryNodeOnTop) {
+    return;
+  }
+
+  const entryNodeIds = findCyclicEntryNodes(
+    data4Layout.nodes,
+    data4Layout.edges.map((edge) => ({ source: edge.start, target: edge.end }))
+  );
+
+  for (const id of entryNodeIds) {
+    const elkNode = nodeDb[id];
+    if (elkNode) {
+      elkNode.layoutOptions = {
+        ...elkNode.layoutOptions,
+        'elk.layered.layering.layerConstraint': 'FIRST',
+      };
+    }
+  }
+}
+
 export function prepareLayoutForElk(
   data4Layout: LayoutData,
   context: CommonLayoutRenderContext<ElkPreparedLayout>
@@ -187,6 +318,7 @@ export function buildElkGraphFromLayoutData(
   addEdgesToElkGraph(data4Layout, elkGraph, nodeDb, elkContext);
   configureSubgraphNodes(data4Layout, nodeDb, parentLookupDb, elkContext);
   configureCrossHierarchyEdges(elkGraph, nodeDb, parentLookupDb, elkContext.log);
+  applyCyclicEntryConstraint(data4Layout, nodeDb);
   logElkGraphForDebug(elkGraph, elkContext.log);
 
   return { elkGraph, nodeDb, parentLookupDb };

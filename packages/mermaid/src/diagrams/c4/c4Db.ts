@@ -1,4 +1,5 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { getRequiredConfig } from '../../diagram-api/requiredConfig.js';
 import { sanitizeText } from '../common/common.js';
 import {
   setAccTitle,
@@ -6,39 +7,58 @@ import {
   getAccDescription,
   setAccDescription,
 } from '../common/commonDb.js';
+import type { C4Boundary, C4Rel, C4Shape } from './c4Types.js';
 
-let c4ShapeArray = [];
-let boundaryParseStack = [''];
-let currentBoundaryParse = 'global';
-let parentBoundaryParse = '';
-let boundaries = [
-  {
+/**
+ * The parser may pass a plain string or an object with a single
+ * `{ key: value }` entry for most attributes.
+ */
+type ParserAttribute = string | Record<string, string>;
+
+const createGlobalBoundary = (): C4Boundary =>
+  ({
     alias: 'global',
     label: { text: 'global' },
     type: { text: 'global' },
     tags: null,
     link: null,
     parentBoundary: '',
-  },
-];
-let rels = [];
+    // The layout fields are populated later by the renderer.
+  }) as C4Boundary;
+
+let c4ShapeArray: C4Shape[] = [];
+let boundaryParseStack = [''];
+let currentBoundaryParse = 'global';
+let parentBoundaryParse = '';
+let boundaries: C4Boundary[] = [createGlobalBoundary()];
+let rels: C4Rel[] = [];
 let title = '';
-let wrapEnabled = false;
+let wrapEnabled: boolean | undefined = false;
 let c4ShapeInRow = 4;
 let c4BoundaryInRow = 2;
-var c4Type;
+let c4Type: string | undefined;
 
 export const getC4Type = function () {
   return c4Type;
 };
 
-export const setC4Type = function (c4TypeParam) {
-  let sanitizedText = sanitizeText(c4TypeParam, getConfig());
+export const setC4Type = function (c4TypeParam: string) {
+  const sanitizedText = sanitizeText(c4TypeParam, getConfig());
   c4Type = sanitizedText;
 };
 
 //type, from, to, label, ?techn, ?descr, ?sprite, ?tags, $link
-export const addRel = function (type, from, to, label, techn, descr, sprite, tags, link) {
+export const addRel = function (
+  type: string | null | undefined,
+  from: string | null | undefined,
+  to: string | null | undefined,
+  label: string | null | undefined,
+  techn?: ParserAttribute | null,
+  descr?: ParserAttribute | null,
+  sprite?: ParserAttribute,
+  tags?: ParserAttribute,
+  link?: ParserAttribute
+) {
   // Don't allow label nulling
   if (
     type === undefined ||
@@ -53,7 +73,7 @@ export const addRel = function (type, from, to, label, techn, descr, sprite, tag
     return;
   }
 
-  let rel = {};
+  let rel = {} as C4Rel;
   const old = rels.find((rel) => rel.from === from && rel.to === to);
   if (old) {
     rel = old;
@@ -70,7 +90,7 @@ export const addRel = function (type, from, to, label, techn, descr, sprite, tag
     rel.techn = { text: '' };
   } else {
     if (typeof techn === 'object') {
-      let [key, value] = Object.entries(techn)[0];
+      const [key, value] = Object.entries(techn)[0];
       rel[key] = { text: value };
     } else {
       rel.techn = { text: techn };
@@ -81,7 +101,7 @@ export const addRel = function (type, from, to, label, techn, descr, sprite, tag
     rel.descr = { text: '' };
   } else {
     if (typeof descr === 'object') {
-      let [key, value] = Object.entries(descr)[0];
+      const [key, value] = Object.entries(descr)[0];
       rel[key] = { text: value };
     } else {
       rel.descr = { text: descr };
@@ -89,19 +109,19 @@ export const addRel = function (type, from, to, label, techn, descr, sprite, tag
   }
 
   if (typeof sprite === 'object') {
-    let [key, value] = Object.entries(sprite)[0];
+    const [key, value] = Object.entries(sprite)[0];
     rel[key] = value;
   } else {
     rel.sprite = sprite;
   }
   if (typeof tags === 'object') {
-    let [key, value] = Object.entries(tags)[0];
+    const [key, value] = Object.entries(tags)[0];
     rel[key] = value;
   } else {
     rel.tags = tags;
   }
   if (typeof link === 'object') {
-    let [key, value] = Object.entries(link)[0];
+    const [key, value] = Object.entries(link)[0];
     rel[key] = value;
   } else {
     rel.link = link;
@@ -110,13 +130,21 @@ export const addRel = function (type, from, to, label, techn, descr, sprite, tag
 };
 
 //type, alias, label, ?descr, ?sprite, ?tags, $link
-export const addPersonOrSystem = function (typeC4Shape, alias, label, descr, sprite, tags, link) {
+export const addPersonOrSystem = function (
+  typeC4Shape: string,
+  alias: string | null,
+  label: string | null | undefined,
+  descr?: ParserAttribute | null,
+  sprite?: ParserAttribute,
+  tags?: ParserAttribute,
+  link?: ParserAttribute
+) {
   // Don't allow label nulling
   if (alias === null || label === null) {
     return;
   }
 
-  let personOrSystem = {};
+  let personOrSystem = {} as C4Shape;
   const old = c4ShapeArray.find((personOrSystem) => personOrSystem.alias === alias);
   if (old && alias === old.alias) {
     personOrSystem = old;
@@ -136,7 +164,7 @@ export const addPersonOrSystem = function (typeC4Shape, alias, label, descr, spr
     personOrSystem.descr = { text: '' };
   } else {
     if (typeof descr === 'object') {
-      let [key, value] = Object.entries(descr)[0];
+      const [key, value] = Object.entries(descr)[0];
       personOrSystem[key] = { text: value };
     } else {
       personOrSystem.descr = { text: descr };
@@ -144,19 +172,19 @@ export const addPersonOrSystem = function (typeC4Shape, alias, label, descr, spr
   }
 
   if (typeof sprite === 'object') {
-    let [key, value] = Object.entries(sprite)[0];
+    const [key, value] = Object.entries(sprite)[0];
     personOrSystem[key] = value;
   } else {
     personOrSystem.sprite = sprite;
   }
   if (typeof tags === 'object') {
-    let [key, value] = Object.entries(tags)[0];
+    const [key, value] = Object.entries(tags)[0];
     personOrSystem[key] = value;
   } else {
     personOrSystem.tags = tags;
   }
   if (typeof link === 'object') {
-    let [key, value] = Object.entries(link)[0];
+    const [key, value] = Object.entries(link)[0];
     personOrSystem[key] = value;
   } else {
     personOrSystem.link = link;
@@ -167,13 +195,22 @@ export const addPersonOrSystem = function (typeC4Shape, alias, label, descr, spr
 };
 
 //type, alias, label, ?techn, ?descr ?sprite, ?tags, $link
-export const addContainer = function (typeC4Shape, alias, label, techn, descr, sprite, tags, link) {
+export const addContainer = function (
+  typeC4Shape: string,
+  alias: string | null,
+  label: string | null | undefined,
+  techn?: ParserAttribute | null,
+  descr?: ParserAttribute | null,
+  sprite?: ParserAttribute,
+  tags?: ParserAttribute,
+  link?: ParserAttribute
+) {
   // Don't allow label nulling
   if (alias === null || label === null) {
     return;
   }
 
-  let container = {};
+  let container = {} as C4Shape;
   const old = c4ShapeArray.find((container) => container.alias === alias);
   if (old && alias === old.alias) {
     container = old;
@@ -193,7 +230,7 @@ export const addContainer = function (typeC4Shape, alias, label, techn, descr, s
     container.techn = { text: '' };
   } else {
     if (typeof techn === 'object') {
-      let [key, value] = Object.entries(techn)[0];
+      const [key, value] = Object.entries(techn)[0];
       container[key] = { text: value };
     } else {
       container.techn = { text: techn };
@@ -204,7 +241,7 @@ export const addContainer = function (typeC4Shape, alias, label, techn, descr, s
     container.descr = { text: '' };
   } else {
     if (typeof descr === 'object') {
-      let [key, value] = Object.entries(descr)[0];
+      const [key, value] = Object.entries(descr)[0];
       container[key] = { text: value };
     } else {
       container.descr = { text: descr };
@@ -212,19 +249,19 @@ export const addContainer = function (typeC4Shape, alias, label, techn, descr, s
   }
 
   if (typeof sprite === 'object') {
-    let [key, value] = Object.entries(sprite)[0];
+    const [key, value] = Object.entries(sprite)[0];
     container[key] = value;
   } else {
     container.sprite = sprite;
   }
   if (typeof tags === 'object') {
-    let [key, value] = Object.entries(tags)[0];
+    const [key, value] = Object.entries(tags)[0];
     container[key] = value;
   } else {
     container.tags = tags;
   }
   if (typeof link === 'object') {
-    let [key, value] = Object.entries(link)[0];
+    const [key, value] = Object.entries(link)[0];
     container[key] = value;
   } else {
     container.link = link;
@@ -235,13 +272,22 @@ export const addContainer = function (typeC4Shape, alias, label, techn, descr, s
 };
 
 //type, alias, label, ?techn, ?descr ?sprite, ?tags, $link
-export const addComponent = function (typeC4Shape, alias, label, techn, descr, sprite, tags, link) {
+export const addComponent = function (
+  typeC4Shape: string,
+  alias: string | null,
+  label: string | null | undefined,
+  techn?: ParserAttribute | null,
+  descr?: ParserAttribute | null,
+  sprite?: ParserAttribute,
+  tags?: ParserAttribute,
+  link?: ParserAttribute
+) {
   // Don't allow label nulling
   if (alias === null || label === null) {
     return;
   }
 
-  let component = {};
+  let component = {} as C4Shape;
   const old = c4ShapeArray.find((component) => component.alias === alias);
   if (old && alias === old.alias) {
     component = old;
@@ -261,7 +307,7 @@ export const addComponent = function (typeC4Shape, alias, label, techn, descr, s
     component.techn = { text: '' };
   } else {
     if (typeof techn === 'object') {
-      let [key, value] = Object.entries(techn)[0];
+      const [key, value] = Object.entries(techn)[0];
       component[key] = { text: value };
     } else {
       component.techn = { text: techn };
@@ -272,7 +318,7 @@ export const addComponent = function (typeC4Shape, alias, label, techn, descr, s
     component.descr = { text: '' };
   } else {
     if (typeof descr === 'object') {
-      let [key, value] = Object.entries(descr)[0];
+      const [key, value] = Object.entries(descr)[0];
       component[key] = { text: value };
     } else {
       component.descr = { text: descr };
@@ -280,19 +326,19 @@ export const addComponent = function (typeC4Shape, alias, label, techn, descr, s
   }
 
   if (typeof sprite === 'object') {
-    let [key, value] = Object.entries(sprite)[0];
+    const [key, value] = Object.entries(sprite)[0];
     component[key] = value;
   } else {
     component.sprite = sprite;
   }
   if (typeof tags === 'object') {
-    let [key, value] = Object.entries(tags)[0];
+    const [key, value] = Object.entries(tags)[0];
     component[key] = value;
   } else {
     component.tags = tags;
   }
   if (typeof link === 'object') {
-    let [key, value] = Object.entries(link)[0];
+    const [key, value] = Object.entries(link)[0];
     component[key] = value;
   } else {
     component.link = link;
@@ -303,7 +349,13 @@ export const addComponent = function (typeC4Shape, alias, label, techn, descr, s
 };
 
 //alias, label, ?type, ?tags, $link
-export const addPersonOrSystemBoundary = function (alias, label, type, tags, link) {
+export const addPersonOrSystemBoundary = function (
+  alias: string | null,
+  label: string | null | undefined,
+  type?: ParserAttribute | null,
+  tags?: ParserAttribute,
+  link?: ParserAttribute
+) {
   // if (parentBoundary === null) return;
 
   // Don't allow label nulling
@@ -311,7 +363,7 @@ export const addPersonOrSystemBoundary = function (alias, label, type, tags, lin
     return;
   }
 
-  let boundary = {};
+  let boundary = {} as C4Boundary;
   const old = boundaries.find((boundary) => boundary.alias === alias);
   if (old && alias === old.alias) {
     boundary = old;
@@ -331,7 +383,7 @@ export const addPersonOrSystemBoundary = function (alias, label, type, tags, lin
     boundary.type = { text: 'system' };
   } else {
     if (typeof type === 'object') {
-      let [key, value] = Object.entries(type)[0];
+      const [key, value] = Object.entries(type)[0];
       boundary[key] = { text: value };
     } else {
       boundary.type = { text: type };
@@ -339,13 +391,13 @@ export const addPersonOrSystemBoundary = function (alias, label, type, tags, lin
   }
 
   if (typeof tags === 'object') {
-    let [key, value] = Object.entries(tags)[0];
+    const [key, value] = Object.entries(tags)[0];
     boundary[key] = value;
   } else {
     boundary.tags = tags;
   }
   if (typeof link === 'object') {
-    let [key, value] = Object.entries(link)[0];
+    const [key, value] = Object.entries(link)[0];
     boundary[key] = value;
   } else {
     boundary.link = link;
@@ -359,7 +411,13 @@ export const addPersonOrSystemBoundary = function (alias, label, type, tags, lin
 };
 
 //alias, label, ?type, ?tags, $link
-export const addContainerBoundary = function (alias, label, type, tags, link) {
+export const addContainerBoundary = function (
+  alias: string | null,
+  label: string | null | undefined,
+  type?: ParserAttribute | null,
+  tags?: ParserAttribute,
+  link?: ParserAttribute
+) {
   // if (parentBoundary === null) return;
 
   // Don't allow label nulling
@@ -367,7 +425,7 @@ export const addContainerBoundary = function (alias, label, type, tags, link) {
     return;
   }
 
-  let boundary = {};
+  let boundary = {} as C4Boundary;
   const old = boundaries.find((boundary) => boundary.alias === alias);
   if (old && alias === old.alias) {
     boundary = old;
@@ -387,7 +445,7 @@ export const addContainerBoundary = function (alias, label, type, tags, link) {
     boundary.type = { text: 'container' };
   } else {
     if (typeof type === 'object') {
-      let [key, value] = Object.entries(type)[0];
+      const [key, value] = Object.entries(type)[0];
       boundary[key] = { text: value };
     } else {
       boundary.type = { text: type };
@@ -395,13 +453,13 @@ export const addContainerBoundary = function (alias, label, type, tags, link) {
   }
 
   if (typeof tags === 'object') {
-    let [key, value] = Object.entries(tags)[0];
+    const [key, value] = Object.entries(tags)[0];
     boundary[key] = value;
   } else {
     boundary.tags = tags;
   }
   if (typeof link === 'object') {
-    let [key, value] = Object.entries(link)[0];
+    const [key, value] = Object.entries(link)[0];
     boundary[key] = value;
   } else {
     boundary.link = link;
@@ -416,14 +474,14 @@ export const addContainerBoundary = function (alias, label, type, tags, link) {
 
 //alias, label, ?type, ?descr, ?sprite, ?tags, $link
 export const addDeploymentNode = function (
-  nodeType,
-  alias,
-  label,
-  type,
-  descr,
-  sprite,
-  tags,
-  link
+  nodeType: string,
+  alias: string | null,
+  label: string | null | undefined,
+  type?: ParserAttribute | null,
+  descr?: ParserAttribute | null,
+  sprite?: ParserAttribute,
+  tags?: ParserAttribute,
+  link?: ParserAttribute
 ) {
   // if (parentBoundary === null) return;
 
@@ -432,7 +490,7 @@ export const addDeploymentNode = function (
     return;
   }
 
-  let boundary = {};
+  let boundary = {} as C4Boundary;
   const old = boundaries.find((boundary) => boundary.alias === alias);
   if (old && alias === old.alias) {
     boundary = old;
@@ -452,7 +510,7 @@ export const addDeploymentNode = function (
     boundary.type = { text: 'node' };
   } else {
     if (typeof type === 'object') {
-      let [key, value] = Object.entries(type)[0];
+      const [key, value] = Object.entries(type)[0];
       boundary[key] = { text: value };
     } else {
       boundary.type = { text: type };
@@ -463,7 +521,7 @@ export const addDeploymentNode = function (
     boundary.descr = { text: '' };
   } else {
     if (typeof descr === 'object') {
-      let [key, value] = Object.entries(descr)[0];
+      const [key, value] = Object.entries(descr)[0];
       boundary[key] = { text: value };
     } else {
       boundary.descr = { text: descr };
@@ -471,13 +529,13 @@ export const addDeploymentNode = function (
   }
 
   if (typeof tags === 'object') {
-    let [key, value] = Object.entries(tags)[0];
+    const [key, value] = Object.entries(tags)[0];
     boundary[key] = value;
   } else {
     boundary.tags = tags;
   }
   if (typeof link === 'object') {
-    let [key, value] = Object.entries(link)[0];
+    const [key, value] = Object.entries(link)[0];
     boundary[key] = value;
   } else {
     boundary.link = link;
@@ -494,25 +552,27 @@ export const addDeploymentNode = function (
 export const popBoundaryParseStack = function () {
   currentBoundaryParse = parentBoundaryParse;
   boundaryParseStack.pop();
-  parentBoundaryParse = boundaryParseStack.pop();
+  parentBoundaryParse = boundaryParseStack.pop()!;
   boundaryParseStack.push(parentBoundaryParse);
 };
 
 //elementName, ?bgColor, ?fontColor, ?borderColor, ?shadowing, ?shape, ?sprite, ?techn, ?legendText, ?legendSprite
 export const updateElStyle = function (
-  typeC4Shape,
-  elementName,
-  bgColor,
-  fontColor,
-  borderColor,
-  shadowing,
-  shape,
-  sprite,
-  techn,
-  legendText,
-  legendSprite
+  typeC4Shape: string,
+  elementName: string,
+  bgColor?: ParserAttribute | null,
+  fontColor?: ParserAttribute | null,
+  borderColor?: ParserAttribute | null,
+  shadowing?: ParserAttribute | null,
+  shape?: ParserAttribute | null,
+  sprite?: ParserAttribute | null,
+  techn?: ParserAttribute | null,
+  legendText?: ParserAttribute | null,
+  legendSprite?: ParserAttribute | null
 ) {
-  let old = c4ShapeArray.find((element) => element.alias === elementName);
+  let old: C4Shape | C4Boundary | undefined = c4ShapeArray.find(
+    (element) => element.alias === elementName
+  );
   if (old === undefined) {
     old = boundaries.find((element) => element.alias === elementName);
     if (old === undefined) {
@@ -521,7 +581,7 @@ export const updateElStyle = function (
   }
   if (bgColor !== undefined && bgColor !== null) {
     if (typeof bgColor === 'object') {
-      let [key, value] = Object.entries(bgColor)[0];
+      const [key, value] = Object.entries(bgColor)[0];
       old[key] = value;
     } else {
       old.bgColor = bgColor;
@@ -529,7 +589,7 @@ export const updateElStyle = function (
   }
   if (fontColor !== undefined && fontColor !== null) {
     if (typeof fontColor === 'object') {
-      let [key, value] = Object.entries(fontColor)[0];
+      const [key, value] = Object.entries(fontColor)[0];
       old[key] = value;
     } else {
       old.fontColor = fontColor;
@@ -537,7 +597,7 @@ export const updateElStyle = function (
   }
   if (borderColor !== undefined && borderColor !== null) {
     if (typeof borderColor === 'object') {
-      let [key, value] = Object.entries(borderColor)[0];
+      const [key, value] = Object.entries(borderColor)[0];
       old[key] = value;
     } else {
       old.borderColor = borderColor;
@@ -545,7 +605,7 @@ export const updateElStyle = function (
   }
   if (shadowing !== undefined && shadowing !== null) {
     if (typeof shadowing === 'object') {
-      let [key, value] = Object.entries(shadowing)[0];
+      const [key, value] = Object.entries(shadowing)[0];
       old[key] = value;
     } else {
       old.shadowing = shadowing;
@@ -553,7 +613,7 @@ export const updateElStyle = function (
   }
   if (shape !== undefined && shape !== null) {
     if (typeof shape === 'object') {
-      let [key, value] = Object.entries(shape)[0];
+      const [key, value] = Object.entries(shape)[0];
       old[key] = value;
     } else {
       old.shape = shape;
@@ -561,7 +621,7 @@ export const updateElStyle = function (
   }
   if (sprite !== undefined && sprite !== null) {
     if (typeof sprite === 'object') {
-      let [key, value] = Object.entries(sprite)[0];
+      const [key, value] = Object.entries(sprite)[0];
       old[key] = value;
     } else {
       old.sprite = sprite;
@@ -569,15 +629,17 @@ export const updateElStyle = function (
   }
   if (techn !== undefined && techn !== null) {
     if (typeof techn === 'object') {
-      let [key, value] = Object.entries(techn)[0];
+      const [key, value] = Object.entries(techn)[0];
       old[key] = value;
     } else {
-      old.techn = techn;
+      // The parser hands over a plain string here, even though `techn` is a
+      // `{ text: string }` object everywhere else.
+      old.techn = techn as unknown as C4Shape['techn'];
     }
   }
   if (legendText !== undefined && legendText !== null) {
     if (typeof legendText === 'object') {
-      let [key, value] = Object.entries(legendText)[0];
+      const [key, value] = Object.entries(legendText)[0];
       old[key] = value;
     } else {
       old.legendText = legendText;
@@ -585,7 +647,7 @@ export const updateElStyle = function (
   }
   if (legendSprite !== undefined && legendSprite !== null) {
     if (typeof legendSprite === 'object') {
-      let [key, value] = Object.entries(legendSprite)[0];
+      const [key, value] = Object.entries(legendSprite)[0];
       old[key] = value;
     } else {
       old.legendSprite = legendSprite;
@@ -595,13 +657,13 @@ export const updateElStyle = function (
 
 //textColor, lineColor, ?offsetX, ?offsetY
 export const updateRelStyle = function (
-  typeC4Shape,
-  from,
-  to,
-  textColor,
-  lineColor,
-  offsetX,
-  offsetY
+  typeC4Shape: string,
+  from: string,
+  to: string,
+  textColor?: ParserAttribute | null,
+  lineColor?: ParserAttribute | null,
+  offsetX?: ParserAttribute | null,
+  offsetY?: ParserAttribute | null
 ) {
   const old = rels.find((rel) => rel.from === from && rel.to === to);
   if (old === undefined) {
@@ -609,7 +671,7 @@ export const updateRelStyle = function (
   }
   if (textColor !== undefined && textColor !== null) {
     if (typeof textColor === 'object') {
-      let [key, value] = Object.entries(textColor)[0];
+      const [key, value] = Object.entries(textColor)[0];
       old[key] = value;
     } else {
       old.textColor = textColor;
@@ -617,7 +679,7 @@ export const updateRelStyle = function (
   }
   if (lineColor !== undefined && lineColor !== null) {
     if (typeof lineColor === 'object') {
-      let [key, value] = Object.entries(lineColor)[0];
+      const [key, value] = Object.entries(lineColor)[0];
       old[key] = value;
     } else {
       old.lineColor = lineColor;
@@ -625,7 +687,7 @@ export const updateRelStyle = function (
   }
   if (offsetX !== undefined && offsetX !== null) {
     if (typeof offsetX === 'object') {
-      let [key, value] = Object.entries(offsetX)[0];
+      const [key, value] = Object.entries(offsetX)[0];
       old[key] = parseInt(value);
     } else {
       old.offsetX = parseInt(offsetX);
@@ -633,7 +695,7 @@ export const updateRelStyle = function (
   }
   if (offsetY !== undefined && offsetY !== null) {
     if (typeof offsetY === 'object') {
-      let [key, value] = Object.entries(offsetY)[0];
+      const [key, value] = Object.entries(offsetY)[0];
       old[key] = parseInt(value);
     } else {
       old.offsetY = parseInt(offsetY);
@@ -642,7 +704,11 @@ export const updateRelStyle = function (
 };
 
 //?c4ShapeInRow, ?c4BoundaryInRow
-export const updateLayoutConfig = function (typeC4Shape, c4ShapeInRowParam, c4BoundaryInRowParam) {
+export const updateLayoutConfig = function (
+  typeC4Shape: string,
+  c4ShapeInRowParam: ParserAttribute,
+  c4BoundaryInRowParam: ParserAttribute
+) {
   let c4ShapeInRowValue = c4ShapeInRow;
   let c4BoundaryInRowValue = c4BoundaryInRow;
 
@@ -681,7 +747,7 @@ export const getParentBoundaryParse = function () {
   return parentBoundaryParse;
 };
 
-export const getC4ShapeArray = function (parentBoundary) {
+export const getC4ShapeArray = function (parentBoundary?: string | null) {
   if (parentBoundary === undefined || parentBoundary === null) {
     return c4ShapeArray;
   } else {
@@ -690,14 +756,14 @@ export const getC4ShapeArray = function (parentBoundary) {
     });
   }
 };
-export const getC4Shape = function (alias) {
+export const getC4Shape = function (alias: string) {
   return c4ShapeArray.find((personOrSystem) => personOrSystem.alias === alias);
 };
-export const getC4ShapeKeys = function (parentBoundary) {
+export const getC4ShapeKeys = function (parentBoundary?: string | null) {
   return Object.keys(getC4ShapeArray(parentBoundary));
 };
 
-export const getBoundaries = function (parentBoundary) {
+export const getBoundaries = function (parentBoundary?: string | null) {
   if (parentBoundary === undefined || parentBoundary === null) {
     return boundaries;
   } else {
@@ -719,7 +785,7 @@ export const getTitle = function () {
   return title;
 };
 
-export const setWrap = function (wrapSetting) {
+export const setWrap = function (wrapSetting?: boolean) {
   wrapEnabled = wrapSetting;
 };
 
@@ -729,16 +795,7 @@ export const autoWrap = function () {
 
 export const clear = function () {
   c4ShapeArray = [];
-  boundaries = [
-    {
-      alias: 'global',
-      label: { text: 'global' },
-      type: { text: 'global' },
-      tags: null,
-      link: null,
-      parentBoundary: '',
-    },
-  ];
+  boundaries = [createGlobalBoundary()];
   parentBoundaryParse = '';
   currentBoundaryParse = 'global';
   boundaryParseStack = [''];
@@ -788,8 +845,8 @@ export const PLACEMENT = {
   OVER: 2,
 };
 
-export const setTitle = function (txt) {
-  let sanitizedText = sanitizeText(txt, getConfig());
+export const setTitle = function (txt: string) {
+  const sanitizedText = sanitizeText(txt, getConfig());
   title = sanitizedText;
 };
 
@@ -823,7 +880,7 @@ export default {
   getAccTitle,
   getAccDescription,
   setAccDescription,
-  getConfig: () => getConfig().c4,
+  getConfig: () => getRequiredConfig('c4'),
   clear,
   LINETYPE,
   ARROWTYPE,

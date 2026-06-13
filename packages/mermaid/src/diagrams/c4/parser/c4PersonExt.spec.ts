@@ -1,4 +1,5 @@
 import c4Db from '../c4Db.js';
+// @ts-ignore: JISON doesn't support types
 import c4 from './c4Diagram.jison';
 import { setConfig } from '../../../config.js';
 
@@ -6,23 +7,16 @@ setConfig({
   securityLevel: 'strict',
 });
 
-describe.each([
-  ['Container', 'container'],
-  ['ContainerDb', 'container_db'],
-  ['ContainerQueue', 'container_queue'],
-  ['Container_Ext', 'external_container'],
-  ['ContainerDb_Ext', 'external_container_db'],
-  ['ContainerQueue_Ext', 'external_container_queue'],
-])('parsing a C4 %s', function (macroName, elementName) {
+describe('parsing a C4 Person_Ext', function () {
   beforeEach(function () {
     c4.parser.yy = c4Db;
     c4.parser.yy.clear();
   });
 
-  it('should parse a C4 diagram with one Container correctly', function () {
+  it('should parse a C4 diagram with one Person_Ext correctly', function () {
     c4.parser.parse(`C4Context
-title Container diagram for Internet Banking Container
-${macroName}(ContainerAA, "Internet Banking Container", "Technology", "Allows customers to view information about their bank accounts, and make payments.")`);
+title System Context diagram for Internet Banking System
+Person_Ext(customerA, "Banking Customer A", "A customer of the bank, with personal bank accounts.")`);
 
     const yy = c4.parser.yy;
 
@@ -31,22 +25,21 @@ ${macroName}(ContainerAA, "Internet Banking Container", "Technology", "Allows cu
     const onlyShape = shapes[0];
 
     expect(onlyShape).toEqual({
-      alias: 'ContainerAA',
+      alias: 'customerA',
       descr: {
-        text: 'Allows customers to view information about their bank accounts, and make payments.',
+        text: 'A customer of the bank, with personal bank accounts.',
       },
       label: {
-        text: 'Internet Banking Container',
+        text: 'Banking Customer A',
       },
+      // TODO: Why are link, sprite, and tags undefined instead of not appearing at all?
+      //       Compare to Person where they don't show up.
       link: undefined,
       sprite: undefined,
       tags: undefined,
       parentBoundary: 'global',
       typeC4Shape: {
-        text: elementName,
-      },
-      techn: {
-        text: 'Technology',
+        text: 'external_person',
       },
       wrap: false,
     });
@@ -54,49 +47,38 @@ ${macroName}(ContainerAA, "Internet Banking Container", "Technology", "Allows cu
 
   it('should parse the alias', function () {
     c4.parser.parse(`C4Context
-${macroName}(ContainerAA, "Internet Banking Container")`);
+Person_Ext(customerA, "Banking Customer A")`);
 
     expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
-      alias: 'ContainerAA',
+      alias: 'customerA',
     });
   });
 
   it('should parse the label', function () {
     c4.parser.parse(`C4Context
-${macroName}(ContainerAA, "Internet Banking Container")`);
+Person_Ext(customerA, "Banking Customer A")`);
 
     expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
       label: {
-        text: 'Internet Banking Container',
-      },
-    });
-  });
-
-  it('should parse the technology', function () {
-    c4.parser.parse(`C4Context
-${macroName}(ContainerAA, "", "Java")`);
-
-    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
-      techn: {
-        text: 'Java',
+        text: 'Banking Customer A',
       },
     });
   });
 
   it('should parse the description', function () {
     c4.parser.parse(`C4Context
-${macroName}(ContainerAA, "", "", "Allows customers to view information about their bank accounts, and make payments.")`);
+Person_Ext(customerA, "", "A customer of the bank, with personal bank accounts.")`);
 
     expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
       descr: {
-        text: 'Allows customers to view information about their bank accounts, and make payments.',
+        text: 'A customer of the bank, with personal bank accounts.',
       },
     });
   });
 
   it('should parse a sprite', function () {
     c4.parser.parse(`C4Context
-${macroName}(ContainerAA, $sprite="users")`);
+Person_Ext(customerA, $sprite="users")`);
 
     expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
       label: {
@@ -109,7 +91,7 @@ ${macroName}(ContainerAA, $sprite="users")`);
 
   it('should parse a link', function () {
     c4.parser.parse(`C4Context
-${macroName}(ContainerAA, $link="https://github.com/mermaidjs")`);
+Person_Ext(customerA, $link="https://github.com/mermaidjs")`);
 
     expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
       label: {
@@ -122,7 +104,7 @@ ${macroName}(ContainerAA, $link="https://github.com/mermaidjs")`);
 
   it('should parse tags', function () {
     c4.parser.parse(`C4Context
-${macroName}(ContainerAA, $tags="tag1,tag2")`);
+Person_Ext(customerA, $tags="tag1,tag2")`);
 
     expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
       label: {

@@ -87,6 +87,7 @@ A line chart offers the capability to graphically depict lines.
 #### Example
 
 1. `line [2.3, 45, .98, -3.4]` it can have all valid numeric values.
+2. `line "series name" [2.3, 45, .98, -3.4]` adds the line to the legend.
 
 ### Bar chart
 
@@ -95,6 +96,31 @@ A bar chart offers the capability to graphically depict bars.
 #### Example
 
 1. `bar [2.3, 45, .98, -3.4]` it can have all valid numeric values.
+2. `bar "series name" [2.3, 45, .98, -3.4]` adds the bar to the legend.
+
+### Legend (v\<MERMAID_RELEASE_VERSION>+)
+
+Named line and bar plots are automatically shown in a legend. Unnamed plots are omitted from the legend.
+
+```mermaid-example
+xychart-beta
+  title "An Example Chart"
+  x-axis ["90d", "60d", "30d", "7d", "1d", "Current"]
+  y-axis "Seconds" 0 --> 198.2
+  line "avg" [48.1, 41.5, 45.7, 72.8, 67.7, 59.9]
+  line "p50" [38.2, 36.8, 39.7, 54.5, 49.0, 38.4]
+  line "p95" [112.2, 75.3, 103.0, 177.0, 180.2, 109.4]
+```
+
+```mermaid
+xychart-beta
+  title "An Example Chart"
+  x-axis ["90d", "60d", "30d", "7d", "1d", "Current"]
+  y-axis "Seconds" 0 --> 198.2
+  line "avg" [48.1, 41.5, 45.7, 72.8, 67.7, 59.9]
+  line "p50" [38.2, 36.8, 39.7, 54.5, 49.0, 38.4]
+  line "p95" [112.2, 75.3, 103.0, 177.0, 180.2, 109.4]
+```
 
 #### Simplest example
 
@@ -114,6 +140,9 @@ xychart
 | titlePadding             | Top and Bottom padding of the title                           |      10       |
 | titleFontSize            | Title font size                                               |      20       |
 | showTitle                | Title to be shown or not                                      |     true      |
+| showLegend               | Legend to be shown for named plots or not                     |     true      |
+| legendFontSize           | Legend font size                                              |      14       |
+| legendPadding            | Padding around the legend                                     |      10       |
 | xAxis                    | xAxis configuration                                           |  AxisConfig   |
 | yAxis                    | yAxis configuration                                           |  AxisConfig   |
 | chartOrientation         | 'vertical' or 'horizontal'                                    |  'vertical'   |
@@ -156,6 +185,7 @@ config:
 | backgroundColor  | Background color of the whole chart                       |
 | titleColor       | Color of the Title text                                   |
 | dataLabelColor   | Color of the Data labels (if shown)                       |
+| legendTextColor  | Color of the legend text                                  |
 | xAxisLabelColor  | Color of the x-axis labels                                |
 | xAxisTitleColor  | Color of the x-axis title                                 |
 | xAxisTickColor   | Color of the x-axis tick                                  |

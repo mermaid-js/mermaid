@@ -1,4 +1,5 @@
 import c4Db from '../c4Db.js';
+// @ts-ignore: JISON doesn't support types
 import c4 from './c4Diagram.jison';
 import { setConfig } from '../../../config.js';
 
@@ -6,16 +7,23 @@ setConfig({
   securityLevel: 'strict',
 });
 
-describe('parsing a C4 Person', function () {
+describe.each([
+  ['Container', 'container'],
+  ['ContainerDb', 'container_db'],
+  ['ContainerQueue', 'container_queue'],
+  ['Container_Ext', 'external_container'],
+  ['ContainerDb_Ext', 'external_container_db'],
+  ['ContainerQueue_Ext', 'external_container_queue'],
+])('parsing a C4 %s', function (macroName, elementName) {
   beforeEach(function () {
     c4.parser.yy = c4Db;
     c4.parser.yy.clear();
   });
 
-  it('should parse a C4 diagram with one Person correctly', function () {
+  it('should parse a C4 diagram with one Container correctly', function () {
     c4.parser.parse(`C4Context
-title System Context diagram for Internet Banking System
-Person(customerA, "Banking Customer A", "A customer of the bank, with personal bank accounts.")`);
+title Container diagram for Internet Banking Container
+${macroName}(ContainerAA, "Internet Banking Container", "Technology", "Allows customers to view information about their bank accounts, and make payments.")`);
 
     const yy = c4.parser.yy;
 
@@ -24,16 +32,22 @@ Person(customerA, "Banking Customer A", "A customer of the bank, with personal b
     const onlyShape = shapes[0];
 
     expect(onlyShape).toEqual({
-      alias: 'customerA',
+      alias: 'ContainerAA',
       descr: {
-        text: 'A customer of the bank, with personal bank accounts.',
+        text: 'Allows customers to view information about their bank accounts, and make payments.',
       },
       label: {
-        text: 'Banking Customer A',
+        text: 'Internet Banking Container',
       },
+      link: undefined,
+      sprite: undefined,
+      tags: undefined,
       parentBoundary: 'global',
       typeC4Shape: {
-        text: 'person',
+        text: elementName,
+      },
+      techn: {
+        text: 'Technology',
       },
       wrap: false,
     });
@@ -41,38 +55,49 @@ Person(customerA, "Banking Customer A", "A customer of the bank, with personal b
 
   it('should parse the alias', function () {
     c4.parser.parse(`C4Context
-Person(customerA, "Banking Customer A")`);
+${macroName}(ContainerAA, "Internet Banking Container")`);
 
     expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
-      alias: 'customerA',
+      alias: 'ContainerAA',
     });
   });
 
   it('should parse the label', function () {
     c4.parser.parse(`C4Context
-Person(customerA, "Banking Customer A")`);
+${macroName}(ContainerAA, "Internet Banking Container")`);
 
     expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
       label: {
-        text: 'Banking Customer A',
+        text: 'Internet Banking Container',
+      },
+    });
+  });
+
+  it('should parse the technology', function () {
+    c4.parser.parse(`C4Context
+${macroName}(ContainerAA, "", "Java")`);
+
+    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+      techn: {
+        text: 'Java',
       },
     });
   });
 
   it('should parse the description', function () {
     c4.parser.parse(`C4Context
-Person(customerA, "", "A customer of the bank, with personal bank accounts.")`);
+${macroName}(ContainerAA, "", "", "Allows customers to view information about their bank accounts, and make payments.")`);
 
     expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
       descr: {
-        text: 'A customer of the bank, with personal bank accounts.',
+        text: 'Allows customers to view information about their bank accounts, and make payments.',
       },
     });
   });
 
   it('should parse a sprite', function () {
     c4.parser.parse(`C4Context
-Person(customerA, $sprite="users")`);
+${macroName}(ContainerAA, $sprite="users")`);
 
     expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
       label: {
@@ -85,7 +110,7 @@ Person(customerA, $sprite="users")`);
 
   it('should parse a link', function () {
     c4.parser.parse(`C4Context
-Person(customerA, $link="https://github.com/mermaidjs")`);
+${macroName}(ContainerAA, $link="https://github.com/mermaidjs")`);
 
     expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
       label: {
@@ -98,7 +123,7 @@ Person(customerA, $link="https://github.com/mermaidjs")`);
 
   it('should parse tags', function () {
     c4.parser.parse(`C4Context
-Person(customerA, $tags="tag1,tag2")`);
+${macroName}(ContainerAA, $tags="tag1,tag2")`);
 
     expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
       label: {

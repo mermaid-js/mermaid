@@ -27,6 +27,7 @@ const config: RequiredDeep<MermaidConfig> = {
     nodePlacementAlignment: 'NONE',
     forceNodeModelOrder: false,
     considerModelOrder: 'NODES_AND_EDGES',
+    keepEntryNodeOnTop: false,
   },
   themeCSS: undefined,
 

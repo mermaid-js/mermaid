@@ -1,33 +1,61 @@
 import common from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
+import type { BaseType, Selection } from 'd3';
+import type { SVG, SVGGroup } from '../../diagram-api/types.js';
+import type { D3Selection } from '../../types.js';
+import type { RectData } from '../common/commonTypes.js';
+import type { C4Boundary, C4DrawConfig, C4Font, C4Rel, C4Shape } from './c4Types.js';
 
-export const drawRect = function (elem, rectData) {
+type TextAttrs = Record<string, string | number>;
+
+type DrawTextFunction = <T extends SVGElement>(
+  content: string,
+  g: D3Selection<T>,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  textAttrs: TextAttrs,
+  conf: C4Font
+) => void;
+
+export const drawRect = function (elem: SVG | SVGGroup, rectData: RectData) {
   return svgDrawCommon.drawRect(elem, rectData);
 };
 
-export const drawImage = function (elem, width, height, x, y, link) {
+export const drawImage = function <T extends SVGElement>(
+  elem: D3Selection<T>,
+  width: number,
+  height: number,
+  x: number,
+  y: number,
+  link: string
+) {
   const imageElem = elem.append('image');
   imageElem.attr('width', width);
   imageElem.attr('height', height);
   imageElem.attr('x', x);
   imageElem.attr('y', y);
-  let sanitizedLink = link.startsWith('data:image/png;base64') ? link : sanitizeUrl(link);
+  const sanitizedLink = link.startsWith('data:image/png;base64') ? link : sanitizeUrl(link);
   imageElem.attr('xlink:href', sanitizedLink);
 };
 
-export const drawRels = (elem, rels, conf, diagramId) => {
+export const drawRels = (elem: SVG, rels: C4Rel[], conf: C4DrawConfig, diagramId: string) => {
   const relsElem = elem.append('g');
   let i = 0;
-  for (let rel of rels) {
-    let textColor = rel.textColor ? rel.textColor : '#444444';
-    let strokeColor = rel.lineColor ? rel.lineColor : '#444444';
-    let offsetX = rel.offsetX ? parseInt(rel.offsetX) : 0;
-    let offsetY = rel.offsetY ? parseInt(rel.offsetY) : 0;
+  for (const rel of rels) {
+    const textColor = rel.textColor ? rel.textColor : '#444444';
+    const strokeColor = rel.lineColor ? rel.lineColor : '#444444';
+    // The parseInt is load-bearing: the JISON grammar passes $key="value" attributes
+    // positionally, so offsets that arrive in the textColor/lineColor parameter slots are
+    // stored by the db as raw strings and must be coerced here before coordinate arithmetic.
+    const offsetX = rel.offsetX ? parseInt(String(rel.offsetX)) : 0;
+    const offsetY = rel.offsetY ? parseInt(String(rel.offsetY)) : 0;
 
-    let url = '';
+    const url = '';
     if (i === 0) {
-      let line = relsElem.append('line');
+      const line = relsElem.append('line');
       line.attr('x1', rel.startPoint.x);
       line.attr('y1', rel.startPoint.y);
       line.attr('x2', rel.endPoint.x);
@@ -44,7 +72,7 @@ export const drawRels = (elem, rels, conf, diagramId) => {
       }
       i = -1;
     } else {
-      let line = relsElem.append('path');
+      const line = relsElem.append('path');
       line
         .attr('fill', 'none')
         .attr('stroke-width', '1')
@@ -52,17 +80,20 @@ export const drawRels = (elem, rels, conf, diagramId) => {
         .attr(
           'd',
           'Mstartx,starty Qcontrolx,controly stopx,stopy '
-            .replaceAll('startx', rel.startPoint.x)
-            .replaceAll('starty', rel.startPoint.y)
+            .replaceAll('startx', rel.startPoint.x as unknown as string)
+            .replaceAll('starty', rel.startPoint.y as unknown as string)
             .replaceAll(
               'controlx',
-              rel.startPoint.x +
+              (rel.startPoint.x +
                 (rel.endPoint.x - rel.startPoint.x) / 2 -
-                (rel.endPoint.x - rel.startPoint.x) / 4
+                (rel.endPoint.x - rel.startPoint.x) / 4) as unknown as string
             )
-            .replaceAll('controly', rel.startPoint.y + (rel.endPoint.y - rel.startPoint.y) / 2)
-            .replaceAll('stopx', rel.endPoint.x)
-            .replaceAll('stopy', rel.endPoint.y)
+            .replaceAll(
+              'controly',
+              (rel.startPoint.y + (rel.endPoint.y - rel.startPoint.y) / 2) as unknown as string
+            )
+            .replaceAll('stopx', rel.endPoint.x as unknown as string)
+            .replaceAll('stopy', rel.endPoint.y as unknown as string)
         );
       if (rel.type !== 'rel_b') {
         line.attr('marker-end', 'url(' + url + '#' + diagramId + '-arrowhead)');
@@ -72,6 +103,8 @@ export const drawRels = (elem, rels, conf, diagramId) => {
       }
     }
 
+    // The label was measured by the renderer before drawing.
+    const labelWidth = rel.label.width!;
     let messageConf = conf.messageFont();
     _drawTextCandidateFunc(conf)(
       rel.label.text,
@@ -82,8 +115,8 @@ export const drawRels = (elem, rels, conf, diagramId) => {
       Math.min(rel.startPoint.y, rel.endPoint.y) +
         Math.abs(rel.endPoint.y - rel.startPoint.y) / 2 +
         offsetY,
-      rel.label.width,
-      rel.label.height,
+      labelWidth,
+      rel.label.height!,
       { fill: textColor },
       messageConf
     );
@@ -98,11 +131,11 @@ export const drawRels = (elem, rels, conf, diagramId) => {
           offsetX,
         Math.min(rel.startPoint.y, rel.endPoint.y) +
           Math.abs(rel.endPoint.y - rel.startPoint.y) / 2 +
-          conf.messageFontSize +
+          (conf.messageFontSize as number) +
           5 +
           offsetY,
-        Math.max(rel.label.width, rel.techn.width),
-        rel.techn.height,
+        Math.max(labelWidth, rel.techn.width!),
+        rel.techn.height!,
         { fill: textColor, 'font-style': 'italic' },
         messageConf
       );
@@ -113,22 +146,25 @@ export const drawRels = (elem, rels, conf, diagramId) => {
 /**
  * Draws a boundary in the diagram
  *
- * @param {any} elem - The diagram we'll draw to.
- * @param {any} boundary - The boundary to draw.
- * @param {any} conf - DrawText implementation discriminator object
+ * @param elem - The diagram we'll draw to.
+ * @param boundary - The boundary to draw.
+ * @param conf - DrawText implementation discriminator object
  */
-const drawBoundary = function (elem, boundary, conf) {
+const drawBoundary = function (elem: SVG, boundary: C4Boundary, conf: C4DrawConfig) {
   const boundaryElem = elem.append('g');
 
-  let fillColor = boundary.bgColor ? boundary.bgColor : 'none';
-  let strokeColor = boundary.borderColor ? boundary.borderColor : '#444444';
-  let fontColor = boundary.fontColor ? boundary.fontColor : 'black';
+  const fillColor = boundary.bgColor ? boundary.bgColor : 'none';
+  const strokeColor = boundary.borderColor ? boundary.borderColor : '#444444';
+  const fontColor = boundary.fontColor ? boundary.fontColor : 'black';
 
-  let attrsValue = { 'stroke-width': 1.0, 'stroke-dasharray': '7.0,7.0' };
+  let attrsValue: Record<string, string | number> = {
+    'stroke-width': 1.0,
+    'stroke-dasharray': '7.0,7.0',
+  };
   if (boundary.nodeType) {
     attrsValue = { 'stroke-width': 1.0 };
   }
-  let rectData = {
+  const rectData: RectData = {
     x: boundary.x,
     y: boundary.y,
     fill: fillColor,
@@ -151,7 +187,7 @@ const drawBoundary = function (elem, boundary, conf) {
     boundary.label.text,
     boundaryElem,
     boundary.x,
-    boundary.y + boundary.label.Y,
+    boundary.y + boundary.label.Y!,
     boundary.width,
     boundary.height,
     { fill: '#444444' },
@@ -166,7 +202,7 @@ const drawBoundary = function (elem, boundary, conf) {
       boundary.type.text,
       boundaryElem,
       boundary.x,
-      boundary.y + boundary.type.Y,
+      boundary.y + boundary.type.Y!,
       boundary.width,
       boundary.height,
       { fill: '#444444' },
@@ -183,7 +219,7 @@ const drawBoundary = function (elem, boundary, conf) {
       boundary.descr.text,
       boundaryElem,
       boundary.x,
-      boundary.y + boundary.descr.Y,
+      boundary.y + boundary.descr.Y!,
       boundary.width,
       boundary.height,
       { fill: '#444444' },
@@ -192,12 +228,14 @@ const drawBoundary = function (elem, boundary, conf) {
   }
 };
 
-export const drawC4Shape = function (elem, c4Shape, conf) {
-  let fillColor = c4Shape.bgColor ? c4Shape.bgColor : conf[c4Shape.typeC4Shape.text + '_bg_color'];
-  let strokeColor = c4Shape.borderColor
+export const drawC4Shape = function (elem: SVG, c4Shape: C4Shape, conf: C4DrawConfig) {
+  const fillColor = c4Shape.bgColor
+    ? c4Shape.bgColor
+    : (conf[c4Shape.typeC4Shape.text + '_bg_color'] as string);
+  const strokeColor = c4Shape.borderColor
     ? c4Shape.borderColor
-    : conf[c4Shape.typeC4Shape.text + '_border_color'];
-  let fontColor = c4Shape.fontColor ? c4Shape.fontColor : '#FFFFFF';
+    : (conf[c4Shape.typeC4Shape.text + '_border_color'] as string);
+  const fontColor = c4Shape.fontColor ? c4Shape.fontColor : '#FFFFFF';
 
   let personImg =
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAACD0lEQVR4Xu2YoU4EMRCGT+4j8Ai8AhaH4QHgAUjQuFMECUgMIUgwJAgMhgQsAYUiJCiQIBBY+EITsjfTdme6V24v4c8vyGbb+ZjOtN0bNcvjQXmkH83WvYBWto6PLm6v7p7uH1/w2fXD+PBycX1Pv2l3IdDm/vn7x+dXQiAubRzoURa7gRZWd0iGRIiJbOnhnfYBQZNJjNbuyY2eJG8fkDE3bbG4ep6MHUAsgYxmE3nVs6VsBWJSGccsOlFPmLIViMzLOB7pCVO2AtHJMohH7Fh6zqitQK7m0rJvAVYgGcEpe//PLdDz65sM4pF9N7ICcXDKIB5Nv6j7tD0NoSdM2QrU9Gg0ewE1LqBhHR3BBdvj2vapnidjHxD/q6vd7Pvhr31AwcY8eXMTXAKECZZJFXuEq27aLgQK5uLMohCenGGuGewOxSjBvYBqeG6B+Nqiblggdjnc+ZXDy+FNFpFzw76O3UBAROuXh6FoiAcf5g9eTvUgzy0nWg6I8cXHRUpg5bOVBCo+KDpFajOf23GgPme7RSQ+lacIENUgJ6gg1k6HjgOlqnLqip4tEuhv0hNEMXUD0clyXE3p6pZA0S2nnvTlXwLJEZWlb7cTQH1+USgTN4VhAenm/wea1OCAOmqo6fE1WCb9WSKBah+rbUWPWAmE2Rvk0ApiB45eOyNAzU8xcTvj8KvkKEoOaIYeHNA3ZuygAvFMUO0AAAAASUVORK5CYII=';
@@ -253,10 +291,10 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
         .attr(
           'd',
           'Mstartx,startyc0,-10 half,-10 half,-10c0,0 half,0 half,10l0,heightc0,10 -half,10 -half,10c0,0 -half,0 -half,-10l0,-height'
-            .replaceAll('startx', c4Shape.x)
-            .replaceAll('starty', c4Shape.y)
-            .replaceAll('half', c4Shape.width / 2)
-            .replaceAll('height', c4Shape.height)
+            .replaceAll('startx', c4Shape.x as unknown as string)
+            .replaceAll('starty', c4Shape.y as unknown as string)
+            .replaceAll('half', (c4Shape.width / 2) as unknown as string)
+            .replaceAll('height', c4Shape.height as unknown as string)
         );
       c4ShapeElem
         .append('path')
@@ -266,9 +304,9 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
         .attr(
           'd',
           'Mstartx,startyc0,10 half,10 half,10c0,0 half,0 half,-10'
-            .replaceAll('startx', c4Shape.x)
-            .replaceAll('starty', c4Shape.y)
-            .replaceAll('half', c4Shape.width / 2)
+            .replaceAll('startx', c4Shape.x as unknown as string)
+            .replaceAll('starty', c4Shape.y as unknown as string)
+            .replaceAll('half', (c4Shape.width / 2) as unknown as string)
         );
       break;
     case 'system_queue':
@@ -285,10 +323,10 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
         .attr(
           'd',
           'Mstartx,startylwidth,0c5,0 5,half 5,halfc0,0 0,half -5,halfl-width,0c-5,0 -5,-half -5,-halfc0,0 0,-half 5,-half'
-            .replaceAll('startx', c4Shape.x)
-            .replaceAll('starty', c4Shape.y)
-            .replaceAll('width', c4Shape.width)
-            .replaceAll('half', c4Shape.height / 2)
+            .replaceAll('startx', c4Shape.x as unknown as string)
+            .replaceAll('starty', c4Shape.y as unknown as string)
+            .replaceAll('width', c4Shape.width as unknown as string)
+            .replaceAll('half', (c4Shape.height / 2) as unknown as string)
         );
       c4ShapeElem
         .append('path')
@@ -298,15 +336,17 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
         .attr(
           'd',
           'Mstartx,startyc-5,0 -5,half -5,halfc0,half 5,half 5,half'
-            .replaceAll('startx', c4Shape.x + c4Shape.width)
-            .replaceAll('starty', c4Shape.y)
-            .replaceAll('half', c4Shape.height / 2)
+            .replaceAll('startx', (c4Shape.x + c4Shape.width) as unknown as string)
+            .replaceAll('starty', c4Shape.y as unknown as string)
+            .replaceAll('half', (c4Shape.height / 2) as unknown as string)
         );
       break;
   }
 
   // draw type of c4Shape
-  let c4ShapeFontConf = getC4ShapeFont(conf, c4Shape.typeC4Shape.text);
+  const c4ShapeFontConf = getC4ShapeFont(conf, c4Shape.typeC4Shape.text);
+  // The type text was measured by the renderer before drawing.
+  const typeC4ShapeWidth = c4Shape.typeC4Shape.width!;
   c4ShapeElem
     .append('text')
     .attr('fill', fontColor)
@@ -314,9 +354,9 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
     .attr('font-size', c4ShapeFontConf.fontSize - 2)
     .attr('font-style', 'italic')
     .attr('lengthAdjust', 'spacing')
-    .attr('textLength', c4Shape.typeC4Shape.width)
-    .attr('x', c4Shape.x + c4Shape.width / 2 - c4Shape.typeC4Shape.width / 2)
-    .attr('y', c4Shape.y + c4Shape.typeC4Shape.Y)
+    .attr('textLength', typeC4ShapeWidth)
+    .attr('x', c4Shape.x + c4Shape.width / 2 - typeC4ShapeWidth / 2)
+    .attr('y', c4Shape.y + c4Shape.typeC4Shape.Y!)
     .text('<<' + c4Shape.typeC4Shape.text + '>>');
 
   // draw image/sprite
@@ -335,7 +375,7 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
   }
 
   // draw label
-  let textFontConf = conf[c4Shape.typeC4Shape.text + 'Font']();
+  let textFontConf = (conf[c4Shape.typeC4Shape.text + 'Font'] as () => C4Font)();
   textFontConf.fontWeight = 'bold';
   textFontConf.fontSize = textFontConf.fontSize + 2;
   textFontConf.fontColor = fontColor;
@@ -343,7 +383,7 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
     c4Shape.label.text,
     c4ShapeElem,
     c4Shape.x,
-    c4Shape.y + c4Shape.label.Y,
+    c4Shape.y + c4Shape.label.Y!,
     c4Shape.width,
     c4Shape.height,
     { fill: fontColor },
@@ -351,7 +391,7 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
   );
 
   // draw techn/type
-  textFontConf = conf[c4Shape.typeC4Shape.text + 'Font']();
+  textFontConf = (conf[c4Shape.typeC4Shape.text + 'Font'] as () => C4Font)();
   textFontConf.fontColor = fontColor;
 
   if (c4Shape.techn && c4Shape.techn?.text !== '') {
@@ -359,7 +399,7 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
       c4Shape.techn.text,
       c4ShapeElem,
       c4Shape.x,
-      c4Shape.y + c4Shape.techn.Y,
+      c4Shape.y + c4Shape.techn.Y!,
       c4Shape.width,
       c4Shape.height,
       { fill: fontColor, 'font-style': 'italic' },
@@ -370,7 +410,7 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
       c4Shape.type.text,
       c4ShapeElem,
       c4Shape.x,
-      c4Shape.y + c4Shape.type.Y,
+      c4Shape.y + c4Shape.type.Y!,
       c4Shape.width,
       c4Shape.height,
       { fill: fontColor, 'font-style': 'italic' },
@@ -386,7 +426,7 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
       c4Shape.descr.text,
       c4ShapeElem,
       c4Shape.x,
-      c4Shape.y + c4Shape.descr.Y,
+      c4Shape.y + c4Shape.descr.Y!,
       c4Shape.width,
       c4Shape.height,
       { fill: fontColor },
@@ -397,7 +437,7 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
   return c4Shape.height;
 };
 
-export const insertDatabaseIcon = function (elem, id) {
+export const insertDatabaseIcon = function (elem: SVG, id: string) {
   elem
     .append('defs')
     .append('symbol')
@@ -412,7 +452,7 @@ export const insertDatabaseIcon = function (elem, id) {
     );
 };
 
-export const insertComputerIcon = function (elem, id) {
+export const insertComputerIcon = function (elem: SVG, id: string) {
   elem
     .append('defs')
     .append('symbol')
@@ -427,7 +467,7 @@ export const insertComputerIcon = function (elem, id) {
     );
 };
 
-export const insertClockIcon = function (elem, id) {
+export const insertClockIcon = function (elem: SVG, id: string) {
   elem
     .append('defs')
     .append('symbol')
@@ -444,10 +484,8 @@ export const insertClockIcon = function (elem, id) {
 
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
- *
- * @param elem
  */
-export const insertArrowHead = function (elem, id) {
+export const insertArrowHead = function (elem: SVG, id: string) {
   elem
     .append('defs')
     .append('marker')
@@ -462,7 +500,7 @@ export const insertArrowHead = function (elem, id) {
     .attr('d', 'M 0 0 L 10 5 L 0 10 z'); // this is actual shape for arrowhead
 };
 
-export const insertArrowEnd = function (elem, id) {
+export const insertArrowEnd = function (elem: SVG, id: string) {
   elem
     .append('defs')
     .append('marker')
@@ -479,10 +517,8 @@ export const insertArrowEnd = function (elem, id) {
 
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
- *
- * @param {any} elem
  */
-export const insertArrowFilledHead = function (elem, id) {
+export const insertArrowFilledHead = function (elem: SVG, id: string) {
   elem
     .append('defs')
     .append('marker')
@@ -498,10 +534,8 @@ export const insertArrowFilledHead = function (elem, id) {
 
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
- *
- * @param {any} elem
  */
-export const insertArrowCrossHead = function (elem, id) {
+export const insertArrowCrossHead = function (elem: SVG, id: string) {
   const defs = elem.append('defs');
   const marker = defs
     .append('marker')
@@ -532,25 +566,24 @@ export const insertArrowCrossHead = function (elem, id) {
   // this is actual shape for arrowhead
 };
 
-const getC4ShapeFont = (cnf, typeC4Shape) => {
+const getC4ShapeFont = (cnf: C4DrawConfig, typeC4Shape: string): C4Font => {
   return {
-    fontFamily: cnf[typeC4Shape + 'FontFamily'],
-    fontSize: cnf[typeC4Shape + 'FontSize'],
-    fontWeight: cnf[typeC4Shape + 'FontWeight'],
+    fontFamily: cnf[typeC4Shape + 'FontFamily'] as string,
+    fontSize: cnf[typeC4Shape + 'FontSize'] as number,
+    fontWeight: cnf[typeC4Shape + 'FontWeight'] as string | number,
   };
 };
 
 const _drawTextCandidateFunc = (function () {
-  /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   */
-  function byText(content, g, x, y, width, height, textAttrs) {
+  function byText<T extends SVGElement>(
+    content: string,
+    g: D3Selection<T>,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs
+  ) {
     const text = g
       .append('text')
       .attr('x', x + width / 2)
@@ -560,17 +593,16 @@ const _drawTextCandidateFunc = (function () {
     _setTextAttrs(text, textAttrs);
   }
 
-  /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   * @param {any} conf
-   */
-  function byTspan(content, g, x, y, width, height, textAttrs, conf) {
+  function byTspan<T extends SVGElement>(
+    content: string,
+    g: D3Selection<T>,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs,
+    conf: C4Font
+  ) {
     const { fontSize, fontFamily, fontWeight } = conf;
 
     const lines = content.split(common.lineBreakRegex);
@@ -597,17 +629,16 @@ const _drawTextCandidateFunc = (function () {
     }
   }
 
-  /**
-   * @param {any} content
-   * @param {any} g
-   * @param {any} x
-   * @param {any} y
-   * @param {any} width
-   * @param {any} height
-   * @param {any} textAttrs
-   * @param {any} conf
-   */
-  function byFo(content, g, x, y, width, height, textAttrs, conf) {
+  function byFo<T extends SVGElement>(
+    content: string,
+    g: D3Selection<T>,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    textAttrs: TextAttrs,
+    conf: C4Font
+  ) {
     const s = g.append('switch');
     const f = s
       .append('foreignObject')
@@ -633,11 +664,10 @@ const _drawTextCandidateFunc = (function () {
     _setTextAttrs(text, textAttrs);
   }
 
-  /**
-   * @param {any} toText
-   * @param {any} fromTextAttrsDict
-   */
-  function _setTextAttrs(toText, fromTextAttrsDict) {
+  function _setTextAttrs<T extends BaseType>(
+    toText: Selection<T, unknown, Element | null, unknown>,
+    fromTextAttrsDict: TextAttrs
+  ) {
     for (const key in fromTextAttrsDict) {
       if (fromTextAttrsDict.hasOwnProperty(key)) {
         toText.attr(key, fromTextAttrsDict[key]);
@@ -645,7 +675,7 @@ const _drawTextCandidateFunc = (function () {
     }
   }
 
-  return function (conf) {
+  return function (conf: C4DrawConfig): DrawTextFunction {
     return conf.textPlacement === 'fo' ? byFo : conf.textPlacement === 'old' ? byText : byTspan;
   };
 })();
