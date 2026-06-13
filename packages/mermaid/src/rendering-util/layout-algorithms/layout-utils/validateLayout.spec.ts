@@ -1112,4 +1112,61 @@ describe('validateLayout new geometric issues', () => {
 
     expect(getIssueTypes(layout)).not.toContain('edge-bend-overlaps-arrowhead');
   });
+
+  // ---- node-too-close-to-group: a leaf crowding a foreign group frame (SOFT) ----
+
+  function mkGroup(id: string, x: number, y: number, width: number, height: number): Node {
+    return { id, x, y, width, height, isGroup: true } as any;
+  }
+
+  it('flags node-too-close-to-group as a graded SOFT penalty (still valid)', () => {
+    // Group G frame at x[150,250]; leaf N right edge at x=140 -> 10px gap, facing.
+    const g = mkGroup('G', 200, 0, 100, 100);
+    const n = mkNode('N', 120, 0, 40, 40);
+    const layout: LayoutData = { nodes: [g, n], edges: [], config: {} as any };
+
+    const res = validateLayout(layout);
+    const issue = res.issues.find((i) => i.type === 'node-too-close-to-group');
+    expect(issue).toBeDefined();
+    expect(issue?.nodeIds).toEqual(['N', 'G']);
+    expect(issue?.details?.gap).toBeCloseTo(10);
+    // Soft: penalizes the score but stays valid. 1000 - round((20 - 10) * 3) = 970.
+    expect(res.ok).toBe(true);
+    expect(res.score).toBe(970);
+  });
+
+  it('charges more the closer a node sits to the group frame', () => {
+    const near = validateLayout({
+      nodes: [mkGroup('G', 200, 0, 100, 100), mkNode('N', 120, 0, 40, 40)], // gap 10
+      edges: [],
+      config: {} as any,
+    });
+    const far = validateLayout({
+      nodes: [mkGroup('G', 200, 0, 100, 100), mkNode('N', 115, 0, 40, 40)], // gap 15
+      edges: [],
+      config: {} as any,
+    });
+    expect(near.ok).toBe(true);
+    expect(far.ok).toBe(true);
+    expect(near.score).toBeLessThan(far.score); // closer => bigger penalty
+  });
+
+  it('does NOT flag a node that clears the group by the full clearance', () => {
+    // N right edge at x=125 -> 25px gap (>= the 20px clearance).
+    const layout: LayoutData = {
+      nodes: [mkGroup('G', 200, 0, 100, 100), mkNode('N', 105, 0, 40, 40)],
+      edges: [],
+      config: {} as any,
+    };
+    const res = validateLayout(layout);
+    expect(res.issues.map((i) => i.type)).not.toContain('node-too-close-to-group');
+    expect(res.score).toBe(1000);
+  });
+
+  it('does NOT flag a node that is a member of the group it sits inside', () => {
+    const g = mkGroup('G', 200, 0, 100, 100);
+    const member = { ...mkNode('M', 180, 0, 40, 40), parentId: 'G' } as unknown as Node;
+    const layout: LayoutData = { nodes: [g, member], edges: [], config: {} as any };
+    expect(getIssueTypes(layout)).not.toContain('node-too-close-to-group');
+  });
 });
