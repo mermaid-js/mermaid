@@ -140,4 +140,20 @@ deploymentNode aws "Amazon Web Services" "" "Cloud" {
     expect(svg).toContain('Amazon Web Services');
     expect(svg).toContain('API Application');
   });
+
+  jsdomIt('should render an infrastructureNode in deployment diagrams', async () => {
+    const { svg } = await mermaidAPI.render(
+      'c4beta-render-5',
+      `c4-beta deployment
+infrastructureNode lb "Load Balancer" "Routes traffic." "nginx"
+deploymentNode web "Web Server" {
+    container app "Web Application" "" "Java"
+}
+lb --> app : "Forwards requests to"
+`
+    );
+    expect(svg).toContain('c4-infrastructureNode');
+    expect(svg).toContain('Load Balancer');
+    expect(svg).toContain('Forwards requests to');
+  });
 });

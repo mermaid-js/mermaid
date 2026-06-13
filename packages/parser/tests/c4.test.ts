@@ -95,6 +95,17 @@ describe('c4-beta', () => {
       expect(result.value.elements[0].kind).toBe('deploymentNode');
     });
 
+    it('should handle an infrastructureNode element', () => {
+      const result = parse(`c4-beta deployment
+        infrastructureNode lb "Load Balancer" "Routes traffic." "nginx"
+      `);
+      expectNoErrorsOrAlternatives(result);
+      const element = result.value.elements[0];
+      expect(element.kind).toBe('infrastructureNode');
+      expect(element.id).toBe('lb');
+      expect(element.technology).toBe('nginx');
+    });
+
     it('should handle a container with technology', () => {
       const result = parse(`c4-beta container
         container spa "Single-Page App" "Web UI" "JavaScript/Angular"

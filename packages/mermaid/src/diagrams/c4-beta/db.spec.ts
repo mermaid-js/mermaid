@@ -413,6 +413,33 @@ describe('c4-beta db', () => {
         expect(nodes[0].label).toBe('Plain Node [Deployment Node]');
       });
 
+      it('should render an infrastructureNode as a leaf box, not a cluster', async () => {
+        await populate(`c4-beta deployment
+          infrastructureNode lb "Load Balancer" "Routes traffic." "nginx"
+        `);
+        const element = db.getElements()[0];
+        expect(element.kind).toBe('infrastructureNode');
+        const { nodes } = db.getData();
+        expect(nodes[0].isGroup).toBe(false);
+        expect(nodes[0].cssClasses).toBe('c4-shape c4-infrastructureNode');
+        expect(nodes[0].label).toContain('&laquo;Infrastructure Node&raquo;');
+        expect(nodes[0].cssStyles).toEqual(['fill: #8b8b8b', 'stroke: #6b6b6b']);
+      });
+
+      it('should let an infrastructureNode be a relationship endpoint', async () => {
+        await populate(`c4-beta deployment
+          infrastructureNode lb "Load Balancer"
+          deploymentNode web "Web Server" {
+            container app "Web Application"
+          }
+          lb --> app : "Forwards requests to"
+        `);
+        const { edges } = db.getData();
+        expect(edges).toHaveLength(1);
+        expect(edges[0].start).toBe('lb');
+        expect(edges[0].end).toBe('app');
+      });
+
       it('should support nesting three levels deep with containers as leaves', async () => {
         await populate(`c4-beta deployment
           deploymentNode aws "AWS" "" "Amazon Web Services" {

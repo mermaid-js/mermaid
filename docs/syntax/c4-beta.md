@@ -240,6 +240,36 @@ api --> db : "Reads from and writes to" "SQL/TCP"
 
 Relationships should connect leaf elements; a relationship between two boundaries is rendered, but mermaid logs a warning.
 
+Use `infrastructureNode` for DNS, load balancers, firewalls, and other supporting infrastructure (v\<MERMAID_RELEASE_VERSION>+). Unlike a `deploymentNode`, an infrastructure node renders as a leaf box rather than a boundary, so it can sit inside a deployment node and act as a relationship endpoint:
+
+```mermaid-example
+c4-beta deployment
+title Internet Banking System - Deployment
+
+deploymentNode dc "Big Bank plc data center" "" "Ubuntu" {
+    infrastructureNode lb "Load Balancer" "Routes traffic to web servers." "nginx"
+    deploymentNode web "Web Server" "" "Ubuntu" {
+        container app "Web Application" "Serves the SPA." "Java/Spring MVC"
+    }
+}
+
+lb --> app : "Forwards requests to" "HTTPS"
+```
+
+```mermaid
+c4-beta deployment
+title Internet Banking System - Deployment
+
+deploymentNode dc "Big Bank plc data center" "" "Ubuntu" {
+    infrastructureNode lb "Load Balancer" "Routes traffic to web servers." "nginx"
+    deploymentNode web "Web Server" "" "Ubuntu" {
+        container app "Web Application" "Serves the SPA." "Java/Spring MVC"
+    }
+}
+
+lb --> app : "Forwards requests to" "HTTPS"
+```
+
 ### Tags and styling
 
 Elements and relationships accept `:::tag` markers. A `style` statement assigns visual styles to every element or relationship carrying the tag:

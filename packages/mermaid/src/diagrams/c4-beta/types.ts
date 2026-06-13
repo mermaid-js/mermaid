@@ -8,7 +8,8 @@ export type C4ElementKind =
   | 'container'
   | 'component'
   | 'group'
-  | 'deploymentNode';
+  | 'deploymentNode'
+  | 'infrastructureNode';
 
 export type C4Arrow = '-->' | '<--' | '<-->';
 

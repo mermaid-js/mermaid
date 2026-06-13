@@ -31,6 +31,7 @@ const ELEMENT_COLORS: Partial<Record<C4ElementKind, ElementColors>> = {
   softwareSystem: { fill: '#1168BD', stroke: '#3C7FC0' },
   container: { fill: '#438DD5', stroke: '#3C7FC0' },
   component: { fill: '#85BBF0', stroke: '#78A8D8' },
+  infrastructureNode: { fill: '#8b8b8b', stroke: '#6b6b6b' },
 };
 
 // Human-readable C4 type names rendered as the element stereotype label.
@@ -41,6 +42,7 @@ const ELEMENT_DISPLAY_NAMES: Partial<Record<C4ElementKind, string>> = {
   container: 'Container',
   component: 'Component',
   deploymentNode: 'Deployment Node',
+  infrastructureNode: 'Infrastructure Node',
 };
 
 // Element kinds that are unexpected for a given diagram kind. They still
