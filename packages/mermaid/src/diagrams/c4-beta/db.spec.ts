@@ -426,6 +426,40 @@ describe('c4-beta db', () => {
         expect(nodes[0].cssStyles).toEqual(['fill: #8b8b8b', 'stroke: #6b6b6b']);
       });
 
+      it('should render an instance count badge on a deployment node', async () => {
+        await populate(`c4-beta deployment
+          deploymentNode ec2 "EC2" "" "Ubuntu" instances "4"
+        `);
+        const { nodes } = db.getData();
+        expect(nodes[0].label).toBe(
+          'EC2 [Deployment Node: Ubuntu]<br/><span class="c4-instances">x4</span>'
+        );
+      });
+
+      it('should render an instance range badge on a deployment node', async () => {
+        await populate(`c4-beta deployment
+          deploymentNode ec2 "EC2" "" "Ubuntu" instances "1..N"
+        `);
+        const { nodes } = db.getData();
+        expect(nodes[0].label).toContain('<span class="c4-instances">x1..N</span>');
+      });
+
+      it('should warn about and ignore instances on a non-deploymentNode', async () => {
+        const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+        await populate(`c4-beta deployment
+          deploymentNode web "Web Server" {
+            container app "Web Application" "" "Java" instances "3"
+          }
+        `);
+        const { nodes } = db.getData();
+        const app = nodes.find((n) => n.id === 'app');
+        expect(app?.label).not.toContain('c4-instances');
+        expect(warnSpy).toHaveBeenCalledWith(
+          'c4-beta: instances "3" on container "app" is ignored; instances only apply to deploymentNode elements'
+        );
+        warnSpy.mockRestore();
+      });
+
       it('should let an infrastructureNode be a relationship endpoint', async () => {
         await populate(`c4-beta deployment
           infrastructureNode lb "Load Balancer"

@@ -156,4 +156,17 @@ lb --> app : "Forwards requests to"
     expect(svg).toContain('Load Balancer');
     expect(svg).toContain('Forwards requests to');
   });
+
+  jsdomIt('should render an instance count badge on a deployment node', async () => {
+    const { svg } = await mermaidAPI.render(
+      'c4beta-render-6',
+      `c4-beta deployment
+deploymentNode ec2 "EC2" "" "Ubuntu" instances "4" {
+    container api "API Application" "" "Java"
+}
+`
+    );
+    expect(svg).toContain('c4-instances');
+    expect(svg).toContain('x4');
+  });
 });

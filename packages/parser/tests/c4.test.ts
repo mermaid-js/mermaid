@@ -106,6 +106,24 @@ describe('c4-beta', () => {
       expect(element.technology).toBe('nginx');
     });
 
+    it('should handle an instance count on a deployment node', () => {
+      const result = parse(`c4-beta deployment
+        deploymentNode ec2 "EC2" "" "Ubuntu" instances "4"
+      `);
+      expectNoErrorsOrAlternatives(result);
+      const element = result.value.elements[0];
+      expect(element.kind).toBe('deploymentNode');
+      expect(element.instances).toBe('4');
+    });
+
+    it('should handle an instance range on a deployment node', () => {
+      const result = parse(`c4-beta deployment
+        deploymentNode ec2 "EC2" "" "Ubuntu" instances "1..N"
+      `);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.elements[0].instances).toBe('1..N');
+    });
+
     it('should handle a container with technology', () => {
       const result = parse(`c4-beta container
         container spa "Single-Page App" "Web UI" "JavaScript/Angular"

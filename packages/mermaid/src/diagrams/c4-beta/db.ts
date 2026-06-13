@@ -175,6 +175,14 @@ export class C4BetaDB implements DiagramDB {
         );
         element.technology = undefined;
       }
+      // An instance count only makes sense on a deployment node (how many copies
+      // of that node are deployed). Drop it elsewhere so it is not rendered.
+      if (element.instances && element.kind !== 'deploymentNode') {
+        log.warn(
+          `c4-beta: instances "${element.instances}" on ${element.kind} "${element.id}" is ignored; instances only apply to deploymentNode elements`
+        );
+        element.instances = undefined;
+      }
     }
   }
 
@@ -196,12 +204,17 @@ export class C4BetaDB implements DiagramDB {
 
     for (const element of this.elements) {
       if (boundaryIds.has(element.id)) {
-        const label =
+        let label =
           element.kind === 'deploymentNode'
             ? escapeHtml(
                 `${element.name} [Deployment Node${element.technology ? `: ${element.technology}` : ''}]`
               )
             : escapeHtml(element.name);
+        // Deployment nodes can declare how many instances are deployed; render
+        // it as an "xN" badge line (a positioned corner badge is a future polish).
+        if (element.kind === 'deploymentNode' && element.instances) {
+          label += `<br/><span class="c4-instances">x${escapeHtml(element.instances)}</span>`;
+        }
         nodes.push({
           id: element.id,
           label,

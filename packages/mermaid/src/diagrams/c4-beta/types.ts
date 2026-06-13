@@ -19,6 +19,7 @@ export interface C4BetaElement {
   name: string;
   description?: string;
   technology?: string;
+  instances?: string;
   tags: string[];
   parentId?: string;
 }

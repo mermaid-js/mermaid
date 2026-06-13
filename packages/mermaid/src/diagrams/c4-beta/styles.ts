@@ -104,6 +104,12 @@ const getStyles = (options: C4BetaStyleOptions) =>
     color: ${options.titleColor};
   }
 
+  .c4-instances {
+    font-size: 0.75em;
+    font-weight: bold;
+    opacity: 0.7;
+  }
+
   .c4TitleText {
     text-anchor: middle;
     font-size: 18px;

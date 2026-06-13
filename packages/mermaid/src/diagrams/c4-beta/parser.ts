@@ -13,6 +13,7 @@ const addElement = (db: C4BetaDB, element: C4Element, parentId?: string) => {
     name: element.name,
     description: element.description,
     technology: element.technology,
+    instances: element.instances,
     tags: [...element.tags],
     parentId,
   });

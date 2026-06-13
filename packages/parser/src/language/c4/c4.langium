@@ -26,6 +26,7 @@ C4Element:
     kind=('person' | 'softwareSystem' | 'container' | 'component' | 'group' | 'deploymentNode' | 'infrastructureNode')
     id=ID
     name=STRING (description=STRING (technology=STRING)?)?
+    ('instances' instances=STRING)?
     (tags+=C4_TAG)*
     ('{' (NEWLINE | children+=C4Element)* '}')?
     EOL

@@ -270,6 +270,30 @@ deploymentNode dc "Big Bank plc data center" "" "Ubuntu" {
 lb --> app : "Forwards requests to" "HTTPS"
 ```
 
+A deployment node can declare how many instances are deployed with `instances "<count>"` (v\<MERMAID_RELEASE_VERSION>+). The count is rendered as an `xN` badge on the node and accepts a single number or a range such as `1..N`, `0..1` or `5..10`:
+
+```mermaid-example
+c4-beta deployment
+title Internet Banking System - Deployment
+
+deploymentNode dc "Big Bank plc data center" "" "Ubuntu" {
+    deploymentNode web "bigbank-web" "" "Ubuntu" instances "4" {
+        container app "Web Application" "Serves the SPA." "Java/Spring MVC"
+    }
+}
+```
+
+```mermaid
+c4-beta deployment
+title Internet Banking System - Deployment
+
+deploymentNode dc "Big Bank plc data center" "" "Ubuntu" {
+    deploymentNode web "bigbank-web" "" "Ubuntu" instances "4" {
+        container app "Web Application" "Serves the SPA." "Java/Spring MVC"
+    }
+}
+```
+
 ### Tags and styling
 
 Elements and relationships accept `:::tag` markers. A `style` statement assigns visual styles to every element or relationship carrying the tag:
