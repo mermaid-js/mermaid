@@ -34,7 +34,7 @@ system banking "Internet Banking System" {
 }
 system mainframe "Mainframe Banking System" :::external
 
-customer --> spa : "Uses" "HTTPS"
+customer --> spa : "Views account balances using" "HTTPS"
 spa --> api : "Makes API calls to" "JSON/HTTPS"
 api --> db : "Reads from and writes to" "SQL/TCP"
 api --> mainframe : "Makes API calls to" "XML/HTTPS"`,

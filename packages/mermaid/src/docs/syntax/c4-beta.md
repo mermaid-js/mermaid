@@ -67,15 +67,18 @@ system banking "Internet Banking System" {
     container db "Database" "Stores user credentials." "Oracle 12c"
 }
 
-customer --> spa : "Uses" "HTTPS"
+customer --> spa : "Views account balances using" "HTTPS"
 spa --> api : "Makes API calls to" "JSON/HTTPS"
 api --> db : "Reads from and writes to" "SQL/TCP"
 ```
 
 ### Relationships
 
+In the C4 model every line is a **unidirectional**, specifically-labelled relationship that captures intent and direction of the interaction. Prefer `-->` (and `<--` when you want to point the other way):
+
 ```
-(N:)? <sourceId> -->|<--|<--> <targetId> (: "Description" ("Technology")?)? (:::tag)*
+(N:)? <sourceId> --> <targetId> (: "Description" ("Technology")?)? (:::tag)*
+(N:)? <sourceId> <-- <targetId> (: "Description" ("Technology")?)? (:::tag)*
 ```
 
 ```mermaid-example
@@ -83,7 +86,20 @@ c4-beta context
 system core "Core System"
 system partner "Partner System" :::external
 
-core <--> partner : "Syncs with" "JSON/HTTPS"
+core --> partner : "Pushes settlement records to" "JSON/HTTPS"
+partner --> core : "Returns settlement confirmations to" "JSON/HTTPS"
+```
+
+Label each relationship with a specific verb phrase that explains _why_ the interaction exists ("Pushes settlement records to", "Reads customer profiles from"). Avoid bare labels such as "Uses": they describe a dependency, not an interaction, and make the diagram harder to read.
+
+`<-->` is supported as a shorthand for two relationships drawn in both directions, but it is **discouraged**: a bidirectional arrow hides the two distinct interactions and their separate labels. Prefer two explicit unidirectional relationships instead:
+
+```mermaid-example
+c4-beta context
+system core "Core System"
+system partner "Partner System" :::external
+
+core <--> partner : "Syncs with"
 ```
 
 ### Dynamic diagrams
@@ -174,7 +190,7 @@ direction LR
 person user "User"
 system core "Core System"
 
-user --> core : "Uses"
+user --> core : "Manages accounts using"
 ```
 
 ### Title
