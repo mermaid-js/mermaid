@@ -176,6 +176,54 @@ deploymentNode dc "Big Bank plc data center" "" "Ubuntu" {
 }
 ```
 
+#### Worked example: a live deployment
+
+Putting it together, here is the canonical C4 "Live" deployment of the Internet Banking System: the customer's devices, a data center with load-balanced web and API tiers (each a multi-instance `deploymentNode`), an `infrastructureNode` load balancer in front of them, and a primary database replicating to a failover:
+
+```mermaid-example
+c4-beta deployment
+title Internet Banking System - Live Deployment
+
+deploymentNode mobile "Customer's mobile device" "" "Apple iOS" {
+    container mobileApp "Mobile App" "Provides banking features." "Xamarin"
+}
+deploymentNode computer "Customer's computer" "" "Microsoft Windows or Apple macOS" {
+    deploymentNode browser "Web Browser" "" "Chrome, Firefox, Safari or Edge" {
+        container spa "Single-Page App" "Provides banking features." "JavaScript/Angular"
+    }
+}
+deploymentNode dc "Big Bank plc data center" "" "Big Bank plc" {
+    infrastructureNode lb "Load Balancer" "Routes requests to the web and API tiers." "nginx"
+    deploymentNode webNode "bigbank-web***" "" "Ubuntu 16.04 LTS" instances "4" {
+        deploymentNode webTomcat "Apache Tomcat" "" "Apache Tomcat 8.x" {
+            container webApp "Web Application" "Delivers the static content and the SPA." "Java/Spring MVC"
+        }
+    }
+    deploymentNode apiNode "bigbank-api***" "" "Ubuntu 16.04 LTS" instances "8" {
+        deploymentNode apiTomcat "Apache Tomcat" "" "Apache Tomcat 8.x" {
+            container apiApp "API Application" "Provides banking features via a JSON/HTTPS API." "Java/Spring MVC"
+        }
+    }
+    deploymentNode db01 "bigbank-db01" "" "Ubuntu 16.04 LTS" {
+        deploymentNode oraclePrimary "Oracle - Primary" "" "Oracle 12c" {
+            container dbPrimary "Database" "Stores user accounts and transactions." "Oracle 12c"
+        }
+    }
+    deploymentNode db02 "bigbank-db02" "" "Ubuntu 16.04 LTS" instances "0..1" {
+        deploymentNode oracleSecondary "Oracle - Secondary" "" "Oracle 12c" {
+            container dbSecondary "Database" "Stores user accounts and transactions." "Oracle 12c"
+        }
+    }
+}
+
+mobileApp --> lb : "Makes API calls to" "json/HTTPS"
+spa --> lb : "Makes API calls to" "json/HTTPS"
+lb --> webApp : "Forwards requests to" "HTTPS"
+lb --> apiApp : "Forwards requests to" "HTTPS"
+apiApp --> dbPrimary : "Reads from and writes to" "JDBC"
+dbPrimary --> dbSecondary : "Replicates data to"
+```
+
 ### Tags and styling
 
 Elements and relationships accept `:::tag` markers. A `style` statement assigns visual styles to every element or relationship carrying the tag:
