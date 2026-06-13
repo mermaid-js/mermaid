@@ -218,6 +218,33 @@ describe('c4-beta db', () => {
       warnSpy.mockRestore();
     });
 
+    describe('technology validation', () => {
+      it('should ignore technology on a person and warn', async () => {
+        const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+        await populate(`c4-beta context\nperson x "Name" "Desc" "Tech"\n`);
+        const { nodes } = db.getData();
+        expect(nodes[0].label).not.toContain('Tech');
+        expect(nodes[0].label).toBe('<small>&laquo;person&raquo;</small><br/><b>Name</b><br/>Desc');
+        expect(warnSpy).toHaveBeenCalledOnce();
+        warnSpy.mockRestore();
+      });
+
+      it('should ignore technology on a software system and warn', async () => {
+        const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+        await populate(`c4-beta context\nsystem y "Name" "Desc" "Tech"\n`);
+        const { nodes } = db.getData();
+        expect(nodes[0].label).not.toContain('Tech');
+        expect(warnSpy).toHaveBeenCalledOnce();
+        warnSpy.mockRestore();
+      });
+
+      it('should keep technology on a container', async () => {
+        await populate(`c4-beta container\ncontainer z "Name" "Desc" "Tech"\n`);
+        const { nodes } = db.getData();
+        expect(nodes[0].label).toContain('[Tech]');
+      });
+    });
+
     describe('tag styles', () => {
       it('should apply tag styles to elements after the built-in kind colors', async () => {
         await populate(`c4-beta context

@@ -145,13 +145,22 @@ export class C4BetaDB implements DiagramDB {
     return this.kind;
   }
 
-  private validateKind() {
+  private validateElements() {
     const unexpected = UNEXPECTED_ELEMENT_KINDS[this.kind];
     for (const element of this.elements) {
       if (unexpected.includes(element.kind)) {
         log.warn(
           `c4-beta: element "${element.id}" of kind "${element.kind}" is unexpected in a "${this.kind}" diagram; rendering it anyway`
         );
+      }
+      // In C4 a person and a software system are black boxes: technology only
+      // belongs on containers, components and deployment nodes. Drop it so it
+      // is not rendered in the label.
+      if (element.technology && (element.kind === 'person' || element.kind === 'system')) {
+        log.warn(
+          `c4-beta: technology "${element.technology}" on ${element.kind} "${element.id}" is ignored; technology only applies to container, component and node elements`
+        );
+        element.technology = undefined;
       }
     }
   }
@@ -161,7 +170,7 @@ export class C4BetaDB implements DiagramDB {
     const nodes: Node[] = [];
     const edges: Edge[] = [];
 
-    this.validateKind();
+    this.validateElements();
 
     // Any element containing other elements is rendered as a boundary cluster.
     // Deployment nodes are always clusters, even when they are empty.
