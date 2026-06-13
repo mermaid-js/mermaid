@@ -20,6 +20,7 @@ import { repairPortDirectionMismatchWhenScoreImproves } from './pipeline/portDir
 import { relocateOffEdgeLabelsWhenScoreImproves } from './pipeline/offEdgeLabelRelocation.js';
 import { remediateFlaggedEdgesWhenMonotone } from './pipeline/flaggedEdgeRemediation.js';
 import { spaceNodesOffGroupFramesWhenScoreImproves } from './pipeline/nodeGroupSpacing.js';
+import { reorderSiblingPortsToUncrossWhenScoreImproves } from './pipeline/siblingPortReorder.js';
 import { isEdgeLabelNodeId } from './core/labels.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
 import { reduceCrossingsWithPortSideCandidatesWhenScoreImproves } from './pipeline/crossingPortRepair.js';
@@ -484,6 +485,11 @@ export function layout(data4Layout: LayoutData): void {
   // layered-fallback candidate, so the main path never de-crossed (e.g. Company
   // kept all 5 crossings). Runs last so it sees the final geometry.
   reduceCrossingsWithPortSideCandidatesWhenScoreImproves(data4Layout, { spacing: 10 });
+
+  // Reorder a node side's ports when two of its own edges still cross because
+  // their ports are ordered opposite to their far endpoints; a directed router
+  // re-routes them honouring each port's side. Score-gated.
+  reorderSiblingPortsToUncrossWhenScoreImproves(data4Layout);
 }
 
 /**
