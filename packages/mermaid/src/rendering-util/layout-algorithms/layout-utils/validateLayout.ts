@@ -74,6 +74,38 @@ const EPS_ENDPOINT_BAND = 18;
 /** Two distinct edges sharing an attach point on a node within this distance trips `edge-shared-attachment-point`. */
 const EPS_SHARED_ATTACH = 3;
 
+/**
+ * A non-member leaf node should keep at least this much clear air between itself
+ * and a foreign group frame it faces. Below it, `node-too-close-to-group` fires
+ * as a GRADED SOFT penalty (the closer, the larger), so it never invalidates a
+ * layout — it just rewards spacing the node out.
+ */
+const NODE_GROUP_CLEARANCE = 20;
+/** Soft penalty per crowded node↔group pair: round((CLEARANCE - gap) * SCALE). */
+const NODE_GROUP_CROWD_SCALE = 3;
+/** Cap a single crowded pair's soft penalty. */
+const NODE_GROUP_CROWD_MAX = 60;
+
+/**
+ * The clear gap between two non-overlapping rects that FACE each other (their
+ * projections overlap on one axis), or null when they overlap on both axes
+ * (containment, handled elsewhere) or only meet diagonally (not facing).
+ */
+function rectFacingGap(a: Rect, b: Rect): number | null {
+  const xOverlap = a.left < b.right && b.left < a.right;
+  const yOverlap = a.top < b.bottom && b.top < a.bottom;
+  if (xOverlap && yOverlap) {
+    return null;
+  }
+  if (xOverlap) {
+    return a.top >= b.bottom ? a.top - b.bottom : b.top - a.bottom;
+  }
+  if (yOverlap) {
+    return a.left >= b.right ? a.left - b.right : b.left - a.right;
+  }
+  return null;
+}
+
 /** Per-edge bend penalty as a function of polyline POINT count (post-normalize). */
 function bendPenaltyForPoints(n: number): number {
   if (n <= 3) {
@@ -114,6 +146,7 @@ export type LayoutIssueType =
   | 'edge-parallel-segment-too-close'
   | 'edge-border-hugging'
   | 'node-border-hugging'
+  | 'node-too-close-to-group'
   | 'edge-label-off-edge'
   | 'edge-endpoint-inside-node'
   | 'edge-label-overlaps-foreign-edge'
@@ -759,6 +792,50 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
         });
         break; // one issue per node
       }
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // 1c) Node-vs-group crowding (SOFT, graded)
+  //
+  // A non-member leaf node parked right up against a foreign group's frame reads
+  // as cramped (e.g. subgraph-variation's P5 only 10px off the P1.5 subgraph;
+  // P1 15.8px above it). Unlike border-hugging (a node running flush ALONG the
+  // frame), this catches a node FACING the frame across too small a gap. The
+  // penalty is GRADED and SOFT: the closer below NODE_GROUP_CLEARANCE, the larger
+  // — so it never invalidates (a hard rule would mass-regress fixtures like
+  // deploy-pipeline, whose D/E sit ~9–12px off their subgraph), it just rewards
+  // spacing the node out. Swimlane lanes use a different spacing model and are
+  // excluded.
+  // ─────────────────────────────────────────────────────────────────────────────
+  for (const n of nodes) {
+    if (n?.id == null || n.isGroup || isLabelDummy(n)) {
+      continue;
+    }
+    const nId = String(n.id);
+    const nr = nodeRects.get(nId);
+    if (!nr) {
+      continue;
+    }
+    for (const [gId, gRect] of groupBorderRects) {
+      const groupNode = byId.get(gId);
+      if (isAncestorGroup(gId, n, byId) || isSwimlaneGroup(groupNode)) {
+        continue;
+      }
+      const gap = rectFacingGap(nr, gRect);
+      if (gap == null || gap <= 0 || gap >= NODE_GROUP_CLEARANCE) {
+        continue;
+      }
+      const penalty = Math.min(
+        NODE_GROUP_CROWD_MAX,
+        Math.round((NODE_GROUP_CLEARANCE - gap) * NODE_GROUP_CROWD_SCALE)
+      );
+      issues.push({
+        type: 'node-too-close-to-group',
+        message: `Node "${nId}" is only ${gap.toFixed(1)} from group "${gId}" frame (< ${NODE_GROUP_CLEARANCE})`,
+        nodeIds: [nId, gId],
+        details: { gap, clearance: NODE_GROUP_CLEARANCE, softPenalty: penalty },
+      });
     }
   }
 
@@ -1631,12 +1708,21 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
   // explicit — promoting an issue to soft changes the headline score model.
   const SOFT_PENALTY_BY_TYPE: Partial<Record<LayoutIssueType, number>> = {
     'edge-bend-overlaps-arrowhead': 50,
+    // Graded: the actual amount is carried per-issue in details.softPenalty.
+    'node-too-close-to-group': 0,
   };
+  const isSoftType = (t: LayoutIssueType): boolean => SOFT_PENALTY_BY_TYPE[t] !== undefined;
   const softPenalty = issues.reduce(
-    (sum, issue) => sum + (SOFT_PENALTY_BY_TYPE[issue.type] ?? 0),
+    (sum, issue) =>
+      sum +
+      (isSoftType(issue.type)
+        ? ((issue.details?.softPenalty as number | undefined) ??
+          SOFT_PENALTY_BY_TYPE[issue.type] ??
+          0)
+        : 0),
     0
   );
-  const hardIssues = issues.filter((issue) => SOFT_PENALTY_BY_TYPE[issue.type] == null);
+  const hardIssues = issues.filter((issue) => !isSoftType(issue.type));
 
   const ok = hardIssues.length === 0;
   const rawScore = MAX_SCORE - totalBendPenalty - crossingPenalty - softPenalty;
