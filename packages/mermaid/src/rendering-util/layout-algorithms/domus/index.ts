@@ -478,6 +478,12 @@ export function layout(data4Layout: LayoutData): void {
   // Place any label the validator flags as off-edge back onto its (now final)
   // polyline at a clear anchor. Score-gated; runs last so the route is settled.
   relocateOffEdgeLabelsWhenScoreImproves(data4Layout);
+
+  // Reduce edge-edge crossings on the fully settled, valid routes via rail
+  // shifts / endpoint detours. Score-gated; previously only ran on the
+  // layered-fallback candidate, so the main path never de-crossed (e.g. Company
+  // kept all 5 crossings). Runs last so it sees the final geometry.
+  reduceCrossingsWithPortSideCandidatesWhenScoreImproves(data4Layout, { spacing: 10 });
 }
 
 /**
