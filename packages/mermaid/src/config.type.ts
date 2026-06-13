@@ -120,6 +120,12 @@ export interface MermaidConfig {
      */
     nodePlacementStrategy?: 'SIMPLE' | 'NETWORK_SIMPLEX' | 'LINEAR_SEGMENTS' | 'BRANDES_KOEPF';
     /**
+     * Elk specific option affecting Brandes-Koepf node placement alignment.
+     * NONE picks the alignment with the smallest height.
+     *
+     */
+    nodePlacementAlignment?: 'NONE' | 'LEFTUP' | 'LEFTDOWN' | 'RIGHTUP' | 'RIGHTDOWN' | 'BALANCED';
+    /**
      * This strategy decides how to find cycles in the graph and deciding which edges need adjustment to break loops.
      *
      */
@@ -139,6 +145,15 @@ export interface MermaidConfig {
      *
      */
     considerModelOrder?: 'NONE' | 'NODES_AND_EDGES' | 'PREFER_EDGES' | 'PREFER_NODES';
+    /**
+     * Elk specific option that keeps the entry node of a recursive flow at the top of the layout.
+     *
+     * When a flow loops back on itself (a back-edge to an earlier node), ELK's degree-based cycle-breaking has no notion of an "entry point" and may rank the first-declared node in the middle, scrambling the reading order. When enabled, the entry node of each cyclic component is pinned to the first layer so the diagram still reads from its entry. Acyclic flows always have a natural source, so this has no effect on them.
+     *
+     * Only applies when the cyclic flow has no node without incoming edges: if the loop is fed from outside (e.g. a start node pointing into it), that component already has a natural source and nothing is pinned. Detection is also scoped per container, so cycles that cross a subgraph boundary are not detected.
+     *
+     */
+    keepEntryNodeOnTop?: boolean;
   };
   darkMode?: boolean;
   /**
@@ -217,6 +232,7 @@ export interface MermaidConfig {
    */
   deterministicIDSeed?: string;
   flowchart?: FlowchartDiagramConfig;
+  swimlane?: SwimlaneDiagramConfig;
   sequence?: SequenceDiagramConfig;
   gantt?: GanttDiagramConfig;
   journey?: JourneyDiagramConfig;
@@ -243,6 +259,7 @@ export interface MermaidConfig {
   venn?: VennDiagramConfig;
   'wardley-beta'?: WardleyDiagramConfig;
   cynefin?: CynefinDiagramConfig;
+  railroad?: RailroadDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
@@ -364,6 +381,38 @@ export interface BaseDiagramConfig {
    *
    */
   useMaxWidth?: boolean;
+}
+/**
+ * The object containing configurations specific for the swimlanes diagram type.
+ *
+ * Swimlanes reuses the flowchart renderer and flowchart config for shared
+ * options (curve, htmlLabels, spacing, …); this block holds the knobs that
+ * only affect the swimlanes layout pipeline.
+ *
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "SwimlaneDiagramConfig".
+ */
+export interface SwimlaneDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Renders edge crossings as small arcs ("hops") or visible gaps so that
+   * overlapping edges are easier to read. Set to `false` to disable. Edges
+   * rendered as curves are skipped to avoid corrupting the geometry.
+   *
+   */
+  lineHops?: boolean | ('arc' | 'gap');
+  /**
+   * Ignores edges that cross swimlane boundaries during swimlane layer
+   * assignment. This can improve rank quality for diagrams with many
+   * cross-lane links.
+   *
+   */
+  ignoreCrossLaneEdges?: boolean;
+  /**
+   * Enables a crossing-aware rank optimization pass for swimlane layouts.
+   *
+   */
+  optimizeRanksByCrossings?: boolean;
 }
 /**
  * The object containing configurations specific for sequence diagrams
@@ -913,6 +962,21 @@ export interface PieDiagramConfig extends BaseDiagramConfig {
    *
    */
   textPosition?: number;
+  /**
+   * Donut hole ratio. Valid value are from 0 to 0.9. Default to 0.
+   *
+   */
+  donutHole?: number;
+  /**
+   * Legend's position relative to the chart. Default to right.
+   *
+   */
+  legendPosition?: 'top' | 'bottom' | 'left' | 'right' | 'center';
+  /**
+   * Highlight specific slice with matching label. Set to 'hover' to highlight hovered slice.
+   *
+   */
+  highlightSlice?: string;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
@@ -1027,6 +1091,18 @@ export interface XYChartConfig extends BaseDiagramConfig {
    * Should show the chart title
    */
   showTitle?: boolean;
+  /**
+   * Should show a legend for named plots
+   */
+  showLegend?: boolean;
+  /**
+   * Font size of the legend text
+   */
+  legendFontSize?: number;
+  /**
+   * Padding around the legend
+   */
+  legendPadding?: number;
   xAxis?: XYChartAxisConfig;
   yAxis?: XYChartAxisConfig;
   /**
@@ -1089,6 +1165,10 @@ export interface XYChartAxisConfig {
    * Width of the axis line
    */
   axisLineWidth?: number;
+  /**
+   * Label rotation in degrees
+   */
+  labelRotation?: number;
 }
 /**
  * The object containing configurations specific for req diagrams
@@ -1119,8 +1199,11 @@ export interface ArchitectureDiagramConfig extends BaseDiagramConfig {
   fontSize?: number;
   /**
    * Whether to randomize initial node positions before running the layout algorithm.
-   * When false (default), the layout is deterministic and produces identical results on every render.
-   * When true, nodes start at random positions, which may produce varied but potentially better-spaced layouts.
+   * When false (default), nodes start at deterministic seed positions. When true, nodes
+   * start at random positions, which may produce varied but potentially better-spaced
+   * layouts. Note: `randomize: false` alone does NOT guarantee identical renders, because
+   * the underlying fcose layout still uses `Math.random()` internally during its
+   * constraint solver — use the `seed` option for full determinism.
    *
    */
   randomize?: boolean;
@@ -1151,6 +1234,15 @@ export interface ArchitectureDiagramConfig extends BaseDiagramConfig {
    *
    */
   numIter?: number;
+  /**
+   * Deterministic seed for the fcose layout. Defaults to 1, which makes every render of the
+   * same diagram produce the same layout — required for visual regression tests to be stable.
+   * Set to 0 to opt out and use the unstubbed Math.random (the layout will still differ
+   * slightly between renders, matching pre-fix behavior). Any other number selects a
+   * different reproducible layout variant.
+   *
+   */
+  seed?: number;
 }
 /**
  * The object containing configurations specific for mindmap diagrams
@@ -1875,6 +1967,118 @@ export interface CynefinDiagramConfig extends BaseDiagramConfig {
    * Waviness amplitude of domain boundaries (0 for straight).
    */
   boundaryAmplitude?: number;
+  /**
+   * Deterministic seed for boundary waviness. When 0 (default) the seed is derived
+   * from the diagram's SVG element id, which varies per render. Set any non-zero
+   * number to produce identical boundaries on every render — required for visual
+   * regression tests to be stable.
+   *
+   */
+  seed?: number;
+}
+/**
+ * Configuration for Railroad (Syntax) Diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "RailroadDiagramConfig".
+ */
+export interface RailroadDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Use compact layout mode
+   */
+  compactMode?: boolean;
+  /**
+   * Padding around elements
+   */
+  padding?: number;
+  /**
+   * Vertical separation between elements
+   */
+  verticalSeparation?: number;
+  /**
+   * Horizontal separation between elements
+   */
+  horizontalSeparation?: number;
+  /**
+   * Radius for curved paths
+   */
+  arcRadius?: number;
+  /**
+   * Font size for text
+   */
+  fontSize?: number;
+  /**
+   * Font family for text
+   */
+  fontFamily?: string;
+  /**
+   * Fill color for terminal elements
+   */
+  terminalFill?: string;
+  /**
+   * Stroke color for terminal elements
+   */
+  terminalStroke?: string;
+  /**
+   * Text color for terminal elements
+   */
+  terminalTextColor?: string;
+  /**
+   * Fill color for non-terminal elements
+   */
+  nonTerminalFill?: string;
+  /**
+   * Stroke color for non-terminal elements
+   */
+  nonTerminalStroke?: string;
+  /**
+   * Text color for non-terminal elements
+   */
+  nonTerminalTextColor?: string;
+  /**
+   * Color for connection lines
+   */
+  lineColor?: string;
+  /**
+   * Width of strokes
+   */
+  strokeWidth?: number;
+  /**
+   * Fill color for start/end markers
+   */
+  markerFill?: string;
+  /**
+   * Fill color for comments
+   */
+  commentFill?: string;
+  /**
+   * Stroke color for comments
+   */
+  commentStroke?: string;
+  /**
+   * Text color for comments
+   */
+  commentTextColor?: string;
+  /**
+   * Fill color for special sequences
+   */
+  specialFill?: string;
+  /**
+   * Stroke color for special sequences
+   */
+  specialStroke?: string;
+  /**
+   * Color for rule names
+   */
+  ruleNameColor?: string;
+  /**
+   * Show start/end markers
+   */
+  showMarkers?: boolean;
+  /**
+   * Radius of start/end markers
+   */
+  markerRadius?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

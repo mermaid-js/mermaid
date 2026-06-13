@@ -120,6 +120,7 @@ class Theme {
     this.noteBorderColor = this.border2;
     this.noteTextColor = this.actorTextColor;
     this.actorLineColor = this.actorBorder;
+    this.rectBkgColor = this.rectBkgColor || this.tertiaryColor;
 
     /* Each color-set will have a background, a foreground and a border color */
     this.cScale0 = this.cScale0 || this.primaryColor;
@@ -343,6 +344,7 @@ class Theme {
       backgroundColor: this.xyChart?.backgroundColor || this.background,
       titleColor: this.xyChart?.titleColor || this.primaryTextColor,
       dataLabelColor: this.xyChart?.dataLabelColor || this.primaryTextColor,
+      legendTextColor: this.xyChart?.legendTextColor || this.primaryTextColor,
       xAxisTitleColor: this.xyChart?.xAxisTitleColor || this.primaryTextColor,
       xAxisLabelColor: this.xyChart?.xAxisLabelColor || this.primaryTextColor,
       xAxisTickColor: this.xyChart?.xAxisTickColor || this.primaryTextColor,

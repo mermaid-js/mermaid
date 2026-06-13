@@ -53,6 +53,28 @@ venn-beta
   union A,B["AB"]
 ```
 
+### Higher-arity unions
+
+`union` accepts three or more set names. The diagram renders the implied
+pairwise overlaps automatically, so the label on the higher-arity union has a
+visible region to sit in:
+
+```mermaid-example
+venn-beta
+  set Desirable
+  set Feasible
+  set Viable
+  union Desirable,Feasible,Viable["Innovation"]
+```
+
+```mermaid
+venn-beta
+  set Desirable
+  set Feasible
+  set Viable
+  union Desirable,Feasible,Viable["Innovation"]
+```
+
 ### Sizes
 
 Use `:N` suffix to set the size of a set or union:

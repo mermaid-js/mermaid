@@ -98,6 +98,18 @@ radar-beta
   max 100
   min 0`,
 
+  railroad: `railroad-diagram
+    rule = choice(terminal("a"), terminal("b")) ;`,
+
+  railroadEbnf: `railroad-ebnf
+    rule = "a" | "b" ;`,
+
+  railroadAbnf: `railroad-abnf
+    rule = "a" / "b" ;`,
+
+  railroadPeg: `railroad-peg
+    rule <- "a" / "b" ;`,
+
   treemap: `treemap-beta
 "Section 1"
     "Leaf 1.1": 12
@@ -269,6 +281,7 @@ describe('Multi-diagram ID uniqueness', () => {
     'state', // legacy alias, covered by stateDiagram
     'flowchart-elk', // ELK layout variant, same renderer as flowchart-v2
     'mindmap', // uses unified pipeline (IDs are prefixed), but cytoscape crashes in JSDOM
+    'swimlane', // reuses the flowchart renderer (createFlowDiagram); IDs covered by flowchart-v2
   ]);
 
   it('"journey" — task line IDs are scoped with the diagram ID', async () => {

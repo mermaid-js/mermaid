@@ -1135,4 +1135,82 @@ flowchart LR
       {}
     );
   });
+
+  it('elk: should merge edges within subgraphs when elk.mergeEdges is true (#7659)', () => {
+    imgSnapshotTest(
+      `---
+config:
+    layout: elk
+    elk:
+        mergeEdges: true
+---
+flowchart TD
+    subgraph S1
+        A & B --> C
+    end
+    subgraph S2
+        D
+        E
+        F
+    end
+    D & E --> F
+      `,
+      {}
+    );
+  });
+
+  it('elk: recursive flow with elk.keepEntryNodeOnTop=false keeps the default layout (#7827)', () => {
+    imgSnapshotTest(
+      `---
+config:
+    layout: elk
+    elk:
+        keepEntryNodeOnTop: false
+---
+flowchart TD
+    brief --> web_sources --> academic_sources --> expert_voices --> synthesize --> decision
+    decision -->|Needs completion| brief
+    decision -->|If complete| format_output
+      `,
+      {}
+    );
+  });
+
+  it('elk: should keep the entry node on top when a flow recurses with elk.keepEntryNodeOnTop=true (#7827)', () => {
+    imgSnapshotTest(
+      `---
+config:
+    layout: elk
+    elk:
+        keepEntryNodeOnTop: true
+---
+flowchart TD
+    brief --> web_sources --> academic_sources --> expert_voices --> synthesize --> decision
+    decision -->|Needs completion| brief
+    decision -->|If complete| format_output
+      `,
+      {}
+    );
+  });
+
+  it('elk: should keep the entry node on top of a recursive flow nested in a subgraph with elk.keepEntryNodeOnTop=true (#7827)', () => {
+    imgSnapshotTest(
+      `---
+config:
+    layout: elk
+    elk:
+        keepEntryNodeOnTop: true
+---
+flowchart TD
+    start([Start]) --> research
+    research --> done([Done])
+    subgraph research["Research"]
+      brief --> web_sources --> academic_sources --> expert_voices --> synthesize --> decision
+      decision -->|Needs completion| brief
+      decision -->|If complete| format_output
+    end
+      `,
+      {}
+    );
+  });
 });

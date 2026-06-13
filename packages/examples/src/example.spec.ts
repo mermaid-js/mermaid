@@ -19,6 +19,7 @@ describe('examples', () => {
       'flowchart-elk',
       'flowchart',
       'state',
+      'swimlane', // reuses flowchart parser/db/renderer; examples covered by flowchart
     ];
     const diagrams = mermaid
       .getRegisteredDiagramsMetadata()
@@ -29,6 +30,19 @@ describe('examples', () => {
       expect(data, `Example for ${diagram.id} is not defined`).toBeDefined();
       expect(data.examples.length).toBeGreaterThan(0);
       expect(data.examples.filter((e) => e.isDefault).length).toBe(1);
+    }
+  });
+
+  describe('should have valid examples', () => {
+    for (const diagram of diagramData) {
+      for (const example of diagram.examples) {
+        it(`${diagram.name}: ${example.title}`, async () => {
+          await expect(
+            mermaid.parse(example.code),
+            `Example "${example.title}" of ${diagram.id} does not parse`
+          ).resolves.toBeTruthy();
+        });
+      }
     }
   });
 });

@@ -247,6 +247,28 @@ erDiagram
 
 The `type` values must begin with an alphabetic character and may contain digits, hyphens, underscores, parentheses and square brackets. The `name` values follow a similar format to `type`, but may start with an asterisk as another option to indicate an attribute is a primary key. Other than that, there are no restrictions, and there is no implicit set of valid data types.
 
+#### Optional attribute types (v\<MERMAID_RELEASE_VERSION>+)
+
+Attribute `type` values may end with `?` to indicate an optional or nullable type.
+
+```mermaid-example
+erDiagram
+    PERSON {
+        string firstName
+        string? middleName
+        string lastName
+    }
+```
+
+```mermaid
+erDiagram
+    PERSON {
+        string firstName
+        string? middleName
+        string lastName
+    }
+```
+
 ### Entity Name Aliases
 
 An alias can be added to an entity using square brackets. If provided, the alias will be showed in the diagram instead of the entity name. Alias names follow all of the same rules as entity names.
@@ -425,6 +447,210 @@ Possible diagram orientations are:
 - BT - Bottom to top
 - RL - Right to left
 - LR - Left to right
+
+### Subgraphs (v\<MERMAID_RELEASE_VERSION>+)
+
+Subgraphs allow grouping entities into logical sections within an ER diagram. They are useful for organizing
+complex diagrams and improving readability.
+
+Subgraphs can contain entities, relationships, and even other subgraphs (nested subgraphs).
+
+```
+subgraph title
+    graph definition
+end
+```
+
+An example below:
+
+```mermaid-example
+erDiagram
+    subgraph title1
+        CUSTOMER
+        CUSTOMER {
+            string name
+            string custNumber
+            string sector
+        }
+    end
+    subgraph title2
+        CAR ||--o{ NAMED-DRIVER : allows
+        subgraph title3
+            PERSON
+            PERSON {
+                string firstName
+                string lastName
+                int age
+            }
+        end
+    end
+```
+
+```mermaid
+erDiagram
+    subgraph title1
+        CUSTOMER
+        CUSTOMER {
+            string name
+            string custNumber
+            string sector
+        }
+    end
+    subgraph title2
+        CAR ||--o{ NAMED-DRIVER : allows
+        subgraph title3
+            PERSON
+            PERSON {
+                string firstName
+                string lastName
+                int age
+            }
+        end
+    end
+```
+
+A subgraph always has an `id`, and optionally a `title`.
+
+If the subgraph name is a single word, it is used as both id and title:
+
+```mermaid-example
+erDiagram
+    subgraph title1
+        CUSTOMER
+    end
+```
+
+```mermaid
+erDiagram
+    subgraph title1
+        CUSTOMER
+    end
+```
+
+If the subgraph identifier contains more than one word, it must be written in `quotes`. In this case, the quoted value is used both as the id and the title.
+
+```mermaid-example
+erDiagram
+    subgraph "Customer Domain"
+        CUSTOMER
+    end
+```
+
+```mermaid
+erDiagram
+    subgraph "Customer Domain"
+        CUSTOMER
+    end
+```
+
+You can also set an explicit id for the subgraph.
+
+```mermaid-example
+erDiagram
+    subgraph id1 [title 1]
+        CUSTOMER
+    end
+```
+
+```mermaid
+erDiagram
+    subgraph id1 [title 1]
+        CUSTOMER
+    end
+```
+
+> **Note**
+> Subgraphs are always referenced by their id, never by their title.
+>
+> This is important when defining relationships involving subgraphs.
+>
+> **If a subgraph id contains spaces, it must be referenced using quotes:**
+>
+> `"Customer Domain" ||--o{ ORDER : contains`
+
+#### Relationships involving subgraphs
+
+It is also possible to define relationships to and from subgraphs.
+
+```mermaid-example
+erDiagram
+    subgraph title1
+        A1 ||--|| A2 : links
+    end
+
+    subgraph title2
+        B1 ||--|| B2 : links
+    end
+
+    subgraph title3
+        C1 ||--|| C2 : links
+    end
+
+    title1 ||--|| title2 : links
+    title2 ||--|| title3 : links
+    title2 ||--|| C2 : links
+```
+
+```mermaid
+erDiagram
+    subgraph title1
+        A1 ||--|| A2 : links
+    end
+
+    subgraph title2
+        B1 ||--|| B2 : links
+    end
+
+    subgraph title3
+        C1 ||--|| C2 : links
+    end
+
+    title1 ||--|| title2 : links
+    title2 ||--|| title3 : links
+    title2 ||--|| C2 : links
+```
+
+#### Direction in subgraphs
+
+A subgraph can define its own layout direction.
+
+```mermaid-example
+erDiagram
+    direction LR
+    subgraph TOP
+        direction TB
+        subgraph B1
+            direction RL
+            I1 ||--|| F1 : links
+        end
+        subgraph B2
+            direction BT
+            I2 ||--|| F2 : links
+        end
+    end
+    A ||--|| TOP : links
+    TOP ||--|| B : links
+    B1 ||--|| B2 : links
+```
+
+```mermaid
+erDiagram
+    direction LR
+    subgraph TOP
+        direction TB
+        subgraph B1
+            direction RL
+            I1 ||--|| F1 : links
+        end
+        subgraph B2
+            direction BT
+            I2 ||--|| F2 : links
+        end
+    end
+    A ||--|| TOP : links
+    TOP ||--|| B : links
+    B1 ||--|| B2 : links
+```
 
 ### Styling a node
 

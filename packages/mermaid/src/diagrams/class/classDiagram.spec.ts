@@ -481,6 +481,49 @@ describe('given a basic class diagram, ', function () {
       expect(c2.cssClasses).toBe('default styleClass2');
     });
 
+    it('should apply cssClasses to generic classes', () => {
+      const str = 'classDiagram\n' + 'class C1~T~\n' + 'cssClass "C1~T~" styleClass';
+
+      parser.parse(str);
+
+      const c1 = classDb.getClass('C1');
+      expect(c1.cssClasses).toBe('default styleClass');
+    });
+
+    it('should apply cssClasses to generic classes via shorthand', () => {
+      const str = 'classDiagram\n' + 'class C1~T~:::styleClass';
+
+      parser.parse(str);
+
+      const c1 = classDb.getClass('C1');
+      expect(c1.cssClasses).toBe('default styleClass');
+    });
+
+    it('should bind click event on generic class', () => {
+      const str = 'classDiagram\n' + 'class C1~T~\n' + 'click C1~T~ call someFunction()';
+
+      parser.parse(str);
+      const c1 = classDb.getClass('C1');
+      expect(c1.haveCallback).toBe(true);
+    });
+
+    it('should bind tooltip on generic class', () => {
+      const str = 'classDiagram\n' + 'class C1~T~\n' + 'click C1~T~ call cb() "a tip"';
+
+      parser.parse(str);
+      const c1 = classDb.getClass('C1');
+      expect(c1.tooltip).toBe('a tip');
+    });
+
+    it('should bind link on generic class', () => {
+      const str = 'classDiagram\n' + 'class C1~T~\n' + 'link C1~T~ "https://example.com"';
+
+      parser.parse(str);
+      const c1 = classDb.getClass('C1');
+      expect(c1.link).toBe('https://example.com/');
+      expect(c1.cssClasses).toBe('default clickable');
+    });
+
     it('should parse multiple classes with same text labels', () => {
       parser.parse(`classDiagram
 class C1["Class with text label"]
@@ -682,7 +725,7 @@ class C13["With Città foreign language"]
         {
           "annotations": [],
           "cssClasses": "default",
-          "domId": "classId-Student-149",
+          "domId": "classId-Student-154",
           "id": "Student",
           "label": "Student",
           "members": [

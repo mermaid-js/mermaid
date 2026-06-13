@@ -1,0 +1,11 @@
+swimlane LR
+      subgraph Dep1
+        Start
+        Process1
+      end
+      subgraph Dep2
+       Process2
+       Process3
+      end
+
+      Start --> Process1 --> Process2 --> Process3

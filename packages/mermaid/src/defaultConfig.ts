@@ -24,8 +24,10 @@ const config: RequiredDeep<MermaidConfig> = {
     // mergeEdges is needed here to be considered
     mergeEdges: false,
     nodePlacementStrategy: 'BRANDES_KOEPF',
+    nodePlacementAlignment: 'NONE',
     forceNodeModelOrder: false,
     considerModelOrder: 'NODES_AND_EDGES',
+    keepEntryNodeOnTop: false,
   },
   themeCSS: undefined,
 
@@ -271,6 +273,26 @@ const config: RequiredDeep<MermaidConfig> = {
   },
   radar: {
     ...defaultConfigJson.radar,
+  },
+  railroad: {
+    ...defaultConfigJson.railroad,
+    // Railroad colors and typography derive from the active theme unless explicitly overridden.
+    fontSize: undefined,
+    fontFamily: undefined,
+    terminalFill: undefined,
+    terminalStroke: undefined,
+    terminalTextColor: undefined,
+    nonTerminalFill: undefined,
+    nonTerminalStroke: undefined,
+    nonTerminalTextColor: undefined,
+    lineColor: undefined,
+    markerFill: undefined,
+    commentFill: undefined,
+    commentStroke: undefined,
+    commentTextColor: undefined,
+    specialFill: undefined,
+    specialStroke: undefined,
+    ruleNameColor: undefined,
   },
   ishikawa: {
     ...defaultConfigJson.ishikawa,

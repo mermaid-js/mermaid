@@ -164,6 +164,7 @@ function sidebarSyntax() {
       collapsed: false,
       items: [
         { text: 'Flowchart', link: '/syntax/flowchart' },
+        { text: 'Swimlanes Diagram', link: '/syntax/swimlanes' },
         { text: 'Sequence Diagram', link: '/syntax/sequenceDiagram' },
         { text: 'Class Diagram', link: '/syntax/classDiagram' },
         { text: 'State Diagram', link: '/syntax/stateDiagram' },

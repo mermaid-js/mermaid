@@ -375,6 +375,35 @@ describe('Gantt diagram', () => {
       `
     );
   });
+  it('should render vertical markers without creating extra rows and show their labels', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        dateFormat HH:mm
+        axisFormat %H:%M
+        Initial vert : vert, v1, 17:30, 2m
+        Initial vert : vert, v1, 17:30, 2m
+        Initial vert : vert, v1, 17:30, 2m
+        Initial vert : vert, v1, 17:30, 2m
+        Initial vert : vert, v1, 17:30, 2m
+        Initial vert : vert, v1, 17:30, 2m
+        Task A : 3m
+        Middle vert : vert, v3, 17:45, 2m
+        Middle vert : vert, v3, 17:45, 2m
+        Middle vert : vert, v3, 17:45, 2m
+        Middle vert : vert, v3, 17:45, 2m
+        Middle vert : vert, v3, 17:45, 2m
+        Middle vert : vert, v3, 17:45, 2m
+        Task B : 8m
+        Final vert : vert, v2, 17:58, 4m
+        Final vert : vert, v2, 17:58, 4m
+        Final vert : vert, v2, 17:58, 4m
+        Final vert : vert, v2, 17:58, 4m
+        Final vert : vert, v2, 17:58, 4m
+        Final vert : vert, v2, 17:58, 4m
+      `
+    );
+  });
   it('should render a gantt diagram with tick is 2 milliseconds', () => {
     imgSnapshotTest(
       `
@@ -916,6 +945,23 @@ describe('Gantt diagram', () => {
       A very long label that will not fit inside the short bar :crit, done, 2014-01-06, 1d
       `,
       { theme: 'dark' }
+    );
+  });
+  it('should render multi-line excludes (issue #6270)', () => {
+    imgSnapshotTest(
+      `
+    gantt
+      dateFormat  YYYY-MM-DD
+      title Multi-line excludes
+      excludes weekends
+      %% mid-January closures
+      excludes 2014-01-15 2014-01-16
+      %% one-off holiday
+      excludes 2014-01-20
+
+      section A section
+      Task across closures :a1, 2014-01-13, 14d
+      `
     );
   });
 });
