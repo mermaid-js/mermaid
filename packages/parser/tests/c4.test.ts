@@ -79,6 +79,32 @@ describe('c4-beta', () => {
       expect(element.tags).toContain('external');
     });
 
+    it('should accept the softwareSystem keyword alias', () => {
+      const long = parse(`c4-beta context
+        softwareSystem banking "Internet Banking System"
+      `);
+      const short = parse(`c4-beta context
+        system banking "Internet Banking System"
+      `);
+      expectNoErrorsOrAlternatives(long);
+      expectNoErrorsOrAlternatives(short);
+      expect(long.value.elements[0].kind).toBe('softwareSystem');
+      expect(short.value.elements[0].kind).toBe('system');
+    });
+
+    it('should accept the deploymentNode keyword alias', () => {
+      const long = parse(`c4-beta deployment
+        deploymentNode aws "AWS"
+      `);
+      const short = parse(`c4-beta deployment
+        node aws "AWS"
+      `);
+      expectNoErrorsOrAlternatives(long);
+      expectNoErrorsOrAlternatives(short);
+      expect(long.value.elements[0].kind).toBe('deploymentNode');
+      expect(short.value.elements[0].kind).toBe('node');
+    });
+
     it('should handle a container with technology', () => {
       const result = parse(`c4-beta container
         container spa "Single-Page App" "Web UI" "JavaScript/Angular"

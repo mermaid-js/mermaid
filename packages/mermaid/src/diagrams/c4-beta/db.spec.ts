@@ -82,6 +82,24 @@ describe('c4-beta db', () => {
     expect(db.getRelationships()[0].tags).toEqual(['async']);
   });
 
+  it('should normalize the softwareSystem alias to the system kind', async () => {
+    await populate(`c4-beta context\nsoftwareSystem banking "Internet Banking System"\n`);
+    const element = db.getElements()[0];
+    expect(element.kind).toBe('system');
+    const { nodes } = db.getData();
+    expect(nodes[0].cssClasses).toBe('c4-shape c4-system');
+    expect(nodes[0].label).toContain('&laquo;system&raquo;');
+  });
+
+  it('should normalize the deploymentNode alias to the node kind', async () => {
+    await populate(`c4-beta deployment\ndeploymentNode aws "AWS" "" "Cloud"\n`);
+    const element = db.getElements()[0];
+    expect(element.kind).toBe('node');
+    const { nodes } = db.getData();
+    expect(nodes[0].cssClasses).toBe('c4-boundary c4-node');
+    expect(nodes[0].label).toBe('AWS [Node: Cloud]');
+  });
+
   describe('getData', () => {
     it('should map a person element to a styled node', async () => {
       await populate(exampleDiagram);

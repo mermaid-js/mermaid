@@ -23,7 +23,7 @@ fragment Direction:
 ;
 
 C4Element:
-    kind=('person' | 'system' | 'container' | 'component' | 'group' | 'node')
+    kind=('person' | 'system' | 'softwareSystem' | 'container' | 'component' | 'group' | 'node' | 'deploymentNode')
     id=ID
     name=STRING (description=STRING (technology=STRING)?)?
     (tags+=C4_TAG)*
