@@ -164,7 +164,7 @@ union A, B`,
 
   c4beta: `c4-beta context
     person user "User"
-    system core "System"
+    softwareSystem core "System"
     user --> core : "Uses"`,
 
   block: `block-beta

@@ -26,10 +26,10 @@ c4-beta context
 style critical stroke:#cc0000
 
 person customer "Personal Banking Customer"
-system banking "Internet Banking System"
+softwareSystem banking "Internet Banking System"
 container spa "Single-Page App"
 component login "Login Controller"
-system mainframe "Mainframe Banking System" :::external
+softwareSystem mainframe "Mainframe Banking System" :::external
 
 customer --> banking : "Views accounts using"
 banking --> mainframe : "Gets account information from" :::critical
@@ -46,10 +46,10 @@ c4-beta context
 style critical stroke:#cc0000
 
 person customer "Personal Banking Customer"
-system banking "Internet Banking System"
+softwareSystem banking "Internet Banking System"
 container spa "Single-Page App"
 component login "Login Controller"
-system mainframe "Mainframe Banking System" :::external
+softwareSystem mainframe "Mainframe Banking System" :::external
 
 customer --> banking : "Views accounts using"
 banking --> mainframe : "Gets account information from" :::critical

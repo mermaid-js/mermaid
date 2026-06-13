@@ -21,9 +21,9 @@
       title Internet Banking System - System Context
 
       person customer "Personal Banking Customer" "A customer of the bank."
-      system banking "Internet Banking System" "Allows customers to view accounts and make payments."
-      system mainframe "Mainframe Banking System" "Stores core banking information." :::external
-      system email "E-mail System" "The internal e-mail system." :::external
+      softwareSystem banking "Internet Banking System" "Allows customers to view accounts and make payments."
+      softwareSystem mainframe "Mainframe Banking System" "Stores core banking information." :::external
+      softwareSystem email "E-mail System" "The internal e-mail system." :::external
 
       customer --> banking : "Views accounts using"
       banking --> mainframe : "Gets account information from" "XML/HTTPS"
@@ -39,12 +39,12 @@
       direction LR
 
       person customer "Personal Banking Customer"
-      system banking "Internet Banking System" {
+      softwareSystem banking "Internet Banking System" {
           container spa "Single-Page Application" "Provides banking functionality." "JavaScript/Angular"
           container api "API Application" "Provides a JSON/HTTPS API." "Java/Spring MVC"
           container db "Database" "Stores user credentials." "Oracle 12c"
       }
-      system mainframe "Mainframe Banking System" :::external
+      softwareSystem mainframe "Mainframe Banking System" :::external
 
       customer --> spa : "Views account balances using" "HTTPS"
       spa --> api : "Makes API calls to" "JSON/HTTPS"
@@ -92,12 +92,12 @@
       c4-beta deployment
       title Internet Banking System - Deployment
 
-      node aws "Amazon Web Services" "" "AWS" {
-          node region "US-East-1" "" "AWS Region" {
-              node ecs "ECS Cluster" "" "AWS ECS" {
+      deploymentNode aws "Amazon Web Services" "" "AWS" {
+          deploymentNode region "US-East-1" "" "AWS Region" {
+              deploymentNode ecs "ECS Cluster" "" "AWS ECS" {
                   container api "API Application" "Provides a JSON/HTTPS API." "Java/Spring MVC"
               }
-              node rds "Database Server" "" "AWS RDS" {
+              deploymentNode rds "Database Server" "" "AWS RDS" {
                   container db "Database" "Stores user credentials." "Oracle 12c"
               }
           }

@@ -12,9 +12,9 @@ export default {
 title Internet Banking System - System Context
 
 person customer "Personal Banking Customer" "A customer of the bank."
-system banking "Internet Banking System" "Allows customers to view accounts and make payments."
-system mainframe "Mainframe Banking System" "Stores core banking information." :::external
-system email "E-mail System" "The internal e-mail system." :::external
+softwareSystem banking "Internet Banking System" "Allows customers to view accounts and make payments."
+softwareSystem mainframe "Mainframe Banking System" "Stores core banking information." :::external
+softwareSystem email "E-mail System" "The internal e-mail system." :::external
 
 customer --> banking : "Views accounts using"
 banking --> mainframe : "Gets account information from" "XML/HTTPS"
@@ -27,12 +27,12 @@ email --> customer : "Sends e-mails to"`,
 title Internet Banking System - Containers
 
 person customer "Personal Banking Customer"
-system banking "Internet Banking System" {
+softwareSystem banking "Internet Banking System" {
     container spa "Single-Page Application" "Provides banking functionality." "JavaScript/Angular"
     container api "API Application" "Provides a JSON/HTTPS API." "Java/Spring MVC"
     container db "Database" "Stores user credentials." "Oracle 12c"
 }
-system mainframe "Mainframe Banking System" :::external
+softwareSystem mainframe "Mainframe Banking System" :::external
 
 customer --> spa : "Views account balances using" "HTTPS"
 spa --> api : "Makes API calls to" "JSON/HTTPS"

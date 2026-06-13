@@ -2,7 +2,13 @@ export type C4DiagramKind = 'context' | 'container' | 'component' | 'dynamic' | 
 
 export type C4Direction = 'TB' | 'BT' | 'LR' | 'RL';
 
-export type C4ElementKind = 'person' | 'system' | 'container' | 'component' | 'group' | 'node';
+export type C4ElementKind =
+  | 'person'
+  | 'softwareSystem'
+  | 'container'
+  | 'component'
+  | 'group'
+  | 'deploymentNode';
 
 export type C4Arrow = '-->' | '<--' | '<-->';
 

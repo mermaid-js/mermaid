@@ -6,20 +6,10 @@ import { populateCommonDb } from '../common/populateCommonDb.js';
 import { C4BetaDB } from './db.js';
 import type { C4Arrow, C4DiagramKind, C4Direction, C4ElementKind } from './types.js';
 
-// Structurizr-style long aliases normalize to the single internal kind set so
-// downstream rendering (and the stereotype label) stays unchanged.
-const KIND_ALIASES: Record<string, C4ElementKind> = {
-  softwareSystem: 'system',
-  deploymentNode: 'node',
-};
-
-const normalizeKind = (kind: string): C4ElementKind =>
-  KIND_ALIASES[kind] ?? (kind as C4ElementKind);
-
 const addElement = (db: C4BetaDB, element: C4Element, parentId?: string) => {
   db.addElement({
     id: element.id,
-    kind: normalizeKind(element.kind),
+    kind: element.kind as C4ElementKind,
     name: element.name,
     description: element.description,
     technology: element.technology,

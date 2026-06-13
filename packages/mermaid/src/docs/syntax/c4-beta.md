@@ -15,9 +15,9 @@ c4-beta context
 title Internet Banking System - System Context
 
 person customer "Personal Banking Customer" "A customer of the bank."
-system banking "Internet Banking System" "Allows customers to view accounts and make payments."
-system mainframe "Mainframe Banking System" "Stores core banking information." :::external
-system email "E-mail System" "The internal e-mail system." :::external
+softwareSystem banking "Internet Banking System" "Allows customers to view accounts and make payments."
+softwareSystem mainframe "Mainframe Banking System" "Stores core banking information." :::external
+softwareSystem email "E-mail System" "The internal e-mail system." :::external
 
 customer --> banking : "Views accounts using"
 banking --> mainframe : "Gets account information from" "XML/HTTPS"
@@ -38,7 +38,7 @@ The kind defaults to `context`. The kind is advisory: every element renders in e
 ### Elements
 
 ```
-person|system|container|component|group|node <id> "Name" ("Description" ("Technology")?)? (:::tag)*
+person|softwareSystem|container|component|group|deploymentNode|infrastructureNode <id> "Name" ("Description" ("Technology")?)? (:::tag)*
 ```
 
 - `:::external` is a built-in convention tag that marks an element as outside the system under discussion. It renders the element in grey by default; override the look with a `style external ...` statement (see [Tags and styling](#tags-and-styling)).
@@ -49,7 +49,7 @@ person|system|container|component|group|node <id> "Name" ("Description" ("Techno
 c4-beta container
 person customer "Customer" "A customer of the bank."
 container spa "Single-Page Application" "Provides banking functionality." "JavaScript/Angular"
-system mainframe "Mainframe Banking System" :::external
+softwareSystem mainframe "Mainframe Banking System" :::external
 ```
 
 ### Nesting and boundaries
@@ -61,7 +61,7 @@ c4-beta container
 title Internet Banking System - Containers
 
 person customer "Personal Banking Customer"
-system banking "Internet Banking System" {
+softwareSystem banking "Internet Banking System" {
     container spa "Single-Page Application" "Provides banking functionality." "JavaScript/Angular"
     container api "API Application" "Provides a JSON/HTTPS API." "Java/Spring MVC"
     container db "Database" "Stores user credentials." "Oracle 12c"
@@ -83,8 +83,8 @@ In the C4 model every line is a **unidirectional**, specifically-labelled relati
 
 ```mermaid-example
 c4-beta context
-system core "Core System"
-system partner "Partner System" :::external
+softwareSystem core "Core System"
+softwareSystem partner "Partner System" :::external
 
 core --> partner : "Pushes settlement records to" "JSON/HTTPS"
 partner --> core : "Returns settlement confirmations to" "JSON/HTTPS"
@@ -96,8 +96,8 @@ Label each relationship with a specific verb phrase that explains _why_ the inte
 
 ```mermaid-example
 c4-beta context
-system core "Core System"
-system partner "Partner System" :::external
+softwareSystem core "Core System"
+softwareSystem partner "Partner System" :::external
 
 core <--> partner : "Syncs with"
 ```
@@ -125,18 +125,18 @@ api --> spa : "Sends back an authentication token to"
 
 ### Deployment diagrams
 
-In a `deployment` diagram, `node` elements describe infrastructure. Nodes always render as boundaries, even without children, labeled `Name [Node: Technology]`, and can be nested arbitrarily:
+In a `deployment` diagram, `deploymentNode` elements describe infrastructure. Deployment nodes always render as boundaries, even without children, labeled `Name [Deployment Node: Technology]`, and can be nested arbitrarily:
 
 ```mermaid-example
 c4-beta deployment
 title Internet Banking System - Deployment
 
-node aws "Amazon Web Services" "" "AWS" {
-    node region "US-East-1" "" "AWS Region" {
-        node ecs "ECS Cluster" "" "AWS ECS" {
+deploymentNode aws "Amazon Web Services" "" "AWS" {
+    deploymentNode region "US-East-1" "" "AWS Region" {
+        deploymentNode ecs "ECS Cluster" "" "AWS ECS" {
             container api "API Application" "Provides a JSON/HTTPS API." "Java/Spring MVC"
         }
-        node rds "Database Server" "" "AWS RDS" {
+        deploymentNode rds "Database Server" "" "AWS RDS" {
             container db "Database" "Stores user credentials." "Oracle 12c"
         }
     }
@@ -188,7 +188,7 @@ c4-beta context
 direction LR
 
 person user "User"
-system core "Core System"
+softwareSystem core "Core System"
 
 user --> core : "Manages accounts using"
 ```

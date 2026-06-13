@@ -63,14 +63,14 @@ describe('c4-beta renderer', () => {
       `c4-beta context
 title Internet Banking System - System Context
 person customer "Personal Banking Customer" "A customer of the bank."
-system banking "Internet Banking System" "Allows customers to view accounts."
-system mainframe "Mainframe Banking System" :::external
+softwareSystem banking "Internet Banking System" "Allows customers to view accounts."
+softwareSystem mainframe "Mainframe Banking System" :::external
 customer --> banking : "Views accounts using"
 banking <--> mainframe : "Syncs with" "XML/HTTPS"
 `
     );
     expect(svg).toContain('c4-person');
-    expect(svg).toContain('c4-system');
+    expect(svg).toContain('c4-softwareSystem');
     expect(svg).toContain('c4-external');
     expect(svg).toContain('Views accounts using');
     expect(svg).toContain('XML/HTTPS');
@@ -82,7 +82,7 @@ banking <--> mainframe : "Syncs with" "XML/HTTPS"
       'c4beta-render-2',
       `c4-beta container
 person customer "Customer"
-system banking "Internet Banking System" {
+softwareSystem banking "Internet Banking System" {
     container spa "Single-Page Application" "Web UI" "JavaScript"
     container db "Database" "Stores data." "Oracle"
 }
@@ -129,14 +129,14 @@ spa --> api : "Calls"
     const { svg } = await mermaidAPI.render(
       'c4beta-render-4',
       `c4-beta deployment
-node aws "Amazon Web Services" "" "Cloud" {
-    node ec2 "EC2" {
+deploymentNode aws "Amazon Web Services" "" "Cloud" {
+    deploymentNode ec2 "EC2" {
         container api "API Application" "Java"
     }
 }
 `
     );
-    expect(svg).toContain('c4-node');
+    expect(svg).toContain('c4-deploymentNode');
     expect(svg).toContain('Amazon Web Services');
     expect(svg).toContain('API Application');
   });

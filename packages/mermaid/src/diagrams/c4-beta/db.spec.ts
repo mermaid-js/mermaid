@@ -10,9 +10,9 @@ title Internet Banking System - System Context
 direction TB
 
 person customer "Personal Banking Customer" "A customer of the bank."
-system banking "Internet Banking System" "Allows customers to view accounts."
-system mainframe "Mainframe Banking System" "Stores core banking information." :::external
-system big "Big System" {
+softwareSystem banking "Internet Banking System" "Allows customers to view accounts."
+softwareSystem mainframe "Mainframe Banking System" "Stores core banking information." :::external
+softwareSystem big "Big System" {
     container spa "Single-Page App" "Web UI" "JavaScript/Angular"
 }
 
@@ -73,7 +73,7 @@ describe('c4-beta db', () => {
 
   it('should store step numbers and tags without rendering them', async () => {
     await populate(`c4-beta dynamic
-      system a "A" :::tagged
+      softwareSystem a "A" :::tagged
       1: a --> b : "Calls" :::async
     `);
     expect(db.getKind()).toBe('dynamic');
@@ -82,22 +82,22 @@ describe('c4-beta db', () => {
     expect(db.getRelationships()[0].tags).toEqual(['async']);
   });
 
-  it('should normalize the softwareSystem alias to the system kind', async () => {
+  it('should keep the softwareSystem kind and render its stereotype label', async () => {
     await populate(`c4-beta context\nsoftwareSystem banking "Internet Banking System"\n`);
     const element = db.getElements()[0];
-    expect(element.kind).toBe('system');
+    expect(element.kind).toBe('softwareSystem');
     const { nodes } = db.getData();
-    expect(nodes[0].cssClasses).toBe('c4-shape c4-system');
-    expect(nodes[0].label).toContain('&laquo;system&raquo;');
+    expect(nodes[0].cssClasses).toBe('c4-shape c4-softwareSystem');
+    expect(nodes[0].label).toContain('&laquo;Software System&raquo;');
   });
 
-  it('should normalize the deploymentNode alias to the node kind', async () => {
+  it('should keep the deploymentNode kind and render it as a cluster', async () => {
     await populate(`c4-beta deployment\ndeploymentNode aws "AWS" "" "Cloud"\n`);
     const element = db.getElements()[0];
-    expect(element.kind).toBe('node');
+    expect(element.kind).toBe('deploymentNode');
     const { nodes } = db.getData();
-    expect(nodes[0].cssClasses).toBe('c4-boundary c4-node');
-    expect(nodes[0].label).toBe('AWS [Node: Cloud]');
+    expect(nodes[0].cssClasses).toBe('c4-boundary c4-deploymentNode');
+    expect(nodes[0].label).toBe('AWS [Deployment Node: Cloud]');
   });
 
   describe('getData', () => {
@@ -111,7 +111,7 @@ describe('c4-beta db', () => {
       expect(customer?.cssClasses).toBe('c4-shape c4-person');
       expect(customer?.cssStyles).toEqual(['fill: #08427B', 'stroke: #073B6F']);
       expect(customer?.label).toBe(
-        '<small>&laquo;person&raquo;</small><br/><b>Personal Banking Customer</b><br/>A customer of the bank.'
+        '<small>&laquo;Person&raquo;</small><br/><b>Personal Banking Customer</b><br/>A customer of the bank.'
       );
     });
 
@@ -120,7 +120,7 @@ describe('c4-beta db', () => {
       const { nodes } = db.getData();
       const spa = nodes.find((n) => n.id === 'spa');
       expect(spa?.label).toBe(
-        '<small>&laquo;container&raquo;</small><br/><b>Single-Page App</b><br/><small><i>[JavaScript/Angular]</i></small><br/>Web UI'
+        '<small>&laquo;Container&raquo;</small><br/><b>Single-Page App</b><br/><small><i>[JavaScript/Angular]</i></small><br/>Web UI'
       );
       expect(spa?.parentId).toBe('big');
     });
@@ -129,7 +129,7 @@ describe('c4-beta db', () => {
       await populate(exampleDiagram);
       const { nodes } = db.getData();
       const mainframe = nodes.find((n) => n.id === 'mainframe');
-      expect(mainframe?.cssClasses).toBe('c4-shape c4-system c4-external c4-tag-external');
+      expect(mainframe?.cssClasses).toBe('c4-shape c4-softwareSystem c4-external c4-tag-external');
       // No inline kind colors: the default grey comes from the .c4-external CSS rule.
       expect(mainframe?.cssStyles).toEqual([]);
     });
@@ -137,11 +137,11 @@ describe('c4-beta db', () => {
     it('should let a style statement override the built-in external tag', async () => {
       await populate(`c4-beta context
         style external fill:#123456
-        system mainframe "Mainframe" :::external
+        softwareSystem mainframe "Mainframe" :::external
       `);
       const { nodes } = db.getData();
       const mainframe = nodes.find((n) => n.id === 'mainframe');
-      expect(mainframe?.cssClasses).toBe('c4-shape c4-system c4-external c4-tag-external');
+      expect(mainframe?.cssClasses).toBe('c4-shape c4-softwareSystem c4-external c4-tag-external');
       // Inline cssStyles beat the default .c4-external class rule.
       expect(mainframe?.cssStyles).toContain('fill: #123456');
     });
@@ -195,7 +195,7 @@ describe('c4-beta db', () => {
     it('should warn about element kinds unexpected for the diagram kind', async () => {
       const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
       await populate(`c4-beta context
-        system banking "Internet Banking System"
+        softwareSystem banking "Internet Banking System"
         container spa "Single-Page App"
       `);
       db.getData();
@@ -210,7 +210,7 @@ describe('c4-beta db', () => {
       const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
       await populate(`c4-beta container
         person user "User"
-        system banking "Internet Banking System"
+        softwareSystem banking "Internet Banking System"
         container spa "Single-Page App"
       `);
       db.getData();
@@ -224,14 +224,14 @@ describe('c4-beta db', () => {
         await populate(`c4-beta context\nperson x "Name" "Desc" "Tech"\n`);
         const { nodes } = db.getData();
         expect(nodes[0].label).not.toContain('Tech');
-        expect(nodes[0].label).toBe('<small>&laquo;person&raquo;</small><br/><b>Name</b><br/>Desc');
+        expect(nodes[0].label).toBe('<small>&laquo;Person&raquo;</small><br/><b>Name</b><br/>Desc');
         expect(warnSpy).toHaveBeenCalledOnce();
         warnSpy.mockRestore();
       });
 
       it('should ignore technology on a software system and warn', async () => {
         const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
-        await populate(`c4-beta context\nsystem y "Name" "Desc" "Tech"\n`);
+        await populate(`c4-beta context\nsoftwareSystem y "Name" "Desc" "Tech"\n`);
         const { nodes } = db.getData();
         expect(nodes[0].label).not.toContain('Tech');
         expect(warnSpy).toHaveBeenCalledOnce();
@@ -249,10 +249,10 @@ describe('c4-beta db', () => {
       it('should apply tag styles to elements after the built-in kind colors', async () => {
         await populate(`c4-beta context
           style web fill:#1F2937, stroke:#111827, color:#fff
-          system banking "Internet Banking System" :::web
+          softwareSystem banking "Internet Banking System" :::web
         `);
         const { nodes } = db.getData();
-        expect(nodes[0].cssClasses).toBe('c4-shape c4-system c4-tag-web');
+        expect(nodes[0].cssClasses).toBe('c4-shape c4-softwareSystem c4-tag-web');
         expect(nodes[0].cssStyles).toEqual([
           'fill: #1168BD',
           'stroke: #3C7FC0',
@@ -284,11 +284,11 @@ describe('c4-beta db', () => {
 
       it('should add tag classes even for tags without styles', async () => {
         await populate(`c4-beta context
-          system a "A" :::critical
+          softwareSystem a "A" :::critical
           a --> b :::async
         `);
         const data = db.getData();
-        expect(data.nodes[0].cssClasses).toBe('c4-shape c4-system c4-tag-critical');
+        expect(data.nodes[0].cssClasses).toBe('c4-shape c4-softwareSystem c4-tag-critical');
         expect(data.edges[0].classes).toBe('c4-rel c4-tag-async');
         expect(data.edges[0].pattern).toBe('solid');
       });
@@ -297,7 +297,7 @@ describe('c4-beta db', () => {
         const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
         await populate(`c4-beta context
           style odd border:#fff, shape:hexagon, line:wavy
-          system a "A" :::odd
+          softwareSystem a "A" :::odd
         `);
         expect(warnSpy).toHaveBeenCalledTimes(3);
         expect(warnSpy).toHaveBeenCalledWith(
@@ -313,7 +313,7 @@ describe('c4-beta db', () => {
         await populate(`c4-beta context
           style web fill:#111
           style web stroke:#222
-          system a "A" :::web
+          softwareSystem a "A" :::web
         `);
         const { nodes } = db.getData();
         expect(nodes[0].cssStyles).toContain('fill: #111');
@@ -385,8 +385,8 @@ describe('c4-beta db', () => {
 
       it('should ignore step numbers in non-dynamic diagrams', async () => {
         await populate(`c4-beta context
-          system a "A"
-          system b "B"
+          softwareSystem a "A"
+          softwareSystem b "B"
           3: a --> b : "Calls"
         `);
         const { edges } = db.getData();
@@ -397,27 +397,27 @@ describe('c4-beta db', () => {
     describe('deployment diagrams', () => {
       it('should render node elements as clusters even without children', async () => {
         await populate(`c4-beta deployment
-          node empty "Empty Node" "" "Ubuntu 22.04"
+          deploymentNode empty "Empty Node" "" "Ubuntu 22.04"
         `);
         const { nodes } = db.getData();
         expect(nodes[0].isGroup).toBe(true);
-        expect(nodes[0].cssClasses).toBe('c4-boundary c4-node');
-        expect(nodes[0].label).toBe('Empty Node [Node: Ubuntu 22.04]');
+        expect(nodes[0].cssClasses).toBe('c4-boundary c4-deploymentNode');
+        expect(nodes[0].label).toBe('Empty Node [Deployment Node: Ubuntu 22.04]');
       });
 
       it('should omit the technology from the node label when absent', async () => {
         await populate(`c4-beta deployment
-          node plain "Plain Node"
+          deploymentNode plain "Plain Node"
         `);
         const { nodes } = db.getData();
-        expect(nodes[0].label).toBe('Plain Node [Node]');
+        expect(nodes[0].label).toBe('Plain Node [Deployment Node]');
       });
 
       it('should support nesting three levels deep with containers as leaves', async () => {
         await populate(`c4-beta deployment
-          node aws "AWS" "" "Amazon Web Services" {
-            node region "US-East-1" "" "AWS Region" {
-              node ecs "ECS Cluster" "" "AWS ECS" {
+          deploymentNode aws "AWS" "" "Amazon Web Services" {
+            deploymentNode region "US-East-1" "" "AWS Region" {
+              deploymentNode ecs "ECS Cluster" "" "AWS ECS" {
                 container api "API Application" "Handles requests" "Java"
               }
             }
@@ -437,10 +437,10 @@ describe('c4-beta db', () => {
       it('should warn about relationships connecting two clusters', async () => {
         const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
         await populate(`c4-beta deployment
-          node a "A" {
+          deploymentNode a "A" {
             container inner1 "Inner 1"
           }
-          node b "B" {
+          deploymentNode b "B" {
             container inner2 "Inner 2"
           }
           a --> b : "Cluster to cluster"

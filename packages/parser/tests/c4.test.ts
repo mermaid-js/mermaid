@@ -70,39 +70,29 @@ describe('c4-beta', () => {
 
     it('should mark an external element via the built-in external tag', () => {
       const result = parse(`c4-beta context
-        system mainframe "Mainframe Banking System" "Stores core banking information." :::external
+        softwareSystem mainframe "Mainframe Banking System" "Stores core banking information." :::external
       `);
       expectNoErrorsOrAlternatives(result);
       const element = result.value.elements[0];
-      expect(element.kind).toBe('system');
+      expect(element.kind).toBe('softwareSystem');
       expect(element.id).toBe('mainframe');
       expect(element.tags).toContain('external');
     });
 
-    it('should accept the softwareSystem keyword alias', () => {
-      const long = parse(`c4-beta context
+    it('should require the explicit softwareSystem keyword', () => {
+      const result = parse(`c4-beta context
         softwareSystem banking "Internet Banking System"
       `);
-      const short = parse(`c4-beta context
-        system banking "Internet Banking System"
-      `);
-      expectNoErrorsOrAlternatives(long);
-      expectNoErrorsOrAlternatives(short);
-      expect(long.value.elements[0].kind).toBe('softwareSystem');
-      expect(short.value.elements[0].kind).toBe('system');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.elements[0].kind).toBe('softwareSystem');
     });
 
-    it('should accept the deploymentNode keyword alias', () => {
-      const long = parse(`c4-beta deployment
+    it('should require the explicit deploymentNode keyword', () => {
+      const result = parse(`c4-beta deployment
         deploymentNode aws "AWS"
       `);
-      const short = parse(`c4-beta deployment
-        node aws "AWS"
-      `);
-      expectNoErrorsOrAlternatives(long);
-      expectNoErrorsOrAlternatives(short);
-      expect(long.value.elements[0].kind).toBe('deploymentNode');
-      expect(short.value.elements[0].kind).toBe('node');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.elements[0].kind).toBe('deploymentNode');
     });
 
     it('should handle a container with technology', () => {
@@ -119,7 +109,7 @@ describe('c4-beta', () => {
 
     it('should handle tags on elements', () => {
       const result = parse(`c4-beta context
-        system banking "Internet Banking System" :::web :::critical-path
+        softwareSystem banking "Internet Banking System" :::web :::critical-path
       `);
       expectNoErrorsOrAlternatives(result);
       const element = result.value.elements[0];
@@ -128,7 +118,7 @@ describe('c4-beta', () => {
 
     it('should handle nested elements via braces', () => {
       const result = parse(`c4-beta context
-        system big "Big System" {
+        softwareSystem big "Big System" {
             container spa "Single-Page App" "Web UI" "JavaScript/Angular"
         }
       `);
@@ -145,7 +135,7 @@ describe('c4-beta', () => {
     it('should handle a relationship with description', () => {
       const result = parse(`c4-beta context
         person customer "Customer"
-        system banking "Banking"
+        softwareSystem banking "Banking"
         customer --> banking : "Views account balances using"
       `);
       expectNoErrorsOrAlternatives(result);
@@ -248,9 +238,9 @@ title Internet Banking System - System Context
 direction TB
 
 person customer "Personal Banking Customer" "A customer of the bank."
-system banking "Internet Banking System" "Allows customers to view accounts."
-system mainframe "Mainframe Banking System" "Stores core banking information." :::external
-system big "Big System" {
+softwareSystem banking "Internet Banking System" "Allows customers to view accounts."
+softwareSystem mainframe "Mainframe Banking System" "Stores core banking information." :::external
+softwareSystem big "Big System" {
     container spa "Single-Page App" "Web UI" "JavaScript/Angular"
 }
 

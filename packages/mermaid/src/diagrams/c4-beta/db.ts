@@ -28,18 +28,28 @@ interface ElementColors {
 
 const ELEMENT_COLORS: Partial<Record<C4ElementKind, ElementColors>> = {
   person: { fill: '#08427B', stroke: '#073B6F' },
-  system: { fill: '#1168BD', stroke: '#3C7FC0' },
+  softwareSystem: { fill: '#1168BD', stroke: '#3C7FC0' },
   container: { fill: '#438DD5', stroke: '#3C7FC0' },
   component: { fill: '#85BBF0', stroke: '#78A8D8' },
+};
+
+// Human-readable C4 type names rendered as the element stereotype label.
+// `group` has no stereotype: it is a plain boundary, not a C4 type.
+const ELEMENT_DISPLAY_NAMES: Partial<Record<C4ElementKind, string>> = {
+  person: 'Person',
+  softwareSystem: 'Software System',
+  container: 'Container',
+  component: 'Component',
+  deploymentNode: 'Deployment Node',
 };
 
 // Element kinds that are unexpected for a given diagram kind. They still
 // render (forgiving WYSIWYG), but we warn so authors can spot mistakes.
 const UNEXPECTED_ELEMENT_KINDS: Record<C4DiagramKind, C4ElementKind[]> = {
-  context: ['container', 'component', 'node'],
-  container: ['component', 'node'],
-  component: ['node'],
-  dynamic: ['node'],
+  context: ['container', 'component', 'deploymentNode'],
+  container: ['component', 'deploymentNode'],
+  component: ['deploymentNode'],
+  dynamic: ['deploymentNode'],
   deployment: ['person'],
 };
 
@@ -52,8 +62,9 @@ const escapeHtml = (text: string): string =>
   text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 const buildElementLabel = (element: C4BetaElement): string => {
+  const displayName = ELEMENT_DISPLAY_NAMES[element.kind] ?? element.kind;
   const lines: string[] = [
-    `<small>&laquo;${escapeHtml(element.kind)}&raquo;</small>`,
+    `<small>&laquo;${escapeHtml(displayName)}&raquo;</small>`,
     `<b>${escapeHtml(element.name)}</b>`,
   ];
   if (element.technology) {
@@ -156,9 +167,9 @@ export class C4BetaDB implements DiagramDB {
       // In C4 a person and a software system are black boxes: technology only
       // belongs on containers, components and deployment nodes. Drop it so it
       // is not rendered in the label.
-      if (element.technology && (element.kind === 'person' || element.kind === 'system')) {
+      if (element.technology && (element.kind === 'person' || element.kind === 'softwareSystem')) {
         log.warn(
-          `c4-beta: technology "${element.technology}" on ${element.kind} "${element.id}" is ignored; technology only applies to container, component and node elements`
+          `c4-beta: technology "${element.technology}" on ${element.kind} "${element.id}" is ignored; technology only applies to container, component and deploymentNode elements`
         );
         element.technology = undefined;
       }
@@ -176,7 +187,7 @@ export class C4BetaDB implements DiagramDB {
     // Deployment nodes are always clusters, even when they are empty.
     const boundaryIds = new Set(
       this.elements.flatMap((element) => [
-        ...(element.kind === 'node' ? [element.id] : []),
+        ...(element.kind === 'deploymentNode' ? [element.id] : []),
         ...(element.parentId === undefined ? [] : [element.parentId]),
       ])
     );
@@ -184,9 +195,9 @@ export class C4BetaDB implements DiagramDB {
     for (const element of this.elements) {
       if (boundaryIds.has(element.id)) {
         const label =
-          element.kind === 'node'
+          element.kind === 'deploymentNode'
             ? escapeHtml(
-                `${element.name} [Node${element.technology ? `: ${element.technology}` : ''}]`
+                `${element.name} [Deployment Node${element.technology ? `: ${element.technology}` : ''}]`
               )
             : escapeHtml(element.name);
         nodes.push({
@@ -195,7 +206,8 @@ export class C4BetaDB implements DiagramDB {
           parentId: element.parentId,
           isGroup: true,
           shape: 'rect',
-          cssClasses: element.kind === 'node' ? 'c4-boundary c4-node' : 'c4-boundary',
+          cssClasses:
+            element.kind === 'deploymentNode' ? 'c4-boundary c4-deploymentNode' : 'c4-boundary',
           cssStyles: [],
           padding: 8,
           look: config.look,
