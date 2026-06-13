@@ -1571,10 +1571,16 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
   };
 
   // 4a) Self-shared subpath: an edge whose own polyline doubles back along the
-  // same lane (e.g. an A*/roundabout route never cleaned up). Two NON-ADJACENT
-  // segments of the SAME edge that are collinear and overlap mean the edge runs
-  // the same track twice — a routing defect the pairwise check below (which only
-  // compares DIFFERENT edges) cannot see.
+  // same lane. Two flavours, both reported as `edge-self-shared-subpath`:
+  //
+  //   * Non-adjacent overlap (e.g. an A*/roundabout route never cleaned up):
+  //     two normalised segments ≥2 apart that are collinear and overlap.
+  //   * Adjacent reversal ("backtrack spike"): the RAW route runs out along a
+  //     lane and immediately comes straight back over it (e.g. project-sox2's
+  //     F→K: right to x=1181.6 then back to x=1071.6 at the same y). This is
+  //     invisible on the normalised segments because `mergeCollinear` silently
+  //     collapses the reversal — so it MUST be checked on the raw points, which
+  //     is what DOMUS paints verbatim.
   for (const em of sortedEdges) {
     const segs = em.normalized.segments;
     let selfFlagged = false;
@@ -1591,6 +1597,41 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
           selfFlagged = true;
           break;
         }
+      }
+    }
+    if (selfFlagged) {
+      continue;
+    }
+    // Adjacent reversal on the RAW points: P_i→P_{i+1}→P_{i+2} collinear with the
+    // second leg running back over the first. The retraced length is the shorter
+    // of the two legs.
+    const pts = em.points;
+    for (let i = 0; i + 2 < pts.length; i++) {
+      const p0 = pts[i];
+      const p1 = pts[i + 1];
+      const p2 = pts[i + 2];
+      let backtrack = 0;
+      if (Math.abs(p0.y - p1.y) <= EPS && Math.abs(p1.y - p2.y) <= EPS) {
+        const d1 = Math.sign(p1.x - p0.x);
+        const d2 = Math.sign(p2.x - p1.x);
+        if (d1 !== 0 && d2 !== 0 && d1 !== d2) {
+          backtrack = Math.min(Math.abs(p1.x - p0.x), Math.abs(p2.x - p1.x));
+        }
+      } else if (Math.abs(p0.x - p1.x) <= EPS && Math.abs(p1.x - p2.x) <= EPS) {
+        const d1 = Math.sign(p1.y - p0.y);
+        const d2 = Math.sign(p2.y - p1.y);
+        if (d1 !== 0 && d2 !== 0 && d1 !== d2) {
+          backtrack = Math.min(Math.abs(p1.y - p0.y), Math.abs(p2.y - p1.y));
+        }
+      }
+      if (backtrack >= L_MIN_SHARED) {
+        issues.push({
+          type: 'edge-self-shared-subpath',
+          message: `Edge "${em.id}" backtracks over its own lane (length ${backtrack.toFixed(1)})`,
+          edgeId: em.id,
+          details: { overlapLength: backtrack, reversalAt: i },
+        });
+        break;
       }
     }
   }
