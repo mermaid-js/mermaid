@@ -55,7 +55,6 @@ export default eyesPlugin(
         return config;
       },
     },
-
     video: false,
   })
 );
