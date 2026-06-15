@@ -111,8 +111,30 @@ Person(p1, "Person")
     const { nodes } = data();
     expect(nodes.find((n) => n.id === 'db1')?.shape).toBe('cylinder');
     expect(nodes.find((n) => n.id === 'q1')?.shape).toBe('h-cyl');
-    expect(nodes.find((n) => n.id === 's1')?.shape).toBe('rect');
+    expect(nodes.find((n) => n.id === 's1')?.shape).toBe('rounded');
     expect(nodes.find((n) => n.id === 'p1')?.shape).toBe('c4-person');
+  });
+
+  it('resolves an explicit $shape over the element type', () => {
+    parse(`C4Context
+System(s1, "System")
+SystemDb(s2, "Store")
+UpdateElementStyle(s1, $shape="folder")
+UpdateElementStyle(s2, $shape="browser")
+`);
+    const { nodes } = data();
+    expect(nodes.find((n) => n.id === 's1')?.shape).toBe('c4-folder');
+    expect(nodes.find((n) => n.id === 's2')?.shape).toBe('c4-browser');
+  });
+
+  it('resolves a recognised $sprite keyword when no $shape is set', () => {
+    parse(`C4Context
+System(s1, "S1", "Desc", $sprite="bucket")
+System(s2, "S2", "Desc", $sprite="terminal")
+`);
+    const { nodes } = data();
+    expect(nodes.find((n) => n.id === 's1')?.shape).toBe('c4-bucket');
+    expect(nodes.find((n) => n.id === 's2')?.shape).toBe('c4-terminal');
   });
 
   it('marks deployment nodes as group nodes', () => {

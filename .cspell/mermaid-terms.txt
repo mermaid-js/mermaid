@@ -42,6 +42,7 @@ sandboxed
 sentencepiece
 siebling
 statediagram
+Structurizr
 substate
 unfixable
 Unmodelled

@@ -24,6 +24,10 @@ interface C4Shape {
   fontColor?: string;
   borderColor?: string;
   link?: string;
+  shape?: string;
+  sprite?: string;
+  tags?: string;
+  shadowing?: string;
 }
 
 interface C4Boundary {
@@ -74,7 +78,49 @@ const DB_SHAPES = new Set([
   'external_component_db',
 ]);
 
-const getNodeShape = (typeC4Shape: string): ShapeID => {
+// Structurizr-style shape keywords accepted via $shape, $sprite or $tags.
+const SHAPE_KEYWORDS: Record<string, ShapeID> = {
+  person: 'c4-person',
+  box: 'rounded',
+  rounded: 'rounded',
+  folder: 'c4-folder',
+  directory: 'c4-folder',
+  cylinder: 'cylinder',
+  database: 'cylinder',
+  db: 'cylinder',
+  queue: 'h-cyl',
+  pipe: 'h-cyl',
+  bucket: 'c4-bucket',
+  blob: 'c4-bucket',
+  s3: 'c4-bucket',
+  terminal: 'c4-terminal',
+  console: 'c4-terminal',
+  browser: 'c4-browser',
+  spa: 'c4-browser',
+  component: 'fr-rect',
+};
+
+const keywordShape = (value: string | undefined): ShapeID | undefined =>
+  value ? SHAPE_KEYWORDS[value.toLowerCase()] : undefined;
+
+/**
+ * Resolves the render shape for a C4 element: explicit $shape/$sprite first,
+ * then a recognised $tags token, then the element type.
+ */
+const resolveNodeShape = (shape: C4Shape): ShapeID => {
+  const explicit = keywordShape(shape.shape) ?? keywordShape(shape.sprite);
+  if (explicit) {
+    return explicit;
+  }
+  if (shape.tags) {
+    for (const tag of shape.tags.split(',')) {
+      const tagged = keywordShape(tag.trim());
+      if (tagged) {
+        return tagged;
+      }
+    }
+  }
+  const typeC4Shape = shape.typeC4Shape.text;
   if (typeC4Shape === 'person' || typeC4Shape === 'external_person') {
     return 'c4-person';
   }
@@ -84,7 +130,7 @@ const getNodeShape = (typeC4Shape: string): ShapeID => {
   if (QUEUE_SHAPES.has(typeC4Shape)) {
     return 'h-cyl';
   }
-  return 'rect';
+  return 'rounded';
 };
 
 /**
@@ -201,7 +247,7 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
       id: shape.alias,
       label: buildNodeLabel(shape),
       isGroup: false,
-      shape: getNodeShape(type),
+      shape: resolveNodeShape(shape),
       parentId: parentIdOf(shape.parentBoundary),
       cssClasses: `c4-shape c4-${type}${isExternal(type) ? ' c4-external' : ''}`,
       cssStyles: [...configColorStyles(type, c4Config), ...elementCssStyles(shape)],
