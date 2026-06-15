@@ -143,6 +143,8 @@ const typeLabel = (typeC4Shape: string): string => {
 
 const isExternal = (typeC4Shape: string): boolean => typeC4Shape.startsWith('external_');
 
+const shadowingDisabled = (shape: C4Shape): boolean => shape.shadowing === 'false';
+
 const escapeHtml = (txt: string): string =>
   txt.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 
@@ -249,7 +251,7 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
       isGroup: false,
       shape: resolveNodeShape(shape),
       parentId: parentIdOf(shape.parentBoundary),
-      cssClasses: `c4-shape c4-${type}${isExternal(type) ? ' c4-external' : ''}`,
+      cssClasses: `c4-shape c4-${type}${isExternal(type) ? ' c4-external' : ''}${shadowingDisabled(shape) ? ' c4-no-shadow' : ''}`,
       cssStyles: [...configColorStyles(type, c4Config), ...elementCssStyles(shape)],
       link: shape.link,
       look: config.look,

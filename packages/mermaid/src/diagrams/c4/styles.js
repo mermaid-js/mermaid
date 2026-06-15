@@ -39,6 +39,16 @@ const getStyles = (options) =>
     font-size: 0.75em;
   }
 
+  /* Subtle drop shadow under C4 elements, matching the Structurizr look.
+     Skipped for the hand-drawn look and for elements opting out via $shadowing. */
+  ${
+    options.look === 'handDrawn'
+      ? ''
+      : `.c4-shape:not(.c4-no-shadow) .basic {
+    filter: url(${options.svgId}-drop-shadow);
+  }`
+  }
+
   .arrowheadPath {
     fill: ${options.arrowheadColor};
   }
