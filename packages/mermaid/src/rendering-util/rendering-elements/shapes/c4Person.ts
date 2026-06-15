@@ -1,12 +1,24 @@
+import { hsl } from 'd3';
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
 import { styles2String } from './handDrawnShapeStyles.js';
 import type { D3Selection } from '../../../types.js';
 
+// A softer, lighter tint of the element color for the person's arms.
+const lighten = (color: string): string => {
+  const c = hsl(color);
+  if (Number.isNaN(c.l)) {
+    return color;
+  }
+  c.l = 0.72;
+  c.s = Math.min(c.s, 0.45);
+  return c.formatHex();
+};
+
 /**
- * C4 person shape: a circular head above a rounded-rectangle body, as used in
- * C4 model notation for Person / Person_Ext elements.
+ * C4 person shape: a circular head above a rounded-rectangle body with two
+ * arms, as used in C4 model notation for Person / Person_Ext elements.
  */
 export async function c4Person<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
@@ -40,6 +52,22 @@ export async function c4Person<T extends SVGGraphicsElement>(parent: D3Selection
     .attr('rx', bodyRadius)
     .attr('ry', bodyRadius)
     .attr('style', `${nodeStyles};rx:${bodyRadius}px;ry:${bodyRadius}px`);
+
+  // Two arms inside the lower body, in a lighter tint of the element color.
+  const accent = /stroke:\s*([^;]+)/.exec(nodeStyles)?.[1]?.trim() ?? 'currentColor';
+  const armColor = lighten(accent);
+  const armX = w * 0.29;
+  const armTop = bodyTop + bodyHeight * 0.45;
+  const armBottom = bodyTop + bodyHeight * 0.97;
+  for (const x of [-armX, armX]) {
+    group
+      .append('line')
+      .attr('x1', x)
+      .attr('y1', armTop)
+      .attr('x2', x)
+      .attr('y2', armBottom)
+      .attr('style', `stroke:${armColor};stroke-width:2px`);
+  }
 
   group
     .append('circle')
