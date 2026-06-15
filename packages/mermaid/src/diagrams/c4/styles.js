@@ -64,7 +64,12 @@ const getStyles = (options) =>
     stroke: ${options.lineColor};
     stroke-width: 2px;
   }
-  path.c4-rel,
+  /* C4 relationships are dashed, as on c4model.com */
+  path.c4-rel {
+    stroke: ${options.lineColor};
+    fill: none;
+    stroke-dasharray: 6 4;
+  }
   .flowchart-link {
     stroke: ${options.lineColor};
     fill: none;
@@ -75,7 +80,9 @@ const getStyles = (options) =>
       background-color: ${options.edgeLabelBackground};
     }
     rect {
-      opacity: 0.5;
+      opacity: 0.9;
+      rx: 4;
+      ry: 4;
       background-color: ${options.edgeLabelBackground};
       fill: ${options.edgeLabelBackground};
     }
@@ -85,15 +92,17 @@ const getStyles = (options) =>
     background-color: ${options.edgeLabelBackground};
   }
 
-  /* C4 boundaries are dashed, mostly-transparent clusters */
+  /* C4 boundaries are light dashed, mostly-transparent clusters */
   .cluster rect {
     fill: none;
     stroke: ${options.nodeBorder};
-    stroke-dasharray: 7 7;
+    stroke-dasharray: 5 5;
     stroke-width: 1px;
+    stroke-opacity: 0.6;
   }
   .cluster .cluster-label {
     font-family: ${options.fontFamily};
+    text-anchor: start;
   }
   .cluster text {
     fill: ${options.titleColor};
