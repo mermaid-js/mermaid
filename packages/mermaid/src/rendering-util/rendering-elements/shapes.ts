@@ -14,6 +14,10 @@ import { curlyBraceRight } from './shapes/curlyBraceRight.js';
 import { curlyBraces } from './shapes/curlyBraces.js';
 import { curvedTrapezoid } from './shapes/curvedTrapezoid.js';
 import { c4Person } from './shapes/c4Person.js';
+import { c4Folder } from './shapes/c4Folder.js';
+import { c4Bucket } from './shapes/c4Bucket.js';
+import { c4Terminal } from './shapes/c4Terminal.js';
+import { c4Browser } from './shapes/c4Browser.js';
 import { cylinder } from './shapes/cylinder.js';
 import { datastore } from './shapes/datastore.js';
 import { dividedRectangle } from './shapes/dividedRect.js';
@@ -150,6 +154,38 @@ export const shapesDefs = [
     description: 'Person in C4 model notation (head and body)',
     aliases: ['c4person'],
     handler: c4Person,
+  },
+  {
+    semanticName: 'C4 Folder',
+    name: 'C4 Folder',
+    shortName: 'c4-folder',
+    description: 'Folder/directory element in C4 model notation',
+    aliases: ['c4folder'],
+    handler: c4Folder,
+  },
+  {
+    semanticName: 'C4 Bucket',
+    name: 'C4 Bucket',
+    shortName: 'c4-bucket',
+    description: 'Object storage element in C4 model notation',
+    aliases: ['c4bucket'],
+    handler: c4Bucket,
+  },
+  {
+    semanticName: 'C4 Terminal',
+    name: 'C4 Terminal',
+    shortName: 'c4-terminal',
+    description: 'Server-side application element in C4 model notation',
+    aliases: ['c4terminal'],
+    handler: c4Terminal,
+  },
+  {
+    semanticName: 'C4 Browser',
+    name: 'C4 Browser',
+    shortName: 'c4-browser',
+    description: 'Single-page application element in C4 model notation',
+    aliases: ['c4browser'],
+    handler: c4Browser,
   },
   {
     semanticName: 'Start',
