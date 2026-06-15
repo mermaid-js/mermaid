@@ -73,6 +73,25 @@ describe('C4 diagram (unified renderer)', () => {
       unified
     );
   });
+  it('C4U.6 should render Structurizr-style shape variants', () => {
+    imgSnapshotTest(
+      `
+      C4Container
+      Person(customer, "Customer", "A customer of the bank.")
+      Container(spa, "Single-Page App", "Angular", "Banking UI.", $sprite="browser")
+      Container(api, "API Application", "Java, Spring", "Banking API.", $sprite="terminal")
+      Container(files, "File Store", "Amazon S3", "Stores documents.", $sprite="bucket")
+      Container(config, "Config Directory", "LDAP", "Stores configuration.", $sprite="folder")
+      ContainerDb(database, "Database", "Oracle 12c", "Stores user information.")
+      Rel(customer, spa, "Uses", "HTTPS")
+      Rel(spa, api, "Calls", "JSON/HTTPS")
+      Rel(api, database, "Reads from and writes to", "SQL/TCP")
+      Rel(api, files, "Stores files in")
+      UpdateElementStyle(config, $shape="folder")
+      `,
+      unified
+    );
+  });
   it('C4U.5 should keep the rendered diagram within sane dimensions', () => {
     imgSnapshotTest(
       `
