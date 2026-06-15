@@ -38,6 +38,14 @@ const getStyles = (options) =>
   .c4-shape .label small {
     font-size: 0.75em;
   }
+  /* Structurizr typography: muted stereotype/type line and smaller description */
+  .c4-shape .label .c4-type {
+    font-size: 0.75em;
+    opacity: 0.85;
+  }
+  .c4-shape .label .c4-descr {
+    font-size: 0.82em;
+  }
 
   /* Subtle drop shadow under C4 elements, matching the Structurizr look.
      Skipped for the hand-drawn look and for elements opting out via $shadowing. */

@@ -137,6 +137,19 @@ System(s2, "S2", "Desc", $sprite="terminal")
     expect(nodes.find((n) => n.id === 's2')?.shape).toBe('c4-terminal');
   });
 
+  it('renders Structurizr-style node labels', () => {
+    parse(`C4Container
+Container(c1, "API", "Spring Boot", "Handles requests")
+System(s1, "Mainframe")
+`);
+    const { nodes } = data();
+    const c1 = nodes.find((n) => n.id === 'c1');
+    expect(c1?.label).toContain('<b>API</b>');
+    expect(c1?.label).toContain('[Container: Spring Boot]');
+    expect(c1?.label).toContain('Handles requests');
+    expect(nodes.find((n) => n.id === 's1')?.label).toContain('[Software System]');
+  });
+
   it('marks deployment nodes as group nodes', () => {
     parse(`C4Deployment
 Deployment_Node(n1, "AWS", "Cloud") {

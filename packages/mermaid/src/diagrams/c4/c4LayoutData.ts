@@ -133,12 +133,17 @@ const resolveNodeShape = (shape: C4Shape): ShapeID => {
   return 'rounded';
 };
 
-/**
- * The type line rendered above the element name, e.g. `<<system>>`.
- * Mirrors the legacy renderer which displays the C4-PlantUML stereotype.
- */
-const typeLabel = (typeC4Shape: string): string => {
-  return typeC4Shape.replace(/^external_/, '').replace(/_/g, ' ');
+const STEREOTYPE_NAMES: Record<string, string> = {
+  person: 'Person',
+  system: 'Software System',
+  container: 'Container',
+  component: 'Component',
+};
+
+// Structurizr-style stereotype, e.g. `Software System` for system / system_db / external_system.
+const stereotypeLabel = (typeC4Shape: string): string => {
+  const base = typeC4Shape.replace(/^external_/, '').replace(/_(db|queue)$/, '');
+  return STEREOTYPE_NAMES[base] ?? base.replace(/_/g, ' ');
 };
 
 const isExternal = (typeC4Shape: string): boolean => typeC4Shape.startsWith('external_');
@@ -149,14 +154,16 @@ const escapeHtml = (txt: string): string =>
   txt.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 
 const buildNodeLabel = (shape: C4Shape): string => {
-  const lines: string[] = [];
-  lines.push(`<small>&laquo;${escapeHtml(typeLabel(shape.typeC4Shape.text))}&raquo;</small>`);
-  lines.push(`<b>${escapeHtml(shape.label.text)}</b>`);
-  if (shape.techn?.text) {
-    lines.push(`<small><i>[${escapeHtml(shape.techn.text)}]</i></small>`);
-  }
+  const stereotype = stereotypeLabel(shape.typeC4Shape.text);
+  const type = shape.techn?.text
+    ? `[${escapeHtml(stereotype)}: ${escapeHtml(shape.techn.text)}]`
+    : `[${escapeHtml(stereotype)}]`;
+  const lines: string[] = [
+    `<b>${escapeHtml(shape.label.text)}</b>`,
+    `<span class="c4-type">${type}</span>`,
+  ];
   if (shape.descr?.text) {
-    lines.push(escapeHtml(shape.descr.text));
+    lines.push(`<span class="c4-descr">${escapeHtml(shape.descr.text)}</span>`);
   }
   return lines.join('<br/>');
 };
@@ -165,7 +172,7 @@ const buildBoundaryLabel = (boundary: C4Boundary): string => {
   const lines: string[] = [`<b>${escapeHtml(boundary.label.text)}</b>`];
   const type = boundary.type?.text;
   if (type && type !== 'system' && type !== 'container') {
-    lines.push(`<small>[${escapeHtml(type)}]</small>`);
+    lines.push(`<span class="c4-type">[${escapeHtml(type)}]</span>`);
   }
   return lines.join('<br/>');
 };
