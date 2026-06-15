@@ -1,3 +1,4 @@
+import { hsl } from 'd3';
 import type { MermaidConfig } from '../../config.type.js';
 import type { ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
 import type { Edge, LayoutData, Node } from '../../rendering-util/types.js';
@@ -148,8 +149,6 @@ const stereotypeLabel = (typeC4Shape: string): string => {
 
 const isExternal = (typeC4Shape: string): boolean => typeC4Shape.startsWith('external_');
 
-const shadowingDisabled = (shape: C4Shape): boolean => shape.shadowing === 'false';
-
 const escapeHtml = (txt: string): string =>
   txt.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 
@@ -205,20 +204,30 @@ const elementCssStyles = (
   return styles;
 };
 
-/**
- * Default fill/stroke for an element type from the c4 config color keys
- * (person_bg_color, external_system_border_color, ...), so the unified
- * renderer keeps the exact palette of the legacy renderer.
- */
-const configColorStyles = (typeC4Shape: string, c4Config: Record<string, any>): string[] => {
-  const styles: string[] = [];
-  const bg = c4Config[`${typeC4Shape}_bg_color`];
-  const border = c4Config[`${typeC4Shape}_border_color`];
-  if (bg) {
-    styles.push(`fill:${bg}`);
+// Clamp a palette color dark enough to read as text/border on a light fill.
+const ensureReadable = (color: string): string => {
+  const c = hsl(color);
+  if (Number.isNaN(c.l)) {
+    return color;
   }
-  if (border) {
-    styles.push(`stroke:${border}`);
+  c.l = Math.min(c.l, 0.42);
+  return c.formatHex();
+};
+
+/**
+ * Outline styling for an element type: the c4 palette color becomes the border
+ * and text (the element's identity), over a light fill, as on c4model.com.
+ */
+const configColorStyles = (
+  typeC4Shape: string,
+  c4Config: Record<string, any>,
+  background: string
+): string[] => {
+  const styles: string[] = [`fill:${background}`];
+  const bg = c4Config[`${typeC4Shape}_bg_color`];
+  if (typeof bg === 'string') {
+    const identity = ensureReadable(bg);
+    styles.push(`stroke:${identity}`, `color:${identity}`);
   }
   return styles;
 };
@@ -227,6 +236,7 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
   const nodes: Node[] = [];
   const edges: Edge[] = [];
   const c4Config: Record<string, any> = config.c4 ?? {};
+  const background = config.themeVariables?.background ?? '#ffffff';
 
   const boundaries = db.getBoundaries().filter((boundary) => boundary.alias !== 'global');
   const boundaryAliases = new Set(boundaries.map((boundary) => boundary.alias));
@@ -259,8 +269,8 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
       isGroup: false,
       shape: resolveNodeShape(shape),
       parentId: parentIdOf(shape.parentBoundary),
-      cssClasses: `c4-shape c4-${type}${isExternal(type) ? ' c4-external' : ''}${shadowingDisabled(shape) ? ' c4-no-shadow' : ''}`,
-      cssStyles: [...configColorStyles(type, c4Config), ...elementCssStyles(shape)],
+      cssClasses: `c4-shape c4-${type}${isExternal(type) ? ' c4-external' : ''}`,
+      cssStyles: [...configColorStyles(type, c4Config, background), ...elementCssStyles(shape)],
       link: shape.link,
       look: config.look,
     });

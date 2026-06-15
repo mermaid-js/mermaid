@@ -85,7 +85,7 @@ UpdateRelStyle(a, b, $textColor="blue", $lineColor="green", $offsetX="5")
     expect(edges[0].labelStyle).toEqual(expect.arrayContaining(['color:blue']));
   });
 
-  it('applies the configured C4 palette per element type', () => {
+  it('applies the configured C4 palette as an outline (border + text) over a light fill', () => {
     parse(`C4Context
 Person(a, "A")
 System_Ext(b, "B")
@@ -93,12 +93,14 @@ System_Ext(b, "B")
     const { nodes } = getData(c4Db, {
       c4: { person_bg_color: '#08427B', external_system_bg_color: '#999999' },
     } as MermaidConfig);
+    // #08427B is already dark, so it is used verbatim as border and text.
     expect(nodes.find((n) => n.id === 'a')?.cssStyles).toEqual(
-      expect.arrayContaining(['fill:#08427B'])
+      expect.arrayContaining(['fill:#ffffff', 'stroke:#08427b', 'color:#08427b'])
     );
-    expect(nodes.find((n) => n.id === 'b')?.cssStyles).toEqual(
-      expect.arrayContaining(['fill:#999999'])
-    );
+    // #999999 is too light for text on white, so it is darkened for legibility.
+    const ext = nodes.find((n) => n.id === 'b')?.cssStyles ?? [];
+    expect(ext).toContain('fill:#ffffff');
+    expect(ext.some((s) => /^stroke:#[\da-f]{6}$/.test(s) && s !== 'stroke:#999999')).toBe(true);
   });
 
   it('maps element variants to dedicated shapes', () => {

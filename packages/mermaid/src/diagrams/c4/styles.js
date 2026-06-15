@@ -28,12 +28,14 @@ const getStyles = (options) =>
     cursor: pointer;
   }
 
-  /* C4 elements show light text on saturated backgrounds */
+  /* C4 outline style (c4model.com): text takes the element's identity color,
+     set inline per element, instead of a fixed fill. */
   .c4-shape .label,
   .c4-shape .label text,
-  .c4-shape .label span {
-    color: #ffffff;
-    fill: #ffffff;
+  .c4-shape .label span,
+  .c4-shape .label p {
+    color: inherit;
+    fill: currentColor;
   }
   .c4-shape .label small {
     font-size: 0.75em;
@@ -46,15 +48,14 @@ const getStyles = (options) =>
   .c4-shape .label .c4-descr {
     font-size: 0.82em;
   }
-
-  /* Subtle drop shadow under C4 elements, matching the Structurizr look.
-     Skipped for the hand-drawn look and for elements opting out via $shadowing. */
-  ${
-    options.look === 'handDrawn'
-      ? ''
-      : `.c4-shape:not(.c4-no-shadow) .basic {
-    filter: url(${options.svgId}-drop-shadow);
-  }`
+  /* Outline boxes use a 2px colored border over a light fill. */
+  .c4-shape .basic,
+  .c4-shape rect,
+  .c4-shape path,
+  .c4-shape circle,
+  .c4-shape ellipse,
+  .c4-shape line {
+    stroke-width: 2px;
   }
 
   .arrowheadPath {
@@ -74,22 +75,21 @@ const getStyles = (options) =>
     stroke: ${options.lineColor};
     fill: none;
   }
+  /* Relationship labels sit on a clean light background, as on c4model.com */
   .edgeLabel {
-    background-color: ${options.edgeLabelBackground};
+    background-color: #ffffff;
     p {
-      background-color: ${options.edgeLabelBackground};
+      background-color: #ffffff;
     }
     rect {
-      opacity: 0.9;
-      rx: 4;
-      ry: 4;
-      background-color: ${options.edgeLabelBackground};
-      fill: ${options.edgeLabelBackground};
+      opacity: 0.85;
+      background-color: #ffffff;
+      fill: #ffffff;
     }
     text-align: center;
   }
   .labelBkg {
-    background-color: ${options.edgeLabelBackground};
+    background-color: #ffffff;
   }
 
   /* C4 boundaries are light dashed, mostly-transparent clusters */
