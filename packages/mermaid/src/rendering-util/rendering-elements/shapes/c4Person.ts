@@ -17,10 +17,12 @@ export async function c4Person<T extends SVGGraphicsElement>(parent: D3Selection
   const padding = node.padding ?? 20;
   const w = Math.max(bbox.width + padding * 2, 100);
   const bodyHeight = bbox.height + padding * 2;
-  // Head diameter is 60% of the body width, as on c4model.com.
-  const headRadius = Math.max(w * 0.3, 16);
-  // Small overlap so the head connects to the body without a visible seam.
-  const overlap = headRadius * 0.15;
+  // Proportions taken from the c4model.com person: head radius 0.23x the body
+  // width, overlapping the body by 0.27x the head radius, body corners 0.177x
+  // the width.
+  const headRadius = Math.max(w * 0.23, 16);
+  const overlap = headRadius * 0.27;
+  const bodyRadius = Math.min(w * 0.177, bodyHeight * 0.45);
   const totalHeight = bodyHeight + 2 * headRadius - overlap;
   const top = -totalHeight / 2;
   const bodyTop = top + 2 * headRadius - overlap;
@@ -28,15 +30,16 @@ export async function c4Person<T extends SVGGraphicsElement>(parent: D3Selection
   const group = shapeSvg.insert('g', ':first-child').attr('class', 'basic label-container');
 
   // Body first, then the head drawn on top so the full circle stays visible.
+  // The radius is set inline so it overrides the shared .c4-shape rect rule.
   group
     .append('rect')
     .attr('x', -w / 2)
     .attr('y', bodyTop)
     .attr('width', w)
     .attr('height', bodyHeight)
-    .attr('rx', 12)
-    .attr('ry', 12)
-    .attr('style', nodeStyles);
+    .attr('rx', bodyRadius)
+    .attr('ry', bodyRadius)
+    .attr('style', `${nodeStyles};rx:${bodyRadius}px;ry:${bodyRadius}px`);
 
   group
     .append('circle')
