@@ -55,10 +55,9 @@ const UNEXPECTED_ELEMENT_KINDS: Record<C4DiagramKind, C4ElementKind[]> = {
   deployment: ['person'],
 };
 
-const LINE_PATTERNS: C4LinePattern[] = ['solid', 'dashed', 'dotted'];
+const LINE_PATTERNS = new Set<string>(['solid', 'dashed', 'dotted']);
 
-const isLinePattern = (value: string): value is C4LinePattern =>
-  (LINE_PATTERNS as string[]).includes(value);
+const isLinePattern = (value: string): value is C4LinePattern => LINE_PATTERNS.has(value);
 
 const escapeHtml = (text: string): string =>
   text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');

@@ -4,12 +4,12 @@ import type { ParserDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { populateCommonDb } from '../common/populateCommonDb.js';
 import { C4BetaDB } from './db.js';
-import type { C4Arrow, C4DiagramKind, C4Direction, C4ElementKind } from './types.js';
+import type { C4Arrow } from './types.js';
 
 const addElement = (db: C4BetaDB, element: C4Element, parentId?: string) => {
   db.addElement({
     id: element.id,
-    kind: element.kind as C4ElementKind,
+    kind: element.kind,
     name: element.name,
     description: element.description,
     technology: element.technology,
@@ -25,10 +25,10 @@ const addElement = (db: C4BetaDB, element: C4Element, parentId?: string) => {
 export const populateDb = (ast: C4, db: C4BetaDB) => {
   populateCommonDb(ast, db);
   if (ast.kind) {
-    db.setKind(ast.kind as C4DiagramKind);
+    db.setKind(ast.kind);
   }
   if (ast.direction) {
-    db.setDirection(ast.direction as C4Direction);
+    db.setDirection(ast.direction);
   }
   for (const element of ast.elements) {
     addElement(db, element);
