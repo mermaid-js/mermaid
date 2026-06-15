@@ -5,8 +5,8 @@ import { styles2String } from './handDrawnShapeStyles.js';
 import type { D3Selection } from '../../../types.js';
 
 /**
- * C4 person shape: a rounded box body with a circular head overlapping the
- * top edge, as used in C4 model notation for Person / Person_Ext elements.
+ * C4 person shape: a circular head above a rounded-rectangle body, as used in
+ * C4 model notation for Person / Person_Ext elements.
  */
 export async function c4Person<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
@@ -15,20 +15,21 @@ export async function c4Person<T extends SVGGraphicsElement>(parent: D3Selection
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
   const padding = node.padding ?? 12;
-  const w = Math.max(bbox.width + padding * 2, 80);
+  const w = Math.max(bbox.width + padding * 2, 90);
   const bodyHeight = bbox.height + padding * 2;
-  const headRadius = Math.max(Math.min(w * 0.16, 24), 14);
-  const totalHeight = bodyHeight + headRadius;
-
-  const bodyTop = -totalHeight / 2 + headRadius;
+  const headRadius = Math.max(Math.min(w * 0.2, 28), 16);
+  const overlap = headRadius * 0.45;
+  const totalHeight = bodyHeight + 2 * headRadius - overlap;
+  const top = -totalHeight / 2;
+  const bodyTop = top + 2 * headRadius - overlap;
 
   const group = shapeSvg.insert('g', ':first-child').attr('class', 'basic label-container');
 
-  // Head first so the body covers its lower half.
+  // Head first so the body's fill covers its lower arc where they meet.
   group
     .append('circle')
     .attr('cx', 0)
-    .attr('cy', bodyTop)
+    .attr('cy', top + headRadius)
     .attr('r', headRadius)
     .attr('style', nodeStyles);
 

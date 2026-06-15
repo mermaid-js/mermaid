@@ -4,7 +4,7 @@ import type { Node } from '../../types.js';
 import { styles2String } from './handDrawnShapeStyles.js';
 import type { D3Selection } from '../../../types.js';
 
-/** C4 folder shape: a tabbed rectangle for folder/directory-like elements. */
+/** C4 folder shape: a rectangle with a raised tab on the top-left, for folder/directory elements. */
 export async function c4Folder<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
@@ -12,10 +12,10 @@ export async function c4Folder<T extends SVGGraphicsElement>(parent: D3Selection
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
   const padding = node.padding ?? 12;
-  const w = Math.max(bbox.width + padding * 2, 80);
+  const w = Math.max(bbox.width + padding * 2, 90);
   const bodyHeight = bbox.height + padding * 2;
-  const tabHeight = Math.max(Math.min(bodyHeight * 0.18, 16), 8);
-  const tabWidth = Math.max(w * 0.4, 30);
+  const tabHeight = Math.max(Math.min(bodyHeight * 0.16, 14), 8);
+  const tabWidth = Math.max(w * 0.38, 28);
   const totalHeight = bodyHeight + tabHeight;
   const top = -totalHeight / 2;
 
@@ -24,8 +24,8 @@ export async function c4Folder<T extends SVGGraphicsElement>(parent: D3Selection
   const d = [
     `M${-w / 2},${top}`,
     `h${tabWidth}`,
-    `l8,${tabHeight}`,
-    `h${w - tabWidth - 8}`,
+    `v${tabHeight}`,
+    `h${w - tabWidth}`,
     `v${bodyHeight}`,
     `h${-w}`,
     `Z`,

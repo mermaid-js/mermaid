@@ -4,6 +4,9 @@ import type { Node } from '../../types.js';
 import { styles2String } from './handDrawnShapeStyles.js';
 import type { D3Selection } from '../../../types.js';
 
+const accentColor = (nodeStyles: string): string =>
+  /stroke:\s*([^;]+)/.exec(nodeStyles)?.[1]?.trim() ?? 'currentColor';
+
 /** C4 terminal shape: a rounded box with a console prompt glyph, for server-side apps. */
 export async function c4Terminal<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
@@ -12,8 +15,8 @@ export async function c4Terminal<T extends SVGGraphicsElement>(parent: D3Selecti
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
   const padding = node.padding ?? 12;
-  const glyphBand = 18;
-  const w = Math.max(bbox.width + padding * 2, 80);
+  const glyphBand = 20;
+  const w = Math.max(bbox.width + padding * 2, 90);
   const h = bbox.height + padding * 2 + glyphBand;
   const top = -h / 2;
 
@@ -31,10 +34,13 @@ export async function c4Terminal<T extends SVGGraphicsElement>(parent: D3Selecti
 
   group
     .append('text')
-    .attr('x', -w / 2 + 10)
+    .attr('x', -w / 2 + 12)
     .attr('y', top + 16)
     .attr('class', 'c4-terminal-glyph')
-    .attr('style', 'font-family:monospace;font-weight:bold;fill:#ffffff')
+    .attr(
+      'style',
+      `font-family:monospace;font-weight:bold;font-size:14px;fill:${accentColor(nodeStyles)}`
+    )
     .text('>_');
 
   updateNodeBounds(node, group);
