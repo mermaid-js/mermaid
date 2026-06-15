@@ -84,14 +84,16 @@ const getStyles = (options) =>
     stroke: ${options.lineColor};
     fill: none;
   }
-  /* Relationship labels sit on a clean light background, as on c4model.com */
+  /* Relationship labels are smaller than element text and sit on an opaque
+     light background, as on c4model.com, so neighbouring labels stay legible. */
   .edgeLabel {
+    font-size: 0.85em;
     background-color: #ffffff;
     p {
       background-color: #ffffff;
     }
     rect {
-      opacity: 0.85;
+      opacity: 1;
       background-color: #ffffff;
       fill: #ffffff;
     }

@@ -26,7 +26,8 @@ export const draw = async function (_text: string, id: string, _version: string,
   data4Layout.layoutAlgorithm = getRegisteredLayoutAlgorithm(layout);
   data4Layout.direction = 'TB';
   data4Layout.nodeSpacing = c4Config?.c4ShapeMargin ?? 50;
-  data4Layout.rankSpacing = c4Config?.c4ShapeMargin ?? 50;
+  // Extra rank spacing gives relationship labels more vertical room.
+  data4Layout.rankSpacing = (c4Config?.c4ShapeMargin ?? 50) + 40;
   data4Layout.markers = ['point'];
   data4Layout.diagramId = id;
 
