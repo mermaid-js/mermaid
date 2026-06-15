@@ -237,6 +237,8 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
   const edges: Edge[] = [];
   const c4Config: Record<string, any> = config.c4 ?? {};
   const background = config.themeVariables?.background ?? '#ffffff';
+  // Generous internal padding so labels never crowd the element borders.
+  const shapePadding = typeof c4Config.c4ShapePadding === 'number' ? c4Config.c4ShapePadding : 20;
 
   const boundaries = db.getBoundaries().filter((boundary) => boundary.alias !== 'global');
   const boundaryAliases = new Set(boundaries.map((boundary) => boundary.alias));
@@ -269,6 +271,7 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
       isGroup: false,
       shape: resolveNodeShape(shape),
       parentId: parentIdOf(shape.parentBoundary),
+      padding: shapePadding,
       cssClasses: `c4-shape c4-${type}${isExternal(type) ? ' c4-external' : ''}`,
       cssStyles: [...configColorStyles(type, c4Config, background), ...elementCssStyles(shape)],
       link: shape.link,
