@@ -17,9 +17,10 @@ export async function c4Person<T extends SVGGraphicsElement>(parent: D3Selection
   const padding = node.padding ?? 20;
   const w = Math.max(bbox.width + padding * 2, 100);
   const bodyHeight = bbox.height + padding * 2;
-  const headRadius = Math.max(Math.min(w * 0.16, 26), 16);
+  // Head diameter is 60% of the body width, as on c4model.com.
+  const headRadius = Math.max(w * 0.3, 16);
   // Small overlap so the head connects to the body without a visible seam.
-  const overlap = 4;
+  const overlap = headRadius * 0.15;
   const totalHeight = bodyHeight + 2 * headRadius - overlap;
   const top = -totalHeight / 2;
   const bodyTop = top + 2 * headRadius - overlap;
@@ -33,8 +34,8 @@ export async function c4Person<T extends SVGGraphicsElement>(parent: D3Selection
     .attr('y', bodyTop)
     .attr('width', w)
     .attr('height', bodyHeight)
-    .attr('rx', 8)
-    .attr('ry', 8)
+    .attr('rx', 12)
+    .attr('ry', 12)
     .attr('style', nodeStyles);
 
   group

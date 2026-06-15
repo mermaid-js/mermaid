@@ -29,8 +29,8 @@ export async function c4Browser<T extends SVGGraphicsElement>(parent: D3Selectio
     .attr('y', top)
     .attr('width', w)
     .attr('height', h)
-    .attr('rx', 8)
-    .attr('ry', 8)
+    .attr('rx', 12)
+    .attr('ry', 12)
     .attr('style', nodeStyles);
 
   group
@@ -53,6 +53,7 @@ export async function c4Browser<T extends SVGGraphicsElement>(parent: D3Selectio
   // Address-bar hint to the right of the traffic lights.
   group
     .append('rect')
+    .attr('class', 'c4-address-bar')
     .attr('x', -w / 2 + 44)
     .attr('y', top + 4)
     .attr('width', Math.max(w - 56, 10))

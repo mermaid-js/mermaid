@@ -57,6 +57,15 @@ const getStyles = (options) =>
   .c4-shape line {
     stroke-width: 2px;
   }
+  /* Generously rounded corners, as on c4model.com. */
+  .c4-shape rect {
+    rx: 12px;
+    ry: 12px;
+  }
+  .c4-shape rect.c4-address-bar {
+    rx: 3px;
+    ry: 3px;
+  }
 
   .arrowheadPath {
     fill: ${options.arrowheadColor};

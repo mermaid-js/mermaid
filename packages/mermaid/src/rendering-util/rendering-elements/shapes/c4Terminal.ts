@@ -28,8 +28,8 @@ export async function c4Terminal<T extends SVGGraphicsElement>(parent: D3Selecti
     .attr('y', top)
     .attr('width', w)
     .attr('height', h)
-    .attr('rx', 8)
-    .attr('ry', 8)
+    .attr('rx', 12)
+    .attr('ry', 12)
     .attr('style', nodeStyles);
 
   group
