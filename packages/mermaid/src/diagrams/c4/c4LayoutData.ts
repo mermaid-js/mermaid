@@ -171,7 +171,8 @@ const buildNodeLabel = (shape: C4Shape): string => {
 const buildBoundaryLabel = (boundary: C4Boundary): string => {
   const lines: string[] = [`<b>${escapeHtml(boundary.label.text)}</b>`];
   const type = boundary.type?.text;
-  if (type && type !== 'system' && type !== 'container') {
+  const implicit = type?.toLowerCase();
+  if (type && implicit !== 'system' && implicit !== 'container') {
     lines.push(`<span class="c4-type">[${escapeHtml(type)}]</span>`);
   }
   return lines.join('<br/>');
