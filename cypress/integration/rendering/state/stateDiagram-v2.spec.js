@@ -887,4 +887,22 @@ State9_____________ --> State10_____________   : Transition9_____
       {}
     );
   });
+
+  it('#7609: nested composite states should be unaffected by the depth-sort guard', () => {
+    imgSnapshotTest(
+      `
+stateDiagram-v2
+state outer {
+  state inner {
+    External
+    state sub {
+      Internal
+    }
+    sub --> External
+  }
+}
+`,
+      {}
+    );
+  });
 });

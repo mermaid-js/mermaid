@@ -373,6 +373,40 @@ describe('Graphlib decorations', () => {
       expect(bGraph.edges().length).toBe(0);
     });
   });
+  it('adjustClustersAndEdges should extract nested clusters when a subgraph has a numeric id (issue #7609)', function () {
+    /*
+      graph LR
+        subgraph outer
+          subgraph 1 ["inner"]
+            external
+            subgraph sub
+              internal
+            end
+            sub-->external
+          end
+        end
+    */
+    g.setNode('outer', { id: 'outer' });
+    g.setNode('1', { id: '1' });
+    g.setNode('sub', { id: 'sub' });
+    g.setNode('external', { id: 'external' });
+    g.setNode('internal', { id: 'internal' });
+    g.setParent('1', 'outer');
+    g.setParent('sub', '1');
+    g.setParent('external', '1');
+    g.setParent('internal', 'sub');
+    g.setEdge('sub', 'external', { data: 'sub-external' });
+
+    adjustClustersAndEdges(g);
+
+    const outerGraph = g.node('outer').graph;
+    const innerGraph = outerGraph.node('1').graph;
+    expect(innerGraph.node('sub')?.clusterNode).toBe(true);
+    const subGraph = innerGraph.node('sub').graph;
+    expect(subGraph.nodes()).toEqual(['internal']);
+    expect(innerGraph.children('sub')).toEqual([]);
+  });
+
   it('adjustClustersAndEdges should handle nesting GLB77', function () {
     /*
 flowchart TB

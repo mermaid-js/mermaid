@@ -363,6 +363,32 @@ export const extractor = (graph, depth) => {
   // containing the nodes and edges in the cluster in a new graph
   // for (let i = 0;)
   let nodes = graph.nodes();
+  const indexOf = new Map(nodes.map((id, i) => [id, i]));
+  // graphlib stores nodes in a plain object so purely-numeric ids (e.g. subgraph
+  // id "1") are iterated before string ids, placing a child before its parent.
+  // Only resort when a numeric-id child actually appears before its parent —
+  // the specific JS integer-key-ordering case that breaks extraction.
+  // Non-numeric ids are returned in insertion order and never need a resort.
+  // Keep in sync with rendering-util/layout-algorithms/dagre/mermaid-graphlib.js (#7609).
+  const needsResort = nodes.some((v) => {
+    if (!/^\d+$/.test(v)) {
+      return false;
+    }
+    const p = graph.parent(v);
+    return p != null && indexOf.get(p) > indexOf.get(v);
+  });
+  if (needsResort) {
+    const nodeDepth = (v) => {
+      let d = 0;
+      let cur = graph.parent(v);
+      while (cur != null) {
+        d++;
+        cur = graph.parent(cur);
+      }
+      return d;
+    };
+    nodes = [...nodes].sort((a, b) => nodeDepth(a) - nodeDepth(b));
+  }
   let hasChildren = false;
   for (const node of nodes) {
     const children = graph.children(node);

@@ -1003,6 +1003,23 @@ graph TD
       }
     );
   });
+  it('#7609: should render nested subgraph with numeric id without crashing', () => {
+    imgSnapshotTest(
+      `
+      graph LR
+        subgraph outer
+          subgraph 1 ["inner"]
+            external
+            subgraph sub
+              internal
+            end
+            sub-->external
+          end
+        end
+      `,
+      { fontFamily: 'courier' }
+    );
+  });
 });
 it('#5824: should be able to render string and markdown labels', () => {
   imgSnapshotTest(
