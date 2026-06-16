@@ -452,6 +452,46 @@ const runDagreGraphLayout = (graph) => {
   // log.info('Graph after layout:', JSON.stringify(graphlibJson.write(graph)));
 };
 
+// Vertical space a cluster must reserve above its children for its own (possibly
+// multi-line) header label. Only active when subGraphTitleMargin is configured (>0);
+// then the measured label height supersedes that margin when it is taller, so a
+// cluster never overlaps its children. Diagrams using the default margin (0) are
+// unaffected.
+const getClusterTitleReserve = (node, subGraphTitleTotalMargin) =>
+  subGraphTitleTotalMargin > 0
+    ? Math.max(node?.labelBBox?.height ?? 0, subGraphTitleTotalMargin)
+    : 0;
+
+// Summed title reserve of all ancestor clusters, so a deeply nested node clears
+// every ancestor's header, not just its immediate parent's.
+const cumulativeAncestorReserve = (graph, nodeId, subGraphTitleTotalMargin) => {
+  let total = 0;
+  let parentId = graph.parent(nodeId);
+  while (parentId) {
+    total += getClusterTitleReserve(graph.node(parentId), subGraphTitleTotalMargin);
+    parentId = graph.parent(parentId);
+  }
+  return total;
+};
+
+// Vertical space a cluster must grow by to fit its own header plus the headers of
+// the deepest chain of nested clusters below it. Sibling sub-clusters sit side by
+// side (same rank), so only the heaviest single ancestor-to-leaf chain stacks
+// vertically; taking the max over child clusters keeps the box tight rather than
+// summing every branch.
+const deepestClusterReserve = (graph, nodeId, subGraphTitleTotalMargin) => {
+  let maxChild = 0;
+  for (const childId of graph.children(nodeId)) {
+    if (graph.children(childId).length > 0) {
+      maxChild = Math.max(
+        maxChild,
+        deepestClusterReserve(graph, childId, subGraphTitleTotalMargin)
+      );
+    }
+  }
+  return getClusterTitleReserve(graph.node(nodeId), subGraphTitleTotalMargin) + maxChild;
+};
+
 const normalizeDagreNode = (graph, nodeId, subGraphTitleTotalMargin) => {
   const node = graph.node(nodeId);
   if (!node) {
@@ -459,12 +499,25 @@ const normalizeDagreNode = (graph, nodeId, subGraphTitleTotalMargin) => {
   }
 
   const normalizedNode = { ...node };
-  if (node?.clusterNode) {
-    normalizedNode.y = (node.y ?? 0) + subGraphTitleTotalMargin;
+  // Every node carries the diagram's baseline half-margin (matching the edge offset so
+  // nodes and edges stay aligned); nested nodes additionally clear all ancestor headers.
+  const ancestorReserve = cumulativeAncestorReserve(graph, nodeId, subGraphTitleTotalMargin);
+  if (node.clusterNode) {
+    // A recursively-rendered cluster already reserves its own header internally, so it
+    // shifts by the full margin (legacy behaviour) plus every ancestor header.
+    normalizedNode.y = (node.y ?? 0) + subGraphTitleTotalMargin + ancestorReserve;
   } else if (graph.children(nodeId).length > 0) {
-    normalizedNode.height = (node.height ?? 0) + subGraphTitleTotalMargin;
+    // A cluster laid out in the top-level graph: grow it to fit its own header and the
+    // deepest chain of nested headers below it (so children never overlap any header),
+    // then shift it down below all ancestor headers. Growing downward and moving the
+    // centre by half the growth keeps the cluster's top edge in place.
+    const ownReserve = deepestClusterReserve(graph, nodeId, subGraphTitleTotalMargin);
+    normalizedNode.height = (node.height ?? 0) + ownReserve;
+    normalizedNode.y =
+      (node.y ?? 0) + subGraphTitleTotalMargin / 2 + ancestorReserve + ownReserve / 2;
   } else {
-    normalizedNode.y = (node.y ?? 0) + subGraphTitleTotalMargin / 2;
+    // A leaf node: baseline half-margin plus clearance for every ancestor header.
+    normalizedNode.y = (node.y ?? 0) + subGraphTitleTotalMargin / 2 + ancestorReserve;
   }
   return normalizedNode;
 };
@@ -521,7 +574,10 @@ export const applyDagreLayoutResult = (data4Layout, measuredLayout) => {
 
   const edgeOffsetY = subGraphTitleTotalMargin / 2;
   data4Layout.edges = getEdgesToRender(graph, edgeOffsetY, { mergeSelfLoops }).map(
-    ({ edge, start, end }) => normalizeDagreEdge(edge, start, end, edgeOffsetY)
+    ({ edge, start, end }) => ({
+      ...normalizeDagreEdge(edge, start, end, edgeOffsetY),
+      subGraphTitleTotalMargin,
+    })
   );
 
   return data4Layout;
