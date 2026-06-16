@@ -205,19 +205,17 @@ export class C4BetaDB implements DiagramDB {
       if (boundaryIds.has(element.id)) {
         let label: string;
         if (element.kind === 'deploymentNode') {
-          // Two compact lines: the name (with an "xN" instances badge) on top, and
-          // a smaller "[Deployment Node: technology]" line below. Putting the name
-          // on its own line keeps the header narrow enough to stay inside the box,
-          // so wide labels no longer overlap sibling deployment nodes, while two
-          // lines stay short enough not to overlap nested children.
+          // The name (with an optional "xN" instances badge) on top, and the technology
+          // in brackets on a smaller line below (Structurizr notation). Keeping the name
+          // on its own line stays narrow enough to fit inside the box without overlapping
+          // sibling nodes; nodes without a technology show just the name.
           let nameLine = `<b>${escapeHtml(element.name)}</b>`;
           if (element.instances) {
             nameLine += ` <span class="c4-instances">x${escapeHtml(element.instances)}</span>`;
           }
-          const stereotype = element.technology
-            ? `[Deployment Node: ${escapeHtml(element.technology)}]`
-            : `[Deployment Node]`;
-          label = `${nameLine}<br/><small>${stereotype}</small>`;
+          label = element.technology
+            ? `${nameLine}<br/><small>[${escapeHtml(element.technology)}]</small>`
+            : nameLine;
         } else {
           label = escapeHtml(element.name);
         }
