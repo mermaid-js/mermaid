@@ -1,4 +1,10 @@
-import { createText, finalizeDeferredHtmlLabel } from '../../createText.js';
+import {
+  createText,
+  escapeAttr,
+  finalizeDeferredHtmlLabel,
+  htmlLabelMarkup,
+  registerDeferredHtmlLabel,
+} from '../../createText.js';
 import type { Node } from '../../types.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { evaluate, getEffectiveHtmlLabels } from '../../../config.js';
@@ -172,24 +178,155 @@ export async function prebuildNodeLabels<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   nodes: Node[]
 ): Promise<void> {
-  // Phase 1 — build every label (deferred measurement: writes only).
-  // The loop is sequential, so the async `labelBuild` bucket is accurate here
-  // (no overlapping wall-clocks) — it attributes the DOM-construction cost.
-  const builds: { node: Node; build: NodeLabelBuild }[] = [];
-  for (const node of nodes) {
-    const build =
-      injected.profiling && profiler.tick
-        ? await profiler.tick('labelBuild', () =>
-            buildNodeLabel(parent, node, getNodeClasses(node), true)
-          )
-        : await buildNodeLabel(parent, node, getNodeClasses(node), true);
-    builds.push({ node, build });
-  }
+  // Phase 1 — build every label (deferred measurement: writes only). When every
+  // label is HTML and the environment can parse batched SVG markup, build them all
+  // with one insertAdjacentHTML (the browser parser is ~2x cheaper than building
+  // each foreignObject/div/span via the DOM API); otherwise build each one
+  // individually. Both paths run sequentially, so the `labelBuild` bucket is exact.
+  const phase1 = async () => {
+    if (nodes.length > 0 && canBatchSvgHtml() && nodes.every(nodeUsesHtmlLabels)) {
+      const batched = await buildNodeLabelsBatched(parent, nodes);
+      if (batched) {
+        return batched;
+      }
+    }
+    return buildNodeLabelsIndividually(parent, nodes);
+  };
+  const builds =
+    injected.profiling && profiler.tick
+      ? await profiler.tick('labelBuild', phase1)
+      : await phase1();
+
   // Phase 2 — read every size (reads run back-to-back: one reflow), then finalize.
   const measured = builds.map((b) => ({ ...b, bbox: measureNodeLabel(b.build) }));
   for (const { node, build, bbox } of measured) {
     prebuiltLabels.set(node, finalizeNodeLabel(build, bbox, node));
   }
+}
+
+/** Whether a node renders an HTML (foreignObject) label — matches buildNodeLabel. */
+function nodeUsesHtmlLabels(node: Node): boolean {
+  return Boolean(node.useHtmlLabels || evaluate(getConfig()?.htmlLabels));
+}
+
+let svgHtmlBatchSupport: boolean | undefined;
+
+/**
+ * One-time probe: can this environment parse batched SVG markup containing an xhtml
+ * foreignObject body via insertAdjacentHTML, with correct namespaces? True in
+ * modern browsers; may be false in headless/jsdom, where we fall back to
+ * per-element construction so correctness never depends on the parser.
+ */
+function canBatchSvgHtml(): boolean {
+  if (svgHtmlBatchSupport !== undefined) {
+    return svgHtmlBatchSupport;
+  }
+  svgHtmlBatchSupport = false;
+  try {
+    if (typeof document !== 'undefined') {
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      g.insertAdjacentHTML(
+        'beforeend',
+        '<foreignObject><div xmlns="http://www.w3.org/1999/xhtml"></div></foreignObject>'
+      );
+      const div = g.querySelector('div');
+      svgHtmlBatchSupport =
+        !!div &&
+        div.namespaceURI === 'http://www.w3.org/1999/xhtml' &&
+        g.firstElementChild?.namespaceURI === 'http://www.w3.org/2000/svg';
+    }
+  } catch {
+    svgHtmlBatchSupport = false;
+  }
+  return svgHtmlBatchSupport;
+}
+
+/** Per-node build path (one foreignObject/div/span at a time via the DOM API). */
+async function buildNodeLabelsIndividually<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  nodes: Node[]
+): Promise<{ node: Node; build: NodeLabelBuild }[]> {
+  const builds: { node: Node; build: NodeLabelBuild }[] = [];
+  for (const node of nodes) {
+    builds.push({ node, build: await buildNodeLabel(parent, node, getNodeClasses(node), true) });
+  }
+  return builds;
+}
+
+/**
+ * Batched build path: assemble the markup for every (HTML) label into one string
+ * and parse it with a single insertAdjacentHTML, then re-select the elements.
+ * Returns null (after cleaning up) if the parse didn't yield the expected
+ * structure, so the caller can fall back to per-element construction.
+ */
+async function buildNodeLabelsBatched<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  nodes: Node[]
+): Promise<{ node: Node; build: NodeLabelBuild }[] | null> {
+  const parentEl = parent.node();
+  if (!parentEl) {
+    return null;
+  }
+  const config = getConfig();
+  const defaultWidth = config.flowchart?.wrappingWidth ?? 200;
+
+  const widths: number[] = [];
+  const parts: string[] = [];
+  for (const node of nodes) {
+    const rawLabel =
+      node.label === undefined ? '' : typeof node.label === 'string' ? node.label : node.label[0];
+    const isMarkdown = node.labelType === 'markdown';
+    const width = node.width || defaultWidth;
+    widths.push(width);
+    const fo = await htmlLabelMarkup(sanitizeText(decodeEntities(rawLabel), config), {
+      markdown: isMarkdown,
+      isNode: true,
+      classes: isMarkdown ? 'markdown-node-label' : '',
+      style: node.labelStyle,
+      width,
+      addSvgBackground: !!node.icon || !!node.img,
+    });
+    parts.push(
+      `<g class="${escapeAttr(getNodeClasses(node))}" id="${escapeAttr(node.domId || node.id)}">` +
+        `<g class="label" style="${escapeAttr(node.labelStyle ?? '')}">` +
+        fo +
+        `</g></g>`
+    );
+  }
+
+  const before = parentEl.childElementCount;
+  parentEl.insertAdjacentHTML('beforeend', parts.join(''));
+  const groups = [...parentEl.children].slice(before);
+
+  const builds: { node: Node; build: NodeLabelBuild }[] = [];
+  if (groups.length === nodes.length) {
+    for (const [i, node] of nodes.entries()) {
+      const shapeSvg = groups[i] as SVGGElement;
+      const labelEl = shapeSvg.firstElementChild as SVGGElement | null;
+      const fo = labelEl?.firstElementChild as SVGForeignObjectElement | null;
+      const div = fo?.firstElementChild as HTMLDivElement | null;
+      if (!labelEl || !fo || !div) {
+        builds.length = 0;
+        break;
+      }
+      registerDeferredHtmlLabel(fo, div, widths[i]);
+      builds.push({
+        node,
+        build: {
+          shapeSvg: select(shapeSvg) as unknown as D3Selection<SVGGElement>,
+          labelEl: select(labelEl) as unknown as D3Selection<SVGGElement>,
+          text: fo as unknown as CreatedText,
+          useHtmlLabels: true,
+          halfPadding: (node?.padding ?? 0) / 2,
+        },
+      });
+    }
+  }
+  if (builds.length !== nodes.length) {
+    groups.forEach((g) => g.remove());
+    return null;
+  }
+  return builds;
 }
 
 /**

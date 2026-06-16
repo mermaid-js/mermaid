@@ -120,6 +120,108 @@ async function addHtmlSpan(
   return fo.node()!;
 }
 
+const XHTML_NS = 'http://www.w3.org/1999/xhtml';
+
+/** Escape a string for use inside a double-quoted HTML/SVG attribute value. */
+export function escapeAttr(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+/**
+ * Run the shared HTML-label text pipeline (markdown/HTML conversion, entity decode,
+ * icon substitution, KaTeX escaping) and return the `{ label, labelStyle, isNode }`
+ * node consumed by {@link addHtmlSpan} and {@link htmlLabelMarkup}. Extracted so the
+ * per-element and batched-markup label paths process text identically.
+ */
+async function prepareHtmlLabelNode(
+  text: string,
+  markdown: boolean,
+  style: string,
+  isNode: boolean,
+  config?: MermaidConfig
+): Promise<{ label: string; labelStyle: string; isNode: boolean }> {
+  const convert = () => (markdown ? markdownToHTML(text, config) : nonMarkdownToHTML(text));
+  const htmlText =
+    injected.profiling && profiler.tickSync ? profiler.tickSync('markdown', convert) : convert();
+  const decode = () => decodeEntities(htmlText);
+  const decoded =
+    injected.profiling && profiler.tickSync ? profiler.tickSync('decode', decode) : decode();
+  const decodedReplacedText = await replaceIconSubstring(decoded, config);
+  // for Katex the text could contain escaped characters, \\relax -> \relax
+  const inputForKatex = text.replace(/\\\\/g, '\\');
+  return {
+    isNode,
+    label: hasKatex(text) ? inputForKatex : decodedReplacedText,
+    labelStyle: style.replace('fill:', 'color:'),
+  };
+}
+
+/**
+ * The string form of {@link addHtmlSpan}: returns the `<foreignObject>` markup for a
+ * prepared label node so many labels can be assembled into one string and parsed by
+ * the browser in a single `insertAdjacentHTML` — far cheaper than building each
+ * foreignObject/div/span with the DOM API. Output matches addHtmlSpan's.
+ */
+export async function htmlLabelMarkup(
+  text: string,
+  {
+    markdown = true,
+    isNode = true,
+    classes = '',
+    style = '',
+    width = 200,
+    addSvgBackground = false,
+  }: {
+    markdown?: boolean;
+    isNode?: boolean;
+    classes?: string;
+    style?: string;
+    width?: number;
+    addSvgBackground?: boolean;
+  } = {},
+  config: MermaidConfig = getConfig()
+): Promise<string> {
+  const node = await prepareHtmlLabelNode(text, markdown, style, isNode, config);
+  const size = `${Math.min(10 * width, maxSafeSizeForWidth)}px`;
+  const sanitizedLabel = hasKatex(node.label)
+    ? await renderKatexSanitized(node.label.replace(common.lineBreakRegex, '\n'), config)
+    : sanitizeText(node.label, config);
+  const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
+  const divStyle = [
+    node.labelStyle || '',
+    'display: table-cell',
+    'white-space: nowrap',
+    'line-height: 1.5',
+    ...(width !== Number.POSITIVE_INFINITY ? [`max-width: ${width}px`, 'text-align: center'] : []),
+  ]
+    .filter(Boolean)
+    .join('; ');
+  const divClass = addSvgBackground ? ' class="labelBkg"' : '';
+  const spanStyle = node.labelStyle ? ` style="${escapeAttr(node.labelStyle)}"` : '';
+  return (
+    `<foreignObject width="${size}" height="${size}">` +
+    `<div xmlns="${XHTML_NS}" style="${escapeAttr(divStyle)}"${divClass}>` +
+    `<span class="${escapeAttr(`${labelClass} ${classes}`)}"${spanStyle}>${sanitizedLabel}</span>` +
+    `</div></foreignObject>`
+  );
+}
+
+/**
+ * Register a foreignObject built from markup (see {@link htmlLabelMarkup}) so the
+ * batched measure pass can apply the same deferred width fix as addHtmlSpan.
+ */
+export function registerDeferredHtmlLabel(
+  fo: SVGForeignObjectElement,
+  div: HTMLDivElement,
+  width: number
+): void {
+  deferredHtmlLabels.set(fo, { div, width });
+}
+
 /**
  * Creates a tspan element with the specified attributes for text positioning.
  *
@@ -371,29 +473,7 @@ export const createText = async (
   );
   if (useHtmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
-
-    // Profiling: attribute markdown/HTML conversion (marked.lexer for markdown
-    // labels, the <p>/<br> wrap for plain ones) separately from element creation.
-    const convert = () => (markdown ? markdownToHTML(text, config) : nonMarkdownToHTML(text));
-    const htmlText =
-      injected.profiling && profiler.tickSync ? profiler.tickSync('markdown', convert) : convert();
-    // Profiling: entity decode is synchronous, so tickSync is accurate even under
-    // concurrent label builds (the async `tick` over-counts overlapping awaits).
-    // replaceIconSubstring is a no-op regex scan for plain labels, so its real cost
-    // is negligible and not separately bucketed.
-    const decode = () => decodeEntities(htmlText);
-    const decoded =
-      injected.profiling && profiler.tickSync ? profiler.tickSync('decode', decode) : decode();
-    const decodedReplacedText = await replaceIconSubstring(decoded, config);
-
-    //for Katex the text could contain escaped characters, \\relax that should be transformed to \relax
-    const inputForKatex = text.replace(/\\\\/g, '\\');
-
-    const node = {
-      isNode,
-      label: hasKatex(text) ? inputForKatex : decodedReplacedText,
-      labelStyle: style.replace('fill:', 'color:'),
-    };
+    const node = await prepareHtmlLabelNode(text, markdown, style, isNode, config);
     const vertexNode = await addHtmlSpan(
       el,
       node,
