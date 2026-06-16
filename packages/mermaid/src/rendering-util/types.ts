@@ -148,6 +148,8 @@ export interface Edge {
   endLabelLeft?: string;
   // Rendering specific properties
   curve?: string;
+  /** Anchor the label on the line's geometric midpoint rather than the layout label point. */
+  centerLabelOnLine?: boolean;
   labelpos?: string;
   labelStyle?: string[];
   minlen?: number;

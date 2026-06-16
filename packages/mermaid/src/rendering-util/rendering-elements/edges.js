@@ -276,7 +276,7 @@ export const positionEdgeLabel = (edge, paths) => {
         pos.y,
         ') abc88'
       );
-      if (paths.updatedPath) {
+      if (paths.updatedPath || edge.centerLabelOnLine) {
         x = pos.x;
         y = pos.y;
       }

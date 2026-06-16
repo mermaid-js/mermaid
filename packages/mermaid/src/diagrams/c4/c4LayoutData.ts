@@ -300,9 +300,10 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
       style,
       labelStyle,
       classes: 'c4-rel',
-      // Straight lines (passing through the layout's label point) so labels sit
-      // on the line, and to match the straight relationships on c4model.com.
+      // Straight lines matching c4model.com, with the label centered on the line's
+      // midpoint (not beside it, where the layout label point can sit).
       curve: 'linear',
+      centerLabelOnLine: true,
       look: config.look,
     });
   });
