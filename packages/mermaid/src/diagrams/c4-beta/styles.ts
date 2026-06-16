@@ -96,6 +96,11 @@ const getStyles = (options: C4BetaStyleOptions) =>
     stroke-width: 1px;
   }
 
+  .cluster small {
+    font-size: 0.75em;
+    opacity: 0.85;
+  }
+
   .cluster text {
     fill: ${options.titleColor};
   }

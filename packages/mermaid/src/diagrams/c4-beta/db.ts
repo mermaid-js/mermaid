@@ -203,16 +203,23 @@ export class C4BetaDB implements DiagramDB {
 
     for (const element of this.elements) {
       if (boundaryIds.has(element.id)) {
-        let label =
-          element.kind === 'deploymentNode'
-            ? escapeHtml(
-                `${element.name} [Deployment Node${element.technology ? `: ${element.technology}` : ''}]`
-              )
-            : escapeHtml(element.name);
-        // Deployment nodes can declare how many instances are deployed; render
-        // it as an "xN" badge line (a positioned corner badge is a future polish).
-        if (element.kind === 'deploymentNode' && element.instances) {
-          label += `<br/><span class="c4-instances">x${escapeHtml(element.instances)}</span>`;
+        let label: string;
+        if (element.kind === 'deploymentNode') {
+          // Two compact lines: the name (with an "xN" instances badge) on top, and
+          // a smaller "[Deployment Node: technology]" line below. Putting the name
+          // on its own line keeps the header narrow enough to stay inside the box,
+          // so wide labels no longer overlap sibling deployment nodes, while two
+          // lines stay short enough not to overlap nested children.
+          let nameLine = `<b>${escapeHtml(element.name)}</b>`;
+          if (element.instances) {
+            nameLine += ` <span class="c4-instances">x${escapeHtml(element.instances)}</span>`;
+          }
+          const stereotype = element.technology
+            ? `[Deployment Node: ${escapeHtml(element.technology)}]`
+            : `[Deployment Node]`;
+          label = `${nameLine}<br/><small>${stereotype}</small>`;
+        } else {
+          label = escapeHtml(element.name);
         }
         nodes.push({
           id: element.id,

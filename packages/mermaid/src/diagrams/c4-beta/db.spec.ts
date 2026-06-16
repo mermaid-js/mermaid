@@ -97,7 +97,7 @@ describe('c4-beta db', () => {
     expect(element.kind).toBe('deploymentNode');
     const { nodes } = db.getData();
     expect(nodes[0].cssClasses).toBe('c4-boundary c4-deploymentNode');
-    expect(nodes[0].label).toBe('AWS [Deployment Node: Cloud]');
+    expect(nodes[0].label).toBe('<b>AWS</b><br/><small>[Deployment Node: Cloud]</small>');
   });
 
   describe('getData', () => {
@@ -402,7 +402,9 @@ describe('c4-beta db', () => {
         const { nodes } = db.getData();
         expect(nodes[0].isGroup).toBe(true);
         expect(nodes[0].cssClasses).toBe('c4-boundary c4-deploymentNode');
-        expect(nodes[0].label).toBe('Empty Node [Deployment Node: Ubuntu 22.04]');
+        expect(nodes[0].label).toBe(
+          '<b>Empty Node</b><br/><small>[Deployment Node: Ubuntu 22.04]</small>'
+        );
       });
 
       it('should omit the technology from the node label when absent', async () => {
@@ -410,7 +412,7 @@ describe('c4-beta db', () => {
           deploymentNode plain "Plain Node"
         `);
         const { nodes } = db.getData();
-        expect(nodes[0].label).toBe('Plain Node [Deployment Node]');
+        expect(nodes[0].label).toBe('<b>Plain Node</b><br/><small>[Deployment Node]</small>');
       });
 
       it('should render an infrastructureNode as a leaf box, not a cluster', async () => {
@@ -432,7 +434,7 @@ describe('c4-beta db', () => {
         `);
         const { nodes } = db.getData();
         expect(nodes[0].label).toBe(
-          'EC2 [Deployment Node: Ubuntu]<br/><span class="c4-instances">x4</span>'
+          '<b>EC2</b> <span class="c4-instances">x4</span><br/><small>[Deployment Node: Ubuntu]</small>'
         );
       });
 

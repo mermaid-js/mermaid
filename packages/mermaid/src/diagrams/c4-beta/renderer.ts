@@ -21,14 +21,22 @@ const draw: DrawDefinition = async function (_text, id, _version, diag) {
   data4Layout.type = diag.type;
   data4Layout.layoutAlgorithm = getRegisteredLayoutAlgorithm(layout);
   data4Layout.direction = db.getDirection();
-  data4Layout.nodeSpacing = 50;
-  data4Layout.rankSpacing = 50;
+  // Extra node spacing keeps sibling deployment-node headers from overlapping.
+  data4Layout.nodeSpacing = 80;
+  data4Layout.rankSpacing = 60;
+  // Reserve vertical space for the (multi-line) deployment-node header labels so
+  // they do not overlap nested content. The dagre layout reads this from the
+  // per-diagram config; clusters otherwise reserve no space for their label.
+  data4Layout.config.flowchart = {
+    ...data4Layout.config.flowchart,
+    subGraphTitleMargin: { top: 40, bottom: 0 },
+  };
   data4Layout.markers = ['point'];
   data4Layout.diagramId = id;
 
   await render(data4Layout, svg);
 
-  utils.insertTitle(svg, 'c4TitleText', 0, db.getDiagramTitle());
+  utils.insertTitle(svg, 'c4TitleText', 30, db.getDiagramTitle());
   setupViewPortForSVG(svg, 10, 'c4beta', true);
 };
 
