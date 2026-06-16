@@ -372,7 +372,11 @@ export const createText = async (
   if (useHtmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
 
-    const htmlText = markdown ? markdownToHTML(text, config) : nonMarkdownToHTML(text);
+    // Profiling: attribute markdown/HTML conversion (marked.lexer for markdown
+    // labels, the <p>/<br> wrap for plain ones) separately from element creation.
+    const convert = () => (markdown ? markdownToHTML(text, config) : nonMarkdownToHTML(text));
+    const htmlText =
+      injected.profiling && profiler.tickSync ? profiler.tickSync('markdown', convert) : convert();
     const decodedReplacedText = await replaceIconSubstring(decodeEntities(htmlText), config);
 
     //for Katex the text could contain escaped characters, \\relax that should be transformed to \relax
