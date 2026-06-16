@@ -377,7 +377,11 @@ export const createText = async (
     const convert = () => (markdown ? markdownToHTML(text, config) : nonMarkdownToHTML(text));
     const htmlText =
       injected.profiling && profiler.tickSync ? profiler.tickSync('markdown', convert) : convert();
-    const decodedReplacedText = await replaceIconSubstring(decodeEntities(htmlText), config);
+    // Profiling: the per-label regex prep (entity decode + icon substitution),
+    // separated from the actual DOM construction in addHtmlSpan below.
+    const prep = () => replaceIconSubstring(decodeEntities(htmlText), config);
+    const decodedReplacedText =
+      injected.profiling && profiler.tick ? await profiler.tick('labelPrep', prep) : await prep();
 
     //for Katex the text could contain escaped characters, \\relax that should be transformed to \relax
     const inputForKatex = text.replace(/\\\\/g, '\\');
@@ -387,15 +391,13 @@ export const createText = async (
       label: hasKatex(text) ? inputForKatex : decodedReplacedText,
       labelStyle: style.replace('fill:', 'color:'),
     };
-    const vertexNode = await addHtmlSpan(
-      el,
-      node,
-      width,
-      classes,
-      addSvgBackground,
-      config,
-      deferMeasure
-    );
+    // Profiling: the DOM construction itself (foreignObject/div/span + attrs).
+    const buildFo = () =>
+      addHtmlSpan(el, node, width, classes, addSvgBackground, config, deferMeasure);
+    const vertexNode =
+      injected.profiling && profiler.tick
+        ? await profiler.tick('addHtmlSpan', buildFo)
+        : await buildFo();
     return vertexNode;
   } else {
     //sometimes the user might add br tags with 1 or more spaces in between, so we need to replace them with <br/>
