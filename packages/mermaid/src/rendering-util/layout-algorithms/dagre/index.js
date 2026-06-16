@@ -772,6 +772,13 @@ export const prepareLayoutForDagre = (data4Layout) => {
 export const measureDagreLayout = async (data4Layout, { element, preparedLayout }) => {
   const prepared = preparedLayout ?? prepareLayoutForDagre(data4Layout);
   const siteConfig = getConfig();
+  // Let a diagram reserve cluster-header space via its own layout config
+  // (subGraphTitleMargin), like nodeSpacing/rankSpacing. Defaults to the global
+  // value, so diagrams that do not set it are unaffected.
+  const layoutTitleMargin = data4Layout.config?.flowchart?.subGraphTitleMargin;
+  if (layoutTitleMargin) {
+    siteConfig.flowchart = { ...siteConfig.flowchart, subGraphTitleMargin: layoutTitleMargin };
+  }
   const measuredLayout = await measureDagreGraph({
     element,
     graph: prepared.graph,
