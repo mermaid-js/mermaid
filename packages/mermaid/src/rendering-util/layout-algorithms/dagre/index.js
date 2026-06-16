@@ -4,7 +4,11 @@ import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { createCommonLayoutRenderer } from '../common/index.js';
 import { profiler } from '../../../profiler.js';
-import { updateNodeBounds } from '../../rendering-elements/shapes/util.js';
+import {
+  clearPrebuiltLabels,
+  prebuildNodeLabels,
+  updateNodeBounds,
+} from '../../rendering-elements/shapes/util.js';
 import {
   clusterDb,
   adjustClustersAndEdges,
@@ -275,6 +279,19 @@ const measureAndRunDagreLayoutCore = async (
   const nodes = elem.insert('g').attr('class', 'nodes');
   const mergeSelfLoops = shouldMergeSelfLoopSegments(diagramType);
 
+  // Batch-build and measure leaf-node labels up front so the label-size reads run
+  // back-to-back (one reflow) instead of a forced reflow per node. Clusters recurse
+  // into their own group and linked nodes get their own wrapper, so they're left to
+  // the inline path in the loop below.
+  const prebuiltLeafNodes = graph
+    .nodes()
+    .filter((v) => {
+      const node = graph.node(v);
+      return node && !node.clusterNode && graph.children(v).length === 0 && !node.link;
+    })
+    .map((v) => graph.node(v));
+  await prebuildNodeLabels(nodes, prebuiltLeafNodes);
+
   // Insert nodes, this will insert them into the dom and each node will get a size. The size is updated
   // to the abstract node and is later used by dagre for the layout
   await Promise.all(
@@ -359,6 +376,11 @@ const measureAndRunDagreLayoutCore = async (
       }
     })
   );
+
+  // Drop any prebuilt leaf labels not consumed above (e.g. a shape that builds its
+  // own label). Scoped to this level's nodes so concurrent nested subgraph renders
+  // don't clear each other's pending entries.
+  clearPrebuiltLabels(prebuiltLeafNodes);
 
   const processEdges = async () => {
     const edgePromises = graph.edges().map(async function (e) {

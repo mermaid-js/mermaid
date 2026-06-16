@@ -184,12 +184,22 @@ export async function prebuildNodeLabels<T extends SVGGraphicsElement>(
   }
 }
 
-/** Remove prebuilt labels that were never consumed by a labelHelper call. */
-export function clearPrebuiltLabels(): void {
-  for (const cached of prebuiltLabels.values()) {
-    cached.shapeSvg.remove();
+/**
+ * Remove prebuilt labels that were never consumed by a labelHelper call. Pass the
+ * exact nodes a {@link prebuildNodeLabels} call produced to clear only those — this
+ * keeps nested, concurrent renders (e.g. dagre subgraphs) from clearing each
+ * other's pending entries. With no argument, clears everything (safe for a single
+ * flat pass).
+ */
+export function clearPrebuiltLabels(nodes?: Node[]): void {
+  const targets = nodes ?? [...prebuiltLabels.keys()];
+  for (const node of targets) {
+    const cached = prebuiltLabels.get(node);
+    if (cached) {
+      cached.shapeSvg.remove();
+      prebuiltLabels.delete(node);
+    }
   }
-  prebuiltLabels.clear();
 }
 export const insertLabel = async <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
