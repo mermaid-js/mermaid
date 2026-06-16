@@ -60,8 +60,10 @@ const stillIgnored = (p) =>
 cfg.entry = entry;
 cfg.ignorePatterns = (cfg.ignorePatterns ?? []).filter(stillIgnored);
 
-// Plain substring match (no RegExp built from argv) so a diagram id can't inject regex syntax.
-const newFileDirs = [...targets, 'common'].map((id) => `diagrams/${id}/parser/`);
+// Filter findings to each diagram's OWN parser dir (no RegExp built from argv → no injection).
+// `common/parser` is shared infra whose exports are used across diagrams, so a single-diagram run
+// would report false positives there — it's covered by full `fallow`, not this per-diagram gate.
+const newFileDirs = targets.map((id) => `diagrams/${id}/parser/`);
 const isNewParserPath = (value) =>
   typeof value === 'string' && newFileDirs.some((dir) => value.includes(dir));
 
