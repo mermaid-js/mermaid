@@ -12,6 +12,22 @@ Mermaid parser package
 
 [![NPM](https://img.shields.io/npm/v/@mermaid-js/parser)](https://www.npmjs.com/package/@mermaid-js/parser)
 
+> [!WARNING]
+> **Deprecated — do not add new languages here.**
+>
+> Mermaid is migrating its diagram parsers to [Chevrotain](https://chevrotain.io/), co-located
+> with each diagram under `packages/mermaid/src/diagrams/<diagram>/parser/`. This separate,
+> Langium-based package is being phased out **one diagram at a time**.
+>
+> - **No new grammars** should be added here. A new diagram gets a Chevrotain parser next to the
+>   diagram instead.
+> - **Existing languages stay and remain fully functional** during the transition. Each migrated
+>   diagram keeps its Langium parser reachable as an instant rollback via the per-diagram config
+>   switch: `parser: { <diagram>: 'legacy' | 'chevrotain' }`.
+> - A language is only ever removed from this package as a **future, opt-in cleanup** — after its
+>   Chevrotain replacement has shipped, been the trusted default long enough that the rollback is
+>   no longer needed. Never during a per-diagram migration.
+
 ## How the package works
 
 The package exports a `parse` function that has two parameters:
