@@ -300,10 +300,10 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
       style,
       labelStyle,
       classes: 'c4-rel',
-      // Straight lines matching c4model.com, with the label centered on the line's
-      // midpoint (not beside it, where the layout label point can sit).
+      // Straight lines matching c4model.com. labelpos 'c' centers the label on
+      // the line instead of dagre's default side offset.
       curve: 'linear',
-      centerLabelOnLine: true,
+      labelpos: 'c',
       look: config.look,
     });
   });
