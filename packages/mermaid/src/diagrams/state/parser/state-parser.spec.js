@@ -1,5 +1,5 @@
 import { StateDB } from '../stateDb.js';
-import stateDiagram from './stateDiagram.jison';
+import stateDiagram from '../stateParser.js';
 import { setConfig } from '../../../config.js';
 
 setConfig({

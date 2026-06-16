@@ -1,6 +1,6 @@
 import { setConfig } from '../../../config.js';
 import { StateDB } from '../stateDb.js';
-import stateDiagram from './stateDiagram.jison';
+import stateDiagram from '../stateParser.js';
 
 setConfig({
   securityLevel: 'strict',

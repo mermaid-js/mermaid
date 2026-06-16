@@ -1,4 +1,4 @@
-import stateDiagram, { parser } from './parser/stateDiagram.jison';
+import stateDiagram, { parser } from './stateParser.js';
 import { DEFAULT_DIAGRAM_DIRECTION } from './stateCommon.js';
 import { StateDB } from './stateDb.js';
 

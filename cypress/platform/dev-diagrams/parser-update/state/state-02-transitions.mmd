@@ -1,0 +1,5 @@
+stateDiagram-v2
+    [*] --> Active
+    Active --> Idle : timeout
+    Idle --> Active : wake
+    Active --> [*] : done

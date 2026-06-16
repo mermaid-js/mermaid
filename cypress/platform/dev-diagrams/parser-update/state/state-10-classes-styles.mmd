@@ -1,0 +1,8 @@
+stateDiagram-v2
+    classDef badBadEvent fill:#f00,color:white
+    classDef movement font-style:italic
+    [*] --> Idle
+    Idle --> Moving
+    Moving:::movement
+    class Idle badBadEvent
+    style Moving fill:#bbf

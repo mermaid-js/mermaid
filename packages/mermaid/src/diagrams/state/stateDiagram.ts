@@ -1,6 +1,5 @@
 import type { DiagramDefinition } from '../../diagram-api/types.js';
-// @ts-ignore: JISON doesn't support types
-import parser from './parser/stateDiagram.jison';
+import parser from './stateParser.js';
 import { StateDB } from './stateDb.js';
 import styles from './styles.js';
 import renderer from './stateRenderer.js';

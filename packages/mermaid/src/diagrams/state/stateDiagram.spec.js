@@ -1,4 +1,4 @@
-import { parser } from './parser/stateDiagram.jison';
+import { parser } from './stateParser.js';
 import { StateDB } from './stateDb.js';
 
 describe('state diagram, ', function () {

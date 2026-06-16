@@ -1,0 +1,8 @@
+stateDiagram-v2
+    [*] --> NotShooting
+    state "Not Shooting State" as NotShooting {
+        state "Idle mode" as Idle
+        [*] --> Idle
+        Idle --> Configuring : EvConfig
+        Configuring --> Idle : EvConfig
+    }
