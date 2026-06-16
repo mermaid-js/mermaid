@@ -284,6 +284,7 @@ properties:
         'maxTextSize',
         'suppressErrorRendering',
         'maxEdges',
+        'parser',
       ]
     type: array
     items:

@@ -9,11 +9,12 @@ These files are **not** picked up by the DDLT layout sweep (which only scans `..
 
 ## Rendering under each engine
 
-Pie uses the legacy parser by default. To render with the Chevrotain parser, select it via config —
-honored only through `initialize()` / `setConfig()` (not via `%%{init}%%` or frontmatter):
+Pie uses the **Chevrotain** parser by default. To render with the legacy (langium) parser instead,
+select it via config — honored only through `initialize()` / `setConfig()` (not via `%%{init}%%`
+or frontmatter, since `parser` is a `secure` key):
 
 ```js
-mermaid.initialize({ parser: { pie: 'chevrotain' } });
+mermaid.initialize({ parser: { pie: 'legacy' } });
 ```
 
 Render the same fixture under both engines and confirm the output is visually identical.

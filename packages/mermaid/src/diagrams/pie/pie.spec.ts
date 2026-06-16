@@ -1,18 +1,16 @@
 import { parser } from './pieParser.js';
 import { DEFAULT_PIE_DB, db } from './pieDb.js';
 import { setConfig } from '../../diagram-api/diagramAPI.js';
+import { describeForEachParserEngine } from '../common/parser/parserTestUtils.js';
 
 setConfig({
   securityLevel: 'strict',
 });
 
-// The same golden assertions run against both the legacy (langium) and Chevrotain engines,
-// selected per-test via the internal `parser` config, to prove behavioural parity.
-describe.each(['legacy', 'chevrotain'] as const)('pie [%s parser]', (engine) => {
-  beforeEach(() => {
-    setConfig({ parser: { pie: engine } });
-    db.clear();
-  });
+// The same golden assertions run against both engines (selected per-test via the internal
+// `parser` config) to prove behavioural parity.
+describeForEachParserEngine('pie', () => {
+  beforeEach(() => db.clear());
 
   describe('parse', () => {
     it('should handle very simple pie', async () => {
