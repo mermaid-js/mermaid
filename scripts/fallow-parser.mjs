@@ -60,7 +60,10 @@ const stillIgnored = (p) =>
 cfg.entry = entry;
 cfg.ignorePatterns = (cfg.ignorePatterns ?? []).filter(stillIgnored);
 
-const newFileRe = new RegExp(`diagrams/(?:${targets.join('|')}|common)/parser/`);
+// Plain substring match (no RegExp built from argv) so a diagram id can't inject regex syntax.
+const newFileDirs = [...targets, 'common'].map((id) => `diagrams/${id}/parser/`);
+const isNewParserPath = (value) =>
+  typeof value === 'string' && newFileDirs.some((dir) => value.includes(dir));
 
 let exitCode = 0;
 try {
@@ -87,7 +90,7 @@ try {
       node.forEach(walk);
       return;
     }
-    if (Object.values(node).some((v) => typeof v === 'string' && newFileRe.test(v))) {
+    if (Object.values(node).some((v) => isNewParserPath(v))) {
       const key = JSON.stringify(node);
       if (!seen.has(key)) {
         seen.add(key);
