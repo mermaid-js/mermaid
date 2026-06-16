@@ -320,19 +320,10 @@ function positionRenderedEdgeLabel(edge: RenderedEdge, paths?: EdgeRenderPaths):
   const { subGraphTitleTotalMargin } = getSubGraphTitleMargins({
     flowchart: siteConfig.flowchart ?? {},
   });
-  // Diagrams that reserve cluster-header space shift their nodes after layout but not the
-  // dagre label anchor (edge.x/edge.y), so a label can land on top of a node. They stamp
-  // their reserve on the edge; when present, center the label on the rendered path instead.
-  const edgeReserve = edge.subGraphTitleTotalMargin ?? 0;
-  const reservesClusterHeader = edgeReserve > 0;
   if (edge.label) {
     const el = edgeLabels.get(edge.id);
     let x = edge.x;
     let y = edge.y;
-    // The per-diagram reserve is not in the global config, so for diagrams that reserve
-    // cluster-header space use the value stamped on the edge to offset the label the same
-    // way its path was shifted (otherwise the label is left behind, above the line).
-    const offsetY = reservesClusterHeader ? edgeReserve / 2 : subGraphTitleTotalMargin / 2;
     if (path) {
       const pos = utils.calcLabelPosition(path);
       log.debug(
@@ -346,14 +337,12 @@ function positionRenderedEdgeLabel(edge: RenderedEdge, paths?: EdgeRenderPaths):
         pos.y,
         ') abc88'
       );
-      // Center the label on the rendered path when the path was adjusted, or when the
-      // diagram shifted its nodes for cluster headers (the dagre anchor is then stale).
-      if (paths?.updatedPath || reservesClusterHeader) {
+      if (paths?.updatedPath) {
         x = pos.x;
         y = pos.y;
       }
     }
-    el.attr('transform', `translate(${x}, ${y! + offsetY})`);
+    el.attr('transform', `translate(${x}, ${y! + subGraphTitleTotalMargin / 2})`);
   }
 
   if (edge?.startLabelLeft) {

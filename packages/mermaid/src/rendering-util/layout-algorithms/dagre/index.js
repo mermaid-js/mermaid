@@ -574,10 +574,7 @@ export const applyDagreLayoutResult = (data4Layout, measuredLayout) => {
 
   const edgeOffsetY = subGraphTitleTotalMargin / 2;
   data4Layout.edges = getEdgesToRender(graph, edgeOffsetY, { mergeSelfLoops }).map(
-    ({ edge, start, end }) => ({
-      ...normalizeDagreEdge(edge, start, end, edgeOffsetY),
-      subGraphTitleTotalMargin,
-    })
+    ({ edge, start, end }) => normalizeDagreEdge(edge, start, end, edgeOffsetY)
   );
 
   return data4Layout;

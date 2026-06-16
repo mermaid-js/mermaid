@@ -190,11 +190,6 @@ export interface Edge {
    * that route or render edges must skip any edge with `isLayoutOnly: true`.
    */
   isLayoutOnly?: boolean;
-  /**
-   * Cluster-header reserve in effect for this diagram, stamped by the dagre layout so the
-   * label painter can center the label on the rendered path when nodes were shifted.
-   */
-  subGraphTitleTotalMargin?: number;
 }
 
 export interface RectOptions {
