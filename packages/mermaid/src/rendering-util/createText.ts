@@ -30,6 +30,44 @@ function applyStyle<T extends Element>(
 // We assume that nobody will want to create labels larger than 16384 pixels wide
 const maxSafeSizeForWidth = 16384;
 
+/**
+ * For HTML labels built with `deferMeasure`, the div + intended width are stashed
+ * here so a batched measure pass can size them later. Deferring the measurement
+ * lets a caller build every label first and then read all sizes in one go,
+ * collapsing the per-label forced reflow that dominates large-diagram rendering.
+ */
+const deferredHtmlLabels = new WeakMap<
+  SVGForeignObjectElement,
+  { div: HTMLDivElement; width: number }
+>();
+
+/**
+ * The display/width fix that switches a label which exactly hit its max-width
+ * from a single nowrap table-cell to a wrapping table. Extracted so both the
+ * inline path (in `addHtmlSpan`) and the batched measure pass can apply it.
+ */
+function applyHtmlLabelWidthFix(div: HTMLDivElement, width: number): void {
+  if (div.getBoundingClientRect().width === width) {
+    div.style.display = 'table';
+    div.style.whiteSpace = 'break-spaces';
+    div.style.width = width + 'px';
+  }
+}
+
+/**
+ * Apply the deferred width fix for a foreignObject label built with
+ * `deferMeasure`. Reads the div's size and, if it hit the max-width exactly,
+ * switches it to a wrapping table. No-op for normally-measured labels. The
+ * batched measure pass (see `measureNodeLabel` in shapes/util.ts) calls this
+ * before reading each label's final size.
+ */
+export function finalizeDeferredHtmlLabel(fo: SVGForeignObjectElement): void {
+  const deferred = deferredHtmlLabels.get(fo);
+  if (deferred) {
+    applyHtmlLabelWidthFix(deferred.div, deferred.width);
+  }
+}
+
 async function addHtmlSpan(
   element: D3Selection<SVGGElement>,
   node: { label: string; labelStyle: string; isNode: boolean },
@@ -37,7 +75,11 @@ async function addHtmlSpan(
   classes: string,
   addBackground = false,
   // TODO: Make config mandatory
-  config: MermaidConfig = getConfig()
+  config: MermaidConfig = getConfig(),
+  // When true, skip the immediate getBoundingClientRect + width fix and stash the
+  // div for a later batched measure. Off by default, so every existing caller is
+  // unchanged.
+  deferMeasure = false
 ) {
   const fo = element.append('foreignObject');
   // This is not the final width but used in order to make sure the foreign
@@ -68,12 +110,11 @@ async function addHtmlSpan(
     div.attr('class', 'labelBkg');
   }
 
-  let bbox = div.node()!.getBoundingClientRect();
-  if (bbox.width === width) {
-    div.style('display', 'table');
-    div.style('white-space', 'break-spaces');
-    div.style('width', width + 'px');
-    bbox = div.node()!.getBoundingClientRect();
+  if (deferMeasure) {
+    // Build only; the caller measures (and applies the width fix) in a batch.
+    deferredHtmlLabels.set(fo.node()!, { div: div.node()!, width });
+  } else {
+    applyHtmlLabelWidthFix(div.node()!, width);
   }
 
   return fo.node()!;
@@ -309,6 +350,11 @@ export const createText = async (
      */
     width = 200,
     addSvgBackground = false,
+    /**
+     * Build the (HTML) label but skip measuring it inline, so a caller can batch
+     * the measurement of many labels and avoid a forced reflow per label.
+     */
+    deferMeasure = false,
   } = {},
   config?: MermaidConfig
 ) => {
@@ -337,7 +383,15 @@ export const createText = async (
       label: hasKatex(text) ? inputForKatex : decodedReplacedText,
       labelStyle: style.replace('fill:', 'color:'),
     };
-    const vertexNode = await addHtmlSpan(el, node, width, classes, addSvgBackground, config);
+    const vertexNode = await addHtmlSpan(
+      el,
+      node,
+      width,
+      classes,
+      addSvgBackground,
+      config,
+      deferMeasure
+    );
     return vertexNode;
   } else {
     //sometimes the user might add br tags with 1 or more spaces in between, so we need to replace them with <br/>

@@ -4,7 +4,11 @@ import type { LayoutData } from './types.js';
 import { getConfig } from '../diagram-api/diagramAPI.js';
 import { hasEdgeLabel, insertEdgeLabel } from './rendering-elements/edges.js';
 import { insertNode } from './rendering-elements/nodes.js';
-import { labelHelper } from './rendering-elements/shapes/util.js';
+import {
+  clearPrebuiltLabels,
+  labelHelper,
+  prebuildNodeLabels,
+} from './rendering-elements/shapes/util.js';
 
 // Update type:
 type D3Selection<T extends SVGElement = SVGElement> = Selection<
@@ -62,6 +66,17 @@ export async function createGraphWithElements(
   // otherwise still build the graph topology with unmeasured (0) sizes.
   const hasDom = element.node() != null;
 
+  // Pre-build and batch-measure plain node labels so all the label-size reads run
+  // back-to-back (one reflow) instead of interleaved with DOM writes (a forced
+  // reflow per node). Groups and linked nodes are built under their own wrapper by
+  // labelHelper, so they fall through to the inline path below.
+  if (hasDom) {
+    await prebuildNodeLabels(
+      nodesGroup,
+      data4Layout.nodes.filter((node) => !node.isGroup && !node.link)
+    );
+  }
+
   // Insert nodes into the DOM and add them to the graph.
   await Promise.all(
     data4Layout.nodes.map(async (node) => {
@@ -88,6 +103,12 @@ export async function createGraphWithElements(
       }
     })
   );
+
+  // Drop any prebuilt labels that weren't consumed above (e.g. a shape that
+  // builds its own label) so their orphaned DOM doesn't linger.
+  if (hasDom) {
+    clearPrebuiltLabels();
+  }
   // Add edges to the graph.
 
   for (const edge of edgesToProcess) {

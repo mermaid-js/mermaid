@@ -1,4 +1,4 @@
-import { createText } from '../../createText.js';
+import { createText, finalizeDeferredHtmlLabel } from '../../createText.js';
 import type { Node } from '../../types.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { evaluate, getEffectiveHtmlLabels } from '../../../config.js';
@@ -9,30 +9,56 @@ import type { D3Selection, Point } from '../../../types.js';
 import { configureLabelImages } from './labelImageUtils.js';
 import { profiler } from '../../../profiler.js';
 
-export const labelHelper = async <T extends SVGGraphicsElement>(
+type CreatedText = Awaited<ReturnType<typeof createText>>;
+
+/** A node label built but not yet measured (see {@link buildNodeLabel}). */
+interface NodeLabelBuild {
+  shapeSvg: D3Selection<SVGGElement>;
+  labelEl: D3Selection<SVGGElement>;
+  text: CreatedText;
+  useHtmlLabels: boolean;
+  halfPadding: number;
+}
+
+/** The measured, positioned label that {@link labelHelper} returns to shapes. */
+export interface NodeLabel {
+  shapeSvg: D3Selection<SVGGElement>;
+  bbox: DOMRect;
+  halfPadding: number;
+  label: D3Selection<SVGGElement>;
+}
+
+// Labels built and measured ahead of time by prebuildNodeLabels, keyed by node
+// identity. labelHelper returns these instead of building+measuring inline;
+// clearPrebuiltLabels removes any that were never consumed.
+const prebuiltLabels = new Map<Node, NodeLabel>();
+
+/**
+ * Build a node's label DOM (the outer `g`, the label `g`, and the text/foreign
+ * object) without measuring it. With `deferMeasure`, the HTML path also skips its
+ * internal `getBoundingClientRect`, so a caller can build many labels before
+ * reading any size — see {@link prebuildNodeLabels}.
+ */
+async function buildNodeLabel<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,
-  _classes?: string
-) => {
-  let cssClasses;
+  _classes: string | undefined,
+  deferMeasure: boolean
+): Promise<NodeLabelBuild> {
   const useHtmlLabels = node.useHtmlLabels || evaluate(getConfig()?.htmlLabels);
-  if (!_classes) {
-    cssClasses = 'node default';
-  } else {
-    cssClasses = _classes;
-  }
+  const cssClasses = _classes ?? 'node default';
 
   // Add outer g element
   const shapeSvg = parent
     .insert('g')
     .attr('class', cssClasses)
-    .attr('id', node.domId || node.id);
+    .attr('id', node.domId || node.id) as unknown as D3Selection<SVGGElement>;
 
   // Create the label and insert it after the rect
   const labelEl = shapeSvg
     .insert('g')
     .attr('class', 'label')
-    .attr('style', handleUndefinedAttr(node.labelStyle));
+    .attr('style', handleUndefinedAttr(node.labelStyle)) as unknown as D3Selection<SVGGElement>;
 
   // Replace label with default value if undefined
   let label;
@@ -54,40 +80,51 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
       style: node.labelStyle,
       addSvgBackground: addBackground,
       markdown: isMarkdown,
+      deferMeasure,
     },
     getConfig()
   );
 
-  // Get the size of the label.
-  // For HTML labels the real size comes from the inner div's bounding client rect
-  // (below); `text` is the oversized foreignObject, so its getBBox() would be
-  // discarded. Only measure the SVG <text> path here — skipping the dead read
-  // avoids a forced reflow per node, a significant cost on large diagrams.
-  const halfPadding = (node?.padding ?? 0) / 2;
-  let bbox: DOMRect;
-
+  // HTML labels may contain images we must wait for before measuring. This is a
+  // build-time concern (not a layout read), so it stays out of the measure pass.
   if (useHtmlLabels) {
-    const div = text.children[0] as HTMLDivElement;
-    const dv = select(text);
-
-    // if there are images, need to wait for them to load before getting the bounding box
-    await configureLabelImages(div);
-
-    bbox =
-      injected.profiling && profiler.tickSync
-        ? profiler.tickSync('getBoundingClientRect', () => div.getBoundingClientRect())
-        : div.getBoundingClientRect();
-    dv.attr('width', bbox.width);
-    dv.attr('height', bbox.height);
-  } else {
-    bbox =
-      injected.profiling && profiler.tickSync
-        ? profiler.tickSync('getBBox', () => text.getBBox())
-        : text.getBBox();
+    await configureLabelImages(text.children[0] as HTMLDivElement);
   }
 
-  // Center the label
+  return { shapeSvg, labelEl, text, useHtmlLabels, halfPadding: (node?.padding ?? 0) / 2 };
+}
+
+/**
+ * Read a built label's size. This is the only forced-reflow step; keeping it
+ * separate from {@link buildNodeLabel} and {@link finalizeNodeLabel} lets a batch
+ * run all reads back-to-back so only the first forces a layout.
+ *
+ * For HTML labels the size is the inner div's bounding client rect; `text` is the
+ * oversized foreignObject, so its `getBBox()` would be discarded — only the SVG
+ * `<text>` path measures `getBBox`.
+ */
+function measureNodeLabel(build: NodeLabelBuild): DOMRect {
+  const { text, useHtmlLabels } = build;
   if (useHtmlLabels) {
+    // Apply the width fix for labels that deferred it (no-op for inline ones).
+    finalizeDeferredHtmlLabel(text as unknown as SVGForeignObjectElement);
+    const div = text.children[0] as HTMLDivElement;
+    return injected.profiling && profiler.tickSync
+      ? profiler.tickSync('getBoundingClientRect', () => div.getBoundingClientRect())
+      : div.getBoundingClientRect();
+  }
+  return injected.profiling && profiler.tickSync
+    ? profiler.tickSync('getBBox', () => text.getBBox())
+    : text.getBBox();
+}
+
+/** Write the measured size back and position the label. Pure DOM writes. */
+function finalizeNodeLabel(build: NodeLabelBuild, bbox: DOMRect, node: Node): NodeLabel {
+  const { shapeSvg, labelEl, text, useHtmlLabels, halfPadding } = build;
+  if (useHtmlLabels) {
+    const dv = select(text);
+    dv.attr('width', bbox.width);
+    dv.attr('height', bbox.height);
     labelEl.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
   } else {
     labelEl.attr('transform', 'translate(' + 0 + ', ' + -bbox.height / 2 + ')');
@@ -97,7 +134,63 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   }
   labelEl.insert('rect', ':first-child');
   return { shapeSvg, bbox, halfPadding, label: labelEl };
+}
+
+export const labelHelper = async <T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  node: Node,
+  _classes?: string
+): Promise<NodeLabel> => {
+  // Fast path: a label already built and measured by prebuildNodeLabels into the
+  // same parent. Re-apply the caller's classes, since the prebuild used the node's
+  // default classes.
+  const prebuilt = prebuiltLabels.get(node);
+  if (prebuilt) {
+    prebuiltLabels.delete(node);
+    prebuilt.shapeSvg.attr('class', _classes ?? 'node default');
+    return prebuilt;
+  }
+
+  const build = await buildNodeLabel(parent, node, _classes, false);
+  const bbox = measureNodeLabel(build);
+  return finalizeNodeLabel(build, bbox, node);
 };
+
+/**
+ * Build and measure many node labels in two phases — build all (DOM writes), then
+ * read all sizes (one forced reflow) — instead of interleaving build+measure per
+ * node, which forces a reflow over the growing tree for every label and dominates
+ * the measure phase on large diagrams. Results are cached and returned by the
+ * matching {@link labelHelper} call.
+ *
+ * Only pass nodes rendered directly into `parent`; skip groups and linked nodes
+ * (labelHelper builds those under their own wrapper). Anything not prebuilt simply
+ * falls back to inline build+measure, so this is purely an optimization. Call
+ * {@link clearPrebuiltLabels} afterwards to drop any entries never consumed.
+ */
+export async function prebuildNodeLabels<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  nodes: Node[]
+): Promise<void> {
+  // Phase 1 — build every label (deferred measurement: writes only).
+  const builds: { node: Node; build: NodeLabelBuild }[] = [];
+  for (const node of nodes) {
+    builds.push({ node, build: await buildNodeLabel(parent, node, getNodeClasses(node), true) });
+  }
+  // Phase 2 — read every size (reads run back-to-back: one reflow), then finalize.
+  const measured = builds.map((b) => ({ ...b, bbox: measureNodeLabel(b.build) }));
+  for (const { node, build, bbox } of measured) {
+    prebuiltLabels.set(node, finalizeNodeLabel(build, bbox, node));
+  }
+}
+
+/** Remove prebuilt labels that were never consumed by a labelHelper call. */
+export function clearPrebuiltLabels(): void {
+  for (const cached of prebuiltLabels.values()) {
+    cached.shapeSvg.remove();
+  }
+  prebuiltLabels.clear();
+}
 export const insertLabel = async <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   label: string,
