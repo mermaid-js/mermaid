@@ -1,6 +1,7 @@
 import DOMPurify from 'dompurify';
 import { evaluate, getEffectiveHtmlLabels } from '../../config.js';
 import type { MermaidConfig } from '../../config.type.js';
+import { profiler } from '../../profiler.js';
 
 // Remove and ignore br:s
 export const lineBreakRegex = /<br\s*\/?>/gi;
@@ -79,18 +80,24 @@ const sanitizeMore = (text: string, config: MermaidConfig) => {
   return text;
 };
 
+const sanitizeTextImpl = (text: string, config: MermaidConfig): string => {
+  if (config.dompurifyConfig) {
+    return DOMPurify.sanitize(sanitizeMore(text, config), config.dompurifyConfig).toString();
+  }
+  return DOMPurify.sanitize(sanitizeMore(text, config), {
+    FORBID_TAGS: ['style'],
+  }).toString();
+};
+
 export const sanitizeText = (text: string, config: MermaidConfig): string => {
   if (!text) {
     return text;
   }
-  if (config.dompurifyConfig) {
-    text = DOMPurify.sanitize(sanitizeMore(text, config), config.dompurifyConfig).toString();
-  } else {
-    text = DOMPurify.sanitize(sanitizeMore(text, config), {
-      FORBID_TAGS: ['style'],
-    }).toString();
-  }
-  return text;
+  // Profiling: attribute sanitizeMore + DOMPurify cost (a candidate hot spot in the
+  // measure phase). Guarded by injected.profiling so it tree-shakes out of prod.
+  return injected.profiling && profiler.tickSync
+    ? profiler.tickSync('sanitize', () => sanitizeTextImpl(text, config))
+    : sanitizeTextImpl(text, config);
 };
 
 export const sanitizeTextOrArray = (

@@ -173,9 +173,17 @@ export async function prebuildNodeLabels<T extends SVGGraphicsElement>(
   nodes: Node[]
 ): Promise<void> {
   // Phase 1 — build every label (deferred measurement: writes only).
+  // The loop is sequential, so the async `labelBuild` bucket is accurate here
+  // (no overlapping wall-clocks) — it attributes the DOM-construction cost.
   const builds: { node: Node; build: NodeLabelBuild }[] = [];
   for (const node of nodes) {
-    builds.push({ node, build: await buildNodeLabel(parent, node, getNodeClasses(node), true) });
+    const build =
+      injected.profiling && profiler.tick
+        ? await profiler.tick('labelBuild', () =>
+            buildNodeLabel(parent, node, getNodeClasses(node), true)
+          )
+        : await buildNodeLabel(parent, node, getNodeClasses(node), true);
+    builds.push({ node, build });
   }
   // Phase 2 — read every size (reads run back-to-back: one reflow), then finalize.
   const measured = builds.map((b) => ({ ...b, bbox: measureNodeLabel(b.build) }));
