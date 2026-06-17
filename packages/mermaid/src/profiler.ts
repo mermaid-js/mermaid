@@ -305,7 +305,22 @@ class Profiler {
   }
 }
 
-type GlobalWithProfiler = typeof globalThis & { __mermaidProfiler?: Profiler };
+type GlobalWithProfiler = typeof globalThis & {
+  __mermaidProfiler?: Profiler;
+  injected?: { includeLargeFeatures: boolean; profiling: boolean; version: string };
+};
+
+// `injected.*` are build-time constants that esbuild's `define` replaces with
+// literals. In runtimes that execute the source *without* that define — e.g. the
+// docs generator running modules through tsx — `injected` is undefined and the
+// guarded reads below would throw `ReferenceError: injected is not defined`. Seed a
+// production-equivalent default. Bundled builds replace `injected.profiling` with a
+// literal and never read this object, so it has no effect there.
+(globalThis as GlobalWithProfiler).injected ??= {
+  includeLargeFeatures: true,
+  profiling: false,
+  version: '0.0.0',
+};
 
 // A SINGLE profiler instance shared across every mermaid bundle on the page.
 //
