@@ -61,7 +61,9 @@ cfg.entry = entry;
 cfg.ignorePatterns = (cfg.ignorePatterns ?? []).filter(stillIgnored);
 
 // Plain substring match (no RegExp built from argv) so a diagram id can't inject regex syntax.
-const newFileDirs = [...targets, 'common'].map((id) => `diagrams/${id}/parser/`);
+// Only report findings in the migrated diagrams' own parser dirs — NOT `common/parser/`, whose shared
+// exports are used by other diagrams and would otherwise false-positive within this scoped run.
+const newFileDirs = targets.map((id) => `diagrams/${id}/parser/`);
 const isNewParserPath = (value) =>
   typeof value === 'string' && newFileDirs.some((dir) => value.includes(dir));
 

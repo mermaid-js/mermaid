@@ -62,6 +62,7 @@
     "test:watch:em": "vitest --watch packages/parser/tests/eventmodeling.test.ts",
     "test:coverage": "vitest --coverage",
     "test:check:tsc": "tsx scripts/tsc-check.ts",
+    "test:flowchart:corpus": "vitest run packages/mermaid/src/diagrams/flowchart/parser/flow.parse-corpus.spec.ts",
     "prepare": "husky && pnpm build",
     "pre-commit": "lint-staged"
   },

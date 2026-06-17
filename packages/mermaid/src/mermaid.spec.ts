@@ -170,12 +170,11 @@ describe('when using mermaid and ', () => {
       ).resolves.not.toThrow();
     });
     it('should throw for an invalid flow definition', async () => {
-      await expect(mermaid.parse('graph TQ;A--x|text including URL space|B;')).rejects
-        .toThrowErrorMatchingInlineSnapshot(`
-        [Error: Lexical error on line 1. Unrecognized text.
-        graph TQ;A--x|text includ
-        -----^]
-      `);
+      await expect(
+        mermaid.parse('graph TQ;A--x|text including URL space|B;')
+      ).rejects.toThrowErrorMatchingInlineSnapshot(
+        `[Error: Error lexing flowchart diagram: unexpected character: -> <- at offset: 5, skipped 25 characters.]`
+      );
     });
 
     it('should not throw for a valid sequenceDiagram definition (mmds1)', async () => {
