@@ -12,7 +12,7 @@
 
 > **defaultMeasureLayout**(`data4Layout`, `__namedParameters`): `Promise`<{ `graph`: `Graph`; `groups`: { `clusters`: `D3Selection`<`SVGGElement`>; `edgeLabels`: `D3Selection`<`SVGGElement`>; `edgePaths`: `D3Selection`<`SVGGElement`>; `nodes`: `D3Selection`<`SVGGElement`>; `rootGroups`: `D3Selection`<`SVGGElement`>; }; `nodeElements`: `Map`<`string`, `D3Selection`<`SVGElement` | `SVGGElement`>>; }>
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:171](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L171)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:190](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L190)
 
 ## Parameters
 

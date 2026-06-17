@@ -10,15 +10,93 @@
 
 # Interface: CommonLayoutPaintOptions
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:52](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L52)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:53](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L53)
 
 ## Properties
+
+### clusterDb?
+
+> `optional` **clusterDb**: `ClusterDb`
+
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:54](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L54)
+
+---
+
+### getEdgeNode()?
+
+> `optional` **getEdgeNode**: (`id`, `edge`, `context`) => `object` | `Node` | `undefined`
+
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:59](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L59)
+
+#### Parameters
+
+##### id
+
+`string` | `undefined`
+
+##### edge
+
+`Edge`
+
+##### context
+
+[`CommonLayoutPaintContext`](CommonLayoutPaintContext.md)<`unknown`, { `graph`: `Graph`; `groups`: { `clusters`: `D3Selection`<`SVGGElement`>; `edgeLabels`: `D3Selection`<`SVGGElement`>; `edgePaths`: `D3Selection`<`SVGGElement`>; `nodes`: `D3Selection`<`SVGGElement`>; `rootGroups`: `D3Selection`<`SVGGElement`>; }; `nodeElements`: `Map`<`string`, `D3Selection`<`SVGElement` | `SVGGElement`>>; }>
+
+#### Returns
+
+`object` | `Node` | `undefined`
+
+---
+
+### getNodes()?
+
+> `optional` **getNodes**: (`data4Layout`, `context`) => `Iterable`<`Node`>
+
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:55](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L55)
+
+#### Parameters
+
+##### data4Layout
+
+[`LayoutData`](LayoutData.md)
+
+##### context
+
+[`CommonLayoutPaintContext`](CommonLayoutPaintContext.md)<`unknown`, { `graph`: `Graph`; `groups`: { `clusters`: `D3Selection`<`SVGGElement`>; `edgeLabels`: `D3Selection`<`SVGGElement`>; `edgePaths`: `D3Selection`<`SVGGElement`>; `nodes`: `D3Selection`<`SVGGElement`>; `rootGroups`: `D3Selection`<`SVGGElement`>; }; `nodeElements`: `Map`<`string`, `D3Selection`<`SVGElement` | `SVGGElement`>>; }>
+
+#### Returns
+
+`Iterable`<`Node`>
+
+---
+
+### isCluster()?
+
+> `optional` **isCluster**: (`node`, `context`) => `boolean`
+
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:68](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L68)
+
+#### Parameters
+
+##### node
+
+`Node`
+
+##### context
+
+[`CommonLayoutPaintContext`](CommonLayoutPaintContext.md)<`unknown`, { `graph`: `Graph`; `groups`: { `clusters`: `D3Selection`<`SVGGElement`>; `edgeLabels`: `D3Selection`<`SVGGElement`>; `edgePaths`: `D3Selection`<`SVGGElement`>; `nodes`: `D3Selection`<`SVGGElement`>; `rootGroups`: `D3Selection`<`SVGGElement`>; }; `nodeElements`: `Map`<`string`, `D3Selection`<`SVGElement` | `SVGGElement`>>; }>
+
+#### Returns
+
+`boolean`
+
+---
 
 ### skipEdge()?
 
 > `optional` **skipEdge**: (`edge`) => `boolean`
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:53](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L53)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:72](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L72)
 
 #### Parameters
 
@@ -36,4 +114,26 @@ Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.
 
 > `optional` **skipIntersect**: `boolean` | (`edge`) => `boolean`
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:54](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L54)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:73](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L73)
+
+---
+
+### skipNode()?
+
+> `optional` **skipNode**: (`node`, `context`) => `boolean`
+
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:64](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L64)
+
+#### Parameters
+
+##### node
+
+`Node`
+
+##### context
+
+[`CommonLayoutPaintContext`](CommonLayoutPaintContext.md)<`unknown`, { `graph`: `Graph`; `groups`: { `clusters`: `D3Selection`<`SVGGElement`>; `edgeLabels`: `D3Selection`<`SVGGElement`>; `edgePaths`: `D3Selection`<`SVGGElement`>; `nodes`: `D3Selection`<`SVGGElement`>; `rootGroups`: `D3Selection`<`SVGGElement`>; }; `nodeElements`: `Map`<`string`, `D3Selection`<`SVGElement` | `SVGGElement`>>; }>
+
+#### Returns
+
+`boolean`

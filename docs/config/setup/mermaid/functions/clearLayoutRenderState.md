@@ -12,7 +12,7 @@
 
 > **clearLayoutRenderState**(): `void`
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:164](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L164)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:183](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L183)
 
 ## Returns
 

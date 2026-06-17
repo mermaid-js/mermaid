@@ -10,9 +10,9 @@
 
 # Function: paintLayoutData()
 
-> **paintLayoutData**(`data4Layout`, `__namedParameters`, `options`): `Promise`<`void`>
+> **paintLayoutData**(`data4Layout`, `context`, `options`): `Promise`<`void`>
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:178](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L178)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:197](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L197)
 
 ## Parameters
 
@@ -20,7 +20,7 @@ Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.
 
 [`LayoutData`](../interfaces/LayoutData.md)
 
-### \_\_namedParameters
+### context
 
 [`CommonLayoutPaintContext`](../interfaces/CommonLayoutPaintContext.md)<`unknown`, { `graph`: `Graph`; `groups`: { `clusters`: `D3Selection`<`SVGGElement`>; `edgeLabels`: `D3Selection`<`SVGGElement`>; `edgePaths`: `D3Selection`<`SVGGElement`>; `nodes`: `D3Selection`<`SVGGElement`>; `rootGroups`: `D3Selection`<`SVGGElement`>; }; `nodeElements`: `Map`<`string`, `D3Selection`<`SVGElement` | `SVGGElement`>>; }>
 
