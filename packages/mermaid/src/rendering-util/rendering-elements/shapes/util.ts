@@ -424,7 +424,11 @@ export const updateNodeBounds = <T extends SVGGraphicsElement>(
    */
   knownBounds?: { width: number; height: number }
 ) => {
-  if (knownBounds) {
+  // Guard against degenerate bounds: if a caller ever passes a zero/negative size,
+  // fall through to a real getBBox() measurement rather than committing the node to
+  // 0×0. In practice callers only pass knownBounds for shapes whose size is known
+  // exactly (plain rects), so this is belt-and-suspenders.
+  if (knownBounds && knownBounds.width > 0 && knownBounds.height > 0) {
     node.width = knownBounds.width;
     node.height = knownBounds.height;
     return;

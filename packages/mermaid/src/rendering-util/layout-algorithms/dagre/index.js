@@ -671,7 +671,7 @@ const paintDagreLayoutCore = async ({
       diff = n.diff;
     }
   });
-  log.warn('Returning from recursive render XAX', elem, diff);
+  log.debug('Returning from recursive render XAX', elem, diff);
   return { elem, diff };
 };
 
