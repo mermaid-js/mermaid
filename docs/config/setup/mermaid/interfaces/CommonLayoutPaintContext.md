@@ -386,7 +386,7 @@ Shape defaults to 'rect'
 
 #### insertNode()
 
-> **insertNode**: (`elem`, `node`, `renderOptions`) => `Promise`<`Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`> | `D3Selection`<`SVGAElement`>>
+> **insertNode**: (`elem`, `node`, `renderOptions`) => `Promise`<`Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`> | `D3Selection`<`SVGGElement`> | `D3Selection`<`SVGAElement`>>
 
 ##### Parameters
 
@@ -404,7 +404,7 @@ Shape defaults to 'rect'
 
 ##### Returns
 
-`Promise`<`Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`> | `D3Selection`<`SVGAElement`>>
+`Promise`<`Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`> | `D3Selection`<`SVGGElement`> | `D3Selection`<`SVGAElement`>>
 
 #### interpolateToCurve()
 
@@ -434,7 +434,7 @@ The curve factory to use
 
 #### labelHelper()
 
-> **labelHelper**: <`T`>(`parent`, `node`, `_classes?`) => `Promise`<{ `bbox`: `DOMRect`; `halfPadding`: `number`; `label`: `Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`>; `shapeSvg`: `Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`>; }>
+> **labelHelper**: <`T`>(`parent`, `node`, `_classes?`) => `Promise`<`NodeLabel`>
 
 ##### Type Parameters
 
@@ -458,7 +458,7 @@ The curve factory to use
 
 ##### Returns
 
-`Promise`<{ `bbox`: `DOMRect`; `halfPadding`: `number`; `label`: `Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`>; `shapeSvg`: `Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`>; }>
+`Promise`<`NodeLabel`>
 
 #### log
 

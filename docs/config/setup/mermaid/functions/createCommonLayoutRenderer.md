@@ -146,7 +146,7 @@ Splits on <br> tags
 
 ##### insertNode
 
-(`elem`, `node`, `renderOptions`) => `Promise`<`Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`> | `D3Selection`<`SVGAElement`>>
+(`elem`, `node`, `renderOptions`) => `Promise`<`Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`> | `D3Selection`<`SVGGElement`> | `D3Selection`<`SVGAElement`>>
 
 ##### interpolateToCurve
 
@@ -154,7 +154,7 @@ Splits on <br> tags
 
 ##### labelHelper
 
-<`T`>(`parent`, `node`, `_classes?`) => `Promise`<{ `bbox`: `DOMRect`; `halfPadding`: `number`; `label`: `Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`>; `shapeSvg`: `Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`>; }>
+<`T`>(`parent`, `node`, `_classes?`) => `Promise`<`NodeLabel`>
 
 ##### log
 
