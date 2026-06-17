@@ -318,6 +318,10 @@ function createFormattedText(
     }
   }
   if (addBackground) {
+    // The `&& profiler.tickSync` guard tolerates an older shared profiler instance
+    // (from a different mermaid version sharing the page's `__mermaidProfiler`) that
+    // predates `tickSync` — fall back to a plain read. In production the whole
+    // `injected.profiling` ternary folds away to just the direct `getBBox()`.
     const bbox =
       injected.profiling && profiler.tickSync
         ? profiler.tickSync('getBBox', () => textElement.node()!.getBBox())

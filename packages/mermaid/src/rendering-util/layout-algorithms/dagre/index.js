@@ -1,6 +1,5 @@
 /* global injected */ // build-time constant injected via esbuild `define` (see .esbuild/util.ts)
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
-import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { createLayoutElementGroups, insertMeasuredNode } from '../../createGraph.js';
 import { createCommonLayoutRenderer } from '../common/index.js';
@@ -269,7 +268,8 @@ const measureDagreGraph = async ({
   parentCluster,
   siteConfig,
 }) => {
-  log.warn('Graph in recursive render:XAX', graphlibJson.write(graph), parentCluster);
+  // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
+  // log.warn('Graph in recursive render:XAX', graphlibJson.write(graph), parentCluster);
   const dir = graph.graph().rankdir;
   log.trace('Dir in recursive render - dir:', dir);
 
@@ -453,7 +453,8 @@ const measureDagreGraph = async ({
 };
 
 const runDagreGraphLayout = (graph) => {
-  log.info('Graph before layout:', JSON.stringify(graphlibJson.write(graph)));
+  // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
+  // log.info('Graph before layout:', JSON.stringify(graphlibJson.write(graph)));
 
   log.info('############################################# XXX');
   log.info('###                Layout                 ### XXX');
@@ -469,7 +470,8 @@ const runDagreGraphLayout = (graph) => {
     profiler.end(); // layoutCore
   }
 
-  log.info('Graph after layout:', JSON.stringify(graphlibJson.write(graph)));
+  // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
+  // log.info('Graph after layout:', JSON.stringify(graphlibJson.write(graph)));
 };
 
 const normalizeDagreNode = (graph, nodeId, subGraphTitleTotalMargin) => {
@@ -774,9 +776,11 @@ export const prepareLayoutForDagre = (data4Layout) => {
     }
   });
 
-  log.warn('Graph at first:', JSON.stringify(graphlibJson.write(graph)));
+  // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
+  // log.debug('Graph at first:', JSON.stringify(graphlibJson.write(graph)));
   adjustClustersAndEdges(graph);
-  log.warn('Graph after XAX:', JSON.stringify(graphlibJson.write(graph)));
+  // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
+  // log.warn('Graph after XAX:', JSON.stringify(graphlibJson.write(graph)));
 
   return { graph };
 };

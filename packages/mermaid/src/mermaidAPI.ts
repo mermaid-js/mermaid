@@ -574,38 +574,41 @@ const render = async function (
   const a11yTitle: string | undefined = diag.db.getAccTitle?.();
   const a11yDescr: string | undefined = diag.db.getAccDescription?.();
   addA11yInfo(diagramType, svgNode, a11yTitle, a11yDescr);
-  if (injected.profiling) {
-    // "paint after layout" tail: SVG serialization + sanitization, which can
-    // dominate for very large diagrams.
-    profiler.begin('serialize');
-  }
-  // -------------------------------------------------------------------------------
-  // Clean up SVG code
-  root.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', XMLNS_XHTML_STD);
+  // "paint after layout" tail: SVG serialization + sanitization, which can
+  // dominate for very large diagrams. Wrapped in a closure so it can run inside a
+  // profiler span — whose try/finally also guarantees the span can never leak —
+  // while staying zero-cost in production, where the `injected.profiling` branch
+  // (and every profiler reference) folds away to a plain `serializeSvg()` call.
+  const serializeSvg = (): string => {
+    // -------------------------------------------------------------------------------
+    // Clean up SVG code
+    root.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', XMLNS_XHTML_STD);
 
-  // Fix for when the base tag is used
-  let svgCode: string = root.select<HTMLDivElement>(enclosingDivID_selector).node()!.innerHTML;
+    // Fix for when the base tag is used
+    let code: string = root.select<HTMLDivElement>(enclosingDivID_selector).node()!.innerHTML;
 
-  log.debug('config.arrowMarkerAbsolute', config.arrowMarkerAbsolute);
-  svgCode = cleanUpSvgCode(svgCode, isSandboxed, evaluate(config.arrowMarkerAbsolute));
+    log.debug('config.arrowMarkerAbsolute', config.arrowMarkerAbsolute);
+    code = cleanUpSvgCode(code, isSandboxed, evaluate(config.arrowMarkerAbsolute));
 
-  if (isSandboxed) {
-    const svgEl = root.select<SVGSVGElement>(enclosingDivID_selector + ' svg').node()!;
-    svgCode = putIntoIFrame(svgCode, svgEl);
-  } else if (!isLooseSecurityLevel) {
-    // Sanitize the svgCode using DOMPurify
-    svgCode = DOMPurify.sanitize(svgCode, {
-      ADD_TAGS: DOMPURIFY_TAGS,
-      ADD_ATTR: DOMPURIFY_ATTR,
-      HTML_INTEGRATION_POINTS: { foreignobject: true },
-    });
-  }
+    if (isSandboxed) {
+      const svgEl = root.select<SVGSVGElement>(enclosingDivID_selector + ' svg').node()!;
+      code = putIntoIFrame(code, svgEl);
+    } else if (!isLooseSecurityLevel) {
+      // Sanitize the svgCode using DOMPurify
+      code = DOMPurify.sanitize(code, {
+        ADD_TAGS: DOMPURIFY_TAGS,
+        ADD_ATTR: DOMPURIFY_ATTR,
+        HTML_INTEGRATION_POINTS: { foreignobject: true },
+      });
+    }
 
-  attachFunctions();
+    attachFunctions();
+    return code;
+  };
 
-  if (injected.profiling) {
-    profiler.end(); // serialize
-  }
+  const svgCode: string = injected.profiling
+    ? await profiler.span('serialize', serializeSvg)
+    : serializeSvg();
 
   if (parseEncounteredException) {
     throw parseEncounteredException;
