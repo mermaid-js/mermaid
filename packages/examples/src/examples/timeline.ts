@@ -16,5 +16,18 @@ export default {
     2005 : YouTube
     2006 : Twitter`,
     },
+    {
+      title: 'Product Roadmap with Sections',
+      code: `timeline
+    title Product Roadmap 2024
+    section Q1 Foundations
+        January : Team hired : Tech stack chosen
+        February : MVP scoped
+        March : Alpha release
+    section Q2 Growth
+        April : Beta program opens
+        May : Mobile app : Public API
+        June : v1.0 launch`,
+    },
   ],
 } satisfies DiagramMetadata;

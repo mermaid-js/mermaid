@@ -315,11 +315,11 @@ export class RequirementDB implements DiagramDB {
       nodes.push(node);
     }
 
+    let counter = 0;
     for (const relation of this.relations) {
-      let counter = 0;
       const isContains = relation.type === this.Relationships.CONTAINS;
       const edge: Edge = {
-        id: `${relation.src}-${relation.dst}-${counter}`,
+        id: `${relation.src}-${relation.dst}-${counter++}`,
         start: this.requirements.get(relation.src)?.name ?? this.elements.get(relation.src)?.name,
         end: this.requirements.get(relation.dst)?.name ?? this.elements.get(relation.dst)?.name,
         label: `&lt;&lt;${relation.type}&gt;&gt;`,
@@ -336,7 +336,6 @@ export class RequirementDB implements DiagramDB {
       };
 
       edges.push(edge);
-      counter++;
     }
 
     return { nodes, edges, other: {}, config, direction: this.getDirection() };

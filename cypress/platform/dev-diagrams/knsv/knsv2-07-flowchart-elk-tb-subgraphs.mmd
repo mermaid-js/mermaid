@@ -1,0 +1,17 @@
+---
+config:
+  layout: elk
+---
+flowchart TB
+
+  process_C
+subgraph container_Alpha
+  subgraph process_B
+    pppB
+  end
+  subgraph process_A
+    pppA
+  end
+  process_B-->|via_AWSBatch|container_Beta
+  process_A-->|messages|container_Beta
+end

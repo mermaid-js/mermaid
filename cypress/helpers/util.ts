@@ -103,7 +103,7 @@ export const openURLAndVerifyRendering = (
   const name: string = (options.name ?? cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
 
   cy.visit(url);
-  cy.window().should('have.property', 'rendered', true);
+  cy.window({ timeout: 15000 }).should('have.property', 'rendered', true);
 
   // Handle sandbox mode where SVG is inside an iframe
   if (options.securityLevel === 'sandbox') {

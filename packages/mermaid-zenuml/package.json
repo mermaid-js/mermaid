@@ -33,7 +33,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@zenuml/core": "^3.47.8"
+    "@zenuml/core": "^3.47.9"
   },
   "devDependencies": {
     "mermaid": "workspace:^"

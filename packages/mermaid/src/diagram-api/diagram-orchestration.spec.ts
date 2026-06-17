@@ -19,6 +19,7 @@ describe('diagram-orchestration', () => {
       { text: 'flowchart TD;', expected: 'flowchart-v2' },
       { text: 'flowchart-v2 TD;', expected: 'flowchart-v2' },
       { text: 'flowchart-elk TD;', expected: 'flowchart-elk' },
+      { text: 'swimlane TD;', expected: 'swimlane' },
       { text: 'error', expected: 'error' },
       { text: 'C4Context;', expected: 'c4' },
       { text: 'classDiagram', expected: 'class' },
@@ -69,6 +70,15 @@ describe('diagram-orchestration', () => {
       // flowchart && elk ==> flowchart-elk
       expect(detectType('flowchart TD; A-->B', { flowchart: { defaultRenderer: 'elk' } })).toBe(
         'flowchart-elk'
+      );
+      expect(detectType('swimlane TD; A-->B', { flowchart: { defaultRenderer: 'elk' } })).toBe(
+        'swimlane'
+      );
+    });
+
+    it('should detect class diagram v2 when dagre-wrapper is the class renderer', () => {
+      expect(detectType('classDiagram', { class: { defaultRenderer: 'dagre-wrapper' } })).toBe(
+        'classDiagram'
       );
     });
 
