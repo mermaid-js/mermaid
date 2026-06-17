@@ -296,11 +296,24 @@ const measureDagreGraph = async ({
   // back-to-back (one reflow) instead of a forced reflow per node. Clusters recurse
   // into their own group and linked nodes get their own wrapper, so they're left to
   // the inline path in the loop below.
+  //
+  // Icon/image shapes are also left to the inline path: their handlers set
+  // `node.labelStyle` (classDef-derived label colour) and `node.width`, and pass a
+  // shape-specific label class ('icon-shape'/'image-shape') to `labelHelper` *after*
+  // this prebuild pass. A label prebuilt here would be built and measured with the
+  // wrong class, stale style and stale width — losing the label's padding and colour.
   const prebuiltLeafNodes = graph
     .nodes()
     .filter((v) => {
       const node = graph.node(v);
-      return node && !node.clusterNode && graph.children(v).length === 0 && !node.link;
+      return (
+        node &&
+        !node.clusterNode &&
+        graph.children(v).length === 0 &&
+        !node.link &&
+        !node.icon &&
+        !node.img
+      );
     })
     .map((v) => graph.node(v));
   await prebuildNodeLabels(nodes, prebuiltLeafNodes);
