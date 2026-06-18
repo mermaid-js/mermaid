@@ -1,0 +1,30 @@
+{
+  "nodes": [
+    {
+      "id": "Start",
+      "width": 61.5703125,
+      "height": 45
+    },
+    {
+      "id": "Process1",
+      "width": 90.359375,
+      "height": 45
+    },
+    {
+      "id": "Process2",
+      "width": 90.359375,
+      "height": 45
+    },
+    {
+      "id": "Process3",
+      "width": 90.359375,
+      "height": 45
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "d9e7c899d00f546398de0cb0bd664297aecea10f32c33c4fc3fced902336e2e7",
+    "capturedAt": "2026-05-06T00:00:00.000Z",
+    "capturedFrom": "browser-dev layout-tests/swimlanes/1-simple.mmd theme=default look=classic"
+  }
+}

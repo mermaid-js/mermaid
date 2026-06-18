@@ -2,6 +2,7 @@ import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { Edge, Node } from '../../rendering-util/types.js';
 import type { EntityNode, Attribute, Relationship, EntityClass, RelSpec } from './erTypes.js';
+import common from '../common/common.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -13,11 +14,16 @@ import {
 } from '../common/commonDb.js';
 import { getEdgeId } from '../../utils.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
+import type { ErSubGraph } from './erTypes.js';
 
 export class ErDB implements DiagramDB {
   private entities = new Map<string, EntityNode>();
   private relationships: Relationship[] = [];
   private classes = new Map<string, EntityClass>();
+  public subgraphDepth = 0; // Public because JISON yy actions access it dynamically.
+  private subGraphs: ErSubGraph[] = [];
+  private subGraphLookup = new Map<string, ErSubGraph>();
+  private subCount = 0;
   private direction = 'TB';
 
   private Cardinality = {
@@ -44,6 +50,7 @@ export class ErDB implements DiagramDB {
     this.setClass = this.setClass.bind(this);
     this.setAccTitle = this.setAccTitle.bind(this);
     this.setAccDescription = this.setAccDescription.bind(this);
+    this.addSubGraph = this.addSubGraph.bind(this);
   }
 
   /**
@@ -111,16 +118,34 @@ export class ErDB implements DiagramDB {
    * @param rSpec - The details of the relationship between the two entities
    */
   public addRelationship(entA: string, rolA: string, entB: string, rSpec: RelSpec) {
-    const entityA = this.entities.get(entA);
-    const entityB = this.entities.get(entB);
-    if (!entityA || !entityB) {
-      return;
+    // Check if entA is a subgraph, otherwise treat it as an entity
+    let entityAId: string;
+    if (this.subGraphLookup.has(entA)) {
+      entityAId = entA;
+    } else {
+      const entityA = this.addEntity(entA);
+      if (!entityA) {
+        return;
+      }
+      entityAId = entityA.id;
+    }
+
+    // Check if entB is a subgraph, otherwise treat it as an entity
+    let entityBId: string;
+    if (this.subGraphLookup.has(entB)) {
+      entityBId = entB;
+    } else {
+      const entityB = this.addEntity(entB);
+      if (!entityB) {
+        return;
+      }
+      entityBId = entityB.id;
     }
 
     const rel = {
-      entityA: entityA.id,
+      entityA: entityAId,
       roleA: rolA,
-      entityB: entityB.id,
+      entityB: entityBId,
       relSpec: rSpec,
     };
 
@@ -157,11 +182,26 @@ export class ErDB implements DiagramDB {
   public addCssStyles(ids: string[], styles: string[]) {
     for (const id of ids) {
       const entity = this.entities.get(id);
-      if (!styles || !entity) {
-        return;
+      const subGraph = this.subGraphLookup.get(id);
+
+      if (!styles) {
+        continue;
       }
-      for (const style of styles) {
-        entity.cssStyles!.push(style);
+
+      if (entity) {
+        for (const style of styles) {
+          entity.cssStyles!.push(style);
+        }
+      }
+
+      if (subGraph) {
+        if (!subGraph.cssStyles) {
+          subGraph.cssStyles = [];
+        }
+
+        for (const style of styles) {
+          subGraph.cssStyles.push(style);
+        }
       }
     }
   }
@@ -186,6 +226,80 @@ export class ErDB implements DiagramDB {
     });
   }
 
+  public addSubGraph(
+    _id: { text: string },
+    list: string[],
+    _title: { text: string; type: string }
+  ) {
+    let id: string | undefined = _id.text.trim();
+    let title = _title.text;
+
+    const uniq = (a: any[]) => {
+      const seen = new Set<string>();
+      let dir: string | undefined;
+
+      const nodeList = a.filter((item) => {
+        if (item?.stmt) {
+          if (item.stmt === 'dir') {
+            dir = item.value;
+          }
+          return false;
+        }
+
+        if (typeof item !== 'string') {
+          return false;
+        }
+
+        const trimmed = item.trim();
+        if (!trimmed) {
+          return false;
+        }
+
+        if (seen.has(trimmed)) {
+          return false;
+        }
+        seen.add(trimmed);
+
+        return true;
+      });
+
+      return { nodeList, dir };
+    };
+
+    const result = uniq(list.flat());
+    const nodeList = result.nodeList;
+    // If no explicit direction is declared within the subgraph, leave dir as undefined
+    // so that the layout engine applies its own default direction
+    const dir = result.dir;
+
+    id = id ?? 'subGraph' + this.subCount;
+    title = title || '';
+    title = this.sanitizeText(title);
+    this.subCount = this.subCount + 1;
+
+    const subGraph: ErSubGraph = {
+      id: id,
+      nodes: nodeList,
+      title: title.trim(),
+      classes: [],
+      cssStyles: [],
+      dir,
+      labelType: this.sanitizeNodeLabelType(_title?.type),
+    };
+
+    log.info('Adding', subGraph.id, subGraph.nodes, subGraph.dir);
+
+    // Ensure nodes are unique across subgraphs by removing duplicates from the new subgraph
+    subGraph.nodes = this.makeUniq(subGraph, this.subGraphs).nodes;
+    this.subGraphs.push(subGraph);
+    this.subGraphLookup.set(id, subGraph);
+    return id;
+  }
+
+  public getSubGraphs() {
+    return this.subGraphs;
+  }
+
   public setClass(ids: string[], classNames: string[]) {
     for (const id of ids) {
       const entity = this.entities.get(id);
@@ -194,6 +308,58 @@ export class ErDB implements DiagramDB {
           entity.cssClasses += ' ' + className;
         }
       }
+
+      const subGraph = this.subGraphLookup.get(id);
+      if (subGraph) {
+        for (const className of classNames) {
+          subGraph.classes.push(className);
+        }
+      }
+    }
+  }
+
+  /**
+   * Build a quick lookup for all node IDs already assigned to existing subgraphs.
+   */
+  private subgraphNodeCache(allSubgraphs: ErSubGraph[]) {
+    const nodeCache = new Set<string>();
+    for (const subGraph of allSubgraphs) {
+      for (const id of subGraph.nodes) {
+        nodeCache.add(id);
+      }
+    }
+    return nodeCache;
+  }
+
+  /**
+   * Filter out nodes that are already part of another subgraph,
+   * keeping subgraph membership unique.
+   */
+  private makeUniq(subGraph: ErSubGraph, allSubgraphs: ErSubGraph[]) {
+    const existingNodes = this.subgraphNodeCache(allSubgraphs);
+    const res: string[] = [];
+    subGraph.nodes.forEach((_id, pos) => {
+      if (existingNodes.has(_id)) {
+        log.warn(`Entity '${_id}' already belongs to another subgraph and will be ignored`);
+      } else {
+        res.push(subGraph.nodes[pos]);
+      }
+    });
+    return { nodes: res };
+  }
+
+  private sanitizeText(txt: string) {
+    return common.sanitizeText(txt, getConfig());
+  }
+
+  private sanitizeNodeLabelType(labelType?: string) {
+    switch (labelType) {
+      case 'markdown':
+      case 'string':
+      case 'text':
+        return labelType;
+      default:
+        return 'markdown';
     }
   }
 
@@ -201,6 +367,10 @@ export class ErDB implements DiagramDB {
     this.entities = new Map();
     this.classes = new Map();
     this.relationships = [];
+    this.subGraphs = [];
+    this.subGraphLookup = new Map();
+    this.subCount = 0;
+    this.subgraphDepth = 0;
     commonClear();
   }
 
@@ -209,13 +379,56 @@ export class ErDB implements DiagramDB {
     const edges: Edge[] = [];
     const config = getConfig();
 
+    const subGraphs = this.getSubGraphs();
+    const parentDB = new Map<string, string>();
+    const subGraphDB = new Map<string, boolean>();
+
+    // Setup the subgraph data for adding nodes
+    for (let i = subGraphs.length - 1; i >= 0; i--) {
+      const subGraph = subGraphs[i];
+      if (subGraph.nodes.length > 0) {
+        subGraphDB.set(subGraph.id, true);
+      }
+      for (const id of subGraph.nodes) {
+        parentDB.set(id, subGraph.id);
+      }
+    }
+
+    // Add the nodes
+    for (let i = subGraphs.length - 1; i >= 0; i--) {
+      const subGraph = subGraphs[i];
+      nodes.push({
+        id: subGraph.id,
+        label: subGraph.title,
+        labelStyle: '',
+        labelType: subGraph.labelType,
+        parentId: parentDB.get(subGraph.id),
+        padding: 8,
+        cssCompiledStyles: this.getCompiledStyles(subGraph.classes),
+        cssStyles: subGraph.cssStyles,
+        cssClasses: subGraph.classes.join(' '),
+        shape: 'rect',
+        dir: subGraph.dir,
+        isGroup: true,
+        look: config.look,
+      });
+    }
+
+    const subGraphIds = new Set(subGraphs.map((sg) => sg.id));
     let colorIndex = 0;
     for (const entityKey of this.entities.keys()) {
+      if (subGraphIds.has(entityKey)) {
+        continue;
+      }
       const entityNode = this.entities.get(entityKey);
       if (entityNode) {
         entityNode.cssCompiledStyles = this.getCompiledStyles(entityNode.cssClasses!.split(' '));
         entityNode.colorIndex = colorIndex++;
-        nodes.push(entityNode as unknown as Node);
+        nodes.push({
+          ...entityNode,
+          parentId: parentDB.get(entityKey),
+          isGroup: false,
+        } as unknown as Node);
       }
     }
 
@@ -242,7 +455,7 @@ export class ErDB implements DiagramDB {
       };
       edges.push(edge);
     }
-    return { nodes, edges, other: {}, config, direction: 'TB' };
+    return { nodes, edges, other: {}, config, direction: this.direction };
   }
 
   public setAccTitle = setAccTitle;

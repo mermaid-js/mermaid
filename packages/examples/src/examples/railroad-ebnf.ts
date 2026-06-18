@@ -17,5 +17,19 @@ export default {
     number = digit+ ;
     digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;`,
     },
+    {
+      title: 'Semantic Version',
+      code: `railroad-ebnf
+    title Semantic Version
+
+    version = core ( "-" prerelease )? ( "+" build )? ;
+    core = number "." number "." number ;
+    prerelease = identifier ( "." identifier )* ;
+    build = identifier ( "." identifier )* ;
+    number = digit+ ;
+    identifier = ( letter | digit )+ ;
+    letter = "a" | "b" | "c" ;
+    digit = "0" | "1" | "2" ;`,
+    },
   ],
 } satisfies DiagramMetadata;

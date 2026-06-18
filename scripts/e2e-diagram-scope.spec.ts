@@ -127,6 +127,18 @@ describe('ignorable files (docs-only, changesets, etc.)', () => {
     ).toBe(SKIP);
   });
 
+  it('returns SKIP when only demo files change', () => {
+    expect(detectScope(['demos/architecture.html'])).toBe(SKIP);
+  });
+
+  it('scopes to diagram when diagram source + file in demo folder changed', () => {
+    const result = detectScope([
+      'packages/mermaid/src/diagrams/flowchart/flowchartDb.ts',
+      'demos/sequence.html',
+    ]);
+    expect(result).toBe(`${SPEC_BASE_DIR}/flowchart/**`);
+  });
+
   it('scopes to diagram when diagram source + docs both change', () => {
     const result = detectScope([
       'packages/mermaid/src/diagrams/flowchart/flowchartDb.ts',

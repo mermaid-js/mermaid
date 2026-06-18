@@ -25,8 +25,8 @@
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
-      import flowchartELK from './mermaid-flowchart-elk.esm.mjs';
-      await mermaid.registerExternalDiagrams([flowchartELK]);
+      import layouts from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
       mermaid.initialize({
         logLevel: 3,
       });

@@ -7,6 +7,7 @@ import { sanitizeText } from '../../../diagrams/common/common.js';
 import { decodeEntities, handleUndefinedAttr } from '../../../utils.js';
 import type { D3Selection, Point } from '../../../types.js';
 import { configureLabelImages } from './labelImageUtils.js';
+import { profiler } from '../../../profiler.js';
 
 export const labelHelper = async <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -57,8 +58,16 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
     getConfig()
   );
 
-  // Get the size of the label
-  let bbox = text.getBBox();
+  // Get the size of the label.
+  // The `&& profiler.tickSync` guard tolerates an older shared profiler instance
+  // (from a different mermaid version sharing the page's `__mermaidProfiler`) that
+  // predates `tickSync` — fall back to a plain read. In production the whole
+  // `injected.profiling` ternary folds away to just the direct read. Same pattern
+  // applies to the other guarded `getBBox`/`getBoundingClientRect` reads below.
+  let bbox =
+    injected.profiling && profiler.tickSync
+      ? profiler.tickSync('getBBox', () => text.getBBox())
+      : text.getBBox();
   const halfPadding = (node?.padding ?? 0) / 2;
 
   if (useHtmlLabels) {
@@ -66,9 +75,12 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
     const dv = select(text);
 
     // if there are images, need to wait for them to load before getting the bounding box
-    await configureLabelImages(div, label);
+    await configureLabelImages(div);
 
-    bbox = div.getBoundingClientRect();
+    bbox =
+      injected.profiling && profiler.tickSync
+        ? profiler.tickSync('getBoundingClientRect', () => div.getBoundingClientRect())
+        : div.getBoundingClientRect();
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }
@@ -114,14 +126,20 @@ export const insertLabel = async <T extends SVGGraphicsElement>(
     addSvgBackground: !!options.icon || !!options.img,
   });
   // Get the size of the label
-  let bbox = text.getBBox();
+  let bbox =
+    injected.profiling && profiler.tickSync
+      ? profiler.tickSync('getBBox', () => text.getBBox())
+      : text.getBBox();
   const halfPadding = options.padding / 2;
 
   if (getEffectiveHtmlLabels(getConfig())) {
     const div = text.children[0];
     const dv = select(text);
 
-    bbox = div.getBoundingClientRect();
+    bbox =
+      injected.profiling && profiler.tickSync
+        ? profiler.tickSync('getBoundingClientRect', () => div.getBoundingClientRect())
+        : div.getBoundingClientRect();
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }
@@ -143,7 +161,10 @@ export const updateNodeBounds = <T extends SVGGraphicsElement>(
   // D3Selection<SVGGElement> is for the roughjs case, D3Selection<T> is for the non-roughjs case
   element: D3Selection<SVGGElement> | D3Selection<T>
 ) => {
-  const bbox = element.node()!.getBBox();
+  const bbox =
+    injected.profiling && profiler.tickSync
+      ? profiler.tickSync('getBBox', () => element.node()!.getBBox())
+      : element.node()!.getBBox();
   node.width = bbox.width;
   node.height = bbox.height;
 };

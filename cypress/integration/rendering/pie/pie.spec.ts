@@ -115,4 +115,77 @@ describe('pie chart', () => {
       `
     );
   });
+
+  it('should render a donut diagram', () => {
+    imgSnapshotTest(
+      `pie title What Koalas Do In A Day
+        "Sleep": 20
+        "Eat": 3
+        "Roam": 1
+      `,
+      { pie: { donutHole: 0.4 } }
+    );
+  });
+
+  it('should render a pie diagram if donutHole parameter is too large', () => {
+    imgSnapshotTest(
+      `pie title Items Sold
+        "Speaker": 30
+        "Monitor": 8
+        "Keyboard": 5
+        "Mouse": 12
+      `,
+      { pie: { donutHole: 1.2 } }
+    );
+  });
+
+  it('should render a pie diagram if donutHole parameter is negative', () => {
+    imgSnapshotTest(
+      `pie title Owned Pet
+        "Dog": 65
+        "Cat": 52
+        "Fish": 16
+      `,
+      { pie: { donutHole: -0.3 } }
+    );
+  });
+
+  it('should render a pie diagram with legend at the bottom of the diagram', () => {
+    imgSnapshotTest(
+      `pie title Football Team Member Position
+        "Goalkeeper": 2
+        "Back": 8
+        "Midfielder": 5
+        "Striker": 3
+      `,
+      { pie: { legendPosition: 'bottom' } }
+    );
+  });
+
+  it('should render a pie diagram that highlights specific slice', () => {
+    renderGraph(
+      `pie title Budget Allocation
+        "Food": 300
+        "Entertainment": 80
+        "Rent": 500
+      `,
+      { pie: { highlightSlice: 'Food' } }
+    );
+    cy.get('.pieCircle').first().should('have.class', 'highlighted');
+  });
+
+  it('should render a pie diagram that highlights hovered slice', () => {
+    renderGraph(
+      `pie title Portfolio Holdings
+        "Stock": 60
+        "Bond": 30
+        "Cash": 10
+      `,
+      { pie: { highlightSlice: 'hover' } }
+    );
+
+    cy.get('.pieCircle').each(($pieCircle) => {
+      expect($pieCircle).to.has.class('highlightedOnHover');
+    });
+  });
 });

@@ -1,111 +1,519 @@
-<!doctype html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Mindmap Mermaid Quick Test Page</title>
-    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/font-awesome.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
-      div.mermaid {
-        /* font-family: 'trebuchet ms', verdana, arial; */
-        font-family: 'Courier New', Courier, monospace !important;
+      body {
+        background: rgb(244, 244, 244);
+        /* background: #333; */
+        font-family: 'Arial';
+        /* color: white; */
+        /* font-size: 18px !important; */
       }
+
+      h1 {
+        color: grey;
+      }
+
+      .mermaid2 {
+        display: none;
+      }
+
+      .mermaid svg {
+        /* font-size: 18px !important; */
+
+        /* background-color: #efefef;
+        background-image: radial-gradient(#fff 51%, transparent 91%),
+          radial-gradient(#fff 51%, transparent 91%);
+        background-size: 20px 20px;
+        background-position:
+          0 0,
+          10px 10px;
+        background-repeat: repeat; */
+      }
+
+      .malware {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 150px;
+        background: red;
+        color: black;
+        display: flex;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: monospace;
+        font-size: 72px;
+      }
+
+      pre {
+        width: 100%;
+      }
+
+      /* tspan {
+              font-size: 6px !important;
+            } */
+      /* .flowchart-link {
+        stroke-dasharray: 4, 4 !important;
+        animation: flow 1s linear infinite;
+        animation: dashdraw 4.93282s linear infinite;
+        stroke-width: 2px !important;
+      } */
+
+      @keyframes dashdraw {
+        from {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      /*stroke-width:2;stroke-dasharray:10.000000,9.865639;stroke-dashoffset:-198.656393;animation:    4.932820s linear infinite;*/
+      /* stroke-width:2;stroke-dasharray:10.000000,9.865639;stroke-dashoffset:-198.656393;animation: dashdraw 4.932820s linear infinite;*/
     </style>
   </head>
 
   <body>
-    <h1>Mindmap diagram demo</h1>
-    <pre class="mermaid">
-        mindmap
-        root
-            child1((Circle))
-                grandchild 1
-                grandchild 2
-            child2(Round rectangle)
-                grandchild 3
-                grandchild 4
-            child3[Square]
-                grandchild 5
-                ::icon(mdi mdi-fire)
-                gc6((grand<br/>child 6))
-                ::icon(mdi mdi-fire)
-                gc7((grand<br/>grand<br/>child 8))
+    <pre class="mermaid2">
+      flowchart LR
+    subgraph HoE["Head of Engineering"]
+        HE_CA{Can answer?} -->|Yes| HE_Ans[Answer]
+        HE_CA -->|No| HE_Inv[Investigate] --> HE_Ans2[Answer]
+    end
+    subgraph StatusSeeker["StatusSeeker"]
+        A([Incoming query]) --> B{Knows which team?}
+    end
+    subgraph TechLead["Tech Lead"]
+        TL_CA{Can answer?} -->|Yes| TL_Ans[Answer]
+    end
+    B -->|Yes| TL_CA
+    B -->|No| HE_CA
+    TL_CA -->|No| HE_CA
     </pre>
+    <pre class="mermaid2">
+      flowchart LR
+      C --> D --> E
+      D --> H --> I --Yes but with a long label that will wrap to the next line --> J --> E
+      I -- No --> K --> L --> N
 
-    <h2>Mindmap with root wrapping text and a shape</h2>
+
+      subgraph Constr
+        C
+        D
+        E
+        H
+        L
+        N
+      end
+      subgraph Legal
+        I
+        J["I am a very very long label that will wrap to the next line<br>and this is a second line<br>and this is a second line<br>and this is a second line<br>and this is a second line"]
+        K
+      end
+    </pre>
+    <pre class="mermaid2">
+flowchart LR
+subgraph Legal
+I
+J["I am a very very long label that will wrap to the next line<br>and this is a second line<br>and this is a second line<br>and this is a second line<br>and this is a second line"]
+K
+end
+I --Yes but with a long label that will wrap to the next line --> J
+I -- No --> K
+    </pre>
+    <pre class="mermaid2">
+---
+config:
+  flowchart:
+    curve: linear
+---
+            flowchart TD
+
+              subgraph lane1
+              B
+              A
+
+              end
+
+              A --> B
+              A --AB--> B
+    </pre>
+    <pre class="mermaid2">
+
+            flowchart TD
+
+              subgraph lane1
+              B
+              A
+              C
+              end
+              subgraph lane2
+              D --> E --EB--> B
+              end
+              A --> D
+              A --AB--> B --> C
+    </pre>
+    <pre class="mermaid2">
+---
+config:
+  curve: basis
+---
+            flowchart TD
+
+              subgraph lane1
+              B
+              A
+
+              end
+
+              A --x B
+              A --AB--> B
+    </pre>
+    <pre class="mermaid2">
+            flowchart TD
+
+              subgraph lane1
+              B
+              A
+              C
+              end
+              subgraph lane2
+              D --> E --EB--> B
+              end
+              A --> D
+              A --AB--> B --> C
+    </pre>
+    <pre class="mermaid2">
+---
+config:
+  flowchart:
+    curve: basis
+---
+            flowchart TD
+
+              subgraph lane1
+              B
+              A
+
+              end
+
+              A --> B
+              A --AB--> B
+    </pre>
+    <pre class="mermaid2">
+            flowchart TD
+
+              subgraph lane1
+              B
+              A
+              C
+              end
+              subgraph lane2
+              D --> E --EB--> B
+              end
+              A --> D
+              A --AB--> B --> C
+    </pre>
+    <pre class="mermaid2">
+
+    flowchart TD
+
+      subgraph lane1
+      B
+      A
+      C
+      end
+      subgraph lane2
+      D --> E --EB--> B
+      end
+      A --> D
+      A --AB--> B --> C
+          </pre
+    >
+    <pre class="mermaid2">
+     flowchart TD
+        H --> I --Yes--> J --> E
+        I -- No --> K --> L
+
+        subgraph Constr
+          E
+          H
+          L
+        end
+        subgraph Legal
+          I
+          J["I am a very very long label that will wrap to the next line<br>and this is a second line<br>and this is a second line<br>and this is a second line<br>and this is a second line"]
+          K
+        end
+    </pre>
+    <pre class="mermaid2">
+     flowchart TD
+        H --> I --Yes--> J --> E
+        I -- No --> K --> L
+
+        subgraph Constr
+          E
+          H
+          L
+        end
+        subgraph Legal
+          I
+          J
+          K
+        end
+    </pre>
+    <pre class="mermaid2">
+    flowchart TD
+        Customer --> USCompany
+
+        USCompany -- fdhdfjkfdkjdjd --> HongKongCompany
+        USCompany -- & --> Expenses
+
+        HongKongCompany  --> USCompany
+        HongKongCompany --> ExpensesHK
+        HongKongCompany --> Wages(HK)
+        HongKongCompany --> Incomehk
+
+
+
+    </pre>
+    <pre class="mermaid2">
+flowchart TB
+  subgraph Dep1
+    Start
+    Decision1
+  end
+  subgraph Dep2
+    Process1
+  end
+  Start --> Process1 --> Decision1
+
+    </pre>
+    <pre class="mermaid2">
+     flowchart TD
+
+         H --> I --Yes--> J --> E
+        I -- No --> K --> L
+        subgraph Legal
+          I
+          J["I am a very very long label that will wrap to the next line<br>and this is a second line<br>and this is a second line<br>and this is a second line<br>and this is a second line"]
+          K
+        end
+        subgraph Constr
+          E
+          H
+          L
+        end
+
+    </pre>
+    <pre class="mermaid2">
+flowchart TB
+        A --> B --> C --> D --> E --> F --> G
+        D --> H --> I --Yes--> J --> E
+        I -- No --> K --> L --> M & N
+        subgraph Car
+          A["I am a very very long label that will wrap to the next line<br>and this is a second line<br>and this is a second line<br>and this is a second line<br>and this is a second line"]
+        end
+        subgraph Fun
+          F
+          G
+        end
+        subgraph Sales
+          B
+          M
+        end
+
+        subgraph Constr
+          C
+          D["I am a very very long label that will wrap to the next line<br>and this is a second line<br>and this is a second line<br>and this is a second line<br>and this is a second line"]
+          E
+          H
+          L
+          N
+        end
+        subgraph Legal
+          I
+          J["I am a very very long label that will wrap to the next line<br>and this is a second line<br>and this is a second line<br>and this is a second line<br>and this is a second line"]
+          K
+        end
+    </pre>
+    <pre class="mermaid2">
+flowchart LR
+
+  subgraph L1[Community / Users]
+    A1[Report issue]
+    A2[Submit PR]
+  end
+
+  subgraph L2[GitHub System of Record]
+    G1[GitHub Issues]
+    G2[GitHub Pull Requests]
+    G3["GitHub Projects\n(tracking + prioritization)"]
+  end
+
+  subgraph L3[Full-time OS Team\nOmkar • Darshan • Shubham]
+    C1[Daily call\ncoordinate + unblock]
+    C2[Dev sync Tue/Thu\ntriage + plan complex items]
+    C3[Implement work\nShubham: layout algorithms focus]
+    C4[Peer review]
+  end
+
+  subgraph L4["Senior project members\n(pre-Mermaid Chart maintainers)"]
+    S1["Escalated review\n(deeper expertise / historical context)"]
+  end
+
+  subgraph L5[Team Lead & Release Manager\nAshish Jain]
+    R1[Owns release process\nplanning + cut release]
+    R2[Biweekly release]
+  end
+
+  A1 --> G1 --> G3
+  A2 --> G2 --> G3
+
+  G3 --> C1 --> C3 --> G2
+  G3 --> C2 --> C3
+
+
+  R1 --> R2 --> G3
+
+    </pre>
     <pre class="mermaid">
-        mindmap
-            root[A root with a long text that wraps to keep the node size in check]
+swimlane LR
+  subgraph Customer
+    request[Request service]
+    receive[Receive update]
+  end
+
+  subgraph Support
+    triage[Triage request]
+    answer[Send answer]
+  end
+
+  subgraph Engineering
+    investigate[Investigate issue]
+    fix[Prepare fix]
+  end
+
+  request --> triage
+  triage -->|Known issue| answer
+  triage -->|Needs code change| investigate
+  investigate --> fix --> answer
+  answer --> receive
+
+    </pre>
+    <pre class="mermaid2">
+flowchart LR
+   subgraph customer
+    sales_process(sales process)
+    places_order[places order]
+  end
+
+   subgraph sales
+    order_complete{{order<br>complete?}}
+    details[ask for details]
+  end
+    sales_process --> places_order --> order_complete -- no --> details --> order_complete
     </pre>
 
     <script type="module">
-      // import mermaid from './mermaid.esm.mjs';
-      import mermaid from '../../packages/mermaid/dist/mermaid.esm.mjs';
-      // import mermaidMindmap from './mermaid-mindmap.esm.mjs';
-
-      // import mermaidMindmap from 'https://cdn.jsdelivr.net/npm/@mermaid-js/mermaid-mindmap@9.3.0/+esm';
-      // await mermaid.registerExternalDiagrams([mermaidMindmap]);
-
-      const ALLOWED_TAGS = [
-        'a',
-        'b',
-        'blockquote',
-        'br',
-        'dd',
-        'div',
-        'dl',
-        'dt',
-        'em',
-        'foreignObject',
-        'h1',
-        'h2',
-        'h3',
-        'h4',
-        'h5',
-        'h6',
-        'h7',
-        'h8',
-        'hr',
-        'i',
-        'li',
-        'ul',
-        'ol',
-        'p',
-        'pre',
-        'span',
-        'strike',
-        'strong',
-        'table',
-        'tbody',
-        'td',
-        'tfoot',
-        'th',
-        'thead',
-        'tr',
-      ];
-      mermaid.parseError = function (err, hash) {
-        // console.error('Mermaid error: ', err);
+      import mermaid from './mermaid.esm.mjs';
+      import layouts from './mermaid-layout-elk.esm.mjs';
+      window.mermaidCaptureSizes = true;
+      const staticBellIconPack = {
+        prefix: 'fa6-regular',
+        icons: {
+          bell: {
+            body: '<path fill="currentColor" d="M224 0c-17.7 0-32 14.3-32 32v19.2C119 66 64 130.6 64 208v25.4c0 45.4-15.5 89.5-43.8 124.9L5.3 377c-5.8 7.2-6.9 17.1-2.9 25.4S14.8 416 24 416h400c9.2 0 17.6-5.3 21.6-13.6s2.9-18.2-2.9-25.4l-14.9-18.6c-28.3-35.5-43.8-79.6-43.8-125V208c0-77.4-55-142-128-156.8V32c0-17.7-14.3-32-32-32m0 96c61.9 0 112 50.1 112 112v25.4c0 47.9 13.9 94.6 39.7 134.6H72.3c25.8-40 39.7-86.7 39.7-134.6V208c0-61.9 50.1-112 112-112m64 352H160c0 17 6.7 33.3 18.7 45.3S207 512 224 512s33.3-6.7 45.3-18.7S288 465 288 448"/>',
+            width: 448,
+          },
+        },
+        width: 512,
+        height: 512,
       };
-      mermaid.initialize({
-        theme: 'base',
-        startOnLoad: true,
-        logLevel: 0,
-        flowchart: {
-          useMaxWidth: false,
-          htmlLabels: true,
+
+      mermaid.registerIconPacks([
+        {
+          name: 'logos',
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/logos@1/icons.json').then((res) => res.json()),
         },
-        gantt: {
-          useMaxWidth: false,
+        {
+          name: 'fa',
+          loader: () => staticBellIconPack,
         },
-        useMaxWidth: false,
-      });
+      ]);
+      mermaid.registerLayoutLoaders(layouts);
+      mermaid.parseError = function (err, hash) {
+        console.error('Mermaid error: ', err);
+      };
+      window.callback = function () {
+        alert('A callback was triggered');
+      };
       function callback() {
         alert('It worked');
       }
+      await mermaid.initialize({
+        theme: 'redux',
+        look: 'neo',
+        // layout: 'swimlane',
+        flowchart: {
+          titleTopMargin: 10,
+          ignoreCrossLaneEdges: true,
+          optimizeRanksByCrossings: true,
+        },
+        fontFamily: 'arial',
+        sequence: {
+          actorFontFamily: 'courier',
+          noteFontFamily: 'courier',
+          messageFontFamily: 'courier',
+        },
+        kanban: {
+          htmlLabels: false,
+        },
+        fontSize: 12,
+        logLevel: 0,
+        securityLevel: 'loose',
+        callback,
+      });
+
       mermaid.parseError = function (err, hash) {
         console.error('In parse error:');
         console.error(err);
       };
+
+      await mermaid.run();
+      window.rendered = true;
     </script>
   </body>
 </html>

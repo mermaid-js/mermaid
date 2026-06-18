@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { draw } from './vennRenderer.js';
+import { draw, ensurePairwiseSubsets } from './vennRenderer.js';
 import type { Diagram } from '../../Diagram.js';
 import * as configModule from '../../config.js';
 
@@ -130,7 +130,7 @@ describe('vennRenderer', () => {
         textColor: '#cccccc',
         primaryTextColor: '#cccccc',
       },
-    } as ReturnType<typeof configModule.getConfig>);
+    });
 
     const diagram = createDiagram();
     await draw('', 'venn', '1.0', diagram);
@@ -162,5 +162,90 @@ describe('vennRenderer', () => {
 
     const debugCircle = document.querySelector('.venn-text-debug-circle');
     expect(debugCircle).not.toBeNull();
+  });
+
+  describe('ensurePairwiseSubsets', () => {
+    it('returns the same reference for empty array', () => {
+      const result = ensurePairwiseSubsets([]);
+      expect(result).toBe(result);
+    });
+
+    it('returns the same reference when no 3+-set unions exist', () => {
+      const subsets = [
+        { sets: ['A'], size: 10, label: 'A' },
+        { sets: ['B'], size: 10, label: 'B' },
+        { sets: ['A', 'B'], size: 2.5, label: 'AB' },
+      ];
+      const result = ensurePairwiseSubsets(subsets);
+      expect(result).toBe(subsets);
+    });
+
+    it('adds pairwise subsets for a 3-set union', () => {
+      const subsets = [
+        { sets: ['A'], size: 10, label: 'A' },
+        { sets: ['B'], size: 10, label: 'B' },
+        { sets: ['C'], size: 10, label: 'C' },
+        { sets: ['A', 'B', 'C'], size: 5, label: 'ABC' },
+      ];
+      const result = ensurePairwiseSubsets(subsets);
+      expect(result).not.toBe(subsets);
+      expect(result).toHaveLength(7);
+      // Check that the three pairwise unions were added
+      const pairs = result.filter((s) => s.sets.length === 2);
+      expect(pairs).toHaveLength(3);
+      const pairKeys = pairs.map((p) => p.sets.join('|')).sort();
+      expect(pairKeys).toEqual(['A|B', 'A|C', 'B|C']);
+      // Verify sizes are 1/4 of smaller set size (10/4 = 2.5)
+      const pairSizes = pairs.map((p) => p.size).sort();
+      expect(pairSizes).toEqual([2.5, 2.5, 2.5]);
+    });
+
+    it('handles partial pairwise coverage: adds only missing pairs', () => {
+      const subsets = [
+        { sets: ['A'], size: 10, label: 'A' },
+        { sets: ['B'], size: 10, label: 'B' },
+        { sets: ['C'], size: 10, label: 'C' },
+        { sets: ['A', 'B', 'C'], size: 5, label: 'ABC' },
+        { sets: ['A', 'B'], size: 2.5, label: 'AB' },
+        { sets: ['B', 'C'], size: 2.5, label: 'BC' },
+      ];
+      const result = ensurePairwiseSubsets(subsets);
+      expect(result).not.toBe(subsets);
+      expect(result).toHaveLength(7);
+      // Should have added exactly one missing pair: A|C
+      const acPair = result.find(
+        (s) => s.sets.length === 2 && s.sets.includes('A') && s.sets.includes('C')
+      );
+      expect(acPair).toBeDefined();
+      expect(acPair?.size).toBe(2.5);
+    });
+
+    it('handles sets out of alphabetical order', () => {
+      const subsets = [
+        { sets: ['A'], size: 10, label: 'A' },
+        { sets: ['B'], size: 10, label: 'B' },
+        { sets: ['C'], size: 10, label: 'C' },
+        { sets: ['B', 'A', 'C'], size: 5, label: 'ABC' }, // out of order
+      ];
+      const result = ensurePairwiseSubsets(subsets);
+      expect(result).not.toBe(subsets);
+      expect(result).toHaveLength(7);
+      // Should add pairs A|B, A|C, B|C (sorted internally)
+      const pairKeys = result
+        .filter((s) => s.sets.length === 2)
+        .map((p) => p.sets.join('|'))
+        .sort();
+      expect(pairKeys).toEqual(['A|B', 'A|C', 'B|C']);
+    });
+
+    it('falls back to default size when individual set sizes are unknown', () => {
+      const subsets = [{ sets: ['A', 'B', 'C'], size: 5, label: 'ABC' }];
+      const result = ensurePairwiseSubsets(subsets);
+      expect(result).not.toBe(subsets);
+      expect(result).toHaveLength(4);
+      const pairs = result.filter((s) => s.sets.length === 2);
+      const pairSizes = pairs.map((p) => p.size);
+      expect(pairSizes).toEqual([2.5, 2.5, 2.5]);
+    });
   });
 });

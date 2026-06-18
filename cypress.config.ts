@@ -5,6 +5,8 @@ import { defineConfig } from 'cypress';
 import { addMatchImageSnapshotPlugin } from 'cypress-image-snapshot/plugin.js';
 import cypressSplit from 'cypress-split';
 import 'dotenv/config';
+import { readdirSync } from 'node:fs';
+import { join } from 'node:path';
 
 export default eyesPlugin(
   defineConfig({
@@ -40,6 +42,15 @@ export default eyesPlugin(
         } else {
           addMatchImageSnapshotPlugin(on, config);
         }
+        on('task', {
+          listSwimlaneFixtures() {
+            return readdirSync(
+              join(config.projectRoot, 'cypress/platform/dev-diagrams/layout-tests/swimlanes')
+            )
+              .filter((file) => file.endsWith('.mmd'))
+              .sort();
+          },
+        });
         // do not forget to return the changed config object!
         return config;
       },

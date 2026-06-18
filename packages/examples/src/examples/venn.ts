@@ -6,22 +6,32 @@ export default {
   description: 'Represent relationships in overlapping circles',
   examples: [
     {
-      title: 'Sales Revenue',
+      title: 'Product Sweet Spot',
       isDefault: true,
       code: `venn-beta
-    title "Three overlapping sets"
-    set A
-    set B
-    set C
-    union A,B["AB"]
-    union B,C["BC"]
-    union A,C["AC"]
-    union A,B,C["ABC"]
-    style A,B fill:skyblue
-    style B,C fill:orange
-    style A,C fill:lightgreen
-    style A,B,C fill:white, color:red
-    `,
+    title "Finding the Product Sweet Spot"
+    set Desirable
+    set Feasible
+    set Viable
+    union Desirable,Feasible["Worth prototyping"]
+    union Feasible,Viable["Cheap to run"]
+    union Desirable,Viable["Hard to build"]
+    union Desirable,Feasible,Viable["Sweet spot"]`,
+    },
+    {
+      title: 'Team Skill Overlap with Sizes and Styles',
+      code: `venn-beta
+    title "Where our teams overlap"
+    set FE["Frontend"]:18
+        text fe1["React"]
+        text fe2["CSS"]
+    set BE["Backend"]:22
+        text be1["Databases"]
+        text be2["APIs"]
+    union FE,BE["Full-stack"]:8
+        text fs1["TypeScript"]
+    style FE fill:skyblue
+    style BE fill:lightgreen`,
     },
   ],
 } satisfies DiagramMetadata;
