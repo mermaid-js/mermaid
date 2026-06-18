@@ -49,6 +49,7 @@ describe('layout runtime config', () => {
 
   it('should handle multi-level nested blocks with column spans (issue #7731)', () => {
     // Nested composite blocks should stretch to fill their allocated column width
+    const padding = 8;
     const makeRoot = (): Block => ({
       id: 'root',
       type: 'square',
@@ -108,15 +109,32 @@ describe('layout runtime config', () => {
       ],
     });
 
-    const makeDb = (root: Block): BlockDB =>
-      ({ getBlock: (id: string) => (id === 'root' ? root : undefined) }) as unknown as BlockDB;
+    const makeDb = (root: Block) => {
+      const blocks = new Map<string, Block>();
+      const collect = (b: Block) => {
+        blocks.set(b.id, b);
+        if (b.children) {
+          b.children.forEach(collect);
+        }
+      };
+      collect(root);
+      return { getBlock: (id: string) => blocks.get(id) };
+    };
 
-    vi.spyOn(diagramAPI, 'getConfig').mockReturnValue({ block: { padding: 8 } } as any);
-    const result = layout(makeDb(makeRoot()));
+    vi.spyOn(diagramAPI, 'getConfig').mockReturnValue({ block: { padding } });
+    const root = makeRoot();
+    const result = layout(makeDb(root) as BlockDB);
 
-    // The layout should succeed without errors
     expect(result).toBeDefined();
     expect(result!.width).toBeGreaterThan(0);
     expect(result!.height).toBeGreaterThan(0);
+
+    // Verify the width cascade: dbconn should span 2 columns in app's 4-column grid
+    // This should result in meaningful width (not just single-cell width)
+    const app = root.children.find(c => c.id === 'app');
+    const dbconn = app?.children?.find(c => c.id === 'dbconn');
+
+    expect(dbconn).toBeDefined();
+    expect(dbconn?.size?.width).toBeGreaterThan(100); // Should be 2-column width, not 1
   });
 });

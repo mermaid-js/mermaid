@@ -73,6 +73,18 @@ function isComposite(child: Block): boolean {
   return !!(child.children && child.children.length > 0);
 }
 
+/**
+ * Calculate how many columns a block actually fills, capped to row boundaries.
+ * Prevents blocks from overflowing into the next row.
+ * Used consistently in both setBlockSizes and layoutBlocks to prevent disagreement.
+ */
+function getColumnsFilled(childCols: number, columns: number, colPos: number): number {
+  if (columns <= 0) {
+    return childCols;
+  }
+  return Math.min(childCols, columns - (colPos % columns));
+}
+
 function setBlockSizes(
   block: Block,
   db: BlockDB,
@@ -165,11 +177,7 @@ function setBlockSizes(
       let colPos = 0;
       for (const child of block.children) {
         const childCols = child.widthInColumns ?? 1;
-        // Cap column spans to row boundaries, matching layoutBlocks behavior
-        let columnsFilled = childCols;
-        if (columns > 0) {
-          columnsFilled = Math.min(columnsFilled, columns - (colPos % columns));
-        }
+        const columnsFilled = getColumnsFilled(childCols, columns, colPos);
         const { py } = calculateBlockPosition(columns > 0 ? columns : numItems, colPos);
         const h = child.size?.height ?? maxHeight;
         const cur = rowMaxHeights.get(py) ?? 0;
@@ -375,11 +383,8 @@ function layoutBlocks(block: Block, db: BlockDB, padding = 8) {
       if (child.children) {
         layoutBlocks(child, db, padding);
       }
-      let columnsFilled = child?.widthInColumns ?? 1;
-      if (columns > 0) {
-        // Make sure overflowing lines do not affect later lines
-        columnsFilled = Math.min(columnsFilled, columns - (columnPos % columns));
-      }
+      const childWidthCols = child?.widthInColumns ?? 1;
+      const columnsFilled = getColumnsFilled(childWidthCols, columns, columnPos);
       columnPos += columnsFilled;
       log.debug('abc88 columnsPos', child, columnPos);
     }
