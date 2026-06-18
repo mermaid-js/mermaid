@@ -61,7 +61,15 @@ export async function drawRect<T extends SVGGraphicsElement>(
       .attr('height', totalHeight);
   }
 
-  updateNodeBounds(node, rect);
+  // For a plain (non-roughjs) axis-aligned rect the rendered geometry is exactly
+  // the size we just drew, so hand it to updateNodeBounds to avoid a getBBox reflow.
+  // Hand-drawn rects are roughjs paths that overflow their nominal box, so they
+  // still need a real measurement.
+  updateNodeBounds(
+    node,
+    rect,
+    node.look === 'handDrawn' ? undefined : { width: totalWidth, height: totalHeight }
+  );
 
   node.calcIntersect = function (bounds: Bounds, point: Point) {
     return intersect.rect(bounds, point);

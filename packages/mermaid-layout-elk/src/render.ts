@@ -702,8 +702,24 @@ async function runElkLayout(
   elkGraph: any,
   log: ElkLayoutContext['log']
 ): Promise<ElkLayoutResult> {
+  // Time the actual external elkjs call ("layoutCore") separately from our
+  // wrapper. The render profiler isn't importable from this external package, so
+  // read the single shared instance off the global — present only in
+  // dev/profiling builds, undefined (and thus a no-op) otherwise.
+  const profiler = (
+    globalThis as typeof globalThis & {
+      __mermaidProfiler?: { begin(name: string): void; end(): void };
+    }
+  ).__mermaidProfiler;
   try {
-    const graph = await elk.layout(elkGraph);
+    // Time the actual external elkjs call ("layoutCore") on its own.
+    profiler?.begin('layoutCore');
+    let graph: ElkLayoutResult;
+    try {
+      graph = await elk.layout(elkGraph);
+    } finally {
+      profiler?.end();
+    }
     log.debug('APA01 after - success');
     log.info('APA01 layout result:', JSON.stringify(graph, null, 2));
     return graph;
