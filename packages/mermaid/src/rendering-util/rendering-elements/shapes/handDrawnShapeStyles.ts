@@ -81,15 +81,22 @@ export const styles2String = (node: Node) => {
 
   stylesArray.forEach((style) => {
     const key = style[0];
+    // Append `!important` only when it isn't already there. prebuildNodeLabels
+    // stamps a node's label style before the shape re-derives it here, so this can
+    // run on an already-stamped declaration; without the guard the second pass would
+    // double the `!important` — it renders the same, but a label rebuilt inline
+    // would then differ in string form from the pre-perf output.
+    const decl = style.join(':');
+    const important = decl.includes('!important') ? decl : `${decl} !important`;
     if (isLabelStyle(key)) {
-      labelStyles.push(style.join(':') + ' !important');
+      labelStyles.push(important);
     } else {
-      nodeStyles.push(style.join(':') + ' !important');
+      nodeStyles.push(important);
       if (key.includes('stroke')) {
-        borderStyles.push(style.join(':') + ' !important');
+        borderStyles.push(important);
       }
       if (key === 'fill') {
-        backgroundStyles.push(style.join(':') + ' !important');
+        backgroundStyles.push(important);
       }
     }
   });

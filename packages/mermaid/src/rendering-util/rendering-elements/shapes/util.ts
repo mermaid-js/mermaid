@@ -13,6 +13,7 @@ import { sanitizeText } from '../../../diagrams/common/common.js';
 import { decodeEntities, handleUndefinedAttr } from '../../../utils.js';
 import type { D3Selection, Point } from '../../../types.js';
 import { configureLabelImages } from './labelImageUtils.js';
+import { styles2String } from './handDrawnShapeStyles.js';
 import { profiler } from '../../../profiler.js';
 
 type CreatedText = Awaited<ReturnType<typeof createText>>;
@@ -48,12 +49,19 @@ const prebuiltLabels = new Map<Node, NodeLabel>();
  * from; {@link labelHelper} recomputes it from the node's *current* state and only
  * reuses the prebuilt label when they still match.
  *
- * Several shapes mutate the node *after* the prebuild pass has already built the
- * label — hourglass blanks `node.label`, erBox rewrites `node.label`/`node.width`,
- * and most shapes assign a classDef-derived `node.labelStyle` via styles2String.
- * Those changes flip the signature, so labelHelper rebuilds the label inline (the
- * exact pre-perf path) instead of returning a stale prebuilt one. Unchanged plain
- * nodes — the bulk of large diagrams — still hit the fast prebuilt path.
+ * Some shapes mutate the node *after* the prebuild pass — hourglass blanks
+ * `node.label`, erBox rewrites `node.label`/`node.width`. Those flip the signature,
+ * so labelHelper rebuilds the label inline (the exact pre-perf path) instead of
+ * returning a stale prebuilt one.
+ *
+ * Deliberately NOT included: `node.labelStyle`. prebuildNodeLabels already builds
+ * the label with the node's final, classDef-derived label style, so the prebuilt
+ * DOM and its measured size are correct. classDef styling (colour/font) is set by
+ * *every* styled node after prebuild, and re-deriving the exact same style string
+ * is fragile — gating on it made every styled node fail the match and rebuild
+ * inline, which was the dominant measure-phase regression on classDef-heavy
+ * diagrams. Since the prebuilt label is already styled correctly, the style is not
+ * needed in the fingerprint.
  */
 function labelSignature(node: Node): string {
   const label =
@@ -64,7 +72,6 @@ function labelSignature(node: Node): string {
     label,
     width ?? '',
     node.labelType === 'markdown',
-    node.labelStyle ?? '',
     Boolean(useHtmlLabels),
     Boolean(node.centerLabel),
     Boolean(node.icon),
@@ -225,6 +232,17 @@ export async function prebuildNodeLabels<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   nodes: Node[]
 ): Promise<void> {
+  // Stamp each node with its classDef/style-derived label style up front, so the
+  // prebuilt label is built with the same style (colour/font) the shape will apply.
+  // The label signature deliberately omits the style (see labelSignature), so a
+  // styled node still matches its prebuilt label and is reused — instead of being
+  // discarded and rebuilt + re-measured inline per node, which was the dominant
+  // measure-phase cost on classDef-heavy diagrams. Colour doesn't affect text size,
+  // so the prebuilt measurement stays valid.
+  for (const node of nodes) {
+    node.labelStyle = styles2String(node).labelStyles;
+  }
+
   // Phase 1 — build every label (deferred measurement: writes only). When every
   // label is HTML and the environment can parse batched SVG markup, build them all
   // with one insertAdjacentHTML (the browser parser is ~2x cheaper than building
