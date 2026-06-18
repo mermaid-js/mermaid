@@ -220,6 +220,13 @@ When using the ELK layout, you can further refine the diagram’s configuration,
   - NETWORK_SIMPLEX
   - LINEAR_SEGMENTS
   - BRANDES_KOEPF (default)
+- To configure Brandes-Koepf node placement alignment, use nodePlacementAlignment with the following options:
+  - NONE (default)
+  - LEFTUP
+  - LEFTDOWN
+  - RIGHTUP
+  - RIGHTDOWN
+  - BALANCED
 
 **Example configuration:**
 
@@ -230,6 +237,7 @@ config:
   elk:
     mergeEdges: true
     nodePlacementStrategy: LINEAR_SEGMENTS
+    nodePlacementAlignment: NONE
 ---
 flowchart LR
   A[Start] --> B{Choose Path}

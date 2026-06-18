@@ -43,6 +43,10 @@ interface BaseNode {
   isGroup?: boolean;
   width?: number;
   height?: number;
+  labelBBox?: {
+    width: number;
+    height: number;
+  };
   // Specific properties for State Diagram nodes TODO remove and use generic properties
   intersect?: (point: any) => any;
   calcIntersect?: (bounds: Bounds, point: Point) => any;
@@ -152,6 +156,10 @@ export interface Edge {
   look?: string;
   isUserDefinedId?: boolean;
   showPoints?: boolean;
+  width?: number;
+  height?: number;
+  x?: number;
+  y?: number;
   points?: Point[];
   parentId?: string;
   dir?: string;

@@ -15,6 +15,8 @@ export interface MermaidBuildOptions extends BuildOptions {
   format: 'esm' | 'iife';
   options: PackageOptions;
   includeLargeFeatures: boolean;
+  /** Compile the render profiler into the bundle (dev/profiling builds only). */
+  profiling: boolean;
 }
 
 export const defaultOptions: Omit<MermaidBuildOptions, 'entryName' | 'options'> = {
@@ -23,6 +25,7 @@ export const defaultOptions: Omit<MermaidBuildOptions, 'entryName' | 'options'> 
   core: false,
   format: 'esm',
   includeLargeFeatures: true,
+  profiling: false,
 } as const;
 
 const buildOptions = (override: BuildOptions): BuildOptions => {
@@ -66,6 +69,7 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
     options: { name, file, packageName },
     globalName = 'mermaid',
     includeLargeFeatures,
+    profiling,
     ...rest
   } = options;
 
@@ -86,6 +90,7 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
     define: {
       // This needs to be stringified for esbuild
       'injected.includeLargeFeatures': `${includeLargeFeatures}`,
+      'injected.profiling': `${profiling}`,
       'injected.version': `'${version}'`,
       'import.meta.vitest': 'undefined',
     },

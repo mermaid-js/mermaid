@@ -30,6 +30,7 @@ Gemfile.lock
 /.vs
 
 cypress/screenshots/
+cypress/argos-sheets/
 cypress/snapshots/
 
 # eslint --cache file

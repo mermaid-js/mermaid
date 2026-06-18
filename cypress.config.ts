@@ -1,5 +1,4 @@
 import eyesPlugin from '@applitools/eyes-cypress';
-import { registerArgosTask } from '@argos-ci/cypress/task';
 import coverage from '@cypress/code-coverage/task.js';
 import { defineConfig } from 'cypress';
 import { addMatchImageSnapshotPlugin } from 'cypress-image-snapshot/plugin.js';
@@ -29,17 +28,10 @@ export default eyesPlugin(
         config.env.useAppli = process.env.USE_APPLI ? true : false;
         config.env.useArgos = process.env.RUN_VISUAL_TEST === 'true';
 
-        if (config.env.useArgos) {
-          registerArgosTask(on, config, {
-            // Enable upload to Argos only when it runs on CI.
-            uploadToArgos: !!process.env.CI,
-            // Mark as a subset build when only a scoped set of specs ran.
-            // This tells Argos to ignore missing screenshots (they were not
-            // run, not deleted) and prevents the baseline from being replaced
-            // by a partial run. Mirrors the ARGOS_SUBSET env var set in e2e.yml.
-            subset: process.env.ARGOS_SUBSET === 'true',
-          });
-        } else {
+        // Argos capture uses cy.argosScreenshot from @argos-ci/cypress/support (e2e.js).
+        // Do not register registerArgosTask — its after:run hook uploads to Argos.
+        // Raw PNGs batch-upload in the argos-batch CI job instead.
+        if (!config.env.useArgos) {
           addMatchImageSnapshotPlugin(on, config);
         }
         on('task', {
