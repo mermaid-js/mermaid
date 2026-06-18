@@ -192,6 +192,13 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
     // we drop the stale prebuilt DOM and rebuild inline — matching the pre-perf path.
     if (prebuilt.signature === labelSignature(node)) {
       prebuilt.shapeSvg.attr('class', _classes ?? 'node default');
+      // Match the inline path's paint order. A freshly built label is appended to
+      // the parent here, at shape-render time, so it sits above any siblings the
+      // shape drew first — e.g. erBox draws a hand-drawn background rect before it
+      // builds the entity. A prebuilt label was inserted earlier (during the
+      // prebuild pass), so raise it to the end now; otherwise those backgrounds
+      // paint over the node.
+      prebuilt.shapeSvg.raise();
       return prebuilt;
     }
     prebuilt.shapeSvg.remove();
