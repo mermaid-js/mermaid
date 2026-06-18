@@ -176,7 +176,9 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   ) {
     const difference =
       nameBBox.width + PADDING * 2 - (maxTypeWidth + maxNameWidth + maxKeysWidth + maxCommentWidth);
-    maxTypeWidth += difference / totalWidthSections;
+    if (typePresent) {
+      maxTypeWidth += difference / totalWidthSections;
+    }
     maxNameWidth += difference / totalWidthSections;
     if (maxKeysWidth > 0) {
       maxKeysWidth += difference / totalWidthSections;

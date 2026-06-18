@@ -39,7 +39,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <block_bq>[^`]+                 return 'ATTRIBUTE_WORD';
 <block_bq>[`]                   { this.popState(); }
 <block>\"[^"]*\"                return 'COMMENT';
-<block>[\n]+                    return 'NEWLINE';
+<block>[\n]+                    /* attribute rows are newline-separated in block mode */ return 'NEWLINE';
 <block>"}"                      { this.popState(); return 'BLOCK_STOP'; }
 <block>.                        return yytext[0];
 "["                             return 'SQS';
