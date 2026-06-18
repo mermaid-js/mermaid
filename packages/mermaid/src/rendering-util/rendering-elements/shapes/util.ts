@@ -392,15 +392,23 @@ async function buildNodeLabelsBatched<T extends SVGGraphicsElement>(
     return null;
   }
 
-  // HTML labels can contain <img> tags. configureLabelImages waits for them to
-  // load and applies their sizing styles; without it the batched labels are
+  // HTML labels can contain <img> tags. configureLabelImages waits for those to
+  // load and applies their sizing styles; without it the batched labels would be
   // measured before images have dimensions, so image nodes come out mis-sized and
   // the images don't show. The per-element path does this inside buildNodeLabel —
-  // the batched markup path must do it explicitly. Build-time, so it stays out of
-  // the measure pass.
-  await Promise.all(
-    builds.map(({ build }) => configureLabelImages(build.text.children[0] as HTMLDivElement))
+  // the batched markup path must do it explicitly. Only labels that actually contain
+  // an image need it, so we skip the async suspension entirely for image-free
+  // diagrams (the common case — this stops an empty Promise.all/await from adding
+  // idle wall-clock to the measure phase). Build-time, so it stays out of the
+  // measure pass.
+  const imageBuilds = builds.filter(
+    ({ build }) => (build.text.children[0] as HTMLElement).getElementsByTagName('img').length > 0
   );
+  if (imageBuilds.length > 0) {
+    await Promise.all(
+      imageBuilds.map(({ build }) => configureLabelImages(build.text.children[0] as HTMLDivElement))
+    );
+  }
 
   return builds;
 }
