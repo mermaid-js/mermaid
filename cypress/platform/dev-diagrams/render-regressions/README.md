@@ -1,18 +1,20 @@
 # Render regression fixtures
 
-Minimal, self-contained reproductions of rendering regressions found while doing
-the large-diagram performance work (PRs #7871 / #7872). Each `.mmd` here renders a
-single, specific visual bug so we can eyeball it in the dev explorer (and compare
-against `develop`) without needing the full Cypress/Argos pipeline.
+Minimal, self-contained reproductions of rendering regressions the large-diagram
+performance work (PRs #7871 / #7872) temporarily introduced. **Every repro below is
+fixed on this branch** — each one now renders identically to `develop`. They are
+kept as a fast parity check (and a guard against reintroduction): a single, specific
+visual case you can eyeball in the dev explorer without running the full
+Cypress/Argos pipeline.
 
-Drop new repros here as we find them — keep each one as small as possible and
-record where it came from below.
+Drop new repros here if a future change reintroduces one — keep each as small as
+possible and record where it came from below.
 
 ## How to use
 
 1. `pnpm dev`, open the dev explorer, pick a file from this folder.
-2. Compare the same file on this branch vs `develop` (or against the Argos
-   baseline) to confirm the regression.
+2. Confirm it renders the same on this branch as on `develop` (or against the Argos
+   baseline). A difference means the regression is back.
 3. Config that matters (look / htmlLabels) is set in each file's YAML frontmatter.
    The explorer's look/theme controls can also be used if frontmatter isn't applied.
 
