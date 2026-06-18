@@ -129,14 +129,16 @@ describe('layout runtime config', () => {
     expect(result!.width).toBeGreaterThan(0);
     expect(result!.height).toBeGreaterThan(0);
 
+    // cspell:disable-next-line
     // Verify the width cascade: dbconn should span 2 columns in app's 4-column grid
     // This should result in meaningful width (not just single-cell width)
-    // cspell:disable-next-line
     const app = root.children.find((c) => c.id === 'app');
     // cspell:disable-next-line
+    // dbconn spans 2 columns in app's 4-column grid
     const dbconn = app?.children?.find((c) => c.id === 'dbconn');
 
     expect(dbconn).toBeDefined();
+    // cspell:disable-next-line
     // dbconn spans 2 columns in app's 4-column grid
     // Width should be > 0 and represent actual 2-column allocation
     expect(dbconn?.size?.width).toBeDefined();
