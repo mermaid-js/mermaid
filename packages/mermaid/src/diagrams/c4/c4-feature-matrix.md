@@ -21,13 +21,13 @@ Legend: **Test** = the `CHAR.*` case in the characterization spec.
 
 ## Elements
 
-| Element         | Variants                                                                                               | Test            |
-| --------------- | ------------------------------------------------------------------------------------------------------ | --------------- |
-| Person          | `Person`, `Person_Ext`                                                                                 | CHAR.person     |
-| System          | `System`, `System_Ext`, `SystemDb`, `SystemDb_Ext`, `SystemQueue`, `SystemQueue_Ext`                   | CHAR.system     |
-| Container       | `Container`, `Container_Ext`, `ContainerDb`, `ContainerDb_Ext`, `ContainerQueue`, `ContainerQueue_Ext` | CHAR.container  |
-| Component       | `Component`, `Component_Ext`, `ComponentDb`, `ComponentDb_Ext`, `ComponentQueue`, `ComponentQueue_Ext` | CHAR.component  |
-| Deployment node | `Deployment_Node` (alias `Node`, `Node_L`, `Node_R`)                                                   | CHAR.deployment |
+| Element         | Variants                                                                                               | Test                                     |
+| --------------- | ------------------------------------------------------------------------------------------------------ | ---------------------------------------- |
+| Person          | `Person`, `Person_Ext`                                                                                 | CHAR.person                              |
+| System          | `System`, `System_Ext`, `SystemDb`, `SystemDb_Ext`, `SystemQueue`, `SystemQueue_Ext`                   | CHAR.system                              |
+| Container       | `Container`, `Container_Ext`, `ContainerDb`, `ContainerDb_Ext`, `ContainerQueue`, `ContainerQueue_Ext` | CHAR.container                           |
+| Component       | `Component`, `Component_Ext`, `ComponentDb`, `ComponentDb_Ext`, `ComponentQueue`, `ComponentQueue_Ext` | CHAR.component                           |
+| Deployment node | `Deployment_Node` (alias `Node`, `Node_L`, `Node_R`)                                                   | CHAR.deployment, CHAR.deployment-aliases |
 
 Visual conventions in the current renderer: `*Db` renders as a (vertical) cylinder, `*Queue` as
 a (horizontal) pipe, `*_Ext` as the same shape with the "external" palette colour, `Person` as a

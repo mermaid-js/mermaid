@@ -224,10 +224,33 @@ describe('C4 characterization', () => {
         {}
       );
     });
+
+    it('CHAR.deployment-aliases should accept the Node / Node_L / Node_R aliases', () => {
+      // Node, Node_L and Node_R are aliases of Deployment_Node (grammar) - this
+      // baselines that the aliases produce equivalent output to CHAR.deployment.
+      imgSnapshotTest(
+        `C4Deployment
+        title Deployment node aliases
+        Node(dc, "Data Center", "us-east-1") {
+          Node_L(srv, "App Server", "Ubuntu 22.04") {
+            Container(api, "API", "Java, Spring")
+          }
+          Node_R(dbn, "DB Server", "Ubuntu 22.04") {
+            ContainerDb(db, "Database", "PostgreSQL")
+          }
+        }
+        Rel(api, db, "reads/writes", "JDBC")
+        `,
+        {}
+      );
+    });
   });
 
   describe('styling and layout macros', () => {
     it('CHAR.update-element-style should apply UpdateElementStyle', () => {
+      // $shape and $sprite are also valid UpdateElementStyle parameters but are omitted
+      // here: sprite/icon rendering is not yet wired up for C4 (tracked in the migration,
+      // RFC #7844). Only the colour parameters are exercised here.
       imgSnapshotTest(
         `C4Context
         title UpdateElementStyle
