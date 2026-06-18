@@ -32,12 +32,45 @@ export interface NodeLabel {
   bbox: DOMRect;
   halfPadding: number;
   label: D3Selection<SVGGElement>;
+  /** Fingerprint of the node state this label was built from (see {@link labelSignature}). */
+  signature: string;
 }
 
 // Labels built and measured ahead of time by prebuildNodeLabels, keyed by node
 // identity. labelHelper returns these instead of building+measuring inline;
 // clearPrebuiltLabels removes any that were never consumed.
 const prebuiltLabels = new Map<Node, NodeLabel>();
+
+/**
+ * A cheap fingerprint of the node inputs that determine a label's built DOM, its
+ * measured size, and its finalize-time positioning. {@link prebuildNodeLabels}
+ * stamps every prebuilt label with the signature of the node state it was built
+ * from; {@link labelHelper} recomputes it from the node's *current* state and only
+ * reuses the prebuilt label when they still match.
+ *
+ * Several shapes mutate the node *after* the prebuild pass has already built the
+ * label — hourglass blanks `node.label`, erBox rewrites `node.label`/`node.width`,
+ * and most shapes assign a classDef-derived `node.labelStyle` via styles2String.
+ * Those changes flip the signature, so labelHelper rebuilds the label inline (the
+ * exact pre-perf path) instead of returning a stale prebuilt one. Unchanged plain
+ * nodes — the bulk of large diagrams — still hit the fast prebuilt path.
+ */
+function labelSignature(node: Node): string {
+  const label =
+    node.label === undefined ? '' : typeof node.label === 'string' ? node.label : node.label[0];
+  const useHtmlLabels = node.useHtmlLabels || evaluate(getConfig()?.htmlLabels);
+  const width = node.width || getConfig().flowchart?.wrappingWidth;
+  return JSON.stringify([
+    label,
+    width ?? '',
+    node.labelType === 'markdown',
+    node.labelStyle ?? '',
+    Boolean(useHtmlLabels),
+    Boolean(node.centerLabel),
+    Boolean(node.icon),
+    Boolean(node.img),
+  ]);
+}
 
 /**
  * Build a node's label DOM (the outer `g`, the label `g`, and the text/foreign
@@ -139,7 +172,7 @@ function finalizeNodeLabel(build: NodeLabelBuild, bbox: DOMRect, node: Node): No
     labelEl.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
   }
   labelEl.insert('rect', ':first-child');
-  return { shapeSvg, bbox, halfPadding, label: labelEl };
+  return { shapeSvg, bbox, halfPadding, label: labelEl, signature: labelSignature(node) };
 }
 
 export const labelHelper = async <T extends SVGGraphicsElement>(
@@ -153,8 +186,15 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   const prebuilt = prebuiltLabels.get(node);
   if (prebuilt) {
     prebuiltLabels.delete(node);
-    prebuilt.shapeSvg.attr('class', _classes ?? 'node default');
-    return prebuilt;
+    // Only reuse it if the node still describes the same label. Shapes that
+    // customise the node after the prebuild pass (blank/rewrite the label, change
+    // its width, apply a classDef-derived label style, …) flip the signature, so
+    // we drop the stale prebuilt DOM and rebuild inline — matching the pre-perf path.
+    if (prebuilt.signature === labelSignature(node)) {
+      prebuilt.shapeSvg.attr('class', _classes ?? 'node default');
+      return prebuilt;
+    }
+    prebuilt.shapeSvg.remove();
   }
 
   const build = await buildNodeLabel(parent, node, _classes, false);
@@ -326,6 +366,17 @@ async function buildNodeLabelsBatched<T extends SVGGraphicsElement>(
     groups.forEach((g) => g.remove());
     return null;
   }
+
+  // HTML labels can contain <img> tags. configureLabelImages waits for them to
+  // load and applies their sizing styles; without it the batched labels are
+  // measured before images have dimensions, so image nodes come out mis-sized and
+  // the images don't show. The per-element path does this inside buildNodeLabel —
+  // the batched markup path must do it explicitly. Build-time, so it stays out of
+  // the measure pass.
+  await Promise.all(
+    builds.map(({ build }) => configureLabelImages(build.text.children[0] as HTMLDivElement))
+  );
+
   return builds;
 }
 
