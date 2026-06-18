@@ -56,11 +56,11 @@ treated as a tag-style per RFC #7844, not a separate shape).
 
 ## Styling and layout macros
 
-| Macro              | Syntax                                                                    | Test                      |
-| ------------------ | ------------------------------------------------------------------------- | ------------------------- |
-| Element style      | `UpdateElementStyle($bgColor, $fontColor, $borderColor, $shape, $sprite)` | CHAR.update-element-style |
-| Relationship style | `UpdateRelStyle($textColor, $lineColor, $offsetX, $offsetY)`              | CHAR.update-rel-style     |
-| Layout config      | `UpdateLayoutConfig($c4ShapeInRow, $c4BoundaryInRow)`                     | CHAR.update-layout-config |
+| Macro              | Syntax                                                                    | Test                                                 |
+| ------------------ | ------------------------------------------------------------------------- | ---------------------------------------------------- |
+| Element style      | `UpdateElementStyle($bgColor, $fontColor, $borderColor, $shape, $sprite)` | CHAR.update-element-style, CHAR.update-element-shape |
+| Relationship style | `UpdateRelStyle($textColor, $lineColor, $offsetX, $offsetY)`              | CHAR.update-rel-style                                |
+| Layout config      | `UpdateLayoutConfig($c4ShapeInRow, $c4BoundaryInRow)`                     | CHAR.update-layout-config                            |
 
 ## Element attributes
 

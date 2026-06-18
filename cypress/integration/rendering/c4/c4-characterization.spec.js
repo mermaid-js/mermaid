@@ -247,10 +247,7 @@ describe('C4 characterization', () => {
   });
 
   describe('styling and layout macros', () => {
-    it('CHAR.update-element-style should apply UpdateElementStyle', () => {
-      // $shape and $sprite are also valid UpdateElementStyle parameters but are omitted
-      // here: sprite/icon rendering is not yet wired up for C4 (tracked in the migration,
-      // RFC #7844). Only the colour parameters are exercised here.
+    it('CHAR.update-element-style should apply UpdateElementStyle colours', () => {
       imgSnapshotTest(
         `C4Context
         title UpdateElementStyle
@@ -258,6 +255,25 @@ describe('C4 characterization', () => {
         System(s, "System")
         Rel(p, s, "Uses")
         UpdateElementStyle(p, $fontColor="white", $bgColor="purple", $borderColor="black")
+        `,
+        {}
+      );
+    });
+
+    // Forward-looking baseline: $shape currently has no visual effect (the legacy renderer
+    // ignores it), so today this renders as a plain Container box. The unified renderer
+    // resolves $shape to a shape, so when the migration lands the snapshot diff will show
+    // the override taking effect. ($sprite is the same idea but renders an <image href>,
+    // which isn't snapshot-safe until icon-pack support lands - added with that slice.)
+    it('CHAR.update-element-shape should accept the $shape override', () => {
+      imgSnapshotTest(
+        `C4Container
+        title UpdateElementStyle shape override
+        Container(a, "Default", "Tech", "no override")
+        Container(b, "As Folder", "Tech", "shape override")
+        Container(c, "As Cylinder", "Tech", "shape override")
+        UpdateElementStyle(b, $shape="folder")
+        UpdateElementStyle(c, $shape="cylinder")
         `,
         {}
       );
