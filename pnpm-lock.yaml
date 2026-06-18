@@ -27,6 +27,9 @@ importers:
       '@argos-ci/cypress':
         specifier: ^6.2.12
         version: 6.2.12(cypress@14.5.4)
+      '@babel/core':
+        specifier: ^7.29.0
+        version: 7.29.0
       '@changesets/changelog-github':
         specifier: ^0.5.2
         version: 0.5.2(encoding@0.1.13)
@@ -99,6 +102,9 @@ importers:
       ajv:
         specifier: ^8.17.1
         version: 8.18.0
+      babel-plugin-istanbul:
+        specifier: ^7.0.1
+        version: 7.0.1
       chokidar:
         specifier: 3.6.0
         version: 3.6.0
@@ -186,9 +192,6 @@ importers:
       husky:
         specifier: ^9.1.7
         version: 9.1.7
-      istanbul-lib-instrument:
-        specifier: ^6.0.3
-        version: 6.0.3
       jest:
         specifier: ^30.1.3
         version: 30.1.3(@types/node@22.19.19)
