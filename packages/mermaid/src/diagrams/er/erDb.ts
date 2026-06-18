@@ -98,6 +98,9 @@ export class ErDB implements DiagramDB {
     // Process attribs in reverse order due to effect of recursive construction (last attribute is first)
     let i;
     for (i = attribs.length - 1; i >= 0; i--) {
+      if (!attribs[i].type) {
+        attribs[i].type = '';
+      }
       if (!attribs[i].keys) {
         attribs[i].keys = [];
       }

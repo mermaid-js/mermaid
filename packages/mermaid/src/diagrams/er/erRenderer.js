@@ -48,6 +48,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
   const attrFontSize = conf.fontSize * 0.85;
   const labelBBox = entityTextNode.node().getBBox();
   const attributeNodes = []; // Intermediate storage for attribute nodes created so that we can do a second pass
+  let hasAttributeType = false;
   let hasKeyType = false;
   let hasComment = false;
   let maxTypeWidth = 0;
@@ -59,11 +60,19 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
 
   // Check to see if any of the attributes has a key or a comment
   attributes.forEach((item) => {
-    if (item.attributeKeyTypeList !== undefined && item.attributeKeyTypeList.length > 0) {
+    const attributeType = item.attributeType ?? item.type ?? '';
+    const attributeKeyTypeList = item.attributeKeyTypeList ?? item.keys;
+    const attributeComment = item.attributeComment ?? item.comment;
+
+    if (attributeType.trim().length > 0) {
+      hasAttributeType = true;
+    }
+
+    if (attributeKeyTypeList !== undefined && attributeKeyTypeList.length > 0) {
       hasKeyType = true;
     }
 
-    if (item.attributeComment !== undefined) {
+    if (attributeComment !== undefined && attributeComment.length > 0) {
       hasComment = true;
     }
   });
@@ -72,20 +81,29 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
     const attrPrefix = `${entityTextNode.node().id}-attr-${attrNum}`;
     let nodeHeight = 0;
 
-    const attributeType = parseGenericTypes(item.attributeType);
+    const attributeType = parseGenericTypes(item.attributeType ?? item.type ?? '');
+    const attributeName = item.attributeName ?? item.name;
+    const attributeKeyTypeList = item.attributeKeyTypeList ?? item.keys;
+    const attributeComment = item.attributeComment ?? item.comment;
+    let typeNode;
+    let typeBBox = { width: 0, height: 0 };
 
-    // Add a text node for the attribute type
-    const typeNode = groupNode
-      .append('text')
-      .classed('er entityLabel', true)
-      .attr('id', `${attrPrefix}-type`)
-      .attr('x', 0)
-      .attr('y', 0)
-      .style('dominant-baseline', 'middle')
-      .style('text-anchor', 'left')
-      .style('font-family', getConfig().fontFamily)
-      .style('font-size', attrFontSize + 'px')
-      .text(attributeType);
+    if (hasAttributeType) {
+      // Add a text node for the attribute type
+      typeNode = groupNode
+        .append('text')
+        .classed('er entityLabel', true)
+        .attr('id', `${attrPrefix}-type`)
+        .attr('x', 0)
+        .attr('y', 0)
+        .style('dominant-baseline', 'middle')
+        .style('text-anchor', 'left')
+        .style('font-family', getConfig().fontFamily)
+        .style('font-size', attrFontSize + 'px')
+        .text(attributeType);
+      typeBBox = typeNode.node().getBBox();
+      maxTypeWidth = Math.max(maxTypeWidth, typeBBox.width);
+    }
 
     // Add a text node for the attribute name
     const nameNode = groupNode
@@ -98,22 +116,22 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
       .style('text-anchor', 'left')
       .style('font-family', getConfig().fontFamily)
       .style('font-size', attrFontSize + 'px')
-      .text(item.attributeName);
+      .text(attributeName);
 
     const attributeNode = {};
-    attributeNode.tn = typeNode;
+    if (typeNode) {
+      attributeNode.tn = typeNode;
+    }
     attributeNode.nn = nameNode;
 
-    const typeBBox = typeNode.node().getBBox();
     const nameBBox = nameNode.node().getBBox();
-    maxTypeWidth = Math.max(maxTypeWidth, typeBBox.width);
     maxNameWidth = Math.max(maxNameWidth, nameBBox.width);
 
     nodeHeight = Math.max(typeBBox.height, nameBBox.height);
 
     if (hasKeyType) {
       const keyTypeNodeText =
-        item.attributeKeyTypeList !== undefined ? item.attributeKeyTypeList.join(',') : '';
+        attributeKeyTypeList !== undefined ? attributeKeyTypeList.join(',') : '';
 
       const keyTypeNode = groupNode
         .append('text')
@@ -144,7 +162,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
         .style('text-anchor', 'left')
         .style('font-family', getConfig().fontFamily)
         .style('font-size', attrFontSize + 'px')
-        .text(item.attributeComment || '');
+        .text(attributeComment || '');
 
       attributeNode.cn = commentNode;
       const commentNodeBBox = commentNode.node().getBBox();
@@ -159,7 +177,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
     attrNum += 1;
   });
 
-  let widthPaddingFactor = 4;
+  let widthPaddingFactor = hasAttributeType ? 4 : 2;
   if (hasKeyType) {
     widthPaddingFactor += 2;
   }
@@ -205,20 +223,24 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
       // Calculate the alignment y coordinate for the type/name of the attribute
       const alignY = heightOffset + heightPadding + attributeNode.height / 2;
 
-      // Position the type attribute
-      attributeNode.tn.attr('transform', 'translate(' + widthPadding + ',' + alignY + ')');
+      let nameXOffset = 0;
 
-      // TODO Handle spareWidth in attr('width')
-      // Insert a rectangle for the type
-      const typeRect = groupNode
-        .insert('rect', '#' + attributeNode.tn.node().id)
-        .classed(`er ${attribStyle}`, true)
-        .attr('x', 0)
-        .attr('y', heightOffset)
-        .attr('width', maxTypeWidth + widthPadding * 2 + spareColumnWidth)
-        .attr('height', attributeNode.height + heightPadding * 2);
+      if (hasAttributeType) {
+        // Position the type attribute
+        attributeNode.tn.attr('transform', 'translate(' + widthPadding + ',' + alignY + ')');
 
-      const nameXOffset = parseFloat(typeRect.attr('x')) + parseFloat(typeRect.attr('width'));
+        // TODO Handle spareWidth in attr('width')
+        // Insert a rectangle for the type
+        const typeRect = groupNode
+          .insert('rect', '#' + attributeNode.tn.node().id)
+          .classed(`er ${attribStyle}`, true)
+          .attr('x', 0)
+          .attr('y', heightOffset)
+          .attr('width', maxTypeWidth + widthPadding * 2 + spareColumnWidth)
+          .attr('height', attributeNode.height + heightPadding * 2);
+
+        nameXOffset = parseFloat(typeRect.attr('x')) + parseFloat(typeRect.attr('width'));
+      }
 
       // Position the name attribute
       attributeNode.nn.attr(
