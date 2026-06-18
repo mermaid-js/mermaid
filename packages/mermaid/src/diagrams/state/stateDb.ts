@@ -81,7 +81,16 @@ interface RelationStmt extends BaseStmt {
 export interface StateStmt extends BaseStmt {
   stmt: 'state' | 'default';
   id: string;
-  type: 'default' | 'fork' | 'join' | 'choice' | 'divider' | 'start' | 'end';
+  type:
+    | 'default'
+    | 'fork'
+    | 'join'
+    | 'choice'
+    | 'divider'
+    | 'start'
+    | 'end'
+    | 'history'
+    | 'deephistory';
   description?: string;
   descriptions?: string[];
   doc?: Stmt[];
