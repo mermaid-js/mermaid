@@ -263,8 +263,7 @@ describe('C4 characterization', () => {
     // Forward-looking baseline: $shape currently has no visual effect (the legacy renderer
     // ignores it), so today this renders as a plain Container box. The unified renderer
     // resolves $shape to a shape, so when the migration lands the snapshot diff will show
-    // the override taking effect. ($sprite is the same idea but renders an <image href>,
-    // which isn't snapshot-safe until icon-pack support lands - added with that slice.)
+    // the override taking effect. ($sprite is exercised the same way by CHAR.sprite below.)
     it('CHAR.update-element-shape should accept the $shape override', () => {
       imgSnapshotTest(
         `C4Container
@@ -326,6 +325,22 @@ describe('C4 characterization', () => {
         Person(p, "Person", "desc", $link="https://example.com")
         System(s, "System", "desc")
         Rel(p, s, "Uses")
+        `,
+        {}
+      );
+    });
+
+    // Forward-looking baseline: the legacy renderer ignores $sprite on non-person elements
+    // (it only ever draws the hardcoded person image - no <image> and no network request for
+    // an arbitrary sprite value), so today these render as plain Containers. The unified
+    // renderer resolves a $sprite shape keyword to a shape (and, once icon packs are wired up,
+    // to an icon), so the migration's effect on $sprite shows up as a snapshot diff.
+    it('CHAR.sprite should accept the $sprite attribute', () => {
+      imgSnapshotTest(
+        `C4Container
+        title Sprite attribute
+        Container(a, "Browser", "Tech", "single-page app", $sprite="browser")
+        Container(b, "Terminal", "Tech", "server-side app", $sprite="terminal")
         `,
         {}
       );

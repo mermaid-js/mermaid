@@ -68,6 +68,7 @@ treated as a tag-style per RFC #7844, not a separate shape).
 | ------------------------ | --------------------------------- | ----------------------------------------- |
 | Tags                     | `$tags="..."`                     | CHAR.tags                                 |
 | Link                     | `$link="..."`                     | CHAR.link                                 |
+| Sprite                   | `$sprite="..."`                   | CHAR.sprite                               |
 | Technology / description | positional `techn` / `descr` args | CHAR.rel-techn-descr, CHAR.descr-wrapping |
 | Description wrapping     | long `descr` strings wrap         | CHAR.descr-wrapping                       |
 
