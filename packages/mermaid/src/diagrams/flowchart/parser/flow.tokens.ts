@@ -56,9 +56,17 @@ export const UnicodeText = createToken({
 // ---------------------------------------------------------------------------
 
 export const NewLine = createToken({ name: 'NEWLINE', pattern: /(?:\r?\n)+/, line_breaks: true });
-// jison's SPACE is `\s` (a single whitespace char); match any single non-newline whitespace — incl.
-// unicode spaces like U+00A0 / U+3000 — while letting NEWLINE handle line breaks.
-export const Space = createToken({ name: 'SPACE', pattern: /[^\S\n\r]/ });
+// jison's SPACE is `\s` (a single whitespace char); we match any RUN of non-newline whitespace —
+// incl. unicode spaces like U+00A0 / U+3000 — while letting NEWLINE handle line breaks.
+//
+// PERF: the pattern is a RUN (`+`), not a single char. A single-char SPACE is O(whitespace) — a
+// deeply-indented file (huge3.mmd has 1.6k-space lines) emits hundreds of thousands of SPACE tokens
+// and the lexer (`matchLength`) dominates parse time. The run form took huge3's Diagram.fromText
+// from ~2900ms to ~30ms with an IDENTICAL parse result: the grammar only uses SPACE as a separator
+// (MANY/AT_LEAST_ONE/OPTION), so collapsing runs is parse-equivalent (flow.db-parity.spec.ts and
+// flow.parser.spec.ts stay green). flow.lexer.spec.ts collapses consecutive SPACE tokens in BOTH
+// streams before its token-for-token comparison with jison (which emits one SPACE per char).
+export const Space = createToken({ name: 'SPACE', pattern: /[^\S\n\r]+/ });
 export const Semi = createToken({ name: 'SEMI', pattern: /;/ });
 
 // ---------------------------------------------------------------------------

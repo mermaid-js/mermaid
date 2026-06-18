@@ -30,6 +30,25 @@ interface Tok {
   image: string;
 }
 
+/**
+ * Collapse runs of consecutive SPACE tokens into one (concatenating images). The Chevrotain SPACE
+ * token matches a whole whitespace RUN (`/[^\S\n\r]+/`, a perf fix), while jison emits one SPACE per
+ * character — both are parse-equivalent since SPACE is only ever a separator. Normalising both streams
+ * this way keeps the token-for-token parity assertion meaningful.
+ */
+function collapseSpaces(tokens: Tok[]): Tok[] {
+  const out: Tok[] = [];
+  for (const tok of tokens) {
+    const prev = out[out.length - 1];
+    if (tok.name === 'SPACE' && prev?.name === 'SPACE') {
+      prev.image += tok.image;
+    } else {
+      out.push({ ...tok });
+    }
+  }
+  return out;
+}
+
 function jisonTokens(input: string): Tok[] {
   const yy = new FlowDB();
   const lexer = flowJisonParser.lexer;
@@ -46,7 +65,7 @@ function jisonTokens(input: string): Tok[] {
     }
     out.push({ name, image: lexer.yytext });
   }
-  return out;
+  return collapseSpaces(out);
 }
 
 // Map a Chevrotain token to the jison terminal NAME it stands for (category name when categorized).
@@ -63,10 +82,12 @@ function chevrotainTokens(input: string): Tok[] {
   if (result.errors.length > 0) {
     throw new Error(`lex error: ${result.errors[0].message}`);
   }
-  return result.tokens.map((tok: IToken) => ({
-    name: grammarName(tok.tokenType),
-    image: tok.image,
-  }));
+  return collapseSpaces(
+    result.tokens.map((tok: IToken) => ({
+      name: grammarName(tok.tokenType),
+      image: tok.image,
+    }))
+  );
 }
 
 /** Structural corpus — every feature whose lexing should match jison byte-for-byte. */
