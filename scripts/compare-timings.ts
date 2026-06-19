@@ -32,7 +32,7 @@ interface CleanupOptions {
   reason: string;
 }
 
-const TIMINGS_FILE = 'cypress/timings.json';
+const TIMINGS_FILE = 'e2e/timings.json';
 const TIMINGS_PATH = path.join(process.cwd(), TIMINGS_FILE);
 
 function log(message: string): void {

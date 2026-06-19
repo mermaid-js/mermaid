@@ -30,7 +30,7 @@
     "ignore": [
       "**/parser/*.js",
       "dist/**/*.js",
-      "cypress/**/*.js"
+      "e2e/**/*.js"
     ],
     "globals": [
       "page"

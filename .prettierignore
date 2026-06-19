@@ -1,7 +1,7 @@
 dist
 # Symlink to packages/mermaid/CHANGELOG.md — prettier must not add a trailing newline
 CHANGELOG.md
-cypress/platform/xss3.html
+e2e/platform/xss3.html
 .cache
 .pnpm-store
 coverage
@@ -19,4 +19,4 @@ generated/
 demos/dev/**
 !/demos/dev/example.html
 # TODO: Lots of errors to fix
-cypress/platform/state-refactor.html
+e2e/platform/state-refactor.html

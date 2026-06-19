@@ -3,21 +3,21 @@
  * Detects which Cypress e2e spec files to run based on changed source files.
  *
  * Convention: every diagram type has a matching subfolder under
- * cypress/integration/rendering/<diagram-name>/. Adding a new spec file to
+ * e2e/rendering/<diagram-name>/. Adding a new spec file to
  * that subfolder requires no configuration here — it is discovered at runtime.
  *
  * CLI usage (reads changed file paths from stdin, one per line):
  *   git diff --name-only <base> HEAD | node scripts/e2e-diagram-scope.mjs
  *
  * Output:
- *   - A comma-separated list of spec patterns (for cypress --spec), OR
+ *   - A comma-separated list of spec patterns (for playwright test), OR
  *   - An empty string if the full suite should run (shared code changed, or
  *     unable to confidently scope the change)
  *
  * Module usage:
  *   import { detectScope } from './e2e-diagram-scope.mjs';
  *   const spec = detectScope(['packages/mermaid/src/diagrams/flowchart/flowchart.ts']);
- *   // => 'cypress/integration/rendering/flowchart/**'
+ *   // => 'e2e/rendering/flowchart/**'
  */
 
 import { createInterface } from 'readline';
@@ -25,7 +25,7 @@ import { existsSync } from 'fs';
 import { fileURLToPath } from 'url';
 
 // Base directory where diagram spec subfolders live
-export const SPEC_BASE_DIR = 'cypress/integration/rendering';
+export const SPEC_BASE_DIR = 'e2e/rendering';
 
 // Sentinel value returned when all changed files are ignorable (e.g.
 // docs-only PRs).  Consumers should skip e2e entirely when they receive this.
@@ -122,9 +122,9 @@ const SHARED_PREFIXES = [
   'packages/mermaid-zenuml/',
   'packages/mermaid-example-diagram/',
   // Cypress: config and cross-cutting test utilities
-  'cypress/integration/other/',
-  'cypress/helpers/',
-  'cypress.config',
+  'e2e/other/',
+  'e2e/helpers/',
+  'playwright.config',
   // Build and tooling (may affect all output)
   '.esbuild/',
   '.vite/',
