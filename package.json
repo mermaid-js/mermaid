@@ -57,6 +57,7 @@
     "e2e:scope:run": "tsx scripts/run-e2e-scoped.ts",
     "e2e:scope:detect": "git diff --name-only ${E2E_BASE_REF:-develop} HEAD | node scripts/e2e-diagram-scope.mjs",
     "argos:batch": "tsx scripts/argos-batch-sheets.ts",
+    "argos:upload-baseline": "tsx scripts/argos-upload-baseline.ts",
     "load:env": "dotenv -e .env",
     "test": "pnpm lint && vitest run",
     "test:watch": "vitest --watch",

@@ -353,60 +353,19 @@ jobs:
         if: env.GROUP_ARGOS_IMAGES == 'true'
         run: pnpm run argos:batch
 
-      # Baseline branch (develop): merge the grouped sheets and the individual
-      # screenshots into one tree and upload them as a SINGLE Argos build. The CLI
-      # uploads one directory and names each screenshot relative to it, so merging
-      # preserves both naming schemes — sheet names (<group>/<group>-NNN.png) and
-      # individual names (<group>/<spec>.spec.js/<name>.png) never collide and match
-      # exactly what grouped PR / manual runs upload. The default build thus becomes
-      # a superset baseline both modes can diff against (each marked --subset).
-      # No --subset here: a develop push runs the full suite and uploads both
-      # representations, so this is the complete, authoritative baseline.
-      #
-      # Sent as a single Argos build, but split into K parallel uploads sharing one
-      # nonce. Argos's PUT /builds/{buildId} finalize body inlines metadata for every
-      # screenshot, so uploading the whole superset in one request exceeds the API
-      # body limit ("request entity too large", HTTP 413). Each parallel index PUTs
-      # only its slice; --files globs stay relative to the same root so names are
-      # preserved, and Argos combines the indices into one build once all K report.
+      # Baseline branch (develop): merge the grouped sheets + the individual
+      # screenshots and upload them as ONE Argos build, so the default build is a
+      # superset baseline that both grouped PRs and per-screenshot runs diff
+      # against. The upload is split into size-balanced parallel slices because
+      # Argos's finalize body inlines per-screenshot metadata, so the whole
+      # superset in one request exceeds the API body limit (HTTP 413). No
+      # --subset: a develop push runs the full suite, so this is the complete,
+      # authoritative baseline. See scripts/argos-upload-baseline.ts.
       - name: Upload combined baseline to Argos (develop)
         if: env.ARGOS_UPLOAD_BOTH == 'true'
         env:
           ARGOS_PARALLEL_NONCE: ${{ github.run_id }}-${{ github.run_attempt }}
-        run: |
-          set -euo pipefail
-          mkdir -p cypress/argos-baseline
-          cp -r cypress/argos-sheets/. cypress/argos-baseline/
-          cp -r cypress/screenshots/. cypress/argos-baseline/
-
-          # Round-robin the leaf directories (those that directly hold images)
-          # into K buckets so each upload's finalize body carries only ~1/K of the
-          # suite. Bucketing by top-level folder instead put all of rendering/
-          # (~60% of the suite) into one bucket whose finalize body exceeded
-          # Argos's limit (HTTP 413) regardless of K; balancing at the leaf level
-          # keeps the biggest bucket to ~1/K.
-          mapfile -t groups < <(
-            cd cypress/argos-baseline &&
-              find . -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) |
-              sed 's#/[^/]*$##' | sort -u | sed 's#^\./##'
-          )
-          K=5
-          for i in $(seq 1 "$K"); do
-            globs=()
-            for j in "${!groups[@]}"; do
-              # Glob each leaf dir non-recursively (`/*` not `/**`) so the buckets
-              # stay a disjoint partition, and match only images: a `/**` glob would
-              # also pick up the `<name>.png.argos.json` metadata sidecars, which
-              # Argos treats as screenshots and whose doubled `<sidecar>.argos.json`
-              # path overflows the 255-byte filename limit (ENAMETOOLONG, surfaced
-              # as "Failed to read metadata").
-              if [ $(( j % K + 1 )) -eq "$i" ]; then globs+=( "${groups[$j]}/*.{png,jpg,jpeg}" ); fi
-            done
-            [ ${#globs[@]} -eq 0 ] && continue
-            npx argos upload cypress/argos-baseline \
-              --files "${globs[@]}" \
-              --parallel --parallel-total "$K" --parallel-index "$i"
-          done
+        run: pnpm run argos:upload-baseline
 
       # PR / merge-queue / manual grouped runs: upload only the composite sheets.
       - name: Upload grouped sheets to Argos
