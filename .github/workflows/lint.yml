@@ -91,7 +91,7 @@ jobs:
 
       - uses: testomatio/check-tests@0ea638fcec1820cf2e7b9854fdbdd04128a55bd4 # stable
         with:
-          framework: cypress
-          tests: './cypress/e2e/**/**.spec.js'
+          framework: playwright
+          tests: './e2e/**/**.spec.{js,ts}'
           token: ${{ secrets.GITHUB_TOKEN }}
           has-tests-label: true
