@@ -2,7 +2,7 @@
  * Local development runner for scoped e2e tests.
  *
  * Detects which diagrams changed (comparing HEAD against a base ref) and
- * invokes Cypress with only the matching spec files. Falls back to the full
+ * invokes Playwright with only the matching spec files. Falls back to the full
  * suite when shared code is touched.
  *
  * The dev server must already be running (started by start-server-and-test).
@@ -34,15 +34,17 @@ if (spec === SKIP) {
   process.exit(0);
 }
 
-const cypressArgs = ['run'];
+const playwrightArgs = ['test'];
 if (spec) {
   /* eslint-disable no-console */
   console.log(`[e2e:scope] Scoped run:\n  ${spec.split(',').join('\n  ')}`);
-  cypressArgs.push('--spec', spec);
+  for (const pattern of spec.split(',')) {
+    playwrightArgs.push(pattern);
+  }
 } else {
   /* eslint-disable no-console */
   console.log('[e2e:scope] Running full e2e suite (shared code changed or scope undetermined).');
 }
 
-const child = spawn('cypress', cypressArgs, { stdio: 'inherit' });
+const child = spawn('playwright', playwrightArgs, { stdio: 'inherit' });
 child.on('exit', (code) => process.exit(code ?? 0));
