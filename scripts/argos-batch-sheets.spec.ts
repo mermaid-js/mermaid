@@ -20,32 +20,35 @@ const SLOT_HEIGHT = 30;
 const FC = 'rendering/flowchart';
 const CLS = 'rendering/class';
 
+const FC_V2 = `${FC}/flowchart-v2.spec.js`;
+const FC_MAIN = `${FC}/flowchart.spec.js`;
+const CLS_V3 = `${CLS}/classDiagram-v3.spec.js`;
+
 describe('deriveGroupKey', () => {
-  it('returns the folder before the *.spec.js directory segment', () => {
-    expect(deriveGroupKey('rendering/flowchart/flowchart-v2.spec.js/Some Test.png')).toBe(FC);
+  it('returns the path up to and including the *.spec.js segment', () => {
+    expect(deriveGroupKey(`${FC_V2}/Some Test.png`)).toBe(FC_V2);
   });
   it('handles .spec.ts specs', () => {
-    expect(deriveGroupKey('rendering/treemap/treemap.spec.ts/A.png')).toBe('rendering/treemap');
+    expect(deriveGroupKey('rendering/treemap/treemap.spec.ts/A.png')).toBe(
+      'rendering/treemap/treemap.spec.ts'
+    );
   });
-  it('groups every spec file in a folder under the same key', () => {
-    expect(deriveGroupKey('rendering/flowchart/flowchart.spec.js/x.png')).toBe(FC);
-    expect(deriveGroupKey('rendering/flowchart/flowchart-elk.spec.js/y.png')).toBe(FC);
+  it('keeps each spec file in its own group, even within one folder', () => {
+    expect(deriveGroupKey(`${FC_MAIN}/x.png`)).toBe(FC_MAIN);
+    expect(deriveGroupKey(`${FC}/flowchart-elk.spec.js/y.png`)).toBe(`${FC}/flowchart-elk.spec.js`);
   });
 });
 
 describe('planSheets', () => {
-  const paths = [
-    `${FC}/flowchart-v2.spec.js/b.png`,
-    `${FC}/flowchart.spec.js/a.png`,
-    `${CLS}/classDiagram-v3.spec.js/c.png`,
-  ];
+  const paths = [`${FC_V2}/b.png`, `${FC_MAIN}/a.png`, `${CLS_V3}/c.png`];
 
-  it('isolates diagrams into separate groups and sheets', () => {
+  it('isolates each spec file into separate groups and sheets', () => {
     const sheets = planSheets(paths, { tilesPerSheet: 12, cols: 3 });
     const groups = sheets.map((s) => s.group);
-    expect(groups).toContain(FC);
-    expect(groups).toContain(CLS);
-    // No sheet mixes two diagrams.
+    expect(groups).toContain(FC_V2);
+    expect(groups).toContain(FC_MAIN);
+    expect(groups).toContain(CLS_V3);
+    // No sheet mixes two spec files.
     for (const s of sheets) {
       expect(s.tiles.every((t) => deriveGroupKey(t.source) === s.group)).toBe(true);
     }
@@ -57,21 +60,21 @@ describe('planSheets', () => {
     expect(a).toStrictEqual(b);
   });
 
-  it('chunks a folder into fixed-size sheets', () => {
+  it('chunks a spec into fixed-size sheets', () => {
     const many = Array.from(
       { length: 13 },
-      (_, i) => `${FC}/flowchart.spec.js/t${String(i).padStart(2, '0')}.png`
+      (_, i) => `${FC_MAIN}/t${String(i).padStart(2, '0')}.png`
     );
     const sheets = planSheets(many, { tilesPerSheet: 12, cols: 3 });
     expect(sheets).toHaveLength(2);
     expect(sheets[0].tiles).toHaveLength(12);
     expect(sheets[1].tiles).toHaveLength(1);
-    expect(sheets[0].output).toBe(`${FC}/flowchart-001.png`);
-    expect(sheets[1].output).toBe(`${FC}/flowchart-002.png`);
+    expect(sheets[0].output).toBe(`${FC_MAIN}/flowchart-001.png`);
+    expect(sheets[1].output).toBe(`${FC_MAIN}/flowchart-002.png`);
   });
 
   it('assigns row/col by column count', () => {
-    const four = ['a', 'b', 'c', 'd'].map((n) => `${FC}/flowchart.spec.js/${n}.png`);
+    const four = ['a', 'b', 'c', 'd'].map((n) => `${FC_MAIN}/${n}.png`);
     const [sheet] = planSheets(four, { tilesPerSheet: 12, cols: 3 });
     expect(sheet.tiles.map((t) => [t.row, t.col])).toStrictEqual([
       [0, 0],
@@ -81,14 +84,14 @@ describe('planSheets', () => {
     ]);
   });
 
-  it('adding a test to one diagram leaves other diagrams’ sheets byte-identical', () => {
+  it('adding a test to one spec leaves other specs’ sheets byte-identical', () => {
     const before = planSheets(paths, { tilesPerSheet: 12, cols: 3 });
-    const after = planSheets([...paths, `${FC}/flowchart.spec.js/aa.png`], {
+    const after = planSheets([...paths, `${FC_MAIN}/aa.png`], {
       tilesPerSheet: 12,
       cols: 3,
     });
-    const clsBefore = before.filter((s) => s.group === CLS);
-    const clsAfter = after.filter((s) => s.group === CLS);
+    const clsBefore = before.filter((s) => s.group === CLS_V3);
+    const clsAfter = after.filter((s) => s.group === CLS_V3);
     expect(clsAfter).toStrictEqual(clsBefore);
   });
 });

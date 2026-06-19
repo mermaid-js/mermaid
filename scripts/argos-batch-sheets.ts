@@ -1,12 +1,12 @@
 /**
- * Batches per-test Cypress screenshots into composite "sheets" for Argos,
- * grouping by diagram folder so a new test in one diagram never alters another
- * diagram's sheets. Pure planning is separated from sharp-backed compositing so
- * the grouping/ordering rules can be unit-tested without images.
+ * Batches per-test Playwright screenshots into composite "sheets" for Argos,
+ * grouping by test file so a new test in one spec never alters another spec's
+ * sheets. Pure planning is separated from sharp-backed compositing so the
+ * grouping/ordering rules can be unit-tested without images.
  *
  * CLI usage:
  *   pnpm run argos:batch
- *   ARGOS_SCREENSHOT_DIR=cypress/screenshots ARGOS_SHEETS_DIR=cypress/argos-sheets
+ *   ARGOS_SCREENSHOT_DIR=e2e/argos-screenshots ARGOS_SHEETS_DIR=e2e/argos-sheets
  *     ARGOS_TILES_PER_SHEET=12 ARGOS_SHEET_COLS=3 ARGOS_SHEET_SCALE=2
  *     ARGOS_TILE_WIDTH=1440 ARGOS_TILE_IMAGE_HEIGHT=1024 pnpm run argos:batch
  */
@@ -205,15 +205,12 @@ export interface WriteSheetsOptions {
   concurrency?: number;
 }
 
-/** Maps a screenshot path to its diagram folder (prefix before the `*.spec.*` segment). */
+/** Maps a screenshot path to its test file (the path up to and including the `*.spec.*` segment). */
 export function deriveGroupKey(relPath: string): string {
   const parts = relPath.split('/');
   const specIdx = parts.findIndex((p) => SPEC_SEGMENT_RE.test(p));
-  if (specIdx > 0) {
-    return parts.slice(0, specIdx).join('/');
-  }
-  if (specIdx === 0) {
-    return parts[0].replace(SPEC_SEGMENT_RE, '');
+  if (specIdx >= 0) {
+    return parts.slice(0, specIdx + 1).join('/');
   }
   return parts.slice(0, -1).join('/') || 'root';
 }
@@ -237,7 +234,7 @@ export function planSheets(relPaths: string[], options: PlanSheetsOptions = {}):
   const sheets: Sheet[] = [];
   for (const key of [...groups.keys()].sort()) {
     const tiles = [...(groups.get(key) ?? [])].sort();
-    const basename = key.split('/').pop() ?? 'sheet';
+    const basename = (key.split('/').pop() ?? 'sheet').replace(SPEC_SEGMENT_RE, '');
     for (let start = 0; start < tiles.length; start += tilesPerSheet) {
       const chunk = tiles.slice(start, start + tilesPerSheet);
       const index = start / tilesPerSheet;
@@ -396,8 +393,8 @@ export async function writeSheets(plans: Sheet[], options: WriteSheetsOptions): 
 }
 
 async function main(): Promise<void> {
-  const inputDir = process.env.ARGOS_SCREENSHOT_DIR ?? 'cypress/screenshots';
-  const outDir = process.env.ARGOS_SHEETS_DIR ?? 'cypress/argos-sheets';
+  const inputDir = process.env.ARGOS_SCREENSHOT_DIR ?? 'e2e/argos-screenshots';
+  const outDir = process.env.ARGOS_SHEETS_DIR ?? 'e2e/argos-sheets';
   const tilesPerSheet = Number(process.env.ARGOS_TILES_PER_SHEET ?? 12);
   const cols = Number(process.env.ARGOS_SHEET_COLS ?? 3);
   const scale = Number(process.env.ARGOS_SHEET_SCALE ?? DEFAULT_SHEET_SCALE);
