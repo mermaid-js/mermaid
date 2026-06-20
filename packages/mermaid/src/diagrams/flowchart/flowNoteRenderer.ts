@@ -9,6 +9,7 @@ const NOTE_PADDING_Y = 2;
 const NOTE_FONT_SIZE = 12;
 const NOTE_LINE_HEIGHT = 15;
 const NOTE_OPACITY = 0.96;
+const NOTE_TARGET_GAP = 1;
 
 type NotesLayer = D3Selection<SVGGElement>;
 type PositionedNode = Node & Required<Pick<Node, 'x' | 'y'>>;
@@ -178,13 +179,13 @@ const getNoteTranslate = (target: Node, note: NodeNote, width: number, height: n
 
   switch (note.position) {
     case 'left':
-      return { x: targetLeft - width, y: target.y! - height / 2 };
+      return { x: targetLeft - width - NOTE_TARGET_GAP, y: target.y! - height / 2 };
     case 'right':
-      return { x: targetRight, y: target.y! - height / 2 };
+      return { x: targetRight + NOTE_TARGET_GAP, y: target.y! - height / 2 };
     case 'top':
-      return { x: target.x! - width / 2, y: targetTop - height };
+      return { x: target.x! - width / 2, y: targetTop - height - NOTE_TARGET_GAP };
     case 'bottom':
-      return { x: target.x! - width / 2, y: targetBottom };
+      return { x: target.x! - width / 2, y: targetBottom + NOTE_TARGET_GAP };
   }
 };
 

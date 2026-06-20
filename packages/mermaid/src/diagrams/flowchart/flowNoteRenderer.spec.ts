@@ -13,7 +13,9 @@ describe('flowNoteRenderer', () => {
       edges: [],
       notes: [
         { position: 'right', target: 'A', text: 'right note' },
+        { position: 'left', target: 'A', text: 'left' },
         { position: 'top', target: 'A', text: 'above' },
+        { position: 'bottom', target: 'A', text: 'below' },
       ],
       config: {
         themeVariables: {
@@ -30,10 +32,12 @@ describe('flowNoteRenderer', () => {
     expect(notesLayer.getAttribute('class')).toBe('flowchart-notes');
 
     const notes = notesLayer.querySelectorAll('g.flowchart-note');
-    expect(notes).toHaveLength(2);
+    expect(notes).toHaveLength(4);
     expect(notes[0].getAttribute('data-target')).toBe('A');
-    expect(notes[0].getAttribute('transform')).toBe('translate(120, 70.5)');
-    expect(notes[1].getAttribute('transform')).toBe('translate(75, 46)');
+    expect(notes[0].getAttribute('transform')).toBe('translate(121, 70.5)');
+    expect(notes[1].getAttribute('transform')).toBe('translate(29, 70.5)');
+    expect(notes[2].getAttribute('transform')).toBe('translate(75, 45)');
+    expect(notes[3].getAttribute('transform')).toBe('translate(75, 96)');
 
     const background = notes[0].querySelector('rect.flowchart-note-background')!;
     expect(background.hasAttribute('fill')).toBe(false);
@@ -85,7 +89,7 @@ describe('flowNoteRenderer', () => {
     drawFlowchartNotes(svg, data4Layout);
 
     const note = svgElement.querySelector('g.flowchart-note')!;
-    expect(note.getAttribute('transform')).toBe('translate(120, 70.5)');
+    expect(note.getAttribute('transform')).toBe('translate(121, 70.5)');
     expect(note.textContent).toBe('right note');
   });
 
