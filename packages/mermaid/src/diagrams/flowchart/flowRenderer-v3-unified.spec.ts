@@ -5,6 +5,10 @@ vi.mock('../../rendering-util/render.js', () => ({
   render: vi.fn().mockResolvedValue(undefined),
 }));
 
+vi.mock('./flowNoteRenderer.js', () => ({
+  drawFlowchartNotes: vi.fn(),
+}));
+
 vi.mock('../../rendering-util/insertElementsForSize.js', () => ({
   getDiagramElement: vi.fn().mockReturnValue({
     attr: vi.fn().mockReturnThis(),
@@ -44,5 +48,38 @@ describe('flowRenderer-v3-unified', () => {
 
     await draw('graph TB; A', 'test-id', '1.0.0', diag);
     expect(setDiagramId).toHaveBeenCalledWith('test-id');
+  });
+
+  it('draws node notes after layout render and before viewport setup', async () => {
+    const { draw } = await import('./flowRenderer-v3-unified.js');
+    const { render } = await import('../../rendering-util/render.js');
+    const { setupViewPortForSVG } = await import('../../rendering-util/setupViewPortForSVG.js');
+    const { drawFlowchartNotes } = await import('./flowNoteRenderer.js');
+
+    const data4Layout = {
+      nodes: [],
+      edges: [],
+      notes: [{ position: 'right', target: 'B', text: 'description' }],
+      config: { flowchart: {} },
+    };
+    const diag = {
+      type: 'flowchart-v2',
+      db: {
+        setDiagramId: vi.fn(),
+        getData: vi.fn().mockReturnValue(data4Layout),
+        getDirection: vi.fn().mockReturnValue('TB'),
+        getDiagramTitle: vi.fn().mockReturnValue(''),
+      },
+    };
+
+    await draw('graph TB; A', 'test-id', '1.0.0', diag);
+
+    expect(drawFlowchartNotes).toHaveBeenCalledWith(expect.anything(), data4Layout);
+    expect(vi.mocked(render).mock.invocationCallOrder[0]).toBeLessThan(
+      vi.mocked(drawFlowchartNotes).mock.invocationCallOrder[0]
+    );
+    expect(vi.mocked(drawFlowchartNotes).mock.invocationCallOrder[0]).toBeLessThan(
+      vi.mocked(setupViewPortForSVG).mock.invocationCallOrder[0]
+    );
   });
 });

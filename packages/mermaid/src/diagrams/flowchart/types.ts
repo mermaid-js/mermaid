@@ -85,6 +85,12 @@ export interface FlowSubGraph {
   title: string;
 }
 
+export interface FlowNote {
+  position: 'left' | 'right' | 'top' | 'bottom';
+  target: string;
+  text: string;
+}
+
 export interface FlowLink {
   length?: number;
   stroke: string;

@@ -42,6 +42,234 @@ describe('parsing a flow chart', function () {
     expect(edges[0].end).toBe('B');
   });
 
+  it('should parse flowchart node notes without adding layout nodes or edges', function () {
+    flow.parser.parse(`flowchart TD
+      A[A] --> B[B]
+
+      note right of B
+        description:
+          Some properties of B
+      end note
+    `);
+
+    const data4Layout = flow.parser.yy.getData();
+
+    expect(data4Layout.nodes.map((node) => node.id)).toEqual(['A', 'B']);
+    expect(data4Layout.edges).toHaveLength(1);
+    expect(data4Layout.notes).toEqual([
+      {
+        position: 'right',
+        target: 'B',
+        text: 'description:\n  Some properties of B',
+      },
+    ]);
+  });
+
+  it('should parse graph node notes in each supported direction', function () {
+    const graph = `graph LR
+      A[A] --> B[B]
+      B --> C[C]
+
+      note left of A
+        left note
+      end note
+
+      note right of B
+        right note
+      end note
+
+      note top of B
+        top note
+      END_NOTE_WITH_SPACES
+
+      note bottom of C
+        bottom note
+      end note
+    `.replace('END_NOTE_WITH_SPACES', 'end note   ');
+
+    flow.parser.parse(graph);
+
+    const data4Layout = flow.parser.yy.getData();
+
+    expect(data4Layout.nodes.map((node) => node.id)).toEqual(['A', 'B', 'C']);
+    expect(data4Layout.edges).toHaveLength(2);
+    expect(data4Layout.notes).toEqual([
+      { position: 'left', target: 'A', text: 'left note' },
+      { position: 'right', target: 'B', text: 'right note' },
+      { position: 'top', target: 'B', text: 'top note' },
+      { position: 'bottom', target: 'C', text: 'bottom note' },
+    ]);
+  });
+
+  it('should continue parsing statements after node notes', function () {
+    flow.parser.parse(`flowchart TD
+      A[A]
+      note right of A
+        right note
+      end note
+      A --> B[B]
+    `);
+
+    const data4Layout = flow.parser.yy.getData();
+
+    expect(data4Layout.nodes.map((node) => node.id)).toEqual(['A', 'B']);
+    expect(data4Layout.edges).toHaveLength(1);
+    expect(data4Layout.edges[0].start).toBe('A');
+    expect(data4Layout.edges[0].end).toBe('B');
+    expect(data4Layout.notes).toEqual([{ position: 'right', target: 'A', text: 'right note' }]);
+  });
+
+  it('should parse empty node notes', function () {
+    flow.parser.parse(`flowchart TD
+      A[A]
+      note right of A
+      end note
+    `);
+
+    expect(flow.parser.yy.getData().notes).toEqual([{ position: 'right', target: 'A', text: '' }]);
+  });
+
+  it('should keep regular nodes named note working', function () {
+    flow.parser.parse(`flowchart
+      note["I am a regular node named note"]
+      note --> A[A]
+    `);
+
+    const data4Layout = flow.parser.yy.getData();
+
+    expect(data4Layout.nodes.map((node) => node.id)).toEqual(['note', 'A']);
+    expect(data4Layout.edges).toHaveLength(1);
+    expect(data4Layout.edges[0].start).toBe('note');
+    expect(data4Layout.edges[0].end).toBe('A');
+    expect(data4Layout.notes).toEqual([]);
+  });
+
+  it('should keep complex flowchart layout data identical when node notes are removed', function () {
+    const parseLayout = (diagram) => {
+      flow.parser.yy = new FlowDB();
+      flow.parser.yy.clear();
+      flow.parser.parse(diagram);
+      const data4Layout = flow.parser.yy.getData();
+
+      return {
+        direction: flow.parser.yy.getDirection(),
+        nodes: data4Layout.nodes.map(({ id, label, shape, isGroup, parentId }) => ({
+          id,
+          label,
+          shape,
+          isGroup,
+          parentId,
+        })),
+        edges: data4Layout.edges.map(
+          ({ start, end, label, type, arrowTypeStart, arrowTypeEnd }) => ({
+            start,
+            end,
+            label,
+            type,
+            arrowTypeStart,
+            arrowTypeEnd,
+          })
+        ),
+        notes: data4Layout.notes,
+      };
+    };
+    const diagramWithNotes = `flowchart TD
+      A[A] -->|Description2: A how to B| B[B]
+      B --> D[D]
+      B --> C[C]
+      D --> F[F]
+      C --> F
+      F --> H[H]
+      F --> G[G]
+      F --> K[K]
+      H --> M[M]
+      G --> M
+      K --> M
+
+      note right of A
+        Description1: Properties of A
+      end note
+
+      note top of A
+        above
+      end note
+
+      note right of B
+        description2:
+        Some properties of B
+      end note
+
+      note right of K
+        Description3:
+        This note is right of K
+      end note
+
+      note left of F
+        Description1: Properties of F
+      end note
+
+      note bottom of M
+        Description5:This note is below M
+      end note
+    `;
+    const diagramWithoutNotes = `flowchart TD
+      A[A] -->|Description2: A how to B| B[B]
+      B --> D[D]
+      B --> C[C]
+      D --> F[F]
+      C --> F
+      F --> H[H]
+      F --> G[G]
+      F --> K[K]
+      H --> M[M]
+      G --> M
+      K --> M
+    `;
+    const withNotes = parseLayout(diagramWithNotes);
+    const withoutNotes = parseLayout(diagramWithoutNotes);
+
+    expect(withNotes.nodes).toEqual(withoutNotes.nodes);
+    expect(withNotes.edges).toEqual(withoutNotes.edges);
+    expect(withNotes.direction).toBe(withoutNotes.direction);
+    expect(withNotes.notes).toEqual([
+      { position: 'right', target: 'A', text: 'Description1: Properties of A' },
+      { position: 'top', target: 'A', text: 'above' },
+      { position: 'right', target: 'B', text: 'description2:\nSome properties of B' },
+      { position: 'right', target: 'K', text: 'Description3:\nThis note is right of K' },
+      { position: 'left', target: 'F', text: 'Description1: Properties of F' },
+      { position: 'bottom', target: 'M', text: 'Description5:This note is below M' },
+    ]);
+  });
+
+  it.each([
+    ['flowchart', 'TD', 'TB'],
+    ['flowchart', 'TB', 'TB'],
+    ['flowchart', 'LR', 'LR'],
+    ['flowchart', 'RL', 'RL'],
+    ['flowchart', 'BT', 'BT'],
+    ['graph', 'TD', 'TB'],
+    ['graph', 'TB', 'TB'],
+    ['graph', 'LR', 'LR'],
+    ['graph', 'RL', 'RL'],
+    ['graph', 'BT', 'BT'],
+  ])('should parse node notes in %s %s', function (keyword, direction, expectedDirection) {
+    flow.parser.parse(`${keyword} ${direction}
+      A[A] --> B[B]
+      note right of A
+        ${keyword} ${direction} note
+      end note
+    `);
+
+    const data4Layout = flow.parser.yy.getData();
+
+    expect(flow.parser.yy.getDirection()).toBe(expectedDirection);
+    expect(data4Layout.nodes.map((node) => node.id)).toEqual(['A', 'B']);
+    expect(data4Layout.edges).toHaveLength(1);
+    expect(data4Layout.notes).toEqual([
+      { position: 'right', target: 'A', text: `${keyword} ${direction} note` },
+    ]);
+  });
+
   it('should handle node names with "end" substring', function () {
     const res = flow.parser.parse('graph TD\nendpoint --> sender');
 
