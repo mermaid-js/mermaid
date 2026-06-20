@@ -1413,6 +1413,7 @@ When loading Mermaid from a CDN, import the ELK layout package and register it i
 ```note
 Registering the ELK layout makes the renderer available to Mermaid. You can then select it with the `flowchart.defaultRenderer` configuration or with the `layout: elk` diagram configuration.
 ```
+
 ### Width
 
 It is possible to adjust the width of the rendered flowchart.
