@@ -46,10 +46,7 @@ function getChartDefaultThemeConfig(): XYChartThemeConfig {
 }
 function getChartDefaultConfig(): XYChartConfig {
   const config = configApi.getConfig();
-  return cleanAndMerge<XYChartConfig>(
-    defaultConfig.xyChart as XYChartConfig,
-    config.xyChart as XYChartConfig
-  );
+  return cleanAndMerge<XYChartConfig>(defaultConfig.xyChart, config.xyChart as XYChartConfig);
 }
 
 function getChartDefaultData(): XYChartData {
@@ -199,7 +196,7 @@ function setBarData(title: NormalTextType, data: ParsedDataPoint[]) {
   plotIndex++;
 }
 
-function mapPlotData(xyChartData: XYChartData): void {
+function mapPlotData(): void {
   for (const plot of xyChartData.plots) {
     if (plot.values) {
       const plotData = transformDataWithoutCategory(plot.values);
@@ -213,7 +210,7 @@ function getDrawableElem(): DrawableElem[] {
     throw Error('No Plot to render, please provide a plot with some data');
   }
 
-  mapPlotData(xyChartData);
+  mapPlotData();
 
   xyChartData.title = getDiagramTitle();
   return XYChartBuilder.build(xyChartConfig, xyChartData, xyChartThemeConfig, tmpSVGGroup);
@@ -260,6 +257,7 @@ export default {
   setLineData,
   setBarData,
   setTmpSVGG,
+  mapPlotData,
   getChartThemeConfig,
   getChartConfig,
   getXYChartData,
