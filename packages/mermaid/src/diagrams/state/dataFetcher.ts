@@ -31,6 +31,7 @@ import {
   SHAPE_START,
   SHAPE_STATE,
   SHAPE_STATE_WITH_DESC,
+  parseStateAction,
   STMT_RELATION,
   STMT_STATE,
 } from './stateCommon.js';
@@ -234,26 +235,34 @@ export const dataFetcher = (
 
     // Build of the array of description strings
     if (parsedItem.description) {
-      if (Array.isArray(newNode.description)) {
-        // There already is an array of strings,add to it
+      // entry/do/exit lines are collected as structured actions so the state name
+      // is kept as the title and the actions render in their own compartment (issue #2899)
+      const action = parseStateAction(parsedItem.description);
+      if (action) {
+        (newNode.actions ??= []).push(action);
         newNode.shape = SHAPE_STATE_WITH_DESC;
-        newNode.description.push(parsedItem.description);
       } else {
-        if (newNode.description?.length && newNode.description.length > 0) {
-          // if there is a description already transform it to an array
+        if (Array.isArray(newNode.description)) {
+          // There already is an array of strings,add to it
           newNode.shape = SHAPE_STATE_WITH_DESC;
-          if (newNode.description === itemId) {
-            // If the previous description was this, remove it
-            newNode.description = [parsedItem.description];
-          } else {
-            newNode.description = [newNode.description, parsedItem.description];
-          }
+          newNode.description.push(parsedItem.description);
         } else {
-          newNode.shape = SHAPE_STATE;
-          newNode.description = parsedItem.description;
+          if (newNode.description?.length && newNode.description.length > 0) {
+            // if there is a description already transform it to an array
+            newNode.shape = SHAPE_STATE_WITH_DESC;
+            if (newNode.description === itemId) {
+              // If the previous description was this, remove it
+              newNode.description = [parsedItem.description];
+            } else {
+              newNode.description = [newNode.description, parsedItem.description];
+            }
+          } else {
+            newNode.shape = SHAPE_STATE;
+            newNode.description = parsedItem.description;
+          }
         }
+        newNode.description = common.sanitizeTextOrArray(newNode.description, config);
       }
-      newNode.description = common.sanitizeTextOrArray(newNode.description, config);
     }
 
     // If there's only 1 description entry, just use a regular state shape
@@ -298,6 +307,7 @@ export const dataFetcher = (
       ry: 10,
       look,
       labelType: 'markdown',
+      actions: newNode.actions,
     };
 
     // Clear the label for dividers who have no description

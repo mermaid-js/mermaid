@@ -108,6 +108,32 @@ stateDiagram-v2
     s2 : This is a state description
 ```
 
+## Entry, do, and exit actions (v\<MERMAID_RELEASE_VERSION>+)
+
+A state can declare the actions performed on entry, while active, and on exit, following the UML state machine model. Write them as state body lines prefixed with `entry /`, `do /`, or `exit /`:
+
+```mermaid-example
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Active : start
+    Active : entry / openValve
+    Active : do / heat
+    Active : exit / closeValve
+    Active --> Idle : stop
+```
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Active : start
+    Active : entry / openValve
+    Active : do / heat
+    Active : exit / closeValve
+    Active --> Idle : stop
+```
+
+The state name stays as the title, and the actions are listed in their own compartment beneath it. Lines that do not begin with one of these keywords are treated as ordinary descriptions.
+
 ## Transitions
 
 Transitions are path/edges when one state passes into another. This is represented using text arrow, "-->".

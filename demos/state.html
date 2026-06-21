@@ -25,7 +25,15 @@
       accDescr:This is an accessible description
       State1 --> State2
     </pre>
-
+    <pre class="mermaid">
+    stateDiagram-v2
+    [*] --> Idle
+    Idle --> Running : start
+    Running : entry / energiseCoils
+    Running : do / commutate
+    Running : exit / deEnergise
+    Running --> Idle : stop
+    </pre>
     <hr />
 
     <h2>This has classDef statements to apply style classes to specific states</h2>
