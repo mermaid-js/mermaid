@@ -3,9 +3,11 @@ import type { D3Selection, MaybePromise } from '../../types.js';
 import type { Node, ShapeRenderOptions } from '../types.js';
 import { anchor } from './shapes/anchor.js';
 import { bowTieRect } from './shapes/bowTieRect.js';
+import { block_arrow } from './shapes/blockArrow.js';
 import { card } from './shapes/card.js';
 import { choice } from './shapes/choice.js';
 import { circle } from './shapes/circle.js';
+import { composite } from './shapes/composite.js';
 import { crossedCircle } from './shapes/crossedCircle.js';
 import { curlyBraceLeft } from './shapes/curlyBraceLeft.js';
 import { curlyBraceRight } from './shapes/curlyBraceRight.js';
@@ -491,8 +493,10 @@ const generateShapeMap = () => {
     note,
 
     // Rectangles
+    composite,
     rectWithTitle,
     labelRect,
+    block_arrow,
 
     // Icons
     iconSquare,

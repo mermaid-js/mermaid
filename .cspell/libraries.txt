@@ -48,6 +48,7 @@ matplotlib
 mdbook
 Mermerd
 mkdocs
+monocart
 Nextra
 nodenext
 npmjs
