@@ -201,8 +201,10 @@ function setBarData(title: NormalTextType, data: ParsedDataPoint[]) {
 
 function mapPlotData(xyChartData: XYChartData): void {
   for (const plot of xyChartData.plots) {
-    const plotData = transformDataWithoutCategory(plot.values);
-    plot.data = plotData;
+    if (plot.values) {
+      const plotData = transformDataWithoutCategory(plot.values);
+      plot.data = plotData;
+    }
   }
 }
 

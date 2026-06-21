@@ -37,7 +37,7 @@ export interface LinePlotData {
   title: string;
   strokeFill: string;
   strokeWidth: number;
-  values: number[];
+  values?: number[];
   data: SimplePlotDataType;
   pointLabels?: string[];
 }
@@ -49,7 +49,7 @@ export interface BarPlotData {
    */
   title: string;
   fill: string;
-  values: number[];
+  values?: number[];
   data: SimplePlotDataType;
 }
 
