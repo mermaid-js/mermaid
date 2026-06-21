@@ -99,15 +99,6 @@ function setXAxisBand(categories: NormalTextType[]) {
     categories: categories.map((c) => textSanitizer(c.text)),
   };
   hasSetXAxis = true;
-
-  // if plots are already mapped before, re-map plots with newly set X Axis Band
-  if (xyChartData.plots?.length > 0) {
-    for (const plot of xyChartData.plots) {
-      plot.data.map((data, index) => {
-        data[0] = textSanitizer(categories[index]?.text);
-      });
-    }
-  }
 }
 function setYAxisTitle(title: NormalTextType) {
   xyChartData.yAxis.title = textSanitizer(title.text);
@@ -183,14 +174,14 @@ interface ParsedDataPoint {
 function setLineData(title: NormalTextType, data: ParsedDataPoint[]) {
   const values = data.map((d) => d.value);
   const labels = data.map((d) => (d.label ? textSanitizer(d.label) : ''));
-  const plotData = transformDataWithoutCategory(values);
   const hasAnyLabel = labels.some((l) => l !== '');
   xyChartData.plots.push({
     type: 'line',
     title: textSanitizer(title.text),
     strokeFill: getPlotColorFromPalette(plotIndex),
     strokeWidth: 2,
-    data: plotData,
+    values: values,
+    data: [],
     ...(hasAnyLabel ? { pointLabels: labels } : {}),
   });
   plotIndex++;
@@ -198,20 +189,30 @@ function setLineData(title: NormalTextType, data: ParsedDataPoint[]) {
 
 function setBarData(title: NormalTextType, data: ParsedDataPoint[]) {
   const values = data.map((d) => d.value);
-  const plotData = transformDataWithoutCategory(values);
   xyChartData.plots.push({
     type: 'bar',
     title: textSanitizer(title.text),
     fill: getPlotColorFromPalette(plotIndex),
-    data: plotData,
+    values,
+    data: [],
   });
   plotIndex++;
+}
+
+function mapPlotData(xyChartData: XYChartData): void {
+  for (const plot of xyChartData.plots) {
+    const plotData = transformDataWithoutCategory(plot.values);
+    plot.data = plotData;
+  }
 }
 
 function getDrawableElem(): DrawableElem[] {
   if (xyChartData.plots.length === 0) {
     throw Error('No Plot to render, please provide a plot with some data');
   }
+
+  mapPlotData(xyChartData);
+
   xyChartData.title = getDiagramTitle();
   return XYChartBuilder.build(xyChartConfig, xyChartData, xyChartThemeConfig, tmpSVGGroup);
 }
