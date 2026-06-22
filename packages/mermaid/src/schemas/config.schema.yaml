@@ -132,6 +132,19 @@ properties:
           - LINEAR_SEGMENTS
           - BRANDES_KOEPF
         default: BRANDES_KOEPF
+      nodePlacementAlignment:
+        description: |
+          Elk specific option affecting Brandes-Koepf node placement alignment.
+          NONE picks the alignment with the smallest height.
+        type: string
+        enum:
+          - NONE
+          - LEFTUP
+          - LEFTDOWN
+          - RIGHTUP
+          - RIGHTDOWN
+          - BALANCED
+        default: NONE
       cycleBreakingStrategy:
         description: |
           This strategy decides how to find cycles in the graph and deciding which edges need adjustment to break loops.
@@ -158,6 +171,15 @@ properties:
           - PREFER_EDGES
           - PREFER_NODES
         default: 'NODES_AND_EDGES'
+      keepEntryNodeOnTop:
+        description: |
+          Elk specific option that keeps the entry node of a recursive flow at the top of the layout.
+
+          When a flow loops back on itself (a back-edge to an earlier node), ELK's degree-based cycle-breaking has no notion of an "entry point" and may rank the first-declared node in the middle, scrambling the reading order. When enabled, the entry node of each cyclic component is pinned to the first layer so the diagram still reads from its entry. Acyclic flows always have a natural source, so this has no effect on them.
+
+          Only applies when the cyclic flow has no node without incoming edges: if the loop is fed from outside (e.g. a start node pointing into it), that component already has a natural source and nothing is pinned. Detection is also scoped per container, so cycles that cross a subgraph boundary are not detected.
+        type: boolean
+        default: false
   darkMode:
     type: boolean
     default: false
@@ -285,6 +307,8 @@ properties:
     type: string
   flowchart:
     $ref: '#/$defs/FlowchartDiagramConfig'
+  swimlane:
+    $ref: '#/$defs/SwimlaneDiagramConfig'
   sequence:
     $ref: '#/$defs/SequenceDiagramConfig'
   gantt:
@@ -1118,6 +1142,24 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: |
           Axial position of slice's label from zero at the center to 1 at the outside edges.
         default: 0.75
+      donutHole:
+        type: number
+        minimum: 0
+        maximum: 0.9
+        description: |
+          Donut hole ratio. Valid value are from 0 to 0.9. Default to 0.
+        default: 0
+      legendPosition:
+        type: string
+        enum: ['top', 'bottom', 'left', 'right', 'center']
+        description: |
+          Legend's position relative to the chart. Default to right.
+        default: 'right'
+      highlightSlice:
+        type: string
+        description: |
+          Highlight specific slice with matching label. Set to 'hover' to highlight hovered slice.
+        default: ''
 
   QuadrantChartConfig:
     title: Quadrant Chart Config
@@ -1239,6 +1281,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         minimum: 0
         default: 2
+
   XYChartAxisConfig:
     title: XYChart axis config
     description: This object contains configuration for XYChart axis config
@@ -1256,6 +1299,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - tickWidth
       - showAxisLine
       - axisLineWidth
+      - labelRotation
     properties:
       showLabel:
         description: Should show the axis labels (tick text)
@@ -1308,6 +1352,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         default: 2
         minimum: 1
+      labelRotation:
+        description: Label rotation in degrees
+        type: number
+        default: 0
+        minimum: -90
+        maximum: 90
 
   XYChartConfig:
     title: XYChart Config
@@ -1358,6 +1408,20 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: Should show the chart title
         type: boolean
         default: true
+      showLegend:
+        description: Should show a legend for named plots
+        type: boolean
+        default: true
+      legendFontSize:
+        description: Font size of the legend text
+        type: number
+        default: 14
+        minimum: 1
+      legendPadding:
+        description: Padding around the legend
+        type: number
+        default: 10
+        minimum: 0
       xAxis:
         $ref: '#/$defs/XYChartAxisConfig'
         default: { '$ref': '#/$defs/XYChartAxisConfig' }
@@ -1489,13 +1553,9 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       nodeSpacing:
         type: integer
         minimum: 0
-        # should the default value be 50?
-        # see https://github.com/mermaid-js/mermaid/blob/7647ae317a7b2130e32777248d25a9c4d24b8f9f/packages/mermaid/src/diagrams/class/classRenderer-v2.ts#L258
       rankSpacing:
         type: integer
         minimum: 0
-        # should the default value be 50?
-        # see https://github.com/mermaid-js/mermaid/blob/7647ae317a7b2130e32777248d25a9c4d24b8f9f/packages/mermaid/src/diagrams/class/classRenderer-v2.ts#L259
       forkWidth:
         type: number
         default: 70
@@ -1573,13 +1633,9 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       nodeSpacing:
         type: integer
         minimum: 0
-        # should the default value be 50?
-        # see https://github.com/mermaid-js/mermaid/blob/7647ae317a7b2130e32777248d25a9c4d24b8f9f/packages/mermaid/src/diagrams/class/classRenderer-v2.ts#L258
       rankSpacing:
         type: integer
         minimum: 0
-        # should the default value be 50?
-        # see https://github.com/mermaid-js/mermaid/blob/7647ae317a7b2130e32777248d25a9c4d24b8f9f/packages/mermaid/src/diagrams/class/classRenderer-v2.ts#L259
       diagramPadding:
         $ref: '#/$defs/ErDiagramConfig/properties/diagramPadding'
       htmlLabels:
@@ -2153,6 +2209,41 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       noteFont: { '$ref': '#/$defs/FontCalculator' }
       actorFont: { '$ref': '#/$defs/FontCalculator' }
 
+  SwimlaneDiagramConfig:
+    title: Swimlane Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: |
+      The object containing configurations specific for the swimlanes diagram type.
+
+      Swimlanes reuses the flowchart renderer and flowchart config for shared
+      options (curve, htmlLabels, spacing, …); this block holds the knobs that
+      only affect the swimlanes layout pipeline.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      lineHops:
+        description: |
+          Renders edge crossings as small arcs ("hops") or visible gaps so that
+          overlapping edges are easier to read. Set to `false` to disable. Edges
+          rendered as curves are skipped to avoid corrupting the geometry.
+        oneOf:
+          - type: boolean
+          - type: string
+            enum: ['arc', 'gap']
+        default: 'arc'
+      ignoreCrossLaneEdges:
+        description: |
+          Ignores edges that cross swimlane boundaries during swimlane layer
+          assignment. This can improve rank quality for diagrams with many
+          cross-lane links.
+        type: boolean
+        default: true
+      optimizeRanksByCrossings:
+        description: |
+          Enables a crossing-aware rank optimization pass for swimlane layouts.
+        type: boolean
+        default: true
+
   FlowchartDiagramConfig:
     title: Flowchart Diagram Config
     allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
@@ -2243,6 +2334,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
             'rounded',
           ]
         default: 'basis'
+
       padding:
         description: |
           Represents the padding between the labels and the shape

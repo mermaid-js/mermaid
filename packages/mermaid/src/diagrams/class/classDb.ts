@@ -334,6 +334,7 @@ export class ClassDB implements DiagramDB {
       if (/\d/.exec(_id[0])) {
         id = MERMAID_DOM_ID_PREFIX + id;
       }
+      id = this.splitClassNameAndType(id).className;
       const classNode = this.classes.get(id);
       if (classNode) {
         classNode.cssClasses += ' ' + className;
@@ -376,7 +377,11 @@ export class ClassDB implements DiagramDB {
   public setTooltip(ids: string, tooltip?: string) {
     ids.split(',').forEach((id) => {
       if (tooltip !== undefined) {
-        this.classes.get(id)!.tooltip = sanitizeText(tooltip);
+        const className = this.splitClassNameAndType(id).className;
+        const classNode = this.classes.get(className);
+        if (classNode) {
+          classNode.tooltip = sanitizeText(tooltip);
+        }
       }
     });
   }
@@ -403,6 +408,7 @@ export class ClassDB implements DiagramDB {
       if (/\d/.exec(_id[0])) {
         id = MERMAID_DOM_ID_PREFIX + id;
       }
+      id = this.splitClassNameAndType(id).className;
       const theClass = this.classes.get(id);
       if (theClass) {
         theClass.link = utils.formatUrl(linkStr, config);
@@ -428,7 +434,11 @@ export class ClassDB implements DiagramDB {
   public setClickEvent(ids: string, functionName: string, functionArgs: string) {
     ids.split(',').forEach((id) => {
       this.setClickFunc(id, functionName, functionArgs);
-      this.classes.get(id)!.haveCallback = true;
+      const className = this.splitClassNameAndType(id).className;
+      const classNode = this.classes.get(className);
+      if (classNode) {
+        classNode.haveCallback = true;
+      }
     });
     this.setCssClass(ids, 'clickable');
   }
@@ -443,7 +453,7 @@ export class ClassDB implements DiagramDB {
       return;
     }
 
-    const id = domId;
+    const id = this.splitClassNameAndType(domId).className;
     if (this.classes.has(id)) {
       let argList: string[] = [];
       if (typeof functionArgs === 'string') {

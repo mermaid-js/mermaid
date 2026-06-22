@@ -1,0 +1,14 @@
+---
+config:
+  layout: elk
+---
+flowchart LR
+    n2@{ shape: rect}
+    n3@{ shape: rect}
+    n4@{ shape: rect}
+    A["Start"] -- Some text --> B("Continue")
+    B --> C{"Evaluate"}
+    C -- One --> D["Option 1"]
+    C -- Two --> E["Option 2"]
+    C -- Three --> F["fa:fa-car Option 3"]
+    %% C@{ shape: hexagon}

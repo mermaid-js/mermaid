@@ -1,0 +1,60 @@
+swimlane LR
+  subgraph C["Customer"]
+    C1(["Customer requests help or reports errors"])
+    C2["More feedback"]
+    Finished1
+    Finished2
+  end
+
+  subgraph S["Sales"]
+    S1{"Sales issue"}
+    S2["Resolve the issue and respond to customer"]
+    T3["Confirm with customer"]
+    T5["Confirm with customer"]
+  end
+
+  subgraph T["Technical support"]
+    T1{"New issue"}
+    T2["Resolve solution"]
+    T4["Get more details from customer"]
+    T6["Resolve solution"]
+  end
+
+  subgraph Tester["Tester"]
+    Te1["Test the issue"]
+    Te2{"Reproduced the issue"}
+    D4{"Resolved?"}
+  end
+
+  subgraph D["Development"]
+    D1["Error report"]
+    D2["Technical analysis"]
+    D3["Fix the issue"]
+
+  end
+
+  %% Edges
+  C1 --> S1
+  S1 -- Yes --> S2 --> T3 --> Finished1(["Finished"])
+  S1 -- No --> T1
+  T1 -- No --> T2 --> T3
+  T1 -- Yes --> Te1 --> Te2
+  Te2 -- Yes --> D1 --> D2 --> D3 --> D4
+  Te2 -- No --> T4
+  T4 -- No --> C2
+  D4 -- No --> D2
+  D4 -- Yes --> T6 --> T5
+  T5 --> Finished2(["Finished"])
+
+  %% Classes for coloring
+  classDef indigo stroke:#818cf8,fill:#eef2ff;
+  classDef teal stroke:#2dd4bf,fill:#f0fdfa;
+  classDef violet stroke:#a78bfa,fill:#f5f3ff;
+  classDef orange stroke:#fb923c,fill:#fff7ed;
+  classDef yellow stroke:#facc15,fill:#fefce8;
+
+  class C* teal;
+  class S* indigo;
+  class T* violet;
+  class Tester* orange;
+  class D* yellow;

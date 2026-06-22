@@ -39,7 +39,7 @@
   "devDependencies": {
     "@microsoft/api-extractor": "^7.57.8",
     "chevrotain": "~11.1.2",
-    "langium": "^4.0.3"
+    "langium": "^4.2.4"
   },
   "files": [
     "dist/"

@@ -200,9 +200,9 @@ describe('Block diagram', () => {
   it('BL14: should style statements and class statements', () => {
     imgSnapshotTest(
       `block
-    A
+    A["My text here"]
     B
-    classDef blue fill:#66f,stroke:#333,stroke-width:2px;
+    classDef blue fill:#66f,stroke:#333,stroke-width:2px,color:#ff6;
     class A blue
     style B fill:#f9F,stroke:#333,stroke-width:4px
       `,

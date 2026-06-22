@@ -130,6 +130,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <STATE_ID>[^\n\{]*         { if (!processId()) return; this.popState(); /* console.log('STATE_ID', yytext); */ return "ID"; }
 <STATE_STRING>["]          { this.popState(); }
 <STATE_STRING>[^"]*        { /* console.log('Long description:', yytext); */ return "STATE_DESCR"; }
+<STATE>\w+\s+\w+.*?\{      { throw new Error('Error: State name must be a single word. Found: "' + yytext.trim() + '"'); }
 <STATE>[^\n\s\{]+          { /* console.log('COMPOSIT_STATE', yytext); */ return 'COMPOSIT_STATE'; }
 <STATE>\n                  { this.popState(); }
 <INITIAL,STATE>\{          { this.popState(); this.pushState('struct'); /* console.log('begin struct', yytext); */ return 'STRUCT_START'; }

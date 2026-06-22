@@ -64,12 +64,6 @@ const getStyles = (options: FlowChartStyleOptions) =>
   .rough-node .label text , .node .label text, .image-shape .label, .icon-shape .label {
     text-anchor: middle;
   }
-  // .flowchart-label .text-outer-tspan {
-  //   text-anchor: middle;
-  // }
-  // .flowchart-label .text-inner-tspan {
-  //   text-anchor: start;
-  // }
 
   .node .katex path {
     fill: #000;
