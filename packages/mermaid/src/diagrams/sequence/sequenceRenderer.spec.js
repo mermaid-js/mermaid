@@ -22,7 +22,7 @@ vi.mock('../../utils.js', async (importOriginal) => {
 });
 
 import * as svgDraw from './svgDraw.js';
-import { drawMessage, setConf, bounds } from './sequenceRenderer.js';
+import { drawMessage, setConf, bounds, computeParentBoxBounds } from './sequenceRenderer.js';
 
 function mockDiagram(name = 'svg') {
   const children = [];
@@ -96,11 +96,12 @@ describe('drawMessage (#3594)', () => {
   });
 });
 
-describe('parent box coordinate computation', () => {
-  it('wraps a single child: startx is less than child startx', () => {
-    const boxMargin = 10;
-    const boxTextMargin = 5;
+const BOX_MARGIN = 10;
+const BOX_TEXT_MARGIN = 5;
+const TEST_CONF = { boxMargin: BOX_MARGIN, boxTextMargin: BOX_TEXT_MARGIN };
 
+describe('computeParentBoxBounds', () => {
+  it('wraps a single child: parent startx/stopx extend beyond child', () => {
     const child = {
       name: 'Inner',
       actorKeys: ['Alice'],
@@ -119,49 +120,17 @@ describe('parent box coordinate computation', () => {
       textMaxHeight: 14,
     };
 
-    const allBoxes = [parent, child];
-    const conf = { boxMargin, boxTextMargin };
-
-    for (const box of [...allBoxes].reverse()) {
-      if (!box.children || box.children.length === 0) {
-        continue;
-      }
-      let minStartx = Infinity,
-        maxStopx = -Infinity,
-        minStarty = Infinity,
-        maxStopy = -Infinity;
-      for (const c of box.children) {
-        if (c.startx !== undefined) {
-          minStartx = Math.min(minStartx, c.startx);
-          maxStopx = Math.max(maxStopx, c.stopx);
-          minStarty = Math.min(minStarty, c.starty);
-          maxStopy = Math.max(maxStopy, c.stopy);
-        }
-      }
-      if (minStartx === Infinity) {
-        continue;
-      }
-      const nestPaddingHoriz = conf.boxMargin * 2;
-      const nestPaddingTop = (box.textMaxHeight || 0) + conf.boxTextMargin + conf.boxMargin;
-      const nestPaddingBottom = conf.boxMargin * 3;
-      box.startx = minStartx - nestPaddingHoriz;
-      box.starty = minStarty - nestPaddingTop;
-      box.stopx = maxStopx + nestPaddingHoriz;
-      box.stopy = maxStopy + nestPaddingBottom;
-    }
+    computeParentBoxBounds([parent, child], TEST_CONF);
 
     expect(parent.startx).toBeLessThan(child.startx);
     expect(parent.stopx).toBeGreaterThan(child.stopx);
     expect(parent.starty).toBeLessThan(child.starty);
     expect(parent.stopy).toBeGreaterThan(child.stopy);
-    expect(parent.startx).toBe(child.startx - boxMargin * 2);
-    expect(parent.stopx).toBe(child.stopx + boxMargin * 2);
+    expect(parent.startx).toBe(child.startx - BOX_MARGIN * 2);
+    expect(parent.stopx).toBe(child.stopx + BOX_MARGIN * 2);
   });
 
   it('wraps two sibling children: startx is min of children, stopx is max', () => {
-    const boxMargin = 10;
-    const boxTextMargin = 5;
-
     const childA = {
       name: 'TeamA',
       actorKeys: ['Alice'],
@@ -191,71 +160,93 @@ describe('parent box coordinate computation', () => {
       textMaxHeight: 14,
     };
 
-    const allBoxes = [parent, childA, childB];
-    const conf = { boxMargin, boxTextMargin };
+    computeParentBoxBounds([parent, childA, childB], TEST_CONF);
 
-    for (const box of [...allBoxes].reverse()) {
-      if (!box.children || box.children.length === 0) {
-        continue;
-      }
-      let minStartx = Infinity,
-        maxStopx = -Infinity,
-        minStarty = Infinity,
-        maxStopy = -Infinity;
-      for (const c of box.children) {
-        if (c.startx !== undefined) {
-          minStartx = Math.min(minStartx, c.startx);
-          maxStopx = Math.max(maxStopx, c.stopx);
-          minStarty = Math.min(minStarty, c.starty);
-          maxStopy = Math.max(maxStopy, c.stopy);
-        }
-      }
-      if (minStartx === Infinity) {
-        continue;
-      }
-      const nestPaddingHoriz = conf.boxMargin * 2;
-      const nestPaddingTop = (box.textMaxHeight || 0) + conf.boxTextMargin + conf.boxMargin;
-      const nestPaddingBottom = conf.boxMargin * 3;
-      box.startx = minStartx - nestPaddingHoriz;
-      box.starty = minStarty - nestPaddingTop;
-      box.stopx = maxStopx + nestPaddingHoriz;
-      box.stopy = maxStopy + nestPaddingBottom;
-    }
-
-    expect(parent.startx).toBe(childA.startx - boxMargin * 2);
-    expect(parent.stopx).toBe(childB.stopx + boxMargin * 2);
+    expect(parent.startx).toBe(childA.startx - BOX_MARGIN * 2);
+    expect(parent.stopx).toBe(childB.stopx + BOX_MARGIN * 2);
     expect(parent.starty).toBeLessThan(childA.starty);
     expect(parent.stopy).toBeGreaterThan(childA.stopy);
   });
 
-  it('skips a parent box whose children have no coordinates yet', () => {
+  it('skips a parent whose children have no coordinates yet', () => {
+    const child = { name: 'Inner', actorKeys: [], children: [] };
     const parent = {
       name: 'Outer',
       actorKeys: [],
-      children: [{ name: 'Inner', actorKeys: [], children: [] }],
+      children: [child],
       textMaxHeight: 14,
     };
 
-    const allBoxes = [parent, parent.children[0]];
-    const conf = { boxMargin: 10, boxTextMargin: 5 };
-
-    for (const box of [...allBoxes].reverse()) {
-      if (!box.children || box.children.length === 0) {
-        continue;
-      }
-      let minStartx = Infinity;
-      for (const c of box.children) {
-        if (c.startx !== undefined) {
-          minStartx = Math.min(minStartx, c.startx);
-        }
-      }
-      if (minStartx === Infinity) {
-        continue;
-      }
-      box.startx = 0;
-    }
+    computeParentBoxBounds([parent, child], TEST_CONF);
 
     expect(parent.startx).toBeUndefined();
+  });
+
+  it('includes direct actors (own leaf bounds) when parent also has child boxes', () => {
+    // Organisation has Manager as a direct actor (already placed by leaf pass)
+    // and Team A as a child box. Bug 1: without seeding from own bounds, Manager
+    // is ejected and Organisation's startx only covers Team A.
+    const teamA = {
+      name: 'Team A',
+      actorKeys: ['Alice'],
+      children: [],
+      startx: 200,
+      stopx: 300,
+      starty: -5,
+      stopy: 400,
+      x: 210,
+      width: 80,
+    };
+    const organisation = {
+      name: 'Organisation',
+      actorKeys: ['Manager'],
+      children: [teamA],
+      textMaxHeight: 14,
+      // Leaf-pass coordinates for Manager (leftmost actor in Organisation)
+      startx: 20,
+      stopx: 160,
+      starty: -5,
+      stopy: 400,
+      x: 30,
+      width: 120,
+    };
+
+    computeParentBoxBounds([organisation, teamA], TEST_CONF);
+
+    // Organisation must wrap both Manager (leaf startx=20) and Team A (stopx=300)
+    expect(organisation.startx).toBeLessThanOrEqual(20 - BOX_MARGIN * 2);
+    expect(organisation.stopx).toBeGreaterThanOrEqual(300 + BOX_MARGIN * 2);
+  });
+
+  it('depth-3 nesting: grandparent starty is more negative than parent starty', () => {
+    const leaf = {
+      name: 'Sub-team',
+      actorKeys: ['Bob'],
+      children: [],
+      startx: 100,
+      stopx: 200,
+      starty: -5,
+      stopy: 400,
+      x: 110,
+      width: 80,
+    };
+    const middle = {
+      name: 'Team A',
+      actorKeys: [],
+      children: [leaf],
+      textMaxHeight: 14,
+    };
+    const outer = {
+      name: 'Organisation',
+      actorKeys: [],
+      children: [middle],
+      textMaxHeight: 14,
+    };
+
+    computeParentBoxBounds([outer, middle, leaf], TEST_CONF);
+
+    expect(middle.starty).toBeLessThan(leaf.starty);
+    expect(outer.starty).toBeLessThan(middle.starty);
   });
 });
 

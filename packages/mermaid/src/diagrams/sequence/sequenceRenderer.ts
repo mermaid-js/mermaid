@@ -1036,6 +1036,64 @@ function adjustCreatedDestroyedData(
 }
 
 /**
+ * Compute parent-box rendering coordinates bottom-up.
+ *
+ * Mutates each parent box in `boxes` (DFS order, parent before child) so that
+ * every parent's startx/starty/stopx/stopy/x/y/width expand to fully wrap its
+ * child boxes AND its own directly-contained actors (whose leaf-pass coordinates
+ * are already set on the box when it also appears in bounds.models.boxes).
+ *
+ * Exported so it can be unit-tested independently of the full draw() pipeline.
+ *
+ * @param boxes - All boxes in DFS order (from db.getBoxes())
+ * @param cnf - The sequence diagram config (needs boxMargin, boxTextMargin)
+ */
+export function computeParentBoxBounds(boxes: any[], cnf: any): void {
+  for (const box of [...boxes].reverse()) {
+    if (!box.children || box.children.length === 0) {
+      continue;
+    }
+
+    let minStartx = box.startx !== undefined ? box.startx : Infinity;
+    let maxStopx = box.startx !== undefined ? box.stopx : -Infinity;
+    let minStarty = box.startx !== undefined ? box.starty : Infinity;
+    let maxStopy = box.startx !== undefined ? box.stopy : -Infinity;
+
+    for (const child of box.children) {
+      if (child.startx !== undefined) {
+        minStartx = Math.min(minStartx, child.startx);
+        maxStopx = Math.max(maxStopx, child.stopx);
+        minStarty = Math.min(minStarty, child.starty);
+        maxStopy = Math.max(maxStopy, child.stopy);
+      }
+    }
+    if (minStartx === Infinity) {
+      continue;
+    }
+    const nestPaddingHoriz = cnf.boxMargin * 2;
+    const nestPaddingTop = (box.textMaxHeight ?? 0) + cnf.boxTextMargin + cnf.boxMargin;
+    const nestPaddingBottom = cnf.boxMargin * 3;
+    box.startx = minStartx - nestPaddingHoriz;
+    box.starty = minStarty - nestPaddingTop;
+    box.stopx = maxStopx + nestPaddingHoriz;
+    box.stopy = maxStopy + nestPaddingBottom;
+
+    let minChildX = Infinity;
+    let maxChildRight = -Infinity;
+    for (const child of box.children) {
+      if (child.x !== undefined) {
+        minChildX = Math.min(minChildX, child.x);
+        maxChildRight = Math.max(maxChildRight, child.x + child.width);
+      }
+    }
+    box.x = minChildX !== Infinity ? minChildX : box.startx + nestPaddingHoriz;
+    box.width = minChildX !== Infinity ? maxChildRight - minChildX : box.stopx - box.startx;
+    box.y = box.starty;
+    box.stroke = 'rgb(0,0,0, 0.5)';
+  }
+}
+
+/**
  * Draws a sequenceDiagram in the tag with id: id based on the graph definition in text.
  *
  * @param _text - The text of the diagram
@@ -1417,53 +1475,22 @@ export const draw = async function (_text: string, id: string, _version: string,
 
   // Compute parent box coordinates bottom-up so each parent wraps its children
   const allBoxes = diagObj.db.getBoxes(); // DFS order: parent before children
-  for (const box of [...allBoxes].reverse()) {
-    if (!box.children || box.children.length === 0) {
-      continue;
+  computeParentBoxBounds(allBoxes, conf);
+
+  for (const box of allBoxes) {
+    if (box.children && box.children.length > 0 && box.startx !== undefined) {
+      bounds.insert(box.startx, box.starty, box.stopx, box.stopy);
     }
-    let minStartx = Infinity,
-      maxStopx = -Infinity,
-      minStarty = Infinity,
-      maxStopy = -Infinity;
-    for (const child of box.children) {
-      if (child.startx !== undefined) {
-        minStartx = Math.min(minStartx, child.startx);
-        maxStopx = Math.max(maxStopx, child.stopx);
-        minStarty = Math.min(minStarty, child.starty);
-        maxStopy = Math.max(maxStopy, child.stopy);
-      }
-    }
-    if (minStartx === Infinity) {
-      continue;
-    }
-    const nestPaddingHoriz = conf.boxMargin * 2;
-    const nestPaddingTop = (box.textMaxHeight || 0) + conf.boxTextMargin + conf.boxMargin;
-    const nestPaddingBottom = conf.boxMargin * 3;
-    box.startx = minStartx - nestPaddingHoriz;
-    box.starty = minStarty - nestPaddingTop;
-    box.stopx = maxStopx + nestPaddingHoriz;
-    box.stopy = maxStopy + nestPaddingBottom;
-    // Center the label over the children's content area
-    let minChildX = Infinity,
-      maxChildRight = -Infinity;
-    for (const child of box.children) {
-      if (child.x !== undefined) {
-        minChildX = Math.min(minChildX, child.x);
-        maxChildRight = Math.max(maxChildRight, child.x + child.width);
-      }
-    }
-    box.x = minChildX !== Infinity ? minChildX : box.startx + nestPaddingHoriz;
-    box.width = minChildX !== Infinity ? maxChildRight - minChildX : box.stopx - box.startx;
-    box.y = box.starty;
-    box.stroke = 'rgb(0,0,0, 0.5)';
-    // Register with bounds so the SVG dimensions expand to include the full parent box
-    bounds.insert(box.startx, box.starty, box.stopx, box.stopy);
   }
 
-  // Draw all boxes in DFS order — parents first so they render behind children
-  for (const box of allBoxes) {
-    if (box.startx !== undefined) {
-      svgDraw.drawBox(diagram, box, conf);
+  const boxesToDraw = allBoxes.filter((b) => b.startx !== undefined);
+  if (boxesToDraw.length > 0) {
+    const boxBg =
+      typeof diagram.insert === 'function'
+        ? diagram.insert('g', ':first-child')
+        : diagram.append('g');
+    for (const box of boxesToDraw) {
+      svgDraw.drawBox(boxBg, box, conf);
     }
   }
 
@@ -1518,23 +1545,14 @@ export const draw = async function (_text: string, id: string, _version: string,
   const extraVertForTitle = title ? 40 : 0;
   const extraHeightForNeoActors = actors.size && look === 'neo' ? 30 : 0;
 
-  const hasNestedBoxes = allBoxes.some((b) => b.children && b.children.length > 0);
-  const extraTopForNesting = hasNestedBoxes
-    ? (boxes[0]?.textMaxHeight || 0) + conf.boxTextMargin + conf.boxMargin
-    : 0;
+  const viewBoxMinY = box.starty - conf.diagramMarginY - extraVertForTitle;
+  const viewBoxHeight = height + extraVertForTitle + extraHeightForNeoActors;
 
-  configureSvgSize(diagram, height + extraTopForNesting, width, conf.useMaxWidth);
+  configureSvgSize(diagram, height, width, conf.useMaxWidth);
 
   diagram.attr(
     'viewBox',
-    box.startx -
-      conf.diagramMarginX +
-      ' -' +
-      (conf.diagramMarginY + extraVertForTitle + extraTopForNesting) +
-      ' ' +
-      width +
-      ' ' +
-      (height + extraVertForTitle + extraHeightForNeoActors + extraTopForNesting)
+    box.startx - conf.diagramMarginX + ' ' + viewBoxMinY + ' ' + width + ' ' + viewBoxHeight
   );
 
   log.debug(`models:`, bounds.models);
