@@ -83,6 +83,7 @@ describe('flow db class', () => {
       'setAccDescription',
       'addVertex',
       'addLink',
+      'addNote',
       'setClass',
       'destructLink',
       'addClass',
@@ -163,6 +164,58 @@ describe('flow db getData', () => {
     expect(edges[1].curve).toBe('monotoneX');
     expect(edges[2].curve).toBe('catmullRom');
     expect(edges[3].curve).toBe('stepBefore');
+  });
+
+  it('should expose node notes without adding layout nodes or edges', () => {
+    flowDb.addVertex('A', { text: 'A', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addVertex('B', { text: 'B', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addLink(['A'], ['B'], {});
+    flowDb.addNote(
+      'right',
+      ' B ',
+      `
+        description:
+          details for B
+      `
+    );
+
+    const data = flowDb.getData();
+
+    expect(data.nodes.map((node) => node.id)).toEqual(['A', 'B']);
+    expect(data.edges).toHaveLength(1);
+    expect(data.notes).toEqual([
+      {
+        position: 'right',
+        target: 'B',
+        text: 'description:\n  details for B',
+      },
+    ]);
+  });
+
+  it('should return getData notes as a copy', () => {
+    flowDb.addNote('top', 'A', 'above');
+
+    const data = flowDb.getData();
+    data.notes?.push({ position: 'bottom', target: 'B', text: 'below' });
+
+    expect(flowDb.getNotes()).toEqual([{ position: 'top', target: 'A', text: 'above' }]);
+  });
+
+  it('should return getNotes result as a copy', () => {
+    flowDb.addNote('top', 'A', 'above');
+
+    const notes = flowDb.getNotes();
+    notes.push({ position: 'bottom', target: 'B', text: 'below' });
+
+    expect(flowDb.getNotes()).toEqual([{ position: 'top', target: 'A', text: 'above' }]);
+  });
+
+  it('should clear node notes', () => {
+    flowDb.addNote('left', 'A', 'note text');
+
+    flowDb.clear();
+
+    expect(flowDb.getNotes()).toEqual([]);
   });
 });
 

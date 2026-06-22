@@ -608,6 +608,42 @@ flowchart TD
   A@{ img: "https://mermaid.js.org/favicon.svg", label: "My example image label", pos: "t", h: 60, constraint: "on" }
 ```
 
+## Node notes (v<MERMAID_RELEASE_VERSION>+)
+
+You can attach a note to a flowchart node by using a `note ... of ...` block. Notes are rendered next to the target node and do not add layout nodes or edges to the graph.
+
+Supported placements are `right`, `left`, `top`, and `bottom`.
+
+```mermaid-example
+flowchart TD
+    A[Start] --> B[Process]
+    B --> C[Done]
+
+    note right of A
+      Input assumptions
+    end note
+
+    note left of B
+      Internal state:
+      cache enabled
+    end note
+
+    note bottom of C
+      Final result
+    end note
+```
+
+The same syntax is also available when using `graph` instead of `flowchart`.
+
+```mermaid-example
+graph LR
+    A[A] --> B[B]
+
+    note top of A
+      graph note
+    end note
+```
+
 ## Links between nodes
 
 Nodes can be connected with links/edges. It is possible to have different types of links or attach a text string to a link.

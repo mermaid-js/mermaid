@@ -182,6 +182,14 @@ export interface Edge {
   isLayoutOnly?: boolean;
 }
 
+export type NodeNotePosition = 'left' | 'right' | 'top' | 'bottom';
+
+export interface NodeNote {
+  target: string;
+  position: NodeNotePosition;
+  text: string;
+}
+
 export interface RectOptions {
   rx: number;
   ry: number;
@@ -203,6 +211,7 @@ export type ClassDiagramNode = Node & {
 export interface LayoutData {
   nodes: Node[];
   edges: Edge[];
+  notes?: NodeNote[];
   config: MermaidConfig;
   diagramId?: string;
   [key: string]: any; // Additional properties not yet defined

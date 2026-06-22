@@ -14,6 +14,8 @@ export interface FlowChartStyleOptions {
   mainBkg: string;
   nodeBorder: string;
   nodeTextColor: string;
+  noteBkgColor: string;
+  noteTextColor: string;
   tertiaryColor: string;
   textColor: string;
   titleColor: string;
@@ -153,6 +155,16 @@ const getStyles = (options: FlowChartStyleOptions) =>
     text-anchor: middle;
     font-size: 18px;
     fill: ${options.textColor};
+  }
+
+  .flowchart-note-background {
+    fill: ${options.noteBkgColor};
+    stroke: none;
+  }
+
+  .flowchart-note-text, .flowchart-note-text > tspan {
+    fill: ${options.noteTextColor};
+    stroke: none;
   }
 
   rect.text {

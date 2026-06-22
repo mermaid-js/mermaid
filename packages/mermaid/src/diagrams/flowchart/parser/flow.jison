@@ -26,6 +26,8 @@
 %x shapeData
 %x shapeDataStr
 %x shapeDataEndBracket
+%x flowNoteId
+%x flowNoteText
 
 %%
 accTitle\s*":"\s*                               { this.begin("acc_title");return 'acc_title'; }
@@ -112,6 +114,17 @@ that id.
 "click"[\s]+             this.begin("click");
 <click>[\s\n]            this.popState();
 <click>[^\s\n]*          return 'CLICK';
+
+"note"[ \t]+"left"[ \t]+"of"[ \t]+    { this.begin("flowNoteId"); return 'NOTE_LEFT_OF'; }
+"note"[ \t]+"right"[ \t]+"of"[ \t]+   { this.begin("flowNoteId"); return 'NOTE_RIGHT_OF'; }
+"note"[ \t]+"top"[ \t]+"of"[ \t]+     { this.begin("flowNoteId"); return 'NOTE_TOP_OF'; }
+"note"[ \t]+"bottom"[ \t]+"of"[ \t]+  { this.begin("flowNoteId"); return 'NOTE_BOTTOM_OF'; }
+<flowNoteId>[^\n]+                    { this.popState(); this.begin("flowNoteText"); return 'NOTE_TARGET'; }
+<flowNoteText>[\s\S]*?\n[ \t]*"end note"[ \t]* {
+                                          this.popState();
+                                          yytext = yytext.replace(/\n[ \t]*end note[ \t]*$/, '');
+                                          return 'NOTE_TEXT';
+                                      }
 
 "flowchart-elk"          {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "swimlane"               {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
@@ -367,6 +380,8 @@ spaceList
 statement
     : vertexStatement separator
     { $$=$vertexStatement.nodes}
+    | noteStatement separator
+    {$$=[];}
     | styleStatement separator
     {$$=[];}
     | linkStyleStatement separator
@@ -392,6 +407,22 @@ statement
     ;
 
 separator: NEWLINE | SEMI | EOF ;
+
+noteStatement
+    : notePosition NOTE_TARGET NOTE_TEXT
+    { yy.addNote($notePosition, $NOTE_TARGET, $NOTE_TEXT); $$=[]; }
+    ;
+
+notePosition
+    : NOTE_LEFT_OF
+    { $$='left'; }
+    | NOTE_RIGHT_OF
+    { $$='right'; }
+    | NOTE_TOP_OF
+    { $$='top'; }
+    | NOTE_BOTTOM_OF
+    { $$='bottom'; }
+    ;
 
 shapeData:
     shapeData SHAPE_DATA

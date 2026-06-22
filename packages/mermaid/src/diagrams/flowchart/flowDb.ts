@@ -22,6 +22,7 @@ import type {
   FlowClass,
   FlowEdge,
   FlowLink,
+  FlowNote,
   FlowSubGraph,
   FlowText,
   FlowVertex,
@@ -41,6 +42,7 @@ export class FlowDB implements DiagramDB {
   private diagramId = '';
   private vertices = new Map<string, FlowVertex>();
   private edges: FlowEdge[] & { defaultInterpolate?: string; defaultStyle?: string[] } = [];
+  private notes: FlowNote[] = [];
   private classes = new Map<string, FlowClass>();
   private subGraphs: FlowSubGraph[] = [];
   private subGraphLookup = new Map<string, FlowSubGraph>();
@@ -63,6 +65,7 @@ export class FlowDB implements DiagramDB {
     this.firstGraph = this.firstGraph.bind(this);
     this.setDirection = this.setDirection.bind(this);
     this.addSubGraph = this.addSubGraph.bind(this);
+    this.addNote = this.addNote.bind(this);
     this.addLink = this.addLink.bind(this);
     this.setLink = this.setLink.bind(this);
     this.updateLink = this.updateLink.bind(this);
@@ -594,6 +597,38 @@ You have to call mermaid.initialize.`
     return this.edges;
   }
 
+  public addNote(position: FlowNote['position'], target: string, text: string) {
+    const normalizedText = this.normalizeNoteText(text);
+    this.notes.push({
+      position,
+      target: target.trim(),
+      text: this.sanitizeText(normalizedText),
+    });
+  }
+
+  private normalizeNoteText(text: string) {
+    const lines = text.replace(/\r\n/g, '\n').split('\n');
+
+    while (lines.length > 0 && lines[0].trim() === '') {
+      lines.shift();
+    }
+    while (lines.length > 0 && lines[lines.length - 1].trim() === '') {
+      lines.pop();
+    }
+
+    const getIndentLength = (line: string) => /^[\t ]*/.exec(line)?.[0].length ?? 0;
+    const indents = lines
+      .filter((line) => line.trim().length > 0)
+      .map((line) => getIndentLength(line));
+    const indent = indents.length > 0 ? Math.min(...indents) : 0;
+
+    return lines.map((line) => line.slice(Math.min(indent, getIndentLength(line)))).join('\n');
+  }
+
+  public getNotes() {
+    return [...this.notes];
+  }
+
   /**
    * Retrieval function for fetching the found class definitions after parsing has completed.
    *
@@ -642,6 +677,7 @@ You have to call mermaid.initialize.`
     this.vertices = new Map();
     this.classes = new Map();
     this.edges = [];
+    this.notes = [];
     this.funs = [this.setupToolTips.bind(this)];
     this.diagramId = '';
     this.subGraphs = [];
@@ -1181,7 +1217,7 @@ You have to call mermaid.initialize.`
       edges.push(edge);
     });
 
-    return { nodes, edges, other: {}, config };
+    return { nodes, edges, notes: this.getNotes(), other: {}, config };
   }
 
   public defaultConfig() {
