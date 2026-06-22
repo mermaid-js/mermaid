@@ -5,16 +5,14 @@
  * sharp-backed compositing so the grouping/ordering rules can be unit-tested
  * without images.
  *
- * CLI usage:
- *   pnpm run screenshots:sheets
- *   SCREENSHOT_DIR=cypress/screenshots SHEETS_DIR=cypress/sheets
- *     TILES_PER_SHEET=12 SHEET_COLS=3 SHEET_SCALE=2
- *     TILE_WIDTH=1440 TILE_IMAGE_HEIGHT=1024 pnpm run screenshots:sheets
+ * CLI: `pnpm screenshots sheets` (build) and `pnpm screenshots order [--check]`
+ * (regenerate/verify the order manifest) — see scripts/screenshots.ts.
+ * Env: SCREENSHOT_DIR, SHEETS_DIR, SHEET_ORDER_FILE, TILES_PER_SHEET, SHEET_COLS,
+ * SHEET_SCALE, TILE_WIDTH, TILE_IMAGE_HEIGHT, SHEET_CONCURRENCY.
  */
 
 import { readdir, mkdir, writeFile, readFile } from 'node:fs/promises';
 import { join, dirname, relative, sep } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 
 // Matches a Cypress spec-file path segment: foo.spec.js / foo.spec.ts / .cjs / .mts
@@ -187,8 +185,7 @@ function getGridBuffer(
  * New screenshots append to the tail of their group, so adding a test only
  * re-tiles that group's last sheet instead of shifting every following tile
  * across sheet boundaries (the alphabetical-sort blast radius). Maintained in
- * git via `pnpm run screenshots:order` and verified in CI — see
- * scripts/screenshot-sheet-order.ts.
+ * git via `pnpm screenshots order` and verified in CI (`order --check`).
  */
 export type OrderManifest = Record<string, string[]>;
 
@@ -470,8 +467,23 @@ export async function writeSheets(plans: Sheet[], options: WriteSheetsOptions): 
   }
 }
 
-async function main(): Promise<void> {
-  const inputDir = process.env.SCREENSHOT_DIR ?? 'cypress/screenshots';
+const SCREENSHOT_DIR = process.env.SCREENSHOT_DIR ?? 'cypress/screenshots';
+const SHEET_ORDER_FILE = process.env.SHEET_ORDER_FILE ?? 'cypress/sheet-order.json';
+
+/** Reads the committed order manifest, or an empty manifest when it doesn't exist yet. */
+async function readOrderManifest(): Promise<OrderManifest> {
+  try {
+    return JSON.parse(await readFile(SHEET_ORDER_FILE, 'utf8')) as OrderManifest;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      return {};
+    }
+    throw error;
+  }
+}
+
+/** Composites the captured screenshots into sheets, ordered by the committed manifest. */
+export async function buildSheets(): Promise<void> {
   const outDir = process.env.SHEETS_DIR ?? 'cypress/sheets';
   const tilesPerSheet = Number(process.env.TILES_PER_SHEET ?? 12);
   const cols = Number(process.env.SHEET_COLS ?? 3);
@@ -480,25 +492,56 @@ async function main(): Promise<void> {
   const tileImageHeight = Number(process.env.TILE_IMAGE_HEIGHT ?? DEFAULT_TILE_IMAGE_HEIGHT);
   const concurrency = Number(process.env.SHEET_CONCURRENCY ?? DEFAULT_SHEET_CONCURRENCY);
 
-  const orderFile = process.env.SHEET_ORDER_FILE ?? 'cypress/sheet-order.json';
-  let order: OrderManifest = {};
-  try {
-    order = JSON.parse(await readFile(orderFile, 'utf8')) as OrderManifest;
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
-      throw error;
-    }
-    // No committed manifest yet — fall back to alphabetical order (pre-manifest behavior).
-  }
-
-  const relPaths = await collectScreenshots(inputDir);
+  const order = await readOrderManifest();
+  const relPaths = await collectScreenshots(SCREENSHOT_DIR);
   const plans = planSheets(relPaths, { tilesPerSheet, cols, order });
-  await writeSheets(plans, { inputDir, outDir, scale, tileWidth, tileImageHeight, concurrency });
+  await writeSheets(plans, {
+    inputDir: SCREENSHOT_DIR,
+    outDir,
+    scale,
+    tileWidth,
+    tileImageHeight,
+    concurrency,
+  });
   process.stdout.write(
-    `[screenshot-sheets] ${relPaths.length} screenshots → ${plans.length} sheets in ${outDir}\n`
+    `[screenshots] ${relPaths.length} screenshots → ${plans.length} sheets in ${outDir}\n`
   );
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  void main();
+/**
+ * Regenerates the committed order manifest from the captured screenshots
+ * (append-only: keeps existing order, appends new, drops removed). With
+ * `check: true`, instead fails if any captured screenshot is missing from the
+ * manifest — scope-tolerant, so it only validates the groups this run captured.
+ */
+export async function regenerateOrder({ check = false }: { check?: boolean } = {}): Promise<void> {
+  const relPaths = await collectScreenshots(SCREENSHOT_DIR);
+  const previous = await readOrderManifest();
+
+  if (check) {
+    const missing = findUnordered(relPaths, previous);
+    const count = Object.values(missing).reduce((n, list) => n + list.length, 0);
+    if (count > 0) {
+      process.stderr.write(
+        `[screenshots] ${count} screenshot(s) are missing from ${SHEET_ORDER_FILE}:\n` +
+          Object.entries(missing)
+            .map(([group, list]) => `  ${group}:\n${list.map((r) => `    ${r}`).join('\n')}`)
+            .join('\n') +
+          `\n\nRun \`pnpm screenshots order\` after capturing screenshots and commit ${SHEET_ORDER_FILE}.\n`
+      );
+      process.exitCode = 1;
+      return;
+    }
+    process.stdout.write(
+      `[screenshots] ${SHEET_ORDER_FILE} is in sync (${relPaths.length} screenshots checked).\n`
+    );
+    return;
+  }
+
+  const next = updateOrder(relPaths, previous);
+  await writeFile(SHEET_ORDER_FILE, JSON.stringify(next, null, 2) + '\n');
+  const total = Object.values(next).reduce((n, list) => n + list.length, 0);
+  process.stdout.write(
+    `[screenshots] wrote ${SHEET_ORDER_FILE} (${total} tiles across ${Object.keys(next).length} groups).\n`
+  );
 }

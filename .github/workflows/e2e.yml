@@ -362,20 +362,20 @@ jobs:
       # under its spec's true cypress/integration path so names are deterministic
       # across runs — otherwise the same diagram churns the Argos baseline.
       - name: Canonicalize screenshot paths
-        run: pnpm run screenshots:canonicalize
+        run: pnpm screenshots canonicalize
 
       # The batcher tiles screenshots into composite sheets in the committed order
       # (cypress/sheet-order.json). New tests must be appended to that manifest in
       # the same PR — otherwise they shift later tiles across sheets and churn many
       # sheets in the diff. Fail here if any captured screenshot is missing from
       # the manifest (scope-tolerant: only checks the groups this run captured).
-      # Fix: `pnpm run screenshots:order` and commit.
+      # Fix: `pnpm screenshots order` and commit.
       - name: Verify sheet order is up to date
-        run: pnpm run screenshots:order --check
+        run: pnpm screenshots order --check
 
       - name: Build composite sheets
         if: env.GROUP_ARGOS_IMAGES == 'true'
-        run: pnpm run screenshots:sheets
+        run: pnpm screenshots sheets
 
       # Baseline branch (develop): merge the grouped sheets and the individual
       # screenshots into one tree and upload them as a SINGLE Argos build. The CLI
