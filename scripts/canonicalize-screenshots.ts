@@ -17,18 +17,16 @@
  * screenshots are unchanged and the one-time churn is limited to the stripped
  * ones.
  *
- * CLI usage:
- *   pnpm run argos:canonicalize
- *   ARGOS_SCREENSHOT_DIR=cypress/screenshots ARGOS_INTEGRATION_DIR=cypress/integration
- *     pnpm run argos:canonicalize
+ * CLI: `pnpm screenshots canonicalize` (see scripts/screenshots.ts).
+ * Env: SCREENSHOT_DIR (default cypress/screenshots), INTEGRATION_DIR
+ * (default cypress/integration).
  */
 
 import { readdir, rename, mkdir } from 'node:fs/promises';
 import { join, dirname, relative, sep } from 'node:path';
-import { fileURLToPath } from 'node:url';
 
-const SCREENSHOT_DIR = process.env.ARGOS_SCREENSHOT_DIR ?? 'cypress/screenshots';
-const INTEGRATION_DIR = process.env.ARGOS_INTEGRATION_DIR ?? 'cypress/integration';
+const SCREENSHOT_DIR = process.env.SCREENSHOT_DIR ?? 'cypress/screenshots';
+const INTEGRATION_DIR = process.env.INTEGRATION_DIR ?? 'cypress/integration';
 
 const SPEC_SEGMENT_RE = /\.spec\.[cm]?[jt]s$/;
 /** Cypress saves argosScreenshot files under an `argos/` namespace inside the spec folder. */
@@ -99,7 +97,7 @@ async function listFiles(dir: string): Promise<string[]> {
     );
 }
 
-async function main(): Promise<void> {
+export async function canonicalizeScreenshots(): Promise<void> {
   const specPathByBasename = await buildSpecMap(INTEGRATION_DIR);
   const files = await listFiles(SCREENSHOT_DIR);
 
@@ -116,10 +114,6 @@ async function main(): Promise<void> {
     moved++;
   }
   process.stdout.write(
-    `[argos-canonicalize] ${files.length} files, ${moved} re-rooted to their canonical spec path\n`
+    `[canonicalize-screenshots] ${files.length} files, ${moved} re-rooted to their canonical spec path\n`
   );
-}
-
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  void main();
 }

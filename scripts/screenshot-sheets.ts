@@ -1,19 +1,18 @@
 /**
- * Batches per-test Cypress screenshots into composite "sheets" for Argos,
- * grouping by diagram folder so a new test in one diagram never alters another
- * diagram's sheets. Pure planning is separated from sharp-backed compositing so
- * the grouping/ordering rules can be unit-tested without images.
+ * Batches per-test Cypress screenshots into composite "sheets" (later uploaded
+ * to Argos by a separate step), grouping by diagram folder so a new test in one
+ * diagram never alters another diagram's sheets. Pure planning is separated from
+ * sharp-backed compositing so the grouping/ordering rules can be unit-tested
+ * without images.
  *
- * CLI usage:
- *   pnpm run argos:batch
- *   ARGOS_SCREENSHOT_DIR=cypress/screenshots ARGOS_SHEETS_DIR=cypress/argos-sheets
- *     ARGOS_TILES_PER_SHEET=12 ARGOS_SHEET_COLS=3 ARGOS_SHEET_SCALE=2
- *     ARGOS_TILE_WIDTH=1440 ARGOS_TILE_IMAGE_HEIGHT=1024 pnpm run argos:batch
+ * CLI: `pnpm screenshots sheets` (build) and `pnpm screenshots order [--check]`
+ * (regenerate/verify the order manifest) — see scripts/screenshots.ts.
+ * Env: SCREENSHOT_DIR, SHEETS_DIR, SHEET_ORDER_FILE, TILES_PER_SHEET, SHEET_COLS,
+ * SHEET_SCALE, TILE_WIDTH, TILE_IMAGE_HEIGHT, SHEET_CONCURRENCY.
  */
 
-import { readdir, mkdir, writeFile } from 'node:fs/promises';
+import { readdir, mkdir, writeFile, readFile } from 'node:fs/promises';
 import { join, dirname, relative, sep } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 
 // Matches a Cypress spec-file path segment: foo.spec.js / foo.spec.ts / .cjs / .mts
@@ -70,6 +69,12 @@ export interface Tile {
   col: number;
   name: string;
   source: string;
+  /**
+   * The manifest places this tile but its screenshot wasn't captured (a removed
+   * test whose spec still ran). It keeps its grid slot — rendered as a blank
+   * cell — so removing a test doesn't shift every following tile across sheets.
+   */
+  missing?: boolean;
 }
 
 /** Cypress screenshot names use hyphens instead of spaces; restore for display. */
@@ -180,9 +185,113 @@ function getGridBuffer(
   return buffer;
 }
 
+/**
+ * Committed tile order, keyed by diagram-group. Each value lists that group's
+ * screenshot sources (relative to the group key) in their canonical sheet order.
+ * New screenshots append to the tail of their group, so adding a test only
+ * re-tiles that group's last sheet instead of shifting every following tile
+ * across sheet boundaries (the alphabetical-sort blast radius). Maintained in
+ * git via `pnpm screenshots order` and verified in CI (`order --check`).
+ */
+export type OrderManifest = Record<string, string[]>;
+
 export interface PlanSheetsOptions {
   tilesPerSheet?: number;
   cols?: number;
+  /** Canonical per-group tile order. Sources absent here sort to the tail. */
+  order?: OrderManifest;
+}
+
+/** Source path with its group-key prefix removed (the form stored in the manifest). */
+function groupRelative(source: string, groupKey: string): string {
+  return groupKey && source.startsWith(`${groupKey}/`) ? source.slice(groupKey.length + 1) : source;
+}
+
+/** The spec-file prefix of a source (up to and including the `*.spec.*` segment). */
+function specOf(source: string): string {
+  const parts = source.split('/');
+  const specIdx = parts.findIndex((p) => SPEC_SEGMENT_RE.test(p));
+  return specIdx === -1 ? parts.slice(0, -1).join('/') : parts.slice(0, specIdx + 1).join('/');
+}
+
+/** A slot in a group's layout: a captured screenshot, or a blank placeholder. */
+interface TileSlot {
+  source: string;
+  missing: boolean;
+}
+
+/**
+ * Lays out a group's tiles in committed-manifest order:
+ *  - manifest sources still present keep their slot;
+ *  - manifest sources absent but whose spec DID run (a removed test) keep their
+ *    slot as a blank placeholder, so removal doesn't shift later tiles;
+ *  - manifest sources whose spec didn't run this time are dropped (scoped runs);
+ *  - present sources not in the manifest append at the tail, sorted.
+ * Without a manifest for the group, falls back to plain alphabetical order.
+ */
+function layoutGroup(sources: string[], groupKey: string, order?: OrderManifest): TileSlot[] {
+  const canonical = order?.[groupKey];
+  if (!canonical) {
+    return [...sources].sort().map((source) => ({ source, missing: false }));
+  }
+  const presentSet = new Set(sources);
+  const activeSpecs = new Set(sources.map(specOf));
+  const canonicalSet = new Set(canonical);
+
+  const slots: TileSlot[] = [];
+  for (const rel of canonical) {
+    const source = `${groupKey}/${rel}`;
+    if (presentSet.has(source)) {
+      slots.push({ source, missing: false });
+    } else if (activeSpecs.has(specOf(source))) {
+      slots.push({ source, missing: true }); // removed test — keep the slot blank
+    }
+    // else: the spec didn't run this time (scoped) — drop it, no placeholder.
+  }
+  const appended = sources
+    .filter((s) => !canonicalSet.has(groupRelative(s, groupKey)))
+    .sort()
+    .map((source) => ({ source, missing: false }));
+  return [...slots, ...appended];
+}
+
+/**
+ * Recomputes the manifest from the screenshots currently present: each group
+ * keeps its committed order (for sources still present) then appends newly-seen
+ * sources, sorted. Removed sources drop out. Pure and deterministic.
+ */
+export function updateOrder(relPaths: string[], previous: OrderManifest = {}): OrderManifest {
+  const present = new Map<string, string[]>();
+  for (const p of relPaths) {
+    const key = deriveGroupKey(p);
+    (present.get(key) ?? present.set(key, []).get(key)!).push(groupRelative(p, key));
+  }
+  const next: OrderManifest = {};
+  for (const key of [...present.keys()].sort()) {
+    const here = new Set(present.get(key));
+    const kept = (previous[key] ?? []).filter((rel) => here.has(rel));
+    const keptSet = new Set(kept);
+    const added = [...here].filter((rel) => !keptSet.has(rel)).sort();
+    next[key] = [...kept, ...added];
+  }
+  return next;
+}
+
+/**
+ * Sources present on disk but missing from the committed manifest, grouped by
+ * key. Non-empty means a PR added/renamed visual tests without refreshing the
+ * order manifest — CI uses this to fail with an actionable message.
+ */
+export function findUnordered(relPaths: string[], order: OrderManifest): OrderManifest {
+  const missing: OrderManifest = {};
+  for (const p of relPaths) {
+    const key = deriveGroupKey(p);
+    const rel = groupRelative(p, key);
+    if (!(order[key] ?? []).includes(rel)) {
+      (missing[key] ?? (missing[key] = [])).push(rel);
+    }
+  }
+  return missing;
 }
 
 export interface ComposeSheetOptions {
@@ -236,10 +345,10 @@ export function planSheets(relPaths: string[], options: PlanSheetsOptions = {}):
 
   const sheets: Sheet[] = [];
   for (const key of [...groups.keys()].sort()) {
-    const tiles = [...(groups.get(key) ?? [])].sort();
+    const slots = layoutGroup(groups.get(key) ?? [], key, options.order);
     const basename = key.split('/').pop() ?? 'sheet';
-    for (let start = 0; start < tiles.length; start += tilesPerSheet) {
-      const chunk = tiles.slice(start, start + tilesPerSheet);
+    for (let start = 0; start < slots.length; start += tilesPerSheet) {
+      const chunk = slots.slice(start, start + tilesPerSheet);
       const index = start / tilesPerSheet;
       const output = `${key}/${basename}-${String(index + 1).padStart(3, '0')}.png`;
       sheets.push({
@@ -247,7 +356,7 @@ export function planSheets(relPaths: string[], options: PlanSheetsOptions = {}):
         index,
         output,
         cols,
-        tiles: chunk.map((source, i) => ({
+        tiles: chunk.map(({ source, missing }, i) => ({
           index: i,
           row: Math.floor(i / cols),
           col: i % cols,
@@ -257,6 +366,7 @@ export function planSheets(relPaths: string[], options: PlanSheetsOptions = {}):
               .pop()
               ?.replace(/\.png$/, '') ?? '',
           source,
+          missing,
         })),
       });
     }
@@ -298,38 +408,48 @@ export async function composeSheet(
   const gridLineWidth = scaled(GRID_LINE_WIDTH, scale);
   const rows = Math.max(...plan.tiles.map((t) => t.row)) + 1;
 
+  // Missing tiles (manifest slot with no captured screenshot) render as a blank
+  // cell — only the label, no image — so the slot is preserved without churn.
   const tileBuffers = await Promise.all(
     plan.tiles.map((t) =>
-      sharp(join(inputDir, t.source))
-        .resize(cellWidth, imageHeight, {
-          fit: 'inside',
-          kernel: sharp.kernel.lanczos3,
-        })
-        .png({ compressionLevel: INTERMEDIATE_PNG_COMPRESSION })
-        .toBuffer()
+      t.missing
+        ? Promise.resolve(null)
+        : sharp(join(inputDir, t.source))
+            .resize(cellWidth, imageHeight, {
+              fit: 'inside',
+              kernel: sharp.kernel.lanczos3,
+            })
+            .png({ compressionLevel: INTERMEDIATE_PNG_COMPRESSION })
+            .toBuffer()
     )
   );
 
   // Label SVGs are composited directly; sharp rasterizes them in the sheet
   // pipeline, avoiding a per-tile PNG encode + decode round-trip.
-  const composites = plan.tiles.flatMap((t, i) => [
-    {
-      input: createLabelSvg(
-        formatTileTitle(t.name),
-        cellWidth,
-        labelHeight,
-        labelFontSize,
-        labelPadding
-      ),
-      left: t.col * cellWidth,
-      top: t.row * cellHeight,
-    },
-    {
-      input: tileBuffers[i],
-      left: t.col * cellWidth,
-      top: t.row * cellHeight + labelHeight,
-    },
-  ]);
+  const composites = plan.tiles.flatMap((t, i) => {
+    const parts: sharp.OverlayOptions[] = [
+      {
+        input: createLabelSvg(
+          formatTileTitle(t.name),
+          cellWidth,
+          labelHeight,
+          labelFontSize,
+          labelPadding
+        ),
+        left: t.col * cellWidth,
+        top: t.row * cellHeight,
+      },
+    ];
+    const tileBuffer = tileBuffers[i];
+    if (tileBuffer) {
+      parts.push({
+        input: tileBuffer,
+        left: t.col * cellWidth,
+        top: t.row * cellHeight + labelHeight,
+      });
+    }
+    return parts;
+  });
 
   const sheetWidth = cellWidth * cols;
   const sheetHeight = cellHeight * rows;
@@ -368,6 +488,7 @@ export async function composeSheet(
       col: t.col,
       name: t.name,
       source: t.source,
+      missing: t.missing,
       title: formatTileTitle(t.name),
     })),
   };
@@ -395,24 +516,81 @@ export async function writeSheets(plans: Sheet[], options: WriteSheetsOptions): 
   }
 }
 
-async function main(): Promise<void> {
-  const inputDir = process.env.ARGOS_SCREENSHOT_DIR ?? 'cypress/screenshots';
-  const outDir = process.env.ARGOS_SHEETS_DIR ?? 'cypress/argos-sheets';
-  const tilesPerSheet = Number(process.env.ARGOS_TILES_PER_SHEET ?? 12);
-  const cols = Number(process.env.ARGOS_SHEET_COLS ?? 3);
-  const scale = Number(process.env.ARGOS_SHEET_SCALE ?? DEFAULT_SHEET_SCALE);
-  const tileWidth = Number(process.env.ARGOS_TILE_WIDTH ?? DEFAULT_TILE_WIDTH);
-  const tileImageHeight = Number(process.env.ARGOS_TILE_IMAGE_HEIGHT ?? DEFAULT_TILE_IMAGE_HEIGHT);
-  const concurrency = Number(process.env.ARGOS_SHEET_CONCURRENCY ?? DEFAULT_SHEET_CONCURRENCY);
+const SCREENSHOT_DIR = process.env.SCREENSHOT_DIR ?? 'cypress/screenshots';
+const SHEET_ORDER_FILE = process.env.SHEET_ORDER_FILE ?? 'cypress/sheet-order.json';
 
-  const relPaths = await collectScreenshots(inputDir);
-  const plans = planSheets(relPaths, { tilesPerSheet, cols });
-  await writeSheets(plans, { inputDir, outDir, scale, tileWidth, tileImageHeight, concurrency });
+/** Reads the committed order manifest, or an empty manifest when it doesn't exist yet. */
+async function readOrderManifest(): Promise<OrderManifest> {
+  try {
+    return JSON.parse(await readFile(SHEET_ORDER_FILE, 'utf8')) as OrderManifest;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      return {};
+    }
+    throw error;
+  }
+}
+
+/** Composites the captured screenshots into sheets, ordered by the committed manifest. */
+export async function buildSheets(): Promise<void> {
+  const outDir = process.env.SHEETS_DIR ?? 'cypress/sheets';
+  const tilesPerSheet = Number(process.env.TILES_PER_SHEET ?? 12);
+  const cols = Number(process.env.SHEET_COLS ?? 3);
+  const scale = Number(process.env.SHEET_SCALE ?? DEFAULT_SHEET_SCALE);
+  const tileWidth = Number(process.env.TILE_WIDTH ?? DEFAULT_TILE_WIDTH);
+  const tileImageHeight = Number(process.env.TILE_IMAGE_HEIGHT ?? DEFAULT_TILE_IMAGE_HEIGHT);
+  const concurrency = Number(process.env.SHEET_CONCURRENCY ?? DEFAULT_SHEET_CONCURRENCY);
+
+  const order = await readOrderManifest();
+  const relPaths = await collectScreenshots(SCREENSHOT_DIR);
+  const plans = planSheets(relPaths, { tilesPerSheet, cols, order });
+  await writeSheets(plans, {
+    inputDir: SCREENSHOT_DIR,
+    outDir,
+    scale,
+    tileWidth,
+    tileImageHeight,
+    concurrency,
+  });
   process.stdout.write(
-    `[argos-batch] ${relPaths.length} screenshots → ${plans.length} sheets in ${outDir}\n`
+    `[screenshots] ${relPaths.length} screenshots → ${plans.length} sheets in ${outDir}\n`
   );
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  void main();
+/**
+ * Regenerates the committed order manifest from the captured screenshots
+ * (append-only: keeps existing order, appends new, drops removed). With
+ * `check: true`, instead fails if any captured screenshot is missing from the
+ * manifest — scope-tolerant, so it only validates the groups this run captured.
+ */
+export async function regenerateOrder({ check = false }: { check?: boolean } = {}): Promise<void> {
+  const relPaths = await collectScreenshots(SCREENSHOT_DIR);
+  const previous = await readOrderManifest();
+
+  if (check) {
+    const missing = findUnordered(relPaths, previous);
+    const count = Object.values(missing).reduce((n, list) => n + list.length, 0);
+    if (count > 0) {
+      process.stderr.write(
+        `[screenshots] ${count} screenshot(s) are missing from ${SHEET_ORDER_FILE}:\n` +
+          Object.entries(missing)
+            .map(([group, list]) => `  ${group}:\n${list.map((r) => `    ${r}`).join('\n')}`)
+            .join('\n') +
+          `\n\nRun \`pnpm screenshots order\` after capturing screenshots and commit ${SHEET_ORDER_FILE}.\n`
+      );
+      process.exitCode = 1;
+      return;
+    }
+    process.stdout.write(
+      `[screenshots] ${SHEET_ORDER_FILE} is in sync (${relPaths.length} screenshots checked).\n`
+    );
+    return;
+  }
+
+  const next = updateOrder(relPaths, previous);
+  await writeFile(SHEET_ORDER_FILE, JSON.stringify(next, null, 2) + '\n');
+  const total = Object.values(next).reduce((n, list) => n + list.length, 0);
+  process.stdout.write(
+    `[screenshots] wrote ${SHEET_ORDER_FILE} (${total} tiles across ${Object.keys(next).length} groups).\n`
+  );
 }
