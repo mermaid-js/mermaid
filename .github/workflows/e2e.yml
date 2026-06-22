@@ -240,9 +240,10 @@ jobs:
           echo '' >> "$GITHUB_STEP_SUMMARY"
           npx tsx scripts/size.ts >> "$GITHUB_STEP_SUMMARY"
 
-      # Rebuild the served bundle with istanbul instrumentation so the Cypress
-      # run can collect coverage. Gated to runs whose coverage is uploaded.
-      - name: Build instrumented bundle for e2e coverage
+      # Rebuild the served bundle with inline source maps so the Cypress run can
+      # collect native V8 coverage and map it back to source (no instrumentation).
+      # Gated to runs whose coverage is uploaded.
+      - name: Build coverage bundle for e2e coverage
         if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/develop' }}
         run: pnpm build:coverage
 
@@ -317,6 +318,12 @@ jobs:
   # upload them to Argos in a single build. PR / merge-queue runs upload only the
   # sheets; a push to develop additionally uploads the individual screenshots so
   # the baseline is a superset (see ARGOS_UPLOAD_BOTH).
+  #
+  # Only runs when the e2e matrix fully succeeded: a failed/partial e2e run would
+  # otherwise upload an incomplete or wrong set of screenshots — and on develop
+  # that set becomes the baseline. `needs.e2e.result == 'success'` requires every
+  # shard to pass (the matrix is fail-fast: false, so its result is failure if any
+  # shard failed).
   argos-batch:
     if: >-
       ${{
@@ -324,7 +331,7 @@ jobs:
         (github.event_name == 'workflow_dispatch' ||
           (github.event_name != 'pull_request' || !startsWith(github.head_ref, 'renovate/'))) &&
         needs.detect-scope.outputs.spec_pattern != 'SKIP' &&
-        !cancelled()
+        needs.e2e.result == 'success'
       }}
     needs: [detect-scope, e2e]
     runs-on: ubuntu-latest
@@ -348,6 +355,14 @@ jobs:
           pattern: argos-screenshots-*
           merge-multiple: true
           path: cypress/screenshots
+
+      # cypress-split gives each shard a different spec subset, so Cypress names
+      # screenshots relative to that shard's spec common-ancestor (the rendering/
+      # prefix is kept or stripped depending on the mix). Re-root every screenshot
+      # under its spec's true cypress/integration path so names are deterministic
+      # across runs — otherwise the same diagram churns the Argos baseline.
+      - name: Canonicalize screenshot paths
+        run: pnpm run argos:canonicalize
 
       - name: Build composite sheets
         if: env.GROUP_ARGOS_IMAGES == 'true'
