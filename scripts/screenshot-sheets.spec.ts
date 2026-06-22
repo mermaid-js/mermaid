@@ -12,7 +12,7 @@ import {
   LABEL_HEIGHT,
   DEFAULT_TILE_WIDTH,
   DEFAULT_TILE_IMAGE_HEIGHT,
-} from './argos-batch-sheets.ts';
+} from './screenshot-sheets.ts';
 
 const SLOT_WIDTH = 40;
 const SLOT_HEIGHT = 30;
@@ -105,7 +105,7 @@ describe('compositor', () => {
   let dir: string;
 
   beforeAll(async () => {
-    dir = await mkdtemp(join(tmpdir(), 'argos-batch-'));
+    dir = await mkdtemp(join(tmpdir(), 'screenshot-sheets-'));
     const specDir = join(dir, 'rendering/flowchart/flowchart.spec.js');
     await mkdir(specDir, { recursive: true });
     // Three differently-sized solid PNGs.

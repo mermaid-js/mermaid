@@ -362,11 +362,11 @@ jobs:
       # under its spec's true cypress/integration path so names are deterministic
       # across runs — otherwise the same diagram churns the Argos baseline.
       - name: Canonicalize screenshot paths
-        run: pnpm run argos:canonicalize
+        run: pnpm run screenshots:canonicalize
 
       - name: Build composite sheets
         if: env.GROUP_ARGOS_IMAGES == 'true'
-        run: pnpm run argos:batch
+        run: pnpm run screenshots:sheets
 
       # Baseline branch (develop): merge the grouped sheets and the individual
       # screenshots into one tree and upload them as a SINGLE Argos build. The CLI
@@ -391,7 +391,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p cypress/argos-baseline
-          cp -r cypress/argos-sheets/. cypress/argos-baseline/
+          cp -r cypress/sheets/. cypress/argos-baseline/
           cp -r cypress/screenshots/. cypress/argos-baseline/
 
           # Round-robin the leaf directories (those that directly hold images)
@@ -428,7 +428,7 @@ jobs:
         if: env.GROUP_ARGOS_IMAGES == 'true' && env.ARGOS_UPLOAD_BOTH != 'true'
         env:
           ARGOS_SUBSET: true
-        run: npx argos upload cypress/argos-sheets
+        run: npx argos upload cypress/sheets
 
       # Manual per-screenshot runs (workflow_dispatch with group_argos_images=false).
       - name: Upload individual screenshots to Argos

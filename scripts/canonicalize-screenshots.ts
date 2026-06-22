@@ -18,17 +18,17 @@
  * ones.
  *
  * CLI usage:
- *   pnpm run argos:canonicalize
- *   ARGOS_SCREENSHOT_DIR=cypress/screenshots ARGOS_INTEGRATION_DIR=cypress/integration
- *     pnpm run argos:canonicalize
+ *   pnpm run screenshots:canonicalize
+ *   SCREENSHOT_DIR=cypress/screenshots INTEGRATION_DIR=cypress/integration
+ *     pnpm run screenshots:canonicalize
  */
 
 import { readdir, rename, mkdir } from 'node:fs/promises';
 import { join, dirname, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const SCREENSHOT_DIR = process.env.ARGOS_SCREENSHOT_DIR ?? 'cypress/screenshots';
-const INTEGRATION_DIR = process.env.ARGOS_INTEGRATION_DIR ?? 'cypress/integration';
+const SCREENSHOT_DIR = process.env.SCREENSHOT_DIR ?? 'cypress/screenshots';
+const INTEGRATION_DIR = process.env.INTEGRATION_DIR ?? 'cypress/integration';
 
 const SPEC_SEGMENT_RE = /\.spec\.[cm]?[jt]s$/;
 /** Cypress saves argosScreenshot files under an `argos/` namespace inside the spec folder. */
@@ -116,7 +116,7 @@ async function main(): Promise<void> {
     moved++;
   }
   process.stdout.write(
-    `[argos-canonicalize] ${files.length} files, ${moved} re-rooted to their canonical spec path\n`
+    `[canonicalize-screenshots] ${files.length} files, ${moved} re-rooted to their canonical spec path\n`
   );
 }
 

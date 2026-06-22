@@ -1,14 +1,15 @@
 /**
- * Batches per-test Cypress screenshots into composite "sheets" for Argos,
- * grouping by diagram folder so a new test in one diagram never alters another
- * diagram's sheets. Pure planning is separated from sharp-backed compositing so
- * the grouping/ordering rules can be unit-tested without images.
+ * Batches per-test Cypress screenshots into composite "sheets" (later uploaded
+ * to Argos by a separate step), grouping by diagram folder so a new test in one
+ * diagram never alters another diagram's sheets. Pure planning is separated from
+ * sharp-backed compositing so the grouping/ordering rules can be unit-tested
+ * without images.
  *
  * CLI usage:
- *   pnpm run argos:batch
- *   ARGOS_SCREENSHOT_DIR=cypress/screenshots ARGOS_SHEETS_DIR=cypress/argos-sheets
- *     ARGOS_TILES_PER_SHEET=12 ARGOS_SHEET_COLS=3 ARGOS_SHEET_SCALE=2
- *     ARGOS_TILE_WIDTH=1440 ARGOS_TILE_IMAGE_HEIGHT=1024 pnpm run argos:batch
+ *   pnpm run screenshots:sheets
+ *   SCREENSHOT_DIR=cypress/screenshots SHEETS_DIR=cypress/sheets
+ *     TILES_PER_SHEET=12 SHEET_COLS=3 SHEET_SCALE=2
+ *     TILE_WIDTH=1440 TILE_IMAGE_HEIGHT=1024 pnpm run screenshots:sheets
  */
 
 import { readdir, mkdir, writeFile } from 'node:fs/promises';
@@ -396,20 +397,20 @@ export async function writeSheets(plans: Sheet[], options: WriteSheetsOptions): 
 }
 
 async function main(): Promise<void> {
-  const inputDir = process.env.ARGOS_SCREENSHOT_DIR ?? 'cypress/screenshots';
-  const outDir = process.env.ARGOS_SHEETS_DIR ?? 'cypress/argos-sheets';
-  const tilesPerSheet = Number(process.env.ARGOS_TILES_PER_SHEET ?? 12);
-  const cols = Number(process.env.ARGOS_SHEET_COLS ?? 3);
-  const scale = Number(process.env.ARGOS_SHEET_SCALE ?? DEFAULT_SHEET_SCALE);
-  const tileWidth = Number(process.env.ARGOS_TILE_WIDTH ?? DEFAULT_TILE_WIDTH);
-  const tileImageHeight = Number(process.env.ARGOS_TILE_IMAGE_HEIGHT ?? DEFAULT_TILE_IMAGE_HEIGHT);
-  const concurrency = Number(process.env.ARGOS_SHEET_CONCURRENCY ?? DEFAULT_SHEET_CONCURRENCY);
+  const inputDir = process.env.SCREENSHOT_DIR ?? 'cypress/screenshots';
+  const outDir = process.env.SHEETS_DIR ?? 'cypress/sheets';
+  const tilesPerSheet = Number(process.env.TILES_PER_SHEET ?? 12);
+  const cols = Number(process.env.SHEET_COLS ?? 3);
+  const scale = Number(process.env.SHEET_SCALE ?? DEFAULT_SHEET_SCALE);
+  const tileWidth = Number(process.env.TILE_WIDTH ?? DEFAULT_TILE_WIDTH);
+  const tileImageHeight = Number(process.env.TILE_IMAGE_HEIGHT ?? DEFAULT_TILE_IMAGE_HEIGHT);
+  const concurrency = Number(process.env.SHEET_CONCURRENCY ?? DEFAULT_SHEET_CONCURRENCY);
 
   const relPaths = await collectScreenshots(inputDir);
   const plans = planSheets(relPaths, { tilesPerSheet, cols });
   await writeSheets(plans, { inputDir, outDir, scale, tileWidth, tileImageHeight, concurrency });
   process.stdout.write(
-    `[argos-batch] ${relPaths.length} screenshots → ${plans.length} sheets in ${outDir}\n`
+    `[screenshot-sheets] ${relPaths.length} screenshots → ${plans.length} sheets in ${outDir}\n`
   );
 }
 

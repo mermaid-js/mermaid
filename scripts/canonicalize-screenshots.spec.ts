@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, it, expect } from 'vitest';
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { canonicalScreenshotPath, buildSpecMap } from './argos-canonicalize-screenshots.ts';
+import { canonicalScreenshotPath, buildSpecMap } from './canonicalize-screenshots.ts';
 
 const specMap = new Map<string, string>([
   ['stateDiagram.spec.js', 'rendering/state/stateDiagram.spec.js'],
@@ -65,7 +65,7 @@ describe('canonicalScreenshotPath', () => {
 describe('buildSpecMap', () => {
   let dir: string;
   beforeAll(async () => {
-    dir = await mkdtemp(join(tmpdir(), 'argos-specmap-'));
+    dir = await mkdtemp(join(tmpdir(), 'canonicalize-specmap-'));
     await mkdir(join(dir, 'rendering/state'), { recursive: true });
     await writeFile(join(dir, 'rendering/state/stateDiagram.spec.js'), '');
     await mkdir(join(dir, 'other'), { recursive: true });
