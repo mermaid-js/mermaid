@@ -200,6 +200,42 @@ describe('Entity Relationship Diagram', () => {
     );
   });
 
+  it('should render entities with omitted attribute types without a type column', () => {
+    imgSnapshotTest(
+      `
+    erDiagram
+        PRIVATE_FINANCIAL_INSTITUTION {
+          registrationNumber PK
+          displayName "Preferred customer name"
+          status
+        }
+      `,
+      { logLevel: 1 },
+      false,
+      ($svg) => {
+        expect($svg.find('.attribute-type')).to.have.length(0);
+      }
+    );
+  });
+
+  it('should render entities with explicit omitted attribute type markers', () => {
+    imgSnapshotTest(
+      `
+    erDiagram
+        CAR {
+          _ registrationNumber PK
+          _ make
+          _ model
+        }
+      `,
+      { logLevel: 1 },
+      false,
+      ($svg) => {
+        expect($svg.find('.attribute-type')).to.have.length(0);
+      }
+    );
+  });
+
   it('should render entities with attributes that begin with asterisk', () => {
     imgSnapshotTest(
       `

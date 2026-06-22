@@ -247,6 +247,42 @@ erDiagram
 
 The `type` values must begin with an alphabetic character and may contain digits, hyphens, underscores, parentheses and square brackets. The `name` values follow a similar format to `type`, but may start with an asterisk as another option to indicate an attribute is a primary key. Other than that, there are no restrictions, and there is no implicit set of valid data types.
 
+#### Omitted attribute types (v\<MERMAID_RELEASE_VERSION>+)
+
+Attribute `type` values may be omitted when a diagram only needs logical attribute names without data types. If no attributes on an entity have a type, the type column is not rendered. An underscore (`_`) may also be used as an explicit omitted type marker.
+
+```mermaid-example
+erDiagram
+    CAR {
+        registrationNumber PK
+        make
+        model
+    }
+    PERSON {
+        driversLicense PK "The license #"
+        firstName "Only 99 characters are allowed"
+        lastName
+        phone UK
+        age
+    }
+```
+
+```mermaid
+erDiagram
+    CAR {
+        registrationNumber PK
+        make
+        model
+    }
+    PERSON {
+        driversLicense PK "The license #"
+        firstName "Only 99 characters are allowed"
+        lastName
+        phone UK
+        age
+    }
+```
+
 #### Optional attribute types (v\<MERMAID_RELEASE_VERSION>+)
 
 Attribute `type` values may end with `?` to indicate an optional or nullable type.

@@ -305,6 +305,69 @@ describe('when parsing ER diagram it...', function () {
       expect(entities.get(entity).attributes[0].keys).toEqual(['UK']);
       expect(entities.get(entity).attributes[0].comment).toBe('optional display name');
     });
+
+    it('should allow attributes without types', function () {
+      const entity = 'PERSON';
+      const attribute1 = 'firstName';
+      const attribute2 = 'lastName';
+      const attribute3 = 'age';
+
+      erDiagram.parser.parse(
+        `erDiagram\n${entity} {\n${attribute1}\n${attribute2}\n${attribute3}\n}`
+      );
+      const entities = erDb.getEntities();
+
+      expect(entities.size).toBe(1);
+      expect(entities.get(entity).attributes.length).toBe(3);
+      expect(entities.get(entity).attributes[0].type).toBe('');
+      expect(entities.get(entity).attributes[0].name).toBe('firstName');
+      expect(entities.get(entity).attributes[1].type).toBe('');
+      expect(entities.get(entity).attributes[1].name).toBe('lastName');
+      expect(entities.get(entity).attributes[2].type).toBe('');
+      expect(entities.get(entity).attributes[2].name).toBe('age');
+    });
+
+    it('should allow attributes without types to have keys and comments', function () {
+      const entity = 'PERSON';
+      const attribute1 = 'driversLicense PK "The license #"';
+      const attribute2 = 'firstName "Only 99 characters are allowed"';
+      const attribute3 = 'phone UK';
+
+      erDiagram.parser.parse(
+        `erDiagram\n${entity} {\n${attribute1}\n${attribute2}\n${attribute3}\n}`
+      );
+      const entities = erDb.getEntities();
+
+      expect(entities.size).toBe(1);
+      expect(entities.get(entity).attributes.length).toBe(3);
+      expect(entities.get(entity).attributes[0].type).toBe('');
+      expect(entities.get(entity).attributes[0].name).toBe('driversLicense');
+      expect(entities.get(entity).attributes[0].keys).toEqual(['PK']);
+      expect(entities.get(entity).attributes[0].comment).toBe('The license #');
+      expect(entities.get(entity).attributes[1].type).toBe('');
+      expect(entities.get(entity).attributes[1].name).toBe('firstName');
+      expect(entities.get(entity).attributes[1].comment).toBe('Only 99 characters are allowed');
+      expect(entities.get(entity).attributes[2].type).toBe('');
+      expect(entities.get(entity).attributes[2].name).toBe('phone');
+      expect(entities.get(entity).attributes[2].keys).toEqual(['UK']);
+    });
+
+    it('should allow an underscore to explicitly omit an attribute type', function () {
+      const entity = 'CAR';
+      const attribute1 = '_ registrationNumber PK';
+      const attribute2 = '_ make';
+
+      erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute1}\n${attribute2}\n}`);
+      const entities = erDb.getEntities();
+
+      expect(entities.size).toBe(1);
+      expect(entities.get(entity).attributes.length).toBe(2);
+      expect(entities.get(entity).attributes[0].type).toBe('');
+      expect(entities.get(entity).attributes[0].name).toBe('registrationNumber');
+      expect(entities.get(entity).attributes[0].keys).toEqual(['PK']);
+      expect(entities.get(entity).attributes[1].type).toBe('');
+      expect(entities.get(entity).attributes[1].name).toBe('make');
+    });
   });
 
   it('should allow an entity with a single attribute to be defined', function () {

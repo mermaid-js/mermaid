@@ -16,6 +16,10 @@ import type { D3Selection } from '../../../types.js';
 const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
 const REDUX_THEMES = new Set(['redux', 'redux-dark', 'redux-color', 'redux-dark-color']);
 
+export function hasNonEmptyAttributeType(attributes: EntityNode['attributes']) {
+  return attributes.some((attribute) => (attribute.type ?? '').trim().length > 0);
+}
+
 export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   // Treat node as entityNode for certain entityNode checks
   const entityNode = node as unknown as EntityNode;
@@ -104,19 +108,16 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   let maxNameWidth = 0;
   let maxKeysWidth = 0;
   let maxCommentWidth = 0;
+  const typePresent = hasNonEmptyAttributeType(entityNode.attributes);
   let keysPresent = true;
   let commentPresent = true;
   for (const attribute of entityNode.attributes) {
-    const typeBBox = await addText(
-      shapeSvg,
-      attribute.type,
-      config,
-      0,
-      yOffset,
-      ['attribute-type'],
-      labelStyles
-    );
-    maxTypeWidth = Math.max(maxTypeWidth, typeBBox.width + PADDING);
+    const typeBBox = typePresent
+      ? await addText(shapeSvg, attribute.type, config, 0, yOffset, ['attribute-type'], labelStyles)
+      : { width: 0, height: 0 };
+    if (typePresent) {
+      maxTypeWidth = Math.max(maxTypeWidth, typeBBox.width + PADDING);
+    }
     const nameBBox = await addText(
       shapeSvg,
       attribute.name,
@@ -154,7 +155,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     rows.push({ yOffset, rowHeight });
     yOffset += rowHeight;
   }
-  let totalWidthSections = 4;
+  let totalWidthSections = typePresent ? 4 : 3;
 
   if (maxKeysWidth <= PADDING) {
     keysPresent = false;
@@ -175,7 +176,9 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   ) {
     const difference =
       nameBBox.width + PADDING * 2 - (maxTypeWidth + maxNameWidth + maxKeysWidth + maxCommentWidth);
-    maxTypeWidth += difference / totalWidthSections;
+    if (typePresent) {
+      maxTypeWidth += difference / totalWidthSections;
+    }
     maxNameWidth += difference / totalWidthSections;
     if (maxKeysWidth > 0) {
       maxKeysWidth += difference / totalWidthSections;
@@ -277,12 +280,20 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   );
   shapeSvg.insert(() => roughLine).attr('class', 'divider');
   // First line
-  points = lineToPolygon(maxTypeWidth + x, nameBBox.height + y, maxTypeWidth + x, h + y, thickness);
-  roughLine = rc.polygon(
-    points.map((p) => [p.x, p.y]),
-    options
-  );
-  shapeSvg.insert(() => roughLine).attr('class', 'divider');
+  if (typePresent) {
+    points = lineToPolygon(
+      maxTypeWidth + x,
+      nameBBox.height + y,
+      maxTypeWidth + x,
+      h + y,
+      thickness
+    );
+    roughLine = rc.polygon(
+      points.map((p) => [p.x, p.y]),
+      options
+    );
+    shapeSvg.insert(() => roughLine).attr('class', 'divider');
+  }
   // Second line
   if (keysPresent) {
     const xCoord = maxTypeWidth + maxNameWidth + x;

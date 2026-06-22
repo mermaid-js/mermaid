@@ -31,7 +31,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 ","                             return 'COMMA';
 ":::"                           return 'STYLE_SEPARATOR';
 ":"                             return 'COLON';
-<block>\s+                      /* skip whitespace in block */
+<block>[ \t\r]+                 /* skip whitespace in block */
 <block>\b((?:PK)|(?:FK)|(?:UK))\b      return 'ATTRIBUTE_KEY'
 <block>([^\s]*)[~].*[~]([^\s]*)        return 'ATTRIBUTE_WORD';
 <block>([\*A-Za-z_\u00C0-\uFFFF][A-Za-z0-9\-\_\[\]\(\)\.,\u00C0-\uFFFF\*]*)  return 'ATTRIBUTE_WORD';
@@ -39,7 +39,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <block_bq>[^`]+                 return 'ATTRIBUTE_WORD';
 <block_bq>[`]                   { this.popState(); }
 <block>\"[^"]*\"                return 'COMMENT';
-<block>[\n]+                    /* nothing */
+<block>[\n]+                    /* attribute rows are newline-separated in block mode */ return 'NEWLINE';
 <block>"}"                      { this.popState(); return 'BLOCK_STOP'; }
 <block>.                        return yytext[0];
 "["                             return 'SQS';
@@ -164,8 +164,6 @@ statement
           yy.setClass([$1], $3);
           $$ = [$1];
       }
-    | entityName BLOCK_START BLOCK_STOP { yy.addEntity($1); $$ = [$1]; }
-    | entityName STYLE_SEPARATOR idList BLOCK_START BLOCK_STOP { yy.addEntity($1); yy.setClass([$1], $3); $$ = [$1]; }
     | entityName { yy.addEntity($1); $$ = [$1]; }
     | entityName STYLE_SEPARATOR idList { yy.addEntity($1); yy.setClass([$1], $3); $$ = [$1]; }
     | entityName SQS entityName SQE BLOCK_START attributes BLOCK_STOP
@@ -181,8 +179,6 @@ statement
           yy.setClass([$1], $6);
           $$ = [$1];
       }
-    | entityName SQS entityName SQE BLOCK_START BLOCK_STOP { yy.addEntity($1, $3); $$ = [$1]; }
-    | entityName SQS entityName SQE STYLE_SEPARATOR idList BLOCK_START BLOCK_STOP { yy.addEntity($1, $3); yy.setClass([$1], $6); $$ = [$1]; }
     | entityName SQS entityName SQE { yy.addEntity($1, $3); }
     | entityName SQS entityName SQE STYLE_SEPARATOR idList { yy.addEntity($1, $3); yy.setClass([$1], $6); }
     | title title_value  { $$=$2.trim();yy.setAccTitle($$); }
@@ -272,25 +268,60 @@ entityName
     ;
 
 attributes
+    : optionalNewLines { $$ = []; }
+    | optionalNewLines attributeRows { $$ = $2; }
+    ;
+
+optionalNewLines
+    : /* empty */ { $$ = []; }
+    | optionalNewLines NEWLINE { $$ = $1; }
+    ;
+
+attributeRows
     : attribute { $$ = [$1]; }
-    | attribute attributes { $2.push($1); $$=$2; }
+    | attributeRows NEWLINE attribute { $1.unshift($3); $$ = $1; }
+    | attributeRows NEWLINE { $$ = $1; }
     ;
 
 attribute
-    : attributeType attributeName { $$ = { type: $1, name: $2 }; }
-    | attributeType attributeName attributeKeyTypeList { $$ = { type: $1, name: $2, keys: $3 }; }
-    | attributeType attributeName attributeComment { $$ = { type: $1, name: $2, comment: $3 }; }
-    | attributeType attributeName attributeKeyTypeList attributeComment { $$ = { type: $1, name: $2, keys: $3, comment: $4 }; }
+    : attributeWordList
+      {
+        var words = $1;
+        $$ = words.length === 1
+          ? { type: '', name: words[0] }
+          : { type: words[0] === '_' ? '' : words.slice(0, -1).join(' '), name: words[words.length - 1] };
+      }
+    | attributeWordList attributeKeyTypeList
+      {
+        var words = $1;
+        $$ = words.length === 1
+          ? { type: '', name: words[0], keys: $2 }
+          : { type: words[0] === '_' ? '' : words.slice(0, -1).join(' '), name: words[words.length - 1], keys: $2 };
+      }
+    | attributeWordList attributeComment
+      {
+        var words = $1;
+        $$ = words.length === 1
+          ? { type: '', name: words[0], comment: $2 }
+          : { type: words[0] === '_' ? '' : words.slice(0, -1).join(' '), name: words[words.length - 1], comment: $2 };
+      }
+    | attributeWordList attributeKeyTypeList attributeComment
+      {
+        var words = $1;
+        $$ = words.length === 1
+          ? { type: '', name: words[0], keys: $2, comment: $3 }
+          : { type: words[0] === '_' ? '' : words.slice(0, -1).join(' '), name: words[words.length - 1], keys: $2, comment: $3 };
+      }
     ;
 
+attributeWordList
+    : attributeWord { $$ = [$1]; }
+    | attributeWordList attributeWord { $1.push($2); $$ = $1; }
+    ;
 
-attributeType
+attributeWord
     : ATTRIBUTE_WORD { $$=$1; }
     | ATTRIBUTE_WORD '?' { $$=$1 + $2; }
-    ;
-
-attributeName
-    : ATTRIBUTE_WORD { $$=$1; }
     ;
 
 attributeKeyTypeList
