@@ -80,7 +80,9 @@ const sanitizeMore = (text: string, config: MermaidConfig) => {
   return text;
 };
 
-const sanitizeTextImpl = (text: string, config: MermaidConfig): string => {
+// The full sanitize pipeline, with no fast path or cache — exported so the equivalence test can
+// assert the optimized `sanitizeText` returns identical output to it for every input.
+export const sanitizeTextImpl = (text: string, config: MermaidConfig): string => {
   if (config.dompurifyConfig) {
     return DOMPurify.sanitize(sanitizeMore(text, config), config.dompurifyConfig).toString();
   }
@@ -89,15 +91,46 @@ const sanitizeTextImpl = (text: string, config: MermaidConfig): string => {
   }).toString();
 };
 
+// `sanitizeMore` only rewrites `<`, `>` and `=`; DOMPurify only changes text that contains `&` (HTML
+// entities) or `<`/`>` (markup). Text with none of these is returned verbatim by the full pipeline at
+// every security level, so it needs no sanitizing. Quotes are intentionally NOT included — DOMPurify
+// leaves `'`/`"` untouched in text content, so apostrophe-bearing labels still take the fast path.
+const SANITIZE_NEEDED = /[&<=>]/;
+
+// Sanitizing runs DOMPurify (parse a document → validate every attribute → serialize) and is the
+// dominant per-label cost of the render measure phase. Labels repeat heavily across a diagram (a
+// large flowchart issued 586 sanitize calls for 132 distinct strings), so memoize the result. The
+// key captures every config input that changes the output. Bounded so it can't grow unbounded over
+// many renders.
+const sanitizeCache = new Map<string, string>();
+const SANITIZE_CACHE_MAX = 10_000;
+
+const sanitizeConfigKey = (config: MermaidConfig): string =>
+  `${config.securityLevel ?? ''} ${getEffectiveHtmlLabels(config)} ${
+    config.dompurifyConfig ? JSON.stringify(config.dompurifyConfig) : ''
+  }`;
+
 export const sanitizeText = (text: string, config: MermaidConfig): string => {
-  if (!text) {
+  // Fast path: plain text (none of `< > & =`) is unchanged by the pipeline at every security level.
+  if (!text || !SANITIZE_NEEDED.test(text)) {
     return text;
   }
-  // Profiling: attribute sanitizeMore + DOMPurify cost (a candidate hot spot in the
-  // measure phase). Guarded by injected.profiling so it tree-shakes out of prod.
-  return injected.profiling && profiler.tickSync
-    ? profiler.tickSync('sanitize', () => sanitizeTextImpl(text, config))
-    : sanitizeTextImpl(text, config);
+  const key = `${sanitizeConfigKey(config)} ${text}`;
+  const cached = sanitizeCache.get(key);
+  if (cached !== undefined) {
+    return cached;
+  }
+  // Profiling: attribute sanitizeMore + DOMPurify cost (a candidate hot spot in the measure phase).
+  // Guarded by injected.profiling so it tree-shakes out of prod.
+  const result =
+    injected.profiling && profiler.tickSync
+      ? profiler.tickSync('sanitize', () => sanitizeTextImpl(text, config))
+      : sanitizeTextImpl(text, config);
+  if (sanitizeCache.size >= SANITIZE_CACHE_MAX) {
+    sanitizeCache.clear();
+  }
+  sanitizeCache.set(key, result);
+  return result;
 };
 
 export const sanitizeTextOrArray = (
