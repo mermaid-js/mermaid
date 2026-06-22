@@ -282,7 +282,9 @@ export class StateDB {
       // Fold entry/do/exit actions into the label beneath the state name (issue #2899).
       // Done once here, not per parsed line, so actions are not duplicated.
       if (node.actions?.length) {
-        const actionLines = node.actions.map((action) => `${action.kind} / ${action.body}`);
+        const actionLines = node.actions.map((action) =>
+          common.sanitizeText(`${action.kind} / ${action.body}`, config)
+        );
         const head = Array.isArray(node.label) ? node.label : node.label ? [node.label] : [node.id];
         node.label = [...head, ...actionLines];
       }
