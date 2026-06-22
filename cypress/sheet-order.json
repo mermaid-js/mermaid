@@ -2072,6 +2072,7 @@
     "gantt.spec.js/argos/Gantt-diagram-should-handle-dates-with-year-typo-like-202-instead-of-2024-(issue-#5496).png",
     "gantt.spec.js/argos/Gantt-diagram-should-handle-milliseconds.png",
     "gantt.spec.js/argos/Gantt-diagram-should-handle-multiple-dependencies-syntax-with-after-and-until.png",
+    "gantt.spec.js/argos/Gantt-diagram-should-handle-numeric-timestamps-with-dateFormat-X.png",
     "gantt.spec.js/argos/Gantt-diagram-should-handle-numeric-timestamps-with-dateFormat-x.png",
     "gantt.spec.js/argos/Gantt-diagram-should-handle-seconds-only-format-with-tickInterval-(issue-#5496).png",
     "gantt.spec.js/argos/Gantt-diagram-should-hide-today-marker.png",
