@@ -116,38 +116,43 @@ export async function createGraphWithElements(
   // back-to-back (one reflow) instead of interleaved with DOM writes (a forced
   // reflow per node). Groups and linked nodes are built under their own wrapper by
   // labelHelper, so they fall through to the inline path below.
-  if (hasDom) {
-    await prebuildNodeLabels(
-      nodesGroup,
-      data4Layout.nodes.filter((node) => !node.isGroup && !node.link)
+  // Wrapped in try/finally so a throw mid-insert still clears the module-global
+  // prebuilt-label cache; otherwise unconsumed entries linger across re-renders
+  // (e.g. the live editor re-rendering on intermittently-invalid input).
+  try {
+    if (hasDom) {
+      await prebuildNodeLabels(
+        nodesGroup,
+        data4Layout.nodes.filter((node) => !node.isGroup && !node.link)
+      );
+    }
+
+    // Insert nodes into the DOM and add them to the graph.
+    await Promise.all(
+      data4Layout.nodes.map(async (node) => {
+        if (node.isGroup) {
+          if (hasDom) {
+            await measureGroupLabel(nodesGroup, node);
+          }
+          graph.setNode(node.id, { ...node });
+        } else {
+          if (hasDom) {
+            const childNodeEl = await insertMeasuredNode(nodesGroup, node, {
+              config,
+              dir: node.dir,
+            });
+            nodeElements.set(node.id, childNodeEl);
+          }
+          graph.setNode(node.id, { ...node });
+        }
+      })
     );
-  }
-
-  // Insert nodes into the DOM and add them to the graph.
-  await Promise.all(
-    data4Layout.nodes.map(async (node) => {
-      if (node.isGroup) {
-        if (hasDom) {
-          await measureGroupLabel(nodesGroup, node);
-        }
-        graph.setNode(node.id, { ...node });
-      } else {
-        if (hasDom) {
-          const childNodeEl = await insertMeasuredNode(nodesGroup, node, {
-            config,
-            dir: node.dir,
-          });
-          nodeElements.set(node.id, childNodeEl);
-        }
-        graph.setNode(node.id, { ...node });
-      }
-    })
-  );
-
-  // Drop any prebuilt labels that weren't consumed above (e.g. a shape that
-  // builds its own label) so their orphaned DOM doesn't linger.
-  if (hasDom) {
-    clearPrebuiltLabels();
+  } finally {
+    // Drop any prebuilt labels that weren't consumed above (e.g. a shape that
+    // builds its own label) so their orphaned DOM doesn't linger.
+    if (hasDom) {
+      clearPrebuiltLabels();
+    }
   }
   // Add edges to the graph.
 

@@ -14,4 +14,7 @@ export const directiveRegex =
 // `\s*` from every position inside an indent, re-scanning the run each time — O(whitespace²), which
 // makes a deeply-indented diagram (1.6k-space lines) cost ~250ms here. The guard makes it O(n) while
 // matching at the exact same positions, so the stripped output is byte-identical (see regexes.spec.ts).
+// Note: the `(?<=\S)` lookbehind requires a modern engine (Chrome 62+, Firefox 78+, Safari 16.4+,
+// Node 9+); this preprocessing runs for every diagram, so on an engine without lookbehind support it
+// would throw a module-load SyntaxError. That's well within the project's supported runtimes.
 export const anyCommentRegex = /(?:^|(?<=\S))\s*%%.*\n/gm;

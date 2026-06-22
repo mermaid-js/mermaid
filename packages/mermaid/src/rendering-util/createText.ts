@@ -122,11 +122,16 @@ async function addHtmlSpan(
 
 const XHTML_NS = 'http://www.w3.org/1999/xhtml';
 
-/** Escape a string for use inside a double-quoted HTML/SVG attribute value. */
+/**
+ * Escape a string for use inside an HTML/SVG attribute value. Single quotes are
+ * escaped too so the result is safe in both double- and single-quoted attributes
+ * (the assembled markup uses double quotes today, but this keeps it robust).
+ */
 export function escapeAttr(value: string): string {
   return value
     .replace(/&/g, '&amp;')
     .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
 }

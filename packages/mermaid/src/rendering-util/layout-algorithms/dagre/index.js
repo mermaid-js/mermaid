@@ -316,97 +316,103 @@ const measureDagreGraph = async ({
       );
     })
     .map((v) => graph.node(v));
-  await prebuildNodeLabels(nodes, prebuiltLeafNodes);
+  // Wrapped in try/finally so a throw mid-insert still runs the scoped clear
+  // below; otherwise this level's prebuilt entries leak permanently from the
+  // module-global cache (the live editor re-renders on every keystroke).
+  try {
+    await prebuildNodeLabels(nodes, prebuiltLeafNodes);
 
-  // Insert nodes, this will insert them into the dom and each node will get a size. The size is updated
-  // to the abstract node and is later used by dagre for the layout
-  await Promise.all(
-    graph.nodes().map(async function (v) {
-      const node = graph.node(v);
-      if (parentCluster !== undefined) {
-        const data = JSON.parse(JSON.stringify(parentCluster.clusterData));
-        // data.clusterPositioning = true;
-        log.trace(
-          'Setting data for parent cluster XXX\n Node.id = ',
-          v,
-          '\n data=',
-          data.height,
-          '\nParent cluster',
-          parentCluster.height
-        );
-        graph.setNode(parentCluster.id, data);
-        if (!graph.parent(v)) {
-          log.trace('Setting parent', v, parentCluster.id);
-          graph.setParent(v, parentCluster.id, data);
-        }
-      }
-      log.info('(Insert) Node XXX' + v + ': ' + JSON.stringify(graph.node(v)));
-      if (node?.clusterNode) {
-        // const children = graph.children(v);
-        log.info('Cluster identified XBX', v, node.width, graph.node(v));
-
-        // `node.graph.setGraph` applies the graph configurations such as nodeSpacing to subgraphs as without this the default values would be used
-        // We override only the `ranksep` and `nodesep` configurations to allow for setting subgraph spacing while avoiding overriding other properties
-        const { ranksep, nodesep } = graph.graph();
-        node.graph.setGraph({
-          ...node.graph.graph(),
-          ranksep: ranksep + 25,
-          nodesep,
-        });
-
-        // "o" will contain the full cluster not just the children
-        const o = await renderDagreSubgraph({
-          element: nodes,
-          graph: node.graph,
-          diagramType,
-          id,
-          parentCluster: graph.node(v),
-          siteConfig,
-        });
-        const newEl = o.elem;
-        updateNodeBounds(node, newEl);
-        // node.height = o.diff;
-        node.diff = o.diff || 0;
-        log.info(
-          'New compound node after recursive render XAX',
-          v,
-          'width',
-          // node,
-          node.width,
-          'height',
-          node.height
-          // node.x,
-          // node.y
-        );
-        setNodeElem(newEl, node);
-      } else {
-        if (graph.children(v).length > 0) {
-          // This is a cluster but not to be rendered recursively
-          // Render as before
+    // Insert nodes, this will insert them into the dom and each node will get a size. The size is updated
+    // to the abstract node and is later used by dagre for the layout
+    await Promise.all(
+      graph.nodes().map(async function (v) {
+        const node = graph.node(v);
+        if (parentCluster !== undefined) {
+          const data = JSON.parse(JSON.stringify(parentCluster.clusterData));
+          // data.clusterPositioning = true;
           log.trace(
-            'Cluster - the non recursive path XBX',
+            'Setting data for parent cluster XXX\n Node.id = ',
             v,
-            node.id,
-            node,
-            node.width,
-            'Graph:',
-            graph
+            '\n data=',
+            data.height,
+            '\nParent cluster',
+            parentCluster.height
           );
-          log.trace(findNonClusterChild(node.id, graph));
-          clusterDb.set(node.id, { id: findNonClusterChild(node.id, graph), node });
-          // insertCluster(clusters, graph.node(v));
-        } else {
-          log.trace('Node - the non recursive path XAX', v, nodes, graph.node(v), dir);
-          await insertMeasuredNode(nodes, graph.node(v), { config: siteConfig, dir });
+          graph.setNode(parentCluster.id, data);
+          if (!graph.parent(v)) {
+            log.trace('Setting parent', v, parentCluster.id);
+            graph.setParent(v, parentCluster.id, data);
+          }
         }
-      }
-    })
-  );
+        log.info('(Insert) Node XXX' + v + ': ' + JSON.stringify(graph.node(v)));
+        if (node?.clusterNode) {
+          // const children = graph.children(v);
+          log.info('Cluster identified XBX', v, node.width, graph.node(v));
 
-  // Drop any prebuilt leaf labels not consumed above (e.g. a shape that builds its
-  // own label). Scoped to this level's nodes so concurrent nested subgraph renders
-  // don't clear each other's pending entries.
-  clearPrebuiltLabels(prebuiltLeafNodes);
+          // `node.graph.setGraph` applies the graph configurations such as nodeSpacing to subgraphs as without this the default values would be used
+          // We override only the `ranksep` and `nodesep` configurations to allow for setting subgraph spacing while avoiding overriding other properties
+          const { ranksep, nodesep } = graph.graph();
+          node.graph.setGraph({
+            ...node.graph.graph(),
+            ranksep: ranksep + 25,
+            nodesep,
+          });
+
+          // "o" will contain the full cluster not just the children
+          const o = await renderDagreSubgraph({
+            element: nodes,
+            graph: node.graph,
+            diagramType,
+            id,
+            parentCluster: graph.node(v),
+            siteConfig,
+          });
+          const newEl = o.elem;
+          updateNodeBounds(node, newEl);
+          // node.height = o.diff;
+          node.diff = o.diff || 0;
+          log.info(
+            'New compound node after recursive render XAX',
+            v,
+            'width',
+            // node,
+            node.width,
+            'height',
+            node.height
+            // node.x,
+            // node.y
+          );
+          setNodeElem(newEl, node);
+        } else {
+          if (graph.children(v).length > 0) {
+            // This is a cluster but not to be rendered recursively
+            // Render as before
+            log.trace(
+              'Cluster - the non recursive path XBX',
+              v,
+              node.id,
+              node,
+              node.width,
+              'Graph:',
+              graph
+            );
+            log.trace(findNonClusterChild(node.id, graph));
+            clusterDb.set(node.id, { id: findNonClusterChild(node.id, graph), node });
+            // insertCluster(clusters, graph.node(v));
+          } else {
+            log.trace('Node - the non recursive path XAX', v, nodes, graph.node(v), dir);
+            await insertMeasuredNode(nodes, graph.node(v), { config: siteConfig, dir });
+          }
+        }
+      })
+    );
+  } finally {
+    // Drop any prebuilt leaf labels not consumed above (e.g. a shape that builds
+    // its own label, or entries left behind by a throw mid-insert). Scoped to
+    // this level's nodes so concurrent nested subgraph renders don't clear each
+    // other's pending entries.
+    clearPrebuiltLabels(prebuiltLeafNodes);
+  }
 
   const processEdges = async () => {
     const edgePromises = graph.edges().map(async function (e) {

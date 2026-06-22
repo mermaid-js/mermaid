@@ -67,7 +67,9 @@ function labelSignature(node: Node): string {
   const label =
     node.label === undefined ? '' : typeof node.label === 'string' ? node.label : node.label[0];
   const useHtmlLabels = node.useHtmlLabels || evaluate(getConfig()?.htmlLabels);
-  const width = node.width || getConfig().flowchart?.wrappingWidth;
+  // Mirror the width buildNodeLabelsBatched actually builds with (`?? 200`) so the
+  // fingerprint matches the prebuilt label and we don't take a spurious cache miss.
+  const width = node.width || (getConfig().flowchart?.wrappingWidth ?? 200);
   return JSON.stringify([
     label,
     width ?? '',
