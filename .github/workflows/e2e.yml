@@ -368,14 +368,10 @@ jobs:
         if: env.GROUP_ARGOS_IMAGES == 'true'
         run: pnpm run argos:batch
 
-      # Baseline branch (develop): merge the grouped sheets + the individual
-      # screenshots and upload them as ONE Argos build, so the default build is a
-      # superset baseline that both grouped PRs and per-screenshot runs diff
-      # against. The upload is split into size-balanced parallel slices because
-      # Argos's finalize body inlines per-screenshot metadata, so the whole
-      # superset in one request exceeds the API body limit (HTTP 413). No
-      # --subset: a develop push runs the full suite, so this is the complete,
-      # authoritative baseline. See scripts/argos-upload-baseline.ts.
+      # Baseline branch (develop) only: upload the grouped sheets + individual
+      # screenshots as one superset Argos build, with no --subset since the full
+      # suite ran (unlike the scoped steps below). See
+      # scripts/argos-upload-baseline.ts for how/why the upload is split.
       - name: Upload combined baseline to Argos (develop)
         if: env.ARGOS_UPLOAD_BOTH == 'true'
         env:
