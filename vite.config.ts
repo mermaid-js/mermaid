@@ -18,6 +18,11 @@ export default defineConfig({
     // TODO: should we move this to a mermaid-core package?
     coverage: {
       provider: 'v8',
+      // Only report files that unit tests actually exercise. Diagram render/style
+      // files are covered by the e2e suite, not unit tests; reporting them here at
+      // 0% makes them merge with the e2e flag on Codecov and paint e2e-covered
+      // files red in the combined view.
+      all: false,
       reporter: ['text', 'json', 'html', 'lcov'],
       reportsDirectory: './coverage/vitest',
       exclude: [...defaultExclude, './tests/**', '**/__mocks__/**', '**/generated/'],

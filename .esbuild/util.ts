@@ -8,6 +8,12 @@ import { jisonPlugin } from './jisonPlugin.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
+// For e2e coverage we serve an uninstrumented bundle and collect native V8
+// coverage in the browser (see cypress-monocart-coverage). monocart maps the V8
+// data back to source via the bundle's source map, which must be inline for it
+// to resolve — so the coverage build emits inline maps instead of external ones.
+const coverageBuild = process.env.MERMAID_COVERAGE === 'true';
+
 export interface MermaidBuildOptions extends BuildOptions {
   minify: boolean;
   core: boolean;
@@ -39,7 +45,7 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     external: ['require', 'fs', 'path'],
     outdir: 'dist',
     plugins: [jisonPlugin, jsonSchemaPlugin],
-    sourcemap: 'external',
+    sourcemap: coverageBuild ? 'inline' : 'external',
     ...override,
   };
 };
