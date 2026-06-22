@@ -58,6 +58,7 @@
     "e2e:scope:detect": "git diff --name-only ${E2E_BASE_REF:-develop} HEAD | node scripts/e2e-diagram-scope.mjs",
     "screenshots:sheets": "tsx scripts/screenshot-sheets.ts",
     "screenshots:canonicalize": "tsx scripts/canonicalize-screenshots.ts",
+    "screenshots:order": "tsx scripts/screenshot-sheet-order.ts",
     "load:env": "dotenv -e .env",
     "test": "pnpm lint && vitest run",
     "test:watch": "vitest --watch",

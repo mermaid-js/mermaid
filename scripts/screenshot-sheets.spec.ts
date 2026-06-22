@@ -9,6 +9,8 @@ import {
   collectScreenshots,
   composeSheet,
   formatTileTitle,
+  updateOrder,
+  findUnordered,
   LABEL_HEIGHT,
   DEFAULT_TILE_WIDTH,
   DEFAULT_TILE_IMAGE_HEIGHT,
@@ -206,5 +208,79 @@ describe('compositor', () => {
     const first = await composeSheet(plan, { inputDir: dir, ...slot });
     const second = await composeSheet(plan, { inputDir: dir, ...slot });
     expect(first.buffer.equals(second.buffer)).toBe(true);
+  });
+});
+
+describe('append-only tile order', () => {
+  // 26 flowchart tiles → with N=12 that's sheets [0..11], [12..23], [24..25].
+  const tiles = (n: number, prefix = 'a') =>
+    Array.from(
+      { length: n },
+      (_, i) => `${FC}/spec.spec.js/argos/${prefix}-${String(i).padStart(3, '0')}.png`
+    );
+
+  const sheetSig = (paths: string[], order?: Record<string, string[]>) =>
+    planSheets(paths, { tilesPerSheet: 12, cols: 3, order }).map(
+      (s) => `${s.group}#${s.index}:${s.tiles.map((t) => t.source).join(',')}`
+    );
+
+  it('updateOrder appends new sources at the group tail and drops removed ones', () => {
+    const base = updateOrder(tiles(3));
+    // add one, remove the first
+    const next = updateOrder(
+      [
+        `${FC}/spec.spec.js/argos/a-001.png`,
+        `${FC}/spec.spec.js/argos/a-002.png`,
+        `${FC}/spec.spec.js/argos/z-new.png`,
+      ],
+      base
+    );
+    expect(next[FC]).toEqual([
+      'spec.spec.js/argos/a-001.png', // kept, original order
+      'spec.spec.js/argos/a-002.png',
+      'spec.spec.js/argos/z-new.png', // appended at tail (not sorted into the middle)
+    ]);
+  });
+
+  it('inserting a mid-sorted tile leaves all prior sheets byte-identical (the churn fix)', () => {
+    const initial = tiles(26);
+    const order = updateOrder(initial);
+    const before = sheetSig(initial, order);
+
+    // A new tile whose NAME sorts into the middle ('m-...' < many 'a-0xx'? no — pick one that sorts early)
+    const inserted = `${FC}/spec.spec.js/argos/a-005-INSERTED.png`;
+    const orderAfter = updateOrder([...initial, inserted], order); // append-only manifest
+    const after = sheetSig([...initial, inserted], orderAfter);
+
+    // Append-only: only the last sheet changes; sheets 0..1 are untouched.
+    expect(after[0]).toBe(before[0]);
+    expect(after[1]).toBe(before[1]);
+    const changed = before.filter((s, i) => s !== after[i]).length + (after.length - before.length);
+    expect(changed).toBeLessThanOrEqual(2);
+  });
+
+  it('alphabetical insertion (no manifest) shifts the tail — demonstrates the problem it fixes', () => {
+    const initial = tiles(26);
+    const before = sheetSig(initial); // no order → alphabetical
+    const inserted = `${FC}/spec.spec.js/argos/a-005-INSERTED.png`;
+    const after = sheetSig([...initial, inserted]); // still alphabetical
+    // The inserted tile lands mid-list and pushes the tail across sheet boundaries.
+    const changed = before.filter((s, i) => s !== after[i]).length + (after.length - before.length);
+    expect(changed).toBeGreaterThan(2);
+  });
+
+  it('findUnordered flags only sources absent from the manifest, grouped by key', () => {
+    const order = updateOrder(tiles(2));
+    const withNew = [...tiles(2), `${FC}/spec.spec.js/argos/brand-new.png`];
+    expect(findUnordered(withNew, order)).toEqual({ [FC]: ['spec.spec.js/argos/brand-new.png'] });
+    expect(findUnordered(tiles(2), order)).toEqual({});
+  });
+
+  it('planSheets without an order is unchanged (alphabetical fallback)', () => {
+    const paths = tiles(5).reverse();
+    const fallback = planSheets(paths, { tilesPerSheet: 12, cols: 3 });
+    const empty = planSheets(paths, { tilesPerSheet: 12, cols: 3, order: {} });
+    expect(fallback[0].tiles.map((t) => t.source)).toEqual(empty[0].tiles.map((t) => t.source));
+    expect(fallback[0].tiles.map((t) => t.source)).toEqual([...paths].sort());
   });
 });

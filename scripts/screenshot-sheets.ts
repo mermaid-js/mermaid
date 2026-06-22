@@ -12,7 +12,7 @@
  *     TILE_WIDTH=1440 TILE_IMAGE_HEIGHT=1024 pnpm run screenshots:sheets
  */
 
-import { readdir, mkdir, writeFile } from 'node:fs/promises';
+import { readdir, mkdir, writeFile, readFile } from 'node:fs/promises';
 import { join, dirname, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
@@ -181,9 +181,83 @@ function getGridBuffer(
   return buffer;
 }
 
+/**
+ * Committed tile order, keyed by diagram-group. Each value lists that group's
+ * screenshot sources (relative to the group key) in their canonical sheet order.
+ * New screenshots append to the tail of their group, so adding a test only
+ * re-tiles that group's last sheet instead of shifting every following tile
+ * across sheet boundaries (the alphabetical-sort blast radius). Maintained in
+ * git via `pnpm run screenshots:order` and verified in CI — see
+ * scripts/screenshot-sheet-order.ts.
+ */
+export type OrderManifest = Record<string, string[]>;
+
 export interface PlanSheetsOptions {
   tilesPerSheet?: number;
   cols?: number;
+  /** Canonical per-group tile order. Sources absent here sort to the tail. */
+  order?: OrderManifest;
+}
+
+/** Source path with its group-key prefix removed (the form stored in the manifest). */
+function groupRelative(source: string, groupKey: string): string {
+  return groupKey && source.startsWith(`${groupKey}/`) ? source.slice(groupKey.length + 1) : source;
+}
+
+/**
+ * Orders a group's sources by the manifest: known entries keep their committed
+ * order; unknown (new) sources append at the tail, sorted for determinism.
+ */
+function orderGroup(sources: string[], groupKey: string, order?: OrderManifest): string[] {
+  const canonical = order?.[groupKey];
+  if (!canonical) {
+    return [...sources].sort();
+  }
+  const rank = new Map(canonical.map((rel, i) => [rel, i]));
+  return [...sources].sort((a, b) => {
+    const ra = rank.get(groupRelative(a, groupKey)) ?? Infinity;
+    const rb = rank.get(groupRelative(b, groupKey)) ?? Infinity;
+    return ra !== rb ? ra - rb : a.localeCompare(b);
+  });
+}
+
+/**
+ * Recomputes the manifest from the screenshots currently present: each group
+ * keeps its committed order (for sources still present) then appends newly-seen
+ * sources, sorted. Removed sources drop out. Pure and deterministic.
+ */
+export function updateOrder(relPaths: string[], previous: OrderManifest = {}): OrderManifest {
+  const present = new Map<string, string[]>();
+  for (const p of relPaths) {
+    const key = deriveGroupKey(p);
+    (present.get(key) ?? present.set(key, []).get(key)!).push(groupRelative(p, key));
+  }
+  const next: OrderManifest = {};
+  for (const key of [...present.keys()].sort()) {
+    const here = new Set(present.get(key));
+    const kept = (previous[key] ?? []).filter((rel) => here.has(rel));
+    const keptSet = new Set(kept);
+    const added = [...here].filter((rel) => !keptSet.has(rel)).sort();
+    next[key] = [...kept, ...added];
+  }
+  return next;
+}
+
+/**
+ * Sources present on disk but missing from the committed manifest, grouped by
+ * key. Non-empty means a PR added/renamed visual tests without refreshing the
+ * order manifest — CI uses this to fail with an actionable message.
+ */
+export function findUnordered(relPaths: string[], order: OrderManifest): OrderManifest {
+  const missing: OrderManifest = {};
+  for (const p of relPaths) {
+    const key = deriveGroupKey(p);
+    const rel = groupRelative(p, key);
+    if (!(order[key] ?? []).includes(rel)) {
+      (missing[key] ?? (missing[key] = [])).push(rel);
+    }
+  }
+  return missing;
 }
 
 export interface ComposeSheetOptions {
@@ -237,7 +311,7 @@ export function planSheets(relPaths: string[], options: PlanSheetsOptions = {}):
 
   const sheets: Sheet[] = [];
   for (const key of [...groups.keys()].sort()) {
-    const tiles = [...(groups.get(key) ?? [])].sort();
+    const tiles = orderGroup(groups.get(key) ?? [], key, options.order);
     const basename = key.split('/').pop() ?? 'sheet';
     for (let start = 0; start < tiles.length; start += tilesPerSheet) {
       const chunk = tiles.slice(start, start + tilesPerSheet);
@@ -406,8 +480,19 @@ async function main(): Promise<void> {
   const tileImageHeight = Number(process.env.TILE_IMAGE_HEIGHT ?? DEFAULT_TILE_IMAGE_HEIGHT);
   const concurrency = Number(process.env.SHEET_CONCURRENCY ?? DEFAULT_SHEET_CONCURRENCY);
 
+  const orderFile = process.env.SHEET_ORDER_FILE ?? 'cypress/sheet-order.json';
+  let order: OrderManifest = {};
+  try {
+    order = JSON.parse(await readFile(orderFile, 'utf8')) as OrderManifest;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+      throw error;
+    }
+    // No committed manifest yet — fall back to alphabetical order (pre-manifest behavior).
+  }
+
   const relPaths = await collectScreenshots(inputDir);
-  const plans = planSheets(relPaths, { tilesPerSheet, cols });
+  const plans = planSheets(relPaths, { tilesPerSheet, cols, order });
   await writeSheets(plans, { inputDir, outDir, scale, tileWidth, tileImageHeight, concurrency });
   process.stdout.write(
     `[screenshot-sheets] ${relPaths.length} screenshots → ${plans.length} sheets in ${outDir}\n`

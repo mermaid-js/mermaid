@@ -364,6 +364,15 @@ jobs:
       - name: Canonicalize screenshot paths
         run: pnpm run screenshots:canonicalize
 
+      # The batcher tiles screenshots into composite sheets in the committed order
+      # (cypress/sheet-order.json). New tests must be appended to that manifest in
+      # the same PR — otherwise they shift later tiles across sheets and churn many
+      # sheets in the diff. Fail here if any captured screenshot is missing from
+      # the manifest (scope-tolerant: only checks the groups this run captured).
+      # Fix: `pnpm run screenshots:order` and commit.
+      - name: Verify sheet order is up to date
+        run: pnpm run screenshots:order --check
+
       - name: Build composite sheets
         if: env.GROUP_ARGOS_IMAGES == 'true'
         run: pnpm run screenshots:sheets
