@@ -284,3 +284,49 @@ describe('append-only tile order', () => {
     expect(fallback[0].tiles.map((t) => t.source)).toEqual([...paths].sort());
   });
 });
+
+describe('empty cells for removed tests', () => {
+  const order = {
+    [FC]: ['s.spec.js/argos/a.png', 's.spec.js/argos/b.png', 's.spec.js/argos/c.png'],
+  };
+
+  it('keeps a removed test’s slot as a blank tile (no shift of later tiles)', () => {
+    // b removed; its spec `s` still ran (a and c present).
+    const present = [`${FC}/s.spec.js/argos/a.png`, `${FC}/s.spec.js/argos/c.png`];
+    const [sheet] = planSheets(present, { tilesPerSheet: 12, cols: 3, order });
+    expect(sheet.tiles.map((t) => [t.name, t.missing ?? false])).toEqual([
+      ['a', false],
+      ['b', true], // blank placeholder, keeps position 1
+      ['c', false], // still at position 2 — not shifted up
+    ]);
+  });
+
+  it('drops manifest tiles whose spec did not run (scoped run — no stray blanks)', () => {
+    // Only spec `t` captured; spec `s` (the whole manifest) didn't run.
+    const present = [`${FC}/t.spec.js/argos/x.png`];
+    const [sheet] = planSheets(present, { tilesPerSheet: 12, cols: 3, order });
+    expect(sheet.tiles.map((t) => t.name)).toEqual(['x']); // no a/b/c blanks
+    expect(sheet.tiles.every((t) => !t.missing)).toBe(true);
+  });
+
+  it('composeSheet renders a missing tile as a blank cell without reading a file', async () => {
+    const plan = planSheets([`${FC}/s.spec.js/argos/a.png`, `${FC}/s.spec.js/argos/c.png`], {
+      tilesPerSheet: 12,
+      cols: 3,
+      order,
+    })[0];
+    // inputDir intentionally empty: only present tiles would be read, and there
+    // are none on disk — so this throws if it tries to read a missing tile.
+    const emptyDir = await mkdtemp(join(tmpdir(), 'screenshot-sheets-missing-'));
+    // Drop the present tiles so every slot is missing → pure blank-cell render.
+    const blankPlan = { ...plan, tiles: plan.tiles.map((t) => ({ ...t, missing: true })) };
+    const { buffer, manifest } = await composeSheet(blankPlan, {
+      inputDir: emptyDir,
+      tileWidth: SLOT_WIDTH,
+      tileImageHeight: SLOT_HEIGHT,
+    });
+    expect((await sharp(buffer).metadata()).width).toBe(SLOT_WIDTH * 3);
+    expect(manifest.tiles.every((t) => t.missing)).toBe(true);
+    await rm(emptyDir, { recursive: true, force: true });
+  });
+});

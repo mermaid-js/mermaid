@@ -69,6 +69,12 @@ export interface Tile {
   col: number;
   name: string;
   source: string;
+  /**
+   * The manifest places this tile but its screenshot wasn't captured (a removed
+   * test whose spec still ran). It keeps its grid slot — rendered as a blank
+   * cell — so removing a test doesn't shift every following tile across sheets.
+   */
+  missing?: boolean;
 }
 
 /** Cypress screenshot names use hyphens instead of spaces; restore for display. */
@@ -201,21 +207,52 @@ function groupRelative(source: string, groupKey: string): string {
   return groupKey && source.startsWith(`${groupKey}/`) ? source.slice(groupKey.length + 1) : source;
 }
 
+/** The spec-file prefix of a source (up to and including the `*.spec.*` segment). */
+function specOf(source: string): string {
+  const parts = source.split('/');
+  const specIdx = parts.findIndex((p) => SPEC_SEGMENT_RE.test(p));
+  return specIdx === -1 ? parts.slice(0, -1).join('/') : parts.slice(0, specIdx + 1).join('/');
+}
+
+/** A slot in a group's layout: a captured screenshot, or a blank placeholder. */
+interface TileSlot {
+  source: string;
+  missing: boolean;
+}
+
 /**
- * Orders a group's sources by the manifest: known entries keep their committed
- * order; unknown (new) sources append at the tail, sorted for determinism.
+ * Lays out a group's tiles in committed-manifest order:
+ *  - manifest sources still present keep their slot;
+ *  - manifest sources absent but whose spec DID run (a removed test) keep their
+ *    slot as a blank placeholder, so removal doesn't shift later tiles;
+ *  - manifest sources whose spec didn't run this time are dropped (scoped runs);
+ *  - present sources not in the manifest append at the tail, sorted.
+ * Without a manifest for the group, falls back to plain alphabetical order.
  */
-function orderGroup(sources: string[], groupKey: string, order?: OrderManifest): string[] {
+function layoutGroup(sources: string[], groupKey: string, order?: OrderManifest): TileSlot[] {
   const canonical = order?.[groupKey];
   if (!canonical) {
-    return [...sources].sort();
+    return [...sources].sort().map((source) => ({ source, missing: false }));
   }
-  const rank = new Map(canonical.map((rel, i) => [rel, i]));
-  return [...sources].sort((a, b) => {
-    const ra = rank.get(groupRelative(a, groupKey)) ?? Infinity;
-    const rb = rank.get(groupRelative(b, groupKey)) ?? Infinity;
-    return ra !== rb ? ra - rb : a.localeCompare(b);
-  });
+  const presentSet = new Set(sources);
+  const activeSpecs = new Set(sources.map(specOf));
+  const canonicalSet = new Set(canonical);
+
+  const slots: TileSlot[] = [];
+  for (const rel of canonical) {
+    const source = `${groupKey}/${rel}`;
+    if (presentSet.has(source)) {
+      slots.push({ source, missing: false });
+    } else if (activeSpecs.has(specOf(source))) {
+      slots.push({ source, missing: true }); // removed test — keep the slot blank
+    }
+    // else: the spec didn't run this time (scoped) — drop it, no placeholder.
+  }
+  const appended = sources
+    .filter((s) => !canonicalSet.has(groupRelative(s, groupKey)))
+    .sort()
+    .map((source) => ({ source, missing: false }));
+  return [...slots, ...appended];
 }
 
 /**
@@ -308,10 +345,10 @@ export function planSheets(relPaths: string[], options: PlanSheetsOptions = {}):
 
   const sheets: Sheet[] = [];
   for (const key of [...groups.keys()].sort()) {
-    const tiles = orderGroup(groups.get(key) ?? [], key, options.order);
+    const slots = layoutGroup(groups.get(key) ?? [], key, options.order);
     const basename = key.split('/').pop() ?? 'sheet';
-    for (let start = 0; start < tiles.length; start += tilesPerSheet) {
-      const chunk = tiles.slice(start, start + tilesPerSheet);
+    for (let start = 0; start < slots.length; start += tilesPerSheet) {
+      const chunk = slots.slice(start, start + tilesPerSheet);
       const index = start / tilesPerSheet;
       const output = `${key}/${basename}-${String(index + 1).padStart(3, '0')}.png`;
       sheets.push({
@@ -319,7 +356,7 @@ export function planSheets(relPaths: string[], options: PlanSheetsOptions = {}):
         index,
         output,
         cols,
-        tiles: chunk.map((source, i) => ({
+        tiles: chunk.map(({ source, missing }, i) => ({
           index: i,
           row: Math.floor(i / cols),
           col: i % cols,
@@ -329,6 +366,7 @@ export function planSheets(relPaths: string[], options: PlanSheetsOptions = {}):
               .pop()
               ?.replace(/\.png$/, '') ?? '',
           source,
+          missing,
         })),
       });
     }
@@ -370,38 +408,48 @@ export async function composeSheet(
   const gridLineWidth = scaled(GRID_LINE_WIDTH, scale);
   const rows = Math.max(...plan.tiles.map((t) => t.row)) + 1;
 
+  // Missing tiles (manifest slot with no captured screenshot) render as a blank
+  // cell — only the label, no image — so the slot is preserved without churn.
   const tileBuffers = await Promise.all(
     plan.tiles.map((t) =>
-      sharp(join(inputDir, t.source))
-        .resize(cellWidth, imageHeight, {
-          fit: 'inside',
-          kernel: sharp.kernel.lanczos3,
-        })
-        .png({ compressionLevel: INTERMEDIATE_PNG_COMPRESSION })
-        .toBuffer()
+      t.missing
+        ? Promise.resolve(null)
+        : sharp(join(inputDir, t.source))
+            .resize(cellWidth, imageHeight, {
+              fit: 'inside',
+              kernel: sharp.kernel.lanczos3,
+            })
+            .png({ compressionLevel: INTERMEDIATE_PNG_COMPRESSION })
+            .toBuffer()
     )
   );
 
   // Label SVGs are composited directly; sharp rasterizes them in the sheet
   // pipeline, avoiding a per-tile PNG encode + decode round-trip.
-  const composites = plan.tiles.flatMap((t, i) => [
-    {
-      input: createLabelSvg(
-        formatTileTitle(t.name),
-        cellWidth,
-        labelHeight,
-        labelFontSize,
-        labelPadding
-      ),
-      left: t.col * cellWidth,
-      top: t.row * cellHeight,
-    },
-    {
-      input: tileBuffers[i],
-      left: t.col * cellWidth,
-      top: t.row * cellHeight + labelHeight,
-    },
-  ]);
+  const composites = plan.tiles.flatMap((t, i) => {
+    const parts: sharp.OverlayOptions[] = [
+      {
+        input: createLabelSvg(
+          formatTileTitle(t.name),
+          cellWidth,
+          labelHeight,
+          labelFontSize,
+          labelPadding
+        ),
+        left: t.col * cellWidth,
+        top: t.row * cellHeight,
+      },
+    ];
+    const tileBuffer = tileBuffers[i];
+    if (tileBuffer) {
+      parts.push({
+        input: tileBuffer,
+        left: t.col * cellWidth,
+        top: t.row * cellHeight + labelHeight,
+      });
+    }
+    return parts;
+  });
 
   const sheetWidth = cellWidth * cols;
   const sheetHeight = cellHeight * rows;
@@ -440,6 +488,7 @@ export async function composeSheet(
       col: t.col,
       name: t.name,
       source: t.source,
+      missing: t.missing,
       title: formatTileTitle(t.name),
     })),
   };
