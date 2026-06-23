@@ -27,6 +27,8 @@ export const DEFAULT_TILE_IMAGE_HEIGHT = 1024;
 const LABEL_FONT_SIZE = 11;
 const LABEL_PADDING = 4;
 const GRID_LINE_WIDTH = 1;
+/** Inset (px, before scale) between a tile image and its cell edges/label. */
+const CELL_PADDING = 16;
 const GRID_LINE_COLOR = '#cccccc';
 /** Default output scale for composite sheets (1 = native pixel dimensions). */
 export const DEFAULT_SHEET_SCALE = 1;
@@ -183,8 +185,6 @@ function getGridBuffer(
 export interface PlanSheetsOptions {
   tilesPerSheet?: number;
   cols?: number;
-  /** Top-level e2e/diagrams folders, used to group mmd-snapshots by diagram type. */
-  mmdGroups?: readonly string[];
 }
 
 export interface ComposeSheetOptions {
@@ -208,30 +208,15 @@ export interface WriteSheetsOptions {
 }
 
 /**
- * Maps a screenshot path to its group key (the path up to and including the
- * `*.spec.*` segment). mmd-snapshots screenshots all live under one spec but
- * cover every diagram type, so they are sub-grouped by diagram type. That type
- * is the top-level `e2e/diagrams` folder, which can itself contain hyphens
- * (`class-diagram`, `state-diagram-v2`); since the screenshot name flattens the
- * title path with hyphens, the folder is recovered by a longest-prefix match
- * against the known diagram folders (`mmdGroups`). Without that list we fall
- * back to the first hyphen-delimited token (correct only for single-word types).
+ * Maps a screenshot path to its group key. Spec-based screenshots group by the
+ * path up to and including the `*.spec.*` segment. mmd-snapshot screenshots are
+ * written under a folder that mirrors the fixture's storage (e.g.
+ * `diagrams/<type>/<name>.png` — see util.ts `screenshotPath`), so they have no
+ * spec segment and group by their containing folder, preserving the diagram
+ * folder structure (including hyphenated and nested folders).
  */
-export function deriveGroupKey(relPath: string, mmdGroups: readonly string[] = []): string {
+export function deriveGroupKey(relPath: string): string {
   const parts = relPath.split('/');
-  const mmdSpecIndex = parts.indexOf('mmd-snapshots.spec.ts');
-  if (mmdSpecIndex >= 0 && parts.length > mmdSpecIndex + 1) {
-    const base = (parts.at(-1) ?? '').replace(/\.png$/, '');
-    const rest = base.replace(/^mmd-snapshots-/, '');
-    // Longest matching folder first, so `state-diagram-v2` wins over `state-diagram`.
-    const group = [...mmdGroups]
-      .sort((a, b) => b.length - a.length)
-      .find((g) => rest === g || rest.startsWith(`${g}-`));
-    const type = group ?? /^[^-]+/.exec(rest)?.[0];
-    if (type) {
-      return [...parts.slice(0, mmdSpecIndex + 1), type].join('/');
-    }
-  }
   const specIdx = parts.findIndex((p) => SPEC_SEGMENT_RE.test(p));
   if (specIdx >= 0) {
     return parts.slice(0, specIdx + 1).join('/');
@@ -246,7 +231,7 @@ export function planSheets(relPaths: string[], options: PlanSheetsOptions = {}):
 
   const groups = new Map<string, string[]>();
   for (const p of relPaths) {
-    const key = deriveGroupKey(p, options.mmdGroups);
+    const key = deriveGroupKey(p);
     const bucket = groups.get(key);
     if (bucket) {
       bucket.push(p);
@@ -317,16 +302,22 @@ export async function composeSheet(
   const labelFontSize = scaled(LABEL_FONT_SIZE, scale);
   const labelPadding = scaled(LABEL_PADDING, scale);
   const gridLineWidth = scaled(GRID_LINE_WIDTH, scale);
+  const cellPadding = scaled(CELL_PADDING, scale);
   const rows = Math.max(...plan.tiles.map((t) => t.row)) + 1;
 
-  // Enlarge each screenshot to fill the cell's image area: `fit: 'inside'` scales
-  // it up (or down) to the largest size that fits while preserving aspect ratio
-  // (sharp enlarges by default — `withoutEnlargement` is off). Keep the resolved
-  // output dimensions so the tile can be centered in the cell below.
+  // The image sits in a padded box inside the cell's image area, so diagrams
+  // don't touch the grid lines or the label.
+  const contentWidth = Math.max(1, cellWidth - 2 * cellPadding);
+  const contentHeight = Math.max(1, imageHeight - 2 * cellPadding);
+
+  // Enlarge each screenshot to fill the padded box: `fit: 'inside'` scales it up
+  // (or down) to the largest size that fits while preserving aspect ratio (sharp
+  // enlarges by default — `withoutEnlargement` is off). Keep the resolved output
+  // dimensions so the tile can be centered in the box below.
   const tileBuffers = await Promise.all(
     plan.tiles.map((t) =>
       sharp(join(inputDir, t.source))
-        .resize(cellWidth, imageHeight, {
+        .resize(contentWidth, contentHeight, {
           fit: 'inside',
           kernel: sharp.kernel.lanczos3,
         })
@@ -351,12 +342,16 @@ export async function composeSheet(
     },
     {
       input: tileBuffers[i].data,
-      // Center the (aspect-preserved) image in the cell's image area.
-      left: t.col * cellWidth + Math.round((cellWidth - tileBuffers[i].info.width) / 2),
+      // Center the (aspect-preserved) image in the padded box below the label.
+      left:
+        t.col * cellWidth +
+        cellPadding +
+        Math.round((contentWidth - tileBuffers[i].info.width) / 2),
       top:
         t.row * cellHeight +
         labelHeight +
-        Math.round((imageHeight - tileBuffers[i].info.height) / 2),
+        cellPadding +
+        Math.round((contentHeight - tileBuffers[i].info.height) / 2),
     },
   ]);
 
@@ -424,16 +419,6 @@ export async function writeSheets(plans: Sheet[], options: WriteSheetsOptions): 
   }
 }
 
-/** Top-level e2e/diagrams folders = the diagram types, used to group mmd sheets. */
-async function readDiagramGroups(diagramsDir = 'e2e/diagrams'): Promise<string[]> {
-  try {
-    const entries = await readdir(diagramsDir, { withFileTypes: true });
-    return entries.filter((e) => e.isDirectory()).map((e) => e.name);
-  } catch {
-    return [];
-  }
-}
-
 async function main(): Promise<void> {
   const inputDir = process.env.ARGOS_SCREENSHOT_DIR ?? 'e2e/argos-screenshots';
   const outDir = process.env.ARGOS_SHEETS_DIR ?? 'e2e/argos-sheets';
@@ -445,8 +430,7 @@ async function main(): Promise<void> {
   const concurrency = Number(process.env.ARGOS_SHEET_CONCURRENCY ?? DEFAULT_SHEET_CONCURRENCY);
 
   const relPaths = await collectScreenshots(inputDir);
-  const mmdGroups = await readDiagramGroups();
-  const plans = planSheets(relPaths, { tilesPerSheet, cols, mmdGroups });
+  const plans = planSheets(relPaths, { tilesPerSheet, cols });
   await writeSheets(plans, { inputDir, outDir, scale, tileWidth, tileImageHeight, concurrency });
   process.stdout.write(
     `[argos-batch] ${relPaths.length} screenshots → ${plans.length} sheets in ${outDir}\n`
