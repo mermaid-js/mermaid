@@ -186,11 +186,20 @@ export const verifyScreenshot = async (
   const useAppli = !!process.env.USE_APPLI;
   const useArgos = process.env.RUN_VISUAL_TEST === 'true';
 
+  // Capture only the rendered diagram SVG so each screenshot is a tight crop of
+  // the diagram rather than the whole viewport (mostly empty space). Fall back
+  // to the full page when there is no top-level diagram SVG — e.g. sandboxed
+  // diagrams (the SVG lives in an iframe) and the iife/xss/external-diagram tests.
+  const svg = diagramSvg(page).first();
+  const hasSvg = (await svg.count()) > 0;
+  const target = hasSvg ? svg : page;
+
   if (useAppli) {
     // Mirrors the Cypress eyes integration: one Applitools batch per spec file,
-    // a full-window check per screenshot. API key, branch, and parent branch are
-    // read from the APPLITOOLS_* env vars by the SDK. Imported lazily so the SDK
-    // is only loaded for Applitools runs, not for Argos/local snapshot runs.
+    // a check per screenshot scoped to the diagram SVG (full window when there
+    // is none). API key, branch, and parent branch are read from the APPLITOOLS_*
+    // env vars by the SDK. Imported lazily so the SDK is only loaded for
+    // Applitools runs, not for Argos/local snapshot runs.
     const { Eyes, ClassicRunner, Target } = await import('@applitools/eyes-playwright');
     const specName = basename(testInfo.file);
     const eyes = new Eyes(new ClassicRunner());
@@ -199,7 +208,10 @@ export const verifyScreenshot = async (
       batch: { id: batchId + specName, name: specName },
     });
     await eyes.open(page, 'Mermaid', name);
-    await eyes.check('Click!', Target.window().fully());
+    await eyes.check(
+      'Click!',
+      hasSvg ? Target.region('svg[aria-roledescription]') : Target.window().fully()
+    );
     await eyes.close(true);
     return;
   }
@@ -219,7 +231,7 @@ export const verifyScreenshot = async (
       `${safeName}.png`
     );
     mkdirSync(dirname(outPath), { recursive: true });
-    const buffer = await page.screenshot({ animations: 'disabled', scale: 'css' });
+    const buffer = await target.screenshot({ animations: 'disabled', scale: 'css' });
     writeFileSync(outPath, buffer);
   } else {
     const snapshotName = `${name}.png`;
@@ -227,12 +239,12 @@ export const verifyScreenshot = async (
 
     if (!existsSync(snapshotPath)) {
       mkdirSync(dirname(snapshotPath), { recursive: true });
-      const screenshot = await page.screenshot({ animations: 'disabled', scale: 'css' });
+      const screenshot = await target.screenshot({ animations: 'disabled', scale: 'css' });
       writeFileSync(snapshotPath, screenshot);
       return;
     }
 
-    await expect(page).toHaveScreenshot(snapshotName);
+    await expect(target).toHaveScreenshot(snapshotName);
   }
 };
 

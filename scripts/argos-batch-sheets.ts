@@ -319,6 +319,10 @@ export async function composeSheet(
   const gridLineWidth = scaled(GRID_LINE_WIDTH, scale);
   const rows = Math.max(...plan.tiles.map((t) => t.row)) + 1;
 
+  // Enlarge each screenshot to fill the cell's image area: `fit: 'inside'` scales
+  // it up (or down) to the largest size that fits while preserving aspect ratio
+  // (sharp enlarges by default — `withoutEnlargement` is off). Keep the resolved
+  // output dimensions so the tile can be centered in the cell below.
   const tileBuffers = await Promise.all(
     plan.tiles.map((t) =>
       sharp(join(inputDir, t.source))
@@ -327,7 +331,7 @@ export async function composeSheet(
           kernel: sharp.kernel.lanczos3,
         })
         .png({ compressionLevel: INTERMEDIATE_PNG_COMPRESSION })
-        .toBuffer()
+        .toBuffer({ resolveWithObject: true })
     )
   );
 
@@ -346,9 +350,13 @@ export async function composeSheet(
       top: t.row * cellHeight,
     },
     {
-      input: tileBuffers[i],
-      left: t.col * cellWidth,
-      top: t.row * cellHeight + labelHeight,
+      input: tileBuffers[i].data,
+      // Center the (aspect-preserved) image in the cell's image area.
+      left: t.col * cellWidth + Math.round((cellWidth - tileBuffers[i].info.width) / 2),
+      top:
+        t.row * cellHeight +
+        labelHeight +
+        Math.round((imageHeight - tileBuffers[i].info.height) / 2),
     },
   ]);
 
