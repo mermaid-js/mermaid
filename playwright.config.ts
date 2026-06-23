@@ -54,7 +54,9 @@ export default defineConfig({
     baseURL: `http://localhost:${port}`,
     ...devices['Desktop Chrome'],
     viewport: { width: 1440, height: 1024 },
-    deviceScaleFactor: 1,
+    // Render at 2x device pixels so diagram screenshots have enough resolution to
+    // stay sharp when the Argos grid enlarges them to fill a cell.
+    deviceScaleFactor: 2,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
   },

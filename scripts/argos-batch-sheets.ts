@@ -20,12 +20,14 @@ import sharp from 'sharp';
 const SPEC_SEGMENT_RE = /\.spec\.[cm]?[jt]s$/;
 
 /** Fixed label band under each screenshot tile (deterministic grid sizing). */
-export const LABEL_HEIGHT = 24;
+export const LABEL_HEIGHT = 48;
 /** Matches cypress.config.ts viewport — every cell uses this slot, not max(tile). */
 export const DEFAULT_TILE_WIDTH = 1440;
 export const DEFAULT_TILE_IMAGE_HEIGHT = 1024;
-const LABEL_FONT_SIZE = 11;
-const LABEL_PADDING = 4;
+// Sized for the 1440px-wide cell: a small font has too few pixels per glyph and
+// reads as pixelated when the sheet is zoomed.
+const LABEL_FONT_SIZE = 28;
+const LABEL_PADDING = 10;
 const GRID_LINE_WIDTH = 1;
 /** Inset (px, before scale) between a tile image and its cell edges/label. */
 const CELL_PADDING = 16;

@@ -245,7 +245,7 @@ export const verifyScreenshot = async (
       outPath = join(argosDir, specRelPath, `${sanitizeSegment(name)}.png`);
     }
     mkdirSync(dirname(outPath), { recursive: true });
-    const buffer = await target.screenshot({ animations: 'disabled', scale: 'css' });
+    const buffer = await target.screenshot({ animations: 'disabled', scale: 'device' });
     writeFileSync(outPath, buffer);
   } else {
     const snapshotName = `${name}.png`;
@@ -253,7 +253,7 @@ export const verifyScreenshot = async (
 
     if (!existsSync(snapshotPath)) {
       mkdirSync(dirname(snapshotPath), { recursive: true });
-      const screenshot = await target.screenshot({ animations: 'disabled', scale: 'css' });
+      const screenshot = await target.screenshot({ animations: 'disabled', scale: 'device' });
       writeFileSync(snapshotPath, screenshot);
       return;
     }
