@@ -5,8 +5,8 @@ import { imgSnapshotTest, urlSnapshotTest } from '../helpers/util.ts';
 // pass site config through imgSnapshotTest's 4th argument (mermaid.initialize())
 // and verify that an in-diagram %%{init}%% directive overrides it. The global
 // mmd-snapshot runner renders fixtures with no options, so the fixture model
-// (frontmatter only, no initialize()) cannot reproduce directive-over-initialize
-// precedence. The non-directive cases (No config, Settings from initialize, from
+// (frontmatter only, no initialize()) cannot reproduce initialize/frontmatter
+// precedence either. The non-precedence cases (No config, Settings from
 // frontmatter, …) are pure snapshots and live as fixtures under e2e/diagrams.
 test.describe('Configuration and directives - nodes should be light blue', () => {
   test('Settings from initialize overriding themeVariable - nodes should be red', async ({
@@ -105,6 +105,31 @@ graph TD
           end
         `,
       { theme: 'base' }
+    );
+  });
+
+  test('Theme from initialize, frontmatter overriding theme variable - nodes should be red', async ({
+    page,
+  }, testInfo) => {
+    await imgSnapshotTest(
+      page,
+      testInfo,
+      `
+---
+config:
+  theme: base
+  themeVariables:
+    primaryColor: '#ff0000'
+---
+graph TD
+          A(Start) --> B[/Another/]
+          A[/Another/] --> C[End]
+          subgraph section
+            B
+            C
+          end
+        `,
+      { theme: 'forest' }
     );
   });
 
