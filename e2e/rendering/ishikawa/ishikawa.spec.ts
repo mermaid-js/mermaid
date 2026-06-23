@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-import { renderGraph } from '../helpers/util.ts';
+import { renderGraph } from '../../helpers/util.ts';
 
 test.describe('Ishikawa diagram', () => {
   test('10: should render when useMaxWidth is true', async ({ page }, testInfo) => {

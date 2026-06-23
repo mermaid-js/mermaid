@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { renderGraph } from '../helpers/util.ts';
+import { renderGraph } from '../../helpers/util.ts';
 
 test.describe('pie chart', () => {
   test('should render a pie diagram when useMaxWidth is true (default)', async ({

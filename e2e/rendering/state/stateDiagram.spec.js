@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { renderGraph } from '../helpers/util.ts';
+import { renderGraph } from '../../helpers/util.ts';
 
 test.describe('State diagram', () => {
   test('should render a state diagram when useMaxWidth is true (default)', async ({

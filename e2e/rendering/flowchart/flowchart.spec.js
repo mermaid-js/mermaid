@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { renderGraph } from '../helpers/util.ts';
+import { renderGraph } from '../../helpers/util.ts';
 
 test.describe('Graph', () => {
   test('38: should render a flowchart when useMaxWidth is true (default)', async ({
