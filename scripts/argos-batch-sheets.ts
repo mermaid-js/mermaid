@@ -175,6 +175,8 @@ export interface WriteSheetsOptions {
   tileWidth?: number;
   tileImageHeight?: number;
   concurrency?: number;
+  /** Called after each sheet is written, for progress reporting. */
+  onSheetWritten?: (output: string, written: number, total: number) => void;
 }
 
 /**
@@ -365,6 +367,7 @@ export async function composeSheet(
 /** Writes composite PNGs and sibling `.json` manifests under outDir. */
 export async function writeSheets(plans: Sheet[], options: WriteSheetsOptions): Promise<void> {
   const concurrency = Math.max(1, options.concurrency ?? DEFAULT_SHEET_CONCURRENCY);
+  let written = 0;
   const writeOne = async (plan: Sheet): Promise<void> => {
     const { buffer, manifest } = await composeSheet(plan, {
       inputDir: options.inputDir,
@@ -376,13 +379,22 @@ export async function writeSheets(plans: Sheet[], options: WriteSheetsOptions): 
     await mkdir(dirname(sheetPath), { recursive: true });
     await writeFile(sheetPath, buffer);
     await writeFile(sheetPath.replace(/\.png$/, '.json'), JSON.stringify(manifest, null, 2) + '\n');
+    // Single-threaded increment between awaits, so the count is consistent even
+    // though sheets within a batch complete in nondeterministic order.
+    options.onSheetWritten?.(plan.output, (written += 1), plans.length);
   };
   for (let start = 0; start < plans.length; start += concurrency) {
     await Promise.all(plans.slice(start, start + concurrency).map(writeOne));
   }
 }
 
+/** Progress/diagnostic logging for the CLI run (stdout, so it shows in CI logs). */
+function log(message: string): void {
+  process.stdout.write(`[argos-batch] ${message}\n`);
+}
+
 async function main(): Promise<void> {
+  const startedAt = Date.now();
   const inputDir = process.env.ARGOS_SCREENSHOT_DIR ?? 'e2e/argos-screenshots';
   const outDir = process.env.ARGOS_SHEETS_DIR ?? 'e2e/argos-sheets';
   const tilesPerSheet = Number(process.env.ARGOS_TILES_PER_SHEET ?? 12);
@@ -392,12 +404,33 @@ async function main(): Promise<void> {
   const tileImageHeight = Number(process.env.ARGOS_TILE_IMAGE_HEIGHT ?? DEFAULT_TILE_IMAGE_HEIGHT);
   const concurrency = Number(process.env.ARGOS_SHEET_CONCURRENCY ?? DEFAULT_SHEET_CONCURRENCY);
 
-  const relPaths = await collectScreenshots(inputDir);
-  const plans = planSheets(relPaths, { tilesPerSheet, cols });
-  await writeSheets(plans, { inputDir, outDir, scale, tileWidth, tileImageHeight, concurrency });
-  process.stdout.write(
-    `[argos-batch] ${relPaths.length} screenshots → ${plans.length} sheets in ${outDir}\n`
+  log(
+    `config: in=${inputDir} out=${outDir} tilesPerSheet=${tilesPerSheet} cols=${cols} scale=${scale} concurrency=${concurrency}`
   );
+
+  const relPaths = await collectScreenshots(inputDir);
+  log(`collected ${relPaths.length} screenshots from ${inputDir}`);
+
+  const plans = planSheets(relPaths, { tilesPerSheet, cols });
+  const groupCount = new Set(plans.map((p) => p.group)).size;
+  if (plans.length === 0) {
+    log('no screenshots found — nothing to composite');
+    return;
+  }
+  log(`planned ${plans.length} sheets across ${groupCount} groups`);
+
+  await writeSheets(plans, {
+    inputDir,
+    outDir,
+    scale,
+    tileWidth,
+    tileImageHeight,
+    concurrency,
+    onSheetWritten: (output, written, total) => log(`wrote [${written}/${total}] ${output}`),
+  });
+
+  const seconds = ((Date.now() - startedAt) / 1000).toFixed(1);
+  log(`done in ${seconds}s: ${relPaths.length} screenshots → ${plans.length} sheets in ${outDir}`);
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
