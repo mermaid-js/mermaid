@@ -9,6 +9,7 @@ import {
   collectScreenshots,
   composeSheet,
   writeSheets,
+  ensureSheetMetadataSidecars,
   formatTileTitle,
   LABEL_HEIGHT,
   DEFAULT_TILE_WIDTH,
@@ -242,7 +243,7 @@ describe('compositor', () => {
       .png()
       .toBuffer();
     await writeFile(join(dir, mmdTile), mmdBuf);
-    writeArgosMetadataSidecar(join(dir, mmdTile), {
+    await writeArgosMetadataSidecar(join(dir, mmdTile), {
       automationLibrary: { name: 'playwright', version: '1.0.0' },
       sdk: { name: '@argos-ci/cli', version: '5.0.0' },
       test: {
@@ -274,6 +275,99 @@ describe('compositor', () => {
         type: 'tile',
         description: 'R1 C1: e2e/diagrams/packet/simple-diagram.mmd',
         location: { file: 'e2e/diagrams/packet/simple-diagram.mmd', line: 1, column: 1 },
+      },
+    ]);
+
+    await rm(outDir, { recursive: true, force: true });
+  });
+
+  it('regenerates sidecars from tile manifests via ensureSheetMetadataSidecars', async () => {
+    const outDir = await mkdtemp(join(tmpdir(), 'argos-out-'));
+    const mmdTile = 'diagrams/packet/simple-diagram.png';
+    await mkdir(join(dir, 'diagrams/packet'), { recursive: true });
+    await writeFile(
+      join(dir, mmdTile),
+      await sharp({
+        create: {
+          width: 10,
+          height: 10,
+          channels: 4,
+          background: { r: 0, g: 128, b: 255, alpha: 1 },
+        },
+      })
+        .png()
+        .toBuffer()
+    );
+
+    const [plan] = planSheets([mmdTile], { tilesPerSheet: 12, cols: 3 });
+    await writeSheets([plan], {
+      inputDir: dir,
+      outDir,
+      tileWidth: SLOT_WIDTH,
+      tileImageHeight: SLOT_HEIGHT,
+    });
+
+    const sidecarPath = argosMetadataSidecarPath(join(outDir, plan.output));
+    await rm(sidecarPath);
+
+    expect(await ensureSheetMetadataSidecars(outDir)).toBe(1);
+    const sidecar = JSON.parse(await readFile(sidecarPath, 'utf8'));
+    expect(sidecar.test.annotations).toHaveLength(1);
+    expect(sidecar.test.annotations[0].description).toContain('simple-diagram.mmd');
+
+    await rm(outDir, { recursive: true, force: true });
+  });
+
+  it('preserves rich per-tile annotations (real spec file/line/column) through regeneration', async () => {
+    const outDir = await mkdtemp(join(tmpdir(), 'argos-out-'));
+    const specTile = 'rendering/flowchart/flowchart.spec.js/should-do-a-thing.png';
+    await mkdir(join(dir, 'rendering/flowchart/flowchart.spec.js'), { recursive: true });
+    await writeFile(
+      join(dir, specTile),
+      await sharp({
+        create: { width: 10, height: 10, channels: 4, background: { r: 1, g: 2, b: 3, alpha: 1 } },
+      })
+        .png()
+        .toBuffer()
+    );
+    // Input sidecar carries the real test location (line/column ≠ 1) that pure
+    // path inference cannot recover.
+    await writeArgosMetadataSidecar(join(dir, specTile), {
+      automationLibrary: { name: 'playwright', version: '1.0.0' },
+      sdk: { name: '@argos-ci/cli', version: '5.0.0' },
+      test: {
+        title: 'should do a thing',
+        titlePath: ['flowchart.spec.js', 'Flowchart', 'should do a thing'],
+        annotations: [
+          {
+            type: 'test',
+            description: 'Flowchart › should do a thing',
+            location: { file: 'e2e/rendering/flowchart/flowchart.spec.js', line: 42, column: 7 },
+          },
+        ],
+      },
+    });
+
+    const [plan] = planSheets([specTile], { tilesPerSheet: 12, cols: 3 });
+    await writeSheets([plan], {
+      inputDir: dir,
+      outDir,
+      tileWidth: SLOT_WIDTH,
+      tileImageHeight: SLOT_HEIGHT,
+    });
+
+    const sidecarPath = argosMetadataSidecarPath(join(outDir, plan.output));
+    await rm(sidecarPath);
+
+    // Regeneration reads the manifest (source of truth) — it must NOT downgrade
+    // the location to line 1 / column 1 the way path inference would.
+    expect(await ensureSheetMetadataSidecars(outDir)).toBe(1);
+    const sidecar = JSON.parse(await readFile(sidecarPath, 'utf8'));
+    expect(sidecar.test.annotations).toStrictEqual([
+      {
+        type: 'tile',
+        description: 'R1 C1: Flowchart › should do a thing',
+        location: { file: 'e2e/rendering/flowchart/flowchart.spec.js', line: 42, column: 7 },
       },
     ]);
 

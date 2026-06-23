@@ -8,6 +8,8 @@ import {
   buildCaptureMetadata,
   buildSheetMetadata,
   formatTileTitle,
+  verifyArgosMetadataSidecars,
+  writeArgosMetadataSidecar,
 } from './argos-metadata.ts';
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '../..');
@@ -97,6 +99,56 @@ describe('argos-metadata', () => {
 
   it('uses the Argos sidecar naming convention', () => {
     expect(argosMetadataSidecarPath('/tmp/foo.png')).toBe('/tmp/foo.png.argos.json');
+  });
+
+  it('verifies sidecars carry tile annotations', async () => {
+    const { mkdtemp, rm, writeFile, mkdir } = await import('node:fs/promises');
+    const { tmpdir } = await import('node:os');
+    const dir = await mkdtemp(join(tmpdir(), 'argos-meta-'));
+    await mkdir(join(dir, 'diagrams/packet'), { recursive: true });
+    const png = join(dir, 'diagrams/packet/sheet-001.png');
+    await writeFile(png, Buffer.from('fake'));
+    await writeArgosMetadataSidecar(png, {
+      automationLibrary: { name: 'playwright', version: '1.0.0' },
+      sdk: { name: '@argos-ci/cli', version: '5.0.0' },
+      test: {
+        title: 'sheet-001',
+        titlePath: ['diagrams/packet', 'sheet-001'],
+        annotations: [
+          {
+            type: 'tile',
+            description: 'R1 C1: e2e/diagrams/packet/a.mmd',
+            location: { file: 'e2e/diagrams/packet/a.mmd', line: 1, column: 1 },
+          },
+        ],
+      },
+    });
+
+    const result = await verifyArgosMetadataSidecars(dir);
+    expect(result.pngs).toBe(1);
+    expect(result.withAnnotations).toBe(1);
+    expect(result.missingSidecars).toEqual([]);
+    expect(result.corruptSidecars).toEqual([]);
+
+    await rm(dir, { recursive: true, force: true });
+  });
+
+  it('reports a present-but-invalid-JSON sidecar as corrupt, not missing', async () => {
+    const { mkdtemp, rm, writeFile, mkdir } = await import('node:fs/promises');
+    const { tmpdir } = await import('node:os');
+    const dir = await mkdtemp(join(tmpdir(), 'argos-meta-'));
+    await mkdir(join(dir, 'diagrams/packet'), { recursive: true });
+    const png = join(dir, 'diagrams/packet/sheet-001.png');
+    await writeFile(png, Buffer.from('fake'));
+    // Sidecar exists on disk but is truncated/invalid JSON.
+    await writeFile(`${png}.argos.json`, '{ "test": ');
+
+    const result = await verifyArgosMetadataSidecars(dir);
+    expect(result.missingSidecars).toEqual([]);
+    expect(result.corruptSidecars).toEqual(['diagrams/packet/sheet-001.png']);
+    expect(result.withAnnotations).toBe(0);
+
+    await rm(dir, { recursive: true, force: true });
   });
 
   it('restores hyphenated screenshot slugs to titles', () => {

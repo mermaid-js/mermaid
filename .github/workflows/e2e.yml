@@ -446,7 +446,7 @@ jobs:
         if: env.GROUP_ARGOS_IMAGES == 'true' && env.ARGOS_UPLOAD_BOTH != 'true'
         env:
           ARGOS_SUBSET: true
-        run: npx argos upload e2e/argos-sheets
+        run: pnpm run argos:upload-sheets
 
       # Manual per-screenshot runs (workflow_dispatch with group_argos_images=false).
       - name: Upload individual screenshots to Argos
