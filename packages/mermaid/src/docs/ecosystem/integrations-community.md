@@ -64,6 +64,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [Tuleap](https://docs.tuleap.org/user-guide/writing-in-tuleap.html#graphs) ✅
 - [Mermaid Flow Visual Editor](https://www.mermaidflow.app) ✅
 - [Mermaid Studio by webtoolz](https://webtoolz.dev/mermaid) - Browser-based Mermaid editor with live preview, curated themes, and PNG/SVG export
+- [Beauty Diagram](https://www.beauty-diagram.com/) - Browser-based tool that renders Mermaid diagrams as polished, shareable SVGs
 - [Mermerd](https://github.com/KarnerTh/mermerd)
 - [Slab](https://slab.com) ✅
 - [Swimm](https://docs.swimm.io/features/diagrams-and-charts) ✅
@@ -71,6 +72,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [Notion](https://notion.so) ✅
 - [Observable](https://observablehq.com/@observablehq/mermaid) ✅
 - [Obsidian](https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram) ✅
+  - [Beauty Diagram](https://community.obsidian.md/plugins/beauty-diagram)
 - [Outline](https://docs.getoutline.com/s/guide/doc/diagrams-KQiKoT4wzK) ✅
 - [Redmine](https://redmine.org)
   - [Mermaid Macro](https://redmine.org/plugins/redmine_mermaid_macro)
@@ -204,6 +206,7 @@ Communication tools and platforms
   - [Preview](https://marketplace.visualstudio.com/items?itemName=searKing.preview-vscode)
   - [Preview Sequence Diagrams](https://marketplace.visualstudio.com/items?itemName=arichika.previewseqdiag-vscode)
   - [Mermaid Markdown Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=bpruitt-goddard.mermaid-markdown-syntax-highlighting)
+  - [Beauty Diagram](https://marketplace.visualstudio.com/items?itemName=beauty-diagram.beauty-diagram)
 - [Vim](https://www.vim.org)
   - [Vim Diagram Syntax](https://github.com/zhaozg/vim-diagram)
   - [Official Vim Syntax and ft plugin](https://github.com/craigmac/vim-mermaid)
@@ -261,6 +264,7 @@ Communication tools and platforms
 
 ### Other
 
+- [Beauty Diagram CLI: Render Mermaid diagrams to SVG from the terminal](https://www.beauty-diagram.com/developers/cli)
 - [Bisheng](https://www.npmjs.com/package/bisheng)
   - [bisheng-plugin-mermaid](https://github.com/yct21/bisheng-plugin-mermaid)
 - [Blazorade Mermaid: Render Mermaid diagrams in Blazor applications](https://github.com/Blazorade/Blazorade-Mermaid/wiki)
