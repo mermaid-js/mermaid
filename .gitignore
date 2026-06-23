@@ -34,6 +34,7 @@ e2e/screenshots/
 e2e/__snapshots__/
 e2e/snapshots/
 e2e/argos-screenshots/
+e2e/argos-sheets/
 
 # eslint --cache file
 .eslintcache

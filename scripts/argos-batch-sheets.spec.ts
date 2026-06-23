@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, it, expect } from 'vitest';
-import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, readFile, rm, access } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import sharp from 'sharp';
@@ -8,11 +8,16 @@ import {
   planSheets,
   collectScreenshots,
   composeSheet,
+  writeSheets,
   formatTileTitle,
   LABEL_HEIGHT,
   DEFAULT_TILE_WIDTH,
   DEFAULT_TILE_IMAGE_HEIGHT,
 } from './argos-batch-sheets.ts';
+import {
+  argosMetadataSidecarPath,
+  writeArgosMetadataSidecar,
+} from '../e2e/helpers/argos-metadata.ts';
 
 const SLOT_WIDTH = 40;
 const SLOT_HEIGHT = 30;
@@ -219,5 +224,59 @@ describe('compositor', () => {
     const first = await composeSheet(plan, { inputDir: dir, ...slot });
     const second = await composeSheet(plan, { inputDir: dir, ...slot });
     expect(first.buffer.equals(second.buffer)).toBe(true);
+  });
+
+  it('writes Argos metadata sidecars with one tile annotation per source', async () => {
+    const outDir = await mkdtemp(join(tmpdir(), 'argos-out-'));
+    const mmdDir = join(dir, 'diagrams/packet');
+    await mkdir(mmdDir, { recursive: true });
+    const mmdTile = 'diagrams/packet/simple-diagram.png';
+    const mmdBuf = await sharp({
+      create: {
+        width: 10,
+        height: 10,
+        channels: 4,
+        background: { r: 255, g: 255, b: 0, alpha: 1 },
+      },
+    })
+      .png()
+      .toBuffer();
+    await writeFile(join(dir, mmdTile), mmdBuf);
+    writeArgosMetadataSidecar(join(dir, mmdTile), {
+      automationLibrary: { name: 'playwright', version: '1.0.0' },
+      sdk: { name: '@argos-ci/cli', version: '5.0.0' },
+      test: {
+        title: 'simple diagram',
+        annotations: [
+          {
+            type: 'mmd-fixture',
+            description: 'e2e/diagrams/packet/simple-diagram.mmd',
+            location: { file: 'e2e/diagrams/packet/simple-diagram.mmd', line: 1, column: 1 },
+          },
+        ],
+      },
+    });
+
+    const [plan] = planSheets([mmdTile], { tilesPerSheet: 12, cols: 3 });
+    await writeSheets([plan], {
+      inputDir: dir,
+      outDir,
+      tileWidth: SLOT_WIDTH,
+      tileImageHeight: SLOT_HEIGHT,
+    });
+
+    const sheetPath = join(outDir, plan.output);
+    const sidecarPath = argosMetadataSidecarPath(sheetPath);
+    await access(sidecarPath);
+    const sidecar = JSON.parse(await readFile(sidecarPath, 'utf8'));
+    expect(sidecar.test.annotations).toStrictEqual([
+      {
+        type: 'tile',
+        description: 'R1 C1: e2e/diagrams/packet/simple-diagram.mmd',
+        location: { file: 'e2e/diagrams/packet/simple-diagram.mmd', line: 1, column: 1 },
+      },
+    ]);
+
+    await rm(outDir, { recursive: true, force: true });
   });
 });
