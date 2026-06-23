@@ -4,15 +4,12 @@ config:
   flowchart:
     htmlLabels: false
     useMaxWidth: false
----
----
-  config:
   layout: swimlane
   swimlane:
-  ignoreCrossLaneEdges: false
-  optimizeRanksByCrossings: false
-  ---
-  swimlane LR
+    ignoreCrossLaneEdges: false
+    optimizeRanksByCrossings: false
+---
+swimlane LR
 
   subgraph L1[Community / Users]
   A1[Report issue]
@@ -46,6 +43,5 @@ config:
 
   G3 --> C1 --> C3 --> G2
   G3 --> C2 --> C3
-
 
   R1 --> R2 --> G3
