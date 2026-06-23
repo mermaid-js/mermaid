@@ -5,6 +5,7 @@ coverage/
 .idea/
 .pnpm-store/
 .instructions/
+docs/superpowers/
 .mcp.json
 
 dist
@@ -32,6 +33,7 @@ Gemfile.lock
 e2e/screenshots/
 e2e/__snapshots__/
 e2e/snapshots/
+e2e/argos-screenshots/
 
 # eslint --cache file
 .eslintcache
