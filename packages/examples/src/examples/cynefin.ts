@@ -33,5 +33,31 @@ export default {
   clear --> chaotic : "Complacency"
 `,
     },
+    {
+      title: 'Product Strategy with Domain Transitions',
+      code: `cynefin-beta
+  title Product Strategy
+
+  complex
+    "New market entry"
+    "Pricing experiments"
+
+  complicated
+    "Competitive analysis"
+    "Capacity planning"
+
+  clear
+    "Standard onboarding"
+    "Invoice processing"
+
+  chaotic
+    "PR crisis response"
+
+  complex --> complicated : "Patterns emerge"
+  complicated --> clear : "Playbook written"
+  clear --> chaotic : "Complacency"
+  chaotic --> complex : "Stabilized"
+`,
+    },
   ],
 } satisfies DiagramMetadata;

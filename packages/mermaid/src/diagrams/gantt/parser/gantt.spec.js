@@ -40,6 +40,26 @@ describe('when parsing a gantt diagram it', function () {
 
     expect(parserFnConstructor(str)).not.toThrow();
   });
+  it('should concatenate tokens across multiple excludes lines (issue #6270)', function () {
+    const str = [
+      'gantt',
+      'dateFormat DD-MM-YYYY',
+      'excludes weekends',
+      '%% week 7 is winter break',
+      'excludes 10-02-2025 11-02-2025 12-02-2025',
+      '%% workers holiday 1 maj',
+      'excludes 01-05-2025',
+    ].join('\n');
+
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(ganttDb.getExcludes()).toEqual([
+      'weekends',
+      '10-02-2025',
+      '11-02-2025',
+      '12-02-2025',
+      '01-05-2025',
+    ]);
+  });
   it('should handle a todayMarker definition', function () {
     spyOn(ganttDb, 'setTodayMarker');
     const str =

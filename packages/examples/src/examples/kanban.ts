@@ -6,7 +6,7 @@ export default {
   description: 'Visualize work items in a Kanban board',
   examples: [
     {
-      title: 'Kanban Diagram',
+      title: 'Mermaid Sprint Board',
       isDefault: true,
       code: `---
 config:
@@ -14,24 +14,29 @@ config:
     ticketBaseUrl: 'https://github.com/mermaid-js/mermaid/issues/#TICKET#'
 ---
 kanban
+  todo[Todo]
+    docs[Create documentation]
+    blog[Write blog post about the new diagram]@{ priority: 'Low' }
+  inProgress[In progress]
+    renderer[Improve renderer for edge cases]@{ assigned: 'knsv', priority: 'High' }
+  readyForTest[Ready for test]
+    parserTests[Create parsing tests]@{ ticket: 2038, assigned: 'K.Sveidqvist', priority: 'High' }
+  done[Done]
+    grammar[Design grammar]@{ assigned: 'knsv' }
+    longTitle[Title of diagram is more than 100 chars when user duplicates diagram with 100 char]@{ ticket: 2036, priority: 'Very High' }
+    dbFunction[Update DB function]@{ ticket: 2037, assigned: 'knsv', priority: 'High' }`,
+    },
+    {
+      title: 'Personal Task Board',
+      code: `kanban
   Todo
-    [Create Documentation]
-    docs[Create Blog about the new diagram]
+    [Buy groceries]
+    [Book dentist appointment]
   [In progress]
-    id6[Create renderer so that it works in all cases. We also add some extra text here for testing purposes. And some more just for the extra flare.]
-  id9[Ready for deploy]
-    id8[Design grammar]@{ assigned: 'knsv' }
-  id10[Ready for test]
-    id4[Create parsing tests]@{ ticket: 2038, assigned: 'K.Sveidqvist', priority: 'High' }
-    id66[last item]@{ priority: 'Very Low', assigned: 'knsv' }
-  id11[Done]
-    id5[define getData]
-    id2[Title of diagram is more than 100 chars when user duplicates diagram with 100 char]@{ ticket: 2036, priority: 'Very High'}
-    id3[Update DB function]@{ ticket: 2037, assigned: knsv, priority: 'High' }
-
-  id12[Can't reproduce]
-    id3[Weird flickering in Firefox]
-`,
+    [Plan weekend trip]
+  Done
+    [Pay electricity bill]
+    [Renew gym membership]`,
     },
   ],
 } satisfies DiagramMetadata;

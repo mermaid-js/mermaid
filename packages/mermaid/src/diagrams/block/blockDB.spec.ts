@@ -1,3 +1,5 @@
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import * as diagramAPI from '../../diagram-api/diagramAPI.js';
 import db from './blockDB.js';
 
 describe('block db edge styles', () => {
@@ -25,5 +27,22 @@ describe('block db edge styles', () => {
 
     expect(db.edgeStrToEdgeData('--x')).toBe('arrow_cross');
     expect(db.edgeStrToEdgeData('--o')).toBe('arrow_circle');
+  });
+});
+
+describe('block db runtime config', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    db.clear();
+  });
+
+  it('should call getConfig at sanitization time, not at module load time', () => {
+    const spy = vi.spyOn(diagramAPI, 'getConfig').mockReturnValue({} as any);
+
+    db.setHierarchy([{ id: 'a', type: 'square', label: 'hello', children: [] }]);
+
+    // getConfig must have been called during setHierarchy (call-time read),
+    // not only once at module import time.
+    expect(spy).toHaveBeenCalled();
   });
 });

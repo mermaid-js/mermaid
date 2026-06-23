@@ -13,8 +13,8 @@ export async function lean_right<T extends SVGGraphicsElement>(parent: D3Selecti
   const labelPaddingY = nodePadding;
   const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const h = (node?.height ?? bbox.height) + labelPaddingY;
-  const w = (node?.width ?? bbox.width) + labelPaddingX;
+  const h = Math.max(bbox.height + labelPaddingY, node.height ?? 0);
+  const w = Math.max(bbox.width + labelPaddingX, (node.width ?? 0) - h);
 
   const points = [
     { x: (-3 * h) / 6, y: 0 },

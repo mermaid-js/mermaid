@@ -6,23 +6,8 @@ export default {
   description: 'Visualize hierarchical data as a tree structure',
   examples: [
     {
-      title: 'Basic TreeView',
+      title: 'Project File Structure',
       isDefault: true,
-      code: `treeView-beta
-            "docs"
-                "build"
-                "make.bat"
-                "Makefile"
-                "out"
-                "source"
-                    "build"
-                    "static"
-                        "_templates"
-                        "div. Files"`,
-    },
-    {
-      title: 'File Tree with Icons',
-      isDefault: false,
       code: `treeView-beta
             my-project/
                 src/
@@ -34,6 +19,19 @@ export default {
                 .gitignore
                 package.json
                 README.md`,
+    },
+    {
+      title: 'Shared Drive with Quoted Names',
+      isDefault: false,
+      code: `treeView-beta
+            "Team Drive"
+                "Quarterly Reports"
+                    "Q1 Review.pdf"
+                    "Q2 Review.pdf"
+                "Brand Assets"
+                    "logo.svg"
+                    "style guide.md"
+                "Meeting Notes"`,
     },
     {
       title: 'Annotations',

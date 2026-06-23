@@ -109,6 +109,20 @@ const getStyles: DiagramStylesProvider = (options) => {
   [data-look=neo].labelBkg {
     background-color: ${fade(options.tertiaryColor, 0.5)};
   }
+
+  .cluster rect {
+    fill: ${options.clusterBkg ?? options.mainBkg};
+    stroke: ${options.clusterBorder ?? options.nodeBorder};
+    stroke-width: 1px;
+  }
+
+  .cluster text {
+    fill: ${options.titleColor ?? options.textColor};
+  }
+
+  .cluster-label text {
+    fill: ${options.titleColor ?? options.textColor};
+  }
 `;
 };
 

@@ -120,6 +120,12 @@ export interface MermaidConfig {
      */
     nodePlacementStrategy?: 'SIMPLE' | 'NETWORK_SIMPLEX' | 'LINEAR_SEGMENTS' | 'BRANDES_KOEPF';
     /**
+     * Elk specific option affecting Brandes-Koepf node placement alignment.
+     * NONE picks the alignment with the smallest height.
+     *
+     */
+    nodePlacementAlignment?: 'NONE' | 'LEFTUP' | 'LEFTDOWN' | 'RIGHTUP' | 'RIGHTDOWN' | 'BALANCED';
+    /**
      * This strategy decides how to find cycles in the graph and deciding which edges need adjustment to break loops.
      *
      */
@@ -139,6 +145,15 @@ export interface MermaidConfig {
      *
      */
     considerModelOrder?: 'NONE' | 'NODES_AND_EDGES' | 'PREFER_EDGES' | 'PREFER_NODES';
+    /**
+     * Elk specific option that keeps the entry node of a recursive flow at the top of the layout.
+     *
+     * When a flow loops back on itself (a back-edge to an earlier node), ELK's degree-based cycle-breaking has no notion of an "entry point" and may rank the first-declared node in the middle, scrambling the reading order. When enabled, the entry node of each cyclic component is pinned to the first layer so the diagram still reads from its entry. Acyclic flows always have a natural source, so this has no effect on them.
+     *
+     * Only applies when the cyclic flow has no node without incoming edges: if the loop is fed from outside (e.g. a start node pointing into it), that component already has a natural source and nothing is pinned. Detection is also scoped per container, so cycles that cross a subgraph boundary are not detected.
+     *
+     */
+    keepEntryNodeOnTop?: boolean;
   };
   darkMode?: boolean;
   /**
@@ -217,6 +232,7 @@ export interface MermaidConfig {
    */
   deterministicIDSeed?: string;
   flowchart?: FlowchartDiagramConfig;
+  swimlane?: SwimlaneDiagramConfig;
   sequence?: SequenceDiagramConfig;
   gantt?: GanttDiagramConfig;
   journey?: JourneyDiagramConfig;
@@ -365,6 +381,38 @@ export interface BaseDiagramConfig {
    *
    */
   useMaxWidth?: boolean;
+}
+/**
+ * The object containing configurations specific for the swimlanes diagram type.
+ *
+ * Swimlanes reuses the flowchart renderer and flowchart config for shared
+ * options (curve, htmlLabels, spacing, …); this block holds the knobs that
+ * only affect the swimlanes layout pipeline.
+ *
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "SwimlaneDiagramConfig".
+ */
+export interface SwimlaneDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Renders edge crossings as small arcs ("hops") or visible gaps so that
+   * overlapping edges are easier to read. Set to `false` to disable. Edges
+   * rendered as curves are skipped to avoid corrupting the geometry.
+   *
+   */
+  lineHops?: boolean | ('arc' | 'gap');
+  /**
+   * Ignores edges that cross swimlane boundaries during swimlane layer
+   * assignment. This can improve rank quality for diagrams with many
+   * cross-lane links.
+   *
+   */
+  ignoreCrossLaneEdges?: boolean;
+  /**
+   * Enables a crossing-aware rank optimization pass for swimlane layouts.
+   *
+   */
+  optimizeRanksByCrossings?: boolean;
 }
 /**
  * The object containing configurations specific for sequence diagrams
@@ -914,6 +962,21 @@ export interface PieDiagramConfig extends BaseDiagramConfig {
    *
    */
   textPosition?: number;
+  /**
+   * Donut hole ratio. Valid value are from 0 to 0.9. Default to 0.
+   *
+   */
+  donutHole?: number;
+  /**
+   * Legend's position relative to the chart. Default to right.
+   *
+   */
+  legendPosition?: 'top' | 'bottom' | 'left' | 'right' | 'center';
+  /**
+   * Highlight specific slice with matching label. Set to 'hover' to highlight hovered slice.
+   *
+   */
+  highlightSlice?: string;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
@@ -1028,6 +1091,18 @@ export interface XYChartConfig extends BaseDiagramConfig {
    * Should show the chart title
    */
   showTitle?: boolean;
+  /**
+   * Should show a legend for named plots
+   */
+  showLegend?: boolean;
+  /**
+   * Font size of the legend text
+   */
+  legendFontSize?: number;
+  /**
+   * Padding around the legend
+   */
+  legendPadding?: number;
   xAxis?: XYChartAxisConfig;
   yAxis?: XYChartAxisConfig;
   /**
@@ -1090,6 +1165,10 @@ export interface XYChartAxisConfig {
    * Width of the axis line
    */
   axisLineWidth?: number;
+  /**
+   * Label rotation in degrees
+   */
+  labelRotation?: number;
 }
 /**
  * The object containing configurations specific for req diagrams

@@ -8,6 +8,16 @@ on:
       - release/**
   pull_request:
   merge_group:
+  workflow_dispatch:
+    inputs:
+      group_argos_images:
+        description: Composite screenshots into batched sheets before Argos upload
+        type: boolean
+        default: true
+      spec_pattern:
+        description: Cypress spec glob (empty = full suite)
+        type: string
+        default: ''
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -18,6 +28,7 @@ env:
   # For PRs and MergeQueues, the target commit is used, and for push events to non-develop branches, github.event.previous is used if available. Otherwise, 'develop' is used.
   targetHash: >-
     ${{
+      github.event_name == 'workflow_dispatch' && 'develop' ||
       github.event.pull_request.base.sha ||
       github.event.merge_group.base_sha ||
       (
@@ -29,7 +40,24 @@ env:
       github.event.before
     }}
   RUN_VISUAL_TEST: >-
-    ${{ github.repository == 'mermaid-js/mermaid' && (github.event_name != 'pull_request' || !startsWith(github.head_ref, 'renovate/')) }}
+    ${{
+      github.repository == 'mermaid-js/mermaid' && (
+        github.event_name == 'workflow_dispatch' ||
+        (github.event_name != 'pull_request' || !startsWith(github.head_ref, 'renovate/'))
+      )
+    }}
+  # Automatic runs always batch; manual runs can upload per-screenshot instead.
+  GROUP_ARGOS_IMAGES: >-
+    ${{
+      github.event_name != 'workflow_dispatch' && 'true' ||
+      (inputs.group_argos_images && 'true' || 'false')
+    }}
+  # On a push to the baseline branch (develop), upload BOTH the grouped sheets
+  # and the individual per-test screenshots in a single Argos build, so the
+  # default build's baseline is a superset. Scoped grouped PRs and manual
+  # per-screenshot runs then both diff cleanly against it (each marked --subset).
+  ARGOS_UPLOAD_BOTH: >-
+    ${{ github.event_name == 'push' && github.ref == 'refs/heads/develop' }}
 jobs:
   cache:
     runs-on: ubuntu-latest
@@ -72,16 +100,7 @@ jobs:
           mv stats cypress/snapshots/stats/base
 
   # Detect which diagram(s) the PR touches and determine the minimal set of
-  # Cypress specs to run. Runs in parallel with the `cache` job so it does not
-  # add to the critical path.
-  #
-  # Feature flag: set the repository variable E2E_SCOPE_BY_DIAGRAM to 'true'
-  # (Settings → Variables → Actions) to enable diagram-scoped test selection.
-  # When the flag is not set or is 'false', the full 5-container matrix runs.
-  #
-  # When scoping is active and all changes are confined to a single diagram,
-  # only that diagram's specs run in a single container. Any change to shared
-  # rendering code, themes, config, or the parser falls back to the full suite.
+  # Cypress specs to run.
   detect-scope:
     runs-on: ubuntu-latest
     outputs:
@@ -100,15 +119,27 @@ jobs:
 
       - name: Detect e2e scope
         id: scope
-        # The detection script is pure Node.js ESM (no npm install required).
-        # It reads changed file paths from stdin and prints the --spec value.
         run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            SPEC="${{ github.event.inputs.spec_pattern }}"
+            if [ -n "$SPEC" ]; then
+              echo "spec_pattern=${SPEC}" >> "$GITHUB_OUTPUT"
+              echo "matrix=[1]" >> "$GITHUB_OUTPUT"
+              echo "[detect-scope] Manual run — scoped to: ${SPEC}"
+            else
+              echo "spec_pattern=" >> "$GITHUB_OUTPUT"
+              echo "matrix=[1,2,3,4,5,6,7,8]" >> "$GITHUB_OUTPUT"
+              echo "[detect-scope] Manual run — full suite."
+            fi
+            exit 0
+          fi
+
           # Kill-switch: set the repo variable E2E_SCOPE_BY_DIAGRAM to 'false'
           # to disable scoping.  Scoping is ON by default so that fork PRs
           # (where repository variables are unavailable) still benefit from it.
           if [ "${E2E_SCOPE_BY_DIAGRAM}" = "false" ]; then
             echo "spec_pattern=" >> "$GITHUB_OUTPUT"
-            echo "matrix=[1,2,3,4,5]" >> "$GITHUB_OUTPUT"
+            echo "matrix=[1,2,3,4,5,6,7,8]" >> "$GITHUB_OUTPUT"
             echo "[detect-scope] Scoping disabled via kill-switch — full suite."
             exit 0
           fi
@@ -119,21 +150,18 @@ jobs:
           # full suite (no PR diff to scope against).
           if [ "$BASE" = "develop" ] || [ "$BASE" = "master" ]; then
             echo "spec_pattern=" >> "$GITHUB_OUTPUT"
-            echo "matrix=[1,2,3,4,5]" >> "$GITHUB_OUTPUT"
+            echo "matrix=[1,2,3,4,5,6,7,8]" >> "$GITHUB_OUTPUT"
             echo "[detect-scope] Direct push to ${BASE} — full suite."
             exit 0
           fi
 
           # Fetch the target branch so we can find the true merge-base.
-          # Using merge-base rather than the raw base SHA from the event payload
-          # avoids picking up commits that landed on the base branch after the
-          # PR was last synchronized (which would widen the diff incorrectly).
           git fetch origin develop --depth=1 2>/dev/null || true
           MERGE_BASE=$(git merge-base HEAD origin/develop 2>/dev/null || echo "")
 
           if [ -z "$MERGE_BASE" ]; then
             echo "spec_pattern=" >> "$GITHUB_OUTPUT"
-            echo "matrix=[1,2,3,4,5]" >> "$GITHUB_OUTPUT"
+            echo "matrix=[1,2,3,4,5,6,7,8]" >> "$GITHUB_OUTPUT"
             echo "[detect-scope] Could not determine merge-base — full suite."
             exit 0
           fi
@@ -145,6 +173,7 @@ jobs:
                  | node scripts/e2e-diagram-scope.mjs \
                  || echo "")
 
+          # Check and set required no of containers to run
           if [ "$SPEC" = "SKIP" ]; then
             echo "spec_pattern=SKIP" >> "$GITHUB_OUTPUT"
             echo "matrix=[1]" >> "$GITHUB_OUTPUT"
@@ -155,7 +184,7 @@ jobs:
             echo "[detect-scope] Scoped to: ${SPEC}"
           else
             echo "spec_pattern=" >> "$GITHUB_OUTPUT"
-            echo "matrix=[1,2,3,4,5]" >> "$GITHUB_OUTPUT"
+            echo "matrix=[1,2,3,4,5,6,7,8]" >> "$GITHUB_OUTPUT"
             echo "[detect-scope] Cannot scope — full suite."
           fi
           echo "[detect-scope] matrix output: $(grep '^matrix=' "$GITHUB_OUTPUT" | tail -1)"
@@ -211,6 +240,13 @@ jobs:
           echo '' >> "$GITHUB_STEP_SUMMARY"
           npx tsx scripts/size.ts >> "$GITHUB_STEP_SUMMARY"
 
+      # Rebuild the served bundle with inline source maps so the Cypress run can
+      # collect native V8 coverage and map it back to source (no instrumentation).
+      # Gated to runs whose coverage is uploaded.
+      - name: Build coverage bundle for e2e coverage
+        if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/develop' }}
+        run: pnpm build:coverage
+
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests (or a scoped subset when detect-scope fires).
       - name: Cypress run
@@ -222,23 +258,11 @@ jobs:
           wait-on: 'http://localhost:9000'
           browser: chrome
           # When detect-scope produced a pattern, run only those specs.
-          # An empty string means "run all specs" (cypress-io/github-action
-          # omits the --spec flag when the value is empty).
           spec: ${{ needs.detect-scope.outputs.spec_pattern }}
           # Disable recording if we don't have an API key
           # e.g. if this action was run from a fork
           record: ${{ env.RUN_VISUAL_TEST == 'true' && secrets.CYPRESS_RECORD_KEY != '' }}
         env:
-          # For scoped runs (only a subset of specs executed), mark the Argos
-          # build as a "subset build". This tells Argos to ignore missing
-          # screenshots (they were simply not run, not deleted) and only report
-          # changed/added screenshots. Subset builds are never used as a
-          # baseline, so the full-suite baseline on develop is always preserved.
-          # See: https://argos-ci.com/docs/subset-builds
-          ARGOS_SUBSET: "${{ needs.detect-scope.outputs.spec_pattern != '' }}"
-          ARGOS_PARALLEL: ${{ env.RUN_VISUAL_TEST == 'true' }}
-          ARGOS_PARALLEL_TOTAL: ${{ env.RUN_VISUAL_TEST == 'true' && strategy.job-total || 1 }}
-          ARGOS_PARALLEL_INDEX: ${{ env.RUN_VISUAL_TEST == 'true' && matrix.containers || 1 }}
           CYPRESS_COMMIT: ${{ github.sha }}
           CYPRESS_RECORD_KEY: ${{ env.RUN_VISUAL_TEST == 'true' && secrets.CYPRESS_RECORD_KEY || ''}}
           SPLIT: ${{ strategy.job-total }}
@@ -246,14 +270,193 @@ jobs:
           SPLIT_FILE: 'cypress/timings.json'
           VITEST_COVERAGE: true
 
+      # Stash each shard's lcov; the host-based `codecov-upload` job uploads them.
+      - name: Upload e2e coverage artifact
+        if: ${{ steps.cypress.conclusion == 'success' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/develop') }}
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
+        with:
+          name: e2e-coverage-${{ matrix.containers }}
+          path: coverage/cypress/lcov.info
+          if-no-files-found: ignore
+          retention-days: 1
+
+      - name: Upload raw screenshots for Argos batching
+        if: ${{ env.RUN_VISUAL_TEST == 'true' && !cancelled() }}
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
+        with:
+          name: argos-screenshots-${{ matrix.containers }}
+          path: cypress/screenshots
+          if-no-files-found: ignore
+          retention-days: 1
+
+  # Upload coverage from the host, where curl + gpg are available; the
+  # cypress/browsers container lacks them and can't install them (non-root).
+  codecov-upload:
+    needs: e2e
+    if: ${{ !cancelled() && (github.event_name == 'pull_request' || github.ref == 'refs/heads/develop') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Download e2e coverage artifacts
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          pattern: e2e-coverage-*
+          path: coverage-artifacts
+
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # v5.3.1
-        # Run step only pushes to develop and pull_requests
-        if: ${{ steps.cypress.conclusion == 'success' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/develop')}}
         with:
-          files: coverage/cypress/lcov.info
+          directory: coverage-artifacts
           flags: e2e
           name: mermaid-codecov
           fail_ci_if_error: false
           verbose: true
           token: 6845cc80-77ee-4e17-85a1-026cd95e0766
+
+  # Batch all per-container screenshots into folder-wise composite sheets and
+  # upload them to Argos in a single build. PR / merge-queue runs upload only the
+  # sheets; a push to develop additionally uploads the individual screenshots so
+  # the baseline is a superset (see ARGOS_UPLOAD_BOTH).
+  #
+  # Only runs when the e2e matrix fully succeeded: a failed/partial e2e run would
+  # otherwise upload an incomplete or wrong set of screenshots — and on develop
+  # that set becomes the baseline. `needs.e2e.result == 'success'` requires every
+  # shard to pass (the matrix is fail-fast: false, so its result is failure if any
+  # shard failed).
+  argos-batch:
+    if: >-
+      ${{
+        github.repository == 'mermaid-js/mermaid' &&
+        (github.event_name == 'workflow_dispatch' ||
+          (github.event_name != 'pull_request' || !startsWith(github.head_ref, 'renovate/'))) &&
+        needs.detect-scope.outputs.spec_pattern != 'SKIP' &&
+        needs.e2e.result == 'success'
+      }}
+    needs: [detect-scope, e2e]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+        with:
+          node-version-file: '.node-version'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download screenshot artifacts
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          pattern: argos-screenshots-*
+          merge-multiple: true
+          path: cypress/screenshots
+
+      # cypress-split gives each shard a different spec subset, so Cypress names
+      # screenshots relative to that shard's spec common-ancestor (the rendering/
+      # prefix is kept or stripped depending on the mix). Re-root every screenshot
+      # under its spec's true cypress/integration path so names are deterministic
+      # across runs — otherwise the same diagram churns the Argos baseline.
+      - name: Canonicalize screenshot paths
+        run: pnpm run argos:canonicalize
+
+      - name: Build composite sheets
+        if: env.GROUP_ARGOS_IMAGES == 'true'
+        run: pnpm run argos:batch
+
+      # Baseline branch (develop): merge the grouped sheets and the individual
+      # screenshots into one tree and upload them as a SINGLE Argos build. The CLI
+      # uploads one directory and names each screenshot relative to it, so merging
+      # preserves both naming schemes — sheet names (<group>/<group>-NNN.png) and
+      # individual names (<group>/<spec>.spec.js/<name>.png) never collide and match
+      # exactly what grouped PR / manual runs upload. The default build thus becomes
+      # a superset baseline both modes can diff against (each marked --subset).
+      # No --subset here: a develop push runs the full suite and uploads both
+      # representations, so this is the complete, authoritative baseline.
+      #
+      # Sent as a single Argos build, but split into K parallel uploads sharing one
+      # nonce. Argos's PUT /builds/{buildId} finalize body inlines metadata for every
+      # screenshot, so uploading the whole superset in one request exceeds the API
+      # body limit ("request entity too large", HTTP 413). Each parallel index PUTs
+      # only its slice; --files globs stay relative to the same root so names are
+      # preserved, and Argos combines the indices into one build once all K report.
+      - name: Upload combined baseline to Argos (develop)
+        if: env.ARGOS_UPLOAD_BOTH == 'true'
+        env:
+          ARGOS_PARALLEL_NONCE: ${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          mkdir -p cypress/argos-baseline
+          cp -r cypress/argos-sheets/. cypress/argos-baseline/
+          cp -r cypress/screenshots/. cypress/argos-baseline/
+
+          # Round-robin the leaf directories (those that directly hold images)
+          # into K buckets so each upload's finalize body carries only ~1/K of the
+          # suite. Bucketing by top-level folder instead put all of rendering/
+          # (~60% of the suite) into one bucket whose finalize body exceeded
+          # Argos's limit (HTTP 413) regardless of K; balancing at the leaf level
+          # keeps the biggest bucket to ~1/K.
+          mapfile -t groups < <(
+            cd cypress/argos-baseline &&
+              find . -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) |
+              sed 's#/[^/]*$##' | sort -u | sed 's#^\./##'
+          )
+          K=5
+          for i in $(seq 1 "$K"); do
+            globs=()
+            for j in "${!groups[@]}"; do
+              # Glob each leaf dir non-recursively (`/*` not `/**`) so the buckets
+              # stay a disjoint partition, and match only images: a `/**` glob would
+              # also pick up the `<name>.png.argos.json` metadata sidecars, which
+              # Argos treats as screenshots and whose doubled `<sidecar>.argos.json`
+              # path overflows the 255-byte filename limit (ENAMETOOLONG, surfaced
+              # as "Failed to read metadata").
+              if [ $(( j % K + 1 )) -eq "$i" ]; then globs+=( "${groups[$j]}/*.{png,jpg,jpeg}" ); fi
+            done
+            [ ${#globs[@]} -eq 0 ] && continue
+            npx argos upload cypress/argos-baseline \
+              --files "${globs[@]}" \
+              --parallel --parallel-total "$K" --parallel-index "$i"
+          done
+
+      # PR / merge-queue / manual grouped runs: upload only the composite sheets.
+      - name: Upload grouped sheets to Argos
+        if: env.GROUP_ARGOS_IMAGES == 'true' && env.ARGOS_UPLOAD_BOTH != 'true'
+        env:
+          ARGOS_SUBSET: true
+        run: npx argos upload cypress/argos-sheets
+
+      # Manual per-screenshot runs (workflow_dispatch with group_argos_images=false).
+      - name: Upload individual screenshots to Argos
+        if: env.GROUP_ARGOS_IMAGES != 'true'
+        env:
+          ARGOS_SUBSET: true
+        run: npx argos upload cypress/screenshots
+
+  e2e-required:
+    if: always()
+    needs: [detect-scope, e2e]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify e2e outcome
+        env:
+          E2E_RESULT: ${{ needs.e2e.result }}
+          SCOPE_RESULT: ${{ needs.detect-scope.result }}
+          SPEC_PATTERN: ${{ needs.detect-scope.outputs.spec_pattern }}
+        run: |
+          echo "detect-scope result: ${SCOPE_RESULT}"
+          echo "detect-scope spec_pattern: ${SPEC_PATTERN}"
+          echo "e2e result: ${E2E_RESULT}"
+          case "${E2E_RESULT}" in
+            success|skipped)
+              echo "OK — required check satisfied."
+              ;;
+            *)
+              echo "FAIL — e2e matrix did not complete successfully."
+              exit 1
+              ;;
+          esac

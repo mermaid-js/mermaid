@@ -1,0 +1,33 @@
+
+swimlane LR
+
+  subgraph S["Sales"]
+    T5["Confirm with customer"]
+  end
+
+  subgraph T["Technical support"]
+    T4["Get more details from customer"]
+    T6["Resolve solution"]
+  end
+
+  subgraph Tester["Tester"]
+    Te2{"Reproduced the issue"}
+    D4{"Resolved?"}
+  end
+
+  subgraph D["Development"]
+    D1["Error report"]
+    D2["Technical analysis"]
+    D3["Fix the issue"]
+
+  end
+
+  %% Edges
+
+
+
+  Te2 -- Yes --> D1 --> D2 --> D3 --> D4
+  Te2 -- No --> T4
+
+  D4 -- No --> D2
+  D4 -- Yes --> T6 --> T5
