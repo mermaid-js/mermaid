@@ -248,37 +248,7 @@ root
       shouldHaveRoot
     );
   });
-  test.describe('Markdown strings mindmaps (#4220)', () => {
-    test('Formatted label with linebreak and a wrapping label and emojis', async ({
-      page,
-    }, testInfo) => {
-      await imgSnapshotTest(
-        page,
-        testInfo,
-        `mindmap
-    id1[\`**Start** with
-    a second line 😎\`]
-      id2[\`The dog in **the** hog... a *very long text* about it Word!\`]`
-      );
-    });
-  });
-  test.describe('Include char sequence "graph" in text (#6795)', () => {
-    test('has a label with char sequence "graph"', async ({ page }, testInfo) => {
-      await imgSnapshotTest(
-        page,
-        testInfo,
-        ` mindmap
-          root
-            Photograph
-              Waterfall
-              Landscape
-            Geography
-              Mountains
-              Rocks`,
-        { flowchart: { defaultRenderer: 'elk' } }
-      );
-    });
-  });
+
   test.describe('Level 2 nodes exceeding 11', () => {
     test('should render all Level 2 nodes correctly when there are more than 11', async ({
       page,

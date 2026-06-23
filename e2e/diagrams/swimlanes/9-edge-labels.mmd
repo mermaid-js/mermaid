@@ -1,0 +1,14 @@
+---
+config:
+  logLevel: 0
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane LR
+  subgraph Dep1
+  Start
+  Process1
+  end
+
+  Start --Yes --> Process1 --> Start

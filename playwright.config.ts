@@ -22,10 +22,18 @@ function resolveE2EPort(): string {
 }
 
 const port = resolveE2EPort();
+process.env.MERMAID_PORT ??= port;
+process.env.MERMAID_DEV_PORT ??= port;
+
+const devCommand = process.env.E2E_COVERAGE ? 'pnpm dev:coverage' : 'pnpm dev';
 
 export default defineConfig({
   testDir: 'e2e',
   testMatch: '**/*.spec.{js,ts}',
+  // e2e/helpers holds Vitest unit tests for the e2e helpers (e.g.
+  // mmd-snapshots.spec.ts imports from 'vitest'); they must not be collected by
+  // Playwright. Vitest runs them (vite.config.ts excludes only e2e/rendering + e2e/other).
+  testIgnore: '**/helpers/**',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
@@ -52,4 +60,14 @@ export default defineConfig({
   },
   snapshotPathTemplate: '{testDir}/__snapshots__/{testFilePath}/{arg}{ext}',
   globalTeardown: process.env.E2E_COVERAGE ? './e2e/global-teardown.ts' : undefined,
+  webServer: {
+    command: devCommand,
+    url: `http://localhost:${port}/`,
+    reuseExistingServer: !process.env.CI,
+    timeout: 180_000,
+    env: {
+      MERMAID_PORT: port,
+      MERMAID_DEV_PORT: port,
+    },
+  },
 });

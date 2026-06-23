@@ -37,6 +37,29 @@ describe('deriveGroupKey', () => {
     expect(deriveGroupKey(`${FC_MAIN}/x.png`)).toBe(FC_MAIN);
     expect(deriveGroupKey(`${FC}/flowchart-elk.spec.js/y.png`)).toBe(`${FC}/flowchart-elk.spec.js`);
   });
+  it('groups mmd snapshots by diagram type from title path', () => {
+    expect(
+      deriveGroupKey(
+        'rendering/mmd-snapshots.spec.ts/mmd-snapshots-flowchart-handdrawn-fhd1-simple.png'
+      )
+    ).toBe('rendering/mmd-snapshots.spec.ts/flowchart');
+  });
+
+  it('groups hyphenated diagram folders by longest known-folder match', () => {
+    const mmdGroups = ['flowchart', 'class-diagram', 'state-diagram', 'state-diagram-v2'];
+    const spec = 'rendering/mmd-snapshots.spec.ts';
+    // A hyphenated folder must not be truncated at its first hyphen.
+    expect(deriveGroupKey(`${spec}/mmd-snapshots-class-diagram-elk-foo.png`, mmdGroups)).toBe(
+      `${spec}/class-diagram`
+    );
+    // state-diagram-v2 must win over the shorter state-diagram prefix.
+    expect(deriveGroupKey(`${spec}/mmd-snapshots-state-diagram-v2-bar.png`, mmdGroups)).toBe(
+      `${spec}/state-diagram-v2`
+    );
+    expect(deriveGroupKey(`${spec}/mmd-snapshots-state-diagram-baz.png`, mmdGroups)).toBe(
+      `${spec}/state-diagram`
+    );
+  });
 });
 
 describe('planSheets', () => {

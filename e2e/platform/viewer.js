@@ -33,6 +33,22 @@ function loadFontAwesomeCSS() {
   });
 }
 
+const DARK_THEMES = ['dark', 'neo-dark', 'redux-dark', 'redux-dark-color'];
+
+function detectThemeFromSource(code) {
+  if (typeof code !== 'string') {
+    return undefined;
+  }
+  const match = /^---\s*\n[\S\s]*?\nconfig:\s*\n(?:[\t ].*\n)*?[\t ]+theme:\s*["']?([\w-]+)/m.exec(
+    code
+  );
+  return match?.[1];
+}
+
+function isDarkTheme(theme) {
+  return theme && DARK_THEMES.includes(theme);
+}
+
 /**
  * ##contentLoaded Callback function that is called when page is loaded. This functions fetches
  * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the
@@ -49,8 +65,9 @@ const contentLoaded = async function () {
     }
     await Promise.all(Array.from(document.fonts, (font) => font.load()));
 
-    const darkThemes = ['dark', 'neo-dark', 'redux-dark', 'redux-dark-color'];
-    if (graphObj.mermaid && darkThemes.includes(graphObj.mermaid.theme)) {
+    const code = Array.isArray(graphObj.code) ? graphObj.code[0] : graphObj.code;
+    const theme = graphObj.mermaid?.theme ?? detectThemeFromSource(code);
+    if (isDarkTheme(theme)) {
       document.body.style.background = '#3f3f3f';
     }
     console.log(graphObj);

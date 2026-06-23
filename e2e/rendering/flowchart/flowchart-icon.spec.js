@@ -26,7 +26,7 @@ test.describe('when rendering flowchart with icons', () => {
         page,
         testInfo,
         `flowchart TD
-            A("fa:fa-bell Bell") 
+            A("fa:fa-bell Bell")
         `,
         { theme }
       );
@@ -38,50 +38,4 @@ test.describe('when rendering flowchart with icons', () => {
    * SVG Logos have unintended opacity being applied when they use rect elements
    *
    */
-  test.describe('iconShape with rect elements (issue #7185)', () => {
-    test('should render single AWS icon with rect elements without unintended opacity', async ({
-      page,
-    }, testInfo) => {
-      await imgSnapshotTest(
-        page,
-        testInfo,
-        `flowchart TB
-          Cloudwatch@{ icon: "aws:arch-amazon-cloudwatch" }
-        `,
-        {}
-      );
-    });
-
-    test('should render multiple AWS icons with rect elements in a flowchart', async ({
-      page,
-    }, testInfo) => {
-      await imgSnapshotTest(
-        page,
-        testInfo,
-        `flowchart TB
-          Cloudwatch@{ icon: "aws:arch-amazon-cloudwatch" }
-          Cloudfront@{ icon: "aws:arch-amazon-route-53" }
-          Route53@{ icon: "aws:arch-amazon-eks-cloud" }
-          Cloudwatch --> Cloudfront
-          Cloudfront --> Route53
-        `,
-        {}
-      );
-    });
-
-    test('should render AWS icons with labels and rect elements', async ({ page }, testInfo) => {
-      await imgSnapshotTest(
-        page,
-        testInfo,
-        `flowchart TB
-          Cloudwatch@{ icon: "aws:arch-amazon-cloudwatch", label: "CloudWatch" }
-          Route53@{ icon: "aws:arch-amazon-route-53", label: "Route 53" }
-          EKS@{ icon: "aws:arch-amazon-eks-cloud", label: "EKS Cloud" }
-          Cloudwatch --> Route53
-          Route53 --> EKS
-        `,
-        {}
-      );
-    });
-  });
 });

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { renderGraph } from '../helpers/util.ts';
 
 const linkColorGraph = `sankey
       a,b,10
@@ -7,14 +7,14 @@ const linkColorGraph = `sankey
 
 const nodeAlignmentGraph = `
         sankey
-        
+
         a,b,8
         b,c,8
         c,d,8
         d,e,8
-        
+
         x,c,4
-        c,y,4  
+        c,y,4
         `;
 
 const labelStyleGraph = `sankey
@@ -33,19 +33,6 @@ const assertNodeX = async (page, nodeId, expectedX) => {
 };
 
 test.describe('Sankey Diagram', () => {
-  test('should render a simple example', async ({ page }, testInfo) => {
-    await imgSnapshotTest(
-      page,
-      testInfo,
-      `
-      sankey-beta
-      
-      sourceNode,targetNode,10
-      `,
-      {}
-    );
-  });
-
   test.describe('when given a linkColor', () => {
     test('links should use hex color', async ({ page }, testInfo) => {
       await renderGraph(page, testInfo, linkColorGraph, { sankey: { linkColor: '#636465' } });
@@ -189,32 +176,6 @@ test.describe('Sankey Diagram', () => {
     });
   });
 
-  test.describe('smart label positioning', function () {
-    test('should render labels with Apple-style outlined text', async ({ page }, testInfo) => {
-      await imgSnapshotTest(
-        page,
-        testInfo,
-        `
-        sankey
-
-        iPhone,Products,205
-        Mac,Products,40
-        iPad,Products,29
-        Wearables,Products,41
-        Products,Revenue,315
-        Services,Revenue,78
-        Revenue,Cost of Revenue,223
-        Revenue,Gross Profit,170
-        Gross Profit,Op Expenses,51
-        Gross Profit,Op Profit,119
-        Op Profit,Tax,19
-        Op Profit,Net Profit,100
-        `,
-        { sankey: { width: 800, height: 500, labelStyle: 'outlined' } }
-      );
-    });
-  });
-
   test.describe('when given nodeColors', () => {
     test('should apply custom node colors', async ({ page }, testInfo) => {
       await renderGraph(page, testInfo, nodeColorsGraph, {
@@ -235,56 +196,6 @@ test.describe('Sankey Diagram', () => {
 
       const secondFill = await page.locator('.node').nth(1).locator('rect').getAttribute('fill');
       expect(secondFill).not.toBe('#ff0000');
-    });
-  });
-
-  test.describe('Apple-style financial flow demo', function () {
-    test('should render complete financial flow with custom colors', async ({ page }, testInfo) => {
-      await imgSnapshotTest(
-        page,
-        testInfo,
-        `
-        sankey
-
-        iPhone,Products,205
-        Mac,Products,40
-        iPad,Products,29
-        Wearables,Products,41
-        Products,Revenue,315
-        Services,Revenue,78
-        Revenue,Cost of Revenue,223
-        Revenue,Gross Profit,170
-        Gross Profit,Op Expenses,51
-        Gross Profit,Op Profit,119
-        Op Profit,Tax,19
-        Op Profit,Net Profit,100
-        `,
-        {
-          sankey: {
-            width: 800,
-            height: 500,
-            labelStyle: 'outlined',
-            showValues: true,
-            prefix: '$',
-            suffix: 'B',
-            nodeColors: {
-              iPhone: '#6e6e73',
-              Mac: '#6e6e73',
-              iPad: '#6e6e73',
-              Wearables: '#6e6e73',
-              Products: '#6e6e73',
-              Services: '#6e6e73',
-              Revenue: '#424245',
-              'Cost of Revenue': '#ff3b30',
-              'Gross Profit': '#34c759',
-              'Op Expenses': '#ff3b30',
-              'Op Profit': '#34c759',
-              Tax: '#ff3b30',
-              'Net Profit': '#34c759',
-            },
-          },
-        }
-      );
     });
   });
 });

@@ -1,0 +1,11 @@
+---
+config:
+  logLevel: 1
+---
+erDiagram
+    PRIVATE_FINANCIAL_INSTITUTION {
+      string name
+      int    turnover
+    }
+    PRIVATE_FINANCIAL_INSTITUTION ||..|{ EMPLOYEE : employs
+    EMPLOYEE { bool officer_of_firm }
