@@ -5,7 +5,8 @@
  * invokes Playwright with only the matching spec files. Falls back to the full
  * suite when shared code is touched.
  *
- * The dev server must already be running (started by start-server-and-test).
+ * Playwright starts the dev server automatically when it is not already running
+ * (see playwright.config.ts webServer).
  *
  * Usage via pnpm:
  *   pnpm e2e:scope                         # base ref defaults to 'develop'

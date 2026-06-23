@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 /**
- * Detects which Cypress e2e spec files to run based on changed source files.
+ * Detects which Playwright e2e spec files to run based on changed source files.
  *
  * Convention: every diagram type has a matching subfolder under
  * e2e/rendering/<diagram-name>/. Adding a new spec file to
  * that subfolder requires no configuration here — it is discovered at runtime.
+ * Diagram fixtures live under `e2e/diagrams/<area>/*.mmd` and are run by the
+ * global runner e2e/rendering/mmd-snapshots.spec.ts; a fixture-only change
+ * scopes to that runner.
  *
  * CLI usage (reads changed file paths from stdin, one per line):
  *   git diff --name-only <base> HEAD | node scripts/e2e-diagram-scope.mjs
@@ -21,11 +24,19 @@
  */
 
 import { createInterface } from 'readline';
-import { existsSync } from 'fs';
+import { existsSync, readdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 
 // Base directory where diagram spec subfolders live
 export const SPEC_BASE_DIR = 'e2e/rendering';
+
+// Where the global mmd snapshot runner's fixtures live.
+export const DIAGRAMS_DIR = 'e2e/diagrams';
+
+// Source diagram folders mix kebab- and camelCase (quadrant-chart, treeView)
+// while the fixture folders are kebab (tree-view); compare on a canonical
+// lowercased, hyphen-stripped name.
+const canonicalName = (name) => name.toLowerCase().replace(/-/g, '');
 
 // Sentinel value returned when all changed files are ignorable (e.g.
 // docs-only PRs).  Consumers should skip e2e entirely when they receive this.
@@ -163,6 +174,11 @@ export function detectScope(files, options = {}) {
   /** @type {Set<string>} */
   const diagramNames = new Set();
   let touchesShared = false;
+  // A changed e2e/diagrams/**/*.mmd fixture is exercised by the global mmd
+  // snapshot runner (e2e/rendering/mmd-snapshots.spec.ts), not by a per-diagram
+  // spec — track it so such a change scopes to that runner instead of the full
+  // suite.
+  let touchesMmdFixtures = false;
   /** @type {string[]} */
   const directlyChangedSpecs = [];
 
@@ -211,6 +227,12 @@ export function detectScope(files, options = {}) {
       continue;
     }
 
+    // A diagram fixture (.mmd) consumed by the global mmd snapshot runner.
+    if (trimmed.startsWith('e2e/diagrams/')) {
+      touchesMmdFixtures = true;
+      continue;
+    }
+
     // Ignorable files (docs, changesets, AI config, etc.) → skip silently.
     // Guard: .md files inside a diagram source folder are NOT ignorable — they
     // may be samples or signal intent, and their diagram folder was already
@@ -235,20 +257,46 @@ export function detectScope(files, options = {}) {
   // Build spec patterns from diagram names using filesystem discovery
   const specs = new Set(directlyChangedSpecs);
 
+  /** @type {Set<string> | null} */
+  let fixtureFolders = null;
+  const hasFixtures = (name) => {
+    if (fixtureFolders === null) {
+      try {
+        fixtureFolders = new Set(
+          readdirSync(DIAGRAMS_DIR, { withFileTypes: true })
+            .filter((entry) => entry.isDirectory())
+            .map((entry) => canonicalName(entry.name))
+        );
+      } catch {
+        fixtureFolders = new Set();
+      }
+    }
+    return fixtureFolders.has(canonicalName(name));
+  };
+
   for (const name of diagramNames) {
     const folder = `${specBaseDir}/${name}`;
-    if (!existsSync(folder)) {
-      // No subfolder exists for this diagram — fall back to full suite so
-      // we don't silently skip tests for diagrams with no spec subfolder
+    if (existsSync(folder)) {
+      specs.add(`${folder}/**`);
+    } else if (hasFixtures(name)) {
+      // Fixtures-only diagram (no per-diagram spec subfolder) — the global mmd
+      // snapshot runner exercises it.
+      touchesMmdFixtures = true;
+    } else {
+      // Neither a spec subfolder nor fixtures — be safe and run the full suite
+      // rather than silently skip tests for an unrecognised diagram.
       return '';
     }
-    specs.add(`${folder}/**`);
   }
 
-  if (specs.size === 0) {
+  if (specs.size === 0 && !touchesMmdFixtures) {
     // All files were either ignorable or empty — no e2e tests needed.
     return SKIP;
   }
+
+  // Any scoped diagram run — and any fixture-only change — executes the shared
+  // mmd snapshot runner.
+  specs.add(`${specBaseDir}/mmd-snapshots.spec.ts`);
 
   return [...specs].join(',');
 }

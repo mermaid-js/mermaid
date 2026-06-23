@@ -468,18 +468,18 @@ test.describe('Requirement Diagram Unified', () => {
         `
       requirementDiagram
       direction BT
-  
+
       requirement test_req {
       id: 1
       text: the test text.
       risk: high
       verifymethod: test
       }
-  
+
       element test_entity {
       type: simulation
       }
-  
+
       test_entity - satisfies -> test_req
           `,
         options
@@ -495,18 +495,18 @@ test.describe('Requirement Diagram Unified', () => {
         `
       requirementDiagram
       direction LR
-  
+
       requirement test_req {
       id: 1
       text: the test text.
       risk: high
       verifymethod: test
       }
-  
+
       element test_entity {
       type: simulation
       }
-  
+
       test_entity - satisfies -> test_req
           `,
         options
@@ -522,18 +522,18 @@ test.describe('Requirement Diagram Unified', () => {
         `
       requirementDiagram
       direction RL
-  
+
       requirement test_req {
       id: 1
       text: the test text.
       risk: high
       verifymethod: test
       }
-  
+
       element test_entity {
       type: simulation
       }
-  
+
       test_entity - satisfies -> test_req
           `,
         options
@@ -576,20 +576,20 @@ test.describe('Requirement Diagram Unified', () => {
         testInfo,
         `
       requirementDiagram
-  
+
       requirement test_req {
       id: 1
       text: the test text.
       risk: high
       verifymethod: test
       }
-  
+
       element test_entity {
       type: simulation
       }
-  
+
       test_entity - satisfies -> test_req
-  
+
       style test_req,test_entity fill:#f9f,stroke:blue, color:grey, font-weight:bold
           `,
         { ...options, htmlLabels: false }
@@ -604,18 +604,18 @@ test.describe('Requirement Diagram Unified', () => {
         testInfo,
         `
 requirementDiagram
-  
+
       requirement test_req {
       id: 1
       text: the test text.
       risk: high
       verifymethod: test
       }
-  
+
       element test_entity {
       type: simulation
       }
-  
+
       test_entity - satisfies -> test_req
       classDef bold font-weight: bold
       classDef blue stroke:lightblue, color: #0000FF
@@ -634,18 +634,18 @@ requirementDiagram
         testInfo,
         `
   requirementDiagram
-    
+
         requirement test_req {
         id: 1
         text: the test text.
         risk: high
         verifymethod: test
         }
-    
+
         element test_entity {
         type: simulation
         }
-    
+
         test_entity - satisfies -> test_req
         classDef bold font-weight: bold
         classDef blue stroke:lightblue, color: #0000FF
@@ -664,18 +664,18 @@ requirementDiagram
         testInfo,
         `
   requirementDiagram
-    
+
         requirement test_req:::blue {
         id: 1
         text: the test text.
         risk: high
         verifymethod: test
         }
-    
+
         element test_entity {
         type: simulation
         }
-    
+
         test_entity - satisfies -> test_req
         classDef bold font-weight: bold
         classDef blue stroke:lightblue, color: #0000FF
@@ -693,18 +693,18 @@ requirementDiagram
         testInfo,
         `
   requirementDiagram
-    
+
         requirement test_req:::blue {
         id: 1
         text: the test text.
         risk: high
         verifymethod: test
         }
-    
+
         element test_entity {
         type: simulation
         }
-    
+
         test_entity - satisfies -> test_req
         classDef bold font-weight: bold
         classDef blue stroke:lightblue, color: #0000FF
@@ -722,18 +722,18 @@ requirementDiagram
         testInfo,
         `
 requirementDiagram
-  
+
       requirement test_req:::blue {
       id: 1
       text: the test text.
       risk: high
       verifymethod: test
       }
-  
+
       element test_entity {
       type: simulation
       }
-  
+
       test_entity - satisfies -> test_req
       classDef blue stroke:lightblue, color:blue
       classDef default fill:pink
@@ -751,18 +751,18 @@ requirementDiagram
         testInfo,
         `
   requirementDiagram
-    
+
         requirement test_req:::blue {
         id: 1
         text: the test text.
         risk: high
         verifymethod: test
         }
-    
+
         element test_entity {
         type: simulation
         }
-    
+
         test_entity - satisfies -> test_req
         classDef blue stroke:lightblue, color:blue
         classDef default fill:pink
@@ -783,18 +783,18 @@ requirementDiagram
   theme: forest
 ---
   requirementDiagram
-    
+
         requirement test_req:::blue {
         id: 1
         text: the test text.
         risk: high
         verifymethod: test
         }
-    
+
         element test_entity {
         type: simulation
         }
-    
+
         test_entity - satisfies -> test_req
           `,
         options

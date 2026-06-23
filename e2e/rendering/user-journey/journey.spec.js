@@ -1,38 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { renderGraph } from '../helpers/util.ts';
 
 test.describe('User journey diagram', () => {
-  test('Simple test', async ({ page }, testInfo) => {
-    await imgSnapshotTest(
-      page,
-      testInfo,
-      `journey
-title Adding journey diagram functionality to mermaid
-section Order from website
-    `,
-      {}
-    );
-  });
-
-  test('should render a user journey chart', async ({ page }, testInfo) => {
-    await imgSnapshotTest(
-      page,
-      testInfo,
-      `
-    journey
-    title My working day
-    section Go to work
-      Make tea: 5: Me
-      Go upstairs: 3: Me
-      Do work: 1: Me, Cat
-    section Go home
-      Go downstairs: 5: Me
-      Sit down: 3: Me
-      `,
-      {}
-    );
-  });
-
   test('should render a user journey diagram when useMaxWidth is true (default)', async ({
     page,
   }, testInfo) => {
@@ -55,23 +24,6 @@ section Checkout from website
     expect(style).toMatch(/^max-width: [\d.]+px;$/);
     const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
     expect(maxWidthValue).toBe(700);
-  });
-
-  test('should render a user journey diagram when useMaxWidth is false', async ({
-    page,
-  }, testInfo) => {
-    await imgSnapshotTest(
-      page,
-      testInfo,
-      `journey
-title E-Commerce
-section Order from website
-  Add to cart: 5: Me
-section Checkout from website
-  Add payment details: 5: Me
-    `,
-      { journey: { useMaxWidth: false } }
-    );
   });
 
   test('should initialize with a left margin of 150px for user journeys', async ({

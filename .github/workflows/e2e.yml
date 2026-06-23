@@ -266,9 +266,6 @@ jobs:
       - name: Playwright run
         id: playwright
         run: |
-          pnpm run dev:coverage &
-          DEV_PID=$!
-          pnpm exec wait-on "http://localhost:9000"
           set +e
           if [ -n "${{ needs.detect-scope.outputs.spec_pattern }}" ]; then
             IFS=',' read -ra SPECS <<< "${{ needs.detect-scope.outputs.spec_pattern }}"
@@ -276,9 +273,7 @@ jobs:
           else
             pnpm exec playwright test --shard=${{ matrix.containers }}/${{ strategy.job-total }}
           fi
-          RESULT=$?
-          kill $DEV_PID || true
-          exit $RESULT
+          exit $?
         env:
           MERMAID_PORT: 9000
           PLAYWRIGHT_COMMIT: ${{ github.sha }}

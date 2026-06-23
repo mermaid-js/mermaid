@@ -45,12 +45,7 @@ jobs:
 
       - name: Playwright run (Applitools)
         if: ${{ env.USE_APPLI }}
-        run: |
-          pnpm run dev &
-          DEV_PID=$!
-          pnpm exec wait-on "http://localhost:9000"
-          USE_APPLI=true pnpm exec playwright test
-          kill $DEV_PID || true
+        run: USE_APPLI=true pnpm exec playwright test
         env:
           MERMAID_PORT: 9000
           APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}

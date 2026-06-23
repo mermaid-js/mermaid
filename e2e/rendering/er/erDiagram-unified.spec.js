@@ -568,19 +568,19 @@ test.describe('Entity Relationship Diagram Unified', () => {
         a["Customer Account"] {
             string email
         }
-  
+
         b["Customer Account Secondary"] {
           string email
         }
-        
+
         c["Customer Account Tertiary"] {
           string email
         }
-        
+
         d["Customer Account Nth"] {
           string email
         }
-  
+
         p ||--o| a : "has<br />one"
         p ||--o| b : "has<br />one<br />two"
         p ||--o| c : "has<br />one<br/>two<br />three"
