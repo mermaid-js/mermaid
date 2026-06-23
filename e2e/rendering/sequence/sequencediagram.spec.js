@@ -537,7 +537,9 @@ test.describe('Sequence diagram', () => {
       await expect(page.locator('.actor.actor-bottom')).not.toHaveClass(/actor-top/);
       await expect(page.locator('.actor-man.actor-bottom')).not.toHaveClass(/actor-top/);
       await expect(page.locator('text.actor-box').first()).toContainText('Alice');
+      await expect(page.locator('text.actor-box').last()).toContainText('Alice');
       await expect(page.locator('text.actor-man').first()).toContainText('Bob');
+      await expect(page.locator('text.actor-man').last()).toContainText('Bob');
     });
     test('should render long notes left of actor', async ({ page }, testInfo) => {
       await imgSnapshotTest(
