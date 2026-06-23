@@ -1,5 +1,6 @@
-import { readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join, relative, sep } from 'node:path';
+import { existsSync, readFileSync } from 'node:fs';
+import { writeFile } from 'node:fs/promises';
+import { dirname, join, relative, resolve, sep } from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import type { TestInfo } from '@playwright/test';
@@ -210,9 +211,76 @@ export function readTileAnnotation(inputDir: string, source: string): ArgosTestA
   return annotationFromScreenshotRelPath(source);
 }
 
-export function writeArgosMetadataSidecar(
+export async function writeArgosMetadataSidecar(
   pngPath: string,
   metadata: ArgosScreenshotMetadata
-): void {
-  writeFileSync(argosMetadataSidecarPath(pngPath), `${JSON.stringify(metadata, null, 2)}\n`);
+): Promise<void> {
+  const sidecarPath = argosMetadataSidecarPath(resolve(pngPath));
+  await writeFile(sidecarPath, `${JSON.stringify(metadata, null, 2)}\n`);
+}
+
+/** Recursively list files under `dir` whose basename matches `predicate`, as sorted forward-slash relative paths. */
+export async function listRelativeFiles(
+  dir: string,
+  predicate: (name: string) => boolean
+): Promise<string[]> {
+  const { readdir } = await import('node:fs/promises');
+  const entries = await readdir(dir, { recursive: true, withFileTypes: true });
+  return entries
+    .filter((e) => e.isFile() && predicate(e.name))
+    .map((e) =>
+      relative(dir, join(e.parentPath ?? e.path, e.name))
+        .split(sep)
+        .join('/')
+    )
+    .sort();
+}
+
+export interface VerifyArgosMetadataResult {
+  pngs: number;
+  sidecars: number;
+  withAnnotations: number;
+  missingSidecars: string[];
+  /** Sidecars present on disk but unreadable/invalid JSON (distinct from missing). */
+  corruptSidecars: string[];
+  emptyAnnotations: string[];
+}
+
+/** Ensure every PNG under `dir` has a readable `.png.argos.json` sidecar. */
+export async function verifyArgosMetadataSidecars(dir: string): Promise<VerifyArgosMetadataResult> {
+  // Mirror Argos's default upload glob so we verify exactly what will be uploaded.
+  const pngs = await listRelativeFiles(dir, (name) => /\.(png|jpe?g)$/i.test(name));
+
+  const missingSidecars: string[] = [];
+  const corruptSidecars: string[] = [];
+  const emptyAnnotations: string[] = [];
+  let withAnnotations = 0;
+
+  for (const pngRel of pngs) {
+    const sidecarPath = resolve(dir, argosMetadataSidecarPath(pngRel));
+    if (!existsSync(sidecarPath)) {
+      missingSidecars.push(pngRel);
+      continue;
+    }
+    try {
+      const meta = JSON.parse(readFileSync(sidecarPath, 'utf8')) as ArgosScreenshotMetadata;
+      const count = meta.test?.annotations?.length ?? 0;
+      if (count === 0) {
+        emptyAnnotations.push(pngRel);
+      } else {
+        withAnnotations += 1;
+      }
+    } catch {
+      corruptSidecars.push(pngRel);
+    }
+  }
+
+  return {
+    pngs: pngs.length,
+    sidecars: pngs.length - missingSidecars.length - corruptSidecars.length,
+    withAnnotations,
+    missingSidecars,
+    corruptSidecars,
+    emptyAnnotations,
+  };
 }

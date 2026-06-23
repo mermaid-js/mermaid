@@ -11,16 +11,23 @@
  *     ARGOS_TILE_WIDTH=1440 ARGOS_TILE_IMAGE_HEIGHT=1024 pnpm run argos:batch
  */
 
-import { readdir, mkdir, writeFile } from 'node:fs/promises';
+import { readdir, mkdir, writeFile, readFile } from 'node:fs/promises';
 import { join, dirname, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 import {
   annotateTilePosition,
+  annotationFromScreenshotRelPath,
   buildSheetMetadata,
   formatTileTitle,
+  listRelativeFiles,
   readTileAnnotation,
+  verifyArgosMetadataSidecars,
   writeArgosMetadataSidecar,
+} from '../e2e/helpers/argos-metadata.ts';
+import type {
+  ArgosScreenshotMetadata,
+  ArgosTestAnnotation,
 } from '../e2e/helpers/argos-metadata.ts';
 
 export { formatTileTitle };
@@ -64,7 +71,12 @@ export interface SheetManifest {
     labelHeight: number;
     scale: number;
   };
-  tiles: (Tile & { title: string })[];
+  /**
+   * Per-tile metadata, including the resolved Argos annotation. The annotation
+   * is the source of truth for the grid cell → mmd/test mapping, so sidecars can
+   * be regenerated (e.g. before upload) without re-reading the input screenshots.
+   */
+  tiles: (Tile & { title: string; annotation: ArgosTestAnnotation })[];
 }
 
 export interface Sheet {
@@ -250,15 +262,7 @@ export function planSheets(relPaths: string[], options: PlanSheetsOptions = {}):
 
 /** Recursively collects PNG paths under `dir`, relative with forward slashes, sorted. */
 export async function collectScreenshots(dir: string): Promise<string[]> {
-  const entries = await readdir(dir, { recursive: true, withFileTypes: true });
-  return entries
-    .filter((e) => e.isFile() && e.name.endsWith('.png'))
-    .map((e) =>
-      relative(dir, join(e.parentPath ?? e.path, e.name))
-        .split(sep)
-        .join('/')
-    )
-    .sort();
+  return listRelativeFiles(dir, (name) => name.endsWith('.png'));
 }
 
 /** Composites one sheet into a deterministic PNG plus a tile manifest. */
@@ -364,10 +368,67 @@ export async function composeSheet(
       name: t.name,
       source: t.source,
       title: formatTileTitle(t.name),
+      // Resolve the rich annotation (real spec file/line/column when an input
+      // sidecar exists) once, here, so it is persisted in the manifest.
+      annotation: readTileAnnotation(inputDir, t.source),
     })),
   };
 
   return { buffer, manifest };
+}
+
+/** Build a sheet's Argos sidecar metadata from its tile manifest (the source of truth). */
+function sheetMetadataFromManifest(manifest: SheetManifest): ArgosScreenshotMetadata {
+  const sheetBasename =
+    manifest.sheet
+      .split('/')
+      .pop()
+      ?.replace(/\.png$/, '') ?? manifest.sheet;
+  const tileAnnotations = manifest.tiles.map((tile) =>
+    annotateTilePosition(
+      tile.row,
+      tile.col,
+      // Pre-annotation manifests (older artifacts) lack the resolved annotation;
+      // fall back to path inference for them.
+      tile.annotation ?? annotationFromScreenshotRelPath(tile.source)
+    )
+  );
+  return buildSheetMetadata({ group: manifest.group, sheetBasename, tileAnnotations });
+}
+
+/** Recursively collects sheet tile manifest paths (`*.json` with a sibling PNG). */
+export async function collectSheetManifests(dir: string): Promise<string[]> {
+  const entries = await readdir(dir, { recursive: true, withFileTypes: true });
+  const toRel = (e: (typeof entries)[number]): string =>
+    relative(dir, join(e.parentPath ?? e.path, e.name))
+      .split(sep)
+      .join('/');
+  // Build the PNG set from the same walk so the sibling-PNG check needs no extra stat per manifest.
+  const pngs = new Set(entries.filter((e) => e.isFile() && e.name.endsWith('.png')).map(toRel));
+  return entries
+    .filter((e) => e.isFile() && e.name.endsWith('.json') && !e.name.endsWith('.argos.json'))
+    .map(toRel)
+    .filter((manifestRel) => pngs.has(manifestRel.replace(/\.json$/, '.png')))
+    .sort();
+}
+
+/**
+ * (Re)write `.png.argos.json` sidecars from tile manifests. Manifests carry the
+ * resolved annotation, so this reproduces the sidecars losslessly (without the
+ * input screenshots) — e.g. as a pre-upload safety net.
+ */
+export async function ensureSheetMetadataSidecars(outDir: string): Promise<number> {
+  const manifests = await collectSheetManifests(outDir);
+  let written = 0;
+  for (const manifestRel of manifests) {
+    const manifest = JSON.parse(await readFile(join(outDir, manifestRel), 'utf8')) as SheetManifest;
+    await writeArgosMetadataSidecar(
+      join(outDir, manifest.sheet),
+      sheetMetadataFromManifest(manifest)
+    );
+    written += 1;
+  }
+  return written;
 }
 
 /** Writes composite PNGs, tile manifests (`.json`), and Argos metadata sidecars. */
@@ -385,23 +446,7 @@ export async function writeSheets(plans: Sheet[], options: WriteSheetsOptions): 
     await mkdir(dirname(sheetPath), { recursive: true });
     await writeFile(sheetPath, buffer);
     await writeFile(sheetPath.replace(/\.png$/, '.json'), JSON.stringify(manifest, null, 2) + '\n');
-
-    const tileAnnotations = plan.tiles.map((tile) =>
-      annotateTilePosition(tile.row, tile.col, readTileAnnotation(options.inputDir, tile.source))
-    );
-    const sheetBasename =
-      plan.output
-        .split('/')
-        .pop()
-        ?.replace(/\.png$/, '') ?? plan.output;
-    writeArgosMetadataSidecar(
-      sheetPath,
-      buildSheetMetadata({
-        group: plan.group,
-        sheetBasename,
-        tileAnnotations,
-      })
-    );
+    await writeArgosMetadataSidecar(sheetPath, sheetMetadataFromManifest(manifest));
 
     // Single-threaded increment between awaits, so the count is consistent even
     // though sheets within a batch complete in nondeterministic order.
@@ -452,6 +497,25 @@ async function main(): Promise<void> {
     concurrency,
     onSheetWritten: (output, written, total) => log(`wrote [${written}/${total}] ${output}`),
   });
+
+  // writeSheets already wrote each sidecar from the manifest; just verify them.
+  const metaCheck = await verifyArgosMetadataSidecars(outDir);
+  log(
+    `metadata check: ${metaCheck.withAnnotations}/${metaCheck.pngs} sheets with tile annotations` +
+      (metaCheck.missingSidecars.length
+        ? `, missing sidecars: ${metaCheck.missingSidecars.slice(0, 3).join(', ')}`
+        : '')
+  );
+  if (
+    metaCheck.missingSidecars.length > 0 ||
+    metaCheck.corruptSidecars.length > 0 ||
+    metaCheck.emptyAnnotations.length > 0
+  ) {
+    throw new Error(
+      `Argos metadata incomplete: ${metaCheck.missingSidecars.length} missing sidecars, ` +
+        `${metaCheck.corruptSidecars.length} corrupt, ${metaCheck.emptyAnnotations.length} without annotations`
+    );
+  }
 
   const seconds = ((Date.now() - startedAt) / 1000).toFixed(1);
   log(`done in ${seconds}s: ${relPaths.length} screenshots → ${plans.length} sheets in ${outDir}`);

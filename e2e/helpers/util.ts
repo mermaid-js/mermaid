@@ -262,7 +262,7 @@ export const verifyScreenshot = async (
     mkdirSync(dirname(outPath), { recursive: true });
     const buffer = await target.screenshot({ animations: 'disabled', scale: 'device' });
     writeFileSync(outPath, buffer);
-    writeArgosMetadataSidecar(
+    await writeArgosMetadataSidecar(
       outPath,
       buildCaptureMetadata({
         testInfo,
