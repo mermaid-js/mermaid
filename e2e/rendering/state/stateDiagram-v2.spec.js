@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { renderGraph } from '../helpers/util.ts';
+import { renderGraph } from '../../helpers/util.ts';
 
 test.describe('State diagram', () => {
   test('v2 should render click directive tooltips on linked states', async ({ page }, testInfo) => {

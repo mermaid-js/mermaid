@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { renderGraph } from '../helpers/util.ts';
+import { renderGraph } from '../../helpers/util.ts';
 
 const linkColorGraph = `sankey
       a,b,10
