@@ -19,6 +19,8 @@ interface E2EConfig {
    * When unset, the screenshot is written under the spec's own folder.
    */
   screenshotPath?: string;
+  /** Fail when mermaid renders its syntax-error diagram instead of the requested type. Default true. */
+  rejectErrorDiagram?: boolean;
 }
 type E2EMermaidConfig = MermaidConfig & E2EConfig;
 
@@ -122,11 +124,18 @@ export const renderGraph = async (
 /** Root mermaid diagram SVG — excludes nested icon/asset SVGs (e.g. architecture services). */
 export const diagramSvg = (page: Page) => page.locator('svg[aria-roledescription]');
 
+/** Assert the page shows a real diagram, not mermaid's syntax-error fallback SVG. */
+export const assertDiagramNotError = async (page: Page): Promise<void> => {
+  const svg = diagramSvg(page).first();
+  await expect(svg).not.toHaveAttribute('aria-roledescription', 'error');
+  await expect(svg.locator('.error-icon')).toHaveCount(0);
+};
+
 export const openURLAndVerifyRendering = async (
   page: Page,
   testInfo: TestInfo,
   url: string,
-  { screenshot = true, ...options }: E2EMermaidConfig,
+  { screenshot = true, rejectErrorDiagram = true, ...options }: E2EMermaidConfig,
   validation?: any
 ): Promise<void> => {
   const name: string = shortenScreenshotName(options.name ?? testInfo.titlePath.join(' '));
@@ -172,6 +181,10 @@ export const openURLAndVerifyRendering = async (
     const svg = diagramSvg(page).first();
     await expect(svg).toBeVisible();
     await expect(svg).not.toHaveAttribute('viewbox'); // cspell:ignore viewbox
+
+    if (rejectErrorDiagram) {
+      await assertDiagramNotError(page);
+    }
 
     if (validation) {
       await validation(svg);

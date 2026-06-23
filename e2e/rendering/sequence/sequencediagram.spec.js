@@ -296,8 +296,11 @@ test.describe('Sequence diagram', () => {
         // ignore expected render errors while recovering
       });
 
-      await renderGraph(page, testInfo, [
-        `sequenceDiagram
+      await renderGraph(
+        page,
+        testInfo,
+        [
+          `sequenceDiagram
     Alice->>Bob: Hello Bob, how are you ?
     Bob->>Alice: Fine, thank you. And you?
     create participant Carl
@@ -308,7 +311,7 @@ test.describe('Sequence diagram', () => {
     Alice-xCarl: We are too many
     destroy Bo
     Bob->>Alice: I agree`,
-        `sequenceDiagram
+          `sequenceDiagram
     Alice->>Bob: Hello Bob, how are you ?
     Bob->>Alice: Fine, thank you. And you?
     create participant Carl
@@ -319,7 +322,9 @@ test.describe('Sequence diagram', () => {
     Alice-xCarl: We are too many
     destroy Bob
     Bob->>Alice: I agree`,
-      ]);
+        ],
+        { rejectErrorDiagram: false }
+      );
     });
   });
 });
