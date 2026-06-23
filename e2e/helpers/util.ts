@@ -12,6 +12,13 @@ interface E2EConfig {
   listId?: string;
   name?: string;
   screenshot?: boolean;
+  /**
+   * Relative path (without extension) for the Argos screenshot, mirroring how
+   * the source is stored — e.g. the mmd runner passes `diagrams/<type>/<name>`
+   * so the Argos sheets group by diagram folder instead of the runner spec file.
+   * When unset, the screenshot is written under the spec's own folder.
+   */
+  screenshotPath?: string;
 }
 type E2EMermaidConfig = MermaidConfig & E2EConfig;
 
@@ -172,7 +179,7 @@ export const openURLAndVerifyRendering = async (
   }
 
   if (screenshot) {
-    await verifyScreenshot(page, testInfo, name);
+    await verifyScreenshot(page, testInfo, name, options.screenshotPath);
   }
 
   await collectCoverage(page, testInfo);
@@ -181,7 +188,8 @@ export const openURLAndVerifyRendering = async (
 export const verifyScreenshot = async (
   page: Page,
   testInfo: TestInfo,
-  name: string
+  name: string,
+  screenshotPath?: string
 ): Promise<void> => {
   const useAppli = !!process.env.USE_APPLI;
   const useArgos = process.env.RUN_VISUAL_TEST === 'true';
@@ -217,19 +225,25 @@ export const verifyScreenshot = async (
   }
 
   if (useArgos) {
-    // Capture a native PNG into a per-test-file folder; a dedicated CI job
-    // composites these into Argos sheets (grouped by spec) and uploads once.
-    const specRelPath = relative(testInfo.project.testDir, testInfo.file).split(sep).join('/');
-    // `name` carries the spec path + test title and may contain characters
-    // GitHub artifacts reject (" : < > | * ?) or path separators; flatten it to
-    // a safe slug. The spec folder lives in specRelPath, which the batch job
-    // groups by, so the filename only needs to be unique within the spec.
-    const safeName = name.replace(/[^\w.-]+/g, '-').replace(/^-+|-+$/g, '');
-    const outPath = join(
-      process.env.ARGOS_SCREENSHOT_DIR ?? 'e2e/argos-screenshots',
-      specRelPath,
-      `${safeName}.png`
-    );
+    // Capture a native PNG; a dedicated CI job composites these into Argos
+    // sheets (grouped by folder) and uploads once.
+    const argosDir = process.env.ARGOS_SCREENSHOT_DIR ?? 'e2e/argos-screenshots';
+    const sanitizeSegment = (segment: string) =>
+      segment.replace(/[^\w.-]+/g, '-').replace(/^-+|-+$/g, '');
+    let outPath: string;
+    if (screenshotPath) {
+      // Mirror the source's storage path (e.g. diagrams/<type>/<name>) so the
+      // Argos sheets group by that folder rather than the runner spec file.
+      const safeSubpath = screenshotPath.split('/').map(sanitizeSegment).join('/');
+      outPath = join(argosDir, `${safeSubpath}.png`);
+    } else {
+      // `name` carries the spec path + test title and may contain characters
+      // GitHub artifacts reject (" : < > | * ?) or path separators; flatten it to
+      // a safe slug. The spec folder lives in specRelPath, which the batch job
+      // groups by, so the filename only needs to be unique within the spec.
+      const specRelPath = relative(testInfo.project.testDir, testInfo.file).split(sep).join('/');
+      outPath = join(argosDir, specRelPath, `${sanitizeSegment(name)}.png`);
+    }
     mkdirSync(dirname(outPath), { recursive: true });
     const buffer = await target.screenshot({ animations: 'disabled', scale: 'css' });
     writeFileSync(outPath, buffer);

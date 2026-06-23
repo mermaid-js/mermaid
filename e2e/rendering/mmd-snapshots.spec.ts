@@ -32,7 +32,11 @@ const registerFixtureNode = (node: FixtureTree): void => {
           `Failed to read mmd fixture ${relativePath}: ${error instanceof Error ? error.message : String(error)}`
         );
       }
-      await imgSnapshotTest(page, testInfo, source);
+      // Mirror the fixture's storage path so Argos sheets group by diagram
+      // folder (e.g. diagrams/packet) rather than the runner spec file.
+      await imgSnapshotTest(page, testInfo, source, {
+        screenshotPath: `diagrams/${relativePath.replace(/\.mmd$/i, '')}`,
+      });
     });
   }
 };
