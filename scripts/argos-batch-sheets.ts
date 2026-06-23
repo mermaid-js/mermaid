@@ -36,8 +36,6 @@ export const DEFAULT_SHEET_SCALE = 1;
 export const DEFAULT_SHEET_CONCURRENCY = 4;
 /** zlib level for the final written sheet — uploaded then discarded, so size barely matters. */
 const SHEET_PNG_COMPRESSION = 3;
-/** Transient buffers are re-decoded during composite; skip zlib effort entirely. */
-const INTERMEDIATE_PNG_COMPRESSION = 0;
 
 function scaled(value: number, scale: number): number {
   return Math.round(value * scale);
@@ -95,91 +93,61 @@ function truncateTitle(title: string, maxWidth: number, fontSize: number, paddin
   return `${title.slice(0, Math.max(0, maxChars - 1))}…`;
 }
 
-function createLabelSvg(
-  title: string,
-  width: number,
-  height: number,
-  fontSize: number,
-  padding: number
-): Buffer {
-  const text = escapeXml(truncateTitle(title, width, fontSize, padding));
-  const baseline = fontSize + padding;
-  const svg = [
-    `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">`,
-    `<rect width="100%" height="100%" fill="#ffffff"/>`,
-    `<text x="${padding}" y="${baseline}" font-family="sans-serif" font-size="${fontSize}" fill="#333333">${text}</text>`,
-    `</svg>`,
-  ].join('');
-  return Buffer.from(svg);
+interface OverlayTile {
+  col: number;
+  row: number;
+  title: string;
 }
 
-function createGridLinesSvg(
-  width: number,
-  height: number,
-  cols: number,
-  rows: number,
-  cellWidth: number,
-  cellHeight: number,
-  lineWidth: number
-): Buffer {
+interface OverlayOptions {
+  width: number;
+  height: number;
+  cols: number;
+  rows: number;
+  cellWidth: number;
+  cellHeight: number;
+  labelFontSize: number;
+  labelPadding: number;
+  lineWidth: number;
+  tiles: readonly OverlayTile[];
+}
+
+/**
+ * One SVG overlay for the whole sheet — every grid line, the outer border, and
+ * every tile's title label. Compositing this single buffer rasterizes the chrome
+ * in one pass, instead of a separate SVG per tile label plus a grid buffer
+ * (which scaled with the tile count). Labels sit on the white sheet background,
+ * and the overlay is composited last so grid lines stay on top.
+ */
+function buildSheetOverlaySvg(o: OverlayOptions): Buffer {
   const lines: string[] = [];
-  for (let c = 1; c < cols; c++) {
-    const x = c * cellWidth;
-    lines.push(
-      `<line x1="${x}" y1="0" x2="${x}" y2="${height}" stroke="${GRID_LINE_COLOR}" stroke-width="${lineWidth}"/>`
-    );
+  for (let c = 1; c < o.cols; c++) {
+    const x = c * o.cellWidth;
+    lines.push(`<line x1="${x}" y1="0" x2="${x}" y2="${o.height}"/>`);
   }
-  for (let r = 1; r < rows; r++) {
-    const y = r * cellHeight;
-    lines.push(
-      `<line x1="0" y1="${y}" x2="${width}" y2="${y}" stroke="${GRID_LINE_COLOR}" stroke-width="${lineWidth}"/>`
-    );
+  for (let r = 1; r < o.rows; r++) {
+    const y = r * o.cellHeight;
+    lines.push(`<line x1="0" y1="${y}" x2="${o.width}" y2="${y}"/>`);
   }
-  const inset = lineWidth / 2;
-  lines.push(
-    `<rect x="${inset}" y="${inset}" width="${width - lineWidth}" height="${height - lineWidth}" fill="none" stroke="${GRID_LINE_COLOR}" stroke-width="${lineWidth}"/>`
-  );
+  const inset = o.lineWidth / 2;
+  const border = `<rect x="${inset}" y="${inset}" width="${o.width - o.lineWidth}" height="${o.height - o.lineWidth}"/>`;
+
+  const labels = o.tiles.map((t) => {
+    const x = t.col * o.cellWidth + o.labelPadding;
+    const y = t.row * o.cellHeight + o.labelFontSize + o.labelPadding;
+    const text = escapeXml(truncateTitle(t.title, o.cellWidth, o.labelFontSize, o.labelPadding));
+    return `<text x="${x}" y="${y}">${text}</text>`;
+  });
+
   const svg = [
-    `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">`,
-    ...lines,
+    `<svg width="${o.width}" height="${o.height}" xmlns="http://www.w3.org/2000/svg">`,
+    // Grid lines + border share one stroke style.
+    `<g fill="none" stroke="${GRID_LINE_COLOR}" stroke-width="${o.lineWidth}">${lines.join('')}${border}</g>`,
+    // Labels share one text style.
+    `<g font-family="sans-serif" font-size="${o.labelFontSize}" fill="#333333">${labels.join('')}</g>`,
     `</svg>`,
   ].join('');
   return Buffer.from(svg);
-}
-
-async function createGridLinesBuffer(
-  width: number,
-  height: number,
-  cols: number,
-  rows: number,
-  cellWidth: number,
-  cellHeight: number,
-  lineWidth: number
-): Promise<Buffer> {
-  return sharp(createGridLinesSvg(width, height, cols, rows, cellWidth, cellHeight, lineWidth))
-    .png({ compressionLevel: INTERMEDIATE_PNG_COMPRESSION })
-    .toBuffer();
-}
-
-// Grid lines depend only on dimensions, which repeat across same-shape sheets
-// (every full sheet shares them). Rasterize once per shape and reuse.
-const gridBufferCache = new Map<string, Promise<Buffer>>();
-function getGridBuffer(
-  width: number,
-  height: number,
-  cols: number,
-  rows: number,
-  cellWidth: number,
-  cellHeight: number,
-  lineWidth: number
-): Promise<Buffer> {
-  const key = `${width}:${height}:${cols}:${rows}:${cellWidth}:${cellHeight}:${lineWidth}`;
-  let buffer = gridBufferCache.get(key);
-  if (!buffer) {
-    buffer = createGridLinesBuffer(width, height, cols, rows, cellWidth, cellHeight, lineWidth);
-    gridBufferCache.set(key, buffer);
-  }
-  return buffer;
 }
 
 export interface PlanSheetsOptions {
@@ -312,8 +280,10 @@ export async function composeSheet(
 
   // Enlarge each screenshot to fill the padded box: `fit: 'inside'` scales it up
   // (or down) to the largest size that fits while preserving aspect ratio (sharp
-  // enlarges by default — `withoutEnlargement` is off). Keep the resolved output
-  // dimensions so the tile can be centered in the box below.
+  // enlarges by default — `withoutEnlargement` is off). Decode to raw pixels (not
+  // PNG) so the sheet composite below consumes them directly, skipping a per-tile
+  // PNG encode + re-decode round-trip. `info` carries the resolved dimensions and
+  // channel count needed to place and re-wrap each buffer.
   const tileBuffers = await Promise.all(
     plan.tiles.map((t) =>
       sharp(join(inputDir, t.source))
@@ -321,56 +291,47 @@ export async function composeSheet(
           fit: 'inside',
           kernel: sharp.kernel.lanczos3,
         })
-        .png({ compressionLevel: INTERMEDIATE_PNG_COMPRESSION })
+        .raw()
         .toBuffer({ resolveWithObject: true })
     )
   );
 
-  // Label SVGs are composited directly; sharp rasterizes them in the sheet
-  // pipeline, avoiding a per-tile PNG encode + decode round-trip.
-  const composites = plan.tiles.flatMap((t, i) => [
-    {
-      input: createLabelSvg(
-        formatTileTitle(t.name),
-        cellWidth,
-        labelHeight,
-        labelFontSize,
-        labelPadding
-      ),
-      left: t.col * cellWidth,
-      top: t.row * cellHeight,
-    },
-    {
-      input: tileBuffers[i].data,
-      // Center the (aspect-preserved) image in the padded box below the label.
-      left:
-        t.col * cellWidth +
-        cellPadding +
-        Math.round((contentWidth - tileBuffers[i].info.width) / 2),
+  const sheetWidth = cellWidth * cols;
+  const sheetHeight = cellHeight * rows;
+
+  // Tile images, each centered in its padded box below the label.
+  const tileComposites = plan.tiles.map((t, i) => {
+    const { data, info } = tileBuffers[i];
+    return {
+      input: data,
+      raw: { width: info.width, height: info.height, channels: info.channels },
+      left: t.col * cellWidth + cellPadding + Math.round((contentWidth - info.width) / 2),
       top:
         t.row * cellHeight +
         labelHeight +
         cellPadding +
-        Math.round((contentHeight - tileBuffers[i].info.height) / 2),
-    },
-  ]);
+        Math.round((contentHeight - info.height) / 2),
+    };
+  });
 
-  const sheetWidth = cellWidth * cols;
-  const sheetHeight = cellHeight * rows;
-  const gridBuffer = await getGridBuffer(
-    sheetWidth,
-    sheetHeight,
+  // All grid lines, border, and labels in a single overlay rasterized once.
+  const overlay = buildSheetOverlaySvg({
+    width: sheetWidth,
+    height: sheetHeight,
     cols,
     rows,
     cellWidth,
     cellHeight,
-    gridLineWidth
-  );
+    labelFontSize,
+    labelPadding,
+    lineWidth: gridLineWidth,
+    tiles: plan.tiles.map((t) => ({ col: t.col, row: t.row, title: formatTileTitle(t.name) })),
+  });
 
   const buffer = await sharp({
     create: { width: sheetWidth, height: sheetHeight, channels: 4, background },
   })
-    .composite([...composites, { input: gridBuffer, left: 0, top: 0 }])
+    .composite([...tileComposites, { input: overlay, left: 0, top: 0 }])
     .png({ compressionLevel: SHEET_PNG_COMPRESSION })
     .toBuffer();
 
