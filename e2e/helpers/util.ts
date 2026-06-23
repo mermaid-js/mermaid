@@ -5,6 +5,7 @@ import { basename, dirname, join, relative, sep } from 'node:path';
 import { expect, type Page, type TestInfo } from '@playwright/test';
 import { Buffer } from 'buffer';
 import type { MermaidConfig } from '../../packages/mermaid/src/config.type.js';
+import { buildCaptureMetadata, writeArgosMetadataSidecar } from './argos-metadata.ts';
 import { collectCoverage, startCoverage } from './coverage.js';
 
 interface E2EConfig {
@@ -192,7 +193,7 @@ export const openURLAndVerifyRendering = async (
   }
 
   if (screenshot) {
-    await verifyScreenshot(page, testInfo, name, options.screenshotPath);
+    await verifyScreenshot(page, testInfo, name, options.screenshotPath, url);
   }
 
   await collectCoverage(page, testInfo);
@@ -202,7 +203,8 @@ export const verifyScreenshot = async (
   page: Page,
   testInfo: TestInfo,
   name: string,
-  screenshotPath?: string
+  screenshotPath?: string,
+  pageUrl?: string
 ): Promise<void> => {
   const useAppli = !!process.env.USE_APPLI;
   const useArgos = process.env.RUN_VISUAL_TEST === 'true';
@@ -260,6 +262,14 @@ export const verifyScreenshot = async (
     mkdirSync(dirname(outPath), { recursive: true });
     const buffer = await target.screenshot({ animations: 'disabled', scale: 'device' });
     writeFileSync(outPath, buffer);
+    writeArgosMetadataSidecar(
+      outPath,
+      buildCaptureMetadata({
+        testInfo,
+        screenshotPath,
+        url: pageUrl ?? page.url(),
+      })
+    );
   } else {
     const snapshotName = `${name}.png`;
     const snapshotPath = testInfo.snapshotPath(snapshotName, { kind: 'screenshot' });

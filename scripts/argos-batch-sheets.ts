@@ -15,6 +15,15 @@ import { readdir, mkdir, writeFile } from 'node:fs/promises';
 import { join, dirname, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
+import {
+  annotateTilePosition,
+  buildSheetMetadata,
+  formatTileTitle,
+  readTileAnnotation,
+  writeArgosMetadataSidecar,
+} from '../e2e/helpers/argos-metadata.ts';
+
+export { formatTileTitle };
 
 // Matches a Cypress spec-file path segment: foo.spec.js / foo.spec.ts / .cjs / .mts
 const SPEC_SEGMENT_RE = /\.spec\.[cm]?[jt]s$/;
@@ -75,9 +84,6 @@ export interface Tile {
 }
 
 /** Cypress screenshot names use hyphens instead of spaces; restore for display. */
-export function formatTileTitle(name: string): string {
-  return name.replace(/-/g, ' ');
-}
 
 function escapeXml(text: string): string {
   return text
@@ -364,7 +370,7 @@ export async function composeSheet(
   return { buffer, manifest };
 }
 
-/** Writes composite PNGs and sibling `.json` manifests under outDir. */
+/** Writes composite PNGs, tile manifests (`.json`), and Argos metadata sidecars. */
 export async function writeSheets(plans: Sheet[], options: WriteSheetsOptions): Promise<void> {
   const concurrency = Math.max(1, options.concurrency ?? DEFAULT_SHEET_CONCURRENCY);
   let written = 0;
@@ -379,6 +385,24 @@ export async function writeSheets(plans: Sheet[], options: WriteSheetsOptions): 
     await mkdir(dirname(sheetPath), { recursive: true });
     await writeFile(sheetPath, buffer);
     await writeFile(sheetPath.replace(/\.png$/, '.json'), JSON.stringify(manifest, null, 2) + '\n');
+
+    const tileAnnotations = plan.tiles.map((tile) =>
+      annotateTilePosition(tile.row, tile.col, readTileAnnotation(options.inputDir, tile.source))
+    );
+    const sheetBasename =
+      plan.output
+        .split('/')
+        .pop()
+        ?.replace(/\.png$/, '') ?? plan.output;
+    writeArgosMetadataSidecar(
+      sheetPath,
+      buildSheetMetadata({
+        group: plan.group,
+        sheetBasename,
+        tileAnnotations,
+      })
+    );
+
     // Single-threaded increment between awaits, so the count is consistent even
     // though sheets within a batch complete in nondeterministic order.
     options.onSheetWritten?.(plan.output, (written += 1), plans.length);
