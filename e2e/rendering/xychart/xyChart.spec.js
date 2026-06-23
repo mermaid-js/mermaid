@@ -5,14 +5,16 @@ const assertBarLabelsWithinBars = async (page, orientation = 'vertical') => {
   await page.locator('g.bar-plot-0').evaluate((plot, barOrientation) => {
     const rects = [...plot.querySelectorAll('rect')];
     const texts = [...plot.querySelectorAll('text')];
-    rects.forEach((rect, index) => {
+    const count = Math.min(rects.length, texts.length);
+    for (let index = 0; index < count; index++) {
+      const rect = rects[index];
+      const text = texts[index];
       const barProps = {
         x: parseFloat(rect.getAttribute('x') ?? '0'),
         y: parseFloat(rect.getAttribute('y') ?? '0'),
         width: parseFloat(rect.getAttribute('width') ?? '0'),
         height: parseFloat(rect.getAttribute('height') ?? '0'),
       };
-      const text = texts[index];
       const bbox = text.getBBox();
       const textProps = {
         x: bbox.x,
@@ -51,7 +53,7 @@ const assertBarLabelsWithinBars = async (page, orientation = 'vertical') => {
           throw new Error('vertical center mismatch');
         }
       }
-    });
+    }
   }, orientation);
 };
 
