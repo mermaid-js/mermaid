@@ -1497,6 +1497,59 @@ flowchart TB
     end
 ```
 
+### Node placement and links
+
+When a node appears in more than one subgraph, Mermaid places it in the subgraph
+where it is first referenced. If an edge references a node before that node is
+declared in its intended subgraph, Mermaid creates the node in the current
+subgraph.
+
+Define nodes in their target subgraphs before adding edges that reference them
+from another subgraph:
+
+```mermaid-example
+flowchart TB
+    subgraph one
+    a1-->a2
+    end
+    subgraph two
+    a2
+    end
+```
+
+```mermaid
+flowchart TB
+    subgraph one
+    a1-->a2
+    end
+    subgraph two
+    a2
+    end
+```
+
+In the example above, `a2` belongs to `one` because the edge `a1-->a2` references
+it there first. To keep `a2` in `two`, declare it before creating the edge:
+
+```mermaid-example
+flowchart TB
+    subgraph two
+    a2
+    end
+    subgraph one
+    a1-->a2
+    end
+```
+
+```mermaid
+flowchart TB
+    subgraph two
+    a2
+    end
+    subgraph one
+    a1-->a2
+    end
+```
+
 ### flowcharts
 
 With the graphtype flowchart it is also possible to set edges to and from subgraphs as in the flowchart below.
