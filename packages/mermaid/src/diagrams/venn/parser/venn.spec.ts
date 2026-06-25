@@ -231,12 +231,55 @@ describe('Venn diagram', function () {
     expect(() => venn.parse(str)).toThrow('union requires multiple identifiers');
   });
 
+  test('intersection requires multiple identifiers', () => {
+    const str = `venn-beta
+        intersection A
+    `;
+    expect(() => venn.parse(str)).toThrow('intersection requires multiple identifiers');
+  });
+
   test('union requires known identifiers', () => {
     const str = `venn-beta
         set Foo
         union Foo,Buz
     `;
     expect(() => venn.parse(str)).toThrow('unknown set identifier');
+  });
+
+  test('intersection requires known identifiers', () => {
+    const str = `venn-beta
+        set Foo
+        intersection Foo,Buz
+    `;
+    expect(() => venn.parse(str)).toThrow('unknown set identifier');
+  });
+
+  test('intersection simple', () => {
+    const str = `venn-beta
+          set A
+          set B
+          intersection A,B
+      `;
+    venn.parse(str);
+    expect(db.getSubsetData()).toEqual([
+      expect.objectContaining({ sets: ['A'], size: 10 }),
+      expect.objectContaining({ sets: ['B'], size: 10 }),
+      expect.objectContaining({ sets: ['A', 'B'], size: 2.5 }),
+    ]);
+  });
+
+  test('intersection with bracket label and size suffix', () => {
+    const str = `venn-beta
+          set A["Alpha"]:20
+          set B["Beta"]:12
+          intersection A,B["AB"]:5.3
+      `;
+    venn.parse(str);
+    expect(db.getSubsetData()).toEqual([
+      expect.objectContaining({ sets: ['A'], size: 20, label: 'Alpha' }),
+      expect.objectContaining({ sets: ['B'], size: 12, label: 'Beta' }),
+      expect.objectContaining({ sets: ['A', 'B'], size: 5.3, label: 'AB' }),
+    ]);
   });
 
   test('quoted identifiers', () => {
