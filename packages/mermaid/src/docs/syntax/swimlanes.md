@@ -3,7 +3,7 @@ title: Swimlanes Diagram Syntax
 outline: 'deep'
 ---
 
-# Swimlanes Diagram (v<MERMAID_RELEASE_VERSION>+)
+# Swimlanes Diagram (v11.16.0+)
 
 ```warning
 This is a new diagram type in Mermaid. Its syntax may evolve in future versions.

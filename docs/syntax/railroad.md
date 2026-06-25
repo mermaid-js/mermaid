@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/syntax/railroad.md](../../packages/mermaid/src/docs/syntax/railroad.md).
 
-# Railroad Diagrams (v\<MERMAID_RELEASE_VERSION>+)
+# Railroad Diagrams (v11.16.0+)
 
 > Railroad diagrams (also known as syntax diagrams or grammar diagrams) are a visual representation of context-free grammars. They provide a graphical way to understand and document language syntax, making complex grammar rules easier to comprehend.
 

@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/syntax/swimlanes.md](../../packages/mermaid/src/docs/syntax/swimlanes.md).
 
-# Swimlanes Diagram (v\<MERMAID_RELEASE_VERSION>+)
+# Swimlanes Diagram (v11.16.0+)
 
 > **Warning**
 > This is a new diagram type in Mermaid. Its syntax may evolve in future versions.
