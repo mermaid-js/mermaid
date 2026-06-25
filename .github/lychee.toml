@@ -81,10 +81,7 @@ exclude = [
 "https://www.kubernetes.dev/blog/2021/12/01/improve-your-documentation-with-mermaid.js-diagrams/",
 
 # Cynefin framework - server returns 500 errors
-"https://thecynefin.co",
-
-# Applitools - returns 415 Unsupported Media Type
-"https://applitools.com"
+"https://thecynefin.co"
 ]
 
 # Exclude all private IPs from checking.
