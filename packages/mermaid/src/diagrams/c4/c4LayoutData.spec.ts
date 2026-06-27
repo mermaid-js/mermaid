@@ -158,10 +158,19 @@ Rel(b, a, "second")`);
     expect(edges[0].label).not.toContain('1:');
   });
 
-  it('passes the db direction through', () => {
+  it.each(['TB', 'BT', 'LR', 'RL'])('honours a top-level `direction %s` statement', (dir) => {
+    const db = parse(`C4Context
+direction ${dir}
+Person(a, "A")
+System(b, "B")`);
+
+    expect(getData(db, config()).direction).toBe(dir);
+  });
+
+  it('lays out top to bottom when the diagram sets no direction', () => {
     const db = parse(`C4Context\nPerson(a, "A")`);
-    const { direction } = getData(db, config());
-    expect(typeof direction).toBe('string');
+
+    expect(getData(db, config()).direction).toBe('TB');
   });
 
   it('carries an UpdateRelStyle colour into the edge style', () => {
