@@ -39,12 +39,34 @@ describe('c4-beta styles', () => {
       arrowheadColor: '#555555',
       edgeLabelBackground: '#dddddd',
       titleColor: '#666666',
+      c4PersonBkg: '#08427B',
+      c4PersonBorder: '#073B6F',
+      c4SystemBkg: '#1168BD',
+      c4SystemBorder: '#3C7FC0',
+      c4ContainerBkg: '#438DD5',
+      c4ContainerBorder: '#3C7FC0',
+      c4ComponentBkg: '#85BBF0',
+      c4ComponentBorder: '#78A8D8',
+      c4ExternalBkg: '#999999',
+      c4ExternalBorder: '#8A8A8A',
+      c4InfrastructureBkg: '#6b6b6b',
+      c4InfrastructureBorder: '#5a5a5a',
+      c4BoundaryBorder: '#777777',
     });
     expect(css).toContain('.c4-shape');
     expect(css).toContain('path.c4-rel');
     expect(css).toContain('stroke-dasharray');
     expect(css).toContain('#444444');
     expect(css).toContain('#666666');
+    expect(css).toContain('.c4-person rect');
+    // Outline style: identity colour drives the border (no solid fill).
+    expect(css).toContain('#08427B');
+    expect(css).toContain('#999999');
+    expect(css).toContain('#777777');
+    // Infrastructure node is theme-driven, not a hardcoded grey.
+    expect(css).toContain('#6b6b6b');
+    // c4TextColor was removed (outline uses identity-coloured text).
+    expect(css).not.toContain('c4TextColor');
   });
 });
 
@@ -123,6 +145,26 @@ spa --> api : "Calls"
     );
     const matches = svg.match(/2\. (Reads|Notifies)/g) ?? [];
     expect(matches).toHaveLength(2);
+  });
+
+  jsdomIt('should use theme-driven element borders that differ in the dark theme', async () => {
+    const text = `c4-beta context
+person customer "Customer"
+`;
+    const { svg: defaultSvg } = await mermaidAPI.render('c4beta-render-theme-1', text);
+    const { svg: darkSvg } = await mermaidAPI.render(
+      'c4beta-render-theme-2',
+      `---
+config:
+  theme: dark
+---
+${text}`
+    );
+    // Outline style: the identity colour drives the rect border (stroke), not the fill.
+    const personStroke = (svg: string) => /\.c4-person rect[^{}]*{stroke:([^;}]+)/.exec(svg)?.[1];
+    expect(personStroke(defaultSvg)).toBe('#08427B');
+    expect(personStroke(darkSvg)).toBeDefined();
+    expect(personStroke(darkSvg)).not.toBe(personStroke(defaultSvg));
   });
 
   jsdomIt('should render deployment nodes as clusters', async () => {

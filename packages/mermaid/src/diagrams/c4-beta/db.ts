@@ -21,19 +21,6 @@ import type {
   C4LinePattern,
 } from './types.js';
 
-interface ElementColors {
-  fill: string;
-  stroke: string;
-}
-
-const ELEMENT_COLORS: Partial<Record<C4ElementKind, ElementColors>> = {
-  person: { fill: '#08427B', stroke: '#073B6F' },
-  softwareSystem: { fill: '#1168BD', stroke: '#3C7FC0' },
-  container: { fill: '#438DD5', stroke: '#3C7FC0' },
-  component: { fill: '#85BBF0', stroke: '#78A8D8' },
-  infrastructureNode: { fill: '#8b8b8b', stroke: '#6b6b6b' },
-};
-
 // Human-readable C4 type names rendered as the element stereotype label.
 // `group` has no stereotype: it is a plain boundary, not a C4 type.
 const ELEMENT_DISPLAY_NAMES: Partial<Record<C4ElementKind, string>> = {
@@ -44,7 +31,6 @@ const ELEMENT_DISPLAY_NAMES: Partial<Record<C4ElementKind, string>> = {
   deploymentNode: 'Deployment Node',
   infrastructureNode: 'Infrastructure Node',
 };
-
 // Element kinds that are unexpected for a given diagram kind. They still
 // render (forgiving WYSIWYG), but we warn so authors can spot mistakes.
 const UNEXPECTED_ELEMENT_KINDS: Record<C4DiagramKind, C4ElementKind[]> = {
@@ -234,16 +220,17 @@ export class C4BetaDB implements DiagramDB {
         continue;
       }
       // `external` is a built-in convention tag: it adds the `c4-external` class
-      // (default grey comes from CSS, not inline styles) instead of the kind color.
+      // (themed grey comes from CSS, not inline styles) instead of the kind color.
       const isExternal = element.tags.includes('external');
-      const colors = isExternal ? undefined : ELEMENT_COLORS[element.kind];
       const cssClasses = ['c4-shape', `c4-${element.kind}`];
       if (isExternal) {
         cssClasses.push('c4-external');
       }
-      const cssStyles = colors ? [`fill: ${colors.fill}`, `stroke: ${colors.stroke}`] : [];
+      // All per-kind colours come from theme-driven outline class rules in styles.ts;
+      // only tag styles are emitted inline so they win over the class-based defaults.
+      const cssStyles: string[] = [];
       let shape: Node['shape'] = element.kind === 'person' ? 'person' : 'rect';
-      // Tag styles are pushed after the built-in kind colors so they override them.
+      // Tag styles are emitted inline so they override the themed class colours.
       // A user `style external fill:#...` therefore beats the default `.c4-external` rule.
       for (const tag of element.tags) {
         cssClasses.push(`c4-tag-${tag}`);
