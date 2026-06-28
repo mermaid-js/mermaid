@@ -269,7 +269,7 @@ class Theme {
       complicatedBg: this.cynefin?.complicatedBg || '#DCEDC8',
       chaoticBg: this.cynefin?.chaoticBg || '#FFE0B2',
       clearBg: this.cynefin?.clearBg || '#FFF9C4',
-      confusionBg: this.cynefin?.confusionBg || '#D7CCC8',
+      aporeticBg: this.cynefin?.aporeticBg || '#D7CCC8',
       textColor: this.cynefin?.textColor || this.textColor,
       labelColor: this.cynefin?.labelColor || this.primaryTextColor,
     };

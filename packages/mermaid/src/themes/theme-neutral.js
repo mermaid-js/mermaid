@@ -294,7 +294,7 @@ class Theme {
       complicatedBg: this.cynefin?.complicatedBg || '#E3F2FD',
       chaoticBg: this.cynefin?.chaoticBg || '#FBE9E7',
       clearBg: this.cynefin?.clearBg || '#FFF8E1',
-      confusionBg: this.cynefin?.confusionBg || '#F3E5F5',
+      aporeticBg: this.cynefin?.aporeticBg || '#F3E5F5',
       textColor: this.cynefin?.textColor || this.textColor,
       labelColor: this.cynefin?.labelColor || this.primaryTextColor,
     };

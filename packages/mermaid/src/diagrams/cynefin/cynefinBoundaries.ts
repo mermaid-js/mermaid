@@ -85,27 +85,40 @@ export function generateFoldPath(
 
 /**
  * Generate a horizontal wavy line through the center of the diagram.
+ *
+ * Defaults to spanning the full width, but accepts an x-range so a single side
+ * can be drawn. The Complex/Chaotic boundary (left half) is a genuine phase
+ * shift and uses this wavy line; the Clear/Complicated boundary (right half) is
+ * a gradient, not a phase shift, and is drawn separately via
+ * {@link generateGradientBoundary}. The range endpoints are pinned to the centre
+ * line so the wavy half meets the gradient half cleanly at the diagram centre.
  * @param width - diagram width
  * @param height - diagram height
  * @param seed - deterministic seed for variation
  * @param amplitudeOverride - optional amplitude in pixels; falls back to 1.5% of height
+ * @param xStart - left edge of the segment (defaults to 0)
+ * @param xEnd - right edge of the segment (defaults to width)
  * @returns SVG path d attribute string
  */
 export function generateHorizontalBoundary(
   width: number,
   height: number,
   seed: number,
-  amplitudeOverride?: number
+  amplitudeOverride?: number,
+  xStart = 0,
+  xEnd = width
 ): string {
   const cy = height / 2;
   const amplitude = amplitudeOverride ?? height * 0.015;
   const segments = 7;
-  const segWidth = width / segments;
+  const segWidth = (xEnd - xStart) / segments;
   const points: { x: number; y: number }[] = [];
 
   for (let i = 0; i <= segments; i++) {
-    const jitter = seededRandom(seed + i * 23) * amplitude * 2 - amplitude;
-    points.push({ x: i * segWidth, y: cy + jitter });
+    // Pin the endpoints to the centre line so adjoining segments meet cleanly.
+    const jitter =
+      i === 0 || i === segments ? 0 : seededRandom(seed + i * 23) * amplitude * 2 - amplitude;
+    points.push({ x: xStart + i * segWidth, y: cy + jitter });
   }
 
   let d = `M${points[0].x},${points[0].y}`;
@@ -123,6 +136,22 @@ export function generateHorizontalBoundary(
   }
 
   return d;
+}
+
+/**
+ * Generate a plain straight boundary line between two ordered domains.
+ *
+ * Used for the Clear/Complicated boundary, which is a gradient rather than a
+ * phase shift — unlike the central fold, the Complex/Chaotic boundary, and the
+ * Clear/Chaotic cliff, crossing it is a smooth, reversible transition, so it is
+ * drawn as a simple straight line with no waviness.
+ * @param xStart - left edge of the line
+ * @param xEnd - right edge of the line
+ * @param y - vertical position of the line
+ * @returns SVG path d attribute string
+ */
+export function generateGradientBoundary(xStart: number, xEnd: number, y: number): string {
+  return `M${xStart},${y} L${xEnd},${y}`;
 }
 
 /**
@@ -151,14 +180,14 @@ export function generateCliffPath(width: number, height: number): string {
 }
 
 /**
- * Generate an ellipse SVG path for the confusion/disorder region at the center.
+ * Generate an ellipse SVG path for the Aporetic region at the center.
  * @param cx - center x
  * @param cy - center y
  * @param rx - horizontal radius
  * @param ry - vertical radius
  * @returns SVG path d attribute string for an ellipse
  */
-export function generateConfusionPath(cx: number, cy: number, rx: number, ry: number): string {
+export function generateAporeticPath(cx: number, cy: number, rx: number, ry: number): string {
   // Draw an ellipse using two arc commands
   return [
     `M${cx - rx},${cy}`,

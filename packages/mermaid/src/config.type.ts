@@ -2018,6 +2018,13 @@ export interface CynefinDiagramConfig extends BaseDiagramConfig {
    *
    */
   seed?: number;
+  /**
+   * Show flow arrows radiating outward from the central Aporetic domain to each
+   * of the four domains. This reflects that, in the Cynefin framework, flow moves
+   * outward from the Aporetic (not-yet-known) centre rather than in from one side.
+   *
+   */
+  showFlow?: boolean;
 }
 /**
  * Configuration for Railroad (Syntax) Diagrams

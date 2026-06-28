@@ -27,4 +27,4 @@ Transition:
     from=DOMAIN_NAME '-->' to=DOMAIN_NAME (':' label=STRING)? EOL
 ;
 
-terminal DOMAIN_NAME returns string: 'complex' | 'complicated' | 'clear' | 'chaotic' | 'confusion';
+terminal DOMAIN_NAME returns string: 'complex' | 'complicated' | 'clear' | 'chaotic' | 'aporetic';

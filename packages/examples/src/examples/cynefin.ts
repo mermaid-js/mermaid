@@ -26,7 +26,7 @@ export default {
   chaotic
     "Page on-call immediately"
 
-  confusion
+  aporetic
     "Unknown failure mode"
 
   complex --> complicated : "Pattern identified"
