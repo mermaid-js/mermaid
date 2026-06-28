@@ -192,6 +192,12 @@ const getStyles = (options: C4BetaStyleOptions) =>
     opacity: 0.7;
   }
 
+  .c4-legend text {
+    font-family: ${options.fontFamily};
+    font-size: 12px;
+    fill: ${options.textColor};
+  }
+
   .c4TitleText {
     text-anchor: middle;
     font-size: 1.5em;

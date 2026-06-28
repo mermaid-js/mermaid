@@ -522,6 +522,57 @@ describe('c4-beta db', () => {
     });
   });
 
+  describe('legend', () => {
+    it('should be enabled by default and disabled by legend off', async () => {
+      await populate(`c4-beta\nperson a "A"\n`);
+      expect(db.isLegendEnabled()).toBe(true);
+      db.clear();
+      await populate(`c4-beta context
+        legend off
+        person a "A"
+      `);
+      expect(db.isLegendEnabled()).toBe(false);
+    });
+
+    it('should derive one entry per element kind used', async () => {
+      await populate(exampleDiagram);
+      // Kind rows carry the kind only; the renderer resolves the swatch colour
+      // from the theme so it matches the rendered elements.
+      expect(db.getLegendItems()).toEqual([
+        { label: 'person', kind: 'person', external: false },
+        { label: 'softwareSystem', kind: 'softwareSystem', external: false },
+        { label: 'external softwareSystem', kind: 'softwareSystem', external: true },
+        { label: 'container', kind: 'container', external: false },
+      ]);
+    });
+
+    it('should not repeat kinds and should skip groups and nodes', async () => {
+      await populate(`c4-beta deployment
+        deploymentNode aws "AWS" {
+          container api "API"
+          container db "DB"
+        }
+        group team "Team"
+      `);
+      expect(db.getLegendItems()).toEqual([
+        { label: 'container', kind: 'container', external: false },
+      ]);
+    });
+
+    it('should add one entry per user-defined style tag', async () => {
+      await populate(`c4-beta context
+        style team-a fill:#1F2937, stroke:#111827
+        style async line:dashed, stroke:#0a0
+        softwareSystem a "A" :::team-a
+      `);
+      expect(db.getLegendItems()).toEqual([
+        { label: 'softwareSystem', kind: 'softwareSystem', external: false },
+        { label: 'team-a', fill: '#1F2937', stroke: '#111827' },
+        { label: 'async', fill: undefined, stroke: '#0a0' },
+      ]);
+    });
+  });
+
   it('should reset state on clear', async () => {
     await populate(exampleDiagram);
     db.clear();
@@ -529,5 +580,12 @@ describe('c4-beta db', () => {
     expect(db.getRelationships()).toHaveLength(0);
     expect(db.getKind()).toBe('context');
     expect(db.getDirection()).toBe('TB');
+  });
+
+  it('should reset the legend flag on clear', async () => {
+    await populate(`c4-beta\nlegend off\n`);
+    expect(db.isLegendEnabled()).toBe(false);
+    db.clear();
+    expect(db.isLegendEnabled()).toBe(true);
   });
 });

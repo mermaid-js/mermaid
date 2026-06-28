@@ -160,4 +160,21 @@ describe('C4 diagram (beta)', () => {
       {}
     );
   });
+
+  it('C4B.8 should render an auto-generated legend by default', () => {
+    imgSnapshotTest(
+      `
+      c4-beta context
+      style critical stroke:#cc0000
+
+      person customer "Personal Banking Customer"
+      softwareSystem banking "Internet Banking System"
+      softwareSystem mainframe "Mainframe Banking System" :::external
+
+      customer --> banking : "Views accounts using"
+      banking --> mainframe : "Gets account information from" :::critical
+      `,
+      {}
+    );
+  });
 });

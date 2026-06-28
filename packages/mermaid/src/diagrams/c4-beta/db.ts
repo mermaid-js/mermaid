@@ -13,6 +13,7 @@ import {
 } from '../common/commonDb.js';
 import type {
   C4BetaElement,
+  C4BetaLegendItem,
   C4BetaRelationship,
   C4BetaTagStyle,
   C4DiagramKind,
@@ -84,12 +85,56 @@ const buildRelationshipLabel = (
   return lines.join('<br/>');
 };
 
+// Element kinds that get a legend swatch (those with a theme identity colour).
+// Groups and deployment nodes render as unfilled boundaries, so they are omitted.
+const LEGEND_KINDS = new Set<C4ElementKind>([
+  'person',
+  'softwareSystem',
+  'container',
+  'component',
+  'infrastructureNode',
+]);
+
+/**
+ * Derives the legend entries for a diagram: one entry per element kind in use
+ * (external variants are listed separately) followed by one entry per
+ * user-defined style tag. Kind rows carry only the kind; the renderer resolves
+ * their swatch colour from the active theme so the legend matches the elements.
+ */
+export const buildLegendItems = (
+  elements: C4BetaElement[],
+  styles: Map<string, C4BetaTagStyle>
+): C4BetaLegendItem[] => {
+  const items: C4BetaLegendItem[] = [];
+  const seenLabels = new Set<string>();
+  for (const element of elements) {
+    // `external` is a convention tag; external elements share the grey identity.
+    const isExternal = element.tags.includes('external');
+    if (!LEGEND_KINDS.has(element.kind)) {
+      continue;
+    }
+    const label = isExternal ? `external ${element.kind}` : element.kind;
+    if (seenLabels.has(label)) {
+      continue;
+    }
+    seenLabels.add(label);
+    // Carry the kind only; the renderer resolves the swatch colour from the
+    // active theme so the legend matches the rendered elements.
+    items.push({ label, kind: element.kind, external: isExternal });
+  }
+  for (const [tag, style] of styles) {
+    items.push({ label: tag, fill: style.fill, stroke: style.stroke ?? style.fill });
+  }
+  return items;
+};
+
 export class C4BetaDB implements DiagramDB {
   private elements: C4BetaElement[] = [];
   private relationships: C4BetaRelationship[] = [];
   private styles = new Map<string, C4BetaTagStyle>();
   private direction: C4Direction = 'TB';
   private kind: C4DiagramKind = 'context';
+  private legendEnabled = true;
 
   public addElement(element: C4BetaElement) {
     this.elements.push(element);
@@ -141,6 +186,18 @@ export class C4BetaDB implements DiagramDB {
 
   public getKind(): C4DiagramKind {
     return this.kind;
+  }
+
+  public setLegendEnabled(enabled: boolean) {
+    this.legendEnabled = enabled;
+  }
+
+  public isLegendEnabled(): boolean {
+    return this.legendEnabled;
+  }
+
+  public getLegendItems(): C4BetaLegendItem[] {
+    return buildLegendItems(this.elements, this.styles);
   }
 
   private validateElements() {
@@ -323,6 +380,7 @@ export class C4BetaDB implements DiagramDB {
     this.styles = new Map();
     this.direction = 'TB';
     this.kind = 'context';
+    this.legendEnabled = true;
   }
 
   public setAccTitle = setAccTitle;

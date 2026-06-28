@@ -54,6 +54,7 @@ describe('c4-beta styles', () => {
       c4BoundaryBorder: '#777777',
     });
     expect(css).toContain('.c4-shape');
+    expect(css).toContain('.c4-legend text');
     expect(css).toContain('path.c4-rel');
     expect(css).toContain('stroke-dasharray');
     expect(css).toContain('#444444');
@@ -165,6 +166,36 @@ ${text}`
     expect(personStroke(defaultSvg)).toBe('#08427B');
     expect(personStroke(darkSvg)).toBeDefined();
     expect(personStroke(darkSvg)).not.toBe(personStroke(defaultSvg));
+  });
+
+  jsdomIt('should render a legend with the element kinds and style tags used', async () => {
+    const { svg } = await mermaidAPI.render(
+      'c4beta-render-legend-1',
+      `c4-beta context
+style critical stroke:#cc0000
+person customer "Customer"
+softwareSystem mainframe "Mainframe Banking System" :::external
+customer --> mainframe : "Uses" :::critical
+`
+    );
+    expect(svg).toContain('class="c4-legend"');
+    expect(svg).toContain('Legend');
+    expect(svg).toContain('>person</text>');
+    expect(svg).toContain('>external softwareSystem</text>');
+    expect(svg).toContain('>critical</text>');
+    // Theme-resolved swatch: the person identity colour on the outline (stroke).
+    expect(svg).toContain('stroke="#08427B"');
+  });
+
+  jsdomIt('should not render a legend when legend off is given', async () => {
+    const { svg } = await mermaidAPI.render(
+      'c4beta-render-legend-2',
+      `c4-beta context
+legend off
+person customer "Customer"
+`
+    );
+    expect(svg).not.toContain('class="c4-legend"');
   });
 
   jsdomIt('should render deployment nodes as clusters', async () => {
