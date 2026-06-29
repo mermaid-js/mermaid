@@ -64,7 +64,7 @@ export async function stadium<T extends SVGGraphicsElement>(parent: D3Selection<
   const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
   const h = bbox.height + (node.look === 'neo' ? labelPaddingY * 2 : labelPaddingY);
-  const w = bbox.width + h / 4 + (node.look === 'neo' ? labelPaddingX * 2 : labelPaddingX);
+  const w = bbox.width + h + (node.look === 'neo' ? labelPaddingX * 2 : labelPaddingX);
 
   const radius = h / 2;
   const { cssStyles } = node;

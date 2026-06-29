@@ -251,4 +251,64 @@ with a second line`
       }).not.toThrow();
     });
   }
+
+  it('should parse the user-reported swimlane diagram from #7830', function () {
+    const code = `swimlane-beta TD
+
+subgraph Requestor
+  1([START])
+  2[Sends Quality Inspection Guide and Sample Inspection]
+  15[Receives the DR and SI]
+  16([END])
+end
+
+subgraph Warehouse_Associate [Warehouse Associate]
+  3[Receives the Quality Inspection Guide and Sample]
+  10[Compare DR and Delivery]
+  11[Inspect the items by piece]
+  12[Encode received items, Lot Number, and Expiry Date]
+  13[Signs the DR]
+  14[Forwards the DR to Requestor]
+end
+
+subgraph Supplier
+  4[Advices Supply Chain Associate regarding Delivery]
+  6[Sends SI, DR, and PO Suppliers Copy to Supply Chain Associate]
+  8[Deliver items]
+  9[Unload items and issue the DR]
+end
+
+subgraph Supply_Chain_Associate [Supply Chain Associate]
+  5[Set the expected delivery date in Receipt Transfer]
+  7[Forwards SI to Requestor <br/> Note: Log Note in PR Request]
+end
+
+%% Connections utilizing the <br> label trick for cross-lane handoffs
+1 --> 2
+2 -- "<br>" ---> 3
+3 -- "<br>" ---> 4
+4 -- "<br>" ---> 5
+5 -- "<br>" ---> 6
+6 -- "<br>" ---> 7
+7 -- "<br>" ---> 8
+8 --> 9
+9 -- "<br>" ---> 10
+10 --> 11
+11 --> 12
+12 --> 13
+13 --> 14
+14 -- "<br>" ---> 15
+15 --> 16
+
+%% Odoo vs Manual Styling
+classDef odoo fill:#e1d5e7,stroke:#9673a6,stroke-width:2px,color:#000000;
+classDef manual fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000;
+
+class 5,7,12 odoo;
+class 1,2,3,4,6,8,9,10,11,13,14,15,16 manual;`;
+
+    expect(() => {
+      flow.parser.parse(cleanupComments(code));
+    }).not.toThrow();
+  });
 });
