@@ -5,7 +5,7 @@
  * every PNG has annotations, then invokes the Argos CLI upload.
  *
  *   pnpm run argos:upload-sheets
- *   ARGOS_SHEETS_DIR=e2e/argos-sheets ARGOS_SUBSET=true pnpm run argos:upload-sheets
+ *   SHEETS_DIR=e2e/sheets ARGOS_SUBSET=true pnpm run argos:upload-sheets
  */
 
 import { spawnSync } from 'node:child_process';
@@ -13,14 +13,14 @@ import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { verifyArgosMetadataSidecars } from '../e2e/helpers/argos-metadata.ts';
-import { ensureSheetMetadataSidecars } from './argos-batch-sheets.ts';
+import { ensureSheetMetadataSidecars } from './screenshot-sheets.ts';
 
 function log(message: string): void {
   process.stdout.write(`[argos-upload] ${message}\n`);
 }
 
 async function main(): Promise<void> {
-  const sheetsDir = process.env.ARGOS_SHEETS_DIR ?? 'e2e/argos-sheets';
+  const sheetsDir = process.env.SHEETS_DIR ?? 'e2e/sheets';
   const absDir = resolve(sheetsDir);
 
   if (!existsSync(absDir)) {

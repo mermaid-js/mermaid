@@ -1,14 +1,14 @@
 /**
- * Batches per-test Playwright screenshots into composite "sheets" for Argos,
- * grouping by test file so a new test in one spec never alters another spec's
- * sheets. Pure planning is separated from sharp-backed compositing so the
- * grouping/ordering rules can be unit-tested without images.
+ * Batches per-test Playwright screenshots into composite "sheets" (later uploaded
+ * to Argos by a separate step), grouping by test file so a new test in one spec
+ * never alters another spec's sheets. Pure planning is separated from sharp-backed
+ * compositing so the grouping/ordering rules can be unit-tested without images.
  *
  * CLI usage:
- *   pnpm run argos:batch
- *   ARGOS_SCREENSHOT_DIR=e2e/argos-screenshots ARGOS_SHEETS_DIR=e2e/argos-sheets
- *     ARGOS_TILES_PER_SHEET=12 ARGOS_SHEET_COLS=3 ARGOS_SHEET_SCALE=2
- *     ARGOS_TILE_WIDTH=1440 ARGOS_TILE_IMAGE_HEIGHT=1024 pnpm run argos:batch
+ *   pnpm run screenshots:sheets
+ *   SCREENSHOT_DIR=e2e/screenshots SHEETS_DIR=e2e/sheets
+ *     TILES_PER_SHEET=12 SHEET_COLS=3 SHEET_SCALE=2
+ *     TILE_WIDTH=1440 TILE_IMAGE_HEIGHT=1024 pnpm run screenshots:sheets
  */
 
 import { readdir, mkdir, writeFile, readFile } from 'node:fs/promises';
@@ -93,6 +93,13 @@ export interface Tile {
   col: number;
   name: string;
   source: string;
+  /**
+   * The order manifest places this tile but its screenshot wasn't captured this
+   * run (a removed test whose group still ran). It keeps its grid slot — drawn
+   * as a blank cell — so removing a test doesn't shift every later tile across
+   * sheet boundaries.
+   */
+  missing?: boolean;
 }
 
 /** Cypress screenshot names use hyphens instead of spaces; restore for display. */
@@ -170,9 +177,21 @@ function buildSheetOverlaySvg(o: OverlayOptions): Buffer {
   return Buffer.from(svg);
 }
 
+/**
+ * Committed tile order, keyed by group (the same key {@link deriveGroupKey}
+ * produces). Each value lists that group's screenshot sources with the group
+ * prefix stripped, in canonical sheet order. New screenshots append at their
+ * group's tail and removed ones leave a blank cell, so adding/removing a test
+ * re-tiles only that group's last/affected sheet instead of cascading the whole
+ * sorted tail across sheet boundaries. Maintained in git via `pnpm run screenshots:order`.
+ */
+export type OrderManifest = Record<string, string[]>;
+
 export interface PlanSheetsOptions {
   tilesPerSheet?: number;
   cols?: number;
+  /** Canonical per-group tile order. Sources absent here sort to the tail. */
+  order?: OrderManifest;
 }
 
 export interface ComposeSheetOptions {
@@ -214,7 +233,101 @@ export function deriveGroupKey(relPath: string): string {
   return parts.slice(0, -1).join('/') || 'root';
 }
 
-/** Groups, stable-sorts, and chunks screenshots into fixed-size grid sheets. */
+/** Source path with its group-key prefix removed (the form stored in the manifest). */
+function groupRelative(source: string, groupKey: string): string {
+  return groupKey && source.startsWith(`${groupKey}/`) ? source.slice(groupKey.length + 1) : source;
+}
+
+/** A slot in a group's layout: a captured screenshot, or a blank placeholder. */
+interface TileSlot {
+  source: string;
+  missing: boolean;
+}
+
+/**
+ * Lays out a group's tiles in committed-manifest order:
+ *  - manifest sources still present keep their slot;
+ *  - manifest sources now absent keep their slot as a blank placeholder, so
+ *    removing a test doesn't shift later tiles across sheets;
+ *  - present sources not in the manifest append at the tail, sorted.
+ * Without a manifest entry for the group, falls back to plain alphabetical order.
+ *
+ * Unlike the upstream coarse-grouped batcher, our group key {@link deriveGroupKey}
+ * IS the scoping unit (a whole spec file or diagram folder), and planSheets only
+ * lays out groups that captured at least one screenshot. So within a laid-out
+ * group an absent manifest tile always means a removed test — never a scoped-out
+ * one — and needs no per-spec "did it run?" check.
+ */
+function layoutGroup(sources: string[], groupKey: string, order?: OrderManifest): TileSlot[] {
+  const canonical = order?.[groupKey];
+  if (!canonical) {
+    return [...sources].sort().map((source) => ({ source, missing: false }));
+  }
+  const presentSet = new Set(sources);
+  const canonicalSet = new Set(canonical);
+  const slots: TileSlot[] = canonical.map((rel) => {
+    const source = `${groupKey}/${rel}`;
+    return { source, missing: !presentSet.has(source) };
+  });
+  const appended = sources
+    .filter((s) => !canonicalSet.has(groupRelative(s, groupKey)))
+    .sort()
+    .map((source) => ({ source, missing: false }));
+  return [...slots, ...appended];
+}
+
+/**
+ * Recomputes the manifest from the screenshots currently present: each group
+ * keeps its committed order (for sources still present) then appends newly-seen
+ * sources, sorted. Removed sources drop out. Pure and deterministic.
+ */
+export function updateOrder(relPaths: string[], previous: OrderManifest = {}): OrderManifest {
+  const present = new Map<string, string[]>();
+  for (const p of relPaths) {
+    const key = deriveGroupKey(p);
+    (present.get(key) ?? present.set(key, []).get(key)!).push(groupRelative(p, key));
+  }
+  const next: OrderManifest = {};
+  for (const key of [...present.keys()].sort()) {
+    const here = new Set(present.get(key));
+    const kept = (previous[key] ?? []).filter((rel) => here.has(rel));
+    const keptSet = new Set(kept);
+    const added = [...here].filter((rel) => !keptSet.has(rel)).sort();
+    next[key] = [...kept, ...added];
+  }
+  return next;
+}
+
+/**
+ * Sources present on disk but missing from the committed manifest, grouped by
+ * key. Non-empty means new visual tests were added without refreshing the order
+ * manifest — informational only (the runtime appends them anyway).
+ */
+export function findUnordered(relPaths: string[], order: OrderManifest): OrderManifest {
+  const missing: OrderManifest = {};
+  for (const p of relPaths) {
+    const key = deriveGroupKey(p);
+    const rel = groupRelative(p, key);
+    if (!(order[key] ?? []).includes(rel)) {
+      (missing[key] ?? (missing[key] = [])).push(rel);
+    }
+  }
+  return missing;
+}
+
+/** Reads the committed order manifest, or an empty manifest when it doesn't exist yet. */
+export async function readOrderManifest(file: string): Promise<OrderManifest> {
+  try {
+    return JSON.parse(await readFile(file, 'utf8')) as OrderManifest;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      return {};
+    }
+    throw error;
+  }
+}
+
+/** Groups, orders (per the committed manifest), and chunks screenshots into fixed-size grid sheets. */
 export function planSheets(relPaths: string[], options: PlanSheetsOptions = {}): Sheet[] {
   const tilesPerSheet = options.tilesPerSheet ?? 12;
   const cols = options.cols ?? 3;
@@ -232,10 +345,10 @@ export function planSheets(relPaths: string[], options: PlanSheetsOptions = {}):
 
   const sheets: Sheet[] = [];
   for (const key of [...groups.keys()].sort()) {
-    const tiles = [...(groups.get(key) ?? [])].sort();
+    const slots = layoutGroup(groups.get(key) ?? [], key, options.order);
     const basename = (key.split('/').pop() ?? 'sheet').replace(SPEC_SEGMENT_RE, '');
-    for (let start = 0; start < tiles.length; start += tilesPerSheet) {
-      const chunk = tiles.slice(start, start + tilesPerSheet);
+    for (let start = 0; start < slots.length; start += tilesPerSheet) {
+      const chunk = slots.slice(start, start + tilesPerSheet);
       const index = start / tilesPerSheet;
       const output = `${key}/${basename}-${String(index + 1).padStart(3, '0')}.png`;
       sheets.push({
@@ -243,7 +356,7 @@ export function planSheets(relPaths: string[], options: PlanSheetsOptions = {}):
         index,
         output,
         cols,
-        tiles: chunk.map((source, i) => ({
+        tiles: chunk.map(({ source, missing }, i) => ({
           index: i,
           row: Math.floor(i / cols),
           col: i % cols,
@@ -253,6 +366,7 @@ export function planSheets(relPaths: string[], options: PlanSheetsOptions = {}):
               .pop()
               ?.replace(/\.png$/, '') ?? '',
           source,
+          missing,
         })),
       });
     }
@@ -298,34 +412,45 @@ export async function composeSheet(
   // PNG) so the sheet composite below consumes them directly, skipping a per-tile
   // PNG encode + re-decode round-trip. `info` carries the resolved dimensions and
   // channel count needed to place and re-wrap each buffer.
+  // Missing tiles (a manifest slot with no captured screenshot) have no image to
+  // load — they render as a blank cell (grid + label only, from the overlay).
   const tileBuffers = await Promise.all(
     plan.tiles.map((t) =>
-      sharp(join(inputDir, t.source))
-        .resize(contentWidth, contentHeight, {
-          fit: 'inside',
-          kernel: sharp.kernel.lanczos3,
-        })
-        .raw()
-        .toBuffer({ resolveWithObject: true })
+      t.missing
+        ? Promise.resolve(null)
+        : sharp(join(inputDir, t.source))
+            .resize(contentWidth, contentHeight, {
+              fit: 'inside',
+              kernel: sharp.kernel.lanczos3,
+            })
+            .raw()
+            .toBuffer({ resolveWithObject: true })
     )
   );
 
   const sheetWidth = cellWidth * cols;
   const sheetHeight = cellHeight * rows;
 
-  // Tile images, each centered in its padded box below the label.
-  const tileComposites = plan.tiles.map((t, i) => {
-    const { data, info } = tileBuffers[i];
-    return {
-      input: data,
-      raw: { width: info.width, height: info.height, channels: info.channels },
-      left: t.col * cellWidth + cellPadding + Math.round((contentWidth - info.width) / 2),
-      top:
-        t.row * cellHeight +
-        labelHeight +
-        cellPadding +
-        Math.round((contentHeight - info.height) / 2),
-    };
+  // Tile images, each centered in its padded box below the label. Missing tiles
+  // contribute no image; their cell shows only the overlay's grid + label.
+  const tileComposites = plan.tiles.flatMap((t, i) => {
+    const buffer = tileBuffers[i];
+    if (!buffer) {
+      return [];
+    }
+    const { data, info } = buffer;
+    return [
+      {
+        input: data,
+        raw: { width: info.width, height: info.height, channels: info.channels },
+        left: t.col * cellWidth + cellPadding + Math.round((contentWidth - info.width) / 2),
+        top:
+          t.row * cellHeight +
+          labelHeight +
+          cellPadding +
+          Math.round((contentHeight - info.height) / 2),
+      },
+    ];
   });
 
   // All grid lines, border, and labels in a single overlay rasterized once.
@@ -367,9 +492,11 @@ export async function composeSheet(
       col: t.col,
       name: t.name,
       source: t.source,
+      missing: t.missing,
       title: formatTileTitle(t.name),
       // Resolve the rich annotation (real spec file/line/column when an input
-      // sidecar exists) once, here, so it is persisted in the manifest.
+      // sidecar exists) once, here, so it is persisted in the manifest. For a
+      // missing tile no input sidecar exists, so this falls back to path inference.
       annotation: readTileAnnotation(inputDir, t.source),
     })),
   };
@@ -459,28 +586,37 @@ export async function writeSheets(plans: Sheet[], options: WriteSheetsOptions): 
 
 /** Progress/diagnostic logging for the CLI run (stdout, so it shows in CI logs). */
 function log(message: string): void {
-  process.stdout.write(`[argos-batch] ${message}\n`);
+  process.stdout.write(`[sheets] ${message}\n`);
 }
 
 async function main(): Promise<void> {
   const startedAt = Date.now();
-  const inputDir = process.env.ARGOS_SCREENSHOT_DIR ?? 'e2e/argos-screenshots';
-  const outDir = process.env.ARGOS_SHEETS_DIR ?? 'e2e/argos-sheets';
-  const tilesPerSheet = Number(process.env.ARGOS_TILES_PER_SHEET ?? 12);
-  const cols = Number(process.env.ARGOS_SHEET_COLS ?? 3);
-  const scale = Number(process.env.ARGOS_SHEET_SCALE ?? DEFAULT_SHEET_SCALE);
-  const tileWidth = Number(process.env.ARGOS_TILE_WIDTH ?? DEFAULT_TILE_WIDTH);
-  const tileImageHeight = Number(process.env.ARGOS_TILE_IMAGE_HEIGHT ?? DEFAULT_TILE_IMAGE_HEIGHT);
-  const concurrency = Number(process.env.ARGOS_SHEET_CONCURRENCY ?? DEFAULT_SHEET_CONCURRENCY);
+  const inputDir = process.env.SCREENSHOT_DIR ?? 'e2e/screenshots';
+  const outDir = process.env.SHEETS_DIR ?? 'e2e/sheets';
+  const tilesPerSheet = Number(process.env.TILES_PER_SHEET ?? 12);
+  const cols = Number(process.env.SHEET_COLS ?? 3);
+  const scale = Number(process.env.SHEET_SCALE ?? DEFAULT_SHEET_SCALE);
+  const tileWidth = Number(process.env.TILE_WIDTH ?? DEFAULT_TILE_WIDTH);
+  const tileImageHeight = Number(process.env.TILE_IMAGE_HEIGHT ?? DEFAULT_TILE_IMAGE_HEIGHT);
+  const concurrency = Number(process.env.SHEET_CONCURRENCY ?? DEFAULT_SHEET_CONCURRENCY);
+  const orderFile = process.env.SHEET_ORDER_FILE ?? 'e2e/sheet-order.json';
 
   log(
     `config: in=${inputDir} out=${outDir} tilesPerSheet=${tilesPerSheet} cols=${cols} scale=${scale} concurrency=${concurrency}`
   );
 
+  const order = await readOrderManifest(orderFile);
+  const orderedGroups = Object.keys(order).length;
+  log(
+    orderedGroups > 0
+      ? `loaded committed tile order for ${orderedGroups} groups from ${orderFile}`
+      : `no committed tile order at ${orderFile} — groups fall back to alphabetical`
+  );
+
   const relPaths = await collectScreenshots(inputDir);
   log(`collected ${relPaths.length} screenshots from ${inputDir}`);
 
-  const plans = planSheets(relPaths, { tilesPerSheet, cols });
+  const plans = planSheets(relPaths, { tilesPerSheet, cols, order });
   const groupCount = new Set(plans.map((p) => p.group)).size;
   if (plans.length === 0) {
     log('no screenshots found — nothing to composite');

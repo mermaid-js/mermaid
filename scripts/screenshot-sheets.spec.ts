@@ -1,24 +1,26 @@
-import { afterAll, beforeAll, describe, it, expect } from 'vitest';
-import { mkdtemp, mkdir, writeFile, readFile, rm, access } from 'node:fs/promises';
+import { access, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import sharp from 'sharp';
-import {
-  deriveGroupKey,
-  planSheets,
-  collectScreenshots,
-  composeSheet,
-  writeSheets,
-  ensureSheetMetadataSidecars,
-  formatTileTitle,
-  LABEL_HEIGHT,
-  DEFAULT_TILE_WIDTH,
-  DEFAULT_TILE_IMAGE_HEIGHT,
-} from './argos-batch-sheets.ts';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
   argosMetadataSidecarPath,
   writeArgosMetadataSidecar,
-} from '../e2e/helpers/argos-metadata.ts';
+} from '../e2e/helpers/argos-metadata.js';
+import {
+  collectScreenshots,
+  composeSheet,
+  DEFAULT_TILE_IMAGE_HEIGHT,
+  DEFAULT_TILE_WIDTH,
+  deriveGroupKey,
+  ensureSheetMetadataSidecars,
+  findUnordered,
+  formatTileTitle,
+  LABEL_HEIGHT,
+  planSheets,
+  updateOrder,
+  writeSheets,
+} from './screenshot-sheets.js';
 
 const SLOT_WIDTH = 40;
 const SLOT_HEIGHT = 30;
@@ -372,5 +374,115 @@ describe('compositor', () => {
     ]);
 
     await rm(outDir, { recursive: true, force: true });
+  });
+});
+
+describe('append-only tile order', () => {
+  // The order manifest is keyed by group (deriveGroupKey) with the group prefix
+  // stripped, so a per-spec group's tiles are bare filenames.
+  const tiles = (n: number, prefix = 'a'): string[] =>
+    Array.from({ length: n }, (_, i) => `${FC_MAIN}/${prefix}-${String(i).padStart(3, '0')}.png`);
+
+  const sheetSig = (paths: string[], order?: Record<string, string[]>): string[] =>
+    planSheets(paths, { tilesPerSheet: 12, cols: 3, order }).map(
+      (s) => `${s.group}#${s.index}:${s.tiles.map((t) => t.source).join(',')}`
+    );
+
+  it('updateOrder appends new sources at the group tail and drops removed ones', () => {
+    const base = updateOrder(tiles(3));
+    // Add z-new, remove a-000.
+    const next = updateOrder(
+      [`${FC_MAIN}/a-001.png`, `${FC_MAIN}/a-002.png`, `${FC_MAIN}/z-new.png`],
+      base
+    );
+    expect(next[FC_MAIN]).toEqual([
+      'a-001.png', // kept, original order
+      'a-002.png',
+      'z-new.png', // appended at the tail, not sorted into the middle
+    ]);
+  });
+
+  it('inserting a mid-sorted tile leaves all prior sheets byte-identical (the churn fix)', () => {
+    const initial = tiles(26); // 26 tiles, N=12 → sheets [0..11],[12..23],[24..25]
+    const order = updateOrder(initial);
+    const before = sheetSig(initial, order);
+
+    const inserted = `${FC_MAIN}/a-005-INSERTED.png`; // name sorts into the middle
+    const orderAfter = updateOrder([...initial, inserted], order); // append-only manifest
+    const after = sheetSig([...initial, inserted], orderAfter);
+
+    expect(after[0]).toBe(before[0]); // sheet 0 untouched
+    expect(after[1]).toBe(before[1]); // sheet 1 untouched
+    const changed = before.filter((s, i) => s !== after[i]).length + (after.length - before.length);
+    expect(changed).toBeLessThanOrEqual(2);
+  });
+
+  it('alphabetical insertion (no manifest) shifts the tail — the problem this fixes', () => {
+    const initial = tiles(26);
+    const before = sheetSig(initial); // no order → alphabetical
+    const inserted = `${FC_MAIN}/a-005-INSERTED.png`;
+    const after = sheetSig([...initial, inserted]);
+    const changed = before.filter((s, i) => s !== after[i]).length + (after.length - before.length);
+    expect(changed).toBeGreaterThan(2);
+  });
+
+  it('findUnordered flags only sources absent from the manifest, grouped by key', () => {
+    const order = updateOrder(tiles(2));
+    expect(findUnordered([...tiles(2), `${FC_MAIN}/brand-new.png`], order)).toEqual({
+      [FC_MAIN]: ['brand-new.png'],
+    });
+    expect(findUnordered(tiles(2), order)).toEqual({});
+  });
+
+  it('planSheets without an order is unchanged (alphabetical fallback)', () => {
+    const paths = tiles(5).reverse();
+    const fallback = planSheets(paths, { tilesPerSheet: 12, cols: 3 });
+    const empty = planSheets(paths, { tilesPerSheet: 12, cols: 3, order: {} });
+    expect(fallback[0].tiles.map((t) => t.source)).toEqual(empty[0].tiles.map((t) => t.source));
+    expect(fallback[0].tiles.map((t) => t.source)).toEqual([...paths].sort());
+  });
+});
+
+describe('blank cells for removed tests', () => {
+  const order = { [FC_MAIN]: ['a.png', 'b.png', 'c.png'] };
+
+  it('keeps a removed test’s slot as a blank tile (no shift of later tiles)', () => {
+    // b removed; its group (the spec) still ran (a and c present).
+    const present = [`${FC_MAIN}/a.png`, `${FC_MAIN}/c.png`];
+    const [sheet] = planSheets(present, { tilesPerSheet: 12, cols: 3, order });
+    expect(sheet.tiles.map((t) => [t.name, t.missing ?? false])).toEqual([
+      ['a', false],
+      ['b', true], // blank placeholder, keeps position 1
+      ['c', false], // still at position 2 — not shifted up
+    ]);
+  });
+
+  it('produces no sheet (no stray blanks) for a manifest group that did not run', () => {
+    // Unlike the coarse-grouped upstream, our group key IS the scoping unit, so a
+    // scoped-out group simply has no captured screenshots → no sheet, no blanks.
+    const present = [`${FC_V2}/x.png`];
+    const sheets = planSheets(present, { tilesPerSheet: 12, cols: 3, order });
+    expect(sheets.map((s) => s.group)).toEqual([FC_V2]);
+    expect(sheets.flatMap((s) => s.tiles).every((t) => !t.missing)).toBe(true);
+  });
+
+  it('composeSheet renders a missing tile as a blank cell without reading a file', async () => {
+    const plan = planSheets([`${FC_MAIN}/a.png`, `${FC_MAIN}/c.png`], {
+      tilesPerSheet: 12,
+      cols: 3,
+      order,
+    })[0];
+    // Empty inputDir: only present tiles would be read, so reading a missing tile
+    // would throw. Mark every slot missing → pure blank-cell render.
+    const emptyDir = await mkdtemp(join(tmpdir(), 'argos-missing-'));
+    const blankPlan = { ...plan, tiles: plan.tiles.map((t) => ({ ...t, missing: true })) };
+    const { buffer, manifest } = await composeSheet(blankPlan, {
+      inputDir: emptyDir,
+      tileWidth: SLOT_WIDTH,
+      tileImageHeight: SLOT_HEIGHT,
+    });
+    expect((await sharp(buffer).metadata()).width).toBe(SLOT_WIDTH * 3);
+    expect(manifest.tiles.every((t) => t.missing)).toBe(true);
+    await rm(emptyDir, { recursive: true, force: true });
   });
 });

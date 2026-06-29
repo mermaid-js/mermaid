@@ -291,14 +291,14 @@ jobs:
           retention-days: 3
           if-no-files-found: ignore
 
-      # Hand the captured PNGs (grouped per spec under e2e/argos-screenshots/)
-      # to the argos-batch job, which composites + uploads them once.
-      - name: Upload Argos screenshots
+      # Hand the captured PNGs (grouped per spec under e2e/screenshots/) to the
+      # argos-batch job, which composites + uploads them once.
+      - name: Upload captured screenshots
         if: ${{ env.RUN_VISUAL_TEST == 'true' && !cancelled() }}
         uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
         with:
-          name: argos-screenshots-${{ matrix.containers }}
-          path: e2e/argos-screenshots/
+          name: screenshots-${{ matrix.containers }}
+          path: e2e/screenshots/
           retention-days: 1
           if-no-files-found: ignore
 
@@ -375,17 +375,23 @@ jobs:
       - name: Download screenshot artifacts
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
-          pattern: argos-screenshots-*
+          pattern: screenshots-*
           merge-multiple: true
-          path: e2e/argos-screenshots
+          path: e2e/screenshots
 
       # Automatic runs batch into sheets; a manual run with group_argos_images=false
       # uploads the per-screenshot PNGs instead. (No canonicalize step needed:
       # verifyScreenshot names each PNG by its spec-relative path, which is already
       # shard-independent — unlike Cypress's cypress-split shard naming.)
+      #
+      # Sheets are tiled in the committed order (e2e/sheet-order.json): new
+      # screenshots append at their group's tail and removed ones leave a blank
+      # cell, so adding/removing a test changes only that group's last/affected
+      # sheet instead of cascading. The manifest is compacted periodically by the
+      # "Refresh screenshot sheet order" workflow (opens a PR), not on every run.
       - name: Composite screenshots into per-spec sheets
         if: env.GROUP_ARGOS_IMAGES == 'true'
-        run: pnpm run argos:batch
+        run: pnpm run screenshots:sheets
 
       # Baseline branch (develop): merge the grouped sheets and the individual
       # screenshots into one tree and upload them as a SINGLE Argos build. The CLI
@@ -409,8 +415,8 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p e2e/argos-baseline
-          cp -r e2e/argos-sheets/. e2e/argos-baseline/
-          cp -r e2e/argos-screenshots/. e2e/argos-baseline/
+          cp -r e2e/sheets/. e2e/argos-baseline/
+          cp -r e2e/screenshots/. e2e/argos-baseline/
 
           # Round-robin the leaf directories (those that directly hold images)
           # into K buckets so each upload's finalize body carries only ~1/K of the
@@ -453,7 +459,7 @@ jobs:
         if: env.GROUP_ARGOS_IMAGES != 'true'
         env:
           ARGOS_SUBSET: true
-        run: npx argos upload e2e/argos-screenshots
+        run: npx argos upload e2e/screenshots
 
   e2e-required:
     if: always()

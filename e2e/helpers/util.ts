@@ -14,9 +14,9 @@ interface E2EConfig {
   name?: string;
   screenshot?: boolean;
   /**
-   * Relative path (without extension) for the Argos screenshot, mirroring how
+   * Relative path (without extension) for the captured screenshot, mirroring how
    * the source is stored — e.g. the mmd runner passes `diagrams/<type>/<name>`
-   * so the Argos sheets group by diagram folder instead of the runner spec file.
+   * so the composite sheets group by diagram folder instead of the runner spec file.
    * When unset, the screenshot is written under the spec's own folder.
    */
   screenshotPath?: string;
@@ -240,24 +240,24 @@ export const verifyScreenshot = async (
   }
 
   if (useArgos) {
-    // Capture a native PNG; a dedicated CI job composites these into Argos
-    // sheets (grouped by folder) and uploads once.
-    const argosDir = process.env.ARGOS_SCREENSHOT_DIR ?? 'e2e/argos-screenshots';
+    // Capture a native PNG; a dedicated CI job composites these into sheets
+    // (grouped by folder) and uploads them once.
+    const screenshotDir = process.env.SCREENSHOT_DIR ?? 'e2e/screenshots';
     const sanitizeSegment = (segment: string) =>
       segment.replace(/[^\w.-]+/g, '-').replace(/^-+|-+$/g, '');
     let outPath: string;
     if (screenshotPath) {
       // Mirror the source's storage path (e.g. diagrams/<type>/<name>) so the
-      // Argos sheets group by that folder rather than the runner spec file.
+      // sheets group by that folder rather than the runner spec file.
       const safeSubpath = screenshotPath.split('/').map(sanitizeSegment).join('/');
-      outPath = join(argosDir, `${safeSubpath}.png`);
+      outPath = join(screenshotDir, `${safeSubpath}.png`);
     } else {
       // `name` carries the spec path + test title and may contain characters
       // GitHub artifacts reject (" : < > | * ?) or path separators; flatten it to
       // a safe slug. The spec folder lives in specRelPath, which the batch job
       // groups by, so the filename only needs to be unique within the spec.
       const specRelPath = relative(testInfo.project.testDir, testInfo.file).split(sep).join('/');
-      outPath = join(argosDir, specRelPath, `${sanitizeSegment(name)}.png`);
+      outPath = join(screenshotDir, specRelPath, `${sanitizeSegment(name)}.png`);
     }
     mkdirSync(dirname(outPath), { recursive: true });
     const buffer = await target.screenshot({ animations: 'disabled', scale: 'device' });
