@@ -66,8 +66,8 @@ export function formatTileTitle(name: string): string {
 }
 
 /**
- * Infer the diagram fixture or spec test that produced an argos-screenshots
- * relative PNG path (no leading `e2e/argos-screenshots/`).
+ * Infer the diagram fixture or spec test that produced a captured-screenshots
+ * relative PNG path (no leading `e2e/screenshots/`).
  */
 export function annotationFromScreenshotRelPath(relPath: string): ArgosTestAnnotation {
   const withoutExt = relPath.replace(/\.png$/i, '');
@@ -108,7 +108,7 @@ export interface BuildCaptureMetadataOptions {
   url?: string;
 }
 
-/** Metadata written beside each per-test PNG under e2e/argos-screenshots. */
+/** Metadata written beside each per-test PNG under e2e/screenshots. */
 export function buildCaptureMetadata(
   options: BuildCaptureMetadataOptions
 ): ArgosScreenshotMetadata {
@@ -157,7 +157,7 @@ export interface BuildSheetMetadataOptions {
   tileAnnotations: ArgosTestAnnotation[];
 }
 
-/** Metadata written beside each composite sheet PNG under e2e/argos-sheets. */
+/** Metadata written beside each composite sheet PNG under e2e/sheets. */
 export function buildSheetMetadata(options: BuildSheetMetadataOptions): ArgosScreenshotMetadata {
   const { group, sheetBasename, tileAnnotations } = options;
   return {
