@@ -386,4 +386,132 @@ describe('[Style] when parsing', () => {
     expect(vert.get('D').classes[0]).toBe('C1');
     expect(vert.get('E').classes[0]).toBe('C2');
   });
+
+  describe('classDef on edges', function () {
+    it('should apply a class to an edge using @::: inline syntax (no edge ID)', function () {
+      flow.parser.parse(`
+        flowchart TD
+          A @:::red--> B
+          classDef red stroke:red
+      `);
+      const edges = flow.parser.yy.getEdges();
+      expect(edges.length).toBe(1);
+      expect(edges[0].classes).toContain('red');
+    });
+
+    it('should apply a class to an edge with an ID using @::: inline syntax', function () {
+      flow.parser.parse(`
+        flowchart TD
+          A okLink@:::red--> B
+          classDef red stroke:red
+      `);
+      const edges = flow.parser.yy.getEdges();
+      expect(edges.length).toBe(1);
+      expect(edges[0].id).toBe('okLink');
+      expect(edges[0].classes).toContain('red');
+    });
+
+    it('should apply a class to a labeled edge using @::: inline syntax (pipe label)', function () {
+      flow.parser.parse(`
+        flowchart TD
+          A @:::red-->|OK| B
+          classDef red stroke:red
+      `);
+      const edges = flow.parser.yy.getEdges();
+      expect(edges.length).toBe(1);
+      expect(edges[0].classes).toContain('red');
+      expect(edges[0].text).toBe('OK');
+    });
+
+    it('should apply a class to a labeled edge with ID using @::: inline syntax (pipe label)', function () {
+      flow.parser.parse(`
+        flowchart TD
+          A okLink@:::red-->|OK| B
+          classDef red stroke:red
+      `);
+      const edges = flow.parser.yy.getEdges();
+      expect(edges.length).toBe(1);
+      expect(edges[0].id).toBe('okLink');
+      expect(edges[0].classes).toContain('red');
+      expect(edges[0].text).toBe('OK');
+    });
+
+    it('should apply a class to an edge using inline text label with @::: syntax (no ID)', function () {
+      flow.parser.parse(`
+        flowchart TD
+          A @:::red-- label --> B
+          classDef red stroke:red
+      `);
+      const edges = flow.parser.yy.getEdges();
+      expect(edges.length).toBe(1);
+      expect(edges[0].classes).toContain('red');
+      expect(edges[0].text).toBe('label');
+    });
+
+    it('should apply a class to an edge using inline text label with @::: syntax (with ID)', function () {
+      flow.parser.parse(`
+        flowchart TD
+          A okLink@:::red-- label --> B
+          classDef red stroke:red
+      `);
+      const edges = flow.parser.yy.getEdges();
+      expect(edges.length).toBe(1);
+      expect(edges[0].id).toBe('okLink');
+      expect(edges[0].classes).toContain('red');
+      expect(edges[0].text).toBe('label');
+    });
+
+    it('should apply a class to an edge via the class statement using a user-defined edge ID', function () {
+      flow.parser.parse(`
+        flowchart TD
+          A okLink@--> B
+          class okLink red
+          classDef red stroke:red
+      `);
+      const edges = flow.parser.yy.getEdges();
+      expect(edges.length).toBe(1);
+      expect(edges[0].id).toBe('okLink');
+      expect(edges[0].classes).toContain('red');
+    });
+
+    it('should compile classDef styles for an edge with @::: syntax', function () {
+      flow.parser.parse(`
+        flowchart TD
+          A @:::red--> B
+          classDef red stroke:red,stroke-width:3px
+      `);
+      const edges = flow.parser.yy.getEdges();
+      const classes = flow.parser.yy.getClasses();
+      expect(edges[0].classes).toContain('red');
+      expect(classes.get('red').styles).toContain('stroke:red');
+      expect(classes.get('red').styles).toContain('stroke-width:3px');
+    });
+
+    it('should support the example from the feature request', function () {
+      flow.parser.parse(`
+        flowchart TD
+          Start:::nodeRed --> Process
+          Process okLink@:::edgeRed-->|OK| Approve
+          Process @:::edgeRed-->|Error| Retry
+          Approve @:::edgeRed--> End
+          Retry --> Process
+          classDef nodeRed fill:green,stroke:red
+          classDef edgeRed stroke:red
+      `);
+      const edges = flow.parser.yy.getEdges();
+      // Edge from Start to Process: no class
+      expect(edges[0].classes).toEqual([]);
+      // Process okLink@:::edgeRed-->|OK| Approve
+      expect(edges[1].id).toBe('okLink');
+      expect(edges[1].classes).toContain('edgeRed');
+      expect(edges[1].text).toBe('OK');
+      // Process @:::edgeRed-->|Error| Retry
+      expect(edges[2].classes).toContain('edgeRed');
+      expect(edges[2].text).toBe('Error');
+      // Approve @:::edgeRed--> End
+      expect(edges[3].classes).toContain('edgeRed');
+      // Retry --> Process: no class
+      expect(edges[4].classes).toEqual([]);
+    });
+  });
 });
