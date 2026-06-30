@@ -1,0 +1,110 @@
+{
+  "nodes": [
+    {
+      "id": "edit",
+      "width": 121.49652862548828,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "classify",
+      "width": 155.72396850585938,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "noop",
+      "width": 192.28646850585938,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "local",
+      "width": 232.00003051757812,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "relayout",
+      "width": 204.43923950195312,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "full",
+      "width": 210.42015075683594,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "patch",
+      "width": 204.81253051757812,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "resize",
+      "width": 232.00003051757812,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "overlap",
+      "width": 229.97398376464844,
+      "height": 229.97398376464844
+    },
+    {
+      "id": "done",
+      "width": 216.42709350585938,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "sizes",
+      "width": 227.32119750976562,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "worker",
+      "width": 232.00003051757812,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "move",
+      "width": 232.00003051757812,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "compare",
+      "width": 183.3246612548828,
+      "height": 183.3246612548828
+    },
+    {
+      "id": "fallback",
+      "width": 232.00003051757812,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "replace",
+      "width": 232.00003051757812,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "edge-label-overlap-done-L_overlap_done_0",
+      "width": 15.572916984558105,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-overlap-relayout-L_overlap_relayout_0",
+      "width": 21.78819465637207,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-compare-done-L_compare_done_0",
+      "width": 21.78819465637207,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-compare-full-L_compare_full_0",
+      "width": 15.572916984558105,
+      "height": 20.99826431274414
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "a2d1ad6a6a82a67b8fae772f2ba5adb610de5b447e0a49371b5275b5a362aca5",
+    "capturedAt": "2026-06-30T11:19:44.039Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/incremental-editing.mmd theme=redux look=neo layout=swimlane"
+  }
+}
