@@ -1,4 +1,4 @@
-import type { Edge, LayoutData } from '../../../types.js';
+import type { Edge, LayoutData, Node } from '../../../types.js';
 import { rectForNode } from '../core/helpers.js';
 import type { Point, Rect } from '../types.js';
 import { validateLayout, type ValidateLayoutResult } from '../../layout-utils/validateLayout.js';
@@ -16,6 +16,11 @@ interface SegmentRef {
   x2: number;
   y1: number;
   y2: number;
+}
+
+interface CandidateGeometry {
+  points: Point[];
+  labelAnchor?: Point;
 }
 
 function clonePoint(point: Point): Point {
@@ -36,6 +41,52 @@ function copyPoints(points: readonly Point[]): Point[] {
 
 function uniqueFinite(values: number[]): number[] {
   return [...new Set(values.filter(Number.isFinite).map((value) => Math.round(value * 1e6) / 1e6))];
+}
+
+function pointKey(point: Point): string {
+  return `${Math.round(point.x * 10)},${Math.round(point.y * 10)}`;
+}
+
+function candidateKey(points: readonly Point[]): string {
+  return points.map(pointKey).join('|');
+}
+
+function polylineMidpoint(points: readonly Point[]): Point {
+  let total = 0;
+  const lengths: number[] = [];
+  for (let i = 0; i < points.length - 1; i++) {
+    const length =
+      Math.abs(points[i].x - points[i + 1].x) + Math.abs(points[i].y - points[i + 1].y);
+    lengths.push(length);
+    total += length;
+  }
+
+  let target = total / 2;
+  for (const [i, length] of lengths.entries()) {
+    if (target <= length) {
+      const a = points[i];
+      const b = points[i + 1];
+      const t = target / (length || 1);
+      return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
+    }
+    target -= length;
+  }
+
+  return clonePoint(points[Math.max(0, Math.floor(points.length / 2))]);
+}
+
+function hasLabelAnchor(edge: Edge): boolean {
+  const maybe = edge as Edge & { x?: number; y?: number };
+  return Number.isFinite(maybe.x) && Number.isFinite(maybe.y);
+}
+
+function sidePorts(rect: Rect): Point[] {
+  return [
+    { x: rect.cx, y: rect.top },
+    { x: rect.cx, y: rect.bottom },
+    { x: rect.left, y: rect.cy },
+    { x: rect.right, y: rect.cy },
+  ];
 }
 
 function collectNodeRects(layout: LayoutData): Rect[] {
@@ -291,12 +342,190 @@ function applyEndpointDetours(
   return current;
 }
 
+function sidePortRouteCandidates(
+  edge: Edge,
+  nodesById: ReadonlyMap<string, Node>,
+  rects: readonly Rect[],
+  spacing: number
+): CandidateGeometry[] {
+  const startId = edge.start != null ? String(edge.start) : '';
+  const endId = edge.end != null ? String(edge.end) : '';
+  const startNode = nodesById.get(startId);
+  const endNode = nodesById.get(endId);
+  if (!startNode || !endNode || startNode.isGroup || endNode.isGroup) {
+    return [];
+  }
+
+  const startRect = rectForNode(startNode);
+  const endRect = rectForNode(endNode);
+  const allRects = rects.length > 0 ? rects : [startRect, endRect];
+  const minLeft = Math.min(...allRects.map((rect) => rect.left), startRect.left, endRect.left);
+  const maxRight = Math.max(...allRects.map((rect) => rect.right), startRect.right, endRect.right);
+  const minTop = Math.min(...allRects.map((rect) => rect.top), startRect.top, endRect.top);
+  const maxBottom = Math.max(
+    ...allRects.map((rect) => rect.bottom),
+    startRect.bottom,
+    endRect.bottom
+  );
+  const outer = spacing * 2;
+  const xRails = uniqueFinite([
+    minLeft - outer,
+    maxRight + outer,
+    startRect.left - outer,
+    startRect.right + outer,
+    endRect.left - outer,
+    endRect.right + outer,
+  ]);
+  const yRails = uniqueFinite([
+    minTop - outer,
+    maxBottom + outer,
+    startRect.top - outer,
+    startRect.bottom + outer,
+    endRect.top - outer,
+    endRect.bottom + outer,
+  ]);
+
+  const seen = new Set<string>();
+  const candidates: CandidateGeometry[] = [];
+  const add = (points: Point[]) => {
+    const sanitized = sanitizeOrthogonalPolylineForRendering(points, { spacing });
+    if (sanitized.length < 2) {
+      return;
+    }
+    const key = candidateKey(sanitized);
+    if (seen.has(key)) {
+      return;
+    }
+    seen.add(key);
+    candidates.push({
+      points: sanitized,
+      labelAnchor: hasLabelAnchor(edge) ? polylineMidpoint(sanitized) : undefined,
+    });
+  };
+
+  for (const start of sidePorts(startRect)) {
+    for (const end of sidePorts(endRect)) {
+      if (sameAxis(start.x, end.x) || sameAxis(start.y, end.y)) {
+        add([clonePoint(start), clonePoint(end)]);
+      }
+      add([clonePoint(start), { x: end.x, y: start.y }, clonePoint(end)]);
+      add([clonePoint(start), { x: start.x, y: end.y }, clonePoint(end)]);
+      for (const railX of xRails) {
+        add([clonePoint(start), { x: railX, y: start.y }, { x: railX, y: end.y }, clonePoint(end)]);
+      }
+      for (const railY of yRails) {
+        add([clonePoint(start), { x: start.x, y: railY }, { x: end.x, y: railY }, clonePoint(end)]);
+      }
+    }
+  }
+
+  return candidates;
+}
+
+function candidateEdgesForSidePorts(layout: LayoutData): Edge[] {
+  const segments = collectSegments(layout);
+  const crossingCounts = new Map<Edge, number>();
+  for (let i = 0; i < segments.length; i++) {
+    for (let j = i + 1; j < segments.length; j++) {
+      if (!crosses(segments[i], segments[j])) {
+        continue;
+      }
+      crossingCounts.set(segments[i].edge, (crossingCounts.get(segments[i].edge) ?? 0) + 1);
+      crossingCounts.set(segments[j].edge, (crossingCounts.get(segments[j].edge) ?? 0) + 1);
+    }
+  }
+
+  const edges = new Set<Edge>(crossingCounts.keys());
+  for (const edge of layout.edges ?? []) {
+    const pts = pointsFor(edge);
+    if (pts && pts.length > 3) {
+      edges.add(edge);
+    }
+  }
+
+  return [...edges]
+    .sort((a, b) => {
+      const crossingDelta = (crossingCounts.get(b) ?? 0) - (crossingCounts.get(a) ?? 0);
+      if (crossingDelta !== 0) {
+        return crossingDelta;
+      }
+      const pointDelta = (pointsFor(b)?.length ?? 0) - (pointsFor(a)?.length ?? 0);
+      if (pointDelta !== 0) {
+        return pointDelta;
+      }
+      return String(a.id ?? '').localeCompare(String(b.id ?? ''));
+    })
+    .slice(0, 10);
+}
+
+function applySidePortCandidates(
+  layout: LayoutData,
+  current: ValidateLayoutResult,
+  spacing: number
+): ValidateLayoutResult {
+  const rects = collectNodeRects(layout);
+  const nodesById = new Map<string, Node>();
+  for (const node of layout.nodes ?? []) {
+    if (node?.id != null) {
+      nodesById.set(String(node.id), node);
+    }
+  }
+
+  let best: {
+    edge: Edge;
+    candidate: CandidateGeometry;
+    result: ValidateLayoutResult;
+  } | null = null;
+
+  for (const edge of candidateEdgesForSidePorts(layout)) {
+    const originalPoints = edge.points;
+    const originalX = (edge as Edge & { x?: number }).x;
+    const originalY = (edge as Edge & { y?: number }).y;
+
+    for (const candidate of sidePortRouteCandidates(edge, nodesById, rects, spacing)) {
+      edge.points = candidate.points.map(clonePoint);
+      if (candidate.labelAnchor) {
+        (edge as Edge & { x?: number }).x = candidate.labelAnchor.x;
+        (edge as Edge & { y?: number }).y = candidate.labelAnchor.y;
+      }
+
+      const next = validateLayout(layout);
+      if (shouldAccept(next, current) && (!best || next.score > best.result.score)) {
+        best = {
+          edge,
+          candidate: {
+            points: candidate.points.map(clonePoint),
+            labelAnchor: candidate.labelAnchor ? clonePoint(candidate.labelAnchor) : undefined,
+          },
+          result: next,
+        };
+      }
+
+      edge.points = originalPoints;
+      (edge as Edge & { x?: number }).x = originalX;
+      (edge as Edge & { y?: number }).y = originalY;
+    }
+  }
+
+  if (!best) {
+    return current;
+  }
+
+  best.edge.points = best.candidate.points.map(clonePoint);
+  if (best.candidate.labelAnchor) {
+    (best.edge as Edge & { x?: number }).x = best.candidate.labelAnchor.x;
+    (best.edge as Edge & { y?: number }).y = best.candidate.labelAnchor.y;
+  }
+  return best.result;
+}
+
 /**
  * Score-gated cleanup for layouts that are already valid but still contain
  * edge-edge crossings. It first tries low-cost rail shifts, then a bounded
- * end-detour for last-mile vertical rails. Every accepted mutation must keep
- * `validateLayout` clean and improve the global validator score, so this is
- * safe to run as a final quality pass.
+ * end-detour for last-mile vertical rails, then legal side-port candidates for
+ * crossing participants and still-bent short routes. Every accepted mutation
+ * must keep `validateLayout` clean and improve the global validator score, so
+ * this is safe to run as a final quality pass.
  */
 export function reduceCrossingsWithPortSideCandidatesWhenScoreImproves(
   layout: LayoutData,
@@ -319,6 +548,12 @@ export function reduceCrossingsWithPortSideCandidatesWhenScoreImproves(
     }
 
     current = applyEndpointDetours(layout, current, spacing);
+    if (current !== before) {
+      changed++;
+      continue;
+    }
+
+    current = applySidePortCandidates(layout, current, spacing);
     if (current !== before) {
       changed++;
       continue;
