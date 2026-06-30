@@ -88,7 +88,7 @@ interface EbnfExceptionPostfix extends EbnfPostfix {
 }
 
 entry RailroadEbnf returns RailroadEbnf:
-    'railroad-ebnf'
+    'railroad-ebnf-beta'
     ((title=TITLE | accTitle=ACC_TITLE | accDescr=ACC_DESCR))*
     rules+=EbnfRule*
 ;

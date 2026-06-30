@@ -4,9 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/syntax/swimlanes.md](../../packages/mermaid/src/docs/syntax/swimlanes.md).
 
-# Swimlanes Diagram
-
-> Available since MERMAID_RELEASE_VERSION.
+# Swimlanes Diagram (v11.16.0+)
 
 > **Warning**
 > This is a new diagram type in Mermaid. Its syntax may evolve in future versions.
@@ -20,7 +18,7 @@ Use swimlane diagrams when the most important question is not only "what happens
 > The rendered examples on this page use the **Neo** look and the **Redux** theme. Out of the box, swimlanes use your configured default look and theme.
 
 ```mermaid-example
-swimlane LR
+swimlane-beta LR
   subgraph Customer
     request[Request service]
     receive[Receive update]
@@ -44,7 +42,7 @@ swimlane LR
 ```
 
 ```mermaid
-swimlane LR
+swimlane-beta LR
   subgraph Customer
     request[Request service]
     receive[Receive update]
@@ -69,14 +67,14 @@ swimlane LR
 
 ## Syntax
 
-A swimlane diagram starts with the `swimlane` keyword. You can optionally add a direction after the keyword.
+A swimlane diagram starts with the `swimlane-beta` keyword. You can optionally add a direction after the keyword.
 
 ```
-swimlane
+swimlane-beta
 ```
 
 ```
-swimlane LR
+swimlane-beta LR
 ```
 
 The supported directions are:
@@ -96,7 +94,7 @@ If no direction is set, the diagram uses `TB`.
 Use `subgraph` to create a lane. In a swimlane diagram, top-level subgraphs are rendered as swimlanes. A lane ends with `end`.
 
 ```mermaid-example
-swimlane
+swimlane-beta
   subgraph Sales
     lead[Qualify lead]
     quote[Prepare quote]
@@ -104,7 +102,7 @@ swimlane
 ```
 
 ```mermaid
-swimlane
+swimlane-beta
   subgraph Sales
     lead[Qualify lead]
     quote[Prepare quote]
@@ -114,7 +112,7 @@ swimlane
 You can give a lane an internal id and a display label. This is useful when the label contains spaces or when you want a stable id for styling.
 
 ```mermaid-example
-swimlane LR
+swimlane-beta LR
   subgraph sales [Sales team]
     lead[Qualify lead]
     quote[Prepare quote]
@@ -129,7 +127,7 @@ swimlane LR
 ```
 
 ```mermaid
-swimlane LR
+swimlane-beta LR
   subgraph sales [Sales team]
     lead[Qualify lead]
     quote[Prepare quote]
@@ -148,7 +146,7 @@ swimlane LR
 Nodes use flowchart-style shape syntax. The id is written first, and the label is written inside the shape.
 
 ```mermaid-example
-swimlane LR
+swimlane-beta LR
   subgraph Intake
     start([Start])
     task[Do work]
@@ -170,7 +168,7 @@ swimlane LR
 ```
 
 ```mermaid
-swimlane LR
+swimlane-beta LR
   subgraph Intake
     start([Start])
     task[Do work]
@@ -208,7 +206,7 @@ For the complete shape catalog, icons, images, markdown strings, classes, and st
 Edges also use flowchart-style syntax. They can connect nodes in the same lane or across lanes.
 
 ```mermaid-example
-swimlane LR
+swimlane-beta LR
   subgraph Buyer
     choose[Choose product]
     pay[Pay invoice]
@@ -225,7 +223,7 @@ swimlane LR
 ```
 
 ```mermaid
-swimlane LR
+swimlane-beta LR
   subgraph Buyer
     choose[Choose product]
     pay[Pay invoice]
@@ -258,7 +256,7 @@ For the full edge syntax, including multi-directional arrows and minimum link le
 Use `accTitle` and `accDescr` to provide an accessible title and description.
 
 ```mermaid-example
-swimlane LR
+swimlane-beta LR
   accTitle: Support escalation
   accDescr: A request starts with the customer, is triaged by support, and may be escalated to engineering.
 
@@ -278,7 +276,7 @@ swimlane LR
 ```
 
 ```mermaid
-swimlane LR
+swimlane-beta LR
   accTitle: Support escalation
   accDescr: A request starts with the customer, is triaged by support, and may be escalated to engineering.
 
@@ -304,7 +302,7 @@ swimlane LR
 Choose lanes that answer "who owns this step?" Avoid mixing teams, phases, and statuses in the same diagram unless that distinction is the point of the diagram.
 
 ```mermaid-example
-swimlane LR
+swimlane-beta LR
   subgraph Customer
     submit[Submit order]
     confirm[Confirm delivery]
@@ -324,7 +322,7 @@ swimlane LR
 ```
 
 ```mermaid
-swimlane LR
+swimlane-beta LR
   subgraph Customer
     submit[Submit order]
     confirm[Confirm delivery]
@@ -348,7 +346,7 @@ swimlane LR
 A cross-lane arrow is where responsibility changes. Label the arrow when the handoff depends on a document, decision, message, or condition.
 
 ```mermaid-example
-swimlane LR
+swimlane-beta LR
   subgraph Applicant
     apply[Submit application]
     sign[Sign agreement]
@@ -371,7 +369,7 @@ swimlane LR
 ```
 
 ```mermaid
-swimlane LR
+swimlane-beta LR
   subgraph Applicant
     apply[Submit application]
     sign[Sign agreement]
@@ -398,7 +396,7 @@ swimlane LR
 Split a large process into several diagrams when the lanes or handoffs stop fitting in one view. A useful swimlane diagram is usually readable without tracing every arrow twice.
 
 ```mermaid-example
-swimlane TB
+swimlane-beta TB
   subgraph Intake
     collect[Collect request]
     validate[Validate details]
@@ -420,7 +418,7 @@ swimlane TB
 ```
 
 ```mermaid
-swimlane TB
+swimlane-beta TB
   subgraph Intake
     collect[Collect request]
     validate[Validate details]
@@ -446,7 +444,7 @@ swimlane TB
 Use short, meaningful ids for nodes and lanes. The label can change without breaking links, styles, or later references.
 
 ```mermaid-example
-swimlane LR
+swimlane-beta LR
   subgraph ops [Operations]
     intake[Receive request]
     plan[Plan work]
@@ -463,7 +461,7 @@ swimlane LR
 ```
 
 ```mermaid
-swimlane LR
+swimlane-beta LR
   subgraph ops [Operations]
     intake[Receive request]
     plan[Plan work]
@@ -484,7 +482,7 @@ swimlane LR
 Place a decision node in the lane that owns the decision. Then route the outcomes to the lanes that act on the result.
 
 ```mermaid-example
-swimlane LR
+swimlane-beta LR
   subgraph Support
     classify{Can support solve it?}
     respond[Respond to customer]
@@ -503,7 +501,7 @@ swimlane LR
 ```
 
 ```mermaid
-swimlane LR
+swimlane-beta LR
   subgraph Support
     classify{Can support solve it?}
     respond[Respond to customer]

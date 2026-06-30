@@ -1,4 +1,3 @@
-!viewbox
 # It should be viewBox
 # This file contains coding related terms
 ABNF
@@ -32,12 +31,14 @@ classdef
 classdefid
 classentity
 classname
+clazz
 CODEOWNERS
 COLONSEP
 COMPOSIT_STATE
 concat
 controlx
 controly
+cplusplus
 CSSCLASS
 curv
 CYLINDEREND
@@ -194,6 +195,7 @@ ts-nocheck
 tsdoc
 typeof
 typestr
+uninstrumented
 unrouted
 unsat
 Unsat

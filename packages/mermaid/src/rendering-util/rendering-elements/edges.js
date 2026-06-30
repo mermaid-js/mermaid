@@ -565,8 +565,13 @@ const generateDashArray = (len, oValueS, oValueE) => {
   const gapLength = 2; // Length of each gap
   const dashGapPairLength = dashLength + gapLength;
 
-  // Calculate number of complete dash-gap pairs that can fit
-  const numberOfPairs = Math.floor(middleLength / dashGapPairLength);
+  // Calculate number of complete dash-gap pairs that can fit.
+  // Clamp to a non-negative, finite integer: a short edge (len < the combined
+  // marker offsets) makes this negative, and a degenerate path makes
+  // getTotalLength() return NaN — either would throw "RangeError: Invalid array
+  // length" from Array(numberOfPairs) below.
+  const rawPairs = Math.floor(middleLength / dashGapPairLength);
+  const numberOfPairs = Number.isFinite(rawPairs) ? Math.max(0, rawPairs) : 0;
 
   // Generate the middle pattern array
   const middlePattern = Array(numberOfPairs).fill(`${dashLength} ${gapLength}`).join(' ');

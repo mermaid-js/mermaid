@@ -1,7 +1,6 @@
 /** Decorates with functions required by mermaids dagre-wrapper. */
 import { log } from '../../../logger.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
-import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
 
 export let clusterDb = new Map();
 let descendants = new Map();
@@ -41,7 +40,7 @@ const edgeInCluster = (edge, clusterId) => {
 };
 
 const copy = (clusterId, graph, newGraph, rootId) => {
-  log.warn(
+  log.debug(
     'Copying children of ',
     clusterId,
     'root',
@@ -56,7 +55,7 @@ const copy = (clusterId, graph, newGraph, rootId) => {
     nodes.push(clusterId);
   }
 
-  log.warn('Copying (nodes) clusterId', clusterId, 'nodes', nodes);
+  log.debug('Copying (nodes) clusterId', clusterId, 'nodes', nodes);
 
   nodes.forEach((node) => {
     if (graph.children(node).length > 0) {
@@ -66,7 +65,7 @@ const copy = (clusterId, graph, newGraph, rootId) => {
       log.info('cp ', node, ' to ', rootId, ' with parent ', clusterId);
       newGraph.setNode(node, data);
       if (rootId !== graph.parent(node)) {
-        log.warn('Setting parent', node, graph.parent(node));
+        log.debug('Setting parent', node, graph.parent(node));
         newGraph.setParent(node, graph.parent(node));
       }
 
@@ -230,7 +229,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
   graph.nodes().forEach(function (id) {
     const children = graph.children(id);
     if (children.length > 0) {
-      log.warn(
+      log.debug(
         'Cluster identified',
         id,
         ' Replacement id in edges: ',
@@ -251,8 +250,8 @@ export const adjustClustersAndEdges = (graph, depth) => {
         const d2 = isDescendant(edge.w, id);
 
         if (d1 ^ d2) {
-          log.warn('Edge: ', edge, ' leaves cluster ', id);
-          log.warn('Descendants of XXX ', id, ': ', descendants.get(id));
+          log.debug('Edge: ', edge, ' leaves cluster ', id);
+          log.debug('Descendants of XXX ', id, ': ', descendants.get(id));
           clusterDb.get(id).externalConnections = true;
         }
       });
@@ -288,12 +287,12 @@ export const adjustClustersAndEdges = (graph, depth) => {
 
   graph.edges().forEach(function (e) {
     const edge = graph.edge(e);
-    log.warn('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
-    log.warn('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
+    log.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
+    log.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
 
     let v = e.v;
     let w = e.w;
-    log.warn(
+    log.debug(
       'Fix XXX',
       clusterDb,
       'ids:',
@@ -305,7 +304,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
       clusterDb.get(e.w)
     );
     if (clusterDb.get(e.v) || clusterDb.get(e.w)) {
-      log.warn('Fixing and trying - removing XXX', e.v, e.w, e.name);
+      log.debug('Fixing and trying - removing XXX', e.v, e.w, e.name);
       v = getAnchorId(e.v);
       w = getAnchorId(e.w);
       graph.removeEdge(e.v, e.w, e.name);
@@ -319,18 +318,20 @@ export const adjustClustersAndEdges = (graph, depth) => {
         clusterDb.get(parent).externalConnections = true;
         edge.toCluster = e.w;
       }
-      log.warn('Fix Replacing with XXX', v, w, e.name);
+      log.debug('Fix Replacing with XXX', v, w, e.name);
       graph.setEdge(v, w, edge, e.name);
     }
   });
-  log.warn('Adjusted Graph', graphlibJson.write(graph));
+  // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
+  // log.debug('Adjusted Graph', graphlibJson.write(graph));
   extractor(graph, 0);
 
   log.trace(clusterDb);
 };
 
 export const extractor = (graph, depth) => {
-  log.warn('extractor - ', depth, graphlibJson.write(graph), graph.children('D'));
+  // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
+  // log.debug('extractor - ', depth, graphlibJson.write(graph), graph.children('D'));
   if (depth > 10) {
     log.error('Bailing out');
     return;
@@ -368,7 +369,7 @@ export const extractor = (graph, depth) => {
     ) {
       // Cluster with an explicit direction keyword — always create a subgraph,
       // even when it has external connections (fixes issue #4648).
-      log.warn('Cluster with explicit dir, creating subgraph for children', node, depth);
+      log.debug('Cluster with explicit dir, creating subgraph for children', node, depth);
 
       const dir = clusterDb.get(node).clusterData.dir;
       const clusterGraph = new graphlib.Graph({
@@ -398,18 +399,19 @@ export const extractor = (graph, depth) => {
         label: clusterDb.get(node).label,
         graph: clusterGraph,
       });
-      log.warn(
-        'Subgraph for cluster with explicit dir created:',
-        node,
-        graphlibJson.write(clusterGraph)
-      );
+      // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
+      // log.debug(
+      //   'Subgraph for cluster with explicit dir created:',
+      //   node,
+      //   graphlibJson.write(clusterGraph)
+      // );
     } else if (
       !clusterDb.get(node).externalConnections &&
       graph.children(node) &&
       graph.children(node).length > 0
     ) {
       // Original behaviour: cluster without external connections gets its own sub-graph.
-      log.warn(
+      log.debug(
         'Cluster without external connections, without a parent and with children',
         node,
         depth
@@ -419,7 +421,7 @@ export const extractor = (graph, depth) => {
       let dir = graphSettings.rankdir === 'TB' ? 'LR' : 'TB';
       if (clusterDb.get(node)?.clusterData?.dir) {
         dir = clusterDb.get(node).clusterData.dir;
-        log.warn('Fixing dir', clusterDb.get(node).clusterData.dir, dir);
+        log.debug('Fixing dir', clusterDb.get(node).clusterData.dir, dir);
       }
 
       const clusterGraph = new graphlib.Graph({
@@ -447,9 +449,10 @@ export const extractor = (graph, depth) => {
         label: clusterDb.get(node).label,
         graph: clusterGraph,
       });
-      log.debug('Old graph after copy', graphlibJson.write(graph));
+      // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
+      // log.debug('Old graph after copy', graphlibJson.write(graph));
     } else {
-      log.warn(
+      log.debug(
         'Cluster ** ',
         node,
         ' **not meeting the criteria !externalConnections:',
@@ -466,10 +469,10 @@ export const extractor = (graph, depth) => {
   }
 
   nodes = graph.nodes();
-  log.warn('New list of nodes', nodes);
+  log.debug('New list of nodes', nodes);
   for (const node of nodes) {
     const data = graph.node(node);
-    log.warn(' Now next level', node, data);
+    log.debug(' Now next level', node, data);
     if (data?.clusterNode) {
       extractor(data.graph, depth + 1);
     }

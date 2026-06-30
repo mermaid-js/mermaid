@@ -1,4 +1,9 @@
-%% Validate ELK edge endpoints against non-rectangular node shapes.
+---
+config:
+  elk:
+    nodePlacementAlignment: BALANCED
+---
+
 flowchart TD
   Start([Start]) --> Split{Ready to Process?}
   Split -->|yes| T1[Task A]

@@ -27,6 +27,7 @@ const config: RequiredDeep<MermaidConfig> = {
     nodePlacementAlignment: 'NONE',
     forceNodeModelOrder: false,
     considerModelOrder: 'NODES_AND_EDGES',
+    keepEntryNodeOnTop: false,
   },
   themeCSS: undefined,
 
@@ -57,8 +58,12 @@ const config: RequiredDeep<MermaidConfig> = {
     },
   },
   class: {
+    defaultRenderer: 'dagre-wrapper',
     hideEmptyMembersBox: false,
     hierarchicalNamespaces: true,
+    // `padding` is intentionally left undefined so the unified (v2) renderer keeps
+    // its own node sizing — setting the schema default of 5 here would change class
+    // node dimensions.
   },
   gantt: {
     ...defaultConfigJson.gantt,

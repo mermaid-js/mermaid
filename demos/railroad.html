@@ -16,13 +16,13 @@
     <h1>Railroad diagram demos</h1>
 
     <pre class="mermaid">
-railroad-diagram
+railroad-beta
 digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
     </pre>
     <hr />
 
     <pre class="mermaid">
-railroad-diagram
+railroad-beta
 title "Identifier Grammar"
 
 identifier = letter ( letter | digit | "_" )* ;
@@ -32,7 +32,7 @@ digit = "0" | "1" | "2" ;
     <hr />
 
     <pre class="mermaid">
-railroad-diagram
+railroad-beta
 title "Optional Sign"
 
 sign = "+" | "-" ;
@@ -42,7 +42,7 @@ digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
     <hr />
 
     <pre class="mermaid">
-railroad-diagram
+railroad-beta
 title "Expression Grammar"
 
 expression = term ( ( "+" | "-" ) term )* ;
@@ -54,7 +54,7 @@ digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
     <hr />
 
     <pre class="mermaid">
-railroad-diagram
+railroad-beta
 title "JSON Grammar"
 
 json = element ;
@@ -66,7 +66,7 @@ member = string ":" element ;
     <hr />
 
     <pre class="mermaid">
-railroad-diagram
+railroad-beta
 title "URL Grammar"
 
 url = protocol "://" domain path? ;
@@ -78,7 +78,7 @@ path = "/" segment ( "/" segment )* ;
     <hr />
 
     <pre class="mermaid">
-railroad-diagram
+railroad-beta
 title "ISO Style Notation"
 
 list = "[" element { "," element } "]" ;
@@ -89,7 +89,7 @@ digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
     <hr />
 
     <pre class="mermaid">
-railroad-diagram
+railroad-beta
 title "BNF Style Definition"
 
 rule ::= "A" | "B" ;

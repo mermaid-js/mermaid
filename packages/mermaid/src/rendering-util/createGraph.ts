@@ -1,6 +1,6 @@
 import type { Selection } from 'd3';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
-import type { LayoutData } from './types.js';
+import type { ClusterNode, LayoutData, NonClusterNode, ShapeRenderOptions } from './types.js';
 import { getConfig } from '../diagram-api/diagramAPI.js';
 import { hasEdgeLabel, insertEdgeLabel } from './rendering-elements/edges.js';
 import { insertNode } from './rendering-elements/nodes.js';
@@ -13,6 +13,56 @@ type D3Selection<T extends SVGElement = SVGElement> = Selection<
   Element | null,
   unknown
 >;
+
+interface LayoutElementGroups {
+  clusters: D3Selection<SVGGElement>;
+  edgePaths: D3Selection<SVGGElement>;
+  edgeLabels: D3Selection<SVGGElement>;
+  nodes: D3Selection<SVGGElement>;
+  rootGroups: D3Selection<SVGGElement>;
+}
+
+export interface CreateLayoutElementGroupsOptions {
+  edgePathsClass?: string;
+}
+
+export function createLayoutElementGroups(
+  element: D3Selection,
+  { edgePathsClass = 'edges edgePath' }: CreateLayoutElementGroupsOptions = {}
+): LayoutElementGroups {
+  const rootGroups = element.insert('g').attr('class', 'root');
+  const clusters = rootGroups.insert('g').attr('class', 'clusters');
+  const edgePaths = rootGroups.insert('g').attr('class', edgePathsClass);
+  const edgeLabels = rootGroups.insert('g').attr('class', 'edgeLabels');
+  const nodes = rootGroups.insert('g').attr('class', 'nodes');
+
+  return { clusters, edgePaths, edgeLabels, nodes, rootGroups };
+}
+
+export async function measureGroupLabel(
+  nodesGroup: D3Selection<SVGGElement>,
+  node: ClusterNode
+): Promise<void> {
+  if (node.label) {
+    const { shapeSvg, bbox } = await labelHelper(nodesGroup, node);
+    node.labelBBox = { width: bbox.width, height: bbox.height };
+    shapeSvg.remove();
+  } else {
+    node.labelBBox = { width: 0, height: 0 };
+  }
+}
+
+export async function insertMeasuredNode(
+  nodesGroup: D3Selection<SVGGElement>,
+  node: NonClusterNode,
+  renderOptions: ShapeRenderOptions
+): Promise<D3Selection<SVGElement | SVGGElement>> {
+  const childNodeEl = await insertNode(nodesGroup, node, renderOptions);
+  const boundingBox = childNodeEl.node()?.getBBox() ?? { width: 0, height: 0 };
+  node.width = boundingBox.width;
+  node.height = boundingBox.height;
+  return childNodeEl as D3Selection<SVGElement | SVGGElement>;
+}
 
 /**
  * Creates a graph by merging the graph construction and DOM element insertion.
@@ -46,12 +96,8 @@ export async function createGraphWithElements(
   });
   const edgesToProcess = [...data4Layout.edges];
   const config = getConfig();
-  // Create groups for clusters, edge paths, edge labels, and nodes.
-  const rootGroups = element.insert('g').attr('class', 'root');
-  const clusters = rootGroups.insert('g').attr('class', 'clusters');
-  const edgePaths = rootGroups.insert('g').attr('class', 'edges edgePath');
-  const edgeLabels = rootGroups.insert('g').attr('class', 'edgeLabels');
-  const nodesGroup = rootGroups.insert('g').attr('class', 'nodes');
+  const groups = createLayoutElementGroups(element);
+  const { edgeLabels, nodes: nodesGroup } = groups;
 
   const nodeElements = new Map<string, D3Selection<SVGElement | SVGGElement>>();
 
@@ -67,22 +113,16 @@ export async function createGraphWithElements(
     data4Layout.nodes.map(async (node) => {
       if (node.isGroup) {
         if (hasDom) {
-          if (node.label) {
-            const { shapeSvg, bbox } = await labelHelper(nodesGroup, node);
-            node.labelBBox = { width: bbox.width, height: bbox.height };
-            shapeSvg.remove();
-          } else {
-            node.labelBBox = { width: 0, height: 0 };
-          }
+          await measureGroupLabel(nodesGroup, node);
         }
         graph.setNode(node.id, { ...node });
       } else {
         if (hasDom) {
-          const childNodeEl = await insertNode(nodesGroup, node, { config, dir: node.dir });
-          const boundingBox = childNodeEl.node()?.getBBox() ?? { width: 0, height: 0 };
-          nodeElements.set(node.id, childNodeEl as D3Selection<SVGElement | SVGGElement>);
-          node.width = boundingBox.width;
-          node.height = boundingBox.height;
+          const childNodeEl = await insertMeasuredNode(nodesGroup, node, {
+            config,
+            dir: node.dir,
+          });
+          nodeElements.set(node.id, childNodeEl);
         }
         graph.setNode(node.id, { ...node });
       }
@@ -114,7 +154,7 @@ export async function createGraphWithElements(
 
   return {
     graph,
-    groups: { clusters, edgePaths, edgeLabels, nodes: nodesGroup, rootGroups },
+    groups,
     nodeElements,
   };
 }

@@ -6,20 +6,20 @@ describe('ABNF Detector', () => {
     expect(railroadAbnf.id).toBe('railroadAbnf');
   });
 
-  it('should detect railroad-abnf keyword', () => {
-    expect(railroadAbnf.detector('railroad-abnf\nrule = "test" ;')).toBe(true);
+  it('should detect railroad-abnf-beta keyword', () => {
+    expect(railroadAbnf.detector('railroad-abnf-beta\nrule = "test" ;')).toBe(true);
   });
 
   it('should detect with leading whitespace', () => {
-    expect(railroadAbnf.detector('  railroad-abnf\nrule = "test" ;')).toBe(true);
+    expect(railroadAbnf.detector('  railroad-abnf-beta\nrule = "test" ;')).toBe(true);
   });
 
   it('should detect case-insensitively', () => {
-    expect(railroadAbnf.detector('RAILROAD-ABNF\nrule = "test" ;')).toBe(true);
+    expect(railroadAbnf.detector('RAILROAD-ABNF-BETA\nrule = "test" ;')).toBe(true);
   });
 
   it('should not detect other diagram types', () => {
-    expect(railroadAbnf.detector('railroad-diagram\nrule = terminal("a") ;')).toBe(false);
+    expect(railroadAbnf.detector('railroad-beta\nrule = terminal("a") ;')).toBe(false);
     expect(railroadAbnf.detector('flowchart TD\nA --> B')).toBe(false);
   });
 

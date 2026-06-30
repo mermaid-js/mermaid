@@ -33,7 +33,7 @@
   ],
   "metadata": {
     "captureVersion": 1,
-    "sourceSha256": "434bf2aad8953355312cd350787b9540b2ab912132b30e135b807b5f55d6862a",
+    "sourceSha256": "84d5000d82dff5c7df93bc1ecf5d376fe7ac87cfa7ac1ef947937fc496defe43",
     "capturedAt": "2026-06-08T13:52:23.183Z",
     "capturedFrom": "dev-explorer layout-tests/swimlanes/pebr-1-duplicate-process-in-substate-no-render.mmd theme=default look=classic layout=swimlane"
   }

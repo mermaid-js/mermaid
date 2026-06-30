@@ -63,7 +63,7 @@
   ],
   "metadata": {
     "captureVersion": 1,
-    "sourceSha256": "e6b10764d5844f763477600cb8182346595741ef7d934e24d95d70cb1daf0198",
+    "sourceSha256": "1f9e023d45b37b419ef39191e5537127a1a3ead970292409564c27a673853358",
     "capturedAt": "2026-06-04T14:52:35.520Z",
     "capturedFrom": "dev-explorer layout-tests/swimlanes/issue-7802-3.mmd theme=default look=classic layout=swimlane"
   }

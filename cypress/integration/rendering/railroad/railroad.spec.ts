@@ -8,10 +8,10 @@ function shouldHaveRailroadContent($svg: JQuery<SVGSVGElement>) {
 }
 
 describe('railroad diagrams', () => {
-  describe('IR syntax (railroad-diagram)', () => {
+  describe('IR syntax (railroad-beta)', () => {
     it('renders a simple rule', () => {
       imgSnapshotTest(
-        `railroad-diagram
+        `railroad-beta
 digit = terminal("0") ;
         `,
         {},
@@ -22,7 +22,7 @@ digit = terminal("0") ;
 
     it('renders sequences and choices', () => {
       imgSnapshotTest(
-        `railroad-diagram
+        `railroad-beta
 expression = sequence(
     nonterminal("term"),
     zeroOrMore(choice(
@@ -42,7 +42,7 @@ digit = choice(terminal("0"), terminal("1"), terminal("2")) ;
 
     it('renders optional and repetition operators', () => {
       imgSnapshotTest(
-        `railroad-diagram
+        `railroad-beta
 sign = choice(terminal("+"), terminal("-")) ;
 number = sequence(optional(nonterminal("sign")), oneOrMore(nonterminal("digit"))) ;
 list = sequence(terminal("["), optional(sequence(nonterminal("number"), zeroOrMore(sequence(terminal(","), nonterminal("number"))))), terminal("]")) ;
@@ -56,7 +56,7 @@ digit = choice(terminal("0"), terminal("1"), terminal("2"), terminal("3")) ;
 
     it('renders multiple rules in one diagram', () => {
       imgSnapshotTest(
-        `railroad-diagram
+        `railroad-beta
 json = nonterminal("element") ;
 element = choice(nonterminal("object"), nonterminal("array"), nonterminal("string"), nonterminal("number"), terminal("true"), terminal("false"), terminal("null")) ;
 object = sequence(terminal("{"), optional(sequence(nonterminal("member"), zeroOrMore(sequence(terminal(","), nonterminal("member"))))), terminal("}")) ;
@@ -73,7 +73,7 @@ digit = choice(terminal("0"), terminal("1"), terminal("2"), terminal("3"), termi
 
     it('adapts to dark theme colors', () => {
       imgSnapshotTest(
-        `railroad-diagram
+        `railroad-beta
 value = choice(nonterminal("string"), nonterminal("number"), nonterminal("object"), nonterminal("array"), terminal("true"), terminal("false"), terminal("null")) ;
 number = oneOrMore(nonterminal("digit")) ;
 digit = choice(terminal("0"), terminal("1"), terminal("2"), terminal("3")) ;
@@ -85,10 +85,10 @@ digit = choice(terminal("0"), terminal("1"), terminal("2"), terminal("3")) ;
     });
   });
 
-  describe('EBNF syntax (railroad-ebnf)', () => {
+  describe('EBNF syntax (railroad-ebnf-beta)', () => {
     it('renders sequences and choices', () => {
       imgSnapshotTest(
-        `railroad-ebnf
+        `railroad-ebnf-beta
 expression = term ( "+" term | "-" term )* ;
 term = number | "(" expression ")" ;
 number = digit+ ;
@@ -102,7 +102,7 @@ digit = "0" | "1" | "2" ;
 
     it('renders ISO 14977 notation', () => {
       imgSnapshotTest(
-        `railroad-ebnf
+        `railroad-ebnf-beta
 identifier = letter , { letter | digit | "_" } ;
 letter = "a" | "b" | "c" ;
 digit = "0" | "1" | "2" ;
@@ -114,10 +114,10 @@ digit = "0" | "1" | "2" ;
     });
   });
 
-  describe('ABNF syntax (railroad-abnf)', () => {
+  describe('ABNF syntax (railroad-abnf-beta)', () => {
     it('renders alternation and repetition', () => {
       imgSnapshotTest(
-        `railroad-abnf
+        `railroad-abnf-beta
 scheme = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." ) ;
 digit = "0" / "1" / "2" / "3" ;
         `,
@@ -128,10 +128,10 @@ digit = "0" / "1" / "2" / "3" ;
     });
   });
 
-  describe('PEG syntax (railroad-peg)', () => {
+  describe('PEG syntax (railroad-peg-beta)', () => {
     it('renders ordered choice and suffixes', () => {
       imgSnapshotTest(
-        `railroad-peg
+        `railroad-peg-beta
 Expression <- Term (("+" / "-") Term)* ;
 Term <- Factor (("*" / "/") Factor)* ;
 Factor <- Number / "(" Expression ")" ;

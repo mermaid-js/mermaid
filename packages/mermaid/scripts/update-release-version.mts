@@ -10,8 +10,8 @@ import { posix } from 'path';
 import {
   getFilesFromGlobs,
   getGlobs,
-  MERMAID_RELEASE_VERSION,
   readSyncedUTF8file,
+  replaceVersionPlaceholder,
   SOURCE_DOCS_DIR,
 } from './docs.mjs';
 
@@ -60,8 +60,7 @@ const main = async () => {
 
   for (const mdFile of mdFilesWithPlaceholder) {
     const content = readSyncedUTF8file(mdFile);
-    const newContent = content.replace(versionPlaceholder, MERMAID_RELEASE_VERSION);
-    await writeFile(mdFile, newContent);
+    await writeFile(mdFile, replaceVersionPlaceholder(content));
   }
 };
 

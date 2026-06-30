@@ -30,7 +30,7 @@ const asStandaloneSwimlanes = (source: string): string => {
   // diagram type directly, so it is rendered as-is. This guard keeps that
   // invariant — a fixture authored as flowchart/graph would fail here.
   expect(source, 'fixture should declare the standalone swimlane diagram type').to.match(
-    /^\s*swimlane\s/m
+    /^\s*swimlane-beta\s/m
   );
   return source;
 };
@@ -117,7 +117,7 @@ describe('Swimlanes diagram', () => {
 
   it('defaults to the swimlanes layout without an explicit layout config', () => {
     renderSwimlanes(
-      `swimlane LR
+      `swimlane-beta LR
         subgraph Intake
           A[Request]
         end
@@ -135,7 +135,7 @@ describe('Swimlanes diagram', () => {
 
   it('applies custom theme variables', () => {
     renderSwimlanes(
-      `swimlane LR
+      `swimlane-beta LR
         subgraph ThemeLane
           A[Themed node]
           B[Next node]
@@ -167,7 +167,7 @@ describe('Swimlanes diagram', () => {
 
   it('applies flowchart style and linkStyle statements', () => {
     renderSwimlanes(
-      `swimlane LR
+      `swimlane-beta LR
         subgraph StyledLane
           A[Styled node]
           B[Linked node]
@@ -195,7 +195,7 @@ describe('Swimlanes diagram', () => {
 
   it('applies classDef and class statements', () => {
     renderSwimlanes(
-      `swimlane LR
+      `swimlane-beta LR
         subgraph ClassLane
           A[Classed node]
           B[Default node]
@@ -218,7 +218,7 @@ describe('Swimlanes diagram', () => {
 
   it('puts nodes without an explicit subgraph into a default swimlane', () => {
     renderSwimlanes(
-      `swimlane LR
+      `swimlane-beta LR
         subgraph OwnedLane
           A[Owned node]
         end

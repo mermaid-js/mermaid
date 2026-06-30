@@ -1,7 +1,12 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { getConfig } from '../../config.js';
-import { insertEdge, insertEdgeLabel, positionEdgeLabel } from '../../dagre-wrapper/edges.js';
-import { insertNode, positionNode } from '../../dagre-wrapper/nodes.js';
+import {
+  insertEdge,
+  insertEdgeLabel,
+  positionEdgeLabel,
+} from '../../rendering-util/rendering-elements/edges.js';
+import { insertNode, positionNode } from '../../rendering-util/rendering-elements/nodes.js';
+import type { ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
 import { getStylesFromArray } from '../../utils.js';
 import type { BlockDB } from './blockDB.js';
 import type { Block } from './blockTypes.js';
@@ -14,10 +19,13 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
     classStr = (vertex?.classes ?? []).join(' ');
   }
   classStr = classStr + ' flowchart-label';
+  const cssCompiledStyles = (vertex?.classes ?? []).flatMap(
+    (className) => db.getClasses().get(className)?.styles ?? []
+  );
 
   // We create a SVG label, either by delegating to addHtmlLabel or manually
   let radius = 0;
-  let shape = '';
+  let shape: ShapeID = 'rect';
   let padding;
   // Set the shape based parameters
   switch (vertex.type) {
@@ -64,6 +72,7 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
       shape = 'circle';
       break;
     case 'ellipse':
+      // @ts-expect-error -- Ellipses are broken, see https://github.com/mermaid-js/mermaid/issues/5976
       shape = 'ellipse';
       break;
     case 'stadium':
@@ -95,22 +104,26 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
   // Add the node
   const node = {
     labelStyle: styles.labelStyle,
-    shape: shape,
+    shape,
+    label: vertexText,
     labelText: vertexText,
     rx: radius,
     ry: radius,
     class: classStr,
+    cssClasses: classStr,
+    cssStyles: vertex?.styles ?? [],
+    cssCompiledStyles,
     style: styles.style,
     id: vertex.id,
     domId: dbDiagramId ? `${dbDiagramId}-${vertex.id}` : vertex.id,
+    isGroup: false as const,
     directions: vertex.directions,
-    width: bounds.width,
-    height: bounds.height,
+    width: bounds.width || undefined,
+    height: bounds.height || undefined,
     x: bounds.x,
     y: bounds.y,
     positioned,
     intersect: undefined,
-    type: vertex.type,
     padding: padding ?? getConfig()?.block?.padding ?? 0,
     widthInColumns: vertex.widthInColumns ?? 1,
   };
@@ -122,14 +135,14 @@ async function calculateBlockSize(
   db: any
 ) {
   const node = getNodeFromBlock(block, db, false);
-  if (node.type === 'group') {
+  if (block.type === 'group') {
     return;
   }
 
   // Add the element to the DOM to size it
   const config = getConfig();
   const nodeEl = await insertNode(elem, node, { config });
-  const boundingBox = nodeEl.node().getBBox();
+  const boundingBox = nodeEl.node()?.getBBox() ?? { width: 0, height: 0 };
   const obj = db.getBlock(node.id);
   obj.size = { width: boundingBox.width, height: boundingBox.height, x: 0, y: 0, node: nodeEl };
   db.setBlock(obj);
@@ -228,7 +241,6 @@ export async function insertEdges(
 
         insertEdge(
           elem,
-          { v: edge.start, w: edge.end, name: prefixedEdgeId },
           {
             ...edge,
             id: prefixedEdgeId,
@@ -237,9 +249,10 @@ export async function insertEdges(
             points,
             classes: dynamicClasses,
           },
-          undefined,
+          {},
           'block',
-          g,
+          g.node(edge.start),
+          g.node(edge.end),
           id
         );
         if (edge.label) {

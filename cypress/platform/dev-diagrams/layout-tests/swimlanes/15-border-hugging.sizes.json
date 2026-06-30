@@ -33,7 +33,7 @@
   ],
   "metadata": {
     "captureVersion": 1,
-    "sourceSha256": "f1052f7901c1a4f1fa0667ceca4940e84e3b74499540fd5ea4df7cb58e9d7a39",
+    "sourceSha256": "268f27fee5dc35ad2a0ceb02244bc945cd8d8b99c6085244a2f3c931f0c3f4a2",
     "capturedAt": "2026-06-08T12:22:25.692Z",
     "capturedFrom": "dev-explorer layout-tests/swimlanes/15-border-hugging.mmd theme=redux look=neo layout=swimlane"
   }
