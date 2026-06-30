@@ -18,12 +18,14 @@
 import type { LayoutData, Node } from '../../../types.js';
 import { rectForNode } from '../core/helpers.js';
 import { validateLayout } from '../../layout-utils/validateLayout.js';
+import { findRoutingGraphPathBetweenPorts } from '../core/routing.js';
 
 interface Point {
   x: number;
   y: number;
 }
 type Rect = ReturnType<typeof rectForNode>;
+type Side = 'N' | 'S' | 'E' | 'W';
 interface Issue {
   type: string;
   message?: string;
@@ -34,6 +36,13 @@ interface Issue {
 const EPS = 1e-6;
 const MARGIN = 8;
 const MAX_ROUNDS = 4;
+const STUB = 20;
+const OUTWARD: Record<Side, Point> = {
+  N: { x: 0, y: -1 },
+  S: { x: 0, y: 1 },
+  E: { x: 1, y: 0 },
+  W: { x: -1, y: 0 },
+};
 
 /** Stable identity for an issue: type + the elements it implicates. */
 function issueKey(issue: Issue): string {
@@ -199,6 +208,110 @@ function railShiftCandidates(pts: Point[]): Point[][] {
   return out;
 }
 
+function sidePort(r: Rect, side: Side, t: number): Point {
+  const clamped = Math.max(0, Math.min(1, t));
+  if (side === 'N' || side === 'S') {
+    return { x: r.left + (r.right - r.left) * clamped, y: side === 'N' ? r.top : r.bottom };
+  }
+  return { x: side === 'W' ? r.left : r.right, y: r.top + (r.bottom - r.top) * clamped };
+}
+
+function sidePreference(rS: Rect, rE: Rect): [Side, Side][] {
+  const dx = rE.cx - rS.cx;
+  const dy = rE.cy - rS.cy;
+  const primary: [Side, Side] =
+    Math.abs(dx) > Math.abs(dy)
+      ? dx >= 0
+        ? ['E', 'W']
+        : ['W', 'E']
+      : dy >= 0
+        ? ['S', 'N']
+        : ['N', 'S'];
+  const secondary: [Side, Side] =
+    Math.abs(dx) > Math.abs(dy)
+      ? dy >= 0
+        ? ['S', 'N']
+        : ['N', 'S']
+      : dx >= 0
+        ? ['E', 'W']
+        : ['W', 'E'];
+  return [primary, secondary, ['N', 'S'], ['S', 'N'], ['E', 'W'], ['W', 'E']];
+}
+
+function sideRouteCandidates(
+  rS: Rect,
+  rE: Rect,
+  nodeById: Map<string, Node>,
+  startId: string,
+  endId: string
+): Point[][] {
+  const out: Point[][] = [];
+  const seen = new Set<string>();
+
+  for (const [startSide, endSide] of sidePreference(rS, rE)) {
+    const startHoriz = startSide === 'N' || startSide === 'S';
+    const endHoriz = endSide === 'N' || endSide === 'S';
+    const startTs = startHoriz
+      ? [(rE.cx - rS.left) / (rS.right - rS.left), 0.5, 0.25, 0.75]
+      : [(rE.cy - rS.top) / (rS.bottom - rS.top), 0.5, 0.25, 0.75];
+    const endTs = endHoriz
+      ? [(rS.cx - rE.left) / (rE.right - rE.left), 0.5, 0.25, 0.75]
+      : [(rS.cy - rE.top) / (rE.bottom - rE.top), 0.5, 0.25, 0.75];
+
+    for (const st of startTs) {
+      const ps = sidePort(rS, startSide, st);
+      const ds = OUTWARD[startSide];
+      const startStub = { x: ps.x + ds.x * STUB, y: ps.y + ds.y * STUB };
+      for (const et of endTs) {
+        const pe = sidePort(rE, endSide, et);
+        const de = OUTWARD[endSide];
+        const endStub = { x: pe.x + de.x * STUB, y: pe.y + de.y * STUB };
+        const mid = findRoutingGraphPathBetweenPorts(
+          startStub,
+          endStub,
+          nodeById,
+          startId,
+          endId,
+          10,
+          { model: 'channels', clearance: 8 }
+        );
+        const routes: Point[][] = [];
+        if (mid && mid.length >= 2) {
+          routes.push([{ ...ps }, ...mid.map((p) => ({ ...p })), { ...pe }]);
+        }
+        if (Math.abs(startStub.x - endStub.x) <= EPS || Math.abs(startStub.y - endStub.y) <= EPS) {
+          routes.push([{ ...ps }, { ...startStub }, { ...endStub }, { ...pe }]);
+        }
+        for (const route of routes) {
+          const key = route
+            .map((p) => `${Math.round(p.x * 10) / 10},${Math.round(p.y * 10) / 10}`)
+            .join('|');
+          if (seen.has(key)) {
+            continue;
+          }
+          seen.add(key);
+          out.push(route);
+        }
+      }
+    }
+  }
+  return out;
+}
+
+function labelAnchors(pts: Point[]): Point[] {
+  const anchors: { x: number; y: number; len: number }[] = [];
+  for (let i = 0; i < pts.length - 1; i++) {
+    const a = pts[i];
+    const b = pts[i + 1];
+    const len = Math.abs(b.x - a.x) + Math.abs(b.y - a.y);
+    for (const t of [0.5, 0.35, 0.65, 0.25, 0.75]) {
+      anchors.push({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t, len });
+    }
+  }
+  anchors.sort((a, b) => b.len - a.len);
+  return anchors.map(({ x, y }) => ({ x, y }));
+}
+
 export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
   let current = validateLayout(layout);
   if (current.ok) {
@@ -216,6 +329,9 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
     start?: string;
     end?: string;
     points?: Point[];
+    x?: number;
+    y?: number;
+    label?: unknown;
   }[];
   const knownEdgeIds = new Set(edges.map((e) => String(e?.id)).filter((id) => id !== 'undefined'));
 
@@ -256,26 +372,51 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
       const parallel = types.has('edge-parallel-segment-too-close');
 
       const candidates = [...routeCandidates(ps, pe, rS, rE, parallel)];
+      if (rS && rE && e?.start != null && e?.end != null) {
+        candidates.push(...sideRouteCandidates(rS, rE, nodeById, String(e.start), String(e.end)));
+      }
       if (parallel) {
         candidates.push(...railShiftCandidates(pts));
       }
 
       const curKeys = new Set((current.issues as Issue[]).map(issueKey));
       const old = e!.points;
+      const oldX = e!.x;
+      const oldY = e!.y;
+      const hasLabel = e!.label != null && Number.isFinite(e!.x) && Number.isFinite(e!.y);
+      const hardReroute =
+        types.has('edge-intersects-obstacle') || types.has('edge-port-direction-mismatch');
       for (const candidate of candidates) {
-        if (candidate.length >= old!.length + 2) {
+        if (!hardReroute && candidate.length >= old!.length + 2) {
           continue; // don't trade a defect for a much longer route
         }
+        if (hardReroute && candidate.length > old!.length + 5) {
+          continue;
+        }
         e!.points = candidate;
-        const next = validateLayout(layout);
-        const fewer = next.issues.length < current.issues.length;
-        const noNew = (next.issues as Issue[]).every((iss) => curKeys.has(issueKey(iss)));
-        if (fewer && noNew) {
-          current = next;
-          improvedThisRound = true;
+        const anchors = hasLabel ? labelAnchors(candidate) : [{ x: oldX ?? 0, y: oldY ?? 0 }];
+        let accepted = false;
+        for (const anchor of anchors) {
+          if (hasLabel) {
+            e!.x = anchor.x;
+            e!.y = anchor.y;
+          }
+          const next = validateLayout(layout);
+          const fewer = next.issues.length < current.issues.length;
+          const noNew = (next.issues as Issue[]).every((iss) => curKeys.has(issueKey(iss)));
+          if (fewer && noNew) {
+            current = next;
+            improvedThisRound = true;
+            accepted = true;
+            break;
+          }
+        }
+        if (accepted) {
           break;
         }
         e!.points = old;
+        e!.x = oldX;
+        e!.y = oldY;
       }
     }
     if (!improvedThisRound) {
