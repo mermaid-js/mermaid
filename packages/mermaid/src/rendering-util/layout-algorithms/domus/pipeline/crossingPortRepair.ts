@@ -102,12 +102,7 @@ function crosses(a: SegmentRef, b: SegmentRef): boolean {
 }
 
 function shouldAccept(next: ValidateLayoutResult, current: ValidateLayoutResult): boolean {
-  return (
-    next.ok &&
-    next.issues.length === 0 &&
-    (next.score > current.score ||
-      (next.breakdown.crossings < current.breakdown.crossings && next.score >= current.score - 25))
-  );
+  return next.ok && next.issues.length === 0 && next.score > current.score;
 }
 
 function tryCandidate(
@@ -285,12 +280,7 @@ function applyEndpointDetours(
           const original = segment.edge.points;
           segment.edge.points = candidate.map(clonePoint);
           const next = validateLayout(layout);
-          if (
-            next.ok &&
-            next.issues.length === 0 &&
-            next.breakdown.crossings < current.breakdown.crossings &&
-            next.score >= current.score - 25
-          ) {
+          if (next.ok && next.issues.length === 0 && next.score > current.score) {
             return next;
           }
           segment.edge.points = original;
@@ -305,9 +295,8 @@ function applyEndpointDetours(
  * Score-gated cleanup for layouts that are already valid but still contain
  * edge-edge crossings. It first tries low-cost rail shifts, then a bounded
  * end-detour for last-mile vertical rails. Every accepted mutation must keep
- * `validateLayout` clean and improve the global validator score (or reduce
- * crossings within a small score budget), so this is safe to run as a final
- * quality pass.
+ * `validateLayout` clean and improve the global validator score, so this is
+ * safe to run as a final quality pass.
  */
 export function reduceCrossingsWithPortSideCandidatesWhenScoreImproves(
   layout: LayoutData,
