@@ -662,5 +662,45 @@ describe('Entity Relationship Diagram Unified', () => {
         { ...options }
       );
     });
+
+    it(`${description}should render ER subgraphs`, () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          subgraph customers
+            CUSTOMER
+            ORDER
+          end
+
+          CUSTOMER ||--o{ ORDER : places
+        `,
+        options
+      );
+    });
+
+    it(`${description}should render nested ER subgraphs with direction override`, () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          direction LR
+
+          subgraph domain
+            direction TB
+
+            CUSTOMER
+
+            subgraph details
+              ORDER
+            end
+          end
+
+          PRODUCT
+
+          PRODUCT ||--o{ domain : links
+          CUSTOMER ||--o{ ORDER : places
+        `,
+        options
+      );
+    });
   });
 });

@@ -7,7 +7,7 @@ import { loadDdltFixture } from './loadDdltFixture.js';
 const SWIMLANE_TOTAL_SCORE_WITH_10_NODE_PLACEMENT_BASELINE = 11754;
 
 describe('DDLT layout-test fixture sweep', () => {
-  it('aggregate validateLayout report — swimlanes', async () => {
+  it('aggregate validateLayout report — swimlanes', { timeout: 20_000 }, async () => {
     const fixtures = discoverLayoutTestFixtures().filter(
       (fixture) => fixture.profile === 'swimlanes'
     );

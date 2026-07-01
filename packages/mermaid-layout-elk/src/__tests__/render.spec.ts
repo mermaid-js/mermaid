@@ -4,6 +4,7 @@ import {
   buildSubgraphLayoutOptions,
   dir2ElkDirection,
   ensureEndMarkerSegmentLength,
+  findCyclicEntryNodes,
   prepareLayoutForElk,
   runElkLayoutCore,
 } from '../render.js';
@@ -70,6 +71,84 @@ describe('buildSubgraphLayoutOptions', () => {
     expect(opts['elk.layered.mergeEdges']).toBeUndefined();
     expect(opts['nodePlacement.strategy']).toBeUndefined();
     expect(opts['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('NONE');
+  });
+});
+
+describe('findCyclicEntryNodes', () => {
+  it('returns nothing for an acyclic flow (natural source exists)', () => {
+    const nodes = [{ id: 'a' }, { id: 'b' }, { id: 'c' }];
+    const edges = [
+      { source: 'a', target: 'b' },
+      { source: 'b', target: 'c' },
+    ];
+    expect(findCyclicEntryNodes(nodes, edges).size).toBe(0);
+  });
+
+  it('nominates the first-declared node of a source-less cycle', () => {
+    // a -> b -> c -> a : pure recursion, no in-degree-0 node
+    const nodes = [{ id: 'a' }, { id: 'b' }, { id: 'c' }];
+    const edges = [
+      { source: 'a', target: 'b' },
+      { source: 'b', target: 'c' },
+      { source: 'c', target: 'a' },
+    ];
+    expect([...findCyclicEntryNodes(nodes, edges)]).toEqual(['a']);
+  });
+
+  it('pins the entry of a recursive flow (reported recursion case)', () => {
+    // brief -> web -> academic -> expert -> synthesize -> decision,
+    // decision -> format_output2, decision -> brief (the recursion edge).
+    // format_output is an orphan; format_output2 is the real sink.
+    const nodes = [
+      'brief',
+      'web',
+      'academic',
+      'expert',
+      'synthesize',
+      'format_output',
+      'decision',
+      'format_output2',
+    ].map((id) => ({ id, parentId: 'research' }));
+    const edges = [
+      { source: 'brief', target: 'web' },
+      { source: 'web', target: 'academic' },
+      { source: 'academic', target: 'expert' },
+      { source: 'expert', target: 'synthesize' },
+      { source: 'synthesize', target: 'decision' },
+      { source: 'decision', target: 'format_output2' },
+      { source: 'decision', target: 'brief' },
+    ];
+    const entries = findCyclicEntryNodes(nodes, edges);
+    expect(entries.has('brief')).toBe(true);
+    // The orphan has in-degree 0, so its component already has a source.
+    expect(entries.has('format_output')).toBe(false);
+    expect(entries.size).toBe(1);
+  });
+
+  it('scopes detection per container (parentId)', () => {
+    // A self-contained cycle inside subgraph "sub"; an acyclic chain at root.
+    const nodes = [
+      { id: 'root_a' },
+      { id: 'root_b' },
+      { id: 'x', parentId: 'sub' },
+      { id: 'y', parentId: 'sub' },
+    ];
+    const edges = [
+      { source: 'root_a', target: 'root_b' },
+      { source: 'x', target: 'y' },
+      { source: 'y', target: 'x' },
+    ];
+    expect([...findCyclicEntryNodes(nodes, edges)]).toEqual(['x']);
+  });
+
+  it('ignores self-loops when deciding whether a node is a source', () => {
+    const nodes = [{ id: 'a' }, { id: 'b' }];
+    const edges = [
+      { source: 'a', target: 'a' }, // self-loop, not a real incoming edge
+      { source: 'a', target: 'b' },
+    ];
+    // 'a' is still a source, so nothing is nominated.
+    expect(findCyclicEntryNodes(nodes, edges).size).toBe(0);
   });
 });
 
@@ -211,6 +290,49 @@ describe('buildElkGraphFromLayoutData', () => {
     expect(state.elkGraph.layoutOptions['elk.layered.nodePlacement.bk.fixedAlignment']).toBe(
       'BALANCED'
     );
+  });
+
+  const recursiveLayoutData = (elk: Record<string, unknown>) =>
+    ({
+      direction: 'TB',
+      config: { elk },
+      nodes: [
+        { id: 'a', isGroup: false, width: 50, height: 20, label: 'a' },
+        { id: 'b', isGroup: false, width: 50, height: 20, label: 'b' },
+        { id: 'c', isGroup: false, width: 50, height: 20, label: 'c' },
+      ],
+      edges: [
+        { id: 'e1', start: 'a', end: 'b', type: 'arrow_point' },
+        { id: 'e2', start: 'b', end: 'c', type: 'arrow_point' },
+        { id: 'e3', start: 'c', end: 'a', type: 'arrow_point' }, // recursion edge
+      ],
+    }) as any;
+
+  const elkContext = {
+    algorithm: 'layered',
+    common: { lineBreakRegex: /<br\s*\/?>/gi },
+    getConfig: () => ({ flowchart: { wrappingWidth: 100 } }),
+    interpolateToCurve: (curve: unknown) => curve,
+    log,
+  } as any;
+
+  it('pins the cyclic entry node to the first layer when keepEntryNodeOnTop is enabled', () => {
+    const state = buildElkGraphFromLayoutData(
+      recursiveLayoutData({ keepEntryNodeOnTop: true }),
+      elkContext
+    );
+    expect(state.nodeDb.a.layoutOptions?.['elk.layered.layering.layerConstraint']).toBe('FIRST');
+    expect(state.nodeDb.b.layoutOptions?.['elk.layered.layering.layerConstraint']).toBeUndefined();
+    expect(state.nodeDb.c.layoutOptions?.['elk.layered.layering.layerConstraint']).toBeUndefined();
+  });
+
+  it('does not constrain any node when keepEntryNodeOnTop is disabled (default)', () => {
+    const state = buildElkGraphFromLayoutData(recursiveLayoutData({}), elkContext);
+    for (const id of ['a', 'b', 'c']) {
+      expect(
+        state.nodeDb[id].layoutOptions?.['elk.layered.layering.layerConstraint']
+      ).toBeUndefined();
+    }
   });
 });
 

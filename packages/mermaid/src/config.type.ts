@@ -145,6 +145,15 @@ export interface MermaidConfig {
      *
      */
     considerModelOrder?: 'NONE' | 'NODES_AND_EDGES' | 'PREFER_EDGES' | 'PREFER_NODES';
+    /**
+     * Elk specific option that keeps the entry node of a recursive flow at the top of the layout.
+     *
+     * When a flow loops back on itself (a back-edge to an earlier node), ELK's degree-based cycle-breaking has no notion of an "entry point" and may rank the first-declared node in the middle, scrambling the reading order. When enabled, the entry node of each cyclic component is pinned to the first layer so the diagram still reads from its entry. Acyclic flows always have a natural source, so this has no effect on them.
+     *
+     * Only applies when the cyclic flow has no node without incoming edges: if the loop is fed from outside (e.g. a start node pointing into it), that component already has a natural source and nothing is pinned. Detection is also scoped per container, so cycles that cross a subgraph boundary are not detected.
+     *
+     */
+    keepEntryNodeOnTop?: boolean;
   };
   darkMode?: boolean;
   /**
@@ -404,6 +413,13 @@ export interface SwimlaneDiagramConfig extends BaseDiagramConfig {
    *
    */
   optimizeRanksByCrossings?: boolean;
+  /**
+   * Automatically reorders top-level swimlanes with a deterministic
+   * weighted-linear-arrangement heuristic. Disabled by default because
+   * source swimlane order can carry semantic meaning.
+   *
+   */
+  automaticLaneOrdering?: boolean;
 }
 /**
  * The object containing configurations specific for sequence diagrams
@@ -1082,6 +1098,18 @@ export interface XYChartConfig extends BaseDiagramConfig {
    * Should show the chart title
    */
   showTitle?: boolean;
+  /**
+   * Should show a legend for named plots
+   */
+  showLegend?: boolean;
+  /**
+   * Font size of the legend text
+   */
+  legendFontSize?: number;
+  /**
+   * Padding around the legend
+   */
+  legendPadding?: number;
   xAxis?: XYChartAxisConfig;
   yAxis?: XYChartAxisConfig;
   /**
@@ -1813,9 +1841,45 @@ export interface TreeViewDiagramConfig extends BaseDiagramConfig {
    */
   lineThickness?: number;
   /**
-   * Whether to show file/folder icons next to labels
+   * Whether to show the default file/folder icons next to labels.
+   * Explicit `icon()` annotations always render, regardless of this setting.
+   *
    */
   showIcons?: boolean;
+  /**
+   * Name of a registered iconify pack used to resolve unprefixed icon
+   * references — `icon(name)` annotations and `filenameIcons`/
+   * `extensionIcons` values without a `pack:` prefix. The pack must be
+   * registered with `registerIconPacks`. When empty, unprefixed names
+   * resolve to the built-in file/folder icons.
+   *
+   */
+  defaultIconPack?: string;
+  /**
+   * Exact-filename → icon map used to pick a file's icon when
+   * `showIcons` is enabled, e.g.
+   * `{ "Dockerfile": "material-icon-theme:docker" }`.
+   * Values are resolved like `icon()` references: `pack:name` is used
+   * as-is, unprefixed names resolve via `defaultIconPack`, and `none`
+   * hides the icon for matching files.
+   *
+   */
+  filenameIcons?: {
+    [k: string]: string;
+  };
+  /**
+   * File-extension → icon map used to pick a file's icon when
+   * `showIcons` is enabled, e.g.
+   * `{ ".ts": "material-icon-theme:typescript" }`. Keys are
+   * lowercase and may include or omit the leading dot.
+   * Values are resolved like `icon()` references: `pack:name` is used
+   * as-is, unprefixed names resolve via `defaultIconPack`, and `none`
+   * hides the icon for matching files.
+   *
+   */
+  extensionIcons?: {
+    [k: string]: string;
+  };
 }
 /**
  * The object containing configurations specific for radar diagrams.

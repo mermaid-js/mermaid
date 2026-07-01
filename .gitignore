@@ -30,6 +30,7 @@ Gemfile.lock
 /.vs
 
 cypress/screenshots/
+cypress/argos-sheets/
 cypress/snapshots/
 
 # eslint --cache file
@@ -77,3 +78,4 @@ mermaid-parser.tar.gz
 .ralph/
 .tmp
 .fallow/
+.playwright-mcp/

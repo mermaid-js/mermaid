@@ -32,4 +32,17 @@ describe('examples', () => {
       expect(data.examples.filter((e) => e.isDefault).length).toBe(1);
     }
   });
+
+  describe('should have valid examples', () => {
+    for (const diagram of diagramData) {
+      for (const example of diagram.examples) {
+        it(`${diagram.name}: ${example.title}`, async () => {
+          await expect(
+            mermaid.parse(example.code),
+            `Example "${example.title}" of ${diagram.id} does not parse`
+          ).resolves.toBeTruthy();
+        });
+      }
+    }
+  });
 });

@@ -1137,4 +1137,19 @@ class C13["With Città foreign language"]
       { class: { hierarchicalNamespaces: false } }
     );
   });
+
+  it('HD: should render a self-referential class diagram with multiplicity labels', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+      class SelfReferential{
+          +int id
+          +int self_referential_id
+          +SelfReferential referenced
+      }
+      SelfReferential "1" --> "0..1" SelfReferential : referenced
+      `,
+      { logLevel: 1, htmlLabels: true, look: 'handDrawn' }
+    );
+  });
 });

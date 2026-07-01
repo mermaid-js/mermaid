@@ -46,8 +46,8 @@ export async function subroutine<T extends SVGGraphicsElement>(parent: D3Selecti
 
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const totalWidth = (node?.width ?? bbox.width) + 2 * FRAME_WIDTH + labelPaddingX;
-  const totalHeight = (node?.height ?? bbox.height) + labelPaddingY;
+  const totalWidth = Math.max(bbox.width + 2 * FRAME_WIDTH + labelPaddingX, node.width ?? 0);
+  const totalHeight = Math.max(bbox.height + labelPaddingY, node.height ?? 0);
 
   const w = totalWidth - 2 * FRAME_WIDTH;
   const h = totalHeight;
