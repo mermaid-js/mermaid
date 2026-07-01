@@ -130,7 +130,7 @@ Splits on <br> tags
 
 ##### insertCluster
 
-(`elem`, `node`) => `Promise`<`any`>
+(`elem`, `node`, `layoutEdges?`) => `Promise`<`any`>
 
 ##### insertEdge
 

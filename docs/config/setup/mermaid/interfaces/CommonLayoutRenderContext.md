@@ -264,7 +264,7 @@ The currentConfig
 
 #### insertCluster()
 
-> **insertCluster**: (`elem`, `node`) => `Promise`<`any`>
+> **insertCluster**: (`elem`, `node`, `layoutEdges?`) => `Promise`<`any`>
 
 ##### Parameters
 
@@ -277,6 +277,12 @@ The currentConfig
 `ClusterNode`
 
 Shape defaults to 'rect'
+
+###### layoutEdges?
+
+`Edge`\[] = `[]`
+
+Routed edges, used by `auto` title placement
 
 ##### Returns
 
