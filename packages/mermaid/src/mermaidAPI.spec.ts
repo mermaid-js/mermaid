@@ -905,6 +905,27 @@ graph TD;A--x|text including URL space|B;`)
         });
       });
     });
+
+    jsdomIt('preserves treeView icons after strict security sanitization', async () => {
+      mermaidAPI.initialize({ securityLevel: 'strict' });
+
+      const { svg } = await mermaidAPI.render(
+        'tree-view-strict-icons',
+        `---
+config:
+  treeView:
+    showIcons: true
+---
+treeView-beta
+  src/
+    index.js`
+      );
+
+      const dom = new JSDOM(svg);
+      const iconNode = ensureNodeFromSelector('.treeView-node-icon', dom.window.document);
+      ensureNodeFromSelector('path', iconNode);
+      expect(dom.window.document.querySelector('use')).toBeNull();
+    });
   });
 
   describe('getDiagramFromText', () => {

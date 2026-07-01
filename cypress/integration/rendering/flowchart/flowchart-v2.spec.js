@@ -1397,4 +1397,80 @@ flowchart TD
       );
     });
   });
+
+  describe('Collapsible subgraphs (@{ view: collapsed })', () => {
+    it('should render a collapsed subgraph as a single node with edges redirected to it', () => {
+      imgSnapshotTest(
+        `flowchart TD
+        Start --> one
+        subgraph one [My Group]
+          A --> B
+          B --> C
+        end
+        one --> End
+        one@{ view: collapsed }
+        `,
+        {}
+      );
+    });
+
+    it('should render a collapsed subgraph alongside an expanded one', () => {
+      imgSnapshotTest(
+        `flowchart LR
+        subgraph g1 [Collapsed]
+          A1 --> A2
+        end
+        subgraph g2 [Expanded]
+          B1 --> B2
+        end
+        g1 --> g2
+        g1@{ view: collapsed }
+        `,
+        {}
+      );
+    });
+
+    it('should redirect a collapsed subgraph using the handDrawn look', () => {
+      imgSnapshotTest(
+        `flowchart TD
+        X --> grp
+        subgraph grp [Hand Drawn Group]
+          P --> Q
+        end
+        grp@{ view: collapsed }
+        `,
+        { look: 'handDrawn' }
+      );
+    });
+
+    it('should collapse nested subgraphs to the outermost collapsed ancestor', () => {
+      imgSnapshotTest(
+        `flowchart TD
+        Start --> inner
+        subgraph outer [Outer]
+          subgraph inner [Inner]
+            A --> B
+          end
+        end
+        outer@{ view: collapsed }
+        `,
+        {}
+      );
+    });
+
+    it('should redirect an edge targeting a deeply nested node to the outermost collapsed subgraph', () => {
+      imgSnapshotTest(
+        `flowchart TD
+        subgraph outer [Outer]
+          subgraph inner [Inner]
+            A --> B
+          end
+        end
+        Start --> A
+        outer@{ view: collapsed }
+        `,
+        {}
+      );
+    });
+  });
 });

@@ -25,37 +25,20 @@ interface RenderInfo {
   centerY: number;
 }
 
-/** Iconify names may contain `:` (pack:name) which is unsafe in url(#…) references */
-const iconSymbolId = (diagramId: string, icon: string) =>
-  `tv-icon-${diagramId}-${icon.replace(/[^\w-]/g, '-')}`;
-
-/**
- * Inject <defs> with all referenced icons into the SVG.
- * Each icon is resolved once through the iconify pipeline and referenced
- * per row via <use>, instead of repeating the icon markup for every node.
- */
-const injectIconDefs = async (
-  svg: D3SVGElement<SVGSVGElement>,
-  root: Node,
-  config: Required<TreeViewDiagramConfig>,
-  diagramId: string
-) => {
-  const usedIcons = new Set<string>();
+const resolveNodeIcons = async (root: Node, config: Required<TreeViewDiagramConfig>) => {
+  const nodeIcons: { icon: string; node: Node }[] = [];
   const collect = (node: Node) => {
     const icon = getNodeIcon(node, config);
     if (icon) {
-      usedIcons.add(icon);
+      nodeIcons.push({ icon, node });
     }
     node.children.forEach(collect);
   };
   collect(root);
-  if (usedIcons.size === 0) {
-    return;
-  }
 
-  const iconSVGs = await Promise.all(
-    [...usedIcons].map(async (icon) => ({
-      icon,
+  const resolvedIcons = await Promise.all(
+    nodeIcons.map(async ({ icon, node }) => ({
+      id: node.id,
       svg: await getIconSVG(icon, {
         height: ICON_SIZE,
         width: ICON_SIZE,
@@ -63,10 +46,7 @@ const injectIconDefs = async (
     }))
   );
 
-  const defs = svg.append('defs');
-  for (const { icon, svg: iconSVG } of iconSVGs) {
-    defs.append('g').attr('id', iconSymbolId(diagramId, icon)).html(iconSVG);
-  }
+  return new Map(resolvedIcons.map(({ id, svg }) => [id, svg]));
 };
 
 const positionLabel = (
@@ -75,7 +55,7 @@ const positionLabel = (
   node: Node,
   domElem: D3SVGElement<SVGGElement>,
   config: Required<TreeViewDiagramConfig>,
-  diagramId: string
+  iconSVGs: Map<number, string>
 ): RenderInfo => {
   const nodeGroup = domElem.append('g');
   let cssClasses = 'treeView-node-label';
@@ -92,11 +72,10 @@ const positionLabel = (
   const showIcon = icon !== undefined;
   if (icon) {
     nodeGroup
-      .append('use')
-      .attr('xlink:href', `#${iconSymbolId(diagramId, icon)}`)
-      .attr('x', x + config.paddingX)
-      .attr('y', y + config.paddingY)
-      .attr('class', 'treeView-node-icon');
+      .append('g')
+      .attr('class', 'treeView-node-icon')
+      .attr('transform', `translate(${x + config.paddingX}, ${y + config.paddingY})`)
+      .html(iconSVGs.get(node.id) ?? '');
   }
 
   // Label text
@@ -152,7 +131,7 @@ const drawTree = (
   elem: D3SVGElement<SVGGElement>,
   root: Node,
   config: Required<TreeViewDiagramConfig>,
-  diagramId: string
+  iconSVGs: Map<number, string>
 ) => {
   let totalHeight = 0;
   let totalWidth = 0;
@@ -165,7 +144,7 @@ const drawTree = (
     depth: number
   ) => {
     const indent = depth * (config.rowIndent + config.paddingX);
-    const info = positionLabel(indent, totalHeight, node, elem, config, diagramId);
+    const info = positionLabel(indent, totalHeight, node, elem, config, iconSVGs);
     renderInfos.push(info);
     const { height, width } = node.BBox!;
     positionLine(
@@ -245,13 +224,11 @@ const draw: DrawDefinition = async (text, id, _ver, diagObj) => {
 
   const svg = selectSvgElement(id);
 
-  // Inject icon definitions (scoped to diagramId to avoid duplicates)
-  await injectIconDefs(svg, root, config, id);
-
   const treeElem = svg.append('g');
   treeElem.attr('class', 'tree-view');
 
-  const { totalHeight, totalWidth } = drawTree(treeElem, root, config, id);
+  const iconSVGs = await resolveNodeIcons(root, config);
+  const { totalHeight, totalWidth } = drawTree(treeElem, root, config, iconSVGs);
   /* -${config.lineThickness/2} is required for a line with x coordinate = 0
      as there is overflow to the left due to the line being centered */
   svg.attr('viewBox', `-${config.lineThickness / 2} 0 ${totalWidth} ${totalHeight}`);
