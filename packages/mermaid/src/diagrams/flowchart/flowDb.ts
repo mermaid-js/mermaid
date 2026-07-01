@@ -1103,8 +1103,7 @@ You have to call mermaid.initialize.`
     const subGraphDB = new Map<string, boolean>();
 
     // Setup the subgraph data for adding nodes
-    for (let i = subGraphs.length - 1; i >= 0; i--) {
-      const subGraph = subGraphs[i];
+    for (const subGraph of subGraphs) {
       if (subGraph.nodes.length > 0) {
         subGraphDB.set(subGraph.id, true);
       }
@@ -1114,8 +1113,7 @@ You have to call mermaid.initialize.`
     }
 
     // Data is setup, add the nodes
-    for (let i = subGraphs.length - 1; i >= 0; i--) {
-      const subGraph = subGraphs[i];
+    for (const subGraph of subGraphs) {
       nodes.push({
         id: subGraph.id,
         label: subGraph.title,

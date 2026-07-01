@@ -400,6 +400,41 @@ D3 --- E1
     );
   });
 
+  it('issue-7741: sibling subgraphs without edges between them render in declaration order', () => {
+    imgSnapshotTest(
+      `flowchart TB
+        subgraph 1-Business
+          b1[role]
+        end
+        subgraph 2-Strategy
+          s1[role]
+        end
+        subgraph 3-Operations
+          o1[role]
+        end
+        subgraph 4-People
+          p1[role]
+        end
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+
+  it('issue-7741: deeply nested subgraphs without edges preserve containment', () => {
+    imgSnapshotTest(
+      `flowchart TB
+        subgraph Outer
+          subgraph Middle
+            subgraph Inner
+              leaf[leaf]
+            end
+          end
+        end
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+
   it('57.x: handle nested subgraphs with outgoing links 5', () => {
     imgSnapshotTest(
       `%% this does not produce the desired result
