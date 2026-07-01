@@ -27,6 +27,7 @@ export function layoutDataToDomusInput(layout: LayoutData): {
       vertexIds.push(String(node.id));
     }
   }
+  const vertexIdSet = new Set(vertexIds);
 
   // Collect edges
   for (const edge of layout.edges ?? []) {
@@ -36,6 +37,9 @@ export function layoutDataToDomusInput(layout: LayoutData): {
       // DOMUS expects simple edges between distinct vertices. Self-loops are handled
       // separately in the orthogonal pipeline with a dedicated loop router.
       if (from === to) {
+        continue;
+      }
+      if (!vertexIdSet.has(from) || !vertexIdSet.has(to)) {
         continue;
       }
       edges.push({
