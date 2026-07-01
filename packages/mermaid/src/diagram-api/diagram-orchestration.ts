@@ -1,6 +1,7 @@
 import c4 from '../diagrams/c4/c4Detector.js';
 import flowchart from '../diagrams/flowchart/flowDetector.js';
 import flowchartV2 from '../diagrams/flowchart/flowDetector-v2.js';
+import swimlanes from '../diagrams/swimlanes/detector.js';
 import er from '../diagrams/er/erDetector.js';
 import git from '../diagrams/git/gitGraphDetector.js';
 import gantt from '../diagrams/gantt/ganttDetector.js';
@@ -24,12 +25,20 @@ import sankey from '../diagrams/sankey/sankeyDetector.js';
 import { packet } from '../diagrams/packet/detector.js';
 import { radar } from '../diagrams/radar/detector.js';
 import block from '../diagrams/block/blockDetector.js';
+import treeView from '../diagrams/treeView/detector.js';
 import architecture from '../diagrams/architecture/architectureDetector.js';
+import eventmodeling from '../diagrams/eventmodeling/detector.js';
 import { ishikawa } from '../diagrams/ishikawa/ishikawaDetector.js';
 import venn from '../diagrams/venn/vennDetector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
 import { treemap } from '../diagrams/treemap/detector.js';
+import wardley from '../diagrams/wardley/wardleyDetector.js';
+import { cynefin } from '../diagrams/cynefin/cynefinDetector.js';
+import { railroad } from '../diagrams/railroad/railroadDetector.js';
+import { railroadEbnf } from '../diagrams/railroad/ebnfDetector.js';
+import { railroadAbnf } from '../diagrams/railroad/abnfDetector.js';
+import { railroadPeg } from '../diagrams/railroad/pegDetector.js';
 import '../type.d.ts';
 
 let hasLoadedDiagrams = false;
@@ -90,6 +99,7 @@ export const addDiagrams = () => {
     pie,
     requirement,
     sequence,
+    swimlanes,
     flowchartV2,
     flowchart,
     timeline,
@@ -102,9 +112,17 @@ export const addDiagrams = () => {
     packet,
     xychart,
     block,
+    eventmodeling,
+    treeView,
     radar,
     ishikawa,
     treemap,
-    venn
+    railroad,
+    railroadEbnf,
+    railroadAbnf,
+    railroadPeg,
+    venn,
+    wardley,
+    cynefin
   );
 };

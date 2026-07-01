@@ -14,6 +14,40 @@ describe('state parser can parse...', () => {
     stateDiagram.parser.yy.clear();
   });
 
+  describe('invalid name between state and curly bracket', () => {
+    describe('valid syntax', () => {
+      it('should only accept 1 word', () => {
+        const diagramText = `stateDiagram-v2
+        state valid { X }`;
+
+        stateDiagram.parser.parse(diagramText);
+
+        const states = stateDiagram.parser.yy.getStates();
+        expect(states.get('valid')).not.toBeUndefined();
+      });
+    });
+
+    describe('invalid syntax', () => {
+      it('should throw error with 2 words', () => {
+        const diagramText = `stateDiagram-v2
+        state invalid syntax { Y }`;
+
+        expect(() => {
+          stateDiagram.parser.parse(diagramText);
+        }).toThrow('Error: State name must be a single word.');
+      });
+
+      it('should also throw with more than 2 words', () => {
+        const diagramText = `stateDiagram-v2
+        state invalid syntax with more than 2 words { Z }`;
+
+        expect(() => {
+          stateDiagram.parser.parse(diagramText);
+        }).toThrow('Error: State name must be a single word.');
+      });
+    });
+  });
+
   describe('states with id displayed as a (name)', () => {
     describe('syntax 1: stateID as "name in quotes"', () => {
       it('stateID as "some name"', () => {
@@ -168,6 +202,46 @@ stateDiagram-v2
 ${prop} --> [*]`);
       const states = stateDiagram.parser.yy.getStates();
       expect(states.get(prop)).not.toBeUndefined();
+    });
+  });
+
+  describe('note parsing (issue #7089)', () => {
+    it('should not terminate a note when "send note" appears within the note text', () => {
+      const diagramText = `stateDiagram-v2
+      State1
+      note right of State1
+        this sentence contains send note inside the note text
+      end note
+      State1 --> State2`;
+      stateDiagram.parser.parse(diagramText);
+
+      const relations = stateDiagram.parser.yy.getRelations();
+      expect(relations).toHaveLength(1);
+      expect(relations[0].id1).toEqual('State1');
+      expect(relations[0].id2).toEqual('State2');
+
+      const states = stateDiagram.parser.yy.getStates();
+      const noteState = states.get('State1');
+      expect(noteState?.note?.text).toContain('send note inside the note text');
+    });
+
+    it('should not treat "end note" as a closing keyword when it is part of the note text', () => {
+      const diagramText = `stateDiagram-v2
+      State1
+      note right of State1
+        this sentence contains end note as part of the note text
+      end note
+      State1 --> State2`;
+      stateDiagram.parser.parse(diagramText);
+
+      const relations = stateDiagram.parser.yy.getRelations();
+      expect(relations).toHaveLength(1);
+      expect(relations[0].id1).toEqual('State1');
+      expect(relations[0].id2).toEqual('State2');
+
+      const states = stateDiagram.parser.yy.getStates();
+      const noteState = states.get('State1');
+      expect(noteState?.note?.text).toContain('end note as part of the note text');
     });
   });
 });

@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/syntax/venn.md](../../packages/mermaid/src/docs/syntax/venn.md).
 
-# Venn diagrams (v\<MERMAID_RELEASE_VERSION>+)
+# Venn diagrams (v11.12.3+)
 
 Venn diagrams show relationships between sets using overlapping circles.
 
@@ -51,6 +51,28 @@ venn-beta
   set A["Alpha"]
   set B["Beta"]
   union A,B["AB"]
+```
+
+### Higher-arity unions
+
+`union` accepts three or more set names. The diagram renders the implied
+pairwise overlaps automatically, so the label on the higher-arity union has a
+visible region to sit in:
+
+```mermaid-example
+venn-beta
+  set Desirable
+  set Feasible
+  set Viable
+  union Desirable,Feasible,Viable["Innovation"]
+```
+
+```mermaid
+venn-beta
+  set Desirable
+  set Feasible
+  set Viable
+  union Desirable,Feasible,Viable["Innovation"]
 ```
 
 ### Sizes

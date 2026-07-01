@@ -26,8 +26,19 @@ export const draw = async function (text: string, id: string, _version: string, 
   data4Layout.config.flowchart!.nodeSpacing = conf?.nodeSpacing || 140;
   data4Layout.config.flowchart!.rankSpacing = conf?.rankSpacing || 80;
   data4Layout.direction = diag.db.getDirection();
+  const { config } = data4Layout;
+  const { look } = config;
 
-  data4Layout.markers = ['only_one', 'zero_or_one', 'one_or_more', 'zero_or_more'];
+  if (look === 'neo') {
+    data4Layout.markers = [
+      'only_one_neo',
+      'zero_or_one_neo',
+      'one_or_more_neo',
+      'zero_or_more_neo',
+    ];
+  } else {
+    data4Layout.markers = ['only_one', 'zero_or_one', 'one_or_more', 'zero_or_more'];
+  }
   data4Layout.diagramId = id;
   await render(data4Layout, svg);
   // Elk layout algorithm displays markers above nodes, so move edges to top so they are "painted" over by the nodes.

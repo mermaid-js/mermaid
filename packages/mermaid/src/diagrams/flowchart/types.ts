@@ -79,6 +79,7 @@ export interface FlowClass {
 export interface FlowSubGraph {
   classes: string[];
   dir?: string;
+  hasExplicitDir: boolean;
   id: string;
   labelType: string;
   nodes: string[];

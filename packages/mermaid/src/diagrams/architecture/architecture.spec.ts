@@ -1,7 +1,8 @@
-import { it, describe, expect, vi } from 'vitest';
+import { it, describe, expect, vi, beforeEach, afterEach } from 'vitest';
 import cytoscape from 'cytoscape';
 import { parser } from './architectureParser.js';
 import { ArchitectureDB } from './architectureDb.js';
+import { setConfig, reset as resetConfig } from '../../config.js';
 describe('architecture diagrams', () => {
   let db: ArchitectureDB;
   beforeEach(() => {
@@ -106,6 +107,170 @@ describe('architecture diagrams', () => {
         warnSpy.mockRestore();
       }
     });
+  });
+
+  describe('randomize config', () => {
+    it('should default randomize to false', () => {
+      expect(db.getConfigField('randomize')).toBe(false);
+    });
+
+    it('should parse a complex deeply-nested diagram with randomize defaulting to false', async () => {
+      const str = `architecture-beta
+    group sub1(cloud)[Subscription A]
+    group vnet1(cloud)[VNet A] in sub1
+    service vm1(server)[VM] in vnet1
+
+    group sub2(cloud)[Subscription B]
+    group shared(cloud)[Shared] in sub2
+    service reg(database)[Registry] in shared
+
+    group env(cloud)[Environment] in sub2
+    group vnet(cloud)[VNet] in env
+    group snet1(cloud)[App Subnet] in vnet
+    service nsg(server)[NSG] in snet1
+    service asp(server)[App Plan] in snet1
+    service web(server)[Web App] in snet1
+
+    group snet2(cloud)[PE Subnet] in vnet
+    service pe1(server)[PE Blob] in snet2
+    service pe2(server)[PE Bus] in snet2
+
+    service storage(disk)[Storage] in env
+    service container(disk)[Container] in env
+    service bus(server)[Service Bus] in env
+    service dns(server)[DNS Zone] in env
+
+    service client(internet)[Client]
+
+    reg:B --> T:web
+    nsg:R --> L:asp
+    asp:R --> L:web
+    web:R --> L:pe1
+    pe1:R --> L:storage
+    storage:B --> T:container
+    web:B --> T:pe2
+    pe2:R --> L:bus
+    vm1:R --> L:pe2`;
+      await expect(parser.parse(str)).resolves.not.toThrow();
+      expect(db.getConfigField('randomize')).toBe(false);
+      expect(db.getServices()).toHaveLength(12);
+      expect(db.getGroups()).toHaveLength(8);
+      expect(db.getEdges()).toHaveLength(9);
+    });
+  });
+
+  describe('fcose layout config', () => {
+    afterEach(() => {
+      resetConfig();
+    });
+
+    it('should default the fcose knobs to documented values', () => {
+      expect(db.getConfigField('nodeSeparation')).toBe(75);
+      expect(db.getConfigField('idealEdgeLengthMultiplier')).toBe(1.5);
+      expect(db.getConfigField('edgeElasticity')).toBe(0.45);
+      expect(db.getConfigField('numIter')).toBe(2500);
+    });
+
+    it('should round-trip user-supplied fcose knobs', () => {
+      setConfig({
+        architecture: {
+          nodeSeparation: 120,
+          idealEdgeLengthMultiplier: 2,
+          edgeElasticity: 0.6,
+          numIter: 5000,
+        },
+      });
+      expect(db.getConfigField('nodeSeparation')).toBe(120);
+      expect(db.getConfigField('idealEdgeLengthMultiplier')).toBe(2);
+      expect(db.getConfigField('edgeElasticity')).toBe(0.6);
+      expect(db.getConfigField('numIter')).toBe(5000);
+    });
+
+    it('should leave defaults intact when only one knob is set', () => {
+      setConfig({ architecture: { nodeSeparation: 200 } });
+      expect(db.getConfigField('nodeSeparation')).toBe(200);
+      expect(db.getConfigField('idealEdgeLengthMultiplier')).toBe(1.5);
+      expect(db.getConfigField('edgeElasticity')).toBe(0.45);
+      expect(db.getConfigField('numIter')).toBe(2500);
+    });
+  });
+
+  describe('align directive', () => {
+    it('should parse a row alignment and expose it via getLayoutHints', async () => {
+      const str = `architecture-beta
+  group api(cloud)[API]
+  service db1(database)[DB1] in api
+  service db2(database)[DB2] in api
+  service db3(database)[DB3] in api
+  align row db1 db2 db3`;
+      await expect(parser.parse(str)).resolves.not.toThrow();
+      const hints = db.getLayoutHints();
+      expect(hints).toHaveLength(1);
+      expect(hints[0].direction).toBe('row');
+      expect(hints[0].members).toEqual(['db1', 'db2', 'db3']);
+    });
+
+    it('should parse a column alignment', async () => {
+      const str = `architecture-beta
+  service a(server)[A]
+  service b(server)[B]
+  align column a b`;
+      await expect(parser.parse(str)).resolves.not.toThrow();
+      const hints = db.getLayoutHints();
+      expect(hints).toHaveLength(1);
+      expect(hints[0].direction).toBe('column');
+      expect(hints[0].members).toEqual(['a', 'b']);
+    });
+
+    it('should reject an align directive whose member is not a service or junction', async () => {
+      const str = `architecture-beta
+  service a(server)[A]
+  service b(server)[B]
+  align row a b ghost`;
+      await expect(parser.parse(str)).rejects.toThrow(/ghost/);
+    });
+
+    it('should reject an align directive that lists the same member twice', async () => {
+      const str = `architecture-beta
+  service a(server)[A]
+  align row a a`;
+      await expect(parser.parse(str)).rejects.toThrow(/more than once/);
+    });
+
+    it('should reject an align directive with fewer than two members at the DB level', () => {
+      // The langium grammar requires `(members+=ID)+` so the parser path already
+      // enforces ≥2 members. This guards the DB API for any non-grammar callers
+      // (programmatic construction, future renderers, etc.).
+      expect(() => db.addLayoutHint({ direction: 'row', members: [] })).toThrow(
+        /at least two members/
+      );
+      expect(() => db.addLayoutHint({ direction: 'column', members: ['only_one'] })).toThrow(
+        /at least two members/
+      );
+    });
+
+    it('should not collide with services whose id starts with row or column', async () => {
+      const str = `architecture-beta
+  service rowspan(server)[Rowspan]
+  service columnar(server)[Columnar]
+  align row rowspan columnar`;
+      await expect(parser.parse(str)).resolves.not.toThrow();
+      expect(db.getServices().map((s) => s.id)).toEqual(['rowspan', 'columnar']);
+      expect(db.getLayoutHints()[0].members).toEqual(['rowspan', 'columnar']);
+    });
+
+    it.each(['align', 'row', 'column'])(
+      'should reject a service whose id is the exact reserved keyword %s',
+      async (keyword) => {
+        // The directive introduces `align`, `row`, and `column` as reserved
+        // keywords in architecture-beta. An exact-match id (no prefix/suffix)
+        // must be rejected at parse time so authors get a clear error rather
+        // than a downstream layout failure.
+        const str = `architecture-beta
+  service ${keyword}(database)[Service Using Reserved Word]`;
+        await expect(parser.parse(str)).rejects.toThrow();
+      }
+    );
   });
 
   describe('addJunction validation', () => {

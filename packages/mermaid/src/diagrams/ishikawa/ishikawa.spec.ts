@@ -45,4 +45,22 @@ Cause B
     expect(root?.children[0].children[0].text).toEqual('Subcause A1');
     expect(root?.children[1].text).toEqual('Cause B');
   });
+
+  it('should handle effect indented more than causes', function () {
+    const str = `ishikawa-beta
+    Problem
+Cause A
+  Subcause A1
+Cause B
+`;
+
+    ishikawa.parse(str);
+    const root = ishikawa.yy.getRoot();
+    expect(root?.text).toEqual('Problem');
+    expect(root?.children.length).toEqual(2);
+    expect(root?.children[0].text).toEqual('Cause A');
+    expect(root?.children[0].children.length).toEqual(1);
+    expect(root?.children[0].children[0].text).toEqual('Subcause A1');
+    expect(root?.children[1].text).toEqual('Cause B');
+  });
 });

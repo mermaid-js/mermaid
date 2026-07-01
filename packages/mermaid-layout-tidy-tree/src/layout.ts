@@ -537,6 +537,18 @@ function calculateEdgePositions(
         x: sourceNode.x + (sourceNode.width ?? 0) / 2 + intersectionShift,
         y: sourceNode.y,
       });
+    } else if (sourceNode.section === 'root') {
+      if (targetNode.section === 'right') {
+        points.push({
+          x: sourceNode.x + (sourceNode.width ?? 0) / 2 + intersectionShift,
+          y: sourceNode.y,
+        });
+      } else if (targetNode.section === 'left') {
+        points.push({
+          x: sourceNode.x - (sourceNode.width ?? 0) / 2 - intersectionShift,
+          y: sourceNode.y,
+        });
+      }
     }
     if (targetNode.section === 'left') {
       points.push({
@@ -548,6 +560,18 @@ function calculateEdgePositions(
         x: targetNode.x - (targetNode.width ?? 0) / 2 - intersectionShift,
         y: targetNode.y,
       });
+    } else if (targetNode.section === 'root') {
+      if (sourceNode.section === 'right') {
+        points.push({
+          x: targetNode.x + (targetNode.width ?? 0) / 2 + intersectionShift,
+          y: targetNode.y,
+        });
+      } else if (sourceNode.section === 'left') {
+        points.push({
+          x: targetNode.x - (targetNode.width ?? 0) / 2 - intersectionShift,
+          y: targetNode.y,
+        });
+      }
     }
 
     points.push(endPos);

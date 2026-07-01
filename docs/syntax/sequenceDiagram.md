@@ -341,6 +341,9 @@ And fixing diagram code does not get rid of this error and rendering of all othe
 
 The actor(s) can be grouped in vertical boxes. You can define a color (if not, it will be transparent) and/or a descriptive label using the following notation:
 
+> **Note**
+> For colored boxes, the color value must be placed **before** the optional description.
+
 ```
 box Aqua Group Description
 ... actors ...
@@ -354,7 +357,16 @@ end
 box rgba(33,66,99,0.5)
 ... actors ...
 end
+box hsl(10, 40%, 90%)
+... actors ...
+end
+box hsla(10, 40%, 90%, 0.5)
+... actors ...
+end
 ```
+
+> **Warning**
+> **Hex colors** (e.g., `#ff0000`) are currently **not supported** as the `#` character is interpreted as comment syntax.
 
 > **Note**
 > If your group name is a color you can force the color to be transparent:
@@ -424,7 +436,7 @@ Lines can be solid or dotted, and can end with various types of arrowheads, cros
 | `-)`     | Solid line with an open arrow at the end (async)     |
 | `--)`    | Dotted line with a open arrow at the end (async)     |
 
-**Half-Arrows (v\<MERMAID_RELEASE_VERSION>+)**
+**Half-Arrows (v11.12.3+)**
 
 The following half-arrow types are supported for more expressive sequence diagrams. Both solid and dotted variants are available by increasing the number of dashes (`-` → `--`).
 
@@ -449,7 +461,7 @@ The following half-arrow types are supported for more expressive sequence diagra
 | `\\-`   | Solid line with reverse bottom stick half arrowhead  |
 | `\\--`  | Dotted line with reverse bottom stick half arrowhead |
 
-## Central Connections (v\<MERMAID_RELEASE_VERSION>+)
+## Central Connections (v11.12.3+)
 
 Mermaid sequence diagrams support **central lifeline connections** using a `()`.
 This is useful to represent messages or signals that connect to a central point, rather than from one actor directly to another.
@@ -969,6 +981,16 @@ sequenceDiagram
     John-->>Alice: Great!
     John->>Bob: How about you?
     Bob-->>John: Jolly good!
+```
+
+### Start and Increment values (v11.15.0+)
+
+It is possible to specify a starting value and an increment value for automatic numbering. Both the starting value and increment value can include decimals up to the hundredths place.
+
+Use the following syntax in your diagram definition:
+
+```
+autonumber <start> <increment>
 ```
 
 ## Actor Menus

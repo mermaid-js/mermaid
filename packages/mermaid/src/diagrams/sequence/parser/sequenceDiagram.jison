@@ -27,7 +27,7 @@
 <INITIAL,ID,ALIAS,LINE>\#[^\n]*   															/* skip comments */
 \%%(?!\{)[^\n]*                                                 /* skip comments */
 [^\}]\%\%[^\n]*                                                 /* skip comments */
-[0-9]+(?=[ \n]+)       											return 'NUM';
+([0-9]+(\.[0-9]{1,2})?|\.[0-9]{1,2})(?=[ \n]+)    				return 'NUM';
 <ID>\@\{                                                        { this.begin('CONFIG'); return 'CONFIG_START'; }
 <CONFIG>[^\}]+                                                  { return 'CONFIG_CONTENT'; }
 <CONFIG>\}(?=\s+as\s)                                           { this.popState(); this.begin('ALIAS'); return 'CONFIG_END'; }

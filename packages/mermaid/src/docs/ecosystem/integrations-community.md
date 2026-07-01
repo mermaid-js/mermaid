@@ -43,7 +43,6 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [Forgejo](https://forgejo.org/) ✅
 - [GitBook](https://gitbook.com)
   - [Mermaid Plugin](https://github.com/JozoVilcek/gitbook-plugin-mermaid)
-  - [Mermaid plugin for GitBook](https://github.com/wwformat/gitbook-plugin-mermaid-pdf)
   - [Markdown with Mermaid CLI](https://github.com/miao1007/gitbook-plugin-mermaid-cli)
 - [Gitea](https://gitea.io) ✅
 - [GitHub](https://github.com) ✅
@@ -64,6 +63,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [Slidev](https://sli.dev) ✅
 - [Tuleap](https://docs.tuleap.org/user-guide/writing-in-tuleap.html#graphs) ✅
 - [Mermaid Flow Visual Editor](https://www.mermaidflow.app) ✅
+- [Mermaid Studio by webtoolz](https://webtoolz.dev/mermaid) - Browser-based Mermaid editor with live preview, curated themes, and PNG/SVG export
 - [Mermerd](https://github.com/KarnerTh/mermerd)
 - [Slab](https://slab.com) ✅
 - [Swimm](https://docs.swimm.io/features/diagrams-and-charts) ✅
@@ -181,6 +181,8 @@ Communication tools and platforms
   - [Mermaid plugin for google docs](https://workspace.google.com/marketplace/app/mermaid/636321283856)
 - [Inkdrop](https://www.inkdrop.app)
   - [Mermaid Plugin](https://github.com/inkdropapp/inkdrop-mermaid)
+- [IntelliJ Idea](https://www.jetbrains.com/idea/)
+  - [Mermaid Visualizer](https://plugins.jetbrains.com/plugin/30432-mermaid-visualizer)
 - [Light Table](http://lighttable.com/)
   - [Mermaid Plugin](https://github.com/cldwalker/Mermaid)
 - [Markdown-It](https://github.com/markdown-it/markdown-it)
@@ -214,7 +216,7 @@ Communication tools and platforms
   - [Adding diagrams to your Astro site with MermaidJS and Playwright](https://agramont.net/blog/diagraming-with-mermaidjs-astro/)
 - [Codedoc](https://codedoc.cc/)
   - [codedoc-mermaid-plugin](https://www.npmjs.com/package/codedoc-mermaid-plugin)
-- [Docsy Hugo Theme](https://www.docsy.dev/docs/adding-content/lookandfeel/#diagrams-with-mermaid) ✅
+- [Docsy Hugo Theme](https://www.docsy.dev/docs/content/diagrams-and-formulae/) ✅
 - [Docusaurus](https://docusaurus.io/docs/markdown-features/diagrams) ✅
 - [Gatsby](https://www.gatsbyjs.com/)
   - [gatsby-remark-mermaid](https://github.com/remcohaszing/gatsby-remark-mermaid)
@@ -255,6 +257,7 @@ Communication tools and platforms
 | Mermaid Diagrams         | [🎡🔗](https://chromewebstore.google.com/detail/mermaid-diagrams/phfcghedmopjadpojhmmaffjmfiakfil)          | -                                                                              | -                                                                              | -                                                                                                                            | -                                                                                                    |
 | Monkeys                  | [🎡🔗](https://chromewebstore.google.com/detail/monkeys-mermaid-for-githu/cplfdpoajbclbgphaphphcldamfkjlgi) | -                                                                              | -                                                                              | -                                                                                                                            | -                                                                                                    |
 | Mermaid Previewer        | [🎡🔗](https://chromewebstore.google.com/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl)         | -                                                                              | -                                                                              | -                                                                                                                            | -                                                                                                    |
+| Tachi Code               | [🎡🔗](https://chromewebstore.google.com/detail/tachi-code/acoecgiamdjjkhmdodcfdfanfnagamjf)                | [🦊🔗](https://addons.mozilla.org/en-US/firefox/addon/tachi-code/)             | -                                                                              | [🌀🔗](https://microsoftedge.microsoft.com/addons/detail/tachi-code/mombmlijgpfamkenkmggobjimompbpji)                        | -                                                                                                    |
 
 ### Other
 
@@ -273,7 +276,9 @@ Communication tools and platforms
   - [reveal.js-mermaid-plugin](https://github.com/ludwick/reveal.js-mermaid-plugin)
 - [Reveal CK](https://github.com/jedcn/reveal-ck)
   - [reveal-ck-mermaid-plugin](https://github.com/tmtm/reveal-ck-mermaid-plugin)
+- [SchemaCrawler - Generate Mermaid diagrams from your database](https://dev.to/sualeh/how-to-generate-mermaid-diagrams-for-your-database-33bn)
 - [speccharts: Turn your test suites into specification diagrams](https://github.com/arnaudrenaud/speccharts)
+- [termaid: Render Mermaid diagrams as Unicode art in the terminal](https://github.com/fasouto/termaid)
 - [Vitepress Plugin](https://github.com/sametcn99/vitepress-mermaid-renderer)
 
 <!--- cspell:ignore Blazorade HueHive --->

@@ -3,15 +3,18 @@ import type { D3Selection, MaybePromise } from '../../types.js';
 import type { Node, ShapeRenderOptions } from '../types.js';
 import { anchor } from './shapes/anchor.js';
 import { bowTieRect } from './shapes/bowTieRect.js';
+import { block_arrow } from './shapes/blockArrow.js';
 import { card } from './shapes/card.js';
 import { choice } from './shapes/choice.js';
 import { circle } from './shapes/circle.js';
+import { composite } from './shapes/composite.js';
 import { crossedCircle } from './shapes/crossedCircle.js';
 import { curlyBraceLeft } from './shapes/curlyBraceLeft.js';
 import { curlyBraceRight } from './shapes/curlyBraceRight.js';
 import { curlyBraces } from './shapes/curlyBraces.js';
 import { curvedTrapezoid } from './shapes/curvedTrapezoid.js';
 import { cylinder } from './shapes/cylinder.js';
+import { datastore } from './shapes/datastore.js';
 import { dividedRectangle } from './shapes/dividedRect.js';
 import { doublecircle } from './shapes/doubleCircle.js';
 import { filledCircle } from './shapes/filledCircle.js';
@@ -130,6 +133,14 @@ export const shapesDefs = [
     description: 'Database storage',
     aliases: ['db', 'database', 'cylinder'],
     handler: cylinder,
+  },
+  {
+    semanticName: 'Data Store',
+    name: 'Data Store',
+    shortName: 'datastore',
+    description: 'Data flow diagram data store',
+    aliases: ['data-store'],
+    handler: datastore,
   },
   {
     semanticName: 'Start',
@@ -482,8 +493,10 @@ const generateShapeMap = () => {
     note,
 
     // Rectangles
+    composite,
     rectWithTitle,
     labelRect,
+    block_arrow,
 
     // Icons
     iconSquare,

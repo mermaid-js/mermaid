@@ -53,6 +53,13 @@ export const draw: DrawDefinition = (
   const textNodes = db.getTextData();
   const styleByKey = buildStyleByKey(db.getStyleData());
 
+  // For layout purposes, ensure all pairwise subsets exist for any N-set union (N >= 3).
+  // The venn.js layout algorithm requires explicit pairwise intersection entries
+  // to correctly position overlapping circles for 3+ set unions. We add these synthetic
+  // entries only for rendering — the stored data model (sets) is not mutated so all
+  // tests that check getSubsetData() continue to pass unchanged.
+  const renderSets = ensurePairwiseSubsets(sets);
+
   // Configurable viewBox size with scale factor for proportional rendering
   const svgWidth = config?.width ?? 800;
   const svgHeight = config?.height ?? 450;
@@ -85,14 +92,14 @@ export const draw: DrawDefinition = (
     .VennDiagram()
     .width(svgWidth)
     .height(svgHeight - titleHeight);
-  dummyD3root.datum(sets).call(vennDiagram as never);
+  dummyD3root.datum(renderSets).call(vennDiagram as never);
 
   const roughSvg = isHandDrawn
     ? rough.svg(dummyD3root.select('svg').node() as SVGSVGElement)
     : undefined;
 
   // Compute layout areas so we can position additional text nodes
-  const layoutAreas = venn.layout(sets, {
+  const layoutAreas = venn.layout(renderSets, {
     width: svgWidth,
     height: svgHeight - titleHeight,
     padding: config?.padding ?? 15,
@@ -362,6 +369,67 @@ function renderTextNodes(
       }
     }
   }
+}
+
+/**
+ * Ensures that for every N-set union (N \>= 3) in the subset list, all pairwise
+ * (2-set) intersections are present in the array passed to the layout engine.
+ *
+ * The venn.js layout algorithm needs explicit pairwise subset entries to
+ * correctly overlap circles when three or more sets share a region. Without them,
+ * `union A,B,C["Innovation"]` renders without the shared centre intersection.
+ *
+ * This function returns a *new* array — the original `subsets` from the DB is never
+ * mutated, so all parser/DB tests that assert on `getSubsetData()` continue to pass.
+ *
+ * The default size for pairwise intersections is chosen as 1/4 of the smaller
+ individual set size. This ratio ensures the overlap is visually distinct but
+ smaller than either contributing set, maintaining a balanced representation.
+ When set sizes are unknown, a fallback of 2.5 (the parser's default for 2-set unions)
+ is used.
+ */
+export function ensurePairwiseSubsets(subsets: VennData[]): VennData[] {
+  // Build a set of all existing subset keys (sorted, joined) for fast lookup.
+  const existingKeys = new Set(subsets.map((s) => [...s.sets].sort().join('|')));
+
+  // Pre-compute a map of individual set sizes for O(1) lookup
+  const individualSetSizes = new Map(
+    subsets
+      .filter((s) => s.sets.length === 1 && s.size !== undefined)
+      .map((s) => [s.sets[0], s.size])
+  );
+
+  const synthetic: VennData[] = [];
+
+  for (const subset of subsets) {
+    if (subset.sets.length < 3) {
+      continue;
+    }
+    // For an N-set union, enumerate all pairs and add any that are missing.
+    const members = [...subset.sets].sort();
+    for (let i = 0; i < members.length - 1; i++) {
+      for (let j = i + 1; j < members.length; j++) {
+        const pair = [members[i], members[j]];
+        const key = pair.join('|');
+        if (!existingKeys.has(key)) {
+          existingKeys.add(key); // avoid duplicates if multiple N-set unions share pairs
+          // Use a size that visually represents a meaningful pairwise overlap.
+          // We default to 1/4 of the smaller of the two individual set sizes,
+          // falling back to 2.5 (the default for a 2-set union in the parser).
+          // This ratio was chosen so the pairwise overlap is visible but smaller
+          // than either contributing set, providing a balanced visual representation
+          // when the actual size relationship between sets is not specified.
+          const sizeA = individualSetSizes.get(pair[0]);
+          const sizeB = individualSetSizes.get(pair[1]);
+          const pairSize =
+            sizeA !== undefined && sizeB !== undefined ? Math.min(sizeA, sizeB) / 4 : 2.5;
+          synthetic.push({ sets: pair, size: pairSize, label: '' });
+        }
+      }
+    }
+  }
+
+  return synthetic.length > 0 ? [...subsets, ...synthetic] : subsets;
 }
 
 export const renderer: DiagramRenderer = { draw };

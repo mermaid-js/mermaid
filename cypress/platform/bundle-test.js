@@ -7,7 +7,7 @@ Power_Supply --> Transmitter_B
 Transmitter_A --> D
 Transmitter_B --> D`;
 
-let code2 = `gantt
+const code2 = `gantt
   dateFormat  YYYY-MM-DD
   title Adding GANTT diagram functionality to mermaid
   section A section

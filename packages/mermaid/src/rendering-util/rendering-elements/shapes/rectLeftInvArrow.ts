@@ -11,10 +11,18 @@ export async function rect_left_inv_arrow<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? 21 : (nodePadding ?? 0);
+  const labelPaddingY = node.look === 'neo' ? 12 : (nodePadding ?? 0);
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const w = Math.max(bbox.width + (node.padding ?? 0), node?.width ?? 0);
-  const h = Math.max(bbox.height + (node.padding ?? 0), node?.height ?? 0);
+  const labelWidth = bbox.width + (node.look === 'neo' ? labelPaddingX * 2 : labelPaddingX);
+  const h = Math.max(
+    bbox.height + (node.look === 'neo' ? labelPaddingY * 2 : labelPaddingY),
+    node.height ?? 0
+  );
+  const notchWidth = h / 4;
+  const w = Math.max(labelWidth, (node.width ?? 0) - notchWidth);
 
   const x = -w / 2;
   const y = -h / 2;
@@ -43,7 +51,7 @@ export async function rect_left_inv_arrow<T extends SVGGraphicsElement>(
 
   const polygon = shapeSvg.insert(() => roughNode, ':first-child');
 
-  polygon.attr('class', 'basic label-container');
+  polygon.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     polygon.selectAll('path').attr('style', cssStyles);

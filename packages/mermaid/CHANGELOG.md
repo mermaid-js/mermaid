@@ -1,5 +1,389 @@
 # mermaid
 
+## 11.16.0
+
+### Minor Changes
+
+- [#7535](https://github.com/mermaid-js/mermaid/pull/7535) [`ea1c48f`](https://github.com/mermaid-js/mermaid/commit/ea1c48f53fce5d025388d386c90da8743ee25b13) Thanks [@ragelink](https://github.com/ragelink)! - feat(cynefin): Adds the Cynefin framework as a new diagram type (beta) to Mermaid (available as `cynefin-beta`). The Cynefin framework, created by Dave Snowden, is a decision-making framework that categorizes problems into five complexity domains, widely used in agile, incident management, strategy, and organizational design.
+
+- [#7721](https://github.com/mermaid-js/mermaid/pull/7721) [`f45cc2c`](https://github.com/mermaid-js/mermaid/commit/f45cc2cc5683b90990e374a463b7bcad0fd68a38) Thanks [@notionparallax](https://github.com/notionparallax)! - feat(treeView): add box-drawing character input support for treeView diagrams
+
+- [#7550](https://github.com/mermaid-js/mermaid/pull/7550) [`f1f4d45`](https://github.com/mermaid-js/mermaid/commit/f1f4d45ee0513b64a2bd280087d31656f9d2c786) Thanks [@DominicBurkart](https://github.com/DominicBurkart)! - feat(xychart): add per-point text labels for xychart line plots
+
+- [#7527](https://github.com/mermaid-js/mermaid/pull/7527) [`b4d0442`](https://github.com/mermaid-js/mermaid/commit/b4d0442dd1628acb3f71681519e7f47fc8bacf55) Thanks [@notionparallax](https://github.com/notionparallax)! - feat(treeView): Extends the existing treeView-beta diagram with features useful for representing file/directory structures.
+
+- [#7793](https://github.com/mermaid-js/mermaid/pull/7793) [`a6f097d`](https://github.com/mermaid-js/mermaid/commit/a6f097d580d459dfc3ade3e21030037341f79940) Thanks [@SSDWGG](https://github.com/SSDWGG)! - feat(er): support optional ER attribute types with a `?` suffix
+
+- [#7772](https://github.com/mermaid-js/mermaid/pull/7772) [`37f2e36`](https://github.com/mermaid-js/mermaid/commit/37f2e36fa017698b66093ac5518396523a7a3241) Thanks [@devareddy05](https://github.com/devareddy05)! - feat(gantt): support multiple `excludes` / `includes` lines so long exclusion lists can be split into commented groups (#6270)
+
+- [#7708](https://github.com/mermaid-js/mermaid/pull/7708) [`4e63e9d`](https://github.com/mermaid-js/mermaid/commit/4e63e9d338b6476df283afd4a002072945bc4563) Thanks [@txmxthy](https://github.com/txmxthy)! - feat(architecture): add `align row|column {ids…}` directive to architecture-beta diagrams so authors can declare horizontal or vertical alignment of services explicitly.
+
+- [#7760](https://github.com/mermaid-js/mermaid/pull/7760) [`05223be`](https://github.com/mermaid-js/mermaid/commit/05223bee47a424be3ba7805e753b96861d342765) Thanks [@ngdaniels](https://github.com/ngdaniels)! - feat(pie): Enhance Pie Chart - Enable donut chart, Set legend position, and highlight slice
+
+- [#7251](https://github.com/mermaid-js/mermaid/pull/7251) [`216e4e9`](https://github.com/mermaid-js/mermaid/commit/216e4e9a61afceae885b00854f79e17373ccad31) Thanks [@ydah](https://github.com/ydah)! - feat(railroad): Add support for Railroad Diagrams (Syntax Diagrams) with four input syntaxes: IR (railroad-beta), EBNF (railroad-ebnf-beta), ABNF (railroad-abnf-beta), and PEG (railroad-peg-beta).
+
+- [#7774](https://github.com/mermaid-js/mermaid/pull/7774) [`e5c75e6`](https://github.com/mermaid-js/mermaid/commit/e5c75e6b797f84f8f652d8771eb1ce6161dd8f89) Thanks [@ngdaniels](https://github.com/ngdaniels)! - feat(xychart): enable rotate label on X-axis
+
+- [#7791](https://github.com/mermaid-js/mermaid/pull/7791) [`974fa7b`](https://github.com/mermaid-js/mermaid/commit/974fa7b7e791b442ad5f7862f1cbecd53d982485) Thanks [@knsv-bot](https://github.com/knsv-bot)! - feat(swimlane): add swimlane as a standalone diagram type with a dedicated layered orthogonal layout algorithm
+
+### Patch Changes
+
+- [#7744](https://github.com/mermaid-js/mermaid/pull/7744) [`633c261`](https://github.com/mermaid-js/mermaid/commit/633c261dadbaa20ee0cf9a0299e2269abe4ca573) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix(architecture): add `architecture.seed` config option to make architecture diagrams render deterministically. Resolves #7729.
+
+- [#7732](https://github.com/mermaid-js/mermaid/pull/7732) [`c8ba156`](https://github.com/mermaid-js/mermaid/commit/c8ba156f551e94dd9a5c30b4971fe83ef3538634) Thanks [@rkdfx](https://github.com/rkdfx)! - fix: tolerate leading horizontal whitespace before YAML frontmatter delimiters. Closes mermaid-js/mermaid#7613
+
+- [#7314](https://github.com/mermaid-js/mermaid/pull/7314) [`4e4e6c4`](https://github.com/mermaid-js/mermaid/commit/4e4e6c4a108d834dd0f643b08deb89159e0eca94) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix(flowchart): Prevent crash when flowchart node shape is undefined
+
+- [#7762](https://github.com/mermaid-js/mermaid/pull/7762) [`cfd2391`](https://github.com/mermaid-js/mermaid/commit/cfd23916f3c6b3ceafc4c0cfaf4078f6442bbc4f) Thanks [@Dharya-dev](https://github.com/Dharya-dev)! - fix(class): support styling and callbacks for generic classes
+
+- [#7284](https://github.com/mermaid-js/mermaid/pull/7284) [`c1f116d`](https://github.com/mermaid-js/mermaid/commit/c1f116d36646786326c596a5f25e519bdaac7748) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix(gantt): Render gantt vertical markers without affecting row layout or chart height
+
+- [#7786](https://github.com/mermaid-js/mermaid/pull/7786) [`72fbab1`](https://github.com/mermaid-js/mermaid/commit/72fbab1a4d6efbfa219b13c1639dabcadc754ad8) Thanks [@knsv-bot](https://github.com/knsv-bot)! - fix(er): allow special characters (e.g. dots) in ER diagram attribute names and types by escaping them with backticks
+
+- [#7672](https://github.com/mermaid-js/mermaid/pull/7672) [`4887e97`](https://github.com/mermaid-js/mermaid/commit/4887e9721c33b5d771306a4e7ab768d78908a157) Thanks [@sjackson0109](https://github.com/sjackson0109)! - fix(flowchart): respect per-subgraph direction keyword in Dagre layout. Fixes #4648
+
+- [#7734](https://github.com/mermaid-js/mermaid/pull/7734) [`a4c1e50`](https://github.com/mermaid-js/mermaid/commit/a4c1e507a347256f1f3a42be3feb5b6ddc7257f2) Thanks [@OfirHaf](https://github.com/OfirHaf)! - fix(block): read block padding and sanitize config dynamically instead of at module load time
+
+- [#7674](https://github.com/mermaid-js/mermaid/pull/7674) [`cc75089`](https://github.com/mermaid-js/mermaid/commit/cc750896b21a2715256ac0de486bafe0351c40c4) Thanks [@cyphercodes](https://github.com/cyphercodes)! - fix(block): respect current DOMPurify config when sanitizing labels
+
+- [#7711](https://github.com/mermaid-js/mermaid/pull/7711) [`be2e282`](https://github.com/mermaid-js/mermaid/commit/be2e28201445505ec68b1ebf6e3e6813fb6a6898) Thanks [@Jinacker](https://github.com/Jinacker)! - fix(flowchart): render flowchart and state self-loop edges as a single SVG path.
+
+- [#7781](https://github.com/mermaid-js/mermaid/pull/7781) [`d945968`](https://github.com/mermaid-js/mermaid/commit/d945968c13b154dcf2c89ad1e6ed5104458d32fe) Thanks [@Dharya-dev](https://github.com/Dharya-dev)! - fix(radar): align axis labels based on angular position to prevent clipping
+
+- [#7661](https://github.com/mermaid-js/mermaid/pull/7661) [`2f5e9e8`](https://github.com/mermaid-js/mermaid/commit/2f5e9e8c9aabb74e61e43428e91217e9585c8d05) Thanks [@nabila401](https://github.com/nabila401)! - fix(venn): fix 3-circle venn diagram union rendering
+
+- [#7780](https://github.com/mermaid-js/mermaid/pull/7780) [`8dcdce4`](https://github.com/mermaid-js/mermaid/commit/8dcdce40ee091aafd546aa842aca8b4da1e49c1b) Thanks [@Dharya-dev](https://github.com/Dharya-dev)! - fix(xychart): truncate plot data to match x-axis category count
+
+- [#7235](https://github.com/mermaid-js/mermaid/pull/7235) [`1bbc189`](https://github.com/mermaid-js/mermaid/commit/1bbc189b69be4c50a08ba74501567123769f30bb) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Support consecutive LaTeX in node text
+
+- [#7247](https://github.com/mermaid-js/mermaid/pull/7247) [`365c1b1`](https://github.com/mermaid-js/mermaid/commit/365c1b1062dd6b5b7c59682f7df6b5c9ed40cd16) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix(treeView): Ensure treemap labels render correctly in large nested diagrams
+
+- [#7754](https://github.com/mermaid-js/mermaid/pull/7754) [`06a32b7`](https://github.com/mermaid-js/mermaid/commit/06a32b74fbe574ba36fb77ffd9743a8b884b2f55) Thanks [@palgunatm66](https://github.com/palgunatm66)! - fix(sequence): sequenceDiagram rect backgrounds using theme-aware fallback colors
+
+- [#7693](https://github.com/mermaid-js/mermaid/pull/7693) [`afaf306`](https://github.com/mermaid-js/mermaid/commit/afaf3062381d115d66744413151b642f124dd9ba) Thanks [@dull-bird](https://github.com/dull-bird)! - fix(quadrant-chart): allow CJK, emoji, Latin-1 accented characters, and other non-ASCII text in unquoted axis/quadrant/point labels. Fixes #7120.
+
+- [#7751](https://github.com/mermaid-js/mermaid/pull/7751) [`79e97cd`](https://github.com/mermaid-js/mermaid/commit/79e97cd7b9cb8f2d9bf6ba6d04de5cdeb4223d1b) Thanks [@puneetdixit200](https://github.com/puneetdixit200)! - fix(state): render state diagram click tooltips with mermaidTooltip
+
+- [#7570](https://github.com/mermaid-js/mermaid/pull/7570) [`c2305df`](https://github.com/mermaid-js/mermaid/commit/c2305df424963c0263d1c75804248db2969ee17e) Thanks [@PinguinsRule](https://github.com/PinguinsRule)! - fix(state): Fix invalid syntax between state and '{'
+
+- [#7758](https://github.com/mermaid-js/mermaid/pull/7758) [`a4a250b`](https://github.com/mermaid-js/mermaid/commit/a4a250b96321e0648eecfbadbfb17b1537dff691) Thanks [@mk24x7](https://github.com/mk24x7)! - fix(venn): render labeled higher-arity unions when the underlying pairwise unions are not declared. Resolves #7656.
+
+- Updated dependencies [[`ea1c48f`](https://github.com/mermaid-js/mermaid/commit/ea1c48f53fce5d025388d386c90da8743ee25b13), [`b4d0442`](https://github.com/mermaid-js/mermaid/commit/b4d0442dd1628acb3f71681519e7f47fc8bacf55), [`4e63e9d`](https://github.com/mermaid-js/mermaid/commit/4e63e9d338b6476df283afd4a002072945bc4563), [`216e4e9`](https://github.com/mermaid-js/mermaid/commit/216e4e9a61afceae885b00854f79e17373ccad31)]:
+  - @mermaid-js/parser@1.2.0
+
+## 11.15.0
+
+### Minor Changes
+
+- [#7174](https://github.com/mermaid-js/mermaid/pull/7174) [`0aca217`](https://github.com/mermaid-js/mermaid/commit/0aca21739c0d1fcaaa206e04a6cd574ebc415483) Thanks [@milesspencer35](https://github.com/milesspencer35)! - feat(sequence): Add support for decimal start and increment values in the `autonumber` directive
+
+- [#7512](https://github.com/mermaid-js/mermaid/pull/7512) [`8e17492`](https://github.com/mermaid-js/mermaid/commit/8e17492f7365ba50896382feb69a23efd9d8a22d) Thanks [@aruncveli](https://github.com/aruncveli)! - feat(flowchart): add datastore shape
+
+  In Data flow diagrams, a datastore/warehouse/file/database is used to represent data persistence. It is denoted by a rectangle with only top and bottom borders, and can be used in flowcharts with `A@{ shape: datastore, label: "Datastore" }`.
+
+- [#6440](https://github.com/mermaid-js/mermaid/pull/6440) [`9ad8dde`](https://github.com/mermaid-js/mermaid/commit/9ad8dde6d049adde85d8ed2d476c09b5820f3f4b) Thanks [@yordis](https://github.com/yordis), [@lgazo](https://github.com/lgazo)! - feat: add Event Modeling diagram
+
+- [#7707](https://github.com/mermaid-js/mermaid/pull/7707) [`27db774`](https://github.com/mermaid-js/mermaid/commit/27db774627be1cee881961dfd0d2cb21cd01b79d) Thanks [@txmxthy](https://github.com/txmxthy)! - feat(architecture): expose four fcose layout knobs for `architecture-beta` diagrams (`nodeSeparation`, `idealEdgeLengthMultiplier`, `edgeElasticity`, `numIter`) so authors can tune layout density and spread overlapping siblings without changing diagram source
+
+- [#7604](https://github.com/mermaid-js/mermaid/pull/7604) [`bf9502f`](https://github.com/mermaid-js/mermaid/commit/bf9502fb6012a4b724679b401ac928f5ee55161c) Thanks [@M-a-c](https://github.com/M-a-c)! - feat(class): add nested namespace support for class diagrams via dot notation and syntactic nesting
+
+  If you have namespaces in class diagrams that use `.`s already and want to render them without nesting (≤v11.14.0 behaviour), you can use set `class.hierarchicalNamespaces=false` in your mermaid config:
+
+  ```yaml
+  config:
+    class:
+      hierarchicalNamespaces: false
+  ```
+
+- [#7272](https://github.com/mermaid-js/mermaid/pull/7272) [`88cdd3d`](https://github.com/mermaid-js/mermaid/commit/88cdd3dc0aab9577174561b04e14760c565a232b) Thanks [@xinbenlv](https://github.com/xinbenlv)! - feat(sankey): add outlined label style, configurable nodeWidth/nodePadding, and custom node colors
+
+### Patch Changes
+
+- [#7737](https://github.com/mermaid-js/mermaid/pull/7737) [`e9b0f34`](https://github.com/mermaid-js/mermaid/commit/e9b0f34d8d82a6260077764ee45e1d7d90957a0f) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: prevent unbalanced CSS styles in classDefs
+
+- [#7737](https://github.com/mermaid-js/mermaid/pull/7737) [`37ff937`](https://github.com/mermaid-js/mermaid/commit/37ff937f1da2e19f882fd1db01235db4d01f4056) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: create CSS styles using the CSSOM
+
+  This removes some invalid CSS and normalizes some CSS formatting.
+
+- [#7508](https://github.com/mermaid-js/mermaid/pull/7508) [`bfe60cc`](https://github.com/mermaid-js/mermaid/commit/bfe60cc67b9a6dec64f9161f58e4d24a06c42b65) Thanks [@biiab](https://github.com/biiab)! - fix(stateDiagram): `end note` now only closes a note when used on a new line
+
+- [#7737](https://github.com/mermaid-js/mermaid/pull/7737) [`faafb5d`](https://github.com/mermaid-js/mermaid/commit/faafb5d49106dd32c367f3882505f2dd625aa30e) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix(gantt): add iteration limit for `excludes` field
+
+- [#7737](https://github.com/mermaid-js/mermaid/pull/7737) [`65f8be2`](https://github.com/mermaid-js/mermaid/commit/65f8be2a42faf869b811469571983cba7eeeca99) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: disallow some CSS at-rules in custom CSS
+
+- [#7726](https://github.com/mermaid-js/mermaid/pull/7726) [`1502f32`](https://github.com/mermaid-js/mermaid/commit/1502f32f3c5fb944925b0c527fbbde3c4f041824) Thanks [@aloisklink](https://github.com/aloisklink)! - fix(wardley): fix unnecessary sanitization of text
+
+- [#7578](https://github.com/mermaid-js/mermaid/pull/7578) [`1f98db8`](https://github.com/mermaid-js/mermaid/commit/1f98db8e326299ac97a2fa60abfd509d8f5f16e2) Thanks [@Gaston202](https://github.com/Gaston202)! - fix(class): self-referential class multiplicity labels no longer rendered multiple times
+
+  Fixes #7560. Resolves an issue where cardinality labels on self-referential class relationships were rendered three times due to edge splitting in the dagre layout. The fix ensures that each sub-edge only carries its relevant label positions.
+
+- [#7592](https://github.com/mermaid-js/mermaid/pull/7592) [`2343e38`](https://github.com/mermaid-js/mermaid/commit/2343e38498a3b31f8ce5e79f1f009e0b56fbe086) Thanks [@knsv-bot](https://github.com/knsv-bot)! - fix(sequence): add background box behind alt/else section title labels in sequence diagrams
+
+- [#7589](https://github.com/mermaid-js/mermaid/pull/7589) [`7fb9509`](https://github.com/mermaid-js/mermaid/commit/7fb9509b8b5cb1dc48519dc60cf6cdc6afba0462) Thanks [@NYCU-Chung](https://github.com/NYCU-Chung)! - fix(block): prevent column widths from shrinking when mixing different column spans
+
+- [#7632](https://github.com/mermaid-js/mermaid/pull/7632) [`3f9e0f1`](https://github.com/mermaid-js/mermaid/commit/3f9e0f15bedc1e2c71ddb6b34192d1a21124cfc2) Thanks [@ekiauhce](https://github.com/ekiauhce)! - fix(sequence): correct messageAlign label position for right-to-left arrows in sequence diagrams
+
+- [#7642](https://github.com/mermaid-js/mermaid/pull/7642) [`7a8fb85`](https://github.com/mermaid-js/mermaid/commit/7a8fb8532c57ecc55b3711454ab0e505a4291445) Thanks [@tractorjuice](https://github.com/tractorjuice)! - fix(wardley): allow hyphens in unquoted component names
+
+  Multi-word names containing hyphens — e.g. `real-time processing`, `end-user`, `on-call engineer` — now parse without quoting, bringing the grammar in line with the OnlineWardleyMaps (OWM) convention. `A->B` (no-space arrow) still tokenises correctly.
+
+- [#7523](https://github.com/mermaid-js/mermaid/pull/7523) [`5144ed4`](https://github.com/mermaid-js/mermaid/commit/5144ed4b138ae0f4836bab4c163c575e0a767dd3) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix(block): Arrow blocks in block-beta diagrams not spanning the specified number of columns when using `:n` syntax.
+
+- [#7262](https://github.com/mermaid-js/mermaid/pull/7262) [`13d9bfa`](https://github.com/mermaid-js/mermaid/commit/13d9bfa4748e845a9eec7d6265ba496d2278f26e) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix(block): Ensure block diagram hexagon blocks respect column spanning syntax
+
+- [#7684](https://github.com/mermaid-js/mermaid/pull/7684) [`e14bb88`](https://github.com/mermaid-js/mermaid/commit/e14bb88bdb940124cdb0a107025653bf93745c99) Thanks [@aloisklink](https://github.com/aloisklink)! - fix: loosen `uuid` dependency range to allow v14
+
+  Mermaid does not use any of the vulnerable code in CVE-2026-41907,
+  but this allows users to silence any `npm audit` alerts on it.
+
+- [#7633](https://github.com/mermaid-js/mermaid/pull/7633) [`9217c0d`](https://github.com/mermaid-js/mermaid/commit/9217c0d8b221b423af80e420b7adae901acf6c8c) Thanks [@Felix-Garci](https://github.com/Felix-Garci)! - fix(block): add support for all arrow types in block diagrams
+
+- [#7587](https://github.com/mermaid-js/mermaid/pull/7587) [`5e7eb62`](https://github.com/mermaid-js/mermaid/commit/5e7eb62e3aba6b5df559f5c839a868e5b7f40e72) Thanks [@MaddyGuthridge](https://github.com/MaddyGuthridge)! - chore: drop lodash-es in favour of es-toolkit
+
+- [#7693](https://github.com/mermaid-js/mermaid/pull/7693) [`afaf306`](https://github.com/mermaid-js/mermaid/commit/afaf3062381d115d66744413151b642f124dd9ba) Thanks [@dull-bird](https://github.com/dull-bird)! - fix(quadrant-chart): allow CJK, emoji, Latin-1 accented characters, and other non-ASCII text in unquoted axis/quadrant/point labels.
+
+  Previously the lexer only matched ASCII `[A-Za-z]+` for text tokens, even though the grammar referenced `UNICODE_TEXT`. Bare Chinese, Japanese, Korean, emoji, and accented Latin characters in labels caused a parse error. Added a `[^\x00-\x7F]+` lexer rule to emit `UNICODE_TEXT` and included it in the `alphaNumToken` grammar rule.
+
+  Fixes #7120.
+
+- [#7737](https://github.com/mermaid-js/mermaid/pull/7737) [`4755553`](https://github.com/mermaid-js/mermaid/commit/4755553d5fb6d1217809e43ffb8fc54d6a73e482) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: improve D3 types for mermaidAPI funcs
+
+- [#7737](https://github.com/mermaid-js/mermaid/pull/7737) [`6476973`](https://github.com/mermaid-js/mermaid/commit/64769738d5b59211e1decb471ffbaca8afec51aa) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: handle `&` when namespacing CSS rules
+
+- [#7520](https://github.com/mermaid-js/mermaid/pull/7520) [`8c1a0c1`](https://github.com/mermaid-js/mermaid/commit/8c1a0c1fd19587c6772d6966fe9d217e5cd1356c) Thanks [@RodrigojndSantos](https://github.com/RodrigojndSantos)! - fix(stateDiagram): comments starting with one `%` are no longer treated as comments
+
+  Switch to using two `%%` if you want to write a comment.
+
+- Updated dependencies [[`7a8fb85`](https://github.com/mermaid-js/mermaid/commit/7a8fb8532c57ecc55b3711454ab0e505a4291445), [`675a64c`](https://github.com/mermaid-js/mermaid/commit/675a64ca0e3cde8728ca715991623c3fc055ce88)]:
+  - @mermaid-js/parser@1.1.1
+
+## 11.14.0
+
+### Minor Changes
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - Add Wardley Maps diagram type (beta)
+
+  Adds Wardley Maps as a new diagram type to Mermaid (available as `wardley-beta`). Wardley Maps are visual representations of business strategy that help map value chains and component evolution.
+
+  Features:
+  - Component positioning with [visibility, evolution] coordinates (OWM format)
+  - Anchors for users/customers
+  - Multiple link types: dependencies, flows, labeled links
+  - Evolution arrows and trend indicators
+  - Custom evolution stages with optional dual labels
+  - Custom stage widths using @boundary notation
+  - Pipeline components with visibility inheritance
+  - Annotations, notes, and visual elements
+  - Source strategy markers: build, buy, outsource, market
+  - Inertia indicators
+  - Theme integration
+
+  Implementation includes parser, D3.js renderer, unit tests, E2E tests, and comprehensive documentation.
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - feat: implement neo look styling for state diagrams
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - feat: implement neo look support for sequence diagrams with drop shadows, and enhanced styling
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - feat: add `randomize` config option for architecture diagrams, defaulting to `false` for deterministic layout
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - feat: Add option to change timeline direction
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - Fix duplicate SVG element IDs when rendering multiple diagrams on the same page. Internal element IDs (nodes, edges, markers, clusters) are now prefixed with the diagram's SVG element ID across all diagram types. Custom CSS or JS using exact ID selectors like `#arrowhead` should use attribute-ending selectors like `[id$="-arrowhead"]` instead.
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - feat: implement neo look styling for ER diagrams
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - feat: implement neo look styling for requirement diagrams
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - feat: add theme support for data label colour in xy chart
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - feat: implement neo look styling for mindmap diagrams
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - feat: implement neo look for mermaid flowchart diagrams
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - feat: implement neo look and themes for class diagram
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - feat: add showDataLabelOutsideBar option for xy chart
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - feat: implement neo look support for timeline diagram with drop shadows, additoinal redux themes and enhanced styling
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - feat: implement neo look and themes for gitGraph diagram
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - add new TreeView diagram
+
+### Patch Changes
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - add link to ishikawa diagram on mermaid.js.org
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - docs: document valid duration token formats in gantt.md
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: ER diagram parsing when using "1" as entity identifier on right side
+
+  The parser was incorrectly tokenizing the second "1" in patterns like `a many to 1 1:` because the lookahead rule only checked for alphabetic characters after whitespace, not digits. Added a new lookahead pattern `"1"(?=\s+[0-9])` to correctly identify the cardinality alias before a numeric entity name.
+
+  Fixes #7472
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: scope cytoscape label style mapping to edges with labels to prevent console warnings
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: support inline annotation syntax in class diagrams (class Shape <<interface>>)
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: Align branch label background with text for multi-line labels in LR GitGraph layout
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: preserve cause hierarchy when ishikawa effect is indented more than causes
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - refactor: remove unused createGraphWithElements function and add regression test for open edge arrowheads
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: Prevent long pie chart titles from being clipped by expanding the viewBox
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: prevent sequence diagram hang when "as" is used without a trailing space in participant declarations
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: warn when `style` statement targets a non-existent node in flowcharts
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: group state diagram SVG children under single root <g> element
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: Allow :::className syntax inside composite state blocks
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@aloisklink](https://github.com/aloisklink), [@BambioGaming](https://github.com/BambioGaming)! - fix: prevent escaping `<` and `&` when `htmlLabels: false`
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: treemap title and labels use theme-aware colors for dark backgrounds
+
+- Updated dependencies [[`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519)]:
+  - @mermaid-js/parser@1.1.0
+
+## 11.13.0
+
+### Minor Changes
+
+- [#7352](https://github.com/mermaid-js/mermaid/pull/7352) [`d6db0b0`](https://github.com/mermaid-js/mermaid/commit/d6db0b039654f6e122c6098821bc75f2910915e3) Thanks [@remcohaszing](https://github.com/remcohaszing)! - feat: Export the `AsyncIconLoader`, `SyncIconLoader`, and `IconLoader` types.
+
+- [#5932](https://github.com/mermaid-js/mermaid/pull/5932) [`cdacb0b`](https://github.com/mermaid-js/mermaid/commit/cdacb0b30171bd15223c008a56c09f7ece842940) Thanks [@exoego](https://github.com/exoego)! - feat: Add venn-beta diagram
+
+- [#6789](https://github.com/mermaid-js/mermaid/pull/6789) [`73e9849`](https://github.com/mermaid-js/mermaid/commit/73e9849f993cd766eecddf349e335a4473560f37) Thanks [@omkarht](https://github.com/omkarht)! - feat: Add half-arrowheads (solid & stick) and central connection support
+
+- [#7387](https://github.com/mermaid-js/mermaid/pull/7387) [`acce4db`](https://github.com/mermaid-js/mermaid/commit/acce4db7a1bd8801666f1a9667a63e4010ec2020) Thanks [@exoego](https://github.com/exoego)! - feat: Add Ishikawa diagram (ishikawa-beta)
+
+- [#7425](https://github.com/mermaid-js/mermaid/pull/7425) [`f16bfbb`](https://github.com/mermaid-js/mermaid/commit/f16bfbbd3b4cf59f816913029760031bf778f41d) Thanks [@knsv](https://github.com/knsv)! - fix: replace smooth curve edges with rounded right-angle edges
+
+  The default flowchart edge curve changes from `basis` (smooth splines) to `rounded` (right-angle segments with rounded corners). This fixes ELK layout edges that were curving instead of routing at right angles (#7213) and applies consistently across all diagram types using the shared rendering pipeline.
+
+  To restore the previous smooth curve behavior, set `flowchart.curve: 'basis'` in your config.
+
+- [#6995](https://github.com/mermaid-js/mermaid/pull/6995) [`9745f32`](https://github.com/mermaid-js/mermaid/commit/9745f325cb9e1967640f0e85da193a2f820634f1) Thanks [@darshanr0107](https://github.com/darshanr0107)! - feat: Deprecate [`flowchart.htmlLabels`](https://mermaid.js.org/config/schema-docs/config-defs-flowchart-diagram-config.html#htmllabels) in favor of [root-level `htmlLabels`](https://mermaid.js.org/config/schema-docs/config.html#htmllabels) in Mermaid config
+
+- [#5814](https://github.com/mermaid-js/mermaid/pull/5814) [`2dd29be`](https://github.com/mermaid-js/mermaid/commit/2dd29bee254a5b89c00eb0b0da1bcf7fe96ce46c) Thanks [@kairi003](https://github.com/kairi003)! - feat: allow to put notes in namespaces on classDiagram
+
+### Patch Changes
+
+- [#7075](https://github.com/mermaid-js/mermaid/pull/7075) [`96a766d`](https://github.com/mermaid-js/mermaid/commit/96a766dcdbb7d6e3043344a2ee3f1b64ba7a62c3) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Prevent HTML tags from being escaped in sandbox label rendering
+
+- [#6843](https://github.com/mermaid-js/mermaid/pull/6843) [`32723b2`](https://github.com/mermaid-js/mermaid/commit/32723b2de13474d7d13e9292e6f801e9874936ab) Thanks [@saurabhg772244](https://github.com/saurabhg772244)! - fix: Support edge animation in hand drawn look
+
+- [#7453](https://github.com/mermaid-js/mermaid/pull/7453) [`a60e615`](https://github.com/mermaid-js/mermaid/commit/a60e615bc31edeb1d623d096117812c0f721f2f8) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: ER diagram edge label positioning
+
+- [#6989](https://github.com/mermaid-js/mermaid/pull/6989) [`1a9d45a`](https://github.com/mermaid-js/mermaid/commit/1a9d45abf0a991c40985021e8b523c32b46dd897) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Resolved parsing error where direction TD was not recognized within subgraphs
+
+- [#7178](https://github.com/mermaid-js/mermaid/pull/7178) [`96ca7c0`](https://github.com/mermaid-js/mermaid/commit/96ca7c090f28eea458027e6871903d789575cfa1) Thanks [@omkarht](https://github.com/omkarht)! - fix(treemap): Fixed treemap classDef style application to properly apply user-defined styles
+
+- [#7076](https://github.com/mermaid-js/mermaid/pull/7076) [`60f6331`](https://github.com/mermaid-js/mermaid/commit/60f633101cd2e55ee80ad2250ae57d4c970430e5) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Correct viewBox casing and make SVGs responsive
+
+- [#7055](https://github.com/mermaid-js/mermaid/pull/7055) [`fa15ce8`](https://github.com/mermaid-js/mermaid/commit/fa15ce8502d2f1d72787998d9d944c5a98b992dd) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Improve participant parsing and prevent recursive loops on invalid syntax
+
+- [#7276](https://github.com/mermaid-js/mermaid/pull/7276) [`33c7c72`](https://github.com/mermaid-js/mermaid/commit/33c7c7206400509537a28f15d0e817340c482cb4) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: respect `markdownAutoWrap: false` to prevent text auto-wrapping in flowchart markdown labels with `htmlLabels` enabled.
+
+  Markdown labels with `markdownAutoWrap: false, htmlLabels: false` set doesn't work
+  correctly.
+
+- [#7416](https://github.com/mermaid-js/mermaid/pull/7416) [`3c069b5`](https://github.com/mermaid-js/mermaid/commit/3c069b52859470dea89f45d5f859b1087b7e1fee) Thanks [@Crafter-Y](https://github.com/Crafter-Y)! - fix: architecture diagram lines should now have the correct length
+
+- [#6995](https://github.com/mermaid-js/mermaid/pull/6995) [`9745f32`](https://github.com/mermaid-js/mermaid/commit/9745f325cb9e1967640f0e85da193a2f820634f1) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Support the [`htmlLabels` Mermaid config value](https://mermaid.js.org/config/schema-docs/config.html#htmllabels) whenever possible
+
+- [#7293](https://github.com/mermaid-js/mermaid/pull/7293) [`a408b55`](https://github.com/mermaid-js/mermaid/commit/a408b5586fb57aac54da4606940779562078f91d) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Prevent browser hang when using multiline accDescr in XY charts
+
+- [#6119](https://github.com/mermaid-js/mermaid/pull/6119) [`712c1ec`](https://github.com/mermaid-js/mermaid/commit/712c1ec1222a771b38cd3b8a5ddf9c2fc4e2cbcc) Thanks [@NealGooch](https://github.com/NealGooch)! - fix: correct block positioning when nested blocks span multiple columns
+
+- [#7424](https://github.com/mermaid-js/mermaid/pull/7424) [`981a62e`](https://github.com/mermaid-js/mermaid/commit/981a62e4ee6078d27a541db35df441734434d5c1) Thanks [@knsv](https://github.com/knsv)! - fix: correct BT orientation arc sweep flags in gitGraph drawArrow()
+
+  Swapped SVG arc sweep-flag values in the BT (bottom-to-top) orientation branches of `drawArrow()` so curves bend in the correct direction. Affects both rerouting and non-rerouting code paths for merge and non-merge arrows.
+
+  Resolves #6593
+
+- [#7430](https://github.com/mermaid-js/mermaid/pull/7430) [`a4bb0b5`](https://github.com/mermaid-js/mermaid/commit/a4bb0b5920e24e44f1a12b163fdcfe6de672871a) Thanks [@knsv](https://github.com/knsv)! - fix: allow colons in stateDiagram-v2 transition and state description text
+
+- [#7432](https://github.com/mermaid-js/mermaid/pull/7432) [`b0f9d5b`](https://github.com/mermaid-js/mermaid/commit/b0f9d5b3aaf01bf5662525bcf59ac42d4bf069ab) Thanks [@knsv](https://github.com/knsv)! - fix: derive taskTextDarkColor from doneTaskBkgColor in dark theme for readable done-task text
+
+- [#7456](https://github.com/mermaid-js/mermaid/pull/7456) [`981fbb8`](https://github.com/mermaid-js/mermaid/commit/981fbb8bd8be584d443dbdc14c84a2718906421d) Thanks [@knsv-bot](https://github.com/knsv-bot)! - fix(gantt): restore readable outside-text color for done tasks in dark mode
+
+- [#7139](https://github.com/mermaid-js/mermaid/pull/7139) [`93aa657`](https://github.com/mermaid-js/mermaid/commit/93aa6575788bdee992d4a60102b1dfdf95c9f4ce) Thanks [@omkarht](https://github.com/omkarht)! - revert: restore original hexagon and roundedRect implementations
+
+- [#7136](https://github.com/mermaid-js/mermaid/pull/7136) [`6bc6617`](https://github.com/mermaid-js/mermaid/commit/6bc6617ca6a30b05d35d5ea1dacb940729ab42fd) Thanks [@omkarht](https://github.com/omkarht)! - feat: add alias support for new participant syntax of sequence diagrams
+
+- [#7375](https://github.com/mermaid-js/mermaid/pull/7375) [`9d0669a`](https://github.com/mermaid-js/mermaid/commit/9d0669a8c04281c3e96b96f285d4dd5d9e0088d7) Thanks [@kaigritun](https://github.com/kaigritun)! - fix(er): recognize '1' cardinality alias before relationship operators
+
+- [#7275](https://github.com/mermaid-js/mermaid/pull/7275) [`7eed6a1`](https://github.com/mermaid-js/mermaid/commit/7eed6a1c347886461c931676b3ca22c1d5f3e1a8) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: change `createLabel` to call `createText`
+
+  This adds support for KaTeX and FontAwesome icons loaded via iconpacks in some
+  older labels. There are some small changes in formatting due to standardizing this code.
+
+- [#7265](https://github.com/mermaid-js/mermaid/pull/7265) [`2000680`](https://github.com/mermaid-js/mermaid/commit/2000680429204b0dd3a970bccfa47e8395f6b00d) Thanks [@omkarht](https://github.com/omkarht)! - fix: prevent unintended opacity on SVG aws icons containing rect elements
+
+- [#7139](https://github.com/mermaid-js/mermaid/pull/7139) [`b7c66a2`](https://github.com/mermaid-js/mermaid/commit/b7c66a220adc811404660004d19c81fc26b0fb53) Thanks [@omkarht](https://github.com/omkarht)! - chore: restore original hexagon and roundedRect implementations
+
+- [#7425](https://github.com/mermaid-js/mermaid/pull/7425) [`f16bfbb`](https://github.com/mermaid-js/mermaid/commit/f16bfbbd3b4cf59f816913029760031bf778f41d) Thanks [@knsv](https://github.com/knsv)! - fix: use rounded right-angle edges for ELK layout
+
+  ELK layout edges now default to `rounded` curve (right-angle segments with rounded corners) instead of inheriting the global `basis` default. This fixes ELK edges that were curving instead of routing at right angles (#7213). Non-ELK layouts are unaffected and keep their existing `basis` default.
+
+- [#7296](https://github.com/mermaid-js/mermaid/pull/7296) [`aac86f7`](https://github.com/mermaid-js/mermaid/commit/aac86f7de32a65fa850db20f14f65565a191564e) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Ensure correct edge label rendering for ER and requirement diagrams when flowchart htmlLabels are false
+
+- [#7019](https://github.com/mermaid-js/mermaid/pull/7019) [`ace0367`](https://github.com/mermaid-js/mermaid/commit/ace0367afd0100ef645f7a583ba4cfbd08064133) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Mindmap breaking in ELK layout
+
+- [#6984](https://github.com/mermaid-js/mermaid/pull/6984) [`09b74f1`](https://github.com/mermaid-js/mermaid/commit/09b74f1c29edf3d51c96d3ef17cb63af036908e1) Thanks [@omkarht](https://github.com/omkarht)! - fix(er-diagram): prevent syntax error when using 'u', numbers, and decimals in node names
+
+- [#7276](https://github.com/mermaid-js/mermaid/pull/7276) [`33c7c72`](https://github.com/mermaid-js/mermaid/commit/33c7c7206400509537a28f15d0e817340c482cb4) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Restore proper rendering of plain text flowchart labels without auto line-wrapping
+
+  This fix restores backwards compatibility with Mermaid v10 by ensuring that plain text labels in flowcharts are rendered correctly. In Mermaid v11, all labels were incorrectly being treated as markdown by default, which caused issues with text wrapping, multiline breaks, and backwards compatibility.
+
+  **What changed:**
+  - Plain text labels in flowcharts (without markdown syntax) now render as regular text
+    - For node labels and edge labels, these will line-wrap automatically. Although this isn't backwards compatible with v10, we think this is a minor change and it's worth keeping to avoid too many changes from diagrams created from v11 onwards.
+    - Plain text labels in other diagrams will continue to not line wrap.
+  - Plain text labels with `\n` characters now correctly create line breaks
+  - Plain text that looks like markdown (e.g., "1.", "- x") is no longer misinterpreted
+
+  **If you want markdown formatting:**
+  You can still use markdown in your flowchart labels by using the proper markdown syntax. Wrap your markdown text with double quotes and backticks:
+  ``node["`_markdown_ **text**`"]``
+
+  Example:
+
+  ````markdown
+  ```mermaid
+  flowchart TD
+      plain["Plain text\nwith manual line break"]
+      markdown["`This is a **markdown** _label_ that wraps and doesn't replace \n with newlines`"]
+  ```
+  ````
+
+- [#7080](https://github.com/mermaid-js/mermaid/pull/7080) [`835de00`](https://github.com/mermaid-js/mermaid/commit/835de0012d7e9981eceafd252b423768e9248830) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Support ComponentQueue_Ext to prevent parsing error
+
+- [#7310](https://github.com/mermaid-js/mermaid/pull/7310) [`a9e4c72`](https://github.com/mermaid-js/mermaid/commit/a9e4c72ed124b4ee632c1c9154838ab10e2d5e03) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Allow quoted string labels in architecture-beta diagrams
+
+- [#7052](https://github.com/mermaid-js/mermaid/pull/7052) [`ff15e51`](https://github.com/mermaid-js/mermaid/commit/ff15e51d2e26df8f6331021ea83fe3a44d450b94) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Correct tooltip placement to appear near hovered element
+
+- [#7197](https://github.com/mermaid-js/mermaid/pull/7197) [`8bfd477`](https://github.com/mermaid-js/mermaid/commit/8bfd47758ad5255459d0cced5210d3cb8cfa6f91) Thanks [@omkarht](https://github.com/omkarht)! - fix: validate dates and tick interval to prevent UI freeze/crash in gantt diagramtype
+
+- [#7099](https://github.com/mermaid-js/mermaid/pull/7099) [`b136acd`](https://github.com/mermaid-js/mermaid/commit/b136acdc670dee2e4825d5d93e825c0ed0551beb) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Mindmap rendering issue when the number of Level 2 nodes exceeds 11
+
+- [#7217](https://github.com/mermaid-js/mermaid/pull/7217) [`e0317ac`](https://github.com/mermaid-js/mermaid/commit/e0317ac764349d5049f3ebeee30a15c2febc911b) Thanks [@omkarht](https://github.com/omkarht)! - fix(gitgraph): pass gitGraphConfig to renderer functions for applying directives properly.
+
+- Updated dependencies [[`fd3fc50`](https://github.com/mermaid-js/mermaid/commit/fd3fc501461e72d11933203175d70f130c1df3c5)]:
+  - @mermaid-js/parser@1.0.1
+
+## 11.12.3
+
+### Patch Changes
+
+- Updated dependencies [[`7243340`](https://github.com/mermaid-js/mermaid/commit/72433401a8c9d90d6753b7592d556122ecb953ca)]:
+  - @mermaid-js/parser@1.0.0
+
 ## 11.12.2
 
 ### Patch Changes

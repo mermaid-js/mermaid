@@ -36,6 +36,7 @@ export interface PositionedEdge {
   sourceHeight?: number;
   targetWidth?: number;
   targetHeight?: number;
+  points: { x: number; y: number }[];
   [key: string]: unknown;
 }
 

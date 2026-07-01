@@ -5,7 +5,6 @@ coverage/
 .idea/
 .pnpm-store/
 .instructions/
-.claude
 .mcp.json
 
 dist
@@ -31,6 +30,7 @@ Gemfile.lock
 /.vs
 
 cypress/screenshots/
+cypress/argos-sheets/
 cypress/snapshots/
 
 # eslint --cache file
@@ -52,19 +52,30 @@ stats/
 demos/dev/**
 !/demos/dev/example.html
 !/demos/dev/reload.js
+!/demos/dev/architecture-randomize.html
 tsx-0/**
+node-compile-cache/
 vite.config.ts.timestamp-*
 
 # autogenereated by langium-cli
 generated/
 
-# Agent instruction files (synced from mermaid-ops via /sync, not committed here)
+
 /CLAUDE.md
 /AGENTS.md
 /assistant/
-/.claude/skills/
+/.claude/
 packages/mermaid/src/diagrams/CLAUDE.md
 packages/parser/CLAUDE.md
 AGENTS.mermaid.md
 CLAUDE.mermaid.md
 .envrc
+AGENTS.alana.md
+CLAUDE.alana.md
+mermaid-parser.tar.gz
+.gitnexus
+.agents/
+.ralph/
+.tmp
+.fallow/
+.playwright-mcp/
