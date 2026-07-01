@@ -375,6 +375,25 @@ describe('validateLayout new geometric issues', () => {
     expect(getIssueTypes(layout)).toContain('edge-intersects-obstacle');
   });
 
+  it('flags edge-intersects-obstacle for visually horizontal segments with subpixel endpoint drift', () => {
+    // Company.mmd regression: the route is visually horizontal through a
+    // third-party node, but the two y values differ by less than a millionth
+    // due to floating-point cleanup. Exact equality let it bypass the
+    // obstacle helper.
+    const s = mkNode('S', -100, 0);
+    const t = mkNode('T', 100, 0);
+    const o = mkNode('O', 0, 0, 40, 40);
+    const e = mkEdge('e', 'S', 'T', [
+      { x: -80, y: 0 },
+      { x: 80, y: 0.00000025 },
+    ]);
+    const layout: LayoutData = { nodes: [s, t, o], edges: [e], config: {} as any };
+
+    const res = validateLayout(layout);
+    expect(res.ok).toBe(false);
+    expect(getIssueTypes(layout)).toContain('edge-intersects-obstacle');
+  });
+
   it('flags edge-intersects-group-title when an edge crosses a group title section', () => {
     const lane: Node = {
       id: 'lane',

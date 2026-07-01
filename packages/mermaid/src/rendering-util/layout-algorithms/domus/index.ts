@@ -21,6 +21,7 @@ import { relocateOffEdgeLabelsWhenScoreImproves } from './pipeline/offEdgeLabelR
 import { remediateFlaggedEdgesWhenMonotone } from './pipeline/flaggedEdgeRemediation.js';
 import { spaceNodesOffGroupFramesWhenScoreImproves } from './pipeline/nodeGroupSpacing.js';
 import { reorderSiblingPortsToUncrossWhenScoreImproves } from './pipeline/siblingPortReorder.js';
+import { alignStraightLeafEdgesWhenValid } from './pipeline/straightLeafAlignment.js';
 import { isEdgeLabelNodeId } from './core/labels.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
 import { reduceCrossingsWithPortSideCandidatesWhenScoreImproves } from './pipeline/crossingPortRepair.js';
@@ -490,6 +491,11 @@ export function layout(data4Layout: LayoutData): void {
   // their ports are ordered opposite to their far endpoints; a directed router
   // re-routes them honouring each port's side. Score-gated.
   reorderSiblingPortsToUncrossWhenScoreImproves(data4Layout);
+
+  // Center degree-1 leaves on clean straight settled edges. This is intentionally
+  // final and validator-gated: it tidies Mermaid-specific post-DOMUS drift
+  // without feeding new coordinates back into the DOMUS shape construction.
+  alignStraightLeafEdgesWhenValid(data4Layout, { spacing: 10 });
 }
 
 /**

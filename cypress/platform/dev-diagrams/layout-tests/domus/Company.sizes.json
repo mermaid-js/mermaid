@@ -2,74 +2,74 @@
   "nodes": [
     {
       "id": "Customer",
-      "width": 92.68891906738281,
-      "height": 44.994319915771484
+      "width": 92.6857681274414,
+      "height": 44.99826431274414
     },
     {
       "id": "USCompany",
-      "width": 111.3678970336914,
-      "height": 44.994319915771484
+      "width": 111.36632537841797,
+      "height": 44.99826431274414
     },
     {
       "id": "HongKongCompany",
-      "width": 158.08663940429688,
-      "height": 44.994319915771484
+      "width": 158.0850830078125,
+      "height": 44.99826431274414
     },
     {
       "id": "Expenses",
-      "width": 93.48436737060547,
-      "height": 44.994319915771484
+      "width": 93.48438262939453,
+      "height": 44.99826431274414
     },
     {
       "id": "Income",
-      "width": 96.171875,
-      "height": 50.99431610107422
+      "width": 75.91146087646484,
+      "height": 50.99826431274414
     },
     {
       "id": "Tax1",
       "width": 49.453125,
-      "height": 50.99431610107422
+      "height": 50.99826431274414
     },
     {
       "id": "ExpensesHK",
-      "width": 112.9375,
-      "height": 44.994319915771484
+      "width": 112.93751525878906,
+      "height": 44.99826431274414
     },
     {
       "id": "Wages",
       "width": 49.453125,
-      "height": 50.99431610107422
+      "height": 50.99826431274414
     },
     {
       "id": "Incomehk",
-      "width": 92.70311737060547,
-      "height": 44.994319915771484
+      "width": 92.70313262939453,
+      "height": 44.99826431274414
     },
     {
       "id": "Tax",
-      "width": 96.171875,
-      "height": 50.99431610107422
+      "width": 93.03820037841797,
+      "height": 50.99826431274414
     },
     {
       "id": "edge-label-USCompany-HongKongCompany-L_USCompany_HongKongCompany_0",
-      "width": 81.71875,
-      "height": 20.99431800842285
+      "width": 81.7187728881836,
+      "height": 20.99826431274414
     },
     {
       "id": "edge-label-USCompany-Expenses-L_USCompany_Expenses_0",
-      "width": 9.33948802947998,
-      "height": 20.99431800842285
+      "width": 9.340279579162598,
+      "height": 20.99826431274414
     },
     {
       "id": "edge-label-USCompany-Income-L_USCompany_Income_0",
-      "width": 7.791193008422852,
-      "height": 20.99431800842285
+      "width": 7.786458492279053,
+      "height": 20.99826431274414
     }
   ],
   "metadata": {
     "captureVersion": 1,
-    "sourceSha256": "6a704c68f330308345f700b719181a8123496ad6c1b74cae445fb523ad59c73c",
-    "capturedAt": "2026-06-10T07:00:31.413Z",
+    "sourceSha256": "c7d407a3e2c6bba195a4573186eec3b7b343ba9ec947cb18a58530a207b864ab",
+    "capturedAt": "2026-06-30T15:15:49.450Z",
     "capturedFrom": "dev-explorer layout-tests/domus/Company.mmd theme=redux look=neo layout=swimlane"
   }
 }
