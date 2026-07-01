@@ -519,13 +519,17 @@ function applySidePortCandidates(
   return best.result;
 }
 
+function hasBentSidePortCandidate(result: ValidateLayoutResult): boolean {
+  return result.breakdown.edges.some((edge) => edge.points > 3 && edge.bendPenalty > 0);
+}
+
 /**
  * Score-gated cleanup for layouts that are already valid but still contain
- * edge-edge crossings. It first tries low-cost rail shifts, then a bounded
- * end-detour for last-mile vertical rails, then legal side-port candidates for
- * crossing participants and still-bent short routes. Every accepted mutation
- * must keep `validateLayout` clean and improve the global validator score, so
- * this is safe to run as a final quality pass.
+ * edge-edge crossings or still-bent short routes. It first tries low-cost rail
+ * shifts, then a bounded end-detour for last-mile vertical rails, then legal
+ * side-port candidates for crossing participants and still-bent routes. Every
+ * accepted mutation must keep `validateLayout` clean and improve the global
+ * validator score, so this is safe to run as a final quality pass.
  */
 export function reduceCrossingsWithPortSideCandidatesWhenScoreImproves(
   layout: LayoutData,
@@ -534,23 +538,25 @@ export function reduceCrossingsWithPortSideCandidatesWhenScoreImproves(
   const maxPasses = options.maxPasses ?? 4;
   const spacing = options.spacing ?? 10;
   let current = validateLayout(layout);
-  if (!current.ok || current.breakdown.crossings <= 0) {
+  if (!current.ok || (current.breakdown.crossings <= 0 && !hasBentSidePortCandidate(current))) {
     return { changed: 0 };
   }
 
   let changed = 0;
-  for (let pass = 0; pass < maxPasses && current.breakdown.crossings > 0; pass++) {
+  for (let pass = 0; pass < maxPasses; pass++) {
     const before = current;
-    current = applyRailShifts(layout, current, spacing);
-    if (current !== before) {
-      changed++;
-      continue;
-    }
+    if (current.breakdown.crossings > 0) {
+      current = applyRailShifts(layout, current, spacing);
+      if (current !== before) {
+        changed++;
+        continue;
+      }
 
-    current = applyEndpointDetours(layout, current, spacing);
-    if (current !== before) {
-      changed++;
-      continue;
+      current = applyEndpointDetours(layout, current, spacing);
+      if (current !== before) {
+        changed++;
+        continue;
+      }
     }
 
     current = applySidePortCandidates(layout, current, spacing);
