@@ -290,6 +290,23 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
     top?: number;
     bottom?: number;
   };
+  /**
+   * Where the subgraph title is placed relative to the subgraph box.
+   *
+   * With `auto` (the default) the title starts at the top-center and, if a routed edge
+   * would cross it, moves to the first free position in this order: `top`, `top-left`,
+   * `bottom`, `bottom-left`, `top-right`, `bottom-right`. If every position is blocked it
+   * stays at `top`. Any of the explicit values pins the title to that position.
+   *
+   */
+  subGraphTitlePosition?:
+    | 'auto'
+    | 'top'
+    | 'top-left'
+    | 'top-right'
+    | 'bottom'
+    | 'bottom-left'
+    | 'bottom-right';
   arrowMarkerAbsolute?: boolean;
   /**
    * The amount of padding around the diagram as a whole so that embedded

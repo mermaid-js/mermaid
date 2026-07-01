@@ -1217,6 +1217,7 @@ You have to call mermaid.initialize.`
           dir: subGraph.dir === 'TD' ? 'TB' : subGraph.dir, // normalize TD→TB for dagre
           explicitDir: subGraph.hasExplicitDir, // true only when the user wrote an explicit 'direction X' keyword
           isGroup: true,
+          subGraphTitlePosition: config.flowchart?.subGraphTitlePosition ?? 'auto',
           look: config.look,
         });
       }

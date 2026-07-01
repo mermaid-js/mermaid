@@ -220,7 +220,7 @@ export async function paintLayoutData(
     if (options.skipNode?.(node, context)) {
       continue;
     }
-    await paintLayoutNode(groups, node, context, options);
+    await paintLayoutNode(groups, node, context, options, data4Layout.edges);
   }
 
   const nodeById = buildNodeLookup(data4Layout.nodes);
@@ -238,12 +238,14 @@ async function paintLayoutNode(
   groups: CommonLayoutMeasure['groups'],
   node: LayoutData['nodes'][number],
   context: CommonLayoutPaintContext<unknown, CommonLayoutMeasure>,
-  options: CommonLayoutPaintOptions
+  options: CommonLayoutPaintOptions,
+  layoutEdges: LayoutData['edges'] = []
 ): Promise<void> {
   if ((node as { clusterNode?: boolean }).clusterNode) {
     positionNode(node);
   } else if (shouldPaintAsCluster(node, context, options)) {
-    await insertCluster(groups.clusters, node);
+    // Pass routed edges so `auto` subgraph titles can dodge edges that would cross them.
+    await insertCluster(groups.clusters, node, layoutEdges);
   } else {
     positionNode(node);
   }

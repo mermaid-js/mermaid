@@ -10,8 +10,9 @@ import createLabel from './createLabel.js';
 import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
 import { styles2String, userNodeOverrides } from './shapes/handDrawnShapeStyles.js';
 import { swimlane } from './clusters/swimlane.js';
+import { resolveSubGraphTitlePlacement } from './subGraphTitlePosition.js';
 
-const rect = async (parent, node) => {
+const rect = async (parent, node, layoutEdges = []) => {
   log.info('Creating subgraph rect for ', node.id, node);
   const siteConfig = getConfig();
   const { themeVariables, handDrawnSeed } = siteConfig;
@@ -99,11 +100,22 @@ const rect = async (parent, node) => {
       .attr('width', width)
       .attr('height', height);
   }
-  const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
+  const { subGraphTitleTopMargin, subGraphTitleBottomMargin } = getSubGraphTitleMargins(siteConfig);
+  // Resolve where the title sits. `auto` (the default for flowchart subgraphs) starts at the
+  // top-center and, if a routed edge would cross it, moves to the first free position; explicit
+  // values pin it. Absent (e.g. class/ER/kanban clusters) → 'top', matching the legacy transform.
+  const titlePlacement = resolveSubGraphTitlePlacement({
+    position: node.subGraphTitlePosition ?? 'top',
+    box: { x: node.x, y: node.y, width, height: node.height },
+    labelSize: { width: bbox.width, height: bbox.height },
+    edges: layoutEdges,
+    margins: { top: subGraphTitleTopMargin, bottom: subGraphTitleBottomMargin },
+    inset: node.padding ?? 0,
+  });
   labelEl.attr(
     'transform',
-    // This puts the label on top of the box instead of inside it
-    `translate(${node.x - bbox.width / 2}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
+    // This puts the label on the resolved edge of the box instead of inside it
+    `translate(${titlePlacement.x}, ${titlePlacement.y})`
   );
 
   if (labelStyles) {
@@ -285,7 +297,7 @@ const roundedWithTitle = async (parent, node) => {
 
   return { cluster: shapeSvg, labelBBox: bbox };
 };
-const kanbanSection = async (parent, node) => {
+const kanbanSection = async (parent, node, layoutEdges = []) => {
   log.info('Creating subgraph rect for ', node.id, node);
   const siteConfig = getConfig();
   const { themeVariables, handDrawnSeed } = siteConfig;
@@ -368,11 +380,22 @@ const kanbanSection = async (parent, node) => {
       .attr('width', width)
       .attr('height', height);
   }
-  const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
+  const { subGraphTitleTopMargin, subGraphTitleBottomMargin } = getSubGraphTitleMargins(siteConfig);
+  // Resolve where the title sits. `auto` (the default for flowchart subgraphs) starts at the
+  // top-center and, if a routed edge would cross it, moves to the first free position; explicit
+  // values pin it. Absent (e.g. class/ER/kanban clusters) → 'top', matching the legacy transform.
+  const titlePlacement = resolveSubGraphTitlePlacement({
+    position: node.subGraphTitlePosition ?? 'top',
+    box: { x: node.x, y: node.y, width, height: node.height },
+    labelSize: { width: bbox.width, height: bbox.height },
+    edges: layoutEdges,
+    margins: { top: subGraphTitleTopMargin, bottom: subGraphTitleBottomMargin },
+    inset: node.padding ?? 0,
+  });
   labelEl.attr(
     'transform',
-    // This puts the label on top of the box instead of inside it
-    `translate(${node.x - bbox.width / 2}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
+    // This puts the label on the resolved edge of the box instead of inside it
+    `translate(${titlePlacement.x}, ${titlePlacement.y})`
   );
 
   if (labelStyles) {
@@ -487,11 +510,13 @@ let clusterElems = new Map();
  */
 
 /**
+ * @param {any} elem
  * @param {import('../types.js').ClusterNode} node - Shape defaults to 'rect'
+ * @param {import('../types.js').Edge[]} [layoutEdges] - Routed edges, used by `auto` title placement
  */
-export const insertCluster = async (elem, node) => {
+export const insertCluster = async (elem, node, layoutEdges = []) => {
   const shape = node.shape || 'rect';
-  const cluster = await shapes[shape](elem, node);
+  const cluster = await shapes[shape](elem, node, layoutEdges);
   clusterElems.set(node.id, cluster);
   return cluster;
 };
