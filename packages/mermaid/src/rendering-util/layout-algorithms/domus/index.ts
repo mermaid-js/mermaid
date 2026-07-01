@@ -496,6 +496,10 @@ export function layout(data4Layout: LayoutData): void {
   // final and validator-gated: it tidies Mermaid-specific post-DOMUS drift
   // without feeding new coordinates back into the DOMUS shape construction.
   alignStraightLeafEdgesWhenValid(data4Layout, { spacing: 10 });
+
+  // Some valid-layout simplifications only become available after the late
+  // label/crossing/port-order passes have settled geometry.
+  simplifyEdgeJogsWhenScoreImproves(data4Layout);
 }
 
 /**

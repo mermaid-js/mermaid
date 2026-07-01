@@ -135,6 +135,23 @@ function uniqueNumbers(values: number[]): number[] {
   return out;
 }
 
+function uniqueCoordinates(values: number[]): number[] {
+  const out: number[] = [];
+  for (const value of values) {
+    if (!Number.isFinite(value)) {
+      continue;
+    }
+    if (!out.some((existing) => approxEqual(existing, value))) {
+      out.push(value);
+    }
+  }
+  return out;
+}
+
+function clamp(value: number, lo: number, hi: number): number {
+  return Math.max(lo, Math.min(hi, value));
+}
+
 function pushUniqueCandidate(out: Point[][], route: Point[]): void {
   if (route.length < 2) {
     return;
@@ -189,6 +206,73 @@ function terminalStubCandidates(pts: Point[]): Point[][] {
       if ((a.x - p0.x) * first.x > 0 && (pn.x - b.x) * last.x > 0) {
         pushUniqueCandidate(out, [{ ...p0 }, a, b, { ...pn }]);
       }
+    }
+  }
+
+  return out;
+}
+
+function startSideExitCandidates(
+  pts: Point[],
+  startRect: ReturnType<typeof rectForNode>,
+  siblingPortClash: (axis: 'x' | 'y', sideCoord: number, target: number) => boolean
+): Point[][] {
+  if (pts.length < 5) {
+    return [];
+  }
+  const first = unitDirection(pts[0], pts[1]);
+  if (!first) {
+    return [];
+  }
+
+  const out: Point[][] = [];
+  const p1 = pts[1];
+  const p2 = pts[2];
+  const p3 = pts[3];
+
+  if (first.x !== 0 && segDir(p1, p2) === 'V' && segDir(p2, p3) === 'H') {
+    const sideY =
+      p2.y < startRect.top - 1
+        ? startRect.top
+        : p2.y > startRect.bottom + 1
+          ? startRect.bottom
+          : null;
+    if (sideY == null) {
+      return out;
+    }
+    const lo = startRect.left + CORNER_MARGIN;
+    const hi = startRect.right - CORNER_MARGIN;
+    for (const x of uniqueCoordinates([
+      clamp(p1.x, lo, hi),
+      clamp(pts[0].x, lo, hi),
+      startRect.cx,
+    ])) {
+      if (siblingPortClash('x', sideY, x)) {
+        continue;
+      }
+      pushUniqueCandidate(out, [{ x, y: sideY }, { x, y: p2.y }, ...pts.slice(3)]);
+    }
+  } else if (first.y !== 0 && segDir(p1, p2) === 'H' && segDir(p2, p3) === 'V') {
+    const sideX =
+      p2.x < startRect.left - 1
+        ? startRect.left
+        : p2.x > startRect.right + 1
+          ? startRect.right
+          : null;
+    if (sideX == null) {
+      return out;
+    }
+    const lo = startRect.top + CORNER_MARGIN;
+    const hi = startRect.bottom - CORNER_MARGIN;
+    for (const y of uniqueCoordinates([
+      clamp(p1.y, lo, hi),
+      clamp(pts[0].y, lo, hi),
+      startRect.cy,
+    ])) {
+      if (siblingPortClash('y', sideX, y)) {
+        continue;
+      }
+      pushUniqueCandidate(out, [{ x: sideX, y }, { x: p2.x, y }, ...pts.slice(3)]);
     }
   }
 
@@ -336,6 +420,15 @@ export function simplifyEdgeJogsWhenScoreImproves(layout: LayoutData): void {
       if (endRect) {
         candidates.push(...endSideEntryCandidates(pts, endRect));
       }
+      const startRect = rectById.get(startId);
+      if (startRect) {
+        const startSideCandidates = startSideExitCandidates(
+          pts,
+          startRect,
+          (axis, sideCoord, target) => siblingPortClash(startId, e, axis, sideCoord, target)
+        );
+        candidates.push(...startSideCandidates);
+      }
 
       // Port-slide candidates: the plain L often fails only because its
       // terminal stub into `pn` would be a hair under the validator's 10px
@@ -343,7 +436,6 @@ export function simplifyEdgeJogsWhenScoreImproves(layout: LayoutData): void {
       // START port along its own side so the single rail clears STUB_MIN,
       // then route as straight/L. Constraints: port stays on the same side,
       // CORNER_MARGIN inside the side span, clear of sibling ports.
-      const startRect = rectById.get(startId);
       const firstDir = segDir(p0, pts[1]);
       const lastDir = segDir(pts[pts.length - 2], pn);
       if (
@@ -429,7 +521,7 @@ export function simplifyEdgeJogsWhenScoreImproves(layout: LayoutData): void {
         const oldPoints = e.points;
         const oldX = e.x;
         const oldY = e.y;
-        const hasLabel = e.label != null && Number.isFinite(oldX) && Number.isFinite(oldY);
+        const hasLabel = Number.isFinite(oldX) && Number.isFinite(oldY);
         e.points = candidate as any;
         let accepted = false;
         const anchors = hasLabel ? labelAnchors(candidate, oldX, oldY) : [{ x: 0, y: 0 }];
