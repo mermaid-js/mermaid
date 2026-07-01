@@ -18,9 +18,9 @@ const __dirname = path.dirname(__filename); // get the name of the directory
 const PACKAGES = {
   mermaid: 'mermaid',
   '@mermaid-js/layout-elk': 'mermaid-layout-elk',
+  '@mermaid-js/parser': 'parser',
   // TODO: these don't import cleanly yet due to exotic tsconfig.json requirements
   // '@mermaid-js/mermaid-zenuml': 'mermaid-zenuml',
-  // '@mermaid-js/parser': 'parser',
 };
 
 /**

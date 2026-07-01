@@ -30,8 +30,17 @@ export function extractFrontMatter(text: string): FrontMatterResult {
     };
   }
 
+  // Dedent by the captured indent — js-yaml rejects tab-indented documents.
+  const indent = matches[1];
+  const yamlBody = indent
+    ? matches[2]
+        .split('\n')
+        .map((line) => (line.startsWith(indent) ? line.slice(indent.length) : line))
+        .join('\n')
+    : matches[2];
+
   let parsed: FrontMatterMetadata =
-    yaml.load(matches[1], {
+    yaml.load(yamlBody, {
       // To support config, we need JSON schema.
       // https://www.yaml.org/spec/1.2/spec.html#id2803231
       schema: yaml.JSON_SCHEMA,

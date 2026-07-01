@@ -120,6 +120,7 @@ class Theme {
     this.noteBorderColor = this.border2;
     this.noteTextColor = this.actorTextColor;
     this.actorLineColor = this.actorBorder;
+    this.rectBkgColor = this.rectBkgColor || this.tertiaryColor;
 
     /* Each color-set will have a background, a foreground and a border color */
     this.cScale0 = this.cScale0 || this.primaryColor;
@@ -254,6 +255,25 @@ class Theme {
     this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
     this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
 
+    /* cynefin */
+    this.cynefin = {
+      domainFontSize: this.cynefin?.domainFontSize || 16,
+      itemFontSize: this.cynefin?.itemFontSize || 12,
+      boundaryColor: this.cynefin?.boundaryColor || this.lineColor,
+      boundaryWidth: this.cynefin?.boundaryWidth || 2,
+      cliffColor: this.cynefin?.cliffColor || '#8B4513',
+      cliffWidth: this.cynefin?.cliffWidth || 4,
+      arrowColor: this.cynefin?.arrowColor || this.lineColor,
+      arrowWidth: this.cynefin?.arrowWidth || 2,
+      complexBg: this.cynefin?.complexBg || '#C8E6C9',
+      complicatedBg: this.cynefin?.complicatedBg || '#DCEDC8',
+      chaoticBg: this.cynefin?.chaoticBg || '#FFE0B2',
+      clearBg: this.cynefin?.clearBg || '#FFF9C4',
+      confusionBg: this.cynefin?.confusionBg || '#D7CCC8',
+      textColor: this.cynefin?.textColor || this.textColor,
+      labelColor: this.cynefin?.labelColor || this.primaryTextColor,
+    };
+
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;
     this.quadrant2Fill = this.quadrant2Fill || adjust(this.primaryColor, { r: 5, g: 5, b: 5 });
@@ -324,6 +344,7 @@ class Theme {
       backgroundColor: this.xyChart?.backgroundColor || this.background,
       titleColor: this.xyChart?.titleColor || this.primaryTextColor,
       dataLabelColor: this.xyChart?.dataLabelColor || this.primaryTextColor,
+      legendTextColor: this.xyChart?.legendTextColor || this.primaryTextColor,
       xAxisTitleColor: this.xyChart?.xAxisTitleColor || this.primaryTextColor,
       xAxisLabelColor: this.xyChart?.xAxisLabelColor || this.primaryTextColor,
       xAxisTickColor: this.xyChart?.xAxisTickColor || this.primaryTextColor,

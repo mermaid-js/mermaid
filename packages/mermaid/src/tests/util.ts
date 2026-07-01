@@ -28,7 +28,8 @@ ${'2w'}   | ${dayjs.duration(2, 'w')}
 
 import { JSDOM } from 'jsdom';
 import { expect, it } from 'vitest';
-import { select, type Selection } from 'd3';
+import { select } from 'd3';
+import type { D3HtmlSelection, D3Selection } from '../types.js';
 
 export const convert = (template: TemplateStringsArray, ...params: unknown[]) => {
   const header = template[0]
@@ -63,10 +64,8 @@ export const MOCKED_BBOX = {
 };
 
 interface JsdomItInput {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  body: Selection<HTMLBodyElement, never, HTMLElement, any>; // The `any` here comes from D3'as API.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  svg: Selection<SVGSVGElement, never, HTMLElement, any>; // The `any` here comes from D3'as API.
+  body: D3HtmlSelection<HTMLElement>;
+  svg: D3Selection<SVGSVGElement>;
 }
 
 /**
@@ -107,8 +106,8 @@ export function jsdomIt(message: string, run: (input: JsdomItInput) => void | Pr
       setOnProtectedConstant(global, 'document', dom.window.document); // Fool D3 into thinking it's in a browser
       setOnProtectedConstant(global, 'MutationObserver', undefined); // JSDOM doesn't like cytoscape elements
 
-      const body = select<HTMLBodyElement, never>('body');
-      const svg = select<SVGSVGElement, never>('svg');
+      const body = select(document.body);
+      const svg = select<SVGSVGElement, unknown>('svg');
       await run({ body, svg });
     } finally {
       setOnProtectedConstant(global, 'window', oldWindow);

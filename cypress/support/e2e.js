@@ -13,7 +13,7 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-import '@cypress/code-coverage/support';
+import 'cypress-monocart-coverage/support';
 import '@applitools/eyes-cypress/commands';
 import '@argos-ci/cypress/support';
 // Import commands.js using ES2015 syntax:

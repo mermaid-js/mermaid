@@ -13,5 +13,14 @@ export default {
     "Cats" : 85
     "Rats" : 15`,
     },
+    {
+      title: 'Workday Breakdown with Values',
+      code: `pie showData title Where the workday goes (minutes)
+    "Focused work" : 210
+    "Meetings" : 120
+    "Email and chat" : 90
+    "Breaks" : 45
+    "Context switching" : 15`,
+    },
   ],
 } satisfies DiagramMetadata;

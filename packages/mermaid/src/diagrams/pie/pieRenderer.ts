@@ -48,11 +48,15 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   let [outerStrokeWidth] = parseFontSize(themeVariables.pieOuterStrokeWidth);
   outerStrokeWidth ??= 2;
 
+  const legendPosition = pieConfig.legendPosition;
+
   const textPosition: number = pieConfig.textPosition;
+  const innerHole: number =
+    pieConfig.donutHole > 0 && pieConfig.donutHole <= 0.9 ? pieConfig.donutHole : 0;
   const radius: number = Math.min(pieWidth, height) / 2 - MARGIN;
   // Shape helper to build arcs:
   const arcGenerator: d3.Arc<unknown, d3.PieArcDatum<D3Section>> = arc<d3.PieArcDatum<D3Section>>()
-    .innerRadius(0)
+    .innerRadius(innerHole * radius)
     .outerRadius(radius);
   const labelArcGenerator: d3.Arc<unknown, d3.PieArcDatum<D3Section>> = arc<
     d3.PieArcDatum<D3Section>
@@ -60,7 +64,9 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .innerRadius(radius * textPosition)
     .outerRadius(radius * textPosition);
 
-  group
+  const pie = group.append('g');
+
+  pie
     .append('circle')
     .attr('cx', 0)
     .attr('cy', 0)
@@ -98,7 +104,7 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   ]);
 
   // Build the pie chart: each part of the pie is a path that we build using the arc function.
-  group
+  pie
     .selectAll('mySlices')
     .data(filteredArcs)
     .enter()
@@ -107,11 +113,19 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .attr('fill', (datum: d3.PieArcDatum<D3Section>) => {
       return color(datum.data.label);
     })
-    .attr('class', 'pieCircle');
+    .attr('class', (datum: d3.PieArcDatum<D3Section>) => {
+      let className = 'pieCircle';
+      if (pieConfig.highlightSlice === 'hover') {
+        className += ' highlightedOnHover';
+      } else if (pieConfig.highlightSlice === datum.data.label) {
+        className += ' highlighted';
+      }
+      return className;
+    });
 
-  // Now add the percentage.
+  // Now add the section text.
   // Use the centroid method to get the best coordinates.
-  group
+  pie
     .selectAll('mySlices')
     .data(filteredArcs)
     .enter()
@@ -139,19 +153,13 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     value,
   }));
 
+  // Draw legend
   const legend = group
     .selectAll('.legend')
     .data(allSectionData)
     .enter()
     .append('g')
-    .attr('class', 'legend')
-    .attr('transform', (_datum, index: number): string => {
-      const height = LEGEND_RECT_SIZE + LEGEND_SPACING;
-      const offset = (height * allSectionData.length) / 2;
-      const horizontal = 12 * LEGEND_RECT_SIZE;
-      const vertical = index * height - offset;
-      return 'translate(' + horizontal + ',' + vertical + ')';
-    });
+    .attr('class', 'legend');
 
   legend
     .append('rect')
@@ -178,8 +186,69 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
       .map((node) => (node as Element)?.getBoundingClientRect().width ?? 0)
   );
 
-  const chartAndLegendWidth =
-    pieWidth + MARGIN + LEGEND_RECT_SIZE + LEGEND_SPACING + longestTextWidth;
+  let chartAndLegendHeight: number = height;
+  let chartAndLegendWidth: number = pieWidth + MARGIN;
+
+  const legendHeight: number = LEGEND_RECT_SIZE + LEGEND_SPACING;
+  const totalLegendHeight: number = allSectionData.length * legendHeight;
+
+  switch (legendPosition) {
+    case 'center':
+      legend.attr('transform', (_datum, index: number): string => {
+        const offset: number = (legendHeight * allSectionData.length) / 2;
+        const horizontal: number = -longestTextWidth / 2 - (LEGEND_RECT_SIZE + LEGEND_SPACING);
+        const vertical: number = index * legendHeight - offset;
+        return 'translate(' + horizontal + ',' + vertical + ')';
+      });
+      break;
+    case 'top':
+      chartAndLegendHeight += totalLegendHeight;
+
+      legend.attr('transform', (_datum, index: number): string => {
+        const offset: number = radius;
+        const horizontal: number = -longestTextWidth / 2 - (LEGEND_RECT_SIZE + LEGEND_SPACING);
+        const vertical: number = index * legendHeight - offset;
+        return `translate(${horizontal}, ${vertical})`;
+      });
+      pie.attr('transform', (): string => {
+        return `translate(0, ${totalLegendHeight + legendHeight})`;
+      });
+      break;
+    case 'bottom':
+      chartAndLegendHeight += totalLegendHeight;
+
+      legend.attr('transform', (_datum, index: number): string => {
+        const offset: number = -radius - legendHeight;
+        const horizontal: number = -longestTextWidth / 2 - (LEGEND_RECT_SIZE + LEGEND_SPACING);
+        const vertical: number = index * legendHeight - offset;
+        return 'translate(' + horizontal + ',' + vertical + ')';
+      });
+      break;
+    case 'left':
+      chartAndLegendWidth += LEGEND_RECT_SIZE + LEGEND_SPACING + longestTextWidth;
+
+      legend.attr('transform', (_datum, index: number): string => {
+        const offset: number = (legendHeight * allSectionData.length) / 2;
+        const horizontal: number = -radius - (LEGEND_RECT_SIZE + LEGEND_SPACING);
+        const vertical: number = index * legendHeight - offset;
+        return 'translate(' + horizontal + ',' + vertical + ')';
+      });
+      pie.attr('transform', (): string => {
+        return `translate(${longestTextWidth + LEGEND_RECT_SIZE + LEGEND_SPACING}, 0)`;
+      });
+      break;
+    case 'right':
+    default:
+      chartAndLegendWidth += LEGEND_RECT_SIZE + LEGEND_SPACING + longestTextWidth;
+
+      legend.attr('transform', (_datum, index: number): string => {
+        const offset: number = (legendHeight * allSectionData.length) / 2;
+        const horizontal: number = 12 * LEGEND_RECT_SIZE;
+        const vertical: number = index * legendHeight - offset;
+        return 'translate(' + horizontal + ',' + vertical + ')';
+      });
+      break;
+  }
 
   // Measure title width to ensure it's not clipped
   const titleWidth = (titleText.node() as Element)?.getBoundingClientRect().width ?? 0;
@@ -192,8 +261,8 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   const viewBoxRight = Math.max(chartAndLegendWidth, titleRight);
   const totalWidth = viewBoxRight - viewBoxX;
 
-  svg.attr('viewBox', `${viewBoxX} 0 ${totalWidth} ${height}`);
-  configureSvgSize(svg, height, totalWidth, pieConfig.useMaxWidth);
+  svg.attr('viewBox', `${viewBoxX} 0 ${totalWidth} ${chartAndLegendHeight}`);
+  configureSvgSize(svg, chartAndLegendHeight, totalWidth, pieConfig.useMaxWidth);
 };
 
 export const renderer = { draw };

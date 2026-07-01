@@ -7,6 +7,7 @@ catmull
 compositTitleSize
 cose
 curv
+cynefin
 deaccelerator
 Deaccelerator
 deaccelerators
@@ -42,6 +43,7 @@ sentencepiece
 siebling
 statediagram
 substate
+treeview
 unfixable
 Unmodelled
 Viewbox
