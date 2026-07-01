@@ -1182,6 +1182,18 @@ end
         { flowchart: { subGraphTitlePosition: 'top-left' } }
       );
     });
+    it('2977: Should pin a subgraph title to bottom-left when configured', () => {
+      imgSnapshotTest(
+        `flowchart TD
+          Root ==> Child
+          subgraph Items
+            Child --> ThingA
+            Child --> ThingB
+          end
+        `,
+        { flowchart: { subGraphTitlePosition: 'bottom-left' } }
+      );
+    });
     it('2977: Should pin a subgraph title to the bottom when configured', () => {
       imgSnapshotTest(
         `flowchart TD
