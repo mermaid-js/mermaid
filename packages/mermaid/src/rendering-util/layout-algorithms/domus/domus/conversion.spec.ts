@@ -3,12 +3,14 @@ import type { LayoutData } from '../../../types.js';
 import { layoutDataToDomusInput } from './conversion.js';
 
 describe('layoutDataToDomusInput', () => {
-  it('excludes group endpoints from the DOMUS simple graph', () => {
+  it('proxies group endpoint edges to descendant leaves', () => {
     const layout = {
       nodes: [
         { id: 'A', isGroup: false },
         { id: 'B', isGroup: false },
         { id: 'G', isGroup: true },
+        { id: 'C', parentId: 'G', isGroup: false },
+        { id: 'D', parentId: 'G', isGroup: false },
         { id: 'edge-label-G-B-L_G_B_0', isGroup: false, isEdgeLabel: true },
       ],
       edges: [
@@ -27,9 +29,12 @@ describe('layoutDataToDomusInput', () => {
     } as LayoutData;
 
     expect(layoutDataToDomusInput(layout)).toEqual({
-      vertexIds: ['A', 'B', 'edge-label-G-B-L_G_B_0'],
+      vertexIds: ['A', 'B', 'C', 'D', 'edge-label-G-B-L_G_B_0'],
       edges: [
         { id: 'A_B', from: 'A', to: 'B' },
+        { id: 'A_G', from: 'A', to: 'C' },
+        { id: 'G_B', from: 'D', to: 'B' },
+        { id: 'G_B-to-label', from: 'D', to: 'edge-label-G-B-L_G_B_0' },
         { id: 'G_B-from-label', from: 'edge-label-G-B-L_G_B_0', to: 'B' },
       ],
     });

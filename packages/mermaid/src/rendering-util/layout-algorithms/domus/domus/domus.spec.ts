@@ -138,6 +138,24 @@ describe('DOMUS Core Types', () => {
       expect(graph.adjacency.get('C')?.length).toBe(1);
     });
 
+    it('excludes edges outside the vertex set', () => {
+      const graph = createDomusGraph(
+        ['A', 'B'],
+        [
+          { id: 'e1', from: 'A', to: 'B' },
+          { id: 'e2', from: 'A', to: 'Group' },
+          { id: 'e3', from: 'Group', to: 'B' },
+        ]
+      );
+
+      expect(graph.edges.size).toBe(1);
+      expect(graph.edges.has('e2')).toBe(false);
+      expect(graph.edges.has('e3')).toBe(false);
+      expect(graph.adjacency.get('A')).toEqual([{ neighbor: 'B', edgeId: 'e1' }]);
+      expect(graph.adjacency.get('B')).toEqual([{ neighbor: 'A', edgeId: 'e1' }]);
+      expect(graph.adjacency.has('Group')).toBe(false);
+    });
+
     it('splits an edge correctly', () => {
       const graph = createDomusGraph(['A', 'B'], [{ id: 'e1', from: 'A', to: 'B' }]);
 

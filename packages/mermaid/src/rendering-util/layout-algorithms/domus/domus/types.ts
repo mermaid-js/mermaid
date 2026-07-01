@@ -424,6 +424,9 @@ export function createDomusGraph(
 
   // Add edges
   for (const e of edges) {
+    if (!vertices.has(e.from) || !vertices.has(e.to)) {
+      continue;
+    }
     const edge: DirectedEdge = { id: e.id, from: e.from, to: e.to, originalEdgeId: e.id };
     edgeMap.set(e.id, edge);
 
