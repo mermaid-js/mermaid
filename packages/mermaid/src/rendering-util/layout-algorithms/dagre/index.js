@@ -291,7 +291,7 @@ const measureDagreGraph = async ({
   // Insert nodes, this will insert them into the dom and each node will get a size. The size is updated
   // to the abstract node and is later used by dagre for the layout
   await Promise.all(
-    graph.nodes().map(async function (v) {
+    graph.nodes().map(async (v) => {
       const node = graph.node(v);
       if (parentCluster !== undefined) {
         const data = JSON.parse(JSON.stringify(parentCluster.clusterData));
@@ -374,7 +374,7 @@ const measureDagreGraph = async ({
   );
 
   const processEdges = async () => {
-    const edgePromises = graph.edges().map(async function (e) {
+    const edgePromises = graph.edges().map(async (e) => {
       const edge = graph.edge(e.v, e.w, e.name);
       log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
       log.info('Edge ' + e.v + ' -> ' + e.w + ': ', e, ' ', JSON.stringify(graph.edge(e)));
@@ -527,6 +527,27 @@ export const applyDagreLayoutResult = (data4Layout, measuredLayout) => {
   return data4Layout;
 };
 
+const getSubGraphTitleOccupiedRects = (graph, nodeId, yOffset = 0) => {
+  const rects = [];
+  const addChildren = (parentId) => {
+    const children = graph.children(parentId) ?? [];
+    children.forEach((childId) => {
+      const child = graph.node(childId);
+      if (child) {
+        rects.push({
+          x: (child.x ?? 0) - (child.width ?? 0) / 2,
+          y: (child.y ?? 0) - (child.height ?? 0) / 2 + yOffset,
+          width: child.width ?? 0,
+          height: child.height ?? 0,
+        });
+      }
+      addChildren(childId);
+    });
+  };
+  addChildren(nodeId);
+  return rects;
+};
+
 const paintDagreLayoutCore = async ({
   elem,
   graph,
@@ -539,7 +560,7 @@ const paintDagreLayoutCore = async ({
   // Move the nodes to the correct place
   let diff = 0;
   await Promise.all(
-    sortNodesByHierarchy(graph).map(async function (v) {
+    sortNodesByHierarchy(graph).map(async (v) => {
       const node = graph.node(v);
       log.info(
         'Position XBX => ' + v + ': (' + node.x,
@@ -584,6 +605,11 @@ const paintDagreLayoutCore = async ({
           const labelHeight = node?.labelBBox?.height || 0;
           const offsetY = labelHeight - halfPadding || 0;
           log.debug('OffsetY', offsetY, 'labelHeight', labelHeight, 'halfPadding', halfPadding);
+          node.subGraphTitleOccupiedRects = getSubGraphTitleOccupiedRects(
+            graph,
+            v,
+            subGraphTitleTotalMargin / 2
+          );
           await insertCluster(clusters, node);
 
           // A cluster in the non-recursive way
@@ -619,7 +645,7 @@ const paintDagreLayoutCore = async ({
   const edgeOffsetY = subGraphTitleTotalMargin / 2;
   const edgesToRender = getEdgesToRender(graph, edgeOffsetY, { mergeSelfLoops });
 
-  edgesToRender.forEach(function ({ edge, start, end }) {
+  edgesToRender.forEach(({ edge, start, end }) => {
     log.info('Edge ' + start + ' -> ' + end + ': ' + JSON.stringify(edge), edge);
 
     edge.points.forEach((point) => (point.y += edgeOffsetY));
@@ -629,7 +655,7 @@ const paintDagreLayoutCore = async ({
     positionEdgeLabel(edge, paths);
   });
 
-  graph.nodes().forEach(function (v) {
+  graph.nodes().forEach((v) => {
     const n = graph.node(v);
     log.info(v, n.type, n.diff);
     if (n.isGroup) {
@@ -664,9 +690,7 @@ export const prepareLayoutForDagre = (data4Layout) => {
       marginx: 8,
       marginy: 8,
     })
-    .setDefaultEdgeLabel(function () {
-      return {};
-    });
+    .setDefaultEdgeLabel(() => ({}));
 
   data4Layout.nodes.forEach((node) => {
     graph.setNode(node.id, { ...node });

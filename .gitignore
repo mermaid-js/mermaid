@@ -65,6 +65,7 @@ generated/
 /AGENTS.md
 /assistant/
 /.claude/
+/.pi/
 packages/mermaid/src/diagrams/CLAUDE.md
 packages/parser/CLAUDE.md
 AGENTS.mermaid.md

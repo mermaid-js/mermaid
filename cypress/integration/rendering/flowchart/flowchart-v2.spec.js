@@ -1055,6 +1055,19 @@ end
     });
   });
   describe('Subgraph title margins', () => {
+    it('Should auto-place subgraph labels away from occupied title positions', () => {
+      imgSnapshotTest(
+        `flowchart TD
+          subgraph TOP[Items]
+            direction LR
+            A[Root] --> B[Child]
+          end
+          C[Outside] --> TOP
+        `,
+        {}
+      );
+    });
+
     it('Should render subgraphs with title margins set (LR)', () => {
       imgSnapshotTest(
         `flowchart LR

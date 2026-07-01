@@ -2,6 +2,7 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { getEffectiveHtmlLabels } from '../../config.js';
 import { log } from '../../logger.js';
 import { getSubGraphTitleMargins } from '../../utils/subGraphTitleMargins.js';
+import { getSubGraphTitlePosition } from '../../utils/subGraphTitlePosition.js';
 import { select } from 'd3';
 import rough from 'roughjs';
 import { createText } from '../createText.ts';
@@ -10,6 +11,66 @@ import createLabel from './createLabel.js';
 import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
 import { styles2String, userNodeOverrides } from './shapes/handDrawnShapeStyles.js';
 import { swimlane } from './clusters/swimlane.js';
+
+const escapeSelectorId = (id) => {
+  if (!id) {
+    return '';
+  }
+  return typeof CSS !== 'undefined' && CSS.escape
+    ? CSS.escape(id)
+    : id.replaceAll(/[^\w-]/g, '\\$&');
+};
+
+const getRenderedOccupiedRects = (parent, clusterRect, clusterId) => {
+  const svg = parent.node()?.ownerSVGElement;
+  if (!svg) {
+    return [];
+  }
+
+  const clusterSelector = `#${escapeSelectorId(clusterId)}`;
+
+  return [...svg.querySelectorAll('.node, .edgeLabel, .edgePaths path')]
+    .filter((element) => !clusterId || !element.closest(clusterSelector))
+    .map((element) => {
+      try {
+        return element.getBBox();
+      } catch {
+        return undefined;
+      }
+    })
+    .filter(
+      (bbox) =>
+        bbox &&
+        bbox.x < clusterRect.x + clusterRect.width &&
+        bbox.x + bbox.width > clusterRect.x &&
+        bbox.y < clusterRect.y + clusterRect.height &&
+        bbox.y + bbox.height > clusterRect.y
+    )
+    .map((bbox) => ({ x: bbox.x, y: bbox.y, width: bbox.width, height: bbox.height }));
+};
+
+const positionSubGraphTitle = (parent, labelEl, node, bbox, width, height, siteConfig) => {
+  const { subGraphTitleTopMargin, subGraphTitleBottomMargin } = getSubGraphTitleMargins(siteConfig);
+  const cluster = {
+    x: node.x - width / 2,
+    y: node.y - height / 2,
+    width,
+    height,
+  };
+  const { x, y } = getSubGraphTitlePosition({
+    position: 'auto',
+    cluster,
+    label: bbox,
+    occupiedRects: [
+      ...(node.subGraphTitleOccupiedRects ?? []),
+      ...getRenderedOccupiedRects(parent, cluster, node.domId),
+    ],
+    topMargin: subGraphTitleTopMargin,
+    bottomMargin: subGraphTitleBottomMargin,
+  });
+
+  labelEl.attr('transform', `translate(${x}, ${y})`);
+};
 
 const rect = async (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
@@ -68,7 +129,7 @@ const rect = async (parent, node) => {
   log.trace('Data ', node, JSON.stringify(node));
   let rect;
   if (node.look === 'handDrawn') {
-    // @ts-ignore TODO: Fix rough typings
+    // @ts-expect-error TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {
       roughness: 0.7,
@@ -99,12 +160,7 @@ const rect = async (parent, node) => {
       .attr('width', width)
       .attr('height', height);
   }
-  const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
-  labelEl.attr(
-    'transform',
-    // This puts the label on top of the box instead of inside it
-    `translate(${node.x - bbox.width / 2}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
-  );
+  positionSubGraphTitle(parent, labelEl, node, bbox, width, height, siteConfig);
 
   if (labelStyles) {
     const span = labelEl.select('span');
@@ -121,9 +177,7 @@ const rect = async (parent, node) => {
   // Used by layout engine to position subgraph in parent
   node.offsetY = bbox.height - node.padding / 2;
 
-  node.intersect = function (point) {
-    return intersectRect(node, point);
-  };
+  node.intersect = (point) => intersectRect(node, point);
 
   return { cluster: shapeSvg, labelBBox: bbox };
 };
@@ -159,9 +213,7 @@ const noteGroup = (parent, node) => {
   node.width = rectBox.width;
   node.height = rectBox.height;
 
-  node.intersect = function (point) {
-    return intersectRect(node, point);
-  };
+  node.intersect = (point) => intersectRect(node, point);
 
   return { cluster: shapeSvg, labelBBox: { width: 0, height: 0 } };
 };
@@ -279,9 +331,7 @@ const roundedWithTitle = async (parent, node) => {
   node.offsetY = bbox.height - node.padding / 2;
   node.labelBBox = bbox;
 
-  node.intersect = function (point) {
-    return intersectRect(node, point);
-  };
+  node.intersect = (point) => intersectRect(node, point);
 
   return { cluster: shapeSvg, labelBBox: bbox };
 };
@@ -337,7 +387,7 @@ const kanbanSection = async (parent, node) => {
   log.trace('Data ', node, JSON.stringify(node));
   let rect;
   if (node.look === 'handDrawn') {
-    // @ts-ignore TODO: Fix rough typings
+    // @ts-expect-error TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {
       roughness: 0.7,
@@ -368,12 +418,7 @@ const kanbanSection = async (parent, node) => {
       .attr('width', width)
       .attr('height', height);
   }
-  const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
-  labelEl.attr(
-    'transform',
-    // This puts the label on top of the box instead of inside it
-    `translate(${node.x - bbox.width / 2}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
-  );
+  positionSubGraphTitle(parent, labelEl, node, bbox, width, height, siteConfig);
 
   if (labelStyles) {
     const span = labelEl.select('span');
@@ -390,9 +435,7 @@ const kanbanSection = async (parent, node) => {
   // Used by layout engine to position subgraph in parent
   node.offsetY = bbox.height - node.padding / 2;
 
-  node.intersect = function (point) {
-    return intersectRect(node, point);
-  };
+  node.intersect = (point) => intersectRect(node, point);
 
   return { cluster: shapeSvg, labelBBox: bbox };
 };
@@ -462,9 +505,7 @@ const divider = (parent, node) => {
   // Used by layout engine to position subgraph in parent
   node.offsetY = 0;
 
-  node.intersect = function (point) {
-    return intersectRect(node, point);
-  };
+  node.intersect = (point) => intersectRect(node, point);
 
   return { cluster: shapeSvg, labelBBox: {} };
 };
