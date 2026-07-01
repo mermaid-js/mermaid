@@ -12,6 +12,12 @@ export interface NodeMetaData {
   assigned?: string;
   ticket?: string;
   labelType?: string;
+  /**
+   * Expand/collapse state for subgraphs (flowchart). `collapsed` draws the
+   * subgraph as a single compact node and redirects boundary-crossing edges
+   * to it; `expanded` (the default) renders the subgraph normally.
+   */
+  view?: 'expanded' | 'collapsed';
 }
 
 export interface ParticipantMetaData {
