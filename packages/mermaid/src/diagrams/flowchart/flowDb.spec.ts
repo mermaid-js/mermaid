@@ -166,7 +166,6 @@ describe('flow db getData', () => {
   });
 });
 
-
 describe('flow db edge constraint annotation', () => {
   let flowDb: FlowDB;
   beforeEach(() => {
