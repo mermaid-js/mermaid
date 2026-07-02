@@ -212,6 +212,7 @@ export class AgentFlowDB implements DiagramDB {
   private classes = new Map<string, FlowClass>();
   private subGraphs: FlowSubGraph[] = [];
   private subGraphLookup = new Map<string, FlowSubGraph>();
+  private globalNodes = new Set<string>();
   private connectors = new Map<string, FlowVertex>();
   private tooltips = new Map<string, string>();
   private subCount = 0;
@@ -260,6 +261,7 @@ export class AgentFlowDB implements DiagramDB {
     this.firstGraph = this.firstGraph.bind(this);
     this.setDirection = this.setDirection.bind(this);
     this.addSubGraph = this.addSubGraph.bind(this);
+    this.addGlobal = this.addGlobal.bind(this);
     this.addConnector = this.addConnector.bind(this);
     this.addConnectorMapping = this.addConnectorMapping.bind(this);
     this.addLink = this.addLink.bind(this);
@@ -1086,6 +1088,7 @@ You have to call mermaid.initialize.`
     this.funs = [this.setupToolTips.bind(this)];
     this.subGraphs = [];
     this.subGraphLookup = new Map();
+    this.globalNodes = new Set();
     this.connectors = new Map();
     this.subCount = 0;
     this.tooltips = new Map();
@@ -1172,8 +1175,10 @@ You have to call mermaid.initialize.`
       // folded into the member list, so `a --> myFlow` written inside
       // `flow myFlow … end` would otherwise make the flow its own member and
       // self-parent, crashing the renderer with graphlib's "would create a
-      // cycle" (issue #70).
-      nodes: nodeList.filter((nodeId: string) => nodeId !== id),
+      // cycle" (issue #70). Globally scoped nodes (`global … end`, issue #80)
+      // are exempt from membership the same way — referencing one inside a
+      // flow must not adopt it.
+      nodes: nodeList.filter((nodeId: string) => nodeId !== id && !this.globalNodes.has(nodeId)),
       title: title.trim(),
       classes: [],
       dir,
@@ -1214,6 +1219,33 @@ You have to call mermaid.initialize.`
       this.subGraphLookup.set(id, subGraph);
     }
     return id;
+  }
+
+  /**
+   * Registers every node id that appears inside a `global … end` block as
+   * globally scoped (issue #80): the node keeps no parent even when it is
+   * referenced inside a `flow … end` block, opting out of the textual
+   * membership rule that would otherwise pull it in. Edges declared inside
+   * the block are ordinary top-level edges — only the membership exemption
+   * is recorded here, and no container is emitted for the block.
+   */
+  public addGlobal(list: unknown[]) {
+    for (const item of list.flat()) {
+      // Skip non-id statement values (e.g. `direction` markers); node ids
+      // arrive as plain strings.
+      if (typeof item !== 'string') {
+        continue;
+      }
+      const id = item.trim();
+      if (id !== '') {
+        this.globalNodes.add(id);
+      }
+    }
+    // Flows parsed before this block already claimed the ids — release them
+    // so the exemption is independent of declaration order.
+    for (const subGraph of this.subGraphs) {
+      subGraph.nodes = subGraph.nodes.filter((nodeId) => !this.globalNodes.has(nodeId));
+    }
   }
 
   private getPosForId(id: string) {

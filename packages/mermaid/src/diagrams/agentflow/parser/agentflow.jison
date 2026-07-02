@@ -114,6 +114,7 @@ that id.
 "agentflow"              {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "flow"                   return 'flow';
 "connector"              return 'connector';
+"global"\b[ \t]*         return 'global';
 "end"\b[ \t]*            return 'end';
 
 "_self"                  return 'LINK_TARGET';
@@ -383,6 +384,8 @@ statement
     {$$=yy.addSubGraph($textNoTags,$document,{text:'', type:'text'},'flow');yy.addVertex($$,undefined,undefined,undefined,undefined,undefined,undefined,$shapeData,@4);if(yy.addSubgraphMapping){yy.addSubgraphMapping($textNoTags,{text:'', type:'text'},@1,@7);}}
     | flow separator document end
     {$$=yy.addSubGraph(undefined,$document,undefined,'flow');if(yy.addSubgraphMapping){yy.addSubgraphMapping(undefined,undefined,@1,@4);}}
+    | global separator document end
+    {yy.addGlobal($document);$$=[];}
     | connector SPACE textNoTags SQS text SQE separator
     {$$=yy.addConnector($textNoTags,$text);if(yy.addConnectorMapping){yy.addConnectorMapping($textNoTags,$text,@1,@7);}}
     | connector SPACE textNoTags SQS text SQE shapeData separator
@@ -523,7 +526,7 @@ text: textToken
 
 
 keywords
-    : STYLE | LINKSTYLE | CLASSDEF | CLASS | CLICK | GRAPH | DIR | flow | connector | end | DOWN | UP;
+    : STYLE | LINKSTYLE | CLASSDEF | CLASS | CLICK | GRAPH | DIR | flow | connector | global | end | DOWN | UP;
 
 
 textNoTags: textNoTagsToken

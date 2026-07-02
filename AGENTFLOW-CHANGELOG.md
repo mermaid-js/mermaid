@@ -20,10 +20,26 @@
 | 0.8.0   | 2026-05-25 | Aggressive simplification per the AI-authored / human-corrected review. Drop the `agentflow:` wrapper; collapse containers to `agent` only (`flow` folds in, `task` becomes a node, `skill`/`testCase`/`directive` removed); cut edges to three (`-->`, `--x`, `---`); remove data-flow edges in favour of a shared stateful object; introduce a real `connector` keyword; remove `type`/`template` declarations (now metadata); drop constraints/directives from core; unify instances under an `instance of` keyword; split diagnostics/conformance and this changelog into separate documents.                                                                                                                                                                                                                                                                                                                                                       |
 | 0.8.1   | 2026-05-26 | Follow-up cuts and renames from the 2026-05-26 syntax meeting. Container renamed `agent` → `flow`. `reads`/`writes` arrays removed (data passes between steps implicitly). `instance of` keyword removed (reuse goes through MCP-callable actions). `procs` external-file shape removed. Reference edge moves from `---` to `-.-` (dotted, non-directional). Shape aliases introduced (`task`, `tool`, `input`, `decision`, `refdoc`, `action`). `hexagon` repurposed as `action`; standalone classification pattern removed. `prompt` renamed to `instruction` and promoted to a cross-cutting key. Dotted form of `connectorRef` is now canonical. Edges may be addressed by id and carry an `instruction`. Flow-level input/output validation. Removed shapes become hard syntax errors. Capability evaluation removed: `permits` / `requires` / `deny` and the Capability Evaluation section are gone — access control is delegated to the runtime. |
 | 0.8.2   | 2026-06-03 | Additive + fixes; nothing removed or renamed. Inline `@{ … }` metadata may be attached on a flow header (`flow <id>@{ … }` / `flow <id>["Title"]@{ … }`), equivalent to the standalone `<id>@{ … }` form. Fixes: genuine self-loop edges (`a --> a`) now render; edge `instruction` metadata is carried into the layout IR (not just the parser DB); editor position-mappings corrected — inline `@{ … }` blocks map to their node rather than the enclosing flow, and sibling flow containers no longer report overlapping line spans.                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| 0.8.3   | 2026-07-02 | Additive. New `global … end` scope block (§3.5): nodes referenced inside it are globally scoped and keep no parent even when referenced inside a `flow … end` block — the explicit opt-out of textual flow membership. The block takes no id/title/metadata and renders nothing itself; edges declared inside are ordinary top-level edges; order-independent; usable inside a flow as an escape hatch. `global` becomes a reserved word (no longer usable as a bare node id). (#80)                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 
 ---
 
-## v0.8.2 — 2026-06-03 (current)
+## v0.8.3 — 2026-07-02 (current)
+
+Additive follow-up to v0.8.2. One new construct, nothing removed or renamed.
+
+**Authoring addition**
+
+- **The `global` scope block.** `global … end` globally scopes every node id referenced
+  inside it: the node keeps no parent even when referenced inside a `flow … end` block,
+  opting out of the textual membership rule that would otherwise pull it into the flow's
+  container. The block takes no id, title, or metadata and emits no container of its
+  own. Edges declared inside are ordinary top-level edges. The exemption is independent
+  of declaration order, and a `global` block nested inside a flow anchors the listed ids
+  at the root scope. `global` becomes a reserved word, consistent with `flow`,
+  `connector`, and `end`. (#80)
+
+## v0.8.2 — 2026-06-03
 
 A small, backward-compatible follow-up to v0.8.1. No syntax is removed or renamed.
 
