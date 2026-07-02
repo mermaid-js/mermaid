@@ -446,37 +446,13 @@ function tryLayeredFallbackCandidateWhenScoreImproves(
   }
 }
 
-export function layout(data4Layout: LayoutData): void {
-  runRP1OrthogonalPipeline(data4Layout, {
-    spacing: 10,
-    routingBackend: 'domus',
-    useExistingPositions: false,
-  });
-
-  const preFinalizeLayout = cloneLayoutForFallbackCandidate(data4Layout);
-
-  // Convert internal dummy label nodes back into overlay labels (DOM-free) so
-  // paint's `adjustLayout` will treat labels as overlays and draw a single
-  // semantic edge per `(start, end)` pair.
-  finalizeDummyLabelNodesToOverlayLabels(data4Layout);
-  tryLayeredFallbackCandidateWhenScoreImproves(data4Layout, preFinalizeLayout);
-
-  // Compound (per-group) DOMUS placement candidate for multi-group layouts the
-  // flat placement left invalid or weak. Score-gated inside; see
-  // `pipeline/compoundPlacement.ts` for the paper trail.
-  tryCompoundGroupPlacementCandidateWhenScoreImproves(data4Layout, preFinalizeLayout, {
-    spacing: 10,
-    routeWithRoutingGraph: (candidate) => {
-      runRP1OrthogonalPipeline(candidate, {
-        spacing: 10,
-        routingBackend: 'routing-graph',
-        routingGraphModel: 'channels',
-        useExistingPositions: true,
-        groupPadding: COMPOUND_GROUP_PAD,
-      });
-    },
-  });
-
+/**
+ * The full post-candidate quality tail: monotone repairs, bend reduction,
+ * score-gated simplifiers and crossing passes. Shared between `layout()` and
+ * the compound-placement tournament — each placement variant must be judged
+ * on its POLISHED quality (hook-stage issue counts misjudge the final).
+ */
+export function runLateQualityPasses(data4Layout: LayoutData): void {
   // Re-exit terminals the validator flags as port-direction-mismatched onto a
   // perpendicular side with a clean L. Runs before jog simplification so the new
   // route can be further straightened if that helps.
@@ -542,6 +518,41 @@ export function layout(data4Layout: LayoutData): void {
   reorderPortFansWhenScoreImproves(data4Layout);
   rerouteTopCrossersWhenScoreImproves(data4Layout);
   simplifyEdgeJogsWhenScoreImproves(data4Layout);
+}
+
+export function layout(data4Layout: LayoutData): void {
+  runRP1OrthogonalPipeline(data4Layout, {
+    spacing: 10,
+    routingBackend: 'domus',
+    useExistingPositions: false,
+  });
+
+  const preFinalizeLayout = cloneLayoutForFallbackCandidate(data4Layout);
+
+  // Convert internal dummy label nodes back into overlay labels (DOM-free) so
+  // paint's `adjustLayout` will treat labels as overlays and draw a single
+  // semantic edge per `(start, end)` pair.
+  finalizeDummyLabelNodesToOverlayLabels(data4Layout);
+  tryLayeredFallbackCandidateWhenScoreImproves(data4Layout, preFinalizeLayout);
+
+  // Compound (per-group) DOMUS placement candidate for multi-group layouts the
+  // flat placement left invalid or weak. Score-gated inside; see
+  // `pipeline/compoundPlacement.ts` for the paper trail.
+  tryCompoundGroupPlacementCandidateWhenScoreImproves(data4Layout, preFinalizeLayout, {
+    spacing: 10,
+    routeWithRoutingGraph: (candidate) => {
+      runRP1OrthogonalPipeline(candidate, {
+        spacing: 10,
+        routingBackend: 'routing-graph',
+        routingGraphModel: 'channels',
+        useExistingPositions: true,
+        groupPadding: COMPOUND_GROUP_PAD,
+      });
+    },
+    polish: runLateQualityPasses,
+  });
+
+  runLateQualityPasses(data4Layout);
 }
 
 /**

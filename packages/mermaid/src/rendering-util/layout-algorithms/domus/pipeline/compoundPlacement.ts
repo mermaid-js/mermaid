@@ -708,7 +708,7 @@ function applyDagreCompoundPlacement(candidate: LayoutData, _spacing: number): b
     g.setEdge(s, t, {}, String(e.id));
   }
 
-  dagreLayout(g);
+  dagreLayout(g, {});
 
   let placedCount = 0;
   for (const n of candidate.nodes ?? []) {
@@ -724,6 +724,170 @@ function applyDagreCompoundPlacement(candidate: LayoutData, _spacing: number): b
 }
 
 /**
+ * Group-arrangement optimisation (corridor planning, greedy form). The
+ * remaining crossings on nested-group fixtures are decided by WHERE sibling
+ * groups sit relative to each other (flow families forced to interleave), not
+ * by routing. dagre optimises its own spline model; this pass re-evaluates
+ * its arrangement against the ORTHOGONAL reality using a cheap straight-line
+ * estimator: count pairwise crossings of centre-to-centre edge segments, and
+ * greedily swap sibling-group subtrees (rigid-body translations) while the
+ * estimate improves. Only the final arrangement is routed; the surrounding
+ * candidate machinery score-gates the result as usual.
+ */
+interface Point {
+  x: number;
+  y: number;
+}
+
+function optimizeGroupArrangement(candidate: LayoutData): void {
+  const nodesById = new Map<string, Node>();
+  const childrenByParent = new Map<string, Node[]>();
+  for (const n of candidate.nodes ?? []) {
+    if (n?.id != null) {
+      nodesById.set(String(n.id), n);
+    }
+  }
+  for (const n of candidate.nodes ?? []) {
+    const pid = n.parentId != null ? String(n.parentId) : null;
+    const key = pid && nodesById.get(pid)?.isGroup ? pid : ' root';
+    const arr = childrenByParent.get(key) ?? [];
+    arr.push(n);
+    childrenByParent.set(key, arr);
+  }
+
+  const subtreeNodes = (groupId: string): Node[] => {
+    const out: Node[] = [];
+    const stack = [groupId];
+    const seen = new Set<string>();
+    while (stack.length > 0) {
+      const id = stack.pop()!;
+      if (seen.has(id)) {
+        continue;
+      }
+      seen.add(id);
+      for (const child of childrenByParent.get(id) ?? []) {
+        out.push(child);
+        if (child.isGroup) {
+          stack.push(String(child.id));
+        }
+      }
+    }
+    return out;
+  };
+
+  const semanticCenter = (id: string): Point | null => {
+    const n = nodesById.get(id);
+    if (!n) {
+      return null;
+    }
+    return { x: n.x ?? 0, y: n.y ?? 0 };
+  };
+
+  // Straight-line estimator over semantic edges (label chains collapsed).
+  const segments = (): [Point, Point][] => {
+    const dummyNeighbor = new Map<string, { from?: string; to?: string }>();
+    const segs: [Point, Point][] = [];
+    for (const e of candidate.edges ?? []) {
+      const s = String(e.start ?? '');
+      const t = String(e.end ?? '');
+      const sD = isEdgeLabelNode(nodesById.get(s));
+      const tD = isEdgeLabelNode(nodesById.get(t));
+      if (sD && !tD) {
+        const rec = dummyNeighbor.get(s) ?? {};
+        rec.to = t;
+        dummyNeighbor.set(s, rec);
+      } else if (tD && !sD) {
+        const rec = dummyNeighbor.get(t) ?? {};
+        rec.from = s;
+        dummyNeighbor.set(t, rec);
+      } else if (!sD && !tD) {
+        const a = semanticCenter(s);
+        const b = semanticCenter(t);
+        if (a && b) {
+          segs.push([a, b]);
+        }
+      }
+    }
+    for (const rec of dummyNeighbor.values()) {
+      if (rec.from && rec.to) {
+        const a = semanticCenter(rec.from);
+        const b = semanticCenter(rec.to);
+        if (a && b) {
+          segs.push([a, b]);
+        }
+      }
+    }
+    return segs;
+  };
+
+  const crossCount = (): number => {
+    const segs = segments();
+    const d = (p: Point, q: Point, r: Point) =>
+      (q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x);
+    let c = 0;
+    for (let i = 0; i < segs.length; i++) {
+      for (let j = i + 1; j < segs.length; j++) {
+        const [a1, a2] = segs[i];
+        const [b1, b2] = segs[j];
+        const d1 = d(b1, b2, a1);
+        const d2 = d(b1, b2, a2);
+        const d3 = d(a1, a2, b1);
+        const d4 = d(a1, a2, b2);
+        if (
+          ((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) &&
+          ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))
+        ) {
+          c++;
+        }
+      }
+    }
+    return c;
+  };
+
+  const translateSubtree = (groupId: string, dx: number, dy: number): void => {
+    const g = nodesById.get(groupId);
+    if (g) {
+      g.x = (g.x ?? 0) + dx;
+      g.y = (g.y ?? 0) + dy;
+    }
+    for (const n of subtreeNodes(groupId)) {
+      n.x = (n.x ?? 0) + dx;
+      n.y = (n.y ?? 0) + dy;
+    }
+  };
+
+  let best = crossCount();
+  for (let round = 0; round < 3; round++) {
+    let improved = false;
+    for (const [, siblings] of childrenByParent) {
+      const groups = siblings.filter((n) => n.isGroup);
+      for (let i = 0; i < groups.length; i++) {
+        for (let j = i + 1; j < groups.length; j++) {
+          const a = groups[i];
+          const b = groups[j];
+          const dxA = (b.x ?? 0) - (a.x ?? 0);
+          const dyA = (b.y ?? 0) - (a.y ?? 0);
+          translateSubtree(String(a.id), dxA, dyA);
+          translateSubtree(String(b.id), -dxA, -dyA);
+          const now = crossCount();
+          if (now < best) {
+            best = now;
+            improved = true;
+          } else {
+            translateSubtree(String(a.id), -dxA, -dyA);
+            translateSubtree(String(b.id), dxA, dyA);
+          }
+        }
+      }
+    }
+    if (!improved) {
+      break;
+    }
+  }
+  log.debug(ORTHO_DEBUG, 'COMPOUND_ARRANGEMENT_OPTIMIZED', { straightLineCrossings: best });
+}
+
+/**
  * Score-gated compound placement candidate. `data` is the finalized main
  * geometry; `preFinalizeLayout` still carries the label dummy nodes routing
  * needs. Accepts the candidate when the unified validator strictly prefers
@@ -736,6 +900,8 @@ export function tryCompoundGroupPlacementCandidateWhenScoreImproves(
   options: {
     spacing?: number;
     routeWithRoutingGraph: (candidate: LayoutData) => void;
+    /** Full late quality tail; judging variants pre-polish misjudges. */
+    polish?: (candidate: LayoutData) => void;
   }
 ): void {
   const spacing = options.spacing ?? 10;
@@ -750,74 +916,110 @@ export function tryCompoundGroupPlacementCandidateWhenScoreImproves(
     return;
   }
 
-  const candidate = cloneLayoutForCandidate(preFinalizeLayout);
-  let placed = false;
-  try {
-    placed = applyDagreCompoundPlacement(candidate, spacing);
-  } catch (err) {
-    log.debug(ORTHO_DEBUG, 'COMPOUND_DAGRE_FAILED', { error: String(err) });
+  // Two-variant tournament: dagre's own arrangement vs. the group-arrangement
+  // optimiser (greedy sibling-subtree swaps under a straight-line crossing
+  // estimator). Each is routed and repaired fully; the final validator picks.
+  const buildRoutedCandidate = (
+    optimizeArrangement: boolean
+  ): { candidate: LayoutData; result: ReturnType<typeof validateLayout> } | null => {
+    const candidate = cloneLayoutForCandidate(preFinalizeLayout);
+    let placed = false;
+    try {
+      placed = applyDagreCompoundPlacement(candidate, spacing);
+    } catch (err) {
+      log.debug(ORTHO_DEBUG, 'COMPOUND_DAGRE_FAILED', { error: String(err) });
+    }
+    if (!placed && !applyCompoundPlacement(candidate, spacing)) {
+      return null;
+    }
+    if (optimizeArrangement) {
+      optimizeGroupArrangement(candidate);
+    }
+    routeAndRepair(candidate);
+    options.polish?.(candidate);
+    return { candidate, result: validateLayout(candidate) };
+  };
+
+  const routeAndRepair = (candidate: LayoutData): void => {
+    preprocessClusters(candidate, { spacing, groupPadding: COMPOUND_GROUP_PAD });
+    nudgeEdgeLabelNodesToAvoidOverlaps(candidate, { padding: 12, maxIterations: 25 });
+    options.routeWithRoutingGraph(candidate);
+
+    // Same post-routing repair chain the cycle-removal path applies after its
+    // routing-graph pass; without it the candidate is compared unrepaired
+    // against a fully repaired baseline.
+    const postRoute = validateLayout(candidate);
+    const portMismatchEdgeIds = new Set<string>(
+      postRoute.issues
+        .filter((iss) => iss.type === 'edge-port-direction-mismatch' && iss.edgeId)
+        .map((iss) => String(iss.edgeId))
+    );
+    if (!postRoute.ok && portMismatchEdgeIds.size > 0) {
+      applyPortDirectionStubs(candidate, portMismatchEdgeIds, Math.max(2, Math.min(20, spacing)));
+    }
+    // Post-routing nudges occasionally leave diagonal joints; the validator
+    // treats any diagonal as hard-invalid. Insert a corner at each one — the
+    // corner occupies the same corridor the diagonal already claimed, and the
+    // obstacle-lift/detour repairs below clean up what it clips.
+    for (const e of candidate.edges ?? []) {
+      const pts = e.points;
+      if (!Array.isArray(pts) || pts.length < 2) {
+        continue;
+      }
+      let hasDiagonal = false;
+      for (let i = 0; i < pts.length - 1; i++) {
+        if (Math.abs(pts[i].x - pts[i + 1].x) > 1e-6 && Math.abs(pts[i].y - pts[i + 1].y) > 1e-6) {
+          hasDiagonal = true;
+          break;
+        }
+      }
+      if (!hasDiagonal) {
+        continue;
+      }
+      const ortho = [pts[0]];
+      for (let i = 1; i < pts.length; i++) {
+        const prev = ortho[ortho.length - 1];
+        const cur = pts[i];
+        if (Math.abs(prev.x - cur.x) > 1e-6 && Math.abs(prev.y - cur.y) > 1e-6) {
+          ortho.push({ x: prev.x, y: cur.y });
+        }
+        ortho.push(cur);
+      }
+      e.points = ortho;
+    }
+    applyStraightCollapsePass(candidate);
+    liftObstacleIntersectingSegments(candidate, { spacing });
+    applyObstacleDetourInsertPass(candidate, { spacing });
+    snapEndpointsToBoundaries(candidate, { tolerance: 1.5 });
+    repairShortEndpointStubs(candidate, { minLength: spacing });
+    repairEndpointApproachesWhenIssuesImprove(candidate, { spacing });
+    repairNonOrthogonalEdgesWhenIssuesImprove(candidate, { spacing });
+
+    finalizeDummyLabelNodesToOverlayLabels(candidate);
+  };
+
+  let best: { candidate: LayoutData; result: ReturnType<typeof validateLayout> } | null = null;
+  for (const optimizeArrangement of [false, true]) {
+    const built = buildRoutedCandidate(optimizeArrangement);
+    if (!built) {
+      continue;
+    }
+    const better =
+      !best ||
+      (built.result.ok && !best.result.ok) ||
+      (built.result.ok === best.result.ok &&
+        (built.result.score > best.result.score ||
+          (built.result.score === best.result.score &&
+            built.result.issues.length < best.result.issues.length)));
+    if (better) {
+      best = built;
+    }
   }
-  if (!placed && !applyCompoundPlacement(candidate, spacing)) {
+  if (!best) {
     return;
   }
-
-  preprocessClusters(candidate, { spacing, groupPadding: COMPOUND_GROUP_PAD });
-  nudgeEdgeLabelNodesToAvoidOverlaps(candidate, { padding: 12, maxIterations: 25 });
-  options.routeWithRoutingGraph(candidate);
-
-  // Same post-routing repair chain the cycle-removal path applies after its
-  // routing-graph pass; without it the candidate is compared unrepaired
-  // against a fully repaired baseline.
-  const postRoute = validateLayout(candidate);
-  const portMismatchEdgeIds = new Set<string>(
-    postRoute.issues
-      .filter((iss) => iss.type === 'edge-port-direction-mismatch' && iss.edgeId)
-      .map((iss) => String(iss.edgeId))
-  );
-  if (!postRoute.ok && portMismatchEdgeIds.size > 0) {
-    applyPortDirectionStubs(candidate, portMismatchEdgeIds, Math.max(2, Math.min(20, spacing)));
-  }
-  // Post-routing nudges occasionally leave diagonal joints; the validator
-  // treats any diagonal as hard-invalid. Insert a corner at each one — the
-  // corner occupies the same corridor the diagonal already claimed, and the
-  // obstacle-lift/detour repairs below clean up what it clips.
-  for (const e of candidate.edges ?? []) {
-    const pts = e.points;
-    if (!Array.isArray(pts) || pts.length < 2) {
-      continue;
-    }
-    let hasDiagonal = false;
-    for (let i = 0; i < pts.length - 1; i++) {
-      if (Math.abs(pts[i].x - pts[i + 1].x) > 1e-6 && Math.abs(pts[i].y - pts[i + 1].y) > 1e-6) {
-        hasDiagonal = true;
-        break;
-      }
-    }
-    if (!hasDiagonal) {
-      continue;
-    }
-    const ortho = [pts[0]];
-    for (let i = 1; i < pts.length; i++) {
-      const prev = ortho[ortho.length - 1];
-      const cur = pts[i];
-      if (Math.abs(prev.x - cur.x) > 1e-6 && Math.abs(prev.y - cur.y) > 1e-6) {
-        ortho.push({ x: prev.x, y: cur.y });
-      }
-      ortho.push(cur);
-    }
-    e.points = ortho;
-  }
-  applyStraightCollapsePass(candidate);
-  liftObstacleIntersectingSegments(candidate, { spacing });
-  applyObstacleDetourInsertPass(candidate, { spacing });
-  snapEndpointsToBoundaries(candidate, { tolerance: 1.5 });
-  repairShortEndpointStubs(candidate, { minLength: spacing });
-  repairEndpointApproachesWhenIssuesImprove(candidate, { spacing });
-  repairNonOrthogonalEdgesWhenIssuesImprove(candidate, { spacing });
-
-  finalizeDummyLabelNodesToOverlayLabels(candidate);
-
-  const candidateResult = validateLayout(candidate);
+  const candidate = best.candidate;
+  const candidateResult = best.result;
   const hardIssues = (r: ReturnType<typeof validateLayout>): number => r.issues.length;
 
   const accept =
