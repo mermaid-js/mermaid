@@ -172,6 +172,29 @@ describe('findCyclicEntryNodes', () => {
     expect(entries.size).toBe(1);
   });
 
+  it('pins the true entry when a back-edge feeds it and it is not declared first (#79)', () => {
+    // The chain starts at stockholm, but end_decision -> stockholm gives the
+    // entry an in-degree of 1 while san_francisco is declared first. The
+    // nomination must follow edge declaration order, not node declaration order.
+    const nodes = [
+      'san_francisco',
+      'stockholm',
+      'new_york',
+      'decide',
+      'end_decision',
+      'format_json',
+    ].map((id) => ({ id, parentId: 'world-clock' }));
+    const edges = [
+      { source: 'stockholm', target: 'new_york' },
+      { source: 'new_york', target: 'san_francisco' },
+      { source: 'san_francisco', target: 'decide' },
+      { source: 'decide', target: 'end_decision' },
+      { source: 'end_decision', target: 'format_json' },
+      { source: 'end_decision', target: 'stockholm' },
+    ];
+    expect([...findCyclicEntryNodes(nodes, edges)]).toEqual(['stockholm']);
+  });
+
   it('scopes detection per container (parentId)', () => {
     // A self-contained cycle inside subgraph "sub"; an acyclic chain at root.
     const nodes = [
