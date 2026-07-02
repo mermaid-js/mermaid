@@ -31,6 +31,7 @@ interface Issue {
   type: string;
   message?: string;
   edgeId?: string;
+  nodeIds?: string[];
   details?: { edgeIds?: string[] };
 }
 
@@ -209,6 +210,122 @@ function railShiftCandidates(pts: Point[]): Point[][] {
   return out;
 }
 
+/**
+ * Re-attach a detached terminal: keep the route, replace the loose end with
+ * an orthogonal L into the nearest border point of the terminal node. The
+ * generic candidates reuse the CURRENT terminal points, so a detached
+ * endpoint can never heal without this.
+ */
+function reattachEndCandidates(pts: Point[], rE: Rect): Point[][] {
+  const out: Point[][] = [];
+  if (pts.length < 2) {
+    return out;
+  }
+  const end = pts[pts.length - 1];
+  const clampX = Math.max(rE.left + MARGIN, Math.min(rE.right - MARGIN, end.x));
+  const clampY = Math.max(rE.top + MARGIN, Math.min(rE.bottom - MARGIN, end.y));
+  const head = pts.slice(0, -1).map((p) => ({ ...p }));
+  // Vertical entry through N or S at a clamped x.
+  out.push([
+    ...head,
+    { ...end },
+    { x: clampX, y: end.y },
+    { x: clampX, y: end.y < rE.cy ? rE.top : rE.bottom },
+  ]);
+  // Horizontal entry through W or E at a clamped y.
+  out.push([
+    ...head,
+    { ...end },
+    { x: end.x, y: clampY },
+    { x: end.x < rE.cx ? rE.left : rE.right, y: clampY },
+  ]);
+  return out;
+}
+
+/**
+ * Shift an interior rail segment that cuts through a known obstacle to just
+ * past that obstacle's near side (the generic rail shifts only try small
+ * fixed deltas and never clear a wide box).
+ */
+function obstacleClearingRailShifts(
+  pts: Point[],
+  obstacle: Rect,
+  rS: Rect | null,
+  rE: Rect | null
+): Point[][] {
+  const out: Point[][] = [];
+  for (let i = 0; i < pts.length - 1; i++) {
+    const a = pts[i];
+    const b = pts[i + 1];
+    const isFirst = i === 0;
+    const isLast = i === pts.length - 2;
+    const horizontal = Math.abs(a.y - b.y) <= EPS;
+    const vertical = Math.abs(a.x - b.x) <= EPS;
+    if (horizontal) {
+      const minX = Math.min(a.x, b.x);
+      const maxX = Math.max(a.x, b.x);
+      if (
+        a.y > obstacle.top &&
+        a.y < obstacle.bottom &&
+        minX < obstacle.right &&
+        maxX > obstacle.left
+      ) {
+        for (const newY of [
+          obstacle.top - 24,
+          obstacle.bottom + 24,
+          obstacle.top - 36,
+          obstacle.bottom + 36,
+          obstacle.top - 12,
+          obstacle.bottom + 12,
+        ]) {
+          // A terminal segment may slide only while its endpoint stays on the
+          // same border side of the terminal node.
+          if (isFirst && rS && (newY < rS.top + 2 || newY > rS.bottom - 2)) {
+            continue;
+          }
+          if (isLast && rE && (newY < rE.top + 2 || newY > rE.bottom - 2)) {
+            continue;
+          }
+          const cand = pts.map((p) => ({ ...p }));
+          cand[i] = { x: a.x, y: newY };
+          cand[i + 1] = { x: b.x, y: newY };
+          out.push(cand);
+        }
+      }
+    } else if (vertical) {
+      const minY = Math.min(a.y, b.y);
+      const maxY = Math.max(a.y, b.y);
+      if (
+        a.x > obstacle.left &&
+        a.x < obstacle.right &&
+        minY < obstacle.bottom &&
+        maxY > obstacle.top
+      ) {
+        for (const newX of [
+          obstacle.left - 24,
+          obstacle.right + 24,
+          obstacle.left - 36,
+          obstacle.right + 36,
+          obstacle.left - 12,
+          obstacle.right + 12,
+        ]) {
+          if (isFirst && rS && (newX < rS.left + 2 || newX > rS.right - 2)) {
+            continue;
+          }
+          if (isLast && rE && (newX < rE.left + 2 || newX > rE.right - 2)) {
+            continue;
+          }
+          const cand = pts.map((p) => ({ ...p }));
+          cand[i] = { x: newX, y: a.y };
+          cand[i + 1] = { x: newX, y: b.y };
+          out.push(cand);
+        }
+      }
+    }
+  }
+  return out;
+}
+
 function sidePort(r: Rect, side: Side, t: number): Point {
   const clamped = Math.max(0, Math.min(1, t));
   if (side === 'N' || side === 'S') {
@@ -236,7 +353,30 @@ function sidePreference(rS: Rect, rE: Rect): [Side, Side][] {
       : dx >= 0
         ? ['E', 'W']
         : ['W', 'E'];
-  return [primary, secondary, ['N', 'S'], ['S', 'N'], ['E', 'W'], ['W', 'E']];
+  // Opposite-side pairs first, then perpendicular combinations — narrow
+  // alleys (the endpoint-band rule needs 18px on BOTH sides) often admit only
+  // an exit on one axis and an entry on the other.
+  const perpendicular: [Side, Side][] =
+    Math.abs(dx) > Math.abs(dy)
+      ? dy >= 0
+        ? [
+            [primary[0], 'N'],
+            ['S', primary[1]],
+          ]
+        : [
+            [primary[0], 'S'],
+            ['N', primary[1]],
+          ]
+      : dx >= 0
+        ? [
+            [primary[0], 'W'],
+            ['E', primary[1]],
+          ]
+        : [
+            [primary[0], 'E'],
+            ['W', primary[1]],
+          ];
+  return [primary, secondary, ...perpendicular, ['N', 'S'], ['S', 'N'], ['E', 'W'], ['W', 'E']];
 }
 
 function sideRouteCandidates(
@@ -278,7 +418,25 @@ function sideRouteCandidates(
         );
         const routes: Point[][] = [];
         if (mid && mid.length >= 2) {
-          routes.push([{ ...ps }, ...mid.map((p) => ({ ...p })), { ...pe }]);
+          // The router snaps the stub endpoints to its grid, so the joints
+          // ps->mid[0] and mid[-1]->pe are often slightly off-axis; stitch
+          // them orthogonally or the candidate self-defeats on
+          // corner-connection / non-orthogonal checks.
+          const raw = [{ ...ps }, ...mid.map((p) => ({ ...p })), { ...pe }];
+          const stitched: Point[] = [raw[0]];
+          for (let ri = 1; ri < raw.length; ri++) {
+            const prev = stitched[stitched.length - 1];
+            const cur = raw[ri];
+            if (Math.abs(prev.x - cur.x) > EPS && Math.abs(prev.y - cur.y) > EPS) {
+              if (startHoriz && ri === 1) {
+                stitched.push({ x: cur.x, y: prev.y });
+              } else {
+                stitched.push({ x: prev.x, y: cur.y });
+              }
+            }
+            stitched.push(cur);
+          }
+          routes.push(stitched);
         }
         if (Math.abs(startStub.x - endStub.x) <= EPS || Math.abs(startStub.y - endStub.y) <= EPS) {
           routes.push([{ ...ps }, { ...startStub }, { ...endStub }, { ...pe }]);
@@ -342,11 +500,19 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
     }
     // Map each flagged edge to the issue types it is involved in.
     const flagged = new Map<string, Set<string>>();
+    const obstacleIdsByEdge = new Map<string, Set<string>>();
     for (const issue of current.issues as Issue[]) {
       for (const id of edgeIdsOfIssue(issue, knownEdgeIds)) {
         const set = flagged.get(id) ?? new Set<string>();
         set.add(issue.type);
         flagged.set(id, set);
+        if (issue.type === 'edge-intersects-obstacle') {
+          const obs = obstacleIdsByEdge.get(id) ?? new Set<string>();
+          for (const nid of issue.nodeIds ?? []) {
+            obs.add(String(nid));
+          }
+          obstacleIdsByEdge.set(id, obs);
+        }
       }
     }
     if (flagged.size === 0) {
@@ -373,6 +539,19 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
       const parallel = types.has('edge-parallel-segment-too-close');
 
       const candidates = [...routeCandidates(ps, pe, rS, rE, parallel)];
+      if (rE && types.has('edge-endpoint-detached-from-node')) {
+        candidates.unshift(...reattachEndCandidates(pts, rE));
+      }
+      if (types.has('edge-intersects-obstacle')) {
+        for (const obstacleId of obstacleIdsByEdge.get(edgeId) ?? []) {
+          const obstacleNode = nodeById.get(obstacleId);
+          if (obstacleNode) {
+            candidates.unshift(
+              ...obstacleClearingRailShifts(pts, rectForNode(obstacleNode), rS, rE)
+            );
+          }
+        }
+      }
       if (rS && rE && e?.start != null && e?.end != null) {
         // Compound-aware direct reroutes: the plain candidates below treat
         // every group frame as a hard obstacle, so a cross-group edge can
@@ -445,6 +624,18 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
           const next = validateLayout(layout);
           const fewer = next.issues.length < current.issues.length;
           const noNew = (next.issues as Issue[]).every((iss) => curKeys.has(issueKey(iss)));
+          if (process.env.REMEDIATE_DBG && (!fewer || !noNew)) {
+            // eslint-disable-next-line no-console
+            console.error(
+              'REMEDIATE-DBG reject',
+              edgeId,
+              `fewer=${fewer} noNew=${noNew}`,
+              (next.issues as Issue[])
+                .filter((iss) => !curKeys.has(issueKey(iss)))
+                .map((iss) => `${iss.type}:${iss.edgeId ?? ''}`)
+                .join(' ')
+            );
+          }
           if (fewer && noNew) {
             current = next;
             improvedThisRound = true;
