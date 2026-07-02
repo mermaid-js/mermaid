@@ -27,6 +27,25 @@ export function chooseSideBetweenPointAndRect(
   return dy >= 0 ? 'N' : 'S';
 }
 
+/**
+ * Side of `rect` facing an external target — the exit side to use when a
+ * route LEAVES a group heading for `target`. (`chooseSideBetweenPointAndRect`
+ * answers the opposite question — which side faces a point OUTSIDE — and when
+ * misused for exits it picks the side nearest the inner port, sending routes
+ * out the back of the group and forcing a U-turn around it.)
+ */
+export function chooseExitSideTowards(
+  target: Point,
+  rect: { cx: number; cy: number }
+): 'E' | 'W' | 'N' | 'S' {
+  const dx = target.x - rect.cx;
+  const dy = target.y - rect.cy;
+  if (Math.abs(dx) >= Math.abs(dy)) {
+    return dx >= 0 ? 'E' : 'W';
+  }
+  return dy >= 0 ? 'S' : 'N';
+}
+
 function compoundBoundaryRequestKey(groupId: string, side: PortSide): string {
   return `${groupId}:${side}`;
 }
@@ -68,13 +87,17 @@ export function buildCompoundBoundarySteps(
   let prev = snapPoint(startPort);
   let idx = 0;
 
+  // Exits aim at the final destination so the route does not leave a group
+  // through its back side and U-turn around the frame.
+  const endRect = rectForNode(endNode);
+  const target: Point = { x: endRect.cx, y: endRect.cy };
   for (const gid of leaving) {
     const g = nodesById.get(gid);
     if (!g) {
       continue;
     }
     const r = rectForNode(g);
-    const side = chooseSideBetweenPointAndRect(prev, r) as PortSide;
+    const side = chooseExitSideTowards(target, r) as PortSide;
     const preferredT = preferredTForSide(prev, r, side);
     const requestId = `${edgeId}:leave:${gid}:${idx++}`;
     steps.push({ groupId: gid, side, requestId, preferredT });

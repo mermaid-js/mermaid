@@ -19,6 +19,7 @@ import {
   snapBoundaryPortAtT,
   snapPoint,
   chooseSideBetweenPointAndRect,
+  chooseExitSideTowards,
   concatPolylines,
   preferredTForSide,
   type CompoundBoundaryStep,
@@ -59,6 +60,7 @@ import {
   routeLShape,
 } from '../core/routing.js';
 import { findOcrPathBetweenPortsWithObstacles } from '../core/ocr/index.js';
+import { findDirectCompoundRoute } from './directCompoundRoute.js';
 import { computeBoundaryPort } from '../core/helpers.js';
 import { isEdgeLabelNodeId } from '../core/labels.js';
 
@@ -110,8 +112,144 @@ export function routeEdges(args: {
   // and provides two distinct ports on that same side.
   let selfLoopPortPlan: AssignedPortPlan | null = null;
 
+  // Pre-pass: route each cross-boundary LABEL-SPLIT pair (X → dummy → Y) as
+  // ONE semantic edge with the direct compound search, then split the route at
+  // the midpoint of its longest segment and move the dummy there. Routing the
+  // two halves independently forces both through the boundary-waypoint chain
+  // anchored on a heuristically placed dummy — the dominant source of
+  // non-orthogonal stitches and obstacle crossings on nested-group fixtures.
+  // Same-context pairs keep the normal per-edge routing.
+  const labelPairRoutedEdgeIds = new Set<string>();
+  if (backend === 'routing-graph') {
+    const inByDummy = new Map<string, Edge[]>();
+    const outByDummy = new Map<string, Edge[]>();
+    for (const e of data.edges ?? []) {
+      const s = (e as any).start != null ? String((e as any).start) : null;
+      const t = (e as any).end != null ? String((e as any).end) : null;
+      if (!s || !t) {
+        continue;
+      }
+      const sDummy = isEdgeLabelNodeId(s);
+      const tDummy = isEdgeLabelNodeId(t);
+      if (tDummy && !sDummy) {
+        const arr = inByDummy.get(t) ?? [];
+        arr.push(e);
+        inByDummy.set(t, arr);
+      } else if (sDummy && !tDummy) {
+        const arr = outByDummy.get(s) ?? [];
+        arr.push(e);
+        outByDummy.set(s, arr);
+      }
+    }
+    const pairModel =
+      (options.routingGraphModel ?? 'channels') === 'ocr'
+        ? 'channels'
+        : ((options.routingGraphModel ?? 'channels') as 'grid' | 'representatives' | 'channels');
+    for (const [dummyId, ins] of inByDummy) {
+      const outs = outByDummy.get(dummyId) ?? [];
+      if (ins.length !== 1 || outs.length !== 1) {
+        continue;
+      }
+      const dummy = nodesById.get(dummyId);
+      const from = nodesById.get(String((ins[0] as any).start));
+      const to = nodesById.get(String((outs[0] as any).end));
+      if (!dummy || !from || !to || from === to) {
+        continue;
+      }
+      const fromAnc = ancestorGroupIds(from, nodesById);
+      const toAnc = ancestorGroupIds(to, nodesById);
+      const cpLen = commonPrefixLen(fromAnc, toAnc);
+      const boundaryCrossings = fromAnc.length - cpLen + (toAnc.length - cpLen);
+      if (boundaryCrossings < 2) {
+        // Same context or a single boundary — the established per-edge chain
+        // handles those well (pinned by cluster-fixtures specs). The pair
+        // pre-pass targets deep nesting, where chaining two independently
+        // routed halves through 3+ boundary waypoints falls apart.
+        continue;
+      }
+      const pairPorts = assignPortsForEdge(from, to);
+      const rFrom = rectForNode(from);
+      const rTo = rectForNode(to);
+      const inEdgeId = String((ins[0] as any).id ?? '');
+      const outEdgeId = String((outs[0] as any).id ?? '');
+      // Distribute ports along the side with the shared t-allocator — several
+      // pair routes leaving one node otherwise stack on the same port.
+      if (!tByEdgeEndpointKey.has(`${inEdgeId}|start`)) {
+        ensureTsForNodeSide(String(from.id), pairPorts.startSide);
+      }
+      if (!tByEdgeEndpointKey.has(`${outEdgeId}|end`)) {
+        ensureTsForNodeSide(String(to.id), pairPorts.endSide);
+      }
+      const tStart = tByEdgeEndpointKey.get(`${inEdgeId}|start`) ?? 0.5;
+      const tEnd = tByEdgeEndpointKey.get(`${outEdgeId}|end`) ?? 0.5;
+      const startPort = snapPoint(
+        snapPortForRoutingOnSide(
+          rFrom,
+          pairPorts.startSide,
+          computeBoundaryPortAtT(rFrom, pairPorts.startSide, tStart),
+          spacing
+        )
+      );
+      const endPort = snapPoint(
+        snapPortForRoutingOnSide(
+          rTo,
+          pairPorts.endSide,
+          computeBoundaryPortAtT(rTo, pairPorts.endSide, tEnd),
+          spacing
+        )
+      );
+      const route = findDirectCompoundRoute({
+        startNode: from,
+        endNode: to,
+        startPort,
+        endPort,
+        nodesById,
+        spacing,
+        clearance,
+        model: pairModel,
+        ignoreEdgeLabelObstacles: true,
+      });
+      if (!route || route.length < 2) {
+        continue;
+      }
+      let bestI = 0;
+      let bestLen = -1;
+      for (let i = 0; i < route.length - 1; i++) {
+        const len = Math.abs(route[i + 1].x - route[i].x) + Math.abs(route[i + 1].y - route[i].y);
+        if (len > bestLen) {
+          bestLen = len;
+          bestI = i;
+        }
+      }
+      const mid = {
+        x: (route[bestI].x + route[bestI + 1].x) / 2,
+        y: (route[bestI].y + route[bestI + 1].y) / 2,
+      };
+      dummy.x = mid.x;
+      dummy.y = mid.y;
+      (ins[0] as any).points = [...route.slice(0, bestI + 1).map((p) => ({ ...p })), { ...mid }];
+      (outs[0] as any).points = [{ ...mid }, ...route.slice(bestI + 1).map((p) => ({ ...p }))];
+      (ins[0] as any).__orthoCompound = true;
+      (outs[0] as any).__orthoCompound = true;
+      const inId = String((ins[0] as any).id ?? '');
+      const outId = String((outs[0] as any).id ?? '');
+      labelPairRoutedEdgeIds.add(inId);
+      labelPairRoutedEdgeIds.add(outId);
+      changedEdgeIds.add(inId);
+      changedEdgeIds.add(outId);
+      log.debug(ORTHO_DEBUG, 'LABEL_PAIR_DIRECT_ROUTE', {
+        dummyId,
+        points: route.length,
+        splitSegment: bestI,
+      });
+    }
+  }
+
   for (const edge of data.edges ?? []) {
     if (!shouldRouteEdge(edge)) {
+      continue;
+    }
+    if (labelPairRoutedEdgeIds.has(String((edge as any).id ?? ''))) {
       continue;
     }
     if (!(edge as any).start || !(edge as any).end) {
@@ -270,150 +408,384 @@ export function routeEdges(args: {
 
         (edge as any).__orthoCompound = true;
         const edgeKey = String((edge as any).id ?? `${startNodeId}->${endNodeId}`);
-        // Prefer the precomputed (bundle-stable) boundary steps, but if they are missing
-        // (e.g. due to upstream mutation or edge-id mismatch), compute them on the fly so
-        // compound routes still explicitly touch group boundaries.
-        let steps = compoundStepsByEdgeId.get(edgeKey) ?? [];
-        if (steps.length === 0) {
-          steps = buildCompoundBoundarySteps(edgeKey, startNode, endNode, nodesById, safeStartPort);
+
+        // Direct compound attempt: one whole-edge search where ONLY the groups
+        // on the start/end ancestry chains stop being obstacles (Siebenhaller's
+        // tree-path rule — an edge may cross exactly the cluster boundaries on
+        // the v→w path in the cluster tree), contained inside the common
+        // ancestors' region via slab obstacles. Segment-by-segment waypoint
+        // routing below remains the fallback; routing each hop independently
+        // costs ~2 bends per boundary and produces zigzag chains.
+        // Single-boundary edges keep the established waypoint chain (its
+        // boundary attachment points are pinned contract); the direct search
+        // targets deep nesting where the chain accumulates ~2 bends per hop.
+        const directPoints =
+          model !== 'ocr' && leaving.length + entering.length >= 2
+            ? findDirectCompoundRoute({
+                startNode,
+                endNode,
+                startPort: snapPoint(safeStartPort),
+                endPort: snapPoint(safeEndPort),
+                nodesById,
+                spacing,
+                clearance,
+                model,
+              })
+            : null;
+        if (!directPoints) {
+          log.debug(ORTHO_DEBUG, 'COMPOUND_DIRECT_NULL', {
+            edgeId: edgeKey,
+            start: snapPoint(safeStartPort),
+            end: snapPoint(safeEndPort),
+          });
         }
-        // If we *still* have no steps even though we decided the edge is cross-boundary,
-        // synthesize minimal boundary steps from the already-computed ancestry diffs.
-        if (steps.length === 0 && (leaving.length > 0 || entering.length > 0)) {
-          const synth: CompoundBoundaryStep[] = [];
-          let prev = snapPoint(safeStartPort);
-          let idx = 0;
-          for (const gid of leaving) {
-            const g = nodesById.get(gid);
+        if (directPoints && directPoints.length >= 2) {
+          points = directPoints;
+          attempts.push({
+            level: 1,
+            kind: 'routing-graph:compound',
+            outcome: 'success',
+            reason: `direct model=${options.routingGraphModel ?? 'grid'}`,
+          });
+          log.debug(ORTHO_DEBUG, 'COMPOUND_DIRECT_ROUTE', {
+            edgeId: edgeKey,
+            points: directPoints.length,
+          });
+        } else {
+          // Prefer the precomputed (bundle-stable) boundary steps, but if they are missing
+          // (e.g. due to upstream mutation or edge-id mismatch), compute them on the fly so
+          // compound routes still explicitly touch group boundaries.
+          let steps = compoundStepsByEdgeId.get(edgeKey) ?? [];
+          if (steps.length === 0) {
+            steps = buildCompoundBoundarySteps(
+              edgeKey,
+              startNode,
+              endNode,
+              nodesById,
+              safeStartPort
+            );
+          }
+          // If we *still* have no steps even though we decided the edge is cross-boundary,
+          // synthesize minimal boundary steps from the already-computed ancestry diffs.
+          if (steps.length === 0 && (leaving.length > 0 || entering.length > 0)) {
+            const synth: CompoundBoundaryStep[] = [];
+            let prev = snapPoint(safeStartPort);
+            let idx = 0;
+            const synthTarget = { x: re.cx, y: re.cy };
+            for (const gid of leaving) {
+              const g = nodesById.get(gid);
+              if (!g) {
+                continue;
+              }
+              const r = rectForNode(g);
+              const side = chooseExitSideTowards(synthTarget, r) as PortSide;
+              const preferredT = preferredTForSide(prev, r, side);
+              synth.push({
+                groupId: gid,
+                side,
+                requestId: `${edgeKey}:synth:${idx++}`,
+                preferredT,
+              });
+              prev = snapPoint(computeBoundaryPort(r, side));
+            }
+            for (const gid of entering) {
+              const g = nodesById.get(gid);
+              if (!g) {
+                continue;
+              }
+              const r = rectForNode(g);
+              const side = chooseSideBetweenPointAndRect(prev, r) as PortSide;
+              const preferredT = preferredTForSide(prev, r, side);
+              synth.push({
+                groupId: gid,
+                side,
+                requestId: `${edgeKey}:synth:${idx++}`,
+                preferredT,
+              });
+              prev = snapPoint(computeBoundaryPort(r, side));
+            }
+            steps = synth;
+          }
+          const waypoints: Point[] = [snapPoint(safeStartPort)];
+          const wpGroupIds: (string | null)[] = [null];
+          for (const step of steps) {
+            const g = nodesById.get(step.groupId);
             if (!g) {
               continue;
             }
             const r = rectForNode(g);
-            const side = chooseSideBetweenPointAndRect(prev, r) as PortSide;
-            const preferredT = preferredTForSide(prev, r, side);
-            synth.push({ groupId: gid, side, requestId: `${edgeKey}:synth:${idx++}`, preferredT });
-            prev = snapPoint(computeBoundaryPort(r, side));
+            const t = boundaryTByRequestId.get(step.requestId) ?? (step as any).preferredT ?? 0.5;
+            const p = snapBoundaryPortAtT(r, step.side, t, spacing);
+            waypoints.push(p);
+            wpGroupIds.push(step.groupId);
           }
-          for (const gid of entering) {
-            const g = nodesById.get(gid);
-            if (!g) {
-              continue;
-            }
-            const r = rectForNode(g);
-            const side = chooseSideBetweenPointAndRect(prev, r) as PortSide;
-            const preferredT = preferredTForSide(prev, r, side);
-            synth.push({ groupId: gid, side, requestId: `${edgeKey}:synth:${idx++}`, preferredT });
-            prev = snapPoint(computeBoundaryPort(r, side));
-          }
-          steps = synth;
-        }
-        const waypoints: Point[] = [snapPoint(safeStartPort)];
-        const wpGroupIds: (string | null)[] = [null];
-        for (const step of steps) {
-          const g = nodesById.get(step.groupId);
-          if (!g) {
-            continue;
-          }
-          const r = rectForNode(g);
-          const t = boundaryTByRequestId.get(step.requestId) ?? (step as any).preferredT ?? 0.5;
-          const p = snapBoundaryPortAtT(r, step.side, t, spacing);
-          waypoints.push(p);
-          wpGroupIds.push(step.groupId);
-        }
-        waypoints.push(snapPoint(safeEndPort));
-        wpGroupIds.push(null);
+          waypoints.push(snapPoint(safeEndPort));
+          wpGroupIds.push(null);
 
-        // Route segment-by-segment, updating obstacle set based on current inside-groups context.
-        const inside = new Set<string>(startAnc);
-        points = [];
+          // Route segment-by-segment, updating obstacle set based on current inside-groups context.
+          const inside = new Set<string>(startAnc);
+          points = [];
 
-        for (let i = 0; i < waypoints.length - 1; i++) {
-          const a = waypoints[i];
-          const b = waypoints[i + 1];
+          for (let i = 0; i < waypoints.length - 1; i++) {
+            const a = waypoints[i];
+            const b = waypoints[i + 1];
 
-          // Update inside-groups AFTER reaching the boundary waypoint.
-          // Leaving: remove, Entering: add. We disambiguate by membership in start/end chains.
-          if (i > 0) {
-            const gid = wpGroupIds[i];
-            if (gid) {
-              if (inside.has(gid) && !endAnc.includes(gid)) {
-                inside.delete(gid);
-              } else if (!inside.has(gid) && endAnc.includes(gid)) {
-                inside.add(gid);
+            // Update inside-groups AFTER reaching the boundary waypoint.
+            // Leaving: remove, Entering: add. We disambiguate by membership in start/end chains.
+            if (i > 0) {
+              const gid = wpGroupIds[i];
+              if (gid) {
+                if (inside.has(gid) && !endAnc.includes(gid)) {
+                  inside.delete(gid);
+                } else if (!inside.has(gid) && endAnc.includes(gid)) {
+                  inside.add(gid);
+                }
               }
             }
-          }
 
-          const obstacleRects: Rect[] = [];
-          for (const [id, node] of nodesById) {
-            // Never include the actual endpoints as obstacles.
-            if (id === startNodeId || id === endNodeId) {
-              continue;
+            // The segment's endpoints sit ON the boundaries of the groups being
+            // crossed at waypoints i / i+1. Those groups must not be obstacles for
+            // THIS segment: the port would lie inside the clearance-inflated rect
+            // and the graph search could never attach to it.
+            const touchedGroupIds = new Set<string>();
+            if (wpGroupIds[i]) {
+              touchedGroupIds.add(wpGroupIds[i]!);
             }
-            // When inside a group, do not treat that group's boundary as an obstacle.
-            if ((node as any).isGroup && inside.has(id)) {
-              continue;
+            if (wpGroupIds[i + 1]) {
+              touchedGroupIds.add(wpGroupIds[i + 1]!);
             }
-            obstacleRects.push(rectForNode(node));
-          }
 
-          if (debugEdge) {
-            log.debug(ORTHO_DEBUG, 'EDGE_ROUTE_SEGMENT', {
-              edgeId: String((edge as any).id ?? ''),
-              segmentIndex: i,
-              a,
-              b,
-              insideGroups: [...inside].sort((x, y) => x.localeCompare(y)),
-              obstacleCount: obstacleRects.length,
+            const obstacleRects: Rect[] = [];
+            for (const [id, node] of nodesById) {
+              // Never include the actual endpoints as obstacles.
+              if (id === startNodeId || id === endNodeId) {
+                continue;
+              }
+              // When inside a group, do not treat that group's boundary as an obstacle.
+              if ((node as any).isGroup && inside.has(id)) {
+                continue;
+              }
+              // Nor a group whose boundary this segment attaches to.
+              if ((node as any).isGroup && touchedGroupIds.has(id)) {
+                continue;
+              }
+              obstacleRects.push(rectForNode(node));
+            }
+
+            if (debugEdge) {
+              log.debug(ORTHO_DEBUG, 'EDGE_ROUTE_SEGMENT', {
+                edgeId: String((edge as any).id ?? ''),
+                segmentIndex: i,
+                a,
+                b,
+                insideGroups: [...inside].sort((x, y) => x.localeCompare(y)),
+                obstacleCount: obstacleRects.length,
+              });
+            }
+
+            const allowed = allowedRectForInsideGroups(inside, nodesById);
+
+            // Contain the graph search inside the allowed region by construction:
+            // four slab obstacles outside `allowed` (offset by clearance+spacing so
+            // boundary waypoints stay routable after clearance inflation). Without
+            // them the search happily routes around a group's outside, the strict
+            // containment clip below rejects the path, and the blind in-rect
+            // L-shape crosses every interior obstacle (Siebenhaller's boundary
+            // blocking applies the same idea on the dual graph).
+            const containPad = Math.max(0, clearance) + Math.max(0, spacing);
+            const OUTER = 1_000_000;
+            const mkSlab = (left: number, top: number, right: number, bottom: number): Rect => ({
+              left,
+              top,
+              right,
+              bottom,
+              cx: (left + right) / 2,
+              cy: (top + bottom) / 2,
             });
-          }
+            const routeObstacles = allowed
+              ? [
+                  ...obstacleRects,
+                  mkSlab(
+                    allowed.left - OUTER,
+                    allowed.top - OUTER,
+                    allowed.right + OUTER,
+                    allowed.top - containPad
+                  ),
+                  mkSlab(
+                    allowed.left - OUTER,
+                    allowed.bottom + containPad,
+                    allowed.right + OUTER,
+                    allowed.bottom + OUTER
+                  ),
+                  mkSlab(
+                    allowed.left - OUTER,
+                    allowed.top - containPad,
+                    allowed.left - containPad,
+                    allowed.bottom + containPad
+                  ),
+                  mkSlab(
+                    allowed.right + containPad,
+                    allowed.top - containPad,
+                    allowed.right + OUTER,
+                    allowed.bottom + containPad
+                  ),
+                ]
+              : obstacleRects;
 
-          const allowed = allowedRectForInsideGroups(inside, nodesById);
-
-          const seg =
-            (obstacleRects.length > 0
-              ? model === 'ocr'
-                ? findOcrPathBetweenPortsWithObstacles(a, b, obstacleRects, spacing, {
-                    maxExpansions: options.ocrMaxExpansions ?? 50_000,
-                  }).points
-                : findRoutingGraphPathBetweenPortsWithObstacles(a, b, obstacleRects, spacing, {
-                    model,
-                  })
-              : null) ??
+            const segPrimary =
+              routeObstacles.length > 0
+                ? model === 'ocr'
+                  ? findOcrPathBetweenPortsWithObstacles(a, b, routeObstacles, spacing, {
+                      maxExpansions: options.ocrMaxExpansions ?? 50_000,
+                    }).points
+                  : findRoutingGraphPathBetweenPortsWithObstacles(a, b, routeObstacles, spacing, {
+                      model,
+                    })
+                : null;
             // Fallback: if we didn't have explicit obstacles, try the standard path finder.
             // This can still be useful if other non-group nodes exist.
-            (model === 'ocr'
-              ? findOcrPathBetweenPortsWithObstacles(
-                  a,
-                  b,
-                  collectObstacleRects(nodesById, startNodeId, endNodeId, 0),
-                  spacing,
-                  { maxExpansions: options.ocrMaxExpansions ?? 50_000 }
-                ).points
-              : findRoutingGraphPathBetweenPorts(a, b, nodesById, startNodeId, endNodeId, spacing, {
-                  model,
-                })) ??
+            const segStandard =
+              segPrimary ??
+              (model === 'ocr'
+                ? findOcrPathBetweenPortsWithObstacles(
+                    a,
+                    b,
+                    collectObstacleRects(nodesById, startNodeId, endNodeId, 0),
+                    spacing,
+                    { maxExpansions: options.ocrMaxExpansions ?? 50_000 }
+                  ).points
+                : findRoutingGraphPathBetweenPorts(
+                    a,
+                    b,
+                    nodesById,
+                    startNodeId,
+                    endNodeId,
+                    spacing,
+                    {
+                      model,
+                    }
+                  ));
             // Last resort: always keep the polyline orthogonal.
-            routeLShapeBetweenPorts(a, b);
+            const seg = segStandard ?? routeLShapeBetweenPorts(a, b);
+            if (!segPrimary) {
+              log.debug(ORTHO_DEBUG, 'SEG_GRAPH_NULL', {
+                edgeId: String((edge as any).id ?? ''),
+                segmentIndex: i,
+                standardRescued: segStandard != null,
+                a,
+                b,
+              });
+            }
 
-          // Enforce containment for segments that are inside one or more groups:
-          // if the candidate path leaves the allowed region (intersection of ancestor groups),
-          // fall back to a deterministic in-rect L-shape.
-          const segClipped =
-            allowed && !polylineWithinRectInclusive(seg, allowed)
-              ? lShapeWithinRect(a, b, allowed)
-              : seg;
+            // Enforce containment for segments that are inside one or more groups:
+            // if the candidate path leaves the allowed region (intersection of ancestor groups),
+            // fall back to a deterministic in-rect L-shape. The slab obstacles above
+            // keep graph paths inside `allowed` up to `containPad` slack, so the
+            // check tolerates exactly that slack — the clip now only fires for the
+            // no-graph fallback paths.
+            const segClipped =
+              allowed && !polylineWithinRectInclusive(seg, allowed, containPad + 1)
+                ? lShapeWithinRect(a, b, allowed)
+                : seg;
+            if (segClipped !== seg) {
+              log.debug(ORTHO_DEBUG, 'SEG_CLIP_L_SHAPE', {
+                edgeId: String((edge as any).id ?? ''),
+                segmentIndex: i,
+                allowed,
+                a,
+                b,
+              });
+            }
 
-          points = concatPolylines(points, segClipped);
+            points = concatPolylines(points, segClipped);
+          }
+          // The chain assembles independently routed hops; clamped/snapped hop
+          // endpoints can disagree, leaving diagonal stitches. Orthogonalize by
+          // inserting a corner at every diagonal joint — the diagonal already
+          // occupied that corridor, so the corner does not newly cross anything
+          // the diagonal didn't.
+          let chainHadDiagonal = false;
+          if (points && points.length >= 2) {
+            const ortho: Point[] = [points[0]];
+            for (let i = 1; i < points.length; i++) {
+              const prev = ortho[ortho.length - 1];
+              const cur = points[i];
+              if (Math.abs(prev.x - cur.x) > 1e-6 && Math.abs(prev.y - cur.y) > 1e-6) {
+                chainHadDiagonal = true;
+                ortho.push({ x: prev.x, y: cur.y });
+              }
+              ortho.push(cur);
+            }
+            points = ortho;
+          }
+
+          // Chain-defect rescue: when the assembled chain is visibly broken
+          // (diagonal stitches, or a segment cutting through a leaf obstacle),
+          // prefer a direct compound search over shipping a defective route.
+          // Clean chains — the pinned contract — are left untouched.
+          if (points && points.length >= 2 && model !== 'ocr') {
+            const crossesLeafObstacle = (): boolean => {
+              for (const [oid, node] of nodesById) {
+                if (oid === startNodeId || oid === endNodeId || (node as any).isGroup) {
+                  continue;
+                }
+                const r = rectForNode(node);
+                for (let i = 0; i < points!.length - 1; i++) {
+                  const a = points![i];
+                  const b = points![i + 1];
+                  const minX = Math.min(a.x, b.x);
+                  const maxX = Math.max(a.x, b.x);
+                  const minY = Math.min(a.y, b.y);
+                  const maxY = Math.max(a.y, b.y);
+                  // Strict-interior overlap of an orthogonal segment with the rect.
+                  if (
+                    minX < r.right - 1 &&
+                    maxX > r.left + 1 &&
+                    minY < r.bottom - 1 &&
+                    maxY > r.top + 1
+                  ) {
+                    return true;
+                  }
+                }
+              }
+              return false;
+            };
+            const chainDefective = chainHadDiagonal || crossesLeafObstacle();
+            const rescue = findDirectCompoundRoute({
+              startNode,
+              endNode,
+              startPort: snapPoint(safeStartPort),
+              endPort: snapPoint(safeEndPort),
+              nodesById,
+              spacing,
+              clearance,
+              model,
+            });
+            // Swap on defect, or when the direct route is SUBSTANTIALLY simpler
+            // (≥2 bends saved) — marginal wins keep the chain so its boundary
+            // attachment contract stays intact for shallow crossings.
+            if (
+              rescue &&
+              rescue.length >= 2 &&
+              (chainDefective || bendCount(rescue) + 2 <= bendCount(points))
+            ) {
+              points = rescue;
+              log.debug(ORTHO_DEBUG, 'COMPOUND_CHAIN_DEFECT_RESCUE', {
+                edgeId: edgeKey,
+                hadDiagonal: chainHadDiagonal,
+                defective: chainDefective,
+              });
+            }
+          }
+          // Phase E1: compound (cross-group) routing recorded as a
+          // single summary attempt. Per-segment detail is Phase E2.
+          attempts.push({
+            level: 1,
+            kind: 'routing-graph:compound',
+            outcome: points && points.length > 0 ? 'success' : 'null',
+            reason: `model=${options.routingGraphModel ?? 'grid'}`,
+          });
         }
-        // Phase E1: compound (cross-group) routing recorded as a
-        // single summary attempt. Per-segment detail is Phase E2.
-        attempts.push({
-          level: 1,
-          kind: 'routing-graph:compound',
-          outcome: points && points.length > 0 ? 'success' : 'null',
-          reason: `model=${options.routingGraphModel ?? 'grid'}`,
-        });
       } else {
         if (trace) {
           // Build graph to expose statistics for debugging/visualization.

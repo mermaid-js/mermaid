@@ -19,6 +19,7 @@ import type { LayoutData, Node } from '../../../types.js';
 import { rectForNode } from '../core/helpers.js';
 import { validateLayout } from '../../layout-utils/validateLayout.js';
 import { findRoutingGraphPathBetweenPorts } from '../core/routing.js';
+import { findDirectCompoundRoute } from './directCompoundRoute.js';
 
 interface Point {
   x: number;
@@ -373,6 +374,43 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
 
       const candidates = [...routeCandidates(ps, pe, rS, rE, parallel)];
       if (rS && rE && e?.start != null && e?.end != null) {
+        // Compound-aware direct reroutes: the plain candidates below treat
+        // every group frame as a hard obstacle, so a cross-group edge can
+        // never be repaired by them. The direct compound search excludes the
+        // ancestry-chain frames (tree-path rule) and stays inside the common
+        // ancestors, exactly like the primary compound routing.
+        const sNode = nodeById.get(String(e.start));
+        const eNode = nodeById.get(String(e.end));
+        if (sNode && eNode) {
+          for (const [sSide, eSide] of sidePreference(rS, rE).slice(0, 3)) {
+            const sHoriz = sSide === 'N' || sSide === 'S';
+            const eHoriz = eSide === 'N' || eSide === 'S';
+            const sT = sHoriz
+              ? (rE.cx - rS.left) / (rS.right - rS.left)
+              : (rE.cy - rS.top) / (rS.bottom - rS.top);
+            const eT = eHoriz
+              ? (rS.cx - rE.left) / (rE.right - rE.left)
+              : (rS.cy - rE.top) / (rE.bottom - rE.top);
+            for (const [st, et] of [
+              [sT, eT],
+              [0.5, 0.5],
+            ]) {
+              const compoundRoute = findDirectCompoundRoute({
+                startNode: sNode,
+                endNode: eNode,
+                startPort: sidePort(rS, sSide, st),
+                endPort: sidePort(rE, eSide, et),
+                nodesById: nodeById,
+                spacing: 10,
+                clearance: 8,
+                model: 'channels',
+              });
+              if (compoundRoute && compoundRoute.length >= 2) {
+                candidates.push(compoundRoute.map((p) => ({ ...p })));
+              }
+            }
+          }
+        }
         candidates.push(...sideRouteCandidates(rS, rE, nodeById, String(e.start), String(e.end)));
       }
       if (parallel) {
@@ -385,7 +423,10 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
       const oldY = e!.y;
       const hasLabel = e!.label != null && Number.isFinite(e!.x) && Number.isFinite(e!.y);
       const hardReroute =
-        types.has('edge-intersects-obstacle') || types.has('edge-port-direction-mismatch');
+        types.has('edge-intersects-obstacle') ||
+        types.has('edge-port-direction-mismatch') ||
+        types.has('edge-non-orthogonal') ||
+        types.has('edge-endpoint-detached-from-node');
       for (const candidate of candidates) {
         if (!hardReroute && candidate.length >= old!.length + 2) {
           continue; // don't trade a defect for a much longer route

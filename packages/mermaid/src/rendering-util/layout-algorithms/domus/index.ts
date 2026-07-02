@@ -25,6 +25,10 @@ import { alignStraightLeafEdgesWhenValid } from './pipeline/straightLeafAlignmen
 import { isEdgeLabelNodeId } from './core/labels.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
 import { reduceCrossingsWithPortSideCandidatesWhenScoreImproves } from './pipeline/crossingPortRepair.js';
+import {
+  COMPOUND_GROUP_PAD,
+  tryCompoundGroupPlacementCandidateWhenScoreImproves,
+} from './pipeline/compoundPlacement.js';
 import { isHorizontalOrthoDirection, oppositeOrthoDirection } from './core/direction.js';
 
 function oppositeDirection(dir: string): string | null {
@@ -451,6 +455,22 @@ export function layout(data4Layout: LayoutData): void {
   // semantic edge per `(start, end)` pair.
   finalizeDummyLabelNodesToOverlayLabels(data4Layout);
   tryLayeredFallbackCandidateWhenScoreImproves(data4Layout, preFinalizeLayout);
+
+  // Compound (per-group) DOMUS placement candidate for multi-group layouts the
+  // flat placement left invalid or weak. Score-gated inside; see
+  // `pipeline/compoundPlacement.ts` for the paper trail.
+  tryCompoundGroupPlacementCandidateWhenScoreImproves(data4Layout, preFinalizeLayout, {
+    spacing: 10,
+    routeWithRoutingGraph: (candidate) => {
+      runRP1OrthogonalPipeline(candidate, {
+        spacing: 10,
+        routingBackend: 'routing-graph',
+        routingGraphModel: 'channels',
+        useExistingPositions: true,
+        groupPadding: COMPOUND_GROUP_PAD,
+      });
+    },
+  });
 
   // Re-exit terminals the validator flags as port-direction-mismatched onto a
   // perpendicular side with a clean L. Runs before jog simplification so the new
