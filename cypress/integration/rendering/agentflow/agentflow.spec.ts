@@ -218,4 +218,20 @@ describe('Agentflow diagram', () => {
       {}
     );
   });
+
+  it('9: should treat an empty/whitespace metadata block as a no-op (#83)', () => {
+    // An empty multi-line `@{` `}` block used to crash the whole diagram with
+    // "Cannot read properties of null (reading 'shape')".
+    imgSnapshotTest(
+      `agentflow TB
+        newtask["Example"]@{
+}
+        other["Other"]@{   }
+        newtask --> other
+        styled["Styled"]@{ shape: task }
+        other --> styled
+      `,
+      {}
+    );
+  });
 });
