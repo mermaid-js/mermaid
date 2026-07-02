@@ -1010,3 +1010,200 @@ export function rerouteTopCrossersWhenScoreImproves(layout: LayoutData): void {
     }
   }
 }
+
+/**
+ * Sink/source port-fan permutation. When several edges attach to one side of
+ * a shared node (nodes that draw 5-8 edges each), ports allocated in
+ * arrival order guarantee pairwise crossings whenever the far endpoints are
+ * ordered differently. Reordering the whole fan by far-endpoint position and
+ * rerouting it is a TRANSACTION — no single-edge move can realise it, which
+ * is exactly where the per-edge passes converge. Accepted only when the full
+ * validator score strictly improves.
+ */
+export function reorderPortFansWhenScoreImproves(layout: LayoutData): void {
+  let current = validateLayout(layout);
+  if (!current.ok || current.score <= 0) {
+    return;
+  }
+
+  const nodeById = new Map<string, Node>();
+  for (const n of layout.nodes ?? []) {
+    if (n?.id != null && !(n as { isGroup?: boolean }).isGroup) {
+      nodeById.set(String(n.id), n);
+    }
+  }
+  const allNodes = new Map<string, Node>();
+  for (const n of layout.nodes ?? []) {
+    if (n?.id != null) {
+      allNodes.set(String(n.id), n);
+    }
+  }
+  const edges = (layout.edges ?? []) as {
+    id?: string;
+    start?: string;
+    end?: string;
+    points?: Point[];
+    x?: number;
+    y?: number;
+    label?: unknown;
+  }[];
+
+  const sideOfPointOnRect = (p: Point, r: Rect): Side | null => {
+    const eps = 2;
+    if (Math.abs(p.y - r.top) <= eps && p.x >= r.left - eps && p.x <= r.right + eps) {
+      return 'N';
+    }
+    if (Math.abs(p.y - r.bottom) <= eps && p.x >= r.left - eps && p.x <= r.right + eps) {
+      return 'S';
+    }
+    if (Math.abs(p.x - r.left) <= eps && p.y >= r.top - eps && p.y <= r.bottom + eps) {
+      return 'W';
+    }
+    if (Math.abs(p.x - r.right) <= eps && p.y >= r.top - eps && p.y <= r.bottom + eps) {
+      return 'E';
+    }
+    return null;
+  };
+
+  interface FanMember {
+    edge: (typeof edges)[number];
+    /** 'start' when the fan side is the edge's first point. */
+    attach: 'start' | 'end';
+    farCoord: number;
+  }
+
+  for (let round = 0; round < 2; round++) {
+    // Group edge terminals by (node, side).
+    const fans = new Map<string, FanMember[]>();
+    for (const e of edges) {
+      const pts = e.points;
+      if (!Array.isArray(pts) || pts.length < 2) {
+        continue;
+      }
+      for (const attach of ['start', 'end'] as const) {
+        const nodeId = attach === 'start' ? e.start : e.end;
+        if (nodeId == null || !nodeById.has(String(nodeId))) {
+          continue;
+        }
+        const node = nodeById.get(String(nodeId))!;
+        const r = rectForNode(node);
+        const p = attach === 'start' ? pts[0] : pts[pts.length - 1];
+        const side = sideOfPointOnRect(p, r);
+        if (!side) {
+          continue;
+        }
+        const far = attach === 'start' ? pts[pts.length - 1] : pts[0];
+        const farCoord = side === 'N' || side === 'S' ? far.x : far.y;
+        const key = `${String(nodeId)}|${side}`;
+        const arr = fans.get(key) ?? [];
+        arr.push({ edge: e, attach, farCoord });
+        fans.set(key, arr);
+      }
+    }
+
+    let improvedThisRound = false;
+    for (const [key, members] of fans) {
+      if (members.length < 3) {
+        continue;
+      }
+      const [nodeId, side] = key.split('|') as [string, Side];
+      const node = nodeById.get(nodeId)!;
+      const r = rectForNode(node);
+
+      // Current port order along the side vs far-endpoint order.
+      const portCoord = (m: FanMember): number => {
+        const pts = m.edge.points!;
+        const p = m.attach === 'start' ? pts[0] : pts[pts.length - 1];
+        return side === 'N' || side === 'S' ? p.x : p.y;
+      };
+      const byPort = [...members].sort((a, b) => portCoord(a) - portCoord(b));
+      const byFar = [...members].sort((a, b) => a.farCoord - b.farCoord);
+      const alreadyOrdered = byPort.every((m, i) => m === byFar[i]);
+      if (alreadyOrdered) {
+        continue;
+      }
+
+      // Transaction: assign evenly spread ports in far-endpoint order and
+      // reroute every member with the direct compound search.
+      const saved = members.map((m) => ({
+        m,
+        points: m.edge.points,
+        x: m.edge.x,
+        y: m.edge.y,
+      }));
+      // Project each far endpoint onto the side (clamped), then push apart to
+      // a minimum separation so straight opportunities survive the permutation.
+      const lo = (side === 'N' || side === 'S' ? r.left : r.top) + MARGIN;
+      const hi = (side === 'N' || side === 'S' ? r.right : r.bottom) - MARGIN;
+      const minSep = Math.min(14, (hi - lo) / Math.max(1, byFar.length - 1));
+      const coords: number[] = byFar.map((m) => Math.max(lo, Math.min(hi, m.farCoord)));
+      for (let i = 1; i < coords.length; i++) {
+        if (coords[i] < coords[i - 1] + minSep) {
+          coords[i] = coords[i - 1] + minSep;
+        }
+      }
+      for (let i = coords.length - 1; i >= 0; i--) {
+        if (coords[i] > hi) {
+          coords[i] = hi;
+        }
+        if (i < coords.length - 1 && coords[i] > coords[i + 1] - minSep) {
+          coords[i] = coords[i + 1] - minSep;
+        }
+      }
+      let failed = false;
+      for (let i = 0; i < byFar.length && !failed; i++) {
+        const m = byFar[i];
+        const span = hi - lo;
+        const t = span > 0 ? (coords[i] - lo) / span : 0.5;
+        const newPort = sidePort(r, side, Math.max(0.05, Math.min(0.95, t)));
+        const pts = m.edge.points!;
+        const otherEndPoint = m.attach === 'start' ? pts[pts.length - 1] : pts[0];
+        const startNode =
+          m.attach === 'start' ? node : (allNodes.get(String(m.edge.start ?? '')) ?? null);
+        const endNode =
+          m.attach === 'end' ? node : (allNodes.get(String(m.edge.end ?? '')) ?? null);
+        if (!startNode || !endNode) {
+          failed = true;
+          break;
+        }
+        const route = findDirectCompoundRoute({
+          startNode,
+          endNode,
+          startPort: m.attach === 'start' ? newPort : otherEndPoint,
+          endPort: m.attach === 'end' ? newPort : otherEndPoint,
+          nodesById: allNodes,
+          spacing: 10,
+          clearance: 8,
+          model: 'channels',
+        });
+        if (!route || route.length < 2) {
+          failed = true;
+          break;
+        }
+        m.edge.points = route.map((p) => ({ ...p }));
+        if (m.edge.label != null && Number.isFinite(m.edge.x) && Number.isFinite(m.edge.y)) {
+          const anchor = labelAnchors(m.edge.points)[0];
+          m.edge.x = anchor.x;
+          m.edge.y = anchor.y;
+        }
+      }
+
+      if (!failed) {
+        const next = validateLayout(layout);
+        if (next.ok && next.score > current.score) {
+          current = next;
+          improvedThisRound = true;
+          continue;
+        }
+      }
+      for (const s of saved) {
+        s.m.edge.points = s.points;
+        s.m.edge.x = s.x;
+        s.m.edge.y = s.y;
+      }
+    }
+    if (!improvedThisRound) {
+      return;
+    }
+  }
+}

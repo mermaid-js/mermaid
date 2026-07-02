@@ -20,6 +20,7 @@ import { repairPortDirectionMismatchWhenScoreImproves } from './pipeline/portDir
 import { relocateOffEdgeLabelsWhenScoreImproves } from './pipeline/offEdgeLabelRelocation.js';
 import {
   remediateFlaggedEdgesWhenMonotone,
+  reorderPortFansWhenScoreImproves,
   rerouteTopCrossersWhenScoreImproves,
   simplifyPathologicalRoutesWhenMonotone,
 } from './pipeline/flaggedEdgeRemediation.js';
@@ -533,6 +534,12 @@ export function layout(data4Layout: LayoutData): void {
 
   // Spend the remaining crossing budget on the worst offenders with the full
   // candidate library (score-gated; no-op while the score is clamped at 0).
+  rerouteTopCrossersWhenScoreImproves(data4Layout);
+
+  // Shared-node port fans whose order disagrees with their far endpoints
+  // guarantee pairwise crossings no single-edge move can fix; permute the fan
+  // and reroute it as one transaction.
+  reorderPortFansWhenScoreImproves(data4Layout);
   rerouteTopCrossersWhenScoreImproves(data4Layout);
   simplifyEdgeJogsWhenScoreImproves(data4Layout);
 }
