@@ -240,9 +240,10 @@ jobs:
           echo '' >> "$GITHUB_STEP_SUMMARY"
           npx tsx scripts/size.ts >> "$GITHUB_STEP_SUMMARY"
 
-      # Rebuild the served bundle with istanbul instrumentation so the Cypress
-      # run can collect coverage. Gated to runs whose coverage is uploaded.
-      - name: Build instrumented bundle for e2e coverage
+      # Rebuild the served bundle with inline source maps so the Cypress run can
+      # collect native V8 coverage and map it back to source (no instrumentation).
+      # Gated to runs whose coverage is uploaded.
+      - name: Build coverage bundle for e2e coverage
         if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/develop' }}
         run: pnpm build:coverage
 
@@ -317,6 +318,12 @@ jobs:
   # upload them to Argos in a single build. PR / merge-queue runs upload only the
   # sheets; a push to develop additionally uploads the individual screenshots so
   # the baseline is a superset (see ARGOS_UPLOAD_BOTH).
+  #
+  # Only runs when the e2e matrix fully succeeded: a failed/partial e2e run would
+  # otherwise upload an incomplete or wrong set of screenshots — and on develop
+  # that set becomes the baseline. `needs.e2e.result == 'success'` requires every
+  # shard to pass (the matrix is fail-fast: false, so its result is failure if any
+  # shard failed).
   argos-batch:
     if: >-
       ${{
@@ -324,7 +331,7 @@ jobs:
         (github.event_name == 'workflow_dispatch' ||
           (github.event_name != 'pull_request' || !startsWith(github.head_ref, 'renovate/'))) &&
         needs.detect-scope.outputs.spec_pattern != 'SKIP' &&
-        !cancelled()
+        needs.e2e.result == 'success'
       }}
     needs: [detect-scope, e2e]
     runs-on: ubuntu-latest
@@ -349,6 +356,14 @@ jobs:
           merge-multiple: true
           path: cypress/screenshots
 
+      # cypress-split gives each shard a different spec subset, so Cypress names
+      # screenshots relative to that shard's spec common-ancestor (the rendering/
+      # prefix is kept or stripped depending on the mix). Re-root every screenshot
+      # under its spec's true cypress/integration path so names are deterministic
+      # across runs — otherwise the same diagram churns the Argos baseline.
+      - name: Canonicalize screenshot paths
+        run: pnpm run argos:canonicalize
+
       - name: Build composite sheets
         if: env.GROUP_ARGOS_IMAGES == 'true'
         run: pnpm run argos:batch
@@ -369,51 +384,53 @@ jobs:
       # body limit ("request entity too large", HTTP 413). Each parallel index PUTs
       # only its slice; --files globs stay relative to the same root so names are
       # preserved, and Argos combines the indices into one build once all K report.
-      - name: Upload combined baseline to Argos (develop)
-        if: env.ARGOS_UPLOAD_BOTH == 'true'
+      - name: Upload images to Argos
         env:
           ARGOS_PARALLEL_NONCE: ${{ github.run_id }}-${{ github.run_attempt }}
         run: |
           set -euo pipefail
           mkdir -p cypress/argos-baseline
-          cp -r cypress/argos-sheets/. cypress/argos-baseline/
-          cp -r cypress/screenshots/. cypress/argos-baseline/
+          if [ "$ARGOS_UPLOAD_BOTH" = 'true' ]; then
+            cp -r cypress/argos-sheets/. cypress/argos-baseline/
+            cp -r cypress/screenshots/. cypress/argos-baseline/
+          elif [ "$GROUP_ARGOS_IMAGES" = 'true' ]; then
+            # PR / merge-queue / manual grouped runs: upload only the composite sheets.
+            cp -r cypress/argos-sheets/. cypress/argos-baseline/
+            export ARGOS_SUBSET=true
+          else
+            # Manual per-screenshot runs (workflow_dispatch with group_argos_images=false).
+            cp -r cypress/screenshots/. cypress/argos-baseline/
+            export ARGOS_SUBSET=true
+          fi
 
-          # Round-robin the top-level diagram-group folders into K buckets so each
-          # upload's finalize body carries metadata for only ~1/K of the suite.
-          mapfile -t groups < <(cd cypress/argos-baseline && ls -d */ | sed 's#/##')
-          K=3
+          # Round-robin the leaf directories (those that directly hold images)
+          # into K buckets so each upload's finalize body carries only ~1/K of the
+          # suite. Bucketing by top-level folder instead put all of rendering/
+          # (~60% of the suite) into one bucket whose finalize body exceeded
+          # Argos's limit (HTTP 413) regardless of K; balancing at the leaf level
+          # keeps the biggest bucket to ~1/K.
+          mapfile -t groups < <(
+            cd cypress/argos-baseline &&
+              find . -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) |
+              sed 's#/[^/]*$##' | sort -u | sed 's#^\./##'
+          )
+          K=5
           for i in $(seq 1 "$K"); do
             globs=()
             for j in "${!groups[@]}"; do
-              # Match only image files. A bare `<group>/**` also matches the
-              # `<name>.png.argos.json` metadata sidecars; Argos then treats each
-              # sidecar as a screenshot and reads `<sidecar>.argos.json`, doubling
-              # the suffix. For long screenshot names that path exceeds the 255-byte
-              # filename limit (ENAMETOOLONG), which Argos rethrows as
-              # "Failed to read metadata". Restricting to images avoids this and
-              # keeps the `.json` manifests / sidecars out of the upload entirely.
-              if [ $(( j % K + 1 )) -eq "$i" ]; then globs+=( "${groups[$j]}/**/*.{png,jpg,jpeg}" ); fi
+              # Glob each leaf dir non-recursively (`/*` not `/**`) so the buckets
+              # stay a disjoint partition, and match only images: a `/**` glob would
+              # also pick up the `<name>.png.argos.json` metadata sidecars, which
+              # Argos treats as screenshots and whose doubled `<sidecar>.argos.json`
+              # path overflows the 255-byte filename limit (ENAMETOOLONG, surfaced
+              # as "Failed to read metadata").
+              if [ $(( j % K + 1 )) -eq "$i" ]; then globs+=( "${groups[$j]}/*.{png,jpg,jpeg}" ); fi
             done
             [ ${#globs[@]} -eq 0 ] && continue
             npx argos upload cypress/argos-baseline \
               --files "${globs[@]}" \
               --parallel --parallel-total "$K" --parallel-index "$i"
           done
-
-      # PR / merge-queue / manual grouped runs: upload only the composite sheets.
-      - name: Upload grouped sheets to Argos
-        if: env.GROUP_ARGOS_IMAGES == 'true' && env.ARGOS_UPLOAD_BOTH != 'true'
-        env:
-          ARGOS_SUBSET: true
-        run: npx argos upload cypress/argos-sheets
-
-      # Manual per-screenshot runs (workflow_dispatch with group_argos_images=false).
-      - name: Upload individual screenshots to Argos
-        if: env.GROUP_ARGOS_IMAGES != 'true'
-        env:
-          ARGOS_SUBSET: true
-        run: npx argos upload cypress/screenshots
 
   e2e-required:
     if: always()

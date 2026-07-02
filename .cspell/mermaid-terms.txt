@@ -43,6 +43,7 @@ sentencepiece
 siebling
 statediagram
 substate
+treeview
 unfixable
 Unmodelled
 Viewbox

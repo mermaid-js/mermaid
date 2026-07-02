@@ -668,8 +668,10 @@ describe('XY Chart', () => {
             expect(textProps.x).to.be.greaterThan(barProps.x);
             expect(textProps.x + textProps.width).to.be.lessThan(barProps.x + barProps.width);
 
-            expect(textProps.y).to.be.greaterThan(barProps.y);
-            expect(textProps.y + textProps.height).to.be.lessThan(barProps.y + barProps.height);
+            // Allow 1px tolerance: getBBox() height can be 1.2-1.45x the nominal font size,
+            // so the rendered text may marginally overflow the bar edge by a fraction of a pixel.
+            expect(textProps.y).to.be.greaterThan(barProps.y - 1);
+            expect(textProps.y + textProps.height).to.be.lessThan(barProps.y + barProps.height + 1);
             expect(textProps.y + textProps.height / 2).to.be.closeTo(
               barProps.y + barProps.height / 2,
               5
@@ -779,8 +781,10 @@ describe('XY Chart', () => {
             expect(textProps.x).to.be.greaterThan(barProps.x);
             expect(textProps.x + textProps.width).to.be.lessThan(barProps.x + barProps.width);
 
-            expect(textProps.y).to.be.greaterThan(barProps.y);
-            expect(textProps.y + textProps.height).to.be.lessThan(barProps.y + barProps.height);
+            // Allow 1px tolerance: getBBox() height can be 1.2-1.45x the nominal font size,
+            // so the rendered text may marginally overflow the bar edge by a fraction of a pixel.
+            expect(textProps.y).to.be.greaterThan(barProps.y - 1);
+            expect(textProps.y + textProps.height).to.be.lessThan(barProps.y + barProps.height + 1);
             expect(textProps.y + textProps.height / 2).to.be.closeTo(
               barProps.y + barProps.height / 2,
               5

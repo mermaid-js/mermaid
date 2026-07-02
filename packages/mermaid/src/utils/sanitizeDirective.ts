@@ -2,6 +2,35 @@ import { configKeys } from '../defaultConfig.js';
 import { log } from '../logger.js';
 
 /**
+ * Dictionary-style configs have arbitrary user-defined keys, so instead of
+ * checking the keys against configKeys, their values are validated against a
+ * pattern (and suspicious keys are dropped).
+ */
+const DICTIONARY_CONFIG_PATTERNS: Record<string, RegExp> = {
+  // CSS colors (sankey)
+  nodeColors: /^#[\da-f]{3,8}$|^rgb\([\d\s%,.]+\)$|^hsl\([\d\s%,.]+\)$|^[a-z]+$/i,
+  // iconify icon references (treeView filenameIcons/extensionIcons)
+  filenameIcons: /^[\w-]+(?::[\w-]+)?$/,
+  extensionIcons: /^[\w-]+(?::[\w-]+)?$/,
+};
+
+const sanitizeDictionaryConfig = (dict: Record<string, unknown>, valuePattern: RegExp): void => {
+  for (const key of Object.keys(dict)) {
+    const value = dict[key];
+    if (
+      key.startsWith('__') ||
+      key.includes('proto') ||
+      key.includes('constr') ||
+      typeof value !== 'string' ||
+      !valuePattern.test(value)
+    ) {
+      log.debug('sanitize deleting dictionary entry:', key, value);
+      delete dict[key];
+    }
+  }
+};
+
+/**
  * Sanitizes directive objects
  *
  * @param args - Directive's JSON
@@ -36,17 +65,11 @@ export const sanitizeDirective = (args: any): void => {
     }
 
     // Recurse if an object, but handle dictionary-style configs specially
-    // (like nodeColors for sankey diagrams) by validating values as CSS colors
+    // (like nodeColors or filenameIcons) by validating their values instead
     if (typeof args[key] === 'object') {
-      if (key === 'nodeColors') {
-        // Validate each value is a valid CSS color
-        const colorPattern = /^#[\da-f]{3,8}$|^rgb\([\d\s%,.]+\)$|^hsl\([\d\s%,.]+\)$|^[a-z]+$/i;
-        for (const colorKey of Object.keys(args[key])) {
-          if (typeof args[key][colorKey] !== 'string' || !colorPattern.test(args[key][colorKey])) {
-            log.debug('sanitize deleting invalid color:', colorKey, args[key][colorKey]);
-            delete args[key][colorKey];
-          }
-        }
+      const valuePattern = DICTIONARY_CONFIG_PATTERNS[key];
+      if (valuePattern) {
+        sanitizeDictionaryConfig(args[key], valuePattern);
       } else {
         log.debug('sanitizing object', key);
         sanitizeDirective(args[key]);

@@ -125,7 +125,7 @@ creates an edge going out of `groupOne`, adjacent to `server`, and into `groupTw
 
 It's important to note that `groupId`s cannot be used for specifying edges and the `{group}` modifier can only be used for services within a group.
 
-### Aligning siblings (v<MERMAID_RELEASE_VERSION>+)
+### Aligning siblings (v11.16.0+)
 
 When several services share similar edge topology (for example, three databases all connecting `R --> L:mcp`), the layout heuristic may collapse them onto the same coordinate so that two render on top of each other. The `align` directive declares that a set of services share a row (same y) or a column (same x), and forces them to spread along that axis.
 

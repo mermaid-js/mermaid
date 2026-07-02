@@ -413,6 +413,13 @@ export interface SwimlaneDiagramConfig extends BaseDiagramConfig {
    *
    */
   optimizeRanksByCrossings?: boolean;
+  /**
+   * Automatically reorders top-level swimlanes with a deterministic
+   * weighted-linear-arrangement heuristic. Disabled by default because
+   * source swimlane order can carry semantic meaning.
+   *
+   */
+  automaticLaneOrdering?: boolean;
 }
 /**
  * The object containing configurations specific for sequence diagrams
@@ -1834,9 +1841,45 @@ export interface TreeViewDiagramConfig extends BaseDiagramConfig {
    */
   lineThickness?: number;
   /**
-   * Whether to show file/folder icons next to labels
+   * Whether to show the default file/folder icons next to labels.
+   * Explicit `icon()` annotations always render, regardless of this setting.
+   *
    */
   showIcons?: boolean;
+  /**
+   * Name of a registered iconify pack used to resolve unprefixed icon
+   * references — `icon(name)` annotations and `filenameIcons`/
+   * `extensionIcons` values without a `pack:` prefix. The pack must be
+   * registered with `registerIconPacks`. When empty, unprefixed names
+   * resolve to the built-in file/folder icons.
+   *
+   */
+  defaultIconPack?: string;
+  /**
+   * Exact-filename → icon map used to pick a file's icon when
+   * `showIcons` is enabled, e.g.
+   * `{ "Dockerfile": "material-icon-theme:docker" }`.
+   * Values are resolved like `icon()` references: `pack:name` is used
+   * as-is, unprefixed names resolve via `defaultIconPack`, and `none`
+   * hides the icon for matching files.
+   *
+   */
+  filenameIcons?: {
+    [k: string]: string;
+  };
+  /**
+   * File-extension → icon map used to pick a file's icon when
+   * `showIcons` is enabled, e.g.
+   * `{ ".ts": "material-icon-theme:typescript" }`. Keys are
+   * lowercase and may include or omit the leading dot.
+   * Values are resolved like `icon()` references: `pack:name` is used
+   * as-is, unprefixed names resolve via `defaultIconPack`, and `none`
+   * hides the icon for matching files.
+   *
+   */
+  extensionIcons?: {
+    [k: string]: string;
+  };
 }
 /**
  * The object containing configurations specific for radar diagrams.
