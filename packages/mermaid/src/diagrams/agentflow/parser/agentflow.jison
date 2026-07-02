@@ -385,8 +385,12 @@ statement
     {$$=yy.addSubGraph(undefined,$document,undefined,'flow');if(yy.addSubgraphMapping){yy.addSubgraphMapping(undefined,undefined,@1,@4);}}
     | connector SPACE textNoTags SQS text SQE separator
     {$$=yy.addConnector($textNoTags,$text);if(yy.addConnectorMapping){yy.addConnectorMapping($textNoTags,$text,@1,@7);}}
+    | connector SPACE textNoTags SQS text SQE shapeData separator
+    {$$=yy.addConnector($textNoTags,$text);yy.addVertex($$,undefined,undefined,undefined,undefined,undefined,undefined,$shapeData,@7);if(yy.addConnectorMapping){yy.addConnectorMapping($textNoTags,$text,@1,@8);}}
     | connector SPACE textNoTags separator
     {$$=yy.addConnector($textNoTags,{text:'', type:'text'});if(yy.addConnectorMapping){yy.addConnectorMapping($textNoTags,{text:'', type:'text'},@1,@4);}}
+    | connector SPACE textNoTags shapeData separator
+    {$$=yy.addConnector($textNoTags,{text:'', type:'text'});yy.addVertex($$,undefined,undefined,undefined,undefined,undefined,undefined,$shapeData,@4);if(yy.addConnectorMapping){yy.addConnectorMapping($textNoTags,{text:'', type:'text'},@1,@5);}}
     | direction
     | acc_title acc_title_value  { $$=$acc_title_value.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$acc_descr_value.trim();yy.setAccDescription($$); }

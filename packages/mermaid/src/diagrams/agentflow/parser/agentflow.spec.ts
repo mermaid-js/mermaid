@@ -277,6 +277,39 @@ describe('parsing an agentflow diagram', function () {
         .sort();
       expect(ids).toEqual(['github', 'slack']);
     });
+
+    it('parses inline metadata on a labeled connector declaration', function () {
+      agentflow.parser.parse(`agentflow TB
+  connector github["GitHub"]@{ protocol: "mcp", transport: "stdio" }`);
+      const db = agentflow.parser.yy as AgentFlowDB;
+      const connectors = db.getConnectors();
+      expect(connectors).toHaveLength(1);
+      expect(connectors[0].id).toBe('github');
+      expect(connectors[0].text).toBe('GitHub');
+      expect(connectors[0].metadata?.protocol).toBe('mcp');
+      expect(connectors[0].metadata?.transport).toBe('stdio');
+    });
+
+    it('parses inline metadata on a bare connector declaration', function () {
+      agentflow.parser.parse(`agentflow TB
+  connector github@{ protocol: "mcp" }`);
+      const db = agentflow.parser.yy as AgentFlowDB;
+      const connectors = db.getConnectors();
+      expect(connectors).toHaveLength(1);
+      expect(connectors[0].id).toBe('github');
+      expect(connectors[0].metadata?.protocol).toBe('mcp');
+    });
+
+    it('merges inline metadata with a later standalone attachment', function () {
+      agentflow.parser.parse(`agentflow TB
+  connector github["GitHub"]@{ protocol: "mcp" }
+  github@{ transport: "stdio" }`);
+      const db = agentflow.parser.yy as AgentFlowDB;
+      const connectors = db.getConnectors();
+      expect(connectors).toHaveLength(1);
+      expect(connectors[0].metadata?.protocol).toBe('mcp');
+      expect(connectors[0].metadata?.transport).toBe('stdio');
+    });
   });
 
   describe('parallel fan-out (`&`)', function () {
