@@ -234,4 +234,22 @@ describe('Agentflow diagram', () => {
       {}
     );
   });
+
+  it('10: should keep a global-scoped node outside the flow container (#80)', () => {
+    // Without the `global` block, referencing A inside the flow would pull it
+    // into the container. Declaring it global anchors it at root level.
+    imgSnapshotTest(
+      `agentflow TB
+
+        global
+          A["Shared input"]
+        end
+
+        flow pipeline["Pipeline"]
+          A --> B["Process"] --> C["Publish"]
+        end
+      `,
+      {}
+    );
+  });
 });

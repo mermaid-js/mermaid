@@ -2,16 +2,29 @@
 
 |             |                                |
 | ----------- | ------------------------------ |
-| **Version** | 0.8.2                          |
+| **Version** | 0.8.3                          |
 | **Status**  | Draft                          |
-| **Date**    | 2026-06-03                     |
+| **Date**    | 2026-07-02                     |
 | **Authors** | Mermaid-Chart / Agentflow Team |
 
 ---
 
+## What's New in v0.8.3
+
+v0.8.3 adds one scoping construct — the `global … end` block — and changes nothing else.
+
+### TL;DR — what changed since v0.8.2
+
+- **The `global` scope block.** Nodes declared inside `global … end` are globally
+  scoped: they keep **no parent**, even when referenced inside a `flow … end` block.
+  This is the explicit opt-out of the textual membership rule, under which any node id
+  referenced inside a flow joins that flow (§3.5). The block renders nothing itself —
+  no container box is emitted. `global` becomes a reserved word and can no longer be
+  used as a bare node id (consistent with `flow`, `connector`, and `end`).
+
 ## What's New in v0.8.2
 
-v0.8.2 is a small, backward-compatible follow-up to v0.8.1 — no syntax is removed or
+v0.8.2 is a small, backward-compatible follow-up to v0.8.1 (superseded by v0.8.3) — no syntax is removed or
 renamed. It adds one authoring convenience and lands a batch of parser/tooling fixes.
 
 ### TL;DR — what changed since v0.8.1
@@ -265,7 +278,9 @@ agentflow LR
 
 v0.8.1 has **one** container keyword: `flow`. The v0.8.0 `agent` container is renamed;
 `skill`, `testCase`, `directive`, and `subgraph` containers of earlier drafts remain
-removed. `task` is not a container; it is the default node (§4.3).
+removed. `task` is not a container; it is the default node (§4.3). v0.8.3 adds the
+`global … end` scope block — a block form that is **not** a container: it renders
+nothing and exists only to anchor nodes at the root scope (§3.5).
 
 A `flow` container follows the standard block form:
 
@@ -355,8 +370,10 @@ container set reduced to `flow`, the matrix is small:
 > Authors do not write a literal `tool` or `task` keyword.
 
 Tools, tasks, and other leaf nodes cannot be parents. A `connector` declaration (§8) is
-a top-level leaf, not a child of a flow. Placements outside this matrix produce a
-warning before v1.0 and become validation errors in v1.0.
+a top-level leaf, not a child of a flow. A `global … end` block (§3.5) is transparent to
+containment — it is not a parent, and the nodes it declares belong to the root scope.
+Placements outside this matrix produce a warning before v1.0 and become validation
+errors in v1.0.
 
 ### 3.4 Nesting Example
 
@@ -368,6 +385,49 @@ flow dev_team["Development Team"]
   end
 end
 ```
+
+### 3.5 The `global` Scope Block (v0.8.3)
+
+Flow membership is textual: any node id referenced anywhere inside a `flow … end`
+block — declared there or merely named as an edge endpoint — becomes a member of that
+flow and is drawn inside its container. That rule keeps agentflow consistent with
+Mermaid flowcharts, but it also means referencing a shared node from inside a flow
+pulls it into the container. The `global` block is the explicit opt-out:
+
+```
+agentflow
+
+global
+  A["Shared input"]
+end
+
+flow pipeline["Pipeline"]
+  A --> B --> C
+end
+```
+
+Here `A` stays at the root scope — the flow contains only `B` and `C` — exactly as if
+the diagram had been authored with `A --> B --> C` outside the flow and only `B`, `C`
+declared inside it.
+
+Rules:
+
+- **No header.** The block form is exactly `global … end`. It takes no id, no
+  `["Title"]`, and no metadata.
+- **Nothing is rendered for the block itself.** `global` declares scope, not a
+  container; there is no box, no label.
+- **Every node id referenced inside becomes globally scoped.** Declarations keep full
+  shape/label/metadata support. Edges may be declared inside the block; they are
+  ordinary top-level edges, and their endpoints become globally scoped like any other
+  id named in the block.
+- **Order-independent.** A `global` block releases its ids from flows declared before
+  or after it.
+- **Usable inside a flow.** A `global` block nested in a `flow` acts as an escape
+  hatch: the listed ids are anchored at the root scope instead of joining the enclosing
+  flow.
+- **`global` is a reserved word.** Like `flow`, `connector`, and `end`, it can no
+  longer be used as a bare node id. It remains usable inside bracketed labels and
+  quoted strings.
 
 ---
 
