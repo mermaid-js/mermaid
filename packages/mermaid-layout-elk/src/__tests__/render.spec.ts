@@ -326,6 +326,35 @@ describe('buildElkGraphFromLayoutData', () => {
     expect(state.elkGraph.layoutOptions['spacing.nodeNodeBetweenLayers']).toBe(0);
   });
 
+  it('preserves default ELK spacing when Mermaid flowchart spacing is defaulted', () => {
+    const state = buildElkGraphFromLayoutData(
+      {
+        direction: 'LR',
+        config: {
+          nodeSpacing: 50,
+          rankSpacing: 50,
+          flowchart: { nodeSpacing: 50, rankSpacing: 100 },
+          elk: {},
+        },
+        nodeSpacing: 50,
+        rankSpacing: 50,
+        nodes: [],
+        edges: [],
+      } as any,
+      {
+        algorithm: 'layered',
+        common: { lineBreakRegex: /<br\s*\/?>/gi },
+        getConfig: () => ({ flowchart: { wrappingWidth: 100 } }),
+        interpolateToCurve: (curve: unknown) => curve,
+        log,
+      } as any
+    );
+
+    expect(state.elkGraph.layoutOptions['spacing.baseValue']).toBe(40);
+    expect(state.elkGraph.layoutOptions['spacing.nodeNode']).toBeUndefined();
+    expect(state.elkGraph.layoutOptions['spacing.nodeNodeBetweenLayers']).toBeUndefined();
+  });
+
   const recursiveLayoutData = (elk: Record<string, unknown>) =>
     ({
       direction: 'TB',

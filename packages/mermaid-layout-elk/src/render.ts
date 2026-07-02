@@ -118,6 +118,9 @@ const ARROW_MAP: Record<string, [string, string]> = {
   double_arrow_circle: ['arrow_circle', 'arrow_circle'],
 };
 const DEFAULT_NODE_PLACEMENT_ALIGNMENT = 'NONE';
+const DEFAULT_FLOWCHART_NODE_SPACING = 50;
+const DEFAULT_FLOWCHART_RANK_SPACING = 100;
+const DEFAULT_LAYOUT_RANK_SPACING = 50;
 
 export function dir2ElkDirection(dir: unknown): 'RIGHT' | 'LEFT' | 'DOWN' | 'UP' {
   switch (dir) {
@@ -160,9 +163,15 @@ export function buildSubgraphLayoutOptions(
 function getElkSpacingConfig(data4Layout: LayoutData): ElkSpacingConfig {
   const config = data4Layout.config as MermaidSpacingConfig | undefined;
 
+  const nodeSpacing = config?.nodeSpacing ?? config?.flowchart?.nodeSpacing;
+  const rankSpacing = config?.rankSpacing ?? config?.flowchart?.rankSpacing;
+
   return {
-    nodeSpacing: config?.nodeSpacing ?? config?.flowchart?.nodeSpacing ?? data4Layout.nodeSpacing,
-    rankSpacing: config?.rankSpacing ?? config?.flowchart?.rankSpacing ?? data4Layout.rankSpacing,
+    nodeSpacing: nodeSpacing === DEFAULT_FLOWCHART_NODE_SPACING ? undefined : nodeSpacing,
+    rankSpacing:
+      rankSpacing === DEFAULT_FLOWCHART_RANK_SPACING || rankSpacing === DEFAULT_LAYOUT_RANK_SPACING
+        ? undefined
+        : rankSpacing,
   };
 }
 
@@ -170,11 +179,18 @@ function buildElkSpacingOptions(
   { nodeSpacing, rankSpacing }: ElkSpacingConfig,
   defaultBaseValue: number
 ): Record<string, unknown> {
-  return {
+  const options: Record<string, unknown> = {
     'spacing.baseValue': rankSpacing ?? nodeSpacing ?? defaultBaseValue,
-    'spacing.nodeNode': nodeSpacing,
-    'spacing.nodeNodeBetweenLayers': rankSpacing,
   };
+
+  if (nodeSpacing !== undefined) {
+    options['spacing.nodeNode'] = nodeSpacing;
+  }
+  if (rankSpacing !== undefined) {
+    options['spacing.nodeNodeBetweenLayers'] = rankSpacing;
+  }
+
+  return options;
 }
 
 /**
