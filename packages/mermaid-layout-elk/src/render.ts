@@ -213,9 +213,14 @@ export function buildSubgraphLayoutOptions(
  * For each container (grouped by `parentId`) we look only at edges internal to
  * that container and find its weakly-connected components. A component with no
  * natural source — no node with in-degree 0 once self-loops are ignored — must
- * contain a cycle, so we nominate its first node in declaration order as the
- * entry. Acyclic components always have a source and nominate nothing, leaving
- * their layout untouched. The caller pins each nominee to the first layer with
+ * contain a cycle. For such components we break cycles greedily in edge
+ * declaration order: an edge that would close a directed cycle is treated as a
+ * back-edge and skipped, and the entry is the first node in declaration order
+ * that is a source of the remaining forward edges. Raw in-degree alone cannot
+ * find it — a back-edge feeding the true entry hides it, and nominating by
+ * node declaration order instead scrambles the layout (#79). Acyclic
+ * components always have a source and nominate nothing, leaving their layout
+ * untouched. The caller pins each nominee to the first layer with
  * `elk.layered.layering.layerConstraint = FIRST`.
  *
  * @param nodes - layout nodes in declaration order
@@ -244,6 +249,9 @@ export function findCyclicEntryNodes(
     const inDegree = new Map<string, number>(ids.map((id) => [id, 0]));
     // Undirected adjacency, used only to find weakly-connected components.
     const neighbors = new Map<string, string[]>(ids.map((id) => [id, []]));
+    // Container-internal directed edges in declaration order, for the
+    // cycle-breaking fallback below.
+    const internalEdges: [string, string][] = [];
 
     for (const edge of edges) {
       const source = edge.source == null ? undefined : String(edge.source);
@@ -258,6 +266,7 @@ export function findCyclicEntryNodes(
       inDegree.set(target, (inDegree.get(target) ?? 0) + 1);
       neighbors.get(source)!.push(target);
       neighbors.get(target)!.push(source);
+      internalEdges.push([source, target]);
     }
 
     // Label weakly-connected components.
@@ -282,17 +291,52 @@ export function findCyclicEntryNodes(
     }
 
     // A component with no in-degree-0 node necessarily contains a cycle.
-    // Nominate the first such node in declaration order as its entry.
     const hasSource = new Array<boolean>(componentCount).fill(false);
     for (const id of ids) {
       if ((inDegree.get(id) ?? 0) === 0) {
         hasSource[component.get(id)!] = true;
       }
     }
+    if (!hasSource.includes(false)) {
+      continue;
+    }
+
+    // Recover each source-less component's entry by breaking cycles greedily
+    // in edge declaration order: skip any edge that would close a directed
+    // cycle (a back-edge). The surviving forward edges are acyclic, so every
+    // component regains at least one source; nominate the first one in
+    // declaration order.
+    const forward = new Map<string, string[]>(ids.map((id) => [id, []]));
+    const residualInDegree = new Map<string, number>(ids.map((id) => [id, 0]));
+    const reaches = (from: string, to: string): boolean => {
+      const seen = new Set<string>([from]);
+      const stack = [from];
+      while (stack.length > 0) {
+        const current = stack.pop()!;
+        if (current === to) {
+          return true;
+        }
+        for (const next of forward.get(current)!) {
+          if (!seen.has(next)) {
+            seen.add(next);
+            stack.push(next);
+          }
+        }
+      }
+      return false;
+    };
+    for (const [source, target] of internalEdges) {
+      if (reaches(target, source)) {
+        continue;
+      }
+      forward.get(source)!.push(target);
+      residualInDegree.set(target, (residualInDegree.get(target) ?? 0) + 1);
+    }
+
     const nominated = new Array<boolean>(componentCount).fill(false);
     for (const id of ids) {
       const c = component.get(id)!;
-      if (!hasSource[c] && !nominated[c]) {
+      if (!hasSource[c] && !nominated[c] && residualInDegree.get(id) === 0) {
         entries.add(id);
         nominated[c] = true;
       }
