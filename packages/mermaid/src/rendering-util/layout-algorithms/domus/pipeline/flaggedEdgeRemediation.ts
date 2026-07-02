@@ -844,3 +844,181 @@ export function simplifyPathologicalRoutesWhenMonotone(layout: LayoutData): void
     }
   }
 }
+
+function segmentsCross(a1: Point, a2: Point, b1: Point, b2: Point): boolean {
+  const d = (p: Point, q: Point, r: Point) => (q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x);
+  const d1 = d(b1, b2, a1);
+  const d2 = d(b1, b2, a2);
+  const d3 = d(a1, a2, b1);
+  const d4 = d(a1, a2, b2);
+  return ((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0));
+}
+
+/**
+ * Score-gated rerouting of the layout's worst crossing offenders. Only
+ * meaningful once the score is un-clamped (a strictly better validator score
+ * is the acceptance), so it complements the monotone passes above: they get
+ * the layout valid and past the 0-clamp, this one spends the remaining
+ * crossing budget. No-op on layouts scoring 0 or with no crossing-heavy edge.
+ */
+export function rerouteTopCrossersWhenScoreImproves(layout: LayoutData): void {
+  let current = validateLayout(layout);
+  if (!current.ok || current.score <= 0 || current.breakdown.crossings === 0) {
+    return;
+  }
+
+  const nodeById = new Map<string, Node>();
+  for (const n of layout.nodes ?? []) {
+    if (n?.id != null) {
+      nodeById.set(String(n.id), n);
+    }
+  }
+  const edges = (layout.edges ?? []) as {
+    id?: string;
+    start?: string;
+    end?: string;
+    points?: Point[];
+    x?: number;
+    y?: number;
+    label?: unknown;
+  }[];
+
+  const crossingCounts = (): Map<string, number> => {
+    const counts = new Map<string, number>();
+    const routed = edges.filter((e) => (e.points?.length ?? 0) >= 2);
+    for (let i = 0; i < routed.length; i++) {
+      for (let j = i + 1; j < routed.length; j++) {
+        const A = routed[i].points!;
+        const B = routed[j].points!;
+        for (let ai = 0; ai < A.length - 1; ai++) {
+          for (let bi = 0; bi < B.length - 1; bi++) {
+            if (segmentsCross(A[ai], A[ai + 1], B[bi], B[bi + 1])) {
+              counts.set(String(routed[i].id), (counts.get(String(routed[i].id)) ?? 0) + 1);
+              counts.set(String(routed[j].id), (counts.get(String(routed[j].id)) ?? 0) + 1);
+            }
+          }
+        }
+      }
+    }
+    return counts;
+  };
+
+  // Hard budget on full-layout validations — this pass runs inside the
+  // per-fixture DDLT timeout (120s) and each validation is O(E^2).
+  let evaluations = 0;
+  const EVAL_BUDGET = 600;
+  for (let round = 0; round < 8; round++) {
+    const counts = crossingCounts();
+    const targets = [...counts.entries()]
+      .filter(([, c]) => c >= 1)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 16)
+      .map(([id]) => id);
+    if (targets.length === 0) {
+      return;
+    }
+
+    let improvedThisRound = false;
+    for (const edgeId of targets) {
+      const e = edges.find((x) => String(x?.id) === edgeId);
+      const pts = e?.points;
+      if (!e || !Array.isArray(pts) || pts.length < 2) {
+        continue;
+      }
+      const ps = pts[0];
+      const pe = pts[pts.length - 1];
+      const rS =
+        e.start != null && nodeById.has(String(e.start))
+          ? rectForNode(nodeById.get(String(e.start))!)
+          : null;
+      const rE =
+        e.end != null && nodeById.has(String(e.end))
+          ? rectForNode(nodeById.get(String(e.end))!)
+          : null;
+
+      const candidates = [...routeCandidates(ps, pe, rS, rE, false)];
+      if (rS && rE && e.start != null && e.end != null) {
+        const sNode = nodeById.get(String(e.start));
+        const eNode = nodeById.get(String(e.end));
+        if (sNode && eNode) {
+          for (const [sSide, eSide] of sidePreference(rS, rE)) {
+            const sHoriz = sSide === 'N' || sSide === 'S';
+            const eHoriz = eSide === 'N' || eSide === 'S';
+            const sT = sHoriz
+              ? (rE.cx - rS.left) / (rS.right - rS.left)
+              : (rE.cy - rS.top) / (rS.bottom - rS.top);
+            const eT = eHoriz
+              ? (rS.cx - rE.left) / (rE.right - rE.left)
+              : (rS.cy - rE.top) / (rE.bottom - rE.top);
+            for (const [st, et] of [
+              [sT, eT],
+              [0.5, 0.5],
+            ]) {
+              const compoundRoute = findDirectCompoundRoute({
+                startNode: sNode,
+                endNode: eNode,
+                startPort: sidePort(rS, sSide, st),
+                endPort: sidePort(rE, eSide, et),
+                nodesById: nodeById,
+                spacing: 10,
+                clearance: 8,
+                model: 'channels',
+              });
+              if (compoundRoute && compoundRoute.length >= 2) {
+                candidates.push(compoundRoute.map((p) => ({ ...p })));
+              }
+            }
+          }
+        }
+        candidates.push(...sideRouteCandidates(rS, rE, nodeById, String(e.start), String(e.end)));
+      }
+
+      const old = e.points;
+      const oldX = e.x;
+      const oldY = e.y;
+      const hasLabel = e.label != null && Number.isFinite(e.x) && Number.isFinite(e.y);
+
+      for (const candidate of candidates) {
+        if (
+          e.start != null &&
+          e.end != null &&
+          candidateCutsLeafInterior(candidate, nodeById, String(e.start), String(e.end))
+        ) {
+          continue;
+        }
+        e.points = candidate;
+        const anchors = hasLabel ? labelAnchors(candidate) : [{ x: oldX ?? 0, y: oldY ?? 0 }];
+        let accepted = false;
+        for (const anchor of anchors) {
+          if (hasLabel) {
+            e.x = anchor.x;
+            e.y = anchor.y;
+          }
+          if (evaluations >= EVAL_BUDGET) {
+            e.points = old;
+            e.x = oldX;
+            e.y = oldY;
+            return;
+          }
+          evaluations++;
+          const next = validateLayout(layout);
+          if (next.ok && next.score > current.score) {
+            current = next;
+            improvedThisRound = true;
+            accepted = true;
+            break;
+          }
+        }
+        if (accepted) {
+          break;
+        }
+        e.points = old;
+        e.x = oldX;
+        e.y = oldY;
+      }
+    }
+    if (!improvedThisRound) {
+      return;
+    }
+  }
+}

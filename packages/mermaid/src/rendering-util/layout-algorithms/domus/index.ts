@@ -20,6 +20,7 @@ import { repairPortDirectionMismatchWhenScoreImproves } from './pipeline/portDir
 import { relocateOffEdgeLabelsWhenScoreImproves } from './pipeline/offEdgeLabelRelocation.js';
 import {
   remediateFlaggedEdgesWhenMonotone,
+  rerouteTopCrossersWhenScoreImproves,
   simplifyPathologicalRoutesWhenMonotone,
 } from './pipeline/flaggedEdgeRemediation.js';
 import { spaceNodesOffGroupFramesWhenScoreImproves } from './pipeline/nodeGroupSpacing.js';
@@ -528,6 +529,11 @@ export function layout(data4Layout: LayoutData): void {
 
   // Some valid-layout simplifications only become available after the late
   // label/crossing/port-order passes have settled geometry.
+  simplifyEdgeJogsWhenScoreImproves(data4Layout);
+
+  // Spend the remaining crossing budget on the worst offenders with the full
+  // candidate library (score-gated; no-op while the score is clamped at 0).
+  rerouteTopCrossersWhenScoreImproves(data4Layout);
   simplifyEdgeJogsWhenScoreImproves(data4Layout);
 }
 
