@@ -62,6 +62,17 @@ interface ElkSubgraphConfig {
   nodePlacementStrategy?: string;
 }
 
+interface ElkSpacingConfig {
+  nodeSpacing?: number;
+  rankSpacing?: number;
+}
+
+interface MermaidSpacingConfig {
+  flowchart?: ElkSpacingConfig;
+  nodeSpacing?: number;
+  rankSpacing?: number;
+}
+
 interface ElkPreparedLayout {
   algorithm?: string;
 }
@@ -127,10 +138,11 @@ export function dir2ElkDirection(dir: unknown): 'RIGHT' | 'LEFT' | 'DOWN' | 'UP'
 export function buildSubgraphLayoutOptions(
   node: { dir?: string },
   elkConfig: ElkSubgraphConfig | undefined,
-  algorithm: string | undefined
+  algorithm: string | undefined,
+  spacingConfig: ElkSpacingConfig = {}
 ): Record<string, unknown> {
   const layoutOptions: Record<string, unknown> = {
-    'spacing.baseValue': 30,
+    ...buildElkSpacingOptions(spacingConfig, 30),
     'nodeLabels.placement': '[H_CENTER V_TOP, INSIDE]',
     'elk.layered.mergeEdges': elkConfig?.mergeEdges,
     'nodePlacement.strategy': elkConfig?.nodePlacementStrategy,
@@ -143,6 +155,26 @@ export function buildSubgraphLayoutOptions(
     layoutOptions['elk.hierarchyHandling'] = 'SEPARATE_CHILDREN';
   }
   return layoutOptions;
+}
+
+function getElkSpacingConfig(data4Layout: LayoutData): ElkSpacingConfig {
+  const config = data4Layout.config as MermaidSpacingConfig | undefined;
+
+  return {
+    nodeSpacing: config?.nodeSpacing ?? config?.flowchart?.nodeSpacing ?? data4Layout.nodeSpacing,
+    rankSpacing: config?.rankSpacing ?? config?.flowchart?.rankSpacing ?? data4Layout.rankSpacing,
+  };
+}
+
+function buildElkSpacingOptions(
+  { nodeSpacing, rankSpacing }: ElkSpacingConfig,
+  defaultBaseValue: number
+): Record<string, unknown> {
+  return {
+    'spacing.baseValue': rankSpacing ?? nodeSpacing ?? defaultBaseValue,
+    'spacing.nodeNode': nodeSpacing,
+    'spacing.nodeNodeBetweenLayers': rankSpacing,
+  };
 }
 
 /**
@@ -407,7 +439,7 @@ function createRootElkGraph(data4Layout: LayoutData, algorithm: string | undefin
         data4Layout.config.elk?.nodePlacementAlignment ?? DEFAULT_NODE_PLACEMENT_ALIGNMENT,
       'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
       'elk.direction': 'DOWN',
-      'spacing.baseValue': 40,
+      ...buildElkSpacingOptions(getElkSpacingConfig(data4Layout), 40),
       'elk.layered.crossingMinimization.forceNodeModelOrder':
         data4Layout.config.elk?.forceNodeModelOrder,
       'elk.layered.considerModelOrder.strategy': data4Layout.config.elk?.considerModelOrder,
@@ -608,6 +640,8 @@ function configureSubgraphNodes(
   parentLookupDb: TreeData,
   elkContext: ElkLayoutContext
 ): void {
+  const spacingConfig = getElkSpacingConfig(data4Layout);
+
   data4Layout.nodes.forEach((n) => {
     const node = nodeDb[n.id];
     if (!node || parentLookupDb.childrenById[node.id] === undefined) {
@@ -625,7 +659,8 @@ function configureSubgraphNodes(
     node.layoutOptions = buildSubgraphLayoutOptions(
       node,
       data4Layout.config.elk,
-      elkContext.algorithm
+      elkContext.algorithm,
+      spacingConfig
     );
     delete node.x;
     delete node.y;

@@ -66,6 +66,16 @@ describe('buildSubgraphLayoutOptions', () => {
     expect(opts['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('NONE');
   });
 
+  it('uses Mermaid node and rank spacing for subgraphs', () => {
+    const opts = buildSubgraphLayoutOptions({}, {}, 'layered', {
+      nodeSpacing: 12,
+      rankSpacing: 24,
+    });
+    expect(opts['spacing.baseValue']).toBe(24);
+    expect(opts['spacing.nodeNode']).toBe(12);
+    expect(opts['spacing.nodeNodeBetweenLayers']).toBe(24);
+  });
+
   it('handles undefined elkConfig gracefully', () => {
     const opts = buildSubgraphLayoutOptions({}, undefined, 'layered');
     expect(opts['elk.layered.mergeEdges']).toBeUndefined();
@@ -290,6 +300,30 @@ describe('buildElkGraphFromLayoutData', () => {
     expect(state.elkGraph.layoutOptions['elk.layered.nodePlacement.bk.fixedAlignment']).toBe(
       'BALANCED'
     );
+  });
+
+  it('passes Mermaid nodeSpacing and rankSpacing to the root graph', () => {
+    const state = buildElkGraphFromLayoutData(
+      {
+        direction: 'LR',
+        config: { flowchart: { nodeSpacing: 0, rankSpacing: 0 }, elk: {} },
+        nodeSpacing: 50,
+        rankSpacing: 50,
+        nodes: [],
+        edges: [],
+      } as any,
+      {
+        algorithm: 'layered',
+        common: { lineBreakRegex: /<br\s*\/?>/gi },
+        getConfig: () => ({ flowchart: { wrappingWidth: 100 } }),
+        interpolateToCurve: (curve: unknown) => curve,
+        log,
+      } as any
+    );
+
+    expect(state.elkGraph.layoutOptions['spacing.baseValue']).toBe(0);
+    expect(state.elkGraph.layoutOptions['spacing.nodeNode']).toBe(0);
+    expect(state.elkGraph.layoutOptions['spacing.nodeNodeBetweenLayers']).toBe(0);
   });
 
   const recursiveLayoutData = (elk: Record<string, unknown>) =>
