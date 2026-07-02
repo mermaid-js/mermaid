@@ -671,7 +671,15 @@ function applyDagreCompoundPlacement(candidate: LayoutData, _spacing: number): b
   const rankdir = rawDir === 'TD' || rawDir === 'DT' ? 'TB' : rawDir || 'TB';
 
   const g = new graphlib.Graph({ compound: true, multigraph: true });
-  g.setGraph({ rankdir, nodesep: 60, ranksep: 80, edgesep: 20, marginx: 20, marginy: 20 });
+  g.setGraph({
+    rankdir,
+    nodesep: 60,
+    ranksep: 80,
+    edgesep: 20,
+    align: 'DL',
+    marginx: 20,
+    marginy: 20,
+  });
   g.setDefaultEdgeLabel(() => ({}));
 
   for (const n of candidate.nodes ?? []) {
