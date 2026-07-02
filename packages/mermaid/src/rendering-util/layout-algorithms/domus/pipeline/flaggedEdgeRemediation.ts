@@ -681,18 +681,6 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
           const next = validateLayout(layout);
           const fewer = next.issues.length < current.issues.length;
           const noNew = (next.issues as Issue[]).every((iss) => curKeys.has(issueKey(iss)));
-          if (process.env.REMEDIATE_DBG && (!fewer || !noNew)) {
-            // eslint-disable-next-line no-console
-            console.error(
-              'REMEDIATE-DBG reject',
-              edgeId,
-              `fewer=${fewer} noNew=${noNew}`,
-              (next.issues as Issue[])
-                .filter((iss) => !curKeys.has(issueKey(iss)))
-                .map((iss) => `${iss.type}:${iss.edgeId ?? ''}`)
-                .join(' ')
-            );
-          }
           if (fewer && noNew) {
             current = next;
             improvedThisRound = true;
