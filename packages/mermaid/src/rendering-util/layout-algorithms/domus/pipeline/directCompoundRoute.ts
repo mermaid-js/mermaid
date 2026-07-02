@@ -38,6 +38,8 @@ export function findDirectCompoundRoute(args: {
    * so routing against their provisional rects is routing against stale data.
    */
   ignoreEdgeLabelObstacles?: boolean;
+  /** Soft crossing avoidance forwarded to the graph search. */
+  avoid?: { segments: Point[][]; costPerCrossing: number };
 }): Point[] | null {
   const { startNode, endNode, startPort, endPort, nodesById, spacing } = args;
   const clearance = args.clearance ?? spacing;
@@ -108,7 +110,7 @@ export function findDirectCompoundRoute(args: {
     endPort,
     obstacles,
     spacing,
-    { model }
+    { model, avoid: args.avoid }
   );
   if (strict) {
     return strict;
@@ -122,7 +124,7 @@ export function findDirectCompoundRoute(args: {
       endPort,
       obstacles.slice(0, slabsLength),
       spacing,
-      { model }
+      { model, avoid: args.avoid }
     );
     if (noEndpointBlock) {
       return noEndpointBlock;
@@ -134,7 +136,7 @@ export function findDirectCompoundRoute(args: {
       endPort,
       obstacles.slice(0, baseLength),
       spacing,
-      { model }
+      { model, avoid: args.avoid }
     );
   }
   return null;

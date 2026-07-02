@@ -779,7 +779,15 @@ export function buildRoutingGraphFromChannels(
  */
 export function findShortestOrthogonalPathOnGraph(
   g: RoutingGraph,
-  options: { prefer: 'ESWN' | 'ENWS' } = { prefer: 'ESWN' }
+  options: {
+    prefer: 'ESWN' | 'ENWS';
+    /**
+     * Soft crossing avoidance: each crossing between a relaxed graph edge and
+     * one of these polylines' segments adds `costPerCrossing` length units to
+     * the path cost. Absent = behavior identical to the classic search.
+     */
+    avoid?: { segments: Point[][]; costPerCrossing: number };
+  } = { prefer: 'ESWN' }
 ): Point[] | null {
   type Dir = 'h' | 'v' | 'n';
   const dirIndex = (d: Dir) => (d === 'n' ? 0 : d === 'h' ? 1 : 2);
@@ -820,6 +828,42 @@ export function findShortestOrthogonalPathOnGraph(
   distLen[g.startIdx][0] = 0;
   distBends[g.startIdx][0] = 0;
   heap.push(startState);
+
+  // Soft crossing-avoidance cost per graph edge (cached per node pair).
+  const avoid = options.avoid;
+  const penaltyCache = new Map<number, number>();
+  const segsCrossStrict = (a1: Point, a2: Point, b1: Point, b2: Point): boolean => {
+    const d = (p: Point, q: Point, r: Point) =>
+      (q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x);
+    const d1 = d(b1, b2, a1);
+    const d2 = d(b1, b2, a2);
+    const d3 = d(a1, a2, b1);
+    const d4 = d(a1, a2, b2);
+    return ((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0));
+  };
+  const crossPenalty = (fromIdx: number, toIdx: number): number => {
+    if (!avoid || avoid.segments.length === 0) {
+      return 0;
+    }
+    const key = fromIdx * N + toIdx;
+    const cached = penaltyCache.get(key);
+    if (cached !== undefined) {
+      return cached;
+    }
+    const a1 = { x: g.nodes[fromIdx].x, y: g.nodes[fromIdx].y };
+    const a2 = { x: g.nodes[toIdx].x, y: g.nodes[toIdx].y };
+    let crossings = 0;
+    for (const poly of avoid.segments) {
+      for (let i = 0; i < poly.length - 1; i++) {
+        if (segsCrossStrict(a1, a2, poly[i], poly[i + 1])) {
+          crossings++;
+        }
+      }
+    }
+    const penalty = crossings * avoid.costPerCrossing;
+    penaltyCache.set(key, penalty);
+    return penalty;
+  };
 
   const neighborOrder = (from: RouteGraphNode, to: RouteGraphNode): number => {
     const dx = to.x - from.x;
@@ -878,7 +922,7 @@ export function findShortestOrthogonalPathOnGraph(
       const nextDir: Dir = e.dir;
       const nd = dirIndex(nextDir);
       const bendInc = cur.dir === 'n' || cur.dir === nextDir ? 0 : 1;
-      const nextLen = cur.len + e.length;
+      const nextLen = cur.len + e.length + crossPenalty(cur.node, e.to);
       const nextBends = cur.bends + bendInc;
 
       const bestLen = distLen[e.to][nd];
@@ -973,7 +1017,11 @@ export function findRoutingGraphPathBetweenPortsWithObstacles(
   endPort: Point,
   obstacleRects: Rect[],
   spacing: number,
-  options: { model?: 'grid' | 'representatives' | 'channels'; clearance?: number } = {}
+  options: {
+    model?: 'grid' | 'representatives' | 'channels';
+    clearance?: number;
+    avoid?: { segments: Point[][]; costPerCrossing: number };
+  } = {}
 ): Point[] | null {
   if (!obstacleRects || obstacleRects.length === 0) {
     return null;
@@ -990,7 +1038,7 @@ export function findRoutingGraphPathBetweenPortsWithObstacles(
   if (!graph) {
     return null;
   }
-  return findShortestOrthogonalPathOnGraph(graph, { prefer: 'ESWN' });
+  return findShortestOrthogonalPathOnGraph(graph, { prefer: 'ESWN', avoid: options.avoid });
 }
 
 /**

@@ -929,6 +929,15 @@ export function rerouteTopCrossersWhenScoreImproves(layout: LayoutData): void {
         const sNode = nodeById.get(String(e.start));
         const eNode = nodeById.get(String(e.end));
         if (sNode && eNode) {
+          // Soft crossing avoidance: the graph search pays 40 length units
+          // per crossing against the other routed edges, so it detours
+          // around them wherever a corridor exists.
+          const avoid = {
+            segments: edges
+              .filter((o) => o !== e && Array.isArray(o.points) && o.points.length >= 2)
+              .map((o) => o.points!),
+            costPerCrossing: 40,
+          };
           for (const [sSide, eSide] of sidePreference(rS, rE)) {
             const sHoriz = sSide === 'N' || sSide === 'S';
             const eHoriz = eSide === 'N' || eSide === 'S';
@@ -951,6 +960,7 @@ export function rerouteTopCrossersWhenScoreImproves(layout: LayoutData): void {
                 spacing: 10,
                 clearance: 8,
                 model: 'channels',
+                avoid,
               });
               if (compoundRoute && compoundRoute.length >= 2) {
                 candidates.push(compoundRoute.map((p) => ({ ...p })));
