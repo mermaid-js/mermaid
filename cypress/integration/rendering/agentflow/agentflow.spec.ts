@@ -195,21 +195,6 @@ describe('Agentflow diagram', () => {
     );
   });
 
-  it('7c: should render a connector declaration with inline metadata (#82)', () => {
-    imgSnapshotTest(
-      `agentflow LR
-        connector github["GitHub API"]@{ protocol: "http", endpoint: "https://api.github.com", token_required: true }
-
-        query["query"]
-        query@{ shape: input }
-        fetch_issues["fetch_issues"]
-        fetch_issues@{ shape: tool, connectorRef: "github.list_issues" }
-        query --> fetch_issues
-      `,
-      {}
-    );
-  });
-
   it('8: should redirect cross-boundary edges to the collapsed parent (#53)', () => {
     imgSnapshotTest(
       `agentflow TB

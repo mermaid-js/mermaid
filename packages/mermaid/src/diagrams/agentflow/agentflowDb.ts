@@ -132,6 +132,77 @@ function resolveShapeAlias(shape: string | undefined): string | undefined {
   return SHAPE_ALIASES.get(shape) ?? shape;
 }
 
+/**
+ * Strip line-trailing commas from a multi-line `@{ … }` metadata body.
+ *
+ * Multi-line bodies are block YAML, where the comma-separated style of the
+ * single-line form (`@{ a: 1, b: 2 }`) is a syntax error. Only commas that
+ * are syntactically trailing get stripped: commas inside quoted scalars,
+ * flow collections (`[ … ]` / `{ … }`) and block scalar content survive, and
+ * a comma directly before a line-trailing comment counts as trailing.
+ */
+function stripLineTrailingCommas(body: string): string {
+  let inSingle = false;
+  let inDouble = false;
+  let flowDepth = 0;
+  let blockScalarIndent: number | undefined;
+  const out: string[] = [];
+  for (const line of body.split('\n')) {
+    if (blockScalarIndent !== undefined) {
+      const indent = line.length - line.trimStart().length;
+      if (line.trim() === '' || indent > blockScalarIndent) {
+        // Block scalar content is verbatim text — commas are content.
+        out.push(line);
+        continue;
+      }
+      blockScalarIndent = undefined;
+    }
+    let commentStart = -1;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (inDouble) {
+        if (ch === '\\') {
+          i++;
+        } else if (ch === '"') {
+          inDouble = false;
+        }
+      } else if (inSingle) {
+        if (ch === "'") {
+          inSingle = false;
+        }
+      } else if (ch === '"') {
+        inDouble = true;
+      } else if (ch === "'") {
+        inSingle = true;
+      } else if (ch === '#' && (i === 0 || line[i - 1] === ' ' || line[i - 1] === '\t')) {
+        commentStart = i;
+        break;
+      } else if (ch === '[' || ch === '{') {
+        flowDepth++;
+      } else if (ch === ']' || ch === '}') {
+        flowDepth = Math.max(0, flowDepth - 1);
+      }
+    }
+    if (inSingle || inDouble || flowDepth > 0) {
+      // The line ends inside a quoted scalar or flow collection — any
+      // trailing comma is content or a separator, not a stray.
+      out.push(line);
+      continue;
+    }
+    const code = commentStart >= 0 ? line.slice(0, commentStart) : line;
+    const comment = commentStart >= 0 ? line.slice(commentStart) : '';
+    if (/:\s*[>|][\d+-]*\s*$/.test(code)) {
+      // `key: |` / `key: >` opens a block scalar; its deeper-indented lines
+      // are verbatim content.
+      blockScalarIndent = line.length - line.trimStart().length;
+      out.push(line);
+      continue;
+    }
+    out.push(code.replace(/,([\t ]*)$/, '$1') + comment);
+  }
+  return out.join('\n');
+}
+
 // We are using arrow functions assigned to class instance fields instead of methods as they are required by JISON
 export class AgentFlowDB implements DiagramDB {
   private vertexCounter = 0;
@@ -288,11 +359,26 @@ export class AgentFlowDB implements DiagramDB {
         // metadata consumers below (issue #83).
         doc = (yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) ?? {}) as NodeMetaData;
       } catch (err) {
-        // js-yaml reports the failure position relative to the `@{ ... }` block
-        // buffer, not the source. Translate it into absolute source coordinates
-        // before it propagates so error banners and editor markers land on the
-        // right line/column (issue #56 part 2). Always throws.
-        this.rethrowMetadataYamlError(err, metadata, metadataLoc);
+        // Multi-line bodies are block YAML, where the comma-separated style of
+        // the single-line form is a syntax error. Retry once with line-trailing
+        // commas stripped so trailing commas work in both forms; valid
+        // documents never reach this path and are parsed verbatim above.
+        const stripped = metadata.includes('\n') ? stripLineTrailingCommas(metadata) : metadata;
+        if (stripped !== metadata) {
+          try {
+            doc = (yaml.load(stripped + '\n', { schema: yaml.JSON_SCHEMA }) ?? {}) as NodeMetaData;
+          } catch {
+            // The commas weren't the problem — surface the original error
+            // against the original, unstripped buffer so positions match.
+            this.rethrowMetadataYamlError(err, metadata, metadataLoc);
+          }
+        } else {
+          // js-yaml reports the failure position relative to the `@{ ... }` block
+          // buffer, not the source. Translate it into absolute source coordinates
+          // before it propagates so error banners and editor markers land on the
+          // right line/column (issue #56 part 2). Always throws.
+          this.rethrowMetadataYamlError(err, metadata, metadataLoc);
+        }
       }
     }
 
