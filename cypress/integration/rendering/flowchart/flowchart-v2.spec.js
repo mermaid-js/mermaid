@@ -1144,7 +1144,7 @@ end
         }
       );
     });
-    it('2977: Should auto-move a subgraph title off an edge that would cross it', () => {
+    it('z2977: Should auto-move a subgraph title off an edge that would cross it', () => {
       // The `Root ==> Child` edge crosses the top-center title; `auto` (default) relocates it.
       imgSnapshotTest(
         `flowchart TD
@@ -1158,7 +1158,7 @@ end
         {}
       );
     });
-    it('2977: Should keep an auto subgraph title at the top when nothing crosses it', () => {
+    it('z2977: Should keep an auto subgraph title at the top when nothing crosses it', () => {
       imgSnapshotTest(
         `flowchart LR
           A --> B
@@ -1170,7 +1170,7 @@ end
         {}
       );
     });
-    it('2977: Should pin a subgraph title to top-left when configured', () => {
+    it('z2977: Should pin a subgraph title to top-left when configured', () => {
       imgSnapshotTest(
         `flowchart TD
           Root ==> Child
@@ -1182,7 +1182,7 @@ end
         { flowchart: { subGraphTitlePosition: 'top-left' } }
       );
     });
-    it('2977: Should pin a subgraph title to bottom-left when configured', () => {
+    it('z2977: Should pin a subgraph title to bottom-left when configured', () => {
       imgSnapshotTest(
         `flowchart TD
           Root ==> Child
@@ -1194,7 +1194,7 @@ end
         { flowchart: { subGraphTitlePosition: 'bottom-left' } }
       );
     });
-    it('2977: Should pin a subgraph title to the bottom when configured', () => {
+    it('z2977: Should pin a subgraph title to the bottom when configured', () => {
       imgSnapshotTest(
         `flowchart TD
           Root ==> Child
@@ -1206,7 +1206,7 @@ end
         { flowchart: { subGraphTitlePosition: 'bottom' } }
       );
     });
-    it('2977: Should pin a subgraph title to bottom-right when configured', () => {
+    it('z2977: Should pin a subgraph title to bottom-right when configured', () => {
       imgSnapshotTest(
         `flowchart TD
           Root ==> Child
