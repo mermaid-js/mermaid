@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.ts';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
 const looks = ['neo'] as const;
 const themes = ['neo'] as const;
@@ -138,5 +138,60 @@ looks.forEach((look) => {
         });
       });
     });
+  });
+});
+
+// Regression for https://github.com/Mermaid-Chart/agentflow/issues/78
+// Neo-look node rects used to carry a hardcoded stroke="url(#gradient)" while
+// no element with id="gradient" existed in the SVG — a dangling paint
+// reference. Every url(#...) reference emitted in the rendered document
+// (attributes and injected CSS) must resolve to a real element.
+describe('neo look: SVG paint references', () => {
+  it('should not emit dangling url(#...) references on node rects', () => {
+    renderGraph(
+      `flowchart TB
+        A(Start) --> B[Process]
+        B --> C(End)
+      `,
+      { look: 'neo', theme: 'neo' }
+    );
+
+    cy.get('svg').should((svg) => {
+      const svgEl = svg.get(0);
+      const doc = svgEl.ownerDocument;
+      const refPattern = /url\(["']?#([^"')]+)["']?\)/g;
+      const referencedIds: string[] = [];
+
+      for (const el of [svgEl, ...svgEl.querySelectorAll('*')]) {
+        for (const attr of el.attributes) {
+          for (const match of attr.value.matchAll(refPattern)) {
+            referencedIds.push(match[1]);
+          }
+        }
+      }
+      for (const styleEl of svgEl.querySelectorAll('style')) {
+        for (const match of (styleEl.textContent ?? '').matchAll(refPattern)) {
+          referencedIds.push(match[1]);
+        }
+      }
+
+      // The neo theme uses gradients and drop-shadows, so references must exist
+      expect(referencedIds).to.have.length.greaterThan(0);
+      for (const id of referencedIds) {
+        expect(doc.getElementById(id), `url(#${id}) should resolve to an element`).to.not.equal(
+          null
+        );
+      }
+    });
+  });
+
+  it('neo look node rects render with themed borders', () => {
+    imgSnapshotTest(
+      `flowchart TB
+        A(Start) --> B[Process]
+        B --> C(End)
+      `,
+      { look: 'neo', theme: 'neo' }
+    );
   });
 });
