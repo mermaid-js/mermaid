@@ -317,6 +317,31 @@ function calculateEntityVisualProps(frame: EmFrame): VisualProps {
   }
 }
 
+/**
+ * Strips the `{ … }` framing off an inline data spec, e.g. `{item, quantity}` → `item, quantity`.
+ *
+ * `String#substring`'s end index is exclusive, so `lastIndexOf('}')` already excludes the brace.
+ * Mirrors `stripInlineValue` in the event-modeling-tools source project.
+ */
+export function stripInlineValue(dataInlineValue: string): string {
+  let value = dataInlineValue;
+  value = value.substring(value.indexOf('{') + 1);
+  value = value.substring(0, value.lastIndexOf('}'));
+  return value;
+}
+
+/**
+ * Strips the `{\n … }` framing off a block data spec, keeping the inner lines
+ * (including the trailing newline before the closing brace).
+ * Mirrors `stripBlockValue` in the event-modeling-tools source project.
+ */
+export function stripBlockValue(dataBlockValue: string): string {
+  let value = dataBlockValue;
+  value = value.substring(value.indexOf('{\n') + 2);
+  value = value.substring(0, value.lastIndexOf('}'));
+  return value;
+}
+
 function calculateTextProps(
   frame: EmFrame,
   dataEntities: EmDataEntity[],
@@ -337,9 +362,7 @@ function calculateTextProps(
   let content = `<b>${wrappedName}</b>`;
 
   if (frame.dataInlineValue) {
-    toHtml = frame.dataInlineValue;
-    toHtml = toHtml.substring(toHtml.indexOf('{') + 1);
-    toHtml = toHtml.substring(0, toHtml.lastIndexOf('}') - 1);
+    toHtml = stripInlineValue(frame.dataInlineValue);
     toHtml = sanitizeText(toHtml, config);
     toHtml = wrapLabel(toHtml, diagramProps.textMaxWidth, wrapLabelConfig);
     toHtml = toHtml.replaceAll(' ', '&nbsp;');
@@ -351,9 +374,7 @@ function calculateTextProps(
     );
 
     if (dataEntity) {
-      toHtml = dataEntity.dataBlockValue;
-      toHtml = toHtml.substring(toHtml.indexOf('{\n') + 2);
-      toHtml = toHtml.substring(0, toHtml.lastIndexOf('}') - 1);
+      toHtml = stripBlockValue(dataEntity.dataBlockValue);
       toHtml = sanitizeText(toHtml, config);
       toHtml = wrapLabel(toHtml, diagramProps.textMaxWidth, wrapLabelConfig);
       toHtml = toHtml.replaceAll(' ', '&nbsp;');
