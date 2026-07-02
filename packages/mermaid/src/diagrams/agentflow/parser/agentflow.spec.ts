@@ -310,6 +310,21 @@ describe('parsing an agentflow diagram', function () {
       expect(connectors[0].metadata?.protocol).toBe('mcp');
       expect(connectors[0].metadata?.transport).toBe('stdio');
     });
+
+    it('parses multi-line inline metadata on a connector declaration', function () {
+      agentflow.parser.parse(`agentflow TB
+  connector github["GitHub"]@{
+    protocol: "mcp"
+    transport: "stdio"
+  }
+  a --> b`);
+      const db = agentflow.parser.yy as AgentFlowDB;
+      const connectors = db.getConnectors();
+      expect(connectors).toHaveLength(1);
+      expect(connectors[0].id).toBe('github');
+      expect(connectors[0].metadata?.protocol).toBe('mcp');
+      expect(connectors[0].metadata?.transport).toBe('stdio');
+    });
   });
 
   describe('parallel fan-out (`&`)', function () {
