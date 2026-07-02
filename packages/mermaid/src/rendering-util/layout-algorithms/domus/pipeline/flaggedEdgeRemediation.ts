@@ -713,3 +713,134 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
     }
   }
 }
+
+/**
+ * Monotone bend reduction for pathological routes (8+ polyline points, i.e.
+ * the exponential tier of the bend penalty). The score-gated simplifiers are
+ * dormant while the score is clamped at 0, so this pass accepts on a strict
+ * per-edge POINT-COUNT decrease instead: a candidate is kept when it is
+ * strictly shorter (in points), introduces no new issue key, and does not
+ * grow the total issue count. Runs after issue remediation; a clean, already
+ * simple layout is a no-op.
+ */
+export function simplifyPathologicalRoutesWhenMonotone(layout: LayoutData): void {
+  const MIN_POINTS = 8;
+  let current = validateLayout(layout);
+
+  const nodeById = new Map<string, Node>();
+  for (const n of layout.nodes ?? []) {
+    if (n?.id != null) {
+      nodeById.set(String(n.id), n);
+    }
+  }
+  const edges = (layout.edges ?? []) as {
+    id?: string;
+    start?: string;
+    end?: string;
+    points?: Point[];
+    x?: number;
+    y?: number;
+    label?: unknown;
+  }[];
+
+  for (let round = 0; round < MAX_ROUNDS; round++) {
+    let improvedThisRound = false;
+    const fat = edges
+      .filter((e) => Array.isArray(e.points) && e.points.length >= MIN_POINTS)
+      .sort((a, b) => (b.points?.length ?? 0) - (a.points?.length ?? 0));
+    if (fat.length === 0) {
+      return;
+    }
+
+    for (const e of fat) {
+      const pts = e.points!;
+      const ps = pts[0];
+      const pe = pts[pts.length - 1];
+      const rS =
+        e.start != null && nodeById.has(String(e.start))
+          ? rectForNode(nodeById.get(String(e.start))!)
+          : null;
+      const rE =
+        e.end != null && nodeById.has(String(e.end))
+          ? rectForNode(nodeById.get(String(e.end))!)
+          : null;
+
+      const candidates = [...routeCandidates(ps, pe, rS, rE, false)];
+      if (rS && rE && e.start != null && e.end != null) {
+        const sNode = nodeById.get(String(e.start));
+        const eNode = nodeById.get(String(e.end));
+        if (sNode && eNode) {
+          for (const [sSide, eSide] of sidePreference(rS, rE).slice(0, 3)) {
+            const sHoriz = sSide === 'N' || sSide === 'S';
+            const eHoriz = eSide === 'N' || eSide === 'S';
+            const sT = sHoriz
+              ? (rE.cx - rS.left) / (rS.right - rS.left)
+              : (rE.cy - rS.top) / (rS.bottom - rS.top);
+            const eT = eHoriz
+              ? (rS.cx - rE.left) / (rE.right - rE.left)
+              : (rS.cy - rE.top) / (rE.bottom - rE.top);
+            const compoundRoute = findDirectCompoundRoute({
+              startNode: sNode,
+              endNode: eNode,
+              startPort: sidePort(rS, sSide, sT),
+              endPort: sidePort(rE, eSide, eT),
+              nodesById: nodeById,
+              spacing: 10,
+              clearance: 8,
+              model: 'channels',
+            });
+            if (compoundRoute && compoundRoute.length >= 2) {
+              candidates.push(compoundRoute.map((p) => ({ ...p })));
+            }
+          }
+        }
+        candidates.push(...sideRouteCandidates(rS, rE, nodeById, String(e.start), String(e.end)));
+      }
+
+      const curKeys = new Set((current.issues as Issue[]).map(issueKey));
+      const old = e.points;
+      const oldX = e.x;
+      const oldY = e.y;
+      const hasLabel = e.label != null && Number.isFinite(e.x) && Number.isFinite(e.y);
+      for (const candidate of candidates) {
+        if (candidate.length >= old!.length) {
+          continue; // must strictly simplify
+        }
+        if (
+          e.start != null &&
+          e.end != null &&
+          candidateCutsLeafInterior(candidate, nodeById, String(e.start), String(e.end))
+        ) {
+          continue;
+        }
+        e.points = candidate;
+        const anchors = hasLabel ? labelAnchors(candidate) : [{ x: oldX ?? 0, y: oldY ?? 0 }];
+        let accepted = false;
+        for (const anchor of anchors) {
+          if (hasLabel) {
+            e.x = anchor.x;
+            e.y = anchor.y;
+          }
+          const next = validateLayout(layout);
+          const notWorse = next.issues.length <= current.issues.length;
+          const noNew = (next.issues as Issue[]).every((iss) => curKeys.has(issueKey(iss)));
+          if (notWorse && noNew) {
+            current = next;
+            improvedThisRound = true;
+            accepted = true;
+            break;
+          }
+        }
+        if (accepted) {
+          break;
+        }
+        e.points = old;
+        e.x = oldX;
+        e.y = oldY;
+      }
+    }
+    if (!improvedThisRound) {
+      return;
+    }
+  }
+}

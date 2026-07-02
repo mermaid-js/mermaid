@@ -18,7 +18,10 @@ import { simplifyEdgeJogsWhenScoreImproves } from './pipeline/simplifyEdgeJogs.j
 import { clearArrowheadBendsWhenScoreImproves } from './pipeline/arrowheadBendClearance.js';
 import { repairPortDirectionMismatchWhenScoreImproves } from './pipeline/portDirectionRepair.js';
 import { relocateOffEdgeLabelsWhenScoreImproves } from './pipeline/offEdgeLabelRelocation.js';
-import { remediateFlaggedEdgesWhenMonotone } from './pipeline/flaggedEdgeRemediation.js';
+import {
+  remediateFlaggedEdgesWhenMonotone,
+  simplifyPathologicalRoutesWhenMonotone,
+} from './pipeline/flaggedEdgeRemediation.js';
 import { spaceNodesOffGroupFramesWhenScoreImproves } from './pipeline/nodeGroupSpacing.js';
 import { reorderSiblingPortsToUncrossWhenScoreImproves } from './pipeline/siblingPortReorder.js';
 import { alignStraightLeafEdgesWhenValid } from './pipeline/straightLeafAlignment.js';
@@ -481,6 +484,12 @@ export function layout(data4Layout: LayoutData): void {
   // validator issue at a time (clean re-routes / rail shifts) until valid. A
   // no-op on valid layouts; never adds an issue, so it cannot regress.
   remediateFlaggedEdgesWhenMonotone(data4Layout);
+
+  // Bend reduction for exponential-tier routes (8+ points). The score-gated
+  // simplifiers below are dormant while the score is clamped at 0, so this
+  // accepts on a strict per-edge point-count decrease under the same
+  // no-new-issues gate.
+  simplifyPathologicalRoutesWhenMonotone(data4Layout);
 
   // Slide leaf nodes that crowd a foreign group frame away until they clear,
   // carrying their edge endpoints along. Score-gated; runs after edge repair so
