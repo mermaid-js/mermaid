@@ -282,7 +282,11 @@ export class AgentFlowDB implements DiagramDB {
         yamlData = metadata + '\n';
       }
       try {
-        doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
+        // A whitespace-only YAML document loads as `null`, not `{}` — coalesce
+        // so an empty multi-line `@{\n}` behaves like single-line `@{}` (whose
+        // brace-wrap already yields `{}`) instead of handing `null` to the
+        // metadata consumers below (issue #83).
+        doc = (yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) ?? {}) as NodeMetaData;
       } catch (err) {
         // js-yaml reports the failure position relative to the `@{ ... }` block
         // buffer, not the source. Translate it into absolute source coordinates
@@ -292,11 +296,16 @@ export class AgentFlowDB implements DiagramDB {
       }
     }
 
-    // Resolve shape alias (§4.3.2) before any other shape handling.
+    // Resolve shape alias (§4.3.2) before any other shape handling. Keep the
+    // authored name around: the lowercase style rule in the vertex branch must
+    // judge what the user typed, not an internal id like `roundedRect` that
+    // alias resolution produces (`task` → `roundedRect` used to trip it).
+    let authoredShape: string | undefined;
     if (doc && typeof (doc as unknown as Record<string, unknown>).shape === 'string') {
       const docRec = doc as unknown as Record<string, unknown>;
-      const resolved = resolveShapeAlias(docRec.shape as string);
-      if (resolved && resolved !== docRec.shape) {
+      authoredShape = docRec.shape as string;
+      const resolved = resolveShapeAlias(authoredShape);
+      if (resolved && resolved !== authoredShape) {
         docRec.shape = resolved;
       }
     }
@@ -402,11 +411,17 @@ export class AgentFlowDB implements DiagramDB {
       Object.assign(vertex.props, props);
     }
 
-    if (doc !== undefined) {
+    if (doc) {
       vertex.metadata = { ...vertex.metadata, ...(doc as unknown as Record<string, unknown>) };
       if (doc.shape) {
-        if (doc.shape !== doc.shape.toLowerCase() || doc.shape.includes('_')) {
-          throw new Error(`No such shape: ${doc.shape}. Shape names should be lowercase.`);
+        const authored = authoredShape ?? doc.shape;
+        // A non-string value (e.g. `shape: 123`) is an ordinary unknown shape,
+        // not an uncaught TypeError on `.toLowerCase` (issue #83).
+        if (typeof authored !== 'string') {
+          throw new Error(`No such shape: ${JSON.stringify(authored)}.`);
+        }
+        if (authored !== authored.toLowerCase() || authored.includes('_')) {
+          throw new Error(`No such shape: ${authored}. Shape names should be lowercase.`);
         } else if (!isValidShape(doc.shape)) {
           throw new Error(`No such shape: ${doc.shape}.`);
         }
