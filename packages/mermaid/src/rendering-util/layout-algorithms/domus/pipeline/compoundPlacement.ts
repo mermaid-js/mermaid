@@ -30,6 +30,8 @@
  *   their semantic endpoints, then de-overlapped by the label nudgers before
  *   routing.
  */
+import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import type { LayoutData, Node } from '../../../types.js';
 import { log } from '../../../../logger.js';
 import { ORTHO_DEBUG } from '../debug.js';
@@ -619,6 +621,101 @@ function applyCompoundPlacement(candidate: LayoutData, spacing: number): boolean
 }
 
 /**
+ * Dagre-based compound placement: flow-aware layered placement with
+ * barycenter crossing reduction and native cluster support — everything the
+ * per-level DOMUS SATs lack. Group-endpoint edges are proxied onto a leaf
+ * descendant (same convention as `conversion.ts`). Positions land directly on
+ * the candidate's leaves/dummies; `preprocessClusters` re-frames the groups.
+ */
+function applyDagreCompoundPlacement(candidate: LayoutData, _spacing: number): boolean {
+  const nodesById = new Map<string, Node>();
+  const childrenByParent = new Map<string, Node[]>();
+  for (const n of candidate.nodes ?? []) {
+    if (n?.id != null) {
+      nodesById.set(String(n.id), n);
+    }
+  }
+  inferEdgeLabelParentIds(nodesById, (candidate.edges ?? []) as never);
+  for (const n of candidate.nodes ?? []) {
+    const pid = n.parentId != null ? String(n.parentId) : null;
+    if (pid && nodesById.get(pid)?.isGroup) {
+      const arr = childrenByParent.get(pid) ?? [];
+      arr.push(n);
+      childrenByParent.set(pid, arr);
+    }
+  }
+
+  const leafDescendant = (id: string, seen = new Set<string>()): string | null => {
+    if (seen.has(id)) {
+      return null;
+    }
+    seen.add(id);
+    const node = nodesById.get(id);
+    if (!node) {
+      return null;
+    }
+    if (!node.isGroup) {
+      return id;
+    }
+    for (const child of childrenByParent.get(id) ?? []) {
+      const leaf = leafDescendant(String(child.id), seen);
+      if (leaf) {
+        return leaf;
+      }
+    }
+    return null;
+  };
+
+  const dirValue = (candidate as { direction?: unknown }).direction;
+  const rawDir = (typeof dirValue === 'string' ? dirValue : 'TB').trim().toUpperCase();
+  const rankdir = rawDir === 'TD' || rawDir === 'DT' ? 'TB' : rawDir || 'TB';
+
+  const g = new graphlib.Graph({ compound: true, multigraph: true });
+  g.setGraph({ rankdir, nodesep: 60, ranksep: 80, edgesep: 20, marginx: 20, marginy: 20 });
+  g.setDefaultEdgeLabel(() => ({}));
+
+  for (const n of candidate.nodes ?? []) {
+    const id = String(n.id);
+    if (n.isGroup) {
+      g.setNode(id, {});
+    } else {
+      g.setNode(id, { width: n.width ?? 40, height: n.height ?? 20 });
+    }
+  }
+  for (const n of candidate.nodes ?? []) {
+    const pid = n.parentId != null ? String(n.parentId) : null;
+    if (pid && nodesById.get(pid)?.isGroup) {
+      g.setParent(String(n.id), pid);
+    }
+  }
+  for (const e of candidate.edges ?? []) {
+    if (e?.id == null || e.start == null || e.end == null) {
+      continue;
+    }
+    const s = leafDescendant(String(e.start));
+    const t = leafDescendant(String(e.end));
+    if (!s || !t || s === t) {
+      continue;
+    }
+    g.setEdge(s, t, {}, String(e.id));
+  }
+
+  dagreLayout(g);
+
+  let placedCount = 0;
+  for (const n of candidate.nodes ?? []) {
+    const p = g.node(String(n.id)) as { x?: number; y?: number } | undefined;
+    if (p && Number.isFinite(p.x) && Number.isFinite(p.y)) {
+      n.x = p.x;
+      n.y = p.y;
+      placedCount++;
+    }
+  }
+  log.debug(ORTHO_DEBUG, 'COMPOUND_DAGRE_PLACED', { placedCount, rankdir });
+  return placedCount > 0;
+}
+
+/**
  * Score-gated compound placement candidate. `data` is the finalized main
  * geometry; `preFinalizeLayout` still carries the label dummy nodes routing
  * needs. Accepts the candidate when the unified validator strictly prefers
@@ -646,7 +743,13 @@ export function tryCompoundGroupPlacementCandidateWhenScoreImproves(
   }
 
   const candidate = cloneLayoutForCandidate(preFinalizeLayout);
-  if (!applyCompoundPlacement(candidate, spacing)) {
+  let placed = false;
+  try {
+    placed = applyDagreCompoundPlacement(candidate, spacing);
+  } catch (err) {
+    log.debug(ORTHO_DEBUG, 'COMPOUND_DAGRE_FAILED', { error: String(err) });
+  }
+  if (!placed && !applyCompoundPlacement(candidate, spacing)) {
     return;
   }
 
@@ -665,6 +768,36 @@ export function tryCompoundGroupPlacementCandidateWhenScoreImproves(
   );
   if (!postRoute.ok && portMismatchEdgeIds.size > 0) {
     applyPortDirectionStubs(candidate, portMismatchEdgeIds, Math.max(2, Math.min(20, spacing)));
+  }
+  // Post-routing nudges occasionally leave diagonal joints; the validator
+  // treats any diagonal as hard-invalid. Insert a corner at each one — the
+  // corner occupies the same corridor the diagonal already claimed, and the
+  // obstacle-lift/detour repairs below clean up what it clips.
+  for (const e of candidate.edges ?? []) {
+    const pts = e.points;
+    if (!Array.isArray(pts) || pts.length < 2) {
+      continue;
+    }
+    let hasDiagonal = false;
+    for (let i = 0; i < pts.length - 1; i++) {
+      if (Math.abs(pts[i].x - pts[i + 1].x) > 1e-6 && Math.abs(pts[i].y - pts[i + 1].y) > 1e-6) {
+        hasDiagonal = true;
+        break;
+      }
+    }
+    if (!hasDiagonal) {
+      continue;
+    }
+    const ortho = [pts[0]];
+    for (let i = 1; i < pts.length; i++) {
+      const prev = ortho[ortho.length - 1];
+      const cur = pts[i];
+      if (Math.abs(prev.x - cur.x) > 1e-6 && Math.abs(prev.y - cur.y) > 1e-6) {
+        ortho.push({ x: prev.x, y: cur.y });
+      }
+      ortho.push(cur);
+    }
+    e.points = ortho;
   }
   applyStraightCollapsePass(candidate);
   liftObstacleIntersectingSegments(candidate, { spacing });
