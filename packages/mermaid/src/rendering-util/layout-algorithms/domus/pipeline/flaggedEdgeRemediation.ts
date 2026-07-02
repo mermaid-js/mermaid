@@ -20,6 +20,7 @@ import { rectForNode } from '../core/helpers.js';
 import { validateLayout } from '../../layout-utils/validateLayout.js';
 import { findRoutingGraphPathBetweenPorts } from '../core/routing.js';
 import { findDirectCompoundRoute } from './directCompoundRoute.js';
+import { ancestorGroupIds } from './groups.js';
 
 interface Point {
   x: number;
@@ -326,6 +327,37 @@ function obstacleClearingRailShifts(
   return out;
 }
 
+/**
+ * Cheap local pre-check: a candidate whose segment cuts a leaf node's strict
+ * interior can never be accepted (edge-intersects-obstacle is hard), and the
+ * full `validateLayout` per candidate is O(E^2). Group frames are crossable.
+ */
+function candidateCutsLeafInterior(
+  candidate: Point[],
+  nodeById: Map<string, Node>,
+  startId: string,
+  endId: string
+): boolean {
+  for (const [id, n] of nodeById) {
+    if (id === startId || id === endId || (n as { isGroup?: boolean }).isGroup) {
+      continue;
+    }
+    const r = rectForNode(n);
+    for (let i = 0; i < candidate.length - 1; i++) {
+      const a = candidate[i];
+      const b = candidate[i + 1];
+      const minX = Math.min(a.x, b.x);
+      const maxX = Math.max(a.x, b.x);
+      const minY = Math.min(a.y, b.y);
+      const maxY = Math.max(a.y, b.y);
+      if (minX < r.right - 1 && maxX > r.left + 1 && minY < r.bottom - 1 && maxY > r.top + 1) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 function sidePort(r: Rect, side: Side, t: number): Point {
   const clamped = Math.max(0, Math.min(1, t));
   if (side === 'N' || side === 'S') {
@@ -389,6 +421,24 @@ function sideRouteCandidates(
   const out: Point[][] = [];
   const seen = new Set<string>();
 
+  // The router must not treat the endpoints' OWN group frames as obstacles —
+  // for any intra-group edge the stubs sit inside those rects and every
+  // search returns null, leaving only the degenerate straight-stub routes
+  // (tree-path rule, same as the compound routing).
+  const sNode = nodeById.get(startId);
+  const eNode = nodeById.get(endId);
+  const chainGroups = new Set<string>([
+    ...(sNode ? ancestorGroupIds(sNode, nodeById) : []),
+    ...(eNode ? ancestorGroupIds(eNode, nodeById) : []),
+  ]);
+  const routerNodes = new Map<string, Node>();
+  for (const [id, n] of nodeById) {
+    if ((n as { isGroup?: boolean }).isGroup && chainGroups.has(id)) {
+      continue;
+    }
+    routerNodes.set(id, n);
+  }
+
   for (const [startSide, endSide] of sidePreference(rS, rE)) {
     const startHoriz = startSide === 'N' || startSide === 'S';
     const endHoriz = endSide === 'N' || endSide === 'S';
@@ -410,7 +460,7 @@ function sideRouteCandidates(
         const mid = findRoutingGraphPathBetweenPorts(
           startStub,
           endStub,
-          nodeById,
+          routerNodes,
           startId,
           endId,
           10,
@@ -611,6 +661,13 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
           continue; // don't trade a defect for a much longer route
         }
         if (hardReroute && candidate.length > old!.length + 5) {
+          continue;
+        }
+        if (
+          e?.start != null &&
+          e?.end != null &&
+          candidateCutsLeafInterior(candidate, nodeById, String(e.start), String(e.end))
+        ) {
           continue;
         }
         e!.points = candidate;
