@@ -1368,3 +1368,210 @@ export function untangleSharedTerminalPairsWhenScoreImproves(layout: LayoutData)
     }
   }
 }
+
+/**
+ * Straighten parallel-side Z routes via port slides. A 4-point Z between
+ * opposite node sides (V-H-V or H-V-H) is shape-optimal ONLY when the two
+ * side spans don't overlap on the cross axis; when they do, sliding both
+ * ports into the overlap turns the Z into a 2-point straight — +5 score,
+ * zero new bends. Kept per edge only when the validator score strictly
+ * improves (the slide may collide with neighbouring ports or cross a new
+ * route, which the gate rejects).
+ */
+export function straightenParallelZsWhenScoreImproves(layout: LayoutData): void {
+  let current = validateLayout(layout);
+  if (!current.ok || current.score <= 0) {
+    return;
+  }
+
+  const nodeById = new Map<string, Node>();
+  for (const n of layout.nodes ?? []) {
+    if (n?.id != null && !(n as { isGroup?: boolean }).isGroup) {
+      nodeById.set(String(n.id), n);
+    }
+  }
+  const edges = (layout.edges ?? []) as {
+    id?: string;
+    start?: string;
+    end?: string;
+    points?: Point[];
+    x?: number;
+    y?: number;
+    label?: unknown;
+  }[];
+
+  for (let round = 0; round < 2; round++) {
+    let improved = false;
+    for (const e of edges) {
+      const pts = e.points;
+      if (!Array.isArray(pts) || pts.length !== 4) {
+        continue;
+      }
+      if (e.start == null || e.end == null) {
+        continue;
+      }
+      const nS = nodeById.get(String(e.start));
+      const nE = nodeById.get(String(e.end));
+      if (!nS || !nE) {
+        continue;
+      }
+      const rS = rectForNode(nS);
+      const rE = rectForNode(nE);
+      const [p0, p1, , p3] = pts;
+      const firstVertical = Math.abs(p0.x - p1.x) <= EPS && Math.abs(p0.y - p1.y) > EPS;
+      const firstHorizontal = Math.abs(p0.y - p1.y) <= EPS && Math.abs(p0.x - p1.x) > EPS;
+      if (!firstVertical && !firstHorizontal) {
+        continue;
+      }
+      const lastVertical = Math.abs(pts[2].x - p3.x) <= EPS && Math.abs(pts[2].y - p3.y) > EPS;
+      if (firstVertical !== lastVertical) {
+        continue; // not a parallel-side Z
+      }
+
+      // Z -> L: a 4-point route between parallel sides becomes a 3-point L by
+      // re-terminating ONE end on a perpendicular side (+5, one fewer bend).
+      {
+        const savedPts = pts.map((p) => ({ ...p }));
+        const savedX = e.x;
+        const savedY = e.y;
+        const hasLabel = e.label != null && Number.isFinite(e.x) && Number.isFinite(e.y);
+        const lCandidates: Point[][] = [];
+        if (firstVertical) {
+          // Keep start (vertical exit); enter end horizontally at ey.
+          for (const ey of [rE.cy, Math.max(rE.top + MARGIN, Math.min(rE.bottom - MARGIN, p1.y))]) {
+            const endX = p0.x < rE.cx ? rE.left : rE.right;
+            lCandidates.push([{ ...p0 }, { x: p0.x, y: ey }, { x: endX, y: ey }]);
+          }
+          // Keep end (vertical entry); exit start horizontally at sy.
+          for (const sy of [rS.cy, Math.max(rS.top + MARGIN, Math.min(rS.bottom - MARGIN, p1.y))]) {
+            const startX = p3.x < rS.cx ? rS.left : rS.right;
+            lCandidates.push([{ x: startX, y: sy }, { x: p3.x, y: sy }, { ...p3 }]);
+          }
+        } else {
+          // Keep start (horizontal exit); enter end vertically at ex.
+          for (const ex of [rE.cx, Math.max(rE.left + MARGIN, Math.min(rE.right - MARGIN, p1.x))]) {
+            const endY = p0.y < rE.cy ? rE.top : rE.bottom;
+            lCandidates.push([{ ...p0 }, { x: ex, y: p0.y }, { x: ex, y: endY }]);
+          }
+          // Keep end (horizontal entry); exit start vertically at sx.
+          for (const sx of [rS.cx, Math.max(rS.left + MARGIN, Math.min(rS.right - MARGIN, p1.x))]) {
+            const startY = p3.y < rS.cy ? rS.top : rS.bottom;
+            lCandidates.push([{ x: sx, y: startY }, { x: sx, y: p3.y }, { ...p3 }]);
+          }
+        }
+        let acceptedL = false;
+        for (const candidate of lCandidates) {
+          e.points = candidate;
+          if (hasLabel) {
+            e.x = candidate[1].x;
+            e.y = candidate[1].y;
+          }
+          const next = validateLayout(layout);
+          if (next.ok && next.score > current.score) {
+            current = next;
+            improved = true;
+            acceptedL = true;
+            break;
+          }
+        }
+        if (acceptedL) {
+          continue;
+        }
+        e.points = savedPts;
+        e.x = savedX;
+        e.y = savedY;
+      }
+
+      if (firstVertical) {
+        // Ports slide along horizontal sides: overlap of the two x-spans.
+        const lo = Math.max(rS.left + MARGIN, rE.left + MARGIN);
+        const hi = Math.min(rS.right - MARGIN, rE.right - MARGIN);
+        if (hi <= lo) {
+          continue;
+        }
+        const startY = p0.y;
+        const endY = p3.y;
+        const candidatesX = [
+          (lo + hi) / 2,
+          Math.max(lo, Math.min(hi, p0.x)),
+          Math.max(lo, Math.min(hi, p3.x)),
+          lo,
+          hi,
+        ];
+        const savedPts = pts.map((p) => ({ ...p }));
+        const savedX = e.x;
+        const savedY = e.y;
+        const hasLabel = e.label != null && Number.isFinite(e.x) && Number.isFinite(e.y);
+        let accepted = false;
+        for (const x of candidatesX) {
+          e.points = [
+            { x, y: startY },
+            { x, y: endY },
+          ];
+          if (hasLabel) {
+            e.x = x;
+            e.y = (startY + endY) / 2;
+          }
+          const next = validateLayout(layout);
+          if (next.ok && next.score > current.score) {
+            current = next;
+            improved = true;
+            accepted = true;
+            break;
+          }
+        }
+        if (!accepted) {
+          e.points = savedPts;
+          e.x = savedX;
+          e.y = savedY;
+        }
+      } else {
+        // Ports slide along vertical sides: overlap of the two y-spans.
+        const lo = Math.max(rS.top + MARGIN, rE.top + MARGIN);
+        const hi = Math.min(rS.bottom - MARGIN, rE.bottom - MARGIN);
+        if (hi <= lo) {
+          continue;
+        }
+        const startX = p0.x;
+        const endX = p3.x;
+        const candidatesY = [
+          (lo + hi) / 2,
+          Math.max(lo, Math.min(hi, p0.y)),
+          Math.max(lo, Math.min(hi, p3.y)),
+          lo,
+          hi,
+        ];
+        const savedPts = pts.map((p) => ({ ...p }));
+        const savedX = e.x;
+        const savedY = e.y;
+        const hasLabel = e.label != null && Number.isFinite(e.x) && Number.isFinite(e.y);
+        let accepted = false;
+        for (const y of candidatesY) {
+          e.points = [
+            { x: startX, y },
+            { x: endX, y },
+          ];
+          if (hasLabel) {
+            e.x = (startX + endX) / 2;
+            e.y = y;
+          }
+          const next = validateLayout(layout);
+          if (next.ok && next.score > current.score) {
+            current = next;
+            improved = true;
+            accepted = true;
+            break;
+          }
+        }
+        if (!accepted) {
+          e.points = savedPts;
+          e.x = savedX;
+          e.y = savedY;
+        }
+      }
+    }
+    if (!improved) {
+      return;
+    }
+  }
+}

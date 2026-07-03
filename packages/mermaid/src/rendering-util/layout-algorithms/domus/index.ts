@@ -23,6 +23,7 @@ import {
   reorderPortFansWhenScoreImproves,
   rerouteTopCrossersWhenScoreImproves,
   simplifyPathologicalRoutesWhenMonotone,
+  straightenParallelZsWhenScoreImproves,
   untangleSharedTerminalPairsWhenScoreImproves,
 } from './pipeline/flaggedEdgeRemediation.js';
 import { spaceNodesOffGroupFramesWhenScoreImproves } from './pipeline/nodeGroupSpacing.js';
@@ -521,6 +522,11 @@ export function runLateQualityPasses(data4Layout: LayoutData): void {
   // Fan inversions: crossing pairs sharing a terminal node are untangled by
   // exchanging their terminal rails (bend-free track swap — the literature's
   // prescribed mechanism; detour-based avoidance is known-ineffective).
+  untangleSharedTerminalPairsWhenScoreImproves(data4Layout);
+
+  // Parallel-side Z routes whose side spans overlap become 2-point straights
+  // via legal port slides (+5 each, zero new bends).
+  straightenParallelZsWhenScoreImproves(data4Layout);
   untangleSharedTerminalPairsWhenScoreImproves(data4Layout);
   rerouteTopCrossersWhenScoreImproves(data4Layout);
   simplifyEdgeJogsWhenScoreImproves(data4Layout);
