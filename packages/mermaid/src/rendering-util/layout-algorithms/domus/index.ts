@@ -23,6 +23,7 @@ import {
   reorderPortFansWhenScoreImproves,
   rerouteTopCrossersWhenScoreImproves,
   simplifyPathologicalRoutesWhenMonotone,
+  untangleSharedTerminalPairsWhenScoreImproves,
 } from './pipeline/flaggedEdgeRemediation.js';
 import { spaceNodesOffGroupFramesWhenScoreImproves } from './pipeline/nodeGroupSpacing.js';
 import { reorderSiblingPortsToUncrossWhenScoreImproves } from './pipeline/siblingPortReorder.js';
@@ -516,6 +517,11 @@ export function runLateQualityPasses(data4Layout: LayoutData): void {
   // guarantee pairwise crossings no single-edge move can fix; permute the fan
   // and reroute it as one transaction.
   reorderPortFansWhenScoreImproves(data4Layout);
+
+  // Fan inversions: crossing pairs sharing a terminal node are untangled by
+  // exchanging their terminal rails (bend-free track swap — the literature's
+  // prescribed mechanism; detour-based avoidance is known-ineffective).
+  untangleSharedTerminalPairsWhenScoreImproves(data4Layout);
   rerouteTopCrossersWhenScoreImproves(data4Layout);
   simplifyEdgeJogsWhenScoreImproves(data4Layout);
 }

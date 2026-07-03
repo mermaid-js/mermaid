@@ -1217,3 +1217,154 @@ export function reorderPortFansWhenScoreImproves(layout: LayoutData): void {
     }
   }
 }
+
+/**
+ * Track-swap untangling for crossing pairs that share a terminal node.
+ * Literature-backed (metro-line crossing minimisation / pipe-routing track
+ * transposition): when two edges of one fan cross, their terminal tracks are
+ * in inverted order — EXCHANGING the two terminal rails removes the crossing
+ * with zero new bends, unlike detour-based avoidance (known to be
+ * ineffective). Both ports stay on the same side of the shared node (a legal
+ * port slide), and the whole swap is kept only when the validator score
+ * strictly improves.
+ */
+export function untangleSharedTerminalPairsWhenScoreImproves(layout: LayoutData): void {
+  let current = validateLayout(layout);
+  if (!current.ok || current.score <= 0 || current.breakdown.crossings === 0) {
+    return;
+  }
+
+  const edges = (layout.edges ?? []) as {
+    id?: string;
+    start?: string;
+    end?: string;
+    points?: Point[];
+  }[];
+
+  const crossingPairIdx = (): [number, number][] => {
+    const out: [number, number][] = [];
+    for (let i = 0; i < edges.length; i++) {
+      const A = edges[i].points;
+      if (!Array.isArray(A) || A.length < 2) {
+        continue;
+      }
+      for (let j = i + 1; j < edges.length; j++) {
+        const B = edges[j].points;
+        if (!Array.isArray(B) || B.length < 2) {
+          continue;
+        }
+        let crossed = false;
+        for (let ai = 0; ai < A.length - 1 && !crossed; ai++) {
+          for (let bi = 0; bi < B.length - 1 && !crossed; bi++) {
+            if (segmentsCross(A[ai], A[ai + 1], B[bi], B[bi + 1])) {
+              crossed = true;
+            }
+          }
+        }
+        if (crossed) {
+          out.push([i, j]);
+        }
+      }
+    }
+    return out;
+  };
+
+  /**
+   * The terminal "track" at the given end: the terminal point plus its rail
+   * partner when the terminal segment is perpendicular to the attach side.
+   * Returns the indices whose coordinate must move on a swap.
+   */
+  const terminalTrack = (
+    pts: Point[],
+    end: 'first' | 'last'
+  ): { idxs: number[]; vertical: boolean; coord: number } | null => {
+    if (pts.length < 2) {
+      return null;
+    }
+    const i0 = end === 'first' ? 0 : pts.length - 1;
+    const i1 = end === 'first' ? 1 : pts.length - 2;
+    const a = pts[i0];
+    const b = pts[i1];
+    const vertical = Math.abs(a.x - b.x) <= EPS && Math.abs(a.y - b.y) > EPS;
+    const horizontal = Math.abs(a.y - b.y) <= EPS && Math.abs(a.x - b.x) > EPS;
+    if (!vertical && !horizontal) {
+      return null;
+    }
+    // Extend along the collinear run so the whole terminal rail moves.
+    const idxs = [i0, i1];
+    const step = end === 'first' ? 1 : -1;
+    let k = i1;
+    while (true) {
+      const nk = k + step;
+      if (nk < 0 || nk >= pts.length) {
+        break;
+      }
+      const same = vertical ? Math.abs(pts[nk].x - a.x) <= EPS : Math.abs(pts[nk].y - a.y) <= EPS;
+      if (!same) {
+        break;
+      }
+      idxs.push(nk);
+      k = nk;
+    }
+    return { idxs, vertical, coord: vertical ? a.x : a.y };
+  };
+
+  for (let round = 0; round < 3; round++) {
+    let improved = false;
+    for (const [i, j] of crossingPairIdx()) {
+      const a = edges[i];
+      const b = edges[j];
+      // Find a shared terminal node between the pair.
+      const combos: ['first' | 'last', 'first' | 'last'][] = [];
+      if (a.start != null && b.start != null && String(a.start) === String(b.start)) {
+        combos.push(['first', 'first']);
+      }
+      if (a.end != null && b.end != null && String(a.end) === String(b.end)) {
+        combos.push(['last', 'last']);
+      }
+      if (a.start != null && b.end != null && String(a.start) === String(b.end)) {
+        combos.push(['first', 'last']);
+      }
+      if (a.end != null && b.start != null && String(a.end) === String(b.start)) {
+        combos.push(['last', 'first']);
+      }
+      for (const [endA, endB] of combos) {
+        const trackA = terminalTrack(a.points!, endA);
+        const trackB = terminalTrack(b.points!, endB);
+        if (!trackA || !trackB || trackA.vertical !== trackB.vertical) {
+          continue;
+        }
+        if (Math.abs(trackA.coord - trackB.coord) <= EPS) {
+          continue;
+        }
+        const savedA = a.points!.map((p) => ({ ...p }));
+        const savedB = b.points!.map((p) => ({ ...p }));
+        for (const idx of trackA.idxs) {
+          if (trackA.vertical) {
+            a.points![idx] = { x: trackB.coord, y: a.points![idx].y };
+          } else {
+            a.points![idx] = { x: a.points![idx].x, y: trackB.coord };
+          }
+        }
+        for (const idx of trackB.idxs) {
+          if (trackB.vertical) {
+            b.points![idx] = { x: trackA.coord, y: b.points![idx].y };
+          } else {
+            b.points![idx] = { x: b.points![idx].x, y: trackA.coord };
+          }
+        }
+        const next = validateLayout(layout);
+        if (next.ok && next.score > current.score) {
+          current = next;
+          improved = true;
+          break;
+        }
+        a.points = savedA;
+        b.points = savedB;
+      }
+    }
+    if (!improved) {
+      return;
+    }
+  }
+}
