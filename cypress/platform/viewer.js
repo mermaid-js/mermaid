@@ -150,6 +150,27 @@ const contentLoaded = async function () {
       width: 80,
       height: 80,
     };
+    // Simplified stand-in for the iconify material-icon-theme pack, for
+    // deterministic treeView icon tests (icon names match real material ids)
+    const staticMaterialIconPack = {
+      prefix: 'material-icon-theme',
+      icons: {
+        typescript: {
+          body: '<rect width="24" height="24" rx="3" fill="#3178c6"/><text x="12" y="17" text-anchor="middle" font-family="monospace" font-size="11" fill="#fff">TS</text>',
+        },
+        javascript: {
+          body: '<rect width="24" height="24" rx="3" fill="#f7df1e"/><text x="12" y="17" text-anchor="middle" font-family="monospace" font-size="11" fill="#000">JS</text>',
+        },
+        python: {
+          body: '<rect width="24" height="24" rx="3" fill="#3776ab"/><text x="12" y="17" text-anchor="middle" font-family="monospace" font-size="11" fill="#fff">PY</text>',
+        },
+        nodejs: {
+          body: '<rect width="24" height="24" rx="3" fill="#cb3837"/><text x="12" y="17" text-anchor="middle" font-family="monospace" font-size="9" fill="#fff">npm</text>',
+        },
+      },
+      width: 24,
+      height: 24,
+    };
     mermaid.registerIconPacks([
       {
         name: 'fa',
@@ -162,6 +183,10 @@ const contentLoaded = async function () {
       {
         name: 'aws',
         loader: () => staticAwsIconPack,
+      },
+      {
+        name: 'material-icon-theme',
+        loader: () => staticMaterialIconPack,
       },
     ]);
     await mermaid.run();

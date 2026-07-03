@@ -758,7 +758,7 @@ describe('mermaidAPI', () => {
       `);
     });
     it('resolves swimlanes as its own diagram type', async () => {
-      await expect(mermaidAPI.parse('swimlane TD;A-->B;')).resolves.toMatchInlineSnapshot(`
+      await expect(mermaidAPI.parse('swimlane-beta TD;A-->B;')).resolves.toMatchInlineSnapshot(`
         {
           "config": {},
           "diagramType": "swimlane",
@@ -904,6 +904,27 @@ graph TD;A--x|text including URL space|B;`)
           );
         });
       });
+    });
+
+    jsdomIt('preserves treeView icons after strict security sanitization', async () => {
+      mermaidAPI.initialize({ securityLevel: 'strict' });
+
+      const { svg } = await mermaidAPI.render(
+        'tree-view-strict-icons',
+        `---
+config:
+  treeView:
+    showIcons: true
+---
+treeView-beta
+  src/
+    index.js`
+      );
+
+      const dom = new JSDOM(svg);
+      const iconNode = ensureNodeFromSelector('.treeView-node-icon', dom.window.document);
+      ensureNodeFromSelector('path', iconNode);
+      expect(dom.window.document.querySelector('use')).toBeNull();
     });
   });
 

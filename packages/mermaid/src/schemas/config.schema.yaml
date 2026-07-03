@@ -2243,6 +2243,13 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           Enables a crossing-aware rank optimization pass for swimlane layouts.
         type: boolean
         default: true
+      automaticLaneOrdering:
+        description: |
+          Automatically reorders top-level swimlanes with a deterministic
+          weighted-linear-arrangement heuristic. Disabled by default because
+          source swimlane order can carry semantic meaning.
+        type: boolean
+        default: false
 
   FlowchartDiagramConfig:
     title: Flowchart Diagram Config
@@ -2561,9 +2568,45 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         minimum: 0
         default: 1
       showIcons:
-        description: Whether to show file/folder icons next to labels
+        description: |
+          Whether to show the default file/folder icons next to labels.
+          Explicit `icon()` annotations always render, regardless of this setting.
         type: boolean
-        default: true
+        default: false
+      defaultIconPack:
+        description: |
+          Name of a registered iconify pack used to resolve unprefixed icon
+          references — `icon(name)` annotations and `filenameIcons`/
+          `extensionIcons` values without a `pack:` prefix. The pack must be
+          registered with `registerIconPacks`. When empty, unprefixed names
+          resolve to the built-in file/folder icons.
+        type: string
+        default: ''
+      filenameIcons:
+        description: |
+          Exact-filename → icon map used to pick a file's icon when
+          `showIcons` is enabled, e.g.
+          `{ "Dockerfile": "material-icon-theme:docker" }`.
+          Values are resolved like `icon()` references: `pack:name` is used
+          as-is, unprefixed names resolve via `defaultIconPack`, and `none`
+          hides the icon for matching files.
+        type: object
+        additionalProperties:
+          type: string
+        default: {}
+      extensionIcons:
+        description: |
+          File-extension → icon map used to pick a file's icon when
+          `showIcons` is enabled, e.g.
+          `{ ".ts": "material-icon-theme:typescript" }`. Keys are
+          lowercase and may include or omit the leading dot.
+          Values are resolved like `icon()` references: `pack:name` is used
+          as-is, unprefixed names resolve via `defaultIconPack`, and `none`
+          hides the icon for matching files.
+        type: object
+        additionalProperties:
+          type: string
+        default: {}
 
   RadarDiagramConfig:
     title: Radar Diagram Config

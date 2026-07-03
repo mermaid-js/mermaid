@@ -55,6 +55,7 @@ describe('when working with site config', () => {
 
     expect(config.swimlane?.ignoreCrossLaneEdges).toBe(true);
     expect(config.swimlane?.optimizeRanksByCrossings).toBe(true);
+    expect(config.swimlane?.automaticLaneOrdering).toBe(false);
   });
 
   it('should default ELK node placement alignment to NONE', () => {

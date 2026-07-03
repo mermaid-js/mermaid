@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/syntax/cynefin.md](../../packages/mermaid/src/docs/syntax/cynefin.md).
 
-# Cynefin Framework Diagram (v\<MERMAID_RELEASE_VERSION>+)
+# Cynefin Framework Diagram (v11.16.0+)
 
 > The Cynefin framework is a sense-making framework created by [Dave Snowden](https://en.wikipedia.org/wiki/Dave_Snowden) that categorizes problems into five complexity domains. It helps teams match their response to the nature of the situation they are facing. The name is Welsh for "place" or "habitat".
 

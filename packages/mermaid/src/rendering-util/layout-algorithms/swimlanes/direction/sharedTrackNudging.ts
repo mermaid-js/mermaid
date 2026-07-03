@@ -2,9 +2,10 @@ import type { Edge, Node } from '../../../types.js';
 import {
   collectNodeRectEntries,
   dedupeConsecutivePoints,
+  overlapLength,
   orthogonalSegmentsForPoints,
   orthogonalSegmentsStrictlyCross,
-  sameAxisSegmentOverlapLength,
+  rectOfNodeBounds,
   segmentHitsAnyRect,
 } from './geometry.js';
 import type { OrthogonalSegment, Point } from './geometry.js';
@@ -13,6 +14,8 @@ export function nudgeSharedInteriorSubpaths(edges: Edge[], nodeByIdMap: Map<stri
   const EPS_LOCAL = 1e-3;
   const MIN_SHARED = 8;
   const TRACK_SHIFT = 7;
+  const MIN_TRACK_GAP = TRACK_SHIFT;
+  const SOURCE_DETOUR_STUB = 20;
   const BUFFER = 2;
   const MAX_ITERATIONS = 12;
 
@@ -50,6 +53,22 @@ export function nudgeSharedInteriorSubpaths(edges: Edge[], nodeByIdMap: Map<stri
     return result;
   };
 
+  const hasCrowdedParallelTrack = (a: SegmentLite, b: SegmentLite): boolean => {
+    if (a.horizontal && b.horizontal) {
+      return (
+        overlapLength(a.a.x, a.b.x, b.a.x, b.b.x) >= MIN_SHARED &&
+        Math.abs(a.a.y - b.a.y) < MIN_TRACK_GAP
+      );
+    }
+    if (a.vertical && b.vertical) {
+      return (
+        overlapLength(a.a.y, a.b.y, b.a.y, b.b.y) >= MIN_SHARED &&
+        Math.abs(a.a.x - b.a.x) < MIN_TRACK_GAP
+      );
+    }
+    return false;
+  };
+
   const candidateIsSafe = (edge: Edge, candidate: PointLite[]): boolean => {
     const sourceId = edge.start;
     const targetId = edge.end;
@@ -79,9 +98,7 @@ export function nudgeSharedInteriorSubpaths(edges: Edge[], nodeByIdMap: Map<stri
       }
       for (const candidateSegment of candidateSegments) {
         for (const otherSegment of segmentsFor(other, dedupeConsecutivePoints(otherPoints))) {
-          if (
-            sameAxisSegmentOverlapLength(candidateSegment, otherSegment, EPS_LOCAL) >= MIN_SHARED
-          ) {
+          if (hasCrowdedParallelTrack(candidateSegment, otherSegment)) {
             return false;
           }
           if (
@@ -122,6 +139,136 @@ export function nudgeSharedInteriorSubpaths(edges: Edge[], nodeByIdMap: Map<stri
       : undefined;
   };
 
+  type NodeRect = NonNullable<ReturnType<typeof rectOfNodeBounds>>;
+
+  interface SourceDetourContext {
+    sourceCenter: Point;
+    targetCenter: Point;
+    sourceRect: NodeRect;
+    tail: PointLite[];
+  }
+
+  const nodeCenter = (node: Node, rect: NodeRect): Point => ({
+    x: node.x ?? (rect.left + rect.right) / 2,
+    y: node.y ?? (rect.top + rect.bottom) / 2,
+  });
+
+  const sourceDetourContextFor = (segment: SegmentLite): SourceDetourContext | undefined => {
+    const edge = segment.edge;
+    const points = dedupeConsecutivePoints(edge.points ?? []);
+    if (points.length !== 4 || segment.index !== 1) {
+      return undefined;
+    }
+
+    const sourceNode = edge.start ? nodeByIdMap.get(edge.start) : undefined;
+    const targetNode = edge.end ? nodeByIdMap.get(edge.end) : undefined;
+    const sourceRect = sourceNode ? rectOfNodeBounds(sourceNode) : undefined;
+    const targetRect = targetNode ? rectOfNodeBounds(targetNode) : undefined;
+    const tail = points.slice(segment.index + 2);
+    if (!sourceNode || !targetNode || !sourceRect || !targetRect || tail.length === 0) {
+      return undefined;
+    }
+
+    return {
+      sourceCenter: nodeCenter(sourceNode, sourceRect),
+      targetCenter: nodeCenter(targetNode, targetRect),
+      sourceRect,
+      tail,
+    };
+  };
+
+  const verticalSourceDetour = (
+    segment: SegmentLite,
+    shift: number,
+    sourceCenter: Point,
+    targetCenter: Point,
+    sourceRect: NodeRect,
+    tail: PointLite[]
+  ): PointLite[] | undefined => {
+    const targetBelow = targetCenter.y >= sourceCenter.y;
+    const sourcePortY = targetBelow ? sourceRect.bottom : sourceRect.top;
+    const stubY = sourcePortY + (targetBelow ? SOURCE_DETOUR_STUB : -SOURCE_DETOUR_STUB);
+    if (
+      (targetBelow && segment.b.y <= stubY + EPS_LOCAL) ||
+      (!targetBelow && segment.b.y >= stubY - EPS_LOCAL)
+    ) {
+      return undefined;
+    }
+
+    const railX = segment.a.x + shift;
+    return dedupeConsecutivePoints(
+      [
+        { x: sourceCenter.x, y: sourcePortY },
+        { x: sourceCenter.x, y: stubY },
+        { x: railX, y: stubY },
+        { x: railX, y: segment.b.y },
+        ...tail,
+      ],
+      EPS_LOCAL
+    );
+  };
+
+  const horizontalSourceDetour = (
+    segment: SegmentLite,
+    shift: number,
+    sourceCenter: Point,
+    targetCenter: Point,
+    sourceRect: NodeRect,
+    tail: PointLite[]
+  ): PointLite[] | undefined => {
+    const targetRight = targetCenter.x >= sourceCenter.x;
+    const sourcePortX = targetRight ? sourceRect.right : sourceRect.left;
+    const stubX = sourcePortX + (targetRight ? SOURCE_DETOUR_STUB : -SOURCE_DETOUR_STUB);
+    if (
+      (targetRight && segment.b.x <= stubX + EPS_LOCAL) ||
+      (!targetRight && segment.b.x >= stubX - EPS_LOCAL)
+    ) {
+      return undefined;
+    }
+
+    const railY = segment.a.y + shift;
+    return dedupeConsecutivePoints(
+      [
+        { x: sourcePortX, y: sourceCenter.y },
+        { x: stubX, y: sourceCenter.y },
+        { x: stubX, y: railY },
+        { x: segment.b.x, y: railY },
+        ...tail,
+      ],
+      EPS_LOCAL
+    );
+  };
+
+  const sourceDetourCandidate = (segment: SegmentLite, shift: number): PointLite[] | undefined => {
+    const context = sourceDetourContextFor(segment);
+    if (!context) {
+      return undefined;
+    }
+
+    if (segment.vertical) {
+      return verticalSourceDetour(
+        segment,
+        shift,
+        context.sourceCenter,
+        context.targetCenter,
+        context.sourceRect,
+        context.tail
+      );
+    }
+    if (segment.horizontal) {
+      return horizontalSourceDetour(
+        segment,
+        shift,
+        context.sourceCenter,
+        context.targetCenter,
+        context.sourceRect,
+        context.tail
+      );
+    }
+
+    return undefined;
+  };
+
   const shifts = [
     -TRACK_SHIFT,
     TRACK_SHIFT,
@@ -139,24 +286,26 @@ export function nudgeSharedInteriorSubpaths(edges: Edge[], nodeByIdMap: Map<stri
       for (let j = i + 1; j < segments.length && !fixed; j++) {
         const first = segments[i];
         const second = segments[j];
-        if (
-          first.edge === second.edge ||
-          sameAxisSegmentOverlapLength(first, second, EPS_LOCAL) < MIN_SHARED
-        ) {
+        if (first.edge === second.edge || !hasCrowdedParallelTrack(first, second)) {
           continue;
         }
 
         const candidates = [first, second].filter((segment) => segment.interior);
         for (const segment of candidates) {
           for (const shift of shifts) {
-            const candidate = shiftedCandidate(segment, shift);
-            if (!candidate || !candidateIsSafe(segment.edge, candidate)) {
-              continue;
+            const direct = shiftedCandidate(segment, shift);
+            if (direct && candidateIsSafe(segment.edge, direct)) {
+              segment.edge.points = direct;
+              fixed = true;
+              break;
             }
 
-            segment.edge.points = candidate;
-            fixed = true;
-            break;
+            const detoured = sourceDetourCandidate(segment, shift);
+            if (detoured && candidateIsSafe(segment.edge, detoured)) {
+              segment.edge.points = detoured;
+              fixed = true;
+              break;
+            }
           }
           if (fixed) {
             break;

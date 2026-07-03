@@ -1,5 +1,5 @@
 import { FlowDB } from './flowDb.js';
-import type { FlowSubGraph } from './types.js';
+import type { FlowSubGraph, FlowText } from './types.js';
 
 describe('flow db subgraphs', () => {
   let flowDb: FlowDB;
@@ -163,6 +163,106 @@ describe('flow db getData', () => {
     expect(edges[1].curve).toBe('monotoneX');
     expect(edges[2].curve).toBe('catmullRom');
     expect(edges[3].curve).toBe('stepBefore');
+  });
+});
+
+describe('flow db collapsible subgraphs', () => {
+  let flowDb: FlowDB;
+  beforeEach(() => {
+    flowDb = new FlowDB();
+  });
+
+  const addVertex = (id: string) =>
+    flowDb.addVertex(id, { text: id, type: 'text' }, undefined, [], [], '', {}, undefined);
+
+  // Attach `@{ view: ... }` metadata to an already-declared subgraph, mirroring
+  // how the parser reduces a bare `sub1@{ view: collapsed }` statement.
+  const attachMeta = (id: string, meta: string) =>
+    flowDb.addVertex(id, undefined as unknown as FlowText, undefined, [], [], '', {}, meta);
+
+  it('renders a subgraph normally (as a group) when no collapse metadata is set', () => {
+    addVertex('A');
+    addVertex('B');
+    addVertex('C');
+    flowDb.addLink(['A'], ['B'], {});
+    flowDb.addLink(['C'], ['A'], {});
+    flowDb.addSubGraph({ text: 'sub1' }, ['A', 'B'], { text: 'My Group', type: 'text' });
+
+    const { nodes, edges } = flowDb.getData();
+    const sub = nodes.find((n) => n.id === 'sub1');
+    expect(sub?.isGroup).toBe(true);
+    expect(nodes.map((n) => n.id)).toEqual(expect.arrayContaining(['A', 'B', 'C', 'sub1']));
+    // edge endpoints unchanged
+    expect(edges.find((e) => e.start === 'C' && e.end === 'A')).toBeDefined();
+  });
+
+  it('renders a collapsed subgraph as a single collapsedGroup node and hides its members', () => {
+    addVertex('A');
+    addVertex('B');
+    addVertex('C');
+    flowDb.addLink(['A'], ['B'], {});
+    flowDb.addLink(['C'], ['A'], {});
+    flowDb.addSubGraph({ text: 'sub1' }, ['A', 'B'], { text: 'My Group', type: 'text' });
+    attachMeta('sub1', ' view: collapsed ');
+
+    const { nodes } = flowDb.getData();
+    const sub = nodes.find((n) => n.id === 'sub1');
+    expect(sub).toBeDefined();
+    expect(sub?.shape).toBe('collapsedGroup');
+    expect(sub?.isGroup).toBe(false);
+    // The collapsed node keeps the subgraph's title
+    expect(sub?.label).toBe('My Group');
+    // Internal members are hidden
+    expect(nodes.find((n) => n.id === 'A')).toBeUndefined();
+    expect(nodes.find((n) => n.id === 'B')).toBeUndefined();
+    // External node remains
+    expect(nodes.find((n) => n.id === 'C')).toBeDefined();
+  });
+
+  it('redirects edges crossing into a collapsed subgraph to the collapsed node', () => {
+    addVertex('A');
+    addVertex('B');
+    addVertex('C');
+    flowDb.addLink(['C'], ['A'], {});
+    flowDb.addSubGraph({ text: 'sub1' }, ['A', 'B'], { text: 'My Group', type: 'text' });
+    attachMeta('sub1', ' view: collapsed ');
+
+    const { edges } = flowDb.getData();
+    // C --> A becomes C --> sub1
+    expect(edges.find((e) => e.start === 'C' && e.end === 'sub1')).toBeDefined();
+    expect(edges.find((e) => e.end === 'A')).toBeUndefined();
+  });
+
+  it('drops edges fully internal to a collapsed subgraph (avoids a self-loop)', () => {
+    addVertex('A');
+    addVertex('B');
+    flowDb.addLink(['A'], ['B'], {});
+    flowDb.addSubGraph({ text: 'sub1' }, ['A', 'B'], { text: 'My Group', type: 'text' });
+    attachMeta('sub1', ' view: collapsed ');
+
+    const { edges } = flowDb.getData();
+    // A --> B is internal to sub1; it would collapse to sub1 --> sub1 and is dropped
+    expect(edges).toHaveLength(0);
+  });
+
+  it('redirects edges to the outermost collapsed ancestor for nested collapsed subgraphs', () => {
+    addVertex('A');
+    addVertex('B');
+    addVertex('C');
+    flowDb.addLink(['C'], ['A'], {});
+    // inner subgraph contains A, B; outer subgraph contains inner + C-less
+    flowDb.addSubGraph({ text: 'inner' }, ['A', 'B'], { text: 'Inner', type: 'text' });
+    flowDb.addSubGraph({ text: 'outer' }, ['inner'], { text: 'Outer', type: 'text' });
+    attachMeta('inner', ' view: collapsed ');
+    attachMeta('outer', ' view: collapsed ');
+
+    const { nodes, edges } = flowDb.getData();
+    // Only the outer collapsed node is visible
+    expect(nodes.find((n) => n.id === 'outer')?.shape).toBe('collapsedGroup');
+    expect(nodes.find((n) => n.id === 'inner')).toBeUndefined();
+    expect(nodes.find((n) => n.id === 'A')).toBeUndefined();
+    // C --> A redirects all the way to the outer collapsed node
+    expect(edges.find((e) => e.start === 'C' && e.end === 'outer')).toBeDefined();
   });
 });
 
