@@ -1305,6 +1305,17 @@ end
         { flowchart: { subGraphTitleMargin: { top: 20, bottom: 10 } } }
       );
     });
+    it('should not overlap a two-line markdown-syntax subgraph title', () => {
+      imgSnapshotTest(
+        `flowchart TD
+          subgraph M["\`**Bold first line**
+          plain second line\`"]
+            E[Node E] --> F[Node F]
+          end
+        `,
+        {}
+      );
+    });
   });
   describe('New @ syntax for node metadata edge cases', () => {
     it('should be possible to use @  syntax to add labels on multi nodes', () => {

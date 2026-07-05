@@ -194,6 +194,56 @@ describe('reserveClusterLabelSpace', () => {
     expect(newGap).toBeCloseTo(originalGap, 5);
   });
 
+  it('shifts a node nested inside two stacked growing clusters by the SUM of the enclosing margins, not the max (nested boundaries must each be cleared in full)', () => {
+    const graph = new Graph({ multigraph: true, compound: true });
+    graph.setGraph({ rankdir: 'TB' });
+
+    // Outer O (title needs 20px) contains inner I (title needs 68px) contains leaf P.
+    graph.setNode('O', {
+      id: 'O',
+      x: 200,
+      y: 150,
+      width: 360,
+      height: 250,
+      padding: 8,
+      labelBBox: { width: 100, height: 24 },
+    });
+    graph.setNode('I', {
+      id: 'I',
+      x: 200,
+      y: 160,
+      width: 200,
+      height: 160,
+      padding: 8,
+      labelBBox: { width: 100, height: 72 },
+      parentId: 'O',
+    });
+    graph.setParent('I', 'O');
+    graph.setNode('P', { id: 'P', x: 200, y: 180, width: 80, height: 54, parentId: 'I' });
+    graph.setParent('P', 'I');
+
+    const beforeO = { ...graph.node('O') };
+    const beforeI = { ...graph.node('I') };
+    const beforeP = { ...graph.node('P') };
+
+    reserveClusterLabelSpace(graph);
+
+    // Mo = 24 - 4 = 20; Mi = 72 - 4 = 68.
+    // Leaf P is enclosed by BOTH growing clusters, so it must clear both: 20 + 68 = 88,
+    // NOT max(20, 68) = 68 — this is the enclosingSum path.
+    expect(graph.node('P').y).toBeCloseTo(beforeP.y + 88, 5);
+
+    // Inner cluster I grows by its own margin (68) and is shifted down by the outer's full
+    // margin plus half of its own growth: 20 + 68/2 = 54.
+    expect(graph.node('I').height).toBeCloseTo(beforeI.height + 68, 5);
+    expect(graph.node('I').y).toBeCloseTo(beforeI.y + 54, 5);
+
+    // Outer cluster O grows by its own margin (20) and its top edge stays fixed (y += 20/2 = 10).
+    // It is NOT pushed down by the inner cluster's growth — an ancestor never moves for its child.
+    expect(graph.node('O').height).toBeCloseTo(beforeO.height + 20, 5);
+    expect(graph.node('O').y).toBeCloseTo(beforeO.y + 10, 5);
+  });
+
   it('leaves an unlabeled / already-fitting cluster untouched', () => {
     const graph = new Graph({ multigraph: true, compound: true });
     graph.setGraph({ rankdir: 'TB' });
