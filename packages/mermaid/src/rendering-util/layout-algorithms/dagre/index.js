@@ -496,11 +496,9 @@ const runDagreGraphLayout = (graph) => {
 };
 
 // Dagre sizes a compound (subgraph) node purely from its children's bounding box — it never
-// budgets room for the cluster's own title label (see #3806). We measure that label up front
-// (measureClusterLabel) and, once the layout coordinates are known, grow the cluster's box by
-// however much the label overshoots the existing padding, then push every descendant of that
-// cluster (nodes and edges) down by half that amount — mirroring how `subGraphTitleTotalMargin`
-// (the user-configurable version of this same margin) is already applied below.
+// budgets room for the cluster's own title label (see #3806). `measureClusterLabel` gets the
+// label's real bbox before layout; this measures how much each cluster's title overshoots the
+// existing padding.
 const computeClusterLabelMargins = (graph) => {
   graph.nodes().forEach((nodeId) => {
     const node = graph.node(nodeId);
@@ -513,17 +511,120 @@ const computeClusterLabelMargins = (graph) => {
   });
 };
 
-// Sum the (already-computed) label margin of every ancestor cluster of `nodeId`, halved to match
-// the symmetric grow-up/grow-down convention used for `subGraphTitleTotalMargin`.
-const getAncestorLabelMarginShift = (graph, nodeId) => {
-  let shift = 0;
+// Is `nodeId` nested (at any depth) inside `ancestorId`'s subgraph?
+const isDescendantOf = (graph, nodeId, ancestorId) => {
   let parentId = graph.parent(nodeId);
   while (parentId) {
-    const parent = graph.node(parentId);
-    shift += (parent?.labelMarginTop ?? 0) / 2;
+    if (parentId === ancestorId) {
+      return true;
+    }
     parentId = graph.parent(parentId);
   }
-  return shift;
+  return false;
+};
+
+// Rewrite every node's y/height and every edge's points/label position so the space a
+// multiline subgraph title needs is real *before* anything paints or any ancestor graph reads
+// these nodes' final size (see #3806). Must run immediately after `runDagreGraphLayout` and
+// before paint/normalize.
+//
+// A cluster's title is always drawn along the top of its box regardless of `rankdir` (see
+// `clusters.js`'s `rect()`), so growing a cluster is always a *vertical* (y) concern. Dagre
+// itself never reserves this room, so growing a cluster's box after the fact can only be made
+// safe by treating it like a rank boundary was inserted: every node/edge endpoint that dagre
+// placed at or below the cluster's pre-growth bottom edge — not just the cluster's own
+// descendants — must shift down by the same amount, exactly as a taller node would have pushed
+// later ranks were it sized correctly from the start. Nodes strictly above stay put, and an
+// ancestor of the growing cluster is never pushed by its own child's growth.
+export const reserveClusterLabelSpace = (graph) => {
+  computeClusterLabelMargins(graph);
+
+  // Snapshot pre-reservation y (and each growing cluster's pre-growth bottom edge) up front —
+  // every shift decision below is relative to the original layout, not to values this same pass
+  // is about to mutate.
+  const originalY = new Map();
+  graph.nodes().forEach((nodeId) => {
+    const node = graph.node(nodeId);
+    if (node) {
+      originalY.set(nodeId, node.y ?? 0);
+    }
+  });
+
+  const growths = [];
+  graph.nodes().forEach((nodeId) => {
+    const node = graph.node(nodeId);
+    if (!node || node.clusterNode || graph.children(nodeId).length === 0) {
+      return;
+    }
+    const margin = node.labelMarginTop ?? 0;
+    if (margin <= 0) {
+      return;
+    }
+    growths.push({
+      clusterId: nodeId,
+      oldBottom: (node.y ?? 0) + (node.height ?? 0) / 2,
+      margin,
+    });
+  });
+  if (growths.length === 0) {
+    return;
+  }
+
+  // Total downward shift for `nodeId`: the margin of every OTHER growing cluster that contains
+  // it, or that it was originally positioned at/below — skipping any cluster that `nodeId` is
+  // itself an ancestor of (a subgraph must never be pushed by its own child's title).
+  const shiftForNode = (nodeId) => {
+    const y = originalY.get(nodeId) ?? 0;
+    let shift = 0;
+    growths.forEach(({ clusterId, oldBottom, margin }) => {
+      if (nodeId === clusterId || isDescendantOf(graph, clusterId, nodeId)) {
+        return;
+      }
+      if (isDescendantOf(graph, nodeId, clusterId) || y >= oldBottom) {
+        shift += margin;
+      }
+    });
+    return shift;
+  };
+
+  graph.nodes().forEach((nodeId) => {
+    const node = graph.node(nodeId);
+    if (!node) {
+      return;
+    }
+    const ownMargin = node.labelMarginTop ?? 0;
+    const shift = shiftForNode(nodeId);
+    if (ownMargin > 0) {
+      // Grow downward only — the top edge (where the title sits) stays exactly where dagre put
+      // it, so the gap above the cluster is untouched.
+      node.height = (node.height ?? 0) + ownMargin;
+      node.y = (node.y ?? 0) + ownMargin / 2 + shift;
+    } else if (shift > 0) {
+      node.y = (node.y ?? 0) + shift;
+    }
+  });
+
+  graph.edges().forEach((e) => {
+    const edge = graph.edge(e);
+    if (!edge) {
+      return;
+    }
+    // Approximate: edges wholly on one side of every growing cluster get that exact shift (both
+    // endpoints agree); edges crossing a boundary get the average of their endpoints' shifts,
+    // which is the best a single edge-level offset can do without re-routing the path.
+    const shift = (shiftForNode(e.v) + shiftForNode(e.w)) / 2;
+    if (shift === 0) {
+      return;
+    }
+    edge.points?.forEach((point) => {
+      if (typeof point.y === 'number') {
+        point.y += shift;
+      }
+    });
+    if (typeof edge.y === 'number') {
+      edge.y += shift;
+    }
+  });
 };
 
 const normalizeDagreNode = (graph, nodeId, subGraphTitleTotalMargin) => {
@@ -532,16 +633,13 @@ const normalizeDagreNode = (graph, nodeId, subGraphTitleTotalMargin) => {
     return undefined;
   }
 
-  const ancestorShift = getAncestorLabelMarginShift(graph, nodeId);
   const normalizedNode = { ...node };
   if (node?.clusterNode) {
-    normalizedNode.y = (node.y ?? 0) + subGraphTitleTotalMargin + ancestorShift;
+    normalizedNode.y = (node.y ?? 0) + subGraphTitleTotalMargin;
   } else if (graph.children(nodeId).length > 0) {
-    normalizedNode.height =
-      (node.height ?? 0) + subGraphTitleTotalMargin + (node.labelMarginTop ?? 0);
-    normalizedNode.y = (node.y ?? 0) + ancestorShift;
+    normalizedNode.height = (node.height ?? 0) + subGraphTitleTotalMargin;
   } else {
-    normalizedNode.y = (node.y ?? 0) + subGraphTitleTotalMargin / 2 + ancestorShift;
+    normalizedNode.y = (node.y ?? 0) + subGraphTitleTotalMargin / 2;
   }
   return normalizedNode;
 };
@@ -582,8 +680,6 @@ export const applyDagreLayoutResult = (data4Layout, measuredLayout) => {
   const { graph, mergeSelfLoops, subGraphTitleTotalMargin = 0 } = measuredLayout;
   const nodeById = new Map(data4Layout.nodes.map((node) => [node.id, node]));
 
-  computeClusterLabelMargins(graph);
-
   sortNodesByHierarchy(graph).forEach((nodeId) => {
     const dagreNode = normalizeDagreNode(graph, nodeId, subGraphTitleTotalMargin);
     if (!dagreNode) {
@@ -600,11 +696,7 @@ export const applyDagreLayoutResult = (data4Layout, measuredLayout) => {
 
   const edgeOffsetY = subGraphTitleTotalMargin / 2;
   data4Layout.edges = getEdgesToRender(graph, edgeOffsetY, { mergeSelfLoops }).map(
-    ({ edge, start, end }) => {
-      const ancestorShift =
-        (getAncestorLabelMarginShift(graph, start) + getAncestorLabelMarginShift(graph, end)) / 2;
-      return normalizeDagreEdge(edge, start, end, edgeOffsetY + ancestorShift);
-    }
+    ({ edge, start, end }) => normalizeDagreEdge(edge, start, end, edgeOffsetY)
   );
 
   return data4Layout;
@@ -621,11 +713,9 @@ const paintDagreLayoutCore = async ({
 }) => {
   // Move the nodes to the correct place
   let diff = 0;
-  computeClusterLabelMargins(graph);
   await Promise.all(
     sortNodesByHierarchy(graph).map(async function (v) {
       const node = graph.node(v);
-      const ancestorShift = getAncestorLabelMarginShift(graph, v);
       log.info(
         'Position XBX => ' + v + ': (' + node.x,
         ',' + node.y,
@@ -636,7 +726,7 @@ const paintDagreLayoutCore = async ({
       );
       if (node?.clusterNode) {
         // Adjust for padding when on root level
-        node.y += subGraphTitleTotalMargin + ancestorShift;
+        node.y += subGraphTitleTotalMargin;
 
         log.info(
           'A tainted cluster node XBX1',
@@ -663,10 +753,8 @@ const paintDagreLayoutCore = async ({
             node.height,
             graph.parent(v)
           );
-          node.height += subGraphTitleTotalMargin + (node.labelMarginTop ?? 0);
-          node.y += ancestorShift;
+          node.height += subGraphTitleTotalMargin;
           graph.node(node.parentId);
-          log.debug('labelMarginTop', node.labelMarginTop, 'ancestorShift', ancestorShift);
           await insertCluster(clusters, node);
 
           // A cluster in the non-recursive way
@@ -674,7 +762,7 @@ const paintDagreLayoutCore = async ({
         } else {
           // Regular node
           const parent = graph.node(node.parentId);
-          node.y += subGraphTitleTotalMargin / 2 + ancestorShift;
+          node.y += subGraphTitleTotalMargin / 2;
           log.info(
             'A regular node XBX1 - using the padding',
             node.id,
@@ -705,9 +793,7 @@ const paintDagreLayoutCore = async ({
   edgesToRender.forEach(function ({ edge, start, end }) {
     log.info('Edge ' + start + ' -> ' + end + ': ' + JSON.stringify(edge), edge);
 
-    const edgeAncestorShift =
-      (getAncestorLabelMarginShift(graph, start) + getAncestorLabelMarginShift(graph, end)) / 2;
-    edge.points.forEach((point) => (point.y += edgeOffsetY + edgeAncestorShift));
+    edge.points.forEach((point) => (point.y += edgeOffsetY));
     const startNode = graph.node(start);
     const endNode = graph.node(end);
     const paths = insertEdge(edgePaths, edge, clusterDb, diagramType, startNode, endNode, id);
@@ -728,6 +814,7 @@ const paintDagreLayoutCore = async ({
 const renderDagreSubgraph = async (options) => {
   const measuredLayout = await measureDagreGraph(options);
   runDagreGraphLayout(measuredLayout.graph);
+  reserveClusterLabelSpace(measuredLayout.graph);
   return await paintDagreLayoutCore(measuredLayout);
 };
 
@@ -871,6 +958,7 @@ export const runDagreLayoutCore = (data4Layout, context) => {
   }
 
   runDagreGraphLayout(measuredLayout.graph);
+  reserveClusterLabelSpace(measuredLayout.graph);
   applyDagreLayoutResult(data4Layout, measuredLayout);
   return measuredLayout;
 };
