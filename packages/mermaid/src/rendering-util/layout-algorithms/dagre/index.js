@@ -570,21 +570,29 @@ export const reserveClusterLabelSpace = (graph) => {
     return;
   }
 
-  // Total downward shift for `nodeId`: the margin of every OTHER growing cluster that contains
-  // it, or that it was originally positioned at/below — skipping any cluster that `nodeId` is
-  // itself an ancestor of (a subgraph must never be pushed by its own child's title).
+  // Total downward shift for `nodeId`, skipping any cluster that `nodeId` is itself an ancestor
+  // of (a subgraph must never be pushed by its own child's title):
+  //  - every ENCLOSING growing cluster contributes its full margin, summed — a node nested
+  //    inside both an outer and inner growing cluster must clear both boundaries in full;
+  //  - growing clusters `nodeId` merely sits AT-OR-BELOW (siblings, not ancestors) contribute
+  //    only their MAX, not a sum — they are parallel obstacles at the same rank, not stacked
+  //    ones, so a shared downstream node only needs to clear the tallest of them, not all of
+  //    them added together (summing here would open unnecessarily large — if harmless — gaps).
   const shiftForNode = (nodeId) => {
     const y = originalY.get(nodeId) ?? 0;
-    let shift = 0;
+    let enclosingSum = 0;
+    let siblingMax = 0;
     growths.forEach(({ clusterId, oldBottom, margin }) => {
       if (nodeId === clusterId || isDescendantOf(graph, clusterId, nodeId)) {
         return;
       }
-      if (isDescendantOf(graph, nodeId, clusterId) || y >= oldBottom) {
-        shift += margin;
+      if (isDescendantOf(graph, nodeId, clusterId)) {
+        enclosingSum += margin;
+      } else if (y >= oldBottom) {
+        siblingMax = Math.max(siblingMax, margin);
       }
     });
-    return shift;
+    return enclosingSum + siblingMax;
   };
 
   graph.nodes().forEach((nodeId) => {

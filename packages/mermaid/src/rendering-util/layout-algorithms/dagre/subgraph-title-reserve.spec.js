@@ -149,6 +149,51 @@ describe('reserveClusterLabelSpace', () => {
     expect(newGap).toBeCloseTo(originalGap, 5);
   });
 
+  it('shifts a node below two side-by-side growing clusters by the MAX of their margins, not the sum (they are parallel obstacles, not stacked ones)', () => {
+    const graph = new Graph({ multigraph: true, compound: true });
+    graph.setGraph({ rankdir: 'TB' });
+
+    // S1's title needs 20px, S2's needs 68px — both siblings, side by side, both above Z.
+    graph.setNode('S1', {
+      id: 'S1',
+      x: 100,
+      y: 118,
+      width: 180,
+      height: 124,
+      padding: 8,
+      labelBBox: { width: 100, height: 24 },
+    });
+    graph.setNode('S2', {
+      id: 'S2',
+      x: 400,
+      y: 118,
+      width: 180,
+      height: 124,
+      padding: 8,
+      labelBBox: { width: 100, height: 72 },
+    });
+    graph.setNode('M1', { id: 'M1', x: 100, y: 118, width: 60, height: 54, parentId: 'S1' });
+    graph.setParent('M1', 'S1');
+    graph.setNode('N1', { id: 'N1', x: 400, y: 118, width: 60, height: 54, parentId: 'S2' });
+    graph.setParent('N1', 'S2');
+    graph.setNode('Z', { id: 'Z', x: 250, y: 230, width: 200, height: 54 });
+    graph.setEdge('M1', 'Z', { id: 'e1', start: 'M1', end: 'Z', points: [{ x: 100, y: 180 }] });
+    graph.setEdge('N1', 'Z', { id: 'e2', start: 'N1', end: 'Z', points: [{ x: 400, y: 180 }] });
+
+    const beforeS2 = { ...graph.node('S2') };
+    const beforeZ = { ...graph.node('Z') };
+    const originalGap = beforeZ.y - beforeZ.height / 2 - (beforeS2.y + beforeS2.height / 2);
+
+    reserveClusterLabelSpace(graph);
+
+    // S1 margin = 24 - 4 = 20; S2 margin = 72 - 4 = 68. Z must clear only the taller (S2, 68),
+    // not 20 + 68 = 88 — otherwise the gap below the taller sibling grows past its ranksep.
+    const afterS2 = graph.node('S2');
+    const afterZ = graph.node('Z');
+    const newGap = afterZ.y - afterZ.height / 2 - (afterS2.y + afterS2.height / 2);
+    expect(newGap).toBeCloseTo(originalGap, 5);
+  });
+
   it('leaves an unlabeled / already-fitting cluster untouched', () => {
     const graph = new Graph({ multigraph: true, compound: true });
     graph.setGraph({ rankdir: 'TB' });
