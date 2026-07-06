@@ -220,7 +220,7 @@ function railShiftCandidates(pts: Point[]): Point[][] {
 function occupiedRailShiftCandidates(pts: Point[], others: Point[][]): Point[][] {
   const OCCUPIED_GAP = 7;
   const MIN_OVERLAP = 12;
-  const out: Point[][] = [];
+  const occupiedRails: { index: number; isV: boolean }[] = [];
   for (let i = 1; i < pts.length - 2; i++) {
     const a = pts[i];
     const b = pts[i + 1];
@@ -248,17 +248,35 @@ function occupiedRailShiftCandidates(pts: Point[], others: Point[][]): Point[][]
         break;
       }
     }
-    if (!occupied) {
-      continue;
+    if (occupied) {
+      occupiedRails.push({ index: i, isV });
     }
-    for (const dlt of [10, -10, 14, -14]) {
+  }
+  if (occupiedRails.length === 0) {
+    return [];
+  }
+  const out: Point[][] = [];
+  const shiftRail = (route: Point[], rail: { index: number; isV: boolean }, dlt: number): void => {
+    if (rail.isV) {
+      route[rail.index].x += dlt;
+      route[rail.index + 1].x += dlt;
+    } else {
+      route[rail.index].y += dlt;
+      route[rail.index + 1].y += dlt;
+    }
+  };
+  for (const dlt of [10, -10, 14, -14]) {
+    for (const rail of occupiedRails) {
       const next = pts.map((p) => ({ ...p }));
-      if (isV) {
-        next[i].x += dlt;
-        next[i + 1].x += dlt;
-      } else {
-        next[i].y += dlt;
-        next[i + 1].y += dlt;
+      shiftRail(next, rail, dlt);
+      out.push(next);
+    }
+    // A route the search laid along SEVERAL occupied rails needs them all
+    // moved at once — per-rail variants still collide on the others.
+    if (occupiedRails.length > 1) {
+      const next = pts.map((p) => ({ ...p }));
+      for (const rail of occupiedRails) {
+        shiftRail(next, rail, dlt);
       }
       out.push(next);
     }
@@ -1802,10 +1820,11 @@ export function swingReroutesWhenScoreImproves(layout: LayoutData): void {
   };
 
   let evaluations = 0;
-  const EVAL_BUDGET = 150;
+  const EVAL_BUDGET = 350;
   const EDGE_EVAL_BUDGET = 24;
+  const EDGE_SEARCH_BUDGET = 48;
 
-  for (let round = 0; round < 4; round++) {
+  for (let round = 0; round < 6; round++) {
     const routed = edges.filter((e) => (e.points?.length ?? 0) >= 2);
     const ownCross = new Map<string, number>();
     for (let i = 0; i < routed.length; i++) {
@@ -1818,11 +1837,11 @@ export function swingReroutesWhenScoreImproves(layout: LayoutData): void {
       }
     }
     const crossers = routed
-      .filter((e) => (ownCross.get(String(e.id)) ?? 0) >= 2)
+      .filter((e) => (ownCross.get(String(e.id)) ?? 0) >= 1)
       .sort((a, b) => (ownCross.get(String(b.id)) ?? 0) - (ownCross.get(String(a.id)) ?? 0))
-      .slice(0, 8);
+      .slice(0, 10);
     const staircases = routed
-      .filter((e) => (ownCross.get(String(e.id)) ?? 0) === 0 && normalizedCount(e.points!) >= 5)
+      .filter((e) => (ownCross.get(String(e.id)) ?? 0) === 0 && normalizedCount(e.points!) >= 4)
       .slice(0, 6);
     const targets = [...crossers, ...staircases];
     if (targets.length === 0) {
@@ -1861,8 +1880,10 @@ export function swingReroutesWhenScoreImproves(layout: LayoutData): void {
       const curBends = normalizedCount(e.points!);
 
       // Free-slot samples along a side: midpoints of the gaps between
-      // occupied attachment points, widest gaps first.
-      const freeSlotSamples = (r: Rect, side: Side): number[] => {
+      // occupied attachment points (widest gaps first), plus the far
+      // endpoint's projection when it lands inside a free gap — the winning
+      // port usually sits toward the far endpoint, not at a gap center.
+      const freeSlotSamples = (r: Rect, side: Side, farCoord: number): number[] => {
         const horiz = side === 'N' || side === 'S';
         const lo = (horiz ? r.left : r.top) + 8;
         const hi = (horiz ? r.right : r.bottom) - 8;
@@ -1876,15 +1897,23 @@ export function swingReroutesWhenScoreImproves(layout: LayoutData): void {
           .filter((v) => v >= lo - 8 && v <= hi + 8)
           .sort((a, b) => a - b);
         const cuts = [lo, ...used, hi];
-        const gaps: { mid: number; width: number }[] = [];
+        const gaps: { lo: number; hi: number; mid: number; width: number }[] = [];
         for (let i = 0; i < cuts.length - 1; i++) {
           const width = cuts[i + 1] - cuts[i];
           if (width >= 16) {
-            gaps.push({ mid: (cuts[i] + cuts[i + 1]) / 2, width });
+            gaps.push({ lo: cuts[i], hi: cuts[i + 1], mid: (cuts[i] + cuts[i + 1]) / 2, width });
           }
         }
         gaps.sort((a, b) => b.width - a.width);
-        return gaps.slice(0, 3).map((g) => g.mid);
+        const samples = gaps.slice(0, 3).map((g) => g.mid);
+        const projected = Math.max(lo, Math.min(hi, farCoord));
+        if (
+          gaps.some((g) => projected >= g.lo + 4 && projected <= g.hi - 4) &&
+          samples.every((s) => Math.abs(s - projected) > 8)
+        ) {
+          samples.unshift(projected);
+        }
+        return samples;
       };
 
       const chainGroups = new Set<string>([
@@ -1908,6 +1937,7 @@ export function swingReroutesWhenScoreImproves(layout: LayoutData): void {
       const oldY = e.y;
       const hasLabel = e.label != null && Number.isFinite(e.x) && Number.isFinite(e.y);
       let edgeEvaluations = 0;
+      let edgeSearches = 0;
       let exhausted = false;
 
       const tryCandidate = (candidate: Point[]): boolean => {
@@ -1925,7 +1955,9 @@ export function swingReroutesWhenScoreImproves(layout: LayoutData): void {
           return false;
         }
         e.points = candidate;
-        const anchors = hasLabel ? labelAnchors(candidate) : [{ x: oldX ?? 0, y: oldY ?? 0 }];
+        const anchors = hasLabel
+          ? labelAnchors(candidate).slice(0, 2)
+          : [{ x: oldX ?? 0, y: oldY ?? 0 }];
         for (const anchor of anchors) {
           if (hasLabel) {
             e.x = anchor.x;
@@ -1952,25 +1984,43 @@ export function swingReroutesWhenScoreImproves(layout: LayoutData): void {
 
       const dx = rE.cx - rS.cx;
       const dy = rE.cy - rS.cy;
+      // Same-side swings first, then the perpendicular exit/entry pairs the
+      // classic reroute never tries (its perpendicular list covers only one
+      // diagonal); alley escapes like exit-East/enter-South live here.
       const swingPairs: [Side, Side][] =
         Math.abs(dx) > Math.abs(dy)
           ? [
               ['S', 'S'],
               ['N', 'N'],
+              [dx >= 0 ? 'E' : 'W', 'S'],
+              [dx >= 0 ? 'E' : 'W', 'N'],
+              ['S', dx >= 0 ? 'W' : 'E'],
+              ['N', dx >= 0 ? 'W' : 'E'],
             ]
           : [
               ['E', 'E'],
               ['W', 'W'],
+              [dy >= 0 ? 'S' : 'N', 'E'],
+              [dy >= 0 ? 'S' : 'N', 'W'],
+              ['E', dy >= 0 ? 'N' : 'S'],
+              ['W', dy >= 0 ? 'N' : 'S'],
             ];
 
-      let accepted = false;
+      // Generate ALL swing candidates first (bounded by the search budget),
+      // then validate best-first by (own crossings, bends). Validating in
+      // generation order lets mediocre same-side candidates exhaust the
+      // validation budget before a winning perpendicular escape is reached.
+      const generated: { route: Point[]; cross: number; bends: number }[] = [];
       for (const [sSide, eSide] of swingPairs) {
-        const sSamples = freeSlotSamples(rS, sSide);
-        const eSamples = freeSlotSamples(rE, eSide);
+        if (edgeSearches >= EDGE_SEARCH_BUDGET || generated.length >= 12) {
+          break;
+        }
+        const sHoriz = sSide === 'N' || sSide === 'S';
+        const eHoriz = eSide === 'N' || eSide === 'S';
+        const sSamples = freeSlotSamples(rS, sSide, sHoriz ? rE.cx : rE.cy);
+        const eSamples = freeSlotSamples(rE, eSide, eHoriz ? rS.cx : rS.cy);
         for (const sv of sSamples) {
           for (const ev of eSamples) {
-            const sHoriz = sSide === 'N' || sSide === 'S';
-            const eHoriz = eSide === 'N' || eSide === 'S';
             const ps: Point = sHoriz
               ? { x: sv, y: sSide === 'N' ? rS.top : rS.bottom }
               : { x: sSide === 'W' ? rS.left : rS.right, y: sv };
@@ -1980,6 +2030,10 @@ export function swingReroutesWhenScoreImproves(layout: LayoutData): void {
             if (onOccupiedPort(ps) || onOccupiedPort(pe)) {
               continue;
             }
+            if (edgeSearches >= EDGE_SEARCH_BUDGET) {
+              break;
+            }
+            edgeSearches++;
             const ds = OUTWARD[sSide];
             const de = OUTWARD[eSide];
             const startStub = { x: ps.x + ds.x * STUB, y: ps.y + ds.y * STUB };
@@ -2002,7 +2056,7 @@ export function swingReroutesWhenScoreImproves(layout: LayoutData): void {
               const prev = stitched[stitched.length - 1];
               const cur = raw[ri];
               if (Math.abs(prev.x - cur.x) > EPS && Math.abs(prev.y - cur.y) > EPS) {
-                if ((sSide === 'N' || sSide === 'S') && ri === 1) {
+                if (sHoriz && ri === 1) {
                   stitched.push({ x: cur.x, y: prev.y });
                 } else {
                   stitched.push({ x: prev.x, y: cur.y });
@@ -2010,35 +2064,46 @@ export function swingReroutesWhenScoreImproves(layout: LayoutData): void {
               }
               stitched.push(cur);
             }
-            if (tryCandidate(stitched)) {
-              accepted = true;
-              break;
+            // Sanity: the graph search sometimes reaches the target via a
+            // huge detour through a far outer band — crossing-free but
+            // hopeless at validation. Those must not outrank real candidates.
+            let routeLength = 0;
+            for (let ri = 0; ri < stitched.length - 1; ri++) {
+              routeLength +=
+                Math.abs(stitched[ri + 1].x - stitched[ri].x) +
+                Math.abs(stitched[ri + 1].y - stitched[ri].y);
             }
-            if (exhausted) {
-              break;
+            const manhattan = Math.abs(pe.x - ps.x) + Math.abs(pe.y - ps.y);
+            if (routeLength > 2.5 * manhattan + 200) {
+              continue;
             }
-            // Occupied-corridor rescue: the crossing-free ride-along fails
-            // validation; the adjacent free track wins.
-            const candCross = ownCrossingsOf(stitched);
-            if (
-              candCross < curCross ||
-              (candCross === curCross && normalizedCount(stitched) < curBends)
-            ) {
-              for (const shifted of occupiedRailShiftCandidates(stitched, otherRoutes)) {
-                if (tryCandidate(shifted)) {
-                  accepted = true;
-                  break;
-                }
-                if (exhausted) {
-                  break;
-                }
-              }
-            }
-            if (accepted || exhausted) {
-              break;
+            const cross = ownCrossingsOf(stitched);
+            const bends = normalizedCount(stitched);
+            if (cross < curCross || (cross === curCross && bends < curBends)) {
+              generated.push({ route: stitched, cross, bends });
             }
           }
-          if (accepted || exhausted) {
+        }
+      }
+      generated.sort((a, b) => a.cross - b.cross || a.bends - b.bends);
+
+      let accepted = false;
+      for (const cand of generated) {
+        if (tryCandidate(cand.route)) {
+          accepted = true;
+          break;
+        }
+        if (exhausted) {
+          break;
+        }
+        // Occupied-corridor rescue: the crossing-free ride-along fails
+        // validation; the adjacent free track wins.
+        for (const shifted of occupiedRailShiftCandidates(cand.route, otherRoutes)) {
+          if (tryCandidate(shifted)) {
+            accepted = true;
+            break;
+          }
+          if (exhausted) {
             break;
           }
         }

@@ -455,7 +455,10 @@ function tryLayeredFallbackCandidateWhenScoreImproves(
  * the compound-placement tournament — each placement variant must be judged
  * on its POLISHED quality (hook-stage issue counts misjudge the final).
  */
-export function runLateQualityPasses(data4Layout: LayoutData): void {
+export function runLateQualityPasses(
+  data4Layout: LayoutData,
+  opts: { skipSwingReroutes?: boolean } = {}
+): void {
   // Re-exit terminals the validator flags as port-direction-mismatched onto a
   // perpendicular side with a clean L. Runs before jog simplification so the new
   // route can be further straightened if that helps.
@@ -531,8 +534,13 @@ export function runLateQualityPasses(data4Layout: LayoutData): void {
   untangleSharedTerminalPairsWhenScoreImproves(data4Layout);
   rerouteTopCrossersWhenScoreImproves(data4Layout);
   // Same-side swings the crossing pass cannot reach: flatten leftover
-  // staircases and escape congested corridors via free-slot ports.
-  swingReroutesWhenScoreImproves(data4Layout);
+  // staircases and escape congested corridors via free-slot ports. Skipped
+  // inside the placement tournament's per-variant polish (both variants gain
+  // roughly equally from it, and it is too slow to run per variant); the
+  // final polish below always runs it.
+  if (!opts.skipSwingReroutes) {
+    swingReroutesWhenScoreImproves(data4Layout);
+  }
   simplifyEdgeJogsWhenScoreImproves(data4Layout);
 }
 
@@ -565,7 +573,7 @@ export function layout(data4Layout: LayoutData): void {
         groupPadding: COMPOUND_GROUP_PAD,
       });
     },
-    polish: runLateQualityPasses,
+    polish: (candidate: LayoutData) => runLateQualityPasses(candidate, { skipSwingReroutes: true }),
   });
 
   runLateQualityPasses(data4Layout);
