@@ -11,6 +11,7 @@ import {
   nonMarkdownToLines,
 } from '../rendering-util/handle-markdown-text.js';
 import { decodeEntities } from '../utils.js';
+import fastdom from './fastdom.js';
 import { getIconSVG, isIconAvailable } from './icons.js';
 import { splitLineToFitWidth } from './splitText.js';
 import type { MarkdownLine, MarkdownWord } from './types.js';
@@ -67,12 +68,11 @@ async function addHtmlSpan(
     div.attr('class', 'labelBkg');
   }
 
-  let bbox = div.node()!.getBoundingClientRect();
+  const bbox = await fastdom.measure(() => div.node()!.getBoundingClientRect());
   if (bbox.width === width) {
     div.style('display', 'table');
     div.style('white-space', 'break-spaces');
     div.style('width', width + 'px');
-    bbox = div.node()!.getBoundingClientRect();
   }
 
   return fo.node()!;
