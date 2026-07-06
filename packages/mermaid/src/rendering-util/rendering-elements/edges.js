@@ -2,6 +2,7 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { getEffectiveHtmlLabels } from '../../config.js';
 import { log } from '../../logger.js';
 import { createText } from '../createText.js';
+import fastdom from '../fastdom.js';
 import { computeLabelTransform } from '../labelTransform.js';
 import utils, { handleUndefinedAttr } from '../../utils.js';
 import {
@@ -94,21 +95,28 @@ export const insertEdgeLabel = async (elem, edge) => {
   log.info('abc82', edge, edge.labelType);
 
   // Center the label
-  let bbox = labelElement.getBBox();
-  let transformBbox = bbox;
+  /** @type {DOMRect} */
+  let bbox;
+  /** @type {@DOMRect} */
+  let transformBbox;
   if (useHtmlLabels) {
     const div = labelElement.children[0];
     const dv = select(labelElement);
-    bbox = div.getBoundingClientRect();
+    bbox = await fastdom.measure(() => div.getBoundingClientRect());
     transformBbox = bbox;
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   } else {
     // For SVG labels, use text element's bbox so the text is centered on the edge
     const textEl = select(labelElement).select('text').node();
-    if (textEl && typeof textEl.getBBox === 'function') {
-      transformBbox = textEl.getBBox();
-    }
+    await fastdom.measure(() => {
+      bbox = labelElement.getBBox();
+      if (textEl && typeof textEl.getBBox === 'function') {
+        transformBbox = textEl.getBBox();
+      } else {
+        transformBbox = bbox;
+      }
+    });
   }
   label.attr('transform', computeLabelTransform(transformBbox, useHtmlLabels));
 

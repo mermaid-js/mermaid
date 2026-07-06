@@ -1,4 +1,5 @@
 import { createText } from '../../createText.js';
+import fastdom from '../../fastdom.js';
 import type { Node } from '../../types.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { evaluate, getEffectiveHtmlLabels } from '../../../config.js';
@@ -58,7 +59,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   );
 
   // Get the size of the label
-  let bbox = text.getBBox();
+  let bbox;
   const halfPadding = (node?.padding ?? 0) / 2;
 
   if (useHtmlLabels) {
@@ -68,9 +69,11 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
     // if there are images, need to wait for them to load before getting the bounding box
     await configureLabelImages(div, label);
 
-    bbox = div.getBoundingClientRect();
+    bbox = await fastdom.measure(() => div.getBoundingClientRect());
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
+  } else {
+    bbox = await fastdom.measure(() => text.getBBox());
   }
 
   // Center the label
@@ -114,16 +117,18 @@ export const insertLabel = async <T extends SVGGraphicsElement>(
     addSvgBackground: !!options.icon || !!options.img,
   });
   // Get the size of the label
-  let bbox = text.getBBox();
+  let bbox;
   const halfPadding = options.padding / 2;
 
   if (getEffectiveHtmlLabels(getConfig())) {
     const div = text.children[0];
     const dv = select(text);
 
-    bbox = div.getBoundingClientRect();
+    bbox = await fastdom.measure(() => div.getBoundingClientRect());
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
+  } else {
+    bbox = await fastdom.measure(() => text.getBBox());
   }
 
   // Center the label
@@ -143,6 +148,7 @@ export const updateNodeBounds = <T extends SVGGraphicsElement>(
   // D3Selection<SVGGElement> is for the roughjs case, D3Selection<T> is for the non-roughjs case
   element: D3Selection<SVGGElement> | D3Selection<T>
 ) => {
+  // TODO: Make this function `async` and use `fastdom.measure` to batch reflow
   const bbox = element.node()!.getBBox();
   node.width = bbox.width;
   node.height = bbox.height;
