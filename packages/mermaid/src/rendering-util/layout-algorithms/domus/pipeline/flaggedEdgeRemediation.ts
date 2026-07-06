@@ -212,6 +212,61 @@ function railShiftCandidates(pts: Point[]): Point[][] {
 }
 
 /**
+ * Rail shifts scoped to interior rails that lie ON (or hair-close to) one of
+ * the given routes — the shared-corridor case the crossing-free graph search
+ * gravitates to. Only those rails are shifted, by just enough to clear the
+ * parallel-too-close band.
+ */
+function occupiedRailShiftCandidates(pts: Point[], others: Point[][]): Point[][] {
+  const OCCUPIED_GAP = 7;
+  const MIN_OVERLAP = 12;
+  const out: Point[][] = [];
+  for (let i = 1; i < pts.length - 2; i++) {
+    const a = pts[i];
+    const b = pts[i + 1];
+    const isV = Math.abs(a.x - b.x) <= EPS && Math.abs(a.y - b.y) > EPS;
+    const isH = Math.abs(a.y - b.y) <= EPS && Math.abs(a.x - b.x) > EPS;
+    if (!isV && !isH) {
+      continue;
+    }
+    let occupied = false;
+    for (const poly of others) {
+      for (let j = 0; j < poly.length - 1 && !occupied; j++) {
+        const c = poly[j];
+        const d = poly[j + 1];
+        if (isH && Math.abs(c.y - d.y) <= EPS && Math.abs(c.y - a.y) < OCCUPIED_GAP) {
+          const lo = Math.max(Math.min(a.x, b.x), Math.min(c.x, d.x));
+          const hi = Math.min(Math.max(a.x, b.x), Math.max(c.x, d.x));
+          occupied = hi - lo >= MIN_OVERLAP;
+        } else if (isV && Math.abs(c.x - d.x) <= EPS && Math.abs(c.x - a.x) < OCCUPIED_GAP) {
+          const lo = Math.max(Math.min(a.y, b.y), Math.min(c.y, d.y));
+          const hi = Math.min(Math.max(a.y, b.y), Math.max(c.y, d.y));
+          occupied = hi - lo >= MIN_OVERLAP;
+        }
+      }
+      if (occupied) {
+        break;
+      }
+    }
+    if (!occupied) {
+      continue;
+    }
+    for (const dlt of [10, -10, 14, -14]) {
+      const next = pts.map((p) => ({ ...p }));
+      if (isV) {
+        next[i].x += dlt;
+        next[i + 1].x += dlt;
+      } else {
+        next[i].y += dlt;
+        next[i + 1].y += dlt;
+      }
+      out.push(next);
+    }
+  }
+  return out;
+}
+
+/**
  * Re-attach a detached terminal: keep the route, replace the loose end with
  * an orthogonal L into the nearest border point of the terminal node. The
  * generic candidates reuse the CURRENT terminal points, so a detached
@@ -408,7 +463,33 @@ function sidePreference(rS: Rect, rE: Rect): [Side, Side][] {
             [primary[0], 'E'],
             ['W', primary[1]],
           ];
-  return [primary, secondary, ...perpendicular, ['N', 'S'], ['S', 'N'], ['E', 'W'], ['W', 'E']];
+  // Same-side pairs last: the route swings through the free band beyond both
+  // nodes (outer-face routing). For lateral targets the swing is vertical
+  // (S-S / N-N), for vertical targets it is horizontal (E-E / W-W).
+  const sameSide: [Side, Side][] =
+    Math.abs(dx) > Math.abs(dy)
+      ? [
+          ['S', 'S'],
+          ['N', 'N'],
+          ['E', 'E'],
+          ['W', 'W'],
+        ]
+      : [
+          ['E', 'E'],
+          ['W', 'W'],
+          ['S', 'S'],
+          ['N', 'N'],
+        ];
+  return [
+    primary,
+    secondary,
+    ...perpendicular,
+    ['N', 'S'],
+    ['S', 'N'],
+    ['E', 'W'],
+    ['W', 'E'],
+    ...sameSide,
+  ];
 }
 
 function sideRouteCandidates(
@@ -416,7 +497,8 @@ function sideRouteCandidates(
   rE: Rect,
   nodeById: Map<string, Node>,
   startId: string,
-  endId: string
+  endId: string,
+  avoid?: { segments: Point[][]; costPerCrossing: number }
 ): Point[][] {
   const out: Point[][] = [];
   const seen = new Set<string>();
@@ -464,7 +546,7 @@ function sideRouteCandidates(
           startId,
           endId,
           10,
-          { model: 'channels', clearance: 8 }
+          { model: 'channels', clearance: 8, avoid }
         );
         const routes: Point[][] = [];
         if (mid && mid.length >= 2) {
@@ -928,16 +1010,19 @@ export function rerouteTopCrossersWhenScoreImproves(layout: LayoutData): void {
       if (rS && rE && e.start != null && e.end != null) {
         const sNode = nodeById.get(String(e.start));
         const eNode = nodeById.get(String(e.end));
+        // Soft crossing avoidance: the graph search pays a stiff length
+        // penalty per crossing against the other routed edges, so it prefers
+        // crossing-free corridors (e.g. the outer band beyond the node rows)
+        // whenever one exists. This only shapes candidate GENERATION — a
+        // detour that trades crossings for worse bends still fails the
+        // validator score gate below.
+        const avoid = {
+          segments: edges
+            .filter((o) => o !== e && Array.isArray(o.points) && o.points.length >= 2)
+            .map((o) => o.points!),
+          costPerCrossing: 300,
+        };
         if (sNode && eNode) {
-          // Soft crossing avoidance: the graph search pays 40 length units
-          // per crossing against the other routed edges, so it detours
-          // around them wherever a corridor exists.
-          const avoid = {
-            segments: edges
-              .filter((o) => o !== e && Array.isArray(o.points) && o.points.length >= 2)
-              .map((o) => o.points!),
-            costPerCrossing: 40,
-          };
           for (const [sSide, eSide] of sidePreference(rS, rE)) {
             const sHoriz = sSide === 'N' || sSide === 'S';
             const eHoriz = eSide === 'N' || eSide === 'S';
@@ -968,7 +1053,9 @@ export function rerouteTopCrossersWhenScoreImproves(layout: LayoutData): void {
             }
           }
         }
-        candidates.push(...sideRouteCandidates(rS, rE, nodeById, String(e.start), String(e.end)));
+        candidates.push(
+          ...sideRouteCandidates(rS, rE, nodeById, String(e.start), String(e.end), avoid)
+        );
       }
 
       const old = e.points;
@@ -976,43 +1063,112 @@ export function rerouteTopCrossersWhenScoreImproves(layout: LayoutData): void {
       const oldY = e.y;
       const hasLabel = e.label != null && Number.isFinite(e.x) && Number.isFinite(e.y);
 
-      for (const candidate of candidates) {
+      // Cheap pre-checks so the validation budget is spent only on candidates
+      // that can actually win: (a) the candidate must strictly reduce THIS
+      // edge's own crossing count against the other routes; (b) its terminals
+      // must not land on another edge's attachment point (instant
+      // same-port/shared-attachment rejection by the validator).
+      const otherRoutes = edges
+        .filter((o) => o !== e && Array.isArray(o.points) && o.points.length >= 2)
+        .map((o) => o.points!);
+      const ownCrossings = (route: Point[]): number => {
+        let n = 0;
+        for (const poly of otherRoutes) {
+          for (let ai = 0; ai < route.length - 1; ai++) {
+            for (let bi = 0; bi < poly.length - 1; bi++) {
+              if (segmentsCross(route[ai], route[ai + 1], poly[bi], poly[bi + 1])) {
+                n++;
+              }
+            }
+          }
+        }
+        return n;
+      };
+      const occupied: Point[] = [];
+      for (const poly of otherRoutes) {
+        occupied.push(poly[0], poly[poly.length - 1]);
+      }
+      const onOccupiedPort = (p: Point): boolean =>
+        occupied.some((q) => Math.abs(q.x - p.x) < 4 && Math.abs(q.y - p.y) < 4);
+      const currentOwnCrossings = ownCrossings(old!);
+
+      let budgetExhausted = false;
+      const tryCandidate = (candidate: Point[]): boolean => {
         if (
           e.start != null &&
           e.end != null &&
           candidateCutsLeafInterior(candidate, nodeById, String(e.start), String(e.end))
         ) {
-          continue;
+          return false;
+        }
+        const candCrossings = ownCrossings(candidate);
+        if (
+          candCrossings > currentOwnCrossings ||
+          (candCrossings === currentOwnCrossings && candidate.length >= old!.length)
+        ) {
+          return false;
+        }
+        if (onOccupiedPort(candidate[0]) || onOccupiedPort(candidate[candidate.length - 1])) {
+          return false;
         }
         e.points = candidate;
         const anchors = hasLabel ? labelAnchors(candidate) : [{ x: oldX ?? 0, y: oldY ?? 0 }];
-        let accepted = false;
         for (const anchor of anchors) {
           if (hasLabel) {
             e.x = anchor.x;
             e.y = anchor.y;
           }
           if (evaluations >= EVAL_BUDGET) {
+            budgetExhausted = true;
             e.points = old;
             e.x = oldX;
             e.y = oldY;
-            return;
+            return false;
           }
           evaluations++;
           const next = validateLayout(layout);
           if (next.ok && next.score > current.score) {
             current = next;
             improvedThisRound = true;
-            accepted = true;
-            break;
+            return true;
+          }
+        }
+        e.points = old;
+        e.x = oldX;
+        e.y = oldY;
+        return false;
+      };
+
+      let accepted = false;
+      for (const candidate of candidates) {
+        if (tryCandidate(candidate)) {
+          accepted = true;
+          break;
+        }
+        if (budgetExhausted) {
+          return;
+        }
+        // A crossing-reducing candidate often fails validation only because
+        // its mid-rail landed ON another route (shared subpath / too-close):
+        // riding an occupied rail is crossing-free, so the graph search
+        // gravitates to it. Rescue by shifting exactly the occupied rails
+        // onto the free tracks beside them — nothing else, or the budget
+        // drains on hopeless variants.
+        const candCrossings = ownCrossings(candidate);
+        if (candCrossings < currentOwnCrossings && candidate.length <= 5) {
+          for (const shifted of occupiedRailShiftCandidates(candidate, otherRoutes)) {
+            if (tryCandidate(shifted)) {
+              accepted = true;
+              break;
+            }
+            if (budgetExhausted) {
+              return;
+            }
           }
         }
         if (accepted) {
           break;
         }
-        e.points = old;
-        e.x = oldX;
-        e.y = oldY;
       }
     }
     if (!improvedThisRound) {

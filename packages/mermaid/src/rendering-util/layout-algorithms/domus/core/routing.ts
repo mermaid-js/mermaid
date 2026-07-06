@@ -984,7 +984,11 @@ export function findRoutingGraphPathBetweenPorts(
   startNodeId: string,
   endNodeId: string,
   spacing: number,
-  options: { model?: 'grid' | 'representatives' | 'channels'; clearance?: number } = {}
+  options: {
+    model?: 'grid' | 'representatives' | 'channels';
+    clearance?: number;
+    avoid?: { segments: Point[][]; costPerCrossing: number };
+  } = {}
 ): Point[] | null {
   const c = Math.max(0, options.clearance ?? spacing);
   const obstacleRects = collectObstacleRects(nodesById, startNodeId, endNodeId, c);
@@ -1003,7 +1007,7 @@ export function findRoutingGraphPathBetweenPorts(
     return null;
   }
 
-  const path = findShortestOrthogonalPathOnGraph(graph, { prefer: 'ESWN' });
+  const path = findShortestOrthogonalPathOnGraph(graph, { prefer: 'ESWN', avoid: options.avoid });
   return path;
 }
 
