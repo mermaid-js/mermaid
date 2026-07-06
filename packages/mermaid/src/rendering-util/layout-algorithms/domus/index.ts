@@ -24,6 +24,7 @@ import {
   rerouteTopCrossersWhenScoreImproves,
   simplifyPathologicalRoutesWhenMonotone,
   straightenParallelZsWhenScoreImproves,
+  swingReroutesWhenScoreImproves,
   untangleSharedTerminalPairsWhenScoreImproves,
 } from './pipeline/flaggedEdgeRemediation.js';
 import { spaceNodesOffGroupFramesWhenScoreImproves } from './pipeline/nodeGroupSpacing.js';
@@ -529,6 +530,9 @@ export function runLateQualityPasses(data4Layout: LayoutData): void {
   straightenParallelZsWhenScoreImproves(data4Layout);
   untangleSharedTerminalPairsWhenScoreImproves(data4Layout);
   rerouteTopCrossersWhenScoreImproves(data4Layout);
+  // Same-side swings the crossing pass cannot reach: flatten leftover
+  // staircases and escape congested corridors via free-slot ports.
+  swingReroutesWhenScoreImproves(data4Layout);
   simplifyEdgeJogsWhenScoreImproves(data4Layout);
 }
 

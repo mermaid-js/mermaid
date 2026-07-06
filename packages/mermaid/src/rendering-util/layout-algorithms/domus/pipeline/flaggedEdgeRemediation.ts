@@ -1731,3 +1731,327 @@ export function straightenParallelZsWhenScoreImproves(layout: LayoutData): void 
     }
   }
 }
+
+/**
+ * Same-side "swing" reroutes for the two shapes the crossing pass cannot
+ * reach: (a) crossing-free staircases (5+ points) left behind by an earlier
+ * outer-band swing that had to enter through a far side — a same-side entry
+ * flattens them; (b) multi-crossing edges whose escape route exists but whose
+ * natural port samples collide with occupied attachment points — free-slot
+ * port samples avoid the collision. Candidates route through the routing
+ * graph with a stiff crossing penalty (generation only) and are accepted only
+ * when the full validator score strictly improves.
+ */
+export function swingReroutesWhenScoreImproves(layout: LayoutData): void {
+  let current = validateLayout(layout);
+  if (!current.ok || current.score <= 0) {
+    return;
+  }
+
+  const nodeById = new Map<string, Node>();
+  for (const n of layout.nodes ?? []) {
+    if (n?.id != null) {
+      nodeById.set(String(n.id), n);
+    }
+  }
+  const edges = (layout.edges ?? []) as {
+    id?: string;
+    start?: string;
+    end?: string;
+    points?: Point[];
+    x?: number;
+    y?: number;
+    label?: unknown;
+  }[];
+
+  const normalizedCount = (route: Point[]): number => {
+    const kept: Point[] = [];
+    for (const p of route) {
+      const prev = kept[kept.length - 1];
+      if (prev && Math.abs(prev.x - p.x) <= EPS && Math.abs(prev.y - p.y) <= EPS) {
+        continue;
+      }
+      kept.push(p);
+      while (kept.length >= 3) {
+        const a = kept[kept.length - 3];
+        const b = kept[kept.length - 2];
+        const c = kept[kept.length - 1];
+        if (
+          (Math.abs(a.x - b.x) <= EPS && Math.abs(b.x - c.x) <= EPS) ||
+          (Math.abs(a.y - b.y) <= EPS && Math.abs(b.y - c.y) <= EPS)
+        ) {
+          kept.splice(-2, 1);
+        } else {
+          break;
+        }
+      }
+    }
+    return kept.length;
+  };
+
+  const crossingsBetween = (a: Point[], b: Point[]): number => {
+    let n = 0;
+    for (let ai = 0; ai < a.length - 1; ai++) {
+      for (let bi = 0; bi < b.length - 1; bi++) {
+        if (segmentsCross(a[ai], a[ai + 1], b[bi], b[bi + 1])) {
+          n++;
+        }
+      }
+    }
+    return n;
+  };
+
+  let evaluations = 0;
+  const EVAL_BUDGET = 150;
+  const EDGE_EVAL_BUDGET = 24;
+
+  for (let round = 0; round < 4; round++) {
+    const routed = edges.filter((e) => (e.points?.length ?? 0) >= 2);
+    const ownCross = new Map<string, number>();
+    for (let i = 0; i < routed.length; i++) {
+      for (let j = i + 1; j < routed.length; j++) {
+        const c = crossingsBetween(routed[i].points!, routed[j].points!);
+        if (c > 0) {
+          ownCross.set(String(routed[i].id), (ownCross.get(String(routed[i].id)) ?? 0) + c);
+          ownCross.set(String(routed[j].id), (ownCross.get(String(routed[j].id)) ?? 0) + c);
+        }
+      }
+    }
+    const crossers = routed
+      .filter((e) => (ownCross.get(String(e.id)) ?? 0) >= 2)
+      .sort((a, b) => (ownCross.get(String(b.id)) ?? 0) - (ownCross.get(String(a.id)) ?? 0))
+      .slice(0, 8);
+    const staircases = routed
+      .filter((e) => (ownCross.get(String(e.id)) ?? 0) === 0 && normalizedCount(e.points!) >= 5)
+      .slice(0, 6);
+    const targets = [...crossers, ...staircases];
+    if (targets.length === 0) {
+      return;
+    }
+
+    let improvedThisRound = false;
+    for (const e of targets) {
+      const startId = String(e.start);
+      const endId = String(e.end);
+      const sNode = nodeById.get(startId);
+      const eNode = nodeById.get(endId);
+      if (!sNode || !eNode) {
+        continue;
+      }
+      const rS = rectForNode(sNode);
+      const rE = rectForNode(eNode);
+
+      const otherRoutes = edges
+        .filter((o) => o !== e && Array.isArray(o.points) && o.points.length >= 2)
+        .map((o) => o.points!);
+      const occupied: Point[] = [];
+      for (const poly of otherRoutes) {
+        occupied.push(poly[0], poly[poly.length - 1]);
+      }
+      const onOccupiedPort = (p: Point): boolean =>
+        occupied.some((q) => Math.abs(q.x - p.x) < 6 && Math.abs(q.y - p.y) < 6);
+      const ownCrossingsOf = (route: Point[]): number => {
+        let n = 0;
+        for (const poly of otherRoutes) {
+          n += crossingsBetween(route, poly);
+        }
+        return n;
+      };
+      const curCross = ownCrossingsOf(e.points!);
+      const curBends = normalizedCount(e.points!);
+
+      // Free-slot samples along a side: midpoints of the gaps between
+      // occupied attachment points, widest gaps first.
+      const freeSlotSamples = (r: Rect, side: Side): number[] => {
+        const horiz = side === 'N' || side === 'S';
+        const lo = (horiz ? r.left : r.top) + 8;
+        const hi = (horiz ? r.right : r.bottom) - 8;
+        if (hi <= lo) {
+          return [horiz ? (r.left + r.right) / 2 : (r.top + r.bottom) / 2];
+        }
+        const line = horiz ? (side === 'N' ? r.top : r.bottom) : side === 'W' ? r.left : r.right;
+        const used = occupied
+          .filter((q) => (horiz ? Math.abs(q.y - line) : Math.abs(q.x - line)) <= 3)
+          .map((q) => (horiz ? q.x : q.y))
+          .filter((v) => v >= lo - 8 && v <= hi + 8)
+          .sort((a, b) => a - b);
+        const cuts = [lo, ...used, hi];
+        const gaps: { mid: number; width: number }[] = [];
+        for (let i = 0; i < cuts.length - 1; i++) {
+          const width = cuts[i + 1] - cuts[i];
+          if (width >= 16) {
+            gaps.push({ mid: (cuts[i] + cuts[i + 1]) / 2, width });
+          }
+        }
+        gaps.sort((a, b) => b.width - a.width);
+        return gaps.slice(0, 3).map((g) => g.mid);
+      };
+
+      const chainGroups = new Set<string>([
+        ...ancestorGroupIds(sNode, nodeById),
+        ...ancestorGroupIds(eNode, nodeById),
+      ]);
+      const routerNodes = new Map<string, Node>();
+      for (const [id, n] of nodeById) {
+        if ((n as { isGroup?: boolean }).isGroup && chainGroups.has(id)) {
+          continue;
+        }
+        routerNodes.set(id, n);
+      }
+      const avoid = {
+        segments: otherRoutes,
+        costPerCrossing: 300,
+      };
+
+      const old = e.points;
+      const oldX = e.x;
+      const oldY = e.y;
+      const hasLabel = e.label != null && Number.isFinite(e.x) && Number.isFinite(e.y);
+      let edgeEvaluations = 0;
+      let exhausted = false;
+
+      const tryCandidate = (candidate: Point[]): boolean => {
+        const candCross = ownCrossingsOf(candidate);
+        if (
+          candCross > curCross ||
+          (candCross === curCross && normalizedCount(candidate) >= curBends)
+        ) {
+          return false;
+        }
+        if (onOccupiedPort(candidate[0]) || onOccupiedPort(candidate[candidate.length - 1])) {
+          return false;
+        }
+        if (candidateCutsLeafInterior(candidate, nodeById, startId, endId)) {
+          return false;
+        }
+        e.points = candidate;
+        const anchors = hasLabel ? labelAnchors(candidate) : [{ x: oldX ?? 0, y: oldY ?? 0 }];
+        for (const anchor of anchors) {
+          if (hasLabel) {
+            e.x = anchor.x;
+            e.y = anchor.y;
+          }
+          if (evaluations >= EVAL_BUDGET || edgeEvaluations >= EDGE_EVAL_BUDGET) {
+            exhausted = true;
+            break;
+          }
+          evaluations++;
+          edgeEvaluations++;
+          const next = validateLayout(layout);
+          if (next.ok && next.score > current.score) {
+            current = next;
+            improvedThisRound = true;
+            return true;
+          }
+        }
+        e.points = old;
+        e.x = oldX;
+        e.y = oldY;
+        return false;
+      };
+
+      const dx = rE.cx - rS.cx;
+      const dy = rE.cy - rS.cy;
+      const swingPairs: [Side, Side][] =
+        Math.abs(dx) > Math.abs(dy)
+          ? [
+              ['S', 'S'],
+              ['N', 'N'],
+            ]
+          : [
+              ['E', 'E'],
+              ['W', 'W'],
+            ];
+
+      let accepted = false;
+      for (const [sSide, eSide] of swingPairs) {
+        const sSamples = freeSlotSamples(rS, sSide);
+        const eSamples = freeSlotSamples(rE, eSide);
+        for (const sv of sSamples) {
+          for (const ev of eSamples) {
+            const sHoriz = sSide === 'N' || sSide === 'S';
+            const eHoriz = eSide === 'N' || eSide === 'S';
+            const ps: Point = sHoriz
+              ? { x: sv, y: sSide === 'N' ? rS.top : rS.bottom }
+              : { x: sSide === 'W' ? rS.left : rS.right, y: sv };
+            const pe: Point = eHoriz
+              ? { x: ev, y: eSide === 'N' ? rE.top : rE.bottom }
+              : { x: eSide === 'W' ? rE.left : rE.right, y: ev };
+            if (onOccupiedPort(ps) || onOccupiedPort(pe)) {
+              continue;
+            }
+            const ds = OUTWARD[sSide];
+            const de = OUTWARD[eSide];
+            const startStub = { x: ps.x + ds.x * STUB, y: ps.y + ds.y * STUB };
+            const endStub = { x: pe.x + de.x * STUB, y: pe.y + de.y * STUB };
+            const mid = findRoutingGraphPathBetweenPorts(
+              startStub,
+              endStub,
+              routerNodes,
+              startId,
+              endId,
+              10,
+              { model: 'channels', clearance: 8, avoid }
+            );
+            if (!mid || mid.length < 2) {
+              continue;
+            }
+            const raw = [{ ...ps }, ...mid.map((p) => ({ ...p })), { ...pe }];
+            const stitched: Point[] = [raw[0]];
+            for (let ri = 1; ri < raw.length; ri++) {
+              const prev = stitched[stitched.length - 1];
+              const cur = raw[ri];
+              if (Math.abs(prev.x - cur.x) > EPS && Math.abs(prev.y - cur.y) > EPS) {
+                if ((sSide === 'N' || sSide === 'S') && ri === 1) {
+                  stitched.push({ x: cur.x, y: prev.y });
+                } else {
+                  stitched.push({ x: prev.x, y: cur.y });
+                }
+              }
+              stitched.push(cur);
+            }
+            if (tryCandidate(stitched)) {
+              accepted = true;
+              break;
+            }
+            if (exhausted) {
+              break;
+            }
+            // Occupied-corridor rescue: the crossing-free ride-along fails
+            // validation; the adjacent free track wins.
+            const candCross = ownCrossingsOf(stitched);
+            if (
+              candCross < curCross ||
+              (candCross === curCross && normalizedCount(stitched) < curBends)
+            ) {
+              for (const shifted of occupiedRailShiftCandidates(stitched, otherRoutes)) {
+                if (tryCandidate(shifted)) {
+                  accepted = true;
+                  break;
+                }
+                if (exhausted) {
+                  break;
+                }
+              }
+            }
+            if (accepted || exhausted) {
+              break;
+            }
+          }
+          if (accepted || exhausted) {
+            break;
+          }
+        }
+        if (accepted || exhausted) {
+          break;
+        }
+      }
+      if (evaluations >= EVAL_BUDGET) {
+        return;
+      }
+    }
+    if (!improvedThisRound) {
+      return;
+    }
+  }
+}
