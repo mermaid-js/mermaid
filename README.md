@@ -95,7 +95,7 @@ In our release process we rely heavily on visual regression tests using [applito
 
 <!-- </Main description> -->
 
-##  Features
+## Features
 
 - **20+ Diagram Types** – Flowchart, Sequence, Class, State, ER, Gantt, Pie, Git Graph, Mindmap, Timeline, Sankey, and more
 - **Markdown-Inspired Syntax** – Write diagrams as text, no drag-and-drop required
@@ -108,7 +108,6 @@ In our release process we rely heavily on visual regression tests using [applito
 - **Lightweight** – Small footprint, no heavy dependencies
 - **Active Community** – Frequent releases and thousands of contributors
 - **Open Source** – MIT licensed
-
 
 ## Examples
 
