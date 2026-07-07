@@ -240,10 +240,9 @@ jobs:
           echo '' >> "$GITHUB_STEP_SUMMARY"
           npx tsx scripts/size.ts >> "$GITHUB_STEP_SUMMARY"
 
-      # Rebuild the served bundle with inline source maps so the Cypress run can
-      # collect native V8 coverage and map it back to source (no instrumentation).
-      # Gated to runs whose coverage is uploaded.
-      - name: Build coverage bundle for e2e coverage
+      # Rebuild the served bundle with istanbul instrumentation so the Cypress
+      # run can collect coverage. Gated to runs whose coverage is uploaded.
+      - name: Build instrumented bundle for e2e coverage
         if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/develop' }}
         run: pnpm build:coverage
 
