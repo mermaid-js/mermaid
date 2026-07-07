@@ -67,7 +67,7 @@ const parseBranch = (branch: BranchAst): BranchDB => {
 
 const parseMerge = (merge: MergeAst): MergeDB => {
   const mergeDB: MergeDB = {
-    branch: merge.branch,
+    branches: merge.branches,
     id: merge.id ?? '',
     type: merge.type !== undefined ? commitType[merge.type] : undefined,
     tags: merge.tags ?? undefined,
@@ -148,14 +148,14 @@ if (import.meta.vitest) {
     it('should parse a merge statement', () => {
       const merge = {
         $type: 'Merge',
-        branch: 'newBranch',
+        branches: ['newBranch'],
         id: '1',
         tags: ['tag1', 'tag2'],
         type: 'NORMAL',
       };
       parseStatement(merge, mockDB);
       expect(mockDB.merge).toHaveBeenCalledWith({
-        branch: 'newBranch',
+        branches: ['newBranch'],
         id: '1',
         tags: ['tag1', 'tag2'],
         type: 0,
@@ -205,7 +205,7 @@ if (import.meta.vitest) {
           {
             $container: dummy,
             $type: 'Merge',
-            branch: 'newBranch',
+            branches: ['newBranch'],
             id: '1',
             tags: ['tag1', 'tag2'],
             type: 'NORMAL',
@@ -238,7 +238,7 @@ if (import.meta.vitest) {
       });
       expect(mockDB.branch).toHaveBeenCalledWith({ name: 'newBranch', order: 1 });
       expect(mockDB.merge).toHaveBeenCalledWith({
-        branch: 'newBranch',
+        branches: ['newBranch'],
         id: '1',
         tags: ['tag1', 'tag2'],
         type: 0,
