@@ -275,6 +275,9 @@ export async function replaceIconSubstring(
   const GENERIC_ICON_PATTERN = /([a-z][\da-z-]*):(\w[\w-]*)/g;
   // Identifies FontAwesome prefixes that use <i> tag fallback when unregistered
   const FA_PREFIX_RE = /^fa[bklrs]?$/;
+  // Returns true for tokens already handled by FA_PATTERN (e.g. fa:fa-user, fab:fa-github)
+  const isFaPatternToken = (prefix: string, iconName: string) =>
+    FA_PREFIX_RE.test(prefix) && iconName.startsWith('fa-');
 
   const collectReplacement = (
     fullMatch: string,
@@ -305,7 +308,7 @@ export async function replaceIconSubstring(
 
   // Collect generic replacements, skipping tokens already covered by FA_PATTERN
   text.replace(GENERIC_ICON_PATTERN, (fullMatch, prefix, iconName) => {
-    if (FA_PREFIX_RE.test(prefix) && iconName.startsWith('fa-')) {
+    if (isFaPatternToken(prefix, iconName)) {
       return fullMatch; // Handled by FA_PATTERN above
     }
     return collectReplacement(fullMatch, prefix, iconName, false);
@@ -317,7 +320,7 @@ export async function replaceIconSubstring(
   let result = text;
   result = result.replace(FA_PATTERN, () => replacements.shift() ?? '');
   result = result.replace(GENERIC_ICON_PATTERN, (fullMatch, prefix, iconName) => {
-    if (FA_PREFIX_RE.test(prefix) && iconName.startsWith('fa-')) {
+    if (isFaPatternToken(prefix, iconName)) {
       return fullMatch; // Already replaced by FA_PATTERN pass above
     }
     return replacements.shift() ?? fullMatch;
