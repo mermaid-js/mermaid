@@ -62,53 +62,66 @@ describe('replaceIconSubstring', () => {
     expect(output).toContain(expected);
   });
 
-  describe('logos/mdi/symbols iconsets', () => {
-    it('converts logos icon notations to HTML tags', async () => {
+  describe('generic Iconify icon tokens', () => {
+    it('leaves unregistered generic icon tokens as literal text', async () => {
       const input = 'Check out these logos: logos:react and logos:nodejs';
       const output = await replaceIconSubstring(input);
-      const expected = `Check out these logos: <i class='logos react'></i> and <i class='logos nodejs'></i>`;
-      expect(output).toEqual(expected);
+      expect(output).toEqual(input);
     });
 
-    it('converts mdi icon notations to HTML tags', async () => {
+    it('leaves unregistered mdi tokens as literal text', async () => {
       const input = 'Material design icons: mdi:home and mdi:account-circle';
       const output = await replaceIconSubstring(input);
-      const expected = `Material design icons: <i class='mdi home'></i> and <i class='mdi account-circle'></i>`;
-      expect(output).toEqual(expected);
+      expect(output).toEqual(input);
     });
 
-    it('converts symbols icon notations to HTML tags', async () => {
+    it('leaves unregistered symbols tokens as literal text', async () => {
       const input = 'Symbols: symbols:arrow-upward and symbols:check';
       const output = await replaceIconSubstring(input);
-      const expected = `Symbols: <i class='symbols arrow-upward'></i> and <i class='symbols check'></i>`;
-      expect(output).toEqual(expected);
+      expect(output).toEqual(input);
     });
 
-    it('handles mixed icon types in one string', async () => {
-      const input = 'Mixed icons: fa:fa-user, logos:github, mdi:home, symbols:star';
+    it('replaces a registered generic icon token with SVG', async () => {
+      const mockIconPack = {
+        prefix: 'mypack',
+        icons: {
+          myicon: {
+            body: '<circle cx="50" cy="50" r="40"/>',
+            width: 100,
+            height: 100,
+          },
+        },
+      };
+      mermaid.registerIconPacks([
+        {
+          name: 'mypack',
+          loader: () => Promise.resolve(mockIconPack),
+        },
+      ]);
+      const input = 'Icon here: mypack:myicon';
       const output = await replaceIconSubstring(input);
-      const expected = `Mixed icons: <i class='fa fa-user'></i>, <i class='logos github'></i>, <i class='mdi home'></i>, <i class='symbols star'></i>`;
-      expect(output).toEqual(expected);
+      expect(output).toContain('<circle');
+      expect(output).not.toContain('mypack:myicon');
     });
 
-    it('handles multiple logos icons in one string', async () => {
-      const input = 'Logos: logos:react, logos:vue, logos:angular';
+    it('FA icons fall back to <i> tags while unregistered generic tokens stay as literal text', async () => {
+      const input = 'Mixed: fa:fa-user and logos:github';
       const output = await replaceIconSubstring(input);
-      const expected = `Logos: <i class='logos react'></i>, <i class='logos vue'></i>, <i class='logos angular'></i>`;
-      expect(output).toEqual(expected);
+      expect(output).toContain("<i class='fa fa-user'></i>");
+      expect(output).toContain('logos:github');
+      expect(output).not.toContain("<i class='logos github'></i>");
     });
 
-    it('handles icons with hyphens and underscores', async () => {
-      const input = 'Complex names: logos:visual-studio-code and mdi:account_circle';
+    it('handles icon names with hyphens and underscores as literal text when unregistered', async () => {
+      const input = 'Complex names: mdi:account-circle and mdi:account_circle';
       const output = await replaceIconSubstring(input);
-      const expected = `Complex names: <i class='logos visual-studio-code'></i> and <i class='mdi account_circle'></i>`;
-      expect(output).toEqual(expected);
+      expect(output).toEqual(input);
     });
 
-    it('handles strings with no new iconset notations', async () => {
+    it('handles strings with no icon tokens', async () => {
       const input = 'This string has no new icons';
       const output = await replaceIconSubstring(input);
-      expect(output).toEqual(input); // No change expected
+      expect(output).toEqual(input);
     });
   });
 });

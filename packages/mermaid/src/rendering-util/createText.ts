@@ -251,10 +251,16 @@ function updateTextContentAndStyles(
 }
 
 /**
- * Convert fontawesome labels into fontawesome icons by using a regex pattern
+ * Convert icon labels into icons by using regex patterns.
+ *
+ * FontAwesome tokens (`fa:`, `fab:`, etc.) always fall back to `<i>` tags when the
+ * icon is not registered. Any other Iconify-style `prefix:name` token is replaced
+ * only when the icon actually resolves via `isIconAvailable`; unresolvable tokens
+ * are left as literal text so unknown pack names are never silently discarded.
+ *
  * @param text - The raw string to convert
  * @param config - Mermaid config
- * @returns string with fontawesome icons as svg if the icon is registered otherwise as i tags
+ * @returns string with icons as SVG where registered, otherwise `<i>` tags (FA) or unchanged text (generic)
  */
 export async function replaceIconSubstring(
   text: string,
@@ -263,41 +269,58 @@ export async function replaceIconSubstring(
 ): Promise<string> {
   const pendingReplacements: Promise<string>[] = [];
 
-  // Define icon regex patterns
-  const iconPatterns = [
-    // cspell: disable-next-line
-    /(fa[bklrs]?):fa-([\w-]+)/g, // FontAwesome icons
-    /(logos|mdi|symbols):([\w-]+)/g, // Other icon types
-  ];
+  // cspell: disable-next-line
+  const FA_PATTERN = /(fa[bklrs]?):fa-([\w-]+)/g;
+  // Generic Iconify-style: any lowercase prefix:name token not already matched by FA_PATTERN
+  const GENERIC_ICON_PATTERN = /([a-z][\da-z-]*):(\w[\w-]*)/g;
+  // Identifies FontAwesome prefixes that use <i> tag fallback when unregistered
+  const FA_PREFIX_RE = /^fa[bklrs]?$/;
 
-  // Helper function to process icon replacements
-  const processIconMatch = (fullMatch: string, prefix: string, iconName: string) => {
+  const collectReplacement = (
+    fullMatch: string,
+    prefix: string,
+    iconName: string,
+    faFallback: boolean
+  ) => {
     pendingReplacements.push(
       (async () => {
         const registeredIconName = `${prefix}:${iconName}`;
         if (await isIconAvailable(registeredIconName)) {
           return await getIconSVG(registeredIconName, undefined, { class: 'label-icon' });
-        } else {
+        } else if (faFallback) {
           return `<i class='${sanitizeText(fullMatch, config).replace(':', ' ')}'></i>`;
+        } else {
+          // Leave the literal source token untouched
+          return fullMatch;
         }
       })()
     );
     return fullMatch;
   };
 
-  // Process each icon pattern
-  iconPatterns.forEach((pattern) => {
-    text.replace(pattern, (fullMatch, prefix, iconName) => {
-      return processIconMatch(fullMatch, prefix, iconName);
-    });
+  // Collect FA replacements first (always use <i> fallback)
+  text.replace(FA_PATTERN, (fullMatch, prefix, iconName) =>
+    collectReplacement(fullMatch, prefix, iconName, true)
+  );
+
+  // Collect generic replacements, skipping tokens already covered by FA_PATTERN
+  text.replace(GENERIC_ICON_PATTERN, (fullMatch, prefix, iconName) => {
+    if (FA_PREFIX_RE.test(prefix) && iconName.startsWith('fa-')) {
+      return fullMatch; // Handled by FA_PATTERN above
+    }
+    return collectReplacement(fullMatch, prefix, iconName, false);
   });
 
   const replacements = await Promise.all(pendingReplacements);
 
-  // Apply replacements using the same patterns
+  // Apply replacements in the same order they were collected
   let result = text;
-  iconPatterns.forEach((pattern) => {
-    result = result.replace(pattern, () => replacements.shift() ?? '');
+  result = result.replace(FA_PATTERN, () => replacements.shift() ?? '');
+  result = result.replace(GENERIC_ICON_PATTERN, (fullMatch, prefix, iconName) => {
+    if (FA_PREFIX_RE.test(prefix) && iconName.startsWith('fa-')) {
+      return fullMatch; // Already replaced by FA_PATTERN pass above
+    }
+    return replacements.shift() ?? fullMatch;
   });
 
   return result;
