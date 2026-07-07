@@ -1,15 +1,5 @@
 import { imgSnapshotTest } from '../../../helpers/util.ts';
 
-/**
- * C4 characterization suite.
- *
- * One focused diagram per grammar feature, capturing the CURRENT renderer's output as a
- * baseline. The point is coverage and reviewability: when the C4 renderer is migrated layer by
- * layer (shapes -> edges -> layout), each visual-regression snapshot here makes the per-feature
- * impact explicit, and the matrix doubles as a checklist of what the renderer must support.
- *
- * See packages/mermaid/src/diagrams/c4/c4-feature-matrix.md for the feature -> test mapping.
- */
 describe('C4 characterization', () => {
   describe('elements', () => {
     it('CHAR.person should render Person and Person_Ext', () => {
@@ -260,14 +250,10 @@ describe('C4 characterization', () => {
       );
     });
 
-    // Forward-looking baseline: $shape currently has no visual effect (the legacy renderer
-    // ignores it), so today this renders as a plain Container box. The unified renderer
-    // resolves $shape to a shape, so when the migration lands the snapshot diff will show
-    // the override taking effect. ($sprite is exercised the same way by CHAR.sprite below.)
-    it('CHAR.update-element-shape should accept the $shape override', () => {
+    it('CHAR.update-element-shape should accept the $shape override (ignored by renderer)', () => {
       imgSnapshotTest(
         `C4Container
-        title UpdateElementStyle shape override
+        title UpdateElementStyle shape override (ignored by renderer)
         Container(a, "Default", "Tech", "no override")
         Container(b, "As Folder", "Tech", "shape override")
         Container(c, "As Cylinder", "Tech", "shape override")
@@ -276,6 +262,7 @@ describe('C4 characterization', () => {
         `,
         {}
       );
+      cy.get('rect').should('have.length', 3);
     });
 
     it('CHAR.update-rel-style should apply UpdateRelStyle offsets and colors', () => {
@@ -293,69 +280,80 @@ describe('C4 characterization', () => {
 
     it('CHAR.update-layout-config should apply UpdateLayoutConfig shapes-per-row', () => {
       imgSnapshotTest(
-        `C4Context
-        title UpdateLayoutConfig
+        [2, 4].map(
+          (shapesInRow) => `C4Context
+        title UpdateLayoutConfig ($c4ShapeInRow=${shapesInRow})
         System(a, "A")
         System(b, "B")
         System(c, "C")
-        UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
-        `,
+        System(d, "D")
+        UpdateLayoutConfig($c4ShapeInRow="${shapesInRow}", $c4BoundaryInRow="1")
+        `
+        ),
         {}
       );
     });
   });
 
   describe('element attributes', () => {
-    it('CHAR.tags should accept $tags on elements', () => {
+    it('CHAR.tags should accept $tags on elements (not yet supported by renderer)', () => {
       imgSnapshotTest(
         `C4Context
-        title Tags attribute
+        title Tags attribute (not shown by current renderer)
         Person(p, "Person", "desc", $tags="v1.0")
         System(s, "System", "desc", $tags="v1.0")
         Rel(p, s, "Uses")
         `,
         {}
       );
+      cy.get('svg').should('not.contain', 'v1.0');
     });
 
-    it('CHAR.link should accept $link on elements', () => {
+    it('CHAR.link should accept $link on elements (not yet supported by renderer)', () => {
       imgSnapshotTest(
         `C4Context
-        title Link attribute
+        title Link attribute (not shown by current renderer)
         Person(p, "Person", "desc", $link="https://example.com")
         System(s, "System", "desc")
         Rel(p, s, "Uses")
         `,
         {}
       );
+      cy.get('svg').find('a').should('not.exist');
     });
 
-    // Forward-looking baseline: the legacy renderer ignores $sprite on non-person elements
-    // (it only ever draws the hardcoded person image - no <image> and no network request for
-    // an arbitrary sprite value), so today these render as plain Containers. The unified
-    // renderer resolves a $sprite shape keyword to a shape (and, once icon packs are wired up,
-    // to an icon), so the migration's effect on $sprite shows up as a snapshot diff.
-    it('CHAR.sprite should accept the $sprite attribute', () => {
+    it('CHAR.sprite should accept the $sprite attribute (not yet supported by renderer)', () => {
       imgSnapshotTest(
         `C4Container
-        title Sprite attribute
+        title Sprite attribute (not shown by current renderer)
         Container(a, "Browser", "Tech", "single-page app", $sprite="browser")
         Container(b, "Terminal", "Tech", "server-side app", $sprite="terminal")
         `,
         {}
       );
+      cy.get('rect').should('have.length', 2);
+      cy.get('image').should('not.exist');
+      cy.get('svg svg').should('not.exist');
     });
 
-    it('CHAR.descr-wrapping should wrap long descriptions', () => {
+    it('CHAR.descr-wrapping should not wrap long descriptions (wrap is currently a no-op, see #7949)', () => {
       imgSnapshotTest(
         `C4Context
-        title Description wrapping
+        title Description wrapping (currently a no-op)
         Person(p, "Person", "A customer of the bank with personal bank accounts and a long description that should wrap across multiple lines")
         System(s, "System", "Allows customers to view information about their bank accounts and make payments")
         Rel(p, s, "Uses")
         `,
         {}
       );
+      cy.contains(
+        'tspan',
+        'A customer of the bank with personal bank accounts and a long description that should wrap across multiple lines'
+      ).should('exist');
+      cy.contains(
+        'tspan',
+        'Allows customers to view information about their bank accounts and make payments'
+      ).should('exist');
     });
   });
 });
