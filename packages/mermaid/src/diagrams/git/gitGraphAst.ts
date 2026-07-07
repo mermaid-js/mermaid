@@ -158,6 +158,24 @@ export const merge = (mergeDB: MergeDB): void => {
   if (customId) {
     customId = common.sanitizeText(customId, config);
   }
+
+  if (customId && state.records.commits.has(customId)) {
+    const error: any = new Error(
+      'Incorrect usage of "merge". Commit with id:' +
+        customId +
+        ' already exists, use different custom id'
+    );
+    error.hash = {
+      text: `merge ${otherBranches.join(',')} ${customId} ${overrideType} ${customTags?.join(' ')}`,
+      token: `merge ${otherBranches.join(',')} ${customId} ${overrideType} ${customTags?.join(' ')}`,
+      expected: [
+        `merge ${otherBranches.join(',')} ${customId}_UNIQUE ${overrideType} ${customTags?.join(' ')}`,
+      ],
+    };
+
+    throw error;
+  }
+
   const currentBranchCheck = state.records.branches.get(state.records.currBranch);
   const currentCommit = currentBranchCheck
     ? state.records.commits.get(currentBranchCheck)
@@ -222,22 +240,6 @@ export const merge = (mergeDB: MergeDB): void => {
         token: `merge ${otherBranch}`,
         expected: ['branch abc'],
       };
-      throw error;
-    }
-    if (customId && state.records.commits.has(customId)) {
-      const error: any = new Error(
-        'Incorrect usage of "merge". Commit with id:' +
-          customId +
-          ' already exists, use different custom id'
-      );
-      error.hash = {
-        text: `merge ${otherBranch} ${customId} ${overrideType} ${customTags?.join(' ')}`,
-        token: `merge ${otherBranch} ${customId} ${overrideType} ${customTags?.join(' ')}`,
-        expected: [
-          `merge ${otherBranch} ${customId}_UNIQUE ${overrideType} ${customTags?.join(' ')}`,
-        ],
-      };
-
       throw error;
     }
 
