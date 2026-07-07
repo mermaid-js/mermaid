@@ -151,6 +151,15 @@ export class FlowDB implements DiagramDB {
       doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
     }
 
+    // Check if this is metadata for an already-declared subgraph
+    // (e.g. `sub1@{ view: collapsed }`). The id refers to a subgraph, so
+    // route the metadata onto the subgraph instead of creating a vertex.
+    const subGraph = this.subGraphLookup.get(id);
+    if (subGraph && doc) {
+      subGraph.metadata = { ...subGraph.metadata, ...doc };
+      return;
+    }
+
     // Check if this is an edge
     const edge = this.edges.find((e) => e.id === id);
     if (edge) {
@@ -1102,9 +1111,68 @@ You have to call mermaid.initialize.`
     const parentDB = new Map<string, string>();
     const subGraphDB = new Map<string, boolean>();
 
+    // ── Collapsible subgraphs (issue #7784) ──────────────────────────────
+    // A subgraph carrying `@{ view: collapsed }` is drawn as a single compact
+    // node; its descendants are hidden and any edge that crosses the boundary
+    // is redirected to the outermost collapsed ancestor.
+    //
+    // `subGraphParent` maps a subgraph id to the subgraph that directly
+    // contains it, so we can walk up the containment chain to find the
+    // outermost collapsed ancestor regardless of declaration order.
+    const subGraphParent = new Map<string, string>();
+    for (const sg of subGraphs) {
+      for (const childId of sg.nodes) {
+        if (this.subGraphLookup.has(childId)) {
+          subGraphParent.set(childId, sg.id);
+        }
+      }
+    }
+    const isCollapsed = (sgId: string) =>
+      this.subGraphLookup.get(sgId)?.metadata?.view === 'collapsed';
+    const outermostCollapsed = (sgId: string): string | undefined => {
+      let result: string | undefined;
+      const seen = new Set<string>();
+      let current: string | undefined = sgId;
+      while (current !== undefined && !seen.has(current)) {
+        seen.add(current);
+        if (isCollapsed(current)) {
+          result = current;
+        }
+        current = subGraphParent.get(current);
+      }
+      return result;
+    };
+
+    // `hiddenIds` are nodes/subgraphs that are not drawn; `collapsedAncestorMap`
+    // maps each hidden id to the visible collapsed node that replaces it.
+    const hiddenIds = new Set<string>();
+    const collapsedAncestorMap = new Map<string, string>();
+    for (const sg of subGraphs) {
+      const ancestor = outermostCollapsed(sg.id);
+      if (ancestor === undefined) {
+        continue;
+      }
+      // Hide the subgraph itself unless it is the visible collapsed node.
+      if (sg.id !== ancestor) {
+        hiddenIds.add(sg.id);
+        collapsedAncestorMap.set(sg.id, ancestor);
+      }
+      // Hide every member, redirecting it to the visible collapsed node.
+      for (const childId of sg.nodes) {
+        if (childId === ancestor) {
+          continue;
+        }
+        hiddenIds.add(childId);
+        collapsedAncestorMap.set(childId, ancestor);
+      }
+    }
+
     // Setup the subgraph data for adding nodes
     for (let i = subGraphs.length - 1; i >= 0; i--) {
       const subGraph = subGraphs[i];
+      if (hiddenIds.has(subGraph.id)) {
+        continue;
+      }
       if (subGraph.nodes.length > 0) {
         subGraphDB.set(subGraph.id, true);
       }
@@ -1116,25 +1184,50 @@ You have to call mermaid.initialize.`
     // Data is setup, add the nodes
     for (let i = subGraphs.length - 1; i >= 0; i--) {
       const subGraph = subGraphs[i];
-      nodes.push({
-        id: subGraph.id,
-        label: subGraph.title,
-        labelStyle: '',
-        labelType: subGraph.labelType,
-        parentId: parentDB.get(subGraph.id),
-        padding: 8,
-        cssCompiledStyles: this.getCompiledStyles(subGraph.classes),
-        cssClasses: subGraph.classes.join(' '),
-        shape: 'rect',
-        dir: subGraph.dir === 'TD' ? 'TB' : subGraph.dir, // normalize TD→TB for dagre
-        explicitDir: subGraph.hasExplicitDir, // true only when the user wrote an explicit 'direction X' keyword
-        isGroup: true,
-        look: config.look,
-      });
+      if (hiddenIds.has(subGraph.id)) {
+        continue;
+      }
+      if (subGraph.metadata?.view === 'collapsed') {
+        // Collapsed: draw as a single compact node instead of a container.
+        nodes.push({
+          id: subGraph.id,
+          label: subGraph.title,
+          labelStyle: '',
+          labelType: subGraph.labelType,
+          parentId: parentDB.get(subGraph.id),
+          padding: 8,
+          cssCompiledStyles: this.getCompiledStyles(subGraph.classes),
+          cssClasses: subGraph.classes.join(' '),
+          shape: 'collapsedGroup',
+          dir: subGraph.dir === 'TD' ? 'TB' : subGraph.dir, // normalize TD→TB for dagre
+          isGroup: false,
+          look: config.look,
+        });
+      } else {
+        nodes.push({
+          id: subGraph.id,
+          label: subGraph.title,
+          labelStyle: '',
+          labelType: subGraph.labelType,
+          parentId: parentDB.get(subGraph.id),
+          padding: 8,
+          cssCompiledStyles: this.getCompiledStyles(subGraph.classes),
+          cssClasses: subGraph.classes.join(' '),
+          shape: 'rect',
+          dir: subGraph.dir === 'TD' ? 'TB' : subGraph.dir, // normalize TD→TB for dagre
+          explicitDir: subGraph.hasExplicitDir, // true only when the user wrote an explicit 'direction X' keyword
+          isGroup: true,
+          look: config.look,
+        });
+      }
     }
 
     const n = this.getVertices();
     n.forEach((vertex) => {
+      // Skip vertices hidden inside a collapsed subgraph
+      if (hiddenIds.has(vertex.id)) {
+        return;
+      }
       this.addNodeFromVertex(vertex, nodes, parentDB, subGraphDB, config, config.look || 'classic');
     });
 
@@ -1143,14 +1236,27 @@ You have to call mermaid.initialize.`
       const { arrowTypeStart, arrowTypeEnd } = this.destructEdgeType(rawEdge.type);
       const styles = [...(e.defaultStyle ?? [])];
 
+      // Redirect boundary-crossing edges to the visible collapsed node. An
+      // edge that becomes a self-loop purely because both endpoints collapsed
+      // into the same node (i.e. it was internal to a collapsed subgraph) is
+      // dropped — self-loops on nodes that are not collapsed are preserved.
+      const start = collapsedAncestorMap.get(rawEdge.start) ?? rawEdge.start;
+      const end = collapsedAncestorMap.get(rawEdge.end) ?? rawEdge.end;
+      if (
+        start === end &&
+        (collapsedAncestorMap.has(rawEdge.start) || collapsedAncestorMap.has(rawEdge.end))
+      ) {
+        return;
+      }
+
       if (rawEdge.style) {
         styles.push(...rawEdge.style);
       }
       const edge: Edge = {
-        id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'L' }, rawEdge.id),
+        id: getEdgeId(start, end, { counter: index, prefix: 'L' }, rawEdge.id),
         isUserDefinedId: rawEdge.isUserDefinedId,
-        start: rawEdge.start,
-        end: rawEdge.end,
+        start,
+        end,
         type: rawEdge.type ?? 'normal',
         label: rawEdge.text,
         labelType: rawEdge.labelType,

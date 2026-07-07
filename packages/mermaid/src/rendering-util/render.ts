@@ -1,4 +1,4 @@
-import type { Positions, SVG } from '../diagram-api/types.js';
+import type { SVG } from '../diagram-api/types.js';
 import type { InternalHelpers } from '../internals.js';
 import { internalHelpers } from '../internals.js';
 import { log } from '../logger.js';
@@ -16,8 +16,7 @@ export interface LayoutAlgorithm {
     layoutData: LayoutData,
     svg: SVG,
     helpers: InternalHelpers,
-    options?: RenderOptions,
-    positions?: Positions
+    options?: RenderOptions
   ): Promise<void>;
 }
 
@@ -60,7 +59,7 @@ const registerDefaultLayoutLoaders = () => {
 
 registerDefaultLayoutLoaders();
 
-export const render = async (data4Layout: LayoutData, svg: SVG, positions?: Positions) => {
+export const render = async (data4Layout: LayoutData, svg: SVG) => {
   if (!(data4Layout.layoutAlgorithm in layoutAlgorithms)) {
     throw new Error(`Unknown layout algorithm: ${data4Layout.layoutAlgorithm}`);
   }
@@ -131,15 +130,9 @@ export const render = async (data4Layout: LayoutData, svg: SVG, positions?: Posi
       .attr('stop-opacity', 1);
   }
 
-  return layoutRenderer.render(
-    data4Layout,
-    svg,
-    internalHelpers,
-    {
-      algorithm: layoutDefinition.algorithm,
-    },
-    positions
-  );
+  return layoutRenderer.render(data4Layout, svg, internalHelpers, {
+    algorithm: layoutDefinition.algorithm,
+  });
 };
 
 /**

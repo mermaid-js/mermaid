@@ -8,6 +8,7 @@ import { sanitizeText } from '../../../diagrams/common/common.js';
 import { decodeEntities, handleUndefinedAttr } from '../../../utils.js';
 import type { D3Selection, Point } from '../../../types.js';
 import { configureLabelImages } from './labelImageUtils.js';
+import { profiler } from '../../../profiler.js';
 
 export const labelHelper = async <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -58,22 +59,37 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
     getConfig()
   );
 
-  // Get the size of the label
-  let bbox;
+  // Get the size of the label.
+  // For HTML labels the real size comes from the inner div's bounding client rect
+  // (below); `text` is the oversized foreignObject, so its getBBox() would be
+  // discarded. Only measure the SVG <text> path here — skipping the dead read
+  // avoids a forced reflow per node, a significant cost on large diagrams.
+  // (The `&& profiler.tickSync` guards on the reads below tolerate an older shared
+  // profiler instance that predates `tickSync`; in production the whole
+  // `injected.profiling` ternary folds away to a direct read.)
   const halfPadding = (node?.padding ?? 0) / 2;
+  let bbox: DOMRect;
 
   if (useHtmlLabels) {
     const div = text.children[0] as HTMLDivElement;
     const dv = select(text);
 
     // if there are images, need to wait for them to load before getting the bounding box
-    await configureLabelImages(div, label);
+    await configureLabelImages(div);
 
-    bbox = await fastdom.measure(() => div.getBoundingClientRect());
+    bbox = await fastdom.measure(() =>
+      injected.profiling && profiler.tickSync
+        ? profiler.tickSync('getBoundingClientRect', () => div.getBoundingClientRect())
+        : div.getBoundingClientRect()
+    );
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   } else {
-    bbox = await fastdom.measure(() => text.getBBox());
+    bbox = await fastdom.measure(() =>
+      injected.profiling && profiler.tickSync
+        ? profiler.tickSync('getBBox', () => text.getBBox())
+        : text.getBBox()
+    );
   }
 
   // Center the label
@@ -116,19 +132,29 @@ export const insertLabel = async <T extends SVGGraphicsElement>(
     style: options.labelStyle,
     addSvgBackground: !!options.icon || !!options.img,
   });
-  // Get the size of the label
-  let bbox;
+  // Get the size of the label. For HTML labels the real size comes from the inner
+  // div's bounding client rect; the SVG <text> getBBox() would be discarded, so
+  // only measure it on the non-HTML path (avoids a dead forced reflow per node).
   const halfPadding = options.padding / 2;
+  let bbox: DOMRect;
 
   if (getEffectiveHtmlLabels(getConfig())) {
     const div = text.children[0];
     const dv = select(text);
 
-    bbox = await fastdom.measure(() => div.getBoundingClientRect());
+    bbox = await fastdom.measure(() =>
+      injected.profiling && profiler.tickSync
+        ? profiler.tickSync('getBoundingClientRect', () => div.getBoundingClientRect())
+        : div.getBoundingClientRect()
+    );
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   } else {
-    bbox = await fastdom.measure(() => text.getBBox());
+    bbox = await fastdom.measure(() =>
+      injected.profiling && profiler.tickSync
+        ? profiler.tickSync('getBBox', () => text.getBBox())
+        : text.getBBox()
+    );
   }
 
   // Center the label
@@ -146,10 +172,28 @@ export const insertLabel = async <T extends SVGGraphicsElement>(
 export const updateNodeBounds = <T extends SVGGraphicsElement>(
   node: Node,
   // D3Selection<SVGGElement> is for the roughjs case, D3Selection<T> is for the non-roughjs case
-  element: D3Selection<SVGGElement> | D3Selection<T>
+  element: D3Selection<SVGGElement> | D3Selection<T>,
+  /**
+   * Pre-computed geometry the caller already knows (e.g. an axis-aligned rect
+   * sized analytically from the label). When supplied, we skip `getBBox()` —
+   * reading it forces a synchronous reflow over the growing node tree, which is
+   * the dominant cost of the measure phase on large diagrams. Only pass this when
+   * the value is exactly equal to what `element.getBBox()` would return (so it is
+   * safe for plain rects, but not for hand-drawn/roughjs paths that overflow
+   * their nominal box).
+   */
+  knownBounds?: { width: number; height: number }
 ) => {
+  if (knownBounds) {
+    node.width = knownBounds.width;
+    node.height = knownBounds.height;
+    return;
+  }
   // TODO: Make this function `async` and use `fastdom.measure` to batch reflow
-  const bbox = element.node()!.getBBox();
+  const bbox =
+    injected.profiling && profiler.tickSync
+      ? profiler.tickSync('getBBox', () => element.node()!.getBBox())
+      : element.node()!.getBBox();
   node.width = bbox.width;
   node.height = bbox.height;
 };

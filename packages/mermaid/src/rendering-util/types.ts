@@ -43,6 +43,10 @@ interface BaseNode {
   isGroup?: boolean;
   width?: number;
   height?: number;
+  labelBBox?: {
+    width: number;
+    height: number;
+  };
   /** Optional rendered title/header region for group-like containers. */
   groupTitleRect?: GroupTitleRect;
   // Specific properties for State Diagram nodes TODO remove and use generic properties
@@ -161,6 +165,10 @@ export interface Edge {
   look?: string;
   isUserDefinedId?: boolean;
   showPoints?: boolean;
+  width?: number;
+  height?: number;
+  x?: number;
+  y?: number;
   points?: Point[];
   parentId?: string;
   dir?: string;
