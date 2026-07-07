@@ -244,6 +244,50 @@ describe('reserveClusterLabelSpace', () => {
     expect(graph.node('O').y).toBeCloseTo(beforeO.y + 10, 5);
   });
 
+  it('ignores label height for cluster shapes that never paint a visible title (noteGroup, divider) — see #3806 follow-up', () => {
+    // noteGroup (stateDiagram: groups a state with its note) and divider (kanban/concurrency
+    // dividers) never render `node.label` as a title. noteGroup in particular reuses `label` to
+    // carry unrelated content (e.g. the note's own multi-line text) for internal bookkeeping, so
+    // measuring it as a title would reserve space for text that is never actually shown there —
+    // pushing the note away from its state for no visible reason.
+    for (const shape of ['noteGroup', 'divider']) {
+      const graph = new Graph({ multigraph: true, compound: true });
+      graph.setGraph({ rankdir: 'TB' });
+      graph.setNode('G', {
+        id: 'G',
+        shape,
+        x: 100,
+        y: 150,
+        width: 300,
+        height: 200,
+        padding: 8,
+        // A tall "label" that would demand ~92px of margin if treated as a real title.
+        labelBBox: { width: 200, height: 100 },
+      });
+      graph.setNode('Child', {
+        id: 'Child',
+        x: 100,
+        y: 150,
+        width: 100,
+        height: 54,
+        parentId: 'G',
+      });
+      graph.setParent('Child', 'G');
+
+      const beforeG = { ...graph.node('G') };
+      const beforeChild = { ...graph.node('Child') };
+
+      reserveClusterLabelSpace(graph);
+
+      // computeClusterLabelMargins skips these shapes entirely, so labelMarginTop is never set
+      // (stays undefined) rather than being computed as 0 — either way, nothing should move.
+      expect(graph.node('G').labelMarginTop).toBeFalsy();
+      expect(graph.node('G').height).toBe(beforeG.height);
+      expect(graph.node('G').y).toBe(beforeG.y);
+      expect(graph.node('Child').y).toBe(beforeChild.y);
+    }
+  });
+
   it('leaves an unlabeled / already-fitting cluster untouched', () => {
     const graph = new Graph({ multigraph: true, compound: true });
     graph.setGraph({ rankdir: 'TB' });

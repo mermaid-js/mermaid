@@ -495,6 +495,12 @@ const runDagreGraphLayout = (graph) => {
   // log.info('Graph after layout:', JSON.stringify(graphlibJson.write(graph)));
 };
 
+// Cluster shapes that never paint `node.label` as a visible title (see clusters.js) — some of
+// these (`noteGroup`) reuse the `label` field to carry unrelated content (e.g. a state's note
+// text, for internal bookkeeping), so measuring it as if it were a title would reserve space for
+// text that is never actually rendered there.
+const CLUSTER_SHAPES_WITHOUT_VISIBLE_TITLE = new Set(['noteGroup', 'divider']);
+
 // Dagre sizes a compound (subgraph) node purely from its children's bounding box — it never
 // budgets room for the cluster's own title label (see #3806). `measureClusterLabel` gets the
 // label's real bbox before layout; this measures how much each cluster's title overshoots the
@@ -502,7 +508,12 @@ const runDagreGraphLayout = (graph) => {
 const computeClusterLabelMargins = (graph) => {
   graph.nodes().forEach((nodeId) => {
     const node = graph.node(nodeId);
-    if (!node || node.clusterNode || graph.children(nodeId).length === 0) {
+    if (
+      !node ||
+      node.clusterNode ||
+      graph.children(nodeId).length === 0 ||
+      CLUSTER_SHAPES_WITHOUT_VISIBLE_TITLE.has(node.shape)
+    ) {
       return;
     }
     const halfPadding = (node.padding ?? 0) / 2;
