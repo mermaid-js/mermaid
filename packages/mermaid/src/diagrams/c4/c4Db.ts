@@ -15,6 +15,29 @@ import type { C4Boundary, C4Rel, C4Shape } from './c4Types.js';
  */
 type ParserAttribute = string | Record<string, string>;
 
+/**
+ * Apply optional C4 attributes to `bag` from the parser.
+ *
+ * Values may arrive as a raw positional value or a single `{ key: value }` named
+ * override; `undefined` is skipped so an earlier-set value is not clobbered.
+ */
+const assignAttributes = <Bag extends C4Shape | C4Boundary | C4Rel>(
+  bag: Bag,
+  attrs: Record<string, ParserAttribute | undefined>
+): void => {
+  for (const [field, value] of Object.entries(attrs)) {
+    if (value === undefined) {
+      continue;
+    }
+    if (typeof value === 'object') {
+      const [key, val] = Object.entries(value)[0];
+      bag[key] = val;
+    } else {
+      bag[field] = value;
+    }
+  }
+};
+
 const createGlobalBoundary = (): C4Boundary =>
   ({
     alias: 'global',
@@ -108,24 +131,7 @@ export const addRel = function (
     }
   }
 
-  if (typeof sprite === 'object') {
-    const [key, value] = Object.entries(sprite)[0];
-    rel[key] = value;
-  } else {
-    rel.sprite = sprite;
-  }
-  if (typeof tags === 'object') {
-    const [key, value] = Object.entries(tags)[0];
-    rel[key] = value;
-  } else {
-    rel.tags = tags;
-  }
-  if (typeof link === 'object') {
-    const [key, value] = Object.entries(link)[0];
-    rel[key] = value;
-  } else {
-    rel.link = link;
-  }
+  assignAttributes(rel, { sprite, tags, link });
   rel.wrap = autoWrap();
 };
 
@@ -171,24 +177,7 @@ export const addPersonOrSystem = function (
     }
   }
 
-  if (typeof sprite === 'object') {
-    const [key, value] = Object.entries(sprite)[0];
-    personOrSystem[key] = value;
-  } else {
-    personOrSystem.sprite = sprite;
-  }
-  if (typeof tags === 'object') {
-    const [key, value] = Object.entries(tags)[0];
-    personOrSystem[key] = value;
-  } else {
-    personOrSystem.tags = tags;
-  }
-  if (typeof link === 'object') {
-    const [key, value] = Object.entries(link)[0];
-    personOrSystem[key] = value;
-  } else {
-    personOrSystem.link = link;
-  }
+  assignAttributes(personOrSystem, { sprite, tags, link });
   personOrSystem.typeC4Shape = { text: typeC4Shape };
   personOrSystem.parentBoundary = currentBoundaryParse;
   personOrSystem.wrap = autoWrap();
@@ -248,24 +237,7 @@ export const addContainer = function (
     }
   }
 
-  if (typeof sprite === 'object') {
-    const [key, value] = Object.entries(sprite)[0];
-    container[key] = value;
-  } else {
-    container.sprite = sprite;
-  }
-  if (typeof tags === 'object') {
-    const [key, value] = Object.entries(tags)[0];
-    container[key] = value;
-  } else {
-    container.tags = tags;
-  }
-  if (typeof link === 'object') {
-    const [key, value] = Object.entries(link)[0];
-    container[key] = value;
-  } else {
-    container.link = link;
-  }
+  assignAttributes(container, { sprite, tags, link });
   container.wrap = autoWrap();
   container.typeC4Shape = { text: typeC4Shape };
   container.parentBoundary = currentBoundaryParse;
@@ -325,24 +297,7 @@ export const addComponent = function (
     }
   }
 
-  if (typeof sprite === 'object') {
-    const [key, value] = Object.entries(sprite)[0];
-    component[key] = value;
-  } else {
-    component.sprite = sprite;
-  }
-  if (typeof tags === 'object') {
-    const [key, value] = Object.entries(tags)[0];
-    component[key] = value;
-  } else {
-    component.tags = tags;
-  }
-  if (typeof link === 'object') {
-    const [key, value] = Object.entries(link)[0];
-    component[key] = value;
-  } else {
-    component.link = link;
-  }
+  assignAttributes(component, { sprite, tags, link });
   component.wrap = autoWrap();
   component.typeC4Shape = { text: typeC4Shape };
   component.parentBoundary = currentBoundaryParse;
@@ -390,18 +345,7 @@ export const addPersonOrSystemBoundary = function (
     }
   }
 
-  if (typeof tags === 'object') {
-    const [key, value] = Object.entries(tags)[0];
-    boundary[key] = value;
-  } else {
-    boundary.tags = tags;
-  }
-  if (typeof link === 'object') {
-    const [key, value] = Object.entries(link)[0];
-    boundary[key] = value;
-  } else {
-    boundary.link = link;
-  }
+  assignAttributes(boundary, { tags, link });
   boundary.parentBoundary = currentBoundaryParse;
   boundary.wrap = autoWrap();
 
@@ -452,18 +396,7 @@ export const addContainerBoundary = function (
     }
   }
 
-  if (typeof tags === 'object') {
-    const [key, value] = Object.entries(tags)[0];
-    boundary[key] = value;
-  } else {
-    boundary.tags = tags;
-  }
-  if (typeof link === 'object') {
-    const [key, value] = Object.entries(link)[0];
-    boundary[key] = value;
-  } else {
-    boundary.link = link;
-  }
+  assignAttributes(boundary, { tags, link });
   boundary.parentBoundary = currentBoundaryParse;
   boundary.wrap = autoWrap();
 
@@ -528,18 +461,7 @@ export const addDeploymentNode = function (
     }
   }
 
-  if (typeof tags === 'object') {
-    const [key, value] = Object.entries(tags)[0];
-    boundary[key] = value;
-  } else {
-    boundary.tags = tags;
-  }
-  if (typeof link === 'object') {
-    const [key, value] = Object.entries(link)[0];
-    boundary[key] = value;
-  } else {
-    boundary.link = link;
-  }
+  assignAttributes(boundary, { tags, link });
   boundary.nodeType = nodeType;
   boundary.parentBoundary = currentBoundaryParse;
   boundary.wrap = autoWrap();

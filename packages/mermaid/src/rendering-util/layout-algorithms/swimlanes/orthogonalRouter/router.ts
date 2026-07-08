@@ -403,6 +403,14 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
   //   and role is 'src' (edge leaves this node) or 'dst' (edge arrives here).
   // Value: list of { edgeIdx, oppositeCoord } sorted by oppositeCoord.
   const portGroups = new Map<string, { edgeIdx: number; oppositeCoord: number }[]>();
+  const incidentEdgeTotals = new Map<string, number>();
+  for (const edge of edges) {
+    if (!edge.start || !edge.end || edge.start === edge.end) {
+      continue;
+    }
+    incidentEdgeTotals.set(edge.start, (incidentEdgeTotals.get(edge.start) ?? 0) + 1);
+    incidentEdgeTotals.set(edge.end, (incidentEdgeTotals.get(edge.end) ?? 0) + 1);
+  }
 
   // First pass: determine which side each edge connects to on each node
   const determineSide = (node: MermaidNode, target: Point): OrthogonalSide =>
@@ -668,6 +676,23 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     }
   }
 
+  const edgeHasLabelNode = (edgeIdx: number): boolean =>
+    Boolean((edges[edgeIdx] as { labelNodeId?: string } | undefined)?.labelNodeId);
+
+  const faceHasLabelNode = (nodeId: string | undefined, side: SideT): boolean => {
+    if (!nodeId) {
+      return false;
+    }
+    return (
+      (portGroups.get(`${nodeId}:${side}:src`) ?? []).some(({ edgeIdx }) =>
+        edgeHasLabelNode(edgeIdx)
+      ) ||
+      (portGroups.get(`${nodeId}:${side}:dst`) ?? []).some(({ edgeIdx }) =>
+        edgeHasLabelNode(edgeIdx)
+      )
+    );
+  };
+
   // Helper to apply port offset to a base center port
   const applyPortOffset = (
     basePort: Point,
@@ -928,14 +953,14 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     //   2. The anchors share one coordinate axis within the pipe margin.
     //   3. The edge is not part of a distributed port group (port offsets
     //      would shift the face-center port and break centering).
-    //   4. No OTHER edge (either src-role or dst-role) is also attaching
-    //      at (src.id, srcSide) or (dst.id, dstSide). If another edge
-    //      shares the face, the face center is contested and we would
-    //      collide at the exact same attach point — the normal pipe
-    //      snap / track assignment flow spreads them via `allRoutedSegments`
-    //      track coordinates, which the fast path bypasses. Counting
-    //      BOTH roles catches the incoming-vs-outgoing collision (eH-I
-    //      arrives at I.south while eI-K departs from I.south in knsv3).
+    //   4. Either the endpoint faces are uncontested, or every contested
+    //      endpoint is a degree-2 chain node. The latter is allowed so a
+    //      genuinely collinear connector keeps the Kandinsky centered-
+    //      straight invariant; the rendered terminal-lane splitter can then
+    //      move the other incident lane instead of introducing a bend here.
+    //      Higher-degree nodes still fall back to normal track assignment,
+    //      because preserving one center port there can force short near-node
+    //      bands on another incident edge.
     //   5. The port-to-port direct segment is obstacle-free.
     //
     // When these hold, set e.points directly and skip the rest of the
@@ -966,7 +991,23 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
         (portGroups.get(`${e.end ?? ''}:${dstPortSide}:src`)?.length ?? 0) +
         (portGroups.get(`${e.end ?? ''}:${dstPortSide}:dst`)?.length ?? 0);
       const faceContested = srcFaceTotal > 1 || dstFaceTotal > 1;
-      if ((anchorsSameX || anchorsSameY) && !hasPortOffset && !faceContested) {
+      const srcIncidentTotal = incidentEdgeTotals.get(e.start ?? '') ?? 0;
+      const dstIncidentTotal = incidentEdgeTotals.get(e.end ?? '') ?? 0;
+      const contestedFaceHasLabel =
+        (srcFaceTotal > 1 && faceHasLabelNode(e.start, srcPortSide)) ||
+        (dstFaceTotal > 1 && faceHasLabelNode(e.end, dstPortSide));
+      const srcContestAllowsCenteredStraight = srcFaceTotal <= 1 || srcIncidentTotal <= 2;
+      const dstContestAllowsCenteredStraight = dstFaceTotal <= 1 || dstIncidentTotal <= 2;
+      const canPreserveSimpleContestedStraight =
+        faceContested &&
+        !contestedFaceHasLabel &&
+        srcContestAllowsCenteredStraight &&
+        dstContestAllowsCenteredStraight;
+      if (
+        (anchorsSameX || anchorsSameY) &&
+        !hasPortOffset &&
+        (!faceContested || canPreserveSimpleContestedStraight)
+      ) {
         const directBlocked = isSegmentBlocked(pSrcPort, pDstPort, e.start, e.end);
         if (!directBlocked) {
           // Emit the canonical `port → anchor → anchor → port` 4-point

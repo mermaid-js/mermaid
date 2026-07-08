@@ -7,7 +7,7 @@ import type {
 const id = 'railroadAbnf';
 
 const detector: DiagramDetector = (txt) => {
-  return /^\s*railroad-abnf/i.test(txt);
+  return /^\s*railroad-abnf-beta/i.test(txt);
 };
 
 const loader: DiagramLoader = async () => {

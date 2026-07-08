@@ -8,7 +8,7 @@ export default {
     {
       title: 'Calculator Grammar',
       isDefault: true,
-      code: `railroad-peg
+      code: `railroad-peg-beta
     title Calculator Grammar
 
     Expression <- Term (("+" / "-") Term)* ;
@@ -19,7 +19,7 @@ export default {
     },
     {
       title: 'Identifiers with Predicates',
-      code: `railroad-peg
+      code: `railroad-peg-beta
     title Identifiers (keywords excluded)
 
     Identifier <- !Keyword Letter Letter* ;

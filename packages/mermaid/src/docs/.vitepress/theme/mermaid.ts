@@ -14,6 +14,13 @@ mermaid.registerIconPacks([
     loader: () =>
       fetch('https://unpkg.com/@iconify-json/logos/icons.json').then((res) => res.json()),
   },
+  {
+    name: 'material-icon-theme',
+    loader: () =>
+      fetch('https://unpkg.com/@iconify-json/material-icon-theme/icons.json').then((res) =>
+        res.json()
+      ),
+  },
 ]);
 
 export const render = async (id: string, code: string, config: MermaidConfig): Promise<string> => {

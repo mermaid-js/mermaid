@@ -1,0 +1,46 @@
+---
+config:
+  theme: redux
+  look: neo
+---
+swimlane-beta TD
+
+subgraph Requestor
+
+  24[Inform Supply Chain Associate regarding the approved EAF <br/> Note: Log Note in PR Request]
+
+end
+
+subgraph Supply_Chain_Associate [Supply Chain Associate]
+
+  25[Submit chosen RFQ for Approval]
+
+end
+
+
+subgraph Supply_Chain_Head [Supply Chain Head]
+  26[26: Reviews and Approves the chosen RFQ]
+end
+
+subgraph General_Manager [General Manager]
+  28[28: Reviews and Approves the chosen RFQ <br/> Note: RFQ will be converted to PO]
+end
+
+
+subgraph BOD
+
+  23[Suggest the best Supplier based on all RFQs <br/> Note: Log Note in EAF Request]
+end
+
+subgraph Finance_Head [Finance Head]
+  27[27: Reviews and Approves the chosen RFQ]
+end
+
+
+%% Connections
+
+23 --> 24
+24 --> 25
+25 --> 26
+26 --> 27
+27 --> 28

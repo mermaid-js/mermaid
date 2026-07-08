@@ -47,6 +47,8 @@ interface BaseNode {
     width: number;
     height: number;
   };
+  /** Optional rendered title/header region for group-like containers. */
+  groupTitleRect?: GroupTitleRect;
   // Specific properties for State Diagram nodes TODO remove and use generic properties
   intersect?: (point: any) => any;
   calcIntersect?: (bounds: Bounds, point: Point) => any;
@@ -98,6 +100,13 @@ interface BaseNode {
  * Group/cluster nodes, e.g. nodes that contain other nodes.
  */
 export type NodeChildren = Node[];
+
+export interface GroupTitleRect {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+}
 
 export interface ClusterNode extends BaseNode {
   shape?: ClusterShapeID;
