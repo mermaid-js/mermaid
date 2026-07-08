@@ -4,7 +4,7 @@ This page lists the available layout algorithms supported in Mermaid diagrams.
 
 ## Supported Layouts
 
-- **elk**: [ELK (Eclipse Layout Kernel)](https://www.eclipse.org/elk/)
+- **elk**: [ELK (Eclipse Layout Kernel)](https://eclipse.dev/elk/)
 - **tidy-tree**: Tidy tree layout for hierarchical diagrams [Tidy Tree Configuration](/config/tidy-tree)
 - **cose-bilkent**: Cose Bilkent layout for force-directed graphs
 - **dagre**: Dagre layout for layered graphs
