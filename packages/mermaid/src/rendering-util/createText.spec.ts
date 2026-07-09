@@ -1,7 +1,8 @@
 import { select } from 'd3';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { sanitizeText } from '../diagram-api/diagramAPI.js';
 import mermaid from '../mermaid.js';
+import { clearIconPacks } from './icons.js';
 import { createText, replaceIconSubstring } from './createText.js';
 
 describe('replaceIconSubstring', () => {
@@ -63,6 +64,10 @@ describe('replaceIconSubstring', () => {
   });
 
   describe('generic Iconify icon tokens', () => {
+    afterEach(() => {
+      clearIconPacks();
+    });
+
     it('leaves unregistered generic icon tokens as literal text', async () => {
       const input = 'Check out these logos: logos:react and logos:nodejs';
       const output = await replaceIconSubstring(input);
