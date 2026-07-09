@@ -4,12 +4,12 @@ Layout algorithms control how nodes and edges are visually arranged in Mermaid d
 
 ## Available Layouts
 
-| Layout | Description |
-|--------|-------------|
-| **dagre** | Layered (top-to-bottom) layout for directed graphs. Default for most diagram types. |
-| **elk** | Advanced layout algorithms from the [Eclipse Layout Kernel](https://www.eclipse.org/elk/). Supports layered, force, tree, and stress layouts. |
-| **tidy-tree** | Compact tree layout for hierarchical diagrams. See [Tidy Tree Configuration](/config/tidy-tree). |
-| **cose-bilkent** | Force-directed layout based on the CoSE (Compound Spring Embedder) algorithm from Bilkent University. |
+| Layout           | Description                                                                                                                                   |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **dagre**        | Layered (top-to-bottom) layout for directed graphs. Default for most diagram types.                                                           |
+| **elk**          | Advanced layout algorithms from the [Eclipse Layout Kernel](https://www.eclipse.org/elk/). Supports layered, force, tree, and stress layouts. |
+| **tidy-tree**    | Compact tree layout for hierarchical diagrams. See [Tidy Tree Configuration](/config/tidy-tree).                                              |
+| **cose-bilkent** | Force-directed layout based on the CoSE (Compound Spring Embedder) algorithm from Bilkent University.                                         |
 
 ## How to Use
 
@@ -99,13 +99,13 @@ flowchart-elk TD
 
 ELK provides several layout algorithms accessible via the `layout` config:
 
-| Config Value | Algorithm | Best For |
-|---|---|---|
-| `elk` or `elk.layered` | Layered (default) | General-purpose hierarchical diagrams |
-| `elk.stress` | Stress minimization | Emphasizing path lengths between nodes |
-| `elk.force` | Force-directed | Organic-looking graphs with no clear hierarchy |
-| `elk.mrtree` | Multi-root tree | Tree structures with multiple roots |
-| `elk.sporeOverlap` | Spore overlap | Reducing node overlap in dense diagrams |
+| Config Value           | Algorithm           | Best For                                       |
+| ---------------------- | ------------------- | ---------------------------------------------- |
+| `elk` or `elk.layered` | Layered (default)   | General-purpose hierarchical diagrams          |
+| `elk.stress`           | Stress minimization | Emphasizing path lengths between nodes         |
+| `elk.force`            | Force-directed      | Organic-looking graphs with no clear hierarchy |
+| `elk.mrtree`           | Multi-root tree     | Tree structures with multiple roots            |
+| `elk.sporeOverlap`     | Spore overlap       | Reducing node overlap in dense diagrams        |
 
 Example:
 
@@ -138,11 +138,11 @@ config:
 
 #### Options
 
-| Option | Type | Default | Description |
-|---|---|---|---|
-| `mergeEdges` | boolean | `false` | Combine parallel edges into a single edge. Useful for reducing visual clutter. |
-| `nodePlacementStrategy` | string | `BRANDES_KOEPF` | Algorithm for placing nodes. One of: `SIMPLE`, `NETWORK_SIMPLEX`, `LINEAR_SEGMENTS`, `BRANDES_KOEPF`. |
-| `nodePlacementAlignment` | string | `NONE` | Alignment strategy for Brandes-Koepf placement. One of: `NONE`, `LEFTUP`, `LEFTDOWN`, `RIGHTUP`, `RIGHTDOWN`, `BALANCED`. |
+| Option                   | Type    | Default         | Description                                                                                                               |
+| ------------------------ | ------- | --------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `mergeEdges`             | boolean | `false`         | Combine parallel edges into a single edge. Useful for reducing visual clutter.                                            |
+| `nodePlacementStrategy`  | string  | `BRANDES_KOEPF` | Algorithm for placing nodes. One of: `SIMPLE`, `NETWORK_SIMPLEX`, `LINEAR_SEGMENTS`, `BRANDES_KOEPF`.                     |
+| `nodePlacementAlignment` | string  | `NONE`          | Alignment strategy for Brandes-Koepf placement. One of: `NONE`, `LEFTUP`, `LEFTDOWN`, `RIGHTUP`, `RIGHTDOWN`, `BALANCED`. |
 
 ---
 
