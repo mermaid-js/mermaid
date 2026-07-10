@@ -166,6 +166,11 @@ function insertOrUpdateNode(
   }
   const existingNodeData = nodes.find((node) => node.id === nodeData.id);
   if (existingNodeData) {
+    // Keep the parent from where the state was first placed; a later reference
+    // (e.g. a transition in an outer document) must not re-parent it (#6337)
+    if (existingNodeData.parentId) {
+      nodeData.parentId = existingNodeData.parentId;
+    }
     //update the existing nodeData
     Object.assign(existingNodeData, nodeData);
   } else {
@@ -265,8 +270,8 @@ export const dataFetcher = (
       }
     }
 
-    // group
-    if (!newNode.type && parsedItem.doc) {
+    // group (an empty doc means there is nothing to render as a cluster, so treat it as a regular state)
+    if (!newNode.type && parsedItem.doc && parsedItem.doc.length > 0) {
       log.info('Setting cluster for XCX', itemId, getDir(parsedItem));
       newNode.type = 'group';
       newNode.isGroup = true;
@@ -305,7 +310,9 @@ export const dataFetcher = (
       nodeData.label = '';
     }
 
-    if (parent && parent.id !== 'root') {
+    // A state can never be its own parent, e.g. a transition inside a composite
+    // state that points back to the composite state itself (#6337)
+    if (parent && parent.id !== 'root' && parent.id !== itemId) {
       log.trace('Setting node ', itemId, ' to be child of its parent ', parent.id);
       nodeData.parentId = parent.id;
     }

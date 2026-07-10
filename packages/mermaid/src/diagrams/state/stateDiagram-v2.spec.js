@@ -469,4 +469,125 @@ describe('state diagram V2, ', function () {
       expect(currentDirection).toEqual('LR');
     });
   });
+
+  describe('composite states in nested documents (#6337)', () => {
+    /** @type {StateDB} */
+    let stateDb;
+    beforeEach(function () {
+      stateDb = new StateDB(2);
+      parser.yy = stateDb;
+      stateDiagram.parser.yy = stateDb;
+      stateDiagram.parser.yy.clear();
+    });
+
+    // Rendering dispatches a node as a cluster only when it has children,
+    // so every group node must keep at least one child or rendering throws
+    // 'No such shape: roundedWithTitle'.
+    const expectGroupsToHaveChildren = (nodes) => {
+      for (const group of nodes.filter((node) => node.isGroup)) {
+        expect(
+          nodes.some((child) => child.parentId === group.id),
+          `group '${group.id}' should have at least one child`
+        ).toBe(true);
+      }
+    };
+
+    it('should keep the declared parent when a nested state is referenced in a transition of an outer document', () => {
+      parser.parse(`stateDiagram-v2
+        state Client {
+          state ClientMobX {
+            state GraphStore {
+              nodes
+            }
+          }
+          state ClientUI {
+            components
+          }
+          GraphStore --> ClientUI: Updates Graph UI
+        }
+      `);
+
+      const { nodes } = stateDb.getData();
+      const graphStore = nodes.find((node) => node.id === 'GraphStore');
+      expect(graphStore.parentId).toBe('ClientMobX');
+      expectGroupsToHaveChildren(nodes);
+    });
+
+    it('should not set a composite state as its own parent when a transition points back to it', () => {
+      parser.parse(`stateDiagram-v2
+        state Outer {
+          state Inner {
+            leaf
+          }
+          Inner --> Outer: back
+        }
+      `);
+
+      const { nodes } = stateDb.getData();
+      const outer = nodes.find((node) => node.id === 'Outer');
+      expect(outer.parentId).toBeUndefined();
+      expectGroupsToHaveChildren(nodes);
+    });
+
+    it('should treat a composite state with an empty body as a regular state', () => {
+      parser.parse(`stateDiagram-v2
+        state L1 {
+          state L2 {
+            state L3 {
+            }
+          }
+        }
+      `);
+
+      const { nodes } = stateDb.getData();
+      const l3 = nodes.find((node) => node.id === 'L3');
+      expect(l3.isGroup).toBeFalsy();
+      expect(l3.shape).toBe('rect');
+      expectGroupsToHaveChildren(nodes);
+    });
+
+    it('should render the diagram from issue #6337 without leaving empty groups', () => {
+      parser.parse(`stateDiagram-v2
+        direction TB
+        state Client {
+          direction TB
+          state ClientMobX {
+            direction LR
+            state WebSocketStore {
+              isConnected
+              connect
+            }
+            state ChatStore {
+              messages
+              sendMessage
+            }
+            state GraphStore {
+              nodes
+              edges
+            }
+          }
+          state ClientUI {
+            direction TB
+            state ChatComponent {
+              ChatStreamMultimodalGraphMobX
+            }
+            state GraphComponent {
+              GraphVisualization
+            }
+          }
+          WebSocketStore --> ChatStore: Provides events
+          WebSocketStore --> GraphStore: Updates data
+          ChatStore --> ClientUI: Updates Chat UI
+          GraphStore --> ClientUI: Updates Graph UI
+          ClientUI --> WebSocketStore: Triggers events
+        }
+      `);
+
+      const { nodes } = stateDb.getData();
+      expect(nodes.find((node) => node.id === 'GraphStore').parentId).toBe('ClientMobX');
+      expect(nodes.find((node) => node.id === 'ChatStore').parentId).toBe('ClientMobX');
+      expect(nodes.find((node) => node.id === 'WebSocketStore').parentId).toBe('ClientMobX');
+      expectGroupsToHaveChildren(nodes);
+    });
+  });
 });
