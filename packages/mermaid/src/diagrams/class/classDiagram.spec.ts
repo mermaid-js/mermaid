@@ -1471,6 +1471,16 @@ describe('given a class diagram with generics, ', function () {
       expect(list.type).toBe('List&lt;Person&gt;');
     });
 
+    it('should handle sibling nested generics in a class name (#7648)', function () {
+      const str = 'classDiagram\n' + 'class Map~List~K~,List~V~~';
+
+      expect(() => parser.parse(str)).not.toThrow();
+      const map = classDb.getClass('Map');
+      // Each nested generic must keep its own type argument, not be merged.
+      expect(map.type).toBe('List&lt;K&gt;,List&lt;V&gt;');
+      expect(map.text).toBe('Map&lt;List&lt;K&gt;,List&lt;V&gt;&gt;');
+    });
+
     it('should handle the full nested-generics sample from #7648', function () {
       const str =
         'classDiagram\n' +
@@ -1480,6 +1490,11 @@ describe('given a class diagram with generics, ', function () {
         'class People List~List~Person~~';
 
       expect(() => parser.parse(str)).not.toThrow();
+      // The nested generic in the inline member is preserved and rendered.
+      const person = classDb.getClass('Person');
+      expect(person.members[0].getDisplayDetails().displayText).toBe(
+        '~AnotherInternalProperty : List<List<string>>'
+      );
     });
 
     it('should handle "namespace"', function () {

@@ -96,18 +96,24 @@ export class ClassDB implements DiagramDB {
 
   /**
    * Convert mermaid's `~`-delimited generic notation to angle brackets, with
-   * support for nested generics, e.g. `List~Person~` becomes `List&lt;Person&gt;`.
-   * Angle brackets are emitted as HTML entities to match how class labels are
-   * escaped elsewhere in this file.
+   * support for nested and sibling generics, e.g. `List~Person~` becomes
+   * `List&lt;Person&gt;` and `List~K~,List~V~` becomes
+   * `List&lt;K&gt;,List&lt;V&gt;`. A `~` opens a generic when it is followed by
+   * a word character and otherwise closes one, mirroring the lexer. Angle
+   * brackets are emitted as HTML entities to match how class labels are escaped
+   * elsewhere in this file.
    */
   private formatGenericType(type: string): string {
-    const firstTilde = type.indexOf('~');
-    if (firstTilde === -1) {
-      return type;
+    let result = '';
+    for (let i = 0; i < type.length; i++) {
+      const char = type[i];
+      if (char === '~') {
+        result += /\w/.test(type[i + 1] ?? '') ? '&lt;' : '&gt;';
+      } else {
+        result += char;
+      }
     }
-    const name = type.substring(0, firstTilde);
-    const inner = type.substring(firstTilde + 1, type.lastIndexOf('~'));
-    return `${name}&lt;${this.formatGenericType(inner)}&gt;`;
+    return result;
   }
 
   public setClassLabel(_id: string, label: string) {
