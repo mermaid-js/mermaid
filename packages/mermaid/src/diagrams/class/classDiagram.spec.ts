@@ -1445,6 +1445,43 @@ describe('given a class diagram with generics, ', function () {
       parser.parse(str);
     });
 
+    it('should handle a nested generic class (#7648)', function () {
+      const str = 'classDiagram\n' + 'class List~List~Person~~';
+
+      expect(() => parser.parse(str)).not.toThrow();
+      const list = classDb.getClass('List');
+      expect(list.type).toBe('List&lt;Person&gt;');
+      expect(list.text).toBe('List&lt;List&lt;Person&gt;&gt;');
+    });
+
+    it('should handle a deeply nested generic class (#7648)', function () {
+      const str = 'classDiagram\n' + 'class Container~Map~String,List~Int~~~';
+
+      expect(() => parser.parse(str)).not.toThrow();
+      const container = classDb.getClass('Container');
+      expect(container.type).toBe('Map&lt;String,List&lt;Int&gt;&gt;');
+      expect(container.text).toBe('Container&lt;Map&lt;String,List&lt;Int&gt;&gt;&gt;');
+    });
+
+    it('should handle a nested generic class with a literal name (#7648)', function () {
+      const str = 'classDiagram\n' + 'class `My.List`~List~Person~~';
+
+      expect(() => parser.parse(str)).not.toThrow();
+      const list = classDb.getClass('My.List');
+      expect(list.type).toBe('List&lt;Person&gt;');
+    });
+
+    it('should handle the full nested-generics sample from #7648', function () {
+      const str =
+        'classDiagram\n' +
+        'class Person {\n' +
+        '  ~AnotherInternalProperty : List~List~string~~\n' +
+        '}\n' +
+        'class People List~List~Person~~';
+
+      expect(() => parser.parse(str)).not.toThrow();
+    });
+
     it('should handle "namespace"', function () {
       const str = `classDiagram
 namespace Namespace1 { class Class1 }

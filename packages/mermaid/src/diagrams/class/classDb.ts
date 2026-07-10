@@ -82,13 +82,32 @@ export class ClassDB implements DiagramDB {
     let genericType = '';
     let className = id;
 
-    if (id.indexOf('~') > 0) {
-      const split = id.split('~');
-      className = sanitizeText(split[0]);
-      genericType = sanitizeText(split[1]);
+    const firstTilde = id.indexOf('~');
+    if (firstTilde > 0) {
+      className = sanitizeText(id.substring(0, firstTilde));
+      // Everything between the first and last tilde is the (possibly nested)
+      // generic type, e.g. `List~List~Person~~` -> `List<Person>`.
+      const innerType = id.substring(firstTilde + 1, id.lastIndexOf('~'));
+      genericType = this.formatGenericType(sanitizeText(innerType));
     }
 
     return { className: className, type: genericType };
+  }
+
+  /**
+   * Convert mermaid's `~`-delimited generic notation to angle brackets, with
+   * support for nested generics, e.g. `List~Person~` becomes `List&lt;Person&gt;`.
+   * Angle brackets are emitted as HTML entities to match how class labels are
+   * escaped elsewhere in this file.
+   */
+  private formatGenericType(type: string): string {
+    const firstTilde = type.indexOf('~');
+    if (firstTilde === -1) {
+      return type;
+    }
+    const name = type.substring(0, firstTilde);
+    const inner = type.substring(firstTilde + 1, type.lastIndexOf('~'));
+    return `${name}&lt;${this.formatGenericType(inner)}&gt;`;
   }
 
   public setClassLabel(_id: string, label: string) {
