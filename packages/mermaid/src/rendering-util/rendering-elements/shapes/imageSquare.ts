@@ -9,23 +9,24 @@ import type { D3Selection } from '../../../types.js';
 // same default the icon shapes use when no explicit size is given
 const DEFAULT_IMAGE_SIZE = 48;
 
+const isValidDimension = (value?: number): value is number =>
+  value !== undefined && Number.isFinite(value) && value > 0;
+
 export function getImageDimensions(
   img: Pick<HTMLImageElement, 'naturalWidth' | 'naturalHeight'>,
   node: Pick<Node, 'assetWidth' | 'assetHeight'>
 ): { width: number; height: number } {
-  let width = Number(img.naturalWidth.toString().replace('px', ''));
-  let height = Number(img.naturalHeight.toString().replace('px', ''));
+  const naturalWidth = Number(img.naturalWidth.toString().replace('px', ''));
+  const naturalHeight = Number(img.naturalHeight.toString().replace('px', ''));
 
   // Firefox reports 0 (instead of the rendered size) for the natural dimensions
   // of SVG images that lack explicit width/height attributes, which would turn
-  // the sizing math below into NaN (#6362). Fall back to the requested asset
-  // size, or the same 48px default the icon shapes use.
-  if (!Number.isFinite(width) || width <= 0) {
-    width = node.assetWidth ?? node.assetHeight ?? DEFAULT_IMAGE_SIZE;
-  }
-  if (!Number.isFinite(height) || height <= 0) {
-    height = node.assetHeight ?? node.assetWidth ?? DEFAULT_IMAGE_SIZE;
-  }
+  // the sizing math below into NaN (#6362). Fall back to the first finite,
+  // positive requested asset size, or the same 48px default the icon shapes use.
+  const width =
+    [naturalWidth, node.assetWidth, node.assetHeight].find(isValidDimension) ?? DEFAULT_IMAGE_SIZE;
+  const height =
+    [naturalHeight, node.assetHeight, node.assetWidth].find(isValidDimension) ?? DEFAULT_IMAGE_SIZE;
 
   return { width, height };
 }

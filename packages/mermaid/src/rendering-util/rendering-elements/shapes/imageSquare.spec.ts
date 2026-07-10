@@ -37,6 +37,46 @@ describe('getImageDimensions', () => {
     expect(dims).toEqual({ width: 48, height: 48 });
   });
 
+  it('should ignore NaN asset dimensions and use the default size', () => {
+    const dims = getImageDimensions(
+      { naturalWidth: 0, naturalHeight: 0 },
+      { assetWidth: NaN, assetHeight: NaN }
+    );
+    expect(dims).toEqual({ width: 48, height: 48 });
+  });
+
+  it('should ignore zero asset dimensions and use the default size', () => {
+    const dims = getImageDimensions(
+      { naturalWidth: 0, naturalHeight: 0 },
+      { assetWidth: 0, assetHeight: 0 }
+    );
+    expect(dims).toEqual({ width: 48, height: 48 });
+  });
+
+  it('should ignore negative asset dimensions and use the default size', () => {
+    const dims = getImageDimensions(
+      { naturalWidth: 0, naturalHeight: 0 },
+      { assetWidth: -100, assetHeight: -80 }
+    );
+    expect(dims).toEqual({ width: 48, height: 48 });
+  });
+
+  it('should ignore Infinity asset dimensions and use the default size', () => {
+    const dims = getImageDimensions(
+      { naturalWidth: 0, naturalHeight: 0 },
+      { assetWidth: Infinity, assetHeight: -Infinity }
+    );
+    expect(dims).toEqual({ width: 48, height: 48 });
+  });
+
+  it('should skip an invalid asset dimension and use the other valid one', () => {
+    const dims = getImageDimensions(
+      { naturalWidth: 0, naturalHeight: 0 },
+      { assetWidth: NaN, assetHeight: 80 }
+    );
+    expect(dims).toEqual({ width: 80, height: 80 });
+  });
+
   it('should keep a partially valid natural dimension', () => {
     const dims = getImageDimensions({ naturalWidth: 120, naturalHeight: 0 }, { assetHeight: 80 });
     expect(dims).toEqual({ width: 120, height: 80 });
