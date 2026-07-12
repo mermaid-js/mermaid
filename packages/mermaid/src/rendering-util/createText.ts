@@ -1,7 +1,7 @@
 import { select } from 'd3';
 import type { MermaidConfig } from '../config.type.js';
 import type { SVGGroup } from '../diagram-api/types.js';
-import common, { hasKatex, renderKatexSanitized, sanitizeText } from '../diagrams/common/common.js';
+import { hasKatex, renderKatexSanitized, sanitizeText } from '../diagrams/common/common.js';
 import type { D3TSpanElement, D3TextElement } from '../diagrams/common/commonTypes.js';
 import { log } from '../logger.js';
 import { profiler } from '../profiler.js';
@@ -47,7 +47,7 @@ async function addHtmlSpan(
 
   const div = fo.append<HTMLDivElement>('xhtml:div');
   const sanitizedLabel = hasKatex(node.label)
-    ? await renderKatexSanitized(node.label.replace(common.lineBreakRegex, '\n'), config)
+    ? await renderKatexSanitized(node.label, config)
     : sanitizeText(node.label, config);
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
   const span = div.append('span');

@@ -99,4 +99,38 @@ describe('createText', () => {
       expect(output.textContent).toEqual(expected);
     }
   );
+
+  it('renders text after <br/> on a new line in labels containing KaTeX math', async () => {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const svgGroup = svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'g'));
+    const output = await createText(
+      select(svgGroup),
+      'Input<br/>$$x$$',
+      { useHtmlLabels: true },
+      { forceLegacyMathML: true, securityLevel: 'strict' }
+    );
+
+    const span = output.querySelector('span.nodeLabel');
+    const rows = [...(span?.children ?? [])];
+    expect(rows).toHaveLength(2);
+    expect(rows[0].outerHTML).toEqual('<div>Input</div>');
+    expect(rows[1].querySelector('.katex')).not.toBeNull();
+  });
+
+  it('renders each KaTeX line separately when <br/> separates two math expressions', async () => {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const svgGroup = svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'g'));
+    const output = await createText(
+      select(svgGroup),
+      '$$x$$<br/>$$f(x)$$',
+      { useHtmlLabels: true },
+      { forceLegacyMathML: true, securityLevel: 'strict' }
+    );
+
+    const span = output.querySelector('span.nodeLabel');
+    const rows = [...(span?.children ?? [])];
+    expect(rows).toHaveLength(2);
+    expect(rows[0].querySelector('.katex')).not.toBeNull();
+    expect(rows[1].querySelector('.katex')).not.toBeNull();
+  });
 });
