@@ -30,6 +30,21 @@ function applyStyle<T extends Element>(
 // We assume that nobody will want to create labels larger than 16384 pixels wide
 const maxSafeSizeForWidth = 16384;
 
+/**
+ * Creates a `<foreignObject>` containing the label as HTML.
+ *
+ * If the label contains KaTeX (`$$…$$`) delimiters, it is rendered through
+ * `renderKatexSanitized`, which places each `<br/>`-separated line in its own
+ * `<div>`; otherwise the label is sanitized as plain HTML.
+ *
+ * @param element - The parent group to append the `<foreignObject>` to.
+ * @param node - The label text, its style, and whether it belongs to a node or an edge.
+ * @param width - The maximum width of the label.
+ * @param classes - Additional CSS classes for the label span.
+ * @param addBackground - Whether to add a background class to the containing div.
+ * @param config - Mermaid configuration object.
+ * @returns The created `<foreignObject>` element.
+ */
 async function addHtmlSpan(
   element: D3Selection<SVGGElement>,
   node: { label: string; labelStyle: string; isNode: boolean },
