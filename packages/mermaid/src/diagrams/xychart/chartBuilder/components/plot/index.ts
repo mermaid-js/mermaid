@@ -57,17 +57,21 @@ export class BasePlot implements Plot {
     }
     const drawableElem: DrawableElem[] = [];
 
-    const dataLength = this.chartData.plots.length > 0 ? this.chartData.plots[0].data.length : 0;
+    // Each distinct bar group is a side-by-side slot. Series that share a group
+    // stack on top of each other within that slot. Groups are ordered by first
+    // appearance so slots follow the order the bars were declared.
+    const groupOrder: string[] = [];
+    for (const plot of this.chartData.plots) {
+      if (isBarPlot(plot) && !groupOrder.includes(plot.group)) {
+        groupOrder.push(plot.group);
+      }
+    }
+    const totalGroups = groupOrder.length;
 
-    // --- Stacked bar tracking ---
-    // Cumulative baselines per category for stacked bars only.
-    const stackedCumulativeValues: number[] = new Array(dataLength).fill(0);
-    let stackedBarCount = 0;
-
-    // --- Side-by-side (grouped) bar tracking ---
-    // Count total non-stacked bar series upfront so we can divide bar width evenly.
-    const totalGroupedBars = this.chartData.plots.filter((p) => isBarPlot(p) && !p.stacked).length;
-    let groupedBarIndex = 0;
+    // Running cumulative baseline per category for each group's stack, plus how
+    // many series of the group have been drawn so far.
+    const groupBaselines = new Map<string, number[]>();
+    const groupSeriesCount = new Map<string, number>();
 
     for (const [i, plot] of this.chartData.plots.entries()) {
       switch (plot.type) {
@@ -85,43 +89,34 @@ export class BasePlot implements Plot {
           break;
         case 'bar':
           {
-            if (isBarPlot(plot) && plot.stacked) {
-              // Stacked path: first stacked series uses empty base (original behavior),
-              // subsequent stacked series stack on top of previous.
-              const stackedBase = stackedBarCount === 0 ? [] : [...stackedCumulativeValues];
-              const barPlot = new BarPlot(
-                plot,
-                this.boundingRect,
-                this.xAxis,
-                this.yAxis,
-                this.chartConfig.chartOrientation,
-                i,
-                stackedBase,
-                0,
-                1
-              );
-              drawableElem.push(...barPlot.getDrawableElement());
-
-              plot.data.forEach((d, idx) => {
-                stackedCumulativeValues[idx] += d[1];
-              });
-              stackedBarCount++;
-            } else {
-              // Grouped (side-by-side) path: bars share the tick space, each offset by slot.
-              const barPlot = new BarPlot(
-                plot,
-                this.boundingRect,
-                this.xAxis,
-                this.yAxis,
-                this.chartConfig.chartOrientation,
-                i,
-                [],
-                groupedBarIndex,
-                totalGroupedBars
-              );
-              drawableElem.push(...barPlot.getDrawableElement());
-              groupedBarIndex++;
+            const { group } = plot;
+            const groupSlot = groupOrder.indexOf(group);
+            let baseline = groupBaselines.get(group);
+            if (!baseline) {
+              baseline = new Array(plot.data.length).fill(0);
+              groupBaselines.set(group, baseline);
             }
+            const seriesDrawn = groupSeriesCount.get(group) ?? 0;
+            // The first series of a group draws from the axis floor (non-stacked
+            // rendering); later series stack on the running baseline.
+            const stackedBase = seriesDrawn === 0 ? [] : [...baseline];
+            const barPlot = new BarPlot(
+              plot,
+              this.boundingRect,
+              this.xAxis,
+              this.yAxis,
+              this.chartConfig.chartOrientation,
+              i,
+              stackedBase,
+              groupSlot,
+              totalGroups
+            );
+            drawableElem.push(...barPlot.getDrawableElement());
+
+            plot.data.forEach((d, idx) => {
+              baseline[idx] += d[1];
+            });
+            groupSeriesCount.set(group, seriesDrawn + 1);
           }
           break;
       }

@@ -34,6 +34,13 @@ let plotColorPalette = xyChartThemeConfig.plotColorPalette.split(',').map((color
 let hasSetXAxis = false;
 let hasSetYAxis = false;
 
+// Monotonic counter used to give every bar statement a unique group id so that
+// distinct groups render in their own side-by-side slot.
+let barGroupIndex = 0;
+// Maps a stacked series' key (e.g. "online") to a color so that the same series
+// keeps a consistent color across every group, matching the legend.
+let barSeriesColors = new Map<string, string>();
+
 interface NormalTextType {
   type: 'text';
   text: string;
@@ -124,25 +131,42 @@ function setYAxisRangeFromPlotData(data: number[]) {
 }
 
 // Recalculates the y-axis range to account for stacked bar series.
-// For each category index, sums the values across all bar plots and uses
-// the maximum cumulative sum as the y-axis upper bound.
+// Series belonging to the same group stack on top of each other, so for each
+// group we sum its series per category and take the largest stacked total as
+// the y-axis upper bound. Groups are rendered side-by-side and do not add up.
 function recalculateYAxisRangeForStackedBars() {
-  const barPlots = xyChartData.plots.filter((p) => isBarPlot(p) && p.stacked);
-  if (barPlots.length <= 1) {
-    // No stacking needed for a single bar series.
+  const barPlots = xyChartData.plots.filter(isBarPlot);
+  if (barPlots.length === 0) {
     return;
   }
 
-  const dataLength = barPlots[0].data.length;
-  const cumulativeSums: number[] = new Array(dataLength).fill(0);
-
+  // Sum the series of each group, keyed by group id.
+  const groupSums = new Map<string, number[]>();
   for (const plot of barPlots) {
-    plot.data.forEach((d, i) => {
-      cumulativeSums[i] += d[1];
-    });
+    const sums = groupSums.get(plot.group);
+    if (sums) {
+      plot.data.forEach((d, i) => {
+        sums[i] += d[1];
+      });
+    } else {
+      groupSums.set(
+        plot.group,
+        plot.data.map((d) => d[1])
+      );
+    }
   }
 
-  const maxCumulative = Math.max(...cumulativeSums);
+  // If every group has exactly one series there is no stacking, and the range
+  // computed per series from the plot data is already correct.
+  if (barPlots.length === groupSums.size) {
+    return;
+  }
+
+  let maxCumulative = -Infinity;
+  for (const sums of groupSums.values()) {
+    maxCumulative = Math.max(maxCumulative, ...sums);
+  }
+
   const prevMinValue = isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.min : 0;
   const prevMaxValue = isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.max : 0;
 
@@ -219,17 +243,52 @@ function setLineData(title: NormalTextType, data: ParsedDataPoint[]) {
   plotIndex++;
 }
 
-function setBarData(title: NormalTextType, data: ParsedDataPoint[], stacked = false) {
+function setBarData(title: NormalTextType, data: ParsedDataPoint[]) {
   const values = data.map((d) => d.value);
   const plotData = transformDataWithoutCategory(values);
+  // A plain bar is its own group, so it renders as a single non-stacked bar in
+  // its own side-by-side slot.
   xyChartData.plots.push({
     type: 'bar',
     title: textSanitizer(title.text),
     fill: getPlotColorFromPalette(plotIndex),
-    stacked,
+    group: `bar-group-${barGroupIndex++}`,
     data: plotData,
   });
   plotIndex++;
+}
+
+interface BarSeriesEntry {
+  key: string;
+  data: ParsedDataPoint[];
+}
+
+// Handles the matplotlib-style object syntax:
+//   bar "Product A" {"online": [10, 20, 30], "store": [5, 10, 15]}
+// Each entry of the object becomes one bar series, all sharing a single group so
+// that they stack on top of each other within one side-by-side slot.
+function setBarGroupData(_title: NormalTextType, series: BarSeriesEntry[]) {
+  const group = `bar-group-${barGroupIndex++}`;
+  for (const { key, data } of series) {
+    const values = data.map((d) => d.value);
+    const plotData = transformDataWithoutCategory(values);
+    const seriesKey = textSanitizer(key);
+    // Reuse a color for series that share a key across groups so the same series
+    // is drawn consistently (matching a legend).
+    let fill = barSeriesColors.get(seriesKey);
+    if (fill === undefined) {
+      fill = getPlotColorFromPalette(plotIndex);
+      barSeriesColors.set(seriesKey, fill);
+      plotIndex++;
+    }
+    xyChartData.plots.push({
+      type: 'bar',
+      title: seriesKey,
+      fill,
+      group,
+      data: plotData,
+    });
+  }
 }
 
 function getDrawableElem(): DrawableElem[] {
@@ -267,6 +326,8 @@ const clear = function () {
   plotColorPalette = xyChartThemeConfig.plotColorPalette.split(',').map((color) => color.trim());
   hasSetXAxis = false;
   hasSetYAxis = false;
+  barGroupIndex = 0;
+  barSeriesColors = new Map<string, string>();
 };
 
 export default {
@@ -286,6 +347,7 @@ export default {
   setYAxisRangeData,
   setLineData,
   setBarData,
+  setBarGroupData,
   setTmpSVGG,
   getChartThemeConfig,
   getChartConfig,

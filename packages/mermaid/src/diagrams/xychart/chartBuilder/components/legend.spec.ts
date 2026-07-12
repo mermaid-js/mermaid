@@ -53,6 +53,7 @@ const chartData: XYChartData = {
       type: 'bar',
       title: 'p95',
       fill: '#0f0',
+      group: 'p95',
       data: [
         ['90d', 80],
         ['60d', 90],
@@ -199,5 +200,73 @@ describe('ChartLegend', () => {
         expect.objectContaining({ text: 'p95', fill: '#333' }),
       ])
     );
+  });
+
+  it('collapses grouped/stacked series that share a name into a single legend row', () => {
+    // Two groups (Product A, Product B) that each carry an "online" and "store"
+    // series. The shared series keep a consistent color, so the legend should
+    // show "online" and "store" once each rather than duplicating them.
+    const groupedData: XYChartData = {
+      title: 'Sales',
+      xAxis: { type: 'band', title: '', categories: ['Q1', 'Q2'] },
+      yAxis: { type: 'linear', title: '', min: 0, max: 60 },
+      plots: [
+        {
+          type: 'bar',
+          title: 'online',
+          fill: '#0f0',
+          group: 'A',
+          data: [
+            ['Q1', 10],
+            ['Q2', 20],
+          ],
+        },
+        {
+          type: 'bar',
+          title: 'store',
+          fill: '#00f',
+          group: 'A',
+          data: [
+            ['Q1', 5],
+            ['Q2', 10],
+          ],
+        },
+        {
+          type: 'bar',
+          title: 'online',
+          fill: '#0f0',
+          group: 'B',
+          data: [
+            ['Q1', 8],
+            ['Q2', 16],
+          ],
+        },
+        {
+          type: 'bar',
+          title: 'store',
+          fill: '#00f',
+          group: 'B',
+          data: [
+            ['Q1', 4],
+            ['Q2', 8],
+          ],
+        },
+      ],
+    };
+
+    const legend = new ChartLegend(
+      textDimensionCalculator,
+      chartConfig,
+      groupedData,
+      chartThemeConfig
+    );
+    legend.calculateSpace({ width: 200, height: 200 });
+    legend.setBoundingBoxXY({ x: 0, y: 0 });
+
+    const labels = legend
+      .getDrawableElements()
+      .find((d) => d.type === 'text' && d.groupTexts.join('.') === 'legend.label')?.data;
+
+    expect(labels?.map((l) => (l as { text: string }).text)).toEqual(['online', 'store']);
   });
 });

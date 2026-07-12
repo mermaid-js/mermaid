@@ -52,8 +52,18 @@ export class ChartLegend implements ChartComponent {
   }
 
   calculateSpace(availableSpace: Dimension): Dimension {
+    // One legend row per distinct series name. Grouped/stacked bars repeat the
+    // same series (e.g. "online") across groups sharing a color, so collapse
+    // duplicate titles to a single row keeping the first (which holds the color).
+    const seenTitles = new Set<string>();
     this.visiblePlots = this.chartConfig.showLegend
-      ? this.chartData.plots.filter((plot) => plot.title)
+      ? this.chartData.plots.filter((plot) => {
+          if (!plot.title || seenTitles.has(plot.title)) {
+            return false;
+          }
+          seenTitles.add(plot.title);
+          return true;
+        })
       : [];
 
     if (this.visiblePlots.length === 0) {

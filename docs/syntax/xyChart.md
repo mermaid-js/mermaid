@@ -122,26 +122,30 @@ xychart-beta
   line "p95" [112.2, 75.3, 103.0, 177.0, 180.2, 109.4]
 ```
 
-#### Stacked bar chart
+#### Grouped and stacked bar charts (v\<MERMAID_RELEASE_VERSION>+)
 
-Use `bar stacked` to stack multiple bar series on top of each other. Each `bar stacked` series is accumulated per category.
+By default every `bar` is drawn as its own bar, and multiple `bar` lines are placed **side-by-side** within each category.
+
+To **stack** several series on top of each other, group them into a single `bar` using a matplotlib-style object, where each key is a series name and each value is its array of numbers:
 
 **Syntax:**
 
 ```
-bar stacked [<values>]
-bar stacked "Title" [<values>]
+bar "Group name" {"series 1": [<values>], "series 2": [<values>]}
 ```
 
-**Example:**
+- Series inside the `{ }` are **stacked** on top of each other.
+- Each `bar` line is one group; different groups are rendered **side-by-side**.
+- A group name is optional (`bar {"a": [...], "b": [...]}`), and keys may be quoted or unquoted.
+
+**Stacked (one group, two stacked series):**
 
 ```mermaid-example
 xychart-beta
     title "Stacked Bar Example"
     x-axis ["Q1", "Q2", "Q3", "Q4"]
     y-axis 0 --> 50
-    bar stacked "Series A" [10, 20, 15, 25]
-    bar stacked "Series B" [5, 10, 8, 12]
+    bar "Revenue" {"Series A": [10, 20, 15, 25], "Series B": [5, 10, 8, 12]}
 ```
 
 ```mermaid
@@ -149,11 +153,32 @@ xychart-beta
     title "Stacked Bar Example"
     x-axis ["Q1", "Q2", "Q3", "Q4"]
     y-axis 0 --> 50
-    bar stacked "Series A" [10, 20, 15, 25]
-    bar stacked "Series B" [5, 10, 8, 12]
+    bar "Revenue" {"Series A": [10, 20, 15, 25], "Series B": [5, 10, 8, 12]}
 ```
 
-> **Note:** When mixing `bar` and `bar stacked` in the same chart, the y-axis upper bound will accommodate the tallest non-stacked bar as well as the largest stacked cumulative total.
+**Grouped + stacked (two side-by-side groups, each stacking two series):**
+
+```mermaid-example
+xychart-beta
+    title "Grouped + Stacked Example"
+    x-axis [Q1, Q2, Q3, Q4]
+    y-axis 0 --> 60
+    bar "Product A" {"online": [10, 20, 30, 25], "store": [5, 10, 15, 12]}
+    bar "Product B" {"online": [8, 16, 24, 20], "store": [4, 8, 12, 10]}
+```
+
+```mermaid
+xychart-beta
+    title "Grouped + Stacked Example"
+    x-axis [Q1, Q2, Q3, Q4]
+    y-axis 0 --> 60
+    bar "Product A" {"online": [10, 20, 30, 25], "store": [5, 10, 15, 12]}
+    bar "Product B" {"online": [8, 16, 24, 20], "store": [4, 8, 12, 10]}
+```
+
+Series that share a key (e.g. `online`) keep a consistent color across every group.
+
+> **Note:** A plain `bar [values]` can be freely mixed with grouped/stacked bars — it simply becomes its own single-series group in its own side-by-side slot. The y-axis upper bound accommodates both the tallest single bar and the largest stacked group total.
 
 #### Simplest example
 

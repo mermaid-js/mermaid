@@ -19,6 +19,7 @@ const mockDB: Record<string, Mock<any>> = {
   setYAxisRangeData: vi.fn(),
   setLineData: vi.fn(),
   setBarData: vi.fn(),
+  setBarGroupData: vi.fn(),
   setAccTitle: vi.fn(),
   setAccDescription: vi.fn(),
 };
@@ -341,11 +342,12 @@ describe('Testing xychart jison file', () => {
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'yAxisName', type: 'text' });
     expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'xAxisName', type: 'text' });
-    expect(mockDB.setBarData).toHaveBeenCalledWith(
-      { text: 'barTitle', type: 'text' },
-      [dp(23), dp(45), dp(56.6), dp(0.22)],
-      false
-    );
+    expect(mockDB.setBarData).toHaveBeenCalledWith({ text: 'barTitle', type: 'text' }, [
+      dp(23),
+      dp(45),
+      dp(56.6),
+      dp(0.22),
+    ]);
   });
   it('parse bar Data spaces and +,- symbol', () => {
     const str =
@@ -353,22 +355,22 @@ describe('Testing xychart jison file', () => {
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'yAxisName', type: 'text' });
     expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'xAxisName', type: 'text' });
-    expect(mockDB.setBarData).toHaveBeenCalledWith(
-      { text: 'barTitle with space', type: 'text' },
-      [dp(23), dp(-45), dp(56.6)],
-      false
-    );
+    expect(mockDB.setBarData).toHaveBeenCalledWith({ text: 'barTitle with space', type: 'text' }, [
+      dp(23),
+      dp(-45),
+      dp(56.6),
+    ]);
   });
   it('parse bar Data without plot title', () => {
     const str = 'xychart\nx-axis xAxisName\ny-axis yAxisName\n bar   [  +23 , -45  , 56.6 ]   ';
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'yAxisName', type: 'text' });
     expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'xAxisName', type: 'text' });
-    expect(mockDB.setBarData).toHaveBeenCalledWith(
-      { text: '', type: 'text' },
-      [dp(23), dp(-45), dp(56.6)],
-      false
-    );
+    expect(mockDB.setBarData).toHaveBeenCalledWith({ text: '', type: 'text' }, [
+      dp(23),
+      dp(-45),
+      dp(56.6),
+    ]);
   });
   it('parse bar should throw for unbalanced brackets', () => {
     let str =
@@ -397,23 +399,74 @@ describe('Testing xychart jison file', () => {
       'xychart\nx-axis xAxisName\ny-axis yAxisName\n bar "barTitle with space"   [  +23 , -4aa5  , 56.6 ]   ';
     expect(parserFnConstructor(str)).toThrow();
   });
-  it('parse stacked bar without title', () => {
-    const str = 'xychart\nx-axis xAxisName\ny-axis yAxisName\n bar stacked [1, 2, 3]';
-    expect(parserFnConstructor(str)).not.toThrow();
-    expect(mockDB.setBarData).toHaveBeenCalledWith(
-      { text: '', type: 'text' },
-      [dp(1), dp(2), dp(3)],
-      true
-    );
-  });
-  it('parse stacked bar with title', () => {
-    const str = 'xychart\nx-axis xAxisName\ny-axis yAxisName\n bar stacked "My Bar" [1, 2, 3]';
-    expect(parserFnConstructor(str)).not.toThrow();
-    expect(mockDB.setBarData).toHaveBeenCalledWith(
-      { text: 'My Bar', type: 'text' },
-      [dp(1), dp(2), dp(3)],
-      true
-    );
+  describe('grouped/stacked object syntax', () => {
+    it('parse a bar group with a title and quoted series keys', () => {
+      const str =
+        'xychart\nx-axis xAxisName\ny-axis yAxisName\n bar "Product A" {"online": [10, 20, 30], "store": [5, 10, 15]}';
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.setBarGroupData).toHaveBeenCalledWith({ text: 'Product A', type: 'text' }, [
+        { key: 'online', data: [dp(10), dp(20), dp(30)] },
+        { key: 'store', data: [dp(5), dp(10), dp(15)] },
+      ]);
+    });
+
+    it('parse a bar group without a group title', () => {
+      const str = 'xychart\nx-axis xAxisName\ny-axis yAxisName\n bar {"a": [1, 2], "b": [3, 4]}';
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.setBarGroupData).toHaveBeenCalledWith({ text: '', type: 'text' }, [
+        { key: 'a', data: [dp(1), dp(2)] },
+        { key: 'b', data: [dp(3), dp(4)] },
+      ]);
+    });
+
+    it('parse a bar group with unquoted series keys', () => {
+      const str =
+        'xychart\nx-axis xAxisName\ny-axis yAxisName\n bar group1 {online: [1], store: [2]}';
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.setBarGroupData).toHaveBeenCalledWith({ text: 'group1', type: 'text' }, [
+        { key: 'online', data: [dp(1)] },
+        { key: 'store', data: [dp(2)] },
+      ]);
+    });
+
+    it('parse a bar group with a single series', () => {
+      const str = 'xychart\nx-axis xAxisName\ny-axis yAxisName\n bar "G" {"only": [7, 8, 9]}';
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.setBarGroupData).toHaveBeenCalledWith({ text: 'G', type: 'text' }, [
+        { key: 'only', data: [dp(7), dp(8), dp(9)] },
+      ]);
+    });
+
+    it('parse a bar group mixed with a plain bar', () => {
+      const str =
+        'xychart\nx-axis xAxisName\ny-axis yAxisName\n bar "A" {"x": [1, 2], "y": [3, 4]} \n bar [5, 6]';
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.setBarGroupData).toHaveBeenCalledWith({ text: 'A', type: 'text' }, [
+        { key: 'x', data: [dp(1), dp(2)] },
+        { key: 'y', data: [dp(3), dp(4)] },
+      ]);
+      expect(mockDB.setBarData).toHaveBeenCalledWith({ text: '', type: 'text' }, [dp(5), dp(6)]);
+    });
+
+    it('throws for an empty object', () => {
+      const str = 'xychart\nx-axis xAxisName\ny-axis yAxisName\n bar "A" {}';
+      expect(parserFnConstructor(str)).toThrow();
+    });
+
+    it('throws for a series without a value array', () => {
+      const str = 'xychart\nx-axis xAxisName\ny-axis yAxisName\n bar "A" {"x": }';
+      expect(parserFnConstructor(str)).toThrow();
+    });
+
+    it('no longer treats "stacked" as a keyword — it becomes a bar title', () => {
+      const str = 'xychart\nx-axis xAxisName\ny-axis yAxisName\n bar stacked [1, 2, 3]';
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.setBarData).toHaveBeenCalledWith({ text: 'stacked', type: 'text' }, [
+        dp(1),
+        dp(2),
+        dp(3),
+      ]);
+    });
   });
   it('parse multiple bar and line variant 1', () => {
     const str =
@@ -421,16 +474,16 @@ describe('Testing xychart jison file', () => {
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'yAxisName', type: 'text' });
     expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'xAxisName', type: 'text' });
-    expect(mockDB.setBarData).toHaveBeenCalledWith(
-      { text: 'barTitle1', type: 'text' },
-      [dp(23), dp(45), dp(56.6)],
-      false
-    );
-    expect(mockDB.setBarData).toHaveBeenCalledWith(
-      { text: 'barTitle2', type: 'text' },
-      [dp(13), dp(42), dp(56.89)],
-      false
-    );
+    expect(mockDB.setBarData).toHaveBeenCalledWith({ text: 'barTitle1', type: 'text' }, [
+      dp(23),
+      dp(45),
+      dp(56.6),
+    ]);
+    expect(mockDB.setBarData).toHaveBeenCalledWith({ text: 'barTitle2', type: 'text' }, [
+      dp(13),
+      dp(42),
+      dp(56.89),
+    ]);
     expect(mockDB.setLineData).toHaveBeenCalledWith({ text: 'lineTitle1', type: 'text' }, [
       dp(11),
       dp(45.5),
@@ -462,16 +515,16 @@ describe('Testing xychart jison file', () => {
       { text: 'category 2', type: 'text' },
       { text: 'category3', type: 'text' },
     ]);
-    expect(mockDB.setBarData).toHaveBeenCalledWith(
-      { text: 'barTitle1', type: 'text' },
-      [dp(23), dp(45), dp(56.6)],
-      false
-    );
-    expect(mockDB.setBarData).toHaveBeenCalledWith(
-      { text: 'barTitle2', type: 'text' },
-      [dp(13), dp(42), dp(56.89)],
-      false
-    );
+    expect(mockDB.setBarData).toHaveBeenCalledWith({ text: 'barTitle1', type: 'text' }, [
+      dp(23),
+      dp(45),
+      dp(56.6),
+    ]);
+    expect(mockDB.setBarData).toHaveBeenCalledWith({ text: 'barTitle2', type: 'text' }, [
+      dp(13),
+      dp(42),
+      dp(56.89),
+    ]);
     expect(mockDB.setLineData).toHaveBeenCalledWith({ text: 'lineTitle1', type: 'text' }, [
       dp(11),
       dp(45.5),
@@ -529,11 +582,11 @@ describe('Testing xychart jison file', () => {
     it('parse bar data with point labels', () => {
       const str = 'xychart\nx-axis xAxisName\ny-axis yAxisName\n bar [10 "A", 20 "B", 30 "C"]';
       expect(parserFnConstructor(str)).not.toThrow();
-      expect(mockDB.setBarData).toHaveBeenCalledWith(
-        { text: '', type: 'text' },
-        [dp(10, 'A'), dp(20, 'B'), dp(30, 'C')],
-        false
-      );
+      expect(mockDB.setBarData).toHaveBeenCalledWith({ text: '', type: 'text' }, [
+        dp(10, 'A'),
+        dp(20, 'B'),
+        dp(30, 'C'),
+      ]);
     });
 
     it('parse line data with decimal values and labels', () => {
