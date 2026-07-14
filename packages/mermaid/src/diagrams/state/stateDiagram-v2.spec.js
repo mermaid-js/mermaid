@@ -486,7 +486,7 @@ describe('state diagram V2, ', function () {
     const expectGroupsToHaveChildren = (nodes) => {
       for (const group of nodes.filter((node) => node.isGroup)) {
         expect(
-          nodes.some((child) => child.parentId === group.id),
+          nodes.some((child) => child.id !== group.id && child.parentId === group.id),
           `group '${group.id}' should have at least one child`
         ).toBe(true);
       }
@@ -543,6 +543,22 @@ describe('state diagram V2, ', function () {
       const l3 = nodes.find((node) => node.id === 'L3');
       expect(l3.isGroup).toBeFalsy();
       expect(l3.shape).toBe('rect');
+      expectGroupsToHaveChildren(nodes);
+    });
+
+    it('should treat a composite state with a direction-only body as a regular state', () => {
+      parser.parse(`stateDiagram-v2
+        state Wrapper {
+          state OnlyDirection {
+            direction LR
+          }
+        }
+      `);
+
+      const { nodes } = stateDb.getData();
+      const onlyDirection = nodes.find((node) => node.id === 'OnlyDirection');
+      expect(onlyDirection.isGroup).toBeFalsy();
+      expect(onlyDirection.shape).toBe('rect');
       expectGroupsToHaveChildren(nodes);
     });
 

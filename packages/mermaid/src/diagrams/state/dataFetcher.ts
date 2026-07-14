@@ -142,6 +142,17 @@ const getDir = (parsedItem: { doc?: Stmt[] }, defaultDir = DEFAULT_NESTED_DOC_DI
   return dir;
 };
 
+/**
+ * Check whether a document contains at least one statement that produces a child node.
+ * These are the same statement types that setupDoc turns into nodes; other statements
+ * (e.g. 'direction') produce nothing to render inside a cluster (#6337).
+ */
+const docHasChildNodes = (doc: Stmt[]) =>
+  doc.some(
+    (stmt) =>
+      stmt.stmt === STMT_STATE || stmt.stmt === STMT_RELATION || stmt.stmt === DEFAULT_STATE_TYPE
+  );
+
 function insertOrUpdateNode(
   nodes: NodeData[],
   nodeData: NodeData,
@@ -270,8 +281,9 @@ export const dataFetcher = (
       }
     }
 
-    // group (an empty doc means there is nothing to render as a cluster, so treat it as a regular state)
-    if (!newNode.type && parsedItem.doc && parsedItem.doc.length > 0) {
+    // group (a body that produces no child nodes, e.g. empty or direction-only,
+    // has nothing to render as a cluster, so treat it as a regular state)
+    if (!newNode.type && parsedItem.doc && docHasChildNodes(parsedItem.doc)) {
       log.info('Setting cluster for XCX', itemId, getDir(parsedItem));
       newNode.type = 'group';
       newNode.isGroup = true;
