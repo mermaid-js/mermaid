@@ -106,7 +106,7 @@ export const insertEdgeLabel = async (elem, edge) => {
   // Center the label
   /** @type {DOMRect} */
   let bbox;
-  /** @type {@DOMRect} */
+  /** @type {DOMRect} */
   let transformBbox;
   if (useHtmlLabels) {
     const div = labelElement.children[0];
