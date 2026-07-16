@@ -30,6 +30,50 @@ describe('when using the ganttDb', function () {
     });
   });
 
+  describe('when the task end is neither a valid date nor a valid duration', function () {
+    beforeEach(function () {
+      ganttDb.setDateFormat('YYYY-MM-DD');
+    });
+
+    // https://github.com/mermaid-js/mermaid/issues/6586
+    it.each(['24de', '24d+', '24d=', '24d7', '2dd', '1x', '2019-13-40'])(
+      'should throw instead of silently dropping the task for end token "%s"',
+      (endToken) => {
+        expect(() => {
+          ganttDb.addTask('another task', `2014-01-12,${endToken}`);
+          ganttDb.getTasks();
+        }).toThrow(/invalid date/i);
+      }
+    );
+
+    it('should still accept valid duration tokens (regression)', function () {
+      expect(() => ganttDb.addTask('A task', 'a1,2014-01-01,30d')).not.toThrow();
+      expect(() => ganttDb.addTask('Another task', 'a2,after a1,20d')).not.toThrow();
+      const tasks = ganttDb.getTasks();
+      expect(tasks[0].endTime).toEqual(dayjs('2014-01-31', 'YYYY-MM-DD').toDate());
+    });
+
+    it('should still accept an explicit valid end date (regression)', function () {
+      expect(() => ganttDb.addTask('A task', 'a1,2014-01-01,2014-01-20')).not.toThrow();
+      const tasks = ganttDb.getTasks();
+      expect(tasks[0].endTime).toEqual(dayjs('2014-01-20', 'YYYY-MM-DD').toDate());
+    });
+
+    // Empty and bare-numeric end tokens are legitimate (zero-length milestones,
+    // `vert` markers) and must keep resolving to the start time, not throw (#6586).
+    it('should not throw for a zero-length milestone end token "0"', function () {
+      expect(() => ganttDb.addTask('deadline', 'milestone, m1, 2014-01-01, 0')).not.toThrow();
+      const tasks = ganttDb.getTasks();
+      expect(tasks[0].endTime).toEqual(dayjs('2014-01-01', 'YYYY-MM-DD').toDate());
+    });
+
+    it('should not throw for an empty end token (vert marker / point task)', function () {
+      expect(() => ganttDb.addTask('marker', 'vert, v1, 2014-01-01,')).not.toThrow();
+      const tasks = ganttDb.getTasks();
+      expect(tasks[0].endTime).toEqual(dayjs('2014-01-01', 'YYYY-MM-DD').toDate());
+    });
+  });
+
   describe('when calling the clear function', function () {
     beforeEach(function () {
       ganttDb.setDateFormat('YYYY-MM-DD');
