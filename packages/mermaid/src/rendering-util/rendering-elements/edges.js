@@ -763,7 +763,10 @@ export const insertEdge = function (
       ? generateRoundedPath(applyMarkerOffsetsToPoints(lineData, edge), 5)
       : lineFunction(lineData);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
-  let strokeColor = edgeStyles.find((style) => style?.startsWith('stroke:'));
+  let strokeColor = edgeStyles
+    .find((style) => style?.startsWith('stroke:'))
+    ?.slice('stroke:'.length)
+    .trim();
 
   let animationClass = '';
   if (edge.animate) {
@@ -821,7 +824,7 @@ export const insertEdge = function (
       .attr('style', pathStyle);
 
     //eslint-disable-next-line @typescript-eslint/prefer-regexp-exec
-    strokeColor = pathStyle.match(/stroke:([^;]+)/)?.[1];
+    strokeColor = pathStyle.match(/stroke:([^;]+)/)?.[1]?.trim();
 
     // Possible fix to remove eslint-disable-next-line
     //strokeColor = /stroke:([^;]+)/.exec(pathStyle)?.[1];
