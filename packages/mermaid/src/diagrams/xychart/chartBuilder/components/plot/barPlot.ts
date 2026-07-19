@@ -22,8 +22,8 @@ export class BarPlot {
       Math.min(this.xAxis.getAxisOuterPadding() * 2, this.xAxis.getTickDistance()) *
       (1 - barPaddingPercent);
 
-    // For grouped (side-by-side) bars, divide the slot evenly.
-    // For stacked bars, groupTotal is always 1 so barWidth equals slotWidth.
+    // Divide the tick slot evenly among the side-by-side groups. A lone group
+    // (a single bar or one stack) has groupTotal 1 and fills the whole slot.
     const barWidth = slotWidth / this.groupTotal;
     const barWidthHalf = barWidth / 2;
 
@@ -46,11 +46,14 @@ export class BarPlot {
             if (isStacked) {
               const scaledBase = this.yAxis.getScaleValue(this.stackedBaseValues[index]);
               const scaledTop = this.yAxis.getScaleValue(this.stackedBaseValues[index] + d[1]);
+              // A negative segment scales to scaledTop < scaledBase; anchor the
+              // rect at the smaller edge and use the absolute span so the width is
+              // never negative (an invalid rect renders nothing).
               return {
-                x: scaledBase,
+                x: Math.min(scaledBase, scaledTop),
                 y: scaledCategory + groupOffset - barWidthHalf,
                 height: barWidth,
-                width: scaledTop - scaledBase,
+                width: Math.abs(scaledTop - scaledBase),
                 fill: this.barData.fill,
                 strokeWidth: 0,
                 strokeFill: this.barData.fill,
@@ -82,11 +85,14 @@ export class BarPlot {
           if (isStacked) {
             const scaledBarBase = this.yAxis.getScaleValue(this.stackedBaseValues[index]);
             const scaledBarTop = this.yAxis.getScaleValue(this.stackedBaseValues[index] + d[1]);
+            // A negative segment scales to scaledBarTop > scaledBarBase; anchor
+            // the rect at the smaller y and use the absolute span so the height is
+            // never negative (an invalid rect renders nothing).
             return {
               x: scaledCategory + groupOffset - barWidthHalf,
-              y: scaledBarTop,
+              y: Math.min(scaledBarBase, scaledBarTop),
               width: barWidth,
-              height: scaledBarBase - scaledBarTop,
+              height: Math.abs(scaledBarBase - scaledBarTop),
               fill: this.barData.fill,
               strokeWidth: 0,
               strokeFill: this.barData.fill,

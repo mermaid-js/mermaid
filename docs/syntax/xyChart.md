@@ -130,13 +130,18 @@ To **stack** several series on top of each other, group them into a single `bar`
 
 **Syntax:**
 
-```
+```text
 bar "Group name" {"series 1": [<values>], "series 2": [<values>]}
 ```
 
 - Series inside the `{ }` are **stacked** on top of each other.
 - Each `bar` line is one group; different groups are rendered **side-by-side**.
 - A group name is optional (`bar {"a": [...], "b": [...]}`), and keys may be quoted or unquoted.
+
+> **Note**
+> The object form is the only way to stack bars. There is no standalone `bar stacked [...]`
+> keyword, and `stacked` is not a reserved word — `bar stacked [1, 2, 3]` is simply a bar
+> titled "stacked".
 
 **Stacked (one group, two stacked series):**
 

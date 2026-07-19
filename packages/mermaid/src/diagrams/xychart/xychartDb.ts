@@ -140,20 +140,22 @@ function recalculateYAxisRangeForStackedBars() {
     return;
   }
 
-  // Sum the series of each group, keyed by group id.
+  // Sum the series of each group, keyed by group id. A series can be shorter
+  // than the axis has categories, which leaves holes in its data, so only finite
+  // values contribute to a group's total.
   const groupSums = new Map<string, number[]>();
   for (const plot of barPlots) {
-    const sums = groupSums.get(plot.group);
-    if (sums) {
-      plot.data.forEach((d, i) => {
-        sums[i] += d[1];
-      });
-    } else {
-      groupSums.set(
-        plot.group,
-        plot.data.map((d) => d[1])
-      );
+    let sums = groupSums.get(plot.group);
+    if (!sums) {
+      sums = new Array(plot.data.length).fill(0);
+      groupSums.set(plot.group, sums);
     }
+    plot.data.forEach((d, i) => {
+      const value = d[1];
+      if (Number.isFinite(value)) {
+        sums[i] = (sums[i] ?? 0) + value;
+      }
+    });
   }
 
   // If every group has exactly one series there is no stacking, and the range
@@ -163,8 +165,19 @@ function recalculateYAxisRangeForStackedBars() {
   }
 
   let maxCumulative = -Infinity;
+  let minCumulative = Infinity;
   for (const sums of groupSums.values()) {
-    maxCumulative = Math.max(maxCumulative, ...sums);
+    for (const total of sums) {
+      if (Number.isFinite(total)) {
+        maxCumulative = Math.max(maxCumulative, total);
+        minCumulative = Math.min(minCumulative, total);
+      }
+    }
+  }
+
+  // Nothing usable to widen the range with.
+  if (!Number.isFinite(maxCumulative) || !Number.isFinite(minCumulative)) {
+    return;
   }
 
   const prevMinValue = isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.min : 0;
@@ -173,7 +186,9 @@ function recalculateYAxisRangeForStackedBars() {
   xyChartData.yAxis = {
     type: 'linear',
     title: xyChartData.yAxis.title,
-    min: Math.min(prevMinValue, 0),
+    // Stacks are anchored at zero, and a group whose series sum to a negative
+    // total must still fit inside the axis.
+    min: Math.min(prevMinValue, 0, minCumulative),
     max: Math.max(prevMaxValue, maxCumulative),
   };
 }

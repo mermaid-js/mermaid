@@ -206,6 +206,48 @@ describe('xychartDb', () => {
       }
     });
 
+    it("keeps the y-axis finite when a group's series have different lengths", () => {
+      db.setXAxisBand([
+        { text: 'a', type: 'text' },
+        { text: 'b', type: 'text' },
+        { text: 'c', type: 'text' },
+      ]);
+      // "short" has no value for category "c", leaving a hole in its data.
+      db.setBarGroupData({ text: 'G', type: 'text' }, [
+        series('short', 10, 20),
+        series('long', 1, 2, 3),
+      ]);
+
+      db.getDrawableElem();
+
+      const { yAxis } = db.getXYChartData();
+      if (yAxis.type === 'linear') {
+        expect(Number.isNaN(yAxis.max)).toBe(false);
+        expect(Number.isNaN(yAxis.min)).toBe(false);
+        // Tallest stack is category "b": 20 + 2.
+        expect(yAxis.max).toBe(22);
+      }
+    });
+
+    it('extends the y-axis minimum to the most negative stacked total', () => {
+      db.setXAxisBand([
+        { text: 'a', type: 'text' },
+        { text: 'b', type: 'text' },
+      ]);
+      // Stacked totals per category: [-15, -30].
+      db.setBarGroupData({ text: 'G', type: 'text' }, [
+        series('down', -10, -20),
+        series('more', -5, -10),
+      ]);
+
+      db.getDrawableElem();
+
+      const { yAxis } = db.getXYChartData();
+      if (yAxis.type === 'linear') {
+        expect(yAxis.min).toBe(-30);
+      }
+    });
+
     it('does not stack side-by-side single-series groups', () => {
       db.setXAxisBand([
         { text: 'a', type: 'text' },

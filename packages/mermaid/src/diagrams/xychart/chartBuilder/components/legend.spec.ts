@@ -269,4 +269,38 @@ describe('ChartLegend', () => {
 
     expect(labels?.map((l) => (l as { text: string }).text)).toEqual(['online', 'store']);
   });
+
+  it('keeps same-titled plots that differ in kind or color as separate rows', () => {
+    // Only genuinely identical series (same kind, title and color) collapse. A
+    // line named "x" and a bar named "x" are different series, and so are two
+    // bars named "x" drawn in different colors.
+    const collidingData: XYChartData = {
+      title: 'Collisions',
+      xAxis: { type: 'band', title: '', categories: ['Q1'] },
+      yAxis: { type: 'linear', title: '', min: 0, max: 60 },
+      plots: [
+        { type: 'line', title: 'x', strokeFill: '#f00', strokeWidth: 2, data: [['Q1', 10]] },
+        { type: 'bar', title: 'x', fill: '#0f0', group: 'A', data: [['Q1', 20]] },
+        { type: 'bar', title: 'x', fill: '#00f', group: 'B', data: [['Q1', 30]] },
+        // Exact duplicate of the previous bar — this one collapses away.
+        { type: 'bar', title: 'x', fill: '#00f', group: 'C', data: [['Q1', 40]] },
+      ],
+    };
+
+    const legend = new ChartLegend(
+      textDimensionCalculator,
+      chartConfig,
+      collidingData,
+      chartThemeConfig
+    );
+    legend.calculateSpace({ width: 200, height: 200 });
+    legend.setBoundingBoxXY({ x: 0, y: 0 });
+
+    const labels = legend
+      .getDrawableElements()
+      .find((d) => d.type === 'text' && d.groupTexts.join('.') === 'legend.label')?.data;
+
+    // The line, the green bar and the blue bar survive; the duplicate blue bar does not.
+    expect(labels?.map((l) => (l as { text: string }).text)).toEqual(['x', 'x', 'x']);
+  });
 });

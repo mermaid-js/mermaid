@@ -68,9 +68,13 @@ export class BasePlot implements Plot {
     }
     const totalGroups = groupOrder.length;
 
-    // Running cumulative baseline per category for each group's stack, plus how
-    // many series of the group have been drawn so far.
-    const groupBaselines = new Map<string, number[]>();
+    // Each group keeps two independent cumulative baselines per category:
+    // positive segments accumulate upward from zero and negative segments
+    // downward from zero, so a stack that mixes signs diverges around the axis
+    // zero instead of one segment eating into another. groupSeriesCount tracks
+    // how many series of the group have been drawn so far.
+    const positiveBaselines = new Map<string, number[]>();
+    const negativeBaselines = new Map<string, number[]>();
     const groupSeriesCount = new Map<string, number>();
 
     for (const [i, plot] of this.chartData.plots.entries()) {
@@ -91,15 +95,22 @@ export class BasePlot implements Plot {
           {
             const { group } = plot;
             const groupSlot = groupOrder.indexOf(group);
-            let baseline = groupBaselines.get(group);
-            if (!baseline) {
-              baseline = new Array(plot.data.length).fill(0);
-              groupBaselines.set(group, baseline);
+            let positive = positiveBaselines.get(group);
+            let negative = negativeBaselines.get(group);
+            if (!positive || !negative) {
+              positive = new Array(plot.data.length).fill(0);
+              negative = new Array(plot.data.length).fill(0);
+              positiveBaselines.set(group, positive);
+              negativeBaselines.set(group, negative);
             }
             const seriesDrawn = groupSeriesCount.get(group) ?? 0;
             // The first series of a group draws from the axis floor (non-stacked
-            // rendering); later series stack on the running baseline.
-            const stackedBase = seriesDrawn === 0 ? [] : [...baseline];
+            // rendering); later series stack on the running baseline that matches
+            // each value's sign.
+            const stackedBase =
+              seriesDrawn === 0
+                ? []
+                : plot.data.map((d, idx) => (d[1] >= 0 ? positive[idx] : negative[idx]));
             const barPlot = new BarPlot(
               plot,
               this.boundingRect,
@@ -113,8 +124,13 @@ export class BasePlot implements Plot {
             );
             drawableElem.push(...barPlot.getDrawableElement());
 
+            // Advance the baseline that matches each value's sign.
             plot.data.forEach((d, idx) => {
-              baseline[idx] += d[1];
+              if (d[1] >= 0) {
+                positive[idx] += d[1];
+              } else {
+                negative[idx] += d[1];
+              }
             });
             groupSeriesCount.set(group, seriesDrawn + 1);
           }
