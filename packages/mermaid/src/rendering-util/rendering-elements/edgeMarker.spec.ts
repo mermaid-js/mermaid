@@ -92,7 +92,7 @@ describe('addEdgeMarker', () => {
     it('should clone the point marker with the resolved stroke color', () => {
       addEdgeMarkers(
         svgPath,
-        { arrowTypeStart: undefined, arrowTypeEnd: 'arrow_point' },
+        { arrowTypeStart: undefined as any, arrowTypeEnd: 'arrow_point' },
         url,
         id,
         flowchartType,
@@ -113,7 +113,7 @@ describe('addEdgeMarker', () => {
     it('should clone the cross marker with a colored stroke but no fill', () => {
       addEdgeMarkers(
         svgPath,
-        { arrowTypeStart: 'arrow_cross', arrowTypeEnd: undefined },
+        { arrowTypeStart: 'arrow_cross', arrowTypeEnd: undefined as any },
         url,
         id,
         flowchartType,
@@ -132,7 +132,7 @@ describe('addEdgeMarker', () => {
     });
 
     it('should reuse an existing colored marker instead of cloning again', () => {
-      const edge = { arrowTypeStart: undefined, arrowTypeEnd: 'arrow_point' };
+      const edge = { arrowTypeStart: undefined as any, arrowTypeEnd: 'arrow_point' };
       addEdgeMarkers(svgPath, edge, url, id, flowchartType, false, 'red');
       addEdgeMarkers(svgPath, edge, url, id, flowchartType, false, 'red');
       const clonedMarkers = document.querySelectorAll(`[id="${id}_${flowchartType}-pointEnd_red"]`);
@@ -142,7 +142,7 @@ describe('addEdgeMarker', () => {
     it('should keep the original marker for edges without strokeColor', () => {
       addEdgeMarkers(
         svgPath,
-        { arrowTypeStart: undefined, arrowTypeEnd: 'arrow_point' },
+        { arrowTypeStart: undefined as any, arrowTypeEnd: 'arrow_point' },
         url,
         id,
         flowchartType,
@@ -158,7 +158,7 @@ describe('addEdgeMarker', () => {
     it('should clone the circle marker with the resolved stroke color', () => {
       addEdgeMarkers(
         svgPath,
-        { arrowTypeStart: undefined, arrowTypeEnd: 'arrow_circle' },
+        { arrowTypeStart: undefined as any, arrowTypeEnd: 'arrow_circle' },
         url,
         id,
         flowchartType,
@@ -176,7 +176,7 @@ describe('addEdgeMarker', () => {
     });
 
     it('should create distinct clones for differently colored edges without collision', () => {
-      const edge = { arrowTypeStart: undefined, arrowTypeEnd: 'arrow_point' };
+      const edge = { arrowTypeStart: undefined as any, arrowTypeEnd: 'arrow_point' };
       addEdgeMarkers(svgPath, edge, url, id, flowchartType, false, 'red');
       addEdgeMarkers(svgPath, edge, url, id, flowchartType, false, 'blue');
       addEdgeMarkers(svgPath, edge, url, id, flowchartType, false, '#00ff00');
@@ -222,7 +222,7 @@ describe('addEdgeMarker', () => {
       // Render a colored edge that clones the point marker.
       addEdgeMarkers(
         svgPath,
-        { arrowTypeStart: undefined, arrowTypeEnd: 'arrow_point' },
+        { arrowTypeStart: undefined as any, arrowTypeEnd: 'arrow_point' },
         url,
         id,
         flowchartType,
@@ -239,7 +239,7 @@ describe('addEdgeMarker', () => {
       // An edge with no strokeColor still resolves to the untouched original marker.
       addEdgeMarkers(
         svgPath,
-        { arrowTypeStart: undefined, arrowTypeEnd: 'arrow_point' },
+        { arrowTypeStart: undefined as any, arrowTypeEnd: 'arrow_point' },
         url,
         id,
         flowchartType,
