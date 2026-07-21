@@ -107,7 +107,7 @@ elk: {
 
 **Example:**
 
-```
+```mermaid
 ---
 config:
   layout: elk
@@ -139,7 +139,7 @@ elk: {
 
 **Example:**
 
-```
+```mermaid
 ---
 config:
   layout: elk
