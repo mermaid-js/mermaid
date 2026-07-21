@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid ELK Stress-Minimization Layout Demo</title>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+          'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 10px;
+      }
+      .section {
+        max-width: 1000px;
+        margin: 30px auto;
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      .section h2 {
+        color: #2c3e50;
+        border-bottom: 3px solid #27ae60;
+        padding-bottom: 12px;
+        margin-top: 0;
+      }
+      .description {
+        background-color: #eafaf1;
+        padding: 15px;
+        border-left: 5px solid #27ae60;
+        margin: 15px 0;
+        line-height: 1.6;
+        color: #1e5631;
+      }
+      .description strong {
+        color: #145a32;
+      }
+      .description ul {
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+      .description li {
+        margin: 8px 0;
+      }
+      code {
+        background-color: #f4f4f4;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'Courier New', monospace;
+        color: #27ae60;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>ELK Stress-Minimization Layout</h1>
+
+    <div class="section">
+      <h2>What is Stress-Minimization Layout?</h2>
+      <div class="description">
+        Stress-minimization is an optimization-based layout algorithm that arranges nodes to
+        minimize a global stress metric, which measures the discrepancy between ideal and actual
+        distances. This approach tends to produce more compact, aesthetically pleasing layouts with
+        fewer edge crossings and more natural grouping.
+      </div>
+      <div class="description">
+        <strong>Key Features:</strong>
+        <ul>
+          <li><strong>Optimization-based:</strong> Iteratively minimizes layout stress metric</li>
+          <li><strong>Compact:</strong> Creates more condensed layouts than force-directed</li>
+          <li><strong>Organic flow:</strong> Produces naturally flowing, intuitive diagrams</li>
+          <li>
+            <strong>Edge crossing reduction:</strong> Minimizes visual clutter from overlapping
+            edges
+          </li>
+          <li>
+            <strong>Configurable precision:</strong> Control iteration limits and convergence
+            threshold
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Configuration Example</h2>
+      <div class="description">
+        <code>Algorithm:</code> <code>elk.stress</code><br />
+        <code>stressDesiredEdgeLength:</code> Target length for edges (optional)<br />
+        <code>stressIterationLimit:</code> Maximum iterations for optimization (optional)<br />
+        <code>stressEpsilon:</code> Convergence threshold (optional)
+      </div>
+      <p>
+        Stress-minimization is particularly effective for documentation and presentations where
+        visual clarity and aesthetic appeal are priorities.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>Example 1: Business Process Flow</h2>
+      <p>
+        Stress-minimization creates compact, easy-to-follow layouts perfect for documentation and
+        process diagrams. Notice how the layout naturally groups related activities and minimizes
+        edge crossings.
+      </p>
+      <pre class="mermaid">
+flowchart-elk TD
+  Start([Start]) --> Intake[Intake]
+  Intake --> Validate{Validate}
+  Validate -->|Invalid| Reject[Reject]
+  Validate -->|Valid| Process[Process]
+  Process --> Review{Review}
+  Review -->|Need Revision| Revise[Revise]
+  Revise --> Process
+  Review -->|Approved| Finalize[Finalize]
+  Reject --> Notify[Notify User]
+  Finalize --> Archive[Archive]
+  Notify --> End([End])
+  Archive --> End
+</pre
+      >
+    </div>
+
+    <div class="section">
+      <h2>Example 2: System Architecture with Compact Layout</h2>
+      <p>
+        Compare this to force-directed: same graph structure, but stress-minimization creates a more
+        compact presentation suitable for whitepapers, presentations, and documentation.
+      </p>
+      <pre class="mermaid">
+flowchart-elk TD
+  Client[Web Client]
+  Mobile[Mobile App]
+  
+  Client --> API[API Gateway]
+  Mobile --> API
+  
+  API --> Auth[Auth Service]
+  API --> User[User Service]
+  API --> Product[Product Service]
+  
+  Auth --> AuthDB[(Auth DB)]
+  User --> UserDB[(User DB)]
+  Product --> ProductDB[(Product DB)]
+  
+  Auth --> Cache[(Redis Cache)]
+  User --> Cache
+  Product --> Cache
+  
+  API --> Search[Search Service]
+  Search --> ES[(Elasticsearch)]
+  
+  User --> Email[Email Service]
+  Product --> Notification[Notification Service]
+  
+  Email --> Queue[Message Queue]
+  Notification --> Queue
+  
+  Queue --> Worker[Background Worker]
+  Worker --> FileStore[(File Storage)]
+</pre
+      >
+    </div>
+
+    <div class="section">
+      <h2>Example 3: Decision Tree</h2>
+      <p>
+        Stress-minimization excels at creating clear, readable decision trees and flowcharts where
+        clarity and compactness matter more than equal node distribution.
+      </p>
+      <pre class="mermaid">
+flowchart-elk TD
+  Root{Is Request Valid?}
+  Root -->|No| Error1[Return 400 Error]
+  Root -->|Yes| Auth{Authenticated?}
+  Auth -->|No| Error2[Return 401 Error]
+  Auth -->|Yes| Authz{Authorized?}
+  Authz -->|No| Error3[Return 403 Error]
+  Authz -->|Yes| Check{Rate Limited?}
+  Check -->|Yes| Error4[Return 429 Error]
+  Check -->|No| Process[Process Request]
+  Process --> Response[Return 200 OK]
+  Error1 --> Log[Log Error]
+  Error2 --> Log
+  Error3 --> Log
+  Error4 --> Log
+  Response --> Log
+</pre
+      >
+    </div>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      import layouts from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
+      mermaid.initialize({
+        logLevel: 3,
+        flowchart: {
+          layout: 'elk',
+          elk: {
+            algorithm: 'elk.stress',
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

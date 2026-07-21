@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid ELK Force vs Stress Layout Comparison</title>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+          'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 10px;
+      }
+      .intro {
+        max-width: 900px;
+        margin: 0 auto 30px;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        line-height: 1.6;
+        color: #555;
+      }
+      .intro h2 {
+        margin-top: 0;
+        color: #333;
+      }
+      .intro p {
+        margin: 10px 0;
+      }
+      .intro ul {
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+      .intro li {
+        margin: 5px 0;
+      }
+      .comparison-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      .layout-demo {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      .layout-demo h2 {
+        margin-top: 0;
+        color: #333;
+        border-bottom: 3px solid #007bff;
+        padding-bottom: 10px;
+      }
+      .layout-demo .description {
+        background-color: #f8f9fa;
+        padding: 12px;
+        border-left: 4px solid #007bff;
+        margin: 15px 0;
+        font-size: 13px;
+        line-height: 1.5;
+        color: #555;
+      }
+      .mermaid {
+        display: flex;
+        justify-content: center;
+      }
+      @media (max-width: 1024px) {
+        .comparison-container {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>ELK Layout Algorithm Comparison</h1>
+
+    <div class="intro">
+      <h2>Force-Directed vs Stress-Minimization Layouts</h2>
+      <p>
+        Below is the same graph structure rendered with two different ELK layout algorithms. The
+        graph consists of moderately connected nodes that represent a typical workflow or system
+        architecture.
+      </p>
+
+      <h3>Algorithm Overview:</h3>
+      <ul>
+        <li>
+          <strong>elk.force</strong> (left): Physics-based layout that models nodes as repelling
+          particles and edges as springs. Tends to produce well-separated, visually balanced layouts
+          with nodes spread across the canvas. Better for detecting clusters and relationships.
+        </li>
+        <li>
+          <strong>elk.stress</strong> (right): Optimization-based layout that minimizes a global
+          stress metric to produce organic, naturally flowing diagrams. Often creates more compact
+          layouts with intuitive grouping. Better for aesthetically pleasing, less cluttered
+          presentations.
+        </li>
+      </ul>
+
+      <p style="margin-top: 20px; font-style: italic; color: #666">
+        Compare the two layouts to see how the algorithm choice affects the visual representation of
+        the same data.
+      </p>
+    </div>
+
+    <div class="comparison-container">
+      <div class="layout-demo">
+        <h2>Force-Directed Layout</h2>
+        <div class="description">
+          <strong>Algorithm:</strong> elk.force with FRUCHTERMAN_REINGOLD model<br />
+          <strong>Characteristics:</strong> Physics-based, well-distributed, highly separated
+          nodes<br />
+          <strong>Best for:</strong> Showing node relationships and network topology
+        </div>
+        <pre class="mermaid">
+flowchart-elk TD
+  A[API Gateway] --> B[Auth Service]
+  A --> C[User Service]
+  A --> D[Data Service]
+  B --> E[Token Cache]
+  C --> F[User DB]
+  C --> G[Notification Queue]
+  D --> H[Analytics DB]
+  D --> I[Cache Layer]
+  E --> J[Redis]
+  F --> J
+  G --> K[Message Broker]
+  H --> K
+  I --> J
+  K --> L[Notification Worker]
+  L --> M[Email Service]
+  L --> N[SMS Service]
+  J --> B
+  J --> C
+</pre
+        >
+      </div>
+
+      <div class="layout-demo">
+        <h2>Stress-Minimization Layout</h2>
+        <div class="description">
+          <strong>Algorithm:</strong> elk.stress with optimization-based placement<br />
+          <strong>Characteristics:</strong> Compact, organic, minimized edge crossings<br />
+          <strong>Best for:</strong> Aesthetic presentations and documentation
+        </div>
+        <pre class="mermaid">
+flowchart-elk TD
+  A[API Gateway] --> B[Auth Service]
+  A --> C[User Service]
+  A --> D[Data Service]
+  B --> E[Token Cache]
+  C --> F[User DB]
+  C --> G[Notification Queue]
+  D --> H[Analytics DB]
+  D --> I[Cache Layer]
+  E --> J[Redis]
+  F --> J
+  G --> K[Message Broker]
+  H --> K
+  I --> J
+  K --> L[Notification Worker]
+  L --> M[Email Service]
+  L --> N[SMS Service]
+  J --> B
+  J --> C
+</pre
+        >
+      </div>
+    </div>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      import layouts from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
+      mermaid.initialize({
+        logLevel: 3,
+        flowchart: {
+          layout: 'elk',
+        },
+      });
+    </script>
+  </body>
+</html>
