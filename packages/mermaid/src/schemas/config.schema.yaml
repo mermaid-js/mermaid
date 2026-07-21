@@ -180,6 +180,53 @@ properties:
           Only applies when the cyclic flow has no node without incoming edges: if the loop is fed from outside (e.g. a start node pointing into it), that component already has a natural source and nothing is pinned. Detection is also scoped per container, so cycles that cross a subgraph boundary are not detected.
         type: boolean
         default: false
+      forceModel:
+        description: |
+          For elk.force layout: selects between the Eades spring-embedder and the
+          Fruchterman-Reingold force-directed placement model.
+        type: string
+        enum:
+          - EADES
+          - FRUCHTERMAN_REINGOLD
+        default: FRUCHTERMAN_REINGOLD
+      forceIterations:
+        description: |
+          For elk.force layout: number of simulation iterations. Higher values produce
+          better layouts at the cost of runtime.
+        type: integer
+        default: 300
+        minimum: 1
+      forceRepulsion:
+        description: |
+          For elk.force layout (Eades model only): repulsive constant between
+          non-adjacent nodes.
+        type: number
+        default: 5.0
+      forceTemperature:
+        description: |
+          For elk.force layout (Fruchterman-Reingold model only): cooling factor;
+          lower values converge sooner.
+        type: number
+        default: 0.001
+      stressDesiredEdgeLength:
+        description: |
+          For elk.stress layout: the ideal edge length, in pixels, that the
+          stress-majorization algorithm targets. Larger values spread the graph out;
+          smaller values compress it.
+        type: number
+        default: 100.0
+      stressIterationLimit:
+        description: |
+          For elk.stress layout: maximum number of majorization iterations.
+          Leave unset (null) for automatic convergence.
+        type: integer
+        minimum: 1
+      stressEpsilon:
+        description: |
+          For elk.stress layout: convergence threshold. The algorithm stops when the
+          stress improvement in an iteration falls below this value.
+        type: number
+        default: 0.0001
   darkMode:
     type: boolean
     default: false

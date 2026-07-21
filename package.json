@@ -110,6 +110,7 @@
     "@vitest/spy": "^3.2.6",
     "@vitest/ui": "^3.2.6",
     "ajv": "^8.17.1",
+    "baseline-browser-mapping": "^2.10.43",
     "chokidar": "3.6.0",
     "codemirror-lang-mermaid": "^0.5.0",
     "concurrently": "^9.2.1",
