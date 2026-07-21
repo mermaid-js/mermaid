@@ -124,6 +124,7 @@
           <strong>Best for:</strong> Showing node relationships and network topology
         </div>
         <pre class="mermaid">
+%%{init: {'elk': {'algorithm': 'elk.force'}}}%%
 flowchart-elk TD
   A[API Gateway] --> B[Auth Service]
   A --> C[User Service]
@@ -155,6 +156,7 @@ flowchart-elk TD
           <strong>Best for:</strong> Aesthetic presentations and documentation
         </div>
         <pre class="mermaid">
+%%{init: {'elk': {'algorithm': 'elk.stress'}}}%%
 flowchart-elk TD
   A[API Gateway] --> B[Auth Service]
   A --> C[User Service]
