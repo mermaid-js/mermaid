@@ -202,6 +202,13 @@ union A, B`,
     chaotic
       "Page on-call"`,
 
+  quantumCircuit: `quantumCircuit-beta
+    wires q0(0), q1(0)
+    H[q0]
+    CNOT[q0, q1]
+    M[q0]
+    M[q1]`,
+
   eventmodeling: `eventmodeling
     tf 01 evt Start
     tf 02 evt End

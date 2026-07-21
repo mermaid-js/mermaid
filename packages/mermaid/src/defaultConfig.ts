@@ -268,6 +268,18 @@ const config: RequiredDeep<MermaidConfig> = {
   packet: {
     ...defaultConfigJson.packet,
   },
+  quantumCircuit: {
+    ...defaultConfigJson.quantumCircuit,
+    columnWidth: 60,
+    rowHeight: 48,
+    wireSpacing: 48,
+    gateFontSize: 14,
+    showWireLabels: true,
+    wireColor: undefined,
+    classicalWireColor: undefined,
+    gateColor: undefined,
+    controlColor: undefined,
+  },
   eventmodeling: {
     ...defaultConfigJson.eventmodeling,
   },

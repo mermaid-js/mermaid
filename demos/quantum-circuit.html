@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Quantum Circuit demo page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+  </head>
+
+  <body>
+    <h1>Quantum Circuit demos</h1>
+
+    <h2>Bell State (LR)</h2>
+    <pre id="diagram" class="mermaid">
+quantumCircuit-beta LR
+    wires q0(0), q1(0)
+    H[q0]
+    CNOT[q0, q1]
+    M[q0]
+    M[q1]
+    </pre>
+
+    <h2>Bell State (TD)</h2>
+    <pre id="diagram" class="mermaid">
+quantumCircuit-beta TD
+    wires q0(0), q1(0)
+    H[q0]
+    CNOT[q0, q1]
+    M[q0]
+    M[q1]
+    </pre>
+
+    <h2>Quantum Teleportation</h2>
+    <pre id="diagram" class="mermaid">
+quantumCircuit-beta LR
+    wires msg(psi), alice(0), bob(0)
+    cbits c_msg, c_alice
+    H[alice]
+    CNOT[alice, bob]
+    CNOT[msg, alice]
+    H[msg]
+    M[msg]   -> c_msg
+    M[alice] -> c_alice
+    X[bob] if c_alice
+    Z[bob] if c_msg
+    </pre>
+
+    <h2>Toffoli with Zero-Control</h2>
+    <pre id="diagram" class="mermaid">
+quantumCircuit-beta LR
+    wires a(0), b(0), c(0)
+    H[a]
+    H[b]
+    CCX[!a, b, c]
+    M[a]
+    M[b]
+    M[c]
+    </pre>
+
+    <h2>SWAP Gate</h2>
+    <pre id="diagram" class="mermaid">
+quantumCircuit-beta LR
+    wires a(psi), b(phi)
+    H[a]
+    H[b]
+    SWAP[a, b]
+    M[a]
+    M[b]
+    </pre>
+
+    <h2>Grover Oracle (4 qubits)</h2>
+    <pre id="diagram" class="mermaid">
+quantumCircuit-beta LR
+    wires q0(0), q1(0), q2(0), oracle(1)
+    H[q0]
+    H[q1]
+    H[q2]
+    H[oracle]
+    CZ[q0, oracle]
+    CZ[q1, oracle]
+    CZ[q2, oracle]
+    H[q0]
+    H[q1]
+    H[q2]
+    H[oracle]
+    X[q0]
+    X[q1]
+    X[q2]
+    X[oracle]
+    CZ[q0, oracle]
+    CZ[q1, oracle]
+    CZ[q2, oracle]
+    X[q0]
+    X[q1]
+    X[q2]
+    X[oracle]
+    H[q0]
+    H[q1]
+    H[q2]
+    H[oracle]
+    M[q0]
+    M[q1]
+    M[q2]
+    </pre>
+
+    <h2>Barriers and Measurement Basis</h2>
+    <pre id="diagram" class="mermaid">
+quantumCircuit-beta LR
+    wires q0(0), q1(0)
+    H[q0]
+    H[q1]
+    barrier
+    CNOT[q0, q1]
+    barrier
+    MZ[q0]
+    MX[q1]
+    </pre>
+
+    <h2>CSWAP (Fredkin Gate)</h2>
+    <pre id="diagram" class="mermaid">
+quantumCircuit-beta LR
+    wires a(0), b(0), c(0)
+    H[a]
+    CSWAP[a, b, c]
+    M[a]
+    M[b]
+    M[c]
+    </pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({
+        theme: 'default',
+        logLevel: 3,
+        securityLevel: 'loose',
+      });
+    </script>
+  </body>
+</html>

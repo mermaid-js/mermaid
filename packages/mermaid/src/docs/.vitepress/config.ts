@@ -176,6 +176,7 @@ function sidebarSyntax() {
         { text: 'Gantt', link: '/syntax/gantt' },
         { text: 'Pie Chart', link: '/syntax/pie' },
         { text: 'Quadrant Chart', link: '/syntax/quadrantChart' },
+        { text: 'Quantum Circuit 🔥', link: '/syntax/quantumCircuit' },
         { text: 'Requirement Diagram', link: '/syntax/requirementDiagram' },
         { text: 'GitGraph (Git) Diagram', link: '/syntax/gitgraph' },
         { text: 'C4 Diagram 🦺⚠️', link: '/syntax/c4' },

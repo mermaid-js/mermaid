@@ -71,6 +71,24 @@ export {
   isDomainBlock,
   isDomainItem,
   isTransition,
+  QuantumCircuit,
+  GateDeclaration,
+  WireList,
+  CbitList,
+  WireSpec,
+  WireRef,
+  Params,
+  State,
+  Barrier,
+  isQuantumCircuit,
+  isGateDeclaration,
+  isWireList,
+  isCbitList,
+  isWireSpec,
+  isWireRef,
+  isParams,
+  isState,
+  isBarrier,
   Branch,
   Commit,
   Merge,
@@ -116,6 +134,7 @@ export {
   TreeViewGrammarGeneratedModule as TreeViewGeneratedModule,
   WardleyGrammarGeneratedModule as WardleyGeneratedModule,
   CynefinGrammarGeneratedModule as CynefinGeneratedModule,
+  QuantumCircuitGrammarGeneratedModule as QuantumCircuitGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';
@@ -134,3 +153,4 @@ export * from './railroad-peg/index.js';
 export * from './treemap/index.js';
 export * from './wardley/index.js';
 export * from './cynefin/index.js';
+export * from './quantum-circuit/index.js';

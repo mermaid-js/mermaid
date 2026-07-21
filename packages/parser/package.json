@@ -18,7 +18,7 @@
   },
   "scripts": {
     "clean": "rimraf dist src/language/generated",
-    "langium:generate": "langium generate",
+    "langium:generate": "NODE_OPTIONS='--require ./scripts/polyfill-groupby.cjs' langium generate",
     "langium:watch": "langium generate --watch",
     "prepack": "./scripts/prepack.ts"
   },

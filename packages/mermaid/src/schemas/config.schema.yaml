@@ -363,6 +363,8 @@ properties:
     $ref: '#/$defs/CynefinDiagramConfig'
   railroad:
     $ref: '#/$defs/RailroadDiagramConfig'
+  quantumCircuit:
+    $ref: '#/$defs/QuantumCircuitDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration
     description: Configuration options to pass to the `dompurify` library.
@@ -2892,6 +2894,50 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         minimum: 0
         default: 5
+
+  QuantumCircuitDiagramConfig:
+    title: Quantum Circuit Diagram Config
+    description: The object containing configurations specific for quantum circuit diagrams.
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    type: object
+    unevaluatedProperties: false
+    properties:
+      columnWidth:
+        description: Width in pixels of each time-step column (LR mode).
+        type: number
+        minimum: 1
+        default: 60
+      rowHeight:
+        description: Height in pixels of each time-step row (TD mode).
+        type: number
+        minimum: 1
+        default: 48
+      wireSpacing:
+        description: Spacing in pixels between qubit wires.
+        type: number
+        minimum: 1
+        default: 48
+      gateFontSize:
+        description: Font size for gate labels.
+        type: number
+        minimum: 1
+        default: 14
+      showWireLabels:
+        description: Whether to display wire names and initial states.
+        type: boolean
+        default: true
+      wireColor:
+        description: CSS color for qubit wires.
+        type: string
+      classicalWireColor:
+        description: CSS color for classical (double) wires.
+        type: string
+      gateColor:
+        description: CSS color for gate boxes.
+        type: string
+      controlColor:
+        description: CSS color for control dots and connector lines.
+        type: string
 
   FontCalculator:
     title: Font Calculator
