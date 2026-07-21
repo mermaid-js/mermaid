@@ -9,7 +9,7 @@ on:
   pull_request:
   merge_group:
   workflow_dispatch:
-    inputs:
+    inputs: &workflow_inputs
       group_argos_images:
         description: Composite screenshots into batched sheets before Argos upload
         type: boolean
@@ -18,6 +18,8 @@ on:
         description: Cypress spec glob (empty = full suite)
         type: string
         default: ''
+  workflow_call:
+    inputs: *workflow_inputs
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -47,11 +49,9 @@ env:
       )
     }}
   # Automatic runs always batch; manual runs can upload per-screenshot instead.
+  # `inputs.group_argos_images` is `null` for non-manual runs, so treat it like `true`.
   GROUP_ARGOS_IMAGES: >-
-    ${{
-      github.event_name != 'workflow_dispatch' && 'true' ||
-      (inputs.group_argos_images && 'true' || 'false')
-    }}
+    ${{ format('{0}', inputs.group_argos_images) == 'false' && 'false' || 'true' }}
   # On a push to the baseline branch (develop), upload BOTH the grouped sheets
   # and the individual per-test screenshots in a single Argos build, so the
   # default build's baseline is a superset. Scoped grouped PRs and manual
@@ -120,8 +120,14 @@ jobs:
       - name: Detect e2e scope
         id: scope
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            SPEC="${{ github.event.inputs.spec_pattern }}"
+          if [ "$SPEC" != 'null' ]; then
+            SPEC=$(node -e '
+              // `SPEC` should be a JSON string, so unwrap it
+              const assert = require("node:assert");
+              const parsed = JSON.parse(process.env.SPEC);
+              assert.strictEqual(typeof parsed, "string", "SPEC must be a JSON string");
+              console.log(parsed);
+            ')
             if [ -n "$SPEC" ]; then
               echo "spec_pattern=${SPEC}" >> "$GITHUB_OUTPUT"
               echo "matrix=[1]" >> "$GITHUB_OUTPUT"
@@ -194,6 +200,9 @@ jobs:
           # Using == 'false' (instead of == 'true') ensures fork PRs — where
           # repository variables are not exposed — still get scoped runs.
           E2E_SCOPE_BY_DIAGRAM: "${{ vars.E2E_SCOPE_BY_DIAGRAM == 'false' && 'false' || 'true' }}"
+          # Either `null` (no inputs), or a JSON string to the spec_pattern.
+          # Empty JSON string (i.e. `""`) means run the full suite.
+          SPEC: ${{ toJSON( inputs.spec_pattern ) }}
 
   e2e:
     # Skip the entire e2e job when only docs/ignorable files changed.
