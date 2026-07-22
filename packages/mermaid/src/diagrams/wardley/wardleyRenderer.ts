@@ -590,7 +590,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
   // final position, and so the boxes can be fed in as placement obstacles.
   // The square and boxes are unchanged — they have always rendered here; only
   // the timing of this computation moved earlier so label placement sees it.
-  const pipelineBoxes: Rect[] = [];
+  const pipelineBoxesByParent = new Map<string, Rect>();
   if (data.pipelines.length > 0) {
     const pipelineBoxHeight = configValues.nodeRadius * 4;
     const pipelineBoxPadding = 15;
@@ -615,7 +615,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
         parentPos.x = (minX + maxX) / 2;
         parentPos.y = y - pipelineBoxHeight / 2 - squareSize / 6;
       }
-      pipelineBoxes.push({
+      pipelineBoxesByParent.set(pipeline.nodeId, {
         x: minX - pipelineBoxPadding,
         y: y - pipelineBoxHeight / 2,
         width: maxX - minX + pipelineBoxPadding * 2,
@@ -623,6 +623,8 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
       });
     });
   }
+  // Shared with the pipeline-box render block below so both use identical geometry.
+  const pipelineBoxes = [...pipelineBoxesByParent.values()];
 
   const chartBounds = {
     x: configValues.padding,
@@ -718,35 +720,18 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
           .attr('stroke-dasharray', '4 4');
       }
 
-      // Find min and max X coordinates of pipeline components
-      let minX = Infinity;
-      let maxX = -Infinity;
-      let y = 0;
-
-      pipeline.componentIds.forEach((componentId) => {
-        const pos = positions.get(componentId);
-        if (pos) {
-          minX = Math.min(minX, pos.x);
-          maxX = Math.max(maxX, pos.x);
-          y = pos.y;
-        }
-      });
-
-      if (minX !== Infinity && maxX !== -Infinity) {
-        const padding = 15; // Padding around the box
-        const height = configValues.nodeRadius * 4; // Height of the pipeline box
-        const boxTop = y - height / 2;
-
-        // The parent square was already repositioned to the pipeline centre
-        // before label auto-placement — see the pipeline pre-pass above.
-
+      // Reuse the box geometry computed in the pipeline pre-pass above so the
+      // rendered box and the label-placement obstacle can never drift apart.
+      // The parent square was already repositioned to the pipeline centre there.
+      const box = pipelineBoxesByParent.get(pipeline.nodeId);
+      if (box) {
         pipelineGroup
           .append('rect')
           .attr('class', 'wardley-pipeline-box')
-          .attr('x', minX - padding)
-          .attr('y', boxTop)
-          .attr('width', maxX - minX + padding * 2)
-          .attr('height', height)
+          .attr('x', box.x)
+          .attr('y', box.y)
+          .attr('width', box.width)
+          .attr('height', box.height)
           .attr('fill', 'none')
           .attr('stroke', theme.axisColor)
           .attr('stroke-width', 1.5)
