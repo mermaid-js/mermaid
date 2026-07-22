@@ -35,7 +35,7 @@ const rect = async (parent, node) => {
     let target;
     if (siteConfig.securityLevel === 'sandbox') {
       target = '_top';
-    } else if (node.linkTarget) {
+    } else {
       target = node.linkTarget || '_blank';
     }
     labelParent = shapeSvg

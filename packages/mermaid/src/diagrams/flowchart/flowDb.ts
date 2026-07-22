@@ -1207,6 +1207,10 @@ You have to call mermaid.initialize.`
           dir: subGraph.dir === 'TD' ? 'TB' : subGraph.dir, // normalize TD→TB for dagre
           isGroup: false,
           look: config.look,
+          link: subGraph.link,
+          linkTarget: subGraph.linkTarget,
+          haveCallback: subGraph.haveCallback,
+          tooltip: this.getTooltip(subGraph.id),
         });
       } else {
         nodes.push({
