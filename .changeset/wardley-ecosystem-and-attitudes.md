@@ -15,7 +15,7 @@ Extends the `wardley-beta` diagram to match more of the OWM syntax:
 
 Example:
 
-```
+```mermaid
 wardley-beta
 component Developer Platform [0.78, 0.10] (ecosystem)
 pioneers [0.95, 0.05, 0.55, 0.30]
