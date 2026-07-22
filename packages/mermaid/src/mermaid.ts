@@ -41,6 +41,19 @@ export type {
   SyncIconLoader,
   UnknownDiagramError,
 };
+export {
+  clearLayoutRenderState,
+  createCommonLayoutRenderer,
+  defaultMeasureLayout,
+  paintLayoutData,
+} from './rendering-util/layout-algorithms/common/index.js';
+export type {
+  CommonLayoutMeasure,
+  CommonLayoutPaintContext,
+  CommonLayoutPaintOptions,
+  CommonLayoutRenderContext,
+  CommonLayoutRendererDefinition,
+} from './rendering-util/layout-algorithms/common/index.js';
 
 export interface RunOptions {
   /**

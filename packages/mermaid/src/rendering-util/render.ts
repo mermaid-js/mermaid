@@ -42,6 +42,10 @@ const registerDefaultLayoutLoaders = () => {
       name: 'dagre',
       loader: async () => await import('./layout-algorithms/dagre/index.js'),
     },
+    {
+      name: 'swimlane',
+      loader: async () => await import('./layout-algorithms/swimlanes/index.js'),
+    },
     ...(injected.includeLargeFeatures
       ? [
           {

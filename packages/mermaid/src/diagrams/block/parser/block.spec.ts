@@ -1,11 +1,14 @@
 // @ts-ignore: jison doesn't export types
 import block from './block.jison';
 import db from '../blockDB.js';
+import * as configApi from '../../../config.js';
 import { log } from '../../../logger.js';
 
 describe('Block diagram', function () {
   describe('when parsing a block diagram graph it should handle > ', function () {
     beforeEach(function () {
+      configApi.setSiteConfig({});
+      configApi.reset();
       block.parser.yy = db;
       block.parser.yy.clear();
       block.parser.yy.getLogger = () => console;
@@ -33,6 +36,16 @@ describe('Block diagram', function () {
       expect(blocks[0].id).toBe('id');
       expect(blocks[0].label).toBe('A label');
       expect(blocks[0].type).toBe('square');
+    });
+    it('sanitizes labels with the current dompurify config', () => {
+      configApi.setSiteConfig({ dompurifyConfig: { FORBID_TAGS: ['b'] } });
+      const str = `block
+          id["<b>Bold</b>"]
+          `;
+
+      block.parse(str);
+      const blocks = db.getBlocks();
+      expect(blocks[0].label).toBe('Bold');
     });
     it('a diagram with multiple nodes', () => {
       const str = `block

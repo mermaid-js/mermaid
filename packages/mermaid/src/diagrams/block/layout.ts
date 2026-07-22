@@ -2,8 +2,6 @@ import type { BlockDB } from './blockDB.js';
 import type { Block } from './blockTypes.js';
 import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-// TODO: This means the number we provide in diagram's config will never be used. Should fix.
-const padding = getConfig()?.block?.padding ?? 8;
 
 interface BlockPosition {
   px: number;
@@ -71,7 +69,13 @@ const getMaxChildSize = (block: Block) => {
   return { width: maxWidth, height: maxHeight };
 };
 
-function setBlockSizes(block: Block, db: BlockDB, siblingWidth = 0, siblingHeight = 0) {
+function setBlockSizes(
+  block: Block,
+  db: BlockDB,
+  siblingWidth = 0,
+  siblingHeight = 0,
+  padding = 8
+) {
   log.debug(
     'setBlockSizes abc95 (start)',
     block.id,
@@ -94,7 +98,7 @@ function setBlockSizes(block: Block, db: BlockDB, siblingWidth = 0, siblingHeigh
 
   if (block.children?.length > 0) {
     for (const child of block.children) {
-      setBlockSizes(child, db);
+      setBlockSizes(child, db, 0, 0, padding);
     }
     // find max width of children
     const childSize = getMaxChildSize(block);
@@ -120,7 +124,7 @@ function setBlockSizes(block: Block, db: BlockDB, siblingWidth = 0, siblingHeigh
       }
     }
     for (const child of block.children) {
-      setBlockSizes(child, db, maxWidth, maxHeight);
+      setBlockSizes(child, db, maxWidth, maxHeight, padding);
     }
 
     const columns = block.columns ?? -1;
@@ -202,7 +206,7 @@ function setBlockSizes(block: Block, db: BlockDB, siblingWidth = 0, siblingHeigh
   );
 }
 
-function layoutBlocks(block: Block, db: BlockDB) {
+function layoutBlocks(block: Block, db: BlockDB, padding = 8) {
   log.debug(
     `abc85 layout blocks (=>layoutBlocks) ${block.id} x: ${block?.size?.x} y: ${block?.size?.y} width: ${block?.size?.width}`
   );
@@ -301,7 +305,7 @@ function layoutBlocks(block: Block, db: BlockDB) {
         );
       }
       if (child.children) {
-        layoutBlocks(child, db);
+        layoutBlocks(child, db, padding);
       }
       let columnsFilled = child?.widthInColumns ?? 1;
       if (columns > 0) {
@@ -350,8 +354,9 @@ export function layout(db: BlockDB) {
     return;
   }
 
-  setBlockSizes(root, db, 0, 0);
-  layoutBlocks(root, db);
+  const padding = getConfig()?.block?.padding ?? 8;
+  setBlockSizes(root, db, 0, 0, padding);
+  layoutBlocks(root, db, padding);
   // Position blocks relative to parents
   // positionBlock(root, root, db);
   log.debug('getBlocks', JSON.stringify(root, null, 2));

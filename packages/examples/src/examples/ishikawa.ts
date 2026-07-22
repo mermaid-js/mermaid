@@ -31,5 +31,26 @@ ishikawa-beta
         Too dark
 `,
     },
+    {
+      title: 'Late Food Delivery Root Causes',
+      code: `
+ishikawa-beta
+    Late Food Delivery
+    Process
+        Orders batched too long
+        Kitchen queue not prioritized
+    People
+        Not enough drivers on shift
+        New cook still in training
+    Equipment
+        Oven capacity too small
+        Delivery bags lose heat
+    Environment
+        Heavy rain
+        Road construction on main route
+    Measurement
+        No alert when prep time exceeds target
+`,
+    },
   ],
 } satisfies DiagramMetadata;

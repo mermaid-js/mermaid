@@ -16,12 +16,10 @@ const COLOR_KEYWORD = 'color';
 const FILL_KEYWORD = 'fill';
 const BG_FILL = 'bgFill';
 const STYLECLASS_SEP = ',';
-const config = getConfig();
-
 let classes = new Map<string, ClassDef>();
 let diagramId = '';
 
-const sanitizeText = (txt: string) => common.sanitizeText(txt, config);
+const sanitizeText = (txt: string) => common.sanitizeText(txt, getConfig());
 
 /**
  * Called when the parser comes across a (style) class definition

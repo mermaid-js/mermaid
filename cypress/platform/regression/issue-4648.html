@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Mermaid Subgraph Direction Test (Issue #4648)</title>
+    <script type="module" src="/demos/render-mermaid.js"></script>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 2em;
+      }
+      .mermaid {
+        background: #fff;
+        border: 1px solid #ccc;
+        margin: 2em 0;
+        padding: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Mermaid Subgraph Direction Test (Issue #4648)</h1>
+    <p>This page demonstrates various subgraph direction scenarios for regression testing.</p>
+
+    <h2>Sibling Subgraphs with Different Directions</h2>
+    <pre class="mermaid">
+flowchart TD
+
+subgraph Group1
+  direction TB
+  A1 --> A2
+  A2 --> A3
+end
+
+subgraph Group2
+  direction LR
+  B1 --> B2
+  B2 --> B3
+end
+
+subgraph Group3
+  direction LR
+  C1 --> C2
+  C2 --> C3
+end
+
+%% External connections between subgraphs
+A3 --- B1
+B3 --- C1
+  </pre
+    >
+
+    <h2>Nested Subgraph with External Connections</h2>
+    <pre class="mermaid">
+flowchart TD
+
+subgraph Wrapper
+  direction LR
+  subgraph Inner
+    D1 --> D2
+    D2 --> D3
+  end
+end
+
+%% External connection to nested subgraph
+D3 --- E1
+  </pre
+    >
+  </body>
+</html>

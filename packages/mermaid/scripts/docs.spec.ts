@@ -1,4 +1,10 @@
-import { buildShapeDoc, transformMarkdownAst, transformToBlockQuote } from './docs.mjs';
+import {
+  buildShapeDoc,
+  MERMAID_RELEASE_VERSION,
+  replaceVersionPlaceholder,
+  transformMarkdownAst,
+  transformToBlockQuote,
+} from './docs.mjs';
 
 import { remark } from 'remark'; // import it this way so we can mock it
 import remarkFrontmatter from 'remark-frontmatter';
@@ -221,6 +227,30 @@ This Markdown should be kept.
         | Text Block                        | Text Block             | \`text\`         | Text block                     |                                                                  |
         "
       `);
+    });
+  });
+
+  describe('replaceVersionPlaceholder', () => {
+    const placeholder = '<MERMAID_RELEASE_VERSION>';
+
+    it('replaces a single placeholder with the current version', () => {
+      const result = replaceVersionPlaceholder(`Available since ${placeholder}.`);
+      expect(result).toBe(`Available since ${MERMAID_RELEASE_VERSION}.`);
+    });
+
+    it('replaces all occurrences of the placeholder', () => {
+      const result = replaceVersionPlaceholder(
+        `Since ${placeholder}. Also added in ${placeholder}.`
+      );
+      expect(result).toBe(
+        `Since ${MERMAID_RELEASE_VERSION}. Also added in ${MERMAID_RELEASE_VERSION}.`
+      );
+      expect(result).not.toContain(placeholder);
+    });
+
+    it('leaves content unchanged when no placeholder is present', () => {
+      const content = 'No placeholder here.';
+      expect(replaceVersionPlaceholder(content)).toBe(content);
     });
   });
 });

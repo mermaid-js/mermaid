@@ -98,6 +98,18 @@ radar-beta
   max 100
   min 0`,
 
+  railroad: `railroad-beta
+    rule = choice(terminal("a"), terminal("b")) ;`,
+
+  railroadEbnf: `railroad-ebnf-beta
+    rule = "a" | "b" ;`,
+
+  railroadAbnf: `railroad-abnf-beta
+    rule = "a" / "b" ;`,
+
+  railroadPeg: `railroad-peg-beta
+    rule <- "a" / "b" ;`,
+
   treemap: `treemap-beta
 "Section 1"
     "Leaf 1.1": 12
@@ -160,7 +172,7 @@ union A, B`,
     service db(database)[DB]
     api:R -- L:db`,
 
-  'wardley-beta': `wardley-beta
+  wardley: `wardley-beta
     title Kettle Evolution Pipeline
     size [1100, 800]
 
@@ -178,6 +190,17 @@ union A, B`,
     Campfire Kettle -> Kettle
     Electric Kettle -> Kettle
     Smart Kettle -> Kettle`,
+
+  cynefin: `cynefin-beta
+    title Incident Response
+    complex
+      "Investigate root cause"
+    complicated
+      "Analyze metrics"
+    clear
+      "Restart service"
+    chaotic
+      "Page on-call"`,
 
   eventmodeling: `eventmodeling
     tf 01 evt Start
@@ -258,6 +281,7 @@ describe('Multi-diagram ID uniqueness', () => {
     'state', // legacy alias, covered by stateDiagram
     'flowchart-elk', // ELK layout variant, same renderer as flowchart-v2
     'mindmap', // uses unified pipeline (IDs are prefixed), but cytoscape crashes in JSDOM
+    'swimlane', // reuses the flowchart renderer (createFlowDiagram); IDs covered by flowchart-v2
   ]);
 
   it('"journey" — task line IDs are scoped with the diagram ID', async () => {

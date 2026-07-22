@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { detectScope, SPEC_BASE_DIR } from './e2e-diagram-scope.mjs';
+import { detectScope, SPEC_BASE_DIR, SKIP } from './e2e-diagram-scope.mjs';
 
 // The tests run in the repo root, so the spec subfolders created by the file
 // reorganisation are present on disk — no mocking needed.
@@ -92,6 +92,73 @@ describe('detectScope', () => {
     ]);
     // Both point to the same subfolder — should deduplicate
     expect(result.split(',').filter((s) => s === `${SPEC_BASE_DIR}/gantt/**`).length).toBe(1);
+  });
+});
+
+describe('ignorable files (docs-only, changesets, etc.)', () => {
+  it('returns SKIP when only docs source files change', () => {
+    expect(
+      detectScope([
+        'packages/mermaid/src/docs/syntax/flowchart.md',
+        'packages/mermaid/src/docs/config/theming.md',
+      ])
+    ).toBe(SKIP);
+  });
+
+  it('returns SKIP when only root markdown files change', () => {
+    expect(detectScope(['README.md', 'CONTRIBUTING.md'])).toBe(SKIP);
+  });
+
+  it('returns SKIP when only changeset files change', () => {
+    expect(detectScope(['.changeset/cool-feature.md'])).toBe(SKIP);
+  });
+
+  it('returns SKIP when only generated docs change', () => {
+    expect(detectScope(['docs/syntax/flowchart.md', 'docs/intro/index.md'])).toBe(SKIP);
+  });
+
+  it('returns SKIP when only AI/assistant config changes', () => {
+    expect(detectScope(['.claude/settings.json', 'assistant/CONVENTIONS.md'])).toBe(SKIP);
+  });
+
+  it('returns SKIP when only docs CI workflows change', () => {
+    expect(
+      detectScope(['.github/workflows/build-docs.yml', '.github/workflows/publish-docs.yml'])
+    ).toBe(SKIP);
+  });
+
+  it('returns SKIP when only demo files change', () => {
+    expect(detectScope(['demos/architecture.html'])).toBe(SKIP);
+  });
+
+  it('scopes to diagram when diagram source + file in demo folder changed', () => {
+    const result = detectScope([
+      'packages/mermaid/src/diagrams/flowchart/flowchartDb.ts',
+      'demos/sequence.html',
+    ]);
+    expect(result).toBe(`${SPEC_BASE_DIR}/flowchart/**`);
+  });
+
+  it('scopes to diagram when diagram source + docs both change', () => {
+    const result = detectScope([
+      'packages/mermaid/src/diagrams/flowchart/flowchartDb.ts',
+      'packages/mermaid/src/docs/syntax/flowchart.md',
+    ]);
+    expect(result).toBe(`${SPEC_BASE_DIR}/flowchart/**`);
+  });
+
+  it('falls back to full suite when shared code + docs both change', () => {
+    expect(
+      detectScope([
+        'packages/mermaid/src/rendering-util/edgeDetails.ts',
+        'packages/mermaid/src/docs/syntax/flowchart.md',
+      ])
+    ).toBe('');
+  });
+
+  it('falls back to full suite for non-docs CI workflows', () => {
+    // e2e.yml affects test execution — not ignorable
+    expect(detectScope(['.github/workflows/e2e.yml'])).toBe('');
   });
 });
 

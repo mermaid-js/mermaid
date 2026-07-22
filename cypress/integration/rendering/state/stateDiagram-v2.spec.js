@@ -20,6 +20,22 @@ describe('State diagram', () => {
       { logLevel: 0, fontFamily: 'courier' }
     );
   });
+  it('v2 should render click directive tooltips on linked states', () => {
+    renderGraph(
+      `
+    stateDiagram-v2
+    A: Google
+    click A "https://google.com" "Visit Google"
+      `,
+      { securityLevel: 'loose', screenshot: false }
+    );
+
+    cy.get('svg a')
+      .filter((_index, link) => link.getAttribute('xlink:href') === 'https://google.com')
+      .should('have.length', 1)
+      .find('g.node[title="Visit Google"]')
+      .should('exist');
+  });
   it('v2 should render a long descriptions instead of id when available', () => {
     imgSnapshotTest(
       `
@@ -345,6 +361,18 @@ stateDiagram
       }
     );
   });
+  it('v2 should render a compact self-loop edge', () => {
+    imgSnapshotTest(
+      `
+stateDiagram-v2
+  [*] --> Node
+  Node --> Node: Self Edge
+    `,
+      {
+        logLevel: 0,
+      }
+    );
+  });
   it('v2 width of compound state should grow with title if title is wider', () => {
     imgSnapshotTest(
       `
@@ -493,6 +521,34 @@ stateDiagram-v2
       expect(svg).to.not.have.attr('style');
     });
   });
+
+  for (const { look, nodeSelector } of [
+    { look: 'classic', nodeSelector: 'g.node' },
+    { look: 'handDrawn', nodeSelector: 'g.rough-node' },
+  ]) {
+    it(`v2 should render clickable state nodes with a tooltip title for ${look} look`, () => {
+      renderGraph(
+        `
+      stateDiagram-v2
+        A: Google
+        click A "https://google.com" "Visit Google"
+        `,
+        { look, securityLevel: 'loose', screenshot: false }
+      );
+
+      cy.get('svg a').should(($links) => {
+        const clickableLink = $links
+          .toArray()
+          .find((link) => link.getAttribute('xlink:href') === 'https://google.com');
+        expect(clickableLink, 'clickable state link').to.not.equal(undefined);
+        expect(clickableLink?.getAttribute('title')).to.equal('Visit Google');
+
+        const stateNode = clickableLink?.querySelector(`${nodeSelector}[title="Visit Google"]`);
+        expect(stateNode, 'clickable state node').to.not.equal(null);
+        expect(stateNode?.textContent).to.contain('Google');
+      });
+    });
+  }
 
   it('v2 should render a state diagram and set the correct length of the labels', () => {
     imgSnapshotTest(

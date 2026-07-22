@@ -1615,6 +1615,50 @@ flowchart LR
     outside ---> top2
 ```
 
+### Collapsible subgraphs (v\<MERMAID_RELEASE_VERSION>+)
+
+A subgraph can be collapsed into a single compact node by attaching the metadata
+`@{ view: collapsed }` to its id. This is useful for hiding the internals of a
+group while still showing how it connects to the rest of the diagram.
+
+```mermaid-example
+flowchart TD
+    Start --> one
+    subgraph one [My Group]
+        A --> B
+        B --> C
+    end
+    one --> End
+    one@{ view: collapsed }
+```
+
+```mermaid
+flowchart TD
+    Start --> one
+    subgraph one [My Group]
+        A --> B
+        B --> C
+    end
+    one --> End
+    one@{ view: collapsed }
+```
+
+The metadata is attached with the existing `id@{ ... }` statement syntax, where
+`id` is the subgraph id (use `subgraph id [Title]` to give a subgraph an explicit
+id). When a subgraph is collapsed:
+
+- Its internal nodes are hidden and it is drawn as a single node carrying the
+  subgraph's title.
+- Edges that cross the subgraph boundary are **redirected to the collapsed node**.
+- Edges that are entirely internal to the collapsed subgraph are dropped (they
+  would otherwise become self-loops on the collapsed node).
+- For nested subgraphs, a collapse resolves to the **outermost** collapsed
+  ancestor, so an edge pointing at a deeply nested node lands on the outermost
+  collapsed group.
+
+`view: expanded` is the default and renders the subgraph normally, so omitting the
+metadata (or setting `view: expanded`) keeps the existing behavior.
+
 ## Markdown Strings
 
 The "Markdown Strings" feature enhances flowcharts and mind maps by offering a more versatile string type, which supports text formatting options such as bold and italics, and automatically wraps text within labels.

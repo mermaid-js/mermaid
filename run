@@ -10,12 +10,12 @@ red()           { ansi 31 "$@"; }
 
 name=$(basename $0)
 command=$1
-args=${@:2}
+args=("${@:2}")
 
 case $command in
 
 build)
-docker compose build $args
+docker compose build "${args[@]}"
 ;;
 
 sh)
@@ -23,7 +23,7 @@ $RUN mermaid sh
 ;;
 
 pnpm)
-$RUN mermaid sh -c "pnpm $args"
+$RUN mermaid sh -c 'pnpm "$@"' sh "${args[@]}"
 ;;
 
 dev)
@@ -35,7 +35,7 @@ $RUN --service-ports mermaid sh -c "pnpm run --filter mermaid docs:dev:docker"
 ;;
 
 cypress)
-$RUN cypress $args
+$RUN cypress "${args[@]}"
 ;;
 
 help|"")
