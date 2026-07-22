@@ -130,15 +130,23 @@ export const getDateFormat = function () {
   return dateFormat;
 };
 
+const mergeTokens = (existing, txt) => {
+  const tokens = txt
+    .toLowerCase()
+    .split(/[\s,]+/)
+    .filter((t) => t !== '');
+  return [...new Set([...existing, ...tokens])];
+};
+
 export const setIncludes = function (txt) {
-  includes = txt.toLowerCase().split(/[\s,]+/);
+  includes = mergeTokens(includes, txt);
 };
 
 export const getIncludes = function () {
   return includes;
 };
 export const setExcludes = function (txt) {
-  excludes = txt.toLowerCase().split(/[\s,]+/);
+  excludes = mergeTokens(excludes, txt);
 };
 
 export const getExcludes = function () {
@@ -251,14 +259,16 @@ const checkTaskDates = function (task, dateFormat, excludes, includes) {
  * @param {dayjs.Dayjs} startTime - The start time.
  * @param {dayjs.Dayjs} endTime - The original end time (will return a different end time if it's invalid).
  * @param {string} dateFormat - Dayjs date format string.
- * @param {*} excludes
- * @param {*} includes
+ * @param {string[]} excludes - Dates or days to exclude.
+ * @param {string[]} includes - Dates to always include, even if they match the excludes.
  * @returns {[endTime: dayjs.Dayjs, renderEndTime: Date | null]} The new `endTime`, and the end time to render.
  * `renderEndTime` may be `null` if `startTime` is newer than `endTime`.
+ * @throws {Error} If a valid end time cannot be found after 10,000 iterations.
  */
 const fixTaskDates = function (startTime, endTime, dateFormat, excludes, includes) {
   let invalid = false;
   let renderEndTime = null;
+  const maxEndTime = endTime.add(10000, 'd');
   while (startTime <= endTime) {
     if (!invalid) {
       renderEndTime = endTime.toDate();
@@ -266,6 +276,11 @@ const fixTaskDates = function (startTime, endTime, dateFormat, excludes, include
     invalid = isInvalidDate(startTime, dateFormat, excludes, includes);
     if (invalid) {
       endTime = endTime.add(1, 'd');
+      if (endTime > maxEndTime) {
+        throw new Error(
+          'Failed to find a valid date that was not excluded by `excludes` after 10,000 iterations.'
+        );
+      }
     }
     startTime = startTime.add(1, 'd');
   }
@@ -560,9 +575,13 @@ export const addTask = function (descr, data) {
   rawTask.crit = taskInfo.crit;
   rawTask.milestone = taskInfo.milestone;
   rawTask.vert = taskInfo.vert;
-  rawTask.order = lastOrder;
 
-  lastOrder++;
+  if (rawTask.vert) {
+    rawTask.order = -1;
+  } else {
+    rawTask.order = lastOrder;
+    lastOrder++;
+  }
 
   const pos = rawTasks.push(rawTask);
 

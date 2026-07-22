@@ -1,0 +1,59 @@
+{
+  "nodes": [
+    {
+      "id": "subGraph0",
+      "isGroup": true
+    },
+    {
+      "id": "C",
+      "width": 42.1171875,
+      "height": 45
+    },
+    {
+      "id": "D",
+      "width": 151.0546875,
+      "height": 151.0546875
+    },
+    {
+      "id": "F",
+      "width": 154.171875,
+      "height": 45
+    },
+    {
+      "id": "I",
+      "width": 35.890625,
+      "height": 45
+    },
+    {
+      "id": "J",
+      "width": 130.8203125,
+      "height": 45
+    },
+    {
+      "id": "K",
+      "width": 161.96875,
+      "height": 45
+    },
+    {
+      "id": "edge-label-D-F-L_D_F_0",
+      "width": 22.84375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-I-J-L_I_J_0",
+      "width": 17.8984375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-I-K-L_I_K_0",
+      "width": 22.84375,
+      "height": 21
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "00ffb238833e3b2cd7bed3f2617db48165ca5adbc99fe77553a0031477b02943",
+    "capturedAt": "2026-05-06T00:00:00.000Z",
+    "capturedFrom": "browser-dev layout-tests/deploy-pipeline-simplified.mmd theme=default look=classic"
+  }
+}

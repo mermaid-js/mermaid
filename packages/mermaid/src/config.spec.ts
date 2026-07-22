@@ -50,6 +50,40 @@ describe('when working with site config', () => {
       updatedConfig.quadrantChart!.chartWidth
     );
   });
+  it('should default swimlane layering options to true', () => {
+    const config = configApi.getConfig();
+
+    expect(config.swimlane?.ignoreCrossLaneEdges).toBe(true);
+    expect(config.swimlane?.optimizeRanksByCrossings).toBe(true);
+    expect(config.swimlane?.automaticLaneOrdering).toBe(false);
+  });
+
+  it('should default ELK node placement alignment to NONE', () => {
+    const config = configApi.getConfig();
+
+    expect(config.elk?.nodePlacementAlignment).toBe('NONE');
+  });
+
+  it('should default class diagrams to dagre-wrapper without forcing class padding', () => {
+    const config = configApi.getConfig();
+
+    expect(config.class?.defaultRenderer).toBe('dagre-wrapper');
+    expect(config.class?.padding).toBeUndefined();
+  });
+
+  it('should retain railroad directives after sanitization', () => {
+    configApi.saveConfigFromInitialize({});
+    configApi.addDirective({
+      railroad: {
+        fontSize: 18,
+        fontFamily: 'Courier New',
+      },
+    });
+
+    const currentConfig = configApi.getConfig();
+    expect(currentConfig.railroad?.fontSize).toBe(18);
+    expect(currentConfig.railroad?.fontFamily).toBe('Courier New');
+  });
   it('should set reset config properly', () => {
     const config_0 = { fontFamily: 'foo-font', fontSize: 150 };
     configApi.setSiteConfig(config_0);

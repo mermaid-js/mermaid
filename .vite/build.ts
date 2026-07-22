@@ -79,6 +79,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
     define: {
       'import.meta.vitest': 'undefined',
       'injected.includeLargeFeatures': 'true',
+      'injected.profiling': 'false',
       'injected.version': `'0.0.0'`,
     },
     resolve: {

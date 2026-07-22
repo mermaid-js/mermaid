@@ -18,10 +18,8 @@ import {
   InvalidStyleError,
 } from './utils.js';
 
-const config = getConfig();
-
 function textSanitizer(text: string) {
-  return sanitizeText(text.trim(), config);
+  return sanitizeText(text.trim(), getConfig());
 }
 
 interface LexTextObj {

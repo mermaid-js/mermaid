@@ -1,0 +1,75 @@
+{
+  "nodes": [
+    {
+      "id": "L1",
+      "width": 47.578125,
+      "height": 45
+    },
+    {
+      "id": "L2",
+      "width": 47.578125,
+      "height": 45
+    },
+    {
+      "id": "C",
+      "width": 42.125,
+      "height": 45
+    },
+    {
+      "id": "M1",
+      "width": 51.453125,
+      "height": 45
+    },
+    {
+      "id": "R1",
+      "width": 49.90625,
+      "height": 45
+    },
+    {
+      "id": "R2",
+      "width": 49.90625,
+      "height": 45
+    },
+    {
+      "id": "E1",
+      "width": 49.125,
+      "height": 45
+    },
+    {
+      "id": "E2",
+      "width": 49.125,
+      "height": 45
+    },
+    {
+      "id": "E3",
+      "width": 49.125,
+      "height": 45
+    },
+    {
+      "id": "E4",
+      "width": 49.125,
+      "height": 45
+    },
+    {
+      "id": "E5",
+      "width": 49.125,
+      "height": 45
+    },
+    {
+      "id": "edge-label-C-E1-L_C_E1_0",
+      "width": 45.9375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-C-E2-L_C_E2_0",
+      "width": 45.9375,
+      "height": 21
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "c24e556ffa7e8ac70465449c7206cf098c6c083a94e722d33e567eee53e7a2c6",
+    "capturedAt": "2026-05-06T00:00:00.000Z",
+    "capturedFrom": "browser-dev layout-tests/edge-types.mmd theme=default look=classic"
+  }
+}

@@ -1,0 +1,9 @@
+flowchart TD
+  C --> D{Tests Passed?}
+  D -->|Yes| F[Build Docker Image]
+
+  subgraph Deploy Pipeline
+    F --> I
+    I -->|No| J[Rollback & Alert]
+    I -->|Yes| K[Deploy to Production]
+  end

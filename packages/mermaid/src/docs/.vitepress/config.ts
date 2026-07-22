@@ -164,6 +164,7 @@ function sidebarSyntax() {
       collapsed: false,
       items: [
         { text: 'Flowchart', link: '/syntax/flowchart' },
+        { text: 'Swimlanes Diagram', link: '/syntax/swimlanes' },
         { text: 'Sequence Diagram', link: '/syntax/sequenceDiagram' },
         { text: 'Class Diagram', link: '/syntax/classDiagram' },
         { text: 'State Diagram', link: '/syntax/stateDiagram' },
@@ -193,6 +194,7 @@ function sidebarSyntax() {
         { text: 'Venn 🔥', link: '/syntax/venn' },
         { text: 'Ishikawa 🔥', link: '/syntax/ishikawa' },
         { text: 'Wardley 🔥', link: '/syntax/wardley' },
+        { text: 'Cynefin 🔥', link: '/syntax/cynefin' },
         { text: 'TreeView 🔥', link: '/syntax/treeView' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],

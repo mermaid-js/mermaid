@@ -132,6 +132,19 @@ properties:
           - LINEAR_SEGMENTS
           - BRANDES_KOEPF
         default: BRANDES_KOEPF
+      nodePlacementAlignment:
+        description: |
+          Elk specific option affecting Brandes-Koepf node placement alignment.
+          NONE picks the alignment with the smallest height.
+        type: string
+        enum:
+          - NONE
+          - LEFTUP
+          - LEFTDOWN
+          - RIGHTUP
+          - RIGHTDOWN
+          - BALANCED
+        default: NONE
       cycleBreakingStrategy:
         description: |
           This strategy decides how to find cycles in the graph and deciding which edges need adjustment to break loops.
@@ -158,6 +171,15 @@ properties:
           - PREFER_EDGES
           - PREFER_NODES
         default: 'NODES_AND_EDGES'
+      keepEntryNodeOnTop:
+        description: |
+          Elk specific option that keeps the entry node of a recursive flow at the top of the layout.
+
+          When a flow loops back on itself (a back-edge to an earlier node), ELK's degree-based cycle-breaking has no notion of an "entry point" and may rank the first-declared node in the middle, scrambling the reading order. When enabled, the entry node of each cyclic component is pinned to the first layer so the diagram still reads from its entry. Acyclic flows always have a natural source, so this has no effect on them.
+
+          Only applies when the cyclic flow has no node without incoming edges: if the loop is fed from outside (e.g. a start node pointing into it), that component already has a natural source and nothing is pinned. Detection is also scoped per container, so cycles that cross a subgraph boundary are not detected.
+        type: boolean
+        default: false
   darkMode:
     type: boolean
     default: false
@@ -285,6 +307,8 @@ properties:
     type: string
   flowchart:
     $ref: '#/$defs/FlowchartDiagramConfig'
+  swimlane:
+    $ref: '#/$defs/SwimlaneDiagramConfig'
   sequence:
     $ref: '#/$defs/SequenceDiagramConfig'
   gantt:
@@ -335,6 +359,10 @@ properties:
     $ref: '#/$defs/VennDiagramConfig'
   wardley-beta:
     $ref: '#/$defs/WardleyDiagramConfig'
+  cynefin:
+    $ref: '#/$defs/CynefinDiagramConfig'
+  railroad:
+    $ref: '#/$defs/RailroadDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration
     description: Configuration options to pass to the `dompurify` library.
@@ -982,6 +1010,11 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - iconSize
       - fontSize
       - randomize
+      - nodeSeparation
+      - idealEdgeLengthMultiplier
+      - edgeElasticity
+      - numIter
+      - seed
     properties:
       padding:
         type: number
@@ -995,10 +1028,49 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       randomize:
         description: |
           Whether to randomize initial node positions before running the layout algorithm.
-          When false (default), the layout is deterministic and produces identical results on every render.
-          When true, nodes start at random positions, which may produce varied but potentially better-spaced layouts.
+          When false (default), nodes start at deterministic seed positions. When true, nodes
+          start at random positions, which may produce varied but potentially better-spaced
+          layouts. Note: `randomize: false` alone does NOT guarantee identical renders, because
+          the underlying fcose layout still uses `Math.random()` internally during its
+          constraint solver — use the `seed` option for full determinism.
         type: boolean
         default: false
+      nodeSeparation:
+        description: |
+          Minimum separation (in pixels) between sibling nodes in the same group, passed through to the
+          underlying fcose layout. Increase to spread overlapping siblings apart when many edges share the
+          same port direction.
+        type: number
+        default: 75
+      idealEdgeLengthMultiplier:
+        description: |
+          Multiplier applied to `iconSize` to compute the ideal length of edges between nodes within the
+          same group. Increase to add breathing room; decrease to pack the diagram tighter. Edges crossing
+          group boundaries are unaffected and use a fixed shorter length.
+        type: number
+        default: 1.5
+      edgeElasticity:
+        description: |
+          Spring elasticity (0–1) applied to edges between nodes within the same group, passed through to
+          fcose. Higher values pull connected nodes closer together; lower values let the layout spread them
+          out. Edges crossing group boundaries are unaffected.
+        type: number
+        default: 0.45
+      numIter:
+        description: |
+          Maximum number of iterations the fcose layout algorithm runs before stopping. Increase for higher
+          quality on large or densely-connected diagrams at the cost of render time.
+        type: number
+        default: 2500
+      seed:
+        description: |
+          Deterministic seed for the fcose layout. Defaults to 1, which makes every render of the
+          same diagram produce the same layout — required for visual regression tests to be stable.
+          Set to 0 to opt out and use the unstubbed Math.random (the layout will still differ
+          slightly between renders, matching pre-fix behavior). Any other number selects a
+          different reproducible layout variant.
+        type: number
+        default: 1
 
   MindmapDiagramConfig:
     title: Mindmap Diagram Config
@@ -1070,6 +1142,24 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: |
           Axial position of slice's label from zero at the center to 1 at the outside edges.
         default: 0.75
+      donutHole:
+        type: number
+        minimum: 0
+        maximum: 0.9
+        description: |
+          Donut hole ratio. Valid value are from 0 to 0.9. Default to 0.
+        default: 0
+      legendPosition:
+        type: string
+        enum: ['top', 'bottom', 'left', 'right', 'center']
+        description: |
+          Legend's position relative to the chart. Default to right.
+        default: 'right'
+      highlightSlice:
+        type: string
+        description: |
+          Highlight specific slice with matching label. Set to 'hover' to highlight hovered slice.
+        default: ''
 
   QuadrantChartConfig:
     title: Quadrant Chart Config
@@ -1191,6 +1281,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         minimum: 0
         default: 2
+
   XYChartAxisConfig:
     title: XYChart axis config
     description: This object contains configuration for XYChart axis config
@@ -1208,6 +1299,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - tickWidth
       - showAxisLine
       - axisLineWidth
+      - labelRotation
     properties:
       showLabel:
         description: Should show the axis labels (tick text)
@@ -1260,6 +1352,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         default: 2
         minimum: 1
+      labelRotation:
+        description: Label rotation in degrees
+        type: number
+        default: 0
+        minimum: -90
+        maximum: 90
 
   XYChartConfig:
     title: XYChart Config
@@ -1310,6 +1408,20 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: Should show the chart title
         type: boolean
         default: true
+      showLegend:
+        description: Should show a legend for named plots
+        type: boolean
+        default: true
+      legendFontSize:
+        description: Font size of the legend text
+        type: number
+        default: 14
+        minimum: 1
+      legendPadding:
+        description: Padding around the legend
+        type: number
+        default: 10
+        minimum: 0
       xAxis:
         $ref: '#/$defs/XYChartAxisConfig'
         default: { '$ref': '#/$defs/XYChartAxisConfig' }
@@ -1441,13 +1553,9 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       nodeSpacing:
         type: integer
         minimum: 0
-        # should the default value be 50?
-        # see https://github.com/mermaid-js/mermaid/blob/7647ae317a7b2130e32777248d25a9c4d24b8f9f/packages/mermaid/src/diagrams/class/classRenderer-v2.ts#L258
       rankSpacing:
         type: integer
         minimum: 0
-        # should the default value be 50?
-        # see https://github.com/mermaid-js/mermaid/blob/7647ae317a7b2130e32777248d25a9c4d24b8f9f/packages/mermaid/src/diagrams/class/classRenderer-v2.ts#L259
       forkWidth:
         type: number
         default: 70
@@ -1525,13 +1633,9 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       nodeSpacing:
         type: integer
         minimum: 0
-        # should the default value be 50?
-        # see https://github.com/mermaid-js/mermaid/blob/7647ae317a7b2130e32777248d25a9c4d24b8f9f/packages/mermaid/src/diagrams/class/classRenderer-v2.ts#L258
       rankSpacing:
         type: integer
         minimum: 0
-        # should the default value be 50?
-        # see https://github.com/mermaid-js/mermaid/blob/7647ae317a7b2130e32777248d25a9c4d24b8f9f/packages/mermaid/src/diagrams/class/classRenderer-v2.ts#L259
       diagramPadding:
         $ref: '#/$defs/ErDiagramConfig/properties/diagramPadding'
       htmlLabels:
@@ -2105,6 +2209,48 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       noteFont: { '$ref': '#/$defs/FontCalculator' }
       actorFont: { '$ref': '#/$defs/FontCalculator' }
 
+  SwimlaneDiagramConfig:
+    title: Swimlane Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: |
+      The object containing configurations specific for the swimlanes diagram type.
+
+      Swimlanes reuses the flowchart renderer and flowchart config for shared
+      options (curve, htmlLabels, spacing, …); this block holds the knobs that
+      only affect the swimlanes layout pipeline.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      lineHops:
+        description: |
+          Renders edge crossings as small arcs ("hops") or visible gaps so that
+          overlapping edges are easier to read. Set to `false` to disable. Edges
+          rendered as curves are skipped to avoid corrupting the geometry.
+        oneOf:
+          - type: boolean
+          - type: string
+            enum: ['arc', 'gap']
+        default: 'arc'
+      ignoreCrossLaneEdges:
+        description: |
+          Ignores edges that cross swimlane boundaries during swimlane layer
+          assignment. This can improve rank quality for diagrams with many
+          cross-lane links.
+        type: boolean
+        default: true
+      optimizeRanksByCrossings:
+        description: |
+          Enables a crossing-aware rank optimization pass for swimlane layouts.
+        type: boolean
+        default: true
+      automaticLaneOrdering:
+        description: |
+          Automatically reorders top-level swimlanes with a deterministic
+          weighted-linear-arrangement heuristic. Disabled by default because
+          source swimlane order can carry semantic meaning.
+        type: boolean
+        default: false
+
   FlowchartDiagramConfig:
     title: Flowchart Diagram Config
     allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
@@ -2195,6 +2341,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
             'rounded',
           ]
         default: 'basis'
+
       padding:
         description: |
           Represents the padding between the labels and the shape
@@ -2420,6 +2567,46 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         minimum: 0
         default: 1
+      showIcons:
+        description: |
+          Whether to show the default file/folder icons next to labels.
+          Explicit `icon()` annotations always render, regardless of this setting.
+        type: boolean
+        default: false
+      defaultIconPack:
+        description: |
+          Name of a registered iconify pack used to resolve unprefixed icon
+          references — `icon(name)` annotations and `filenameIcons`/
+          `extensionIcons` values without a `pack:` prefix. The pack must be
+          registered with `registerIconPacks`. When empty, unprefixed names
+          resolve to the built-in file/folder icons.
+        type: string
+        default: ''
+      filenameIcons:
+        description: |
+          Exact-filename → icon map used to pick a file's icon when
+          `showIcons` is enabled, e.g.
+          `{ "Dockerfile": "material-icon-theme:docker" }`.
+          Values are resolved like `icon()` references: `pack:name` is used
+          as-is, unprefixed names resolve via `defaultIconPack`, and `none`
+          hides the icon for matching files.
+        type: object
+        additionalProperties:
+          type: string
+        default: {}
+      extensionIcons:
+        description: |
+          File-extension → icon map used to pick a file's icon when
+          `showIcons` is enabled, e.g.
+          `{ ".ts": "material-icon-theme:typescript" }`. Keys are
+          lowercase and may include or omit the leading dot.
+          Values are resolved like `icon()` references: `pack:name` is used
+          as-is, unprefixed names resolve via `defaultIconPack`, and `none`
+          hides the icon for matching files.
+        type: object
+        additionalProperties:
+          type: string
+        default: {}
 
   RadarDiagramConfig:
     title: Radar Diagram Config
@@ -2553,6 +2740,158 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: Whether to display a background grid.
         type: boolean
         default: false
+
+  CynefinDiagramConfig:
+    title: Cynefin Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: Configuration for Cynefin framework diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      width:
+        description: The width of the Cynefin diagram.
+        type: number
+        minimum: 1
+        default: 800
+      height:
+        description: The height of the Cynefin diagram.
+        type: number
+        minimum: 1
+        default: 600
+      padding:
+        description: Padding around the diagram.
+        type: number
+        minimum: 0
+        default: 40
+      showDomainDescriptions:
+        description: Show decision model and practice type labels.
+        type: boolean
+        default: true
+      boundaryAmplitude:
+        description: Waviness amplitude of domain boundaries (0 for straight).
+        type: number
+        minimum: 0
+        maximum: 50
+        default: 8
+      seed:
+        description: |
+          Deterministic seed for boundary waviness. When 0 (default) the seed is derived
+          from the diagram's SVG element id, which varies per render. Set any non-zero
+          number to produce identical boundaries on every render — required for visual
+          regression tests to be stable.
+        type: number
+        default: 0
+
+  RailroadDiagramConfig:
+    title: Railroad Diagram Config
+    description: Configuration for Railroad (Syntax) Diagrams
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    type: object
+    unevaluatedProperties: false
+    properties:
+      compactMode:
+        description: Use compact layout mode
+        type: boolean
+        default: false
+      padding:
+        description: Padding around elements
+        type: number
+        minimum: 0
+        default: 10
+      verticalSeparation:
+        description: Vertical separation between elements
+        type: number
+        minimum: 0
+        default: 8
+      horizontalSeparation:
+        description: Horizontal separation between elements
+        type: number
+        minimum: 0
+        default: 10
+      arcRadius:
+        description: Radius for curved paths
+        type: number
+        minimum: 0
+        default: 10
+      fontSize:
+        description: Font size for text
+        type: number
+        minimum: 0
+        default: 14
+      fontFamily:
+        description: Font family for text
+        type: string
+        default: 'monospace'
+      terminalFill:
+        description: Fill color for terminal elements
+        type: string
+        default: '#FFFFC0'
+      terminalStroke:
+        description: Stroke color for terminal elements
+        type: string
+        default: '#000000'
+      terminalTextColor:
+        description: Text color for terminal elements
+        type: string
+        default: '#000000'
+      nonTerminalFill:
+        description: Fill color for non-terminal elements
+        type: string
+        default: '#FFFFFF'
+      nonTerminalStroke:
+        description: Stroke color for non-terminal elements
+        type: string
+        default: '#000000'
+      nonTerminalTextColor:
+        description: Text color for non-terminal elements
+        type: string
+        default: '#000000'
+      lineColor:
+        description: Color for connection lines
+        type: string
+        default: '#000000'
+      strokeWidth:
+        description: Width of strokes
+        type: number
+        minimum: 0
+        default: 2
+      markerFill:
+        description: Fill color for start/end markers
+        type: string
+        default: '#000000'
+      commentFill:
+        description: Fill color for comments
+        type: string
+        default: '#E8E8E8'
+      commentStroke:
+        description: Stroke color for comments
+        type: string
+        default: '#888888'
+      commentTextColor:
+        description: Text color for comments
+        type: string
+        default: '#666666'
+      specialFill:
+        description: Fill color for special sequences
+        type: string
+        default: '#F0E0FF'
+      specialStroke:
+        description: Stroke color for special sequences
+        type: string
+        default: '#8800CC'
+      ruleNameColor:
+        description: Color for rule names
+        type: string
+        default: '#000066'
+      showMarkers:
+        description: Show start/end markers
+        type: boolean
+        default: true
+      markerRadius:
+        description: Radius of start/end markers
+        type: number
+        minimum: 0
+        default: 5
 
   FontCalculator:
     title: Font Calculator

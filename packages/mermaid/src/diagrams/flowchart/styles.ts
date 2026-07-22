@@ -64,12 +64,6 @@ const getStyles = (options: FlowChartStyleOptions) =>
   .rough-node .label text , .node .label text, .image-shape .label, .icon-shape .label {
     text-anchor: middle;
   }
-  // .flowchart-label .text-outer-tspan {
-  //   text-anchor: middle;
-  // }
-  // .flowchart-label .text-inner-tspan {
-  //   text-anchor: start;
-  // }
 
   .node .katex path {
     fill: #000;
@@ -140,6 +134,18 @@ const getStyles = (options: FlowChartStyleOptions) =>
   /* .cluster div {
     color: ${options.titleColor};
   } */
+
+  /* Collapsed subgraph node (@{ view: collapsed }) */
+  .node .collapsed-indicator {
+    fill: ${options.clusterBorder};
+    stroke: none;
+    opacity: 0.6;
+  }
+
+  .node .collapsed-separator {
+    stroke: ${options.clusterBorder};
+    stroke-width: 0.75px;
+  }
 
   div.mermaidTooltip {
     position: absolute;

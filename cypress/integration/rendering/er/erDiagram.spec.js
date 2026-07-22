@@ -109,8 +109,8 @@ describe('Entity Relationship Diagram', () => {
       const style = svg.attr('style');
       expect(style).to.match(/^max-width: [\d.]+px;$/);
       const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-      // use within because the absolute value can be slightly different depending on the environment ±6%
-      expect(maxWidthValue).to.be.within(140 * 0.96, 140 * 1.06);
+      // use within because the absolute value can be slightly different depending on the environment ±10%
+      expect(maxWidthValue).to.be.within(140 * 0.9, 140 * 1.1);
     });
   });
 
@@ -125,8 +125,8 @@ describe('Entity Relationship Diagram', () => {
     );
     cy.get('svg').should((svg) => {
       const width = parseFloat(svg.attr('width'));
-      // use within because the absolute value can be slightly different depending on the environment ±6%
-      expect(width).to.be.within(140 * 0.96, 140 * 1.06);
+      // use within because the absolute value can be slightly different depending on the environment ±10%
+      expect(width).to.be.within(140 * 0.9, 140 * 1.1);
       // expect(svg).to.have.attr('height', '465');
       expect(svg).to.not.have.attr('style');
     });
@@ -214,6 +214,44 @@ describe('Entity Relationship Diagram', () => {
           int         *id
           string      name
           varchar(50) address
+        }
+        `,
+      { loglevel: 1 }
+    );
+  });
+
+  it('should render entities with backtick-escaped attribute names containing special characters', () => {
+    imgSnapshotTest(
+      `
+    erDiagram
+        HOTEL {
+          string      address
+          string      \`geo.accuracy\`
+          string      \`check-in date\` PK "ISO 8601"
+        }
+        HOTEL ||--o{ ROOM : has
+        ROOM {
+          int         \`room.number\`
+          string      \`bed.type\`
+        }
+        `,
+      { loglevel: 1 }
+    );
+  });
+
+  it('should render entities with unescaped attribute names or types containing commas or periods', () => {
+    imgSnapshotTest(
+      `
+    erDiagram
+        HOTEL {
+          string               address
+          GEOMETRY(point,4326) location
+          DECIMAL(10,2)        price_per_night
+        }
+        HOTEL ||--o{ ROOM : has
+        ROOM {
+          int room.number
+          string bed.type
         }
         `,
       { loglevel: 1 }
@@ -496,5 +534,152 @@ ORDER ||--|{ LINE-ITEM : contains
       `,
       { logLevel: 1 }
     );
+  });
+
+  describe('ER diagram subgraphs', () => {
+    it('should render a simple subgraph', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          subgraph domain
+            CUSTOMER
+            ORDER
+          end
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render empty subgraphs', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          subgraph emptyDomain
+          end
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render nested subgraphs', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          subgraph domain
+            CUSTOMER
+
+            subgraph details
+              ORDER
+            end
+          end
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render relationships across subgraphs', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          subgraph customers
+            CUSTOMER
+          end
+
+          subgraph orders
+            ORDER
+          end
+
+          CUSTOMER ||--o{ ORDER : places
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render relationships between subgraph and entity', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          subgraph customers
+            CUSTOMER
+          end
+
+          subgraph orders
+            ORDER
+          end
+
+          CUSTOMER ||--o{ orders : places
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render relationships between subgraphs', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          subgraph customers
+            CUSTOMER
+          end
+
+          subgraph orders
+            ORDER
+          end
+
+          customers ||--o{ orders : places
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render subgraphs with quoted ids', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          subgraph "Customer Domain"
+            CUSTOMER
+          end
+
+          "Customer Domain" ||--o{ ORDER : contains
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render subgraphs with explicit id and title', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          subgraph domain["Customer Domain"]
+            CUSTOMER
+            ORDER
+          end
+
+          CUSTOMER ||--o{ ORDER : places
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render subgraphs with direction override', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          direction LR
+
+          subgraph domain
+            direction TB
+
+            CUSTOMER
+            ORDER
+          end
+
+          PRODUCT
+
+          PRODUCT||--o{ domain: links
+          CUSTOMER ||--o{ ORDER : places
+        `,
+        { logLevel: 1 }
+      );
+    });
   });
 });

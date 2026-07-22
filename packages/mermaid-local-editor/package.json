@@ -1,0 +1,6 @@
+{
+  "name": "@mermaid-js/mermaid-local-editor",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module"
+}

@@ -7,6 +7,7 @@ catmull
 compositTitleSize
 cose
 curv
+cynefin
 deaccelerator
 Deaccelerator
 deaccelerators
@@ -43,6 +44,7 @@ siebling
 statediagram
 substate
 townplanners
+treeview
 unfixable
 Unmodelled
 Viewbox

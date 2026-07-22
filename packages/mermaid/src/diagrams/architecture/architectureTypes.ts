@@ -230,6 +230,13 @@ export interface ArchitectureGroup {
   in?: string;
 }
 
+export type ArchitectureAlignmentDirection = 'row' | 'column';
+
+export interface ArchitectureLayoutHint {
+  direction: ArchitectureAlignmentDirection;
+  members: string[];
+}
+
 export interface ArchitectureEdge<DT = ArchitectureDirection> {
   lhsId: string;
   lhsDir: DT;
@@ -254,6 +261,8 @@ export interface ArchitectureDB extends DiagramDBBase<ArchitectureDiagramConfig>
   getGroups: () => ArchitectureGroup[];
   addEdge: (edge: ArchitectureEdge) => void;
   getEdges: () => ArchitectureEdge[];
+  addLayoutHint: (hint: ArchitectureLayoutHint) => void;
+  getLayoutHints: () => ArchitectureLayoutHint[];
   setElementForId: (id: string, element: D3Element) => void;
   getElementById: (id: string) => D3Element;
   getDataStructures: () => ArchitectureDataStructures;
@@ -292,6 +301,7 @@ export interface ArchitectureState extends Record<string, unknown> {
   dataStructures?: ArchitectureDataStructures;
   elements: Record<string, D3Element>;
   config: ArchitectureDiagramConfig;
+  layoutHints: ArchitectureLayoutHint[];
 }
 
 /*=======================================*\

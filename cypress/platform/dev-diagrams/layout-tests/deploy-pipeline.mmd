@@ -1,0 +1,17 @@
+flowchart TD
+  A[Start Build] --> B[Compile Source]
+  B --> C[Test Suite]
+  C --> D{Tests Passed?}
+  D -->|No| E[Notify Developer]
+  E --> A
+  D -->|Yes| F[Build Docker Image]
+
+  subgraph Deploy Pipeline
+    F --> G[Deploy to Staging]
+    G --> H[Run Integration Tests]
+    H --> I{Tests Passed?}
+    I -->|No| J[Rollback & Alert]
+    I -->|Yes| K[Deploy to Production]
+  end
+
+  K --> L([Success])

@@ -1,38 +1,283 @@
+/* global injected */ // build-time constant injected via esbuild `define` (see .esbuild/util.ts)
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
-import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
-import insertMarkers from '../../rendering-elements/markers.js';
+import { createLayoutElementGroups, insertMeasuredNode } from '../../createGraph.js';
+import { createCommonLayoutRenderer } from '../common/index.js';
+import { profiler } from '../../../profiler.js';
 import { updateNodeBounds } from '../../rendering-elements/shapes/util.js';
 import {
-  clear as clearGraphlib,
   clusterDb,
   adjustClustersAndEdges,
   findNonClusterChild,
   sortNodesByHierarchy,
 } from './mermaid-graphlib.js';
-import {
-  insertNode,
-  positionNode,
-  clear as clearNodes,
-  setNodeElem,
-} from '../../rendering-elements/nodes.js';
-import { insertCluster, clear as clearClusters } from '../../rendering-elements/clusters.js';
-import {
-  insertEdgeLabel,
-  positionEdgeLabel,
-  insertEdge,
-  clear as clearEdges,
-} from '../../rendering-elements/edges.js';
+import { positionNode, setNodeElem } from '../../rendering-elements/nodes.js';
+import { insertCluster } from '../../rendering-elements/clusters.js';
+import { insertEdgeLabel, positionEdgeLabel, insertEdge } from '../../rendering-elements/edges.js';
 import { log } from '../../../logger.js';
 import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
-const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, siteConfig) => {
-  log.warn('Graph in recursive render:XAX', graphlibJson.write(graph), parentCluster);
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+const getDefaultSelfLoopSide = (rankdir = 'TB') => {
+  switch (rankdir) {
+    case 'BT':
+      return 'bottom';
+    case 'LR':
+      return 'right';
+    case 'RL':
+      return 'left';
+    case 'TB':
+    default:
+      return 'top';
+  }
+};
+
+const shouldMergeSelfLoopSegments = (diagramType) =>
+  diagramType === 'flowchart' ||
+  diagramType === 'flowchart-v2' ||
+  diagramType === 'stateDiagram' ||
+  diagramType === 'er' ||
+  diagramType === 'classDiagram';
+
+// Keep this a fixed literal allowlist — never derive keys from graph data, since node ids and
+// other graph keys are user-controlled and copying them wholesale onto LayoutData would open a
+// property-injection surface. `intersect`/`calcIntersect` are function references installed by
+// the shape handlers; the painter needs them alongside the geometry.
+const DAGRE_NODE_LAYOUT_PROPERTIES = [
+  'x',
+  'y',
+  'width',
+  'height',
+  'labelBBox',
+  'intersect',
+  'calcIntersect',
+  'diff',
+  'clusterNode',
+];
+
+// Use dagre's dummy self-loop placement as a hint, so loops are not always forced above the node.
+const getSelfLoopSide = (graph, node, segments, originalNodeId, rankdir) => {
+  const layoutHints = [];
+  const dummyNodeIds = new Set();
+
+  segments.forEach(({ start, end }) => {
+    if (start !== originalNodeId) {
+      dummyNodeIds.add(start);
+    }
+    if (end !== originalNodeId) {
+      dummyNodeIds.add(end);
+    }
+  });
+
+  dummyNodeIds.forEach((id) => {
+    const dummyNode = graph.node(id);
+    if (typeof dummyNode?.x === 'number' && typeof dummyNode?.y === 'number') {
+      layoutHints.push(dummyNode);
+    }
+  });
+
+  if (layoutHints.length === 0) {
+    segments.forEach(({ edge }) => {
+      (edge.points ?? []).forEach((point) => {
+        if (typeof point?.x === 'number' && typeof point?.y === 'number') {
+          layoutHints.push(point);
+        }
+      });
+    });
+  }
+
+  if (layoutHints.length === 0) {
+    return getDefaultSelfLoopSide(rankdir);
+  }
+
+  const center = layoutHints.reduce(
+    (acc, point) => ({
+      x: acc.x + point.x / layoutHints.length,
+      y: acc.y + point.y / layoutHints.length,
+    }),
+    { x: 0, y: 0 }
+  );
+  const dx = center.x - node.x;
+  const dy = center.y - node.y;
+
+  if (Math.abs(dx) > Math.abs(dy)) {
+    return dx > 0 ? 'right' : 'left';
+  }
+  if (Math.abs(dy) > 0) {
+    return dy > 0 ? 'bottom' : 'top';
+  }
+  return getDefaultSelfLoopSide(rankdir);
+};
+
+// Build a compact loop around the node instead of rendering dagre's long dummy-edge route.
+const getSelfLoopPoints = (node, side = 'top', yOffset = 0, labelWidth = 0) => {
+  const x = node.x;
+  const y = node.y - yOffset;
+  const halfWidth = node.width / 2;
+  const halfHeight = node.height / 2;
+  const maxSpan = Math.max(36, Math.min(100, node.width * 0.8));
+  const span = clamp(Math.max(labelWidth, node.width * 0.35), 36, maxSpan);
+  const depth = clamp(Math.min(node.width, node.height) * 0.45, 24, 48);
+
+  switch (side) {
+    case 'bottom': {
+      const bottom = y + halfHeight;
+      return [
+        { x: x - span / 2, y: bottom },
+        { x: x - span / 2, y: bottom + depth },
+        { x: x + span / 2, y: bottom + depth },
+        { x: x + span / 2, y: bottom },
+      ];
+    }
+    case 'right': {
+      const right = x + halfWidth;
+      return [
+        { x: right, y: y - span / 2 },
+        { x: right + depth, y: y - span / 2 },
+        { x: right + depth, y: y + span / 2 },
+        { x: right, y: y + span / 2 },
+      ];
+    }
+    case 'left': {
+      const left = x - halfWidth;
+      return [
+        { x: left, y: y - span / 2 },
+        { x: left - depth, y: y - span / 2 },
+        { x: left - depth, y: y + span / 2 },
+        { x: left, y: y + span / 2 },
+      ];
+    }
+    case 'top':
+    default: {
+      const top = y - halfHeight;
+      return [
+        { x: x - span / 2, y: top },
+        { x: x - span / 2, y: top - depth },
+        { x: x + span / 2, y: top - depth },
+        { x: x + span / 2, y: top },
+      ];
+    }
+  }
+};
+
+const getSelfLoopLabelPosition = (node, points, side = 'top', yOffset = 0, label = {}) => {
+  const gap = 4;
+  const x = node.x;
+  const y = node.y - yOffset;
+  const labelWidth = label.width ?? 0;
+  const labelHeight = label.height ?? 0;
+
+  switch (side) {
+    case 'bottom':
+      return { x, y: Math.max(...points.map((point) => point.y)) + labelHeight / 2 + gap };
+    case 'right':
+      return { x: Math.max(...points.map((point) => point.x)) + labelWidth / 2 + gap, y };
+    case 'left':
+      return { x: Math.min(...points.map((point) => point.x)) - labelWidth / 2 - gap, y };
+    case 'top':
+    default:
+      return { x, y: Math.min(...points.map((point) => point.y)) - labelHeight / 2 - gap };
+  }
+};
+
+// Convert internal dagre layout edges into the public SVG edges we actually render.
+export const getEdgesToRender = (graph, yOffset = 0, { mergeSelfLoops = true } = {}) => {
+  const selfLoopEdgeGroups = new Map();
+  const edgesToRender = [];
+  const rankdir = graph.graph()?.rankdir;
+
+  graph.edges().forEach((e) => {
+    const edge = graph.edge(e);
+    if (mergeSelfLoops && edge.selfLoop) {
+      const key = edge.selfLoop.id;
+      if (!selfLoopEdgeGroups.has(key)) {
+        selfLoopEdgeGroups.set(key, []);
+      }
+      selfLoopEdgeGroups.get(key).push({ edge, start: e.v, end: e.w });
+    } else {
+      edgesToRender.push({ edge, start: e.v, end: e.w });
+    }
+  });
+
+  selfLoopEdgeGroups.forEach((segments) => {
+    if (segments.length !== 3) {
+      // Unexpected self-loop state: preserve the old rendering behavior rather than dropping edges.
+      segments.forEach((segment) => edgesToRender.push(segment));
+      return;
+    }
+
+    segments.sort((a, b) => a.edge.selfLoop.order - b.edge.selfLoop.order);
+    const [firstSegment, middleSegment, lastSegment] = segments;
+    const originalEdge =
+      firstSegment.edge.originalEdge ??
+      middleSegment.edge.originalEdge ??
+      lastSegment.edge.originalEdge ??
+      middleSegment.edge;
+    const node = graph.node(originalEdge.start);
+    if (!node) {
+      segments.forEach((segment) => edgesToRender.push(segment));
+      return;
+    }
+    const label = {
+      width: middleSegment.edge.width,
+      height: middleSegment.edge.height,
+    };
+    // Dagre uses the dummy route for layout; the SVG output should still be one logical edge.
+    const side = getSelfLoopSide(graph, node, segments, originalEdge.start, rankdir);
+    const points = getSelfLoopPoints(node, side, yOffset, label.width ?? 0);
+    const labelPosition = getSelfLoopLabelPosition(node, points, side, yOffset, label);
+    const mergedEdge = {
+      ...middleSegment.edge,
+      ...originalEdge,
+      id: originalEdge.id,
+      points,
+      start: originalEdge.start,
+      end: originalEdge.end,
+      x: labelPosition.x,
+      y: labelPosition.y,
+      width: label.width,
+      height: label.height,
+      labelStyle: middleSegment.edge.labelStyle,
+      fromCluster:
+        firstSegment.edge.fromCluster ??
+        middleSegment.edge.fromCluster ??
+        lastSegment.edge.fromCluster,
+      toCluster:
+        firstSegment.edge.toCluster ?? middleSegment.edge.toCluster ?? lastSegment.edge.toCluster,
+    };
+    delete mergedEdge.selfLoop;
+    delete mergedEdge.originalEdge;
+
+    edgesToRender.push({ edge: mergedEdge, start: mergedEdge.start, end: mergedEdge.end });
+  });
+
+  return edgesToRender;
+};
+
+const measureDagreGraph = async ({
+  element: _elem,
+  graph,
+  diagramType,
+  id,
+  parentCluster,
+  siteConfig,
+}) => {
+  // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
+  // log.warn('Graph in recursive render:XAX', graphlibJson.write(graph), parentCluster);
   const dir = graph.graph().rankdir;
   log.trace('Dir in recursive render - dir:', dir);
 
-  const elem = _elem.insert('g').attr('class', 'root');
+  const {
+    clusters,
+    edgePaths,
+    edgeLabels,
+    nodes,
+    rootGroups: elem,
+  } = createLayoutElementGroups(_elem, {
+    edgePathsClass: 'edgePaths',
+  });
   if (!graph.nodes()) {
     log.info('No nodes found for', graph);
   } else {
@@ -41,10 +286,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   if (graph.edges().length > 0) {
     log.info('Recursive edges', graph.edge(graph.edges()[0]));
   }
-  const clusters = elem.insert('g').attr('class', 'clusters');
-  const edgePaths = elem.insert('g').attr('class', 'edgePaths');
-  const edgeLabels = elem.insert('g').attr('class', 'edgeLabels');
-  const nodes = elem.insert('g').attr('class', 'nodes');
+  const mergeSelfLoops = shouldMergeSelfLoopSegments(diagramType);
 
   // Insert nodes, this will insert them into the dom and each node will get a size. The size is updated
   // to the abstract node and is later used by dagre for the layout
@@ -83,14 +325,14 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         });
 
         // "o" will contain the full cluster not just the children
-        const o = await recursiveRender(
-          nodes,
-          node.graph,
+        const o = await renderDagreSubgraph({
+          element: nodes,
+          graph: node.graph,
           diagramType,
           id,
-          graph.node(v),
-          siteConfig
-        );
+          parentCluster: graph.node(v),
+          siteConfig,
+        });
         const newEl = o.elem;
         updateNodeBounds(node, newEl);
         // node.height = o.diff;
@@ -125,7 +367,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
           // insertCluster(clusters, graph.node(v));
         } else {
           log.trace('Node - the non recursive path XAX', v, nodes, graph.node(v), dir);
-          await insertNode(nodes, graph.node(v), { config: siteConfig, dir });
+          await insertMeasuredNode(nodes, graph.node(v), { config: siteConfig, dir });
         }
       }
     })
@@ -148,6 +390,26 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         clusterDb.get(e.v),
         clusterDb.get(e.w)
       );
+      if (mergeSelfLoops && edge.selfLoop) {
+        // Only the middle layout segment owns the label, using the original edge id for lookup.
+        if (edge.selfLoop.order !== 1) {
+          return;
+        }
+        const labelEdge = {
+          ...edge.originalEdge,
+          ...edge,
+          id: edge.selfLoop.id,
+          startLabelLeft: edge.originalEdge?.startLabelLeft ?? edge.startLabelLeft,
+          startLabelRight: edge.originalEdge?.startLabelRight ?? edge.startLabelRight,
+          endLabelLeft: edge.originalEdge?.endLabelLeft ?? edge.endLabelLeft,
+          endLabelRight: edge.originalEdge?.endLabelRight ?? edge.endLabelRight,
+        };
+        await insertEdgeLabel(edgeLabels, labelEdge);
+        edge.width = labelEdge.width;
+        edge.height = labelEdge.height;
+        edge.labelStyle = labelEdge.labelStyle;
+        return;
+      }
       await insertEdgeLabel(edgeLabels, edge);
     });
 
@@ -156,18 +418,126 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
 
   await processEdges();
 
-  log.info('Graph before layout:', JSON.stringify(graphlibJson.write(graph)));
+  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
+  return {
+    elem,
+    graph,
+    groups: { clusters, edgePaths, edgeLabels, nodes, rootGroups: elem },
+    diagramType,
+    id,
+    mergeSelfLoops,
+    subGraphTitleTotalMargin,
+  };
+};
+
+const runDagreGraphLayout = (graph) => {
+  // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
+  // log.info('Graph before layout:', JSON.stringify(graphlibJson.write(graph)));
 
   log.info('############################################# XXX');
   log.info('###                Layout                 ### XXX');
   log.info('############################################# XXX');
 
+  // Time the actual external dagre call on its own ("layoutCore"); the rest of
+  // this function is our wrapper (DOM, graph (de)serialization, …).
+  if (injected.profiling) {
+    profiler.begin('layoutCore');
+  }
   dagreLayout(graph);
+  if (injected.profiling) {
+    profiler.end(); // layoutCore
+  }
 
-  log.info('Graph after layout:', JSON.stringify(graphlibJson.write(graph)));
+  // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
+  // log.info('Graph after layout:', JSON.stringify(graphlibJson.write(graph)));
+};
+
+const normalizeDagreNode = (graph, nodeId, subGraphTitleTotalMargin) => {
+  const node = graph.node(nodeId);
+  if (!node) {
+    return undefined;
+  }
+
+  const normalizedNode = { ...node };
+  if (node?.clusterNode) {
+    normalizedNode.y = (node.y ?? 0) + subGraphTitleTotalMargin;
+  } else if (graph.children(nodeId).length > 0) {
+    normalizedNode.height = (node.height ?? 0) + subGraphTitleTotalMargin;
+  } else {
+    normalizedNode.y = (node.y ?? 0) + subGraphTitleTotalMargin / 2;
+  }
+  return normalizedNode;
+};
+
+const applyDagreNodeLayout = (targetNode, dagreNode) => {
+  DAGRE_NODE_LAYOUT_PROPERTIES.forEach((property) => {
+    if (dagreNode[property] !== undefined) {
+      targetNode[property] = dagreNode[property];
+    }
+  });
+};
+
+const normalizeDagreEdge = (edge, start, end, edgeOffsetY) => ({
+  ...edge,
+  start: edge.start ?? start,
+  end: edge.end ?? end,
+  points: (edge.points ?? []).map((point) => ({
+    ...point,
+    y: typeof point.y === 'number' ? point.y + edgeOffsetY : point.y,
+  })),
+});
+
+/**
+ * Copy the Dagre layout results back onto LayoutData.
+ *
+ * Known limitations — the normalization only covers the top-level graph:
+ * - Recursive clusters: `adjustClustersAndEdges` moves cluster children and intra-cluster edges
+ *   into the nested `node.graph`, where they are laid out and painted during the recursive
+ *   measure pass in their own coordinate space. Those nodes keep their pre-layout LayoutData
+ *   values, and intra-cluster edges are absent from the normalized `data4Layout.edges`.
+ * - Self-loops on diagram types where segments are not merged: the three `*-cyclic-special-*`
+ *   layout segments replace the original self-edge in `data4Layout.edges`, since they are what
+ *   is actually rendered.
+ * Consumers of the normalized LayoutData must not assume it is a complete description of the
+ * rendered output for cluster diagrams — the recursive paint path owns the nested content.
+ */
+export const applyDagreLayoutResult = (data4Layout, measuredLayout) => {
+  const { graph, mergeSelfLoops, subGraphTitleTotalMargin = 0 } = measuredLayout;
+  const nodeById = new Map(data4Layout.nodes.map((node) => [node.id, node]));
+
+  sortNodesByHierarchy(graph).forEach((nodeId) => {
+    const dagreNode = normalizeDagreNode(graph, nodeId, subGraphTitleTotalMargin);
+    if (!dagreNode) {
+      return;
+    }
+
+    applyDagreNodeLayout(graph.node(nodeId), dagreNode);
+
+    const targetNode = nodeById.get(nodeId);
+    if (targetNode) {
+      applyDagreNodeLayout(targetNode, dagreNode);
+    }
+  });
+
+  const edgeOffsetY = subGraphTitleTotalMargin / 2;
+  data4Layout.edges = getEdgesToRender(graph, edgeOffsetY, { mergeSelfLoops }).map(
+    ({ edge, start, end }) => normalizeDagreEdge(edge, start, end, edgeOffsetY)
+  );
+
+  return data4Layout;
+};
+
+const paintDagreLayoutCore = async ({
+  elem,
+  graph,
+  groups: { clusters, edgePaths },
+  diagramType,
+  id,
+  mergeSelfLoops,
+  subGraphTitleTotalMargin,
+}) => {
   // Move the nodes to the correct place
   let diff = 0;
-  let { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
   await Promise.all(
     sortNodesByHierarchy(graph).map(async function (v) {
       const node = graph.node(v);
@@ -246,13 +616,15 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   );
 
   // Move the edge labels to the correct place after layout
-  graph.edges().forEach(function (e) {
-    const edge = graph.edge(e);
-    log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
+  const edgeOffsetY = subGraphTitleTotalMargin / 2;
+  const edgesToRender = getEdgesToRender(graph, edgeOffsetY, { mergeSelfLoops });
 
-    edge.points.forEach((point) => (point.y += subGraphTitleTotalMargin / 2));
-    const startNode = graph.node(e.v);
-    var endNode = graph.node(e.w);
+  edgesToRender.forEach(function ({ edge, start, end }) {
+    log.info('Edge ' + start + ' -> ' + end + ': ' + JSON.stringify(edge), edge);
+
+    edge.points.forEach((point) => (point.y += edgeOffsetY));
+    const startNode = graph.node(start);
+    const endNode = graph.node(end);
     const paths = insertEdge(edgePaths, edge, clusterDb, diagramType, startNode, endNode, id);
     positionEdgeLabel(edge, paths);
   });
@@ -268,33 +640,39 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   return { elem, diff };
 };
 
-export const render = async (data4Layout, svg) => {
+const renderDagreSubgraph = async (options) => {
+  const measuredLayout = await measureDagreGraph(options);
+  runDagreGraphLayout(measuredLayout.graph);
+  return await paintDagreLayoutCore(measuredLayout);
+};
+
+export const prepareLayoutForDagre = (data4Layout) => {
   const graph = new graphlib.Graph({
     multigraph: true,
     compound: true,
   })
     .setGraph({
       rankdir: data4Layout.direction,
+      // Precedence: an explicit top-level config override (only present when a
+      // user sets it - it has no schema default) > the value the diagram's own
+      // renderer put on data4Layout (usually derived from that diagram's config)
+      // > the flowchart config as a generic fallback. The flowchart keys have
+      // schema defaults and therefore always exist, so they must come last or
+      // they silently shadow every diagram's own spacing (see #7932).
       nodesep:
         data4Layout.config?.nodeSpacing ||
-        data4Layout.config?.flowchart?.nodeSpacing ||
-        data4Layout.nodeSpacing,
+        data4Layout.nodeSpacing ||
+        data4Layout.config?.flowchart?.nodeSpacing,
       ranksep:
         data4Layout.config?.rankSpacing ||
-        data4Layout.config?.flowchart?.rankSpacing ||
-        data4Layout.rankSpacing,
+        data4Layout.rankSpacing ||
+        data4Layout.config?.flowchart?.rankSpacing,
       marginx: 8,
       marginy: 8,
     })
     .setDefaultEdgeLabel(function () {
       return {};
     });
-  const element = svg.select('g');
-  insertMarkers(element, data4Layout.markers, data4Layout.type, data4Layout.diagramId);
-  clearNodes();
-  clearEdges();
-  clearClusters();
-  clearGraphlib();
 
   data4Layout.nodes.forEach((node) => {
     graph.setNode(node.id, { ...node });
@@ -305,8 +683,8 @@ export const render = async (data4Layout, svg) => {
 
   log.debug('Edges:', data4Layout.edges);
   data4Layout.edges.forEach((edge) => {
-    // Handle self-loops
     if (edge.start === edge.end) {
+      // Keep the dagre dummy-node workaround for layout, then merge these segments before rendering.
       const nodeId = edge.start;
       const specialId1 = nodeId + '---' + nodeId + '---1';
       const specialId2 = nodeId + '---' + nodeId + '---2';
@@ -340,9 +718,17 @@ export const render = async (data4Layout, svg) => {
       });
       graph.setParent(specialId2, node.parentId);
 
+      const originalEdge = structuredClone(edge);
       const edge1 = structuredClone(edge);
       const edgeMid = structuredClone(edge);
       const edge2 = structuredClone(edge);
+      // Preserve the original edge so the final SVG path uses the logical self-loop id and data.
+      edge1.originalEdge = originalEdge;
+      edge1.selfLoop = { id: originalEdge.id, order: 0 };
+      edgeMid.originalEdge = originalEdge;
+      edgeMid.selfLoop = { id: originalEdge.id, order: 1 };
+      edge2.originalEdge = originalEdge;
+      edge2.selfLoop = { id: originalEdge.id, order: 2 };
       edge1.label = '';
       edge1.arrowTypeEnd = 'none';
       edge1.endLabelLeft = '';
@@ -368,22 +754,66 @@ export const render = async (data4Layout, svg) => {
       edge2.arrowTypeStart = 'none';
       graph.setEdge(nodeId, specialId1, edge1, nodeId + '-cyclic-special-0');
       graph.setEdge(specialId1, specialId2, edgeMid, nodeId + '-cyclic-special-1');
-      graph.setEdge(specialId2, nodeId, edge2, nodeId + '-cyc<lic-special-2');
+      graph.setEdge(specialId2, nodeId, edge2, nodeId + '-cyclic-special-2');
     } else {
       graph.setEdge(edge.start, edge.end, { ...edge }, edge.id);
     }
   });
 
-  log.warn('Graph at first:', JSON.stringify(graphlibJson.write(graph)));
+  // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
+  // log.debug('Graph at first:', JSON.stringify(graphlibJson.write(graph)));
   adjustClustersAndEdges(graph);
-  log.warn('Graph after XAX:', JSON.stringify(graphlibJson.write(graph)));
-  const siteConfig = getConfig();
-  await recursiveRender(
-    element,
-    graph,
-    data4Layout.type,
-    data4Layout.diagramId,
-    undefined,
-    siteConfig
-  );
+  // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
+  // log.warn('Graph after XAX:', JSON.stringify(graphlibJson.write(graph)));
+
+  return { graph };
 };
+
+export const measureDagreLayout = async (data4Layout, { element, preparedLayout }) => {
+  const prepared = preparedLayout ?? prepareLayoutForDagre(data4Layout);
+  const siteConfig = getConfig();
+  const measuredLayout = await measureDagreGraph({
+    element,
+    graph: prepared.graph,
+    diagramType: data4Layout.type,
+    id: data4Layout.diagramId,
+    parentCluster: undefined,
+    siteConfig,
+  });
+  prepared.measuredLayout = measuredLayout;
+  return measuredLayout;
+};
+
+export const runDagreLayoutCore = (data4Layout, context) => {
+  const measuredLayout = context.preparedLayout?.measuredLayout;
+
+  if (!measuredLayout) {
+    throw new Error('runDagreLayoutCore requires measureDagreLayout to run first');
+  }
+
+  runDagreGraphLayout(measuredLayout.graph);
+  applyDagreLayoutResult(data4Layout, measuredLayout);
+  return measuredLayout;
+};
+
+const getDagrePaintNodes = (_data4Layout, { measure }) =>
+  sortNodesByHierarchy(measure.graph)
+    .map((nodeId) => measure.graph.node(nodeId))
+    .filter(Boolean);
+
+const getDagreEdgeNode = (nodeId, _edge, { measure }) =>
+  nodeId ? measure.graph.node(nodeId) : undefined;
+
+export const render = createCommonLayoutRenderer({
+  prepareLayout: prepareLayoutForDagre,
+  measureLayout: measureDagreLayout,
+  runLayoutCore: runDagreLayoutCore,
+  paintOptions: {
+    clusterDb,
+    getNodes: getDagrePaintNodes,
+    getEdgeNode: getDagreEdgeNode,
+    skipNode: (node, { measure }) => !measure.graph.hasNode(node.id),
+    isCluster: (node, { measure }) =>
+      measure.graph.hasNode(node.id) && (measure.graph.children(node.id) ?? []).length > 0,
+  },
+});

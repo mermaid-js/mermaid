@@ -1,0 +1,34 @@
+{
+  "nodes": [
+    {
+      "id": "hello",
+      "isGroup": true
+    },
+    {
+      "id": "A",
+      "width": 41.34375,
+      "height": 45
+    },
+    {
+      "id": "B",
+      "width": 41.34375,
+      "height": 45
+    },
+    {
+      "id": "C",
+      "width": 42.1171875,
+      "height": 45
+    },
+    {
+      "id": "D",
+      "width": 42.1171875,
+      "height": 45
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "19bc5536f54ad3b7ef74bd10762254ce5e90f776f87b639e11df41765596940f",
+    "capturedAt": "2026-05-06T00:00:00.000Z",
+    "capturedFrom": "browser-dev layout-tests/decoupled-subgraph.mmd theme=default look=classic"
+  }
+}
