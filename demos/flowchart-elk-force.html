@@ -483,31 +483,14 @@ flowchart TD
         const mermaidCode = generateMermaidDiagram(nodeCount, edgeCount);
         const diagramElement = document.getElementById('dynamicDiagram');
 
-        // Clear any existing SVG siblings that Mermaid may have rendered
-        const parent = diagramElement.parentElement;
-        if (parent) {
-          const svgs = parent.querySelectorAll('svg');
-          svgs.forEach((svg) => {
-            if (svg !== diagramElement) svg.remove();
-          });
-        }
+        // Remove the data-processed attribute to allow Mermaid to re-process
+        diagramElement.removeAttribute('data-processed');
 
         // Clear the diagram element and set new code
-        diagramElement.innerHTML = '';
         diagramElement.textContent = mermaidCode;
 
-        // Re-initialize mermaid with new config
-        mermaid.initialize({
-          logLevel: 3,
-          flowchart: {
-            layout: 'elk',
-            elk: {
-              algorithm: 'elk.force',
-              ...currentConfig,
-            },
-          },
-        });
-        mermaid.contentLoaded();
+        // Trigger mermaid re-render on only this element (not all .mermaid elements)
+        mermaid.run({ nodes: [diagramElement] });
       }
 
       function updateConfigDisplay() {
@@ -536,7 +519,6 @@ flowchart TD
         currentConfig.forceIterations = forceIterations;
 
         // Update display values
-        document.getElementById('forceModelValue').textContent = forceModel;
         document.getElementById('forceRepulsionValue').textContent = forceRepulsion.toFixed(1);
         document.getElementById('forceTemperatureValue').textContent = forceTemperature.toFixed(4);
         document.getElementById('forceIterationsValue').textContent = forceIterations;

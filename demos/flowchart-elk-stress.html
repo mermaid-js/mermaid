@@ -474,8 +474,8 @@ flowchart TD
         // Clear the diagram element and set new code
         diagramElement.textContent = mermaidCode;
 
-        // Trigger mermaid re-render
-        mermaid.run();
+        // Trigger mermaid re-render on only this element (not all .mermaid elements)
+        mermaid.run({ nodes: [diagramElement] });
       }
 
       function updateConfigDisplay() {
