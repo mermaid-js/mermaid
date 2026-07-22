@@ -443,12 +443,6 @@ flowchart-elk TD
         });
       };
 
-      // Attach event listeners
-      document.getElementById('forceModel').addEventListener('change', updateForceConfig);
-      document.getElementById('forceRepulsion').addEventListener('input', updateForceConfig);
-      document.getElementById('forceTemperature').addEventListener('input', updateForceConfig);
-      document.getElementById('forceIterations').addEventListener('input', updateForceConfig);
-
       // Initial setup
       mermaid.registerLayoutLoaders(layouts);
       mermaid.initialize({
@@ -465,6 +459,28 @@ flowchart-elk TD
         },
       });
       updateConfigDisplay();
+
+      // Attach event listeners immediately with error handling
+      setTimeout(() => {
+        try {
+          const forceModelSelect = document.getElementById('forceModel');
+          const forceRepulsionSlider = document.getElementById('forceRepulsion');
+          const forceTemperatureSlider = document.getElementById('forceTemperature');
+          const forceIterationsSlider = document.getElementById('forceIterations');
+
+          if (forceModelSelect) forceModelSelect.addEventListener('change', updateForceConfig);
+          if (forceRepulsionSlider)
+            forceRepulsionSlider.addEventListener('input', updateForceConfig);
+          if (forceTemperatureSlider)
+            forceTemperatureSlider.addEventListener('input', updateForceConfig);
+          if (forceIterationsSlider)
+            forceIterationsSlider.addEventListener('input', updateForceConfig);
+
+          console.log('Event listeners attached successfully');
+        } catch (error) {
+          console.error('Error attaching event listeners:', error);
+        }
+      }, 0);
     </script>
   </body>
 </html>

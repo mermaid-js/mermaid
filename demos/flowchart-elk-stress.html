@@ -442,12 +442,25 @@ flowchart-elk TD
         });
       };
 
-      // Attach event listeners
-      document
-        .getElementById('stressDesiredEdgeLength')
-        .addEventListener('input', updateStressConfig);
-      document.getElementById('stressIterationLimit').addEventListener('input', updateStressConfig);
-      document.getElementById('stressEpsilon').addEventListener('input', updateStressConfig);
+      // Attach event listeners with error handling
+      setTimeout(() => {
+        try {
+          const stressDesiredEdgeLengthSlider = document.getElementById('stressDesiredEdgeLength');
+          const stressIterationLimitSlider = document.getElementById('stressIterationLimit');
+          const stressEpsilonSlider = document.getElementById('stressEpsilon');
+
+          if (stressDesiredEdgeLengthSlider)
+            stressDesiredEdgeLengthSlider.addEventListener('input', updateStressConfig);
+          if (stressIterationLimitSlider)
+            stressIterationLimitSlider.addEventListener('input', updateStressConfig);
+          if (stressEpsilonSlider)
+            stressEpsilonSlider.addEventListener('input', updateStressConfig);
+
+          console.log('Stress demo event listeners attached successfully');
+        } catch (error) {
+          console.error('Error attaching stress demo event listeners:', error);
+        }
+      }, 0);
 
       // Initial setup
       mermaid.registerLayoutLoaders(layouts);
