@@ -256,8 +256,8 @@ Beyond the default layered layout, ELK provides **force-directed** and **stress-
   - `FRUCHTERMAN_REINGOLD` (default)
   - `EADES`
 - `forceIterations`: Number of iterations (default: 300, minimum: 1)
-- `forceRepulsion`: Repulsive force between nodes (default: 5.0)
-- `forceTemperature`: Initial temperature for node movement (default: 0.001)
+- `forceRepulsion`: Repulsive force between nodes; applies only to EADES algorithm (default: 5.0)
+- `forceTemperature`: Cooling factor for node movement; applies only to FRUCHTERMAN_REINGOLD algorithm (default: 0.001)
 
 **Stress Layout** (`elk.stress`): Uses a stress-majorization algorithm for more balanced, circular layouts. Optimal for meshes, clusters, and graphs where even spacing is desired.
 
@@ -267,7 +267,7 @@ Beyond the default layered layout, ELK provides **force-directed** and **stress-
 
 **Example: Force-Directed Layout**
 
-```
+```mermaid
 ---
 config:
   layout: elk
@@ -286,7 +286,7 @@ graph TD
 
 **Example: Stress-Based Layout**
 
-```
+```mermaid
 ---
 config:
   layout: elk

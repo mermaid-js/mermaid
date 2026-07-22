@@ -30,8 +30,7 @@ elk: {
   algorithm: 'elk.force',
   forceModel: 'EADES',
   forceIterations: 300,
-  forceRepulsion: 1.0,
-  forceTemperature: 1.0
+  forceRepulsion: 1.0
 }
 
 // Stress-minimization algorithm

@@ -220,6 +220,30 @@
         >
       </div>
 
+      <hr style="border: none; border-top: 1px solid rgba(255, 255, 255, 0.2); margin: 20px 0" />
+
+      <div class="control-group">
+        <label for="graphNodeCount">
+          Graph Node Count
+          <span class="value-display" id="graphNodeCountValue">20</span>
+        </label>
+        <input type="range" id="graphNodeCount" min="5" max="50" step="1" value="20" />
+        <small style="opacity: 0.8; display: block; margin-top: 5px"
+          >Number of nodes to generate in the test graph</small
+        >
+      </div>
+
+      <div class="control-group">
+        <label for="graphEdgeCount">
+          Graph Edge Count
+          <span class="value-display" id="graphEdgeCountValue">40</span>
+        </label>
+        <input type="range" id="graphEdgeCount" min="1" max="200" step="1" value="40" />
+        <small style="opacity: 0.8; display: block; margin-top: 5px"
+          >Number of edges (connections) in the test graph</small
+        >
+      </div>
+
       <div class="button-group">
         <button class="btn-reset" onclick="resetForceParameters()">↻ Reset to Defaults</button>
         <button class="btn-copy" onclick="copyForceConfig()">📋 Copy Config</button>
@@ -229,6 +253,15 @@
         <strong>Current Configuration:</strong>
         <pre id="forceConfigDisplay" style="margin: 8px 0 0 0"></pre>
       </div>
+    </div>
+
+    <div class="section">
+      <h2>🧪 Interactive Graph (Dynamically Generated)</h2>
+      <p style="font-size: 14px; opacity: 0.85">
+        Adjust node and edge counts above to generate and visualize different graph complexities
+        with the current force-directed layout settings.
+      </p>
+      <pre class="mermaid" id="dynamicDiagram"></pre>
     </div>
 
     <div class="section">
@@ -375,6 +408,85 @@ flowchart-elk TD
         forceTemperature: 0.001,
       };
 
+      let graphConfig = {
+        nodeCount: 20,
+        edgeCount: 40,
+      };
+
+      function generateConnectedGraph(nodeCount, edgeCount) {
+        const nodes = [];
+        const edges = [];
+
+        // Create nodes
+        for (let i = 0; i < nodeCount; i++) {
+          nodes.push({ id: i, label: `N${i}` });
+        }
+
+        // Create spanning tree to ensure connectivity
+        for (let i = 1; i < nodeCount; i++) {
+          const parent = Math.floor(Math.random() * i);
+          edges.push([parent, i]);
+        }
+
+        // Add random edges until we reach the target
+        while (edges.length < edgeCount && edges.length < (nodeCount * (nodeCount - 1)) / 2) {
+          const source = Math.floor(Math.random() * nodeCount);
+          const target = Math.floor(Math.random() * nodeCount);
+
+          if (source !== target) {
+            const edgeKey = source < target ? `${source}-${target}` : `${target}-${source}`;
+            const exists = edges.some(
+              (e) => (e[0] === source && e[1] === target) || (e[0] === target && e[1] === source)
+            );
+
+            if (!exists) {
+              edges.push([source, target]);
+            }
+          }
+        }
+
+        return { nodes, edges: edges.slice(0, edgeCount) };
+      }
+
+      function generateMermaidDiagram(nodeCount, edgeCount) {
+        const { nodes, edges } = generateConnectedGraph(nodeCount, edgeCount);
+
+        let mermaidCode = 'flowchart-elk TD\n';
+
+        // Add nodes
+        for (const node of nodes) {
+          mermaidCode += `  ${node.label}[${node.label}]\n`;
+        }
+
+        // Add edges
+        for (const [source, target] of edges) {
+          const sourceLabel = nodes[source].label;
+          const targetLabel = nodes[target].label;
+          mermaidCode += `  ${sourceLabel} --> ${targetLabel}\n`;
+        }
+
+        return mermaidCode;
+      }
+
+      function updateDynamicDiagram() {
+        const nodeCount = parseInt(document.getElementById('graphNodeCount').value);
+        const edgeCount = parseInt(document.getElementById('graphEdgeCount').value);
+
+        graphConfig.nodeCount = nodeCount;
+        graphConfig.edgeCount = edgeCount;
+
+        // Update display values
+        document.getElementById('graphNodeCountValue').textContent = nodeCount;
+        document.getElementById('graphEdgeCountValue').textContent = edgeCount;
+
+        // Generate and render new diagram
+        const mermaidCode = generateMermaidDiagram(nodeCount, edgeCount);
+        document.getElementById('dynamicDiagram').textContent = mermaidCode;
+
+        // Trigger mermaid re-render
+        mermaid.contentLoaded();
+      }
+
       function updateForceConfig() {
         currentConfig = {
           forceModel: document.getElementById('forceModel').value,
@@ -467,6 +579,8 @@ flowchart-elk TD
           const forceRepulsionSlider = document.getElementById('forceRepulsion');
           const forceTemperatureSlider = document.getElementById('forceTemperature');
           const forceIterationsSlider = document.getElementById('forceIterations');
+          const graphNodeCountSlider = document.getElementById('graphNodeCount');
+          const graphEdgeCountSlider = document.getElementById('graphEdgeCount');
 
           if (forceModelSelect) forceModelSelect.addEventListener('change', updateForceConfig);
           if (forceRepulsionSlider)
@@ -475,8 +589,15 @@ flowchart-elk TD
             forceTemperatureSlider.addEventListener('input', updateForceConfig);
           if (forceIterationsSlider)
             forceIterationsSlider.addEventListener('input', updateForceConfig);
+          if (graphNodeCountSlider)
+            graphNodeCountSlider.addEventListener('input', updateDynamicDiagram);
+          if (graphEdgeCountSlider)
+            graphEdgeCountSlider.addEventListener('input', updateDynamicDiagram);
 
           console.log('Event listeners attached successfully');
+
+          // Generate initial diagram
+          updateDynamicDiagram();
         } catch (error) {
           console.error('Error attaching event listeners:', error);
         }
