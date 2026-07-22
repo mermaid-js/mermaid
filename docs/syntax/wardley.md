@@ -229,7 +229,7 @@ Legacy System -> New Platform
 
 #### Source Strategy
 
-Indicate build/buy/outsource decisions:
+Indicate sourcing strategy decisions:
 
 - `(build)` - Light grey overlay circle with black border (in-house build)
 - `(buy)` - Light grey overlay circle (off-the-shelf purchase)

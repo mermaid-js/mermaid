@@ -426,16 +426,22 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
         .attr('stroke', style.stroke)
         .attr('stroke-opacity', 0.7)
         .attr('stroke-width', 2);
-      const labelY = Math.min(rectY + 16, rectY + Math.max(rectH - 4, rectH / 2));
-      group
-        .append('text')
-        .attr('x', rectX + rectW / 2)
-        .attr('y', labelY)
-        .attr('text-anchor', 'middle')
-        .attr('font-size', configValues.axisFontSize)
-        .attr('font-weight', 'bold')
-        .attr('fill', style.stroke)
-        .text(style.label);
+      // Only render the zone label when the rectangle can plausibly contain it.
+      // Width is estimated (no DOM text measurement is available at render time),
+      // so very narrow or thin zones omit the label rather than spilling outside.
+      const estLabelWidth = style.label.length * configValues.axisFontSize * 0.6;
+      if (rectW >= estLabelWidth && rectH >= configValues.axisFontSize) {
+        const labelY = Math.min(rectY + 16, rectY + Math.max(rectH - 4, rectH / 2));
+        group
+          .append('text')
+          .attr('x', rectX + rectW / 2)
+          .attr('y', labelY)
+          .attr('text-anchor', 'middle')
+          .attr('font-size', configValues.axisFontSize)
+          .attr('font-weight', 'bold')
+          .attr('fill', style.stroke)
+          .text(style.label);
+      }
     });
   }
 
