@@ -523,9 +523,9 @@ You have to call mermaid.initialize.`
       argList.push(id);
     }
 
-    const vertex = this.vertices.get(id);
-    if (vertex) {
-      vertex.haveCallback = true;
+    const target = this.vertices.get(id) ?? this.subGraphLookup.get(id);
+    if (target) {
+      target.haveCallback = true;
       this.funs.push(() => {
         // Defer lookUpDomId to bind time so it includes the diagramId prefix
         const domId = this.lookUpDomId(id);
@@ -556,6 +556,11 @@ You have to call mermaid.initialize.`
       if (vertex !== undefined) {
         vertex.link = utils.formatUrl(linkStr, this.config);
         vertex.linkTarget = target;
+      }
+      const subGraph = this.subGraphLookup.get(id);
+      if (subGraph !== undefined) {
+        subGraph.link = utils.formatUrl(linkStr, this.config);
+        subGraph.linkTarget = target;
       }
     });
     this.setClass(ids, 'clickable');
@@ -1218,6 +1223,10 @@ You have to call mermaid.initialize.`
           explicitDir: subGraph.hasExplicitDir, // true only when the user wrote an explicit 'direction X' keyword
           isGroup: true,
           look: config.look,
+          link: subGraph.link,
+          linkTarget: subGraph.linkTarget,
+          haveCallback: subGraph.haveCallback,
+          tooltip: this.getTooltip(subGraph.id),
         });
       }
     }

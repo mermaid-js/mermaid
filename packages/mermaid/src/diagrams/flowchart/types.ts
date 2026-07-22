@@ -84,6 +84,9 @@ export interface FlowSubGraph {
   labelType: string;
   nodes: string[];
   title: string;
+  link?: string;
+  linkTarget?: string;
+  haveCallback?: boolean;
   /**
    * Optional `@{ ... }` metadata attached to the subgraph via a
    * `subGraphId@{ ... }` statement, e.g. `{ view: 'collapsed' }`.

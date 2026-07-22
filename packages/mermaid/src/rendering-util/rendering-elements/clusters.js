@@ -28,8 +28,24 @@ const rect = async (parent, node) => {
 
   const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
 
+  // When a `click`/`href` directive is attached to the subgraph, wrap the label
+  // in an anchor so it acts as a link (see issue #5428).
+  let labelParent = shapeSvg;
+  if (node.link) {
+    let target;
+    if (siteConfig.securityLevel === 'sandbox') {
+      target = '_top';
+    } else if (node.linkTarget) {
+      target = node.linkTarget || '_blank';
+    }
+    labelParent = shapeSvg
+      .insert('svg:a')
+      .attr('xlink:href', node.link)
+      .attr('target', target ?? null);
+  }
+
   // Create the label and insert it after the rect
-  const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label ');
+  const labelEl = labelParent.insert('g').attr('class', 'cluster-label ');
 
   let text;
   if (node.labelType === 'markdown') {
