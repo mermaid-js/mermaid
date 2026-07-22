@@ -468,22 +468,23 @@ Wardley Maps support Mermaid's theme system. Use standard Mermaid configuration 
 
 ## Syntax Summary
 
-| Element    | Syntax                              | Example                             |
-| ---------- | ----------------------------------- | ----------------------------------- |
-| Diagram    | `wardley-beta`                      | `wardley-beta`                      |
-| Title      | `title Text`                        | `title My Map`                      |
-| Size       | `size [width, height]`              | `size [1100, 800]`                  |
-| Component  | `component Name [vis, evo]`         | `component API [0.6, 0.7]`          |
-| Anchor     | `anchor Name [vis, evo]`            | `anchor User [0.9, 0.95]`           |
-| Link       | `A -> B`                            | `API -> Database`                   |
-| Flow       | `A +> B`                            | `User +> API`                       |
-| Evolve     | `evolve Name targetEvo`             | `evolve API 0.85`                   |
-| Note       | `note "Text" [vis, evo]`            | `note "Key insight" [0.4, 0.5]`     |
-| Annotation | `annotation N,[x,y] "Text"`         | `annotation 1,[0.5,0.5] "Critical"` |
-| Inertia    | `(inertia)`                         | `component DB [0.4, 0.6] (inertia)` |
-| Strategy   | `(build\|buy\|outsource\|market)`   | `component API [0.6, 0.7] (buy)`    |
-| Pipeline   | `pipeline Parent { ... }`           | See pipeline example above          |
-| Evolution  | `evolution Stage1 -> Stage2 -> ...` | See evolution examples above        |
+| Element    | Syntax                                              | Example                             |
+| ---------- | --------------------------------------------------- | ----------------------------------- |
+| Diagram    | `wardley-beta`                                      | `wardley-beta`                      |
+| Title      | `title Text`                                        | `title My Map`                      |
+| Size       | `size [width, height]`                              | `size [1100, 800]`                  |
+| Component  | `component Name [vis, evo]`                         | `component API [0.6, 0.7]`          |
+| Anchor     | `anchor Name [vis, evo]`                            | `anchor User [0.9, 0.95]`           |
+| Link       | `A -> B`                                            | `API -> Database`                   |
+| Flow       | `A +> B`                                            | `User +> API`                       |
+| Evolve     | `evolve Name targetEvo`                             | `evolve API 0.85`                   |
+| Note       | `note "Text" [vis, evo]`                            | `note "Key insight" [0.4, 0.5]`     |
+| Annotation | `annotation N,[x,y] "Text"`                         | `annotation 1,[0.5,0.5] "Critical"` |
+| Inertia    | `(inertia)`                                         | `component DB [0.4, 0.6] (inertia)` |
+| Strategy   | `(build\|buy\|outsource\|market\|ecosystem)`        | `component API [0.6, 0.7] (buy)`    |
+| Attitude   | `pioneers\|settlers\|townplanners [v1, e1, v2, e2]` | `pioneers [0.95, 0.05, 0.55, 0.3]`  |
+| Pipeline   | `pipeline Parent { ... }`                           | See pipeline example above          |
+| Evolution  | `evolution Stage1 -> Stage2 -> ...`                 | See evolution examples above        |
 
 ## Limitations
 
