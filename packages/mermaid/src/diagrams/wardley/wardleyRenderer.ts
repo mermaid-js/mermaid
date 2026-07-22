@@ -263,6 +263,21 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
   const configValues = getConfigValues();
   const theme = getTheme();
   const squareSize = configValues.nodeRadius * 1.6; // Size of pipeline parent square nodes
+  // Ecosystem symbol radii (concentric circles); outer ring doubles as the link endpoint radius
+  const ecoOuterRadius = configValues.nodeRadius * 2;
+  const ecoMiddleRadius = configValues.nodeRadius * 1.65;
+  const ecoInnerRadius = configValues.nodeRadius * 0.65;
+  // Radius at which a link should terminate for a given node, matching the node's
+  // rendered outer edge: pipeline square corner, ecosystem outer ring, or default circle.
+  const getLinkRadius = (node: WardleyNode): number => {
+    if (node.isPipelineParent) {
+      return squareSize / Math.sqrt(2);
+    }
+    if (node.sourceStrategy === 'ecosystem') {
+      return ecoOuterRadius;
+    }
+    return configValues.nodeRadius;
+  };
   const db = diagObj.db as {
     getWardleyData: () => WardleyBuildResult;
     getDiagramTitle: () => string;
@@ -767,9 +782,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
       const sourcePos = positions.get(link.source)!;
       const targetPos = positions.get(link.target)!;
       const sourceNode = data.nodes.find((n) => n.id === link.source)!;
-      const radius = sourceNode.isPipelineParent
-        ? squareSize / Math.sqrt(2)
-        : configValues.nodeRadius;
+      const radius = getLinkRadius(sourceNode);
       const dx = targetPos.x - sourcePos.x;
       const dy = targetPos.y - sourcePos.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
@@ -779,9 +792,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
       const sourcePos = positions.get(link.source)!;
       const targetPos = positions.get(link.target)!;
       const sourceNode = data.nodes.find((n) => n.id === link.source)!;
-      const radius = sourceNode.isPipelineParent
-        ? squareSize / Math.sqrt(2)
-        : configValues.nodeRadius;
+      const radius = getLinkRadius(sourceNode);
       const dx = targetPos.x - sourcePos.x;
       const dy = targetPos.y - sourcePos.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
@@ -791,9 +802,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
       const sourcePos = positions.get(link.source)!;
       const targetPos = positions.get(link.target)!;
       const targetNode = data.nodes.find((n) => n.id === link.target)!;
-      const radius = targetNode.isPipelineParent
-        ? squareSize / Math.sqrt(2)
-        : configValues.nodeRadius;
+      const radius = getLinkRadius(targetNode);
       const dx = sourcePos.x - targetPos.x;
       const dy = sourcePos.y - targetPos.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
@@ -803,9 +812,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
       const sourcePos = positions.get(link.source)!;
       const targetPos = positions.get(link.target)!;
       const targetNode = data.nodes.find((n) => n.id === link.target)!;
-      const radius = targetNode.isPipelineParent
-        ? squareSize / Math.sqrt(2)
-        : configValues.nodeRadius;
+      const radius = getLinkRadius(targetNode);
       const dx = sourcePos.x - targetPos.x;
       const dy = sourcePos.y - targetPos.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
@@ -1102,9 +1109,6 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
 
   // Render ecosystem symbol (concentric circles with diagonal hatch fill)
   const ecosystemNodes = nodeEnter.filter((node) => node.sourceStrategy === 'ecosystem');
-  const ecoOuterRadius = configValues.nodeRadius * 2;
-  const ecoMiddleRadius = configValues.nodeRadius * 1.65;
-  const ecoInnerRadius = configValues.nodeRadius * 0.65;
 
   // Outer filled circle
   ecosystemNodes
