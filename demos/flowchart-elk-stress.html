@@ -387,6 +387,16 @@ flowchart TD
       import mermaid from '../packages/mermaid/dist/mermaid.esm.mjs';
       import layouts from '../packages/mermaid-layout-elk/dist/mermaid-layout-elk.esm.mjs';
 
+      // Cache original source of each static mermaid element before Mermaid
+      // first processes them (replaces content with SVG).  We restore this
+      // source text whenever a slider change requires a full re-render.
+      const staticDiagramSources = new Map();
+      document.querySelectorAll('pre.mermaid').forEach((el) => {
+        if (el.id !== 'dynamicDiagram') {
+          staticDiagramSources.set(el, el.textContent);
+        }
+      });
+
       let currentConfig = {
         stressDesiredEdgeLength: 100,
         stressIterationLimit: undefined,
@@ -491,6 +501,17 @@ flowchart TD
         document.getElementById('stressConfigDisplay').textContent = configText;
       }
 
+      // Restore each cached static diagram to its original source text, clear
+      // the data-processed flag so Mermaid will re-process it, and re-run
+      // Mermaid on just that element.
+      function reRenderStaticDiagrams() {
+        staticDiagramSources.forEach((source, el) => {
+          el.removeAttribute('data-processed');
+          el.textContent = source;
+          mermaid.run({ nodes: [el] });
+        });
+      }
+
       function updateStressConfig() {
         // Read current slider values
         const stressDesiredEdgeLength = parseFloat(
@@ -514,8 +535,27 @@ flowchart TD
           stressIterationLimit === 0 ? 'unlimited' : stressIterationLimit;
         document.getElementById('stressEpsilonValue').textContent = stressEpsilon.toFixed(5);
 
-        // Update config display and regenerate diagram
+        // Re-initialize Mermaid with the updated ELK parameters.  The elk key
+        // must be at the top level of the config object — the ELK layout plugin
+        // reads data4Layout.config.elk (i.e. getConfig().elk), not
+        // getConfig().flowchart.elk.
+        const elkConfig = {
+          stressDesiredEdgeLength,
+          stressEpsilon,
+        };
+        if (currentConfig.stressIterationLimit !== undefined) {
+          elkConfig.stressIterationLimit = currentConfig.stressIterationLimit;
+        }
+        mermaid.initialize({
+          logLevel: 3,
+          layout: 'elk.stress',
+          elk: elkConfig,
+        });
+
+        // Update config display, re-render the static examples with new params,
+        // and regenerate the dynamic diagram.
         updateConfigDisplay();
+        reRenderStaticDiagrams();
         updateDynamicDiagram();
       }
 
@@ -584,13 +624,10 @@ flowchart TD
       mermaid.registerLayoutLoaders(layouts);
       mermaid.initialize({
         logLevel: 3,
-        flowchart: {
-          layout: 'elk',
-          elk: {
-            algorithm: 'elk.stress',
-            stressDesiredEdgeLength: 100,
-            stressEpsilon: 0.0001,
-          },
+        layout: 'elk.stress',
+        elk: {
+          stressDesiredEdgeLength: 100,
+          stressEpsilon: 0.0001,
         },
       });
       updateConfigDisplay();
