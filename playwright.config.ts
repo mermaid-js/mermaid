@@ -1,5 +1,4 @@
 import { createHash } from 'node:crypto';
-import { basename } from 'node:path';
 import { defineConfig, devices } from '@playwright/test';
 import 'dotenv/config';
 
@@ -13,10 +12,10 @@ function resolveE2EPort(): string {
   if (process.env.MERMAID_DEV_PORT) {
     return process.env.MERMAID_DEV_PORT;
   }
+  // Derive a stable per-worktree port from the working directory so parallel
+  // worktrees don't collide. Set MERMAID_PORT / MERMAID_DEV_PORT to pin a fixed
+  // port (e.g. 9000) explicitly.
   const worktreeRoot = process.cwd();
-  if (basename(worktreeRoot) === 'alana-mermaid') {
-    return '9000';
-  }
   const hash = createHash('sha1').update(worktreeRoot).digest();
   return String(9000 + (hash.readUInt16BE(0) % 100));
 }
