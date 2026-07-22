@@ -298,7 +298,7 @@
         edge crossings.
       </p>
       <pre class="mermaid">
-flowchart-elk TD
+flowchart TD
   Start([Start]) --> Intake[Intake]
   Intake --> Validate{Validate}
   Validate -->|Invalid| Reject[Reject]
@@ -322,7 +322,7 @@ flowchart-elk TD
         compact presentation suitable for whitepapers, presentations, and documentation.
       </p>
       <pre class="mermaid">
-flowchart-elk TD
+flowchart TD
   Client[Web Client]
   Mobile[Mobile App]
   
@@ -363,7 +363,7 @@ flowchart-elk TD
         clarity and compactness matter more than equal node distribution.
       </p>
       <pre class="mermaid">
-flowchart-elk TD
+flowchart TD
   Root{Is Request Valid?}
   Root -->|No| Error1[Return 400 Error]
   Root -->|Yes| Auth{Authenticated?}
@@ -436,11 +436,11 @@ flowchart-elk TD
       function generateMermaidDiagram(nodeCount, edgeCount) {
         const { nodes, edges } = generateConnectedGraph(nodeCount, edgeCount);
 
-        let mermaidCode = 'flowchart-elk TD\n';
+        let mermaidCode = `flowchart TD\n`;
 
         // Add nodes
         for (const node of nodes) {
-          mermaidCode += `  ${node.label}[${node.label}]\n`;
+          mermaidCode += `  ${node.label}["${node.label}"]\n`;
         }
 
         // Add edges
@@ -460,56 +460,33 @@ flowchart-elk TD
         graphConfig.nodeCount = nodeCount;
         graphConfig.edgeCount = edgeCount;
 
-        // Update display values
+        // Update display values for node/edge counts
         document.getElementById('graphNodeCountValue').textContent = nodeCount;
         document.getElementById('graphEdgeCountValue').textContent = edgeCount;
 
-        // Generate and render new diagram
-        const mermaidCode = generateMermaidDiagram(nodeCount, edgeCount);
-        document.getElementById('dynamicDiagram').textContent = mermaidCode;
-
-        // Trigger mermaid re-render
-        mermaid.contentLoaded();
-      }
-
-      function updateStressConfig() {
-        const iterLimit = parseInt(document.getElementById('stressIterationLimit').value);
-        currentConfig = {
-          stressDesiredEdgeLength: parseInt(
-            document.getElementById('stressDesiredEdgeLength').value
-          ),
-          stressIterationLimit: iterLimit === 0 ? undefined : iterLimit,
-          stressEpsilon: parseFloat(document.getElementById('stressEpsilon').value),
-        };
-
-        // Update display values
+        // Update display values for stress parameters
         document.getElementById('stressDesiredEdgeLengthValue').textContent =
           currentConfig.stressDesiredEdgeLength;
         document.getElementById('stressIterationLimitValue').textContent =
-          iterLimit === 0 ? 'unlimited' : iterLimit;
+          currentConfig.stressIterationLimit === 0
+            ? 'unlimited'
+            : currentConfig.stressIterationLimit;
         document.getElementById('stressEpsilonValue').textContent =
           currentConfig.stressEpsilon.toFixed(5);
         updateConfigDisplay();
 
-        // Build config object
-        const elkConfig = {
-          algorithm: 'elk.stress',
-          stressDesiredEdgeLength: currentConfig.stressDesiredEdgeLength,
-          stressEpsilon: currentConfig.stressEpsilon,
-        };
-        if (currentConfig.stressIterationLimit !== undefined) {
-          elkConfig.stressIterationLimit = currentConfig.stressIterationLimit;
-        }
+        // Generate new diagram code
+        const mermaidCode = generateMermaidDiagram(nodeCount, edgeCount);
+        const diagramElement = document.getElementById('dynamicDiagram');
 
-        // Re-initialize mermaid with new config
-        mermaid.initialize({
-          logLevel: 3,
-          flowchart: {
-            layout: 'elk',
-            elk: elkConfig,
-          },
-        });
-        mermaid.contentLoaded();
+        // Remove the data-processed attribute to allow Mermaid to re-process
+        diagramElement.removeAttribute('data-processed');
+
+        // Clear the diagram element and set new code
+        diagramElement.textContent = mermaidCode;
+
+        // Trigger mermaid re-render
+        mermaid.run();
       }
 
       function updateConfigDisplay() {

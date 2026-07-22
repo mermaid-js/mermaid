@@ -314,7 +314,7 @@
         services to reveal clusters and communication patterns.
       </p>
       <pre class="mermaid">
-flowchart-elk TD
+flowchart TD
   User[Client/User]
   LB[Load Balancer]
   
@@ -364,7 +364,7 @@ flowchart-elk TD
         readability even with many edges.
       </p>
       <pre class="mermaid">
-flowchart-elk TD
+flowchart TD
   A[Node A]
   B[Node B]
   C[Node C]
@@ -451,11 +451,11 @@ flowchart-elk TD
       function generateMermaidDiagram(nodeCount, edgeCount) {
         const { nodes, edges } = generateConnectedGraph(nodeCount, edgeCount);
 
-        let mermaidCode = 'flowchart-elk TD\n';
+        let mermaidCode = `flowchart TD\n`;
 
         // Add nodes
         for (const node of nodes) {
-          mermaidCode += `  ${node.label}[${node.label}]\n`;
+          mermaidCode += `  ${node.label}["${node.label}"]\n`;
         }
 
         // Add edges
@@ -479,23 +479,25 @@ flowchart-elk TD
         document.getElementById('graphNodeCountValue').textContent = nodeCount;
         document.getElementById('graphEdgeCountValue').textContent = edgeCount;
 
-        // Generate and render new diagram
+        // Generate new diagram code
         const mermaidCode = generateMermaidDiagram(nodeCount, edgeCount);
-        document.getElementById('dynamicDiagram').textContent = mermaidCode;
+        const diagramElement = document.getElementById('dynamicDiagram');
+
+        // Clear any existing SVG siblings that Mermaid may have rendered
+        const parent = diagramElement.parentElement;
+        if (parent) {
+          const svgs = parent.querySelectorAll('svg');
+          svgs.forEach((svg) => {
+            if (svg !== diagramElement) svg.remove();
+          });
+        }
+
+        // Clear the diagram element and set new code
+        diagramElement.innerHTML = '';
+        diagramElement.textContent = mermaidCode;
 
         // Trigger mermaid re-render
-        mermaid.contentLoaded();
-      }
-
-      function updateForceConfig() {
-        currentConfig = {
-          forceModel: document.getElementById('forceModel').value,
-          forceIterations: parseInt(document.getElementById('forceIterations').value),
-          forceRepulsion: parseFloat(document.getElementById('forceRepulsion').value),
-          forceTemperature: parseFloat(document.getElementById('forceTemperature').value),
-        };
-
-        // Update display values
+        mermaid.run();
         document.getElementById('forceRepulsionValue').textContent =
           currentConfig.forceRepulsion.toFixed(1);
         document.getElementById('forceTemperatureValue').textContent =
