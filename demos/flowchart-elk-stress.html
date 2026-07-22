@@ -56,11 +56,166 @@
         font-family: 'Courier New', monospace;
         color: #27ae60;
       }
+      .control-panel {
+        background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+      }
+      .control-panel h2 {
+        color: white;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        margin-top: 0;
+      }
+      .control-group {
+        margin-bottom: 20px;
+      }
+      .control-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+      .control-group input[type='range'] {
+        width: 100%;
+        max-width: 300px;
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      .control-group input[type='range']::-webkit-slider-thumb {
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: white;
+        cursor: pointer;
+      }
+      .control-group input[type='range']::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: white;
+        cursor: pointer;
+        border: none;
+      }
+      .value-display {
+        display: inline-block;
+        margin-left: 15px;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 4px 12px;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .button-group {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+      }
+      .button-group button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+      .btn-reset {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+      .btn-reset:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+      .btn-copy {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+      .btn-copy:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+      .config-display {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 15px;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        margin-top: 15px;
+        color: #ecf0f1;
+        overflow-x: auto;
+        max-height: 120px;
+        overflow-y: auto;
+      }
     </style>
   </head>
 
   <body>
     <h1>ELK Stress-Minimization Layout</h1>
+
+    <div class="section control-panel">
+      <h2>⚙️ Interactive Parameters</h2>
+      <p style="margin-top: 0; font-size: 14px; opacity: 0.9">
+        Adjust parameters below to see real-time layout changes
+      </p>
+
+      <div class="control-group">
+        <label for="stressDesiredEdgeLength">
+          Desired Edge Length
+          <span class="value-display" id="stressDesiredEdgeLengthValue">100</span>
+        </label>
+        <input type="range" id="stressDesiredEdgeLength" min="10" max="500" step="10" value="100" />
+        <small style="opacity: 0.8; display: block; margin-top: 5px"
+          >Lower = compact, Higher = spread out</small
+        >
+      </div>
+
+      <div class="control-group">
+        <label for="stressIterationLimit">
+          Iteration Limit
+          <span class="value-display" id="stressIterationLimitValue">unlimited</span>
+        </label>
+        <input type="range" id="stressIterationLimit" min="0" max="2000" step="1" value="0" />
+        <small style="opacity: 0.8; display: block; margin-top: 5px"
+          >0 = unlimited, higher = fewer iterations</small
+        >
+      </div>
+
+      <div class="control-group">
+        <label for="stressEpsilon">
+          Epsilon (Convergence Threshold)
+          <span class="value-display" id="stressEpsilonValue">0.0001</span>
+        </label>
+        <input
+          type="range"
+          id="stressEpsilon"
+          min="0.00001"
+          max="0.1"
+          step="0.00001"
+          value="0.0001"
+        />
+        <small style="opacity: 0.8; display: block; margin-top: 5px"
+          >Lower = stricter convergence, Higher = looser</small
+        >
+      </div>
+
+      <div class="button-group">
+        <button class="btn-reset" onclick="resetStressParameters()">↻ Reset to Defaults</button>
+        <button class="btn-copy" onclick="copyStressConfig()">📋 Copy Config</button>
+      </div>
+
+      <div class="config-display">
+        <strong>Current Configuration:</strong>
+        <pre id="stressConfigDisplay" style="margin: 8px 0 0 0"></pre>
+      </div>
+    </div>
 
     <div class="section">
       <h2>What is Stress-Minimization Layout?</h2>
@@ -198,6 +353,103 @@ flowchart-elk TD
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       import layouts from './mermaid-layout-elk.esm.mjs';
+
+      let currentConfig = {
+        stressDesiredEdgeLength: 100,
+        stressIterationLimit: undefined,
+        stressEpsilon: 0.0001,
+      };
+
+      function updateStressConfig() {
+        const iterLimit = parseInt(document.getElementById('stressIterationLimit').value);
+        currentConfig = {
+          stressDesiredEdgeLength: parseInt(
+            document.getElementById('stressDesiredEdgeLength').value
+          ),
+          stressIterationLimit: iterLimit === 0 ? undefined : iterLimit,
+          stressEpsilon: parseFloat(document.getElementById('stressEpsilon').value),
+        };
+
+        // Update display values
+        document.getElementById('stressDesiredEdgeLengthValue').textContent =
+          currentConfig.stressDesiredEdgeLength;
+        document.getElementById('stressIterationLimitValue').textContent =
+          iterLimit === 0 ? 'unlimited' : iterLimit;
+        document.getElementById('stressEpsilonValue').textContent =
+          currentConfig.stressEpsilon.toFixed(5);
+        updateConfigDisplay();
+
+        // Build config object
+        const elkConfig = {
+          algorithm: 'elk.stress',
+          stressDesiredEdgeLength: currentConfig.stressDesiredEdgeLength,
+          stressEpsilon: currentConfig.stressEpsilon,
+        };
+        if (currentConfig.stressIterationLimit !== undefined) {
+          elkConfig.stressIterationLimit = currentConfig.stressIterationLimit;
+        }
+
+        // Re-initialize mermaid with new config
+        mermaid.initialize({
+          logLevel: 3,
+          flowchart: {
+            layout: 'elk',
+            elk: elkConfig,
+          },
+        });
+        mermaid.contentLoaded();
+      }
+
+      function updateConfigDisplay() {
+        const configObj = {
+          algorithm: 'elk.stress',
+          stressDesiredEdgeLength: currentConfig.stressDesiredEdgeLength,
+          stressEpsilon: currentConfig.stressEpsilon,
+        };
+        if (currentConfig.stressIterationLimit !== undefined) {
+          configObj.stressIterationLimit = currentConfig.stressIterationLimit;
+        }
+        const configText = JSON.stringify(configObj, null, 2);
+        document.getElementById('stressConfigDisplay').textContent = configText;
+      }
+
+      window.resetStressParameters = function () {
+        document.getElementById('stressDesiredEdgeLength').value = '100';
+        document.getElementById('stressIterationLimit').value = '0';
+        document.getElementById('stressEpsilon').value = '0.0001';
+        updateStressConfig();
+      };
+
+      window.copyStressConfig = function () {
+        const iterLimit = currentConfig.stressIterationLimit;
+        let configText = `mermaid.initialize({
+  flowchart: {
+    layout: 'elk',
+    elk: {
+      algorithm: 'elk.stress',
+      stressDesiredEdgeLength: ${currentConfig.stressDesiredEdgeLength},
+      stressEpsilon: ${currentConfig.stressEpsilon},`;
+        if (iterLimit !== undefined) {
+          configText += `
+      stressIterationLimit: ${iterLimit},`;
+        }
+        configText += `
+    },
+  },
+});`;
+        navigator.clipboard.writeText(configText).then(() => {
+          alert('Configuration copied to clipboard!');
+        });
+      };
+
+      // Attach event listeners
+      document
+        .getElementById('stressDesiredEdgeLength')
+        .addEventListener('input', updateStressConfig);
+      document.getElementById('stressIterationLimit').addEventListener('input', updateStressConfig);
+      document.getElementById('stressEpsilon').addEventListener('input', updateStressConfig);
+
+      // Initial setup
       mermaid.registerLayoutLoaders(layouts);
       mermaid.initialize({
         logLevel: 3,
@@ -205,9 +457,12 @@ flowchart-elk TD
           layout: 'elk',
           elk: {
             algorithm: 'elk.stress',
+            stressDesiredEdgeLength: 100,
+            stressEpsilon: 0.0001,
           },
         },
       });
+      updateConfigDisplay();
     </script>
   </body>
 </html>

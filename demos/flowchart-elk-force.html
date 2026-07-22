@@ -56,11 +56,180 @@
         font-family: 'Courier New', monospace;
         color: #e74c3c;
       }
+      .control-panel {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+      }
+      .control-panel h2 {
+        color: white;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        margin-top: 0;
+      }
+      .control-group {
+        margin-bottom: 20px;
+      }
+      .control-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+      .control-group input[type='range'],
+      .control-group select {
+        width: 100%;
+        max-width: 300px;
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 14px;
+      }
+      .control-group select {
+        cursor: pointer;
+      }
+      .control-group input[type='range'] {
+        cursor: pointer;
+      }
+      .control-group input[type='range']::-webkit-slider-thumb {
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: white;
+        cursor: pointer;
+      }
+      .control-group input[type='range']::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: white;
+        cursor: pointer;
+        border: none;
+      }
+      .value-display {
+        display: inline-block;
+        margin-left: 15px;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 4px 12px;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .button-group {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+      }
+      .button-group button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+      .btn-reset {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+      .btn-reset:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+      .btn-copy {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+      .btn-copy:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+      .config-display {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 15px;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        margin-top: 15px;
+        color: #ecf0f1;
+        overflow-x: auto;
+        max-height: 120px;
+        overflow-y: auto;
+      }
     </style>
   </head>
 
   <body>
     <h1>ELK Force-Directed Layout</h1>
+
+    <div class="section control-panel">
+      <h2>⚙️ Interactive Parameters</h2>
+      <p style="margin-top: 0; font-size: 14px; opacity: 0.9">
+        Adjust parameters below to see real-time layout changes
+      </p>
+
+      <div class="control-group">
+        <label for="forceModel">Force Model</label>
+        <select id="forceModel">
+          <option value="FRUCHTERMAN_REINGOLD">FRUCHTERMAN_REINGOLD (default)</option>
+          <option value="EADES">EADES</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="forceRepulsion">
+          Force Repulsion
+          <span class="value-display" id="forceRepulsionValue">5.0</span>
+        </label>
+        <input type="range" id="forceRepulsion" min="0.1" max="50" step="0.1" value="5.0" />
+        <small style="opacity: 0.8; display: block; margin-top: 5px"
+          >Lower = compact, Higher = spread out</small
+        >
+      </div>
+
+      <div class="control-group">
+        <label for="forceTemperature">
+          Force Temperature
+          <span class="value-display" id="forceTemperatureValue">0.001</span>
+        </label>
+        <input
+          type="range"
+          id="forceTemperature"
+          min="0.0001"
+          max="0.1"
+          step="0.0001"
+          value="0.001"
+        />
+        <small style="opacity: 0.8; display: block; margin-top: 5px"
+          >Lower = fast convergence, Higher = more exploration</small
+        >
+      </div>
+
+      <div class="control-group">
+        <label for="forceIterations">
+          Force Iterations
+          <span class="value-display" id="forceIterationsValue">300</span>
+        </label>
+        <input type="range" id="forceIterations" min="1" max="1000" step="1" value="300" />
+        <small style="opacity: 0.8; display: block; margin-top: 5px"
+          >More iterations = better refined layout</small
+        >
+      </div>
+
+      <div class="button-group">
+        <button class="btn-reset" onclick="resetForceParameters()">↻ Reset to Defaults</button>
+        <button class="btn-copy" onclick="copyForceConfig()">📋 Copy Config</button>
+      </div>
+
+      <div class="config-display">
+        <strong>Current Configuration:</strong>
+        <pre id="forceConfigDisplay" style="margin: 8px 0 0 0"></pre>
+      </div>
+    </div>
 
     <div class="section">
       <h2>What is Force-Directed Layout?</h2>
@@ -198,6 +367,89 @@ flowchart-elk TD
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       import layouts from './mermaid-layout-elk.esm.mjs';
+
+      let currentConfig = {
+        forceModel: 'FRUCHTERMAN_REINGOLD',
+        forceIterations: 300,
+        forceRepulsion: 5.0,
+        forceTemperature: 0.001,
+      };
+
+      function updateForceConfig() {
+        currentConfig = {
+          forceModel: document.getElementById('forceModel').value,
+          forceIterations: parseInt(document.getElementById('forceIterations').value),
+          forceRepulsion: parseFloat(document.getElementById('forceRepulsion').value),
+          forceTemperature: parseFloat(document.getElementById('forceTemperature').value),
+        };
+
+        // Update display values
+        document.getElementById('forceRepulsionValue').textContent =
+          currentConfig.forceRepulsion.toFixed(1);
+        document.getElementById('forceTemperatureValue').textContent =
+          currentConfig.forceTemperature.toFixed(4);
+        document.getElementById('forceIterationsValue').textContent = currentConfig.forceIterations;
+        updateConfigDisplay();
+
+        // Re-initialize mermaid with new config
+        mermaid.initialize({
+          logLevel: 3,
+          flowchart: {
+            layout: 'elk',
+            elk: {
+              algorithm: 'elk.force',
+              ...currentConfig,
+            },
+          },
+        });
+        mermaid.contentLoaded();
+      }
+
+      function updateConfigDisplay() {
+        const configText = JSON.stringify(
+          {
+            algorithm: 'elk.force',
+            ...currentConfig,
+          },
+          null,
+          2
+        );
+        document.getElementById('forceConfigDisplay').textContent = configText;
+      }
+
+      window.resetForceParameters = function () {
+        document.getElementById('forceModel').value = 'FRUCHTERMAN_REINGOLD';
+        document.getElementById('forceRepulsion').value = '5.0';
+        document.getElementById('forceTemperature').value = '0.001';
+        document.getElementById('forceIterations').value = '300';
+        updateForceConfig();
+      };
+
+      window.copyForceConfig = function () {
+        const configText = `mermaid.initialize({
+  flowchart: {
+    layout: 'elk',
+    elk: {
+      algorithm: 'elk.force',
+      forceModel: '${currentConfig.forceModel}',
+      forceIterations: ${currentConfig.forceIterations},
+      forceRepulsion: ${currentConfig.forceRepulsion},
+      forceTemperature: ${currentConfig.forceTemperature},
+    },
+  },
+});`;
+        navigator.clipboard.writeText(configText).then(() => {
+          alert('Configuration copied to clipboard!');
+        });
+      };
+
+      // Attach event listeners
+      document.getElementById('forceModel').addEventListener('change', updateForceConfig);
+      document.getElementById('forceRepulsion').addEventListener('input', updateForceConfig);
+      document.getElementById('forceTemperature').addEventListener('input', updateForceConfig);
+      document.getElementById('forceIterations').addEventListener('input', updateForceConfig);
+
+      // Initial setup
       mermaid.registerLayoutLoaders(layouts);
       mermaid.initialize({
         logLevel: 3,
@@ -212,6 +464,7 @@ flowchart-elk TD
           },
         },
       });
+      updateConfigDisplay();
     </script>
   </body>
 </html>
