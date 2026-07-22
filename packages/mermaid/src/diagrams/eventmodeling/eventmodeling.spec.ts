@@ -5,6 +5,14 @@ import { parser } from './parser.js';
 
 const { clear } = db;
 
+// jsdom does not implement SVGElement.getBBox, which eventmodeling's getState()
+// relies on for text measurement. Provide a stub returning non-zero dimensions so
+// getState() can run in the test environment (the values do not affect swimlane logic).
+Object.defineProperty(SVGElement.prototype, 'getBBox', {
+  configurable: true,
+  value: () => ({ x: 0, y: 0, width: 10, height: 10 }),
+});
+
 describe('eventmodeling diagrams', () => {
   beforeEach(() => {
     clear();
@@ -75,5 +83,33 @@ data ItemAddedData
     tf 09 rmo ReadModel
     tf 10 readmodel ReadModel2`;
     await expect(parser.parse(str)).resolves.not.toThrow();
+  });
+
+  it('should reuse a namespace swimlane when the namespace re-enters its lane', async () => {
+    // https://github.com/mermaid-js/mermaid/issues/7925
+    // Order acts, Payment reacts, then Order returns to each band. Each
+    // (namespace + band) pair must map to exactly one swimlane, so this flow
+    // has 6 swimlanes (Order and Payment across the UI, command and event bands),
+    // not 9 with Order duplicated in every band.
+    const str = `eventmodeling
+    tf 01 ui Order.NewOrderScreen
+    tf 02 cmd Order.PlaceOrder
+    tf 03 evt Order.OrderPlaced
+    tf 04 pcr Payment.ChargeOnOrderPlaced
+    tf 05 cmd Payment.Charge
+    tf 06 evt Payment.Charged
+    tf 07 pcr Order.ConfirmOnPaymentCharged
+    tf 08 cmd Order.Confirm
+    tf 09 evt Order.Confirmed`;
+    await parser.parse(str);
+
+    const { sortedSwimlanesArray } = db.getState();
+    expect(sortedSwimlanesArray).toHaveLength(6);
+    expect(sortedSwimlanesArray.filter((swimlane) => swimlane.namespace === 'Order')).toHaveLength(
+      3
+    );
+    expect(
+      sortedSwimlanesArray.filter((swimlane) => swimlane.namespace === 'Payment')
+    ).toHaveLength(3);
   });
 });
