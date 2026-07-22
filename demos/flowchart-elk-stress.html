@@ -464,17 +464,6 @@ flowchart TD
         document.getElementById('graphNodeCountValue').textContent = nodeCount;
         document.getElementById('graphEdgeCountValue').textContent = edgeCount;
 
-        // Update display values for stress parameters
-        document.getElementById('stressDesiredEdgeLengthValue').textContent =
-          currentConfig.stressDesiredEdgeLength;
-        document.getElementById('stressIterationLimitValue').textContent =
-          currentConfig.stressIterationLimit === 0
-            ? 'unlimited'
-            : currentConfig.stressIterationLimit;
-        document.getElementById('stressEpsilonValue').textContent =
-          currentConfig.stressEpsilon.toFixed(5);
-        updateConfigDisplay();
-
         // Generate new diagram code
         const mermaidCode = generateMermaidDiagram(nodeCount, edgeCount);
         const diagramElement = document.getElementById('dynamicDiagram');
@@ -500,6 +489,34 @@ flowchart TD
         }
         const configText = JSON.stringify(configObj, null, 2);
         document.getElementById('stressConfigDisplay').textContent = configText;
+      }
+
+      function updateStressConfig() {
+        // Read current slider values
+        const stressDesiredEdgeLength = parseFloat(
+          document.getElementById('stressDesiredEdgeLength').value
+        );
+        const stressIterationLimit = parseInt(
+          document.getElementById('stressIterationLimit').value
+        );
+        const stressEpsilon = parseFloat(document.getElementById('stressEpsilon').value);
+
+        // Update current config
+        currentConfig.stressDesiredEdgeLength = stressDesiredEdgeLength;
+        currentConfig.stressIterationLimit =
+          stressIterationLimit === 0 ? undefined : stressIterationLimit;
+        currentConfig.stressEpsilon = stressEpsilon;
+
+        // Update display values
+        document.getElementById('stressDesiredEdgeLengthValue').textContent =
+          stressDesiredEdgeLength;
+        document.getElementById('stressIterationLimitValue').textContent =
+          stressIterationLimit === 0 ? 'unlimited' : stressIterationLimit;
+        document.getElementById('stressEpsilonValue').textContent = stressEpsilon.toFixed(5);
+
+        // Update config display and regenerate diagram
+        updateConfigDisplay();
+        updateDynamicDiagram();
       }
 
       window.resetStressParameters = function () {
@@ -552,6 +569,9 @@ flowchart TD
             graphEdgeCountSlider.addEventListener('input', updateDynamicDiagram);
 
           console.log('Stress demo event listeners attached successfully');
+
+          // Initialize config display
+          updateConfigDisplay();
 
           // Generate initial diagram
           updateDynamicDiagram();

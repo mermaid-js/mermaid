@@ -496,15 +496,6 @@ flowchart TD
         diagramElement.innerHTML = '';
         diagramElement.textContent = mermaidCode;
 
-        // Trigger mermaid re-render
-        mermaid.run();
-        document.getElementById('forceRepulsionValue').textContent =
-          currentConfig.forceRepulsion.toFixed(1);
-        document.getElementById('forceTemperatureValue').textContent =
-          currentConfig.forceTemperature.toFixed(4);
-        document.getElementById('forceIterationsValue').textContent = currentConfig.forceIterations;
-        updateConfigDisplay();
-
         // Re-initialize mermaid with new config
         mermaid.initialize({
           logLevel: 3,
@@ -529,6 +520,30 @@ flowchart TD
           2
         );
         document.getElementById('forceConfigDisplay').textContent = configText;
+      }
+
+      function updateForceConfig() {
+        // Read current slider values
+        const forceModel = document.getElementById('forceModel').value;
+        const forceRepulsion = parseFloat(document.getElementById('forceRepulsion').value);
+        const forceTemperature = parseFloat(document.getElementById('forceTemperature').value);
+        const forceIterations = parseInt(document.getElementById('forceIterations').value);
+
+        // Update current config
+        currentConfig.forceModel = forceModel;
+        currentConfig.forceRepulsion = forceRepulsion;
+        currentConfig.forceTemperature = forceTemperature;
+        currentConfig.forceIterations = forceIterations;
+
+        // Update display values
+        document.getElementById('forceModelValue').textContent = forceModel;
+        document.getElementById('forceRepulsionValue').textContent = forceRepulsion.toFixed(1);
+        document.getElementById('forceTemperatureValue').textContent = forceTemperature.toFixed(4);
+        document.getElementById('forceIterationsValue').textContent = forceIterations;
+
+        // Update config display and regenerate diagram
+        updateConfigDisplay();
+        updateDynamicDiagram();
       }
 
       window.resetForceParameters = function () {
@@ -597,6 +612,9 @@ flowchart TD
             graphEdgeCountSlider.addEventListener('input', updateDynamicDiagram);
 
           console.log('Event listeners attached successfully');
+
+          // Initialize config display
+          updateConfigDisplay();
 
           // Generate initial diagram
           updateDynamicDiagram();
