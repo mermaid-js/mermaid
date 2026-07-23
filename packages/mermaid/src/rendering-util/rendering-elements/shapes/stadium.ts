@@ -10,6 +10,7 @@ import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
+import { handleUndefinedAttr } from '../../../utils.js';
 
 export const createStadiumPathD = (
   x: number,
@@ -68,14 +69,6 @@ export async function stadium<T extends SVGGraphicsElement>(parent: D3Selection<
 
   const radius = h / 2;
   const { cssStyles } = node;
-  // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
-  const rc = rough.svg(shapeSvg);
-  const options = userNodeOverrides(node, {});
-
-  if (node.look !== 'handDrawn') {
-    options.roughness = 0;
-    options.fillStyle = 'solid';
-  }
 
   const points = [
     { x: -w / 2 + radius, y: -h / 2 },
@@ -86,17 +79,23 @@ export async function stadium<T extends SVGGraphicsElement>(parent: D3Selection<
   ];
 
   const pathData = createPathFromPoints(points);
-  const shapeNode = rc.path(pathData, options);
+  let polygon;
 
-  const polygon = shapeSvg.insert(() => shapeNode, ':first-child');
-  polygon.attr('class', 'basic label-container outer-path');
-
-  if (cssStyles && node.look !== 'handDrawn') {
-    polygon.selectChildren('path').attr('style', cssStyles);
-  }
-
-  if (nodeStyles && node.look !== 'handDrawn') {
-    polygon.selectChildren('path').attr('style', nodeStyles);
+  if (node.look === 'handDrawn') {
+    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
+    const rc = rough.svg(shapeSvg);
+    const options = userNodeOverrides(node, {});
+    const shapeNode = rc.path(pathData, options);
+    polygon = shapeSvg.insert(() => shapeNode, ':first-child');
+    polygon.attr('class', 'basic label-container outer-path');
+  } else {
+    // Rough.js splits paths into segments, which breaks CSS stroke-dasharray on straight sides.
+    polygon = shapeSvg
+      .insert('path', ':first-child')
+      .attr('d', pathData)
+      .attr('class', 'basic label-container outer-path')
+      .attr('style', handleUndefinedAttr(cssStyles))
+      .attr('style', nodeStyles);
   }
 
   updateNodeBounds(node, polygon);
