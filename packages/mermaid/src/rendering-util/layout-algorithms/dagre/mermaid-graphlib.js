@@ -218,6 +218,28 @@ const getAnchorId = (id) => {
   return id;
 };
 
+const hasInternalEdge = (graph, clusterId) => {
+  const clusterDescendants = descendants.get(clusterId) || [];
+  return graph.edges().some((edge) => {
+    const vIn = clusterDescendants.includes(edge.v) || isDescendant(edge.v, clusterId);
+    const wIn = clusterDescendants.includes(edge.w) || isDescendant(edge.w, clusterId);
+    return vIn && wIn;
+  });
+};
+
+const shouldExtractExplicitDirCluster = (graph, id) => {
+  const children = graph.children(id);
+  if (!clusterDb.get(id)?.clusterData?.explicitDir || !children || children.length === 0) {
+    return false;
+  }
+
+  // If the cluster only contains disconnected leaves with edges to siblings,
+  // keeping the leaves in the parent graph lets dagre align those edges to the
+  // actual nodes. Extracting in that case rebases the edges onto the cluster
+  // boundary and loses the leaf-level constraints.
+  return hasInternalEdge(graph, id) || children.some((child) => graph.children(child).length > 0);
+};
+
 export const adjustClustersAndEdges = (graph, depth) => {
   if (!graph || depth > 10) {
     log.debug('Opting out, no graph ');
@@ -362,12 +384,8 @@ export const extractor = (graph, depth) => {
     );
     if (!clusterDb.has(node)) {
       log.debug('Not a cluster', node, depth);
-    } else if (
-      clusterDb.get(node)?.clusterData?.explicitDir &&
-      graph.children(node) &&
-      graph.children(node).length > 0
-    ) {
-      // Cluster with an explicit direction keyword — always create a subgraph,
+    } else if (shouldExtractExplicitDirCluster(graph, node)) {
+      // Cluster with an explicit direction keyword that needs an isolated layout,
       // even when it has external connections (fixes issue #4648).
       log.debug('Cluster with explicit dir, creating subgraph for children', node, depth);
 

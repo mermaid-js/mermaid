@@ -1,6 +1,7 @@
 import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import {
+  clear,
   validate,
   adjustClustersAndEdges,
   extractDescendants,
@@ -11,6 +12,7 @@ import { setLogLevel, log } from '../../../logger.js';
 describe('Graphlib decorations', () => {
   let g;
   beforeEach(function () {
+    clear();
     setLogLevel(1);
     g = new graphlib.Graph({
       multigraph: true,
@@ -473,7 +475,7 @@ flowchart TB
       expect(g.node('B2').graph.nodes()).toEqual(['i2']);
     });
 
-    it('GLB-DIR4: cross-boundary edge should be rebound in outer graph, not copied into clusterGraph', function () {
+    it('GLB-DIR4: explicit dir cluster with only leaf cross-boundary edges stays in the parent graph', function () {
       /*
         subgraph C2 [direction LR]  ← uses a fresh cluster id to avoid stale module state
           D1
@@ -488,18 +490,50 @@ flowchart TB
 
       adjustClustersAndEdges(g);
 
-      // C2 should be a clusterNode (Branch 1 fired)
-      expect(g.node('C2').clusterNode).toBe(true);
+      expect(g.node('C2').clusterNode).toBeUndefined();
+      expect(g.parent('D1')).toBe('C2');
+      expect(g.edges().some((e) => e.v === 'D1' && e.w === 'D2')).toBe(true);
+    });
 
-      // The clusterGraph should contain D1 but have NO edges
-      // (the cross-boundary edge must NOT be copied inside)
-      const C2Graph = g.node('C2').graph;
-      expect(C2Graph.nodes()).toContain('D1');
-      expect(C2Graph.edges().length).toBe(0);
+    it('GLB-DIR5: leaf edges between sibling subgraphs remain leaf edges inside an extracted parent', function () {
+      /*
+        subgraph L1
+          subgraph sources [direction LR]
+            A
+            B
+          end
+          subgraph outputs
+            OA
+            OB
+          end
+          A --> OA
+          B --> OB
+        end
+      */
+      g.setNode('L1', { data: 'outer' });
+      g.setNode('sources', { data: 'sources', dir: 'LR', explicitDir: true });
+      g.setNode('outputs', { data: 'outputs' });
+      g.setNode('A', { data: 'A' });
+      g.setNode('B', { data: 'B' });
+      g.setNode('OA', { data: 'OA' });
+      g.setNode('OB', { data: 'OB' });
+      g.setParent('sources', 'L1');
+      g.setParent('outputs', 'L1');
+      g.setParent('A', 'sources');
+      g.setParent('B', 'sources');
+      g.setParent('OA', 'outputs');
+      g.setParent('OB', 'outputs');
+      g.setEdge('A', 'OA', { data: 'A to OA' }, 'edge-a');
+      g.setEdge('B', 'OB', { data: 'B to OB' }, 'edge-b');
 
-      // The outer graph should have a rebound edge from the cluster root (C2) to D2
-      const rebound = g.edges().some((e) => e.v === 'C2' && e.w === 'D2');
-      expect(rebound).toBe(true);
+      adjustClustersAndEdges(g);
+
+      const L1Graph = g.node('L1').graph;
+      expect(L1Graph.node('sources').clusterNode).toBeUndefined();
+      expect(L1Graph.parent('A')).toBe('sources');
+      expect(L1Graph.parent('B')).toBe('sources');
+      expect(L1Graph.edges().some((e) => e.v === 'A' && e.w === 'OA')).toBe(true);
+      expect(L1Graph.edges().some((e) => e.v === 'B' && e.w === 'OB')).toBe(true);
     });
   });
 });
