@@ -133,4 +133,41 @@ describe('createText', () => {
     expect(rows[0].querySelector('.katex')).not.toBeNull();
     expect(rows[1].querySelector('.katex')).not.toBeNull();
   });
+
+  it('renders hard line breaks on separate lines in labels containing KaTeX math', async () => {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const svgGroup = svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'g'));
+    // The flowchart lexer passes node text through verbatim, so a hard-wrapped label
+    // reaches createText with literal newlines rather than <br/>.
+    const output = await createText(
+      select(svgGroup),
+      'line 0\n  line 1\n  $$x=42$$',
+      { useHtmlLabels: true },
+      { forceLegacyMathML: true, securityLevel: 'strict' }
+    );
+
+    const span = output.querySelector('span.nodeLabel');
+    const rows = [...(span?.children ?? [])];
+    expect(rows).toHaveLength(3);
+    expect(rows[0].outerHTML).toEqual('<div>line 0</div>');
+    expect(rows[1].outerHTML).toEqual('<div>line 1</div>');
+    expect(rows[2].querySelector('.katex')).not.toBeNull();
+  });
+
+  it('keeps math intact when a hard line break follows a math expression', async () => {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const svgGroup = svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'g'));
+    const output = await createText(
+      select(svgGroup),
+      '$$a_1 + b_2$$\n$$x * y$$',
+      { useHtmlLabels: true },
+      { forceLegacyMathML: true, securityLevel: 'strict' }
+    );
+
+    const span = output.querySelector('span.nodeLabel');
+    const rows = [...(span?.children ?? [])];
+    expect(rows).toHaveLength(2);
+    expect(rows[0].querySelector('.katex')).not.toBeNull();
+    expect(rows[1].querySelector('.katex')).not.toBeNull();
+  });
 });

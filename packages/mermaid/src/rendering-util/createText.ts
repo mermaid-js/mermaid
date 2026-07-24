@@ -349,7 +349,10 @@ export const createText = async (
     const decodedReplacedText = await replaceIconSubstring(decodeEntities(htmlText), config);
 
     //for Katex the text could contain escaped characters, \\relax that should be transformed to \relax
-    const inputForKatex = text.replace(/\\\\/g, '\\');
+    //KaTeX labels bypass the markdown/non-markdown conversion above, so hard line breaks in the
+    //source label would never reach `renderKatexSanitized`, which splits its input on `<br/>`.
+    //Convert them here using the same rule `markdownToHTML` applies to plain text.
+    const inputForKatex = text.replace(/\\\\/g, '\\').replace(/\n */g, '<br/>');
 
     const node = {
       isNode,
