@@ -75,7 +75,13 @@ exclude = [
 "https://appsource.microsoft.com",
 
 # mermaid.ai 403
-"https://mermaid.ai"
+"https://mermaid.ai",
+
+# Kubernetes blog - certificate/network issues
+"https://www.kubernetes.dev/blog/2021/12/01/improve-your-documentation-with-mermaid.js-diagrams/",
+
+# Cynefin framework - server returns 500 errors
+"https://thecynefin.co"
 ]
 
 # Exclude all private IPs from checking.

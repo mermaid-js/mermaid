@@ -17,6 +17,7 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
+          allow-unsafe-pr-checkout: true
 
       - name: Validate pnpm-lock.yaml entries
         id: validate # give this step an ID so we can reference its outputs
