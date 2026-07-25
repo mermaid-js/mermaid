@@ -87,5 +87,22 @@ describe('Sankey diagram', function () {
         );
       });
     }
+
+    for (const syntax of ['sankey-beta', 'sankey'] as const) {
+      it(`parses non-ASCII node names with ${syntax} syntax (issue #7996)`, function () {
+        sankey.parser.parse(
+          prepareTextForParsing(`${syntax}
+      中文,普通话,100
+      中文,粤语,100
+      `)
+        );
+
+        const graph = sankey.parser.yy.getGraph();
+        expect(graph.links).toHaveLength(2);
+        expect(graph.nodes).toEqual(
+          expect.arrayContaining([{ id: '中文' }, { id: '普通话' }, { id: '粤语' }])
+        );
+      });
+    }
   });
 });
