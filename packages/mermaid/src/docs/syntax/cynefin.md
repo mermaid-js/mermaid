@@ -167,7 +167,12 @@ Cynefin diagrams accept the following configuration under the `cynefin` key in t
 Example:
 
 ```
-%%{init: {'cynefin': {'width': 1000, 'showDomainDescriptions': false}}}%%
+---
+config:
+  cynefin:
+    width: 1000
+    showDomainDescriptions: false
+---
 cynefin-beta
   complex
     "Adaptive work"
