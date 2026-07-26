@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid ELK Force vs Stress Layout Comparison</title>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+          'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 10px;
+      }
+      .intro {
+        max-width: 900px;
+        margin: 0 auto 30px;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        line-height: 1.6;
+        color: #555;
+      }
+      .intro h2 {
+        margin-top: 0;
+        color: #333;
+      }
+      .intro p {
+        margin: 10px 0;
+      }
+      .intro ul {
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+      .intro li {
+        margin: 5px 0;
+      }
+      .comparison-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      .layout-demo {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      .layout-demo h2 {
+        margin-top: 0;
+        color: #333;
+        border-bottom: 3px solid #007bff;
+        padding-bottom: 10px;
+      }
+      .layout-demo .description {
+        background-color: #f8f9fa;
+        padding: 12px;
+        border-left: 4px solid #007bff;
+        margin: 15px 0;
+        font-size: 13px;
+        line-height: 1.5;
+        color: #555;
+      }
+      .mermaid {
+        display: flex;
+        justify-content: center;
+      }
+      @media (max-width: 1024px) {
+        .comparison-container {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>ELK Layout Algorithm Comparison</h1>
+
+    <div class="intro">
+      <h2>Layered vs Stress-Minimization Layouts</h2>
+      <p>
+        The same directed graph rendered with two fundamentally different ELK algorithms.
+        <strong>elk.layered</strong> assigns nodes to horizontal layers following edge direction —
+        the result is an unmistakable top-down hierarchy. <strong>elk.stress</strong> places nodes
+        so visual distances match graph-theoretic distances, producing an organic layout with no
+        notion of layers.
+      </p>
+
+      <h3>Algorithm Overview:</h3>
+      <ul>
+        <li>
+          <strong>elk.layered</strong> (left): Assigns nodes to layers so edges generally flow in
+          one direction. Produces a clean, hierarchical "org chart" layout. Best for DAGs,
+          flowcharts, and dependency graphs.
+        </li>
+        <li>
+          <strong>elk.stress</strong> (right): Minimizes the difference between visual distances and
+          graph-theoretic distances. Produces a compact, organic shape — no concept of layers or
+          directions. Best for general graphs where spatial proximity should reflect connectivity.
+        </li>
+      </ul>
+
+      <p style="margin-top: 20px; font-style: italic; color: #666">
+        Layered will show a clear top-down hierarchy; stress will fold the same graph into an
+        organic blob. The difference is immediate and unmistakable.
+      </p>
+
+      <details
+        style="
+          margin-top: 24px;
+          background: #f0f4ff;
+          border: 1px solid #c7d2fe;
+          border-radius: 6px;
+          padding: 12px 16px;
+        "
+      >
+        <summary style="cursor: pointer; font-weight: 600; color: #3730a3">
+          Why not <code>elk.force</code> vs <code>elk.stress</code>?
+        </summary>
+        <div style="margin-top: 12px; line-height: 1.6; color: #374151">
+          <p>
+            The intuitive comparison would be force-directed vs stress-minimization — they sound
+            like opposites. But both algorithms solve the same underlying problem with similar
+            mathematics: place nodes so the visual distance between them matches their
+            graph-theoretic distance (hop count). Fruchterman-Reingold force simulation and stress
+            majorization converge to nearly identical layouts on most graphs, especially DAGs and
+            moderately connected networks. They look the same in practice.
+          </p>
+          <p style="margin-top: 8px">
+            <strong>elk.layered</strong> is a completely different class of algorithm — it assigns
+            nodes to discrete ranks (layers) before placing them, which produces a fundamentally
+            different visual structure. Comparing layered to stress is comparing
+            <em>hierarchical ranking</em> to <em>distance preservation</em>, which are genuinely
+            distinct layout philosophies that produce unmistakably different pictures.
+          </p>
+          <p style="margin-top: 8px">
+            For interactive demos of the force-directed algorithm in isolation, see
+            <a href="flowchart-elk-force.html">flowchart-elk-force.html</a> and
+            <a href="flowchart-elk-stress.html">flowchart-elk-stress.html</a>.
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="comparison-container">
+      <div class="layout-demo">
+        <h2>Layered Layout (elk.layered)</h2>
+        <div class="description">
+          <strong>Algorithm:</strong> elk.layered — the ELK default<br />
+          <strong>Characteristics:</strong> Assigns nodes to layers; edges flow top-to-bottom<br />
+          <strong>Best for:</strong> Flowcharts, DAGs, dependency trees
+        </div>
+        <iframe
+          src="elk-layered-mini.html"
+          style="width: 100%; height: 600px; border: none; border-radius: 4px; background: #f8f9fa"
+          title="elk.layered layout"
+        ></iframe>
+      </div>
+
+      <div class="layout-demo">
+        <h2>Stress-Minimization Layout (elk.stress)</h2>
+        <div class="description">
+          <strong>Algorithm:</strong> elk.stress — optimization-based placement<br />
+          <strong>Characteristics:</strong> Organic placement, no layers, visual distance ≈ graph
+          distance<br />
+          <strong>Best for:</strong> General graphs, network topology, circular layouts
+        </div>
+        <iframe
+          src="elk-stress-mini.html"
+          style="width: 100%; height: 600px; border: none; border-radius: 4px; background: #f8f9fa"
+          title="elk.stress layout"
+        ></iframe>
+      </div>
+    </div>
+  </body>
+</html>

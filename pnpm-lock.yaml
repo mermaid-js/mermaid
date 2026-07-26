@@ -96,6 +96,9 @@ importers:
       ajv:
         specifier: ^8.17.1
         version: 8.18.0
+      baseline-browser-mapping:
+        specifier: ^2.10.43
+        version: 2.10.43
       chokidar:
         specifier: 3.6.0
         version: 3.6.0
@@ -453,10 +456,10 @@ importers:
         version: 5.0.0
       vitepress:
         specifier: ^1.6.4
-        version: 1.6.4(@algolia/client-search@5.37.0)(@types/node@22.19.19)(axios@1.16.0)(change-case@5.4.4)(postcss@8.5.15)(search-insights@2.17.3)(terser@5.46.1)(typescript@5.7.3)
+        version: 1.6.4(@algolia/client-search@5.37.0)(@types/node@22.19.19)(@types/react@19.2.15)(axios@1.16.0)(change-case@5.4.4)(postcss@8.5.15)(search-insights@2.17.3)(terser@5.46.1)(typescript@5.7.3)
       vitepress-plugin-search:
         specifier: 1.0.4-alpha.22
-        version: 1.0.4-alpha.22(flexsearch@0.8.212)(vitepress@1.6.4(@algolia/client-search@5.37.0)(@types/node@22.19.19)(axios@1.16.0)(change-case@5.4.4)(postcss@8.5.15)(search-insights@2.17.3)(terser@5.46.1)(typescript@5.7.3))(vue@3.5.35(typescript@5.7.3))
+        version: 1.0.4-alpha.22(flexsearch@0.8.212)(vitepress@1.6.4(@algolia/client-search@5.37.0)(@types/node@22.19.19)(@types/react@19.2.15)(axios@1.16.0)(change-case@5.4.4)(postcss@8.5.15)(search-insights@2.17.3)(terser@5.46.1)(typescript@5.7.3))(vue@3.5.35(typescript@5.7.3))
 
   packages/mermaid-example-diagram:
     dependencies:
@@ -4833,12 +4836,9 @@ packages:
     engines: {node: '>=6.0.0'}
     hasBin: true
 
-  baseline-browser-mapping@2.8.25:
-    resolution: {integrity: sha512-2NovHVesVF5TXefsGX1yzx1xgr7+m9JQenvz6FQY3qd+YXkKkYiv+vTCc7OriP9mcDZpTC5mAOYN4ocd29+erA==}
-    hasBin: true
-
-  baseline-browser-mapping@2.8.3:
-    resolution: {integrity: sha512-mcE+Wr2CAhHNWxXN/DdTI+n4gsPc5QpXpWnyCQWiQYIYZX+ZMJ8juXZgjRa/0/YPJo/NSsgW15/YgmI4nbysYw==}
+  baseline-browser-mapping@2.10.43:
+    resolution: {integrity: sha512-AjYpR78kDWAY3Efj+cDTFH9t9SCoL7OoTp1BOb0mQV7S+6CiLwnWM3FyxhJtdPufDFKzmCSFoUncKjWgJEZTCQ==}
+    engines: {node: '>=6.0.0'}
     hasBin: true
 
   batch@0.6.1:
@@ -12988,17 +12988,6 @@ snapshots:
       - react-dom
       - search-insights
 
-  '@docsearch/js@3.8.2(@algolia/client-search@5.37.0)(search-insights@2.17.3)':
-    dependencies:
-      '@docsearch/react': 3.8.2(@algolia/client-search@5.37.0)(search-insights@2.17.3)
-      preact: 10.27.2
-    transitivePeerDependencies:
-      - '@algolia/client-search'
-      - '@types/react'
-      - react
-      - react-dom
-      - search-insights
-
   '@docsearch/react@3.8.2(@algolia/client-search@5.37.0)(@types/react@19.2.15)(search-insights@2.17.3)':
     dependencies:
       '@algolia/autocomplete-core': 1.17.7(@algolia/client-search@5.37.0)(algoliasearch@5.37.0)(search-insights@2.17.3)
@@ -13007,17 +12996,6 @@ snapshots:
       algoliasearch: 5.37.0
     optionalDependencies:
       '@types/react': 19.2.15
-      search-insights: 2.17.3
-    transitivePeerDependencies:
-      - '@algolia/client-search'
-
-  '@docsearch/react@3.8.2(@algolia/client-search@5.37.0)(search-insights@2.17.3)':
-    dependencies:
-      '@algolia/autocomplete-core': 1.17.7(@algolia/client-search@5.37.0)(algoliasearch@5.37.0)(search-insights@2.17.3)
-      '@algolia/autocomplete-preset-algolia': 1.17.7(@algolia/client-search@5.37.0)(algoliasearch@5.37.0)
-      '@docsearch/css': 3.8.2
-      algoliasearch: 5.37.0
-    optionalDependencies:
       search-insights: 2.17.3
     transitivePeerDependencies:
       - '@algolia/client-search'
@@ -13456,7 +13434,7 @@ snapshots:
       '@antfu/install-pkg': 1.1.0
       '@antfu/utils': 9.2.0
       '@iconify/types': 2.0.0
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@8.1.1)
       globals: 15.15.0
       kolorist: 1.8.0
       local-pkg: 1.1.2
@@ -16022,9 +16000,7 @@ snapshots:
 
   baseline-browser-mapping@2.10.18: {}
 
-  baseline-browser-mapping@2.8.25: {}
-
-  baseline-browser-mapping@2.8.3: {}
+  baseline-browser-mapping@2.10.43: {}
 
   batch@0.6.1: {}
 
@@ -16137,7 +16113,7 @@ snapshots:
 
   browserslist@4.26.0:
     dependencies:
-      baseline-browser-mapping: 2.8.3
+      baseline-browser-mapping: 2.10.18
       caniuse-lite: 1.0.30001741
       electron-to-chromium: 1.5.218
       node-releases: 2.0.21
@@ -16145,7 +16121,7 @@ snapshots:
 
   browserslist@4.27.0:
     dependencies:
-      baseline-browser-mapping: 2.8.25
+      baseline-browser-mapping: 2.10.43
       caniuse-lite: 1.0.30001754
       electron-to-chromium: 1.5.245
       node-releases: 2.0.27
@@ -17125,10 +17101,6 @@ snapshots:
   debug@4.3.4:
     dependencies:
       ms: 2.1.2
-
-  debug@4.4.3:
-    dependencies:
-      ms: 2.1.3
 
   debug@4.4.3(supports-color@8.1.1):
     dependencies:
@@ -18263,7 +18235,7 @@ snapshots:
 
   follow-redirects@1.16.0(debug@4.4.3):
     optionalDependencies:
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@8.1.1)
 
   font-awesome@4.7.0: {}
 
@@ -18689,7 +18661,7 @@ snapshots:
   http-proxy-agent@7.0.2:
     dependencies:
       agent-base: 7.1.4
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -18738,7 +18710,7 @@ snapshots:
   https-proxy-agent@7.0.6:
     dependencies:
       agent-base: 7.1.4
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -20292,7 +20264,7 @@ snapshots:
   micromark@4.0.2:
     dependencies:
       '@types/debug': 4.1.12
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@8.1.1)
       decode-named-character-reference: 1.2.0
       devlop: 1.1.0
       micromark-core-commonmark: 2.0.3
@@ -22028,7 +22000,7 @@ snapshots:
       arg: 5.0.2
       bluebird: 3.7.2
       check-more-types: 2.24.0
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@8.1.1)
       execa: 5.1.1
       lazy-ass: 1.6.0
       ps-tree: 1.2.0
@@ -22933,17 +22905,17 @@ snapshots:
       tsx: 4.20.6
       yaml: 2.8.4
 
-  vitepress-plugin-search@1.0.4-alpha.22(flexsearch@0.8.212)(vitepress@1.6.4(@algolia/client-search@5.37.0)(@types/node@22.19.19)(axios@1.16.0)(change-case@5.4.4)(postcss@8.5.15)(search-insights@2.17.3)(terser@5.46.1)(typescript@5.7.3))(vue@3.5.35(typescript@5.7.3)):
+  vitepress-plugin-search@1.0.4-alpha.22(flexsearch@0.8.212)(vitepress@1.6.4(@algolia/client-search@5.37.0)(@types/node@22.19.19)(@types/react@19.2.15)(axios@1.16.0)(change-case@5.4.4)(postcss@8.5.15)(search-insights@2.17.3)(terser@5.46.1)(typescript@5.7.3))(vue@3.5.35(typescript@5.7.3)):
     dependencies:
       '@types/flexsearch': 0.7.42
       '@types/markdown-it': 12.2.3
       flexsearch: 0.8.212
       glob-to-regexp: 0.4.1
       markdown-it: 13.0.2
-      vitepress: 1.6.4(@algolia/client-search@5.37.0)(@types/node@22.19.19)(axios@1.16.0)(change-case@5.4.4)(postcss@8.5.15)(search-insights@2.17.3)(terser@5.46.1)(typescript@5.7.3)
+      vitepress: 1.6.4(@algolia/client-search@5.37.0)(@types/node@22.19.19)(@types/react@19.2.15)(axios@1.16.0)(change-case@5.4.4)(postcss@8.5.15)(search-insights@2.17.3)(terser@5.46.1)(typescript@5.7.3)
       vue: 3.5.35(typescript@5.7.3)
 
-  vitepress@1.6.4(@algolia/client-search@5.37.0)(@types/node@22.19.19)(@types/react@19.2.15)(axios@1.16.0)(change-case@5.4.4)(postcss@8.5.15)(search-insights@2.17.3)(terser@5.46.1)(typescript@5.9.3):
+  vitepress@1.6.4(@algolia/client-search@5.37.0)(@types/node@22.19.19)(@types/react@19.2.15)(axios@1.16.0)(change-case@5.4.4)(postcss@8.5.15)(search-insights@2.17.3)(terser@5.46.1)(typescript@5.7.3):
     dependencies:
       '@docsearch/css': 3.8.2
       '@docsearch/js': 3.8.2(@algolia/client-search@5.37.0)(@types/react@19.2.15)(search-insights@2.17.3)
@@ -22952,17 +22924,17 @@ snapshots:
       '@shikijs/transformers': 2.5.0
       '@shikijs/types': 2.5.0
       '@types/markdown-it': 14.1.2
-      '@vitejs/plugin-vue': 5.2.4(vite@5.4.20(@types/node@22.19.19)(terser@5.46.1))(vue@3.5.25(typescript@5.9.3))
+      '@vitejs/plugin-vue': 5.2.4(vite@5.4.20(@types/node@22.19.19)(terser@5.46.1))(vue@3.5.25(typescript@5.7.3))
       '@vue/devtools-api': 7.7.7
       '@vue/shared': 3.5.25
-      '@vueuse/core': 12.8.2(typescript@5.9.3)
-      '@vueuse/integrations': 12.8.2(axios@1.16.0)(change-case@5.4.4)(focus-trap@7.6.5)(typescript@5.9.3)
+      '@vueuse/core': 12.8.2(typescript@5.7.3)
+      '@vueuse/integrations': 12.8.2(axios@1.16.0)(change-case@5.4.4)(focus-trap@7.6.5)(typescript@5.7.3)
       focus-trap: 7.6.5
       mark.js: 8.11.1
       minisearch: 7.1.2
       shiki: 2.5.0
       vite: 5.4.20(@types/node@22.19.19)(terser@5.46.1)
-      vue: 3.5.25(typescript@5.9.3)
+      vue: 3.5.25(typescript@5.7.3)
     optionalDependencies:
       postcss: 8.5.15
     transitivePeerDependencies:
@@ -22992,26 +22964,26 @@ snapshots:
       - typescript
       - universal-cookie
 
-  vitepress@1.6.4(@algolia/client-search@5.37.0)(@types/node@22.19.19)(axios@1.16.0)(change-case@5.4.4)(postcss@8.5.15)(search-insights@2.17.3)(terser@5.46.1)(typescript@5.7.3):
+  vitepress@1.6.4(@algolia/client-search@5.37.0)(@types/node@22.19.19)(@types/react@19.2.15)(axios@1.16.0)(change-case@5.4.4)(postcss@8.5.15)(search-insights@2.17.3)(terser@5.46.1)(typescript@5.9.3):
     dependencies:
       '@docsearch/css': 3.8.2
-      '@docsearch/js': 3.8.2(@algolia/client-search@5.37.0)(search-insights@2.17.3)
+      '@docsearch/js': 3.8.2(@algolia/client-search@5.37.0)(@types/react@19.2.15)(search-insights@2.17.3)
       '@iconify-json/simple-icons': 1.2.52
       '@shikijs/core': 2.5.0
       '@shikijs/transformers': 2.5.0
       '@shikijs/types': 2.5.0
       '@types/markdown-it': 14.1.2
-      '@vitejs/plugin-vue': 5.2.4(vite@5.4.20(@types/node@22.19.19)(terser@5.46.1))(vue@3.5.25(typescript@5.7.3))
+      '@vitejs/plugin-vue': 5.2.4(vite@5.4.20(@types/node@22.19.19)(terser@5.46.1))(vue@3.5.25(typescript@5.9.3))
       '@vue/devtools-api': 7.7.7
       '@vue/shared': 3.5.25
-      '@vueuse/core': 12.8.2(typescript@5.7.3)
-      '@vueuse/integrations': 12.8.2(axios@1.16.0)(change-case@5.4.4)(focus-trap@7.6.5)(typescript@5.7.3)
+      '@vueuse/core': 12.8.2(typescript@5.9.3)
+      '@vueuse/integrations': 12.8.2(axios@1.16.0)(change-case@5.4.4)(focus-trap@7.6.5)(typescript@5.9.3)
       focus-trap: 7.6.5
       mark.js: 8.11.1
       minisearch: 7.1.2
       shiki: 2.5.0
       vite: 5.4.20(@types/node@22.19.19)(terser@5.46.1)
-      vue: 3.5.25(typescript@5.7.3)
+      vue: 3.5.25(typescript@5.9.3)
     optionalDependencies:
       postcss: 8.5.15
     transitivePeerDependencies:

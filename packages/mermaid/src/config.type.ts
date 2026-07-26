@@ -154,6 +154,49 @@ export interface MermaidConfig {
      *
      */
     keepEntryNodeOnTop?: boolean;
+    /**
+     * For elk.force layout: selects between the Eades spring-embedder and the
+     * Fruchterman-Reingold force-directed placement model.
+     *
+     */
+    forceModel?: 'EADES' | 'FRUCHTERMAN_REINGOLD';
+    /**
+     * For elk.force layout: number of simulation iterations. Higher values produce
+     * better layouts at the cost of runtime.
+     *
+     */
+    forceIterations?: number;
+    /**
+     * For elk.force layout (Eades model only): repulsive constant between
+     * non-adjacent nodes.
+     *
+     */
+    forceRepulsion?: number;
+    /**
+     * For elk.force layout (Fruchterman-Reingold model only): cooling factor;
+     * lower values converge sooner.
+     *
+     */
+    forceTemperature?: number;
+    /**
+     * For elk.stress layout: the ideal edge length, in pixels, that the
+     * stress-majorization algorithm targets. Larger values spread the graph out;
+     * smaller values compress it.
+     *
+     */
+    stressDesiredEdgeLength?: number;
+    /**
+     * For elk.stress layout: maximum number of majorization iterations.
+     * Leave unset (null) for automatic convergence.
+     *
+     */
+    stressIterationLimit?: number;
+    /**
+     * For elk.stress layout: convergence threshold. The algorithm stops when the
+     * stress improvement in an iteration falls below this value.
+     *
+     */
+    stressEpsilon?: number;
   };
   darkMode?: boolean;
   /**

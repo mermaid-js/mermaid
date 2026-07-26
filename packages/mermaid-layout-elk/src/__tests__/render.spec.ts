@@ -487,3 +487,223 @@ describe('ensureEndMarkerSegmentLength', () => {
     expect(ensureEndMarkerSegmentLength(points, circleBounds, 4, log)).toEqual(points);
   });
 });
+
+describe('Force and Stress Algorithm Support', () => {
+  const defaultLayoutData = {
+    direction: 'TB',
+    config: { elk: {} },
+    nodes: [],
+    edges: [],
+  } as any;
+
+  const logContext = {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    debug: () => {},
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    error: () => {},
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    info: () => {},
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    warn: () => {},
+  };
+
+  const createElkContext = (
+    algorithm: string | undefined,
+    config: Record<string, unknown> = {}
+  ) => ({
+    algorithm,
+    common: { lineBreakRegex: /<br\s*\/?>/gi },
+    getConfig: () => ({ flowchart: { wrappingWidth: 100 } }),
+    interpolateToCurve: (curve: unknown) => curve,
+    log: logContext,
+    ...config,
+  });
+
+  describe('createRootElkGraph with force algorithm', () => {
+    it('should include elk.force options when algorithm is elk.force', () => {
+      const state = buildElkGraphFromLayoutData(
+        {
+          ...defaultLayoutData,
+          config: { elk: { forceModel: 'EADES', forceIterations: 500 } },
+        },
+        createElkContext('elk.force') as any
+      );
+
+      expect(state.elkGraph.layoutOptions['elk.force.model']).toBe('EADES');
+      expect(state.elkGraph.layoutOptions['elk.force.iterations']).toBe(500);
+      expect(state.elkGraph.layoutOptions['elk.force.repulsivePower']).toBe(5.0);
+      expect(state.elkGraph.layoutOptions['elk.force.temperature']).toBe(0.001);
+      expect(state.elkGraph.layoutOptions['elk.separateConnectedComponents']).toBe(true);
+    });
+
+    it('should use default force options when config not provided', () => {
+      const state = buildElkGraphFromLayoutData(
+        defaultLayoutData,
+        createElkContext('elk.force') as any
+      );
+
+      expect(state.elkGraph.layoutOptions['elk.force.model']).toBe('FRUCHTERMAN_REINGOLD');
+      expect(state.elkGraph.layoutOptions['elk.force.iterations']).toBe(300);
+      expect(state.elkGraph.layoutOptions['elk.force.repulsivePower']).toBe(5.0);
+      expect(state.elkGraph.layoutOptions['elk.force.temperature']).toBe(0.001);
+    });
+
+    it('should not include elk.layered options for force algorithm', () => {
+      const state = buildElkGraphFromLayoutData(
+        {
+          ...defaultLayoutData,
+          config: { elk: { mergeEdges: true, nodePlacementStrategy: 'SIMPLE' } },
+        },
+        createElkContext('elk.force') as any
+      );
+
+      expect(state.elkGraph.layoutOptions['elk.layered.mergeEdges']).toBeUndefined();
+      expect(state.elkGraph.layoutOptions['nodePlacement.strategy']).toBeUndefined();
+      expect(
+        state.elkGraph.layoutOptions['elk.layered.nodePlacement.bk.fixedAlignment']
+      ).toBeUndefined();
+    });
+
+    it('should not include elk.direction for force algorithm', () => {
+      const state = buildElkGraphFromLayoutData(
+        {
+          ...defaultLayoutData,
+          direction: 'RIGHT',
+        },
+        createElkContext('elk.force') as any
+      );
+
+      // elk.direction should not be set for force algorithms (they handle their own layout)
+      expect(state.elkGraph.layoutOptions['elk.direction']).toBeUndefined();
+    });
+
+    it('should support both elk.force and force algorithm identifiers', () => {
+      const state1 = buildElkGraphFromLayoutData(
+        { ...defaultLayoutData, config: { elk: { forceIterations: 400 } } },
+        createElkContext('elk.force') as any
+      );
+      const state2 = buildElkGraphFromLayoutData(
+        { ...defaultLayoutData, config: { elk: { forceIterations: 400 } } },
+        createElkContext('force') as any
+      );
+
+      expect(state1.elkGraph.layoutOptions['elk.force.iterations']).toBe(400);
+      expect(state2.elkGraph.layoutOptions['elk.force.iterations']).toBe(400);
+    });
+  });
+
+  describe('createRootElkGraph with stress algorithm', () => {
+    it('should include elk.stress options when algorithm is elk.stress', () => {
+      const state = buildElkGraphFromLayoutData(
+        {
+          ...defaultLayoutData,
+          config: { elk: { stressDesiredEdgeLength: 150, stressEpsilon: 0.0001 } },
+        },
+        createElkContext('elk.stress') as any
+      );
+
+      expect(state.elkGraph.layoutOptions['elk.stress.desiredEdgeLength']).toBe(150);
+      expect(state.elkGraph.layoutOptions['elk.stress.epsilon']).toBe(0.0001);
+      expect(state.elkGraph.layoutOptions['elk.separateConnectedComponents']).toBe(true);
+    });
+
+    it('should use default stress options when config not provided', () => {
+      const state = buildElkGraphFromLayoutData(
+        defaultLayoutData,
+        createElkContext('elk.stress') as any
+      );
+
+      expect(state.elkGraph.layoutOptions['elk.stress.desiredEdgeLength']).toBe(100.0);
+      expect(state.elkGraph.layoutOptions['elk.stress.epsilon']).toBe(0.0001);
+    });
+
+    it('should handle iterationLimit as undefined (for convergence)', () => {
+      const state = buildElkGraphFromLayoutData(
+        defaultLayoutData,
+        createElkContext('elk.stress') as any
+      );
+
+      // iterationLimit should not be set if config doesn't provide it (allows ELK's convergence)
+      expect(state.elkGraph.layoutOptions['elk.stress.iterationLimit']).toBeUndefined();
+    });
+
+    it('should set iterationLimit when explicitly configured', () => {
+      const state = buildElkGraphFromLayoutData(
+        {
+          ...defaultLayoutData,
+          config: { elk: { stressIterationLimit: 500 } },
+        },
+        createElkContext('elk.stress') as any
+      );
+
+      expect(state.elkGraph.layoutOptions['elk.stress.iterationLimit']).toBe(500);
+    });
+
+    it('should not include elk.layered options for stress algorithm', () => {
+      const state = buildElkGraphFromLayoutData(
+        {
+          ...defaultLayoutData,
+          config: { elk: { mergeEdges: true, nodePlacementStrategy: 'SIMPLE' } },
+        },
+        createElkContext('elk.stress') as any
+      );
+
+      expect(state.elkGraph.layoutOptions['elk.layered.mergeEdges']).toBeUndefined();
+      expect(state.elkGraph.layoutOptions['nodePlacement.strategy']).toBeUndefined();
+    });
+
+    it('should support both elk.stress and stress algorithm identifiers', () => {
+      const state1 = buildElkGraphFromLayoutData(
+        { ...defaultLayoutData, config: { elk: { stressDesiredEdgeLength: 120 } } },
+        createElkContext('elk.stress') as any
+      );
+      const state2 = buildElkGraphFromLayoutData(
+        { ...defaultLayoutData, config: { elk: { stressDesiredEdgeLength: 120 } } },
+        createElkContext('stress') as any
+      );
+
+      expect(state1.elkGraph.layoutOptions['elk.stress.desiredEdgeLength']).toBe(120);
+      expect(state2.elkGraph.layoutOptions['elk.stress.desiredEdgeLength']).toBe(120);
+    });
+  });
+
+  describe('Layered algorithm regression tests', () => {
+    it('should still apply elk.layered options for default algorithm (undefined)', () => {
+      const state = buildElkGraphFromLayoutData(
+        {
+          ...defaultLayoutData,
+          config: { elk: { mergeEdges: true } },
+        },
+        createElkContext(undefined) as any
+      );
+
+      expect(state.elkGraph.layoutOptions['elk.layered.mergeEdges']).toBe(true);
+    });
+
+    it('should still apply elk.layered options when algorithm is explicitly layered', () => {
+      const state = buildElkGraphFromLayoutData(
+        {
+          ...defaultLayoutData,
+          config: { elk: { nodePlacementAlignment: 'BALANCED' } },
+        },
+        createElkContext('elk.layered') as any
+      );
+
+      expect(state.elkGraph.layoutOptions['elk.layered.nodePlacement.bk.fixedAlignment']).toBe(
+        'BALANCED'
+      );
+    });
+
+    it('should include elk.direction for layered algorithm', () => {
+      const state = buildElkGraphFromLayoutData(
+        {
+          ...defaultLayoutData,
+          direction: 'LR',
+        },
+        createElkContext('layered') as any
+      );
+
+      expect(state.elkGraph.layoutOptions['elk.direction']).toBe('RIGHT');
+    });
+  });
+});

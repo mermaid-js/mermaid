@@ -9,7 +9,7 @@
   <body>
     <h1>Flowchart ELK</h1>
     <pre class="mermaid">
-		flowchart-elk TD
+		flowchart TD
       A([Start]) ==> B[Step 1]
       B ==> C{Flow 1}
       C -- Choice 1.1 --> D[Step 2.1]
@@ -24,8 +24,8 @@
     </pre>
 
     <script type="module">
-      import mermaid from './mermaid.esm.mjs';
-      import layouts from './mermaid-layout-elk.esm.mjs';
+      import mermaid from '../packages/mermaid/dist/mermaid.esm.mjs';
+      import layouts from '../packages/mermaid-layout-elk/dist/mermaid-layout-elk.esm.mjs';
       mermaid.registerLayoutLoaders(layouts);
       mermaid.initialize({
         logLevel: 3,

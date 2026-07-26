@@ -187,6 +187,63 @@ flowchart LR
 
 ```
 
+#### Force and Stress Layout Algorithms:
+
+Beyond the default layered layout, ELK provides **force-directed** and **stress-based** layout algorithms for organic, physics-inspired graph visualization:
+
+**Force Layout** (`elk.force`): Uses a Fruchterman-Reingold force-directed model that simulates repulsive and attractive forces between nodes. Ideal for general graphs, network visualizations, and diagrams where hierarchical structure is not important.
+
+- `forceModel`: Algorithm variant
+  - `FRUCHTERMAN_REINGOLD` (default)
+  - `EADES`
+- `forceIterations`: Number of iterations (default: 300, minimum: 1)
+- `forceRepulsion`: Repulsive force between nodes (default: 5.0)
+- `forceTemperature`: Initial temperature for node movement (default: 0.001)
+
+**Stress Layout** (`elk.stress`): Uses a stress-majorization algorithm for more balanced, circular layouts. Optimal for meshes, clusters, and graphs where even spacing is desired.
+
+- `stressDesiredEdgeLength`: Target distance between connected nodes (default: 100.0)
+- `stressIterationLimit`: Maximum iterations (optional; default auto-converges)
+- `stressEpsilon`: Convergence threshold (default: 0.0001)
+
+**Example: Force-Directed Layout**
+
+```
+---
+config:
+  layout: elk
+  elk:
+    algorithm: elk.force
+    forceIterations: 500
+    forceRepulsion: 8.0
+---
+graph TD
+  A[Node A] --> B[Node B]
+  A --> C[Node C]
+  B --> D[Node D]
+  C --> D
+  D --> E[Node E]
+```
+
+**Example: Stress-Based Layout**
+
+```
+---
+config:
+  layout: elk
+  elk:
+    algorithm: elk.stress
+    stressDesiredEdgeLength: 150
+    stressIterationLimit: 100
+---
+graph TD
+  A[Node A] --> B[Node B]
+  A --> C[Node C]
+  B --> D[Node D]
+  C --> D
+  D --> E[Node E]
+```
+
 #### Using Dagre Layout with Classic Look:
 
 Another example:

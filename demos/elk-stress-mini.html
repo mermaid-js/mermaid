@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: transparent;
+        overflow: hidden;
+      }
+      .mermaid {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .mermaid svg {
+        max-width: 100%;
+        height: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <pre class="mermaid">
+flowchart TD
+  A[Start] --> B[Auth]
+  A --> C[Cache]
+  A --> D[Config]
+  B --> E[UserDB]
+  B --> F[TokenStore]
+  C --> G[Redis]
+  C --> H[Memcached]
+  D --> I[EnvVars]
+  D --> J[Secrets]
+  E --> K[Replicas]
+  F --> K
+  G --> L[Cluster]
+  H --> L
+  I --> M[Deploy]
+  J --> M
+  K --> N[Backup]
+  L --> N
+  M --> O[Monitor]
+  N --> O
+  O --> P[Alert]
+  B --> G
+  C --> E
+  D --> F
+  E --> H
+  F --> I
+    </pre>
+    <script type="module">
+      import mermaid from '../packages/mermaid/dist/mermaid.esm.mjs';
+      import layouts from '../packages/mermaid-layout-elk/dist/mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
+      mermaid.initialize({
+        startOnLoad: true,
+        logLevel: 3,
+        layout: 'elk.stress',
+      });
+    </script>
+  </body>
+</html>

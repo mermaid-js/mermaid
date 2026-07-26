@@ -56,10 +56,23 @@ interface NodeWithVertex {
   offset?: ElkNodeOffset;
 }
 
+// cspell:ignore EADES FRUCHTERMAN REINGOLD
 interface ElkSubgraphConfig {
   mergeEdges?: boolean;
   nodePlacementAlignment?: string;
   nodePlacementStrategy?: string;
+  cycleBreakingStrategy?: string;
+  forceNodeModelOrder?: boolean;
+  considerModelOrder?: string;
+  // elk.force
+  forceModel?: 'EADES' | 'FRUCHTERMAN_REINGOLD';
+  forceIterations?: number;
+  forceRepulsion?: number;
+  forceTemperature?: number;
+  // elk.stress
+  stressDesiredEdgeLength?: number;
+  stressIterationLimit?: number;
+  stressEpsilon?: number;
 }
 
 interface ElkPreparedLayout {
@@ -108,6 +121,63 @@ const ARROW_MAP: Record<string, [string, string]> = {
 };
 const DEFAULT_NODE_PLACEMENT_ALIGNMENT = 'NONE';
 
+// Algorithm detection helpers
+function isLayeredAlgorithm(algorithm: string | undefined): boolean {
+  return (
+    !algorithm || algorithm === 'elk' || algorithm === 'elk.layered' || algorithm === 'layered'
+  );
+}
+
+function isForceAlgorithm(algorithm: string | undefined): boolean {
+  return algorithm === 'elk.force' || algorithm === 'force';
+}
+
+function isStressAlgorithm(algorithm: string | undefined): boolean {
+  return algorithm === 'elk.stress' || algorithm === 'stress';
+}
+
+// Algorithm-specific layout option builders
+function buildLayeredOptions(config: ElkSubgraphConfig | undefined): Record<string, unknown> {
+  return {
+    'spacing.baseValue': 40,
+    'elk.layered.mergeEdges': config?.mergeEdges,
+    'nodePlacement.strategy': config?.nodePlacementStrategy,
+    'elk.layered.nodePlacement.bk.fixedAlignment':
+      config?.nodePlacementAlignment ?? DEFAULT_NODE_PLACEMENT_ALIGNMENT,
+    'elk.layered.unnecessaryBendpoints': true,
+    'elk.layered.cycleBreaking.strategy': config?.cycleBreakingStrategy,
+    'elk.layered.crossingMinimization.forceNodeModelOrder': config?.forceNodeModelOrder,
+    'elk.layered.considerModelOrder.strategy': config?.considerModelOrder,
+    'elk.layered.wrapping.multiEdge.improveCuts': true,
+    'elk.layered.wrapping.multiEdge.improveWrappedEdges': true,
+    'elk.layered.edgeRouting.selfLoopDistribution': 'EQUALLY',
+    'elk.layered.mergeHierarchyEdges': true,
+  };
+}
+
+// cspell:ignore FRUCHTERMAN REINGOLD
+function buildForceOptions(config: ElkSubgraphConfig | undefined): Record<string, unknown> {
+  return {
+    'elk.force.model': config?.forceModel ?? 'FRUCHTERMAN_REINGOLD',
+    'elk.force.iterations': config?.forceIterations ?? 300,
+    'elk.force.repulsivePower': config?.forceRepulsion ?? 5.0,
+    'elk.force.temperature': config?.forceTemperature ?? 0.001,
+    'elk.separateConnectedComponents': true,
+  };
+}
+
+function buildStressOptions(config: ElkSubgraphConfig | undefined): Record<string, unknown> {
+  const opts: Record<string, unknown> = {
+    'elk.stress.desiredEdgeLength': config?.stressDesiredEdgeLength ?? 100.0,
+    'elk.stress.epsilon': config?.stressEpsilon ?? 0.0001,
+    'elk.separateConnectedComponents': true,
+  };
+  if (config?.stressIterationLimit != null) {
+    opts['elk.stress.iterationLimit'] = config.stressIterationLimit;
+  }
+  return opts;
+}
+
 export function dir2ElkDirection(dir: unknown): 'RIGHT' | 'LEFT' | 'DOWN' | 'UP' {
   switch (dir) {
     case 'LR':
@@ -132,11 +202,15 @@ export function buildSubgraphLayoutOptions(
   const layoutOptions: Record<string, unknown> = {
     'spacing.baseValue': 30,
     'nodeLabels.placement': '[H_CENTER V_TOP, INSIDE]',
-    'elk.layered.mergeEdges': elkConfig?.mergeEdges,
-    'nodePlacement.strategy': elkConfig?.nodePlacementStrategy,
-    'elk.layered.nodePlacement.bk.fixedAlignment':
-      elkConfig?.nodePlacementAlignment ?? DEFAULT_NODE_PLACEMENT_ALIGNMENT,
   };
+
+  if (isLayeredAlgorithm(algorithm)) {
+    layoutOptions['elk.layered.mergeEdges'] = elkConfig?.mergeEdges;
+    layoutOptions['nodePlacement.strategy'] = elkConfig?.nodePlacementStrategy;
+    layoutOptions['elk.layered.nodePlacement.bk.fixedAlignment'] =
+      elkConfig?.nodePlacementAlignment ?? DEFAULT_NODE_PLACEMENT_ALIGNMENT;
+  }
+
   if (node.dir) {
     layoutOptions['elk.algorithm'] = algorithm;
     layoutOptions['elk.direction'] = dir2ElkDirection(node.dir);
@@ -251,11 +325,17 @@ export function findCyclicEntryNodes(
  * to the first layer so the diagram reads from its entry instead of an arbitrary
  * point in the loop. No-op when the option is off or the graph is acyclic, so
  * existing ELK diagrams are unaffected unless they opt in.
+ *
+ * Only applies to layered algorithms; force and stress algorithms have no notion of layers.
  */
 function applyCyclicEntryConstraint(
   data4Layout: LayoutData,
-  nodeDb: Record<string, NodeWithVertex>
+  nodeDb: Record<string, NodeWithVertex>,
+  algorithm: string | undefined
 ): void {
+  if (!isLayeredAlgorithm(algorithm)) {
+    return;
+  }
   if (!data4Layout.config.elk?.keepEntryNodeOnTop) {
     return;
   }
@@ -311,14 +391,17 @@ export function buildElkGraphFromLayoutData(
   const elkGraph = createRootElkGraph(data4Layout, elkContext.algorithm);
 
   const dir = (data4Layout as { direction?: string }).direction ?? 'DOWN';
-  elkGraph.layoutOptions['elk.direction'] = dir2ElkDirection(dir);
+  if (isLayeredAlgorithm(elkContext.algorithm)) {
+    // Override the default DOWN direction from createRootElkGraph with the specific diagram direction
+    elkGraph.layoutOptions['elk.direction'] = dir2ElkDirection(dir);
+  }
 
   const parentLookupDb = addSubGraphs(data4Layout.nodes, elkContext.log);
   addVertices(data4Layout.nodes, elkGraph, nodeDb, elkContext);
   addEdgesToElkGraph(data4Layout, elkGraph, nodeDb, elkContext);
   configureSubgraphNodes(data4Layout, nodeDb, parentLookupDb, elkContext);
   configureCrossHierarchyEdges(elkGraph, nodeDb, parentLookupDb, elkContext.log);
-  applyCyclicEntryConstraint(data4Layout, nodeDb);
+  applyCyclicEntryConstraint(data4Layout, nodeDb, elkContext.algorithm);
   logElkGraphForDebug(elkGraph, elkContext.log);
 
   return { elkGraph, nodeDb, parentLookupDb };
@@ -397,59 +480,26 @@ function getElkLayoutContext(
 }
 
 function createRootElkGraph(data4Layout: LayoutData, algorithm: string | undefined): any {
-  return {
+  const config = data4Layout.config.elk;
+  const base: any = {
     id: 'root',
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
       'elk.algorithm': algorithm,
-      'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy,
-      'elk.layered.nodePlacement.bk.fixedAlignment':
-        data4Layout.config.elk?.nodePlacementAlignment ?? DEFAULT_NODE_PLACEMENT_ALIGNMENT,
-      'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
-      'elk.direction': 'DOWN',
-      'spacing.baseValue': 40,
-      'elk.layered.crossingMinimization.forceNodeModelOrder':
-        data4Layout.config.elk?.forceNodeModelOrder,
-      'elk.layered.considerModelOrder.strategy': data4Layout.config.elk?.considerModelOrder,
-      'elk.layered.unnecessaryBendpoints': true,
-      'elk.layered.cycleBreaking.strategy': data4Layout.config.elk?.cycleBreakingStrategy,
-
-      // 'elk.layered.cycleBreaking.strategy': 'GREEDY_MODEL_ORDER',
-      // 'elk.layered.cycleBreaking.strategy': 'MODEL_ORDER',
-      // 'spacing.nodeNode': 20,
-      // 'spacing.nodeNodeBetweenLayers': 25,
-      // 'spacing.edgeNode': 20,
-      // 'spacing.edgeNodeBetweenLayers': 10,
-      // 'spacing.edgeEdge': 10,
-      // 'spacing.edgeEdgeBetweenLayers': 20,
-      // 'spacing.nodeSelfLoop': 20,
-
-      // Tweaking options
-      // 'nodePlacement.favorStraightEdges': true,
-      // 'elk.layered.nodePlacement.favorStraightEdges': true,
-      // 'nodePlacement.feedbackEdges': true,
-      'elk.layered.wrapping.multiEdge.improveCuts': true,
-      'elk.layered.wrapping.multiEdge.improveWrappedEdges': true,
-      // 'elk.layered.wrapping.strategy': 'MULTI_EDGE',
-      // 'elk.layered.wrapping.strategy': 'SINGLE_EDGE',
-      'elk.layered.edgeRouting.selfLoopDistribution': 'EQUALLY',
-      'elk.layered.mergeHierarchyEdges': true,
-
-      // 'elk.layered.feedbackEdges': true,
-      // 'elk.layered.crossingMinimization.semiInteractive': true,
-      // 'elk.layered.edgeRouting.splines.sloppy.layerSpacingFactor': 1,
-      // 'elk.layered.edgeRouting.polyline.slopedEdgeZoneWidth': 4.0,
-      // 'elk.layered.wrapping.validify.strategy': 'LOOK_BACK',
-      // 'elk.insideSelfLoops.activate': true,
-      // 'elk.separateConnectedComponents': true,
-      // 'elk.alg.layered.options.EdgeStraighteningStrategy': 'NONE',
-      // 'elk.layered.considerModelOrder.strategy': 'NODES_AND_EDGES',
-      // 'elk.layered.considerModelOrder.strategy': 'EDGES',
-      // 'elk.layered.wrapping.cutting.strategy': 'ARD',
-    },
+    } as Record<string, unknown>,
     children: [],
     edges: [],
   };
+
+  if (isLayeredAlgorithm(algorithm)) {
+    Object.assign(base.layoutOptions, buildLayeredOptions(config));
+  } else if (isForceAlgorithm(algorithm)) {
+    Object.assign(base.layoutOptions, buildForceOptions(config));
+  } else if (isStressAlgorithm(algorithm)) {
+    Object.assign(base.layoutOptions, buildStressOptions(config));
+  }
+
+  return base;
 }
 
 function addSubGraphs(nodeArr: Node[], log: ElkLayoutContext['log']): TreeData {
