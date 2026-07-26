@@ -90,12 +90,13 @@ export async function stadium<T extends SVGGraphicsElement>(parent: D3Selection<
     polygon.attr('class', 'basic label-container outer-path');
   } else {
     // Rough.js splits paths into segments, which breaks CSS stroke-dasharray on straight sides.
+    // Merge cssStyles and nodeStyles into one style attribute; nodeStyles goes last so it wins.
+    const combinedStyles = [...(cssStyles ?? []), nodeStyles].filter(Boolean).join(';');
     polygon = shapeSvg
       .insert('path', ':first-child')
       .attr('d', pathData)
       .attr('class', 'basic label-container outer-path')
-      .attr('style', handleUndefinedAttr(cssStyles))
-      .attr('style', nodeStyles);
+      .attr('style', handleUndefinedAttr(combinedStyles || undefined));
   }
 
   updateNodeBounds(node, polygon);
