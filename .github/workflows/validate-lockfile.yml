@@ -18,6 +18,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          filter: 'blob:none'
 
       - name: Validate pnpm-lock.yaml entries
         id: validate # give this step an ID so we can reference its outputs
