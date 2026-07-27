@@ -227,6 +227,13 @@ const hasInternalEdge = (graph, clusterId) => {
   });
 };
 
+const hasRebasedClusterEdge = (graph, clusterId) => {
+  return graph.edges().some((edge) => {
+    const edgeData = graph.edge(edge);
+    return edgeData?.fromCluster === clusterId || edgeData?.toCluster === clusterId;
+  });
+};
+
 const shouldExtractExplicitDirCluster = (graph, id) => {
   const children = graph.children(id);
   if (!clusterDb.get(id)?.clusterData?.explicitDir || !children || children.length === 0) {
@@ -237,7 +244,11 @@ const shouldExtractExplicitDirCluster = (graph, id) => {
   // keeping the leaves in the parent graph lets dagre align those edges to the
   // actual nodes. Extracting in that case rebases the edges onto the cluster
   // boundary and loses the leaf-level constraints.
-  return hasInternalEdge(graph, id) || children.some((child) => graph.children(child).length > 0);
+  return (
+    hasInternalEdge(graph, id) ||
+    hasRebasedClusterEdge(graph, id) ||
+    children.some((child) => graph.children(child).length > 0)
+  );
 };
 
 export const adjustClustersAndEdges = (graph, depth) => {

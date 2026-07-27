@@ -535,6 +535,56 @@ flowchart TB
       expect(L1Graph.edges().some((e) => e.v === 'A' && e.w === 'OA')).toBe(true);
       expect(L1Graph.edges().some((e) => e.v === 'B' && e.w === 'OB')).toBe(true);
     });
+
+    it('GLB-DIR6: direct outgoing cluster edges still extract after rebasing', function () {
+      /*
+        subgraph C3 [direction LR]
+          E1
+        end
+        E1 --> E0
+        C3 --> E2
+      */
+      g.setNode('E0', { data: 0 });
+      g.setNode('E1', { data: 1 });
+      g.setNode('E2', { data: 2 });
+      g.setNode('C3', { data: 3, dir: 'LR', explicitDir: true });
+      g.setParent('E1', 'C3');
+      g.setEdge('E1', 'E0', { data: 'leaf edge' }, 'leaf-out');
+      g.setEdge('C3', 'E2', { data: 'cluster edge' }, 'cluster-out');
+
+      adjustClustersAndEdges(g);
+
+      expect(g.node('C3').clusterNode).toBe(true);
+      expect(g.node('C3').graph.nodes()).toEqual(['E1']);
+      const rebound = g.edges().find((e) => e.v === 'C3' && e.w === 'E2');
+      expect(rebound).toBeDefined();
+      expect(g.edge(rebound).fromCluster).toBe('C3');
+    });
+
+    it('GLB-DIR7: direct incoming cluster edges still extract after rebasing', function () {
+      /*
+        subgraph C4 [direction LR]
+          F1
+        end
+        F0 --> F1
+        F2 --> C4
+      */
+      g.setNode('F0', { data: 0 });
+      g.setNode('F1', { data: 1 });
+      g.setNode('F2', { data: 2 });
+      g.setNode('C4', { data: 3, dir: 'LR', explicitDir: true });
+      g.setParent('F1', 'C4');
+      g.setEdge('F0', 'F1', { data: 'leaf edge' }, 'leaf-in');
+      g.setEdge('F2', 'C4', { data: 'cluster edge' }, 'cluster-in');
+
+      adjustClustersAndEdges(g);
+
+      expect(g.node('C4').clusterNode).toBe(true);
+      expect(g.node('C4').graph.nodes()).toEqual(['F1']);
+      const rebound = g.edges().find((e) => e.v === 'F2' && e.w === 'C4');
+      expect(rebound).toBeDefined();
+      expect(g.edge(rebound).toCluster).toBe('C4');
+    });
   });
 });
 describe('extractDescendants', function () {
