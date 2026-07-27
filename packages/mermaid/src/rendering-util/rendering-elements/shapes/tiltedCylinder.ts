@@ -81,10 +81,10 @@ export async function tiltedCylinder<T extends SVGGraphicsElement>(
   }
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const h = (node.height ? node.height : bbox.height) + labelPadding;
+  const h = Math.max(node.height ?? 0, bbox.height) + labelPadding;
   const ry = h / 2;
   const rx = ry / (2.5 + h / 50);
-  const w = (node.width ? node.width : bbox.width) + rx + labelPadding;
+  const w = Math.max(node.width ?? 0, bbox.width) + rx + labelPadding;
   const { cssStyles } = node;
 
   let cylinder: D3Selection<SVGGElement> | D3Selection<SVGPathElement>;

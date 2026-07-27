@@ -82,10 +82,10 @@ export async function cylinder<T extends SVGGraphicsElement>(parent: D3Selection
 
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const w = (node.width ? node.width : bbox.width) + labelPaddingY;
+  const w = Math.max(node.width ?? 0, bbox.width) + labelPaddingY;
   const rx = w / 2;
   const ry = rx / (2.5 + w / 50);
-  const h = (node.height ? node.height : bbox.height) + labelPaddingX + ry;
+  const h = Math.max(node.height ?? 0, bbox.height) + labelPaddingX + ry;
 
   let cylinder: D3Selection<SVGPathElement> | D3Selection<SVGGElement>;
   const { cssStyles } = node;
