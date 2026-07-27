@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   validate-lockfile:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
