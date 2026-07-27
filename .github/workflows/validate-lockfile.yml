@@ -36,7 +36,7 @@ jobs:
           fi
 
           # 3) Lockfile only changes when package.json changes
-          git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > changed.txt
+          git diff --name-only "$GITHUB_BASE_SHA" "$GITHUB_HEAD_SHA" > changed.txt
           if grep -q '^pnpm-lock.yaml$' changed.txt && ! grep -q 'package.json' changed.txt; then
             issues+=('- `pnpm-lock.yaml` changed without any `**/package.json` modification')
           fi
@@ -51,6 +51,9 @@ jobs:
             } >> $GITHUB_OUTPUT
             exit 1
           fi
+        env:
+          GITHUB_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
 
       - name: Comment on CI Step Summary if validation fails
         if: failure()
