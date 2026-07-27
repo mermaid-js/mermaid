@@ -1,11 +1,14 @@
 name: Validate pnpm-lock.yaml
 
 on:
-  pull_request_target:
+  pull_request:
     paths:
       - 'pnpm-lock.yaml'
       - '**/package.json'
       - '.github/workflows/validate-lockfile.yml'
+
+permissions:
+  contents: read
 
 jobs:
   validate-lockfile:
@@ -15,8 +18,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Validate pnpm-lock.yaml entries
         id: validate # give this step an ID so we can reference its outputs
@@ -25,18 +26,18 @@ jobs:
 
           # 1) No tarball references
           if grep -qF 'tarball:' pnpm-lock.yaml; then
-            issues+=("• Tarball references found (forbidden)")
+            issues+=('- Tarball references found (forbidden)')
           fi
 
           # 2) No unwanted vitepress paths
           if grep -qF 'packages/mermaid/src/vitepress' pnpm-lock.yaml; then
-            issues+=("• Disallowed path 'packages/mermaid/src/vitepress' present. Run \`rm -rf packages/mermaid/src/vitepress && pnpm install\` to regenerate.")
+            issues+=('- Disallowed path `packages/mermaid/src/vitepress` present. Run `rm -rf packages/mermaid/src/vitepress && pnpm install` to regenerate.')
           fi
 
           # 3) Lockfile only changes when package.json changes
           git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > changed.txt
           if grep -q '^pnpm-lock.yaml$' changed.txt && ! grep -q 'package.json' changed.txt; then
-            issues+=("• pnpm-lock.yaml changed without any package.json modification")
+            issues+=('- `pnpm-lock.yaml` changed without any `**/package.json` modification')
           fi
 
           # If any issues, output them and fail
@@ -50,41 +51,16 @@ jobs:
             exit 1
           fi
 
-      - name: Find existing lockfile validation comment
-        if: always()
-        uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3
-        id: find-comment
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: 'Lockfile Validation Failed'
-
-      - name: Comment on PR if validation failed
+      - name: Comment on CI Step Summary if validation fails
         if: failure()
-        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-id: ${{ steps.find-comment.outputs.comment-id }}
-          edit-mode: replace
-          body: |
-            ❌ **Lockfile Validation Failed**
-
-            The following issue(s) were detected:
-            ${{ steps.validate.outputs.errors }}
-
-            Please address these and push an update.
-
-            _Posted automatically by GitHub Actions_
-
-      - name: Delete comment if validation passed
-        if: success() && steps.find-comment.outputs.comment-id != ''
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            await github.rest.issues.deleteComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              comment_id: ${{ steps.find-comment.outputs.comment-id }},
-            });
+        run: |
+          {
+            echo "❌ **Lockfile Validation Failed**"
+            echo ""
+            echo "The following issue(s) were detected:"
+            echo ""
+            echo "$VALIDATION_ERRORS"
+            echo "Please address these and push an update."
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+        env:
+          VALIDATION_ERRORS: ${{ steps.validate.outputs.errors }}
