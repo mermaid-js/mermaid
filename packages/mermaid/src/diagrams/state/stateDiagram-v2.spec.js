@@ -287,6 +287,46 @@ describe('state diagram V2, ', function () {
 
       parser.parse(str);
     });
+    it('should handle history statements', function () {
+      const str = `stateDiagram-v2
+      state "D" as D {
+        state "E" as E {
+          state "F" as F
+          state "G" as G
+
+          F --> G
+          G --> F
+        }
+        state "I" as I
+        state D_History <<history>>
+
+        E --> I
+        I --> E
+      }
+
+      A --> D_History`;
+      parser.parse(str);
+    });
+    it('should handle deep history statements', function () {
+      const str = `stateDiagram-v2
+      state "D" as D {
+        state "E" as E {
+          state "F" as F
+          state "G" as G
+
+          F --> G
+          G --> F
+        }
+        state "I" as I
+        state D_History <<deephistory>>
+
+        E --> I
+        I --> E
+      }
+
+      A --> D_History`;
+      parser.parse(str);
+    });
     it('should handle concurrent state', function () {
       const str = `stateDiagram-v2\n
       [*] --> Active

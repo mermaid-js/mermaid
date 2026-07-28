@@ -11,6 +11,7 @@ cynefin
 deaccelerator
 Deaccelerator
 deaccelerators
+deephistory
 doublecircle
 elem
 elems
