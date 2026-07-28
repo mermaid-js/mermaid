@@ -215,21 +215,21 @@ export async function paintLayoutData(
   const { measure } = context;
   const { groups } = measure;
 
+  // Only edges that actually get painted should influence `auto` title placement, so a title
+  // never dodges a layout-only or skipped edge that the render pass suppresses.
+  const renderedEdges = data4Layout.edges.filter((edge) => !shouldSkipPaintEdge(edge, options));
+
   // Render clusters and position nodes; this also populates node.intersect on shapes.
   for (const node of options.getNodes?.(data4Layout, context) ?? data4Layout.nodes) {
     if (options.skipNode?.(node, context)) {
       continue;
     }
-    await paintLayoutNode(groups, node, context, options);
+    await paintLayoutNode(groups, node, context, options, renderedEdges);
   }
 
   const nodeById = buildNodeLookup(data4Layout.nodes);
 
-  for (const edge of data4Layout.edges) {
-    if (shouldSkipPaintEdge(edge, options)) {
-      continue;
-    }
-
+  for (const edge of renderedEdges) {
     await paintLayoutEdge(groups, edge, nodeById, data4Layout, options, context);
   }
 }
@@ -238,12 +238,14 @@ async function paintLayoutNode(
   groups: CommonLayoutMeasure['groups'],
   node: LayoutData['nodes'][number],
   context: CommonLayoutPaintContext<unknown, CommonLayoutMeasure>,
-  options: CommonLayoutPaintOptions
+  options: CommonLayoutPaintOptions,
+  layoutEdges: LayoutData['edges'] = []
 ): Promise<void> {
   if ((node as { clusterNode?: boolean }).clusterNode) {
     positionNode(node);
   } else if (shouldPaintAsCluster(node, context, options)) {
-    await insertCluster(groups.clusters, node);
+    // Pass routed edges so `auto` subgraph titles can dodge edges that would cross them.
+    await insertCluster(groups.clusters, node, layoutEdges);
   } else {
     positionNode(node);
   }

@@ -2285,6 +2285,17 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         default:
           top: 0
           bottom: 0
+      subGraphTitlePosition:
+        description: |
+          Where the subgraph title is placed relative to the subgraph box.
+
+          With `auto` (the default) the title starts at the top-center and, if a routed edge
+          would cross it, moves to the first free position in this order: `top`, `top-left`,
+          `bottom`, `bottom-left`, `top-right`, `bottom-right`. If every position is blocked it
+          stays at `top`. Any of the explicit values pins the title to that position.
+        type: string
+        enum: ['auto', 'top', 'top-left', 'top-right', 'bottom', 'bottom-left', 'bottom-right']
+        default: 'auto'
       arrowMarkerAbsolute:
         type: boolean # TODO, is this actually used here (it has no default value but was in types)
       diagramPadding:

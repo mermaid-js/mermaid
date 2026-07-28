@@ -316,7 +316,9 @@ describe('paintLayoutData', () => {
       skipIntersect: (candidate) => candidate.id === renderEdge.id,
     });
 
-    expect(mocks.insertCluster).toHaveBeenCalledWith(measured.groups.clusters, group);
+    // Clusters receive only the rendered edges (layout-only/skipped filtered out) so `auto`
+    // subgraph titles dodge exactly the edges that actually get painted.
+    expect(mocks.insertCluster).toHaveBeenCalledWith(measured.groups.clusters, group, [renderEdge]);
     expect(mocks.positionNode).toHaveBeenCalledWith(nodeA);
     expect(mocks.positionNode).toHaveBeenCalledWith(nodeB);
     expect(mocks.insertEdge).toHaveBeenCalledTimes(1);

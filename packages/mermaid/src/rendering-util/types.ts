@@ -2,6 +2,7 @@ export type MarkdownWordType = 'normal' | 'strong' | 'em';
 import type { MermaidConfig } from '../config.type.js';
 import type { ClusterShapeID } from './rendering-elements/clusters.js';
 import type { ShapeID } from './rendering-elements/shapes.js';
+import type { SubGraphTitlePosition } from './rendering-elements/subGraphTitlePosition.js';
 import type { Bounds, Point } from '../types.js';
 export interface MarkdownWord {
   content: string;
@@ -49,6 +50,11 @@ interface BaseNode {
   };
   /** Optional rendered title/header region for group-like containers. */
   groupTitleRect?: GroupTitleRect;
+  /**
+   * Where a group/cluster title sits relative to its box. `auto` places it at the top-center
+   * and relocates it if a routed edge would cross it. Only set for flowchart subgraphs today.
+   */
+  subGraphTitlePosition?: SubGraphTitlePosition;
   // Specific properties for State Diagram nodes TODO remove and use generic properties
   intersect?: (point: any) => any;
   calcIntersect?: (bounds: Bounds, point: Point) => any;
