@@ -15,3 +15,5 @@ minimumReleaseAgeExclude:
   - vite@7.3.2
   # Renovate security update: sharp@0.35.0
   - sharp@0.35.0
+  # Renovate security update: js-yaml@4.3.0
+  - js-yaml@4.3.0
