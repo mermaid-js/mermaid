@@ -136,7 +136,7 @@ export interface GitGraphDB extends DiagramDBBase<GitGraphDiagramConfig> {
     tooltip?: string,
     target?: '_self' | '_blank' | '_parent' | '_top'
   ) => void;
-  getLink: (id: string) => GitGraphLink | undefined;
+  getLink: (id: string, type?: 'commit' | 'branch' | 'tag') => GitGraphLink | undefined;
   getLinks: () => Map<string, GitGraphLink>;
 }
 
@@ -168,7 +168,7 @@ export interface GitGraphDBRenderProvider extends Partial<GitGraphDB> {
   getDirection: () => DiagramOrientation;
   getHead: () => Commit | null;
   getDiagramTitle: () => string;
-  getLink: (id: string) => GitGraphLink | undefined;
+  getLink: (id: string, type?: 'commit' | 'branch' | 'tag') => GitGraphLink | undefined;
   getLinks: () => Map<string, GitGraphLink>;
 }
 

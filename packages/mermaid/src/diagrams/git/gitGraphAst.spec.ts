@@ -8,7 +8,7 @@ describe('gitGraph links', () => {
   describe('setLink', () => {
     it('should store a basic link', () => {
       db.setLink('commit1', 'https://example.com', 'commit');
-      expect(db.getLinks().has('commit1')).toBe(true);
+      expect(db.getLinks().has('commit:commit1')).toBe(true);
       expect(db.getLink('commit1')?.link).toBe('https://example.com');
     });
 
@@ -67,8 +67,8 @@ describe('gitGraph links', () => {
       db.setLink('c2', 'https://example.com/2', 'commit');
       const links = db.getLinks();
       expect(links.size).toBe(2);
-      expect(links.has('c1')).toBe(true);
-      expect(links.has('c2')).toBe(true);
+      expect(links.has('commit:c1')).toBe(true);
+      expect(links.has('commit:c2')).toBe(true);
     });
 
     it('should return the internal map (performance)', () => {

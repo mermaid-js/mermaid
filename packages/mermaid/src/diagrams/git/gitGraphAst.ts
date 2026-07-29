@@ -509,7 +509,7 @@ export const setLink = (
 ): void => {
   const config = getConfig();
   const sanitizedId = common.sanitizeText(id, config);
-  state.records.links.set(sanitizedId, {
+  state.records.links.set(`${type}:${sanitizedId}`, {
     id: sanitizedId,
     link,
     tooltip,
@@ -522,10 +522,24 @@ export const getLinks = (): Map<string, GitGraphLink> => {
   return state.records.links;
 };
 
-export const getLink = (id: string): GitGraphLink | undefined => {
+export const getLink = (
+  id: string,
+  type?: 'commit' | 'branch' | 'tag'
+): GitGraphLink | undefined => {
   const config = getConfig();
   const sanitizedId = common.sanitizeText(id, config);
-  return state.records.links.get(sanitizedId);
+  if (type) {
+    return (
+      state.records.links.get(`${type}:${sanitizedId}`) ??
+      state.records.links.get(sanitizedId)
+    );
+  }
+  return (
+    state.records.links.get(sanitizedId) ??
+    state.records.links.get(`commit:${sanitizedId}`) ??
+    state.records.links.get(`branch:${sanitizedId}`) ??
+    state.records.links.get(`tag:${sanitizedId}`)
+  );
 };
 
 export const db: GitGraphDB = {

@@ -216,7 +216,7 @@ const addInteraction = (
 ): d3.Selection<SVGGElement, unknown, HTMLElement, any> | undefined => {
   const config = getConfig();
   const { securityLevel } = config;
-  const linkData = db.getLink?.(id);
+  const linkData = db.getLink?.(id, type);
 
   if (securityLevel === 'strict' || !linkData || linkData.type !== type) {
     return undefined;
