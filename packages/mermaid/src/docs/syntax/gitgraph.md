@@ -276,7 +276,9 @@ Let see an example:
 You can add clickable links to commits, branches, and tags. This allows you to navigate to external URLs when clicking on the corresponding element in the diagram.
 
 ```note
-This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
+- `securityLevel='strict'`: Click links are disabled.
+- `securityLevel='loose'`: Click links are enabled and respect specified targets (`_blank`, `_self`, etc.).
+- `securityLevel='sandbox'`: Click links are enabled and override the link target to `_top`.
 ```
 
 Usage:
