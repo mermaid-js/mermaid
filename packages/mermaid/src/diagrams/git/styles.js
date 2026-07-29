@@ -176,16 +176,20 @@ const getStyles = (options) => {
   }
 
   .clickable:hover text,
-  .clickable:focus text {
+  .clickable:focus text,
+  a:focus-visible .clickable text {
     text-decoration: underline;
   }
 
   .commit.clickable:hover circle,
   .commit.clickable:focus circle,
+  a:focus-visible .commit.clickable circle,
   .commit.clickable:hover rect:not(.commit-label-bkg),
   .commit.clickable:focus rect:not(.commit-label-bkg),
+  a:focus-visible .commit.clickable rect:not(.commit-label-bkg),
   .commit.clickable:hover path,
-  .commit.clickable:focus path {
+  .commit.clickable:focus path,
+  a:focus-visible .commit.clickable path {
     transform: scale(1.4);
   }
 
