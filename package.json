@@ -157,7 +157,7 @@
     "prettier-plugin-jsdoc": "^1.3.3",
     "rimraf": "^6.0.1",
     "rollup-plugin-visualizer": "^6.0.11",
-    "sharp": "^0.34.4",
+    "sharp": "^0.35.0",
     "sirv-cli": "^3.0.1",
     "start-server-and-test": "^2.1.5",
     "tslib": "^2.8.1",

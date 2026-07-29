@@ -134,13 +134,11 @@ jobs:
             exit 0
           fi
 
-          # Kill-switch: set the repo variable E2E_SCOPE_BY_DIAGRAM to 'false'
-          # to disable scoping.  Scoping is ON by default so that fork PRs
-          # (where repository variables are unavailable) still benefit from it.
-          if [ "${E2E_SCOPE_BY_DIAGRAM}" = "false" ]; then
+          # Feature flag off → always use full matrix
+          if [ "${E2E_SCOPE_BY_DIAGRAM}" != "true" ]; then
             echo "spec_pattern=" >> "$GITHUB_OUTPUT"
             echo "matrix=[1,2,3,4,5,6,7,8]" >> "$GITHUB_OUTPUT"
-            echo "[detect-scope] Scoping disabled via kill-switch — full suite."
+            echo "[detect-scope] Feature flag disabled — full suite."
             exit 0
           fi
 
@@ -189,11 +187,9 @@ jobs:
           fi
           echo "[detect-scope] matrix output: $(grep '^matrix=' "$GITHUB_OUTPUT" | tail -1)"
         env:
-          # Scoping is ON by default.  To disable, set this repository variable
-          # to 'false' (GitHub → Settings → Secrets and variables → Actions → Variables).
-          # Using == 'false' (instead of == 'true') ensures fork PRs — where
-          # repository variables are not exposed — still get scoped runs.
-          E2E_SCOPE_BY_DIAGRAM: "${{ vars.E2E_SCOPE_BY_DIAGRAM == 'false' && 'false' || 'true' }}"
+          # Toggle diagram-scoped e2e: set this repository variable to 'true'
+          # (GitHub → Settings → Secrets and variables → Actions → Variables)
+          E2E_SCOPE_BY_DIAGRAM: "${{ vars.E2E_SCOPE_BY_DIAGRAM == 'true' }}"
 
   e2e:
     # Skip the entire e2e job when only docs/ignorable files changed.
