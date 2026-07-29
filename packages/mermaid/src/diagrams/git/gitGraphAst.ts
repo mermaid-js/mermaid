@@ -530,8 +530,7 @@ export const getLink = (
   const sanitizedId = common.sanitizeText(id, config);
   if (type) {
     return (
-      state.records.links.get(`${type}:${sanitizedId}`) ??
-      state.records.links.get(sanitizedId)
+      state.records.links.get(`${type}:${sanitizedId}`) ?? state.records.links.get(sanitizedId)
     );
   }
   return (
