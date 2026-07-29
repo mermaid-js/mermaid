@@ -1549,6 +1549,27 @@ describe('given a class diagram with relationships, ', function () {
       parser.parse(str);
     });
 
+    it('should reuse a declared class in a lollipop relationship', function () {
+      const str = `classDiagram
+        class IPerson {
+          <<interface>>
+          +name: string
+        }
+        class Person
+        IPerson ()-- Person`;
+
+      parser.parse(str);
+
+      const { nodes, edges } = classDb.getData();
+      expect(nodes.filter((node) => node.label === 'IPerson')).toHaveLength(1);
+      expect(nodes.map((node) => node.id).sort()).toEqual(['IPerson', 'Person']);
+      expect(edges[0]).toMatchObject({
+        start: 'IPerson',
+        end: 'Person',
+        arrowTypeStart: 'lollipop',
+      });
+    });
+
     it('should handle relation definitions EXTENSION', function () {
       const str = 'classDiagram\n' + 'Class1 <|-- Class02';
 
