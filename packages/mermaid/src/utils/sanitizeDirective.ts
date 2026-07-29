@@ -67,6 +67,11 @@ export const sanitizeDirective = (args: any): void => {
     // Recurse if an object, but handle dictionary-style configs specially
     // (like nodeColors or filenameIcons) by validating their values instead
     if (typeof args[key] === 'object') {
+      // cssVariableTheme / webCompatibility accept a small options object whose
+      // nested keys are not top-level MermaidConfig keys — do not strip them.
+      if (key === 'cssVariableTheme' || key === 'webCompatibility') {
+        continue;
+      }
       const valuePattern = DICTIONARY_CONFIG_PATTERNS[key];
       if (valuePattern) {
         sanitizeDictionaryConfig(args[key], valuePattern);

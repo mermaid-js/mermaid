@@ -31,6 +31,10 @@ const config: RequiredDeep<MermaidConfig> = {
   },
   themeCSS: undefined,
 
+  // Emit-time CSS vars + web SVG normalize (see #8007). Explicit so configKeys includes them.
+  cssVariableTheme: false,
+  webCompatibility: false,
+
   // add non-JSON default config values
   themeVariables: theme.default.getThemeVariables(),
   sequence: {
