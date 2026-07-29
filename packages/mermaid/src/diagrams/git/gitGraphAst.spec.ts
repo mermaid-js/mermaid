@@ -45,6 +45,16 @@ describe('gitGraph links', () => {
       db.setLink('v1.0.0-beta', 'https://example.com', 'commit');
       expect(db.getLink('v1.0.0-beta')?.link).toBe('https://example.com');
     });
+
+    it('should handle overlapping identifiers across commit, branch, and tag types', () => {
+      db.setLink('v1.0', 'https://example.com/commit', 'commit');
+      db.setLink('v1.0', 'https://example.com/branch', 'branch');
+      db.setLink('v1.0', 'https://example.com/tag', 'tag');
+
+      expect((db.getLink as any)('v1.0', 'commit')?.link).toBe('https://example.com/commit');
+      expect((db.getLink as any)('v1.0', 'branch')?.link).toBe('https://example.com/branch');
+      expect((db.getLink as any)('v1.0', 'tag')?.link).toBe('https://example.com/tag');
+    });
   });
 
   describe('getLinks', () => {
