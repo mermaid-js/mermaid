@@ -138,4 +138,26 @@ describe('C4 diagram', () => {
       {}
     );
   });
+  it('C4.7 should apply per-element font config (personFontFamily, personFontSize)', () => {
+    imgSnapshotTest(
+      [
+        { fontFamily: 'courier', fontSize: 14 },
+        { fontFamily: 'serif', fontSize: 24 },
+      ].map(
+        ({ fontFamily, fontSize }) => `---
+title: personFontFamily=${fontFamily} personFontSize=${fontSize}
+config:
+  c4:
+    personFontFamily: ${fontFamily}
+    personFontSize: ${fontSize}
+---
+C4Context
+      Person(customerA, "Banking Customer A", "A customer of the bank.")
+      System(SystemAA, "Internet Banking System", "Allows customers to view information.")
+      Rel(customerA, SystemAA, "Uses")
+      `
+      ),
+      {}
+    );
+  });
 });
