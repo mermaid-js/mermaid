@@ -62,17 +62,19 @@ export async function tiltedCylinder<T extends SVGGraphicsElement>(
   node.labelStyle = labelStyles;
   const nodePadding = node.padding ?? 0;
   const labelPadding = node.look === 'neo' ? 12 : nodePadding / 2;
-  if (node.width || node.height) {
-    const originalHeight = node.height ?? 0;
-    node.height = (node.height ?? 0) - labelPadding;
+  const originalHeight = node.height ?? 0;
+  if (node.height) {
+    node.height = node.height - labelPadding;
     if (node.height < MIN_HEIGHT) {
       node.height = MIN_HEIGHT;
     }
+  }
+
+  if (node.width) {
     const ry = originalHeight / 2;
     // based on this height, width is calculated
     const rx = ry / (2.5 + originalHeight / 50);
-
-    node.width = (node.width ?? 0) - labelPadding - rx * 3;
+    node.width = node.width - labelPadding - rx * 3;
     if (node.width < MIN_WIDTH) {
       node.width = MIN_WIDTH;
     }
