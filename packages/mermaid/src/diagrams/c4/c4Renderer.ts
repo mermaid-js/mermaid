@@ -309,6 +309,9 @@ export const drawC4ShapeArray = async function (
     c4Shapes.map(async (c4Shape) => {
       const node = buildC4Node(c4Shape, conf, conf.c4ShapePadding, look, conf.width);
       node.domId = `${diagramId}-${node.id}`;
+      // Needed to properly calculate the intersection points.
+      node.x = c4Shape.x + c4Shape.width / 2;
+      node.y = c4Shape.y + c4Shape.height / 2;
       // Appending before the await keeps the shapes' stacking order deterministic.
       const positioned = diagram
         .append('g')
@@ -317,6 +320,7 @@ export const drawC4ShapeArray = async function (
           `translate(${c4Shape.x + c4Shape.width / 2}, ${c4Shape.y + c4Shape.height / 2})`
         );
       await shapeHandlerFor(node)(positioned, node, renderOptions);
+      c4Shape.intersect = node.intersect;
     })
   );
 
@@ -333,88 +337,17 @@ class Point {
   }
 }
 
-/* * *
+/*
  * Get the intersection of the line between the center point of a rectangle and a point outside the rectangle.
- * Algorithm idea.
- * Using a point outside the rectangle as the coordinate origin, the graph is divided into four quadrants, and each quadrant is divided into two cases, with separate treatment on the coordinate axes
- * 1. The case of coordinate axes.
- * 1. The case of the negative x-axis
- * 2. The case of the positive x-axis
- * 3. The case of the positive y-axis
- * 4. The negative y-axis case
- * 2. Quadrant cases.
- * 2.1. first quadrant: the case where the line intersects the left side of the rectangle; the case where it intersects the lower side of the rectangle
- * 2.2. second quadrant: the case where the line intersects the right side of the rectangle; the case where it intersects the lower edge of the rectangle
- * 2.3. third quadrant: the case where the line intersects the right side of the rectangle; the case where it intersects the upper edge of the rectangle
- * 2.4. fourth quadrant: the case where the line intersects the left side of the rectangle; the case where it intersects the upper side of the rectangle
- *
  */
 const getIntersectPoint = function (fromNode: C4Shape, endPoint: Point): Point | null {
-  const x1 = fromNode.x;
-
-  const y1 = fromNode.y;
-
-  const x2 = endPoint.x;
-
-  const y2 = endPoint.y;
-
-  const fromCenterX = x1 + fromNode.width / 2;
-
-  const fromCenterY = y1 + fromNode.height / 2;
-
-  const dx = Math.abs(x1 - x2);
-
-  const dy = Math.abs(y1 - y2);
-
-  const tanDYX = dy / dx;
-
-  const fromDYX = fromNode.height / fromNode.width;
-
-  let returnPoint: Point | null = null;
-
-  if (y1 == y2 && x1 < x2) {
-    returnPoint = new Point(x1 + fromNode.width, fromCenterY);
-  } else if (y1 == y2 && x1 > x2) {
-    returnPoint = new Point(x1, fromCenterY);
-  } else if (x1 == x2 && y1 < y2) {
-    returnPoint = new Point(fromCenterX, y1 + fromNode.height);
-  } else if (x1 == x2 && y1 > y2) {
-    returnPoint = new Point(fromCenterX, y1);
+  if (!fromNode.intersect) {
+    throw new Error(
+      `C4 shape "${fromNode.alias}" has no intersect function. Please report this to https://github.com/mermaid-js/mermaid/issues`
+    );
   }
-
-  if (x1 > x2 && y1 < y2) {
-    if (fromDYX >= tanDYX) {
-      returnPoint = new Point(x1, fromCenterY + (tanDYX * fromNode.width) / 2);
-    } else {
-      returnPoint = new Point(
-        fromCenterX - ((dx / dy) * fromNode.height) / 2,
-        y1 + fromNode.height
-      );
-    }
-  } else if (x1 < x2 && y1 < y2) {
-    //
-    if (fromDYX >= tanDYX) {
-      returnPoint = new Point(x1 + fromNode.width, fromCenterY + (tanDYX * fromNode.width) / 2);
-    } else {
-      returnPoint = new Point(
-        fromCenterX + ((dx / dy) * fromNode.height) / 2,
-        y1 + fromNode.height
-      );
-    }
-  } else if (x1 < x2 && y1 > y2) {
-    if (fromDYX >= tanDYX) {
-      returnPoint = new Point(x1 + fromNode.width, fromCenterY - (tanDYX * fromNode.width) / 2);
-    } else {
-      returnPoint = new Point(fromCenterX + ((fromNode.height / 2) * dx) / dy, y1);
-    }
-  } else if (x1 > x2 && y1 > y2) {
-    if (fromDYX >= tanDYX) {
-      returnPoint = new Point(x1, fromCenterY - (fromNode.width / 2) * tanDYX);
-    } else {
-      returnPoint = new Point(fromCenterX - ((fromNode.height / 2) * dx) / dy, y1);
-    }
-  }
-  return returnPoint;
+  const { x, y } = fromNode.intersect(endPoint);
+  return new Point(x, y);
 };
 
 const getIntersectPoints = function (fromNode: C4Shape, endNode: C4Shape) {
