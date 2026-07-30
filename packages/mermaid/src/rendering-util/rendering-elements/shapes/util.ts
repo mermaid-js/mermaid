@@ -8,12 +8,17 @@ import { decodeEntities, handleUndefinedAttr } from '../../../utils.js';
 import type { D3Selection, Point } from '../../../types.js';
 import { configureLabelImages } from './labelImageUtils.js';
 import { profiler } from '../../../profiler.js';
+import { c4LabelHelper } from './c4LabelHelper.js';
 
 export const labelHelper = async <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,
   _classes?: string
 ) => {
+  // Nodes carrying a stereotype render a stacked multi-section SVG label.
+  if (node.stereotype !== undefined) {
+    return c4LabelHelper(parent, node, _classes);
+  }
   let cssClasses;
   const useHtmlLabels = node.useHtmlLabels || evaluate(getConfig()?.htmlLabels);
   if (!_classes) {

@@ -15,6 +15,8 @@ interface BaseNode {
   id: string;
   label?: string;
   description?: string[];
+  /** Stereotype line rendered between label and description in multi-section labels, e.g. `[Container: Node.js]`. */
+  stereotype?: string;
   parentId?: string;
   position?: string; // Keep, this is for notes 'left of', 'right of', etc. Move into nodeNode
   cssStyles?: string[]; // Renamed from `styles` to `cssStyles`
