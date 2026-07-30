@@ -160,4 +160,21 @@ C4Context
       {}
     );
   });
+  it('C4.8 should wrap element text at c4.width when the root wrap config is enabled', () => {
+    imgSnapshotTest(
+      [216, 4000].map(
+        (width) => `---
+title: wrap at c4.width=${width}
+config:
+  wrap: true
+  c4:
+    width: ${width}
+---
+C4Context
+      System(s, "System", "A long description that wraps at the default width and stays on one line when the width is large")
+      `
+      ),
+      {}
+    );
+  });
 });
