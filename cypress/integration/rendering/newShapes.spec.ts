@@ -48,7 +48,8 @@ const newShapesSet5 = [
   'brace-r',
 ] as const;
 
-const newShapesSet6 = ['brace-r', 'braces'] as const;
+const newShapesSet6 = ['brace-r', 'braces', 'person'] as const;
+
 // Aggregate all shape sets into a single array
 const newShapesSets = [
   newShapesSet1,
