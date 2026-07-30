@@ -15,6 +15,8 @@ import type { C4DiagramConfig } from '../../config.type.js';
 import type { SVG } from '../../diagram-api/types.js';
 import type { TextDimensionConfig } from '../../types.js';
 import type { C4Boundary, C4DrawConfig, C4Font, C4Rel, C4Shape, C4Text } from './c4Types.js';
+import { shapes } from '../../rendering-util/rendering-elements/shapes.js';
+import { buildC4Node } from './c4ShapeAdapter.js';
 
 type C4DB = typeof c4Db;
 
@@ -173,14 +175,6 @@ export const setConf = function (cnf?: C4SetConfigParam) {
   }
 };
 
-const c4ShapeFont = (cnf: C4DrawConfig, typeC4Shape: string): C4Font => {
-  return {
-    fontFamily: cnf[typeC4Shape + 'FontFamily'] as string,
-    fontSize: cnf[typeC4Shape + 'FontSize'] as number,
-    fontWeight: cnf[typeC4Shape + 'FontWeight'] as string | number,
-  };
-};
-
 const boundaryFont = (cnf: C4DrawConfig): C4Font => {
   return {
     fontFamily: cnf.boundaryFontFamily,
@@ -263,128 +257,68 @@ export const drawBoundary = function (diagram: SVG, boundary: C4Boundary, bounds
   svgDraw.drawBoundary(diagram, boundary, conf);
 };
 
-export const drawC4ShapeArray = function (
+export const drawC4ShapeArray = async function (
   currentBounds: Bounds,
   diagram: SVG,
   c4ShapeArray: C4Shape[],
   c4ShapeKeys: string[]
 ) {
-  // Upper Y is relative point
-  let Y = 0;
-  // Draw the c4ShapeArray
-  for (const c4ShapeKey of c4ShapeKeys) {
-    Y = 0;
-    // `c4ShapeKeys` are the (numeric string) indices of `c4ShapeArray`.
-    const c4Shape = c4ShapeArray[Number(c4ShapeKey)];
+  const mermaidConfig = getConfig();
+  const look = mermaidConfig.look ?? 'classic';
+  const renderOptions = { config: mermaidConfig };
+  // Namespace the shape DOM ids with the diagram id so two diagrams on one page don't
+  // collide (the unified shapes use node.domId for the element id).
+  const diagramId = diagram.attr('id') ?? '';
 
-    // calc c4 shape type width and height
+  // `c4ShapeKeys` are the (numeric string) indices of `c4ShapeArray`.
+  const c4Shapes = c4ShapeKeys.map((key) => c4ShapeArray[Number(key)]);
 
-    const c4ShapeTypeConf = c4ShapeFont(conf, c4Shape.typeC4Shape.text);
-    c4ShapeTypeConf.fontSize = c4ShapeTypeConf.fontSize - 2;
-    c4Shape.typeC4Shape.width = calculateTextWidth(
-      '«' + c4Shape.typeC4Shape.text + '»',
-      c4ShapeTypeConf as TextDimensionConfig
-    );
-    c4Shape.typeC4Shape.height = c4ShapeTypeConf.fontSize + 2;
-    c4Shape.typeC4Shape.Y = conf.c4ShapePadding;
-    Y = c4Shape.typeC4Shape.Y + c4Shape.typeC4Shape.height - 4;
-
-    // set image width and height c4Shape.x + c4Shape.width / 2 - 24, c4Shape.y + 28
-    // let imageWidth = 0,
-    //   imageHeight = 0,
-    //   imageY = 0;
-    //
-    c4Shape.image = { width: 0, height: 0, Y: 0 };
-    switch (c4Shape.typeC4Shape.text) {
-      case 'person':
-      case 'external_person':
-        c4Shape.image.width = 48;
-        c4Shape.image.height = 48;
-        c4Shape.image.Y = Y;
-        Y = c4Shape.image.Y + c4Shape.image.height;
-        break;
+  const shapeHandlerFor = (node: ReturnType<typeof buildC4Node>) => {
+    const handler = node.shape ? shapes[node.shape] : undefined;
+    if (!handler) {
+      throw new Error(`C4: no shape handler for "${node.shape}"`);
     }
-    if (c4Shape.sprite) {
-      c4Shape.image.width = 48;
-      c4Shape.image.height = 48;
-      c4Shape.image.Y = Y;
-      Y = c4Shape.image.Y + c4Shape.image.height;
-    }
+    return handler;
+  };
 
-    // Y = conf.c4ShapePadding + c4Shape.image.height;
+  // Pass 1 (measure): render each shape, read its self-sized dimensions onto the legacy
+  // c4Shape, then discard the rendering. The shape is drawn again in pass 2 directly at its
+  // final position, so its label (and any composited sub-element) lays out under the final
+  // transform - drawing at the origin and translating afterwards leaves composited layers
+  // (e.g. anything with opacity) painting at the stale origin.
+  await Promise.all(
+    c4Shapes.map(async (c4Shape) => {
+      const node = buildC4Node(c4Shape, conf, conf.c4ShapePadding, look, conf.width);
+      node.domId = `${diagramId}-${node.id}`;
+      const measured = await shapeHandlerFor(node)(diagram, node, renderOptions);
+      c4Shape.width = node.width ?? conf.width;
+      c4Shape.height = node.height ?? conf.height;
+      c4Shape.margin = conf.c4ShapeMargin;
+      measured.remove();
+    })
+  );
 
-    const c4ShapeTextWrap = c4Shape.wrap && conf.wrap;
-    const textLimitWidth = conf.width - conf.c4ShapePadding * 2;
-
-    const c4ShapeLabelConf = c4ShapeFont(conf, c4Shape.typeC4Shape.text);
-    c4ShapeLabelConf.fontSize = c4ShapeLabelConf.fontSize + 2;
-    c4ShapeLabelConf.fontWeight = 'bold';
-    const label = calcC4ShapeTextWH(
-      'label',
-      c4Shape,
-      c4ShapeTextWrap,
-      c4ShapeLabelConf,
-      textLimitWidth
-    );
-    label.Y = Y + 8;
-    Y = label.Y + label.height;
-
-    if (c4Shape.type && c4Shape.type.text !== '') {
-      c4Shape.type.text = '[' + c4Shape.type.text + ']';
-      const c4ShapeTypeConf = c4ShapeFont(conf, c4Shape.typeC4Shape.text);
-      const type = calcC4ShapeTextWH(
-        'type',
-        c4Shape,
-        c4ShapeTextWrap,
-        c4ShapeTypeConf,
-        textLimitWidth
-      );
-      type.Y = Y + 5;
-      Y = type.Y + type.height;
-    } else if (c4Shape.techn && c4Shape.techn.text !== '') {
-      c4Shape.techn.text = '[' + c4Shape.techn.text + ']';
-      const c4ShapeTechnConf = c4ShapeFont(conf, c4Shape.techn.text);
-      const techn = calcC4ShapeTextWH(
-        'techn',
-        c4Shape,
-        c4ShapeTextWrap,
-        c4ShapeTechnConf,
-        textLimitWidth
-      );
-      techn.Y = Y + 5;
-      Y = techn.Y + techn.height;
-    }
-
-    let rectHeight = Y;
-    let rectWidth = label.width;
-
-    if (c4Shape.descr && c4Shape.descr.text !== '') {
-      const c4ShapeDescrConf = c4ShapeFont(conf, c4Shape.typeC4Shape.text);
-      const descr = calcC4ShapeTextWH(
-        'descr',
-        c4Shape,
-        c4ShapeTextWrap,
-        c4ShapeDescrConf,
-        textLimitWidth
-      );
-      descr.Y = Y + 20;
-      Y = descr.Y + descr.height;
-
-      rectWidth = Math.max(label.width, descr.width);
-      rectHeight = Y - descr.textLines * 5;
-    }
-
-    rectWidth = rectWidth + conf.c4ShapePadding;
-    // let rectHeight =
-
-    c4Shape.width = Math.max(c4Shape.width || conf.width, rectWidth, conf.width);
-    c4Shape.height = Math.max(c4Shape.height || conf.height, rectHeight, conf.height);
-    c4Shape.margin = c4Shape.margin || conf.c4ShapeMargin;
-
+  // Position with the legacy grid.
+  for (const c4Shape of c4Shapes) {
     currentBounds.insert(c4Shape);
-
-    svgDraw.drawC4Shape(diagram, c4Shape, conf);
   }
+
+  // Pass 2 (draw): render each shape into a group already translated to its grid position
+  // (unified shapes are centred at the origin; legacy x/y is the top-left corner).
+  await Promise.all(
+    c4Shapes.map(async (c4Shape) => {
+      const node = buildC4Node(c4Shape, conf, conf.c4ShapePadding, look, conf.width);
+      node.domId = `${diagramId}-${node.id}`;
+      // Appending before the await keeps the shapes' stacking order deterministic.
+      const positioned = diagram
+        .append('g')
+        .attr(
+          'transform',
+          `translate(${c4Shape.x + c4Shape.width / 2}, ${c4Shape.y + c4Shape.height / 2})`
+        );
+      await shapeHandlerFor(node)(positioned, node, renderOptions);
+    })
+  );
 
   currentBounds.bumpLastMargin(conf.c4ShapeMargin);
 };
@@ -541,7 +475,7 @@ export const drawRels = function (
   svgDraw.drawRels(diagram, rels, conf, diagramId);
 };
 
-function drawInsideBoundary(
+async function drawInsideBoundary(
   diagram: SVG,
   parentBoundaryAlias: string,
   parentBounds: Bounds,
@@ -631,7 +565,7 @@ function drawInsideBoundary(
     const currentPersonOrSystemKeys = db.getC4ShapeKeys(currentBoundary.alias);
 
     if (currentPersonOrSystemKeys.length > 0) {
-      drawC4ShapeArray(
+      await drawC4ShapeArray(
         currentBounds,
         diagram,
         currentPersonOrSystemArray,
@@ -643,7 +577,7 @@ function drawInsideBoundary(
 
     if (nextCurrentBoundaries.length > 0) {
       // draw boundary inside currentBoundary
-      drawInsideBoundary(
+      await drawInsideBoundary(
         diagram,
         parentBoundaryAlias,
         currentBounds,
@@ -671,7 +605,7 @@ function drawInsideBoundary(
 /**
  * Draws a sequenceDiagram in the tag with id: id based on the graph definition in text.
  */
-export const draw = function (_text: string, id: string, _version: string, diagObj: Diagram) {
+export const draw = async function (_text: string, id: string, _version: string, diagObj: Diagram) {
   conf = getRequiredConfig('c4') as C4DrawConfig;
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
@@ -709,7 +643,7 @@ export const draw = function (_text: string, id: string, _version: string, diagO
   const currentBoundaries = db.getBoundaries('');
   // switch (c4type) {
   //   case 'C4Context':
-  drawInsideBoundary(diagram, '', screenBounds, currentBoundaries, diagObj);
+  await drawInsideBoundary(diagram, '', screenBounds, currentBoundaries, diagObj);
   //     break;
   // }
 
