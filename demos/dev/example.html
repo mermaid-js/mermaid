@@ -45,10 +45,6 @@ graph TB
       }
       const storeKey = window.location.pathname;
       const code = localStorage.getItem(storeKey);
-      if (code) {
-        document.getElementById('code').value = code;
-        await render(code);
-      }
       mermaid.initialize({
         startOnLoad: true,
         logLevel: 0,
@@ -58,6 +54,10 @@ graph TB
         localStorage.setItem(storeKey, value);
         await render(value);
       });
+      if (code) {
+        document.getElementById('code').value = code;
+        await render(code);
+      }
     </script>
   </body>
 </html>
