@@ -41,4 +41,15 @@ describe('Katex', () => {
       { fontFamily: 'courier' }
     );
   });
+  it('5: should render a KaTeX note over a single actor without extra padding', () => {
+    imgSnapshotTest(
+      `sequenceDiagram
+      participant A
+      participant B
+      Note over B: $$(sk_B, pk_B)\\leftarrow KeyGen(1^\\lambda)$$
+      Note left of B: $$(sk_B, pk_B)\\leftarrow KeyGen(1^\\lambda)$$
+      A->>B: Message`,
+      { sequence: { useMaxWidth: false } }
+    );
+  });
 });

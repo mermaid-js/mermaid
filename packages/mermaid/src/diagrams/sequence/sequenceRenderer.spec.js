@@ -20,8 +20,18 @@ vi.mock('../../utils.js', async (importOriginal) => {
   };
 });
 
+vi.mock('../common/common.js', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    calculateMathMLDimensions: vi.fn(() => Promise.resolve({ width: 200, height: 30 })),
+  };
+});
+
 import * as svgDraw from './svgDraw.js';
-import { drawMessage, setConf } from './sequenceRenderer.js';
+import { calculateMathMLDimensions } from '../common/common.js';
+import utils from '../../utils.js';
+import { buildNoteModel, drawMessage, setConf } from './sequenceRenderer.js';
 
 function mockDiagram(name = 'svg') {
   const children = [];
@@ -92,5 +102,65 @@ describe('drawMessage (#3594)', () => {
     const textObj = messageTextCalls[0][1];
     expect(textObj.x).toBe(Math.min(startx, stopx));
     expect(textObj.width).toBe(Math.abs(stopx - startx));
+  });
+});
+
+describe('buildNoteModel (#6993)', () => {
+  const diagObj = { db: { PLACEMENT: { LEFTOF: 0, RIGHTOF: 1, OVER: 2 } } };
+
+  beforeEach(() => {
+    setConf({
+      width: 80,
+      noteMargin: 10,
+      wrapPadding: 10,
+      noteFontFamily: 'sans-serif',
+      noteFontSize: 14,
+      noteFontWeight: '400',
+    });
+    vi.mocked(calculateMathMLDimensions).mockClear();
+    vi.mocked(utils.calculateTextDimensions).mockClear();
+  });
+
+  it('sizes a KaTeX note over a single actor from its MathML dimensions', async () => {
+    const actors = new Map([['B', { x: 100, width: 150 }]]);
+    const msg = {
+      from: 'B',
+      to: 'B',
+      message: '$$(sk_B, pk_B)\\leftarrow KeyGen(1^\\lambda)$$',
+      wrap: false,
+      placement: diagObj.db.PLACEMENT.OVER,
+    };
+
+    const noteModel = await buildNoteModel(msg, actors, diagObj);
+
+    // max(actor width, conf.width, MathML width (200) + 2 * noteMargin)
+    expect(noteModel.width).toBe(220);
+    expect(noteModel.startx).toBe(100 + (150 - 220) / 2);
+    expect(calculateMathMLDimensions).toHaveBeenCalledTimes(1);
+    // The raw `$$...$$` source must not be measured as plain text: doing so is
+    // what inflated the note's padding.
+    expect(utils.calculateTextDimensions).not.toHaveBeenCalled();
+  });
+
+  it('still sizes a plain-text note over a single actor from its text dimensions', async () => {
+    const actors = new Map([['B', { x: 100, width: 150 }]]);
+    const msg = {
+      from: 'B',
+      to: 'B',
+      message: 'a plain note',
+      wrap: false,
+      placement: diagObj.db.PLACEMENT.OVER,
+    };
+
+    const noteModel = await buildNoteModel(msg, actors, diagObj);
+
+    // max(actor width, conf.width, text width (40) + 2 * noteMargin)
+    expect(noteModel.width).toBe(150);
+    expect(calculateMathMLDimensions).not.toHaveBeenCalled();
+    expect(utils.calculateTextDimensions).toHaveBeenCalledWith('a plain note', {
+      fontFamily: 'sans-serif',
+      fontSize: 14,
+      fontWeight: '400',
+    });
   });
 });
