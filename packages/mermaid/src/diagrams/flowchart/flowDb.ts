@@ -273,6 +273,7 @@ export class FlowDB implements DiagramDB {
       if (doc.h) {
         vertex.assetHeight = Number(doc.h);
       }
+      vertex.metadata = { ...vertex.metadata, ...doc };
     }
   }
 
@@ -1071,6 +1072,7 @@ You have to call mermaid.initialize.`
         assetWidth: vertex.assetWidth,
         assetHeight: vertex.assetHeight,
         constraint: vertex.constraint,
+        metadata: vertex.metadata,
       };
       if (isGroup) {
         nodes.push({

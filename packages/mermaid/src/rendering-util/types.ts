@@ -74,6 +74,8 @@ interface BaseNode {
   x?: number;
   y?: number;
 
+  metadata?: Record<string, unknown>;
+
   look?: string;
   icon?: string;
   pos?: 't' | 'b';
