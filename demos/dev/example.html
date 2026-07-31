@@ -20,13 +20,16 @@
     </style>
   </head>
   <body>
-    <pre id="diagram" class="mermaid">
+    <div class="container">
+      <pre id="diagram" class="mermaid">
 graph TB
       a --> b
       a --> c
       b --> d
       c --> d
-    </pre>
+      </pre>
+      <pre class="mermaid">info</pre>
+    </div>
 
     <hr />
     Type code to view diagram:
@@ -34,13 +37,51 @@ graph TB
       <textarea name="code" id="code" cols="30" rows="10"></textarea>
       <div id="dynamicDiagram"></div>
     </div>
-    <pre class="mermaid">info</pre>
+
+    <table>
+      <tbody>
+        <tr>
+          <th scope="row">Error</th>
+          <td>
+            <pre><code id="errors"></code></pre>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">Render time</th>
+          <td>
+            <time id="renderTime">N/A</time>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
     <script type="module">
       import mermaid from '/mermaid.esm.mjs';
+
+      function setRenderTime(start, end) {
+        const durationMs = end - start;
+        document
+          .getElementById('renderTime')
+          .setAttribute('datetime', `PT${(durationMs / 1000).toFixed(3)}s`);
+        document.getElementById('renderTime').innerText = new Intl.NumberFormat('en', {
+          style: 'unit',
+          unit: 'millisecond',
+        }).format(durationMs);
+      }
+
       async function render(str) {
-        const { svg } = await mermaid.render('dynamic', str);
-        document.getElementById('dynamicDiagram').innerHTML = svg;
+        const start = performance.now();
+        try {
+          const { svg } = await mermaid.render('dynamic', str);
+          const end = performance.now();
+          document.getElementById('dynamicDiagram').innerHTML = svg;
+          document.getElementById('errors').innerText = 'No errors';
+          setRenderTime(start, end);
+        } catch (err) {
+          const end = performance.now();
+          document.getElementById('errors').innerText = err;
+          setRenderTime(start, end);
+        }
       }
       const storeKey = window.location.pathname;
       const code = localStorage.getItem(storeKey);
