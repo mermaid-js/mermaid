@@ -1,5 +1,5 @@
 import { setConfig } from '../../../config.js';
-import requirementDb from '../requirementDb.js';
+import { RequirementDB } from '../requirementDb.js';
 import reqDiagram from './requirementDiagram.jison';
 
 setConfig({
@@ -7,6 +7,7 @@ setConfig({
 });
 
 describe('when parsing requirement diagram it...', function () {
+  const requirementDb = new RequirementDB();
   beforeEach(function () {
     reqDiagram.parser.yy = requirementDb;
     reqDiagram.parser.yy.clear();
@@ -33,14 +34,14 @@ describe('when parsing requirement diagram it...', function () {
 
     reqDiagram.parser.parse(doc);
 
-    expect(Object.keys(requirementDb.getRequirements()).length).toBe(1);
+    expect(requirementDb.getRequirements().size).toBe(1);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
-    expect(foundReq.id).toBe(expectedId);
+    expect(foundReq.requirementId).toBe(expectedId);
     expect(foundReq.text).toBe(expectedText);
 
-    expect(Object.keys(requirementDb.getElements()).length).toBe(0);
+    expect(requirementDb.getElements().size).toBe(0);
     expect(Object.keys(requirementDb.getRelationships()).length).toBe(0);
   });
 
@@ -61,10 +62,10 @@ describe('when parsing requirement diagram it...', function () {
 
     reqDiagram.parser.parse(doc);
 
-    expect(Object.keys(requirementDb.getRequirements()).length).toBe(0);
-    expect(Object.keys(requirementDb.getElements()).length).toBe(1);
+    expect(requirementDb.getRequirements().size).toBe(0);
+    expect(requirementDb.getElements().size).toBe(1);
 
-    let foundElement = requirementDb.getElements()[expectedName];
+    let foundElement = requirementDb.getElements().get(expectedName);
     expect(foundElement).toBeDefined();
     expect(foundElement.type).toBe(expectedType);
     expect(foundElement.docRef).toBe(expectedDocRef);
@@ -121,8 +122,8 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    expect(Object.keys(requirementDb.getRequirements()).length).toBe(0);
-    expect(Object.keys(requirementDb.getElements()).length).toBe(0);
+    expect(requirementDb.getRequirements().size).toBe(0);
+    expect(requirementDb.getElements().size).toBe(0);
     expect(Object.keys(requirementDb.getRelationships()).length).toBe(1);
 
     let foundRelationship = requirementDb.getRelationships()[0];
@@ -152,7 +153,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.type).toBe(expectedType);
   });
@@ -179,7 +180,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.type).toBe(expectedType);
   });
@@ -206,7 +207,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.type).toBe(expectedType);
   });
@@ -233,7 +234,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.type).toBe(expectedType);
   });
@@ -260,7 +261,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.type).toBe(expectedType);
   });
@@ -287,7 +288,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.type).toBe(expectedType);
   });
@@ -314,7 +315,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.risk).toBe(expectedRisk);
   });
@@ -341,7 +342,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.risk).toBe(expectedRisk);
   });
@@ -368,7 +369,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.risk).toBe(expectedRisk);
   });
@@ -395,7 +396,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.verifyMethod).toBe(expectedVerifyMethod);
   });
@@ -422,7 +423,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.verifyMethod).toBe(expectedVerifyMethod);
   });
@@ -449,7 +450,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.verifyMethod).toBe(expectedVerifyMethod);
   });
@@ -476,7 +477,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    let foundReq = requirementDb.getRequirements()[expectedName];
+    let foundReq = requirementDb.getRequirements().get(expectedName);
     expect(foundReq).toBeDefined();
     expect(foundReq.verifyMethod).toBe(expectedVerifyMethod);
   });
@@ -577,5 +578,273 @@ line 2`;
 
     let foundRelationship = requirementDb.getRelationships()[0];
     expect(foundRelationship.type).toBe(expectedType);
+  });
+
+  for (const property of ['__proto__', 'constructor']) {
+    it(`will accept ${property} as requirement id`, function () {
+      reqDiagram.parser.parse(`requirementDiagram
+      requirement ${property} {
+        id: 1
+        text: the test text.
+        risk: high
+        verifymethod: test
+      }`);
+      expect(reqDiagram.parser.yy.getRequirements().size).toBe(1);
+    });
+
+    it(`will accept ${property} as element id`, function () {
+      reqDiagram.parser.parse(`requirementDiagram
+      element ${property} {
+        type: simulation
+      }`);
+      expect(reqDiagram.parser.yy.getElements().size).toBe(1);
+    });
+  }
+
+  it('will accept styling a requirement', function () {
+    const expectedName = 'test_req';
+
+    let lines = [
+      `requirementDiagram`,
+      ``,
+      `requirement ${expectedName} {`,
+      `}`,
+      `style ${expectedName} fill:#f9f,stroke:#333,stroke-width:4px`,
+      ``,
+    ];
+    let doc = lines.join('\n');
+
+    reqDiagram.parser.parse(doc);
+
+    let foundReq = requirementDb.getRequirements().get(expectedName);
+    const styles = foundReq.cssStyles;
+    expect(styles).toEqual(['fill:#f9f', 'stroke:#333', 'stroke-width:4px']);
+  });
+
+  it('will accept styling an element', function () {
+    const expectedName = 'test_element';
+
+    let lines = [
+      `requirementDiagram`,
+      ``,
+      `element ${expectedName} {`,
+      `}`,
+      `style ${expectedName} fill:#f9f,stroke:#333,stroke-width:4px`,
+      ``,
+    ];
+    let doc = lines.join('\n');
+
+    reqDiagram.parser.parse(doc);
+
+    let foundElement = requirementDb.getElements().get(expectedName);
+    const styles = foundElement.cssStyles;
+    expect(styles).toEqual(['fill:#f9f', 'stroke:#333', 'stroke-width:4px']);
+  });
+
+  it('will accept styling multiple things at once', function () {
+    const expectedRequirementName = 'test_requirement';
+    const expectedElementName = 'test_element';
+
+    let lines = [
+      `requirementDiagram`,
+      ``,
+      `requirement ${expectedRequirementName} {`,
+      `}`,
+      `element ${expectedElementName} {`,
+      `}`,
+      `style ${expectedRequirementName},${expectedElementName} fill:#f9f,stroke:#333,stroke-width:4px`,
+      ``,
+    ];
+    let doc = lines.join('\n');
+
+    reqDiagram.parser.parse(doc);
+
+    let foundRequirement = requirementDb.getRequirements().get(expectedRequirementName);
+    const requirementStyles = foundRequirement.cssStyles;
+    expect(requirementStyles).toEqual(['fill:#f9f', 'stroke:#333', 'stroke-width:4px']);
+    let foundElement = requirementDb.getElements().get(expectedElementName);
+    const elementStyles = foundElement.cssStyles;
+    expect(elementStyles).toEqual(['fill:#f9f', 'stroke:#333', 'stroke-width:4px']);
+  });
+
+  it('will accept defining a class', function () {
+    const expectedName = 'myClass';
+
+    let lines = [
+      `requirementDiagram`,
+      ``,
+      `classDef ${expectedName} fill:#f9f,stroke:#333,stroke-width:4px`,
+      ``,
+    ];
+    let doc = lines.join('\n');
+
+    reqDiagram.parser.parse(doc);
+
+    let foundClass = requirementDb.getClasses().get(expectedName);
+    expect(foundClass).toEqual({
+      id: 'myClass',
+      styles: ['fill:#f9f', 'stroke:#333', 'stroke-width:4px'],
+      textStyles: [],
+    });
+  });
+
+  it('will accept defining multiple classes at once', function () {
+    const firstName = 'firstClass';
+    const secondName = 'secondClass';
+
+    let lines = [
+      `requirementDiagram`,
+      ``,
+      `classDef ${firstName},${secondName} fill:#f9f,stroke:#333,stroke-width:4px`,
+      ``,
+    ];
+    let doc = lines.join('\n');
+
+    reqDiagram.parser.parse(doc);
+
+    let firstClass = requirementDb.getClasses().get(firstName);
+    expect(firstClass).toEqual({
+      id: 'firstClass',
+      styles: ['fill:#f9f', 'stroke:#333', 'stroke-width:4px'],
+      textStyles: [],
+    });
+    let secondClass = requirementDb.getClasses().get(secondName);
+    expect(secondClass).toEqual({
+      id: 'secondClass',
+      styles: ['fill:#f9f', 'stroke:#333', 'stroke-width:4px'],
+      textStyles: [],
+    });
+  });
+
+  it('will accept assigning a class via the class statement', function () {
+    const requirementName = 'myReq';
+    const className = 'myClass';
+
+    let lines = [
+      `requirementDiagram`,
+      ``,
+      `requirement ${requirementName} {`,
+      `}`,
+      `classDef ${className} fill:#f9f,stroke:#333,stroke-width:4px`,
+      `class ${requirementName} ${className}`,
+      ``,
+    ];
+    let doc = lines.join('\n');
+
+    reqDiagram.parser.parse(doc);
+
+    let foundRequirement = requirementDb.getRequirements().get(requirementName);
+    expect(foundRequirement.classes).toEqual(['default', className]);
+  });
+
+  it('will accept assigning multiple classes to multiple things via the class statement', function () {
+    const requirementName = 'req';
+    const elementName = 'elem';
+    const firstClassName = 'class1';
+    const secondClassName = 'class2';
+
+    let lines = [
+      `requirementDiagram`,
+      ``,
+      `requirement ${requirementName} {`,
+      `}`,
+      `element ${elementName} {`,
+      `}`,
+      `classDef ${firstClassName},${secondClassName} fill:#f9f,stroke:#333,stroke-width:4px`,
+      `class ${requirementName},${elementName} ${firstClassName},${secondClassName}`,
+      ``,
+    ];
+    let doc = lines.join('\n');
+
+    reqDiagram.parser.parse(doc);
+
+    let requirement = requirementDb.getRequirements().get(requirementName);
+    expect(requirement.classes).toEqual(['default', firstClassName, secondClassName]);
+    let element = requirementDb.getElements().get(elementName);
+    expect(element.classes).toEqual(['default', firstClassName, secondClassName]);
+  });
+
+  it('will accept assigning a class via the shorthand syntax', function () {
+    const requirementName = 'myReq';
+    const className = 'myClass';
+
+    let lines = [
+      `requirementDiagram`,
+      ``,
+      `requirement ${requirementName} {`,
+      `}`,
+      `classDef ${className} fill:#f9f,stroke:#333,stroke-width:4px`,
+      `${requirementName}:::${className}`,
+      ``,
+    ];
+    let doc = lines.join('\n');
+
+    reqDiagram.parser.parse(doc);
+
+    let foundRequirement = requirementDb.getRequirements().get(requirementName);
+    expect(foundRequirement.classes).toEqual(['default', className]);
+  });
+
+  it('will accept assigning multiple classes via the shorthand syntax', function () {
+    const requirementName = 'myReq';
+    const firstClassName = 'class1';
+    const secondClassName = 'class2';
+
+    let lines = [
+      `requirementDiagram`,
+      ``,
+      `requirement ${requirementName} {`,
+      `}`,
+      `classDef ${firstClassName} fill:#f9f,stroke:#333,stroke-width:4px`,
+      `classDef ${secondClassName} color:blue`,
+      `${requirementName}:::${firstClassName},${secondClassName}`,
+      ``,
+    ];
+    let doc = lines.join('\n');
+
+    reqDiagram.parser.parse(doc);
+
+    let foundRequirement = requirementDb.getRequirements().get(requirementName);
+    expect(foundRequirement.classes).toEqual(['default', firstClassName, secondClassName]);
+  });
+
+  it('will accept assigning a class or multiple via the shorthand syntax when defining a requirement or element', function () {
+    const requirementName = 'myReq';
+    const elementName = 'myElem';
+    const firstClassName = 'class1';
+    const secondClassName = 'class2';
+
+    let lines = [
+      `requirementDiagram`,
+      ``,
+      `requirement ${requirementName}:::${firstClassName} {`,
+      `}`,
+      `element ${elementName}:::${firstClassName},${secondClassName} {`,
+      `}`,
+      ``,
+      `classDef ${firstClassName} fill:#f9f,stroke:#333,stroke-width:4px`,
+      `classDef ${secondClassName} color:blue`,
+      ``,
+    ];
+    let doc = lines.join('\n');
+
+    reqDiagram.parser.parse(doc);
+
+    let foundRequirement = requirementDb.getRequirements().get(requirementName);
+    expect(foundRequirement.classes).toEqual(['default', firstClassName]);
+    let foundElement = requirementDb.getElements().get(elementName);
+    expect(foundElement.classes).toEqual(['default', firstClassName, secondClassName]);
+  });
+
+  describe('will parse direction statements and', () => {
+    test.each(['TB', 'BT', 'LR', 'RL'])('will accept direction %s', (directionVal) => {
+      const lines = ['requirementDiagram', '', `direction ${directionVal}`, ''];
+      const doc = lines.join('\n');
+
+      reqDiagram.parser.parse(doc);
+
+      const direction = requirementDb.getDirection();
+      expect(direction).toBe(directionVal);
+    });
   });
 });

@@ -1,36 +1,48 @@
 /**
- * This is the API to be used when optionally handling the integration with the web page, instead of
- * using the default integration provided by mermaid.js.
- *
- * The core of this api is the [**render**](Setup.md?id=render) function which, given a graph
- * definition as text, renders the graph/diagram and returns an svg element for the graph.
- *
- * It is then up to the user of the API to make use of the svg, either insert it somewhere in the
- * page or do something completely different.
- *
- * In addition to the render function, a number of behavioral configuration options are available.
+ * This file contains functions that are used internally by mermaid
+ * and is not intended to be used by the end user.
  */
 // @ts-ignore TODO: Investigate D3 issue
 import { select } from 'd3';
-import { compile, serialize, stringify } from 'stylis';
-// @ts-ignore: TODO Fix ts errors
-import { version } from '../package.json';
+import {
+  COMMENT,
+  compile,
+  KEYFRAMES,
+  LAYER,
+  MEDIA,
+  middleware,
+  SCOPE,
+  serialize,
+  stringify,
+  SUPPORTS,
+} from 'stylis';
+import DOMPurify from 'dompurify';
+import { isEmpty } from 'es-toolkit/compat';
+import { addSVGa11yTitleDescription, setA11yDiagramInfo } from './accessibility.js';
+import assignWithDepth from './assignWithDepth.js';
 import * as configApi from './config.js';
+import { getEffectiveHtmlLabels } from './config.js';
+import type { MermaidConfig } from './config.type.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
-import { Diagram, getDiagramFromText as getDiagramFromTextInternal } from './Diagram.js';
+import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
+import { Diagram } from './Diagram.js';
+import { evaluate } from './diagrams/common/common.js';
 import errorRenderer from './diagrams/error/errorRenderer.js';
 import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
-import getStyles from './styles.js';
-import theme from './themes/index.js';
-import DOMPurify from 'dompurify';
-import type { MermaidConfig } from './config.type.js';
-import { evaluate } from './diagrams/common/common.js';
-import isEmpty from 'lodash-es/isEmpty.js';
-import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
-import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
 import { preprocessDiagram } from './preprocess.js';
+import getStyles, { cssStyleSheetToString } from './styles.js';
+import theme from './themes/index.js';
+import type {
+  D3HtmlSelection,
+  D3Selection,
+  ParseOptions,
+  ParseResult,
+  RenderResult,
+} from './types.js';
 import { decodeEntities } from './utils.js';
+import { toBase64 } from './utils/base64.js';
+import { sanitizeCss } from './utils/sanitizeDirective.js';
 
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
@@ -56,30 +68,6 @@ const IFRAME_NOT_SUPPORTED_MSG = 'The "iframe" tag is not supported by your brow
 const DOMPURIFY_TAGS = ['foreignobject'];
 const DOMPURIFY_ATTR = ['dominant-baseline'];
 
-export interface ParseOptions {
-  suppressErrors?: boolean;
-}
-
-// This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
-export type D3Element = any;
-
-export interface RenderResult {
-  /**
-   * The svg code for the rendered graph.
-   */
-  svg: string;
-  /**
-   * Bind function to be called after the svg has been inserted into the DOM.
-   * This is necessary for adding event listeners to the elements in the svg.
-   * ```js
-   * const { svg, bindFunctions } = mermaidAPI.render('id1', 'graph TD;A-->B');
-   * div.innerHTML = svg;
-   * bindFunctions?.(div); // To call bindFunctions only if it's present.
-   * ```
-   */
-  bindFunctions?: (element: Element) => void;
-}
-
 function processAndSetConfigs(text: string) {
   const processed = preprocessDiagram(text);
   configApi.reset();
@@ -90,29 +78,29 @@ function processAndSetConfigs(text: string) {
 /**
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
- * @param parseOptions - Options for parsing.
- * @returns true if the diagram is valid, false otherwise if parseOptions.suppressErrors is true.
- * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false.
+ * @param parseOptions - Options for parsing. @see {@link ParseOptions}
+ * @returns An object with the `diagramType` set to type of the diagram if valid. Otherwise `false` if parseOptions.suppressErrors is `true`.
+ * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false or not set.
  */
-
-async function parse(text: string, parseOptions?: ParseOptions): Promise<boolean> {
+async function parse(
+  text: string,
+  parseOptions: ParseOptions & { suppressErrors: true }
+): Promise<ParseResult | false>;
+async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult>;
+async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult | false> {
   addDiagrams();
-
-  text = processAndSetConfigs(text).code;
-
   try {
-    await getDiagramFromText(text);
+    const { code, config } = processAndSetConfigs(text);
+    const diagram = await getDiagramFromText(code);
+    return { diagramType: diagram.type, config };
   } catch (error) {
     if (parseOptions?.suppressErrors) {
       return false;
     }
     throw error;
   }
-  return true;
 }
 
-// append !important; to each cssClass followed by a final !important, all enclosed in { }
-//
 /**
  * Create a CSS style that starts with the given class name, then the element,
  * with an enclosing block that has each of the cssClasses followed by !important;
@@ -126,7 +114,8 @@ export const cssImportantStyles = (
   element: string,
   cssClasses: string[] = []
 ): string => {
-  return `\n.${cssClass} ${element} { ${cssClasses.join(' !important; ')} !important; }`;
+  const declarationBlock = sanitizeCss(`{ ${cssClasses.join(' !important; ')} !important; }`);
+  return `.${cssClass} ${element} ${declarationBlock}`;
 };
 
 /**
@@ -138,27 +127,29 @@ export const cssImportantStyles = (
  */
 export const createCssStyles = (
   config: MermaidConfig,
-  classDefs: Record<string, DiagramStyleClassDef> | null | undefined = {}
+  classDefs: Map<string, DiagramStyleClassDef> | null | undefined = new Map()
 ): string => {
-  let cssStyles = '';
+  const cssStyles = new CSSStyleSheet();
 
   // user provided theme CSS info
   // If you add more configuration driven data into the user styles make sure that the value is
   // sanitized by the sanitize CSS function TODO where is this method?  what should be used to replace it?  refactor so that it's always sanitized
-  if (config.themeCSS !== undefined) {
-    cssStyles += `\n${config.themeCSS}`;
-  }
-
   if (config.fontFamily !== undefined) {
-    cssStyles += `\n:root { --mermaid-font-family: ${config.fontFamily}}`;
+    cssStyles.insertRule(
+      `:root { --mermaid-font-family: ${config.fontFamily}}`,
+      cssStyles.cssRules.length
+    );
   }
   if (config.altFontFamily !== undefined) {
-    cssStyles += `\n:root { --mermaid-alt-font-family: ${config.altFontFamily}}`;
+    cssStyles.insertRule(
+      `:root { --mermaid-alt-font-family: ${config.altFontFamily}}`,
+      cssStyles.cssRules.length
+    );
   }
 
   // classDefs defined in the diagram text
-  if (!isEmpty(classDefs)) {
-    const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?
+  if (classDefs instanceof Map) {
+    const htmlLabels = getEffectiveHtmlLabels(config);
 
     const cssHtmlElements = ['> *', 'span']; // TODO make a constant
     const cssShapeElements = ['rect', 'polygon', 'ellipse', 'circle', 'path']; // TODO make a constant
@@ -166,36 +157,142 @@ export const createCssStyles = (
     const cssElements = htmlLabels ? cssHtmlElements : cssShapeElements;
 
     // create the CSS styles needed for each styleClass definition and css element
-    for (const classId in classDefs) {
-      const styleClassDef = classDefs[classId];
+    classDefs.forEach((styleClassDef) => {
       // create the css styles for each cssElement and the styles (only if there are styles)
       if (!isEmpty(styleClassDef.styles)) {
         cssElements.forEach((cssElement) => {
-          cssStyles += cssImportantStyles(styleClassDef.id, cssElement, styleClassDef.styles);
+          cssStyles.insertRule(
+            cssImportantStyles(styleClassDef.id, cssElement, styleClassDef.styles),
+            cssStyles.cssRules.length
+          );
         });
       }
       // create the css styles for the tspan element and the text styles (only if there are textStyles)
       if (!isEmpty(styleClassDef.textStyles)) {
-        cssStyles += cssImportantStyles(styleClassDef.id, 'tspan', styleClassDef.textStyles);
+        cssStyles.insertRule(
+          cssImportantStyles(
+            styleClassDef.id,
+            'tspan',
+            (styleClassDef?.textStyles || []).map((s) => s.replace('color', 'fill'))
+          ),
+          cssStyles.cssRules.length
+        );
       }
+    });
+  }
+
+  let cssString = '';
+  if (config.themeCSS !== undefined) {
+    if (typeof cssStyles.replaceSync === 'function') {
+      const themeCssStyleSheet = new CSSStyleSheet();
+      themeCssStyleSheet.replaceSync(config.themeCSS);
+      cssString = cssStyleSheetToString(themeCssStyleSheet) + '\n';
+    } else {
+      /**
+       * Ideally we'd do a `CSSStyleSheet.replaceSync`, but it's not supported
+       * in some older browsers and in JSDOM.
+       */
+      cssString += `${config.themeCSS}\n`;
     }
   }
-  return cssStyles;
+
+  return cssString + cssStyleSheetToString(cssStyles);
+};
+
+/**
+ * Use `stylis` to compile the CSS to only apply to the given namespace.
+ *
+ * This will also remove some newer CSS features (e.g. nesting) to better
+ * support older browsers and does some minification. It also removes some
+ * at-rules that can't be namespaced.
+ *
+ * @internal
+ * @param namespace - the namespace to add in front of all the CSS styles, e.g. `#idOfSvgElement`
+ * @param css - the CSS styles to add the namespace to.
+ * @see https://github.com/thysultan/stylis
+ *
+ * @example
+ * // Returns `#id .class1{fill:red;}`
+ * compileCSS('#id', `.class1 { fill: red }`)
+ */
+const compileCSS = (namespace: `#${string}`, css: string) => {
+  return serialize(
+    compile(`${namespace}{${css}}`),
+    middleware([
+      function addNamespace(element, _index, _children, _callback) {
+        /**
+         * CSS normally automatically adds the `&` selector in front of each
+         * element. But, if there's already an `&` selector, it doesn't add this.
+         *
+         * This code will explicitly make sure it's always added, to ensure
+         * that the CSS never applies outside the SVG.
+         *
+         * E.g. `#svgId { .nested-class :not(&) { fill: red } }` will be
+         * transformed to `#svgId { & .nested-class :not(&) { fill: red } }`
+         */
+        if (element.type === 'rule' && Array.isArray(element.props)) {
+          if (element.parent && element.parent.type === KEYFRAMES) {
+            /**
+             * Don't namespace CSSKeyframeRule, since they don't have selectors.
+             */
+            return;
+          }
+          element.props = element.props.map((prop) => {
+            if (!prop.startsWith(namespace)) {
+              return `${namespace} ${prop}`;
+            }
+            return prop;
+          });
+        } else if (element.type.startsWith('@')) {
+          // Only allow certain at-rules to avoid namespace escape.
+          //
+          // Nested ones are allowed, since they'd get namespaced appropriately.
+          // @keyframes are required for Mermaid's animation features, even
+          // if they can potentially pollute the page.
+
+          /**
+           * At-rules that contain nested rules.
+           *
+           * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@container}
+           */
+          const nestedAtRules = [
+            MEDIA,
+            SUPPORTS,
+            LAYER,
+            SCOPE,
+            '@container',
+            '@starting-style',
+          ] as const;
+          const allowedAtRules = [
+            ...nestedAtRules,
+            KEYFRAMES, // needed for Mermaid's animation feature
+          ] as const;
+          if (!allowedAtRules.includes(element.type as (typeof allowedAtRules)[number])) {
+            log.warn(`Removing unsupported at-rule ${element.type} from CSS`);
+            element.type = COMMENT;
+          }
+        }
+      },
+      stringify,
+    ])
+  );
 };
 
 export const createUserStyles = (
   config: MermaidConfig,
   graphType: string,
-  classDefs: Record<string, DiagramStyleClassDef> | undefined,
-  svgId: string
+  classDefs: Map<string, DiagramStyleClassDef> | undefined,
+  // CSS selector for the SVG element, e.g. `#idOfSvgElement`
+  svgId: `#${string}`
 ): string => {
   const userCSSstyles = createCssStyles(config, classDefs);
-  const allStyles = getStyles(graphType, userCSSstyles, config.themeVariables);
-
-  // Now turn all of the styles into a (compiled) string that starts with the id
-  // use the stylis library to compile the css, turn the results into a valid CSS string (serialize(...., stringify))
-  // @see https://github.com/thysultan/stylis
-  return serialize(compile(`${svgId}{${allStyles}}`), stringify);
+  const allStyles = getStyles(
+    graphType,
+    userCSSstyles,
+    { ...config.themeVariables, theme: config.theme, look: config.look },
+    svgId
+  );
+  return compileCSS(svgId, allStyles);
 };
 
 /**
@@ -235,14 +332,13 @@ export const cleanUpSvgCode = (
  * @param svgCode - the svg code to put inside the iFrame
  * @param svgElement - the d3 node that has the current svgElement so we can get the height from it
  * @returns  - the code with the iFrame that now contains the svgCode
- * TODO replace btoa(). Replace with  buf.toString('base64')?
  */
-export const putIntoIFrame = (svgCode = '', svgElement?: D3Element): string => {
+export const putIntoIFrame = (svgCode = '', svgElement?: SVGSVGElement): string => {
   const height = svgElement?.viewBox?.baseVal?.height
     ? svgElement.viewBox.baseVal.height + 'px'
     : IFRAME_HEIGHT;
-  const base64encodedSrc = btoa('<body style="' + IFRAME_BODY_STYLE + '">' + svgCode + '</body>');
-  return `<iframe style="width:${IFRAME_WIDTH};height:${height};${IFRAME_STYLES}" src="data:text/html;base64,${base64encodedSrc}" sandbox="${IFRAME_SANDBOX_OPTS}">
+  const base64encodedSrc = toBase64(`<body style="${IFRAME_BODY_STYLE}">${svgCode}</body>`);
+  return `<iframe style="width:${IFRAME_WIDTH};height:${height};${IFRAME_STYLES}" src="data:text/html;charset=UTF-8;base64,${base64encodedSrc}" sandbox="${IFRAME_SANDBOX_OPTS}">
   ${IFRAME_NOT_SUPPORTED_MSG}
 </iframe>`;
 };
@@ -261,12 +357,12 @@ export const putIntoIFrame = (svgCode = '', svgElement?: D3Element): string => {
  * @returns - returns the parentRoot that had nodes appended
  */
 export const appendDivSvgG = (
-  parentRoot: D3Element,
+  parentRoot: D3HtmlSelection<HTMLElement> | D3HtmlSelection<Element>,
   id: string,
   enclosingDivId: string,
   divStyle?: string,
   svgXlink?: string
-): D3Element => {
+) => {
   const enclosingDiv = parentRoot.append('div');
   enclosingDiv.attr('id', enclosingDivId);
   if (divStyle) {
@@ -294,7 +390,10 @@ export const appendDivSvgG = (
  * @param iFrameId - id to use for the iFrame
  * @returns the appended iframe d3 node
  */
-function sandboxedIframe(parentNode: D3Element, iFrameId: string): D3Element {
+function sandboxedIframe(
+  parentNode: D3HtmlSelection<Element> | D3HtmlSelection<HTMLElement>,
+  iFrameId: string
+) {
   return parentNode
     .append('iframe')
     .attr('id', iFrameId)
@@ -348,13 +447,23 @@ const render = async function (
     text = MAX_TEXTLENGTH_EXCEEDED_MSG;
   }
 
-  const idSelector = '#' + id;
+  const idSelector = `#${id}` as const;
   const iFrameID = 'i' + id;
   const iFrameID_selector = '#' + iFrameID;
   const enclosingDivID = 'd' + id;
   const enclosingDivID_selector = '#' + enclosingDivID;
 
-  let root: any = select('body');
+  const removeTempElements = () => {
+    // -------------------------------------------------------------------------------
+    // Remove the temporary HTML element if appropriate
+    const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
+    const node = select(tmpElementSelector).node();
+    if (node && 'remove' in node) {
+      node.remove();
+    }
+  };
+
+  let root: D3HtmlSelection<HTMLElement> | D3HtmlSelection<Element> = select(document.body);
 
   const isSandboxed = config.securityLevel === SECURITY_LVL_SANDBOX;
   const isLooseSecurityLevel = config.securityLevel === SECURITY_LVL_LOOSE;
@@ -373,8 +482,8 @@ const render = async function (
     if (isSandboxed) {
       // If we are in sandboxed mode, we do everything mermaid related in a (sandboxed )iFrame
       const iframe = sandboxedIframe(select(svgContainingElement), iFrameID);
-      root = select(iframe.nodes()[0]!.contentDocument!.body);
-      root.node().style.margin = 0;
+      root = select(iframe.nodes()[0].contentDocument!.body);
+      root.node()!.style.margin = '0';
     } else {
       root = select(svgContainingElement);
     }
@@ -390,9 +499,9 @@ const render = async function (
 
     if (isSandboxed) {
       // If we are in sandboxed mode, we do everything mermaid related in a (sandboxed) iFrame
-      const iframe = sandboxedIframe(select('body'), iFrameID);
-      root = select(iframe.nodes()[0]!.contentDocument!.body);
-      root.node().style.margin = 0;
+      const iframe = sandboxedIframe(select(document.body), iFrameID);
+      root = select(iframe.nodes()[0].contentDocument!.body);
+      root.node()!.style.margin = '0';
     } else {
       root = select('body');
     }
@@ -408,21 +517,25 @@ const render = async function (
   let parseEncounteredException;
 
   try {
-    diag = await getDiagramFromText(text, { title: processed.title });
+    diag = await Diagram.fromText(text, { title: processed.title });
   } catch (error) {
-    diag = new Diagram('error');
+    if (config.suppressErrorRendering) {
+      removeTempElements();
+      throw error;
+    }
+    diag = await Diagram.fromText('error');
     parseEncounteredException = error;
   }
 
   // Get the temporary div element containing the svg
-  const element = root.select(enclosingDivID_selector).node();
+  const element = root.select<HTMLDivElement>(enclosingDivID_selector).node()!;
   const diagramType = diag.type;
 
   // -------------------------------------------------------------------------------
   // Create and insert the styles (user styles, theme styles, config styles)
 
   // Insert an element into svg. This is where we put the styles
-  const svg = element.firstChild;
+  const svg = element.firstChild!;
   const firstChild = svg.firstChild;
   const diagramClassDefs = diag.renderer.getClasses?.(text, diag);
 
@@ -435,14 +548,18 @@ const render = async function (
   // -------------------------------------------------------------------------------
   // Draw the diagram with the renderer
   try {
-    await diag.renderer.draw(text, id, version, diag);
+    await diag.renderer.draw(text, id, injected.version, diag);
   } catch (e) {
-    errorRenderer.draw(text, id, version);
+    if (config.suppressErrorRendering) {
+      removeTempElements();
+    } else {
+      errorRenderer.draw(text, id, injected.version);
+    }
     throw e;
   }
 
   // This is the d3 node for the svg element
-  const svgNode = root.select(`${enclosingDivID_selector} svg`);
+  const svgNode = root.select<SVGSVGElement>(`${enclosingDivID_selector} svg`);
   const a11yTitle: string | undefined = diag.db.getAccTitle?.();
   const a11yDescr: string | undefined = diag.db.getAccDescription?.();
   addA11yInfo(diagramType, svgNode, a11yTitle, a11yDescr);
@@ -451,19 +568,20 @@ const render = async function (
   root.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', XMLNS_XHTML_STD);
 
   // Fix for when the base tag is used
-  let svgCode: string = root.select(enclosingDivID_selector).node().innerHTML;
+  let svgCode: string = root.select<HTMLDivElement>(enclosingDivID_selector).node()!.innerHTML;
 
   log.debug('config.arrowMarkerAbsolute', config.arrowMarkerAbsolute);
   svgCode = cleanUpSvgCode(svgCode, isSandboxed, evaluate(config.arrowMarkerAbsolute));
 
   if (isSandboxed) {
-    const svgEl = root.select(enclosingDivID_selector + ' svg').node();
+    const svgEl = root.select<SVGSVGElement>(enclosingDivID_selector + ' svg').node()!;
     svgCode = putIntoIFrame(svgCode, svgEl);
   } else if (!isLooseSecurityLevel) {
     // Sanitize the svgCode using DOMPurify
     svgCode = DOMPurify.sanitize(svgCode, {
       ADD_TAGS: DOMPURIFY_TAGS,
       ADD_ATTR: DOMPURIFY_ATTR,
+      HTML_INTEGRATION_POINTS: { foreignobject: true },
     });
   }
 
@@ -473,24 +591,20 @@ const render = async function (
     throw parseEncounteredException;
   }
 
-  // -------------------------------------------------------------------------------
-  // Remove the temporary HTML element if appropriate
-  const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
-  const node = select(tmpElementSelector).node();
-  if (node && 'remove' in node) {
-    node.remove();
-  }
+  removeTempElements();
 
   return {
+    diagramType,
     svg: svgCode,
     bindFunctions: diag.db.bindFunctions,
   };
 };
 
 /**
- * @param  options - Initial Mermaid options
+ * @param  userOptions - Initial Mermaid options
  */
-function initialize(options: MermaidConfig = {}) {
+function initialize(userOptions: MermaidConfig = {}) {
+  const options: MermaidConfig = assignWithDepth({}, userOptions);
   // Handle legacy location of font-family configuration
   if (options?.fontFamily && !options.themeVariables?.fontFamily) {
     if (!options.themeVariables) {
@@ -520,7 +634,7 @@ function initialize(options: MermaidConfig = {}) {
 
 const getDiagramFromText = (text: string, metadata: Pick<DiagramMetadata, 'title'> = {}) => {
   const { code } = preprocessDiagram(text);
-  return getDiagramFromTextInternal(code, metadata);
+  return Diagram.fromText(code, metadata);
 };
 
 /**
@@ -533,7 +647,7 @@ const getDiagramFromText = (text: string, metadata: Pick<DiagramMetadata, 'title
  */
 function addA11yInfo(
   diagramType: string,
-  svgNode: D3Element,
+  svgNode: D3Selection<SVGSVGElement>,
   a11yTitle?: string,
   a11yDescr?: string
 ): void {
@@ -542,68 +656,8 @@ function addA11yInfo(
 }
 
 /**
- * ## mermaidAPI configuration defaults
- *
- * ```ts
- *   const config = {
- *     theme: 'default',
- *     logLevel: 'fatal',
- *     securityLevel: 'strict',
- *     startOnLoad: true,
- *     arrowMarkerAbsolute: false,
- *
- *     er: {
- *       diagramPadding: 20,
- *       layoutDirection: 'TB',
- *       minEntityWidth: 100,
- *       minEntityHeight: 75,
- *       entityPadding: 15,
- *       stroke: 'gray',
- *       fill: 'honeydew',
- *       fontSize: 12,
- *       useMaxWidth: true,
- *     },
- *     flowchart: {
- *       diagramPadding: 8,
- *       htmlLabels: true,
- *       curve: 'basis',
- *     },
- *     sequence: {
- *       diagramMarginX: 50,
- *       diagramMarginY: 10,
- *       actorMargin: 50,
- *       width: 150,
- *       height: 65,
- *       boxMargin: 10,
- *       boxTextMargin: 5,
- *       noteMargin: 10,
- *       messageMargin: 35,
- *       messageAlign: 'center',
- *       mirrorActors: true,
- *       bottomMarginAdj: 1,
- *       useMaxWidth: true,
- *       rightAngles: false,
- *       showSequenceNumbers: false,
- *     },
- *     gantt: {
- *       titleTopMargin: 25,
- *       barHeight: 20,
- *       barGap: 4,
- *       topPadding: 50,
- *       leftPadding: 75,
- *       gridLineStartPadding: 35,
- *       fontSize: 11,
- *       fontFamily: '"Open Sans", sans-serif',
- *       numberSectionStyles: 4,
- *       axisFormat: '%Y-%m-%d',
- *       topAxis: false,
- *       displayMode: '',
- *     },
- *   };
- *   mermaid.initialize(config);
- * ```
+ * @internal - Use mermaid.function instead of mermaid.mermaidAPI.function
  */
-
 export const mermaidAPI = Object.freeze({
   render,
   parse,

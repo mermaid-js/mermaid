@@ -30,8 +30,8 @@ appearance by doing the following:
 sequenceDiagram
     participant Alice
     participant Bob
-    Alice->>Bob: Hi Bob
     Bob->>Alice: Hi Alice
+    Alice->>Bob: Hi Bob
 ```
 
 ### Actors
@@ -46,9 +46,85 @@ sequenceDiagram
     Bob->>Alice: Hi Alice
 ```
 
+### Boundary
+
+If you want to use the boundary symbol for a participant, use the JSON configuration syntax as shown below.
+
+```mermaid-example
+sequenceDiagram
+    participant Alice@{ "type" : "boundary" }
+    participant Bob
+    Alice->>Bob: Request from boundary
+    Bob->>Alice: Response to boundary
+```
+
+### Control
+
+If you want to use the control symbol for a participant, use the JSON configuration syntax as shown below.
+
+```mermaid-example
+sequenceDiagram
+    participant Alice@{ "type" : "control" }
+    participant Bob
+    Alice->>Bob: Control request
+    Bob->>Alice: Control response
+```
+
+### Entity
+
+If you want to use the entity symbol for a participant, use the JSON configuration syntax as shown below.
+
+```mermaid-example
+sequenceDiagram
+    participant Alice@{ "type" : "entity" }
+    participant Bob
+    Alice->>Bob: Entity request
+    Bob->>Alice: Entity response
+```
+
+### Database
+
+If you want to use the database symbol for a participant, use the JSON configuration syntax as shown below.
+
+```mermaid-example
+sequenceDiagram
+    participant Alice@{ "type" : "database" }
+    participant Bob
+    Alice->>Bob: DB query
+    Bob->>Alice: DB result
+```
+
+### Collections
+
+If you want to use the collections symbol for a participant, use the JSON configuration syntax as shown below.
+
+```mermaid-example
+sequenceDiagram
+    participant Alice@{ "type" : "collections" }
+    participant Bob
+    Alice->>Bob: Collections request
+    Bob->>Alice: Collections response
+```
+
+### Queue
+
+If you want to use the queue symbol for a participant, use the JSON configuration syntax as shown below.
+
+```mermaid-example
+sequenceDiagram
+    participant Alice@{ "type" : "queue" }
+    participant Bob
+    Alice->>Bob: Queue message
+    Bob->>Alice: Queue response
+```
+
 ### Aliases
 
-The actor can have a convenient identifier and a descriptive label.
+The actor can have a convenient identifier and a descriptive label. Aliases can be defined in two ways: using external syntax with the `as` keyword, or inline within the configuration object.
+
+#### External Alias Syntax
+
+You can define an alias using the `as` keyword after the participant declaration:
 
 ```mermaid-example
 sequenceDiagram
@@ -57,6 +133,48 @@ sequenceDiagram
     A->>J: Hello John, how are you?
     J->>A: Great!
 ```
+
+The external alias syntax also works with participant stereotype configurations, allowing you to combine type specification with aliases:
+
+```mermaid-example
+sequenceDiagram
+    participant API@{ "type": "boundary" } as Public API
+    actor DB@{ "type": "database" } as User Database
+    participant Svc@{ "type": "control" } as Auth Service
+    API->>Svc: Authenticate
+    Svc->>DB: Query user
+    DB-->>Svc: User data
+    Svc-->>API: Token
+```
+
+#### Inline Alias Syntax
+
+Alternatively, you can define an alias directly inside the configuration object using the `"alias"` field. This works with both `participant` and `actor` keywords:
+
+```mermaid-example
+sequenceDiagram
+    participant API@{ "type": "boundary", "alias": "Public API" }
+    participant Auth@{ "type": "control", "alias": "Auth Service" }
+    participant DB@{ "type": "database", "alias": "User Database" }
+    API->>Auth: Login request
+    Auth->>DB: Query user
+    DB-->>Auth: User data
+    Auth-->>API: Access token
+```
+
+#### Alias Precedence
+
+When both inline alias (in the configuration object) and external alias (using `as` keyword) are provided, the **external alias takes precedence**:
+
+```mermaid-example
+sequenceDiagram
+    participant API@{ "type": "boundary", "alias": "Internal Name" } as External Name
+    participant DB@{ "type": "database", "alias": "Internal DB" } as External DB
+    API->>DB: Query
+    DB-->>API: Result
+```
+
+In the example above, "External Name" and "External DB" will be displayed, not "Internal Name" and "Internal DB".
 
 ### Actor Creation and Destruction (v10.3.0+)
 
@@ -105,6 +223,9 @@ end
 box rgb(33,66,99)
 ... actors ...
 end
+box rgba(33,66,99,0.5)
+... actors ...
+end
 ```
 
 ```note
@@ -141,18 +262,67 @@ Messages can be of two displayed either solid or with a dotted line.
 [Actor][Arrow][Actor]:Message text
 ```
 
-There are six types of arrows currently supported:
+Lines can be solid or dotted, and can end with various types of arrowheads, crosses, or open arrows.
 
-| Type   | Description                                      |
-| ------ | ------------------------------------------------ |
-| `->`   | Solid line without arrow                         |
-| `-->`  | Dotted line without arrow                        |
-| `->>`  | Solid line with arrowhead                        |
-| `-->>` | Dotted line with arrowhead                       |
-| `-x`   | Solid line with a cross at the end               |
-| `--x`  | Dotted line with a cross at the end.             |
-| `-)`   | Solid line with an open arrow at the end (async) |
-| `--)`  | Dotted line with a open arrow at the end (async) |
+#### Supported Arrow Types
+
+**Standard Arrow Types**
+
+| Type     | Description                                          |
+| -------- | ---------------------------------------------------- |
+| `->`     | Solid line without arrow                             |
+| `-->`    | Dotted line without arrow                            |
+| `->>`    | Solid line with arrowhead                            |
+| `-->>`   | Dotted line with arrowhead                           |
+| `<<->>`  | Solid line with bidirectional arrowheads (v11.0.0+)  |
+| `<<-->>` | Dotted line with bidirectional arrowheads (v11.0.0+) |
+| `-x`     | Solid line with a cross at the end                   |
+| `--x`    | Dotted line with a cross at the end                  |
+| `-)`     | Solid line with an open arrow at the end (async)     |
+| `--)`    | Dotted line with a open arrow at the end (async)     |
+
+**Half-Arrows (v11.12.3+)**
+
+The following half-arrow types are supported for more expressive sequence diagrams. Both solid and dotted variants are available by increasing the number of dashes (`-` → `--`).
+
+---
+
+| Type    | Description                                          |
+| ------- | ---------------------------------------------------- |
+| `-\|\`  | Solid line with top half arrowhead                   |
+| `--\|\` | Dotted line with top half arrowhead                  |
+| `-\|/`  | Solid line with bottom half arrowhead                |
+| `--\|/` | Dotted line with bottom half arrowhead               |
+| `/\|-`  | Solid line with reverse top half arrowhead           |
+| `/\|--` | Dotted line with reverse top half arrowhead          |
+| `\\-`   | Solid line with reverse bottom half arrowhead        |
+| `\\--`  | Dotted line with reverse bottom half arrowhead       |
+| `-\\`   | Solid line with top stick half arrowhead             |
+| `--\\`  | Dotted line with top stick half arrowhead            |
+| `-//`   | Solid line with bottom stick half arrowhead          |
+| `--//`  | Dotted line with bottom stick half arrowhead         |
+| `//-`   | Solid line with reverse top stick half arrowhead     |
+| `//--`  | Dotted line with reverse top stick half arrowhead    |
+| `\\-`   | Solid line with reverse bottom stick half arrowhead  |
+| `\\--`  | Dotted line with reverse bottom stick half arrowhead |
+
+## Central Connections (v11.12.3+)
+
+Mermaid sequence diagrams support **central lifeline connections** using a `()`.
+This is useful to represent messages or signals that connect to a central point, rather than from one actor directly to another.
+
+To indicate a central connection, append `()` to the arrow syntax.
+
+#### Basic Syntax
+
+```mermaid-example
+sequenceDiagram
+    participant Alice
+    participant John
+    Alice->>()John: Hello John
+    Alice()->>John: How are you?
+    John()->>()Alice: Great!
+```
 
 ## Activations
 
@@ -205,11 +375,22 @@ sequenceDiagram
     Note over Alice,John: A typical interaction
 ```
 
-It is also possible to add a line break (applies to text input in general):
+## Line breaks
+
+Line break can be added to Note and Message:
 
 ```mermaid-example
 sequenceDiagram
-    Alice->John: Hello John, how are you?
+    Alice->John: Hello John,<br/>how are you?
+    Note over Alice,John: A typical interaction<br/>But now in two lines
+```
+
+Line breaks in Actor names requires aliases:
+
+```mermaid-example
+sequenceDiagram
+    participant Alice as Alice<br/>Johnson
+    Alice->John: Hello John,<br/>how are you?
     Note over Alice,John: A typical interaction<br/>But now in two lines
 ```
 
@@ -381,6 +562,12 @@ sequenceDiagram
 
 It is possible to highlight flows by providing colored background rects. This is done by the notation
 
+```
+rect COLOR
+... content ...
+end
+```
+
 The colors are defined using rgb and rgba syntax.
 
 ```
@@ -420,7 +607,7 @@ sequenceDiagram
 
 Comments can be entered within a sequence diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     Alice->>John: Hello John, how are you?
     %% this is a comment
@@ -464,6 +651,16 @@ sequenceDiagram
     John-->>Alice: Great!
     John->>Bob: How about you?
     Bob-->>John: Jolly good!
+```
+
+### Start and Increment values (v11.15.0+)
+
+It is possible to specify a starting value and an increment value for automatic numbering. Both the starting value and increment value can include decimals up to the hundredths place.
+
+Use the following syntax in your diagram definition:
+
+```
+autonumber <start> <increment>
 ```
 
 ## Actor Menus
@@ -518,22 +715,24 @@ Styling of a sequence diagram is done by defining a number of css classes. Durin
 
 ### Classes used
 
-| Class        | Description                                                    |
-| ------------ | -------------------------------------------------------------- |
-| actor        | Styles for the actor box.                                      |
-| actor-top    | Styles for the actor figure/ box at the top of the diagram.    |
-| actor-bottom | Styles for the actor figure/ box at the bottom of the diagram. |
-| text.actor   | Styles for text in the actor box.                              |
-| actor-line   | The vertical line for an actor.                                |
-| messageLine0 | Styles for the solid message line.                             |
-| messageLine1 | Styles for the dotted message line.                            |
-| messageText  | Defines styles for the text on the message arrows.             |
-| labelBox     | Defines styles label to left in a loop.                        |
-| labelText    | Styles for the text in label for loops.                        |
-| loopText     | Styles for the text in the loop box.                           |
-| loopLine     | Defines styles for the lines in the loop box.                  |
-| note         | Styles for the note box.                                       |
-| noteText     | Styles for the text on in the note boxes.                      |
+| Class          | Description                                                    |
+| -------------- | -------------------------------------------------------------- |
+| actor          | Styles for the actor box.                                      |
+| actor-top      | Styles for the actor figure/ box at the top of the diagram.    |
+| actor-bottom   | Styles for the actor figure/ box at the bottom of the diagram. |
+| text.actor     | Styles for text of all of the actors.                          |
+| text.actor-box | Styles for text of the actor box.                              |
+| text.actor-man | Styles for text of the actor figure.                           |
+| actor-line     | The vertical line for an actor.                                |
+| messageLine0   | Styles for the solid message line.                             |
+| messageLine1   | Styles for the dotted message line.                            |
+| messageText    | Defines styles for the text on the message arrows.             |
+| labelBox       | Defines styles label to left in a loop.                        |
+| labelText      | Styles for the text in label for loops.                        |
+| loopText       | Styles for the text in the loop box.                           |
+| loopLine       | Defines styles for the lines in the loop box.                  |
+| note           | Styles for the note box.                                       |
+| noteText       | Styles for the text on in the note boxes.                      |
 
 ### Sample stylesheet
 

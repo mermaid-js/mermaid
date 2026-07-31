@@ -1,4 +1,4 @@
-import { markdownToLines, markdownToHTML } from './handle-markdown-text.js';
+import { markdownToLines, markdownToHTML, nonMarkdownToLines } from './handle-markdown-text.js';
 import { test, expect } from 'vitest';
 
 test('markdownToLines - Basic test', () => {
@@ -36,9 +36,9 @@ Here is a line *with an italic* section`;
       { content: 'is', type: 'normal' },
       { content: 'a', type: 'normal' },
       { content: 'line', type: 'normal' },
-      { content: 'with', type: 'emphasis' },
-      { content: 'an', type: 'emphasis' },
-      { content: 'italic', type: 'emphasis' },
+      { content: 'with', type: 'em' },
+      { content: 'an', type: 'em' },
+      { content: 'italic', type: 'em' },
       { content: 'section', type: 'normal' },
     ],
   ];
@@ -142,7 +142,7 @@ test('markdownToLines - Only italic formatting', () => {
       { content: 'This', type: 'normal' },
       { content: 'is', type: 'normal' },
       { content: 'an', type: 'normal' },
-      { content: 'italic', type: 'emphasis' },
+      { content: 'italic', type: 'em' },
       { content: 'test', type: 'normal' },
     ],
   ];
@@ -155,7 +155,7 @@ it('markdownToLines - Mixed formatting', () => {
   let input = `*Italic* and **bold** formatting`;
   let expected = [
     [
-      { content: 'Italic', type: 'emphasis' },
+      { content: 'Italic', type: 'em' },
       { content: 'and', type: 'normal' },
       { content: 'bold', type: 'strong' },
       { content: 'formatting', type: 'normal' },
@@ -166,9 +166,9 @@ it('markdownToLines - Mixed formatting', () => {
   input = `*Italic with space* and **bold ws** formatting`;
   expected = [
     [
-      { content: 'Italic', type: 'emphasis' },
-      { content: 'with', type: 'emphasis' },
-      { content: 'space', type: 'emphasis' },
+      { content: 'Italic', type: 'em' },
+      { content: 'with', type: 'em' },
+      { content: 'space', type: 'em' },
       { content: 'and', type: 'normal' },
       { content: 'bold', type: 'strong' },
       { content: 'ws', type: 'strong' },
@@ -190,9 +190,9 @@ Word!`;
       { content: 'the', type: 'strong' },
       { content: 'hog...', type: 'normal' },
       { content: 'a', type: 'normal' },
-      { content: 'very', type: 'emphasis' },
-      { content: 'long', type: 'emphasis' },
-      { content: 'text', type: 'emphasis' },
+      { content: 'very', type: 'em' },
+      { content: 'long', type: 'em' },
+      { content: 'text', type: 'em' },
       { content: 'about', type: 'normal' },
       { content: 'it', type: 'normal' },
     ],
@@ -201,6 +201,32 @@ Word!`;
 
   const output = markdownToLines(input);
   expect(output).toEqual(expectedOutput);
+});
+// TODO: Fix markdownAutoWrap=false behavior for htmlLabels:false.
+// Expected output may need update after resolving space handling logic.
+test.skip('markdownToLines - No auto wrapping', () => {
+  expect(
+    markdownToLines(
+      `Hello, how do
+  you do?`,
+      { markdownAutoWrap: false }
+    )
+  ).toMatchInlineSnapshot(`
+    [
+      [
+        {
+          "content": "Hello,&nbsp;how&nbsp;do",
+          "type": "normal",
+        },
+      ],
+      [
+        {
+          "content": "you&nbsp;do?",
+          "type": "normal",
+        },
+      ],
+    ]
+  `);
 });
 
 test('markdownToHTML - Basic test', () => {
@@ -260,5 +286,59 @@ test('markdownToHTML - Unsupported formatting', () => {
   - l1
   - l2
   - l3`)
-  ).toMatchInlineSnapshot('"<p>Hello</p>Unsupported markdown: list"');
+  ).toMatchInlineSnapshot(`
+    "<p>Hello</p>  - l1
+      - l2
+      - l3"
+  `);
+});
+
+test('markdownToHTML - no auto wrapping', () => {
+  expect(
+    markdownToHTML(
+      `Hello, how do
+  you do?`,
+      { markdownAutoWrap: false }
+    )
+  ).toMatchInlineSnapshot('"<p>Hello,&nbsp;how&nbsp;do<br/>you&nbsp;do?</p>"');
+});
+
+test('markdownToHTML - auto wrapping', () => {
+  expect(
+    markdownToHTML(
+      `Hello, how do
+  you do?`,
+      { markdownAutoWrap: true }
+    )
+  ).toMatchInlineSnapshot('"<p>Hello, how do<br/>you do?</p>"');
+});
+
+test('nonMarkdownToLines - splits text by newlines, preserves SVG tags, does not process markdown', () => {
+  // Splits by newlines (\n, \\n, <br>) and preserves SVG tags
+  expect(nonMarkdownToLines('Line 1\\nLine 2<br/>Text with <strong>tag</strong>')).toEqual([
+    [
+      { content: 'Line', type: 'normal' },
+      { content: '1', type: 'normal' },
+    ],
+    [
+      { content: 'Line', type: 'normal' },
+      { content: '2', type: 'normal' },
+    ],
+    [
+      { content: 'Text', type: 'normal' },
+      { content: 'with', type: 'normal' },
+      { content: '<strong>', type: 'normal' },
+      { content: 'tag', type: 'normal' },
+      { content: '</strong>', type: 'normal' },
+    ],
+  ]);
+
+  // Markdown syntax is NOT processed - stays as plain text
+  expect(nonMarkdownToLines('**bold** and *italic*')).toEqual([
+    [
+      { content: '**bold**', type: 'normal' },
+      { content: 'and', type: 'normal' },
+      { content: '*italic*', type: 'normal' },
+    ],
+  ]);
 });

@@ -17,8 +17,10 @@
 \s+                     /* skip whitespace */
 \#[^\n]*                /* skip comments */
 
+"timeline"[ \t]+LR       return 'timeline_lr';
+"timeline"[ \t]+TD       return 'timeline_td';
 "timeline"               return 'timeline';
-"title"\s[^#\n;]+       return 'title';
+"title"\s[^\n]+       return 'title';
 accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
 <acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
 accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
@@ -26,11 +28,11 @@ accDescr\s*":"\s*                                               { this.begin("ac
 accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
 <acc_descr_multiline>[\}]                       { this.popState(); }
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
-"section"\s[^#:\n;]+    return 'section';
+"section"\s[^:\n]+    return 'section';
 
 // event starting with "==>" keyword
-":"\s[^#:\n;]+        return 'event';
-[^#:\n;]+               return 'period';
+":"\s(?:[^:\n]|":"(?!\s))+        return 'event';
+[^#:\n]+               return 'period';
 
 
 <<EOF>>                 return 'EOF';
@@ -45,7 +47,13 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 %% /* language grammar */
 
 start
-	: timeline document 'EOF' { return $2; }
+	: timeline_header document 'EOF' { return $2; }
+	;
+
+timeline_header
+	: timeline
+	| timeline_lr { yy.setDirection('LR'); }
+	| timeline_td { yy.setDirection('TD'); }
 	;
 
 document

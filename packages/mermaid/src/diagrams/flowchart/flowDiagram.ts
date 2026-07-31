@@ -1,24 +1,40 @@
-// @ts-ignore: JISON doesn't support types
-import flowParser from './parser/flow.jison';
-import flowDb from './flowDb.js';
-import flowRenderer from './flowRenderer.js';
-import flowRendererV2 from './flowRenderer-v2.js';
-import flowStyles from './styles.js';
 import type { MermaidConfig } from '../../config.type.js';
+import { getUserDefinedConfig } from '../../config.js';
+import { setConfig } from '../../diagram-api/diagramAPI.js';
+import type { DiagramDefinition } from '../../diagram-api/types.js';
+import { FlowDB } from './flowDb.js';
+import renderer from './flowRenderer-v3-unified.js';
+// @ts-ignore: JISON doesn't support types
+//import flowParser from './parser/flow.jison';
+import flowParser from './parser/flowParser.ts';
+import flowStyles from './styles.js';
 
-export const diagram = {
+interface FlowDiagramOptions {
+  defaultLayout?: string;
+  styles?: typeof flowStyles;
+}
+
+export const createFlowDiagram = ({
+  defaultLayout,
+  styles = flowStyles,
+}: FlowDiagramOptions = {}): DiagramDefinition => ({
   parser: flowParser,
-  db: flowDb,
-  renderer: flowRendererV2,
-  styles: flowStyles,
+  get db() {
+    return new FlowDB();
+  },
+  renderer,
+  styles,
   init: (cnf: MermaidConfig) => {
     if (!cnf.flowchart) {
       cnf.flowchart = {};
     }
-    // TODO, broken as of 2022-09-14 (13809b50251845475e6dca65cc395761be38fbd2)
+    const layout = getUserDefinedConfig().layout ?? defaultLayout ?? cnf.layout;
+    if (layout) {
+      setConfig({ layout });
+    }
     cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-    flowRenderer.setConf(cnf.flowchart);
-    flowDb.clear();
-    flowDb.setGen('gen-1');
+    setConfig({ flowchart: { arrowMarkerAbsolute: cnf.arrowMarkerAbsolute } });
   },
-};
+});
+
+export const diagram = createFlowDiagram();

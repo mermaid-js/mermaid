@@ -258,21 +258,21 @@ export const drawC4ShapeArray = function (currentBounds, diagram, c4ShapeArray, 
     c4ShapeLabelConf.fontSize = c4ShapeLabelConf.fontSize + 2;
     c4ShapeLabelConf.fontWeight = 'bold';
     calcC4ShapeTextWH('label', c4Shape, c4ShapeTextWrap, c4ShapeLabelConf, textLimitWidth);
-    c4Shape['label'].Y = Y + 8;
-    Y = c4Shape['label'].Y + c4Shape['label'].height;
+    c4Shape.label.Y = Y + 8;
+    Y = c4Shape.label.Y + c4Shape.label.height;
 
     if (c4Shape.type && c4Shape.type.text !== '') {
       c4Shape.type.text = '[' + c4Shape.type.text + ']';
       let c4ShapeTypeConf = c4ShapeFont(conf, c4Shape.typeC4Shape.text);
       calcC4ShapeTextWH('type', c4Shape, c4ShapeTextWrap, c4ShapeTypeConf, textLimitWidth);
-      c4Shape['type'].Y = Y + 5;
-      Y = c4Shape['type'].Y + c4Shape['type'].height;
+      c4Shape.type.Y = Y + 5;
+      Y = c4Shape.type.Y + c4Shape.type.height;
     } else if (c4Shape.techn && c4Shape.techn.text !== '') {
       c4Shape.techn.text = '[' + c4Shape.techn.text + ']';
       let c4ShapeTechnConf = c4ShapeFont(conf, c4Shape.techn.text);
       calcC4ShapeTextWH('techn', c4Shape, c4ShapeTextWrap, c4ShapeTechnConf, textLimitWidth);
-      c4Shape['techn'].Y = Y + 5;
-      Y = c4Shape['techn'].Y + c4Shape['techn'].height;
+      c4Shape.techn.Y = Y + 5;
+      Y = c4Shape.techn.Y + c4Shape.techn.height;
     }
 
     let rectHeight = Y;
@@ -281,11 +281,11 @@ export const drawC4ShapeArray = function (currentBounds, diagram, c4ShapeArray, 
     if (c4Shape.descr && c4Shape.descr.text !== '') {
       let c4ShapeDescrConf = c4ShapeFont(conf, c4Shape.typeC4Shape.text);
       calcC4ShapeTextWH('descr', c4Shape, c4ShapeTextWrap, c4ShapeDescrConf, textLimitWidth);
-      c4Shape['descr'].Y = Y + 20;
-      Y = c4Shape['descr'].Y + c4Shape['descr'].height;
+      c4Shape.descr.Y = Y + 20;
+      Y = c4Shape.descr.Y + c4Shape.descr.height;
 
       rectWidth = Math.max(c4Shape.label.width, c4Shape.descr.width);
-      rectHeight = Y - c4Shape['descr'].textLines * 5;
+      rectHeight = Y - c4Shape.descr.textLines * 5;
     }
 
     rectWidth = rectWidth + conf.c4ShapePadding;
@@ -406,7 +406,7 @@ let getIntersectPoints = function (fromNode, endNode) {
   return { startPoint: startPoint, endPoint: endPoint };
 };
 
-export const drawRels = function (diagram, rels, getC4ShapeObj, diagObj) {
+export const drawRels = function (diagram, rels, getC4ShapeObj, diagObj, diagramId) {
   let i = 0;
   for (let rel of rels) {
     i = i + 1;
@@ -435,7 +435,7 @@ export const drawRels = function (diagram, rels, getC4ShapeObj, diagObj) {
     rel.startPoint = points.startPoint;
     rel.endPoint = points.endPoint;
   }
-  svgDraw.drawRels(diagram, rels, conf);
+  svgDraw.drawRels(diagram, rels, conf, diagramId);
 };
 
 /**
@@ -482,8 +482,8 @@ function drawInsideBoundary(
       currentBoundaryLabelConf,
       currentBounds.data.widthLimit
     );
-    currentBoundary['label'].Y = Y + 8;
-    Y = currentBoundary['label'].Y + currentBoundary['label'].height;
+    currentBoundary.label.Y = Y + 8;
+    Y = currentBoundary.label.Y + currentBoundary.label.height;
 
     if (currentBoundary.type && currentBoundary.type.text !== '') {
       currentBoundary.type.text = '[' + currentBoundary.type.text + ']';
@@ -495,8 +495,8 @@ function drawInsideBoundary(
         currentBoundaryTypeConf,
         currentBounds.data.widthLimit
       );
-      currentBoundary['type'].Y = Y + 5;
-      Y = currentBoundary['type'].Y + currentBoundary['type'].height;
+      currentBoundary.type.Y = Y + 5;
+      Y = currentBoundary.type.Y + currentBoundary.type.height;
     }
 
     if (currentBoundary.descr && currentBoundary.descr.text !== '') {
@@ -509,8 +509,8 @@ function drawInsideBoundary(
         currentBoundaryDescrConf,
         currentBounds.data.widthLimit
       );
-      currentBoundary['descr'].Y = Y + 20;
-      Y = currentBoundary['descr'].Y + currentBoundary['descr'].height;
+      currentBoundary.descr.Y = Y + 20;
+      Y = currentBoundary.descr.Y + currentBoundary.descr.height;
     }
 
     if (i == 0 || i % c4BoundaryInRow === 0) {
@@ -542,7 +542,7 @@ function drawInsideBoundary(
       );
     }
     parentBoundaryAlias = currentBoundary.alias;
-    let nextCurrentBoundaries = diagObj.db.getBoundarys(parentBoundaryAlias);
+    let nextCurrentBoundaries = diagObj.db.getBoundaries(parentBoundaryAlias);
 
     if (nextCurrentBoundaries.length > 0) {
       // draw boundary inside currentBoundary
@@ -604,9 +604,9 @@ export const draw = function (_text, id, _version, diagObj) {
   const diagram =
     securityLevel === 'sandbox' ? root.select(`[id="${id}"]`) : select(`[id="${id}"]`);
 
-  svgDraw.insertComputerIcon(diagram);
-  svgDraw.insertDatabaseIcon(diagram);
-  svgDraw.insertClockIcon(diagram);
+  svgDraw.insertComputerIcon(diagram, id);
+  svgDraw.insertDatabaseIcon(diagram, id);
+  svgDraw.insertClockIcon(diagram, id);
 
   let screenBounds = new Bounds(diagObj);
 
@@ -622,7 +622,7 @@ export const draw = function (_text, id, _version, diagObj) {
   globalBoundaryMaxY = conf.diagramMarginY;
 
   const title = diagObj.db.getTitle();
-  let currentBoundaries = diagObj.db.getBoundarys('');
+  let currentBoundaries = diagObj.db.getBoundaries('');
   // switch (c4type) {
   //   case 'C4Context':
   drawInsideBoundary(diagram, '', screenBounds, currentBoundaries, diagObj);
@@ -630,12 +630,12 @@ export const draw = function (_text, id, _version, diagObj) {
   // }
 
   // The arrow head definition is attached to the svg once
-  svgDraw.insertArrowHead(diagram);
-  svgDraw.insertArrowEnd(diagram);
-  svgDraw.insertArrowCrossHead(diagram);
-  svgDraw.insertArrowFilledHead(diagram);
+  svgDraw.insertArrowHead(diagram, id);
+  svgDraw.insertArrowEnd(diagram, id);
+  svgDraw.insertArrowCrossHead(diagram, id);
+  svgDraw.insertArrowFilledHead(diagram, id);
 
-  drawRels(diagram, diagObj.db.getRels(), diagObj.db.getC4Shape, diagObj);
+  drawRels(diagram, diagObj.db.getRels(), diagObj.db.getC4Shape, diagObj, id);
 
   screenBounds.data.stopx = globalBoundaryMaxX;
   screenBounds.data.stopy = globalBoundaryMaxY;

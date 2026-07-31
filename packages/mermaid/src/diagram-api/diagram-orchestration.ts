@@ -1,6 +1,7 @@
 import c4 from '../diagrams/c4/c4Detector.js';
 import flowchart from '../diagrams/flowchart/flowDetector.js';
 import flowchartV2 from '../diagrams/flowchart/flowDetector-v2.js';
+import swimlanes from '../diagrams/swimlanes/detector.js';
 import er from '../diagrams/er/erDetector.js';
 import git from '../diagrams/git/gitGraphDetector.js';
 import gantt from '../diagrams/gantt/ganttDetector.js';
@@ -19,10 +20,26 @@ import errorDiagram from '../diagrams/error/errorDiagram.js';
 import flowchartElk from '../diagrams/flowchart/elk/detector.js';
 import timeline from '../diagrams/timeline/detector.js';
 import mindmap from '../diagrams/mindmap/detector.js';
+import kanban from '../diagrams/kanban/detector.js';
 import sankey from '../diagrams/sankey/sankeyDetector.js';
+import { packet } from '../diagrams/packet/detector.js';
+import { radar } from '../diagrams/radar/detector.js';
 import block from '../diagrams/block/blockDetector.js';
+import treeView from '../diagrams/treeView/detector.js';
+import architecture from '../diagrams/architecture/architectureDetector.js';
+import eventmodeling from '../diagrams/eventmodeling/detector.js';
+import { ishikawa } from '../diagrams/ishikawa/ishikawaDetector.js';
+import venn from '../diagrams/venn/vennDetector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
+import { treemap } from '../diagrams/treemap/detector.js';
+import wardley from '../diagrams/wardley/wardleyDetector.js';
+import { cynefin } from '../diagrams/cynefin/cynefinDetector.js';
+import { railroad } from '../diagrams/railroad/railroadDetector.js';
+import { railroadEbnf } from '../diagrams/railroad/ebnfDetector.js';
+import { railroadAbnf } from '../diagrams/railroad/abnfDetector.js';
+import { railroadPeg } from '../diagrams/railroad/pegDetector.js';
+import '../type.d.ts';
 
 let hasLoadedDiagrams = false;
 export const addDiagrams = () => {
@@ -51,7 +68,6 @@ export const addDiagrams = () => {
         },
       },
       parser: {
-        parser: { yy: {} },
         parse: () => {
           throw new Error(
             'Diagrams beginning with --- are not valid. ' +
@@ -66,9 +82,15 @@ export const addDiagrams = () => {
       return text.toLowerCase().trimStart().startsWith('---');
     }
   );
+
+  if (injected.includeLargeFeatures) {
+    registerLazyLoadedDiagrams(flowchartElk, mindmap, architecture);
+  }
+
   // Ordering of detectors is important. The first one to return true will be used.
   registerLazyLoadedDiagrams(
     c4,
+    kanban,
     classDiagramV2,
     classDiagram,
     er,
@@ -77,10 +99,9 @@ export const addDiagrams = () => {
     pie,
     requirement,
     sequence,
-    flowchartElk,
+    swimlanes,
     flowchartV2,
     flowchart,
-    mindmap,
     timeline,
     git,
     stateV2,
@@ -88,7 +109,20 @@ export const addDiagrams = () => {
     journey,
     quadrantChart,
     sankey,
+    packet,
     xychart,
-    block
+    block,
+    eventmodeling,
+    treeView,
+    radar,
+    ishikawa,
+    treemap,
+    railroad,
+    railroadEbnf,
+    railroadAbnf,
+    railroadPeg,
+    venn,
+    wardley,
+    cynefin
   );
 };

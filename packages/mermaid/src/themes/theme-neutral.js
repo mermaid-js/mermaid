@@ -42,6 +42,8 @@ class Theme {
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
     this.fontSize = '16px';
     this.THEME_COLOR_LIMIT = 12;
+    this.radius = 5;
+    this.strokeWidth = 1;
 
     /* Flowchart variables */
 
@@ -58,7 +60,7 @@ class Theme {
     this.actorBorder = 'calculated';
     this.actorBkg = 'calculated';
     this.actorTextColor = 'calculated';
-    this.actorLineColor = 'calculated';
+    this.actorLineColor = this.actorBorder;
     this.signalColor = 'calculated';
     this.signalTextColor = 'calculated';
     this.labelBoxBkgColor = 'calculated';
@@ -93,16 +95,35 @@ class Theme {
     this.critBkgColor = 'calculated';
     this.critBorderColor = 'calculated';
     this.todayLineColor = 'calculated';
+    this.vertLineColor = 'calculated';
 
     /* C4 Context Diagram variables */
     this.personBorder = this.primaryBorderColor;
     this.personBkg = this.mainBkg;
+
+    /* Architecture Diagram variables */
+    this.archEdgeColor = 'calculated';
+    this.archEdgeArrowColor = 'calculated';
+    this.archEdgeWidth = '3';
+    this.archGroupBorderColor = this.primaryBorderColor;
+    this.archGroupBorderWidth = '2px';
+
+    this.noteFontWeight = 'normal';
+    this.fontWeight = 'normal';
+
+    /* ER diagram */
+    this.rowOdd = this.rowOdd || lighten(this.mainBkg, 75) || '#ffffff';
+    this.rowEven = this.rowEven || '#f4f4f4';
 
     /* state colors */
     this.labelColor = 'black';
 
     this.errorBkgColor = '#552222';
     this.errorTextColor = '#552222';
+    this.useGradient = true;
+    this.gradientStart = this.primaryBorderColor;
+    this.gradientStop = this.secondaryBorderColor;
+    this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,1))';
   }
   updateColors() {
     this.secondBkg = lighten(this.contrast, 55);
@@ -113,7 +134,8 @@ class Theme {
     this.actorBorder = lighten(this.border1, 23);
     this.actorBkg = this.mainBkg;
     this.actorTextColor = this.text;
-    this.actorLineColor = this.lineColor;
+    this.actorLineColor = this.actorBorder;
+    this.rectBkgColor = this.rectBkgColor || this.tertiaryColor;
     this.signalColor = this.text;
     this.signalTextColor = this.text;
     this.labelBoxBkgColor = this.actorBkg;
@@ -156,8 +178,8 @@ class Theme {
     // Setup the label color for the set
     this.scaleLabelColor = this.scaleLabelColor || (this.darkMode ? 'black' : this.labelTextColor);
 
-    this['cScaleLabel0'] = this['cScaleLabel0'] || this.cScale1;
-    this['cScaleLabel2'] = this['cScaleLabel2'] || this.cScale1;
+    this.cScaleLabel0 = this.cScaleLabel0 || this.cScale1;
+    this.cScaleLabel2 = this.cScaleLabel2 || this.cScale1;
     for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
       this['cScaleLabel' + i] = this['cScaleLabel' + i] || this.scaleLabelColor;
     }
@@ -198,6 +220,11 @@ class Theme {
     this.critBorderColor = darken(this.critBkgColor, 10);
 
     this.todayLineColor = this.critBkgColor;
+    this.vertLineColor = this.critBkgColor;
+
+    /* Architecture Diagram variables */
+    this.archEdgeColor = this.lineColor;
+    this.archEdgeArrowColor = this.lineColor;
 
     /* state colors */
     this.transitionColor = this.transitionColor || '#000';
@@ -246,6 +273,32 @@ class Theme {
     this.pieOuterStrokeColor = this.pieOuterStrokeColor || 'black';
     this.pieOpacity = this.pieOpacity || '0.7';
 
+    /* venn */
+    for (let i = 0; i < 8; i++) {
+      this['venn' + (i + 1)] = this['venn' + (i + 1)] ?? this['cScale' + i];
+    }
+    this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
+    this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
+
+    /* cynefin */
+    this.cynefin = {
+      domainFontSize: this.cynefin?.domainFontSize || 16,
+      itemFontSize: this.cynefin?.itemFontSize || 12,
+      boundaryColor: this.cynefin?.boundaryColor || this.lineColor,
+      boundaryWidth: this.cynefin?.boundaryWidth || 2,
+      cliffColor: this.cynefin?.cliffColor || '#8B0000',
+      cliffWidth: this.cynefin?.cliffWidth || 4,
+      arrowColor: this.cynefin?.arrowColor || this.lineColor,
+      arrowWidth: this.cynefin?.arrowWidth || 2,
+      complexBg: this.cynefin?.complexBg || '#E8F5E9',
+      complicatedBg: this.cynefin?.complicatedBg || '#E3F2FD',
+      chaoticBg: this.cynefin?.chaoticBg || '#FBE9E7',
+      clearBg: this.cynefin?.clearBg || '#FFF8E1',
+      confusionBg: this.cynefin?.confusionBg || '#F3E5F5',
+      textColor: this.cynefin?.textColor || this.textColor,
+      labelColor: this.cynefin?.labelColor || this.primaryTextColor,
+    };
+
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;
     this.quadrant2Fill = this.quadrant2Fill || adjust(this.primaryColor, { r: 5, g: 5, b: 5 });
@@ -275,6 +328,7 @@ class Theme {
     this.xyChart = {
       backgroundColor: this.xyChart?.backgroundColor || this.background,
       titleColor: this.xyChart?.titleColor || this.primaryTextColor,
+      dataLabelColor: this.xyChart?.dataLabelColor || this.primaryTextColor,
       xAxisTitleColor: this.xyChart?.xAxisTitleColor || this.primaryTextColor,
       xAxisLabelColor: this.xyChart?.xAxisLabelColor || this.primaryTextColor,
       xAxisTickColor: this.xyChart?.xAxisTickColor || this.primaryTextColor,
@@ -286,6 +340,37 @@ class Theme {
       plotColorPalette:
         this.xyChart?.plotColorPalette ||
         '#EEE,#6BB8E4,#8ACB88,#C7ACD6,#E8DCC2,#FFB2A8,#FFF380,#7E8D91,#FFD8B1,#FAF3E0',
+    };
+
+    /* radar */
+    this.radar = {
+      axisColor: this.radar?.axisColor || this.lineColor,
+      axisStrokeWidth: this.radar?.axisStrokeWidth || 2,
+      axisLabelFontSize: this.radar?.axisLabelFontSize || 12,
+      curveOpacity: this.radar?.curveOpacity || 0.5,
+      curveStrokeWidth: this.radar?.curveStrokeWidth || 2,
+      graticuleColor: this.radar?.graticuleColor || '#DEDEDE',
+      graticuleStrokeWidth: this.radar?.graticuleStrokeWidth || 1,
+      graticuleOpacity: this.radar?.graticuleOpacity || 0.3,
+      legendBoxSize: this.radar?.legendBoxSize || 12,
+      legendFontSize: this.radar?.legendFontSize || 12,
+    };
+
+    /* wardley */
+    this.wardleyEvolutionColor = this.wardleyEvolutionColor || '#dc3545';
+    this.wardley = {
+      backgroundColor: this.wardley?.backgroundColor || this.background,
+      axisColor: this.wardley?.axisColor || this.lineColor,
+      axisTextColor: this.wardley?.axisTextColor || this.primaryTextColor,
+      gridColor: this.wardley?.gridColor || this.gridColor,
+      componentFill: this.wardley?.componentFill || this.background,
+      componentStroke: this.wardley?.componentStroke || this.lineColor,
+      componentLabelColor: this.wardley?.componentLabelColor || this.primaryTextColor,
+      linkStroke: this.wardley?.linkStroke || this.lineColor,
+      evolutionStroke: this.wardley?.evolutionStroke || this.wardleyEvolutionColor,
+      annotationStroke: this.wardley?.annotationStroke || this.lineColor,
+      annotationTextColor: this.wardley?.annotationTextColor || this.primaryTextColor,
+      annotationFill: this.wardley?.annotationFill || this.background,
     };
 
     /* requirement-diagram */
@@ -333,6 +418,24 @@ class Theme {
     this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
     this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
     this.commitLabelFontSize = this.commitLabelFontSize || '10px';
+
+    /* -------------------------------------------------- */
+    /* Event Modeling diagrams                             */
+
+    this.emUiFill = this.emUiFill || 'white';
+    this.emUiStroke = this.emUiStroke || '#dbdada';
+    this.emProcessorFill = this.emProcessorFill || '#edb3f6';
+    this.emProcessorStroke = this.emProcessorStroke || '#b88cbf';
+    this.emReadModelFill = this.emReadModelFill || '#d3f1a2';
+    this.emReadModelStroke = this.emReadModelStroke || '#a3b732';
+    this.emCommandFill = this.emCommandFill || '#bcd6fe';
+    this.emCommandStroke = this.emCommandStroke || '#679ac3';
+    this.emEventFill = this.emEventFill || '#ffb778';
+    this.emEventStroke = this.emEventStroke || '#c19a0f';
+    this.emSwimlaneBackgroundOdd = this.emSwimlaneBackgroundOdd || 'rgb(250,250,250)';
+    this.emSwimlaneBackgroundStroke = this.emSwimlaneBackgroundStroke || 'rgb(240,240,240)';
+    this.emArrowhead = this.emArrowhead || this.lineColor;
+    this.emRelationStroke = this.emRelationStroke || this.lineColor;
 
     /* -------------------------------------------------- */
     /* EntityRelationship diagrams                        */

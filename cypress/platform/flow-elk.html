@@ -1,0 +1,28 @@
+<html>
+  <body>
+    <pre class="mermaid">
+      flowchart-elk
+      a[hello] --> b[world]
+      b --> c{test}
+      c --> one
+      c --> two
+      c --> three
+    </pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      import elk from './mermaid-flowchart-elk.esm.min.mjs';
+      if (window.location.search.includes('elk')) {
+        await mermaid.registerExternalDiagrams([elk]);
+      }
+      mermaid.initialize({
+        logLevel: 3,
+        startOnLoad: false,
+      });
+      await mermaid.run();
+      if (window.Cypress) {
+        window.rendered = true;
+      }
+    </script>
+  </body>
+</html>

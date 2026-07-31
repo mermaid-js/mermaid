@@ -12,7 +12,7 @@ timeline
     2002 : LinkedIn
     2004 : Facebook
          : Google
-    2005 : Youtube
+    2005 : YouTube
     2006 : Twitter
 ```
 
@@ -51,7 +51,7 @@ timeline
     title History of Social Media Platform
     2002 : LinkedIn
     2004 : Facebook : Google
-    2005 : Youtube
+    2005 : YouTube
     2006 : Twitter
 ```
 
@@ -121,6 +121,26 @@ timeline
           Bullet 4 : sub-point 4a : sub-point 4b
 ```
 
+### Direction (v11.14.0+)
+
+Timeline can change its direction by the keyword after `timeline`.
+
+```mermaid-example
+timeline TD
+  title MermaidChart 2023 Timeline
+    section 2023 Q1 <br> Release Personal Tier
+      Bullet 1 : sub-point 1a : sub-point 1b
+      Bullet 2 : sub-point 2a : sub-point 2b
+    section 2023 Q2 <br> Release XYZ Tier
+      Bullet 3 : sub-point <br> 3a : sub-point 3b
+      Bullet 4 : sub-point 4a : sub-point 4b
+```
+
+Possible directions are:
+
+- `LR`: Left to right (default)
+- `TD`: Top top down.
+
 ## Styling of time periods and events
 
 As explained earlier, each section has a color scheme, and each time period and event under a section follow the similar color scheme.
@@ -134,7 +154,7 @@ However, if there is no section defined, then we have two possibilities:
         title History of Social Media Platform
           2002 : LinkedIn
           2004 : Facebook : Google
-          2005 : Youtube
+          2005 : YouTube
           2006 : Twitter
 
 ```
@@ -160,12 +180,18 @@ mermaid.initialize({
 let us look at same example, where we have disabled the multiColor option.
 
 ```mermaid-example
-   %%{init: { 'logLevel': 'debug', 'theme': 'base', 'timeline': {'disableMulticolor': true}}}%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'base'
+  timeline:
+    disableMulticolor: true
+---
     timeline
         title History of Social Media Platform
           2002 : LinkedIn
           2004 : Facebook : Google
-          2005 : Youtube
+          2005 : YouTube
           2006 : Twitter
 
 ```
@@ -184,16 +210,22 @@ Example:
 Now let's override the default values for the `cScale0` to `cScale2` variables:
 
 ```mermaid-example
-    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
-              'cScale0': '#ff0000', 'cScaleLabel0': '#ffffff',
-              'cScale1': '#00ff00',
-              'cScale2': '#0000ff', 'cScaleLabel2': '#ffffff'
-       } } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'default'
+  themeVariables:
+    cScale0: '#ff0000'
+    cScaleLabel0: '#ffffff'
+    cScale1: '#00ff00'
+    cScale2: '#0000ff'
+    cScaleLabel2: '#ffffff'
+---
        timeline
         title History of Social Media Platform
           2002 : LinkedIn
           2004 : Facebook : Google
-          2005 : Youtube
+          2005 : YouTube
           2006 : Twitter
           2007 : Tumblr
           2008 : Instagram
@@ -205,7 +237,7 @@ See how the colors are changed to the values specified in the theme variables.
 
 ## Themes
 
-Mermaid supports a bunch of pre-defined themes which you can use to find the right one for you. PS: you can actually override an existing theme's variable to get your own custom theme going. Learn more about theming your diagram [here](../config/theming.md).
+Mermaid supports a bunch of pre-defined themes which you can use to find the right one for you. PS: you can actually override an existing theme's variable to get your own custom theme going. Learn more about [theming your diagram](../config/theming.md).
 
 The following are the different pre-defined theme options:
 
@@ -221,12 +253,16 @@ Let's put them to use, and see how our sample diagram looks in different themes:
 ### Base Theme
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'base' } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'base'
+---
     timeline
         title History of Social Media Platform
           2002 : LinkedIn
           2004 : Facebook : Google
-          2005 : Youtube
+          2005 : YouTube
           2006 : Twitter
           2007 : Tumblr
           2008 : Instagram
@@ -236,12 +272,16 @@ Let's put them to use, and see how our sample diagram looks in different themes:
 ### Forest Theme
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'forest' } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'forest'
+---
     timeline
         title History of Social Media Platform
           2002 : LinkedIn
           2004 : Facebook : Google
-          2005 : Youtube
+          2005 : YouTube
           2006 : Twitter
           2007 : Tumblr
           2008 : Instagram
@@ -251,12 +291,16 @@ Let's put them to use, and see how our sample diagram looks in different themes:
 ### Dark Theme
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'dark' } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'dark'
+---
     timeline
         title History of Social Media Platform
           2002 : LinkedIn
           2004 : Facebook : Google
-          2005 : Youtube
+          2005 : YouTube
           2006 : Twitter
           2007 : Tumblr
           2008 : Instagram
@@ -266,12 +310,16 @@ Let's put them to use, and see how our sample diagram looks in different themes:
 ### Default Theme
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'default' } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'default'
+---
     timeline
         title History of Social Media Platform
           2002 : LinkedIn
           2004 : Facebook : Google
-          2005 : Youtube
+          2005 : YouTube
           2006 : Twitter
           2007 : Tumblr
           2008 : Instagram
@@ -281,12 +329,16 @@ Let's put them to use, and see how our sample diagram looks in different themes:
 ### Neutral Theme
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'neutral' } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'neutral'
+---
     timeline
         title History of Social Media Platform
           2002 : LinkedIn
           2004 : Facebook : Google
-          2005 : Youtube
+          2005 : YouTube
           2006 : Twitter
           2007 : Tumblr
           2008 : Instagram
@@ -305,4 +357,4 @@ You can use this method to add mermaid including the timeline diagram to a web p
 </script>
 ```
 
-You can also refer the implementation in the live editor [here](https://github.com/mermaid-js/mermaid-live-editor/blob/develop/src/lib/util/mermaid.ts) to see how the async loading is done.
+You can also refer the [implementation in the live editor](https://github.com/mermaid-js/mermaid-live-editor/blob/develop/src/lib/util/mermaid.ts) to see how the async loading is done.

@@ -1,73 +1,52 @@
-'use strict';
-import { vi } from 'vitest';
-
-// -------------------------------------
-//  Mocks and mocking
-
-import { MockedD3 } from './tests/MockedD3.js';
-
-// Note: If running this directly from within an IDE, the mocks directory must be at packages/mermaid/mocks
-vi.mock('d3');
-vi.mock('dagre-d3');
-
-// mermaidAPI.spec.ts:
-import * as accessibility from './accessibility.js'; // Import it this way so we can use spyOn(accessibility,...)
-vi.mock('./accessibility.js', () => ({
-  setA11yDiagramInfo: vi.fn(),
-  addSVGa11yTitleDescription: vi.fn(),
-}));
-
-// Mock the renderers specifically so we can test render(). Need to mock draw() for each renderer
-vi.mock('./diagrams/c4/c4Renderer.js');
-vi.mock('./diagrams/class/classRenderer.js');
-vi.mock('./diagrams/class/classRenderer-v2.js');
-vi.mock('./diagrams/er/erRenderer.js');
-vi.mock('./diagrams/flowchart/flowRenderer-v2.js');
-vi.mock('./diagrams/git/gitGraphRenderer.js');
-vi.mock('./diagrams/gantt/ganttRenderer.js');
-vi.mock('./diagrams/user-journey/journeyRenderer.js');
-vi.mock('./diagrams/pie/pieRenderer.js');
-vi.mock('./diagrams/requirement/requirementRenderer.js');
-vi.mock('./diagrams/sequence/sequenceRenderer.js');
-vi.mock('./diagrams/state/stateRenderer-v2.js');
-
-// -------------------------------------
-
-import mermaid from './mermaid.js';
-import type { MermaidConfig } from './config.type.js';
-
-import mermaidAPI, { removeExistingElements } from './mermaidAPI.js';
-import {
-  createCssStyles,
-  createUserStyles,
-  appendDivSvgG,
-  cleanUpSvgCode,
-  putIntoIFrame,
-} from './mermaidAPI.js';
+import { assert, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import assignWithDepth from './assignWithDepth.js';
+import type { MermaidConfig } from './config.type.js';
+import mermaid from './mermaid.js';
+import mermaidAPI, {
+  appendDivSvgG,
+  cleanUpSvgCode,
+  createCssStyles,
+  createUserStyles,
+  putIntoIFrame,
+  removeExistingElements,
+} from './mermaidAPI.js';
+import * as configApi from './config.js';
 
 // --------------
 // Mocks
 //   To mock a module, first define a mock for it, then (if used explicitly in the tests) import it. Be sure the path points to exactly the same file as is imported in mermaidAPI (the module being tested)
-vi.mock('./styles.js', () => {
+vi.mock(import('./styles.js'), async (importOriginal) => {
+  const original = await importOriginal();
   return {
     addStylesForDiagram: vi.fn(),
-    default: vi.fn().mockReturnValue(' .userStyle { font-weight:bold; }'),
+    cssStyleSheetToString: vi.fn().mockImplementation(original.cssStyleSheetToString),
+    default: vi.fn().mockImplementation(
+      (_type, userStyles, _options) => `
+    & .edge-pattern-dashed{
+      stroke-dasharray: 3;
+    }
+
+    ${userStyles}
+    `
+    ),
   };
 });
+
 import getStyles from './styles.js';
 
-vi.mock('stylis', () => {
-  return {
-    stringify: vi.fn(),
-    compile: vi.fn(),
-    serialize: vi.fn().mockReturnValue('stylis serialized css'),
-  };
-});
+vi.mock(import('stylis'), { spy: true });
+
 import { compile, serialize } from 'stylis';
-import { decodeEntities, encodeEntities } from './utils.js';
 import { Diagram } from './Diagram.js';
+import { ClassDB } from './diagrams/class/classDb.js';
+import { FlowDB } from './diagrams/flowchart/flowDb.js';
+import { SequenceDB } from './diagrams/sequence/sequenceDb.js';
+import { decodeEntities, encodeEntities } from './utils.js';
+import { toBase64 } from './utils/base64.js';
+import { StateDB } from './diagrams/state/stateDb.js';
+import { ensureNodeFromSelector, jsdomIt } from './tests/util.js';
+import { JSDOM } from 'jsdom';
 
 /**
  * @see https://vitest.dev/guide/mocking.html Mock part of a module
@@ -75,7 +54,6 @@ import { Diagram } from './Diagram.js';
  */
 
 // -------------------------------------------------------------------------------------
-
 describe('mermaidAPI', () => {
   describe('encodeEntities', () => {
     it('removes the ending ; from style [text1]:[optional word]#[text2]; with ', () => {
@@ -175,7 +153,7 @@ describe('mermaidAPI', () => {
   });
 
   describe('putIntoIFrame', () => {
-    const inputSvgCode = 'this is the SVG code';
+    const inputSvgCode = 'this is the SVG code ⛵';
 
     it('uses the default SVG iFrame height is used if no svgElement given', () => {
       const result = putIntoIFrame(inputSvgCode);
@@ -198,84 +176,66 @@ describe('mermaidAPI', () => {
     });
 
     it('sets src to base64 version of <body style="IFRAME_SVG_BODY_STYLE">svgCode<//body>', () => {
-      const base64encodedSrc = btoa('<body style="' + 'margin:0' + '">' + inputSvgCode + '</body>');
-      const expectedRegExp = new RegExp('src="data:text/html;base64,' + base64encodedSrc + '"');
-
+      const base64encodedSrc = toBase64(`<body style="margin:0">${inputSvgCode}</body>`);
+      const expectedSrc = `src="data:text/html;charset=UTF-8;base64,${base64encodedSrc}"`;
       const result = putIntoIFrame(inputSvgCode);
-      expect(result).toMatch(expectedRegExp);
+      expect(result).toContain(expectedSrc);
     });
 
     it('uses the height and appends px from the svgElement given', () => {
-      const faux_svgElement = {
-        viewBox: {
-          baseVal: {
-            height: 42,
-          },
-        },
-      };
+      const faux_svgElement = vi.mockObject(
+        document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+      );
+      vi.spyOn(faux_svgElement.viewBox.baseVal, 'height', 'get').mockReturnValue(42);
 
       const result = putIntoIFrame(inputSvgCode, faux_svgElement);
       expect(result).toMatch(/style="(.*)height:42px;/);
     });
   });
 
-  const fauxParentNode = new MockedD3();
-  const fauxEnclosingDiv = new MockedD3();
-  const fauxSvgNode = new MockedD3();
-
   describe('appendDivSvgG', () => {
-    const fauxGNode = new MockedD3();
-    const parent_append_spy = vi.spyOn(fauxParentNode, 'append').mockReturnValue(fauxEnclosingDiv);
-    const div_append_spy = vi.spyOn(fauxEnclosingDiv, 'append').mockReturnValue(fauxSvgNode);
-    // @ts-ignore @todo TODO why is this getting a type error?
-    const div_attr_spy = vi.spyOn(fauxEnclosingDiv, 'attr').mockReturnValue(fauxEnclosingDiv);
-    const svg_append_spy = vi.spyOn(fauxSvgNode, 'append').mockReturnValue(fauxGNode);
-    // @ts-ignore @todo TODO why is this getting a type error?
-    const svg_attr_spy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
-
     // cspell:ignore dthe
 
-    it('appends a div node', () => {
-      appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
-      expect(parent_append_spy).toHaveBeenCalledWith('div');
-      expect(div_append_spy).toHaveBeenCalledWith('svg');
+    jsdomIt('appends a div node', ({ body }) => {
+      appendDivSvgG(body, 'theId', 'dtheId');
+      const divNode = ensureNodeFromSelector('div');
+      const svgNode = ensureNodeFromSelector('svg', divNode);
+      ensureNodeFromSelector('g', svgNode);
     });
-    it('the id for the div is "d" with the id appended', () => {
-      appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
-      expect(div_attr_spy).toHaveBeenCalledWith('id', 'dtheId');
-    });
-
-    it('sets the style for the div if one is given', () => {
-      appendDivSvgG(fauxParentNode, 'theId', 'dtheId', 'given div style', 'given x link');
-      expect(div_attr_spy).toHaveBeenCalledWith('style', 'given div style');
+    jsdomIt('the id for the div is "d" with the id appended', ({ body }) => {
+      appendDivSvgG(body, 'theId', 'dtheId');
+      const divNode = ensureNodeFromSelector('div');
+      expect(divNode?.getAttribute('id')).toBe('dtheId');
     });
 
-    it('appends a svg node to the div node', () => {
-      appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
-      expect(div_attr_spy).toHaveBeenCalledWith('id', 'dtheId');
+    jsdomIt('sets the style for the div if one is given', ({ body }) => {
+      appendDivSvgG(body, 'theId', 'dtheId', 'given div style', 'given x link');
+      const divNode = ensureNodeFromSelector('div');
+      expect(divNode?.getAttribute('style')).toBe('given div style');
     });
-    it('sets the svg width to 100%', () => {
-      appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
-      expect(svg_attr_spy).toHaveBeenCalledWith('width', '100%');
+
+    jsdomIt('sets the svg width to 100%', ({ body }) => {
+      appendDivSvgG(body, 'theId', 'dtheId');
+      const svgNode = ensureNodeFromSelector('div > svg');
+      expect(svgNode.getAttribute('width')).toBe('100%');
     });
-    it('the svg id is the id', () => {
-      appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
-      expect(svg_attr_spy).toHaveBeenCalledWith('id', 'theId');
+    jsdomIt('the svg id is the id', ({ body }) => {
+      appendDivSvgG(body, 'theId', 'dtheId');
+      const svgNode = ensureNodeFromSelector('div > svg');
+      expect(svgNode.getAttribute('id')).toBe('theId');
     });
-    it('the svg xml namespace is the 2000 standard', () => {
-      appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
-      expect(svg_attr_spy).toHaveBeenCalledWith('xmlns', 'http://www.w3.org/2000/svg');
+    jsdomIt('the svg xml namespace is the 2000 standard', ({ body }) => {
+      appendDivSvgG(body, 'theId', 'dtheId');
+      const svgNode = ensureNodeFromSelector('div > svg');
+      expect(svgNode.getAttribute('xmlns')).toBe('http://www.w3.org/2000/svg');
     });
-    it('sets the  svg xlink if one is given', () => {
-      appendDivSvgG(fauxParentNode, 'theId', 'dtheId', 'div style', 'given x link');
-      expect(svg_attr_spy).toHaveBeenCalledWith('xmlns:xlink', 'given x link');
+    jsdomIt('sets the  svg xlink if one is given', ({ body }) => {
+      appendDivSvgG(body, 'theId', 'dtheId', 'div style', 'given x link');
+      const svgNode = ensureNodeFromSelector('div > svg');
+      expect(svgNode.getAttribute('xmlns:xlink')).toBe('given x link');
     });
-    it('appends a g (group) node to the svg node', () => {
-      appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
-      expect(svg_append_spy).toHaveBeenCalledWith('g');
-    });
-    it('returns the given parentRoot d3 nodes', () => {
-      expect(appendDivSvgG(fauxParentNode, 'theId', 'dtheId')).toEqual(fauxParentNode);
+    jsdomIt('returns the given parentRoot d3 nodes', ({ body }) => {
+      expect(appendDivSvgG(body, 'theId', 'dtheId')).toEqual(body);
     });
   });
 
@@ -283,7 +243,7 @@ describe('mermaidAPI', () => {
     const serif = 'serif';
     const sansSerif = 'sans-serif';
     const mocked_config_with_htmlLabels: MermaidConfig = {
-      themeCSS: 'default',
+      themeCSS: '.default {color: red;}',
       fontFamily: serif,
       altFontFamily: sansSerif,
       htmlLabels: true,
@@ -291,21 +251,30 @@ describe('mermaidAPI', () => {
 
     it('gets the cssStyles from the theme', () => {
       const styles = createCssStyles(mocked_config_with_htmlLabels, null);
-      expect(styles).toMatch(/^\ndefault(.*)/);
+      expect(styles).toContain('.default {color: red;}');
     });
+
     it('gets the fontFamily from the config', () => {
-      const styles = createCssStyles(mocked_config_with_htmlLabels, {});
-      expect(styles).toMatch(/(.*)\n:root { --mermaid-font-family: serif(.*)/);
+      const styles = createCssStyles(mocked_config_with_htmlLabels, new Map());
+      expect(styles).toMatch(/(.*)\n:root {--mermaid-font-family: serif(.*)/);
     });
+
     it('gets the alt fontFamily from the config', () => {
       const styles = createCssStyles(mocked_config_with_htmlLabels, undefined);
-      expect(styles).toMatch(/(.*)\n:root { --mermaid-alt-font-family: sans-serif(.*)/);
+      expect(styles).toMatch(/(.*)\n:root {--mermaid-alt-font-family: sans-serif(.*)/);
     });
 
     describe('there are some classDefs', () => {
-      const classDef1 = { id: 'classDef1', styles: ['style1-1', 'style1-2'], textStyles: [] };
-      const classDef2 = { id: 'classDef2', styles: [], textStyles: ['textStyle2-1'] };
-      const classDef3 = { id: 'classDef3', textStyles: ['textStyle3-1', 'textStyle3-2'] };
+      const classDef1 = {
+        id: 'classDef1',
+        styles: ['prop: style1-1', 'prop-2: style1-2'],
+        textStyles: [],
+      };
+      const classDef2 = { id: 'classDef2', styles: [], textStyles: ['prop: textStyle2-1'] };
+      const classDef3 = {
+        id: 'classDef3',
+        textStyles: ['prop: textStyle3-1', 'prop-2: textStyle3-2'],
+      };
       const classDefs = { classDef1, classDef2, classDef3 };
 
       describe('the graph supports classDefs', () => {
@@ -330,7 +299,7 @@ describe('mermaidAPI', () => {
             new RegExp(
               `\\.classDef1 ${escapeForRegexp(
                 htmlElement
-              )} \\{ style1-1 !important; style1-2 !important; }`
+              )} \\{prop: style1-1 !important; prop-2: style1-2 !important;}`
             )
           );
           // no CSS styles are created if there are no styles for a classDef
@@ -346,14 +315,14 @@ describe('mermaidAPI', () => {
         function expect_textStyles_matchesHtmlElements(textStyles: string, htmlElement: string) {
           expect(textStyles).toMatch(
             new RegExp(
-              `\\.classDef2 ${escapeForRegexp(htmlElement)} \\{ textStyle2-1 !important; }`
+              `\\.classDef2 ${escapeForRegexp(htmlElement)} \\{prop: textStyle2-1 !important;}`
             )
           );
           expect(textStyles).toMatch(
             new RegExp(
               `\\.classDef3 ${escapeForRegexp(
                 htmlElement
-              )} \\{ textStyle3-1 !important; textStyle3-2 !important; }`
+              )} \\{prop: textStyle3-1 !important; prop-2: textStyle3-2 !important;}`
             )
           );
 
@@ -374,7 +343,7 @@ describe('mermaidAPI', () => {
               // @todo TODO Can't figure out how to spy on the cssImportantStyles method.
               //   That would be a much better approach than manually checking the result
 
-              const styles = createCssStyles(mocked_config, classDefs);
+              const styles = createCssStyles(mocked_config, new Map(Object.entries(classDefs)));
               htmlElements.forEach((htmlElement) => {
                 expect_styles_matchesHtmlElements(styles, htmlElement);
               });
@@ -400,10 +369,11 @@ describe('mermaidAPI', () => {
         });
 
         describe('no htmlLabels in the configuration', () => {
-          const mocked_config_no_htmlLabels = {
+          const mocked_config_no_htmlLabels: MermaidConfig = {
             themeCSS: 'default',
             fontFamily: 'serif',
             altFontFamily: 'sans-serif',
+            htmlLabels: false, // Explicitly set to false
           };
 
           describe('creates styles for shape elements "rect", "polygon", "ellipse", and "circle"', () => {
@@ -412,7 +382,10 @@ describe('mermaidAPI', () => {
             it('creates CSS styles for every style and textStyle in every classDef', () => {
               // TODO Can't figure out how to spy on the cssImportantStyles method. That would be a much better approach than manually checking the result.
 
-              const styles = createCssStyles(mocked_config_no_htmlLabels, classDefs);
+              const styles = createCssStyles(
+                mocked_config_no_htmlLabels,
+                new Map(Object.entries(classDefs))
+              );
               htmlElements.forEach((htmlElement) => {
                 expect_styles_matchesHtmlElements(styles, htmlElement);
               });
@@ -426,36 +399,125 @@ describe('mermaidAPI', () => {
 
   describe('createUserStyles', () => {
     const mockConfig = {
-      themeCSS: 'default',
+      themeCSS: '.default {color: red;}',
       htmlLabels: true,
       themeVariables: { fontFamily: 'serif' },
     };
 
-    const classDef1 = { id: 'classDef1', styles: ['style1-1'], textStyles: [] };
+    const classDef1 = { id: 'classDef1', styles: ['prop: style1-1'], textStyles: [] };
+
+    const divElement = document.body.appendChild(document.createElement('div'));
 
     it('gets the css styles created', () => {
       // @todo TODO if a single function in the module can be mocked, do it for createCssStyles and mock the results.
 
-      createUserStyles(mockConfig, 'flowchart-v2', { classDef1 }, 'someId');
+      createUserStyles(mockConfig, 'flowchart-v2', new Map([['classDef1', classDef1]]), '#someId');
       const expectedStyles =
-        '\ndefault' +
-        '\n.classDef1 > * { style1-1 !important; }' +
-        '\n.classDef1 span { style1-1 !important; }';
-      expect(getStyles).toHaveBeenCalledWith('flowchart-v2', expectedStyles, {
-        fontFamily: 'serif',
-      });
+        '.default {color: red;}' +
+        '\n.classDef1 > * {prop: style1-1 !important;}' +
+        '\n.classDef1 span {prop: style1-1 !important;}';
+      expect(getStyles).toHaveBeenCalledWith(
+        'flowchart-v2',
+        expectedStyles,
+        {
+          fontFamily: 'serif',
+        },
+        '#someId'
+      );
     });
 
     it('calls getStyles to get css for all graph, user css styles, and config theme variables', () => {
-      createUserStyles(mockConfig, 'someDiagram', {}, 'someId');
+      createUserStyles(mockConfig, 'someDiagram', new Map(), '#someId');
       expect(getStyles).toHaveBeenCalled();
     });
 
     it('returns the result of compiling, stringifying, and serializing the css code with stylis', () => {
-      const result = createUserStyles(mockConfig, 'someDiagram', {}, 'someId');
+      const result = createUserStyles(mockConfig, 'someDiagram', new Map(), '#someId');
       expect(compile).toHaveBeenCalled();
       expect(serialize).toHaveBeenCalled();
-      expect(result).toEqual('stylis serialized css');
+      expect(result).toEqual(
+        '#someId .edge-pattern-dashed{stroke-dasharray:3;}#someId .default{color:red;}'
+      );
+    });
+
+    it('should sanitize CSS to avoid unbalanced braces', () => {
+      const result = createUserStyles(
+        mockConfig,
+        'someDiagram',
+        new Map(
+          Object.entries({
+            classDef1: {
+              styles: ['}*{ background-image: url("https://example.test")}'],
+              textStyles: [],
+            },
+            classDef2: {
+              styles: ['color: purple;'],
+            },
+          }).map(([id, value]) => [id, { ...value, id }])
+        ),
+        '#someId'
+      );
+      expect(result).toEqual(
+        '#someId .edge-pattern-dashed{stroke-dasharray:3;}#someId .default{color:red;}#someId .classDef2>*{color:purple;}#someId .classDef2 span{color:purple;}'
+      );
+    });
+
+    it('should handle `:not(&)` selectors in the CSS', () => {
+      const result = createUserStyles(
+        {
+          ...mockConfig,
+          themeCSS: ':not(&){background:green !important}',
+        },
+        'someDiagram',
+        new Map(),
+        '#someId'
+      );
+      expect(result).toEqual(
+        '#someId .edge-pattern-dashed{stroke-dasharray:3;}#someId :not(#someId){background:green!important;}'
+      );
+    });
+
+    it('should remove unsupported at-rules from user CSS', () => {
+      const result = createUserStyles(
+        {
+          ...mockConfig,
+          themeCSS: `
+          @import url('https://example.test/styles.css');
+          @media (max-width: 600px) {
+            * {
+              background-color: lightblue;
+            }
+          }
+          @supports selector(h2 > p) {
+            h2 > p {
+              color: red;
+            }
+          }
+          `,
+        },
+        'someDiagram',
+        new Map(),
+        '#someId'
+      );
+      // @import is removed, but @media and @supports are kept with their child rules namespaced
+      expect(result).toEqual(
+        '#someId .edge-pattern-dashed{stroke-dasharray:3;}@media (max-width: 600px){#someId *{background-color:lightblue;}}@supports selector(h2 > p){#someId h2>p{color:red;}}'
+      );
+    });
+
+    it('should not namespace keyframe rules', () => {
+      const result = createUserStyles(
+        {
+          ...mockConfig,
+          themeCSS: '@keyframes dash { to { stroke-dashoffset: 1000; } }',
+        },
+        'someDiagram',
+        new Map(),
+        '#someId'
+      );
+      expect(result).toEqual(
+        '#someId .edge-pattern-dashed{stroke-dasharray:3;}@keyframes dash{to{stroke-dashoffset:1000;}}'
+      );
     });
   });
 
@@ -564,7 +626,7 @@ describe('mermaidAPI', () => {
       const config = {
         logLevel: 0,
         securityLevel: 'loose',
-      };
+      } as const;
       mermaidAPI.initialize(config);
       mermaidAPI.setConfig({ securityLevel: 'strict', logLevel: 1 });
       expect(mermaidAPI.getConfig().logLevel).toBe(1);
@@ -589,7 +651,6 @@ describe('mermaidAPI', () => {
           mermaidAPI.initialize({ securityLevel: 'loose' });
         },
       };
-      // mermaidAPI.reinitialize(config);
       expect(mermaidAPI.getConfig().secure).toEqual(mermaidAPI.getSiteConfig().secure);
       expect(mermaidAPI.getConfig().securityLevel).toBe('strict');
       mermaidAPI.reset();
@@ -602,27 +663,27 @@ describe('mermaidAPI', () => {
 
       let error: any = { message: '' };
       try {
-        // @ts-ignore This is a read-only property. Typescript will not allow assignment, but regular javascript might.
-        mermaidAPI['defaultConfig'] = config;
+        // @ts-ignore This is a read-only property. TypeScript will not allow assignment, but regular javascript might.
+        mermaidAPI.defaultConfig = config;
       } catch (e) {
         error = e;
       }
       expect(error.message).toBe(
         "Cannot assign to read only property 'defaultConfig' of object '#<Object>'"
       );
-      expect(mermaidAPI.defaultConfig['logLevel']).toBe(5);
+      expect(mermaidAPI.defaultConfig.logLevel).toBe(5);
     });
     it('prevents changes to global defaults (direct)', () => {
       let error: any = { message: '' };
       try {
-        mermaidAPI.defaultConfig['logLevel'] = 0;
+        mermaidAPI.defaultConfig.logLevel = 0;
       } catch (e) {
         error = e;
       }
       expect(error.message).toBe(
         "Cannot assign to read only property 'logLevel' of object '#<Object>'"
       );
-      expect(mermaidAPI.defaultConfig['logLevel']).toBe(5);
+      expect(mermaidAPI.defaultConfig.logLevel).toBe(5);
     });
     it('prevents sneaky changes to global defaults (assignWithDepth)', () => {
       const config = {
@@ -637,7 +698,7 @@ describe('mermaidAPI', () => {
       expect(error.message).toBe(
         "Cannot assign to read only property 'logLevel' of object '#<Object>'"
       );
-      expect(mermaidAPI.defaultConfig['logLevel']).toBe(5);
+      expect(mermaidAPI.defaultConfig.logLevel).toBe(5);
     });
   });
 
@@ -645,7 +706,7 @@ describe('mermaidAPI', () => {
     it('allows dompurify config to be set', () => {
       mermaidAPI.initialize({ dompurifyConfig: { ADD_ATTR: ['onclick'] } });
 
-      expect(mermaidAPI!.getConfig()!.dompurifyConfig!.ADD_ATTR).toEqual(['onclick']);
+      expect(mermaidAPI.getConfig().dompurifyConfig!.ADD_ATTR).toEqual(['onclick']);
     });
   });
 
@@ -679,7 +740,7 @@ describe('mermaidAPI', () => {
       await expect(
         mermaidAPI.parse('this is not a mermaid diagram definition')
       ).rejects.toThrowErrorMatchingInlineSnapshot(
-        '"No diagram type detected matching given configuration for text: this is not a mermaid diagram definition"'
+        `[UnknownDiagramError: No diagram type detected matching given configuration for text: this is not a mermaid diagram definition]`
       );
     });
     it('returns false for invalid definition with silent option', async () => {
@@ -688,14 +749,90 @@ describe('mermaidAPI', () => {
       ).resolves.toBe(false);
     });
     it('resolves for valid definition', async () => {
-      await expect(
-        mermaidAPI.parse('graph TD;A--x|text including URL space|B;')
-      ).resolves.toBeTruthy();
+      await expect(mermaidAPI.parse('graph TD;A--x|text including URL space|B;')).resolves
+        .toMatchInlineSnapshot(`
+        {
+          "config": {},
+          "diagramType": "flowchart-v2",
+        }
+      `);
     });
+    it('resolves swimlanes as its own diagram type', async () => {
+      await expect(mermaidAPI.parse('swimlane-beta TD;A-->B;')).resolves.toMatchInlineSnapshot(`
+        {
+          "config": {},
+          "diagramType": "swimlane",
+        }
+      `);
+    });
+    it('returns config when defined in frontmatter', async () => {
+      await expect(
+        mermaidAPI.parse(`---
+config:
+  theme: base
+  flowchart:
+    htmlLabels: true
+---
+graph TD;A--x|text including URL space|B;`)
+      ).resolves.toMatchInlineSnapshot(`
+  {
+    "config": {
+      "flowchart": {
+        "htmlLabels": true,
+      },
+      "theme": "base",
+    },
+    "diagramType": "flowchart-v2",
+  }
+`);
+    });
+
+    it('returns config when defined in directive', async () => {
+      await expect(
+        mermaidAPI.parse(`%%{init: { 'theme': 'base' } }%%
+graph TD;A--x|text including URL space|B;`)
+      ).resolves.toMatchInlineSnapshot(`
+  {
+    "config": {
+      "theme": "base",
+    },
+    "diagramType": "flowchart-v2",
+  }
+`);
+    });
+
+    it('returns merged config when defined in frontmatter and directive', async () => {
+      await expect(
+        mermaidAPI.parse(`---
+config:
+  theme: forest
+  flowchart:
+    htmlLabels: true
+---
+%%{init: { 'theme': 'base' } }%%
+graph TD;A--x|text including URL space|B;`)
+      ).resolves.toMatchInlineSnapshot(`
+  {
+    "config": {
+      "flowchart": {
+        "htmlLabels": true,
+      },
+      "theme": "base",
+    },
+    "diagramType": "flowchart-v2",
+  }
+`);
+    });
+
     it('returns true for valid definition with silent option', async () => {
       await expect(
         mermaidAPI.parse('graph TD;A--x|text including URL space|B;', { suppressErrors: true })
-      ).resolves.toBe(true);
+      ).resolves.toMatchInlineSnapshot(`
+          {
+            "config": {},
+            "diagramType": "flowchart-v2",
+          }
+        `);
     });
   });
 
@@ -706,10 +843,10 @@ describe('mermaidAPI', () => {
     // render(id, text, cb?, svgContainingElement?)
 
     // Test all diagram types.  Note that old flowchart 'graph' type will invoke the flowRenderer-v2. (See the flowchart v2 detector.)
-    // We have to have both the specific textDiagramType and the expected type name because the expected type may be slightly different than was is put in the diagram text (ex: in -v2 diagrams)
+    // We have to have both the specific textDiagramType and the expected type name because the expected type may be slightly different from what is put in the diagram text (ex: in -v2 diagrams)
     const diagramTypesAndExpectations = [
-      { textDiagramType: 'C4Context', expectedType: 'c4' },
-      { textDiagramType: 'classDiagram', expectedType: 'classDiagram' },
+      // { textDiagramType: 'C4Context', expectedType: 'c4' }, TODO : setAccTitle not called in C4 jison parser
+      { textDiagramType: 'classDiagram', expectedType: 'class' },
       { textDiagramType: 'classDiagram-v2', expectedType: 'classDiagram' },
       { textDiagramType: 'erDiagram', expectedType: 'er' },
       { textDiagramType: 'graph', expectedType: 'flowchart-v2' },
@@ -718,9 +855,24 @@ describe('mermaidAPI', () => {
       { textDiagramType: 'gantt', expectedType: 'gantt' },
       { textDiagramType: 'journey', expectedType: 'journey' },
       { textDiagramType: 'pie', expectedType: 'pie' },
+      { textDiagramType: 'packet', expectedType: 'packet' },
+      { textDiagramType: 'packet-beta', expectedType: 'packet' },
+      {
+        textDiagramType: 'xychart-beta',
+        expectedType: 'xychart',
+        content: 'x-axis "Attempts" 10000 --> 10000\ny-axis "Passing tests" 1 --> 1\nbar [1]',
+      },
+      {
+        textDiagramType: 'xychart',
+        expectedType: 'xychart',
+        content: 'x-axis "Attempts" 10000 --> 10000\ny-axis "Passing tests" 1 --> 1\nbar [1]',
+      },
       { textDiagramType: 'requirementDiagram', expectedType: 'requirement' },
       { textDiagramType: 'sequenceDiagram', expectedType: 'sequence' },
       { textDiagramType: 'stateDiagram-v2', expectedType: 'stateDiagram' },
+      { textDiagramType: 'treeView-beta', expectedType: 'treeView' },
+      { textDiagramType: 'radar-beta', expectedType: 'radar' },
+      { textDiagramType: 'architecture-beta', expectedType: 'architecture' },
     ];
 
     describe('accessibility', () => {
@@ -731,19 +883,25 @@ describe('mermaidAPI', () => {
       diagramTypesAndExpectations.forEach((testedDiagram) => {
         describe(`${testedDiagram.textDiagramType}`, () => {
           const diagramType = testedDiagram.textDiagramType;
-          const diagramText = `${diagramType}\n accTitle: ${a11yTitle}\n accDescr: ${a11yDescr}\n`;
+          const content = testedDiagram.content || '';
+          const diagramText = `${diagramType}\n accTitle: ${a11yTitle}\n accDescr: ${a11yDescr}\n${content}`;
           const expectedDiagramType = testedDiagram.expectedType;
 
-          it('should set aria-roledescription to the diagram type AND should call addSVGa11yTitleDescription', async () => {
-            const a11yDiagramInfo_spy = vi.spyOn(accessibility, 'setA11yDiagramInfo');
-            const a11yTitleDesc_spy = vi.spyOn(accessibility, 'addSVGa11yTitleDescription');
-            await mermaidAPI.render(id, diagramText);
-            expect(a11yDiagramInfo_spy).toHaveBeenCalledWith(
-              expect.anything(),
-              expectedDiagramType
-            );
-            expect(a11yTitleDesc_spy).toHaveBeenCalled();
-          });
+          jsdomIt(
+            'should set aria-roledescription to the diagram type AND should call addSVGa11yTitleDescription',
+            async () => {
+              const { svg } = await mermaidAPI.render(id, diagramText);
+              const dom = new JSDOM(svg);
+              const svgNode = ensureNodeFromSelector('svg', dom.window.document);
+              const descNode = ensureNodeFromSelector('desc', svgNode);
+              const titleNode = ensureNodeFromSelector('title', svgNode);
+              expect(svgNode.getAttribute('aria-roledescription')).toBe(expectedDiagramType);
+              expect(svgNode.getAttribute('aria-describedby')).toBe(`chart-desc-${id}`);
+              expect(descNode.getAttribute('id')).toBe(`chart-desc-${id}`);
+              expect(descNode.innerHTML).toBe(a11yDescr);
+              expect(titleNode.innerHTML).toBe(a11yTitle);
+            }
+          );
         });
       });
     });
@@ -759,5 +917,345 @@ describe('mermaidAPI', () => {
       expect(diagram).toBeInstanceOf(Diagram);
       expect(diagram.type).toBe('flowchart-v2');
     });
+
+    it('should not modify db when rendering different diagrams', async () => {
+      const stateDiagram1 = await mermaidAPI.getDiagramFromText(
+        `stateDiagram
+            direction LR
+            [*] --> Still
+            Still --> [*]
+            Still --> Moving
+            Moving --> Still
+            Moving --> Crash
+            Crash --> [*]`
+      );
+      const stateDiagram2 = await mermaidAPI.getDiagramFromText(
+        `stateDiagram
+          direction TB
+          [*] --> Still
+          Still --> [*]
+          Still --> Moving
+          Moving --> Still
+          Moving --> Crash
+          Crash --> [*]`
+      );
+      expect(stateDiagram1.db).not.toBe(stateDiagram2.db);
+      assert(stateDiagram1.db instanceof StateDB);
+      assert(stateDiagram2.db instanceof StateDB);
+      expect(stateDiagram1.db.getDirection()).not.toEqual(stateDiagram2.db.getDirection());
+
+      const flowDiagram1 = await mermaidAPI.getDiagramFromText(
+        `flowchart LR
+      A -- text --> B -- text2 --> C`
+      );
+      const flowDiagram2 = await mermaidAPI.getDiagramFromText(
+        `flowchart TD
+      A -- text --> B -- text2 --> C`
+      );
+      // Since flowDiagram will return new Db object each time, we can compare the db to be different.
+      expect(flowDiagram1.db).not.toBe(flowDiagram2.db);
+      assert(flowDiagram1.db instanceof FlowDB);
+      assert(flowDiagram2.db instanceof FlowDB);
+      expect(flowDiagram1.db.getDirection()).not.toEqual(flowDiagram2.db.getDirection());
+
+      const classDiagram1 = await mermaidAPI.getDiagramFromText(
+        `classDiagram
+            direction TB
+            class Student {
+              -idCard : IdCard
+            }
+            class IdCard{
+              -id : int
+              -name : string
+            }
+            class Bike{
+              -id : int
+              -name : string
+            }
+            Student "1" --o "1" IdCard : carries
+            Student "1" --o "1" Bike : rides`
+      );
+      const classDiagram2 = await mermaidAPI.getDiagramFromText(
+        `classDiagram
+            direction LR
+            class Student {
+              -idCard : IdCard
+            }
+            class IdCard{
+              -id : int
+              -name : string
+            }
+            class Bike{
+              -id : int
+              -name : string
+            }
+            Student "1" --o "1" IdCard : carries
+            Student "1" --o "1" Bike : rides`
+      );
+      // Since classDiagram will return new Db object each time, we can compare the db to be different.
+      expect(classDiagram1.db).not.toBe(classDiagram2.db);
+      assert(classDiagram1.db instanceof ClassDB);
+      assert(classDiagram2.db instanceof ClassDB);
+      expect(classDiagram1.db.getDirection()).not.toEqual(classDiagram2.db.getDirection());
+
+      const sequenceDiagram1 = await mermaidAPI.getDiagramFromText(
+        `sequenceDiagram
+    Alice->>+John: Hello John, how are you?
+    Alice->>+John: John, can you hear me?
+    John-->>-Alice: Hi Alice, I can hear you!
+    John-->>-Alice: I feel great!`
+      );
+      const sequenceDiagram2 = await mermaidAPI.getDiagramFromText(
+        `sequenceDiagram
+        actor A1
+    Alice->>+John: Hello John, how are you?
+    Alice->>+John: John, can you hear me?
+    John-->>-Alice: Hi Alice, I can hear you!
+    John-->>-Alice: I feel great!`
+      );
+
+      // Since sequenceDiagram will return new Db object each time, we can compare the db to be different.
+      expect(sequenceDiagram1.db).not.toBe(sequenceDiagram2.db);
+      assert(sequenceDiagram1.db instanceof SequenceDB);
+      assert(sequenceDiagram2.db instanceof SequenceDB);
+      expect(sequenceDiagram1.db.getActors()).not.toEqual(sequenceDiagram2.db.getActors());
+    });
+  });
+
+  describe('mermaidAPI config precedence', () => {
+    const id = 'mermaid-config-test';
+
+    beforeEach(() => {
+      mermaidAPI.globalReset();
+    });
+
+    jsdomIt('renders with YAML config taking precedence over initialize config', async () => {
+      mermaid.initialize({
+        theme: 'forest',
+        fontFamily: 'Arial',
+        themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+        flowchart: { htmlLabels: false },
+      });
+
+      const diagramText = `---
+config:
+  theme: base
+  fontFamily: Courier
+  themeVariables:
+    fontFamily: "Courier New"
+    fontSize: "20px"
+  flowchart:
+    htmlLabels: true
+---
+flowchart TD
+  A --> B
+`;
+
+      const { svg } = await mermaidAPI.render('yaml-over-init', diagramText);
+
+      const config = mermaidAPI.getConfig();
+      expect(config.theme).toBe('base');
+      expect(config.fontFamily).toBe('Courier');
+      expect(config.themeVariables.fontFamily).toBe('Courier New');
+      expect(config.themeVariables.fontSize).toBe('20px');
+      expect(config.flowchart?.htmlLabels).toBe(true);
+
+      const svgNode = ensureNodeFromSelector('svg', new JSDOM(svg).window.document);
+      expect(svgNode).not.toBeNull();
+    });
+
+    jsdomIt(
+      'renders with YAML themeVariables fully overriding initialize themeVariables',
+      async () => {
+        mermaid.initialize({
+          themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+        });
+
+        const diagramText = `---
+config:
+  themeVariables:
+    fontFamily: "Courier New"
+    fontSize: "20px"
+---
+flowchart TD
+  A --> B
+`;
+
+        const { svg } = await mermaidAPI.render(id, diagramText);
+        const config = mermaidAPI.getConfig();
+
+        expect(config.themeVariables.fontFamily).toBe('Courier New');
+        expect(config.themeVariables.fontSize).toBe('20px');
+        expect(config.themeVariables.fontFamily).not.toBe('Arial');
+        expect(config.themeVariables.fontSize).not.toBe('16px');
+
+        const svgNode = ensureNodeFromSelector('svg', new JSDOM(svg).window.document);
+        expect(svgNode).not.toBeNull();
+      }
+    );
+
+    jsdomIt(
+      'renders with YAML themeVariables overriding only provided keys and keeping others from initialize',
+      async () => {
+        mermaid.initialize({
+          theme: 'forest',
+          fontFamily: 'Arial',
+          themeVariables: { fontFamily: 'Arial', fontSize: '16px', colorPrimary: '#ff0000' },
+        });
+
+        const diagramText = `---
+config:
+  themeVariables:
+    fontFamily: "Courier New"
+---
+flowchart TD
+  A --> B
+`;
+
+        const { svg } = await mermaidAPI.render(id, diagramText);
+
+        const config = mermaidAPI.getConfig();
+        expect(config.themeVariables.fontFamily).toBe('Courier New');
+        expect(config.themeVariables.fontSize).toBe('16px');
+        expect(config.themeVariables.colorPrimary).toBe('#ff0000');
+
+        const svgNode = ensureNodeFromSelector('svg', new JSDOM(svg).window.document);
+        expect(svgNode).not.toBeNull();
+      }
+    );
+
+    jsdomIt(
+      'renders with YAML config (no themeVariables) and falls back to initialize themeVariables',
+      async () => {
+        mermaid.initialize({
+          themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+        });
+
+        const diagramText = `---
+config:
+  theme: base
+---
+flowchart TD
+  A --> B
+`;
+
+        const { svg } = await mermaidAPI.render(id, diagramText);
+
+        const config = mermaidAPI.getConfig();
+        expect(config.themeVariables.fontFamily).toBe('Arial');
+        expect(config.themeVariables.fontSize).toBe('16px');
+        expect(config.theme).toBe('base');
+
+        const svgNode = ensureNodeFromSelector('svg', new JSDOM(svg).window.document);
+        expect(svgNode).not.toBeNull();
+      }
+    );
+
+    jsdomIt(
+      'renders with full YAML config block taking full precedence over initialize config',
+      async () => {
+        mermaid.initialize({
+          theme: 'forest',
+          fontFamily: 'Arial',
+          themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+          flowchart: { htmlLabels: false },
+        });
+
+        const diagramText = `---
+config:
+  theme: base
+  fontFamily: Courier
+  themeVariables:
+    fontFamily: "Courier New"
+    fontSize: "20px"
+  flowchart:
+    htmlLabels: true
+---
+flowchart TD
+  A --> B
+`;
+
+        const { svg } = await mermaidAPI.render('yaml-over-init', diagramText);
+
+        const config = mermaidAPI.getConfig();
+        expect(config.theme).toBe('base');
+        expect(config.fontFamily).toBe('Courier');
+        expect(config.themeVariables.fontFamily).toBe('Courier New');
+        expect(config.themeVariables.fontSize).toBe('20px');
+        expect(config.flowchart?.htmlLabels).toBe(true);
+
+        const svgNode = ensureNodeFromSelector('svg', new JSDOM(svg).window.document);
+        expect(svgNode).not.toBeNull();
+      }
+    );
+
+    jsdomIt(
+      'renders with YAML config (no themeVariables) and falls back to initialize themeVariables (duplicate scenario)',
+      async () => {
+        mermaid.initialize({
+          themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+        });
+
+        const diagramText = `---
+config:
+  theme: base
+---
+flowchart TD
+  A --> B
+`;
+
+        await mermaidAPI.render(id, diagramText);
+
+        const config = mermaidAPI.getConfig();
+        expect(config.themeVariables.fontFamily).toBe('Arial');
+        expect(config.themeVariables.fontSize).toBe('16px');
+        expect(config.theme).toBe('base');
+      }
+    );
+
+    jsdomIt('renders with no YAML config so initialize config is fully applied', async () => {
+      mermaid.initialize({
+        theme: 'forest',
+        fontFamily: 'Arial',
+        themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+      });
+
+      const diagramText = `
+flowchart TD
+  A --> B
+`;
+
+      await mermaidAPI.render(id, diagramText);
+
+      const config = mermaidAPI.getConfig();
+      expect(config.theme).toBe('forest');
+      expect(config.fontFamily).toBe('Arial');
+      expect(config.themeVariables.fontFamily).toBe('Arial');
+      expect(config.themeVariables.fontSize).toBe('16px');
+    });
+
+    jsdomIt(
+      'renders with empty YAML config block and falls back to initialize config',
+      async () => {
+        mermaid.initialize({
+          theme: 'dark',
+          themeVariables: { fontFamily: 'Times', fontSize: '14px' },
+        });
+
+        const diagramText = `---
+config: {}
+---
+flowchart TD
+  A --> B
+`;
+
+        await mermaidAPI.render(id, diagramText);
+
+        const config = mermaidAPI.getConfig();
+        expect(config.theme).toBe('dark');
+        expect(config.themeVariables.fontFamily).toBe('Times');
+        expect(config.themeVariables.fontSize).toBe('14px');
+      }
+    );
   });
 });

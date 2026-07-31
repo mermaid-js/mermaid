@@ -21,22 +21,25 @@ dayjs.extend(dayjsIsoWeek);
 dayjs.extend(dayjsCustomParseFormat);
 dayjs.extend(dayjsAdvancedFormat);
 
+const WEEKEND_START_DAY = { friday: 5, saturday: 6 };
 let dateFormat = '';
 let axisFormat = '';
 let tickInterval = undefined;
 let todayMarker = '';
 let includes = [];
 let excludes = [];
-let links = {};
+let links = new Map();
 let sections = [];
 let tasks = [];
 let currentSection = '';
 let displayMode = '';
-const tags = ['active', 'done', 'crit', 'milestone'];
+const tags = ['active', 'done', 'crit', 'milestone', 'vert'];
 let funs = [];
+let diagramId = '';
 let inclusiveEndDates = false;
 let topAxis = false;
 let weekday = 'sunday';
+let weekend = 'saturday';
 
 // The serial order of the task in the script
 let lastOrder = 0;
@@ -60,9 +63,15 @@ export const clear = function () {
   inclusiveEndDates = false;
   topAxis = false;
   lastOrder = 0;
-  links = {};
+  links = new Map();
+  diagramId = '';
   commonClear();
   weekday = 'sunday';
+  weekend = 'saturday';
+};
+
+export const setDiagramId = function (id) {
+  diagramId = id;
 };
 
 export const setAxisFormat = function (txt) {
@@ -121,15 +130,23 @@ export const getDateFormat = function () {
   return dateFormat;
 };
 
+const mergeTokens = (existing, txt) => {
+  const tokens = txt
+    .toLowerCase()
+    .split(/[\s,]+/)
+    .filter((t) => t !== '');
+  return [...new Set([...existing, ...tokens])];
+};
+
 export const setIncludes = function (txt) {
-  includes = txt.toLowerCase().split(/[\s,]+/);
+  includes = mergeTokens(includes, txt);
 };
 
 export const getIncludes = function () {
   return includes;
 };
 export const setExcludes = function (txt) {
-  excludes = txt.toLowerCase().split(/[\s,]+/);
+  excludes = mergeTokens(excludes, txt);
 };
 
 export const getExcludes = function () {
@@ -164,16 +181,23 @@ export const getTasks = function () {
 };
 
 export const isInvalidDate = function (date, dateFormat, excludes, includes) {
-  if (includes.includes(date.format(dateFormat.trim()))) {
+  const formattedDate = date.format(dateFormat.trim());
+  const dateOnly = date.format('YYYY-MM-DD');
+
+  if (includes.includes(formattedDate) || includes.includes(dateOnly)) {
     return false;
   }
-  if (date.isoWeekday() >= 6 && excludes.includes('weekends')) {
+  if (
+    excludes.includes('weekends') &&
+    (date.isoWeekday() === WEEKEND_START_DAY[weekend] ||
+      date.isoWeekday() === WEEKEND_START_DAY[weekend] + 1)
+  ) {
     return true;
   }
   if (excludes.includes(date.format('dddd').toLowerCase())) {
     return true;
   }
-  return excludes.includes(date.format(dateFormat.trim()));
+  return excludes.includes(formattedDate) || excludes.includes(dateOnly);
 };
 
 export const setWeekday = function (txt) {
@@ -182,6 +206,10 @@ export const setWeekday = function (txt) {
 
 export const getWeekday = function () {
   return weekday;
+};
+
+export const setWeekend = function (startDay) {
+  weekend = startDay;
 };
 
 /**
@@ -231,14 +259,16 @@ const checkTaskDates = function (task, dateFormat, excludes, includes) {
  * @param {dayjs.Dayjs} startTime - The start time.
  * @param {dayjs.Dayjs} endTime - The original end time (will return a different end time if it's invalid).
  * @param {string} dateFormat - Dayjs date format string.
- * @param {*} excludes
- * @param {*} includes
+ * @param {string[]} excludes - Dates or days to exclude.
+ * @param {string[]} includes - Dates to always include, even if they match the excludes.
  * @returns {[endTime: dayjs.Dayjs, renderEndTime: Date | null]} The new `endTime`, and the end time to render.
  * `renderEndTime` may be `null` if `startTime` is newer than `endTime`.
+ * @throws {Error} If a valid end time cannot be found after 10,000 iterations.
  */
 const fixTaskDates = function (startTime, endTime, dateFormat, excludes, includes) {
   let invalid = false;
   let renderEndTime = null;
+  const maxEndTime = endTime.add(10000, 'd');
   while (startTime <= endTime) {
     if (!invalid) {
       renderEndTime = endTime.toDate();
@@ -246,6 +276,11 @@ const fixTaskDates = function (startTime, endTime, dateFormat, excludes, include
     invalid = isInvalidDate(startTime, dateFormat, excludes, includes);
     if (invalid) {
       endTime = endTime.add(1, 'd');
+      if (endTime > maxEndTime) {
+        throw new Error(
+          'Failed to find a valid date that was not excluded by `excludes` after 10,000 iterations.'
+        );
+      }
     }
     startTime = startTime.add(1, 'd');
   }
@@ -255,6 +290,16 @@ const fixTaskDates = function (startTime, endTime, dateFormat, excludes, include
 const getStartDate = function (prevTime, dateFormat, str) {
   str = str.trim();
 
+  // Helper function to check if format is a timestamp format (x or X)
+  const isTimestampFormat = (format) => {
+    const trimmedFormat = format.trim();
+    return trimmedFormat === 'x' || trimmedFormat === 'X';
+  };
+
+  // Handle timestamp formats (x, X) with numeric strings
+  if (isTimestampFormat(dateFormat) && /^\d+$/.test(str)) {
+    return new Date(Number(str));
+  }
   // Test for after
   const afterRePattern = /^after\s+(?<ids>[\d\w- ]+)/;
   const afterStatement = afterRePattern.exec(str);
@@ -277,13 +322,15 @@ const getStartDate = function (prevTime, dateFormat, str) {
     return today;
   }
 
-  // Check for actual date set
+  // Check for actual date set using dayjs strict parsing
   let mDate = dayjs(str, dateFormat.trim(), true);
   if (mDate.isValid()) {
     return mDate.toDate();
   } else {
     log.debug('Invalid date:' + str);
     log.debug('With date format:' + dateFormat.trim());
+
+    // Timestamp formats can fall back to new Date()
     const d = new Date(str);
     if (
       d === undefined ||
@@ -411,7 +458,7 @@ const compileData = function (prevTask, dataStr) {
 
   const task = {};
 
-  // Get tags like active, done, crit and milestone
+  // Get tags like active, done, crit, milestone, and vert
   getTaskTags(data, task, tags);
 
   for (let i = 0; i < data.length; i++) {
@@ -459,7 +506,7 @@ const parseData = function (prevTaskId, dataStr) {
 
   const task = {};
 
-  // Get tags like active, done, crit and milestone
+  // Get tags like active, done, crit, milestone, and vert
   getTaskTags(data, task, tags);
 
   for (let i = 0; i < data.length; i++) {
@@ -527,9 +574,14 @@ export const addTask = function (descr, data) {
   rawTask.done = taskInfo.done;
   rawTask.crit = taskInfo.crit;
   rawTask.milestone = taskInfo.milestone;
-  rawTask.order = lastOrder;
+  rawTask.vert = taskInfo.vert;
 
-  lastOrder++;
+  if (rawTask.vert) {
+    rawTask.order = -1;
+  } else {
+    rawTask.order = lastOrder;
+    lastOrder++;
+  }
 
   const pos = rawTasks.push(rawTask);
 
@@ -559,6 +611,7 @@ export const addTaskOrg = function (descr, data) {
   newTask.done = taskInfo.done;
   newTask.crit = taskInfo.crit;
   newTask.milestone = taskInfo.milestone;
+  newTask.vert = taskInfo.vert;
   lastTask = newTask;
   tasks.push(newTask);
 };
@@ -628,7 +681,7 @@ export const setLink = function (ids, _linkStr) {
       pushFun(id, () => {
         window.open(linkStr, '_self');
       });
-      links[id] = linkStr;
+      links.set(id, linkStr);
     }
   });
   setClass(ids, 'clickable');
@@ -665,7 +718,7 @@ const setClickFun = function (id, functionName, functionArgs) {
       let item = argList[i].trim();
       /* Removes all double quotes at the start and end of an argument */
       /* This preserves all starting and ending whitespace inside */
-      if (item.charAt(0) === '"' && item.charAt(item.length - 1) === '"') {
+      if (item.startsWith('"') && item.endsWith('"')) {
         item = item.substr(1, item.length - 2);
       }
       argList[i] = item;
@@ -695,8 +748,8 @@ const setClickFun = function (id, functionName, functionArgs) {
 const pushFun = function (id, callbackFunction) {
   funs.push(
     function () {
-      // const elem = d3.select(element).select(`[id="${id}"]`)
-      const elem = document.querySelector(`[id="${id}"]`);
+      const prefixedId = diagramId ? `${diagramId}-${id}` : id;
+      const elem = document.querySelector(`[id="${prefixedId}"]`);
       if (elem !== null) {
         elem.addEventListener('click', function () {
           callbackFunction();
@@ -704,8 +757,8 @@ const pushFun = function (id, callbackFunction) {
       }
     },
     function () {
-      // const elem = d3.select(element).select(`[id="${id}-text"]`)
-      const elem = document.querySelector(`[id="${id}-text"]`);
+      const prefixedId = diagramId ? `${diagramId}-${id}` : id;
+      const elem = document.querySelector(`[id="${prefixedId}-text"]`);
       if (elem !== null) {
         elem.addEventListener('click', function () {
           callbackFunction();
@@ -759,6 +812,7 @@ export default {
   getAccTitle,
   setDiagramTitle,
   getDiagramTitle,
+  setDiagramId,
   setDisplayMode,
   getDisplayMode,
   setAccDescription,
@@ -781,6 +835,7 @@ export default {
   isInvalidDate,
   setWeekday,
   getWeekday,
+  setWeekend,
 };
 
 /**

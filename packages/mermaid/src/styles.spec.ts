@@ -17,7 +17,6 @@ import theme from './themes/index.js';
 import c4 from './diagrams/c4/styles.js';
 import classDiagram from './diagrams/class/styles.js';
 import flowchart from './diagrams/flowchart/styles.js';
-import flowchartElk from './diagrams/flowchart/elk/styles.js';
 import er from './diagrams/er/styles.js';
 import git from './diagrams/git/styles.js';
 import gantt from './diagrams/gantt/styles.js';
@@ -28,10 +27,14 @@ import state from './diagrams/state/styles.js';
 import journey from './diagrams/user-journey/styles.js';
 import timeline from './diagrams/timeline/styles.js';
 import mindmap from './diagrams/mindmap/styles.js';
+import packet from './diagrams/packet/styles.js';
 import block from './diagrams/block/styles.js';
+import treeView from './diagrams/treeView/styles.js';
+import radar from './diagrams/radar/styles.js';
+import venn from './diagrams/venn/styles.js';
 import themes from './themes/index.js';
 
-async function checkValidStylisCSSStyleSheet(stylisString: string) {
+function checkValidStylisCSSStyleSheet(stylisString: string) {
   const cssString = serialize(compile(`#my-svg-id{${stylisString}}`), stringify);
   const errors = validate(cssString, 'this-file-was-created-by-tests.css') as Error[];
 
@@ -51,6 +54,7 @@ async function checkValidStylisCSSStyleSheet(stylisString: string) {
 
   if (unexpectedErrors.length > 0) {
     throw new Error(
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       `The given CSS string was invalid: ${errors}.\n\n` +
         'Copy the below CSS into https://jigsaw.w3.org/css-validator/validator to help debug where the invalid CSS is:\n\n' +
         `Original CSS value was ${cssString}`
@@ -73,9 +77,9 @@ describe('styles', () => {
 
       addStylesForDiagram(diagramType, myTypeGetStylesFunc);
 
-      const styles = getStyles(diagramType, '', getConfig().themeVariables);
+      const styles = getStyles(diagramType, '', getConfig().themeVariables, '');
 
-      await checkValidStylisCSSStyleSheet(styles);
+      checkValidStylisCSSStyleSheet(styles);
     });
 
     /**
@@ -87,7 +91,6 @@ describe('styles', () => {
         classDiagram,
         er,
         flowchart,
-        flowchartElk,
         gantt,
         git,
         journey,
@@ -98,6 +101,10 @@ describe('styles', () => {
         state,
         block,
         timeline,
+        packet,
+        treeView,
+        radar,
+        venn,
       })) {
         test(`should return a valid style for diagram ${diagramId} and theme ${themeId}`, async () => {
           const { default: getStyles, addStylesForDiagram } = await import('./styles.js');
@@ -107,10 +114,11 @@ describe('styles', () => {
             diagramId,
             '',
             // @ts-expect-error This will probably be broken until we create a proper Themes type.
-            themes[themeId].getThemeVariables()
+            themes[themeId].getThemeVariables(),
+            ''
           );
 
-          await checkValidStylisCSSStyleSheet(styles);
+          checkValidStylisCSSStyleSheet(styles);
         });
       }
     }

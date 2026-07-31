@@ -1,4 +1,4 @@
-import stateDb from '../stateDb.js';
+import { StateDB } from '../stateDb.js';
 import stateDiagram from './stateDiagram.jison';
 import { setConfig } from '../../../config.js';
 
@@ -7,9 +7,45 @@ setConfig({
 });
 
 describe('state parser can parse...', () => {
+  let stateDb;
   beforeEach(function () {
+    stateDb = new StateDB(2);
     stateDiagram.parser.yy = stateDb;
     stateDiagram.parser.yy.clear();
+  });
+
+  describe('invalid name between state and curly bracket', () => {
+    describe('valid syntax', () => {
+      it('should only accept 1 word', () => {
+        const diagramText = `stateDiagram-v2
+        state valid { X }`;
+
+        stateDiagram.parser.parse(diagramText);
+
+        const states = stateDiagram.parser.yy.getStates();
+        expect(states.get('valid')).not.toBeUndefined();
+      });
+    });
+
+    describe('invalid syntax', () => {
+      it('should throw error with 2 words', () => {
+        const diagramText = `stateDiagram-v2
+        state invalid syntax { Y }`;
+
+        expect(() => {
+          stateDiagram.parser.parse(diagramText);
+        }).toThrow('Error: State name must be a single word.');
+      });
+
+      it('should also throw with more than 2 words', () => {
+        const diagramText = `stateDiagram-v2
+        state invalid syntax with more than 2 words { Z }`;
+
+        expect(() => {
+          stateDiagram.parser.parse(diagramText);
+        }).toThrow('Error: State name must be a single word.');
+      });
+    });
   });
 
   describe('states with id displayed as a (name)', () => {
@@ -18,11 +54,10 @@ describe('state parser can parse...', () => {
         const diagramText = `stateDiagram-v2
         state "Small State 1" as namedState1`;
         stateDiagram.parser.parse(diagramText);
-        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
         const states = stateDiagram.parser.yy.getStates();
-        expect(states['namedState1']).not.toBeUndefined();
-        expect(states['namedState1'].descriptions.join(' ')).toEqual('Small State 1');
+        expect(states.get('namedState1')).not.toBeUndefined();
+        expect(states.get('namedState1').descriptions.join(' ')).toEqual('Small State 1');
       });
     });
 
@@ -31,22 +66,20 @@ describe('state parser can parse...', () => {
         const diagramText = `stateDiagram-v2
         namedState1 : Small State 1`;
         stateDiagram.parser.parse(diagramText);
-        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
         const states = stateDiagram.parser.yy.getStates();
-        expect(states['namedState1']).not.toBeUndefined();
-        expect(states['namedState1'].descriptions.join(' ')).toEqual('Small State 1');
+        expect(states.get('namedState1')).not.toBeUndefined();
+        expect(states.get('namedState1').descriptions.join(' ')).toEqual('Small State 1');
       });
 
       it('no spaces before and after the colon', () => {
         const diagramText = `stateDiagram-v2
         namedState1:Small State 1`;
         stateDiagram.parser.parse(diagramText);
-        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
         const states = stateDiagram.parser.yy.getStates();
-        expect(states['namedState1']).not.toBeUndefined();
-        expect(states['namedState1'].descriptions.join(' ')).toEqual('Small State 1');
+        expect(states.get('namedState1')).not.toBeUndefined();
+        expect(states.get('namedState1').descriptions.join(' ')).toEqual('Small State 1');
       });
     });
   });
@@ -60,10 +93,9 @@ describe('state parser can parse...', () => {
       state assemblies
       `;
       stateDiagram.parser.parse(diagramText);
-      stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
       const states = stateDiagram.parser.yy.getStates();
-      expect(states['assemble']).not.toBeUndefined();
-      expect(states['assemblies']).not.toBeUndefined();
+      expect(states.get('assemble')).not.toBeUndefined();
+      expect(states.get('assemblies')).not.toBeUndefined();
     });
 
     it('state "as" as as', function () {
@@ -71,10 +103,9 @@ describe('state parser can parse...', () => {
       state "as" as as
       `;
       stateDiagram.parser.parse(diagramText);
-      stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
       const states = stateDiagram.parser.yy.getStates();
-      expect(states['as']).not.toBeUndefined();
-      expect(states['as'].descriptions.join(' ')).toEqual('as');
+      expect(states.get('as')).not.toBeUndefined();
+      expect(states.get('as').descriptions.join(' ')).toEqual('as');
     });
   });
 
@@ -96,15 +127,14 @@ describe('state parser can parse...', () => {
         namedState2 --> bigState2: should point to \\nbigState2 container`;
 
       stateDiagram.parser.parse(diagramText);
-      stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
       const states = stateDiagram.parser.yy.getStates();
-      expect(states['namedState1']).not.toBeUndefined();
-      expect(states['bigState1']).not.toBeUndefined();
-      expect(states['bigState1'].doc[0].id).toEqual('bigState1InternalState');
-      expect(states['namedState2']).not.toBeUndefined();
-      expect(states['bigState2']).not.toBeUndefined();
-      expect(states['bigState2'].doc[0].id).toEqual('bigState2InternalState');
+      expect(states.get('namedState1')).not.toBeUndefined();
+      expect(states.get('bigState1')).not.toBeUndefined();
+      expect(states.get('bigState1').doc[0].id).toEqual('bigState1InternalState');
+      expect(states.get('namedState2')).not.toBeUndefined();
+      expect(states.get('bigState2')).not.toBeUndefined();
+      expect(states.get('bigState2').doc[0].id).toEqual('bigState2InternalState');
       const relationships = stateDiagram.parser.yy.getRelations();
       expect(relationships[0].id1).toEqual('namedState1');
       expect(relationships[0].id2).toEqual('bigState1');
@@ -120,14 +150,98 @@ describe('state parser can parse...', () => {
             inner1 --> inner2
         }`;
       stateDiagram.parser.parse(diagramText);
-      stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
       const states = stateDiagram.parser.yy.getStates();
-      expect(states['bigState1']).not.toBeUndefined();
-      expect(states['bigState1'].doc[0].id).toEqual('inner1');
-      expect(states['bigState1'].doc[0].description).toEqual('inner state 1');
-      expect(states['bigState1'].doc[1].id).toEqual('inner2');
-      expect(states['bigState1'].doc[1].description).toEqual('inner state 2');
+      expect(states.get('bigState1')).not.toBeUndefined();
+      expect(states.get('bigState1').doc[0].id).toEqual('inner1');
+      expect(states.get('bigState1').doc[0].description).toEqual('inner state 1');
+      expect(states.get('bigState1').doc[1].id).toEqual('inner2');
+      expect(states.get('bigState1').doc[1].description).toEqual('inner state 2');
+    });
+  });
+
+  describe('colons in transition descriptions (issue #7418)', () => {
+    it('should allow a colon inside transition text', () => {
+      const diagramText = `stateDiagram-v2
+        locked --> pending : recoverable error (ex: timeout)`;
+      stateDiagram.parser.parse(diagramText);
+
+      const relationships = stateDiagram.parser.yy.getRelations();
+      expect(relationships).toHaveLength(1);
+      expect(relationships[0].id1).toEqual('locked');
+      expect(relationships[0].id2).toEqual('pending');
+      expect(relationships[0].relationTitle).toEqual('recoverable error (ex: timeout)');
+    });
+
+    it('should allow multiple colons inside transition text', () => {
+      const diagramText = `stateDiagram-v2
+        A --> B : info: key: value`;
+      stateDiagram.parser.parse(diagramText);
+
+      const relationships = stateDiagram.parser.yy.getRelations();
+      expect(relationships).toHaveLength(1);
+      expect(relationships[0].relationTitle).toEqual('info: key: value');
+    });
+
+    it('should allow a colon inside state description text', () => {
+      const diagramText = `stateDiagram-v2
+        myState : status: active`;
+      stateDiagram.parser.parse(diagramText);
+
+      const states = stateDiagram.parser.yy.getStates();
+      expect(states.get('myState')).not.toBeUndefined();
+      expect(states.get('myState').descriptions.join(' ')).toEqual('status: active');
+    });
+  });
+
+  describe('unsafe properties as state names', () => {
+    it.each(['__proto__', 'constructor'])('should allow %s as a state name', function (prop) {
+      stateDiagram.parser.parse(`
+stateDiagram-v2
+[*] --> ${prop}
+${prop} --> [*]`);
+      const states = stateDiagram.parser.yy.getStates();
+      expect(states.get(prop)).not.toBeUndefined();
+    });
+  });
+
+  describe('note parsing (issue #7089)', () => {
+    it('should not terminate a note when "send note" appears within the note text', () => {
+      const diagramText = `stateDiagram-v2
+      State1
+      note right of State1
+        this sentence contains send note inside the note text
+      end note
+      State1 --> State2`;
+      stateDiagram.parser.parse(diagramText);
+
+      const relations = stateDiagram.parser.yy.getRelations();
+      expect(relations).toHaveLength(1);
+      expect(relations[0].id1).toEqual('State1');
+      expect(relations[0].id2).toEqual('State2');
+
+      const states = stateDiagram.parser.yy.getStates();
+      const noteState = states.get('State1');
+      expect(noteState?.note?.text).toContain('send note inside the note text');
+    });
+
+    it('should not treat "end note" as a closing keyword when it is part of the note text', () => {
+      const diagramText = `stateDiagram-v2
+      State1
+      note right of State1
+        this sentence contains end note as part of the note text
+      end note
+      State1 --> State2`;
+      stateDiagram.parser.parse(diagramText);
+
+      const relations = stateDiagram.parser.yy.getRelations();
+      expect(relations).toHaveLength(1);
+      expect(relations[0].id1).toEqual('State1');
+      expect(relations[0].id2).toEqual('State2');
+
+      const states = stateDiagram.parser.yy.getStates();
+      const noteState = states.get('State1');
+      expect(noteState?.note?.text).toContain('end note as part of the note text');
     });
   });
 });

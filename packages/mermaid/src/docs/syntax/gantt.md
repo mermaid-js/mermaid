@@ -95,6 +95,23 @@ After processing the tags, the remaining metadata items are interpreted as follo
 Support for keyword `until` was added in (v10.9.0+). This can be used to define a task which is running until some other specific task or milestone starts.
 ```
 
+#### Duration format
+
+When specifying a `<length>`, use a number followed by one of these unit suffixes:
+
+| Unit         | Suffix | Example |
+| ------------ | ------ | ------- |
+| Milliseconds | `ms`   | `500ms` |
+| Seconds      | `s`    | `30s`   |
+| Minutes      | `m`    | `30m`   |
+| Hours        | `h`    | `4h`    |
+| Days         | `d`    | `3d`    |
+| Weeks        | `w`    | `2w`    |
+| Months       | `M`    | `1M`    |
+| Years        | `y`    | `1y`    |
+
+Decimal values are also supported (e.g., `1.5d`). Invalid duration tokens (e.g., `3dX`) will be ignored and the task will default to zero duration.
+
 For simplicity, the table does not show the use of multiple tasks listed with the `after` keyword. Here is an example of how to use it and how it's interpreted:
 
 ```mermaid-example
@@ -108,6 +125,39 @@ gantt
 ### Title
 
 The `title` is an _optional_ string to be displayed at the top of the Gantt chart to describe the chart as a whole.
+
+### Excludes
+
+The `excludes` is an _optional_ attribute that accepts specific dates in YYYY-MM-DD format, days of the week ("sunday") or "weekends", but not the word "weekdays".
+These date will be marked on the graph, and be excluded from the duration calculation of tasks. Meaning that if there are excluded dates during a task interval, the number of 'skipped' days will be added to the end of the task to ensure the duration is as specified in the code.
+
+Multiple `excludes` lines are supported and their tokens are concatenated, so long exclusion lists can be split across grouped lines with comments:
+
+```
+gantt
+    dateFormat DD-MM-YYYY
+    excludes weekends
+    %% week 7 is winter break
+    excludes 10-02-2025 11-02-2025 12-02-2025 13-02-2025 14-02-2025
+    %% workers holiday 1 maj
+    excludes 01-05-2025
+```
+
+#### Weekend (v\11.0.0+)
+
+When excluding weekends, it is possible to configure the weekends to be either Friday and Saturday or Saturday and Sunday. By default weekends are Saturday and Sunday.
+To define the weekend start day, there is an _optional_ attribute `weekend` that can be added in a new line followed by either `friday` or `saturday`.
+
+```mermaid-example
+gantt
+    title A Gantt Diagram Excluding Fri - Sat weekends
+    dateFormat YYYY-MM-DD
+    excludes weekends
+    weekend friday
+    section Section
+        A task          :a1, 2024-01-01, 30d
+        Another task    :after a1, 20d
+```
 
 ### Section statements
 
@@ -127,6 +177,20 @@ gantt
     Task A : 10m
     Task B : 5m
     Final milestone : milestone, m2, 18:08, 4m
+```
+
+### Vertical Markers
+
+The `vert` keyword lets you add vertical lines to your Gantt chart, making it easy to highlight important dates like deadlines, events, or checkpoints. These markers extend across the entire chart and are positioned based on the date you provide. Unlike milestones, vertical markers don’t take up a row. They’re purely visual reference points that help break up the timeline and make important moments easier to spot.
+
+```mermaid-example
+gantt
+    dateFormat HH:mm
+    axisFormat %H:%M
+    Initial vert : vert, v1, 17:30, 2m
+    Task A : 3m
+    Task B : 8m
+    Final vert : vert, v2, 17:58, 4m
 ```
 
 ## Setting dates
@@ -238,7 +302,7 @@ gantt
 
 The compact mode allows you to display multiple tasks in the same row. Compact mode can be enabled for a gantt chart by setting the display mode of the graph via preceding YAML settings.
 
-```mermaid
+```mermaid-example
 ---
 displayMode: compact
 ---
@@ -369,7 +433,7 @@ mermaid.ganttConfig = {
   sectionFontSize: 24, // Font size for sections
   numberSectionStyles: 1, // The number of alternating section styles
   axisFormat: '%d/%m', // Date/time format of the axis
-  tickInterval: '1 week', // Axis ticks
+  tickInterval: '1week', // Axis ticks
   topAxis: true, // When this flag is set, date labels will be added to the top of the chart
   displayMode: 'compact', // Turns compact mode on
   weekday: 'sunday', // On which day a week-based interval should start
@@ -395,7 +459,7 @@ click taskId href URL
 - taskId is the id of the task
 - callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the taskId as the parameter if no other arguments are specified.
 
-Beginner's tip—a full example using interactive links in an html context:
+Beginner's tip—a full example using interactive links in an HTML context:
 
 ```html
 <body>
@@ -448,6 +512,48 @@ gantt
     9    : 0, 9
     section Issue1300
     5    : 0, 5
+```
+
+### Timeline (with comments, CSS, config in frontmatter)
+
+```mermaid-example
+---
+    # Frontmatter config, YAML comments
+    title: Ignored if specified in chart
+    displayMode: compact     #gantt specific setting but works at this level too
+    config:
+#        theme: forest
+#        themeCSS: " #item36 { fill: CadetBlue } "
+        themeCSS: " // YAML supports multiline strings using a newline markers: \n
+            #item36 { fill: CadetBlue }       \n
+
+            // Custom marker workaround CSS from forum (below)    \n
+            rect[id^=workaround] { height: calc(100% - 50px) ; transform: translate(9px, 25px); y: 0; width: 1.5px; stroke: none; fill: red; }   \n
+            text[id^=workaround] { fill: red; y: 100%; font-size: 15px;}
+        "
+        gantt:
+            useWidth: 400
+            rightPadding: 0
+            topAxis: true  #false
+            numberSectionStyles: 2
+---
+gantt
+    title Timeline - Gantt Sampler
+    dateFormat YYYY
+    axisFormat %y
+    %% this next line doesn't recognise 'decade' or 'year', but will silently ignore
+    tickInterval 1decade
+
+    section Issue19062
+    71   :            item71, 1900, 1930
+    section Issue19401
+    36   :            item36, 1913, 1935
+    section Issue1300
+    94   :            item94, 1910, 1915
+    5    :            item5,  1920, 1925
+    0    : milestone, item0,  1918, 1s
+    9    : vert,              1906, 1s   %% not yet official
+    64   : workaround,        1923, 1s   %% custom CSS object https://github.com/mermaid-js/mermaid/issues/3250
 ```
 
 <!--- cspell:ignore isadded --->

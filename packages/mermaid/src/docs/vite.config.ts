@@ -5,6 +5,7 @@ import path from 'path';
 import { SearchPlugin } from 'vitepress-plugin-search';
 import fs from 'fs';
 import Components from 'unplugin-vue-components/vite';
+import Icons from 'unplugin-icons/vite';
 import Unocss from 'unocss/vite';
 import { presetAttributify, presetIcons, presetUno } from 'unocss';
 import { resolve } from 'pathe';
@@ -13,6 +14,13 @@ const virtualModuleId = 'virtual:mermaid-config';
 const resolvedVirtualModuleId = '\0' + virtualModuleId;
 
 export default defineConfig({
+  define: {
+    __DOCS_HOSTNAME__: JSON.stringify(process.env.DOCS_HOSTNAME ?? 'mermaid.js.org'),
+  },
+  build: {
+    // Vite v7 changes the default target and drops old browser support
+    target: 'modules',
+  },
   optimizeDeps: {
     // vitepress is aliased with replacement `join(DIST_CLIENT_PATH, '/index')`
     // This needs to be excluded from optimization
@@ -24,6 +32,9 @@ export default defineConfig({
       include: [/\.vue/, /\.md/],
       dirs: '.vitepress/components',
       dts: '.vitepress/components.d.ts',
+    }) as Plugin,
+    Icons({
+      compiler: 'vue3',
     }) as Plugin,
     // @ts-ignore This package has an incorrect exports.
     Unocss({
@@ -49,12 +60,12 @@ export default defineConfig({
       // TODO: will be fixed in the next vitepress release.
       name: 'fix-virtual',
 
-      async resolveId(id: string) {
+      resolveId(id: string) {
         if (id === virtualModuleId) {
           return resolvedVirtualModuleId;
         }
       },
-      async load(this, id: string) {
+      load(this, id: string) {
         if (id === resolvedVirtualModuleId) {
           return `export default ${JSON.stringify({
             securityLevel: 'loose',

@@ -1,7 +1,7 @@
 import { line, curveBasis } from 'd3';
 import utils from '../../utils.js';
 import { log } from '../../logger.js';
-import { parseGenericTypes } from '../common/common.js';
+import { parseGenericTypes, getUrl } from '../common/common.js';
 
 let edgeCount = 0;
 export const drawEdge = function (elem, path, relation, conf, diagObj) {
@@ -42,14 +42,7 @@ export const drawEdge = function (elem, path, relation, conf, diagObj) {
     .attr('class', 'relation');
   let url = '';
   if (conf.arrowMarkerAbsolute) {
-    url =
-      window.location.protocol +
-      '//' +
-      window.location.host +
-      window.location.pathname +
-      window.location.search;
-    url = url.replace(/\(/g, '\\(');
-    url = url.replace(/\)/g, '\\)');
+    url = getUrl(true);
   }
 
   if (relation.relation.lineType == 1) {
@@ -315,10 +308,10 @@ export const getClassTitleString = function (classDef) {
  * @param {SVGSVGElement} elem The element to draw it into
  * @param {{id: string; text: string; class: string;}} note
  * @param conf
- * @param diagObj
+ * @param _diagObj
  * @todo Add more information in the JSDOC here
  */
-export const drawNote = function (elem, note, conf, diagObj) {
+export const drawNote = function (elem, note, conf, _diagObj) {
   log.debug('Rendering note ', note, conf);
 
   const id = note.id;

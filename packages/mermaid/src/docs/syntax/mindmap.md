@@ -152,7 +152,7 @@ mindmap
           C
 ```
 
-This outline is unclear as `B` clearly is a child of `A` but when we move on to `C` the clarity is lost. `C` is not a child of `B` with a higher indentation nor does it have the same indentation as `B`. The only thing that is clear is that the first node with smaller indentation, indicating a parent, is A. Then Mermaid relies on this known truth and compensates for the unclear indentation and selects `A` as a parent of `C` leading till the same diagram with `B` and `C` as siblings.
+This outline is unclear as `B` clearly is a child of `A` but when we move on to `C` the clarity is lost. `C` is neither a child of `B` with a higher indentation nor does it have the same indentation as `B`. The only thing that is clear is that the first node with smaller indentation, indicating a parent, is A. Then Mermaid relies on this known truth and compensates for the unclear indentation and selects `A` as a parent of `C` leading till the same diagram with `B` and `C` as siblings.
 
 ```mermaid
 mindmap
@@ -203,9 +203,28 @@ From version 9.4.0 you can simplify this code to:
 </script>
 ```
 
-You can also refer the implementation in the live editor [here](https://github.com/mermaid-js/mermaid-live-editor/blob/develop/src/lib/util/mermaid.ts) to see how the async loading is done.
+You can also refer the [implementation in the live editor](https://github.com/mermaid-js/mermaid-live-editor/blob/develop/src/lib/util/mermaid.ts) to see how the async loading is done.
 
 <!---
 cspell:locale en,en-gb
 cspell:ignore Buzan
 --->
+
+## Layouts
+
+Mermaid also supports a Tidy Tree layout for mindmaps.
+
+```
+---
+config:
+  layout: tidy-tree
+---
+mindmap
+root((mindmap is a long thing))
+  A
+  B
+  C
+  D
+```
+
+Instructions to add and register tidy-tree layout are present in [Tidy Tree Configuration](/config/tidy-tree)

@@ -1,8 +1,10 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base",
     ":rebaseStalePrs",
     "schedule:earlyMondays",
+    "security:minimumReleaseAgeNpm",
     ":automergeMinor",
     ":automergeTesters",
     ":automergeLinters",
@@ -11,8 +13,26 @@
   ],
   "packageRules": [
     {
+      "description": "minimumReleaseAge is normally not supported for digest/other update types",
+      "matchManagers": ["github-actions", "dockerfile", "devcontainer", "docker-compose"],
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "minimumReleaseAge": "3 days"
+    },
+    {
       "matchUpdateTypes": ["minor", "patch", "digest"],
       "automerge": true
+    },
+    {
+      "groupName": "all major dependencies",
+      "groupSlug": "all-major",
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["major"]
+    },
+    {
+      "groupName": "all minor dependencies",
+      "groupSlug": "all-minor",
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["minor"]
     },
     {
       "groupName": "all patch dependencies",
@@ -21,15 +41,19 @@
       "matchUpdateTypes": ["patch"]
     },
     {
-      "groupName": "all minor dependencies",
-      "groupSlug": "all-minor",
-      "matchPackagePatterns": ["*"],
-      "matchUpdateTypes": ["minor"]
+      "groupName": "eslint",
+      "matchPackagePatterns": ["eslint"]
+    },
+    {
+      "groupName": "dompurify",
+      "matchPackagePatterns": ["dompurify"]
+    },
+    {
+      "matchPackageNames": ["chokidar"],
+      "enabled": false
     }
   ],
-  "dependencyDashboard": true,
-  "major": {
-    "dependencyDashboardApproval": true
-  },
-  "dependencyDashboardAutoclose": true
+  "dependencyDashboard": false,
+  "dependencyDashboardAutoclose": true,
+  "rangeStrategy": "bump"
 }

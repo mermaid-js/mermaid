@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type * as d3 from 'd3';
+import type { SetOptional, SetRequired } from 'type-fest';
 import type { Diagram } from '../Diagram.js';
 import type { BaseDiagramConfig, MermaidConfig } from '../config.type.js';
-import type * as d3 from 'd3';
+import type { DiagramOrientation } from '../diagrams/git/gitGraphTypes.js';
 
 export interface DiagramMetadata {
   title?: string;
@@ -34,17 +36,42 @@ export interface DiagramDB {
   getAccTitle?: () => string;
   setAccDescription?: (description: string) => void;
   getAccDescription?: () => string;
-
+  getDirection?: () => string | undefined;
+  setDirection?: (dir: DiagramOrientation) => void;
   setDisplayMode?: (title: string) => void;
+  setDiagramId?: (svgElementId: string) => void;
   bindFunctions?: (element: Element) => void;
 }
+
+/**
+ * DiagramDB with fields that is required for all new diagrams.
+ */
+export type DiagramDBBase<T extends BaseDiagramConfig> = {
+  getConfig: () => Required<T>;
+} & SetRequired<
+  DiagramDB,
+  | 'clear'
+  | 'getAccTitle'
+  | 'getDiagramTitle'
+  | 'getAccDescription'
+  | 'setAccDescription'
+  | 'setAccTitle'
+  | 'setDiagramTitle'
+>;
 
 // This is what is returned from getClasses(...) methods.
 // It is slightly renamed to ..StyleClassDef instead of just ClassDef because "class" is a greatly ambiguous and overloaded word.
 // It makes it clear we're working with a style class definition, even though defining the type is currently difficult.
 export interface DiagramStyleClassDef {
   id: string;
+  /**
+   * The styles to apply to the class for HTML rendering.
+   * These are expected to be CSS property declarations without a trailing semicolon, e.g. `color: red`.
+   */
   styles?: string[];
+  /**
+   * The styles to apply to `<tspan>` elements with the given class.
+   */
   textStyles?: string[];
 }
 
@@ -53,7 +80,7 @@ export interface DiagramRenderer {
   getClasses?: (
     text: string,
     diagram: Pick<DiagramDefinition, 'db'>
-  ) => Record<string, DiagramStyleClassDef>;
+  ) => Map<string, DiagramStyleClassDef>;
 }
 
 export interface DiagramDefinition {
@@ -74,19 +101,39 @@ export interface DiagramDefinition {
   ) => void;
 }
 
-export interface DetectorRecord {
-  detector: DiagramDetector;
-  loader?: DiagramLoader;
-}
-
 export interface ExternalDiagramDefinition {
   id: string;
   detector: DiagramDetector;
   loader: DiagramLoader;
 }
 
+export type DetectorRecord = SetOptional<Omit<ExternalDiagramDefinition, 'id'>, 'loader'>;
 export type DiagramDetector = (text: string, config?: MermaidConfig) => boolean;
 export type DiagramLoader = () => Promise<{ id: string; diagram: DiagramDefinition }>;
+
+/* Types for the positions used in the free layout engine */
+interface Point {
+  x: number;
+  y: number;
+}
+
+export interface IntersectionPoint extends Point {
+  pos: 't' | 'b' | 'l' | 'r';
+}
+
+export interface NodePosition extends Point {
+  width?: number;
+  height?: number;
+}
+
+export interface EdgePoints {
+  points: Point[];
+}
+
+export interface Positions {
+  nodes: Record<string, NodePosition>;
+  edges: Record<string, EdgePoints>;
+}
 
 /**
  * Type for function draws diagram in the tag with id: id based on the graph definition in text.
@@ -100,18 +147,19 @@ export type DrawDefinition = (
   text: string,
   id: string,
   version: string,
-  diagramObject: Diagram
+  diagramObject: Diagram,
+  positions?: Positions
 ) => void | Promise<void>;
 
 export interface ParserDefinition {
-  parse: (text: string) => void;
-  parser: { yy: DiagramDB };
+  parse: (text: string) => void | Promise<void>;
+  parser?: { yy: DiagramDB };
 }
 
 export type HTML = d3.Selection<HTMLIFrameElement, unknown, Element | null, unknown>;
 
 export type SVG = d3.Selection<SVGSVGElement, unknown, Element | null, unknown>;
 
-export type Group = d3.Selection<SVGGElement, unknown, Element | null, unknown>;
+export type SVGGroup = d3.Selection<SVGGElement, unknown, Element | null, unknown>;
 
-export type DiagramStylesProvider = (options?: any) => string;
+export type DiagramStylesProvider = (options?: any, svgId?: string) => string;

@@ -1,4 +1,4 @@
-import type { MermaidConfig } from '../config.type.js';
+import type { GanttDiagramConfig, MermaidConfig } from '../config.type.js';
 import { frontMatterRegex } from './regexes.js';
 // The "* as yaml" part is necessary for tree-shaking
 import * as yaml from 'js-yaml';
@@ -6,7 +6,7 @@ import * as yaml from 'js-yaml';
 interface FrontMatterMetadata {
   title?: string;
   // Allows custom display modes. Currently used for compact mode in gantt charts.
-  displayMode?: string;
+  displayMode?: GanttDiagramConfig['displayMode'];
   config?: MermaidConfig;
 }
 
@@ -30,8 +30,17 @@ export function extractFrontMatter(text: string): FrontMatterResult {
     };
   }
 
+  // Dedent by the captured indent — js-yaml rejects tab-indented documents.
+  const indent = matches[1];
+  const yamlBody = indent
+    ? matches[2]
+        .split('\n')
+        .map((line) => (line.startsWith(indent) ? line.slice(indent.length) : line))
+        .join('\n')
+    : matches[2];
+
   let parsed: FrontMatterMetadata =
-    yaml.load(matches[1], {
+    yaml.load(yamlBody, {
       // To support config, we need JSON schema.
       // https://www.yaml.org/spec/1.2/spec.html#id2803231
       schema: yaml.JSON_SCHEMA,
@@ -44,7 +53,7 @@ export function extractFrontMatter(text: string): FrontMatterResult {
 
   // Only add properties that are explicitly supported, if they exist
   if (parsed.displayMode) {
-    metadata.displayMode = parsed.displayMode.toString();
+    metadata.displayMode = parsed.displayMode.toString() as GanttDiagramConfig['displayMode'];
   }
   if (parsed.title) {
     metadata.title = parsed.title.toString();

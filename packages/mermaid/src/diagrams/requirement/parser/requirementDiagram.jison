@@ -9,6 +9,7 @@
 %x string
 %x token
 %x unqString
+%x style
 %x acc_title
 %x acc_descr
 %x acc_descr_multiline
@@ -22,6 +23,10 @@ accDescr\s*":"\s*                                               { this.begin("ac
 accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
 <acc_descr_multiline>[\}]                       { this.popState(); }
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
+.*direction\s+TB[^\n]*                       return 'direction_tb';
+.*direction\s+BT[^\n]*                       return 'direction_bt';
+.*direction\s+RL[^\n]*                       return 'direction_rl';
+.*direction\s+LR[^\n]*                       return 'direction_lr';
 (\r?\n)+                               return 'NEWLINE';
 \s+                                    /* skip all whitespace */
 \#[^\n]*                               /* skip comments */
@@ -32,6 +37,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 
 "{"                         return 'STRUCT_START';
 "}"                         return 'STRUCT_STOP';
+":"{3}                       return 'STYLE_SEPARATOR';
 ":"                         return 'COLONSEP';
 
 "id"                        return 'ID';
@@ -68,6 +74,20 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 "type"          return 'TYPE';
 "docref"        return 'DOCREF';
 
+"style"                         { this.begin("style"); return 'STYLE'; }
+<style>\w+                          return 'ALPHA';
+<style>":" return 'COLON';
+<style>";" return 'SEMICOLON';
+<style>"%" return 'PERCENT';
+<style>"-" return 'MINUS';
+<style>"#" return 'BRKT';
+<style>" "                             /* skip spaces */
+<style>["] { this.begin("string"); }
+<style>\n { this.popState(); }
+
+"classDef" { this.begin("style"); return 'CLASSDEF'; }
+"class" { this.begin("style"); return 'CLASS'; }
+
 "<-"        return 'END_ARROW_L';
 "->"        {return 'END_ARROW_R';}
 "-"         {return 'LINE';}
@@ -76,7 +96,11 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <string>["]         { this.popState(); }
 <string>[^"]*       { return "qString"; }
 
-[\w][^\r\n\{\<\>\-\=]*                { yytext = yytext.trim(); return 'unqString';}
+[\w][^:,\r\n\{\<\>\-\=]*                { yytext = yytext.trim(); return 'unqString';}
+
+<*>\w+                          return 'ALPHA';
+<*>[0-9]+                       return 'NUM';
+<*>","                             return 'COMMA';
 
 /lex
 
@@ -101,11 +125,28 @@ diagram
   | elementDef diagram
   | relationshipDef diagram
   | directive diagram
-  | NEWLINE diagram;
+  | direction diagram
+  | styleStatement diagram
+  | classDefStatement diagram
+  | classStatement diagram
+  | NEWLINE diagram
+  ;
+
+direction
+    : direction_tb
+    { yy.setDirection('TB');}
+    | direction_bt
+    { yy.setDirection('BT');}
+    | direction_rl
+    { yy.setDirection('RL');}
+    | direction_lr
+    { yy.setDirection('LR');}
+    ;
 
 requirementDef
-  : requirementType requirementName STRUCT_START NEWLINE requirementBody
-    { yy.addRequirement($2, $1) };
+  : requirementType requirementName STRUCT_START NEWLINE requirementBody { yy.addRequirement($2, $1) }
+  | requirementType requirementName STYLE_SEPARATOR idList STRUCT_START NEWLINE requirementBody { yy.addRequirement($2, $1); yy.setClass([$2], $4); }
+  ;
 
 requirementBody
   : ID COLONSEP id NEWLINE requirementBody
@@ -149,8 +190,9 @@ verifyType
     { $$=yy.VerifyType.VERIFY_TEST;};
 
 elementDef
-  : ELEMENT elementName STRUCT_START NEWLINE elementBody
-    { yy.addElement($2) };
+  : ELEMENT elementName STRUCT_START NEWLINE elementBody { yy.addElement($2) }
+  | ELEMENT elementName STYLE_SEPARATOR idList STRUCT_START NEWLINE elementBody { yy.addElement($2); yy.setClass([$2], $4); }
+  ;
 
 elementBody
   : TYPE COLONSEP type NEWLINE elementBody
@@ -181,6 +223,38 @@ relationship
       { $$=yy.Relationships.REFINES;}
   | TRACES
       { $$=yy.Relationships.TRACES;};
+
+classDefStatement
+  : CLASSDEF idList stylesOpt {$$ = $CLASSDEF;yy.defineClass($idList,$stylesOpt);}
+  ;
+
+classStatement
+    : CLASS idList idList                            {yy.setClass($2, $3);}
+    | id STYLE_SEPARATOR idList {yy.setClass([$1], $3);}
+    ;
+
+idList
+    : ALPHA { $$ = [$ALPHA]; }
+    | idList COMMA ALPHA = { $$ = $idList.concat([$ALPHA]); }
+    | id { $$ = [$id]; }
+    | idList COMMA id = { $$ = $idList.concat([$id]); }
+    ;
+
+styleStatement
+  : STYLE idList stylesOpt                              {$$ = $STYLE;yy.setCssStyle($2,$stylesOpt);}
+  ;
+
+stylesOpt
+    : style {$$ = [$style]}
+    | stylesOpt COMMA style {$stylesOpt.push($style);$$ = $stylesOpt;}
+    ;
+
+style
+    : styleComponent
+    | style styleComponent  {$$ = $style + $styleComponent;}
+    ;
+
+styleComponent: ALPHA | NUM | COLON | UNIT | SPACE | BRKT | PCT | MINUS | LABEL | SEMICOLON;
 
 
 requirementName: unqString | qString;

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <title>Mermaid development page</title>
@@ -57,6 +57,8 @@ graph TB
 
     <script type="module">
       import mermaid from '/mermaid.esm.mjs';
+      import layouts from '/mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
 
       function setRenderTime(start, end) {
         const durationMs = end - start;
@@ -99,5 +101,7 @@ graph TB
         await render(code);
       }
     </script>
+
+    <script src="/dev/reload.js"></script>
   </body>
 </html>

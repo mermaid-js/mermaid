@@ -109,7 +109,7 @@ describe('when using the ganttDb', function () {
       ganttDb.addTask(taskName2, taskData2);
       const tasks = ganttDb.getTasks();
       expect(tasks[1].startTime).toEqual(expStartDate2);
-      if (!expEndDate2 === undefined) {
+      if (expEndDate2) {
         expect(tasks[1].endTime).toEqual(expEndDate2);
       }
       expect(tasks[1].id).toEqual(expId2);
@@ -219,7 +219,7 @@ describe('when using the ganttDb', function () {
     ganttDb.addTask('test3', 'id3,after id2,7d');
     ganttDb.addTask('test4', 'id4,2019-02-01,2019-02-20'); // Fixed endTime
     ganttDb.addTask('test5', 'id5,after id4,1d');
-    ganttDb.addSection('full ending taks on last day');
+    ganttDb.addSection('full ending task on last day');
     ganttDb.addTask('test6', 'id6,2019-02-13,2d');
     ganttDb.addTask('test7', 'id7,after id6,1d');
 
@@ -265,6 +265,59 @@ describe('when using the ganttDb', function () {
     expect(tasks[6].endTime).toEqual(dayjs('2019-02-19', 'YYYY-MM-DD').toDate());
     expect(tasks[6].id).toEqual('id7');
     expect(tasks[6].task).toEqual('test7');
+  });
+
+  it('should ignore weekends starting on friday', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.setExcludes('weekends');
+    ganttDb.setWeekend('friday');
+    ganttDb.addSection('friday-saturday weekends skip test');
+    ganttDb.addTask('test1', 'id1,2024-02-28, 3d');
+
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].startTime).toEqual(dayjs('2024-02-28', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].endTime).toEqual(dayjs('2024-03-04', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].id).toEqual('id1');
+    expect(tasks[0].task).toEqual('test1');
+  });
+
+  it('should not infinite loop when excluding everything', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.setExcludes('weekends,monday,tuesday,wednesday,thursday,friday');
+    ganttDb.setWeekend('saturday');
+    ganttDb.addSection('weekends skip test');
+    ganttDb.addTask('test1', 'id1,2019-02-01,7d');
+
+    expect(() => ganttDb.getTasks()).toThrowError('Failed to find a valid date');
+
+    // Fridays are now allowed, so it should not throw an error
+    ganttDb.clear();
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.setExcludes('weekends,monday,tuesday,wednesday,thursday');
+    ganttDb.setWeekend('saturday');
+    ganttDb.addSection('weekends skip test');
+    ganttDb.addTask('test1', 'id1,2019-02-01,7d');
+    expect(() => ganttDb.getTasks()).not.toThrow();
+  });
+
+  it('should merge tokens across multiple setExcludes calls (issue #6270)', function () {
+    ganttDb.setExcludes('weekends');
+    ganttDb.setExcludes('2019-02-06');
+    ganttDb.setExcludes('friday, monday');
+    expect(ganttDb.getExcludes()).toEqual(['weekends', '2019-02-06', 'friday', 'monday']);
+  });
+
+  it('should dedupe tokens across multiple setExcludes calls (issue #6270)', function () {
+    ganttDb.setExcludes('weekends,2019-02-06');
+    ganttDb.setExcludes('weekends 2019-02-07');
+    expect(ganttDb.getExcludes()).toEqual(['weekends', '2019-02-06', '2019-02-07']);
+  });
+
+  it('should merge tokens across multiple setIncludes calls (issue #6270)', function () {
+    ganttDb.setIncludes('2019-02-06');
+    ganttDb.setIncludes('2019-02-07,2019-02-08');
+    expect(ganttDb.getIncludes()).toEqual(['2019-02-06', '2019-02-07', '2019-02-08']);
   });
 
   it('should maintain the order in which tasks are created', function () {
@@ -489,5 +542,28 @@ describe('when using the ganttDb', function () {
     ganttDb.setDateFormat('YYYYMMDD');
     ganttDb.addTask('test1', 'id1,202304,1d');
     expect(() => ganttDb.getTasks()).toThrowError('Invalid date:202304');
+  });
+
+  it('should handle seconds-only format with valid numeric values (issue #5496)', function () {
+    ganttDb.setDateFormat('ss');
+    ganttDb.addSection('Network Request');
+    ganttDb.addTask('RTT', 'rtt, 0, 20');
+    const tasks = ganttDb.getTasks();
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0].task).toBe('RTT');
+    expect(tasks[0].id).toBe('rtt');
+  });
+
+  it('should handle dates with year typo like 202 instead of 2024 (issue #5496)', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('Vacation');
+    ganttDb.addTask('London Trip 1', '2024-12-01, 7d');
+    ganttDb.addTask('London Trip 2', '202-12-01, 7d');
+    const tasks = ganttDb.getTasks();
+    expect(tasks).toHaveLength(2);
+    // First task should be in year 2024
+    expect(tasks[0].startTime.getFullYear()).toBe(2024);
+    // Second task will be parsed as year 202 (fallback to new Date())
+    expect(tasks[1].startTime.getFullYear()).toBe(202);
   });
 });

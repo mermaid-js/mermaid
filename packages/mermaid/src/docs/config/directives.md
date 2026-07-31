@@ -17,7 +17,6 @@ While directives allow you to change most of the default configuration settings,
 Mermaid basically supports two types of configuration options to be overridden by directives.
 
 1. _General/Top Level configurations_ : These are the configurations that are available and applied to all the diagram. **Some of the most important top-level** configurations are:
-
    - theme
    - fontFamily
    - logLevel
@@ -49,8 +48,8 @@ The following code snippet shows the structure of a directive:
     "theme": "dark",
     "fontFamily": "monospace",
     "logLevel": "info",
+    "htmlLabels": true,
     "flowchart": {
-      "htmlLabels": true,
       "curve": "linear"
     },
     "sequence": {
@@ -88,7 +87,7 @@ Here the directive declaration will set the `logLevel` to `debug` and the `theme
 
 Note: You can use 'init' or 'initialize' as both are acceptable as init directives. Also note that `%%init%%` and `%%initialize%%` directives will be grouped together after they are parsed.
 
-```mermaid
+```mermaid-example
 %%{init: { 'logLevel': 'debug', 'theme': 'forest' } }%%
 %%{initialize: { 'logLevel': 'fatal', "theme":'dark', 'startOnLoad': true } }%%
 ...
@@ -186,7 +185,7 @@ A --> C[End]
 
 Some common flowchart configurations are:
 
-- _htmlLabels_: true/false
+- ~~_htmlLabels_~~: Deprecated, [prefer setting this at the root level](/config/schema-docs/config#htmllabels).
 - _curve_: linear/curve
 - _diagramPadding_: number
 - _useMaxWidth_: number
@@ -196,9 +195,15 @@ _Soon we plan to publish a complete list of all diagram-specific configurations 
 
 The following code snippet changes flowchart config:
 
-`%%{init: { "flowchart": { "htmlLabels": true, "curve": "linear" } } }%%`
+```
+%%{init: { "htmlLabels": true, "flowchart": { "curve": "linear" } } }%%
+```
 
 Here we are overriding only the flowchart config, and not the general config, setting `htmlLabels` to `true` and `curve` to `linear`.
+
+```warning
+**Deprecated:** `flowchart.htmlLabels` has been deprecated from (v11.12.3+). Use the global `htmlLabels` configuration instead. For example, instead of `"flowchart": { "htmlLabels": true }`, use `"htmlLabels": true` at the top level.
+```
 
 ```mermaid-example
 %%{init: { "flowchart": { "htmlLabels": true, "curve": "linear" } } }%%

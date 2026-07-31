@@ -61,11 +61,13 @@ Function arguments are optional: 'call <callback_name>()' simply executes 'callb
 <string>[^"]*                   return "STR";
 <*>["]                          this.begin("string");
 "style"                         return 'STYLE';
+"classDef"                      return 'CLASSDEF';
 
-<INITIAL,namespace>"namespace"  { this.begin('namespace'); return 'NAMESPACE'; }
+<INITIAL,namespace,namespace-body>"namespace"  { this.begin('namespace'); return 'NAMESPACE'; }
 <namespace>\s*(\r?\n)+          { this.popState(); return 'NEWLINE'; }
 <namespace>\s+                  /* skip whitespace */
 <namespace>[{]                  { this.begin("namespace-body"); return 'STRUCT_START';}
+<namespace>[}]                  { this.popState(); this.less(0); }
 <namespace-body>[}]             { this.popState(); return 'STRUCT_STOP'; }
 <namespace-body><<EOF>>         return "EOF_IN_STRUCT";
 <namespace-body>\s*(\r?\n)+     return 'NEWLINE';
@@ -241,11 +243,14 @@ classLabel
 
 namespaceName
     : alphaNumToken { $$=$1; }
+    | classLiteralName { $$=$1; }
+    | alphaNumToken DOT namespaceName { $$=$1+'.'+$3; }
     | alphaNumToken namespaceName { $$=$1+$2; }
     ;
 
 className
     : alphaNumToken { $$=$1; }
+    | alphaNumToken DOT className { $$=$1+'.'+$3; }
     | classLiteralName { $$=$1; }
     | alphaNumToken className { $$=$1+$2; }
     | alphaNumToken GENERICTYPE { $$=$1+'~'+$2+'~'; }
@@ -263,6 +268,7 @@ statement
     | styleStatement
     | cssClassStatement
     | noteStatement
+    | classDefStatement
     | direction
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
@@ -270,25 +276,36 @@ statement
     ;
 
 namespaceStatement
-    : namespaceIdentifier STRUCT_START classStatements STRUCT_STOP          {yy.addClassesToNamespace($1, $3);}
-    | namespaceIdentifier STRUCT_START NEWLINE classStatements STRUCT_STOP  {yy.addClassesToNamespace($1, $4);}
+    : namespaceIdentifier STRUCT_START classStatements STRUCT_STOP          { yy.addClassesToNamespace($1, $3[0], $3[1]); yy.popNamespace(); }
+    | namespaceIdentifier STRUCT_START NEWLINE classStatements STRUCT_STOP  { yy.addClassesToNamespace($1, $4[0], $4[1]); yy.popNamespace(); }
     ;
 
 namespaceIdentifier
-    : NAMESPACE namespaceName   {$$=$2; yy.addNamespace($2);}
+    : NAMESPACE namespaceName { $$=yy.addNamespace($2); }
+    | NAMESPACE namespaceName classLabel { $$=yy.addNamespace($2, $3); }
     ;
 
 classStatements
-    : classStatement                            {$$=[$1]}
-    | classStatement NEWLINE                    {$$=[$1]}
-    | classStatement NEWLINE classStatements    {$3.unshift($1); $$=$3}
+    : classStatement                            {$$=[[$1], []]}
+    | classStatement NEWLINE                    {$$=[[$1], []]}
+    | classStatement NEWLINE classStatements    {$3[0].unshift($1); $$=$3}
+    | noteStatement                             {$$=[[], [$1]]}
+    | noteStatement NEWLINE                     {$$=[[], [$1]]}
+    | noteStatement NEWLINE classStatements     {$3[1].unshift($1); $$=$3}
+    | namespaceStatement                        {$$=[[], []]}
+    | namespaceStatement NEWLINE                {$$=[[], []]}
+    | namespaceStatement NEWLINE classStatements {$$=$3}
     ;
 
 classStatement
     : classIdentifier
     | classIdentifier STYLE_SEPARATOR alphaNumToken      {yy.setCssClass($1, $3);}
     | classIdentifier STRUCT_START members STRUCT_STOP   {yy.addMembers($1,$3);}
+    | classIdentifier STRUCT_START STRUCT_STOP           {}
     | classIdentifier STYLE_SEPARATOR alphaNumToken STRUCT_START members STRUCT_STOP {yy.setCssClass($1, $3);yy.addMembers($1,$5);}
+    | classIdentifier ANNOTATION_START alphaNumToken ANNOTATION_END {yy.addAnnotation($1, $3);}
+    | classIdentifier ANNOTATION_START alphaNumToken ANNOTATION_END STRUCT_START members STRUCT_STOP {yy.addAnnotation($1, $3);yy.addMembers($1,$6);}
+    | classIdentifier ANNOTATION_START alphaNumToken ANNOTATION_END STRUCT_START STRUCT_STOP {yy.addAnnotation($1, $3);}
     ;
 
 classIdentifier
@@ -296,8 +313,15 @@ classIdentifier
     | CLASS className classLabel                         {$$=$2; yy.addClass($2);yy.setClassLabel($2, $3);}
     ;
 
+
+emptyBody
+    :
+    | SPACE emptyBody
+    | NEWLINE emptyBody
+    ;
+
 annotationStatement
-    :ANNOTATION_START alphaNumToken ANNOTATION_END className  { yy.addAnnotation($4,$2); }
+    : ANNOTATION_START alphaNumToken ANNOTATION_END className  { yy.addAnnotation($4,$2); }
     ;
 
 members
@@ -320,8 +344,17 @@ relationStatement
     ;
 
 noteStatement
-    : NOTE_FOR className noteText  { yy.addNote($3, $2); }
-    | NOTE noteText                { yy.addNote($2); }
+    : NOTE_FOR className noteText  { $$ = yy.addNote($3, $2); }
+    | NOTE noteText                { $$ = yy.addNote($2); }
+    ;
+
+classDefStatement
+    : CLASSDEF classList stylesOpt {$$ = $CLASSDEF;yy.defineClass($classList,$stylesOpt);}
+    ;
+
+classList
+    : ALPHA { $$ = [$ALPHA]; }
+    | classList COMMA ALPHA = { $$ = $classList.concat([$ALPHA]); }
     ;
 
 direction

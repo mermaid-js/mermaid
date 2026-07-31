@@ -21,7 +21,7 @@ System(SystemAA, "Internet Banking System")
 
     const yy = c4.parser.yy;
 
-    const boundaries = yy.getBoundarys();
+    const boundaries = yy.getBoundaries();
     expect(boundaries.length).toBe(2);
     const boundary = boundaries[1];
 
@@ -49,7 +49,7 @@ ${macroName}(b1, "BankBoundary") {
 System(SystemAA, "Internet Banking System")
 }`);
 
-    expect(c4.parser.yy.getBoundarys()[1]).toMatchObject({
+    expect(c4.parser.yy.getBoundaries()[1]).toMatchObject({
       alias: 'b1',
     });
   });
@@ -60,7 +60,7 @@ ${macroName}(b1, "BankBoundary") {
 System(SystemAA, "Internet Banking System")
 }`);
 
-    expect(c4.parser.yy.getBoundarys()[1]).toMatchObject({
+    expect(c4.parser.yy.getBoundaries()[1]).toMatchObject({
       label: {
         text: 'BankBoundary',
       },
@@ -73,7 +73,7 @@ ${macroName}(b1, "", "company") {
 System(SystemAA, "Internet Banking System")
 }`);
 
-    expect(c4.parser.yy.getBoundarys()[1]).toMatchObject({
+    expect(c4.parser.yy.getBoundaries()[1]).toMatchObject({
       type: { text: 'company' },
     });
   });
@@ -84,7 +84,7 @@ ${macroName}(b1, $link="https://github.com/mermaidjs") {
 System(SystemAA, "Internet Banking System")
 }`);
 
-    expect(c4.parser.yy.getBoundarys()[1]).toMatchObject({
+    expect(c4.parser.yy.getBoundaries()[1]).toMatchObject({
       label: {
         text: {
           link: 'https://github.com/mermaidjs',
@@ -99,7 +99,7 @@ ${macroName}(b1, $tags="tag1,tag2") {
 System(SystemAA, "Internet Banking System")
 }`);
 
-    expect(c4.parser.yy.getBoundarys()[1]).toMatchObject({
+    expect(c4.parser.yy.getBoundaries()[1]).toMatchObject({
       label: {
         text: {
           tags: 'tag1,tag2',

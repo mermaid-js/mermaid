@@ -9,7 +9,7 @@ describe('diagram-orchestration', () => {
     expect(detectType('graph TD; A-->B')).toBe('flowchart');
   });
 
-  describe('proper diagram types should be detetced', () => {
+  describe('proper diagram types should be detected', () => {
     beforeAll(() => {
       addDiagrams();
     });
@@ -19,6 +19,7 @@ describe('diagram-orchestration', () => {
       { text: 'flowchart TD;', expected: 'flowchart-v2' },
       { text: 'flowchart-v2 TD;', expected: 'flowchart-v2' },
       { text: 'flowchart-elk TD;', expected: 'flowchart-elk' },
+      { text: 'swimlane-beta TD;', expected: 'swimlane' },
       { text: 'error', expected: 'error' },
       { text: 'C4Context;', expected: 'c4' },
       { text: 'classDiagram', expected: 'class' },
@@ -53,7 +54,7 @@ describe('diagram-orchestration', () => {
       expect(() =>
         detectType('flowchart TD; A-->B', { flowchart: { defaultRenderer: 'dagre-d3' } })
       ).toThrowErrorMatchingInlineSnapshot(
-        '"No diagram type detected matching given configuration for text: flowchart TD; A-->B"'
+        `[UnknownDiagramError: No diagram type detected matching given configuration for text: flowchart TD; A-->B]`
       );
 
       // graph & dagre-wrapper => flowchart-v2
@@ -70,6 +71,9 @@ describe('diagram-orchestration', () => {
       expect(detectType('flowchart TD; A-->B', { flowchart: { defaultRenderer: 'elk' } })).toBe(
         'flowchart-elk'
       );
+      expect(detectType('swimlane-beta TD; A-->B', { flowchart: { defaultRenderer: 'elk' } })).toBe(
+        'swimlane'
+      );
     });
 
     it('should not detect flowchart if pie contains flowchart', () => {
@@ -77,6 +81,42 @@ describe('diagram-orchestration', () => {
         detectType(`pie title: "flowchart"
       flowchart: 1 "pie" pie: 2 "pie"`)
       ).toBe('pie');
+    });
+
+    it('should detect proper diagram when defaultRenderer is elk for flowchart', () => {
+      expect(
+        detectType('mindmap\n  root\n    Photograph\n      Waterfall', {
+          flowchart: { defaultRenderer: 'elk' },
+        })
+      ).toBe('mindmap');
+      expect(
+        detectType(
+          `
+          classDiagram
+            class Person {
+              +String name
+              -Int id
+              #double age
+              +Text demographicProfile
+            }
+          `,
+          { flowchart: { defaultRenderer: 'elk' } }
+        )
+      ).toBe('class');
+      expect(
+        detectType(
+          `
+          erDiagram
+            p[Photograph] {
+              varchar(12) jobId
+              date dateCreated
+            }
+          `,
+          {
+            flowchart: { defaultRenderer: 'elk' },
+          }
+        )
+      ).toBe('er');
     });
   });
 });

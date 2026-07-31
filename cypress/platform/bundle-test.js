@@ -7,7 +7,7 @@ Power_Supply --> Transmitter_B
 Transmitter_A --> D
 Transmitter_B --> D`;
 
-let code2 = `gantt
+const code2 = `gantt
   dateFormat  YYYY-MM-DD
   title Adding GANTT diagram functionality to mermaid
   section A section
@@ -27,7 +27,7 @@ const code3 = `flowchart TD
 A(<img scr='https://iconscout.com/ms-icon-310x310.png' width='20' height='20' />)
 B(<b>Bold text!</b>)`;
 
-if (location.href.match('test-html-escaping')) {
+if (/test-html-escaping/.exec(location.href)) {
   code = code3;
 }
 

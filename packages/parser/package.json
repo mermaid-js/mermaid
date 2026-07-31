@@ -1,0 +1,50 @@
+{
+  "name": "@mermaid-js/parser",
+  "version": "1.2.0",
+  "description": "MermaidJS parser",
+  "author": "Yokozuna59",
+  "contributors": [
+    "Yokozuna59",
+    "Sidharth Vinod (https://sidharth.dev)"
+  ],
+  "homepage": "https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/parser/#readme",
+  "types": "dist/src/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/mermaid-parser.core.mjs",
+      "types": "./dist/src/index.d.ts"
+    }
+  },
+  "scripts": {
+    "clean": "rimraf dist src/language/generated",
+    "langium:generate": "langium generate",
+    "langium:watch": "langium generate --watch",
+    "prepack": "./scripts/prepack.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid.git",
+    "directory": "packages/parser"
+  },
+  "license": "MIT",
+  "keywords": [
+    "mermaid",
+    "parser",
+    "ast"
+  ],
+  "dependencies": {
+    "@chevrotain/types": "~11.1.2"
+  },
+  "devDependencies": {
+    "@microsoft/api-extractor": "^7.57.8",
+    "chevrotain": "~11.1.2",
+    "langium": "^4.0.3"
+  },
+  "files": [
+    "dist/"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

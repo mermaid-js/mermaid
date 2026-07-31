@@ -5,7 +5,7 @@
  * @see https://www.w3.org/TR/wai-aria-1.1/
  * @see https://www.w3.org/TR/svg-aam-1.0/
  */
-import type { D3Element } from './mermaidAPI.js';
+import type { D3Element } from './types.js';
 
 /**
  * SVG element role:

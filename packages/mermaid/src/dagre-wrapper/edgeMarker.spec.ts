@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import type { Mocked } from 'vitest';
 import type { SVG } from '../diagram-api/types.js';
 import { addEdgeMarkers } from './edgeMarker.js';

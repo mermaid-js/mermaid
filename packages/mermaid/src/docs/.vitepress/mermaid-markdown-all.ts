@@ -1,6 +1,6 @@
 import type { MarkdownRenderer } from 'vitepress';
 
-const MermaidExample = async (md: MarkdownRenderer) => {
+const MermaidExample = (md: MarkdownRenderer) => {
   const defaultRenderer = md.renderer.rules.fence;
 
   if (!defaultRenderer) {

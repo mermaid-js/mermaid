@@ -30,9 +30,7 @@ export const getCommonDb = () => {
 };
 
 const diagrams: Record<string, DiagramDefinition> = {};
-export interface Detectors {
-  [key: string]: DiagramDetector;
-}
+export type Detectors = Record<string, DiagramDetector>;
 
 /**
  * Registers the given diagram with Mermaid.
@@ -49,7 +47,7 @@ export const registerDiagram = (
   detector?: DiagramDetector
 ) => {
   if (diagrams[id]) {
-    throw new Error(`Diagram ${id} already registered.`);
+    log.warn(`Diagram with id ${id} already registered. Overwriting.`);
   }
   diagrams[id] = diagram;
   if (detector) {

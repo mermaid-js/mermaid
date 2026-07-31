@@ -41,7 +41,7 @@ In the `Code` panel, write or edit Mermaid code, and instantly `Preview` the ren
 
 Here is an example of Mermaid code and its rendered result:
 
-```mermaid
+```mermaid-example
 graph TD
     A[Enter Chart Definition] --> B(Preview)
     B --> C{decide}
@@ -119,7 +119,7 @@ And, here is the diagram view from the above example:
 
 ## 2. Using the Mermaid Chart Editor
 
-Available at the [Mermaid Chart](https://www.mermaidchart.com/) website.
+Available at the [Mermaid Chart](https://mermaid.ai/) website.
 
 Mermaid Chart is a web-based diagram editor that allows you to create and edit diagrams in your browser. It is built by the team behind Mermaid.
 
@@ -132,7 +132,7 @@ Features include:
 
 To learn more, visit the [Mermaid Chart page](/ecosystem/mermaid-chart.html) in the Ecosystem section of the documentation.
 
-Or go to the [Mermaid Chart website](https://www.mermaidchart.com/app/sign-up) to sign up for a Free account.
+Or go to the [Mermaid Chart website](https://mermaid.ai/app/sign-up) to sign up for a Free account.
 
 ## 3. Using Mermaid Plugins
 
@@ -146,13 +146,13 @@ For a list of Mermaid Plugins and Integrations, visit the [Integrations page](..
 
 Mermaid Chart plugins are available for:
 
-- [ChatGPT](https://docs.mermaidchart.com/plugins/chatgpt)
-- [JetBrains IDE](https://docs.mermaidchart.com/plugins/jetbrains-ide)
-- [Microsoft PowerPoint](https://docs.mermaidchart.com/plugins/microsoft-powerpoint)
-- [Microsoft Word](https://docs.mermaidchart.com/plugins/microsoft-word)
-- [Visual Studio Code](https://docs.mermaidchart.com/plugins/visual-studio-code)
+- [ChatGPT](https://mermaid.ai/docs/plugins/mermaid-chart-gpt)
+- [JetBrains IDE](https://mermaid.ai/docs/plugins/jetbrains-ide)
+- [Microsoft PowerPoint](https://mermaid.ai/docs/plugins/microsoft-powerpoint)
+- [Microsoft Word](https://mermaid.ai/docs/plugins/microsoft-word)
+- [Visual Studio Code](https://mermaid.ai/docs/plugins/visual-studio-code)
 
-To learn more, visit the [Mermaid Chart Plugins](https://www.mermaidchart.com/plugins) page.
+To learn more, visit the [Mermaid Chart Plugins](https://mermaid.ai/plugins) page.
 
 ### Native Mermaid Support
 
@@ -239,18 +239,18 @@ In this example, the `mermaidAPI` is being called through the `CDN`:
   <body>
     Here is one mermaid diagram:
     <pre class="mermaid">
-            graph TD 
-            A[Client] --> B[Load Balancer] 
-            B --> C[Server1] 
+            graph TD
+            A[Client] --> B[Load Balancer]
+            B --> C[Server1]
             B --> D[Server2]
     </pre>
 
     And here is another:
     <pre class="mermaid">
-            graph TD 
+            graph TD
             A[Client] -->|tcp_123| B
-            B(Load Balancer) 
-            B -->|tcp_456| C[Server1] 
+            B(Load Balancer)
+            B -->|tcp_456| C[Server1]
             B -->|tcp_456| D[Server2]
     </pre>
 
@@ -271,15 +271,15 @@ In this example, `mermaid.js` is referenced in `src` as a separate JavaScript fi
   </head>
   <body>
     <pre class="mermaid">
-            graph LR 
-            A --- B 
-            B-->C[fa:fa-ban forbidden] 
+            graph LR
+            A --- B
+            B-->C[fa:fa-ban forbidden]
             B-->D(fa:fa-spinner);
     </pre>
     <pre class="mermaid">
-            graph TD 
-            A[Client] --> B[Load Balancer] 
-            B --> C[Server1] 
+            graph TD
+            A[Client] --> B[Load Balancer]
+            B --> C[Server1]
             B --> D[Server2]
     </pre>
     <script type="module">

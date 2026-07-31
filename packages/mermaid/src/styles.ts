@@ -4,6 +4,10 @@ import type { DiagramStylesProvider } from './diagram-api/types.js';
 
 const themes: Record<string, DiagramStylesProvider> = {};
 
+export function cssStyleSheetToString(cssStyleSheet: CSSStyleSheet): string {
+  return [...cssStyleSheet.cssRules].map((rule) => rule.cssText).join('\n');
+}
+
 const getStyles = (
   type: string,
   userStyles: string,
@@ -14,11 +18,24 @@ const getStyles = (
     errorBkgColor: string;
     errorTextColor: string;
     lineColor: string;
-  } & FlowChartStyleOptions
+    useGradient?: boolean;
+    dropShadow?: string;
+    primaryBorderColor?: string;
+    compositeTitleBackground?: string;
+    THEME_COLOR_LIMIT?: number;
+    nodeBorder?: string;
+    mainBkg?: string;
+    strokeWidth?: number;
+    theme?: string;
+    look?: string;
+  } & FlowChartStyleOptions,
+  svgId: `${string}`
 ) => {
   let diagramStyles = '';
-  if (type in themes && themes[type as keyof typeof themes]) {
-    diagramStyles = themes[type as keyof typeof themes](options);
+  if (type in themes && themes[type]) {
+    // Pass svgId through options so diagram-specific style functions can use it
+    // (e.g., for gradient URL references like url(svgId-gradient)).
+    diagramStyles = themes[type]({ ...options, svgId });
   } else {
     log.warn(`No theme found for ${type}`);
   }
@@ -27,7 +44,28 @@ const getStyles = (
     font-size: ${options.fontSize};
     fill: ${options.textColor}
   }
-
+  @keyframes edge-animation-frame {
+    from {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes dash {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  & .edge-animation-slow {
+    stroke-dasharray: 9,5 !important;
+    stroke-dashoffset: 900;
+    animation: dash 50s linear infinite;
+    stroke-linecap: round;
+  }
+  & .edge-animation-fast {
+    stroke-dasharray: 9,5 !important;
+    stroke-dashoffset: 900;
+    animation: dash 20s linear infinite;
+    stroke-linecap: round;
+  }
   /* Classes common for multiple diagrams */
 
   & .error-icon {
@@ -39,7 +77,7 @@ const getStyles = (
   }
 
   & .edge-thickness-normal {
-    stroke-width: 2px;
+    stroke-width: ${(options.strokeWidth ?? 1) as number}px;
   }
   & .edge-thickness-thick {
     stroke-width: 3.5px
@@ -47,7 +85,10 @@ const getStyles = (
   & .edge-pattern-solid {
     stroke-dasharray: 0;
   }
-
+  & .edge-thickness-invisible {
+    stroke-width: 0;
+    fill: none;
+  }
   & .edge-pattern-dashed{
     stroke-dasharray: 3;
   }
@@ -67,8 +108,56 @@ const getStyles = (
     font-family: ${options.fontFamily};
     font-size: ${options.fontSize};
   }
+   & p {
+    margin: 0
+   }
 
   ${diagramStyles}
+  .node .neo-node {
+    stroke: ${options.nodeBorder};
+  }
+
+  [data-look="neo"].node rect, [data-look="neo"].cluster rect, [data-look="neo"].node polygon {
+    stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
+    filter: ${options.dropShadow ? options.dropShadow.replace('url(#drop-shadow)', `url(${svgId}-drop-shadow)`) : 'none'};
+  }
+  [data-look="neo"].swimlane.cluster rect {
+    filter: none;
+  }
+
+
+  [data-look="neo"].node path {
+    stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
+    stroke-width: ${(options.strokeWidth ?? 1) as number}px;
+  }
+
+  [data-look="neo"].node .outer-path {
+    filter: ${options.dropShadow ? options.dropShadow.replace('url(#drop-shadow)', `url(${svgId}-drop-shadow)`) : 'none'};
+  }
+
+  [data-look="neo"].node .neo-line path {
+    stroke: ${options.nodeBorder};
+    filter: none;
+  }
+
+  [data-look="neo"].node circle{
+    stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
+    filter: ${options.dropShadow ? options.dropShadow.replace('url(#drop-shadow)', `url(${svgId}-drop-shadow)`) : 'none'};
+  }
+
+  [data-look="neo"].node circle .state-start{
+    fill: #000000;
+  }
+
+  [data-look="neo"].icon-shape .icon {
+    fill: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
+    filter: ${options.dropShadow ? options.dropShadow.replace('url(#drop-shadow)', `url(${svgId}-drop-shadow)`) : 'none'};
+  }
+
+    [data-look="neo"].icon-shape .icon-neo path {
+    stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
+    filter: ${options.dropShadow ? options.dropShadow.replace('url(#drop-shadow)', `url(${svgId}-drop-shadow)`) : 'none'};
+  }
 
   ${userStyles}
 `;

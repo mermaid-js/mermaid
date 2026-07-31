@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -237,6 +237,17 @@
       actor John
       Alice-xJohn: Hello John, how are you?
       John--xAlice: Great!
+    </pre>
+
+    <hr />
+
+    <pre class="mermaid">
+    sequenceDiagram
+      participant Alice
+      participant Bob
+      Alice<<->>Bob: Hello!
+      Alice<<->>Bob: Wow, we said that at the same time!
+      Bob<<-->>Alice: Bidirectional Arrows are so cool
     </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';

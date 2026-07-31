@@ -1,29 +1,24 @@
 import type d3 from 'd3';
-import { scaleOrdinal, pie as d3pie, arc } from 'd3';
-import { log } from '../../logger.js';
-import { configureSvgSize } from '../../setupGraphViewbox.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { cleanAndMerge, parseFontSize } from '../../utils.js';
-import type { DrawDefinition, Group, SVG } from '../../diagram-api/types.js';
-import type { D3Sections, PieDB, Sections } from './pieTypes.js';
+import { arc, pie as d3pie, scaleOrdinal } from 'd3';
 import type { MermaidConfig, PieDiagramConfig } from '../../config.type.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
+import type { DrawDefinition, SVG, SVGGroup } from '../../diagram-api/types.js';
+import { log } from '../../logger.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
+import { cleanAndMerge, parseFontSize } from '../../utils.js';
+import type { D3Section, PieDB, Sections } from './pieTypes.js';
 
-const createPieArcs = (sections: Sections): d3.PieArcDatum<D3Sections>[] => {
-  // Compute the position of each group on the pie:
-  const pieData: D3Sections[] = Object.entries(sections)
-    .map((element: [string, number]): D3Sections => {
-      return {
-        label: element[0],
-        value: element[1],
-      };
-    })
-    .sort((a: D3Sections, b: D3Sections): number => {
-      return b.value - a.value;
-    });
-  const pie: d3.Pie<unknown, D3Sections> = d3pie<D3Sections>().value(
-    (d3Section: D3Sections): number => d3Section.value
-  );
+const createPieArcs = (sections: Sections): d3.PieArcDatum<D3Section>[] => {
+  const sum = [...sections.values()].reduce((acc, val) => acc + val, 0);
+
+  const pieData: D3Section[] = [...sections.entries()]
+    .map(([label, value]) => ({ label, value }))
+    .filter((d) => (d.value / sum) * 100 >= 1); // Remove values < 1%
+
+  const pie: d3.Pie<unknown, D3Section> = d3pie<D3Section>()
+    .value((d) => d.value)
+    .sort(null);
   return pie(pieData);
 };
 
@@ -46,36 +41,40 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   const height = 450;
   const pieWidth: number = height;
   const svg: SVG = selectSvgElement(id);
-  const group: Group = svg.append('g');
-  const sections: Sections = db.getSections();
+  const group: SVGGroup = svg.append('g');
   group.attr('transform', 'translate(' + pieWidth / 2 + ',' + height / 2 + ')');
 
   const { themeVariables } = globalConfig;
   let [outerStrokeWidth] = parseFontSize(themeVariables.pieOuterStrokeWidth);
   outerStrokeWidth ??= 2;
 
+  const legendPosition = pieConfig.legendPosition;
+
   const textPosition: number = pieConfig.textPosition;
+  const innerHole: number =
+    pieConfig.donutHole > 0 && pieConfig.donutHole <= 0.9 ? pieConfig.donutHole : 0;
   const radius: number = Math.min(pieWidth, height) / 2 - MARGIN;
   // Shape helper to build arcs:
-  const arcGenerator: d3.Arc<unknown, d3.PieArcDatum<D3Sections>> = arc<
-    d3.PieArcDatum<D3Sections>
-  >()
-    .innerRadius(0)
+  const arcGenerator: d3.Arc<unknown, d3.PieArcDatum<D3Section>> = arc<d3.PieArcDatum<D3Section>>()
+    .innerRadius(innerHole * radius)
     .outerRadius(radius);
-  const labelArcGenerator: d3.Arc<unknown, d3.PieArcDatum<D3Sections>> = arc<
-    d3.PieArcDatum<D3Sections>
+  const labelArcGenerator: d3.Arc<unknown, d3.PieArcDatum<D3Section>> = arc<
+    d3.PieArcDatum<D3Section>
   >()
     .innerRadius(radius * textPosition)
     .outerRadius(radius * textPosition);
 
-  group
+  const pie = group.append('g');
+
+  pie
     .append('circle')
     .attr('cx', 0)
     .attr('cy', 0)
     .attr('r', radius + outerStrokeWidth / 2)
     .attr('class', 'pieOuterCircle');
 
-  const arcs: d3.PieArcDatum<D3Sections>[] = createPieArcs(sections);
+  const sections: Sections = db.getSections();
+  const arcs: d3.PieArcDatum<D3Section>[] = createPieArcs(sections);
 
   const myGeneratedColors = [
     themeVariables.pie1,
@@ -91,42 +90,57 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     themeVariables.pie11,
     themeVariables.pie12,
   ];
+  let sum = 0;
+  sections.forEach((section) => {
+    sum += section;
+  });
+
+  // Filter out arcs that would render as 0%
+  const filteredArcs = arcs.filter((datum) => ((datum.data.value / sum) * 100).toFixed(0) !== '0');
+
   // Set the color scale
-  const color: d3.ScaleOrdinal<string, 12, never> = scaleOrdinal(myGeneratedColors);
+  const color: d3.ScaleOrdinal<string, 12, never> = scaleOrdinal(myGeneratedColors).domain([
+    ...sections.keys(),
+  ]);
 
   // Build the pie chart: each part of the pie is a path that we build using the arc function.
-  group
+  pie
     .selectAll('mySlices')
-    .data(arcs)
+    .data(filteredArcs)
     .enter()
     .append('path')
     .attr('d', arcGenerator)
-    .attr('fill', (datum: d3.PieArcDatum<D3Sections>) => {
+    .attr('fill', (datum: d3.PieArcDatum<D3Section>) => {
       return color(datum.data.label);
     })
-    .attr('class', 'pieCircle');
+    .attr('class', (datum: d3.PieArcDatum<D3Section>) => {
+      let className = 'pieCircle';
+      if (pieConfig.highlightSlice === 'hover') {
+        className += ' highlightedOnHover';
+      } else if (pieConfig.highlightSlice === datum.data.label) {
+        className += ' highlighted';
+      }
+      return className;
+    });
 
-  let sum = 0;
-  Object.keys(sections).forEach((key: string): void => {
-    sum += sections[key];
-  });
-  // Now add the percentage.
+  // Now add the section text.
   // Use the centroid method to get the best coordinates.
-  group
+  pie
     .selectAll('mySlices')
-    .data(arcs)
+    .data(filteredArcs)
     .enter()
     .append('text')
-    .text((datum: d3.PieArcDatum<D3Sections>): string => {
+    .text((datum: d3.PieArcDatum<D3Section>): string => {
       return ((datum.data.value / sum) * 100).toFixed(0) + '%';
     })
-    .attr('transform', (datum: d3.PieArcDatum<D3Sections>): string => {
+    .attr('transform', (datum: d3.PieArcDatum<D3Section>): string => {
+      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       return 'translate(' + labelArcGenerator.centroid(datum) + ')';
     })
     .style('text-anchor', 'middle')
     .attr('class', 'slice');
 
-  group
+  const titleText = group
     .append('text')
     .text(db.getDiagramTitle())
     .attr('x', 0)
@@ -134,38 +148,35 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .attr('class', 'pieTitleText');
 
   // Add the legends/annotations for each section
+  const allSectionData: D3Section[] = [...sections.entries()].map(([label, value]) => ({
+    label,
+    value,
+  }));
+
+  // Draw legend
   const legend = group
     .selectAll('.legend')
-    .data(color.domain())
+    .data(allSectionData)
     .enter()
     .append('g')
-    .attr('class', 'legend')
-    .attr('transform', (_datum, index: number): string => {
-      const height = LEGEND_RECT_SIZE + LEGEND_SPACING;
-      const offset = (height * color.domain().length) / 2;
-      const horizontal = 12 * LEGEND_RECT_SIZE;
-      const vertical = index * height - offset;
-      return 'translate(' + horizontal + ',' + vertical + ')';
-    });
+    .attr('class', 'legend');
 
   legend
     .append('rect')
     .attr('width', LEGEND_RECT_SIZE)
     .attr('height', LEGEND_RECT_SIZE)
-    .style('fill', color)
-    .style('stroke', color);
+    .style('fill', (d) => color(d.label))
+    .style('stroke', (d) => color(d.label));
 
   legend
-    .data(arcs)
     .append('text')
     .attr('x', LEGEND_RECT_SIZE + LEGEND_SPACING)
     .attr('y', LEGEND_RECT_SIZE - LEGEND_SPACING)
-    .text((datum: d3.PieArcDatum<D3Sections>): string => {
-      const { label, value } = datum.data;
+    .text((d) => {
       if (db.getShowData()) {
-        return `${label} [${value}]`;
+        return `${d.label} [${d.value}]`;
       }
-      return label;
+      return d.label;
     });
 
   const longestTextWidth = Math.max(
@@ -175,11 +186,83 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
       .map((node) => (node as Element)?.getBoundingClientRect().width ?? 0)
   );
 
-  const totalWidth = pieWidth + MARGIN + LEGEND_RECT_SIZE + LEGEND_SPACING + longestTextWidth;
+  let chartAndLegendHeight: number = height;
+  let chartAndLegendWidth: number = pieWidth + MARGIN;
 
-  // Set viewBox
-  svg.attr('viewBox', `0 0 ${totalWidth} ${height}`);
-  configureSvgSize(svg, height, totalWidth, pieConfig.useMaxWidth);
+  const legendHeight: number = LEGEND_RECT_SIZE + LEGEND_SPACING;
+  const totalLegendHeight: number = allSectionData.length * legendHeight;
+
+  switch (legendPosition) {
+    case 'center':
+      legend.attr('transform', (_datum, index: number): string => {
+        const offset: number = (legendHeight * allSectionData.length) / 2;
+        const horizontal: number = -longestTextWidth / 2 - (LEGEND_RECT_SIZE + LEGEND_SPACING);
+        const vertical: number = index * legendHeight - offset;
+        return 'translate(' + horizontal + ',' + vertical + ')';
+      });
+      break;
+    case 'top':
+      chartAndLegendHeight += totalLegendHeight;
+
+      legend.attr('transform', (_datum, index: number): string => {
+        const offset: number = radius;
+        const horizontal: number = -longestTextWidth / 2 - (LEGEND_RECT_SIZE + LEGEND_SPACING);
+        const vertical: number = index * legendHeight - offset;
+        return `translate(${horizontal}, ${vertical})`;
+      });
+      pie.attr('transform', (): string => {
+        return `translate(0, ${totalLegendHeight + legendHeight})`;
+      });
+      break;
+    case 'bottom':
+      chartAndLegendHeight += totalLegendHeight;
+
+      legend.attr('transform', (_datum, index: number): string => {
+        const offset: number = -radius - legendHeight;
+        const horizontal: number = -longestTextWidth / 2 - (LEGEND_RECT_SIZE + LEGEND_SPACING);
+        const vertical: number = index * legendHeight - offset;
+        return 'translate(' + horizontal + ',' + vertical + ')';
+      });
+      break;
+    case 'left':
+      chartAndLegendWidth += LEGEND_RECT_SIZE + LEGEND_SPACING + longestTextWidth;
+
+      legend.attr('transform', (_datum, index: number): string => {
+        const offset: number = (legendHeight * allSectionData.length) / 2;
+        const horizontal: number = -radius - (LEGEND_RECT_SIZE + LEGEND_SPACING);
+        const vertical: number = index * legendHeight - offset;
+        return 'translate(' + horizontal + ',' + vertical + ')';
+      });
+      pie.attr('transform', (): string => {
+        return `translate(${longestTextWidth + LEGEND_RECT_SIZE + LEGEND_SPACING}, 0)`;
+      });
+      break;
+    case 'right':
+    default:
+      chartAndLegendWidth += LEGEND_RECT_SIZE + LEGEND_SPACING + longestTextWidth;
+
+      legend.attr('transform', (_datum, index: number): string => {
+        const offset: number = (legendHeight * allSectionData.length) / 2;
+        const horizontal: number = 12 * LEGEND_RECT_SIZE;
+        const vertical: number = index * legendHeight - offset;
+        return 'translate(' + horizontal + ',' + vertical + ')';
+      });
+      break;
+  }
+
+  // Measure title width to ensure it's not clipped
+  const titleWidth = (titleText.node() as Element)?.getBoundingClientRect().width ?? 0;
+
+  // Title is centered at pieWidth/2 in SVG coords — expand viewBox to contain it
+  const titleLeft = pieWidth / 2 - titleWidth / 2;
+  const titleRight = pieWidth / 2 + titleWidth / 2;
+
+  const viewBoxX = Math.min(0, titleLeft);
+  const viewBoxRight = Math.max(chartAndLegendWidth, titleRight);
+  const totalWidth = viewBoxRight - viewBoxX;
+
+  svg.attr('viewBox', `${viewBoxX} 0 ${totalWidth} ${chartAndLegendHeight}`);
+  configureSvgSize(svg, chartAndLegendHeight, totalWidth, pieConfig.useMaxWidth);
 };
 
 export const renderer = { draw };

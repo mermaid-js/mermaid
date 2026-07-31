@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+  <mask
+    id="mask0_89_26596"
+    style="mask-type: alpha"
+    maskUnits="userSpaceOnUse"
+    x="0"
+    y="0"
+    width="20"
+    height="20"
+  >
+    <rect width="20" height="20" fill="currentColor" />
+  </mask>
+  <g mask="url(#mask0_89_26596)">
+    <path
+      d="M5 12H15V10.5H5V12ZM5 9.25H15V7.75H5V9.25ZM5 6.5H15V5H5V6.5ZM18 18L15 15H3.5C3.0875 15 2.73438 14.8531 2.44063 14.5594C2.14688 14.2656 2 13.9125 2 13.5V3.5C2 3.0875 2.14688 2.73438 2.44063 2.44063C2.73438 2.14688 3.0875 2 3.5 2H16.5C16.9125 2 17.2656 2.14688 17.5594 2.44063C17.8531 2.73438 18 3.0875 18 3.5V18ZM3.5 13.5H15.625L16.5 14.375V3.5H3.5V13.5Z"
+      fill="currentColor"
+    />
+  </g>
+</svg>

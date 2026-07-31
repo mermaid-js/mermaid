@@ -1,6 +1,5 @@
 import type { DiagramDefinition } from '../../diagram-api/types.js';
-// @ts-ignore: JISON doesn't support types
-import parser from './parser/pie.jison';
+import { parser } from './pieParser.js';
 import { db } from './pieDb.js';
 import styles from './pieStyles.js';
 import { renderer } from './pieRenderer.js';

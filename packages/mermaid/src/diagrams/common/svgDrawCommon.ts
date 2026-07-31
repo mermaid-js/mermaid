@@ -1,5 +1,7 @@
 import { sanitizeUrl } from '@braintree/sanitize-url';
-import type { Group, SVG } from '../../diagram-api/types.js';
+import { select } from 'd3';
+import type { SVG, SVGGroup } from '../../diagram-api/types.js';
+import { lineBreakRegex } from './common.js';
 import type {
   Bound,
   D3ImageElement,
@@ -11,9 +13,8 @@ import type {
   TextData,
   TextObject,
 } from './commonTypes.js';
-import { lineBreakRegex } from './common.js';
 
-export const drawRect = (element: SVG | Group, rectData: RectData): D3RectElement => {
+export const drawRect = (element: SVG | SVGGroup, rectData: RectData): D3RectElement => {
   const rectElement: D3RectElement = element.append('rect');
   rectElement.attr('x', rectData.x);
   rectElement.attr('y', rectData.y);
@@ -24,8 +25,12 @@ export const drawRect = (element: SVG | Group, rectData: RectData): D3RectElemen
   if (rectData.name) {
     rectElement.attr('name', rectData.name);
   }
-  rectData.rx !== undefined && rectElement.attr('rx', rectData.rx);
-  rectData.ry !== undefined && rectElement.attr('ry', rectData.ry);
+  if (rectData.rx) {
+    rectElement.attr('rx', rectData.rx);
+  }
+  if (rectData.ry) {
+    rectElement.attr('ry', rectData.ry);
+  }
 
   if (rectData.attrs !== undefined) {
     for (const attrKey in rectData.attrs) {
@@ -33,7 +38,9 @@ export const drawRect = (element: SVG | Group, rectData: RectData): D3RectElemen
     }
   }
 
-  rectData.class !== undefined && rectElement.attr('class', rectData.class);
+  if (rectData.class) {
+    rectElement.attr('class', rectData.class);
+  }
 
   return rectElement;
 };
@@ -44,7 +51,7 @@ export const drawRect = (element: SVG | Group, rectData: RectData): D3RectElemen
  * @param element - Diagram (reference for bounds)
  * @param bounds - Shape of the rectangle
  */
-export const drawBackgroundRect = (element: SVG | Group, bounds: Bound): void => {
+export const drawBackgroundRect = (element: SVG | SVGGroup, bounds: Bound): void => {
   const rectData: RectData = {
     x: bounds.startx,
     y: bounds.starty,
@@ -58,7 +65,7 @@ export const drawBackgroundRect = (element: SVG | Group, bounds: Bound): void =>
   rectElement.lower();
 };
 
-export const drawText = (element: SVG | Group, textData: TextData): D3TextElement => {
+export const drawText = (element: SVG | SVGGroup, textData: TextData): D3TextElement => {
   const nText: string = textData.text.replace(lineBreakRegex, ' ');
 
   const textElem: D3TextElement = element.append('text');
@@ -67,7 +74,9 @@ export const drawText = (element: SVG | Group, textData: TextData): D3TextElemen
   textElem.attr('class', 'legend');
 
   textElem.style('text-anchor', textData.anchor);
-  textData.class !== undefined && textElem.attr('class', textData.class);
+  if (textData.class) {
+    textElem.attr('class', textData.class);
+  }
 
   const tspan: D3TSpanElement = textElem.append('tspan');
   tspan.attr('x', textData.x + textData.textMargin * 2);
@@ -76,7 +85,7 @@ export const drawText = (element: SVG | Group, textData: TextData): D3TextElemen
   return textElem;
 };
 
-export const drawImage = (elem: SVG | Group, x: number, y: number, link: string): void => {
+export const drawImage = (elem: SVG | SVGGroup, x: number, y: number, link: string): void => {
   const imageElement: D3ImageElement = elem.append('image');
   imageElement.attr('x', x);
   imageElement.attr('y', y);
@@ -85,7 +94,7 @@ export const drawImage = (elem: SVG | Group, x: number, y: number, link: string)
 };
 
 export const drawEmbeddedImage = (
-  element: SVG | Group,
+  element: SVG | SVGGroup,
   x: number,
   y: number,
   link: string
@@ -126,4 +135,25 @@ export const getTextObj = (): TextObject => {
     tspan: true,
   };
   return testObject;
+};
+
+export const createTooltip = () => {
+  let tooltipElem = select<HTMLDivElement, unknown>('.mermaidTooltip');
+  if (tooltipElem.empty()) {
+    tooltipElem = select('body')
+      .append('div')
+      .attr('class', 'mermaidTooltip')
+      .style('opacity', 0)
+      .style('position', 'absolute')
+      .style('text-align', 'center')
+      .style('max-width', '200px')
+      .style('padding', '2px')
+      .style('font-size', '12px')
+      .style('background', '#ffffde')
+      .style('border', '1px solid #333')
+      .style('border-radius', '2px')
+      .style('pointer-events', 'none')
+      .style('z-index', '100');
+  }
+  return tooltipElem;
 };

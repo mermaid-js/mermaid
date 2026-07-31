@@ -1,3 +1,9 @@
+import * as configApi from '../../config.js';
+import defaultConfig from '../../defaultConfig.js';
+import type { SVGGroup } from '../../diagram-api/types.js';
+import { getThemeVariables } from '../../themes/theme-default.js';
+import { cleanAndMerge } from '../../utils.js';
+import { sanitizeText } from '../common/common.js';
 import {
   clear as commonClear,
   getAccDescription,
@@ -7,11 +13,6 @@ import {
   setAccTitle,
   setDiagramTitle,
 } from '../common/commonDb.js';
-import * as configApi from '../../config.js';
-import defaultConfig from '../../defaultConfig.js';
-import { getThemeVariables } from '../../themes/theme-default.js';
-import { cleanAndMerge } from '../../utils.js';
-import { sanitizeText } from '../common/common.js';
 import { XYChartBuilder } from './chartBuilder/index.js';
 import type {
   DrawableElem,
@@ -21,11 +22,10 @@ import type {
   XYChartThemeConfig,
 } from './chartBuilder/interfaces.js';
 import { isBandAxisData, isLinearAxisData } from './chartBuilder/interfaces.js';
-import type { Group } from '../../diagram-api/types.js';
 
 let plotIndex = 0;
 
-let tmpSVGGroup: Group;
+let tmpSVGGroup: SVGGroup;
 
 let xyChartConfig: XYChartConfig = getChartDefaultConfig();
 let xyChartThemeConfig: XYChartThemeConfig = getChartDefaultThemeConfig();
@@ -75,7 +75,7 @@ function textSanitizer(text: string) {
   return sanitizeText(text.trim(), config);
 }
 
-function setTmpSVGG(SVGG: Group) {
+function setTmpSVGG(SVGG: SVGGroup) {
   tmpSVGGroup = SVGG;
 }
 function setOrientation(orientation: string) {
@@ -132,6 +132,14 @@ function transformDataWithoutCategory(data: number[]): SimplePlotDataType {
     const prevMaxValue = isLinearAxisData(xyChartData.xAxis) ? xyChartData.xAxis.max : -Infinity;
     setXAxisRangeData(Math.min(prevMinValue, 1), Math.max(prevMaxValue, data.length));
   }
+
+  // When a band axis is defined, truncate data to match the number of categories
+  // to prevent orphaned bars/lines from rendering in unlabeled chart space.
+  // This also ensures the Y-axis range is computed only from visible data points.
+  if (isBandAxisData(xyChartData.xAxis) && data.length > xyChartData.xAxis.categories.length) {
+    data = data.slice(0, xyChartData.xAxis.categories.length);
+  }
+
   if (!hasSetYAxis) {
     setYAxisRangeFromPlotData(data);
   }
@@ -143,7 +151,7 @@ function transformDataWithoutCategory(data: number[]): SimplePlotDataType {
   if (isLinearAxisData(xyChartData.xAxis)) {
     const min = xyChartData.xAxis.min;
     const max = xyChartData.xAxis.max;
-    const step = (max - min + 1) / data.length;
+    const step = (max - min) / (data.length - 1);
     const categories: string[] = [];
     for (let i = min; i <= max; i += step) {
       categories.push(`${i}`);
@@ -158,19 +166,29 @@ function getPlotColorFromPalette(plotIndex: number): string {
   return plotColorPalette[plotIndex === 0 ? 0 : plotIndex % plotColorPalette.length];
 }
 
-function setLineData(title: NormalTextType, data: number[]) {
-  const plotData = transformDataWithoutCategory(data);
+interface ParsedDataPoint {
+  value: number;
+  label: string;
+}
+
+function setLineData(title: NormalTextType, data: ParsedDataPoint[]) {
+  const values = data.map((d) => d.value);
+  const labels = data.map((d) => (d.label ? textSanitizer(d.label) : ''));
+  const plotData = transformDataWithoutCategory(values);
+  const hasAnyLabel = labels.some((l) => l !== '');
   xyChartData.plots.push({
     type: 'line',
     strokeFill: getPlotColorFromPalette(plotIndex),
     strokeWidth: 2,
     data: plotData,
+    ...(hasAnyLabel ? { pointLabels: labels } : {}),
   });
   plotIndex++;
 }
 
-function setBarData(title: NormalTextType, data: number[]) {
-  const plotData = transformDataWithoutCategory(data);
+function setBarData(title: NormalTextType, data: ParsedDataPoint[]) {
+  const values = data.map((d) => d.value);
+  const plotData = transformDataWithoutCategory(values);
   xyChartData.plots.push({
     type: 'bar',
     fill: getPlotColorFromPalette(plotIndex),
@@ -193,6 +211,10 @@ function getChartThemeConfig() {
 
 function getChartConfig() {
   return xyChartConfig;
+}
+
+function getXYChartData() {
+  return xyChartData;
 }
 
 const clear = function () {
@@ -226,4 +248,5 @@ export default {
   setTmpSVGG,
   getChartThemeConfig,
   getChartConfig,
+  getXYChartData,
 };

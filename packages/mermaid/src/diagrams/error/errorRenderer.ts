@@ -1,5 +1,5 @@
+import type { SVG, SVGGroup } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
-import type { Group, SVG } from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 
@@ -13,7 +13,7 @@ import { configureSvgSize } from '../../setupGraphViewbox.js';
 export const draw = (_text: string, id: string, version: string) => {
   log.debug('rendering svg for syntax error\n');
   const svg: SVG = selectSvgElement(id);
-  const g: Group = svg.append('g');
+  const g: SVGGroup = svg.append('g');
 
   svg.attr('viewBox', '0 0 2412 512');
   configureSvgSize(svg, 100, 512, true);

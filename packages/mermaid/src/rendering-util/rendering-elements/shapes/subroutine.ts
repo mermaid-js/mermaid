@@ -1,0 +1,98 @@
+import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
+import intersect from '../intersect/index.js';
+import type { Node } from '../../types.js';
+import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import rough from 'roughjs';
+import { insertPolygonShape } from './insertPolygonShape.js';
+import type { D3Selection } from '../../../types.js';
+import { handleUndefinedAttr } from '../../../utils.js';
+
+export const createSubroutinePathD = (
+  x: number,
+  y: number,
+  width: number,
+  height: number
+): string => {
+  const offset = 8;
+  return [
+    `M${x - offset},${y}`,
+    `H${x + width + offset}`,
+    `V${y + height}`,
+    `H${x - offset}`,
+    `V${y}`,
+    'M',
+    x,
+    y,
+    'H',
+    x + width,
+    'V',
+    y + height,
+    'H',
+    x,
+    'Z',
+  ].join(' ');
+};
+
+// width of the frame on the left and right side of the shape
+const FRAME_WIDTH = 8;
+
+export async function subroutine<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
+  const { labelStyles, nodeStyles } = styles2String(node);
+  node.labelStyle = labelStyles;
+
+  const nodePadding = node?.padding ?? 8;
+  const labelPaddingX = node.look === 'neo' ? 28 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
+
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+
+  const totalWidth = (node?.width ?? bbox.width) + 2 * FRAME_WIDTH + labelPaddingX;
+  const totalHeight = (node?.height ?? bbox.height) + labelPaddingY;
+
+  const w = totalWidth - 2 * FRAME_WIDTH;
+  const h = totalHeight;
+  const x = -totalWidth / 2;
+  const y = -totalHeight / 2;
+
+  const points = [
+    { x: 0, y: 0 },
+    { x: w, y: 0 },
+    { x: w, y: -h },
+    { x: 0, y: -h },
+    { x: 0, y: 0 },
+    { x: -8, y: 0 },
+    { x: w + 8, y: 0 },
+    { x: w + 8, y: -h },
+    { x: -8, y: -h },
+    { x: -8, y: 0 },
+  ];
+
+  if (node.look === 'handDrawn') {
+    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
+    const rc = rough.svg(shapeSvg);
+    const options = userNodeOverrides(node, {});
+
+    const roughNode = rc.rectangle(x, y, w + 16, h, options);
+    const l1 = rc.line(x + FRAME_WIDTH, y, x + FRAME_WIDTH, y + h, options);
+    const l2 = rc.line(x + FRAME_WIDTH + w, y, x + FRAME_WIDTH + w, y + h, options);
+
+    shapeSvg.insert(() => l1, ':first-child');
+    shapeSvg.insert(() => l2, ':first-child');
+    const rect = shapeSvg.insert(() => roughNode, ':first-child');
+    const { cssStyles } = node;
+    rect.attr('class', 'basic label-container').attr('style', handleUndefinedAttr(cssStyles));
+    updateNodeBounds(node, rect);
+  } else {
+    const el = insertPolygonShape(shapeSvg, w, h, points);
+    if (nodeStyles) {
+      el.attr('style', nodeStyles);
+    }
+    updateNodeBounds(node, el);
+  }
+
+  node.intersect = function (point) {
+    return intersect.polygon(node, points, point);
+  };
+
+  return shapeSvg;
+}

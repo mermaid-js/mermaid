@@ -21,7 +21,11 @@ sequenceDiagram
     mermaid.initialize({
       theme: 'base',
       themeVariables: {},
-      startOnLoad: true,
+      startOnLoad: false,
     });
+    await mermaid.run();
+    if (window.Cypress) {
+      window.rendered = true;
+    }
   </script>
 </html>

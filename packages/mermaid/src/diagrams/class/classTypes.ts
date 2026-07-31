@@ -5,7 +5,9 @@ export interface ClassNode {
   id: string;
   type: string;
   label: string;
-  cssClasses: string[];
+  shape: 'classBox';
+  text: string;
+  cssClasses: string;
   methods: ClassMember[];
   members: ClassMember[];
   annotations: string[];
@@ -16,6 +18,7 @@ export interface ClassNode {
   linkTarget?: string;
   haveCallback?: boolean;
   tooltip?: string;
+  look?: string;
 }
 
 export type Visibility = '#' | '+' | '~' | '-' | '';
@@ -30,6 +33,7 @@ export class ClassMember {
   cssStyle!: string;
   memberType!: 'method' | 'attribute';
   visibility!: Visibility;
+  text: string;
   /**
    * denote if static or to determine which css class to apply to the node
    * @defaultValue ''
@@ -50,6 +54,7 @@ export class ClassMember {
     this.memberType = memberType;
     this.visibility = '';
     this.classifier = '';
+    this.text = '';
     const sanitizedInput = sanitizeText(input, getConfig());
     this.parseMember(sanitizedInput);
   }
@@ -77,7 +82,7 @@ export class ClassMember {
 
     if (this.memberType === 'method') {
       const methodRegEx = /([#+~-])?(.+)\((.*)\)([\s$*])?(.*)([$*])?/;
-      const match = input.match(methodRegEx);
+      const match = methodRegEx.exec(input);
       if (match) {
         const detectedVisibility = match[1] ? match[1].trim() : '';
 
@@ -85,14 +90,14 @@ export class ClassMember {
           this.visibility = detectedVisibility as Visibility;
         }
 
-        this.id = match[2].trim();
+        this.id = match[2];
         this.parameters = match[3] ? match[3].trim() : '';
         potentialClassifier = match[4] ? match[4].trim() : '';
         this.returnType = match[5] ? match[5].trim() : '';
 
         if (potentialClassifier === '') {
           const lastChar = this.returnType.substring(this.returnType.length - 1);
-          if (lastChar.match(/[$*]/)) {
+          if (/[$*]/.exec(lastChar)) {
             potentialClassifier = lastChar;
             this.returnType = this.returnType.substring(0, this.returnType.length - 1);
           }
@@ -107,7 +112,7 @@ export class ClassMember {
         this.visibility = firstChar as Visibility;
       }
 
-      if (lastChar.match(/[$*]/)) {
+      if (/[$*]/.exec(lastChar)) {
         potentialClassifier = lastChar;
       }
 
@@ -118,6 +123,14 @@ export class ClassMember {
     }
 
     this.classifier = potentialClassifier;
+    // Preserve one space only
+    this.id = this.id.startsWith(' ') ? ' ' + this.id.trim() : this.id.trim();
+
+    const combinedText = `${this.visibility ? '\\' + this.visibility : ''}${parseGenericTypes(this.id)}${this.memberType === 'method' ? `(${parseGenericTypes(this.parameters)})${this.returnType ? ' : ' + parseGenericTypes(this.returnType) : ''}` : ''}`;
+    this.text = combinedText.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+    if (this.text.startsWith('\\&lt;')) {
+      this.text = this.text.replace('\\&lt;', '~');
+    }
   }
 
   parseClassifier() {
@@ -136,9 +149,11 @@ export interface ClassNote {
   id: string;
   class: string;
   text: string;
+  index: number;
+  parent?: string;
 }
 
-export type ClassRelation = {
+export interface ClassRelation {
   id1: string;
   id2: string;
   relationTitle1: string;
@@ -152,14 +167,36 @@ export type ClassRelation = {
     type2: number;
     lineType: number;
   };
-};
+}
+
+export interface Interface {
+  id: string;
+  label: string;
+  classId: string;
+}
 
 export interface NamespaceNode {
   id: string;
+  label: string;
   domId: string;
   classes: ClassMap;
+  notes: ClassNoteMap;
   children: NamespaceMap;
+  parent?: string;
+  /**
+   * True if this namespace was explicitly declared by the user (e.g. `namespace A.B { ... }`).
+   * False for intermediate ancestors auto-created when parsing a dotted name.
+   * Used by compact (non-hierarchical) rendering mode to only emit declared namespaces.
+   */
+  explicit: boolean;
 }
 
-export type ClassMap = Record<string, ClassNode>;
-export type NamespaceMap = Record<string, NamespaceNode>;
+export interface StyleClass {
+  id: string;
+  styles: string[];
+  textStyles: string[];
+}
+
+export type ClassMap = Map<string, ClassNode>;
+export type ClassNoteMap = Map<string, ClassNote>;
+export type NamespaceMap = Map<string, NamespaceNode>;

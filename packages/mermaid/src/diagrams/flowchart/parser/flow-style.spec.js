@@ -1,6 +1,8 @@
-import flowDb from '../flowDb.js';
-import flow from './flow.jison';
+import { vi } from 'vitest';
+import { FlowDB } from '../flowDb.js';
+import flow from './flowParser.ts';
 import { setConfig } from '../../../config.js';
+import { log } from '../../../logger.js';
 
 setConfig({
   securityLevel: 'strict',
@@ -8,7 +10,7 @@ setConfig({
 
 describe('[Style] when parsing', () => {
   beforeEach(function () {
-    flow.parser.yy = flowDb;
+    flow.parser.yy = new FlowDB();
     flow.parser.yy.clear();
     flow.parser.yy.setGen('gen-2');
   });
@@ -20,10 +22,8 @@ describe('[Style] when parsing', () => {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    const style = vert['Q'].styles[0];
-
-    expect(vert['Q'].styles.length).toBe(1);
-    expect(vert['Q'].styles[0]).toBe('background:#fff');
+    expect(vert.get('Q').styles.length).toBe(1);
+    expect(vert.get('Q').styles[0]).toBe('background:#fff');
   });
 
   it('should handle multiple styles for a vortex', function () {
@@ -32,9 +32,9 @@ describe('[Style] when parsing', () => {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['R'].styles.length).toBe(2);
-    expect(vert['R'].styles[0]).toBe('background:#fff');
-    expect(vert['R'].styles[1]).toBe('border:1px solid red');
+    expect(vert.get('R').styles.length).toBe(2);
+    expect(vert.get('R').styles[0]).toBe('background:#fff');
+    expect(vert.get('R').styles[1]).toBe('border:1px solid red');
   });
 
   it('should handle multiple styles in a graph', function () {
@@ -45,11 +45,11 @@ describe('[Style] when parsing', () => {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['S'].styles.length).toBe(1);
-    expect(vert['T'].styles.length).toBe(2);
-    expect(vert['S'].styles[0]).toBe('background:#aaa');
-    expect(vert['T'].styles[0]).toBe('background:#bbb');
-    expect(vert['T'].styles[1]).toBe('border:1px solid red');
+    expect(vert.get('S').styles.length).toBe(1);
+    expect(vert.get('T').styles.length).toBe(2);
+    expect(vert.get('S').styles[0]).toBe('background:#aaa');
+    expect(vert.get('T').styles[0]).toBe('background:#bbb');
+    expect(vert.get('T').styles[1]).toBe('border:1px solid red');
   });
 
   it('should handle styles and graph definitions in a graph', function () {
@@ -60,11 +60,11 @@ describe('[Style] when parsing', () => {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['S'].styles.length).toBe(1);
-    expect(vert['T'].styles.length).toBe(2);
-    expect(vert['S'].styles[0]).toBe('background:#aaa');
-    expect(vert['T'].styles[0]).toBe('background:#bbb');
-    expect(vert['T'].styles[1]).toBe('border:1px solid red');
+    expect(vert.get('S').styles.length).toBe(1);
+    expect(vert.get('T').styles.length).toBe(2);
+    expect(vert.get('S').styles[0]).toBe('background:#aaa');
+    expect(vert.get('T').styles[0]).toBe('background:#bbb');
+    expect(vert.get('T').styles[1]).toBe('border:1px solid red');
   });
 
   it('should handle styles and graph definitions in a graph', function () {
@@ -73,9 +73,9 @@ describe('[Style] when parsing', () => {
 
     const vert = flow.parser.yy.getVertices();
 
-    expect(vert['T'].styles.length).toBe(2);
-    expect(vert['T'].styles[0]).toBe('background:#bbb');
-    expect(vert['T'].styles[1]).toBe('border:1px solid red');
+    expect(vert.get('T').styles.length).toBe(2);
+    expect(vert.get('T').styles[0]).toBe('background:#bbb');
+    expect(vert.get('T').styles[1]).toBe('border:1px solid red');
   });
 
   it('should keep node label text (if already defined) when a style is applied', function () {
@@ -85,10 +85,10 @@ describe('[Style] when parsing', () => {
 
     const vert = flow.parser.yy.getVertices();
 
-    expect(vert['A'].text).toBe('');
-    expect(vert['B'].text).toBe('Test');
-    expect(vert['C'].text).toBe('C');
-    expect(vert['D'].text).toBe('D');
+    expect(vert.get('A').text).toBe('');
+    expect(vert.get('B').text).toBe('Test');
+    expect(vert.get('C').text).toBe('C');
+    expect(vert.get('D').text).toBe('D');
   });
 
   it('should be possible to declare a class', function () {
@@ -99,9 +99,9 @@ describe('[Style] when parsing', () => {
 
     const classes = flow.parser.yy.getClasses();
 
-    expect(classes['exClass'].styles.length).toBe(2);
-    expect(classes['exClass'].styles[0]).toBe('background:#bbb');
-    expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
+    expect(classes.get('exClass').styles.length).toBe(2);
+    expect(classes.get('exClass').styles[0]).toBe('background:#bbb');
+    expect(classes.get('exClass').styles[1]).toBe('border:1px solid red');
   });
 
   it('should be possible to declare multiple classes', function () {
@@ -111,13 +111,13 @@ describe('[Style] when parsing', () => {
 
     const classes = flow.parser.yy.getClasses();
 
-    expect(classes['firstClass'].styles.length).toBe(2);
-    expect(classes['firstClass'].styles[0]).toBe('background:#bbb');
-    expect(classes['firstClass'].styles[1]).toBe('border:1px solid red');
+    expect(classes.get('firstClass').styles.length).toBe(2);
+    expect(classes.get('firstClass').styles[0]).toBe('background:#bbb');
+    expect(classes.get('firstClass').styles[1]).toBe('border:1px solid red');
 
-    expect(classes['secondClass'].styles.length).toBe(2);
-    expect(classes['secondClass'].styles[0]).toBe('background:#bbb');
-    expect(classes['secondClass'].styles[1]).toBe('border:1px solid red');
+    expect(classes.get('secondClass').styles.length).toBe(2);
+    expect(classes.get('secondClass').styles[0]).toBe('background:#bbb');
+    expect(classes.get('secondClass').styles[1]).toBe('border:1px solid red');
   });
 
   it('should be possible to declare a class with a dot in the style', function () {
@@ -128,9 +128,9 @@ describe('[Style] when parsing', () => {
 
     const classes = flow.parser.yy.getClasses();
 
-    expect(classes['exClass'].styles.length).toBe(2);
-    expect(classes['exClass'].styles[0]).toBe('background:#bbb');
-    expect(classes['exClass'].styles[1]).toBe('border:1.5px solid red');
+    expect(classes.get('exClass').styles.length).toBe(2);
+    expect(classes.get('exClass').styles[0]).toBe('background:#bbb');
+    expect(classes.get('exClass').styles[1]).toBe('border:1.5px solid red');
   });
   it('should be possible to declare a class with a space in the style', function () {
     const res = flow.parser.parse(
@@ -140,9 +140,9 @@ describe('[Style] when parsing', () => {
 
     const classes = flow.parser.yy.getClasses();
 
-    expect(classes['exClass'].styles.length).toBe(2);
-    expect(classes['exClass'].styles[0]).toBe('background:  #bbb');
-    expect(classes['exClass'].styles[1]).toBe('border:1.5px solid red');
+    expect(classes.get('exClass').styles.length).toBe(2);
+    expect(classes.get('exClass').styles[0]).toBe('background:  #bbb');
+    expect(classes.get('exClass').styles[1]).toBe('border:1.5px solid red');
   });
   it('should be possible to apply a class to a vertex', function () {
     let statement = '';
@@ -156,9 +156,9 @@ describe('[Style] when parsing', () => {
 
     const classes = flow.parser.yy.getClasses();
 
-    expect(classes['exClass'].styles.length).toBe(2);
-    expect(classes['exClass'].styles[0]).toBe('background:#bbb');
-    expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
+    expect(classes.get('exClass').styles.length).toBe(2);
+    expect(classes.get('exClass').styles[0]).toBe('background:#bbb');
+    expect(classes.get('exClass').styles[1]).toBe('border:1px solid red');
   });
   it('should be possible to apply a class to a vertex with an id containing _', function () {
     let statement = '';
@@ -172,9 +172,9 @@ describe('[Style] when parsing', () => {
 
     const classes = flow.parser.yy.getClasses();
 
-    expect(classes['exClass'].styles.length).toBe(2);
-    expect(classes['exClass'].styles[0]).toBe('background:#bbb');
-    expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
+    expect(classes.get('exClass').styles.length).toBe(2);
+    expect(classes.get('exClass').styles[0]).toBe('background:#bbb');
+    expect(classes.get('exClass').styles[1]).toBe('border:1px solid red');
   });
   it('should be possible to apply a class to a vertex directly', function () {
     let statement = '';
@@ -187,10 +187,10 @@ describe('[Style] when parsing', () => {
     const vertices = flow.parser.yy.getVertices();
     const classes = flow.parser.yy.getClasses();
 
-    expect(classes['exClass'].styles.length).toBe(2);
-    expect(vertices['b'].classes[0]).toBe('exClass');
-    expect(classes['exClass'].styles[0]).toBe('background:#bbb');
-    expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
+    expect(classes.get('exClass').styles.length).toBe(2);
+    expect(vertices.get('b').classes[0]).toBe('exClass');
+    expect(classes.get('exClass').styles[0]).toBe('background:#bbb');
+    expect(classes.get('exClass').styles[1]).toBe('border:1px solid red');
   });
 
   it('should be possible to apply a class to a vertex directly : usecase A[text].class ', function () {
@@ -204,10 +204,10 @@ describe('[Style] when parsing', () => {
     const vertices = flow.parser.yy.getVertices();
     const classes = flow.parser.yy.getClasses();
 
-    expect(classes['exClass'].styles.length).toBe(2);
-    expect(vertices['b'].classes[0]).toBe('exClass');
-    expect(classes['exClass'].styles[0]).toBe('background:#bbb');
-    expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
+    expect(classes.get('exClass').styles.length).toBe(2);
+    expect(vertices.get('b').classes[0]).toBe('exClass');
+    expect(classes.get('exClass').styles[0]).toBe('background:#bbb');
+    expect(classes.get('exClass').styles[1]).toBe('border:1px solid red');
   });
 
   it('should be possible to apply a class to a vertex directly : usecase A[text].class-->B[test2] ', function () {
@@ -221,10 +221,10 @@ describe('[Style] when parsing', () => {
     const vertices = flow.parser.yy.getVertices();
     const classes = flow.parser.yy.getClasses();
 
-    expect(classes['exClass'].styles.length).toBe(2);
-    expect(vertices['A'].classes[0]).toBe('exClass');
-    expect(classes['exClass'].styles[0]).toBe('background:#bbb');
-    expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
+    expect(classes.get('exClass').styles.length).toBe(2);
+    expect(vertices.get('A').classes[0]).toBe('exClass');
+    expect(classes.get('exClass').styles[0]).toBe('background:#bbb');
+    expect(classes.get('exClass').styles[1]).toBe('border:1px solid red');
   });
 
   it('should be possible to apply a class to a vertex directly 2', function () {
@@ -238,10 +238,10 @@ describe('[Style] when parsing', () => {
     const vertices = flow.parser.yy.getVertices();
     const classes = flow.parser.yy.getClasses();
 
-    expect(classes['exClass'].styles.length).toBe(2);
-    expect(vertices['b'].classes[0]).toBe('exClass');
-    expect(classes['exClass'].styles[0]).toBe('background:#bbb');
-    expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
+    expect(classes.get('exClass').styles.length).toBe(2);
+    expect(vertices.get('b').classes[0]).toBe('exClass');
+    expect(classes.get('exClass').styles[0]).toBe('background:#bbb');
+    expect(classes.get('exClass').styles[1]).toBe('border:1px solid red');
   });
   it('should be possible to apply a class to a comma separated list of vertices', function () {
     let statement = '';
@@ -256,11 +256,11 @@ describe('[Style] when parsing', () => {
     const classes = flow.parser.yy.getClasses();
     const vertices = flow.parser.yy.getVertices();
 
-    expect(classes['exClass'].styles.length).toBe(2);
-    expect(classes['exClass'].styles[0]).toBe('background:#bbb');
-    expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
-    expect(vertices['a'].classes[0]).toBe('exClass');
-    expect(vertices['b'].classes[0]).toBe('exClass');
+    expect(classes.get('exClass').styles.length).toBe(2);
+    expect(classes.get('exClass').styles[0]).toBe('background:#bbb');
+    expect(classes.get('exClass').styles[1]).toBe('border:1px solid red');
+    expect(vertices.get('a').classes[0]).toBe('exClass');
+    expect(vertices.get('b').classes[0]).toBe('exClass');
   });
 
   it('should handle style definitions with more then 1 digit in a row', function () {
@@ -354,6 +354,23 @@ describe('[Style] when parsing', () => {
     expect(edges[0].type).toBe('arrow_point');
   });
 
+  it('should warn when style targets a non-existent node', function () {
+    const warnSpy = vi.spyOn(log, 'warn');
+    const res = flow.parser.parse('graph TD;\nAA-->BB;\nstyle A fill:#f00;');
+
+    const vert = flow.parser.yy.getVertices();
+
+    // Node A should still be created for backward compat, but a warning should be logged
+    expect(vert.get('A')).toBeDefined();
+    expect(vert.get('A').styles[0]).toBe('fill:#f00');
+    // AA and BB exist from the edge definition
+    expect(vert.get('AA')).toBeDefined();
+    expect(vert.get('BB')).toBeDefined();
+    // A warning should have been logged about the non-existent node
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('A'));
+    warnSpy.mockRestore();
+  });
+
   it('should handle multiple vertices with style', function () {
     const res = flow.parser.parse(`
     graph TD
@@ -364,9 +381,9 @@ describe('[Style] when parsing', () => {
 
     const vert = flow.parser.yy.getVertices();
 
-    expect(vert['A'].classes.length).toBe(0);
-    expect(vert['B'].classes[0]).toBe('C1');
-    expect(vert['D'].classes[0]).toBe('C1');
-    expect(vert['E'].classes[0]).toBe('C2');
+    expect(vert.get('A').classes.length).toBe(0);
+    expect(vert.get('B').classes[0]).toBe('C1');
+    expect(vert.get('D').classes[0]).toBe('C1');
+    expect(vert.get('E').classes[0]).toBe('C2');
   });
 });

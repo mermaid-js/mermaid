@@ -4,6 +4,8 @@ node_modules/
 coverage/
 .idea/
 .pnpm-store/
+.instructions/
+.mcp.json
 
 dist
 v8-compile-cache-0
@@ -35,7 +37,7 @@ cypress/snapshots/
 .tsbuildinfo
 tsconfig.tsbuildinfo
 
-knsv*.html
+#knsv*.html
 local*.html
 stats/
 
@@ -44,6 +46,35 @@ stats/
 .pnpm-store
 .nyc_output
 
+.env
+
 demos/dev/**
 !/demos/dev/example.html
+!/demos/dev/reload.js
+!/demos/dev/architecture-randomize.html
 tsx-0/**
+node-compile-cache/
+vite.config.ts.timestamp-*
+
+# autogenereated by langium-cli
+generated/
+
+
+/CLAUDE.md
+/AGENTS.md
+/assistant/
+/.claude/
+packages/mermaid/src/diagrams/CLAUDE.md
+packages/parser/CLAUDE.md
+AGENTS.mermaid.md
+CLAUDE.mermaid.md
+.envrc
+AGENTS.alana.md
+CLAUDE.alana.md
+mermaid-parser.tar.gz
+.gitnexus
+.agents/
+.ralph/
+.tmp
+.fallow/
+.playwright-mcp/

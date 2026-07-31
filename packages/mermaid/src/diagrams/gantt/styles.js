@@ -1,7 +1,7 @@
 const getStyles = (options) =>
   `
   .mermaid-main-font {
-    font-family: var(--mermaid-font-family, "trebuchet ms", verdana, arial, sans-serif);
+        font-family: ${options.fontFamily};
   }
 
   .exclude-range {
@@ -45,7 +45,7 @@ const getStyles = (options) =>
 
   .sectionTitle {
     text-anchor: start;
-    font-family: var(--mermaid-font-family, "trebuchet ms", verdana, arial, sans-serif);
+    font-family: ${options.fontFamily};
   }
 
 
@@ -86,13 +86,13 @@ const getStyles = (options) =>
 
   .taskText {
     text-anchor: middle;
-    font-family: var(--mermaid-font-family, "trebuchet ms", verdana, arial, sans-serif);
+    font-family: ${options.fontFamily};
   }
 
   .taskTextOutsideRight {
     fill: ${options.taskTextDarkColor};
     text-anchor: start;
-    font-family: var(--mermaid-font-family, "trebuchet ms", verdana, arial, sans-serif);
+    font-family: ${options.fontFamily};
   }
 
   .taskTextOutsideLeft {
@@ -191,6 +191,19 @@ const getStyles = (options) =>
     fill: ${options.taskTextDarkColor} !important;
   }
 
+  /* Done task text displayed outside the bar sits against the diagram background,
+     not against the done-task bar, so it must use the outside/contrast color. */
+  .doneText0.taskTextOutsideLeft,
+  .doneText0.taskTextOutsideRight,
+  .doneText1.taskTextOutsideLeft,
+  .doneText1.taskTextOutsideRight,
+  .doneText2.taskTextOutsideLeft,
+  .doneText2.taskTextOutsideRight,
+  .doneText3.taskTextOutsideLeft,
+  .doneText3.taskTextOutsideRight {
+    fill: ${options.taskTextOutsideColor} !important;
+  }
+
 
   /* Tasks on the critical line */
 
@@ -237,6 +250,28 @@ const getStyles = (options) =>
     fill: ${options.taskTextDarkColor} !important;
   }
 
+  /* Done-crit task text outside the bar — same reasoning as doneText above. */
+  .doneCritText0.taskTextOutsideLeft,
+  .doneCritText0.taskTextOutsideRight,
+  .doneCritText1.taskTextOutsideLeft,
+  .doneCritText1.taskTextOutsideRight,
+  .doneCritText2.taskTextOutsideLeft,
+  .doneCritText2.taskTextOutsideRight,
+  .doneCritText3.taskTextOutsideLeft,
+  .doneCritText3.taskTextOutsideRight {
+    fill: ${options.taskTextOutsideColor} !important;
+  }
+
+  .vert {
+    stroke: ${options.vertLineColor};
+  }
+
+  .vertText {
+    font-size: 15px;
+    text-anchor: middle;
+    fill: ${options.vertLineColor} !important;
+  }
+
   .activeCritText0,
   .activeCritText1,
   .activeCritText2,
@@ -248,7 +283,7 @@ const getStyles = (options) =>
     text-anchor: middle;
     font-size: 18px;
     fill: ${options.titleColor || options.textColor};
-    font-family: var(--mermaid-font-family, "trebuchet ms", verdana, arial, sans-serif);
+    font-family: ${options.fontFamily};
   }
 `;
 

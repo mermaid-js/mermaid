@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { addToRender } from './flowChartShapes.js';
 
 describe('flowchart shapes', function () {

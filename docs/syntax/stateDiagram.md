@@ -160,7 +160,7 @@ In a real world use of state diagrams you often end up with diagrams that are mu
 have several internal states. These are called composite states in this terminology.
 
 In order to define a composite state you need to use the state keyword followed by an id and the body of the composite
-state between {}. See the example below:
+state between {}. You can name a composite state on a separate line just like a simple state. See the example below:
 
 ```mermaid-example
 stateDiagram-v2
@@ -168,6 +168,14 @@ stateDiagram-v2
     state First {
         [*] --> second
         second --> [*]
+    }
+
+    [*] --> NamedComposite
+    NamedComposite: Another Composite
+    state NamedComposite {
+        [*] --> namedSimple
+        namedSimple --> [*]
+        namedSimple: Another simple
     }
 ```
 
@@ -177,6 +185,14 @@ stateDiagram-v2
     state First {
         [*] --> second
         second --> [*]
+    }
+
+    [*] --> NamedComposite
+    NamedComposite: Another Composite
+    state NamedComposite {
+        [*] --> namedSimple
+        namedSimple --> [*]
+        namedSimple: Another simple
     }
 ```
 
@@ -262,7 +278,7 @@ stateDiagram-v2
     }
 ```
 
-_You can not define transitions between internal states belonging to different composite states_
+_You cannot define transitions between internal states belonging to different composite states_
 
 ## Choice
 
@@ -421,9 +437,7 @@ stateDiagram
 
 ## Comments
 
-Comments can be entered within a state diagram chart, which will be ignored by the parser. Comments need to be on their
-own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next
-newline will be treated as a comment, including any diagram syntax
+Comments can be entered within a state diagram chart, which will be ignored by the parser. Comments must be prefaced with `%%` (double percent signs) and any text after their start to the next newline will be treated as a comment, including any diagram syntax. They can be on their own line or at the end of a statement.
 
 ```mermaid-example
 stateDiagram-v2
@@ -454,8 +468,8 @@ state or states in the diagram.
 
 **These are the current limitations with state diagram classDefs:**
 
-1.  Cannot be applied to start or end states
-2.  Cannot be applied to or within composite states
+1. Cannot be applied to start or end states
+2. Cannot be applied to or within composite states
 
 _These are in development and will be available in a future version._
 
@@ -467,7 +481,9 @@ a _[valid CSS property name](https://www.w3.org/TR/CSS/#properties)_ followed by
 
 Here is an example of a classDef with just one property-value pair:
 
-        classDef movement font-style:italic;
+```txt
+classDef movement font-style:italic;
+```
 
 where
 
@@ -478,7 +494,9 @@ If you want to have more than one _property-value pair_ then you put a comma (`,
 
 Here is an example with three property-value pairs:
 
-        classDef badBadEvent fill:#f00,color:white,font-weight:bold,stroke-width:2px,stroke:yellow
+```txt
+classDef badBadEvent fill:#f00,color:white,font-weight:bold,stroke-width:2px,stroke:yellow
+```
 
 where
 
@@ -493,16 +511,16 @@ where
 
 There are two ways to apply a `classDef` style to a state:
 
-1.  use the `class` keyword to apply a classDef style to one or more states in a single statement, or
-2.  use the `:::` operator to apply a classDef style to a state as it is being used in a transition statement (e.g. with an arrow
-    to/from another state)
+1. use the `class` keyword to apply a classDef style to one or more states in a single statement, or
+2. use the `:::` operator to apply a classDef style to a state as it is being used in a transition statement (e.g. with an arrow
+   to/from another state)
 
 #### 1. `class` statement
 
 A `class` statement tells Mermaid to apply the named classDef to one or more classes. The form is:
 
 ```txt
-    class [one or more state names, separated by commas] [name of a style defined with classDef]
+class [one or more state names, separated by commas] [name of a style defined with classDef]
 ```
 
 Here is an example applying the `badBadEvent` style to a state named `Crash`:

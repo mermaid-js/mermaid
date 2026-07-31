@@ -1,39 +1,50 @@
+/* eslint-disable no-console */
 import DefaultTheme from 'vitepress/theme';
-import './custom.css';
-// @ts-ignore
-import Mermaid from './Mermaid.vue';
-// @ts-ignore
 import Contributors from '../components/Contributors.vue';
-// @ts-ignore
+import EditorSelectionModal from '../components/EditorSelectionModal.vue';
 import HomePage from '../components/HomePage.vue';
-// @ts-ignore
+import LandingIntentModal from '../components/LandingIntentModal.vue';
 import TopBar from '../components/TopBar.vue';
+import './custom.css';
+import Mermaid from './Mermaid.vue';
+import OssHomeHeroNameClipApplier from './OssHomeHeroNameClipApplier.js';
 import { getRedirect } from './redirect.js';
-import { h } from 'vue';
-import Theme from 'vitepress/theme';
-import '../style/main.css';
+import Tooltip from './Tooltip.vue';
+// @ts-ignore Type not available
 import 'uno.css';
 import type { EnhanceAppContext } from 'vitepress';
+import Theme from 'vitepress/theme';
+import { h } from 'vue';
+import '../style/main.css';
+import { initPlausible } from './plausible.js';
 
 export default {
   ...DefaultTheme,
   Layout() {
     return h(Theme.Layout, null, {
-      // Keeping this as comment as it took a lot of time to figure out how to add a component to the top bar.
-      'home-hero-before': () => h(TopBar),
       'home-features-after': () => h(HomePage),
+      'home-hero-before': () => h(TopBar),
+      'home-hero-after': () => h(OssHomeHeroNameClipApplier),
+      'doc-before': () => h(TopBar),
+      'layout-bottom': () => h(Tooltip),
+      'layout-top': () => [h(EditorSelectionModal), h(LandingIntentModal)],
     });
   },
   enhanceApp({ app, router }: EnhanceAppContext) {
+    if (typeof window !== 'undefined') {
+      void initPlausible();
+    }
+
     // register global components
     app.component('Mermaid', Mermaid);
     app.component('Contributors', Contributors);
+
     router.onBeforeRouteChange = (to) => {
       try {
         const url = new URL(window.location.origin + to);
         const newPath = getRedirect(url);
         if (newPath) {
-          console.log(`Redirecting to ${newPath} from ${window.location}`);
+          console.log(`Redirecting to ${newPath} from ${window.location.toString()}`);
           // router.go isn't loading the ID properly.
           window.location.href = `/${newPath}`;
         }

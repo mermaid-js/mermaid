@@ -6,10 +6,6 @@
  */
 
 /**
- * Configuration options to pass to the `dompurify` library.
- */
-export type DOMPurifyConfiguration = import('dompurify').Config;
-/**
  * JavaScript function that returns a `FontConfig`.
  *
  * By default, these return the appropriate `*FontSize`, `*FontFamily`, `*FontWeight`
@@ -51,6 +47,18 @@ export type SankeyLinkColor = 'source' | 'target' | 'gradient';
  */
 export type SankeyNodeAlignment = 'left' | 'right' | 'center' | 'justify';
 /**
+ * Configuration options to pass to the `dompurify` library.
+ */
+export type DOMPurifyConfiguration = import('dompurify').Config;
+/**
+ * The style of labels in the sankey diagram.
+ *
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "SankeyLabelStyle".
+ */
+export type SankeyLabelStyle = 'legacy' | 'outlined';
+/**
  * The font size to use
  */
 export type CSSFontSize = string | number;
@@ -61,9 +69,36 @@ export interface MermaidConfig {
    * You may also use `themeCSS` to override this value.
    *
    */
-  theme?: string | 'default' | 'forest' | 'dark' | 'neutral' | 'null';
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
   themeVariables?: any;
   themeCSS?: string;
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
+  /**
+   * Defines the seed to be used when using handDrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.
+   *
+   */
+  handDrawnSeed?: number;
+  /**
+   * Defines which layout algorithm to use for rendering the diagram.
+   *
+   */
+  layout?: string;
   /**
    * The maximum allowed size of the users text diagram
    */
@@ -73,7 +108,46 @@ export interface MermaidConfig {
    *
    */
   maxEdges?: number;
+  elk?: {
+    /**
+     * Elk specific option that allows edges to share path where it convenient. It can make for pretty diagrams but can also make it harder to read the diagram.
+     *
+     */
+    mergeEdges?: boolean;
+    /**
+     * Elk specific option affecting how nodes are placed.
+     *
+     */
+    nodePlacementStrategy?: 'SIMPLE' | 'NETWORK_SIMPLEX' | 'LINEAR_SEGMENTS' | 'BRANDES_KOEPF';
+    /**
+     * This strategy decides how to find cycles in the graph and deciding which edges need adjustment to break loops.
+     *
+     */
+    cycleBreakingStrategy?:
+      | 'GREEDY'
+      | 'DEPTH_FIRST'
+      | 'INTERACTIVE'
+      | 'MODEL_ORDER'
+      | 'GREEDY_MODEL_ORDER';
+    /**
+     * The node order given by the model does not change to produce a better layout. E.g. if node A is before node B in the model this is not changed during crossing minimization. This assumes that the node model order is already respected before crossing minimization. This can be achieved by setting considerModelOrder.strategy to NODES_AND_EDGES.
+     *
+     */
+    forceNodeModelOrder?: boolean;
+    /**
+     * Preserves the order of nodes and edges in the model file if this does not lead to additional edge crossings. Depending on the strategy this is not always possible since the node and edge order might be conflicting.
+     *
+     */
+    considerModelOrder?: 'NONE' | 'NODES_AND_EDGES' | 'PREFER_EDGES' | 'PREFER_NODES';
+  };
   darkMode?: boolean;
+  /**
+   * Flag for setting whether or not a html tag should be used for rendering labels on nodes and edges.
+   * **Note:** Diagram-specific `htmlLabels` settings (e.g., `flowchart.htmlLabels`) are deprecated.
+   * Use this root-level `htmlLabels` setting instead. The root-level `htmlLabels` takes precedence
+   * over any diagram-specific settings.
+   *
+   */
   htmlLabels?: boolean;
   /**
    * Specifies the font to be used in the rendered diagrams.
@@ -87,26 +161,11 @@ export interface MermaidConfig {
    * This option decides the amount of logging to be used by mermaid.
    *
    */
-  logLevel?:
-    | number
-    | string
-    | 0
-    | 2
-    | 1
-    | 'trace'
-    | 'debug'
-    | 'info'
-    | 'warn'
-    | 'error'
-    | 'fatal'
-    | 3
-    | 4
-    | 5
-    | undefined;
+  logLevel?: 'trace' | 0 | 'debug' | 1 | 'info' | 2 | 'warn' | 3 | 'error' | 4 | 'fatal' | 5;
   /**
    * Level of trust for parsed diagram
    */
-  securityLevel?: string | 'strict' | 'loose' | 'antiscript' | 'sandbox' | undefined;
+  securityLevel?: 'strict' | 'loose' | 'antiscript' | 'sandbox';
   /**
    * Dictates whether mermaid starts on Page load
    */
@@ -119,10 +178,7 @@ export interface MermaidConfig {
   arrowMarkerAbsolute?: boolean;
   /**
    * This option controls which `currentConfig` keys are considered secure and
-   * can only be changed via call to `mermaidAPI.initialize`.
-   * Calls to `mermaidAPI.reinitialize` cannot make changes to the secure keys
-   * in the current `currentConfig`.
-   *
+   * can only be changed via call to `mermaid.initialize`.
    * This prevents malicious graph directives from overriding a site's default security.
    *
    */
@@ -135,6 +191,13 @@ export interface MermaidConfig {
    *
    */
   legacyMathML?: boolean;
+  /**
+   * This option forces Mermaid to rely on KaTeX's own stylesheet for rendering MathML. Due to differences between OS
+   * fonts and browser's MathML implementation, this option is recommended if consistent rendering is important.
+   * If set to true, ignores legacyMathML.
+   *
+   */
+  forceLegacyMathML?: boolean;
   /**
    * This option controls if the generated ids of nodes in the SVG are
    * generated randomly or based on a seed.
@@ -154,6 +217,7 @@ export interface MermaidConfig {
    */
   deterministicIDSeed?: string;
   flowchart?: FlowchartDiagramConfig;
+  swimlane?: SwimlaneDiagramConfig;
   sequence?: SequenceDiagramConfig;
   gantt?: GanttDiagramConfig;
   journey?: JourneyDiagramConfig;
@@ -165,23 +229,129 @@ export interface MermaidConfig {
   quadrantChart?: QuadrantChartConfig;
   xyChart?: XYChartConfig;
   requirement?: RequirementDiagramConfig;
+  architecture?: ArchitectureDiagramConfig;
   mindmap?: MindmapDiagramConfig;
+  ishikawa?: IshikawaDiagramConfig;
+  kanban?: KanbanDiagramConfig;
   gitGraph?: GitGraphDiagramConfig;
   c4?: C4DiagramConfig;
   sankey?: SankeyDiagramConfig;
+  packet?: PacketDiagramConfig;
   block?: BlockDiagramConfig;
+  eventmodeling?: EventModelingDiagramConfig;
+  treeView?: TreeViewDiagramConfig;
+  radar?: RadarDiagramConfig;
+  venn?: VennDiagramConfig;
+  'wardley-beta'?: WardleyDiagramConfig;
+  cynefin?: CynefinDiagramConfig;
+  railroad?: RailroadDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
+  markdownAutoWrap?: boolean;
+  /**
+   * Suppresses inserting 'Syntax error' diagram in the DOM.
+   * This is useful when you want to control how to handle syntax errors in your application.
+   *
+   */
+  suppressErrorRendering?: boolean;
 }
 /**
- * The object containing configurations specific for block diagrams.
+ * The object containing configurations specific for flowcharts
  *
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "BlockDiagramConfig".
+ * via the `definition` "FlowchartDiagramConfig".
  */
-export interface BlockDiagramConfig extends BaseDiagramConfig {
+export interface FlowchartDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Margin top for the text over the diagram
+   */
+  titleTopMargin?: number;
+  /**
+   * Defines a top/bottom margin for subgraph titles
+   *
+   */
+  subGraphTitleMargin?: {
+    top?: number;
+    bottom?: number;
+  };
+  arrowMarkerAbsolute?: boolean;
+  /**
+   * The amount of padding around the diagram as a whole so that embedded
+   * diagrams have margins, expressed in pixels.
+   *
+   */
+  diagramPadding?: number;
+  /**
+   * @deprecated
+   * **DEPRECATED: Use global `htmlLabels` instead.**
+   *
+   * Flag for setting whether or not a html tag should be used for rendering labels on nodes and edges.
+   * This property is deprecated.
+   * Please use the global `htmlLabels` configuration instead.
+   *
+   */
+  htmlLabels?: boolean | null;
+  /**
+   * Defines the spacing between nodes on the same level
+   *
+   * Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs,
+   * and the vertical spacing for LR as well as RL graphs.
+   *
+   */
+  nodeSpacing?: number;
+  /**
+   * Defines the spacing between nodes on different levels
+   *
+   * Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs,
+   * and the vertical spacing for LR as well as RL graphs.
+   *
+   */
+  rankSpacing?: number;
+  /**
+   * Defines how mermaid renders curves for flowcharts.
+   *
+   */
+  curve?:
+    | 'basis'
+    | 'bumpX'
+    | 'bumpY'
+    | 'cardinal'
+    | 'catmullRom'
+    | 'linear'
+    | 'monotoneX'
+    | 'monotoneY'
+    | 'natural'
+    | 'step'
+    | 'stepAfter'
+    | 'stepBefore'
+    | 'rounded';
+  /**
+   * Represents the padding between the labels and the shape
+   *
+   * **Only used in new experimental rendering.**
+   *
+   */
   padding?: number;
+  /**
+   * Decides which rendering engine that is to be used for the rendering.
+   *
+   */
+  defaultRenderer?: 'dagre-d3' | 'dagre-wrapper' | 'elk';
+  /**
+   * Width of nodes where text is wrapped.
+   *
+   * When using markdown strings the text is wrapped automatically, this
+   * value sets the max width of a text before it continues on a new line.
+   *
+   */
+  wrappingWidth?: number;
+  /**
+   * If true, subgraphs without explicit direction will inherit the global graph direction
+   * (e.g., LR, TB, RL, BT). Defaults to false to preserve legacy layout behavior.
+   *
+   */
+  inheritDir?: boolean;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
@@ -196,6 +366,937 @@ export interface BaseDiagramConfig {
    *
    */
   useMaxWidth?: boolean;
+}
+/**
+ * The object containing configurations specific for the swimlanes diagram type.
+ *
+ * Swimlanes reuses the flowchart renderer and flowchart config for shared
+ * options (curve, htmlLabels, spacing, …); this block holds the knobs that
+ * only affect the swimlanes layout pipeline.
+ *
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "SwimlaneDiagramConfig".
+ */
+export interface SwimlaneDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Renders edge crossings as small arcs ("hops") or visible gaps so that
+   * overlapping edges are easier to read. Set to `false` to disable. Edges
+   * rendered as curves are skipped to avoid corrupting the geometry.
+   *
+   */
+  lineHops?: boolean | ('arc' | 'gap');
+  /**
+   * Ignores edges that cross swimlane boundaries during swimlane layer
+   * assignment. This can improve rank quality for diagrams with many
+   * cross-lane links.
+   *
+   */
+  ignoreCrossLaneEdges?: boolean;
+  /**
+   * Enables a crossing-aware rank optimization pass for swimlane layouts.
+   *
+   */
+  optimizeRanksByCrossings?: boolean;
+  /**
+   * Automatically reorders top-level swimlanes with a deterministic
+   * weighted-linear-arrangement heuristic. Disabled by default because
+   * source swimlane order can carry semantic meaning.
+   *
+   */
+  automaticLaneOrdering?: boolean;
+}
+/**
+ * The object containing configurations specific for sequence diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "SequenceDiagramConfig".
+ */
+export interface SequenceDiagramConfig extends BaseDiagramConfig {
+  arrowMarkerAbsolute?: boolean;
+  hideUnusedParticipants?: boolean;
+  /**
+   * Width of the activation rect
+   */
+  activationWidth?: number;
+  /**
+   * Margin to the right and left of the sequence diagram
+   */
+  diagramMarginX?: number;
+  /**
+   * Margin to the over and under the sequence diagram
+   */
+  diagramMarginY?: number;
+  /**
+   * Margin between actors
+   */
+  actorMargin?: number;
+  /**
+   * Width of actor boxes
+   */
+  width?: number;
+  /**
+   * Height of actor boxes
+   */
+  height?: number;
+  /**
+   * Margin around loop boxes
+   */
+  boxMargin?: number;
+  /**
+   * Margin around the text in loop/alt/opt boxes
+   */
+  boxTextMargin?: number;
+  /**
+   * Margin around notes
+   */
+  noteMargin?: number;
+  /**
+   * Space between messages.
+   */
+  messageMargin?: number;
+  /**
+   * Multiline message alignment
+   */
+  messageAlign?: 'left' | 'center' | 'right';
+  /**
+   * Mirror actors under diagram
+   *
+   */
+  mirrorActors?: boolean;
+  /**
+   * forces actor popup menus to always be visible (to support E2E testing).
+   *
+   */
+  forceMenus?: boolean;
+  /**
+   * Prolongs the edge of the diagram downwards.
+   *
+   * Depending on css styling this might need adjustment.
+   *
+   */
+  bottomMarginAdj?: number;
+  /**
+   * Curved Arrows become Right Angles
+   *
+   * This will display arrows that start and begin at the same node as
+   * right angles, rather than as curves.
+   *
+   */
+  rightAngles?: boolean;
+  /**
+   * This will show the node numbers
+   */
+  showSequenceNumbers?: boolean;
+  /**
+   * This sets the font size of the actor's description
+   */
+  actorFontSize?: string | number;
+  /**
+   * This sets the font family of the actor's description
+   */
+  actorFontFamily?: string;
+  /**
+   * This sets the font weight of the actor's description
+   */
+  actorFontWeight?: string | number;
+  /**
+   * This sets the font size of actor-attached notes
+   */
+  noteFontSize?: string | number;
+  /**
+   * This sets the font family of actor-attached notes
+   */
+  noteFontFamily?: string;
+  /**
+   * This sets the font weight of actor-attached notes
+   */
+  noteFontWeight?: string | number;
+  /**
+   * This sets the text alignment of actor-attached notes
+   */
+  noteAlign?: 'left' | 'center' | 'right';
+  /**
+   * This sets the font size of actor messages
+   */
+  messageFontSize?: string | number;
+  /**
+   * This sets the font family of actor messages
+   */
+  messageFontFamily?: string;
+  /**
+   * This sets the font weight of actor messages
+   */
+  messageFontWeight?: string | number;
+  /**
+   * This sets the auto-wrap state for the diagram
+   */
+  wrap?: boolean;
+  /**
+   * This sets the auto-wrap padding for the diagram (sides only)
+   */
+  wrapPadding?: number;
+  /**
+   * This sets the width of the loop-box (loop, alt, opt, par)
+   */
+  labelBoxWidth?: number;
+  /**
+   * This sets the height of the loop-box (loop, alt, opt, par)
+   */
+  labelBoxHeight?: number;
+  messageFont?: FontCalculator;
+  noteFont?: FontCalculator;
+  actorFont?: FontCalculator;
+}
+/**
+ * The object containing configurations specific for gantt diagrams
+ *
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "GanttDiagramConfig".
+ */
+export interface GanttDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Margin top for the text over the diagram
+   */
+  titleTopMargin?: number;
+  /**
+   * The height of the bars in the graph
+   */
+  barHeight?: number;
+  /**
+   * The margin between the different activities in the gantt diagram
+   */
+  barGap?: number;
+  /**
+   * Margin between title and gantt diagram and between axis and gantt diagram.
+   *
+   */
+  topPadding?: number;
+  /**
+   * The space allocated for the section name to the right of the activities
+   *
+   */
+  rightPadding?: number;
+  /**
+   * The space allocated for the section name to the left of the activities
+   *
+   */
+  leftPadding?: number;
+  /**
+   * Vertical starting position of the grid lines
+   */
+  gridLineStartPadding?: number;
+  /**
+   * Font size
+   */
+  fontSize?: number;
+  /**
+   * Font size for sections
+   */
+  sectionFontSize?: string | number;
+  /**
+   * The number of alternating section styles
+   */
+  numberSectionStyles?: number;
+  /**
+   * Date/time format of the axis
+   *
+   * This might need adjustment to match your locale and preferences.
+   *
+   */
+  axisFormat?: string;
+  /**
+   * axis ticks
+   *
+   * Pattern is:
+   *
+   * ```javascript
+   * /^([1-9][0-9]*)(millisecond|second|minute|hour|day|week|month)$/
+   * ```
+   *
+   */
+  tickInterval?: string;
+  /**
+   * When this flag is set, date labels will be added to the top of the chart
+   *
+   */
+  topAxis?: boolean;
+  /**
+   * Controls the display mode.
+   *
+   */
+  displayMode?: '' | 'compact';
+  /**
+   * On which day a week-based interval should start
+   *
+   */
+  weekday?: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+}
+/**
+ * The object containing configurations specific for journey diagrams
+ *
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "JourneyDiagramConfig".
+ */
+export interface JourneyDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Margin to the right and left of the c4 diagram, must be a positive value.
+   *
+   */
+  diagramMarginX?: number;
+  /**
+   * Margin to the over and under the c4 diagram, must be a positive value.
+   *
+   */
+  diagramMarginY?: number;
+  /**
+   * Margin between actors
+   */
+  leftMargin?: number;
+  /**
+   * Maximum width of actor labels
+   */
+  maxLabelWidth?: number;
+  /**
+   * Width of actor boxes
+   */
+  width?: number;
+  /**
+   * Height of actor boxes
+   */
+  height?: number;
+  /**
+   * Margin around loop boxes
+   */
+  boxMargin?: number;
+  /**
+   * Margin around the text in loop/alt/opt boxes
+   */
+  boxTextMargin?: number;
+  /**
+   * Margin around notes
+   */
+  noteMargin?: number;
+  /**
+   * Space between messages.
+   */
+  messageMargin?: number;
+  /**
+   * Multiline message alignment
+   */
+  messageAlign?: 'left' | 'center' | 'right';
+  /**
+   * Prolongs the edge of the diagram downwards.
+   *
+   * Depending on css styling this might need adjustment.
+   *
+   */
+  bottomMarginAdj?: number;
+  /**
+   * Curved Arrows become Right Angles
+   *
+   * This will display arrows that start and begin at the same node as
+   * right angles, rather than as curves.
+   *
+   */
+  rightAngles?: boolean;
+  taskFontSize?: string | number;
+  taskFontFamily?: string;
+  taskMargin?: number;
+  /**
+   * Width of activation box
+   */
+  activationWidth?: number;
+  /**
+   * text placement as: tspan | fo | old only text as before
+   *
+   */
+  textPlacement?: string;
+  actorColours?: string[];
+  sectionFills?: string[];
+  sectionColours?: string[];
+  /**
+   * Color of the title text in Journey Diagrams
+   */
+  titleColor?: string;
+  /**
+   * Font family to be used for the title text in Journey Diagrams
+   */
+  titleFontFamily?: string;
+  /**
+   * Font size to be used for the title text in Journey Diagrams
+   */
+  titleFontSize?: string;
+}
+/**
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "TimelineDiagramConfig".
+ */
+export interface TimelineDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Margin to the right and left of the c4 diagram, must be a positive value.
+   *
+   */
+  diagramMarginX?: number;
+  /**
+   * Margin to the over and under the c4 diagram, must be a positive value.
+   *
+   */
+  diagramMarginY?: number;
+  /**
+   * Margin between actors
+   */
+  leftMargin?: number;
+  /**
+   * Width of actor boxes
+   */
+  width?: number;
+  /**
+   * Height of actor boxes
+   */
+  height?: number;
+  padding?: number;
+  /**
+   * Margin around loop boxes
+   */
+  boxMargin?: number;
+  /**
+   * Margin around the text in loop/alt/opt boxes
+   */
+  boxTextMargin?: number;
+  /**
+   * Margin around notes
+   */
+  noteMargin?: number;
+  /**
+   * Space between messages.
+   */
+  messageMargin?: number;
+  /**
+   * Multiline message alignment
+   */
+  messageAlign?: 'left' | 'center' | 'right';
+  /**
+   * Prolongs the edge of the diagram downwards.
+   *
+   * Depending on css styling this might need adjustment.
+   *
+   */
+  bottomMarginAdj?: number;
+  /**
+   * Curved Arrows become Right Angles
+   *
+   * This will display arrows that start and begin at the same node as
+   * right angles, rather than as curves.
+   *
+   */
+  rightAngles?: boolean;
+  taskFontSize?: string | number;
+  taskFontFamily?: string;
+  taskMargin?: number;
+  /**
+   * Width of activation box
+   */
+  activationWidth?: number;
+  /**
+   * text placement as: tspan | fo | old only text as before
+   *
+   */
+  textPlacement?: string;
+  actorColours?: string[];
+  sectionFills?: string[];
+  sectionColours?: string[];
+  disableMulticolor?: boolean;
+}
+/**
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "ClassDiagramConfig".
+ */
+export interface ClassDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Margin top for the text over the diagram
+   */
+  titleTopMargin?: number;
+  /**
+   * Controls whether or arrow markers in html code are absolute paths or anchors.
+   * This matters if you are using base tag settings.
+   *
+   */
+  arrowMarkerAbsolute?: boolean;
+  dividerMargin?: number;
+  padding?: number;
+  textHeight?: number;
+  /**
+   * Decides which rendering engine that is to be used for the rendering.
+   *
+   */
+  defaultRenderer?: 'dagre-d3' | 'dagre-wrapper' | 'elk';
+  nodeSpacing?: number;
+  rankSpacing?: number;
+  /**
+   * The amount of padding around the diagram as a whole so that embedded
+   * diagrams have margins, expressed in pixels.
+   *
+   */
+  diagramPadding?: number;
+  htmlLabels?: boolean;
+  hideEmptyMembersBox?: boolean;
+  /**
+   * When true (default), nested namespaces render as hierarchical clusters,
+   * with each segment of a dotted name (e.g. `A.B.C`) becoming its own nested
+   * box. When false, namespaces render in compact mode: only explicitly
+   * declared namespaces are emitted and their full qualified name is used as
+   * a single flat label.
+   *
+   */
+  hierarchicalNamespaces?: boolean;
+}
+/**
+ * The object containing configurations specific for entity relationship diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "StateDiagramConfig".
+ */
+export interface StateDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Margin top for the text over the diagram
+   */
+  titleTopMargin?: number;
+  arrowMarkerAbsolute?: boolean;
+  dividerMargin?: number;
+  sizeUnit?: number;
+  padding?: number;
+  textHeight?: number;
+  titleShift?: number;
+  noteMargin?: number;
+  nodeSpacing?: number;
+  rankSpacing?: number;
+  forkWidth?: number;
+  forkHeight?: number;
+  miniPadding?: number;
+  /**
+   * Font size factor, this is used to guess the width of the edges labels
+   * before rendering by dagre layout.
+   * This might need updating if/when switching font
+   *
+   */
+  fontSizeFactor?: number;
+  fontSize?: number;
+  labelHeight?: number;
+  edgeLengthFactor?: string;
+  compositTitleSize?: number;
+  radius?: number;
+  /**
+   * Decides which rendering engine that is to be used for the rendering.
+   *
+   */
+  defaultRenderer?: 'dagre-d3' | 'dagre-wrapper' | 'elk';
+}
+/**
+ * The object containing configurations specific for entity relationship diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "ErDiagramConfig".
+ */
+export interface ErDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Margin top for the text over the diagram
+   */
+  titleTopMargin?: number;
+  /**
+   * The amount of padding around the diagram as a whole so that embedded
+   * diagrams have margins, expressed in pixels.
+   *
+   */
+  diagramPadding?: number;
+  /**
+   * Directional bias for layout of entities
+   */
+  layoutDirection?: 'TB' | 'BT' | 'LR' | 'RL';
+  /**
+   * The minimum width of an entity box. Expressed in pixels.
+   */
+  minEntityWidth?: number;
+  /**
+   * The minimum height of an entity box. Expressed in pixels.
+   */
+  minEntityHeight?: number;
+  /**
+   * The minimum internal padding between text in an entity box and the enclosing box borders.
+   * Expressed in pixels.
+   *
+   */
+  entityPadding?: number;
+  nodeSpacing?: number;
+  rankSpacing?: number;
+  /**
+   * Stroke color of box edges and lines.
+   */
+  stroke?: string;
+  /**
+   * Fill color of entity boxes
+   */
+  fill?: string;
+  /**
+   * Font size (expressed as an integer representing a number of pixels)
+   */
+  fontSize?: number;
+}
+/**
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "PieDiagramConfig".
+ */
+export interface PieDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Axial position of slice's label from zero at the center to 1 at the outside edges.
+   *
+   */
+  textPosition?: number;
+  /**
+   * Donut hole ratio. Valid value are from 0 to 0.9. Default to 0.
+   *
+   */
+  donutHole?: number;
+  /**
+   * Legend's position relative to the chart. Default to right.
+   *
+   */
+  legendPosition?: 'top' | 'bottom' | 'left' | 'right' | 'center';
+  /**
+   * Highlight specific slice with matching label. Set to 'hover' to highlight hovered slice.
+   *
+   */
+  highlightSlice?: string;
+}
+/**
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "QuadrantChartConfig".
+ */
+export interface QuadrantChartConfig extends BaseDiagramConfig {
+  /**
+   * Width of the chart
+   */
+  chartWidth?: number;
+  /**
+   * Height of the chart
+   */
+  chartHeight?: number;
+  /**
+   * Chart title top and bottom padding
+   */
+  titleFontSize?: number;
+  /**
+   * Padding around the quadrant square
+   */
+  titlePadding?: number;
+  /**
+   * quadrant title padding from top if the quadrant is rendered on top
+   */
+  quadrantPadding?: number;
+  /**
+   * Padding around x-axis labels
+   */
+  xAxisLabelPadding?: number;
+  /**
+   * Padding around y-axis labels
+   */
+  yAxisLabelPadding?: number;
+  /**
+   * x-axis label font size
+   */
+  xAxisLabelFontSize?: number;
+  /**
+   * y-axis label font size
+   */
+  yAxisLabelFontSize?: number;
+  /**
+   * quadrant title font size
+   */
+  quadrantLabelFontSize?: number;
+  /**
+   * quadrant title padding from top if the quadrant is rendered on top
+   */
+  quadrantTextTopPadding?: number;
+  /**
+   * padding between point and point label
+   */
+  pointTextPadding?: number;
+  /**
+   * point title font size
+   */
+  pointLabelFontSize?: number;
+  /**
+   * radius of the point to be drawn
+   */
+  pointRadius?: number;
+  /**
+   * position of x-axis labels
+   */
+  xAxisPosition?: 'top' | 'bottom';
+  /**
+   * position of y-axis labels
+   */
+  yAxisPosition?: 'left' | 'right';
+  /**
+   * stroke width of edges of the box that are inside the quadrant
+   */
+  quadrantInternalBorderStrokeWidth?: number;
+  /**
+   * stroke width of edges of the box that are outside the quadrant
+   */
+  quadrantExternalBorderStrokeWidth?: number;
+}
+/**
+ * This object contains configuration specific to XYCharts
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "XYChartConfig".
+ */
+export interface XYChartConfig extends BaseDiagramConfig {
+  /**
+   * width of the chart
+   */
+  width?: number;
+  /**
+   * height of the chart
+   */
+  height?: number;
+  /**
+   * Font size of the chart title
+   */
+  titleFontSize?: number;
+  /**
+   * Top and bottom space from the chart title
+   */
+  titlePadding?: number;
+  /**
+   * Should show the value corresponding to the bar within the bar
+   */
+  showDataLabel?: boolean;
+  /**
+   * If showing data label then show it outside the bar
+   */
+  showDataLabelOutsideBar?: boolean;
+  /**
+   * Should show the chart title
+   */
+  showTitle?: boolean;
+  xAxis?: XYChartAxisConfig;
+  yAxis?: XYChartAxisConfig;
+  /**
+   * How to plot will be drawn horizontal or vertical
+   */
+  chartOrientation?: 'vertical' | 'horizontal';
+  /**
+   * Minimum percent of space plots of the chart will take
+   */
+  plotReservedSpacePercent?: number;
+}
+/**
+ * This object contains configuration for XYChart axis config
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "XYChartAxisConfig".
+ */
+export interface XYChartAxisConfig {
+  /**
+   * Should show the axis labels (tick text)
+   */
+  showLabel?: boolean;
+  /**
+   * font size of the axis labels (tick text)
+   */
+  labelFontSize?: number;
+  /**
+   * top and bottom space from axis label (tick text)
+   */
+  labelPadding?: number;
+  /**
+   * Should show the axis title
+   */
+  showTitle?: boolean;
+  /**
+   * font size of the axis title
+   */
+  titleFontSize?: number;
+  /**
+   * top and bottom space from axis title
+   */
+  titlePadding?: number;
+  /**
+   * Should show the axis tick lines
+   */
+  showTick?: boolean;
+  /**
+   * length of the axis tick lines
+   */
+  tickLength?: number;
+  /**
+   * width of the axis tick lines
+   */
+  tickWidth?: number;
+  /**
+   * Show line across the axis
+   */
+  showAxisLine?: boolean;
+  /**
+   * Width of the axis line
+   */
+  axisLineWidth?: number;
+  /**
+   * Label rotation in degrees
+   */
+  labelRotation?: number;
+}
+/**
+ * The object containing configurations specific for req diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "RequirementDiagramConfig".
+ */
+export interface RequirementDiagramConfig extends BaseDiagramConfig {
+  rect_fill?: string;
+  text_color?: string;
+  rect_border_size?: string;
+  rect_border_color?: string;
+  rect_min_width?: number;
+  rect_min_height?: number;
+  fontSize?: number;
+  rect_padding?: number;
+  line_height?: number;
+}
+/**
+ * The object containing configurations specific for architecture diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "ArchitectureDiagramConfig".
+ */
+export interface ArchitectureDiagramConfig extends BaseDiagramConfig {
+  padding?: number;
+  iconSize?: number;
+  fontSize?: number;
+  /**
+   * Whether to randomize initial node positions before running the layout algorithm.
+   * When false (default), nodes start at deterministic seed positions. When true, nodes
+   * start at random positions, which may produce varied but potentially better-spaced
+   * layouts. Note: `randomize: false` alone does NOT guarantee identical renders, because
+   * the underlying fcose layout still uses `Math.random()` internally during its
+   * constraint solver — use the `seed` option for full determinism.
+   *
+   */
+  randomize?: boolean;
+  /**
+   * Minimum separation (in pixels) between sibling nodes in the same group, passed through to the
+   * underlying fcose layout. Increase to spread overlapping siblings apart when many edges share the
+   * same port direction.
+   *
+   */
+  nodeSeparation?: number;
+  /**
+   * Multiplier applied to `iconSize` to compute the ideal length of edges between nodes within the
+   * same group. Increase to add breathing room; decrease to pack the diagram tighter. Edges crossing
+   * group boundaries are unaffected and use a fixed shorter length.
+   *
+   */
+  idealEdgeLengthMultiplier?: number;
+  /**
+   * Spring elasticity (0–1) applied to edges between nodes within the same group, passed through to
+   * fcose. Higher values pull connected nodes closer together; lower values let the layout spread them
+   * out. Edges crossing group boundaries are unaffected.
+   *
+   */
+  edgeElasticity?: number;
+  /**
+   * Maximum number of iterations the fcose layout algorithm runs before stopping. Increase for higher
+   * quality on large or densely-connected diagrams at the cost of render time.
+   *
+   */
+  numIter?: number;
+  /**
+   * Deterministic seed for the fcose layout. Defaults to 1, which makes every render of the
+   * same diagram produce the same layout — required for visual regression tests to be stable.
+   * Set to 0 to opt out and use the unstubbed Math.random (the layout will still differ
+   * slightly between renders, matching pre-fix behavior). Any other number selects a
+   * different reproducible layout variant.
+   *
+   */
+  seed?: number;
+}
+/**
+ * The object containing configurations specific for mindmap diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "MindmapDiagramConfig".
+ */
+export interface MindmapDiagramConfig extends BaseDiagramConfig {
+  padding?: number;
+  maxNodeWidth?: number;
+  /**
+   * Layout algorithm to use for positioning mindmap nodes
+   */
+  layoutAlgorithm?: string;
+}
+/**
+ * The object containing configurations specific for ishikawa diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "IshikawaDiagramConfig".
+ */
+export interface IshikawaDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The amount of padding around the diagram as a whole so that embedded
+   * diagrams have margins, expressed in pixels.
+   *
+   */
+  diagramPadding?: number;
+  useMaxWidth?: boolean;
+}
+/**
+ * The object containing configurations specific for kanban diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "KanbanDiagramConfig".
+ */
+export interface KanbanDiagramConfig extends BaseDiagramConfig {
+  padding?: number;
+  sectionWidth?: number;
+  ticketBaseUrl?: string;
+}
+/**
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "GitGraphDiagramConfig".
+ */
+export interface GitGraphDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Margin top for the text over the diagram
+   */
+  titleTopMargin?: number;
+  diagramPadding?: number;
+  nodeLabel?: NodeLabel;
+  mainBranchName?: string;
+  mainBranchOrder?: number;
+  showCommitLabel?: boolean;
+  showBranches?: boolean;
+  rotateCommitLabel?: boolean;
+  parallelCommits?: boolean;
+  /**
+   * Controls whether or arrow markers in html code are absolute paths or anchors.
+   * This matters if you are using base tag settings.
+   *
+   */
+  arrowMarkerAbsolute?: boolean;
+}
+/**
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "NodeLabel".
+ */
+export interface NodeLabel {
+  width?: number;
+  height?: number;
+  x?: number;
+  y?: number;
 }
 /**
  * The object containing configurations specific for c4 diagrams
@@ -579,925 +1680,6 @@ export interface C4DiagramConfig extends BaseDiagramConfig {
   messageFont?: FontCalculator;
 }
 /**
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "GitGraphDiagramConfig".
- */
-export interface GitGraphDiagramConfig extends BaseDiagramConfig {
-  /**
-   * Margin top for the text over the diagram
-   */
-  titleTopMargin?: number;
-  diagramPadding?: number;
-  nodeLabel?: NodeLabel;
-  mainBranchName?: string;
-  mainBranchOrder?: number;
-  showCommitLabel?: boolean;
-  showBranches?: boolean;
-  rotateCommitLabel?: boolean;
-  parallelCommits?: boolean;
-  /**
-   * Controls whether or arrow markers in html code are absolute paths or anchors.
-   * This matters if you are using base tag settings.
-   *
-   */
-  arrowMarkerAbsolute?: boolean;
-}
-/**
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "NodeLabel".
- */
-export interface NodeLabel {
-  width?: number;
-  height?: number;
-  x?: number;
-  y?: number;
-}
-/**
- * The object containing configurations specific for req diagrams
- *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "RequirementDiagramConfig".
- */
-export interface RequirementDiagramConfig extends BaseDiagramConfig {
-  rect_fill?: string;
-  text_color?: string;
-  rect_border_size?: string;
-  rect_border_color?: string;
-  rect_min_width?: number;
-  rect_min_height?: number;
-  fontSize?: number;
-  rect_padding?: number;
-  line_height?: number;
-}
-/**
- * The object containing configurations specific for mindmap diagrams
- *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "MindmapDiagramConfig".
- */
-export interface MindmapDiagramConfig extends BaseDiagramConfig {
-  padding?: number;
-  maxNodeWidth?: number;
-}
-/**
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "PieDiagramConfig".
- */
-export interface PieDiagramConfig extends BaseDiagramConfig {
-  /**
-   * Axial position of slice's label from zero at the center to 1 at the outside edges.
-   *
-   */
-  textPosition?: number;
-}
-/**
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "QuadrantChartConfig".
- */
-export interface QuadrantChartConfig extends BaseDiagramConfig {
-  /**
-   * Width of the chart
-   */
-  chartWidth?: number;
-  /**
-   * Height of the chart
-   */
-  chartHeight?: number;
-  /**
-   * Chart title top and bottom padding
-   */
-  titleFontSize?: number;
-  /**
-   * Padding around the quadrant square
-   */
-  titlePadding?: number;
-  /**
-   * quadrant title padding from top if the quadrant is rendered on top
-   */
-  quadrantPadding?: number;
-  /**
-   * Padding around x-axis labels
-   */
-  xAxisLabelPadding?: number;
-  /**
-   * Padding around y-axis labels
-   */
-  yAxisLabelPadding?: number;
-  /**
-   * x-axis label font size
-   */
-  xAxisLabelFontSize?: number;
-  /**
-   * y-axis label font size
-   */
-  yAxisLabelFontSize?: number;
-  /**
-   * quadrant title font size
-   */
-  quadrantLabelFontSize?: number;
-  /**
-   * quadrant title padding from top if the quadrant is rendered on top
-   */
-  quadrantTextTopPadding?: number;
-  /**
-   * padding between point and point label
-   */
-  pointTextPadding?: number;
-  /**
-   * point title font size
-   */
-  pointLabelFontSize?: number;
-  /**
-   * radius of the point to be drawn
-   */
-  pointRadius?: number;
-  /**
-   * position of x-axis labels
-   */
-  xAxisPosition?: 'top' | 'bottom';
-  /**
-   * position of y-axis labels
-   */
-  yAxisPosition?: 'left' | 'right';
-  /**
-   * stroke width of edges of the box that are inside the quadrant
-   */
-  quadrantInternalBorderStrokeWidth?: number;
-  /**
-   * stroke width of edges of the box that are outside the quadrant
-   */
-  quadrantExternalBorderStrokeWidth?: number;
-}
-/**
- * This object contains configuration for XYChart axis config
- *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "XYChartAxisConfig".
- */
-export interface XYChartAxisConfig {
-  /**
-   * Should show the axis labels (tick text)
-   */
-  showLabel?: boolean;
-  /**
-   * font size of the axis labels (tick text)
-   */
-  labelFontSize?: number;
-  /**
-   * top and bottom space from axis label (tick text)
-   */
-  labelPadding?: number;
-  /**
-   * Should show the axis title
-   */
-  showTitle?: boolean;
-  /**
-   * font size of the axis title
-   */
-  titleFontSize?: number;
-  /**
-   * top and bottom space from axis title
-   */
-  titlePadding?: number;
-  /**
-   * Should show the axis tick lines
-   */
-  showTick?: boolean;
-  /**
-   * length of the axis tick lines
-   */
-  tickLength?: number;
-  /**
-   * width of the axis tick lines
-   */
-  tickWidth?: number;
-  /**
-   * Show line across the axis
-   */
-  showAxisLine?: boolean;
-  /**
-   * Width of the axis line
-   */
-  axisLineWidth?: number;
-}
-/**
- * This object contains configuration specific to XYCharts
- *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "XYChartConfig".
- */
-export interface XYChartConfig extends BaseDiagramConfig {
-  /**
-   * width of the chart
-   */
-  width?: number;
-  /**
-   * height of the chart
-   */
-  height?: number;
-  /**
-   * Font size of the chart title
-   */
-  titleFontSize?: number;
-  /**
-   * Top and bottom space from the chart title
-   */
-  titlePadding?: number;
-  /**
-   * Should show the chart title
-   */
-  showTitle?: boolean;
-  xAxis?: XYChartAxisConfig1;
-  yAxis?: XYChartAxisConfig2;
-  /**
-   * How to plot will be drawn horizontal or vertical
-   */
-  chartOrientation?: 'vertical' | 'horizontal';
-  /**
-   * Minimum percent of space plots of the chart will take
-   */
-  plotReservedSpacePercent?: number;
-}
-/**
- * This object contains configuration for XYChart axis config
- */
-export interface XYChartAxisConfig1 {
-  /**
-   * Should show the axis labels (tick text)
-   */
-  showLabel?: boolean;
-  /**
-   * font size of the axis labels (tick text)
-   */
-  labelFontSize?: number;
-  /**
-   * top and bottom space from axis label (tick text)
-   */
-  labelPadding?: number;
-  /**
-   * Should show the axis title
-   */
-  showTitle?: boolean;
-  /**
-   * font size of the axis title
-   */
-  titleFontSize?: number;
-  /**
-   * top and bottom space from axis title
-   */
-  titlePadding?: number;
-  /**
-   * Should show the axis tick lines
-   */
-  showTick?: boolean;
-  /**
-   * length of the axis tick lines
-   */
-  tickLength?: number;
-  /**
-   * width of the axis tick lines
-   */
-  tickWidth?: number;
-  /**
-   * Show line across the axis
-   */
-  showAxisLine?: boolean;
-  /**
-   * Width of the axis line
-   */
-  axisLineWidth?: number;
-}
-/**
- * This object contains configuration for XYChart axis config
- */
-export interface XYChartAxisConfig2 {
-  /**
-   * Should show the axis labels (tick text)
-   */
-  showLabel?: boolean;
-  /**
-   * font size of the axis labels (tick text)
-   */
-  labelFontSize?: number;
-  /**
-   * top and bottom space from axis label (tick text)
-   */
-  labelPadding?: number;
-  /**
-   * Should show the axis title
-   */
-  showTitle?: boolean;
-  /**
-   * font size of the axis title
-   */
-  titleFontSize?: number;
-  /**
-   * top and bottom space from axis title
-   */
-  titlePadding?: number;
-  /**
-   * Should show the axis tick lines
-   */
-  showTick?: boolean;
-  /**
-   * length of the axis tick lines
-   */
-  tickLength?: number;
-  /**
-   * width of the axis tick lines
-   */
-  tickWidth?: number;
-  /**
-   * Show line across the axis
-   */
-  showAxisLine?: boolean;
-  /**
-   * Width of the axis line
-   */
-  axisLineWidth?: number;
-}
-/**
- * The object containing configurations specific for entity relationship diagrams
- *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "ErDiagramConfig".
- */
-export interface ErDiagramConfig extends BaseDiagramConfig {
-  /**
-   * Margin top for the text over the diagram
-   */
-  titleTopMargin?: number;
-  /**
-   * The amount of padding around the diagram as a whole so that embedded
-   * diagrams have margins, expressed in pixels.
-   *
-   */
-  diagramPadding?: number;
-  /**
-   * Directional bias for layout of entities
-   */
-  layoutDirection?: string | 'TB' | 'BT' | 'LR' | 'RL';
-  /**
-   * The minimum width of an entity box. Expressed in pixels.
-   */
-  minEntityWidth?: number;
-  /**
-   * The minimum height of an entity box. Expressed in pixels.
-   */
-  minEntityHeight?: number;
-  /**
-   * The minimum internal padding between text in an entity box and the enclosing box borders.
-   * Expressed in pixels.
-   *
-   */
-  entityPadding?: number;
-  /**
-   * Stroke color of box edges and lines.
-   */
-  stroke?: string;
-  /**
-   * Fill color of entity boxes
-   */
-  fill?: string;
-  /**
-   * Font size (expressed as an integer representing a number of pixels)
-   */
-  fontSize?: number;
-}
-/**
- * The object containing configurations specific for entity relationship diagrams
- *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "StateDiagramConfig".
- */
-export interface StateDiagramConfig extends BaseDiagramConfig {
-  /**
-   * Margin top for the text over the diagram
-   */
-  titleTopMargin?: number;
-  arrowMarkerAbsolute?: boolean;
-  dividerMargin?: number;
-  sizeUnit?: number;
-  padding?: number;
-  textHeight?: number;
-  titleShift?: number;
-  noteMargin?: number;
-  forkWidth?: number;
-  forkHeight?: number;
-  miniPadding?: number;
-  /**
-   * Font size factor, this is used to guess the width of the edges labels
-   * before rendering by dagre layout.
-   * This might need updating if/when switching font
-   *
-   */
-  fontSizeFactor?: number;
-  fontSize?: number;
-  labelHeight?: number;
-  edgeLengthFactor?: string;
-  compositTitleSize?: number;
-  radius?: number;
-  /**
-   * Decides which rendering engine that is to be used for the rendering.
-   *
-   */
-  defaultRenderer?: string | 'dagre-d3' | 'dagre-wrapper' | 'elk';
-}
-/**
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "ClassDiagramConfig".
- */
-export interface ClassDiagramConfig extends BaseDiagramConfig {
-  /**
-   * Margin top for the text over the diagram
-   */
-  titleTopMargin?: number;
-  /**
-   * Controls whether or arrow markers in html code are absolute paths or anchors.
-   * This matters if you are using base tag settings.
-   *
-   */
-  arrowMarkerAbsolute?: boolean;
-  dividerMargin?: number;
-  padding?: number;
-  textHeight?: number;
-  /**
-   * Decides which rendering engine that is to be used for the rendering.
-   *
-   */
-  defaultRenderer?: string | 'dagre-d3' | 'dagre-wrapper' | 'elk';
-  nodeSpacing?: number;
-  rankSpacing?: number;
-  /**
-   * The amount of padding around the diagram as a whole so that embedded
-   * diagrams have margins, expressed in pixels.
-   *
-   */
-  diagramPadding?: number;
-  htmlLabels?: boolean;
-}
-/**
- * The object containing configurations specific for journey diagrams
- *
- *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "JourneyDiagramConfig".
- */
-export interface JourneyDiagramConfig extends BaseDiagramConfig {
-  /**
-   * Margin to the right and left of the c4 diagram, must be a positive value.
-   *
-   */
-  diagramMarginX?: number;
-  /**
-   * Margin to the over and under the c4 diagram, must be a positive value.
-   *
-   */
-  diagramMarginY?: number;
-  /**
-   * Margin between actors
-   */
-  leftMargin?: number;
-  /**
-   * Width of actor boxes
-   */
-  width?: number;
-  /**
-   * Height of actor boxes
-   */
-  height?: number;
-  /**
-   * Margin around loop boxes
-   */
-  boxMargin?: number;
-  /**
-   * Margin around the text in loop/alt/opt boxes
-   */
-  boxTextMargin?: number;
-  /**
-   * Margin around notes
-   */
-  noteMargin?: number;
-  /**
-   * Space between messages.
-   */
-  messageMargin?: number;
-  /**
-   * Multiline message alignment
-   */
-  messageAlign?: string | 'left' | 'center' | 'right';
-  /**
-   * Prolongs the edge of the diagram downwards.
-   *
-   * Depending on css styling this might need adjustment.
-   *
-   */
-  bottomMarginAdj?: number;
-  /**
-   * Curved Arrows become Right Angles
-   *
-   * This will display arrows that start and begin at the same node as
-   * right angles, rather than as curves.
-   *
-   */
-  rightAngles?: boolean;
-  taskFontSize?: string | number;
-  taskFontFamily?: string;
-  taskMargin?: number;
-  /**
-   * Width of activation box
-   */
-  activationWidth?: number;
-  /**
-   * text placement as: tspan | fo | old only text as before
-   *
-   */
-  textPlacement?: string;
-  actorColours?: string[];
-  sectionFills?: string[];
-  sectionColours?: string[];
-}
-/**
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "TimelineDiagramConfig".
- */
-export interface TimelineDiagramConfig extends BaseDiagramConfig {
-  /**
-   * Margin to the right and left of the c4 diagram, must be a positive value.
-   *
-   */
-  diagramMarginX?: number;
-  /**
-   * Margin to the over and under the c4 diagram, must be a positive value.
-   *
-   */
-  diagramMarginY?: number;
-  /**
-   * Margin between actors
-   */
-  leftMargin?: number;
-  /**
-   * Width of actor boxes
-   */
-  width?: number;
-  /**
-   * Height of actor boxes
-   */
-  height?: number;
-  padding?: number;
-  /**
-   * Margin around loop boxes
-   */
-  boxMargin?: number;
-  /**
-   * Margin around the text in loop/alt/opt boxes
-   */
-  boxTextMargin?: number;
-  /**
-   * Margin around notes
-   */
-  noteMargin?: number;
-  /**
-   * Space between messages.
-   */
-  messageMargin?: number;
-  /**
-   * Multiline message alignment
-   */
-  messageAlign?: string | 'left' | 'center' | 'right';
-  /**
-   * Prolongs the edge of the diagram downwards.
-   *
-   * Depending on css styling this might need adjustment.
-   *
-   */
-  bottomMarginAdj?: number;
-  /**
-   * Curved Arrows become Right Angles
-   *
-   * This will display arrows that start and begin at the same node as
-   * right angles, rather than as curves.
-   *
-   */
-  rightAngles?: boolean;
-  taskFontSize?: string | number;
-  taskFontFamily?: string;
-  taskMargin?: number;
-  /**
-   * Width of activation box
-   */
-  activationWidth?: number;
-  /**
-   * text placement as: tspan | fo | old only text as before
-   *
-   */
-  textPlacement?: string;
-  actorColours?: string[];
-  sectionFills?: string[];
-  sectionColours?: string[];
-  disableMulticolor?: boolean;
-}
-/**
- * The object containing configurations specific for gantt diagrams
- *
- *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "GanttDiagramConfig".
- */
-export interface GanttDiagramConfig extends BaseDiagramConfig {
-  /**
-   * Margin top for the text over the diagram
-   */
-  titleTopMargin?: number;
-  /**
-   * The height of the bars in the graph
-   */
-  barHeight?: number;
-  /**
-   * The margin between the different activities in the gantt diagram
-   */
-  barGap?: number;
-  /**
-   * Margin between title and gantt diagram and between axis and gantt diagram.
-   *
-   */
-  topPadding?: number;
-  /**
-   * The space allocated for the section name to the right of the activities
-   *
-   */
-  rightPadding?: number;
-  /**
-   * The space allocated for the section name to the left of the activities
-   *
-   */
-  leftPadding?: number;
-  /**
-   * Vertical starting position of the grid lines
-   */
-  gridLineStartPadding?: number;
-  /**
-   * Font size
-   */
-  fontSize?: number;
-  /**
-   * Font size for sections
-   */
-  sectionFontSize?: string | number;
-  /**
-   * The number of alternating section styles
-   */
-  numberSectionStyles?: number;
-  /**
-   * Date/time format of the axis
-   *
-   * This might need adjustment to match your locale and preferences.
-   *
-   */
-  axisFormat?: string;
-  /**
-   * axis ticks
-   *
-   * Pattern is:
-   *
-   * ```javascript
-   * /^([1-9][0-9]*)(millisecond|second|minute|hour|day|week|month)$/
-   * ```
-   *
-   */
-  tickInterval?: string;
-  /**
-   * When this flag is set, date labels will be added to the top of the chart
-   *
-   */
-  topAxis?: boolean;
-  /**
-   * Controls the display mode.
-   *
-   */
-  displayMode?: string | 'compact';
-  /**
-   * On which day a week-based interval should start
-   *
-   */
-  weekday?: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
-}
-/**
- * The object containing configurations specific for sequence diagrams
- *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "SequenceDiagramConfig".
- */
-export interface SequenceDiagramConfig extends BaseDiagramConfig {
-  arrowMarkerAbsolute?: boolean;
-  hideUnusedParticipants?: boolean;
-  /**
-   * Width of the activation rect
-   */
-  activationWidth?: number;
-  /**
-   * Margin to the right and left of the sequence diagram
-   */
-  diagramMarginX?: number;
-  /**
-   * Margin to the over and under the sequence diagram
-   */
-  diagramMarginY?: number;
-  /**
-   * Margin between actors
-   */
-  actorMargin?: number;
-  /**
-   * Width of actor boxes
-   */
-  width?: number;
-  /**
-   * Height of actor boxes
-   */
-  height?: number;
-  /**
-   * Margin around loop boxes
-   */
-  boxMargin?: number;
-  /**
-   * Margin around the text in loop/alt/opt boxes
-   */
-  boxTextMargin?: number;
-  /**
-   * Margin around notes
-   */
-  noteMargin?: number;
-  /**
-   * Space between messages.
-   */
-  messageMargin?: number;
-  /**
-   * Multiline message alignment
-   */
-  messageAlign?: string | 'left' | 'center' | 'right';
-  /**
-   * Mirror actors under diagram
-   *
-   */
-  mirrorActors?: boolean;
-  /**
-   * forces actor popup menus to always be visible (to support E2E testing).
-   *
-   */
-  forceMenus?: boolean;
-  /**
-   * Prolongs the edge of the diagram downwards.
-   *
-   * Depending on css styling this might need adjustment.
-   *
-   */
-  bottomMarginAdj?: number;
-  /**
-   * Curved Arrows become Right Angles
-   *
-   * This will display arrows that start and begin at the same node as
-   * right angles, rather than as curves.
-   *
-   */
-  rightAngles?: boolean;
-  /**
-   * This will show the node numbers
-   */
-  showSequenceNumbers?: boolean;
-  /**
-   * This sets the font size of the actor's description
-   */
-  actorFontSize?: string | number;
-  /**
-   * This sets the font family of the actor's description
-   */
-  actorFontFamily?: string;
-  /**
-   * This sets the font weight of the actor's description
-   */
-  actorFontWeight?: string | number;
-  /**
-   * This sets the font size of actor-attached notes
-   */
-  noteFontSize?: string | number;
-  /**
-   * This sets the font family of actor-attached notes
-   */
-  noteFontFamily?: string;
-  /**
-   * This sets the font weight of actor-attached notes
-   */
-  noteFontWeight?: string | number;
-  /**
-   * This sets the text alignment of actor-attached notes
-   */
-  noteAlign?: string | 'left' | 'center' | 'right';
-  /**
-   * This sets the font size of actor messages
-   */
-  messageFontSize?: string | number;
-  /**
-   * This sets the font family of actor messages
-   */
-  messageFontFamily?: string;
-  /**
-   * This sets the font weight of actor messages
-   */
-  messageFontWeight?: string | number;
-  /**
-   * This sets the auto-wrap state for the diagram
-   */
-  wrap?: boolean;
-  /**
-   * This sets the auto-wrap padding for the diagram (sides only)
-   */
-  wrapPadding?: number;
-  /**
-   * This sets the width of the loop-box (loop, alt, opt, par)
-   */
-  labelBoxWidth?: number;
-  /**
-   * This sets the height of the loop-box (loop, alt, opt, par)
-   */
-  labelBoxHeight?: number;
-  messageFont?: FontCalculator;
-  noteFont?: FontCalculator;
-  actorFont?: FontCalculator;
-}
-/**
- * The object containing configurations specific for flowcharts
- *
- * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "FlowchartDiagramConfig".
- */
-export interface FlowchartDiagramConfig extends BaseDiagramConfig {
-  /**
-   * Margin top for the text over the diagram
-   */
-  titleTopMargin?: number;
-  /**
-   * Defines a top/bottom margin for subgraph titles
-   *
-   */
-  subGraphTitleMargin?: {
-    top?: number;
-    bottom?: number;
-  };
-  arrowMarkerAbsolute?: boolean;
-  /**
-   * The amount of padding around the diagram as a whole so that embedded
-   * diagrams have margins, expressed in pixels.
-   *
-   */
-  diagramPadding?: number;
-  /**
-   * Flag for setting whether or not a html tag should be used for rendering labels on the edges.
-   *
-   */
-  htmlLabels?: boolean;
-  /**
-   * Defines the spacing between nodes on the same level
-   *
-   * Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs,
-   * and the vertical spacing for LR as well as RL graphs.
-   *
-   */
-  nodeSpacing?: number;
-  /**
-   * Defines the spacing between nodes on different levels
-   *
-   * Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs,
-   * and the vertical spacing for LR as well as RL graphs.
-   *
-   */
-  rankSpacing?: number;
-  /**
-   * Defines how mermaid renders curves for flowcharts.
-   *
-   */
-  curve?: string | 'basis' | 'linear' | 'cardinal';
-  /**
-   * Represents the padding between the labels and the shape
-   *
-   * **Only used in new experimental rendering.**
-   *
-   */
-  padding?: number;
-  /**
-   * Decides which rendering engine that is to be used for the rendering.
-   *
-   */
-  defaultRenderer?: string | 'dagre-d3' | 'dagre-wrapper' | 'elk';
-  /**
-   * Width of nodes where text is wrapped.
-   *
-   * When using markdown strings the text ius wrapped automatically, this
-   * value sets the max width of a text before it continues on a new line.
-   *
-   */
-  wrappingWidth?: number;
-}
-/**
  * The object containing configurations specific for sankey diagrams.
  *
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
@@ -1511,13 +1693,7 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
    *
    */
   linkColor?: SankeyLinkColor | string;
-  /**
-   * Controls the alignment of the Sankey diagrams.
-   *
-   * See <https://github.com/d3/d3-sankey#alignments>.
-   *
-   */
-  nodeAlignment?: 'left' | 'right' | 'center' | 'justify';
+  nodeAlignment?: SankeyNodeAlignment;
   useMaxWidth?: boolean;
   /**
    * Toggle to display or hide values along with title.
@@ -1534,6 +1710,391 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
    *
    */
   suffix?: string;
+  /**
+   * The width of the nodes in the sankey diagram.
+   *
+   */
+  nodeWidth?: number;
+  /**
+   * The padding between nodes in the sankey diagram.
+   *
+   */
+  nodePadding?: number;
+  /**
+   * The style of labels in the sankey diagram. 'outlined' provides better readability with a white stroke behind the text.
+   *
+   */
+  labelStyle?: 'legacy' | 'outlined';
+  /**
+   * A mapping of node IDs to their colors. Nodes not specified will use the default color scheme.
+   *
+   */
+  nodeColors?: {
+    [k: string]: string;
+  };
+}
+/**
+ * The object containing configurations specific for packet diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "PacketDiagramConfig".
+ */
+export interface PacketDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The height of each row in the packet diagram.
+   */
+  rowHeight?: number;
+  /**
+   * The width of each bit in the packet diagram.
+   */
+  bitWidth?: number;
+  /**
+   * The number of bits to display per row.
+   */
+  bitsPerRow?: number;
+  /**
+   * Toggle to display or hide bit numbers.
+   */
+  showBits?: boolean;
+  /**
+   * The horizontal padding between the blocks in a row.
+   */
+  paddingX?: number;
+  /**
+   * The vertical padding between the rows.
+   */
+  paddingY?: number;
+}
+/**
+ * The object containing configurations specific for block diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "BlockDiagramConfig".
+ */
+export interface BlockDiagramConfig extends BaseDiagramConfig {
+  padding?: number;
+}
+/**
+ * The object containing configurations specific for Event Modeling diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "EventModelingDiagramConfig".
+ */
+export interface EventModelingDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The padding around the Event Modeling diagram.
+   */
+  padding?: number;
+  /**
+   * The height of each row in the Event Modeling diagram.
+   */
+  rowHeight?: number;
+}
+/**
+ * The object containing configurations specific for treeView diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "TreeViewDiagramConfig".
+ */
+export interface TreeViewDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Horizontal distance between rows differing by one level
+   */
+  rowIndent?: number;
+  /**
+   * Horizontal padding of label
+   */
+  paddingX?: number;
+  /**
+   * Vertical padding of label
+   */
+  paddingY?: number;
+  /**
+   * Thickness of the line
+   */
+  lineThickness?: number;
+  /**
+   * Whether to show the default file/folder icons next to labels.
+   * Explicit `icon()` annotations always render, regardless of this setting.
+   *
+   */
+  showIcons?: boolean;
+  /**
+   * Name of a registered iconify pack used to resolve unprefixed icon
+   * references — `icon(name)` annotations and `filenameIcons`/
+   * `extensionIcons` values without a `pack:` prefix. The pack must be
+   * registered with `registerIconPacks`. When empty, unprefixed names
+   * resolve to the built-in file/folder icons.
+   *
+   */
+  defaultIconPack?: string;
+  /**
+   * Exact-filename → icon map used to pick a file's icon when
+   * `showIcons` is enabled, e.g.
+   * `{ "Dockerfile": "material-icon-theme:docker" }`.
+   * Values are resolved like `icon()` references: `pack:name` is used
+   * as-is, unprefixed names resolve via `defaultIconPack`, and `none`
+   * hides the icon for matching files.
+   *
+   */
+  filenameIcons?: {
+    [k: string]: string;
+  };
+  /**
+   * File-extension → icon map used to pick a file's icon when
+   * `showIcons` is enabled, e.g.
+   * `{ ".ts": "material-icon-theme:typescript" }`. Keys are
+   * lowercase and may include or omit the leading dot.
+   * Values are resolved like `icon()` references: `pack:name` is used
+   * as-is, unprefixed names resolve via `defaultIconPack`, and `none`
+   * hides the icon for matching files.
+   *
+   */
+  extensionIcons?: {
+    [k: string]: string;
+  };
+}
+/**
+ * The object containing configurations specific for radar diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "RadarDiagramConfig".
+ */
+export interface RadarDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The size of the radar diagram.
+   */
+  width?: number;
+  /**
+   * The size of the radar diagram.
+   */
+  height?: number;
+  /**
+   * The margin from the top of the radar diagram.
+   */
+  marginTop?: number;
+  /**
+   * The margin from the right of the radar diagram.
+   */
+  marginRight?: number;
+  /**
+   * The margin from the bottom of the radar diagram.
+   */
+  marginBottom?: number;
+  /**
+   * The margin from the left of the radar diagram.
+   */
+  marginLeft?: number;
+  /**
+   * The scale factor of the axis.
+   */
+  axisScaleFactor?: number;
+  /**
+   * The scale factor of the axis label.
+   */
+  axisLabelFactor?: number;
+  /**
+   * The tension factor for the Catmull-Rom spline conversion to cubic Bézier curves.
+   */
+  curveTension?: number;
+}
+/**
+ * The object containing configurations specific for Venn diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "VennDiagramConfig".
+ */
+export interface VennDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The width of the Venn diagram.
+   */
+  width?: number;
+  /**
+   * The height of the Venn diagram.
+   */
+  height?: number;
+  padding?: number;
+  useDebugLayout?: boolean;
+}
+/**
+ * The object containing configurations specific for Wardley Maps diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "WardleyDiagramConfig".
+ */
+export interface WardleyDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The width of the Wardley diagram canvas.
+   */
+  width?: number;
+  /**
+   * The height of the Wardley diagram canvas.
+   */
+  height?: number;
+  /**
+   * The padding around the Wardley diagram.
+   */
+  padding?: number;
+  /**
+   * The radius of component nodes.
+   */
+  nodeRadius?: number;
+  /**
+   * The offset distance for node labels.
+   */
+  nodeLabelOffset?: number;
+  /**
+   * The font size for axis labels.
+   */
+  axisFontSize?: number;
+  /**
+   * The font size for component labels.
+   */
+  labelFontSize?: number;
+  /**
+   * Whether to display a background grid.
+   */
+  showGrid?: boolean;
+}
+/**
+ * Configuration for Cynefin framework diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "CynefinDiagramConfig".
+ */
+export interface CynefinDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The width of the Cynefin diagram.
+   */
+  width?: number;
+  /**
+   * The height of the Cynefin diagram.
+   */
+  height?: number;
+  /**
+   * Padding around the diagram.
+   */
+  padding?: number;
+  /**
+   * Show decision model and practice type labels.
+   */
+  showDomainDescriptions?: boolean;
+  /**
+   * Waviness amplitude of domain boundaries (0 for straight).
+   */
+  boundaryAmplitude?: number;
+  /**
+   * Deterministic seed for boundary waviness. When 0 (default) the seed is derived
+   * from the diagram's SVG element id, which varies per render. Set any non-zero
+   * number to produce identical boundaries on every render — required for visual
+   * regression tests to be stable.
+   *
+   */
+  seed?: number;
+}
+/**
+ * Configuration for Railroad (Syntax) Diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "RailroadDiagramConfig".
+ */
+export interface RailroadDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Use compact layout mode
+   */
+  compactMode?: boolean;
+  /**
+   * Padding around elements
+   */
+  padding?: number;
+  /**
+   * Vertical separation between elements
+   */
+  verticalSeparation?: number;
+  /**
+   * Horizontal separation between elements
+   */
+  horizontalSeparation?: number;
+  /**
+   * Radius for curved paths
+   */
+  arcRadius?: number;
+  /**
+   * Font size for text
+   */
+  fontSize?: number;
+  /**
+   * Font family for text
+   */
+  fontFamily?: string;
+  /**
+   * Fill color for terminal elements
+   */
+  terminalFill?: string;
+  /**
+   * Stroke color for terminal elements
+   */
+  terminalStroke?: string;
+  /**
+   * Text color for terminal elements
+   */
+  terminalTextColor?: string;
+  /**
+   * Fill color for non-terminal elements
+   */
+  nonTerminalFill?: string;
+  /**
+   * Stroke color for non-terminal elements
+   */
+  nonTerminalStroke?: string;
+  /**
+   * Text color for non-terminal elements
+   */
+  nonTerminalTextColor?: string;
+  /**
+   * Color for connection lines
+   */
+  lineColor?: string;
+  /**
+   * Width of strokes
+   */
+  strokeWidth?: number;
+  /**
+   * Fill color for start/end markers
+   */
+  markerFill?: string;
+  /**
+   * Fill color for comments
+   */
+  commentFill?: string;
+  /**
+   * Stroke color for comments
+   */
+  commentStroke?: string;
+  /**
+   * Text color for comments
+   */
+  commentTextColor?: string;
+  /**
+   * Fill color for special sequences
+   */
+  specialFill?: string;
+  /**
+   * Stroke color for special sequences
+   */
+  specialStroke?: string;
+  /**
+   * Color for rule names
+   */
+  ruleNameColor?: string;
+  /**
+   * Show start/end markers
+   */
+  showMarkers?: boolean;
+  /**
+   * Radius of start/end markers
+   */
+  markerRadius?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

@@ -3,7 +3,7 @@ import { select } from 'd3';
 import { log, getConfig, setupGraphViewbox } from './mermaidUtils.js';
 
 /**
- * Draws a an info picture in the tag with id: id based on the graph definition in text.
+ * Draws an info picture in the tag with id: id based on the graph definition in text.
  *
  * @param {any} text
  * @param {any} id

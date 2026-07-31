@@ -7,6 +7,15 @@ import { sanitizeDirective } from './utils/sanitizeDirective.js';
 
 export const defaultConfig: MermaidConfig = Object.freeze(config);
 
+/**
+ * Converts a string/boolean into a boolean
+ *
+ * @param val - String or boolean to convert
+ * @returns The result from the input
+ */
+export const evaluate = (val?: string | boolean | null): boolean =>
+  val === false || ['false', 'null', '0'].includes(String(val).trim().toLowerCase()) ? false : true;
+
 let siteConfig: MermaidConfig = assignWithDepth({}, defaultConfig);
 let configFromInitialize: MermaidConfig;
 let directives: MermaidConfig[] = [];
@@ -21,7 +30,7 @@ export const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: Mermaid
   let sumOfDirectives: MermaidConfig = {};
   for (const d of _directives) {
     sanitize(d);
-    // Apply the data from the directive where the the overrides the themeVariables
+    // Apply the data from the directive where the overrides the themeVariables
     sumOfDirectives = assignWithDepth(sumOfDirectives, d);
   }
 
@@ -124,7 +133,7 @@ export const setConfig = (conf: MermaidConfig): MermaidConfig => {
  * | --------- | ------------------------- | ----------- | ------------------------------ |
  * | getConfig | Obtains the currentConfig | Get Request | Any Values from current Config |
  *
- * **Notes**: Returns **any** the currentConfig
+ * **Notes**: Avoid calling this function repeatedly. Instead, store the result in a variable and use it, and pass it down to function calls.
  *
  * @returns The currentConfig
  */
@@ -189,8 +198,11 @@ export const addDirective = (directive: MermaidConfig) => {
   sanitizeDirective(directive);
 
   // If the directive has a fontFamily, but no themeVariables, add the fontFamily to the themeVariables
-  if (directive.fontFamily && (!directive.themeVariables || !directive.themeVariables.fontFamily)) {
-    directive.themeVariables = { fontFamily: directive.fontFamily };
+  if (directive.fontFamily && !directive.themeVariables?.fontFamily) {
+    directive.themeVariables = {
+      ...directive.themeVariables,
+      fontFamily: directive.fontFamily,
+    };
   }
 
   directives.push(directive);
@@ -224,10 +236,12 @@ export const reset = (config = siteConfig): void => {
 const ConfigWarning = {
   LAZY_LOAD_DEPRECATED:
     'The configuration options lazyLoadedDiagrams and loadExternalDiagramsAtStartup are deprecated. Please use registerExternalDiagrams instead.',
+  FLOWCHART_HTML_LABELS_DEPRECATED:
+    'flowchart.htmlLabels is deprecated. Please use global htmlLabels instead.',
 } as const;
 
 type ConfigWarningStrings = keyof typeof ConfigWarning;
-const issuedWarnings: { [key in ConfigWarningStrings]?: boolean } = {};
+const issuedWarnings: Partial<Record<ConfigWarningStrings, boolean>> = {};
 const issueWarning = (warning: ConfigWarningStrings) => {
   if (issuedWarnings[warning]) {
     return;
@@ -244,4 +258,31 @@ const checkConfig = (config: MermaidConfig) => {
   if (config.lazyLoadedDiagrams || config.loadExternalDiagramsAtStartup) {
     issueWarning('LAZY_LOAD_DEPRECATED');
   }
+};
+
+export const getUserDefinedConfig = (): MermaidConfig => {
+  let userConfig: MermaidConfig = {};
+
+  if (configFromInitialize) {
+    userConfig = assignWithDepth(userConfig, configFromInitialize);
+  }
+
+  for (const d of directives) {
+    userConfig = assignWithDepth(userConfig, d);
+  }
+
+  return userConfig;
+};
+
+/**
+ * Helper function to handle deprecated flowchart.htmlLabels
+ * @param config - The configuration object (merged config with defaults)
+ * @returns The effective htmlLabels value based on precedence: root flowchart  default
+ */
+export const getEffectiveHtmlLabels = (config: MermaidConfig): boolean => {
+  // != instead of !== handles null case
+  if (config.flowchart?.htmlLabels != undefined) {
+    issueWarning('FLOWCHART_HTML_LABELS_DEPRECATED');
+  }
+  return evaluate(config.htmlLabels ?? config.flowchart?.htmlLabels ?? true);
 };

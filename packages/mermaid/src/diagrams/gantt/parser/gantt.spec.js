@@ -1,7 +1,6 @@
 import { parser } from './gantt.jison';
 import ganttDb from '../ganttDb.js';
-import { convert } from '../../../tests/util.js';
-import { vi } from 'vitest';
+import { vi, it } from 'vitest';
 const spyOn = vi.spyOn;
 const parserFnConstructor = (str) => {
   return () => {
@@ -40,6 +39,26 @@ describe('when parsing a gantt diagram it', function () {
       'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid\nexcludes weekdays 2019-02-01';
 
     expect(parserFnConstructor(str)).not.toThrow();
+  });
+  it('should concatenate tokens across multiple excludes lines (issue #6270)', function () {
+    const str = [
+      'gantt',
+      'dateFormat DD-MM-YYYY',
+      'excludes weekends',
+      '%% week 7 is winter break',
+      'excludes 10-02-2025 11-02-2025 12-02-2025',
+      '%% workers holiday 1 maj',
+      'excludes 01-05-2025',
+    ].join('\n');
+
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(ganttDb.getExcludes()).toEqual([
+      'weekends',
+      '10-02-2025',
+      '11-02-2025',
+      '12-02-2025',
+      '01-05-2025',
+    ]);
   });
   it('should handle a todayMarker definition', function () {
     spyOn(ganttDb, 'setTodayMarker');
@@ -150,14 +169,14 @@ describe('when parsing a gantt diagram it', function () {
     expect(tasks[3].id).toEqual('d');
     expect(tasks[3].task).toEqual('task D');
   });
-  it.each(convert`
+  it.each`
     tags                     | milestone | done     | crit     | active
     ${'milestone'}           | ${true}   | ${false} | ${false} | ${false}
     ${'done'}                | ${false}  | ${true}  | ${false} | ${false}
     ${'crit'}                | ${false}  | ${false} | ${true}  | ${false}
     ${'active'}              | ${false}  | ${false} | ${false} | ${true}
     ${'crit,milestone,done'} | ${true}   | ${true}  | ${true}  | ${false}
-  `)('should handle a task with tags $tags', ({ tags, milestone, done, crit, active }) => {
+  `('should handle a task with tags $tags', ({ tags, milestone, done, crit, active }) => {
     const str =
       'gantt\n' +
       'dateFormat YYYY-MM-DD\n' +
@@ -256,4 +275,15 @@ row2`;
       expect(ganttDb.getWeekday()).toBe(day);
     }
   );
+
+  it.each(['__proto__', 'constructor'])('should allow for a link to %s id', (prop) => {
+    expect(() =>
+      parser.parse(`gantt
+    dateFormat YYYY-MM-DD
+    section Section
+    A task :${prop}, 2024-10-01, 3d
+    click ${prop} href "https://mermaid.js.org/"
+    `)
+    ).not.toThrow();
+  });
 });
