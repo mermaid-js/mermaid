@@ -124,7 +124,7 @@
     "cypress-split": "^1.24.31",
     "dotenv": "^17.4.2",
     "dotenv-cli": "^11.0.0",
-    "esbuild": "^0.25.12",
+    "esbuild": "^0.28.0",
     "eslint": "^9.26.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-cypress": "^5.3.0",

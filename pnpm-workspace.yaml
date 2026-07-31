@@ -19,3 +19,5 @@ minimumReleaseAgeExclude:
   - js-yaml@4.3.0
   # Renovate security update: vitest@3.2.6
   - vitest@3.2.6
+  # Renovate security update: esbuild@0.28.1
+  - esbuild@0.28.1
