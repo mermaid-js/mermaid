@@ -1040,6 +1040,7 @@ You have to call mermaid.initialize.`
       node.cssStyles = vertex.styles;
       node.cssCompiledStyles = this.getCompiledStyles(vertex.classes);
       node.cssClasses = vertex.classes.join(' ');
+      node.metadata = vertex.metadata;
     } else {
       const baseNode = {
         id: vertex.id,
