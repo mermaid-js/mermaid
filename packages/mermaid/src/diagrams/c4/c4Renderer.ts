@@ -288,7 +288,7 @@ export const drawC4ShapeArray = async function (
   // (e.g. anything with opacity) painting at the stale origin.
   await Promise.all(
     c4Shapes.map(async (c4Shape) => {
-      const node = buildC4Node(c4Shape, conf, conf.c4ShapePadding, look, conf.width);
+      const node = buildC4Node(c4Shape, conf.c4ShapePadding, look, conf.width);
       node.domId = `${diagramId}-${node.id}`;
       const measured = await shapeHandlerFor(node)(diagram, node, renderOptions);
       c4Shape.width = node.width ?? conf.width;
@@ -307,7 +307,7 @@ export const drawC4ShapeArray = async function (
   // (unified shapes are centred at the origin; legacy x/y is the top-left corner).
   await Promise.all(
     c4Shapes.map(async (c4Shape) => {
-      const node = buildC4Node(c4Shape, conf, conf.c4ShapePadding, look, conf.width);
+      const node = buildC4Node(c4Shape, conf.c4ShapePadding, look, conf.width);
       node.domId = `${diagramId}-${node.id}`;
       // Needed to properly calculate the intersection points.
       node.x = c4Shape.x + c4Shape.width / 2;

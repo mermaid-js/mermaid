@@ -177,4 +177,27 @@ C4Context
       {}
     );
   });
+  // The outline look derives the border and label from the palette colour over the theme's
+  // surface. Without a dark-theme case the snapshots only ever show the light surface, so a
+  // dark identity colour on a dark body would not be visible here.
+  it('C4.9 should keep the outline style readable in the dark theme', () => {
+    imgSnapshotTest(
+      ['default', 'dark'].map(
+        (theme) => `---
+title: theme=${theme}
+config:
+  theme: ${theme}
+---
+C4Context
+      Person(customerA, "Banking Customer A", "A customer of the bank.")
+      System(SystemAA, "Internet Banking System", "Allows customers to view information.")
+      System_Ext(SystemE, "Mainframe", "Stores all of the core banking information.")
+      ContainerDb(db, "Database", "SQL Database", "Stores user registration information.")
+      Rel(customerA, SystemAA, "Uses")
+      Rel(SystemAA, db, "Reads from and writes to", "JDBC")
+      `
+      ),
+      {}
+    );
+  });
 });
