@@ -277,8 +277,9 @@ Communication tools and platforms
 - [Reveal CK](https://github.com/jedcn/reveal-ck)
   - [reveal-ck-mermaid-plugin](https://github.com/tmtm/reveal-ck-mermaid-plugin)
 - [SchemaCrawler - Generate Mermaid diagrams from your database](https://dev.to/sualeh/how-to-generate-mermaid-diagrams-for-your-database-33bn)
+- [Sharayeh: Render Mermaid diagrams onto PowerPoint slides](https://sharayeh.com/en/tools/mermaid-to-powerpoint)
 - [speccharts: Turn your test suites into specification diagrams](https://github.com/arnaudrenaud/speccharts)
 - [termaid: Render Mermaid diagrams as Unicode art in the terminal](https://github.com/fasouto/termaid)
 - [Vitepress Plugin](https://github.com/sametcn99/vitepress-mermaid-renderer)
 
-<!--- cspell:ignore Blazorade HueHive --->
+<!--- cspell:ignore Blazorade HueHive Sharayeh --->
