@@ -55,6 +55,8 @@ export interface C4Shape {
   height: number;
   margin: number;
   image: C4Image;
+  /* Should be set by the shape renderer */
+  intersect?: (point: C4Point) => C4Point;
 }
 
 export interface C4Boundary {
