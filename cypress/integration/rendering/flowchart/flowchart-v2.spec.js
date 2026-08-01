@@ -1006,6 +1006,35 @@ end
     });
   });
   describe('Subgraph title margins', () => {
+    // An edge into a node *inside* a nested subgraph gives both TOP and B1 an external
+    // connection, so they stay compound instead of being extracted into their own
+    // sub-graphs. That is the shape in which a nested subgraph's title shares a box with
+    // its children, so its height has to be reserved above them. The sibling tests below
+    // only use cluster-to-cluster edges, where every cluster is extracted and the nested
+    // case never arises.
+    const nestedTitleDiagram = `flowchart TB
+          subgraph TOP
+              subgraph B1
+                  i1 --> f1
+              end
+              i2 --> f2
+          end
+          A --> i1
+          f2 --> B
+        `;
+    it('Should keep a nested subgraph title clear of its children (small margin)', () => {
+      imgSnapshotTest(nestedTitleDiagram, {
+        flowchart: { subGraphTitleMargin: { top: 10, bottom: 0 } },
+      });
+    });
+    it('Should keep a nested subgraph title clear of its children (large margin)', () => {
+      // The same diagram at a margin large enough that an unreserved title would sit on
+      // top of the nested children; paired with the case above so the effect is visible
+      // by comparison rather than in the absolute.
+      imgSnapshotTest(nestedTitleDiagram, {
+        flowchart: { subGraphTitleMargin: { top: 40, bottom: 0 } },
+      });
+    });
     it('Should render subgraphs with title margins set (LR)', () => {
       imgSnapshotTest(
         `flowchart LR

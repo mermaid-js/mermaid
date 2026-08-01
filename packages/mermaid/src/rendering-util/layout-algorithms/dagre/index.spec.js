@@ -239,6 +239,126 @@ describe('getEdgesToRender', () => {
     expect(data4Layout.edges.map((edge) => edge.id)).toEqual(['X-cluster1']);
   });
 
+  it('reserves each nested cluster its own label height and clears every ancestor header', () => {
+    // Two nested top-level clusters O -> I -> leaf L, each with a multi-line header whose
+    // measured height exceeds the configured margin. Every node must clear the cumulative
+    // height of all its ancestors' headers, and each cluster must grow to fit its own header
+    // plus the deepest chain of nested headers below it.
+    const graph = new Graph({ multigraph: true, compound: true });
+    graph.setGraph({ rankdir: 'TB' });
+    graph.setNode('O', {
+      id: 'O',
+      x: 100,
+      y: 100,
+      width: 200,
+      height: 180,
+      labelBBox: { height: 30 },
+    });
+    graph.setNode('I', {
+      id: 'I',
+      x: 100,
+      y: 110,
+      width: 160,
+      height: 120,
+      labelBBox: { height: 20 },
+    });
+    graph.setNode('L', { id: 'L', x: 100, y: 120, width: 80, height: 40 });
+    graph.setParent('I', 'O');
+    graph.setParent('L', 'I');
+    const data4Layout = {
+      nodes: [
+        { id: 'O', isGroup: true },
+        { id: 'I', isGroup: true },
+        { id: 'L', isGroup: false },
+      ],
+      edges: [],
+    };
+
+    applyDagreLayoutResult(data4Layout, {
+      graph,
+      mergeSelfLoops: true,
+      subGraphTitleTotalMargin: 10,
+    });
+
+    // O reserve = max(30, 10) = 30; I reserve = max(20, 10) = 20.
+    // O grows by its own header plus the deepest nested header below it (30 + 20 = 50);
+    // its centre moves down half that growth plus the baseline half-margin (5 + 25 = 30).
+    expect(graph.node('O')).toMatchObject({ y: 130, height: 230 });
+    // I grows by its own header (20); centre moves down by baseline + O's header + half its
+    // own growth (5 + 30 + 10 = 45).
+    expect(graph.node('I')).toMatchObject({ y: 155, height: 140 });
+    // The leaf clears both ancestor headers (30 + 20) on top of the baseline half-margin.
+    expect(graph.node('L')).toMatchObject({ y: 175, height: 40 });
+  });
+
+  it('shifts a recursively-rendered cluster by its ancestors reserve, without resizing it', () => {
+    // A cluster with no external connections is extracted into its own sub-graph and comes
+    // back as a `clusterNode` placeholder, which already contains its own header. Nested
+    // inside a cluster that did survive, it must still drop below that ancestor's header,
+    // but must not be grown again.
+    const graph = new Graph({ multigraph: true, compound: true });
+    graph.setGraph({ rankdir: 'TB' });
+    graph.setNode('O', {
+      id: 'O',
+      x: 100,
+      y: 100,
+      width: 200,
+      height: 180,
+      labelBBox: { height: 30 },
+    });
+    graph.setNode('P', { id: 'P', x: 100, y: 110, width: 160, height: 120, clusterNode: true });
+    graph.setParent('P', 'O');
+    const data4Layout = {
+      nodes: [
+        { id: 'O', isGroup: true },
+        { id: 'P', isGroup: true },
+      ],
+      edges: [],
+    };
+
+    applyDagreLayoutResult(data4Layout, {
+      graph,
+      mergeSelfLoops: true,
+      subGraphTitleTotalMargin: 10,
+    });
+
+    // The clusterNode keeps its own height and shifts by the full margin (10) plus O's
+    // header reserve (max(30, 10) = 30): 110 + 10 + 30 = 150.
+    expect(graph.node('P')).toMatchObject({ y: 150, height: 120 });
+  });
+
+  it('leaves every node untouched at the default margin', () => {
+    // The reserve is inert at margin 0, and the helpers return before walking the graph.
+    const graph = new Graph({ multigraph: true, compound: true });
+    graph.setGraph({ rankdir: 'TB' });
+    graph.setNode('O', {
+      id: 'O',
+      x: 100,
+      y: 100,
+      width: 200,
+      height: 180,
+      labelBBox: { height: 30 },
+    });
+    graph.setNode('L', { id: 'L', x: 100, y: 120, width: 80, height: 40 });
+    graph.setParent('L', 'O');
+    const data4Layout = {
+      nodes: [
+        { id: 'O', isGroup: true },
+        { id: 'L', isGroup: false },
+      ],
+      edges: [],
+    };
+
+    applyDagreLayoutResult(data4Layout, {
+      graph,
+      mergeSelfLoops: true,
+      subGraphTitleTotalMargin: 0,
+    });
+
+    expect(graph.node('O')).toMatchObject({ y: 100, height: 180 });
+    expect(graph.node('L')).toMatchObject({ y: 120, height: 40 });
+  });
+
   it('creates one compact render edge from self-loop layout segments', () => {
     const graph = new Graph({ multigraph: true, compound: true });
     graph.setNode('A', { id: 'A', x: 10, y: 10, width: 20, height: 20 });
