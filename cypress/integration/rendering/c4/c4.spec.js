@@ -177,4 +177,20 @@ C4Context
       {}
     );
   });
+  it('C4.9 should render a relationship whose endpoint is a boundary', () => {
+    imgSnapshotTest(
+      `
+      C4Context
+      title Relationship to a boundary
+
+      Container_Boundary(banking, "Internet Banking") {
+        Container(spa, "SPA", "JavaScript", "Front-end")
+      }
+      System_Ext(email, "Email System", "External mail")
+
+      Rel(banking, email, "Forwards alerts")
+      `,
+      {}
+    );
+  });
 });
