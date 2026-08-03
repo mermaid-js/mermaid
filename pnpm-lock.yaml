@@ -313,7 +313,7 @@ importers:
         specifier: ^1.11.21
         version: 1.11.21
       dompurify:
-        specifier: ^3.3.3
+        specifier: ^3.4.12
         version: 3.4.12
       es-toolkit:
         specifier: ^1.45.1
