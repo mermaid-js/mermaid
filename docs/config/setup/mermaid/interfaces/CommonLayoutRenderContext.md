@@ -284,7 +284,7 @@ Shape defaults to 'rect'
 
 #### insertEdge()
 
-> **insertEdge**: (`elem`, `edge`, `clusterDb`, `diagramType`, `startNode`, `endNode`, `diagramId`, `skipIntersect`) => `object`
+> **insertEdge**: (`elem`, `edge`, `clusterDb`, `diagramType`, `startNode`, `endNode`, `diagramId`, `skipLayoutAdjustments`) => `object`
 
 ##### Parameters
 
@@ -316,7 +316,7 @@ Shape defaults to 'rect'
 
 `any`
 
-###### skipIntersect
+###### skipLayoutAdjustments
 
 `boolean` = `false`
 

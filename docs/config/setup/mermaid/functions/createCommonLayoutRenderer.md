@@ -134,7 +134,7 @@ Splits on <br> tags
 
 ##### insertEdge
 
-(`elem`, `edge`, `clusterDb`, `diagramType`, `startNode`, `endNode`, `diagramId`, `skipIntersect`) => `object`
+(`elem`, `edge`, `clusterDb`, `diagramType`, `startNode`, `endNode`, `diagramId`, `skipLayoutAdjustments`) => `object`
 
 ##### insertEdgeLabel
 
