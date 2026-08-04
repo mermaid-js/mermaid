@@ -477,6 +477,34 @@ describe('mermaidAPI', () => {
       );
     });
 
+    it.for([
+      // test for CSS sibling components
+      ['should namespace sibling combinator', '& ~ *', '#someId #someId~*'],
+      // CSS ignores these whitespace characters
+      ['should namespace sibling combinator', '& \n\t \r \f \r\n + *', '#someId #someId+*'],
+      /*
+       * Experimental column combinator,
+       * see https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Column_combinator
+       *
+       * Output whitespace will probably change once JSDOM supports it.
+       */
+      ['should namespace column combinator', '& || *', '#someId #someId || *'],
+      ['should namespace root if using unsupported declarations', '&', '#someId #someId'],
+      // child combinators and descent combinators are already namespaced
+      ['should not namespace child combinator', '& > *', '#someId>*'],
+      ['should not namespace descent combinator', '& *', '#someId *'],
+    ] as const)('%s %s to %s', ([_description, inputSelector, expectedSelector]) => {
+      const result = createUserStyles(
+        { ...mockConfig, themeCSS: `${inputSelector} { color: red; }` },
+        'someDiagram',
+        new Map(),
+        '#someId'
+      );
+      expect(result).toEqual(
+        `#someId .edge-pattern-dashed{stroke-dasharray:3;}${expectedSelector}{color:red;}`
+      );
+    });
+
     it('should remove unsupported at-rules from user CSS', () => {
       const result = createUserStyles(
         {
