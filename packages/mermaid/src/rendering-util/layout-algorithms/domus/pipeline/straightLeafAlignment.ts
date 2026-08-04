@@ -70,9 +70,12 @@ function buildDegrees(layout: LayoutData, nodesById: Map<string, Node>): Map<str
     }
     const startId = nodeId(edge.start);
     const endId = nodeId(edge.end);
-    const start = startId ? nodesById.get(startId) : undefined;
-    const end = endId ? nodesById.get(endId) : undefined;
-    if (!isLayoutLeafNode(start) || !isLayoutLeafNode(end) || startId === endId) {
+    if (!startId || !endId || startId === endId) {
+      continue;
+    }
+    const start = nodesById.get(startId);
+    const end = nodesById.get(endId);
+    if (!isLayoutLeafNode(start) || !isLayoutLeafNode(end)) {
       continue;
     }
     degrees.set(startId, (degrees.get(startId) ?? 0) + 1);
