@@ -291,6 +291,9 @@ importers:
       '@upsetjs/venn.js':
         specifier: ^2.0.0
         version: 2.0.0
+      chevrotain:
+        specifier: ~11.1.2
+        version: 11.1.2
       cytoscape:
         specifier: ^3.33.4
         version: 3.34.0

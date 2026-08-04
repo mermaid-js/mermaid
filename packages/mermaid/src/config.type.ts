@@ -108,6 +108,19 @@ export interface MermaidConfig {
    *
    */
   maxEdges?: number;
+  /**
+   * **INTERNAL / EXPERIMENTAL — not part of the public API.**
+   *
+   * Transitional per-diagram parser-engine selector used during the Chevrotain parser migration.
+   * Keyed by diagram id (e.g. `pie`); the special key `default` applies to any diagram not listed.
+   * Values: `legacy` or `chevrotain`. Honored only via `initialize()` / `setConfig()` — NOT via
+   * `%%{init}%%` directives or frontmatter `config:`. Carries no semver stability guarantee and
+   * will be removed once the migration completes.
+   *
+   */
+  parser?: {
+    [k: string]: 'legacy' | 'chevrotain';
+  };
   elk?: {
     /**
      * Elk specific option that allows edges to share path where it convenient. It can make for pretty diagrams but can also make it harder to read the diagram.

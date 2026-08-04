@@ -1,12 +1,15 @@
 import { parser } from './pieParser.js';
 import { DEFAULT_PIE_DB, db } from './pieDb.js';
 import { setConfig } from '../../diagram-api/diagramAPI.js';
+import { describeForEachParserEngine } from '../common/parser/parserTestUtils.js';
 
 setConfig({
   securityLevel: 'strict',
 });
 
-describe('pie', () => {
+// The same golden assertions run against both engines (selected per-test via the internal
+// `parser` config) to prove behavioural parity.
+describeForEachParserEngine('pie', () => {
   beforeEach(() => db.clear());
 
   describe('parse', () => {
@@ -175,24 +178,26 @@ describe('pie', () => {
       expect([...db.getSections().keys()]).toEqual(['__proto__', 'constructor', 'prototype']);
     });
   });
+});
 
-  describe('config', () => {
-    it.todo('setConfig', () => {
-      // db.setConfig({ useWidth: 850, useMaxWidth: undefined });
+describe('pie config', () => {
+  beforeEach(() => db.clear());
 
-      const config = db.getConfig();
-      expect(config.useWidth).toBe(850);
-      expect(config.useMaxWidth).toBeTruthy();
-    });
+  it.todo('setConfig', () => {
+    // db.setConfig({ useWidth: 850, useMaxWidth: undefined });
 
-    it('getConfig', () => {
-      expect(db.getConfig()).toStrictEqual(DEFAULT_PIE_DB.config);
-    });
+    const config = db.getConfig();
+    expect(config.useWidth).toBe(850);
+    expect(config.useMaxWidth).toBeTruthy();
+  });
 
-    it.todo('resetConfig', () => {
-      // db.setConfig({ textPosition: 0 });
-      // db.resetConfig();
-      expect(db.getConfig().textPosition).toStrictEqual(DEFAULT_PIE_DB.config.textPosition);
-    });
+  it('getConfig', () => {
+    expect(db.getConfig()).toStrictEqual(DEFAULT_PIE_DB.config);
+  });
+
+  it.todo('resetConfig', () => {
+    // db.setConfig({ textPosition: 0 });
+    // db.resetConfig();
+    expect(db.getConfig().textPosition).toStrictEqual(DEFAULT_PIE_DB.config.textPosition);
   });
 });
