@@ -100,6 +100,20 @@ describe('XY Chart', () => {
     );
     cy.get('svg');
   });
+  it('x-axis range with same values is supported', () => {
+    imgSnapshotTest(
+      `---
+title: Dirac delta function
+---
+xychart-beta
+  x-axis "Only 0 matters" 0 --> 0
+  line "dirac" [0, 0.5, 1]
+`,
+      {}
+    );
+
+    cy.get('g.plot g.line-plot-0 path').should('exist');
+  });
   it('Render spark line with "plotReservedSpacePercent"', () => {
     imgSnapshotTest(
       `
@@ -314,6 +328,18 @@ describe('XY Chart', () => {
         y-axis "Revenue (in $)" 4000 --> 11000
         bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
         line [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
+      `,
+      {}
+    );
+    cy.get('svg');
+  });
+  it('should use the correct distances between data points', () => {
+    imgSnapshotTest(
+      `
+      xychart-beta
+        x-axis 0 --> 2
+        line [0, 1, 0, 1]
+        bar [1, 0, 1, 0]
       `,
       {}
     );

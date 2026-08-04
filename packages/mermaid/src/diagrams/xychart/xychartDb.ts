@@ -143,12 +143,13 @@ function transformDataWithoutCategory(data: number[]): SimplePlotDataType {
   if (isLinearAxisData(xyChartData.xAxis)) {
     const min = xyChartData.xAxis.min;
     const max = xyChartData.xAxis.max;
-    const step = (max - min + 1) / data.length;
-    const categories: string[] = [];
-    for (let i = min; i <= max; i += step) {
-      categories.push(`${i}`);
+    if (data.length === 1) {
+      // For backwards compatibility, avoid divide-by-zero error
+      retData = [[`${min}`, data[0]]];
+    } else {
+      const step = (max - min) / (data.length - 1);
+      retData = data.map((datum, index) => [`${min + index * step}`, datum]);
     }
-    retData = categories.map((c, i) => [c, data[i]]);
   }
 
   return retData;
