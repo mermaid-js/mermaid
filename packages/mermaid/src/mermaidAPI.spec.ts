@@ -687,18 +687,18 @@ describe('mermaidAPI', () => {
     it('resets mermaid config to global defaults', () => {
       const config = {
         logLevel: 0,
-        securityLevel: 'loose',
+        htmlLabels: false,
       };
       mermaidAPI.initialize(config);
-      mermaidAPI.setConfig({ securityLevel: 'strict', logLevel: 1 });
+      mermaidAPI.setConfig({ logLevel: 1, htmlLabels: true });
       expect(mermaidAPI.getConfig().logLevel).toBe(1);
-      expect(mermaidAPI.getConfig().securityLevel).toBe('strict');
+      expect(mermaidAPI.getConfig().htmlLabels).toBe(true);
       mermaidAPI.reset();
       expect(mermaidAPI.getConfig().logLevel).toBe(0);
-      expect(mermaidAPI.getConfig().securityLevel).toBe('loose');
+      expect(mermaidAPI.getConfig().htmlLabels).toBe(false);
       mermaidAPI.globalReset();
       expect(mermaidAPI.getConfig().logLevel).toBe(5);
-      expect(mermaidAPI.getConfig().securityLevel).toBe('strict');
+      expect(mermaidAPI.getConfig().htmlLabels).toBe(mermaidAPI.defaultConfig.htmlLabels);
     });
 
     it('prevents changes to site defaults (sneaky)', () => {

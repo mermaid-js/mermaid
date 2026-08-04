@@ -727,6 +727,10 @@ export const mermaidAPI = Object.freeze({
   getDiagramFromText,
   initialize,
   getConfig: configApi.getConfig,
+  /**
+   * @deprecated This function does nothing. It will be overwritten by the next
+   *             call to {@link render} or {@link parse}.
+   */
   setConfig: configApi.setConfig,
   getSiteConfig: configApi.getSiteConfig,
   updateSiteConfig: configApi.updateSiteConfig,
