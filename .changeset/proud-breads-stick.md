@@ -4,5 +4,5 @@
 
 deprecate: Deprecate the `mermaidAPI.setConfig()` function
 
-commit: 32e1cea6c6664322f1e75110e1a79accb1210c3a
+commit: 2cd6dcf735533b323507e3e889ffdea870540b43
 author: @aloisklink

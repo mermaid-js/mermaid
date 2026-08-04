@@ -8,5 +8,5 @@ User-controlled input already has protections against prototype pollution.
 
 Fixes: GHSA-c4c3-pg64-4m4v
 
-commit: c55def8e582cb499191b5630d3221722ed3e7fc4
+commit: 2cd6dcf735533b323507e3e889ffdea870540b43
 author: @aloisklink
