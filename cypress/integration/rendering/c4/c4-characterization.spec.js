@@ -250,10 +250,10 @@ describe('C4 characterization', () => {
       );
     });
 
-    it('CHAR.update-element-shape should accept the $shape override (ignored by renderer)', () => {
+    it('CHAR.update-element-shape should apply the $shape="cylinder" override ($shape="folder" not yet supported)', () => {
       imgSnapshotTest(
         `C4Container
-        title UpdateElementStyle shape override (ignored by renderer)
+        title UpdateElementStyle shape override (folder not yet supported)
         Container(a, "Default", "Tech", "no override")
         Container(b, "As Folder", "Tech", "shape override")
         Container(c, "As Cylinder", "Tech", "shape override")
@@ -262,7 +262,10 @@ describe('C4 characterization', () => {
         `,
         {}
       );
-      cy.get('rect').should('have.length', 3);
+      // the cylinder renders as a path; the folder override falls back to the plain box
+      // (scoped to .node to exclude unrelated defs/marker paths)
+      cy.get('.node path').should('have.length', 1);
+      cy.get('.node > rect').should('have.length', 2);
     });
 
     it('CHAR.update-rel-style should apply UpdateRelStyle offsets and colors', () => {
@@ -331,29 +334,28 @@ describe('C4 characterization', () => {
         `,
         {}
       );
-      cy.get('rect').should('have.length', 2);
+      // both containers fall back to the plain box; a sprite implementation must break this
       cy.get('image').should('not.exist');
       cy.get('svg svg').should('not.exist');
+      cy.get('.node > rect').should('have.length', 2);
     });
 
-    it('CHAR.descr-wrapping should not wrap long descriptions (wrap is currently a no-op, see #7949)', () => {
+    it('CHAR.descr-wrapping should wrap long descriptions as SVG text (the wrap-config bug in #7949 is unrelated)', () => {
       imgSnapshotTest(
         `C4Context
-        title Description wrapping (currently a no-op)
+        title Description wrapping
         Person(p, "Person", "A customer of the bank with personal bank accounts and a long description that should wrap across multiple lines")
         System(s, "System", "Allows customers to view information about their bank accounts and make payments")
         Rel(p, s, "Uses")
         `,
-        {}
+        { wrap: true }
       );
-      cy.contains(
-        'tspan',
-        'A customer of the bank with personal bank accounts and a long description that should wrap across multiple lines'
-      ).should('exist');
-      cy.contains(
-        'tspan',
-        'Allows customers to view information about their bank accounts and make payments'
-      ).should('exist');
+      cy.get('.node foreignObject').should('not.exist');
+      cy.get('.node .c4-descr').should('have.length', 2);
+      // wrapping produces multiple tspan lines within the description section
+      cy.get('.node .c4-descr').first().find('tspan.text-outer-tspan').should('have.length.gt', 1);
+      // textContent joins wrapped lines without spaces, so assert within one line
+      cy.get('.node .c4-descr tspan.text-outer-tspan').first().should('contain.text', 'A customer');
     });
   });
 });
