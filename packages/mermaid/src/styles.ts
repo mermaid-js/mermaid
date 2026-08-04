@@ -27,7 +27,7 @@ const getStyles = (
   } else {
     log.warn(`No theme found for ${type}`);
   }
-  return ` & {
+  return `& {
     font-family: ${options.fontFamily};
     font-size: ${options.fontSize};
     fill: ${options.textColor}

@@ -259,7 +259,37 @@ const compileCSS = (namespace: `#${string}`, css: string) => {
             return;
           }
           element.props = element.props.map((prop) => {
-            if (!prop.startsWith(namespace)) {
+            /**
+             * For the root selector `& { ... }`, allow limited inherited
+             * styles to not be namespaced.
+             * These won't do anything to the `<svg>`, but will be inherited by
+             * children with a lower specificity than SVG presentation attributes.
+             */
+            if (
+              prop === namespace &&
+              Array.isArray(element.children) &&
+              element.children.every((child) => {
+                if (child.type !== 'decl') {
+                  return false;
+                }
+                const allowedProps = new Set<typeof child.props>([
+                  'font-family',
+                  'font-size',
+                  'fill',
+                ]);
+                return allowedProps.has(child.props);
+              })
+            ) {
+              return prop;
+            }
+
+            const alreadyNamespaced =
+              // If the prop already starts with the namespace followed by a space or >, then it's already namespaced.
+              (prop.startsWith(`${namespace} `) || prop.startsWith(`${namespace}>`)) &&
+              // Column combinators are not yet widely supported, it's not yet compressed to `${namespace}||`,
+              // so we need to add an extra check for that
+              !prop.startsWith(`${namespace} ||`);
+            if (!alreadyNamespaced) {
               return `${namespace} ${prop}`;
             }
             return prop;
