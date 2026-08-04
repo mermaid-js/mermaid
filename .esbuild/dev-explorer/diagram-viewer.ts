@@ -321,13 +321,6 @@ function normalizeLayout(v: unknown): MermaidLayout | null {
   return null;
 }
 
-function sizeCaptureUnavailableReason(layout: MermaidLayout) {
-  if (layout !== 'swimlane') {
-    return 'No size data is available for this layout. Select swimlanes to capture DDLT sizes.';
-  }
-  return '';
-}
-
 function parseBoolean(v: unknown): boolean | null {
   if (typeof v !== 'string') return null;
   const s = v.trim().toLowerCase();
@@ -768,13 +761,6 @@ export class DevDiagramViewer extends LitElement {
   async #saveSizes() {
     if (!this.filePath || this.sizesSaving) return;
 
-    const unavailableReason = sizeCaptureUnavailableReason(this.layout);
-    if (unavailableReason) {
-      this.sizesMessage = 'size data unavailable';
-      this.error = unavailableReason;
-      return;
-    }
-
     this.sizesSaving = true;
     this.error = '';
     this.sizesMessage = this.dirty ? 'saving diagram...' : 'capturing sizes...';
@@ -803,7 +789,10 @@ export class DevDiagramViewer extends LitElement {
       const captured = window.mermaidLastCapturedSizes;
       const nodes = captured?.sizes.nodes ?? [];
       if (nodes.length === 0) {
-        throw new Error('Mermaid did not capture any node sizes; select a capture-enabled layout');
+        throw new Error(
+          `Mermaid captured no node sizes for layout "${this.layout}". Layouts that measure through ` +
+            'createGraphWithElements (domus, swimlane) support capture; others do not yet.'
+        );
       }
 
       this.sizesMessage = 'saving sizes...';
@@ -1182,9 +1171,10 @@ export class DevDiagramViewer extends LitElement {
     const sizesStatus = this.sizesSaving
       ? this.sizesMessage || 'saving sizes...'
       : this.sizesMessage;
-    const sizesUnavailableReason = sizeCaptureUnavailableReason(this.layout);
-    const saveSizesDisabled =
-      this.loading || this.saving || this.sizesSaving || Boolean(sizesUnavailableReason);
+    // Whether a layout can produce capture data is decided at render time by
+    // `createGraphWithElements`, not by a list here: `#saveSizes` reports it if
+    // nothing was captured and posts nothing.
+    const saveSizesDisabled = this.loading || this.saving || this.sizesSaving;
 
     return html`
       <div class="header">
@@ -1379,23 +1369,15 @@ export class DevDiagramViewer extends LitElement {
                   <sl-icon slot="prefix" name="floppy"></sl-icon>
                   Save
                 </sl-button>
-                <sl-tooltip
-                  content=${sizesUnavailableReason}
-                  ?disabled=${!sizesUnavailableReason}
-                  hoist
+                <sl-button
+                  size="small"
+                  variant="default"
+                  ?disabled=${saveSizesDisabled}
+                  @click=${() => void this.#saveSizes()}
                 >
-                  <span class="tooltip-target">
-                    <sl-button
-                      size="small"
-                      variant="default"
-                      ?disabled=${saveSizesDisabled}
-                      @click=${() => void this.#saveSizes()}
-                    >
-                      <sl-icon slot="prefix" name="rulers"></sl-icon>
-                      Save sizes
-                    </sl-button>
-                  </span>
-                </sl-tooltip>
+                  <sl-icon slot="prefix" name="rulers"></sl-icon>
+                  Save sizes
+                </sl-button>
               </div>
               <dev-code-editor
                 .value=${this.editorSource}
