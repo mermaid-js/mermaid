@@ -134,6 +134,7 @@ registerLayoutLoaders([
   { name: 'dagre', loader: async () => await import('./layout-algorithms/dagre/index.js') },
   { name: 'swimlane', loader: async () => await import('./layout-algorithms/swimlanes/index.js') },
   { name: 'domus', loader: async () => await import('./layout-algorithms/domus/index.js') },
+  { name: 'hola', loader: async () => await import('./layout-algorithms/hola/index.js') },
   // your new layout
   { name: 'grid', loader: async () => await import('./layout-algorithms/grid/index.js') },
 ]);

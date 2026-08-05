@@ -155,6 +155,15 @@ export interface MermaidConfig {
      */
     keepEntryNodeOnTop?: boolean;
   };
+  hola?: {
+    /**
+     * HOLA specific option. Breaks cycles before the topological decomposition and restores
+     * the removed edges afterwards, so a cyclic graph still decomposes into a core plus trees.
+     * Disable to lay the graph out with its cycles intact.
+     *
+     */
+    removeCycles?: boolean;
+  };
   darkMode?: boolean;
   /**
    * Flag for setting whether or not a html tag should be used for rendering labels on nodes and edges.

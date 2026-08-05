@@ -6,6 +6,7 @@ antiscript
 APPLYCLASS
 ARROWHEADSTYLE
 ARROWTYPE
+astar
 autonumber
 axisl-line
 Backjumping
@@ -115,6 +116,7 @@ logmeta
 LOGMSG
 lookaheads
 LPAREN
+lshape
 mdast
 metafile
 minlen
@@ -217,3 +219,4 @@ yaxis
 yfunc
 yytext
 zenuml
+zshape

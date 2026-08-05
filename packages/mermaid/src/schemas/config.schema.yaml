@@ -180,6 +180,16 @@ properties:
           Only applies when the cyclic flow has no node without incoming edges: if the loop is fed from outside (e.g. a start node pointing into it), that component already has a natural source and nothing is pinned. Detection is also scoped per container, so cycles that cross a subgraph boundary are not detected.
         type: boolean
         default: false
+  hola:
+    type: object
+    properties:
+      removeCycles:
+        description: |
+          HOLA specific option. Breaks cycles before the topological decomposition and restores
+          the removed edges afterwards, so a cyclic graph still decomposes into a core plus trees.
+          Disable to lay the graph out with its cycles intact.
+        type: boolean
+        default: true
   darkMode:
     type: boolean
     default: false

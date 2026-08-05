@@ -50,6 +50,10 @@ const registerDefaultLayoutLoaders = () => {
       name: 'domus',
       loader: async () => await import('./layout-algorithms/domus/index.js'),
     },
+    {
+      name: 'hola',
+      loader: async () => await import('./layout-algorithms/hola/index.js'),
+    },
     ...(injected.includeLargeFeatures
       ? [
           {
