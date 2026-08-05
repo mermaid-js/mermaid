@@ -123,10 +123,13 @@ function assertNoLiveInjection(container: Element): void {
       if (name.startsWith('on')) {
         problems.push(`event-handler attribute ${tag}[${name}="${value}"]`);
       }
-      if (URL_ATTRIBUTES.includes(name) && /^\s*(javascript|data:text\/html|vbscript):/i.test(value)) {
+      if (
+        URL_ATTRIBUTES.includes(name) &&
+        /^\s*(javascript|data:text\/html|vbscript):/i.test(value)
+      ) {
         problems.push(`dangerous URL in ${tag}[${name}="${value}"]`);
       }
-      if (name === 'style' && /expression\(|url\(\s*['"]?\s*javascript:/i.test(value)) {
+      if (name === 'style' && /expression\(|url\(\s*["']?\s*javascript:/i.test(value)) {
         problems.push(`dangerous style in ${tag}[${name}="${value}"]`);
       }
     }

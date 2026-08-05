@@ -76,7 +76,7 @@ interface BaseNode {
   y?: number;
 
   /**
-   * Raw @{} metadata from user input. Values are unparsed strings/numbers.
+   * Raw `@{}` metadata from user input. Values are unparsed strings/numbers.
    * Sanitize before writing to any DOM/SVG sink.
    */
   metadata?: Record<string, unknown>;
