@@ -67,6 +67,8 @@ async function renderInJsdom(
 ): Promise<{ svg: string; container: Element }> {
   const oldWindow = global.window;
   const oldDocument = global.document;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const oldMutationObserver = (global as any).MutationObserver;
 
   try {
     const dom = new JSDOM(`<html lang="en"><body><div id="container"></div></body></html>`, {
@@ -97,6 +99,8 @@ async function renderInJsdom(
     (global as any).window = oldWindow;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (global as any).document = oldDocument;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (global as any).MutationObserver = oldMutationObserver;
   }
 }
 
