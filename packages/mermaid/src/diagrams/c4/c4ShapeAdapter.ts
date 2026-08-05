@@ -122,6 +122,23 @@ const escapeHtml = (txt: string): string =>
     .replaceAll("'", '&#39;');
 
 /**
+ * An `UpdateRelStyle` colour, accepted only if it is a colour on its own. The value is
+ * interpolated into a CSS declaration, so one carrying `;` or a `url(...)` could append
+ * further declarations; `CSS.supports` rejects those, and anything it cannot judge (no
+ * CSS API, as in jsdom) falls back to a conservative pattern match.
+ */
+export const asColor = (value: unknown): string | undefined => {
+  if (typeof value !== 'string' || value === '') {
+    return undefined;
+  }
+  const accepted =
+    typeof globalThis.CSS?.supports === 'function'
+      ? globalThis.CSS.supports('color', value)
+      : /^(#[\da-f]{3,8}|[a-z]+|rgba?\([\d\s%,./]+\)|hsla?\([\d\s%,./deg]+\))$/i.test(value);
+  return accepted ? value : undefined;
+};
+
+/**
  * A C4 relationship label: name, then optional `[technology]` and description, one per
  * line. `<br/>` separates the lines either way, since it is a line break in an HTML
  * label and a line delimiter in a plain SVG one. The emphasis tags only render as
