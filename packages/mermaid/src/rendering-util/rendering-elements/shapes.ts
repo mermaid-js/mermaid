@@ -14,6 +14,7 @@ import { curlyBraceLeft } from './shapes/curlyBraceLeft.js';
 import { curlyBraceRight } from './shapes/curlyBraceRight.js';
 import { curlyBraces } from './shapes/curlyBraces.js';
 import { curvedTrapezoid } from './shapes/curvedTrapezoid.js';
+import { person } from './shapes/person.js';
 import { cylinder } from './shapes/cylinder.js';
 import { datastore } from './shapes/datastore.js';
 import { dividedRectangle } from './shapes/dividedRect.js';
@@ -142,6 +143,13 @@ export const shapesDefs = [
     description: 'Data flow diagram data store',
     aliases: ['data-store'],
     handler: datastore,
+  },
+  {
+    semanticName: 'Person',
+    name: 'Person',
+    shortName: 'person',
+    description: 'Person (circular head above a rounded body)',
+    handler: person,
   },
   {
     semanticName: 'Start',
