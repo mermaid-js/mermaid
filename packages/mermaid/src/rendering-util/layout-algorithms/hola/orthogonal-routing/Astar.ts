@@ -786,6 +786,20 @@ function simplifyPath(
     }
   }
 
+  // The last pushed point's axis that isn't shared with its predecessor was taken
+  // from a grid-quantized cell (gridToWorld), which is generally not exactly on
+  // the same line as `end`. Snap that free axis to `end`'s exact coordinate so the
+  // final segment stays axis-aligned instead of drifting a few px off-grid.
+  if (points.length > 1) {
+    const finalDir = getDirection(cells[cells.length - 2], cells[cells.length - 1]);
+    const lastPushed = points[points.length - 1];
+    if (finalDir === 'horizontal') {
+      points[points.length - 1] = { x: lastPushed.x, y: end.y };
+    } else if (finalDir === 'vertical') {
+      points[points.length - 1] = { x: end.x, y: lastPushed.y };
+    }
+  }
+
   points.push(end);
 
   return points;
