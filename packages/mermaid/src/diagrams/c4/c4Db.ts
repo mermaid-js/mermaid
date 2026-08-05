@@ -60,6 +60,7 @@ let wrapEnabled: boolean | undefined = false;
 let c4ShapeInRow = 4;
 let c4BoundaryInRow = 2;
 let c4Type: string | undefined;
+let direction = 'TB';
 
 export const getC4Type = function () {
   return c4Type;
@@ -715,6 +716,14 @@ export const autoWrap = function () {
   return wrapEnabled;
 };
 
+export const setDirection = function (dir: string) {
+  direction = dir;
+};
+
+export const getDirection = function () {
+  return direction;
+};
+
 export const clear = function () {
   c4ShapeArray = [];
   boundaries = [createGlobalBoundary()];
@@ -728,6 +737,7 @@ export const clear = function () {
   wrapEnabled = false;
   c4ShapeInRow = 4;
   c4BoundaryInRow = 2;
+  direction = 'TB';
 };
 
 export const LINETYPE = {
@@ -809,5 +819,7 @@ export default {
   PLACEMENT,
   setTitle,
   setC4Type,
+  setDirection,
+  getDirection,
   // apply,
 };
