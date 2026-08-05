@@ -18,6 +18,11 @@ export interface NodeMetaData {
    * to it; `expanded` (the default) renders the subgraph normally.
    */
   view?: 'expanded' | 'collapsed';
+  /**
+   * Raw `@{}` other metadata from user input. Values are unparsed strings/numbers.
+   * Sanitize before writing to any DOM/SVG sink.
+   */
+  [key: string]: unknown;
 }
 
 export interface ParticipantMetaData {

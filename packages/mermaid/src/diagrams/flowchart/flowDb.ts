@@ -1040,7 +1040,9 @@ You have to call mermaid.initialize.`
       node.cssStyles = vertex.styles;
       node.cssCompiledStyles = this.getCompiledStyles(vertex.classes);
       node.cssClasses = vertex.classes.join(' ');
-      node.metadata = vertex.metadata;
+      if (vertex.metadata !== undefined) {
+        node.metadata = { ...node.metadata, ...vertex.metadata };
+      }
     } else {
       const baseNode = {
         id: vertex.id,
@@ -1196,6 +1198,7 @@ You have to call mermaid.initialize.`
           dir: subGraph.dir,
           isGroup: false,
           look: config.look,
+          metadata: subGraph.metadata,
         });
       } else {
         nodes.push({
@@ -1211,6 +1214,7 @@ You have to call mermaid.initialize.`
           dir: subGraph.dir,
           isGroup: true,
           look: config.look,
+          metadata: subGraph.metadata,
         });
       }
     }
