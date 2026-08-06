@@ -33,7 +33,9 @@ export async function adjustLayout(
   // measures the title, so its height is estimated from the flowchart font size
   // (one rendered line ≈ 1.5 × fontSize), matching the browser's single-line title.
   const siteConfig = getConfig();
-  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
+  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins({
+    flowchart: siteConfig.flowchart ?? {},
+  });
   const titleFontSize = Number((siteConfig as { fontSize?: unknown }).fontSize) || 16;
   const titleBand = Math.round(titleFontSize * 1.5) + subGraphTitleTotalMargin;
   for (const node of data4Layout.nodes) {
