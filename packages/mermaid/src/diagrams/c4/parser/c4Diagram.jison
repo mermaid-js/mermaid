@@ -84,7 +84,7 @@
 .*direction\s+LR[^\n]*                    return 'direction_lr';
 
 
-"title"\s[^#\n;]+                         return 'title';
+"title"\s[^\n;]+                          return 'title';
 "accDescription"\s[^#\n;]+                return 'accDescription';
 accTitle\s*":"\s*                         { this.begin("acc_title");return 'acc_title'; }
 <acc_title>(?!\n|;|#)*[^\n]*              { this.popState(); return "acc_title_value"; }

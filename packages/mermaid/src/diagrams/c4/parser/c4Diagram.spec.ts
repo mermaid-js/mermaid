@@ -22,6 +22,15 @@ Person(customerA, "Banking Customer A", "A customer of the bank, with personal b
     expect(rendered).toBe(true);
   });
 
+  it('should allow # characters in the diagram title', function () {
+    c4.parser.parse(`C4Context
+title Sprint #3 architecture
+Person(customer, "Customer", "A customer")`);
+
+    const yy = c4.parser.yy;
+    expect(yy.getTitle()).toBe('Sprint #3 architecture');
+  });
+
   it('should handle parameter names that are keywords', function () {
     c4.parser.parse(`C4Context
 title title
