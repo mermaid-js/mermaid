@@ -814,10 +814,14 @@ export function findShortestOrthogonalPathOnGraph(
   }
 
   const N = g.nodes.length;
-  const distLen = Array.from({ length: N }, () => [Infinity, Infinity, Infinity]);
-  const distBends = Array.from({ length: N }, () => [Infinity, Infinity, Infinity]);
-  const prevNode = Array.from({ length: N }, () => [-1, -1, -1]);
-  const prevDir = Array.from({ length: N }, () => [0, 0, 0]);
+  // Flat (node * 3 + dir) typed arrays rather than N nested 3-element arrays.
+  // This search runs tens of thousands of times per layout, and the nested form
+  // allocated 4*N throwaway arrays on every call; the values and comparisons
+  // below are unchanged.
+  const distLen = new Float64Array(N * 3).fill(Infinity);
+  const distBends = new Float64Array(N * 3).fill(Infinity);
+  const prevNode = new Int32Array(N * 3).fill(-1);
+  const prevDir = new Int32Array(N * 3);
 
   const startState: State = { node: g.startIdx, dir: 'n', len: 0, bends: 0 };
 
@@ -839,8 +843,8 @@ export function findShortestOrthogonalPathOnGraph(
     return dirIndex(a.dir) < dirIndex(b.dir);
   });
 
-  distLen[g.startIdx][0] = 0;
-  distBends[g.startIdx][0] = 0;
+  distLen[g.startIdx * 3] = 0;
+  distBends[g.startIdx * 3] = 0;
   heap.push(startState);
 
   // Soft crossing-avoidance cost per graph edge (cached per node pair).
@@ -909,7 +913,7 @@ export function findShortestOrthogonalPathOnGraph(
   while (heap.size > 0) {
     const cur = heap.pop()!;
     const di = dirIndex(cur.dir);
-    if (cur.len !== distLen[cur.node][di] || cur.bends !== distBends[cur.node][di]) {
+    if (cur.len !== distLen[cur.node * 3 + di] || cur.bends !== distBends[cur.node * 3 + di]) {
       continue;
     }
     if (cur.node === g.endIdx) {
@@ -939,14 +943,15 @@ export function findShortestOrthogonalPathOnGraph(
       const nextLen = cur.len + e.length + crossPenalty(cur.node, e.to);
       const nextBends = cur.bends + bendInc;
 
-      const bestLen = distLen[e.to][nd];
-      const bestBends = distBends[e.to][nd];
+      const ti = e.to * 3 + nd;
+      const bestLen = distLen[ti];
+      const bestBends = distBends[ti];
 
       if (nextLen < bestLen || (nextLen === bestLen && nextBends < bestBends)) {
-        distLen[e.to][nd] = nextLen;
-        distBends[e.to][nd] = nextBends;
-        prevNode[e.to][nd] = cur.node;
-        prevDir[e.to][nd] = di;
+        distLen[ti] = nextLen;
+        distBends[ti] = nextBends;
+        prevNode[ti] = cur.node;
+        prevDir[ti] = di;
         heap.push({ node: e.to, dir: nextDir, len: nextLen, bends: nextBends });
       }
     }
@@ -956,14 +961,14 @@ export function findShortestOrthogonalPathOnGraph(
   let bestEndDir = 0;
   for (let d = 1; d < 3; d++) {
     if (
-      distLen[g.endIdx][d] < distLen[g.endIdx][bestEndDir] ||
-      (distLen[g.endIdx][d] === distLen[g.endIdx][bestEndDir] &&
-        distBends[g.endIdx][d] < distBends[g.endIdx][bestEndDir])
+      distLen[g.endIdx * 3 + d] < distLen[g.endIdx * 3 + bestEndDir] ||
+      (distLen[g.endIdx * 3 + d] === distLen[g.endIdx * 3 + bestEndDir] &&
+        distBends[g.endIdx * 3 + d] < distBends[g.endIdx * 3 + bestEndDir])
     ) {
       bestEndDir = d;
     }
   }
-  if (!Number.isFinite(distLen[g.endIdx][bestEndDir])) {
+  if (!Number.isFinite(distLen[g.endIdx * 3 + bestEndDir])) {
     return null;
   }
 
@@ -973,8 +978,8 @@ export function findShortestOrthogonalPathOnGraph(
   let curDir = bestEndDir;
   while (curNode !== -1) {
     pathIdxs.push(curNode);
-    const pn = prevNode[curNode][curDir];
-    const pd = prevDir[curNode][curDir];
+    const pn = prevNode[curNode * 3 + curDir];
+    const pd = prevDir[curNode * 3 + curDir];
     curNode = pn;
     curDir = pd;
   }
