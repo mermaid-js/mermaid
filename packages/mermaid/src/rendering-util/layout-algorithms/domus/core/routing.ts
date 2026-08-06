@@ -699,8 +699,12 @@ export function buildRoutingGraphFromChannels(
   const key = (x: number, y: number) => `${x},${y}`;
 
   for (const y of yCoords) {
+    // Same narrowing as the adjacency loops below: `pointInRectInterior`
+    // requires `p.y > rect.top && p.y < rect.bottom`, so only rects strictly
+    // spanning this row can contain any point on it.
+    const rowRects = obstacleRects.filter((r) => r.top < y && r.bottom > y);
     for (const x of xCoords) {
-      if (pointInsideAnyRectInterior({ x, y }, obstacleRects)) {
+      if (pointInsideAnyRectInterior({ x, y }, rowRects)) {
         continue;
       }
       const id = key(x, y);
@@ -720,6 +724,13 @@ export function buildRoutingGraphFromChannels(
   const adj: RouteGraphEdge[][] = Array.from({ length: nodes.length }, () => []);
 
   for (const y of yCoords) {
+    // A horizontal segment at height `y` can only be blocked by a rect whose
+    // vertical span contains `y`: `segmentIntersectsRectInterior` requires
+    // `y >= rect.top && y <= rect.bottom`. Narrowing the obstacle list once per
+    // row is therefore exactly equivalent to scanning every rect per segment,
+    // and takes the adjacency build from O(|X|*|Y|*n) to O(|Y|*n + |X|*|Y|*k)
+    // where k is the few rects that actually span the row.
+    const rowRects = obstacleRects.filter((r) => r.top <= y && r.bottom >= y);
     let prevIdx: number | null = null;
     let prevX: number | null = null;
     for (const x of xCoords) {
@@ -732,7 +743,7 @@ export function buildRoutingGraphFromChannels(
       if (prevIdx != null && prevX != null) {
         const a = { x: prevX, y };
         const b = { x, y };
-        if (!segmentCrossesAnyRectInterior(a, b, obstacleRects)) {
+        if (!segmentCrossesAnyRectInterior(a, b, rowRects)) {
           const len = Math.abs(x - prevX);
           adj[prevIdx].push({ to: idx, length: len, dir: 'h' });
           adj[idx].push({ to: prevIdx, length: len, dir: 'h' });
@@ -744,6 +755,9 @@ export function buildRoutingGraphFromChannels(
   }
 
   for (const x of xCoords) {
+    // Dual of the row filter: a vertical segment at `x` can only be blocked by
+    // a rect with `x >= rect.left && x <= rect.right`.
+    const colRects = obstacleRects.filter((r) => r.left <= x && r.right >= x);
     let prevIdx: number | null = null;
     let prevY: number | null = null;
     for (const y of yCoords) {
@@ -756,7 +770,7 @@ export function buildRoutingGraphFromChannels(
       if (prevIdx != null && prevY != null) {
         const a = { x, y: prevY };
         const b = { x, y };
-        if (!segmentCrossesAnyRectInterior(a, b, obstacleRects)) {
+        if (!segmentCrossesAnyRectInterior(a, b, colRects)) {
           const len = Math.abs(y - prevY);
           adj[prevIdx].push({ to: idx, length: len, dir: 'v' });
           adj[idx].push({ to: prevIdx, length: len, dir: 'v' });
