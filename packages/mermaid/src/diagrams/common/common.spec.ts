@@ -1,4 +1,10 @@
-import { sanitizeText, removeScript, parseGenericTypes, countOccurrence } from './common.js';
+import {
+  sanitizeText,
+  removeScript,
+  parseGenericTypes,
+  countOccurrence,
+  renderKatexSanitized,
+} from './common.js';
 
 describe('when securityLevel is antiscript, all script must be removed', () => {
   /**
@@ -124,3 +130,22 @@ it.each([
     expect(countOccurrence(str, substring)).toEqual(count);
   }
 );
+
+describe('renderKatexSanitized', () => {
+  beforeAll(() => {
+    // @ts-ignore -- injected is a build-time global
+    globalThis.injected = { version: '1.0.0', includeLargeFeatures: true };
+    // @ts-ignore -- stub MathMLElement so isMathMLSupported() returns true
+    window.MathMLElement = class {};
+  });
+
+  it('should use white-space: pre to preserve spaces around math formulas', async () => {
+    const text = 'hello $$x^2$$ world';
+    const result = await renderKatexSanitized(text, {
+      securityLevel: 'strict',
+      flowchart: { htmlLabels: true },
+    });
+    expect(result).toContain('white-space: pre');
+    expect(result).not.toContain('white-space: nowrap');
+  });
+});
