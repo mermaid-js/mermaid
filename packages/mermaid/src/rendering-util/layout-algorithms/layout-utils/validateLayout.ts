@@ -73,6 +73,15 @@ const EPS_MARKER_CLEARANCE_HALF_WIDTH = 7;
 const EPS_ENDPOINT_BAND = 18;
 /** Two distinct edges sharing an attach point on a node within this distance trips `edge-shared-attachment-point`. */
 const EPS_SHARED_ATTACH = 3;
+/**
+ * A self-loop (start === end) must escape its own node to be visible: its
+ * polyline has to reach at least this far outside the node's border. Below it,
+ * the loop has been collapsed onto (or inside) the node boundary and renders as
+ * a bare arrowhead with no visible loop — `edge-self-loop-not-rendered` fires.
+ * A properly-drawn loop (any style) leaves a real outward stub (~nodeSpacing),
+ * so this only catches genuinely degenerate/collapsed self-loops.
+ */
+const EPS_SELF_LOOP_EXTENT = 4;
 
 /**
  * A non-member leaf node should keep at least this much clear air between itself
@@ -142,6 +151,7 @@ export type LayoutIssueType =
   | 'edge-bend-near-endpoint'
   | 'edge-corner-connection'
   | 'edge-endpoint-detached-from-node'
+  | 'edge-self-loop-not-rendered'
   | 'edge-shared-subpath'
   | 'edge-self-shared-subpath'
   | 'edge-bend-overlaps-arrowhead'
@@ -301,6 +311,13 @@ function direction(a: Point, b: Point): 'E' | 'W' | 'N' | 'S' | null {
     return dy > 0 ? 'S' : 'N';
   }
   return null;
+}
+
+/** Euclidean distance a point sits OUTSIDE a rect (0 when on the border or inside). */
+function distanceOutsideRect(p: Point, r: Rect): number {
+  const dx = Math.max(r.left - p.x, 0, p.x - r.right);
+  const dy = Math.max(r.top - p.y, 0, p.y - r.bottom);
+  return Math.hypot(dx, dy);
 }
 
 /** Compute distance from a point to rectangle corners, return min distance */
@@ -948,6 +965,32 @@ export function validateLayout(
     const normalized = normalizePolyline(points);
     edgeMetas.push({ id: edgeId, startId, endId, points, normalized });
     validEdgeCount++;
+
+    // ─── edge-self-loop-not-rendered (HARD) ──────────────────────────────────
+    // A self-loop (start === end) has to leave its node and return to be drawn
+    // at all. A late routing/simplification pass can collapse the loop's U-turn
+    // onto — or inside — the node boundary (e.g. both ports slid onto a shared
+    // rail, yielding a zero-length segment), which paints as a bare arrowhead
+    // with no visible loop. Bend/point scoring can't see this: the collapsed
+    // 2-point polyline looks like a perfect "straight" edge and scores ABOVE the
+    // correct U-bend. Flag it structurally: if the self-loop never reaches
+    // EPS_SELF_LOOP_EXTENT outside its own node, it is not rendering.
+    if (startId.length > 0 && startId === endId && sNode && !sNode.isGroup) {
+      const loopRect = rectForNode(sNode);
+      let maxOutside = 0;
+      for (const p of points) {
+        maxOutside = Math.max(maxOutside, distanceOutsideRect(p, loopRect));
+      }
+      if (maxOutside < EPS_SELF_LOOP_EXTENT) {
+        issues.push({
+          type: 'edge-self-loop-not-rendered',
+          message: `Edge "${edgeId}" is a self-loop on node "${startId}" that does not leave the node (max ${maxOutside.toFixed(1)}px outside, needs ${EPS_SELF_LOOP_EXTENT})`,
+          edgeId,
+          nodeIds: [startId],
+          details: { maxOutside, threshold: EPS_SELF_LOOP_EXTENT, points },
+        });
+      }
+    }
 
     // ─── New: edge-bend-near-endpoint ────────────────────────────────────────
     // After normalising the polyline (so collinear waypoints don't make a

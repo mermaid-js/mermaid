@@ -169,6 +169,50 @@ describe('validateLayout scoring (DDLT unified, 0–1000 fixed cap)', () => {
   });
 });
 
+describe('validateLayout self-loop rendering', () => {
+  // Node A centred at (0,0), 120x60 → borders x∈[-60,60], y∈[-30,30].
+  const a = () => mkNode('A', 0, 0, 120, 60);
+
+  it('flags edge-self-loop-not-rendered for a collapsed (zero-length) self-loop', () => {
+    // Both endpoints slid onto a single point on the right border — the exact
+    // degeneracy straightenParallelZs used to produce. Renders as a bare
+    // arrowhead with no visible loop.
+    const e = mkEdge('L_A_A', 'A', 'A', [
+      { x: 60, y: 0 },
+      { x: 60, y: 0 },
+    ]);
+    const layout: LayoutData = { nodes: [a()], edges: [e], config: {} as any };
+    const res = validateLayout(layout);
+    expect(res.issues.map((i) => i.type)).toContain('edge-self-loop-not-rendered');
+    expect(res.ok).toBe(false); // hard: the drawing is broken
+    expect(res.score).toBe(0);
+  });
+
+  it('flags edge-self-loop-not-rendered when the loop never leaves the node border', () => {
+    // Both ports on the right border at different offsets, no outward stub.
+    const e = mkEdge('L_A_A', 'A', 'A', [
+      { x: 60, y: -15 },
+      { x: 60, y: 15 },
+    ]);
+    const layout: LayoutData = { nodes: [a()], edges: [e], config: {} as any };
+    expect(getIssueTypes(layout)).toContain('edge-self-loop-not-rendered');
+  });
+
+  it('does NOT flag a proper same-side U-bend self-loop that escapes the node', () => {
+    // right border → out 40px → over → back to right border: a visible loop.
+    const e = mkEdge('L_A_A', 'A', 'A', [
+      { x: 60, y: -15 },
+      { x: 100, y: -15 },
+      { x: 100, y: 15 },
+      { x: 60, y: 15 },
+    ]);
+    const layout: LayoutData = { nodes: [a()], edges: [e], config: {} as any };
+    const res = validateLayout(layout);
+    expect(res.issues.map((i) => i.type)).not.toContain('edge-self-loop-not-rendered');
+    expect(res.ok).toBe(true);
+  });
+});
+
 describe('validateLayout new hard-validation rules', () => {
   it('flags edge-bend-near-endpoint when the LAST segment is shorter than 10', () => {
     // Use node-free edges so only the new rule fires.
