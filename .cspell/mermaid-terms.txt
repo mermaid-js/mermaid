@@ -42,7 +42,9 @@ sandboxed
 sentencepiece
 siebling
 statediagram
+Structurizr
 substate
+treeview
 unfixable
 Unmodelled
 Viewbox

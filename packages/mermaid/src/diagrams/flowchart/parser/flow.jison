@@ -2,6 +2,13 @@
  *  https://mermaidjs.github.io/
  *  (c) 2015 Knut Sveidqvist
  *  MIT license.
+ *
+ *  DEPRECATED — legacy flowchart parser.
+ *  The flowchart diagram now parses with the Chevrotain parser in this directory
+ *  (`flow.tokens.ts` / `flow.lexer.ts` / `flow.parser.ts` / `flow.visitor.ts`) by default.
+ *  This grammar is retained only as a config-selectable rollback during the parser migration:
+ *  `mermaid.initialize({ parser: { flowchart: 'legacy' } })`. Do not add features here — make
+ *  flowchart parser changes in the Chevrotain files instead.
  */
 
 /* lexical grammar */
@@ -114,7 +121,7 @@ that id.
 <click>[^\s\n]*          return 'CLICK';
 
 "flowchart-elk"          {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
-"swimlane"               {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
+"swimlane-beta"          {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "graph"                  {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "flowchart"              {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "subgraph"               return 'subgraph';

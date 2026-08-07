@@ -2,6 +2,7 @@ import type { SVG } from '../../../diagram-api/types.js';
 import type { InternalHelpers } from '../../../internals.js';
 import type { D3Selection } from '../../../types.js';
 import { log } from '../../../logger.js';
+import { profiler } from '../../../profiler.js';
 import { getConfig } from '../../../config.js';
 import utils from '../../../utils.js';
 import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
@@ -145,23 +146,32 @@ export function createCommonLayoutRenderer<
 
     // Algorithm-specific transformations onto the original parsed layout data so the algorithm-specific
     // layout core has the inputs and setup it needs
-    renderContext.preparedLayout = await prepareLayout?.(data4Layout, renderContext);
+    renderContext.preparedLayout = injected.profiling
+      ? await profiler.span('prepare', () => prepareLayout?.(data4Layout, renderContext))
+      : await prepareLayout?.(data4Layout, renderContext);
 
     // Get the sizes of the labels and other elements by running the measureLayout function,
     // which by default creates a graph with the elements and measures them.
     // This is needed for layout algorithms that require size information to compute the layout.
-    const measure = await measureLayoutFn(data4Layout, renderContext);
+    const measure = injected.profiling
+      ? await profiler.span('measure', () => measureLayoutFn(data4Layout, renderContext))
+      : await measureLayoutFn(data4Layout, renderContext);
 
     // Next, run the core layout algorithm to compute the positions of nodes and edges based on the algorithm,
     // layoutData and the measurements. This is the core piece where functions are supposed to be different
     // between different algorithms.
-    const coreResult = await runLayoutCore(data4Layout, renderContext);
+    const coreResult = injected.profiling
+      ? await profiler.span('layout', () => runLayoutCore(data4Layout, renderContext))
+      : await runLayoutCore(data4Layout, renderContext);
 
     const paintContext: CommonLayoutPaintContext<PreparedLayout, MeasureResult> = {
       ...renderContext,
       measure,
     };
 
+    if (injected.profiling) {
+      profiler.begin('paint');
+    }
     if (paintLayout) {
       // Escape hatch: if a custom paintLayout is provided, we assume it handles everything including painting
       // based on the layout data and measurements, so we just call it directly with the core result. Only to be used
@@ -177,6 +187,9 @@ export function createCommonLayoutRenderer<
     // Some algorithms may need to do some post-processing after the initial paint, for example to position edge
     // labels after the edges have been rendered and their paths are known.
     await afterPaint?.(data4Layout, paintContext, coreResult);
+    if (injected.profiling) {
+      profiler.end(); // paint
+    }
   };
 }
 

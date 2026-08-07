@@ -792,3 +792,43 @@ Gateway --> Repository : delegates`
     }
   });
 });
+
+describe('prepareLayoutForDagre spacing precedence (#7932)', () => {
+  const base = { direction: 'TB', nodes: [], edges: [] };
+
+  it('honours the spacing the diagram renderer set on data4Layout over the flowchart config defaults', () => {
+    const { graph } = prepareLayoutForDagre({
+      ...base,
+      nodeSpacing: 120,
+      rankSpacing: 130,
+      // The resolved site config always carries the flowchart schema defaults.
+      config: { flowchart: { nodeSpacing: 50, rankSpacing: 50 } },
+    });
+    expect(graph.graph().nodesep).toBe(120);
+    expect(graph.graph().ranksep).toBe(130);
+  });
+
+  it('lets an explicit top-level config override win over the diagram value', () => {
+    const { graph } = prepareLayoutForDagre({
+      ...base,
+      nodeSpacing: 120,
+      rankSpacing: 130,
+      config: {
+        nodeSpacing: 200,
+        rankSpacing: 210,
+        flowchart: { nodeSpacing: 50, rankSpacing: 50 },
+      },
+    });
+    expect(graph.graph().nodesep).toBe(200);
+    expect(graph.graph().ranksep).toBe(210);
+  });
+
+  it('falls back to the flowchart config when the diagram sets no spacing', () => {
+    const { graph } = prepareLayoutForDagre({
+      ...base,
+      config: { flowchart: { nodeSpacing: 60, rankSpacing: 70 } },
+    });
+    expect(graph.graph().nodesep).toBe(60);
+    expect(graph.graph().ranksep).toBe(70);
+  });
+});

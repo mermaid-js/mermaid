@@ -114,6 +114,21 @@ function mirrorAxis(layout: LayoutData, axis: Axis): boolean {
     if (typeof value === 'number') {
       node[axis] = mirror(value);
     }
+    const titleRect = node.groupTitleRect;
+    if (titleRect) {
+      node.groupTitleRect =
+        axis === 'x'
+          ? {
+              ...titleRect,
+              left: mirror(titleRect.right),
+              right: mirror(titleRect.left),
+            }
+          : {
+              ...titleRect,
+              top: mirror(titleRect.bottom),
+              bottom: mirror(titleRect.top),
+            };
+    }
   }
   for (const edge of edges) {
     for (const point of edge.points ?? []) {
@@ -296,6 +311,12 @@ export function applyLrDirectionTransform(
     curr.lane.width = laneWidth;
     curr.lane.height = laneHeight;
     curr.lane.swimlaneContentTop = curr.contentTop;
+    curr.lane.groupTitleRect = {
+      left: laneLeft,
+      right: laneLeft + titleBandSize,
+      top: laneTop,
+      bottom: laneBottom,
+    };
   }
 
   if (direction === 'RL') {

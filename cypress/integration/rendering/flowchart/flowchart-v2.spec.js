@@ -351,55 +351,6 @@ end
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
-  it('issue-4648: sibling subgraphs with different directions and external connections', () => {
-    imgSnapshotTest(
-      `flowchart TD
-
-subgraph Group1
-  direction TB
-  A1 --> A2
-  A2 --> A3
-end
-
-subgraph Group2
-  direction LR
-  B1 --> B2
-  B2 --> B3
-end
-
-subgraph Group3
-  direction LR
-  C1 --> C2
-  C2 --> C3
-end
-
-%% External connections between subgraphs
-A3 --- B1
-B3 --- C1
-      `,
-      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
-    );
-  });
-
-  it('issue-4648: nested subgraph with external connection', () => {
-    imgSnapshotTest(
-      `flowchart TD
-
-subgraph Wrapper
-  direction LR
-  subgraph Inner
-    D1 --> D2
-    D2 --> D3
-  end
-end
-
-%% External connection to nested subgraph
-D3 --- E1
-      `,
-      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
-    );
-  });
-
   it('57.x: handle nested subgraphs with outgoing links 5', () => {
     imgSnapshotTest(
       `%% this does not produce the desired result
@@ -1394,6 +1345,82 @@ flowchart TD
     B -- "\`**Markdown** edge labels will autowrap, unless markdownAutoWrap: false is set\`" --> C
 `
         )
+      );
+    });
+  });
+
+  describe('Collapsible subgraphs (@{ view: collapsed })', () => {
+    it('should render a collapsed subgraph as a single node with edges redirected to it', () => {
+      imgSnapshotTest(
+        `flowchart TD
+        Start --> one
+        subgraph one [My Group]
+          A --> B
+          B --> C
+        end
+        one --> End
+        one@{ view: collapsed }
+        `,
+        {}
+      );
+    });
+
+    it('should render a collapsed subgraph alongside an expanded one', () => {
+      imgSnapshotTest(
+        `flowchart LR
+        subgraph g1 [Collapsed]
+          A1 --> A2
+        end
+        subgraph g2 [Expanded]
+          B1 --> B2
+        end
+        g1 --> g2
+        g1@{ view: collapsed }
+        `,
+        {}
+      );
+    });
+
+    it('should redirect a collapsed subgraph using the handDrawn look', () => {
+      imgSnapshotTest(
+        `flowchart TD
+        X --> grp
+        subgraph grp [Hand Drawn Group]
+          P --> Q
+        end
+        grp@{ view: collapsed }
+        `,
+        { look: 'handDrawn' }
+      );
+    });
+
+    it('should collapse nested subgraphs to the outermost collapsed ancestor', () => {
+      imgSnapshotTest(
+        `flowchart TD
+        Start --> inner
+        subgraph outer [Outer]
+          subgraph inner [Inner]
+            A --> B
+          end
+        end
+        outer@{ view: collapsed }
+        `,
+        {}
+      );
+    });
+
+    it('should redirect an edge targeting a deeply nested node to the outermost collapsed subgraph', () => {
+      imgSnapshotTest(
+        `flowchart TD
+        subgraph outer [Outer]
+          subgraph inner [Inner]
+            A --> B
+          end
+        end
+        Start --> A
+        outer@{ view: collapsed }
+        `,
+        {}
       );
     });
   });

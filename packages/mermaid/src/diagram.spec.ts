@@ -64,12 +64,9 @@ describe('diagram detection', () => {
   });
 
   test('should throw the right error for incorrect diagram', async () => {
-    await expect(Diagram.fromText('graph TD; A-->')).rejects.toThrowErrorMatchingInlineSnapshot(`
-      [Error: Parse error on line 2:
-      graph TD; A-->
-      --------------^
-      Expecting 'AMP', 'COLON', 'PIPE', 'TESTSTR', 'DOWN', 'DEFAULT', 'NUM', 'COMMA', 'NODE_STRING', 'BRKT', 'MINUS', 'MULT', 'UNICODE_TEXT', got 'EOF']
-    `);
+    await expect(Diagram.fromText('graph TD; A-->')).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Error parsing flowchart diagram: Expecting 'NUM', 'NODE_STRING', 'DOWN', 'MINUS', 'DEFAULT', 'COMMA', 'COLON', 'AMP', 'BRKT', 'MULT', 'UNICODE_TEXT' got 'EOF']`
+    );
     await expect(Diagram.fromText('sequenceDiagram; A-->B')).rejects
       .toThrowErrorMatchingInlineSnapshot(`
       [Error: Parse error on line 1:

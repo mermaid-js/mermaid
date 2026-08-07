@@ -1,8 +1,9 @@
+/* global injected */ // build-time constant injected via esbuild `define` (see .esbuild/util.ts)
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
-import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { createLayoutElementGroups, insertMeasuredNode } from '../../createGraph.js';
 import { createCommonLayoutRenderer } from '../common/index.js';
+import { profiler } from '../../../profiler.js';
 import { updateNodeBounds } from '../../rendering-elements/shapes/util.js';
 import {
   clusterDb,
@@ -263,7 +264,8 @@ const measureDagreGraph = async ({
   parentCluster,
   siteConfig,
 }) => {
-  log.warn('Graph in recursive render:XAX', graphlibJson.write(graph), parentCluster);
+  // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
+  // log.warn('Graph in recursive render:XAX', graphlibJson.write(graph), parentCluster);
   const dir = graph.graph().rankdir;
   log.trace('Dir in recursive render - dir:', dir);
 
@@ -429,15 +431,25 @@ const measureDagreGraph = async ({
 };
 
 const runDagreGraphLayout = (graph) => {
-  log.info('Graph before layout:', JSON.stringify(graphlibJson.write(graph)));
+  // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
+  // log.info('Graph before layout:', JSON.stringify(graphlibJson.write(graph)));
 
   log.info('############################################# XXX');
   log.info('###                Layout                 ### XXX');
   log.info('############################################# XXX');
 
+  // Time the actual external dagre call on its own ("layoutCore"); the rest of
+  // this function is our wrapper (DOM, graph (de)serialization, …).
+  if (injected.profiling) {
+    profiler.begin('layoutCore');
+  }
   dagreLayout(graph);
+  if (injected.profiling) {
+    profiler.end(); // layoutCore
+  }
 
-  log.info('Graph after layout:', JSON.stringify(graphlibJson.write(graph)));
+  // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
+  // log.info('Graph after layout:', JSON.stringify(graphlibJson.write(graph)));
 };
 
 const normalizeDagreNode = (graph, nodeId, subGraphTitleTotalMargin) => {
@@ -641,14 +653,20 @@ export const prepareLayoutForDagre = (data4Layout) => {
   })
     .setGraph({
       rankdir: data4Layout.direction,
+      // Precedence: an explicit top-level config override (only present when a
+      // user sets it - it has no schema default) > the value the diagram's own
+      // renderer put on data4Layout (usually derived from that diagram's config)
+      // > the flowchart config as a generic fallback. The flowchart keys have
+      // schema defaults and therefore always exist, so they must come last or
+      // they silently shadow every diagram's own spacing (see #7932).
       nodesep:
         data4Layout.config?.nodeSpacing ||
-        data4Layout.config?.flowchart?.nodeSpacing ||
-        data4Layout.nodeSpacing,
+        data4Layout.nodeSpacing ||
+        data4Layout.config?.flowchart?.nodeSpacing,
       ranksep:
         data4Layout.config?.rankSpacing ||
-        data4Layout.config?.flowchart?.rankSpacing ||
-        data4Layout.rankSpacing,
+        data4Layout.rankSpacing ||
+        data4Layout.config?.flowchart?.rankSpacing,
       marginx: 8,
       marginy: 8,
     })
@@ -742,9 +760,11 @@ export const prepareLayoutForDagre = (data4Layout) => {
     }
   });
 
-  log.warn('Graph at first:', JSON.stringify(graphlibJson.write(graph)));
+  // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
+  // log.debug('Graph at first:', JSON.stringify(graphlibJson.write(graph)));
   adjustClustersAndEdges(graph);
-  log.warn('Graph after XAX:', JSON.stringify(graphlibJson.write(graph)));
+  // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
+  // log.warn('Graph after XAX:', JSON.stringify(graphlibJson.write(graph)));
 
   return { graph };
 };

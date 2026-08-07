@@ -60,7 +60,7 @@ Here you can edit certain values to change the behavior and appearance of the di
 
 Each of these techniques are functionally equivalent, but better for different deployments.
 
-### [The initialize() call](./getting-started.md#_3-calling-the-javascript-api)
+### [The initialize() call](./getting-started.md#_4-calling-the-mermaid-javascript-api)
 
 Used when Mermaid is called via an API, or through a `<script>` tag.
 

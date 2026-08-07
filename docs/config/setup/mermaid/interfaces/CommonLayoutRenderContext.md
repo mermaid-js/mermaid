@@ -10,7 +10,7 @@
 
 # Interface: CommonLayoutRenderContext\<PreparedLayout>
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:39](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L39)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:40](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L40)
 
 ## Extended by
 
@@ -28,7 +28,7 @@ Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.
 
 > **element**: `D3Selection`<`SVGElement`>
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:40](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L40)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:41](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L41)
 
 ---
 
@@ -36,7 +36,7 @@ Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.
 
 > `optional` **helpers**: `object`
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:41](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L41)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:42](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L42)
 
 #### common
 
@@ -248,19 +248,18 @@ List of lines as strings
 
 > **getConfig**: () => [`MermaidConfig`](MermaidConfig.md)
 
-## getConfig
-
-| Function  | Description               | Type        | Return Values                  |
-| --------- | ------------------------- | ----------- | ------------------------------ |
-| getConfig | Obtains the currentConfig | Get Request | Any Values from current Config |
-
-**Notes**: Avoid calling this function repeatedly. Instead, store the result in a variable and use it, and pass it down to function calls.
+Returns a copy of the `currentConfig`.
 
 ##### Returns
 
 [`MermaidConfig`](MermaidConfig.md)
 
 The currentConfig
+
+##### Remarks
+
+Avoid calling this function repeatedly.
+Instead, store the result in a variable and use it, and pass it down to function calls.
 
 #### insertCluster()
 
@@ -480,7 +479,7 @@ The curve factory to use
 
 > `optional` **options**: [`RenderOptions`](RenderOptions.md)
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:42](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L42)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:43](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L43)
 
 ---
 
@@ -488,4 +487,4 @@ Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.
 
 > `optional` **preparedLayout**: `PreparedLayout`
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:43](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L43)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:44](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L44)

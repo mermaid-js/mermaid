@@ -19,6 +19,16 @@
       "id": "swimlanes/commant",
       "profile": "swimlanes",
       "allowLevel1Failure": true
+    },
+    {
+      "id": "swimlanes/12-disagree-exits-b-c",
+      "profile": "swimlanes",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "swimlanes/13-disagree-exits-b-c-d",
+      "profile": "swimlanes",
+      "allowLevel1Failure": true
     }
   ]
 }

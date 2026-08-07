@@ -34,20 +34,20 @@ describe('treeView parser integration', () => {
       const node = await parseAndGetNode('src/');
       expect(node.name).toBe('src');
       expect(node.nodeType).toBe('directory');
-      expect(node.iconId).toBe('folder');
+      expect(node.icon).toBeUndefined();
     });
 
     it('should parse dotfiles', async () => {
       const node = await parseAndGetNode('.gitignore');
       expect(node.name).toBe('.gitignore');
       expect(node.nodeType).toBe('file');
-      expect(node.iconId).toBe('git');
+      expect(node.icon).toBeUndefined();
     });
 
     it('should parse filenames with hyphens', async () => {
       const node = await parseAndGetNode('docker-compose.yml');
       expect(node.name).toBe('docker-compose.yml');
-      expect(node.iconId).toBe('docker');
+      expect(node.icon).toBeUndefined();
     });
   });
 
@@ -91,15 +91,15 @@ describe('treeView parser integration', () => {
 
   describe('icon() annotation', () => {
     it('should extract icon override', async () => {
-      const node = await parseAndGetNode('data.bin icon(database)');
+      const node = await parseAndGetNode('data.bin icon(folder)');
       expect(node.name).toBe('data.bin');
-      expect(node.iconId).toBe('database');
+      expect(node.icon).toBe('folder');
     });
 
-    it('should override auto-detected icon', async () => {
-      const node = await parseAndGetNode('config.json icon(config)');
-      expect(node.name).toBe('config.json');
-      expect(node.iconId).toBe('config');
+    it('should accept prefixed iconify names', async () => {
+      const node = await parseAndGetNode('App.tsx icon(logos:react)');
+      expect(node.name).toBe('App.tsx');
+      expect(node.icon).toBe('logos:react');
     });
   });
 
@@ -125,18 +125,22 @@ describe('treeView parser integration', () => {
 
   describe('combined annotations', () => {
     it('should handle all annotations together', async () => {
-      const node = await parseAndGetNode('App.tsx :::highlight icon(react) ## main component');
+      const node = await parseAndGetNode(
+        'App.tsx :::highlight icon(logos:react) ## main component'
+      );
       expect(node.name).toBe('App.tsx');
       expect(node.cssClass).toBe('highlight');
-      expect(node.iconId).toBe('react');
+      expect(node.icon).toBe('logos:react');
       expect(node.description).toBe('main component');
     });
 
     it('should handle quoted label with all annotations', async () => {
-      const node = await parseAndGetNode('"my app.tsx" :::highlight icon(react) ## main component');
+      const node = await parseAndGetNode(
+        '"my app.tsx" :::highlight icon(logos:react) ## main component'
+      );
       expect(node.name).toBe('my app.tsx');
       expect(node.cssClass).toBe('highlight');
-      expect(node.iconId).toBe('react');
+      expect(node.icon).toBe('logos:react');
       expect(node.description).toBe('main component');
     });
 
@@ -145,7 +149,7 @@ describe('treeView parser integration', () => {
       expect(node.name).toBe('src');
       expect(node.nodeType).toBe('directory');
       expect(node.cssClass).toBe('highlight');
-      expect(node.iconId).toBe('folder');
+      expect(node.icon).toBeUndefined();
     });
   });
 
@@ -154,7 +158,7 @@ describe('treeView parser integration', () => {
       const node = await parseAndGetNode('My Documents/');
       expect(node.name).toBe('My Documents');
       expect(node.nodeType).toBe('directory');
-      expect(node.iconId).toBe('folder');
+      expect(node.icon).toBeUndefined();
     });
 
     it('should handle folder names with spaces and annotations', async () => {
@@ -168,62 +172,60 @@ describe('treeView parser integration', () => {
       const node = await parseAndGetNode('my file.ts ## some description');
       expect(node.name).toBe('my file.ts');
       expect(node.nodeType).toBe('file');
-      expect(node.iconId).toBe('typescript');
+      expect(node.icon).toBeUndefined();
       expect(node.description).toBe('some description');
+    });
+
+    it('should preserve consecutive spaces and unicode in bare names', async () => {
+      const node = await parseAndGetNode('But  _  _ton💓.tsx');
+      expect(node.name).toBe('But  _  _ton💓.tsx');
+      expect(node.nodeType).toBe('file');
+    });
+
+    it('should preserve consecutive spaces and unicode in quoted names', async () => {
+      const node = await parseAndGetNode('"But  _  _ton💓.tsx"');
+      expect(node.name).toBe('But  _  _ton💓.tsx');
+    });
+
+    it('should trim trailing whitespace from bare names', async () => {
+      const node = await parseAndGetNode('index.js  ');
+      expect(node.name).toBe('index.js');
     });
   });
 
-  describe('icon auto-detection', () => {
-    it('should auto-detect TypeScript icon', async () => {
-      const node = await parseAndGetNode('utils.ts');
-      expect(node.iconId).toBe('typescript');
-    });
-
-    it('should auto-detect Python icon', async () => {
-      const node = await parseAndGetNode('main.py');
-      expect(node.iconId).toBe('python');
-    });
-
-    it('should auto-detect Markdown icon', async () => {
-      const node = await parseAndGetNode('README.md');
-      expect(node.iconId).toBe('markdown');
-    });
-
-    it('should fall back to generic file icon', async () => {
-      const node = await parseAndGetNode('unknown.xyz');
-      expect(node.iconId).toBe('file');
-    });
-
-    it('should use folder icon for directories', async () => {
-      const node = await parseAndGetNode('components/');
-      expect(node.iconId).toBe('folder');
+  describe('default icons', () => {
+    it('should not assign an icon without an annotation — defaults are resolved at render time', async () => {
+      const file = await parseAndGetNode('utils.ts');
+      expect(file.icon).toBeUndefined();
+      const dir = await parseAndGetNode('components/');
+      expect(dir.icon).toBeUndefined();
     });
   });
 
   describe('icon suppression', () => {
-    it('should set iconId to none for icon(none)', async () => {
+    it('should set icon to none for icon(none)', async () => {
       const node = await parseAndGetNode('index.js icon(none)');
       expect(node.name).toBe('index.js');
-      expect(node.iconId).toBe('none');
+      expect(node.icon).toBe('none');
     });
 
-    it('should set iconId to none for empty icon()', async () => {
+    it('should set icon to none for empty icon()', async () => {
       const node = await parseAndGetNode('index.js icon()');
       expect(node.name).toBe('index.js');
-      expect(node.iconId).toBe('none');
+      expect(node.icon).toBe('none');
     });
 
     it('should suppress icon on a directory', async () => {
       const node = await parseAndGetNode('src/ icon(none)');
       expect(node.name).toBe('src');
       expect(node.nodeType).toBe('directory');
-      expect(node.iconId).toBe('none');
+      expect(node.icon).toBe('none');
     });
 
     it('should combine icon(none) with other annotations', async () => {
       const node = await parseAndGetNode('app.ts icon(none) :::highlight ## entry point');
       expect(node.name).toBe('app.ts');
-      expect(node.iconId).toBe('none');
+      expect(node.icon).toBe('none');
       expect(node.cssClass).toBe('highlight');
       expect(node.description).toBe('entry point');
     });
@@ -240,7 +242,7 @@ interface NodeSnapshot {
   nodeType: string;
   level: number;
   cssClass?: string;
-  iconId?: string;
+  icon?: string;
   description?: string;
   children: NodeSnapshot[];
 }
@@ -250,7 +252,7 @@ function collectNodes(node: {
   nodeType: string;
   level: number;
   cssClass?: string;
-  iconId?: string;
+  icon?: string;
   description?: string;
   children: (typeof node)[];
 }): NodeSnapshot {
@@ -259,7 +261,7 @@ function collectNodes(node: {
     nodeType: node.nodeType,
     level: node.level,
     ...(node.cssClass ? { cssClass: node.cssClass } : {}),
-    ...(node.iconId ? { iconId: node.iconId } : {}),
+    ...(node.icon ? { icon: node.icon } : {}),
     ...(node.description ? { description: node.description } : {}),
     children: node.children.map(collectNodes),
   };

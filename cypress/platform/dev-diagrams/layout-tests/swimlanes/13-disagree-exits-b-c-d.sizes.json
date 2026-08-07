@@ -1,0 +1,100 @@
+{
+  "nodes": [
+    {
+      "id": "A",
+      "width": 59.568748474121094,
+      "height": 51
+    },
+    {
+      "id": "B",
+      "width": 121.3125,
+      "height": 91
+    },
+    {
+      "id": "I",
+      "width": 35.89374923706055,
+      "height": 45
+    },
+    {
+      "id": "id1",
+      "width": 83.9312515258789,
+      "height": 75.1287841796875
+    },
+    {
+      "id": "Sys1",
+      "width": 63.125,
+      "height": 45
+    },
+    {
+      "id": "E",
+      "width": 41.34375,
+      "height": 45
+    },
+    {
+      "id": "C",
+      "width": 150.05624389648438,
+      "height": 91
+    },
+    {
+      "id": "D",
+      "width": 94.11250305175781,
+      "height": 91
+    },
+    {
+      "id": "F",
+      "width": 40.556251525878906,
+      "height": 45
+    },
+    {
+      "id": "G",
+      "width": 42.89374923706055,
+      "height": 45
+    },
+    {
+      "id": "H",
+      "width": 46.775001525878906,
+      "height": 45
+    },
+    {
+      "id": "exit",
+      "width": 53.34375,
+      "height": 51
+    },
+    {
+      "id": "edge-label-B-C-L_B_C_0",
+      "width": 37.36249923706055,
+      "height": 21
+    },
+    {
+      "id": "edge-label-C-D-L_C_D_0",
+      "width": 37.36249923706055,
+      "height": 21
+    },
+    {
+      "id": "edge-label-D-E-L_D_E_0",
+      "width": 37.36249923706055,
+      "height": 21
+    },
+    {
+      "id": "edge-label-B-exit-L_B_exit_0",
+      "width": 56.03125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-C-exit-L_C_exit_0",
+      "width": 56.03125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-D-exit-L_D_exit_0",
+      "width": 56.03125,
+      "height": 21
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "8d81773b11c8907c180f985ba2881d1114ca63764b7b0c6abdfb6a57eb3416fa",
+    "capturedAt": "2026-06-08T09:36:48.853Z",
+    "capturedFrom": "dev-explorer layout-tests/swimlanes/13-disagree-exits-b-c-d.mmd theme=redux look=neo layout=swimlane"
+  }
+}

@@ -65,4 +65,36 @@ describe('writeBackToLayoutData lane sizing', () => {
     expect(lane1.height).toBeCloseTo(lane2.height!, 6);
     expect(lane1.y).toBeCloseTo(lane2.y ?? 0, 6);
   });
+
+  it('keeps a minimum horizontal padding between a top-level lane and its children', () => {
+    const layout: any = { nodes: [], edges: [] };
+    const nodeById = new Map<NodeId, any>();
+    const lane: TestNode = { id: 'lane', isGroup: true, padding: 8 };
+    const child: TestNode = {
+      id: 'child',
+      isGroup: false,
+      parentId: 'lane',
+      width: 100,
+      height: 40,
+    };
+    layout.nodes.push(lane, child);
+    nodeById.set('lane', lane);
+    nodeById.set('child', child);
+
+    const g: Graph = {
+      nodes: ['child'],
+      edges: [],
+      layout,
+      nodeById,
+    } as any;
+
+    writeBackToLayoutData(
+      g,
+      { layers: [['child']] },
+      { x: { child: 0 }, y: { child: 0 } },
+      { nodeGap: 40, layerGap: 120 }
+    );
+
+    expect(lane.width).toBeGreaterThanOrEqual(child.width! + 40);
+  });
 });
