@@ -133,6 +133,7 @@ export type LayoutIssueType =
   | 'edge-intersects-node'
   | 'edge-intersects-obstacle'
   | 'edge-intersects-group-title'
+  | 'node-overlaps-group-title'
   | 'edge-port-direction-mismatch'
   | 'edge-same-port-departure'
   | 'edge-shared-attachment-point'

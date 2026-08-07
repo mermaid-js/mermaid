@@ -4,6 +4,80 @@ import { rectForNode } from './core/helpers.js';
 import { log } from '../../../logger.js';
 import { ORTHO_DEBUG } from './debug.js';
 import { isEdgeLabelNode } from './core/labels.js';
+import { getConfig } from '../../../config.js';
+import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
+
+/**
+ * Height reserved at the top of a titled subgraph frame for its title band.
+ *
+ * `clusters.js` paints the title inside the frame at `top + subGraphTitleTopMargin`,
+ * so the topmost child must sit *below* that band or the title overlaps it (e.g.
+ * `domus/decoupled-subgraph`: node "D" under the "hello" title). Reserving the band
+ * here — while the group is framed, before routing and overlap resolution — is what
+ * makes the layout title-aware: the router sees the true top edge and draws
+ * subgraph→external edges from it, and the frame's real extent participates in
+ * spacing. (The previous fix grew the frame in paint only, after routing, so the
+ * edge start ended up buried inside the grown box.) The DOM-free layout never
+ * measures the title, so the height is estimated from the flowchart font size
+ * (one rendered line ≈ 1.5 × fontSize), matching the browser's single-line title.
+ */
+function titleBandHeight(): number {
+  const siteConfig = getConfig();
+  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins({
+    flowchart: siteConfig.flowchart ?? {},
+  });
+  const titleFontSize = Number((siteConfig as { fontSize?: unknown }).fontSize) || 16;
+  return Math.round(titleFontSize * 1.5) + subGraphTitleTotalMargin;
+}
+
+/** Gap we want to keep between the title band and the topmost child. */
+const TITLE_CHILD_GAP = 15;
+
+/**
+ * Extra top inset a specific group needs *beyond* its ordinary padding to host
+ * the title band. `calculateGroupBounds` already insets the top by `groupPadding`,
+ * so a titled group only needs enough more to reach `titleBand + TITLE_CHILD_GAP`
+ * of clear space above its topmost child. When `groupPadding` already exceeds
+ * that (e.g. the compound path's 40px routing margin), no extra is reserved — the
+ * title fits in the padding — which keeps title-band reservation from inflating
+ * deeply nested compound frames. Untitled groups reserve nothing.
+ */
+function groupTitleBand(group: Node, titleBand: number, groupPadding: number): number {
+  if (!hasTitle(group) || titleBand <= 0) {
+    return 0;
+  }
+  return Math.max(0, titleBand + TITLE_CHILD_GAP - groupPadding);
+}
+
+/** Whether a group carries a non-empty title label. */
+export function hasTitle(group: Node): boolean {
+  const label = (group as { label?: unknown }).label;
+  return typeof label === 'string' && label.trim() !== '';
+}
+
+/**
+ * The title-band rectangle a titled group reserves at the top of its final frame:
+ * the top `titleBandHeight()` strip, full frame width. Returns `null` for untitled
+ * groups or before the group has geometry. The validator's node-overlap check reads
+ * this to score title-over-child overlaps; it is intentionally NOT stored as
+ * `node.groupTitleRect` (that also arms the core edge-title check, which conflicts
+ * with subgraph→external edges that must legitimately exit through the top strip).
+ */
+export function subgraphTitleBandRect(
+  group: Node
+): { left: number; right: number; top: number; bottom: number } | null {
+  if (!group.isGroup || !hasTitle(group)) {
+    return null;
+  }
+  const band = titleBandHeight();
+  if (band <= 0 || typeof group.x !== 'number' || typeof group.y !== 'number') {
+    return null;
+  }
+  const left = group.x - (group.width ?? 0) / 2;
+  const right = group.x + (group.width ?? 0) / 2;
+  const top = group.y - (group.height ?? 0) / 2;
+  return { left, right, top, bottom: top + band };
+}
 
 export interface ClusterPreprocessResult {
   nodesById: Map<string, Node>;
@@ -80,7 +154,8 @@ function groupDepth(groupId: string, nodesById: Map<string, Node>): number {
 function calculateGroupBounds(
   group: Node,
   children: Node[],
-  groupPadding: number
+  groupPadding: number,
+  topBand = 0
 ): { cx: number; cy: number; width: number; height: number } | null {
   if (!children || children.length === 0) {
     return null;
@@ -101,7 +176,9 @@ function calculateGroupBounds(
   }
 
   minX -= groupPadding;
-  minY -= groupPadding;
+  // Reserve the title band on top of the ordinary padding for titled groups so
+  // the topmost child clears the painted title (see `titleBandHeight`).
+  minY -= groupPadding + topBand;
   maxX += groupPadding;
   maxY += groupPadding;
 
@@ -402,6 +479,7 @@ export function preprocessClusters(
   });
   const groupPadding = options.groupPadding ?? 15;
   const minGroupSpacing = options.minGroupSpacing ?? 100;
+  const titleBand = titleBandHeight();
   const { nodesById, groupsById, childrenByParentId } = buildClusterIndex(data);
 
   if (groupsById.size === 0) {
@@ -424,7 +502,12 @@ export function preprocessClusters(
       continue;
     }
     const children = childrenByParentId.get(gid) ?? [];
-    const bounds = calculateGroupBounds(group, children, groupPadding);
+    const bounds = calculateGroupBounds(
+      group,
+      children,
+      groupPadding,
+      groupTitleBand(group, titleBand, groupPadding)
+    );
     if (!bounds) {
       continue;
     }
@@ -450,7 +533,12 @@ export function preprocessClusters(
       continue;
     }
     const children = childrenByParentId.get(gid) ?? [];
-    const bounds = calculateGroupBounds(group, children, groupPadding);
+    const bounds = calculateGroupBounds(
+      group,
+      children,
+      groupPadding,
+      groupTitleBand(group, titleBand, groupPadding)
+    );
     if (!bounds) {
       continue;
     }

@@ -23,28 +23,12 @@ export async function adjustLayout(
     edgeLabels: D3Selection<SVGGElement>;
   }
 ): Promise<void> {
-  // Reserve a band at the top of each titled subgraph for its title. `clusters.ts`
-  // paints the title inside the frame at `top + subGraphTitleTopMargin`, so without
-  // this the topmost child sits under the title text (e.g. domus/decoupled-subgraph:
-  // node "D" under the "hello" title). This runs in paint only — DOMUS placement and
-  // routing (and the DOM-free validator that scores them) never see the grown frame,
-  // so it fixes the render without perturbing the layout score. The frame grows
-  // upward (top moves up, bottom and every child stay put). The DOM-free layout never
-  // measures the title, so its height is estimated from the flowchart font size
-  // (one rendered line ≈ 1.5 × fontSize), matching the browser's single-line title.
-  const siteConfig = getConfig();
-  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins({
-    flowchart: siteConfig.flowchart ?? {},
-  });
-  const titleFontSize = Number((siteConfig as { fontSize?: unknown }).fontSize) || 16;
-  const titleBand = Math.round(titleFontSize * 1.5) + subGraphTitleTotalMargin;
-  for (const node of data4Layout.nodes) {
-    const label = (node as { label?: unknown }).label;
-    if (node.isGroup && titleBand > 0 && typeof label === 'string' && label.trim() !== '') {
-      node.height = (node.height ?? 0) + titleBand;
-      node.y = (node.y ?? 0) - titleBand / 2;
-    }
-  }
+  // The title band at the top of each titled subgraph is reserved during layout
+  // (see `cluster.ts` → `titleBandHeight`/`calculateGroupBounds`), so the frame
+  // already has room for the title and the router has drawn subgraph edges from
+  // its true top edge. Paint therefore renders the frames verbatim — no
+  // post-layout resizing here (a paint-only grow moved the top up after routing,
+  // burying subgraph→external edge starts inside the box).
 
   // Render clusters and position nodes; this also populates node.intersect on shapes.
   for (const node of data4Layout.nodes) {

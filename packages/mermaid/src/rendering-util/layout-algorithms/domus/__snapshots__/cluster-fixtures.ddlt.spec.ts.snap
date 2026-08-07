@@ -1,8 +1,16 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Domus cluster fixtures sweep — iter-26 D1-v1 widen coverage > deploy-pipeline-simplified.mmd (regular cluster-crossing edge F→I) > DOMUS-native (allowDomusWithGroups=true): pins current issue count > deploy-pipeline-simplified-domus-native-real-issues 1`] = `[]`;
+exports[`Domus cluster fixtures sweep — iter-26 D1-v1 widen coverage > deploy-pipeline-simplified.mmd (regular cluster-crossing edge F→I) > DOMUS-native (allowDomusWithGroups=true): pins current issue count > deploy-pipeline-simplified-domus-native-real-issues 1`] = `
+[
+  "edge-border-hugging",
+]
+`;
 
-exports[`Domus cluster fixtures sweep — iter-26 D1-v1 widen coverage > deploy-pipeline-simplified.mmd (regular cluster-crossing edge F→I) > fallback (allowDomusWithGroups=false): pins current issue count > deploy-pipeline-simplified-fallback-real-issues 1`] = `[]`;
+exports[`Domus cluster fixtures sweep — iter-26 D1-v1 widen coverage > deploy-pipeline-simplified.mmd (regular cluster-crossing edge F→I) > fallback (allowDomusWithGroups=false): pins current issue count > deploy-pipeline-simplified-fallback-real-issues 1`] = `
+[
+  "edge-border-hugging",
+]
+`;
 
 exports[`Domus cluster fixtures sweep — iter-26 D1-v1 widen coverage > edge-from-subgraph.mmd (COMPOUND edge B2→X) > DOMUS-native (allowDomusWithGroups=true): compound edge stress test > edge-from-subgraph-domus-native-real-issues 1`] = `[]`;
 
