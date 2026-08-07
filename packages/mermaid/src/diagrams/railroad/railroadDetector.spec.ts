@@ -7,23 +7,23 @@ describe('Railroad Detector', () => {
   });
 
   describe('detector', () => {
-    it('should detect railroad-diagram keyword', () => {
-      const text = 'railroad-diagram\nrule = "test" ;';
+    it('should detect railroad-beta keyword', () => {
+      const text = 'railroad-beta\nrule = "test" ;';
       expect(railroad.detector(text)).toBe(true);
     });
 
-    it('should detect railroad-diagram with leading whitespace', () => {
-      const text = '  railroad-diagram\nrule = "test" ;';
+    it('should detect railroad-beta with leading whitespace', () => {
+      const text = '  railroad-beta\nrule = "test" ;';
       expect(railroad.detector(text)).toBe(true);
     });
 
-    it('should detect railroad-diagram case-insensitively', () => {
-      const text = 'RAILROAD-DIAGRAM\nrule = "test" ;';
+    it('should detect railroad-beta case-insensitively', () => {
+      const text = 'RAILROAD-BETA\nrule = "test" ;';
       expect(railroad.detector(text)).toBe(true);
     });
 
-    it('should detect Railroad-Diagram mixed case', () => {
-      const text = 'Railroad-Diagram\nrule = "test" ;';
+    it('should detect Railroad-Beta mixed case', () => {
+      const text = 'Railroad-Beta\nrule = "test" ;';
       expect(railroad.detector(text)).toBe(true);
     });
 
@@ -32,8 +32,8 @@ describe('Railroad Detector', () => {
       expect(railroad.detector(text)).toBe(false);
     });
 
-    it('should not detect railroad-diagram in middle of text', () => {
-      const text = 'some text railroad-diagram\nrule = "test" ;';
+    it('should not detect railroad-beta in middle of text', () => {
+      const text = 'some text railroad-beta\nrule = "test" ;';
       expect(railroad.detector(text)).toBe(false);
     });
 
@@ -47,8 +47,8 @@ describe('Railroad Detector', () => {
       expect(railroad.detector(text)).toBe(false);
     });
 
-    it('should detect railroad-diagram with newlines before it', () => {
-      const text = '\n\nrailroad-diagram\nrule = "test" ;';
+    it('should detect railroad-beta with newlines before it', () => {
+      const text = '\n\nrailroad-beta\nrule = "test" ;';
       expect(railroad.detector(text)).toBe(true);
     });
   });

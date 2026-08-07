@@ -30,6 +30,7 @@ import { evaluate } from './diagrams/common/common.js';
 import errorRenderer from './diagrams/error/errorRenderer.js';
 import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
+import { profiler } from './profiler.js';
 import { preprocessDiagram } from './preprocess.js';
 import getStyles, { cssStyleSheetToString } from './styles.js';
 import theme from './themes/index.js';
@@ -238,7 +239,37 @@ const compileCSS = (namespace: `#${string}`, css: string) => {
             return;
           }
           element.props = element.props.map((prop) => {
-            if (!prop.startsWith(namespace)) {
+            /**
+             * For the root selector `& { ... }`, allow limited inherited
+             * styles to not be namespaced.
+             * These won't do anything to the `<svg>`, but will be inherited by
+             * children with a lower specificity than SVG presentation attributes.
+             */
+            if (
+              prop === namespace &&
+              Array.isArray(element.children) &&
+              element.children.every((child) => {
+                if (child.type !== 'decl') {
+                  return false;
+                }
+                const allowedProps = new Set<typeof child.props>([
+                  'font-family',
+                  'font-size',
+                  'fill',
+                ]);
+                return allowedProps.has(child.props);
+              })
+            ) {
+              return prop;
+            }
+
+            const alreadyNamespaced =
+              // If the prop already starts with the namespace followed by a space or >, then it's already namespaced.
+              (prop.startsWith(`${namespace} `) || prop.startsWith(`${namespace}>`)) &&
+              // Column combinators are not yet widely supported, it's not yet compressed to `${namespace}||`,
+              // so we need to add an extra check for that
+              !prop.startsWith(`${namespace} ||`);
+            if (!alreadyNamespaced) {
               return `${namespace} ${prop}`;
             }
             return prop;
@@ -436,6 +467,10 @@ const render = async function (
 ): Promise<RenderResult> {
   addDiagrams();
 
+  if (injected.profiling) {
+    profiler.start('render');
+  }
+
   const processed = processAndSetConfigs(text);
   text = processed.code;
 
@@ -517,7 +552,9 @@ const render = async function (
   let parseEncounteredException;
 
   try {
-    diag = await Diagram.fromText(text, { title: processed.title });
+    diag = injected.profiling
+      ? await profiler.span('parse', () => Diagram.fromText(text, { title: processed.title }))
+      : await Diagram.fromText(text, { title: processed.title });
   } catch (error) {
     if (config.suppressErrorRendering) {
       removeTempElements();
@@ -548,7 +585,11 @@ const render = async function (
   // -------------------------------------------------------------------------------
   // Draw the diagram with the renderer
   try {
-    await diag.renderer.draw(text, id, injected.version, diag);
+    if (injected.profiling) {
+      await profiler.span('draw', () => diag.renderer.draw(text, id, injected.version, diag));
+    } else {
+      await diag.renderer.draw(text, id, injected.version, diag);
+    }
   } catch (e) {
     if (config.suppressErrorRendering) {
       removeTempElements();
@@ -563,35 +604,51 @@ const render = async function (
   const a11yTitle: string | undefined = diag.db.getAccTitle?.();
   const a11yDescr: string | undefined = diag.db.getAccDescription?.();
   addA11yInfo(diagramType, svgNode, a11yTitle, a11yDescr);
-  // -------------------------------------------------------------------------------
-  // Clean up SVG code
-  root.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', XMLNS_XHTML_STD);
+  // "paint after layout" tail: SVG serialization + sanitization, which can
+  // dominate for very large diagrams. Wrapped in a closure so it can run inside a
+  // profiler span — whose try/finally also guarantees the span can never leak —
+  // while staying zero-cost in production, where the `injected.profiling` branch
+  // (and every profiler reference) folds away to a plain `serializeSvg()` call.
+  const serializeSvg = (): string => {
+    // -------------------------------------------------------------------------------
+    // Clean up SVG code
+    root.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', XMLNS_XHTML_STD);
 
-  // Fix for when the base tag is used
-  let svgCode: string = root.select<HTMLDivElement>(enclosingDivID_selector).node()!.innerHTML;
+    // Fix for when the base tag is used
+    let code: string = root.select<HTMLDivElement>(enclosingDivID_selector).node()!.innerHTML;
 
-  log.debug('config.arrowMarkerAbsolute', config.arrowMarkerAbsolute);
-  svgCode = cleanUpSvgCode(svgCode, isSandboxed, evaluate(config.arrowMarkerAbsolute));
+    log.debug('config.arrowMarkerAbsolute', config.arrowMarkerAbsolute);
+    code = cleanUpSvgCode(code, isSandboxed, evaluate(config.arrowMarkerAbsolute));
 
-  if (isSandboxed) {
-    const svgEl = root.select<SVGSVGElement>(enclosingDivID_selector + ' svg').node()!;
-    svgCode = putIntoIFrame(svgCode, svgEl);
-  } else if (!isLooseSecurityLevel) {
-    // Sanitize the svgCode using DOMPurify
-    svgCode = DOMPurify.sanitize(svgCode, {
-      ADD_TAGS: DOMPURIFY_TAGS,
-      ADD_ATTR: DOMPURIFY_ATTR,
-      HTML_INTEGRATION_POINTS: { foreignobject: true },
-    });
-  }
+    if (isSandboxed) {
+      const svgEl = root.select<SVGSVGElement>(enclosingDivID_selector + ' svg').node()!;
+      code = putIntoIFrame(code, svgEl);
+    } else if (!isLooseSecurityLevel) {
+      // Sanitize the svgCode using DOMPurify
+      code = DOMPurify.sanitize(code, {
+        ADD_TAGS: DOMPURIFY_TAGS,
+        ADD_ATTR: DOMPURIFY_ATTR,
+        HTML_INTEGRATION_POINTS: { foreignobject: true },
+      });
+    }
 
-  attachFunctions();
+    attachFunctions();
+    return code;
+  };
+
+  const svgCode: string = injected.profiling
+    ? await profiler.span('serialize', serializeSvg)
+    : serializeSvg();
 
   if (parseEncounteredException) {
     throw parseEncounteredException;
   }
 
   removeTempElements();
+
+  if (injected.profiling) {
+    profiler.stop(); // render
+  }
 
   return {
     diagramType,
@@ -664,6 +721,10 @@ export const mermaidAPI = Object.freeze({
   getDiagramFromText,
   initialize,
   getConfig: configApi.getConfig,
+  /**
+   * @deprecated This function does nothing. It will be overwritten by the next
+   *             call to {@link render} or {@link parse}.
+   */
   setConfig: configApi.setConfig,
   getSiteConfig: configApi.getSiteConfig,
   updateSiteConfig: configApi.updateSiteConfig,

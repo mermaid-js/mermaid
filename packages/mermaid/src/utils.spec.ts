@@ -63,6 +63,37 @@ describe('when assignWithDepth: should merge objects within objects', function (
       boofar: 1,
     });
   });
+  it('should handle `null` values', function () {
+    const config_0 = { foo: 'bar', bar: { foo: 'bar' }, boofar: 1 };
+    const config_1 = { foo: 'foo', bar: null, foobar: 'foobar' };
+    const result = assignWithDepth(config_0, config_1);
+    expect(result).toEqual({
+      foo: 'foo',
+      bar: { foo: 'bar' },
+      foobar: 'foobar',
+      boofar: 1,
+    });
+  });
+  it('should handle `undefined` values', function () {
+    // explicit `undefined` values are assignable
+    const config_0 = { foo: 'bar', bar: undefined, extra: undefined };
+    const config_1 = { foo: undefined, bar: { foo: 'bar' } };
+    const result = assignWithDepth(config_0, config_1);
+    expect(result).toEqual({ foo: undefined, bar: { foo: 'bar' }, extra: undefined });
+  });
+  it('should avoid prototype pollution', function () {
+    const result = assignWithDepth(
+      {},
+      {
+        // On browsers/Node.JS, `__proto__` is a special prop in object literals,
+        // but this syntax declares a new property named `__proto__`.
+        ['__proto__']: { polluted: 'yes' },
+      }
+    );
+    expect(Object.getPrototypeOf(result)).toEqual(Object.prototype);
+    expect(result).to.deep.equal({ ['__proto__']: { polluted: 'yes' } });
+    expect({}).not.toHaveProperty('polluted');
+  });
   it('should handle depth:3 types (merge with clobber because assignWithDepth::depth == 2)', function () {
     const config_0 = {
       foo: 'bar',

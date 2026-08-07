@@ -109,4 +109,15 @@ Person(customerA, $tags="tag1,tag2")`);
       },
     });
   });
+
+  it('should keep named attributes that land in an earlier positional slot', function () {
+    c4.parser.parse(`C4Context
+Person(customerA, "Banking Customer A", "A customer.", $tags="v1.0+internal", $link="https://example.com")`);
+
+    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+      alias: 'customerA',
+      tags: 'v1.0+internal',
+      link: 'https://example.com',
+    });
+  });
 });

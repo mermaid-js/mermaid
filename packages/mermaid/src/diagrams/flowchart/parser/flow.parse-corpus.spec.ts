@@ -66,7 +66,7 @@ function tryParse(parse: ParseFn, text: string): { ok: boolean; error?: string }
 }
 
 describe.skipIf(!FIXTURE_PATH)('flowchart parse corpus (Chevrotain vs legacy)', () => {
-  it('parses everything the legacy parser parses', () => {
+  it('parses everything the legacy parser parses', async () => {
     const files = findMmdFiles(FIXTURE_PATH!);
     const regressions: { file: string; error: string }[] = [];
     const improvements: string[] = []; // chevrotain OK, legacy FAIL
@@ -74,7 +74,10 @@ describe.skipIf(!FIXTURE_PATH)('flowchart parse corpus (Chevrotain vs legacy)', 
     let bothOk = 0;
     let bothFail = 0;
 
-    for (const file of files) {
+    for (const [index, file] of files.entries()) {
+      if (index % 50 === 0) {
+        await new Promise<void>((resolve) => setImmediate(resolve));
+      }
       let text: string;
       try {
         text = preprocess(readFileSync(file, 'utf8'));

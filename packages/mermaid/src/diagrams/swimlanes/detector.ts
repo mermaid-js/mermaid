@@ -7,7 +7,7 @@ import type {
 const id = 'swimlane';
 
 const detector: DiagramDetector = (txt) => {
-  return /^\s*swimlane\b/.test(txt);
+  return /^\s*swimlane-beta\b/.test(txt);
 };
 
 const loader: DiagramLoader = async () => {

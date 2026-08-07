@@ -7,7 +7,7 @@ import type {
 const id = 'railroadPeg';
 
 const detector: DiagramDetector = (txt) => {
-  return /^\s*railroad-peg/i.test(txt);
+  return /^\s*railroad-peg-beta/i.test(txt);
 };
 
 const loader: DiagramLoader = async () => {

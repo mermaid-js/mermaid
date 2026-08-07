@@ -39,7 +39,6 @@ function chevrotainErrors(input: string): string[] {
     return [`lex: ${lex.errors[0].message}`];
   }
   flowParser.input = lex.tokens;
-  // @ts-expect-error generated rule method
   flowParser.start();
   return flowParser.errors.map((e) => e.message);
 }

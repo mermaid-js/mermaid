@@ -31,37 +31,38 @@ function resolveEngine(): 'legacy' | 'chevrotain' {
 }
 
 interface FlowInnerParser {
-  yy?: FlowDB;
-  parse: (text: string) => unknown;
+  yy: FlowDB;
+  parse: (text: string) => void;
 }
 
 const parser: FlowInnerParser = {
-  yy: undefined,
-  parse(text: string): unknown {
+  // Diagram orchestration assigns the active database before calling parse().
+  yy: undefined as unknown as FlowDB,
+  parse(text: string): void {
     const engine = resolveEngine();
     log.debug(`flowchart: parsing with the ${engine} parser`);
     if (engine === 'chevrotain') {
-      parseFlowchartChevrotain(text, this.yy!);
+      parseFlowchartChevrotain(text, this.yy);
       return;
     }
     legacyParser.yy = this.yy;
-    return legacyParser.parse(text);
+    legacyParser.parse(text);
   },
 };
 
 const flowDispatcher = {
   parser,
-  parse(text: string): unknown {
+  parse(text: string): void {
     // remove the trailing whitespace after closing curly braces when ending a line break
     const src = text.replace(/}\s*\n/g, '}\n');
     const engine = resolveEngine();
     log.debug(`flowchart: parsing with the ${engine} parser`);
     if (engine === 'chevrotain') {
-      parseFlowchartChevrotain(src, parser.yy!);
+      parseFlowchartChevrotain(src, parser.yy);
       return;
     }
     legacyParser.yy = parser.yy;
-    return legacyParser.parse(src);
+    legacyParser.parse(src);
   },
 };
 

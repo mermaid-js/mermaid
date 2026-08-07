@@ -164,4 +164,41 @@ describe('architecture', () => {
       expect(service?.title).toBe('The "Main" API');
     });
   });
+
+  describe('should handle non-ASCII and punctuation in unquoted titles', () => {
+    it.each([
+      '采集器',
+      'Hello 世界',
+      'Сервер',
+      'Café',
+      'Structure + Src',
+      'Multi-Agent',
+      'A, B, C',
+      'TCP/IP: v6',
+    ])('should handle a service title containing "%s"', (title: string) => {
+      const context = `architecture-beta
+            service a(server)[${title}] in g1
+            `;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Architecture.$type);
+
+      const service = result.value.services?.[0];
+      expect(service).toBeDefined();
+      expect(service?.title).toBe(title);
+    });
+
+    it('should handle a group title containing Chinese characters', () => {
+      const context = `architecture-beta
+            group g1(server)[你好世界]
+            `;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Architecture.$type);
+
+      const group = result.value.groups?.[0];
+      expect(group).toBeDefined();
+      expect(group?.title).toBe('你好世界');
+    });
+  });
 });

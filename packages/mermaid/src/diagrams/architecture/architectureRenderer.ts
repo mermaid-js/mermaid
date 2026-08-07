@@ -28,6 +28,7 @@ import {
   type ArchitectureGroup,
   type ArchitectureService,
   ArchitectureDirectionName,
+  architectureGroupAlignmentKey,
   edgeData,
   getOppositeArchitectureDirection,
   isArchitectureDirectionXY,
@@ -158,83 +159,89 @@ function getAlignments(
   layoutHints: ArchitectureLayoutHint[] = []
 ): fcose.FcoseAlignmentConstraint {
   /**
-   * Flattens the alignment object so nodes in different groups will be in the same alignment array IFF their groups don't connect in a conflicting alignment
+   * Flattens the alignment map so nodes in different groups will be in the same alignment array IFF their groups don't connect in a conflicting alignment
    *
    * i.e., two groups which connect horizontally should not have nodes with vertical alignments to one another
    *
    * See: #5952
    *
-   * @param alignmentObj - alignment object with the outer key being the row/col # and the inner key being the group name mapped to the nodes on that axis in the group
+   * @param alignmentMap - alignment map with the outer key being the row/col # and the inner key being the group name mapped to the nodes on that axis in the group
    * @param alignmentDir - alignment direction
-   * @returns flattened alignment object with an arbitrary key mapping to nodes in the same row/col
+   * @returns flattened alignment map with an arbitrary key mapping to nodes in the same row/col
    */
   const flattenAlignments = (
-    alignmentObj: Record<number, Record<string, string[]>>,
+    alignmentMap: Map<number, Map<string, string[]>>,
     alignmentDir: ArchitectureAlignment
-  ): Record<string, string[]> => {
-    return Object.entries(alignmentObj).reduce(
-      (prev, [dir, alignments]) => {
-        // prev is the mapping of x/y coordinate to an array of the nodes in that row/column
-        let cnt = 0;
-        const arr = Object.entries(alignments); // [group name, array of nodes within the group on axis dir]
-        if (arr.length === 1) {
-          // If only one group exists in the row/column, we don't need to do anything else
-          prev[dir] = arr[0][1];
-          return prev;
-        }
-        for (let i = 0; i < arr.length - 1; i++) {
-          for (let j = i + 1; j < arr.length; j++) {
-            const [aGroupId, aNodeIds] = arr[i];
-            const [bGroupId, bNodeIds] = arr[j];
-            const alignment = groupAlignments[aGroupId]?.[bGroupId]; // Get how the two groups are intended to align (undefined if they aren't)
+  ): Map<string, string[]> => {
+    // flattened is the mapping of x/y coordinate to an array of the nodes in that row/column
+    const flattened = new Map<string, string[]>();
+    for (const [numericDir, alignments] of alignmentMap.entries()) {
+      const dir = `${numericDir}`;
+      let cnt = 0;
+      const arr = [...alignments.entries()]; // [group name, array of nodes within the group on axis dir]
+      if (arr.length === 1) {
+        // If only one group exists in the row/column, we don't need to do anything else
+        flattened.set(dir, arr[0][1]);
+        continue;
+      }
+      for (let i = 0; i < arr.length - 1; i++) {
+        for (let j = i + 1; j < arr.length; j++) {
+          const [aGroupId, aNodeIds] = arr[i];
+          const [bGroupId, bNodeIds] = arr[j];
+          // Get how the two groups are intended to align (undefined if they aren't)
+          const alignment = groupAlignments.get(architectureGroupAlignmentKey(aGroupId, bGroupId));
 
-            if (alignment === alignmentDir) {
-              // If the intended alignment between the two groups is the same as the alignment we are parsing
-              prev[dir] ??= [];
-              prev[dir] = [...prev[dir], ...aNodeIds, ...bNodeIds]; // add the node ids of both groups to the axis array in prev
-            } else if (aGroupId === 'default' || bGroupId === 'default') {
-              // If either of the groups are in the default space (not in a group), use the same behavior as above
-              prev[dir] ??= [];
-              prev[dir] = [...prev[dir], ...aNodeIds, ...bNodeIds];
-            } else {
-              // Otherwise, the nodes in the two groups are not intended to align
-              const keyA = `${dir}-${cnt++}`;
-              prev[keyA] = aNodeIds;
-              const keyB = `${dir}-${cnt++}`;
-              prev[keyB] = bNodeIds;
-            }
+          if (alignment === alignmentDir) {
+            // If the intended alignment between the two groups is the same as the alignment we are parsing
+            flattened.set(dir, [...(flattened.get(dir) ?? []), ...aNodeIds, ...bNodeIds]); // add the node ids of both groups to the axis array in flattened
+          } else if (aGroupId === 'default' || bGroupId === 'default') {
+            // If either of the groups are in the default space (not in a group), use the same behavior as above
+            flattened.set(dir, [...(flattened.get(dir) ?? []), ...aNodeIds, ...bNodeIds]);
+          } else {
+            // Otherwise, the nodes in the two groups are not intended to align
+            const keyA = `${dir}-${cnt++}`;
+            flattened.set(keyA, aNodeIds);
+            const keyB = `${dir}-${cnt++}`;
+            flattened.set(keyB, bNodeIds);
           }
         }
-
-        return prev;
-      },
-      {} as Record<string, string[]>
-    );
+      }
+    }
+    return flattened;
   };
 
   const alignments = spatialMaps.map((spatialMap) => {
-    const horizontalAlignments: Record<number, Record<string, string[]>> = {};
-    const verticalAlignments: Record<number, Record<string, string[]>> = {};
+    const horizontalAlignments = new Map<number, Map<string, string[]>>();
+    const verticalAlignments = new Map<number, Map<string, string[]>>();
 
-    // Group service ids in an object with their x and y coordinate as the key
-    Object.entries(spatialMap).forEach(([id, [x, y]]) => {
+    // Group service ids in a map with their x and y coordinate as the key
+    spatialMap.forEach(([x, y], id) => {
       const nodeGroup = db.getNode(id)?.in ?? 'default';
+      const horizontalAlignment = horizontalAlignments.get(y) ?? new Map<string, string[]>();
+      if (!horizontalAlignments.has(y)) {
+        horizontalAlignments.set(y, horizontalAlignment);
+      }
 
-      horizontalAlignments[y] ??= {};
-      horizontalAlignments[y][nodeGroup] ??= [];
-      horizontalAlignments[y][nodeGroup].push(id);
+      const verticalAlignment = verticalAlignments.get(x) ?? new Map<string, string[]>();
+      if (!verticalAlignments.has(x)) {
+        verticalAlignments.set(x, verticalAlignment);
+      }
 
-      verticalAlignments[x] ??= {};
-      verticalAlignments[x][nodeGroup] ??= [];
-      verticalAlignments[x][nodeGroup].push(id);
+      for (const alignment of [horizontalAlignment, verticalAlignment]) {
+        const nodeList = alignment.get(nodeGroup) ?? [];
+        if (!alignment.has(nodeGroup)) {
+          alignment.set(nodeGroup, nodeList);
+        }
+        nodeList.push(id);
+      }
     });
 
-    // Merge the values of each object into a list if the inner list has at least 2 elements
+    // Merge the values of each map into a list if the inner list has at least 2 elements
     return {
-      horiz: Object.values(flattenAlignments(horizontalAlignments, 'horizontal')).filter(
+      horiz: [...flattenAlignments(horizontalAlignments, 'horizontal').values()].filter(
         (arr) => arr.length > 1
       ),
-      vert: Object.values(flattenAlignments(verticalAlignments, 'vertical')).filter(
+      vert: [...flattenAlignments(verticalAlignments, 'vertical').values()].filter(
         (arr) => arr.length > 1
       ),
     };
@@ -311,17 +318,17 @@ function getRelativeConstraints(
       }
     }
   });
-  const posToStr = (pos: number[]) => `${pos[0]},${pos[1]}`;
+  const posToStr = (pos: number[]) => `${pos[0]},${pos[1]}` as const;
   const strToPos = (pos: string) => pos.split(',').map((p) => parseInt(p));
 
   spatialMaps.forEach((spatialMap) => {
-    const invSpatialMap = Object.fromEntries(
-      Object.entries(spatialMap).map(([id, pos]) => [posToStr(pos), id])
+    const invSpatialMap = new Map(
+      [...spatialMap.entries()].map(([key, value]) => [posToStr(value), key])
     );
 
     // perform BFS
     const queue = [posToStr([0, 0])];
-    const visited: Record<string, number> = {};
+    const visited: Record<ReturnType<typeof posToStr>, number> = {};
     const directions: Record<ArchitectureDirection, number[]> = {
       L: [-1, 0],
       R: [1, 0],
@@ -332,12 +339,12 @@ function getRelativeConstraints(
       const curr = queue.shift();
       if (curr) {
         visited[curr] = 1;
-        const currId = invSpatialMap[curr];
+        const currId = invSpatialMap.get(curr);
         if (currId) {
           const currPos = strToPos(curr);
           Object.entries(directions).forEach(([dir, shift]) => {
             const newPos = posToStr([currPos[0] + shift[0], currPos[1] + shift[1]]);
-            const newId = invSpatialMap[newPos];
+            const newId = invSpatialMap.get(newPos);
             // If there is an adjacent service to the current one and it has not yet been visited
             if (newId && !visited[newPos]) {
               queue.push(newPos);

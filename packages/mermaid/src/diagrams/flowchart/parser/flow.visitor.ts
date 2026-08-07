@@ -234,7 +234,9 @@ class FlowVisitor extends BaseVisitor {
         undefined as any,
         undefined as any,
         undefined as any,
-        undefined as any
+        undefined as any,
+        undefined,
+        undefined
       );
     }
     return id;
@@ -370,7 +372,9 @@ class FlowVisitor extends BaseVisitor {
       undefined as any,
       this.visit(ctx.stylesOpt),
       undefined as any,
-      undefined as any
+      undefined as any,
+      undefined,
+      undefined
     );
   }
 
