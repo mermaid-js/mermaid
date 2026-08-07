@@ -72,7 +72,7 @@ class UsecaseParser extends CstParser {
   declare styleStatement: () => CstNode;
 
   constructor() {
-    super(usecaseTokens);
+    super(usecaseTokens, { nodeLocationTracking: 'full' });
 
     this.RULE('start', () => {
       this.CONSUME(Usecase);

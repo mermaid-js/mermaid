@@ -15,7 +15,7 @@ export const parser: ParserDefinition = {
         lexer: usecaseLexer,
         parser: usecaseParser,
         entry: () => usecaseParser.start(),
-        visit: (cst) => usecaseVisitor.visit(cst),
+        visit: (cst) => usecaseVisitor.build(cst, input),
       },
       input
     );

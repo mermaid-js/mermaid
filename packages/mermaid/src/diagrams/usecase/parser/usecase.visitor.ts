@@ -1,10 +1,18 @@
 import type { CstNode, IToken } from 'chevrotain';
+import { buildUsecaseGraphAST } from '../usecaseAst.js';
 import { db } from '../usecaseDb.js';
-import type { ArrowType } from '../usecaseTypes.js';
 import { UsecaseModelBuilder } from './usecaseModelBuilder.js';
+import type {
+  ArrowType,
+  EdgeOccurrence,
+  GraphStatement,
+  NodeOccurrence,
+  Span,
+} from '../usecaseTypes.js';
 import { usecaseParser } from './usecase.parser.js';
 
 interface StartCtx {
+  USECASE: IToken[];
   statement?: CstNode[];
 }
 
@@ -16,6 +24,7 @@ interface StatementCtx {
   classStatement?: CstNode[];
   styleStatement?: CstNode[];
   entityStatement?: CstNode[];
+  NEWLINE?: IToken[];
 }
 
 interface ActorStatementCtx {
@@ -47,6 +56,12 @@ interface EntityStatementCtx {
 interface EntityNameCtx {
   IDENTIFIER?: IToken[];
   STRING?: IToken[];
+  nodeLabel?: CstNode[];
+}
+
+interface NodeLabelCtx {
+  IDENTIFIER?: IToken[];
+  STRING?: IToken[];
 }
 
 interface ArrowCtx {
@@ -57,6 +72,7 @@ interface ArrowCtx {
   CIRCLE_ARROW_REVERSED?: IToken[];
   CROSS_ARROW_REVERSED?: IToken[];
   edgeLabel?: CstNode[];
+  LINE_SOLID?: IToken[];
 }
 
 interface EdgeLabelCtx {
@@ -64,9 +80,15 @@ interface EdgeLabelCtx {
   STRING?: IToken[];
 }
 
+interface ParsedLabel {
+  name: string;
+  span: Span;
+}
+
 interface SystemBoundaryStatementCtx {
   systemBoundaryName: CstNode[];
   systemBoundaryContent?: CstNode[];
+  END: IToken[];
 }
 
 interface SystemBoundaryNameCtx {
@@ -132,38 +154,66 @@ interface StyleStatementCtx {
 interface ParsedActor {
   name: string;
   metadata?: Record<string, string>;
+  idSpan: Span;
+  labelSpan: Span;
+}
+
+interface ParsedEntity {
+  id: string;
+  name: string;
+  classes?: string[];
+  idSpan: Span;
+  labelSpan?: Span;
 }
 
 interface ParsedArrow {
   type: ArrowType;
   label?: string;
+  labelSpan?: Span;
 }
 
-interface BoundaryUsecase {
-  id: string;
-  name: string;
-  classes?: string[];
-}
+type BoundaryUsecase = ParsedEntity;
+
+type PendingGraphStatement = Omit<GraphStatement, 'edges' | 'span'> & {
+  edges?: Omit<EdgeOccurrence, 'span'>[];
+};
 
 const unquote = (text: string): string => text.slice(1, -1);
 const BaseVisitor = usecaseParser.getBaseCstVisitorConstructorWithDefaults();
 
 class UsecaseVisitor extends BaseVisitor {
   private readonly builder = new UsecaseModelBuilder(db);
+  private source = '';
 
   constructor() {
     super();
     this.validateVisitor();
   }
 
-  start(ctx: StartCtx): void {
-    this.builder.reset();
-    for (const statement of ctx.statement ?? []) {
-      this.visit(statement);
-    }
+  build(cst: CstNode, source: string): void {
+    this.source = source;
+    this.visit(cst);
   }
 
-  statement(ctx: StatementCtx): void {
+  start(ctx: StartCtx): void {
+    this.builder.reset();
+    const statements: GraphStatement[] = [];
+    for (const statementNode of ctx.statement ?? []) {
+      const statement = this.visit(statementNode) as GraphStatement | undefined;
+      if (statement) {
+        statements.push(statement);
+      }
+    }
+    db.setAST(
+      buildUsecaseGraphAST(db, this.source, this.tokenSpan(ctx.USECASE[0], false), statements)
+    );
+  }
+
+  statement(ctx: StatementCtx): GraphStatement | undefined {
+    if (ctx.NEWLINE) {
+      const offset = ctx.NEWLINE[0].startOffset;
+      return { kind: 'blank', span: [offset, offset] };
+    }
     const child =
       ctx.actorStatement?.[0] ??
       ctx.systemBoundaryStatement?.[0] ??
@@ -172,32 +222,72 @@ class UsecaseVisitor extends BaseVisitor {
       ctx.classStatement?.[0] ??
       ctx.styleStatement?.[0] ??
       ctx.entityStatement?.[0];
-    if (child) {
-      this.visit(child);
+    if (!child) {
+      return undefined;
     }
+    const pending = this.visit(child) as PendingGraphStatement;
+    const { edges, ...statement } = pending;
+    const span = this.nodeSpan(child);
+    return {
+      ...statement,
+      span,
+      ...(edges ? { edges: edges.map((edge): EdgeOccurrence => ({ ...edge, span })) } : {}),
+    };
   }
 
-  actorStatement(ctx: ActorStatementCtx): void {
+  actorStatement(ctx: ActorStatementCtx): PendingGraphStatement {
     const actors = ctx.actorName.map((actor) => this.visit(actor) as ParsedActor);
+    const nodes = ctx.actorName.map((actorNode, index) =>
+      this.nodeOccurrence(
+        actorNode,
+        this.builder.generateId(actors[index].name),
+        actors[index].idSpan,
+        actors[index].labelSpan,
+        true
+      )
+    );
     if (ctx.arrow && ctx.entityName) {
       const actor = actors[0];
       this.builder.addActor(actor.name, actor.metadata);
       const arrow = this.visit(ctx.arrow[0]) as ParsedArrow;
-      const target = this.visit(ctx.entityName[0]) as string;
-      this.builder.addRelationship(actor.name, target, arrow.type, arrow.label);
-      return;
+      const target = this.visit(ctx.entityName[0]) as ParsedEntity;
+      this.ensureEntity(target);
+      this.builder.addRelationship(actor.name, target.id, arrow.type, arrow.label);
+      const relationship = db.getRelationships().at(-1)!;
+      nodes.push(
+        this.nodeOccurrence(
+          ctx.entityName[0],
+          target.id,
+          target.idSpan,
+          target.labelSpan,
+          target.labelSpan !== undefined
+        )
+      );
+      return {
+        kind: 'edge',
+        nodes,
+        edges: [
+          {
+            id: relationship.id,
+            ...(arrow.labelSpan ? { labelSpan: arrow.labelSpan } : {}),
+          },
+        ],
+      };
     }
     for (const actor of actors) {
       this.builder.addActor(actor.name, actor.metadata);
     }
+    return { kind: 'node', nodes };
   }
 
   actorName(ctx: ActorNameCtx): ParsedActor {
+    const token = ctx.IDENTIFIER?.[0] ?? ctx.STRING![0];
     const name = ctx.IDENTIFIER?.[0].image ?? unquote(ctx.STRING![0].image);
     const metadata = ctx.metadata
       ? (this.visit(ctx.metadata[0]) as Record<string, string>)
       : undefined;
-    return { name, metadata };
+    const nameSpan = this.tokenSpan(token, token.tokenType.name === 'STRING');
+    return { name, metadata, idSpan: nameSpan, labelSpan: nameSpan };
   }
 
   metadata(ctx: MetadataCtx): Record<string, string> {
@@ -213,27 +303,82 @@ class UsecaseVisitor extends BaseVisitor {
     return [unquote(ctx.STRING[0].image), unquote(ctx.STRING[1].image)];
   }
 
-  entityStatement(ctx: EntityStatementCtx): void {
-    const entity = this.visit(ctx.entityName[0]) as string;
+  entityStatement(ctx: EntityStatementCtx): PendingGraphStatement {
+    const entity = this.visit(ctx.entityName[0]) as ParsedEntity;
+    const sourceOccurrence = this.nodeOccurrence(
+      ctx.entityName[0],
+      entity.id,
+      entity.idSpan,
+      entity.labelSpan,
+      !ctx.arrow
+    );
     if (ctx.arrow) {
       const arrow = this.visit(ctx.arrow[0]) as ParsedArrow;
-      const target = this.visit(ctx.entityName[1]) as string;
-      this.builder.addRelationship(entity, target, arrow.type, arrow.label);
-      return;
+      const target = this.visit(ctx.entityName[1]) as ParsedEntity;
+      this.ensureEntity(entity);
+      this.ensureEntity(target);
+      this.builder.addRelationship(entity.id, target.id, arrow.type, arrow.label);
+      const relationship = db.getRelationships().at(-1)!;
+      return {
+        kind: 'edge',
+        nodes: [
+          sourceOccurrence,
+          this.nodeOccurrence(
+            ctx.entityName[1],
+            target.id,
+            target.idSpan,
+            target.labelSpan,
+            target.labelSpan !== undefined
+          ),
+        ],
+        edges: [
+          {
+            id: relationship.id,
+            ...(arrow.labelSpan ? { labelSpan: arrow.labelSpan } : {}),
+          },
+        ],
+      };
     }
     if (ctx.systemBoundaryType) {
       const types = this.visit(ctx.systemBoundaryType[0]) as ('package' | 'rect')[];
-      const boundaryId = this.builder.generateId(entity);
       for (const type of types) {
-        this.builder.setSystemBoundaryType(boundaryId, type);
+        this.builder.setSystemBoundaryType(entity.id, type);
       }
-      return;
+      return {
+        kind: 'style',
+        group: entity.id,
+        ref: entity.id,
+        refSpan: entity.idSpan,
+      };
     }
-    this.builder.addUseCase(entity, entity);
+    this.builder.addUseCase(entity.id, entity.name, entity.classes);
+    return { kind: 'node', nodes: [sourceOccurrence] };
   }
 
-  entityName(ctx: EntityNameCtx): string {
-    return ctx.STRING ? unquote(ctx.STRING[0].image) : ctx.IDENTIFIER![0].image;
+  entityName(ctx: EntityNameCtx): ParsedEntity {
+    if (ctx.STRING) {
+      return this.createQuotedEntity(ctx.STRING[0], ctx.IDENTIFIER?.[0]);
+    }
+    const token = ctx.IDENTIFIER![0];
+    const label = ctx.nodeLabel ? (this.visit(ctx.nodeLabel[0]) as ParsedLabel) : undefined;
+    return this.createParsedEntity(
+      token,
+      label?.name ?? token.image,
+      ctx.IDENTIFIER?.[1],
+      label?.span
+    );
+  }
+
+  nodeLabel(ctx: NodeLabelCtx): ParsedLabel {
+    const tokens = [...(ctx.IDENTIFIER ?? []), ...(ctx.STRING ?? [])].sort(
+      (left, right) => left.startOffset - right.startOffset
+    );
+    const first = tokens[0];
+    if (tokens.length === 1 && first.tokenType.name === 'STRING') {
+      return { name: unquote(first.image), span: this.tokenSpan(first, true) };
+    }
+    const span: Span = [this.tokenSpan(first, false)[0], this.tokenSpan(tokens.at(-1)!, false)[1]];
+    return { name: this.source.slice(span[0], span[1]), span };
   }
 
   arrow(ctx: ArrowCtx): ParsedArrow {
@@ -251,28 +396,55 @@ class UsecaseVisitor extends BaseVisitor {
     } else if (ctx.CROSS_ARROW_REVERSED) {
       arrowText = 'x--';
     }
-    const label = ctx.edgeLabel ? (this.visit(ctx.edgeLabel[0]) as string) : undefined;
-    return { type: this.builder.arrowType(arrowText), label };
+    const label = ctx.edgeLabel ? (this.visit(ctx.edgeLabel[0]) as ParsedLabel) : undefined;
+    return {
+      type: this.builder.arrowType(arrowText),
+      ...(label ? { label: label.name, labelSpan: label.span } : {}),
+    };
   }
 
-  edgeLabel(ctx: EdgeLabelCtx): string {
-    return ctx.IDENTIFIER?.[0].image ?? unquote(ctx.STRING![0].image);
+  edgeLabel(ctx: EdgeLabelCtx): ParsedLabel {
+    const token = ctx.IDENTIFIER?.[0] ?? ctx.STRING![0];
+    return {
+      name: ctx.IDENTIFIER?.[0].image ?? unquote(ctx.STRING![0].image),
+      span: this.tokenSpan(token, token.tokenType.name === 'STRING'),
+    };
   }
 
-  systemBoundaryStatement(ctx: SystemBoundaryStatementCtx): void {
-    const name = this.visit(ctx.systemBoundaryName[0]) as string;
-    this.builder.startSystemBoundary(this.builder.generateId(name));
+  systemBoundaryStatement(ctx: SystemBoundaryStatementCtx): PendingGraphStatement {
+    const name = this.visit(ctx.systemBoundaryName[0]) as ParsedEntity;
+    this.builder.startSystemBoundary(name.id);
+    const children: GraphStatement[] = [];
     for (const content of ctx.systemBoundaryContent ?? []) {
       const useCase = this.visit(content) as BoundaryUsecase | undefined;
       if (useCase) {
         this.builder.addUseCase(useCase.id, useCase.name, useCase.classes);
+        children.push({
+          kind: 'node',
+          span: this.nodeSpan(content),
+          nodes: [
+            this.nodeOccurrence(content, useCase.id, useCase.idSpan, useCase.labelSpan, true),
+          ],
+        });
       }
     }
     this.builder.endSystemBoundary();
+    return {
+      kind: 'group',
+      group: name.id,
+      idSpan: name.idSpan,
+      titleSpan: name.labelSpan ?? name.idSpan,
+      endSpan: this.tokenSpan(ctx.END[0], false),
+      ...(children.length > 0 ? { children } : {}),
+    };
   }
 
-  systemBoundaryName(ctx: SystemBoundaryNameCtx): string {
-    return ctx.IDENTIFIER?.[0].image ?? unquote(ctx.STRING![0].image);
+  systemBoundaryName(ctx: SystemBoundaryNameCtx): ParsedEntity {
+    if (ctx.STRING) {
+      return this.createQuotedEntity(ctx.STRING[0]);
+    }
+    const token = ctx.IDENTIFIER![0];
+    return this.createParsedEntity(token, token.image, undefined, this.tokenSpan(token, false));
   }
 
   systemBoundaryContent(ctx: SystemBoundaryContentCtx): BoundaryUsecase | undefined {
@@ -282,10 +454,11 @@ class UsecaseVisitor extends BaseVisitor {
   }
 
   boundaryUsecase(ctx: BoundaryUsecaseCtx): BoundaryUsecase {
-    const name = ctx.STRING ? unquote(ctx.STRING[0].image) : ctx.IDENTIFIER![0].image;
-    const id = ctx.STRING ? this.builder.generateId(name) : name;
-    const classId = ctx.STRING ? ctx.IDENTIFIER?.[0].image : ctx.IDENTIFIER?.[1]?.image;
-    return { id, name, classes: classId ? [classId] : undefined };
+    if (ctx.STRING) {
+      return this.createQuotedEntity(ctx.STRING[0], ctx.IDENTIFIER?.[0]);
+    }
+    const token = ctx.IDENTIFIER![0];
+    return this.createParsedEntity(token, token.image, ctx.IDENTIFIER?.[1]);
   }
 
   systemBoundaryType(ctx: SystemBoundaryTypeCtx): ('package' | 'rect')[] {
@@ -295,7 +468,7 @@ class UsecaseVisitor extends BaseVisitor {
     return tokens.map((token) => (token.tokenType.name === 'PACKAGE' ? 'package' : 'rect'));
   }
 
-  directionStatement(ctx: DirectionStatementCtx): void {
+  directionStatement(ctx: DirectionStatementCtx): PendingGraphStatement {
     const direction =
       ctx.TB?.[0].image ??
       ctx.TD?.[0].image ??
@@ -303,11 +476,18 @@ class UsecaseVisitor extends BaseVisitor {
       ctx.RL?.[0].image ??
       ctx.LR![0].image;
     this.builder.setDirection(direction);
+    return { kind: 'direction' };
   }
 
-  classDefStatement(ctx: ClassDefStatementCtx): void {
+  classDefStatement(ctx: ClassDefStatementCtx): PendingGraphStatement {
     const styles = this.visit(ctx.styles[0]) as string[];
-    this.builder.addClassDef(ctx.IDENTIFIER[0].image, styles);
+    const classToken = ctx.IDENTIFIER[0];
+    this.builder.addClassDef(classToken.image, styles);
+    return {
+      kind: 'classDef',
+      ref: classToken.image,
+      refSpan: this.tokenSpan(classToken, false),
+    };
   }
 
   styles(ctx: StylesCtx): string[] {
@@ -335,14 +515,113 @@ class UsecaseVisitor extends BaseVisitor {
     ).image;
   }
 
-  classStatement(ctx: ClassStatementCtx): void {
-    const ids = ctx.IDENTIFIER.map((token) => token.image);
-    this.builder.applyClass(ids.slice(0, -1), ids.at(-1)!);
+  classStatement(ctx: ClassStatementCtx): PendingGraphStatement {
+    const classToken = ctx.IDENTIFIER.at(-1)!;
+    const nodeTokens = ctx.IDENTIFIER.slice(0, -1);
+    this.builder.applyClass(
+      nodeTokens.map((token) => token.image),
+      classToken.image
+    );
+    return {
+      kind: 'classAssign',
+      ref: classToken.image,
+      refSpan: this.tokenSpan(classToken, false),
+      nodes: nodeTokens.map((token) => ({
+        id: token.image,
+        span: this.tokenSpan(token, false),
+        idSpan: this.tokenSpan(token, false),
+      })),
+    };
   }
 
-  styleStatement(ctx: StyleStatementCtx): void {
+  styleStatement(ctx: StyleStatementCtx): PendingGraphStatement {
     const styles = this.visit(ctx.styles[0]) as string[];
-    this.builder.applyStyles(ctx.IDENTIFIER[0].image, styles);
+    const nodeToken = ctx.IDENTIFIER[0];
+    this.builder.applyStyles(nodeToken.image, styles);
+    const nodeSpan = this.tokenSpan(nodeToken, false);
+    return {
+      kind: 'style',
+      nodes: [{ id: nodeToken.image, span: nodeSpan, idSpan: nodeSpan }],
+    };
+  }
+
+  private createQuotedEntity(token: IToken, classToken?: IToken): ParsedEntity {
+    return this.createParsedEntity(
+      token,
+      unquote(token.image),
+      classToken,
+      this.tokenSpan(token, true)
+    );
+  }
+
+  private createParsedEntity(
+    token: IToken,
+    name: string,
+    classToken?: IToken,
+    labelSpan?: Span
+  ): ParsedEntity {
+    const quoted = token.tokenType.name === 'STRING';
+    const entity: ParsedEntity = {
+      id: quoted ? this.builder.generateId(name) : token.image,
+      name,
+      idSpan: this.tokenSpan(token, quoted),
+    };
+    if (classToken) {
+      entity.classes = [classToken.image];
+    }
+    if (labelSpan) {
+      entity.labelSpan = labelSpan;
+    }
+    return entity;
+  }
+
+  private ensureEntity(entity: ParsedEntity): void {
+    if (!db.getActor(entity.id) && !db.getUseCase(entity.id)) {
+      db.addUseCase({
+        id: entity.id,
+        name: entity.name,
+        ...(entity.classes ? { classes: entity.classes } : {}),
+      });
+    }
+  }
+
+  private nodeOccurrence(
+    node: CstNode,
+    id: string,
+    idSpan: Span,
+    labelSpan: Span | undefined,
+    defines: boolean
+  ): NodeOccurrence {
+    return {
+      id,
+      span: this.nodeSpan(node),
+      idSpan,
+      ...(labelSpan ? { labelSpan } : {}),
+      ...(defines ? { defines: true } : {}),
+    };
+  }
+
+  private nodeSpan(node: CstNode): Span {
+    const location = node.location;
+    if (location?.startOffset === undefined || location.endOffset === undefined) {
+      throw new Error('Usecase CST node is missing full location tracking');
+    }
+    const start = location.startOffset;
+    let end = location.endOffset + 1;
+    while (end > start) {
+      const code = this.source.charCodeAt(end - 1);
+      if (code !== 10 && code !== 13) {
+        break;
+      }
+      end--;
+    }
+    return [start, end];
+  }
+
+  private tokenSpan(token: IToken, excludeQuotes: boolean): Span {
+    const quoteOffset = excludeQuotes ? 1 : 0;
+    const end = token.endOffset ?? token.startOffset + token.image.length - 1;
+    return [token.startOffset + quoteOffset, end + 1 - quoteOffset];
   }
 }
 

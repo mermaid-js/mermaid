@@ -64,6 +64,94 @@ export interface ClassDef {
   styles: string[];
 }
 
+export type Span = [start: number, end: number];
+
+export interface GraphNode {
+  label?: string;
+  shape?: string;
+  classes?: string[];
+  styles?: string[];
+  attrs?: Record<string, unknown>;
+}
+
+export interface GraphEdge {
+  id: string;
+  source: string;
+  target: string;
+  label?: string;
+  classes?: string[];
+  styles?: string[];
+  attrs?: Record<string, unknown>;
+}
+
+export interface GraphGroup {
+  title?: string;
+  parent?: string;
+  nodes: string[];
+  direction?: Exclude<Direction, 'TD'>;
+  classes?: string[];
+  attrs?: Record<string, unknown>;
+}
+
+export interface NodeOccurrence {
+  id: string;
+  span: Span;
+  idSpan: Span;
+  labelSpan?: Span;
+  defines?: boolean;
+}
+
+export interface EdgeOccurrence {
+  id: string;
+  span: Span;
+  labelSpan?: Span;
+  idSpan?: Span;
+}
+
+export interface GraphStatement {
+  kind:
+    | 'node'
+    | 'edge'
+    | 'group'
+    | 'classDef'
+    | 'classAssign'
+    | 'style'
+    | 'linkStyle'
+    | 'click'
+    | 'direction'
+    | 'accTitle'
+    | 'accDescr'
+    | 'comment'
+    | 'blank'
+    | 'frontmatter';
+  span: Span;
+  nodes?: NodeOccurrence[];
+  edges?: EdgeOccurrence[];
+  group?: string;
+  idSpan?: Span;
+  titleSpan?: Span;
+  endSpan?: Span;
+  ref?: string;
+  refSpan?: Span;
+  children?: GraphStatement[];
+}
+
+export interface GraphAST {
+  version: 1;
+  diagramType: 'usecase';
+  source: string;
+  header: {
+    keyword: 'usecase';
+    direction: Exclude<Direction, 'TD'>;
+    span: Span;
+  };
+  nodes: Record<string, GraphNode>;
+  edges: GraphEdge[];
+  groups: Record<string, GraphGroup>;
+  classDefs: Record<string, { styles: string[] }>;
+  statements: GraphStatement[];
+}
+
 export interface UsecaseFields {
   actors: Map<string, Actor>;
   useCases: Map<string, UseCase>;
@@ -76,6 +164,8 @@ export interface UsecaseFields {
 
 export interface UsecaseDB extends DiagramDB {
   getConfig: () => Required<UsecaseDiagramConfig>;
+  getAST: () => GraphAST | undefined;
+  setAST: (ast: GraphAST) => void;
 
   // Actor management
   addActor: (actor: Actor) => void;

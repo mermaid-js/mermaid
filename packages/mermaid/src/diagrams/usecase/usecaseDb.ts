@@ -18,6 +18,7 @@ import type {
   ActorMetadata,
   Direction,
   ClassDef,
+  GraphAST,
 } from './usecaseTypes.js';
 import { DEFAULT_DIRECTION, ARROW_TYPE } from './usecaseTypes.js';
 import type { RequiredDeep } from 'type-fest';
@@ -44,9 +45,15 @@ let systemBoundaries = new Map<string, SystemBoundary>();
 let relationships: Relationship[] = [];
 let classDefs = new Map<string, ClassDef>();
 let direction: Direction = DEFAULT_DIRECTION;
+let ast: GraphAST | undefined;
 const config: Required<UsecaseDiagramConfig> = structuredClone(DEFAULT_USECASE_CONFIG);
 
 const getConfig = (): Required<UsecaseDiagramConfig> => structuredClone(config);
+const getAST = (): GraphAST | undefined => ast;
+
+const setAST = (nextAST: GraphAST): void => {
+  ast = nextAST;
+};
 
 const clear = (): void => {
   actors = new Map();
@@ -55,6 +62,7 @@ const clear = (): void => {
   relationships = [];
   classDefs = new Map();
   direction = DEFAULT_DIRECTION;
+  ast = undefined;
   commonClear();
 };
 
@@ -360,6 +368,8 @@ const getData = (): LayoutData => {
 
 export const db: UsecaseDB = {
   getConfig,
+  getAST,
+  setAST,
 
   clear,
   setDiagramTitle,

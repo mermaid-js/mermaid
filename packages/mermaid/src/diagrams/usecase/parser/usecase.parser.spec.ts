@@ -101,10 +101,114 @@ describe('usecase Chevrotain parser', () => {
     ]);
   });
 
+  it('stores a serializable normalized AST with end-exclusive source spans', async () => {
+    const source = `usecase
+direction TD
+actor "System Administrator"@{ "icon": "user" }
+systemBoundary "Authentication System"
+  Login:::important
+end
+"System Administrator" -- "include" --> Login
+classDef important fill:#f96
+class Login important
+style Login stroke:#333`;
+
+    await parser.parse(source);
+
+    const ast = db.getAST();
+    expect(ast).toMatchObject({
+      version: 1,
+      diagramType: 'usecase',
+      source,
+      header: { keyword: 'usecase', direction: 'TB', span: [0, 7] },
+      nodes: {
+        System_Administrator: {
+          label: 'System Administrator',
+          shape: 'actor-icon',
+          attrs: { kind: 'actor', metadata: { icon: 'user' } },
+        },
+        Login: {
+          shape: 'ellipse',
+          classes: ['important'],
+          styles: ['stroke', ':', '#333'],
+          attrs: { kind: 'usecase' },
+        },
+      },
+      edges: [
+        {
+          id: 'rel_0',
+          source: 'System_Administrator',
+          target: 'Login',
+          label: 'include',
+          attrs: {
+            relationshipType: 'include',
+            arrowType: ARROW_TYPE.SOLID_ARROW,
+          },
+        },
+      ],
+      groups: {
+        Authentication_System: {
+          title: 'Authentication System',
+          nodes: ['Login'],
+          attrs: { type: 'rect' },
+        },
+      },
+      classDefs: {
+        important: { styles: ['fill', ':', '#f96'] },
+      },
+    });
+    expect(ast?.statements.map(({ kind }) => kind)).toEqual([
+      'direction',
+      'node',
+      'group',
+      'edge',
+      'classDef',
+      'classAssign',
+      'style',
+    ]);
+
+    const actorStatement = ast?.statements[1];
+    const groupStatement = ast?.statements[2];
+    const edgeStatement = ast?.statements[3];
+    expect(source.slice(...actorStatement!.span)).toBe(
+      'actor "System Administrator"@{ "icon": "user" }'
+    );
+    expect(source.slice(...actorStatement!.nodes![0].idSpan)).toBe('System Administrator');
+    expect(source.slice(...groupStatement!.span)).toBe(
+      'systemBoundary "Authentication System"\n  Login:::important\nend'
+    );
+    expect(source.slice(...groupStatement!.titleSpan!)).toBe('Authentication System');
+    expect(source.slice(...groupStatement!.endSpan!)).toBe('end');
+    expect(source.slice(...groupStatement!.children![0].nodes![0].idSpan)).toBe('Login');
+    expect(source.slice(...edgeStatement!.edges![0].labelSpan!)).toBe('include');
+    expect(JSON.parse(JSON.stringify(ast))).toEqual(ast);
+  });
+
+  it('captures explicit labels separately from every node id occurrence', async () => {
+    const source = `usecase
+Checkout(Complete checkout)
+Checkout --> Done`;
+
+    await parser.parse(source);
+
+    const ast = db.getAST()!;
+    expect(ast.nodes.Checkout).toMatchObject({
+      label: 'Complete checkout',
+      attrs: { kind: 'usecase' },
+    });
+    const definition = ast.statements[0].nodes![0];
+    const reference = ast.statements[1].nodes![0];
+    expect(source.slice(...definition.idSpan)).toBe('Checkout');
+    expect(source.slice(...definition.labelSpan!)).toBe('Complete checkout');
+    expect(source.slice(...reference.idSpan)).toBe('Checkout');
+    expect(reference.labelSpan).toBeUndefined();
+  });
+
   it('rejects malformed input and leaves the database empty', async () => {
     db.addActor({ id: 'stale', name: 'stale' });
 
     await expect(parser.parse('usecase\nactor')).rejects.toThrow('Error parsing usecase diagram');
     expect(db.getActors()).toHaveLength(0);
+    expect(db.getAST()).toBeUndefined();
   });
 });
