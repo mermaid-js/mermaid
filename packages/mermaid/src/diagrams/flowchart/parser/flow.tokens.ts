@@ -212,10 +212,10 @@ export const ClickEnd = createToken({
 // <click>[^\s\n]*  (jison uses *, but Chevrotain needs >=1; click ids are non-empty)
 export const Click = createToken({ name: 'CLICK', pattern: /\S+/ });
 
-// graph / flowchart / flowchart-elk / swimlane  -> GRAPH (+ push dir)
+// graph / flowchart / flowchart-elk / swimlane-beta  -> GRAPH (+ push dir)
 export const Graph = createToken({
   name: 'GRAPH',
-  pattern: /(?:flowchart-elk|flowchart|swimlane|graph)\b/,
+  pattern: /(?:flowchart-elk|swimlane-beta|flowchart|graph)\b/,
   push_mode: 'dir',
 });
 export const Subgraph = createToken({ name: 'subgraph', pattern: /subgraph\b/ });

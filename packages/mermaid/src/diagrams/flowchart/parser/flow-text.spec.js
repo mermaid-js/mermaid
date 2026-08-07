@@ -312,7 +312,6 @@ describeForEachParserEngine('flowchart', () => {
         'graph',
         'flowchart',
         'flowchart-elk',
-        'swimlane',
         'style',
         'default',
         'linkStyle',

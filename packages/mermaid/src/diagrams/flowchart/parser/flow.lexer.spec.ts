@@ -97,6 +97,7 @@ const CORPUS: string[] = [
   'flowchart LR\n A --> B\n',
   'graph\n A --> B\n',
   'flowchart-elk TD\n A --> B\n',
+  'swimlane-beta LR\n A --> B\n',
   // edges
   'graph TD\nA-->B\n',
   'graph TD\nA --> B\n',
