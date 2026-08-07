@@ -1,129 +1,159 @@
+import { ARROW_TYPE } from './usecaseTypes.js';
 import type {
   Actor,
+  ClassDef,
+  Direction,
   GraphAST,
+  GraphEdge,
   GraphGroup,
   GraphNode,
   GraphStatement,
+  Relationship,
   Span,
+  SystemBoundary,
   UseCase,
-  UsecaseDB,
+  UsecaseJsonNode,
+  UsecaseNote,
 } from './usecaseTypes.js';
 
-const findGroupStatement = (
-  statements: GraphStatement[],
-  groupId: string
-): GraphStatement | undefined => {
-  for (const statement of statements) {
-    if (statement.kind === 'group' && statement.group === groupId) {
-      return statement;
-    }
-    if (statement.children) {
-      const match = findGroupStatement(statement.children, groupId);
-      if (match) {
-        return match;
-      }
-    }
-  }
-  return undefined;
-};
+export interface UsecaseModelReader {
+  getActors(): ReadonlyMap<string, Actor>;
+  getUseCases(): ReadonlyMap<string, UseCase>;
+  getSystemBoundaries(): ReadonlyMap<string, SystemBoundary>;
+  getRelationships(): readonly Relationship[];
+  getNotes(): ReadonlyMap<string, UsecaseNote>;
+  getJsonNodes(): ReadonlyMap<string, UsecaseJsonNode>;
+  getClassDefs(): ReadonlyMap<string, ClassDef>;
+  getDirection(): Direction;
+  getAccTitle(): string;
+  getAccDescription(): string;
+}
 
-const actorGraphNode = (actor: Actor): GraphNode => {
-  const attrs: Record<string, unknown> = { kind: 'actor' };
-  if (actor.metadata) {
-    attrs.metadata = { ...actor.metadata };
-  }
-  const node: GraphNode = {
-    shape: actor.metadata?.icon ? 'actor-icon' : 'actor',
-    attrs,
-  };
-  if (actor.name !== actor.id) {
-    node.label = actor.name;
-  }
-  if (actor.styles) {
-    node.styles = [...actor.styles];
-  }
-  return node;
-};
+const actorNode = (actor: Actor): GraphNode => ({
+  shape:
+    actor.type === 'normal'
+      ? 'actor'
+      : actor.type === 'hollow'
+        ? 'actor-hollow'
+        : actor.type === 'awesome'
+          ? 'actor-awesome'
+          : 'actor-icon',
+  ...(actor.label === actor.id ? {} : { label: actor.label }),
+  ...(actor.classes.length ? { classes: [...actor.classes] } : {}),
+  ...(actor.styles.length ? { styles: [...actor.styles] } : {}),
+  attrs: {
+    kind: 'actor',
+    actorType: actor.type,
+    business: actor.business,
+    labelType: actor.labelType,
+    ...(actor.icon ? { icon: actor.icon } : {}),
+    ...(actor.stereotype ? { stereotype: actor.stereotype } : {}),
+    ...(actor.parentId ? { parentId: actor.parentId } : {}),
+  },
+});
 
-const useCaseGraphNode = (useCase: UseCase): GraphNode => {
-  const node: GraphNode = {
-    shape: 'ellipse',
-    attrs: { kind: 'usecase' },
-  };
-  if (useCase.name !== useCase.id) {
-    node.label = useCase.name;
-  }
-  if (useCase.classes) {
-    node.classes = [...useCase.classes];
-  }
-  if (useCase.styles) {
-    node.styles = [...useCase.styles];
-  }
-  return node;
-};
+const useCaseNode = (useCase: UseCase): GraphNode => ({
+  shape: useCase.shape,
+  ...(useCase.label === useCase.id ? {} : { label: useCase.label }),
+  ...(useCase.classes.length ? { classes: [...useCase.classes] } : {}),
+  ...(useCase.styles.length ? { styles: [...useCase.styles] } : {}),
+  attrs: {
+    kind: 'usecase',
+    useCaseShape: useCase.shape,
+    business: useCase.business,
+    labelType: useCase.labelType,
+    ...(useCase.stereotype ? { stereotype: useCase.stereotype } : {}),
+    ...(useCase.parentId ? { parentId: useCase.parentId } : {}),
+  },
+});
 
-const buildGraphNodes = (db: UsecaseDB): Record<string, GraphNode> => {
-  const nodes: Record<string, GraphNode> = {};
-  for (const actor of db.getActors().values()) {
-    nodes[actor.id] = actorGraphNode(actor);
-  }
-  for (const useCase of db.getUseCases().values()) {
-    nodes[useCase.id] = useCaseGraphNode(useCase);
-  }
-  return nodes;
-};
+const noteNode = (note: UsecaseNote): GraphNode => ({
+  label: note.label,
+  shape: 'note',
+  attrs: { kind: 'note', target: note.target, labelType: note.labelType },
+});
 
-const buildGraphGroups = (
-  db: UsecaseDB,
-  source: string,
-  statements: GraphStatement[]
-): Record<string, GraphGroup> => {
-  const groups: Record<string, GraphGroup> = {};
-  for (const boundary of db.getSystemBoundaries().values()) {
-    const statement = findGroupStatement(statements, boundary.id);
-    const title = statement?.titleSpan
-      ? source.slice(statement.titleSpan[0], statement.titleSpan[1])
-      : boundary.name;
-    groups[boundary.id] = {
-      ...(title === boundary.id ? {} : { title }),
-      nodes: [...boundary.useCases],
-      attrs: { type: boundary.type ?? 'rect' },
-    };
-  }
-  return groups;
-};
+const jsonNode = (json: UsecaseJsonNode): GraphNode => ({
+  label: json.id,
+  shape: 'json-table',
+  ...(json.classes.length ? { classes: [...json.classes] } : {}),
+  ...(json.styles.length ? { styles: [...json.styles] } : {}),
+  attrs: { kind: 'json', value: json.value, propertyOrder: json.propertyOrder, labelType: 'text' },
+});
 
-const buildClassDefs = (db: UsecaseDB): GraphAST['classDefs'] => {
-  const classDefs: GraphAST['classDefs'] = {};
-  for (const classDef of db.getClassDefs().values()) {
-    classDefs[classDef.id] = { styles: [...classDef.styles] };
-  }
-  return classDefs;
-};
+const relationshipEdge = (relationship: Relationship): GraphEdge => ({
+  id: relationship.id,
+  source: relationship.source,
+  target: relationship.target,
+  ...(relationship.label ? { label: relationship.label } : {}),
+  ...(relationship.classes.length ? { classes: [...relationship.classes] } : {}),
+  ...(relationship.styles.length ? { styles: [...relationship.styles] } : {}),
+  attrs: {
+    relationshipType: relationship.type,
+    arrowType: relationship.arrowType,
+    minlen: relationship.minlen,
+    explicitId: relationship.explicitId,
+    animate: relationship.animate,
+    ...(relationship.animation ? { animation: relationship.animation } : {}),
+    ...(relationship.labelType ? { labelType: relationship.labelType } : {}),
+  },
+});
+
+const noteEdge = (note: UsecaseNote): GraphEdge => ({
+  id: `${note.id}-edge`,
+  source: note.id,
+  target: note.target,
+  attrs: {
+    relationshipType: 'note',
+    arrowType: ARROW_TYPE.LINE_SOLID,
+    pattern: 'dotted',
+    minlen: 1,
+    explicitId: false,
+    animate: false,
+    internal: true,
+  },
+});
 
 export const buildUsecaseGraphAST = (
-  db: UsecaseDB,
+  model: UsecaseModelReader,
   source: string,
   headerSpan: Span,
   statements: GraphStatement[]
 ): GraphAST => {
-  const nodes = buildGraphNodes(db);
+  const nodes: Record<string, GraphNode> = {};
+  for (const actor of model.getActors().values()) {
+    nodes[actor.id] = actorNode(actor);
+  }
+  for (const useCase of model.getUseCases().values()) {
+    nodes[useCase.id] = useCaseNode(useCase);
+  }
+  for (const note of model.getNotes().values()) {
+    nodes[note.id] = noteNode(note);
+  }
+  for (const json of model.getJsonNodes().values()) {
+    nodes[json.id] = jsonNode(json);
+  }
 
-  const edges = db.getRelationships().map((relationship) => ({
-    id: relationship.id,
-    source: relationship.from,
-    target: relationship.to,
-    ...(relationship.label ? { label: relationship.label } : {}),
-    attrs: {
-      relationshipType: relationship.type,
-      arrowType: relationship.arrowType,
-    },
-  }));
+  const groups: Record<string, GraphGroup> = {};
+  for (const boundary of model.getSystemBoundaries().values()) {
+    groups[boundary.id] = {
+      ...(boundary.label === boundary.id ? {} : { title: boundary.label }),
+      nodes: [...boundary.members],
+      ...(boundary.classes.length ? { classes: [...boundary.classes] } : {}),
+      ...(boundary.styles.length ? { styles: [...boundary.styles] } : {}),
+      attrs: {
+        kind: 'systemBoundary',
+        boundaryType: boundary.type,
+        labelType: boundary.labelType,
+      },
+    };
+  }
 
-  const groups = buildGraphGroups(db, source, statements);
-  const classDefs = buildClassDefs(db);
-  const direction = db.getDirection();
-
+  const classDefs: GraphAST['classDefs'] = {};
+  for (const definition of model.getClassDefs().values()) {
+    classDefs[definition.id] = { styles: [...definition.styles] };
+  }
+  const direction = model.getDirection();
   return {
     version: 1,
     diagramType: 'usecase',
@@ -133,8 +163,13 @@ export const buildUsecaseGraphAST = (
       direction: direction === 'TD' ? 'TB' : direction,
       span: headerSpan,
     },
+    ...(model.getAccTitle() ? { accTitle: model.getAccTitle() } : {}),
+    ...(model.getAccDescription() ? { accDescr: model.getAccDescription() } : {}),
     nodes,
-    edges,
+    edges: [
+      ...model.getRelationships().map(relationshipEdge),
+      ...[...model.getNotes().values()].map(noteEdge),
+    ],
     groups,
     classDefs,
     statements,

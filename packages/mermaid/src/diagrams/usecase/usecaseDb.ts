@@ -1,4 +1,3 @@
-import { log } from '../../logger.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -9,367 +8,500 @@ import {
   clear as commonClear,
 } from '../common/commonDb.js';
 import type {
-  UsecaseFields,
-  UsecaseDB,
   Actor,
-  UseCase,
-  SystemBoundary,
-  Relationship,
-  ActorMetadata,
-  Direction,
   ClassDef,
+  Direction,
   GraphAST,
+  Relationship,
+  SystemBoundary,
+  UseCase,
+  UsecaseDB,
+  UsecaseFields,
+  UsecaseJsonNode,
+  UsecaseJsonRow,
+  UsecaseLayoutData,
+  UsecaseLayoutEdge,
+  UsecaseLayoutNode,
+  UsecaseNote,
 } from './usecaseTypes.js';
 import { DEFAULT_DIRECTION, ARROW_TYPE } from './usecaseTypes.js';
-import type { RequiredDeep } from 'type-fest';
 import type { UsecaseDiagramConfig } from '../../config.type.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
 import { getConfig as getGlobalConfig } from '../../diagram-api/diagramAPI.js';
-import type { LayoutData, Node, ClusterNode, Edge } from '../../rendering-util/types.js';
+import { sanitizeText } from '../common/common.js';
 
 export const DEFAULT_USECASE_CONFIG: Required<UsecaseDiagramConfig> = DEFAULT_CONFIG.usecase;
 
-export const DEFAULT_USECASE_DB: RequiredDeep<UsecaseFields> = {
+const createModel = (): UsecaseFields => ({
   actors: new Map(),
   useCases: new Map(),
   systemBoundaries: new Map(),
   relationships: [],
+  notes: new Map(),
+  jsonNodes: new Map(),
   classDefs: new Map(),
+  symbols: new Map(),
   direction: DEFAULT_DIRECTION,
-  config: DEFAULT_USECASE_CONFIG,
-} as const;
+  relationshipCounter: 0,
+  noteCounter: 0,
+  accTitle: '',
+  accDescription: '',
+  ast: undefined,
+  config: structuredClone(DEFAULT_USECASE_CONFIG),
+});
 
-let actors = new Map<string, Actor>();
-let useCases = new Map<string, UseCase>();
-let systemBoundaries = new Map<string, SystemBoundary>();
-let relationships: Relationship[] = [];
-let classDefs = new Map<string, ClassDef>();
-let direction: Direction = DEFAULT_DIRECTION;
-let ast: GraphAST | undefined;
-const config: Required<UsecaseDiagramConfig> = structuredClone(DEFAULT_USECASE_CONFIG);
+const assertCompleteModel = (model: UsecaseFields): void => {
+  if (
+    !(model.actors instanceof Map) ||
+    !(model.useCases instanceof Map) ||
+    !(model.systemBoundaries instanceof Map) ||
+    !Array.isArray(model.relationships) ||
+    !(model.notes instanceof Map) ||
+    !(model.jsonNodes instanceof Map) ||
+    !(model.classDefs instanceof Map) ||
+    !(model.symbols instanceof Map) ||
+    !['TB', 'TD', 'BT', 'RL', 'LR'].includes(model.direction) ||
+    !Number.isSafeInteger(model.relationshipCounter) ||
+    model.relationshipCounter < 0 ||
+    !Number.isSafeInteger(model.noteCounter) ||
+    model.noteCounter < 0 ||
+    typeof model.accTitle !== 'string' ||
+    typeof model.accDescription !== 'string' ||
+    !model.config
+  ) {
+    throw new Error('Cannot commit an incomplete usecase model');
+  }
+};
 
-const getConfig = (): Required<UsecaseDiagramConfig> => structuredClone(config);
-const getAST = (): GraphAST | undefined => ast;
+let state = createModel();
 
-const setAST = (nextAST: GraphAST): void => {
-  ast = nextAST;
+const getConfig = (): Required<UsecaseDiagramConfig> => structuredClone(state.config);
+const getAST = (): GraphAST | undefined => state.ast;
+
+const commit = (model: UsecaseFields): void => {
+  const nextState = structuredClone(model);
+  assertCompleteModel(nextState);
+  const previousAccTitle = getAccTitle();
+  const previousAccDescription = getAccDescription();
+  try {
+    setAccTitle(nextState.accTitle);
+    setAccDescription(nextState.accDescription);
+    state = nextState;
+  } catch (error) {
+    setAccTitle(previousAccTitle);
+    setAccDescription(previousAccDescription);
+    throw error;
+  }
 };
 
 const clear = (): void => {
-  actors = new Map();
-  useCases = new Map();
-  systemBoundaries = new Map();
-  relationships = [];
-  classDefs = new Map();
-  direction = DEFAULT_DIRECTION;
-  ast = undefined;
+  state = createModel();
   commonClear();
 };
 
-// Actor management
-const addActor = (actor: Actor): void => {
-  if (!actor.id || !actor.name) {
-    throw new Error(
-      `Invalid actor: Actor must have both id and name. Received: ${JSON.stringify(actor)}`
-    );
-  }
+const getActors = (): ReadonlyMap<string, Actor> => state.actors;
+const getActor = (id: string): Actor | undefined => state.actors.get(id);
+const getUseCases = (): ReadonlyMap<string, UseCase> => state.useCases;
+const getUseCase = (id: string): UseCase | undefined => state.useCases.get(id);
+const getSystemBoundaries = (): ReadonlyMap<string, SystemBoundary> => state.systemBoundaries;
+const getSystemBoundary = (id: string): SystemBoundary | undefined =>
+  state.systemBoundaries.get(id);
+const getRelationships = (): readonly Relationship[] => state.relationships;
+const getNotes = (): ReadonlyMap<string, UsecaseNote> => state.notes;
+const getNote = (id: string): UsecaseNote | undefined => state.notes.get(id);
+const getJsonNodes = (): ReadonlyMap<string, UsecaseJsonNode> => state.jsonNodes;
+const getJsonNode = (id: string): UsecaseJsonNode | undefined => state.jsonNodes.get(id);
+const getClassDefs = (): ReadonlyMap<string, ClassDef> => state.classDefs;
+const getClassDef = (id: string): ClassDef | undefined => state.classDefs.get(id);
+const getDirection = (): Direction => state.direction;
 
-  if (!actors.has(actor.id)) {
-    actors.set(actor.id, actor);
-    log.debug(`Added actor: ${actor.id} (${actor.name})`);
-  } else {
-    log.debug(`Actor ${actor.id} already exists`);
-  }
-};
-
-const getActors = (): Map<string, Actor> => actors;
-
-const getActor = (id: string): Actor | undefined => actors.get(id);
-
-// UseCase management
-const addUseCase = (useCase: UseCase): void => {
-  if (!useCase.id || !useCase.name) {
-    throw new Error(
-      `Invalid use case: Use case must have both id and name. Received: ${JSON.stringify(useCase)}`
-    );
-  }
-
-  if (!useCases.has(useCase.id)) {
-    useCases.set(useCase.id, useCase);
-    log.debug(`Added use case: ${useCase.id} (${useCase.name})`);
-  } else {
-    log.debug(`Use case ${useCase.id} already exists`);
-  }
-};
-
-const getUseCases = (): Map<string, UseCase> => useCases;
-
-const getUseCase = (id: string): UseCase | undefined => useCases.get(id);
-
-// SystemBoundary management
-const addSystemBoundary = (systemBoundary: SystemBoundary): void => {
-  if (!systemBoundary.id || !systemBoundary.name) {
-    throw new Error(
-      `Invalid system boundary: System boundary must have both id and name. Received: ${JSON.stringify(systemBoundary)}`
-    );
-  }
-
-  if (!systemBoundaries.has(systemBoundary.id)) {
-    systemBoundaries.set(systemBoundary.id, systemBoundary);
-    log.debug(`Added system boundary: ${systemBoundary.name}`);
-  } else {
-    log.debug(`System boundary ${systemBoundary.id} already exists`);
-  }
-};
-
-const getSystemBoundaries = (): Map<string, SystemBoundary> => systemBoundaries;
-
-const getSystemBoundary = (id: string): SystemBoundary | undefined => systemBoundaries.get(id);
-
-// Relationship management
-const addRelationship = (relationship: Relationship): void => {
-  // Validate relationship structure
-  if (!relationship.id || !relationship.from || !relationship.to) {
-    throw new Error(
-      `Invalid relationship: Relationship must have id, from, and to fields. Received: ${JSON.stringify(relationship)}`
-    );
-  }
-
-  if (!relationship.type) {
-    throw new Error(
-      `Invalid relationship: Relationship must have a type. Received: ${JSON.stringify(relationship)}`
-    );
-  }
-
-  // Validate relationship type
-  const validTypes = ['association', 'include', 'extend'];
-  if (!validTypes.includes(relationship.type)) {
-    throw new Error(
-      `Invalid relationship type: ${relationship.type}. Valid types are: ${validTypes.join(', ')}`
-    );
-  }
-
-  // Validate arrow type if present
-  if (relationship.arrowType !== undefined) {
-    const validArrowTypes = [0, 1, 2, 3, 4, 5, 6]; // SOLID_ARROW, BACK_ARROW, LINE_SOLID, CIRCLE_ARROW, CROSS_ARROW
-    if (!validArrowTypes.includes(relationship.arrowType)) {
-      throw new Error(
-        `Invalid arrow type: ${relationship.arrowType}. Valid arrow types are: ${validArrowTypes.join(', ')}`
-      );
+const getCompiledStyles = (classNames: readonly string[]): string[] => {
+  const compiled = new Map<string, string>();
+  for (const className of ['default', ...classNames]) {
+    const definition = state.classDefs.get(className);
+    if (!definition) {
+      continue;
+    }
+    for (const rawStyle of definition.styles) {
+      const style = rawStyle.trim();
+      const separator = style.indexOf(':');
+      const property = (separator === -1 ? style : style.slice(0, separator)).trim();
+      if (property) {
+        compiled.set(property, style);
+      }
     }
   }
-
-  relationships.push(relationship);
-  log.debug(
-    `Added relationship: ${relationship.from} -> ${relationship.to} (${relationship.type})`
-  );
+  return [...compiled.values()];
 };
 
-const getRelationships = (): Relationship[] => relationships;
+const escapeJsonPointerPart = (part: string): string =>
+  part.replaceAll('~', '~0').replaceAll('/', '~1');
 
-// ClassDef management
-const addClassDef = (classDef: ClassDef): void => {
-  if (!classDef.id) {
-    throw new Error(
-      `Invalid classDef: ClassDef must have an id. Received: ${JSON.stringify(classDef)}`
-    );
-  }
+const displayJsonScalar = (value: string | number | boolean | null): string =>
+  typeof value === 'string' ? value : value === null ? 'null' : String(value);
 
-  classDefs.set(classDef.id, classDef);
-  log.debug(`Added classDef: ${classDef.id}`);
-};
-
-const getClassDefs = (): Map<string, ClassDef> => classDefs;
-
-const getClassDef = (id: string): ClassDef | undefined => classDefs.get(id);
+type JsonCellSanitizer = (value: string) => string;
 
 /**
- * Get compiled styles from class definitions
- * Similar to flowchart's getCompiledStyles method
+ * Flattens a JSON object once into renderer-ready rows. The supplied sanitizer keeps this helper
+ * deterministic and makes the security policy an explicit conversion input.
  */
-const getCompiledStyles = (classNames: string[]): string[] => {
-  let compiledStyles: string[] = [];
-  for (const className of classNames) {
-    const cssClass = classDefs.get(className);
-    if (cssClass?.styles) {
-      compiledStyles = [...compiledStyles, ...(cssClass.styles ?? [])].map((s) => s.trim());
+const flattenJsonRows = (
+  value: Record<string, unknown>,
+  propertyOrder: Readonly<Record<string, readonly string[]>>,
+  sanitize: JsonCellSanitizer = (cell) => cell
+): UsecaseJsonRow[] => {
+  const rows: UsecaseJsonRow[] = [];
+
+  const append = (key: string, accessibleKey: string, cellValue: string): void => {
+    rows.push({
+      key: sanitize(key),
+      accessibleKey: sanitize(accessibleKey),
+      value: sanitize(cellValue),
+    });
+  };
+
+  const visit = (current: unknown, path: string, pointer: string): void => {
+    if (Array.isArray(current)) {
+      if (current.length === 0) {
+        append(path, path, '[]');
+        return;
+      }
+
+      const scalarArray = current.every(
+        (item) => item === null || ['string', 'number', 'boolean'].includes(typeof item)
+      );
+      if (scalarArray) {
+        for (const [index, element] of current.entries()) {
+          append(
+            index === 0 ? path : '',
+            path,
+            displayJsonScalar(element as string | number | boolean | null)
+          );
+        }
+        return;
+      }
+
+      for (const [index, element] of current.entries()) {
+        visit(element, `${path}[${index}]`, `${pointer}/${index}`);
+      }
+      return;
     }
-  }
-  return compiledStyles;
+
+    if (current !== null && typeof current === 'object') {
+      const object = current as Record<string, unknown>;
+      const keys = propertyOrder[pointer] ?? Object.keys(object);
+      if (keys.length === 0) {
+        append(path, path, '{}');
+        return;
+      }
+
+      for (const key of keys) {
+        const childPath = path ? `${path}.${key}` : key;
+        visit(object[key], childPath, `${pointer}/${escapeJsonPointerPart(key)}`);
+      }
+      return;
+    }
+
+    append(path, path, displayJsonScalar(current as string | number | boolean | null));
+  };
+
+  visit(value, '', '');
+  return rows;
 };
 
-// Direction management
-const setDirection = (dir: Direction): void => {
-  // Normalize TD to TB (same as flowchart)
-  if (dir === 'TD') {
-    direction = 'TB';
-  } else {
-    direction = dir;
+const actorShape = (actor: Actor): UsecaseLayoutNode['shape'] => {
+  switch (actor.type) {
+    case 'hollow':
+      return 'usecaseActorHollow';
+    case 'awesome':
+      return 'usecaseActorAwesome';
+    case 'icon':
+      return 'usecaseActorIcon';
+    case 'normal':
+      return 'usecaseActor';
   }
-  log.debug('Direction set to:', direction);
 };
 
-const getDirection = (): Direction => direction;
+const useCaseShape = (useCase: UseCase): UsecaseLayoutNode['shape'] =>
+  useCase.business && useCase.shape === 'ellipse' ? 'usecaseBusiness' : useCase.shape;
 
-// Convert usecase diagram data to LayoutData format for unified rendering
-const getData = (): LayoutData => {
+const associationMarkers = (
+  arrowType: Relationship['arrowType']
+): Pick<UsecaseLayoutEdge, 'arrowTypeStart' | 'arrowTypeEnd'> => {
+  switch (arrowType) {
+    case ARROW_TYPE.SOLID_ARROW:
+      return { arrowTypeStart: 'none', arrowTypeEnd: 'arrow_point' };
+    case ARROW_TYPE.BACK_ARROW:
+      return { arrowTypeStart: 'arrow_point', arrowTypeEnd: 'none' };
+    case ARROW_TYPE.CIRCLE_ARROW:
+      return { arrowTypeStart: 'none', arrowTypeEnd: 'arrow_circle' };
+    case ARROW_TYPE.CROSS_ARROW:
+      return { arrowTypeStart: 'none', arrowTypeEnd: 'arrow_cross' };
+    case ARROW_TYPE.CIRCLE_ARROW_REVERSED:
+      return { arrowTypeStart: 'arrow_circle', arrowTypeEnd: 'none' };
+    case ARROW_TYPE.CROSS_ARROW_REVERSED:
+      return { arrowTypeStart: 'arrow_cross', arrowTypeEnd: 'none' };
+    case ARROW_TYPE.LINE_SOLID:
+      return { arrowTypeStart: 'none', arrowTypeEnd: 'none' };
+  }
+};
+
+const relationshipVisuals = (
+  relationship: Relationship
+): Pick<
+  UsecaseLayoutEdge,
+  'arrowTypeStart' | 'arrowTypeEnd' | 'pattern' | 'label' | 'labelType'
+> => {
+  switch (relationship.type) {
+    case 'include':
+    case 'extend':
+      return {
+        arrowTypeStart: 'none',
+        arrowTypeEnd: 'arrow_point',
+        pattern: 'dotted',
+        label: relationship.type,
+        labelType: 'text',
+      };
+    case 'generalization':
+      return {
+        arrowTypeStart: 'none',
+        arrowTypeEnd: 'extension',
+        pattern: 'solid',
+      };
+    case 'association':
+      return {
+        ...associationMarkers(relationship.arrowType),
+        pattern: 'solid',
+        ...(relationship.label ? { label: relationship.label } : {}),
+        ...(relationship.labelType ? { labelType: relationship.labelType } : {}),
+      };
+  }
+};
+
+const animationClasses = (relationship: Relationship): string[] =>
+  relationship.animate || relationship.animation
+    ? [`edge-animation-${relationship.animation ?? 'fast'}`]
+    : [];
+
+const classNames = (...names: (string | false | undefined)[]): string =>
+  names.filter((name): name is string => Boolean(name)).join(' ');
+
+// Convert the committed use-case model to the unified renderer contract without semantic re-parsing.
+const getData = (): UsecaseLayoutData => {
   const globalConfig = getGlobalConfig();
-  const nodes: Node[] = [];
-  const edges: Edge[] = [];
+  const config: Required<UsecaseDiagramConfig> = {
+    ...state.config,
+    ...globalConfig.usecase,
+  };
+  const sanitize = (value: string): string => sanitizeText(value, globalConfig);
+  const endpointLabel = (id: string): string =>
+    sanitize(
+      state.actors.get(id)?.label ??
+        state.useCases.get(id)?.label ??
+        state.jsonNodes.get(id)?.id ??
+        state.notes.get(id)?.label ??
+        id
+    );
+  const nodes: UsecaseLayoutData['nodes'] = [];
+  const edges: UsecaseLayoutEdge[] = [];
 
-  // Convert actors to nodes
-  for (const actor of actors.values()) {
-    const classesArray = ['default', 'usecase-actor'];
-    const cssCompiledStyles = getCompiledStyles(classesArray);
-
-    // Determine which shape to use based on whether actor has an icon
-    const actorShape = actor.metadata?.icon ? 'usecaseActorIcon' : 'usecaseActor';
-
-    const node: Node = {
+  for (const actor of state.actors.values()) {
+    nodes.push({
       id: actor.id,
-      label: actor.name,
-      description: actor.description ? [actor.description] : undefined,
-      shape: actorShape, // Use icon shape if icon is present, otherwise stick figure
+      label: sanitize(actor.label),
+      labelType: actor.labelType,
+      shape: actorShape(actor),
       isGroup: false,
       padding: 10,
       look: globalConfig.look,
-      // Add metadata as data attributes for styling
-      cssClasses: `usecase-actor ${
-        actor.metadata && Object.keys(actor.metadata).length > 0
-          ? Object.entries(actor.metadata)
-              .map(([key, value]) => `actor-${key}-${value}`)
-              .join(' ')
-          : ''
-      }`.trim(),
-      cssStyles: actor.styles ?? [], // Direct styles
-      cssCompiledStyles, // Compiled styles from class definitions
-      // Pass actor metadata to the shape handler
-      metadata: actor.metadata,
-    } as Node & { metadata?: ActorMetadata };
-    nodes.push(node);
+      cssClasses: classNames(
+        'default',
+        'usecase-actor',
+        `usecase-actor-${actor.type}`,
+        actor.business && 'usecase-business',
+        ...actor.classes
+      ),
+      cssStyles: [...actor.styles],
+      cssCompiledStyles: getCompiledStyles(actor.classes),
+      actorType: actor.type,
+      business: actor.business,
+      ...(actor.icon ? { icon: actor.icon } : {}),
+      ...(actor.stereotype ? { stereotype: sanitize(actor.stereotype) } : {}),
+      ...(actor.parentId ? { parentId: actor.parentId } : {}),
+    });
   }
 
-  // Convert use cases to nodes
-  for (const useCase of useCases.values()) {
-    // Build CSS classes string
-    let cssClasses = 'usecase-element';
-    const classesArray = ['default', 'usecase-element'];
-    if (useCase.classes && useCase.classes.length > 0) {
-      cssClasses += ' ' + useCase.classes.join(' ');
-      classesArray.push(...useCase.classes);
-    }
-
-    // Get compiled styles from class definitions
-    const cssCompiledStyles = getCompiledStyles(classesArray);
-    const node: Node = {
+  for (const useCase of state.useCases.values()) {
+    nodes.push({
       id: useCase.id,
-      label: useCase.name,
-      description: useCase.description ? [useCase.description] : undefined,
-      shape: 'ellipse', // Use ellipse shape for use cases
+      label: sanitize(useCase.label),
+      labelType: useCase.labelType,
+      shape: useCaseShape(useCase),
       isGroup: false,
       padding: 10,
       look: globalConfig.look,
-      cssClasses,
-      cssStyles: useCase.styles ?? [], // Direct styles
-      cssCompiledStyles, // Compiled styles from class definitions
-      // If use case belongs to a system boundary, set parentId
-      ...(useCase.systemBoundary && { parentId: useCase.systemBoundary }),
-    };
-    nodes.push(node);
+      cssClasses: classNames(
+        'default',
+        'usecase-element',
+        `usecase-${useCase.shape}`,
+        useCase.business && 'usecase-business',
+        ...useCase.classes
+      ),
+      cssStyles: [...useCase.styles],
+      cssCompiledStyles: getCompiledStyles(useCase.classes),
+      business: useCase.business,
+      ...(useCase.stereotype ? { stereotype: sanitize(useCase.stereotype) } : {}),
+      ...(useCase.parentId ? { parentId: useCase.parentId } : {}),
+    });
   }
 
-  // Convert system boundaries to group nodes
-  for (const boundary of systemBoundaries.values()) {
-    const classesArray = [
-      'default',
-      'system-boundary',
-      `system-boundary-${boundary.type ?? 'rect'}`,
-    ];
-    const cssCompiledStyles = getCompiledStyles(classesArray);
+  for (const note of state.notes.values()) {
+    nodes.push({
+      id: note.id,
+      label: sanitize(note.label),
+      labelType: note.labelType,
+      shape: 'note',
+      isGroup: false,
+      padding: 10,
+      look: globalConfig.look,
+      cssClasses: 'default usecase-note',
+      cssStyles: [],
+      cssCompiledStyles: getCompiledStyles([]),
+      noteTarget: note.target,
+      noteTargetLabel: sanitize(
+        state.actors.get(note.target)?.label ??
+          state.useCases.get(note.target)?.label ??
+          state.jsonNodes.get(note.target)?.id ??
+          note.target
+      ),
+    });
+  }
 
-    const node: ClusterNode & { boundaryType?: string } = {
+  for (const json of state.jsonNodes.values()) {
+    nodes.push({
+      id: json.id,
+      label: sanitize(json.id),
+      labelType: 'text',
+      shape: 'usecaseJsonTable',
+      isGroup: false,
+      padding: 10,
+      look: globalConfig.look,
+      cssClasses: classNames('default', 'usecase-json-table', ...json.classes),
+      cssStyles: [...json.styles],
+      cssCompiledStyles: getCompiledStyles(json.classes),
+      jsonRows: flattenJsonRows(json.value, json.propertyOrder, sanitize),
+    });
+  }
+
+  for (const boundary of state.systemBoundaries.values()) {
+    nodes.push({
       id: boundary.id,
-      label: boundary.name,
-      shape: 'usecaseSystemBoundary', // Use custom usecase system boundary cluster shape
-      isGroup: true, // System boundaries are clusters (containers for other nodes)
+      label: sanitize(boundary.label),
+      labelType: boundary.labelType,
+      shape: 'usecaseSystemBoundary',
+      isGroup: true,
       padding: 20,
       look: globalConfig.look,
-      cssClasses: `system-boundary system-boundary-${boundary.type ?? 'rect'}`,
-      cssStyles: boundary.styles ?? [], // Direct styles
-      cssCompiledStyles, // Compiled styles from class definitions
-      // Pass boundary type to the shape handler
+      cssClasses: classNames(
+        'default',
+        'system-boundary',
+        `system-boundary-${boundary.type}`,
+        ...boundary.classes
+      ),
+      cssStyles: [...boundary.styles],
+      cssCompiledStyles: getCompiledStyles(boundary.classes),
       boundaryType: boundary.type,
-    };
-    nodes.push(node);
+    });
   }
 
-  // Convert relationships to edges
-  relationships.forEach((relationship, index) => {
-    // Determine arrow types based on relationship.arrowType
-    let arrowTypeEnd = 'none';
-    let arrowTypeStart = 'none';
-
-    switch (relationship.arrowType) {
-      case ARROW_TYPE.SOLID_ARROW: // -->
-        arrowTypeEnd = 'arrow_point';
-        break;
-      case ARROW_TYPE.BACK_ARROW: // <--
-        arrowTypeStart = 'arrow_point';
-        break;
-      case ARROW_TYPE.CIRCLE_ARROW: // --o
-        arrowTypeEnd = 'arrow_circle';
-        break;
-      case ARROW_TYPE.CROSS_ARROW: // --x
-        arrowTypeEnd = 'arrow_cross';
-        break;
-      case ARROW_TYPE.CIRCLE_ARROW_REVERSED: // o--
-        arrowTypeStart = 'arrow_circle';
-        break;
-      case ARROW_TYPE.CROSS_ARROW_REVERSED: // x--
-        arrowTypeStart = 'arrow_cross';
-        break;
-      case ARROW_TYPE.LINE_SOLID: // --
-        // Both remain 'none'
-        break;
-    }
-
-    const edge: Edge = {
-      id: relationship.id || `edge-${index}`,
-      start: relationship.from,
-      end: relationship.to,
-      source: relationship.from,
-      target: relationship.to,
-      label: relationship.label,
-      labelpos: 'c', // Center label position for proper dagre layout
-      type: relationship.type,
-      arrowTypeEnd,
-      arrowTypeStart,
-      classes: `relationship relationship-${relationship.type}`,
+  for (const relationship of state.relationships) {
+    const { label: rawLabel, ...visual } = relationshipVisuals(relationship);
+    edges.push({
+      id: relationship.id,
+      start: relationship.source,
+      end: relationship.target,
+      source: relationship.source,
+      target: relationship.target,
+      sourceLabel: endpointLabel(relationship.source),
+      targetLabel: endpointLabel(relationship.target),
+      type: 'edge',
+      relationshipType: relationship.type,
+      internal: false,
+      ...visual,
+      ...(rawLabel !== undefined ? { label: sanitize(rawLabel) } : {}),
+      labelpos: 'c',
+      classes: classNames(
+        'default',
+        'relationship',
+        `relationship-${relationship.type}`,
+        ...relationship.classes,
+        ...animationClasses(relationship)
+      ),
+      style: [...relationship.styles],
+      cssCompiledStyles: getCompiledStyles(relationship.classes),
+      animate: relationship.animate,
+      ...(relationship.animation ? { animation: relationship.animation } : {}),
       look: globalConfig.look,
       thickness: 'normal',
-      pattern: 'solid',
-    };
-    edges.push(edge);
-  });
+      minlen: relationship.minlen,
+      isUserDefinedId: relationship.explicitId,
+    });
+  }
+
+  for (const note of state.notes.values()) {
+    edges.push({
+      id: `${note.id}-edge`,
+      start: note.id,
+      end: note.target,
+      source: note.id,
+      target: note.target,
+      type: 'edge',
+      relationshipType: 'note',
+      sourceLabel: endpointLabel(note.id),
+      targetLabel: endpointLabel(note.target),
+      internal: true,
+      pattern: 'dotted',
+      arrowTypeStart: 'none',
+      arrowTypeEnd: 'none',
+      labelpos: 'c',
+      classes: 'default relationship relationship-note',
+      style: [],
+      cssCompiledStyles: getCompiledStyles([]),
+      animate: false,
+      look: globalConfig.look,
+      thickness: 'normal',
+      minlen: 1,
+      isUserDefinedId: false,
+    });
+  }
 
   return {
     nodes,
     edges,
     config: globalConfig,
-    // Additional properties that layout algorithms might expect
     type: 'usecase',
-    layoutAlgorithm: 'dagre', // Default layout algorithm
-    direction: getDirection(), // Use the current direction setting
-    nodeSpacing: 50, // Default node spacing
-    rankSpacing: 50, // Default rank spacing
-    markers: ['arrow_point'], // Arrow point markers used in usecase diagrams
+    layoutAlgorithm: 'dagre',
+    direction: getDirection(),
+    nodeSpacing: config.nodeSpacing,
+    rankSpacing: config.rankSpacing,
+    actorFontSize: config.actorFontSize,
+    actorFontFamily: config.actorFontFamily,
+    actorFontWeight: config.actorFontWeight,
+    usecaseFontSize: config.usecaseFontSize,
+    usecaseFontFamily: config.usecaseFontFamily,
+    usecaseFontWeight: config.usecaseFontWeight,
+    diagramPadding: config.diagramPadding,
+    useMaxWidth: config.useMaxWidth,
+    markers: ['point', 'circle', 'cross', 'extension'],
   };
 };
 
 export const db: UsecaseDB = {
   getConfig,
+  createModel,
+  commit,
   getAST,
-  setAST,
 
   clear,
   setDiagramTitle,
@@ -379,29 +511,19 @@ export const db: UsecaseDB = {
   setAccDescription,
   getAccDescription,
 
-  addActor,
   getActors,
   getActor,
-
-  addUseCase,
   getUseCases,
   getUseCase,
-
-  addSystemBoundary,
   getSystemBoundaries,
   getSystemBoundary,
-
-  addRelationship,
   getRelationships,
-
-  addClassDef,
+  getNotes,
+  getNote,
+  getJsonNodes,
+  getJsonNode,
   getClassDefs,
   getClassDef,
-
-  // Direction management
-  setDirection,
   getDirection,
-
-  // Add getData method for unified rendering
   getData,
 };

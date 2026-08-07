@@ -1,168 +1,228 @@
-import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
-import type { Node } from '../../types.js';
-import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
+import type { Node } from '../../types.js';
 import intersect from '../intersect/index.js';
+import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { getNodeClasses, insertLabel, labelHelper, updateNodeBounds } from './util.js';
 
-/**
- * Get actor styling based on metadata
- */
-const getActorStyling = (metadata?: Record<string, string>) => {
-  const defaults = {
-    fillColor: 'none',
-    strokeColor: 'black',
-    strokeWidth: 2,
-    type: 'solid',
-  };
+export type UsecaseActorVariant = 'normal' | 'hollow' | 'awesome' | 'icon';
 
-  if (!metadata) {
-    return defaults;
-  }
-
-  return {
-    fillColor: metadata.type === 'hollow' ? 'none' : metadata.fillColor || defaults.fillColor,
-    strokeColor: metadata.strokeColor || defaults.strokeColor,
-    strokeWidth: parseInt(metadata.strokeWidth || '2', 10),
-    type: metadata.type || defaults.type,
-  };
+export type UsecaseActorNode = Node & {
+  labelType?: 'text' | 'markdown';
+  actorType?: UsecaseActorVariant;
+  icon?: string;
+  business?: boolean;
+  stereotype?: string;
+  accessibleName?: string;
 };
 
-/**
- * Create stick figure path data
- * This generates the SVG path for a stick figure centered at (x, y)
- */
-const createStickFigurePathD = (x: number, y: number, scale = 1.5): string => {
-  // Base path template (centered at origin):
-  // M 0 -4 C 4.4183 -4 8 -7.5817 8 -12 C 8 -16.4183 4.4183 -20 0 -20 C -4.4183 -20 -8 -16.4183 -8 -12 C -8 -7.5817 -4.4183 -4 0 -4 Z M 0 -4 V 5 M -10 14.5 L 0 5 M 10 14.5 L 0 5 M -11 0 H 11
+const ACTOR_FIGURE_WIDTH = 56;
+const ACTOR_FIGURE_HEIGHT = 72;
 
-  // Scale all coordinates
-  const s = (val: number) => val * scale;
+const ACTOR_LABEL_GAP = 8;
+const STEREOTYPE_LABEL_GAP = 2;
+const DEFAULT_ACTOR_PADDING = 8;
 
-  // Translate the path to the desired position
-  return [
-    // Head (circle using cubic bezier curves)
-    `M ${x + s(0)} ${y + s(-4)}`,
-    `C ${x + s(4.4183)} ${y + s(-4)} ${x + s(8)} ${y + s(-7.5817)} ${x + s(8)} ${y + s(-12)}`,
-    `C ${x + s(8)} ${y + s(-16.4183)} ${x + s(4.4183)} ${y + s(-20)} ${x + s(0)} ${y + s(-20)}`,
-    `C ${x + s(-4.4183)} ${y + s(-20)} ${x + s(-8)} ${y + s(-16.4183)} ${x + s(-8)} ${y + s(-12)}`,
-    `C ${x + s(-8)} ${y + s(-7.5817)} ${x + s(-4.4183)} ${y + s(-4)} ${x + s(0)} ${y + s(-4)}`,
-    'Z',
-    // Body (vertical line from head to torso)
-    `M ${x + s(0)} ${y + s(-4)}`,
-    `V ${y + s(5)}`,
-    // Left leg
-    `M ${x + s(-10)} ${y + s(14.5)}`,
-    `L ${x + s(0)} ${y + s(5)}`,
-    // Right leg
-    `M ${x + s(10)} ${y + s(14.5)}`,
-    `L ${x + s(0)} ${y + s(5)}`,
-    // Arms (horizontal line)
-    `M ${x + s(-11)} ${y + s(0)}`,
-    `H ${x + s(11)}`,
-  ].join(' ');
+const variantClass: Record<UsecaseActorVariant, string> = {
+  normal: 'usecase-actor-shape usecase-actor-normal',
+  hollow: 'usecase-actor-hollow',
+  awesome: 'usecase-actor-awesome',
+  icon: 'usecase-actor-icon',
 };
 
-/**
- * Draw traditional stick figure
- */
-const drawStickFigure = (
-  actorGroup: D3Selection<SVGGElement>,
-  styling: ReturnType<typeof getActorStyling>,
-  node: Node
-): void => {
-  const x = 0; // Center at origin
-  const y = -10; // Adjust vertical position
-  actorGroup.attr('class', 'usecase-actor-shape');
+interface MeasuredBox {
+  width: number;
+  height: number;
+  x?: number;
+  y?: number;
+  left?: number;
+  top?: number;
+}
 
-  const pathData = createStickFigurePathD(x, y);
+type ActorGlyphRenderer = (
+  group: D3Selection<SVGGElement>,
+  node: UsecaseActorNode
+) => void | Promise<void>;
 
+const positionLabel = (label: D3Selection<SVGGElement>, bbox: MeasuredBox, centerY: number) => {
+  const originX = bbox.x ?? bbox.left ?? 0;
+  const originY = bbox.y ?? bbox.top ?? 0;
+  label.attr(
+    'transform',
+    `translate(${-bbox.width / 2 - originX},${centerY - bbox.height / 2 - originY})`
+  );
+};
+
+export const appendActorPath = (
+  group: D3Selection<SVGGElement>,
+  node: UsecaseActorNode,
+  pathData: string,
+  className: string,
+  hollow = false
+) => {
   if (node.look === 'handDrawn') {
-    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
-    const rc = rough.svg(actorGroup);
-    const options = userNodeOverrides(node, {
-      stroke: styling.strokeColor,
-      strokeWidth: styling.strokeWidth,
-      fill: styling.fillColor,
-    });
-
-    // Draw the stick figure using the path
-    const stickFigure = rc.path(pathData, options);
-    actorGroup.insert(() => stickFigure, ':first-child');
-  } else {
-    // Draw the stick figure using standard SVG path
-    actorGroup
-      .append('path')
-      .attr('d', pathData)
-      .attr('fill', styling.fillColor)
-      .attr('stroke', styling.strokeColor)
-      .attr('stroke-width', styling.strokeWidth);
+    // @ts-expect-error roughjs accepts the underlying SVG group through a D3 selection at runtime.
+    const rc = rough.svg(group);
+    const path = rc.path(pathData, userNodeOverrides(node, hollow ? { fill: 'none' } : {}));
+    return group.insert(() => path, ':first-child').attr('class', className);
   }
+
+  const path = group.append('path').attr('class', className).attr('d', pathData);
+  if (hollow) {
+    path.attr('fill', 'none');
+  }
+  return path;
 };
 
-/**
- * Custom shape handler for usecase actors (stick figure)
- */
+export const appendActorCircle = (
+  group: D3Selection<SVGGElement>,
+  node: UsecaseActorNode,
+  cx: number,
+  cy: number,
+  radius: number,
+  className: string,
+  hollow = false
+) => {
+  if (node.look === 'handDrawn') {
+    // @ts-expect-error roughjs accepts the underlying SVG group through a D3 selection at runtime.
+    const rc = rough.svg(group);
+    const circle = rc.circle(
+      cx,
+      cy,
+      radius * 2,
+      userNodeOverrides(node, hollow ? { fill: 'none' } : {})
+    );
+    return group.insert(() => circle, ':first-child').attr('class', className);
+  }
+
+  const circle = group
+    .append('circle')
+    .attr('class', className)
+    .attr('cx', cx)
+    .attr('cy', cy)
+    .attr('r', radius);
+  if (hollow) {
+    circle.attr('fill', 'none');
+  }
+  return circle;
+};
+
+const appendBusinessActorMarker = (group: D3Selection<SVGGElement>, node: UsecaseActorNode) => {
+  if (!node.business) {
+    return;
+  }
+
+  group
+    .append('path')
+    .attr('class', 'usecase-business-marker usecase-actor-business-marker')
+    .attr('d', 'M -10 -29 L 10 -11')
+    .attr('fill', 'none')
+    .attr('style', 'stroke: inherit !important; stroke-width: inherit !important');
+};
+
+export async function renderUsecaseActor<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  node: UsecaseActorNode,
+  variant: UsecaseActorVariant,
+  drawGlyph: ActorGlyphRenderer
+): Promise<D3Selection<SVGGElement>> {
+  const { labelStyles, nodeStyles } = styles2String(node);
+  node.labelStyle = labelStyles;
+  // Generic icon nodes add a background to their label measurement. Actor icons already render
+  // their own frame, so measure the shared actor label without that icon-only decoration.
+  const labelNode: Node = variant === 'icon' ? { ...node, icon: undefined } : node;
+  const {
+    shapeSvg,
+    bbox: labelBox,
+    label,
+  } = await labelHelper(
+    parent,
+    labelNode,
+    getNodeClasses(node, `usecase-actor-variant usecase-actor-${variant}`)
+  );
+
+  shapeSvg.attr('role', 'img');
+  if (node.accessibleName) {
+    shapeSvg.attr('aria-label', node.accessibleName);
+  }
+
+  label.attr('class', 'label actor-label usecase-actor-label');
+
+  let stereotypeLabel: D3Selection<SVGGElement> | undefined;
+  let stereotypeBox: MeasuredBox | undefined;
+  if (node.stereotype) {
+    const stereotype = await insertLabel(shapeSvg, `«${node.stereotype}»`, {
+      labelStyle: labelStyles,
+      useHtmlLabels: node.useHtmlLabels,
+      padding: 0,
+      centerLabel: true,
+    });
+    stereotypeLabel = stereotype.label.attr('class', 'label usecase-stereotype');
+    stereotypeBox = stereotype.bbox;
+  }
+
+  const actorGroup = shapeSvg
+    .append('g')
+    .attr('class', `usecase-actor-glyph ${variantClass[variant]}`)
+    .attr('style', nodeStyles || null);
+  await drawGlyph(actorGroup, node);
+  appendBusinessActorMarker(actorGroup, node);
+
+  const padding = node.padding ?? DEFAULT_ACTOR_PADDING;
+  const stereotypeHeight = stereotypeBox?.height ?? 0;
+  const contentHeight =
+    ACTOR_FIGURE_HEIGHT +
+    ACTOR_LABEL_GAP +
+    labelBox.height +
+    (stereotypeBox ? stereotypeHeight + STEREOTYPE_LABEL_GAP : 0);
+  const totalWidth =
+    Math.max(ACTOR_FIGURE_WIDTH, labelBox.width, stereotypeBox?.width ?? 0) + padding * 2;
+  const totalHeight = contentHeight + padding * 2;
+  const contentTop = -contentHeight / 2;
+
+  actorGroup.attr('transform', `translate(0,${contentTop + ACTOR_FIGURE_HEIGHT / 2})`);
+
+  let nextLabelCenter = contentTop + ACTOR_FIGURE_HEIGHT + ACTOR_LABEL_GAP;
+  if (stereotypeLabel && stereotypeBox) {
+    nextLabelCenter += stereotypeHeight / 2;
+    positionLabel(stereotypeLabel, stereotypeBox, nextLabelCenter);
+    nextLabelCenter += stereotypeHeight / 2 + STEREOTYPE_LABEL_GAP;
+  }
+  positionLabel(label, labelBox, nextLabelCenter + labelBox.height / 2);
+
+  const outline = shapeSvg
+    .insert('rect', ':first-child')
+    .attr('class', 'usecase-actor-outline')
+    .attr('x', -totalWidth / 2)
+    .attr('y', -totalHeight / 2)
+    .attr('width', totalWidth)
+    .attr('height', totalHeight)
+    .attr('opacity', 0)
+    .attr('aria-hidden', 'true');
+
+  updateNodeBounds(node, outline);
+  node.intersect = (point) => intersect.rect(node, point);
+
+  return shapeSvg;
+}
+
+const STICK_FIGURE_PATH = [
+  'M 0 -12',
+  'C 6.627 -12 12 -17.373 12 -24',
+  'C 12 -30.627 6.627 -36 0 -36',
+  'C -6.627 -36 -12 -30.627 -12 -24',
+  'C -12 -17.373 -6.627 -12 0 -12 Z',
+  'M 0 -12 V 8',
+  'M -17 -5 H 17',
+  'M 0 8 L -15 28',
+  'M 0 8 L 15 28',
+].join(' ');
+
 export async function usecaseActor<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node
-) {
-  const { labelStyles, nodeStyles } = styles2String(node);
-
-  node.labelStyle = labelStyles;
-  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-
-  // Get actor metadata from node
-  const metadata = (node as Node & { metadata?: Record<string, string> }).metadata;
-  const styling = getActorStyling(metadata);
-
-  // Create actor group
-  const actorGroup = shapeSvg.append('g');
-
-  // Add metadata as data attributes for CSS styling
-  if (metadata) {
-    Object.entries(metadata).forEach(([key, value]) => {
-      actorGroup.attr(`data-${key}`, value);
-    });
-  }
-
-  // Draw stick figure
-  drawStickFigure(actorGroup, styling, node);
-
-  // Get the actual bounding box of the rendered actor
-  const actorBBox = actorGroup.node()?.getBBox();
-  const actorHeight = actorBBox?.height ?? 70;
-
-  // Actor name (always rendered below the figure)
-  const labelY = actorHeight / 2 + 15; // Position label below the figure
-
-  // Calculate label height from the actual text element
-  const labelBBox = label.node()?.getBBox() ?? { height: 20 };
-  const labelHeight = labelBBox.height + 10; // Space for label below
-  const totalHeight = actorHeight + labelHeight;
-
-  actorGroup.attr('transform', `translate(${0}, ${-totalHeight / 2 + 35})`);
-  label.attr(
-    'transform',
-    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))},${labelY / 2 - 15} )`
-  );
-
-  if (nodeStyles && node.look !== 'handDrawn') {
-    actorGroup.selectChildren('path').attr('style', nodeStyles);
-  }
-
-  // Update node bounds for layout - this will set node.width and node.height from the bounding box
-  updateNodeBounds(node, actorGroup);
-
-  // Override height to include label space
-  // Width is kept from updateNodeBounds as it correctly reflects the actor's visual width
-  node.height = totalHeight;
-
-  // Add intersect function for edge connection points
-  // Use rectangular intersection since the actor has a rectangular bounding box
-  node.intersect = function (point) {
-    return intersect.rect(node, point);
-  };
-
-  return shapeSvg;
+): Promise<D3Selection<SVGGElement>> {
+  return renderUsecaseActor(parent, node as UsecaseActorNode, 'normal', (group, actorNode) => {
+    appendActorPath(group, actorNode, STICK_FIGURE_PATH, 'usecase-actor-stick');
+  });
 }

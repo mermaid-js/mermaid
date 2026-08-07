@@ -2367,13 +2367,13 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: Font weight for usecase labels
         type: string
         default: 'normal'
-      actorMargin:
-        description: Margin around actors
+      nodeSpacing:
+        description: Spacing between nodes on the same level
         type: number
         minimum: 0
         default: 50
-      usecaseMargin:
-        description: Margin around use cases
+      rankSpacing:
+        description: Spacing between nodes on different levels
         type: number
         minimum: 0
         default: 50

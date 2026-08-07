@@ -1,425 +1,348 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest, mermaidUrl } from '../../helpers/util.ts';
+
+const FULL_DIAGRAM = `usecase
+  accTitle: Complete use case example
+  accDescr: Actors interact with authentication, payment, notes, and JSON data.
+  actor Normal("Normal User") &lt;&lt;Human&gt;&gt;
+  actor Hollow@{ type: hollow, business: true }
+  actor Awesome@{ type: awesome }
+  actor Icon@{ icon: "fa:bell" }
+  actor UnknownIcon@{ icon: "fa:not-registered" }
+  actor BusinessActor@{ business: true }
+
+  systemBoundary "Authentication System":::framed
+    actor ContainedActor("Contained actor")
+    Login("\`**Sign in**
+securely\`") &lt;&lt;Main&gt;&gt;:::critical
+    Reset[Reset password]
+  end
+  "Authentication System"@{ type: package }
+
+  Payment("Payment")
+  Extra("Optional flow")
+  Checkout("Checkout")@{ business: true } &lt;&lt;Core&gt;&gt;
+  Literal("**Literal markers**")
+  Hostile("&lt;img src=x onerror=alert#40;1#41;&gt;")
+
+  Normal assocRel@-- "\`opens **session**\`" --> Login
+  Hollow circleRel@--o Reset
+  Awesome crossRel@--x Normal
+  Awesome generalRel@--|> Normal
+  Login includeRel@..> : include Payment
+  Extra extendRel@..> : extend Login
+  Checkout --> Payment
+  note for Login "\`Requires an **active session**\`"
+
+  json Payload@{
+    "2": "two",
+    "1": "one",
+    "colors": ["Red", "Green"],
+    "address": { "city": "Oslo" },
+    "empty": {}
+  }
+  Payment jsonRel@--> Payload
+
+  classDef framed fill:#fdf6e3,stroke:#6c71c4,stroke-width:3px
+  classDef critical fill:#fff3cd,stroke:#b58900
+  classDef emphasized stroke:#268bd2,stroke-width:3px
+  class assocRel emphasized
+  style Authentication_System fill:#fdf6e3,stroke:#6c71c4,stroke-width:3px
+  style Checkout stroke:#dc322f,stroke-width:4px
+  style Payload fill:#eef7ff,stroke:#123456
+  style assocRel stroke:#2aa198,stroke-width:5px
+  assocRel@{ animate: true, animation: fast }
+`;
+
+type MermaidOptions = Parameters<typeof mermaidUrl>[1];
+
+const renderForDom = (source: string, options: MermaidOptions = {}) => {
+  cy.visit(mermaidUrl(source, options, false));
+  cy.window().should('have.property', 'rendered', true);
+  cy.get('svg').should('be.visible');
+};
+
+const edge = (id: string) => cy.get(`path[data-usecase-id="${id}"]`);
+const element = (id: string) => cy.get(`[data-usecase-id="${id}"]`);
 
 describe('Usecase diagram', () => {
-  it('should render a simple usecase diagram with actors and use cases', () => {
-    imgSnapshotTest(
-      `
-      usecase
-        actor User
-        actor Admin
-        User --> Login
-        Admin --> "Manage Users"
-        User --> "View Profile"
-      `
+  it('renders the complete typed use-case contract with stable semantics', () => {
+    renderForDom(FULL_DIAGRAM, {
+      usecase: {
+        actorFontSize: 21,
+        actorFontFamily: 'Courier New',
+        actorFontWeight: '600',
+        usecaseFontSize: 19,
+        usecaseFontFamily: 'Georgia',
+        usecaseFontWeight: '500',
+        nodeSpacing: 65,
+        rankSpacing: 75,
+        diagramPadding: 37,
+        useMaxWidth: false,
+      },
+    });
+
+    element('Normal').should('have.attr', 'data-usecase-kind', 'actor');
+    element('Normal').should('have.attr', 'aria-label', 'actor Normal User, stereotype Human');
+    element('Normal')
+      .find('.usecase-actor-shape.usecase-actor-normal .usecase-actor-stick')
+      .should('exist');
+    element('Hollow').should('have.attr', 'aria-label', 'business hollow actor Hollow');
+    element('Hollow').find('.usecase-actor-hollow-head').should('exist');
+    element('Hollow').find('.usecase-actor-business-marker').should('exist');
+    element('Awesome').should('have.attr', 'aria-label', 'awesome actor Awesome');
+    element('Awesome').find('.usecase-actor-awesome-silhouette').should('exist');
+    element('Icon').should('have.attr', 'aria-label', 'icon actor Icon');
+    element('Icon').find('.usecase-actor-icon-symbol').should('exist');
+    element('UnknownIcon').find('.usecase-actor-icon-fallback').should('exist');
+    element('BusinessActor').should('have.attr', 'aria-label', 'business actor BusinessActor');
+    element('BusinessActor').find('.usecase-actor-business-marker').should('exist');
+
+    element('Login').should('have.attr', 'data-usecase-kind', 'usecase');
+    element('Login').should(
+      'have.attr',
+      'aria-label',
+      'use case Sign in\nsecurely, stereotype Main'
     );
-  });
-
-  it('should render usecase diagram with quoted actor names', () => {
-    imgSnapshotTest(
-      `usecase
-        actor "Customer Service"
-        actor "System Administrator"
-        "Customer Service" --> "Handle Tickets"
-        "System Administrator" --> "Manage System"
-      `
+    element('Login').find('ellipse').should('exist');
+    element('Login').find('.usecase-stereotype').should('contain.text', '«Main»');
+    element('Login').find('.label strong').should('contain.text', 'Sign in');
+    element('Reset').find('rect.label-container').should('exist');
+    element('Checkout').should(
+      'have.attr',
+      'aria-label',
+      'business use case Checkout, stereotype Core'
     );
-  });
+    element('Checkout')
+      .find('.usecase-business-marker')
+      .should('have.attr', 'style')
+      .and('contain', 'stroke:#dc322f');
+    element('Literal')
+      .should('contain.text', '**Literal markers**')
+      .find('strong')
+      .should('not.exist');
 
-  it('should render usecase diagram with different arrow types', () => {
-    imgSnapshotTest(
-      `usecase
-        actor User
-        actor Admin
-        User --> Login
-        Admin <-- Logout
-        User -- "View Data"
-      `
+    element('Authentication_System').should('have.attr', 'data-usecase-kind', 'boundary');
+    element('Authentication_System').should('have.attr', 'data-boundary-type', 'package');
+    element('Authentication_System').should(
+      'have.attr',
+      'aria-label',
+      'package system boundary Authentication System'
     );
-  });
+    element('Authentication_System').within(() => {
+      cy.get('.boundary-tab.system-boundary-package-tab')
+        .should('have.attr', 'style')
+        .and('contain', 'fill:#fdf6e3')
+        .and('contain', 'stroke:#6c71c4');
+      cy.get('.boundary-body')
+        .should('have.attr', 'style')
+        .and('contain', 'fill:#fdf6e3')
+        .and('contain', 'stroke:#6c71c4');
+    });
+    cy.get('[data-usecase-id="Authentication_System"] .boundary-body').then(($body) => {
+      const body = $body[0].getBoundingClientRect();
+      for (const id of ['ContainedActor', 'Login', 'Reset']) {
+        element(id).then(($child) => {
+          const child = $child[0].getBoundingClientRect();
+          expect(child.left).to.be.at.least(body.left - 1);
+          expect(child.right).to.be.at.most(body.right + 1);
+          expect(child.top).to.be.at.least(body.top - 1);
+          expect(child.bottom).to.be.at.most(body.bottom + 1);
+        });
+      }
+    });
+    cy.get('[data-usecase-id="Authentication_System"] .boundary-tab').then(($tab) => {
+      const tab = $tab[0].getBoundingClientRect();
+      element('ContainedActor').then(($child) => {
+        expect($child[0].getBoundingClientRect().top).to.be.at.least(tab.bottom - 1);
+      });
+    });
 
-  it('should render usecase diagram with edge labels', () => {
-    imgSnapshotTest(
-      `usecase
-        actor Developer
-        actor Manager
-        Developer --important--> "Write Code"
-        Manager --review--> "Code Review"
-        Developer --urgent--> Manager
-      `
+    edge('assocRel')
+      .should('have.attr', 'marker-end')
+      .and('match', /pointEnd/);
+    edge('assocRel').should('have.class', 'emphasized').and('have.class', 'edge-animation-fast');
+    edge('assocRel').should(
+      'have.attr',
+      'aria-label',
+      'association opens session from Normal User to Sign in\nsecurely'
     );
-  });
-
-  it('should render usecase diagram with node ID syntax', () => {
-    imgSnapshotTest(
-      `usecase
-        actor User
-        User --> a(Login)
-        User --> b("View Profile")
-        User --> c("Update Settings")
-      `
+    edge('assocRel')
+      .should('have.attr', 'style')
+      .and('contain', 'stroke:#2aa198')
+      .and('contain', 'stroke-width:5px');
+    edge('assocRel').should(($path) => {
+      expect($path.attr('id')).to.match(/^usecase-.+-assocRel$/);
+      expect($path.attr('data-id')).to.equal('assocRel');
+    });
+    cy.get('.edgeLabel [data-id="assocRel"] strong').should('contain.text', 'session');
+    edge('circleRel')
+      .should('have.attr', 'marker-end')
+      .and('match', /circleEnd/);
+    edge('crossRel')
+      .should('have.attr', 'marker-end')
+      .and('match', /crossEnd/);
+    edge('generalRel')
+      .should('have.attr', 'marker-end')
+      .and('match', /extensionEnd/);
+    edge('generalRel').should(
+      'have.attr',
+      'aria-label',
+      'generalization from Awesome to Normal User'
     );
-  });
-
-  it('should render usecase diagram with comma-separated actors', () => {
-    imgSnapshotTest(
-      `usecase
-        actor "Customer Service", "Technical Support", "Sales Team"
-        actor SystemAdmin
-        "Customer Service" --> "Handle Tickets"
-        "Technical Support" --> "Resolve Issues"
-        "Sales Team" --> "Process Orders"
-        SystemAdmin --> "Manage System"
-      `
+    edge('includeRel').should('have.class', 'edge-pattern-dotted');
+    edge('includeRel')
+      .should('have.attr', 'marker-end')
+      .and('match', /pointEnd/);
+    edge('includeRel').should(
+      'have.attr',
+      'aria-label',
+      'include from Sign in\nsecurely to Payment'
     );
-  });
-
-  it('should render usecase diagram with actor metadata', () => {
-    imgSnapshotTest(
-      `usecase
-        actor User@{ "type" : "primary", "icon" : "user" }
-        actor Admin@{ "type" : "secondary", "icon" : "admin" }
-        actor System@{ "type" : "hollow", "icon" : "system" }
-        User --> Login
-        Admin --> "Manage Users"
-        System --> "Process Data"
-      `
+    edge('extendRel').should('have.class', 'edge-pattern-dotted');
+    edge('extendRel').should(
+      'have.attr',
+      'aria-label',
+      'extend from Optional flow to Sign in\nsecurely'
     );
-  });
+    cy.get('.edgeLabel [data-id="includeRel"]').should('contain.text', 'include');
+    cy.get('.edgeLabel [data-id="extendRel"]').should('contain.text', 'extend');
 
-  it('should render usecase diagram with system boundaries (rect type)', () => {
-    imgSnapshotTest(
-      `usecase
-        actor Admin, User
-        systemBoundary "Authentication"
-          Login
-          Logout
-          "Reset Password"
-        end
-        "Authentication"@{ type: rect }
-        Admin --> Login
-        User --> Login
-        User --> "Reset Password"
-      `
+    element('note-0').should('have.attr', 'data-usecase-kind', 'note');
+    element('note-0').should(
+      'have.attr',
+      'aria-label',
+      'Note for Sign in\nsecurely: Requires an active session'
     );
-  });
+    element('note-0').find('strong').should('contain.text', 'active session');
+    edge('note-0-edge').should('have.attr', 'data-usecase-kind', 'note-connector');
+    edge('note-0-edge').should('have.attr', 'aria-hidden', 'true');
+    edge('note-0-edge').should('have.class', 'edge-pattern-dotted');
+    edge('note-0-edge').should('not.have.attr', 'marker-start');
+    edge('note-0-edge').should('not.have.attr', 'marker-end');
 
-  it('should render usecase diagram with system boundaries (package type)', () => {
-    imgSnapshotTest(
-      `usecase
-        actor Admin, User
-        systemBoundary "Authentication"
-          Login
-          Logout
-          "Reset Password"
-        end
-        "Authentication"@{ type: package }
-        Admin --> Login
-        User --> Login
-        User --> "Reset Password"
-      `
+    element('Payload').should('have.attr', 'data-usecase-kind', 'json');
+    element('Payload').should(
+      'have.attr',
+      'aria-label',
+      'Payload: 2: two; 1: one; colors: Red; colors: Green; address.city: Oslo; empty: {}'
     );
-  });
+    element('Payload')
+      .find('.usecase-json-border')
+      .should('have.attr', 'style')
+      .and('contain', 'fill:#eef7ff')
+      .and('contain', 'stroke:#123456');
+    element('Payload').find('.usecase-json-title').should('contain.text', 'Payload');
+    element('Payload')
+      .find('.usecase-json-row')
+      .should('have.length', 6)
+      .then(($rows) => {
+        expect([...$rows].map((row) => row.textContent?.replace(/\s+/g, ' ').trim())).to.deep.equal(
+          ['2two', '1one', 'colorsRed', 'Green', 'address.cityOslo', 'empty{}']
+        );
+      });
 
-  it('should render complex usecase diagram with all features', () => {
-    imgSnapshotTest(
-      `usecase
-        actor "Customer Service"@{ "type" : "primary", "icon" : "user" }
-        actor "System Admin"@{ "type" : "secondary", "icon" : "admin" }
-        actor "Database"@{ "type" : "hollow", "icon" : "database" }
-
-        systemBoundary "Customer Support System"
-          "Handle Tickets"
-          "View Customer Info"
-        end
-        "Customer Support System"@{ type: package }
-
-        systemBoundary "Administration"
-          "User Management"
-          "System Config"
-        end
-
-        "Customer Service" --priority--> "Handle Tickets"
-        "Customer Service" --> "View Customer Info"
-        "System Admin" --manage--> "User Management"
-        "System Admin" --> "System Config"
-        "Database" <-- "Handle Tickets"
-        "Database" <-- "View Customer Info"
-        "Database" <-- "User Management"
-      `
+    element('Hostile').find('img, script, [onerror]').should('not.exist');
+    cy.get('svg > title').should('contain.text', 'Complete use case example');
+    cy.get('svg > desc').should(
+      'contain.text',
+      'Actors interact with authentication, payment, notes, and JSON data.'
     );
-  });
 
-  it('should render usecase diagram with actor-to-actor relationships', () => {
-    imgSnapshotTest(
-      `usecase
-        actor Manager
-        actor Developer
-        actor Tester
-        
-        Manager --supervises--> Developer
-        Manager --coordinates--> Tester
-        Developer --collaborates--> Tester
-        
-        Developer --> "Write Code"
-        Tester --> "Test Code"
-        Manager --> "Review Progress"
-      `
-    );
-  });
-
-  it('should render usecase diagram with mixed relationship types', () => {
-    imgSnapshotTest(
-      `usecase
-        actor User
-        actor Admin
-        
-        User --> "Basic Login"
-        Admin --> "Advanced Login"
-        User --includes--> "View Profile"
-        Admin --extends--> "Manage Profiles"
-        
-        "Basic Login" <-- "Advanced Login"
-      `
-    );
-  });
-
-  it('should render usecase diagram with long labels and text wrapping', () => {
-    imgSnapshotTest(
-      `usecase
-        actor "Customer Service Representative"
-        actor "System Administrator with Extended Privileges"
-        
-        "Customer Service Representative" --Process--> "Handle Complex Customer Support Tickets"
-        "System Administrator with Extended Privileges" --> "Manage System Configuration and User Permissions"
-      `
-    );
-  });
-
-  it('should render usecase diagram with special characters in names', () => {
-    imgSnapshotTest(
-      `usecase
-        actor "User@Company.com"
-        actor "Admin (Level-1)"        
-        "User@Company.com" --> a("Login & Authenticate")
-        "Admin (Level-1)" --> b("Manage Users & Permissions")
-      `
-    );
-  });
-
-  it('should render usecase diagram when useMaxWidth is true (default)', () => {
-    renderGraph(
-      `usecase
-        actor User
-        actor Admin
-        User --> Login
-        Admin --> "Manage System"
-        User --> "View Profile"
-      `,
-      { usecase: { useMaxWidth: true } }
-    );
-    cy.get('svg').should((svg) => {
-      expect(svg).to.have.attr('width', '100%');
-      const style = svg.attr('style');
-      expect(style).to.match(/^max-width: [\d.]+px;$/);
+    cy.get('svg').should(($svg) => {
+      const svg = $svg[0] as unknown as SVGSVGElement;
+      expect(svg.style.getPropertyValue('--mermaid-usecase-actor-font-size')).to.equal('21px');
+      expect(svg.style.getPropertyValue('--mermaid-usecase-font-size')).to.equal('19px');
+      expect(svg.getAttribute('width')).not.to.equal('100%');
+      expect(svg.getAttribute('style')).not.to.match(/max-width/);
+      const [, , viewBoxWidth, viewBoxHeight] = (svg.getAttribute('viewBox') ?? '')
+        .split(/\s+/)
+        .map(Number);
+      const bounds = svg.getBBox();
+      expect(viewBoxWidth - bounds.width).to.be.closeTo(74, 1);
+      expect(viewBoxHeight - bounds.height).to.be.closeTo(74, 1);
+    });
+    element('Normal').find('.nodeLabel p').should('have.css', 'font-size', '21px');
+    element('Login').find('.nodeLabel p').should('have.css', 'font-size', '19px');
+    element('Normal').should(($node) => {
+      expect($node.attr('id')).to.match(/^usecase-.+-Normal$/);
     });
   });
 
-  it('should render usecase diagram when useMaxWidth is false', () => {
-    renderGraph(
+  it('honors max-width independently of padding and font configuration', () => {
+    renderForDom(
       `usecase
-        actor User
-        actor Admin
-        User --> Login
-        Admin --> "Manage System"
-      `,
-      { usecase: { useMaxWidth: false } }
+        systemBoundary "Plain Boundary"
+          actor User
+          Login("Sign in")
+        end
+        User --> Login`,
+      {
+        usecase: {
+          actorFontSize: 18,
+          usecaseFontSize: 17,
+          diagramPadding: 12,
+          useMaxWidth: true,
+        },
+      }
     );
-    cy.get('svg').should((svg) => {
-      const width = parseFloat(svg.attr('width'));
-      expect(width).to.be.greaterThan(200);
-      expect(svg).to.not.have.attr('style');
+
+    cy.get('svg').should(($svg) => {
+      expect($svg.attr('width')).to.equal('100%');
+      expect($svg.attr('style')).to.match(/max-width: [\d.]+px/);
     });
+    element('Plain_Boundary').should('have.attr', 'data-boundary-type', 'rect');
+    element('Plain_Boundary').should('have.class', 'usecase-system-boundary-rect');
+    element('Plain_Boundary').find('.boundary-body').should('exist');
+    element('Plain_Boundary').find('.boundary-tab').should('not.exist');
   });
 
-  it('should render empty usecase diagram', () => {
-    imgSnapshotTest(`usecase`);
-  });
-
-  it('should render usecase diagram with only actors', () => {
-    imgSnapshotTest(
+  it('renders clustered minlen relationships through the registered ELK layout', () => {
+    renderForDom(
       `usecase
-        actor User
-        actor Admin
-        actor Guest
-      `
-    );
-  });
-
-  it('should render usecase diagram with implicit use case creation', () => {
-    imgSnapshotTest(
-      `usecase
-        actor User
-        User --> Login
-        User --> Register
-        User --> "Forgot Password"
-      `
-    );
-  });
-
-  it('should render usecase diagram with nested system boundaries', () => {
-    imgSnapshotTest(
-      `usecase
-        actor User
-        actor Admin
-
-        systemBoundary "Main System"
-          Login
-          Logout
-          "Create User"
-          "Delete User"
+        systemBoundary "External Layout"
+          actor User
+          Login("Sign in")
         end
-
-        User --> Login
-        User --> Logout
-        Admin --> "Create User"
-        Admin --> "Delete User"
-      `
+        User longEdge@---> Login`,
+      {
+        layout: 'elk',
+        usecase: {
+          nodeSpacing: 40,
+          rankSpacing: 55,
+          diagramPadding: 16,
+        },
+      }
     );
+
+    element('External_Layout').should('have.attr', 'data-boundary-type', 'rect');
+    element('User').should('have.attr', 'data-usecase-kind', 'actor');
+    element('Login').should('have.attr', 'data-usecase-kind', 'usecase');
+    edge('longEdge').should('have.attr', 'data-usecase-kind', 'relationship');
+    edge('longEdge')
+      .should('have.attr', 'marker-end')
+      .and('match', /pointEnd/);
+
+    element('External_Layout')
+      .find('.boundary-body')
+      .then(($body) => {
+        const body = $body[0].getBoundingClientRect();
+        for (const id of ['User', 'Login']) {
+          element(id).then(($child) => {
+            const child = $child[0].getBoundingClientRect();
+            expect(child.left).to.be.at.least(body.left - 1);
+            expect(child.right).to.be.at.most(body.right + 1);
+            expect(child.top).to.be.at.least(body.top - 1);
+            expect(child.bottom).to.be.at.most(body.bottom + 1);
+          });
+        }
+      });
   });
 
-  it('should render usecase diagram with multiple edge labels on same relationship', () => {
-    imgSnapshotTest(
-      `usecase
-        actor Developer
-        actor Manager
-
-        Developer --"code review"--> Manager
-        Developer --"status update"--> Manager
-        Manager --"feedback"--> Developer
-        Manager --"approval"--> Developer
-      `
-    );
+  it('keeps a small representative visual snapshot', () => {
+    imgSnapshotTest(FULL_DIAGRAM, { usecase: { diagramPadding: 24, useMaxWidth: true } });
   });
 
-  it('should render usecase diagram with various actor icon types', () => {
-    imgSnapshotTest(
-      `usecase
-        actor User@{ "icon": "user" }
-        actor Admin@{ "icon": "admin" }
-        actor Database@{ "icon": "database" }
-        actor API@{ "icon": "api" }
-        actor Mobile@{ "icon": "mobile" }
-        actor Web@{ "icon": "web" }
-
-        User --> "Access System"
-        Admin --> "Manage System"
-        Database --> "Store Data"
-        API --> "Provide Services"
-        Mobile --> "Mobile Access"
-        Web --> "Web Access"
-      `
-    );
-  });
-
-  it('should render usecase diagram with mixed arrow directions and labels', () => {
-    imgSnapshotTest(
-      `usecase
-        actor User
-        actor System
-        actor Admin
-
-        User --request--> System
-        System --response--> User
-        System <--monitor-- Admin
-        Admin --configure--> System
-        User -- "direct access" -- Admin
-      `
-    );
-  });
-
-  it('should render usecase diagram with boundary-less use cases', () => {
-    imgSnapshotTest(
-      `usecase
-        actor User
-        actor Admin
-
-        systemBoundary "Secure Area"
-          "Admin Panel"
-          "User Management"
-        end
-
-        User --> "Public Login"
-        User --> "Guest Access"
-        Admin --> "Public Login"
-        Admin --> "Admin Panel"
-        Admin --> "User Management"
-      `
-    );
-  });
-
-  it('should render usecase diagram with complex metadata combinations', () => {
-    imgSnapshotTest(
-      `usecase
-        actor "Primary User"@{ "type": "primary", "icon": "user", "fillColor": "lightblue" }
-        actor "Secondary User"@{ "type": "secondary", "icon": "client", "strokeColor": "red" }
-        actor "System Service"@{ "type": "hollow", "icon": "service", "strokeWidth": "3" }
-
-        "Primary User" --"high priority"--> a("Critical Process")
-        "Secondary User" --"low priority"--> b("Background Task")
-        "System Service" --"automated"--> c("System Maintenance")
-      `
-    );
-  });
-
-  it('should render usecase diagram with Unicode characters', () => {
-    imgSnapshotTest(
-      `usecase
-        actor "用户"@{ "icon": "user" }
-        actor "管理员"@{ "icon": "admin" }
-
-        "用户" --"登录"--> "系统访问"
-        "管理员" --"管理"--> "用户管理"
-        "用户" --> "数据查看"
-      `
-    );
-  });
-
-  it('should render large usecase diagram with many elements', () => {
-    imgSnapshotTest(
-      `usecase
-        actor User1, User2, User3, User4
-        actor Admin1, Admin2
-        actor System1@{ "icon": "system" }
-        actor System2@{ "icon": "database" }
-
-        systemBoundary "Module A"
-          "Feature A1"
-          "Feature A2"
-          "Admin A1"
-        end
-        "Module A"@{ type: package }
-
-        systemBoundary "Module B"
-          "Feature B1"
-          "Feature B2"
-          "Admin B1"
-        end
-
-        User1 --> "Feature A1"
-        User2 --> "Feature A2"
-        Admin1 --> "Admin A1"
-        User3 --> "Feature B1"
-        User4 --> "Feature B2"
-        Admin2 --> "Admin B1"
-
-        System1 <-- "Feature A1"
-        System1 <-- "Feature B1"
-        System2 <-- "Admin A1"
-        System2 <-- "Admin B1"
-
-        User1 --"collaborates"--> User2
-        Admin1 --"supervises"--> Admin2
-      `
-    );
+  it('keeps empty-diagram rendering covered without duplicating feature snapshots', () => {
+    imgSnapshotTest('usecase');
   });
 });

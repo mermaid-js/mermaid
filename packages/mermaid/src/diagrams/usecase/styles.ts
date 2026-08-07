@@ -1,86 +1,145 @@
-const getStyles = (options: any) =>
-  `
-  .actor {
-    stroke: ${options.primaryColor};
-    fill: ${options.primaryColor};
-  }
-  
-  .actor-label {
-    fill: ${options.primaryTextColor};
-    font-family: ${options.fontFamily};
-    font-size: 14px;
-    font-weight: normal;
-  }
-  
-  .usecase-actor-shape line {
-    stroke: ${options.actorBorder};
-    fill: ${options.actorBkg};
-  }
-  .usecase-actor-shape circle, line {
-    stroke: ${options.actorBorder};
-    fill: ${options.actorBkg};
-    stroke-width: 2px;
-  }
-  
-  .usecase {
-    stroke: ${options.primaryColor};
-    fill: ${options.primaryColor};
-  }
-  
-  .usecase-label {
-    fill: ${options.primaryTextColor};
-    font-family: ${options.fontFamily};
-    font-size: 12px;
-    font-weight: normal;
+interface UsecaseStyleOptions {
+  actorBkg?: string;
+  actorBorder?: string;
+  actorTextColor?: string;
+  clusterBkg: string;
+  clusterBorder: string;
+  fontFamily: string;
+  lineColor: string;
+  mainBkg: string;
+  nodeBorder?: string;
+  noteBkgColor: string;
+  noteBorderColor: string;
+  noteTextColor: string;
+  primaryColor: string;
+  primaryTextColor: string;
+  titleColor?: string;
+}
+
+const getStyles = (options: UsecaseStyleOptions) => `
+  & .usecase-actor {
+    color: ${options.actorTextColor ?? options.primaryTextColor};
   }
 
-  /* Ellipse shape styling for use cases */
-  .usecase-element ellipse {
-    fill: ${options.mainBkg ?? '#ffffff'};
-    stroke: ${options.primaryColor};
+  & .usecase-actor-shape,
+  & .usecase-actor-hollow,
+  & .usecase-actor-awesome,
+  & .usecase-actor-icon {
+    fill: ${options.actorBkg ?? options.mainBkg};
+    stroke: ${options.actorBorder ?? options.primaryColor};
     stroke-width: 2px;
   }
 
-  .usecase-element .label {
-    fill: ${options.primaryTextColor};
-    font-family: ${options.fontFamily};
-    font-size: 12px;
-    font-weight: normal;
-    text-anchor: middle;
-    dominant-baseline: central;
+  & .usecase-actor .nodeLabel,
+  & .actor-label {
+    color: ${options.actorTextColor ?? options.primaryTextColor};
+    fill: ${options.actorTextColor ?? options.primaryTextColor};
+    font-family: var(--mermaid-usecase-actor-font-family, ${options.fontFamily});
+    font-size: var(--mermaid-usecase-actor-font-size, 14px);
+    font-weight: var(--mermaid-usecase-actor-font-weight, normal);
   }
 
-  /* General ellipse styling */
-  .node ellipse {
-    fill: ${options.mainBkg ?? '#ffffff'};
+  & .usecase-element ellipse,
+  & .usecase-element rect,
+  & .usecase-business ellipse,
+  & .usecase-business rect {
+    fill: ${options.mainBkg};
     stroke: ${options.nodeBorder ?? options.primaryColor};
+    stroke-width: 2px;
+  }
+
+  & .usecase-element .nodeLabel,
+  & .usecase-label {
+    color: ${options.primaryTextColor};
+    fill: ${options.primaryTextColor};
+    font-family: var(--mermaid-usecase-font-family, ${options.fontFamily});
+    font-size: var(--mermaid-usecase-font-size, 12px);
+    font-weight: var(--mermaid-usecase-font-weight, normal);
+  }
+
+  & .usecase-stereotype,
+  & .usecase-business-marker {
+    color: ${options.primaryTextColor};
+    fill: ${options.primaryTextColor};
+    stroke: ${options.nodeBorder ?? options.primaryColor};
+  }
+
+  & .system-boundary,
+  & .system-boundary-rect,
+  & .system-boundary-package {
+    fill: ${options.clusterBkg};
+    stroke: ${options.clusterBorder};
     stroke-width: 1px;
   }
-  
-  .relationship {
-    stroke: ${options.lineColor};
+
+  & .system-boundary .cluster-label,
+  & .system-boundary-title,
+  & .system-boundary-package-tab {
+    color: ${options.titleColor ?? options.primaryTextColor};
+    fill: ${options.titleColor ?? options.primaryTextColor};
+  }
+
+  & .usecase-note {
+    fill: ${options.noteBkgColor};
+    stroke: ${options.noteBorderColor};
+    color: ${options.noteTextColor};
+  }
+
+  & .usecase-note .nodeLabel {
+    color: ${options.noteTextColor};
+    fill: ${options.noteTextColor};
+  }
+
+  & .usecase-json-table,
+  & .usecase-json-table rect,
+  & .usecase-json-cell {
+    fill: ${options.mainBkg};
+    stroke: ${options.nodeBorder ?? options.primaryColor};
+  }
+
+  & .usecase-json-title,
+  & .usecase-json-key,
+  & .usecase-json-value {
+    color: ${options.primaryTextColor};
+    fill: ${options.primaryTextColor};
+  }
+
+  & .relationship {
     fill: none;
-  }
-  
-  & .marker {
-    fill: ${options.lineColor};
     stroke: ${options.lineColor};
   }
-  
-  .relationship-label {
+
+  & .relationship-include,
+  & .relationship-extend,
+  & .relationship-note {
+    stroke-dasharray: 3;
+  }
+
+  & .relationship.edge-animation-fast,
+  & .relationship.edge-animation-slow {
+    stroke-linecap: round;
+  }
+
+  & .relationship-label,
+  & .edgeLabel {
+    color: ${options.primaryTextColor};
     fill: ${options.primaryTextColor};
     font-family: ${options.fontFamily};
     font-size: 10px;
     font-weight: normal;
   }
-  
-  .nodeLabel, .edgeLabel {
-  color: ${options.classText};
+
+  & .marker,
+  & .marker.point,
+  & .marker.circle,
+  & .marker.cross {
+    fill: ${options.lineColor};
+    stroke: ${options.lineColor};
   }
-  .system-boundary {
-    fill: ${options.clusterBkg};
-    stroke: ${options.clusterBorder};
-    stroke-width: 1px;
+
+  & .marker.extension {
+    fill: ${options.mainBkg};
+    stroke: ${options.lineColor};
   }
 `;
 

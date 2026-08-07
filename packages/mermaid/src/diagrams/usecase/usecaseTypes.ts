@@ -1,57 +1,90 @@
 import type { DiagramDB } from '../../diagram-api/types.js';
-import type { UsecaseDiagramConfig } from '../../config.type.js';
-import type { LayoutData } from '../../rendering-util/types.js';
+import type { MermaidConfig, UsecaseDiagramConfig } from '../../config.type.js';
+import type { ClusterNode, Edge, LayoutData, NonClusterNode } from '../../rendering-util/types.js';
 
-export type ActorMetadata = Record<string, string>;
+export type LabelType = 'text' | 'markdown';
+export type ActorType = 'normal' | 'hollow' | 'awesome' | 'icon';
+export type UseCaseShape = 'ellipse' | 'rect';
+export type BoundaryType = 'rect' | 'package';
+export type RelationshipType = 'association' | 'include' | 'extend' | 'generalization';
+export type Animation = 'fast' | 'slow';
 
 export interface Actor {
   id: string;
-  name: string;
-  description?: string;
-  metadata?: ActorMetadata;
-  styles?: string[]; // Direct CSS styles applied to this actor
+  label: string;
+  labelType: LabelType;
+  type: ActorType;
+  icon?: string;
+  business: boolean;
+  stereotype?: string;
+  parentId?: string;
+  classes: string[];
+  styles: string[];
 }
 
 export interface UseCase {
   id: string;
-  name: string;
-  description?: string;
-  nodeId?: string; // Optional node ID (e.g., 'a' in 'a(Go through code)')
-  systemBoundary?: string; // Optional reference to system boundary
-  classes?: string[]; // CSS classes applied to this use case
-  styles?: string[]; // Direct CSS styles applied to this use case
+  label: string;
+  labelType: LabelType;
+  shape: UseCaseShape;
+  business: boolean;
+  stereotype?: string;
+  parentId?: string;
+  classes: string[];
+  styles: string[];
 }
-
-export type SystemBoundaryType = 'package' | 'rect';
 
 export interface SystemBoundary {
   id: string;
-  name: string;
-  useCases: string[]; // Array of use case IDs within this boundary
-  type?: SystemBoundaryType; // Type of boundary rendering (default: 'rect')
-  styles?: string[]; // Direct CSS styles applied to this system boundary
+  label: string;
+  labelType: LabelType;
+  type: BoundaryType;
+  members: string[];
+  classes: string[];
+  styles: string[];
 }
 
-// Arrow types for usecase diagrams (matching parser types)
 export const ARROW_TYPE = {
-  SOLID_ARROW: 0, // -->
-  BACK_ARROW: 1, // <--
-  LINE_SOLID: 2, // --
-  CIRCLE_ARROW: 3, // --o
-  CROSS_ARROW: 4, // --x
-  CIRCLE_ARROW_REVERSED: 5, // o--
-  CROSS_ARROW_REVERSED: 6, // x--
+  SOLID_ARROW: 0,
+  BACK_ARROW: 1,
+  LINE_SOLID: 2,
+  CIRCLE_ARROW: 3,
+  CROSS_ARROW: 4,
+  CIRCLE_ARROW_REVERSED: 5,
+  CROSS_ARROW_REVERSED: 6,
 } as const;
 
 export type ArrowType = (typeof ARROW_TYPE)[keyof typeof ARROW_TYPE];
 
 export interface Relationship {
   id: string;
-  from: string;
-  to: string;
-  type: 'association' | 'include' | 'extend';
+  explicitId: boolean;
+  source: string;
+  target: string;
+  type: RelationshipType;
   arrowType: ArrowType;
   label?: string;
+  labelType?: LabelType;
+  minlen: number;
+  classes: string[];
+  styles: string[];
+  animate: boolean;
+  animation?: Animation;
+}
+
+export interface UsecaseNote {
+  id: string;
+  target: string;
+  label: string;
+  labelType: LabelType;
+}
+
+export interface UsecaseJsonNode {
+  id: string;
+  value: Record<string, unknown>;
+  propertyOrder: Record<string, string[]>;
+  classes: string[];
+  styles: string[];
 }
 
 // Direction types for usecase diagrams
@@ -62,6 +95,80 @@ export const DEFAULT_DIRECTION: Direction = 'LR';
 export interface ClassDef {
   id: string;
   styles: string[];
+}
+
+export interface UsecaseJsonRow {
+  /** The visual key cell. Scalar-array rows after the first use an empty string. */
+  key: string;
+  /** The key repeated for assistive technology even when the visual key is blank. */
+  accessibleKey: string;
+  value: string;
+}
+
+export type UsecaseLayoutNodeShape =
+  | 'usecaseActor'
+  | 'usecaseActorHollow'
+  | 'usecaseActorAwesome'
+  | 'usecaseActorIcon'
+  | 'ellipse'
+  | 'rect'
+  | 'usecaseBusiness'
+  | 'note'
+  | 'usecaseJsonTable';
+
+export type UsecaseLayoutNode = Omit<NonClusterNode, 'shape'> & {
+  shape: UsecaseLayoutNodeShape;
+  labelType: LabelType;
+  actorType?: ActorType;
+  business?: boolean;
+  stereotype?: string;
+  jsonRows?: UsecaseJsonRow[];
+  noteTarget?: string;
+  noteTargetLabel?: string;
+};
+
+export type UsecaseLayoutCluster = ClusterNode & {
+  shape: 'usecaseSystemBoundary';
+  labelType: LabelType;
+  boundaryType: BoundaryType;
+};
+
+export interface UsecaseLayoutEdge extends Edge {
+  start: string;
+  end: string;
+  source: string;
+  sourceLabel: string;
+  targetLabel: string;
+  target: string;
+  type: 'edge';
+  relationshipType: RelationshipType | 'note';
+  pattern: 'solid' | 'dotted';
+  arrowTypeStart: string;
+  arrowTypeEnd: string;
+  internal: boolean;
+  style: string[];
+  cssCompiledStyles: string[];
+  minlen: number;
+}
+
+export interface UsecaseLayoutData extends Omit<LayoutData, 'nodes' | 'edges'> {
+  nodes: (UsecaseLayoutNode | UsecaseLayoutCluster)[];
+  edges: UsecaseLayoutEdge[];
+  config: MermaidConfig;
+  type: 'usecase';
+  layoutAlgorithm: string;
+  direction: Direction;
+  nodeSpacing: number;
+  actorFontSize: number;
+  actorFontFamily: string;
+  actorFontWeight: string;
+  usecaseFontSize: number;
+  usecaseFontFamily: string;
+  usecaseFontWeight: string;
+  rankSpacing: number;
+  diagramPadding: number;
+  useMaxWidth: boolean;
+  markers: ('point' | 'circle' | 'cross' | 'extension')[];
 }
 
 export type Span = [start: number, end: number];
@@ -90,7 +197,15 @@ export interface GraphGroup {
   nodes: string[];
   direction?: Exclude<Direction, 'TD'>;
   classes?: string[];
+  styles?: string[];
   attrs?: Record<string, unknown>;
+}
+
+export interface MetadataOccurrence {
+  key: string;
+  span: Span;
+  keySpan: Span;
+  valueSpan: Span;
 }
 
 export interface NodeOccurrence {
@@ -99,6 +214,9 @@ export interface NodeOccurrence {
   idSpan: Span;
   labelSpan?: Span;
   defines?: boolean;
+  stereotypeSpan?: Span;
+  metadata?: MetadataOccurrence[];
+  classSpans?: Span[];
 }
 
 export interface EdgeOccurrence {
@@ -106,6 +224,8 @@ export interface EdgeOccurrence {
   span: Span;
   labelSpan?: Span;
   idSpan?: Span;
+  metadata?: MetadataOccurrence[];
+  classSpans?: Span[];
 }
 
 export interface GraphStatement {
@@ -113,6 +233,10 @@ export interface GraphStatement {
     | 'node'
     | 'edge'
     | 'group'
+    | 'note'
+    | 'json'
+    | 'metadata'
+    | 'edgeMetadata'
     | 'classDef'
     | 'classAssign'
     | 'style'
@@ -134,6 +258,9 @@ export interface GraphStatement {
   ref?: string;
   refSpan?: Span;
   children?: GraphStatement[];
+  metadata?: MetadataOccurrence[];
+  stereotypeSpan?: Span;
+  classSpans?: Span[];
 }
 
 export interface GraphAST {
@@ -145,6 +272,8 @@ export interface GraphAST {
     direction: Exclude<Direction, 'TD'>;
     span: Span;
   };
+  accTitle?: string;
+  accDescr?: string;
   nodes: Record<string, GraphNode>;
   edges: GraphEdge[];
   groups: Record<string, GraphGroup>;
@@ -152,52 +281,47 @@ export interface GraphAST {
   statements: GraphStatement[];
 }
 
+export type UsecaseSymbolKind = 'actor' | 'usecase' | 'boundary' | 'json' | 'edge';
+
 export interface UsecaseFields {
   actors: Map<string, Actor>;
   useCases: Map<string, UseCase>;
   systemBoundaries: Map<string, SystemBoundary>;
   relationships: Relationship[];
+  notes: Map<string, UsecaseNote>;
+  jsonNodes: Map<string, UsecaseJsonNode>;
   classDefs: Map<string, ClassDef>;
+  symbols: Map<string, UsecaseSymbolKind>;
   direction: Direction;
+  relationshipCounter: number;
+  noteCounter: number;
+  accTitle: string;
+  accDescription: string;
+  ast: GraphAST | undefined;
   config: Required<UsecaseDiagramConfig>;
 }
 
 export interface UsecaseDB extends DiagramDB {
   getConfig: () => Required<UsecaseDiagramConfig>;
+  createModel: () => UsecaseFields;
+  commit: (model: UsecaseFields) => void;
   getAST: () => GraphAST | undefined;
-  setAST: (ast: GraphAST) => void;
 
-  // Actor management
-  addActor: (actor: Actor) => void;
-  getActors: () => Map<string, Actor>;
+  getActors: () => ReadonlyMap<string, Actor>;
   getActor: (id: string) => Actor | undefined;
-
-  // UseCase management
-  addUseCase: (useCase: UseCase) => void;
-  getUseCases: () => Map<string, UseCase>;
+  getUseCases: () => ReadonlyMap<string, UseCase>;
   getUseCase: (id: string) => UseCase | undefined;
-
-  // SystemBoundary management
-  addSystemBoundary: (systemBoundary: SystemBoundary) => void;
-  getSystemBoundaries: () => Map<string, SystemBoundary>;
+  getSystemBoundaries: () => ReadonlyMap<string, SystemBoundary>;
   getSystemBoundary: (id: string) => SystemBoundary | undefined;
-
-  // Relationship management
-  addRelationship: (relationship: Relationship) => void;
-  getRelationships: () => Relationship[];
-
-  // ClassDef management
-  addClassDef: (classDef: ClassDef) => void;
-  getClassDefs: () => Map<string, ClassDef>;
+  getRelationships: () => readonly Relationship[];
+  getNotes: () => ReadonlyMap<string, UsecaseNote>;
+  getNote: (id: string) => UsecaseNote | undefined;
+  getJsonNodes: () => ReadonlyMap<string, UsecaseJsonNode>;
+  getJsonNode: (id: string) => UsecaseJsonNode | undefined;
+  getClassDefs: () => ReadonlyMap<string, ClassDef>;
   getClassDef: (id: string) => ClassDef | undefined;
-
-  // Direction management
-  setDirection: (direction: Direction) => void;
   getDirection: () => Direction;
 
-  // Unified rendering support
-  getData: () => LayoutData;
-
-  // Utility methods
+  getData: () => UsecaseLayoutData;
   clear: () => void;
 }

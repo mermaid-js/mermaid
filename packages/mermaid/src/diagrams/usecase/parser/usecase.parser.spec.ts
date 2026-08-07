@@ -1,214 +1,208 @@
-import { beforeEach, describe, expect, it } from 'vitest';
-import { db } from '../usecaseDb.js';
-import { ARROW_TYPE } from '../usecaseTypes.js';
-import { parser } from './usecase.chevrotain.js';
+import { describe, expect, it } from 'vitest';
+import { usecaseLexer } from './usecase.lexer.js';
+import { usecaseParser } from './usecase.parser.js';
 
-describe('usecase Chevrotain parser', () => {
-  beforeEach(() => db.clear());
+function parseGrammar(source: string) {
+  const lexResult = usecaseLexer.tokenize(source);
+  usecaseParser.input = lexResult.tokens;
+  const cst = usecaseParser.start();
+  return { cst, lexErrors: lexResult.errors, parseErrors: usecaseParser.errors };
+}
 
-  it('populates actors, boundaries, use cases, relationships, and direction', async () => {
-    await parser.parse(`usecase
-      direction TD
-      actor User, "System Administrator"
-      systemBoundary "Authentication System"
-        Login
-        "Reset password":::important
-      end
-      User --include--> Login
-      "System Administrator" --> "Reset password"`);
+function expectAccepted(source: string): void {
+  const result = parseGrammar(source);
+  expect(result.lexErrors, source).toEqual([]);
+  expect(result.parseErrors, source).toEqual([]);
+  expect(result.cst.name).toBe('start');
+}
 
-    expect([...db.getActors().keys()]).toEqual(['User', 'System_Administrator']);
-    expect(db.getDirection()).toBe('TB');
-    expect(db.getSystemBoundary('Authentication_System')).toEqual({
-      id: 'Authentication_System',
-      name: 'Authentication_System',
-      useCases: ['Login', 'Reset_password'],
-    });
-    expect(db.getUseCase('Reset_password')).toMatchObject({
-      name: 'Reset password',
-      classes: ['important'],
-      systemBoundary: 'Authentication_System',
-    });
-    expect(db.getRelationships()).toMatchObject([
-      {
-        id: 'rel_0',
-        from: 'User',
-        to: 'Login',
-        type: 'include',
-        arrowType: ARROW_TYPE.SOLID_ARROW,
-        label: 'include',
-      },
-      {
-        id: 'rel_1',
-        from: 'System_Administrator',
-        to: 'Reset_password',
-        type: 'association',
-        arrowType: ARROW_TYPE.SOLID_ARROW,
-      },
-    ]);
+function expectRejected(source: string): void {
+  const result = parseGrammar(source);
+  expect(result.lexErrors.length + result.parseErrors.length, source).toBeGreaterThan(0);
+}
+
+describe('usecase canonical line-oriented grammar', () => {
+  it.each([
+    ['header at EOF', 'usecase'],
+    ['line feed', 'usecase\nactor User'],
+    ['carriage return and line feed', 'usecase\r\nactor User\r\n'],
+    ['carriage return', 'usecase\ractor User\r'],
+    ['blank and comment lines', 'usecase\n\n  %% retained\nLogin'],
+  ])('accepts %s', (_name, source) => {
+    expectAccepted(source);
   });
 
-  it('supports every relationship operator and quoted labels', async () => {
-    await parser.parse(`usecase
-      A --> B
-      B <-- C
-      C -- D
-      D --o E
-      E o-- F
-      F --x G
-      G x-- H
-      H <-- "extend" -- I`);
-
-    expect(db.getRelationships().map(({ arrowType, label }) => ({ arrowType, label }))).toEqual([
-      { arrowType: ARROW_TYPE.SOLID_ARROW, label: undefined },
-      { arrowType: ARROW_TYPE.BACK_ARROW, label: undefined },
-      { arrowType: ARROW_TYPE.LINE_SOLID, label: undefined },
-      { arrowType: ARROW_TYPE.CIRCLE_ARROW, label: undefined },
-      { arrowType: ARROW_TYPE.CIRCLE_ARROW_REVERSED, label: undefined },
-      { arrowType: ARROW_TYPE.CROSS_ARROW, label: undefined },
-      { arrowType: ARROW_TYPE.CROSS_ARROW_REVERSED, label: undefined },
-      { arrowType: ARROW_TYPE.BACK_ARROW, label: 'extend' },
-    ]);
-    expect(db.getRelationships().at(-1)?.type).toBe('extend');
+  it('defines the stable canonical CST rule names', () => {
+    const names = usecaseParser
+      .getSerializedGastProductions()
+      .flatMap((production) =>
+        'name' in production && typeof production.name === 'string' ? [production.name] : []
+      );
+    expect(names).toEqual(
+      expect.arrayContaining([
+        'start',
+        'line',
+        'statement',
+        'lineEnd',
+        'blankLine',
+        'commentLine',
+        'actorStatement',
+        'actorItem',
+        'actorName',
+        'accTitleStatement',
+        'accDescrStatement',
+        'actorDeclarationOnly',
+        'entityStatement',
+        'entityName',
+        'nodeLabel',
+        'useCaseMetadata',
+        'relationTail',
+        'arrow',
+        'edgeLabel',
+        'semanticRelation',
+        'metadata',
+        'metadataProperty',
+        'metadataSeparator',
+        'systemBoundaryStatement',
+        'systemBoundaryName',
+        'systemBoundaryContent',
+        'boundaryElement',
+        'metadataAssignmentStatement',
+        'metadataAssignmentTarget',
+        'noteStatement',
+        'stereotype',
+        'classSuffix',
+        'jsonStatement',
+        'directionStatement',
+        'classDefStatement',
+        'classStatement',
+        'styleStatement',
+        'styles',
+        'styleValue',
+      ])
+    );
   });
 
-  it('applies metadata, classes, direct styles, and boundary types', async () => {
-    await parser.parse(`usecase
-      actor User@{ "type": "primary", "icon": "user" }
-      systemBoundary Auth
-        Login
-      end
-      Auth@{ type: package }
-      classDef important fill:#f96,stroke-width:4px
-      class Login important
-      style User fill:#fff,opacity:50%`);
-
-    expect(db.getActor('User')).toMatchObject({
-      metadata: { type: 'primary', icon: 'user' },
-      styles: ['fill', ':', '#fff', 'opacity', ':', '50', '%'],
-    });
-    expect(db.getSystemBoundary('Auth')?.type).toBe('package');
-    expect(db.getUseCase('Login')?.classes).toEqual(['important']);
-    expect(db.getClassDef('important')?.styles).toEqual([
-      'fill',
-      ':',
-      '#f96',
-      'stroke',
-      '-',
-      'width',
-      ':',
-      '4px',
-    ]);
+  it('accepts canonical actors, use cases, metadata, stereotypes, and class suffixes', () => {
+    expectAccepted(`usecase
+actor Admin("Main Administrator")@{ type: hollow, business: true } <<Human>>:::external
+actor "System Administrator", "\`**Automation**\`"
+Login(Sign in)@{ business: false } <<Primary>>:::critical
+Report[Generate report]
+"Reset password"
+"\`**Markdown** use case\`"`);
   });
 
-  it('stores a serializable normalized AST with end-exclusive source spans', async () => {
-    const source = `usecase
-direction TD
-actor "System Administrator"@{ "icon": "user" }
-systemBoundary "Authentication System"
-  Login:::important
+  it('accepts multiline metadata with newline and comma separators and a trailing comma', () => {
+    expectAccepted(`usecase
+User@{
+  business: true
+  type: normal,
+}`);
+  });
+
+  it.each([
+    'A --> B',
+    'A <-- B',
+    'A -- B',
+    'A --o B',
+    'A o-- B',
+    'A --x B',
+    'A x-- B',
+    'A -- "starts session" --> B',
+    'A <-- "reverse label" -- B',
+    'A -- label -- B',
+    'A -- label --o B',
+    'A o-- label -- B',
+    'A -- label --x B',
+    'A x-- label -- B',
+    'A ..> : include B',
+    'A ..> : INCLUDE B',
+    'A ..> : ExTeNd B',
+    'A --|> B',
+    'A ---> B',
+    'A <---- B',
+    'A ---- B',
+    'A -- longer ----> B',
+    'A login@--> B',
+    'A dependency@..> : include B',
+  ])('accepts canonical relation %s', (relation) => {
+    expectAccepted(`usecase\n${relation}`);
+  });
+
+  it('accepts restricted system-boundary declarations, blanks, and comments', () => {
+    expectAccepted(`usecase
+systemBoundary "Authentication System":::system
+  %% boundary comment
+  actor User, Admin("Administrator")
+
+  Login("Sign in"):::critical
+  Report[Generate report]
 end
-"System Administrator" -- "include" --> Login
-classDef important fill:#f96
-class Login important
-style Login stroke:#333`;
-
-    await parser.parse(source);
-
-    const ast = db.getAST();
-    expect(ast).toMatchObject({
-      version: 1,
-      diagramType: 'usecase',
-      source,
-      header: { keyword: 'usecase', direction: 'TB', span: [0, 7] },
-      nodes: {
-        System_Administrator: {
-          label: 'System Administrator',
-          shape: 'actor-icon',
-          attrs: { kind: 'actor', metadata: { icon: 'user' } },
-        },
-        Login: {
-          shape: 'ellipse',
-          classes: ['important'],
-          styles: ['stroke', ':', '#333'],
-          attrs: { kind: 'usecase' },
-        },
-      },
-      edges: [
-        {
-          id: 'rel_0',
-          source: 'System_Administrator',
-          target: 'Login',
-          label: 'include',
-          attrs: {
-            relationshipType: 'include',
-            arrowType: ARROW_TYPE.SOLID_ARROW,
-          },
-        },
-      ],
-      groups: {
-        Authentication_System: {
-          title: 'Authentication System',
-          nodes: ['Login'],
-          attrs: { type: 'rect' },
-        },
-      },
-      classDefs: {
-        important: { styles: ['fill', ':', '#f96'] },
-      },
-    });
-    expect(ast?.statements.map(({ kind }) => kind)).toEqual([
-      'direction',
-      'node',
-      'group',
-      'edge',
-      'classDef',
-      'classAssign',
-      'style',
-    ]);
-
-    const actorStatement = ast?.statements[1];
-    const groupStatement = ast?.statements[2];
-    const edgeStatement = ast?.statements[3];
-    expect(source.slice(...actorStatement!.span)).toBe(
-      'actor "System Administrator"@{ "icon": "user" }'
-    );
-    expect(source.slice(...actorStatement!.nodes![0].idSpan)).toBe('System Administrator');
-    expect(source.slice(...groupStatement!.span)).toBe(
-      'systemBoundary "Authentication System"\n  Login:::important\nend'
-    );
-    expect(source.slice(...groupStatement!.titleSpan!)).toBe('Authentication System');
-    expect(source.slice(...groupStatement!.endSpan!)).toBe('end');
-    expect(source.slice(...groupStatement!.children![0].nodes![0].idSpan)).toBe('Login');
-    expect(source.slice(...edgeStatement!.edges![0].labelSpan!)).toBe('include');
-    expect(JSON.parse(JSON.stringify(ast))).toEqual(ast);
+User --> Login`);
   });
 
-  it('captures explicit labels separately from every node id occurrence', async () => {
-    const source = `usecase
-Checkout(Complete checkout)
-Checkout --> Done`;
-
-    await parser.parse(source);
-
-    const ast = db.getAST()!;
-    expect(ast.nodes.Checkout).toMatchObject({
-      label: 'Complete checkout',
-      attrs: { kind: 'usecase' },
-    });
-    const definition = ast.statements[0].nodes![0];
-    const reference = ast.statements[1].nodes![0];
-    expect(source.slice(...definition.idSpan)).toBe('Checkout');
-    expect(source.slice(...definition.labelSpan!)).toBe('Complete checkout');
-    expect(source.slice(...reference.idSpan)).toBe('Checkout');
-    expect(reference.labelSpan).toBeUndefined();
+  it('accepts metadata assignments, notes, JSON, direction, classes, and styles', () => {
+    expectAccepted(`usecase
+direction LR
+Auth@{ type: package }
+note for Login "\`Requires an **active session**\`"
+json Payload@{
+  "fruit": "Apple",
+  "nested": { "brace": "}", "items": [1, 2] }
+}:::data
+classDef external,critical fill:#fff,stroke-width:3px
+class Login,Payload external,critical
+style Login fill:#fee,stroke-dasharray:5\\,5`);
   });
 
-  it('rejects malformed input and leaves the database empty', async () => {
-    db.addActor({ id: 'stale', name: 'stale' });
+  it('accepts single-line and multiline accessibility statements', () => {
+    expectAccepted(`usecase
+accTitle: Authentication use cases
+accDescr: Actors and authentication flows`);
+    expectAccepted(`usecase
+accDescr {
+  Actors authenticate,
+  reset credentials, and sign out.
+}`);
+  });
 
-    await expect(parser.parse('usecase\nactor')).rejects.toThrow('Error parsing usecase diagram');
-    expect(db.getActors()).toHaveLength(0);
-    expect(db.getAST()).toBeUndefined();
+  it.each([
+    ['uppercase header', 'Usecase\nA'],
+    ['same-line statements', 'usecase\nactor A actor B'],
+    ['header statement on same line', 'usecase actor A'],
+    ['ambiguous actor list relation', 'usecase\nactor A, B --> C'],
+    ['unknown directive', 'usecase\nunknown command'],
+    ['slash comment lookalike', 'usecase\n// not a comment'],
+    ['hash comment lookalike', 'usecase\n# not a comment'],
+    ['semicolon separator', 'usecase\nA; B'],
+    ['colon actor', 'usecase\n:User:'],
+    ['actor alias', 'usecase\nactor User as U'],
+    ['use-case alias', 'usecase\nusecase "Login" as Login'],
+    ['G16 newpage', 'usecase\nnewpage'],
+    ['PlantUML package', 'usecase\npackage "Auth" {'],
+    ['PlantUML rectangle', 'usecase\nrectangle "Auth" {'],
+    ['PlantUML skinparam', 'usecase\nskinparam actorStyle awesome'],
+    ['PlantUML allowmixing', 'usecase\nallowmixing'],
+    ['plain separator', 'usecase\n== Section =='],
+    ['literal backslash n separator', 'usecase\nA \\n B'],
+    ['relation direction hint', 'usecase\nA -left-> B'],
+    ['note placement', 'usecase\nnote left of Login "text"'],
+    ['note alias', 'usecase\nnote for Login as N "text"'],
+    ['multi-target note', 'usecase\nnote for Login,Report "text"'],
+    ['nested boundary', 'usecase\nsystemBoundary A\nsystemBoundary B\nend\nend'],
+    ['relation in boundary', 'usecase\nsystemBoundary A\nUser --> Login\nend'],
+    ['note in boundary', 'usecase\nsystemBoundary A\nnote for User "text"\nend'],
+    ['JSON in boundary', 'usecase\nsystemBoundary A\njson Payload@{}\nend'],
+    ['extra circle dash', 'usecase\nA ---o B'],
+    ['extra reversed circle dash', 'usecase\nA o--- B'],
+    ['extra cross dash', 'usecase\nA ---x B'],
+    ['extra generalization dash', 'usecase\nA ---|> B'],
+    ['extra include dot', 'usecase\nA ...> : include B'],
+    ['empty stereotype', 'usecase\nA <<>>'],
+    ['multiline stereotype', 'usecase\nA <<first\nsecond>>'],
+    ['semicolon CSS', 'usecase\nstyle A fill:red;stroke:blue'],
+  ])('rejects %s', (_name, source) => {
+    expectRejected(source);
   });
 });

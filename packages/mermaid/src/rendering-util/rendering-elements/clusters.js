@@ -8,7 +8,7 @@ import { createText } from '../createText.ts';
 import intersectRect from '../rendering-elements/intersect/intersect-rect.js';
 import createLabel from './createLabel.js';
 import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
-import { styles2String, userNodeOverrides } from './shapes/handDrawnShapeStyles.js';
+import { compileStyles, styles2String, userNodeOverrides } from './shapes/handDrawnShapeStyles.js';
 
 const rect = async (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
@@ -459,9 +459,31 @@ const divider = (parent, node) => {
   return { cluster: shapeSvg, labelBBox: {} };
 };
 
+export const getUsecaseSystemBoundaryGeometry = (node, labelBBox) => {
+  const boundaryType = node.boundaryType || 'rect';
+  const horizontalLabelPadding = boundaryType === 'package' ? 20 : node.padding;
+  const tabHeight = boundaryType === 'package' ? labelBBox.height + 10 : 0;
+  const width = Math.max(node.width, labelBBox.width + horizontalLabelPadding);
+  const height =
+    boundaryType === 'package' ? Math.max(node.height, tabHeight + node.padding * 2) : node.height;
+  const x = node.x - width / 2;
+  const y = node.y - height / 2;
+
+  return {
+    boundaryType,
+    width,
+    height,
+    x,
+    y,
+    bodyY: y + tabHeight,
+    bodyHeight: height - tabHeight,
+    tabHeight,
+    tabWidth: boundaryType === 'package' ? Math.min(width, Math.max(80, labelBBox.width + 20)) : 0,
+  };
+};
+
 /**
- * Custom cluster shape for usecase system boundaries
- * Supports two types: 'rect' (dashed rectangle) and 'package' (UML package notation)
+ * Custom cluster shape for use-case system boundaries.
  * @param {any} parent
  * @param {any} node
  * @returns {any} ShapeSvg
@@ -469,32 +491,39 @@ const divider = (parent, node) => {
 const usecaseSystemBoundary = async (parent, node) => {
   log.info('Creating usecase system boundary for ', node.id, node);
   const siteConfig = getConfig();
-  const { handDrawnSeed } = siteConfig;
+  const { themeVariables, handDrawnSeed } = siteConfig;
+  const { clusterBkg, clusterBorder } = themeVariables;
+  const { labelStyles, nodeStyles } = styles2String(node);
+  const { stylesMap } = compileStyles(node);
 
-  // Add outer g element
+  const boundaryType = node.boundaryType || 'rect';
   const shapeSvg = parent
     .insert('g')
-    .attr('class', 'cluster usecase-system-boundary ' + node.cssClasses)
-    .attr('id', node.id)
+    .attr(
+      'class',
+      `cluster usecase-system-boundary usecase-system-boundary-${boundaryType} ${node.cssClasses}`
+    )
+    .attr(
+      'id',
+      typeof node.usecaseDomId === 'string'
+        ? node.usecaseDomId
+        : typeof node.domId === 'string'
+          ? node.domId
+          : node.id
+    )
+    .attr('data-boundary-type', boundaryType)
     .attr('data-look', node.look);
 
-  // Get boundary type from node metadata (default to 'rect')
-  const boundaryType = node.boundaryType || 'rect';
-  shapeSvg.attr('data-boundary-type', boundaryType);
-
   const useHtmlLabels = evaluate(siteConfig.flowchart?.htmlLabels);
-
-  // Create the label
-  const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label');
+  const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label system-boundary-title');
   const text = await createText(labelEl, node.label, {
-    style: node.labelStyle,
+    style: labelStyles,
     useHtmlLabels,
     isNode: true,
   });
 
-  // Get the size of the label
   let bbox = text.getBBox();
-  if (evaluate(siteConfig.flowchart?.htmlLabels)) {
+  if (useHtmlLabels) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();
@@ -502,128 +531,81 @@ const usecaseSystemBoundary = async (parent, node) => {
     dv.attr('height', bbox.height);
   }
 
-  // Calculate width with padding (similar to rect cluster)
-  const width = node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width;
-  if (node.width <= bbox.width + node.padding) {
-    node.diff = (width - node.width) / 2 - node.padding;
+  const geometry = getUsecaseSystemBoundaryGeometry(node, bbox);
+  const { width, height, x, y, bodyY, bodyHeight, tabHeight, tabWidth } = geometry;
+  node.diff =
+    node.width <= bbox.width + node.padding
+      ? (width - node.width) / 2 - node.padding
+      : -node.padding;
+
+  const roughOptions = userNodeOverrides(node, {
+    fill: stylesMap.get('fill') || clusterBkg,
+    stroke: stylesMap.get('stroke') || clusterBorder,
+    strokeWidth: stylesMap.get('stroke-width')?.replace('px', '') || 1,
+    seed: handDrawnSeed,
+  });
+
+  if (node.look === 'handDrawn') {
+    const rc = rough.svg(shapeSvg);
+    const roughBody = rc.rectangle(x, bodyY, width, bodyHeight, roughOptions);
+    shapeSvg.insert(() => roughBody, ':first-child').attr('class', 'boundary-body label-container');
+
+    if (boundaryType === 'package') {
+      const roughTab = rc.rectangle(x, y, tabWidth, tabHeight, roughOptions);
+      shapeSvg
+        .insert(() => roughTab, ':first-child')
+        .attr('class', 'boundary-tab system-boundary-package-tab label-container');
+    }
   } else {
-    node.diff = -node.padding;
-  }
+    shapeSvg
+      .insert('rect', ':first-child')
+      .attr('class', 'boundary-body label-container')
+      .attr('style', nodeStyles)
+      .attr('x', x)
+      .attr('y', bodyY)
+      .attr('width', width)
+      .attr('height', bodyHeight);
 
-  const height = node.height;
-  // Use absolute coordinates from layout engine (like rect cluster does)
-  const x = node.x - width / 2;
-  const y = node.y - height / 2;
-
-  let boundaryRect;
-  const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
-
-  if (boundaryType === 'package') {
-    // Draw package-type boundary (rectangle with separate name box at top)
-    const nameBoxWidth = Math.max(80, bbox.width + 20);
-    const nameBoxHeight = 25;
-
-    if (node.look === 'handDrawn') {
-      const rc = rough.svg(shapeSvg);
-      const options = userNodeOverrides(node, {
-        stroke: 'black',
-        strokeWidth: 2,
-        fill: 'none',
-        seed: handDrawnSeed,
-      });
-
-      // Draw main boundary rectangle
-      const roughRect = rc.rectangle(x, y, width, height, options);
-      boundaryRect = shapeSvg.insert(() => roughRect, ':first-child');
-
-      // Draw name box at top-left
-      const roughNameBox = rc.rectangle(x, y - nameBoxHeight, nameBoxWidth, nameBoxHeight, options);
-      shapeSvg.insert(() => roughNameBox, ':first-child');
-    } else {
-      // Draw main boundary rectangle
-      boundaryRect = shapeSvg
-        .insert('rect', ':first-child')
-        .attr('x', x)
-        .attr('y', y)
-        .attr('width', width)
-        .attr('height', height)
-        .attr('fill', 'none')
-        .attr('stroke', 'black')
-        .attr('stroke-width', 2);
-
-      // Draw name box at top-left
+    if (boundaryType === 'package') {
       shapeSvg
         .insert('rect', ':first-child')
-        .attr('x', x)
-        .attr('y', y - nameBoxHeight)
-        .attr('width', nameBoxWidth)
-        .attr('height', nameBoxHeight)
-        .attr('fill', 'white')
-        .attr('stroke', 'black')
-        .attr('stroke-width', 2);
-    }
-
-    // Position label in the center of the name box (using absolute coordinates)
-    // The name box is at (x, y - nameBoxHeight), so center the label there
-    labelEl.attr(
-      'transform',
-      `translate(${x + nameBoxWidth / 2 - bbox.width / 2}, ${y - nameBoxHeight})`
-    );
-  } else {
-    // Draw rect-type boundary (simple dashed rectangle)
-    if (node.look === 'handDrawn') {
-      const rc = rough.svg(shapeSvg);
-      const options = userNodeOverrides(node, {
-        stroke: 'black',
-        strokeWidth: 2,
-        fill: 'none',
-        strokeLineDash: [5, 5],
-        seed: handDrawnSeed,
-      });
-
-      const roughRect = rc.rectangle(x, y, width, height, options);
-      boundaryRect = shapeSvg.insert(() => roughRect, ':first-child');
-    } else {
-      // Draw dashed rectangle
-      boundaryRect = shapeSvg
-        .insert('rect', ':first-child')
+        .attr('class', 'boundary-tab system-boundary-package-tab label-container')
+        .attr('style', nodeStyles)
         .attr('x', x)
         .attr('y', y)
-        .attr('width', width)
-        .attr('height', height)
-        .attr('fill', 'none')
-        .attr('stroke', 'black')
-        .attr('stroke-width', 2)
-        .attr('stroke-dasharray', '5,5');
+        .attr('width', tabWidth)
+        .attr('height', tabHeight);
     }
+  }
 
-    // Position label at top-left (using absolute coordinates, same as rect cluster)
+  const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
+  if (boundaryType === 'package') {
     labelEl.attr(
       'transform',
-      `translate(${node.x - bbox.width / 2}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
+      `translate(${x + (tabWidth - bbox.width) / 2}, ${y + (tabHeight - bbox.height) / 2})`
+    );
+  } else {
+    labelEl.attr(
+      'transform',
+      `translate(${node.x - bbox.width / 2}, ${y + subGraphTitleTopMargin})`
     );
   }
 
-  // Get the bounding box of the boundary rectangle
-  const rectBox = boundaryRect.node().getBBox();
+  if (labelStyles) {
+    labelEl.attr('style', labelStyles);
+    labelEl.select('span').attr('style', labelStyles);
+  }
 
-  // Set node properties required by layout engine (similar to rect cluster)
   node.offsetX = 0;
-  node.width = rectBox.width;
-  node.height = rectBox.height;
-  // Used by layout engine to position subgraph in parent
+  node.width = width;
+  node.height = height;
   node.offsetY = bbox.height - node.padding / 2;
-
-  // Set intersection function for edge routing
+  node.labelBBox = bbox;
   node.intersect = function (point) {
     return intersectRect(node, point);
   };
 
-  // Return cluster object
-  return {
-    cluster: shapeSvg,
-    labelBBox: bbox,
-  };
+  return { cluster: shapeSvg, labelBBox: bbox };
 };
 
 const squareRect = rect;

@@ -1656,13 +1656,13 @@ export interface UsecaseDiagramConfig extends BaseDiagramConfig {
    */
   usecaseFontWeight?: string;
   /**
-   * Margin around actors
+   * Spacing between nodes on the same level
    */
-  actorMargin?: number;
+  nodeSpacing?: number;
   /**
-   * Margin around use cases
+   * Spacing between nodes on different levels
    */
-  usecaseMargin?: number;
+  rankSpacing?: number;
   /**
    * Padding around the entire diagram
    */

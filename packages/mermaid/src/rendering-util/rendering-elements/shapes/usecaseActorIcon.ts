@@ -1,156 +1,71 @@
-import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
-import type { Node } from '../../types.js';
-import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
-import { getIconSVG } from '../../icons.js';
 import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
-import intersect from '../intersect/index.js';
+import type { Node } from '../../types.js';
+import { getIconSVG, isIconAvailable } from '../../icons.js';
+import { userNodeOverrides } from './handDrawnShapeStyles.js';
+import { renderUsecaseActor, type UsecaseActorNode } from './usecaseActor.js';
 
-/**
- * Get actor styling based on metadata
- */
-const getActorStyling = (metadata?: Record<string, string>) => {
-  const defaults = {
-    fillColor: 'none',
-    strokeColor: 'black',
-    strokeWidth: 2,
-    type: 'solid',
-  };
+const ICON_FRAME_SIZE = 52;
+const ICON_SIZE = 42;
+const ICON_CENTER_Y = -2;
 
-  if (!metadata) {
-    return defaults;
-  }
-
-  return {
-    fillColor: metadata.type === 'hollow' ? 'none' : metadata.fillColor || defaults.fillColor,
-    strokeColor: metadata.strokeColor || defaults.strokeColor,
-    strokeWidth: parseInt(metadata.strokeWidth || '2', 10),
-    type: metadata.type || defaults.type,
-  };
-};
-
-/**
- * Draw actor with icon representation
- */
-const drawActorWithIcon = async (
-  actorGroup: D3Selection<SVGGElement>,
-  iconName: string,
-  styling: ReturnType<typeof getActorStyling>,
-  node: Node
+const drawIconActor = async (
+  group: D3Selection<SVGGElement>,
+  node: UsecaseActorNode
 ): Promise<void> => {
-  const x = 0; // Center at origin
-  const y = -10; // Adjust vertical position
-  const iconSize = 50; // Icon size
+  const frameX = -ICON_FRAME_SIZE / 2;
+  const frameY = ICON_CENTER_Y - ICON_FRAME_SIZE / 2;
 
   if (node.look === 'handDrawn') {
-    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
-    const rc = rough.svg(actorGroup);
-    const options = userNodeOverrides(node, {
-      stroke: styling.strokeColor,
-      strokeWidth: styling.strokeWidth,
-      fill: styling.fillColor === 'none' ? 'white' : styling.fillColor,
-    });
-    actorGroup.attr('class', 'usecase-icon');
-    // Create a rectangle background for the icon
-    const iconBg = rc.rectangle(x - 35, y - 40, 50, 50, options);
-    actorGroup.insert(() => iconBg, ':first-child');
+    // @ts-expect-error roughjs accepts the underlying SVG group through a D3 selection at runtime.
+    const rc = rough.svg(group);
+    const frame = rc.rectangle(
+      frameX,
+      frameY,
+      ICON_FRAME_SIZE,
+      ICON_FRAME_SIZE,
+      userNodeOverrides(node, {})
+    );
+    group.insert(() => frame, ':first-child').attr('class', 'usecase-actor-icon-frame');
   } else {
-    // Create a rectangle background for the icon
-    actorGroup
+    group
       .append('rect')
-      .attr('x', x - 27.5)
-      .attr('y', y - 42)
-      .attr('width', 55)
-      .attr('height', 55)
-      .attr('rx', 5)
-      .attr('fill', styling.fillColor === 'none' ? 'white' : styling.fillColor)
-      .attr('stroke', styling.strokeColor)
-      .attr('stroke-width', styling.strokeWidth);
+      .attr('class', 'usecase-actor-icon-frame')
+      .attr('x', frameX)
+      .attr('y', frameY)
+      .attr('width', ICON_FRAME_SIZE)
+      .attr('height', ICON_FRAME_SIZE)
+      .attr('rx', 4)
+      .attr('ry', 4);
   }
 
-  // Add icon using getIconSVG (like iconCircle.ts does)
-  const iconElem = actorGroup.append('g').attr('class', 'actor-icon');
-  iconElem.html(
-    `<g>${await getIconSVG(iconName, {
-      height: iconSize,
-      width: iconSize,
-      fallbackPrefix: 'fa',
-    })}</g>`
-  );
+  const iconName = node.icon ?? '';
+  const available = await isIconAvailable(iconName.includes(':') ? iconName : `fa:${iconName}`);
+  const iconSvg = await getIconSVG(iconName, {
+    height: ICON_SIZE,
+    width: ICON_SIZE,
+    fallbackPrefix: 'fa',
+  });
+  const iconGroup = group
+    .append('g')
+    .attr('class', `usecase-actor-icon-symbol${available ? '' : ' usecase-actor-icon-fallback'}`)
+    .attr('aria-hidden', 'true')
+    .html(`<g>${iconSvg}</g>`);
 
-  // Get icon bounding box for positioning
-  const iconBBox = iconElem.node()?.getBBox();
-  if (iconBBox) {
-    const iconWidth = iconBBox.width;
-    const iconHeight = iconBBox.height;
-    const iconX = iconBBox.x;
-    const iconY = iconBBox.y;
-
-    // Center the icon in the rectangle
-    iconElem.attr(
+  const iconBox = iconGroup.node()?.getBBox();
+  if (iconBox) {
+    iconGroup.attr(
       'transform',
-      `translate(${-iconWidth / 2 - iconX}, ${y - 15 - iconHeight / 2 - iconY})`
+      `translate(${-iconBox.width / 2 - iconBox.x},${
+        ICON_CENTER_Y - iconBox.height / 2 - iconBox.y
+      })`
     );
   }
 };
 
-/**
- * Custom shape handler for usecase actors with icons
- */
 export async function usecaseActorIcon<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node
-) {
-  const { labelStyles } = styles2String(node);
-  node.labelStyle = labelStyles;
-  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-
-  // Get actor metadata from node
-  const metadata = (node as Node & { metadata?: Record<string, string> }).metadata;
-  const styling = getActorStyling(metadata);
-
-  // Create actor group
-  const actorGroup = shapeSvg.append('g');
-
-  // Add metadata as data attributes for CSS styling
-  if (metadata) {
-    Object.entries(metadata).forEach(([key, value]) => {
-      actorGroup.attr(`data-${key}`, value);
-    });
-  }
-
-  // Get icon name from metadata
-  const iconName = metadata?.icon ?? 'user';
-  await drawActorWithIcon(actorGroup, iconName, styling, node);
-
-  // Get the actual bounding box of the rendered actor icon
-  const actorBBox = actorGroup.node()?.getBBox();
-  const actorHeight = actorBBox?.height ?? 70;
-
-  // Actor name (always rendered below the figure)
-  const labelY = actorHeight / 2 + 15; // Position label below the figure
-
-  // Calculate label height from the actual text element
-  const labelBBox = label.node()?.getBBox() ?? { height: 20 };
-  const labelHeight = labelBBox.height + 10; // Space for label below
-  const totalHeight = actorHeight + labelHeight;
-  label.attr(
-    'transform',
-    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))},${labelY / 2 - 15})`
-  );
-
-  // Update node bounds for layout - this will set node.width and node.height from the bounding box
-  updateNodeBounds(node, actorGroup);
-
-  // Override height to include label space
-  // Width is kept from updateNodeBounds as it correctly reflects the actor's visual width
-  node.height = totalHeight;
-
-  // Add intersect function for edge connection points
-  // Use rectangular intersection for icon actors
-  node.intersect = function (point) {
-    return intersect.rect(node, point);
-  };
-
-  return shapeSvg;
+): Promise<D3Selection<SVGGElement>> {
+  return renderUsecaseActor(parent, node as UsecaseActorNode, 'icon', drawIconActor);
 }

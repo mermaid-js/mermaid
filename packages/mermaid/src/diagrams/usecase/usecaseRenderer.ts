@@ -1,48 +1,261 @@
-import type { DrawDefinition } from '../../diagram-api/types.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
+import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { getDiagramElement } from '../../rendering-util/insertElementsForSize.js';
 import { getRegisteredLayoutAlgorithm, render } from '../../rendering-util/render.js';
+import { markdownToLines } from '../../rendering-util/handle-markdown-text.js';
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
+import type { UsecaseLayoutData, UsecaseLayoutEdge, UsecaseLayoutNode } from './usecaseTypes.js';
 import utils from '../../utils.js';
 import type { UsecaseDB } from './usecaseTypes.js';
+
+export const USECASE_MARKERS: UsecaseLayoutData['markers'] = [
+  'point',
+  'circle',
+  'cross',
+  'extension',
+];
+
+const ACTOR_SHAPES: Record<string, true> = {
+  usecaseActor: true,
+  usecaseActorHollow: true,
+  usecaseActorAwesome: true,
+  usecaseActorIcon: true,
+};
+
+export const usecaseDomId = (diagramId: string, modelId: string): string => {
+  const [safeDiagramId, safeModelId] = [diagramId, modelId].map(
+    (value) => value.replace(/[^\w-]+/g, '_').replace(/^_+|_+$/g, '') || 'element'
+  );
+  return `usecase-${safeDiagramId}-${safeModelId}`;
+};
+
+const getAccessibleLabel = (label: string, labelType?: string): string => {
+  if (labelType !== 'markdown') {
+    return label;
+  }
+  return markdownToLines(label)
+    .map((line) => line.map((word) => word.content).join(' '))
+    .join('\n');
+};
+
+export const getUsecaseNodeAccessibleName = (node: UsecaseLayoutNode): string => {
+  const label = getAccessibleLabel(node.label ?? node.id, node.labelType);
+  if (ACTOR_SHAPES[node.shape]) {
+    const variant = node.actorType && node.actorType !== 'normal' ? `${node.actorType} ` : '';
+    const business = node.business ? 'business ' : '';
+    const stereotype = node.stereotype ? `, stereotype ${node.stereotype}` : '';
+    return `${business}${variant}actor ${label}${stereotype}`;
+  }
+  if (node.shape === 'note') {
+    return `Note for ${node.noteTargetLabel ?? node.noteTarget ?? ''}: ${label}`;
+  }
+  if (node.shape === 'usecaseJsonTable') {
+    const rows = (node.jsonRows ?? [])
+      .map((row) => `${row.accessibleKey}: ${row.value}`)
+      .join('; ');
+    return rows ? `${label}: ${rows}` : label;
+  }
+  const stereotype = node.stereotype ? `, stereotype ${node.stereotype}` : '';
+  return `${node.business ? 'business ' : ''}use case ${label}${stereotype}`;
+};
+
+export const getUsecaseBoundaryAccessibleName = (
+  boundary: Extract<UsecaseLayoutData['nodes'][number], { isGroup: true }>
+): string =>
+  `${boundary.boundaryType} system boundary ${getAccessibleLabel(
+    boundary.label ?? boundary.id,
+    boundary.labelType
+  )}`;
+
+export const getUsecaseEdgeAccessibleName = (edge: UsecaseLayoutEdge): string => {
+  if (edge.relationshipType === 'note') {
+    return '';
+  }
+  const relation =
+    edge.relationshipType === 'association' && edge.label
+      ? `association ${getAccessibleLabel(edge.label, edge.labelType)}`
+      : edge.relationshipType;
+  return `${relation} from ${edge.sourceLabel} to ${edge.targetLabel}`;
+};
+
+const escapePlainLabel = (label: string): string =>
+  label
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/([*[\\\]_`])/g, '\\$1');
+
+interface UsecaseAccessibleNames {
+  nodes: ReadonlyMap<string, string>;
+  edges: ReadonlyMap<string, string>;
+}
+
+type UsecaseRenderingNode = UsecaseLayoutData['nodes'][number] & {
+  usecaseDomId: string;
+};
+
+export const prepareUsecaseLayoutData = (
+  data: UsecaseLayoutData,
+  diagramId: string
+): UsecaseLayoutData => {
+  data.diagramId = diagramId;
+  data.markers = [...USECASE_MARKERS];
+  for (const node of data.nodes) {
+    const stableDomId = usecaseDomId(diagramId, node.id);
+    const renderingNode: UsecaseRenderingNode = Object.assign(node, {
+      usecaseDomId: stableDomId,
+    });
+    renderingNode.domId = stableDomId;
+    if (node.label !== undefined && node.labelType === 'text') {
+      node.label = escapePlainLabel(node.label);
+    }
+    if (!node.isGroup && node.shape === 'usecaseJsonTable') {
+      node.jsonRows = node.jsonRows?.map((row) => ({
+        ...row,
+        key: escapePlainLabel(row.key),
+        value: escapePlainLabel(row.value),
+      }));
+    }
+    if (!node.isGroup && (node.shape === 'ellipse' || node.shape === 'rect') && node.stereotype) {
+      node.label = `«${escapePlainLabel(node.stereotype)}»<br/>${node.label ?? node.id}`;
+      node.labelType = 'markdown';
+    }
+  }
+  for (const edge of data.edges) {
+    if (edge.label !== undefined && edge.labelType === 'text') {
+      edge.label = escapePlainLabel(edge.label);
+    }
+  }
+  return data;
+};
+
+const annotateUsecaseElements = (
+  svg: SVG,
+  data: UsecaseLayoutData,
+  accessibleNames: UsecaseAccessibleNames
+) => {
+  for (const node of data.nodes) {
+    const stableDomId =
+      'usecaseDomId' in node && typeof node.usecaseDomId === 'string'
+        ? node.usecaseDomId
+        : usecaseDomId(data.diagramId, node.id);
+    const element = svg.select<SVGGElement>(`#${stableDomId}`);
+    const kind = node.isGroup
+      ? 'boundary'
+      : ACTOR_SHAPES[node.shape]
+        ? 'actor'
+        : node.shape === 'note'
+          ? 'note'
+          : node.shape === 'usecaseJsonTable'
+            ? 'json'
+            : 'usecase';
+    const accessibleName = accessibleNames.nodes.get(node.id) ?? node.id;
+    element
+      .attr('data-usecase-id', node.id)
+      .attr('data-usecase-kind', kind)
+      .attr('role', 'img')
+      .attr('aria-label', accessibleName);
+    if (!node.isGroup && (node.shape === 'ellipse' || node.shape === 'rect') && node.stereotype) {
+      const root = element.node();
+      const htmlLabel = root?.querySelector('.nodeLabel');
+      const container = htmlLabel?.querySelector('p') ?? htmlLabel;
+      const firstLabelNode = container?.firstChild;
+      if (container && firstLabelNode?.nodeType === 3) {
+        const stereotype = container.ownerDocument.createElement('span');
+        stereotype.className = 'usecase-stereotype';
+        container.insertBefore(stereotype, firstLabelNode);
+        stereotype.appendChild(firstLabelNode);
+      } else {
+        root
+          ?.querySelector('.label tspan tspan, .label tspan')
+          ?.classList.add('usecase-stereotype');
+      }
+    }
+  }
+
+  const edgePaths = svg.selectAll<SVGPathElement, unknown>('path[data-et="edge"]');
+  for (const edge of data.edges) {
+    const path = edgePaths.filter(function () {
+      return this.getAttribute('data-id') === edge.id;
+    });
+    path
+      .attr('id', usecaseDomId(data.diagramId, edge.id))
+      .attr('data-usecase-id', edge.id)
+      .attr('data-usecase-kind', edge.internal ? 'note-connector' : 'relationship');
+    if (edge.internal) {
+      path.attr('aria-hidden', 'true');
+    } else {
+      path.attr('role', 'img').attr('aria-label', accessibleNames.edges.get(edge.id) ?? edge.id);
+    }
+  }
+};
 
 /**
  * Main draw function using unified rendering system
  */
 const draw: DrawDefinition = async (_text, id, _version, diag) => {
   log.info('Drawing usecase diagram (unified)', id);
-  const { securityLevel, usecase: conf, layout } = getConfig();
+  const { layout } = getConfig();
 
   // The getData method provided in all supported diagrams is used to extract the data from the parsed structure
   // into the Layout data format
   const usecaseDb = diag.db as UsecaseDB;
   const data4Layout = usecaseDb.getData();
+  const accessibleLabels = new Map(
+    data4Layout.nodes.map((node) => [
+      node.id,
+      getAccessibleLabel(node.label ?? node.id, node.labelType),
+    ])
+  );
+  const accessibleNames: UsecaseAccessibleNames = {
+    nodes: new Map(
+      data4Layout.nodes.map((node) => [
+        node.id,
+        node.isGroup
+          ? getUsecaseBoundaryAccessibleName(node)
+          : getUsecaseNodeAccessibleName(
+              node.shape === 'note'
+                ? { ...node, noteTargetLabel: accessibleLabels.get(node.noteTarget ?? '') }
+                : node
+            ),
+      ])
+    ),
+    edges: new Map(
+      data4Layout.edges.map((edge) => [
+        edge.id,
+        getUsecaseEdgeAccessibleName({
+          ...edge,
+          sourceLabel: accessibleLabels.get(edge.source) ?? edge.sourceLabel,
+          targetLabel: accessibleLabels.get(edge.target) ?? edge.targetLabel,
+        }),
+      ])
+    ),
+  };
+  const svg = getDiagramElement(id, data4Layout.config.securityLevel);
 
-  // Create the root SVG - the element is the div containing the SVG element
-  const svg = getDiagramElement(id, securityLevel);
-
-  data4Layout.type = diag.type;
   data4Layout.layoutAlgorithm = getRegisteredLayoutAlgorithm(layout);
+  prepareUsecaseLayoutData(data4Layout, id);
 
-  data4Layout.nodeSpacing = 50; // Default node spacing
-  data4Layout.rankSpacing = 50; // Default rank spacing
-  data4Layout.markers = ['point', 'circle', 'cross']; // Support point, circle, and cross markers
-  data4Layout.diagramId = id;
+  svg
+    .style('--mermaid-usecase-actor-font-size', `${data4Layout.actorFontSize}px`)
+    .style('--mermaid-usecase-actor-font-family', data4Layout.actorFontFamily)
+    .style('--mermaid-usecase-actor-font-weight', data4Layout.actorFontWeight)
+    .style('--mermaid-usecase-font-size', `${data4Layout.usecaseFontSize}px`)
+    .style('--mermaid-usecase-font-family', data4Layout.usecaseFontFamily)
+    .style('--mermaid-usecase-font-weight', data4Layout.usecaseFontWeight);
 
-  log.debug('Usecase layout data:', data4Layout);
-
-  // Use the unified rendering system
   await render(data4Layout, svg);
+  annotateUsecaseElements(svg, data4Layout, accessibleNames);
 
-  const padding = 8;
+  const padding = data4Layout.diagramPadding;
   utils.insertTitle(
     svg,
     'usecaseDiagramTitleText',
     0, // Default title top margin
     usecaseDb.getDiagramTitle?.() ?? ''
   );
-  setupViewPortForSVG(svg, padding, 'usecaseDiagram', conf?.useMaxWidth ?? false);
+  setupViewPortForSVG(svg, padding, 'usecaseDiagram', data4Layout.useMaxWidth);
 };
 
 export const renderer = { draw };

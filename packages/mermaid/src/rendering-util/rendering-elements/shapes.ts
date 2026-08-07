@@ -34,7 +34,11 @@ import { lightningBolt } from './shapes/lightningBolt.js';
 import { linedCylinder } from './shapes/linedCylinder.js';
 import { linedWaveEdgedRect } from './shapes/linedWaveEdgedRect.js';
 import { usecaseActor } from './shapes/usecaseActor.js';
+import { usecaseActorAwesome } from './shapes/usecaseActorAwesome.js';
+import { usecaseActorHollow } from './shapes/usecaseActorHollow.js';
 import { usecaseActorIcon } from './shapes/usecaseActorIcon.js';
+import { usecaseBusiness } from './shapes/usecaseBusiness.js';
+import { usecaseJsonTable } from './shapes/usecaseJsonTable.js';
 import { multiRect } from './shapes/multiRect.js';
 import { multiWaveEdgedRectangle } from './shapes/multiWaveEdgedRectangle.js';
 import { note } from './shapes/note.js';
@@ -521,7 +525,11 @@ const generateShapeMap = () => {
 
     // Usecase diagram
     usecaseActor,
+    usecaseActorHollow,
+    usecaseActorAwesome,
     usecaseActorIcon,
+    usecaseBusiness,
+    usecaseJsonTable,
   } as const;
 
   const entries = [

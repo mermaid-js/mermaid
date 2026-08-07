@@ -96,6 +96,7 @@ export const specificCanonicalUrls: Record<string, string> = {
   'syntax/quadrantChart.md': 'https://docs.mermaidchart.com/mermaid-oss/syntax/quadrantChart.html',
   'syntax/requirementDiagram.md':
     'https://docs.mermaidchart.com/mermaid-oss/syntax/requirementDiagram.html',
+  'syntax/usecase.md': 'https://docs.mermaidchart.com/mermaid-oss/syntax/usecase.html',
   'syntax/mindmap.md': 'https://docs.mermaidchart.com/mermaid-oss/syntax/mindmap.html',
   'syntax/timeline.md': 'https://docs.mermaidchart.com/mermaid-oss/syntax/timeline.html',
   'syntax/gitgraph.md': 'https://docs.mermaidchart.com/mermaid-oss/syntax/gitgraph.html',

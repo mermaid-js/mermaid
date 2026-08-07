@@ -1,66 +1,110 @@
 import { describe, expect, it } from 'vitest';
 import { usecaseLexer } from './usecase.lexer.js';
 
-interface ComparableToken {
-  name: string;
-  image: string;
+function lex(input: string) {
+  return usecaseLexer.tokenize(input);
 }
 
-function tokenize(input: string): ComparableToken[] {
-  const result = usecaseLexer.tokenize(input);
+function tokenImages(input: string): [string, string][] {
+  const result = lex(input);
   expect(result.errors).toEqual([]);
-  return result.tokens.map((token) => ({
-    name: token.tokenType.name,
-    image: token.image,
-  }));
+  return result.tokens.map((token) => [token.tokenType.name, token.image]);
 }
 
 describe('usecase Chevrotain lexer', () => {
-  it('tokenizes every relationship operator before its shorter alternatives', () => {
-    expect(tokenize('--> <-- --o o-- --x x-- -- -')).toEqual([
-      { name: 'SOLID_ARROW', image: '-->' },
-      { name: 'BACK_ARROW', image: '<--' },
-      { name: 'CIRCLE_ARROW', image: '--o' },
-      { name: 'CIRCLE_ARROW_REVERSED', image: 'o--' },
-      { name: 'CROSS_ARROW', image: '--x' },
-      { name: 'CROSS_ARROW_REVERSED', image: 'x--' },
-      { name: 'LINE_SOLID', image: '--' },
-      { name: 'DASH', image: '-' },
+  it('uses longest operator and delimiter precedence', () => {
+    expect(tokenImages('--|> ..> <<Human>> ::: ---> <--- --o o-- --x x-- --')).toEqual([
+      ['GENERALIZATION', '--|>'],
+      ['DEPENDENCY_ARROW', '..>'],
+      ['STEREOTYPE_START', '<<'],
+      ['STEREOTYPE_TEXT', 'Human'],
+      ['STEREOTYPE_END', '>>'],
+      ['CLASS_SEPARATOR', ':::'],
+      ['FORWARD_SOLID', '--->'],
+      ['BACKWARD_SOLID', '<---'],
+      ['FORWARD_CIRCLE', '--o'],
+      ['BACKWARD_CIRCLE', 'o--'],
+      ['FORWARD_CROSS', '--x'],
+      ['BACKWARD_CROSS', 'x--'],
+      ['MARKERLESS_SOLID', '--'],
     ]);
   });
 
-  it('keeps keywords inside longer identifiers as identifiers', () => {
+  it('keeps exact keywords out of longer identifiers and matches semantic words case-insensitively', () => {
     expect(
-      tokenize('actor actorName systemBoundary systemBoundaryName classDef classDefName')
+      tokenImages('actor actorName include INCLUDE Include included extend EXTEND extended')
     ).toEqual([
-      { name: 'ACTOR', image: 'actor' },
-      { name: 'IDENTIFIER', image: 'actorName' },
-      { name: 'SYSTEM_BOUNDARY', image: 'systemBoundary' },
-      { name: 'IDENTIFIER', image: 'systemBoundaryName' },
-      { name: 'CLASS_DEF', image: 'classDef' },
-      { name: 'IDENTIFIER', image: 'classDefName' },
+      ['ACTOR', 'actor'],
+      ['IDENTIFIER', 'actorName'],
+      ['INCLUDE', 'include'],
+      ['INCLUDE', 'INCLUDE'],
+      ['INCLUDE', 'Include'],
+      ['IDENTIFIER', 'included'],
+      ['EXTEND', 'extend'],
+      ['EXTEND', 'EXTEND'],
+      ['IDENTIFIER', 'extended'],
     ]);
   });
 
-  it('tokenizes metadata, class, and style values', () => {
-    expect(tokenize('User@{ "type": "primary" } Login:::important fill:#f96 4px 2.5 50%')).toEqual([
-      { name: 'IDENTIFIER', image: 'User' },
-      { name: 'AT', image: '@' },
-      { name: 'LBRACE', image: '{' },
-      { name: 'STRING', image: '"type"' },
-      { name: 'COLON', image: ':' },
-      { name: 'STRING', image: '"primary"' },
-      { name: 'RBRACE', image: '}' },
-      { name: 'IDENTIFIER', image: 'Login' },
-      { name: 'CLASS_SEPARATOR', image: ':::' },
-      { name: 'IDENTIFIER', image: 'important' },
-      { name: 'IDENTIFIER', image: 'fill' },
-      { name: 'COLON', image: ':' },
-      { name: 'HASH_COLOR', image: '#f96' },
-      { name: 'NUMBER', image: '4px' },
-      { name: 'NUMBER', image: '2.5' },
-      { name: 'NUMBER', image: '50' },
-      { name: 'PERCENT', image: '%' },
+  it.each([
+    ['line feed', '\n'],
+    ['carriage return and line feed', '\r\n'],
+    ['carriage return', '\r'],
+  ])('emits one token per physical newline for %s', (_name, newline) => {
+    const tokens = lex(`${newline}${newline}`).tokens;
+    expect(tokens).toHaveLength(2);
+    expect(tokens.every((token) => token.tokenType.name === 'NEWLINE')).toBe(true);
+  });
+
+  it('preserves multiline Markdown and treats comment lookalikes inside it as data', () => {
+    expect(tokenImages('"`first\n%% still markdown\nlast`"')).toEqual([
+      ['MARKDOWN_STRING', '"`first\n%% still markdown\nlast`"'],
+    ]);
+  });
+
+  it('emits indented whole-line comments but not percent pairs after another token', () => {
+    expect(tokenImages('  %% comment\n')).toEqual([
+      ['COMMENT', '%% comment'],
+      ['NEWLINE', '\n'],
+    ]);
+    const inline = lex('A %% data');
+    expect(inline.tokens.map((token) => token.tokenType.name)).toEqual([
+      'IDENTIFIER',
+      'PERCENT',
+      'PERCENT',
+      'IDENTIFIER',
+    ]);
+  });
+
+  it('balances nested JSON while ignoring escaped quotes and braces in strings', () => {
+    const source = 'json Payload@{\n  "text": "} \\" {",\n  "nested": {"items": [1, 2]}\n}:::data';
+    const result = lex(source);
+    expect(result.errors).toEqual([]);
+    expect(result.tokens.map((token) => token.tokenType.name)).toEqual([
+      'JSON_DECLARATION_START',
+      'JSON_OBJECT_LITERAL',
+      'CLASS_SEPARATOR',
+      'IDENTIFIER',
+    ]);
+    expect(result.tokens[1]).toMatchObject({ startLine: 1, startColumn: 14, endLine: 4 });
+  });
+
+  it('reports an unclosed JSON object at its opening brace', () => {
+    const result = lex('json Payload@{\n  "nested": {}');
+    expect(result.errors[0]).toMatchObject({ line: 1, column: 14, offset: 13 });
+  });
+
+  it('preserves strict strings, colors, CSS units, and escaped commas', () => {
+    expect(tokenImages('"%%" \'plain\' #f96 4px 50% red\\,blue')).toEqual([
+      ['PLAIN_STRING', '"%%"'],
+      ['PLAIN_STRING', "'plain'"],
+      ['HASH_COLOR', '#f96'],
+      ['NUMBER', '4px'],
+      ['NUMBER', '50'],
+      ['PERCENT', '%'],
+      ['IDENTIFIER', 'red'],
+      ['CSS_ESCAPED_COMMA', '\\,'],
+      ['IDENTIFIER', 'blue'],
     ]);
   });
 });
