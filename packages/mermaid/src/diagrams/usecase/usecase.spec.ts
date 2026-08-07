@@ -69,7 +69,7 @@ vi.mock('d3', () => {
 
 addDiagrams();
 
-describe('UseCase diagram with ANTLR parser', () => {
+describe('UseCase diagram with Chevrotain parser', () => {
   beforeEach(() => {
     db.clear();
   });
