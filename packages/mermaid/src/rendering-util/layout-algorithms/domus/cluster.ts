@@ -213,13 +213,6 @@ function overlapsRects(
   return overlapX > 0 && overlapY > 0;
 }
 
-function isPointInsideRect(
-  p: { x: number; y: number },
-  r: ReturnType<typeof rectForNode>
-): boolean {
-  return p.x > r.left && p.x < r.right && p.y > r.top && p.y < r.bottom;
-}
-
 function belongsToGroup(node: Node, groupId: string, nodesById: Map<string, Node>): boolean {
   let cur: Node | undefined = node;
   const seen = new Set<string>();
@@ -343,8 +336,16 @@ function checkAllChildrenInGroup(
     }
   }
 
-  // Pass 2: if a node is geometrically inside a group it doesn't belong to, push it out.
+  // Pass 2: if a node's rectangle overlaps a group frame it doesn't belong to,
+  // push it fully out of that frame. Rect-based (not centre-based): a foreign
+  // node crossing any edge — top, bottom, left, or right — reads as "inside the
+  // box" and must be separated, even when its centre is outside the frame
+  // (e.g. deploy-pipeline's "Notify Developer" crossing the frame's right edge).
+  // Displacement is the minimal penetration on the shallowest axis plus a
+  // clearance, so the node clears both this hard overlap and the soft
+  // node-too-close-to-group threshold.
   const groups = [...groupsById.values()].sort((a, b) => String(a.id).localeCompare(String(b.id)));
+  const CLEARANCE = 20;
   for (const node of nodes) {
     if (node.isGroup) {
       continue;
@@ -364,29 +365,30 @@ function checkAllChildrenInGroup(
         continue;
       }
 
-      const r = rectForNode(group);
-      if (!isPointInsideRect({ x: node.x, y: node.y }, r)) {
+      const gr = rectForNode(group);
+      const r = rectForNode(node);
+      const overlapX = Math.min(r.right, gr.right) - Math.max(r.left, gr.left);
+      const overlapY = Math.min(r.bottom, gr.bottom) - Math.max(r.top, gr.top);
+      if (overlapX <= 0 || overlapY <= 0) {
         continue;
       }
 
-      const leftDist = node.x - r.left;
-      const rightDist = r.right - node.x;
-      const topDist = node.y - r.top;
-      const bottomDist = r.bottom - node.y;
+      // Minimal displacement to move the node's rect clear of the frame on each
+      // side, plus clearance. Smallest wins; ties break left→right→up→down.
+      const pushLeft = r.right - gr.left + CLEARANCE;
+      const pushRight = gr.right - r.left + CLEARANCE;
+      const pushUp = r.bottom - gr.top + CLEARANCE;
+      const pushDown = gr.bottom - r.top + CLEARANCE;
+      const minPush = Math.min(pushLeft, pushRight, pushUp, pushDown);
 
-      const min = Math.min(leftDist, rightDist, topDist, bottomDist);
-      const nodeHalfW = (node.width ?? 40) / 2;
-      const nodeHalfH = (node.height ?? 40) / 2;
-      const offset = 60;
-
-      if (min === leftDist) {
-        node.x = r.left - nodeHalfW - offset;
-      } else if (min === rightDist) {
-        node.x = r.right + nodeHalfW + offset;
-      } else if (min === topDist) {
-        node.y = r.top - nodeHalfH - offset;
+      if (minPush === pushLeft) {
+        node.x -= pushLeft;
+      } else if (minPush === pushRight) {
+        node.x += pushRight;
+      } else if (minPush === pushUp) {
+        node.y -= pushUp;
       } else {
-        node.y = r.bottom + nodeHalfH + offset;
+        node.y += pushDown;
       }
     }
   }

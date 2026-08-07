@@ -21,11 +21,13 @@ import {
 } from '../layout-utils/validateLayout.js';
 import { domusLocalCrossingExtension } from './validation/localCrossings.js';
 import { groupTitleNodeOverlapExtension } from './validation/groupTitleNodeOverlap.js';
+import { foreignNodeGroupOverlapExtension } from './validation/foreignNodeGroupOverlap.js';
 
 /** Validation extensions applied to every DOMUS layout. */
 export const DOMUS_VALIDATION_EXTENSIONS: readonly LayoutValidationExtension[] = [
   domusLocalCrossingExtension,
   groupTitleNodeOverlapExtension,
+  foreignNodeGroupOverlapExtension,
 ];
 
 /** Core validation plus the DOMUS extensions. */
