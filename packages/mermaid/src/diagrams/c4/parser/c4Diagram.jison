@@ -85,7 +85,7 @@
 
 
 "title"\s[^\n;]+                          return 'title';
-"accDescription"\s[^#\n;]+                return 'accDescription';
+"accDescription"\s[^\n;]+                 return 'accDescription';
 accTitle\s*":"\s*                         { this.begin("acc_title");return 'acc_title'; }
 <acc_title>(?!\n|;|#)*[^\n]*              { this.popState(); return "acc_title_value"; }
 accDescr\s*":"\s*                         { this.begin("acc_descr");return 'acc_descr'; }
