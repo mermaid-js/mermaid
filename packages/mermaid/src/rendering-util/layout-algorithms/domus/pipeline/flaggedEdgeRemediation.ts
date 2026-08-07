@@ -1597,6 +1597,14 @@ export function straightenParallelZsWhenScoreImproves(layout: LayoutData): void 
       if (e.start == null || e.end == null) {
         continue;
       }
+      // Self-loops (start === end) carry a dedicated U-turn route on a single
+      // node side. The parallel-Z straighten below would read the two same-side
+      // endpoints as a Z between two nodes and slide both ports onto a shared
+      // rail — collapsing the loop to a zero-length segment. Skip them, matching
+      // the self-loop guards in portSideReselect / directionConstraints.
+      if (String(e.start) === String(e.end)) {
+        continue;
+      }
       const nS = nodeById.get(String(e.start));
       const nE = nodeById.get(String(e.end));
       if (!nS || !nE) {
