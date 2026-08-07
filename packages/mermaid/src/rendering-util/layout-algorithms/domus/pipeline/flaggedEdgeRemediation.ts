@@ -510,15 +510,14 @@ function sidePreference(rS: Rect, rE: Rect): [Side, Side][] {
   ];
 }
 
-function sideRouteCandidates(
+function* sideRouteCandidates(
   rS: Rect,
   rE: Rect,
   nodeById: Map<string, Node>,
   startId: string,
   endId: string,
   avoid?: { segments: Point[][]; costPerCrossing: number }
-): Point[][] {
-  const out: Point[][] = [];
+): Generator<Point[], void, void> {
   const seen = new Set<string>();
 
   // The router must not treat the endpoints' OWN group frames as obstacles —
@@ -599,12 +598,11 @@ function sideRouteCandidates(
             continue;
           }
           seen.add(key);
-          out.push(route);
+          yield route;
         }
       }
     }
   }
-  return out;
 }
 
 function labelAnchors(pts: Point[]): Point[] {
@@ -689,6 +687,8 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
       const parallel = types.has('edge-parallel-segment-too-close');
 
       const candidates = [...routeCandidates(ps, pe, rS, rE, parallel)];
+      let deferredSideCandidates: Iterable<Point[]> = [];
+      let deferredRailCandidates: Iterable<Point[]> = [];
       if (rE && types.has('edge-endpoint-detached-from-node')) {
         candidates.unshift(...reattachEndCandidates(pts, rE));
       }
@@ -740,10 +740,16 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
             }
           }
         }
-        candidates.push(...sideRouteCandidates(rS, rE, nodeById, String(e.start), String(e.end)));
+        deferredSideCandidates = sideRouteCandidates(
+          rS,
+          rE,
+          nodeById,
+          String(e.start),
+          String(e.end)
+        );
       }
       if (parallel) {
-        candidates.push(...railShiftCandidates(pts));
+        deferredRailCandidates = railShiftCandidates(pts);
       }
 
       const curKeys = new Set((current.issues as Issue[]).map(issueKey));
@@ -756,44 +762,51 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
         types.has('edge-port-direction-mismatch') ||
         types.has('edge-non-orthogonal') ||
         types.has('edge-endpoint-detached-from-node');
-      for (const candidate of candidates) {
-        if (!hardReroute && candidate.length >= old!.length + 2) {
-          continue; // don't trade a defect for a much longer route
-        }
-        if (hardReroute && candidate.length > old!.length + 5) {
-          continue;
-        }
-        if (
-          e?.start != null &&
-          e?.end != null &&
-          candidateCutsLeafInterior(candidate, nodeById, String(e.start), String(e.end))
-        ) {
-          continue;
-        }
-        e!.points = candidate;
-        const anchors = hasLabel ? labelAnchors(candidate) : [{ x: oldX ?? 0, y: oldY ?? 0 }];
-        let accepted = false;
-        for (const anchor of anchors) {
-          if (hasLabel) {
-            e!.x = anchor.x;
-            e!.y = anchor.y;
+      const candidateSources: Iterable<Point[]>[] = [
+        candidates,
+        deferredSideCandidates,
+        deferredRailCandidates,
+      ];
+      candidateSearch: for (const source of candidateSources) {
+        for (const candidate of source) {
+          if (!hardReroute && candidate.length >= old!.length + 2) {
+            continue; // don't trade a defect for a much longer route
           }
-          const next = validateLayout(layout);
-          const fewer = next.issues.length < current.issues.length;
-          const noNew = (next.issues as Issue[]).every((iss) => curKeys.has(issueKey(iss)));
-          if (fewer && noNew) {
-            current = next;
-            improvedThisRound = true;
-            accepted = true;
-            break;
+          if (hardReroute && candidate.length > old!.length + 5) {
+            continue;
           }
+          if (
+            e?.start != null &&
+            e?.end != null &&
+            candidateCutsLeafInterior(candidate, nodeById, String(e.start), String(e.end))
+          ) {
+            continue;
+          }
+          e!.points = candidate;
+          const anchors = hasLabel ? labelAnchors(candidate) : [{ x: oldX ?? 0, y: oldY ?? 0 }];
+          let accepted = false;
+          for (const anchor of anchors) {
+            if (hasLabel) {
+              e!.x = anchor.x;
+              e!.y = anchor.y;
+            }
+            const next = validateLayout(layout);
+            const fewer = next.issues.length < current.issues.length;
+            const noNew = (next.issues as Issue[]).every((iss) => curKeys.has(issueKey(iss)));
+            if (fewer && noNew) {
+              current = next;
+              improvedThisRound = true;
+              accepted = true;
+              break;
+            }
+          }
+          if (accepted) {
+            break candidateSearch;
+          }
+          e!.points = old;
+          e!.x = oldX;
+          e!.y = oldY;
         }
-        if (accepted) {
-          break;
-        }
-        e!.points = old;
-        e!.x = oldX;
-        e!.y = oldY;
       }
     }
     if (!improvedThisRound) {

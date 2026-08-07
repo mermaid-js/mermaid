@@ -783,6 +783,32 @@ export function buildRoutingGraphFromChannels(
 
   return { nodes, adj, startIdx, endIdx };
 }
+
+function segmentsCrossStrict(a1: Point, a2: Point, b1: Point, b2: Point): boolean {
+  const aHorizontal = a1.y === a2.y;
+  const bHorizontal = b1.y === b2.y;
+  if (aHorizontal && b1.x === b2.x) {
+    return (
+      Math.min(a1.x, a2.x) < b1.x &&
+      b1.x < Math.max(a1.x, a2.x) &&
+      Math.min(b1.y, b2.y) < a1.y &&
+      a1.y < Math.max(b1.y, b2.y)
+    );
+  }
+  if (a1.x === a2.x && bHorizontal) {
+    return (
+      Math.min(b1.x, b2.x) < a1.x &&
+      a1.x < Math.max(b1.x, b2.x) &&
+      Math.min(a1.y, a2.y) < b1.y &&
+      b1.y < Math.max(a1.y, a2.y)
+    );
+  }
+  const d1 = (b2.x - b1.x) * (a1.y - b1.y) - (b2.y - b1.y) * (a1.x - b1.x);
+  const d2 = (b2.x - b1.x) * (a2.y - b1.y) - (b2.y - b1.y) * (a2.x - b1.x);
+  const d3 = (a2.x - a1.x) * (b1.y - a1.y) - (a2.y - a1.y) * (b1.x - a1.x);
+  const d4 = (a2.x - a1.x) * (b2.y - a1.y) - (a2.y - a1.y) * (b2.x - a1.x);
+  return ((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0));
+}
 // ============================================================================
 // Shortest Path Search
 // ============================================================================
@@ -847,35 +873,55 @@ export function findShortestOrthogonalPathOnGraph(
   distBends[g.startIdx * 3] = 0;
   heap.push(startState);
 
-  // Soft crossing-avoidance cost per graph edge (cached per node pair).
+  // Build immutable segment buckets once per search. Routing-graph edges are
+  // orthogonal, so only perpendicular and non-orthogonal avoid segments can
+  // cross them. This removes the parallel half of the hot inner-loop scan.
   const avoid = options.avoid;
+  const horizontalAvoidSegments: Point[] = [];
+  const verticalAvoidSegments: Point[] = [];
+  const otherAvoidSegments: Point[] = [];
+  if (avoid) {
+    for (const poly of avoid.segments) {
+      for (let i = 0; i < poly.length - 1; i++) {
+        const a = poly[i];
+        const b = poly[i + 1];
+        const bucket =
+          a.y === b.y
+            ? horizontalAvoidSegments
+            : a.x === b.x
+              ? verticalAvoidSegments
+              : otherAvoidSegments;
+        bucket.push(a, b);
+      }
+    }
+  }
+
+  // Crossing cost is symmetric, so cache both traversal directions under the
+  // same canonical node-pair key.
   const penaltyCache = new Map<number, number>();
-  const segsCrossStrict = (a1: Point, a2: Point, b1: Point, b2: Point): boolean => {
-    const d = (p: Point, q: Point, r: Point) =>
-      (q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x);
-    const d1 = d(b1, b2, a1);
-    const d2 = d(b1, b2, a2);
-    const d3 = d(a1, a2, b1);
-    const d4 = d(a1, a2, b2);
-    return ((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0));
-  };
   const crossPenalty = (fromIdx: number, toIdx: number): number => {
-    if (!avoid || avoid.segments.length === 0) {
+    if (!avoid) {
       return 0;
     }
-    const key = fromIdx * N + toIdx;
+    const lo = Math.min(fromIdx, toIdx);
+    const hi = Math.max(fromIdx, toIdx);
+    const key = lo * N + hi;
     const cached = penaltyCache.get(key);
     if (cached !== undefined) {
       return cached;
     }
-    const a1 = { x: g.nodes[fromIdx].x, y: g.nodes[fromIdx].y };
-    const a2 = { x: g.nodes[toIdx].x, y: g.nodes[toIdx].y };
+    const a1 = g.nodes[fromIdx];
+    const a2 = g.nodes[toIdx];
+    const perpendicularSegments = a1.y === a2.y ? verticalAvoidSegments : horizontalAvoidSegments;
     let crossings = 0;
-    for (const poly of avoid.segments) {
-      for (let i = 0; i < poly.length - 1; i++) {
-        if (segsCrossStrict(a1, a2, poly[i], poly[i + 1])) {
-          crossings++;
-        }
+    for (let i = 0; i < perpendicularSegments.length; i += 2) {
+      if (segmentsCrossStrict(a1, a2, perpendicularSegments[i], perpendicularSegments[i + 1])) {
+        crossings++;
+      }
+    }
+    for (let i = 0; i < otherAvoidSegments.length; i += 2) {
+      if (segmentsCrossStrict(a1, a2, otherAvoidSegments[i], otherAvoidSegments[i + 1])) {
+        crossings++;
       }
     }
     const penalty = crossings * avoid.costPerCrossing;
