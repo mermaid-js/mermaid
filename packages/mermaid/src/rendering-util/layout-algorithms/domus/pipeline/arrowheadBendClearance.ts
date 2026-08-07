@@ -16,7 +16,7 @@
  * interior vertex we may move (a 3-point L's far end is the fixed target port).
  */
 import type { LayoutData } from '../../../types.js';
-import { validateLayout } from '../../layout-utils/validateLayout.js';
+import { validateLayout } from '../validateLayoutProxy.js';
 
 interface Point {
   x: number;

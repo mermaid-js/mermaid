@@ -16,7 +16,7 @@ import { snapPortsToCenterWhenPaintDiagonal } from './pipeline/snapPortToCenter.
 import { rebuildPathologicalLabelEdges } from './pipeline/labelDetourRebuild.js';
 import { repairShortEndpointStubs } from './pipeline/endpointStubRepair.js';
 import { nudgeSegmentsOffGroupBordersWhenScoreImproves } from './pipeline/groupBorderHugNudge.js';
-import { validateLayout } from '../layout-utils/validateLayout.js';
+import { validateLayout } from './validateLayoutProxy.js';
 
 /** Arc-length midpoint of an orthogonal polyline (the point halfway along its
  * total length). Returns null for a polyline with fewer than 2 finite points. */

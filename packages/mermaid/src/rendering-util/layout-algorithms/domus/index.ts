@@ -27,7 +27,7 @@ import {
 import { spaceNodesOffGroupFramesWhenScoreImproves } from './pipeline/nodeGroupSpacing.js';
 import { alignStraightLeafEdgesWhenValid } from './pipeline/straightLeafAlignment.js';
 import { isEdgeLabelNodeId } from './core/labels.js';
-import { validateLayout } from '../layout-utils/validateLayout.js';
+import { validateLayout } from './validateLayoutProxy.js';
 import { reduceCrossingsWithPortSideCandidatesWhenScoreImproves } from './pipeline/crossingPortRepair.js';
 import {
   COMPOUND_GROUP_PAD,

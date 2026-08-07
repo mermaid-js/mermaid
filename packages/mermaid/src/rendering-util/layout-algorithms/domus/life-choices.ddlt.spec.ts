@@ -14,7 +14,7 @@ import { Diagram } from '../../../Diagram.js';
 import { addDiagrams } from '../../../diagram-api/diagram-orchestration.js';
 import { preprocessDiagram } from '../../../preprocess.js';
 import { runOrthogonalEdgePipeline } from './pipeline.js';
-import { validateLayout } from '../layout-utils/validateLayout.js';
+import { validateLayout } from './validateLayoutProxy.js';
 import { finalizeDummyLabelNodesToOverlayLabels } from './finalizeOverlayLabels.js';
 import { partitionDomusValidationIssues } from './pipeline/domusBackend.js';
 import { setLogLevel } from '../../../logger.js';

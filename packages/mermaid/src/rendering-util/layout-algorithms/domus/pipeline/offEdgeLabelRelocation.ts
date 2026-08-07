@@ -15,7 +15,7 @@
  * off-edge flag without parking the label on a node or another edge.
  */
 import type { LayoutData } from '../../../types.js';
-import { validateLayout } from '../../layout-utils/validateLayout.js';
+import { validateLayout } from '../validateLayoutProxy.js';
 
 interface Point {
   x: number;

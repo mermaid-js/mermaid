@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import type { LayoutData, Node } from '../../types.js';
 import { nudgeEdgeLabelNodesToAvoidOverlaps } from './labelNudging.js';
-import { validateLayout } from '../layout-utils/validateLayout.js';
+import { validateLayout } from './validateLayoutProxy.js';
 
 function mkNode(
   id: string,

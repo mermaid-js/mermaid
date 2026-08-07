@@ -20,7 +20,7 @@
  */
 import type { LayoutData } from '../../../types.js';
 import { approxEqual, rectForNode, segmentIntersectsRectInterior } from '../core/helpers.js';
-import { validateLayout } from '../../layout-utils/validateLayout.js';
+import { validateLayout } from '../validateLayoutProxy.js';
 
 interface Point {
   x: number;

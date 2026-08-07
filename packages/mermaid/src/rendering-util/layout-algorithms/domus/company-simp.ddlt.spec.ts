@@ -20,7 +20,7 @@ import { Diagram } from '../../../Diagram.js';
 import { addDiagrams } from '../../../diagram-api/diagram-orchestration.js';
 import { preprocessDiagram } from '../../../preprocess.js';
 import { runOrthogonalEdgePipeline, type OrthogonalTrace } from './pipeline.js';
-import { validateLayout } from '../layout-utils/validateLayout.js';
+import { validateLayout } from './validateLayoutProxy.js';
 import { countFallbacks } from './pipeline/countFallbacks.js';
 import { finalizeDummyLabelNodesToOverlayLabels } from './finalizeOverlayLabels.js';
 import { setLogLevel } from '../../../logger.js';

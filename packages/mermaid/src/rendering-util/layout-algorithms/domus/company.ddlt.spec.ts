@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import type { Edge, LayoutData, Node } from '../../types.js';
 import { loadDdltFixture } from '../ddlt/index.js';
 import { segmentIntersectsRectInterior } from '../layout-utils/helpers.js';
-import { validateLayout } from '../layout-utils/validateLayout.js';
+import { validateLayout } from './validateLayoutProxy.js';
 import { rectForNode } from './core/helpers.js';
 
 function nodeById(layout: LayoutData, id: string): Node {

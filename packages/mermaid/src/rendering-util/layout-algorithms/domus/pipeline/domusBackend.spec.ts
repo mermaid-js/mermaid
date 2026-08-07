@@ -14,7 +14,7 @@
  * invariant).
  */
 import { describe, it, expect } from 'vitest';
-import type { Issue } from '../../layout-utils/validateLayout.js';
+import type { Issue } from '../validateLayoutProxy.js';
 import type { LayoutData } from '../../../types.js';
 import { partitionDomusValidationIssues } from './domusBackend.js';
 

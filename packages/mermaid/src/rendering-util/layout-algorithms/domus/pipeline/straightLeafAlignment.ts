@@ -1,5 +1,5 @@
 import type { Edge, LayoutData, Node } from '../../../types.js';
-import { validateLayout, type ValidateLayoutResult } from '../../layout-utils/validateLayout.js';
+import { validateLayout, type ValidateLayoutResult } from '../validateLayoutProxy.js';
 import { approxEqual, rectForNode } from '../core/helpers.js';
 import type { Point } from '../types.js';
 

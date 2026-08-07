@@ -17,7 +17,7 @@
  */
 import type { LayoutData, Node } from '../../../types.js';
 import { rectForNode } from '../core/helpers.js';
-import { validateLayout } from '../../layout-utils/validateLayout.js';
+import { validateLayout } from '../validateLayoutProxy.js';
 
 interface Point {
   x: number;

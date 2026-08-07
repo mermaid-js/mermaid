@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import type { LayoutData, Node } from '../../types.js';
-import { validateLayout } from '../layout-utils/validateLayout.js';
+import { validateLayout } from './validateLayoutProxy.js';
 import {
   nudgeLeafNodesAwayFromNonAncestorGroups,
   nudgeOverlappingLeafNodes,

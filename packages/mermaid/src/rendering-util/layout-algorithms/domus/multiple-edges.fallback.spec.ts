@@ -25,7 +25,7 @@ import {
   parseApplySizesAndLayout,
   type LayoutTestFixture,
 } from '../ddlt/index.js';
-import { validateLayout } from '../layout-utils/validateLayout.js';
+import { validateLayout } from './validateLayoutProxy.js';
 import { setLogLevel, log } from '../../../logger.js';
 
 describe('Cyclic-path placement-failure fallback (multiple-edges)', () => {

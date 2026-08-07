@@ -27,7 +27,7 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import type { LayoutData, Node, Edge } from '../../types.js';
 import { layoutOrthogonalNodes, runOrthogonalEdgePipeline } from './pipeline.js';
-import { validateLayout } from '../layout-utils/validateLayout.js';
+import { validateLayout } from './validateLayoutProxy.js';
 import { setLogLevel } from '../../../logger.js';
 
 function buildClusterFixture(): LayoutData {

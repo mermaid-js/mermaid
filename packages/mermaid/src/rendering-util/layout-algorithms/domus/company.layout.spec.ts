@@ -17,7 +17,7 @@ import { FlowDB } from '../../../diagrams/flowchart/flowDb.js';
 import flow from '../../../diagrams/flowchart/parser/flowParser.js';
 import { renderPreAdjustLayout, render, measure, layout as layoutStage } from './index.js';
 import { setLogLevel } from '../../../logger.js';
-import { validateLayout } from '../layout-utils/validateLayout.js';
+import { validateLayout } from './validateLayoutProxy.js';
 import { bendCount, rectForNode } from './core/helpers.js';
 
 function ids(nodes: Node[] | undefined): Set<string> {

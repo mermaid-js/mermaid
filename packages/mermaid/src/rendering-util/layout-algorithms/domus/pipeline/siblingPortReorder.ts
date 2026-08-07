@@ -19,7 +19,7 @@
  */
 import type { LayoutData, Node } from '../../../types.js';
 import { rectForNode } from '../core/helpers.js';
-import { validateLayout } from '../../layout-utils/validateLayout.js';
+import { validateLayout } from '../validateLayoutProxy.js';
 import { findRoutingGraphPathBetweenPorts } from '../core/routing.js';
 
 interface Point {

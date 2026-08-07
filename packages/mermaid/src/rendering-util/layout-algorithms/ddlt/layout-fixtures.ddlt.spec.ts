@@ -9,6 +9,19 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import { addDiagrams } from '../../../diagram-api/diagram-orchestration.js';
 import { log, setLogLevel } from '../../../logger.js';
 import { validateLayout, type ValidateLayoutResult } from '../layout-utils/validateLayout.js';
+import { DOMUS_VALIDATION_EXTENSIONS } from '../domus/validateLayoutProxy.js';
+
+/**
+ * Validate a fixture the same way its own engine does. DOMUS attaches
+ * algorithm-specific extensions at `domus/validateLayoutProxy.ts`; if the sweep
+ * scored with core rules while the engine optimised against extended ones, the
+ * test and the pipeline would be measuring different things.
+ */
+function validateForBackend(layout: Parameters<typeof validateLayout>[0], backendId: string) {
+  return backendId === 'domus-orthogonal'
+    ? validateLayout(layout, { extensions: DOMUS_VALIDATION_EXTENSIONS })
+    : validateLayout(layout);
+}
 import {
   backendsForProfile,
   combineValidateLayoutResults,
@@ -46,7 +59,7 @@ describe('DDLT layout-tests fixture sweep', () => {
     for (const backendId of backendIds) {
       it(`${fx.id} — ${backendId}`, { timeout: 120_000 }, async () => {
         const layout = await parseApplySizesAndLayout(fx.mmdPath, fx.sizes, backendId);
-        const result = validateLayout(layout);
+        const result = validateForBackend(layout, backendId);
         if (fx.allowLevel1Failure) {
           // Documented in ddlt-manifest.json (e.g. strict Level 1 still tracked in a dedicated spec).
           expect(layout.nodes.length).toBeGreaterThan(0);
@@ -70,7 +83,7 @@ describe('DDLT layout-tests fixture sweep', () => {
         let result: ValidateLayoutResult;
         try {
           const layout = await parseApplySizesAndLayout(fx.mmdPath, fx.sizes, backendId);
-          result = validateLayout(layout);
+          result = validateForBackend(layout, backendId);
         } catch (err) {
           // Surface backend errors as a synthetic "invalid" entry instead of
           // aborting the sweep — the per-fixture `it()` above already asserts

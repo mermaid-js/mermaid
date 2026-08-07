@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { applyDomusPortDistribution, createPortTAllocator } from './portDistribution.js';
 import { applyPortDirectionStubs } from './portStubs.js';
-import { validateLayout } from '../../layout-utils/validateLayout.js';
+import { validateLayout } from '../validateLayoutProxy.js';
 import type { LayoutData, Node } from '../../../types.js';
 
 describe('domus/pipeline/portDistribution - ', () => {

@@ -3,7 +3,7 @@ import { log } from '../../../../logger.js';
 import { ORTHO_DEBUG } from '../debug.js';
 import type { OrthogonalOptions, Point } from '../types.js';
 import { validateLayout } from '../validateLayoutProxy.js';
-import type { Issue } from '../../layout-utils/validateLayout.js';
+import type { Issue } from '../validateLayoutProxy.js';
 import { runDomusRouting } from '../domus/index.js';
 import { layoutDataToDomusInput } from '../domus/conversion.js';
 import { nudgeLeafNodesForMinimumSpacing } from '../minSpacingNudging.js';

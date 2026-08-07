@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { addDiagrams } from '../../../diagram-api/diagram-orchestration.js';
 import { setLogLevel } from '../../../logger.js';
 import { discoverLayoutTestFixtures, parseApplySizesAndLayout } from '../ddlt/index.js';
-import { validateLayout } from '../layout-utils/validateLayout.js';
+import { validateLayout } from './validateLayoutProxy.js';
 
 describe('Domus DDLT — project-sox2 labelled dogleg cleanup', () => {
   beforeAll(() => {

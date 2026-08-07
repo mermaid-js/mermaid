@@ -1,7 +1,7 @@
 import type { Edge, LayoutData, Node } from '../../../types.js';
 import { rectForNode } from '../core/helpers.js';
 import type { Point, Rect } from '../types.js';
-import { validateLayout, type ValidateLayoutResult } from '../../layout-utils/validateLayout.js';
+import { validateLayout, type ValidateLayoutResult } from '../validateLayoutProxy.js';
 import { sanitizeOrthogonalPolylineForRendering } from './sanitize.js';
 
 const EPS = 1e-6;

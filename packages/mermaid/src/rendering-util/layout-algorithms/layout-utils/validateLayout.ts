@@ -162,6 +162,42 @@ export interface Issue {
   details?: Record<string, unknown>;
 }
 
+/**
+ * An algorithm-specific addition to layout validation.
+ *
+ * `validateLayout` itself stays algorithm-agnostic: every layout engine shares
+ * the same core checks and the same 0–1000 scale, so a change made for one
+ * engine cannot silently move another's scores. Anything that only makes sense
+ * for a particular engine belongs in an extension, wired up at that engine's
+ * own entry point (see `domus/validateLayoutProxy.ts`).
+ *
+ * Both hooks receive the finished core result, so an extension can react to
+ * what the core already found rather than recomputing geometry.
+ */
+export interface LayoutValidationExtension {
+  /** Stable identifier; keys this extension's entry in `breakdown.extensions`. */
+  readonly id: string;
+  /**
+   * Extra HARD constraints. Any issue returned here is appended to `issues` and
+   * makes the layout invalid, which zeroes the score — same rule as the core.
+   */
+  check?(layout: LayoutData, core: Readonly<ValidateLayoutResult>): Issue[];
+  /**
+   * Extra GRADED penalty, subtracted from the core score and clamped at 0.
+   * Never invalidates a layout. `detail` is echoed into
+   * `breakdown.extensions[id]` for debugging and for sweep reporting.
+   */
+  penalise?(
+    layout: LayoutData,
+    core: Readonly<ValidateLayoutResult>
+  ): { points: number; detail?: Record<string, unknown> };
+}
+
+export interface ValidateLayoutOptions {
+  /** Applied in order, after the core checks. Omitted = core behaviour exactly. */
+  readonly extensions?: readonly LayoutValidationExtension[];
+}
+
 export interface ValidateLayoutResult {
   ok: boolean;
   issues: Issue[];
@@ -203,6 +239,11 @@ export interface ValidateLayoutResult {
     edges: { id: string; points: number; bendPenalty: number; crossings: number }[];
     /** Histogram of polyline point counts: keys '2','3','4','5','6','7+'. */
     pointsHistogram: Record<'2' | '3' | '4' | '5' | '6' | '7+', number>;
+    /**
+     * Per-extension detail, keyed by extension id. Absent when no extension
+     * ran, so core-only callers see the same shape they always did.
+     */
+    extensions?: Record<string, { points: number; detail?: Record<string, unknown> }>;
   };
 }
 
@@ -653,7 +694,10 @@ function nearEndpointBandDistance(seg: Segment, side: PortSide, rect: Rect): num
  *
  * Also computes scoring based on bends and crossings.
  */
-export function validateLayout(layout: LayoutData): ValidateLayoutResult {
+export function validateLayout(
+  layout: LayoutData,
+  options: ValidateLayoutOptions = {}
+): ValidateLayoutResult {
   const issues: Issue[] = [];
   const nodes = layout.nodes ?? [];
   const edges = layout.edges ?? [];
@@ -1846,5 +1890,54 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
     issuesJson: JSON.stringify(issues.slice(0, 50)),
   });
 
-  return { ok, issues, score, breakdown };
+  const coreResult: ValidateLayoutResult = { ok, issues, score, breakdown };
+  const extensions = options.extensions;
+  if (!extensions || extensions.length === 0) {
+    return coreResult;
+  }
+  return applyValidationExtensions(layout, coreResult, extensions);
+}
+
+/**
+ * Fold algorithm-specific extensions into a finished core result.
+ *
+ * Ordering is deliberate: every `check` runs before any `penalise`, so an
+ * extension penalty can never rescue a layout that another extension has
+ * already invalidated, and the outcome does not depend on extension order.
+ */
+function applyValidationExtensions(
+  layout: LayoutData,
+  core: ValidateLayoutResult,
+  extensions: readonly LayoutValidationExtension[]
+): ValidateLayoutResult {
+  const issues = [...core.issues];
+  for (const ext of extensions) {
+    const extra = ext.check?.(layout, core);
+    if (extra?.length) {
+      issues.push(...extra);
+    }
+  }
+
+  const detail: Record<string, { points: number; detail?: Record<string, unknown> }> = {};
+  let penalty = 0;
+  for (const ext of extensions) {
+    const result = ext.penalise?.(layout, core);
+    if (!result) {
+      continue;
+    }
+    const points = Math.max(0, result.points);
+    penalty += points;
+    detail[ext.id] = { points, detail: result.detail };
+  }
+
+  const ok = issues.length === 0;
+  const score = ok ? Math.max(0, Math.min(MAX_SCORE, core.score - penalty)) : 0;
+
+  return {
+    ok,
+    issues,
+    score,
+    breakdown:
+      Object.keys(detail).length > 0 ? { ...core.breakdown, extensions: detail } : core.breakdown,
+  };
 }

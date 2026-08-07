@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { LayoutData, Node, Edge } from '../../types.js';
-import { validateLayout } from '../layout-utils/validateLayout.js';
+import { validateLayout } from './validateLayoutProxy.js';
 import { runDomusRouting } from './domus/runner.js';
 import { setLogLevel, log } from '../../../logger.js';
 import { ORTHO_DEBUG } from './debug.js';
