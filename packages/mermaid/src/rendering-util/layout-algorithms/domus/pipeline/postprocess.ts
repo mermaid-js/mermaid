@@ -54,10 +54,16 @@ export function applyPostRoutingPasses(args: {
   // Re-sanitize after nudging: the nudger can move only a subset of points (segment endpoints),
   // which can temporarily introduce diagonal segments if upstream polylines are not in the
   // expected canonical form. The renderer/validator require strict orthogonality.
+  //
+  // Compound routes are sanitized too. They used to be skipped here, on the same
+  // "semantic boundary waypoints" reasoning that makes the spacing/ordering stages
+  // skip them — but those stages MOVE points, whereas this one only straightens
+  // what is already there. Skipping it meant compound routes were the one class
+  // nothing ever squared up: on architecture.mmd every single one of the eight
+  // `edge-non-orthogonal` violations was a compound edge, each hard-invalid, each
+  // then repaired far more expensively downstream. Sanitizing them costs nothing
+  // and is strictly better on every axis measured.
   for (const e of data.edges ?? []) {
-    if ((e as any).__orthoCompound) {
-      continue;
-    }
     if (!e?.points || e.points.length < 2) {
       continue;
     }
