@@ -56,7 +56,7 @@ const SRC = {
           incremental: true,
           lib: ['dom', 'es2020'],
           module: 'esnext',
-          moduleResolution: 'node',
+          moduleResolution: 'bundler',
           noEmitOnError: true,
           noImplicitAny: true,
           noUnusedLocals: true,
