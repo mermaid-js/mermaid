@@ -275,7 +275,6 @@ Communication tools and platforms
 - [MarkChart: Preview Mermaid diagrams on macOS](https://markchart.app/)
 - [mermaid-isomorphic](https://github.com/remcohaszing/mermaid-isomorphic)
 - [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
-- [Mermaid Theme Builder: Visual governance workbench for Mermaid — brand palette enforcement, renderer-aware export, and SKILL.md agent skill for Claude Code, Cursor, and GitHub Copilot](https://github.com/OKHP3/mermaid-theme-builder)
 - [NiceGUI: Let any browser be the frontend of your Python code](https://nicegui.io) ✅
   - [ui.mermaid(...)](https://nicegui.io/documentation/mermaid)
 - [Reveal.js](https://github.com/hakimel/reveal.js)
