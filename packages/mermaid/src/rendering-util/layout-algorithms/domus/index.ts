@@ -20,15 +20,11 @@ import { repairPortDirectionMismatchWhenScoreImproves } from './pipeline/portDir
 import { relocateOffEdgeLabelsWhenScoreImproves } from './pipeline/offEdgeLabelRelocation.js';
 import {
   remediateFlaggedEdgesWhenMonotone,
-  reorderPortFansWhenScoreImproves,
-  rerouteTopCrossersWhenScoreImproves,
   simplifyPathologicalRoutesWhenMonotone,
   straightenParallelZsWhenScoreImproves,
   swingReroutesWhenScoreImproves,
-  untangleSharedTerminalPairsWhenScoreImproves,
 } from './pipeline/flaggedEdgeRemediation.js';
 import { spaceNodesOffGroupFramesWhenScoreImproves } from './pipeline/nodeGroupSpacing.js';
-import { reorderSiblingPortsToUncrossWhenScoreImproves } from './pipeline/siblingPortReorder.js';
 import { alignStraightLeafEdgesWhenValid } from './pipeline/straightLeafAlignment.js';
 import { isEdgeLabelNodeId } from './core/labels.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
@@ -494,16 +490,26 @@ export function runLateQualityPasses(
   // polyline at a clear anchor. Score-gated; runs last so the route is settled.
   relocateOffEdgeLabelsWhenScoreImproves(data4Layout);
 
-  // Reduce edge-edge crossings on the fully settled, valid routes via rail
-  // shifts / endpoint detours. Score-gated; previously only ran on the
-  // layered-fallback candidate, so the main path never de-crossed (e.g. Company
-  // kept all 5 crossings). Runs last so it sees the final geometry.
-  reduceCrossingsWithPortSideCandidatesWhenScoreImproves(data4Layout, { spacing: 10 });
-
-  // Reorder a node side's ports when two of its own edges still cross because
-  // their ports are ordered opposite to their far endpoints; a directed router
-  // re-routes them honouring each port's side. Score-gated.
-  reorderSiblingPortsToUncrossWhenScoreImproves(data4Layout);
+  // ── Crossing reduction is intentionally NOT performed here ────────────────
+  //
+  // DOMUS implements "A Walk on the Wild Side: A Shape-First Methodology for
+  // Orthogonal Drawings" (LIPIcs.GD.2025.35), which trades crossings away for
+  // bends on purpose: "orthogonal crossings are known to have a limited impact
+  // on readability, suggesting that crossing minimization may not always be the
+  // optimal goal." The paper reports being sharply outperformed on crossings by
+  // TSM implementations and treats bounding them as an open problem.
+  //
+  // The passes that used to run here (reduceCrossingsWithPortSideCandidates,
+  // reorderSiblingPortsToUncross, rerouteTopCrossers, reorderPortFans,
+  // untangleSharedTerminalPairs) bought back that traded-away metric by
+  // re-routing individual edges and re-scoring the whole layout per candidate.
+  // Measured over the DDLT sweep they cost 55% of total layout time and were
+  // worth 81 points of 18807 (0.4%), with 14 of 19 fixtures completely
+  // unaffected and none becoming invalid. They are still exported and tested;
+  // only the wiring is gone.
+  //
+  // Validity and bend repair below are unaffected and still run.
+  // ──────────────────────────────────────────────────────────────────────────
 
   // Center degree-1 leaves on clean straight settled edges. This is intentionally
   // final and validator-gated: it tidies Mermaid-specific post-DOMUS drift
@@ -514,25 +520,9 @@ export function runLateQualityPasses(
   // label/crossing/port-order passes have settled geometry.
   simplifyEdgeJogsWhenScoreImproves(data4Layout);
 
-  // Spend the remaining crossing budget on the worst offenders with the full
-  // candidate library (score-gated; no-op while the score is clamped at 0).
-  rerouteTopCrossersWhenScoreImproves(data4Layout);
-
-  // Shared-node port fans whose order disagrees with their far endpoints
-  // guarantee pairwise crossings no single-edge move can fix; permute the fan
-  // and reroute it as one transaction.
-  reorderPortFansWhenScoreImproves(data4Layout);
-
-  // Fan inversions: crossing pairs sharing a terminal node are untangled by
-  // exchanging their terminal rails (bend-free track swap — the literature's
-  // prescribed mechanism; detour-based avoidance is known-ineffective).
-  untangleSharedTerminalPairsWhenScoreImproves(data4Layout);
-
   // Parallel-side Z routes whose side spans overlap become 2-point straights
   // via legal port slides (+5 each, zero new bends).
   straightenParallelZsWhenScoreImproves(data4Layout);
-  untangleSharedTerminalPairsWhenScoreImproves(data4Layout);
-  rerouteTopCrossersWhenScoreImproves(data4Layout);
   // Same-side swings the crossing pass cannot reach: flatten leftover
   // staircases and escape congested corridors via free-slot ports. Skipped
   // inside the placement tournament's per-variant polish (both variants gain
