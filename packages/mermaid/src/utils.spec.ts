@@ -431,6 +431,23 @@ describe('when inserting titles', function () {
   });
 });
 
+describe('when wrapping labels', function () {
+  const wrapConfig = { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', joinWith: '<br/>' };
+
+  jsdomIt('leaves a label that already has line breaks untouched', () => {
+    expect(utils.wrapLabel('first line<br/>second line', 100, wrapConfig)).toBe(
+      'first line<br/>second line'
+    );
+  });
+
+  jsdomIt('leaves every label with line breaks untouched, not just the first one', () => {
+    utils.wrapLabel('first line<br/>second line', 100, wrapConfig);
+    expect(utils.wrapLabel('third line<br/>fourth line', 100, wrapConfig)).toBe(
+      'third line<br/>fourth line'
+    );
+  });
+});
+
 describe('when parsing font sizes', function () {
   it('parses number inputs', function () {
     expect(utils.parseFontSize(14)).toEqual([14, '14px']);

@@ -111,7 +111,9 @@ export const sanitizeTextOrArray = (
  * @returns Whether or not the text has breaks
  */
 export const hasBreaks = (text: string): boolean => {
-  return lineBreakRegex.test(text);
+  // `search` is used rather than `test` because `lineBreakRegex` is global,
+  // and `test` would carry its `lastIndex` over into the next call.
+  return text.search(lineBreakRegex) !== -1;
 };
 
 /**

@@ -1,4 +1,10 @@
-import { sanitizeText, removeScript, parseGenericTypes, countOccurrence } from './common.js';
+import {
+  sanitizeText,
+  removeScript,
+  parseGenericTypes,
+  countOccurrence,
+  hasBreaks,
+} from './common.js';
 
 describe('when securityLevel is antiscript, all script must be removed', () => {
   /**
@@ -94,6 +100,21 @@ describe('Sanitize text', () => {
     expect(result).toContain('<p>');
     expect(result).toContain('Hello');
     expect(result).toContain('world');
+  });
+});
+
+describe('hasBreaks', () => {
+  it('should detect line breaks', () => {
+    expect(hasBreaks('a<br/>b')).toBe(true);
+    expect(hasBreaks('a<br>b')).toBe(true);
+    expect(hasBreaks('a<BR />b')).toBe(true);
+    expect(hasBreaks('no breaks here')).toBe(false);
+  });
+
+  it('should give the same answer on repeated calls', () => {
+    expect(hasBreaks('a<br/>b')).toBe(true);
+    expect(hasBreaks('a<br/>b')).toBe(true);
+    expect(hasBreaks('c<br/>d')).toBe(true);
   });
 });
 
