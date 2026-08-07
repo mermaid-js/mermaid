@@ -88,6 +88,8 @@ describe('DDLT layout-tests fixture sweep', () => {
               nodeCount: 0,
               edgeCount: 0,
               crossings: 0,
+              maxCrossingsOnAnyEdge: 0,
+              crossingsHistogram: { '0': 0, '1': 0, '2': 0, '3': 0, '4+': 0 },
               totalPoints: 0,
               totalBendPenalty: 0,
               crossingPenalty: 0,
@@ -109,6 +111,12 @@ describe('DDLT layout-tests fixture sweep', () => {
       invalid: report.invalidCount,
       cases: report.byCase.length,
     });
+    for (const item of items) {
+      const b = item.result.breakdown;
+      log.debug(
+        `DDLT-XING: ${item.id} total=${b.crossings} maxPerEdge=${b.maxCrossingsOnAnyEdge} hist=${JSON.stringify(b.crossingsHistogram)}`
+      );
+    }
     for (const row of report.byCase) {
       log.debug(
         `DDLT-AGG: ${row.id} score=${row.score} valid=${row.valid} issues=${row.issueTypes.join(',') || '-'}`

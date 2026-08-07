@@ -178,14 +178,29 @@ export interface ValidateLayoutResult {
     edgeCount: number;
     /** Crossing events counted globally. */
     crossings: number;
+    /**
+     * Local crossing number: the most crossings any single edge participates
+     * in. REPORTED ONLY — no penalty is charged for it. Formally independent
+     * of `crossings`: a drawing can have a low total with one badly-crossed
+     * edge, or a high total spread thinly.
+     */
+    maxCrossingsOnAnyEdge: number;
+    /**
+     * How many edges participate in 0, 1, 2, 3 and 4+ crossings. REPORTED ONLY.
+     */
+    crossingsHistogram: Record<'0' | '1' | '2' | '3' | '4+', number>;
     /** Total points across all edges (for sanity / debugging). */
     totalPoints: number;
     /** Sum of per-edge bend penalties. */
     totalBendPenalty: number;
     /** Crossings * CROSSING_PENALTY. */
     crossingPenalty: number;
-    /** Per-edge breakdown sorted DESC by `bendPenalty` (worst offenders first). */
-    edges: { id: string; points: number; bendPenalty: number }[];
+    /**
+     * Per-edge breakdown sorted DESC by `bendPenalty` (worst offenders first).
+     * `crossings` is how many crossing events this edge participates in and is
+     * REPORTED ONLY — it carries no penalty.
+     */
+    edges: { id: string; points: number; bendPenalty: number; crossings: number }[];
     /** Histogram of polyline point counts: keys '2','3','4','5','6','7+'. */
     pointsHistogram: Record<'2' | '3' | '4' | '5' | '6' | '7+', number>;
   };
@@ -1698,18 +1713,40 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
   // ─────────────────────────────────────────────────────────────────────────────
   // 5) Crossing count for scoring
   // ─────────────────────────────────────────────────────────────────────────────
+  // `crossings` is the global event count that `crossingPenalty` charges for.
+  // `crossingsByEdge` additionally attributes each event to BOTH participating
+  // edges, which yields the local crossing number (the max over edges). These
+  // per-edge figures are REPORTED ONLY and carry no penalty — the score is
+  // unchanged by their presence. They exist because the global sum and the
+  // per-edge distribution are formally independent objectives: minimising the
+  // total does not minimise the per-edge worst case (local crossing
+  // minimisation is separately NP-hard). See `domus/todo-before.publish.md`
+  // under "Scoring / validator" before charging for them.
   let crossings = 0;
+  const crossingsByEdge = new Map<string, number>();
+  for (const em of edgeMetas) {
+    crossingsByEdge.set(em.id, 0);
+  }
+  const bumpEdgeCrossing = (id: string, by: number) => {
+    crossingsByEdge.set(id, (crossingsByEdge.get(id) ?? 0) + by);
+  };
   for (let i = 0; i < sortedEdges.length; i++) {
     for (let j = i + 1; j < sortedEdges.length; j++) {
       const e1 = sortedEdges[i];
       const e2 = sortedEdges[j];
 
+      let pairCrossings = 0;
       for (const s1 of e1.normalized.segments) {
         for (const s2 of e2.normalized.segments) {
           if (segmentsCross(s1, s2)) {
-            crossings++;
+            pairCrossings++;
           }
         }
+      }
+      if (pairCrossings > 0) {
+        crossings += pairCrossings;
+        bumpEdgeCrossing(e1.id, pairCrossings);
+        bumpEdgeCrossing(e2.id, pairCrossings);
       }
     }
   }
@@ -1721,12 +1758,30 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
     id: em.id,
     points: em.normalized.points.length,
     bendPenalty: bendPenaltyForPoints(em.normalized.points.length),
+    crossings: crossingsByEdge.get(em.id) ?? 0,
   }));
   perEdgePenalties.sort((a, b) => b.bendPenalty - a.bendPenalty);
 
   const totalBendPenalty = perEdgePenalties.reduce((acc, p) => acc + p.bendPenalty, 0);
   const crossingPenalty = crossings * CROSSING_PENALTY;
   const totalPoints = edgeMetas.reduce((acc, em) => acc + em.normalized.points.length, 0);
+
+  const perEdgeCrossingCounts = [...crossingsByEdge.values()];
+  const maxCrossingsOnAnyEdge = perEdgeCrossingCounts.reduce((m, c) => (c > m ? c : m), 0);
+  const crossingsHistogram: Record<'0' | '1' | '2' | '3' | '4+', number> = {
+    '0': 0,
+    '1': 0,
+    '2': 0,
+    '3': 0,
+    '4+': 0,
+  };
+  for (const c of perEdgeCrossingCounts) {
+    if (c >= 4) {
+      crossingsHistogram['4+']++;
+    } else {
+      crossingsHistogram[String(c) as '0' | '1' | '2' | '3']++;
+    }
+  }
 
   const pointsHistogram: Record<'2' | '3' | '4' | '5' | '6' | '7+', number> = {
     '2': 0,
@@ -1773,6 +1828,8 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
     nodeCount: leafNodeCount,
     edgeCount: validEdgeCount,
     crossings,
+    maxCrossingsOnAnyEdge,
+    crossingsHistogram,
     totalPoints,
     totalBendPenalty,
     crossingPenalty,
