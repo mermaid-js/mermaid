@@ -8,6 +8,8 @@ import {
   setAccDescription,
 } from '../common/commonDb.js';
 import type { C4Boundary, C4Rel, C4Shape } from './c4Types.js';
+import type { LayoutData } from '../../rendering-util/types.js';
+import { getData as buildLayoutData } from './c4LayoutData.js';
 
 /**
  * The parser may pass a plain string or an object with a single
@@ -724,6 +726,14 @@ export const getDirection = function () {
   return direction;
 };
 
+/** The parsed diagram as the unified rendering pipeline consumes it. */
+export const getData = function (): LayoutData {
+  return buildLayoutData(
+    { getC4ShapeArray, getBoundaries, getRels, getC4Type, getDirection },
+    getConfig()
+  );
+};
+
 export const clear = function () {
   c4ShapeArray = [];
   boundaries = [createGlobalBoundary()];
@@ -821,5 +831,6 @@ export default {
   setC4Type,
   setDirection,
   getDirection,
+  getData,
   // apply,
 };

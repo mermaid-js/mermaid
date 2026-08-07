@@ -312,17 +312,21 @@ describe('C4 characterization', () => {
       cy.get('svg').should('not.contain', 'v1.0');
     });
 
-    it('CHAR.link should accept $link on elements (not yet supported by renderer)', () => {
+    it('CHAR.link should render $link on an element as a hyperlink', () => {
       imgSnapshotTest(
         `C4Context
-        title Link attribute (not shown by current renderer)
+        title Link attribute
         Person(p, "Person", "desc", $link="https://example.com")
         System(s, "System", "desc")
         Rel(p, s, "Uses")
         `,
         {}
       );
-      cy.get('svg').find('a').should('not.exist');
+      // The unified renderer wraps a linked node in an `svg:a`; it sets only
+      // `xlink:href`, and no `target` unless one was asked for.
+      cy.get('g.nodes a')
+        .should('have.attr', 'xlink:href', 'https://example.com')
+        .should('not.have.attr', 'target');
     });
 
     it('CHAR.sprite should accept the $sprite attribute (not yet supported by renderer)', () => {
