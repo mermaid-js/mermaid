@@ -90,7 +90,7 @@ interface Tree extends WireframeComponent {
     nodes?: TreeNode[]
 }
 
-interface Section extends WireframeComponent {
+interface WireframeSection extends WireframeComponent {
     components?: Component[]
 }
 
@@ -347,7 +347,7 @@ TreeNode:
 
 /* ─── Layout Containers ───────────────────────────────────────────────────── */
 
-Section returns Section:
+Section returns WireframeSection:
     'section' label=STRING Modifiers
     (NEWLINE | components+=Component)*
     'end' EOL

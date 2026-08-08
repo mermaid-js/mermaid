@@ -55,6 +55,7 @@ required:
   - packet
   - block
   - treeView
+  - wireframe
   - look
   - eventmodeling
   - radar
@@ -331,6 +332,8 @@ properties:
     $ref: '#/$defs/EventModelingDiagramConfig'
   treeView:
     $ref: '#/$defs/TreeViewDiagramConfig'
+  wireframe:
+    $ref: '#/$defs/WireframeDiagramConfig'
   radar:
     $ref: '#/$defs/RadarDiagramConfig'
   venn:
@@ -2579,6 +2582,34 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         additionalProperties:
           type: string
         default: {}
+
+  WireframeDiagramConfig:
+    title: Wireframe Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for wireframe diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      padding:
+        description: Canvas padding around the wireframe diagram
+        type: number
+        minimum: 0
+        default: 10
+      containerPadding:
+        description: Inner padding for layout containers
+        type: number
+        minimum: 0
+        default: 15
+      defaultCanvasSize:
+        description: Default canvas size preset if not specified in header
+        type: string
+        default: desktop
+      fontFamily:
+        description: Font family to use for wireframe labels
+        type: string
+      fontSize:
+        description: Font size to use for wireframe labels
+        type: number
 
   RadarDiagramConfig:
     title: Radar Diagram Config

@@ -269,6 +269,10 @@ const config: RequiredDeep<MermaidConfig> = {
     ...defaultConfigJson.treeView,
     useWidth: undefined,
   },
+  wireframe: {
+    ...defaultConfigJson.wireframe,
+    useWidth: undefined,
+  },
   radar: {
     ...defaultConfigJson.radar,
   },

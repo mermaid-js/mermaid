@@ -240,6 +240,7 @@ export interface MermaidConfig {
   block?: BlockDiagramConfig;
   eventmodeling?: EventModelingDiagramConfig;
   treeView?: TreeViewDiagramConfig;
+  wireframe?: WireframeDiagramConfig;
   radar?: RadarDiagramConfig;
   venn?: VennDiagramConfig;
   'wardley-beta'?: WardleyDiagramConfig;
@@ -1853,6 +1854,34 @@ export interface TreeViewDiagramConfig extends BaseDiagramConfig {
   extensionIcons?: {
     [k: string]: string;
   };
+}
+/**
+ * The object containing configurations specific for wireframe diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "WireframeDiagramConfig".
+ */
+export interface WireframeDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Canvas padding around the wireframe diagram
+   */
+  padding?: number;
+  /**
+   * Inner padding for layout containers
+   */
+  containerPadding?: number;
+  /**
+   * Default canvas size preset if not specified in header
+   */
+  defaultCanvasSize?: string;
+  /**
+   * Font family to use for wireframe labels
+   */
+  fontFamily?: string;
+  /**
+   * Font size to use for wireframe labels
+   */
+  fontSize?: number;
 }
 /**
  * The object containing configurations specific for radar diagrams.
