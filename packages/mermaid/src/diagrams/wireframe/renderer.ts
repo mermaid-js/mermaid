@@ -1,22 +1,18 @@
+import type { Selection } from 'd3';
 import type { DiagramRenderer, DrawDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { WireframeDB } from './db.js';
-import { LAYOUT_METRICS } from './types.js';
-import {
-  type WireframeComponent,
-  type ActionBar,
-  isWireframeSection,
-  isFieldSet,
-  isButton,
-  isTextField,
-  isHeading,
-  isParagraph,
-} from '@mermaid-js/parser';
+import { LAYOUT_METRICS, type WireframeDiagramConfig, type WireframeRenderNode } from './types.js';
+import { computeWireframeLayout } from './layout.js';
+import { registry } from './renderers/index.js';
+import type { ActionBar } from '@mermaid-js/parser';
+
+type SVGGroupSelection = Selection<SVGGElement, unknown, null, undefined>;
 
 const renderActionBar = (
-  parentElem: any,
+  parentElem: SVGGroupSelection,
   actionBar: ActionBar,
   width: number,
   yPos: number
@@ -66,171 +62,21 @@ const renderActionBar = (
   return metrics.height;
 };
 
-const renderComponents = (
-  parentElem: any,
-  components: WireframeComponent[],
-  startX: number,
-  startY: number,
-  containerWidth: number
-): number => {
-  let currentY = startY;
-
-  for (const comp of components) {
-    const compGroup = parentElem
-      .append('g')
-      .attr('class', `wireframe-comp wireframe-${comp.$type.toLowerCase()}`);
-
-    if (isWireframeSection(comp)) {
-      const metrics = LAYOUT_METRICS.section;
-      const title = comp.label ?? '';
-      compGroup
-        .append('text')
-        .attr('x', startX)
-        .attr('y', currentY + metrics.titleOffsetY)
-        .attr('class', 'wireframe-text wireframe-container-title')
-        .text(title);
-      currentY += metrics.headerHeight;
-
-      if (comp.components && comp.components.length > 0) {
-        const childHeight = renderComponents(
-          parentElem,
-          comp.components as unknown as WireframeComponent[],
-          startX + metrics.paddingX,
-          currentY,
-          containerWidth - metrics.paddingX * 2
-        );
-        currentY += childHeight;
-      }
-    } else if (isFieldSet(comp)) {
-      const metrics = LAYOUT_METRICS.fieldset;
-      const legend = comp.label ?? '';
-      const fieldsetGroup = parentElem.append('g');
-      const contentStartY = currentY + metrics.headerPaddingY;
-      let childHeight: number = metrics.baseHeight;
-
-      if (comp.components && comp.components.length > 0) {
-        childHeight = renderComponents(
-          fieldsetGroup,
-          comp.components as unknown as WireframeComponent[],
-          startX + metrics.paddingX,
-          contentStartY,
-          containerWidth - metrics.paddingX * 2
-        );
-      }
-      const totalHeight = childHeight + metrics.baseHeight;
-      fieldsetGroup
-        .append('rect')
-        .attr('x', startX)
-        .attr('y', currentY)
-        .attr('width', containerWidth)
-        .attr('height', totalHeight)
-        .attr('class', 'wireframe-container');
-
-      if (legend) {
-        fieldsetGroup
-          .append('text')
-          .attr('x', startX + 12)
-          .attr('y', currentY + metrics.legendOffsetY)
-          .attr('class', 'wireframe-text wireframe-container-title')
-          .text(legend);
-      }
-      currentY += totalHeight + metrics.gapY;
-    } else if (isButton(comp)) {
-      const metrics = LAYOUT_METRICS.button;
-      const label = comp.label ?? 'Button';
-      const isPrimary = comp.primary ?? false;
-      const btnWidth = Math.max(metrics.minWidth, label.length * 8 + metrics.paddingX);
-
-      compGroup
-        .append('rect')
-        .attr('x', startX)
-        .attr('y', currentY)
-        .attr('width', btnWidth)
-        .attr('height', metrics.height)
-        .attr(
-          'class',
-          isPrimary ? 'wireframe-button wireframe-button-primary' : 'wireframe-button'
-        );
-
-      compGroup
-        .append('text')
-        .attr('x', startX + btnWidth / 2)
-        .attr('y', currentY + 20)
-        .attr('text-anchor', 'middle')
-        .attr('class', 'wireframe-text')
-        .style('fill', isPrimary ? '#ffffff' : '#333333')
-        .text(label);
-
-      currentY += metrics.height + metrics.gapY;
-    } else if (isTextField(comp)) {
-      const metrics = LAYOUT_METRICS.input;
-      const label = comp.label ?? comp.type ?? comp.$type;
-      const fieldWidth = Math.min(metrics.maxWidth, containerWidth);
-
-      if (label) {
-        compGroup
-          .append('text')
-          .attr('x', startX)
-          .attr('y', currentY + metrics.labelOffsetY)
-          .attr('class', 'wireframe-text')
-          .text(label);
-        currentY += 20;
-      }
-
-      compGroup
-        .append('rect')
-        .attr('x', startX)
-        .attr('y', currentY)
-        .attr('width', fieldWidth)
-        .attr('height', metrics.height)
-        .attr('class', 'wireframe-input');
-
-      currentY += metrics.height + metrics.gapY;
-    } else if (isHeading(comp)) {
-      const metrics = LAYOUT_METRICS.heading;
-      const text = comp.label ?? '';
-      compGroup
-        .append('text')
-        .attr('x', startX)
-        .attr('y', currentY + metrics.offsetY)
-        .attr('class', 'wireframe-text')
-        .style('font-size', `${metrics.fontSize}px`)
-        .style('font-weight', 'bold')
-        .text(text);
-      currentY += metrics.height;
-    } else if (isParagraph(comp)) {
-      const metrics = LAYOUT_METRICS.paragraph;
-      const text = comp.label ?? '';
-      compGroup
-        .append('text')
-        .attr('x', startX)
-        .attr('y', currentY + metrics.offsetY)
-        .attr('class', 'wireframe-text')
-        .text(text);
-      currentY += metrics.height;
-    } else {
-      const metrics = LAYOUT_METRICS.defaultComponent;
-      const label = comp.label ?? comp.$type;
-      compGroup
-        .append('rect')
-        .attr('x', startX)
-        .attr('y', currentY)
-        .attr('width', Math.min(metrics.maxWidth, containerWidth))
-        .attr('height', metrics.height)
-        .attr('class', 'wireframe-container');
-
-      compGroup
-        .append('text')
-        .attr('x', startX + metrics.textPaddingX)
-        .attr('y', currentY + metrics.textOffsetY)
-        .attr('class', 'wireframe-text')
-        .text(label);
-
-      currentY += metrics.gapY;
-    }
+const renderNodesRecursive = (
+  parentElem: SVGGroupSelection,
+  nodes: WireframeRenderNode[],
+  config: Required<WireframeDiagramConfig>
+) => {
+  for (const node of nodes) {
+    registry.render({
+      parentElem,
+      node,
+      config,
+      renderChildNodes: (childParent, children) => {
+        renderNodesRecursive(childParent, children, config);
+      },
+    });
   }
-
-  return currentY - startY;
 };
 
 const draw: DrawDefinition = (text, id, _ver, diagObj) => {
@@ -266,10 +112,14 @@ const draw: DrawDefinition = (text, id, _ver, diagObj) => {
     currentY += barHeight + LAYOUT_METRICS.actionBar.paddingY;
   }
 
-  // Render Component Hierarchy
+  // Pass 1: Compute Layout ( resolving coordinates, alignTo relative layout, container dimensions )
   if (components.length > 0) {
-    const renderedHeight = renderComponents(wireframeGroup, components, 20, currentY, width - 40);
-    currentY += renderedHeight + 20;
+    const layout = computeWireframeLayout(components, width - 40, 20, currentY);
+
+    // Pass 2: Modular SVG Render
+    renderNodesRecursive(wireframeGroup, layout.nodes, config);
+
+    currentY += layout.totalHeight + 20;
   }
 
   const totalHeight = Math.max(height, currentY);

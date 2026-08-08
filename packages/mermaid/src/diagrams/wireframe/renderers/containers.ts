@@ -1,0 +1,202 @@
+import {
+  isWireframeSection,
+  isFieldSet,
+  isTitleWindow,
+  isColumns,
+  isContentTabs,
+  isAccordion,
+  isTabBar,
+  type WireframeSection,
+  type FieldSet,
+  type TitleWindow,
+  type Columns,
+  type ContentTabs,
+  type Accordion,
+  type TabBar,
+} from '@mermaid-js/parser';
+import type { ComponentRenderer } from './types.js';
+import { drawBox, drawText } from './utils.js';
+
+export const sectionRenderer: ComponentRenderer<WireframeSection> = {
+  type: 'WireframeSection',
+  guard: isWireframeSection,
+  render: ({ parentElem, node, renderChildNodes }) => {
+    const { x, y, astNode, children } = node;
+    const title = astNode.label ?? '';
+    const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-section');
+
+    if (title) {
+      drawText(g, title, x, y + 16, 'wireframe-text wireframe-container-title');
+    }
+
+    if (children && children.length > 0) {
+      renderChildNodes(parentElem, children);
+    }
+  },
+};
+
+export const fieldSetRenderer: ComponentRenderer<FieldSet> = {
+  type: 'FieldSet',
+  guard: isFieldSet,
+  render: ({ parentElem, node, renderChildNodes }) => {
+    const { x, y, width, height, astNode, children } = node;
+    const legend = astNode.label ?? '';
+    const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-fieldset');
+
+    drawBox(g, x, y, width, height, 'wireframe-container');
+
+    if (legend) {
+      drawText(g, legend, x + 12, y + 14, 'wireframe-text wireframe-container-title');
+    }
+
+    if (children && children.length > 0) {
+      renderChildNodes(g, children);
+    }
+  },
+};
+
+export const titleWindowRenderer: ComponentRenderer<TitleWindow> = {
+  type: 'TitleWindow',
+  guard: isTitleWindow,
+  render: ({ parentElem, node, renderChildNodes }) => {
+    const { x, y, width, height, astNode, children } = node;
+    const title = astNode.label ?? 'Window';
+    const titleBarHeight = 28;
+    const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-titlewindow');
+
+    // Outer container
+    drawBox(g, x, y, width, height, 'wireframe-container');
+
+    // Title bar background
+    g.append('rect')
+      .attr('x', x)
+      .attr('y', y)
+      .attr('width', width)
+      .attr('height', titleBarHeight)
+      .attr('class', 'wireframe-title-bar');
+
+    // Window controls (close, minimize, maximize dots)
+    const dotColors = ['#ff5f56', '#ffbd2e', '#27c93f'];
+    dotColors.forEach((color, idx) => {
+      g.append('circle')
+        .attr('cx', x + 12 + idx * 14)
+        .attr('cy', y + titleBarHeight / 2)
+        .attr('r', 4.5)
+        .style('fill', color);
+    });
+
+    // Window Title
+    drawText(
+      g,
+      title,
+      x + width / 2,
+      y + titleBarHeight / 2 + 4,
+      'wireframe-text wireframe-bold',
+      'middle'
+    );
+
+    if (children && children.length > 0) {
+      renderChildNodes(g, children);
+    }
+  },
+};
+
+export const columnsRenderer: ComponentRenderer<Columns> = {
+  type: 'Columns',
+  guard: isColumns,
+  render: ({ parentElem, node, renderChildNodes }) => {
+    const { children } = node;
+    if (children && children.length > 0) {
+      renderChildNodes(parentElem, children);
+    }
+  },
+};
+
+export const contentTabsRenderer: ComponentRenderer<ContentTabs> = {
+  type: 'ContentTabs',
+  guard: isContentTabs,
+  render: ({ parentElem, node, renderChildNodes }) => {
+    const { x, y, width, height, astNode, children } = node;
+    const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-content-tabs');
+
+    const tabHeight = 30;
+    const tabs = astNode.tabs ?? [];
+    const activeIdx = astNode.activeTab ?? 0;
+
+    let tabX = x;
+    tabs.forEach((tab, idx) => {
+      const tabLabel = tab.value ?? `Tab ${idx + 1}`;
+      const tabWidth = Math.max(70, tabLabel.length * 8 + 20);
+      const isActive = idx === activeIdx;
+
+      g.append('rect')
+        .attr('x', tabX)
+        .attr('y', y)
+        .attr('width', tabWidth)
+        .attr('height', tabHeight)
+        .attr('class', isActive ? 'wireframe-tab wireframe-tab-active' : 'wireframe-tab');
+
+      drawText(g, tabLabel, tabX + tabWidth / 2, y + tabHeight / 2 + 4, 'wireframe-text', 'middle');
+      tabX += tabWidth + 4;
+    });
+
+    // Tab pane container box below
+    drawBox(g, x, y + tabHeight, width, height - tabHeight, 'wireframe-container');
+
+    if (children && children.length > 0) {
+      renderChildNodes(g, children);
+    }
+  },
+};
+
+export const accordionRenderer: ComponentRenderer<Accordion> = {
+  type: 'Accordion',
+  guard: isAccordion,
+  render: ({ parentElem, node, renderChildNodes }) => {
+    const { x, y, width, height, astNode, children } = node;
+    const title = astNode.label ?? 'Accordion';
+    const isCollapsed = astNode.collapsed ?? false;
+    const headerHeight = 32;
+
+    const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-accordion');
+
+    // Header box
+    drawBox(g, x, y, width, headerHeight, 'wireframe-container');
+    const arrowChar = isCollapsed ? '▶' : '▼';
+    drawText(g, `${arrowChar} ${title}`, x + 10, y + 20, 'wireframe-text wireframe-bold');
+
+    if (!isCollapsed && children && children.length > 0) {
+      drawBox(g, x, y + headerHeight, width, height - headerHeight, 'wireframe-container');
+      renderChildNodes(g, children);
+    }
+  },
+};
+
+export const tabBarRenderer: ComponentRenderer<TabBar> = {
+  type: 'TabBar',
+  guard: isTabBar,
+  render: ({ parentElem, node }) => {
+    const { x, y, astNode } = node;
+    const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-tabbar');
+    const tabHeight = 32;
+    const tabs = astNode.tabs ?? [];
+    const activeIdx = astNode.activeTab ?? 0;
+
+    let tabX = x;
+    tabs.forEach((tab, idx) => {
+      const tabLabel = tab.value ?? `Tab ${idx + 1}`;
+      const tabWidth = Math.max(70, tabLabel.length * 8 + 20);
+      const isActive = idx === activeIdx;
+
+      g.append('rect')
+        .attr('x', tabX)
+        .attr('y', y)
+        .attr('width', tabWidth)
+        .attr('height', tabHeight)
+        .attr('class', isActive ? 'wireframe-tab wireframe-tab-active' : 'wireframe-tab');
+
+      drawText(g, tabLabel, tabX + tabWidth / 2, y + tabHeight / 2 + 4, 'wireframe-text', 'middle');
+      tabX += tabWidth + 4;
+    });
+  },
+};
