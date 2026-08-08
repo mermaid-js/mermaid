@@ -2,15 +2,14 @@ import type { Selection } from 'd3';
 import type { WireframeComponent } from '@mermaid-js/parser';
 import type { WireframeDiagramConfig, WireframeRenderNode } from '../types.js';
 
+export type SVGGroupSelection = Selection<SVGGElement, unknown, Element | null, unknown>;
+
 export interface ComponentRenderContext<T extends WireframeComponent = WireframeComponent> {
-  parentElem: Selection<SVGGElement, unknown, null, undefined>;
+  parentElem: SVGGroupSelection;
   node: WireframeRenderNode & { astNode: T };
   config: Required<WireframeDiagramConfig>;
   /** Callback to recursively render child nodes (for containers like section, fieldset, columns) */
-  renderChildNodes: (
-    parent: Selection<SVGGElement, unknown, null, undefined>,
-    children: WireframeRenderNode[]
-  ) => void;
+  renderChildNodes: (parent: SVGGroupSelection, children: WireframeRenderNode[]) => void;
 }
 
 export interface ComponentRenderer<T extends WireframeComponent = WireframeComponent> {

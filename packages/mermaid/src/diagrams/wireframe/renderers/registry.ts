@@ -26,11 +26,11 @@ export const defaultRenderer: ComponentRenderer<WireframeComponent> = {
 export class ComponentRegistry {
   private renderers = new Map<string, ComponentRenderer<WireframeComponent>>();
 
-  public register(renderer: ComponentRenderer<WireframeComponent>) {
-    this.renderers.set(renderer.type, renderer);
+  public register<T extends WireframeComponent>(renderer: ComponentRenderer<T>) {
+    this.renderers.set(renderer.type, renderer as unknown as ComponentRenderer<WireframeComponent>);
   }
 
-  public render(ctx: ComponentRenderContext) {
+  public render(ctx: ComponentRenderContext<WireframeComponent>) {
     const renderer = this.renderers.get(ctx.node.astNode.$type) ?? defaultRenderer;
     renderer.render(ctx);
   }

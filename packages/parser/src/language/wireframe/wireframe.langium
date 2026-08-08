@@ -2,6 +2,7 @@ grammar WireframeGrammar
 import "../common/common";
 
 /* ─── AST Interfaces ──────────────────────────────────────────────────────── */
+// Wireframe Diagram Grammar for Langium
 
 interface WireframeComponent {
     label?: string
@@ -129,14 +130,18 @@ interface Accordion extends WireframeComponent {
 /* ─── Shared Fragments ─────────────────────────────────────────────────────── */
 
 fragment Modifiers:
-    ('id=' id=ID)? ('alignTo=' alignTo=ID)? (info?='info')?
+    (
+        'id=' id=ID |
+        'alignTo=' alignTo=ID |
+        info?='info'
+    )*
 ;
 
 /* ─── Entry & Root Rules ───────────────────────────────────────────────────── */
 
 entry WireframeDiagram:
     NEWLINE*
-    'wireframe' label=STRING ('size=' canvasSize=CanvasSize)?
+    'wireframe' (label=(STRING | ID))? ('size=' canvasSize=CanvasSize)?
     (
         NEWLINE
         | TitleAndAccessibilities
@@ -216,131 +221,131 @@ TabOption:
 /* ─── Leaf Components ──────────────────────────────────────────────────────── */
 
 TextField returns TextField:
-    type=('textfield' | 'password' | 'numberfield' | 'datepicker') label=STRING
+    type=('textfield' | 'password' | 'numberfield' | 'datepicker') label=(STRING | ID)
     Modifiers EOL
 ;
 
 RichText returns RichText:
-    'richtext' label=STRING Modifiers EOL
+    'richtext' label=(STRING | ID) Modifiers EOL
 ;
 
 TextArea returns TextArea:
-    'textarea' label=STRING ('rows=' rows=INT)? Modifiers EOL
+    'textarea' label=(STRING | ID) ('rows=' rows=INT)? Modifiers EOL
 ;
 
 MultiField returns MultiField:
-    'multifield' label=STRING Modifiers EOL
+    'multifield' label=(STRING | ID) Modifiers EOL
 ;
 
 ImageField returns ImageField:
-    'imagefield' label=STRING Modifiers EOL
+    'imagefield' label=(STRING | ID) Modifiers EOL
 ;
 
 PathField returns PathField:
-    'pathfield' label=STRING Modifiers EOL
+    'pathfield' label=(STRING | ID) Modifiers EOL
 ;
 
 SelectField returns SelectField:
-    type=('select' | 'select-multiple') label=STRING
-    ('[' options+=SelectOption (',' options+=SelectOption)* ']')?
+    type=(SELECT | SELECT_MULTIPLE) label=(STRING | ID)
+    ('[' options+=SelectOption ((',' | NEWLINE)? options+=SelectOption)* ']')?
     Modifiers EOL
 ;
 
 ComboBox returns ComboBox:
-    'combobox' label=STRING
-    ('[' options+=SelectOption (',' options+=SelectOption)* ']')?
+    'combobox' label=(STRING | ID)
+    ('[' options+=SelectOption ((',' | NEWLINE)? options+=SelectOption)* ']')?
     Modifiers EOL
 ;
 
 CheckboxField returns CheckboxField:
-    'checkbox' label=STRING (checked?='checked')? Modifiers EOL
+    CHECKBOX label=(STRING | ID) (checked?='checked')? Modifiers EOL
 ;
 
 CheckboxGroup returns CheckboxGroup:
-    'checkboxgroup' label=STRING
-    ('[' options+=CheckboxOption (',' options+=CheckboxOption)* ']')?
+    CHECKBOXGROUP label=(STRING | ID)
+    ('[' options+=CheckboxOption ((',' | NEWLINE)? options+=CheckboxOption)* ']')?
     Modifiers EOL
 ;
 
 RadioGroup returns RadioGroup:
-    'radiogroup' label=STRING
-    ('[' options+=RadioOption (',' options+=RadioOption)* ']')?
+    'radiogroup' label=(STRING | ID)
+    ('[' options+=RadioOption ((',' | NEWLINE)? options+=RadioOption)* ']')?
     Modifiers EOL
 ;
 
 TextElement returns TextElement:
-    'label' label=STRING Modifiers EOL
+    'label' label=(STRING | ID) Modifiers EOL
 ;
 
 Paragraph returns Paragraph:
-    'paragraph' label=STRING Modifiers EOL
+    'paragraph' label=(STRING | ID) Modifiers EOL
 ;
 
 Button returns Button:
-    'button' label=STRING (primary?='primary')? Modifiers EOL
+    'button' label=(STRING | ID) (primary?='primary')? Modifiers EOL
 ;
 
 Icon returns Icon:
-    'icon' label=STRING ('glyph=' glyph=STRING)? Modifiers EOL
+    'icon' label=(STRING | ID) ('glyph=' glyph=(STRING | ID))? Modifiers EOL
 ;
 
 Canvas returns Canvas:
-    'canvas' label=STRING ('height=' height=INT)? Modifiers EOL
+    'canvas' label=(STRING | ID) ('height=' height=INT)? Modifiers EOL
 ;
 
 TabBar returns TabBar:
-    'tabbar' label=STRING
-    ('[' tabs+=TabOption (',' tabs+=TabOption)* ']')?
+    TABBAR label=(STRING | ID)
+    ('[' tabs+=TabOption ((',' | NEWLINE)? tabs+=TabOption)* ']')?
     ('active=' activeTab=INT)?
     Modifiers EOL
 ;
 
 Heading returns Heading:
-    'heading' label=STRING Modifiers EOL
+    'heading' label=(STRING | ID) Modifiers EOL
 ;
 
 SubTitle returns SubTitle:
-    'subtitle' label=STRING Modifiers EOL
+    'subtitle' label=(STRING | ID) Modifiers EOL
 ;
 
 Arrow returns Arrow:
-    'arrow' label=STRING (direction=('right' | 'left' | 'up' | 'down' | 'both'))?
+    'arrow' label=(STRING | ID) (direction=('right' | 'left' | 'up' | 'down' | 'both'))?
     Modifiers EOL
 ;
 
 FormattingToolbar returns FormattingToolbar:
-    'formattingtoolbar' label=STRING Modifiers EOL
+    'formattingtoolbar' label=(STRING | ID) Modifiers EOL
 ;
 
 VCurly returns VCurly:
-    'vcurly' label=STRING ('height=' height=INT)? Modifiers EOL
+    'vcurly' label=(STRING | ID) ('height=' height=INT)? Modifiers EOL
 ;
 
 VRule returns VRule:
-    'vrule' label=STRING ('height=' height=INT)? Modifiers EOL
+    'vrule' label=(STRING | ID) ('height=' height=INT)? Modifiers EOL
 ;
 
 Menu returns Menu:
-    'menu' label=STRING
-    ('[' items+=SelectOption (',' items+=SelectOption)* ']')?
+    'menu' label=(STRING | ID)
+    ('[' items+=SelectOption ((',' | NEWLINE)? items+=SelectOption)* ']')?
     Modifiers EOL
 ;
 
 List returns List:
-    'list' label=STRING
-    ('[' items+=SelectOption (',' items+=SelectOption)* ']')?
+    'list' label=(STRING | ID)
+    ('[' items+=SelectOption ((',' | NEWLINE)? items+=SelectOption)* ']')?
     (ordered?='ordered')?
     Modifiers EOL
 ;
 
 Tree returns Tree:
-    'tree' label=STRING Modifiers
+    'tree' label=(STRING | ID) Modifiers
     (NEWLINE | nodes+=TreeNode)*
     'end' EOL
 ;
 
 TreeNode:
-    'node' label=STRING (expanded?='expanded')?
+    'node' label=(STRING | ID) (expanded?='expanded')?
     ('>' children+=(STRING | ID) (',' children+=(STRING | ID))*)?
     EOL
 ;
@@ -348,19 +353,19 @@ TreeNode:
 /* ─── Layout Containers ───────────────────────────────────────────────────── */
 
 Section returns WireframeSection:
-    'section' label=STRING Modifiers
+    'section' label=(STRING | ID) Modifiers
     (NEWLINE | components+=Component)*
     'end' EOL
 ;
 
 FieldSet returns FieldSet:
-    'fieldset' label=STRING Modifiers
+    'fieldset' label=(STRING | ID) Modifiers
     (NEWLINE | components+=Component)*
     'end' EOL
 ;
 
 TitleWindow returns TitleWindow:
-    'titlewindow' label=STRING Modifiers
+    TITLEWINDOW label=(STRING | ID) Modifiers
     (NEWLINE | components+=Component)*
     'end' EOL
 ;
@@ -378,13 +383,13 @@ Columns returns Columns:
 ;
 
 TabPane returns TabPane:
-    'tab' label=STRING Modifiers
+    TAB label=(STRING | ID) Modifiers
     (NEWLINE | components+=Component)*
     'end' EOL
 ;
 
 ContentTabs returns ContentTabs:
-    'tabs' '[' tabs+=TabOption (',' tabs+=TabOption)* ']'
+    TABS '[' tabs+=TabOption ((',' | NEWLINE)? tabs+=TabOption)* ']'
     ('active=' activeTab=INT)?
     Modifiers
     (NEWLINE | tabBlocks+=TabPane)*
@@ -392,11 +397,20 @@ ContentTabs returns ContentTabs:
 ;
 
 Accordion returns Accordion:
-    'accordion' label=STRING (collapsed?='collapsed')? Modifiers
+    'accordion' label=(STRING | ID) Modifiers
+    (collapsed?='collapsed')?
     (NEWLINE | components+=Component)*
     'end' EOL
 ;
 
 /* ─── Terminals ───────────────────────────────────────────────────────────── */
 
+terminal CHECKBOXGROUP: /[\t ]*checkboxgroup(?!\w)/;
+terminal CHECKBOX: /[\t ]*checkbox(?!\w)/;
+terminal SELECT_MULTIPLE: /[\t ]*select-multiple(?!\w)/;
+terminal SELECT: /[\t ]*select(?!\w)/;
+terminal TABBAR: /[\t ]*tabbar(?!\w)/;
+terminal TABS: /[\t ]*tabs(?!\w)/;
+terminal TAB: /[\t ]*tab(?!\w)/;
+terminal TITLEWINDOW: /[\t ]*titlewindow(?!\w)/;
 terminal COL_WIDTH: /[0-9]+(%|px)/;

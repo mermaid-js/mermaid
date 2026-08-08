@@ -1,4 +1,3 @@
-import type { Selection } from 'd3';
 import type { DiagramRenderer, DrawDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
@@ -9,7 +8,7 @@ import { computeWireframeLayout } from './layout.js';
 import { registry } from './renderers/index.js';
 import type { ActionBar } from '@mermaid-js/parser';
 
-type SVGGroupSelection = Selection<SVGGElement, unknown, null, undefined>;
+import type { SVGGroupSelection } from './renderers/types.js';
 
 const renderActionBar = (
   parentElem: SVGGroupSelection,

@@ -1,11 +1,11 @@
-import type { Selection } from 'd3';
+import type { SVGGroupSelection } from './types.js';
 
 /**
  * Shared SVG drawing helper functions for wireframe components
  */
 
 export const drawBox = (
-  parent: Selection<SVGGElement, unknown, null, undefined>,
+  parent: SVGGroupSelection,
   x: number,
   y: number,
   width: number,
@@ -25,7 +25,7 @@ export const drawBox = (
 };
 
 export const drawText = (
-  parent: Selection<SVGGElement, unknown, null, undefined>,
+  parent: SVGGroupSelection,
   text: string,
   x: number,
   y: number,
@@ -41,11 +41,7 @@ export const drawText = (
     .text(text);
 };
 
-export const drawCheckmark = (
-  parent: Selection<SVGGElement, unknown, null, undefined>,
-  x: number,
-  y: number
-) => {
+export const drawCheckmark = (parent: SVGGroupSelection, x: number, y: number) => {
   return parent
     .append('path')
     .attr('d', `M ${x + 3} ${y + 8} L ${x + 7} ${y + 13} L ${x + 14} ${y + 4}`)
@@ -54,12 +50,7 @@ export const drawCheckmark = (
     .attr('fill', 'none');
 };
 
-export const drawRadioDot = (
-  parent: Selection<SVGGElement, unknown, null, undefined>,
-  cx: number,
-  cy: number,
-  r = 4
-) => {
+export const drawRadioDot = (parent: SVGGroupSelection, cx: number, cy: number, r = 4) => {
   return parent
     .append('circle')
     .attr('cx', cx)
@@ -68,11 +59,7 @@ export const drawRadioDot = (
     .attr('class', 'wireframe-radio-dot');
 };
 
-export const drawDropdownArrow = (
-  parent: Selection<SVGGElement, unknown, null, undefined>,
-  x: number,
-  y: number
-) => {
+export const drawDropdownArrow = (parent: SVGGroupSelection, x: number, y: number) => {
   return parent
     .append('path')
     .attr('d', `M ${x} ${y} L ${x + 8} ${y} L ${x + 4} ${y + 6} Z`)
@@ -80,7 +67,7 @@ export const drawDropdownArrow = (
 };
 
 export const drawIconPlaceholder = (
-  parent: Selection<SVGGElement, unknown, null, undefined>,
+  parent: SVGGroupSelection,
   glyph: string,
   x: number,
   y: number,

@@ -104,7 +104,7 @@ button "Submit" id=btnSubmit alignTo=btnCancel
       expect(btnSubmitNode.x).toBeGreaterThan(btnCancelNode.x + btnCancelNode.width);
     });
 
-    it('should parse and layout complex wireframe controls (checkboxes, radio, select, icons, columns)', async () => {
+    it('should parse and layout complex wireframe controls (checkboxes, radio, select, icons, columns, titlewindow)', async () => {
       const input = `wireframe "Form Showcase"
 checkbox "Agree to Terms" checked
 radiogroup "Notification Preference" [*Email, SMS]
@@ -112,7 +112,9 @@ select "Country" [USA, Canada, Germany]
 icon "Star" glyph="star"
 columns
   col
-    textfield "First Name"
+    titlewindow "System Metrics"
+      heading "Overview"
+    end
   end
   col
     textfield "Last Name"
