@@ -16,6 +16,7 @@ import type {
   TreeView,
   Wardley,
   Cynefin,
+  WireframeDiagram,
 } from './language/index.js';
 
 export type DiagramAST =
@@ -33,7 +34,8 @@ export type DiagramAST =
   | Treemap
   | TreeView
   | Wardley
-  | Cynefin;
+  | Cynefin
+  | WireframeDiagram;
 
 const parsers: Record<string, LangiumParser> = {};
 const initializers = {
@@ -112,6 +114,11 @@ const initializers = {
     const parser = createCynefinServices().Cynefin.parser.LangiumParser;
     parsers.cynefin = parser;
   },
+  wireframe: async () => {
+    const { createWireframeServices } = await import('./language/wireframe/index.js');
+    const parser = createWireframeServices().Wireframe.parser.LangiumParser;
+    parsers.wireframe = parser;
+  },
 } as const;
 
 export async function parse(diagramType: 'info', text: string): Promise<Info>;
@@ -129,6 +136,7 @@ export async function parse(diagramType: 'railroadPeg', text: string): Promise<R
 export async function parse(diagramType: 'treemap', text: string): Promise<Treemap>;
 export async function parse(diagramType: 'wardley', text: string): Promise<Wardley>;
 export async function parse(diagramType: 'cynefin', text: string): Promise<Cynefin>;
+export async function parse(diagramType: 'wireframe', text: string): Promise<WireframeDiagram>;
 
 export async function parse<T extends DiagramAST>(
   diagramType: keyof typeof initializers,

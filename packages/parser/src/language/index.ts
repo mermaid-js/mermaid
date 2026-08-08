@@ -97,6 +97,46 @@ export {
   EmModelEntityType,
   isEmModelEntityType,
   isEmResetFrame,
+  WireframeDiagram,
+  isWireframeDiagram,
+  WireframeComponent,
+  isWireframeComponent,
+  Accordion,
+  Arrow,
+  Button,
+  Canvas,
+  CheckboxField,
+  CheckboxGroup,
+  ColBlock,
+  Columns,
+  ComboBox,
+  ContentTabs,
+  FieldSet,
+  FormattingToolbar,
+  Heading,
+  Icon,
+  ImageField,
+  List,
+  Menu,
+  MultiField,
+  Paragraph,
+  PathField,
+  RadioGroup,
+  RichText,
+  Section,
+  SelectField,
+  SubTitle,
+  TabBar,
+  TabPane,
+  TextArea,
+  TextElement,
+  TextField,
+  TitleWindow,
+  Tree,
+  VCurly,
+  VRule,
+  ActionButton,
+  ActionBar,
 } from './generated/ast.js';
 
 export {
@@ -116,6 +156,7 @@ export {
   TreeViewGrammarGeneratedModule as TreeViewGeneratedModule,
   WardleyGrammarGeneratedModule as WardleyGeneratedModule,
   CynefinGrammarGeneratedModule as CynefinGeneratedModule,
+  WireframeGrammarGeneratedModule as WireframeGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';
@@ -134,3 +175,4 @@ export * from './railroad-peg/index.js';
 export * from './treemap/index.js';
 export * from './wardley/index.js';
 export * from './cynefin/index.js';
+export * from './wireframe/index.js';
