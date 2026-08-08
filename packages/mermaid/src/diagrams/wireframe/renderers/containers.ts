@@ -121,6 +121,26 @@ export const contentTabsRenderer: ComponentRenderer<ContentTabs> = {
   guard: isContentTabs,
   render: ({ parentElem, node, renderChildNodes }) => {
     const { x, y, width, height, astNode, children } = node;
+
+    if ((astNode.showTabs || astNode.showTabsValue) && children?.length) {
+      const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-show-tabs-group');
+      children.forEach((childNode, idx) => {
+        if (idx < children.length - 1) {
+          const dividerX = childNode.x + childNode.width + 6;
+          g.append('line')
+            .attr('x1', dividerX)
+            .attr('y1', y)
+            .attr('x2', dividerX)
+            .attr('y2', y + height)
+            .attr('stroke', '#888888')
+            .attr('stroke-width', '1.5')
+            .attr('stroke-dasharray', '4 4');
+        }
+      });
+      renderChildNodes(parentElem, children);
+      return;
+    }
+
     const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-content-tabs');
 
     const tabHeight = 30;
@@ -158,6 +178,7 @@ export const accordionRenderer: ComponentRenderer<Accordion> = {
   guard: isAccordion,
   render: ({ parentElem, node, renderChildNodes }) => {
     const { x, y, width, height, astNode, children } = node;
+
     const title = astNode.label ?? 'Accordion';
     const isCollapsed = astNode.collapsed ?? false;
     const headerHeight = 32;

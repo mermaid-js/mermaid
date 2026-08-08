@@ -1,5 +1,6 @@
 import {
   type WireframeComponent,
+  type ContentTabs,
   isWireframeSection,
   isFieldSet,
   isTitleWindow,
@@ -141,6 +142,58 @@ export function measureComponentHeight(
   };
 }
 
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function parseShowTabs(comp: ContentTabs, totalTabs: number): number[] {
+  if (comp.showTabsValue) {
+    const items = Array.isArray(comp.showTabsValue) ? comp.showTabsValue : [comp.showTabsValue];
+    const rawTargets = items
+      .flatMap((item) => String(item).replace(/["']/g, '').split(','))
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean);
+
+    if (rawTargets.length > 0) {
+      const selectedIndices: number[] = [];
+      const tabs = comp.tabs ?? [];
+      const tabBlocks = comp.tabBlocks ?? [];
+
+      rawTargets.forEach((targetKey) => {
+        const targetSlug = slugify(targetKey);
+        const numericVal = parseInt(targetKey, 10);
+
+        for (let idx = 0; idx < totalTabs; idx++) {
+          const tabLabel = tabs[idx]?.value ?? tabBlocks[idx]?.label ?? `Tab ${idx + 1}`;
+          const tabSlug = slugify(tabLabel);
+          const explicitId = tabBlocks[idx]?.id?.toLowerCase();
+
+          if (
+            (explicitId && explicitId === targetKey) ||
+            tabSlug === targetKey ||
+            tabSlug === targetSlug ||
+            (!isNaN(numericVal) && numericVal === idx + 1)
+          ) {
+            if (!selectedIndices.includes(idx)) {
+              selectedIndices.push(idx);
+            }
+            break;
+          }
+        }
+      });
+
+      if (selectedIndices.length > 0) {
+        return selectedIndices;
+      }
+    }
+  }
+  return Array.from({ length: totalTabs }, (_, i) => i);
+}
+
 export function computeWireframeLayout(
   components: WireframeComponent[],
   containerWidth: number,
@@ -228,25 +281,86 @@ export function computeWireframeLayout(
       nodeHeight = metrics.titleBarHeight + childrenHeight + 16;
     } else if (isContentTabs(comp)) {
       const tabHeaderHeight = LAYOUT_METRICS.tabBar.height;
-      let childrenHeight = 40;
+      const tabs = comp.tabs ?? [];
+      const hasShowTabs = Boolean(comp.showTabs) || Boolean(comp.showTabsValue);
 
-      if (comp.tabBlocks?.length) {
-        const activeIdx = comp.activeTab ?? 0;
-        const activeBlock = comp.tabBlocks[activeIdx] ?? comp.tabBlocks[0];
-        if (activeBlock?.components?.length) {
-          const childRes = computeWireframeLayout(
-            activeBlock.components as unknown as WireframeComponent[],
-            containerWidth - 20,
-            x + 10,
-            y + tabHeaderHeight + 10,
-            idMap
-          );
-          childNodes = childRes.nodes;
-          childrenHeight = childRes.totalHeight + 20;
+      if (hasShowTabs && tabs.length > 0) {
+        const selectedIndices = parseShowTabs(comp, tabs.length);
+        const numStates = selectedIndices.length;
+        const minPanelWidth = 260;
+        const variantWidth = Math.max(
+          minPanelWidth,
+          (containerWidth - (numStates - 1) * GAP_X) / numStates
+        );
+        let maxVariantHeight = 0;
+        const variantNodes: WireframeRenderNode[] = [];
+
+        selectedIndices.forEach((tabIdx, colIdx) => {
+          const variantX = x + colIdx * (variantWidth + GAP_X);
+          const variantComp = {
+            ...comp,
+            activeTab: tabIdx,
+            showTabs: false,
+            showTabsValue: undefined,
+          };
+          let childrenHeight = 40;
+          let variantChildNodes: WireframeRenderNode[] = [];
+
+          if (comp.tabBlocks?.length) {
+            const activeBlock = comp.tabBlocks[tabIdx];
+            if (activeBlock?.components?.length) {
+              const childRes = computeWireframeLayout(
+                activeBlock.components as unknown as WireframeComponent[],
+                Math.max(0, variantWidth - 20),
+                variantX + 10,
+                y + tabHeaderHeight + 10,
+                idMap
+              );
+              variantChildNodes = childRes.nodes;
+              childrenHeight = childRes.totalHeight + 20;
+            }
+          }
+
+          const vHeight = tabHeaderHeight + childrenHeight;
+          maxVariantHeight = Math.max(maxVariantHeight, vHeight);
+          variantNodes.push({
+            astNode: variantComp,
+            x: variantX,
+            y,
+            width: variantWidth,
+            height: vHeight,
+            children: variantChildNodes,
+          });
+        });
+
+        childNodes = variantNodes;
+        nodeWidth = numStates * variantWidth + (numStates - 1) * GAP_X;
+        nodeHeight = maxVariantHeight;
+      } else {
+        let childrenHeight = 40;
+        if (comp.tabBlocks?.length) {
+          const activeIdx =
+            comp.activeTab !== undefined &&
+            comp.activeTab >= 0 &&
+            comp.activeTab < comp.tabBlocks.length
+              ? comp.activeTab
+              : 0;
+          const activeBlock = comp.tabBlocks[activeIdx] ?? comp.tabBlocks[0];
+          if (activeBlock?.components?.length) {
+            const childRes = computeWireframeLayout(
+              activeBlock.components as unknown as WireframeComponent[],
+              containerWidth - 20,
+              x + 10,
+              y + tabHeaderHeight + 10,
+              idMap
+            );
+            childNodes = childRes.nodes;
+            childrenHeight = childRes.totalHeight + 20;
+          }
         }
+        nodeWidth = containerWidth;
+        nodeHeight = tabHeaderHeight + childrenHeight;
       }
-      nodeWidth = containerWidth;
-      nodeHeight = tabHeaderHeight + childrenHeight;
     } else if (isTabPane(comp)) {
       let childrenHeight = 0;
       if (comp.components?.length) {

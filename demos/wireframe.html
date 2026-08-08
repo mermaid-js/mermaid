@@ -91,6 +91,26 @@ checkbox "Remember me on this device" checked
       </pre>
     </div>
 
+    <div class="demo-card">
+      <h2>Multi-Tab Side-by-Side Preview (showTabs)</h2>
+      <pre class="mermaid">
+wireframe "Multi-Tab Settings" size=page
+tabs ["General", "Security", "Notifications"] showTabs="general,security"
+  tab "General"
+    textfield "Username"
+    select "Language" [English, Spanish, French]
+  end
+  tab "Security"
+    password "Current Password"
+    password "New Password"
+  end
+  tab "Notifications"
+    checkbox "Email Alerts" checked
+  end
+end
+      </pre>
+    </div>
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({

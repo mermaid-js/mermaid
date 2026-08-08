@@ -57,5 +57,22 @@ textfield "Username or Email"
 password "Password"
 checkbox "Remember me on this device" checked`,
     },
+    {
+      title: 'Multi-Tab Preview (showTabs)',
+      code: `wireframe "Multi-Tab Settings" size=page
+tabs ["General", "Security", "Notifications"] showTabs="general,security"
+  tab "General"
+    textfield "Username"
+    select "Language" [English, Spanish, French]
+  end
+  tab "Security"
+    password "Current Password"
+    password "New Password"
+  end
+  tab "Notifications"
+    checkbox "Email Alerts" checked
+  end
+end`,
+    },
   ],
 } satisfies DiagramMetadata;

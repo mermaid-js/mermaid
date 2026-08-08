@@ -120,6 +120,8 @@ interface ContentTabs extends WireframeComponent {
     tabs?: TabOption[]
     activeTab?: number
     tabBlocks?: TabPane[]
+    showTabs?: boolean
+    showTabsValue?: (string | number)[]
 }
 
 interface Accordion extends WireframeComponent {
@@ -221,7 +223,7 @@ TabOption:
 /* ─── Leaf Components ──────────────────────────────────────────────────────── */
 
 TextField returns TextField:
-    type=('textfield' | 'password' | 'numberfield' | 'datepicker') label=(STRING | ID)
+    type=('textfield' | 'password' | 'numberfield' | 'datepicker' | 'date-picker') label=(STRING | ID)
     Modifiers EOL
 ;
 
@@ -391,6 +393,7 @@ TabPane returns TabPane:
 ContentTabs returns ContentTabs:
     TABS '[' tabs+=TabOption ((',' | NEWLINE)? tabs+=TabOption)* ']'
     ('active=' activeTab=INT)?
+    ('showTabs=' showTabsValue+=(STRING | ID | INT) (',' showTabsValue+=(STRING | ID | INT))* | showTabs?='showTabs')?
     Modifiers
     (NEWLINE | tabBlocks+=TabPane)*
     'end' EOL
