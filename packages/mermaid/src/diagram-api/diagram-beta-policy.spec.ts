@@ -68,6 +68,7 @@ const EXCLUDED_DIAGRAMS = new Set(['error', '---']);
  * here are assumed to use `{id}-beta`.
  */
 const BETA_KEYWORD_OVERRIDES: Record<string, string> = {
+  c4beta: 'c4-beta',
   railroad: 'railroad-beta',
   railroadEbnf: 'railroad-ebnf-beta',
   railroadAbnf: 'railroad-abnf-beta',
