@@ -31,6 +31,7 @@ import architecture from '../diagrams/architecture/architectureDetector.js';
 import eventmodeling from '../diagrams/eventmodeling/detector.js';
 import { ishikawa } from '../diagrams/ishikawa/ishikawaDetector.js';
 import venn from '../diagrams/venn/vennDetector.js';
+import { domainstorytelling } from '../diagrams/domainstorytelling/domainstorytellingDetector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
 import { treemap } from '../diagrams/treemap/detector.js';
@@ -127,6 +128,7 @@ export const addDiagrams = () => {
     venn,
     wardley,
     cynefin,
-    usecase
+    usecase,
+    domainstorytelling
   );
 };

@@ -302,6 +302,12 @@ class Theme {
       labelColor: this.cynefin?.labelColor || this.primaryTextColor,
     };
 
+    /* domainstorytelling */
+    this.domainstorytellingActorColor = this.domainstorytellingActorColor || '#455A64';
+    this.domainstorytellingWorkobjectColor = this.domainstorytellingWorkobjectColor || '#6D4C41';
+    this.domainstorytellingSequenceColor = this.domainstorytellingSequenceColor || '#546E7A';
+    this.domainstorytellingGroupColor = this.domainstorytellingGroupColor || 'rgba(0, 0, 0, 0.35)';
+
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;
     this.quadrant2Fill = this.quadrant2Fill || adjust(this.primaryColor, { r: 5, g: 5, b: 5 });

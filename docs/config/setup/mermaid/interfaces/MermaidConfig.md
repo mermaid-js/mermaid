@@ -77,7 +77,7 @@ Defined in: [packages/mermaid/src/config.type.ts:330](https://github.com/mermaid
 
 > `optional` **cynefin**: `CynefinDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:352](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L352)
+Defined in: [packages/mermaid/src/config.type.ts:353](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L353)
 
 ---
 
@@ -117,11 +117,19 @@ You can set this attribute to base the seed on a static string.
 
 ---
 
+### domainstorytelling?
+
+> `optional` **domainstorytelling**: `DomainstorytellingDiagramConfig`
+
+Defined in: [packages/mermaid/src/config.type.ts:350](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L350)
+
+---
+
 ### dompurifyConfig?
 
 > `optional` **dompurifyConfig**: `Config`
 
-Defined in: [packages/mermaid/src/config.type.ts:354](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L354)
+Defined in: [packages/mermaid/src/config.type.ts:355](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L355)
 
 ---
 
@@ -304,7 +312,7 @@ See <https://developer.mozilla.org/en-US/docs/Web/CSS/font-family>
 
 > `optional` **fontSize**: `number`
 
-Defined in: [packages/mermaid/src/config.type.ts:356](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L356)
+Defined in: [packages/mermaid/src/config.type.ts:357](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L357)
 
 ---
 
@@ -433,7 +441,7 @@ Defines which main look to use for the diagram.
 
 > `optional` **markdownAutoWrap**: `boolean`
 
-Defined in: [packages/mermaid/src/config.type.ts:357](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L357)
+Defined in: [packages/mermaid/src/config.type.ts:358](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L358)
 
 ---
 
@@ -501,7 +509,7 @@ Defined in: [packages/mermaid/src/config.type.ts:348](https://github.com/mermaid
 
 > `optional` **railroad**: `RailroadDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:353](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L353)
+Defined in: [packages/mermaid/src/config.type.ts:354](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L354)
 
 ---
 
@@ -573,7 +581,7 @@ Defined in: [packages/mermaid/src/config.type.ts:331](https://github.com/mermaid
 
 > `optional` **suppressErrorRendering**: `boolean`
 
-Defined in: [packages/mermaid/src/config.type.ts:363](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L363)
+Defined in: [packages/mermaid/src/config.type.ts:364](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L364)
 
 Suppresses inserting 'Syntax error' diagram in the DOM.
 This is useful when you want to control how to handle syntax errors in your application.
@@ -643,7 +651,7 @@ Defined in: [packages/mermaid/src/config.type.ts:349](https://github.com/mermaid
 
 > `optional` **venn**: `VennDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:350](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L350)
+Defined in: [packages/mermaid/src/config.type.ts:351](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L351)
 
 ---
 
@@ -651,7 +659,7 @@ Defined in: [packages/mermaid/src/config.type.ts:350](https://github.com/mermaid
 
 > `optional` **wardley-beta**: `WardleyDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:351](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L351)
+Defined in: [packages/mermaid/src/config.type.ts:352](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L352)
 
 ---
 
@@ -659,7 +667,7 @@ Defined in: [packages/mermaid/src/config.type.ts:351](https://github.com/mermaid
 
 > `optional` **wrap**: `boolean`
 
-Defined in: [packages/mermaid/src/config.type.ts:355](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L355)
+Defined in: [packages/mermaid/src/config.type.ts:356](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L356)
 
 ---
 
