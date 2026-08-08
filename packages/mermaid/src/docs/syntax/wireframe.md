@@ -202,7 +202,7 @@ Wireframe diagrams support a wide selection of form input controls, text element
 | `textfield "Label"`                 | Text input field                        | `textfield "First Name"`                          |
 | `password "Label"`                  | Password input field                    | `password "Secret Pin"`                           |
 | `numberfield "Label"`               | Numeric input field                     | `numberfield "Quantity"`                          |
-| `date-picker "Label"`               | Date picker field                       | `date-picker "Birth Date"`                        |
+| `datepicker "Label"`                | Date picker field                       | `datepicker "Birth Date"`                         |
 | `textarea "Label" rows=N`           | Multi-line text area                    | `textarea "Comments" rows=4`                      |
 | `select "Label" ["A", "B"]`         | Dropdown select menu                    | `select "Country" ["USA", "Canada"]`              |
 | `combobox "Label" ["A", "B"]`       | Editable combo box                      | `combobox "Tags" ["JS", "TS"]`                    |

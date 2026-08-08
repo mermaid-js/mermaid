@@ -283,7 +283,7 @@ end`);
 
       expectNoErrorsOrAlternatives(result);
       const sec = result.value.components[0] as unknown as Section;
-      expect(sec.$type).toBe('Section');
+      expect(sec.$type).toBe('WireframeSection');
       expect(sec.label).toBe('Personal Info');
       expect(sec.components).toHaveLength(2);
     });
@@ -356,6 +356,22 @@ end`);
       expect(contentTabs.tabs).toHaveLength(2);
       expect(contentTabs.activeTab).toBe(0);
       expect(contentTabs.tabBlocks).toHaveLength(2);
+    });
+
+    it('should parse showTabs with slug list like showTabs=general,notifications', () => {
+      const result = parse(`wireframe "Tabs"
+tabs ["General", "Security", "Notifications"] showTabs=general,notifications
+  tab "General"
+    textfield "Username"
+  end
+  tab "Security"
+    password "Current Password"
+  end
+  tab "Notifications"
+    checkbox "Email Alerts" checked
+  end
+end`);
+      expectNoErrorsOrAlternatives(result);
     });
 
     it('should parse accordion container with collapsed state', () => {

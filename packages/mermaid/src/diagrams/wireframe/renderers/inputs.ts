@@ -44,8 +44,7 @@ export const buttonRenderer: ComponentRenderer<Button> = {
       .attr('x', x + width / 2)
       .attr('y', y + height / 2 + 5)
       .attr('text-anchor', 'middle')
-      .attr('class', 'wireframe-text')
-      .style('fill', isPrimary ? '#ffffff' : '#333333')
+      .attr('class', isPrimary ? 'wireframe-text wireframe-text-primary' : 'wireframe-text')
       .text(label);
   },
 };

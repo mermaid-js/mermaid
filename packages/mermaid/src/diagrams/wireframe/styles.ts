@@ -54,6 +54,10 @@ const getStyles: DiagramStylesProvider = (options: any) => `
     fill: ${options?.textColor ?? '#2c2c2c'};
   }
   
+  .wireframe-text-primary {
+    fill: ${options?.primaryTextColor ?? '#ffffff'};
+  }
+  
   .wireframe-input {
     fill: ${options?.mainBkg ?? '#ffffff'};
     stroke: ${options?.primaryBorderColor ?? options?.lineColor ?? '#333333'};

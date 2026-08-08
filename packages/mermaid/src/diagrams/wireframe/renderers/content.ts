@@ -78,14 +78,19 @@ export const treeRenderer: ComponentRenderer<Tree> = {
     let currentY = y;
     if (astNode.nodes) {
       for (const treeNode of astNode.nodes) {
-        const prefix =
-          treeNode.children && treeNode.children.length > 0
-            ? treeNode.expanded
-              ? '📂'
-              : '📁'
-            : '📄';
+        const hasChildren = Boolean(treeNode.children && treeNode.children.length > 0);
+        const isExpanded = hasChildren && treeNode.expanded !== false;
+        const prefix = hasChildren ? (isExpanded ? '📂' : '📁') : '📄';
+
         drawText(g, `${prefix} ${treeNode.label ?? ''}`, x, currentY + 16);
         currentY += 22;
+
+        if (hasChildren && isExpanded && treeNode.children) {
+          for (const childLabel of treeNode.children) {
+            drawText(g, `📄 ${childLabel}`, x + 20, currentY + 16);
+            currentY += 22;
+          }
+        }
       }
     }
   },

@@ -58,8 +58,8 @@ end`;
     const var1 = tabsNode.children![0];
     const var2 = tabsNode.children![1];
 
-    expect((var1.astNode as ContentTabs).activeTab).toBe(0);
-    expect((var2.astNode as ContentTabs).activeTab).toBe(1);
+    expect((var1.astNode as ContentTabs).activeTab).toBe(1);
+    expect((var2.astNode as ContentTabs).activeTab).toBe(2);
 
     expect(var1.x).toBe(0);
     expect(var2.x).toBeGreaterThan(var1.x);
@@ -92,8 +92,8 @@ end`;
     const var1 = tabsNode.children![0];
     const var2 = tabsNode.children![1];
 
-    expect((var1.astNode as ContentTabs).activeTab).toBe(0);
-    expect((var2.astNode as ContentTabs).activeTab).toBe(2);
+    expect((var1.astNode as ContentTabs).activeTab).toBe(1);
+    expect((var2.astNode as ContentTabs).activeTab).toBe(3);
   });
 
   it('should support unquoted numbers like showTabs=1,3', async () => {
@@ -119,13 +119,13 @@ end`;
     const var1 = tabsNode.children![0];
     const var2 = tabsNode.children![1];
 
-    expect((var1.astNode as ContentTabs).activeTab).toBe(0);
-    expect((var2.astNode as ContentTabs).activeTab).toBe(2);
+    expect((var1.astNode as ContentTabs).activeTab).toBe(1);
+    expect((var2.astNode as ContentTabs).activeTab).toBe(3);
   });
 
-  it('should match tab IDs/slugs like showTabs=tab-1,tab-3', async () => {
+  it('should match tab IDs/slugs like showTabs="tab-1,tab-3"', async () => {
     const input = `wireframe size=panel
-tabs ["Tab 1", "Tab 2", "Tab 3"] showTabs=tab-1,tab-3
+tabs ["Tab 1", "Tab 2", "Tab 3"] showTabs="tab-1,tab-3"
   tab "Tab 1"
     label "Tab 1 content"
   end
@@ -146,8 +146,8 @@ end`;
     const var1 = tabsNode.children![0];
     const var2 = tabsNode.children![1];
 
-    expect((var1.astNode as ContentTabs).activeTab).toBe(0);
-    expect((var2.astNode as ContentTabs).activeTab).toBe(2);
+    expect((var1.astNode as ContentTabs).activeTab).toBe(1);
+    expect((var2.astNode as ContentTabs).activeTab).toBe(3);
   });
 
   it('should match explicit tab IDs like showTabs=gen,sec', async () => {
@@ -170,7 +170,85 @@ end`;
     const var1 = tabsNode.children![0];
     const var2 = tabsNode.children![1];
 
-    expect((var1.astNode as ContentTabs).activeTab).toBe(0);
-    expect((var2.astNode as ContentTabs).activeTab).toBe(1);
+    expect((var1.astNode as ContentTabs).activeTab).toBe(1);
+    expect((var2.astNode as ContentTabs).activeTab).toBe(2);
+  });
+
+  it('should support mixing slugs/IDs and numbers like showTabs=general,3', async () => {
+    const input = `wireframe size=panel
+tabs ["General", "Security", "Notifications"] showTabs=general,3
+  tab "General"
+    textfield "Username"
+  end
+  tab "Security"
+    password "Password"
+  end
+  tab "Notifications"
+    checkbox "Email" checked
+  end
+end`;
+    await expect(parser.parse(input)).resolves.not.toThrow();
+
+    const components = db.getComponents();
+    const layout = computeWireframeLayout(components, 600, 0, 0);
+    const tabsNode = layout.nodes[0];
+    expect(tabsNode.children).toHaveLength(2);
+
+    const var1 = tabsNode.children![0];
+    const var2 = tabsNode.children![1];
+
+    expect((var1.astNode as ContentTabs).activeTab).toBe(1);
+    expect((var2.astNode as ContentTabs).activeTab).toBe(3);
+  });
+
+  it('should ignore active parameter when showTabs is set', async () => {
+    const input = `wireframe size=panel
+tabs ["General", "Security"] active=2 showTabs
+  tab "General"
+    textfield "Name"
+  end
+  tab "Security"
+    password "Password"
+  end
+end`;
+    await expect(parser.parse(input)).resolves.not.toThrow();
+
+    const components = db.getComponents();
+    const layout = computeWireframeLayout(components, 600, 0, 0);
+    const tabsNode = layout.nodes[0];
+    expect(tabsNode.children).toHaveLength(2);
+  });
+
+  it('should default to first tab (active=1) when neither active nor showTabs is set', async () => {
+    const input = `wireframe size=panel
+tabs ["General", "Security"]
+  tab "General"
+    textfield "Name"
+  end
+  tab "Security"
+    password "Password"
+  end
+end`;
+    await expect(parser.parse(input)).resolves.not.toThrow();
+
+    const components = db.getComponents();
+    const layout = computeWireframeLayout(components, 600, 0, 0);
+    const tabsNode = layout.nodes[0];
+    expect(tabsNode.children?.[0]?.astNode.$type).toBe('TextField');
+  });
+
+  it('should calculate tree height including expanded children', async () => {
+    const input = `wireframe size=panel
+tree "Explorer"
+  node "src" expanded > "index.ts", "utils.ts"
+  node "public" > "favicon.ico"
+end`;
+    await expect(parser.parse(input)).resolves.not.toThrow();
+
+    const components = db.getComponents();
+    const layout = computeWireframeLayout(components, 600, 0, 0);
+    const treeNode = layout.nodes[0];
+    // 1 node ("src") + 2 children ("index.ts", "utils.ts") + 1 node ("public") = 4 lines * 22 = 88px
+    expect(treeNode.height).toBe(88);
   });
 });

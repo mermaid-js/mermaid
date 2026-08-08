@@ -182,8 +182,25 @@ end
       const layout = computeWireframeLayout(components, 800, 20, 10);
       expect(layout.nodes).toHaveLength(1);
       const tabsNode = layout.nodes[0];
-      expect(tabsNode.children).toBeDefined();
-      expect(tabsNode.children!).toHaveLength(1);
+      expect(tabsNode.children![0].astNode.$type).toBe('TextElement');
+    });
+
+    it('should select second tab when active=2', async () => {
+      const input = `wireframe "Tabs Test 2"
+tabs [General, Settings] active=2
+  tab "General"
+    label "General Info"
+  end
+  tab "Settings"
+    button "Save Config"
+  end
+end
+`;
+      await expect(parser.parse(input)).resolves.not.toThrow();
+
+      const components = db.getComponents();
+      const layout = computeWireframeLayout(components, 800, 20, 10);
+      const tabsNode = layout.nodes[0];
       expect(tabsNode.children![0].astNode.$type).toBe('Button');
     });
 

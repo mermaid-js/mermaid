@@ -19,22 +19,24 @@ import {
   type TabBar,
 } from '@mermaid-js/parser';
 import type { ComponentRenderer } from './types.js';
-import { drawBox, drawText } from './utils.js';
+import { drawBox, drawText, hasShowTabs, resolveActiveTabIdx } from './utils.js';
 
 export const sectionRenderer: ComponentRenderer<WireframeSection> = {
   type: 'WireframeSection',
   guard: isWireframeSection,
   render: ({ parentElem, node, renderChildNodes }) => {
-    const { x, y, astNode, children } = node;
+    const { x, y, width, height, astNode, children } = node;
     const title = astNode.label ?? '';
     const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-section');
 
+    drawBox(g, x, y, width, height, 'wireframe-container');
+
     if (title) {
-      drawText(g, title, x, y + 16, 'wireframe-text wireframe-container-title');
+      drawText(g, title, x + 12, y + 16, 'wireframe-text wireframe-container-title');
     }
 
     if (children?.length) {
-      renderChildNodes(parentElem, children);
+      renderChildNodes(g, children);
     }
   },
 };
@@ -122,7 +124,7 @@ export const contentTabsRenderer: ComponentRenderer<ContentTabs> = {
   render: ({ parentElem, node, renderChildNodes }) => {
     const { x, y, width, height, astNode, children } = node;
 
-    if ((astNode.showTabs || astNode.showTabsValue) && children?.length) {
+    if (hasShowTabs(astNode) && children?.length) {
       const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-show-tabs-group');
       children.forEach((childNode, idx) => {
         if (idx < children.length - 1) {
@@ -145,7 +147,7 @@ export const contentTabsRenderer: ComponentRenderer<ContentTabs> = {
 
     const tabHeight = 30;
     const tabs = astNode.tabs ?? [];
-    const activeIdx = astNode.activeTab ?? 0;
+    const activeIdx = resolveActiveTabIdx(astNode, tabs.length);
 
     let tabX = x;
     tabs.forEach((tab, idx) => {
@@ -205,7 +207,7 @@ export const tabBarRenderer: ComponentRenderer<TabBar> = {
     const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-tabbar');
     const tabHeight = 32;
     const tabs = astNode.tabs ?? [];
-    const activeIdx = astNode.activeTab ?? 0;
+    const activeIdx = resolveActiveTabIdx(astNode, tabs.length);
 
     let tabX = x;
     tabs.forEach((tab, idx) => {

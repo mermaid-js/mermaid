@@ -63,7 +63,7 @@ interface Canvas extends WireframeComponent {
 
 interface TabBar extends WireframeComponent {
     tabs?: TabOption[]
-    activeTab?: number
+    activeTab?: (string | number)
 }
 
 interface Arrow extends WireframeComponent {
@@ -118,7 +118,7 @@ interface Columns extends WireframeComponent {
 
 interface ContentTabs extends WireframeComponent {
     tabs?: TabOption[]
-    activeTab?: number
+    activeTab?: (string | number)
     tabBlocks?: TabPane[]
     showTabs?: boolean
     showTabsValue?: (string | number)[]
@@ -223,7 +223,7 @@ TabOption:
 /* ─── Leaf Components ──────────────────────────────────────────────────────── */
 
 TextField returns TextField:
-    type=('textfield' | 'password' | 'numberfield' | 'datepicker' | 'date-picker') label=(STRING | ID)
+    type=('textfield' | 'password' | 'numberfield' | 'datepicker') label=(STRING | ID)
     Modifiers EOL
 ;
 
@@ -298,7 +298,7 @@ Canvas returns Canvas:
 TabBar returns TabBar:
     TABBAR label=(STRING | ID)
     ('[' tabs+=TabOption ((',' | NEWLINE)? tabs+=TabOption)* ']')?
-    ('active=' activeTab=INT)?
+    ('active=' activeTab=(STRING | ID | INT))?
     Modifiers EOL
 ;
 
@@ -392,7 +392,7 @@ TabPane returns TabPane:
 
 ContentTabs returns ContentTabs:
     TABS '[' tabs+=TabOption ((',' | NEWLINE)? tabs+=TabOption)* ']'
-    ('active=' activeTab=INT)?
+    ('active=' activeTab=(STRING | ID | INT))?
     ('showTabs=' showTabsValue+=(STRING | ID | INT) (',' showTabsValue+=(STRING | ID | INT))* | showTabs?='showTabs')?
     Modifiers
     (NEWLINE | tabBlocks+=TabPane)*

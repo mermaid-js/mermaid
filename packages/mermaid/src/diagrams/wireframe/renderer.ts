@@ -46,13 +46,14 @@ const renderActionBar = (
         .attr('height', metrics.buttonHeight)
         .attr('class', btnClass);
 
+      const textClass = isPrimary ? 'wireframe-text wireframe-text-primary' : 'wireframe-text';
+
       bar
         .append('text')
         .attr('x', xOffset + btnWidth / 2)
         .attr('y', yPos + 23)
         .attr('text-anchor', 'middle')
-        .attr('class', 'wireframe-text')
-        .style('fill', isPrimary ? '#ffffff' : '#333333')
+        .attr('class', textClass)
         .text(displayLabel);
 
       xOffset += btnWidth + metrics.gap;
