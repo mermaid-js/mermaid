@@ -1,4 +1,5 @@
 import type { SVG, SVGGroup } from '../../diagram-api/types.js';
+import { t } from '../../i18n/index.js';
 import { log } from '../../logger.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
@@ -66,14 +67,14 @@ export const draw = (_text: string, id: string, version: string) => {
     .attr('y', 250)
     .attr('font-size', '150px')
     .style('text-anchor', 'middle')
-    .text('Syntax error in text');
+    .text(t('error.syntaxError'));
   g.append('text') // text label for the x axis
     .attr('class', 'error-text')
     .attr('x', 1250)
     .attr('y', 400)
     .attr('font-size', '100px')
     .style('text-anchor', 'middle')
-    .text(`mermaid version ${version}`);
+    .text(t('error.version', { version }));
 };
 
 export const renderer = { draw };
