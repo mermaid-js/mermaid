@@ -107,7 +107,7 @@ describe('c4-beta db', () => {
       const customer = nodes.find((n) => n.id === 'customer');
       expect(customer).toBeDefined();
       expect(customer?.isGroup).toBe(false);
-      expect(customer?.shape).toBe('c4-person');
+      expect(customer?.shape).toBe('person');
       expect(customer?.cssClasses).toBe('c4-shape c4-person');
       expect(customer?.cssStyles).toEqual(['fill: #08427B', 'stroke: #073B6F']);
       expect(customer?.label).toBe(

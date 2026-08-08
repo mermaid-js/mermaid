@@ -242,7 +242,7 @@ export class C4BetaDB implements DiagramDB {
         cssClasses.push('c4-external');
       }
       const cssStyles = colors ? [`fill: ${colors.fill}`, `stroke: ${colors.stroke}`] : [];
-      let shape: Node['shape'] = element.kind === 'person' ? 'c4-person' : 'rect';
+      let shape: Node['shape'] = element.kind === 'person' ? 'person' : 'rect';
       // Tag styles are pushed after the built-in kind colors so they override them.
       // A user `style external fill:#...` therefore beats the default `.c4-external` rule.
       for (const tag of element.tags) {
