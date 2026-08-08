@@ -131,6 +131,105 @@ end
       expect(layout.totalHeight).toBeGreaterThan(100);
     });
 
+    it('should calculate custom column widths (% and px) in multi-column layout engine', async () => {
+      const input = `wireframe "Custom Columns"
+columns
+  col 30%
+    heading "Left Column"
+  end
+  col 70%
+    heading "Right Column"
+  end
+end
+`;
+      await expect(parser.parse(input)).resolves.not.toThrow();
+
+      const components = db.getComponents();
+      expect(components).toHaveLength(1);
+
+      const layout = computeWireframeLayout(components, 1000, 20, 10);
+      expect(layout.nodes).toHaveLength(1);
+      const colsNode = layout.nodes[0];
+      expect(colsNode.children).toBeDefined();
+      expect(colsNode.children).toHaveLength(2);
+
+      const col1Heading = colsNode.children![0];
+      const col2Heading = colsNode.children![1];
+
+      // Total available width = 1000 - 12 (gap) = 988.
+      // col1 width ~ 30% of 988 = 296.4. col2 width ~ 70% of 988 = 691.6.
+      expect(col1Heading.width).toBeCloseTo(296.4, 0);
+      expect(col2Heading.width).toBeCloseTo(691.6, 0);
+      expect(col2Heading.x).toBeGreaterThan(col1Heading.x);
+    });
+
+    it('should correctly position ContentTabs active tab child components', async () => {
+      const input = `wireframe "Tabs Test"
+tabs [General, Settings] active=1
+  tab "General"
+    label "General Info"
+  end
+  tab "Settings"
+    button "Save Config"
+  end
+end
+`;
+      await expect(parser.parse(input)).resolves.not.toThrow();
+
+      const components = db.getComponents();
+      expect(components).toHaveLength(1);
+
+      const layout = computeWireframeLayout(components, 800, 20, 10);
+      expect(layout.nodes).toHaveLength(1);
+      const tabsNode = layout.nodes[0];
+      expect(tabsNode.children).toBeDefined();
+      expect(tabsNode.children!).toHaveLength(1);
+      expect(tabsNode.children![0].astNode.$type).toBe('Button');
+    });
+
+    it('should respect Accordion collapsed vs expanded states during layout', async () => {
+      const inputExpanded = `wireframe "Expanded Accordion"
+accordion "Section A"
+  button "Action inside"
+end
+`;
+      await expect(parser.parse(inputExpanded)).resolves.not.toThrow();
+      const expLayout = computeWireframeLayout(db.getComponents(), 800, 20, 10);
+      expect(expLayout.nodes[0].children).toHaveLength(1);
+      const expandedHeight = expLayout.nodes[0].height;
+
+      db.clear();
+      const inputCollapsed = `wireframe "Collapsed Accordion"
+accordion "Section B" collapsed
+  button "Action inside"
+end
+`;
+      await expect(parser.parse(inputCollapsed)).resolves.not.toThrow();
+      const colLayout = computeWireframeLayout(db.getComponents(), 800, 20, 10);
+      expect(colLayout.nodes[0].children).toBeUndefined();
+      expect(colLayout.nodes[0].height).toBeLessThan(expandedHeight);
+    });
+
+    it('should track maximum row height when aligning multiple components to prevent downstream overlap', async () => {
+      const input = `wireframe "Row Height Align Test"
+canvas "Large Image" height=100 id=c1
+button "Side Button" alignTo=c1 id=b1
+paragraph "Subsequent Text"
+`;
+      await expect(parser.parse(input)).resolves.not.toThrow();
+
+      const layout = computeWireframeLayout(db.getComponents(), 800, 20, 10);
+      expect(layout.nodes).toHaveLength(3);
+
+      const canvasNode = layout.nodes[0];
+      const buttonNode = layout.nodes[1];
+      const paragraphNode = layout.nodes[2];
+
+      expect(buttonNode.y).toBe(canvasNode.y);
+      // Paragraph should be placed safely below the bottom of canvas (y=10, height=100 -> bottom=110)
+      expect(paragraphNode.y).toBeGreaterThanOrEqual(122);
+    });
+
     it('should verify ComponentRegistry fallback for unknown components', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const createMockSelection = (): any => ({

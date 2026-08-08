@@ -13,7 +13,9 @@ import {
   fieldSetRenderer,
   titleWindowRenderer,
   columnsRenderer,
+  colBlockRenderer,
   contentTabsRenderer,
+  tabPaneRenderer,
   accordionRenderer,
   tabBarRenderer,
 } from './containers.js';
@@ -45,7 +47,9 @@ registry.register(sectionRenderer);
 registry.register(fieldSetRenderer);
 registry.register(titleWindowRenderer);
 registry.register(columnsRenderer);
+registry.register(colBlockRenderer);
 registry.register(contentTabsRenderer);
+registry.register(tabPaneRenderer);
 registry.register(accordionRenderer);
 registry.register(tabBarRenderer);
 

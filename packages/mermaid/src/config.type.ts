@@ -1873,7 +1873,7 @@ export interface WireframeDiagramConfig extends BaseDiagramConfig {
   /**
    * Default canvas size preset if not specified in header
    */
-  defaultCanvasSize?: string;
+  defaultCanvasSize?: 'dialog' | 'panel' | 'tablet' | 'desktop' | 'page';
   /**
    * Font family to use for wireframe labels
    */

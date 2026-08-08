@@ -7,7 +7,7 @@ export type SVGGroupSelection = Selection<SVGGElement, unknown, Element | null, 
 export interface ComponentRenderContext<T extends WireframeComponent = WireframeComponent> {
   parentElem: SVGGroupSelection;
   node: WireframeRenderNode & { astNode: T };
-  config: Required<WireframeDiagramConfig>;
+  config: WireframeDiagramConfig;
   /** Callback to recursively render child nodes (for containers like section, fieldset, columns) */
   renderChildNodes: (parent: SVGGroupSelection, children: WireframeRenderNode[]) => void;
 }

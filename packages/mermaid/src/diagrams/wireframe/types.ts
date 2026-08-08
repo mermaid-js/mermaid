@@ -1,7 +1,8 @@
 import type { WireframeComponent } from '@mermaid-js/parser';
-import type { BaseDiagramConfig } from '../../config.type.js';
+import type { WireframeDiagramConfig } from '../../config.type.js';
 
 export type CanvasSizePreset = 'dialog' | 'panel' | 'tablet' | 'desktop' | 'page';
+export type { WireframeDiagramConfig };
 
 export const CANVAS_SIZE_MAP: Record<CanvasSizePreset, { width: number; height: number }> = {
   dialog: { width: 450, height: 320 },
@@ -31,14 +32,6 @@ export const LAYOUT_METRICS = {
   listNode: { itemHeight: 22, gapY: 4 },
   defaultComponent: { height: 28, maxWidth: 200, gapY: 10, textPaddingX: 8, textOffsetY: 18 },
 } as const;
-
-export interface WireframeDiagramConfig extends BaseDiagramConfig {
-  padding?: number;
-  containerPadding?: number;
-  defaultCanvasSize?: CanvasSizePreset;
-  fontFamily?: string;
-  fontSize?: number;
-}
 
 export interface WireframeRenderNode {
   astNode: WireframeComponent;

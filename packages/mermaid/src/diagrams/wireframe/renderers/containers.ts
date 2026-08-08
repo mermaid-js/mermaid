@@ -3,14 +3,18 @@ import {
   isFieldSet,
   isTitleWindow,
   isColumns,
+  isColBlock,
   isContentTabs,
+  isTabPane,
   isAccordion,
   isTabBar,
   type WireframeSection,
   type FieldSet,
   type TitleWindow,
   type Columns,
+  type ColBlock,
   type ContentTabs,
+  type TabPane,
   type Accordion,
   type TabBar,
 } from '@mermaid-js/parser';
@@ -29,7 +33,7 @@ export const sectionRenderer: ComponentRenderer<WireframeSection> = {
       drawText(g, title, x, y + 16, 'wireframe-text wireframe-container-title');
     }
 
-    if (children && children.length > 0) {
+    if (children?.length) {
       renderChildNodes(parentElem, children);
     }
   },
@@ -49,7 +53,7 @@ export const fieldSetRenderer: ComponentRenderer<FieldSet> = {
       drawText(g, legend, x + 12, y + 14, 'wireframe-text wireframe-container-title');
     }
 
-    if (children && children.length > 0) {
+    if (children?.length) {
       renderChildNodes(g, children);
     }
   },
@@ -95,7 +99,7 @@ export const titleWindowRenderer: ComponentRenderer<TitleWindow> = {
       'middle'
     );
 
-    if (children && children.length > 0) {
+    if (children?.length) {
       renderChildNodes(g, children);
     }
   },
@@ -106,7 +110,7 @@ export const columnsRenderer: ComponentRenderer<Columns> = {
   guard: isColumns,
   render: ({ parentElem, node, renderChildNodes }) => {
     const { children } = node;
-    if (children && children.length > 0) {
+    if (children?.length) {
       renderChildNodes(parentElem, children);
     }
   },
@@ -143,7 +147,7 @@ export const contentTabsRenderer: ComponentRenderer<ContentTabs> = {
     // Tab pane container box below
     drawBox(g, x, y + tabHeight, width, height - tabHeight, 'wireframe-container');
 
-    if (children && children.length > 0) {
+    if (children?.length) {
       renderChildNodes(g, children);
     }
   },
@@ -165,7 +169,7 @@ export const accordionRenderer: ComponentRenderer<Accordion> = {
     const arrowChar = isCollapsed ? '▶' : '▼';
     drawText(g, `${arrowChar} ${title}`, x + 10, y + 20, 'wireframe-text wireframe-bold');
 
-    if (!isCollapsed && children && children.length > 0) {
+    if (!isCollapsed && children?.length) {
       drawBox(g, x, y + headerHeight, width, height - headerHeight, 'wireframe-container');
       renderChildNodes(g, children);
     }
@@ -198,5 +202,27 @@ export const tabBarRenderer: ComponentRenderer<TabBar> = {
       drawText(g, tabLabel, tabX + tabWidth / 2, y + tabHeight / 2 + 4, 'wireframe-text', 'middle');
       tabX += tabWidth + 4;
     });
+  },
+};
+
+export const colBlockRenderer: ComponentRenderer<ColBlock> = {
+  type: 'ColBlock',
+  guard: isColBlock,
+  render: ({ parentElem, node, renderChildNodes }) => {
+    const { children } = node;
+    if (children?.length) {
+      renderChildNodes(parentElem, children);
+    }
+  },
+};
+
+export const tabPaneRenderer: ComponentRenderer<TabPane> = {
+  type: 'TabPane',
+  guard: isTabPane,
+  render: ({ parentElem, node, renderChildNodes }) => {
+    const { children } = node;
+    if (children?.length) {
+      renderChildNodes(parentElem, children);
+    }
   },
 };

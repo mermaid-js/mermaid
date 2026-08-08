@@ -2603,6 +2603,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       defaultCanvasSize:
         description: Default canvas size preset if not specified in header
         type: string
+        enum:
+          - dialog
+          - panel
+          - tablet
+          - desktop
+          - page
         default: desktop
       fontFamily:
         description: Font family to use for wireframe labels

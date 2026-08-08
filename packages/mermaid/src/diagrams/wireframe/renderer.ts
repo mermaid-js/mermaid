@@ -64,7 +64,7 @@ const renderActionBar = (
 const renderNodesRecursive = (
   parentElem: SVGGroupSelection,
   nodes: WireframeRenderNode[],
-  config: Required<WireframeDiagramConfig>
+  config: WireframeDiagramConfig
 ) => {
   for (const node of nodes) {
     registry.render({
