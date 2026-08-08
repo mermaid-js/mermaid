@@ -16,6 +16,7 @@ import type {
   TreeView,
   Wardley,
   Cynefin,
+  DomainStorytelling,
 } from './language/index.js';
 
 export type DiagramAST =
@@ -33,7 +34,8 @@ export type DiagramAST =
   | Treemap
   | TreeView
   | Wardley
-  | Cynefin;
+  | Cynefin
+  | DomainStorytelling;
 
 const parsers: Record<string, LangiumParser> = {};
 const initializers = {
@@ -112,6 +114,13 @@ const initializers = {
     const parser = createCynefinServices().Cynefin.parser.LangiumParser;
     parsers.cynefin = parser;
   },
+  domainstorytelling: async () => {
+    const { createDomainStorytellingServices } = await import(
+      './language/domainstorytelling/index.js'
+    );
+    const parser = createDomainStorytellingServices().DomainStorytelling.parser.LangiumParser;
+    parsers.domainstorytelling = parser;
+  },
 } as const;
 
 export async function parse(diagramType: 'info', text: string): Promise<Info>;
@@ -129,6 +138,10 @@ export async function parse(diagramType: 'railroadPeg', text: string): Promise<R
 export async function parse(diagramType: 'treemap', text: string): Promise<Treemap>;
 export async function parse(diagramType: 'wardley', text: string): Promise<Wardley>;
 export async function parse(diagramType: 'cynefin', text: string): Promise<Cynefin>;
+export async function parse(
+  diagramType: 'domainstorytelling',
+  text: string
+): Promise<DomainStorytelling>;
 
 export async function parse<T extends DiagramAST>(
   diagramType: keyof typeof initializers,

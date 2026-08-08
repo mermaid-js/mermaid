@@ -1,0 +1,396 @@
+<!-- Simple test page for Domain Storytelling diagram -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Domain Storytelling Diagram Test</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      h1 {
+        margin-bottom: 0.25em;
+      }
+
+      h2 {
+        color: #333;
+        border-bottom: 2px solid #4a90e2;
+        padding-bottom: 0.5em;
+        margin-top: 2em;
+      }
+
+      .theme-switcher {
+        position: sticky;
+        top: 0;
+        background: var(--page-bg, white);
+        padding: 10px 0;
+        border-bottom: 2px solid #ddd;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .theme-switcher label {
+        font-size: 13px;
+        font-weight: bold;
+        /* Theme-driven: #555 on white, lightened for the dark switcher background
+           (set alongside --page-bg in applyPageBackground). */
+        color: var(--switcher-label, #555);
+        margin-right: 4px;
+      }
+
+      .theme-btn,
+      .layout-btn {
+        padding: 5px 16px;
+        border: 2px solid #ccc;
+        border-radius: 20px;
+        cursor: pointer;
+        background: white;
+        font-size: 13px;
+        transition: all 0.15s;
+      }
+
+      .theme-btn:hover,
+      .layout-btn:hover {
+        border-color: #4a90e2;
+      }
+
+      .theme-btn.active,
+      .layout-btn.active {
+        border-color: #4a90e2;
+        background: #4a90e2;
+        color: white;
+      }
+
+      .switcher-divider {
+        width: 1px;
+        align-self: stretch;
+        background: #ddd;
+        margin: 0 6px;
+      }
+
+      .mermaid {
+        padding: 2em;
+        margin: 1em 0;
+        background-color: var(--diagram-bg, #f9f9f9);
+        transition: background-color 0.2s;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Domain Storytelling Diagram Test</h1>
+
+    <div class="theme-switcher">
+      <label>Theme:</label>
+      <button class="theme-btn active" data-theme="default">default</button>
+      <button class="theme-btn" data-theme="dark">dark</button>
+      <button class="theme-btn" data-theme="forest">forest</button>
+      <button class="theme-btn" data-theme="neutral">neutral</button>
+      <button class="theme-btn" data-theme="base">base</button>
+
+      <span class="switcher-divider"></span>
+
+      <label>Layout:</label>
+      <button class="layout-btn active" data-layout="dagre">dagre</button>
+      <button class="layout-btn" data-layout="elk">elk</button>
+    </div>
+
+    <h2>Domain Storytelling with Annotations</h2>
+    <pre class="mermaid" id="domainstorytelling-annotations">
+      domainstorytelling-beta
+      group G_Service "Service Desk"
+      group G_Engineering "Engineering"
+
+      A_Customer "Customer" fa6-solid:user in G_Service
+      A_Agent "Support Agent" fa6-solid:headset in G_Service
+      A_Engineer "Engineer" fa6-solid:laptop-code in G_Engineering
+      A_Manager "Team Lead" fa6-solid:user-tie in G_Engineering
+      W_Ticket "Ticket" fa6-solid:ticket
+      W_Backlog "Backlog" fa6-solid:list
+      W_Fix "Fix" fa6-solid:wrench
+      W_Release "Release" fa6-solid:rocket
+
+      A_Customer : 01 -- "reports" -> W_Ticket in G_Service -- "to" -> A_Agent id S_Report
+      A_Agent : 02 -- "triages" -> W_Ticket in G_Service -- "into" -> W_Backlog in G_Service id S_Triage
+      A_Agent : 03 -- "escalates" -> W_Ticket -- "to" -> A_Engineer id S_Escalate
+      A_Engineer : 04 -- "implements" -> W_Fix in G_Engineering -- "for" -> W_Ticket in G_Engineering <- "reviews" -- A_Manager id S_Fix
+      A_Engineer : 05 -- "ships" -> W_Fix in G_Engineering -- "in" -> W_Release in G_Engineering id S_Ship
+      A_Agent : 05 -- "closes" -> W_Ticket in G_Service -- "and notifies" -> A_Customer id S_Close
+
+      annotate actor A_Engineer "Owns root-cause analysis and the fix; loops in the team lead for review."
+
+      annotate group G_Engineering "Second-level support. Only tickets L1 cannot resolve are escalated here."
+
+      annotate sentence 01 "Entry point of the story — the seqNo badge 01 sits on the reporting arrow."
+
+      annotate sentence S_Close "Referenced by id because seqNo 05 is reused (ship + close run in parallel)."
+
+      annotate workobject W_Ticket@01 "The ticket instance as first created by the customer."
+
+      annotate workobject W_Fix@S_Fix "The fix while under review, before it is bundled into a release."
+    </pre>
+
+    <h2>Basic Domain Storytelling Example</h2>
+    <pre class="mermaid" id="domainstorytelling-test">
+      domainstorytelling-beta
+
+      A_A : 01 -- "works on" -> W_W
+      A_A : 02 -- "works on" -> W_W -- "using" -> W_V
+      A_B : 02 -- "works on" -> W_W
+      A_A : 03 -- "hands over" -> W_W -- "to" -> A_B
+      A_A : 04 -- "hands over" -> W_W -- "to" -> A_B -- "and" -> A_C
+      A_A : 05 -- "collaborates on" -> W_W
+      A_B : 05 -- "collaborates on" -> W_W
+      A_C : 05 -- "collaborates on" -> W_W
+
+      A_D : 06 -- "collaborates on" -> W_W <- "collaborates on" -- A_E <- "collaborates on" -- A_F
+      A_D : 07 -- "works on" -> W_X -- "using" -> W_Y -- "writing" -> W_Z
+    </pre>
+
+    <h2>Built-in Notation Icons (no icon pack registration needed)</h2>
+    <pre class="mermaid" id="domainstorytelling-builtin-icons">
+      domainstorytelling-beta
+
+      A_Customer "Customer" person
+      A_SupportTeam "Support Team" people
+      A_CRM "CRM System" system
+      W_Request "Request" conversation
+      W_Call "Phone Call" call
+      W_Mail "Confirmation Mail" email
+      W_Case "Support Case" document
+      W_Archive "Case Archive" folder
+      W_Notice "Status Notice" info
+
+      A_Customer : 01 -- "starts" -> W_Request
+      A_Customer : 02 -- "makes" -> W_Call -- "answered by" -> A_SupportTeam
+      A_SupportTeam : 03 -- "records" -> W_Case -- "in" -> A_CRM
+      A_CRM : 04 -- "sends" -> W_Mail -- "to" -> A_Customer
+      A_SupportTeam : 05 -- "files" -> W_Case -- "into" -> W_Archive
+      A_CRM : 06 -- "publishes" -> W_Notice
+    </pre>
+
+    <h2>Complex E-Commerce Fulfillment (Full Feature Demo)</h2>
+    <pre class="mermaid" id="domainstorytelling-ecommerce-complex">
+      domainstorytelling-beta
+      A_Customer fa6-solid:user
+      A_SalesAgent fa6-solid:headset
+      A_WarehouseStaff fa6-solid:warehouse
+      A_QualityChecker fa6-solid:circle-check
+      A_ShippingClerk fa6-solid:tag
+      A_Carrier fa6-solid:truck
+      A_FinanceTeam fa6-solid:coins
+      W_CartItem fa6-solid:cart-shopping
+      W_Order fa6-solid:receipt
+      W_PaymentAuth fa6-solid:credit-card
+      W_Receipt fa6-solid:file-lines
+      W_PickList fa6-solid:list
+      W_Package fa6-solid:box
+      W_ShipLabel fa6-solid:tag
+      W_TrackingCode fa6-solid:barcode
+      W_Invoice fa6-solid:file-invoice
+      group G_Platform "E-Commerce Platform"
+
+      A_SalesAgent in G_Platform
+      A_WarehouseStaff in G_Platform
+      A_QualityChecker in G_Platform
+      A_ShippingClerk in G_Platform
+      A_Carrier in G_Platform
+      A_FinanceTeam in G_Platform
+      A_Customer in G_Platform
+
+      group G_Storefront "Customer Storefront" in G_Platform {
+        A_Customer : 01 -- "adds" -> W_CartItem
+        A_Customer : 02 -- "places" -> W_Order -- "from" -> W_CartItem
+        A_SalesAgent : 03 -- "reviews" -> W_Order -- "confirms" -> W_PaymentAuth
+        A_Customer : 12 -- "acknowledges" -> W_Receipt
+      }
+
+      group G_Finance "Finance & Billing" in G_Platform {
+        A_FinanceTeam : 04 -- "processes" -> W_PaymentAuth -- "issues" -> W_Receipt
+        A_FinanceTeam : 13 -- "closes" -> W_Invoice -- "from" -> W_Order -- "and" -> W_Receipt
+      }
+
+      group G_Fulfillment "Fulfillment Center" in G_Platform {
+        A_WarehouseStaff : 05 -- "generates" -> W_PickList -- "from" -> W_Order
+        A_WarehouseStaff : 06 -- "packs" -> W_Package -- "from" -> W_PickList
+        A_QualityChecker : 07 -- "inspects" -> W_Package <- "presents" -- A_WarehouseStaff
+      }
+
+      group G_Logistics "Logistics & Shipping" in G_Platform {
+        A_ShippingClerk : 08 -- "labels" -> W_Package -- "creates" -> W_ShipLabel -- "assigns" -> W_TrackingCode
+        A_ShippingClerk : 09 -- "notifies" -> W_TrackingCode in G_Storefront -- "to" -> A_Customer
+        A_Carrier : 10 -- "collects" -> W_Package -- "with" -> W_ShipLabel
+        A_Carrier : 11 -- "delivers" -> W_Package -- "to" -> A_Customer
+      }
+    </pre>
+
+    <h2>Metropolis 1a: Going to the movies—coarse-grained—grouped by subdomain (Book Sample)</h2>
+    <pre class="mermaid" id="domainstorytelling-book-sample">
+      ---
+      title: Metropolis - 1a Going to the movies—coarse-grained—grouped by subdomain
+
+      config:
+        domainstorytelling:
+          rankdir: TB
+          nodeSpacing: 50
+          rankSpacing: 100
+      ---
+      domainstorytelling-beta
+
+      A_Cashier "Cashier" fa6-solid:user
+      A_Concession "Concession" fa6-solid:user
+      A_Moviegoer "Moviegoer" fa6-solid:user
+      A_Projectionist "Projectionist" fa6-solid:user
+      A_Usher "Usher" fa6-solid:user
+      W_Ticket "Ticket" fa6-solid:ticket
+      W_SnackAndDrinks "Snack & Drinks" fa6-solid:martini-glass-citrus
+      W_Movie "Movie" fa6-solid:film
+
+      group G_TicketSales "Ticket Sales" {
+        A_Moviegoer : 01 -- "buys" -> W_Ticket -- "from" -> A_Cashier
+      }
+
+      group G_SnackSales "Snack Sales" {
+        A_Moviegoer : 02 -- "buys" -> W_SnackAndDrinks -- "from" -> A_Concession
+      }
+
+      group G_Entrance "Entrance Control" {
+        A_Moviegoer : 03 -- "shows" -> W_Ticket -- "to" -> A_Usher
+        A_Usher : 04 -- "checks" -> W_Ticket -- "and grant entrance to" -> A_Moviegoer
+      }
+
+      group G_MovieProjection "Movie Projection" {
+        A_Projectionist : 05 -- "starts" -> W_Movie -- "for" -> A_Moviegoer
+        A_Moviegoer : 06 -- "watches" -> W_Movie
+      }
+    </pre>
+
+    <script type="module">
+      import mermaid from '/mermaid.esm.mjs';
+      // ELK is an optional external layout engine. Registering its loaders is what
+      // makes the "elk" button in the Layout switcher work (via `config.layout: elk`).
+      import layouts from '/mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
+
+      // The basic Domain Storytelling notation icons (person, document, ...) are
+      // built in and need no registration. Additional Iconify names (prefix:name)
+      // require their pack to be registered; without a registered pack, mermaid
+      // draws the Iconify placeholder icon.
+      mermaid.registerIconPacks([
+        {
+          name: 'fa6-solid',
+          // Pinned to the 1.x dataset so a future major can't reshape the JSON
+          // under the demo (same pin style as demos/er-multiline.html).
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/fa6-solid@1/icons.json').then((res) => {
+              if (!res.ok) {
+                throw new Error(
+                  `Failed to load fa6-solid icon pack: ${res.status} ${res.statusText}`
+                );
+              }
+              return res.json();
+            }),
+        },
+      ]);
+
+      const DARK_THEMES = new Set(['dark']);
+
+      const themeVars = {
+        default: { mainBkg: '#f9f9f9', background: '#f9f9f9', darkMode: false },
+        dark: { mainBkg: '#333', background: '#333', darkMode: true, primaryColor: '#1f2020' },
+        forest: { mainBkg: '#f9f9f9', background: '#f9f9f9', darkMode: false },
+        neutral: { mainBkg: '#f9f9f9', background: '#f9f9f9', darkMode: false },
+        base: { mainBkg: '#f9f9f9', background: '#f9f9f9', darkMode: false },
+      };
+
+      // Save original text before mermaid processes anything
+      const diagrams = [...document.querySelectorAll('.mermaid[id]')];
+      const originals = new Map(diagrams.map((el) => [el.id, el.textContent]));
+
+      let currentTheme = 'default';
+      let currentLayout = 'dagre';
+
+      function applyPageBackground(theme) {
+        const dark = DARK_THEMES.has(theme);
+        document.body.style.background = dark ? '#222' : '';
+        document.body.style.color = dark ? '#ccc' : '';
+        document.querySelectorAll('h2').forEach((h) => {
+          h.style.color = dark ? '#ccc' : '#333';
+        });
+        document.querySelector('.theme-switcher').style.background = dark ? '#222' : 'white';
+        const bg = dark ? '#333' : '#f9f9f9';
+        document.documentElement.style.setProperty('--diagram-bg', bg);
+        document.documentElement.style.setProperty('--page-bg', dark ? '#222' : 'white');
+        document.documentElement.style.setProperty('--switcher-label', dark ? '#ccc' : '#555');
+      }
+
+      function setActive(selector, dataKey, value) {
+        document.querySelectorAll(selector).forEach((btn) => {
+          const isActive = btn.dataset[dataKey] === value;
+          btn.classList.toggle('active', isActive);
+          // Keep the accessible state in sync with the visual one — the active
+          // class is colour-only, which assistive tech doesn't convey.
+          btn.setAttribute('aria-pressed', String(isActive));
+        });
+      }
+
+      // Re-render every diagram with the currently selected theme + layout.
+      async function render() {
+        applyPageBackground(currentTheme);
+
+        // Restore original content so mermaid can re-process
+        diagrams.forEach((el) => {
+          el.textContent = originals.get(el.id);
+          el.removeAttribute('data-processed');
+        });
+
+        mermaid.initialize({
+          logLevel: 3,
+          htmlLabels: true,
+          theme: currentTheme,
+          themeVariables: themeVars[currentTheme] ?? {},
+          // Global layout engine: dagre (default) or the optional ELK loaders
+          // registered above. A diagram that pins `layout` in its own frontmatter
+          // would override this.
+          layout: currentLayout,
+        });
+
+        await mermaid.run({ nodes: diagrams });
+      }
+
+      // Wire up theme buttons
+      document.querySelectorAll('.theme-btn').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          currentTheme = btn.dataset.theme;
+          setActive('.theme-btn', 'theme', currentTheme);
+          await render();
+        });
+      });
+
+      // Wire up layout buttons
+      document.querySelectorAll('.layout-btn').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          currentLayout = btn.dataset.layout;
+          setActive('.layout-btn', 'layout', currentLayout);
+          await render();
+        });
+      });
+
+      // Initial render
+      setActive('.theme-btn', 'theme', currentTheme);
+      setActive('.layout-btn', 'layout', currentLayout);
+      await render();
+    </script>
+  </body>
+</html>

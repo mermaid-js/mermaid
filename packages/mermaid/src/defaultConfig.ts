@@ -315,6 +315,9 @@ const config: RequiredDeep<MermaidConfig> = {
   ishikawa: {
     ...defaultConfigJson.ishikawa,
   },
+  domainstorytelling: {
+    ...defaultConfigJson.domainstorytelling,
+  },
   sankey: {
     ...defaultConfigJson.sankey,
     // Set so that `configKeys` includes this key for sanitizeDirective

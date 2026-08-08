@@ -36,6 +36,7 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
   'usecase',
   'venn',
   'cynefin',
+  'domainstorytelling',
 ] as const;
 
 /**

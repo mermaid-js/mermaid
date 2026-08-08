@@ -274,6 +274,17 @@ class Theme {
       labelColor: this.cynefin?.labelColor || this.primaryTextColor,
     };
 
+    /* domainstorytelling */
+    this.domainstorytellingActorColor =
+      this.domainstorytellingActorColor || this.primaryBorderColor;
+    this.domainstorytellingWorkobjectColor =
+      this.domainstorytellingWorkobjectColor || this.tertiaryBorderColor;
+    this.domainstorytellingSequenceColor =
+      this.domainstorytellingSequenceColor || this.secondaryBorderColor;
+    this.domainstorytellingGroupColor =
+      this.domainstorytellingGroupColor ||
+      (this.darkMode ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.35)');
+
     /* radar */
     this.radar = {
       axisColor: this.radar?.axisColor || this.lineColor,
