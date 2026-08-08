@@ -1,4 +1,3 @@
-/* cspell:words actionbar */
 import type { DiagramStylesProvider } from '../../diagram-api/types.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -25,7 +24,7 @@ const getStyles: DiagramStylesProvider = (options: any) => `
     fill: ${options?.textColor ?? '#2c2c2c'};
   }
   
-  .wireframe-actionbar {
+  .wireframe-action-bar {
     fill: ${options?.secondaryColor ?? '#f3f4f6'};
     stroke: ${options?.primaryBorderColor ?? options?.lineColor ?? '#2c2c2c'};
     stroke-width: 2px;

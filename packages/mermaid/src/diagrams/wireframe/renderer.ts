@@ -1,4 +1,3 @@
-/* cspell:words actionbar */
 import type { DiagramRenderer, DrawDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
@@ -23,7 +22,7 @@ const renderActionBar = (
   yPos: number
 ): number => {
   const metrics = LAYOUT_METRICS.actionBar;
-  const bar = parentElem.append('g').attr('class', 'wireframe-actionbar-group');
+  const bar = parentElem.append('g').attr('class', 'wireframe-action-bar-group');
 
   bar
     .append('rect')
@@ -31,7 +30,7 @@ const renderActionBar = (
     .attr('y', yPos)
     .attr('width', width)
     .attr('height', metrics.height)
-    .attr('class', 'wireframe-actionbar');
+    .attr('class', 'wireframe-action-bar');
 
   let xOffset = 10;
   if (actionBar.buttons) {
