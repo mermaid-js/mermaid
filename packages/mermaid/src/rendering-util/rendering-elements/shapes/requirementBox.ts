@@ -10,6 +10,8 @@ import { createText } from '../../createText.js';
 import { select } from 'd3';
 import type { Requirement, Element } from '../../../diagrams/requirement/types.js';
 
+type TextAlignment = 'center' | 'start';
+
 export async function requirementBox<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node
@@ -22,8 +24,10 @@ export async function requirementBox<T extends SVGGraphicsElement>(
   const gap = 20;
   const isRequirementNode = 'verifyMethod' in node;
   const classes = getNodeClasses(node);
-  const { themeVariables } = getConfig();
+  const config = getConfig();
+  const { themeVariables } = config;
   const { borderColorArray, requirementEdgeLabelBackground } = themeVariables;
+  const bodyTextAlignment: TextAlignment = config.layout === 'elk' ? 'start' : 'center';
 
   // Add outer g element
   const shapeSvg = parent
@@ -58,7 +62,8 @@ export async function requirementBox<T extends SVGGraphicsElement>(
       shapeSvg,
       `${requirementNode.requirementId ? `ID: ${requirementNode.requirementId}` : ''}`,
       accumulativeHeight,
-      node.labelStyle
+      node.labelStyle,
+      bodyTextAlignment
     );
 
     accumulativeHeight += idHeight;
@@ -66,21 +71,24 @@ export async function requirementBox<T extends SVGGraphicsElement>(
       shapeSvg,
       `${requirementNode.text ? `Text: ${requirementNode.text}` : ''}`,
       accumulativeHeight,
-      node.labelStyle
+      node.labelStyle,
+      bodyTextAlignment
     );
     accumulativeHeight += textHeight;
     const riskHeight = await addText(
       shapeSvg,
       `${requirementNode.risk ? `Risk: ${requirementNode.risk}` : ''}`,
       accumulativeHeight,
-      node.labelStyle
+      node.labelStyle,
+      bodyTextAlignment
     );
     accumulativeHeight += riskHeight;
     await addText(
       shapeSvg,
       `${requirementNode.verifyMethod ? `Verification: ${requirementNode.verifyMethod}` : ''}`,
       accumulativeHeight,
-      node.labelStyle
+      node.labelStyle,
+      bodyTextAlignment
     );
   } else {
     // Element
@@ -88,14 +96,16 @@ export async function requirementBox<T extends SVGGraphicsElement>(
       shapeSvg,
       `${elementNode.type ? `Type: ${elementNode.type}` : ''}`,
       accumulativeHeight,
-      node.labelStyle
+      node.labelStyle,
+      bodyTextAlignment
     );
     accumulativeHeight += typeHeight;
     await addText(
       shapeSvg,
       `${elementNode.docRef ? `Doc Ref: ${elementNode.docRef}` : ''}`,
       accumulativeHeight,
-      node.labelStyle
+      node.labelStyle,
+      bodyTextAlignment
     );
   }
 
@@ -195,7 +205,8 @@ async function addText<T extends SVGGraphicsElement>(
   parentGroup: D3Selection<T>,
   inputText: string,
   yOffset: number,
-  style = ''
+  style = '',
+  alignment: TextAlignment = 'center'
 ) {
   if (inputText === '') {
     return 0;
@@ -224,6 +235,12 @@ async function addText<T extends SVGGraphicsElement>(
         child.setAttribute('style', style);
       }
     }
+    if (alignment === 'start') {
+      textChild.setAttribute('text-anchor', 'start');
+      for (const child of textChild.children) {
+        child.setAttribute('text-anchor', 'start');
+      }
+    }
     // Get the bounding box after the style update
     bbox = text.getBBox();
     // Add extra height so it is similar to the html labels
@@ -232,6 +249,9 @@ async function addText<T extends SVGGraphicsElement>(
     const div = text.children[0];
     const dv = select(text);
 
+    if (alignment === 'start') {
+      select(div).style('text-align', 'left');
+    }
     bbox = div.getBoundingClientRect();
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);

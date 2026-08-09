@@ -4,10 +4,10 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/syntax/wireframe.md](../../packages/mermaid/src/docs/syntax/wireframe.md).
 
-# Wireframe Diagrams
+# Wireframe Diagrams (v\<MERMAID_RELEASE_VERSION>+)
 
 > \[!NOTE]
-> Wireframe diagrams are available starting in v11.x.
+> Wireframe diagrams are available starting in v\<MERMAID_RELEASE_VERSION>+.
 
 A Wireframe diagram allows you to create high-level low-fidelity UI mockups and layout wireframes using text syntax. It provides built-in support for standard UI controls, multi-column grid layouts, container nesting, canvas presets, and multi-tab panel previews.
 
@@ -53,7 +53,7 @@ wireframe "User Profile Setup" size=desktop
 
 ## Declaration & Canvas Size Presets
 
-Every wireframe diagram starts with the `wireframe` (or `wireframe-beta`) keyword. You can optionally specify a title enclosed in quotes and a canvas preset size using `size=<preset>`.
+Every wireframe diagram starts with the `wireframe` keyword. You can optionally specify a title enclosed in quotes and a canvas preset size using `size=<preset>`.
 
 ### Syntax
 

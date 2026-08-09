@@ -6,10 +6,14 @@ import type { MermaidBuildOptions } from './util.js';
 import { defaultOptions, getBuildConfig } from './util.js';
 
 const shouldVisualize = process.argv.includes('--visualize');
+// Opt-in: build a profiling-enabled artifact (`pnpm build:esbuild --profiling`).
+// Off by default so released bundles never carry the profiler.
+const shouldProfile = process.argv.includes('--profiling');
 
 const buildPackage = async (entryName: keyof typeof packageOptions) => {
   const commonOptions: MermaidBuildOptions = {
     ...defaultOptions,
+    profiling: shouldProfile,
     options: packageOptions[entryName],
   } as const;
   const buildConfigs: MermaidBuildOptions[] = [

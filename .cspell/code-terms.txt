@@ -23,6 +23,7 @@ classdef
 classdefid
 classentity
 classname
+clazz
 CODEOWNERS
 COLONSEP
 COMPOSIT_STATE
@@ -164,6 +165,7 @@ ts-nocheck
 tsdoc
 typeof
 typestr
+uninstrumented
 unrouted
 unshift
 urlsafe

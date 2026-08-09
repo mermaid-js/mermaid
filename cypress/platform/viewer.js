@@ -15,6 +15,13 @@ function markRendered() {
   }
 }
 
+function usesLegacyFontAwesomeSyntax(code) {
+  const legacyFontAwesomePattern = /fa[bklrs]?:fa-[\w-]+|::icon\(\s*fa\b/;
+  return Array.isArray(code)
+    ? code.some((diagramCode) => usesLegacyFontAwesomeSyntax(diagramCode))
+    : legacyFontAwesomePattern.test(code);
+}
+
 function loadFontAwesomeCSS() {
   const link = document.createElement('link');
   link.rel = 'stylesheet';
@@ -34,14 +41,16 @@ function loadFontAwesomeCSS() {
  * page.
  */
 const contentLoaded = async function () {
-  await loadFontAwesomeCSS();
-  await Promise.all(Array.from(document.fonts, (font) => font.load()));
-
   let pos = document.location.href.indexOf('?graph=');
   if (pos > 0) {
     pos = pos + 7;
     const graphBase64 = document.location.href.substr(pos);
     const graphObj = JSON.parse(b64ToUtf8(graphBase64));
+    if (usesLegacyFontAwesomeSyntax(graphObj.code)) {
+      await loadFontAwesomeCSS();
+    }
+    await Promise.all(Array.from(document.fonts, (font) => font.load()));
+
     const darkThemes = ['dark', 'neo-dark', 'redux-dark', 'redux-dark-color'];
     if (graphObj.mermaid && darkThemes.includes(graphObj.mermaid.theme)) {
       document.body.style.background = '#3f3f3f';

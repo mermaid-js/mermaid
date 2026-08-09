@@ -4,6 +4,7 @@ import type { SVGGroup } from '../diagram-api/types.js';
 import common, { hasKatex, renderKatexSanitized, sanitizeText } from '../diagrams/common/common.js';
 import type { D3TSpanElement, D3TextElement } from '../diagrams/common/commonTypes.js';
 import { log } from '../logger.js';
+import { profiler } from '../profiler.js';
 import {
   markdownToHTML,
   markdownToLines,
@@ -11,6 +12,7 @@ import {
   nonMarkdownToLines,
 } from '../rendering-util/handle-markdown-text.js';
 import { decodeEntities } from '../utils.js';
+import fastdom from './fastdom.js';
 import { getIconSVG, isIconAvailable } from './icons.js';
 import { splitLineToFitWidth } from './splitText.js';
 import type { MarkdownLine, MarkdownWord } from './types.js';
@@ -67,12 +69,11 @@ async function addHtmlSpan(
     div.attr('class', 'labelBkg');
   }
 
-  let bbox = div.node()!.getBoundingClientRect();
+  const bbox = await fastdom.measure(() => div.node()!.getBoundingClientRect());
   if (bbox.width === width) {
     div.style('display', 'table');
     div.style('white-space', 'break-spaces');
     div.style('width', width + 'px');
-    bbox = div.node()!.getBoundingClientRect();
   }
 
   return fo.node()!;
@@ -174,7 +175,14 @@ function createFormattedText(
     }
   }
   if (addBackground) {
-    const bbox = textElement.node()!.getBBox();
+    // The `&& profiler.tickSync` guard tolerates an older shared profiler instance
+    // (from a different mermaid version sharing the page's `__mermaidProfiler`) that
+    // predates `tickSync` — fall back to a plain read. In production the whole
+    // `injected.profiling` ternary folds away to just the direct `getBBox()`.
+    const bbox =
+      injected.profiling && profiler.tickSync
+        ? profiler.tickSync('getBBox', () => textElement.node()!.getBBox())
+        : textElement.node()!.getBBox();
     const padding = 2;
     bkg
       .attr('x', bbox.x - padding)

@@ -24,6 +24,7 @@ Doctave
 DokuWiki
 dompurify
 elkjs
+fastdom
 fcose
 fontawesome
 Fonticons
@@ -48,6 +49,7 @@ matplotlib
 mdbook
 Mermerd
 mkdocs
+monocart
 Nextra
 nodenext
 npmjs
