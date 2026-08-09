@@ -42,8 +42,9 @@ export const buttonRenderer: ComponentRenderer<Button> = {
 
     g.append('text')
       .attr('x', x + width / 2)
-      .attr('y', y + height / 2 + 5)
+      .attr('y', y + height / 2)
       .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'central')
       .attr('class', isPrimary ? 'wireframe-text wireframe-text-primary' : 'wireframe-text')
       .text(label);
   },

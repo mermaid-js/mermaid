@@ -29,6 +29,7 @@ const renderActionBar = (
 
   let xOffset = 10;
   if (actionBar.buttons) {
+    const btnY = yPos + Math.round((metrics.height - metrics.buttonHeight) / 2);
     for (const btn of actionBar.buttons) {
       const label = btn.label ?? '';
       const btnWidth = Math.max(metrics.minButtonWidth, label.length * 8 + 16);
@@ -41,7 +42,7 @@ const renderActionBar = (
       bar
         .append('rect')
         .attr('x', xOffset)
-        .attr('y', yPos + 6)
+        .attr('y', btnY)
         .attr('width', btnWidth)
         .attr('height', metrics.buttonHeight)
         .attr('class', btnClass);
@@ -51,8 +52,9 @@ const renderActionBar = (
       bar
         .append('text')
         .attr('x', xOffset + btnWidth / 2)
-        .attr('y', yPos + 23)
+        .attr('y', btnY + metrics.buttonHeight / 2)
         .attr('text-anchor', 'middle')
+        .attr('dominant-baseline', 'central')
         .attr('class', textClass)
         .text(displayLabel);
 
@@ -104,7 +106,8 @@ const draw: DrawDefinition = (text, id, _ver, diagObj) => {
     .attr('height', height)
     .attr('class', 'wireframe-container');
 
-  let currentY = 10;
+  const canvasPadding = config.padding ?? 15;
+  let currentY = canvasPadding;
 
   // Render Action Bar
   if (actionBar) {
@@ -114,12 +117,19 @@ const draw: DrawDefinition = (text, id, _ver, diagObj) => {
 
   // Pass 1: Compute Layout ( resolving coordinates, alignTo relative layout, container dimensions )
   if (components.length > 0) {
-    const layout = computeWireframeLayout(components, width - 40, 20, currentY);
+    const layout = computeWireframeLayout(
+      components,
+      width - canvasPadding * 2,
+      canvasPadding,
+      currentY,
+      new Map(),
+      config
+    );
 
     // Pass 2: Modular SVG Render
     renderNodesRecursive(wireframeGroup, layout.nodes, config);
 
-    currentY += layout.totalHeight + 20;
+    currentY += layout.totalHeight + canvasPadding;
   }
 
   const totalHeight = Math.max(height, currentY);

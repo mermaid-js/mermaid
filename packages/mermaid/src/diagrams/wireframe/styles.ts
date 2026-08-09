@@ -3,7 +3,7 @@ import type { DiagramStylesProvider } from '../../diagram-api/types.js';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getStyles: DiagramStylesProvider = (options: any) => `
   .wireframe-sketch {
-    font-family: ${options?.fontFamily ?? "'Comic Neue', 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif"};
+    font-family: ${options?.fontFamily ?? "'Chalkboard SE', 'Comic Neue', 'Comic Sans MS', cursive, sans-serif"};
     font-size: ${options?.fontSize ?? '14px'};
   }
   
@@ -18,7 +18,7 @@ const getStyles: DiagramStylesProvider = (options: any) => `
   }
   
   .wireframe-container-title {
-    font-family: ${options?.fontFamily ?? "'Comic Neue', 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif"};
+    font-family: ${options?.fontFamily ?? "'Chalkboard SE', 'Comic Neue', 'Comic Sans MS', cursive, sans-serif"};
     font-weight: bold;
     font-size: 15px;
     fill: ${options?.textColor ?? '#2c2c2c'};
@@ -49,7 +49,7 @@ const getStyles: DiagramStylesProvider = (options: any) => `
   }
   
   .wireframe-text {
-    font-family: ${options?.fontFamily ?? "'Comic Neue', 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif"};
+    font-family: ${options?.fontFamily ?? "'Chalkboard SE', 'Comic Neue', 'Comic Sans MS', cursive, sans-serif"};
     font-size: ${options?.fontSize ?? '14px'};
     fill: ${options?.textColor ?? '#2c2c2c'};
   }

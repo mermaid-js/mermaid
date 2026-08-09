@@ -156,10 +156,10 @@ end
       const col1Heading = colsNode.children![0];
       const col2Heading = colsNode.children![1];
 
-      // Total available width = 1000 - 12 (gap) = 988.
-      // col1 width ~ 30% of 988 = 296.4. col2 width ~ 70% of 988 = 691.6.
-      expect(col1Heading.width).toBeCloseTo(296.4, 0);
-      expect(col2Heading.width).toBeCloseTo(691.6, 0);
+      // Total available width = 1000 - 16 (gap) = 984.
+      // col1 width ~ 30% of 984 = 295.2. col2 width ~ 70% of 984 = 688.8.
+      expect(col1Heading.width).toBeCloseTo(295.2, 0);
+      expect(col2Heading.width).toBeCloseTo(688.8, 0);
       expect(col2Heading.x).toBeGreaterThan(col1Heading.x);
     });
 
@@ -245,6 +245,29 @@ paragraph "Subsequent Text"
       expect(buttonNode.y).toBe(canvasNode.y);
       // Paragraph should be placed safely below the bottom of canvas (y=10, height=100 -> bottom=110)
       expect(paragraphNode.y).toBeGreaterThanOrEqual(122);
+    });
+
+    it('should respect custom gapX, gapY, and containerPadding config overrides', async () => {
+      const input = `wireframe "Config Overrides Test"
+button "B1" id=b1
+button "B2" alignTo=b1 id=b2
+button "B3"
+`;
+      await expect(parser.parse(input)).resolves.not.toThrow();
+      const components = db.getComponents();
+
+      // Custom config: gapX = 30, gapY = 24
+      const customLayout = computeWireframeLayout(components, 800, 20, 10, new Map(), {
+        gapX: 30,
+        gapY: 24,
+      });
+
+      const b1 = customLayout.nodes[0];
+      const b2 = customLayout.nodes[1];
+      const b3 = customLayout.nodes[2];
+
+      expect(b2.x).toBe(b1.x + b1.width + 30);
+      expect(b3.y).toBe(b1.y + Math.max(b1.height, b2.height) + 24);
     });
 
     it('should verify ComponentRegistry fallback for unknown components', () => {

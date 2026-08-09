@@ -403,6 +403,8 @@ config:
     defaultCanvasSize: 'desktop'
     padding: 15
     containerPadding: 20
+    gapX: 16
+    gapY: 16
     fontFamily: 'Inter, sans-serif'
     fontSize: 14
 ---
@@ -413,8 +415,10 @@ config:
 | Option              | Type     | Default     | Description                                                                                                             |
 | :------------------ | :------- | :---------- | :---------------------------------------------------------------------------------------------------------------------- |
 | `defaultCanvasSize` | `string` | `'desktop'` | Canvas preset to use when size is not specified in the diagram header (`dialog`, `panel`, `tablet`, `desktop`, `page`). |
-| `padding`           | `number` | `10`        | Outer canvas padding (in pixels).                                                                                       |
-| `containerPadding`  | `number` | `15`        | Inner padding for containers and columns (in pixels).                                                                   |
+| `padding`           | `number` | `15`        | Outer canvas padding (in pixels).                                                                                       |
+| `containerPadding`  | `number` | `20`        | Inner padding for containers and columns (in pixels).                                                                   |
+| `gapX`              | `number` | `16`        | Horizontal gap between aligned elements and grid columns (in pixels).                                                   |
+| `gapY`              | `number` | `16`        | Vertical gap between stacked layout elements (in pixels).                                                               |
 | `fontFamily`        | `string` | `undefined` | Custom font family for wireframe labels and headers.                                                                    |
 | `fontSize`          | `number` | `undefined` | Base font size for wireframe text elements.                                                                             |
 

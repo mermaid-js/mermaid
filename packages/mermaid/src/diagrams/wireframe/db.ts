@@ -17,8 +17,10 @@ import type { CanvasSizePreset } from './types.js';
 import { CANVAS_SIZE_MAP } from './types.js';
 
 const DEFAULT_WIREFRAME_CONFIG: Required<WireframeDiagramConfig> = DEFAULT_CONFIG.wireframe ?? {
-  padding: 10,
-  containerPadding: 15,
+  padding: 15,
+  containerPadding: 20,
+  gapX: 16,
+  gapY: 16,
   defaultCanvasSize: 'desktop',
   fontFamily: 'sans-serif',
   fontSize: 14,

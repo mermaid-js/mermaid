@@ -2594,12 +2594,22 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: Canvas padding around the wireframe diagram
         type: number
         minimum: 0
-        default: 10
+        default: 15
       containerPadding:
         description: Inner padding for layout containers
         type: number
         minimum: 0
-        default: 15
+        default: 20
+      gapX:
+        description: Horizontal gap between aligned elements and grid columns
+        type: number
+        minimum: 0
+        default: 16
+      gapY:
+        description: Vertical gap between stacked layout elements
+        type: number
+        minimum: 0
+        default: 16
       defaultCanvasSize:
         description: Default canvas size preset if not specified in header
         type: string

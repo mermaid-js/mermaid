@@ -29,10 +29,8 @@ import {
   isTabBar,
   isCanvas,
 } from '@mermaid-js/parser';
-import { LAYOUT_METRICS, type WireframeRenderNode } from './types.js';
+import { LAYOUT_METRICS, type WireframeRenderNode, type WireframeDiagramConfig } from './types.js';
 import { hasShowTabs, resolveActiveTabIdx } from './renderers/utils.js';
-
-const GAP_X = 12;
 
 export function measureComponentHeight(
   comp: WireframeComponent,
@@ -210,8 +208,13 @@ export function computeWireframeLayout(
   containerWidth: number,
   startX: number,
   startY: number,
-  idMap = new Map<string, WireframeRenderNode>()
+  idMap = new Map<string, WireframeRenderNode>(),
+  config?: Partial<WireframeDiagramConfig>
 ): { nodes: WireframeRenderNode[]; totalHeight: number } {
+  const gapX = config?.gapX ?? 16;
+  const gapY = config?.gapY ?? 16;
+  const cPadding = config?.containerPadding ?? 20;
+
   const nodes: WireframeRenderNode[] = [];
   let currentY = startY;
   let rowMaxBottom = startY;
@@ -224,10 +227,10 @@ export function computeWireframeLayout(
     // Resolve alignTo relative positioning
     if (comp.alignTo && idMap.has(comp.alignTo)) {
       const targetNode = idMap.get(comp.alignTo)!;
-      x = targetNode.x + targetNode.width + GAP_X;
+      x = targetNode.x + targetNode.width + gapX;
       y = targetNode.y;
     } else if (nodes.length > 0) {
-      currentY = rowMaxBottom > startY ? rowMaxBottom + 12 : startY;
+      currentY = rowMaxBottom > startY ? rowMaxBottom + gapY : startY;
       y = currentY;
     }
 
@@ -244,16 +247,17 @@ export function computeWireframeLayout(
       if (comp.components?.length) {
         const childRes = computeWireframeLayout(
           comp.components as unknown as WireframeComponent[],
-          containerWidth - metrics.paddingX * 2,
-          x + metrics.paddingX,
-          y + headerHeight + (comp.label ? 4 : metrics.paddingX),
-          idMap
+          containerWidth - cPadding * 2,
+          x + cPadding,
+          y + headerHeight + (comp.label ? 4 : cPadding),
+          idMap,
+          config
         );
         childNodes = childRes.nodes;
         childrenHeight = childRes.totalHeight;
       }
       nodeWidth = containerWidth;
-      nodeHeight = headerHeight + childrenHeight + metrics.paddingX * 2;
+      nodeHeight = headerHeight + childrenHeight + cPadding * 2;
     } else if (isFieldSet(comp)) {
       const metrics = LAYOUT_METRICS.fieldset;
       const contentStartY = y + metrics.headerPaddingY;
@@ -262,10 +266,11 @@ export function computeWireframeLayout(
       if (comp.components?.length) {
         const childRes = computeWireframeLayout(
           comp.components as unknown as WireframeComponent[],
-          containerWidth - metrics.paddingX * 2,
-          x + metrics.paddingX,
+          containerWidth - cPadding * 2,
+          x + cPadding,
           contentStartY,
-          idMap
+          idMap,
+          config
         );
         childNodes = childRes.nodes;
         childrenHeight = childRes.totalHeight;
@@ -280,10 +285,11 @@ export function computeWireframeLayout(
       if (comp.components?.length) {
         const childRes = computeWireframeLayout(
           comp.components as unknown as WireframeComponent[],
-          containerWidth - metrics.paddingX * 2,
-          x + metrics.paddingX,
+          containerWidth - cPadding * 2,
+          x + cPadding,
           contentStartY,
-          idMap
+          idMap,
+          config
         );
         childNodes = childRes.nodes;
         childrenHeight = childRes.totalHeight;
@@ -300,13 +306,13 @@ export function computeWireframeLayout(
         const minPanelWidth = 260;
         const variantWidth = Math.max(
           minPanelWidth,
-          (containerWidth - (numStates - 1) * GAP_X) / numStates
+          (containerWidth - (numStates - 1) * gapX) / numStates
         );
         let maxVariantHeight = 0;
         const variantNodes: WireframeRenderNode[] = [];
 
         selectedIndices.forEach((tabIdx, colIdx) => {
-          const variantX = x + colIdx * (variantWidth + GAP_X);
+          const variantX = x + colIdx * (variantWidth + gapX);
           const variantComp = {
             ...comp,
             activeTab: tabIdx + 1,
@@ -321,10 +327,11 @@ export function computeWireframeLayout(
             if (activeBlock?.components?.length) {
               const childRes = computeWireframeLayout(
                 activeBlock.components as unknown as WireframeComponent[],
-                Math.max(0, variantWidth - 20),
-                variantX + 10,
+                Math.max(0, variantWidth - cPadding),
+                variantX + cPadding / 2,
                 y + tabHeaderHeight + 10,
-                idMap
+                idMap,
+                config
               );
               variantChildNodes = childRes.nodes;
               childrenHeight = childRes.totalHeight + 20;
@@ -344,7 +351,7 @@ export function computeWireframeLayout(
         });
 
         childNodes = variantNodes;
-        nodeWidth = numStates * variantWidth + (numStates - 1) * GAP_X;
+        nodeWidth = numStates * variantWidth + (numStates - 1) * gapX;
         nodeHeight = maxVariantHeight;
       } else {
         const activeIdx = resolveActiveTabIdx(comp, comp.tabBlocks?.length ?? tabs.length);
@@ -354,10 +361,11 @@ export function computeWireframeLayout(
           if (activeBlock?.components?.length) {
             const childRes = computeWireframeLayout(
               activeBlock.components as unknown as WireframeComponent[],
-              containerWidth - 20,
-              x + 10,
+              containerWidth - cPadding,
+              x + cPadding / 2,
               y + tabHeaderHeight + 10,
-              idMap
+              idMap,
+              config
             );
             childNodes = childRes.nodes;
             childrenHeight = childRes.totalHeight + 20;
@@ -374,7 +382,8 @@ export function computeWireframeLayout(
           containerWidth,
           x,
           y,
-          idMap
+          idMap,
+          config
         );
         childNodes = childRes.nodes;
         childrenHeight = childRes.totalHeight;
@@ -382,17 +391,18 @@ export function computeWireframeLayout(
       nodeWidth = containerWidth;
       nodeHeight = childrenHeight;
     } else if (isAccordion(comp)) {
-      const headerHeight = 32;
+      const headerHeight = 36;
       const isCollapsed = comp.collapsed ?? false;
       let childrenHeight = 0;
 
       if (!isCollapsed && comp.components?.length) {
         const childRes = computeWireframeLayout(
           comp.components as unknown as WireframeComponent[],
-          containerWidth - 20,
-          x + 10,
+          containerWidth - cPadding,
+          x + cPadding / 2,
           y + headerHeight + 10,
-          idMap
+          idMap,
+          config
         );
         childNodes = childRes.nodes;
         childrenHeight = childRes.totalHeight + 20;
@@ -402,7 +412,7 @@ export function computeWireframeLayout(
     } else if (isColumns(comp)) {
       const cols = comp.cols ?? [];
       const numCols = Math.max(1, cols.length);
-      const totalGap = (numCols - 1) * GAP_X;
+      const totalGap = (numCols - 1) * gapX;
       const availableWidth = Math.max(0, containerWidth - totalGap);
 
       // Parse column width specifications (% or px)
@@ -457,12 +467,13 @@ export function computeWireframeLayout(
             colWidth,
             currentColX,
             y,
-            idMap
+            idMap,
+            config
           );
           allColNodes.push(...childRes.nodes);
           maxColHeight = Math.max(maxColHeight, childRes.totalHeight);
         }
-        currentColX += colWidth + GAP_X;
+        currentColX += colWidth + gapX;
       });
 
       childNodes = allColNodes;
@@ -485,7 +496,8 @@ export function computeWireframeLayout(
           colWidth,
           x,
           y,
-          idMap
+          idMap,
+          config
         );
         childNodes = childRes.nodes;
         childrenHeight = childRes.totalHeight;
