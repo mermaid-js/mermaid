@@ -26,7 +26,9 @@ export const drawBox = (
 };
 
 export const truncateText = (text: string, maxWidth: number, charWidth = 8): string => {
-  if (maxWidth <= 0) return text;
+  if (maxWidth <= 0) {
+    return text;
+  }
   const maxChars = Math.floor((maxWidth - 12) / charWidth);
   if (maxChars > 3 && text.length > maxChars) {
     return text.slice(0, maxChars - 1) + '…';
@@ -107,7 +109,9 @@ export const drawIconPlaceholder = (
 };
 
 export const stripQuotes = (text: string): string => {
-  if (!text) return '';
+  if (!text) {
+    return '';
+  }
   return text.trim().replace(/^["']|["']$/g, '');
 };
 

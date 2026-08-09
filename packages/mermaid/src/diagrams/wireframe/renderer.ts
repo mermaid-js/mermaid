@@ -119,7 +119,6 @@ const draw: DrawDefinition = (text, id, _ver, diagObj) => {
     currentY += barHeight + LAYOUT_METRICS.actionBar.paddingY;
   }
 
-  let totalLayoutHeight = 0;
   let layoutNodes: WireframeRenderNode[] = [];
 
   // Pass 1: Compute Layout ( resolving coordinates, alignTo relative layout, container dimensions )
@@ -134,7 +133,6 @@ const draw: DrawDefinition = (text, id, _ver, diagObj) => {
     );
 
     layoutNodes = layout.nodes;
-    totalLayoutHeight = layout.totalHeight;
     currentY += layout.totalHeight + canvasPadding;
   }
 
