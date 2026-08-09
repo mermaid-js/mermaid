@@ -1,7 +1,7 @@
-# Wireframe Diagrams
+# Wireframe Diagrams (v<MERMAID_RELEASE_VERSION>+)
 
 > [!NOTE]
-> Wireframe diagrams are available starting in v11.x.
+> Wireframe diagrams are available starting in v<MERMAID_RELEASE_VERSION>+.
 
 A Wireframe diagram allows you to create high-level low-fidelity UI mockups and layout wireframes using text syntax. It provides built-in support for standard UI controls, multi-column grid layouts, container nesting, canvas presets, and multi-tab panel previews.
 
