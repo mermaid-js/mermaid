@@ -161,11 +161,11 @@ describe('Wireframe diagram', () => {
   it('11: should render a section with alignTo positioning', () => {
     imgSnapshotTest(
       `wireframe size=panel
-  section "Primary" id=primary
+  section "Primary" id=sec1
     textfield "Search"
     button "Submit" primary
   end
-  section "Secondary" alignTo=primary
+  section "Secondary" alignTo=sec1
     label "Results will appear here"
   end
 `,
