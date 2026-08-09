@@ -24,21 +24,32 @@ export const drawBox = (
     .attr('class', className);
 };
 
+export const truncateText = (text: string, maxWidth: number, charWidth = 8): string => {
+  if (maxWidth <= 0) return text;
+  const maxChars = Math.floor((maxWidth - 12) / charWidth);
+  if (maxChars > 3 && text.length > maxChars) {
+    return text.slice(0, maxChars - 1) + '…';
+  }
+  return text;
+};
+
 export const drawText = (
   parent: SVGGroupSelection,
   text: string,
   x: number,
   y: number,
   className = 'wireframe-text',
-  textAnchor: 'start' | 'middle' | 'end' = 'start'
+  textAnchor: 'start' | 'middle' | 'end' = 'start',
+  maxWidth?: number
 ) => {
+  const displayText = maxWidth ? truncateText(text, maxWidth) : text;
   return parent
     .append('text')
     .attr('x', x)
     .attr('y', y)
     .attr('text-anchor', textAnchor)
     .attr('class', className)
-    .text(text);
+    .text(displayText);
 };
 
 export const drawCheckmark = (parent: SVGGroupSelection, x: number, y: number) => {

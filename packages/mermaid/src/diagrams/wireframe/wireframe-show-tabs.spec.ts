@@ -251,4 +251,32 @@ end`;
     // 1 node ("src") + 2 children ("index.ts", "utils.ts") + 1 node ("public") = 4 lines * 22 = 88px
     expect(treeNode.height).toBe(88);
   });
+
+  it('should allocate full container width per variant when showTabs is set', async () => {
+    const input = `wireframe size=panel
+tabs ["General", "Security"] showTabs
+  tab "General"
+    textfield "Name"
+  end
+  tab "Security"
+    password "Password"
+  end
+end`;
+    await expect(parser.parse(input)).resolves.not.toThrow();
+
+    const components = db.getComponents();
+    const layout = computeWireframeLayout(components, 570, 15, 0);
+    const tabsNode = layout.nodes[0];
+    expect(tabsNode.children).toHaveLength(2);
+
+    const var1 = tabsNode.children![0];
+    const var2 = tabsNode.children![1];
+
+    // Each variant gets full container width (570)
+    expect(var1.width).toBe(570);
+    expect(var2.width).toBe(570);
+    // Distance between variant starts is full canvas width (600) + gap (16) = 616
+    expect(var2.x - var1.x).toBe(616);
+  });
 });
+

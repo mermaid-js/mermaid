@@ -19,7 +19,7 @@ import {
   type RadioGroup,
 } from '@mermaid-js/parser';
 import type { ComponentRenderer } from './types.js';
-import { drawBox, drawText, drawCheckmark, drawRadioDot, drawDropdownArrow } from './utils.js';
+import { drawBox, drawText, drawCheckmark, drawRadioDot, drawDropdownArrow, truncateText } from './utils.js';
 
 export const buttonRenderer: ComponentRenderer<Button> = {
   type: 'Button',
@@ -46,7 +46,7 @@ export const buttonRenderer: ComponentRenderer<Button> = {
       .attr('text-anchor', 'middle')
       .attr('dominant-baseline', 'central')
       .attr('class', isPrimary ? 'wireframe-text wireframe-text-primary' : 'wireframe-text')
-      .text(label);
+      .text(truncateText(label, width - 8));
   },
 };
 

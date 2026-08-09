@@ -5,6 +5,8 @@ import { parser } from './parser.js';
 import db from './db.js';
 import { computeWireframeLayout } from './layout.js';
 import { registry } from './renderers/index.js';
+import getStyles from './styles.js';
+import { getConfig, updateSiteConfig } from '../../config.js';
 
 describe('wireframe diagram', () => {
   beforeEach(() => {
@@ -298,6 +300,28 @@ button "B3"
           },
         });
       }).not.toThrow();
+    });
+
+    it('should prioritize frontmatter fontFamily and fontSize in styles', () => {
+      const originalWireframe = getConfig().wireframe;
+      updateSiteConfig({
+        wireframe: {
+          fontFamily: 'Inter, sans-serif',
+          fontSize: 18,
+        },
+      });
+
+      const generatedStyles = getStyles({
+        fontFamily: 'theme-font',
+        fontSize: '12px',
+      });
+
+      expect(generatedStyles).toContain('font-family: Inter, sans-serif');
+      expect(generatedStyles).toContain('font-size: 18px');
+
+      if (originalWireframe) {
+        updateSiteConfig({ wireframe: originalWireframe });
+      }
     });
   });
 });

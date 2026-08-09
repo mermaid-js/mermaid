@@ -21,7 +21,11 @@ import {
 } from './containers.js';
 import {
   headingRenderer,
+  subTitleRenderer,
   paragraphRenderer,
+  labelRenderer,
+  richTextRenderer,
+  textElementRenderer,
   listRenderer,
   treeRenderer,
   menuRenderer,
@@ -54,7 +58,11 @@ registry.register(accordionRenderer);
 registry.register(tabBarRenderer);
 
 registry.register(headingRenderer);
+registry.register(subTitleRenderer);
 registry.register(paragraphRenderer);
+registry.register(labelRenderer);
+registry.register(richTextRenderer);
+registry.register(textElementRenderer);
 registry.register(listRenderer);
 registry.register(treeRenderer);
 registry.register(menuRenderer);

@@ -59,7 +59,7 @@ checkbox "Remember me on this device" checked`,
     },
     {
       title: 'Multi-Tab Preview (showTabs)',
-      code: `wireframe "Multi-Tab Settings" size=page
+      code: `wireframe "Multi-Tab Settings" size=panel
 tabs ["General", "Security", "Notifications"] showTabs="general,security"
   tab "General"
     textfield "Username"

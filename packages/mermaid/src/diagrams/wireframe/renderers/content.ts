@@ -7,6 +7,7 @@ import {
   isList,
   isTree,
   isMenu,
+  type WireframeComponent,
   type Heading,
   type SubTitle,
   type Paragraph,
@@ -16,7 +17,7 @@ import {
   type Tree,
   type Menu,
 } from '@mermaid-js/parser';
-import type { ComponentRenderer } from './types.js';
+import type { ComponentRenderer, ComponentRenderContext } from './types.js';
 import { drawBox, drawText } from './utils.js';
 
 export const headingRenderer: ComponentRenderer<Heading | SubTitle> = {
@@ -41,13 +42,44 @@ export const headingRenderer: ComponentRenderer<Heading | SubTitle> = {
 
 export const paragraphRenderer: ComponentRenderer<Paragraph | RichText | TextElement> = {
   type: 'Paragraph',
-  guard: (comp): comp is Paragraph => isParagraph(comp) || isRichText(comp) || isTextElement(comp),
+  guard: (comp): comp is Paragraph =>
+    isParagraph(comp) ||
+    isRichText(comp) ||
+    isTextElement(comp) ||
+    (comp as { $type?: string }).$type === 'Label',
   render: ({ parentElem, node }) => {
     const { x, y, astNode } = node;
     const text = astNode.label ?? '';
-    const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-paragraph');
+    const g = parentElem.append('g').attr('class', `wireframe-comp wireframe-${astNode.$type.toLowerCase()}`);
     drawText(g, text, x, y + 16);
   },
+};
+
+export const subTitleRenderer: ComponentRenderer<SubTitle> = {
+  type: 'SubTitle',
+  guard: isSubTitle,
+  render: headingRenderer.render,
+};
+
+export const labelRenderer: ComponentRenderer<WireframeComponent> = {
+  type: 'Label',
+  guard: (comp): comp is WireframeComponent => (comp as { $type?: string }).$type === 'Label',
+  render: (ctx) =>
+    paragraphRenderer.render(
+      ctx as unknown as ComponentRenderContext<Paragraph | RichText | TextElement>
+    ),
+};
+
+export const richTextRenderer: ComponentRenderer<RichText> = {
+  type: 'RichText',
+  guard: isRichText,
+  render: paragraphRenderer.render,
+};
+
+export const textElementRenderer: ComponentRenderer<TextElement> = {
+  type: 'TextElement',
+  guard: isTextElement,
+  render: paragraphRenderer.render,
 };
 
 export const listRenderer: ComponentRenderer<List> = {

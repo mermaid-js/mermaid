@@ -4,30 +4,32 @@ import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { WireframeDB } from './db.js';
 import { LAYOUT_METRICS, type WireframeDiagramConfig, type WireframeRenderNode } from './types.js';
-import { computeWireframeLayout } from './layout.js';
 import { registry } from './renderers/index.js';
-import type { ActionBar } from '@mermaid-js/parser';
-
+import type { ActionBar, WireframeComponent } from '@mermaid-js/parser';
+import { isContentTabs } from '@mermaid-js/parser';
+import { hasShowTabs } from './renderers/utils.js';
+import { computeWireframeLayout, parseShowTabs } from './layout.js';
 import type { SVGGroupSelection } from './renderers/types.js';
 
 const renderActionBar = (
   parentElem: SVGGroupSelection,
   actionBar: ActionBar,
   width: number,
-  yPos: number
+  yPos: number,
+  xPos = 0
 ): number => {
   const metrics = LAYOUT_METRICS.actionBar;
   const bar = parentElem.append('g').attr('class', 'wireframe-action-bar-group');
 
   bar
     .append('rect')
-    .attr('x', 0)
+    .attr('x', xPos)
     .attr('y', yPos)
     .attr('width', width)
     .attr('height', metrics.height)
     .attr('class', 'wireframe-action-bar');
 
-  let xOffset = 10;
+  let xOffset = xPos + 10;
   if (actionBar.buttons) {
     const btnY = yPos + Math.round((metrics.height - metrics.buttonHeight) / 2);
     for (const btn of actionBar.buttons) {
@@ -81,6 +83,15 @@ const renderNodesRecursive = (
   }
 };
 
+const getShowTabsCount = (components: WireframeComponent[]): number => {
+  for (const comp of components) {
+    if (isContentTabs(comp) && hasShowTabs(comp) && comp.tabs?.length) {
+      return parseShowTabs(comp, comp.tabs.length).length;
+    }
+  }
+  return 1;
+};
+
 const draw: DrawDefinition = (text, id, _ver, diagObj) => {
   log.debug('Rendering wireframe diagram:\n' + text);
 
@@ -94,26 +105,22 @@ const draw: DrawDefinition = (text, id, _ver, diagObj) => {
 
   const width = dimensions.width;
   const height = dimensions.height;
+  const gapX = config.gapX ?? 16;
+  const numCanvases = Math.max(1, getShowTabsCount(components));
 
   const wireframeGroup = svg.append('g').attr('class', 'wireframe-main wireframe-sketch');
-
-  // Draw sketchy canvas background container
-  wireframeGroup
-    .append('rect')
-    .attr('x', 0)
-    .attr('y', 0)
-    .attr('width', width)
-    .attr('height', height)
-    .attr('class', 'wireframe-container');
 
   const canvasPadding = config.padding ?? 15;
   let currentY = canvasPadding;
 
-  // Render Action Bar
+  let barHeight = 0;
   if (actionBar) {
-    const barHeight = renderActionBar(wireframeGroup, actionBar, width, currentY);
+    barHeight = LAYOUT_METRICS.actionBar.height;
     currentY += barHeight + LAYOUT_METRICS.actionBar.paddingY;
   }
+
+  let totalLayoutHeight = 0;
+  let layoutNodes: WireframeRenderNode[] = [];
 
   // Pass 1: Compute Layout ( resolving coordinates, alignTo relative layout, container dimensions )
   if (components.length > 0) {
@@ -126,14 +133,35 @@ const draw: DrawDefinition = (text, id, _ver, diagObj) => {
       config
     );
 
-    // Pass 2: Modular SVG Render
-    renderNodesRecursive(wireframeGroup, layout.nodes, config);
-
+    layoutNodes = layout.nodes;
+    totalLayoutHeight = layout.totalHeight;
     currentY += layout.totalHeight + canvasPadding;
   }
 
   const totalHeight = Math.max(height, currentY);
-  const totalWidth = width;
+  const totalWidth = numCanvases * width + (numCanvases - 1) * gapX;
+
+  // Draw sketchy canvas background container rects for each multiplied canvas
+  for (let c = 0; c < numCanvases; c++) {
+    const canvasX = c * (width + gapX);
+
+    wireframeGroup
+      .append('rect')
+      .attr('x', canvasX)
+      .attr('y', 0)
+      .attr('width', width)
+      .attr('height', totalHeight)
+      .attr('class', 'wireframe-container');
+
+    if (actionBar) {
+      renderActionBar(wireframeGroup, actionBar, width, canvasPadding, canvasX);
+    }
+  }
+
+  // Pass 2: Modular SVG Render
+  if (layoutNodes.length > 0) {
+    renderNodesRecursive(wireframeGroup, layoutNodes, config);
+  }
 
   svg.attr('viewBox', `0 0 ${totalWidth} ${totalHeight}`);
   configureSvgSize(svg, totalHeight, totalWidth, config.useMaxWidth);

@@ -41,7 +41,7 @@ export function measureComponentHeight(
     const label = comp.label ?? 'Button';
     const btnWidth = Math.min(
       containerWidth,
-      Math.max(metrics.minWidth, label.length * 8 + metrics.paddingX)
+      Math.max(metrics.minWidth, label.length * 8.5 + metrics.paddingX * 2)
     );
     return { width: btnWidth, height: metrics.height };
   }
@@ -88,12 +88,18 @@ export function measureComponentHeight(
     return { width: containerWidth, height: Math.max(28, height) };
   }
 
-  if (isHeading(comp) || isSubTitle(comp)) {
+  if (isHeading(comp) || isSubTitle(comp) || (comp as { $type?: string }).$type === 'SubTitle' || (comp as { $type?: string }).$type === 'Heading') {
     const metrics = LAYOUT_METRICS.heading;
     return { width: containerWidth, height: metrics.height };
   }
 
-  if (isParagraph(comp)) {
+  if (
+    isParagraph(comp) ||
+    (comp as { $type?: string }).$type === 'Paragraph' ||
+    (comp as { $type?: string }).$type === 'Label' ||
+    (comp as { $type?: string }).$type === 'RichText' ||
+    (comp as { $type?: string }).$type === 'TextElement'
+  ) {
     const metrics = LAYOUT_METRICS.paragraph;
     return { width: containerWidth, height: metrics.height };
   }
@@ -159,7 +165,7 @@ function slugify(text: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-function parseShowTabs(comp: ContentTabs, totalTabs: number): number[] {
+export function parseShowTabs(comp: ContentTabs, totalTabs: number): number[] {
   if (comp.showTabsValue) {
     const items = Array.isArray(comp.showTabsValue) ? comp.showTabsValue : [comp.showTabsValue];
     const rawTargets = items
@@ -214,6 +220,7 @@ export function computeWireframeLayout(
   const gapX = config?.gapX ?? 16;
   const gapY = config?.gapY ?? 16;
   const cPadding = config?.containerPadding ?? 20;
+  const outerPadding = config?.padding ?? 15;
 
   const nodes: WireframeRenderNode[] = [];
   let currentY = startY;
@@ -242,6 +249,7 @@ export function computeWireframeLayout(
     if (isWireframeSection(comp)) {
       const metrics = LAYOUT_METRICS.section;
       const headerHeight = comp.label ? metrics.headerHeight : 0;
+      const topPadding = comp.label ? 16 : cPadding;
       let childrenHeight = 0;
 
       if (comp.components?.length) {
@@ -249,7 +257,7 @@ export function computeWireframeLayout(
           comp.components as unknown as WireframeComponent[],
           containerWidth - cPadding * 2,
           x + cPadding,
-          y + headerHeight + (comp.label ? 4 : cPadding),
+          y + headerHeight + topPadding,
           idMap,
           config
         );
@@ -257,7 +265,7 @@ export function computeWireframeLayout(
         childrenHeight = childRes.totalHeight;
       }
       nodeWidth = containerWidth;
-      nodeHeight = headerHeight + childrenHeight + cPadding * 2;
+      nodeHeight = headerHeight + childrenHeight + topPadding + cPadding;
     } else if (isFieldSet(comp)) {
       const metrics = LAYOUT_METRICS.fieldset;
       const contentStartY = y + metrics.headerPaddingY;
@@ -303,16 +311,13 @@ export function computeWireframeLayout(
       if (hasShowTabs(comp) && tabs.length > 0) {
         const selectedIndices = parseShowTabs(comp, tabs.length);
         const numStates = selectedIndices.length;
-        const minPanelWidth = 260;
-        const variantWidth = Math.max(
-          minPanelWidth,
-          (containerWidth - (numStates - 1) * gapX) / numStates
-        );
+        const variantWidth = containerWidth;
+        const fullCanvasWidth = containerWidth + outerPadding * 2;
         let maxVariantHeight = 0;
         const variantNodes: WireframeRenderNode[] = [];
 
         selectedIndices.forEach((tabIdx, colIdx) => {
-          const variantX = x + colIdx * (variantWidth + gapX);
+          const variantX = x + colIdx * (fullCanvasWidth + gapX);
           const variantComp = {
             ...comp,
             activeTab: tabIdx + 1,
@@ -351,7 +356,7 @@ export function computeWireframeLayout(
         });
 
         childNodes = variantNodes;
-        nodeWidth = numStates * variantWidth + (numStates - 1) * gapX;
+        nodeWidth = numStates * fullCanvasWidth + (numStates - 1) * gapX - outerPadding * 2;
         nodeHeight = maxVariantHeight;
       } else {
         const activeIdx = resolveActiveTabIdx(comp, comp.tabBlocks?.length ?? tabs.length);

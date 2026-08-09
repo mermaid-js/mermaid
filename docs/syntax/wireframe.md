@@ -214,7 +214,7 @@ Creates a tabbed container. By default, it renders a single panel with the activ
 To view all tab variants side-by-side as separate standalone panels with divider lines, add `showTabs`! You can also pass a list of 1-indexed tab numbers (e.g. `showTabs=1,3`) to select specific tabs to display side-by-side.
 
 ```mermaid-example
-wireframe size=page
+wireframe size=panel
   tabs ["General", "Security", "Notifications"] active=1 showTabs
     tab "General"
       textfield "Display Name"
@@ -231,7 +231,7 @@ wireframe size=page
 ```
 
 ```mermaid
-wireframe size=page
+wireframe size=panel
   tabs ["General", "Security", "Notifications"] active=1 showTabs
     tab "General"
       textfield "Display Name"
@@ -278,7 +278,7 @@ The `showTabs` property can be added to `tabs`:
 - **`tabs ... showTabs="1,3"`**: Renders only selected 1-indexed tabs (e.g. Tab 1 and Tab 3) side-by-side.
 
 ```mermaid-example
-wireframe "Selective Tab Previews" size=page
+wireframe "Selective Tab Previews" size=panel
   tabs ["General", "Security", "Notifications"] showTabs="1,3"
     tab "General"
       textfield "Username"
@@ -293,7 +293,7 @@ wireframe "Selective Tab Previews" size=page
 ```
 
 ```mermaid
-wireframe "Selective Tab Previews" size=page
+wireframe "Selective Tab Previews" size=panel
   tabs ["General", "Security", "Notifications"] showTabs="1,3"
     tab "General"
       textfield "Username"

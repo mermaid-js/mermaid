@@ -27,12 +27,37 @@ export const sectionRenderer: ComponentRenderer<WireframeSection> = {
   render: ({ parentElem, node, renderChildNodes }) => {
     const { x, y, width, height, astNode, children } = node;
     const title = astNode.label ?? '';
+    const headerHeight = title ? 28 : 0;
+
     const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-section');
 
+    // Outer container frame
     drawBox(g, x, y, width, height, 'wireframe-container');
 
     if (title) {
-      drawText(g, title, x + 12, y + 16, 'wireframe-text wireframe-container-title');
+      // Header strip with rounded top corners matching container rx: 6px
+      g.append('path')
+        .attr(
+          'd',
+          `M ${x + 1} ${y + headerHeight} L ${x + 1} ${y + 6} Q ${x + 1} ${y + 1} ${x + 6} ${y + 1} L ${x + width - 6} ${y + 1} Q ${x + width - 1} ${y + 1} ${x + width - 1} ${y + 6} L ${x + width - 1} ${y + headerHeight} Z`
+        )
+        .attr('class', 'wireframe-section-header');
+
+      g.append('line')
+        .attr('x1', x)
+        .attr('y1', y + headerHeight)
+        .attr('x2', x + width)
+        .attr('y2', y + headerHeight)
+        .attr('class', 'wireframe-section-divider');
+
+      drawText(
+        g,
+        title,
+        x + 12,
+        y + headerHeight / 2 + 4,
+        'wireframe-text wireframe-container-title',
+        'start'
+      );
     }
 
     if (children?.length) {
@@ -52,7 +77,29 @@ export const fieldSetRenderer: ComponentRenderer<FieldSet> = {
     drawBox(g, x, y, width, height, 'wireframe-container');
 
     if (legend) {
-      drawText(g, legend, x + 12, y + 14, 'wireframe-text wireframe-container-title');
+      const paddingX = 12;
+      const legendWidth = Math.max(40, legend.length * 8.5 + paddingX * 2);
+      const legendX = x + 12;
+      const legendY = y - 10;
+
+      // Legend badge sitting on top of the fieldset border
+      g.append('rect')
+        .attr('x', legendX)
+        .attr('y', legendY)
+        .attr('width', legendWidth)
+        .attr('height', 20)
+        .attr('rx', 4)
+        .attr('ry', 4)
+        .attr('class', 'wireframe-fieldset-legend-bg');
+
+      drawText(
+        g,
+        legend,
+        legendX + legendWidth / 2,
+        y + 5,
+        'wireframe-text wireframe-container-title',
+        'middle'
+      );
     }
 
     if (children?.length) {
@@ -126,20 +173,7 @@ export const contentTabsRenderer: ComponentRenderer<ContentTabs> = {
 
     if (hasShowTabs(astNode) && children?.length) {
       const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-show-tabs-group');
-      children.forEach((childNode, idx) => {
-        if (idx < children.length - 1) {
-          const dividerX = childNode.x + childNode.width + 6;
-          g.append('line')
-            .attr('x1', dividerX)
-            .attr('y1', y)
-            .attr('x2', dividerX)
-            .attr('y2', y + height)
-            .attr('stroke', '#888888')
-            .attr('stroke-width', '1.5')
-            .attr('stroke-dasharray', '4 4');
-        }
-      });
-      renderChildNodes(parentElem, children);
+      renderChildNodes(g, children);
       return;
     }
 
