@@ -100,8 +100,6 @@ const getStyles: DiagramStylesProvider = (options = {}) => {
     stroke: ${primaryBorderColor};
     stroke-width: 1.8px;
     stroke-linecap: round;
-    rx: 5px;
-    ry: 5px;
   }
   
   .wireframe-button {

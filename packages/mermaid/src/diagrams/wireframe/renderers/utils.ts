@@ -1,5 +1,12 @@
 import type { SVGGroupSelection } from './types.js';
-import { slugify } from '../layout.js';
+
+export function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\da-z]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
 
 /**
  * Shared SVG drawing helper functions for wireframe components

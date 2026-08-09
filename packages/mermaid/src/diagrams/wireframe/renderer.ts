@@ -34,9 +34,9 @@ const renderActionBar = (
     const btnY = yPos + Math.round((metrics.height - metrics.buttonHeight) / 2);
     for (const btn of actionBar.buttons) {
       const label = btn.label ?? '';
-      const btnWidth = Math.max(metrics.minButtonWidth, label.length * 8 + 16);
       const isPrimary = label.startsWith('*');
       const displayLabel = isPrimary ? label.slice(1).trim() : label;
+      const btnWidth = Math.max(metrics.minButtonWidth, displayLabel.length * 8 + 16);
       const btnClass = isPrimary
         ? 'wireframe-action-button wireframe-action-button-primary'
         : 'wireframe-action-button';

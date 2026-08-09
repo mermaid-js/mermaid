@@ -32,7 +32,7 @@ import {
   isCanvas,
 } from '@mermaid-js/parser';
 import { LAYOUT_METRICS, type WireframeRenderNode, type WireframeDiagramConfig } from './types.js';
-import { hasShowTabs, resolveActiveTabIdx, stripQuotes } from './renderers/utils.js';
+import { hasShowTabs, resolveActiveTabIdx, slugify, stripQuotes } from './renderers/utils.js';
 
 export function measureComponentHeight(
   comp: WireframeComponent,
@@ -164,13 +164,7 @@ export function measureComponentHeight(
   };
 }
 
-export function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\da-z]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
+export { slugify };
 
 export function findTargetNode(
   alignTo: string,
