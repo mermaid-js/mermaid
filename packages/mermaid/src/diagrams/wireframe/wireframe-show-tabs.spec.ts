@@ -279,4 +279,3 @@ end`;
     expect(var2.x - var1.x).toBe(616);
   });
 });
-
