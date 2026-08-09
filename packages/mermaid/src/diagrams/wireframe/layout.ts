@@ -173,12 +173,75 @@ export function measureComponentHeight(
   };
 }
 
-function slugify(text: string): string {
+export function slugify(text: string): string {
   return text
     .toLowerCase()
     .trim()
     .replace(/[^\da-z]+/g, '-')
     .replace(/^-+|-+$/g, '');
+}
+
+export function findTargetNode(
+  alignTo: string,
+  idMap: Map<string, WireframeRenderNode>
+): WireframeRenderNode | undefined {
+  if (!alignTo) {
+    return undefined;
+  }
+  const cleaned = alignTo.trim().replace(/^["']|["']$/g, '');
+  if (!cleaned) {
+    return undefined;
+  }
+  if (idMap.has(cleaned)) {
+    return idMap.get(cleaned);
+  }
+  const lower = cleaned.toLowerCase();
+  if (idMap.has(lower)) {
+    return idMap.get(lower);
+  }
+  const slug = slugify(cleaned);
+  if (slug && idMap.has(slug)) {
+    return idMap.get(slug);
+  }
+  return undefined;
+}
+
+export function registerNodeInIdMap(
+  node: WireframeRenderNode,
+  idMap: Map<string, WireframeRenderNode>
+): void {
+  const comp = node.astNode;
+
+  if (comp.id) {
+    const rawId = comp.id.trim().replace(/^["']|["']$/g, '');
+    if (rawId) {
+      idMap.set(rawId, node);
+      idMap.set(rawId.toLowerCase(), node);
+      const idSlug = slugify(rawId);
+      if (idSlug) {
+        idMap.set(idSlug, node);
+      }
+    }
+  }
+
+  const rawLabel =
+    comp.label ?? (comp as { value?: string }).value ?? (comp as { glyph?: string }).glyph;
+  if (rawLabel && typeof rawLabel === 'string') {
+    const trimmed = rawLabel.trim().replace(/^["']|["']$/g, '');
+    if (trimmed) {
+      if (!idMap.has(trimmed)) {
+        idMap.set(trimmed, node);
+      }
+      const lower = trimmed.toLowerCase();
+      if (!idMap.has(lower)) {
+        idMap.set(lower, node);
+      }
+      const labelSlug = slugify(trimmed);
+      if (labelSlug && !idMap.has(labelSlug)) {
+        idMap.set(labelSlug, node);
+      }
+    }
+  }
 }
 
 export function parseShowTabs(comp: ContentTabs, totalTabs: number): number[] {
@@ -248,8 +311,8 @@ export function computeWireframeLayout(
     let y = currentY;
 
     // Resolve alignTo relative positioning
-    if (comp.alignTo && idMap.has(comp.alignTo)) {
-      const targetNode = idMap.get(comp.alignTo)!;
+    const targetNode = comp.alignTo ? findTargetNode(comp.alignTo, idMap) : undefined;
+    if (targetNode) {
       x = targetNode.x + targetNode.width + gapX;
       y = targetNode.y;
     } else if (nodes.length > 0) {
@@ -536,9 +599,7 @@ export function computeWireframeLayout(
       children: childNodes,
     };
 
-    if (comp.id) {
-      idMap.set(comp.id, node);
-    }
+    registerNodeInIdMap(node, idMap);
 
     nodes.push(node);
 

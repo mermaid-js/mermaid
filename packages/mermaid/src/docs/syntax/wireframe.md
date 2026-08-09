@@ -235,13 +235,29 @@ wireframe size=panel
 
 ## Relative Alignment (`alignTo`)
 
-Components can be explicitly positioned relative to previously declared components using `id=<id>` and `alignTo=<id>`.
+Components can be positioned horizontally adjacent to previously declared components using `alignTo`. The target component can be referenced either by an **explicit ID** (`id=<id>`) or by an **implicit slug** generated from its label.
+
+### Using Explicit IDs
 
 ```mermaid-example
 wireframe size=panel
   button "Submit" primary id=btnSubmit
   button "Cancel" alignTo=btnSubmit
 ```
+
+### Using Implicit Label Slugs
+
+Implicit slugs are automatically generated from component labels (lowercased with spaces and special characters converted to hyphens). For example, `"Cancel"` becomes `cancel`, and `"Save Changes"` becomes `save-changes`.
+
+```mermaid-example
+wireframe size=dialog
+  button "Cancel"
+  button "Save Changes" alignTo=cancel
+  button "Submit" primary alignTo=save-changes
+```
+
+> [!NOTE]
+> Explicit component IDs take precedence over implicit label slugs if a collision occurs.
 
 ---
 

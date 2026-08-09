@@ -106,6 +106,48 @@ button "Submit" id=btnSubmit alignTo=btnCancel
       expect(btnSubmitNode.x).toBeGreaterThan(btnCancelNode.x + btnCancelNode.width);
     });
 
+    it('should compute alignTo positioning using implicit label slugs', async () => {
+      const input = `wireframe "Align Implicit Slug Test"
+button "Cancel"
+button "Save Changes" alignTo=cancel
+button "Submit" alignTo=save-changes
+`;
+      await expect(parser.parse(input)).resolves.not.toThrow();
+
+      const components = db.getComponents();
+      const layout = computeWireframeLayout(components, 800, 20, 10);
+
+      expect(layout.nodes).toHaveLength(3);
+      const cancelNode = layout.nodes[0];
+      const saveNode = layout.nodes[1];
+      const submitNode = layout.nodes[2];
+
+      expect(saveNode.y).toBe(cancelNode.y);
+      expect(saveNode.x).toBeGreaterThan(cancelNode.x + cancelNode.width);
+
+      expect(submitNode.y).toBe(saveNode.y);
+      expect(submitNode.x).toBeGreaterThan(saveNode.x + saveNode.width);
+    });
+
+    it('should compute alignTo positioning using quoted labels and prioritize explicit IDs', async () => {
+      const input = `wireframe "Align Precedence Test"
+button "First Button" id=btnCustom
+button "First Button"
+button "Next" alignTo=btnCustom
+`;
+      await expect(parser.parse(input)).resolves.not.toThrow();
+
+      const components = db.getComponents();
+      const layout = computeWireframeLayout(components, 800, 20, 10);
+
+      const firstBtn = layout.nodes[0];
+      const nextBtn = layout.nodes[2];
+
+      // Next button aligned to explicit ID btnCustom (First Button)
+      expect(nextBtn.y).toBe(firstBtn.y);
+      expect(nextBtn.x).toBeGreaterThan(firstBtn.x + firstBtn.width);
+    });
+
     it('should parse and layout complex wireframe controls (checkboxes, radio, select, icons, columns, titlewindow)', async () => {
       const input = `wireframe "Form Showcase"
 checkbox "Agree to Terms" checked

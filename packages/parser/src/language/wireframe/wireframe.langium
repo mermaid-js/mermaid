@@ -135,8 +135,8 @@ interface Accordion extends WireframeComponent {
 
 fragment Modifiers:
     (
-        'id=' id=ID |
-        'alignTo=' alignTo=ID |
+        'id=' id=(ID | STRING) |
+        'alignTo=' alignTo=(ID | STRING) |
         info?='info'
     )*
 ;
