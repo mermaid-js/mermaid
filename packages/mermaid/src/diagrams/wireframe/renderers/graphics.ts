@@ -35,25 +35,53 @@ export const imageRenderer: ComponentRenderer<ImageField | PathField> = {
   render: ({ parentElem, node }) => {
     const { x, y, width, height, astNode } = node;
     const label = astNode.label ?? 'Image';
+    const isPath = isPathField(astNode);
     const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-image');
 
-    // Container box with diagonal cross (placeholder graphic)
+    // Outer container box
     drawBox(g, x, y, width, height, 'wireframe-container');
+
+    // Diagonal placeholder lines with subtle dashed stroke, inset 5px to fit within rounded corners
+    const inset = 5;
     g.append('line')
-      .attr('x1', x)
-      .attr('y1', y)
-      .attr('x2', x + width)
-      .attr('y2', y + height)
-      .attr('class', 'wireframe-rule');
+      .attr('x1', x + inset)
+      .attr('y1', y + inset)
+      .attr('x2', x + width - inset)
+      .attr('y2', y + height - inset)
+      .attr('class', 'wireframe-rule')
+      .style('stroke-dasharray', '4 4');
+
     g.append('line')
-      .attr('x1', x + width)
-      .attr('y1', y)
-      .attr('x2', x)
-      .attr('y2', y + height)
-      .attr('class', 'wireframe-rule');
+      .attr('x1', x + width - inset)
+      .attr('y1', y + inset)
+      .attr('x2', x + inset)
+      .attr('y2', y + height - inset)
+      .attr('class', 'wireframe-rule')
+      .style('stroke-dasharray', '4 4');
 
     if (label) {
-      drawText(g, label, x + width / 2, y + height / 2 + 4, 'wireframe-text', 'middle');
+      const icon = isPath ? '📁 ' : '🖼️ ';
+      const fullText = `${icon}${label}`;
+      const approxCharWidth = 7;
+      const textWidth = label.length * approxCharWidth + 24;
+      const badgeWidth = Math.min(width - 16, Math.max(70, textWidth + 16));
+      const badgeHeight = 24;
+      const badgeX = x + (width - badgeWidth) / 2;
+      const badgeY = y + (height - badgeHeight) / 2;
+
+      // Draw background pill/badge to cleanly obscure line intersection
+      drawBox(g, badgeX, badgeY, badgeWidth, badgeHeight, 'wireframe-fieldset-legend-bg', 12);
+
+      // Centered label text inside pill
+      drawText(
+        g,
+        fullText,
+        x + width / 2,
+        y + height / 2 + 4,
+        'wireframe-text wireframe-text-small',
+        'middle',
+        badgeWidth - 8
+      );
     }
   },
 };

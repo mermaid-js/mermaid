@@ -1,6 +1,5 @@
 import type { DiagramStylesProvider } from '../../diagram-api/types.js';
 import { getConfig } from '../../config.js';
-import type { WireframeDiagramConfig } from './types.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getStyles: DiagramStylesProvider = (options: any) => {
@@ -187,6 +186,22 @@ const getStyles: DiagramStylesProvider = (options: any) => {
 
   .wireframe-bold {
     font-weight: bold;
+  }
+
+  .wireframe-italic {
+    font-style: italic;
+  }
+
+  .wireframe-underline {
+    text-decoration: underline;
+  }
+
+  .wireframe-strikethrough {
+    text-decoration: line-through;
+  }
+
+  .wireframe-text-small {
+    font-size: 10px;
   }
 
   .wireframe-fieldset-legend-bg {

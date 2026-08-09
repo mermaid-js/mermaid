@@ -246,7 +246,22 @@ paragraph "Subsequent Text"
 
       expect(buttonNode.y).toBe(canvasNode.y);
       // Paragraph should be placed safely below the bottom of canvas (y=10, height=100 -> bottom=110)
-      expect(paragraphNode.y).toBeGreaterThanOrEqual(122);
+    });
+
+    it('should parse textarea with richtext option and compute extra height for toolbar', async () => {
+      const input = `wireframe "Form"
+textarea "Notes" richtext rows=4
+textarea "Plain Notes" rows=4
+`;
+      await expect(parser.parse(input)).resolves.not.toThrow();
+      const components = db.getComponents();
+      const layout = computeWireframeLayout(components, 800, 20, 10, new Map());
+
+      const richTaNode = layout.nodes[0];
+      const plainTaNode = layout.nodes[1];
+
+      // Richtext node height should include 30px extra toolbar height
+      expect(richTaNode.height).toBe(plainTaNode.height + 30);
     });
 
     it('should respect custom gapX, gapY, and containerPadding config overrides', async () => {

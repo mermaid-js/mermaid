@@ -93,17 +93,17 @@ wireframe "Edit Profile Dialog" size=dialog
 
 ## Action Bar Configuration
 
-An action bar displays quick action buttons along the top of the wireframe header or canvas. You can specify buttons inside square brackets (quoted for strings containing spaces or special characters) under an `actions` directive:
+An action bar displays quick action buttons along the top of the wireframe header or canvas. You can specify buttons inside square brackets (prefix with `*` for primary buttons) under an `actions` directive:
 
 ```mermaid-example
 wireframe "Dashboard" size=panel
-  actions ["Refresh"] ["Export PDF"] ["Settings"]
+  actions ["Refresh"] ["Export PDF"] ["*Settings"]
   paragraph "Welcome back to your dashboard."
 ```
 
 ```mermaid
 wireframe "Dashboard" size=panel
-  actions ["Refresh"] ["Export PDF"] ["Settings"]
+  actions ["Refresh"] ["Export PDF"] ["*Settings"]
   paragraph "Welcome back to your dashboard."
 ```
 
@@ -149,7 +149,7 @@ wireframe "Multi-Column Layout" size=desktop
 
 ### 2. Title Window (`titlewindow`)
 
-Wraps components in a window container complete with a window header title.
+Wraps components in a window container complete with a window header title bar.
 
 ```mermaid-example
 wireframe size=panel
@@ -209,13 +209,15 @@ wireframe size=panel
 
 ### 5. Content Tabs (`tabs` & `tab`)
 
-Creates a tabbed container. By default, it renders a single panel with the active tab (`active=<index>`, 1-indexed).
+Creates a tabbed container. You can control tab rendering and preview modes using the following modifiers:
 
-To view all tab variants side-by-side as separate standalone panels with divider lines, add `showTabs`! You can also pass a list of 1-indexed tab numbers (e.g. `showTabs=1,3`) to select specific tabs to display side-by-side.
+- **`active=N`**: Sets the initial active tab index (1-indexed, default is `1`).
+- **`showTabs`**: Displays all tab panes side-by-side as separate preview panels.
+- **`showTabs="1,3"`**: Displays only specified 1-indexed tab panes side-by-side.
 
 ```mermaid-example
 wireframe size=panel
-  tabs ["General", "Security", "Notifications"] active=1 showTabs
+  tabs ["General", "Security", "Notifications"] active=1 showTabs="1,2"
     tab "General"
       textfield "Display Name"
       select "Language" ["English", "Spanish", "French"]
@@ -232,7 +234,7 @@ wireframe size=panel
 
 ```mermaid
 wireframe size=panel
-  tabs ["General", "Security", "Notifications"] active=1 showTabs
+  tabs ["General", "Security", "Notifications"] active=1 showTabs="1,2"
     tab "General"
       textfield "Display Name"
       select "Language" ["English", "Spanish", "French"]
@@ -253,7 +255,7 @@ Creates collapsible accordion sections. Use `collapsed` to render an accordion s
 
 ```mermaid-example
 wireframe size=desktop
-  accordion "Advanced Settings"
+  accordion "Advanced Settings" collapsed
     checkbox "Enable Developer Mode"
     textfield "API Key"
   end
@@ -261,49 +263,9 @@ wireframe size=desktop
 
 ```mermaid
 wireframe size=desktop
-  accordion "Advanced Settings"
+  accordion "Advanced Settings" collapsed
     checkbox "Enable Developer Mode"
     textfield "API Key"
-  end
-```
-
----
-
-## Multi-Tab Previews (`showTabs` & `showTabs=1,3`)
-
-The `showTabs` property can be added to `tabs`:
-
-- **Omitted (default)**: Renders a single panel container displaying only the `active` tab.
-- **`tabs ... showTabs`**: Renders all tab variants side-by-side as separate full panels with dashed vertical dividers.
-- **`tabs ... showTabs="1,3"`**: Renders only selected 1-indexed tabs (e.g. Tab 1 and Tab 3) side-by-side.
-
-```mermaid-example
-wireframe "Selective Tab Previews" size=panel
-  tabs ["General", "Security", "Notifications"] showTabs="1,3"
-    tab "General"
-      textfield "Username"
-    end
-    tab "Security"
-      password "Password"
-    end
-    tab "Notifications"
-      checkbox "Enable Email Alerts" checked
-    end
-  end
-```
-
-```mermaid
-wireframe "Selective Tab Previews" size=panel
-  tabs ["General", "Security", "Notifications"] showTabs="1,3"
-    tab "General"
-      textfield "Username"
-    end
-    tab "Security"
-      password "Password"
-    end
-    tab "Notifications"
-      checkbox "Enable Email Alerts" checked
-    end
   end
 ```
 
@@ -315,25 +277,30 @@ Wireframe diagrams support a wide selection of form input controls, text element
 
 ### Form Inputs
 
-| Component Syntax                    | Description                             | Example                                           |
-| :---------------------------------- | :-------------------------------------- | :------------------------------------------------ |
-| `textfield "Label"`                 | Text input field                        | `textfield "First Name"`                          |
-| `password "Label"`                  | Password input field                    | `password "Secret Pin"`                           |
-| `numberfield "Label"`               | Numeric input field                     | `numberfield "Quantity"`                          |
-| `datepicker "Label"`                | Date picker field                       | `datepicker "Birth Date"`                         |
-| `textarea "Label" rows=N`           | Multi-line text area                    | `textarea "Comments" rows=4`                      |
-| `select "Label" ["A", "B"]`         | Dropdown select menu                    | `select "Country" ["USA", "Canada"]`              |
-| `combobox "Label" ["A", "B"]`       | Editable combo box                      | `combobox "Tags" ["JS", "TS"]`                    |
-| `checkbox "Label" [checked]`        | Checkbox input                          | `checkbox "I agree" checked`                      |
-| `checkboxgroup "Label" ["*A", "B"]` | Group of checkboxes (`*` = checked)     | `checkboxgroup "Interests" ["*Coding", "Design"]` |
-| `radiogroup "Label" ["*A", "B"]`    | Group of radio buttons (`*` = selected) | `radiogroup "Gender" ["*Male", "Female"]`         |
+| Component Syntax                                       | Description                                                              | Example                                                   |
+| :----------------------------------------------------- | :----------------------------------------------------------------------- | :-------------------------------------------------------- |
+| `textfield "Label"`                                    | Standard text input field                                                | `textfield "First Name"`                                  |
+| `password "Label"`                                     | Masked password input field                                              | `password "Secret Pin"`                                   |
+| `numberfield "Label"`                                  | Numeric input field                                                      | `numberfield "Quantity"`                                  |
+| `datepicker "Label"`                                   | Date selection input field                                               | `datepicker "Birth Date"`                                 |
+| `textarea ["Label"] [\`content\`] \[richtext] rows=N\` | Multi-line text area (supports `\`multiline\``& optional`richtext\` bar) | `textarea "Comments" \`Line 1\nLine 2\` richtext rows=4\` |
+| `select "Label" ["A", "B"]`                            | Dropdown select menu                                                     | `select "Country" ["USA", "Canada"]`                      |
+| `select-multiple "Label" ["A", "B"]`                   | Multi-select list box                                                    | `select-multiple "Tags" ["React", "Vue", "Svelte"]`       |
+| `combobox "Label" ["A", "B"]`                          | Editable combo box dropdown                                              | `combobox "Search" ["Option 1", "Option 2"]`              |
+| `checkbox "Label" [checked]`                           | Single checkbox input                                                    | `checkbox "I agree to terms" checked`                     |
+| `checkboxgroup "Label" ["*A", "B"]`                    | Group of checkboxes (`*` = checked)                                      | `checkboxgroup "Interests" ["*Coding", "Design"]`         |
+| `radiogroup "Label" ["*A", "B"]`                       | Group of radio options (`*` = selected)                                  | `radiogroup "Gender" ["*Male", "Female"]`                 |
+| `multifield "Label"`                                   | Multi-value input tag field                                              | `multifield "Categories"`                                 |
+| `pathfield "Label"`                                    | File path input field                                                    | `pathfield "Attachment Path"`                             |
+| `imagefield "Label"`                                   | Image placeholder box                                                    | `imagefield "Banner Image"`                               |
 
 ### Buttons & Action Controls
 
-| Component Syntax         | Description                | Example                         |
-| :----------------------- | :------------------------- | :------------------------------ |
-| `button "Label"`         | Standard button            | `button "Cancel"`               |
-| `button "Label" primary` | Primary highlighted button | `button "Save Changes" primary` |
+| Component Syntax         | Description                             | Example                         |
+| :----------------------- | :-------------------------------------- | :------------------------------ |
+| `button "Label"`         | Standard button                         | `button "Cancel"`               |
+| `button "Label" primary` | Primary highlighted button              | `button "Save Changes" primary` |
+| `actions ["A"] ["*B"]`   | Header action bar buttons (`*`=primary) | `actions ["Help"] ["*Save"]`    |
 
 ### Text & Titles
 
@@ -344,15 +311,18 @@ Wireframe diagrams support a wide selection of form input controls, text element
 | `label "Text"`        | Generic label           | `label "Status: Active"`             |
 | `paragraph "Text"`    | Paragraph block of text | `paragraph "Detailed summary line."` |
 
-### Displays & Lists
+### Displays, Graphics & Navigation
 
-| Component Syntax                    | Description         | Example                                      |
-| :---------------------------------- | :------------------ | :------------------------------------------- |
-| `imagefield "Label"`                | Image placeholder   | `imagefield "Banner"`                        |
-| `icon "Label" glyph="name"`         | Icon element        | `icon "Search" glyph="search"`               |
-| `menu "Label" ["Item 1", "Item 2"]` | Menu bar            | `menu "Navigation" ["File", "Edit", "View"]` |
-| `list "Label" ["Item 1", "Item 2"]` | List element        | `list "Options" ["Item A", "Item B"]`        |
-| `tree` ... `end`                    | Tree hierarchy view | See Tree example below                       |
+| Component Syntax                    | Description                       | Example                                      |
+| :---------------------------------- | :-------------------------------- | :------------------------------------------- |
+| `canvas "Label" [height=N]`         | Custom drawing canvas placeholder | `canvas "Preview Area" height=150`           |
+| `icon "Label" glyph="name"`         | Icon placeholder                  | `icon "Search" glyph="search"`               |
+| `vrule [height=N]`                  | Vertical separator line           | `vrule height=100`                           |
+| `vcurly "Label" [height=N]`         | Vertical curly brace indicator    | `vcurly "Group A" height=80`                 |
+| `formattingtoolbar`                 | Standalone rich text format bar   | `formattingtoolbar "Toolbar"`                |
+| `menu "Label" ["Item 1", "Item 2"]` | Menu bar element                  | `menu "Navigation" ["File", "Edit", "View"]` |
+| `list "Label" ["Item 1", "Item 2"]` | Standard list element             | `list "Options" ["Item A", "Item B"]`        |
+| `tree` ... `end`                    | Hierarchical tree view container  | See Tree example below                       |
 
 #### Tree Structure Example
 

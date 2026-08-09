@@ -57,8 +57,19 @@ export function measureComponentHeight(
     const metrics = LAYOUT_METRICS.textarea;
     const hasLabel = Boolean(comp.label);
     const fieldWidth = Math.min(metrics.maxWidth, containerWidth);
-    const rowsHeight = (comp.rows ?? 3) * 20;
-    return { width: fieldWidth, height: rowsHeight + (hasLabel ? 20 : 0) };
+    let val = comp.value ?? '';
+    if (
+      (val.startsWith('`') && val.endsWith('`')) ||
+      (val.startsWith('"') && val.endsWith('"')) ||
+      (val.startsWith("'") && val.endsWith("'"))
+    ) {
+      val = val.slice(1, -1);
+    }
+    const lineCount = val ? val.split('\n').length : 0;
+    const rows = comp.rows ?? Math.max(3, lineCount);
+    const rowsHeight = rows * 20;
+    const toolbarHeight = comp.richtext ? 30 : 0;
+    return { width: fieldWidth, height: rowsHeight + toolbarHeight + (hasLabel ? 20 : 0) };
   }
 
   if (isSelectField(comp) || isComboBox(comp)) {
@@ -88,7 +99,12 @@ export function measureComponentHeight(
     return { width: containerWidth, height: Math.max(28, height) };
   }
 
-  if (isHeading(comp) || isSubTitle(comp) || (comp as { $type?: string }).$type === 'SubTitle' || (comp as { $type?: string }).$type === 'Heading') {
+  if (
+    isHeading(comp) ||
+    isSubTitle(comp) ||
+    (comp as { $type?: string }).$type === 'SubTitle' ||
+    (comp as { $type?: string }).$type === 'Heading'
+  ) {
     const metrics = LAYOUT_METRICS.heading;
     return { width: containerWidth, height: metrics.height };
   }

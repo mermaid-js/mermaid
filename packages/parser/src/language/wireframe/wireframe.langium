@@ -27,6 +27,8 @@ interface FormattingToolbar extends WireframeComponent {}
 
 interface TextArea extends WireframeComponent {
     rows?: number
+    richtext?: boolean
+    value?: string
 }
 
 interface SelectField extends WireframeComponent {
@@ -232,7 +234,7 @@ RichText returns RichText:
 ;
 
 TextArea returns TextArea:
-    'textarea' label=(STRING | ID) ('rows=' rows=INT)? Modifiers EOL
+    'textarea' (label=(STRING | ID))? (value=(BACKTICK_STRING | STRING) | ('value=' value=(BACKTICK_STRING | STRING)))? (('rows=' rows=INT) | (richtext?='richtext'))* Modifiers EOL
 ;
 
 MultiField returns MultiField:
@@ -417,3 +419,4 @@ terminal TABS: /[\t ]*tabs(?!\w)/;
 terminal TAB: /[\t ]*tab(?!\w)/;
 terminal TITLEWINDOW: /[\t ]*titlewindow(?!\w)/;
 terminal COL_WIDTH: /[0-9]+(%|px)/;
+terminal BACKTICK_STRING returns string: /`([^`\\]|\\.)*`/;

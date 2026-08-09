@@ -102,13 +102,28 @@ datepicker "Birth Date"`);
       expect(tf4.type).toBe('datepicker');
     });
 
-    it('should parse textarea with rows attribute', () => {
-      const result = parse('wireframe "Form"\ntextarea "Comments" rows=8');
+    it('should parse textarea with rows attribute and richtext option', () => {
+      const result = parse('wireframe "Form"\ntextarea "Comments" richtext rows=8');
       expectNoErrorsOrAlternatives(result);
       const ta = result.value.components[0] as unknown as TextArea;
       expect(ta.$type).toBe('TextArea');
       expect(ta.label).toBe('Comments');
       expect(ta.rows).toBe(8);
+      expect(ta.richtext).toBe(true);
+    });
+
+    it('should parse textarea with multiline backtick string value', () => {
+      const input = `wireframe "Form"
+textarea "Comments" \`Lorem ipsum ...
+dolorem...
+last line\` richtext`;
+      const result = parse(input);
+      expectNoErrorsOrAlternatives(result);
+      const ta = result.value.components[0] as unknown as TextArea;
+      expect(ta.$type).toBe('TextArea');
+      expect(ta.label).toBe('Comments');
+      expect(ta.value).toBe('`Lorem ipsum ...\ndolorem...\nlast line`');
+      expect(ta.richtext).toBe(true);
     });
 
     it('should parse simple inputs (richtext, multifield, imagefield, pathfield)', () => {
