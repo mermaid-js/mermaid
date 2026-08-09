@@ -20,66 +20,65 @@ import {
 import type { ComponentRenderer, ComponentRenderContext } from './types.js';
 import { drawBox, drawText } from './utils.js';
 
-export const headingRenderer: ComponentRenderer<Heading | SubTitle> = {
-  type: 'Heading',
-  guard: (comp): comp is Heading => isHeading(comp) || isSubTitle(comp),
-  render: ({ parentElem, node }) => {
-    const { x, y, astNode } = node;
-    const text = astNode.label ?? '';
-    const isSub = isSubTitle(astNode);
-    const fontSize = isSub ? 16 : 20;
+const renderHeading = ({ parentElem, node }: ComponentRenderContext<WireframeComponent>) => {
+  const { x, y, astNode } = node;
+  const text = astNode.label ?? '';
+  const isSub = isSubTitle(astNode);
+  const fontSize = isSub ? 16 : 20;
 
-    const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-heading');
-    g.append('text')
-      .attr('x', x)
-      .attr('y', y + (isSub ? 18 : 22))
-      .attr('class', 'wireframe-text')
-      .style('font-size', `${fontSize}px`)
-      .style('font-weight', 'bold')
-      .text(text);
-  },
+  const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-heading');
+  g.append('text')
+    .attr('x', x)
+    .attr('y', y + (isSub ? 18 : 22))
+    .attr('class', 'wireframe-text')
+    .style('font-size', `${fontSize}px`)
+    .style('font-weight', 'bold')
+    .text(text);
 };
 
-export const paragraphRenderer: ComponentRenderer<Paragraph | RichText | TextElement> = {
-  type: 'Paragraph',
-  guard: (comp): comp is Paragraph =>
-    isParagraph(comp) ||
-    isRichText(comp) ||
-    isTextElement(comp) ||
-    (comp as { $type?: string }).$type === 'Label',
-  render: ({ parentElem, node }) => {
-    const { x, y, astNode } = node;
-    const text = astNode.label ?? '';
-    const g = parentElem.append('g').attr('class', `wireframe-comp wireframe-${astNode.$type.toLowerCase()}`);
-    drawText(g, text, x, y + 16);
-  },
+export const headingRenderer: ComponentRenderer<Heading> = {
+  type: 'Heading',
+  guard: isHeading,
+  render: renderHeading,
 };
 
 export const subTitleRenderer: ComponentRenderer<SubTitle> = {
   type: 'SubTitle',
   guard: isSubTitle,
-  render: headingRenderer.render,
+  render: renderHeading,
+};
+
+const renderParagraph = ({ parentElem, node }: ComponentRenderContext<WireframeComponent>) => {
+  const { x, y, astNode } = node;
+  const text = astNode.label ?? '';
+  const g = parentElem
+    .append('g')
+    .attr('class', `wireframe-comp wireframe-${astNode.$type.toLowerCase()}`);
+  drawText(g, text, x, y + 16);
+};
+
+export const paragraphRenderer: ComponentRenderer<Paragraph> = {
+  type: 'Paragraph',
+  guard: isParagraph,
+  render: renderParagraph,
 };
 
 export const labelRenderer: ComponentRenderer<WireframeComponent> = {
   type: 'Label',
   guard: (comp): comp is WireframeComponent => (comp as { $type?: string }).$type === 'Label',
-  render: (ctx) =>
-    paragraphRenderer.render(
-      ctx as unknown as ComponentRenderContext<Paragraph | RichText | TextElement>
-    ),
+  render: renderParagraph,
 };
 
 export const richTextRenderer: ComponentRenderer<RichText> = {
   type: 'RichText',
   guard: isRichText,
-  render: paragraphRenderer.render,
+  render: renderParagraph,
 };
 
 export const textElementRenderer: ComponentRenderer<TextElement> = {
   type: 'TextElement',
   guard: isTextElement,
-  render: paragraphRenderer.render,
+  render: renderParagraph,
 };
 
 export const listRenderer: ComponentRenderer<List> = {

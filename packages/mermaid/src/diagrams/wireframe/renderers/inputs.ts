@@ -18,7 +18,8 @@ import {
   type CheckboxGroup,
   type RadioGroup,
 } from '@mermaid-js/parser';
-import type { ComponentRenderer } from './types.js';
+import type { ComponentRenderer, ComponentRenderContext } from './types.js';
+import type { WireframeComponent } from '@mermaid-js/parser';
 import {
   drawBox,
   drawText,
@@ -57,23 +58,31 @@ export const buttonRenderer: ComponentRenderer<Button> = {
   },
 };
 
-export const textFieldRenderer: ComponentRenderer<TextField | MultiField> = {
+const renderTextField = ({ parentElem, node }: ComponentRenderContext<WireframeComponent>) => {
+  const { x, y, width, height, astNode } = node;
+  const label = astNode.label ?? (isTextField(astNode) ? astNode.type : undefined) ?? 'Input';
+  const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-textfield');
+
+  let currentY = y;
+  if (label) {
+    drawText(g, label, x, currentY + 14);
+    currentY += 20;
+  }
+
+  const inputHeight = Math.max(28, height - (label ? 20 : 0));
+  drawBox(g, x, currentY, width, inputHeight, 'wireframe-input');
+};
+
+export const textFieldRenderer: ComponentRenderer<TextField> = {
   type: 'TextField',
-  guard: (comp): comp is TextField => isTextField(comp) || isMultiField(comp),
-  render: ({ parentElem, node }) => {
-    const { x, y, width, height, astNode } = node;
-    const label = astNode.label ?? (isTextField(astNode) ? astNode.type : undefined) ?? 'Input';
-    const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-textfield');
+  guard: isTextField,
+  render: renderTextField,
+};
 
-    let currentY = y;
-    if (label) {
-      drawText(g, label, x, currentY + 14);
-      currentY += 20;
-    }
-
-    const inputHeight = Math.max(28, height - (label ? 20 : 0));
-    drawBox(g, x, currentY, width, inputHeight, 'wireframe-input');
-  },
+export const multiFieldRenderer: ComponentRenderer<MultiField> = {
+  type: 'MultiField',
+  guard: isMultiField,
+  render: renderTextField,
 };
 
 export const textAreaRenderer: ComponentRenderer<TextArea> = {
@@ -209,18 +218,26 @@ export const textAreaRenderer: ComponentRenderer<TextArea> = {
   },
 };
 
-export const selectFieldRenderer: ComponentRenderer<SelectField | ComboBox> = {
-  type: 'SelectField',
-  guard: (comp): comp is SelectField => isSelectField(comp) || isComboBox(comp),
-  render: ({ parentElem, node }) => {
-    const { x, y, width, height, astNode } = node;
-    const label = astNode.label ?? 'Select...';
-    const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-select');
+const renderSelectField = ({ parentElem, node }: ComponentRenderContext<WireframeComponent>) => {
+  const { x, y, width, height, astNode } = node;
+  const label = astNode.label ?? 'Select...';
+  const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-select');
 
-    drawBox(g, x, y, width, height, 'wireframe-input');
-    drawText(g, label, x + 10, y + height / 2 + 5);
-    drawDropdownArrow(g, x + width - 16, y + height / 2 - 3);
-  },
+  drawBox(g, x, y, width, height, 'wireframe-input');
+  drawText(g, label, x + 10, y + height / 2 + 5);
+  drawDropdownArrow(g, x + width - 16, y + height / 2 - 3);
+};
+
+export const selectFieldRenderer: ComponentRenderer<SelectField> = {
+  type: 'SelectField',
+  guard: isSelectField,
+  render: renderSelectField,
+};
+
+export const comboBoxRenderer: ComponentRenderer<ComboBox> = {
+  type: 'ComboBox',
+  guard: isComboBox,
+  render: renderSelectField,
 };
 
 export const checkboxFieldRenderer: ComponentRenderer<CheckboxField> = {

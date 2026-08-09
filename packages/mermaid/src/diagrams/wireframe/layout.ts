@@ -20,6 +20,8 @@ import {
   isHeading,
   isSubTitle,
   isParagraph,
+  isRichText,
+  isTextElement,
   isList,
   isTree,
   isMenu,
@@ -30,7 +32,7 @@ import {
   isCanvas,
 } from '@mermaid-js/parser';
 import { LAYOUT_METRICS, type WireframeRenderNode, type WireframeDiagramConfig } from './types.js';
-import { hasShowTabs, resolveActiveTabIdx } from './renderers/utils.js';
+import { hasShowTabs, resolveActiveTabIdx, stripQuotes } from './renderers/utils.js';
 
 export function measureComponentHeight(
   comp: WireframeComponent,
@@ -99,23 +101,12 @@ export function measureComponentHeight(
     return { width: containerWidth, height: Math.max(28, height) };
   }
 
-  if (
-    isHeading(comp) ||
-    isSubTitle(comp) ||
-    (comp as { $type?: string }).$type === 'SubTitle' ||
-    (comp as { $type?: string }).$type === 'Heading'
-  ) {
+  if (isHeading(comp) || isSubTitle(comp)) {
     const metrics = LAYOUT_METRICS.heading;
     return { width: containerWidth, height: metrics.height };
   }
 
-  if (
-    isParagraph(comp) ||
-    (comp as { $type?: string }).$type === 'Paragraph' ||
-    (comp as { $type?: string }).$type === 'Label' ||
-    (comp as { $type?: string }).$type === 'RichText' ||
-    (comp as { $type?: string }).$type === 'TextElement'
-  ) {
+  if (isParagraph(comp) || isRichText(comp) || isTextElement(comp)) {
     const metrics = LAYOUT_METRICS.paragraph;
     return { width: containerWidth, height: metrics.height };
   }
@@ -188,7 +179,7 @@ export function findTargetNode(
   if (!alignTo) {
     return undefined;
   }
-  const cleaned = alignTo.trim().replace(/^["']|["']$/g, '');
+  const cleaned = stripQuotes(alignTo);
   if (!cleaned) {
     return undefined;
   }
@@ -213,7 +204,7 @@ export function registerNodeInIdMap(
   const comp = node.astNode;
 
   if (comp.id) {
-    const rawId = comp.id.trim().replace(/^["']|["']$/g, '');
+    const rawId = stripQuotes(comp.id);
     if (rawId) {
       idMap.set(rawId, node);
       idMap.set(rawId.toLowerCase(), node);
@@ -227,7 +218,7 @@ export function registerNodeInIdMap(
   const rawLabel =
     comp.label ?? (comp as { value?: string }).value ?? (comp as { glyph?: string }).glyph;
   if (rawLabel && typeof rawLabel === 'string') {
-    const trimmed = rawLabel.trim().replace(/^["']|["']$/g, '');
+    const trimmed = stripQuotes(rawLabel);
     if (trimmed) {
       if (!idMap.has(trimmed)) {
         idMap.set(trimmed, node);
@@ -288,6 +279,27 @@ export function parseShowTabs(comp: ContentTabs, totalTabs: number): number[] {
   return Array.from({ length: totalTabs }, (_, i) => i);
 }
 
+function layoutChildComponents(
+  components: unknown[] | undefined,
+  containerWidth: number,
+  startX: number,
+  startY: number,
+  idMap: Map<string, WireframeRenderNode>,
+  config?: Partial<WireframeDiagramConfig>
+): { nodes: WireframeRenderNode[]; totalHeight: number } {
+  if (!components || components.length === 0) {
+    return { nodes: [], totalHeight: 0 };
+  }
+  return computeWireframeLayout(
+    components as unknown as WireframeComponent[],
+    containerWidth,
+    startX,
+    startY,
+    idMap,
+    config
+  );
+}
+
 export function computeWireframeLayout(
   components: WireframeComponent[],
   containerWidth: number,
@@ -329,58 +341,48 @@ export function computeWireframeLayout(
       const metrics = LAYOUT_METRICS.section;
       const headerHeight = comp.label ? metrics.headerHeight : 0;
       const topPadding = comp.label ? 16 : cPadding;
-      let childrenHeight = 0;
 
-      if (comp.components?.length) {
-        const childRes = computeWireframeLayout(
-          comp.components as unknown as WireframeComponent[],
-          containerWidth - cPadding * 2,
-          x + cPadding,
-          y + headerHeight + topPadding,
-          idMap,
-          config
-        );
-        childNodes = childRes.nodes;
-        childrenHeight = childRes.totalHeight;
-      }
+      const childRes = layoutChildComponents(
+        comp.components,
+        containerWidth - cPadding * 2,
+        x + cPadding,
+        y + headerHeight + topPadding,
+        idMap,
+        config
+      );
+      childNodes = childRes.nodes.length ? childRes.nodes : undefined;
       nodeWidth = containerWidth;
-      nodeHeight = headerHeight + childrenHeight + topPadding + cPadding;
+      nodeHeight = headerHeight + childRes.totalHeight + topPadding + cPadding;
     } else if (isFieldSet(comp)) {
       const metrics = LAYOUT_METRICS.fieldset;
       const contentStartY = y + metrics.headerPaddingY;
-      let childrenHeight: number = metrics.baseHeight;
 
-      if (comp.components?.length) {
-        const childRes = computeWireframeLayout(
-          comp.components as unknown as WireframeComponent[],
-          containerWidth - cPadding * 2,
-          x + cPadding,
-          contentStartY,
-          idMap,
-          config
-        );
-        childNodes = childRes.nodes;
-        childrenHeight = childRes.totalHeight;
-      }
+      const childRes = layoutChildComponents(
+        comp.components,
+        containerWidth - cPadding * 2,
+        x + cPadding,
+        contentStartY,
+        idMap,
+        config
+      );
+      childNodes = childRes.nodes.length ? childRes.nodes : undefined;
+      const childrenHeight = childRes.nodes.length ? childRes.totalHeight : metrics.baseHeight;
       nodeWidth = containerWidth;
       nodeHeight = childrenHeight + metrics.baseHeight;
     } else if (isTitleWindow(comp)) {
       const metrics = LAYOUT_METRICS.titleWindow;
       const contentStartY = y + metrics.titleBarHeight + 10;
-      let childrenHeight: number = metrics.baseHeight;
 
-      if (comp.components?.length) {
-        const childRes = computeWireframeLayout(
-          comp.components as unknown as WireframeComponent[],
-          containerWidth - cPadding * 2,
-          x + cPadding,
-          contentStartY,
-          idMap,
-          config
-        );
-        childNodes = childRes.nodes;
-        childrenHeight = childRes.totalHeight;
-      }
+      const childRes = layoutChildComponents(
+        comp.components,
+        containerWidth - cPadding * 2,
+        x + cPadding,
+        contentStartY,
+        idMap,
+        config
+      );
+      childNodes = childRes.nodes.length ? childRes.nodes : undefined;
+      const childrenHeight = childRes.nodes.length ? childRes.totalHeight : metrics.baseHeight;
       nodeWidth = containerWidth;
       nodeHeight = metrics.titleBarHeight + childrenHeight + 16;
     } else if (isContentTabs(comp)) {
@@ -408,15 +410,15 @@ export function computeWireframeLayout(
 
           if (comp.tabBlocks?.length) {
             const activeBlock = comp.tabBlocks[tabIdx];
-            if (activeBlock?.components?.length) {
-              const childRes = computeWireframeLayout(
-                activeBlock.components as unknown as WireframeComponent[],
-                Math.max(0, variantWidth - cPadding),
-                variantX + cPadding / 2,
-                y + tabHeaderHeight + 10,
-                idMap,
-                config
-              );
+            const childRes = layoutChildComponents(
+              activeBlock?.components,
+              Math.max(0, variantWidth - cPadding),
+              variantX + cPadding / 2,
+              y + tabHeaderHeight + 10,
+              idMap,
+              config
+            );
+            if (childRes.nodes.length) {
               variantChildNodes = childRes.nodes;
               childrenHeight = childRes.totalHeight + 20;
             }
@@ -442,15 +444,15 @@ export function computeWireframeLayout(
         let childrenHeight = 40;
         if (comp.tabBlocks?.length) {
           const activeBlock = comp.tabBlocks[activeIdx] ?? comp.tabBlocks[0];
-          if (activeBlock?.components?.length) {
-            const childRes = computeWireframeLayout(
-              activeBlock.components as unknown as WireframeComponent[],
-              containerWidth - cPadding,
-              x + cPadding / 2,
-              y + tabHeaderHeight + 10,
-              idMap,
-              config
-            );
+          const childRes = layoutChildComponents(
+            activeBlock?.components,
+            containerWidth - cPadding,
+            x + cPadding / 2,
+            y + tabHeaderHeight + 10,
+            idMap,
+            config
+          );
+          if (childRes.nodes.length) {
             childNodes = childRes.nodes;
             childrenHeight = childRes.totalHeight + 20;
           }
@@ -459,37 +461,28 @@ export function computeWireframeLayout(
         nodeHeight = tabHeaderHeight + childrenHeight;
       }
     } else if (isTabPane(comp)) {
-      let childrenHeight = 0;
-      if (comp.components?.length) {
-        const childRes = computeWireframeLayout(
-          comp.components as unknown as WireframeComponent[],
-          containerWidth,
-          x,
-          y,
-          idMap,
-          config
-        );
-        childNodes = childRes.nodes;
-        childrenHeight = childRes.totalHeight;
-      }
+      const childRes = layoutChildComponents(comp.components, containerWidth, x, y, idMap, config);
+      childNodes = childRes.nodes.length ? childRes.nodes : undefined;
       nodeWidth = containerWidth;
-      nodeHeight = childrenHeight;
+      nodeHeight = childRes.totalHeight;
     } else if (isAccordion(comp)) {
       const headerHeight = 36;
       const isCollapsed = comp.collapsed ?? false;
       let childrenHeight = 0;
 
-      if (!isCollapsed && comp.components?.length) {
-        const childRes = computeWireframeLayout(
-          comp.components as unknown as WireframeComponent[],
+      if (!isCollapsed) {
+        const childRes = layoutChildComponents(
+          comp.components,
           containerWidth - cPadding,
           x + cPadding / 2,
           y + headerHeight + 10,
           idMap,
           config
         );
-        childNodes = childRes.nodes;
-        childrenHeight = childRes.totalHeight + 20;
+        if (childRes.nodes.length) {
+          childNodes = childRes.nodes;
+          childrenHeight = childRes.totalHeight + 20;
+        }
       }
       nodeWidth = containerWidth;
       nodeHeight = headerHeight + childrenHeight;
@@ -545,15 +538,15 @@ export function computeWireframeLayout(
 
       cols.forEach((col, colIdx) => {
         const colWidth = widths[colIdx] || availableWidth / numCols;
-        if (col.components?.length) {
-          const childRes = computeWireframeLayout(
-            col.components as unknown as WireframeComponent[],
-            colWidth,
-            currentColX,
-            y,
-            idMap,
-            config
-          );
+        const childRes = layoutChildComponents(
+          col.components,
+          colWidth,
+          currentColX,
+          y,
+          idMap,
+          config
+        );
+        if (childRes.nodes.length) {
           allColNodes.push(...childRes.nodes);
           maxColHeight = Math.max(maxColHeight, childRes.totalHeight);
         }
@@ -564,7 +557,6 @@ export function computeWireframeLayout(
       nodeWidth = containerWidth;
       nodeHeight = maxColHeight;
     } else if (isColBlock(comp)) {
-      let childrenHeight = 0;
       let colWidth = containerWidth;
       if (comp.width) {
         const wStr = comp.width.trim();
@@ -574,20 +566,10 @@ export function computeWireframeLayout(
           colWidth = parseFloat(wStr);
         }
       }
-      if (comp.components?.length) {
-        const childRes = computeWireframeLayout(
-          comp.components as unknown as WireframeComponent[],
-          colWidth,
-          x,
-          y,
-          idMap,
-          config
-        );
-        childNodes = childRes.nodes;
-        childrenHeight = childRes.totalHeight;
-      }
+      const childRes = layoutChildComponents(comp.components, colWidth, x, y, idMap, config);
+      childNodes = childRes.nodes.length ? childRes.nodes : undefined;
       nodeWidth = colWidth;
-      nodeHeight = childrenHeight;
+      nodeHeight = childRes.totalHeight;
     }
 
     const node: WireframeRenderNode = {

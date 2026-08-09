@@ -12,6 +12,8 @@ export const CANVAS_SIZE_MAP: Record<CanvasSizePreset, { width: number; height: 
   page: { width: 1200, height: 900 },
 };
 
+export const CHAR_WIDTH_ESTIMATE = 8;
+
 export const LAYOUT_METRICS = {
   actionBar: { height: 44, buttonHeight: 32, minButtonWidth: 80, gap: 10, paddingY: 16 },
   button: { height: 36, paddingX: 20, minWidth: 90, gapY: 16 },

@@ -329,7 +329,7 @@ button "B3"
       expect(b3.y).toBe(b1.y + Math.max(b1.height, b2.height) + 24);
     });
 
-    it('should verify ComponentRegistry fallback for unknown components', () => {
+    it('should verify ComponentRegistry fallback for unknown components and support for all AST types', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const createMockSelection = (): any => ({
         append: () => createMockSelection(),
@@ -339,24 +339,39 @@ button "B3"
       });
       const mockParent = createMockSelection();
 
-      expect(() => {
-        registry.render({
-          parentElem: mockParent,
-          node: {
+      const astTypes = [
+        'MultiField',
+        'ComboBox',
+        'PathField',
+        'Arrow',
+        'VCurly',
+        'SubTitle',
+        'RichText',
+        'TextElement',
+        'Label',
+        'CustomUnknownComponent',
+      ];
+
+      for (const $type of astTypes) {
+        expect(() => {
+          registry.render({
+            parentElem: mockParent,
+            node: {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              astNode: { $type, label: 'Test' } as any,
+              x: 0,
+              y: 0,
+              width: 100,
+              height: 30,
+            },
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            astNode: { $type: 'CustomUnknownComponent', label: 'Test' } as any,
-            x: 0,
-            y: 0,
-            width: 100,
-            height: 30,
-          },
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          config: {} as any,
-          renderChildNodes: () => {
-            // No-op for unit test mock
-          },
-        });
-      }).not.toThrow();
+            config: {} as any,
+            renderChildNodes: () => {
+              // No-op for unit test mock
+            },
+          });
+        }).not.toThrow();
+      }
     });
 
     it('should prioritize frontmatter fontFamily and fontSize in styles', () => {

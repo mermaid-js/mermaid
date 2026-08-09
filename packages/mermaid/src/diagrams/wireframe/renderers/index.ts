@@ -2,8 +2,10 @@ import { registry } from './registry.js';
 import {
   buttonRenderer,
   textFieldRenderer,
+  multiFieldRenderer,
   textAreaRenderer,
   selectFieldRenderer,
+  comboBoxRenderer,
   checkboxFieldRenderer,
   checkboxGroupRenderer,
   radioGroupRenderer,
@@ -33,7 +35,10 @@ import {
 import {
   iconRenderer,
   imageRenderer,
+  pathFieldRenderer,
   vRuleRenderer,
+  arrowRenderer,
+  vCurlyRenderer,
   formattingToolbarRenderer,
   canvasRenderer,
 } from './graphics.js';
@@ -41,8 +46,10 @@ import {
 // Register all component renderers
 registry.register(buttonRenderer);
 registry.register(textFieldRenderer);
+registry.register(multiFieldRenderer);
 registry.register(textAreaRenderer);
 registry.register(selectFieldRenderer);
+registry.register(comboBoxRenderer);
 registry.register(checkboxFieldRenderer);
 registry.register(checkboxGroupRenderer);
 registry.register(radioGroupRenderer);
@@ -69,7 +76,10 @@ registry.register(menuRenderer);
 
 registry.register(iconRenderer);
 registry.register(imageRenderer);
+registry.register(pathFieldRenderer);
 registry.register(vRuleRenderer);
+registry.register(arrowRenderer);
+registry.register(vCurlyRenderer);
 registry.register(formattingToolbarRenderer);
 registry.register(canvasRenderer);
 

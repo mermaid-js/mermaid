@@ -42,44 +42,44 @@ export class WireframeDB implements DiagramDB {
     return this.diagramId;
   }
 
-  public getConfig = (): Required<WireframeDiagramConfig> => {
+  public getConfig(): Required<WireframeDiagramConfig> {
     return cleanAndMerge(DEFAULT_WIREFRAME_CONFIG, commonGetConfig().wireframe);
-  };
+  }
 
-  public clear = (): void => {
+  public clear(): void {
     commonClear();
     this.ast = undefined;
     this.diagramId = '';
-  };
+  }
 
-  public setWireframe = (ast: WireframeDiagram): void => {
+  public setWireframe(ast: WireframeDiagram): void {
     this.ast = ast;
-  };
+  }
 
-  public getWireframe = (): WireframeDiagram | undefined => {
+  public getWireframe(): WireframeDiagram | undefined {
     return this.ast;
-  };
+  }
 
-  public getCanvasSize = (): CanvasSizePreset => {
+  public getCanvasSize(): CanvasSizePreset {
     const parsedPreset = this.ast?.canvasSize as CanvasSizePreset | undefined;
     const configPreset = this.getConfig().defaultCanvasSize as CanvasSizePreset | undefined;
     const resolvedPreset =
       parsedPreset && parsedPreset in CANVAS_SIZE_MAP ? parsedPreset : (configPreset ?? 'desktop');
     return resolvedPreset;
-  };
+  }
 
-  public getCanvasDimensions = (): { width: number; height: number } => {
+  public getCanvasDimensions(): { width: number; height: number } {
     const sizePreset = this.getCanvasSize();
     return CANVAS_SIZE_MAP[sizePreset] ?? CANVAS_SIZE_MAP.desktop;
-  };
+  }
 
-  public getActionBar = (): ActionBar | undefined => {
+  public getActionBar(): ActionBar | undefined {
     return this.ast?.actions;
-  };
+  }
 
-  public getComponents = (): WireframeComponent[] => {
+  public getComponents(): WireframeComponent[] {
     return (this.ast?.components as unknown as WireframeComponent[]) ?? [];
-  };
+  }
 
   public setAccTitle = setAccTitle;
   public getAccTitle = getAccTitle;

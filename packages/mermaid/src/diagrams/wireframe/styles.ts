@@ -1,22 +1,27 @@
 import type { DiagramStylesProvider } from '../../diagram-api/types.js';
 import { getConfig } from '../../config.js';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const getStyles: DiagramStylesProvider = (options: any) => {
+const getStyles: DiagramStylesProvider = (options = {}) => {
   const config = getConfig();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const wireframeConfig = (config.wireframe ?? {}) as Record<string, any>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const globalConfig = config as Record<string, any>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const themeVars = (config.themeVariables ?? {}) as Record<string, any>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const opts = (options ?? {}) as Record<string, any>;
+  const wireframeConfig = config.wireframe ?? {};
+  const globalConfig = config as Record<string, unknown>;
+  const themeVars = config.themeVariables ?? {};
+  const opts = options as Record<string, unknown>;
 
   const getOpt = (key: string, fallback: string): string => {
     const val =
-      wireframeConfig[key] ?? globalConfig[key] ?? themeVars[key] ?? opts[key] ?? fallback;
-    return typeof val === 'number' ? `${val}px` : String(val);
+      (wireframeConfig as Record<string, unknown>)[key] ??
+      globalConfig[key] ??
+      (themeVars as Record<string, unknown>)[key] ??
+      opts[key] ??
+      fallback;
+    if (typeof val === 'string') {
+      return val;
+    }
+    if (typeof val === 'number') {
+      return `${val}px`;
+    }
+    return fallback;
   };
 
   const fontFamily = getOpt(
@@ -31,12 +36,7 @@ const getStyles: DiagramStylesProvider = (options: any) => {
   const secondaryColor = getOpt('secondaryColor', '#f3f4f6');
   const tertiaryColor = getOpt('tertiaryColor', '#e5e7eb');
   const lineColor = getOpt('lineColor', '#2c2c2c');
-  const primaryBorderColor =
-    wireframeConfig.primaryBorderColor ??
-    globalConfig.primaryBorderColor ??
-    themeVars.primaryBorderColor ??
-    opts.primaryBorderColor ??
-    lineColor;
+  const primaryBorderColor = getOpt('primaryBorderColor', lineColor);
 
   return `
   .wireframe-sketch {

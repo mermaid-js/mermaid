@@ -19,7 +19,7 @@ import {
   type TabBar,
 } from '@mermaid-js/parser';
 import type { ComponentRenderer } from './types.js';
-import { drawBox, drawText, hasShowTabs, resolveActiveTabIdx } from './utils.js';
+import { drawBox, drawText, drawTabStrip, hasShowTabs, resolveActiveTabIdx } from './utils.js';
 
 export const sectionRenderer: ComponentRenderer<WireframeSection> = {
   type: 'WireframeSection',
@@ -183,22 +183,7 @@ export const contentTabsRenderer: ComponentRenderer<ContentTabs> = {
     const tabs = astNode.tabs ?? [];
     const activeIdx = resolveActiveTabIdx(astNode, tabs.length);
 
-    let tabX = x;
-    tabs.forEach((tab, idx) => {
-      const tabLabel = tab.value ?? `Tab ${idx + 1}`;
-      const tabWidth = Math.max(70, tabLabel.length * 8 + 20);
-      const isActive = idx === activeIdx;
-
-      g.append('rect')
-        .attr('x', tabX)
-        .attr('y', y)
-        .attr('width', tabWidth)
-        .attr('height', tabHeight)
-        .attr('class', isActive ? 'wireframe-tab wireframe-tab-active' : 'wireframe-tab');
-
-      drawText(g, tabLabel, tabX + tabWidth / 2, y + tabHeight / 2 + 4, 'wireframe-text', 'middle');
-      tabX += tabWidth + 4;
-    });
+    drawTabStrip(g, tabs, activeIdx, x, y, tabHeight);
 
     // Tab pane container box below
     drawBox(g, x, y + tabHeight, width, height - tabHeight, 'wireframe-container');
@@ -243,22 +228,7 @@ export const tabBarRenderer: ComponentRenderer<TabBar> = {
     const tabs = astNode.tabs ?? [];
     const activeIdx = resolveActiveTabIdx(astNode, tabs.length);
 
-    let tabX = x;
-    tabs.forEach((tab, idx) => {
-      const tabLabel = tab.value ?? `Tab ${idx + 1}`;
-      const tabWidth = Math.max(70, tabLabel.length * 8 + 20);
-      const isActive = idx === activeIdx;
-
-      g.append('rect')
-        .attr('x', tabX)
-        .attr('y', y)
-        .attr('width', tabWidth)
-        .attr('height', tabHeight)
-        .attr('class', isActive ? 'wireframe-tab wireframe-tab-active' : 'wireframe-tab');
-
-      drawText(g, tabLabel, tabX + tabWidth / 2, y + tabHeight / 2 + 4, 'wireframe-text', 'middle');
-      tabX += tabWidth + 4;
-    });
+    drawTabStrip(g, tabs, activeIdx, x, y, tabHeight);
   },
 };
 

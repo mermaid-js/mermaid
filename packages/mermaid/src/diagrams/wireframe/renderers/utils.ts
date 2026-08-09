@@ -1,4 +1,5 @@
 import type { SVGGroupSelection } from './types.js';
+import { slugify } from '../layout.js';
 
 /**
  * Shared SVG drawing helper functions for wireframe components
@@ -105,6 +106,38 @@ export const drawIconPlaceholder = (
   return g;
 };
 
+export const stripQuotes = (text: string): string => {
+  if (!text) return '';
+  return text.trim().replace(/^["']|["']$/g, '');
+};
+
+export const drawTabStrip = (
+  g: SVGGroupSelection,
+  tabs: { value?: string }[],
+  activeIdx: number,
+  x: number,
+  y: number,
+  tabHeight = 30
+): number => {
+  let tabX = x;
+  tabs.forEach((tab, idx) => {
+    const tabLabel = tab.value ?? `Tab ${idx + 1}`;
+    const tabWidth = Math.max(70, tabLabel.length * 8 + 20);
+    const isActive = idx === activeIdx;
+
+    g.append('rect')
+      .attr('x', tabX)
+      .attr('y', y)
+      .attr('width', tabWidth)
+      .attr('height', tabHeight)
+      .attr('class', isActive ? 'wireframe-tab wireframe-tab-active' : 'wireframe-tab');
+
+    drawText(g, tabLabel, tabX + tabWidth / 2, y + tabHeight / 2 + 4, 'wireframe-text', 'middle');
+    tabX += tabWidth + 4;
+  });
+  return tabX;
+};
+
 export const hasShowTabs = (comp?: { showTabs?: boolean; showTabsValue?: unknown[] }): boolean => {
   if (!comp) {
     return false;
@@ -113,14 +146,6 @@ export const hasShowTabs = (comp?: { showTabs?: boolean; showTabsValue?: unknown
     Boolean(comp.showTabs) || (Array.isArray(comp.showTabsValue) && comp.showTabsValue.length > 0)
   );
 };
-
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\da-z]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
 
 export const resolveActiveTabIdx = (
   comp: {
@@ -142,7 +167,7 @@ export const resolveActiveTabIdx = (
       return rawActive;
     }
   }
-  const targetKey = String(rawActive).trim().replace(/["']/g, '');
+  const targetKey = stripQuotes(String(rawActive));
   const targetSlug = slugify(targetKey);
   const numericVal = parseInt(targetKey, 10);
   const tabs = comp.tabs ?? [];
