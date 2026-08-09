@@ -18,6 +18,7 @@ describe('wireframe diagram', () => {
   describe('detector', () => {
     it('should detect wireframe diagram keywords', () => {
       expect(detector.detector('wireframe "User Settings" size=dialog')).toBe(true);
+      expect(detector.detector('wireframe-beta "User Settings" size=dialog')).toBe(true);
       expect(detector.detector('  wireframe')).toBe(true);
       expect(detector.detector('WIREFRAME "Dashboard"')).toBe(true);
       expect(detector.detector('flowchart TD')).toBe(false);
