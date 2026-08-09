@@ -27,7 +27,7 @@ wireframe "User Profile Setup" size=desktop
 
 ## Declaration & Canvas Size Presets
 
-Every wireframe diagram starts with the `wireframe` (or `wireframe-beta`) keyword. You can optionally specify a title enclosed in quotes and a canvas preset size using `size=<preset>`.
+Every wireframe diagram starts with the `wireframe` keyword. You can optionally specify a title enclosed in quotes and a canvas preset size using `size=<preset>`.
 
 ### Syntax
 

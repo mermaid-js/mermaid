@@ -145,7 +145,7 @@ fragment Modifiers:
 
 entry WireframeDiagram:
     NEWLINE*
-    ('wireframe' | 'wireframe-beta') (label=(STRING | ID))? ('size=' canvasSize=CanvasSize)?
+    'wireframe' (label=(STRING | ID))? ('size=' canvasSize=CanvasSize)?
     (
         NEWLINE
         | TitleAndAccessibilities
