@@ -87,6 +87,29 @@ function aligned(a: Point, b: Point): boolean {
   return Math.abs(a.x - b.x) <= EPS || Math.abs(a.y - b.y) <= EPS;
 }
 
+/**
+ * Strip consecutive coincident points from a candidate route. A zero-length
+ * segment (two identical adjacent points) is invisible to the validator —
+ * `normalizePolyline` collapses it before scoring, so a degenerate candidate
+ * scores identically to its clean form and passes the monotone gate — but the
+ * renderer's curve interpolation divides by the segment length and emits `NaN`,
+ * which truncates the painted edge mid-air (e.g. a group→group channels reroute
+ * that appends the end port after already reaching it: `[start, end, end]`).
+ * Cleaning the candidate here keeps the beneficial reroute while guaranteeing no
+ * degenerate polyline is ever written onto an edge.
+ */
+function dropConsecutiveDuplicatePoints(pts: Point[]): Point[] {
+  const out: Point[] = [];
+  for (const p of pts) {
+    const last = out[out.length - 1];
+    if (last && Math.abs(last.x - p.x) <= EPS && Math.abs(last.y - p.y) <= EPS) {
+      continue;
+    }
+    out.push(p);
+  }
+  return out;
+}
+
 /** A few sample coordinates spread across [lo, hi] (inset by MARGIN). */
 function spread(lo: number, hi: number): number[] {
   const a = lo + MARGIN;
@@ -768,7 +791,14 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
         deferredRailCandidates,
       ];
       candidateSearch: for (const source of candidateSources) {
-        for (const candidate of source) {
+        for (const rawCandidate of source) {
+          // A candidate can carry a zero-length segment (coincident adjacent
+          // points); strip it so no NaN-inducing polyline is written. Skip if
+          // it collapses below a drawable 2-point route.
+          const candidate = dropConsecutiveDuplicatePoints(rawCandidate);
+          if (candidate.length < 2) {
+            continue;
+          }
           if (!hardReroute && candidate.length >= old!.length + 2) {
             continue; // don't trade a defect for a much longer route
           }
