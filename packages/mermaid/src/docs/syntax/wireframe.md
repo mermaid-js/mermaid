@@ -294,6 +294,12 @@ config:
 
 ---
 
+## Known Limitations
+
+- **Hand-drawn style is not supported.** The global `look: 'handDrawn'` option has no effect on wireframe diagrams. Wireframe always renders with clean, geometric strokes regardless of the configured look.
+
+---
+
 ## Complete Example
 
 ```mermaid-example
