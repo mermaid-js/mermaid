@@ -40,8 +40,8 @@ const positionLabel = (
   centerX: number,
   centerY: number
 ) => {
-  const originX = bbox.x ?? bbox.left ?? 0;
-  const originY = bbox.y ?? bbox.top ?? 0;
+  const originX = (bbox.x ?? 0) - (bbox.left ?? 0);
+  const originY = (bbox.y ?? 0) - (bbox.top ?? 0);
   label.attr(
     'transform',
     `translate(${centerX - bbox.width / 2 - originX},${centerY - bbox.height / 2 - originY})`
@@ -135,6 +135,7 @@ export async function usecaseJsonTable<T extends SVGGraphicsElement>(
     .attr('width', innerWidth)
     .attr('height', titleHeight)
     .attr('style', nodeStyles);
+  tableGroup.node()?.append(titleLabel.node()!);
   positionLabel(titleLabel, titleBox, 0, top + titleHeight / 2);
 
   let rowTop = top + titleHeight;

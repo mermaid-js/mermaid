@@ -45,8 +45,8 @@ type ActorGlyphRenderer = (
 ) => void | Promise<void>;
 
 const positionLabel = (label: D3Selection<SVGGElement>, bbox: MeasuredBox, centerY: number) => {
-  const originX = bbox.x ?? bbox.left ?? 0;
-  const originY = bbox.y ?? bbox.top ?? 0;
+  const originX = (bbox.x ?? 0) - (bbox.left ?? 0);
+  const originY = (bbox.y ?? 0) - (bbox.top ?? 0);
   label.attr(
     'transform',
     `translate(${-bbox.width / 2 - originX},${centerY - bbox.height / 2 - originY})`

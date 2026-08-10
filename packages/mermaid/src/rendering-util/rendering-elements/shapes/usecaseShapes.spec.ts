@@ -219,6 +219,46 @@ describe('use-case actor shapes', () => {
     expect(document.querySelector('.usecase-actor-awesome-silhouette')).not.toBeNull();
     expect(document.querySelector('.usecase-actor-awesome svg')).toBeNull();
   });
+
+  it('keeps HTML actor labels in local actor coordinates when the SVG has a viewport offset', async () => {
+    const originalHtmlGetBoundingClientRect = Object.getOwnPropertyDescriptor(
+      HTMLElement.prototype,
+      'getBoundingClientRect'
+    );
+    Object.defineProperty(HTMLElement.prototype, 'getBoundingClientRect', {
+      configurable: true,
+      value: () => box(300, 1000, 80, 20),
+    });
+    configApi.setConfig({ htmlLabels: true, flowchart: { htmlLabels: true } });
+
+    try {
+      const node = actorNode('usecaseActor', { stereotype: 'Analyst' });
+      await usecaseActor(svg(), node);
+
+      const labels = [
+        document.querySelector('.usecase-actor-label'),
+        document.querySelector('.usecase-stereotype'),
+      ];
+      for (const label of labels) {
+        const transform = label?.getAttribute('transform') ?? '';
+        const match = /^translate\(([^,]+),([^)]+)\)$/.exec(transform);
+        expect(match).not.toBeNull();
+        expect(Math.abs(Number(match?.[1]))).toBeLessThan(node.width ?? 0);
+        expect(Math.abs(Number(match?.[2]))).toBeLessThan(node.height ?? 0);
+      }
+    } finally {
+      if (originalHtmlGetBoundingClientRect) {
+        Object.defineProperty(
+          HTMLElement.prototype,
+          'getBoundingClientRect',
+          originalHtmlGetBoundingClientRect
+        );
+      } else {
+        Reflect.deleteProperty(HTMLElement.prototype, 'getBoundingClientRect');
+      }
+      configApi.setConfig({ htmlLabels: false, flowchart: { htmlLabels: false } });
+    }
+  });
 });
 
 describe('business use case and JSON table', () => {
@@ -271,5 +311,56 @@ describe('business use case and JSON table', () => {
     expect(document.querySelector('[role="img"]')?.getAttribute('aria-label')).toBe(
       'JSON Payload, fruit Apple, tags Red, tags Green'
     );
+  });
+
+  it('keeps HTML table labels in local table coordinates when the SVG has a viewport offset', async () => {
+    const originalHtmlGetBoundingClientRect = Object.getOwnPropertyDescriptor(
+      HTMLElement.prototype,
+      'getBoundingClientRect'
+    );
+    Object.defineProperty(HTMLElement.prototype, 'getBoundingClientRect', {
+      configurable: true,
+      value: () => box(300, 1000, 80, 20),
+    });
+    configApi.setConfig({ htmlLabels: true, flowchart: { htmlLabels: true } });
+
+    try {
+      const node = actorNode('usecaseJsonTable', {
+        label: 'Payload',
+        cssClasses: 'default usecase-json-table',
+        jsonRows: [{ key: 'status', accessibleKey: 'status', value: 'ready' }],
+      });
+      await usecaseJsonTable(svg(), node);
+      const tableGrid = document.querySelector('.usecase-json-table-grid');
+      const title = document.querySelector('.usecase-json-title');
+      expect(title?.parentElement).toBe(tableGrid);
+      expect(title?.previousElementSibling?.classList.contains('usecase-json-title-cell')).toBe(
+        true
+      );
+
+      const labels = [
+        document.querySelector('.usecase-json-title'),
+        document.querySelector('.usecase-json-key'),
+        document.querySelector('.usecase-json-value'),
+      ];
+      for (const label of labels) {
+        const transform = label?.getAttribute('transform') ?? '';
+        const match = /^translate\(([^,]+),([^)]+)\)$/.exec(transform);
+        expect(match).not.toBeNull();
+        expect(Math.abs(Number(match?.[1]))).toBeLessThan(node.width ?? 0);
+        expect(Math.abs(Number(match?.[2]))).toBeLessThan(node.height ?? 0);
+      }
+    } finally {
+      if (originalHtmlGetBoundingClientRect) {
+        Object.defineProperty(
+          HTMLElement.prototype,
+          'getBoundingClientRect',
+          originalHtmlGetBoundingClientRect
+        );
+      } else {
+        Reflect.deleteProperty(HTMLElement.prototype, 'getBoundingClientRect');
+      }
+      configApi.setConfig({ htmlLabels: false, flowchart: { htmlLabels: false } });
+    }
   });
 });
