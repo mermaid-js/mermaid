@@ -1,0 +1,860 @@
+{
+  "nodes": [
+    {
+      "id": "AlphaA",
+      "width": 64.65625,
+      "height": 64.65625
+    },
+    {
+      "id": "AlphaB",
+      "width": 64.28125,
+      "height": 64.28125
+    },
+    {
+      "id": "AlphaC",
+      "width": 109.796875,
+      "height": 54
+    },
+    {
+      "id": "AlphaD",
+      "width": 110.03125,
+      "height": 54
+    },
+    {
+      "id": "AlphaE",
+      "width": 63.796875,
+      "height": 63.796875
+    },
+    {
+      "id": "AlphaF",
+      "width": 108.625,
+      "height": 54
+    },
+    {
+      "id": "AlphaG",
+      "width": 66.046875,
+      "height": 66.046875
+    },
+    {
+      "id": "AlphaH",
+      "width": 110.6875,
+      "height": 54
+    },
+    {
+      "id": "AlphaC_1",
+      "width": 81.578125,
+      "height": 81.578125
+    },
+    {
+      "id": "AlphaC_2",
+      "width": 81.578125,
+      "height": 81.578125
+    },
+    {
+      "id": "AlphaC_3",
+      "width": 126.578125,
+      "height": 54
+    },
+    {
+      "id": "AlphaD_1",
+      "width": 126.8125,
+      "height": 54
+    },
+    {
+      "id": "AlphaF1",
+      "width": 80.40625,
+      "height": 80.40625
+    },
+    {
+      "id": "AlphaF2",
+      "width": 80.40625,
+      "height": 80.40625
+    },
+    {
+      "id": "AlphaF3",
+      "width": 117.015625,
+      "height": 54
+    },
+    {
+      "id": "AlphaH_1",
+      "width": 127.46875,
+      "height": 54
+    },
+    {
+      "id": "BetaA",
+      "width": 101.96875,
+      "height": 54
+    },
+    {
+      "id": "BetaB",
+      "width": 101.59375,
+      "height": 54
+    },
+    {
+      "id": "BetaC",
+      "width": 102.109375,
+      "height": 54
+    },
+    {
+      "id": "BetaD",
+      "width": 102.34375,
+      "height": 54
+    },
+    {
+      "id": "BetaE",
+      "width": 101.109375,
+      "height": 54
+    },
+    {
+      "id": "BetaF",
+      "width": 100.9375,
+      "height": 54
+    },
+    {
+      "id": "BetaG",
+      "width": 103.359375,
+      "height": 54
+    },
+    {
+      "id": "BetaH",
+      "width": 103,
+      "height": 54
+    },
+    {
+      "id": "BetaI",
+      "width": 96.984375,
+      "height": 54
+    },
+    {
+      "id": "BetaJ",
+      "width": 100.15625,
+      "height": 54
+    },
+    {
+      "id": "BetaA_1",
+      "width": 118.75,
+      "height": 54
+    },
+    {
+      "id": "BetaC1",
+      "width": 110.5,
+      "height": 54
+    },
+    {
+      "id": "BetaC2",
+      "width": 110.5,
+      "height": 54
+    },
+    {
+      "id": "BetaC3",
+      "width": 110.5,
+      "height": 54
+    },
+    {
+      "id": "BetaD1",
+      "width": 110.734375,
+      "height": 54
+    },
+    {
+      "id": "BetaD2",
+      "width": 110.734375,
+      "height": 54
+    },
+    {
+      "id": "BetaF1",
+      "width": 109.328125,
+      "height": 54
+    },
+    {
+      "id": "BetaF2",
+      "width": 109.328125,
+      "height": 54
+    },
+    {
+      "id": "BetaF3",
+      "width": 109.328125,
+      "height": 54
+    },
+    {
+      "id": "BetaG1",
+      "width": 111.75,
+      "height": 54
+    },
+    {
+      "id": "BetaI1",
+      "width": 105.375,
+      "height": 54
+    },
+    {
+      "id": "GammaA",
+      "width": 123.640625,
+      "height": 54
+    },
+    {
+      "id": "GammaB",
+      "width": 123.25,
+      "height": 54
+    },
+    {
+      "id": "GammaC",
+      "width": 123.765625,
+      "height": 54
+    },
+    {
+      "id": "GammaD",
+      "width": 124.015625,
+      "height": 54
+    },
+    {
+      "id": "GammaE",
+      "width": 122.765625,
+      "height": 54
+    },
+    {
+      "id": "GammaF",
+      "width": 122.59375,
+      "height": 54
+    },
+    {
+      "id": "GammaG",
+      "width": 125.015625,
+      "height": 54
+    },
+    {
+      "id": "GammaH",
+      "width": 124.671875,
+      "height": 54
+    },
+    {
+      "id": "GammaI",
+      "width": 118.65625,
+      "height": 54
+    },
+    {
+      "id": "GammaJ",
+      "width": 121.828125,
+      "height": 54
+    },
+    {
+      "id": "GammaK",
+      "width": 123.40625,
+      "height": 54
+    },
+    {
+      "id": "GammaL",
+      "width": 122.296875,
+      "height": 54
+    },
+    {
+      "id": "GammaA1",
+      "width": 132.03125,
+      "height": 54
+    },
+    {
+      "id": "GammaB1",
+      "width": 131.640625,
+      "height": 54
+    },
+    {
+      "id": "GammaB2",
+      "width": 131.640625,
+      "height": 54
+    },
+    {
+      "id": "GammaB3",
+      "width": 131.640625,
+      "height": 54
+    },
+    {
+      "id": "GammaE1",
+      "width": 131.15625,
+      "height": 54
+    },
+    {
+      "id": "GammaE2",
+      "width": 131.15625,
+      "height": 54
+    },
+    {
+      "id": "GammaF1",
+      "width": 130.984375,
+      "height": 54
+    },
+    {
+      "id": "GammaF2",
+      "width": 130.984375,
+      "height": 54
+    },
+    {
+      "id": "GammaF3",
+      "width": 130.984375,
+      "height": 54
+    },
+    {
+      "id": "GammaH1",
+      "width": 133.0625,
+      "height": 54
+    },
+    {
+      "id": "GammaI1",
+      "width": 127.046875,
+      "height": 54
+    },
+    {
+      "id": "GammaI2",
+      "width": 127.046875,
+      "height": 54
+    },
+    {
+      "id": "GammaI3",
+      "width": 127.046875,
+      "height": 54
+    },
+    {
+      "id": "GammaI4",
+      "width": 127.046875,
+      "height": 54
+    },
+    {
+      "id": "GammaK1",
+      "width": 131.796875,
+      "height": 54
+    },
+    {
+      "id": "GammaL1",
+      "width": 130.6875,
+      "height": 54
+    },
+    {
+      "id": "GammaL2",
+      "width": 130.6875,
+      "height": 54
+    },
+    {
+      "id": "GammaL3",
+      "width": 130.6875,
+      "height": 54
+    },
+    {
+      "id": "GammaL4",
+      "width": 130.6875,
+      "height": 54
+    },
+    {
+      "id": "DeltaA",
+      "width": 107.453125,
+      "height": 54
+    },
+    {
+      "id": "DeltaB",
+      "width": 107.0625,
+      "height": 54
+    },
+    {
+      "id": "DeltaC",
+      "width": 107.578125,
+      "height": 54
+    },
+    {
+      "id": "DeltaD",
+      "width": 107.828125,
+      "height": 54
+    },
+    {
+      "id": "DeltaE",
+      "width": 106.578125,
+      "height": 54
+    },
+    {
+      "id": "DeltaF",
+      "width": 106.40625,
+      "height": 54
+    },
+    {
+      "id": "DeltaG",
+      "width": 108.828125,
+      "height": 54
+    },
+    {
+      "id": "DeltaH",
+      "width": 108.484375,
+      "height": 54
+    },
+    {
+      "id": "DeltaI",
+      "width": 102.46875,
+      "height": 54
+    },
+    {
+      "id": "DeltaA1",
+      "width": 115.84375,
+      "height": 54
+    },
+    {
+      "id": "DeltaA2",
+      "width": 115.84375,
+      "height": 54
+    },
+    {
+      "id": "DeltaA3",
+      "width": 115.84375,
+      "height": 54
+    },
+    {
+      "id": "DeltaB1",
+      "width": 115.453125,
+      "height": 54
+    },
+    {
+      "id": "DeltaB2",
+      "width": 115.453125,
+      "height": 54
+    },
+    {
+      "id": "DeltaB3",
+      "width": 115.453125,
+      "height": 54
+    },
+    {
+      "id": "DeltaB4",
+      "width": 115.453125,
+      "height": 54
+    },
+    {
+      "id": "DeltaC1",
+      "width": 115.96875,
+      "height": 54
+    },
+    {
+      "id": "DeltaC2",
+      "width": 115.96875,
+      "height": 54
+    },
+    {
+      "id": "DeltaC3",
+      "width": 115.96875,
+      "height": 54
+    },
+    {
+      "id": "DeltaD1",
+      "width": 116.21875,
+      "height": 54
+    },
+    {
+      "id": "DeltaF1",
+      "width": 114.796875,
+      "height": 54
+    },
+    {
+      "id": "DeltaF2",
+      "width": 114.796875,
+      "height": 54
+    },
+    {
+      "id": "DeltaF3",
+      "width": 114.796875,
+      "height": 54
+    },
+    {
+      "id": "DeltaH1",
+      "width": 116.875,
+      "height": 54
+    },
+    {
+      "id": "EpsA",
+      "width": 93.40625,
+      "height": 54
+    },
+    {
+      "id": "EpsB",
+      "width": 93.015625,
+      "height": 54
+    },
+    {
+      "id": "EpsC",
+      "width": 93.53125,
+      "height": 54
+    },
+    {
+      "id": "EpsD",
+      "width": 93.78125,
+      "height": 54
+    },
+    {
+      "id": "EpsE",
+      "width": 92.53125,
+      "height": 54
+    },
+    {
+      "id": "EpsF",
+      "width": 92.359375,
+      "height": 54
+    },
+    {
+      "id": "EpsG",
+      "width": 94.78125,
+      "height": 54
+    },
+    {
+      "id": "EpsH",
+      "width": 94.4375,
+      "height": 54
+    },
+    {
+      "id": "EpsI",
+      "width": 88.421875,
+      "height": 54
+    },
+    {
+      "id": "EpsJ",
+      "width": 91.59375,
+      "height": 54
+    },
+    {
+      "id": "EpsK",
+      "width": 93.171875,
+      "height": 54
+    },
+    {
+      "id": "EpsL",
+      "width": 92.0625,
+      "height": 54
+    },
+    {
+      "id": "EpsM",
+      "width": 95.3125,
+      "height": 54
+    },
+    {
+      "id": "EpsN",
+      "width": 94.171875,
+      "height": 54
+    },
+    {
+      "id": "EpsB1",
+      "width": 101.40625,
+      "height": 54
+    },
+    {
+      "id": "EpsB2",
+      "width": 101.40625,
+      "height": 54
+    },
+    {
+      "id": "EpsB3",
+      "width": 101.40625,
+      "height": 54
+    },
+    {
+      "id": "EpsB4",
+      "width": 101.40625,
+      "height": 54
+    },
+    {
+      "id": "EpsC1",
+      "width": 101.921875,
+      "height": 54
+    },
+    {
+      "id": "EpsC2",
+      "width": 101.921875,
+      "height": 54
+    },
+    {
+      "id": "EpsC3",
+      "width": 101.921875,
+      "height": 54
+    },
+    {
+      "id": "EpsE1",
+      "width": 100.921875,
+      "height": 54
+    },
+    {
+      "id": "EpsE2",
+      "width": 100.921875,
+      "height": 54
+    },
+    {
+      "id": "EpsE3",
+      "width": 100.921875,
+      "height": 54
+    },
+    {
+      "id": "EpsE4",
+      "width": 100.921875,
+      "height": 54
+    },
+    {
+      "id": "EpsG1",
+      "width": 103.171875,
+      "height": 54
+    },
+    {
+      "id": "EpsG2",
+      "width": 103.171875,
+      "height": 54
+    },
+    {
+      "id": "EpsG3",
+      "width": 103.171875,
+      "height": 54
+    },
+    {
+      "id": "EpsI1",
+      "width": 96.8125,
+      "height": 54
+    },
+    {
+      "id": "EpsI2",
+      "width": 96.8125,
+      "height": 54
+    },
+    {
+      "id": "EpsI3",
+      "width": 96.8125,
+      "height": 54
+    },
+    {
+      "id": "EpsI4",
+      "width": 96.8125,
+      "height": 54
+    },
+    {
+      "id": "EpsK1",
+      "width": 101.5625,
+      "height": 54
+    },
+    {
+      "id": "EpsM1",
+      "width": 103.703125,
+      "height": 54
+    },
+    {
+      "id": "EpsM2",
+      "width": 103.703125,
+      "height": 54
+    },
+    {
+      "id": "EpsM3",
+      "width": 103.703125,
+      "height": 54
+    },
+    {
+      "id": "EpsN1",
+      "width": 102.5625,
+      "height": 54
+    },
+    {
+      "id": "EpsN2",
+      "width": 102.5625,
+      "height": 54
+    },
+    {
+      "id": "EpsN3",
+      "width": 102.5625,
+      "height": 54
+    },
+    {
+      "id": "EpsN4",
+      "width": 102.5625,
+      "height": 54
+    },
+    {
+      "id": "EpsN5",
+      "width": 102.5625,
+      "height": 54
+    },
+    {
+      "id": "ZetaA",
+      "width": 101.71875,
+      "height": 54
+    },
+    {
+      "id": "ZetaB",
+      "width": 101.34375,
+      "height": 54
+    },
+    {
+      "id": "ZetaC",
+      "width": 101.859375,
+      "height": 54
+    },
+    {
+      "id": "ZetaD",
+      "width": 102.09375,
+      "height": 54
+    },
+    {
+      "id": "ZetaE",
+      "width": 100.859375,
+      "height": 54
+    },
+    {
+      "id": "ZetaF",
+      "width": 100.6875,
+      "height": 54
+    },
+    {
+      "id": "ZetaG",
+      "width": 103.109375,
+      "height": 54
+    },
+    {
+      "id": "ZetaH",
+      "width": 102.75,
+      "height": 54
+    },
+    {
+      "id": "ZetaI",
+      "width": 96.734375,
+      "height": 54
+    },
+    {
+      "id": "ZetaJ",
+      "width": 99.90625,
+      "height": 54
+    },
+    {
+      "id": "ZetaK",
+      "width": 101.5,
+      "height": 54
+    },
+    {
+      "id": "ZetaL",
+      "width": 100.390625,
+      "height": 54
+    },
+    {
+      "id": "ZetaM",
+      "width": 103.640625,
+      "height": 54
+    },
+    {
+      "id": "ZetaA1",
+      "width": 110.109375,
+      "height": 54
+    },
+    {
+      "id": "ZetaA2",
+      "width": 110.109375,
+      "height": 54
+    },
+    {
+      "id": "ZetaA3",
+      "width": 110.109375,
+      "height": 54
+    },
+    {
+      "id": "ZetaD1",
+      "width": 110.484375,
+      "height": 54
+    },
+    {
+      "id": "ZetaF1",
+      "width": 109.078125,
+      "height": 54
+    },
+    {
+      "id": "ZetaC1",
+      "width": 110.25,
+      "height": 54
+    },
+    {
+      "id": "ZetaC2",
+      "width": 110.25,
+      "height": 54
+    },
+    {
+      "id": "ZetaC3",
+      "width": 110.25,
+      "height": 54
+    },
+    {
+      "id": "ZetaH1",
+      "width": 111.140625,
+      "height": 54
+    },
+    {
+      "id": "ZetaH2",
+      "width": 111.140625,
+      "height": 54
+    },
+    {
+      "id": "ZetaH3",
+      "width": 111.140625,
+      "height": 54
+    },
+    {
+      "id": "ZetaH4",
+      "width": 111.140625,
+      "height": 54
+    },
+    {
+      "id": "ZetaH5",
+      "width": 111.140625,
+      "height": 54
+    },
+    {
+      "id": "ZetaI1",
+      "width": 105.125,
+      "height": 54
+    },
+    {
+      "id": "ZetaI2",
+      "width": 105.125,
+      "height": 54
+    },
+    {
+      "id": "ZetaI3",
+      "width": 105.125,
+      "height": 54
+    },
+    {
+      "id": "ZetaK1",
+      "width": 109.890625,
+      "height": 54
+    },
+    {
+      "id": "ZetaK2",
+      "width": 109.890625,
+      "height": 54
+    },
+    {
+      "id": "ZetaK3",
+      "width": 109.890625,
+      "height": 54
+    },
+    {
+      "id": "ZetaK4",
+      "width": 109.890625,
+      "height": 54
+    },
+    {
+      "id": "ZetaM1",
+      "width": 112.03125,
+      "height": 54
+    },
+    {
+      "id": "ZetaM2",
+      "width": 112.03125,
+      "height": 54
+    },
+    {
+      "id": "ZetaM3",
+      "width": 112.03125,
+      "height": 54
+    },
+    {
+      "id": "ZetaM4",
+      "width": 112.03125,
+      "height": 54
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "d7e106457934de15be61547f3b85a96fbf575a1d02ed0519106a222ae78cf9ef",
+    "capturedAt": "2026-08-10T14:23:52.991Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/GRAPH - hola main page nr 3.mmd theme=forest look=classic layout=elk"
+  }
+}

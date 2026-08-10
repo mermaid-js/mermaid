@@ -305,25 +305,36 @@ rejecting any that the solver cannot satisfy or that would create an overlap.
     the last overlap pass changes nothing, so those bends are structurally
     required, not drift.
 
-14. **Several connectors leaving one node side are spread along it.**
-    `distributeFanPorts` in `routing/finalRouting.ts`, called just before final
-    routing.
+14. **Ports are assigned after the sides are known, in a second routing pass.**
+    `routeFinalEdges` routes once, `planPorts` decides where along each side every
+    edge attaches, and `routePass` runs again with those sides locked and those ports
+    fixed.
 
-    Guide §19.8 lets a request name the sides an edge must use, but says nothing
-    about _where_ on a side it attaches, and the router's own `portPoint` defaults
-    to the middle. A tree node with several children therefore fired every arrow
-    from one point, the routes only separating a clearance step later. Each
-    connector now gets its own point on the side, ordered by where its far end sits
-    across that side, so the spread can never introduce a crossing. The spacing is
-    `treeFanPortSpacing`, capped by the side's own length less a corner margin, so a
-    wide fan on a small node simply gets a tighter spread — and an odd fan keeps its
-    middle connector on the centre line, so a straight middle branch stays straight.
+    Guide §19.8 lets a request name the sides an edge must use but says nothing about
+    _where_ on a side it attaches, and the router's `portPoint` defaults to the
+    middle — so everything arriving at one side of one node was drawn on top of
+    everything else arriving there. It cannot be fixed before routing, either:
+    which side an edge uses is an output of the A\* search, not an input.
 
-    Only ends whose side is already fixed take part, which in practice means tree
-    connectors; a core edge's sides are the router's to choose, so those are left
-    alone. Over both corpora this cuts `edge-same-port-departure` from 105 to 31,
-    `edge-shared-attachment-point` from 109 to 35 and `edge-shared-subpath` from 130
-    to 56, with the bend count unchanged at 270 — the separation is free.
+    Each end asks for the point on its side nearest its own far end, which is the
+    attachment that needs no bend, so an edge that can run straight keeps running
+    straight. `spreadPorts` then parts the ends that asked for the same place, using
+    two sweeps that honour the requests as closely as a minimum separation
+    (`treeFanPortSpacing`) and the length of the side allow — a hub with ten edges on
+    one short side gets whatever gap fits rather than ports off its corners. Ordering
+    follows the requests, so parting them cannot introduce a crossing. Parallel edges
+    need no special case: they ask for the same point and are parted like anything
+    else.
+
+    The second pass is kept only if it failed no more edges than the first, so a port
+    assignment some route cannot satisfy costs nothing.
+
+    Over both corpora this ends port sharing outright — `edge-same-port-departure`
+    105 → 0, `edge-shared-attachment-point` 109 → 0, `edge-corner-connection` 8 → 0,
+    `edge-border-hugging` 6 → 1, `edge-port-direction-mismatch` 6 → 1,
+    `edge-shared-subpath` 130 → 28 — at a cost of 12 bends and 3 straight edges
+    (265 → 277 bends, 215 → 212 straight): giving an edge its own port sometimes
+    means giving it a jog.
 
 15. **An ordinal placement is a real corner placement.** `evaluateCandidate`
     offsets the tree clear of its root along the ordinal's _other_ component
@@ -434,13 +445,6 @@ Relative to guide §26, these remain open:
   are dropped and children flattened, exactly as the guide specifies.
 - **PR 9 (§21).** The legacy `hola` path is still registered; this
   implementation is additive.
-- **Port distribution on core edges.** Tree connectors now spread along their
-  side (deviation 14), but a core edge's sides are chosen inside the router, so
-  the edges meeting one core node still share a port. That is what is left of
-  `edge-same-port-departure` (31 of the original 105) and
-  `edge-shared-attachment-point` (35 of 109), and it is why
-  `holaFaithfulDdlt.spec.ts` asserts the structural subset only. Closing it means
-  assigning sides and ports together rather than per edge.
 
 ---
 

@@ -31,7 +31,7 @@ import { opportunisticallyAlign } from '../improvement/opportunisticAlignment.js
 import { rotateGrowth, rotateLandscapeIfNeeded } from '../improvement/rotation.js';
 import { alignTreeRanks, straightenTreeConnectors } from '../improvement/treeRankAlignment.js';
 import type { RestoredTree } from '../improvement/treeRankAlignment.js';
-import { distributeFanPorts, routeFinalEdges } from '../routing/finalRouting.js';
+import { routeFinalEdges } from '../routing/finalRouting.js';
 import type { FinalEdge, RoutedFinalEdge } from '../routing/finalRouting.js';
 import type { CoreLayoutState } from '../state.js';
 import type { DeferredEdge } from '../model.js';
@@ -506,10 +506,6 @@ function finaliseComponent(
       parallelCount: input.selfLoops.length,
     });
   });
-
-  // Several connectors leaving one side of one tree node get their own point on
-  // that side, so a branching parent does not fire every arrow from one spot.
-  distributeFanPorts(restored.nodes, finalEdges, input.options);
 
   const routed = routeFinalEdges(
     restored.nodes,

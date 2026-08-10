@@ -30,6 +30,13 @@ const STRUCTURAL = new Set<string>([
 /** Two arrows leaving one node closer than this read as one arrow. */
 const MIN_DEPARTURE_GAP = 8;
 
+/**
+ * Corpus-wide, only *coincident* attachment points are a defect. A hub with ten
+ * edges on one short side genuinely cannot hold them 8px apart, and `spreadPorts`
+ * correctly tightens the gap to whatever the side allows.
+ */
+const MIN_DISTINCT_GAP = 0.5;
+
 describe('faithful HOLA — wider fixture corpus', () => {
   beforeAll(() => {
     setLogLevel('fatal');
@@ -253,6 +260,58 @@ describe('faithful HOLA — wider fixture corpus', () => {
   }, 60_000);
 
   for (const fx of fixtures) {
+    /**
+     * No two edges may meet a node at the same point. Ports are assigned after the
+     * router has chosen sides, so this holds for core edges as well as tree
+     * connectors — before that, everything arriving at one side of a node piled up
+     * on its middle.
+     */
+    it(`${fx.id} gives every edge its own attachment point`, async () => {
+      const data = await parseMmdFileToLayoutData(fx.mmdPath, {
+        stampFlowchartRendererFields: true,
+      });
+      applyFixtureContentSizesStrict(data, fx.sizes);
+      applyFixtureEdgeLabelSizes(data, fx.sizes);
+      runHolaFaithfulLayoutCore(data);
+
+      // Node id → the points where edges meet it. Self-loops leave and re-enter the
+      // same side by design, so they are not part of this.
+      const attachments = new Map<string, { edge: string; point: { x: number; y: number } }[]>();
+      for (const edge of data.edges) {
+        if (edge.start === edge.end) {
+          continue;
+        }
+        const points = edge.points ?? [];
+        if (points.length < 2) {
+          continue;
+        }
+        for (const [node, point] of [
+          [edge.start ?? '', points[0]] as const,
+          [edge.end ?? '', points[points.length - 1]] as const,
+        ]) {
+          attachments.set(node, [...(attachments.get(node) ?? []), { edge: edge.id, point }]);
+        }
+      }
+
+      const shared: string[] = [];
+      for (const [node, list] of attachments) {
+        for (let i = 0; i < list.length; i++) {
+          for (let j = i + 1; j < list.length; j++) {
+            const gap = Math.hypot(
+              list[i].point.x - list[j].point.x,
+              list[i].point.y - list[j].point.y
+            );
+            if (gap < MIN_DISTINCT_GAP) {
+              shared.push(
+                `${node}: ${list[i].edge} and ${list[j].edge} meet it ${gap.toFixed(1)}px apart`
+              );
+            }
+          }
+        }
+      }
+      expect(shared).toEqual([]);
+    }, 60_000);
+
     it(`${fx.id} raises no structural issue`, async () => {
       const data = await parseMmdFileToLayoutData(fx.mmdPath, {
         stampFlowchartRendererFields: true,

@@ -1,139 +1,58 @@
 /**
- * Spreading the connectors that leave one side of one node (guide §15.2, §19.8):
- * a branching tree node must not fire every arrow from the same point, and the
- * spread must not introduce a crossing or push a port off its side.
+ * Where along a node's side each edge attaches (guide §19.8).
+ *
+ * `spreadPorts` is the whole decision: every end asks for the point nearest its own
+ * far end — the attachment that needs no bend — and ends that ask for the same place
+ * are pushed apart by as little as the side allows.
  */
 
 import { describe, expect, it } from 'vitest';
-import type { HolaNode, Side } from '../model.js';
-import { resolveOptions } from '../options.js';
-import { makeEntity } from '../state.js';
-import { distributeFanPorts } from './finalRouting.js';
-import type { FinalEdge } from './finalRouting.js';
+import { spreadPorts } from './finalRouting.js';
 
-const OPTIONS = resolveOptions();
-
-function edge(source: string, target: string, side?: Side): FinalEdge {
-  return {
-    originalEdgeId: `${source}->${target}`,
-    source,
-    target,
-    mandatoryWaypoints: [],
-    parallelIndex: 0,
-    parallelCount: 1,
-    lockedSourceSide: side,
-    lockedTargetSide: side === 'right' ? 'left' : undefined,
-  };
-}
-
-function nodeMap(...nodes: HolaNode[]): Map<string, HolaNode> {
-  return new Map(nodes.map((node) => [node.id, node]));
-}
-
-describe('spreading a fan of connectors along one node side', () => {
-  it('gives each child its own point, keeping the middle one on the centre line', () => {
-    const nodes = nodeMap(
-      makeEntity('P', 0, 0, 40, 54),
-      makeEntity('up', 200, -100, 40, 20),
-      makeEntity('mid', 200, 0, 40, 20),
-      makeEntity('down', 200, 100, 40, 20)
-    );
-    const edges = [edge('P', 'mid', 'right'), edge('P', 'down', 'right'), edge('P', 'up', 'right')];
-
-    distributeFanPorts(nodes, edges, OPTIONS);
-
-    const offsetOf = (target: string): number =>
-      edges.find((e) => e.target === target)!.sourcePortOffset!;
-    // Side 54 high, 8px margin either end → 38 usable, so the full 14px spacing.
-    expect(offsetOf('up')).toBe(-14);
-    expect(offsetOf('mid')).toBe(0);
-    expect(offsetOf('down')).toBe(14);
+describe('spreading attachment points along one node side', () => {
+  it('grants every request when they are already far enough apart', () => {
+    expect(spreadPorts([0, 40, 80], 0, 100, 14)).toEqual([0, 40, 80]);
   });
 
-  it('orders the ports by the far ends, so the spread cannot cross', () => {
-    const nodes = nodeMap(
-      makeEntity('P', 0, 0, 40, 54),
-      makeEntity('low', 200, 90, 40, 20),
-      makeEntity('high', 200, -90, 40, 20)
-    );
-    // Declared low-first; the ports must still come out high-first.
-    const edges = [edge('P', 'low', 'right'), edge('P', 'high', 'right')];
-
-    distributeFanPorts(nodes, edges, OPTIONS);
-
-    expect(edges.find((e) => e.target === 'high')!.sourcePortOffset).toBeLessThan(
-      edges.find((e) => e.target === 'low')!.sourcePortOffset!
-    );
+  it('parts two ends that ask for the same point', () => {
+    // The first keeps its request, the second gives way — so an edge that can run
+    // straight to the middle of a side keeps running straight.
+    expect(spreadPorts([50, 50], 0, 100, 14)).toEqual([50, 64]);
   });
 
-  it('offsets along x on the top and bottom sides', () => {
-    const nodes = nodeMap(
-      makeEntity('P', 0, 0, 54, 40),
-      makeEntity('left', -200, -100, 40, 20),
-      makeEntity('right', 200, -100, 40, 20)
-    );
-    const edges = [edge('P', 'left', 'top'), edge('P', 'right', 'top')];
-
-    distributeFanPorts(nodes, edges, OPTIONS);
-
-    expect(edges.find((e) => e.target === 'left')!.sourcePortOffset).toBe(-7);
-    expect(edges.find((e) => e.target === 'right')!.sourcePortOffset).toBe(7);
+  it('keeps the straight edge straight when the other end asks from far off', () => {
+    // A node whose side spans [502, 556]: one edge wants 502 (its far end is away to
+    // one side, so the request is clamped), the other wants the centre at 529.
+    expect(spreadPorts([502, 529], 502, 556, 14)).toEqual([502, 529]);
   });
 
-  it('tightens the spread rather than run off a short side', () => {
-    // A 24px side leaves 12 usable after the margins, shared by three ports.
-    const nodes = nodeMap(
-      makeEntity('P', 0, 0, 40, 24),
-      makeEntity('a', 200, -100, 40, 20),
-      makeEntity('b', 200, 0, 40, 20),
-      makeEntity('c', 200, 100, 40, 20)
-    );
-    const edges = [edge('P', 'a', 'right'), edge('P', 'b', 'right'), edge('P', 'c', 'right')];
-
-    distributeFanPorts(nodes, edges, OPTIONS);
-
-    for (const e of edges) {
-      expect(Math.abs(e.sourcePortOffset!)).toBeLessThanOrEqual(12 - 1e-9);
+  it('never leaves the usable span', () => {
+    const spread = spreadPorts([-100, 0, 500], 0, 100, 14);
+    for (const position of spread) {
+      expect(position).toBeGreaterThanOrEqual(0);
+      expect(position).toBeLessThanOrEqual(100);
     }
-    expect(edges.find((e) => e.target === 'b')!.sourcePortOffset).toBe(0);
   });
 
-  it('leaves an edge whose side the router still has to choose alone', () => {
-    const nodes = nodeMap(
-      makeEntity('P', 0, 0, 40, 54),
-      makeEntity('a', 200, -100, 40, 20),
-      makeEntity('b', 200, 100, 40, 20)
-    );
-    const edges = [edge('P', 'a'), edge('P', 'b')];
-
-    distributeFanPorts(nodes, edges, OPTIONS);
-
-    expect(edges[0].sourcePortOffset).toBeUndefined();
-    expect(edges[1].sourcePortOffset).toBeUndefined();
+  it('tightens the gap rather than overflow a short side', () => {
+    // Five ends on a 20px span cannot be 14 apart; 5 apart is what fits.
+    const spread = spreadPorts([0, 0, 0, 0, 0], 0, 20, 14);
+    expect(spread).toEqual([0, 5, 10, 15, 20]);
   });
 
-  it('leaves a lone connector on the centre line', () => {
-    const nodes = nodeMap(makeEntity('P', 0, 0, 40, 54), makeEntity('a', 200, 100, 40, 20));
-    const edges = [edge('P', 'a', 'right')];
-
-    distributeFanPorts(nodes, edges, OPTIONS);
-
-    expect(edges[0].sourcePortOffset).toBeUndefined();
+  it('keeps the given order, so spreading cannot make two edges cross', () => {
+    const spread = spreadPorts([10, 12, 14, 16], 0, 100, 20);
+    for (let i = 1; i < spread.length; i++) {
+      expect(spread[i]).toBeGreaterThan(spread[i - 1]);
+    }
   });
 
-  it('treats the two sides of one node as separate fans', () => {
-    const nodes = nodeMap(
-      makeEntity('P', 0, 0, 40, 54),
-      makeEntity('r1', 200, -100, 40, 20),
-      makeEntity('r2', 200, 100, 40, 20),
-      makeEntity('l1', -200, 0, 40, 20)
-    );
-    const edges = [edge('P', 'r1', 'right'), edge('P', 'r2', 'right'), edge('P', 'l1', 'left')];
+  it('pulls a block back inside the span from the far end', () => {
+    // All four want the top of the span; they end up filling it downwards.
+    expect(spreadPorts([100, 100, 100, 100], 0, 100, 14)).toEqual([58, 72, 86, 100]);
+  });
 
-    distributeFanPorts(nodes, edges, OPTIONS);
-
-    expect(edges.find((e) => e.target === 'r1')!.sourcePortOffset).toBe(-7);
-    expect(edges.find((e) => e.target === 'r2')!.sourcePortOffset).toBe(7);
-    expect(edges.find((e) => e.target === 'l1')!.sourcePortOffset).toBeUndefined();
+  it('leaves a lone end exactly where it asked', () => {
+    expect(spreadPorts([37], 0, 100, 14)).toEqual([37]);
   });
 });

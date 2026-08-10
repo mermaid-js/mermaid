@@ -1,0 +1,280 @@
+
+flowchart TB
+
+ AlphaA(("AlphaA"))
+ AlphaB(("AlphaB"))
+ AlphaC
+ AlphaD
+ AlphaE(("AlphaE"))
+ AlphaF
+ AlphaG(("AlphaG"))
+ AlphaH
+
+ AlphaA --- AlphaC
+ AlphaC --- AlphaB
+ AlphaB --- AlphaD
+ AlphaD --- AlphaE
+ AlphaE --- AlphaF
+ AlphaF --- AlphaG
+ AlphaG --- AlphaH
+ AlphaH --- AlphaA
+
+ AlphaC --- AlphaC_1(("AlphaC_1"))
+ AlphaC --- AlphaC_2(("AlphaC_2"))
+ AlphaC --- AlphaC_3
+
+ AlphaD --- AlphaD_1
+
+ AlphaF --- AlphaF1(("AlphaF_1"))
+ AlphaF --- AlphaF2(("AlphaF_2"))
+ AlphaF --- AlphaF3
+
+ AlphaH --- AlphaH_1
+
+ BetaA
+ BetaB
+ BetaC
+ BetaD
+ BetaE
+ BetaF
+ BetaG
+ BetaH
+ BetaI
+ BetaJ
+
+ AlphaB --- BetaA
+
+ BetaA --- BetaB
+ BetaB --- BetaC
+ BetaB --- BetaD
+ BetaD --- BetaF
+ BetaC --- BetaE
+ BetaD --- BetaE
+ BetaE --- BetaF
+ BetaE --- BetaG
+ BetaG --- BetaH
+ BetaG --- BetaJ
+ BetaH --- BetaI
+ BetaI --- BetaJ
+
+ BetaA --- BetaA_1
+ BetaC --- BetaC1
+ BetaC --- BetaC2
+ BetaC --- BetaC3
+ BetaD --- BetaD1
+ BetaD --- BetaD2
+ BetaF --- BetaF1
+ BetaF --- BetaF2
+ BetaF --- BetaF3
+ BetaG --- BetaG1
+ BetaI --- BetaI1
+
+
+ GammaA
+ GammaB
+ GammaC
+ GammaD
+ GammaE
+ GammaF
+ GammaG
+ GammaH
+ GammaI
+ GammaJ
+ GammaK
+ GammaL
+
+ AlphaA --- GammaA
+ BetaH --- GammaB
+
+ GammaA --- GammaD
+ GammaB --- GammaJ
+ GammaC --- GammaL
+ GammaD --- GammaE
+ GammaD --- GammaF
+ GammaE --- GammaG
+ GammaF --- GammaG
+ GammaG --- GammaH
+ GammaH --- GammaI
+ GammaH --- GammaJ
+ GammaI --- GammaK
+ GammaJ --- GammaK
+ GammaJ --- GammaL
+
+ GammaA --- GammaA1
+ GammaB --- GammaB1
+ GammaB --- GammaB2
+ GammaB --- GammaB3
+ GammaE --- GammaE1
+ GammaE --- GammaE2
+ GammaF --- GammaF1
+ GammaF --- GammaF2
+ GammaF --- GammaF3
+ GammaH --- GammaH1
+ GammaI --- GammaI1
+ GammaI --- GammaI2
+ GammaI --- GammaI3
+ GammaI --- GammaI4
+ GammaK --- GammaK1
+ GammaL --- GammaL1
+ GammaL --- GammaL2
+ GammaL --- GammaL3
+ GammaL --- GammaL4
+
+DeltaA
+DeltaB
+DeltaC
+DeltaD
+DeltaE
+DeltaF
+DeltaG
+DeltaH
+DeltaI
+
+BetaH --- DeltaA
+BetaH --- DeltaB
+DeltaA --- DeltaE
+DeltaB --- DeltaG
+DeltaC --- DeltaE
+DeltaD --- DeltaI
+DeltaE --- DeltaH
+DeltaE --- DeltaF
+DeltaF --- DeltaG
+DeltaH --- DeltaI
+
+DeltaA --- DeltaA1
+DeltaA --- DeltaA2
+DeltaA --- DeltaA3
+DeltaB --- DeltaB1
+DeltaB --- DeltaB2
+DeltaB --- DeltaB3
+DeltaB --- DeltaB4
+DeltaC --- DeltaC1
+DeltaC --- DeltaC2
+DeltaC --- DeltaC3
+DeltaD --- DeltaD1
+DeltaF --- DeltaF1
+DeltaF --- DeltaF2
+DeltaF --- DeltaF3
+DeltaH --- DeltaH1
+
+
+EpsA
+EpsB
+EpsC
+EpsD
+EpsE
+EpsF
+EpsG
+EpsH
+EpsI
+EpsJ
+EpsK
+EpsL
+EpsM
+EpsN
+
+EpsA --- DeltaD
+EpsA --- EpsB
+EpsA --- EpsC
+EpsA --- EpsM
+EpsA --- EpsN
+EpsB --- EpsD
+EpsC --- EpsD
+EpsD --- EpsE
+EpsE --- EpsF
+EpsF --- EpsG
+EpsG --- EpsH
+EpsH --- EpsI
+EpsI --- EpsJ
+EpsJ --- EpsK
+EpsK --- EpsL
+EpsL --- EpsM
+EpsL --- EpsN
+
+EpsB --- EpsB1
+EpsB --- EpsB2
+EpsB --- EpsB3
+EpsB --- EpsB4
+EpsC --- EpsC1
+EpsC --- EpsC2
+EpsC --- EpsC3
+EpsE --- EpsE1
+EpsE --- EpsE2
+EpsE --- EpsE3
+EpsE --- EpsE4
+EpsG --- EpsG1
+EpsG --- EpsG2
+EpsG --- EpsG3
+EpsI --- EpsI1
+EpsI --- EpsI2
+EpsI --- EpsI3
+EpsI --- EpsI4
+EpsK --- EpsK1
+EpsM --- EpsM1
+EpsM --- EpsM2
+EpsM --- EpsM3
+EpsN --- EpsN1
+EpsN --- EpsN2
+EpsN --- EpsN3
+EpsN --- EpsN4
+EpsN --- EpsN5
+
+
+
+
+ZetaA
+ZetaB
+ZetaC
+ZetaD
+ZetaE
+ZetaF
+ZetaG
+ZetaH
+ZetaI
+ZetaJ
+ZetaK
+ZetaL
+ZetaM
+
+GammaC --- ZetaA
+DeltaC --- ZetaB
+EpsA --- ZetaC
+
+ZetaA --- ZetaB
+ZetaB --- ZetaD
+ZetaC --- ZetaG
+ZetaD --- ZetaE
+ZetaE --- ZetaF
+ZetaF --- ZetaG
+ZetaG --- ZetaH
+ZetaG --- ZetaI
+ZetaH --- ZetaJ
+ZetaI --- ZetaJ
+ZetaJ --- ZetaK
+ZetaK --- ZetaL
+ZetaL --- ZetaM
+
+ZetaA --- ZetaA1
+ZetaA --- ZetaA2
+ZetaA --- ZetaA3
+ZetaD --- ZetaD1
+ZetaF --- ZetaF1
+ZetaC --- ZetaC1
+ZetaC --- ZetaC2
+ZetaC --- ZetaC3
+ZetaH --- ZetaH1
+ZetaH --- ZetaH2
+ZetaH --- ZetaH3
+ZetaH --- ZetaH4
+ZetaH --- ZetaH5
+ZetaI --- ZetaI1
+ZetaI --- ZetaI2
+ZetaI --- ZetaI3
+ZetaK --- ZetaK1
+ZetaK --- ZetaK2
+ZetaK --- ZetaK3
+ZetaK --- ZetaK4
+ZetaM --- ZetaM1
+ZetaM --- ZetaM2
+ZetaM --- ZetaM3
+ZetaM --- ZetaM4
