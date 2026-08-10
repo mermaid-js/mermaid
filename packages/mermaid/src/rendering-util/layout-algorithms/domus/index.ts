@@ -534,6 +534,41 @@ export function runLateQualityPasses(
   simplifyEdgeJogsWhenScoreImproves(data4Layout);
 }
 
+/**
+ * Final safety net before the geometry leaves the DOM-free layout stage: drop
+ * consecutive coincident points from every edge polyline. A zero-length segment
+ * is invisible to the validator (`normalizePolyline` collapses it) but makes the
+ * renderer's curve interpolation divide by the segment length and emit NaN path
+ * coordinates, truncating the painted edge. Any producer pass can leave one
+ * behind; enforcing "no degenerate polyline reaches the renderer" here is the
+ * single guarantee that covers all of them. Never drops below a 2-point route.
+ */
+function stripDegenerateEdgePoints(data4Layout: LayoutData): void {
+  const EPS_COINCIDENT = 1e-3;
+  for (const e of data4Layout.edges ?? []) {
+    const pts = (e as { points?: { x: number; y: number }[] }).points;
+    if (!Array.isArray(pts) || pts.length < 2) {
+      continue;
+    }
+    const out: { x: number; y: number }[] = [];
+    for (const p of pts) {
+      const last = out[out.length - 1];
+      if (
+        last &&
+        Math.abs(last.x - p.x) <= EPS_COINCIDENT &&
+        Math.abs(last.y - p.y) <= EPS_COINCIDENT
+      ) {
+        continue;
+      }
+      out.push(p);
+    }
+    // Keep a drawable 2-point minimum even if the whole route collapsed.
+    if (out.length >= 2 && out.length !== pts.length) {
+      (e as { points: { x: number; y: number }[] }).points = out;
+    }
+  }
+}
+
 export function layout(data4Layout: LayoutData): void {
   runRP1OrthogonalPipeline(data4Layout, {
     spacing: 10,
@@ -567,6 +602,9 @@ export function layout(data4Layout: LayoutData): void {
   });
 
   runLateQualityPasses(data4Layout);
+
+  // Final safety net: no zero-length segments reach the renderer (NaN paths).
+  stripDegenerateEdgePoints(data4Layout);
 }
 
 /**

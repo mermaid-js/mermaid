@@ -152,6 +152,7 @@ export type LayoutIssueType =
   | 'edge-corner-connection'
   | 'edge-endpoint-detached-from-node'
   | 'edge-self-loop-not-rendered'
+  | 'edge-zero-length-segment'
   | 'edge-shared-subpath'
   | 'edge-self-shared-subpath'
   | 'edge-bend-overlaps-arrowhead'
