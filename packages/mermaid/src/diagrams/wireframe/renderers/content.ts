@@ -63,12 +63,6 @@ export const paragraphRenderer: ComponentRenderer<Paragraph> = {
   render: renderParagraph,
 };
 
-export const labelRenderer: ComponentRenderer<WireframeComponent> = {
-  type: 'Label',
-  guard: (comp): comp is WireframeComponent => (comp as { $type?: string }).$type === 'Label',
-  render: renderParagraph,
-};
-
 export const richTextRenderer: ComponentRenderer<RichText> = {
   type: 'RichText',
   guard: isRichText,

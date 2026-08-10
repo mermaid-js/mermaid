@@ -25,7 +25,6 @@ import {
   headingRenderer,
   subTitleRenderer,
   paragraphRenderer,
-  labelRenderer,
   richTextRenderer,
   textElementRenderer,
   listRenderer,
@@ -67,7 +66,6 @@ registry.register(tabBarRenderer);
 registry.register(headingRenderer);
 registry.register(subTitleRenderer);
 registry.register(paragraphRenderer);
-registry.register(labelRenderer);
 registry.register(richTextRenderer);
 registry.register(textElementRenderer);
 registry.register(listRenderer);

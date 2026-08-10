@@ -5,6 +5,9 @@ import { drawBox, drawText } from './utils.js';
 
 export const defaultRenderer: ComponentRenderer<WireframeComponent> = {
   type: 'default',
+  // The guard is never called by ComponentRegistry.render() — the registry
+  // dispatches by $type key and falls back to this renderer when no specific
+  // renderer is found. The guard is present purely to satisfy the interface.
   guard: (_comp): _comp is WireframeComponent => true,
   render: ({ parentElem, node }) => {
     const { x, y, width, height, astNode } = node;
