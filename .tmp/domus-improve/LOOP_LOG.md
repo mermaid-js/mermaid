@@ -36,3 +36,10 @@ run ended: user-directed target achieved (self-loop U-bend restored, dedicated s
 - lesson: SAME instrument gap as the self-loop, generalized: validateLayout's normalizePolyline hides ALL coincident-consecutive-point degeneracies from the score, but the renderer NaNs on them. A raw-polyline "no zero-length segment" check in the scorer would catch this whole class (recommended follow-up, like edge-self-loop-not-rendered). Any candidate-generating pass can emit such a tail; a final raw-polyline sanitize in layout() would be the fully robust guard.
 
 run ended: user-directed target achieved (three-->two edge reaches the two boundary; NaN gone) — total 44209 → 44209 (scorer-blind; render corrected)
+
+## Follow-up (user-directed, post-round) — robustness checks for zero-length edge segments
+- User authorized two instrument/layout guards against the coincident-point degeneracy behind the subgraph-variation-2 bug.
+- (1) PREVENT: stripDegenerateEdgePoints() at end of domus layout() — drops consecutive coincident points from every edge before the renderer.
+- (2) DETECT: edgeZeroLengthSegmentExtension (HARD, edge-zero-length-segment) wired via validateLayoutProxy — flags any raw coincident-point pair; also lets score-gated passes reject degenerate candidates at the source.
+- scope lesson: FIRST cut put the check in CORE validateLayout → invalidated 23 SWIMLANES fixtures (that backend emits coincident points its renderer tolerates; the domus sanitize doesn't reach it). Moved to the DOMUS extension → swimlanes untouched. Core only gains the shared issue-type name. This is exactly what validateLayoutProxy/extensions exist for.
+- commit: def3808c9. DDLT sweep 47/47, invalid 0, total 44209 unchanged (sanitize keeps domus clean → check is a dormant backstop). +4 extension unit tests; wider domus suite 0 new failures.
