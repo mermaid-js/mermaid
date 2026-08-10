@@ -121,6 +121,42 @@ describe('faithful HOLA — wider fixture corpus', () => {
     }
   }, 60_000);
 
+  /**
+   * Each of `C1`…`C4` carries its trees on one side, and every one of those trees
+   * begins with a single node — so the connector from the core node to its first
+   * rank has no reason to bend. It used to: a few pixels of drift left over from
+   * an overlap pass that did not converge turned each one into a Z with two bends
+   * and a 12px lateral step, the "two small curves where a straight line would do"
+   * shape.
+   */
+  it('connects a core node to a first rank with one straight segment', async () => {
+    const fx = fixtures.find((f) => f.id.endsWith('4 nodes loop + trees'))!;
+    const data = await parseMmdFileToLayoutData(fx.mmdPath, {
+      stampFlowchartRendererFields: true,
+    });
+    applyFixtureContentSizesStrict(data, fx.sizes);
+    applyFixtureEdgeLabelSizes(data, fx.sizes);
+    runHolaFaithfulLayoutCore(data);
+
+    // Core node → first rank, so not the four edges of the cycle itself.
+    const connectors = data.edges.filter(
+      (edge) => /^C\d$/.test(edge.start ?? '') && /^C\d_\d$/.test(edge.end ?? '')
+    );
+    expect(connectors.length, 'the fixture hangs a tree off every core node').toBe(7);
+
+    const bent: string[] = [];
+    for (const edge of connectors) {
+      const points = edge.points ?? [];
+      if (points.length !== 2) {
+        bent.push(
+          `${edge.start}->${edge.end} has ${points.length} points: ` +
+            points.map((p) => `(${p.x.toFixed(0)},${p.y.toFixed(0)})`).join('')
+        );
+      }
+    }
+    expect(bent).toEqual([]);
+  }, 60_000);
+
   for (const fx of fixtures) {
     it(`${fx.id} raises no structural issue`, async () => {
       const data = await parseMmdFileToLayoutData(fx.mmdPath, {

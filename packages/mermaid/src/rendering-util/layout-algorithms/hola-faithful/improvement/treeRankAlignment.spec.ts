@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import type { HolaNode } from '../model.js';
 import { resolveOptions } from '../options.js';
 import { makeEntity } from '../state.js';
-import { alignTreeRanks } from './treeRankAlignment.js';
+import { alignTreeRanks, straightenTreeConnectors } from './treeRankAlignment.js';
 import type { RestoredTree } from './treeRankAlignment.js';
 
 const OPTIONS = resolveOptions();
@@ -16,9 +16,19 @@ function nodeMap(...nodes: HolaNode[]): Map<string, HolaNode> {
   return new Map(nodes.map((node) => [node.id, node]));
 }
 
-/** `ranks[0]` is unused — rank 0 is the core node the tree hangs from. */
+/**
+ * `ranks[0]` is unused — rank 0 is the core node the tree hangs from. The parent of
+ * each rank is taken to be the first node of the rank above, which is all the
+ * straightening pass needs from these single-chain fixtures.
+ */
 function tree(growth: RestoredTree['growth'], rootId: string, ...ranks: string[][]): RestoredTree {
-  return { growth, rootId, ranks: [[], ...ranks] };
+  const children = new Map<string, string[]>();
+  let parent = rootId;
+  for (const rank of ranks) {
+    children.set(parent, rank);
+    parent = rank[0];
+  }
+  return { growth, rootId, ranks: [[], ...ranks], children };
 }
 
 describe('cross-tree rank alignment', () => {
@@ -171,5 +181,108 @@ describe('cross-tree rank alignment', () => {
     const nodes = nodeMap(makeEntity('rootA', 0, 0, 40, 20), makeEntity('A1', 300, 0, 40, 20));
     alignTreeRanks(nodes, [tree('E', 'rootA', ['A1'])], OPTIONS);
     expect(nodes.get('A1')!.x).toBe(300);
+  });
+});
+
+describe('straightening the connector to an only child', () => {
+  it('pulls an only child onto its parent across the growth axis', () => {
+    // 12px of drift, the residue of an overlap pass that did not converge: the
+    // router has to spend two bends on a jog that carries the edge nowhere.
+    const nodes = nodeMap(
+      makeEntity('root', 0, 0, 40, 20),
+      makeEntity('A1', 12, 100, 40, 20),
+      makeEntity('A2', 12, 200, 40, 20)
+    );
+
+    straightenTreeConnectors(nodes, [tree('S', 'root', ['A1'], ['A2'])], OPTIONS);
+
+    // The whole subtree moves, so A1's own connector keeps the shape it had.
+    expect(nodes.get('A1')!.x).toBe(0);
+    expect(nodes.get('A2')!.x).toBe(0);
+    expect(nodes.get('A1')!.y).toBe(100);
+  });
+
+  it('works across the y axis for a tree growing east', () => {
+    const nodes = nodeMap(makeEntity('root', 0, 0, 40, 20), makeEntity('A1', 100, -9, 40, 20));
+    straightenTreeConnectors(nodes, [tree('E', 'root', ['A1'])], OPTIONS);
+    expect(nodes.get('A1')!.y).toBe(0);
+    expect(nodes.get('A1')!.x).toBe(100);
+  });
+
+  it('keeps a fan-out that is already centred exactly where it is', () => {
+    // Two children are *meant* to sit either side of their parent; the fan is the
+    // layout's decision, not drift.
+    const nodes = nodeMap(
+      makeEntity('root', 0, 0, 40, 20),
+      makeEntity('A1', -60, 100, 40, 20),
+      makeEntity('A2', 60, 100, 40, 20)
+    );
+
+    straightenTreeConnectors(nodes, [tree('S', 'root', ['A1', 'A2'])], OPTIONS);
+
+    expect(nodes.get('A1')!.x).toBe(-60);
+    expect(nodes.get('A2')!.x).toBe(60);
+  });
+
+  it('re-centres a fan-out that drifted, keeping its spacing', () => {
+    // The fan spans [-52, 68], centred on 8 rather than on the parent's 0.
+    const nodes = nodeMap(
+      makeEntity('root', 0, 0, 40, 20),
+      makeEntity('A1', -32, 100, 40, 20),
+      makeEntity('A2', 48, 100, 40, 20)
+    );
+
+    straightenTreeConnectors(nodes, [tree('S', 'root', ['A1', 'A2'])], OPTIONS);
+
+    expect(nodes.get('A1')!.x).toBe(-40);
+    expect(nodes.get('A2')!.x).toBe(40);
+  });
+
+  it('straightens the middle child of an odd fan-out', () => {
+    const nodes = nodeMap(
+      makeEntity('root', 0, 0, 40, 20),
+      makeEntity('A1', -70, 100, 40, 20),
+      makeEntity('A2', 10, 100, 40, 20),
+      makeEntity('A3', 90, 100, 40, 20)
+    );
+
+    straightenTreeConnectors(nodes, [tree('S', 'root', ['A1', 'A2', 'A3'])], OPTIONS);
+
+    expect(nodes.get('A2')!.x).toBe(0);
+    expect(nodes.get('A1')!.x).toBe(-80);
+    expect(nodes.get('A3')!.x).toBe(80);
+  });
+
+  it('leaves an offset larger than the alignment tolerance alone', () => {
+    const far = OPTIONS.baseEdgeLength * OPTIONS.alignmentToleranceFraction + 50;
+    const nodes = nodeMap(makeEntity('root', 0, 0, 40, 20), makeEntity('A1', far, 100, 40, 20));
+    straightenTreeConnectors(nodes, [tree('S', 'root', ['A1'])], OPTIONS);
+    expect(nodes.get('A1')!.x).toBe(far);
+  });
+
+  it('gives the move up when it would overlap something', () => {
+    const nodes = nodeMap(
+      makeEntity('root', 0, 0, 40, 20),
+      makeEntity('A1', 12, 100, 40, 20),
+      makeEntity('blocker', 0, 100, 40, 20)
+    );
+
+    straightenTreeConnectors(nodes, [tree('S', 'root', ['A1'])], OPTIONS);
+
+    expect(nodes.get('A1')!.x).toBe(12);
+  });
+
+  it('straightens a deeper only-child chain rank by rank', () => {
+    const nodes = nodeMap(
+      makeEntity('root', 0, 0, 40, 20),
+      makeEntity('A1', 10, 100, 40, 20),
+      makeEntity('A2', 18, 200, 40, 20)
+    );
+
+    straightenTreeConnectors(nodes, [tree('S', 'root', ['A1'], ['A2'])], OPTIONS);
+
+    // A1 onto the root (taking A2 with it), then A2 onto A1.
+    expect(nodes.get('A1')!.x).toBe(0);
+    expect(nodes.get('A2')!.x).toBe(0);
   });
 });

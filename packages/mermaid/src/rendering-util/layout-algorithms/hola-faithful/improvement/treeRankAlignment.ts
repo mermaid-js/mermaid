@@ -27,11 +27,120 @@ export interface RestoredTree {
   rootId: string;
   /** Node ids by depth. Index 0 is empty — rank 0 is the core node. */
   ranks: string[][];
+  /** Parent id → child ids. The core node stands in for the copied root. */
+  children: Map<string, string[]>;
 }
 
 /** The axis a tree extends along, and which way along it. */
 const ALONG_AXIS: Record<Cardinal, Axis> = { N: 'y', S: 'y', E: 'x', W: 'x' };
+const ACROSS_AXIS: Record<Cardinal, Axis> = { N: 'x', S: 'x', E: 'y', W: 'y' };
 const GROWTH_SIGN: Record<Cardinal, 1 | -1> = { S: 1, E: 1, N: -1, W: -1 };
+
+/**
+ * Re-centre each parent's children on the parent, across the growth axis.
+ *
+ * Tree layout centres a parent's children on it, so an only child sits on one line
+ * with its parent and a fan sits symmetrically either side. Any difference that
+ * survives into the drawing is noise from the constraint work downstream — an
+ * overlap pass that did not converge leaves the tree a handful of pixels off the
+ * alignment it was given. The router then has to spend two bends on a jog that
+ * carries the edge nowhere: the "two small curves where a straight line would do"
+ * shape. An only child comes out with a straight connector, and the middle child of
+ * an odd fan does too.
+ *
+ * The fan is moved as a whole and each child takes its subtree with it, so the
+ * spacing tree layout chose is untouched — only its centre moves. The move is given
+ * up if it overlaps anything. The tolerance is HOLA's own alignment tolerance
+ * (guide §18.1): this is the same judgement, applied to the tree connectors that
+ * the core's alignment pass never sees.
+ */
+export function straightenTreeConnectors(
+  nodes: Map<string, HolaNode>,
+  trees: RestoredTree[],
+  options: HolaOptions
+): void {
+  const tolerance = options.baseEdgeLength * options.alignmentToleranceFraction;
+
+  for (const tree of trees) {
+    const axis = ACROSS_AXIS[tree.growth];
+    // Parents before children: re-centring a parent's fan moves whole subtrees, so
+    // a child's own children are only worth measuring afterwards.
+    const queue = [tree.rootId];
+    while (queue.length > 0) {
+      const parentId = queue.shift()!;
+      const children = tree.children.get(parentId) ?? [];
+      queue.push(...children);
+
+      const parent = nodes.get(parentId);
+      if (!parent || children.length === 0) {
+        continue;
+      }
+      const centre = fanCentre(children, nodes, axis);
+      if (centre === undefined) {
+        continue;
+      }
+      const delta = along(parent, axis) - centre;
+      if (Math.abs(delta) <= CLEARANCE_EPSILON || Math.abs(delta) > tolerance) {
+        continue;
+      }
+
+      const moving = children.flatMap((child) => subtreeOf(tree, child));
+      const before = moving.map((id) => {
+        const node = nodes.get(id)!;
+        return { id, x: node.x, y: node.y };
+      });
+      for (const id of moving) {
+        const node = nodes.get(id)!;
+        if (axis === 'x') {
+          node.x += delta;
+        } else {
+          node.y += delta;
+        }
+      }
+      if (anyNodesOverlap(nodes)) {
+        for (const position of before) {
+          const node = nodes.get(position.id)!;
+          node.x = position.x;
+          node.y = position.y;
+        }
+      }
+    }
+  }
+}
+
+/** Midpoint of the space the children occupy across the growth axis. */
+function fanCentre(
+  children: string[],
+  nodes: Map<string, HolaNode>,
+  axis: Axis
+): number | undefined {
+  let min = Number.POSITIVE_INFINITY;
+  let max = Number.NEGATIVE_INFINITY;
+  for (const id of children) {
+    const node = nodes.get(id);
+    if (!node) {
+      continue;
+    }
+    const half = axis === 'x' ? node.width / 2 : node.height / 2;
+    min = Math.min(min, along(node, axis) - half);
+    max = Math.max(max, along(node, axis) + half);
+  }
+  return isFinite(min) ? (min + max) / 2 : undefined;
+}
+
+/** `rootId` and everything below it. */
+function subtreeOf(tree: RestoredTree, rootId: string): string[] {
+  const collected: string[] = [];
+  const queue = [rootId];
+  while (queue.length > 0) {
+    const id = queue.shift()!;
+    collected.push(id);
+    queue.push(...(tree.children.get(id) ?? []));
+  }
+  return collected;
+}
+
+const CLEARANCE_EPSILON = 1e-6;
 
 /**
  * Give every tree growing the same way one shared set of rank lines.

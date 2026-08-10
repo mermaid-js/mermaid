@@ -278,6 +278,33 @@ rejecting any that the solver cannot satisfy or that would create an overlap.
     On `4 nodes loop + trees` this both aligns and tightens: the two east trees
     went from ranks at 227/396/573 and 493/662/839 to a shared 191/360/537.
 
+13. **A parent's children are re-centred on it before routing.**
+    `straightenTreeConnectors`, in the same module, run straight after rank
+    alignment.
+
+    Tree layout centres a parent's children on it, so an only child sits on one
+    line with its parent and a fan sits symmetrically either side. Any difference
+    that reaches the drawing is noise from the constraint work downstream — an
+    overlap pass that does not converge commits a projection in which the tree's
+    across-axis alignment is off by a few pixels. The router then has to spend two
+    bends on a jog that carries the edge nowhere: two small curves where a straight
+    line would do.
+
+    The fan moves as a whole and every child takes its subtree with it, so the
+    spacing tree layout chose is untouched — only its centre moves. The move is
+    given up if it overlaps anything, and it is only made at all within HOLA's own
+    alignment tolerance (guide §18.1), so a real fan-out is never collapsed.
+
+    Over both fixture corpora this turns 4 more edges straight and removes 8 bends
+    (211 → 215 straight of 359, 278 → 270 bends), including the three connectors
+    that prompted it: `C1—C1_2`, `C2—C2_2` and `C4—C4_1` in
+    `4 nodes loop + trees`.
+
+    The small jogs that remain are all on _core_ edges, between nodes that node or
+    chain configuration cannot put on one line — re-offering the alignments after
+    the last overlap pass changes nothing, so those bends are structurally
+    required, not drift.
+
 ---
 
 ## 4. Why the core is not pre-expanded for the trees

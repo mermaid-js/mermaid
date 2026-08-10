@@ -29,7 +29,7 @@ import { layoutForGrowth, placeTrees, ROTATION_FOR_GROWTH } from '../placement/p
 import type { PlaceableTree, TreePlacement } from '../placement/placeTrees.js';
 import { opportunisticallyAlign } from '../improvement/opportunisticAlignment.js';
 import { rotateGrowth, rotateLandscapeIfNeeded } from '../improvement/rotation.js';
-import { alignTreeRanks } from '../improvement/treeRankAlignment.js';
+import { alignTreeRanks, straightenTreeConnectors } from '../improvement/treeRankAlignment.js';
 import type { RestoredTree } from '../improvement/treeRankAlignment.js';
 import { routeFinalEdges } from '../routing/finalRouting.js';
 import type { FinalEdge, RoutedFinalEdge } from '../routing/finalRouting.js';
@@ -304,7 +304,12 @@ function restoreTrees(
     for (const rank of ranks) {
       rank?.sort();
     }
-    restored.push({ growth, rootId: placement.coreNodeId, ranks });
+    restored.push({
+      growth,
+      rootId: placement.coreNodeId,
+      ranks,
+      children: childrenOf(tree, placement.coreNodeId),
+    });
 
     // Rank-facing sides for this tree's final growth direction: the parent
     // leaves through the side facing the child's rank, the child enters through
@@ -334,6 +339,7 @@ function restoreTrees(
   });
 
   alignTreeRanks(nodes, restored, state.options);
+  straightenTreeConnectors(nodes, restored, state.options);
 
   // Refresh chain waypoints from the bend entities' final positions.
   const waypointsByEdge = new Map<string, Point[]>();
@@ -351,6 +357,30 @@ function restoreTrees(
   }
 
   return { nodes, treeEdges, waypointsByEdge, graph: state.core };
+}
+
+/**
+ * Parent → children over a decomposed tree, rooted at its copied root but keyed by
+ * the core node the copy stands for, so the first rank hangs off the real node.
+ */
+function childrenOf(tree: DecomposedTree, coreNodeId: string): Map<string, string[]> {
+  const children = new Map<string, string[]>();
+  const seen = new Set<string>([tree.rootCopyId]);
+  const queue: string[] = [tree.rootCopyId];
+
+  while (queue.length > 0) {
+    const current = queue.shift()!;
+    const key = current === tree.rootCopyId ? coreNodeId : current;
+    for (const neighbour of [...(tree.graph.adjacency.get(current) ?? [])].sort()) {
+      if (seen.has(neighbour)) {
+        continue;
+      }
+      seen.add(neighbour);
+      children.set(key, [...(children.get(key) ?? []), neighbour]);
+      queue.push(neighbour);
+    }
+  }
+  return children;
 }
 
 /**
