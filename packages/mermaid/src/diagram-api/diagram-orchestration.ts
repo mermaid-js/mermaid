@@ -23,6 +23,7 @@ import mindmap from '../diagrams/mindmap/detector.js';
 import kanban from '../diagrams/kanban/detector.js';
 import sankey from '../diagrams/sankey/sankeyDetector.js';
 import { packet } from '../diagrams/packet/detector.js';
+import { quantumCircuit } from '../diagrams/quantum-circuit/detector.js';
 import { radar } from '../diagrams/radar/detector.js';
 import block from '../diagrams/block/blockDetector.js';
 import treeView from '../diagrams/treeView/detector.js';
@@ -110,6 +111,7 @@ export const addDiagrams = () => {
     quadrantChart,
     sankey,
     packet,
+    quantumCircuit,
     xychart,
     block,
     eventmodeling,

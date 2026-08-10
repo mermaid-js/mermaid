@@ -190,6 +190,11 @@
     "ignoredBuiltDependencies": [
       "sharp",
       "vue-demi"
-    ]
+    ],
+    "supportedArchitectures": {
+      "os": ["current", "linux"],
+      "cpu": ["current", "arm64"],
+      "libc": ["current", "musl"]
+    }
   }
 }

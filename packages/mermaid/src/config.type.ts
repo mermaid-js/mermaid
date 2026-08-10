@@ -260,6 +260,7 @@ export interface MermaidConfig {
   'wardley-beta'?: WardleyDiagramConfig;
   cynefin?: CynefinDiagramConfig;
   railroad?: RailroadDiagramConfig;
+  quantumCircuit?: QuantumCircuitDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
@@ -2122,6 +2123,50 @@ export interface RailroadDiagramConfig extends BaseDiagramConfig {
    * Radius of start/end markers
    */
   markerRadius?: number;
+}
+/**
+ * The object containing configurations specific for quantum circuit diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "QuantumCircuitDiagramConfig".
+ */
+export interface QuantumCircuitDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Width in pixels of each time-step column (LR mode).
+   */
+  columnWidth?: number;
+  /**
+   * Height in pixels of each time-step row (TD mode).
+   */
+  rowHeight?: number;
+  /**
+   * Spacing in pixels between qubit wires.
+   */
+  wireSpacing?: number;
+  /**
+   * Font size for gate labels.
+   */
+  gateFontSize?: number;
+  /**
+   * Whether to display wire names and initial states.
+   */
+  showWireLabels?: boolean;
+  /**
+   * CSS color for qubit wires.
+   */
+  wireColor?: string;
+  /**
+   * CSS color for classical (double) wires.
+   */
+  classicalWireColor?: string;
+  /**
+   * CSS color for gate boxes.
+   */
+  gateColor?: string;
+  /**
+   * CSS color for control dots and connector lines.
+   */
+  controlColor?: string;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

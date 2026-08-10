@@ -75,6 +75,11 @@
       "id": "railroadPeg",
       "grammar": "src/language/railroad-peg/railroad-peg.langium",
       "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "quantumCircuit",
+      "grammar": "src/language/quantum-circuit/quantum-circuit.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
     }
   ],
   "mode": "production",
