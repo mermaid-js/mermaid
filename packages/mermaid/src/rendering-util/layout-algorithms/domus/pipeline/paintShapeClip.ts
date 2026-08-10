@@ -80,17 +80,19 @@ const BISECT_STEPS = 24;
 /**
  * Extra inward margin on the clipped point.
  *
- * The probe below can only be as accurate as the shape module it asks, and those
- * are internally inconsistent at the pixel level: `question.ts` translates the
- * polygon it DRAWS by `+0.5` in x, while the `calcIntersect` it installs reports
- * crossings on the untranslated polygon minus `0.5` in BOTH coords. Measured
- * against the analytic rhombus face, the probe therefore lands up to 2px short —
- * always short, never deep, i.e. always leaving a hairline gap. This margin
- * closes it. An overshoot is harmless (edges paint over nodes, and 2px is about
- * one stroke width, at the border either way); a shortfall is the very defect
- * this pass exists to remove.
+ * The probe below can only be as accurate as the shape module it asks. Measured
+ * against the analytic rhombus face across all four sides and offsets from 5px to
+ * the apex, it lands up to ~0.55px SHORT — never deep — so without a margin the
+ * pass would leave a hairline gap in exactly the case it exists to fix. 1px
+ * closes that with room to spare and covers comparable quirks in other shape
+ * modules. An overshoot is harmless (edges paint over nodes, and this is well
+ * under one stroke width); a shortfall is the visible defect.
+ *
+ * This used to be 2px, to absorb `question.ts` disagreeing with itself by ~1px
+ * between the polygon it drew and the `calcIntersect` it installed. That is now
+ * fixed at the source, so the margin only has to cover probe residue.
  */
-const SAFETY_INSET = 2;
+const SAFETY_INSET = 1;
 /** …but never spend more than this share of the box half-extent on the margin. */
 const MAX_INSET_SHARE = 0.25;
 

@@ -6,7 +6,7 @@ import type { ShapeClipNode, ShapeClipPoint } from './paintShapeClip.js';
 /**
  * A `diamond` node exactly as `shapes/question.ts` builds it: a rhombus with
  * side-midpoint apexes, inscribed in a square box, intersected through the real
- * `intersect.polygon` (including the shape's -0.5 adjustment).
+ * `intersect.polygon`.
  */
 function diamondNode(cx: number, cy: number, s: number): ShapeClipNode {
   const node: any = { x: cx, y: cy, width: s, height: s };
@@ -17,8 +17,7 @@ function diamondNode(cx: number, cy: number, s: number): ShapeClipNode {
       { x: s / 2, y: -s },
       { x: 0, y: -s / 2 },
     ];
-    const res = intersect.polygon(node, points, point);
-    return { x: res.x - 0.5, y: res.y - 0.5 };
+    return intersect.polygon(node, points, point);
   };
   return node;
 }
@@ -60,14 +59,17 @@ function rhombusT(p: ShapeClipPoint, cx: number, cy: number, s: number): number 
 
 /**
  * The pass guarantees CONTACT: a clipped point never stops outside the drawn
- * face, and never sinks more than `SAFETY_INSET` (2px) plus a rounding hair past
- * it. `question.ts` disagrees with itself by ~1px between the polygon it draws
- * and the `intersect` it installs, so exact equality is not on offer.
+ * face. The binding assertion is therefore `t <= 1`; how far past the face it
+ * lands is bounded but not exact — `SAFETY_INSET` (1px) plus the sub-pixel
+ * residue of reading the outline through the shape's own `intersect`, which can
+ * fall either side of the true face.
  */
+const MAX_OVERLAP = 2;
+
 function expectOnFace(p: ShapeClipPoint, cx: number, cy: number, s: number): void {
   const t = rhombusT(p, cx, cy, s);
   expect(t).toBeLessThanOrEqual(1);
-  expect(t).toBeGreaterThan(1 - (2.5 * 2) / s);
+  expect(t).toBeGreaterThan(1 - (MAX_OVERLAP * 2) / s);
 }
 
 describe('clipEndpointsToNodeOutlines', () => {
@@ -92,7 +94,7 @@ describe('clipEndpointsToNodeOutlines', () => {
     // After: on the face, moved ~57.5px inward, still axis-aligned with its bend.
     expectOnFace(out[0], OVERLAP.cx, OVERLAP.cy, OVERLAP.s);
     expect(out[0].x).toBeGreaterThan(449.7 + 57.5);
-    expect(out[0].x).toBeLessThan(449.7 + 57.5 + 2.5);
+    expect(out[0].x).toBeLessThan(449.7 + 57.5 + MAX_OVERLAP);
     expect(out[0].y).toBeCloseTo(1086.3, 6);
     expect(out.slice(1)).toEqual(points.slice(1)); // interior bends untouched
   });
@@ -106,7 +108,7 @@ describe('clipEndpointsToNodeOutlines', () => {
     const out = clipEndpointsToNodeOutlines(points, node, undefined)!;
     expectOnFace(out[0], OVERLAP.cx, OVERLAP.cy, OVERLAP.s);
     expect(out[0].x).toBeGreaterThan(449.7 + 82.2);
-    expect(out[0].x).toBeLessThan(449.7 + 82.2 + 2.5);
+    expect(out[0].x).toBeLessThan(449.7 + 82.2 + MAX_OVERLAP);
     expect(out[0].y).toBeCloseTo(1111, 6);
   });
 
@@ -153,7 +155,7 @@ describe('clipEndpointsToNodeOutlines', () => {
 
   // Regression: `life-choices`' hexagon. Its flat bottom side lies ON the box
   // boundary, so those ports were already correct — an earlier version of this
-  // pass still spent the safety inset on them and pushed them 2px into the shape.
+  // pass still spent the safety inset on them and pushed them into the shape.
   it('leaves a port alone where the outline already lies on the box side', () => {
     const node = hexagonNode(0, 0, 200, 80);
     const points = [
