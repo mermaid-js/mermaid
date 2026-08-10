@@ -185,6 +185,19 @@ describe('use-case actor shapes', () => {
     expect(new Set(dimensions.map((dimension) => dimension.join('x')))).toHaveLength(1);
   });
 
+  it('renders the hollow actor with wide shoulders, body, and split legs', async () => {
+    await usecaseActorHollow(svg(), actorNode('usecaseActorHollow'));
+
+    const body = document.querySelector('.usecase-actor-hollow-body');
+    const head = document.querySelector('.usecase-actor-hollow-head');
+    expect(body?.getAttribute('d')).toBe(
+      'M -22 -10 H 22 V 0 H 6 L 22 17 L 13 28 L 0 13 L -13 28 L -22 17 L -6 0 H -22 Z'
+    );
+    expect(body?.getAttribute('fill')).toBe('none');
+    expect(head?.getAttribute('r')).toBe('9');
+    expect(head?.getAttribute('fill')).toBe('none');
+  });
+
   it('measures stereotypes, exposes accessible names, and inherits computed business stroke', async () => {
     const node = actorNode('usecaseActor', {
       business: true,

@@ -8,16 +8,18 @@ import {
 } from './usecaseActor.js';
 
 const HOLLOW_BODY_PATH = [
-  'M 0 -10',
-  'C -13 -10 -22 -2 -22 10',
-  'V 25',
-  'H -10',
-  'V 8',
-  'H 10',
-  'V 25',
+  'M -22 -10',
   'H 22',
-  'V 10',
-  'C 22 -2 13 -10 0 -10 Z',
+  'V 0',
+  'H 6',
+  'L 22 17',
+  'L 13 28',
+  'L 0 13',
+  'L -13 28',
+  'L -22 17',
+  'L -6 0',
+  'H -22',
+  'Z',
 ].join(' ');
 
 export async function usecaseActorHollow<T extends SVGGraphicsElement>(
