@@ -7,7 +7,7 @@ import type {
 const id = 'usecase';
 
 const detector: DiagramDetector = (txt) => {
-  return /^\s*usecase/.test(txt);
+  return /^\s*usecase-beta(?:\s|$)/.test(txt);
 };
 
 const loader: DiagramLoader = async () => {

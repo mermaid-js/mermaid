@@ -223,8 +223,12 @@ const actorShape = (actor: Actor): UsecaseLayoutNode['shape'] => {
   }
 };
 
-const useCaseShape = (useCase: UseCase): UsecaseLayoutNode['shape'] =>
-  useCase.business && useCase.shape === 'ellipse' ? 'usecaseBusiness' : useCase.shape;
+const useCaseShape = (useCase: UseCase): UsecaseLayoutNode['shape'] => {
+  if (useCase.shape === 'ellipse') {
+    return useCase.business ? 'usecaseBusiness' : 'usecaseEllipse';
+  }
+  return useCase.shape;
+};
 
 const associationMarkers = (
   arrowType: Relationship['arrowType']

@@ -1,0 +1,9 @@
+usecase-beta
+direction BT
+actor Customer
+Browse("Browse catalog")
+Checkout("Checkout")
+Receipt[Download receipt]
+Customer --> Browse
+Browse --> Checkout
+Checkout --> Receipt

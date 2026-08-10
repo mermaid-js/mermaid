@@ -34,13 +34,12 @@
     "ast"
   ],
   "dependencies": {
-    "@chevrotain/regexp-to-ast": "~11.1.2",
-    "@chevrotain/types": "~11.1.2",
-    "langium": "4.2.1"
+    "@chevrotain/types": "~11.1.2"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.57.8",
-    "chevrotain": "~11.1.2"
+    "chevrotain": "~11.1.2",
+    "langium": "4.2.1"
   },
   "files": [
     "dist/"

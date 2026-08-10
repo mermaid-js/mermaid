@@ -89,9 +89,29 @@ describe('usecase Chevrotain lexer', () => {
     expect(result.tokens[1]).toMatchObject({ startLine: 1, startColumn: 14, endLine: 4 });
   });
 
-  it('reports an unclosed JSON object at its opening brace', () => {
-    const result = lex('json Payload@{\n  "nested": {}');
-    expect(result.errors[0]).toMatchObject({ line: 1, column: 14, offset: 13 });
+  it('consumes an unclosed JSON object once from its opening brace', () => {
+    const result = lex(`json Payload@{${'{'.repeat(32_000)}`);
+    expect(result.errors).toEqual([]);
+    expect(result.tokens.at(-1)).toMatchObject({
+      tokenType: expect.objectContaining({ name: 'UNCLOSED_JSON_OBJECT_LITERAL' }),
+      startLine: 1,
+      startColumn: 14,
+      startOffset: 13,
+    });
+  });
+
+  it('consumes unclosed Markdown and stereotypes once instead of rescanning every suffix', () => {
+    const markdown = lex('"`x'.repeat(32_000));
+    expect(markdown.errors).toEqual([]);
+    expect(markdown.tokens).toHaveLength(1);
+    expect(markdown.tokens[0].tokenType.name).toBe('UNCLOSED_MARKDOWN_STRING');
+
+    const stereotype = lex(`<<${'x'.repeat(128_000)}`);
+    expect(stereotype.errors).toEqual([]);
+    expect(stereotype.tokens.map((token) => token.tokenType.name)).toEqual([
+      'STEREOTYPE_START',
+      'UNCLOSED_STEREOTYPE_TEXT',
+    ]);
   });
 
   it('preserves strict strings, colors, CSS units, and escaped commas', () => {

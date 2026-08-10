@@ -513,14 +513,7 @@ const usecaseSystemBoundary = async (parent, node) => {
       'class',
       `cluster usecase-system-boundary usecase-system-boundary-${boundaryType} ${node.cssClasses}`
     )
-    .attr(
-      'id',
-      typeof node.usecaseDomId === 'string'
-        ? node.usecaseDomId
-        : typeof node.domId === 'string'
-          ? node.domId
-          : node.id
-    )
+    .attr('id', typeof node.domId === 'string' ? node.domId : node.id)
     .attr('data-boundary-type', boundaryType)
     .attr('data-look', node.look);
 

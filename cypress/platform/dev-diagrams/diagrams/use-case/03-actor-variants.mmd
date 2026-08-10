@@ -1,0 +1,12 @@
+usecase-beta
+direction LR
+actor Normal("Normal actor")
+actor Hollow("Hollow actor")@{ type: hollow }
+actor Awesome("Awesome actor")@{ type: awesome }
+actor Icon("Icon actor")@{ icon: "fa:user" }
+actor Fallback("Missing icon fallback")@{ icon: "not-registered:user" }
+Normal --> Manage
+Hollow --> Manage
+Awesome --> Manage
+Icon --> Manage
+Fallback --> Manage

@@ -23,11 +23,11 @@ function expectRejected(source: string): void {
 
 describe('usecase canonical line-oriented grammar', () => {
   it.each([
-    ['header at EOF', 'usecase'],
-    ['line feed', 'usecase\nactor User'],
-    ['carriage return and line feed', 'usecase\r\nactor User\r\n'],
-    ['carriage return', 'usecase\ractor User\r'],
-    ['blank and comment lines', 'usecase\n\n  %% retained\nLogin'],
+    ['header at EOF', 'usecase-beta'],
+    ['line feed', 'usecase-beta\nactor User'],
+    ['carriage return and line feed', 'usecase-beta\r\nactor User\r\n'],
+    ['carriage return', 'usecase-beta\ractor User\r'],
+    ['blank and comment lines', 'usecase-beta\n\n  %% retained\nLogin'],
   ])('accepts %s', (_name, source) => {
     expectAccepted(source);
   });
@@ -84,7 +84,7 @@ describe('usecase canonical line-oriented grammar', () => {
   });
 
   it('accepts canonical actors, use cases, metadata, stereotypes, and class suffixes', () => {
-    expectAccepted(`usecase
+    expectAccepted(`usecase-beta
 actor Admin("Main Administrator")@{ type: hollow, business: true } <<Human>>:::external
 actor "System Administrator", "\`**Automation**\`"
 Login(Sign in)@{ business: false } <<Primary>>:::critical
@@ -94,7 +94,7 @@ Report[Generate report]
   });
 
   it('accepts multiline metadata with newline and comma separators and a trailing comma', () => {
-    expectAccepted(`usecase
+    expectAccepted(`usecase-beta
 User@{
   business: true
   type: normal,
@@ -127,11 +127,11 @@ User@{
     'A login@--> B',
     'A dependency@..> : include B',
   ])('accepts canonical relation %s', (relation) => {
-    expectAccepted(`usecase\n${relation}`);
+    expectAccepted(`usecase-beta\n${relation}`);
   });
 
   it('accepts restricted system-boundary declarations, blanks, and comments', () => {
-    expectAccepted(`usecase
+    expectAccepted(`usecase-beta
 systemBoundary "Authentication System":::system
   %% boundary comment
   actor User, Admin("Administrator")
@@ -143,7 +143,7 @@ User --> Login`);
   });
 
   it('accepts metadata assignments, notes, JSON, direction, classes, and styles', () => {
-    expectAccepted(`usecase
+    expectAccepted(`usecase-beta
 direction LR
 Auth@{ type: package }
 note for Login "\`Requires an **active session**\`"
@@ -157,10 +157,10 @@ style Login fill:#fee,stroke-dasharray:5\\,5`);
   });
 
   it('accepts single-line and multiline accessibility statements', () => {
-    expectAccepted(`usecase
+    expectAccepted(`usecase-beta
 accTitle: Authentication use cases
 accDescr: Actors and authentication flows`);
-    expectAccepted(`usecase
+    expectAccepted(`usecase-beta
 accDescr {
   Actors authenticate,
   reset credentials, and sign out.
@@ -169,39 +169,42 @@ accDescr {
 
   it.each([
     ['uppercase header', 'Usecase\nA'],
-    ['same-line statements', 'usecase\nactor A actor B'],
+    ['same-line statements', 'usecase-beta\nactor A actor B'],
     ['header statement on same line', 'usecase actor A'],
-    ['ambiguous actor list relation', 'usecase\nactor A, B --> C'],
-    ['unknown directive', 'usecase\nunknown command'],
-    ['slash comment lookalike', 'usecase\n// not a comment'],
-    ['hash comment lookalike', 'usecase\n# not a comment'],
-    ['semicolon separator', 'usecase\nA; B'],
-    ['colon actor', 'usecase\n:User:'],
-    ['actor alias', 'usecase\nactor User as U'],
-    ['use-case alias', 'usecase\nusecase "Login" as Login'],
-    ['G16 newpage', 'usecase\nnewpage'],
-    ['PlantUML package', 'usecase\npackage "Auth" {'],
-    ['PlantUML rectangle', 'usecase\nrectangle "Auth" {'],
-    ['PlantUML skinparam', 'usecase\nskinparam actorStyle awesome'],
-    ['PlantUML allowmixing', 'usecase\nallowmixing'],
-    ['plain separator', 'usecase\n== Section =='],
-    ['literal backslash n separator', 'usecase\nA \\n B'],
-    ['relation direction hint', 'usecase\nA -left-> B'],
-    ['note placement', 'usecase\nnote left of Login "text"'],
-    ['note alias', 'usecase\nnote for Login as N "text"'],
-    ['multi-target note', 'usecase\nnote for Login,Report "text"'],
-    ['nested boundary', 'usecase\nsystemBoundary A\nsystemBoundary B\nend\nend'],
-    ['relation in boundary', 'usecase\nsystemBoundary A\nUser --> Login\nend'],
-    ['note in boundary', 'usecase\nsystemBoundary A\nnote for User "text"\nend'],
-    ['JSON in boundary', 'usecase\nsystemBoundary A\njson Payload@{}\nend'],
-    ['extra circle dash', 'usecase\nA ---o B'],
-    ['extra reversed circle dash', 'usecase\nA o--- B'],
-    ['extra cross dash', 'usecase\nA ---x B'],
-    ['extra generalization dash', 'usecase\nA ---|> B'],
-    ['extra include dot', 'usecase\nA ...> : include B'],
-    ['empty stereotype', 'usecase\nA <<>>'],
-    ['multiline stereotype', 'usecase\nA <<first\nsecond>>'],
-    ['semicolon CSS', 'usecase\nstyle A fill:red;stroke:blue'],
+    ['ambiguous actor list relation', 'usecase-beta\nactor A, B --> C'],
+    ['unknown directive', 'usecase-beta\nunknown command'],
+    ['slash comment lookalike', 'usecase-beta\n// not a comment'],
+    ['hash comment lookalike', 'usecase-beta\n# not a comment'],
+    ['semicolon separator', 'usecase-beta\nA; B'],
+    ['colon actor', 'usecase-beta\n:User:'],
+    ['actor alias', 'usecase-beta\nactor User as U'],
+    ['use-case alias', 'usecase-beta\nusecase "Login" as Login'],
+    ['G16 newpage', 'usecase-beta\nnewpage'],
+    ['PlantUML package', 'usecase-beta\npackage "Auth" {'],
+    ['PlantUML rectangle', 'usecase-beta\nrectangle "Auth" {'],
+    ['PlantUML skinparam', 'usecase-beta\nskinparam actorStyle awesome'],
+    ['PlantUML allowmixing', 'usecase-beta\nallowmixing'],
+    ['plain separator', 'usecase-beta\n== Section =='],
+    ['literal backslash n separator', 'usecase-beta\nA \\n B'],
+    ['relation direction hint', 'usecase-beta\nA -left-> B'],
+    ['note placement', 'usecase-beta\nnote left of Login "text"'],
+    ['note alias', 'usecase-beta\nnote for Login as N "text"'],
+    ['multi-target note', 'usecase-beta\nnote for Login,Report "text"'],
+    ['nested boundary', 'usecase-beta\nsystemBoundary A\nsystemBoundary B\nend\nend'],
+    ['relation in boundary', 'usecase-beta\nsystemBoundary A\nUser --> Login\nend'],
+    ['note in boundary', 'usecase-beta\nsystemBoundary A\nnote for User "text"\nend'],
+    ['JSON in boundary', 'usecase-beta\nsystemBoundary A\njson Payload@{}\nend'],
+    ['extra circle dash', 'usecase-beta\nA ---o B'],
+    ['extra reversed circle dash', 'usecase-beta\nA o--- B'],
+    ['extra cross dash', 'usecase-beta\nA ---x B'],
+    ['extra generalization dash', 'usecase-beta\nA ---|> B'],
+    ['extra include dot', 'usecase-beta\nA ...> : include B'],
+    ['empty stereotype', 'usecase-beta\nA <<>>'],
+    ['multiline stereotype', 'usecase-beta\nA <<first\nsecond>>'],
+    ['unclosed stereotype', 'usecase-beta\nA <<primary'],
+    ['unclosed JSON', 'usecase-beta\njson Payload@{"nested": {'],
+    ['unclosed Markdown', 'usecase-beta\nA("`unfinished")'],
+    ['semicolon CSS', 'usecase-beta\nstyle A fill:red;stroke:blue'],
   ])('rejects %s', (_name, source) => {
     expectRejected(source);
   });

@@ -19,7 +19,7 @@ const node = (overrides: Partial<UsecaseLayoutNode>): UsecaseLayoutNode =>
     id: 'Element',
     label: 'Element label',
     labelType: 'text',
-    shape: 'ellipse',
+    shape: 'usecaseEllipse',
     isGroup: false,
     ...overrides,
   }) as UsecaseLayoutNode;
@@ -46,7 +46,7 @@ const edge = (overrides: Partial<UsecaseLayoutEdge> = {}): UsecaseLayoutEdge =>
   }) as UsecaseLayoutEdge;
 
 describe('usecase renderer integration', () => {
-  it('requests every relationship marker and assigns diagram-scoped sanitized node identities', () => {
+  it('requests every relationship marker and assigns sanitized pre-render node identities', () => {
     const data = {
       nodes: [node({ id: 'User' }), node({ id: 'quoted label/id' })],
       edges: [],
@@ -62,12 +62,8 @@ describe('usecase renderer integration', () => {
 
     expect(data.markers).toEqual(USECASE_MARKERS);
     expect(data.nodes.map(({ domId }) => domId)).toEqual([
-      'usecase-diagram_id_1-User',
-      'usecase-diagram_id_1-quoted_label_id',
-    ]);
-    expect(data.nodes).toMatchObject([
-      { usecaseDomId: 'usecase-diagram_id_1-User' },
-      { usecaseDomId: 'usecase-diagram_id_1-quoted_label_id' },
+      'usecase-User',
+      'usecase-quoted_label_id',
     ]);
     expect(data).toMatchObject({
       nodeSpacing: 73,
@@ -86,15 +82,20 @@ describe('usecase renderer integration', () => {
           id: 'PlainStereotype',
           label: '**literal with stereotype**',
           labelType: 'text',
-          shape: 'ellipse',
+          shape: 'usecaseEllipse',
           stereotype: 'Primary *actor*',
         }),
         node({
           id: 'Markdown',
           label: '**formatted**',
           labelType: 'markdown',
-          shape: 'ellipse',
+          shape: 'usecaseEllipse',
           stereotype: 'Main',
+        }),
+        node({
+          id: 'ActorStereotype',
+          shape: 'usecaseActor',
+          stereotype: '<img src=x>',
         }),
       ],
       edges: [edge({ label: '<b>edge</b> **literal**', labelType: 'text' })],
@@ -111,6 +112,7 @@ describe('usecase renderer integration', () => {
     });
     expect(data.nodes[2].label).toBe('«Main»<br/>**formatted**');
     expect(data.edges[0].label).toBe('&lt;b&gt;edge&lt;/b&gt; **literal**');
+    expect(data.nodes[3].stereotype).toBe('&lt;img src=x&gt;');
   });
 
   it.each([

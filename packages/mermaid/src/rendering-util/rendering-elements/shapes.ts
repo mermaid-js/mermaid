@@ -19,7 +19,7 @@ import { cylinder } from './shapes/cylinder.js';
 import { datastore } from './shapes/datastore.js';
 import { dividedRectangle } from './shapes/dividedRect.js';
 import { doublecircle } from './shapes/doubleCircle.js';
-import { ellipse } from './shapes/ellipse.js';
+import { usecaseEllipse } from './shapes/usecaseEllipse.js';
 import { filledCircle } from './shapes/filledCircle.js';
 import { flippedTriangle } from './shapes/flippedTriangle.js';
 import { forkJoin } from './shapes/forkJoin.js';
@@ -126,14 +126,6 @@ export const shapesDefs = [
     description: 'Terminal point',
     aliases: ['terminal', 'pill'],
     handler: stadium,
-  },
-  {
-    semanticName: 'Ellipse',
-    name: 'Ellipse',
-    shortName: 'ellipse',
-    description: 'Ellipse shape',
-    aliases: ['oval'],
-    handler: ellipse,
   },
   {
     semanticName: 'Subprocess',
@@ -554,6 +546,7 @@ const generateShapeMap = () => {
     usecaseActorAwesome,
     usecaseActorIcon,
     usecaseBusiness,
+    usecaseEllipse,
     usecaseJsonTable,
   } as const;
 

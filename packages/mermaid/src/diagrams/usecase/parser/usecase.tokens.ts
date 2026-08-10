@@ -138,6 +138,11 @@ export const MarkdownString = createToken({
   start_chars_hint: ['"'],
   line_breaks: true,
 });
+export const UnclosedMarkdownString = createToken({
+  name: 'UNCLOSED_MARKDOWN_STRING',
+  pattern: /"`[^]*/,
+  line_breaks: true,
+});
 export const Comment = createToken({
   name: 'COMMENT',
   pattern: matchComment,
@@ -184,11 +189,17 @@ export const JsonObjectLiteral = createToken({
   line_breaks: true,
   pop_mode: true,
 });
+export const UnclosedJsonObjectLiteral = createToken({
+  name: 'UNCLOSED_JSON_OBJECT_LITERAL',
+  pattern: /{[^]*/,
+  line_breaks: true,
+  pop_mode: true,
+});
 
 const keyword = (name: string, pattern: RegExp) =>
   createToken({ name, pattern, longer_alt: Identifier, categories: Word });
 
-export const Usecase = keyword('USECASE', /usecase/);
+export const Usecase = keyword('USECASE', /usecase-beta/);
 export const Actor = keyword('ACTOR', /actor/);
 export const SystemBoundary = keyword('SYSTEM_BOUNDARY', /systemBoundary/);
 export const End = keyword('END', /end/);
@@ -225,6 +236,12 @@ export const StereotypeText = createToken({
   name: 'STEREOTYPE_TEXT',
   pattern: matchStereotypeText,
   line_breaks: false,
+});
+export const UnclosedStereotypeText = createToken({
+  name: 'UNCLOSED_STEREOTYPE_TEXT',
+  pattern: /[^\n\r]+/,
+  line_breaks: false,
+  pop_mode: true,
 });
 export const ClassSeparator = createToken({ name: 'CLASS_SEPARATOR', pattern: /:::/ });
 export const ForwardSolid = createToken({ name: 'FORWARD_SOLID', pattern: /--+>/ });
@@ -268,6 +285,7 @@ const defaultModeTokens = [
   Word,
   WhiteSpace,
   MarkdownString,
+  UnclosedMarkdownString,
   Comment,
   NewLine,
   AccDescrBlock,
@@ -331,8 +349,8 @@ export const usecaseLexerModes = {
   defaultMode: 'defaultMode',
   modes: {
     defaultMode: [...defaultModeTokens],
-    jsonBody: [JsonObjectLiteral],
-    stereotype: [StereotypeEnd, StereotypeText],
+    jsonBody: [JsonObjectLiteral, UnclosedJsonObjectLiteral],
+    stereotype: [StereotypeEnd, StereotypeText, UnclosedStereotypeText],
   },
 };
 
@@ -340,6 +358,8 @@ export const usecaseLexerModes = {
 export const usecaseTokens: TokenType[] = [
   ...defaultModeTokens,
   JsonObjectLiteral,
+  UnclosedJsonObjectLiteral,
   StereotypeEnd,
   StereotypeText,
+  UnclosedStereotypeText,
 ];

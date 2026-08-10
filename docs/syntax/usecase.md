@@ -4,14 +4,14 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/syntax/usecase.md](../../packages/mermaid/src/docs/syntax/usecase.md).
 
-# Use case diagrams
+# Use case diagrams (\<MERMAID_RELEASE_VERSION>+)
 
-Use case diagrams show how actors interact with a system and its use cases. Start a diagram with the `usecase` keyword. Put each statement on its own physical line.
+Use case diagrams show how actors interact with a system and its use cases. Start a diagram with the `usecase-beta` keyword. Put each statement on its own physical line.
 
-In UML prose, **use case** is two words. Mermaid's exact syntax keyword is the single token `usecase`; this page uses the two-word form everywhere else.
+In UML prose, **use case** is two words. Mermaid's exact syntax keyword is the single token `usecase-beta`; this page uses the two-word form everywhere else.
 
 ```mermaid-example
-usecase
+usecase-beta
 direction LR
 actor Customer("Customer")
 systemBoundary "Order system"
@@ -21,7 +21,7 @@ Customer --> Checkout
 ```
 
 ```mermaid
-usecase
+usecase-beta
 direction LR
 actor Customer("Customer")
 systemBoundary "Order system"
@@ -39,7 +39,7 @@ Actor and use case identifiers match `[A-Za-z_][A-Za-z0-9_]*`. Identifiers are d
 A bare actor uses its identifier as its label. An actor can also have an explicit identifier and display label. Use cases use parentheses for an ellipse and square brackets for a rectangle.
 
 ```mermaid-example
-usecase
+usecase-beta
 Customer --> Login
 actor Customer
 actor Admin("Main administrator")
@@ -50,7 +50,7 @@ Admin --> Report
 ```
 
 ```mermaid
-usecase
+usecase-beta
 Customer --> Login
 actor Customer
 actor Admin("Main administrator")
@@ -69,7 +69,7 @@ A relationship endpoint can appear before its declaration. Final declaration ord
 Actors support four variants. The normal stick actor is the default. Set `type` to `hollow` or `awesome` for the other built-in variants. Set `icon` to an icon name for an icon actor.
 
 ```mermaid-example
-usecase
+usecase-beta
 actor Normal("Normal actor")
 actor Hollow("Hollow actor")@{ type: hollow }
 actor Awesome("Awesome actor")@{ type: awesome }
@@ -83,7 +83,7 @@ Fallback --> Manage
 ```
 
 ```mermaid
-usecase
+usecase-beta
 actor Normal("Normal actor")
 actor Hollow("Hollow actor")@{ type: hollow }
 actor Awesome("Awesome actor")@{ type: awesome }
@@ -107,7 +107,7 @@ Set `business: true` to add the conventional business slash to a normal or hollo
 An actor or use case can have one visible stereotype. Put `<<...>>` after metadata and before a `:::` class suffix. The stereotype keeps its case and appears above the main label.
 
 ```mermaid-example
-usecase
+usecase-beta
 actor SalesAgent("Sales agent")@{ business: true } <<Employee>>
 actor Broker@{ type: hollow, business: true }
 Quote("Prepare quote")@{ business: true } <<Core>>
@@ -118,7 +118,7 @@ Quote --> Archive
 ```
 
 ```mermaid
-usecase
+usecase-beta
 actor SalesAgent("Sales agent")@{ business: true } <<Employee>>
 actor Broker@{ type: hollow, business: true }
 Quote("Prepare quote")@{ business: true } <<Core>>
@@ -137,7 +137,7 @@ Labels can be unquoted text inside parentheses or brackets, a single-line plain 
 Plain strings remain plain text. Markdown markers in a plain string are displayed literally. Mermaid Markdown strings use an outer pair of double quotes and an inner pair of backticks. Markdown strings can contain physical newlines.
 
 ```mermaid-example
-usecase
+usecase-beta
 actor Reviewer("`*Reviewer*`")
 Literal("**Literal markers**")
 Formatted("`**Formatted label**
@@ -149,7 +149,7 @@ Reviewer --> Quoted
 ```
 
 ```mermaid
-usecase
+usecase-beta
 actor Reviewer("`*Reviewer*`")
 Literal("**Literal markers**")
 Formatted("`**Formatted label**
@@ -169,7 +169,7 @@ Each statement occupies one physical line unless it contains a Markdown string, 
 After optional indentation, `%%` starts a whole-line comment. Blank lines and comments retain their source order in the public AST.
 
 ```mermaid-example
-usecase
+usecase-beta
 %% Actors are declared explicitly.
 actor User
 
@@ -179,7 +179,7 @@ Login --> Dashboard
 ```
 
 ```mermaid
-usecase
+usecase-beta
 %% Actors are declared explicitly.
 actor User
 
@@ -195,7 +195,7 @@ Login --> Dashboard
 A `systemBoundary` block groups actor and use case declarations. A quoted title gets a deterministic identifier. In this example the title `Payment service` produces the boundary identifier `Payment_service`, which is used for the metadata assignment after the block.
 
 ```mermaid-example
-usecase
+usecase-beta
 systemBoundary "Payment service":::system
   actor Clerk("Payment clerk")
   Authorize("Authorize payment")
@@ -208,7 +208,7 @@ classDef system fill:#f8f8ff,stroke:#4b4b7a
 ```
 
 ```mermaid
-usecase
+usecase-beta
 systemBoundary "Payment service":::system
   actor Clerk("Payment clerk")
   Authorize("Authorize payment")
@@ -231,7 +231,7 @@ Boundaries are one level deep. Their contents can contain only actor and use cas
 Seven solid association operators are supported. The marker direction and type are preserved.
 
 ```mermaid-example
-usecase
+usecase-beta
 actor User
 actor Support
 Start
@@ -246,7 +246,7 @@ Finish x-- Support
 ```
 
 ```mermaid
-usecase
+usecase-beta
 actor User
 actor Support
 Start
@@ -263,14 +263,14 @@ Finish x-- Support
 Solid associations can have a label. A label containing `include` or `extend` is still an ordinary association.
 
 ```mermaid-example
-usecase
+usecase-beta
 actor User
 Login
 User -- "include account details" --> Login
 ```
 
 ```mermaid
-usecase
+usecase-beta
 actor User
 Login
 User -- "include account details" --> Login
@@ -283,7 +283,7 @@ JSON nodes can use only point, reversed-point, or markerless solid associations.
 Use explicit operators for UML relationship semantics.
 
 ```mermaid-example
-usecase
+usecase-beta
 actor Admin
 actor Person
 Checkout
@@ -296,7 +296,7 @@ ApplyCoupon --|> Checkout
 ```
 
 ```mermaid
-usecase
+usecase-beta
 actor Admin
 actor Person
 Checkout
@@ -315,7 +315,7 @@ For include, the source use case includes the target use case. For extend, the s
 Place an explicit edge ID followed by `@` immediately before an operator. Explicit edge IDs share the diagram-wide ID namespace and can be targeted by `class`, `style`, and metadata statements.
 
 ```mermaid-example
-usecase
+usecase-beta
 actor Customer
 Checkout
 Payment
@@ -329,7 +329,7 @@ payment@{ animate: false }
 ```
 
 ```mermaid
-usecase
+usecase-beta
 actor Customer
 Checkout
 Payment
@@ -351,7 +351,7 @@ Extra dashes request greater minimum layout length on point, reversed-point, and
 A note attaches to one actor or use case. The target can be declared after the note. Mermaid places the shared folded-corner note shape automatically and connects it to the target with a dotted, markerless line.
 
 ```mermaid-example
-usecase
+usecase-beta
 note for Login "`Requires an **active session**`"
 note for User "Starts the workflow"
 actor User
@@ -360,7 +360,7 @@ User --> Login
 ```
 
 ```mermaid
-usecase
+usecase-beta
 note for Login "`Requires an **active session**`"
 note for User "Starts the workflow"
 actor User
@@ -375,7 +375,7 @@ Notes cannot target JSON nodes, boundaries, edges, or other notes. Notes do not 
 A top-level JSON declaration creates a table whose title is its identifier. Its body must be a strict JSON object.
 
 ```mermaid-example
-usecase
+usecase-beta
 Inspect("Inspect payload")
 json Payload@{
   "2": "second in source",
@@ -395,7 +395,7 @@ style Payload stroke-width:2px
 ```
 
 ```mermaid
-usecase
+usecase-beta
 Inspect("Inspect payload")
 json Payload@{
   "2": "second in source",
@@ -423,7 +423,7 @@ JSON declarations must stay at the top level. Arrays and scalar values are not v
 Actors, use cases, boundaries, JSON nodes, and explicit edges support Mermaid classes and direct styles. Use `classDef` to define one or more classes, `class` to assign them, `style` for direct declarations, or `:::` on an actor, use case, boundary, or JSON declaration.
 
 ```mermaid-example
-usecase
+usecase-beta
 actor Customer:::external
 Checkout("Checkout"):::critical
 systemBoundary Account
@@ -442,7 +442,7 @@ style Account stroke:#536878
 ```
 
 ```mermaid
-usecase
+usecase-beta
 actor Customer:::external
 Checkout("Checkout"):::critical
 systemBoundary Account
@@ -496,7 +496,7 @@ config:
     diagramPadding: 24
     useMaxWidth: false
 ---
-usecase
+usecase-beta
 direction LR
 actor Customer
 Browse("Browse catalog")
@@ -518,7 +518,7 @@ config:
     diagramPadding: 24
     useMaxWidth: false
 ---
-usecase
+usecase-beta
 direction LR
 actor Customer
 Browse("Browse catalog")
@@ -532,7 +532,7 @@ Classes and direct styles override theme and diagram font configuration for the 
 Use `accTitle` and `accDescr` to give the diagram an accessible title and description. `accDescr` accepts a single-line value after `:` or a multiline block.
 
 ```mermaid-example
-usecase
+usecase-beta
 accTitle: Account access use cases
 accDescr {
   A customer signs in and can reset a password.
@@ -546,7 +546,7 @@ Customer --> Reset
 ```
 
 ```mermaid
-usecase
+usecase-beta
 accTitle: Account access use cases
 accDescr {
   A customer signs in and can reset a password.
@@ -566,7 +566,7 @@ Rendered actors, use cases, boundaries, notes, JSON tables, and relationships in
 Features can be combined in one diagram. This example uses accessibility metadata, actor variants, a package boundary, stereotypes, classes, a JSON table, a note, a labelled long association, an include relationship, an animated edge, and a directly styled edge.
 
 ```mermaid-example
-usecase
+usecase-beta
 direction LR
 accTitle: Online ordering use cases
 accDescr {
@@ -601,7 +601,7 @@ style pays stroke:#6b46c1,stroke-width:2px
 ```
 
 ```mermaid
-usecase
+usecase-beta
 direction LR
 accTitle: Online ordering use cases
 accDescr {

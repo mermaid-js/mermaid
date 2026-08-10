@@ -72,6 +72,7 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
       shape = 'circle';
       break;
     case 'ellipse':
+      // @ts-expect-error -- Ellipses are broken, see https://github.com/mermaid-js/mermaid/issues/5976
       shape = 'ellipse';
       break;
     case 'stadium':

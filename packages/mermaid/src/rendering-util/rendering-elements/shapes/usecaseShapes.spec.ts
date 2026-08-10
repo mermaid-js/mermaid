@@ -9,6 +9,7 @@ import { usecaseActorAwesome } from './usecaseActorAwesome.js';
 import { usecaseActorHollow } from './usecaseActorHollow.js';
 import { usecaseActorIcon } from './usecaseActorIcon.js';
 import { usecaseBusiness } from './usecaseBusiness.js';
+import { usecaseEllipse } from './usecaseEllipse.js';
 import { usecaseJsonTable } from './usecaseJsonTable.js';
 
 const originalGetBBox = Object.getOwnPropertyDescriptor(SVGElement.prototype, 'getBBox');
@@ -156,11 +157,12 @@ describe('use-case shared shape registration', () => {
       usecaseActorAwesome,
       usecaseActorIcon,
       usecaseBusiness,
+      usecaseEllipse,
       usecaseJsonTable,
     });
     expect(shapes.process).toBe(shapes.rect);
     expect(shapes.note).toBeDefined();
-    expect(shapes.ellipse).toBeDefined();
+    expect('ellipse' in shapes).toBe(false);
   });
 });
 
@@ -447,6 +449,22 @@ describe('business use case and JSON table', () => {
     expect(document.querySelector('[role="img"]')?.getAttribute('aria-label')).toBe(
       'JSON Payload, fruit Apple, tags Red, tags Green'
     );
+  });
+  it('renders JSON table borders and cells with rough paths in hand-drawn mode', async () => {
+    const node = actorNode('usecaseJsonTable', {
+      label: 'Payload',
+      look: 'handDrawn',
+      jsonRows: [{ key: 'status', accessibleKey: 'status', value: 'ready' }],
+    });
+    await usecaseJsonTable(svg(), node);
+
+    const border = document.querySelector('.usecase-json-border');
+    expect(border?.tagName.toLowerCase()).toBe('g');
+    expect(border?.querySelectorAll('path').length).toBeGreaterThan(0);
+    const cells = [...document.querySelectorAll('.usecase-json-cell')];
+    expect(cells).toHaveLength(3);
+    expect(cells.every((cell) => cell.tagName.toLowerCase() === 'g')).toBe(true);
+    expect(cells.every((cell) => cell.querySelector('path'))).toBe(true);
   });
 
   it('keeps HTML table labels in local table coordinates when the SVG has a viewport offset', async () => {

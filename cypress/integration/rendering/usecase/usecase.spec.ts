@@ -1,6 +1,6 @@
-import { imgSnapshotTest, mermaidUrl } from '../../helpers/util.ts';
+import { imgSnapshotTest, mermaidUrl } from '../../../helpers/util.ts';
 
-const FULL_DIAGRAM = `usecase
+const FULL_DIAGRAM = `usecase-beta
   accTitle: Complete use case example
   accDescr: Actors interact with authentication, payment, notes, and JSON data.
   actor Normal("Normal User") &lt;&lt;Human&gt;&gt;
@@ -264,13 +264,13 @@ describe('Usecase diagram', () => {
     element('Normal').find('.nodeLabel p').should('have.css', 'font-size', '21px');
     element('Login').find('.nodeLabel p').should('have.css', 'font-size', '19px');
     element('Normal').should(($node) => {
-      expect($node.attr('id')).to.match(/^usecase-.+-Normal$/);
+      expect($node.attr('id')).to.match(/-usecase-Normal$/);
     });
   });
 
   it('honors max-width independently of padding and font configuration', () => {
     renderForDom(
-      `usecase
+      `usecase-beta
         systemBoundary "Plain Boundary"
           actor User
           Login("Sign in")
@@ -298,7 +298,7 @@ describe('Usecase diagram', () => {
 
   it('renders clustered minlen relationships through the registered ELK layout', () => {
     renderForDom(
-      `usecase
+      `usecase-beta
         systemBoundary "External Layout"
           actor User
           Login("Sign in")
@@ -342,7 +342,14 @@ describe('Usecase diagram', () => {
     imgSnapshotTest(FULL_DIAGRAM, { usecase: { diagramPadding: 24, useMaxWidth: true } });
   });
 
+  it('keeps the complete hand-drawn rendering contract covered', () => {
+    imgSnapshotTest(FULL_DIAGRAM, {
+      look: 'handDrawn',
+      usecase: { diagramPadding: 24, useMaxWidth: true },
+    });
+  });
+
   it('keeps empty-diagram rendering covered without duplicating feature snapshots', () => {
-    imgSnapshotTest('usecase');
+    imgSnapshotTest('usecase-beta');
   });
 });

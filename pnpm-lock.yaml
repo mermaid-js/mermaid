@@ -603,15 +603,9 @@ importers:
 
   packages/parser:
     dependencies:
-      '@chevrotain/regexp-to-ast':
-        specifier: ~11.1.2
-        version: 11.1.2
       '@chevrotain/types':
         specifier: ~11.1.2
         version: 11.1.2
-      langium:
-        specifier: 4.2.1
-        version: 4.2.1
     devDependencies:
       '@microsoft/api-extractor':
         specifier: ^7.57.8
@@ -619,6 +613,9 @@ importers:
       chevrotain:
         specifier: ~11.1.2
         version: 11.1.2
+      langium:
+        specifier: 4.2.1
+        version: 4.2.1
 
   packages/tiny: {}
 

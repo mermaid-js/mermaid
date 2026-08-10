@@ -34,7 +34,6 @@ export type DiagramAST =
   | TreeView
   | Wardley
   | Cynefin;
-export type LangiumDiagramAST = DiagramAST;
 
 const parsers: Record<string, LangiumParser> = {};
 const initializers = {
@@ -131,7 +130,7 @@ export async function parse(diagramType: 'treemap', text: string): Promise<Treem
 export async function parse(diagramType: 'wardley', text: string): Promise<Wardley>;
 export async function parse(diagramType: 'cynefin', text: string): Promise<Cynefin>;
 
-export async function parse<T extends LangiumDiagramAST>(
+export async function parse<T extends DiagramAST>(
   diagramType: keyof typeof initializers,
   text: string
 ): Promise<T> {

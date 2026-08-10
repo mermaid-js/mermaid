@@ -1,0 +1,16 @@
+usecase-beta
+direction LR
+actor Analyst
+Inspect("Inspect payload")
+json Payload@{
+  "2": "second in source",
+  "1": "first after 2",
+  "colors": ["Red", "Green"],
+  "address": { "city": "Oslo" },
+  "items": [{ "name": "Book" }],
+  "empty": {}
+}:::data
+Analyst --> Inspect
+Inspect --> Payload
+classDef data fill:#f6fbff,stroke:#3572a5
+style Payload stroke-width:2px

@@ -1,7 +1,8 @@
+import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
 import type { Node } from '../../types.js';
 import intersect from '../intersect/index.js';
-import { compileStyles, styles2String } from './handDrawnShapeStyles.js';
+import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { getNodeClasses, insertLabel, labelHelper, updateNodeBounds } from './util.js';
 
 interface UsecaseJsonRow {
@@ -118,23 +119,48 @@ export async function usecaseJsonTable<T extends SVGGraphicsElement>(
   const left = -innerWidth / 2;
   const top = -innerHeight / 2;
 
-  const outerBorder = shapeSvg
-    .insert('rect', ':first-child')
-    .attr('class', 'label-container usecase-json-border')
-    .attr('x', -totalWidth / 2)
-    .attr('y', -totalHeight / 2)
-    .attr('width', totalWidth)
-    .attr('height', totalHeight)
-    .attr('style', nodeStyles);
+  // @ts-expect-error roughjs accepts the underlying SVG group through a D3 selection at runtime.
+  const roughSvg = node.look === 'handDrawn' ? rough.svg(shapeSvg) : undefined;
+  const roughOptions = roughSvg ? userNodeOverrides(node, {}) : undefined;
+  const insertCell = (
+    container: D3Selection<SVGGElement>,
+    className: string,
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  ) => {
+    if (roughSvg && roughOptions) {
+      const roughCell = roughSvg.rectangle(x, y, width, height, roughOptions);
+      return container.insert(() => roughCell, ':first-child').attr('class', className);
+    }
+    return container
+      .insert('rect', ':first-child')
+      .attr('class', className)
+      .attr('x', x)
+      .attr('y', y)
+      .attr('width', width)
+      .attr('height', height)
+      .attr('style', nodeStyles);
+  };
 
-  tableGroup
-    .insert('rect', ':first-child')
-    .attr('class', 'usecase-json-cell usecase-json-title-cell')
-    .attr('x', left)
-    .attr('y', top)
-    .attr('width', innerWidth)
-    .attr('height', titleHeight)
-    .attr('style', nodeStyles);
+  const outerBorder = insertCell(
+    shapeSvg,
+    'label-container usecase-json-border',
+    -totalWidth / 2,
+    -totalHeight / 2,
+    totalWidth,
+    totalHeight
+  );
+
+  insertCell(
+    tableGroup,
+    'usecase-json-cell usecase-json-title-cell',
+    left,
+    top,
+    innerWidth,
+    titleHeight
+  );
   tableGroup.node()?.append(titleLabel.node()!);
   positionLabel(titleLabel, titleBox, 0, top + titleHeight / 2);
 
@@ -147,22 +173,15 @@ export async function usecaseJsonTable<T extends SVGGraphicsElement>(
       .attr('data-row-index', index)
       .attr('transform', `translate(0,${rowTop})`);
 
-    rowGroup
-      .append('rect')
-      .attr('class', 'usecase-json-cell usecase-json-key-cell')
-      .attr('x', left)
-      .attr('y', 0)
-      .attr('width', keyWidth)
-      .attr('height', rowHeight)
-      .attr('style', nodeStyles);
-    rowGroup
-      .append('rect')
-      .attr('class', 'usecase-json-cell usecase-json-value-cell')
-      .attr('x', left + keyWidth)
-      .attr('y', 0)
-      .attr('width', valueWidth)
-      .attr('height', rowHeight)
-      .attr('style', nodeStyles);
+    insertCell(rowGroup, 'usecase-json-cell usecase-json-key-cell', left, 0, keyWidth, rowHeight);
+    insertCell(
+      rowGroup,
+      'usecase-json-cell usecase-json-value-cell',
+      left + keyWidth,
+      0,
+      valueWidth,
+      rowHeight
+    );
 
     rowGroup.node()?.append(key.label.node()!, value.label.node()!);
     positionLabel(key.label, key.bbox, left + keyWidth / 2, rowHeight / 2);

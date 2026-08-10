@@ -9,7 +9,7 @@ import getStyles from './styles.js';
 
 beforeAll(async () => {
   // Is required to load the useCase diagram
-  await Diagram.fromText('usecase\n actor TestActor');
+  await Diagram.fromText('usecase-beta\n actor TestActor');
 });
 
 /**
@@ -81,7 +81,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
   describe('when parsing basic actors', () => {
     it('should parse a single actor', async () => {
       const diagram = await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor User`
       );
 
@@ -96,7 +96,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
 
     it('should parse multiple actors', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor User
         actor Admin
         actor Guest`
@@ -111,7 +111,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
 
     it('should parse actor with simple name', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor SystemUser`
       );
 
@@ -124,7 +124,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
   describe('when parsing use cases', () => {
     it('should parse use cases from relationships', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor User
         User --> Login`
       );
@@ -136,7 +136,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
 
     it('should parse multiple use cases from relationships', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor User
         User --> Login
         User --> Logout
@@ -152,7 +152,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
 
     it('should parse use case from relationship', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor User
         User --> UserLoginProcess`
       );
@@ -164,7 +164,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
 
     it('should parse use cases with quoted names', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor "Customer Service"
         actor "System Administrator"
         "Customer Service" --> "Handle Tickets"
@@ -192,7 +192,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
   describe('when parsing relationships', () => {
     it('should parse actor to use case relationship', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor User
         User --> Login`
       );
@@ -206,7 +206,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
 
     it('should parse multiple relationships', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor User
         User --> Login
         User --> Logout`
@@ -222,7 +222,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
 
     it('should parse relationship with label', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor Developer
         Developer --important--> WriteCode`
       );
@@ -234,7 +234,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
 
     it('should parse different arrow types', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor User
         actor Admin
         User --> Login
@@ -250,7 +250,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
   describe('when parsing system boundaries', () => {
     it('should parse a system boundary', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor Admin, User
         systemBoundary "Authentication"
           Login
@@ -266,7 +266,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
 
     it('should parse use cases within system boundary', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor User
         systemBoundary "Authentication System"
           Login
@@ -285,7 +285,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
   describe('when parsing direction', () => {
     it('should handle TB direction', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         direction TB
         actor User`
       );
@@ -295,7 +295,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
 
     it('should handle LR direction', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         direction LR
         actor User`
       );
@@ -305,7 +305,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
 
     it('should normalize TD to TB', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         direction TD
         actor User`
       );
@@ -317,7 +317,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
   describe('when parsing actor metadata', () => {
     it('should parse actor with metadata', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor User@{ "type" : "normal", "icon" : "user" }
         User --> Login`
       );
@@ -331,7 +331,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
 
     it('should parse multiple actors with different metadata', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor User@{ "icon" : "user" }
         actor Admin@{ "type" : "hollow" }
         User --> Login
@@ -348,7 +348,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
   describe('when parsing complex diagrams', () => {
     it('should parse a complete authentication system', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor User
         actor Admin
 
@@ -376,7 +376,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
 
     it('should parse diagram with multiple arrow types', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor User
         actor Admin
         User --> Login
@@ -390,7 +390,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
 
     it('should handle use case creation from relationships', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor Developer
         Developer --> LoginSystem
         Developer --> Authentication`
@@ -406,7 +406,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
   describe('when parsing class definitions', () => {
     it('should handle classDef', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor User
         User --> Login
         classDef important fill:#f96,stroke:#333,stroke-width:4px
@@ -421,7 +421,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
   describe('database methods', () => {
     it('should clear all data', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor User
         User --> Login`
       );
@@ -439,7 +439,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
 
     it('should get specific actor by id', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor User
         actor Admin`
       );
@@ -452,7 +452,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
 
     it('should get specific use case by id', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor User
         User --> Login
         User --> Logout`
@@ -478,7 +478,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
   describe('getData method', () => {
     it('should convert diagram data to LayoutData format', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         actor User
         User --> Login`
       );
@@ -495,7 +495,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
 
     it('should include direction in layout data', async () => {
       await Diagram.fromText(
-        `usecase
+        `usecase-beta
         direction LR
         actor User`
       );
@@ -506,7 +506,7 @@ describe('UseCase diagram with Chevrotain parser', () => {
   });
 
   it('projects parser-produced actor and use-case geometry exactly into AST and LayoutData', async () => {
-    await Diagram.fromText(`usecase
+    await Diagram.fromText(`usecase-beta
 actor Normal
 actor Hollow@{ type: hollow, business: true }
 Business(Business)@{ business: true }
@@ -541,13 +541,13 @@ RectCase[Rectangle]`);
       Normal: { shape: 'usecaseActor', actorType: 'normal', business: false },
       Hollow: { shape: 'usecaseActorHollow', actorType: 'hollow', business: true },
       Business: { shape: 'usecaseBusiness', business: true },
-      Ellipse: { shape: 'ellipse', business: false },
+      Ellipse: { shape: 'usecaseEllipse', business: false },
       RectCase: { shape: 'rect', business: false },
     });
   });
 
   it('projects base, one-extra, N-extra, and labelled minimum lengths from parser to layout', async () => {
-    await Diagram.fromText(`usecase
+    await Diagram.fromText(`usecase-beta
 A base@--> B
 B two@---> C
 C many@-----> D
@@ -574,7 +574,7 @@ D labelled@-- "long" ----> E`);
   });
 
   it('projects parser-produced animation metadata into exact shared layout classes', async () => {
-    await Diagram.fromText(`usecase
+    await Diagram.fromText(`usecase-beta
 A trueEdge@--> B
 trueEdge@{ animate: true }
 A fastEdge@--> B
@@ -620,7 +620,7 @@ offEdge@{ animate: false }`);
   });
 
   it('projects complex source-ordered JSON, a forward edge, classes, and styles end to end', async () => {
-    await Diagram.fromText(`usecase
+    await Diagram.fromText(`usecase-beta
 classDef data fill:#eef,stroke:#369
 json Payload@{
   "2": "second",
@@ -829,7 +829,7 @@ style payloadEdge stroke:#f00`);
         'usecaseActorHollow',
         'usecaseActorAwesome',
         'usecaseActorIcon',
-        'ellipse',
+        'usecaseEllipse',
         'rect',
         'usecaseBusiness',
         'note',

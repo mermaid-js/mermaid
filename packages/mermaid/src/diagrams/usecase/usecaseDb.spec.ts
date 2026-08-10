@@ -7,7 +7,7 @@ const ast = (source: string): GraphAST => ({
   version: 1,
   diagramType: 'usecase',
   source,
-  header: { keyword: 'usecase', direction: 'LR', span: [0, 7] },
+  header: { keyword: 'usecase', direction: 'LR', span: [0, 12] },
   nodes: {},
   edges: [],
   groups: {},
@@ -61,7 +61,7 @@ describe('usecase database', () => {
       animate: true,
       animation: 'fast',
     });
-    first.ast = ast('usecase\nactor User');
+    first.ast = ast('usecase-beta\nactor User');
 
     db.commit(first);
     first.actors.get('User')!.label = 'mutated draft';
@@ -72,7 +72,7 @@ describe('usecase database', () => {
     expect([...db.getNotes().keys()]).toEqual(['note_0', 'note_1']);
     expect([...db.getJsonNodes().keys()]).toEqual(['Payload']);
     expect(db.getRelationships()).toHaveLength(1);
-    expect(db.getAST()?.source).toBe('usecase\nactor User');
+    expect(db.getAST()?.source).toBe('usecase-beta\nactor User');
 
     const replacement = db.createModel();
     replacement.useCases.set('Login', {
@@ -132,7 +132,7 @@ describe('usecase database', () => {
       classes: [],
       styles: [],
     });
-    model.ast = ast('usecase');
+    model.ast = ast('usecase-beta');
     db.commit(model);
     db.setDiagramTitle?.('Title');
     db.setAccTitle?.('Accessible title');

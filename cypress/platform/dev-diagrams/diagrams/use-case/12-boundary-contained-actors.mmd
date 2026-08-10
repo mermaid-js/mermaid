@@ -1,0 +1,13 @@
+usecase-beta
+direction LR
+actor Guest("Restaurant guest")
+systemBoundary "Professional Services":::service
+  actor Chef("Chef")
+  ReviewMeal("Review meal")
+  PrepareMeal("Prepare meal")
+end
+Professional_Services@{ type: package }
+Chef --> PrepareMeal
+Chef --> ReviewMeal
+Guest --> ReviewMeal
+classDef service fill:#fffbea,stroke:#b8860b,stroke-width:2px

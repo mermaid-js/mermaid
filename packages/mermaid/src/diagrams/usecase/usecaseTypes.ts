@@ -110,7 +110,7 @@ export type UsecaseLayoutNodeShape =
   | 'usecaseActorHollow'
   | 'usecaseActorAwesome'
   | 'usecaseActorIcon'
-  | 'ellipse'
+  | 'usecaseEllipse'
   | 'rect'
   | 'usecaseBusiness'
   | 'note'

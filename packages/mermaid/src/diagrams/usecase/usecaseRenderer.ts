@@ -30,6 +30,9 @@ export const usecaseDomId = (diagramId: string, modelId: string): string => {
   return `usecase-${safeDiagramId}-${safeModelId}`;
 };
 
+const usecaseNodeDomId = (modelId: string): string =>
+  `usecase-${modelId.replace(/[^\w-]+/g, '_').replace(/^_+|_+$/g, '') || 'element'}`;
+
 const getAccessibleLabel = (label: string, labelType?: string): string => {
   if (labelType !== 'markdown') {
     return label;
@@ -90,7 +93,7 @@ interface UsecaseAccessibleNames {
 }
 
 type UsecaseRenderingNode = UsecaseLayoutData['nodes'][number] & {
-  usecaseDomId: string;
+  hasFoldedStereotype?: boolean;
 };
 
 export const prepareUsecaseLayoutData = (
@@ -100,13 +103,13 @@ export const prepareUsecaseLayoutData = (
   data.diagramId = diagramId;
   data.markers = [...USECASE_MARKERS];
   for (const node of data.nodes) {
-    const stableDomId = usecaseDomId(diagramId, node.id);
-    const renderingNode: UsecaseRenderingNode = Object.assign(node, {
-      usecaseDomId: stableDomId,
-    });
-    renderingNode.domId = stableDomId;
+    const renderingNode = node as UsecaseRenderingNode;
+    renderingNode.domId = usecaseNodeDomId(node.id);
     if (node.label !== undefined && node.labelType === 'text') {
       node.label = escapePlainLabel(node.label);
+    }
+    if (node.stereotype) {
+      node.stereotype = escapePlainLabel(node.stereotype);
     }
     if (!node.isGroup && node.shape === 'usecaseJsonTable') {
       node.jsonRows = node.jsonRows?.map((row) => ({
@@ -115,12 +118,18 @@ export const prepareUsecaseLayoutData = (
         value: escapePlainLabel(row.value),
       }));
     }
-    if (!node.isGroup && (node.shape === 'ellipse' || node.shape === 'rect') && node.stereotype) {
+    if (
+      !node.isGroup &&
+      (node.shape === 'usecaseEllipse' || node.shape === 'rect') &&
+      node.stereotype
+    ) {
       const label = node.label ?? escapePlainLabel(node.id);
-      node.label = `«${escapeMarkdownMarkers(escapePlainLabel(node.stereotype))}»<br/>${
+      node.label = `«${escapeMarkdownMarkers(node.stereotype)}»<br/>${
         node.labelType === 'text' ? escapeMarkdownMarkers(label) : label
       }`;
       node.labelType = 'markdown';
+      renderingNode.hasFoldedStereotype = true;
+      delete node.stereotype;
     }
   }
   for (const edge of data.edges) {
@@ -138,9 +147,7 @@ const annotateUsecaseElements = (
 ) => {
   for (const node of data.nodes) {
     const stableDomId =
-      'usecaseDomId' in node && typeof node.usecaseDomId === 'string'
-        ? node.usecaseDomId
-        : usecaseDomId(data.diagramId, node.id);
+      typeof node.domId === 'string' ? node.domId : usecaseDomId(data.diagramId, node.id);
     const element = svg.select<SVGGElement>(`#${stableDomId}`);
     const kind = node.isGroup
       ? 'boundary'
@@ -157,7 +164,12 @@ const annotateUsecaseElements = (
       .attr('data-usecase-kind', kind)
       .attr('role', 'img')
       .attr('aria-label', accessibleName);
-    if (!node.isGroup && (node.shape === 'ellipse' || node.shape === 'rect') && node.stereotype) {
+    if (
+      !node.isGroup &&
+      (node.shape === 'usecaseEllipse' || node.shape === 'rect') &&
+      'hasFoldedStereotype' in node &&
+      node.hasFoldedStereotype === true
+    ) {
       const root = element.node();
       const htmlLabel = root?.querySelector('.nodeLabel');
       const container = htmlLabel?.querySelector('p') ?? htmlLabel;

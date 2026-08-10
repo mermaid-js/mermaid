@@ -1,0 +1,25 @@
+---
+config:
+  usecase:
+    actorFontSize: 16
+    actorFontFamily: Arial
+    actorFontWeight: bold
+    usecaseFontSize: 14
+    usecaseFontFamily: Georgia
+    nodeSpacing: 60
+    rankSpacing: 70
+    diagramPadding: 24
+    useMaxWidth: false
+---
+usecase-beta
+direction LR
+accTitle: Account access use cases
+accDescr {
+  A customer signs in and can reset a password.
+  The diagram names the actor, use cases, and associations.
+}
+actor Customer
+SignIn("Sign in")
+Reset("Reset password")
+Customer --> SignIn
+Customer --> Reset

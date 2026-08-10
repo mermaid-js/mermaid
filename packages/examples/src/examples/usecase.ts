@@ -8,7 +8,7 @@ export default {
     {
       title: 'Basic Use Cases',
       isDefault: true,
-      code: `usecase
+      code: `usecase-beta
 actor User("User")
 actor Admin("Administrator")
 Login("Log in")
@@ -22,7 +22,7 @@ Admin --> ViewReports`,
     },
     {
       title: 'System Boundaries',
-      code: `usecase
+      code: `usecase-beta
 actor Customer("Customer")
 actor SupportAgent("Support agent")
 systemBoundary "E-commerce System"
@@ -43,7 +43,7 @@ SupportAgent --> HandleReturns`,
     },
     {
       title: 'Actor Collaboration',
-      code: `usecase
+      code: `usecase-beta
 actor Developer("Developer")
 actor Reviewer("Reviewer")
 actor Manager("Release manager")

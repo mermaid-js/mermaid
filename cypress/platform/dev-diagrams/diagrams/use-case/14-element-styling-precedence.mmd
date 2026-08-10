@@ -1,0 +1,21 @@
+usecase-beta
+direction LR
+actor User:::external
+Login("Sign in"):::critical
+systemBoundary Account:::boundary
+  Profile[Edit profile]
+end
+json Session@{ "active": true }:::data
+User --> Login
+Login --> Profile
+Profile --> Session
+classDef default fill:#ffffff,stroke:#333333
+classDef external,critical stroke-width:3px
+classDef boundary fill:#fffbea,stroke:#b8860b
+classDef data fill:#eef8ff,stroke:#3572a5
+class User,Login external,critical
+class Account,Session boundary,data
+style User stroke:#1e40af
+style Login fill:#ffe6e6
+style Account stroke-width:4px
+style Session fill:#e6f7ff

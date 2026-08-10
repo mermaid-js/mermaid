@@ -10,7 +10,6 @@ import type { TemplateType } from 'rollup-plugin-visualizer/dist/plugin/template
 import istanbul from 'vite-plugin-istanbul';
 import { packageOptions } from '../.build/common.js';
 import { generateLangium } from '../.build/generateLangium.js';
-import { generateAntlr } from '../.build/generateAntlr.js';
 
 const visualize = process.argv.includes('--visualize');
 const watch = process.argv.includes('--watch');

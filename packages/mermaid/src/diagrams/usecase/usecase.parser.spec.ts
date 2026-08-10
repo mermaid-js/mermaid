@@ -103,7 +103,7 @@ describe('usecase parser publication and normalized AST', () => {
   beforeEach(() => db.clear());
 
   it('accepts the header at EOF and publishes an empty AST', async () => {
-    await parser.parse('usecase');
+    await parser.parse('usecase-beta');
 
     expect(publishedModel()).toEqual({
       actors: [],
@@ -118,8 +118,8 @@ describe('usecase parser publication and normalized AST', () => {
     expect(db.getAST()).toEqual({
       version: 1,
       diagramType: 'usecase',
-      source: 'usecase',
-      header: { keyword: 'usecase', direction: 'LR', span: [0, 7] },
+      source: 'usecase-beta',
+      header: { keyword: 'usecase', direction: 'LR', span: [0, 12] },
       nodes: {},
       edges: [],
       groups: {},
@@ -129,7 +129,7 @@ describe('usecase parser publication and normalized AST', () => {
   });
 
   it('publishes accessibility text through common DB and normalized AST transactionally', async () => {
-    const source = `usecase
+    const source = `usecase-beta
 accTitle: Authentication use cases
 accDescr {
   First line
@@ -163,7 +163,7 @@ actor User`;
     });
 
     await expectRejectedWithoutPublication(
-      `usecase
+      `usecase-beta
 accTitle: Draft title
 accDescr: Draft description
 note for Missing "invalid"`,
@@ -172,7 +172,7 @@ note for Missing "invalid"`,
   });
 
   it('accepts a final statement without a newline and keeps end-exclusive source spans', async () => {
-    const source = 'usecase\nactor User';
+    const source = 'usecase-beta\nactor User';
     await parser.parse(source);
 
     expect(db.getActors().get('User')).toMatchObject({ id: 'User', label: 'User' });
@@ -195,7 +195,7 @@ note for Missing "invalid"`,
   });
 
   it('isolates success, clear, failure, and a second success across singleton reuse', async () => {
-    await parser.parse(`usecase
+    await parser.parse(`usecase-beta
 actor First
 First --> Login
 note for Login "First note"`);
@@ -209,14 +209,14 @@ note for Login "First note"`);
     expectEmptyPublication();
 
     await expectRejectedWithoutPublication(
-      `usecase
+      `usecase-beta
 actor Draft
 Draft --> Pending
 note for Missing "invalid"`,
       'Missing'
     );
 
-    await parser.parse(`usecase
+    await parser.parse(`usecase-beta
 actor Second
 Second --> Done
 note for Done "Second note"`);
@@ -249,10 +249,10 @@ note for Done "Second note"`);
   ])(
     'resolves forward $refinement refinement independently of declaration order',
     async (testCase) => {
-      await parser.parse(`usecase\n${testCase.declaration}\n${testCase.relation}`);
+      await parser.parse(`usecase-beta\n${testCase.declaration}\n${testCase.relation}`);
       const declarationFirst = publishedModel();
 
-      await parser.parse(`usecase\n${testCase.relation}\n${testCase.declaration}`);
+      await parser.parse(`usecase-beta\n${testCase.relation}\n${testCase.declaration}`);
       const relationFirst = publishedModel();
 
       expect(relationFirst).toEqual(declarationFirst);
@@ -264,7 +264,7 @@ note for Done "Second note"`);
   );
 
   it('finalizes unresolved relation endpoints as ellipse use cases without actor inference', async () => {
-    await parser.parse(`usecase
+    await parser.parse(`usecase-beta
 Left --> Right`);
 
     expect(db.getActors().size).toBe(0);
@@ -297,7 +297,7 @@ Left --> Right`);
   });
 
   it('merges equivalent repeated declarations, including equivalent parent ownership', async () => {
-    await parser.parse(`usecase
+    await parser.parse(`usecase-beta
 systemBoundary Auth
 actor User("Person")@{ type: hollow } <<Human>>
 actor User("Person")@{ type: hollow } <<Human>>
@@ -341,7 +341,7 @@ end`);
     ['stereotype', 'Login <<Primary>>\nLogin <<Secondary>>', 'Login'],
     ['parent', 'systemBoundary First\nLogin\nend\nsystemBoundary Second\nLogin\nend', 'Login'],
   ])('rejects conflicting %s declarations transactionally', async (_conflict, body, id) => {
-    await expectRejectedWithoutPublication(`usecase\n${body}`, id);
+    await expectRejectedWithoutPublication(`usecase-beta\n${body}`, id);
   });
 
   it.each([
@@ -351,7 +351,7 @@ end`);
     ['element and explicit edge ID', 'actor link\nA link@--> B', 'link'],
     ['duplicate explicit edge ID', 'A link@--> B\nB link@--> C', 'link'],
   ])('rejects a %s collision in the diagram-global namespace', async (_collision, body, id) => {
-    await expectRejectedWithoutPublication(`usecase\n${body}`, id);
+    await expectRejectedWithoutPublication(`usecase-beta\n${body}`, id);
   });
 
   it.each([
@@ -360,17 +360,17 @@ end`);
     ['style', 'style Ghost fill:red'],
     ['metadata', 'Ghost@{ type: package }'],
   ])('rejects an unresolved %s target', async (_targetKind, statement) => {
-    await expectRejectedWithoutPublication(`usecase\n${statement}`, 'Ghost');
+    await expectRejectedWithoutPublication(`usecase-beta\n${statement}`, 'Ghost');
   });
 
   it('publishes no draft collection or AST when final semantic resolution fails', async () => {
-    await parser.parse(`usecase
+    await parser.parse(`usecase-beta
 actor Previous
 Previous --> Published`);
     expect(db.getAST()).toBeDefined();
 
     await expectRejectedWithoutPublication(
-      `usecase
+      `usecase-beta
 direction TB
 classDef important fill:red
 actor User:::important
@@ -384,7 +384,7 @@ note for Missing "late failure"`,
   });
 
   it('allocates anonymous edge and note IDs deterministically in source order', async () => {
-    const source = `usecase
+    const source = `usecase-beta
 actor User
 User --> Login
 note for User "first"
@@ -406,7 +406,7 @@ note for Logout "second"`;
   });
 
   it('distinguishes generated and explicit IDs and records their exact occurrences', async () => {
-    const source = `usecase
+    const source = `usecase-beta
 "Reset password"
 Login("Reset password")`;
     await parser.parse(source);
@@ -453,7 +453,7 @@ Login("Reset password")`;
   });
 
   it('names both exact locations for generated and explicit ID collisions', async () => {
-    const generated = `usecase
+    const generated = `usecase-beta
 "A-B"
 "A B"`;
     await expectExactSemanticError(
@@ -461,7 +461,7 @@ Login("Reset password")`;
       `Generated ID 'A_B' collides with another declaration at ${occurrenceLocation(generated, '"A B"', 1, 1, 1)}; previous declaration at ${occurrenceLocation(generated, '"A-B"', 1, 1, 1)}`
     );
 
-    const generatedAndExplicit = `usecase
+    const generatedAndExplicit = `usecase-beta
 "A B"
 A_B(Explicit)`;
     await expectExactSemanticError(
@@ -469,7 +469,7 @@ A_B(Explicit)`;
       `Generated ID 'A_B' collides with another declaration at ${occurrenceLocation(generatedAndExplicit, 'A_B')}; previous declaration at ${occurrenceLocation(generatedAndExplicit, '"A B"', 1, 1, 1)}`
     );
 
-    const explicitEdges = `usecase
+    const explicitEdges = `usecase-beta
 A link@--> B
 B link@--> C`;
     await expectExactSemanticError(
@@ -480,7 +480,7 @@ B link@--> C`;
 
   it('preserves entity codes and literal backslash-n while accepting physical newlines only in Markdown labels', async () => {
     const source = [
-      'usecase',
+      'usecase-beta',
       'classDef decorated fill:#fee',
       'actor User("`**User**',
       'role`") <<Human>>:::decorated',
@@ -521,27 +521,27 @@ B link@--> C`;
     });
 
     await expectRejectedWithoutPublication(
-      ['usecase', 'Broken("First', 'Second")'].join('\n'),
+      ['usecase-beta', 'Broken("First', 'Second")'].join('\n'),
       'Error lexing usecase diagram'
     );
   });
 
   it('reports exact actor metadata and incompatible icon locations', async () => {
-    const invalidType = `usecase
+    const invalidType = `usecase-beta
 actor User@{ type: giant }`;
     await expectExactSemanticError(
       invalidType,
       `Metadata property 'type' is invalid for actor 'User' at ${occurrenceLocation(invalidType, 'type')}`
     );
 
-    const invalidKey = `usecase
+    const invalidKey = `usecase-beta
 actor User@{ fillColor: red }`;
     await expectExactSemanticError(
       invalidKey,
       `Metadata property 'fillColor' is invalid for actor 'User' at ${occurrenceLocation(invalidKey, 'fillColor')}`
     );
 
-    const iconAndAwesome = `usecase
+    const iconAndAwesome = `usecase-beta
 actor User@{ icon: "fa:user", type: awesome }`;
     await expectExactSemanticError(
       iconAndAwesome,
@@ -550,7 +550,7 @@ actor User@{ icon: "fa:user", type: awesome }`;
   });
 
   it('rejects mixed-kind generalization and actor include at the exact relation span', async () => {
-    const generalization = `usecase
+    const generalization = `usecase-beta
 actor User
 Login
 User --|> Login`;
@@ -559,7 +559,7 @@ User --|> Login`;
       `Generalization requires actor-to-actor or use-case-to-use-case endpoints at ${occurrenceLocation(generalization, '--|> Login')}`
     );
 
-    const actorInclude = `usecase
+    const actorInclude = `usecase-beta
 actor User
 actor Admin
 User ..> : include Admin`;
@@ -570,7 +570,7 @@ User ..> : include Admin`;
   });
 
   it('rejects duplicate and unknown edge class/style targets with exact locations', async () => {
-    const duplicate = `usecase
+    const duplicate = `usecase-beta
 A link@--> B
 B link@--> C`;
     await expectExactSemanticError(
@@ -578,7 +578,7 @@ B link@--> C`;
       `ID 'link' is declared more than once (edge and edge) at ${occurrenceLocation(duplicate, 'link', 2)}; previous declaration at ${occurrenceLocation(duplicate, 'link')}`
     );
 
-    const unknownClass = `usecase
+    const unknownClass = `usecase-beta
 A known@--> B
 class missingEdge decorated`;
     await expectExactSemanticError(
@@ -586,7 +586,7 @@ class missingEdge decorated`;
       `Class/style target 'missingEdge' is unresolved or anonymous at ${occurrenceLocation(unknownClass, 'missingEdge')}`
     );
 
-    const unknownStyle = `usecase
+    const unknownStyle = `usecase-beta
 A known@--> B
 style missingEdge stroke:red`;
     await expectExactSemanticError(
@@ -596,7 +596,7 @@ style missingEdge stroke:red`;
   });
 
   it('publishes exact true, fast, slow, and false animation state and rejects invalid values', async () => {
-    const source = `usecase
+    const source = `usecase-beta
 A trueEdge@--> B
 trueEdge@{ animate: true }
 A fastEdge@--> B
@@ -628,7 +628,7 @@ offEdge@{ animate: false }`;
       { id: 'offEdge', animate: false, animation: undefined },
     ]);
 
-    const invalidAnimation = `usecase
+    const invalidAnimation = `usecase-beta
 A link@--> B
 link@{ animation: medium }`;
     await expectExactSemanticError(
@@ -636,7 +636,7 @@ link@{ animation: medium }`;
       `Metadata property 'animation' is invalid for edge 'link' at ${occurrenceLocation(invalidAnimation, 'animation')}`
     );
 
-    const invalidAnimate = `usecase
+    const invalidAnimate = `usecase-beta
 A link@--> B
 link@{ animate: fast }`;
     await expectExactSemanticError(
@@ -658,7 +658,7 @@ link@{ animate: fast }`;
   ])(
     'locates rejected $kind content inside a boundary',
     async ({ statement, unexpected, occurrence }) => {
-      const source = `usecase
+      const source = `usecase-beta
 systemBoundary Auth
 ${statement}
 end`;
@@ -671,7 +671,7 @@ end`;
   );
 
   it('rejects notes targeting JSON, boundary, and explicit edge IDs with both locations', async () => {
-    const json = `usecase
+    const json = `usecase-beta
 json Payload@{}
 note for Payload "invalid"`;
     await expectExactSemanticError(
@@ -679,7 +679,7 @@ note for Payload "invalid"`;
       `Note target 'Payload' must be an actor or use case, not json at ${occurrenceLocation(json, 'Payload', 2)}; previous declaration at ${occurrenceLocation(json, 'Payload')}`
     );
 
-    const boundary = `usecase
+    const boundary = `usecase-beta
 systemBoundary Auth
 Login
 end
@@ -689,7 +689,7 @@ note for Auth "invalid"`;
       `Note target 'Auth' must be an actor or use case, not boundary at ${occurrenceLocation(boundary, 'Auth', 2)}; previous declaration at ${occurrenceLocation(boundary, 'Auth')}`
     );
 
-    const edge = `usecase
+    const edge = `usecase-beta
 A link@--> B
 note for link "invalid"`;
     await expectExactSemanticError(
@@ -704,27 +704,27 @@ note for link "invalid"`;
     ['JSON', 'json Payload@{} <<Data>>'],
     ['edge', 'A link@--> B\nlink@{ animate: true } <<Link>>'],
   ])('locates a stereotype on invalid %s syntax', async (_kind, body) => {
-    const source = `usecase
+    const source = `usecase-beta
 ${body}`;
     await expectGrammarErrorAt(source, '<<', occurrenceLocation(source, '<<'));
   });
 
   it('rejects business icon, awesome, and rectangular declarations at exact locations', async () => {
-    const icon = `usecase
+    const icon = `usecase-beta
 actor Icon@{ icon: "fa:user", business: true }`;
     await expectExactSemanticError(
       icon,
       `Business actor 'Icon' must use normal or hollow geometry at ${occurrenceLocation(icon, 'Icon')}`
     );
 
-    const awesome = `usecase
+    const awesome = `usecase-beta
 actor Awesome@{ type: awesome, business: true }`;
     await expectExactSemanticError(
       awesome,
       `Business actor 'Awesome' must use normal or hollow geometry at ${occurrenceLocation(awesome, 'Awesome')}`
     );
 
-    const rectangle = `usecase
+    const rectangle = `usecase-beta
 Report[Generate report]@{ business: true }`;
     await expectExactSemanticError(
       rectangle,
@@ -733,7 +733,7 @@ Report[Generate report]@{ business: true }`;
   });
 
   it('rejects JSON in boundaries and JSON semantic or circle relations at exact locations', async () => {
-    const boundary = `usecase
+    const boundary = `usecase-beta
 systemBoundary Auth
 json Payload@{}
 end`;
@@ -743,7 +743,7 @@ end`;
       occurrenceLocation(boundary, 'json Payload@')
     );
 
-    const semantic = `usecase
+    const semantic = `usecase-beta
 json Payload@{}
 Inspect
 Payload ..> : include Inspect`;
@@ -752,7 +752,7 @@ Payload ..> : include Inspect`;
       `include relationship requires use-case endpoints at ${occurrenceLocation(semantic, '..> : include Inspect')}`
     );
 
-    const circle = `usecase
+    const circle = `usecase-beta
 json Payload@{}
 Inspect --o Payload`;
     await expectExactSemanticError(
@@ -762,7 +762,7 @@ Inspect --o Payload`;
   });
 
   it('publishes a complete serializable AST v1 with ordered statements and exact spans', async () => {
-    const source = `usecase
+    const source = `usecase-beta
 
 %% representative
 systemBoundary Auth
@@ -782,7 +782,7 @@ note for Login "Remember"`;
       version: 1,
       diagramType: 'usecase',
       source,
-      header: { keyword: 'usecase', direction: 'LR', span: [0, 7] },
+      header: { keyword: 'usecase', direction: 'LR', span: [0, 12] },
       classDefs: {},
       nodes: {
         User: {
