@@ -29,6 +29,8 @@ import { layoutForGrowth, placeTrees, ROTATION_FOR_GROWTH } from '../placement/p
 import type { PlaceableTree, TreePlacement } from '../placement/placeTrees.js';
 import { opportunisticallyAlign } from '../improvement/opportunisticAlignment.js';
 import { rotateGrowth, rotateLandscapeIfNeeded } from '../improvement/rotation.js';
+import { alignTreeRanks } from '../improvement/treeRankAlignment.js';
+import type { RestoredTree } from '../improvement/treeRankAlignment.js';
 import { routeFinalEdges } from '../routing/finalRouting.js';
 import type { FinalEdge, RoutedFinalEdge } from '../routing/finalRouting.js';
 import type { CoreLayoutState } from '../state.js';
@@ -248,6 +250,7 @@ function restoreTrees(
   }
 
   const treeEdges: FinalEdge[] = [];
+  const restored: RestoredTree[] = [];
 
   placements.forEach((placement, index) => {
     const source = sources.get(placement.treeId);
@@ -281,6 +284,7 @@ function restoreTrees(
       { x: root.x + slide.x, y: root.y + slide.y }
     );
 
+    const ranks: string[][] = [];
     for (const node of transformed.nodes.values()) {
       if (node.id === tree.rootCopyId) {
         continue;
@@ -295,7 +299,12 @@ function restoreTrees(
         inputOrder: source?.inputOrder ?? 0,
         original: source?.original,
       });
+      (ranks[node.depth] ??= []).push(node.id);
     }
+    for (const rank of ranks) {
+      rank?.sort();
+    }
+    restored.push({ growth, rootId: placement.coreNodeId, ranks });
 
     // Rank-facing sides for this tree's final growth direction: the parent
     // leaves through the side facing the child's rank, the child enters through
@@ -323,6 +332,8 @@ function restoreTrees(
     // The placeholder has done its job.
     state.entities.delete(placement.placeholderId);
   });
+
+  alignTreeRanks(nodes, restored, state.options);
 
   // Refresh chain waypoints from the bend entities' final positions.
   const waypointsByEdge = new Map<string, Point[]>();

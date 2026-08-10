@@ -250,6 +250,34 @@ rejecting any that the solver cannot satisfy or that would create an overlap.
     cannot be brought back keeps its slide and reports
     `HOLA_TREE_SLID_FROM_ROOT` with the residual distance.
 
+12. **Trees on the same side of the core share one line per rank.**
+    `improvement/treeRankAlignment.ts`, applied in `restoreTrees` on the real tree
+    nodes, after the constraint work and before final routing.
+
+    Each tree is laid out and placed against its own root, so nothing makes two
+    trees on one side agree about where a rank sits: one tree's second rank comes
+    out level with another's third, and a side that is a hierarchy reads as a
+    jumble. Trees growing east or west get one x per rank (each level vertically
+    aligned), trees growing north or south one y per rank.
+
+    Two candidate line sets are tried, tightest first:
+    - `tightRankLines` is derived from geometry alone — each root's own extent, the
+      rank gap, and the largest node of each rank across the group. It is the
+      closest the ranks can legally sit to the core, and because it ignores where
+      the trees currently are, it also _undoes_ any slide a tree was carrying.
+    - `outermostRankLines` keeps every tree at least where it already was. Always
+      fits, but hands every tree in the group the largest slide in it.
+
+    A group is only formed from trees growing the same way, and only from trees
+    standing side by side _across_ the growth axis — trees stacked along it are at
+    different distances from the core deliberately, and sharing lines would drive
+    one into the other. If the chosen lines overlap anything the group is put back
+    as it was. This is opportunistic in the sense of guide §18.1: the paper's own
+    alignment pass improves a drawing where it can and leaves it alone otherwise.
+
+    On `4 nodes loop + trees` this both aligns and tightens: the two east trees
+    went from ranks at 227/396/573 and 493/662/839 to a shared 191/360/537.
+
 ---
 
 ## 4. Why the core is not pre-expanded for the trees
