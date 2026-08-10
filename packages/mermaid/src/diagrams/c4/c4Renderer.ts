@@ -358,7 +358,7 @@ const asColor = (value: unknown): string | undefined => {
   const accepted =
     typeof globalThis.CSS?.supports === 'function'
       ? globalThis.CSS.supports('color', value)
-      : /^(#[\da-f]{3,8}|[a-z]+|rgba?\([\d\s%.,/]+\)|hsla?\([\d\s%.,/deg]+\))$/i.test(value);
+      : /^(#[\da-f]{3,8}|[a-z]+|rgba?\([\d\s%,./]+\)|hsla?\([\d\s%,./deg]+\))$/i.test(value);
   return accepted ? value : undefined;
 };
 
