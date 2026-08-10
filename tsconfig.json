@@ -34,7 +34,8 @@
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
     // "typeRoots": [] /* Specify multiple folders that act like `./node_modules/@types`. */,
     "types": [
-      "vitest/globals"
+      "vitest/globals",
+      "vitest/importMeta"
     ] /* Specify type package names to be included without being referenced in a source file. */,
 
     // "allowUmdGlobalAccess": true,                     /* Allow accessing UMD globals from modules. */
@@ -103,5 +104,5 @@
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
-  "exclude": ["**/node_modules/*", "**/dist/*", ".git", "coverage"]
+  "exclude": ["**/node_modules/*", "**/dist/*", ".git", "coverage", "cypress", ".build"]
 }

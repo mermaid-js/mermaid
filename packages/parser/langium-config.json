@@ -57,6 +57,11 @@
       "fileExtensions": [".mmd", ".mermaid"]
     },
     {
+      "id": "neuralnet",
+      "grammar": "src/language/neuralnet/neuralnet.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
       "id": "railroad",
       "grammar": "src/language/railroad/railroad.langium",
       "fileExtensions": [".mmd", ".mermaid"]

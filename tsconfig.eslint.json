@@ -22,5 +22,6 @@
     "packages/mermaid-local-editor/static/js/**/*.js",
     "packages/mermaid-local-editor/**/*.js",
     "packages/mermaid-local-editor/**/*.html"
-  ]
+  ],
+  "exclude": ["**/node_modules/*", "**/dist/*", ".git", "coverage"]
 }

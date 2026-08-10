@@ -207,6 +207,10 @@ union A, B`,
     tf 02 evt End
     rf 03 readmodel ReadModel01 ->> 01 ->> 02 { a: true }
     rf 04 rmo ReadModel02 ->> 01 ->> 02`,
+
+  neuralnet: `neuralnet sequential
+    Input[28, 28, 1]
+    Dense[128, relu]`,
 };
 
 async function renderTwoAndCheckIds(

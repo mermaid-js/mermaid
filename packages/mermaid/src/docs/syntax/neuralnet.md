@@ -1,0 +1,149 @@
+# Neural Network Diagrams
+
+> A neural network diagram visualises the architecture of a deep learning model — its layers, connections, and data flow.
+
+Mermaid supports two modes for drawing neural networks:
+
+- **Sequential** — list layers top-to-bottom; connections are wired automatically.
+- **Graph** — name nodes explicitly, then declare edges with `-->` to support skip connections and branching.
+
+## Sequential mode
+
+```mermaid-example
+neuralnet sequential
+  title Simple MLP
+  Input[4]
+  Dense[16, relu]
+  Dense[8, relu]
+  Dense[3, softmax]
+```
+
+## Graph mode (with skip connection)
+
+```mermaid-example
+neuralnet
+  title ResNet Block
+  inp: Input[64]
+  conv: Conv2D[64, 3x3, relu]
+  bn: BatchNorm
+  add: Add
+  out: Dense[10, softmax]
+
+  inp --> conv
+  conv --> bn
+  bn --> add
+  inp --> add
+  add --> out
+```
+
+## Syntax
+
+### Header
+
+```
+neuralnet [sequential]
+```
+
+- `sequential` keyword is optional. Without it the diagram is in **graph mode**.
+
+### Declaring layers
+
+```
+[id: ]LayerType[param1, param2, ...]
+```
+
+| Part        | Required   | Description                                  |
+| ----------- | ---------- | -------------------------------------------- |
+| `id:`       | Graph mode | Node reference used in edge declarations     |
+| `LayerType` | Yes        | One of the supported layer types (see below) |
+| `[params]`  | No         | Comma-separated layer parameters             |
+
+**Sequential mode example:**
+
+```
+Conv2D[32, 3x3, relu]
+MaxPool2D[2x2]
+Flatten
+Dense[128, relu]
+Dropout[0.5]
+Dense[10, softmax]
+```
+
+**Graph mode example:**
+
+```
+enc: Conv2D[64, 3x3, relu]
+skip: Add
+enc --> skip
+inp --> skip
+```
+
+### Edges (graph mode only)
+
+```
+fromId --> toId
+```
+
+### Supported layer types
+
+| Category        | Layer types                                                                                                    |
+| --------------- | -------------------------------------------------------------------------------------------------------------- |
+| I/O             | `Input`, `Output`                                                                                              |
+| Fully-connected | `Dense`, `Linear`                                                                                              |
+| Convolutional   | `Conv1D`, `Conv2D`, `Conv3D`                                                                                   |
+| Pooling         | `MaxPool1D`, `MaxPool2D`, `MaxPool3D`, `AvgPool1D`, `AvgPool2D`, `AvgPool3D`, `GlobalAvgPool`, `GlobalMaxPool` |
+| Normalisation   | `BatchNorm`, `LayerNorm`, `GroupNorm`                                                                          |
+| Regularisation  | `Dropout`                                                                                                      |
+| Structural      | `Flatten`, `Reshape`, `Embedding`                                                                              |
+| Recurrent       | `LSTM`, `GRU`, `RNN`, `Bidirectional`                                                                          |
+| Merge           | `Add`, `Concat`, `Multiply`                                                                                    |
+| Attention       | `Attention`, `MultiHeadAttention`                                                                              |
+| Activation      | `Activation`, `ReLU`, `Sigmoid`, `Softmax`, `Tanh`, `GELU`                                                     |
+
+### Parameter conventions
+
+| Type      | Example        | Used by                     |
+| --------- | -------------- | --------------------------- |
+| Integer   | `128`          | Dense units, Conv filters   |
+| Dimension | `3x3`, `2x2`   | Conv kernel size, pool size |
+| Float     | `0.5`          | Dropout probability         |
+| String    | `relu`, `tanh` | Activation name             |
+
+## Examples
+
+### LeNet-5
+
+```mermaid-example
+neuralnet sequential
+  title LeNet-5
+  Input[28, 28, 1]
+  Conv2D[6, 5x5, tanh]
+  AvgPool2D[2x2]
+  Conv2D[16, 5x5, tanh]
+  AvgPool2D[2x2]
+  Flatten
+  Dense[120, tanh]
+  Dense[84, tanh]
+  Dense[10, softmax]
+```
+
+### Encoder-Decoder (graph mode)
+
+```mermaid-example
+neuralnet
+  title Simple Autoencoder
+  inp: Input[784]
+  enc1: Dense[256, relu]
+  enc2: Dense[64, relu]
+  lat: Dense[16, relu]
+  dec1: Dense[64, relu]
+  dec2: Dense[256, relu]
+  out: Dense[784, sigmoid]
+
+  inp --> enc1
+  enc1 --> enc2
+  enc2 --> lat
+  lat --> dec1
+  dec1 --> dec2
+  dec2 --> out
+```
