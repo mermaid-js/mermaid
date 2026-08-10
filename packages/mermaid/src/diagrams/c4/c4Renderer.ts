@@ -5,6 +5,7 @@ import { parser } from './parser/c4Diagram.jison';
 import common from '../common/common.js';
 import c4Db from './c4Db.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { getEffectiveHtmlLabels } from '../../config.js';
 import { getRequiredConfig } from '../../diagram-api/requiredConfig.js';
 import assignWithDepth from '../../assignWithDepth.js';
 import { wrapLabel, calculateTextWidth, calculateTextHeight } from '../../utils.js';
@@ -16,7 +17,9 @@ import type { SVG } from '../../diagram-api/types.js';
 import type { TextDimensionConfig } from '../../types.js';
 import type { C4Boundary, C4DrawConfig, C4Font, C4Rel, C4Shape, C4Text } from './c4Types.js';
 import { shapes } from '../../rendering-util/rendering-elements/shapes.js';
-import { buildC4Node } from './c4ShapeAdapter.js';
+import { buildC4Node, buildEdgeLabel } from './c4ShapeAdapter.js';
+import { insertEdgeLabel, insertEdge } from '../../rendering-util/rendering-elements/edges.js';
+import insertMarkers from '../../rendering-util/rendering-elements/markers.js';
 
 type C4DB = typeof c4Db;
 
@@ -183,14 +186,6 @@ const boundaryFont = (cnf: C4DrawConfig): C4Font => {
   };
 };
 
-const messageFont = (cnf: C4DrawConfig): C4Font => {
-  return {
-    fontFamily: cnf.messageFontFamily,
-    fontSize: cnf.messageFontSize as number,
-    fontWeight: cnf.messageFontWeight,
-  };
-};
-
 function calcC4ShapeTextWH(
   textType: 'label' | 'type' | 'techn' | 'descr',
   c4Shape: C4Shape | C4Boundary | C4Rel,
@@ -350,19 +345,37 @@ const getIntersectPoint = function (fromNode: C4Shape, endPoint: Point): Point |
   return new Point(x, y);
 };
 
-const getIntersectPoints = function (fromNode: C4Shape, endNode: C4Shape) {
-  const endIntersectPoint = { x: 0, y: 0 };
-  endIntersectPoint.x = endNode.x + endNode.width / 2;
-  endIntersectPoint.y = endNode.y + endNode.height / 2;
-  const startPoint = getIntersectPoint(fromNode, endIntersectPoint);
+/**
+ * An `UpdateRelStyle` colour, accepted only if it is a colour on its own. The value is
+ * interpolated into a CSS declaration, so one carrying `;` or a `url(...)` could append
+ * further declarations; `CSS.supports` rejects those, and anything it cannot judge (no
+ * CSS API, as in jsdom) falls back to a conservative pattern match.
+ */
+const asColor = (value: unknown): string | undefined => {
+  if (typeof value !== 'string' || value === '') {
+    return undefined;
+  }
+  const accepted =
+    typeof globalThis.CSS?.supports === 'function'
+      ? globalThis.CSS.supports('color', value)
+      : /^(#[\da-f]{3,8}|[a-z]+|rgba?\([\d\s%.,/]+\)|hsla?\([\d\s%.,/deg]+\))$/i.test(value);
+  return accepted ? value : undefined;
+};
 
-  endIntersectPoint.x = fromNode.x + fromNode.width / 2;
-  endIntersectPoint.y = fromNode.y + fromNode.height / 2;
-  const endPoint = getIntersectPoint(endNode, endIntersectPoint);
+// Where the line between two shapes meets each one's boundary. Each endpoint comes
+// from that shape's own `intersect`, captured from the unified shape that drew it,
+// so an arrow stops at the person or cylinder silhouette rather than at its bounding
+// box. Aiming each endpoint at the other shape's centre keeps the segment on the line
+// joining the two centres.
+const getIntersectPoints = function (fromNode: C4Shape, endNode: C4Shape) {
+  const fromCenter = new Point(fromNode.x + fromNode.width / 2, fromNode.y + fromNode.height / 2);
+  const endCenter = new Point(endNode.x + endNode.width / 2, endNode.y + endNode.height / 2);
+  const startPoint = getIntersectPoint(fromNode, endCenter);
+  const endPoint = getIntersectPoint(endNode, fromCenter);
   return { startPoint: startPoint, endPoint: endPoint };
 };
 
-export const drawRels = function (
+export const drawRels = async function (
   diagram: SVG,
   rels: C4Rel[],
   getC4ShapeObj: (alias: string) => C4Shape | undefined,
@@ -370,25 +383,28 @@ export const drawRels = function (
   diagramId: string
 ) {
   const diagramType = (diagObj.db as C4DB).getC4Type();
+  const config = getConfig();
+  const look = config.look ?? 'classic';
+  // Emphasis tags only render as emphasis in an HTML label; the plain form drops them.
+  const useHtmlLabels = getEffectiveHtmlLabels(config);
+
+  // Relationships are drawn through the unified edge renderer: a dashed line with an
+  // arrowhead and an HTML label, matching c4model.com. Edges (and their labels) are drawn
+  // ON TOP of the shapes - as the legacy C4 renderer did - so the connection line is never
+  // hidden behind a box. The legacy grid still supplies the geometry (a straight line
+  // between the two shapes' boundary intersection points), which keeps the line in the gaps.
+  const edgePaths = diagram.append('g').attr('class', 'edgePaths');
+  const edgeLabels = diagram.append('g').attr('class', 'edgeLabels');
+  insertMarkers(diagram, ['point'], 'c4', diagramId);
+  // The intersection points are already clipped to the shape boundaries, so insertEdge does
+  // not need to clip again (skipIntersect); the node stubs are therefore unused.
+  const nodeStub = { intersect: (point: Point) => point };
+
   let i = 0;
   for (const rel of rels) {
     i = i + 1;
-    const relTextWrap = rel.wrap && conf.wrap;
-    const relConf = messageFont(conf);
     if (diagramType === 'C4Dynamic') {
       rel.label.text = i + ': ' + rel.label.text;
-    }
-    let textLimitWidth = calculateTextWidth(rel.label.text, relConf as TextDimensionConfig);
-    calcC4ShapeTextWH('label', rel, relTextWrap, relConf, textLimitWidth);
-
-    if (rel.techn && rel.techn.text !== '') {
-      textLimitWidth = calculateTextWidth(rel.techn.text, relConf as TextDimensionConfig);
-      calcC4ShapeTextWH('techn', rel, relTextWrap, relConf, textLimitWidth);
-    }
-
-    if (rel.descr && rel.descr.text !== '') {
-      textLimitWidth = calculateTextWidth(rel.descr.text, relConf as TextDimensionConfig);
-      calcC4ShapeTextWH('descr', rel, relTextWrap, relConf, textLimitWidth);
     }
 
     const fromNode = getC4ShapeObj(rel.from);
@@ -402,10 +418,49 @@ export const drawRels = function (
         `Could not calculate intersection points for rel "${rel.from}" -> "${rel.to}"`
       );
     }
-    rel.startPoint = points.startPoint;
-    rel.endPoint = points.endPoint;
+
+    // Honour UpdateRelStyle: $offsetX/$offsetY nudge the label, $textColor/$lineColor recolour it.
+    // The db may store the offsets as strings (named attributes land in the textColor/lineColor
+    // slots, which aren't parseInt'd) or as numbers (positional), so coerce defensively.
+    const toOffset = (value: unknown) => {
+      const n = Number(value);
+      return Number.isNaN(n) ? 0 : n;
+    };
+    const offsetX = toOffset(rel.offsetX);
+    const offsetY = toOffset(rel.offsetY);
+    const lineColor = asColor(rel.lineColor);
+    const textColor = asColor(rel.textColor);
+    const labelX = (points.startPoint.x + points.endPoint.x) / 2 + offsetX;
+    const labelY = (points.startPoint.y + points.endPoint.y) / 2 + offsetY;
+
+    const edge = {
+      id: `${diagramId}_rel${i}`,
+      label: buildEdgeLabel(rel, useHtmlLabels),
+      labelType: 'string',
+      classes: 'c4-rel',
+      arrowTypeEnd: 'arrow_point',
+      arrowTypeStart: rel.type === 'birel' ? 'arrow_point' : undefined,
+      thickness: 'normal',
+      pattern: 'dashed',
+      curve: 'linear',
+      look,
+      points: [points.startPoint, points.endPoint],
+      style: lineColor ? [`stroke:${lineColor}`] : undefined,
+      cssStyles: textColor ? [`color:${textColor}`] : undefined,
+    };
+
+    if (edge.label) {
+      await insertEdgeLabel(edgeLabels, edge);
+      // Position the label at the line midpoint + the UpdateRelStyle offset. We set the
+      // transform directly rather than via positionEdgeLabel, which discards edge.x/y (and
+      // so the offset) whenever insertEdge happens to report an updated path.
+      const labelGroup = edgeLabels.node()?.lastElementChild;
+      if (labelGroup) {
+        labelGroup.setAttribute('transform', `translate(${labelX}, ${labelY})`);
+      }
+    }
+    insertEdge(edgePaths, edge, new Map(), 'c4', nodeStub, nodeStub, diagramId, true);
   }
-  svgDraw.drawRels(diagram, rels, conf, diagramId);
 };
 
 async function drawInsideBoundary(
@@ -580,13 +635,7 @@ export const draw = async function (_text: string, id: string, _version: string,
   //     break;
   // }
 
-  // The arrow head definition is attached to the svg once
-  svgDraw.insertArrowHead(diagram, id);
-  svgDraw.insertArrowEnd(diagram, id);
-  svgDraw.insertArrowCrossHead(diagram, id);
-  svgDraw.insertArrowFilledHead(diagram, id);
-
-  drawRels(diagram, db.getRels(), db.getC4Shape, diagObj, id);
+  await drawRels(diagram, db.getRels(), db.getC4Shape, diagObj, id);
 
   screenBounds.data.stopx = globalBoundaryMaxX;
   screenBounds.data.stopy = globalBoundaryMaxY;
