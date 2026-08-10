@@ -129,13 +129,17 @@ export const titleWindowRenderer: ComponentRenderer<TitleWindow> = {
       .attr('class', 'wireframe-title-bar');
 
     // Window controls (close, minimize, maximize dots)
-    const dotColors = ['#ff5f56', '#ffbd2e', '#27c93f'];
-    dotColors.forEach((color, idx) => {
+    const dotClasses = [
+      'wireframe-title-bar-dot-close',
+      'wireframe-title-bar-dot-minimize',
+      'wireframe-title-bar-dot-maximize',
+    ];
+    dotClasses.forEach((dotClass, idx) => {
       g.append('circle')
         .attr('cx', x + 12 + idx * 14)
         .attr('cy', y + titleBarHeight / 2)
         .attr('r', 4.5)
-        .style('fill', color);
+        .attr('class', `wireframe-title-bar-dot ${dotClass}`);
     });
 
     // Window Title
