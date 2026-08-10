@@ -85,8 +85,7 @@ Use double quotes and backticks "\` text \`" to enclose the markdown text.
 ```mermaid-example
 ---
 config:
-  flowchart:
-    htmlLabels: false
+  htmlLabels: false
 ---
 flowchart LR
     markdown["`This **is** _Markdown_`"]
@@ -99,8 +98,7 @@ flowchart LR
 ```mermaid
 ---
 config:
-  flowchart:
-    htmlLabels: false
+  htmlLabels: false
 ---
 flowchart LR
     markdown["`This **is** _Markdown_`"]
@@ -324,56 +322,58 @@ This syntax creates a node A as a rectangle. It renders in the same way as `A["A
 
 Below is a comprehensive list of the newly introduced shapes and their corresponding semantic meanings, short names, and aliases:
 
-| **Semantic Name**                 | **Shape Name**         | **Short Name** | **Description**                | **Alias Supported**                                              |
-| --------------------------------- | ---------------------- | -------------- | ------------------------------ | ---------------------------------------------------------------- |
-| Bang                              | Bang                   | `bang`         | Bang                           | `bang`                                                           |
-| Card                              | Notched Rectangle      | `notch-rect`   | Represents a card              | `card`, `notched-rectangle`                                      |
-| Cloud                             | Cloud                  | `cloud`        | cloud                          | `cloud`                                                          |
-| Collate                           | Hourglass              | `hourglass`    | Represents a collate operation | `collate`, `hourglass`                                           |
-| Com Link                          | Lightning Bolt         | `bolt`         | Communication link             | `com-link`, `lightning-bolt`                                     |
-| Comment                           | Curly Brace            | `brace`        | Adds a comment                 | `brace-l`, `comment`                                             |
-| Comment Right                     | Curly Brace            | `brace-r`      | Adds a comment                 |                                                                  |
-| Comment with braces on both sides | Curly Braces           | `braces`       | Adds a comment                 |                                                                  |
-| Data Input/Output                 | Lean Right             | `lean-r`       | Represents input or output     | `in-out`, `lean-right`                                           |
-| Data Input/Output                 | Lean Left              | `lean-l`       | Represents output or input     | `lean-left`, `out-in`                                            |
-| Database                          | Cylinder               | `cyl`          | Database storage               | `cylinder`, `database`, `db`                                     |
-| Decision                          | Diamond                | `diam`         | Decision-making step           | `decision`, `diamond`, `question`                                |
-| Delay                             | Half-Rounded Rectangle | `delay`        | Represents a delay             | `half-rounded-rectangle`                                         |
-| Direct Access Storage             | Horizontal Cylinder    | `h-cyl`        | Direct access storage          | `das`, `horizontal-cylinder`                                     |
-| Disk Storage                      | Lined Cylinder         | `lin-cyl`      | Disk storage                   | `disk`, `lined-cylinder`                                         |
-| Display                           | Curved Trapezoid       | `curv-trap`    | Represents a display           | `curved-trapezoid`, `display`                                    |
-| Divided Process                   | Divided Rectangle      | `div-rect`     | Divided process shape          | `div-proc`, `divided-process`, `divided-rectangle`               |
-| Document                          | Document               | `doc`          | Represents a document          | `doc`, `document`                                                |
-| Ellipse                           | Ellipse                | `ellipse`      | Ellipse shape                  | `oval`                                                           |
-| Event                             | Rounded Rectangle      | `rounded`      | Represents an event            | `event`                                                          |
-| Extract                           | Triangle               | `tri`          | Extraction process             | `extract`, `triangle`                                            |
-| Fork/Join                         | Filled Rectangle       | `fork`         | Fork or join in process flow   | `join`                                                           |
-| Internal Storage                  | Window Pane            | `win-pane`     | Internal storage               | `internal-storage`, `window-pane`                                |
-| Junction                          | Filled Circle          | `f-circ`       | Junction point                 | `filled-circle`, `junction`                                      |
-| Lined Document                    | Lined Document         | `lin-doc`      | Lined document                 | `lined-document`                                                 |
-| Lined/Shaded Process              | Lined Rectangle        | `lin-rect`     | Lined process shape            | `lin-proc`, `lined-process`, `lined-rectangle`, `shaded-process` |
-| Loop Limit                        | Trapezoidal Pentagon   | `notch-pent`   | Loop limit step                | `loop-limit`, `notched-pentagon`                                 |
-| Manual File                       | Flipped Triangle       | `flip-tri`     | Manual file operation          | `flipped-triangle`, `manual-file`                                |
-| Manual Input                      | Sloped Rectangle       | `sl-rect`      | Manual input step              | `manual-input`, `sloped-rectangle`                               |
-| Manual Operation                  | Trapezoid Base Top     | `trap-t`       | Represents a manual task       | `inv-trapezoid`, `manual`, `trapezoid-top`                       |
-| Multi-Document                    | Stacked Document       | `docs`         | Multiple documents             | `documents`, `st-doc`, `stacked-document`                        |
-| Multi-Process                     | Stacked Rectangle      | `st-rect`      | Multiple processes             | `processes`, `procs`, `stacked-rectangle`                        |
-| Odd                               | Odd                    | `odd`          | Odd shape                      |                                                                  |
-| Paper Tape                        | Flag                   | `flag`         | Paper tape                     | `paper-tape`                                                     |
-| Prepare Conditional               | Hexagon                | `hex`          | Preparation or condition step  | `hexagon`, `prepare`                                             |
-| Priority Action                   | Trapezoid Base Bottom  | `trap-b`       | Priority action                | `priority`, `trapezoid`, `trapezoid-bottom`                      |
-| Process                           | Rectangle              | `rect`         | Standard process shape         | `proc`, `process`, `rectangle`                                   |
-| Start                             | Circle                 | `circle`       | Starting point                 | `circ`                                                           |
-| Start                             | Small Circle           | `sm-circ`      | Small starting point           | `small-circle`, `start`                                          |
-| Stop                              | Double Circle          | `dbl-circ`     | Represents a stop point        | `double-circle`                                                  |
-| Stop                              | Framed Circle          | `fr-circ`      | Stop point                     | `framed-circle`, `stop`                                          |
-| Stored Data                       | Bow Tie Rectangle      | `bow-rect`     | Stored data                    | `bow-tie-rectangle`, `stored-data`                               |
-| Subprocess                        | Framed Rectangle       | `fr-rect`      | Subprocess                     | `framed-rectangle`, `subproc`, `subprocess`, `subroutine`        |
-| Summary                           | Crossed Circle         | `cross-circ`   | Summary                        | `crossed-circle`, `summary`                                      |
-| Tagged Document                   | Tagged Document        | `tag-doc`      | Tagged document                | `tag-doc`, `tagged-document`                                     |
-| Tagged Process                    | Tagged Rectangle       | `tag-rect`     | Tagged process                 | `tag-proc`, `tagged-process`, `tagged-rectangle`                 |
-| Terminal Point                    | Stadium                | `stadium`      | Terminal point                 | `pill`, `terminal`                                               |
-| Text Block                        | Text Block             | `text`         | Text block                     |                                                                  |
+| **Semantic Name**                 | **Shape Name**         | **Short Name** | **Description**                             | **Alias Supported**                                              |
+| --------------------------------- | ---------------------- | -------------- | ------------------------------------------- | ---------------------------------------------------------------- |
+| Bang                              | Bang                   | `bang`         | Bang                                        | `bang`                                                           |
+| Card                              | Notched Rectangle      | `notch-rect`   | Represents a card                           | `card`, `notched-rectangle`                                      |
+| Cloud                             | Cloud                  | `cloud`        | cloud                                       | `cloud`                                                          |
+| Collate                           | Hourglass              | `hourglass`    | Represents a collate operation              | `collate`, `hourglass`                                           |
+| Com Link                          | Lightning Bolt         | `bolt`         | Communication link                          | `com-link`, `lightning-bolt`                                     |
+| Comment                           | Curly Brace            | `brace`        | Adds a comment                              | `brace-l`, `comment`                                             |
+| Comment Right                     | Curly Brace            | `brace-r`      | Adds a comment                              |                                                                  |
+| Comment with braces on both sides | Curly Braces           | `braces`       | Adds a comment                              |                                                                  |
+| Data Input/Output                 | Lean Right             | `lean-r`       | Represents input or output                  | `in-out`, `lean-right`                                           |
+| Data Input/Output                 | Lean Left              | `lean-l`       | Represents output or input                  | `lean-left`, `out-in`                                            |
+| Data Store                        | Data Store             | `datastore`    | Data flow diagram data store                | `data-store`                                                     |
+| Database                          | Cylinder               | `cyl`          | Database storage                            | `cylinder`, `database`, `db`                                     |
+| Decision                          | Diamond                | `diam`         | Decision-making step                        | `decision`, `diamond`, `question`                                |
+| Delay                             | Half-Rounded Rectangle | `delay`        | Represents a delay                          | `half-rounded-rectangle`                                         |
+| Direct Access Storage             | Horizontal Cylinder    | `h-cyl`        | Direct access storage                       | `das`, `horizontal-cylinder`                                     |
+| Disk Storage                      | Lined Cylinder         | `lin-cyl`      | Disk storage                                | `disk`, `lined-cylinder`                                         |
+| Display                           | Curved Trapezoid       | `curv-trap`    | Represents a display                        | `curved-trapezoid`, `display`                                    |
+| Divided Process                   | Divided Rectangle      | `div-rect`     | Divided process shape                       | `div-proc`, `divided-process`, `divided-rectangle`               |
+| Document                          | Document               | `doc`          | Represents a document                       | `doc`, `document`                                                |
+| Ellipse                           | Ellipse                | `ellipse`      | Ellipse shape                               | `oval`                                                           |
+| Event                             | Rounded Rectangle      | `rounded`      | Represents an event                         | `event`                                                          |
+| Extract                           | Triangle               | `tri`          | Extraction process                          | `extract`, `triangle`                                            |
+| Fork/Join                         | Filled Rectangle       | `fork`         | Fork or join in process flow                | `join`                                                           |
+| Internal Storage                  | Window Pane            | `win-pane`     | Internal storage                            | `internal-storage`, `window-pane`                                |
+| Junction                          | Filled Circle          | `f-circ`       | Junction point                              | `filled-circle`, `junction`                                      |
+| Lined Document                    | Lined Document         | `lin-doc`      | Lined document                              | `lined-document`                                                 |
+| Lined/Shaded Process              | Lined Rectangle        | `lin-rect`     | Lined process shape                         | `lin-proc`, `lined-process`, `lined-rectangle`, `shaded-process` |
+| Loop Limit                        | Trapezoidal Pentagon   | `notch-pent`   | Loop limit step                             | `loop-limit`, `notched-pentagon`                                 |
+| Manual File                       | Flipped Triangle       | `flip-tri`     | Manual file operation                       | `flipped-triangle`, `manual-file`                                |
+| Manual Input                      | Sloped Rectangle       | `sl-rect`      | Manual input step                           | `manual-input`, `sloped-rectangle`                               |
+| Manual Operation                  | Trapezoid Base Top     | `trap-t`       | Represents a manual task                    | `inv-trapezoid`, `manual`, `trapezoid-top`                       |
+| Multi-Document                    | Stacked Document       | `docs`         | Multiple documents                          | `documents`, `st-doc`, `stacked-document`                        |
+| Multi-Process                     | Stacked Rectangle      | `st-rect`      | Multiple processes                          | `processes`, `procs`, `stacked-rectangle`                        |
+| Odd                               | Odd                    | `odd`          | Odd shape                                   |                                                                  |
+| Paper Tape                        | Flag                   | `flag`         | Paper tape                                  | `paper-tape`                                                     |
+| Person                            | Person                 | `person`       | Person (circular head above a rounded body) |                                                                  |
+| Prepare Conditional               | Hexagon                | `hex`          | Preparation or condition step               | `hexagon`, `prepare`                                             |
+| Priority Action                   | Trapezoid Base Bottom  | `trap-b`       | Priority action                             | `priority`, `trapezoid`, `trapezoid-bottom`                      |
+| Process                           | Rectangle              | `rect`         | Standard process shape                      | `proc`, `process`, `rectangle`                                   |
+| Start                             | Circle                 | `circle`       | Starting point                              | `circ`                                                           |
+| Start                             | Small Circle           | `sm-circ`      | Small starting point                        | `small-circle`, `start`                                          |
+| Stop                              | Double Circle          | `dbl-circ`     | Represents a stop point                     | `double-circle`                                                  |
+| Stop                              | Framed Circle          | `fr-circ`      | Stop point                                  | `framed-circle`, `stop`                                          |
+| Stored Data                       | Bow Tie Rectangle      | `bow-rect`     | Stored data                                 | `bow-tie-rectangle`, `stored-data`                               |
+| Subprocess                        | Framed Rectangle       | `fr-rect`      | Subprocess                                  | `framed-rectangle`, `subproc`, `subprocess`, `subroutine`        |
+| Summary                           | Crossed Circle         | `cross-circ`   | Summary                                     | `crossed-circle`, `summary`                                      |
+| Tagged Document                   | Tagged Document        | `tag-doc`      | Tagged document                             | `tag-doc`, `tagged-document`                                     |
+| Tagged Process                    | Tagged Rectangle       | `tag-rect`     | Tagged process                              | `tag-proc`, `tagged-process`, `tagged-rectangle`                 |
+| Terminal Point                    | Stadium                | `stadium`      | Terminal point                              | `pill`, `terminal`                                               |
+| Text Block                        | Text Block             | `text`         | Text block                                  |                                                                  |
 
 ### Example Flowchart with New Shapes
 
@@ -527,6 +527,18 @@ flowchart TD
 ```mermaid
 flowchart TD
     A@{ shape: lean-l, label: "Output/Input" }
+```
+
+### Datastore (Top and bottom border)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: datastore, label: "Datastore" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: datastore, label: "Datastore" }
 ```
 
 ### Priority Action (Trapezoid Base Bottom)
@@ -1605,6 +1617,50 @@ flowchart LR
     outside ---> top2
 ```
 
+### Collapsible subgraphs (v\<MERMAID_RELEASE_VERSION>+)
+
+A subgraph can be collapsed into a single compact node by attaching the metadata
+`@{ view: collapsed }` to its id. This is useful for hiding the internals of a
+group while still showing how it connects to the rest of the diagram.
+
+```mermaid-example
+flowchart TD
+    Start --> one
+    subgraph one [My Group]
+        A --> B
+        B --> C
+    end
+    one --> End
+    one@{ view: collapsed }
+```
+
+```mermaid
+flowchart TD
+    Start --> one
+    subgraph one [My Group]
+        A --> B
+        B --> C
+    end
+    one --> End
+    one@{ view: collapsed }
+```
+
+The metadata is attached with the existing `id@{ ... }` statement syntax, where
+`id` is the subgraph id (use `subgraph id [Title]` to give a subgraph an explicit
+id). When a subgraph is collapsed:
+
+- Its internal nodes are hidden and it is drawn as a single node carrying the
+  subgraph's title.
+- Edges that cross the subgraph boundary are **redirected to the collapsed node**.
+- Edges that are entirely internal to the collapsed subgraph are dropped (they
+  would otherwise become self-loops on the collapsed node).
+- For nested subgraphs, a collapse resolves to the **outermost** collapsed
+  ancestor, so an edge pointing at a deeply nested node lands on the outermost
+  collapsed group.
+
+`view: expanded` is the default and renders the subgraph normally, so omitting the
+metadata (or setting `view: expanded`) keeps the existing behavior.
+
 ## Markdown Strings
 
 The "Markdown Strings" feature enhances flowcharts and mind maps by offering a more versatile string type, which supports text formatting options such as bold and italics, and automatically wraps text within labels.
@@ -1612,8 +1668,7 @@ The "Markdown Strings" feature enhances flowcharts and mind maps by offering a m
 ```mermaid-example
 ---
 config:
-  flowchart:
-    htmlLabels: false
+  htmlLabels: false
 ---
 flowchart LR
 subgraph "One"
@@ -1629,8 +1684,7 @@ end
 ```mermaid
 ---
 config:
-  flowchart:
-    htmlLabels: false
+  htmlLabels: false
 ---
 flowchart LR
 subgraph "One"
@@ -1761,7 +1815,8 @@ Beginner's tip—a full example using interactive links in a html context:
     };
     const config = {
       startOnLoad: true,
-      flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'cardinal' },
+      htmlLabels: true,
+      flowchart: { useMaxWidth: true, curve: 'cardinal' },
       securityLevel: 'loose',
     };
     mermaid.initialize(config);
@@ -1940,35 +1995,24 @@ flowchart LR
 
 ### CSS classes
 
-It is also possible to predefine classes in CSS styles that can be applied from the graph definition as in the example
-below:
+> **Note:** Applying styles to Mermaid nodes via external CSS (e.g., `.cssClass > rect { fill: ... }`) does **not** work reliably. Mermaid's internal styles are injected with `!important` and scoped to the SVG element ID, giving them higher specificity than external CSS rules. External CSS will be silently overridden.
+>
+> The recommended approach is to use the `classDef` syntax shown in the [Classes](#classes) section above, which works correctly and is the intended styling mechanism.
+>
+> If external CSS is strictly required, every property must use `!important` to override Mermaid's styles — but this is not recommended.
 
-**Example style**
-
-```html
-<style>
-  .cssClass > rect {
-    fill: #ff0000;
-    stroke: #ffff00;
-    stroke-width: 4px;
-  }
-</style>
-```
-
-**Example definition**
+**Working approach — use `classDef` instead:**
 
 ```mermaid-example
 flowchart LR
-    A-->B[AAA<span>BBB</span>]
-    B-->D
-    class A cssClass
+    A:::myStyle --> B
+    classDef myStyle fill:#ff0000,stroke:#ffff00,stroke-width:4px
 ```
 
 ```mermaid
 flowchart LR
-    A-->B[AAA<span>BBB</span>]
-    B-->D
-    class A cssClass
+    A:::myStyle --> B
+    classDef myStyle fill:#ff0000,stroke:#ffff00,stroke-width:4px
 ```
 
 ### Default class

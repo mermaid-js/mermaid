@@ -1,5 +1,5 @@
 import { line } from 'd3';
-import type { DrawableElem, LinePlotData, XYChartConfig } from '../../interfaces.js';
+import type { DrawableElem, LinePlotData, TextElem, XYChartConfig } from '../../interfaces.js';
 import type { Axis } from '../axis/index.js';
 
 export class LinePlot {
@@ -30,7 +30,8 @@ export class LinePlot {
     if (!path) {
       return [];
     }
-    return [
+
+    const elements: DrawableElem[] = [
       {
         groupTexts: ['plot', `line-plot-${this.plotIndex}`],
         type: 'path',
@@ -43,5 +44,52 @@ export class LinePlot {
         ],
       },
     ];
+
+    if (this.plotData.pointLabels && this.plotData.pointLabels.length > 0) {
+      const labelOffset = 10;
+      const fontSize = 12;
+      const textData: TextElem[] = [];
+
+      for (const [i, [px, py]] of finalData.entries()) {
+        const label = this.plotData.pointLabels[i];
+        if (!label) {
+          continue;
+        }
+
+        if (this.orientation === 'horizontal') {
+          textData.push({
+            x: py + labelOffset,
+            y: px,
+            text: label,
+            fill: this.plotData.strokeFill,
+            verticalPos: 'middle',
+            horizontalPos: 'left',
+            fontSize,
+            rotation: 0,
+          });
+        } else {
+          textData.push({
+            x: px,
+            y: py - labelOffset,
+            text: label,
+            fill: this.plotData.strokeFill,
+            verticalPos: 'middle',
+            horizontalPos: 'center',
+            fontSize,
+            rotation: 0,
+          });
+        }
+      }
+
+      if (textData.length > 0) {
+        elements.push({
+          groupTexts: ['plot', `line-plot-${this.plotIndex}`, 'labels'],
+          type: 'text',
+          data: textData,
+        });
+      }
+    }
+
+    return elements;
   }
 }

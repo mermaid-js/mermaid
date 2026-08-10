@@ -11,26 +11,31 @@ import mermaidAPI, {
   putIntoIFrame,
   removeExistingElements,
 } from './mermaidAPI.js';
+import * as configApi from './config.js';
 
 // --------------
 // Mocks
 //   To mock a module, first define a mock for it, then (if used explicitly in the tests) import it. Be sure the path points to exactly the same file as is imported in mermaidAPI (the module being tested)
-vi.mock('./styles.js', () => {
+vi.mock(import('./styles.js'), async (importOriginal) => {
+  const original = await importOriginal();
   return {
     addStylesForDiagram: vi.fn(),
-    default: vi.fn().mockReturnValue(' .userStyle { font-weight:bold; }'),
+    cssStyleSheetToString: vi.fn().mockImplementation(original.cssStyleSheetToString),
+    default: vi.fn().mockImplementation(
+      (_type, userStyles, _options) => `
+    & .edge-pattern-dashed{
+      stroke-dasharray: 3;
+    }
+
+    ${userStyles}
+    `
+    ),
   };
 });
 
 import getStyles from './styles.js';
 
-vi.mock('stylis', () => {
-  return {
-    stringify: vi.fn(),
-    compile: vi.fn(),
-    serialize: vi.fn().mockReturnValue('stylis serialized css'),
-  };
-});
+vi.mock(import('stylis'), { spy: true });
 
 import { compile, serialize } from 'stylis';
 import { Diagram } from './Diagram.js';
@@ -178,13 +183,10 @@ describe('mermaidAPI', () => {
     });
 
     it('uses the height and appends px from the svgElement given', () => {
-      const faux_svgElement = {
-        viewBox: {
-          baseVal: {
-            height: 42,
-          },
-        },
-      };
+      const faux_svgElement = vi.mockObject(
+        document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+      );
+      vi.spyOn(faux_svgElement.viewBox.baseVal, 'height', 'get').mockReturnValue(42);
 
       const result = putIntoIFrame(inputSvgCode, faux_svgElement);
       expect(result).toMatch(/style="(.*)height:42px;/);
@@ -241,7 +243,7 @@ describe('mermaidAPI', () => {
     const serif = 'serif';
     const sansSerif = 'sans-serif';
     const mocked_config_with_htmlLabels: MermaidConfig = {
-      themeCSS: 'default',
+      themeCSS: '.default {color: red;}',
       fontFamily: serif,
       altFontFamily: sansSerif,
       htmlLabels: true,
@@ -249,21 +251,30 @@ describe('mermaidAPI', () => {
 
     it('gets the cssStyles from the theme', () => {
       const styles = createCssStyles(mocked_config_with_htmlLabels, null);
-      expect(styles).toMatch(/^\ndefault(.*)/);
+      expect(styles).toContain('.default {color: red;}');
     });
+
     it('gets the fontFamily from the config', () => {
       const styles = createCssStyles(mocked_config_with_htmlLabels, new Map());
-      expect(styles).toMatch(/(.*)\n:root { --mermaid-font-family: serif(.*)/);
+      expect(styles).toMatch(/(.*)\n:root {--mermaid-font-family: serif(.*)/);
     });
+
     it('gets the alt fontFamily from the config', () => {
       const styles = createCssStyles(mocked_config_with_htmlLabels, undefined);
-      expect(styles).toMatch(/(.*)\n:root { --mermaid-alt-font-family: sans-serif(.*)/);
+      expect(styles).toMatch(/(.*)\n:root {--mermaid-alt-font-family: sans-serif(.*)/);
     });
 
     describe('there are some classDefs', () => {
-      const classDef1 = { id: 'classDef1', styles: ['style1-1', 'style1-2'], textStyles: [] };
-      const classDef2 = { id: 'classDef2', styles: [], textStyles: ['textStyle2-1'] };
-      const classDef3 = { id: 'classDef3', textStyles: ['textStyle3-1', 'textStyle3-2'] };
+      const classDef1 = {
+        id: 'classDef1',
+        styles: ['prop: style1-1', 'prop-2: style1-2'],
+        textStyles: [],
+      };
+      const classDef2 = { id: 'classDef2', styles: [], textStyles: ['prop: textStyle2-1'] };
+      const classDef3 = {
+        id: 'classDef3',
+        textStyles: ['prop: textStyle3-1', 'prop-2: textStyle3-2'],
+      };
       const classDefs = { classDef1, classDef2, classDef3 };
 
       describe('the graph supports classDefs', () => {
@@ -288,7 +299,7 @@ describe('mermaidAPI', () => {
             new RegExp(
               `\\.classDef1 ${escapeForRegexp(
                 htmlElement
-              )} \\{ style1-1 !important; style1-2 !important; }`
+              )} \\{prop: style1-1 !important; prop-2: style1-2 !important;}`
             )
           );
           // no CSS styles are created if there are no styles for a classDef
@@ -304,14 +315,14 @@ describe('mermaidAPI', () => {
         function expect_textStyles_matchesHtmlElements(textStyles: string, htmlElement: string) {
           expect(textStyles).toMatch(
             new RegExp(
-              `\\.classDef2 ${escapeForRegexp(htmlElement)} \\{ textStyle2-1 !important; }`
+              `\\.classDef2 ${escapeForRegexp(htmlElement)} \\{prop: textStyle2-1 !important;}`
             )
           );
           expect(textStyles).toMatch(
             new RegExp(
               `\\.classDef3 ${escapeForRegexp(
                 htmlElement
-              )} \\{ textStyle3-1 !important; textStyle3-2 !important; }`
+              )} \\{prop: textStyle3-1 !important; prop-2: textStyle3-2 !important;}`
             )
           );
 
@@ -358,10 +369,11 @@ describe('mermaidAPI', () => {
         });
 
         describe('no htmlLabels in the configuration', () => {
-          const mocked_config_no_htmlLabels = {
+          const mocked_config_no_htmlLabels: MermaidConfig = {
             themeCSS: 'default',
             fontFamily: 'serif',
             altFontFamily: 'sans-serif',
+            htmlLabels: false, // Explicitly set to false
           };
 
           describe('creates styles for shape elements "rect", "polygon", "ellipse", and "circle"', () => {
@@ -387,36 +399,153 @@ describe('mermaidAPI', () => {
 
   describe('createUserStyles', () => {
     const mockConfig = {
-      themeCSS: 'default',
+      themeCSS: '.default {color: red;}',
       htmlLabels: true,
       themeVariables: { fontFamily: 'serif' },
     };
 
-    const classDef1 = { id: 'classDef1', styles: ['style1-1'], textStyles: [] };
+    const classDef1 = { id: 'classDef1', styles: ['prop: style1-1'], textStyles: [] };
+
+    const divElement = document.body.appendChild(document.createElement('div'));
 
     it('gets the css styles created', () => {
       // @todo TODO if a single function in the module can be mocked, do it for createCssStyles and mock the results.
 
-      createUserStyles(mockConfig, 'flowchart-v2', new Map([['classDef1', classDef1]]), 'someId');
+      createUserStyles(mockConfig, 'flowchart-v2', new Map([['classDef1', classDef1]]), '#someId');
       const expectedStyles =
-        '\ndefault' +
-        '\n.classDef1 > * { style1-1 !important; }' +
-        '\n.classDef1 span { style1-1 !important; }';
-      expect(getStyles).toHaveBeenCalledWith('flowchart-v2', expectedStyles, {
-        fontFamily: 'serif',
-      });
+        '.default {color: red;}' +
+        '\n.classDef1 > * {prop: style1-1 !important;}' +
+        '\n.classDef1 span {prop: style1-1 !important;}';
+      expect(getStyles).toHaveBeenCalledWith(
+        'flowchart-v2',
+        expectedStyles,
+        {
+          fontFamily: 'serif',
+        },
+        '#someId'
+      );
     });
 
     it('calls getStyles to get css for all graph, user css styles, and config theme variables', () => {
-      createUserStyles(mockConfig, 'someDiagram', new Map(), 'someId');
+      createUserStyles(mockConfig, 'someDiagram', new Map(), '#someId');
       expect(getStyles).toHaveBeenCalled();
     });
 
     it('returns the result of compiling, stringifying, and serializing the css code with stylis', () => {
-      const result = createUserStyles(mockConfig, 'someDiagram', new Map(), 'someId');
+      const result = createUserStyles(mockConfig, 'someDiagram', new Map(), '#someId');
       expect(compile).toHaveBeenCalled();
       expect(serialize).toHaveBeenCalled();
-      expect(result).toEqual('stylis serialized css');
+      expect(result).toEqual(
+        '#someId .edge-pattern-dashed{stroke-dasharray:3;}#someId .default{color:red;}'
+      );
+    });
+
+    it('should sanitize CSS to avoid unbalanced braces', () => {
+      const result = createUserStyles(
+        mockConfig,
+        'someDiagram',
+        new Map(
+          Object.entries({
+            classDef1: {
+              styles: ['}*{ background-image: url("https://example.test")}'],
+              textStyles: [],
+            },
+            classDef2: {
+              styles: ['color: purple;'],
+            },
+          }).map(([id, value]) => [id, { ...value, id }])
+        ),
+        '#someId'
+      );
+      expect(result).toEqual(
+        '#someId .edge-pattern-dashed{stroke-dasharray:3;}#someId .default{color:red;}#someId .classDef2>*{color:purple;}#someId .classDef2 span{color:purple;}'
+      );
+    });
+
+    it('should handle `:not(&)` selectors in the CSS', () => {
+      const result = createUserStyles(
+        {
+          ...mockConfig,
+          themeCSS: ':not(&){background:green !important}',
+        },
+        'someDiagram',
+        new Map(),
+        '#someId'
+      );
+      expect(result).toEqual(
+        '#someId .edge-pattern-dashed{stroke-dasharray:3;}#someId :not(#someId){background:green!important;}'
+      );
+    });
+
+    it.for([
+      // test for CSS sibling components
+      ['should namespace sibling combinator', '& ~ *', '#someId #someId~*'],
+      // CSS ignores these whitespace characters
+      ['should namespace sibling combinator', '& \n\t \r \f \r\n + *', '#someId #someId+*'],
+      /*
+       * Experimental column combinator,
+       * see https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Column_combinator
+       *
+       * Output whitespace will probably change once JSDOM supports it.
+       */
+      ['should namespace column combinator', '& || *', '#someId #someId || *'],
+      ['should namespace root if using unsupported declarations', '&', '#someId #someId'],
+      // child combinators and descent combinators are already namespaced
+      ['should not namespace child combinator', '& > *', '#someId>*'],
+      ['should not namespace descent combinator', '& *', '#someId *'],
+    ] as const)('%s %s to %s', ([_description, inputSelector, expectedSelector]) => {
+      const result = createUserStyles(
+        { ...mockConfig, themeCSS: `${inputSelector} { color: red; }` },
+        'someDiagram',
+        new Map(),
+        '#someId'
+      );
+      expect(result).toEqual(
+        `#someId .edge-pattern-dashed{stroke-dasharray:3;}${expectedSelector}{color:red;}`
+      );
+    });
+
+    it('should remove unsupported at-rules from user CSS', () => {
+      const result = createUserStyles(
+        {
+          ...mockConfig,
+          themeCSS: `
+          @import url('https://example.test/styles.css');
+          @media (max-width: 600px) {
+            * {
+              background-color: lightblue;
+            }
+          }
+          @supports selector(h2 > p) {
+            h2 > p {
+              color: red;
+            }
+          }
+          `,
+        },
+        'someDiagram',
+        new Map(),
+        '#someId'
+      );
+      // @import is removed, but @media and @supports are kept with their child rules namespaced
+      expect(result).toEqual(
+        '#someId .edge-pattern-dashed{stroke-dasharray:3;}@media (max-width: 600px){#someId *{background-color:lightblue;}}@supports selector(h2 > p){#someId h2>p{color:red;}}'
+      );
+    });
+
+    it('should not namespace keyframe rules', () => {
+      const result = createUserStyles(
+        {
+          ...mockConfig,
+          themeCSS: '@keyframes dash { to { stroke-dashoffset: 1000; } }',
+        },
+        'someDiagram',
+        new Map(),
+        '#someId'
+      );
+      expect(result).toEqual(
+        '#someId .edge-pattern-dashed{stroke-dasharray:3;}@keyframes dash{to{stroke-dashoffset:1000;}}'
+      );
     });
   });
 
@@ -524,18 +653,18 @@ describe('mermaidAPI', () => {
     it('resets mermaid config to global defaults', () => {
       const config = {
         logLevel: 0,
-        securityLevel: 'loose',
+        htmlLabels: false,
       } as const;
       mermaidAPI.initialize(config);
-      mermaidAPI.setConfig({ securityLevel: 'strict', logLevel: 1 });
+      mermaidAPI.setConfig({ logLevel: 1, htmlLabels: true });
       expect(mermaidAPI.getConfig().logLevel).toBe(1);
-      expect(mermaidAPI.getConfig().securityLevel).toBe('strict');
+      expect(mermaidAPI.getConfig().htmlLabels).toBe(true);
       mermaidAPI.reset();
       expect(mermaidAPI.getConfig().logLevel).toBe(0);
-      expect(mermaidAPI.getConfig().securityLevel).toBe('loose');
+      expect(mermaidAPI.getConfig().htmlLabels).toBe(false);
       mermaidAPI.globalReset();
       expect(mermaidAPI.getConfig().logLevel).toBe(5);
-      expect(mermaidAPI.getConfig().securityLevel).toBe('strict');
+      expect(mermaidAPI.getConfig().htmlLabels).toBe(mermaidAPI.defaultConfig.htmlLabels);
     });
 
     it('prevents changes to site defaults (sneaky)', () => {
@@ -656,6 +785,14 @@ describe('mermaidAPI', () => {
         }
       `);
     });
+    it('resolves swimlanes as its own diagram type', async () => {
+      await expect(mermaidAPI.parse('swimlane-beta TD;A-->B;')).resolves.toMatchInlineSnapshot(`
+        {
+          "config": {},
+          "diagramType": "swimlane",
+        }
+      `);
+    });
     it('returns config when defined in frontmatter', async () => {
       await expect(
         mermaidAPI.parse(`---
@@ -737,7 +874,7 @@ graph TD;A--x|text including URL space|B;`)
     // We have to have both the specific textDiagramType and the expected type name because the expected type may be slightly different from what is put in the diagram text (ex: in -v2 diagrams)
     const diagramTypesAndExpectations = [
       // { textDiagramType: 'C4Context', expectedType: 'c4' }, TODO : setAccTitle not called in C4 jison parser
-      { textDiagramType: 'classDiagram', expectedType: 'class' },
+      { textDiagramType: 'classDiagram', expectedType: 'classDiagram' },
       { textDiagramType: 'classDiagram-v2', expectedType: 'classDiagram' },
       { textDiagramType: 'erDiagram', expectedType: 'er' },
       { textDiagramType: 'graph', expectedType: 'flowchart-v2' },
@@ -761,6 +898,7 @@ graph TD;A--x|text including URL space|B;`)
       { textDiagramType: 'requirementDiagram', expectedType: 'requirement' },
       { textDiagramType: 'sequenceDiagram', expectedType: 'sequence' },
       { textDiagramType: 'stateDiagram-v2', expectedType: 'stateDiagram' },
+      { textDiagramType: 'treeView-beta', expectedType: 'treeView' },
       { textDiagramType: 'radar-beta', expectedType: 'radar' },
       { textDiagramType: 'architecture-beta', expectedType: 'architecture' },
     ];
@@ -774,7 +912,7 @@ graph TD;A--x|text including URL space|B;`)
         describe(`${testedDiagram.textDiagramType}`, () => {
           const diagramType = testedDiagram.textDiagramType;
           const content = testedDiagram.content || '';
-          const diagramText = `${diagramType}\n accTitle: ${a11yTitle}\n accDescr: ${a11yDescr}\n ${content}`;
+          const diagramText = `${diagramType}\n accTitle: ${a11yTitle}\n accDescr: ${a11yDescr}\n${content}`;
           const expectedDiagramType = testedDiagram.expectedType;
 
           jsdomIt(
@@ -794,6 +932,27 @@ graph TD;A--x|text including URL space|B;`)
           );
         });
       });
+    });
+
+    jsdomIt('preserves treeView icons after strict security sanitization', async () => {
+      mermaidAPI.initialize({ securityLevel: 'strict' });
+
+      const { svg } = await mermaidAPI.render(
+        'tree-view-strict-icons',
+        `---
+config:
+  treeView:
+    showIcons: true
+---
+treeView-beta
+  src/
+    index.js`
+      );
+
+      const dom = new JSDOM(svg);
+      const iconNode = ensureNodeFromSelector('.treeView-node-icon', dom.window.document);
+      ensureNodeFromSelector('path', iconNode);
+      expect(dom.window.document.querySelector('use')).toBeNull();
     });
   });
 

@@ -1,5 +1,5 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { evaluate } from '../../diagrams/common/common.js';
+import { evaluate, getEffectiveHtmlLabels } from '../../config.js';
 import { log } from '../../logger.js';
 import { getSubGraphTitleMargins } from '../../utils/subGraphTitleMargins.js';
 import { select } from 'd3';
@@ -9,6 +9,7 @@ import intersectRect from '../rendering-elements/intersect/intersect-rect.js';
 import createLabel from './createLabel.js';
 import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
 import { compileStyles, styles2String, userNodeOverrides } from './shapes/handDrawnShapeStyles.js';
+import { swimlane } from './clusters/swimlane.js';
 
 const rect = async (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
@@ -22,24 +23,30 @@ const rect = async (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'cluster ' + node.cssClasses)
-    .attr('id', node.id)
+    .attr('id', node.domId)
     .attr('data-look', node.look);
 
-  const useHtmlLabels = evaluate(siteConfig.flowchart.htmlLabels);
+  const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
 
   // Create the label and insert it after the rect
   const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label ');
 
-  const text = await createText(labelEl, node.label, {
-    style: node.labelStyle,
-    useHtmlLabels,
-    isNode: true,
-  });
+  let text;
+  if (node.labelType === 'markdown') {
+    text = await createText(labelEl, node.label, {
+      style: node.labelStyle,
+      useHtmlLabels,
+      isNode: true,
+      width: node.width,
+    });
+  } else {
+    text = await createLabel(labelEl, node.label, node.labelStyle || '', false, true);
+  }
 
   // Get the size of the label
   let bbox = text.getBBox();
 
-  if (evaluate(siteConfig.flowchart.htmlLabels)) {
+  if (getEffectiveHtmlLabels(siteConfig)) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();
@@ -130,7 +137,7 @@ const rect = async (parent, node) => {
  */
 const noteGroup = (parent, node) => {
   // Add outer g element
-  const shapeSvg = parent.insert('g').attr('class', 'note-cluster').attr('id', node.id);
+  const shapeSvg = parent.insert('g').attr('class', 'note-cluster').attr('id', node.domId);
 
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
@@ -170,7 +177,7 @@ const roundedWithTitle = async (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', node.cssClasses)
-    .attr('id', node.id)
+    .attr('id', node.domId)
     .attr('data-id', node.id)
     .attr('data-look', node.look);
 
@@ -181,14 +188,12 @@ const roundedWithTitle = async (parent, node) => {
   const label = shapeSvg.insert('g').attr('class', 'cluster-label');
   let innerRect = shapeSvg.append('rect');
 
-  const text = label
-    .node()
-    .appendChild(await createLabel(node.label, node.labelStyle, undefined, true));
+  const text = await createLabel(label, node.label, node.labelStyle, undefined, true);
 
   // Get the size of the label
   let bbox = text.getBBox();
 
-  if (evaluate(siteConfig.flowchart.htmlLabels)) {
+  if (getEffectiveHtmlLabels(siteConfig)) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();
@@ -264,7 +269,7 @@ const roundedWithTitle = async (parent, node) => {
 
   label.attr(
     'transform',
-    `translate(${node.x - bbox.width / 2}, ${y + 1 - (evaluate(siteConfig.flowchart.htmlLabels) ? 0 : 3)})`
+    `translate(${node.x - bbox.width / 2}, ${y + 1 - (getEffectiveHtmlLabels(siteConfig) ? 0 : 3)})`
   );
 
   const rectBox = rect.node().getBBox();
@@ -292,10 +297,10 @@ const kanbanSection = async (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'cluster ' + node.cssClasses)
-    .attr('id', node.id)
+    .attr('id', node.domId)
     .attr('data-look', node.look);
 
-  const useHtmlLabels = evaluate(siteConfig.flowchart.htmlLabels);
+  const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
 
   // Create the label and insert it after the rect
   const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label ');
@@ -310,7 +315,7 @@ const kanbanSection = async (parent, node) => {
   // Get the size of the label
   let bbox = text.getBBox();
 
-  if (evaluate(siteConfig.flowchart.htmlLabels)) {
+  if (getEffectiveHtmlLabels(siteConfig)) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();
@@ -401,7 +406,7 @@ const divider = (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', node.cssClasses)
-    .attr('id', node.id)
+    .attr('id', node.domId)
     .attr('data-look', node.look);
 
   // add the rect
@@ -434,7 +439,12 @@ const divider = (parent, node) => {
     rect = shapeSvg.insert(() => roughOuterNode, ':first-child');
   } else {
     rect = outerRectG.insert('rect', ':first-child');
-    const outerRectClass = 'divider';
+    let outerRectClass = 'outer';
+    if (node.look === 'neo') {
+      outerRectClass = 'divider';
+    } else {
+      outerRectClass = 'divider';
+    }
 
     // center the rect around its coordinate
     rect
@@ -617,6 +627,7 @@ const shapes = {
   divider,
   kanbanSection,
   usecaseSystemBoundary,
+  swimlane,
 };
 
 let clusterElems = new Map();
@@ -636,8 +647,8 @@ export const insertCluster = async (elem, node) => {
 };
 
 export const getClusterTitleWidth = (elem, node) => {
-  const label = createLabel(node.label, node.labelStyle, undefined, true);
-  elem.node().appendChild(label);
+  // TODO: Doesn't this need an `await`?
+  const label = createLabel(elem, node.label, node.labelStyle, undefined, true);
   const width = label.getBBox().width;
   elem.node().removeChild(label);
   return width;

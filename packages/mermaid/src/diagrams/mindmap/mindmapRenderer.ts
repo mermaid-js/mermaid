@@ -7,6 +7,7 @@ import type { LayoutData } from '../../rendering-util/types.js';
 import type { FilledMindMapNode } from './mindmapTypes.js';
 import defaultConfig from '../../defaultConfig.js';
 import type { MindmapDB } from './mindmapDb.js';
+import { getConfig } from '../../config.js';
 
 /**
  * Update the layout data with actual node dimensions after drawing
@@ -66,11 +67,44 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
     } else if (node.shape === 'rect') {
       node.width = 0;
       node.padding = 10;
+    } else if (node.shape === 'hexagon') {
+      node.width = 0;
+      node.height = 0;
     }
   });
 
   // Use the unified rendering system
   await render(data4Layout, svg);
+
+  // For mindmap, the linearGradient used by the neo theme must live inside <defs>
+  // so browsers treat it as a valid SVG paint server (url(#id-gradient) references).
+  // render.ts appends it to the SVG root for other diagram types; mindmap adds its
+  // own properly-scoped <defs> entry here to avoid relying on that placement.
+  const { themeVariables } = getConfig();
+  const { useGradient, gradientStart, gradientStop } = themeVariables;
+  if (useGradient && gradientStart && gradientStop) {
+    const svgId = svg.attr('id');
+    const gradient = svg
+      .append('defs')
+      .append('linearGradient')
+      .attr('id', `${svgId}-gradient`)
+      .attr('gradientUnits', 'objectBoundingBox')
+      .attr('x1', '0%')
+      .attr('y1', '0%')
+      .attr('x2', '100%')
+      .attr('y2', '0%');
+
+    gradient
+      .append('stop')
+      .attr('offset', '0%')
+      .attr('stop-color', gradientStart)
+      .attr('stop-opacity', 1);
+    gradient
+      .append('stop')
+      .attr('offset', '100%')
+      .attr('stop-color', gradientStop)
+      .attr('stop-opacity', 1);
+  }
 
   // Setup the view box and size of the svg element using config from data4Layout
   setupViewPortForSVG(

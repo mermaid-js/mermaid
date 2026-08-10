@@ -12,18 +12,12 @@
 
 > **setSiteConfig**(`conf`): [`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md)
 
-Defined in: [packages/mermaid/src/config.ts:61](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L61)
+Defined in: [packages/mermaid/src/config.ts:64](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L64)
 
-## setSiteConfig
+Sets the `siteConfig` to the desired values.
 
-| Function      | Description                           | Type        | Values                                  |
-| ------------- | ------------------------------------- | ----------- | --------------------------------------- |
-| setSiteConfig | Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array |
-
-**Notes:** Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls
-to reset() will reset the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig)
-will reset siteConfig and currentConfig to the defaultConfig Note: currentConfig is set in this
-function _Default value: At default, will mirror Global Config_
+The `siteConfig` is a protected configuration for repeat use. Calls
+to [reset](reset.md) will reset the `currentConfig` to `siteConfig`.
 
 ## Parameters
 
@@ -31,7 +25,7 @@ function _Default value: At default, will mirror Global Config_
 
 [`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md)
 
-The base currentConfig to use as siteConfig
+The config to use as `siteConfig`. This will be merged with the `defaultConfig`.
 
 ## Returns
 

@@ -62,7 +62,7 @@ radar-beta
 radar-beta
   title Restaurant Comparison
   axis food["Food Quality"], service["Service"], price["Price"]
-  axis ambiance["Ambiance"],
+  axis ambiance["Ambiance"]
 
   curve a["Restaurant A"]{4, 3, 2, 4}
   curve b["Restaurant B"]{3, 4, 3, 3}
@@ -78,7 +78,7 @@ radar-beta
 radar-beta
   title Restaurant Comparison
   axis food["Food Quality"], service["Service"], price["Price"]
-  axis ambiance["Ambiance"],
+  axis ambiance["Ambiance"]
 
   curve a["Restaurant A"]{4, 3, 2, 4}
   curve b["Restaurant B"]{3, 4, 3, 3}

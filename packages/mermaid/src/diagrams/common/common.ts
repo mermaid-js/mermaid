@@ -1,4 +1,5 @@
 import DOMPurify from 'dompurify';
+import { evaluate, getEffectiveHtmlLabels } from '../../config.js';
 import type { MermaidConfig } from '../../config.type.js';
 
 // Remove and ignore br:s
@@ -64,9 +65,9 @@ export const removeScript = (txt: string): string => {
 };
 
 const sanitizeMore = (text: string, config: MermaidConfig) => {
-  if (config.flowchart?.htmlLabels !== false) {
+  if (getEffectiveHtmlLabels(config)) {
     const level = config.securityLevel;
-    if (level === 'antiscript' || level === 'strict') {
+    if (level === 'antiscript' || level === 'strict' || level === 'sandbox') {
       text = removeScript(text);
     } else if (level !== 'loose') {
       text = breakToPlaceholder(text);
@@ -165,14 +166,7 @@ export const getUrl = (useAbsolute: boolean): string => {
   return url;
 };
 
-/**
- * Converts a string/boolean into a boolean
- *
- * @param val - String or boolean to convert
- * @returns The result from the input
- */
-export const evaluate = (val?: string | boolean): boolean =>
-  val === false || ['false', 'null', '0'].includes(String(val).trim().toLowerCase()) ? false : true;
+export { evaluate };
 
 /**
  * Wrapper around Math.max which removes non-numeric values
@@ -293,7 +287,7 @@ const processSet = (input: string): string => {
 // Firefox versions between [4,71] (0.47%) and Safari versions between [5,13.4] (0.17%) don't have this interface implemented but MathML is supported
 export const isMathMLSupported = () => window.MathMLElement !== undefined;
 
-export const katexRegex = /\$\$(.*)\$\$/g;
+export const katexRegex = /\$\$(.*?)\$\$/g;
 
 /**
  * Whether or not a text has KaTeX delimiters
@@ -333,7 +327,7 @@ const renderKatexUnsanitized = async (text: string, config: MermaidConfig): Prom
     return text.replace(katexRegex, 'MathML is unsupported in this environment.');
   }
 
-  if (includeLargeFeatures) {
+  if (injected.includeLargeFeatures) {
     const { default: katex } = await import('katex');
     const outputMode =
       config.forceLegacyMathML || (!isMathMLSupported() && config.legacyMathML)

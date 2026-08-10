@@ -17,6 +17,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
+import { createTooltip } from '../common/svgDrawCommon.js';
 import type {
   FlowClass,
   FlowEdge,
@@ -26,7 +27,7 @@ import type {
   FlowVertex,
   FlowVertexTypeParam,
 } from './types.js';
-
+import DOMPurify from 'dompurify';
 interface LinkData {
   id: string;
 }
@@ -37,6 +38,7 @@ const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 export class FlowDB implements DiagramDB {
   private vertexCounter = 0;
   private config = getConfig();
+  private diagramId = '';
   private vertices = new Map<string, FlowVertex>();
   private edges: FlowEdge[] & { defaultInterpolate?: string; defaultStyle?: string[] } = [];
   private classes = new Map<string, FlowClass>();
@@ -85,18 +87,38 @@ export class FlowDB implements DiagramDB {
     return common.sanitizeText(txt, this.config);
   }
 
+  private sanitizeNodeLabelType(labelType?: string) {
+    switch (labelType) {
+      case 'markdown':
+      case 'string':
+      case 'text':
+        return labelType;
+      default:
+        return 'markdown';
+    }
+  }
+
+  /**
+   * Sets the diagram's SVG element ID, used to prefix domIds for uniqueness
+   * across multiple diagrams on the same page.
+   */
+  public setDiagramId(svgElementId: string) {
+    this.diagramId = svgElementId;
+  }
+
   /**
    * Function to lookup domId from id in the graph definition.
+   * When diagramId is set, returns the prefixed version for DOM uniqueness.
    *
    * @param id - id of the node
    */
   public lookUpDomId(id: string) {
     for (const vertex of this.vertices.values()) {
       if (vertex.id === id) {
-        return vertex.domId;
+        return this.diagramId ? `${this.diagramId}-${vertex.domId}` : vertex.domId;
       }
     }
-    return id;
+    return this.diagramId ? `${this.diagramId}-${id}` : id;
   }
 
   /**
@@ -129,6 +151,15 @@ export class FlowDB implements DiagramDB {
       doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
     }
 
+    // Check if this is metadata for an already-declared subgraph
+    // (e.g. `sub1@{ view: collapsed }`). The id refers to a subgraph, so
+    // route the metadata onto the subgraph instead of creating a vertex.
+    const subGraph = this.subGraphLookup.get(id);
+    if (subGraph && doc) {
+      subGraph.metadata = { ...subGraph.metadata, ...doc };
+      return;
+    }
+
     // Check if this is an edge
     const edge = this.edges.find((e) => e.id === id);
     if (edge) {
@@ -149,6 +180,11 @@ export class FlowDB implements DiagramDB {
 
     let vertex = this.vertices.get(id);
     if (vertex === undefined) {
+      if (textObj === undefined && type === undefined && style !== undefined && style !== null) {
+        log.warn(
+          `Style applied to unknown node "${id}". This may indicate a typo. The node will be created automatically.`
+        );
+      }
       vertex = {
         id,
         labelType: 'text',
@@ -208,6 +244,7 @@ export class FlowDB implements DiagramDB {
 
       if (doc?.label) {
         vertex.text = doc?.label;
+        vertex.labelType = this.sanitizeNodeLabelType(doc?.labelType);
       }
       if (doc?.icon) {
         vertex.icon = doc?.icon;
@@ -267,7 +304,7 @@ export class FlowDB implements DiagramDB {
       if (edge.text.startsWith('"') && edge.text.endsWith('"')) {
         edge.text = edge.text.substring(1, edge.text.length - 1);
       }
-      edge.labelType = linkTextObj.type;
+      edge.labelType = this.sanitizeNodeLabelType(linkTextObj.type);
     }
 
     if (type !== undefined) {
@@ -459,7 +496,6 @@ You have to call mermaid.initialize.`
   }
 
   private setClickFun(id: string, functionName: string, functionArgs: string) {
-    const domId = this.lookUpDomId(id);
     // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (getConfig().securityLevel !== 'loose') {
       return;
@@ -491,6 +527,8 @@ You have to call mermaid.initialize.`
     if (vertex) {
       vertex.haveCallback = true;
       this.funs.push(() => {
+        // Defer lookUpDomId to bind time so it includes the diagramId prefix
+        const domId = this.lookUpDomId(id);
         const elem = document.querySelector(`[id="${domId}"]`);
         if (elem !== null) {
           elem.addEventListener(
@@ -574,15 +612,7 @@ You have to call mermaid.initialize.`
   }
 
   private setupToolTips(element: Element) {
-    let tooltipElem = select('.mermaidTooltip');
-    // @ts-ignore TODO: fix this
-    if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
-      // @ts-ignore TODO: fix this
-      tooltipElem = select('body')
-        .append('div')
-        .attr('class', 'mermaidTooltip')
-        .style('opacity', 0);
-    }
+    const tooltipElem = createTooltip();
 
     const svg = select(element).select('svg');
 
@@ -603,7 +633,7 @@ You have to call mermaid.initialize.`
           .text(el.attr('title'))
           .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
           .style('top', window.scrollY + rect.bottom + 'px');
-        tooltipElem.html(tooltipElem.html().replace(/&lt;br\/&gt;/g, '<br/>'));
+        tooltipElem.html(DOMPurify.sanitize(title));
         el.classed('hover', true);
       })
       .on('mouseout', (e: MouseEvent) => {
@@ -622,6 +652,7 @@ You have to call mermaid.initialize.`
     this.classes = new Map();
     this.edges = [];
     this.funs = [this.setupToolTips.bind(this)];
+    this.diagramId = '';
     this.subGraphs = [];
     this.subGraphLookup = new Map();
     this.subCount = 0;
@@ -702,7 +733,7 @@ You have to call mermaid.initialize.`
       title: title.trim(),
       classes: [],
       dir,
-      labelType: _title.type,
+      labelType: this.sanitizeNodeLabelType(_title?.type),
     };
 
     log.info('Adding', subGraph.id, subGraph.nodes, subGraph.dir);
@@ -1011,6 +1042,7 @@ You have to call mermaid.initialize.`
       const baseNode = {
         id: vertex.id,
         label: vertex.text,
+        labelType: vertex.labelType,
         labelStyle: '',
         parentId,
         padding: config.flowchart?.padding || 8,
@@ -1069,9 +1101,68 @@ You have to call mermaid.initialize.`
     const parentDB = new Map<string, string>();
     const subGraphDB = new Map<string, boolean>();
 
+    // ── Collapsible subgraphs (issue #7784) ──────────────────────────────
+    // A subgraph carrying `@{ view: collapsed }` is drawn as a single compact
+    // node; its descendants are hidden and any edge that crosses the boundary
+    // is redirected to the outermost collapsed ancestor.
+    //
+    // `subGraphParent` maps a subgraph id to the subgraph that directly
+    // contains it, so we can walk up the containment chain to find the
+    // outermost collapsed ancestor regardless of declaration order.
+    const subGraphParent = new Map<string, string>();
+    for (const sg of subGraphs) {
+      for (const childId of sg.nodes) {
+        if (this.subGraphLookup.has(childId)) {
+          subGraphParent.set(childId, sg.id);
+        }
+      }
+    }
+    const isCollapsed = (sgId: string) =>
+      this.subGraphLookup.get(sgId)?.metadata?.view === 'collapsed';
+    const outermostCollapsed = (sgId: string): string | undefined => {
+      let result: string | undefined;
+      const seen = new Set<string>();
+      let current: string | undefined = sgId;
+      while (current !== undefined && !seen.has(current)) {
+        seen.add(current);
+        if (isCollapsed(current)) {
+          result = current;
+        }
+        current = subGraphParent.get(current);
+      }
+      return result;
+    };
+
+    // `hiddenIds` are nodes/subgraphs that are not drawn; `collapsedAncestorMap`
+    // maps each hidden id to the visible collapsed node that replaces it.
+    const hiddenIds = new Set<string>();
+    const collapsedAncestorMap = new Map<string, string>();
+    for (const sg of subGraphs) {
+      const ancestor = outermostCollapsed(sg.id);
+      if (ancestor === undefined) {
+        continue;
+      }
+      // Hide the subgraph itself unless it is the visible collapsed node.
+      if (sg.id !== ancestor) {
+        hiddenIds.add(sg.id);
+        collapsedAncestorMap.set(sg.id, ancestor);
+      }
+      // Hide every member, redirecting it to the visible collapsed node.
+      for (const childId of sg.nodes) {
+        if (childId === ancestor) {
+          continue;
+        }
+        hiddenIds.add(childId);
+        collapsedAncestorMap.set(childId, ancestor);
+      }
+    }
+
     // Setup the subgraph data for adding nodes
     for (let i = subGraphs.length - 1; i >= 0; i--) {
       const subGraph = subGraphs[i];
+      if (hiddenIds.has(subGraph.id)) {
+        continue;
+      }
       if (subGraph.nodes.length > 0) {
         subGraphDB.set(subGraph.id, true);
       }
@@ -1083,23 +1174,49 @@ You have to call mermaid.initialize.`
     // Data is setup, add the nodes
     for (let i = subGraphs.length - 1; i >= 0; i--) {
       const subGraph = subGraphs[i];
-      nodes.push({
-        id: subGraph.id,
-        label: subGraph.title,
-        labelStyle: '',
-        parentId: parentDB.get(subGraph.id),
-        padding: 8,
-        cssCompiledStyles: this.getCompiledStyles(subGraph.classes),
-        cssClasses: subGraph.classes.join(' '),
-        shape: 'rect',
-        dir: subGraph.dir,
-        isGroup: true,
-        look: config.look,
-      });
+      if (hiddenIds.has(subGraph.id)) {
+        continue;
+      }
+      if (subGraph.metadata?.view === 'collapsed') {
+        // Collapsed: draw as a single compact node instead of a container.
+        nodes.push({
+          id: subGraph.id,
+          label: subGraph.title,
+          labelStyle: '',
+          labelType: subGraph.labelType,
+          parentId: parentDB.get(subGraph.id),
+          padding: 8,
+          cssCompiledStyles: this.getCompiledStyles(subGraph.classes),
+          cssClasses: subGraph.classes.join(' '),
+          shape: 'collapsedGroup',
+          dir: subGraph.dir,
+          isGroup: false,
+          look: config.look,
+        });
+      } else {
+        nodes.push({
+          id: subGraph.id,
+          label: subGraph.title,
+          labelStyle: '',
+          labelType: subGraph.labelType,
+          parentId: parentDB.get(subGraph.id),
+          padding: 8,
+          cssCompiledStyles: this.getCompiledStyles(subGraph.classes),
+          cssClasses: subGraph.classes.join(' '),
+          shape: 'rect',
+          dir: subGraph.dir,
+          isGroup: true,
+          look: config.look,
+        });
+      }
     }
 
     const n = this.getVertices();
     n.forEach((vertex) => {
+      // Skip vertices hidden inside a collapsed subgraph
+      if (hiddenIds.has(vertex.id)) {
+        return;
+      }
       this.addNodeFromVertex(vertex, nodes, parentDB, subGraphDB, config, config.look || 'classic');
     });
 
@@ -1108,16 +1225,30 @@ You have to call mermaid.initialize.`
       const { arrowTypeStart, arrowTypeEnd } = this.destructEdgeType(rawEdge.type);
       const styles = [...(e.defaultStyle ?? [])];
 
+      // Redirect boundary-crossing edges to the visible collapsed node. An
+      // edge that becomes a self-loop purely because both endpoints collapsed
+      // into the same node (i.e. it was internal to a collapsed subgraph) is
+      // dropped — self-loops on nodes that are not collapsed are preserved.
+      const start = collapsedAncestorMap.get(rawEdge.start) ?? rawEdge.start;
+      const end = collapsedAncestorMap.get(rawEdge.end) ?? rawEdge.end;
+      if (
+        start === end &&
+        (collapsedAncestorMap.has(rawEdge.start) || collapsedAncestorMap.has(rawEdge.end))
+      ) {
+        return;
+      }
+
       if (rawEdge.style) {
         styles.push(...rawEdge.style);
       }
       const edge: Edge = {
-        id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'L' }, rawEdge.id),
+        id: getEdgeId(start, end, { counter: index, prefix: 'L' }, rawEdge.id),
         isUserDefinedId: rawEdge.isUserDefinedId,
-        start: rawEdge.start,
-        end: rawEdge.end,
+        start,
+        end,
         type: rawEdge.type ?? 'normal',
         label: rawEdge.text,
+        labelType: rawEdge.labelType,
         labelpos: 'c',
         thickness: rawEdge.stroke,
         minlen: rawEdge.length,

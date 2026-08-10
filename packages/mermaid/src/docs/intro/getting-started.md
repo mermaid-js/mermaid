@@ -119,7 +119,7 @@ And, here is the diagram view from the above example:
 
 ## 2. Using the Mermaid Chart Editor
 
-Available at the [Mermaid Chart](https://www.mermaidchart.com/) website.
+Available at the [Mermaid Chart](https://mermaid.ai/) website.
 
 Mermaid Chart is a web-based diagram editor that allows you to create and edit diagrams in your browser. It is built by the team behind Mermaid.
 
@@ -132,7 +132,7 @@ Features include:
 
 To learn more, visit the [Mermaid Chart page](/ecosystem/mermaid-chart.html) in the Ecosystem section of the documentation.
 
-Or go to the [Mermaid Chart website](https://www.mermaidchart.com/app/sign-up) to sign up for a Free account.
+Or go to the [Mermaid Chart website](https://mermaid.ai/app/sign-up) to sign up for a Free account.
 
 ## 3. Using Mermaid Plugins
 
@@ -146,13 +146,13 @@ For a list of Mermaid Plugins and Integrations, visit the [Integrations page](..
 
 Mermaid Chart plugins are available for:
 
-- [ChatGPT](https://docs.mermaidchart.com/plugins/mermaid-chart-gpt)
-- [JetBrains IDE](https://docs.mermaidchart.com/plugins/jetbrains-ide)
-- [Microsoft PowerPoint](https://docs.mermaidchart.com/plugins/microsoft-powerpoint)
-- [Microsoft Word](https://docs.mermaidchart.com/plugins/microsoft-word)
-- [Visual Studio Code](https://docs.mermaidchart.com/plugins/visual-studio-code)
+- [ChatGPT](https://mermaid.ai/docs/plugins/mermaid-chart-gpt)
+- [JetBrains IDE](https://mermaid.ai/docs/plugins/jetbrains-ide)
+- [Microsoft PowerPoint](https://mermaid.ai/docs/plugins/microsoft-powerpoint)
+- [Microsoft Word](https://mermaid.ai/docs/plugins/microsoft-word)
+- [Visual Studio Code](https://mermaid.ai/docs/plugins/visual-studio-code)
 
-To learn more, visit the [Mermaid Chart Plugins](https://www.mermaidchart.com/plugins) page.
+To learn more, visit the [Mermaid Chart Plugins](https://mermaid.ai/plugins) page.
 
 ### Native Mermaid Support
 
@@ -294,23 +294,33 @@ In this example, `mermaid.js` is referenced in `src` as a separate JavaScript fi
 
 Below are the steps for adding Mermaid as a dependency:
 
-1. Install `node v16`
+1. Install [Node.js](https://nodejs.org/) v20 or higher (LTS recommended).
 
 ```note
 To learn more about downloading and installing `Node.js` and `npm`, visit the [npm Docs website](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
 ```
 
-1. Install `yarn` using `npm` with this command:
+2. Add Mermaid using your preferred package manager:
 
-   `npm install -g yarn`
+   **npm**
 
-1. After yarn installs, enter this command:
+   `npm install mermaid`
+
+   **yarn**
 
    `yarn add mermaid`
 
-1. To add Mermaid as a dev dependency, enter this command:
+   **pnpm**
 
-   `yarn add --dev mermaid`
+   `pnpm add mermaid`
+
+3. To add Mermaid as a dev dependency instead, append the dev flag:
+
+   **npm:** `npm install --save-dev mermaid`
+
+   **yarn:** `yarn add --dev mermaid`
+
+   **pnpm:** `pnpm add --save-dev mermaid`
 
 ## Closing note
 

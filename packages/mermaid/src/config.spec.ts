@@ -4,6 +4,7 @@ import type { MermaidConfig } from './config.type.js';
 describe('when working with site config', () => {
   beforeEach(() => {
     // Resets the site config to default config
+    configApi.reset();
     configApi.setSiteConfig({});
   });
   it('should set site config and config properly', () => {
@@ -29,7 +30,8 @@ describe('when working with site config', () => {
       fontSize: 54321,
       securityLevel: 'loose',
     };
-    const cfg: MermaidConfig = configApi.updateCurrentConfig(config_0, [directive]);
+    configApi.addDirective(directive);
+    const cfg: MermaidConfig = configApi.getConfig();
     expect(cfg.fontFamily).toEqual(directive.fontFamily);
     expect(cfg.fontSize).toBe(config_0.fontSize);
     expect(cfg.securityLevel).toBe(config_0.securityLevel);
@@ -49,6 +51,40 @@ describe('when working with site config', () => {
     expect(defaultConfig.quadrantChart!.chartWidth).toEqual(
       updatedConfig.quadrantChart!.chartWidth
     );
+  });
+  it('should default swimlane layering options to true', () => {
+    const config = configApi.getConfig();
+
+    expect(config.swimlane?.ignoreCrossLaneEdges).toBe(true);
+    expect(config.swimlane?.optimizeRanksByCrossings).toBe(true);
+    expect(config.swimlane?.automaticLaneOrdering).toBe(false);
+  });
+
+  it('should default ELK node placement alignment to NONE', () => {
+    const config = configApi.getConfig();
+
+    expect(config.elk?.nodePlacementAlignment).toBe('NONE');
+  });
+
+  it('should default class diagrams to dagre-wrapper without forcing class padding', () => {
+    const config = configApi.getConfig();
+
+    expect(config.class?.defaultRenderer).toBe('dagre-wrapper');
+    expect(config.class?.padding).toBeUndefined();
+  });
+
+  it('should retain railroad directives after sanitization', () => {
+    configApi.saveConfigFromInitialize({});
+    configApi.addDirective({
+      railroad: {
+        fontSize: 18,
+        fontFamily: 'Courier New',
+      },
+    });
+
+    const currentConfig = configApi.getConfig();
+    expect(currentConfig.railroad?.fontSize).toBe(18);
+    expect(currentConfig.railroad?.fontFamily).toBe('Courier New');
   });
   it('should set reset config properly', () => {
     const config_0 = { fontFamily: 'foo-font', fontSize: 150 };
@@ -260,5 +296,74 @@ describe('getUserDefinedConfig', () => {
     `);
 
     configApi.reset();
+  });
+});
+
+describe('getEffectiveHtmlLabels', () => {
+  beforeEach(() => {
+    configApi.reset();
+  });
+
+  it('should return true when root-level htmlLabels is true', () => {
+    configApi.setSiteConfig({ htmlLabels: true });
+    const config = configApi.getConfig();
+    expect(configApi.getEffectiveHtmlLabels(config)).toBe(true);
+  });
+
+  it('should return false when root-level htmlLabels is false', () => {
+    configApi.setSiteConfig({ htmlLabels: false });
+    const config = configApi.getConfig();
+    expect(configApi.getEffectiveHtmlLabels(config)).toBe(false);
+  });
+
+  it('should return true when flowchart.htmlLabels is true and root is not set', () => {
+    configApi.setSiteConfig({ flowchart: { htmlLabels: true } });
+    const config = configApi.getConfig();
+    expect(configApi.getEffectiveHtmlLabels(config)).toBe(true);
+  });
+
+  it('should return false when flowchart.htmlLabels is false and root is not set', () => {
+    configApi.setSiteConfig({ flowchart: { htmlLabels: false } });
+    const config = configApi.getConfig();
+    expect(configApi.getEffectiveHtmlLabels(config)).toBe(false);
+  });
+
+  it('should prioritize root-level htmlLabels over flowchart.htmlLabels', () => {
+    configApi.setSiteConfig({
+      htmlLabels: false,
+      flowchart: { htmlLabels: true },
+    });
+    const config = configApi.getConfig();
+    expect(configApi.getEffectiveHtmlLabels(config)).toBe(false);
+  });
+
+  it('should default to true when neither root nor flowchart htmlLabels is explicitly set', () => {
+    configApi.setSiteConfig({});
+    const config = configApi.getConfig();
+    // flowchart.htmlLabels has a default of true in the schema
+    expect(configApi.getEffectiveHtmlLabels(config)).toBe(true);
+  });
+
+  it('should handle directives with flowchart.htmlLabels set to false', () => {
+    configApi.setSiteConfig({});
+    // Add a directive that sets flowchart.htmlLabels to false
+    configApi.addDirective({ flowchart: { htmlLabels: false } });
+    const config = configApi.getConfig();
+    // Since flowchart.htmlLabels was explicitly set via directive, it should be false
+    expect(configApi.getEffectiveHtmlLabels(config)).toBe(false);
+  });
+
+  it('should handle directives with root htmlLabels taking precedence', () => {
+    configApi.setSiteConfig({ flowchart: { htmlLabels: true } });
+    configApi.addDirective({ htmlLabels: false });
+    const config = configApi.getConfig();
+    expect(configApi.getEffectiveHtmlLabels(config)).toBe(false);
+  });
+
+  it('should handle directives with root htmlLabels true overriding flowchart htmlLabels false', () => {
+    configApi.setSiteConfig({ flowchart: { htmlLabels: false } });
+    configApi.addDirective({ htmlLabels: true });
+    const config = configApi.getConfig();
+    expect(configApi.getEffectiveHtmlLabels(config)).toBe(true);
   });
 });

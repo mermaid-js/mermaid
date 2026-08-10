@@ -274,6 +274,8 @@ After starting the dev server open <http://localhost:9000> in your browser.
 
 Now you are ready to make your changes!
 
+Note: By default, the Mermaid service will run on port 9000. To use a different port, change the environment variable `MERMAID_PORT` in the file `.env`. You should only need to do this if you are using port 9000 to run other projects.
+
 ### Make Changes
 
 Have a look at <http://localhost:9000>. There is a list of demos that can be used to see and test your changes.
@@ -373,7 +375,7 @@ To start working with the E2E tests:
 
 The rendering tests are very straightforward to create. There is a function `imgSnapshotTest`, which takes a diagram in text form and the mermaid options, and it renders that diagram in Cypress.
 
-When running in CI it will take a snapshot of the rendered diagram and compare it with the snapshot from last build and flag it for review if it differs.
+When running in CI it will take a snapshot of the rendered diagram and compare it with the snapshot from last build and flag it for review if it differs. When the changes in PR only apply to specific diagrams, only the rendering tests for those diagrams will be run in CI. If a change is not related to a specific diagram, the full test-suite will be run.
 
 This is what a rendering test looks like:
 

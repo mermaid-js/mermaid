@@ -17,6 +17,7 @@ export interface FlowChartStyleOptions {
   tertiaryColor: string;
   textColor: string;
   titleColor: string;
+  strokeWidth: string;
 }
 
 const fade = (color: string, opacity: number) => {
@@ -58,17 +59,11 @@ const getStyles = (options: FlowChartStyleOptions) =>
   .node path {
     fill: ${options.mainBkg};
     stroke: ${options.nodeBorder};
-    stroke-width: 1px;
+    stroke-width: ${options.strokeWidth ?? 1}px;
   }
   .rough-node .label text , .node .label text, .image-shape .label, .icon-shape .label {
     text-anchor: middle;
   }
-  // .flowchart-label .text-outer-tspan {
-  //   text-anchor: middle;
-  // }
-  // .flowchart-label .text-inner-tspan {
-  //   text-anchor: start;
-  // }
 
   .node .katex path {
     fill: #000;
@@ -96,7 +91,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
 
   .edgePath .path {
     stroke: ${options.lineColor};
-    stroke-width: 2.0px;
+    stroke-width: ${options.strokeWidth ?? 2}px;
   }
 
   .flowchart-link {
@@ -140,6 +135,18 @@ const getStyles = (options: FlowChartStyleOptions) =>
     color: ${options.titleColor};
   } */
 
+  /* Collapsed subgraph node (@{ view: collapsed }) */
+  .node .collapsed-indicator {
+    fill: ${options.clusterBorder};
+    stroke: none;
+    opacity: 0.6;
+  }
+
+  .node .collapsed-separator {
+    stroke: ${options.clusterBorder};
+    stroke-width: 0.75px;
+  }
+
   div.mermaidTooltip {
     position: absolute;
     text-align: center;
@@ -171,7 +178,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
       background-color: ${options.edgeLabelBackground};
       padding: 2px;
     }
-    rect {
+    .label rect {
       opacity: 0.5;
       background-color: ${options.edgeLabelBackground};
       fill: ${options.edgeLabelBackground};

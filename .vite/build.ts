@@ -79,6 +79,9 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
     },
     define: {
       'import.meta.vitest': 'undefined',
+      'injected.includeLargeFeatures': 'true',
+      'injected.profiling': 'false',
+      'injected.version': `'0.0.0'`,
     },
     resolve: {
       extensions: [],
@@ -95,10 +98,6 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
       }),
       ...visualizerOptions(packageName, core),
     ],
-    define: {
-      // Needs to be string
-      includeLargeFeatures: 'true',
-    },
   };
 
   if (watch && config.build) {

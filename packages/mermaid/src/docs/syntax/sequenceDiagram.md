@@ -120,7 +120,11 @@ sequenceDiagram
 
 ### Aliases
 
-The actor can have a convenient identifier and a descriptive label.
+The actor can have a convenient identifier and a descriptive label. Aliases can be defined in two ways: using external syntax with the `as` keyword, or inline within the configuration object.
+
+#### External Alias Syntax
+
+You can define an alias using the `as` keyword after the participant declaration:
 
 ```mermaid-example
 sequenceDiagram
@@ -129,6 +133,48 @@ sequenceDiagram
     A->>J: Hello John, how are you?
     J->>A: Great!
 ```
+
+The external alias syntax also works with participant stereotype configurations, allowing you to combine type specification with aliases:
+
+```mermaid-example
+sequenceDiagram
+    participant API@{ "type": "boundary" } as Public API
+    actor DB@{ "type": "database" } as User Database
+    participant Svc@{ "type": "control" } as Auth Service
+    API->>Svc: Authenticate
+    Svc->>DB: Query user
+    DB-->>Svc: User data
+    Svc-->>API: Token
+```
+
+#### Inline Alias Syntax
+
+Alternatively, you can define an alias directly inside the configuration object using the `"alias"` field. This works with both `participant` and `actor` keywords:
+
+```mermaid-example
+sequenceDiagram
+    participant API@{ "type": "boundary", "alias": "Public API" }
+    participant Auth@{ "type": "control", "alias": "Auth Service" }
+    participant DB@{ "type": "database", "alias": "User Database" }
+    API->>Auth: Login request
+    Auth->>DB: Query user
+    DB-->>Auth: User data
+    Auth-->>API: Access token
+```
+
+#### Alias Precedence
+
+When both inline alias (in the configuration object) and external alias (using `as` keyword) are provided, the **external alias takes precedence**:
+
+```mermaid-example
+sequenceDiagram
+    participant API@{ "type": "boundary", "alias": "Internal Name" } as External Name
+    participant DB@{ "type": "database", "alias": "Internal DB" } as External DB
+    API->>DB: Query
+    DB-->>API: Result
+```
+
+In the example above, "External Name" and "External DB" will be displayed, not "Internal Name" and "Internal DB".
 
 ### Actor Creation and Destruction (v10.3.0+)
 
@@ -167,6 +213,10 @@ And fixing diagram code does not get rid of this error and rendering of all othe
 
 The actor(s) can be grouped in vertical boxes. You can define a color (if not, it will be transparent) and/or a descriptive label using the following notation:
 
+```note
+For colored boxes, the color value must be placed **before** the optional description.
+```
+
 ```
 box Aqua Group Description
 ... actors ...
@@ -180,6 +230,16 @@ end
 box rgba(33,66,99,0.5)
 ... actors ...
 end
+box hsl(10, 40%, 90%)
+... actors ...
+end
+box hsla(10, 40%, 90%, 0.5)
+... actors ...
+end
+```
+
+```warning
+**Hex colors** (e.g., `#ff0000`) are currently **not supported** as the `#` character is interpreted as comment syntax.
 ```
 
 ```note
@@ -235,7 +295,7 @@ Lines can be solid or dotted, and can end with various types of arrowheads, cros
 | `-)`     | Solid line with an open arrow at the end (async)     |
 | `--)`    | Dotted line with a open arrow at the end (async)     |
 
-**Half-Arrows (v<MERMAID_RELEASE_VERSION>+)**
+**Half-Arrows (v11.12.3+)**
 
 The following half-arrow types are supported for more expressive sequence diagrams. Both solid and dotted variants are available by increasing the number of dashes (`-` → `--`).
 
@@ -260,7 +320,7 @@ The following half-arrow types are supported for more expressive sequence diagra
 | `\\-`   | Solid line with reverse bottom stick half arrowhead  |
 | `\\--`  | Dotted line with reverse bottom stick half arrowhead |
 
-## Central Connections (v<MERMAID_RELEASE_VERSION>+)
+## Central Connections (v11.12.3+)
 
 Mermaid sequence diagrams support **central lifeline connections** using a `()`.
 This is useful to represent messages or signals that connect to a central point, rather than from one actor directly to another.
@@ -605,6 +665,16 @@ sequenceDiagram
     John-->>Alice: Great!
     John->>Bob: How about you?
     Bob-->>John: Jolly good!
+```
+
+### Start and Increment values (v11.15.0+)
+
+It is possible to specify a starting value and an increment value for automatic numbering. Both the starting value and increment value can include decimals up to the hundredths place.
+
+Use the following syntax in your diagram definition:
+
+```
+autonumber <start> <increment>
 ```
 
 ## Actor Menus

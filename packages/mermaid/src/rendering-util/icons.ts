@@ -5,12 +5,12 @@ import { getConfig } from '../config.js';
 import { sanitizeText } from '../diagrams/common/common.js';
 import { log } from '../logger.js';
 
-interface AsyncIconLoader {
+export interface AsyncIconLoader {
   name: string;
   loader: () => Promise<IconifyJSON>;
 }
 
-interface SyncIconLoader {
+export interface SyncIconLoader {
   name: string;
   icons: IconifyJSON;
 }

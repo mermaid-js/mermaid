@@ -2,6 +2,7 @@
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
  * functionality and to render the diagrams to svg code!
  */
+import type { AsyncIconLoader, IconLoader, SyncIconLoader } from './rendering-util/icons.js';
 import { registerIconPacks } from './rendering-util/icons.js';
 import { dedent } from 'ts-dedent';
 import type { MermaidConfig } from './config.type.js';
@@ -22,8 +23,10 @@ import type { DetailedError } from './utils.js';
 import utils, { isDetailedError } from './utils.js';
 
 export type {
+  AsyncIconLoader,
   DetailedError,
   ExternalDiagramDefinition,
+  IconLoader,
   InternalHelpers,
   LayoutData,
   LayoutLoaderDefinition,
@@ -35,8 +38,22 @@ export type {
   RenderResult,
   SVG,
   SVGGroup,
+  SyncIconLoader,
   UnknownDiagramError,
 };
+export {
+  clearLayoutRenderState,
+  createCommonLayoutRenderer,
+  defaultMeasureLayout,
+  paintLayoutData,
+} from './rendering-util/layout-algorithms/common/index.js';
+export type {
+  CommonLayoutMeasure,
+  CommonLayoutPaintContext,
+  CommonLayoutPaintOptions,
+  CommonLayoutRenderContext,
+  CommonLayoutRendererDefinition,
+} from './rendering-util/layout-algorithms/common/index.js';
 
 export interface RunOptions {
   /**

@@ -12,10 +12,10 @@ Generate diagrams from markdown-like text.
 <p>
 
 <p align="center">
-<a href="https://mermaid.live/"><b>Live Editor!</b></a>
+<a href="https://mermaid.ai/live/"><b>Live Editor!</b></a>
 </p>
 <p align="center">
- <a href="https://mermaid.js.org">📖 Documentation</a> | <a href="https://mermaid.js.org/intro/">🚀 Getting Started</a> | <a href="https://www.jsdelivr.com/package/npm/mermaid">🌐 CDN</a> | <a href="https://discord.gg/sKeNQX4Wtj" title="Discord invite">🙌 Join Us</a>
+ <a href="https://mermaid.ai/open-source/">📖 Documentation</a> | <a href="https://mermaid.ai/open-source/intro/">🚀 Getting Started</a> | <a href="https://www.jsdelivr.com/package/npm/mermaid">🌐 CDN</a> | <a href="https://discord.gg/sKeNQX4Wtj" title="Discord invite">🙌 Join Us</a>
 </p>
 <p align="center">
 <a href="./README.zh-CN.md">简体中文</a>
@@ -94,6 +94,20 @@ In our release process we rely heavily on visual regression tests using [applito
 </a>
 
 <!-- </Main description> -->
+
+## Features
+
+- **20+ Diagram Types** – Flowchart, Sequence, Class, State, ER, Gantt, Pie, Git Graph, Mindmap, Timeline, Sankey, and more
+- **Markdown-Inspired Syntax** – Write diagrams as text, no drag-and-drop required
+- **No Design Tool Needed** – Generate professional diagrams straight from code
+- **Live Editor** – Prototype instantly at [mermaid.live](https://mermaid.live)
+- **Version-Control Friendly** – Diagrams live as text, so diffs and reviews just work
+- **Native GitHub Rendering** – Mermaid code blocks render directly in Markdown on GitHub
+- **Highly Customizable** – Themes, colors, fonts, and layout directions
+- **Security First** – Built-in sanitization plus a sandboxed rendering mode
+- **Lightweight** – Small footprint, no heavy dependencies
+- **Active Community** – Frequent releases and thousands of contributors
+- **Open Source** – MIT licensed
 
 ## Examples
 

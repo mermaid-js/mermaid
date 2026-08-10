@@ -13,8 +13,36 @@ const getStyles = (options) =>
 
 }
 
+  .cluster-label text {
+    fill: ${options.titleColor};
+  }
+  .cluster-label span {
+    color: ${options.titleColor};
+  }
+  .cluster-label span p {
+    background-color: transparent;
+  }
+
+  .cluster rect {
+    fill: ${options.clusterBkg};
+    stroke: ${options.clusterBorder};
+    stroke-width: 1px;
+  }
+
+  .cluster text {
+    fill: ${options.titleColor};
+  }
+
+  .cluster span {
+    color: ${options.titleColor};
+  }
+
 .nodeLabel, .edgeLabel {
   color: ${options.classText};
+}
+
+.noteLabel .nodeLabel, .noteLabel .edgeLabel {
+  color: ${options.noteTextColor};
 }
 .edgeLabel .label rect {
   fill: ${options.mainBkg};
@@ -40,7 +68,7 @@ const getStyles = (options) =>
   .node path {
     fill: ${options.mainBkg};
     stroke: ${options.nodeBorder};
-    stroke-width: 1px;
+    stroke-width: ${options.strokeWidth};
   }
 
 
@@ -77,7 +105,7 @@ g.classGroup line {
 
 .relation {
   stroke: ${options.lineColor};
-  stroke-width: 1;
+  stroke-width: ${options.strokeWidth};
   fill: none;
 }
 
@@ -89,61 +117,61 @@ g.classGroup line {
   stroke-dasharray: 1 2;
 }
 
-#compositionStart, .composition {
+[id$="-compositionStart"], .composition {
   fill: ${options.lineColor} !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
-#compositionEnd, .composition {
+[id$="-compositionEnd"], .composition {
   fill: ${options.lineColor} !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
-#dependencyStart, .dependency {
+[id$="-dependencyStart"], .dependency {
   fill: ${options.lineColor} !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
-#dependencyStart, .dependency {
+[id$="-dependencyEnd"], .dependency {
   fill: ${options.lineColor} !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
-#extensionStart, .extension {
+[id$="-extensionStart"], .extension {
   fill: transparent !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
-#extensionEnd, .extension {
+[id$="-extensionEnd"], .extension {
   fill: transparent !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
-#aggregationStart, .aggregation {
+[id$="-aggregationStart"], .aggregation {
   fill: transparent !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
-#aggregationEnd, .aggregation {
+[id$="-aggregationEnd"], .aggregation {
   fill: transparent !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
-#lollipopStart, .lollipop {
+[id$="-lollipopStart"], .lollipop {
   fill: ${options.mainBkg} !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
-#lollipopEnd, .lollipop {
+[id$="-lollipopEnd"], .lollipop {
   fill: ${options.mainBkg} !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
@@ -158,6 +186,19 @@ g.classGroup line {
   text-anchor: middle;
   font-size: 18px;
   fill: ${options.textColor};
+}
+
+.edgeLabel[data-look="neo"] {
+  background-color: ${options.edgeLabelBackground};
+  p {
+    background-color: ${options.edgeLabelBackground};
+  }
+  rect {
+    opacity: 0.5;
+    background-color: ${options.edgeLabelBackground};
+    fill: ${options.edgeLabelBackground};
+  }
+  text-align: center;
 }
   ${getIconStyles()}
 `;

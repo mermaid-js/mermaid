@@ -1,17 +1,25 @@
 import { createText } from '../../createText.js';
+import fastdom from '../../fastdom.js';
 import type { Node } from '../../types.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
+import { evaluate, getEffectiveHtmlLabels } from '../../../config.js';
 import { select } from 'd3';
-import defaultConfig from '../../../defaultConfig.js';
-import { evaluate, sanitizeText } from '../../../diagrams/common/common.js';
-import { decodeEntities, handleUndefinedAttr, parseFontSize } from '../../../utils.js';
+import { sanitizeText } from '../../../diagrams/common/common.js';
+import { decodeEntities, handleUndefinedAttr } from '../../../utils.js';
 import type { D3Selection, Point } from '../../../types.js';
+import { configureLabelImages } from './labelImageUtils.js';
+import { profiler } from '../../../profiler.js';
+import { c4LabelHelper } from './c4LabelHelper.js';
 
 export const labelHelper = async <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,
   _classes?: string
 ) => {
+  // Nodes carrying a stereotype render a stacked multi-section SVG label.
+  if (node.stereotype !== undefined) {
+    return c4LabelHelper(parent, node, _classes);
+  }
   let cssClasses;
   const useHtmlLabels = node.useHtmlLabels || evaluate(getConfig()?.htmlLabels);
   if (!_classes) {
@@ -40,68 +48,53 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
     label = typeof node.label === 'string' ? node.label : node.label[0];
   }
 
-  const text = await createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
-    useHtmlLabels,
-    width: node.width || getConfig().flowchart?.wrappingWidth,
-    // @ts-expect-error -- This is currently not used. Should this be `classes` instead?
-    cssClasses: 'markdown-node-label',
-    style: node.labelStyle,
-    addSvgBackground: !!node.icon || !!node.img,
-  });
-  // Get the size of the label
-  let bbox = text.getBBox();
+  const addBackground = !!node.icon || !!node.img;
+  const isMarkdown = node.labelType === 'markdown';
+  const text = await createText(
+    labelEl,
+    sanitizeText(decodeEntities(label), getConfig()),
+    {
+      useHtmlLabels,
+      width: node.width || getConfig().flowchart?.wrappingWidth,
+      classes: isMarkdown ? 'markdown-node-label' : '',
+      style: node.labelStyle,
+      addSvgBackground: addBackground,
+      markdown: isMarkdown,
+    },
+    getConfig()
+  );
+
+  // Get the size of the label.
+  // For HTML labels the real size comes from the inner div's bounding client rect
+  // (below); `text` is the oversized foreignObject, so its getBBox() would be
+  // discarded. Only measure the SVG <text> path here — skipping the dead read
+  // avoids a forced reflow per node, a significant cost on large diagrams.
+  // (The `&& profiler.tickSync` guards on the reads below tolerate an older shared
+  // profiler instance that predates `tickSync`; in production the whole
+  // `injected.profiling` ternary folds away to a direct read.)
   const halfPadding = (node?.padding ?? 0) / 2;
+  let bbox: DOMRect;
 
   if (useHtmlLabels) {
-    const div = text.children[0];
+    const div = text.children[0] as HTMLDivElement;
     const dv = select(text);
 
     // if there are images, need to wait for them to load before getting the bounding box
-    const images = div.getElementsByTagName('img');
-    if (images) {
-      const noImgText = label.replace(/<img[^>]*>/g, '').trim() === '';
+    await configureLabelImages(div);
 
-      await Promise.all(
-        [...images].map(
-          (img) =>
-            new Promise((res) => {
-              /**
-               *
-               */
-              function setupImage() {
-                img.style.display = 'flex';
-                img.style.flexDirection = 'column';
-
-                if (noImgText) {
-                  // default size if no text
-                  const bodyFontSize = getConfig().fontSize
-                    ? getConfig().fontSize
-                    : window.getComputedStyle(document.body).fontSize;
-                  const enlargingFactor = 5;
-                  const [parsedBodyFontSize = defaultConfig.fontSize] = parseFontSize(bodyFontSize);
-                  const width = parsedBodyFontSize * enlargingFactor + 'px';
-                  img.style.minWidth = width;
-                  img.style.maxWidth = width;
-                } else {
-                  img.style.width = '100%';
-                }
-                res(img);
-              }
-              setTimeout(() => {
-                if (img.complete) {
-                  setupImage();
-                }
-              });
-              img.addEventListener('error', setupImage);
-              img.addEventListener('load', setupImage);
-            })
-        )
-      );
-    }
-
-    bbox = div.getBoundingClientRect();
+    bbox = await fastdom.measure(() =>
+      injected.profiling && profiler.tickSync
+        ? profiler.tickSync('getBoundingClientRect', () => div.getBoundingClientRect())
+        : div.getBoundingClientRect()
+    );
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
+  } else {
+    bbox = await fastdom.measure(() =>
+      injected.profiling && profiler.tickSync
+        ? profiler.tickSync('getBBox', () => text.getBBox())
+        : text.getBBox()
+    );
   }
 
   // Center the label
@@ -130,7 +123,7 @@ export const insertLabel = async <T extends SVGGraphicsElement>(
     addSvgBackground?: boolean | undefined;
   }
 ) => {
-  const useHtmlLabels = options.useHtmlLabels || evaluate(getConfig()?.flowchart?.htmlLabels);
+  const useHtmlLabels = options.useHtmlLabels ?? getEffectiveHtmlLabels(getConfig());
 
   // Create the label and insert it after the rect
   const labelEl = parent
@@ -144,17 +137,29 @@ export const insertLabel = async <T extends SVGGraphicsElement>(
     style: options.labelStyle,
     addSvgBackground: !!options.icon || !!options.img,
   });
-  // Get the size of the label
-  let bbox = text.getBBox();
+  // Get the size of the label. For HTML labels the real size comes from the inner
+  // div's bounding client rect; the SVG <text> getBBox() would be discarded, so
+  // only measure it on the non-HTML path (avoids a dead forced reflow per node).
   const halfPadding = options.padding / 2;
+  let bbox: DOMRect;
 
-  if (evaluate(getConfig()?.flowchart?.htmlLabels)) {
+  if (getEffectiveHtmlLabels(getConfig())) {
     const div = text.children[0];
     const dv = select(text);
 
-    bbox = div.getBoundingClientRect();
+    bbox = await fastdom.measure(() =>
+      injected.profiling && profiler.tickSync
+        ? profiler.tickSync('getBoundingClientRect', () => div.getBoundingClientRect())
+        : div.getBoundingClientRect()
+    );
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
+  } else {
+    bbox = await fastdom.measure(() =>
+      injected.profiling && profiler.tickSync
+        ? profiler.tickSync('getBBox', () => text.getBBox())
+        : text.getBBox()
+    );
   }
 
   // Center the label
@@ -172,9 +177,28 @@ export const insertLabel = async <T extends SVGGraphicsElement>(
 export const updateNodeBounds = <T extends SVGGraphicsElement>(
   node: Node,
   // D3Selection<SVGGElement> is for the roughjs case, D3Selection<T> is for the non-roughjs case
-  element: D3Selection<SVGGElement> | D3Selection<T>
+  element: D3Selection<SVGGElement> | D3Selection<T>,
+  /**
+   * Pre-computed geometry the caller already knows (e.g. an axis-aligned rect
+   * sized analytically from the label). When supplied, we skip `getBBox()` —
+   * reading it forces a synchronous reflow over the growing node tree, which is
+   * the dominant cost of the measure phase on large diagrams. Only pass this when
+   * the value is exactly equal to what `element.getBBox()` would return (so it is
+   * safe for plain rects, but not for hand-drawn/roughjs paths that overflow
+   * their nominal box).
+   */
+  knownBounds?: { width: number; height: number }
 ) => {
-  const bbox = element.node()!.getBBox();
+  if (knownBounds) {
+    node.width = knownBounds.width;
+    node.height = knownBounds.height;
+    return;
+  }
+  // TODO: Make this function `async` and use `fastdom.measure` to batch reflow
+  const bbox =
+    injected.profiling && profiler.tickSync
+      ? profiler.tickSync('getBBox', () => element.node()!.getBBox())
+      : element.node()!.getBBox();
   node.width = bbox.width;
   node.height = bbox.height;
 };
@@ -279,4 +303,68 @@ export function generateCirclePoints(
   }
 
   return points;
+}
+
+export function mergePaths(roughElement: SVGElement) {
+  // Get all paths generated by RoughJS
+  // eslint-disable-next-line unicorn/prefer-spread
+  const paths: SVGPathElement[] = Array.from(roughElement.childNodes).filter(
+    (node): node is SVGPathElement => (node as Element).tagName === 'path'
+  );
+
+  // Create a new path element
+  const mergedPath: SVGPathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+  // Combine all path data
+  const combinedPathData: string = paths
+    .map((path) => path.getAttribute('d'))
+    .filter((d): d is string => d !== null)
+    .join(' ');
+
+  mergedPath.setAttribute('d', combinedPathData);
+
+  // Find the fill path (usually the second path)
+  const fillPath = paths.find((path) => path.getAttribute('fill') !== 'none');
+
+  // Find the stroke path (usually the first path)
+  const strokePath = paths.find((path) => path.getAttribute('stroke') !== 'none');
+
+  // Helper function to safely get attribute
+  const getAttr = (element: SVGPathElement | undefined, attr: string): string | undefined => {
+    return element?.getAttribute(attr) ?? undefined;
+  };
+
+  // Apply the correct styles from respective paths
+  if (fillPath) {
+    const fillAttrs = {
+      fill: getAttr(fillPath, 'fill'),
+      'fill-opacity': getAttr(fillPath, 'fill-opacity') ?? '1',
+    };
+
+    Object.entries(fillAttrs).forEach(([attr, value]) => {
+      if (value) {
+        mergedPath.setAttribute(attr, value);
+      }
+    });
+  }
+
+  if (strokePath) {
+    const strokeAttrs = {
+      stroke: getAttr(strokePath, 'stroke'),
+      'stroke-width': getAttr(strokePath, 'stroke-width') ?? '1',
+      'stroke-opacity': getAttr(strokePath, 'stroke-opacity') ?? '1',
+    };
+
+    Object.entries(strokeAttrs).forEach(([attr, value]) => {
+      if (value) {
+        mergedPath.setAttribute(attr, value);
+      }
+    });
+  }
+
+  // Create a group to hold our merged path
+  const group: SVGGElement = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  group.appendChild(mergedPath);
+
+  return group;
 }

@@ -51,6 +51,14 @@ export type SankeyNodeAlignment = 'left' | 'right' | 'center' | 'justify';
  */
 export type DOMPurifyConfiguration = import('dompurify').Config;
 /**
+ * The style of labels in the sankey diagram.
+ *
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "SankeyLabelStyle".
+ */
+export type SankeyLabelStyle = 'legacy' | 'outlined';
+/**
  * The font size to use
  */
 export type CSSFontSize = string | number;
@@ -61,14 +69,26 @@ export interface MermaidConfig {
    * You may also use `themeCSS` to override this value.
    *
    */
-  theme?: 'default' | 'base' | 'dark' | 'forest' | 'neutral' | 'null';
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
   themeVariables?: any;
   themeCSS?: string;
   /**
    * Defines which main look to use for the diagram.
    *
    */
-  look?: 'classic' | 'handDrawn';
+  look?: 'classic' | 'handDrawn' | 'neo';
   /**
    * Defines the seed to be used when using handDrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.
    *
@@ -100,6 +120,12 @@ export interface MermaidConfig {
      */
     nodePlacementStrategy?: 'SIMPLE' | 'NETWORK_SIMPLEX' | 'LINEAR_SEGMENTS' | 'BRANDES_KOEPF';
     /**
+     * Elk specific option affecting Brandes-Koepf node placement alignment.
+     * NONE picks the alignment with the smallest height.
+     *
+     */
+    nodePlacementAlignment?: 'NONE' | 'LEFTUP' | 'LEFTDOWN' | 'RIGHTUP' | 'RIGHTDOWN' | 'BALANCED';
+    /**
      * This strategy decides how to find cycles in the graph and deciding which edges need adjustment to break loops.
      *
      */
@@ -119,8 +145,24 @@ export interface MermaidConfig {
      *
      */
     considerModelOrder?: 'NONE' | 'NODES_AND_EDGES' | 'PREFER_EDGES' | 'PREFER_NODES';
+    /**
+     * Elk specific option that keeps the entry node of a recursive flow at the top of the layout.
+     *
+     * When a flow loops back on itself (a back-edge to an earlier node), ELK's degree-based cycle-breaking has no notion of an "entry point" and may rank the first-declared node in the middle, scrambling the reading order. When enabled, the entry node of each cyclic component is pinned to the first layer so the diagram still reads from its entry. Acyclic flows always have a natural source, so this has no effect on them.
+     *
+     * Only applies when the cyclic flow has no node without incoming edges: if the loop is fed from outside (e.g. a start node pointing into it), that component already has a natural source and nothing is pinned. Detection is also scoped per container, so cycles that cross a subgraph boundary are not detected.
+     *
+     */
+    keepEntryNodeOnTop?: boolean;
   };
   darkMode?: boolean;
+  /**
+   * Flag for setting whether or not a html tag should be used for rendering labels on nodes and edges.
+   * **Note:** Diagram-specific `htmlLabels` settings (e.g., `flowchart.htmlLabels`) are deprecated.
+   * Use this root-level `htmlLabels` setting instead. The root-level `htmlLabels` takes precedence
+   * over any diagram-specific settings.
+   *
+   */
   htmlLabels?: boolean;
   /**
    * Specifies the font to be used in the rendered diagrams.
@@ -190,6 +232,7 @@ export interface MermaidConfig {
    */
   deterministicIDSeed?: string;
   flowchart?: FlowchartDiagramConfig;
+  swimlane?: SwimlaneDiagramConfig;
   sequence?: SequenceDiagramConfig;
   gantt?: GanttDiagramConfig;
   journey?: JourneyDiagramConfig;
@@ -203,14 +246,21 @@ export interface MermaidConfig {
   requirement?: RequirementDiagramConfig;
   architecture?: ArchitectureDiagramConfig;
   mindmap?: MindmapDiagramConfig;
+  ishikawa?: IshikawaDiagramConfig;
   kanban?: KanbanDiagramConfig;
   gitGraph?: GitGraphDiagramConfig;
   c4?: C4DiagramConfig;
   sankey?: SankeyDiagramConfig;
   packet?: PacketDiagramConfig;
   block?: BlockDiagramConfig;
+  eventmodeling?: EventModelingDiagramConfig;
+  treeView?: TreeViewDiagramConfig;
   radar?: RadarDiagramConfig;
   usecase?: UsecaseDiagramConfig;
+  venn?: VennDiagramConfig;
+  'wardley-beta'?: WardleyDiagramConfig;
+  cynefin?: CynefinDiagramConfig;
+  railroad?: RailroadDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
@@ -249,10 +299,15 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    */
   diagramPadding?: number;
   /**
-   * Flag for setting whether or not a html tag should be used for rendering labels on the edges.
+   * @deprecated
+   * **DEPRECATED: Use global `htmlLabels` instead.**
+   *
+   * Flag for setting whether or not a html tag should be used for rendering labels on nodes and edges.
+   * This property is deprecated.
+   * Please use the global `htmlLabels` configuration instead.
    *
    */
-  htmlLabels?: boolean;
+  htmlLabels?: boolean | null;
   /**
    * Defines the spacing between nodes on the same level
    *
@@ -285,7 +340,8 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
     | 'natural'
     | 'step'
     | 'stepAfter'
-    | 'stepBefore';
+    | 'stepBefore'
+    | 'rounded';
   /**
    * Represents the padding between the labels and the shape
    *
@@ -326,6 +382,45 @@ export interface BaseDiagramConfig {
    *
    */
   useMaxWidth?: boolean;
+}
+/**
+ * The object containing configurations specific for the swimlanes diagram type.
+ *
+ * Swimlanes reuses the flowchart renderer and flowchart config for shared
+ * options (curve, htmlLabels, spacing, …); this block holds the knobs that
+ * only affect the swimlanes layout pipeline.
+ *
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "SwimlaneDiagramConfig".
+ */
+export interface SwimlaneDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Renders edge crossings as small arcs ("hops") or visible gaps so that
+   * overlapping edges are easier to read. Set to `false` to disable. Edges
+   * rendered as curves are skipped to avoid corrupting the geometry.
+   *
+   */
+  lineHops?: boolean | ('arc' | 'gap');
+  /**
+   * Ignores edges that cross swimlane boundaries during swimlane layer
+   * assignment. This can improve rank quality for diagrams with many
+   * cross-lane links.
+   *
+   */
+  ignoreCrossLaneEdges?: boolean;
+  /**
+   * Enables a crossing-aware rank optimization pass for swimlane layouts.
+   *
+   */
+  optimizeRanksByCrossings?: boolean;
+  /**
+   * Automatically reorders top-level swimlanes with a deterministic
+   * weighted-linear-arrangement heuristic. Disabled by default because
+   * source swimlane order can carry semantic meaning.
+   *
+   */
+  automaticLaneOrdering?: boolean;
 }
 /**
  * The object containing configurations specific for sequence diagrams
@@ -764,6 +859,15 @@ export interface ClassDiagramConfig extends BaseDiagramConfig {
   diagramPadding?: number;
   htmlLabels?: boolean;
   hideEmptyMembersBox?: boolean;
+  /**
+   * When true (default), nested namespaces render as hierarchical clusters,
+   * with each segment of a dotted name (e.g. `A.B.C`) becoming its own nested
+   * box. When false, namespaces render in compact mode: only explicitly
+   * declared namespaces are emitted and their full qualified name is used as
+   * a single flat label.
+   *
+   */
+  hierarchicalNamespaces?: boolean;
 }
 /**
  * The object containing configurations specific for entity relationship diagrams
@@ -866,6 +970,21 @@ export interface PieDiagramConfig extends BaseDiagramConfig {
    *
    */
   textPosition?: number;
+  /**
+   * Donut hole ratio. Valid value are from 0 to 0.9. Default to 0.
+   *
+   */
+  donutHole?: number;
+  /**
+   * Legend's position relative to the chart. Default to right.
+   *
+   */
+  legendPosition?: 'top' | 'bottom' | 'left' | 'right' | 'center';
+  /**
+   * Highlight specific slice with matching label. Set to 'hover' to highlight hovered slice.
+   *
+   */
+  highlightSlice?: string;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
@@ -973,9 +1092,25 @@ export interface XYChartConfig extends BaseDiagramConfig {
    */
   showDataLabel?: boolean;
   /**
+   * If showing data label then show it outside the bar
+   */
+  showDataLabelOutsideBar?: boolean;
+  /**
    * Should show the chart title
    */
   showTitle?: boolean;
+  /**
+   * Should show a legend for named plots
+   */
+  showLegend?: boolean;
+  /**
+   * Font size of the legend text
+   */
+  legendFontSize?: number;
+  /**
+   * Padding around the legend
+   */
+  legendPadding?: number;
   xAxis?: XYChartAxisConfig;
   yAxis?: XYChartAxisConfig;
   /**
@@ -1038,6 +1173,10 @@ export interface XYChartAxisConfig {
    * Width of the axis line
    */
   axisLineWidth?: number;
+  /**
+   * Label rotation in degrees
+   */
+  labelRotation?: number;
 }
 /**
  * The object containing configurations specific for req diagrams
@@ -1066,6 +1205,52 @@ export interface ArchitectureDiagramConfig extends BaseDiagramConfig {
   padding?: number;
   iconSize?: number;
   fontSize?: number;
+  /**
+   * Whether to randomize initial node positions before running the layout algorithm.
+   * When false (default), nodes start at deterministic seed positions. When true, nodes
+   * start at random positions, which may produce varied but potentially better-spaced
+   * layouts. Note: `randomize: false` alone does NOT guarantee identical renders, because
+   * the underlying fcose layout still uses `Math.random()` internally during its
+   * constraint solver — use the `seed` option for full determinism.
+   *
+   */
+  randomize?: boolean;
+  /**
+   * Minimum separation (in pixels) between sibling nodes in the same group, passed through to the
+   * underlying fcose layout. Increase to spread overlapping siblings apart when many edges share the
+   * same port direction.
+   *
+   */
+  nodeSeparation?: number;
+  /**
+   * Multiplier applied to `iconSize` to compute the ideal length of edges between nodes within the
+   * same group. Increase to add breathing room; decrease to pack the diagram tighter. Edges crossing
+   * group boundaries are unaffected and use a fixed shorter length.
+   *
+   */
+  idealEdgeLengthMultiplier?: number;
+  /**
+   * Spring elasticity (0–1) applied to edges between nodes within the same group, passed through to
+   * fcose. Higher values pull connected nodes closer together; lower values let the layout spread them
+   * out. Edges crossing group boundaries are unaffected.
+   *
+   */
+  edgeElasticity?: number;
+  /**
+   * Maximum number of iterations the fcose layout algorithm runs before stopping. Increase for higher
+   * quality on large or densely-connected diagrams at the cost of render time.
+   *
+   */
+  numIter?: number;
+  /**
+   * Deterministic seed for the fcose layout. Defaults to 1, which makes every render of the
+   * same diagram produce the same layout — required for visual regression tests to be stable.
+   * Set to 0 to opt out and use the unstubbed Math.random (the layout will still differ
+   * slightly between renders, matching pre-fix behavior). Any other number selects a
+   * different reproducible layout variant.
+   *
+   */
+  seed?: number;
 }
 /**
  * The object containing configurations specific for mindmap diagrams
@@ -1080,6 +1265,21 @@ export interface MindmapDiagramConfig extends BaseDiagramConfig {
    * Layout algorithm to use for positioning mindmap nodes
    */
   layoutAlgorithm?: string;
+}
+/**
+ * The object containing configurations specific for ishikawa diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "IshikawaDiagramConfig".
+ */
+export interface IshikawaDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The amount of padding around the diagram as a whole so that embedded
+   * diagrams have margins, expressed in pixels.
+   *
+   */
+  diagramPadding?: number;
+  useMaxWidth?: boolean;
 }
 /**
  * The object containing configurations specific for kanban diagrams
@@ -1538,6 +1738,28 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
    *
    */
   suffix?: string;
+  /**
+   * The width of the nodes in the sankey diagram.
+   *
+   */
+  nodeWidth?: number;
+  /**
+   * The padding between nodes in the sankey diagram.
+   *
+   */
+  nodePadding?: number;
+  /**
+   * The style of labels in the sankey diagram. 'outlined' provides better readability with a white stroke behind the text.
+   *
+   */
+  labelStyle?: 'legacy' | 'outlined';
+  /**
+   * A mapping of node IDs to their colors. Nodes not specified will use the default color scheme.
+   *
+   */
+  nodeColors?: {
+    [k: string]: string;
+  };
 }
 /**
  * The object containing configurations specific for packet diagrams.
@@ -1579,6 +1801,86 @@ export interface PacketDiagramConfig extends BaseDiagramConfig {
  */
 export interface BlockDiagramConfig extends BaseDiagramConfig {
   padding?: number;
+}
+/**
+ * The object containing configurations specific for Event Modeling diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "EventModelingDiagramConfig".
+ */
+export interface EventModelingDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The padding around the Event Modeling diagram.
+   */
+  padding?: number;
+  /**
+   * The height of each row in the Event Modeling diagram.
+   */
+  rowHeight?: number;
+}
+/**
+ * The object containing configurations specific for treeView diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "TreeViewDiagramConfig".
+ */
+export interface TreeViewDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Horizontal distance between rows differing by one level
+   */
+  rowIndent?: number;
+  /**
+   * Horizontal padding of label
+   */
+  paddingX?: number;
+  /**
+   * Vertical padding of label
+   */
+  paddingY?: number;
+  /**
+   * Thickness of the line
+   */
+  lineThickness?: number;
+  /**
+   * Whether to show the default file/folder icons next to labels.
+   * Explicit `icon()` annotations always render, regardless of this setting.
+   *
+   */
+  showIcons?: boolean;
+  /**
+   * Name of a registered iconify pack used to resolve unprefixed icon
+   * references — `icon(name)` annotations and `filenameIcons`/
+   * `extensionIcons` values without a `pack:` prefix. The pack must be
+   * registered with `registerIconPacks`. When empty, unprefixed names
+   * resolve to the built-in file/folder icons.
+   *
+   */
+  defaultIconPack?: string;
+  /**
+   * Exact-filename → icon map used to pick a file's icon when
+   * `showIcons` is enabled, e.g.
+   * `{ "Dockerfile": "material-icon-theme:docker" }`.
+   * Values are resolved like `icon()` references: `pack:name` is used
+   * as-is, unprefixed names resolve via `defaultIconPack`, and `none`
+   * hides the icon for matching files.
+   *
+   */
+  filenameIcons?: {
+    [k: string]: string;
+  };
+  /**
+   * File-extension → icon map used to pick a file's icon when
+   * `showIcons` is enabled, e.g.
+   * `{ ".ts": "material-icon-theme:typescript" }`. Keys are
+   * lowercase and may include or omit the leading dot.
+   * Values are resolved like `icon()` references: `pack:name` is used
+   * as-is, unprefixed names resolve via `defaultIconPack`, and `none`
+   * hides the icon for matching files.
+   *
+   */
+  extensionIcons?: {
+    [k: string]: string;
+  };
 }
 /**
  * The object containing configurations specific for radar diagrams.
@@ -1667,6 +1969,204 @@ export interface UsecaseDiagramConfig extends BaseDiagramConfig {
    * Padding around the entire diagram
    */
   diagramPadding?: number;
+}
+/**
+ * The object containing configurations specific for Venn diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "VennDiagramConfig".
+ */
+export interface VennDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The width of the Venn diagram.
+   */
+  width?: number;
+  /**
+   * The height of the Venn diagram.
+   */
+  height?: number;
+  padding?: number;
+  useDebugLayout?: boolean;
+}
+/**
+ * The object containing configurations specific for Wardley Maps diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "WardleyDiagramConfig".
+ */
+export interface WardleyDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The width of the Wardley diagram canvas.
+   */
+  width?: number;
+  /**
+   * The height of the Wardley diagram canvas.
+   */
+  height?: number;
+  /**
+   * The padding around the Wardley diagram.
+   */
+  padding?: number;
+  /**
+   * The radius of component nodes.
+   */
+  nodeRadius?: number;
+  /**
+   * The offset distance for node labels.
+   */
+  nodeLabelOffset?: number;
+  /**
+   * The font size for axis labels.
+   */
+  axisFontSize?: number;
+  /**
+   * The font size for component labels.
+   */
+  labelFontSize?: number;
+  /**
+   * Whether to display a background grid.
+   */
+  showGrid?: boolean;
+}
+/**
+ * Configuration for Cynefin framework diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "CynefinDiagramConfig".
+ */
+export interface CynefinDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The width of the Cynefin diagram.
+   */
+  width?: number;
+  /**
+   * The height of the Cynefin diagram.
+   */
+  height?: number;
+  /**
+   * Padding around the diagram.
+   */
+  padding?: number;
+  /**
+   * Show decision model and practice type labels.
+   */
+  showDomainDescriptions?: boolean;
+  /**
+   * Waviness amplitude of domain boundaries (0 for straight).
+   */
+  boundaryAmplitude?: number;
+  /**
+   * Deterministic seed for boundary waviness. When 0 (default) the seed is derived
+   * from the diagram's SVG element id, which varies per render. Set any non-zero
+   * number to produce identical boundaries on every render — required for visual
+   * regression tests to be stable.
+   *
+   */
+  seed?: number;
+}
+/**
+ * Configuration for Railroad (Syntax) Diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "RailroadDiagramConfig".
+ */
+export interface RailroadDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Use compact layout mode
+   */
+  compactMode?: boolean;
+  /**
+   * Padding around elements
+   */
+  padding?: number;
+  /**
+   * Vertical separation between elements
+   */
+  verticalSeparation?: number;
+  /**
+   * Horizontal separation between elements
+   */
+  horizontalSeparation?: number;
+  /**
+   * Radius for curved paths
+   */
+  arcRadius?: number;
+  /**
+   * Font size for text
+   */
+  fontSize?: number;
+  /**
+   * Font family for text
+   */
+  fontFamily?: string;
+  /**
+   * Fill color for terminal elements
+   */
+  terminalFill?: string;
+  /**
+   * Stroke color for terminal elements
+   */
+  terminalStroke?: string;
+  /**
+   * Text color for terminal elements
+   */
+  terminalTextColor?: string;
+  /**
+   * Fill color for non-terminal elements
+   */
+  nonTerminalFill?: string;
+  /**
+   * Stroke color for non-terminal elements
+   */
+  nonTerminalStroke?: string;
+  /**
+   * Text color for non-terminal elements
+   */
+  nonTerminalTextColor?: string;
+  /**
+   * Color for connection lines
+   */
+  lineColor?: string;
+  /**
+   * Width of strokes
+   */
+  strokeWidth?: number;
+  /**
+   * Fill color for start/end markers
+   */
+  markerFill?: string;
+  /**
+   * Fill color for comments
+   */
+  commentFill?: string;
+  /**
+   * Stroke color for comments
+   */
+  commentStroke?: string;
+  /**
+   * Text color for comments
+   */
+  commentTextColor?: string;
+  /**
+   * Fill color for special sequences
+   */
+  specialFill?: string;
+  /**
+   * Stroke color for special sequences
+   */
+  specialStroke?: string;
+  /**
+   * Color for rule names
+   */
+  ruleNameColor?: string;
+  /**
+   * Show start/end markers
+   */
+  showMarkers?: boolean;
+  /**
+   * Radius of start/end markers
+   */
+  markerRadius?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

@@ -8,6 +8,8 @@ export interface EntityNode {
   cssClasses?: string;
   cssStyles?: string[];
   cssCompiledStyles?: string[];
+  labelType?: string;
+  colorIndex?: number;
 }
 
 export interface Attribute {
@@ -34,4 +36,14 @@ export interface EntityClass {
   id: string;
   styles: string[];
   textStyles: string[];
+}
+
+export interface ErSubGraph {
+  classes: string[];
+  cssStyles?: string[];
+  dir?: string;
+  id: string;
+  labelType: string;
+  nodes: string[];
+  title: string;
 }

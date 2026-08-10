@@ -13,11 +13,34 @@ export function stateEnd<T extends SVGGraphicsElement>(
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { cssStyles } = node;
-  const { lineColor, stateBorder, nodeBorder } = themeVariables;
+  const { lineColor, stateBorder, nodeBorder, nodeShadow } = themeVariables;
+
+  // If incoming height & width are present, subtract the padding from them
+  // as labelHelper does not take padding into account
+  // also check if the width or height is less than minimum default values (50),
+  // if so set it to min value
+  if (node.width || node.height) {
+    if ((node.width ?? 0) < 14) {
+      node.width = 14;
+    }
+
+    if ((node.height ?? 0) < 14) {
+      node.height = 14;
+    }
+  }
+
+  if (!node.width) {
+    node.width = 14;
+  }
+
+  if (!node.height) {
+    node.height = 14;
+  }
+
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'node default')
-    .attr('id', node.domId || node.id);
+    .attr('id', node.domId ?? node.id);
 
   // @ts-ignore TODO: Fix rough typings
   const rc = rough.svg(shapeSvg);
@@ -28,13 +51,14 @@ export function stateEnd<T extends SVGGraphicsElement>(
     options.fillStyle = 'solid';
   }
 
-  const roughNode = rc.circle(0, 0, 14, {
+  const roughNode = rc.circle(0, 0, node.width, {
     ...options,
     stroke: lineColor,
     strokeWidth: 2,
   });
   const innerFill = stateBorder ?? nodeBorder;
-  const roughInnerNode = rc.circle(0, 0, 5, {
+  const innerNodeRadius = ((node.width ?? 0) * 5) / 14;
+  const roughInnerNode = rc.circle(0, 0, innerNodeRadius, {
     ...options,
     fill: innerFill,
     stroke: innerFill,
@@ -44,6 +68,10 @@ export function stateEnd<T extends SVGGraphicsElement>(
   const circle = shapeSvg.insert(() => roughNode, ':first-child');
   circle.insert(() => roughInnerNode);
 
+  if (node.look !== 'handDrawn') {
+    circle.attr('class', 'outer-path');
+  }
+
   if (cssStyles) {
     circle.selectAll('path').attr('style', cssStyles);
   }
@@ -52,10 +80,16 @@ export function stateEnd<T extends SVGGraphicsElement>(
     circle.selectAll('path').attr('style', nodeStyles);
   }
 
+  if (node.width < 25 && nodeShadow && node.look !== 'handDrawn') {
+    const svgId = parent.node()?.ownerSVGElement?.id ?? '';
+    const filterId = svgId ? `${svgId}-drop-shadow-small` : 'drop-shadow-small';
+    circle.attr('style', `filter:url(#${filterId})`);
+  }
+
   updateNodeBounds(node, circle);
 
   node.intersect = function (point) {
-    return intersect.circle(node, 7, point);
+    return intersect.circle(node, (node.width ?? 0) / 2, point);
   };
 
   return shapeSvg;

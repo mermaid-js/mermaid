@@ -17,13 +17,14 @@
 ## Functions
 
 - [addDirective](functions/addDirective.md)
+- [evaluate](functions/evaluate.md)
 - [getConfig](functions/getConfig.md)
+- [getEffectiveHtmlLabels](functions/getEffectiveHtmlLabels.md)
 - [getSiteConfig](functions/getSiteConfig.md)
 - [getUserDefinedConfig](functions/getUserDefinedConfig.md)
 - [reset](functions/reset.md)
 - [sanitize](functions/sanitize.md)
 - [saveConfigFromInitialize](functions/saveConfigFromInitialize.md)
-- [setConfig](functions/setConfig.md)
+- [~~setConfig~~](functions/setConfig.md)
 - [setSiteConfig](functions/setSiteConfig.md)
-- [updateCurrentConfig](functions/updateCurrentConfig.md)
 - [updateSiteConfig](functions/updateSiteConfig.md)

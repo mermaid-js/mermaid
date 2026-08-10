@@ -54,8 +54,6 @@ export const styles: DiagramStylesProvider = ({ radar }: { radar?: RadarStyleOpt
 		stroke-width: ${radarOptions.axisStrokeWidth};
 	}
 	.radarAxisLabel {
-		dominant-baseline: middle;
-		text-anchor: middle;
 		font-size: ${radarOptions.axisLabelFontSize}px;
 		color: ${radarOptions.axisColor};
 	}

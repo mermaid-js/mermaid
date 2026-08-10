@@ -55,27 +55,27 @@ describe('XSS', () => {
   });
 
   it('should not allow changing the __proto__ attribute using config', () => {
-    cy.visit('http://localhost:9000/xss2.html');
+    cy.visit('/xss2.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
   it('should not allow manipulating htmlLabels into a false positive', () => {
-    cy.visit('http://localhost:9000/xss4.html');
+    cy.visit('/xss4.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
   it('should not allow manipulating antiscript to run javascript', () => {
-    cy.visit('http://localhost:9000/xss5.html');
+    cy.visit('/xss5.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
   it('should not allow manipulating antiscript to run javascript using onerror', () => {
-    cy.visit('http://localhost:9000/xss6.html');
+    cy.visit('/xss6.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
   it('should not allow manipulating antiscript to run javascript using onerror in state diagrams with dagre wrapper', () => {
-    cy.visit('http://localhost:9000/xss8.html');
+    cy.visit('/xss8.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
@@ -83,61 +83,61 @@ describe('XSS', () => {
     cy.on('uncaught:exception', (_err, _runnable) => {
       return false; // continue rendering even if there if mermaid throws an error
     });
-    cy.visit('http://localhost:9000/xss9.html');
+    cy.visit('/xss9.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
   it('should not allow manipulating antiscript to run javascript using onerror in state diagrams with dagre d3', () => {
-    cy.visit('http://localhost:9000/xss10.html');
+    cy.visit('/xss10.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
   it('should not allow manipulating antiscript to run javascript using onerror in state diagrams with dagre d3', () => {
-    cy.visit('http://localhost:9000/xss11.html');
+    cy.visit('/xss11.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
   it('should not allow manipulating antiscript to run javascript using onerror in state diagrams with dagre d3', () => {
-    cy.visit('http://localhost:9000/xss12.html');
+    cy.visit('/xss12.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
   it('should not allow manipulating antiscript to run javascript using onerror in state diagrams with dagre d3', () => {
-    cy.visit('http://localhost:9000/xss13.html');
+    cy.visit('/xss13.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
   it('should not allow manipulating antiscript to run javascript iframes in class diagrams', () => {
-    cy.visit('http://localhost:9000/xss14.html');
+    cy.visit('/xss14.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
   it('should sanitize cardinalities properly in class diagrams', () => {
-    cy.visit('http://localhost:9000/xss18.html');
+    cy.visit('/xss18.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
   it('should sanitize colons properly', () => {
-    cy.visit('http://localhost:9000/xss20.html');
+    cy.visit('/xss20.html');
     cy.wait(1000);
     cy.get('a').click('');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
   it('should sanitize colons properly', () => {
-    cy.visit('http://localhost:9000/xss21.html');
+    cy.visit('/xss21.html');
     cy.wait(1000);
     cy.get('a').click('');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
   it('should sanitize backticks in class names properly', () => {
-    cy.visit('http://localhost:9000/xss24.html');
+    cy.visit('/xss24.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
   it('should sanitize backticks block diagram labels properly', () => {
-    cy.visit('http://localhost:9000/xss25.html');
+    cy.visit('/xss25.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });

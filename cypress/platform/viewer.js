@@ -15,6 +15,13 @@ function markRendered() {
   }
 }
 
+function usesLegacyFontAwesomeSyntax(code) {
+  const legacyFontAwesomePattern = /fa[bklrs]?:fa-[\w-]+|::icon\(\s*fa\b/;
+  return Array.isArray(code)
+    ? code.some((diagramCode) => usesLegacyFontAwesomeSyntax(diagramCode))
+    : legacyFontAwesomePattern.test(code);
+}
+
 function loadFontAwesomeCSS() {
   const link = document.createElement('link');
   link.rel = 'stylesheet';
@@ -34,15 +41,18 @@ function loadFontAwesomeCSS() {
  * page.
  */
 const contentLoaded = async function () {
-  await loadFontAwesomeCSS();
-  await Promise.all(Array.from(document.fonts, (font) => font.load()));
-
   let pos = document.location.href.indexOf('?graph=');
   if (pos > 0) {
     pos = pos + 7;
     const graphBase64 = document.location.href.substr(pos);
     const graphObj = JSON.parse(b64ToUtf8(graphBase64));
-    if (graphObj.mermaid && graphObj.mermaid.theme === 'dark') {
+    if (usesLegacyFontAwesomeSyntax(graphObj.code)) {
+      await loadFontAwesomeCSS();
+    }
+    await Promise.all(Array.from(document.fonts, (font) => font.load()));
+
+    const darkThemes = ['dark', 'neo-dark', 'redux-dark', 'redux-dark-color'];
+    if (graphObj.mermaid && darkThemes.includes(graphObj.mermaid.theme)) {
       document.body.style.background = '#3f3f3f';
     }
     console.log(graphObj);
@@ -117,6 +127,50 @@ const contentLoaded = async function () {
       width: 256,
       height: 256,
     };
+    // Simplified AWS icons with rect elements for testing issue #7185
+    const staticAwsIconPack = {
+      prefix: 'aws',
+      icons: {
+        'arch-amazon-cloudwatch': {
+          width: 80,
+          height: 80,
+          body: '<g><rect x="0" y="0" width="80" height="80" fill="#FF4F8B" rx="4"/><path fill="#FFFFFF" d="M20 25h40v5H20zm0 10h40v5H20zm0 10h40v5H20z"/></g>',
+        },
+        'arch-amazon-route-53': {
+          width: 80,
+          height: 80,
+          body: '<g><rect x="0" y="0" width="80" height="80" fill="#8C4FFF" rx="4"/><circle cx="40" cy="40" r="15" fill="#FFFFFF"/><circle cx="40" cy="40" r="8" fill="#8C4FFF"/></g>',
+        },
+        'arch-amazon-eks-cloud': {
+          width: 80,
+          height: 80,
+          body: '<g><rect x="0" y="0" width="80" height="80" fill="#FF9900" rx="4"/><path fill="#FFFFFF" d="M40 20l15 10v20l-15 10-15-10V30z"/></g>',
+        },
+      },
+      width: 80,
+      height: 80,
+    };
+    // Simplified stand-in for the iconify material-icon-theme pack, for
+    // deterministic treeView icon tests (icon names match real material ids)
+    const staticMaterialIconPack = {
+      prefix: 'material-icon-theme',
+      icons: {
+        typescript: {
+          body: '<rect width="24" height="24" rx="3" fill="#3178c6"/><text x="12" y="17" text-anchor="middle" font-family="monospace" font-size="11" fill="#fff">TS</text>',
+        },
+        javascript: {
+          body: '<rect width="24" height="24" rx="3" fill="#f7df1e"/><text x="12" y="17" text-anchor="middle" font-family="monospace" font-size="11" fill="#000">JS</text>',
+        },
+        python: {
+          body: '<rect width="24" height="24" rx="3" fill="#3776ab"/><text x="12" y="17" text-anchor="middle" font-family="monospace" font-size="11" fill="#fff">PY</text>',
+        },
+        nodejs: {
+          body: '<rect width="24" height="24" rx="3" fill="#cb3837"/><text x="12" y="17" text-anchor="middle" font-family="monospace" font-size="9" fill="#fff">npm</text>',
+        },
+      },
+      width: 24,
+      height: 24,
+    };
     mermaid.registerIconPacks([
       {
         name: 'fa',
@@ -125,6 +179,14 @@ const contentLoaded = async function () {
       {
         name: 'fluent-emoji',
         loader: () => staticAwsLogoIconPack,
+      },
+      {
+        name: 'aws',
+        loader: () => staticAwsIconPack,
+      },
+      {
+        name: 'material-icon-theme',
+        loader: () => staticMaterialIconPack,
       },
     ]);
     await mermaid.run();

@@ -1,0 +1,60 @@
+{
+  "nodes": [
+    {
+      "id": "Start",
+      "width": 61.5703125,
+      "height": 45
+    },
+    {
+      "id": "Process1",
+      "width": 90.359375,
+      "height": 45
+    },
+    {
+      "id": "Decision1",
+      "width": 93.4765625,
+      "height": 45
+    },
+    {
+      "id": "Process2",
+      "width": 90.359375,
+      "height": 45
+    },
+    {
+      "id": "Process5",
+      "width": 90.359375,
+      "height": 45
+    },
+    {
+      "id": "Process3",
+      "width": 90.359375,
+      "height": 45
+    },
+    {
+      "id": "Decision2",
+      "width": 93.4765625,
+      "height": 45
+    },
+    {
+      "id": "Process4",
+      "width": 90.359375,
+      "height": 45
+    },
+    {
+      "id": "Process6",
+      "width": 90.359375,
+      "height": 45
+    },
+    {
+      "id": "Finish",
+      "width": 69.3515625,
+      "height": 45
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "1f8d434214b88742b169fcbf91dd48e399b28a6a79f12f3c0798559d92e7535b",
+    "capturedAt": "2026-05-06T00:00:00.000Z",
+    "capturedFrom": "browser-dev layout-tests/swimlanes/3-decisions-tb.mmd theme=default look=classic"
+  }
+}

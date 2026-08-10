@@ -1,17 +1,17 @@
 describe('Rerendering', () => {
   it('should be able to render after an error has occurred', () => {
-    const url = 'http://localhost:9000/render-after-error.html';
+    const url = '/render-after-error.html';
     cy.visit(url);
     cy.get('#graphDiv').should('exist');
   });
 
   it('should be able to render and rerender a graph via API', () => {
-    const url = 'http://localhost:9000/rerender.html';
+    const url = '/rerender.html';
     cy.visit(url);
-    cy.get('#graph [id^=flowchart-A]').should('have.text', 'XMas');
+    cy.get('#graph [id*=flowchart-A]').should('have.text', 'XMas');
 
     cy.get('body').find('#rerender').click({ force: true });
 
-    cy.get('#graph [id^=flowchart-A]').should('have.text', 'Saturday');
+    cy.get('#graph [id*=flowchart-A]').should('have.text', 'Saturday');
   });
 });

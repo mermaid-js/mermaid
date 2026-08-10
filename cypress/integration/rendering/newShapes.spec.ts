@@ -20,6 +20,7 @@ const newShapesSet2 = [
   'lightning-bolt',
   'filled-circle',
   'window-pane',
+  'datastore',
 ] as const;
 
 const newShapesSet3 = [
@@ -47,7 +48,8 @@ const newShapesSet5 = [
   'brace-r',
 ] as const;
 
-const newShapesSet6 = ['brace-r', 'braces'] as const;
+const newShapesSet6 = ['brace-r', 'braces', 'person'] as const;
+
 // Aggregate all shape sets into a single array
 const newShapesSets = [
   newShapesSet1,
@@ -133,7 +135,7 @@ looks.forEach((look) => {
 
         it(`with classDef`, () => {
           let flowchartCode = `flowchart ${direction}\n`;
-          flowchartCode += `  classDef customClazz fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5\n`;
+          flowchartCode += `  classDef customClazz fill:#bbf,stroke:#f66,stroke-width:2px,color:#000,stroke-dasharray: 5 5\n`;
           newShapesSet.forEach((newShape, index) => {
             flowchartCode += `  n${index} --> n${index}${index}@{ shape: ${newShape}, label: 'new ${newShape} shape' }\n`;
             flowchartCode += `  n${index}${index}:::customClazz\n`;

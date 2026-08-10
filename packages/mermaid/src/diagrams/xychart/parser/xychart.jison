@@ -26,7 +26,7 @@
 "accDescr"\s*":"\s*                         { this.pushState("acc_descr");return 'acc_descr'; }
 <acc_descr>(?!\n|;|#)*[^\n]*              { this.popState(); return "acc_descr_value"; }
 "accDescr"\s*"{"\s*                         { this.pushState("acc_descr_multiline");}
-<acc_descr_multiline>"{"                 { this.popState(); }
+<acc_descr_multiline>"}"                 { this.popState(); }
 <acc_descr_multiline>[^\}]*               { return "acc_descr_multiline_value"; }
 
 "xychart-beta"                            {return 'XYCHART';}
@@ -111,12 +111,17 @@ statement
   ;
 
 plotData
-  : SQUARE_BRACES_START commaSeparatedNumbers SQUARE_BRACES_END   { $$ = $commaSeparatedNumbers }
+  : SQUARE_BRACES_START dataPoints SQUARE_BRACES_END   { $$ = $dataPoints }
   ;
 
-commaSeparatedNumbers
-  : NUMBER_WITH_DECIMAL COMMA commaSeparatedNumbers                { $$ = [Number($NUMBER_WITH_DECIMAL), ...$commaSeparatedNumbers] }
-  | NUMBER_WITH_DECIMAL                                           { $$ = [Number($NUMBER_WITH_DECIMAL)] }
+dataPoints
+  : dataPoint COMMA dataPoints                { $$ = [$dataPoint, ...$dataPoints] }
+  | dataPoint                                 { $$ = [$dataPoint] }
+  ;
+
+dataPoint
+  : NUMBER_WITH_DECIMAL STR                   { $$ = { value: Number($1), label: $2 } }
+  | NUMBER_WITH_DECIMAL                       { $$ = { value: Number($1), label: '' } }
   ;
 
 parseXAxis

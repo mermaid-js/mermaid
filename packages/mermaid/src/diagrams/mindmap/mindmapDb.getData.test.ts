@@ -293,5 +293,37 @@ describe('MindmapDb getData function', () => {
       expect(edgeA1_aaa.section).toBe(1);
       expect(edgeA_a2.section).toBe(2);
     });
+
+    it('should wrap section numbers when there are more than 11 level 2 nodes', () => {
+      db.addNode(0, 'root', 'Example', 0);
+
+      for (let i = 1; i <= 15; i++) {
+        db.addNode(1, `child${i}`, `${i}`, 0);
+      }
+
+      const result = db.getData();
+
+      expect(result.nodes).toHaveLength(16);
+
+      const child1 = result.nodes.find((n) => n.label === '1') as MindmapLayoutNode;
+      const child11 = result.nodes.find((n) => n.label === '11') as MindmapLayoutNode;
+      const child12 = result.nodes.find((n) => n.label === '12') as MindmapLayoutNode;
+      const child13 = result.nodes.find((n) => n.label === '13') as MindmapLayoutNode;
+      const child14 = result.nodes.find((n) => n.label === '14') as MindmapLayoutNode;
+      const child15 = result.nodes.find((n) => n.label === '15') as MindmapLayoutNode;
+
+      expect(child1.section).toBe(0);
+      expect(child11.section).toBe(10);
+
+      expect(child12.section).toBe(0);
+      expect(child13.section).toBe(1);
+      expect(child14.section).toBe(2);
+      expect(child15.section).toBe(3);
+
+      expect(child12.cssClasses).toBe('mindmap-node section-0');
+      expect(child13.cssClasses).toBe('mindmap-node section-1');
+      expect(child14.cssClasses).toBe('mindmap-node section-2');
+      expect(child15.cssClasses).toBe('mindmap-node section-3');
+    });
   });
 });

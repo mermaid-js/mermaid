@@ -12,21 +12,9 @@
 
 > **reset**(`config`): `void`
 
-Defined in: [packages/mermaid/src/config.ts:221](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L221)
+Defined in: [packages/mermaid/src/config.ts:194](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L194)
 
-## reset
-
-| Function | Description                  | Type        | Required | Values |
-| -------- | ---------------------------- | ----------- | -------- | ------ |
-| reset    | Resets currentConfig to conf | Put Request | Required | None   |
-
-## conf
-
-| Parameter | Description                                                    | Type       | Required | Values                                       |
-| --------- | -------------------------------------------------------------- | ---------- | -------- | -------------------------------------------- |
-| conf      | base set of values, which currentConfig could be **reset** to. | Dictionary | Required | Any Values, with respect to the secure Array |
-
-**Notes**: (default: current siteConfig ) (optional, default `getSiteConfig()`)
+Resets the current config and applied directives to the provided config.
 
 ## Parameters
 
@@ -34,8 +22,8 @@ Defined in: [packages/mermaid/src/config.ts:221](https://github.com/mermaid-js/m
 
 [`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md) = `siteConfig`
 
-base set of values, which currentConfig could be **reset** to.
-Defaults to the current siteConfig (e.g returned by [getSiteConfig](getSiteConfig.md)).
+the value to reset the `currentConfig` to.
+Defaults to the current `siteConfig` (e.g the value returned by [getSiteConfig](getSiteConfig.md)).
 
 ## Returns
 

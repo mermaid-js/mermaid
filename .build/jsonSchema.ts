@@ -8,6 +8,7 @@ import type { MermaidConfig, BaseDiagramConfig } from '../packages/mermaid/src/c
  */
 const MERMAID_CONFIG_DIAGRAM_KEYS = [
   'flowchart',
+  'swimlane',
   'sequence',
   'gantt',
   'journey',
@@ -19,6 +20,7 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
   'xyChart',
   'requirement',
   'mindmap',
+  'ishikawa',
   'kanban',
   'timeline',
   'gitGraph',
@@ -26,9 +28,13 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
   'sankey',
   'block',
   'packet',
+  'treeView',
   'architecture',
+  'eventmodeling',
   'radar',
   'usecase',
+  'venn',
+  'cynefin',
 ] as const;
 
 /**

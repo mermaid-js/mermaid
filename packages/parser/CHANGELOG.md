@@ -1,5 +1,75 @@
 # @mermaid-js/parser
 
+## 1.2.0
+
+### Minor Changes
+
+- [#7535](https://github.com/mermaid-js/mermaid/pull/7535) [`ea1c48f`](https://github.com/mermaid-js/mermaid/commit/ea1c48f53fce5d025388d386c90da8743ee25b13) Thanks [@ragelink](https://github.com/ragelink)! - feat(cynefin): Adds the Cynefin framework as a new diagram type (beta) to Mermaid (available as `cynefin-beta`). The Cynefin framework, created by Dave Snowden, is a decision-making framework that categorizes problems into five complexity domains, widely used in agile, incident management, strategy, and organizational design.
+
+- [#7527](https://github.com/mermaid-js/mermaid/pull/7527) [`b4d0442`](https://github.com/mermaid-js/mermaid/commit/b4d0442dd1628acb3f71681519e7f47fc8bacf55) Thanks [@notionparallax](https://github.com/notionparallax)! - feat(treeView): Extends the existing treeView-beta diagram with features useful for representing file/directory structures.
+
+- [#7708](https://github.com/mermaid-js/mermaid/pull/7708) [`4e63e9d`](https://github.com/mermaid-js/mermaid/commit/4e63e9d338b6476df283afd4a002072945bc4563) Thanks [@txmxthy](https://github.com/txmxthy)! - feat(architecture): add `align row|column {ids…}` directive to architecture-beta diagrams so authors can declare horizontal or vertical alignment of services explicitly.
+
+- [#7251](https://github.com/mermaid-js/mermaid/pull/7251) [`216e4e9`](https://github.com/mermaid-js/mermaid/commit/216e4e9a61afceae885b00854f79e17373ccad31) Thanks [@ydah](https://github.com/ydah)! - feat(railroad): Add support for Railroad Diagrams (Syntax Diagrams) with four input syntaxes: IR (railroad-beta), EBNF (railroad-ebnf-beta), ABNF (railroad-abnf-beta), and PEG (railroad-peg-beta).
+
+## 1.1.1
+
+### Patch Changes
+
+- [#7642](https://github.com/mermaid-js/mermaid/pull/7642) [`7a8fb85`](https://github.com/mermaid-js/mermaid/commit/7a8fb8532c57ecc55b3711454ab0e505a4291445) Thanks [@tractorjuice](https://github.com/tractorjuice)! - fix(wardley): allow hyphens in unquoted component names
+
+  Multi-word names containing hyphens — e.g. `real-time processing`, `end-user`, `on-call engineer` — now parse without quoting, bringing the grammar in line with the OnlineWardleyMaps (OWM) convention. `A->B` (no-space arrow) still tokenises correctly.
+
+- [#7658](https://github.com/mermaid-js/mermaid/pull/7658) [`675a64c`](https://github.com/mermaid-js/mermaid/commit/675a64ca0e3cde8728ca715991623c3fc055ce88) Thanks [@aloisklink](https://github.com/aloisklink)! - fix(parser): bundle langium/chevrotain
+
+  This should silence warnings about lodash-es 4.17.23, which chevrotain@11.1.1 is pinned to, but is not vulnerable to.
+
+  And this avoids warnings when langium v4 is installed on Node.JS v20.0.
+
+## 1.1.0
+
+### Minor Changes
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - add new TreeView diagram
+
+## 1.0.1
+
+### Patch Changes
+
+- [#7333](https://github.com/mermaid-js/mermaid/pull/7333) [`fd3fc50`](https://github.com/mermaid-js/mermaid/commit/fd3fc501461e72d11933203175d70f130c1df3c5) Thanks [@omkarht](https://github.com/omkarht)! - fix: enhanced parser error messages to include line and column numbers for better debugging experience
+
+## 1.0.0
+
+### Major Changes
+
+- [#7377](https://github.com/mermaid-js/mermaid/pull/7377) [`7243340`](https://github.com/mermaid-js/mermaid/commit/72433401a8c9d90d6753b7592d556122ecb953ca) Thanks [@aloisklink](https://github.com/aloisklink)! - chore: upgrade to Langium v4
+
+  Upgrade `@mermaid-js/parser` to use Langium v4,
+  see https://github.com/eclipse-langium/langium/releases/tag/v4.0.0
+  for more details.
+
+  The major breaking changes that impact consumers of this package are:
+  - Due to various type-related changes, `langium` now requires version `>= 5.8.0`
+    of TypeScript.
+  - The generated type names from `ast.ts` have been moved from `<typeName>` to
+    `<typeName>.$type`
+    ([langium#1942](https://github.com/eclipse-langium/langium/pull/1942)).
+
+  This also removes a transitive dependency on lodash versions that are vulnerable
+  to CVE-2025-13465, although
+  [chevrotain doesn't use the affected functions](https://github.com/Chevrotain/chevrotain/blob/21f20cd9754f8d5e85243fd9286d1fff397363ab/packages/website/docs/changes/CHANGELOG.md?plain=1#L5-L8),
+  so this is only to silence security scanners.
+
+## 0.6.3
+
+### Patch Changes
+
+- [#7051](https://github.com/mermaid-js/mermaid/pull/7051) [`63df702`](https://github.com/mermaid-js/mermaid/commit/63df7021462e8dc1f2aaecb9c5febbbbde4c38e3) Thanks [@shubhamparikh2704](https://github.com/shubhamparikh2704)! - Add validation for negative values in pie charts:
+
+  Prevents crashes during parsing by validating values post-parsing.
+
+  Provides clearer, user-friendly error messages for invalid negative inputs.
+
 ## 0.6.2
 
 ### Patch Changes

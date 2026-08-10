@@ -14,14 +14,14 @@ describe('info', () => {
   it('should throw because of unsupported info grammar', async () => {
     const str = `info unsupported`;
     await expect(parser.parse(str)).rejects.toThrow(
-      'Parsing failed: unexpected character: ->u<- at offset: 5, skipped 11 characters.'
+      'Parsing failed: Lexer error on line 1, column 6: unexpected character: ->u<- at offset: 5, skipped 11 characters.'
     );
   });
 
   it('should throw because of unsupported info grammar', async () => {
     const str = `info unsupported`;
     await expect(parser.parse(str)).rejects.toThrow(
-      'Parsing failed: unexpected character: ->u<- at offset: 5, skipped 11 characters.'
+      'Parsing failed: Lexer error on line 1, column 6: unexpected character: ->u<- at offset: 5, skipped 11 characters.'
     );
   });
 });

@@ -309,4 +309,47 @@ describe('when parsing subgraphs', function () {
     expect(subgraphA.nodes).toContain('a');
     expect(subgraphA.nodes).not.toContain('c');
   });
+  it('should correctly parse direction TD inside a subgraph', function () {
+    const res = flow.parser.parse(`
+      graph LR
+        subgraph WithTD
+          direction TD
+          A1 --> A2
+        end
+    `);
+
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(1);
+    const subgraph = subgraphs[0];
+
+    expect(subgraph.dir).toBe('TD');
+    expect(subgraph.nodes).toContain('A1');
+    expect(subgraph.nodes).toContain('A2');
+  });
+
+  it('should attach `@{ view: collapsed }` metadata to a subgraph and collapse it', function () {
+    flow.parser.parse(`
+      graph TD
+        subgraph one [My Group]
+          A --> B
+        end
+        C --> A
+        one@{ view: collapsed }
+    `);
+
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(1);
+    expect(subgraphs[0].metadata?.view).toBe('collapsed');
+
+    const { nodes, edges } = flow.parser.yy.getData();
+    const collapsed = nodes.find((n) => n.id === 'one');
+    expect(collapsed?.shape).toBe('collapsedGroup');
+    expect(collapsed?.isGroup).toBe(false);
+    // Internal members are hidden
+    expect(nodes.find((n) => n.id === 'A')).toBeUndefined();
+    expect(nodes.find((n) => n.id === 'B')).toBeUndefined();
+    // C --> A is redirected to the collapsed node, A --> B is dropped
+    expect(edges.find((e) => e.start === 'C' && e.end === 'one')).toBeDefined();
+    expect(edges.find((e) => e.end === 'A')).toBeUndefined();
+  });
 });

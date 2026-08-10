@@ -13,7 +13,10 @@ import {
 } from 'langium';
 
 import { CommonValueConverter } from '../common/valueConverter.js';
-import { MermaidGeneratedSharedModule, PacketGeneratedModule } from '../generated/module.js';
+import {
+  MermaidGeneratedSharedModule,
+  PacketGrammarGeneratedModule as PacketGeneratedModule,
+} from '../generated/module.js';
 import { PacketTokenBuilder } from './tokenBuilder.js';
 
 /**

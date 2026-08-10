@@ -7,10 +7,14 @@ import { defaultOptions, getBuildConfig } from './util.js';
 import { generateAntlr } from '../.build/generateAntlr.js';
 
 const shouldVisualize = process.argv.includes('--visualize');
+// Opt-in: build a profiling-enabled artifact (`pnpm build:esbuild --profiling`).
+// Off by default so released bundles never carry the profiler.
+const shouldProfile = process.argv.includes('--profiling');
 
 const buildPackage = async (entryName: keyof typeof packageOptions) => {
   const commonOptions: MermaidBuildOptions = {
     ...defaultOptions,
+    profiling: shouldProfile,
     options: packageOptions[entryName],
   } as const;
   const buildConfigs: MermaidBuildOptions[] = [
@@ -74,7 +78,6 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
 };
 
 const handler = (e) => {
-  // eslint-disable-next-line no-console
   console.error(e);
   process.exit(1);
 };

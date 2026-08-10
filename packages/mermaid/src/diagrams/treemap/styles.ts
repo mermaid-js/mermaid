@@ -1,6 +1,8 @@
 import type { DiagramStylesProvider } from '../../diagram-api/types.js';
 import { cleanAndMerge } from '../../utils.js';
 import type { TreemapStyleOptions } from './types.js';
+import { getThemeVariables } from '../../themes/theme-default.js';
+import { getConfig as getConfigAPI } from '../../config.js';
 
 const defaultTreemapStyleOptions: TreemapStyleOptions = {
   sectionStrokeColor: 'black',
@@ -9,18 +11,23 @@ const defaultTreemapStyleOptions: TreemapStyleOptions = {
   leafStrokeColor: 'black',
   leafStrokeWidth: '1',
   leafFillColor: '#efefef',
-  labelColor: 'black',
   labelFontSize: '12px',
   valueFontSize: '10px',
-  valueColor: 'black',
-  titleColor: 'black',
   titleFontSize: '14px',
 };
 
 export const getStyles: DiagramStylesProvider = ({
   treemap,
 }: { treemap?: TreemapStyleOptions } = {}) => {
+  const defaultThemeVariables = getThemeVariables();
+  const currentConfig = getConfigAPI();
+  const themeVariables = cleanAndMerge(defaultThemeVariables, currentConfig.themeVariables);
+
   const options = cleanAndMerge(defaultTreemapStyleOptions, treemap);
+
+  const titleColor = options.titleColor ?? themeVariables.titleColor;
+  const labelColor = options.labelColor ?? themeVariables.textColor;
+  const valueColor = options.valueColor ?? themeVariables.textColor;
 
   return `
   .treemapNode.section {
@@ -34,15 +41,15 @@ export const getStyles: DiagramStylesProvider = ({
     fill: ${options.leafFillColor};
   }
   .treemapLabel {
-    fill: ${options.labelColor};
+    fill: ${labelColor};
     font-size: ${options.labelFontSize};
   }
   .treemapValue {
-    fill: ${options.valueColor};
+    fill: ${valueColor};
     font-size: ${options.valueFontSize};
   }
   .treemapTitle {
-    fill: ${options.titleColor};
+    fill: ${titleColor};
     font-size: ${options.titleFontSize};
   }
   `;
