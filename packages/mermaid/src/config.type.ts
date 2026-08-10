@@ -90,6 +90,18 @@ export interface MermaidConfig {
    */
   look?: 'classic' | 'handDrawn' | 'neo';
   /**
+   * Language used for mermaid's own built-in text, such as the syntax error
+   * message shown when a diagram fails to parse.
+   *
+   * This does not translate diagram content — labels you write in a diagram are
+   * always rendered as authored. Error messages thrown as exceptions also remain
+   * in English so that they stay stable and searchable.
+   *
+   * Any message missing from the selected locale falls back to English.
+   *
+   */
+  locale?: 'en' | 'zh-CN';
+  /**
    * Defines the seed to be used when using handDrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.
    *
    */
