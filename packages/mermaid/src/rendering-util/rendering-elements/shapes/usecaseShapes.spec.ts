@@ -1,6 +1,7 @@
 import { select } from 'd3';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import * as configApi from '../../../config.js';
+import { registerIconPacks } from '../../icons.js';
 import type { Node } from '../../types.js';
 import { shapes } from '../shapes.js';
 import { usecaseActor } from './usecaseActor.js';
@@ -219,6 +220,29 @@ describe('use-case actor shapes', () => {
     expect(glyph?.getAttribute('style')).toContain('stroke:#12506b !important');
     expect(glyph?.getAttribute('style')).toContain('stroke-width:5px !important');
     expect(marker?.getAttribute('style')).toContain('stroke: inherit !important');
+  });
+
+  it('renders actors from the shared icon pack registry', async () => {
+    registerIconPacks([
+      {
+        name: 'usecase-test',
+        icons: {
+          prefix: 'usecase-test',
+          icons: {
+            user: {
+              body: '<path data-usecase-test-icon="true" d="M0 0h24v24H0z"/>',
+            },
+          },
+          width: 24,
+          height: 24,
+        },
+      },
+    ]);
+
+    await usecaseActorIcon(svg(), actorNode('usecaseActorIcon', { icon: 'usecase-test:user' }));
+
+    expect(document.querySelector('.usecase-actor-icon-fallback')).toBeNull();
+    expect(document.querySelector('[data-usecase-test-icon="true"]')).not.toBeNull();
   });
 
   it('keeps the shared unknown-icon fallback and bundles awesome without an icon pack', async () => {
