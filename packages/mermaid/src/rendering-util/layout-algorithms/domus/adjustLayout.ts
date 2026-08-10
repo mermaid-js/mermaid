@@ -13,6 +13,7 @@ import { log } from '../../../logger.js';
 import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
 import { getConfig } from '../../../config.js';
 import utils from '../../../utils.js';
+import { clipEndpointsToNodeOutlines } from './pipeline/paintShapeClip.js';
 
 export async function adjustLayout(
   data4Layout: LayoutData,
@@ -48,13 +49,30 @@ export async function adjustLayout(
     }
   }
 
+  // Painted geometry per edge id, keyed for the line-hop pass below. Only differs
+  // from `edge.points` where a terminal point was clipped onto a non-rectangular
+  // node outline (see `clipEndpointsToNodeOutlines`).
+  const paintPointsById = new Map<string, any[]>();
+
   for (const edge of data4Layout.edges) {
     const startNode = edge.start ? (nodeById.get(edge.start) ?? {}) : {};
     const endNode = edge.end ? (nodeById.get(edge.end) ?? {}) : {};
 
+    // Last mile into the node: DOMUS routes and validates against node bounding
+    // BOXES, but a `diamond` (and hexagon, trapezoid, …) is drawn inscribed in
+    // its box and touches it only at the side midpoints, so an off-midpoint port
+    // ends in empty space. Clip the terminal points onto the drawn outline —
+    // `dot` does the same as its final step ("the spline is clipped to endpoint
+    // node shapes", TSE93 §5). `data4Layout` keeps the validated box-terminated
+    // polyline; only what is painted is clipped.
+    const paintPoints = clipEndpointsToNodeOutlines(edge.points as any, startNode, endNode);
+    if (edge.id) {
+      paintPointsById.set(String(edge.id), paintPoints as any[]);
+    }
+
     const paths = insertEdge(
       groups.edgePaths,
-      { ...edge, layoutAlgorithm: data4Layout.layoutAlgorithm },
+      { ...edge, points: paintPoints, layoutAlgorithm: data4Layout.layoutAlgorithm },
       {},
       data4Layout.type,
       startNode,
@@ -62,7 +80,11 @@ export async function adjustLayout(
       data4Layout.diagramId,
       // DOMUS emits final, node-attached, validated polylines. Paint must not
       // re-clip or re-cut them (that recomputed geometry the validator never saw
-      // and manufactured artifacts like border-hugging). Draw them verbatim.
+      // and manufactured artifacts like border-hugging). Draw them verbatim —
+      // the one exception is the shape clip applied above, which is deliberately
+      // OURS: axis-aligned, bounded to the last mile, and never fed back into
+      // `data4Layout`, unlike paint's center-ray `intersect` which would tilt the
+      // terminal segment off-axis.
       true
     );
     if (edge.label && !(data4Layout.config as { isLabelNode?: boolean }).isLabelNode) {
@@ -85,7 +107,8 @@ export async function adjustLayout(
       .filter((e: any) => Array.isArray(e.points) && e.points.length >= 2)
       .map((e: any) => ({
         id: e.id,
-        points: e.points,
+        // Hop positions must match the PAINTED path, not the layout polyline.
+        points: paintPointsById.get(String(e.id)) ?? e.points,
         curve: e.curve,
         arrowTypeStart: e.arrowTypeStart,
         arrowTypeEnd: e.arrowTypeEnd,
