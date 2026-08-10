@@ -27,6 +27,9 @@ const STRUCTURAL = new Set<string>([
   'edge-missing-points',
 ]);
 
+/** Two arrows leaving one node closer than this read as one arrow. */
+const MIN_DEPARTURE_GAP = 8;
+
 describe('faithful HOLA — wider fixture corpus', () => {
   beforeAll(() => {
     setLogLevel('fatal');
@@ -155,6 +158,62 @@ describe('faithful HOLA — wider fixture corpus', () => {
       }
     }
     expect(bent).toEqual([]);
+  }, 60_000);
+
+  /**
+   * A branching tree node used to fire every arrow from one point on its side, the
+   * routes separating only a clearance step later. Each connector now leaves from
+   * its own point, and the drawing stays orthogonal.
+   */
+  it('spreads the connectors leaving one tree node', async () => {
+    const fx = fixtures.find((f) => f.id.endsWith('4 nodes loop + trees'))!;
+    const data = await parseMmdFileToLayoutData(fx.mmdPath, {
+      stampFlowchartRendererFields: true,
+    });
+    applyFixtureContentSizesStrict(data, fx.sizes);
+    applyFixtureEdgeLabelSizes(data, fx.sizes);
+    runHolaFaithfulLayoutCore(data);
+
+    const departures = new Map<string, { edge: string; point: { x: number; y: number } }[]>();
+    for (const edge of data.edges) {
+      const start = edge.start ?? '';
+      const point = (edge.points ?? [])[0];
+      if (!point) {
+        continue;
+      }
+      departures.set(start, [...(departures.get(start) ?? []), { edge: edge.id, point }]);
+    }
+
+    const fans = [...departures.entries()].filter(([, list]) => list.length > 1);
+    expect(fans.length, 'the fixture has branching nodes').toBeGreaterThan(4);
+
+    const shared: string[] = [];
+    for (const [node, list] of fans) {
+      for (let i = 0; i < list.length; i++) {
+        for (let j = i + 1; j < list.length; j++) {
+          const gap = Math.hypot(
+            list[i].point.x - list[j].point.x,
+            list[i].point.y - list[j].point.y
+          );
+          if (gap < MIN_DEPARTURE_GAP) {
+            shared.push(
+              `${node}: ${list[i].edge} and ${list[j].edge} depart ${gap.toFixed(1)}px apart`
+            );
+          }
+        }
+      }
+    }
+    expect(shared).toEqual([]);
+
+    // Still orthogonal, and no bend spent on the spreading.
+    for (const edge of data.edges) {
+      const points = edge.points ?? [];
+      for (let i = 1; i < points.length; i++) {
+        const dx = Math.abs(points[i].x - points[i - 1].x);
+        const dy = Math.abs(points[i].y - points[i - 1].y);
+        expect(dx < 1e-3 || dy < 1e-3, `${edge.id} has a diagonal segment`).toBe(true);
+      }
+    }
   }, 60_000);
 
   for (const fx of fixtures) {

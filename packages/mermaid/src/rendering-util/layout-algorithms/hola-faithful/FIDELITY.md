@@ -305,6 +305,26 @@ rejecting any that the solver cannot satisfy or that would create an overlap.
     the last overlap pass changes nothing, so those bends are structurally
     required, not drift.
 
+14. **Several connectors leaving one node side are spread along it.**
+    `distributeFanPorts` in `routing/finalRouting.ts`, called just before final
+    routing.
+
+    Guide §19.8 lets a request name the sides an edge must use, but says nothing
+    about _where_ on a side it attaches, and the router's own `portPoint` defaults
+    to the middle. A tree node with several children therefore fired every arrow
+    from one point, the routes only separating a clearance step later. Each
+    connector now gets its own point on the side, ordered by where its far end sits
+    across that side, so the spread can never introduce a crossing. The spacing is
+    `treeFanPortSpacing`, capped by the side's own length less a corner margin, so a
+    wide fan on a small node simply gets a tighter spread — and an odd fan keeps its
+    middle connector on the centre line, so a straight middle branch stays straight.
+
+    Only ends whose side is already fixed take part, which in practice means tree
+    connectors; a core edge's sides are the router's to choose, so those are left
+    alone. Over both corpora this cuts `edge-same-port-departure` from 105 to 31,
+    `edge-shared-attachment-point` from 109 to 35 and `edge-shared-subpath` from 130
+    to 56, with the bend count unchanged at 270 — the separation is free.
+
 ---
 
 ## 4. Why the core is not pre-expanded for the trees
@@ -390,14 +410,13 @@ Relative to guide §26, these remain open:
   are dropped and children flattened, exactly as the guide specifies.
 - **PR 9 (§21).** The legacy `hola` path is still registered; this
   implementation is additive.
-- **Port distribution along a node side.** Every edge attaching to the same side
-  of a node currently shares one port (its centre, offset only for _parallel_
-  edges of the same pair). Structural correctness does not depend on it, but the
-  `validateLayout` aesthetics that do — `edge-same-port-departure`,
-  `edge-shared-attachment-point`, `edge-shared-projected-port`,
-  `edge-corner-connection`, `edge-border-hugging`, `edge-bend-near-endpoint` —
-  still fire. This is the largest remaining connector-quality gap and is why
-  `holaFaithfulDdlt.spec.ts` asserts the structural subset only.
+- **Port distribution on core edges.** Tree connectors now spread along their
+  side (deviation 14), but a core edge's sides are chosen inside the router, so
+  the edges meeting one core node still share a port. That is what is left of
+  `edge-same-port-departure` (31 of the original 105) and
+  `edge-shared-attachment-point` (35 of 109), and it is why
+  `holaFaithfulDdlt.spec.ts` asserts the structural subset only. Closing it means
+  assigning sides and ports together rather than per edge.
 
 ---
 

@@ -47,6 +47,12 @@ export interface HolaOptions {
   treeRankGap: number;
   /** Horizontal gap between sibling subtrees. */
   treeSiblingGap: number;
+  /**
+   * How far apart the connectors leaving one side of a tree node are spread along
+   * that side, when a parent has several children. Capped by the side's length, so
+   * a wide fan on a small node simply gets a tighter spread.
+   */
+  treeFanPortSpacing: number;
 
   /** Offset of an edge label from the segment it is attached to. */
   edgeLabelOffset: number;
@@ -84,6 +90,7 @@ export const DEFAULT_HOLA_OPTIONS: HolaOptions = {
 
   treeRankGap: 70,
   treeSiblingGap: 40,
+  treeFanPortSpacing: 14,
 
   edgeLabelOffset: 0,
 
