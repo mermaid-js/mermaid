@@ -2,6 +2,8 @@
 
 Use case diagrams show how actors interact with a system and its use cases. Start a diagram with the `usecase` keyword. Put each statement on its own physical line.
 
+In UML prose, **use case** is two words. Mermaid's exact syntax keyword is the single token `usecase`; this page uses the two-word form everywhere else.
+
 ```mermaid-example
 usecase
 direction LR
@@ -204,9 +206,9 @@ opens@{ animation: fast }
 payment@{ animate: false }
 ```
 
-Anonymous edges receive internal IDs but cannot be styled or configured by ID. Edge metadata accepts `animate: true`, `animate: false`, and `animation: fast` or `animation: slow`. An animation speed implies `animate: true` and uses Mermaid's shared edge animation classes.
+Anonymous edges receive internal IDs but cannot be styled or configured by ID. Use `animate: true` for the default speed, `animation: fast` or `animation: slow` to select a speed and enable animation, and `animate: false` to disable it.
 
-Extra dashes request greater minimum layout length on point, reversed-point, and markerless solid associations. The two-dash form has `minlen = 1`; three dashes give `minlen = 2`, and each additional dash adds one. In a labelled association, put the extra dashes on the right side of the label, as in `A -- "longer" ----> B`. Circle, cross, include, extend, and generalization operators have fixed length and reject extra dashes.
+Extra dashes request greater minimum layout length on point, reversed-point, and markerless solid associations. The two-dash form has `minlen = 1`; three dashes give `minlen = 2`, and each additional dash adds one. For example, `A --> B`, `A ---> B`, and `A ----> B` request progressively longer edges. In a labelled association, put the extra dashes on the right side of the label, as in `A -- "longer" ----> B`. Circle, cross, include, extend, and generalization operators have fixed length and reject extra dashes.
 
 ## Notes
 
@@ -233,10 +235,14 @@ Inspect("Inspect payload")
 json Payload@{
   "2": "second in source",
   "1": "first after 2",
+  "enabled": true,
+  "count": 3,
+  "missing": null,
   "colors": ["Red", "Green"],
   "address": { "city": "Oslo" },
   "items": [{ "name": "Book" }],
-  "empty": {}
+  "emptyObject": {},
+  "emptyArray": []
 }:::data
 Inspect --> Payload
 classDef data fill:#f6fbff,stroke:#3572a5
@@ -334,6 +340,45 @@ Customer --> Reset
 ```
 
 Rendered actors, use cases, boundaries, notes, JSON tables, and relationships include semantic accessible names. Actor variants, business roles, stereotypes, and relationship types are included in those names. See [Accessibility](../config/accessibility.md) for the diagram title and description syntax.
+
+## Complete example
+
+Features can be combined in one diagram. This example uses accessibility metadata, actor variants, a package boundary, stereotypes, classes, a JSON table, a note, a labelled long association, an include relationship, an animated edge, and a directly styled edge.
+
+```mermaid-example
+usecase
+direction LR
+accTitle: Online ordering use cases
+accDescr {
+  A customer places an order through the storefront.
+  Staff review the order and inspect its data.
+}
+actor Customer("Customer")
+actor Staff("Order staff")@{ type: hollow, business: true } <<Employee>>
+systemBoundary "Ordering System":::system
+  Browse("Browse products")
+  Checkout("Checkout") <<Core>>:::critical
+  Payment("Process payment")
+  Review[Review order]
+end
+Ordering_System@{ type: package }
+json OrderData@{
+  "status": "pending",
+  "items": [{ "name": "Book", "quantity": 1 }],
+  "total": 29.95
+}:::data
+note for Checkout "`Validates the **cart** before payment`"
+Customer starts@-- "places order" ---> Checkout
+Customer --> Browse
+Checkout pays@..> : include Payment
+Staff --> Review
+Review --> OrderData
+classDef system fill:#fffbea,stroke:#8a6d1d
+classDef critical fill:#fff0f0,stroke:#c33,stroke-width:3px
+classDef data fill:#eef8ff,stroke:#3572a5
+starts@{ animation: fast }
+style pays stroke:#6b46c1,stroke-width:2px
+```
 
 ## Limitations
 
