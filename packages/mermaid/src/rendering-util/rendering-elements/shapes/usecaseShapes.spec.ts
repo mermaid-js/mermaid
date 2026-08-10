@@ -222,6 +222,39 @@ describe('use-case actor shapes', () => {
     expect(marker?.getAttribute('style')).toContain('stroke: inherit !important');
   });
 
+  it.each([
+    ['normal', 'usecaseActor', usecaseActor, -24, 12],
+    ['hollow', 'usecaseActorHollow', usecaseActorHollow, -23, 9],
+    ['awesome', 'usecaseActorAwesome', usecaseActorAwesome, -21, 13],
+  ] as const)(
+    'renders the %s business marker as a right-side, edge-to-edge head chord',
+    async (_variant, shape, handler, centerY, radius) => {
+      await handler(svg(), actorNode(shape, { business: true }));
+
+      const markerPath =
+        document.querySelector('.usecase-actor-business-marker')?.getAttribute('d') ?? '';
+      const markerPoints = /^M ([^ ]+) ([^ ]+) L ([^ ]+) ([^ ]+)$/.exec(markerPath);
+      expect(markerPoints).not.toBeNull();
+      if (!markerPoints) {
+        throw new Error('Expected a four-coordinate actor business marker path');
+      }
+      const [, startXText, startYText, endXText, endYText] = markerPoints;
+      const points = [
+        [Number(startXText), Number(startYText)],
+        [Number(endXText), Number(endYText)],
+      ];
+      expect(points[0][0]).toBeGreaterThan(0);
+      expect(points[0][0]).toBeLessThan(points[1][0]);
+      expect(points[0][1]).toBeGreaterThan(points[1][1]);
+      for (const [x, y] of points) {
+        expect((x / radius) ** 2 + ((y - centerY) / radius) ** 2).toBeCloseTo(1, 10);
+      }
+      const angleDegrees =
+        (Math.atan2(points[0][1] - points[1][1], points[1][0] - points[0][0]) * 180) / Math.PI;
+      expect(angleDegrees).toBeCloseTo(60, 10);
+    }
+  );
+
   it('renders actors from the shared icon pack registry', async () => {
     registerIconPacks([
       {
@@ -312,11 +345,73 @@ describe('business use case and JSON table', () => {
     const marker = document.querySelector('.usecase-business-marker');
     expect(marker?.getAttribute('style')).toContain('stroke:#6b253c !important');
     expect(marker?.getAttribute('style')).toContain('stroke-width:4px !important');
+    const markerPath = marker?.getAttribute('d') ?? '';
+    const markerPoints = /^M ([^ ]+) ([^ ]+) L ([^ ]+) ([^ ]+)$/.exec(markerPath);
+    expect(markerPoints).not.toBeNull();
+    if (!markerPoints) {
+      throw new Error('Expected a four-coordinate business marker path');
+    }
+    const [, startXText, startYText, endXText, endYText] = markerPoints;
+    const [startX, startY, endX, endY] = [startXText, startYText, endXText, endYText].map(Number);
+    const ellipse = document.querySelector<SVGEllipseElement>('.usecase-business-ellipse');
+    const label = document.querySelector<SVGGraphicsElement>('.usecase-label');
+    if (!ellipse || !label) {
+      throw new Error('Expected the business ellipse and its label');
+    }
+    const radiusX = numberAttribute(ellipse, 'rx');
+    const radiusY = numberAttribute(ellipse, 'ry');
+    const labelRight = label.getBBox().width / 2;
+    expect(startX).toBeGreaterThan(labelRight);
+    expect(endX).toBeGreaterThan(startX);
+    expect(endX).toBeLessThan(radiusX);
+    expect(startY).toBeGreaterThan(endY);
+    expect((startX / radiusX) ** 2 + (startY / radiusY) ** 2).toBeCloseTo(1, 10);
+    expect((endX / radiusX) ** 2 + (endY / radiusY) ** 2).toBeCloseTo(1, 10);
     expect(document.querySelector('.usecase-stereotype')?.textContent).toContain('«Primary»');
     expect(document.querySelector('[role="img"]')?.getAttribute('aria-label')).toBe(
       'business use case Checkout, stereotype Primary'
     );
     expect(node.intersect?.({ x: 100, y: 0 }).x).toBe((node.width ?? 0) / 2);
+  });
+
+  it('keeps an HTML stereotype in local coordinates when the SVG has a viewport offset', async () => {
+    const originalHtmlGetBoundingClientRect = Object.getOwnPropertyDescriptor(
+      HTMLElement.prototype,
+      'getBoundingClientRect'
+    );
+    Object.defineProperty(HTMLElement.prototype, 'getBoundingClientRect', {
+      configurable: true,
+      value: () => box(300, 1000, 70, 18),
+    });
+    configApi.setConfig({ htmlLabels: true, flowchart: { htmlLabels: true } });
+
+    try {
+      const node = actorNode('usecaseBusiness', {
+        label: 'Prepare quote',
+        stereotype: 'Core',
+      });
+      await usecaseBusiness(svg(), node);
+
+      const stereotype = document.querySelector('.usecase-stereotype');
+      const transform = stereotype?.getAttribute('transform') ?? '';
+      const match = /^translate\(([^,]+),([^)]+)\)$/.exec(transform);
+      expect(match).not.toBeNull();
+      expect(Math.abs(Number(match?.[1]))).toBeLessThan(node.width ?? 0);
+      expect(Math.abs(Number(match?.[2]))).toBeLessThan(node.height ?? 0);
+      expect(Number(match?.[2])).toBeLessThan(0);
+      expect(document.querySelector('.c4-type')).toBeNull();
+    } finally {
+      if (originalHtmlGetBoundingClientRect) {
+        Object.defineProperty(
+          HTMLElement.prototype,
+          'getBoundingClientRect',
+          originalHtmlGetBoundingClientRect
+        );
+      } else {
+        Reflect.deleteProperty(HTMLElement.prototype, 'getBoundingClientRect');
+      }
+      configApi.setConfig({ htmlLabels: false, flowchart: { htmlLabels: false } });
+    }
   });
 
   it('renders ordered sanitized JSON cells with stable hooks, bounds, and aria label', async () => {

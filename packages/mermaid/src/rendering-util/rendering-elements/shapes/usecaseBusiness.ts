@@ -21,11 +21,11 @@ interface MeasuredBox {
 }
 
 const positionLabel = (label: D3Selection<SVGGElement>, bbox: MeasuredBox, centerY: number) => {
-  const originX = bbox.x ?? bbox.left ?? 0;
-  const originY = bbox.y ?? bbox.top ?? 0;
+  const viewportOffsetX = (bbox.x ?? 0) - (bbox.left ?? 0);
+  const viewportOffsetY = (bbox.y ?? 0) - (bbox.top ?? 0);
   label.attr(
     'transform',
-    `translate(${-bbox.width / 2 - originX},${centerY - bbox.height / 2 - originY})`
+    `translate(${-bbox.width / 2 - viewportOffsetX},${centerY - bbox.height / 2 - viewportOffsetY})`
   );
 };
 
@@ -36,12 +36,13 @@ export async function usecaseBusiness<T extends SVGGraphicsElement>(
   const businessNode = node as BusinessUsecaseNode;
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+  const labelNode: Node = businessNode.stereotype ? { ...node, stereotype: undefined } : node;
   const {
     shapeSvg,
     bbox: labelBox,
     halfPadding,
     label,
-  } = await labelHelper(parent, node, getNodeClasses(node, 'usecase-business-shape'));
+  } = await labelHelper(parent, labelNode, getNodeClasses(node, 'usecase-business-shape'));
 
   label.attr('class', 'label usecase-label');
   let stereotypeLabel: D3Selection<SVGGElement> | undefined;
@@ -63,6 +64,13 @@ export async function usecaseBusiness<T extends SVGGraphicsElement>(
   const padding = halfPadding ?? 10;
   const radiusX = labelWidth / 2 + padding * 2;
   const radiusY = labelHeight / 2 + padding;
+  const markerInset = Math.min(Math.max(padding / 5, 1), padding / 2);
+  const markerStartX = labelWidth / 2 + markerInset;
+  const markerEndX = radiusX - markerInset;
+  const normalizedStartX = markerStartX / radiusX;
+  const normalizedEndX = markerEndX / radiusX;
+  const markerStartY = radiusY * Math.sqrt(Math.max(0, 1 - normalizedStartX * normalizedStartX));
+  const markerEndY = -radiusY * Math.sqrt(Math.max(0, 1 - normalizedEndX * normalizedEndX));
 
   if (stereotypeLabel && stereotypeBox) {
     positionLabel(stereotypeLabel, stereotypeBox, -labelHeight / 2 + stereotypeBox.height / 2);
@@ -91,7 +99,7 @@ export async function usecaseBusiness<T extends SVGGraphicsElement>(
   shapeSvg
     .append('path')
     .attr('class', 'usecase-business-marker')
-    .attr('d', `M ${radiusX * 0.54} ${radiusY * 0.38} L ${radiusX * 0.96} ${radiusY * 0.84}`)
+    .attr('d', `M ${markerStartX} ${markerStartY} L ${markerEndX} ${markerEndY}`)
     .attr('fill', 'none')
     .attr('style', nodeStyles || null);
 

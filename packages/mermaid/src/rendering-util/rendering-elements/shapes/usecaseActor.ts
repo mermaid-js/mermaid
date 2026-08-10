@@ -30,6 +30,31 @@ const variantClass: Record<UsecaseActorVariant, string> = {
   icon: 'usecase-actor-icon',
 };
 
+const BUSINESS_MARKER_ANGLE = Math.PI / 3;
+const BUSINESS_MARKER_OFFSET_RATIO = 0.6;
+
+const businessMarkerPathForCircle = (centerY: number, radius: number): string => {
+  const centerOffset = radius * BUSINESS_MARKER_OFFSET_RATIO;
+  const halfChord = radius * Math.sqrt(1 - BUSINESS_MARKER_OFFSET_RATIO ** 2);
+  const directionX = Math.cos(BUSINESS_MARKER_ANGLE);
+  const directionY = -Math.sin(BUSINESS_MARKER_ANGLE);
+  const centerX = centerOffset * -directionY;
+  const markerCenterY = centerY + centerOffset * directionX;
+  const deltaX = halfChord * directionX;
+  const deltaY = halfChord * directionY;
+
+  return `M ${centerX - deltaX} ${markerCenterY - deltaY} L ${centerX + deltaX} ${
+    markerCenterY + deltaY
+  }`;
+};
+
+const businessMarkerPath: Record<UsecaseActorVariant, string> = {
+  normal: businessMarkerPathForCircle(-24, 12),
+  hollow: businessMarkerPathForCircle(-23, 9),
+  awesome: businessMarkerPathForCircle(-21, 13),
+  icon: 'M 12 -8 L 26 -26',
+};
+
 interface MeasuredBox {
   width: number;
   height: number;
@@ -107,7 +132,11 @@ export const appendActorCircle = (
   return circle;
 };
 
-const appendBusinessActorMarker = (group: D3Selection<SVGGElement>, node: UsecaseActorNode) => {
+const appendBusinessActorMarker = (
+  group: D3Selection<SVGGElement>,
+  node: UsecaseActorNode,
+  variant: UsecaseActorVariant
+) => {
   if (!node.business) {
     return;
   }
@@ -115,7 +144,7 @@ const appendBusinessActorMarker = (group: D3Selection<SVGGElement>, node: Usecas
   group
     .append('path')
     .attr('class', 'usecase-business-marker usecase-actor-business-marker')
-    .attr('d', 'M -10 -29 L 10 -11')
+    .attr('d', businessMarkerPath[variant])
     .attr('fill', 'none')
     .attr('style', 'stroke: inherit !important; stroke-width: inherit !important');
 };
@@ -166,7 +195,7 @@ export async function renderUsecaseActor<T extends SVGGraphicsElement>(
     .attr('class', `usecase-actor-glyph ${variantClass[variant]}`)
     .attr('style', nodeStyles || null);
   await drawGlyph(actorGroup, node);
-  appendBusinessActorMarker(actorGroup, node);
+  appendBusinessActorMarker(actorGroup, node, variant);
 
   const padding = node.padding ?? DEFAULT_ACTOR_PADDING;
   const stereotypeHeight = stereotypeBox?.height ?? 0;
