@@ -339,7 +339,7 @@ const getData = (): UsecaseLayoutData => {
       labelType: useCase.labelType,
       shape: useCaseShape(useCase),
       isGroup: false,
-      padding: 10,
+      padding: useCase.shape === 'ellipse' ? 20 : 10,
       look: globalConfig.look,
       cssClasses: classNames(
         'default',

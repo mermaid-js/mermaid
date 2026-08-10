@@ -80,11 +80,9 @@ export const getUsecaseEdgeAccessibleName = (edge: UsecaseLayoutEdge): string =>
 };
 
 const escapePlainLabel = (label: string): string =>
-  label
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/([*[\\\]_`])/g, '\\$1');
+  label.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+const escapeMarkdownMarkers = (label: string): string => label.replace(/([*[\\\]_`])/g, '\\$1');
 
 interface UsecaseAccessibleNames {
   nodes: ReadonlyMap<string, string>;
@@ -118,7 +116,10 @@ export const prepareUsecaseLayoutData = (
       }));
     }
     if (!node.isGroup && (node.shape === 'ellipse' || node.shape === 'rect') && node.stereotype) {
-      node.label = `«${escapePlainLabel(node.stereotype)}»<br/>${node.label ?? node.id}`;
+      const label = node.label ?? escapePlainLabel(node.id);
+      node.label = `«${escapeMarkdownMarkers(escapePlainLabel(node.stereotype))}»<br/>${
+        node.labelType === 'text' ? escapeMarkdownMarkers(label) : label
+      }`;
       node.labelType = 'markdown';
     }
   }

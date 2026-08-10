@@ -83,6 +83,13 @@ describe('usecase renderer integration', () => {
       nodes: [
         node({ id: 'Hostile', label: '<img src=x>& **literal**', labelType: 'text' }),
         node({
+          id: 'PlainStereotype',
+          label: '**literal with stereotype**',
+          labelType: 'text',
+          shape: 'ellipse',
+          stereotype: 'Primary *actor*',
+        }),
+        node({
           id: 'Markdown',
           label: '**formatted**',
           labelType: 'markdown',
@@ -97,9 +104,13 @@ describe('usecase renderer integration', () => {
 
     prepareUsecaseLayoutData(data, 'diagram');
 
-    expect(data.nodes[0].label).toBe('&lt;img src=x&gt;&amp; \\*\\*literal\\*\\*');
-    expect(data.nodes[1].label).toBe('«Main»<br/>**formatted**');
-    expect(data.edges[0].label).toBe('&lt;b&gt;edge&lt;/b&gt; \\*\\*literal\\*\\*');
+    expect(data.nodes[0].label).toBe('&lt;img src=x&gt;&amp; **literal**');
+    expect(data.nodes[1]).toMatchObject({
+      label: '«Primary \\*actor\\*»<br/>\\*\\*literal with stereotype\\*\\*',
+      labelType: 'markdown',
+    });
+    expect(data.nodes[2].label).toBe('«Main»<br/>**formatted**');
+    expect(data.edges[0].label).toBe('&lt;b&gt;edge&lt;/b&gt; **literal**');
   });
 
   it.each([

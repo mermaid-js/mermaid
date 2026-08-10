@@ -1134,6 +1134,7 @@ style payloadEdge stroke:#f00`);
         actorTextColor: '#222',
         clusterBkg: '#eee',
         clusterBorder: '#333',
+        edgeLabelBackground: '#def',
         fontFamily: 'Open Sans',
         lineColor: '#444',
         mainBkg: '#fff',
@@ -1150,9 +1151,16 @@ style payloadEdge stroke:#f00`);
       expect(css).toContain('.usecase-actor-awesome');
       expect(css).toContain('.usecase-business-marker');
       expect(css).toContain('.system-boundary-package');
+      expect(css).toContain(
+        '& .system-boundary-package-tab {\n    fill: #eee;\n    stroke: #333;\n  }'
+      );
+      expect(css).not.toContain('& .system-boundary-title,\n  & .system-boundary-package-tab');
       expect(css).toContain('.usecase-note');
       expect(css).toContain('.usecase-json-table');
       expect(css).toContain('.relationship-include');
+      expect(css).toContain('& .edgeLabel,\n  & .edgeLabel p {\n    background-color: #def;\n  }');
+      expect(css).toContain('& .labelBkg {\n    background-color: #def;\n    padding: 0 2px;\n  }');
+      expect(css).toContain('& .edgeLabel .label rect {\n    fill: #def;\n  }');
       expect(css).toContain('.marker.extension');
       expect(css).toContain('var(--mermaid-usecase-actor-font-size, 14px)');
       expect(css).toContain('var(--mermaid-usecase-font-size, 12px)');

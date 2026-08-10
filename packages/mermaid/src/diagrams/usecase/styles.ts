@@ -4,6 +4,7 @@ interface UsecaseStyleOptions {
   actorTextColor?: string;
   clusterBkg: string;
   clusterBorder: string;
+  edgeLabelBackground: string;
   fontFamily: string;
   lineColor: string;
   mainBkg: string;
@@ -73,10 +74,14 @@ const getStyles = (options: UsecaseStyleOptions) => `
   }
 
   & .system-boundary .cluster-label,
-  & .system-boundary-title,
-  & .system-boundary-package-tab {
+  & .system-boundary-title {
     color: ${options.titleColor ?? options.primaryTextColor};
     fill: ${options.titleColor ?? options.primaryTextColor};
+  }
+
+  & .system-boundary-package-tab {
+    fill: ${options.clusterBkg};
+    stroke: ${options.clusterBorder};
   }
 
   & .usecase-note {
@@ -118,6 +123,20 @@ const getStyles = (options: UsecaseStyleOptions) => `
   & .relationship.edge-animation-fast,
   & .relationship.edge-animation-slow {
     stroke-linecap: round;
+  }
+
+  & .edgeLabel,
+  & .edgeLabel p {
+    background-color: ${options.edgeLabelBackground};
+  }
+
+  & .labelBkg {
+    background-color: ${options.edgeLabelBackground};
+    padding: 0 2px;
+  }
+
+  & .edgeLabel .label rect {
+    fill: ${options.edgeLabelBackground};
   }
 
   & .relationship-label,

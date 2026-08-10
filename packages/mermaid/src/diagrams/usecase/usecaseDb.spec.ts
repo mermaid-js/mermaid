@@ -158,4 +158,31 @@ describe('usecase database', () => {
     expect(reset.symbols).toHaveLength(0);
     expect(db.getConfig()).toEqual(reset.config);
   });
+
+  it('gives oval use cases the same label clearance as rectangular use cases', () => {
+    const model = db.createModel();
+    model.useCases.set('Browse', {
+      id: 'Browse',
+      label: 'Browse catalog',
+      labelType: 'text',
+      shape: 'ellipse',
+      business: false,
+      classes: [],
+      styles: [],
+    });
+    model.useCases.set('Manage', {
+      id: 'Manage',
+      label: 'Manage catalog',
+      labelType: 'text',
+      shape: 'rect',
+      business: false,
+      classes: [],
+      styles: [],
+    });
+    db.commit(model);
+
+    const nodes = new Map(db.getData().nodes.map((node) => [node.id, node]));
+    expect(nodes.get('Browse')?.padding).toBe(20);
+    expect(nodes.get('Manage')?.padding).toBe(10);
+  });
 });
