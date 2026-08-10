@@ -375,6 +375,97 @@ button "B3"
       }
     });
 
+    it('should render VRule, VCurly, and Arrow with proper attributes and directions', () => {
+      const elements: { tag: string; attrs: Record<string, any> }[] = [];
+      const createMockSelection = (): any => {
+        const sel = {
+          append: (tag: string) => {
+            const elem = { tag, attrs: {} as Record<string, any> };
+            elements.push(elem);
+            return sel;
+          },
+          attr: (name: string, val: any) => {
+            if (elements.length > 0) {
+              elements[elements.length - 1].attrs[name] = val;
+            }
+            return sel;
+          },
+          style: () => sel,
+          text: (txt: string) => {
+            if (elements.length > 0) {
+              elements[elements.length - 1].attrs.text = txt;
+            }
+            return sel;
+          },
+        };
+        return sel;
+      };
+
+      // Test VRule
+      elements.length = 0;
+      registry.render({
+        parentElem: createMockSelection(),
+        node: {
+          astNode: { $type: 'VRule', label: 'VRule Label', height: 80 } as any,
+          x: 10,
+          y: 20,
+          width: 100,
+          height: 80,
+        },
+        config: {} as any,
+        renderChildNodes: () => {
+          // no-op
+        },
+      });
+      expect(
+        elements.some((e) => e.tag === 'line' && e.attrs.x1 === 60 && e.attrs.y2 === 100)
+      ).toBe(true);
+
+      // Test VCurly
+      elements.length = 0;
+      registry.render({
+        parentElem: createMockSelection(),
+        node: {
+          astNode: { $type: 'VCurly', label: 'Brace', height: 100 } as any,
+          x: 0,
+          y: 0,
+          width: 60,
+          height: 100,
+        },
+        config: {} as any,
+        renderChildNodes: () => {
+          // no-op
+        },
+      });
+      expect(
+        elements.some(
+          (e) => e.tag === 'path' && typeof e.attrs.d === 'string' && e.attrs.d.includes('M')
+        )
+      ).toBe(true);
+
+      // Test Arrow (directional)
+      for (const direction of ['right', 'left', 'up', 'down', 'both']) {
+        elements.length = 0;
+        registry.render({
+          parentElem: createMockSelection(),
+          node: {
+            astNode: { $type: 'Arrow', direction, label: `Arrow ${direction}` } as any,
+            x: 0,
+            y: 0,
+            width: 100,
+            height: 50,
+          },
+          config: {} as any,
+          renderChildNodes: () => {
+            // no-op
+          },
+        });
+        expect(
+          elements.some((e) => e.tag === 'polygon' && typeof e.attrs.points === 'string')
+        ).toBe(true);
+      }
+    });
+
     it('should prioritize frontmatter fontFamily and fontSize in styles', () => {
       const originalWireframe = getConfig().wireframe;
       updateSiteConfig({

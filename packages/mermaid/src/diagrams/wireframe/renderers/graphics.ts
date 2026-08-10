@@ -96,14 +96,114 @@ export const pathFieldRenderer: ComponentRenderer<PathField> = {
 };
 
 const renderVRule = ({ parentElem, node }: ComponentRenderContext<WireframeComponent>) => {
-  const { x, y, width } = node;
-  const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-divider');
+  const { x, y, width, height, astNode } = node;
+  const vruleNode = isVRule(astNode) ? astNode : undefined;
+  const label = vruleNode?.label;
+  const h = height > 0 ? height : 60;
+  const cx = Math.round(x + width / 2);
+  const g = parentElem
+    .append('g')
+    .attr('class', 'wireframe-comp wireframe-divider wireframe-vrule');
   g.append('line')
-    .attr('x1', x)
-    .attr('y1', y + 6)
-    .attr('x2', x + width)
-    .attr('y2', y + 6)
+    .attr('x1', cx)
+    .attr('y1', y)
+    .attr('x2', cx)
+    .attr('y2', y + h)
     .attr('class', 'wireframe-rule');
+
+  if (label) {
+    drawText(g, label, cx + 8, y + h / 2 + 4, 'wireframe-text wireframe-text-small');
+  }
+};
+
+const renderVCurly = ({ parentElem, node }: ComponentRenderContext<WireframeComponent>) => {
+  const { x, y, width, height, astNode } = node;
+  const curlyNode = isVCurly(astNode) ? astNode : undefined;
+  const label = curlyNode?.label;
+  const h = height > 0 ? height : 60;
+  const half = h / 2;
+  const braceWidth = 10;
+  const cx = Math.round(x + Math.max(10, (width - braceWidth) / 2));
+  const g = parentElem.append('g').attr('class', 'wireframe-comp wireframe-vcurly');
+
+  const pathD =
+    `M ${cx},${y} ` +
+    `C ${cx},${y + half / 2} ${cx + braceWidth},${y + half / 2} ${cx + braceWidth},${y + half} ` +
+    `C ${cx + braceWidth},${y + half + half / 2} ${cx},${y + half + half / 2} ${cx},${y + h}`;
+
+  g.append('path').attr('d', pathD).attr('class', 'wireframe-rule').attr('fill', 'none');
+
+  if (label) {
+    drawText(g, label, cx + braceWidth + 6, y + half + 4, 'wireframe-text wireframe-text-small');
+  }
+};
+
+const renderArrow = ({ parentElem, node }: ComponentRenderContext<WireframeComponent>) => {
+  const { x, y, width, height, astNode } = node;
+  const arrowNode = isArrow(astNode) ? astNode : undefined;
+  const label = arrowNode?.label;
+  const dir = arrowNode?.direction ?? 'right';
+  const g = parentElem
+    .append('g')
+    .attr('class', `wireframe-comp wireframe-arrow wireframe-arrow-${dir}`);
+
+  const midX = Math.round(x + width / 2);
+  const midY = Math.round(y + height / 2);
+  const headSize = 6;
+
+  let x1 = x;
+  let y1 = midY;
+  let x2 = x + width;
+  let y2 = midY;
+
+  if (dir === 'up' || dir === 'down') {
+    x1 = midX;
+    y1 = y;
+    x2 = midX;
+    y2 = y + height;
+  }
+
+  g.append('line')
+    .attr('x1', x1)
+    .attr('y1', y1)
+    .attr('x2', x2)
+    .attr('y2', y2)
+    .attr('class', 'wireframe-rule');
+
+  const drawHead = (px: number, py: number, direction: 'left' | 'right' | 'up' | 'down') => {
+    let points = '';
+    if (direction === 'right') {
+      points = `${px},${py} ${px - headSize * 1.5},${py - headSize} ${px - headSize * 1.5},${py + headSize}`;
+    } else if (direction === 'left') {
+      points = `${px},${py} ${px + headSize * 1.5},${py - headSize} ${px + headSize * 1.5},${py + headSize}`;
+    } else if (direction === 'up') {
+      points = `${px},${py} ${px - headSize},${py + headSize * 1.5} ${px + headSize},${py + headSize * 1.5}`;
+    } else if (direction === 'down') {
+      points = `${px},${py} ${px - headSize},${py - headSize * 1.5} ${px + headSize},${py - headSize * 1.5}`;
+    }
+    g.append('polygon').attr('points', points).attr('class', 'wireframe-arrow-head');
+  };
+
+  if (dir === 'right' || dir === 'both') {
+    drawHead(x2, y2, 'right');
+  }
+  if (dir === 'left' || dir === 'both') {
+    drawHead(x1, y1, 'left');
+  }
+  if (dir === 'up') {
+    drawHead(x1, y1, 'up');
+  }
+  if (dir === 'down') {
+    drawHead(x2, y2, 'down');
+  }
+
+  if (label) {
+    if (dir === 'up' || dir === 'down') {
+      drawText(g, label, midX + 10, midY + 4, 'wireframe-text wireframe-text-small');
+    } else {
+      drawText(g, label, midX, midY - 6, 'wireframe-text wireframe-text-small', 'middle');
+    }
+  }
 };
 
 export const vRuleRenderer: ComponentRenderer<VRule> = {
@@ -115,13 +215,13 @@ export const vRuleRenderer: ComponentRenderer<VRule> = {
 export const arrowRenderer: ComponentRenderer<Arrow> = {
   type: 'Arrow',
   guard: isArrow,
-  render: renderVRule,
+  render: renderArrow,
 };
 
 export const vCurlyRenderer: ComponentRenderer<VCurly> = {
   type: 'VCurly',
   guard: isVCurly,
-  render: renderVRule,
+  render: renderVCurly,
 };
 
 export const formattingToolbarRenderer: ComponentRenderer<FormattingToolbar> = {

@@ -28,6 +28,8 @@ import {
   isIcon,
   isImageField,
   isVRule,
+  isVCurly,
+  isArrow,
   isTabBar,
   isCanvas,
 } from '@mermaid-js/parser';
@@ -145,8 +147,15 @@ export function measureComponentHeight(
     return { width: Math.min(300, containerWidth), height: 120 };
   }
 
-  if (isVRule(comp)) {
-    return { width: containerWidth, height: LAYOUT_METRICS.divider.height };
+  if (isVRule(comp) || isVCurly(comp)) {
+    const h = comp.height ?? 60;
+    return { width: containerWidth, height: h };
+  }
+
+  if (isArrow(comp)) {
+    const isVertical = comp.direction === 'up' || comp.direction === 'down';
+    const h = isVertical ? 60 : 30;
+    return { width: containerWidth, height: h };
   }
 
   if (isTabBar(comp)) {
