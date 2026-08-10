@@ -22,3 +22,17 @@ run ended: user-directed target achieved (self-loop U-bend restored, dedicated s
 - commit: cf4d19ca3
 - effect: collapsed self-loop now scores 0/invalid (was 1000); correct U-bend stays 995. DDLT aggregate unchanged (44209) since the fixture already renders the U-bend after 57b73875b. Instrument gap from round 1 lesson is now closed — a future self-loop collapse trips the DDLT validity floor.
 - verified: browser render of self-loop.mmd (layout: domus) shows the U-bend; screenshot shared with user.
+
+## Run 2026-08-10T09:23 — branch domus-loop/20260810T0923-subgraph-edge
+- base: 62bc3c950 (self-loop routing + scorer commits). baseline total 44209, invalid 0, 47/47 pass.
+- goal: user-directed — fix the broken three-->two subgraph-to-subgraph edge in subgraph-variation-2 ("ends somewhere in between").
+
+### 2026-08-10 09:23 — round 1
+- target: domus/subgraph-variation-2 (DDLT 1000/valid, but three-->two renders as a stub ending mid-gap; rendered path 'd' contains NaN).
+- root cause: remediateFlaggedEdgesWhenMonotone accepted a compound reroute candidate ending in a coincident-point tail [start,end,end] (zero-length final segment). validateLayout's normalizePolyline collapses the dup before scoring, so it scores identically to the clean route and passes the monotone gate; the renderer feeds RAW points to curve interpolation → divide-by-zero → NaN in path → truncated edge. Isolated via per-pass point logging: clean 2-pt survives RP1 + routeAndRepair; dup appears only in compound-placement polish (remediateFlaggedEdges).
+- approach: dropConsecutiveDuplicatePoints() sanitizes each remediation candidate before the monotone test. Deduped route [start,end] validates identically → still accepted, no NaN tail. (Literature not consulted: zero-length-segment rendering degeneracy is a renderer-hygiene issue outside the graph-drawing corpus's scope; strong code evidence from the trace.)
+- files: domus/pipeline/flaggedEdgeRemediation.ts (+dedupe helper, applied in candidate loop)
+- result: KEPT (commit b675c001d) — sweep 47/47, invalid 0, total 44209 UNCHANGED (scorer normalizes dups → blind to the fix). Wider domus suite: identical failure set with/without (0 new). Browser render of subgraph-variation-2 now shows three-->two reaching the two boundary.
+- lesson: SAME instrument gap as the self-loop, generalized: validateLayout's normalizePolyline hides ALL coincident-consecutive-point degeneracies from the score, but the renderer NaNs on them. A raw-polyline "no zero-length segment" check in the scorer would catch this whole class (recommended follow-up, like edge-self-loop-not-rendered). Any candidate-generating pass can emit such a tail; a final raw-polyline sanitize in layout() would be the fully robust guard.
+
+run ended: user-directed target achieved (three-->two edge reaches the two boundary; NaN gone) — total 44209 → 44209 (scorer-blind; render corrected)
