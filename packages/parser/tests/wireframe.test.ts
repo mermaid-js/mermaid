@@ -15,7 +15,7 @@ import type {
   List,
   Menu,
   RadioGroup,
-  Section,
+  WireframeSection,
   SelectField,
   TabBar,
   TextArea,
@@ -29,7 +29,7 @@ import { expectNoErrorsOrAlternatives, wireframeParse as parse } from './test-ut
 describe('Wireframe Parser', () => {
   describe('Root & Header Parsing', () => {
     it('should parse basic wireframe declaration', () => {
-      const result = parse('wireframe "User Profile"');
+      const result = parse('wireframe-beta "User Profile"');
       expectNoErrorsOrAlternatives(result);
       expect(result.value.$type).toBe(WireframeDiagram.$type);
       expect(result.value.label).toBe('User Profile');
@@ -38,20 +38,20 @@ describe('Wireframe Parser', () => {
     it('should parse wireframe with size options', () => {
       const sizes = ['dialog', 'panel', 'tablet', 'desktop', 'page'] as const;
       for (const canvasSize of sizes) {
-        const result = parse(`wireframe "Dashboard" size=${canvasSize}`);
+        const result = parse(`wireframe-beta "Dashboard" size=${canvasSize}`);
         expectNoErrorsOrAlternatives(result);
         expect(result.value.canvasSize).toBe(canvasSize);
       }
     });
 
     it('should parse wireframe with optional end keyword', () => {
-      const result = parse('wireframe "Main"\nend');
+      const result = parse('wireframe-beta "Main"\nend');
       expectNoErrorsOrAlternatives(result);
       expect(result.value.$type).toBe(WireframeDiagram.$type);
     });
 
     it('should parse metadata divider ---', () => {
-      const result = parse('wireframe "Main"\n---\nbutton "Click"');
+      const result = parse('wireframe-beta "Main"\n---\nbutton "Click"');
       expectNoErrorsOrAlternatives(result);
       expect(result.value.components).toHaveLength(1);
     });
@@ -59,7 +59,7 @@ describe('Wireframe Parser', () => {
 
   describe('Action Bar Parsing', () => {
     it('should parse action bar with buttons', () => {
-      const result = parse('wireframe "App"\nactions [Save] [Cancel] [Delete]');
+      const result = parse('wireframe-beta "App"\nactions [Save] [Cancel] [Delete]');
       expectNoErrorsOrAlternatives(result);
       expect(result.value.actions).toBeDefined();
       expect(result.value.actions?.buttons).toHaveLength(3);
@@ -69,7 +69,7 @@ describe('Wireframe Parser', () => {
     });
 
     it('should parse action bar buttons with quoted labels', () => {
-      const result = parse('wireframe "App"\nactions ["Submit Form"] ["Reset All"]');
+      const result = parse('wireframe-beta "App"\nactions ["Submit Form"] ["Reset All"]');
       expectNoErrorsOrAlternatives(result);
       expect(result.value.actions?.buttons).toHaveLength(2);
       expect(result.value.actions?.buttons[0].label).toBe('Submit Form');
@@ -78,7 +78,7 @@ describe('Wireframe Parser', () => {
 
   describe('Leaf Components Parsing', () => {
     it('should parse text field components (textfield, password, numberfield, datepicker)', () => {
-      const result = parse(`wireframe "Form"
+      const result = parse(`wireframe-beta "Form"
 textfield "Username"
 password "Password"
 numberfield "Age"
@@ -103,7 +103,7 @@ datepicker "Birth Date"`);
     });
 
     it('should parse textarea with rows attribute and richtext option', () => {
-      const result = parse('wireframe "Form"\ntextarea "Comments" richtext rows=8');
+      const result = parse('wireframe-beta "Form"\ntextarea "Comments" richtext rows=8');
       expectNoErrorsOrAlternatives(result);
       const ta = result.value.components[0] as unknown as TextArea;
       expect(ta.$type).toBe('TextArea');
@@ -113,7 +113,7 @@ datepicker "Birth Date"`);
     });
 
     it('should parse textarea with multiline backtick string value', () => {
-      const input = `wireframe "Form"
+      const input = `wireframe-beta "Form"
 textarea "Comments" \`Lorem ipsum ...
 dolorem...
 last line\` richtext`;
@@ -127,7 +127,7 @@ last line\` richtext`;
     });
 
     it('should parse simple inputs (richtext, multifield, imagefield, pathfield)', () => {
-      const result = parse(`wireframe "Inputs"
+      const result = parse(`wireframe-beta "Inputs"
 richtext "Description"
 multifield "Tags"
 imagefield "Avatar"
@@ -138,7 +138,7 @@ pathfield "File Path"`);
     });
 
     it('should parse select fields and combobox with options', () => {
-      const result = parse(`wireframe "Selects"
+      const result = parse(`wireframe-beta "Selects"
 select "Country" [USA, Germany, Japan]
 select-multiple "Roles" ["Admin", "User", "Guest"]
 combobox "Category" [Tech, Science]`);
@@ -157,7 +157,7 @@ combobox "Category" [Tech, Science]`);
     });
 
     it('should parse checkbox and radio groups with selections', () => {
-      const result = parse(`wireframe "Checkboxes"
+      const result = parse(`wireframe-beta "Checkboxes"
 checkbox "Remember Me" checked
 checkboxgroup "Hobbies" [*Coding, Reading, *Gaming]
 radiogroup "Gender" [*Male, Female, Other]`);
@@ -177,7 +177,7 @@ radiogroup "Gender" [*Male, Female, Other]`);
     });
 
     it('should parse text labels and headings', () => {
-      const result = parse(`wireframe "Typography"
+      const result = parse(`wireframe-beta "Typography"
 label "Simple Label"
 paragraph "Paragraph content goes here."
 heading "Main Header"
@@ -188,7 +188,7 @@ subtitle "Sub Header"`);
     });
 
     it('should parse buttons with primary flag', () => {
-      const result = parse(`wireframe "Buttons"
+      const result = parse(`wireframe-beta "Buttons"
 button "Submit" primary
 button "Cancel"`);
 
@@ -201,14 +201,14 @@ button "Cancel"`);
     });
 
     it('should parse icon with glyph property', () => {
-      const result = parse('wireframe "Icons"\nicon "UserIcon" glyph="user"');
+      const result = parse('wireframe-beta "Icons"\nicon "UserIcon" glyph="user"');
       expectNoErrorsOrAlternatives(result);
       const icon = result.value.components[0] as unknown as Icon;
       expect(icon.glyph).toBe('user');
     });
 
     it('should parse canvas with height property', () => {
-      const result = parse('wireframe "Draw"\ncanvas "Map" height=300');
+      const result = parse('wireframe-beta "Draw"\ncanvas "Map" height=300');
       expectNoErrorsOrAlternatives(result);
       const cv = result.value.components[0] as unknown as Canvas;
       expect(cv.height).toBe(300);
@@ -216,7 +216,7 @@ button "Cancel"`);
 
     it('should parse tabbar with active tab', () => {
       const result = parse(
-        'wireframe "Nav"\ntabbar "Main Navigation" [Home, Profile, Settings] active=1'
+        'wireframe-beta "Nav"\ntabbar "Main Navigation" [Home, Profile, Settings] active=1'
       );
       expectNoErrorsOrAlternatives(result);
       const tb = result.value.components[0] as unknown as TabBar;
@@ -227,13 +227,13 @@ button "Cancel"`);
     it('should parse directional arrows', () => {
       const directions = ['right', 'left', 'up', 'down', 'both'] as const;
       for (const dir of directions) {
-        const result = parse(`wireframe "Flow"\narrow "Flow Pointer" ${dir}`);
+        const result = parse(`wireframe-beta "Flow"\narrow "Flow Pointer" ${dir}`);
         expectNoErrorsOrAlternatives(result);
       }
     });
 
     it('should parse formatting toolbar, vcurly, and vrule', () => {
-      const result = parse(`wireframe "Tools"
+      const result = parse(`wireframe-beta "Tools"
 formattingtoolbar "Toolbar"
 vcurly "Curly Bracket" height=100
 vrule "Vertical Rule" height=50`);
@@ -243,7 +243,7 @@ vrule "Vertical Rule" height=50`);
     });
 
     it('should parse menu and list (ordered and unordered)', () => {
-      const result = parse(`wireframe "Lists"
+      const result = parse(`wireframe-beta "Lists"
 menu "File Menu" [New, Open, Save]
 list "Unordered List" [Alpha, Beta]
 list "Ordered List" [First, Second] ordered`);
@@ -260,7 +260,7 @@ list "Ordered List" [First, Second] ordered`);
     });
 
     it('should parse tree component with nested nodes', () => {
-      const result = parse(`wireframe "Files"
+      const result = parse(`wireframe-beta "Files"
 tree "File Explorer"
 node "src" expanded > "components", "utils"
 node "components" > "Header.tsx"
@@ -277,7 +277,7 @@ end`);
   describe('Component Modifiers', () => {
     it('should parse id, alignTo, and info modifiers on components', () => {
       const result = parse(
-        'wireframe "Modifiers"\nbutton "Click Me" id=btnSubmit alignTo=lblHeader info'
+        'wireframe-beta "Modifiers"\nbutton "Click Me" id=btnSubmit alignTo=lblHeader info'
       );
 
       expectNoErrorsOrAlternatives(result);
@@ -290,21 +290,21 @@ end`);
 
   describe('Layout Container Components', () => {
     it('should parse section container', () => {
-      const result = parse(`wireframe "Containers"
+      const result = parse(`wireframe-beta "Containers"
 section "Personal Info" id=sec1
   textfield "First Name"
   textfield "Last Name"
 end`);
 
       expectNoErrorsOrAlternatives(result);
-      const sec = result.value.components[0] as unknown as Section;
+      const sec = result.value.components[0] as unknown as WireframeSection;
       expect(sec.$type).toBe('WireframeSection');
       expect(sec.label).toBe('Personal Info');
       expect(sec.components).toHaveLength(2);
     });
 
     it('should parse fieldset container', () => {
-      const result = parse(`wireframe "Containers"
+      const result = parse(`wireframe-beta "Containers"
 fieldset "Account Credentials"
   textfield "Email"
   password "Password"
@@ -317,7 +317,7 @@ end`);
     });
 
     it('should parse titlewindow container', () => {
-      const result = parse(`wireframe "Popup Window"
+      const result = parse(`wireframe-beta "Popup Window"
 titlewindow "Edit Profile"
   textfield "Display Name"
   button "Save Changes" primary
@@ -330,7 +330,7 @@ end`);
     });
 
     it('should parse columns and col blocks with width', () => {
-      const result = parse(`wireframe "Grid"
+      const result = parse(`wireframe-beta "Grid"
 columns
   col 30%
     label "Sidebar"
@@ -355,7 +355,7 @@ end`);
     });
 
     it('should parse content tabs and tab panes', () => {
-      const result = parse(`wireframe "Tabs"
+      const result = parse(`wireframe-beta "Tabs"
 tabs [General, Security] active=0
   tab "General"
     textfield "Username"
@@ -374,7 +374,7 @@ end`);
     });
 
     it('should parse showTabs with slug list like showTabs=general,notifications', () => {
-      const result = parse(`wireframe "Tabs"
+      const result = parse(`wireframe-beta "Tabs"
 tabs ["General", "Security", "Notifications"] showTabs=general,notifications
   tab "General"
     textfield "Username"
@@ -390,7 +390,7 @@ end`);
     });
 
     it('should parse accordion container with collapsed state', () => {
-      const result = parse(`wireframe "Accordion"
+      const result = parse(`wireframe-beta "Accordion"
 accordion "Advanced Options" collapsed
   checkbox "Enable Debug Logging"
 end`);
@@ -405,7 +405,7 @@ end`);
 
   describe('Nested Containers & Complex Wireframes', () => {
     it('should parse multi-level nested layout containers', () => {
-      const result = parse(`wireframe "Complex Page" size=desktop
+      const result = parse(`wireframe-beta "Complex Page" size=desktop
 actions [Save] [Export]
 ---
 section "Main Form" id=secMain
@@ -428,7 +428,7 @@ end`);
       expect(result.value.canvasSize).toBe('desktop');
       expect(result.value.actions?.buttons).toHaveLength(2);
 
-      const sec = result.value.components[0] as unknown as Section;
+      const sec = result.value.components[0] as unknown as WireframeSection;
       expect(sec.components).toHaveLength(1);
       const cols = sec.components?.[0] as unknown as Columns;
       expect(cols.cols).toHaveLength(2);

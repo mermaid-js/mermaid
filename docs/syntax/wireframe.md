@@ -12,7 +12,7 @@
 A Wireframe diagram allows you to create high-level low-fidelity UI mockups and layout wireframes using text syntax. It provides built-in support for standard UI controls, multi-column grid layouts, container nesting, canvas presets, and multi-tab panel previews.
 
 ```mermaid-example
-wireframe "User Profile Setup" size=desktop
+wireframe-beta "User Profile Setup" size=desktop
   actions ["Help"] ["Save"] ["Cancel"]
 
   titlewindow "Account Settings" id=mainWin
@@ -32,7 +32,7 @@ wireframe "User Profile Setup" size=desktop
 ```
 
 ```mermaid
-wireframe "User Profile Setup" size=desktop
+wireframe-beta "User Profile Setup" size=desktop
   actions ["Help"] ["Save"] ["Cancel"]
 
   titlewindow "Account Settings" id=mainWin
@@ -53,12 +53,12 @@ wireframe "User Profile Setup" size=desktop
 
 ## Declaration & Canvas Size Presets
 
-Every wireframe diagram starts with the `wireframe` keyword. You can optionally specify a title enclosed in quotes and a canvas preset size using `size=<preset>`.
+Every wireframe diagram starts with the `wireframe-beta` keyword. You can optionally specify a title enclosed in quotes and a canvas preset size using `size=<preset>`.
 
 ### Syntax
 
 ```
-wireframe ["Diagram Title"] [size=preset]
+wireframe-beta ["Diagram Title"] [size=preset]
 ```
 
 ### Canvas Presets
@@ -76,14 +76,14 @@ Mermaid Wireframe includes 5 predefined canvas size presets:
 ### Example
 
 ```mermaid-example
-wireframe "Edit Profile Dialog" size=dialog
+wireframe-beta "Edit Profile Dialog" size=dialog
   textfield "Username"
   password "Password"
   button "Submit" primary
 ```
 
 ```mermaid
-wireframe "Edit Profile Dialog" size=dialog
+wireframe-beta "Edit Profile Dialog" size=dialog
   textfield "Username"
   password "Password"
   button "Submit" primary
@@ -96,13 +96,13 @@ wireframe "Edit Profile Dialog" size=dialog
 An action bar displays quick action buttons along the top of the wireframe header or canvas. You can specify buttons inside square brackets (prefix with `*` for primary buttons) under an `actions` directive:
 
 ```mermaid-example
-wireframe "Dashboard" size=panel
+wireframe-beta "Dashboard" size=panel
   actions ["Refresh"] ["Export PDF"] ["*Settings"]
   paragraph "Welcome back to your dashboard."
 ```
 
 ```mermaid
-wireframe "Dashboard" size=panel
+wireframe-beta "Dashboard" size=panel
   actions ["Refresh"] ["Export PDF"] ["*Settings"]
   paragraph "Welcome back to your dashboard."
 ```
@@ -118,7 +118,7 @@ Wireframes support flexible layout containers to group controls and divide the s
 Use `columns` to create a row of columns. Each column is specified with `col` and an optional width specifier (in percentage `%` or fixed pixels `px`, e.g. `col 30%` or `col 200px`).
 
 ```mermaid-example
-wireframe "Multi-Column Layout" size=desktop
+wireframe-beta "Multi-Column Layout" size=desktop
   columns
     col 30%
       heading "Sidebar Menu"
@@ -133,7 +133,7 @@ wireframe "Multi-Column Layout" size=desktop
 ```
 
 ```mermaid
-wireframe "Multi-Column Layout" size=desktop
+wireframe-beta "Multi-Column Layout" size=desktop
   columns
     col 30%
       heading "Sidebar Menu"
@@ -152,7 +152,7 @@ wireframe "Multi-Column Layout" size=desktop
 Wraps components in a window container complete with a window header title bar.
 
 ```mermaid-example
-wireframe size=panel
+wireframe-beta size=panel
   titlewindow "System Status"
     label "CPU Usage: 42%"
     label "Memory Usage: 68%"
@@ -161,7 +161,7 @@ wireframe size=panel
 ```
 
 ```mermaid
-wireframe size=panel
+wireframe-beta size=panel
   titlewindow "System Status"
     label "CPU Usage: 42%"
     label "Memory Usage: 68%"
@@ -174,7 +174,7 @@ wireframe size=panel
 Groups related form elements inside a bordered fieldset box with a legend label.
 
 ```mermaid-example
-wireframe size=panel
+wireframe-beta size=panel
   fieldset "Contact Information"
     textfield "Phone Number"
     textfield "Address"
@@ -182,7 +182,7 @@ wireframe size=panel
 ```
 
 ```mermaid
-wireframe size=panel
+wireframe-beta size=panel
   fieldset "Contact Information"
     textfield "Phone Number"
     textfield "Address"
@@ -194,14 +194,14 @@ wireframe size=panel
 Creates a generic bordered section box for organizing content blocks.
 
 ```mermaid-example
-wireframe size=panel
+wireframe-beta size=panel
   section "Overview"
     paragraph "Section content goes here."
   end
 ```
 
 ```mermaid
-wireframe size=panel
+wireframe-beta size=panel
   section "Overview"
     paragraph "Section content goes here."
   end
@@ -216,7 +216,7 @@ Creates a tabbed container. You can control tab rendering and preview modes usin
 - **`showTabs="1,3"`**: Displays only specified 1-indexed tab panes side-by-side.
 
 ```mermaid-example
-wireframe size=panel
+wireframe-beta size=panel
   tabs ["General", "Security", "Notifications"] active=1 showTabs="1,2"
     tab "General"
       textfield "Display Name"
@@ -233,7 +233,7 @@ wireframe size=panel
 ```
 
 ```mermaid
-wireframe size=panel
+wireframe-beta size=panel
   tabs ["General", "Security", "Notifications"] active=1 showTabs="1,2"
     tab "General"
       textfield "Display Name"
@@ -254,7 +254,7 @@ wireframe size=panel
 Creates collapsible accordion sections. Use `collapsed` to render an accordion section in its collapsed state.
 
 ```mermaid-example
-wireframe size=desktop
+wireframe-beta size=desktop
   accordion "Advanced Settings" collapsed
     checkbox "Enable Developer Mode"
     textfield "API Key"
@@ -262,7 +262,7 @@ wireframe size=desktop
 ```
 
 ```mermaid
-wireframe size=desktop
+wireframe-beta size=desktop
   accordion "Advanced Settings" collapsed
     checkbox "Enable Developer Mode"
     textfield "API Key"
@@ -313,21 +313,22 @@ Wireframe diagrams support a wide selection of form input controls, text element
 
 ### Displays, Graphics & Navigation
 
-| Component Syntax                    | Description                       | Example                                      |
-| :---------------------------------- | :-------------------------------- | :------------------------------------------- |
-| `canvas "Label" [height=N]`         | Custom drawing canvas placeholder | `canvas "Preview Area" height=150`           |
-| `icon "Label" glyph="name"`         | Icon placeholder                  | `icon "Search" glyph="search"`               |
-| `vrule [height=N]`                  | Vertical separator line           | `vrule height=100`                           |
-| `vcurly "Label" [height=N]`         | Vertical curly brace indicator    | `vcurly "Group A" height=80`                 |
-| `formattingtoolbar`                 | Standalone rich text format bar   | `formattingtoolbar "Toolbar"`                |
-| `menu "Label" ["Item 1", "Item 2"]` | Menu bar element                  | `menu "Navigation" ["File", "Edit", "View"]` |
-| `list "Label" ["Item 1", "Item 2"]` | Standard list element             | `list "Options" ["Item A", "Item B"]`        |
-| `tree` ... `end`                    | Hierarchical tree view container  | See Tree example below                       |
+| Component Syntax                    | Description                                 | Example                                      |
+| :---------------------------------- | :------------------------------------------ | :------------------------------------------- |
+| `canvas "Label" [height=N]`         | Custom drawing canvas placeholder           | `canvas "Preview Area" height=150`           |
+| `icon "Label" glyph="name"`         | Icon placeholder                            | `icon "Search" glyph="search"`               |
+| `vrule ["Label"] [height=N]`        | Vertical separator line                     | `vrule height=100`                           |
+| `vcurly "Label" [height=N]`         | Vertical curly brace indicator              | `vcurly "Group A" height=80`                 |
+| `arrow "Label" [direction]`         | Directional arrow (right/left/up/down/both) | `arrow "Next" right`                         |
+| `formattingtoolbar`                 | Standalone rich text format bar             | `formattingtoolbar "Toolbar"`                |
+| `menu "Label" ["Item 1", "Item 2"]` | Menu bar element                            | `menu "Navigation" ["File", "Edit", "View"]` |
+| `list "Label" ["Item 1", "Item 2"]` | Standard list element                       | `list "Options" ["Item A", "Item B"]`        |
+| `tree` ... `end`                    | Hierarchical tree view container            | See Tree example below                       |
 
 #### Tree Structure Example
 
 ```mermaid-example
-wireframe size=panel
+wireframe-beta size=panel
   tree "File Explorer"
     node "src" expanded > "index.ts", "utils.ts"
     node "public" > "favicon.ico"
@@ -335,7 +336,7 @@ wireframe size=panel
 ```
 
 ```mermaid
-wireframe size=panel
+wireframe-beta size=panel
   tree "File Explorer"
     node "src" expanded > "index.ts", "utils.ts"
     node "public" > "favicon.ico"
@@ -351,13 +352,13 @@ Components can be positioned horizontally adjacent to previously declared compon
 ### Using Explicit IDs
 
 ```mermaid-example
-wireframe size=panel
+wireframe-beta size=panel
   button "Submit" primary id=btnSubmit
   button "Cancel" alignTo=btnSubmit
 ```
 
 ```mermaid
-wireframe size=panel
+wireframe-beta size=panel
   button "Submit" primary id=btnSubmit
   button "Cancel" alignTo=btnSubmit
 ```
@@ -367,14 +368,14 @@ wireframe size=panel
 Implicit slugs are automatically generated from component labels (lowercased with spaces and special characters converted to hyphens). For example, `"Cancel"` becomes `cancel`, and `"Save Changes"` becomes `save-changes`.
 
 ```mermaid-example
-wireframe size=dialog
+wireframe-beta size=dialog
   button "Cancel"
   button "Save Changes" alignTo=cancel
   button "Submit" primary alignTo=save-changes
 ```
 
 ```mermaid
-wireframe size=dialog
+wireframe-beta size=dialog
   button "Cancel"
   button "Save Changes" alignTo=cancel
   button "Submit" primary alignTo=save-changes
@@ -426,7 +427,7 @@ config:
     defaultCanvasSize: 'desktop'
     fontFamily: 'system-ui, sans-serif'
 ---
-wireframe "E-Commerce Checkout" size=desktop
+wireframe-beta "E-Commerce Checkout" size=desktop
   actions ["Help"] ["Cart (2)"]
 
   titlewindow "Checkout Process"
@@ -465,7 +466,7 @@ config:
     defaultCanvasSize: 'desktop'
     fontFamily: 'system-ui, sans-serif'
 ---
-wireframe "E-Commerce Checkout" size=desktop
+wireframe-beta "E-Commerce Checkout" size=desktop
   actions ["Help"] ["Cart (2)"]
 
   titlewindow "Checkout Process"

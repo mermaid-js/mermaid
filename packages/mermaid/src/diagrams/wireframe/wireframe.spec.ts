@@ -17,9 +17,10 @@ describe('wireframe diagram', () => {
 
   describe('detector', () => {
     it('should detect wireframe diagram keywords', () => {
-      expect(detector.detector('wireframe "User Settings" size=dialog')).toBe(true);
-      expect(detector.detector('  wireframe')).toBe(true);
-      expect(detector.detector('WIREFRAME "Dashboard"')).toBe(true);
+      expect(detector.detector('wireframe-beta "User Settings" size=dialog')).toBe(true);
+      expect(detector.detector('  wireframe-beta')).toBe(true);
+      expect(detector.detector('WIREFRAME-BETA "Dashboard"')).toBe(false);
+      expect(detector.detector('wireframe "User Settings"')).toBe(false);
       expect(detector.detector('flowchart TD')).toBe(false);
       expect(detector.detector('sequenceDiagram')).toBe(false);
     });
@@ -27,7 +28,7 @@ describe('wireframe diagram', () => {
 
   describe('parser & state DB integration', () => {
     it('should parse diagram title and canvas size preset', async () => {
-      const input = `wireframe "App Dashboard" size=tablet`;
+      const input = `wireframe-beta "App Dashboard" size=tablet`;
       await expect(parser.parse(input)).resolves.not.toThrow();
 
       expect(db.getCanvasSize()).toBe('tablet');
@@ -35,7 +36,7 @@ describe('wireframe diagram', () => {
     });
 
     it('should default to desktop canvas size if size is omitted', async () => {
-      const input = `wireframe "Simple App"`;
+      const input = `wireframe-beta "Simple App"`;
       await expect(parser.parse(input)).resolves.not.toThrow();
 
       expect(db.getCanvasSize()).toBe('desktop');
@@ -43,7 +44,7 @@ describe('wireframe diagram', () => {
     });
 
     it('should extract top action bar buttons with primary flags', async () => {
-      const input = `wireframe "Settings"
+      const input = `wireframe-beta "Settings"
 actions [Cancel] ["*Save"]
 `;
       await expect(parser.parse(input)).resolves.not.toThrow();
@@ -56,7 +57,7 @@ actions [Cancel] ["*Save"]
     });
 
     it('should parse component hierarchy with section containers', async () => {
-      const input = `wireframe "User Form"
+      const input = `wireframe-beta "User Form"
 section "Account Details"
   textfield "Username"
   password "Password"
@@ -75,7 +76,7 @@ end
     });
 
     it('should handle accessibility titles and descriptions', async () => {
-      const input = `wireframe "Accessible App"
+      const input = `wireframe-beta "Accessible App"
 accTitle: Main Form Title
 accDescr: Accessibility description for screen readers
 `;
@@ -88,7 +89,7 @@ accDescr: Accessibility description for screen readers
 
   describe('Two-Pass Layout Engine & Component Controls', () => {
     it('should compute horizontal alignTo positioning correctly', async () => {
-      const input = `wireframe "Align Test"
+      const input = `wireframe-beta "Align Test"
 button "Cancel" id=btnCancel
 button "Submit" id=btnSubmit alignTo=btnCancel
 `;
@@ -107,7 +108,7 @@ button "Submit" id=btnSubmit alignTo=btnCancel
     });
 
     it('should compute alignTo positioning using implicit label slugs', async () => {
-      const input = `wireframe "Align Implicit Slug Test"
+      const input = `wireframe-beta "Align Implicit Slug Test"
 button "Cancel"
 button "Save Changes" alignTo=cancel
 button "Submit" alignTo=save-changes
@@ -130,7 +131,7 @@ button "Submit" alignTo=save-changes
     });
 
     it('should compute alignTo positioning using quoted labels and prioritize explicit IDs', async () => {
-      const input = `wireframe "Align Precedence Test"
+      const input = `wireframe-beta "Align Precedence Test"
 button "First Button" id=btnCustom
 button "First Button"
 button "Next" alignTo=btnCustom
@@ -149,7 +150,7 @@ button "Next" alignTo=btnCustom
     });
 
     it('should parse and layout complex wireframe controls (checkboxes, radio, select, icons, columns, titlewindow)', async () => {
-      const input = `wireframe "Form Showcase"
+      const input = `wireframe-beta "Form Showcase"
 checkbox "Agree to Terms" checked
 radiogroup "Notification Preference" [*Email, SMS]
 select "Country" [USA, Canada, Germany]
@@ -176,7 +177,7 @@ end
     });
 
     it('should calculate custom column widths (% and px) in multi-column layout engine', async () => {
-      const input = `wireframe "Custom Columns"
+      const input = `wireframe-beta "Custom Columns"
 columns
   col 30%
     heading "Left Column"
@@ -208,7 +209,7 @@ end
     });
 
     it('should correctly position ContentTabs active tab child components', async () => {
-      const input = `wireframe "Tabs Test"
+      const input = `wireframe-beta "Tabs Test"
 tabs [General, Settings] active=1
   tab "General"
     label "General Info"
@@ -230,7 +231,7 @@ end
     });
 
     it('should select second tab when active=2', async () => {
-      const input = `wireframe "Tabs Test 2"
+      const input = `wireframe-beta "Tabs Test 2"
 tabs [General, Settings] active=2
   tab "General"
     label "General Info"
@@ -249,7 +250,7 @@ end
     });
 
     it('should respect Accordion collapsed vs expanded states during layout', async () => {
-      const inputExpanded = `wireframe "Expanded Accordion"
+      const inputExpanded = `wireframe-beta "Expanded Accordion"
 accordion "Section A"
   button "Action inside"
 end
@@ -260,7 +261,7 @@ end
       const expandedHeight = expLayout.nodes[0].height;
 
       db.clear();
-      const inputCollapsed = `wireframe "Collapsed Accordion"
+      const inputCollapsed = `wireframe-beta "Collapsed Accordion"
 accordion "Section B" collapsed
   button "Action inside"
 end
@@ -272,7 +273,7 @@ end
     });
 
     it('should track maximum row height when aligning multiple components to prevent downstream overlap', async () => {
-      const input = `wireframe "Row Height Align Test"
+      const input = `wireframe-beta "Row Height Align Test"
 canvas "Large Image" height=100 id=c1
 button "Side Button" alignTo=c1 id=b1
 paragraph "Subsequent Text"
@@ -291,7 +292,7 @@ paragraph "Subsequent Text"
     });
 
     it('should parse textarea with richtext option and compute extra height for toolbar', async () => {
-      const input = `wireframe "Form"
+      const input = `wireframe-beta "Form"
 textarea "Notes" richtext rows=4
 textarea "Plain Notes" rows=4
 `;
@@ -307,7 +308,7 @@ textarea "Plain Notes" rows=4
     });
 
     it('should respect custom gapX, gapY, and containerPadding config overrides', async () => {
-      const input = `wireframe "Config Overrides Test"
+      const input = `wireframe-beta "Config Overrides Test"
 button "B1" id=b1
 button "B2" alignTo=b1 id=b2
 button "B3"

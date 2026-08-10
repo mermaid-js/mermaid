@@ -12,7 +12,7 @@ describe('wireframe showTabs multi-panel layout', () => {
   });
 
   it('should render single active panel when showTabs is not set', async () => {
-    const input = `wireframe size=panel
+    const input = `wireframe-beta size=panel
 tabs ["General", "Security"] active=1
   tab "General"
     textfield "Name"
@@ -35,7 +35,7 @@ end`;
   });
 
   it('should generate side-by-side variant nodes for all tabs when showTabs is set', async () => {
-    const input = `wireframe size=panel
+    const input = `wireframe-beta size=panel
 tabs ["General", "Security"] showTabs
   tab "General"
     textfield "Name"
@@ -66,7 +66,7 @@ end`;
   });
 
   it('should filter specific tab indices when showTabs="1,3" is set', async () => {
-    const input = `wireframe size=panel
+    const input = `wireframe-beta size=panel
 tabs ["Tab 1", "Tab 2", "Tab 3"] showTabs="1,3"
   tab "Tab 1"
     label "Tab 1 content"
@@ -97,7 +97,7 @@ end`;
   });
 
   it('should support unquoted numbers like showTabs=1,3', async () => {
-    const input = `wireframe size=panel
+    const input = `wireframe-beta size=panel
 tabs ["Tab 1", "Tab 2", "Tab 3"] showTabs=1,3
   tab "Tab 1"
     label "Tab 1 content"
@@ -124,7 +124,7 @@ end`;
   });
 
   it('should match tab IDs/slugs like showTabs="tab-1,tab-3"', async () => {
-    const input = `wireframe size=panel
+    const input = `wireframe-beta size=panel
 tabs ["Tab 1", "Tab 2", "Tab 3"] showTabs="tab-1,tab-3"
   tab "Tab 1"
     label "Tab 1 content"
@@ -151,7 +151,7 @@ end`;
   });
 
   it('should match explicit tab IDs like showTabs=gen,sec', async () => {
-    const input = `wireframe size=panel
+    const input = `wireframe-beta size=panel
 tabs ["General", "Security"] showTabs=gen,sec
   tab "General" id=gen
     textfield "Username"
@@ -175,7 +175,7 @@ end`;
   });
 
   it('should support mixing slugs/IDs and numbers like showTabs=general,3', async () => {
-    const input = `wireframe size=panel
+    const input = `wireframe-beta size=panel
 tabs ["General", "Security", "Notifications"] showTabs=general,3
   tab "General"
     textfield "Username"
@@ -202,7 +202,7 @@ end`;
   });
 
   it('should ignore active parameter when showTabs is set', async () => {
-    const input = `wireframe size=panel
+    const input = `wireframe-beta size=panel
 tabs ["General", "Security"] active=2 showTabs
   tab "General"
     textfield "Name"
@@ -220,7 +220,7 @@ end`;
   });
 
   it('should default to first tab (active=1) when neither active nor showTabs is set', async () => {
-    const input = `wireframe size=panel
+    const input = `wireframe-beta size=panel
 tabs ["General", "Security"]
   tab "General"
     textfield "Name"
@@ -238,7 +238,7 @@ end`;
   });
 
   it('should calculate tree height including expanded children', async () => {
-    const input = `wireframe size=panel
+    const input = `wireframe-beta size=panel
 tree "Explorer"
   node "src" expanded > "index.ts", "utils.ts"
   node "public" > "favicon.ico"
@@ -253,7 +253,7 @@ end`;
   });
 
   it('should allocate full container width per variant when showTabs is set', async () => {
-    const input = `wireframe size=panel
+    const input = `wireframe-beta size=panel
 tabs ["General", "Security"] showTabs
   tab "General"
     textfield "Name"

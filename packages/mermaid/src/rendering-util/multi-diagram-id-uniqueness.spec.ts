@@ -135,7 +135,7 @@ set A
 set B
 union A, B`,
 
-  wireframe: `wireframe "Title"
+  wireframe: `wireframe-beta "Title"
     button "Click me"
     textfield "Name"`,
 

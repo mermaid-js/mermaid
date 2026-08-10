@@ -8,7 +8,7 @@ export default {
     {
       title: 'User Settings Form',
       isDefault: true,
-      code: `wireframe "User Profile Settings" size=desktop
+      code: `wireframe-beta "User Profile Settings" size=desktop
 actions [Cancel] ["*Save Changes"]
 
 section "Personal Information"
@@ -31,7 +31,7 @@ end`,
     },
     {
       title: 'Dashboard Grid & Panels',
-      code: `wireframe "Analytics Dashboard" size=desktop
+      code: `wireframe-beta "Analytics Dashboard" size=desktop
 columns
   col
     titlewindow "System Metrics"
@@ -50,7 +50,7 @@ end`,
     },
     {
       title: 'Login Dialog',
-      code: `wireframe "User Login" size=dialog
+      code: `wireframe-beta "User Login" size=dialog
 actions ["*Login"]
 
 textfield "Username or Email"
@@ -59,7 +59,7 @@ checkbox "Remember me on this device" checked`,
     },
     {
       title: 'Multi-Tab Preview (showTabs)',
-      code: `wireframe "Multi-Tab Settings" size=panel
+      code: `wireframe-beta "Multi-Tab Settings" size=panel
 tabs ["General", "Security", "Notifications"] showTabs="general,security"
   tab "General"
     textfield "Username"
