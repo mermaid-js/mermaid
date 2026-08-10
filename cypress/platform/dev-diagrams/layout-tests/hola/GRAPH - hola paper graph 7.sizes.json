@@ -1,0 +1,70 @@
+{
+  "nodes": [
+    {
+      "id": "A",
+      "width": 69.4375,
+      "height": 54
+    },
+    {
+      "id": "B",
+      "width": 69.0625,
+      "height": 54
+    },
+    {
+      "id": "C",
+      "width": 69.578125,
+      "height": 54
+    },
+    {
+      "id": "D",
+      "width": 69.8125,
+      "height": 54
+    },
+    {
+      "id": "E",
+      "width": 68.578125,
+      "height": 54
+    },
+    {
+      "id": "F",
+      "width": 68.40625,
+      "height": 54
+    },
+    {
+      "id": "G",
+      "width": 70.828125,
+      "height": 54
+    },
+    {
+      "id": "H",
+      "width": 70.46875,
+      "height": 54
+    },
+    {
+      "id": "I",
+      "width": 64.453125,
+      "height": 54
+    },
+    {
+      "id": "L",
+      "width": 68.109375,
+      "height": 54
+    },
+    {
+      "id": "M",
+      "width": 71.359375,
+      "height": 54
+    },
+    {
+      "id": "N",
+      "width": 70.21875,
+      "height": 54
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "3a31aabcd980494981404b15e6752a9c5ac0c8f979bb7fc6013cbc5cc44c0cc7",
+    "capturedAt": "2026-08-07T13:47:51.018Z",
+    "capturedFrom": "dev-explorer layout-tests/hola/GRAPH - hola paper graph 7.mmd theme=forest look=classic layout=hola"
+  }
+}

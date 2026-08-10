@@ -1,0 +1,40 @@
+{
+  "nodes": [
+    {
+      "id": "A1",
+      "width": 32.828125,
+      "height": 32.828125
+    },
+    {
+      "id": "A2",
+      "width": 32.828125,
+      "height": 32.828125
+    },
+    {
+      "id": "A3",
+      "width": 32.828125,
+      "height": 32.828125
+    },
+    {
+      "id": "B1",
+      "width": 32.453125,
+      "height": 32.453125
+    },
+    {
+      "id": "B2",
+      "width": 32.453125,
+      "height": 32.453125
+    },
+    {
+      "id": "B3",
+      "width": 32.453125,
+      "height": 32.453125
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "47bc160a5f4adea1128758506e147acfb5241880b1a9a7486470454002dc1c99",
+    "capturedAt": "2026-08-07T11:26:03.153Z",
+    "capturedFrom": "dev-explorer layout-tests/hola/Bipartite Graph k3,3.mmd theme=forest look=classic layout=elk"
+  }
+}

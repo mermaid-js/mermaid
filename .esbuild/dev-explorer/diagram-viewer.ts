@@ -106,12 +106,12 @@ type MermaidTheme =
   | 'redux'
   | 'redux-dark'
   | 'redux-color';
-type MermaidLayout = 'dagre' | 'elk' | 'domus' | 'hola' | 'swimlane';
+type MermaidLayout = 'dagre' | 'elk' | 'domus' | 'hola' | 'hola-faithful' | 'swimlane';
 type MermaidLook = 'classic' | 'handDrawn' | 'neo';
 type MermaidLogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 type ViewerTab = 'diagram' | 'code' | 'profile';
 
-const ALL_LAYOUTS: MermaidLayout[] = ['dagre', 'elk', 'domus', 'hola', 'swimlane'];
+const ALL_LAYOUTS: MermaidLayout[] = ['dagre', 'elk', 'domus', 'hola', 'hola-faithful', 'swimlane'];
 
 // mermaid's `maxTextSize` (default 50_000) and `maxEdges` (default 500) are
 // *secure* config keys, so they can't be raised from a diagram's frontmatter/
@@ -299,7 +299,14 @@ function isTheme(v: unknown): v is MermaidTheme {
 }
 
 function isLayout(v: unknown): v is MermaidLayout {
-  return v === 'dagre' || v === 'elk' || v === 'domus' || v === 'hola' || v === 'swimlane';
+  return (
+    v === 'dagre' ||
+    v === 'elk' ||
+    v === 'domus' ||
+    v === 'hola' ||
+    v === 'hola-faithful' ||
+    v === 'swimlane'
+  );
 }
 
 function isLook(v: unknown): v is MermaidLook {
@@ -316,7 +323,7 @@ function normalizeLayout(v: unknown): MermaidLayout | null {
   // Back-compat:
   // - older UI used `renderer=dagre-d3|dagre-wrapper|elk`
   // - new UI uses `layout=dagre|elk|domus`
-  if (v === 'dagre' || v === 'elk' || v === 'domus' || v === 'hola' || v === 'swimlane') return v;
+  if (isLayout(v)) return v;
   if (v === 'dagre-d3' || v === 'dagre-wrapper') return 'dagre';
   return null;
 }
@@ -1258,6 +1265,7 @@ export class DevDiagramViewer extends LitElement {
               <sl-option value="elk">elk</sl-option>
               <sl-option value="domus">domus</sl-option>
               <sl-option value="hola">hola</sl-option>
+              <sl-option value="hola-faithful">hola-faithful</sl-option>
               <sl-option value="swimlane">swimlane</sl-option>
             </sl-select>
           </div>

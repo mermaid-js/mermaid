@@ -54,6 +54,12 @@ const registerDefaultLayoutLoaders = () => {
       name: 'hola',
       loader: async () => await import('./layout-algorithms/hola/index.js'),
     },
+    {
+      // Faithful HOLA (Kieffer et al. 2015). Runs alongside the experimental
+      // `hola` implementation until it replaces it.
+      name: 'hola-faithful',
+      loader: async () => await import('./layout-algorithms/hola-faithful/index.js'),
+    },
     ...(injected.includeLargeFeatures
       ? [
           {

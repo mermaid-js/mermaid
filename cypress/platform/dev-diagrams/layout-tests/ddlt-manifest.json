@@ -31,6 +31,36 @@
       "allowLevel1Failure": true
     },
     {
+      "id": "hola/deploy-pipeline",
+      "profile": "flowchart-hola",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "hola/domus1",
+      "profile": "flowchart-hola",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "hola/incremental-editing",
+      "profile": "flowchart-hola",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "hola/life-choices",
+      "profile": "flowchart-hola",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "hola/multiple-edges",
+      "profile": "flowchart-hola",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "hola/project-sox2",
+      "profile": "flowchart-hola",
+      "allowLevel1Failure": true
+    },
+    {
       "id": "swimlanes/commant",
       "profile": "swimlanes",
       "allowLevel1Failure": true
@@ -43,6 +73,51 @@
     {
       "id": "swimlanes/13-disagree-exits-b-c-d",
       "profile": "swimlanes",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "hola-faithful/GRAPH - hola paper graph 5",
+      "profile": "flowchart-hola-faithful",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "hola-faithful/GRAPH - hola paper graph 7",
+      "profile": "flowchart-hola-faithful",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "hola-faithful/GRAPH - hola paper graph 8",
+      "profile": "flowchart-hola-faithful",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "hola-faithful/complete_graph_k4",
+      "profile": "flowchart-hola-faithful",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "hola-faithful/Bipartite Graph k3,3",
+      "profile": "flowchart-hola-faithful",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "hola-faithful/self-loop",
+      "profile": "flowchart-hola-faithful",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "hola-faithful/multiple-edges",
+      "profile": "flowchart-hola-faithful",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "hola-faithful/life-choices",
+      "profile": "flowchart-hola-faithful",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "hola-faithful/domus1",
+      "profile": "flowchart-hola-faithful",
       "allowLevel1Failure": true
     }
   ]

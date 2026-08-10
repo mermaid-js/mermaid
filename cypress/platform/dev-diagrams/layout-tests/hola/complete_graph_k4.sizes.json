@@ -1,0 +1,30 @@
+{
+  "nodes": [
+    {
+      "id": "A",
+      "width": 109.8125,
+      "height": 54
+    },
+    {
+      "id": "B",
+      "width": 110.3125,
+      "height": 54
+    },
+    {
+      "id": "C",
+      "width": 110.828125,
+      "height": 54
+    },
+    {
+      "id": "D",
+      "width": 111.078125,
+      "height": 54
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "24a85ae028b5a2d34904e1f789c52d9ec691af39ed76d5cc06a7b91311d9a18d",
+    "capturedAt": "2026-08-07T11:06:52.988Z",
+    "capturedFrom": "dev-explorer layout-tests/hola/complete_graph_k4.mmd theme=forest look=classic layout=hola"
+  }
+}

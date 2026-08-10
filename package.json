@@ -190,5 +190,8 @@
       "sharp",
       "vue-demi"
     ]
+  },
+  "volta": {
+    "node": "22.20.0"
   }
 }

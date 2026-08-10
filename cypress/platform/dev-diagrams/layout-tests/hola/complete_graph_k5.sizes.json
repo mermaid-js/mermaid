@@ -1,0 +1,35 @@
+{
+  "nodes": [
+    {
+      "id": "A",
+      "width": 64.65625,
+      "height": 64.65625
+    },
+    {
+      "id": "B",
+      "width": 64.65625,
+      "height": 64.65625
+    },
+    {
+      "id": "C",
+      "width": 64.65625,
+      "height": 64.65625
+    },
+    {
+      "id": "D",
+      "width": 64.65625,
+      "height": 64.65625
+    },
+    {
+      "id": "E",
+      "width": 64.65625,
+      "height": 64.65625
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "8426a158fa8f73ba3e831289b92a14f196112d79b79eb67ff49cc15489e84bfd",
+    "capturedAt": "2026-08-07T11:04:50.148Z",
+    "capturedFrom": "dev-explorer layout-tests/hola/complete_graph_k5.mmd theme=default look=classic layout=hola"
+  }
+}

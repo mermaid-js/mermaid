@@ -1,12 +1,16 @@
 # It should be viewBox
 # This file contains coding related terms
 ABNF
+Adaptagrams
 ALPHANUM
+anchorless
 antiscript
 APPLYCLASS
+argmin
 ARROWHEADSTYLE
 ARROWTYPE
 astar
+Atallah
 autonumber
 axisl-line
 Backjumping
@@ -46,6 +50,7 @@ CYLINDEREND
 CYLINDERSTART
 DAGA
 datakey
+DCEL
 ddlt
 Ddlt
 DDLT
@@ -105,6 +110,7 @@ layoutstop
 lcov
 LEFTOF
 Lexa
+libvpsc
 linebreak
 LINETYPE
 LINKSTYLE
@@ -117,11 +123,13 @@ LOGMSG
 lookaheads
 LPAREN
 lshape
+majorisation
 mdast
 metafile
 minlen
 Mstartx
 MULT
+multiset
 Mutzel
 Naur
 NODIR
@@ -130,8 +138,13 @@ NSTR
 nums
 OGDF
 outdir
+planarisation
+planarise
+planarised
+planariser
 planarization
 podavsnef
+posn
 Qcontrolx
 QSTR
 raykov
@@ -145,15 +158,18 @@ resetframe
 rewritelinks
 rgba
 RIGHTOF
+rootcopy
 roughjs
 RPAREN
 sankey
+scanline
 segs
 sequencenumber
 shortcutting
 shrc
 Siebenhaller
 signaltype
+SMACOF
 someclass
 SPACELINE
 SPACELIST
@@ -168,6 +184,7 @@ stopy
 strikethrough
 stringifying
 struct
+Stuckey
 STYLECLASS
 STYLEDEF
 STYLEOPTS
@@ -205,8 +222,10 @@ UNSAT
 unsatisfiability
 unshift
 urlsafe
+vendorable
 verifymethod
 VERIFYMTHD
+VPSC
 VSIDS
 WARN_DOCSDIR_DOESNT_MATCH
 wildside
