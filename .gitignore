@@ -57,11 +57,8 @@ tsx-0/**
 node-compile-cache/
 vite.config.ts.timestamp-*
 
-# autogenereated by langium-cli and antlr-cli
+# autogenereated by langium-cli
 generated/
-
-# autogenereated by antlr-cli
-.antlr/
 
 /CLAUDE.md
 /AGENTS.md

@@ -4,7 +4,6 @@ import { packageOptions } from '../.build/common.js';
 import { generateLangium } from '../.build/generateLangium.js';
 import type { MermaidBuildOptions } from './util.js';
 import { defaultOptions, getBuildConfig } from './util.js';
-import { generateAntlr } from '../.build/generateAntlr.js';
 
 const shouldVisualize = process.argv.includes('--visualize');
 // Opt-in: build a profiling-enabled artifact (`pnpm build:esbuild --profiling`).
@@ -99,7 +98,6 @@ const buildTinyMermaid = async () => {
 
 const main = async () => {
   await generateLangium();
-  await generateAntlr();
   await mkdir('stats', { recursive: true });
   const packageNames = Object.keys(packageOptions) as (keyof typeof packageOptions)[];
   // it should build `parser` before `mermaid` because it's a dependency
