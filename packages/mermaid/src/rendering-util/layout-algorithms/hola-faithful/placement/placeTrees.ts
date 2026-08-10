@@ -77,6 +77,13 @@ export interface TreePlacement {
   /** Placeholder centre relative to the root at the natural attachment. */
   offsetX: number;
   offsetY: number;
+  /**
+   * Where the copied root sits relative to the core node. Zero for a cardinal
+   * placement, which grows straight out of the node; non-zero for an ordinal one,
+   * which sits in the quadrant beside it.
+   */
+  anchorShiftX: number;
+  anchorShiftY: number;
   stressIncrease: number;
 }
 
@@ -115,6 +122,8 @@ interface EvaluatedCandidate extends Candidate {
   cost: number;
   transformed: TreeLayout;
   placeholder: { id: string; x: number; y: number; width: number; height: number };
+  /** Where the copied root sits relative to the core node; non-zero for a corner placement. */
+  anchorShift: Point;
   /** False when the tree had to be slid outwards to fit; see `anchorConstraints`. */
   rigidAnchor: boolean;
 }
@@ -188,6 +197,8 @@ function defaultPlacement(state: CoreLayoutState, tree: PlaceableTree): TreePlac
     transformed: transformTreeLayout(tree.layout, 0, false, { x: root.x, y: root.y }),
     offsetX: 0,
     offsetY: 0,
+    anchorShiftX: 0,
+    anchorShiftY: 0,
     stressIncrease: Number.POSITIVE_INFINITY,
   };
 }
@@ -253,7 +264,7 @@ function placeOneTree(
     layoutForGrowth(tree, winner.growthDirection),
     ROTATION_FOR_GROWTH[winner.growthDirection],
     winner.flip,
-    { x: finalRoot.x, y: finalRoot.y }
+    { x: finalRoot.x + winner.anchorShift.x, y: finalRoot.y + winner.anchorShift.y }
   );
 
   return {
@@ -269,6 +280,8 @@ function placeOneTree(
     transformed,
     offsetX: winner.offsetX,
     offsetY: winner.offsetY,
+    anchorShiftX: winner.anchorShift.x,
+    anchorShiftY: winner.anchorShift.y,
     stressIncrease: winner.stressIncrease,
   };
 }
@@ -517,17 +530,41 @@ function evaluateCandidate(
 ): EvaluatedCandidate | null {
   const coreNode = state.entities.get(tree.coreNodeId)!;
   const source = layoutForGrowth(tree, candidate.growthDirection);
-  const transformed = transformTreeLayout(
-    source,
-    ROTATION_FOR_GROWTH[candidate.growthDirection],
-    candidate.flip,
-    { x: coreNode.x, y: coreNode.y }
-  );
+  const rotation = ROTATION_FOR_GROWTH[candidate.growthDirection];
 
-  const occupied = occupiedBounds(transformed, tree.rootCopyId);
-  if (!occupied) {
+  const draw = (shift: Point): { transformed: TreeLayout; occupied: Bounds } | undefined => {
+    const transformed = transformTreeLayout(source, rotation, candidate.flip, {
+      x: coreNode.x + shift.x,
+      y: coreNode.y + shift.y,
+    });
+    const occupied = occupiedBounds(transformed, tree.rootCopyId);
+    return occupied ? { transformed, occupied } : undefined;
+  };
+
+  let drawn = draw(ZERO_SHIFT);
+  if (!drawn) {
     return null;
   }
+
+  // An ordinal placement is a *corner* placement, and that has to be geometry, not
+  // just a label: without this the tree is centred on its root's row or column
+  // exactly as the cardinal candidate is, and the two are the same drawing scored
+  // twice (guide §17.2 — a direction points into a face's wedge, and an ordinal
+  // wedge is the quadrant between two neighbours). Offsetting the tree clear of the
+  // core node along the ordinal's *other* component puts it in that quadrant, which
+  // is the only place it fits when all four sides of its root are taken.
+  let anchorShift = ZERO_SHIFT;
+  if (!isCardinal(candidate.placementDirection)) {
+    const other = ordinalComponents(candidate.placementDirection).find(
+      (component) => component !== candidate.growthDirection
+    );
+    if (other) {
+      anchorShift = clearanceShift(other, coreNode, drawn.occupied, state.options.nodeClearance);
+      drawn = draw(anchorShift) ?? drawn;
+    }
+  }
+
+  const { transformed, occupied } = drawn;
   const placeholder = {
     id: placeholderId(tree.id),
     x: (occupied.minX + occupied.maxX) / 2,
@@ -577,6 +614,7 @@ function evaluateCandidate(
           placeholder,
           offsetX,
           offsetY,
+          anchorShift,
           rigidAnchor: rigid,
         };
       }
@@ -596,6 +634,38 @@ function evaluateCandidate(
  * `D` the natural attachment distance and `w = 1/D²`, exactly the convention of
  * guide §7.4 — makes the two comparable.
  */
+const ZERO_SHIFT: Point = { x: 0, y: 0 };
+
+/**
+ * How far to move a tree so its footprint clears the core node in one direction.
+ * Zero when it already does.
+ */
+export function clearanceShift(
+  direction: Cardinal,
+  core: HolaNode,
+  occupied: Bounds,
+  clearance: number
+): Point {
+  switch (direction) {
+    case 'N': {
+      const overlap = occupied.maxY - (core.y - core.height / 2 - clearance);
+      return overlap > 0 ? { x: 0, y: -overlap } : ZERO_SHIFT;
+    }
+    case 'S': {
+      const overlap = core.y + core.height / 2 + clearance - occupied.minY;
+      return overlap > 0 ? { x: 0, y: overlap } : ZERO_SHIFT;
+    }
+    case 'W': {
+      const overlap = occupied.maxX - (core.x - core.width / 2 - clearance);
+      return overlap > 0 ? { x: -overlap, y: 0 } : ZERO_SHIFT;
+    }
+    case 'E': {
+      const overlap = core.x + core.width / 2 + clearance - occupied.minX;
+      return overlap > 0 ? { x: overlap, y: 0 } : ZERO_SHIFT;
+    }
+  }
+}
+
 function slideCost(naturalDistance: number, actualDistance: number): number {
   const ideal = Math.max(Math.abs(naturalDistance), 1);
   const excess = Math.abs(actualDistance) - ideal;

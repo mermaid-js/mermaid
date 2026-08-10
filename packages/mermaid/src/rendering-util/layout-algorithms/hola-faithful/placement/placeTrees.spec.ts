@@ -13,7 +13,7 @@ import type { Face } from '../planarization/dcel.js';
 import type { PlanarisedCore } from '../planarization/planarise.js';
 import type { CoreLayoutState } from '../state.js';
 import { makeEntity } from '../state.js';
-import { expansionConstraintsFor } from './placeTrees.js';
+import { clearanceShift, expansionConstraintsFor } from './placeTrees.js';
 import type { PlaceableTree } from './placeTrees.js';
 
 function makeState(entities: HolaNode[]): CoreLayoutState {
@@ -133,6 +133,36 @@ describe('face expansion constraint generation (guide §17.4)', () => {
       if (constraint.kind === 'separation') {
         expect([constraint.leftOrAbove, constraint.rightOrBelow]).not.toContain('root');
       }
+    }
+  });
+});
+
+describe('corner placement offset (guide §17.2)', () => {
+  // A 40x20 node at the origin, and a tree footprint centred on it.
+  const core = makeEntity('root', 0, 0, 40, 20);
+  const occupied = { minX: -50, minY: -30, maxX: 50, maxY: 30 };
+  const clearance = 24;
+
+  it('moves the footprint clear of the node, in the given direction', () => {
+    // North: the footprint's bottom edge (30) must reach the node's top (-10)
+    // less the clearance, so it travels 30 - (-34) = 64 upwards.
+    expect(clearanceShift('N', core, occupied, clearance)).toEqual({ x: 0, y: -64 });
+    expect(clearanceShift('S', core, occupied, clearance)).toEqual({ x: 0, y: 64 });
+    // East and west work off the node's half-width of 20 instead: 50 + 44.
+    expect(clearanceShift('E', core, occupied, clearance)).toEqual({ x: 94, y: 0 });
+    expect(clearanceShift('W', core, occupied, clearance)).toEqual({ x: -94, y: 0 });
+  });
+
+  it('stays put when the footprint is already clear', () => {
+    const away = { minX: 200, minY: 200, maxX: 300, maxY: 300 };
+    expect(clearanceShift('E', core, away, clearance)).toEqual({ x: 0, y: 0 });
+    expect(clearanceShift('S', core, away, clearance)).toEqual({ x: 0, y: 0 });
+  });
+
+  it('only ever moves along one axis', () => {
+    for (const direction of ['N', 'S', 'E', 'W'] as const) {
+      const shift = clearanceShift(direction, core, occupied, clearance);
+      expect(shift.x === 0 || shift.y === 0).toBe(true);
     }
   });
 });

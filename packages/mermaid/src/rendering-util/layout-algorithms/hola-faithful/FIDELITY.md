@@ -325,6 +325,33 @@ rejecting any that the solver cannot satisfy or that would create an overlap.
     `edge-shared-attachment-point` from 109 to 35 and `edge-shared-subpath` from 130
     to 56, with the bend count unchanged at 270 — the separation is free.
 
+15. **An ordinal placement is a real corner placement.** `evaluateCandidate`
+    offsets the tree clear of its root along the ordinal's _other_ component
+    (`clearanceShift`), and the offset is carried on the placement
+    (`anchorShiftX/Y`) so `restoreTrees` puts the tree back in the same quadrant.
+
+    Guide §17.2 has a placement direction point into a face's wedge, and §17.6
+    ranks cardinal directions above ordinal ones — which only means something if the
+    two are different drawings. They were not: the tree was anchored with its copied
+    root exactly on the core node whatever the direction, so an ordinal candidate was
+    its growth-cardinal candidate scored a second time. A core node with a neighbour
+    on all four sides therefore had nowhere to put a tree except centred on its own
+    row or column, both blocked, and the tree was shoved past the whole core.
+
+    Offsetting into the quadrant is what the wedge meant all along. In
+    `hola paper graph 5`, `E` joins two cycles and has neighbours north, south, east
+    and west; its tree's first rank went from 358px clear of `E` to 101px, in the
+    empty corner beside it.
+
+    The connector from the core node to the first rank does _not_ keep the locked
+    rank-facing sides in this case (`cornerPlacement` in `restoreTrees`): the tree no
+    longer grows straight out of its root, so forcing the growth-axis sides makes the
+    route climb a staircase around the two neighbours flanking the corner. Letting
+    the router choose took that connector from four bends to two.
+
+    Across both corpora: two fewer trees left slid, total drawing area 13.03M →
+    12.81M, bends 270 → 265.
+
 ---
 
 ## 4. Why the core is not pre-expanded for the trees
@@ -385,17 +412,14 @@ same stage, and is addressed by deviations 1, 10 and 11: expansion no longer
 constrains what it does not need to, a rigid attachment competes fairly with a
 slid one, and a slide that the settled core no longer requires is retracted.
 
-**Known limitation.** A tree hanging off a core node whose every cardinal
-direction is already taken by a core neighbour has only ordinal wedges to sit in,
-and no rigid attachment in such a wedge is feasible: the neighbours forming the
-wedge are welded to the node's own axes by node configuration, so the wedge cannot
-be opened without breaking the orthogonal structure that node configuration
-exists to produce. Those trees stay slid, and say so
-(`HOLA_TREE_SLID_FROM_ROOT`). `GRAPH - hola paper graph 5` is the case in this
-corpus: `E` has four core neighbours and its tree sits ~300px further out than its
-natural rank distance. Closing this needs the wedge itself to open — face
-expansion that may re-route a core edge — which is beyond what the constraint
-system alone can express.
+**Corner placements.** A tree hanging off a core node whose every side is taken by
+a core neighbour has only the quadrants between them to sit in, and reaching them
+needs the ordinal placement of deviation 15 — without it there is no candidate that
+both fits and stays near the core, and the tree is pushed out past the whole
+drawing. That was `GRAPH - hola paper graph 5`, and it is what deviation 15 fixes.
+
+Four trees in the corpus are still left slid (down from six), each reported with
+`HOLA_TREE_SLID_FROM_ROOT` and the residual distance.
 
 ---
 

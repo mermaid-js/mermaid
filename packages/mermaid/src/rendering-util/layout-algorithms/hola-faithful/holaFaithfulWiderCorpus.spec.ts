@@ -216,6 +216,42 @@ describe('faithful HOLA — wider fixture corpus', () => {
     }
   }, 60_000);
 
+  /**
+   * In `hola paper graph 5` node `E` joins two cycles and has a core neighbour on
+   * every side, so its tree has nothing but the *corners* to sit in. While ordinal
+   * placement was geometrically identical to its cardinal component the tree could
+   * only be centred on `E`'s own row or column, both of which are blocked, so it was
+   * shoved past the whole core: `D` ended up 358px clear of `E`, joined by a
+   * connector that crawled back across the drawing. A real corner placement puts it
+   * in the empty quadrant beside `E` instead.
+   */
+  it('places a tree in the corner when every side of its root is taken', async () => {
+    const fx = fixtures.find((f) => f.profile === 'flowchart-hola' && f.id.includes('graph 5'))!;
+    const data = await parseMmdFileToLayoutData(fx.mmdPath, {
+      stampFlowchartRendererFields: true,
+    });
+    applyFixtureContentSizesStrict(data, fx.sizes);
+    applyFixtureEdgeLabelSizes(data, fx.sizes);
+    runHolaFaithfulLayoutCore(data);
+
+    const byId = new Map(data.nodes.map((node) => [node.id, node]));
+    const root = byId.get('E')!;
+    const first = byId.get('D')!;
+
+    const gapX =
+      Math.abs((root.x ?? 0) - (first.x ?? 0)) - ((root.width ?? 0) + (first.width ?? 0)) / 2;
+    const gapY =
+      Math.abs((root.y ?? 0) - (first.y ?? 0)) - ((root.height ?? 0) + (first.height ?? 0)) / 2;
+    const gap = Math.max(gapX, gapY);
+    expect(gap, `D sits ${gap.toFixed(0)}px clear of E`).toBeLessThan(160);
+
+    // And the connector between them is a short orthogonal path, not a detour.
+    const connector = data.edges.find(
+      (edge) => (edge.start === 'D' && edge.end === 'E') || (edge.start === 'E' && edge.end === 'D')
+    )!;
+    expect(connector.points!.length).toBeLessThanOrEqual(4);
+  }, 60_000);
+
   for (const fx of fixtures) {
     it(`${fx.id} raises no structural issue`, async () => {
       const data = await parseMmdFileToLayoutData(fx.mmdPath, {

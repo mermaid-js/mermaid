@@ -277,11 +277,19 @@ function restoreTrees(
       ? { x: placeholder.x - (root.x + rotated.x), y: placeholder.y - (root.y + rotated.y) }
       : { x: 0, y: 0 };
 
+    // A corner placement holds the copied root beside the core node rather than on
+    // it, and that offset turns with the drawing exactly as the placeholder's does.
+    const shift = rotateOffset(
+      { x: placement.anchorShiftX, y: placement.anchorShiftY },
+      placement.rotation,
+      ROTATION_FOR_GROWTH[growth]
+    );
+
     const transformed = transformTreeLayout(
       layoutForGrowth(source.placeable, growth),
       ROTATION_FOR_GROWTH[growth],
       placement.flip,
-      { x: root.x + slide.x, y: root.y + slide.y }
+      { x: root.x + shift.x + slide.x, y: root.y + shift.y + slide.y }
     );
 
     const ranks: string[][] = [];
@@ -316,9 +324,17 @@ function restoreTrees(
     // the side facing the parent's.
     const [parentSide, childSide] = RANK_SIDES[growth];
 
+    // A corner placement holds the tree beside its root rather than straight out of
+    // it, so the rank-facing sides are only right *inside* the tree. For the
+    // connector from the core node the router picks the sides itself, or it is made
+    // to climb a staircase around the neighbours that flank the corner.
+    const cornerPlacement = placement.placementDirection.length === 2;
+
     for (const edge of transformed.edges) {
+      const fromRoot = edge.source === tree.rootCopyId || edge.target === tree.rootCopyId;
       const sourceId = edge.source === tree.rootCopyId ? tree.coreNodeId : edge.source;
       const targetId = edge.target === tree.rootCopyId ? tree.coreNodeId : edge.target;
+      const locked = !(cornerPlacement && fromRoot);
       const originals = originalEdgeIdsBetween(tree, edge.source, edge.target);
       originals.forEach((originalEdgeId, index) => {
         treeEdges.push({
@@ -328,8 +344,8 @@ function restoreTrees(
           mandatoryWaypoints: [],
           parallelIndex: index,
           parallelCount: originals.length,
-          lockedSourceSide: parentSide,
-          lockedTargetSide: childSide,
+          lockedSourceSide: locked ? parentSide : undefined,
+          lockedTargetSide: locked ? childSide : undefined,
         });
       });
     }
