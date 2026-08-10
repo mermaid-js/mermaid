@@ -214,9 +214,13 @@ describe('use-case actor shapes', () => {
     expect(root?.getAttribute('aria-label')).toBe(
       'business actor Customer, stereotype External Customer'
     );
-    expect(document.querySelector('.usecase-stereotype')?.textContent).toContain(
-      '«External Customer»'
-    );
+    const actorLabel = document.querySelector('.usecase-actor-label');
+    const stereotypeLabels = document.querySelectorAll('.usecase-stereotype');
+    expect(actorLabel?.textContent).toBe('Customer');
+    expect(stereotypeLabels).toHaveLength(1);
+    expect(stereotypeLabels[0]?.textContent).toContain('«External Customer»');
+    expect(actorLabel?.querySelector('.c4-name')).toBeNull();
+    expect(actorLabel?.querySelector('.c4-type')).toBeNull();
     expect(glyph?.getAttribute('style')).toContain('stroke:#12506b !important');
     expect(glyph?.getAttribute('style')).toContain('stroke-width:5px !important');
     expect(marker?.getAttribute('style')).toContain('stroke: inherit !important');

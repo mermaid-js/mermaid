@@ -157,9 +157,17 @@ export async function renderUsecaseActor<T extends SVGGraphicsElement>(
 ): Promise<D3Selection<SVGGElement>> {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  // Generic icon nodes add a background to their label measurement. Actor icons already render
-  // their own frame, so measure the shared actor label without that icon-only decoration.
-  const labelNode: Node = variant === 'icon' ? { ...node, icon: undefined } : node;
+  // Actor icons render their own frame, and actor stereotypes render in a dedicated label below.
+  // Remove those fields before measurement so the generic helper does not add icon decoration or
+  // switch to the C4 multi-section label renderer.
+  const labelNode: Node =
+    variant === 'icon' || node.stereotype !== undefined
+      ? {
+          ...node,
+          icon: variant === 'icon' ? undefined : node.icon,
+          stereotype: undefined,
+        }
+      : node;
   const {
     shapeSvg,
     bbox: labelBox,
