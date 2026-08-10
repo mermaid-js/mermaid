@@ -3,7 +3,7 @@ import { imgSnapshotTest } from '../../../helpers/util.ts';
 describe('Wireframe diagram', () => {
   it('1: should render a minimal wireframe with a single button', () => {
     imgSnapshotTest(
-      `wireframe
+      `wireframe-beta
   button "Click me"
 `,
       {}
@@ -12,7 +12,7 @@ describe('Wireframe diagram', () => {
 
   it('2: should render a simple form with common inputs', () => {
     imgSnapshotTest(
-      `wireframe "Login" size=dialog
+      `wireframe-beta "Login" size=dialog
   textfield "Username"
   password "Password"
   checkbox "Remember me" checked
@@ -25,7 +25,7 @@ describe('Wireframe diagram', () => {
 
   it('3: should render a multi-column layout', () => {
     imgSnapshotTest(
-      `wireframe "User Profile" size=desktop
+      `wireframe-beta "User Profile" size=desktop
   columns
     col 30%
       imagefield "Avatar"
@@ -44,7 +44,7 @@ describe('Wireframe diagram', () => {
 
   it('4: should render a titlewindow container', () => {
     imgSnapshotTest(
-      `wireframe size=panel
+      `wireframe-beta size=panel
   titlewindow "System Status"
     label "CPU Usage: 42%"
     label "Memory Usage: 68%"
@@ -57,7 +57,7 @@ describe('Wireframe diagram', () => {
 
   it('5: should render a fieldset', () => {
     imgSnapshotTest(
-      `wireframe size=panel
+      `wireframe-beta size=panel
   fieldset "Contact Information"
     textfield "Phone Number"
     textfield "Address"
@@ -70,7 +70,7 @@ describe('Wireframe diagram', () => {
 
   it('6: should render tabs container', () => {
     imgSnapshotTest(
-      `wireframe size=panel
+      `wireframe-beta size=panel
   tabs ["General", "Security", "Notifications"] active=1
     tab "General"
       textfield "Display Name"
@@ -91,7 +91,7 @@ describe('Wireframe diagram', () => {
 
   it('7: should render an accordion', () => {
     imgSnapshotTest(
-      `wireframe size=panel
+      `wireframe-beta size=panel
   accordion "Basic Settings"
     textfield "Name"
     textfield "Email"
@@ -107,7 +107,7 @@ describe('Wireframe diagram', () => {
 
   it('8: should render an action bar', () => {
     imgSnapshotTest(
-      `wireframe "Dashboard" size=panel
+      `wireframe-beta "Dashboard" size=panel
   actions ["Refresh"] ["Export PDF"] ["*Settings"]
   paragraph "Welcome back to your dashboard."
 `,
@@ -117,7 +117,7 @@ describe('Wireframe diagram', () => {
 
   it('9: should render checkbox and radio groups', () => {
     imgSnapshotTest(
-      `wireframe size=panel
+      `wireframe-beta size=panel
   checkboxgroup "Interests" ["*Coding", "Design", "Marketing"]
   radiogroup "Priority" ["Low", "*Medium", "High"]
 `,
@@ -127,7 +127,7 @@ describe('Wireframe diagram', () => {
 
   it('10: should render a complex full-screen wireframe', () => {
     imgSnapshotTest(
-      `wireframe "Project Dashboard" size=desktop
+      `wireframe-beta "Project Dashboard" size=desktop
   actions ["Help"] ["*Save"] ["Cancel"]
   columns
     col 25%
@@ -160,7 +160,7 @@ describe('Wireframe diagram', () => {
 
   it('11: should render a section with alignTo positioning', () => {
     imgSnapshotTest(
-      `wireframe size=panel
+      `wireframe-beta size=panel
   section "Primary" id=sec1
     textfield "Search"
     button "Submit" primary
@@ -175,7 +175,7 @@ describe('Wireframe diagram', () => {
 
   it('12: should render a showTabs multi-pane view', () => {
     imgSnapshotTest(
-      `wireframe size=desktop
+      `wireframe-beta size=desktop
   tabs ["Tab A", "Tab B"] showTabs="1,2"
     tab "Tab A"
       textfield "First Name"
@@ -187,6 +187,29 @@ describe('Wireframe diagram', () => {
   end
 `,
       {}
+    );
+  });
+
+  it('13: should render correctly with the dark theme', () => {
+    imgSnapshotTest(
+      `wireframe-beta "Dark Theme Preview" size=panel
+  textfield "Username"
+  password "Password"
+  button "Sign In" primary
+  button "Cancel"
+`,
+      { theme: 'dark' }
+    );
+  });
+
+  it('14: should render correctly with the neutral theme', () => {
+    imgSnapshotTest(
+      `wireframe-beta "Neutral Theme Preview" size=panel
+  textfield "Search"
+  button "Submit" primary
+  label "Results will appear here"
+`,
+      { theme: 'neutral' }
     );
   });
 });
