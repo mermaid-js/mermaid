@@ -207,6 +207,49 @@ export function nudgeLeafNodesAwayFromNonAncestorGroups(
   return { changed: moves > 0, moves, iterations, remainingOverlaps: remaining };
 }
 
+/**
+ * How much extra separation a pair needs on each axis for a `padding` gap.
+ *
+ * `min(right) - max(left)` is the overlap when positive and the negated gap when
+ * negative, so `+ padding` covers both cases in one expression: an overlapping
+ * pair needs `overlap + padding`, a pair sitting `g` apart needs `padding - g`,
+ * and a pair already `padding` or more apart needs nothing. Returns `null` when
+ * neither axis is deficient.
+ *
+ * A pair only counts as a violation when BOTH axes are deficient — clearing
+ * either one leaves the boxes `padding` apart, which is the whole requirement.
+ *
+ * This is what makes `padding` mean a minimum gap rather than merely how far to
+ * push boxes that already collide. `nudgeOverlappingLeafNodes` resolves the worst
+ * pair per iteration, so its own pushes routinely park some *other* pair a hair
+ * apart — measured on Company.mmd as 1.9px between `Tax` and `USCompany` despite
+ * `padding: 10`. Those pairs no longer overlap, so the old overlap-only test
+ * declared victory, and the drawing shipped with boxes visibly touching and no
+ * room to route between them.
+ */
+function separationDeficit(
+  a: ReturnType<typeof rectForNode>,
+  b: ReturnType<typeof rectForNode>,
+  padding: number,
+  enforceGap: boolean
+): { x: number; y: number } | null {
+  const rawX = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+  const rawY = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+  // Pairs this pass has not touched only have to stop OVERLAPPING. Applying the
+  // gap requirement to every pair in the drawing turns a shrinking problem into a
+  // spreading one — each widening creates new tight neighbours — and on
+  // `domus/architecture` (60+ nodes) that cascade ran past a 120s budget.
+  if (!enforceGap && (rawX <= 0 || rawY <= 0)) {
+    return null;
+  }
+  const needX = rawX + padding;
+  const needY = rawY + padding;
+  if (needX <= 0 || needY <= 0) {
+    return null;
+  }
+  return { x: needX, y: needY };
+}
+
 export function nudgeOverlappingLeafNodes(
   layout: LayoutData,
   opts: { padding?: number; maxIterations?: number; preferAxis?: 'x' | 'y' } = {}
@@ -228,6 +271,10 @@ export function nudgeOverlappingLeafNodes(
     }
   }
 
+  // Nodes this pass has displaced. Only these (and their new neighbours) are held
+  // to the `padding` gap — see `separationDeficit`.
+  const movedIds = new Set<string>();
+
   const computeRemaining = (): number => {
     let rem = 0;
     for (let i = 0; i < leaves.length; i++) {
@@ -241,7 +288,12 @@ export function nudgeOverlappingLeafNodes(
         if (!b) {
           continue;
         }
-        const ov = overlapAmount(ra, rectForNode(b));
+        const ov = separationDeficit(
+          ra,
+          rectForNode(b),
+          padding,
+          movedIds.has(leaves[i]) || movedIds.has(leaves[j])
+        );
         if (ov) {
           rem++;
         }
@@ -282,7 +334,12 @@ export function nudgeOverlappingLeafNodes(
         if (!b) {
           continue;
         }
-        const ov = overlapAmount(ra, rectForNode(b));
+        const ov = separationDeficit(
+          ra,
+          rectForNode(b),
+          padding,
+          movedIds.has(aId) || movedIds.has(bId)
+        );
         if (!ov) {
           continue;
         }
@@ -305,8 +362,9 @@ export function nudgeOverlappingLeafNodes(
 
     const a = byId.get(worst.aId)!;
     const b = byId.get(worst.bId)!;
-    const dx = worst.ov.x + padding;
-    const dy = worst.ov.y + padding;
+    // `separationDeficit` already folded `padding` in.
+    const dx = worst.ov.x;
+    const dy = worst.ov.y;
 
     const ax = Number((a as any).x ?? 0);
     const ay = Number((a as any).y ?? 0);
@@ -332,6 +390,8 @@ export function nudgeOverlappingLeafNodes(
       const pushB = -pushA;
       (a as any).x = ax + (pushA * dx) / 2;
       (b as any).x = bx + (pushB * dx) / 2;
+      movedIds.add(worst.aId);
+      movedIds.add(worst.bId);
     } else {
       // Separate along y.
       const eps = 1e-6;
@@ -347,6 +407,8 @@ export function nudgeOverlappingLeafNodes(
       const pushB = -pushA;
       (a as any).y = ay + (pushA * dy) / 2;
       (b as any).y = by + (pushB * dy) / 2;
+      movedIds.add(worst.aId);
+      movedIds.add(worst.bId);
     }
 
     moves++;

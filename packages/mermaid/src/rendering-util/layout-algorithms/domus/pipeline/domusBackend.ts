@@ -590,6 +590,30 @@ export function maybeHandleDomusBackend(args: {
           maxIterations: 60,
           preferAxis: ctx.preferAxisForVerticalFlow,
         });
+        // Re-snap: this nudger is class-unaware for exactly the reason iter-48
+        // documents above, and it runs AFTER that snap, so any drift it
+        // introduces reaches the router unsnapped. Cheap to demonstrate — it
+        // knocked Company.mmd's `Income`/`Tax` column 5.8px out of alignment,
+        // which is under the snap threshold but enough to stop
+        // `applyStraightCollapsePass` recognising a same-column pair, turning a
+        // straight 2-point edge into a 4-point zigzag.
+        if (
+          cycleRemovalRouting.success &&
+          cycleRemovalRouting.domusResult?.shape &&
+          cycleRemovalRouting.domusResult.graph
+        ) {
+          const snapThreshold = Math.max(4, ctx.spacing * 2);
+          const reSnapStats = applyGxClassSnap(
+            data,
+            cycleRemovalRouting.domusResult.graph,
+            cycleRemovalRouting.domusResult.shape,
+            snapThreshold
+          );
+          log.debug(ORTHO_DEBUG, 'ITER48_GX_CLASS_SNAP_AFTER_OVERLAP_NUDGE', {
+            ...reSnapStats,
+            threshold: snapThreshold,
+          });
+        }
       }
       refreshClustersAfterLeafPlacement(data, options);
       routeWithRoutingGraph({
