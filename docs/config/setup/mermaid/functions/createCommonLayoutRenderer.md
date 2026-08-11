@@ -133,7 +133,7 @@ Instead, store the result in a variable and use it, and pass it down to function
 
 ##### insertEdge
 
-(`elem`, `edge`, `clusterDb`, `diagramType`, `startNode`, `endNode`, `diagramId`, `skipIntersect`) => `object`
+(`elem`, `edge`, `clusterDb`, `diagramType`, `startNode`, `endNode`, `diagramId`, `skipLayoutAdjustments`) => `object`
 
 ##### insertEdgeLabel
 

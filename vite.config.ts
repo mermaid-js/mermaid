@@ -15,6 +15,12 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
+    // Agent tooling checks git worktrees out *inside* the repo (.claude/worktrees,
+    // .codex/worktrees). Those hold a full second copy of the source tree, so
+    // without this every unfiltered run collects their specs too: the suite runs
+    // twice, timings double, and a sweep reports two different aggregates — one
+    // of them measuring whatever branch that worktree happens to be on.
+    exclude: [...defaultExclude, '**/.claude/**', '**/.codex/**'],
     // TODO: should we move this to a mermaid-core package?
     coverage: {
       provider: 'v8',

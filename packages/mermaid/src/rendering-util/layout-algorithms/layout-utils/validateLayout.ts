@@ -73,6 +73,47 @@ const EPS_MARKER_CLEARANCE_HALF_WIDTH = 7;
 const EPS_ENDPOINT_BAND = 18;
 /** Two distinct edges sharing an attach point on a node within this distance trips `edge-shared-attachment-point`. */
 const EPS_SHARED_ATTACH = 3;
+/**
+ * A self-loop (start === end) must escape its own node to be visible: its
+ * polyline has to reach at least this far outside the node's border. Below it,
+ * the loop has been collapsed onto (or inside) the node boundary and renders as
+ * a bare arrowhead with no visible loop — `edge-self-loop-not-rendered` fires.
+ * A properly-drawn loop (any style) leaves a real outward stub (~nodeSpacing),
+ * so this only catches genuinely degenerate/collapsed self-loops.
+ */
+const EPS_SELF_LOOP_EXTENT = 4;
+
+/**
+ * A non-member leaf node should keep at least this much clear air between itself
+ * and a foreign group frame it faces. Below it, `node-too-close-to-group` fires
+ * as a GRADED SOFT penalty (the closer, the larger), so it never invalidates a
+ * layout — it just rewards spacing the node out.
+ */
+const NODE_GROUP_CLEARANCE = 20;
+/** Soft penalty per crowded node↔group pair: round((CLEARANCE - gap) * SCALE). */
+const NODE_GROUP_CROWD_SCALE = 3;
+/** Cap a single crowded pair's soft penalty. */
+const NODE_GROUP_CROWD_MAX = 60;
+
+/**
+ * The clear gap between two non-overlapping rects that FACE each other (their
+ * projections overlap on one axis), or null when they overlap on both axes
+ * (containment, handled elsewhere) or only meet diagonally (not facing).
+ */
+function rectFacingGap(a: Rect, b: Rect): number | null {
+  const xOverlap = a.left < b.right && b.left < a.right;
+  const yOverlap = a.top < b.bottom && b.top < a.bottom;
+  if (xOverlap && yOverlap) {
+    return null;
+  }
+  if (xOverlap) {
+    return a.top >= b.bottom ? a.top - b.bottom : b.top - a.bottom;
+  }
+  if (yOverlap) {
+    return a.left >= b.right ? a.left - b.right : b.left - a.right;
+  }
+  return null;
+}
 
 /** Per-edge bend penalty as a function of polyline POINT count (post-normalize). */
 function bendPenaltyForPoints(n: number): number {
@@ -101,21 +142,30 @@ export type LayoutIssueType =
   | 'edge-intersects-node'
   | 'edge-intersects-obstacle'
   | 'edge-intersects-group-title'
+  | 'node-overlaps-group-title'
+  | 'node-overlaps-foreign-group'
   | 'edge-port-direction-mismatch'
   | 'edge-same-port-departure'
   | 'edge-shared-attachment-point'
   | 'edge-shared-projected-port'
   | 'edge-bend-near-endpoint'
   | 'edge-corner-connection'
+  | 'edge-endpoint-detached-from-node'
+  | 'edge-self-loop-not-rendered'
+  | 'edge-zero-length-segment'
   | 'edge-shared-subpath'
+  | 'edge-self-shared-subpath'
+  | 'edge-bend-overlaps-arrowhead'
   | 'edge-parallel-segment-too-close'
   | 'edge-border-hugging'
   | 'node-border-hugging'
+  | 'node-too-close-to-group'
   | 'edge-label-off-edge'
   | 'edge-endpoint-inside-node'
   | 'edge-label-overlaps-foreign-edge'
   | 'edge-label-overlaps-own-arrowhead'
-  | 'edge-label-overlaps-group-border';
+  | 'edge-label-overlaps-group-border'
+  | 'edge-label-overlaps-node';
 
 export interface Issue {
   type: LayoutIssueType;
@@ -123,6 +173,42 @@ export interface Issue {
   nodeIds?: string[];
   edgeId?: string;
   details?: Record<string, unknown>;
+}
+
+/**
+ * An algorithm-specific addition to layout validation.
+ *
+ * `validateLayout` itself stays algorithm-agnostic: every layout engine shares
+ * the same core checks and the same 0–1000 scale, so a change made for one
+ * engine cannot silently move another's scores. Anything that only makes sense
+ * for a particular engine belongs in an extension, wired up at that engine's
+ * own entry point (see `domus/validateLayoutProxy.ts`).
+ *
+ * Both hooks receive the finished core result, so an extension can react to
+ * what the core already found rather than recomputing geometry.
+ */
+export interface LayoutValidationExtension {
+  /** Stable identifier; keys this extension's entry in `breakdown.extensions`. */
+  readonly id: string;
+  /**
+   * Extra HARD constraints. Any issue returned here is appended to `issues` and
+   * makes the layout invalid, which zeroes the score — same rule as the core.
+   */
+  check?(layout: LayoutData, core: Readonly<ValidateLayoutResult>): Issue[];
+  /**
+   * Extra GRADED penalty, subtracted from the core score and clamped at 0.
+   * Never invalidates a layout. `detail` is echoed into
+   * `breakdown.extensions[id]` for debugging and for sweep reporting.
+   */
+  penalise?(
+    layout: LayoutData,
+    core: Readonly<ValidateLayoutResult>
+  ): { points: number; detail?: Record<string, unknown> };
+}
+
+export interface ValidateLayoutOptions {
+  /** Applied in order, after the core checks. Omitted = core behaviour exactly. */
+  readonly extensions?: readonly LayoutValidationExtension[];
 }
 
 export interface ValidateLayoutResult {
@@ -141,16 +227,36 @@ export interface ValidateLayoutResult {
     edgeCount: number;
     /** Crossing events counted globally. */
     crossings: number;
+    /**
+     * Local crossing number: the most crossings any single edge participates
+     * in. REPORTED ONLY — no penalty is charged for it. Formally independent
+     * of `crossings`: a drawing can have a low total with one badly-crossed
+     * edge, or a high total spread thinly.
+     */
+    maxCrossingsOnAnyEdge: number;
+    /**
+     * How many edges participate in 0, 1, 2, 3 and 4+ crossings. REPORTED ONLY.
+     */
+    crossingsHistogram: Record<'0' | '1' | '2' | '3' | '4+', number>;
     /** Total points across all edges (for sanity / debugging). */
     totalPoints: number;
     /** Sum of per-edge bend penalties. */
     totalBendPenalty: number;
     /** Crossings * CROSSING_PENALTY. */
     crossingPenalty: number;
-    /** Per-edge breakdown sorted DESC by `bendPenalty` (worst offenders first). */
-    edges: { id: string; points: number; bendPenalty: number }[];
+    /**
+     * Per-edge breakdown sorted DESC by `bendPenalty` (worst offenders first).
+     * `crossings` is how many crossing events this edge participates in and is
+     * REPORTED ONLY — it carries no penalty.
+     */
+    edges: { id: string; points: number; bendPenalty: number; crossings: number }[];
     /** Histogram of polyline point counts: keys '2','3','4','5','6','7+'. */
     pointsHistogram: Record<'2' | '3' | '4' | '5' | '6' | '7+', number>;
+    /**
+     * Per-extension detail, keyed by extension id. Absent when no extension
+     * ran, so core-only callers see the same shape they always did.
+     */
+    extensions?: Record<string, { points: number; detail?: Record<string, unknown> }>;
   };
 }
 
@@ -206,6 +312,13 @@ function direction(a: Point, b: Point): 'E' | 'W' | 'N' | 'S' | null {
     return dy > 0 ? 'S' : 'N';
   }
   return null;
+}
+
+/** Euclidean distance a point sits OUTSIDE a rect (0 when on the border or inside). */
+function distanceOutsideRect(p: Point, r: Rect): number {
+  const dx = Math.max(r.left - p.x, 0, p.x - r.right);
+  const dy = Math.max(r.top - p.y, 0, p.y - r.bottom);
+  return Math.hypot(dx, dy);
 }
 
 /** Compute distance from a point to rectangle corners, return min distance */
@@ -601,7 +714,10 @@ function nearEndpointBandDistance(seg: Segment, side: PortSide, rect: Rect): num
  *
  * Also computes scoring based on bends and crossings.
  */
-export function validateLayout(layout: LayoutData): ValidateLayoutResult {
+export function validateLayout(
+  layout: LayoutData,
+  options: ValidateLayoutOptions = {}
+): ValidateLayoutResult {
   const issues: Issue[] = [];
   const nodes = layout.nodes ?? [];
   const edges = layout.edges ?? [];
@@ -759,6 +875,50 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
   }
 
   // ─────────────────────────────────────────────────────────────────────────────
+  // 1c) Node-vs-group crowding (SOFT, graded)
+  //
+  // A non-member leaf node parked right up against a foreign group's frame reads
+  // as cramped (e.g. subgraph-variation's P5 only 10px off the P1.5 subgraph;
+  // P1 15.8px above it). Unlike border-hugging (a node running flush ALONG the
+  // frame), this catches a node FACING the frame across too small a gap. The
+  // penalty is GRADED and SOFT: the closer below NODE_GROUP_CLEARANCE, the larger
+  // — so it never invalidates (a hard rule would mass-regress fixtures like
+  // deploy-pipeline, whose D/E sit ~9–12px off their subgraph), it just rewards
+  // spacing the node out. Swimlane lanes use a different spacing model and are
+  // excluded.
+  // ─────────────────────────────────────────────────────────────────────────────
+  for (const n of nodes) {
+    if (n?.id == null || n.isGroup || isLabelDummy(n)) {
+      continue;
+    }
+    const nId = String(n.id);
+    const nr = nodeRects.get(nId);
+    if (!nr) {
+      continue;
+    }
+    for (const [gId, gRect] of groupBorderRects) {
+      const groupNode = byId.get(gId);
+      if (isAncestorGroup(gId, n, byId) || isSwimlaneGroup(groupNode)) {
+        continue;
+      }
+      const gap = rectFacingGap(nr, gRect);
+      if (gap == null || gap <= 0 || gap >= NODE_GROUP_CLEARANCE) {
+        continue;
+      }
+      const penalty = Math.min(
+        NODE_GROUP_CROWD_MAX,
+        Math.round((NODE_GROUP_CLEARANCE - gap) * NODE_GROUP_CROWD_SCALE)
+      );
+      issues.push({
+        type: 'node-too-close-to-group',
+        message: `Node "${nId}" is only ${gap.toFixed(1)} from group "${gId}" frame (< ${NODE_GROUP_CLEARANCE})`,
+        nodeIds: [nId, gId],
+        details: { gap, clearance: NODE_GROUP_CLEARANCE, softPenalty: penalty },
+      });
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
   // Pre-compute normalized polylines and edge metadata for edge checks
   // ─────────────────────────────────────────────────────────────────────────────
   interface EdgeMeta {
@@ -806,6 +966,32 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
     const normalized = normalizePolyline(points);
     edgeMetas.push({ id: edgeId, startId, endId, points, normalized });
     validEdgeCount++;
+
+    // ─── edge-self-loop-not-rendered (HARD) ──────────────────────────────────
+    // A self-loop (start === end) has to leave its node and return to be drawn
+    // at all. A late routing/simplification pass can collapse the loop's U-turn
+    // onto — or inside — the node boundary (e.g. both ports slid onto a shared
+    // rail, yielding a zero-length segment), which paints as a bare arrowhead
+    // with no visible loop. Bend/point scoring can't see this: the collapsed
+    // 2-point polyline looks like a perfect "straight" edge and scores ABOVE the
+    // correct U-bend. Flag it structurally: if the self-loop never reaches
+    // EPS_SELF_LOOP_EXTENT outside its own node, it is not rendering.
+    if (startId.length > 0 && startId === endId && sNode && !sNode.isGroup) {
+      const loopRect = rectForNode(sNode);
+      let maxOutside = 0;
+      for (const p of points) {
+        maxOutside = Math.max(maxOutside, distanceOutsideRect(p, loopRect));
+      }
+      if (maxOutside < EPS_SELF_LOOP_EXTENT) {
+        issues.push({
+          type: 'edge-self-loop-not-rendered',
+          message: `Edge "${edgeId}" is a self-loop on node "${startId}" that does not leave the node (max ${maxOutside.toFixed(1)}px outside, needs ${EPS_SELF_LOOP_EXTENT})`,
+          edgeId,
+          nodeIds: [startId],
+          details: { maxOutside, threshold: EPS_SELF_LOOP_EXTENT, points },
+        });
+      }
+    }
 
     // ─── New: edge-bend-near-endpoint ────────────────────────────────────────
     // After normalising the polyline (so collinear waypoints don't make a
@@ -1004,6 +1190,87 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
           details: { labelRect, points },
         });
       }
+    } else {
+      // Post-finalize / overlay representation: the label lives on the edge as
+      // `edge.label` + `edge.x/y` + `edge.width/height` (no `labelNodeId`). The
+      // labelNodeId branch above never sees it, so a label anchored away from
+      // its own polyline (e.g. a broken edge whose label floats in empty space)
+      // was silently accepted. Apply the same off-edge test to the overlay rect.
+      const overlayRect = labelRectForEdge(e);
+      if (overlayRect && !polylineIntersectsRect(points, overlayRect)) {
+        issues.push({
+          type: 'edge-label-off-edge',
+          message: `Edge "${edgeId}" label does not sit on the edge polyline`,
+          edgeId,
+          details: { labelRect: overlayRect, points },
+        });
+      }
+    }
+
+    // Check edge-endpoint-detached-from-node: an edge's start/end point must
+    // attach to its start/end node. A point floating in empty space — more than
+    // EPS_DETACHED OUTSIDE the node (the opposite of edge-endpoint-inside-node) —
+    // means the edge does not actually connect that node, the most basic
+    // structural defect. Paint clips the dangling endpoint back onto the node,
+    // which renders as the edge hugging the node's border.
+    {
+      const EPS_DETACHED = 2;
+      const distOutsideRect = (p: Point, r: Rect): number => {
+        const dx = Math.max(r.left - p.x, 0, p.x - r.right);
+        const dy = Math.max(r.top - p.y, 0, p.y - r.bottom);
+        return Math.hypot(dx, dy);
+      };
+      const ends: [Node | undefined, string, Point | undefined, 'start' | 'end'][] = [
+        [sNode, startId, points[0], 'start'],
+        [tNode, endId, points[points.length - 1], 'end'],
+      ];
+      for (const [node, nodeId, endpoint, which] of ends) {
+        if (!node || !endpoint) {
+          continue;
+        }
+        const d = distOutsideRect(endpoint, rectForNode(node));
+        if (d > EPS_DETACHED) {
+          issues.push({
+            type: 'edge-endpoint-detached-from-node',
+            message: `Edge "${edgeId}" ${which} point is ${d.toFixed(1)}px from node "${nodeId}" (not attached)`,
+            edgeId,
+            nodeIds: [nodeId],
+            details: { which, distance: d, point: endpoint },
+          });
+        }
+      }
+    }
+
+    // Check edge-bend-overlaps-arrowhead (SOFT): a turn (interior bend) sitting
+    // inside the terminal arrowhead marker's footprint — the bend visually
+    // overlaps the arrowhead because the terminal segment is no longer than the
+    // marker body. A real but non-structural defect, so it is a soft penalty
+    // (see SOFT_PENALTY_BY_TYPE), not an invalidation.
+    if (points.length >= 3) {
+      for (const terminal of ['start', 'end'] as const) {
+        if (!hasTerminalMarker(e, terminal)) {
+          continue;
+        }
+        const markerRect = terminalMarkerClearanceRect(points, terminal);
+        if (!markerRect) {
+          continue;
+        }
+        const innerVertex = terminal === 'end' ? points[points.length - 2] : points[1];
+        const insideMarker =
+          innerVertex.x >= markerRect.left - EPS &&
+          innerVertex.x <= markerRect.right + EPS &&
+          innerVertex.y >= markerRect.top - EPS &&
+          innerVertex.y <= markerRect.bottom + EPS;
+        if (insideMarker) {
+          issues.push({
+            type: 'edge-bend-overlaps-arrowhead',
+            message: `Edge "${edgeId}" ${terminal} bend overlaps its arrowhead marker`,
+            edgeId,
+            details: { terminal, innerVertex, markerRect },
+          });
+          break;
+        }
+      }
     }
 
     // Check edge-endpoint-inside-node: the start and end points of an edge
@@ -1195,6 +1462,42 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
         }
       }
 
+      // edge-label-overlaps-node: the label rect sits on top of a leaf node's
+      // interior. An edge label belongs in the routing channel, not over a box;
+      // covering a node hides both the node's text and the label's. Checked
+      // against every leaf node (groups and label dummies excluded) including
+      // the label's own endpoints — a label covering even its own source/target
+      // is a real visual defect. A small overlap margin avoids border-touch
+      // noise from sub-pixel sizes.
+      {
+        const EPS_LABEL_NODE_OVERLAP = 2;
+        for (const n of nodes) {
+          if (n?.id == null || n.isGroup || isLabelDummy(n)) {
+            continue;
+          }
+          const nr = nodeRects.get(String(n.id));
+          if (!nr) {
+            continue;
+          }
+          const ov = rectsOverlap(labelRect, nr);
+          if (ov && ov.overlapX > EPS_LABEL_NODE_OVERLAP && ov.overlapY > EPS_LABEL_NODE_OVERLAP) {
+            issues.push({
+              type: 'edge-label-overlaps-node',
+              message: `Label ${who} overlaps node "${String(n.id)}"`,
+              edgeId: ownerEdgeId || undefined,
+              nodeIds: labelNodeId ? [labelNodeId, String(n.id)] : [String(n.id)],
+              details: {
+                nodeId: String(n.id),
+                labelRect,
+                overlapX: ov.overlapX,
+                overlapY: ov.overlapY,
+              },
+            });
+            break; // one node-overlap issue per label
+          }
+        }
+      }
+
       // edge-label-overlaps-group-border: a subgraph frame line cuts the
       // label rect (the label is half-in / half-out of a subgraph — its text
       // is visually sliced by the border, regardless of which group it is).
@@ -1371,6 +1674,73 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
         isTerminalSegmentForNode(e1, s1, nodeId) && isTerminalSegmentForNode(e2, s2, nodeId)
     );
   };
+
+  // 4a) Self-shared subpath: an edge whose own polyline doubles back along the
+  // same lane. Two flavours, both reported as `edge-self-shared-subpath`:
+  //
+  //   * Non-adjacent overlap (e.g. an A*/roundabout route never cleaned up):
+  //     two normalised segments ≥2 apart that are collinear and overlap.
+  //   * Adjacent reversal ("backtrack spike"): the RAW route runs out along a
+  //     lane and immediately comes straight back over it (e.g. project-sox2's
+  //     F→K: right to x=1181.6 then back to x=1071.6 at the same y). This is
+  //     invisible on the normalised segments because `mergeCollinear` silently
+  //     collapses the reversal — so it MUST be checked on the raw points, which
+  //     is what DOMUS paints verbatim.
+  for (const em of sortedEdges) {
+    const segs = em.normalized.segments;
+    let selfFlagged = false;
+    for (let a = 0; a < segs.length && !selfFlagged; a++) {
+      for (let b = a + 2; b < segs.length; b++) {
+        const overlap = collinearOverlap(segs[a], segs[b]);
+        if (overlap >= L_MIN_SHARED) {
+          issues.push({
+            type: 'edge-self-shared-subpath',
+            message: `Edge "${em.id}" overlaps its own route along a shared lane (length ${overlap.toFixed(1)})`,
+            edgeId: em.id,
+            details: { overlapLength: overlap, segmentIndices: [a, b] },
+          });
+          selfFlagged = true;
+          break;
+        }
+      }
+    }
+    if (selfFlagged) {
+      continue;
+    }
+    // Adjacent reversal on the RAW points: P_i→P_{i+1}→P_{i+2} collinear with the
+    // second leg running back over the first. The retraced length is the shorter
+    // of the two legs.
+    const pts = em.points;
+    for (let i = 0; i + 2 < pts.length; i++) {
+      const p0 = pts[i];
+      const p1 = pts[i + 1];
+      const p2 = pts[i + 2];
+      let backtrack = 0;
+      if (Math.abs(p0.y - p1.y) <= EPS && Math.abs(p1.y - p2.y) <= EPS) {
+        const d1 = Math.sign(p1.x - p0.x);
+        const d2 = Math.sign(p2.x - p1.x);
+        if (d1 !== 0 && d2 !== 0 && d1 !== d2) {
+          backtrack = Math.min(Math.abs(p1.x - p0.x), Math.abs(p2.x - p1.x));
+        }
+      } else if (Math.abs(p0.x - p1.x) <= EPS && Math.abs(p1.x - p2.x) <= EPS) {
+        const d1 = Math.sign(p1.y - p0.y);
+        const d2 = Math.sign(p2.y - p1.y);
+        if (d1 !== 0 && d2 !== 0 && d1 !== d2) {
+          backtrack = Math.min(Math.abs(p1.y - p0.y), Math.abs(p2.y - p1.y));
+        }
+      }
+      if (backtrack >= L_MIN_SHARED) {
+        issues.push({
+          type: 'edge-self-shared-subpath',
+          message: `Edge "${em.id}" backtracks over its own lane (length ${backtrack.toFixed(1)})`,
+          edgeId: em.id,
+          details: { overlapLength: backtrack, reversalAt: i },
+        });
+        break;
+      }
+    }
+  }
+
   for (let i = 0; i < sortedEdges.length; i++) {
     for (let j = i + 1; j < sortedEdges.length; j++) {
       const e1 = sortedEdges[i];
@@ -1433,18 +1803,40 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
   // ─────────────────────────────────────────────────────────────────────────────
   // 5) Crossing count for scoring
   // ─────────────────────────────────────────────────────────────────────────────
+  // `crossings` is the global event count that `crossingPenalty` charges for.
+  // `crossingsByEdge` additionally attributes each event to BOTH participating
+  // edges, which yields the local crossing number (the max over edges). These
+  // per-edge figures are REPORTED ONLY and carry no penalty — the score is
+  // unchanged by their presence. They exist because the global sum and the
+  // per-edge distribution are formally independent objectives: minimising the
+  // total does not minimise the per-edge worst case (local crossing
+  // minimisation is separately NP-hard). See `domus/todo-before.publish.md`
+  // under "Scoring / validator" before charging for them.
   let crossings = 0;
+  const crossingsByEdge = new Map<string, number>();
+  for (const em of edgeMetas) {
+    crossingsByEdge.set(em.id, 0);
+  }
+  const bumpEdgeCrossing = (id: string, by: number) => {
+    crossingsByEdge.set(id, (crossingsByEdge.get(id) ?? 0) + by);
+  };
   for (let i = 0; i < sortedEdges.length; i++) {
     for (let j = i + 1; j < sortedEdges.length; j++) {
       const e1 = sortedEdges[i];
       const e2 = sortedEdges[j];
 
+      let pairCrossings = 0;
       for (const s1 of e1.normalized.segments) {
         for (const s2 of e2.normalized.segments) {
           if (segmentsCross(s1, s2)) {
-            crossings++;
+            pairCrossings++;
           }
         }
+      }
+      if (pairCrossings > 0) {
+        crossings += pairCrossings;
+        bumpEdgeCrossing(e1.id, pairCrossings);
+        bumpEdgeCrossing(e2.id, pairCrossings);
       }
     }
   }
@@ -1456,12 +1848,30 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
     id: em.id,
     points: em.normalized.points.length,
     bendPenalty: bendPenaltyForPoints(em.normalized.points.length),
+    crossings: crossingsByEdge.get(em.id) ?? 0,
   }));
   perEdgePenalties.sort((a, b) => b.bendPenalty - a.bendPenalty);
 
   const totalBendPenalty = perEdgePenalties.reduce((acc, p) => acc + p.bendPenalty, 0);
   const crossingPenalty = crossings * CROSSING_PENALTY;
   const totalPoints = edgeMetas.reduce((acc, em) => acc + em.normalized.points.length, 0);
+
+  const perEdgeCrossingCounts = [...crossingsByEdge.values()];
+  const maxCrossingsOnAnyEdge = perEdgeCrossingCounts.reduce((m, c) => (c > m ? c : m), 0);
+  const crossingsHistogram: Record<'0' | '1' | '2' | '3' | '4+', number> = {
+    '0': 0,
+    '1': 0,
+    '2': 0,
+    '3': 0,
+    '4+': 0,
+  };
+  for (const c of perEdgeCrossingCounts) {
+    if (c >= 4) {
+      crossingsHistogram['4+']++;
+    } else {
+      crossingsHistogram[String(c) as '0' | '1' | '2' | '3']++;
+    }
+  }
 
   const pointsHistogram: Record<'2' | '3' | '4' | '5' | '6' | '7+', number> = {
     '2': 0,
@@ -1478,14 +1888,38 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
     pointsHistogram[key]++;
   }
 
-  const ok = issues.length === 0;
-  const rawScore = MAX_SCORE - totalBendPenalty - crossingPenalty;
+  // Soft issues are real defects that DON'T invalidate the layout but cost a
+  // fixed score penalty (a "warning"). Everything not listed here is HARD: a
+  // single occurrence sets ok=false and the score to 0. Keep this map small and
+  // explicit — promoting an issue to soft changes the headline score model.
+  const SOFT_PENALTY_BY_TYPE: Partial<Record<LayoutIssueType, number>> = {
+    'edge-bend-overlaps-arrowhead': 50,
+    // Graded: the actual amount is carried per-issue in details.softPenalty.
+    'node-too-close-to-group': 0,
+  };
+  const isSoftType = (t: LayoutIssueType): boolean => SOFT_PENALTY_BY_TYPE[t] !== undefined;
+  const softPenalty = issues.reduce(
+    (sum, issue) =>
+      sum +
+      (isSoftType(issue.type)
+        ? ((issue.details?.softPenalty as number | undefined) ??
+          SOFT_PENALTY_BY_TYPE[issue.type] ??
+          0)
+        : 0),
+    0
+  );
+  const hardIssues = issues.filter((issue) => !isSoftType(issue.type));
+
+  const ok = hardIssues.length === 0;
+  const rawScore = MAX_SCORE - totalBendPenalty - crossingPenalty - softPenalty;
   const score = ok ? Math.max(0, Math.min(MAX_SCORE, rawScore)) : 0;
 
   const breakdown = {
     nodeCount: leafNodeCount,
     edgeCount: validEdgeCount,
     crossings,
+    maxCrossingsOnAnyEdge,
+    crossingsHistogram,
     totalPoints,
     totalBendPenalty,
     crossingPenalty,
@@ -1502,5 +1936,54 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
     issuesJson: JSON.stringify(issues.slice(0, 50)),
   });
 
-  return { ok, issues, score, breakdown };
+  const coreResult: ValidateLayoutResult = { ok, issues, score, breakdown };
+  const extensions = options.extensions;
+  if (!extensions || extensions.length === 0) {
+    return coreResult;
+  }
+  return applyValidationExtensions(layout, coreResult, extensions);
+}
+
+/**
+ * Fold algorithm-specific extensions into a finished core result.
+ *
+ * Ordering is deliberate: every `check` runs before any `penalise`, so an
+ * extension penalty can never rescue a layout that another extension has
+ * already invalidated, and the outcome does not depend on extension order.
+ */
+function applyValidationExtensions(
+  layout: LayoutData,
+  core: ValidateLayoutResult,
+  extensions: readonly LayoutValidationExtension[]
+): ValidateLayoutResult {
+  const issues = [...core.issues];
+  for (const ext of extensions) {
+    const extra = ext.check?.(layout, core);
+    if (extra?.length) {
+      issues.push(...extra);
+    }
+  }
+
+  const detail: Record<string, { points: number; detail?: Record<string, unknown> }> = {};
+  let penalty = 0;
+  for (const ext of extensions) {
+    const result = ext.penalise?.(layout, core);
+    if (!result) {
+      continue;
+    }
+    const points = Math.max(0, result.points);
+    penalty += points;
+    detail[ext.id] = { points, detail: result.detail };
+  }
+
+  const ok = issues.length === 0;
+  const score = ok ? Math.max(0, Math.min(MAX_SCORE, core.score - penalty)) : 0;
+
+  return {
+    ok,
+    issues,
+    score,
+    breakdown:
+      Object.keys(detail).length > 0 ? { ...core.breakdown, extensions: detail } : core.breakdown,
+  };
 }

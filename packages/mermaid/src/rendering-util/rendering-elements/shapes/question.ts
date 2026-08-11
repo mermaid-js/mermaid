@@ -25,7 +25,6 @@ export async function question<T extends SVGGraphicsElement>(parent: D3Selection
   const w = bbox.width + (node.padding ?? 0);
   const h = bbox.height + (node.padding ?? 0);
   const s = w + h;
-  const adjustment = 0.5;
 
   const points = [
     { x: s / 2, y: 0 },
@@ -46,14 +45,15 @@ export async function question<T extends SVGGraphicsElement>(parent: D3Selection
 
     polygon = shapeSvg
       .insert(() => roughNode, ':first-child')
-      .attr('transform', `translate(${-s / 2 + adjustment}, ${s / 2})`);
+      .attr('transform', `translate(${-s / 2}, ${s / 2})`);
 
     if (cssStyles) {
       polygon.attr('style', cssStyles);
     }
   } else {
+    // `insertPolygonShape` already centers the polygon on the node with exactly
+    // this transform, so there is nothing to override here.
     polygon = insertPolygonShape(shapeSvg, s, s, points);
-    polygon.attr('transform', `translate(${-s / 2 + adjustment}, ${s / 2})`);
   }
 
   if (nodeStyles) {
@@ -64,7 +64,12 @@ export async function question<T extends SVGGraphicsElement>(parent: D3Selection
   node.calcIntersect = function (bounds: Bounds, point: Point) {
     const s = bounds.width;
 
-    // Define polygon points
+    // The same rhombus that was drawn above. `intersect.polygon` re-derives the
+    // polygon's placement from `bounds` and the points' own min x/y, which lands
+    // it centered on the node — matching the drawn `translate(-s/2, s/2)`.
+    // Nothing is shifted on the way out: the reported boundary IS the drawn
+    // boundary, so callers that clip an edge to this shape (DOMUS's paint-stage
+    // `paintShapeClip`) land exactly on the visible outline.
     const points = [
       { x: s / 2, y: 0 },
       { x: s, y: -s / 2 },
@@ -72,10 +77,7 @@ export async function question<T extends SVGGraphicsElement>(parent: D3Selection
       { x: 0, y: -s / 2 },
     ];
 
-    // Calculate the intersection point
-    const res = intersect.polygon(bounds, points, point);
-
-    return { x: res.x - 0.5, y: res.y - 0.5 }; // Adjusted result
+    return intersect.polygon(bounds, points, point);
   };
 
   node.intersect = function (point) {

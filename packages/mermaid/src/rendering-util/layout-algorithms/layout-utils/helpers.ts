@@ -91,15 +91,15 @@ export function bendCount(points: Point[]): number {
 export function segmentIntersectsRectInterior(a: Point, b: Point, rect: Rect): boolean {
   // We only care about axis-aligned segments; non-orthogonal segments are ignored
   // in this helper since the pipeline only produces orthogonal polylines.
-  if (a.x === b.x && a.y === b.y) {
+  if (approxEqual(a.x, b.x) && approxEqual(a.y, b.y)) {
     return false;
   }
 
-  if (a.y === b.y) {
+  if (approxEqual(a.y, b.y)) {
     // Horizontal segment. Treat segments that run exactly along the top/bottom
     // boundary of the rectangle as collisions as well, so that edges do not
     // visually "run under" or "on" other nodes.
-    const y = a.y;
+    const y = (a.y + b.y) / 2;
     const x1 = Math.min(a.x, b.x);
     const x2 = Math.max(a.x, b.x);
     const crossesVertically = y >= rect.top && y <= rect.bottom;
@@ -107,10 +107,10 @@ export function segmentIntersectsRectInterior(a: Point, b: Point, rect: Rect): b
     return crossesVertically && overlapsHorizontally;
   }
 
-  if (a.x === b.x) {
+  if (approxEqual(a.x, b.x)) {
     // Vertical segment. Similarly, segments that run exactly along the
     // left/right boundary of the rectangle are treated as collisions.
-    const x = a.x;
+    const x = (a.x + b.x) / 2;
     const y1 = Math.min(a.y, b.y);
     const y2 = Math.max(a.y, b.y);
     const crossesHorizontally = x >= rect.left && x <= rect.right;

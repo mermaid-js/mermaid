@@ -270,19 +270,21 @@ pnpm run dev
 ./run dev
 ```
 
-After starting the dev server open <http://localhost:9000> in your browser.
+The dev server prints its address as it starts. Open that URL in your browser.
 
 Now you are ready to make your changes!
 
-Note: By default, the Mermaid service will run on port 9000. To use a different port, change the environment variable `MERMAID_PORT` in the file `.env`. You should only need to do this if you are using port 9000 to run other projects.
+Note: the port is derived from the path of your checkout, so a single clone is stable across restarts while several checkouts or git worktrees can each run `pnpm dev` at the same time without colliding. Read the port from the line the server prints rather than assuming 9000. Set `MERMAID_DEV_PORT` to pin it to a port of your choosing.
+
+`MERMAID_PORT`, set in `.env`, is a separate setting. It applies to the Cypress base URL and to the older Vite dev server used by `pnpm dev:coverage`, and it has no effect on `pnpm dev`.
 
 ### Make Changes
 
-Have a look at <http://localhost:9000>. There is a list of demos that can be used to see and test your changes.
+The page the dev server serves has a list of demos that can be used to see and test your changes.
 
 If you need a specific diagram, you can duplicate the `example.html` file in `/demos/dev` and add your own mermaid code to your copy.
 
-That will be served at <http://localhost:9000/dev/your-file-name.html>.
+That will be served at `/dev/your-file-name.html` on the same server.
 After making code changes, the dev server will rebuild the mermaid library and automatically reload the page.
 
 Edit files in `packages/mermaid/src` as required.

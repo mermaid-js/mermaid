@@ -21,6 +21,7 @@ import {
 } from './direction/materializedGeometry.js';
 import { simplifyDetouredEdges } from './direction/detourSimplification.js';
 import { anchorLabelsToPolyline } from './direction/labelAnchoring.js';
+import { repairCornerAttachments } from './direction/cornerAttachmentRepair.js';
 import { straightenCollinearSiblingDetours } from './direction/siblingSharedFaceRouting.js';
 import { nudgeSharedInteriorSubpaths } from './direction/sharedTrackNudging.js';
 export { validateSwimlanesLayout } from './direction/validation.js';
@@ -131,6 +132,13 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   // labels and endpoint handoff. `prepareEdgeEndpointsForRenderer` is
   // idempotent, so unchanged edges do not accumulate duplicate endpoints.
   nudgeSharedInteriorSubpaths(edges, nodeByIdMap);
+
+  // Attachment points landing within a few px of a node corner read as
+  // corner-connected once rendered (validateLayout: edge-corner-connection).
+  // Slide the terminal rail inboard along the side; sibling-clearance and
+  // far-end checks keep the shift surgical. The finalize pass below re-anchors
+  // labels and re-prepares endpoints after the shift.
+  repairCornerAttachments(edges, nodeByIdMap);
 
   // Endpoint preparation materializes the renderer-facing terminal stubs. In
   // long return-edge cases those stubs can reveal a crossing that was not

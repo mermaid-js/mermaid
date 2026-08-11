@@ -1,17 +1,32 @@
 {
   "fixtures": [
     {
-      "id": "Company",
+      "id": "domus/Company-simp",
       "profile": "flowchart-domus",
       "allowLevel1Failure": true
     },
     {
-      "id": "multiple-edges",
+      "id": "domus/Company",
       "profile": "flowchart-domus",
       "allowLevel1Failure": true
     },
     {
-      "id": "edge-types",
+      "id": "domus/architecture",
+      "profile": "flowchart-domus",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "domus/deploy-pipeline",
+      "profile": "flowchart-domus",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "domus/multiple-edges",
+      "profile": "flowchart-domus",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "domus/edge-types",
       "profile": "flowchart-domus",
       "allowLevel1Failure": true
     },

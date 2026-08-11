@@ -11,6 +11,8 @@ cynefin
 deaccelerator
 Deaccelerator
 deaccelerators
+domus
+Domus
 doublecircle
 elem
 elems
@@ -19,8 +21,14 @@ gantt
 gitgraph
 gzipped
 handDrawn
+headerless
+Incomehk
+invtrapezoid
+ipsepcola
 jsobj
 kanban
+leanleft
+leanright
 marginx
 marginy
 Markdownish
@@ -32,6 +40,7 @@ mrtree
 multigraph
 nodesep
 NOTEGROUP
+ogdc
 Pinterest
 procs
 rankdir
