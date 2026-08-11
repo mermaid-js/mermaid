@@ -2,13 +2,13 @@
   "nodes": [
     {
       "id": "AlphaA",
-      "width": 64.65625,
-      "height": 64.65625
+      "width": 109.65625,
+      "height": 54
     },
     {
       "id": "AlphaB",
-      "width": 64.28125,
-      "height": 64.28125
+      "width": 109.28125,
+      "height": 54
     },
     {
       "id": "AlphaC",
@@ -22,8 +22,8 @@
     },
     {
       "id": "AlphaE",
-      "width": 63.796875,
-      "height": 63.796875
+      "width": 108.796875,
+      "height": 54
     },
     {
       "id": "AlphaF",
@@ -32,8 +32,8 @@
     },
     {
       "id": "AlphaG",
-      "width": 66.046875,
-      "height": 66.046875
+      "width": 111.046875,
+      "height": 54
     },
     {
       "id": "AlphaH",
@@ -42,13 +42,13 @@
     },
     {
       "id": "AlphaC_1",
-      "width": 81.578125,
-      "height": 81.578125
+      "width": 126.578125,
+      "height": 54
     },
     {
       "id": "AlphaC_2",
-      "width": 81.578125,
-      "height": 81.578125
+      "width": 126.578125,
+      "height": 54
     },
     {
       "id": "AlphaC_3",
@@ -62,13 +62,13 @@
     },
     {
       "id": "AlphaF1",
-      "width": 80.40625,
-      "height": 80.40625
+      "width": 117.015625,
+      "height": 54
     },
     {
       "id": "AlphaF2",
-      "width": 80.40625,
-      "height": 80.40625
+      "width": 117.015625,
+      "height": 54
     },
     {
       "id": "AlphaF3",
@@ -853,8 +853,8 @@
   ],
   "metadata": {
     "captureVersion": 1,
-    "sourceSha256": "d7e106457934de15be61547f3b85a96fbf575a1d02ed0519106a222ae78cf9ef",
-    "capturedAt": "2026-08-10T14:23:52.991Z",
+    "sourceSha256": "f06fcff3eb936b2793af86e865e0e98b6134b88e898c1b1647b5b8d590f33612",
+    "capturedAt": "2026-08-10T14:27:53.842Z",
     "capturedFrom": "dev-explorer layout-tests/hola-faithful/GRAPH - hola main page nr 3.mmd theme=forest look=classic layout=elk"
   }
 }

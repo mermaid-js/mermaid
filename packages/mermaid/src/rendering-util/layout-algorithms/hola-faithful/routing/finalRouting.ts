@@ -280,15 +280,24 @@ function planPorts(
       continue;
     }
 
-    const wanted = group.ends.map((end) => {
+    // Where each end would like to attach: the point on this side nearest its own
+    // far end. `raw` is that position, `wanted` is it clamped onto the side.
+    const raw = group.ends.map((end) => {
       const other = nodes.get(end.otherId);
-      const raw = other ? (vertical ? other.y : other.x) : centre;
-      return Math.max(low, Math.min(high, raw));
+      return other ? (vertical ? other.y : other.x) : centre;
     });
+    const wanted = raw.map((position) => Math.max(low, Math.min(high, position)));
+
+    // Order by the *unclamped* position. Every end whose far node lies beyond the
+    // side clamps to the same limit, so ordering on the clamped value leaves those
+    // ends tied and settles them on their edge id — which is unrelated to where they
+    // are going, and puts a nearer branch outside a further one. Their corridors then
+    // cross and run along each other. Clamping is monotone, so ordering on `raw`
+    // still hands `spreadPorts` an ascending list.
     const order = group.ends
       .map((end, index) => ({ end, index }))
       .sort((a, b) => {
-        const delta = wanted[a.index] - wanted[b.index];
+        const delta = raw[a.index] - raw[b.index];
         return delta !== 0 ? delta : a.end.edgeId.localeCompare(b.end.edgeId);
       });
 
