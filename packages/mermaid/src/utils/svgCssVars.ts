@@ -183,7 +183,7 @@ function applyColorBindings(chunk: string, bindings: ColorBinding[]): string {
  * Never touch element text (labels like "Red Team").
  */
 function rewritePaintContexts(svg: string, rewrite: (chunk: string) => string): string {
-  let out = svg.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, (block) => rewrite(block));
+  let out = svg.replace(/<style\b[^>]*>[\S\s]*?<\/style>/gi, (block) => rewrite(block));
   out = out.replace(
     /\b(fill|stroke|stop-color|color|flood-color|lighting-color)\s*=\s*("[^"]*"|'[^']*')/gi,
     (_full, name: string, quoted: string) => {

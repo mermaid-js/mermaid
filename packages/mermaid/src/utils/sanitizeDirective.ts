@@ -103,7 +103,7 @@ export const sanitizeDirective = (args: any): void => {
 };
 
 /** Reject `"`, `<`, `>`, `)`, `;` so values cannot break out of SVG attrs / CSS `var()`. */
-const SAFE_OPTION_STRING = /^[^"<>);]+$/;
+const SAFE_OPTION_STRING = /^[^");<>]+$/;
 const CSS_VAR_PREFIX = /^(--)?[\w-]*$/;
 
 const CSS_VARIABLE_THEME_NESTED = new Set(['prefix']);
