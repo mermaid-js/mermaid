@@ -63,19 +63,25 @@ const getStyles: DiagramStylesProvider = (options = {}) => {
 
   const DEFAULT_FONT_FAMILY = "'Comic Sans MS', 'Comic Neue', 'Chalkboard SE', cursive, sans-serif";
 
+  const getColorOpt = (key: string, hardcodedFallback: string): string => {
+    const themeFallback = sanitizeColor(themeVars[key], hardcodedFallback);
+    const userOpt = wireframeOpts[key] ?? opts[key];
+    return sanitizeColor(userOpt, themeFallback);
+  };
+
   const fontFamily = sanitizeFontFamily(getRawOpt('fontFamily'), DEFAULT_FONT_FAMILY);
   const fontSize = sanitizeFontSize(getRawOpt('fontSize'), '14px');
-  const mainBkg = sanitizeColor(getRawOpt('mainBkg'), '#ffffff');
-  const textColor = sanitizeColor(getRawOpt('textColor'), '#2c2c2c');
-  const primaryColor = sanitizeColor(getRawOpt('primaryColor'), '#2563eb');
-  const primaryTextColor = sanitizeColor(getRawOpt('primaryTextColor'), '#ffffff');
-  const secondaryColor = sanitizeColor(getRawOpt('secondaryColor'), '#f3f4f6');
-  const tertiaryColor = sanitizeColor(getRawOpt('tertiaryColor'), '#e5e7eb');
-  const lineColor = sanitizeColor(getRawOpt('lineColor'), '#2c2c2c');
-  const primaryBorderColor = sanitizeColor(getRawOpt('primaryBorderColor'), lineColor);
-  const dotCloseColor = sanitizeColor(getRawOpt('dotCloseColor'), '#ff5f56');
-  const dotMinimizeColor = sanitizeColor(getRawOpt('dotMinimizeColor'), '#ffbd2e');
-  const dotMaximizeColor = sanitizeColor(getRawOpt('dotMaximizeColor'), '#27c93f');
+  const mainBkg = getColorOpt('mainBkg', '#ffffff');
+  const textColor = getColorOpt('textColor', '#2c2c2c');
+  const primaryColor = getColorOpt('primaryColor', '#2563eb');
+  const primaryTextColor = getColorOpt('primaryTextColor', '#ffffff');
+  const secondaryColor = getColorOpt('secondaryColor', '#f3f4f6');
+  const tertiaryColor = getColorOpt('tertiaryColor', '#e5e7eb');
+  const lineColor = getColorOpt('lineColor', '#2c2c2c');
+  const primaryBorderColor = getColorOpt('primaryBorderColor', lineColor);
+  const dotCloseColor = getColorOpt('dotCloseColor', '#ff5f56');
+  const dotMinimizeColor = getColorOpt('dotMinimizeColor', '#ffbd2e');
+  const dotMaximizeColor = getColorOpt('dotMaximizeColor', '#27c93f');
 
   return `
   .wireframe-sketch {
