@@ -178,6 +178,13 @@
       "@isaacs/brace-expansion": "^5.0.1",
       "minimatch@10": "^10.2.6"
     },
+    "packageExtensions": {
+      "langium@4.2.1": {
+        "dependencies": {
+          "@chevrotain/regexp-to-ast": "11.1.2"
+        }
+      }
+    },
     "patchedDependencies": {
       "roughjs": "patches/roughjs.patch"
     },
