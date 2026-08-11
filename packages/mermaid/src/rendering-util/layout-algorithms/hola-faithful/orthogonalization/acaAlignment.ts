@@ -84,8 +84,13 @@ export function acaAlign(
         system.remove(ids);
         system.restore(snapshot, entities);
 
+        // Rejected *for now* — not for good. Whether an alignment overlaps or is
+        // satisfiable depends on which alignments are already committed, and this
+        // loop commits one per round: the last edge of a cycle typically collides
+        // while the cycle is still half-formed and is perfectly placeable once the
+        // rest is in. Blacklisting it here left a four-cycle with three of its four
+        // alignments, so one side of the rectangle came out as a jog.
         if (!projection.feasible || overlaps || !isFinite(penalty)) {
-          done.add(key);
           continue;
         }
         if (best === null || penalty < best.penalty) {

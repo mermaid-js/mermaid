@@ -156,6 +156,36 @@ export function countCrossings(a: Point, b: Point, segments: Segment[]): number 
   return count;
 }
 
+/**
+ * How many already-routed segments this move would run along, sharing a stretch of
+ * the same line rather than merely touching at a point.
+ */
+export function countCollinearOverlaps(a: Point, b: Point, segments: Segment[]): number {
+  const horizontal = Math.abs(a.y - b.y) < EPSILON;
+  const at = horizontal ? a.y : a.x;
+  const lo = horizontal ? Math.min(a.x, b.x) : Math.min(a.y, b.y);
+  const hi = horizontal ? Math.max(a.x, b.x) : Math.max(a.y, b.y);
+
+  let count = 0;
+  for (const other of segments) {
+    const otherHorizontal = Math.abs(other.a.y - other.b.y) < EPSILON;
+    if (otherHorizontal !== horizontal) {
+      continue;
+    }
+    const otherAt = horizontal ? other.a.y : other.a.x;
+    if (Math.abs(otherAt - at) > EPSILON) {
+      continue;
+    }
+    const otherLo = horizontal ? Math.min(other.a.x, other.b.x) : Math.min(other.a.y, other.b.y);
+    const otherHi = horizontal ? Math.max(other.a.x, other.b.x) : Math.max(other.a.y, other.b.y);
+    // Meeting at a single point is fine — two routes may share a corner.
+    if (Math.min(hi, otherHi) - Math.max(lo, otherLo) > EPSILON) {
+      count++;
+    }
+  }
+  return count;
+}
+
 interface Grid {
   xs: number[];
   ys: number[];
@@ -346,7 +376,13 @@ function searchGrid(
       const bend = current.axis !== 0 && current.axis !== n.axis ? config.bendPenalty : 0;
       const crossed =
         existingSegments.length > 0 ? countCrossings(here, there, existingSegments) : 0;
-      const g = current.g + distance + bend + crossed * config.crossingPenalty;
+      // Running *along* an already-routed segment is at least as bad as crossing it:
+      // the two are drawn on top of each other and read as one thicker line. A
+      // crossing count cannot see it, because it only looks at perpendicular
+      // segments, and the detour that avoids it is usually one grid step sideways.
+      const shared =
+        existingSegments.length > 0 ? countCollinearOverlaps(here, there, existingSegments) : 0;
+      const g = current.g + distance + bend + (crossed + shared) * config.crossingPenalty;
       const nk = key(n.xi, n.yi, n.axis);
       if (g >= (bestG.get(nk) ?? Infinity) - EPSILON) {
         continue;
