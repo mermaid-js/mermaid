@@ -180,13 +180,13 @@ note for Missing "invalid"`,
     expect(db.getAST()?.statements).toEqual([
       {
         kind: 'node',
-        span: [8, 18],
+        span: [13, 23],
         nodes: [
           {
             id: 'User',
-            span: [14, 18],
-            idSpan: [14, 18],
-            labelSpan: [14, 18],
+            span: [19, 23],
+            idSpan: [19, 23],
+            labelSpan: [19, 23],
             defines: true,
           },
         ],
@@ -852,69 +852,69 @@ note for Login "Remember"`;
     });
 
     expect(ast?.statements.map(({ kind, span }) => ({ kind, span }))).toEqual([
-      { kind: 'blank', span: [8, 9] },
-      { kind: 'comment', span: [9, 26] },
-      { kind: 'group', span: [27, 103] },
-      { kind: 'metadata', span: [104, 126] },
-      { kind: 'json', span: [127, 152] },
-      { kind: 'edge', span: [153, 190] },
-      { kind: 'edgeMetadata', span: [191, 222] },
-      { kind: 'note', span: [223, 248] },
+      { kind: 'blank', span: [13, 14] },
+      { kind: 'comment', span: [14, 31] },
+      { kind: 'group', span: [32, 108] },
+      { kind: 'metadata', span: [109, 131] },
+      { kind: 'json', span: [132, 157] },
+      { kind: 'edge', span: [158, 195] },
+      { kind: 'edgeMetadata', span: [196, 227] },
+      { kind: 'note', span: [228, 253] },
     ]);
 
     const group = ast?.statements[2];
     expect(group).toMatchObject({
       group: 'Auth',
-      idSpan: [42, 46],
-      titleSpan: [42, 46],
-      endSpan: [100, 103],
+      idSpan: [47, 51],
+      titleSpan: [47, 51],
+      endSpan: [105, 108],
     });
     expect(group?.children?.map(({ kind, span }) => ({ kind, span }))).toEqual([
-      { kind: 'node', span: [47, 84] },
-      { kind: 'node', span: [85, 99] },
+      { kind: 'node', span: [52, 89] },
+      { kind: 'node', span: [90, 104] },
     ]);
     expect(group?.children?.[0]).toMatchObject({
       nodes: [
         {
           id: 'User',
-          idSpan: [53, 57],
-          stereotypeSpan: [77, 82],
-          metadata: [{ key: 'type', span: [60, 72], keySpan: [60, 64], valueSpan: [66, 72] }],
+          idSpan: [58, 62],
+          stereotypeSpan: [82, 87],
+          metadata: [{ key: 'type', span: [65, 77], keySpan: [65, 69], valueSpan: [71, 77] }],
         },
       ],
     });
     expect(group?.children?.[1]).toMatchObject({
-      nodes: [{ id: 'Login', idSpan: [85, 90], labelSpan: [91, 98] }],
+      nodes: [{ id: 'Login', idSpan: [90, 95], labelSpan: [96, 103] }],
     });
     expect(ast?.statements[3]).toMatchObject({
-      nodes: [{ id: 'Auth', idSpan: [104, 108] }],
-      metadata: [{ key: 'type', span: [111, 124], keySpan: [111, 115], valueSpan: [117, 124] }],
+      nodes: [{ id: 'Auth', idSpan: [109, 113] }],
+      metadata: [{ key: 'type', span: [116, 129], keySpan: [116, 120], valueSpan: [122, 129] }],
     });
     expect(ast?.statements[4]).toMatchObject({
-      nodes: [{ id: 'Payload', idSpan: [132, 139] }],
+      nodes: [{ id: 'Payload', idSpan: [137, 144] }],
     });
     expect(ast?.statements[5]).toMatchObject({
       nodes: [
-        { id: 'Login', idSpan: [153, 158] },
-        { id: 'Login', idSpan: [185, 190] },
+        { id: 'Login', idSpan: [158, 163] },
+        { id: 'Login', idSpan: [190, 195] },
       ],
-      edges: [{ id: 'includeEdge', idSpan: [159, 170], labelSpan: [177, 184] }],
+      edges: [{ id: 'includeEdge', idSpan: [164, 175], labelSpan: [182, 189] }],
     });
     expect(ast?.statements[6]).toMatchObject({
-      edges: [{ id: 'includeEdge', idSpan: [191, 202] }],
+      edges: [{ id: 'includeEdge', idSpan: [196, 207] }],
       metadata: [
         {
           key: 'animation',
-          span: [205, 220],
-          keySpan: [205, 214],
-          valueSpan: [216, 220],
+          span: [210, 225],
+          keySpan: [210, 219],
+          valueSpan: [221, 225],
         },
       ],
     });
     expect(ast?.statements[7]).toMatchObject({
       ref: 'note-0',
-      refSpan: [239, 247],
-      nodes: [{ id: 'Login', idSpan: [232, 237] }],
+      refSpan: [244, 252],
+      nodes: [{ id: 'Login', idSpan: [237, 242] }],
     });
     expect(JSON.parse(JSON.stringify(ast))).toEqual(ast);
   });

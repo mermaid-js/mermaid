@@ -34,6 +34,7 @@
     "ast"
   ],
   "dependencies": {
+    "@chevrotain/regexp-to-ast": "~11.1.2",
     "@chevrotain/types": "~11.1.2"
   },
   "devDependencies": {

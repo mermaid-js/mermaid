@@ -603,6 +603,9 @@ importers:
 
   packages/parser:
     dependencies:
+      '@chevrotain/regexp-to-ast':
+        specifier: ~11.1.2
+        version: 11.1.2
       '@chevrotain/types':
         specifier: ~11.1.2
         version: 11.1.2
