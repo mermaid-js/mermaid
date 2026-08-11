@@ -57,7 +57,7 @@ Every wireframe diagram starts with the `wireframe-beta` keyword. You can option
 
 ### Syntax
 
-```
+```text
 wireframe-beta ["Diagram Title"] [size=preset]
 ```
 
