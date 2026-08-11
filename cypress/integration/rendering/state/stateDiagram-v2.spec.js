@@ -887,4 +887,17 @@ State9_____________ --> State10_____________   : Transition9_____
       {}
     );
   });
+  it('should render entry, do and exit actions in a state', () => {
+    imgSnapshotTest(
+      `
+    stateDiagram-v2
+      [*] --> Active
+      Active : entry / openValve
+      Active : do / heat
+      Active : exit / closeValve
+      Active --> [*]
+      `,
+      { logLevel: 0, fontFamily: 'courier' }
+    );
+  });
 });

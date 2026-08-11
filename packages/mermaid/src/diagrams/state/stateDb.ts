@@ -28,6 +28,7 @@ import {
   STMT_STATE,
   STMT_STYLEDEF,
 } from './stateCommon.js';
+import type { StateAction } from './stateCommon.js';
 import type { MermaidConfig } from '../../config.type.js';
 
 const CONSTANTS = {
@@ -165,6 +166,7 @@ export interface NodeData {
   position?: string;
   description?: string | string[];
   labelType?: string;
+  actions?: StateAction[];
 }
 
 export interface Edge {
@@ -276,6 +278,16 @@ export class StateDB {
 
     // Process node labels
     for (const node of this.nodes) {
+      // Fold entry/do/exit actions into the label beneath the state name (issue #2899).
+      // Done once here, not per parsed line, so actions are not duplicated.
+      if (node.actions?.length) {
+        const actionLines = node.actions.map((action) =>
+          common.sanitizeText(`${action.kind} / ${action.body}`, config)
+        );
+        const head = Array.isArray(node.label) ? node.label : node.label ? [node.label] : [node.id];
+        node.label = [...head, ...actionLines];
+      }
+
       if (!Array.isArray(node.label)) {
         continue;
       }

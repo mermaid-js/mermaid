@@ -66,6 +66,30 @@ export const NOTE_ID = `${DOMID_TYPE_SPACER}${NOTE}`;
 export const PARENT_ID = `${DOMID_TYPE_SPACER}${PARENT}`;
 // --------------------------------------
 
+// entry / do / exit actions inside a state, per the UML state machine model (issue #2899)
+export const STATE_ACTION_KINDS = ['entry', 'do', 'exit'] as const;
+export type StateActionKind = (typeof STATE_ACTION_KINDS)[number];
+export interface StateAction {
+  kind: StateActionKind;
+  body: string;
+}
+
+/**
+ * Parse a state body line as an entry/do/exit action.
+ * Returns the structured action, or null when the line is an ordinary description.
+ * For example the line "entry / turnOnMotor" yields kind 'entry' and body 'turnOnMotor'.
+ */
+export function parseStateAction(text: string): StateAction | null {
+  if (typeof text !== 'string') {
+    return null;
+  }
+  const match = /^(entry|do|exit)\s*\/\s*(.+)$/i.exec(text.trim());
+  if (!match) {
+    return null;
+  }
+  return { kind: match[1].toLowerCase() as StateActionKind, body: match[2].trim() };
+}
+
 export default {
   DEFAULT_DIAGRAM_DIRECTION,
   DEFAULT_NESTED_DOC_DIR,
