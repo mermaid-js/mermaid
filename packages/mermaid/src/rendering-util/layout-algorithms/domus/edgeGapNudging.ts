@@ -104,7 +104,23 @@ export function nudgeConnectedPairsForMinGap(
 
     let ra = rectForNode(na);
     let rb = rectForNode(nb);
-    if (overlapY(ra, rb) <= 0) {
+    // The pair has to actually be SIDE BY SIDE for a horizontal gap to be the
+    // thing it needs. Any y-overlap at all used to qualify, which let a
+    // *vertically stacked* pair in — and then the fix below pushed it apart
+    // sideways, which does nothing for the arrowhead on a vertical edge and
+    // destroys the x-alignment that a `U`/`D` shape label requires.
+    //
+    // This is what made the algorithm sensitive to `look`. The graph is the same
+    // in every look; only box sizes change. On `edge-types`, `M1` sits directly
+    // above `C`: at `look=neo` (h=48) their rects are 8px apart so nothing fires,
+    // at `look=classic` (h=54) they overlap by 2px, this pass fired, split them
+    // 34px in x, and `applyGxClassSnap`'s 20px threshold then refused to put them
+    // back — leaving `M1 --> C` doubling back across M1's own border and the whole
+    // layout invalid. Requiring the overlap to be a real share of the box height
+    // rather than a sliver is scale-invariant, so the decision no longer depends
+    // on how tall the boxes happen to be.
+    const sameRowOverlap = Math.min(ra.bottom - ra.top, rb.bottom - rb.top) / 2;
+    if (overlapY(ra, rb) <= sameRowOverlap) {
       continue;
     }
 

@@ -376,11 +376,17 @@ export function nudgeOverlappingLeafNodes(
 
     const chooseX = (wantX && dx > 0) || (!wantY && dx <= dy);
     if (chooseX) {
-      // Separate along x (tie-break deterministic by id).
+      // Separate along x: each node moves AWAY from the other. Geometry decides
+      // the direction; the id order is only a deterministic tie-break for the
+      // degenerate case of identical centres, where neither direction is "away".
+      //
+      // This used to consult geometry for edge-label pairs ONLY and fall back to
+      // alphabetical id order for everything else. When that order disagreed with
+      // the actual arrangement, the pass pushed the pair THROUGH each other,
+      // overlapping them worse, and iterating swapped their positions outright.
       const eps = 1e-6;
-      const labelPair = isEdgeLabelNodeId(worst.aId) || isEdgeLabelNodeId(worst.bId);
       const pushA =
-        labelPair && Math.abs(ax - bx) > eps
+        Math.abs(ax - bx) > eps
           ? ax < bx
             ? -1
             : 1
@@ -393,11 +399,18 @@ export function nudgeOverlappingLeafNodes(
       movedIds.add(worst.aId);
       movedIds.add(worst.bId);
     } else {
-      // Separate along y.
+      // Separate along y — same rule as the x branch above: away from each other,
+      // by geometry, with the id order only breaking exact ties.
+      //
+      // `edge-types` at `look=classic` is the case that exposed the old id-order
+      // rule: `C` sits BELOW `M1` but sorts before it, so C was pushed up and M1
+      // down, driving them through each other until they swapped. That put `M1`
+      // under `C` in a `flowchart TD` — against both the flow direction and the
+      // `D` shape label DOMUS had assigned — and left C's downward edges running
+      // straight into M1.
       const eps = 1e-6;
-      const labelPair = isEdgeLabelNodeId(worst.aId) || isEdgeLabelNodeId(worst.bId);
       const pushA =
-        labelPair && Math.abs(ay - by) > eps
+        Math.abs(ay - by) > eps
           ? ay < by
             ? -1
             : 1
