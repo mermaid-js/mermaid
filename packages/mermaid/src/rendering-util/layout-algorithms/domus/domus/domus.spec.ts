@@ -874,7 +874,7 @@ describe('DOMUS Full Algorithm', () => {
   });
 
   describe('gridToPixelCoordinates', () => {
-    it('converts grid coordinates to pixels', () => {
+    it('converts grid coordinates to pixels, reflecting y onto the screen axis', () => {
       const gridCoords = new Map<string, { x: number; y: number }>();
       gridCoords.set('A', { x: 0, y: 0 });
       gridCoords.set('B', { x: 1, y: 0 });
@@ -882,9 +882,23 @@ describe('DOMUS Full Algorithm', () => {
 
       const pixelCoords = gridToPixelCoordinates(gridCoords, 100, { x: 50, y: 50 });
 
+      // Grid y points up, pixel y points down, so C — one grid step ABOVE B —
+      // must come out one step above it in pixels too, i.e. at a SMALLER y.
       expect(pixelCoords.get('A')).toEqual({ x: 50, y: 50 });
       expect(pixelCoords.get('B')).toEqual({ x: 150, y: 50 });
-      expect(pixelCoords.get('C')).toEqual({ x: 150, y: 150 });
+      expect(pixelCoords.get('C')).toEqual({ x: 150, y: -50 });
+    });
+
+    it('reflects about yFlipReference so the drawing stays in positive pixel space', () => {
+      const gridCoords = new Map<string, { x: number; y: number }>();
+      gridCoords.set('bottom', { x: 0, y: 0 });
+      gridCoords.set('top', { x: 0, y: 2 });
+
+      // Reference = the largest grid y, as `runner.ts` passes.
+      const pixelCoords = gridToPixelCoordinates(gridCoords, 100, { x: 50, y: 50 }, 2);
+
+      expect(pixelCoords.get('top')).toEqual({ x: 50, y: 50 });
+      expect(pixelCoords.get('bottom')).toEqual({ x: 50, y: 250 });
     });
   });
 });

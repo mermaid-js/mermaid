@@ -393,22 +393,46 @@ function createFailureResult(state: DomusState): DomusResult {
  * based on topological ordering. This function converts them to pixel
  * coordinates with specified spacing.
  *
- * @param coordinates - Raw coordinates from DOMUS
+ * **This is the axis-sign boundary.** Grid space is the paper's space, where the
+ * y axis points *up*: DOMUS §2 defines label `U` on (u,v) by `y(u) < y(v)`, and
+ * `buildAuxiliaryGraphGy` follows it, giving a U-labelled edge's head the larger
+ * Gy coordinate. Pixel space is SVG's, where y points *down*. Emitting grid y
+ * unchanged conflated the two and rendered every drawing upside down — a TB
+ * flowchart flowed bottom-up. So y is negated here, and only here.
+ *
+ * Negating (rather than rebuilding Gy against the screen axis) keeps the whole
+ * solver — SAT trajectory, drawability test, compaction packing and its
+ * overlap-separation tie-breaks — working on exactly the coordinates it always
+ * did, so the emitted drawing is the *exact vertical mirror* of the old one:
+ * same shape, same bend count, same crossings. Reversing Gy's arcs instead is
+ * equally paper-faithful (it is what DOMUS §3 literally says, and the paper
+ * contradicts its own §2 here) but it re-runs longest-path compaction on the
+ * reversed constraint graph, which is not a reflection of the original packing
+ * — measured on the DDLT sweep as +5 crossings and a 120-point loss.
+ *
+ * @param coordinates - Raw coordinates from DOMUS, y axis pointing up
  * @param nodeSpacing - Spacing between adjacent grid positions
  * @param baseOffset - Base offset for the origin
- * @returns Pixel coordinates
+ * @param yFlipReference - Grid y that the reflection maps onto `baseOffset.y`.
+ *   Pass the maximum grid y over *every* coordinate map being converted for the
+ *   same drawing to keep the result in positive pixel space; callers converting
+ *   several maps (e.g. collapsed node coords and expanded routing coords) MUST
+ *   pass the same value, or nodes and their edge endpoints land in frames offset
+ *   from each other. Defaults to `0`, i.e. a plain negation about `baseOffset.y`.
+ * @returns Pixel coordinates, y axis pointing down (SVG)
  */
 export function gridToPixelCoordinates(
   coordinates: Map<string, Point>,
   nodeSpacing = 100,
-  baseOffset: Point = { x: 50, y: 50 }
+  baseOffset: Point = { x: 50, y: 50 },
+  yFlipReference = 0
 ): Map<string, Point> {
   const pixelCoords = new Map<string, Point>();
 
   for (const [vertexId, { x, y }] of coordinates) {
     pixelCoords.set(vertexId, {
       x: baseOffset.x + x * nodeSpacing,
-      y: baseOffset.y + y * nodeSpacing,
+      y: baseOffset.y + (yFlipReference - y) * nodeSpacing,
     });
   }
 

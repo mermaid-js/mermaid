@@ -264,15 +264,28 @@ export function runDomusRouting(
     const coordsForNodes =
       domusResult.coordinates ?? domusResult.fullCoordinates ?? coordsForRouting;
 
+    // Grid y points up, pixel y points down (see `gridToPixelCoordinates`), so
+    // the conversion reflects y. Reflect both maps about the SAME grid y — the
+    // maximum over both — or the expanded routing frame and the collapsed node
+    // frame end up translated relative to each other and every edge detaches
+    // from its endpoints. Using the maximum also keeps the drawing in the
+    // positive pixel range it occupied before the reflection.
+    const yFlipReference = Math.max(
+      0,
+      ...[...coordsForRouting.values()].map((p) => p.y),
+      ...[...coordsForNodes.values()].map((p) => p.y)
+    );
     const pixelCoordsForRouting = gridToPixelCoordinates(
       coordsForRouting,
       usedNodeSizes ? 1 : gridSpacing,
-      usedNodeSizes ? { x: 50, y: 50 } : baseOffset
+      usedNodeSizes ? { x: 50, y: 50 } : baseOffset,
+      yFlipReference
     );
     const pixelCoordsForNodes = gridToPixelCoordinates(
       coordsForNodes,
       usedNodeSizes ? 1 : gridSpacing,
-      usedNodeSizes ? { x: 50, y: 50 } : baseOffset
+      usedNodeSizes ? { x: 50, y: 50 } : baseOffset,
+      yFlipReference
     );
 
     // Placement-only: update node positions but skip routing.

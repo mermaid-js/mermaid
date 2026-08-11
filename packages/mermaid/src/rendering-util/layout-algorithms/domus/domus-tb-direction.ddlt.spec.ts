@@ -99,9 +99,11 @@ describe('Domus DDLT — A4: SAT position constraints enforce flowchart directio
     // forbids both from sharing a label, so only the first (B->C) gets a
     // direction constraint. B->E is left unconstrained.
     expect(constraints.length).toBe(3);
-    // Note: TB maps to `below` (source is below target in the encoder's
-    // inverted semantic), not `above`. See directionConstraints.relationFor().
-    expect(constraints.every((c) => c.relation === 'below')).toBe(true);
+    // TB maps to `above` — the relation reads "source is above target", which is
+    // what TB means. It used to map to `below` to cancel out the one inverted
+    // axis in `buildAuxiliaryGraphGy`; that inversion now lives at the single
+    // grid→pixel reflection instead. See directionConstraints.relationFor().
+    expect(constraints.every((c) => c.relation === 'above')).toBe(true);
     expect(new Set(constraints.map((c) => `${c.from}->${c.to}`))).toEqual(
       new Set(['A->B', 'B->C', 'C->D'])
     );

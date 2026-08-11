@@ -40,22 +40,24 @@ function normalizeDirection(raw: unknown): OrthoDirection | null {
 }
 
 function relationFor(dir: OrthoDirection): PositionConstraint['relation'] {
-  // Empirically verified: the SAT encoder's `above/below` and `left-of/right-of`
-  // semantics are inverted vs. screen coordinates (where y increases downward).
-  // Label `D` in DOMUS shape language produces a Gy arc `to -> from`, which in
-  // topological order places `to` above `from` (see drawability.ts:272-279 and
-  // topologicalSort at :767). To get "source above target" for a TB flow, we
-  // must therefore emit `below(from, to)` (which the encoder translates to
-  // label `U`, producing Gy arc `from -> to`, i.e., source above target).
+  // Screen semantics throughout, and the relation reads "`from` is _relation_
+  // `to`": `above(from, to)` becomes label `D` in the SAT encoder, and Gy's arcs
+  // point the way screen y increases, so `D` puts `to` below `from` — which is
+  // what a TB flow wants. Matches `compoundPlacement.ts`' mapping.
+  //
+  // Every arm here used to be reversed. The vertical pair compensated for the
+  // one genuinely inverted axis (Gy, since fixed in `buildAuxiliaryGraphGy`);
+  // the horizontal pair was inverted for no reason at all — Gx has always been
+  // screen-consistent — and mirrored LR/RL flows left-to-right.
   switch (dir) {
     case 'TB':
-      return 'below';
-    case 'BT':
       return 'above';
+    case 'BT':
+      return 'below';
     case 'LR':
-      return 'right-of';
-    case 'RL':
       return 'left-of';
+    case 'RL':
+      return 'right-of';
   }
 }
 
