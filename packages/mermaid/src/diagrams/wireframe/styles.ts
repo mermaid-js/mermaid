@@ -23,7 +23,15 @@ const sanitizeFontFamily = (value: unknown, fallback: string): string => {
     return fallback;
   }
   const normalized = value.trim();
-  return FONT_FAMILY_PATTERN.test(normalized) ? normalized : fallback;
+  if (!FONT_FAMILY_PATTERN.test(normalized)) {
+    return fallback;
+  }
+  const singleQuotes = (normalized.match(/'/g) || []).length;
+  const doubleQuotes = (normalized.match(/"/g) || []).length;
+  if (singleQuotes % 2 !== 0 || doubleQuotes % 2 !== 0) {
+    return fallback;
+  }
+  return normalized;
 };
 
 const sanitizeFontSize = (value: unknown, fallback: string): string => {

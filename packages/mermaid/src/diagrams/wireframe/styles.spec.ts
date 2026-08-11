@@ -56,6 +56,22 @@ describe('Wireframe Styles', () => {
       );
     });
 
+    it('should reject font families with unmatched single or double quotes and fallback safely', () => {
+      const stylesSingle = getStyles({
+        fontFamily: "Comic Sans'",
+      });
+      expect(stylesSingle).toContain(
+        "font-family: 'Comic Sans MS', 'Comic Neue', 'Chalkboard SE', cursive, sans-serif"
+      );
+
+      const stylesDouble = getStyles({
+        fontFamily: 'Comic Sans"',
+      });
+      expect(stylesDouble).toContain(
+        "font-family: 'Comic Sans MS', 'Comic Neue', 'Chalkboard SE', cursive, sans-serif"
+      );
+    });
+
     it('should sanitize raw CSS injection attempts in fontSize property', () => {
       const maliciousStyles = getStyles({
         fontSize: '14px; } body { display: none }',
