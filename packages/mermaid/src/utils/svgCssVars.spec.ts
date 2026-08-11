@@ -22,13 +22,33 @@ describe('svgCssVars', () => {
     expect(out.split('var(--mermaid-primaryColor').length - 1).toBe(1);
   });
 
-  it('normalizes SVG for web embedding', () => {
+  it('normalizes SVG for web embedding without stripping backgrounds by default', () => {
     const svg = `<svg width="800" height="600" style="background:#fff"><g/></svg>`;
     const out = normalizeMermaidSvgForWeb(svg);
     expect(out).toMatch(/viewBox="0 0 800 600"/);
     expect(out).toMatch(/width="100%"/);
     expect(out).toMatch(/height="auto"/);
+    expect(out).toMatch(/style="[^"]*background/i);
+  });
+
+  it('strips backgrounds only when stripBackground is true', () => {
+    const svg = `<svg width="800" height="600" style="background:#fff"><g/></svg>`;
+    const out = normalizeMermaidSvgForWeb(svg, { stripBackground: true });
     expect(out).not.toMatch(/style="[^"]*background/i);
+  });
+
+  it('does not treat unpaired hex as a shorthand match', () => {
+    const svg = `<svg><rect fill="#eef"/><rect fill="#ECECFF"/></svg>`;
+    const out = rewriteMermaidSvgCssVars(svg, { primaryColor: '#ECECFF' });
+    expect(out).toContain('fill="#eef"');
+    expect(out).toContain('var(--mermaid-primaryColor, #ECECFF)');
+  });
+
+  it('does not rewrite color words inside diagram labels', () => {
+    const svg = `<svg><text>Red Team</text><rect fill="red"/></svg>`;
+    const out = rewriteMermaidSvgCssVars(svg, { primaryColor: 'red' });
+    expect(out).toContain('>Red Team<');
+    expect(out).toContain('fill="var(--mermaid-primaryColor, red)"');
   });
 
   it('prepareMermaidSvgForWeb combines both options', () => {

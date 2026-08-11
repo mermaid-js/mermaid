@@ -107,8 +107,9 @@ export interface MermaidConfig {
   /**
    * Normalize the emitted SVG for responsive web embedding: ensure viewBox when
    * derivable from numeric width/height, set width="100%" / height="auto",
-   * preserveAspectRatio when missing, and optionally strip hardcoded backgrounds
-   * that fight host themes. See https://github.com/mermaid-js/mermaid/issues/8007
+   * preserveAspectRatio when missing. Set `stripBackground: true` to optionally
+   * strip hardcoded backgrounds that fight host themes (off by default).
+   * See https://github.com/mermaid-js/mermaid/issues/8007
    *
    */
   webCompatibility?:

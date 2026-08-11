@@ -45,6 +45,33 @@ describe('sanitizeDirective', () => {
       expect(args.treeView.filenameIcons).toEqual({ 'a.ts': 'docker' });
     });
 
+    it('keeps valid cssVariableTheme/webCompatibility nested options', () => {
+      const args = {
+        cssVariableTheme: { prefix: '--host-' },
+        webCompatibility: { stripBackground: true, preserveAspectRatio: 'xMidYMid meet' },
+      };
+      sanitizeDirective(args);
+      expect(args.cssVariableTheme).toEqual({ prefix: '--host-' });
+      expect(args.webCompatibility).toEqual({
+        stripBackground: true,
+        preserveAspectRatio: 'xMidYMid meet',
+      });
+    });
+
+    it('drops prototype-pollution keys and unsafe nested option values', () => {
+      const args = {
+        cssVariableTheme: { prefix: '--ok-', constructor: 'y' },
+        webCompatibility: {
+          preserveAspectRatio: '" onload="alert(1)',
+          stripBackground: 'yes',
+          unknown: true,
+        },
+      };
+      sanitizeDirective(args);
+      expect(args.cssVariableTheme).toEqual({ prefix: '--ok-' });
+      expect(args.webCompatibility).toEqual({});
+    });
+
     it('preserves valid nodeColors and deletes invalid ones', () => {
       const args = {
         sankey: {

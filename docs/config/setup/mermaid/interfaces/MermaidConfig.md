@@ -590,7 +590,8 @@ Defined in: [packages/mermaid/src/config.type.ts:114](https://github.com/mermaid
 
 Normalize the emitted SVG for responsive web embedding: ensure viewBox when
 derivable from numeric width/height, set width="100%" / height="auto",
-preserveAspectRatio when missing, and optionally strip hardcoded backgrounds
+preserveAspectRatio when missing. Set `stripBackground: true` to optionally
+strip hardcoded backgrounds
 that fight host themes. See <https://github.com/mermaid-js/mermaid/issues/8007>
 
 #### Type Declaration

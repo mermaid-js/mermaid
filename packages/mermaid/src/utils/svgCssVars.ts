@@ -82,18 +82,25 @@ function escapeRegExp(s: string): string {
   return s.replace(/[$()*+.?[\\\]^{|}]/g, '\\$&');
 }
 
+/** Shorthand only when each expanded pair is a doubled digit (`#aabbcc` → `abc`). */
+function toPairedShorthand(long: string): string | null {
+  let short = '';
+  for (let i = 0; i < long.length; i += 2) {
+    if (long[i] !== long[i + 1]) {
+      return null;
+    }
+    short += long[i];
+  }
+  return short;
+}
+
 function colorOccurrenceRegex(fallback: string): RegExp {
   const hex = normalizeHex(fallback);
   if (hex) {
-    if (hex.length === 7) {
+    if (hex.length === 7 || hex.length === 9) {
       const long = hex.slice(1);
-      const short = `${hex[1]}${hex[3]}${hex[5]}`;
-      return new RegExp(`#(?:${long}|${short})`, 'gi');
-    }
-    if (hex.length === 9) {
-      const long = hex.slice(1);
-      const short = `${hex[1]}${hex[3]}${hex[5]}${hex[7]}`;
-      return new RegExp(`#(?:${long}|${short})`, 'gi');
+      const short = toPairedShorthand(long);
+      return new RegExp(short ? `#(?:${long}|${short})` : `#${long}`, 'gi');
     }
     return new RegExp(escapeRegExp(hex), 'gi');
   }
@@ -124,7 +131,7 @@ function buildBindings(themeVariables: ThemeVariablesRecord, prefix: string): Co
     const key = colorKey(rawValue);
     if (!byKey.has(key)) {
       byKey.set(key, {
-        cssVar: `${prefix}${rawName}`,
+        cssVar: `${sanitizeCssIdent(prefix)}${rawName}`,
         fallback: rawValue.trim(),
       });
     }
@@ -146,7 +153,17 @@ export function rewriteMermaidSvgCssVars(
     return svg;
   }
 
-  let out = svg;
+  return rewritePaintContexts(svg, (chunk) => applyColorBindings(chunk, bindings));
+}
+
+/** CSS custom-property-safe ident (defense in depth vs directive injection). */
+function sanitizeCssIdent(value: string): string {
+  const cleaned = value.replace(/[^\w-]/g, '');
+  return cleaned || DEFAULT_PREFIX;
+}
+
+function applyColorBindings(chunk: string, bindings: ColorBinding[]): string {
+  let out = chunk;
   for (const binding of bindings) {
     const re = colorOccurrenceRegex(binding.fallback);
     const source = out;
@@ -158,6 +175,26 @@ export function rewriteMermaidSvgCssVars(
       return `var(${binding.cssVar}, ${match})`;
     });
   }
+  return out;
+}
+
+/**
+ * Rewrite colors only in paint contexts: `<style>` CSS and fill/stroke/style attrs.
+ * Never touch element text (labels like "Red Team").
+ */
+function rewritePaintContexts(svg: string, rewrite: (chunk: string) => string): string {
+  let out = svg.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, (block) => rewrite(block));
+  out = out.replace(
+    /\b(fill|stroke|stop-color|color|flood-color|lighting-color)\s*=\s*("[^"]*"|'[^']*')/gi,
+    (_full, name: string, quoted: string) => {
+      const q = quoted[0];
+      return `${name}=${q}${rewrite(quoted.slice(1, -1))}${q}`;
+    }
+  );
+  out = out.replace(/\bstyle\s*=\s*("[^"]*"|'[^']*')/gi, (_full, quoted: string) => {
+    const q = quoted[0];
+    return `style=${q}${rewrite(quoted.slice(1, -1))}${q}`;
+  });
   return out;
 }
 
@@ -178,12 +215,17 @@ function getAttr(tag: string, name: string): string | null {
   return m[2] ?? m[3] ?? null;
 }
 
+function escapeAttr(value: string): string {
+  return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
+
 function setAttr(tag: string, name: string, value: string): string {
+  const safe = escapeAttr(value);
   const re = new RegExp(`\\s*${name}\\s*=\\s*("[^"]*"|'[^']*')`, 'i');
   if (re.test(tag)) {
-    return tag.replace(re, ` ${name}="${value}"`);
+    return tag.replace(re, ` ${name}="${safe}"`);
   }
-  return tag.replace(/>$/, ` ${name}="${value}">`);
+  return tag.replace(/>$/, ` ${name}="${safe}">`);
 }
 
 function removeAttr(tag: string, name: string): string {
@@ -209,7 +251,7 @@ export function normalizeMermaidSvgForWeb(
     responsiveWidth: options.responsiveWidth ?? true,
     responsiveHeight: options.responsiveHeight ?? true,
     ensureViewBox: options.ensureViewBox ?? true,
-    stripBackground: options.stripBackground ?? true,
+    stripBackground: options.stripBackground ?? false,
     preserveAspectRatio:
       options.preserveAspectRatio === undefined
         ? 'xMidYMid meet'
@@ -272,7 +314,7 @@ function resolveCssVariableTheme(option: CssVariableThemeOption | undefined): {
   if (option === true) {
     return { enabled: true, prefix: DEFAULT_PREFIX };
   }
-  return { enabled: true, prefix: option.prefix ?? DEFAULT_PREFIX };
+  return { enabled: true, prefix: sanitizeCssIdent(option.prefix ?? DEFAULT_PREFIX) };
 }
 
 /**
