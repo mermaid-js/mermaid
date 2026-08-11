@@ -7,7 +7,7 @@ import type {
 const id = 'wireframe';
 
 const detector: DiagramDetector = (txt) => {
-  return /^\s*wireframe-beta/.test(txt);
+  return /^\s*wireframe-beta(?:\s|$)/.test(txt);
 };
 
 const loader: DiagramLoader = async () => {
