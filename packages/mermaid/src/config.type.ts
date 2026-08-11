@@ -85,6 +85,47 @@ export interface MermaidConfig {
   themeVariables?: any;
   themeCSS?: string;
   /**
+   * After rendering with concrete themeVariables, rewrite theme colors in the
+   * emitted SVG (embedded `<style>` and presentation attributes) to
+   * `var(--mermaid-<slot>, <resolvedFallback>)` so one pre-rendered SVG works
+   * under host light/dark themes.
+   *
+   * This is emit-time CSS vars with fallbacks. It is not the same as accepting
+   * CSS vars as themeVariables *inputs* (khroma still needs concrete colors
+   * to derive lighten/adjust). See https://github.com/mermaid-js/mermaid/issues/8007
+   * and contrast with https://github.com/mermaid-js/mermaid/issues/6860.
+   *
+   */
+  cssVariableTheme?:
+    | boolean
+    | {
+        /**
+         * CSS custom property prefix. Default `--mermaid-`.
+         */
+        prefix?: string;
+      };
+  /**
+   * Normalize the emitted SVG for responsive web embedding: ensure viewBox when
+   * derivable from numeric width/height, set width="100%" / height="auto",
+   * preserveAspectRatio when missing. Set `stripBackground: true` to optionally
+   * strip hardcoded backgrounds that fight host themes (off by default).
+   * See https://github.com/mermaid-js/mermaid/issues/8007
+   *
+   */
+  webCompatibility?:
+    | boolean
+    | {
+        responsiveWidth?: boolean;
+        responsiveHeight?: boolean;
+        ensureViewBox?: boolean;
+        stripBackground?: boolean;
+        /**
+         * Value for preserveAspectRatio when missing. Set false to leave unchanged.
+         *
+         */
+        preserveAspectRatio?: string | boolean;
+      };
+  /**
    * Defines which main look to use for the diagram.
    *
    */

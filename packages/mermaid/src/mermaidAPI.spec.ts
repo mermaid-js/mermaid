@@ -934,6 +934,26 @@ graph TD;A--x|text including URL space|B;`)
       });
     });
 
+    jsdomIt('applies cssVariableTheme and webCompatibility through serializeSvg', async () => {
+      mermaidAPI.initialize({
+        securityLevel: 'strict',
+        theme: 'base',
+        themeVariables: { primaryColor: '#ECECFF' },
+        cssVariableTheme: true,
+        webCompatibility: true,
+      });
+
+      const { svg } = await mermaidAPI.render(
+        'css-var-theme-web',
+        `flowchart TD
+  A --> B`
+      );
+
+      expect(svg).toMatch(/var\(--mermaid-/);
+      expect(svg).toMatch(/width="100%"/);
+      expect(svg).toMatch(/height="auto"/);
+    });
+
     jsdomIt('preserves treeView icons after strict security sanitization', async () => {
       mermaidAPI.initialize({ securityLevel: 'strict' });
 

@@ -67,6 +67,11 @@ export const sanitizeDirective = (args: any): void => {
     // Recurse if an object, but handle dictionary-style configs specially
     // (like nodeColors or filenameIcons) by validating their values instead
     if (typeof args[key] === 'object') {
+      // Nested option objects whose keys are not top-level MermaidConfig keys.
+      if (key === 'cssVariableTheme' || key === 'webCompatibility') {
+        sanitizeSvgPostProcessOptions(key, args[key]);
+        continue;
+      }
       const valuePattern = DICTIONARY_CONFIG_PATTERNS[key];
       if (valuePattern) {
         sanitizeDictionaryConfig(args[key], valuePattern);
@@ -95,6 +100,65 @@ export const sanitizeDirective = (args: any): void => {
     }
   }
   log.debug('After sanitization', args);
+};
+
+/** Reject `"`, `<`, `>`, `)`, `;` so values cannot break out of SVG attrs / CSS `var()`. */
+const SAFE_OPTION_STRING = /^[^");<>]+$/;
+const CSS_VAR_PREFIX = /^(--)?[\w-]*$/;
+
+const CSS_VARIABLE_THEME_NESTED = new Set(['prefix']);
+const WEB_COMPATIBILITY_NESTED = new Set([
+  'responsiveWidth',
+  'responsiveHeight',
+  'ensureViewBox',
+  'stripBackground',
+  'preserveAspectRatio',
+]);
+
+const sanitizeSvgPostProcessOptions = (
+  topKey: 'cssVariableTheme' | 'webCompatibility',
+  opts: Record<string, unknown>
+): void => {
+  const allowed =
+    topKey === 'cssVariableTheme' ? CSS_VARIABLE_THEME_NESTED : WEB_COMPATIBILITY_NESTED;
+  for (const nested of Object.keys(opts)) {
+    const value = opts[nested];
+    if (
+      nested.startsWith('__') ||
+      nested.includes('proto') ||
+      nested.includes('constr') ||
+      !allowed.has(nested)
+    ) {
+      log.debug('sanitize deleting nested key:', topKey, nested);
+      delete opts[nested];
+      continue;
+    }
+    if (nested === 'prefix') {
+      if (
+        typeof value !== 'string' ||
+        !CSS_VAR_PREFIX.test(value) ||
+        !SAFE_OPTION_STRING.test(value)
+      ) {
+        log.debug('sanitize deleting invalid prefix:', value);
+        delete opts[nested];
+      }
+      continue;
+    }
+    if (nested === 'preserveAspectRatio') {
+      if (typeof value === 'boolean') {
+        continue;
+      }
+      if (typeof value !== 'string' || !SAFE_OPTION_STRING.test(value)) {
+        log.debug('sanitize deleting invalid preserveAspectRatio:', value);
+        delete opts[nested];
+      }
+      continue;
+    }
+    if (typeof value !== 'boolean') {
+      log.debug('sanitize deleting non-boolean nested option:', nested, value);
+      delete opts[nested];
+    }
+  }
 };
 
 export const sanitizeCss = (str: string): string => {
