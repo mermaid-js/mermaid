@@ -820,8 +820,18 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
               e!.x = anchor.x;
               e!.y = anchor.y;
             }
-            const next = validateLayout(layout);
-            const fewer = next.issues.length < current.issues.length;
+            // Fast reject: acceptance needs FEWER issues than the baseline, so
+            // once a candidate reaches the baseline count the answer is already
+            // no. `abortAboveIssueCount` lets validation stop there instead of
+            // finishing the quadratic pairwise scans. 7,356 of the 7,374
+            // candidates tried on `domus/architecture` are rejects, and they were
+            // costing a full validation each.
+            const next = validateLayout(layout, {
+              abortAboveIssueCount: current.issues.length,
+            });
+            const fewer = !next.aborted && next.issues.length < current.issues.length;
+            // Only reached when `fewer` holds, i.e. never on an aborted result —
+            // whose issue list is deliberately partial.
             const noNew = (next.issues as Issue[]).every((iss) => curKeys.has(issueKey(iss)));
             if (fewer && noNew) {
               current = next;

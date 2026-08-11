@@ -209,11 +209,34 @@ export interface LayoutValidationExtension {
 export interface ValidateLayoutOptions {
   /** Applied in order, after the core checks. Omitted = core behaviour exactly. */
   readonly extensions?: readonly LayoutValidationExtension[];
+  /**
+   * Opt-in fast reject. When set, validation may stop as soon as it has found
+   * this many issues and return early with `aborted: true`, `ok: false` and a
+   * zeroed `breakdown`.
+   *
+   * For callers that only need to know whether a candidate layout has FEWER
+   * issues than a baseline. Once the count reaches the baseline the answer is
+   * already "no", and the remaining work — the pairwise shared-subpath and
+   * crossing scans, which are quadratic in edges — cannot change it, because
+   * the issue list only ever grows.
+   *
+   * Omitting this leaves behaviour bit-identical: no abort point can fire, and
+   * an aborted result is never a scoring result. `remediateFlaggedEdgesWhenMonotone`
+   * spends 35s of `domus/architecture`'s 64s validating 7,374 candidate routes to
+   * accept 18 of them; every one of the other 7,356 is a fast reject.
+   */
+  readonly abortAboveIssueCount?: number;
 }
 
 export interface ValidateLayoutResult {
   ok: boolean;
   issues: Issue[];
+  /**
+   * Set only when `abortAboveIssueCount` cut the run short. Such a result is a
+   * "this has at least N issues" answer, NOT a scored verdict: `score` is 0 and
+   * `breakdown` is zeroed. Never store one as a baseline.
+   */
+  aborted?: boolean;
   /**
    * DDLT headline score in [0, 1000]. **Zero** when `!ok`. When `ok`, starts
    * at 1000 and is reduced by `totalBendPenalty` (per-edge by polyline point
@@ -719,6 +742,28 @@ export function validateLayout(
   options: ValidateLayoutOptions = {}
 ): ValidateLayoutResult {
   const issues: Issue[] = [];
+  // See `abortAboveIssueCount`. `undefined` (the default) makes both no-ops, so
+  // every abort point below is dead code unless a caller opts in.
+  const abortLimit = options.abortAboveIssueCount;
+  const shouldAbort = (): boolean => abortLimit !== undefined && issues.length >= abortLimit;
+  const abortedResult = (): ValidateLayoutResult => ({
+    ok: false,
+    issues,
+    aborted: true,
+    score: 0,
+    breakdown: {
+      nodeCount: 0,
+      edgeCount: 0,
+      crossings: 0,
+      maxCrossingsOnAnyEdge: 0,
+      crossingsHistogram: { '0': 0, '1': 0, '2': 0, '3': 0, '4+': 0 },
+      totalPoints: 0,
+      totalBendPenalty: 0,
+      crossingPenalty: 0,
+      edges: [],
+      pointsHistogram: { '2': 0, '3': 0, '4': 0, '5': 0, '6': 0, '7+': 0 },
+    },
+  });
   const nodes = layout.nodes ?? [];
   const edges = layout.edges ?? [];
   const edgeById = new Map<string, _Edge>();
@@ -1648,6 +1693,9 @@ export function validateLayout(
   // ─────────────────────────────────────────────────────────────────────────────
   // 4) Shared / crowded parallel subpath checks (pairwise edges)
   // ─────────────────────────────────────────────────────────────────────────────
+  if (shouldAbort()) {
+    return abortedResult();
+  }
   const sortedEdges = [...edgeMetas].sort((a, b) => a.id.localeCompare(b.id));
   const segmentTouchesPoint = (seg: Segment, p: Point): boolean =>
     distance(seg.a, p) <= EPS || distance(seg.b, p) <= EPS;
@@ -1742,6 +1790,9 @@ export function validateLayout(
   }
 
   for (let i = 0; i < sortedEdges.length; i++) {
+    if (shouldAbort()) {
+      return abortedResult();
+    }
     for (let j = i + 1; j < sortedEdges.length; j++) {
       const e1 = sortedEdges[i];
       const e2 = sortedEdges[j];
@@ -1798,6 +1849,10 @@ export function validateLayout(
         }
       }
     }
+  }
+
+  if (shouldAbort()) {
+    return abortedResult();
   }
 
   // ─────────────────────────────────────────────────────────────────────────────

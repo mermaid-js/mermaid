@@ -32,9 +32,22 @@ export const DOMUS_VALIDATION_EXTENSIONS: readonly LayoutValidationExtension[] =
   edgeZeroLengthSegmentExtension,
 ];
 
-/** Core validation plus the DOMUS extensions. */
-export function validateLayout(layout: LayoutData): ValidateLayoutResult {
-  return validateLayoutCore(layout, { extensions: DOMUS_VALIDATION_EXTENSIONS });
+/**
+ * Core validation plus the DOMUS extensions.
+ *
+ * `abortAboveIssueCount` is forwarded for score-gated passes that only need a
+ * fast "does this candidate have fewer issues than the baseline" answer; see the
+ * option's docs on the core validator. The extensions are non-negotiable — a
+ * caller cannot swap the objective, only ask for an earlier "no".
+ */
+export function validateLayout(
+  layout: LayoutData,
+  options: { abortAboveIssueCount?: number } = {}
+): ValidateLayoutResult {
+  return validateLayoutCore(layout, {
+    extensions: DOMUS_VALIDATION_EXTENSIONS,
+    abortAboveIssueCount: options.abortAboveIssueCount,
+  });
 }
 
 export type { Issue, LayoutIssueType, ValidateLayoutResult };
