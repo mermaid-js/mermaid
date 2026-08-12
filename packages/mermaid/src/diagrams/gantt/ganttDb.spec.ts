@@ -472,6 +472,34 @@ describe('when using the ganttDb', function () {
     expect(tasks[1].task).toEqual('test2');
   });
 
+  it('should handle an end date without a time when the dateFormat includes one', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD HH:mm');
+    ganttDb.addSection('Tasks with mixed end dates');
+    ganttDb.addTask('test1', 'id1,2026-01-03,2026-01-05');
+    ganttDb.addTask('test2', 'id2,2026-01-02 21:30,2026-01-03 23:30');
+    ganttDb.addTask('test3', 'id3,2026-01-03,2d');
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].startTime).toEqual(new Date('2026-01-03'));
+    expect(tasks[0].endTime).toEqual(new Date('2026-01-05'));
+
+    expect(tasks[1].startTime).toEqual(dayjs('2026-01-02 21:30', 'YYYY-MM-DD HH:mm').toDate());
+    expect(tasks[1].endTime).toEqual(dayjs('2026-01-03 23:30', 'YYYY-MM-DD HH:mm').toDate());
+
+    expect(tasks[2].startTime).toEqual(new Date('2026-01-03'));
+    expect(tasks[2].endTime).toEqual(dayjs(new Date('2026-01-03')).add(2, 'd').toDate());
+  });
+
+  it('should handle end dates and times even when the dateFormat cannot parse them strictly', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD HH:MM');
+    ganttDb.addSection('Tasks with an hour:month dateFormat');
+    ganttDb.addTask('test1', 'id1,2026-01-02 21:30,2026-01-03 23:30');
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].startTime).toEqual(new Date('2026-01-02 21:30'));
+    expect(tasks[0].endTime).toEqual(new Date('2026-01-03 23:30'));
+  });
+
   /**
    * Unfortunately, Vitest has no way of modifying the timezone at runtime, so
    * in order to test this, please run this test with

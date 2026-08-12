@@ -415,6 +415,27 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
     return parsedDate.toDate();
   }
 
+  // Fall back to non-strict parsing, mirroring getStartDate. This handles
+  // dates that do not match the configured dateFormat exactly, e.g. a date
+  // without a time when the dateFormat includes one.
+  const d = new Date(str);
+  if (
+    d !== undefined &&
+    !isNaN(d.getTime()) &&
+    // WebKit browsers can mis-parse invalid dates to be ridiculously
+    // huge numbers, e.g. new Date('202304') gets parsed as January 1, 202304.
+    // This can cause virtually infinite loops while rendering, so for the
+    // purposes of Gantt charts we'll just treat any date beyond 10,000 AD/BC as
+    // invalid.
+    d.getFullYear() >= -10000 &&
+    d.getFullYear() <= 10000
+  ) {
+    if (inclusive) {
+      return dayjs(d).add(1, 'd').toDate();
+    }
+    return d;
+  }
+
   let endTime = dayjs(prevTime);
   const [durationValue, durationUnit] = parseDuration(str);
   if (!Number.isNaN(durationValue)) {
