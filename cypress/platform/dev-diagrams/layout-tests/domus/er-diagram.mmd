@@ -1,0 +1,51 @@
+erDiagram
+    CREW ||--o{ SPECIMEN : owns
+    CREW ||--o{ DRAWER : owns
+    CREW {
+        uuid id PK
+        string name
+    }
+    DRAWER {
+        uuid id PK
+        string name
+        uuid owner FK
+        uuid unit FK
+    }
+    SPECIMEN {
+        uuid id PK
+        uuid owner FK
+        uuid drawer FK
+    }
+    SPECIMEN-MEASURE {
+        uuid id PK
+        uuid specimenid FK
+        int major
+        int minor
+        int state
+    }
+    SPECIMEN-SHARE {
+        uuid id PK
+        uuid specimenId FK
+        uuid crewId FK
+    }
+    UNIT {
+        uuid id PK
+        string name
+        uuid owner FK
+    }
+
+    UNIT-MEMBER {
+        uuid id PK
+        uuid unit FK
+        uuid memberid FK
+    }
+
+    
+    CREW ||--o| UNIT-MEMBER : could-be
+    SPECIMEN |o--|| DRAWER : lives-in
+    UNIT ||--}o DRAWER : owns
+    UNIT-MEMBER }o--|| UNIT : member-of
+    SPECIMEN ||--|{ SPECIMEN-MEASURE : contains
+    SPECIMEN-SHARE ||--}o CREW : shared-with
+    SPECIMEN ||--}o SPECIMEN-SHARE : shared
+    

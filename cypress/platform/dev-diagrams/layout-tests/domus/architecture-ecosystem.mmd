@@ -1,0 +1,94 @@
+flowchart TB
+    route["Reading route +page.widget"] --> editor["ReadingEditor.widget<br/>(orchestrator)"]
+
+    subgraph editing["Editing surfaces"]
+        direction TB
+        scribe["Scribe code editor<br/>scribe-plotter · y-scribe"]
+        visual["Visual Editor<br/>ForecastsASTService ·<br/>StationsASTService · Toolbars"]
+        textmirror["TextMirror<br/>(markdown / lightweight)"]
+    end
+
+    subgraph view["Rendering"]
+        direction TB
+        viewer["View.widget"]
+        plotter["@plotter-chart/plotter<br/>render engine"]
+        layout["Layout: GRD · tidy-tree"]
+        viewbox["svg-view-box · svg.js"]
+        viewer --> plotter
+        viewer --> viewbox
+    end
+
+    subgraph richnote["Rich text & docs"]
+        direction TB
+        comments["Comments"]
+        notes["Notes"]
+        penpal["PenPal / QuillMirror<br/>y-quillmirror"]
+        comments --> penpal
+        notes --> penpal
+    end
+
+    subgraph ml["ML features"]
+        direction TB
+        mlchat["MLChat panel<br/>@ml-sdk/widget useChat()"]
+        coldstart["Cold-start prompt → reading"]
+    end
+
+    subgraph sync["Collaboration core (Syn)"]
+        direction TB
+        sdoc["S.Doc<br/>code · notes · metadata"]
+        bindings["Bindings: y-scribe ·<br/>y-textmirror · y-quillmirror"]
+        persist["y-localbase (local)"]
+        provider["BookbaseProvider"]
+        bindings --> sdoc
+        persist --> sdoc
+        sdoc --> provider
+    end
+
+    subgraph platform["State & UI platform"]
+        direction LR
+        stores["Widget stores"]
+        query["@querystack/widget-qry"]
+        shell["@plotter-chart/shell · kits-ui<br/>Skeleton · Stylekit"]
+    end
+
+    editor --> view
+    editor --> view
+    editor --> richnote
+    editor --> ml
+
+    editor --> editing
+    scribe --> visual
+    visual --> plotter
+    scribe --> bindings
+    textmirror --> bindings
+    penpal --> bindings
+    provider --> realtime["Bookbase Realtime"]
+
+    editor --> platform
+    ml --> query
+
+    %% Slightly deeper hue fill for nodes, lighter for subgraph background
+    classDef editingGroup stroke:#ef4444,fill:#fee2e2
+    classDef editingNode stroke:#ef4444,fill:#fecaca
+
+    classDef viewGroup stroke:#3b82f6,fill:#dbeafe
+    classDef viewNode stroke:#3b82f6,fill:#bfdbfe
+
+    classDef richnoteGroup stroke:#22c55e,fill:#dcfce7
+    classDef richnoteNode stroke:#22c55e,fill:#bbf7d0
+
+    classDef mlGroup stroke:#a855f7,fill:#f3e8ff
+    classDef mlNode stroke:#a855f7,fill:#e9d5ff
+
+    classDef syncGroup stroke:#eab308,fill:#fef9c3
+    classDef syncNode stroke:#eab308,fill:#fef08a
+
+    classDef platformGroup stroke:#f97316,fill:#ffedd5
+    classDef platformNode stroke:#f97316,fill:#fed7aa
+
+    class editing editingGroup
+    class view viewGroup
+    class richnote richnoteGroup
+    class ml mlGroup
+    class sync syncGroup
+    class platform platformGroup

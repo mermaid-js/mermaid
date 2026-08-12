@@ -1,0 +1,120 @@
+{
+  "nodes": [
+    {
+      "id": "route",
+      "width": 207.52084350585938,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "editor",
+      "width": 164.31771850585938,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "scribe",
+      "width": 174.3697967529297,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "visual",
+      "width": 221.60940551757812,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "textmirror",
+      "width": 183.72743225097656,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "viewer",
+      "width": 105.68054962158203,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "plotter",
+      "width": 163.7100830078125,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "layout",
+      "width": 175.94097900390625,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "viewbox",
+      "width": 161.92189025878906,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "comments",
+      "width": 99.69097900390625,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "notes",
+      "width": 68.57986450195312,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "penpal",
+      "width": 153.37155151367188,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "mlchat",
+      "width": 197.15628051757812,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "coldstart",
+      "width": 208.63197326660156,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "sdoc",
+      "width": 179.86459350585938,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "bindings",
+      "width": 188.32814025878906,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "persist",
+      "width": 144.82118225097656,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "provider",
+      "width": 146.4010467529297,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "stores",
+      "width": 117.59027862548828,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "query",
+      "width": 182.38197326660156,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "shell",
+      "width": 202.59896850585938,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "realtime",
+      "width": 153.40625,
+      "height": 44.99826431274414
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "06c7d85e24dc2614bd71391edafd2af1fa28d5c44250d6ecb61275f57fe751cf",
+    "capturedAt": "2026-08-12T14:54:05.659Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/architecture-ecosystem.mmd theme=redux-color look=neo layout=domus"
+  }
+}

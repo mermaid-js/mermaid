@@ -1,0 +1,210 @@
+{
+  "nodes": [
+    {
+      "id": "n1",
+      "width": 113.27257537841797,
+      "height": 50.99826431274414
+    },
+    {
+      "id": "Review",
+      "width": 77.91146087646484,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "n2",
+      "width": 103.90625,
+      "height": 50.99826431274414
+    },
+    {
+      "id": "Booked",
+      "width": 79.48263549804688,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "n3",
+      "width": 117.15277862548828,
+      "height": 71.99652862548828
+    },
+    {
+      "id": "Classify",
+      "width": 121.00694274902344,
+      "height": 121.00694274902344
+    },
+    {
+      "id": "n4",
+      "width": 96.171875,
+      "height": 71.99652862548828
+    },
+    {
+      "id": "Sweep",
+      "width": 74.81250762939453,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "BSState",
+      "width": 160.14584350585938,
+      "height": 129.11688232421875
+    },
+    {
+      "id": "approve",
+      "width": 84.15277862548828,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "reqchange",
+      "width": 144.08334350585938,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "escR",
+      "width": 101.26215362548828,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "close",
+      "width": 126.94792175292969,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "park",
+      "width": 79.48263549804688,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "assign",
+      "width": 79.48263549804688,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "fixPR",
+      "width": 74.02257537841797,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "escT",
+      "width": 101.26215362548828,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "respond",
+      "width": 88.04166412353516,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "reReview",
+      "width": 94.2482681274414,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "backlog",
+      "width": 81.80902862548828,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "escC",
+      "width": 101.26215362548828,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "stale",
+      "width": 84.15277862548828,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "deps",
+      "width": 97.3732681274414,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "health",
+      "width": 74.02257537841797,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Done",
+      "width": 65.47222137451172,
+      "height": 65.47222137451172
+    },
+    {
+      "id": "edge-label-BSState-Review-L_BSState_Review_0",
+      "width": 28.02083396911621,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-BSState-Booked-L_BSState_Booked_0",
+      "width": 28.02083396911621,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-BSState-Classify-L_BSState_Classify_0",
+      "width": 28.02083396911621,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-BSState-Sweep-L_BSState_Sweep_0",
+      "width": 28.02083396911621,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-approve-BSState-L_approve_BSState_0",
+      "width": 29.56597328186035,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-reqchange-BSState-L_reqchange_BSState_0",
+      "width": 29.56597328186035,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-close-BSState-L_close_BSState_0",
+      "width": 29.56597328186035,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-park-BSState-L_park_BSState_0",
+      "width": 29.56597328186035,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-assign-BSState-L_assign_BSState_0",
+      "width": 29.56597328186035,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-respond-BSState-L_respond_BSState_0",
+      "width": 29.56597328186035,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-stale-BSState-L_stale_BSState_0",
+      "width": 29.56597328186035,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-backlog-BSState-L_backlog_BSState_0",
+      "width": 29.56597328186035,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-fixPR-Review-L_fixPR_Review_0",
+      "width": 108.1857681274414,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-reReview-Review-L_reReview_Review_0",
+      "width": 94.19271087646484,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-deps-Review-L_deps_Review_0",
+      "width": 87.93402862548828,
+      "height": 20.99826431274414
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "76380c3f10db59ed57ecd40d85e3155e33ed372df067007042d701ae1fb5a856",
+    "capturedAt": "2026-08-12T15:19:11.108Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/triage2.mmd theme=redux-color look=neo layout=domus"
+  }
+}

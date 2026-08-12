@@ -1,0 +1,28 @@
+flowchart TD
+ subgraph office["office"]
+    direction LR
+        TBD["steps needed here"]
+        PlotFeeRecords{"Check Plot Fee Record"}
+  end
+ subgraph actions["actions"]
+    direction LR
+        A2["clear plots"]
+        A1["membership verification"]
+        A5("remove attached shed logs")
+        A4["get plotid"]
+        A3["plot table"]
+  end
+    A("tenant requests plot surrender") --> B["confirmation request"]
+    PlotFeeRecords -- Unpaid Arrears --> TBD
+    A1 --> A2
+    A3 --> A4
+    A4 --> A5
+    C("Confirmed") --> office & actions
+    office --> actions
+    actions --> E("send handover letters")
+    B --> C
+     A:::state
+     E:::state
+    classDef state fill:#739,color:#fff
+    style B stroke:#BBDEFB,fill:#BBDEFB
+

@@ -1,0 +1,175 @@
+{
+  "nodes": [
+    {
+      "id": "entity-CREW-0",
+      "width": 294.53125,
+      "height": 198.74131774902344
+    },
+    {
+      "id": "entity-BOOKING-1",
+      "width": 279.79168701171875,
+      "height": 198.74131774902344
+    },
+    {
+      "id": "entity-CREW_PROFILES-2",
+      "width": 442.4219055175781,
+      "height": 198.74131774902344
+    },
+    {
+      "id": "entity-CALLSIGN_INDEX-3",
+      "width": 303.0903015136719,
+      "height": 119.24479675292969
+    },
+    {
+      "id": "entity-CREW_CHARTERS_INDEX-4",
+      "width": 336.5278015136719,
+      "height": 119.24479675292969
+    },
+    {
+      "id": "entity-CHARTER-5",
+      "width": 330.7899475097656,
+      "height": 397.4826354980469
+    },
+    {
+      "id": "entity-CHARTER_ACL-6",
+      "width": 389.201416015625,
+      "height": 198.74131774902344
+    },
+    {
+      "id": "entity-CHARTER_CONNECTIONS-7",
+      "width": 408.9583435058594,
+      "height": 238.4896240234375
+    },
+    {
+      "id": "entity-BERTH_LINK-8",
+      "width": 422.68231201171875,
+      "height": 158.99307250976562
+    },
+    {
+      "id": "entity-CHARTER_INVITE-9",
+      "width": 303.8802185058594,
+      "height": 317.9861145019531
+    },
+    {
+      "id": "entity-LOG_META-10",
+      "width": 356.779541015625,
+      "height": 437.23089599609375
+    },
+    {
+      "id": "entity-MARINA_DOCK_CONFIG-11",
+      "width": 325.6771240234375,
+      "height": 278.23785400390625
+    },
+    {
+      "id": "entity-BERTH_TOKEN_INDEX-12",
+      "width": 349.79168701171875,
+      "height": 158.99307250976562
+    },
+    {
+      "id": "entity-MARINA_CONNECTION-13",
+      "width": 349.045166015625,
+      "height": 278.23785400390625
+    },
+    {
+      "id": "entity-MARINA_ENTRY_STATE-14",
+      "width": 329.5746765136719,
+      "height": 198.74131774902344
+    },
+    {
+      "id": "entity-RUN-15",
+      "width": 334.7829895019531,
+      "height": 317.9861145019531
+    },
+    {
+      "id": "entity-CALLOUT_REGISTRATION-16",
+      "width": 257.21356201171875,
+      "height": 198.74131774902344
+    },
+    {
+      "id": "edge-label-entity-CREW-0-entity-BOOKING-1-id_entity-CREW-0_entity-BOOKING-1_0",
+      "width": 22.5781307220459,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-CREW-0-entity-CREW_PROFILES-2-id_entity-CREW-0_entity-CREW_PROFILES-2_1",
+      "width": 22.5781307220459,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-CREW-0-entity-CALLSIGN_INDEX-3-id_entity-CREW-0_entity-CALLSIGN_INDEX-3_2",
+      "width": 67.7170181274414,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-CREW-0-entity-CREW_CHARTERS_INDEX-4-id_entity-CREW-0_entity-CREW_CHARTERS_INDEX-4_3",
+      "width": 112.06597900390625,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-CREW-0-entity-CHARTER-5-id_entity-CREW-0_entity-CHARTER-5_4",
+      "width": 95.70314025878906,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-CREW-0-entity-CHARTER_ACL-6-id_entity-CREW-0_entity-CHARTER_ACL-6_5",
+      "width": 38.91493225097656,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-CHARTER-5-entity-CHARTER_ACL-6-id_entity-CHARTER-5_entity-CHARTER_ACL-6_6",
+      "width": 22.5781307220459,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-CHARTER-5-entity-CHARTER_CONNECTIONS-7-id_entity-CHARTER-5_entity-CHARTER_CONNECTIONS-7_7",
+      "width": 22.5781307220459,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-CHARTER-5-entity-BERTH_LINK-8-id_entity-CHARTER-5_entity-BERTH_LINK-8_8",
+      "width": 22.5781307220459,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-CHARTER-5-entity-CHARTER_INVITE-9-id_entity-CHARTER-5_entity-CHARTER_INVITE-9_9",
+      "width": 22.5781307220459,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-CHARTER-5-entity-LOG_META-10-id_entity-CHARTER-5_entity-LOG_META-10_10",
+      "width": 66.14583587646484,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-CHARTER-5-entity-MARINA_DOCK_CONFIG-11-id_entity-CHARTER-5_entity-MARINA_DOCK_CONFIG-11_11",
+      "width": 22.5781307220459,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-CHARTER-5-entity-BERTH_TOKEN_INDEX-12-id_entity-CHARTER-5_entity-BERTH_TOKEN_INDEX-12_12",
+      "width": 67.7170181274414,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-BOOKING-1-entity-MARINA_CONNECTION-13-id_entity-BOOKING-1_entity-MARINA_CONNECTION-13_13",
+      "width": 22.5781307220459,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-BOOKING-1-entity-MARINA_ENTRY_STATE-14-id_entity-BOOKING-1_entity-MARINA_ENTRY_STATE-14_14",
+      "width": 49.8350715637207,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-RUN-15-entity-CALLOUT_REGISTRATION-16-id_entity-RUN-15_entity-CALLOUT_REGISTRATION-16_15",
+      "width": 84.0625228881836,
+      "height": 20.99826431274414
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "c3dfa45b999d940b6fa7cda5f85ad5f5d440982133c1464b13080d25a63a106b",
+    "capturedAt": "2026-08-12T14:58:50.091Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/er-db-model.mmd theme=redux-color look=neo layout=domus"
+  }
+}

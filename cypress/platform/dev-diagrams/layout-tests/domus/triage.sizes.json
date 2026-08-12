@@ -1,0 +1,300 @@
+{
+  "nodes": [
+    {
+      "id": "Start",
+      "width": 114.4254150390625,
+      "height": 107.99305725097656
+    },
+    {
+      "id": "S3",
+      "width": 135.00868225097656,
+      "height": 135.00868225097656
+    },
+    {
+      "id": "Skip",
+      "width": 111.39236450195312,
+      "height": 107.99305725097656
+    },
+    {
+      "id": "S4",
+      "width": 81.80035400390625,
+      "height": 107.99305725097656
+    },
+    {
+      "id": "Conf",
+      "width": 129.61805725097656,
+      "height": 129.61805725097656
+    },
+    {
+      "id": "RouteD",
+      "width": 157.13021850585938,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "S5",
+      "width": 124.89583587646484,
+      "height": 124.89583587646484
+    },
+    {
+      "id": "TypeCheck",
+      "width": 89.14063262939453,
+      "height": 89.14063262939453
+    },
+    {
+      "id": "S6",
+      "width": 201.65798950195312,
+      "height": 201.65798950195312
+    },
+    {
+      "id": "RouteA",
+      "width": 90.75000762939453,
+      "height": 107.99305725097656
+    },
+    {
+      "id": "RouteC",
+      "width": 105.93229675292969,
+      "height": 170.98785400390625
+    },
+    {
+      "id": "RouteE",
+      "width": 86.47916412353516,
+      "height": 128.99131774902344
+    },
+    {
+      "id": "RouteF",
+      "width": 87.26910400390625,
+      "height": 128.99131774902344
+    },
+    {
+      "id": "S7",
+      "width": 98.13715362548828,
+      "height": 128.99131774902344
+    },
+    {
+      "id": "RouteG",
+      "width": 88.03298950195312,
+      "height": 128.99131774902344
+    },
+    {
+      "id": "S9_med",
+      "width": 148.7760467529297,
+      "height": 148.7760467529297
+    },
+    {
+      "id": "S8",
+      "width": 124.921875,
+      "height": 124.921875
+    },
+    {
+      "id": "RouteB_bot",
+      "width": 139.12673950195312,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "RouteB_human",
+      "width": 158.8663330078125,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Report",
+      "width": 115.11979675292969,
+      "height": 115.11979675292969
+    },
+    {
+      "id": "n1",
+      "width": 114.4254150390625,
+      "height": 107.99305725097656
+    },
+    {
+      "id": "n2",
+      "width": 100.47222900390625,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "n3",
+      "width": 81.01041412353516,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "n4",
+      "width": 124.89583587646484,
+      "height": 124.89583587646484
+    },
+    {
+      "id": "n5",
+      "width": 89.14063262939453,
+      "height": 89.14063262939453
+    },
+    {
+      "id": "n6",
+      "width": 201.65798950195312,
+      "height": 201.65798950195312
+    },
+    {
+      "id": "n7",
+      "width": 88.75000762939453,
+      "height": 113.99305725097656
+    },
+    {
+      "id": "n8",
+      "width": 144.4010467529297,
+      "height": 113.99305725097656
+    },
+    {
+      "id": "n9",
+      "width": 85.26909637451172,
+      "height": 134.99131774902344
+    },
+    {
+      "id": "n11",
+      "width": 124.921875,
+      "height": 124.921875
+    },
+    {
+      "id": "n12",
+      "width": 114.05382537841797,
+      "height": 50.99826431274414
+    },
+    {
+      "id": "n13",
+      "width": 137.8246612548828,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "n10",
+      "width": 88.03298950195312,
+      "height": 128.99131774902344
+    },
+    {
+      "id": "edge-label-S3-Skip-L_S3_Skip_0",
+      "width": 100.3732681274414,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-S3-S4-L_S3_S4_0",
+      "width": 67.69097900390625,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-Conf-RouteD-L_Conf_RouteD_0",
+      "width": 25.68576431274414,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-Conf-S5-L_Conf_S5_0",
+      "width": 59.92188262939453,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-S5-RouteD-L_S5_RouteD_0",
+      "width": 157.2309112548828,
+      "height": 83.99305725097656
+    },
+    {
+      "id": "edge-label-S5-TypeCheck-L_S5_TypeCheck_0",
+      "width": 68.47222900390625,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-TypeCheck-S6-L_TypeCheck_S6_0",
+      "width": 24.88715362548828,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-TypeCheck-RouteA-L_TypeCheck_RouteA_0",
+      "width": 56.04166793823242,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-TypeCheck-RouteC-L_TypeCheck_RouteC_0",
+      "width": 76.27604675292969,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-TypeCheck-RouteE-L_TypeCheck_RouteE_0",
+      "width": 58.36805725097656,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-TypeCheck-RouteF-L_TypeCheck_RouteF_0",
+      "width": 62.239585876464844,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-S6-S7-L_S6_S7_0",
+      "width": 22.84722328186035,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-S6-RouteG-L_S6_RouteG_0",
+      "width": 108.94097900390625,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-S7-RouteD-L_S7_RouteD_0",
+      "width": 68.48958587646484,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-S7-S9_med-L_S7_S9_med_0",
+      "width": 49.800350189208984,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-S9_med-S8-L_S9_med_S8_0",
+      "width": 40.4687614440918,
+      "height": 62.99479293823242
+    },
+    {
+      "id": "edge-label-S9_med-RouteC-L_S9_med_RouteC_0",
+      "width": 17.899309158325195,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-S7-S8-L_S7_S8_0",
+      "width": 35.00868225097656,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-S8-RouteB_bot-L_S8_RouteB_bot_0",
+      "width": 42.01388931274414,
+      "height": 62.99479293823242
+    },
+    {
+      "id": "edge-label-S8-RouteB_human-L_S8_RouteB_human_0",
+      "width": 82.4826431274414,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-n5-n6-L_n5_n6_0",
+      "width": 63.784725189208984,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-n5-n7-L_n5_n7_0",
+      "width": 56.04166793823242,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-n5-n8-L_n5_n8_0",
+      "width": 58.36805725097656,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-n5-n9-L_n5_n9_0",
+      "width": 62.239585876464844,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-n11-n12-L_n11_n12_0",
+      "width": 42.01388931274414,
+      "height": 62.99479293823242
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "e3d99f8ff56f3ed9bf5f3ba4c0eb39853452b400669388db53bb5e6219f3be0f",
+    "capturedAt": "2026-08-12T15:18:34.775Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/triage.mmd theme=redux-color look=neo layout=domus"
+  }
+}

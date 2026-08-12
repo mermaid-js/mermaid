@@ -1,0 +1,71 @@
+flowchart TD
+ subgraph wa["Aisle One"]
+        n3("Ledger row<br>missing last entry")
+        n5("Tag beside a<br>cracked crate lid")
+        n6("Flattened cardboard<br>near loading")
+        n8("Label on the mat")
+  end
+ subgraph na["Packing Corner"]
+        n11@{ label: "memo \"from Bay\"<br>on the desk" }
+        n14("Washer, copper, Dock item")
+        n15("adhesive bottle")
+  end
+ subgraph ea["East Bay"]
+        n2("Chips on Floor<br>near outer door")
+        n7("Neighbour heard rattling")
+        n20["Missing"]
+  end
+ subgraph sa["Guest Bay"]
+        n10("Van log shows gaps")
+  end
+ subgraph dock["Dock 12"]
+        n12("Torn ledger page inside the crate")
+        n17("Stained wrapping deep in the toolchest")
+        n18("cutter with traces of resin or a snapped tip, hidden in a rusty barrel")
+  end
+    n1("Stock Gap") --> wa
+    n2 --> na
+    n7 --> na
+    n10 --> na
+    n5 --> ea
+    n6 --> ea
+    n8 --> ea
+    n11 --> dock
+    n12 --> n13["Resolved"]
+    n15 --> dock
+    n14 --> n16("Storeman confirms this bolt tray<br>definitely from Dock12")
+    n16 --> dock
+    n17 --> n13
+    n18 --> n13
+    n19["Forklift hit"] --> ea
+    n11@{ shape: rounded}
+    n20@{ shape: rect}
+    n13@{ shape: dbl-circ}
+    n19@{ shape: rounded}
+     n3:::Aqua
+     n5:::Aqua
+     n6:::Aqua
+     n8:::Aqua
+     n11:::Peach
+     n11:::Aqua
+     n14:::Peach
+     n14:::Aqua
+     n15:::Aqua
+     n15:::Peach
+     n2:::Aqua
+     n7:::Aqua
+     n20:::Rose
+     n10:::Peach
+     n10:::Aqua
+     n12:::Aqua
+     n12:::Peach
+     n17:::Peach
+     n18:::Peach
+     n1:::Aqua
+     n16:::Aqua
+     n16:::Peach
+     n19:::Rose
+     n19:::Aqua
+    classDef Rose stroke-width:1px, stroke-dasharray:none, stroke:#FF5978, fill:#FFDFE5, color:#8E2236
+    classDef Peach stroke-width:1px, stroke-dasharray:none, stroke:#FBB35A, fill:#FFEFDB, color:#8F632D
+    classDef Aqua stroke-width:1px, stroke-dasharray:none, stroke:#46EDC8, fill:#DEFFF8, color:#378E7A

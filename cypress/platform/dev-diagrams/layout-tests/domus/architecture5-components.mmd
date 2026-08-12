@@ -1,0 +1,110 @@
+flowchart TB
+    subgraph Edge["Edge & middleware"]
+        CDN["EdgeCached CDN — 🟢<br/>6 distributions<br/>(app, render, redirect, docs, app-cdn, render-cdn)"]
+        ALBs["ALBs + WAF — 🟢<br/>main · mcp · voice · chatbot"]
+    end
+    subgraph Core["Core platform — Pod Runtime"]
+        App["app — 🟢<br/>collab · Bookstack web app<br/>2 vCPU / 4 GB"]
+        AppML["app-ml — 🟢<br/>collab · isolated ML route<br/>2 vCPU / 4 GB · 3–12 tasks"]
+        Render["render — 🟢<br/>prerender service<br/>queue-based autoscale 4–16"]
+    end
+    subgraph ML["ML services"]
+        MLAPI["lantern-ml REST API — 🟢<br/>Lambda + API Gateway<br/>ml.lantern.ml"]
+        MLPOD["lantern-ml POD — 🟢<br/>additional ML compute"]
+        MCP["mcp — 🟢<br/>external clients · POD<br/>scaled to 4 tasks (stateless x4)"]
+        MCP2["mcp2 — 🟢<br/>chatbot-app traffic · POD<br/>4–8 tasks · sticky sessions"]
+        Chatbot["chatbot-app — 🟢<br/>VendAI Chatbot plugin · POD"]
+        Voice["voice — 🟢 (beta)<br/>voice-to-caption · POD<br/>VendAI Realtime API"]
+        UCB["user-profile-builder — 🟢<br/>SNS-triggered Lambda"]
+        CaptSum["caption-summary — 🟢<br/>Lambda → Lumens"]
+        MLSDK["ml-sdk — ⚫<br/>shared LLM NPM lib"]
+        MLPy["ml-python-code — ⚫<br/>ETL scripts"]
+        MLEvol["lantern-ml-evolution — 🔵<br/>RFC / proposals repo"]
+    end
+    subgraph Plugins["Plugins & integrations"]
+        DeskAppOS["deskapp-lanternchart — 🟢 (OSS)"]
+        DeskAppCo["deskap-commercial — 🟢"]
+        Suites["suites-v2 — 🟢<br/>Text · Sheet · Sld · Notepad · Planner"]
+        Tikt["tikt-plugin — 🟢"]
+        Conf["wikispaces-plugin-v2 — 🟢"]
+        ClDO["cloud-devops-plugin — 🟡"]
+        Drives["drives-plugin — 🟠<br/>maintenance / sunset candidate"]
+        SDK["@lanternchart/sdk — 🟢<br/>plugin contract layer"]
+    end
+    subgraph Content["Content & docs"]
+        Marketing["lantern-content-site — 🔵<br/>Astro · absorbing docs"]
+        Docs["lantern-chart-docs — 🟠<br/>retiring"]
+        Community["community.lanternchart.com — 🟢"]
+    end
+    subgraph Ops["Infra, ops & data pipelines"]
+        Infra["infrastructure — 🟢<br/>Pulumi IaC"]
+        Redeploy["redeploy-on-push — 🟢<br/>Lambda · ECR → POD"]
+        DataSync["caption-sync — 🟢<br/>Lambda · S3 ETL"]
+        MetWH["metricly webhook — 🟢<br/>Lambda"]
+        Smoke["smoke-test-production — 🟠<br/>Builder / Playwright · sunset candidate"]
+        Analytics["lantern_analytics — 🟢<br/>dbt · Ledger ETL"]
+    end
+    subgraph Data["Data stores"]
+        DB[("Bookbase ArchiveSQL — 🟢<br/>primary OLTP")]
+        Auth[("Bookbase Auth — 🟢")]
+        Bucket[("Bookbase Storage — 🟢<br/>S3-compatible API")]
+        DocSto[("DocStore — 🟢<br/>UserProfileStores")]
+        Cachey[("Cachey cache — 🟢<br/>sessions · Queue-compatible")]
+        S3[("S3 buckets — 🟢<br/>ETL · static · WAF / CF logs · Pulumi state")]
+    end
+    subgraph ExtCompute["External compute"]
+        CCRender["CoastalCloud App Platform — 🟢<br/>primary render service<br/>seagull-app-a1b2c"]
+        CCBuilder["CoastalCloud droplet — 🟠<br/>Builder smoke-test runner"]
+        EdgecoProxy["Edgeco — 🟢<br/>Suites proxy · docs"]
+    end
+    CDN --> ALBs
+    ALBs --> App
+    ALBs --> AppML
+    ALBs --> Render
+    ALBs --> MCP
+    ALBs --> MCP2
+    ALBs --> Chatbot
+    ALBs --> Voice
+    App --> DB
+    App --> Auth
+    App --> Cachey
+    App --> Bucket
+    AppML --> DB
+    AppML --> Cachey
+    Render --> CCRender
+    MLAPI --> DocSto
+    MLAPI --> DB
+    UCB --> DocSto
+    CaptSum --> DocSto
+    DataSync --> S3
+    MLPOD --> DB
+    MCP --> SDK
+    MCP2 --> SDK
+    Chatbot --> MCP2
+    SDK -. used by .-> DeskAppOS
+    SDK -. used by .-> DeskAppCo
+    SDK -. used by .-> Suites
+    SDK -. used by .-> Tikt
+    SDK -. used by .-> Conf
+    SDK -. used by .-> ClDO
+    SDK -. used by .-> Drives
+    Suites --> EdgecoProxy
+    Marketing --> CDN
+    Docs --> CDN
+    Community --> CDN
+    Redeploy -. watches ECR push .-> Core
+    Redeploy -. invalidates .-> CDN
+    Smoke -. polls every 5 min .-> CDN
+    MetWH --> DocSto
+    classDef active fill:#d4edda,stroke:#28a745,color:#000
+    classDef maint fill:#fff3cd,stroke:#ffc107,color:#000
+    classDef sunset fill:#ffe0b3,stroke:#fd7e14,color:#000
+    classDef indev fill:#cce5ff,stroke:#007bff,color:#000
+    classDef dormant fill:#e2e3e5,stroke:#6c757d,color:#000
+    classDef db fill:#f1f3f5,stroke:#495057,color:#000
+    class CDN,ALBs,App,AppML,Render,MLAPI,MLPOD,MCP,MCP2,Chatbot,Voice,UCB,CaptSum,DeskAppOS,DeskAppCo,Suites,Tikt,Conf,SDK,Community,Infra,Redeploy,DataSync,MetWH,Analytics,CCRender,EdgecoProxy active
+    class ClDO maint
+    class Drives,Docs,Smoke,CCBuilder sunset
+    class Marketing,MLEvol indev
+    class MLSDK,MLPy dormant
+    class DB,Auth,Bucket,DocSto,Cachey,S3 db

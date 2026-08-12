@@ -1,0 +1,110 @@
+{
+  "nodes": [
+    {
+      "id": "repair-1",
+      "width": 167.17881774902344,
+      "height": 35.99826431274414
+    },
+    {
+      "id": "repair-2",
+      "width": 157.8125,
+      "height": 35.99826431274414
+    },
+    {
+      "id": "repair-models",
+      "width": 232.00003051757812,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "chat-1",
+      "width": 164.07118225097656,
+      "height": 35.99826431274414
+    },
+    {
+      "id": "chat-2",
+      "width": 140.703125,
+      "height": 35.99826431274414
+    },
+    {
+      "id": "chat-models",
+      "width": 131.6007080078125,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "summary-1",
+      "width": 164.07118225097656,
+      "height": 35.99826431274414
+    },
+    {
+      "id": "summary-model",
+      "width": 232.00003051757812,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "title-1",
+      "width": 164.07118225097656,
+      "height": 35.99826431274414
+    },
+    {
+      "id": "title-model",
+      "width": 92.69445037841797,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "ptc-1",
+      "width": 144.57467651367188,
+      "height": 35.99826431274414
+    },
+    {
+      "id": "ptc-2",
+      "width": 168.7152862548828,
+      "height": 35.99826431274414
+    },
+    {
+      "id": "ptc-3",
+      "width": 163.28125,
+      "height": 35.99826431274414
+    },
+    {
+      "id": "ptc-model",
+      "width": 209.4479217529297,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "live-1",
+      "width": 143.02085876464844,
+      "height": 35.99826431274414
+    },
+    {
+      "id": "live-2",
+      "width": 164.07118225097656,
+      "height": 35.99826431274414
+    },
+    {
+      "id": "live-3",
+      "width": 223.21180725097656,
+      "height": 35.99826431274414
+    },
+    {
+      "id": "live-model",
+      "width": 219.57815551757812,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "starter-1",
+      "width": 164.07118225097656,
+      "height": 35.99826431274414
+    },
+    {
+      "id": "starter-model",
+      "width": 209.4479217529297,
+      "height": 44.99826431274414
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "5315a10dad7fda7d35986a652bc071d3e39c6a62fe342cfbfb3e1b4d139de73e",
+    "capturedAt": "2026-08-12T15:00:20.524Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/mermaid-ai-input-and-models.mmd theme=redux-color look=neo layout=domus"
+  }
+}

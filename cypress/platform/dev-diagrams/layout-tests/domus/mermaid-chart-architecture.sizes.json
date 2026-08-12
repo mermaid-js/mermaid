@@ -1,0 +1,125 @@
+{
+  "nodes": [
+    {
+      "id": "prerender_server",
+      "width": 141.70486450195312,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "chatbot",
+      "width": 143.9444580078125,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "suites",
+      "width": 133.15452575683594,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "wikispaces",
+      "width": 102.79861450195312,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "app_server",
+      "width": 203.9791717529297,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "suites_server",
+      "width": 158.84896850585938,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "wikispaces_server",
+      "width": 190.73265075683594,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "docs",
+      "width": 89.57813262939453,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "edgeco_KV",
+      "width": 94.05208587646484,
+      "height": 77.19281005859375
+    },
+    {
+      "id": "archivesql",
+      "width": 121.51736450195312,
+      "height": 81.95997619628906
+    },
+    {
+      "id": "bookbase_auth",
+      "width": 126.19270324707031,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "bookbase_realtime",
+      "width": 153.40625,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "bookbase_storage",
+      "width": 139.19967651367188,
+      "height": 84.51373291015625
+    },
+    {
+      "id": "app_client",
+      "width": 232.00003051757812,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "llm",
+      "width": 132.39064025878906,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "onprem",
+      "width": 202.39065551757812,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "analytics",
+      "width": 88.0243148803711,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "errorLogging",
+      "width": 104.15626525878906,
+      "height": 79.08731079101562
+    },
+    {
+      "id": "logging",
+      "width": 177.33334350585938,
+      "height": 88.98943328857422
+    },
+    {
+      "id": "alerts",
+      "width": 208.67535400390625,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "marketingEmails",
+      "width": 157.1475830078125,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "emails",
+      "width": 158.71875,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "edge-label-app_server-archivesql-L_app_server_archivesql_0",
+      "width": 152.109375,
+      "height": 20.99826431274414
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "c3ec87f31ef444485610e1cfa6938ef66731c743378b44a8cb40d9b5c4cb13db",
+    "capturedAt": "2026-08-12T15:01:00.520Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/mermaid-chart-architecture.mmd theme=redux-color look=neo layout=domus"
+  }
+}

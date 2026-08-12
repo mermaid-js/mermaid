@@ -1,0 +1,71 @@
+flowchart LR
+    Start(["Fetch<br>Cycles<br>Status:<br>Booked"]) --> S3{"Rust &amp; <br>Noise<br>Filter"}
+    S3 -- Rust/Box/Empty --> Skip["Skip or<br>Request Info<br>+ Close <br>after 30d"]
+    S3 -- Real Cycle --> S4["Classify<br>Type<br>+<br>Gearset"]
+    S4 --> Conf{"Confidence?"}
+    Conf -- Low --> RouteD["Route D<br>Escalate to Owner<br>⚠️ NEEDS REVIEW"]
+    Conf -- Med/High --> S5{"Early<br>Risk<br>Gate"}
+    S5 -- "Trigger hit:<br>hub change, shared axle,<br>frame weld, brake job,<br>multi-gearset, cracking" --> RouteD
+    S5 -- No triggers --> TypeCheck{"Type?"}
+    TypeCheck -- Rim --> S6{"Replicated?<br>Extract → Test → <br>Verify"}
+    TypeCheck -- Question --> RouteA["Route A:<br>Answer + <br>Close <br>after 30d"]
+    TypeCheck -- Upgrade job --> RouteC["Route C:<br>Label + <br>Apprentices <br>Needed<br>+ Good <br>First<br>Cycle?"]
+    TypeCheck -- Duplicate --> RouteE["Route E:<br>Link<br>Original<br>Keep in<br>Booked"]
+    TypeCheck -- Not a Rim --> RouteF["Route F:<br>Explain<br>Behavior<br>+ Close <br>after 30d"]
+    S6 -- Yes --> S7["Size Cycle<br>Small / <br>Med / <br>Large /<br>Arch"]
+    S6 -- No parts to check --> RouteG["Route G:<br>Request<br>Parts<br>+ Close <br>after 30d"]
+    S7 -- Large/Arch --> RouteD
+    S7 -- Medium --> S9_med{"Well-scoped<br>part known?"}
+    S9_med -- Part<br>fault <br>known --> S8{"Fastfix<br>Eligible?"}
+    S9_med -- No --> RouteC
+    S7 -- Small --> S8
+    S8 -- All <br>criteria <br>met --> RouteB_bot["Route B:<br>Fastfix Queue 🤖<br>Work order sheet"]
+    S8 -- Criteria failed --> RouteB_human["Route B:<br>Apprentices Needed"]
+    RouteA --> Report(("Step 11:<br>Booked<br>Report<br>"))
+    RouteB_bot --> Report
+    RouteB_human --> Report
+    RouteC --> Report
+    RouteD --> Report
+    RouteE --> Report
+    RouteF --> Report
+    RouteG --> Report
+    Skip --> Report
+    n1(["Fetch<br>Cycles<br>Status:<br>Booked"]) --> n2["Close Rust"]
+    n2 --> n3["Classify<br>Cycle"]
+    n3 --> n4["Early<br>Risk<br>Gate"]
+    n5["Type?"] -- Rim/Cycle --> n6["Replicated?<br>Extract → Test → <br>Verify"]
+    n5 -- Question --> n7["Route A:<br>Answer + <br>Close <br>after 30d"]
+    n5 -- Duplicate --> n8["Route E:<br>Link<br>Original<br>Close as duplicate"]
+    n5 -- Not a Rim --> n9["Route F:<br>Explain<br>Behavior<br>+ Close <br>after 30d"]
+    n4 --> n5
+    n11["Fastfix<br>Eligible?"] -- All <br>criteria <br>met --> n12["Fastfix queue"]
+    n6 --> n11
+    n11 --> n13["Scop with Owner"]
+    n13 --> n12
+    n10["Route G:<br>Request<br>Parts<br>+ Close <br>after 30d"]
+
+    n2@{ shape: rect}
+    n3@{ shape: rect}
+    n4@{ shape: diam}
+    n5@{ shape: diam}
+    n6@{ shape: diam}
+    n7@{ shape: rounded}
+    n8@{ shape: rounded}
+    n9@{ shape: rounded}
+    n11@{ shape: diam}
+    n12@{ shape: rounded}
+    n13@{ shape: rect}
+    n10@{ shape: rect}
+     n1:::Peach
+     n7:::Aqua
+     n8:::Aqua
+     n9:::Aqua
+     n12:::Aqua
+    classDef Peach stroke-width:1px, stroke-dasharray:none, stroke:#FBB35A, fill:#FFEFDB, color:#8F632D
+    classDef Aqua stroke-width:1px, stroke-dasharray:none, stroke:#46EDC8, fill:#DEFFF8, color:#378E7A
+    style S3 fill:#748ffc,color:#fff
+    style RouteD fill:#ff6b6b,color:#fff
+    style S5 fill:#ffd43b,color:#000
+    style RouteB_bot fill:#51cf66,color:#fff
+    style Report fill:#845ef7,color:#fff
+    style n4 fill:#ffd43b,color:#000

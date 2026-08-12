@@ -1,0 +1,90 @@
+{
+  "nodes": [
+    {
+      "id": "entity-CREW-0",
+      "width": 162.94271850585938,
+      "height": 119.24479675292969
+    },
+    {
+      "id": "entity-SPECIMEN-1",
+      "width": 162.95140075683594,
+      "height": 158.99307250976562
+    },
+    {
+      "id": "entity-DRAWER-2",
+      "width": 166.05035400390625,
+      "height": 198.74131774902344
+    },
+    {
+      "id": "entity-SPECIMEN-MEASURE-3",
+      "width": 197.02259826660156,
+      "height": 238.4896240234375
+    },
+    {
+      "id": "entity-SPECIMEN-SHARE-4",
+      "width": 191.7534942626953,
+      "height": 158.99307250976562
+    },
+    {
+      "id": "entity-UNIT-5",
+      "width": 166.05035400390625,
+      "height": 158.99307250976562
+    },
+    {
+      "id": "entity-UNIT-MEMBER-6",
+      "width": 182.40452575683594,
+      "height": 158.99307250976562
+    },
+    {
+      "id": "edge-label-entity-CREW-0-entity-SPECIMEN-1-id_entity-CREW-0_entity-SPECIMEN-1_0",
+      "width": 32.690975189208984,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-CREW-0-entity-DRAWER-2-id_entity-CREW-0_entity-DRAWER-2_1",
+      "width": 32.690975189208984,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-CREW-0-entity-UNIT-MEMBER-6-id_entity-CREW-0_entity-UNIT-MEMBER-6_2",
+      "width": 53.706600189208984,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-SPECIMEN-1-entity-DRAWER-2-id_entity-SPECIMEN-1_entity-DRAWER-2_3",
+      "width": 43.567710876464844,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-UNIT-5-entity-DRAWER-2-id_entity-UNIT-5_entity-DRAWER-2_4",
+      "width": 32.690975189208984,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-UNIT-MEMBER-6-entity-UNIT-5-id_entity-UNIT-MEMBER-6_entity-UNIT-5_5",
+      "width": 67.69097900390625,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-SPECIMEN-1-entity-SPECIMEN-MEASURE-3-id_entity-SPECIMEN-1_entity-SPECIMEN-MEASURE-3_6",
+      "width": 52.15277862548828,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-SPECIMEN-SHARE-4-entity-CREW-0-id_entity-SPECIMEN-SHARE-4_entity-CREW-0_7",
+      "width": 72.36979675292969,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-entity-SPECIMEN-1-entity-SPECIMEN-SHARE-4-id_entity-SPECIMEN-1_entity-SPECIMEN-SHARE-4_8",
+      "width": 42.8125114440918,
+      "height": 20.99826431274414
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "6e1c10590481d6cab9ae5c4ec6e33a0c8b799ea2ad8e7a681dd2614e5d5a4523",
+    "capturedAt": "2026-08-12T14:59:32.989Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/er-diagram.mmd theme=redux-color look=neo layout=domus"
+  }
+}

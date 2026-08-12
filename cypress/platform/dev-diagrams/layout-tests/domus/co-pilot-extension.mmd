@@ -1,0 +1,24 @@
+flowchart TD
+    User["User sends recipes (via Portal.io/Desk App)"] --> Platform["Vendor Platform forwards request to our site"]
+    Platform --> Response
+    subgraph Response["Our site (also known as agent)"]
+        start(["Request from Partner Relays"]) --> n1["Embed 'pantry_conversions' into message content"]
+        n1 --> n2["Send user request + instructions to LLM"]
+        n2 -- Call LLM --> n3{"Does response contain 'function_call'?"}
+        n3 -- Yes --> n4["Call function, add function response to chat history, and call LLM again"]
+        n4 -- Call LLM --> n3
+        n3 -- No --> n5{"Does response contain kitchen codeblock"}
+        n5 -- No --> endNode(["Done"])
+        n5 -- Yes --> n7{"Is kitchen codeblock a valid kitchen portion?"}
+        n8["Add error to chat history, and tell LLM to repair the portion"] -- Call LLM --> n3
+        n7 -- No --> n9{"Hit max retries?"}
+        n9 -- No --> n8
+        n9 -- Yes --> n10["Tell user that repairing the portion failed, but give them a link to the Portion Drafts Workbench to manually repair the bug"]
+        n10 --> endNode
+        n7 -- Yes --> n11["Give user a link to the Portion Drafts Workbench"]
+        n11 --> endNode
+        style start fill:#C8E6C9
+        style endNode fill:#C8E6C9
+    end
+
+    Response --> PlatformResponse["Platform forwards response from agent to user"] --> User

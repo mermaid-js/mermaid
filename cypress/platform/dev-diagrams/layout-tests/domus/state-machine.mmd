@@ -1,0 +1,16 @@
+stateDiagram-v2
+    direction LR
+
+    [*] --> Cold
+    Cold --> Hot: Preheat
+    Hot --> Cold: Shut down
+
+    state Hot {
+        [*] --> Firing_a
+        Firing_b --> Quenching
+        Firing_a --> Quenching
+        Firing_b --> Firing_a: Rotate
+        Firing_a --> Firing_b: Rotate
+        Quenching --> Firing_a: Relit
+        Quenching --> Firing_b: Relit
+    }

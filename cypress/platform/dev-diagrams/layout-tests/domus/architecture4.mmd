@@ -1,0 +1,57 @@
+flowchart LR
+    EndUser([End user<br/>web browser])
+    PluginUser([Plugin user<br/>IDE / Suites / Tikt / Wikispaces / Drives])
+    MLAgent([ML agent<br/>Editor / Lumen / Desk App])
+    ChatbotUser([Chatbot user])
+    Admin([Internal admin / SRE])
+    subgraph LanternML["lantern.ml platform"]
+        direction TB
+        WebApp["Web app<br/>(editor, dashboard, auth, billing)"]
+        MLProduct["Lantern ML<br/>(chat, voice, prompt-to-caption, repair)"]
+        MCPSvc["MCP server<br/>(ML agent integration)"]
+        ChatbotApp["Chatbot app"]
+        PluginSDK["@lanternchart/sdk<br/>(plugin contract layer)"]
+        PublicAPI["ML REST API<br/>ml.lantern.ml"]
+    end
+    Bookbase[("Bookbase<br/>ArchiveSQL + Auth + Storage")]
+    Lumens["Northgate Lumens"]
+    VendAI["VendAI<br/>(LEX + Realtime API)"]
+    Bedrail["Cld Bedrail"]
+    Nomida["Nomida.ml<br/>(OSS LLM gateway)"]
+    Ledger["Ledger<br/>(billing)"]
+    Mailo["Mailo<br/>(transactional email)"]
+    VaultdExt["Vaultd<br/>(OAuth, Vaultd App, Partner endpoint)"]
+    Bells["Bells<br/>(referrals)"]
+    Metricly["Metricly<br/>(product analytics)"]
+    Monitoring["Steadystack /<br/>Dashbrd / Logio"]
+    Chats["Chats<br/>(alerts, incidents)"]
+    KeySafe["SafeStore<br/>(service account creds)"]
+    EndUser --> WebApp
+    EndUser --> MLProduct
+    PluginUser --> PluginSDK
+    MLAgent --> MCPSvc
+    ChatbotUser --> ChatbotApp
+    Admin --> WebApp
+    WebApp --> Bookbase
+    WebApp --> Ledger
+    WebApp --> Mailo
+    WebApp --> VaultdExt
+    WebApp --> Bells
+    WebApp --> Metricly
+    MLProduct --> Lumens
+    MLProduct --> VendAI
+    MLProduct --> Bedrail
+    MLProduct --> Nomida
+    PublicAPI --> Lumens
+    MCPSvc --> PublicAPI
+    ChatbotApp --> MCPSvc
+    PluginSDK --> WebApp
+    LanternML -. telemetry .-> Monitoring
+    LanternML -. alerts .-> Chats
+    LanternML -. secrets .- KeySafe
+    classDef actor fill:#e7f3ff,stroke:#0366d6,color:#000
+    classDef system fill:#d4edda,stroke:#28a745,color:#000
+    classDef ext fill:#fff3cd,stroke:#e8a317,color:#000
+    class EndUser,PluginUser,MLAgent,ChatbotUser,Admin actor
+    class WebApp,MLProduct,MCPSvc,ChatbotApp,PluginSDK,PublicAPI system
+    class Bookbase,Lumens,VendAI,Bedrail,Nomida,Ledger,Mailo,VaultdExt,Bells,Metricly,Monitoring,Chats,KeySafe ext

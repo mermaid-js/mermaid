@@ -1,0 +1,23 @@
+flowchart TD
+    Start([Start Kiln Firing Sequences]) --> Validate{Kiln test<br/>Pass?}
+    Validate -->|No| Analyze[Sampling Phase<br/>Review the bad<br/>weakest firings]
+    Analyze --> Reference[Glazework Reference Sheet<br/>Study relevant approaches]
+    Reference --> Ideate[Blending Phase<br/>Mix new glaze sets]
+    Ideate --> Implement[Kiln operation<br/>Run one batch]
+    Implement --> Score[Grade Results<br/>Kiln Analysis<br/>Methodology]
+    Score --> Evaluate{Grade Shows<br/>Improvement?}
+    Evaluate -->|Worse| Discard[Discard Batches<br/>Revert to previous]
+    Discard --> Validate
+    Evaluate -->|Better| Keep[Keep Batches<br/>Update baseline]
+    Keep --> Validate
+    Validate -->|Yes| Success([Glaze Validation<br/>Complete])
+    
+    classDef processNode stroke:#818cf8,fill:#eef2ff,color:#1e1b4b
+    classDef decisionNode stroke:#fb923c,fill:#fff7ed,color:#1e1b4b
+    classDef successNode stroke:#4ade80,fill:#f0fdf4,color:#1e1b4b
+    classDef failNode stroke:#f87171,fill:#fef2f2,color:#1e1b4b
+    
+    class Analyze,Reference,Ideate,Implement,Score processNode
+    class Validate,Evaluate decisionNode
+    class Success,Keep successNode
+    class Discard failNode

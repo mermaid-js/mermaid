@@ -1,0 +1,68 @@
+flowchart TD
+ subgraph coastal_cloud["Coastal Cloud fab:fa-coastal-cloud"]
+        prerender_server["Pre-render server fab:fa-node"]
+  end
+
+ subgraph plugins["Plugins"]
+        chatbot["Bot for Chatbot ✨"]
+        suites["Papermill Suites fab:fa-papermill"]
+        wikispaces["Wikispaces fab:fa-wikispaces"]
+  end
+
+ subgraph edgeco["Edgeco"]
+        app_server["Core App Bookstack Server"]
+        suites_server["Suites fab:fa-papermill Plugin Server"]
+        wikispaces_server["Wikispaces fab:fa-wikispaces Plugin Server fab:fa-node"]
+        docs["Docs site fa:fa-book"]
+        edgeco_KV[("Edgeco KV")]
+  end
+
+ subgraph bookbase["Bookbase services"]
+        archivesql[("ArchiveSQL DB fa:fa-database")]
+        bookbase_auth["Bookbase Auth fa:fa-user"]
+        bookbase_realtime["Bookbase Realtime fa:fa-arrow-pointer"]
+        bookbase_storage[("Bookbase Storage fa:fa-hard-drive")]
+  end
+
+ subgraph userBrowser["User's Browser fab:fa-chrome fab:fa-firefox fab:fa-safari fab:fa-internet-explorer"]
+        app_client["https://bookstacksly.com website fab:fa-html5"]
+  end
+
+ subgraph vendai["Vend AI"]
+        llm["LEX-4/3.5 LLMs"]
+  end
+
+ subgraph vaultd["Vaultd Container Registry fab:fa-vaultd"]
+        onprem["On-premise Docker images fab:fa-docker"]
+  end
+    subgraph metricly["Metricly"]
+            analytics["Analytics"]
+    end
+    subgraph errlog["Errlog"]
+            errorLogging[("Error logging fa:fa-file-lines")]
+    end
+    subgraph logio["Logio"]
+            logging[("General purpose logging fa:fa-file-lines")]
+    end
+    subgraph steadyStack["SteadyStack 🏔️"]
+        alerts["Alerting and status detection"]
+    end
+
+ subgraph postdrake["Postdrake fab:fa-postdrake"]
+        marketingEmails["Marketing Emails 📧"]
+  end
+
+ subgraph mailcage["Mailcage"]
+        emails["Functional emails 📧"]
+  end
+
+    app_client --> app_server & bookbase_realtime & bookbase_auth & errorLogging & analytics
+    app_server == Using Ormlib + GuardKit ==> archivesql
+    app_server ==> prerender_server & bookbase_auth & bookbase_storage & llm & errorLogging & logging & analytics & marketingEmails & emails
+    alerts --> app_server
+    wikispaces --> app_server & wikispaces_server
+    suites --> app_server & suites_server
+    chatbot --> app_server
+    bookbase_auth --> emails
+    analytics --> marketingEmails
+    wikispaces_server --> edgeco_KV

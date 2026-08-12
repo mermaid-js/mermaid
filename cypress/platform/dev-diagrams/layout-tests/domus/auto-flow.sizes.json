@@ -1,0 +1,85 @@
+{
+  "nodes": [
+    {
+      "id": "Start",
+      "width": 220.87054443359375,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "Validate",
+      "width": 121.796875,
+      "height": 121.796875
+    },
+    {
+      "id": "Analyze",
+      "width": 133.95314025878906,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "Reference",
+      "width": 207.09548950195312,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Ideate",
+      "width": 150.2725830078125,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Implement",
+      "width": 123.0763931274414,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Score",
+      "width": 121.48786163330078,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "Evaluate",
+      "width": 161.48439025878906,
+      "height": 161.48439025878906
+    },
+    {
+      "id": "Discard",
+      "width": 145.61111450195312,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Keep",
+      "width": 133.18923950195312,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Success",
+      "width": 157.38536071777344,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "edge-label-Validate-Analyze-L_Validate_Analyze_0",
+      "width": 17.899309158325195,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-Evaluate-Discard-L_Evaluate_Discard_0",
+      "width": 40.19965362548828,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-Evaluate-Keep-L_Evaluate_Keep_0",
+      "width": 37.35243225097656,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-Validate-Success-L_Validate_Success_0",
+      "width": 22.84722328186035,
+      "height": 20.99826431274414
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "0ac68d081100d3678e2ae4d7899b9ebe971c1d07fe5487ecd48f438258b2d2cd",
+    "capturedAt": "2026-08-12T15:17:00.626Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/auto-flow.mmd theme=redux-color look=neo layout=domus"
+  }
+}

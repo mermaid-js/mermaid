@@ -1,0 +1,60 @@
+---
+config:
+  theme: redux-color
+---
+flowchart LR
+ subgraph Core["State core — Widget 5 cells"]
+        TEXT["plotter<br>code"]
+        PADSTAT["canvasState<br>"]
+        SHAPES["shapeBundle<br>"]
+  end
+ subgraph Editing["Code editing"]
+        SCRIBE["Scribe 0.31.4<br>scribe-editor"]
+        SSETUP["scribeSetup<br>stitchery language<br>markers"]
+  end
+ subgraph Render["Drawing rendering"]
+        PLOTTER["plotter<br>parse<br>render to SVG"]
+        GRD["layout-grd<br>layout engine"]
+        VIEWBOX["svg-view-box 3.2.9<br>pan / zoom on SVG"]
+  end
+ subgraph UIKit["UI toolkit"]
+        KITS["kits-ui <br>(primitive-kit)<br>Dialog<br>Tabs<br>Popover<br>Select"]
+        GLYPHS["@glyphs/widget<br>icons"]
+        SS["Stylekit CSS v4"]
+  end
+ subgraph Utils["Editor utils — app/mod/utils"]
+        LINTER["diagnostics"]
+        SDATA["parse-data<br>(Plotter db payload)"]
+  end
+ subgraph ServerLibs["Server libraries — app/mod/server"]
+        QUEUECL["queuecl<br>Queue client + pub/sub"]
+        BLOBSD["@blob-sd<br>DocStore + S3"]
+        VAULTKT["@vaultkt/rest<br>Vaultd API"]
+        VAL["val<br>env + schema validation"]
+        JOURNAL["journal<br>structured logging"]
+  end
+    TEXT --> PADSTAT
+    PADSTAT --> SHAPES & LINTER & EXEC["execution store<br>pipeline phases · job polling"]
+    SCRIBE --- SSETUP
+    PLOTTER --- GRD
+    SCRIBE -- edit → code --> TEXT
+    TEXT -- debounced setValue --> SCRIBE
+    PADSTAT -- render(code) --> PLOTTER
+    PLOTTER -- SVG --> VIEWBOX
+    PLOTTER -- "db.getData()" --> SDATA
+    SDATA --> SHAPES
+    LINTER --> SHAPES
+    KITS -. hosts .-> SCRIBE & VIEWBOX
+    KITS --- GLYPHS & SS
+    PADSTAT -- fetch /api/* --> ServerLibs
+    VAULTKT --> VT["Vaultd"]
+    QUEUECL --> QUE[("Queue")]
+    BLOBSD --> BLB[("DocStore / S3")]
+
+    style EXEC fill:#E1BEE7
+    style ServerLibs fill:#BBDEFB
+    style Core fill:#C8E6C9
+    style Utils fill:#FFF9C4
+    style Editing fill:#E1BEE7
+    style Render fill:#FFE0B2
+    style UIKit fill:#FFCDD2

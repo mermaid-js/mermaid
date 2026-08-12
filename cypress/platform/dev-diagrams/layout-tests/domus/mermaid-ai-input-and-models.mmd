@@ -1,0 +1,75 @@
+---
+title: Lantern's ML models and inputs
+---
+flowchart LR
+  subgraph "Caption Repair"
+    direction LR
+    repair-1@{ shape: lean-r, label: "Caption Content" }
+    repair-2@{ shape: lean-r, label: "Error message" }
+    repair-models["`Models:
+
+    - <b>Custom model</b>
+    - <b>lex-2b-lite-2024-07-18</b>
+    - <b>lumen-breeze-4-5-20251001</b>
+    - <b>lumen-canzone-4-5-20250929</b>
+    `"]
+
+    repair-1 & repair-2 --> repair-models
+  end
+
+  subgraph "Caption Chat"
+    direction LR
+    chat-1@{ shape: lean-r, label: "Caption content" }
+    chat-2@{ shape: lean-r, label: "Chat history" }
+    chat-models["lex-9-chat-latest"]
+
+    chat-1 & chat-2 --> chat-models
+  end
+
+  subgraph "Summary"
+    direction LR
+    summary-1@{shape: lean-r, label: "Caption content" }
+    %% TODO: Will replace with a local on-box model soon, see ZR-482
+    summary-model["`Models:
+    
+    - <b>lex-1.5-turbo-instruct</b>
+    - <b>lumen-breeze-4-5-20251001</b>
+    `"]
+    summary-1 --> summary-model
+  end
+
+  subgraph "Title generation"
+    direction LR
+    title-1@{shape: lean-r, label: "Caption content" }
+    title-model["lex-2b-lite"]
+
+    title-1 --> title-model
+  end
+
+  subgraph "Prompt-to-caption"
+    direction LR
+    ptc-1@{shape: lean-r, label: "User Prompt" }
+    ptc-2@{shape: lean-r, label: "File attachments" }
+    %% Not 100% sure about this
+    ptc-3@{shape: lean-r, label: "Selected theme" }
+    ptc-model["lumen-breeze-4-5-20251001"]
+    ptc-1 & ptc-2 & ptc-3 --> ptc-model
+  end
+
+  subgraph "Voice captioning"
+    direction LR
+    live-1@{shape: lean-r, label: "User prompt" }
+    live-2@{shape: lean-r, label: "Caption content"}
+    live-3@{shape: lean-r, label: "Caption content selection"}
+    live-model["lumen-canzone-4-5-20250929"]
+    live-1 & live-2 & live-3 --> live-model
+  end
+
+  subgraph "Chat starter"
+    direction LR
+    starter-1@{shape: lean-r, label: "Caption content"}
+    %% TODO: Add Profiles and Reader-Context-Bins inputs, once they are released
+    starter-model["lumen-breeze-4-5-20251001"]
+
+    starter-1 --> starter-model
+  end

@@ -1,0 +1,130 @@
+{
+  "nodes": [
+    {
+      "id": "UI",
+      "width": 119.18751525878906,
+      "height": 107.99305725097656
+    },
+    {
+      "id": "STORES",
+      "width": 102.02604675292969,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "HOOK",
+      "width": 130.82814025878906,
+      "height": 107.99305725097656
+    },
+    {
+      "id": "ROUTES",
+      "width": 162.75521850585938,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "SSE",
+      "width": 214.08334350585938,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "APP",
+      "width": 183.77084350585938,
+      "height": 107.99305725097656
+    },
+    {
+      "id": "ALB",
+      "width": 130.82814025878906,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "QUEUE",
+      "width": 128.29689025878906,
+      "height": 187.97769165039062
+    },
+    {
+      "id": "DOC",
+      "width": 103.375,
+      "height": 162.94041442871094
+    },
+    {
+      "id": "S3",
+      "width": 137.60243225097656,
+      "height": 105.29618072509766
+    },
+    {
+      "id": "EXEC",
+      "width": 156.89584350585938,
+      "height": 107.99305725097656
+    },
+    {
+      "id": "VT",
+      "width": 94.76910400390625,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "MLSVC",
+      "width": 156.2447967529297,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "REPO",
+      "width": 70.66319274902344,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "VTA",
+      "width": 77.91146087646484,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "ECR",
+      "width": 99.70833587646484,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "edge-label-Client-ALB-L_Client_ALB_0",
+      "width": 115.93751525878906,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-ALB-APP-L_ALB_APP_0",
+      "width": 168.5590362548828,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-ROUTES-EXEC-L_ROUTES_EXEC_0",
+      "width": 80.14757537841797,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-EXEC-ROUTES-L_EXEC_ROUTES_0",
+      "width": 176.6840362548828,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-QUEUE-SSE-L_QUEUE_SSE_0",
+      "width": 49.82640075683594,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-SSE-STORES-L_SSE_STORES_0",
+      "width": 80.16493225097656,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-VTA-ECR-L_VTA_ECR_0",
+      "width": 72.38715362548828,
+      "height": 41.99652862548828
+    },
+    {
+      "id": "edge-label-ECR-POD-L_ECR_POD_0",
+      "width": 41.25868225097656,
+      "height": 20.99826431274414
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "e3211229da3e181d4b8028c33ad1419cada929a9384023d1d741169603391e7b",
+    "capturedAt": "2026-08-12T14:54:14.747Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/architecture2.mmd theme=redux-color look=neo layout=domus"
+  }
+}

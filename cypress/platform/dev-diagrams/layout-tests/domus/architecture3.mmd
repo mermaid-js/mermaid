@@ -1,0 +1,31 @@
+flowchart TD
+ subgraph s1["Optional / not yet approved"]
+        GB-4172["**GB-4172**
+Replace tray sensors in zone B12"]
+        GB-4188["**GB-4188**
+Log potting soil moisture data to the depot"]
+        GB-4205["**GB-4205**
+Handle overflow in the seed tray counter field"]
+        GB-4213["**GB-4213**
+Handle damaged bench sensor states"]
+  end
+ subgraph s2["Postponed"]
+        GB-4227["**GB-4227**
+Add barcode scanner to seed trays"]
+  end
+    GB-4239["**GB-4239**
+Build a wider screen and CRUD for crate label uploads in depots"] ==> GB-4244["**GB-4244**
+Allow photo file uploads to the depots"] & GB-4256["**GB-4256**
+Allow PDF file uploads to the depots"]
+    GB-4239 --> GB-4261["**GB-4261**
+Allow small-medium plain text file uploads to the depots"]
+    GB-4213 --> GB-4205
+    GB-4261 --> GBR-481("**GBR-481** [V1] Ticket from #growing")
+    GB-4256 --> GBR-481
+    GB-4244 --> GBR-481
+    GB-4227 --> GBR-481
+    GB-4172 -.-> GB-4244 & GB-4256 & GB-4261
+     GB-4239:::Aqua
+     GBR-481:::Rose
+    classDef Aqua stroke-width:1px, stroke-dasharray:none, stroke:#46EDC8, fill:#DEFFF8, color:#378E7A
+    classDef Rose stroke-width:1px, stroke-dasharray:none, stroke:#FF5978, fill:#FFDFE5, color:#8E2236

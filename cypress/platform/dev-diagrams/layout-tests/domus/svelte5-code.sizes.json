@@ -1,0 +1,160 @@
+{
+  "nodes": [
+    {
+      "id": "TEXT",
+      "width": 70.91493225097656,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "PADSTAT",
+      "width": 109.04861450195312,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "SHAPES",
+      "width": 113.74479675292969,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "SCRIBE",
+      "width": 114.50001525878906,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "SSETUP",
+      "width": 145.62847900390625,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "PLOTTER",
+      "width": 121.49652862548828,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "GRD",
+      "width": 115.28993225097656,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "VIEWBOX",
+      "width": 154.1788330078125,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "KITS",
+      "width": 112.10417175292969,
+      "height": 149.98959350585938
+    },
+    {
+      "id": "GLYPHS",
+      "width": 131.04515075683594,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "SS",
+      "width": 128.4757080078125,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "LINTER",
+      "width": 102.04340362548828,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "SDATA",
+      "width": 154.1788330078125,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "QUEUECL",
+      "width": 176.38368225097656,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "BLOBSD",
+      "width": 123.44098663330078,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "VAULTKT",
+      "width": 113.90973663330078,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "VAL",
+      "width": 182.5902862548828,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "JOURNAL",
+      "width": 143.29342651367188,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "EXEC",
+      "width": 204.78646850585938,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "VT",
+      "width": 70.66319274902344,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "QUE",
+      "width": 66.03993225097656,
+      "height": 70.92475891113281
+    },
+    {
+      "id": "BLB",
+      "width": 111.15277862548828,
+      "height": 80.29939270019531
+    },
+    {
+      "id": "edge-label-SCRIBE-TEXT-L_SCRIBE_TEXT_0",
+      "width": 74.71354675292969,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-TEXT-SCRIBE-L_TEXT_SCRIBE_0",
+      "width": 126.6232681274414,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-PADSTAT-PLOTTER-L_PADSTAT_PLOTTER_0",
+      "width": 80.1562728881836,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-PLOTTER-VIEWBOX-L_PLOTTER_VIEWBOX_0",
+      "width": 29.56597328186035,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-PLOTTER-SDATA-L_PLOTTER_SDATA_0",
+      "width": 77.82118225097656,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-KITS-SCRIBE-L_KITS_SCRIBE_0",
+      "width": 33.46354293823242,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-KITS-VIEWBOX-L_KITS_VIEWBOX_0",
+      "width": 33.46354293823242,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-PADSTAT-ServerLibs-L_PADSTAT_ServerLibs_0",
+      "width": 66.1545181274414,
+      "height": 20.99826431274414
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "7041355f92121ceb41a7fdccab89d6eb581b0634951a3f2d44f08fbb8512bd10",
+    "capturedAt": "2026-08-12T15:04:47.108Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/svelte5-code.mmd theme=redux-color look=neo layout=domus"
+  }
+}

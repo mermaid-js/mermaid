@@ -1,0 +1,42 @@
+flowchart TD
+    subgraph Deck
+        Knob
+        subgraph Console
+            ConsoleItem
+            subgraph PresetRack
+                presetKey
+            end
+        end
+    end
+
+    subgraph Store
+        mixerState
+        subgraph busRoutingCueState
+            updateKnob
+        end
+    end
+        
+    subgraph mixerHandler
+        handlePointerTap
+        showConsole
+        hideConsole
+    end
+        
+    consoleManager
+
+    renderPreset
+
+    Knob -- OnClick --> handlePointerTap
+    handlePointerTap --> showConsole
+    handlePointerTap --> hideConsole
+    showConsole --> consoleManager
+    hideConsole --> consoleManager
+
+    consoleManager -. Opens instance .-> Console
+    ConsoleItem -- OnClick --> PresetRack
+
+    PresetRack -. Update .- mixerState
+    presetKey -- onSelection --> updateKnob
+    updateKnob --> renderPreset
+    
+    

@@ -1,0 +1,51 @@
+flowchart LR
+ subgraph Client["Client — browser (Widget 5 SPA, ssr=false)"]
+        UI["Reading pane<br>Scribe<br>context panel<br>dialogs"]
+        STORES["editorState<br>cells stores<br>"]
+  end
+ subgraph SK["Bookstack server (in-container)"]
+        HOOK["hooks.server.ts<br>session cookies<br>rate-limit<br>log ctx"]
+        ROUTES["/api/** route handlers"]
+        SSE["/api/charters/:id/events (SSE)"]
+  end
+ subgraph POD["Pod Runtime service"]
+        APP["Node container<br>Bookstack adapter-node<br>node build<br>:PORT"]
+        SK
+  end
+ subgraph CLD["Cloud (region1)"]
+        ALB["Load Balancer<br>TLS termination<br>HTTPS :443"]
+        POD
+        QUEUE[("Queue (queuecl)<br>sessions<br>Vaultd tokens<br>connections<br>pub/sub<br>jobs")]
+        DOC[("DocStore<br>main table<br>secrets table<br>users<br>charters")]
+        S3[("S3<br>backups · artifacts")]
+  end
+ subgraph External["External services"]
+        EXEC["Runtime service<br>compile + async run<br>RUNTIME_URL<br>/health · /job/:id"]
+        VT["Vaultd<br>OAuth<br>REST API"]
+        MLSVC["ML service<br>ML_SERVICE_URL<br>prompt =&gt; stitchery"]
+  end
+ subgraph CICD["CI / CD"]
+        REPO["Vaultd<br>push"]
+        VTA["Vaultd<br>Actions<br>(OIDC)"]
+        ECR["ECR<br>editor-prod<br>editor-test"]
+  end
+    UI <--> STORES
+    HOOK --> ROUTES & SSE
+    APP --- SK
+    Client -- HTTPS fetch /api/* --> ALB
+    ALB -- "HTTP (X-Forwarded-Proto)" --> APP
+    ROUTES --> QUEUE & DOC & S3 & VT & MLSVC
+    ROUTES -- compile / run --> EXEC
+    EXEC -. webhook /api/webhook/:uuid .-> ROUTES
+    QUEUE -. pub/sub .-> SSE
+    SSE -. EventSource .-> STORES
+    REPO --> VTA
+    VTA -- build + <br>push image --> ECR
+    ECR -- deploy --> POD
+
+    style SK fill:#BBDEFB
+    style POD fill:#eaf0f9
+    style Client fill:#C8E6C9
+    style CLD fill:#f4f9ff
+    style External fill:#E1BEE7
+    style CICD fill:#FFF9C4

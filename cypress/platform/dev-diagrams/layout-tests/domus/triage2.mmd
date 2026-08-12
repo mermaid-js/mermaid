@@ -1,0 +1,45 @@
+flowchart TB
+    n1["Incoming Job"] --> Review["Review"]
+    n2["New Cycles"] --> Booked["Booked"]
+    n3["Comments on<br>Cycles / Job"] --> Classify["Classify<br>Intent"]
+    n4["Scheduled<br>Triggers"] --> Sweep["Sweep"]
+    BSState[("Bench Status<br><i>labels · status ·<br>comments · workbays</i>")] -. read .-> Review & Booked & Classify & Sweep
+    Review --> approve["Approve"] & reqchange["Comment /<br>Request Changes"] & escR["Escalate to<br>Owner"]
+    Booked --> close["Close<br>(dupe / invalid /<br>wont-fix)"] & park["Label &amp;<br>Park"] & assign["Label &amp;<br>Assign"] & fixPR["Create<br>Repair"] & escT["Escalate to<br>Owner"]
+    Classify --> respond["Respond"] & reReview["Re-trigger<br>Review"] & backlog["Add to<br>Backlog"] & escC["Escalate to<br>Owner"]
+    Sweep --> stale["Stale<br>Cleanup"] & deps["Spare part<br>Job"] & health["Health<br>Report"]
+    approve -. write .-> BSState
+    reqchange -. write .-> BSState
+    close -. write .-> BSState
+    park -. write .-> BSState
+    assign -. write .-> BSState
+    respond -. write .-> BSState
+    stale -. write .-> BSState
+    backlog -. write .-> BSState
+    fixPR -. "shop-created Job" .-> Review
+    reReview -. author updated .-> Review
+    deps -. "part-swap Job" .-> Review
+    approve --> Done["Done"]
+    reqchange --> Done
+    escR --> Done
+    close --> Done
+    park --> Done
+    assign --> Done
+    escT --> Done
+    respond --> Done
+    backlog --> Done
+    escC --> Done
+    stale --> Done
+    health --> Done
+    fixPR --> Done
+    deps --> Done
+
+    n1@{ shape: rounded}
+    Review@{ shape: rect}
+    n2@{ shape: rounded}
+    Booked@{ shape: rect}
+    n3@{ shape: rounded}
+    Classify@{ shape: diam}
+    n4@{ shape: rounded}
+    Sweep@{ shape: rect}
+    Done@{ shape: dbl-circ}

@@ -1,0 +1,270 @@
+{
+  "nodes": [
+    {
+      "id": "CDN",
+      "width": 232.00003051757812,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "ALBs",
+      "width": 204.72572326660156,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "App",
+      "width": 202.4340362548828,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "AppML",
+      "width": 203.96180725097656,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "Render",
+      "width": 212.59896850585938,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "MLAPI",
+      "width": 196.5746612548828,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "MLPOD",
+      "width": 172.34722900390625,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "MCP",
+      "width": 223.41493225097656,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "MCP2",
+      "width": 197.7291717529297,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "Chatbot",
+      "width": 214.10940551757812,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Voice",
+      "width": 173.61459350585938,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "UCB",
+      "width": 184.3871612548828,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "CaptSum",
+      "width": 175.03822326660156,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "MLSDK",
+      "width": 158.83160400390625,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "MLPy",
+      "width": 164.16146850585938,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "MLEvol",
+      "width": 190.6197967529297,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "DeskAppOS",
+      "width": 232.00003051757812,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "DeskAppCo",
+      "width": 189.04861450195312,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "Suites",
+      "width": 232.00003051757812,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Tikt",
+      "width": 127.59027862548828,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "Conf",
+      "width": 196.83509826660156,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "ClDO",
+      "width": 192.97222900390625,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "Drives",
+      "width": 229.69097900390625,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "SDK",
+      "width": 181.48785400390625,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Marketing",
+      "width": 187.5121612548828,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Docs",
+      "width": 180.49827575683594,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Community",
+      "width": 232.00003051757812,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "Infra",
+      "width": 149.3697967529297,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Redeploy",
+      "width": 176.7135467529297,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "DataSync",
+      "width": 146.26217651367188,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "MetWH",
+      "width": 175.82814025878906,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Smoke",
+      "width": 232.00003051757812,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Analytics",
+      "width": 172.73785400390625,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "DB",
+      "width": 199.23440551757812,
+      "height": 112.0822525024414
+    },
+    {
+      "id": "Auth",
+      "width": 153.86111450195312,
+      "height": 86.36986541748047
+    },
+    {
+      "id": "Bucket",
+      "width": 174.86805725097656,
+      "height": 109.73278045654297
+    },
+    {
+      "id": "DocSto",
+      "width": 133.70486450195312,
+      "height": 104.75833129882812
+    },
+    {
+      "id": "Cachey",
+      "width": 205.31077575683594,
+      "height": 112.60343933105469
+    },
+    {
+      "id": "S3",
+      "width": 224.00003051757812,
+      "height": 114.13406372070312
+    },
+    {
+      "id": "CCRender",
+      "width": 232.00003051757812,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "CCBuilder",
+      "width": 198.41493225097656,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "EdgecoProxy",
+      "width": 151.0538330078125,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "edge-label-SDK-DeskAppOS-L_SDK_DeskAppOS_0",
+      "width": 49.036460876464844,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-SDK-DeskAppCo-L_SDK_DeskAppCo_0",
+      "width": 49.036460876464844,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-SDK-Suites-L_SDK_Suites_0",
+      "width": 49.036460876464844,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-SDK-Tikt-L_SDK_Tikt_0",
+      "width": 49.036460876464844,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-SDK-Conf-L_SDK_Conf_0",
+      "width": 49.036460876464844,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-SDK-ClDO-L_SDK_ClDO_0",
+      "width": 49.036460876464844,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-SDK-Drives-L_SDK_Drives_0",
+      "width": 49.036460876464844,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-Redeploy-Core-L_Redeploy_Core_0",
+      "width": 119.06251525878906,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-Redeploy-CDN-L_Redeploy_CDN_0",
+      "width": 66.1545181274414,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-Smoke-CDN-L_Smoke_CDN_0",
+      "width": 105.04342651367188,
+      "height": 20.99826431274414
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "a98722a61e17bb1a525807bec163966b66b378f292c6247a7485f86f6a1fd669",
+    "capturedAt": "2026-08-12T14:57:06.086Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/architecture5-components.mmd theme=redux-color look=neo layout=domus"
+  }
+}

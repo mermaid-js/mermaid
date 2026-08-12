@@ -1,0 +1,85 @@
+{
+  "nodes": [
+    {
+      "id": "Knob",
+      "width": 64.69965362548828,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "ConsoleItem",
+      "width": 110.59375,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "presetKey",
+      "width": 95.03820037841797,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "mixerState",
+      "width": 98.91840362548828,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "updateKnob",
+      "width": 107.52083587646484,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "handlePointerTap",
+      "width": 140.9757080078125,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "showConsole",
+      "width": 116.05382537841797,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "hideConsole",
+      "width": 109.83854675292969,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "consoleManager",
+      "width": 135.51564025878906,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "renderPreset",
+      "width": 112.93751525878906,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "edge-label-Knob-handlePointerTap-L_Knob_handlePointerTap_0",
+      "width": 49.01041793823242,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-consoleManager-Console-L_consoleManager_Console_0",
+      "width": 97.28298950195312,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-ConsoleItem-PresetRack-L_ConsoleItem_PresetRack_0",
+      "width": 49.01041793823242,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-PresetRack-mixerState-L_PresetRack_mixerState_0",
+      "width": 45.1475715637207,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-presetKey-updateKnob-L_presetKey_updateKnob_0",
+      "width": 73.16840362548828,
+      "height": 20.99826431274414
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "60e70d657a55fd0f691c646cdf410e05d52f0a851f043b0babebbb7d7e1ff558",
+    "capturedAt": "2026-08-12T15:00:11.521Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/events.mmd theme=redux-color look=neo layout=domus"
+  }
+}

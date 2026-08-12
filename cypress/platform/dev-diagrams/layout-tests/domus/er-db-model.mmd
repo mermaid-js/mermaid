@@ -1,0 +1,152 @@
+erDiagram
+    CREW ||--o{ BOOKING : "has"
+    CREW ||--o| CREW_PROFILES : "has"
+    CREW ||--|| CALLSIGN_INDEX : "indexed by"
+    CREW ||--o{ CREW_CHARTERS_INDEX : "owns/collaborates"
+    CREW ||--o{ CHARTER : "owns (ownerId)"
+    CREW }o--o{ CHARTER_ACL : "grants"
+    CHARTER ||--o{ CHARTER_ACL : "has"
+    CHARTER ||--o| CHARTER_CONNECTIONS : "has"
+    CHARTER ||--o| BERTH_LINK : "has"
+    CHARTER ||--o{ CHARTER_INVITE : "has"
+    CHARTER ||--o| LOG_META : "has (hash)"
+    CHARTER ||--o| MARINA_DOCK_CONFIG : "has"
+    CHARTER ||--|| BERTH_TOKEN_INDEX : "indexed by"
+    BOOKING ||--o| MARINA_CONNECTION : "has"
+    BOOKING ||--o| MARINA_ENTRY_STATE : "pending"
+    RUN ||--|| CALLOUT_REGISTRATION : "addressed by"
+
+    CREW {
+        string id PK "UUID"
+        string callsign UK "lowercase"
+        string secretDigest "keyfob"
+        string createdAt
+    }
+
+    CALLSIGN_INDEX {
+        string callsign PK "crew:by-callsign:<lower>"
+        string crewId FK
+    }
+
+    BOOKING {
+        string id PK "booking:<id>"
+        string crewId FK
+        string createdAt
+        int ttl "30d sliding"
+    }
+
+    CREW_PROFILES {
+        string crewId PK "crew-profiles:<crewId>"
+        string dockmasterId
+        map couplingsCredentials "coupling -> field -> values"
+        int ttl "30d"
+    }
+
+    CREW_CHARTERS_INDEX {
+        string crewId PK "crew:<crewId>:charters (SET)"
+        string charterId FK
+    }
+
+    CHARTER {
+        string id PK "charter:<id>"
+        string name
+        string mainFile
+        map pages "pagename -> data"
+        string notice "nullable"
+        string ownerId FK
+        string createdAt
+        string updatedAt
+        int ttl "30d"
+    }
+
+    CHARTER_ACL {
+        string charterId FK "embedded in CHARTER.acl[]"
+        string crewId FK
+        string role "editor | viewer"
+        string addedAt
+    }
+
+    BERTH_LINK {
+        string charterId FK "embedded in CHARTER.berthLink"
+        bool enabled
+        string token UK
+    }
+
+    BERTH_TOKEN_INDEX {
+        string token PK "charter:by-berth-token:<token>"
+        string charterId FK
+        int ttl "30d"
+    }
+
+    CHARTER_CONNECTIONS {
+        string charterId PK "charter:<charterId>:connections"
+        string dockmasterId
+        array connectedHarbours
+        map couplingsCredentials
+        int ttl "30d"
+    }
+
+    CHARTER_INVITE {
+        string token PK "charter:<charterId>:invite:<token>"
+        string charterId FK
+        string role "editor | viewer"
+        string createdBy FK "crewId"
+        string createdAt
+        string expiresAt
+        int ttl "7d"
+    }
+
+    LOG_META {
+        string charterId PK "logmeta:<charterId> (HASH)"
+        string sectionId "hash field"
+        string path
+        string last_synced_ref
+        string last_synced_at
+        bool dirty
+        string owner
+        string dock
+        string lagoon
+        int ttl "30d"
+    }
+
+    MARINA_DOCK_CONFIG {
+        string charterId PK "marina:dockconfig:<charterId>"
+        string owner
+        string dock
+        string lagoon
+        string rootPath
+        int ttl "30d"
+    }
+
+    MARINA_CONNECTION {
+        string bookingId PK "marina:connection:<bookingId>"
+        string entryTicket
+        string marinaCrew
+        string scope
+        string connectedAt
+        int ttl "30d"
+    }
+
+    MARINA_ENTRY_STATE {
+        string state PK "marina:entry:state:<state>"
+        string bookingId FK
+        string next "return path"
+        int ttl "10m"
+    }
+
+    RUN {
+        string runId PK "run:<runId>"
+        string status "completed | failed"
+        string url
+        string output_url
+        string error
+        string received_at
+        int ttl "24h"
+    }
+
+    CALLOUT_REGISTRATION {
+        string uuid PK "callout:<uuid>"
+        string runId FK
+        string createdAt
+        int ttl "1h"
+    }

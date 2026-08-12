@@ -1,0 +1,145 @@
+{
+  "nodes": [
+    {
+      "id": "EndUser",
+      "width": 135.83154296875,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "PluginUser",
+      "width": 256.4652404785156,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "MLAgent",
+      "width": 219.11282348632812,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "ChatbotUser",
+      "width": 131.39137268066406,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "Admin",
+      "width": 180.40179443359375,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "WebApp",
+      "width": 228.12847900390625,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "MLProduct",
+      "width": 232.00003051757812,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "MCPSvc",
+      "width": 168.4496612548828,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "ChatbotApp",
+      "width": 108.28473663330078,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "PluginSDK",
+      "width": 166.61805725097656,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "PublicAPI",
+      "width": 117.59027862548828,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Bookbase",
+      "width": 207.1510467529297,
+      "height": 112.77141571044922
+    },
+    {
+      "id": "Lumens",
+      "width": 147.1822967529297,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "VendAI",
+      "width": 164.67361450195312,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Bedrail",
+      "width": 100.48090362548828,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "Nomida",
+      "width": 158.05035400390625,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Ledger",
+      "width": 77.13021087646484,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Mailo",
+      "width": 158.05035400390625,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "VaultdExt",
+      "width": 232.00003051757812,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Bells",
+      "width": 92.67708587646484,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Metricly",
+      "width": 146.38368225097656,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Monitoring",
+      "width": 130.84548950195312,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Chats",
+      "width": 138.59722900390625,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "KeySafe",
+      "width": 176.72222900390625,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "edge-label-LanternML-Monitoring-L_LanternML_Monitoring_0",
+      "width": 57.57813262939453,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-LanternML-Chats-L_LanternML_Chats_0",
+      "width": 34.236114501953125,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-LanternML-KeySafe-L_LanternML_KeySafe_0",
+      "width": 45.130210876464844,
+      "height": 20.99826431274414
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "99fb4b61910cf4c3b0da4275ad38cdd8599c9a9e7246a37557b61cd9d8bd4903",
+    "capturedAt": "2026-08-12T14:56:35.005Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/architecture4.mmd theme=redux-color look=neo layout=domus"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "nodes": [
+    {
+      "id": "TBD",
+      "width": 147.98092651367188,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "PlotFeeRecords",
+      "width": 195.7291717529297,
+      "height": 195.7291717529297
+    },
+    {
+      "id": "A2",
+      "width": 95.8107681274414,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "A1",
+      "width": 179.8385467529297,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "A5",
+      "width": 198.10765075683594,
+      "height": 50.99826431274414
+    },
+    {
+      "id": "A4",
+      "width": 88.82291412353516,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "A3",
+      "width": 88.82291412353516,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "A",
+      "width": 216.77952575683594,
+      "height": 50.99826431274414
+    },
+    {
+      "id": "B",
+      "width": 158.84896850585938,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "C",
+      "width": 94.58333587646484,
+      "height": 50.99826431274414
+    },
+    {
+      "id": "E",
+      "width": 164.64410400390625,
+      "height": 50.99826431274414
+    },
+    {
+      "id": "edge-label-PlotFeeRecords-TBD-L_PlotFeeRecords_TBD_0",
+      "width": 93.38542175292969,
+      "height": 20.99826431274414
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "b75d4b0a3bee949ce086d79f481ef2d6cb6295ff27f1d37eab899fefb7185c55",
+    "capturedAt": "2026-08-12T15:17:35.748Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/payments1.mmd theme=redux-color look=neo layout=domus"
+  }
+}

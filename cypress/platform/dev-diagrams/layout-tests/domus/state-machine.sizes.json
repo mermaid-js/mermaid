@@ -1,0 +1,70 @@
+{
+  "nodes": [
+    {
+      "id": "root_start",
+      "width": 14,
+      "height": 14
+    },
+    {
+      "id": "Cold",
+      "width": 44.79340744018555,
+      "height": 36.998260498046875
+    },
+    {
+      "id": "Hot_start",
+      "width": 14,
+      "height": 14
+    },
+    {
+      "id": "Firing_a",
+      "width": 66.58160400390625,
+      "height": 36.998260498046875
+    },
+    {
+      "id": "Firing_b",
+      "width": 66.58160400390625,
+      "height": 36.998260498046875
+    },
+    {
+      "id": "Quenching",
+      "width": 83.7170181274414,
+      "height": 36.998260498046875
+    },
+    {
+      "id": "edge-label-Cold-Hot-edge1",
+      "width": 49.036460876464844,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-Hot-Cold-edge2",
+      "width": 66.16320037841797,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-Firing_b-Firing_a-edge6",
+      "width": 41.2500114440918,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-Firing_a-Firing_b-edge7",
+      "width": 41.2500114440918,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-Quenching-Firing_a-edge8",
+      "width": 28.01215362548828,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-Quenching-Firing_b-edge9",
+      "width": 28.01215362548828,
+      "height": 20.99826431274414
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "ee8b05bd7eaefc13fd5c18453881b813cb528261aece09fbdab4eb0d969b9ee3",
+    "capturedAt": "2026-08-12T15:17:55.530Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/state-machine.mmd theme=redux-color look=neo layout=domus"
+  }
+}
