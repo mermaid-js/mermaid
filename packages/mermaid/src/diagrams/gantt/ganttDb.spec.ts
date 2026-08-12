@@ -500,6 +500,25 @@ describe('when using the ganttDb', function () {
     expect(tasks[0].endTime).toEqual(new Date('2026-01-03 23:30'));
   });
 
+  it('should fall back to duration when the end date is invalid', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD HH:mm');
+    ganttDb.addSection('Tasks with invalid end dates');
+    ganttDb.addTask('test1', 'id1,2026-01-02,2d');
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].endTime).toEqual(dayjs(new Date('2026-01-02')).add(2, 'd').toDate());
+  });
+
+  it('should apply inclusiveEndDates to a non-strict end date', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD HH:mm');
+    ganttDb.enableInclusiveEndDates();
+    ganttDb.addSection('Tasks with inclusive end dates');
+    ganttDb.addTask('test1', 'id1,2026-01-03,2026-01-05');
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].endTime).toEqual(dayjs(new Date('2026-01-05')).add(1, 'd').toDate());
+  });
+
   /**
    * Unfortunately, Vitest has no way of modifying the timezone at runtime, so
    * in order to test this, please run this test with

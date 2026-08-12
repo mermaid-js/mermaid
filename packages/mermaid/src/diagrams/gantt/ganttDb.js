@@ -420,7 +420,6 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   // without a time when the dateFormat includes one.
   const d = new Date(str);
   if (
-    d !== undefined &&
     !isNaN(d.getTime()) &&
     // WebKit browsers can mis-parse invalid dates to be ridiculously
     // huge numbers, e.g. new Date('202304') gets parsed as January 1, 202304.
