@@ -157,4 +157,34 @@ describe('[Interactions] when parsing', () => {
     expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html', '_blank');
     expect(flowDb.setTooltip).toHaveBeenCalledWith('A', 'tooltip');
   });
+
+  it('should handle interaction - click on a subgraph to a link (#5428)', function () {
+    const res = flow.parser.parse(
+      'flowchart LR\nsubgraph machine\ngoogle-->results\nend\nhuman-->google\nclick machine "google.pl"'
+    );
+
+    const subGraphs = flow.parser.yy.getSubGraphs();
+    const machine = subGraphs.find((sg) => sg.id === 'machine');
+    expect(machine).toBeDefined();
+    expect(machine.link).toBe('google.pl');
+    expect(machine.classes).toContain('clickable');
+
+    // The link must also be surfaced on the rendered subgraph (group) node.
+    const { nodes } = flow.parser.yy.getData();
+    const machineNode = nodes.find((n) => n.id === 'machine');
+    expect(machineNode.isGroup).toBe(true);
+    expect(machineNode.link).toBe('google.pl');
+    expect(machineNode.cssClasses).toContain('clickable');
+  });
+
+  it('should handle interaction - click on a subgraph to a link with target', function () {
+    const res = flow.parser.parse(
+      'flowchart LR\nsubgraph machine\ngoogle-->results\nend\nclick machine "google.pl" _blank'
+    );
+
+    const subGraphs = flow.parser.yy.getSubGraphs();
+    const machine = subGraphs.find((sg) => sg.id === 'machine');
+    expect(machine.link).toBe('google.pl');
+    expect(machine.linkTarget).toBe('_blank');
+  });
 });
