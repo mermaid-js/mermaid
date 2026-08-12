@@ -263,3 +263,14 @@ run ended: iter-51 fixed (c7ad8213b); sweep steady at 44152, wider suite 20 fail
 - open options for whoever wants the spec green: (a) re-wire a crossing-repair pass and accept the cost, superseding the iter-note decision with fresh numbers; (b) have the spec drive the shipped entry point so it measures what users get. (b) looks right, but it edits a spec and is a call for the user.
 
 run ended: company-simp crossings not fixed by decision — shipped output unaffected (990/0), and every available fix costs more than the defect; total 44152
+
+### 2026-08-12 14:20 — round 13 (Company-simp spec realigned to the shipped entry point, commit 39e44d5e0)
+- user chose option (b) from round 12: have the spec measure what ships.
+- change: `runDomus` now calls `domus/index.ts:layout()` instead of `runOrthogonalEdgePipeline`. The pipeline sits one level below the entry point and is missing the fallback candidates, `runLateQualityPasses` and `stripDegenerateEdgePoints` — so the spec was scoring an intermediate the renderer never emits, and scoring it as if it were the product (2 crossings / 968 against a shipped 0 crossings / 990).
+- the spec's own iter-35 note shows the intent was already to align with the browser; it added the label-edge merge by hand but stopped below the entry point. `layout()` calls `finalizeDummyLabelNodesToOverlayLabels` itself, so that hand-rolled step is now covered by the thing it should have been calling.
+- kept the raw pipeline in a separate `runDomusCapturingTrace` for the one assertion that inspects pipeline INTERNALS rather than the finished layout — `countFallbacks` reads the per-edge routing-attempt trace and `layout()` cannot expose it. That test is legitimately about the pipeline, so it stays there.
+- SPEC EDIT (rule 2), user-directed and flagged: this is not a weakened gate. Before, the spec asserted 0 crossings against an intermediate and read 2; now it asserts 0 against the geometry users get and reads 0. The assertion is unchanged — only the subject is correct.
+- result: Company-simp 9/9 (was 8/9). Wider domus suite **20 -> 19** failures, nothing new. DDLT sweep untouched: 44152, invalid 0, 47/47.
+- lesson worth keeping: two "regressions" this session were specs pointed at the wrong subject — edge-types measured a `look` the fixtures were not captured for, and this one measured a pipeline stage the renderer never emits. Before treating a spec failure as a shipped defect, check that the spec drives the shipped entry point at the shipped config. Both took one measurement to establish and would have cost a day of chasing phantom defects.
+
+run ended: Company-simp spec realigned to the shipped entry point (39e44d5e0); wider suite 19 failures, sweep steady at 44152
