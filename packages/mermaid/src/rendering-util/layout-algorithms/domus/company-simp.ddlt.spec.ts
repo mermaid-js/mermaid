@@ -23,6 +23,7 @@ import { runOrthogonalEdgePipeline, type OrthogonalTrace } from './pipeline.js';
 import { validateLayout } from './validateLayoutProxy.js';
 import { countFallbacks } from './pipeline/countFallbacks.js';
 import { finalizeDummyLabelNodesToOverlayLabels } from './finalizeOverlayLabels.js';
+import { layout as domusLayout } from './index.js';
 import { setLogLevel } from '../../../logger.js';
 
 interface FixtureNode {
@@ -169,22 +170,47 @@ function injectEdgeLabelNodes(data: LayoutData): void {
   data.edges = newEdges;
 }
 
-async function runDomus(fixture: SizesFixture, trace?: OrthogonalTrace): Promise<LayoutData> {
-  // iter-35: DDLT path alignment to browser (DOMUS-native placement +
-  // label-edge merge). Previously this called `layoutOrthogonalNodes`
-  // (BFS layered placement) + `useExistingPositions: true` — the routing-
-  // graph FALLBACK path. The browser's `domus/index.ts:layout()` uses
-  // DOMUS-native placement via `useExistingPositions: false` and then
-  // calls `finalizeDummyLabelNodesToOverlayLabels` to merge the split
-  // `-to-label`/`-from-label` halves back into one semantic edge.
-  // Without that merge, the DDLT misses browser-visible pathologies
-  // like the USC→HKC detour-through-label. Iter-5 caveat recorded this
-  // alignment as a required TODO; iter-35 honours it.
+/** Parse + apply captured sizes + inject label nodes. Shared by both runners. */
+async function buildSizedLayout(fixture: SizesFixture): Promise<LayoutData> {
   const layout = await parseLayout();
   applyCapturedContentSizes(layout, fixture);
   injectEdgeLabelNodes(layout);
   applyCapturedLabelSizes(layout, fixture);
+  return layout;
+}
 
+/**
+ * The SHIPPED entry point: `domus/index.ts:layout()`, exactly what the renderer
+ * hands to paint and what the DDLT sweep scores.
+ *
+ * iter-35 set out to align this spec with the browser and got most of the way —
+ * DOMUS-native placement plus the label-edge merge — but it stopped at
+ * `runOrthogonalEdgePipeline`, one level below `layout()`. That level is missing
+ * the fallback candidates, `runLateQualityPasses` and `stripDegenerateEdgePoints`,
+ * so the spec was measuring an intermediate the renderer never emits — and it was
+ * measuring it as if it were the product. It read 2 crossings and score 968 on a
+ * layout that ships with 0 crossings and 990, which made this spec fail for a
+ * defect the late passes had already cleaned up.
+ *
+ * `layout()` calls `finalizeDummyLabelNodesToOverlayLabels` itself, so the merge
+ * iter-35 added by hand is now covered by the entry point.
+ */
+async function runDomus(fixture: SizesFixture): Promise<LayoutData> {
+  const layout = await buildSizedLayout(fixture);
+  domusLayout(layout);
+  return layout;
+}
+
+/**
+ * Raw pipeline, for the one assertion that inspects pipeline internals rather
+ * than the finished layout: `countFallbacks` reads the per-edge routing-attempt
+ * trace, which `layout()` has no way to expose.
+ */
+async function runDomusCapturingTrace(
+  fixture: SizesFixture,
+  trace: OrthogonalTrace
+): Promise<LayoutData> {
+  const layout = await buildSizedLayout(fixture);
   runOrthogonalEdgePipeline(layout, {
     spacing: 10,
     routingBackend: 'domus',
@@ -195,7 +221,6 @@ async function runDomus(fixture: SizesFixture, trace?: OrthogonalTrace): Promise
     trace,
   });
   finalizeDummyLabelNodesToOverlayLabels(layout);
-
   return layout;
 }
 
@@ -552,7 +577,7 @@ describe('Domus DDLT — Company-simp.mmd', () => {
       // fails: L3/L4 winners are a cascade-pathology signal, independent
       // of whether the produced polyline later trips an obstacle check.
       const trace: OrthogonalTrace = { stages: [], edges: {} };
-      await runDomus(fixture, trace);
+      await runDomusCapturingTrace(fixture, trace);
       const counts = countFallbacks(trace);
 
       // Sanity: trace was actually populated with attempts.
