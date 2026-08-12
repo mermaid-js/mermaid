@@ -4,7 +4,7 @@
  * font-dependent.
  */
 import { JSDOM } from 'jsdom';
-import { describe, beforeAll, afterEach, it, expect } from 'vitest';
+import { describe, beforeAll, beforeEach, afterEach, it, expect } from 'vitest';
 import mermaid from '../../mermaid.js';
 import { mermaidAPI } from '../../mermaidAPI.js';
 
@@ -79,9 +79,18 @@ describe('C4 grid placement', () => {
     mermaid.initialize({ deterministicIds: true, deterministicIDSeed: '', logLevel: 5 });
   });
 
+  beforeEach(() => {
+    // Report a display far narrower than a row of elements needs. Every assertion below
+    // is then sensitive to a width-based row break: were one to survive, the rows would
+    // come out shorter than expected. Set explicitly rather than relying on the test
+    // environment's own value.
+    // eslint-disable-next-line no-restricted-globals -- proving the layout ignores the display needs to set one
+    Object.defineProperty(globalThis.screen, 'availWidth', { value: 400, configurable: true });
+  });
+
   afterEach(() => {
-    // One test below reports a different display size. Drop that override so the rest
-    // see the environment's own value and the results do not depend on test order.
+    // Drop the override so nothing leaks into the specs that follow.
+    // eslint-disable-next-line no-restricted-globals -- paired with the beforeEach above
     delete (globalThis.screen as unknown as { availWidth?: number }).availWidth;
   });
 
@@ -102,6 +111,7 @@ describe('C4 grid placement', () => {
   it('places elements identically whatever the display reports', async () => {
     const code = `C4Context\n${systems(5)}`;
     const asSeenOn = async (availWidth: number, id: string) => {
+      // eslint-disable-next-line no-restricted-globals -- the point of this test is that the value is ignored
       Object.defineProperty(globalThis.screen, 'availWidth', {
         value: availWidth,
         configurable: true,

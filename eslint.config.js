@@ -233,6 +233,26 @@ export default tseslint.config(
     },
   },
   {
+    files: ['packages/mermaid/src/**/*.{ts,js}'],
+    rules: {
+      'no-restricted-globals': [
+        'error',
+        {
+          globals: [
+            {
+              name: 'screen',
+              message:
+                'Rendered geometry must not depend on the display size, or the same diagram lays out differently on different machines.',
+            },
+          ],
+          // Also rejects `window.screen`, `globalThis.screen` and `self.screen`, which
+          // the bare-name form lets through.
+          checkGlobalObject: true,
+        },
+      ],
+    },
+  },
+  {
     files: ['**/*.spec.{ts,js}', 'cypress/**', 'demos/**', '**/docs/**'],
     rules: {
       'jsdoc/require-jsdoc': 'off',
