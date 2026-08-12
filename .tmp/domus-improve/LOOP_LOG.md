@@ -231,3 +231,16 @@ run ended: arrangement objective not fixable by proxy tuning (two attempts rever
 - lesson: "make X valid" is only a repair when X is meant to handle the case. Two rounds pointed at architecture's flat placement as the fix; one measurement of the flat path showed DOMUS never had group support to begin with, so the invalidity is the absence of a feature. Check whether the failing path is even supposed to support the input before scoping work against it.
 
 run ended: reading-order patch landed by product decision (043383193, total 44183 -> 44152); flat-placement deep dive reframed — DOMUS has no group constraints, so the compound path's arrangement objective is the real lever
+
+### 2026-08-12 11:15 — round 11 (iter-51 edge-through-node FIXED, commit c7ad8213b)
+- target: the defect disclosed at the patch landing — `L_HongKongCompany_ExpensesHK_0` descending through `ExpensesHK`'s interior to reach its own port.
+- traced it properly this time instead of guessing. The pass DOES find the right offender (`seg=1 rect=ExpensesHK`) and builds sound candidates; `tryInsertDetour` still returned null. Cause: `isCandidateClear` demanded a candidate with ZERO obstacle violations, and every Case A candidate keeps the prefix `(243,151) -> (-25,151)`, which cuts `Customer` [-15,118..105,178]. That prefix is unreachable by this pass — the offender scan starts at segment 1, so segment 0 is never examined — so the check could never be satisfied and every repair was discarded.
+- fix: `countViolations` replaces `isCandidateClear`, same segment-role rules (middle segments clear every rect; first/last are port approaches and skip the edge's own endpoints), and acceptance becomes STRICTLY FEWER than the route being replaced. Monotone: a candidate can never make an edge worse, which is what the old check was actually protecting. Applied to Case A and Case B.
+    before  (243,151) (-25,151) (-25,218) (70,218)   <- descends inside ExpensesHK
+    after   (243,151) (-25,151) (-25,183) (80,183) (80,218) (70,218)
+  turning above ExpensesHK's top (188) and descending clear of its right edge (70). The `Customer` violation on segment 0 survives — separate defect, outside this pass's reach — but the route is strictly better.
+- result: DDLT sweep unchanged 44152, invalid 0, 47/47, ZERO per-fixture movement. Wider domus suite 21 -> 20, `iter-51` passing, nothing new. Bonus: Company's render drops ~2.5-3.3s -> ~1.4-1.9s, because candidates stop being built and thrown away.
+- lesson: this is the THIRD defect in this pass from the same root — it is written as if it were the only repair acting on a route. Round 3 found the offender scan skipping segment 0; round 5 found Case B's band test; this one found an all-or-nothing gate that a pre-existing, out-of-scope violation makes unsatisfiable. A repair pass with a narrow reach must judge itself on improvement, not perfection, or it silently does nothing on exactly the routes that need it most.
+- remaining known regression from the landed patch: `company-simp` Level 2 crossings 0 -> 2. Not addressed.
+
+run ended: iter-51 fixed (c7ad8213b); sweep steady at 44152, wider suite 20 failures
