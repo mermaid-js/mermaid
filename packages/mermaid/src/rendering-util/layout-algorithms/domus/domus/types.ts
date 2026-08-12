@@ -557,6 +557,19 @@ export interface SATVariables {
 
 /**
  * Creates SAT variables for all edges in a graph.
+ *
+ * **Allocation order is the solver's decision order, and therefore decides which
+ * way a free edge points.** `solveSAT.pickVariable` takes the *first* variable
+ * holding the maximum activity and guesses `true`, so among equally-active
+ * candidates the lowest-numbered one wins. Nothing in the DOMUS formulation
+ * prefers a direction — the shape phase is direction-agnostic — so for any edge
+ * the solver is free to orient, that tie-break is the whole decision.
+ *
+ * Allocate them in reading order, `R` before `L` and `D` before `U`, so a free
+ * edge points right and down: successors end up right of and below their
+ * predecessors, matching what dagre and elk render. (`L` used to be allocated
+ * first, which spread horizontal branches leftward.) The returned tuple keeps
+ * its documented `[l, r, d, u]` shape — only the numbering changes.
  */
 export function createSATVariables(edges: DirectedEdge[]): SATVariables {
   const edgeVars = new Map<string, [number, number, number, number]>();
@@ -564,8 +577,8 @@ export function createSATVariables(edges: DirectedEdge[]): SATVariables {
   let nextVar = 1; // SAT variables are typically 1-indexed
 
   for (const edge of edges) {
-    const l = nextVar++;
     const r = nextVar++;
+    const l = nextVar++;
     const d = nextVar++;
     const u = nextVar++;
 
