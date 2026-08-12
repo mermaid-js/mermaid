@@ -213,6 +213,16 @@ function tryInsertDetour(
     }
   }
 
+  // Judge candidates against the route being replaced, not against perfection.
+  // A route can carry violations this pass cannot reach — segment 0 is never
+  // even scanned for offenders — and demanding a spotless candidate then throws
+  // away every repair. Company.mmd's `L_HongKongCompany_ExpensesHK_0` is the
+  // case: its first segment cuts `Customer`, so although the pass correctly
+  // finds the `ExpensesHK` offender on segment 1, every candidate keeps that
+  // prefix, fails the all-or-nothing check, and the edge ships through the
+  // target's interior. Strictly fewer violations is still monotone progress.
+  const baseViolations = countViolations(pts, nonEndpointRects, portApproachRects);
+
   let best: Point[] | null = null;
   let bestBends = Infinity;
   let bestLen = Infinity;
@@ -237,7 +247,7 @@ function tryInsertDetour(
       // (e.g., (830,230)→(970,230)→(960,230) collapses to (830,230)→(960,230)
       // which then evades the port-approach check that excludes the edge's
       // own endpoint from `portApproachRects`).
-      if (!isCandidateClear(candidate, nonEndpointRects, portApproachRects)) {
+      if (countViolations(candidate, nonEndpointRects, portApproachRects) >= baseViolations) {
         continue;
       }
       const sanitized = sanitizeOrthogonalPolylineForRendering(candidate, { spacing });
@@ -286,32 +296,42 @@ function buildCandidate(
   return [...prefix, ...insert, ...suffix];
 }
 
-function isCandidateClear(
+/**
+ * Obstacle violations in a polyline, by the segment-role rules this pass uses:
+ * middle segments must clear every rect (a middle segment inside the edge's own
+ * endpoint body is a real defect), while the first and last segments are port
+ * approaches and so skip the edge's own endpoint rects.
+ *
+ * Counted rather than merely detected because a candidate is judged against the
+ * route it replaces, not against perfection — see `tryInsertDetour`.
+ */
+function countViolations(
   pts: Point[],
   nonEndpointRects: [string, Rect][],
   portApproachRects: [string, Rect][]
-): boolean {
-  // Middle segments (i ∈ [1, n-3]) must clear ALL rects — even endpoints.
+): number {
+  let n = 0;
   for (let i = 1; i < pts.length - 2; i++) {
     for (const [, rect] of nonEndpointRects) {
       if (segmentIntersectsRectInterior(pts[i], pts[i + 1], rect)) {
-        return false;
+        n += 1;
       }
     }
   }
-  // Port-approach segments (first and last) skip the edge's own endpoint
-  // rects by construction, so check them against portApproachRects only.
   if (pts.length >= 2) {
     for (const [, rect] of portApproachRects) {
       if (segmentIntersectsRectInterior(pts[0], pts[1], rect)) {
-        return false;
+        n += 1;
       }
-      if (segmentIntersectsRectInterior(pts[pts.length - 2], pts[pts.length - 1], rect)) {
-        return false;
+      if (
+        pts.length > 2 &&
+        segmentIntersectsRectInterior(pts[pts.length - 2], pts[pts.length - 1], rect)
+      ) {
+        n += 1;
       }
     }
   }
-  return true;
+  return n;
 }
 
 function countBends(pts: Point[]): number {
@@ -402,6 +422,8 @@ function tryCaseBDetour(
     }
   }
 
+  const baseViolations = countViolations(pts, nonEndpointRects, portApproachRects);
+
   let best: Point[] | null = null;
   let bestBends = Infinity;
   let bestLen = Infinity;
@@ -421,7 +443,7 @@ function tryCaseBDetour(
       if (!candidate) {
         continue;
       }
-      if (!isCandidateClear(candidate, nonEndpointRects, portApproachRects)) {
+      if (countViolations(candidate, nonEndpointRects, portApproachRects) >= baseViolations) {
         continue;
       }
       // Use minSegmentLength:2 so the narrow-band final stub (e.g., 2.5u
