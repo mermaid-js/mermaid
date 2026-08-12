@@ -244,3 +244,22 @@ run ended: reading-order patch landed by product decision (043383193, total 4418
 - remaining known regression from the landed patch: `company-simp` Level 2 crossings 0 -> 2. Not addressed.
 
 run ended: iter-51 fixed (c7ad8213b); sweep steady at 44152, wider suite 20 failures
+
+### 2026-08-12 13:05 — round 12 (company-simp crossings: NOT FIXED, deliberately — the fix costs more than the defect)
+- confirmed the patch causes it, after first getting the comparison WRONG: `git stash push` on a file with no working-tree change is a silent no-op, so my "without patch" run was actually with it. Redone via `git checkout 043383193^ -- types.ts`:
+    without patch: score 978, crossings **0** — `ExpensesHK` sits LEFT of HKC (x~106); HKC->ExpensesHK routes left, no contention
+    with patch:    score 968, crossings **2** — `ExpensesHK` mirrors to the RIGHT (x=501), so HKC->ExpensesHK and USCompany->HKC now share HKC's east corridor and interleave
+  The two routes tangle twice: A (363,234)(373,234)(373,183)(501,183) vs B (339,135)(383,135)(383,209)(363,209). A's jog sits at x=373, INSIDE B's descent at x=383, so A crosses B's vertical on the way out and B's horizontal on the way up. A needs the OUTER rail.
+- **the shipped output is unaffected.** DDLT sweep has Company-simp at 990 with 0 crossings, before and after the patch. The failing spec drives `runOrthogonalEdgePipeline` directly — a lower-level entry that by design does not run `runLateQualityPasses`, which is what clears these crossings on the path that actually ships.
+- measured every existing repair against it:
+    applyMultiCrossingCleanup                      968 / 2 crossings — no effect
+    Option B post-processing (bundle order+nudge)  968 / 2 — no effect
+    reorderSiblingPortsToUncross                   978 / 0 — fixes it
+    reduceCrossingsWithPortSideCandidates          **990 / 0** — fixes it, and 990 is exactly the shipped score
+  Only the two crossing-repair passes work, and BOTH were deliberately unwired (documented at `index.ts:503`: the five crossing passes cost 55% of layout time and were worth 81 points of 18807 = 0.4%).
+- tried wiring the single best one (`reduceCrossingsWithPortSideCandidates`) into `runOrthogonalEdgePipeline`, the shared core that `runRP1OrthogonalPipeline` delegates to. Result: sweep 44152 -> 44160 (+8), sweep wall time ~3m, and it did NOT fix the target spec — Company-simp's path returns via `runNonDomusPipeline`, not the `domusHandled` branch I hooked. Reverted.
+- DECISION: not fixed. The defect is confined to a lower-level entry point; the delivered rendering of Company-simp is unchanged at 990/0 crossings. The only fixes re-wire a pass removed on a measured perf decision, paying that cost on every layout AND every candidate build, to improve a path that is not what ships. That is a worse trade than the defect.
+- lesson: check WHICH entry point a failing spec drives before treating it as a shipped regression. Two of this session's "regressions" (edge-types at look=classic, this one) were specs exercising a configuration or entry point that differs from the delivered path — in this case the spec is stricter than production because it stops before the passes that clean up.
+- open options for whoever wants the spec green: (a) re-wire a crossing-repair pass and accept the cost, superseding the iter-note decision with fresh numbers; (b) have the spec drive the shipped entry point so it measures what users get. (b) looks right, but it edits a spec and is a call for the user.
+
+run ended: company-simp crossings not fixed by decision — shipped output unaffected (990/0), and every available fix costs more than the defect; total 44152
