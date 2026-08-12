@@ -262,10 +262,15 @@ describe('C4 characterization', () => {
         `,
         {}
       );
-      // the cylinder renders as a path; the folder override falls back to the plain box
-      // (scoped to .node to exclude unrelated defs/marker paths)
-      cy.get('.node path').should('have.length', 1);
-      cy.get('.node > rect').should('have.length', 2);
+      // Asserted per element rather than by total count: counting `.node path` and
+      // `.node > rect` across the whole diagram passes just as well if the cylinder and
+      // folder overrides are swapped.
+      cy.contains('.node', 'As Cylinder').find('path').should('have.length', 1);
+      cy.contains('.node', 'As Cylinder').children('rect').should('not.exist');
+      // `$shape="folder"` is not mapped, so it falls back to the same box as no override.
+      cy.contains('.node', 'As Folder').find('path').should('not.exist');
+      cy.contains('.node', 'As Folder').children('rect').should('have.length', 1);
+      cy.contains('.node', 'Default').children('rect').should('have.length', 1);
     });
 
     it('CHAR.update-rel-style should apply UpdateRelStyle offsets and colors', () => {
@@ -334,10 +339,15 @@ describe('C4 characterization', () => {
         `,
         {}
       );
-      // both containers fall back to the plain box; a sprite implementation must break this
+      // Both containers fall back to the plain box, asserted per element: a total of two
+      // rects cannot tell "both fell back" from "one fell back and the other grew a second
+      // box". A sprite implementation must break these.
       cy.get('image').should('not.exist');
       cy.get('svg svg').should('not.exist');
-      cy.get('.node > rect').should('have.length', 2);
+      cy.contains('.node', 'Browser').children('rect').should('have.length', 1);
+      cy.contains('.node', 'Browser').find('path').should('not.exist');
+      cy.contains('.node', 'Terminal').children('rect').should('have.length', 1);
+      cy.contains('.node', 'Terminal').find('path').should('not.exist');
     });
 
     it('CHAR.descr-wrapping should wrap long descriptions as SVG text (the wrap-config bug in #7949 is unrelated)', () => {
