@@ -1,4 +1,5 @@
 import { createText } from '../../createText.js';
+import fastdom from '../../fastdom.js';
 import type { Node } from '../../types.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { evaluate, getEffectiveHtmlLabels } from '../../../config.js';
@@ -8,12 +9,17 @@ import { decodeEntities, handleUndefinedAttr } from '../../../utils.js';
 import type { D3Selection, Point } from '../../../types.js';
 import { configureLabelImages } from './labelImageUtils.js';
 import { profiler } from '../../../profiler.js';
+import { c4LabelHelper } from './c4LabelHelper.js';
 
 export const labelHelper = async <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,
   _classes?: string
 ) => {
+  // Nodes carrying a stereotype render a stacked multi-section SVG label.
+  if (node.stereotype !== undefined) {
+    return c4LabelHelper(parent, node, _classes);
+  }
   let cssClasses;
   const useHtmlLabels = node.useHtmlLabels || evaluate(getConfig()?.htmlLabels);
   if (!_classes) {
@@ -76,17 +82,19 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
     // if there are images, need to wait for them to load before getting the bounding box
     await configureLabelImages(div);
 
-    bbox =
+    bbox = await fastdom.measure(() =>
       injected.profiling && profiler.tickSync
         ? profiler.tickSync('getBoundingClientRect', () => div.getBoundingClientRect())
-        : div.getBoundingClientRect();
+        : div.getBoundingClientRect()
+    );
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   } else {
-    bbox =
+    bbox = await fastdom.measure(() =>
       injected.profiling && profiler.tickSync
         ? profiler.tickSync('getBBox', () => text.getBBox())
-        : text.getBBox();
+        : text.getBBox()
+    );
   }
 
   // Center the label
@@ -139,17 +147,19 @@ export const insertLabel = async <T extends SVGGraphicsElement>(
     const div = text.children[0];
     const dv = select(text);
 
-    bbox =
+    bbox = await fastdom.measure(() =>
       injected.profiling && profiler.tickSync
         ? profiler.tickSync('getBoundingClientRect', () => div.getBoundingClientRect())
-        : div.getBoundingClientRect();
+        : div.getBoundingClientRect()
+    );
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   } else {
-    bbox =
+    bbox = await fastdom.measure(() =>
       injected.profiling && profiler.tickSync
         ? profiler.tickSync('getBBox', () => text.getBBox())
-        : text.getBBox();
+        : text.getBBox()
+    );
   }
 
   // Center the label
@@ -184,6 +194,7 @@ export const updateNodeBounds = <T extends SVGGraphicsElement>(
     node.height = knownBounds.height;
     return;
   }
+  // TODO: Make this function `async` and use `fastdom.measure` to batch reflow
   const bbox =
     injected.profiling && profiler.tickSync
       ? profiler.tickSync('getBBox', () => element.node()!.getBBox())

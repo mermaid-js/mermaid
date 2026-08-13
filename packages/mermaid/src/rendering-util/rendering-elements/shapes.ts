@@ -3,23 +3,28 @@ import type { D3Selection, MaybePromise } from '../../types.js';
 import type { Node, ShapeRenderOptions } from '../types.js';
 import { anchor } from './shapes/anchor.js';
 import { bowTieRect } from './shapes/bowTieRect.js';
+import { bucket } from './shapes/bucket.js';
 import { collapsedGroup } from './shapes/collapsedGroup.js';
 import { block_arrow } from './shapes/blockArrow.js';
+import { browser } from './shapes/browser.js';
 import { card } from './shapes/card.js';
 import { choice } from './shapes/choice.js';
 import { circle } from './shapes/circle.js';
 import { composite } from './shapes/composite.js';
+import { consoleWindow } from './shapes/console.js';
 import { crossedCircle } from './shapes/crossedCircle.js';
 import { curlyBraceLeft } from './shapes/curlyBraceLeft.js';
 import { curlyBraceRight } from './shapes/curlyBraceRight.js';
 import { curlyBraces } from './shapes/curlyBraces.js';
 import { curvedTrapezoid } from './shapes/curvedTrapezoid.js';
+import { person } from './shapes/person.js';
 import { cylinder } from './shapes/cylinder.js';
 import { datastore } from './shapes/datastore.js';
 import { dividedRectangle } from './shapes/dividedRect.js';
 import { doublecircle } from './shapes/doubleCircle.js';
 import { filledCircle } from './shapes/filledCircle.js';
 import { flippedTriangle } from './shapes/flippedTriangle.js';
+import { folder } from './shapes/folder.js';
 import { forkJoin } from './shapes/forkJoin.js';
 import { halfRoundedRectangle } from './shapes/halfRoundedRectangle.js';
 import { hexagon } from './shapes/hexagon.js';
@@ -142,6 +147,42 @@ export const shapesDefs = [
     description: 'Data flow diagram data store',
     aliases: ['data-store'],
     handler: datastore,
+  },
+  {
+    semanticName: 'Folder',
+    name: 'Folder',
+    shortName: 'folder',
+    description: 'Folder or directory',
+    aliases: ['directory'],
+    handler: folder,
+  },
+  {
+    semanticName: 'Bucket',
+    name: 'Bucket',
+    shortName: 'bucket',
+    description: 'Object storage bucket',
+    handler: bucket,
+  },
+  {
+    semanticName: 'Console',
+    name: 'Console (terminal window)',
+    shortName: 'console',
+    description: 'Terminal or console window',
+    handler: consoleWindow,
+  },
+  {
+    semanticName: 'Browser',
+    name: 'Browser',
+    shortName: 'browser',
+    description: 'Browser window',
+    handler: browser,
+  },
+  {
+    semanticName: 'Person',
+    name: 'Person',
+    shortName: 'person',
+    description: 'Person (circular head above a rounded body)',
+    handler: person,
   },
   {
     semanticName: 'Start',

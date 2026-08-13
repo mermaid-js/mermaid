@@ -256,19 +256,18 @@ List of lines as strings
 
 > **getConfig**: () => [`MermaidConfig`](MermaidConfig.md)
 
-## getConfig
-
-| Function  | Description               | Type        | Return Values                  |
-| --------- | ------------------------- | ----------- | ------------------------------ |
-| getConfig | Obtains the currentConfig | Get Request | Any Values from current Config |
-
-**Notes**: Avoid calling this function repeatedly. Instead, store the result in a variable and use it, and pass it down to function calls.
+Returns a copy of the `currentConfig`.
 
 ##### Returns
 
 [`MermaidConfig`](MermaidConfig.md)
 
 The currentConfig
+
+##### Remarks
+
+Avoid calling this function repeatedly.
+Instead, store the result in a variable and use it, and pass it down to function calls.
 
 #### insertCluster()
 

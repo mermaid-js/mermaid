@@ -120,13 +120,12 @@ Splits on <br> tags
 
 () => [`MermaidConfig`](../interfaces/MermaidConfig.md)
 
-## getConfig
+Returns a copy of the `currentConfig`.
 
-| Function  | Description               | Type        | Return Values                  |
-| --------- | ------------------------- | ----------- | ------------------------------ |
-| getConfig | Obtains the currentConfig | Get Request | Any Values from current Config |
+**Remarks**
 
-**Notes**: Avoid calling this function repeatedly. Instead, store the result in a variable and use it, and pass it down to function calls.
+Avoid calling this function repeatedly.
+Instead, store the result in a variable and use it, and pass it down to function calls.
 
 ##### insertCluster
 

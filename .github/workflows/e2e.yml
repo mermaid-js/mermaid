@@ -9,7 +9,7 @@ on:
   pull_request:
   merge_group:
   workflow_dispatch:
-    inputs:
+    inputs: &workflow_inputs
       group_argos_images:
         description: Composite screenshots into batched sheets before Argos upload
         type: boolean
@@ -18,6 +18,8 @@ on:
         description: Cypress spec glob (empty = full suite)
         type: string
         default: ''
+  workflow_call:
+    inputs: *workflow_inputs
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -47,11 +49,9 @@ env:
       )
     }}
   # Automatic runs always batch; manual runs can upload per-screenshot instead.
+  # `inputs.group_argos_images` is `null` for non-manual runs, so treat it like `true`.
   GROUP_ARGOS_IMAGES: >-
-    ${{
-      github.event_name != 'workflow_dispatch' && 'true' ||
-      (inputs.group_argos_images && 'true' || 'false')
-    }}
+    ${{ format('{0}', inputs.group_argos_images) == 'false' && 'false' || 'true' }}
   # On a push to the baseline branch (develop), upload BOTH the grouped sheets
   # and the individual per-test screenshots in a single Argos build, so the
   # default build's baseline is a superset. Scoped grouped PRs and manual
@@ -120,8 +120,14 @@ jobs:
       - name: Detect e2e scope
         id: scope
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            SPEC="${{ github.event.inputs.spec_pattern }}"
+          if [ "$SPEC" != 'null' ]; then
+            SPEC=$(node -e '
+              // `SPEC` should be a JSON string, so unwrap it
+              const assert = require("node:assert");
+              const parsed = JSON.parse(process.env.SPEC);
+              assert.strictEqual(typeof parsed, "string", "SPEC must be a JSON string");
+              console.log(parsed);
+            ')
             if [ -n "$SPEC" ]; then
               echo "spec_pattern=${SPEC}" >> "$GITHUB_OUTPUT"
               echo "matrix=[1]" >> "$GITHUB_OUTPUT"
@@ -134,13 +140,11 @@ jobs:
             exit 0
           fi
 
-          # Kill-switch: set the repo variable E2E_SCOPE_BY_DIAGRAM to 'false'
-          # to disable scoping.  Scoping is ON by default so that fork PRs
-          # (where repository variables are unavailable) still benefit from it.
-          if [ "${E2E_SCOPE_BY_DIAGRAM}" = "false" ]; then
+          # Feature flag off → always use full matrix
+          if [ "${E2E_SCOPE_BY_DIAGRAM}" != "true" ]; then
             echo "spec_pattern=" >> "$GITHUB_OUTPUT"
             echo "matrix=[1,2,3,4,5,6,7,8]" >> "$GITHUB_OUTPUT"
-            echo "[detect-scope] Scoping disabled via kill-switch — full suite."
+            echo "[detect-scope] Feature flag disabled — full suite."
             exit 0
           fi
 
@@ -189,11 +193,12 @@ jobs:
           fi
           echo "[detect-scope] matrix output: $(grep '^matrix=' "$GITHUB_OUTPUT" | tail -1)"
         env:
-          # Scoping is ON by default.  To disable, set this repository variable
-          # to 'false' (GitHub → Settings → Secrets and variables → Actions → Variables).
-          # Using == 'false' (instead of == 'true') ensures fork PRs — where
-          # repository variables are not exposed — still get scoped runs.
-          E2E_SCOPE_BY_DIAGRAM: "${{ vars.E2E_SCOPE_BY_DIAGRAM == 'false' && 'false' || 'true' }}"
+          # Toggle diagram-scoped e2e: set this repository variable to 'true'
+          # (GitHub → Settings → Secrets and variables → Actions → Variables)
+          E2E_SCOPE_BY_DIAGRAM: "${{ vars.E2E_SCOPE_BY_DIAGRAM == 'true' }}"
+          # Either `null` (no inputs), or a JSON string to the spec_pattern.
+          # Empty JSON string (i.e. `""`) means run the full suite.
+          SPEC: ${{ toJSON( inputs.spec_pattern ) }}
 
   e2e:
     # Skip the entire e2e job when only docs/ignorable files changed.
@@ -272,7 +277,7 @@ jobs:
       # Stash each shard's lcov; the host-based `codecov-upload` job uploads them.
       - name: Upload e2e coverage artifact
         if: ${{ steps.cypress.conclusion == 'success' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/develop') }}
-        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: e2e-coverage-${{ matrix.containers }}
           path: coverage/cypress/lcov.info
@@ -281,7 +286,7 @@ jobs:
 
       - name: Upload raw screenshots for Argos batching
         if: ${{ env.RUN_VISUAL_TEST == 'true' && !cancelled() }}
-        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: argos-screenshots-${{ matrix.containers }}
           path: cypress/screenshots
@@ -298,7 +303,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Download e2e coverage artifacts
-        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
         with:
           pattern: e2e-coverage-*
           path: coverage-artifacts
@@ -349,7 +354,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Download screenshot artifacts
-        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
         with:
           pattern: argos-screenshots-*
           merge-multiple: true
