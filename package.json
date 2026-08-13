@@ -89,6 +89,7 @@
     "@argos-ci/cypress": "^6.2.12",
     "@changesets/changelog-github": "^0.5.2",
     "@changesets/cli": "^2.29.8",
+    "@chevrotain/regexp-to-ast": "11.1.2",
     "@codemirror/commands": "^6.10.4",
     "@codemirror/language": "^6.12.4",
     "@codemirror/state": "^6.6.0",
