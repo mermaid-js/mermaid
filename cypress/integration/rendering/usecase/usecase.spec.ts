@@ -91,7 +91,7 @@ describe('Usecase diagram', () => {
           expect(source, 'fixture should declare the usecase diagram type').to.match(
             /(?:^|\n)usecase-beta(?:\s|$)/
           );
-          renderForDom(asMermaidElementSource(source));
+          imgSnapshotTest(asMermaidElementSource(source));
           cy.get('svg .error-icon').should('not.exist');
           cy.get('[data-usecase-kind]').its('length').should('be.greaterThan', 0);
         });
