@@ -65,23 +65,22 @@ const getStyles = (options: UsecaseStyleOptions) => `
     stroke: ${options.nodeBorder ?? options.primaryColor};
   }
 
-  & .system-boundary,
-  & .system-boundary-rect,
-  & .system-boundary-package {
+  & .system-boundary rect.boundary-body,
+  & .system-boundary rect.boundary-tab,
+  & .system-boundary-package-tab {
     fill: ${options.clusterBkg};
     stroke: ${options.clusterBorder};
     stroke-width: 1px;
   }
 
-  & .system-boundary .cluster-label,
-  & .system-boundary-title {
-    color: ${options.titleColor ?? options.primaryTextColor};
+  & .system-boundary-title text {
     fill: ${options.titleColor ?? options.primaryTextColor};
   }
 
-  & .system-boundary-package-tab {
-    fill: ${options.clusterBkg};
-    stroke: ${options.clusterBorder};
+  /* Only the span, never the <p> inside it: the renderer puts a user-supplied
+     'color' on the span, and that has to stay inheritable by its children. */
+  & .system-boundary-title span {
+    color: ${options.titleColor ?? options.primaryTextColor};
   }
 
   & .usecase-note {

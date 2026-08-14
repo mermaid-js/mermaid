@@ -129,7 +129,7 @@ systemBoundary sb1["Payment service"]@{ type: package }:::system
 end
 Clerk --> Authorize
 Authorize --> Receipt
-classDef system fill:#f8f8ff,stroke:#4b4b7a
+classDef system stroke:#4b4b7a
 ```
 
 Titles accept the same label forms as use cases — unquoted text, a plain string, or a Markdown string — inside either `[…]` or `(…)`. Unlike a use case, the bracket form does not select a shape: boundary geometry comes from the `type` metadata only.
@@ -138,13 +138,12 @@ A boundary declared with a quoted title and no identifier gets a deterministic o
 
 ```mermaid-example
 usecase-beta
-systemBoundary "Payment service":::system
+systemBoundary "Payment service"
   actor Clerk("Payment clerk")
   Authorize("Authorize payment")
 end
 Payment_service@{ type: package }
 Clerk --> Authorize
-classDef system fill:#f8f8ff,stroke:#4b4b7a
 ```
 
 The default boundary type is `rect`. Set `type: package`, inline or in a later metadata statement, to render a package title tab. A later statement overrides inline metadata for the same key. Boundary IDs are diagram-wide, while their titles are display labels.
@@ -261,7 +260,7 @@ json Payload@{
   "emptyArray": []
 }:::data
 Inspect --> Payload
-classDef data fill:#f6fbff,stroke:#3572a5
+classDef data stroke:#3572a5
 style Payload stroke-width:2px
 ```
 
@@ -284,15 +283,17 @@ json Session@{ "active": true }:::data
 Customer --> Checkout
 Checkout --> Profile
 Profile --> Session
-classDef default fill:#fff,stroke:#333
+classDef default stroke:#7f8ea3
 classDef external,critical stroke-width:3px
 class Customer,Checkout external,critical
 class Account,Session data
-style Checkout fill:#fff0f0
+style Checkout stroke:#c33,stroke-width:4px
 style Account stroke:#536878
 ```
 
 CSS declarations are comma-separated `property:value` items. Use `\,` for a literal comma in a value. Semicolons are rejected. Style precedence is theme variables, the `default` class, named classes in assignment order, then direct `style` declarations. Later declarations win per property within the same layer.
+
+Backgrounds come from the active theme, so a hardcoded `fill` is tied to the theme you wrote it for. A `fill` on a boundary paints its body and, on a `package` boundary, its title tab, while the title text keeps the theme's title color. A light `fill` therefore hides the title in a dark theme, exactly as it does on a flowchart subgraph. Pair the `fill` with a `color` declaration when you set one, as in `classDef system fill:#f8f8ff,color:#333`.
 
 Actor metadata is typed and is not a style map. `fillColor`, `strokeColor`, `strokeWidth`, and arbitrary actor metadata keys are errors. Use `classDef`, `class`, or `style` instead.
 
@@ -389,9 +390,9 @@ Customer --> Browse
 Checkout pays@..> : include Payment
 Staff --> Review
 Review --> OrderData
-classDef system fill:#fffbea,stroke:#8a6d1d
-classDef critical fill:#fff0f0,stroke:#c33,stroke-width:3px
-classDef data fill:#eef8ff,stroke:#3572a5
+classDef system stroke:#c8a02a,stroke-width:2px
+classDef critical stroke:#c33,stroke-width:3px
+classDef data stroke:#3572a5
 starts@{ animation: fast }
 style pays stroke:#6b46c1,stroke-width:2px
 ```

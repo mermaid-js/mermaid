@@ -1168,9 +1168,22 @@ style payloadEdge stroke:#f00`);
       expect(css).toContain('.usecase-actor-awesome');
       expect(css).toContain('.usecase-business-marker');
       expect(css).toContain('.system-boundary-package');
+      // Boundary colours are painted on the shapes themselves, the way flowchart
+      // clusters do it, so no child element inherits a fill from the group.
       expect(css).toContain(
-        '& .system-boundary-package-tab {\n    fill: #eee;\n    stroke: #333;\n  }'
+        '& .system-boundary rect.boundary-body,\n  & .system-boundary rect.boundary-tab,\n  & .system-boundary-package-tab {\n    fill: #eee;\n    stroke: #333;\n    stroke-width: 1px;\n  }'
       );
+      // The group must not be painted: a fill on it is inherited by every child.
+      expect(css).not.toContain('& .system-boundary,\n');
+      expect(css).toContain('& .system-boundary-title text {\n    fill: #222;\n  }');
+      expect(css).toContain('& .system-boundary-title span {\n    color: #222;\n  }');
+      // The <p> inside the span must stay unstyled. The renderer puts a
+      // user-supplied `color` on the span, and a rule on the <p> would win over
+      // it, making a boundary title unreadable on a user-supplied `fill`.
+      expect(css).not.toContain('& .system-boundary-title p');
+      // The title group itself must not carry a fill: it would leak into the
+      // label background rect and paint a light bar behind light title text.
+      expect(css).not.toContain('& .system-boundary .cluster-label');
       expect(css).not.toContain('& .system-boundary-title,\n  & .system-boundary-package-tab');
       expect(css).toContain('.usecase-note');
       expect(css).toContain('.usecase-json-table');
