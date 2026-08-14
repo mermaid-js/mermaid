@@ -8,9 +8,15 @@ import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 const SWIMLANE_FIXTURE_DIR = 'cypress/platform/dev-diagrams/layout-tests/swimlanes';
+const USECASE_FIXTURE_DIR = 'cypress/platform/dev-diagrams/diagrams/use-case';
 
 const listSwimlaneFixtureNames = (projectRoot: string): string[] =>
   readdirSync(join(projectRoot, SWIMLANE_FIXTURE_DIR))
+    .filter((file) => file.endsWith('.mmd'))
+    .sort();
+
+const listUsecaseFixtureNames = (projectRoot: string): string[] =>
+  readdirSync(join(projectRoot, USECASE_FIXTURE_DIR))
     .filter((file) => file.endsWith('.mmd'))
     .sort();
 
@@ -35,6 +41,7 @@ export default eyesPlugin(
         config.env.useAppli = process.env.USE_APPLI ? true : false;
         config.env.useArgos = process.env.RUN_VISUAL_TEST === 'true';
         config.env.swimlaneFixtures = listSwimlaneFixtureNames(config.projectRoot);
+        config.env.usecaseFixtures = listUsecaseFixtureNames(config.projectRoot);
 
         // Argos capture uses cy.argosScreenshot from @argos-ci/cypress/support (e2e.js).
         // Do not register registerArgosTask — its after:run hook uploads to Argos.
@@ -45,6 +52,9 @@ export default eyesPlugin(
         on('task', {
           listSwimlaneFixtures() {
             return listSwimlaneFixtureNames(config.projectRoot);
+          },
+          listUsecaseFixtures() {
+            return listUsecaseFixtureNames(config.projectRoot);
           },
         });
         // do not forget to return the changed config object!

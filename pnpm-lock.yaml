@@ -10,6 +10,8 @@ overrides:
   '@isaacs/brace-expansion': ^5.0.1
   minimatch@10: ^10.2.6
 
+packageExtensionsChecksum: sha256-MNAXgvfQrO1Cwjlk5bwEsW3ZfMffzU8xSht5BuS8yGc=
+
 patchedDependencies:
   roughjs:
     hash: 3543d47108cb41b68ec6a671c0e1f9d0cfe2ce524fea5b0992511ae84c3c6b64
@@ -289,6 +291,9 @@ importers:
       '@upsetjs/venn.js':
         specifier: ^2.0.0
         version: 2.0.0
+      chevrotain:
+        specifier: ~11.1.2
+        version: 11.1.2
       cytoscape:
         specifier: ^3.34.0
         version: 3.34.0
@@ -20073,6 +20078,7 @@ snapshots:
 
   langium@4.2.1:
     dependencies:
+      '@chevrotain/regexp-to-ast': 11.1.2
       chevrotain: 11.1.2
       chevrotain-allstar: 0.3.1(chevrotain@11.1.2)
       vscode-languageserver: 9.0.1
