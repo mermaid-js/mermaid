@@ -621,13 +621,12 @@ accDescr {
 }
 actor Customer("Customer")
 actor Staff("Order staff")@{ type: hollow, business: true } <<Employee>>
-systemBoundary "Ordering System":::system
+systemBoundary ordering["Ordering System"]@{ type: package }:::system
   Browse("Browse products")
   Checkout("Checkout") <<Core>>:::critical
   Payment("Process payment")
   Review[Review order]
 end
-Ordering_System@{ type: package }
 json OrderData@{
   "status": "pending",
   "items": [{ "name": "Book", "quantity": 1 }],
@@ -656,13 +655,12 @@ accDescr {
 }
 actor Customer("Customer")
 actor Staff("Order staff")@{ type: hollow, business: true } <<Employee>>
-systemBoundary "Ordering System":::system
+systemBoundary ordering["Ordering System"]@{ type: package }:::system
   Browse("Browse products")
   Checkout("Checkout") <<Core>>:::critical
   Payment("Process payment")
   Review[Review order]
 end
-Ordering_System@{ type: package }
 json OrderData@{
   "status": "pending",
   "items": [{ "name": "Book", "quantity": 1 }],
