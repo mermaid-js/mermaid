@@ -11,16 +11,15 @@ import { join } from 'node:path';
 const SWIMLANE_FIXTURE_DIR = 'cypress/platform/dev-diagrams/layout-tests/swimlanes';
 const USECASE_FIXTURE_DIR = 'cypress/platform/dev-diagrams/diagrams/use-case';
 
-const listFixtureNames = (projectRoot: string, fixtureDir: string): string[] =>
-  readdirSync(join(projectRoot, fixtureDir))
+const listSwimlaneFixtureNames = (projectRoot: string): string[] =>
+  readdirSync(join(projectRoot, SWIMLANE_FIXTURE_DIR))
     .filter((file) => file.endsWith('.mmd'))
     .sort();
 
-const listSwimlaneFixtureNames = (projectRoot: string): string[] =>
-  listFixtureNames(projectRoot, SWIMLANE_FIXTURE_DIR);
-
 const listUsecaseFixtureNames = (projectRoot: string): string[] =>
-  listFixtureNames(projectRoot, USECASE_FIXTURE_DIR);
+  readdirSync(join(projectRoot, USECASE_FIXTURE_DIR))
+    .filter((file) => file.endsWith('.mmd'))
+    .sort();
 
 export default eyesPlugin(
   defineConfig({
