@@ -280,6 +280,23 @@ describe('UseCase diagram with Chevrotain parser', () => {
       expect(useCases.has('Login')).toBe(true);
       expect(useCases.has('Logout')).toBe(true);
     });
+
+    it('should parse a boundary with an explicit id, a label, and inline metadata', async () => {
+      await Diagram.fromText(
+        `usecase-beta
+        systemBoundary sb1["Payment service"]@{ type: package }
+          actor Clerk("Payment clerk")
+          Authorize("Authorize payment")
+        end
+        Clerk --> Authorize`
+      );
+
+      expect(db.getSystemBoundary('sb1')).toMatchObject({
+        label: 'Payment service',
+        type: 'package',
+        members: ['Clerk', 'Authorize'],
+      });
+    });
   });
 
   describe('when parsing direction', () => {

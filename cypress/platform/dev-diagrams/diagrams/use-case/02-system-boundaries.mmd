@@ -7,11 +7,10 @@ usecase-beta
     Order("Place order")
     Track("Track order")
   end
-  systemBoundary "Admin Panel"
+  systemBoundary admin["Admin Panel"]@{ type: package }
     Process[Process orders]
     Returns[Handle returns]
   end
-  Admin_Panel@{ type: package }
   Customer --> Browse
   Customer --> Order
   Customer --> Track

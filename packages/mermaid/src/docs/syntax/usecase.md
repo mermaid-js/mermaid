@@ -118,22 +118,36 @@ Login --> Dashboard
 
 ## System boundaries
 
-A `systemBoundary` block groups actor and use case declarations. A quoted title gets a deterministic identifier. In this example the title `Payment service` produces the boundary identifier `Payment_service`, which is used for the metadata assignment after the block.
+A `systemBoundary` block groups actor and use case declarations. Give the boundary a short identifier followed by an optional display title, then optional metadata and classes. The suffixes are ordered `systemBoundary <id><title>@{ … }:::<classes>`, the same order actors and use cases use.
+
+```mermaid-example
+usecase-beta
+systemBoundary sb1["Payment service"]@{ type: package }:::system
+  actor Clerk("Payment clerk")
+  Authorize("Authorize payment")
+  Receipt[Create receipt]
+end
+Clerk --> Authorize
+Authorize --> Receipt
+classDef system fill:#f8f8ff,stroke:#4b4b7a
+```
+
+Titles accept the same label forms as use cases — unquoted text, a plain string, or a Markdown string — inside either `[…]` or `(…)`. Unlike a use case, the bracket form does not select a shape: boundary geometry comes from the `type` metadata only.
+
+A boundary declared with a quoted title and no identifier gets a deterministic one instead. Below, the title `Payment service` produces the identifier `Payment_service`, which the separate metadata statement then targets.
 
 ```mermaid-example
 usecase-beta
 systemBoundary "Payment service":::system
   actor Clerk("Payment clerk")
   Authorize("Authorize payment")
-  Receipt[Create receipt]
 end
 Payment_service@{ type: package }
 Clerk --> Authorize
-Authorize --> Receipt
 classDef system fill:#f8f8ff,stroke:#4b4b7a
 ```
 
-The default boundary type is `rect`. Set `type: package` at the top level to render a package title tab. Boundary IDs are diagram-wide, while their titles are display labels.
+The default boundary type is `rect`. Set `type: package`, inline or in a later metadata statement, to render a package title tab. A later statement overrides inline metadata for the same key. Boundary IDs are diagram-wide, while their titles are display labels.
 
 Boundaries are one level deep. Their contents can contain only actor and use case declarations, blank lines, and `%%` comments. Relationships, notes, JSON nodes, direction statements, class and style statements, boundary metadata, and nested boundaries remain at the top level. An actor or use case can belong to at most one boundary. Contained elements can be referenced by top-level relationships, notes, classes, and styles.
 

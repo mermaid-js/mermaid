@@ -434,7 +434,9 @@ class UsecaseVisitor extends BaseVisitor {
     const children = contentNode ? (this.visit(contentNode) as GraphStatement[]) : [];
     this.parentBoundary = previous;
     const end = this.tokens(ctx, 'END')[0];
-    return {
+    const metadataNode = this.nodes(ctx, 'metadata')[0];
+    const metadata = metadataNode ? (this.visit(metadataNode) as DraftMetadata) : undefined;
+    const statement: GraphStatement = {
       kind: 'group',
       span: [0, 0],
       group: boundary.id,
@@ -442,17 +444,44 @@ class UsecaseVisitor extends BaseVisitor {
       titleSpan: boundary.label.span,
       endSpan: this.tokenSpan(end),
       classSpans: classes.spans,
+      ...(metadata
+        ? {
+            metadata: metadata.properties.map(({ key, span, keySpan, valueSpan }) => ({
+              key,
+              span,
+              keySpan,
+              valueSpan,
+            })),
+          }
+        : {}),
       ...(children.length ? { children } : {}),
     };
+    if (metadata) {
+      // Inline metadata resolves exactly like the standalone `id@{ … }` statement, so
+      // both forms share one validation path and a later statement can still override.
+      this.builder.addMetadataAssignment(boundary.id, boundary.location, metadata, statement);
+    }
+    return statement;
   }
   systemBoundaryName(ctx: Ctx): DraftBoundary {
-    const token = this.allTokens(ctx)[0];
+    const identifier = this.tokens(ctx, 'IDENTIFIER')[0];
+    if (identifier) {
+      const labelNode = this.nodes(ctx, 'nodeLabel')[0];
+      return {
+        id: identifier.image,
+        label: labelNode ? (this.visit(labelNode) as DraftLabel) : this.tokenLabel(identifier),
+        location: this.tokenLocation(identifier),
+        generated: false,
+        classes: [],
+      };
+    }
+    const token = this.tokens(ctx, 'PLAIN_STRING')[0] ?? this.tokens(ctx, 'MARKDOWN_STRING')[0];
     const label = this.tokenLabel(token);
     return {
-      id: token.tokenType.name === 'IDENTIFIER' ? token.image : this.generateId(label.text),
+      id: this.generateId(label.text),
       label,
       location: this.tokenLocation(token),
-      generated: token.tokenType.name !== 'IDENTIFIER',
+      generated: true,
       classes: [],
     };
   }

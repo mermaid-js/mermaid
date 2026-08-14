@@ -458,7 +458,9 @@ class UsecaseParser extends CstParser {
     this.RULE('systemBoundaryStatement', () => {
       this.CONSUME(SystemBoundary);
       this.SUBRULE(this.systemBoundaryName);
-      this.OPTION(() => this.SUBRULE(this.classSuffix));
+      // Same suffix order as actor and use case declarations: metadata, then classes.
+      this.OPTION(() => this.SUBRULE(this.metadata));
+      this.OPTION2(() => this.SUBRULE(this.classSuffix));
       this.SUBRULE(this.lineEnd);
       this.SUBRULE(this.systemBoundaryContent);
       this.CONSUME(End);
@@ -467,7 +469,32 @@ class UsecaseParser extends CstParser {
 
     this.RULE('systemBoundaryName', () => {
       this.OR([
-        { ALT: () => this.CONSUME(Identifier) },
+        {
+          ALT: () => {
+            this.CONSUME(Identifier);
+            // Mirrors `entityName`, so a short id can carry a long title. Unlike a use
+            // case, the bracket form does not select a shape; boundary geometry comes
+            // from `type` metadata only.
+            this.OPTION(() => {
+              this.OR2([
+                {
+                  ALT: () => {
+                    this.CONSUME(LeftParen);
+                    this.SUBRULE(this.nodeLabel);
+                    this.CONSUME(RightParen);
+                  },
+                },
+                {
+                  ALT: () => {
+                    this.CONSUME(LeftBracket);
+                    this.SUBRULE2(this.nodeLabel);
+                    this.CONSUME(RightBracket);
+                  },
+                },
+              ]);
+            });
+          },
+        },
         { ALT: () => this.CONSUME(PlainString) },
         { ALT: () => this.CONSUME(MarkdownString) },
       ]);

@@ -142,6 +142,21 @@ end
 User --> Login`);
   });
 
+  it('accepts explicit boundary ids with labels, inline metadata, and class suffixes', () => {
+    expectAccepted(`usecase-beta
+systemBoundary sb1["Payment service"]@{ type: package }:::system
+  Authorize("Authorize payment")
+end
+systemBoundary sb2(Billing)@{
+  type: rect
+}:::billing
+  Invoice[Create invoice]
+end
+systemBoundary sb3("\`**Support**\`")
+  Refund[Issue refund]
+end`);
+  });
+
   it('accepts metadata assignments, notes, JSON, direction, classes, and styles', () => {
     expectAccepted(`usecase-beta
 direction LR
@@ -205,6 +220,12 @@ accDescr {
     ['unclosed JSON', 'usecase-beta\njson Payload@{"nested": {'],
     ['unclosed Markdown', 'usecase-beta\nA("`unfinished")'],
     ['semicolon CSS', 'usecase-beta\nstyle A fill:red;stroke:blue'],
+    [
+      'boundary class suffix before inline metadata',
+      'usecase-beta\nsystemBoundary A:::system@{ type: package }\nend',
+    ],
+    ['boundary stereotype before inline metadata', 'usecase-beta\nsystemBoundary A <<S>>\nend'],
+    ['boundary label without an id', 'usecase-beta\nsystemBoundary [Payment service]\nend'],
   ])('rejects %s', (_name, source) => {
     expectRejected(source);
   });

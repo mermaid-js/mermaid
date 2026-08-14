@@ -761,6 +761,132 @@ Inspect --o Payload`;
     );
   });
 
+  it('declares a boundary with an explicit id, a label, inline metadata, and classes', async () => {
+    await parser.parse(`usecase-beta
+classDef system fill:#f8f8ff
+systemBoundary sb1["Payment service"]@{ type: package }:::system
+  actor Clerk("Payment clerk")
+  Authorize("Authorize payment")
+end
+Clerk --> Authorize`);
+
+    expect(db.getSystemBoundary('sb1')).toEqual({
+      id: 'sb1',
+      label: 'Payment service',
+      labelType: 'text',
+      type: 'package',
+      members: ['Clerk', 'Authorize'],
+      classes: ['system'],
+      styles: [],
+    });
+  });
+
+  it.each([
+    ['bracketed text', 'sb1[Payment service]', 'Payment service', 'text'],
+    ['bracketed plain string', 'sb1["Payment service"]', 'Payment service', 'text'],
+    [
+      'bracketed Markdown string',
+      'sb1["`**Payment** service`"]',
+      '**Payment** service',
+      'markdown',
+    ],
+    ['parenthesized text', 'sb1(Payment service)', 'Payment service', 'text'],
+    ['parenthesized plain string', 'sb1("Payment service")', 'Payment service', 'text'],
+    [
+      'parenthesized Markdown string',
+      'sb1("`**Payment** service`")',
+      '**Payment** service',
+      'markdown',
+    ],
+  ])('accepts a %s boundary label', async (_form, declaration, label, labelType) => {
+    await parser.parse(`usecase-beta
+systemBoundary ${declaration}
+Authorize("Authorize payment")
+end`);
+
+    expect(db.getSystemBoundary('sb1')).toMatchObject({ id: 'sb1', label, labelType });
+  });
+
+  it('keeps plain ids, derived ids, and separate metadata statements working', async () => {
+    await parser.parse(`usecase-beta
+classDef system fill:#f8f8ff
+systemBoundary "Payment service":::system
+  Authorize("Authorize payment")
+end
+systemBoundary Billing
+  Invoice[Create invoice]
+end
+Payment_service@{ type: package }`);
+
+    expect(db.getSystemBoundary('Payment_service')).toMatchObject({
+      label: 'Payment service',
+      type: 'package',
+      classes: ['system'],
+      members: ['Authorize'],
+    });
+    expect(db.getSystemBoundary('Billing')).toMatchObject({
+      label: 'Billing',
+      type: 'rect',
+      members: ['Invoice'],
+    });
+  });
+
+  it('lets a later metadata statement override inline boundary metadata', async () => {
+    await parser.parse(`usecase-beta
+systemBoundary "Payment service"@{ type: package }
+  Authorize("Authorize payment")
+end
+Payment_service@{ type: rect }`);
+
+    expect(db.getSystemBoundary('Payment_service')?.type).toBe('rect');
+  });
+
+  it('records the boundary id, title, and inline metadata spans in the AST', async () => {
+    const source = `usecase-beta
+systemBoundary sb1["Payment service"]@{ type: package }
+Authorize("Authorize payment")
+end`;
+    await parser.parse(source);
+
+    const idStart = source.indexOf('sb1');
+    const titleStart = source.indexOf('Payment service');
+    const typeStart = source.indexOf('type');
+    expect(db.getAST()?.statements[0]).toMatchObject({
+      kind: 'group',
+      group: 'sb1',
+      idSpan: [idStart, idStart + 3],
+      titleSpan: [titleStart, titleStart + 'Payment service'.length],
+      metadata: [
+        {
+          key: 'type',
+          span: [typeStart, typeStart + 'type: package'.length],
+          keySpan: [typeStart, typeStart + 4],
+          valueSpan: [typeStart + 6, typeStart + 'type: package'.length],
+        },
+      ],
+    });
+  });
+
+  it('requires inline boundary metadata before the class suffix', async () => {
+    const source = `usecase-beta
+systemBoundary sb1:::system@{ type: package }
+Authorize("Authorize payment")
+end
+classDef system fill:#f8f8ff`;
+    await expectGrammarErrorAt(source, '@{', occurrenceLocation(source, '@{'));
+  });
+
+  it('rejects inline boundary metadata that a boundary does not accept', async () => {
+    const source = `usecase-beta
+systemBoundary sb1["Payment service"]@{ animate: true }
+Authorize("Authorize payment")
+end`;
+    await expectExactSemanticError(
+      source,
+      `Metadata property 'animate' is invalid for boundary 'sb1' at ${occurrenceLocation(source, 'animate')}`
+    );
+  });
+
   it('publishes a complete serializable AST v1 with ordered statements and exact spans', async () => {
     const source = `usecase-beta
 
