@@ -185,7 +185,7 @@ describe('use-case actor shapes', () => {
       expect(node.intersect?.({ x: 100, y: 0 })).toEqual({ x: (node.width ?? 0) / 2, y: 0 });
     }
 
-    expect(new Set(dimensions.map((dimension) => dimension.join('x')))).toHaveLength(1);
+    expect(new Set(dimensions.map((dimension) => dimension.join('x'))).size).toBe(1);
   });
 
   it('renders the hollow actor with wide shoulders, body, and split legs', async () => {

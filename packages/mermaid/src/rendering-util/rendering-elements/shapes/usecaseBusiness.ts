@@ -103,9 +103,11 @@ export async function usecaseBusiness<T extends SVGGraphicsElement>(
     .attr('fill', 'none')
     .attr('style', nodeStyles || null);
 
-  shapeSvg.attr('role', 'img');
-  if (businessNode.accessibleName) {
-    shapeSvg.attr('aria-label', businessNode.accessibleName);
+  // `role="img"` without a name is worse than no role at all, so fall back to the
+  // label and skip the role entirely when neither is available.
+  const accessibleName = businessNode.accessibleName ?? businessNode.label;
+  if (accessibleName) {
+    shapeSvg.attr('role', 'img').attr('aria-label', accessibleName);
   }
 
   updateNodeBounds(node, ellipseElement);

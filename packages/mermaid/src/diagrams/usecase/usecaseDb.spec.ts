@@ -141,13 +141,13 @@ describe('usecase database', () => {
     db.clear();
 
     const reset = db.createModel();
-    expect(db.getActors()).toHaveLength(0);
-    expect(db.getUseCases()).toHaveLength(0);
-    expect(db.getSystemBoundaries()).toHaveLength(0);
+    expect(db.getActors().size).toBe(0);
+    expect(db.getUseCases().size).toBe(0);
+    expect(db.getSystemBoundaries().size).toBe(0);
     expect(db.getRelationships()).toHaveLength(0);
-    expect(db.getNotes()).toHaveLength(0);
-    expect(db.getJsonNodes()).toHaveLength(0);
-    expect(db.getClassDefs()).toHaveLength(0);
+    expect(db.getNotes().size).toBe(0);
+    expect(db.getJsonNodes().size).toBe(0);
+    expect(db.getClassDefs().size).toBe(0);
     expect(db.getDirection()).toBe('LR');
     expect(db.getAST()).toBeUndefined();
     expect(db.getDiagramTitle?.()).toBe('');
@@ -155,11 +155,11 @@ describe('usecase database', () => {
     expect(db.getAccDescription?.()).toBe('');
     expect(reset.relationshipCounter).toBe(0);
     expect(reset.noteCounter).toBe(0);
-    expect(reset.symbols).toHaveLength(0);
+    expect(reset.symbols.size).toBe(0);
     expect(db.getConfig()).toEqual(reset.config);
   });
 
-  it('gives oval use cases the same label clearance as rectangular use cases', () => {
+  it('gives oval use cases extra label clearance over rectangular use cases', () => {
     const model = db.createModel();
     model.useCases.set('Browse', {
       id: 'Browse',

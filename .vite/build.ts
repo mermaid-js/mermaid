@@ -122,7 +122,6 @@ const main = async () => {
 };
 
 await generateLangium();
-await generateAntlr();
 
 if (watch) {
   await build(getBuildConfig({ minify: false, watch, core: false, entryName: 'parser' }));

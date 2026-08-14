@@ -138,7 +138,6 @@ export async function parse<T extends DiagramAST>(
   if (!initializer) {
     throw new Error(`Unknown diagram type: ${diagramType}`);
   }
-
   if (!parsers[diagramType]) {
     await initializer();
   }

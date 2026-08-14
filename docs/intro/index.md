@@ -118,7 +118,7 @@ sequenceDiagram
 ### [Use case diagram](../syntax/usecase.md)
 
 ```mermaid-example
-usecase
+usecase-beta
 direction LR
 actor Customer
 Checkout("Place order")
@@ -126,7 +126,7 @@ Customer --> Checkout
 ```
 
 ```mermaid
-usecase
+usecase-beta
 direction LR
 actor Customer
 Checkout("Place order")

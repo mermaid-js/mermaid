@@ -12,7 +12,17 @@ interface ChevrotainParseConfig {
 export function runChevrotainParse(config: ChevrotainParseConfig, input: string): void {
   const lexResult = config.lexer.tokenize(input);
   if (lexResult.errors.length > 0) {
-    throw new Error(`Error lexing ${config.diagramType} diagram: ${lexResult.errors[0].message}`);
+    // Lexer failures never reach `parser.errors`, so callers cannot enrich them the way
+    // they enrich parser errors. Attach the position here so both failure modes report
+    // the same fields.
+    const lexError = lexResult.errors[0];
+    const start = Number.isFinite(lexError.offset) ? lexError.offset : input.length;
+    const end = start + (Number.isFinite(lexError.length) ? lexError.length : 0);
+    throw new Error(
+      `Error lexing ${config.diagramType} diagram: ${lexError.message} at line ${
+        lexError.line ?? 1
+      }, column ${lexError.column ?? 1} [${start},${end})`
+    );
   }
 
   config.parser.input = lexResult.tokens;

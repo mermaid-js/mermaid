@@ -178,9 +178,11 @@ export async function renderUsecaseActor<T extends SVGGraphicsElement>(
     getNodeClasses(node, `usecase-actor-variant usecase-actor-${variant}`)
   );
 
-  shapeSvg.attr('role', 'img');
-  if (node.accessibleName) {
-    shapeSvg.attr('aria-label', node.accessibleName);
+  // `role="img"` without a name is worse than no role at all, so fall back to the
+  // label and skip the role entirely when neither is available.
+  const accessibleName = node.accessibleName ?? node.label;
+  if (accessibleName) {
+    shapeSvg.attr('role', 'img').attr('aria-label', accessibleName);
   }
 
   label.attr('class', 'label actor-label usecase-actor-label');

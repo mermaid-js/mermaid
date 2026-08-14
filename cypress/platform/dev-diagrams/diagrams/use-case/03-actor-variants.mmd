@@ -5,6 +5,7 @@ usecase-beta
     actor Awesome("Awesome actor")@{ type: awesome }
     actor Icon("Icon actor")@{ icon: "fa:user" }
     actor Fallback("Missing icon fallback")@{ icon: "not-registered:user" }
+    Manage("Manage catalog")
     Normal --> Manage
     Hollow --> Manage
     Awesome --> Manage

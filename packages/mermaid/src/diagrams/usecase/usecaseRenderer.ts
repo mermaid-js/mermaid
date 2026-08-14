@@ -1,3 +1,4 @@
+import { select } from 'd3';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
@@ -187,11 +188,15 @@ const annotateUsecaseElements = (
     }
   }
 
-  const edgePaths = svg.selectAll<SVGPathElement, unknown>('path[data-et="edge"]');
-  for (const edge of data.edges) {
-    const path = edgePaths.filter(function () {
-      return this.getAttribute('data-id') === edge.id;
-    });
+  // Index the edges by id so the paths are matched in a single pass instead of
+  // re-scanning every path for each edge.
+  const edgesById = new Map(data.edges.map((edge) => [edge.id, edge]));
+  svg.selectAll<SVGPathElement, unknown>('path[data-et="edge"]').each(function () {
+    const edge = edgesById.get(this.getAttribute('data-id') ?? '');
+    if (!edge) {
+      return;
+    }
+    const path = select(this);
     path
       .attr('id', usecaseDomId(data.diagramId, edge.id))
       .attr('data-usecase-id', edge.id)
@@ -201,7 +206,7 @@ const annotateUsecaseElements = (
     } else {
       path.attr('role', 'img').attr('aria-label', accessibleNames.edges.get(edge.id) ?? edge.id);
     }
-  }
+  });
 };
 
 /**

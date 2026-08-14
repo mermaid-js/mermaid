@@ -1,5 +1,5 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { evaluate, getEffectiveHtmlLabels } from '../../config.js';
+import { getEffectiveHtmlLabels } from '../../config.js';
 import { log } from '../../logger.js';
 import { getSubGraphTitleMargins } from '../../utils/subGraphTitleMargins.js';
 import { select } from 'd3';
@@ -517,7 +517,7 @@ const usecaseSystemBoundary = async (parent, node) => {
     .attr('data-boundary-type', boundaryType)
     .attr('data-look', node.look);
 
-  const useHtmlLabels = evaluate(siteConfig.flowchart?.htmlLabels);
+  const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
   const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label system-boundary-title');
   const text = await createText(labelEl, node.label, {
     style: labelStyles,

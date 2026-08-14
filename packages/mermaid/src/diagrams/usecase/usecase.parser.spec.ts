@@ -918,4 +918,34 @@ note for Login "Remember"`;
     });
     expect(JSON.parse(JSON.stringify(ast))).toEqual(ast);
   });
+
+  it.each(['o', 'n', 's', 'j', 'jo', 'so', 'on', 'son', 'json'])(
+    'locates the JSON id %s even when it is a substring of the json keyword',
+    async (id) => {
+      const source = `usecase-beta\njson ${id} @{"a": 1}`;
+      await parser.parse(source);
+
+      const idStart = source.indexOf(`json ${id}`) + 'json '.length;
+      expect(db.getAST()?.statements.at(-1)).toMatchObject({
+        kind: 'json',
+        nodes: [{ id, idSpan: [idStart, idStart + id.length] }],
+      });
+    }
+  );
+
+  it('preserves the separators inside multi-word style and classDef values', async () => {
+    await parser.parse(`usecase-beta
+Checkout("Place order")
+classDef big font-family:Arial Black
+style Checkout border:1px solid red,fill:#eee`);
+
+    expect(db.getUseCases().get('Checkout')?.styles).toEqual(['border:1px solid red', 'fill:#eee']);
+    expect(db.getClassDefs().get('big')?.styles).toEqual(['font-family:Arial Black']);
+  });
+
+  it('reports the source position of a lexer failure', async () => {
+    await expect(parser.parse('usecase-beta\nactor "Bob')).rejects.toThrow(
+      /^Error lexing usecase diagram: .* at line 2, column 7 \[\d+,\d+\)$/
+    );
+  });
 });

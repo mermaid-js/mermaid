@@ -67,6 +67,33 @@ securely\`") &lt;&lt;Main&gt;&gt;:::critical
   assocRel@{ animate: true, animation: fast }
 `;
 
+// No classDef or style here on purpose — the theme variables must supply every colour.
+const THEMED_DIAGRAM = `usecase-beta
+  accTitle: Themed use case example
+  accDescr: Exercises every themed element without any inline style overrides.
+  actor Normal("Normal User")
+  actor Hollow@{ type: hollow }
+  actor Business@{ business: true }
+
+  systemBoundary "Authentication System"
+    Login("Sign in")
+    Reset[Reset password]
+  end
+
+  Checkout("Checkout")@{ business: true }
+  Normal --> Login
+  Hollow --o Reset
+  Business --> Checkout
+  Login ..> : include Checkout
+  note for Login "Requires an active session"
+
+  json Payload@{
+    "region": "eu",
+    "tags": ["Red", "Green"]
+  }
+  Checkout --> Payload
+`;
+
 type MermaidOptions = Parameters<typeof mermaidUrl>[1];
 
 const renderForDom = (source: string, options: MermaidOptions = {}) => {
@@ -386,4 +413,16 @@ describe('Usecase diagram', () => {
   it('keeps empty-diagram rendering covered without duplicating feature snapshots', () => {
     imgSnapshotTest('usecase-beta');
   });
+
+  // THEMED_DIAGRAM deliberately carries no classDef/style, so every colour on screen comes
+  // from a theme variable. clusterBkg (system boundary), noteBkgColor/noteBorderColor (note),
+  // and the actor/use-case fills are the ones most likely to regress on a dark background.
+  for (const theme of ['default', 'dark', 'forest', 'neutral', 'base'] as const) {
+    it(`renders every themed element on the ${theme} theme`, () => {
+      imgSnapshotTest(THEMED_DIAGRAM, {
+        theme,
+        usecase: { diagramPadding: 24, useMaxWidth: true },
+      });
+    });
+  }
 });

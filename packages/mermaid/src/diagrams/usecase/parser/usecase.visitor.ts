@@ -539,7 +539,10 @@ class UsecaseVisitor extends BaseVisitor {
     const literal = this.tokens(ctx, 'JSON_OBJECT_LITERAL')[0];
     const match = /^json[\t ]+([A-Z_a-z]\w*)/.exec(start.image)!;
     const id = match[1];
-    const relative = start.image.indexOf(id);
+    // The match is anchored at the start of the image, so the id begins where the
+    // matched prefix ends. A text search would instead find ids like `o` or `son`
+    // inside the leading `json` keyword.
+    const relative = match[0].length - id.length;
     const idLocation: DraftLocation = {
       span: [start.startOffset + relative, start.startOffset + relative + id.length],
       line: start.startLine ?? 1,
@@ -636,10 +639,15 @@ class UsecaseVisitor extends BaseVisitor {
     return this.nodes(ctx, 'styleValue').map((node) => this.visit(node) as string);
   }
   styleValue(ctx: Ctx): string {
-    return this.allTokens(ctx)
-      .map((token) => token.image)
-      .join('')
-      .replaceAll('\\,', ',');
+    const tokens = this.allTokens(ctx);
+    // WhiteSpace is Lexer.SKIPPED, so joining the token images would collapse the
+    // separators inside multi-word values such as `border:1px solid red`. Commas are
+    // consumed by the `styles` rule, so the source slice never spans two values.
+    const span: Span = [
+      tokens[0].startOffset,
+      (tokens.at(-1)!.endOffset ?? tokens.at(-1)!.startOffset) + 1,
+    ];
+    return this.source.slice(span[0], span[1]).replaceAll('\\,', ',');
   }
   styleComponent(ctx: Ctx): string {
     return this.allTokens(ctx)

@@ -60,6 +60,7 @@ vite.config.ts.timestamp-*
 # autogenereated by langium-cli
 generated/
 
+
 /CLAUDE.md
 /AGENTS.md
 /assistant/
