@@ -116,6 +116,8 @@ interface SymbolOrigin {
   kind: UsecaseSymbolKind;
   location: DraftLocation;
   generated: boolean;
+  /** Source label a generated ID was derived from; absent when the ID was written explicitly. */
+  label?: string;
 }
 interface ElementState {
   kind: 'actor' | 'usecase';
@@ -150,6 +152,14 @@ interface EdgeState {
 
 const locationText = (location: DraftLocation): string =>
   `line ${location.line}, column ${location.column} [${location.span[0]},${location.span[1]})`;
+/**
+ * Names the source label a generated ID was derived from, so that a collision between two
+ * different labels that normalize to the same ID points at both originals.
+ */
+const labelSuffix = (label: string | undefined): string =>
+  label === undefined ? '' : ` (label "${label}")`;
+const generatedFrom = (origin: { generated: boolean; label?: string }): string | undefined =>
+  origin.generated ? origin.label : undefined;
 const pushUnique = (target: string[], values: readonly string[]): void => {
   for (const value of values) {
     if (!target.includes(value)) {
@@ -351,18 +361,23 @@ export class UsecaseModelBuilder implements UsecaseModelReader {
     states: Map<string, ElementState>
   ): void {
     const origin = symbols.get(draft.id);
+    const draftLabel = generatedFrom({ generated: draft.generated, label: draft.label.text });
     if (origin && origin.kind !== draft.kind) {
       this.conflict(
         `ID '${draft.id}' is declared as both ${origin.kind} and ${draft.kind}`,
         draft.location,
-        origin.location
+        origin.location,
+        draftLabel,
+        generatedFrom(origin)
       );
     }
     if (origin && (origin.generated || draft.generated)) {
       this.conflict(
         `Generated ID '${draft.id}' collides with another declaration`,
         draft.location,
-        origin.location
+        origin.location,
+        draftLabel,
+        generatedFrom(origin)
       );
     }
     const existing = states.get(draft.id);
@@ -388,6 +403,7 @@ export class UsecaseModelBuilder implements UsecaseModelReader {
         kind: draft.kind,
         location: draft.location,
         generated: draft.generated,
+        label: draft.label.text,
       });
       return;
     }
@@ -430,18 +446,23 @@ export class UsecaseModelBuilder implements UsecaseModelReader {
     states: Map<string, BoundaryState>
   ): void {
     const origin = symbols.get(draft.id);
+    const draftLabel = generatedFrom({ generated: draft.generated, label: draft.label.text });
     if (origin && origin.kind !== 'boundary') {
       this.conflict(
         `ID '${draft.id}' is declared as both ${origin.kind} and boundary`,
         draft.location,
-        origin.location
+        origin.location,
+        draftLabel,
+        generatedFrom(origin)
       );
     }
     if (origin && (origin.generated || draft.generated)) {
       this.conflict(
         `Generated ID '${draft.id}' collides with another declaration`,
         draft.location,
-        origin.location
+        origin.location,
+        draftLabel,
+        generatedFrom(origin)
       );
     }
     const existing = states.get(draft.id);
@@ -469,6 +490,7 @@ export class UsecaseModelBuilder implements UsecaseModelReader {
       kind: 'boundary',
       location: draft.location,
       generated: draft.generated,
+      label: draft.label.text,
     });
   }
 
@@ -569,6 +591,7 @@ export class UsecaseModelBuilder implements UsecaseModelReader {
       kind: 'usecase',
       location: endpoint.location,
       generated: endpoint.generated,
+      label: endpoint.label.text,
     });
     this.recordFirst(first, endpoint.id, endpoint.location.span[0]);
     return 'usecase';
@@ -1000,7 +1023,9 @@ export class UsecaseModelBuilder implements UsecaseModelReader {
       this.conflict(
         `ID '${id}' is declared more than once (${previous.kind} and ${kind})`,
         location,
-        previous.location
+        previous.location,
+        undefined,
+        generatedFrom(previous)
       );
     }
     symbols.set(id, { kind, location, generated });
@@ -1011,9 +1036,15 @@ export class UsecaseModelBuilder implements UsecaseModelReader {
       map.set(id, offset);
     }
   }
-  private conflict(message: string, current: DraftLocation, previous: DraftLocation): never {
+  private conflict(
+    message: string,
+    current: DraftLocation,
+    previous: DraftLocation,
+    currentLabel?: string,
+    previousLabel?: string
+  ): never {
     throw new Error(
-      `${message} at ${locationText(current)}; previous declaration at ${locationText(previous)}`
+      `${message} at ${locationText(current)}${labelSuffix(currentLabel)}; previous declaration at ${locationText(previous)}${labelSuffix(previousLabel)}`
     );
   }
 }

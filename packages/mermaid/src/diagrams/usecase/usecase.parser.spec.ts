@@ -452,13 +452,13 @@ Login("Reset password")`;
     ]);
   });
 
-  it('names both exact locations for generated and explicit ID collisions', async () => {
+  it('names both exact locations and the source labels for generated and explicit ID collisions', async () => {
     const generated = `usecase-beta
 "A-B"
 "A B"`;
     await expectExactSemanticError(
       generated,
-      `Generated ID 'A_B' collides with another declaration at ${occurrenceLocation(generated, '"A B"', 1, 1, 1)}; previous declaration at ${occurrenceLocation(generated, '"A-B"', 1, 1, 1)}`
+      `Generated ID 'A_B' collides with another declaration at ${occurrenceLocation(generated, '"A B"', 1, 1, 1)} (label "A B"); previous declaration at ${occurrenceLocation(generated, '"A-B"', 1, 1, 1)} (label "A-B")`
     );
 
     const generatedAndExplicit = `usecase-beta
@@ -466,7 +466,25 @@ Login("Reset password")`;
 A_B(Explicit)`;
     await expectExactSemanticError(
       generatedAndExplicit,
-      `Generated ID 'A_B' collides with another declaration at ${occurrenceLocation(generatedAndExplicit, 'A_B')}; previous declaration at ${occurrenceLocation(generatedAndExplicit, '"A B"', 1, 1, 1)}`
+      `Generated ID 'A_B' collides with another declaration at ${occurrenceLocation(generatedAndExplicit, 'A_B')}; previous declaration at ${occurrenceLocation(generatedAndExplicit, '"A B"', 1, 1, 1)} (label "A B")`
+    );
+
+    const generatedKinds = `usecase-beta
+actor "A-B"
+"A B"`;
+    await expectExactSemanticError(
+      generatedKinds,
+      `ID 'A_B' is declared as both actor and usecase at ${occurrenceLocation(generatedKinds, '"A B"', 1, 1, 1)} (label "A B"); previous declaration at ${occurrenceLocation(generatedKinds, '"A-B"', 1, 1, 1)} (label "A-B")`
+    );
+
+    const generatedBoundaries = `usecase-beta
+systemBoundary "A-B"
+end
+systemBoundary "A B"
+end`;
+    await expectExactSemanticError(
+      generatedBoundaries,
+      `Generated ID 'A_B' collides with another declaration at ${occurrenceLocation(generatedBoundaries, '"A B"', 1, 1, 1)} (label "A B"); previous declaration at ${occurrenceLocation(generatedBoundaries, '"A-B"', 1, 1, 1)} (label "A-B")`
     );
 
     const explicitEdges = `usecase-beta
