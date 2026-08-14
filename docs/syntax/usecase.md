@@ -665,26 +665,53 @@ style pays stroke:#6b46c1,stroke-width:2px
 
 Use case diagrams have these limits:
 
-- One Mermaid block produces one SVG. Page splitting is not supported, and `newpage` is an unknown statement.
+- One Mermaid block produces one SVG. Page splitting is not supported, and `newpage` is outside the grammar, so a line containing it fails to parse.
 - Boundaries cannot be nested and can contain only actor and use case declarations.
 - A note has one actor or use case target and no manual placement syntax.
-- A stereotype can be added only to an actor or use case. It does not create an automatic CSS selector.
+- A stereotype can be added only to an actor or use case. A stereotype is display text, so it does not become a class that CSS or `classDef` can target. Define a class with `classDef` and attach it with `:::name` to style the element. See [Styling](#styling).
 - JSON is a top-level use case diagram node, not a generic cross-diagram data node.
 - Raw `<style>` blocks are host HTML and are not part of the diagram grammar.
 - There are no per-edge left, right, up, or down direction hints.
 - Arbitrary actor style metadata is not supported.
 
-PlantUML use case syntax is not accepted. This includes separators and titled separators, `as` aliases, colon actors, actor-position inference, standalone `package` and `rectangle` blocks, `skinparam`, `allowmixing`, backslash escaping, plain `\n` multiline text, link-direction hints, note placement keywords, standalone notes, multi-target notes, and `newpage`.
+PlantUML use case syntax is not accepted. [Migrating from PlantUML](#migrating-from-plantuml) lists the constructs and what to write instead.
 
-## Migration from permissive and PlantUML syntax
+### Constructs that parse but mean something else
 
-Existing diagrams that relied on permissive parsing or PlantUML forms need these changes:
+Unsupported syntax raises a parse error, with two exceptions. These parse without an error and render differently from PlantUML:
 
-- Put one statement on each physical line. Same-line statements and `newpage` no longer become accidental use cases.
-- Undeclared relationship endpoints still become ellipse use cases. Declare every actor with `actor ID` somewhere in the document because source position does not imply an actor.
+- `A("Line1\nLine2")` keeps the backslash and the `n` as literal text on a single line. Use a Markdown string containing a physical newline for a real line break.
+- `A("Paren \( x")` keeps the backslash as literal text, because a backslash never escapes the character after it. Write the character directly inside a quoted or Markdown string, or use an entity code such as `#40;` and `#41;`.
+
+```mermaid-example
+usecase-beta
+actor Customer
+Reset("`Reset
+password`")
+Refund("Refund #40;partial#41;")
+Customer --> Reset
+Customer --> Refund
+```
+
+```mermaid
+usecase-beta
+actor Customer
+Reset("`Reset
+password`")
+Refund("Refund #40;partial#41;")
+Customer --> Reset
+Customer --> Refund
+```
+
+## Migrating from PlantUML
+
+A PlantUML use case diagram needs these changes before it renders as Mermaid:
+
+- Put one statement on each physical line. A second statement on the same line is a parse error.
+- Undeclared relationship endpoints become ellipse use cases. Declare every actor with `actor ID` somewhere in the document because source position does not imply an actor.
 - An association label containing `include` or `extend` remains an association. Use `..> : include` or `..> : extend` for UML include and extend semantics.
 - Replace actor `fillColor`, `strokeColor`, `strokeWidth`, and other arbitrary metadata with `classDef`, `class`, or `style`.
-- Remove the unused `actorMargin` and `usecaseMargin` configuration keys. The actor and use case font keys, `nodeSpacing`, `rankSpacing`, `diagramPadding`, and `useMaxWidth` now affect the rendered output.
-- Replace unsupported PlantUML syntax rather than carrying it into a Mermaid block. Plain `\n`, separators, titled separators, `as` aliases, colon actors, actor-position inference, standalone `package` and `rectangle` blocks, `skinparam`, `allowmixing`, left, right, up, or down link hints, note placement keywords, standalone notes, multi-target notes, and `newpage` are outside the grammar.
+- Replace these constructs, which are outside the grammar and raise a parse error: separators and titled separators, `as` aliases, colon actors, standalone `package` and `rectangle` blocks, `skinparam`, `allowmixing`, left, right, up, or down link hints, note placement keywords, standalone notes, multi-target notes, and `newpage`.
+- Rewrite backslash escapes and plain `\n` multiline text. They parse, so no error points at them. See [Constructs that parse but mean something else](#constructs-that-parse-but-mean-something-else).
 
 <!--- cspell:ignore markerless newpage skinparam allowmixing --->
