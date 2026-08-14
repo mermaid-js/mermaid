@@ -1,0 +1,31 @@
+flowchart TB
+subgraph X1
+  A([A])
+  B{{B}}
+  I[C]
+end
+subgraph X2
+  C{{C}}
+  D{{D}}
+  G@{ shape: notch-pent, label: "G" }
+  H[H]
+end
+subgraph X3
+  Sys1[Sys1]
+  E[E]
+  F[F]
+end
+  A --> Sys1
+  --> B
+  --> C
+  --> D
+  --> E
+  --> F
+  --> G
+  --> H
+  --> I
+    %% A[Christmas] -->|Get money| B(Go shopping)
+    %% B --> C{Let me think}
+    %% C -->|One| D[Laptop]
+    %% C -->|Two| E[iPhone]
+    %% C -->|Three| F[fa:fa-car Car]

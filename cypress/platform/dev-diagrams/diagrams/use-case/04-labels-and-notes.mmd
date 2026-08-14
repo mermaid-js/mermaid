@@ -1,13 +1,13 @@
 usecase-beta
-direction LR
-actor Reviewer("`*Reviewer*`")
-Literal("**Literal markers**")
-Formatted("`**Formatted label**
-with a physical line break`")
-Quoted("Show #quot;quoted#quot; text")
-note for Formatted "`Requires an **active session**
-and reviewer approval.`"
-note for Reviewer "Starts the review workflow"
-Reviewer -- "`opens **review form**`" --> Formatted
-Reviewer --> Literal
-Reviewer --> Quoted
+    direction LR
+    actor Reviewer("`*Reviewer*`")
+    Literal("**Literal markers**")
+    Formatted("`**Formatted label**
+    with a physical line break`")
+    Quoted("Show #quot;quoted#quot; text")
+    note for Formatted "`Requires an **active session**
+    and reviewer approval.`"
+    note for Reviewer "Starts the review workflow"
+    Reviewer -- "`opens **review form**`" --> Formatted
+    Reviewer --> Literal
+    Reviewer --> Quoted

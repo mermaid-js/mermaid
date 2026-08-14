@@ -1,13 +1,13 @@
 usecase-beta
-direction LR
-actor User
-actor Support
-Start("Start workflow")
-Finish("Finish workflow")
-User --> Start
-Start <-- Support
-Start -- Finish
-User --o Finish
-Start o-- Support
-User --x Finish
-Finish x-- Support
+    direction LR
+    actor User
+    actor Support
+    Start("Start workflow")
+    Finish("Finish workflow")
+    User --> Start
+    Start <-- Support
+    Start -- Finish
+    User --o Finish
+    Start o-- Support
+    User --x Finish
+    Finish x-- Support

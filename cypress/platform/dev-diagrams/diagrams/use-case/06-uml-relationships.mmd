@@ -1,11 +1,11 @@
 usecase-beta
-direction LR
-actor Admin
-actor Person
-Checkout("Checkout")
-Payment("Process payment")
-Coupon("Apply coupon")
-Admin --|> Person
-Checkout ..> : include Payment
-Coupon ..> : extend Checkout
-Coupon --|> Checkout
+    direction LR
+    actor Admin
+    actor Person
+    Checkout("Checkout")
+    Payment("Process payment")
+    Coupon("Apply coupon")
+    Admin --|> Person
+    Checkout ..> : include Payment
+    Coupon ..> : extend Checkout
+    Coupon --|> Checkout

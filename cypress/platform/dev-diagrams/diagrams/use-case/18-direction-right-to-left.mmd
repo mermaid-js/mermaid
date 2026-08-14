@@ -1,9 +1,12 @@
 usecase-beta
-direction RL
-actor Customer
-Browse("Browse catalog")
-Checkout("Checkout")
-Receipt[Download receipt]
-Customer --> Browse
-Browse --> Checkout
-Checkout --> Receipt
+    direction RL
+    %% Actors
+    actor Customer
+    Browse("Browse catalog")
+    Checkout("Checkout")
+    Receipt[Download receipt]
+
+    %% Relationships
+    Customer --> Browse
+    Browse --> Checkout
+    Checkout --> Receipt

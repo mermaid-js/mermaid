@@ -1,5 +1,19 @@
 import { imgSnapshotTest, mermaidUrl } from '../../../helpers/util.ts';
 
+const USECASE_FIXTURE_DIR = 'cypress/platform/dev-diagrams/diagrams/use-case';
+
+const readUsecaseFixtures = (): string[] => {
+  const fixtures = Cypress.env('usecaseFixtures');
+  return Array.isArray(fixtures) && fixtures.every((fixture) => typeof fixture === 'string')
+    ? fixtures
+    : [];
+};
+
+const USECASE_FIXTURES = readUsecaseFixtures();
+
+const asMermaidElementSource = (source: string): string =>
+  source.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
 const FULL_DIAGRAM = `usecase-beta
   accTitle: Complete use case example
   accDescr: Actors interact with authentication, payment, notes, and JSON data.
@@ -65,6 +79,26 @@ const edge = (id: string) => cy.get(`path[data-usecase-id="${id}"]`);
 const element = (id: string) => cy.get(`[data-usecase-id="${id}"]`);
 
 describe('Usecase diagram', () => {
+  describe('dev fixture coverage', () => {
+    it('covers every use-case dev fixture', () => {
+      expect(USECASE_FIXTURES.length, 'generated use-case fixture inventory').to.be.greaterThan(0);
+      cy.task('listUsecaseFixtures').should('deep.equal', USECASE_FIXTURES);
+    });
+
+    USECASE_FIXTURES.forEach((fixture) => {
+      it(`renders ${fixture} end to end`, () => {
+        cy.readFile(`${USECASE_FIXTURE_DIR}/${fixture}`, 'utf8').then((source) => {
+          expect(source, 'fixture should declare the usecase diagram type').to.match(
+            /(?:^|\n)usecase-beta(?:\s|$)/
+          );
+          renderForDom(asMermaidElementSource(source));
+          cy.get('svg .error-icon').should('not.exist');
+          cy.get('[data-usecase-kind]').its('length').should('be.greaterThan', 0);
+        });
+      });
+    });
+  });
+
   it('renders the complete typed use-case contract with stable semantics', () => {
     renderForDom(FULL_DIAGRAM, {
       usecase: {

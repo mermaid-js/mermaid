@@ -1,20 +1,20 @@
 usecase-beta
-direction LR
-actor Customer("Customer")
-actor Support("Support agent")
-systemBoundary Storefront
-  Browse("Browse products")
-  Order("Place order")
-  Track("Track order")
-end
-systemBoundary "Admin Panel"
-  Process[Process orders]
-  Returns[Handle returns]
-end
-Admin_Panel@{ type: package }
-Customer --> Browse
-Customer --> Order
-Customer --> Track
-Order --> Process
-Support --> Process
-Support --> Returns
+  direction LR
+  actor Customer("Customer")
+  actor Support("Support agent")
+  systemBoundary Storefront
+    Browse("Browse products")
+    Order("Place order")
+    Track("Track order")
+  end
+  systemBoundary "Admin Panel"
+    Process[Process orders]
+    Returns[Handle returns]
+  end
+  Admin_Panel@{ type: package }
+  Customer --> Browse
+  Customer --> Order
+  Customer --> Track
+  Order --> Process
+  Support --> Process
+  Support --> Returns
