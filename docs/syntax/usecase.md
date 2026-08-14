@@ -34,7 +34,7 @@ Use `direction` with `TD`, `TB`, `BT`, `LR`, or `RL` to choose the layout direct
 
 ## Actors and use cases
 
-Actor and use case identifiers match `[A-Za-z_][A-Za-z0-9_]*`. Identifiers are diagram-wide and are shared by actors, use cases, boundaries, JSON nodes, and explicit edges.
+Actor and use case identifiers match `[A-Za-z0-9_]+`, so they may start with a digit — `1`, `1mg`, and `3rd` are all valid. Identifiers are diagram-wide and are shared by actors, use cases, boundaries, JSON nodes, and explicit edges.
 
 A bare actor uses its identifier as its label. An actor can also have an explicit identifier and display label. Use cases use parentheses for an ellipse and square brackets for a rectangle.
 

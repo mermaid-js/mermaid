@@ -115,16 +115,34 @@ describe('usecase Chevrotain lexer', () => {
   });
 
   it('preserves strict strings, colors, CSS units, and escaped commas', () => {
+    // IDENTIFIER is `\w+` so ids may start with a digit, which means whole-number CSS
+    // units lex as IDENTIFIER rather than NUMBER. Both are accepted by `styleComponent`
+    // and `styleValue` rebuilds its text from the source, so the value is unaffected.
     expect(tokenImages('"%%" \'plain\' #f96 4px 50% red\\,blue')).toEqual([
       ['PLAIN_STRING', '"%%"'],
       ['PLAIN_STRING', "'plain'"],
       ['HASH_COLOR', '#f96'],
-      ['NUMBER', '4px'],
-      ['NUMBER', '50'],
+      ['IDENTIFIER', '4px'],
+      ['IDENTIFIER', '50'],
       ['PERCENT', '%'],
       ['IDENTIFIER', 'red'],
       ['CSS_ESCAPED_COMMA', '\\,'],
       ['IDENTIFIER', 'blue'],
+    ]);
+  });
+
+  it('lexes digit-leading ids as identifiers while decimals stay numbers', () => {
+    expect(tokenImages('1 1mg a1 _x')).toEqual([
+      ['IDENTIFIER', '1'],
+      ['IDENTIFIER', '1mg'],
+      ['IDENTIFIER', 'a1'],
+      ['IDENTIFIER', '_x'],
+    ]);
+    // The longer_alt keeps decimals intact instead of splitting them into `1` `.` `5`.
+    expect(tokenImages('1.5 1.5px .5')).toEqual([
+      ['NUMBER', '1.5'],
+      ['NUMBER', '1.5px'],
+      ['NUMBER', '.5'],
     ]);
   });
 });

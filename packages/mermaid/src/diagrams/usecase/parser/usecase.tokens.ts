@@ -122,9 +122,18 @@ const matchStereotypeText: CustomPatternMatcherFunc = (text, offset) => {
 };
 
 export const Word = createToken({ name: 'WORD', pattern: Lexer.NA });
+// Declared before IDENTIFIER so it can serve as its longer_alt.
+export const NumberLiteral = createToken({
+  name: 'NUMBER',
+  pattern: /(?:\d+\.\d+|\d+|\.\d+)(?:[A-Za-z]+)?/,
+});
+// Ids may start with a digit (`1`, `1mg`), so this is `\w+` rather than an
+// identifier-shaped pattern. NUMBER is the longer_alt so decimals such as `1.5`
+// and `1.5px` still lex as a single number instead of `1` + `.` + `5`.
 export const Identifier = createToken({
   name: 'IDENTIFIER',
-  pattern: /[A-Z_a-z]\w*/,
+  pattern: /\w+/,
+  longer_alt: NumberLiteral,
   categories: Word,
 });
 export const WhiteSpace = createToken({
@@ -179,7 +188,7 @@ export const AccDescrLine = createToken({
 
 export const JsonDeclarationStart = createToken({
   name: 'JSON_DECLARATION_START',
-  pattern: /json[\t ]+[A-Z_a-z]\w*[\t ]*@[\t ]*(?={)/,
+  pattern: /json[\t ]+\w+[\t ]*@[\t ]*(?={)/,
   push_mode: 'jsonBody',
 });
 export const JsonObjectLiteral = createToken({
@@ -263,10 +272,6 @@ export const Comma = createToken({ name: 'COMMA', pattern: /,/ });
 export const Colon = createToken({ name: 'COLON', pattern: /:/ });
 
 export const HashColor = createToken({ name: 'HASH_COLOR', pattern: /#[\dA-Fa-f]+/ });
-export const NumberLiteral = createToken({
-  name: 'NUMBER',
-  pattern: /(?:\d+\.\d+|\d+|\.\d+)(?:[A-Za-z]+)?/,
-});
 export const PlainString = createToken({
   name: 'PLAIN_STRING',
   pattern: /"[^\n\r"]*"|'[^\n\r']*'/,
@@ -334,10 +339,12 @@ const defaultModeTokens = [
   Comma,
   Colon,
   HashColor,
-  NumberLiteral,
   PlainString,
   CssIdentifier,
+  // IDENTIFIER precedes NUMBER so `1mg` lexes as one id; its longer_alt still hands
+  // decimals like `1.5px` to NUMBER.
   Identifier,
+  NumberLiteral,
   CssEscapedComma,
   Dash,
   Dot,

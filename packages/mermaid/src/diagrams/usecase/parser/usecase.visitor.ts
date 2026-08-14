@@ -537,7 +537,7 @@ class UsecaseVisitor extends BaseVisitor {
   jsonStatement(ctx: Ctx): GraphStatement {
     const start = this.tokens(ctx, 'JSON_DECLARATION_START')[0];
     const literal = this.tokens(ctx, 'JSON_OBJECT_LITERAL')[0];
-    const match = /^json[\t ]+([A-Z_a-z]\w*)/.exec(start.image)!;
+    const match = /^json[\t ]+(\w+)/.exec(start.image)!;
     const id = match[1];
     // The match is anchored at the start of the image, so the id begins where the
     // matched prefix ends. A text search would instead find ids like `o` or `son`

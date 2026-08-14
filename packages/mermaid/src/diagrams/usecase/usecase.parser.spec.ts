@@ -948,4 +948,39 @@ style Checkout border:1px solid red,fill:#eee`);
       /^Error lexing usecase diagram: .* at line 2, column 7 \[\d+,\d+\)$/
     );
   });
+
+  it('accepts ids that start with a digit', async () => {
+    await parser.parse(`usecase-beta
+actor 1("Customer")
+actor 1mg("Milligram")
+2("Place order")
+3rd("Third party")
+1 --> 2
+1mg --> 3rd
+json 4 @{"a": 1}
+2 --> 4`);
+
+    expect([...db.getActors().keys()]).toEqual(['1', '1mg']);
+    expect([...db.getUseCases().keys()]).toEqual(['2', '3rd']);
+    expect([...db.getJsonNodes().keys()]).toEqual(['4']);
+    expect(db.getActor('1')?.label).toBe('Customer');
+    expect(db.getUseCases().get('3rd')?.label).toBe('Third party');
+    expect(db.getRelationships().map(({ source, target }) => `${source}->${target}`)).toEqual([
+      '1->2',
+      '1mg->3rd',
+      '2->4',
+    ]);
+  });
+
+  it('keeps decimal style values intact now that ids may start with a digit', async () => {
+    await parser.parse(`usecase-beta
+A("x")
+style A stroke-width:1.5px,opacity:0.5,margin:2`);
+
+    expect(db.getUseCases().get('A')?.styles).toEqual([
+      'stroke-width:1.5px',
+      'opacity:0.5',
+      'margin:2',
+    ]);
+  });
 });
