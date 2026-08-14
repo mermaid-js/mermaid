@@ -226,7 +226,9 @@ Extra dashes request greater minimum layout length on point, reversed-point, and
 
 ## Notes
 
-A note attaches to one actor or use case. The target can be declared after the note. Mermaid places the shared folded-corner note shape automatically and connects it to the target with a dotted, markerless line.
+A note attaches to one actor or use case. The target can be declared after the note. A note uses the shared note shape, a plain rectangle in the theme note colors, and is connected to its target by a dotted, markerless line.
+
+A note is an ordinary node in the graph. The layout algorithm places it together with the actors and use cases, so a note has no fixed side relative to its target: its position follows the diagram direction and the rest of the layout, and adding a note can move the other elements.
 
 ```mermaid-example
 usecase-beta
