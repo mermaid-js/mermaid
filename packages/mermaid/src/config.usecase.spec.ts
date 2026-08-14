@@ -101,4 +101,61 @@ describe('usecase configuration', () => {
       })
     );
   });
+
+  // These four values are written verbatim into inline CSS custom properties and read back
+  // through var(), so the schema states the accepted surface rather than relying on the
+  // implicit guarantees of addDirective's sanitize() and setProperty().
+  describe('font pattern constraints', () => {
+    const compile = () => {
+      const ajv = new Ajv2019({ allErrors: true, allowUnionTypes: true, strict: true });
+      return ajv.compile({
+        $schema: schema.$schema,
+        $defs: { BaseDiagramConfig: baseDefinition },
+        ...usecaseDefinition,
+      });
+    };
+
+    it.each(['actorFontFamily', 'usecaseFontFamily'])('accepts real font stacks for %s', (key) => {
+      const validate = compile();
+      for (const value of [
+        '"Open Sans", sans-serif',
+        "'Segoe UI', Roboto, Helvetica, sans-serif",
+        'Arial Black',
+        'Noto Sans JP, sans-serif',
+        '',
+      ]) {
+        expect(validate({ ...supportedConfig, [key]: value })).toBe(true);
+      }
+    });
+
+    it.each(['actorFontFamily', 'usecaseFontFamily'])(
+      'rejects CSS-terminating characters for %s',
+      (key) => {
+        const validate = compile();
+        for (const value of [
+          'Arial; background: red',
+          'url(https://example.com/x)',
+          '<script>',
+          'Arial} .node {fill:red',
+          String.raw`Arial\3b `,
+        ]) {
+          expect(validate({ ...supportedConfig, [key]: value })).toBe(false);
+        }
+      }
+    );
+
+    it.each(['actorFontWeight', 'usecaseFontWeight'])('accepts CSS weights for %s', (key) => {
+      const validate = compile();
+      for (const value of ['normal', 'bold', 'bolder', 'lighter', '400', '700', '1000']) {
+        expect(validate({ ...supportedConfig, [key]: value })).toBe(true);
+      }
+    });
+
+    it.each(['actorFontWeight', 'usecaseFontWeight'])('rejects arbitrary text for %s', (key) => {
+      const validate = compile();
+      for (const value of ['normal; background: red', 'heavy', '', '0', 'url(x)']) {
+        expect(validate({ ...supportedConfig, [key]: value })).toBe(false);
+      }
+    });
+  });
 });

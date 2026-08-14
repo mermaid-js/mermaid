@@ -2680,12 +2680,24 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         minimum: 1
         default: 14
       actorFontFamily:
-        description: Font family for actor labels
+        description: |
+          Font family for actor labels.
+
+          Written verbatim into an inline CSS custom property, so the characters that could
+          terminate a declaration or open a new one are excluded: `;`, `<`, `>`, `(`, `)`,
+          `{`, `}`, and `\`. Quotes, commas, and spaces stay allowed for font stacks such as
+          `"Open Sans", sans-serif`.
         type: string
+        pattern: &cssFontFamilyPattern '^[^;<>(){}\\]*$'
         default: '"Open Sans", sans-serif'
       actorFontWeight:
-        description: Font weight for actor labels
+        description: |
+          Font weight for actor labels.
+
+          Restricted to the CSS `font-weight` keywords and numeric weights, since this value
+          is written verbatim into an inline CSS custom property.
         type: string
+        pattern: &cssFontWeightPattern '^(normal|bold|bolder|lighter|inherit|initial|revert|unset|[1-9][0-9]{0,3})$'
         default: 'normal'
       usecaseFontSize:
         description: Font size for usecase labels
@@ -2693,12 +2705,20 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         minimum: 1
         default: 12
       usecaseFontFamily:
-        description: Font family for usecase labels
+        description: |
+          Font family for usecase labels.
+
+          Constrained the same way as `actorFontFamily`.
         type: string
+        pattern: *cssFontFamilyPattern
         default: '"Open Sans", sans-serif'
       usecaseFontWeight:
-        description: Font weight for usecase labels
+        description: |
+          Font weight for usecase labels.
+
+          Constrained the same way as `actorFontWeight`.
         type: string
+        pattern: *cssFontWeightPattern
         default: 'normal'
       nodeSpacing:
         description: Spacing between nodes on the same level

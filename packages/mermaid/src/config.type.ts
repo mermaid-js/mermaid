@@ -1938,11 +1938,21 @@ export interface UsecaseDiagramConfig extends BaseDiagramConfig {
    */
   actorFontSize?: number;
   /**
-   * Font family for actor labels
+   * Font family for actor labels.
+   *
+   * Written verbatim into an inline CSS custom property, so the characters that could
+   * terminate a declaration or open a new one are excluded: `;`, `<`, `>`, `(`, `)`,
+   * `{`, `}`, and `\`. Quotes, commas, and spaces stay allowed for font stacks such as
+   * `"Open Sans", sans-serif`.
+   *
    */
   actorFontFamily?: string;
   /**
-   * Font weight for actor labels
+   * Font weight for actor labels.
+   *
+   * Restricted to the CSS `font-weight` keywords and numeric weights, since this value
+   * is written verbatim into an inline CSS custom property.
+   *
    */
   actorFontWeight?: string;
   /**
@@ -1950,11 +1960,17 @@ export interface UsecaseDiagramConfig extends BaseDiagramConfig {
    */
   usecaseFontSize?: number;
   /**
-   * Font family for usecase labels
+   * Font family for usecase labels.
+   *
+   * Constrained the same way as `actorFontFamily`.
+   *
    */
   usecaseFontFamily?: string;
   /**
-   * Font weight for usecase labels
+   * Font weight for usecase labels.
+   *
+   * Constrained the same way as `actorFontWeight`.
+   *
    */
   usecaseFontWeight?: string;
   /**
