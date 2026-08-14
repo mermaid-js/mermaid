@@ -408,20 +408,16 @@ starts@{ animation: fast }
 style pays stroke:#6b46c1,stroke-width:2px
 ```
 
-## Limitations
+## Migrating from PlantUML
 
-Use case diagrams have these limits:
+A PlantUML use case diagram needs these changes before it renders as Mermaid:
 
-- One Mermaid block produces one SVG. Page splitting is not supported, and `newpage` is outside the grammar, so a line containing it fails to parse.
-- Boundaries cannot be nested and can contain only actor and use case declarations.
-- A note has one actor or use case target and no manual placement syntax.
-- A stereotype can be added only to an actor or use case. A stereotype is display text, so it does not become a class that CSS or `classDef` can target. Define a class with `classDef` and attach it with `:::name` to style the element. See [Styling](#styling).
-- JSON is a top-level use case diagram node, not a generic cross-diagram data node.
-- Raw `<style>` blocks are host HTML and are not part of the diagram grammar.
-- There are no per-edge left, right, up, or down direction hints.
-- Arbitrary actor style metadata is not supported.
-
-PlantUML use case syntax is not accepted. [Migrating from PlantUML](#migrating-from-plantuml) lists the constructs and what to write instead.
+- Put one statement on each physical line. A second statement on the same line is a parse error.
+- Undeclared relationship endpoints become ellipse use cases. Declare every actor with `actor ID` somewhere in the document because source position does not imply an actor.
+- An association label containing `include` or `extend` remains an association. Use `..> : include` or `..> : extend` for UML include and extend semantics.
+- Replace actor `fillColor`, `strokeColor`, `strokeWidth`, and other arbitrary metadata with `classDef`, `class`, or `style`.
+- Replace these constructs, which are outside the grammar and raise a parse error: separators and titled separators, `as` aliases, colon actors, standalone `package` and `rectangle` blocks, `skinparam`, `<style>` blocks, `allowmixing`, left, right, up, or down link hints, note placement keywords, standalone notes, multi-target notes, and `newpage`. Style the diagram with `classDef`, `class`, `style`, and `:::` instead, as described under [Styling](#styling).
+- Rewrite backslash escapes and plain `\n` multiline text. They parse, so no error points at them. See [Constructs that parse but mean something else](#constructs-that-parse-but-mean-something-else).
 
 ### Constructs that parse but mean something else
 
@@ -439,16 +435,5 @@ Refund("Refund #40;partial#41;")
 Customer --> Reset
 Customer --> Refund
 ```
-
-## Migrating from PlantUML
-
-A PlantUML use case diagram needs these changes before it renders as Mermaid:
-
-- Put one statement on each physical line. A second statement on the same line is a parse error.
-- Undeclared relationship endpoints become ellipse use cases. Declare every actor with `actor ID` somewhere in the document because source position does not imply an actor.
-- An association label containing `include` or `extend` remains an association. Use `..> : include` or `..> : extend` for UML include and extend semantics.
-- Replace actor `fillColor`, `strokeColor`, `strokeWidth`, and other arbitrary metadata with `classDef`, `class`, or `style`.
-- Replace these constructs, which are outside the grammar and raise a parse error: separators and titled separators, `as` aliases, colon actors, standalone `package` and `rectangle` blocks, `skinparam`, `allowmixing`, left, right, up, or down link hints, note placement keywords, standalone notes, multi-target notes, and `newpage`.
-- Rewrite backslash escapes and plain `\n` multiline text. They parse, so no error points at them. See [Constructs that parse but mean something else](#constructs-that-parse-but-mean-something-else).
 
 <!--- cspell:ignore markerless newpage skinparam allowmixing --->
