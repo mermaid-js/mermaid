@@ -123,6 +123,20 @@ describe('XY Chart', () => {
       {}
     );
   });
+  it('x-axis range with same values is supported', () => {
+    imgSnapshotTest(
+      `---
+title: Dirac delta function
+---
+xychart-beta
+  x-axis "Only 0 matters" 0 --> 0
+  line "dirac" [0, 0.5, 1]
+`,
+      {}
+    );
+
+    cy.get('g.plot g.line-plot-0 path').should('exist');
+  });
   it('Render spark line with "plotReservedSpacePercent"', () => {
     imgSnapshotTest(
       `

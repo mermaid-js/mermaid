@@ -21,7 +21,7 @@ let configFromInitialize: MermaidConfig;
 let directives: MermaidConfig[] = [];
 let currentConfig: MermaidConfig = assignWithDepth({}, defaultConfig);
 
-export const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: MermaidConfig[]) => {
+const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: MermaidConfig[]) => {
   // start with config being the siteConfig
   let cfg: MermaidConfig = assignWithDepth({}, siteCfg);
   // let sCfg = assignWithDepth(defaultConfig, siteConfigDelta);
@@ -53,18 +53,12 @@ export const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: Mermaid
 };
 
 /**
- * ## setSiteConfig
+ * Sets the `siteConfig` to the desired values.
  *
- * | Function      | Description                           | Type        | Values                                  |
- * | ------------- | ------------------------------------- | ----------- | --------------------------------------- |
- * | setSiteConfig | Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array |
+ * The `siteConfig` is a protected configuration for repeat use. Calls
+ * to {@link reset} will reset the `currentConfig` to `siteConfig`.
  *
- * **Notes:** Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls
- * to reset() will reset the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig)
- * will reset siteConfig and currentConfig to the defaultConfig Note: currentConfig is set in this
- * function _Default value: At default, will mirror Global Config_
- *
- * @param conf - The base currentConfig to use as siteConfig
+ * @param conf - The config to use as `siteConfig`. This will be merged with the `defaultConfig`.
  * @returns The new siteConfig
  */
 export const setSiteConfig = (conf: MermaidConfig): MermaidConfig => {
@@ -91,66 +85,48 @@ export const updateSiteConfig = (conf: MermaidConfig): MermaidConfig => {
 
   return siteConfig;
 };
+
 /**
- * ## getSiteConfig
- *
- * | Function      | Description                                       | Type        | Values                           |
- * | ------------- | ------------------------------------------------- | ----------- | -------------------------------- |
- * | setSiteConfig | Returns the current siteConfig base configuration | Get Request | Returns Any Values in siteConfig |
- *
- * **Notes**: Returns **any** values in siteConfig.
+ * Returns a copy of the current `siteConfig` base configuration.
  *
  * @returns The siteConfig
  */
 export const getSiteConfig = (): MermaidConfig => {
   return assignWithDepth({}, siteConfig);
 };
+
 /**
- * ## setConfig
+ * Updates the `currentConfig` with the provided `conf` after sanitization.
  *
- * | Function      | Description                           | Type        | Values                                  |
- * | ------------- | ------------------------------------- | ----------- | --------------------------------------- |
- * | setSiteConfig | Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array |
- *
- * **Notes**: Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure
- * keys. Any values found in conf with key found in siteConfig.secure will be replaced with the
- * corresponding siteConfig value.
- *
+ * @deprecated Any changes to the `currentConfig` would be overwritten by the
+ *             next call to {@link addDirective} or {@link reset}.
  * @param conf - The potential currentConfig
  * @returns The currentConfig merged with the sanitized conf
  */
 export const setConfig = (conf: MermaidConfig): MermaidConfig => {
-  checkConfig(conf);
-  assignWithDepth(currentConfig, conf);
+  updateCurrentConfig(currentConfig, [conf]);
 
   return getConfig();
 };
 
 /**
- * ## getConfig
+ * Returns a copy of the `currentConfig`.
  *
- * | Function  | Description               | Type        | Return Values                  |
- * | --------- | ------------------------- | ----------- | ------------------------------ |
- * | getConfig | Obtains the currentConfig | Get Request | Any Values from current Config |
- *
- * **Notes**: Avoid calling this function repeatedly. Instead, store the result in a variable and use it, and pass it down to function calls.
+ * @remarks Avoid calling this function repeatedly.
+ * Instead, store the result in a variable and use it, and pass it down to function calls.
  *
  * @returns The currentConfig
  */
 export const getConfig = (): MermaidConfig => {
   return assignWithDepth({}, currentConfig);
 };
+
 /**
- * ## sanitize
+ * Ensures options parameter does not attempt to override `siteConfig` secure keys.
  *
- * | Function | Description                            | Type        | Values |
- * | -------- | -------------------------------------- | ----------- | ------ |
- * | sanitize | Sets the siteConfig to desired values. | Put Request | None   |
+ * @remarks Modifies options in-place.
  *
- * Ensures options parameter does not attempt to override siteConfig secure keys **Notes**: modifies
- * options in-place
- *
- * @param options - The potential setConfig parameter
+ * @param options - The potential `setConfig` parameter
  */
 export const sanitize = (options: any) => {
   if (!options) {
@@ -210,22 +186,10 @@ export const addDirective = (directive: MermaidConfig) => {
 };
 
 /**
- * ## reset
+ * Resets the current config and applied directives to the provided config.
  *
- * | Function | Description                  | Type        | Required | Values |
- * | -------- | ---------------------------- | ----------- | -------- | ------ |
- * | reset    | Resets currentConfig to conf | Put Request | Required | None   |
- *
- * ## conf
- *
- * | Parameter | Description                                                    | Type       | Required | Values                                       |
- * | --------- | -------------------------------------------------------------- | ---------- | -------- | -------------------------------------------- |
- * | conf      | base set of values, which currentConfig could be **reset** to. | Dictionary | Required | Any Values, with respect to the secure Array |
- *
- * **Notes**: (default: current siteConfig ) (optional, default `getSiteConfig()`)
- *
- * @param config - base set of values, which currentConfig could be **reset** to.
- * Defaults to the current siteConfig (e.g returned by {@link getSiteConfig}).
+ * @param config - the value to reset the `currentConfig` to.
+ * Defaults to the current `siteConfig` (e.g the value returned by {@link getSiteConfig}).
  */
 export const reset = (config = siteConfig): void => {
   // Replace current config with siteConfig
