@@ -70,6 +70,7 @@ grammr
 graphtype
 halign
 iife
+instrumenter
 interp
 introdcued
 INVTRAPEND
@@ -164,7 +165,6 @@ ts-nocheck
 tsdoc
 typeof
 typestr
-uninstrumented
 unrouted
 unshift
 urlsafe
