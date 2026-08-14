@@ -121,11 +121,15 @@ const matchStereotypeText: CustomPatternMatcherFunc = (text, offset) => {
   return image.trim() ? customMatch(text, offset, image) : null;
 };
 
-export const Word = createToken({ name: 'WORD', pattern: Lexer.NA });
+// Everything an unquoted label may contain. Membership is opt-in per token, so a token
+// only becomes label text once it is provably not a delimiter, operator, or suffix marker.
+export const LabelText = createToken({ name: 'LABEL_TEXT', pattern: Lexer.NA });
+export const Word = createToken({ name: 'WORD', pattern: Lexer.NA, categories: LabelText });
 // Declared before IDENTIFIER so it can serve as its longer_alt.
 export const NumberLiteral = createToken({
   name: 'NUMBER',
   pattern: /(?:\d+\.\d+|\d+|\.\d+)(?:[A-Za-z]+)?/,
+  categories: LabelText,
 });
 // Ids may start with a digit (`1`, `1mg`), so this is `\w+` rather than an
 // identifier-shaped pattern. NUMBER is the longer_alt so decimals such as `1.5`
@@ -261,17 +265,21 @@ export const ForwardCross = createToken({ name: 'FORWARD_CROSS', pattern: /--x/ 
 export const BackwardCross = createToken({ name: 'BACKWARD_CROSS', pattern: /x--/ });
 export const MarkerlessSolid = createToken({ name: 'MARKERLESS_SOLID', pattern: /--+/ });
 export const MetadataStart = createToken({ name: 'METADATA_START', pattern: /@{/ });
-export const At = createToken({ name: 'AT', pattern: /@/ });
+export const At = createToken({ name: 'AT', pattern: /@/, categories: LabelText });
 export const LeftBrace = createToken({ name: 'LBRACE', pattern: /{/ });
 export const RightBrace = createToken({ name: 'RBRACE', pattern: /}/ });
 export const LeftBracket = createToken({ name: 'LBRACKET', pattern: /\[/ });
 export const RightBracket = createToken({ name: 'RBRACKET', pattern: /]/ });
 export const LeftParen = createToken({ name: 'LPAREN', pattern: /\(/ });
 export const RightParen = createToken({ name: 'RPAREN', pattern: /\)/ });
-export const Comma = createToken({ name: 'COMMA', pattern: /,/ });
-export const Colon = createToken({ name: 'COLON', pattern: /:/ });
+export const Comma = createToken({ name: 'COMMA', pattern: /,/, categories: LabelText });
+export const Colon = createToken({ name: 'COLON', pattern: /:/, categories: LabelText });
 
-export const HashColor = createToken({ name: 'HASH_COLOR', pattern: /#[\dA-Fa-f]+/ });
+export const HashColor = createToken({
+  name: 'HASH_COLOR',
+  pattern: /#[\dA-Fa-f]+/,
+  categories: LabelText,
+});
 export const PlainString = createToken({
   name: 'PLAIN_STRING',
   pattern: /"[^\n\r"]*"|'[^\n\r']*'/,
@@ -279,14 +287,41 @@ export const PlainString = createToken({
 export const CssIdentifier = createToken({
   name: 'CSS_IDENTIFIER',
   pattern: /--[A-Z_a-z][\w-]*|[A-Z_a-z]\w*(?:-\w+)+/,
+  categories: LabelText,
 });
-export const CssEscapedComma = createToken({ name: 'CSS_ESCAPED_COMMA', pattern: /\\,/ });
-export const Dash = createToken({ name: 'DASH', pattern: /-/ });
-export const Dot = createToken({ name: 'DOT', pattern: /\./ });
-export const Percent = createToken({ name: 'PERCENT', pattern: /%/ });
-export const CssPunctuation = createToken({ name: 'CSS_PUNCTUATION', pattern: /[!#$&*+/=?^_|~]/ });
+export const CssEscapedComma = createToken({
+  name: 'CSS_ESCAPED_COMMA',
+  pattern: /\\,/,
+  categories: LabelText,
+});
+export const Dash = createToken({ name: 'DASH', pattern: /-/, categories: LabelText });
+export const Dot = createToken({ name: 'DOT', pattern: /\./, categories: LabelText });
+export const Percent = createToken({ name: 'PERCENT', pattern: /%/, categories: LabelText });
+export const CssPunctuation = createToken({
+  name: 'CSS_PUNCTUATION',
+  pattern: /[!#$&*+/=?^_|~]/,
+  categories: LabelText,
+});
+// Last-resort label text. These characters carry meaning only inside a longer operator
+// (`\,`, `<<`, `<--`, `-->`, `..>`) or a Markdown string, all of which are matched earlier,
+// so on their own they are literal. `"` and `'` are deliberately absent: they open the two
+// quoted-string forms, and letting them stand alone would turn an unterminated string into
+// a silently accepted label.
+export const LabelPunctuation = createToken({
+  name: 'LABEL_PUNCTUATION',
+  pattern: /[;<>\\`]/,
+  categories: LabelText,
+});
+// Any run of characters outside printable ASCII, so unquoted labels are not English-only.
+// Disjoint from every other pattern in the mode, which all match printable ASCII.
+export const LabelSymbol = createToken({
+  name: 'LABEL_SYMBOL',
+  pattern: /[^\t\n\r !-~]+/,
+  categories: LabelText,
+});
 
 const defaultModeTokens = [
+  LabelText,
   Word,
   WhiteSpace,
   MarkdownString,
@@ -350,6 +385,9 @@ const defaultModeTokens = [
   Dot,
   Percent,
   CssPunctuation,
+  // Both fallbacks stay last so every operator, delimiter, and string form wins first.
+  LabelPunctuation,
+  LabelSymbol,
 ] as const;
 
 export const usecaseLexerModes = {

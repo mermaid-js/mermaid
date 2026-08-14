@@ -82,6 +82,17 @@ Stereotypes provide visible semantics but do not create CSS classes or automatic
 
 Labels can be unquoted text inside parentheses or brackets, a single-line plain string, or a Mermaid Markdown string. The same forms apply to actor labels, use case labels, boundary titles, relationship labels, and notes.
 
+An unquoted label is taken literally from the source, so it can hold digits, Markdown markers, punctuation, and non-ASCII characters. It has to stay on one physical line, and leading and trailing spaces are dropped. Only what the syntax already reserves stays out: the delimiters `(`, `)`, `[`, `]`, `{`, and `}`, the quote characters `"` and `'`, and the sequences `--`, `-->`, `<--`, `--o`, `--x`, `--|>`, `..>`, `:::`, `@{`, and `<<`. A lone `-`, `.`, `:`, `@`, `<`, or `>` is ordinary text. Quote the label when a reserved character has to appear in it.
+
+```mermaid-example
+usecase-beta
+actor Analyst(*Analyst*)
+Literal(**Literal markers**)
+Priced[Costs 19.95 EUR — VAT included!]
+Analyst -- files R&D report --> Literal
+Analyst --> Priced
+```
+
 Plain strings remain plain text. Markdown markers in a plain string are displayed literally. Mermaid Markdown strings use an outer pair of double quotes and an inner pair of backticks. Markdown strings can contain physical newlines.
 
 ```mermaid-example
@@ -96,7 +107,7 @@ Reviewer --> Literal
 Reviewer --> Quoted
 ```
 
-Use Mermaid entity codes when a delimiter must appear in a label. Common codes include `#quot;`, `#39;`, `#40;`, `#41;`, `#91;`, `#93;`, and `#96;`. Plain strings do not process backslash escapes. For example, `"First\nSecond"` displays the backslash and `n`; use a physical newline inside a Markdown string for multiline content.
+Use Mermaid entity codes when a reserved character must appear in a label. Common codes include `#quot;`, `#39;`, `#40;`, `#41;`, `#91;`, `#93;`, and `#96;`. Plain strings do not process backslash escapes. For example, `"First\nSecond"` displays the backslash and `n`; use a physical newline inside a Markdown string for multiline content.
 
 ## Lines and comments
 

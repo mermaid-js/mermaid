@@ -38,6 +38,7 @@ import {
   Include,
   JsonDeclarationStart,
   JsonObjectLiteral,
+  LabelText,
   LeftBrace,
   LeftBracket,
   LeftParen,
@@ -68,7 +69,7 @@ import {
 } from './usecase.tokens.js';
 
 const isLabelToken = (token: IToken): boolean =>
-  tokenMatcher(token, Word) ||
+  tokenMatcher(token, LabelText) ||
   token.tokenType === PlainString ||
   token.tokenType === MarkdownString;
 
@@ -294,7 +295,10 @@ class UsecaseParser extends CstParser {
       this.OR([
         { ALT: () => this.CONSUME(PlainString) },
         { ALT: () => this.CONSUME(MarkdownString) },
-        { ALT: () => this.AT_LEAST_ONE(() => this.CONSUME(Word)) },
+        // Unquoted labels run until a delimiter, operator, or suffix marker, none of
+        // which belong to `LabelText`. The visitor rebuilds the text from the source
+        // slice, so the internal token split never reaches the model.
+        { ALT: () => this.AT_LEAST_ONE(() => this.CONSUME(LabelText)) },
       ]);
     });
 
@@ -394,7 +398,7 @@ class UsecaseParser extends CstParser {
       this.OR([
         { ALT: () => this.CONSUME(PlainString) },
         { ALT: () => this.CONSUME(MarkdownString) },
-        { ALT: () => this.AT_LEAST_ONE(() => this.CONSUME(Word)) },
+        { ALT: () => this.AT_LEAST_ONE(() => this.CONSUME(LabelText)) },
       ]);
     });
 

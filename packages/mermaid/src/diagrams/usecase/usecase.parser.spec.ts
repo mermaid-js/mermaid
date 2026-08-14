@@ -544,6 +544,58 @@ B link@--> C`;
     );
   });
 
+  it('accepts markdown markers, punctuation, and non-ASCII characters in unquoted labels', async () => {
+    const source = [
+      'usecase-beta',
+      'actor Reviewer(*Reviewer*)',
+      'Literal(**Literal markers**)',
+      'Priced[Costs 19.95 EUR, incl. VAT!]',
+      'Progress(Ärende — 50% klart)',
+      'Reviewer -- opens **form** --> Literal',
+      'Reviewer --> Priced',
+      'Reviewer --> Progress',
+      'note for Literal Read the guide; then sign off.',
+    ].join('\n');
+    await parser.parse(source);
+
+    expect(db.getActors().get('Reviewer')?.label).toBe('*Reviewer*');
+    expect(db.getUseCases().get('Literal')?.label).toBe('**Literal markers**');
+    expect(db.getUseCases().get('Priced')?.label).toBe('Costs 19.95 EUR, incl. VAT!');
+    expect(db.getUseCases().get('Progress')?.label).toBe('Ärende — 50% klart');
+    expect(db.getRelationships()[0].label).toBe('opens **form**');
+    expect([...db.getNotes().values()][0].label).toBe('Read the guide; then sign off.');
+    expect(db.getAST()?.nodes).toMatchObject({
+      Reviewer: { label: '*Reviewer*', attrs: { labelType: 'text' } },
+      Literal: { label: '**Literal markers**', attrs: { labelType: 'text' } },
+    });
+  });
+
+  it.each([
+    ['a parenthesis', 'Literal(Literal (nested) markers)', '('],
+    ['a bracket', 'Literal[Literal [nested] markers]', '['],
+    ['a brace', 'Literal(Literal {nested} markers)', '{'],
+    ['a relationship operator', 'Literal(Literal -- markers)', '--'],
+    ['the class suffix', 'Literal(Literal ::: markers)', ':::'],
+    ['the metadata suffix', 'Literal(Literal @{ markers)', '@{'],
+  ])('still rejects %s inside an unquoted label', async (_name, statement, tokenImage) => {
+    const source = ['usecase-beta', statement].join('\n');
+    await expectGrammarErrorAt(
+      source,
+      tokenImage,
+      occurrenceLocation(source, tokenImage, tokenImage === '(' || tokenImage === '[' ? 2 : 1)
+    );
+  });
+
+  it.each([
+    ['a double quote', 'Literal(Literal "markers)'],
+    ['a single quote', "Literal(Reviewer's markers)"],
+  ])('still rejects %s inside an unquoted label', async (_name, statement) => {
+    await expectRejectedWithoutPublication(
+      ['usecase-beta', statement].join('\n'),
+      'Error lexing usecase diagram'
+    );
+  });
+
   it('reports exact actor metadata and incompatible icon locations', async () => {
     const invalidType = `usecase-beta
 actor User@{ type: giant }`;

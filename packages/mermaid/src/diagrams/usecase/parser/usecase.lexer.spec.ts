@@ -131,6 +131,31 @@ describe('usecase Chevrotain lexer', () => {
     ]);
   });
 
+  it('lexes leftover punctuation and non-ASCII characters as label text', () => {
+    expect(tokenImages('*bold* ; < > ` \\ Ärlig 日本語')).toEqual([
+      ['CSS_PUNCTUATION', '*'],
+      ['IDENTIFIER', 'bold'],
+      ['CSS_PUNCTUATION', '*'],
+      ['LABEL_PUNCTUATION', ';'],
+      ['LABEL_PUNCTUATION', '<'],
+      ['LABEL_PUNCTUATION', '>'],
+      ['LABEL_PUNCTUATION', '`'],
+      ['LABEL_PUNCTUATION', '\\'],
+      ['LABEL_SYMBOL', 'Ä'],
+      ['IDENTIFIER', 'rlig'],
+      ['LABEL_SYMBOL', '日本語'],
+    ]);
+    // The fallback sits last, so every operator that shares a character still wins.
+    expect(tokenImages('<-- --> ..> ::: @{ \\,')).toEqual([
+      ['BACKWARD_SOLID', '<--'],
+      ['FORWARD_SOLID', '-->'],
+      ['DEPENDENCY_ARROW', '..>'],
+      ['CLASS_SEPARATOR', ':::'],
+      ['METADATA_START', '@{'],
+      ['CSS_ESCAPED_COMMA', '\\,'],
+    ]);
+  });
+
   it('lexes digit-leading ids as identifiers while decimals stay numbers', () => {
     expect(tokenImages('1 1mg a1 _x')).toEqual([
       ['IDENTIFIER', '1'],
