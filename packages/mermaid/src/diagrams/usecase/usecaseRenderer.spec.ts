@@ -1,18 +1,33 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import type { Diagram } from '../../Diagram.js';
+import type { SVG } from '../../diagram-api/types.js';
 import type {
   UsecaseLayoutCluster,
   UsecaseLayoutData,
   UsecaseLayoutEdge,
   UsecaseLayoutNode,
 } from './usecaseTypes.js';
+import { db } from './usecaseDb.js';
 import {
   getUsecaseBoundaryAccessibleName,
   getUsecaseEdgeAccessibleName,
   getUsecaseNodeAccessibleName,
   prepareUsecaseLayoutData,
+  renderer,
   USECASE_MARKERS,
   usecaseDomId,
 } from './usecaseRenderer.js';
+
+const renderCallStyles: (string | null)[] = [];
+
+vi.mock('../../rendering-util/render.js', () => ({
+  getRegisteredLayoutAlgorithm: () => 'dagre',
+  render: (_data: UsecaseLayoutData, svg: SVG) => {
+    // Labels are measured inside `render`, so record the fonts that were in force at that moment.
+    renderCallStyles.push(svg.node()?.getAttribute('style') ?? null);
+    return Promise.resolve();
+  },
+}));
 
 const node = (overrides: Partial<UsecaseLayoutNode>): UsecaseLayoutNode =>
   ({
@@ -208,5 +223,57 @@ describe('usecase renderer integration', () => {
     expect(getUsecaseEdgeAccessibleName(edge({ relationshipType: 'note', internal: true }))).toBe(
       ''
     );
+  });
+});
+
+describe('usecase font custom properties', () => {
+  const originalGetBBox = Object.getOwnPropertyDescriptor(SVGElement.prototype, 'getBBox');
+
+  beforeAll(() => {
+    Object.defineProperty(SVGElement.prototype, 'getBBox', {
+      configurable: true,
+      value: () => ({ x: 0, y: 0, width: 120, height: 60 }),
+    });
+  });
+
+  afterAll(() => {
+    if (originalGetBBox) {
+      Object.defineProperty(SVGElement.prototype, 'getBBox', originalGetBBox);
+    } else {
+      // @ts-expect-error -- jsdom does not implement getBBox, so remove the stand-in again.
+      delete SVGElement.prototype.getBBox;
+    }
+  });
+
+  it('keeps the label fonts identical between measurement and the final paint', async () => {
+    renderCallStyles.length = 0;
+    db.clear();
+    document.body.innerHTML = '<svg id="usecase-font-vars"></svg>';
+
+    await renderer.draw('usecase-beta', 'usecase-font-vars', '1.0.0', {
+      db,
+    } as unknown as Diagram);
+
+    const svgElement = document.getElementById('usecase-font-vars') as unknown as SVGSVGElement;
+    const expectedFonts = {
+      '--mermaid-usecase-actor-font-size': '14px',
+      '--mermaid-usecase-actor-font-family': '"Open Sans", sans-serif',
+      '--mermaid-usecase-actor-font-weight': 'normal',
+      '--mermaid-usecase-font-size': '12px',
+      '--mermaid-usecase-font-family': '"Open Sans", sans-serif',
+      '--mermaid-usecase-font-weight': 'normal',
+    };
+
+    // The labels are sized while `render` runs...
+    expect(renderCallStyles).toHaveLength(1);
+    for (const [property, value] of Object.entries(expectedFonts)) {
+      expect(renderCallStyles[0]).toContain(`${property}: ${value}`);
+    }
+
+    // ...and `setupViewPortForSVG` must not drop the same fonts before the diagram is painted,
+    // otherwise every label falls back to a different typeface and overflows its foreignObject.
+    for (const [property, value] of Object.entries(expectedFonts)) {
+      expect(svgElement.style.getPropertyValue(property)).toBe(value);
+    }
   });
 });

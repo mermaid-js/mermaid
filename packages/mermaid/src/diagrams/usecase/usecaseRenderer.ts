@@ -210,6 +210,28 @@ const annotateUsecaseElements = (
 };
 
 /**
+ * Publishes the configured use-case fonts on the diagram root as the CSS custom properties that
+ * `styles.ts` reads through `var(--mermaid-usecase-*, <fallback>)`.
+ *
+ * This has to be applied twice. The labels are measured while `render` runs, and the measured
+ * width is frozen onto each label `foreignObject`; the fonts therefore have to be in force by
+ * then. `setupViewPortForSVG` then runs `configureSvgSize`, which assigns the whole `style`
+ * attribute (`max-width: …`) and so wipes the custom properties again. Without the second call
+ * the finished diagram repaints every label in the fallback font — a different typeface from the
+ * one it was measured in — and the wider glyphs spill past the fixed `foreignObject` width, where
+ * they are clipped at the trailing edge.
+ */
+const applyUsecaseFonts = (svg: SVG, data: UsecaseLayoutData): void => {
+  svg
+    .style('--mermaid-usecase-actor-font-size', `${data.actorFontSize}px`)
+    .style('--mermaid-usecase-actor-font-family', data.actorFontFamily)
+    .style('--mermaid-usecase-actor-font-weight', data.actorFontWeight)
+    .style('--mermaid-usecase-font-size', `${data.usecaseFontSize}px`)
+    .style('--mermaid-usecase-font-family', data.usecaseFontFamily)
+    .style('--mermaid-usecase-font-weight', data.usecaseFontWeight);
+};
+
+/**
  * Main draw function using unified rendering system
  */
 const draw: DrawDefinition = async (_text, id, _version, diag) => {
@@ -255,13 +277,8 @@ const draw: DrawDefinition = async (_text, id, _version, diag) => {
   data4Layout.layoutAlgorithm = getRegisteredLayoutAlgorithm(layout);
   prepareUsecaseLayoutData(data4Layout, id);
 
-  svg
-    .style('--mermaid-usecase-actor-font-size', `${data4Layout.actorFontSize}px`)
-    .style('--mermaid-usecase-actor-font-family', data4Layout.actorFontFamily)
-    .style('--mermaid-usecase-actor-font-weight', data4Layout.actorFontWeight)
-    .style('--mermaid-usecase-font-size', `${data4Layout.usecaseFontSize}px`)
-    .style('--mermaid-usecase-font-family', data4Layout.usecaseFontFamily)
-    .style('--mermaid-usecase-font-weight', data4Layout.usecaseFontWeight);
+  // Set before `render` so the labels are measured in the fonts they will be painted in.
+  applyUsecaseFonts(svg, data4Layout);
 
   await render(data4Layout, svg);
   annotateUsecaseElements(svg, data4Layout, accessibleNames);
@@ -274,6 +291,8 @@ const draw: DrawDefinition = async (_text, id, _version, diag) => {
     usecaseDb.getDiagramTitle?.() ?? ''
   );
   setupViewPortForSVG(svg, padding, 'usecaseDiagram', data4Layout.useMaxWidth);
+  // Restore the fonts that `setupViewPortForSVG` just dropped from the `style` attribute.
+  applyUsecaseFonts(svg, data4Layout);
 };
 
 export const renderer = { draw };

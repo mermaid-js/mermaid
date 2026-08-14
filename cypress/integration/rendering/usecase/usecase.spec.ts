@@ -333,14 +333,18 @@ describe('Usecase diagram', () => {
     renderForDom(
       `usecase-beta
         systemBoundary "Plain Boundary"
-          actor User
+          actor User("Main administrator")
           Login("Sign in")
+          Report[Generate report]
         end
-        User --> Login`,
+        User --> Login
+        User --> Report`,
       {
         usecase: {
           actorFontSize: 18,
+          actorFontFamily: 'Courier New',
           usecaseFontSize: 17,
+          usecaseFontFamily: 'Georgia',
           diagramPadding: 12,
           useMaxWidth: true,
         },
@@ -350,6 +354,30 @@ describe('Usecase diagram', () => {
     cy.get('svg').should(($svg) => {
       expect($svg.attr('width')).to.equal('100%');
       expect($svg.attr('style')).to.match(/max-width: [\d.]+px/);
+    });
+    // `max-width` is written with `attr('style', …)`, which replaces the whole attribute. The
+    // configured fonts must survive that, otherwise the labels are painted in a different
+    // typeface than the one they were measured in and their trailing glyphs get clipped.
+    cy.get('svg').should(($svg) => {
+      const svg = $svg[0] as unknown as SVGSVGElement;
+      expect(svg.style.getPropertyValue('--mermaid-usecase-actor-font-size')).to.equal('18px');
+      expect(svg.style.getPropertyValue('--mermaid-usecase-actor-font-family')).to.equal(
+        'Courier New'
+      );
+      expect(svg.style.getPropertyValue('--mermaid-usecase-font-size')).to.equal('17px');
+      expect(svg.style.getPropertyValue('--mermaid-usecase-font-family')).to.equal('Georgia');
+    });
+    cy.get('svg foreignObject').should(($foreignObjects) => {
+      for (const foreignObject of [...$foreignObjects]) {
+        const label = foreignObject.firstElementChild as HTMLElement | null;
+        if (!label) {
+          continue;
+        }
+        const available = Math.ceil(Number(foreignObject.getAttribute('width')));
+        expect(label.scrollWidth, `"${label.textContent}" fits its label box`).to.be.at.most(
+          available
+        );
+      }
     });
     element('Plain_Boundary').should('have.attr', 'data-boundary-type', 'rect');
     element('Plain_Boundary').should('have.class', 'usecase-system-boundary-rect');
