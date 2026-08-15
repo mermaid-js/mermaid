@@ -422,7 +422,28 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
     if (newEndTime.isValid()) {
       endTime = newEndTime;
     }
+    return endTime.toDate();
   }
+
+  // The string matched neither `dateFormat` nor a duration. `getStartDate` falls
+  // back to a lenient parse at this point, so a start date whose precision differs
+  // from `dateFormat` still resolves; without the same fallback here the end time
+  // collapses onto the start time and the task renders as a zero-width bar.
+  //
+  // Parsed through dayjs rather than `new Date()` so a date-only string keeps the
+  // local midnight the strict path above would have produced: `new Date()` reads
+  // those as UTC, which would shift the bar by the viewer's offset.
+  const fallbackDate = dayjs(str);
+  if (
+    fallbackDate.isValid() &&
+    // Mirrors the bounds `getStartDate` uses to reject dates that engines parse
+    // into absurd years, which can stall rendering.
+    fallbackDate.year() >= -10000 &&
+    fallbackDate.year() <= 10000
+  ) {
+    return inclusive ? fallbackDate.add(1, 'd').toDate() : fallbackDate.toDate();
+  }
+
   return endTime.toDate();
 };
 

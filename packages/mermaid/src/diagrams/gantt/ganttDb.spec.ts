@@ -566,4 +566,53 @@ describe('when using the ganttDb', function () {
     // Second task will be parsed as year 202 (fallback to new Date())
     expect(tasks[1].startTime.getFullYear()).toBe(202);
   });
+
+  describe('when the end date does not match dateFormat', function () {
+    beforeEach(function () {
+      ganttDb.clear();
+    });
+
+    // Regression for #8052: `getStartDate` falls back to `new Date()` when strict
+    // parsing fails, `getEndDate` did not. The end time collapsed onto the start
+    // time and the task rendered as a zero-width bar.
+    it('resolves an end date that omits the time the format asks for', function () {
+      ganttDb.setDateFormat('YYYY-MM-DD HH:mm');
+      ganttDb.addSection('section');
+      ganttDb.addTask('dated task', 'id1,2026-01-03 08:00,2026-01-05');
+
+      const task = ganttDb.getTasks()[0];
+      expect(task.endTime).toEqual(new Date(2026, 0, 5));
+      expect(task.endTime.getTime()).toBeGreaterThan(task.startTime.getTime());
+    });
+
+    it('resolves an end date that carries a time the format omits', function () {
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      ganttDb.addSection('section');
+      ganttDb.addTask('dated task', 'id1,2026-01-03,2026-01-05 12:00');
+
+      const task = ganttDb.getTasks()[0];
+      expect(task.endTime).toEqual(new Date(2026, 0, 5, 12, 0));
+      expect(task.endTime.getTime()).toBeGreaterThan(task.startTime.getTime());
+    });
+
+    // Guards the fallback against swallowing the duration and until forms, which
+    // reach the same branch and already worked.
+    it('still treats a duration as a duration', function () {
+      ganttDb.setDateFormat('YYYY-MM-DD HH:mm');
+      ganttDb.addSection('section');
+      ganttDb.addTask('duration task', 'id1,2026-01-03 08:00,2d');
+
+      const task = ganttDb.getTasks()[0];
+      expect(task.endTime).toEqual(dayjs('2026-01-05 08:00', 'YYYY-MM-DD HH:mm').toDate());
+    });
+
+    it('leaves an unparseable end date collapsed on the start time', function () {
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      ganttDb.addSection('section');
+      ganttDb.addTask('bad task', 'id1,2026-01-03,not-a-date');
+
+      const task = ganttDb.getTasks()[0];
+      expect(task.endTime).toEqual(task.startTime);
+    });
+  });
 });
