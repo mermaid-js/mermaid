@@ -1270,4 +1270,3 @@ describe('when parsing ER diagram it...', function () {
     });
   });
 });
-
