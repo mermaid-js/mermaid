@@ -7,8 +7,9 @@ import {
   resolveSeed,
   generateFoldPath,
   generateHorizontalBoundary,
+  generateGradientBoundary,
   generateCliffPath,
-  generateConfusionPath,
+  generateAporeticPath,
 } from './cynefinBoundaries.js';
 
 /** Test helper: build a partial DomainBlock with just the fields the DB reads. */
@@ -84,7 +85,7 @@ describe('Cynefin Database', () => {
       block('complicated'),
       block('clear'),
       block('chaotic'),
-      block('confusion'),
+      block('aporetic'),
     ]);
     expect(db.getDomains().size).toBe(5);
   });
@@ -99,6 +100,10 @@ describe('Cynefin Database', () => {
   it('should return config', () => {
     const config = db.getConfig();
     expect(typeof config).toBe('object');
+  });
+
+  it('should default showFlow to true', () => {
+    expect(db.getConfig().showFlow).toBe(true);
   });
 });
 
@@ -147,15 +152,28 @@ describe('Cynefin Boundaries', () => {
     expect(path).toContain('C');
   });
 
-  it('generateConfusionPath should return valid ellipse path', () => {
-    const path = generateConfusionPath(400, 300, 50, 40);
+  it('generateGradientBoundary should return a straight line (no curves)', () => {
+    const path = generateGradientBoundary(400, 800, 300);
+    expect(path).toBe('M400,300 L800,300');
+    expect(path).not.toContain('C');
+  });
+
+  it('generateHorizontalBoundary should respect an explicit x-range and pin its endpoints', () => {
+    const path = generateHorizontalBoundary(800, 600, 42, 8, 0, 400);
+    // Pinned endpoints sit exactly on the centre line (cy = 300) at x=0 and x=400.
+    expect(path).toMatch(/^M0,300 /);
+    expect(path).toContain('400,300');
+  });
+
+  it('generateAporeticPath should return valid ellipse path', () => {
+    const path = generateAporeticPath(400, 300, 50, 40);
     expect(path).toMatch(/^M/);
     expect(path).toContain('A');
     expect(path).toMatch(/Z$/);
   });
 
-  it('generateConfusionPath should use provided center and radii', () => {
-    const path = generateConfusionPath(400, 300, 50, 40);
+  it('generateAporeticPath should use provided center and radii', () => {
+    const path = generateAporeticPath(400, 300, 50, 40);
     expect(path).toContain('350'); // cx - rx = 400 - 50
     expect(path).toContain('450'); // cx + rx = 400 + 50
     expect(path).toContain('300'); // cy

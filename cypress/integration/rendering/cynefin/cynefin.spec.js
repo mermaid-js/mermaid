@@ -21,7 +21,7 @@ describe('cynefin framework', () => {
         chaotic
           "Page on-call immediately"
 
-        confusion
+        aporetic
           "Unknown failure mode"
       `
     );
@@ -104,6 +104,20 @@ describe('cynefin framework', () => {
     );
   });
 
+  it('should render cynefin without outward flow arrows', () => {
+    imgSnapshotTest(
+      `cynefin-beta
+        title No Flow
+
+        complex
+          "Item A"
+        clear
+          "Item B"
+      `,
+      { cynefin: { showFlow: false } }
+    );
+  });
+
   it('should render cynefin without domain descriptions', () => {
     imgSnapshotTest(
       `cynefin-beta
@@ -157,12 +171,12 @@ describe('cynefin framework', () => {
     );
   });
 
-  it('should render cynefin with confusion domain items without overflow', () => {
+  it('should render cynefin with aporetic domain items without overflow', () => {
     imgSnapshotTest(
       `cynefin-beta
-        title Confusion Items
+        title Aporetic Items
 
-        confusion
+        aporetic
           "Unknown A"
           "Unknown B"
           "Unknown C"

@@ -30,7 +30,7 @@ describe('Cynefin Parsing - Basic', () => {
     "C"
   chaotic
     "D"
-  confusion
+  aporetic
     "E"
 `);
     const domains = db.getDomains();
@@ -39,7 +39,7 @@ describe('Cynefin Parsing - Basic', () => {
     expect(domains.has('complicated')).toBe(true);
     expect(domains.has('clear')).toBe(true);
     expect(domains.has('chaotic')).toBe(true);
-    expect(domains.has('confusion')).toBe(true);
+    expect(domains.has('aporetic')).toBe(true);
   });
 
   it('should parse empty domains', async () => {
@@ -179,12 +179,12 @@ describe('Cynefin Parsing - Complex diagram', () => {
     "Deployment checklist"
   chaotic
     "Incident response"
-  confusion
+  aporetic
     "New initiative"
   complex --> complicated : "Pattern emerges"
   complicated --> clear : "Best practice found"
   chaotic --> complex : "Stabilized"
-  confusion --> chaotic : "Crisis detected"
+  aporetic --> chaotic : "Crisis detected"
 `);
     expect(db.getDiagramTitle()).toBe('Team Practices');
     expect(db.getAccTitle()).toBe('Cynefin for team practices');
@@ -195,7 +195,7 @@ describe('Cynefin Parsing - Complex diagram', () => {
     expect(domains.get('complicated')!.items).toHaveLength(2);
     expect(domains.get('clear')!.items).toHaveLength(1);
     expect(domains.get('chaotic')!.items).toHaveLength(1);
-    expect(domains.get('confusion')!.items).toHaveLength(1);
+    expect(domains.get('aporetic')!.items).toHaveLength(1);
 
     const transitions = db.getTransitions();
     expect(transitions).toHaveLength(4);
@@ -205,7 +205,7 @@ describe('Cynefin Parsing - Complex diagram', () => {
       label: 'Pattern emerges',
     });
     expect(transitions[3]).toMatchObject({
-      from: 'confusion',
+      from: 'aporetic',
       to: 'chaotic',
       label: 'Crisis detected',
     });

@@ -62,11 +62,16 @@ export const styles: DiagramStylesProvider = () => {
 		stroke-width: ${t.boundaryWidth};
 		stroke-dasharray: 6 3;
 	}
+	.cynefinGradientBoundary {
+		stroke: ${t.boundaryColor};
+		stroke-width: ${t.boundaryWidth};
+		stroke-opacity: 0.4;
+	}
 	.cynefinCliff {
 		stroke: ${t.cliffColor};
 		stroke-width: ${t.cliffWidth};
 	}
-	.cynefinConfusion {
+	.cynefinAporetic {
 		stroke: ${t.boundaryColor};
 		stroke-width: 1.5;
 		stroke-dasharray: 4 2;
@@ -75,6 +80,18 @@ export const styles: DiagramStylesProvider = () => {
 		stroke: ${t.arrowColor};
 		stroke-width: ${t.arrowWidth};
 		fill: none;
+	}
+	.cynefinFlowLine {
+		stroke: ${t.arrowColor};
+		stroke-width: ${t.arrowWidth};
+		stroke-dasharray: 5 3;
+		stroke-opacity: 0.5;
+		fill: none;
+	}
+	.cynefinFlowHead {
+		fill: ${t.arrowColor};
+		fill-opacity: 0.5;
+		stroke: none;
 	}
 	.cynefinArrowHead {
 		fill: ${t.arrowColor};

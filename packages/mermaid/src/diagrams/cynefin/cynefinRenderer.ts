@@ -10,8 +10,9 @@ import type { CynefinDB, CynefinDomain, CynefinTransition, DomainName } from './
 import {
   generateFoldPath,
   generateHorizontalBoundary,
+  generateGradientBoundary,
   generateCliffPath,
-  generateConfusionPath,
+  generateAporeticPath,
   resolveSeed,
 } from './cynefinBoundaries.js';
 
@@ -25,7 +26,7 @@ const DOMAIN_META: Record<DomainName, DomainMeta> = {
   complicated: { model: 'Sense \u2192 Analyse \u2192 Respond', practice: 'Good Practices' },
   clear: { model: 'Sense \u2192 Categorise \u2192 Respond', practice: 'Best Practices' },
   chaotic: { model: 'Act \u2192 Sense \u2192 Respond', practice: 'Novel Practices' },
-  confusion: { model: '', practice: 'Disorder' },
+  aporetic: { model: '', practice: '' },
 };
 
 interface DomainLayout {
@@ -45,7 +46,7 @@ const getDomainLayouts = (width: number, height: number): Record<DomainName, Dom
     complicated: { cx: hw + hw / 2, cy: hh / 2, x: hw, y: 0, w: hw, h: hh },
     chaotic: { cx: hw / 2, cy: hh + hh / 2, x: 0, y: hh, w: hw, h: hh },
     clear: { cx: hw + hw / 2, cy: hh + hh / 2, x: hw, y: hh, w: hw, h: hh },
-    confusion: { cx: hw, cy: hh, x: hw * 0.7, y: hh * 0.7, w: hw * 0.6, h: hh * 0.6 },
+    aporetic: { cx: hw, cy: hh, x: hw * 0.7, y: hh * 0.7, w: hw * 0.6, h: hh * 0.6 },
   };
 };
 
@@ -54,7 +55,7 @@ interface CynefinDomainColors {
   complicatedBg: string;
   chaoticBg: string;
   clearBg: string;
-  confusionBg: string;
+  aporeticBg: string;
 }
 
 /** Resolve only the domain background colors from the cynefin theme block. */
@@ -65,8 +66,8 @@ const getCynefinDomainColors = (): CynefinDomainColors => {
   return themeVariables.cynefin as CynefinDomainColors;
 };
 
-/** Maximum items rendered inside the confusion ellipse before overflow badge is shown. */
-const MAX_CONFUSION_ITEMS = 3;
+/** Maximum items rendered inside the aporetic ellipse before overflow badge is shown. */
+const MAX_APORETIC_ITEMS = 3;
 
 const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const db = diagram.db as CynefinDB;
@@ -85,6 +86,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const padding = config.padding;
   const showDomainDescriptions = config.showDomainDescriptions;
   const boundaryAmplitude = config.boundaryAmplitude;
+  const showFlow = config.showFlow;
   const totalWidth = width + padding * 2;
   const totalHeight = height + padding * 2;
 
@@ -93,7 +95,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     complicated: domainColors.complicatedBg,
     clear: domainColors.clearBg,
     chaotic: domainColors.chaoticBg,
-    confusion: domainColors.confusionBg,
+    aporetic: domainColors.aporeticBg,
   };
 
   const svg: SVG = selectSvgElement(id);
@@ -140,10 +142,22 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     .attr('d', generateFoldPath(width, height, seed, boundaryAmplitude))
     .attr('fill', 'none');
 
+  // Horizontal boundary splits into two halves with different meanings:
+  // - left half (Complex/Chaotic) is a genuine phase shift → wavy
+  // - right half (Clear/Complicated) is a gradient, not a phase shift → straight
   boundaryGroup
     .append('path')
     .attr('class', 'cynefinBoundary')
-    .attr('d', generateHorizontalBoundary(width, height, seed + 100, boundaryAmplitude))
+    .attr(
+      'd',
+      generateHorizontalBoundary(width, height, seed + 100, boundaryAmplitude, 0, width / 2)
+    )
+    .attr('fill', 'none');
+
+  boundaryGroup
+    .append('path')
+    .attr('class', 'cynefinGradientBoundary')
+    .attr('d', generateGradientBoundary(width / 2, width, height / 2))
     .attr('fill', 'none');
 
   // 3. The cliff (thicker, between Clear and Chaotic) — stroke handled by .cynefinCliff CSS class
@@ -153,16 +167,56 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     .attr('d', generateCliffPath(width, height))
     .attr('fill', 'none');
 
-  // 4. Confusion ellipse (center overlay) — stroke handled by .cynefinConfusion CSS class
+  // 4. Aporetic ellipse (center overlay) — stroke handled by .cynefinAporetic CSS class
   // Using width*0.15 and height*0.15 gives enough room for up to ~3 item badges
-  const confusionRx = width * 0.15;
-  const confusionRy = height * 0.15;
+  const aporeticRx = width * 0.15;
+  const aporeticRy = height * 0.15;
   root
     .append('path')
-    .attr('class', 'cynefinConfusion')
-    .attr('d', generateConfusionPath(width / 2, height / 2, confusionRx, confusionRy))
-    .attr('fill', domainBg.confusion)
+    .attr('class', 'cynefinAporetic')
+    .attr('d', generateAporeticPath(width / 2, height / 2, aporeticRx, aporeticRy))
+    .attr('fill', domainBg.aporetic)
     .attr('fill-opacity', 0.5);
+
+  // 4b. Flow arrows radiating outward from the Aporetic centre to each domain.
+  // In Cynefin, flow moves outward from the not-yet-known centre, not in from a side.
+  if (showFlow) {
+    const flowDefs = svg.select('defs').empty() ? svg.append('defs') : svg.select('defs');
+    const flowMarkerId = `cynefin-flow-${id}`;
+    flowDefs
+      .append('marker')
+      .attr('id', flowMarkerId)
+      .attr('viewBox', '0 0 10 10')
+      .attr('refX', 9)
+      .attr('refY', 5)
+      .attr('markerWidth', 6)
+      .attr('markerHeight', 6)
+      .attr('orient', 'auto-start-reverse')
+      .append('path')
+      .attr('d', 'M 0 0 L 10 5 L 0 10 z')
+      .attr('class', 'cynefinFlowHead');
+
+    const flowGroup = root.append('g').attr('class', 'cynefin-flow');
+    const cx = width / 2;
+    const cy = height / 2;
+    for (const domainName of quadrantDomains) {
+      const target = layouts[domainName];
+      const dx = target.cx - cx;
+      const dy = target.cy - cy;
+      const len = Math.sqrt(dx * dx + dy * dy);
+      // Start at the Aporetic ellipse edge, end partway toward the quadrant centre.
+      const startX = cx + (dx / len) * aporeticRx;
+      const startY = cy + (dy / len) * aporeticRy;
+      const endX = cx + dx * 0.7;
+      const endY = cy + dy * 0.7;
+      flowGroup
+        .append('path')
+        .attr('class', 'cynefinFlowLine')
+        .attr('d', `M${startX},${startY} L${endX},${endY}`)
+        .attr('fill', 'none')
+        .attr('marker-end', `url(#${flowMarkerId})`);
+    }
+  }
 
   // 5. Domain name labels — text styling handled by .cynefinDomainLabel CSS class
   const labelGroup = root.append('g').attr('class', 'cynefin-labels');
@@ -178,7 +232,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       .text(domainName.charAt(0).toUpperCase() + domainName.slice(1));
   }
 
-  // Confusion label
+  // Aporetic label
   labelGroup
     .append('text')
     .attr('class', 'cynefinDomainLabel')
@@ -186,7 +240,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     .attr('y', showDomainDescriptions ? height / 2 - 10 : height / 2)
     .attr('text-anchor', 'middle')
     .attr('dominant-baseline', 'middle')
-    .text('Confusion');
+    .text('Aporetic');
 
   // 6. Domain description subtitles — text styling handled by .cynefinSubtitle CSS class
   if (showDomainDescriptions) {
@@ -213,16 +267,8 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
         .attr('dominant-baseline', 'middle')
         .text(meta.practice);
     }
-
-    // Confusion subtitle
-    subtitleGroup
-      .append('text')
-      .attr('class', 'cynefinSubtitle')
-      .attr('x', width / 2)
-      .attr('y', height / 2 + 8)
-      .attr('text-anchor', 'middle')
-      .attr('dominant-baseline', 'middle')
-      .text(DOMAIN_META.confusion.practice);
+    // The Aporetic centre has no decision model or practice subtitle — it is the
+    // state of not-yet-knowing which domain applies, so only its label is shown.
   }
 
   // 7. Items as text badges within each domain
@@ -230,7 +276,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const itemHeight = 26;
   const itemPaddingX = 10;
 
-  const allDomains: DomainName[] = ['complex', 'complicated', 'chaotic', 'clear', 'confusion'];
+  const allDomains: DomainName[] = ['complex', 'complicated', 'chaotic', 'clear', 'aporetic'];
   for (const domainName of allDomains) {
     const domain: CynefinDomain | undefined = domains.get(domainName);
     if (!domain || domain.items.length === 0) {
@@ -238,19 +284,19 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     }
 
     const layout = layouts[domainName];
-    const isConfusion = domainName === 'confusion';
+    const isAporetic = domainName === 'aporetic';
 
-    // For confusion: cap items and center the block around the ellipse center.
+    // For aporetic: cap items and center the block around the ellipse center.
     // For quadrant domains: start below the label/subtitle area.
     let itemsToRender = domain.items;
     let overflowCount = 0;
-    if (isConfusion && domain.items.length > MAX_CONFUSION_ITEMS) {
-      overflowCount = domain.items.length - MAX_CONFUSION_ITEMS;
-      itemsToRender = domain.items.slice(0, MAX_CONFUSION_ITEMS);
+    if (isAporetic && domain.items.length > MAX_APORETIC_ITEMS) {
+      overflowCount = domain.items.length - MAX_APORETIC_ITEMS;
+      itemsToRender = domain.items.slice(0, MAX_APORETIC_ITEMS);
     }
 
     let startY: number;
-    if (isConfusion) {
+    if (isAporetic) {
       // Center the item block below the label within the ellipse
       const labelOffset = showDomainDescriptions ? 22 : 14;
       startY = layout.cy + labelOffset;
@@ -304,7 +350,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       textEl.attr('x', badgeWidth / 2).attr('y', itemHeight / 2);
     });
 
-    // Overflow badge: "+N more" when confusion has more items than MAX_CONFUSION_ITEMS
+    // Overflow badge: "+N more" when aporetic has more items than MAX_APORETIC_ITEMS
     if (overflowCount > 0) {
       const overflowY = startY + itemsToRender.length * (itemHeight + 4);
       const overflowLabel = `+${overflowCount} more`;

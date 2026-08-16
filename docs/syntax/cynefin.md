@@ -18,9 +18,9 @@ The Cynefin framework divides the world into five domains, each with its own dec
 - **Complicated**: Cause and effect require analysis or expertise. Sense → Analyse → Respond. Apply **good practices**.
 - **Complex**: Cause and effect can only be deduced in retrospect. Probe → Sense → Respond. Apply **emergent practices**.
 - **Chaotic**: No perceivable cause and effect. Act → Sense → Respond. Apply **novel practices**.
-- **Confusion** (or Disorder): You do not know which domain you are in. The goal is to move items out of this state into one of the other four.
+- **Aporetic** (the central domain): You do not yet know which domain you are in — a state of productive not-knowing. The goal is to move items out of this state into one of the other four. (Note: "Confused" is a distinct concept that only appears in the liminal/dynamic version of Cynefin, which this diagram does not model.)
 
-The signature visual feature is the wavy, organic boundary between the ordered (Clear, Complicated) and unordered (Complex, Chaotic) halves, and the "cliff" between Clear and Chaotic representing the risk of complacency leading to crisis.
+The signature visual features are the phase-shift boundaries between domains — wavy and abrupt where crossing them is a real transition (the central fold, the Complex/Chaotic boundary, and the "cliff" between Clear and Chaotic) — versus the plain Clear/Complicated boundary, which is a gradient rather than a phase shift. Flow radiates outward from the central Aporetic domain.
 
 ## Syntax
 
@@ -43,7 +43,7 @@ clear
 chaotic
 "Crisis response"
 
-confusion
+aporetic
 "Item of unknown domain"
 
 complex --> complicated : "Pattern identified"
@@ -60,7 +60,7 @@ clear --> chaotic : "Complacency"
 | `complicated`  | Opens the Complicated domain block                                     |
 | `clear`        | Opens the Clear domain block                                           |
 | `chaotic`      | Opens the Chaotic domain block                                         |
-| `confusion`    | Opens the Confusion / Disorder domain block                            |
+| `aporetic`     | Opens the central Aporetic (not-yet-known) domain block                |
 | `-->`          | Declares a transition from one domain to another                       |
 
 ### Items
@@ -73,7 +73,7 @@ complex
   "Run chaos experiment"
 ```
 
-Keep per-domain item lists short — the quadrants have fixed layout and long lists can visually overflow their boxes. The confusion ellipse caps at three items and shows a `+N more` badge; the four quadrant domains do not clip, so prefer a handful of items each.
+Keep per-domain item lists short — the quadrants have fixed layout and long lists can visually overflow their boxes. The aporetic ellipse caps at three items and shows a `+N more` badge; the four quadrant domains do not clip, so prefer a handful of items each.
 
 ### Transitions
 
@@ -115,7 +115,7 @@ cynefin-beta
   chaotic
     "Page on-call immediately"
 
-  confusion
+  aporetic
     "Unknown failure mode"
 ```
 
@@ -138,7 +138,7 @@ cynefin-beta
   chaotic
     "Page on-call immediately"
 
-  confusion
+  aporetic
     "Unknown failure mode"
 ```
 
@@ -224,6 +224,7 @@ Cynefin diagrams accept the following configuration under the `cynefin` key in t
 | `showDomainDescriptions` | boolean | `true`  | Show decision model and practice type subtitles per domain                                                                                                                                                                   |
 | `boundaryAmplitude`      | number  | `8`     | Waviness amplitude of domain boundaries in pixels (set to `0` for straight lines)                                                                                                                                            |
 | `seed`                   | number  | `0`     | Deterministic seed for boundary waviness. `0` (default) hashes the diagram's SVG id so each diagram looks unique. Set any non-zero number to lock the waviness across renders — required for stable visual regression tests. |
+| `showFlow`               | boolean | `true`  | Show flow arrows radiating outward from the central Aporetic domain to each domain (set to `false` to hide them)                                                                                                             |
 
 Example:
 
@@ -243,29 +244,29 @@ cynefin-beta
 
 Cynefin diagrams use the following theme variables, which can be overridden via `themeVariables.cynefin`:
 
-| Variable         | Description                                      |
-| ---------------- | ------------------------------------------------ |
-| `complexBg`      | Background color for the Complex domain          |
-| `complicatedBg`  | Background color for the Complicated domain      |
-| `clearBg`        | Background color for the Clear domain            |
-| `chaoticBg`      | Background color for the Chaotic domain          |
-| `confusionBg`    | Background color for the Confusion center region |
-| `boundaryColor`  | Color of the wavy domain boundaries              |
-| `boundaryWidth`  | Stroke width of the boundaries                   |
-| `cliffColor`     | Color of the Clear/Chaotic cliff                 |
-| `cliffWidth`     | Stroke width of the cliff                        |
-| `arrowColor`     | Color of transition arrows                       |
-| `arrowWidth`     | Stroke width of transition arrows                |
-| `labelColor`     | Color of domain name labels                      |
-| `textColor`      | Color of item and subtitle text                  |
-| `domainFontSize` | Font size of domain name labels                  |
-| `itemFontSize`   | Font size of item badges and subtitles           |
+| Variable         | Description                                     |
+| ---------------- | ----------------------------------------------- |
+| `complexBg`      | Background color for the Complex domain         |
+| `complicatedBg`  | Background color for the Complicated domain     |
+| `clearBg`        | Background color for the Clear domain           |
+| `chaoticBg`      | Background color for the Chaotic domain         |
+| `aporeticBg`     | Background color for the Aporetic center region |
+| `boundaryColor`  | Color of the wavy domain boundaries             |
+| `boundaryWidth`  | Stroke width of the boundaries                  |
+| `cliffColor`     | Color of the Clear/Chaotic cliff                |
+| `cliffWidth`     | Stroke width of the cliff                       |
+| `arrowColor`     | Color of transition arrows                      |
+| `arrowWidth`     | Stroke width of transition arrows               |
+| `labelColor`     | Color of domain name labels                     |
+| `textColor`      | Color of item and subtitle text                 |
+| `domainFontSize` | Font size of domain name labels                 |
+| `itemFontSize`   | Font size of item badges and subtitles          |
 
 ## Notes
 
-- Domain names are fixed keywords. Only `complex`, `complicated`, `clear`, `chaotic`, and `confusion` are recognized.
-- Domains can be declared in any order; their position in the diagram is always the same (Complex top-left, Complicated top-right, Chaotic bottom-left, Clear bottom-right, Confusion center).
-- The `confusion` domain has a compact center ellipse. Up to 3 items are shown inside it; if more are provided a `+N more` overflow badge is displayed. In practice, the confusion domain should contain very few items — its purpose is to surface unknowns so they can be moved to one of the four main domains.
+- Domain names are fixed keywords. Only `complex`, `complicated`, `clear`, `chaotic`, and `aporetic` are recognized.
+- Domains can be declared in any order; their position in the diagram is always the same (Complex top-left, Complicated top-right, Chaotic bottom-left, Clear bottom-right, Aporetic center).
+- The `aporetic` domain has a compact center ellipse. Up to 3 items are shown inside it; if more are provided a `+N more` overflow badge is displayed. In practice, the aporetic domain should contain very few items — its purpose is to surface unknowns so they can be moved to one of the four main domains.
 - Self-loop transitions (e.g. `complex --> complex`) are silently ignored. Transitions must connect two different domains.
 - Handdrawn mode is not currently supported.
 - The wavy boundary rendering is deterministic: the same input always produces the same diagram, so diffs are stable across builds.

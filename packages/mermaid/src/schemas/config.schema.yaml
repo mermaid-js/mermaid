@@ -2854,6 +2854,13 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           regression tests to be stable.
         type: number
         default: 0
+      showFlow:
+        description: |
+          Show flow arrows radiating outward from the central Aporetic domain to each
+          of the four domains. This reflects that, in the Cynefin framework, flow moves
+          outward from the Aporetic (not-yet-known) centre rather than in from one side.
+        type: boolean
+        default: true
 
   RailroadDiagramConfig:
     title: Railroad Diagram Config

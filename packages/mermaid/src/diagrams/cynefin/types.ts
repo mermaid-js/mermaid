@@ -1,7 +1,7 @@
 import type { DomainBlock, Transition } from '@mermaid-js/parser';
 import type { CynefinDiagramConfig } from '../../config.type.js';
 
-export type DomainName = 'complex' | 'complicated' | 'clear' | 'chaotic' | 'confusion';
+export type DomainName = 'complex' | 'complicated' | 'clear' | 'chaotic' | 'aporetic';
 
 export interface CynefinItem {
   label: string;
