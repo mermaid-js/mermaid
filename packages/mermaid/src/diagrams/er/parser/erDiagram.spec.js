@@ -1270,7 +1270,9 @@ describe('when parsing ER diagram it...', function () {
 
       it('should allow escaped quotes (#quot;) inside entity names and relationship labels', function () {
         expect(() => {
-          erDiagram.parser.parse(`erDiagram\n"say #quot;hello#quot; now" ||--|| Bb : "owns #quot;item#quot;"\n`);
+          erDiagram.parser.parse(
+            `erDiagram\n"say #quot;hello#quot; now" ||--|| Bb : "owns #quot;item#quot;"\n`
+          );
         }).not.toThrow();
       });
     });
