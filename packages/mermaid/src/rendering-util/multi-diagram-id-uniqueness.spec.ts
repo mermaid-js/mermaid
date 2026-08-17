@@ -206,6 +206,11 @@ union A, B`,
     chaotic
       "Page on-call"`,
 
+  usecase: `usecase-beta
+    actor User
+    Login("Sign in")
+    User --> Login`,
+
   eventmodeling: `eventmodeling
     tf 01 evt Start
     tf 02 evt End

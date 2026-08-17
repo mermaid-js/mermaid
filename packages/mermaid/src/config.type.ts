@@ -257,6 +257,7 @@ export interface MermaidConfig {
   treeView?: TreeViewDiagramConfig;
   wireframe?: WireframeDiagramConfig;
   radar?: RadarDiagramConfig;
+  usecase?: UsecaseDiagramConfig;
   venn?: VennDiagramConfig;
   'wardley-beta'?: WardleyDiagramConfig;
   cynefin?: CynefinDiagramConfig;
@@ -1961,6 +1962,66 @@ export interface RadarDiagramConfig extends BaseDiagramConfig {
    * The tension factor for the Catmull-Rom spline conversion to cubic Bézier curves.
    */
   curveTension?: number;
+}
+/**
+ * The object containing configurations specific for usecase diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "UsecaseDiagramConfig".
+ */
+export interface UsecaseDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Font size for actor labels
+   */
+  actorFontSize?: number;
+  /**
+   * Font family for actor labels.
+   *
+   * Written verbatim into an inline CSS custom property, so the characters that could
+   * terminate a declaration or open a new one are excluded: `;`, `<`, `>`, `(`, `)`,
+   * `{`, `}`, and `\`. Quotes, commas, and spaces stay allowed for font stacks such as
+   * `"Open Sans", sans-serif`.
+   *
+   */
+  actorFontFamily?: string;
+  /**
+   * Font weight for actor labels.
+   *
+   * Restricted to the CSS `font-weight` keywords and numeric weights, since this value
+   * is written verbatim into an inline CSS custom property.
+   *
+   */
+  actorFontWeight?: string;
+  /**
+   * Font size for usecase labels
+   */
+  usecaseFontSize?: number;
+  /**
+   * Font family for usecase labels.
+   *
+   * Constrained the same way as `actorFontFamily`.
+   *
+   */
+  usecaseFontFamily?: string;
+  /**
+   * Font weight for usecase labels.
+   *
+   * Constrained the same way as `actorFontWeight`.
+   *
+   */
+  usecaseFontWeight?: string;
+  /**
+   * Spacing between nodes on the same level
+   */
+  nodeSpacing?: number;
+  /**
+   * Spacing between nodes on different levels
+   */
+  rankSpacing?: number;
+  /**
+   * Padding around the entire diagram
+   */
+  diagramPadding?: number;
 }
 /**
  * The object containing configurations specific for Venn diagrams.
