@@ -28,7 +28,7 @@ The config passed as YAML frontmatter or directives
 
 > **db**: `unknown`
 
-Defined in: [packages/mermaid/src/types.ts:107](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L107)
+Defined in: [packages/mermaid/src/types.ts:113](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L113)
 
 ---
 
