@@ -8,7 +8,7 @@ import { createText } from '../createText.ts';
 import intersectRect from '../rendering-elements/intersect/intersect-rect.js';
 import createLabel from './createLabel.js';
 import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
-import { styles2String, userNodeOverrides } from './shapes/handDrawnShapeStyles.js';
+import { compileStyles, styles2String, userNodeOverrides } from './shapes/handDrawnShapeStyles.js';
 import { swimlane } from './clusters/swimlane.js';
 
 const rect = async (parent, node) => {
@@ -469,6 +469,148 @@ const divider = (parent, node) => {
   return { cluster: shapeSvg, labelBBox: {} };
 };
 
+export const getUsecaseSystemBoundaryGeometry = (node, labelBBox) => {
+  const boundaryType = node.boundaryType || 'rect';
+  const horizontalLabelPadding = boundaryType === 'package' ? 20 : node.padding;
+  const tabHeight = boundaryType === 'package' ? labelBBox.height + 10 : 0;
+  const width = Math.max(node.width, labelBBox.width + horizontalLabelPadding);
+  const height =
+    boundaryType === 'package' ? Math.max(node.height, tabHeight + node.padding * 2) : node.height;
+  const x = node.x - width / 2;
+  const y = node.y - height / 2;
+
+  return {
+    boundaryType,
+    width,
+    height,
+    x,
+    y,
+    bodyY: y + tabHeight,
+    bodyHeight: height - tabHeight,
+    tabHeight,
+    tabWidth: boundaryType === 'package' ? Math.min(width, Math.max(80, labelBBox.width + 20)) : 0,
+  };
+};
+
+/**
+ * Custom cluster shape for use-case system boundaries.
+ * @param {any} parent
+ * @param {any} node
+ * @returns {any} ShapeSvg
+ */
+const usecaseSystemBoundary = async (parent, node) => {
+  log.info('Creating usecase system boundary for ', node.id, node);
+  const siteConfig = getConfig();
+  const { themeVariables, handDrawnSeed } = siteConfig;
+  const { clusterBkg, clusterBorder } = themeVariables;
+  const { labelStyles, nodeStyles } = styles2String(node);
+  const { stylesMap } = compileStyles(node);
+
+  const boundaryType = node.boundaryType || 'rect';
+  const shapeSvg = parent
+    .insert('g')
+    .attr(
+      'class',
+      `cluster usecase-system-boundary usecase-system-boundary-${boundaryType} ${node.cssClasses}`
+    )
+    .attr('id', typeof node.domId === 'string' ? node.domId : node.id)
+    .attr('data-boundary-type', boundaryType)
+    .attr('data-look', node.look);
+
+  const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
+  const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label system-boundary-title');
+  const text = await createText(labelEl, node.label, {
+    style: labelStyles,
+    useHtmlLabels,
+    isNode: true,
+  });
+
+  let bbox = text.getBBox();
+  if (useHtmlLabels) {
+    const div = text.children[0];
+    const dv = select(text);
+    bbox = div.getBoundingClientRect();
+    dv.attr('width', bbox.width);
+    dv.attr('height', bbox.height);
+  }
+
+  const geometry = getUsecaseSystemBoundaryGeometry(node, bbox);
+  const { width, height, x, y, bodyY, bodyHeight, tabHeight, tabWidth } = geometry;
+  node.diff =
+    node.width <= bbox.width + node.padding
+      ? (width - node.width) / 2 - node.padding
+      : -node.padding;
+
+  const roughOptions = userNodeOverrides(node, {
+    fill: stylesMap.get('fill') || clusterBkg,
+    stroke: stylesMap.get('stroke') || clusterBorder,
+    strokeWidth: stylesMap.get('stroke-width')?.replace('px', '') || 1,
+    seed: handDrawnSeed,
+  });
+
+  if (node.look === 'handDrawn') {
+    const rc = rough.svg(shapeSvg);
+    const roughBody = rc.rectangle(x, bodyY, width, bodyHeight, roughOptions);
+    shapeSvg.insert(() => roughBody, ':first-child').attr('class', 'boundary-body label-container');
+
+    if (boundaryType === 'package') {
+      const roughTab = rc.rectangle(x, y, tabWidth, tabHeight, roughOptions);
+      shapeSvg
+        .insert(() => roughTab, ':first-child')
+        .attr('class', 'boundary-tab system-boundary-package-tab label-container');
+    }
+  } else {
+    shapeSvg
+      .insert('rect', ':first-child')
+      .attr('class', 'boundary-body label-container')
+      .attr('style', nodeStyles)
+      .attr('x', x)
+      .attr('y', bodyY)
+      .attr('width', width)
+      .attr('height', bodyHeight);
+
+    if (boundaryType === 'package') {
+      shapeSvg
+        .insert('rect', ':first-child')
+        .attr('class', 'boundary-tab system-boundary-package-tab label-container')
+        .attr('style', nodeStyles)
+        .attr('x', x)
+        .attr('y', y)
+        .attr('width', tabWidth)
+        .attr('height', tabHeight);
+    }
+  }
+
+  const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
+  if (boundaryType === 'package') {
+    labelEl.attr(
+      'transform',
+      `translate(${x + (tabWidth - bbox.width) / 2}, ${y + (tabHeight - bbox.height) / 2})`
+    );
+  } else {
+    labelEl.attr(
+      'transform',
+      `translate(${node.x - bbox.width / 2}, ${y + subGraphTitleTopMargin})`
+    );
+  }
+
+  if (labelStyles) {
+    labelEl.attr('style', labelStyles);
+    labelEl.select('span').attr('style', labelStyles);
+  }
+
+  node.offsetX = 0;
+  node.width = width;
+  node.height = height;
+  node.offsetY = bbox.height - node.padding / 2;
+  node.labelBBox = bbox;
+  node.intersect = function (point) {
+    return intersectRect(node, point);
+  };
+
+  return { cluster: shapeSvg, labelBBox: bbox };
+};
+
 const squareRect = rect;
 const shapes = {
   rect,
@@ -477,6 +619,7 @@ const shapes = {
   noteGroup,
   divider,
   kanbanSection,
+  usecaseSystemBoundary,
   swimlane,
 };
 

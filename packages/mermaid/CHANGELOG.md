@@ -1,5 +1,33 @@
 # mermaid
 
+## 11.16.1
+
+### Patch Changes
+
+- [#8022](https://github.com/mermaid-js/mermaid/pull/8022) [`12d472c`](https://github.com/mermaid-js/mermaid/commit/12d472c9ed43f94814b110da8d7a9ae6dd5266ed) Thanks [@aloisklink](https://github.com/aloisklink)! - fix: handle CSS sibling combinators in compileCSS
+
+- [#8022](https://github.com/mermaid-js/mermaid/pull/8022) [`2cd6dcf`](https://github.com/mermaid-js/mermaid/commit/2cd6dcf735533b323507e3e889ffdea870540b43) Thanks [@aloisklink](https://github.com/aloisklink)! - fix: increase protections against prototype pollution
+
+  User-controlled input already has protections against prototype pollution.
+
+  Fixes: GHSA-c4c3-pg64-4m4v
+
+- [#8022](https://github.com/mermaid-js/mermaid/pull/8022) [`99af3fc`](https://github.com/mermaid-js/mermaid/commit/99af3fc35ef0a9a9c8c6314521344d67523ddccf) Thanks [@aloisklink](https://github.com/aloisklink)! - fix(architecture): use `Map`s and `Set`s to store groups/services
+
+  Services are now rendered in the order they are defined and more service IDs
+  are now supported.
+
+- [#8022](https://github.com/mermaid-js/mermaid/pull/8022) [`2cd6dcf`](https://github.com/mermaid-js/mermaid/commit/2cd6dcf735533b323507e3e889ffdea870540b43) Thanks [@aloisklink](https://github.com/aloisklink)! - deprecate: Deprecate the `mermaidAPI.setConfig()` function
+
+  Calling this function has no observable effect, as the next time a
+  `render()` or `parse()` is called, the `currentConfig` is cleared.
+
+- [#8022](https://github.com/mermaid-js/mermaid/pull/8022) [`630aa7e`](https://github.com/mermaid-js/mermaid/commit/630aa7e5dd417e1f56bff2a1ce8df2c5ad08d289) Thanks [@aloisklink](https://github.com/aloisklink)! - fix(xychart): support zero-width x-axis ranges
+
+- [#8022](https://github.com/mermaid-js/mermaid/pull/8022) [`59b22fa`](https://github.com/mermaid-js/mermaid/commit/59b22fad2b3bb04f87a476c84a8a2b24679e607e) Thanks [@aloisklink](https://github.com/aloisklink)! - fix(radar): limit number of ticks to 32
+
+  Setting a ticks value higher than this would only show 32 ticks.
+
 ## 11.16.0
 
 ### Minor Changes

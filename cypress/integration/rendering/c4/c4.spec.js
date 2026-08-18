@@ -177,10 +177,26 @@ C4Context
       {}
     );
   });
+  it('C4.9 should render a relationship whose endpoint is a boundary', () => {
+    imgSnapshotTest(
+      `
+      C4Context
+      title Relationship to a boundary
+
+      Container_Boundary(banking, "Internet Banking") {
+        Container(spa, "SPA", "JavaScript", "Front-end")
+      }
+      System_Ext(email, "Email System", "External mail")
+
+      Rel(banking, email, "Forwards alerts")
+      `,
+      {}
+    );
+  });
   // The outline look derives the border and label from the palette colour over the theme's
   // surface. Without a dark-theme case the snapshots only ever show the light surface, so a
   // dark identity colour on a dark body would not be visible here.
-  it('C4.9 should keep the outline style readable in the dark theme', () => {
+  it('C4.10 should keep the outline style readable in the dark theme', () => {
     imgSnapshotTest(
       ['default', 'dark'].map(
         (theme) => `---
