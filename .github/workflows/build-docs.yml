@@ -36,7 +36,4 @@ jobs:
         run: pnpm --filter mermaid run docs:verify-version
 
       - name: Run Build
-        env:
-          # vitepress build can OOM on the default ~4 GB heap.
-          NODE_OPTIONS: --max-old-space-size=6144
         run: pnpm --filter mermaid run docs:build:vitepress

@@ -19,8 +19,6 @@ export class Diagram {
     codeObjectOrText: DiagramCode | string,
     metadata: Pick<DiagramMetadata, 'title'> = {}
   ) {
-    // eslint-disable-next-line no-console
-    console.log('Starting mermaid vx.3');
     // Accept either a raw string (legacy callers) or a DiagramCode object from
     // preprocessDiagram(). When given a string we normalise to a minimal code
     // object so downstream selection logic stays consistent.

@@ -1,8 +1,0 @@
-agentflow TB
-  llm_root["^llm"]
-  llm_query["^llm.query"]
-
-  llm_root -->> llm_query
-
-  llm_root@{ shape: procs }
-  llm_query@{ shape: procs }

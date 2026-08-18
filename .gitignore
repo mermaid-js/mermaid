@@ -6,7 +6,7 @@ coverage/
 .pnpm-store/
 .instructions/
 .mcp.json
-.tmp
+
 dist
 v8-compile-cache-0
 

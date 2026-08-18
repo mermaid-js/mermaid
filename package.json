@@ -65,8 +65,7 @@
     "test:coverage": "vitest --coverage",
     "test:check:tsc": "tsx scripts/tsc-check.ts",
     "prepare": "husky && pnpm build",
-    "pre-commit": "lint-staged",
-    "pack:parser": "tsx scripts/pack-parser.ts"
+    "pre-commit": "lint-staged"
   },
   "repository": {
     "type": "git",

@@ -32,10 +32,6 @@ jobs:
 
       - name: Fix Linting
         shell: bash
-        env:
-          # eslint can OOM on the default heap when scanning the whole
-          # monorepo — same bump as lint.yml / build-docs.yml.
-          NODE_OPTIONS: --max-old-space-size=6144
         run: pnpm -w run lint:fix
 
       - name: Sync `./src/config.type.ts` with `./src/schemas/config.schema.yaml`
@@ -44,8 +40,6 @@ jobs:
 
       - name: Build Docs
         working-directory: ./packages/mermaid
-        env:
-          NODE_OPTIONS: --max-old-space-size=6144
         run: pnpm run docs:build
 
       - uses: autofix-ci/action@7a166d7532b277f34e16238930461bf77f9d7ed8 # main

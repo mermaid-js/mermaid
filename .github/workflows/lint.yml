@@ -42,9 +42,6 @@ jobs:
 
       - name: Run Linting
         shell: bash
-        env:
-          # eslint can OOM on the default ~4 GB heap when scanning the whole monorepo.
-          NODE_OPTIONS: --max-old-space-size=6144
         run: |
           if ! pnpm run lint; then
               # print a nice error message on lint failure

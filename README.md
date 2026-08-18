@@ -49,7 +49,7 @@ Try Live Editor previews of future releases: <a href="https://develop.git.mermai
 ## Table of content
 
 <details>
-<summary>Expand contents:</summary>
+<summary>Expand contents</summary>
 
 - [About](#about)
 - [Examples](#examples)

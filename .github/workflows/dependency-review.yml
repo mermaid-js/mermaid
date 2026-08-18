@@ -13,12 +13,6 @@ permissions:
 jobs:
   dependency-review:
     runs-on: ubuntu-latest
-    # Dependency review needs GitHub Advanced Security + Dependency graph enabled.
-    # This is a private fork that doesn't have GHAS enabled, so the action errors with
-    # "Dependency review is not supported on this repository". Don't block PRs on it;
-    # remove `continue-on-error` once GHAS is enabled at:
-    # https://github.com/Mermaid-Chart/agentflow/settings/security_analysis
-    continue-on-error: true
     steps:
       - name: 'Checkout Repository'
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2

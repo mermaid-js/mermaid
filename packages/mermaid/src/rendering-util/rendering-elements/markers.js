@@ -527,7 +527,7 @@ const barb = (elem, type, id) => {
     .append('defs')
     .append('marker')
     .attr('id', id + '_' + type + '-barbEnd')
-    .attr('refX', 14)
+    .attr('refX', 19)
     .attr('refY', 7)
     .attr('markerWidth', 20)
     .attr('markerHeight', 14)
