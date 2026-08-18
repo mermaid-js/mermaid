@@ -141,8 +141,7 @@ looks.forEach((look) => {
   });
 });
 
-// Regression for https://github.com/Mermaid-Chart/agentflow/issues/78
-// Neo-look node rects used to carry a hardcoded stroke="url(#gradient)" while
+// Regression: neo-look node rects used to carry a hardcoded stroke="url(#gradient)" while
 // no element with id="gradient" existed in the SVG — a dangling paint
 // reference. Every url(#...) reference emitted in the rendered document
 // (attributes and injected CSS) must resolve to a real element.

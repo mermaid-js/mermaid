@@ -1,5 +1,5 @@
 /**
- * Regression tests for https://github.com/Mermaid-Chart/agentflow/issues/78
+ * Regression tests for a dangling paint reference in the neo look.
  *
  * The neo look used to emit node rects with a hardcoded `stroke="url(#gradient)"`
  * attribute while no element with id="gradient" existed anywhere in the SVG.
