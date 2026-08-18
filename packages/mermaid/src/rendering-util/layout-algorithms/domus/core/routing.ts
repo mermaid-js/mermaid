@@ -577,6 +577,38 @@ interface ChannelLines {
  */
 const channelLinesByObstacles = new WeakMap<Rect[], Map<string, ChannelLines>>();
 
+/**
+ * Content-addressed fallback for the identity cache above.
+ *
+ * `findRoutingGraphPathBetweenPortsWithObstacles` inflates its obstacle array on
+ * every call and `findDirectCompoundRoute` then passes prefixes of it, so those
+ * callers hand a fresh array identity to every query and the `WeakMap` could
+ * never hit for them — measured in Chrome as 270 ms per render of pure channel
+ * recomputation on `mermaid-chart-architecture`. Keying on the rounded rectangle
+ * extents costs one O(R) pass, against the O(R^2) channel construction plus
+ * O(C^2) dominance prune it saves.
+ *
+ * Bounded and cleared wholesale rather than evicted one by one: entries are only
+ * valid while node geometry is unchanged, and a layout run wants a handful of
+ * obstacle sets, not hundreds. Clearing on overflow keeps a long session from
+ * holding stale geometry alive.
+ */
+const CHANNEL_LINES_BY_SIGNATURE_MAX = 64;
+const channelLinesBySignature = new Map<string, ChannelLines>();
+
+function obstacleSignature(obstacleRects: Rect[]): string {
+  // EXACT coordinates, deliberately not rounded. Equal signature has to mean
+  // equal inputs, or the cache hands back channels computed for a different
+  // drawing. Rounding to whole pixels here made `domus/svelte5-code` invalid in a
+  // full-corpus run while it stayed valid when laid out alone — two fixtures'
+  // obstacle sets collided on the rounded key.
+  const parts: string[] = [String(obstacleRects.length)];
+  for (const r of obstacleRects) {
+    parts.push(`${r.left},${r.top},${r.right},${r.bottom}`);
+  }
+  return parts.join(';');
+}
+
 function channelRepresentativeLines(
   obstacleRects: Rect[],
   c: number,
@@ -594,6 +626,12 @@ function channelRepresentativeLines(
   const cached = byBounds.get(boundsKey);
   if (cached) {
     return cached;
+  }
+  const signatureKey = `${boundsKey}|${obstacleSignature(obstacleRects)}`;
+  const bySignature = channelLinesBySignature.get(signatureKey);
+  if (bySignature) {
+    byBounds.set(boundsKey, bySignature);
+    return bySignature;
   }
 
   const channels: RoutingChannel[] = [];
@@ -770,6 +808,10 @@ function channelRepresentativeLines(
 
   const lines: ChannelLines = { xLines, yLines };
   byBounds.set(boundsKey, lines);
+  if (channelLinesBySignature.size >= CHANNEL_LINES_BY_SIGNATURE_MAX) {
+    channelLinesBySignature.clear();
+  }
+  channelLinesBySignature.set(signatureKey, lines);
   return lines;
 }
 
@@ -1087,6 +1129,8 @@ export function findShortestOrthogonalPathOnGraph(
     return 3;
   };
 
+  const sortedAdjacency: (RouteGraphEdge[] | undefined)[] = new Array(N);
+
   while (heap.size > 0) {
     const cur = heap.pop()!;
     const di = dirIndex(cur.dir);
@@ -1097,21 +1141,30 @@ export function findShortestOrthogonalPathOnGraph(
       break;
     }
 
-    const fromNode = g.nodes[cur.node];
-    const edges = [...g.adj[cur.node]];
-    edges.sort((a, b) => {
-      const na = g.nodes[a.to];
-      const nb = g.nodes[b.to];
-      const oa = neighborOrder(fromNode, na);
-      const ob = neighborOrder(fromNode, nb);
-      if (oa !== ob) {
-        return oa - ob;
-      }
-      if (na.x !== nb.x) {
-        return na.x - nb.x;
-      }
-      return na.y - nb.y;
-    });
+    // Relaxation order is a property of the node and `prefer`, not of the search
+    // state, but a node is popped once per incoming direction — so copying and
+    // sorting its adjacency list inline re-did the same work up to three times
+    // per node, on every one of the tens of thousands of searches per layout.
+    // Memoized per search; the order itself is unchanged.
+    let edges = sortedAdjacency[cur.node];
+    if (edges === undefined) {
+      const fromNode = g.nodes[cur.node];
+      edges = [...g.adj[cur.node]];
+      edges.sort((a, b) => {
+        const na = g.nodes[a.to];
+        const nb = g.nodes[b.to];
+        const oa = neighborOrder(fromNode, na);
+        const ob = neighborOrder(fromNode, nb);
+        if (oa !== ob) {
+          return oa - ob;
+        }
+        if (na.x !== nb.x) {
+          return na.x - nb.x;
+        }
+        return na.y - nb.y;
+      });
+      sortedAdjacency[cur.node] = edges;
+    }
 
     for (const e of edges) {
       const nextDir: Dir = e.dir;

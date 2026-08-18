@@ -568,28 +568,24 @@ function* sideRouteCandidates(
   // builds into one. The cache dies with this generator.
   const routingCache = createRoutingQueryCache();
 
-  // Enumeration budget. `sidePreference` yields ~12 side pairs and each used to be
-  // crossed with 4 start x 4 end port offsets: 192 shortest-path searches through a
-  // freshly built routing graph, for ONE flagged edge. On `domus/architecture` that
-  // was the single most expensive thing DOMUS did.
+  // This crosses ~12 side pairs with 4 start x 4 end port offsets: 192 shortest-path
+  // searches through a routing graph, for ONE flagged edge — the largest single cost
+  // in a DOMUS render, and the reason the graph construction it calls is cached.
   //
-  // The pairs come out in preference order (facing sides first, then perpendicular,
-  // then opposed, then same-side) and the offsets likewise (the geometrically
-  // implied one, then the centre), so the tail of that product is the desperate
-  // end of the search — and this generator is consumed lazily, so a repair that
-  // exists early is found before any of it is reached. Truncating to the leading
-  // SIDE_PAIR_BUDGET x 2 x 2 keeps every ordering the search already preferred and
-  // drops the 8x that only ran when nothing worked at all.
-  const SIDE_PAIR_BUDGET = 6;
-  for (const [startSide, endSide] of sidePreference(rS, rE).slice(0, SIDE_PAIR_BUDGET)) {
+  // Truncating the sweep is tempting and was measured: the leading 6 pairs x 2x2
+  // offsets is 1.5x faster again, but `domus/svelte5-code` goes invalid — its
+  // validity rests on the very last candidates the exhaustive sweep tries, and every
+  // truncation tried (12x3, 12x2, 6x4, 4x4, 3x4) breaks it. So the enumeration stays
+  // complete and the speedup comes from making each query cheap instead.
+  for (const [startSide, endSide] of sidePreference(rS, rE)) {
     const startHoriz = startSide === 'N' || startSide === 'S';
     const endHoriz = endSide === 'N' || endSide === 'S';
     const startTs = startHoriz
-      ? [(rE.cx - rS.left) / (rS.right - rS.left), 0.5]
-      : [(rE.cy - rS.top) / (rS.bottom - rS.top), 0.5];
+      ? [(rE.cx - rS.left) / (rS.right - rS.left), 0.5, 0.25, 0.75]
+      : [(rE.cy - rS.top) / (rS.bottom - rS.top), 0.5, 0.25, 0.75];
     const endTs = endHoriz
-      ? [(rS.cx - rE.left) / (rE.right - rE.left), 0.5]
-      : [(rS.cy - rE.top) / (rE.bottom - rE.top), 0.5];
+      ? [(rS.cx - rE.left) / (rE.right - rE.left), 0.5, 0.25, 0.75]
+      : [(rS.cy - rE.top) / (rE.bottom - rE.top), 0.5, 0.25, 0.75];
 
     for (const st of startTs) {
       const ps = sidePort(rS, startSide, st);

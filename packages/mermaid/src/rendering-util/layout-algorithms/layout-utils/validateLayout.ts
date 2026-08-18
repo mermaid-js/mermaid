@@ -1528,15 +1528,21 @@ export function validateLayout(
       const who = labelNodeId ? `node "${labelNodeId}"` : `of edge "${ownerEdgeId}"`;
       const ownerEdge = ownerEdgeId ? edgeById.get(ownerEdgeId) : undefined;
       const ownerMeta = ownerEdgeId ? edgeMetas.find((em) => em.id === ownerEdgeId) : undefined;
-      // A label belongs to one edge; checks against nodes and group frames can
-      // only involve that edge, so they are skipped unless it is in focus. The
-      // foreign-edge check below can involve either side and is guarded per pair.
-      const ownerFocused = !focused || inFocus(ownerEdgeId);
+      // NOTE: this whole section runs in full even under `focusEdgeIds`, and every
+      // issue it finds is reported. It is the one part of the validator that is NOT
+      // decomposable by edge: each label reports at most ONE overlap and uses `break`
+      // to enforce that, so moving the focus edge can change WHICH pair reports —
+      // `domus/triage2` produces an `edge-label-overlaps-foreign-edge` between two
+      // edges that are BOTH out of focus, purely because the focus edge stopped being
+      // that label's first hit. Filtering here made the focused issue delta differ
+      // from the full one by one on `domus/triage` and `domus/triage2`. Reporting the
+      // section wholesale keeps the delta exact: these issues appear on both sides of
+      // the caller's before/after comparison and cancel unless they really moved.
 
       // edge-label-overlaps-own-arrowhead: labels should not sit on top of
       // their own start/end marker. This complements `edge-label-off-edge`:
       // a label can be on its edge and still visually cover the arrowhead.
-      if (ownerEdge && ownerMeta && ownerFocused) {
+      if (ownerEdge && ownerMeta) {
         for (const terminal of ['start', 'end'] as const) {
           if (!hasTerminalMarker(ownerEdge, terminal)) {
             continue;
@@ -1568,9 +1574,6 @@ export function validateLayout(
         if (ownerEdgeId && em.id === ownerEdgeId) {
           continue;
         }
-        if (!ownerFocused && !inFocus(em.id)) {
-          continue;
-        }
         let hit = false;
         for (let i = 0; i < em.points.length - 1; i++) {
           if (segmentIntersectsRectInterior(em.points[i], em.points[i + 1], labelRect)) {
@@ -1586,7 +1589,7 @@ export function validateLayout(
           }
         }
         if (hit) {
-          break; // one foreign-edge issue per label
+          break; // one foreign-edge issue per label, focused or not
         }
       }
 
@@ -1600,9 +1603,6 @@ export function validateLayout(
       {
         const EPS_LABEL_NODE_OVERLAP = 2;
         for (const n of nodes) {
-          if (!ownerFocused) {
-            break;
-          }
           if (n?.id == null || n.isGroup || isLabelDummy(n)) {
             continue;
           }
@@ -1633,9 +1633,6 @@ export function validateLayout(
       // label rect (the label is half-in / half-out of a subgraph — its text
       // is visually sliced by the border, regardless of which group it is).
       for (const [gId, gr] of groupBorderRects) {
-        if (!ownerFocused) {
-          break;
-        }
         const corners: Point[] = [
           { x: gr.left, y: gr.top },
           { x: gr.right, y: gr.top },
