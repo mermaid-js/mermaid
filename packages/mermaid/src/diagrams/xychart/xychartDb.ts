@@ -179,6 +179,7 @@ function setLineData(title: NormalTextType, data: ParsedDataPoint[]) {
   const hasAnyLabel = labels.some((l) => l !== '');
   xyChartData.plots.push({
     type: 'line',
+    title: textSanitizer(title.text),
     strokeFill: getPlotColorFromPalette(plotIndex),
     strokeWidth: 2,
     data: plotData,
@@ -192,6 +193,7 @@ function setBarData(title: NormalTextType, data: ParsedDataPoint[]) {
   const plotData = transformDataWithoutCategory(values);
   xyChartData.plots.push({
     type: 'bar',
+    title: textSanitizer(title.text),
     fill: getPlotColorFromPalette(plotIndex),
     data: plotData,
   });

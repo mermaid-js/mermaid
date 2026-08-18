@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../../helpers/util';
+import { imgSnapshotTest, renderGraph } from '../../../helpers/util';
 /* eslint-disable no-useless-escape */
 describe('Block diagram', () => {
   it('BL1: should calculate the block widths', () => {
@@ -200,9 +200,9 @@ describe('Block diagram', () => {
   it('BL14: should style statements and class statements', () => {
     imgSnapshotTest(
       `block
-    A
+    A["My text here"]
     B
-    classDef blue fill:#66f,stroke:#333,stroke-width:2px;
+    classDef blue fill:#66f,stroke:#333,stroke-width:2px,color:#ff6;
     class A blue
     style B fill:#f9F,stroke:#333,stroke-width:4px
       `,
@@ -515,5 +515,38 @@ columns 10
       Q <-.-> R
     `
     );
+  });
+
+  it('BL38: should not let a sibling with a much wider label overflow into its neighbors', () => {
+    renderGraph(
+      `block-beta
+  block:ID
+    A
+    B["This label is intentionally very wide so that it clearly exceeds the two hundred pixel default wrap threshold"]
+    C
+  end`,
+      { screenshot: false }
+    );
+
+    cy.get('svg').then(($svg) => {
+      const svg = $svg[0];
+      const ranges = ['A', 'B', 'C'].map((id) => {
+        const g = svg.querySelector(`[id$="-${id}"]`);
+        const rect = g.querySelector('rect');
+        const transform = g.getAttribute('transform');
+        const tx = parseFloat(/translate\(([\d.-]+)/.exec(transform)[1]);
+        const x = parseFloat(rect.getAttribute('x'));
+        const width = parseFloat(rect.getAttribute('width'));
+        return { id, left: tx + x, right: tx + x + width };
+      });
+
+      const sorted = [...ranges].sort((a, b) => a.left - b.left);
+      for (let i = 1; i < sorted.length; i++) {
+        expect(
+          sorted[i].left,
+          `${sorted[i - 1].id} [${sorted[i - 1].left}, ${sorted[i - 1].right}] should not overlap ${sorted[i].id} [${sorted[i].left}, ${sorted[i].right}]`
+        ).to.be.at.least(sorted[i - 1].right);
+      }
+    });
   });
 });

@@ -1,4 +1,5 @@
 import type { ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
+import type { NodeMetaData } from '../../types.js';
 
 /**
  * Valid `type` args to `yy.addVertex` taken from
@@ -78,11 +79,15 @@ export interface FlowClass {
 export interface FlowSubGraph {
   classes: string[];
   dir?: string;
-  hasExplicitDir: boolean;
   id: string;
   labelType: string;
   nodes: string[];
   title: string;
+  /**
+   * Optional `@{ ... }` metadata attached to the subgraph via a
+   * `subGraphId@{ ... }` statement, e.g. `{ view: 'collapsed' }`.
+   */
+  metadata?: NodeMetaData;
 }
 
 export interface FlowLink {

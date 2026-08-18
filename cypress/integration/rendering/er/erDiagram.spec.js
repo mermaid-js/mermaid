@@ -535,4 +535,151 @@ ORDER ||--|{ LINE-ITEM : contains
       { logLevel: 1 }
     );
   });
+
+  describe('ER diagram subgraphs', () => {
+    it('should render a simple subgraph', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          subgraph domain
+            CUSTOMER
+            ORDER
+          end
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render empty subgraphs', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          subgraph emptyDomain
+          end
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render nested subgraphs', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          subgraph domain
+            CUSTOMER
+
+            subgraph details
+              ORDER
+            end
+          end
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render relationships across subgraphs', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          subgraph customers
+            CUSTOMER
+          end
+
+          subgraph orders
+            ORDER
+          end
+
+          CUSTOMER ||--o{ ORDER : places
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render relationships between subgraph and entity', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          subgraph customers
+            CUSTOMER
+          end
+
+          subgraph orders
+            ORDER
+          end
+
+          CUSTOMER ||--o{ orders : places
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render relationships between subgraphs', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          subgraph customers
+            CUSTOMER
+          end
+
+          subgraph orders
+            ORDER
+          end
+
+          customers ||--o{ orders : places
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render subgraphs with quoted ids', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          subgraph "Customer Domain"
+            CUSTOMER
+          end
+
+          "Customer Domain" ||--o{ ORDER : contains
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render subgraphs with explicit id and title', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          subgraph domain["Customer Domain"]
+            CUSTOMER
+            ORDER
+          end
+
+          CUSTOMER ||--o{ ORDER : places
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render subgraphs with direction override', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          direction LR
+
+          subgraph domain
+            direction TB
+
+            CUSTOMER
+            ORDER
+          end
+
+          PRODUCT
+
+          PRODUCT||--o{ domain: links
+          CUSTOMER ||--o{ ORDER : places
+        `,
+        { logLevel: 1 }
+      );
+    });
+  });
 });

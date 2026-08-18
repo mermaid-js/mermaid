@@ -1,7 +1,7 @@
 import chokidar from 'chokidar';
 import cors from 'cors';
 import { createHash } from 'crypto';
-import { context } from 'esbuild';
+import { build, context } from 'esbuild';
 import { promises as fs } from 'fs';
 import type { Request, Response } from 'express';
 import express from 'express';
@@ -50,11 +50,14 @@ console.log(
 console.log('================================================================');
 console.log('');
 
+// The dev server is never published, so always compile the render profiler in.
+// It stays a no-op until toggled on at runtime: `__mermaidProfiler.enable()`.
 const configs = Object.values(packageOptions).map(({ packageName }) =>
   getBuildConfig({
     ...defaultOptions,
     minify: false,
     core: false,
+    profiling: true,
     options: packageOptions[packageName],
   })
 );
@@ -62,10 +65,30 @@ const mermaidIIFEConfig = getBuildConfig({
   ...defaultOptions,
   minify: false,
   core: false,
+  profiling: true,
   options: packageOptions.mermaid,
   format: 'iife',
 });
 configs.push(mermaidIIFEConfig);
+
+// The @mermaid-js/layout-elk package imports mermaid through its package
+// `exports`, which resolves to dist/mermaid.core.mjs — and esbuild INLINES that
+// prebuilt core bundle into the elk bundle (mermaid is a peer dep, not external
+// here). The watched configs above only emit the *esm* entry, never the core,
+// so the elk bundle would otherwise inline whatever core was left on disk by the
+// last `pnpm build` (profiling disabled). Its layout phases (prepare/measure/
+// layout/paint) would then be compiled into dead `if (false)` branches and never
+// reach the profiler. Build a profiling-enabled core once, up front, so the elk
+// bundle inlines live spans that share the global `__mermaidProfiler` instance.
+await build(
+  getBuildConfig({
+    ...defaultOptions,
+    minify: false,
+    core: true,
+    profiling: true,
+    options: packageOptions.mermaid,
+  })
+);
 
 const contexts = await Promise.all(
   configs.map(async (config) => ({ config, context: await context(config) }))

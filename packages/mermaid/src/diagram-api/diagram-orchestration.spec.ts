@@ -76,6 +76,12 @@ describe('diagram-orchestration', () => {
       );
     });
 
+    it('should detect class diagram v2 when dagre-wrapper is the class renderer', () => {
+      expect(detectType('classDiagram', { class: { defaultRenderer: 'dagre-wrapper' } })).toBe(
+        'classDiagram'
+      );
+    });
+
     it('should not detect flowchart if pie contains flowchart', () => {
       expect(
         detectType(`pie title: "flowchart"

@@ -15,6 +15,19 @@ export const solidStateFill = (color: string) => {
   };
 };
 
+const normalizeStyleList = (styles: string | string[] | undefined): string[] => {
+  if (Array.isArray(styles)) {
+    return styles;
+  }
+  if (!styles) {
+    return [];
+  }
+  return styles
+    .split(';')
+    .map((style) => style.trim())
+    .filter(Boolean);
+};
+
 export const compileStyles = (node: Node) => {
   // node.cssCompiledStyles is an array of strings in the form of 'key: value' where key is the css property and value is the value
   // the array is the styles of node from the classes it is using
@@ -23,7 +36,7 @@ export const compileStyles = (node: Node) => {
   const stylesMap = styles2Map([
     ...(node.cssCompiledStyles || []),
     ...(node.cssStyles || []),
-    ...(node.labelStyle || []),
+    ...normalizeStyleList(node.labelStyle),
   ]);
   return { stylesMap, stylesArray: [...stylesMap] };
 };
@@ -36,6 +49,7 @@ export const styles2Map = (styles: string[]) => {
   });
   return styleMap;
 };
+
 export const isLabelStyle = (key: string) => {
   return (
     key === 'color' ||
