@@ -12,7 +12,7 @@
 
 > **saveConfigFromInitialize**(`conf`): `void`
 
-Defined in: [packages/mermaid/src/config.ts:78](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L78)
+Defined in: packages/mermaid/src/config.ts:78
 
 ## Parameters
 
