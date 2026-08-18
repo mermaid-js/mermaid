@@ -24,6 +24,7 @@ fragment Statement:
     | annotation+=Annotation
     | accelerators+=Accelerator
     | deaccelerators+=Deaccelerator
+    | attitudes+=Attitude
 ;
 
 Size:
@@ -103,6 +104,10 @@ Deaccelerator:
     KW_DEACCELERATOR name=(STRING | ID | NAME_WITH_SPACES) '[' x=WARDLEY_NUMBER ',' y=WARDLEY_NUMBER ']' EOL
 ;
 
+Attitude:
+    kind=ATTITUDE_KIND '[' visibility=WARDLEY_NUMBER ',' evolution=WARDLEY_NUMBER ',' visibility2=WARDLEY_NUMBER ',' evolution2=WARDLEY_NUMBER ']' EOL
+;
+
 // Define decimal number terminal for coordinates
 // This ONLY matches decimals like 0.5, not integers
 // For accepting both decimals and integers, use the CoordinateValue rule
@@ -112,7 +117,8 @@ terminal ARROW: '->';
 terminal LINK_PORT: '+<>' | '+>' | '+<';
 terminal LINK_ARROW: '-->' | '-.->' | '>' | /\+'[^']*'<>/ | /\+'[^']*'</ | /\+'[^']*'>/;
 terminal LINK_LABEL: /;[^\n\r]+/;
-terminal STRATEGY: 'build' | 'buy' | 'outsource' | 'market';
+terminal STRATEGY: 'build' | 'buy' | 'outsource' | 'market' | 'ecosystem';
+terminal ATTITUDE_KIND: 'pioneers' | 'settlers' | 'townplanners' | 'explorers' | 'villagers';
 
 // Define keywords explicitly to ensure they take precedence over NAME_WITH_SPACES
 terminal KW_WARDLEY: 'wardley-beta';

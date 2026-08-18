@@ -44,6 +44,7 @@ siebling
 statediagram
 Structurizr
 substate
+townplanners
 treeview
 unfixable
 Unmodelled
