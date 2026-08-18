@@ -55,6 +55,8 @@ function childBelongsToGroup(node: Node, groupId: string, nodesById: Map<string,
 
 export const groupTitleNodeOverlapExtension: LayoutValidationExtension = {
   id: 'domus:groupTitleNodeOverlap',
+  // Issues here name a node and a group, never an edge (see `nodeOnly`).
+  nodeOnly: true,
 
   check(layout: LayoutData, _core: Readonly<ValidateLayoutResult>): Issue[] {
     const nodes = layout.nodes ?? [];
@@ -70,7 +72,7 @@ export const groupTitleNodeOverlapExtension: LayoutValidationExtension = {
       if (!group.isGroup) {
         continue;
       }
-      const band = subgraphTitleBandRect(group);
+      const band = subgraphTitleBandRect(group, layout);
       if (!band) {
         continue;
       }

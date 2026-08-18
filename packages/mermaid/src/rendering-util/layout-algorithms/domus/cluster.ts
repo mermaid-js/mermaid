@@ -30,6 +30,31 @@ function titleBandHeight(): number {
   return Math.round(titleFontSize * 1.5) + subGraphTitleTotalMargin;
 }
 
+/**
+ * Per-layout memo of `titleBandHeight()`.
+ *
+ * `getConfig()` is `assignWithDepth({}, currentConfig)` — a full recursive clone
+ * of the Mermaid config — and the band height is read once per titled group per
+ * `validateLayout()` call. The score-gated passes validate thousands of edge
+ * candidates per render, so on `domus/mermaid-chart-architecture` (13 groups)
+ * this one constant cost 1259 ms of a 13.5 s render: 9% of the whole layout
+ * spent deep-cloning the config to read a font size. The band cannot change
+ * while a layout object is being laid out — no pass rewrites the site config
+ * mid-render — and each render parses a fresh `LayoutData`, so keying the memo
+ * on the layout object is both safe and self-invalidating.
+ */
+const titleBandByLayout = new WeakMap<object, number>();
+
+function titleBandHeightForLayout(layout: object): number {
+  const cached = titleBandByLayout.get(layout);
+  if (cached !== undefined) {
+    return cached;
+  }
+  const band = titleBandHeight();
+  titleBandByLayout.set(layout, band);
+  return band;
+}
+
 /** Gap we want to keep between the title band and the topmost child. */
 const TITLE_CHILD_GAP = 15;
 
@@ -64,12 +89,14 @@ export function hasTitle(group: Node): boolean {
  * with subgraph→external edges that must legitimately exit through the top strip).
  */
 export function subgraphTitleBandRect(
-  group: Node
+  group: Node,
+  /** Pass the owning layout to reuse the memoized band height (see `titleBandHeightForLayout`). */
+  layout?: object
 ): { left: number; right: number; top: number; bottom: number } | null {
   if (!group.isGroup || !hasTitle(group)) {
     return null;
   }
-  const band = titleBandHeight();
+  const band = layout ? titleBandHeightForLayout(layout) : titleBandHeight();
   if (band <= 0 || typeof group.x !== 'number' || typeof group.y !== 'number') {
     return null;
   }

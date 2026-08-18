@@ -196,6 +196,13 @@ export interface LayoutValidationExtension {
    */
   check?(layout: LayoutData, core: Readonly<ValidateLayoutResult>): Issue[];
   /**
+   * Set when `check` can only ever report issues about nodes, never about an
+   * edge. A focused run (see `focusEdgeIds`) skips such checks: their issues are
+   * invariant under a change to an edge's geometry, so the caller carries them
+   * over from its baseline instead of recomputing them per candidate.
+   */
+  readonly nodeOnly?: boolean;
+  /**
    * Extra GRADED penalty, subtracted from the core score and clamped at 0.
    * Never invalidates a layout. `detail` is echoed into
    * `breakdown.extensions[id]` for debugging and for sweep reporting.
@@ -226,11 +233,39 @@ export interface ValidateLayoutOptions {
    * accept 18 of them; every one of the other 7,356 is a fast reject.
    */
   readonly abortAboveIssueCount?: number;
+
+  /**
+   * Validate only what the given edges can affect.
+   *
+   * Every check here is a pure function of geometry, so when a single edge's
+   * polyline (and its label anchor) is the only thing that changed, no issue that
+   * does not involve that edge can have changed either. A caller that wants to
+   * know whether a rerouted edge is an improvement therefore does not need the
+   * whole layout re-validated: it needs this edge's issues before and after.
+   *
+   * With this set, the validator reports exactly the issues in which one of these
+   * edges participates, and skips outright the work that cannot produce one —
+   * node overlap, node/group hugging and crowding, other edges' own checks, and
+   * every pair where neither side is in the set. `remediateFlaggedEdgesWhenMonotone`
+   * tries thousands of candidate routes per render, and a full validation per
+   * candidate was 33% of DOMUS layout time.
+   *
+   * The result is a partial view: `score` and `breakdown` are NOT computed (the
+   * crossing pass that feeds them is skipped) and are returned zeroed with
+   * `focused: true`. Never compare a focused result's score against anything.
+   */
+  readonly focusEdgeIds?: ReadonlySet<string>;
 }
 
 export interface ValidateLayoutResult {
   ok: boolean;
   issues: Issue[];
+  /**
+   * Set only when `focusEdgeIds` restricted the run. `score`/`breakdown` are
+   * zeroed placeholders on such a result; only `issues` is meaningful.
+   */
+  readonly focused?: boolean;
+
   /**
    * Set only when `abortAboveIssueCount` cut the run short. Such a result is a
    * "this has at least N issues" answer, NOT a scored verdict: `score` is 0 and
@@ -737,6 +772,36 @@ function nearEndpointBandDistance(seg: Segment, side: PortSide, rect: Rect): num
  *
  * Also computes scoring based on bends and crossings.
  */
+// Soft issues are real defects that DON'T invalidate the layout but cost a
+// fixed score penalty (a "warning"). Everything not listed here is HARD: a
+// single occurrence sets ok=false and the score to 0. Keep this map small and
+// explicit — promoting an issue to soft changes the headline score model.
+// Module scope so the focused early return (see `focusEdgeIds`) can read it
+// before the scoring section it used to be declared in.
+/**
+ * Zeroed breakdown for the two early returns that cannot compute one: an aborted
+ * run (`abortAboveIssueCount`) and a focused run (`focusEdgeIds`). Both flag
+ * themselves in the result, and neither result's score is meaningful.
+ */
+const EMPTY_BREAKDOWN = {
+  nodeCount: 0,
+  edgeCount: 0,
+  crossings: 0,
+  maxCrossingsOnAnyEdge: 0,
+  crossingsHistogram: { '0': 0, '1': 0, '2': 0, '3': 0, '4+': 0 },
+  totalPoints: 0,
+  totalBendPenalty: 0,
+  crossingPenalty: 0,
+  edges: [],
+  pointsHistogram: { '2': 0, '3': 0, '4': 0, '5': 0, '6': 0, '7+': 0 },
+} as const satisfies ValidateLayoutResult['breakdown'];
+
+const SOFT_PENALTY_BY_TYPE: Partial<Record<LayoutIssueType, number>> = {
+  'edge-bend-overlaps-arrowhead': 50,
+  // Graded: the actual amount is carried per-issue in details.softPenalty.
+  'node-too-close-to-group': 0,
+};
+
 export function validateLayout(
   layout: LayoutData,
   options: ValidateLayoutOptions = {}
@@ -746,23 +811,17 @@ export function validateLayout(
   // every abort point below is dead code unless a caller opts in.
   const abortLimit = options.abortAboveIssueCount;
   const shouldAbort = (): boolean => abortLimit !== undefined && issues.length >= abortLimit;
+  // See `focusEdgeIds`. `focused` is false by default, so every focus guard below
+  // is dead code unless a caller opts in.
+  const focusEdgeIds = options.focusEdgeIds;
+  const focused = focusEdgeIds !== undefined;
+  const inFocus = (id: string): boolean => focusEdgeIds!.has(id);
   const abortedResult = (): ValidateLayoutResult => ({
     ok: false,
     issues,
     aborted: true,
     score: 0,
-    breakdown: {
-      nodeCount: 0,
-      edgeCount: 0,
-      crossings: 0,
-      maxCrossingsOnAnyEdge: 0,
-      crossingsHistogram: { '0': 0, '1': 0, '2': 0, '3': 0, '4+': 0 },
-      totalPoints: 0,
-      totalBendPenalty: 0,
-      crossingPenalty: 0,
-      edges: [],
-      pointsHistogram: { '2': 0, '3': 0, '4': 0, '5': 0, '6': 0, '7+': 0 },
-    },
+    breakdown: EMPTY_BREAKDOWN,
   });
   const nodes = layout.nodes ?? [];
   const edges = layout.edges ?? [];
@@ -823,6 +882,9 @@ export function validateLayout(
   }[] = [];
 
   for (let i = 0; i < nodeIds.length; i++) {
+    if (focused) {
+      break; // node-only check: nothing here can involve an edge (see `focusEdgeIds`)
+    }
     const aId = nodeIds[i];
     const aNode = byId.get(aId);
     const aRect = nodeRects.get(aId)!;
@@ -883,6 +945,9 @@ export function validateLayout(
   // swimlanes still need visible lane/content padding.
   // ─────────────────────────────────────────────────────────────────────────────
   for (const n of nodes) {
+    if (focused) {
+      break; // node-only check (see `focusEdgeIds`)
+    }
     if (n?.id == null || n.isGroup || isLabelDummy(n)) {
       continue;
     }
@@ -933,6 +998,9 @@ export function validateLayout(
   // excluded.
   // ─────────────────────────────────────────────────────────────────────────────
   for (const n of nodes) {
+    if (focused) {
+      break; // node-only check (see `focusEdgeIds`)
+    }
     if (n?.id == null || n.isGroup || isLabelDummy(n)) {
       continue;
     }
@@ -999,11 +1067,13 @@ export function validateLayout(
       !Array.isArray((e as { points?: Point[] }).points) ||
       (e as { points?: Point[] }).points!.length < 2
     ) {
-      issues.push({
-        type: 'edge-missing-points',
-        message: `Edge "${edgeId}" is missing points`,
-        edgeId,
-      });
+      if (!focused || inFocus(edgeId)) {
+        issues.push({
+          type: 'edge-missing-points',
+          message: `Edge "${edgeId}" is missing points`,
+          edgeId,
+        });
+      }
       continue;
     }
 
@@ -1011,6 +1081,12 @@ export function validateLayout(
     const normalized = normalizePolyline(points);
     edgeMetas.push({ id: edgeId, startId, endId, points, normalized });
     validEdgeCount++;
+    // Metadata for every edge is still needed — the pairwise sections below pair
+    // the focus edges against all the others — but only the focus edges' own
+    // checks run.
+    if (focused && !inFocus(edgeId)) {
+      continue;
+    }
 
     // ─── edge-self-loop-not-rendered (HARD) ──────────────────────────────────
     // A self-loop (start === end) has to leave its node and return to be drawn
@@ -1452,11 +1528,15 @@ export function validateLayout(
       const who = labelNodeId ? `node "${labelNodeId}"` : `of edge "${ownerEdgeId}"`;
       const ownerEdge = ownerEdgeId ? edgeById.get(ownerEdgeId) : undefined;
       const ownerMeta = ownerEdgeId ? edgeMetas.find((em) => em.id === ownerEdgeId) : undefined;
+      // A label belongs to one edge; checks against nodes and group frames can
+      // only involve that edge, so they are skipped unless it is in focus. The
+      // foreign-edge check below can involve either side and is guarded per pair.
+      const ownerFocused = !focused || inFocus(ownerEdgeId);
 
       // edge-label-overlaps-own-arrowhead: labels should not sit on top of
       // their own start/end marker. This complements `edge-label-off-edge`:
       // a label can be on its edge and still visually cover the arrowhead.
-      if (ownerEdge && ownerMeta) {
+      if (ownerEdge && ownerMeta && ownerFocused) {
         for (const terminal of ['start', 'end'] as const) {
           if (!hasTerminalMarker(ownerEdge, terminal)) {
             continue;
@@ -1488,6 +1568,9 @@ export function validateLayout(
         if (ownerEdgeId && em.id === ownerEdgeId) {
           continue;
         }
+        if (!ownerFocused && !inFocus(em.id)) {
+          continue;
+        }
         let hit = false;
         for (let i = 0; i < em.points.length - 1; i++) {
           if (segmentIntersectsRectInterior(em.points[i], em.points[i + 1], labelRect)) {
@@ -1517,6 +1600,9 @@ export function validateLayout(
       {
         const EPS_LABEL_NODE_OVERLAP = 2;
         for (const n of nodes) {
+          if (!ownerFocused) {
+            break;
+          }
           if (n?.id == null || n.isGroup || isLabelDummy(n)) {
             continue;
           }
@@ -1547,6 +1633,9 @@ export function validateLayout(
       // label rect (the label is half-in / half-out of a subgraph — its text
       // is visually sliced by the border, regardless of which group it is).
       for (const [gId, gr] of groupBorderRects) {
+        if (!ownerFocused) {
+          break;
+        }
         const corners: Point[] = [
           { x: gr.left, y: gr.top },
           { x: gr.right, y: gr.top },
@@ -1598,6 +1687,9 @@ export function validateLayout(
       for (let j = i + 1; j < nodeEdges.length; j++) {
         const e1 = nodeEdges[i];
         const e2 = nodeEdges[j];
+        if (focused && !inFocus(e1.id) && !inFocus(e2.id)) {
+          continue;
+        }
 
         // Get attachment info for each edge on this node
         const e1IsStart = e1.startId === nodeId;
@@ -1735,6 +1827,9 @@ export function validateLayout(
   //     collapses the reversal — so it MUST be checked on the raw points, which
   //     is what DOMUS paints verbatim.
   for (const em of sortedEdges) {
+    if (focused && !inFocus(em.id)) {
+      continue;
+    }
     const segs = em.normalized.segments;
     let selfFlagged = false;
     for (let a = 0; a < segs.length && !selfFlagged; a++) {
@@ -1796,6 +1891,9 @@ export function validateLayout(
     for (let j = i + 1; j < sortedEdges.length; j++) {
       const e1 = sortedEdges[i];
       const e2 = sortedEdges[j];
+      if (focused && !inFocus(e1.id) && !inFocus(e2.id)) {
+        continue;
+      }
 
       for (const s1 of e1.normalized.segments) {
         for (const s2 of e2.normalized.segments) {
@@ -1853,6 +1951,45 @@ export function validateLayout(
 
   if (shouldAbort()) {
     return abortedResult();
+  }
+
+  // A focused run stops here. Everything below is whole-layout aggregation —
+  // crossing counts, bend penalties, the 0–1000 score — and none of it can be
+  // computed from a subset of the checks, so it is returned zeroed and flagged
+  // rather than silently wrong (see `focusEdgeIds`).
+  if (focused) {
+    // Extensions that can report edge issues still have to run — an edge moving
+    // can create or clear one — but only their issues involving a focus edge are
+    // part of this partial view. `penalise` is score-only and therefore skipped
+    // with the score. Node-only checks are skipped outright (see `nodeOnly`).
+    for (const ext of options.extensions ?? []) {
+      if (ext.nodeOnly || !ext.check) {
+        continue;
+      }
+      const partial: ValidateLayoutResult = {
+        ok: false,
+        issues,
+        focused: true,
+        score: 0,
+        breakdown: EMPTY_BREAKDOWN,
+      };
+      for (const extIssue of ext.check(layout, partial)) {
+        const detailIds = extIssue.details?.edgeIds;
+        const ids = [extIssue.edgeId, ...(Array.isArray(detailIds) ? detailIds : [])];
+        if (ids.some((id) => typeof id === 'string' && id.length > 0 && inFocus(id))) {
+          issues.push(extIssue);
+        }
+      }
+    }
+    return {
+      // `isSoftType` is declared further down, past this return; the predicate is
+      // the same one it wraps.
+      ok: issues.filter((issue) => SOFT_PENALTY_BY_TYPE[issue.type] === undefined).length === 0,
+      issues,
+      focused: true,
+      score: 0,
+      breakdown: EMPTY_BREAKDOWN,
+    };
   }
 
   // ─────────────────────────────────────────────────────────────────────────────
@@ -1943,15 +2080,6 @@ export function validateLayout(
     pointsHistogram[key]++;
   }
 
-  // Soft issues are real defects that DON'T invalidate the layout but cost a
-  // fixed score penalty (a "warning"). Everything not listed here is HARD: a
-  // single occurrence sets ok=false and the score to 0. Keep this map small and
-  // explicit — promoting an issue to soft changes the headline score model.
-  const SOFT_PENALTY_BY_TYPE: Partial<Record<LayoutIssueType, number>> = {
-    'edge-bend-overlaps-arrowhead': 50,
-    // Graded: the actual amount is carried per-issue in details.softPenalty.
-    'node-too-close-to-group': 0,
-  };
   const isSoftType = (t: LayoutIssueType): boolean => SOFT_PENALTY_BY_TYPE[t] !== undefined;
   const softPenalty = issues.reduce(
     (sum, issue) =>

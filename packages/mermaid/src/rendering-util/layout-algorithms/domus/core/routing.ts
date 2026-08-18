@@ -116,6 +116,47 @@ export function inflateRect(rect: Rect, margin: number): Rect {
 /**
  * Collect obstacle rectangles for routing, excluding start and end nodes.
  */
+/**
+ * Reuse token for repeated routing queries over *frozen* node geometry.
+ *
+ * `collectObstacleRects` inflates a rectangle for every node on every query, and
+ * `buildRoutingGraphFromChannels` then derives its channels from that array. A
+ * candidate sweep asks for hundreds of routes between the same pair of nodes, so
+ * both were being redone per candidate. Pass a cache and they are computed once.
+ *
+ * Contract: a cache is only valid while no node moves and the same `nodesById`
+ * is used, so create one per candidate sweep and drop it afterwards — never hold
+ * one across a pass that repositions nodes.
+ */
+export interface RoutingQueryCache {
+  /** Key `${startNodeId}|${endNodeId}|${margin}`, value the inflated obstacle rects. */
+  obstacles: Map<string, Rect[]>;
+}
+
+export function createRoutingQueryCache(): RoutingQueryCache {
+  return { obstacles: new Map<string, Rect[]>() };
+}
+
+function collectObstacleRectsCached(
+  nodesById: Map<string, Node>,
+  startNodeId: string,
+  endNodeId: string,
+  margin: number,
+  cache?: RoutingQueryCache
+): Rect[] {
+  if (!cache) {
+    return collectObstacleRects(nodesById, startNodeId, endNodeId, margin);
+  }
+  const cacheKey = `${startNodeId}|${endNodeId}|${margin}`;
+  const hit = cache.obstacles.get(cacheKey);
+  if (hit) {
+    return hit;
+  }
+  const rects = collectObstacleRects(nodesById, startNodeId, endNodeId, margin);
+  cache.obstacles.set(cacheKey, rects);
+  return rects;
+}
+
 export function collectObstacleRects(
   nodesById: Map<string, Node>,
   startNodeId: string,
@@ -214,51 +255,66 @@ export function buildRoutingGraphFromRects(
     return null;
   }
 
+  // This is a full Hanan grid — 4 lines per obstacle per axis — so a 100-node
+  // diagram is ~400x400 cells. Two things made that quadratic cost worse than it
+  // needs to be, both fixed the same way as in `buildRoutingGraphFromChannels`:
+  // cells were keyed by a `"x,y"` string in a Map (a string allocation per cell
+  // plus two lookups per cell in the adjacency passes), and every point/segment
+  // test scanned ALL obstacles instead of the few that can span the row or column
+  // being walked. Narrowing is exactly equivalent: `pointInRectInterior` needs
+  // `p.y > rect.top && p.y < rect.bottom`, and `segmentIntersectsRectInterior`
+  // needs `y >= rect.top && y <= rect.bottom` for a horizontal segment (dually in
+  // x for a vertical one), so a rect outside that band can never match.
+  const cols = xCoords.length;
+  const cellIndex = new Int32Array(cols * yCoords.length).fill(-1);
   const nodes: RouteGraphNode[] = [];
-  const indexByKey = new Map<string, number>();
-
-  function key(x: number, y: number): string {
-    return `${x},${y}`;
-  }
 
   // Create grid intersection nodes that are not inside any obstacle interior.
-  for (const y of yCoords) {
-    for (const x of xCoords) {
-      const p = { x, y };
-      if (pointInsideAnyRectInterior(p, obstacleRects)) {
+  for (const [yi, y] of yCoords.entries()) {
+    const rowRects = obstacleRects.filter((r) => r.top < y && r.bottom > y);
+    const rowBase = yi * cols;
+    for (let xi = 0; xi < cols; xi++) {
+      const x = xCoords[xi];
+      if (pointInsideAnyRectInterior({ x, y }, rowRects)) {
         continue;
       }
-      const id = key(x, y);
-      indexByKey.set(id, nodes.length);
-      nodes.push({ id, x, y });
+      cellIndex[rowBase + xi] = nodes.length;
+      nodes.push({ id: `${x},${y}`, x, y });
     }
   }
 
-  const startKey = key(startPort.x, startPort.y);
-  const endKey = key(endPort.x, endPort.y);
-  const startIdx = indexByKey.get(startKey);
-  const endIdx = indexByKey.get(endKey);
-  if (startIdx == null || endIdx == null) {
+  const startXi = xCoords.indexOf(startPort.x);
+  const startYi = yCoords.indexOf(startPort.y);
+  const endXi = xCoords.indexOf(endPort.x);
+  const endYi = yCoords.indexOf(endPort.y);
+  if (startXi < 0 || startYi < 0 || endXi < 0 || endYi < 0) {
+    return null;
+  }
+  const startIdx = cellIndex[startYi * cols + startXi];
+  const endIdx = cellIndex[endYi * cols + endXi];
+  if (startIdx < 0 || endIdx < 0) {
     return null;
   }
 
   const adj: RouteGraphEdge[][] = Array.from({ length: nodes.length }, () => []);
 
   // Horizontal connections.
-  for (const y of yCoords) {
-    let prevIdx: number | null = null;
-    let prevX: number | null = null;
-    for (const x of xCoords) {
-      const idx = indexByKey.get(key(x, y));
-      if (idx == null) {
-        prevIdx = null;
-        prevX = null;
+  for (const [yi, y] of yCoords.entries()) {
+    const rowRects = obstacleRects.filter((r) => r.top <= y && r.bottom >= y);
+    const rowBase = yi * cols;
+    let prevIdx = -1;
+    let prevX = 0;
+    for (let xi = 0; xi < cols; xi++) {
+      const idx = cellIndex[rowBase + xi];
+      if (idx < 0) {
+        prevIdx = -1;
         continue;
       }
-      if (prevIdx != null && prevX != null) {
+      const x = xCoords[xi];
+      if (prevIdx >= 0) {
         const a = { x: prevX, y };
         const b = { x, y };
-        if (!segmentCrossesAnyRectInterior(a, b, obstacleRects)) {
+        if (!segmentCrossesAnyRectInterior(a, b, rowRects)) {
           const len = Math.abs(x - prevX);
           adj[prevIdx].push({ to: idx, length: len, dir: 'h' });
           adj[idx].push({ to: prevIdx, length: len, dir: 'h' });
@@ -270,20 +326,21 @@ export function buildRoutingGraphFromRects(
   }
 
   // Vertical connections.
-  for (const x of xCoords) {
-    let prevIdx: number | null = null;
-    let prevY: number | null = null;
-    for (const y of yCoords) {
-      const idx = indexByKey.get(key(x, y));
-      if (idx == null) {
-        prevIdx = null;
-        prevY = null;
+  for (let xi = 0; xi < cols; xi++) {
+    const x = xCoords[xi];
+    const colRects = obstacleRects.filter((r) => r.left <= x && r.right >= x);
+    let prevIdx = -1;
+    let prevY = 0;
+    for (const [yi, y] of yCoords.entries()) {
+      const idx = cellIndex[yi * cols + xi];
+      if (idx < 0) {
+        prevIdx = -1;
         continue;
       }
-      if (prevIdx != null && prevY != null) {
+      if (prevIdx >= 0) {
         const a = { x, y: prevY };
         const b = { x, y };
-        if (!segmentCrossesAnyRectInterior(a, b, obstacleRects)) {
+        if (!segmentCrossesAnyRectInterior(a, b, colRects)) {
           const len = Math.abs(y - prevY);
           adj[prevIdx].push({ to: idx, length: len, dir: 'v' });
           adj[idx].push({ to: prevIdx, length: len, dir: 'v' });
@@ -486,35 +543,60 @@ export function buildRoutingGraphFromRepresentatives(
   return { nodes, adj, startIdx, endIdx };
 }
 
-export function buildRoutingGraphFromChannels(
-  startPort: Point,
-  endPort: Point,
+interface RoutingChannel {
+  dir: 'E' | 'W' | 'N' | 'S';
+  x0: number;
+  x1: number;
+  y0: number;
+  y1: number;
+}
+
+/** The port-independent half of a channel routing graph: its representative lines. */
+interface ChannelLines {
+  xLines: number[];
+  yLines: number[];
+}
+
+/**
+ * Cache for the obstacle-derived half of `buildRoutingGraphFromChannels`.
+ *
+ * Channel construction is O(R^2) over obstacles plus an O(C^2) dominance prune,
+ * and it depends only on the obstacle rectangles, the clearance and the outer
+ * bounding box — not on where the two ports sit. `sideRouteCandidates` asks for
+ * up to 12 side pairs x 4 start offsets x 4 end offsets = 192 routes for a
+ * single flagged edge, all against the same obstacle set, so without this the
+ * channels are rebuilt 192 times per edge. On `domus/mermaid-chart-architecture`
+ * that was 3039 ms of a 13.5 s render.
+ *
+ * Keyed on the obstacle array's identity (a `WeakMap`, so nothing is retained
+ * once the caller drops it) and then on the bounds, which the ports can widen.
+ * Callers that reuse an obstacle array must therefore keep node geometry frozen
+ * for its lifetime — `collectObstacleRects` builds a fresh array per call unless
+ * a `RoutingQueryCache` is passed in, and that cache is created per remediation
+ * edge, where nodes provably do not move.
+ */
+const channelLinesByObstacles = new WeakMap<Rect[], Map<string, ChannelLines>>();
+
+function channelRepresentativeLines(
   obstacleRects: Rect[],
-  spacing: number,
-  clearance: number = spacing
-): RoutingGraph | null {
-  const c = Math.max(0, clearance);
-  // Build a loose boundary around everything to ensure outer channels exist.
-  const xs = [startPort.x, endPort.x];
-  const ys = [startPort.y, endPort.y];
-  for (const r of obstacleRects) {
-    xs.push(r.left, r.right);
-    ys.push(r.top, r.bottom);
+  c: number,
+  minX: number,
+  maxX: number,
+  minY: number,
+  maxY: number
+): ChannelLines {
+  let byBounds = channelLinesByObstacles.get(obstacleRects);
+  if (!byBounds) {
+    byBounds = new Map<string, ChannelLines>();
+    channelLinesByObstacles.set(obstacleRects, byBounds);
   }
-  const minX = Math.min(...xs) - c * 5;
-  const maxX = Math.max(...xs) + c * 5;
-  const minY = Math.min(...ys) - c * 5;
-  const maxY = Math.max(...ys) + c * 5;
-
-  interface Channel {
-    dir: 'E' | 'W' | 'N' | 'S';
-    x0: number;
-    x1: number;
-    y0: number;
-    y1: number;
+  const boundsKey = `${c}|${minX}|${maxX}|${minY}|${maxY}`;
+  const cached = byBounds.get(boundsKey);
+  if (cached) {
+    return cached;
   }
 
-  const channels: Channel[] = [];
+  const channels: RoutingChannel[] = [];
   const rects = obstacleRects;
 
   const overlap = (a0: number, a1: number, b0: number, b1: number) =>
@@ -528,7 +610,7 @@ export function buildRoutingGraphFromChannels(
   // For each obstacle, keep only the minimum-width channel per direction.
   for (const u of rects) {
     // East (rightward) channel: nearest obstacle/boundary to the right with overlapping vertical span.
-    let bestE: Channel | null = null;
+    let bestE: RoutingChannel | null = null;
     for (const v of rects) {
       if (v.left <= u.right + c) {
         continue;
@@ -542,7 +624,7 @@ export function buildRoutingGraphFromChannels(
       if (x1 <= x0) {
         continue;
       }
-      const cand: Channel = { dir: 'E', x0, x1, y0: ov.y0, y1: ov.y1 };
+      const cand: RoutingChannel = { dir: 'E', x0, x1, y0: ov.y0, y1: ov.y1 };
       const w = cand.x1 - cand.x0;
       if (!bestE || w < bestE.x1 - bestE.x0) {
         bestE = cand;
@@ -554,7 +636,7 @@ export function buildRoutingGraphFromChannels(
     }
 
     // West channel
-    let bestW: Channel | null = null;
+    let bestW: RoutingChannel | null = null;
     for (const v of rects) {
       if (v.right >= u.left - c) {
         continue;
@@ -568,7 +650,7 @@ export function buildRoutingGraphFromChannels(
       if (x1 <= x0) {
         continue;
       }
-      const cand: Channel = { dir: 'W', x0, x1, y0: ov.y0, y1: ov.y1 };
+      const cand: RoutingChannel = { dir: 'W', x0, x1, y0: ov.y0, y1: ov.y1 };
       const w = cand.x1 - cand.x0;
       if (!bestW || w < bestW.x1 - bestW.x0) {
         bestW = cand;
@@ -580,7 +662,7 @@ export function buildRoutingGraphFromChannels(
     }
 
     // South channel (downward): nearest obstacle/boundary below with overlapping horizontal span.
-    let bestS: Channel | null = null;
+    let bestS: RoutingChannel | null = null;
     for (const v of rects) {
       if (v.top <= u.bottom + c) {
         continue;
@@ -597,7 +679,7 @@ export function buildRoutingGraphFromChannels(
       if (y1 <= y0) {
         continue;
       }
-      const cand: Channel = { dir: 'S', x0: ov.y0, x1: ov.y1, y0, y1 };
+      const cand: RoutingChannel = { dir: 'S', x0: ov.y0, x1: ov.y1, y0, y1 };
       const h = cand.y1 - cand.y0;
       if (!bestS || h < bestS.y1 - bestS.y0) {
         bestS = cand;
@@ -609,7 +691,7 @@ export function buildRoutingGraphFromChannels(
     }
 
     // North channel (upward)
-    let bestN: Channel | null = null;
+    let bestN: RoutingChannel | null = null;
     for (const v of rects) {
       if (v.bottom >= u.top - c) {
         continue;
@@ -626,7 +708,7 @@ export function buildRoutingGraphFromChannels(
       if (y1 <= y0) {
         continue;
       }
-      const cand: Channel = { dir: 'N', x0: ov.y0, x1: ov.y1, y0, y1 };
+      const cand: RoutingChannel = { dir: 'N', x0: ov.y0, x1: ov.y1, y0, y1 };
       const h = cand.y1 - cand.y0;
       if (!bestN || h < bestN.y1 - bestN.y0) {
         bestN = cand;
@@ -643,9 +725,10 @@ export function buildRoutingGraphFromChannels(
   // drop those whose free-space projection is contained in another channel's projection
   // with <= width/height (i.e. "dominated").
   const dominated = new Set<number>();
-  const width = (c: Channel) => (c.dir === 'E' || c.dir === 'W' ? c.x1 - c.x0 : c.y1 - c.y0);
-  const proj0 = (c: Channel) => (c.dir === 'E' || c.dir === 'W' ? c.y0 : c.x0);
-  const proj1 = (c: Channel) => (c.dir === 'E' || c.dir === 'W' ? c.y1 : c.x1);
+  const width = (ch: RoutingChannel) =>
+    ch.dir === 'E' || ch.dir === 'W' ? ch.x1 - ch.x0 : ch.y1 - ch.y0;
+  const proj0 = (ch: RoutingChannel) => (ch.dir === 'E' || ch.dir === 'W' ? ch.y0 : ch.x0);
+  const proj1 = (ch: RoutingChannel) => (ch.dir === 'E' || ch.dir === 'W' ? ch.y1 : ch.x1);
   for (let i = 0; i < channels.length; i++) {
     if (dominated.has(i)) {
       continue;
@@ -671,59 +754,106 @@ export function buildRoutingGraphFromChannels(
       }
     }
   }
-  const prunedChannels = channels.filter((_, idx) => !dominated.has(idx));
 
-  // Representative lines: centerline of each channel + always include ports.
-  // Prefer port-aligned lines (paper: prefer reps starting at a port).
-  const xLines: number[] = [startPort.x, endPort.x];
-  const yLines: number[] = [startPort.y, endPort.y];
-  for (const ch of prunedChannels) {
-    if (ch.dir === 'E' || ch.dir === 'W') {
-      xLines.push((ch.x0 + ch.x1) / 2);
-      // Avoid adding both endpoints; it bloats the grid. Keep only midpoint projection anchors.
-      yLines.push((ch.y0 + ch.y1) / 2);
-    } else {
-      yLines.push((ch.y0 + ch.y1) / 2);
-      xLines.push((ch.x0 + ch.x1) / 2);
+  // Representative lines: centerline of each channel. Ports are added by the
+  // caller (paper: prefer reps starting at a port) and are what keeps this
+  // result reusable across every candidate port pair on the same obstacles.
+  const xLines: number[] = [];
+  const yLines: number[] = [];
+  for (const [idx, ch] of channels.entries()) {
+    if (dominated.has(idx)) {
+      continue;
     }
+    xLines.push((ch.x0 + ch.x1) / 2);
+    yLines.push((ch.y0 + ch.y1) / 2);
   }
 
-  const xCoords = uniqSorted(xLines);
-  const yCoords = uniqSorted(yLines);
+  const lines: ChannelLines = { xLines, yLines };
+  byBounds.set(boundsKey, lines);
+  return lines;
+}
+
+export function buildRoutingGraphFromChannels(
+  startPort: Point,
+  endPort: Point,
+  obstacleRects: Rect[],
+  spacing: number,
+  clearance: number = spacing
+): RoutingGraph | null {
+  const c = Math.max(0, clearance);
+  // Build a loose boundary around everything to ensure outer channels exist.
+  let minX = Math.min(startPort.x, endPort.x);
+  let maxX = Math.max(startPort.x, endPort.x);
+  let minY = Math.min(startPort.y, endPort.y);
+  let maxY = Math.max(startPort.y, endPort.y);
+  for (const r of obstacleRects) {
+    if (r.left < minX) {
+      minX = r.left;
+    }
+    if (r.right > maxX) {
+      maxX = r.right;
+    }
+    if (r.top < minY) {
+      minY = r.top;
+    }
+    if (r.bottom > maxY) {
+      maxY = r.bottom;
+    }
+  }
+  minX -= c * 5;
+  maxX += c * 5;
+  minY -= c * 5;
+  maxY += c * 5;
+
+  const lines = channelRepresentativeLines(obstacleRects, c, minX, maxX, minY, maxY);
+
+  // Always include the ports themselves (paper: prefer reps starting at a port).
+  const xCoords = uniqSorted([startPort.x, endPort.x, ...lines.xLines]);
+  const yCoords = uniqSorted([startPort.y, endPort.y, ...lines.yLines]);
   if (xCoords.length === 0 || yCoords.length === 0) {
     return null;
   }
 
+  // Grid cells are addressed by (row, column) into a flat Int32Array instead of
+  // by a `"x,y"` string key in a Map: the adjacency build does two lookups per
+  // cell and this graph is rebuilt for every candidate route, so the string keys
+  // were a per-candidate allocation of |X|*|Y| strings.
+  const cols = xCoords.length;
+  const cellIndex = new Int32Array(cols * yCoords.length).fill(-1);
   const nodes: RouteGraphNode[] = [];
-  const indexByKey = new Map<string, number>();
-  const key = (x: number, y: number) => `${x},${y}`;
 
-  for (const y of yCoords) {
+  for (const [yi, y] of yCoords.entries()) {
     // Same narrowing as the adjacency loops below: `pointInRectInterior`
     // requires `p.y > rect.top && p.y < rect.bottom`, so only rects strictly
     // spanning this row can contain any point on it.
     const rowRects = obstacleRects.filter((r) => r.top < y && r.bottom > y);
-    for (const x of xCoords) {
+    const rowBase = yi * cols;
+    for (let xi = 0; xi < cols; xi++) {
+      const x = xCoords[xi];
       if (pointInsideAnyRectInterior({ x, y }, rowRects)) {
         continue;
       }
-      const id = key(x, y);
-      indexByKey.set(id, nodes.length);
-      nodes.push({ id, x, y });
+      cellIndex[rowBase + xi] = nodes.length;
+      nodes.push({ id: `${x},${y}`, x, y });
     }
   }
 
-  const startKey = key(startPort.x, startPort.y);
-  const endKey = key(endPort.x, endPort.y);
-  const startIdx = indexByKey.get(startKey);
-  const endIdx = indexByKey.get(endKey);
-  if (startIdx == null || endIdx == null) {
+  const startXi = xCoords.indexOf(startPort.x);
+  const startYi = yCoords.indexOf(startPort.y);
+  const endXi = xCoords.indexOf(endPort.x);
+  const endYi = yCoords.indexOf(endPort.y);
+  if (startXi < 0 || startYi < 0 || endXi < 0 || endYi < 0) {
+    return null;
+  }
+  const startIdx = cellIndex[startYi * cols + startXi];
+  const endIdx = cellIndex[endYi * cols + endXi];
+  if (startIdx < 0 || endIdx < 0) {
     return null;
   }
 
   const adj: RouteGraphEdge[][] = Array.from({ length: nodes.length }, () => []);
 
-  for (const y of yCoords) {
+  for (const [yi, y] of yCoords.entries()) {
     // A horizontal segment at height `y` can only be blocked by a rect whose
     // vertical span contains `y`: `segmentIntersectsRectInterior` requires
     // `y >= rect.top && y <= rect.bottom`. Narrowing the obstacle list once per
@@ -731,16 +861,17 @@ export function buildRoutingGraphFromChannels(
     // and takes the adjacency build from O(|X|*|Y|*n) to O(|Y|*n + |X|*|Y|*k)
     // where k is the few rects that actually span the row.
     const rowRects = obstacleRects.filter((r) => r.top <= y && r.bottom >= y);
-    let prevIdx: number | null = null;
-    let prevX: number | null = null;
-    for (const x of xCoords) {
-      const idx = indexByKey.get(key(x, y));
-      if (idx == null) {
-        prevIdx = null;
-        prevX = null;
+    const rowBase = yi * cols;
+    let prevIdx = -1;
+    let prevX = 0;
+    for (let xi = 0; xi < cols; xi++) {
+      const idx = cellIndex[rowBase + xi];
+      if (idx < 0) {
+        prevIdx = -1;
         continue;
       }
-      if (prevIdx != null && prevX != null) {
+      const x = xCoords[xi];
+      if (prevIdx >= 0) {
         const a = { x: prevX, y };
         const b = { x, y };
         if (!segmentCrossesAnyRectInterior(a, b, rowRects)) {
@@ -754,20 +885,20 @@ export function buildRoutingGraphFromChannels(
     }
   }
 
-  for (const x of xCoords) {
+  for (let xi = 0; xi < cols; xi++) {
+    const x = xCoords[xi];
     // Dual of the row filter: a vertical segment at `x` can only be blocked by
     // a rect with `x >= rect.left && x <= rect.right`.
     const colRects = obstacleRects.filter((r) => r.left <= x && r.right >= x);
-    let prevIdx: number | null = null;
-    let prevY: number | null = null;
-    for (const y of yCoords) {
-      const idx = indexByKey.get(key(x, y));
-      if (idx == null) {
-        prevIdx = null;
-        prevY = null;
+    let prevIdx = -1;
+    let prevY = 0;
+    for (const [yi, y] of yCoords.entries()) {
+      const idx = cellIndex[yi * cols + xi];
+      if (idx < 0) {
+        prevIdx = -1;
         continue;
       }
-      if (prevIdx != null && prevY != null) {
+      if (prevIdx >= 0) {
         const a = { x, y: prevY };
         const b = { x, y };
         if (!segmentCrossesAnyRectInterior(a, b, colRects)) {
@@ -1053,10 +1184,17 @@ export function findRoutingGraphPathBetweenPorts(
     model?: 'grid' | 'representatives' | 'channels';
     clearance?: number;
     avoid?: { segments: Point[][]; costPerCrossing: number };
+    cache?: RoutingQueryCache;
   } = {}
 ): Point[] | null {
   const c = Math.max(0, options.clearance ?? spacing);
-  const obstacleRects = collectObstacleRects(nodesById, startNodeId, endNodeId, c);
+  const obstacleRects = collectObstacleRectsCached(
+    nodesById,
+    startNodeId,
+    endNodeId,
+    c,
+    options.cache
+  );
   if (obstacleRects.length === 0) {
     return null;
   }

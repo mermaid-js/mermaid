@@ -289,14 +289,33 @@ function shapeConstruction(
   }
 
   // Solve SAT (apply preference bias as a heuristic, not as hard clauses).
-  // When UNSAT, also compute a deterministic clause core and pick a single culprit
-  // variable to drive edge splitting (paper: “use the solver proof”).
+  // When UNSAT, pick a single culprit variable to drive edge splitting from the
+  // solver's own conflict analysis (paper: "use the solver's proof").
+  //
+  // We deliberately do NOT ask for a clause core here. `requestUnsatCore` runs
+  // deletion-based extraction — one full re-solve per clause, up to 300 of them
+  // — and on `domus/mermaid-chart-architecture` that was 1976 ms of a 13.5 s
+  // render, more than the whole rest of DOMUS placement and routing combined.
+  // The paper asks for nothing that expensive: "we use the solver's proof to
+  // determine which edge to subdivide" and "SM identifies an over-constrained
+  // edge-label variable and subdivides the corresponding edge" (LIPIcs.GD.2025.35,
+  // Abstract and §4.3). It never asks for a minimal core — the terms
+  // "unsatisfiable core"/"MUS" do not appear in it — and its termination argument
+  // is an existence one that does not mention the proof at all: "The overall
+  // process terminates because every graph has an orthogonal drawing" (§4.3). The
+  // choice is therefore a heuristic over iteration count and drawing quality, and
+  // conflict analysis is exactly the proof output Glucose is credited with in §5.
+  // What must be preserved is progress (one edge split per UNSAT round) and
+  // determinism — `pickCulpritVarFromConflictVars` tie-breaks on edgeId, then
+  // label order L,R,D,U, then variable id, and `identifyEdgeToSplit` /
+  // `pickFallbackEdgeToSplit` below still guarantee an edge when conflict
+  // analysis hands back no edge-label variable.
   const variableBias = buildPreferenceVariableBias(vars, state.constraints);
   const satResult = solveShapeSAT(
     formula,
     vars,
     debug,
-    { requestUnsatCore: true },
+    { requestUnsatCore: false },
     { variableBias }
   );
 

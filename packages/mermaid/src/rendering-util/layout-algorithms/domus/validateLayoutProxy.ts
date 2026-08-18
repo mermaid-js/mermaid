@@ -36,17 +36,19 @@ export const DOMUS_VALIDATION_EXTENSIONS: readonly LayoutValidationExtension[] =
  * Core validation plus the DOMUS extensions.
  *
  * `abortAboveIssueCount` is forwarded for score-gated passes that only need a
- * fast "does this candidate have fewer issues than the baseline" answer; see the
- * option's docs on the core validator. The extensions are non-negotiable — a
- * caller cannot swap the objective, only ask for an earlier "no".
+ * fast "does this candidate have fewer issues than the baseline" answer, and
+ * `focusEdgeIds` for passes that changed one edge and only need that edge's
+ * issues; see both options' docs on the core validator. The extensions are
+ * non-negotiable — a caller cannot swap the objective, only narrow the question.
  */
 export function validateLayout(
   layout: LayoutData,
-  options: { abortAboveIssueCount?: number } = {}
+  options: { abortAboveIssueCount?: number; focusEdgeIds?: ReadonlySet<string> } = {}
 ): ValidateLayoutResult {
   return validateLayoutCore(layout, {
     extensions: DOMUS_VALIDATION_EXTENSIONS,
     abortAboveIssueCount: options.abortAboveIssueCount,
+    focusEdgeIds: options.focusEdgeIds,
   });
 }
 

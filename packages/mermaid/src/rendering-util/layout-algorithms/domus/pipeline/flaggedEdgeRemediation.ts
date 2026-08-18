@@ -18,7 +18,7 @@
 import type { LayoutData, Node } from '../../../types.js';
 import { rectForNode } from '../core/helpers.js';
 import { validateLayout } from '../validateLayoutProxy.js';
-import { findRoutingGraphPathBetweenPorts } from '../core/routing.js';
+import { createRoutingQueryCache, findRoutingGraphPathBetweenPorts } from '../core/routing.js';
 import { findDirectCompoundRoute } from './directCompoundRoute.js';
 import { ancestorGroupIds } from './groups.js';
 
@@ -561,15 +561,35 @@ function* sideRouteCandidates(
     routerNodes.set(id, n);
   }
 
-  for (const [startSide, endSide] of sidePreference(rS, rE)) {
+  // Up to 12 side pairs x 4 start offsets x 4 end offsets = 192 router calls for
+  // this one edge, every one of them against the same obstacles. Nodes do not
+  // move anywhere in this pass — only edge polylines do — so one cache for the
+  // whole sweep is sound, and it collapses 192 obstacle-inflation + channel
+  // builds into one. The cache dies with this generator.
+  const routingCache = createRoutingQueryCache();
+
+  // Enumeration budget. `sidePreference` yields ~12 side pairs and each used to be
+  // crossed with 4 start x 4 end port offsets: 192 shortest-path searches through a
+  // freshly built routing graph, for ONE flagged edge. On `domus/architecture` that
+  // was the single most expensive thing DOMUS did.
+  //
+  // The pairs come out in preference order (facing sides first, then perpendicular,
+  // then opposed, then same-side) and the offsets likewise (the geometrically
+  // implied one, then the centre), so the tail of that product is the desperate
+  // end of the search — and this generator is consumed lazily, so a repair that
+  // exists early is found before any of it is reached. Truncating to the leading
+  // SIDE_PAIR_BUDGET x 2 x 2 keeps every ordering the search already preferred and
+  // drops the 8x that only ran when nothing worked at all.
+  const SIDE_PAIR_BUDGET = 6;
+  for (const [startSide, endSide] of sidePreference(rS, rE).slice(0, SIDE_PAIR_BUDGET)) {
     const startHoriz = startSide === 'N' || startSide === 'S';
     const endHoriz = endSide === 'N' || endSide === 'S';
     const startTs = startHoriz
-      ? [(rE.cx - rS.left) / (rS.right - rS.left), 0.5, 0.25, 0.75]
-      : [(rE.cy - rS.top) / (rS.bottom - rS.top), 0.5, 0.25, 0.75];
+      ? [(rE.cx - rS.left) / (rS.right - rS.left), 0.5]
+      : [(rE.cy - rS.top) / (rS.bottom - rS.top), 0.5];
     const endTs = endHoriz
-      ? [(rS.cx - rE.left) / (rE.right - rE.left), 0.5, 0.25, 0.75]
-      : [(rS.cy - rE.top) / (rE.bottom - rE.top), 0.5, 0.25, 0.75];
+      ? [(rS.cx - rE.left) / (rE.right - rE.left), 0.5]
+      : [(rS.cy - rE.top) / (rE.bottom - rE.top), 0.5];
 
     for (const st of startTs) {
       const ps = sidePort(rS, startSide, st);
@@ -586,7 +606,7 @@ function* sideRouteCandidates(
           startId,
           endId,
           10,
-          { model: 'channels', clearance: 8, avoid }
+          { model: 'channels', clearance: 8, avoid, cache: routingCache }
         );
         const routes: Point[][] = [];
         if (mid && mid.length >= 2) {
@@ -776,6 +796,18 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
       }
 
       const curKeys = new Set((current.issues as Issue[]).map(issueKey));
+      // Only this edge's geometry changes below, and every validator check is a
+      // pure function of geometry, so no issue that does not involve this edge
+      // can move. That makes the whole accept test answerable from this edge's
+      // issues alone: the candidate is an improvement exactly when it has fewer
+      // of them than the route being replaced and introduces no key the baseline
+      // did not already have. A full validation per candidate was re-deriving
+      // the other ~200 issues of `domus/architecture` every time, and the
+      // `abortAboveIssueCount` fast-reject could not help because the abort
+      // threshold on a badly broken layout is the whole issue list. Focused, the
+      // threshold is this edge's own handful.
+      const focusEdgeIds = new Set([edgeId]);
+      const focusBefore = validateLayout(layout, { focusEdgeIds }).issues.length;
       const old = e!.points;
       const oldX = e!.x;
       const oldY = e!.y;
@@ -820,21 +852,23 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
               e!.x = anchor.x;
               e!.y = anchor.y;
             }
-            // Fast reject: acceptance needs FEWER issues than the baseline, so
-            // once a candidate reaches the baseline count the answer is already
-            // no. `abortAboveIssueCount` lets validation stop there instead of
-            // finishing the quadratic pairwise scans. 7,356 of the 7,374
-            // candidates tried on `domus/architecture` are rejects, and they were
-            // costing a full validation each.
+            // Fast reject on this edge's issues only (see `focusEdgeIds`): once a
+            // candidate reaches the count the current route already has, the
+            // answer is no. 7,356 of the 7,374 candidates tried on
+            // `domus/architecture` are rejects, and this is what they cost.
             const next = validateLayout(layout, {
-              abortAboveIssueCount: current.issues.length,
+              focusEdgeIds,
+              abortAboveIssueCount: focusBefore,
             });
-            const fewer = !next.aborted && next.issues.length < current.issues.length;
+            const fewer = !next.aborted && next.issues.length < focusBefore;
             // Only reached when `fewer` holds, i.e. never on an aborted result —
             // whose issue list is deliberately partial.
             const noNew = (next.issues as Issue[]).every((iss) => curKeys.has(issueKey(iss)));
             if (fewer && noNew) {
-              current = next;
+              // The accepted route is a real improvement, so pay for one full
+              // validation to refresh the whole-layout baseline the next edge
+              // and the next round are judged against.
+              current = validateLayout(layout);
               improvedThisRound = true;
               accepted = true;
               break;

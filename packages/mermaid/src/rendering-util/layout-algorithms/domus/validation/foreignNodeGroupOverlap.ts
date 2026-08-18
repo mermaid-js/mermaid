@@ -64,6 +64,8 @@ function isSelfOrDescendant(node: Node, groupId: string, byId: Map<string, Node>
 
 export const foreignNodeGroupOverlapExtension: LayoutValidationExtension = {
   id: 'domus:foreignNodeGroupOverlap',
+  // Issues here name a node and a group, never an edge (see `nodeOnly`).
+  nodeOnly: true,
 
   check(layout: LayoutData, _core: Readonly<ValidateLayoutResult>): Issue[] {
     const nodes = layout.nodes ?? [];
