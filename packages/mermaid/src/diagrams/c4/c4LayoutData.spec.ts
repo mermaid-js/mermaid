@@ -139,6 +139,24 @@ Rel_Back(c, d, "returns")`);
     expect(edges[2].arrowTypeEnd).toBeUndefined();
   });
 
+  // A relationship may name a boundary rather than a shape (#4864). The legacy renderer
+  // needed the boundary to carry its own intersect function for this; here the boundary is
+  // an ordinary group node, so the edge is built the same way as any other.
+  it('builds an edge whose endpoint is a boundary', () => {
+    const db = parse(`C4Context
+Container_Boundary(banking, "Internet Banking") {
+Container(spa, "SPA", "JavaScript", "Front-end")
+}
+System_Ext(email, "Email System", "External mail")
+Rel(banking, email, "Forwards alerts")`);
+
+    const { nodes, edges } = getData(db, config());
+
+    expect(nodes.find((n) => n.id === 'banking')).toMatchObject({ isGroup: true });
+    expect(edges).toHaveLength(1);
+    expect(edges[0]).toMatchObject({ start: 'banking', end: 'email' });
+  });
+
   it('numbers relationships in a C4Dynamic diagram', () => {
     const db = parse(`C4Dynamic
 Person(a, "A")
