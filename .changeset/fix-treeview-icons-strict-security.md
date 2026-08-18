@@ -2,4 +2,4 @@
 'mermaid': patch
 ---
 
-Fix treeView icons disappearing after strict security sanitization.
+fix(treeView): icons disappearing after strict security sanitization.
