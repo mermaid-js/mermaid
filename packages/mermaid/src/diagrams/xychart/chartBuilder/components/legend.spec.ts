@@ -53,6 +53,7 @@ const chartData: XYChartData = {
       type: 'bar',
       title: 'p95',
       fill: '#0f0',
+      group: 'p95',
       data: [
         ['90d', 80],
         ['60d', 90],
@@ -199,5 +200,107 @@ describe('ChartLegend', () => {
         expect.objectContaining({ text: 'p95', fill: '#333' }),
       ])
     );
+  });
+
+  it('collapses grouped/stacked series that share a name into a single legend row', () => {
+    // Two groups (Product A, Product B) that each carry an "online" and "store"
+    // series. The shared series keep a consistent color, so the legend should
+    // show "online" and "store" once each rather than duplicating them.
+    const groupedData: XYChartData = {
+      title: 'Sales',
+      xAxis: { type: 'band', title: '', categories: ['Q1', 'Q2'] },
+      yAxis: { type: 'linear', title: '', min: 0, max: 60 },
+      plots: [
+        {
+          type: 'bar',
+          title: 'online',
+          fill: '#0f0',
+          group: 'A',
+          data: [
+            ['Q1', 10],
+            ['Q2', 20],
+          ],
+        },
+        {
+          type: 'bar',
+          title: 'store',
+          fill: '#00f',
+          group: 'A',
+          data: [
+            ['Q1', 5],
+            ['Q2', 10],
+          ],
+        },
+        {
+          type: 'bar',
+          title: 'online',
+          fill: '#0f0',
+          group: 'B',
+          data: [
+            ['Q1', 8],
+            ['Q2', 16],
+          ],
+        },
+        {
+          type: 'bar',
+          title: 'store',
+          fill: '#00f',
+          group: 'B',
+          data: [
+            ['Q1', 4],
+            ['Q2', 8],
+          ],
+        },
+      ],
+    };
+
+    const legend = new ChartLegend(
+      textDimensionCalculator,
+      chartConfig,
+      groupedData,
+      chartThemeConfig
+    );
+    legend.calculateSpace({ width: 200, height: 200 });
+    legend.setBoundingBoxXY({ x: 0, y: 0 });
+
+    const labels = legend
+      .getDrawableElements()
+      .find((d) => d.type === 'text' && d.groupTexts.join('.') === 'legend.label')?.data;
+
+    expect(labels?.map((l) => (l as { text: string }).text)).toEqual(['online', 'store']);
+  });
+
+  it('keeps same-titled plots that differ in kind or color as separate rows', () => {
+    // Only genuinely identical series (same kind, title and color) collapse. A
+    // line named "x" and a bar named "x" are different series, and so are two
+    // bars named "x" drawn in different colors.
+    const collidingData: XYChartData = {
+      title: 'Collisions',
+      xAxis: { type: 'band', title: '', categories: ['Q1'] },
+      yAxis: { type: 'linear', title: '', min: 0, max: 60 },
+      plots: [
+        { type: 'line', title: 'x', strokeFill: '#f00', strokeWidth: 2, data: [['Q1', 10]] },
+        { type: 'bar', title: 'x', fill: '#0f0', group: 'A', data: [['Q1', 20]] },
+        { type: 'bar', title: 'x', fill: '#00f', group: 'B', data: [['Q1', 30]] },
+        // Exact duplicate of the previous bar — this one collapses away.
+        { type: 'bar', title: 'x', fill: '#00f', group: 'C', data: [['Q1', 40]] },
+      ],
+    };
+
+    const legend = new ChartLegend(
+      textDimensionCalculator,
+      chartConfig,
+      collidingData,
+      chartThemeConfig
+    );
+    legend.calculateSpace({ width: 200, height: 200 });
+    legend.setBoundingBoxXY({ x: 0, y: 0 });
+
+    const labels = legend
+      .getDrawableElements()
+      .find((d) => d.type === 'text' && d.groupTexts.join('.') === 'legend.label')?.data;
+
+    // The line, the green bar and the blue bar survive; the duplicate blue bar does not.
+    expect(labels?.map((l) => (l as { text: string }).text)).toEqual(['x', 'x', 'x']);
   });
 });

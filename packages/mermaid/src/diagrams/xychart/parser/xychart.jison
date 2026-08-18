@@ -42,6 +42,8 @@
 "line"                                    { this.pushState("data"); return 'LINE'; }
 "bar"                                     { this.pushState("data"); return 'BAR'; }
 <data>"["                                 { this.pushState("data_inner"); return 'SQUARE_BRACES_START'; }
+<data>"{"                                 { return 'BRACE_START'; }
+<data>"}"                                 { return 'BRACE_END'; }
 <axis_data,data_inner>[+-]?(?:\d+(?:\.\d+)?|\.\d+)   { return 'NUMBER_WITH_DECIMAL'; }
 <data_inner,axis_band_data>"]"            { this.popState(); return 'SQUARE_BRACES_END'; }
 
@@ -105,6 +107,8 @@ statement
   | LINE text plotData                                          { yy.setLineData($text, $plotData); }
   | BAR plotData                                                { yy.setBarData({text: '', type: 'text'}, $plotData); }
   | BAR text plotData                                           { yy.setBarData($text, $plotData); }
+  | BAR objectData                                              { yy.setBarGroupData({text: '', type: 'text'}, $objectData); }
+  | BAR text objectData                                         { yy.setBarGroupData($text, $objectData); }
   | acc_title acc_title_value                                   { $$=$acc_title_value.trim();yy.setAccTitle($$); }
   | acc_descr acc_descr_value                                   { $$=$acc_descr_value.trim();yy.setAccDescription($$); }
   | acc_descr_multiline_value                                   { $$=$acc_descr_multiline_value.trim();yy.setAccDescription($$); }
@@ -112,6 +116,19 @@ statement
 
 plotData
   : SQUARE_BRACES_START dataPoints SQUARE_BRACES_END   { $$ = $dataPoints }
+  ;
+
+objectData
+  : BRACE_START seriesEntries BRACE_END       { $$ = $seriesEntries }
+  ;
+
+seriesEntries
+  : seriesEntry COMMA seriesEntries           { $$ = [$seriesEntry, ...$seriesEntries] }
+  | seriesEntry                               { $$ = [$seriesEntry] }
+  ;
+
+seriesEntry
+  : text COLON plotData                       { $$ = { key: $text.text, data: $plotData } }
   ;
 
 dataPoints

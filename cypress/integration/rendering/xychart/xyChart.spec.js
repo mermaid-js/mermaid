@@ -1,6 +1,59 @@
 import { imgSnapshotTest } from '../../../helpers/util.ts';
 
 describe('XY Chart', () => {
+  it('renders stacked bar chart', () => {
+    imgSnapshotTest(
+      `
+      xychart vertical
+        title "Test XY Chart"
+        x-axis "Months" ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        y-axis "Values" 0 --> 27
+        bar "Traffic" {"organic": [10, 8, 12, 16, 10, 7, 4, 13, 6, 11, 18, 15], "paid": [2, 1, 3, 4, 2.5, 1.5, 1, 3, 2, 5, 6, 4]}
+        line [12, 9, 15, 20, 12.5, 8.5, 5, 16, 8, 16, 24, 19]
+      `,
+      {}
+    );
+  });
+  it('renders grouped and stacked bars side-by-side', () => {
+    imgSnapshotTest(
+      `
+      xychart vertical
+        title "Grouped + stacked"
+        x-axis [Q1, Q2, Q3, Q4]
+        y-axis "Revenue" 0 --> 60
+        bar "Product A" {"online": [10, 20, 30, 25], "store": [5, 10, 15, 12]}
+        bar "Product B" {"online": [8, 16, 24, 20], "store": [4, 8, 12, 10]}
+      `,
+      {}
+    );
+  });
+  it('renders a stacked group mixed with a plain bar and a line', () => {
+    imgSnapshotTest(
+      `
+      xychart vertical
+        title "Mixed groups"
+        x-axis [Q1, Q2, Q3, Q4]
+        y-axis "Value" 0 --> 60
+        bar "Costs" {"labor": [10, 12, 14, 11], "materials": [8, 9, 7, 10]}
+        bar "Revenue" [25, 30, 28, 33]
+        line [20, 22, 21, 24]
+      `,
+      {}
+    );
+  });
+  it('renders grouped and stacked bars in a horizontal chart', () => {
+    imgSnapshotTest(
+      `
+      xychart horizontal
+        title "Grouped + stacked (horizontal)"
+        x-axis [Q1, Q2, Q3, Q4]
+        y-axis "Revenue" 0 --> 60
+        bar "Product A" {"online": [10, 20, 30, 25], "store": [5, 10, 15, 12]}
+        bar "Product B" {"online": [8, 16, 24, 20], "store": [4, 8, 12, 10]}
+      `,
+      {}
+    );
+  });
   it('should render the simplest possible xy-beta chart', () => {
     imgSnapshotTest(
       `

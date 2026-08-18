@@ -21,7 +21,7 @@ import type {
   XYChartData,
   XYChartThemeConfig,
 } from './chartBuilder/interfaces.js';
-import { isBandAxisData, isLinearAxisData } from './chartBuilder/interfaces.js';
+import { isBandAxisData, isLinearAxisData, isBarPlot } from './chartBuilder/interfaces.js';
 
 let plotIndex = 0;
 
@@ -33,6 +33,13 @@ let xyChartData: XYChartData = getChartDefaultData();
 let plotColorPalette = xyChartThemeConfig.plotColorPalette.split(',').map((color) => color.trim());
 let hasSetXAxis = false;
 let hasSetYAxis = false;
+
+// Monotonic counter used to give every bar statement a unique group id so that
+// distinct groups render in their own side-by-side slot.
+let barGroupIndex = 0;
+// Maps a stacked series' key (e.g. "online") to a color so that the same series
+// keeps a consistent color across every group, matching the legend.
+let barSeriesColors = new Map<string, string>();
 
 interface NormalTextType {
   type: 'text';
@@ -108,7 +115,8 @@ function setYAxisRangeData(min: number, max: number) {
   hasSetYAxis = true;
 }
 
-// this function does not set `hasSetYAxis` as there can be multiple data so we should calculate the range accordingly
+// This function does not set `hasSetYAxis` as there can be multiple data series,
+// so we calculate the range accordingly.
 function setYAxisRangeFromPlotData(data: number[]) {
   const minValue = Math.min(...data);
   const maxValue = Math.max(...data);
@@ -119,6 +127,69 @@ function setYAxisRangeFromPlotData(data: number[]) {
     title: xyChartData.yAxis.title,
     min: Math.min(prevMinValue, minValue),
     max: Math.max(prevMaxValue, maxValue),
+  };
+}
+
+// Recalculates the y-axis range to account for stacked bar series.
+// Series belonging to the same group stack on top of each other, so for each
+// group we sum its series per category and take the largest stacked total as
+// the y-axis upper bound. Groups are rendered side-by-side and do not add up.
+function recalculateYAxisRangeForStackedBars() {
+  const barPlots = xyChartData.plots.filter(isBarPlot);
+  if (barPlots.length === 0) {
+    return;
+  }
+
+  // Sum the series of each group, keyed by group id. A series can be shorter
+  // than the axis has categories, which leaves holes in its data, so only finite
+  // values contribute to a group's total.
+  const groupSums = new Map<string, number[]>();
+  for (const plot of barPlots) {
+    let sums = groupSums.get(plot.group);
+    if (!sums) {
+      sums = new Array(plot.data.length).fill(0);
+      groupSums.set(plot.group, sums);
+    }
+    plot.data.forEach((d, i) => {
+      const value = d[1];
+      if (Number.isFinite(value)) {
+        sums[i] = (sums[i] ?? 0) + value;
+      }
+    });
+  }
+
+  // If every group has exactly one series there is no stacking, and the range
+  // computed per series from the plot data is already correct.
+  if (barPlots.length === groupSums.size) {
+    return;
+  }
+
+  let maxCumulative = -Infinity;
+  let minCumulative = Infinity;
+  for (const sums of groupSums.values()) {
+    for (const total of sums) {
+      if (Number.isFinite(total)) {
+        maxCumulative = Math.max(maxCumulative, total);
+        minCumulative = Math.min(minCumulative, total);
+      }
+    }
+  }
+
+  // Nothing usable to widen the range with.
+  if (!Number.isFinite(maxCumulative) || !Number.isFinite(minCumulative)) {
+    return;
+  }
+
+  const prevMinValue = isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.min : 0;
+  const prevMaxValue = isLinearAxisData(xyChartData.yAxis) ? xyChartData.yAxis.max : 0;
+
+  xyChartData.yAxis = {
+    type: 'linear',
+    title: xyChartData.yAxis.title,
+    // Stacks are anchored at zero, and a group whose series sum to a negative
+    // total must still fit inside the axis.
+    min: Math.min(prevMinValue, 0, minCumulative),
+    max: Math.max(prevMaxValue, maxCumulative),
   };
 }
 
@@ -191,13 +262,49 @@ function setLineData(title: NormalTextType, data: ParsedDataPoint[]) {
 function setBarData(title: NormalTextType, data: ParsedDataPoint[]) {
   const values = data.map((d) => d.value);
   const plotData = transformDataWithoutCategory(values);
+  // A plain bar is its own group, so it renders as a single non-stacked bar in
+  // its own side-by-side slot.
   xyChartData.plots.push({
     type: 'bar',
     title: textSanitizer(title.text),
     fill: getPlotColorFromPalette(plotIndex),
+    group: `bar-group-${barGroupIndex++}`,
     data: plotData,
   });
   plotIndex++;
+}
+
+interface BarSeriesEntry {
+  key: string;
+  data: ParsedDataPoint[];
+}
+
+// Handles the matplotlib-style object syntax:
+//   bar "Product A" {"online": [10, 20, 30], "store": [5, 10, 15]}
+// Each entry of the object becomes one bar series, all sharing a single group so
+// that they stack on top of each other within one side-by-side slot.
+function setBarGroupData(_title: NormalTextType, series: BarSeriesEntry[]) {
+  const group = `bar-group-${barGroupIndex++}`;
+  for (const { key, data } of series) {
+    const values = data.map((d) => d.value);
+    const plotData = transformDataWithoutCategory(values);
+    const seriesKey = textSanitizer(key);
+    // Reuse a color for series that share a key across groups so the same series
+    // is drawn consistently (matching a legend).
+    let fill = barSeriesColors.get(seriesKey);
+    if (fill === undefined) {
+      fill = getPlotColorFromPalette(plotIndex);
+      barSeriesColors.set(seriesKey, fill);
+      plotIndex++;
+    }
+    xyChartData.plots.push({
+      type: 'bar',
+      title: seriesKey,
+      fill,
+      group,
+      data: plotData,
+    });
+  }
 }
 
 function getDrawableElem(): DrawableElem[] {
@@ -205,6 +312,12 @@ function getDrawableElem(): DrawableElem[] {
     throw Error('No Plot to render, please provide a plot with some data');
   }
   xyChartData.title = getDiagramTitle();
+
+  // Recalculate y-axis range to accommodate stacked bar totals before building.
+  if (!hasSetYAxis) {
+    recalculateYAxisRangeForStackedBars();
+  }
+
   return XYChartBuilder.build(xyChartConfig, xyChartData, xyChartThemeConfig, tmpSVGGroup);
 }
 
@@ -229,6 +342,8 @@ const clear = function () {
   plotColorPalette = xyChartThemeConfig.plotColorPalette.split(',').map((color) => color.trim());
   hasSetXAxis = false;
   hasSetYAxis = false;
+  barGroupIndex = 0;
+  barSeriesColors = new Map<string, string>();
 };
 
 export default {
@@ -248,6 +363,7 @@ export default {
   setYAxisRangeData,
   setLineData,
   setBarData,
+  setBarGroupData,
   setTmpSVGG,
   getChartThemeConfig,
   getChartConfig,

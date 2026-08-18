@@ -123,4 +123,146 @@ describe('xychartDb', () => {
       }
     });
   });
+
+  describe('grouped / stacked bars', () => {
+    /** Helper to build a series entry the way the parser emits it. */
+    function series(key: string, ...values: number[]) {
+      return { key, data: pts(...values) };
+    }
+
+    it('turns each object entry into one bar plot sharing a single group', () => {
+      db.setXAxisBand([
+        { text: 'a', type: 'text' },
+        { text: 'b', type: 'text' },
+        { text: 'c', type: 'text' },
+      ]);
+      db.setBarGroupData({ text: 'Product A', type: 'text' }, [
+        series('online', 10, 20, 30),
+        series('store', 5, 10, 15),
+      ]);
+
+      const { plots } = db.getXYChartData();
+      expect(plots).toHaveLength(2);
+      expect(plots[0]).toMatchObject({ type: 'bar', title: 'online' });
+      expect(plots[1]).toMatchObject({ type: 'bar', title: 'store' });
+      // Both series of the group share the same group id.
+      expect((plots[0] as { group: string }).group).toBe((plots[1] as { group: string }).group);
+    });
+
+    it('gives different groups distinct group ids, and plain bars their own group', () => {
+      db.setBarGroupData({ text: 'A', type: 'text' }, [series('x', 1, 2), series('y', 3, 4)]);
+      db.setBarGroupData({ text: 'B', type: 'text' }, [series('x', 5, 6), series('y', 7, 8)]);
+      db.setBarData({ text: 'plain', type: 'text' }, pts(9, 10));
+
+      const groups = db.getXYChartData().plots.map((p) => (p as { group: string }).group);
+      // groups: [A, A, B, B, plain]
+      expect(groups[0]).toBe(groups[1]);
+      expect(groups[2]).toBe(groups[3]);
+      expect(groups[0]).not.toBe(groups[2]);
+      // The plain bar is isolated in its own group.
+      expect(groups[4]).not.toBe(groups[0]);
+      expect(groups[4]).not.toBe(groups[2]);
+    });
+
+    it('colors series consistently by key across groups', () => {
+      db.setBarGroupData({ text: 'A', type: 'text' }, [
+        series('online', 1, 2),
+        series('store', 3, 4),
+      ]);
+      db.setBarGroupData({ text: 'B', type: 'text' }, [
+        series('online', 5, 6),
+        series('store', 7, 8),
+      ]);
+
+      const plots = db.getXYChartData().plots as { title: string; fill: string }[];
+      const online = plots.filter((p) => p.title === 'online');
+      const store = plots.filter((p) => p.title === 'store');
+      // Same key -> same color in every group.
+      expect(online[0].fill).toBe(online[1].fill);
+      expect(store[0].fill).toBe(store[1].fill);
+      // Different keys -> different colors.
+      expect(online[0].fill).not.toBe(store[0].fill);
+    });
+
+    it('raises the y-axis range to the tallest stacked group total', () => {
+      db.setXAxisBand([
+        { text: 'a', type: 'text' },
+        { text: 'b', type: 'text' },
+      ]);
+      // Stacked totals per category: [10+5, 20+10] = [15, 30].
+      db.setBarGroupData({ text: 'A', type: 'text' }, [
+        series('lower', 10, 20),
+        series('upper', 5, 10),
+      ]);
+
+      // The stacked recalculation runs while building the drawable elements.
+      db.getDrawableElem();
+
+      const { yAxis } = db.getXYChartData();
+      expect(yAxis.type).toBe('linear');
+      if (yAxis.type === 'linear') {
+        expect(yAxis.max).toBe(30);
+        expect(yAxis.min).toBeLessThanOrEqual(0);
+      }
+    });
+
+    it("keeps the y-axis finite when a group's series have different lengths", () => {
+      db.setXAxisBand([
+        { text: 'a', type: 'text' },
+        { text: 'b', type: 'text' },
+        { text: 'c', type: 'text' },
+      ]);
+      // "short" has no value for category "c", leaving a hole in its data.
+      db.setBarGroupData({ text: 'G', type: 'text' }, [
+        series('short', 10, 20),
+        series('long', 1, 2, 3),
+      ]);
+
+      db.getDrawableElem();
+
+      const { yAxis } = db.getXYChartData();
+      if (yAxis.type === 'linear') {
+        expect(Number.isNaN(yAxis.max)).toBe(false);
+        expect(Number.isNaN(yAxis.min)).toBe(false);
+        // Tallest stack is category "b": 20 + 2.
+        expect(yAxis.max).toBe(22);
+      }
+    });
+
+    it('extends the y-axis minimum to the most negative stacked total', () => {
+      db.setXAxisBand([
+        { text: 'a', type: 'text' },
+        { text: 'b', type: 'text' },
+      ]);
+      // Stacked totals per category: [-15, -30].
+      db.setBarGroupData({ text: 'G', type: 'text' }, [
+        series('down', -10, -20),
+        series('more', -5, -10),
+      ]);
+
+      db.getDrawableElem();
+
+      const { yAxis } = db.getXYChartData();
+      if (yAxis.type === 'linear') {
+        expect(yAxis.min).toBe(-30);
+      }
+    });
+
+    it('does not stack side-by-side single-series groups', () => {
+      db.setXAxisBand([
+        { text: 'a', type: 'text' },
+        { text: 'b', type: 'text' },
+      ]);
+      db.setBarData({ text: 'first', type: 'text' }, pts(10, 20));
+      db.setBarData({ text: 'second', type: 'text' }, pts(30, 40));
+
+      db.getDrawableElem();
+
+      const { yAxis } = db.getXYChartData();
+      if (yAxis.type === 'linear') {
+        // No stacking: max stays the largest single value, not the sum.
+        expect(yAxis.max).toBe(40);
+      }
+    });
+  });
 });

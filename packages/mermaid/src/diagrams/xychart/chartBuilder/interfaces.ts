@@ -48,6 +48,16 @@ export interface BarPlotData {
    */
   title: string;
   fill: string;
+  /**
+   * Identifier of the group this bar series belongs to.
+   *
+   * Bar series sharing the same `group` are stacked on top of each other and
+   * rendered together in a single side-by-side slot within each category tick.
+   * Each distinct `group` occupies its own slot, so different groups render
+   * next to each other. A plain `bar [values]` gets its own unique group and is
+   * therefore rendered as a single, non-stacked bar.
+   */
+  group: string;
   data: SimplePlotDataType;
 }
 

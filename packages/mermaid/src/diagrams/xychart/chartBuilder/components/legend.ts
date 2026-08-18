@@ -52,8 +52,24 @@ export class ChartLegend implements ChartComponent {
   }
 
   calculateSpace(availableSpace: Dimension): Dimension {
+    // One legend row per distinct series. Grouped/stacked bars repeat the same
+    // series (e.g. "online") across groups with a shared color, so collapse only
+    // rows that match on kind, title *and* color. Plots that merely share a title
+    // but differ in color, or a line and a bar with the same name, stay distinct.
+    const seenSeries = new Set<string>();
     this.visiblePlots = this.chartConfig.showLegend
-      ? this.chartData.plots.filter((plot) => plot.title)
+      ? this.chartData.plots.filter((plot) => {
+          if (!plot.title) {
+            return false;
+          }
+          const color = isBarPlot(plot) ? plot.fill : plot.strokeFill;
+          const identity = `${plot.type} ${plot.title} ${color}`;
+          if (seenSeries.has(identity)) {
+            return false;
+          }
+          seenSeries.add(identity);
+          return true;
+        })
       : [];
 
     if (this.visiblePlots.length === 0) {
