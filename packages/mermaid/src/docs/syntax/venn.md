@@ -9,8 +9,8 @@ Venn diagrams show relationships between sets using overlapping circles.
 
 - Start with `venn-beta`.
 - Use `set` for a single set name.
-- Use `union` for an overlap of two or more set names.
-- Identifiers in `union` must be defined by earlier `set` lines.
+- Use `intersection` for an overlap of two or more set names (the older `union` keyword is also supported for backward compatibility).
+- Identifiers in `intersection` / `union` must be defined by earlier `set` lines.
 - Set identifiers can be bare words (`A`, `Set_1`) or quoted strings (`"Foo Bar"`).
 
 ```mermaid-example
@@ -18,7 +18,7 @@ venn-beta
   title "Team overlap"
   set Frontend
   set Backend
-  union Frontend,Backend["APIs"]
+  intersection Frontend,Backend["APIs"]
 ```
 
 ### Labels
@@ -29,13 +29,13 @@ Use bracket syntax `["..."]` to set a display label while keeping the identifier
 venn-beta
   set A["Alpha"]
   set B["Beta"]
-  union A,B["AB"]
+  intersection A,B["AB"]
 ```
 
-### Higher-arity unions
+### Higher-arity intersections / unions
 
-`union` accepts three or more set names. The diagram renders the implied
-pairwise overlaps automatically, so the label on the higher-arity union has a
+`intersection` (or `union`) accepts three or more set names. The diagram renders the implied
+pairwise overlaps automatically, so the label on the higher-arity intersection has a
 visible region to sit in:
 
 ```mermaid-example
@@ -43,24 +43,24 @@ venn-beta
   set Desirable
   set Feasible
   set Viable
-  union Desirable,Feasible,Viable["Innovation"]
+  intersection Desirable,Feasible,Viable["Innovation"]
 ```
 
 ### Sizes
 
-Use `:N` suffix to set the size of a set or union:
+Use `:N` suffix to set the size of a set or intersection:
 
 ```mermaid-example
 venn-beta
   set A["Alpha"]:20
   set B["Beta"]:12
-  union A,B["AB"]:3
+  intersection A,B["AB"]:3
 ```
 
 ### Text nodes
 
-- Use `text` to place labels inside a set or union.
-- Indented `text` lines attach to the most recent `set` or `union`.
+- Use `text` to place labels inside a set or intersection.
+- Indented `text` lines attach to the most recent `set` or `intersection` / `union`.
 - Use bracket syntax `["..."]` to set a display label for text nodes.
 
 ```mermaid-example
@@ -70,13 +70,13 @@ venn-beta
     text A2["Design Systems"]
   set B["Backend"]
     text B1["API"]
-  union A,B["Shared"]
+  intersection A,B["Shared"]
     text AB1["OpenAPI"]
 ```
 
 ### Styling
 
-Use `style` statements to apply visual styles to sets, unions, and text nodes:
+Use `style` statements to apply visual styles to sets, intersections, and text nodes:
 
 - `fill`: change the fill color
 - `color`: change the text color
@@ -90,7 +90,7 @@ venn-beta
     text A1["React"]
     text A2["Design Systems"]
   set B["Beta"]:12
-  union A,B["AB"]:3
+  intersection A,B["AB"]:3
   style A fill:#ff6b6b
   style A,B color:#333
   style A1 color:red

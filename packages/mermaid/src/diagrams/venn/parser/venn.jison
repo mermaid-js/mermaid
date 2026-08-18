@@ -27,6 +27,7 @@
 "venn-beta"        { return 'VENN'; }
 "set"              { return 'SET'; }
 "union"            { return 'UNION'; }
+"intersection"     { return 'INTERSECTION'; }
 "text"             { if (yy.consumeIndentText) { yy.consumeIndentText = false; } else { return 'TEXT'; } }
 "style"            { return 'STYLE'; }
 
@@ -74,10 +75,10 @@ statement
   | SET identifier BRACKET_LABEL                     { yy.addSubsetData([$identifier], $BRACKET_LABEL, undefined); if (yy.setIndentMode) { yy.setIndentMode(true); } }
   | SET identifier COLON NUMERIC                     { yy.addSubsetData([$identifier], undefined, parseFloat($NUMERIC)); if (yy.setIndentMode) { yy.setIndentMode(true); } }
   | SET identifier BRACKET_LABEL COLON NUMERIC       { yy.addSubsetData([$identifier], $BRACKET_LABEL, parseFloat($NUMERIC)); if (yy.setIndentMode) { yy.setIndentMode(true); } }
-  | UNION identifierList                             { if ($identifierList.length < 2) { throw new Error('union requires multiple identifiers'); } if (yy.validateUnionIdentifiers) { yy.validateUnionIdentifiers($identifierList); } yy.addSubsetData($identifierList, undefined, undefined); if (yy.setIndentMode) { yy.setIndentMode(true); } }
-  | UNION identifierList BRACKET_LABEL               { if ($identifierList.length < 2) { throw new Error('union requires multiple identifiers'); } if (yy.validateUnionIdentifiers) { yy.validateUnionIdentifiers($identifierList); } yy.addSubsetData($identifierList, $BRACKET_LABEL, undefined); if (yy.setIndentMode) { yy.setIndentMode(true); } }
-  | UNION identifierList COLON NUMERIC               { if ($identifierList.length < 2) { throw new Error('union requires multiple identifiers'); } if (yy.validateUnionIdentifiers) { yy.validateUnionIdentifiers($identifierList); } yy.addSubsetData($identifierList, undefined, parseFloat($NUMERIC)); if (yy.setIndentMode) { yy.setIndentMode(true); } }
-  | UNION identifierList BRACKET_LABEL COLON NUMERIC { if ($identifierList.length < 2) { throw new Error('union requires multiple identifiers'); } if (yy.validateUnionIdentifiers) { yy.validateUnionIdentifiers($identifierList); } yy.addSubsetData($identifierList, $BRACKET_LABEL, parseFloat($NUMERIC)); if (yy.setIndentMode) { yy.setIndentMode(true); } }
+  | union_or_intersection identifierList                             { if ($identifierList.length < 2) { throw new Error($1 + ' requires multiple identifiers'); } if (yy.validateUnionIdentifiers) { yy.validateUnionIdentifiers($identifierList); } yy.addSubsetData($identifierList, undefined, undefined); if (yy.setIndentMode) { yy.setIndentMode(true); } }
+  | union_or_intersection identifierList BRACKET_LABEL               { if ($identifierList.length < 2) { throw new Error($1 + ' requires multiple identifiers'); } if (yy.validateUnionIdentifiers) { yy.validateUnionIdentifiers($identifierList); } yy.addSubsetData($identifierList, $BRACKET_LABEL, undefined); if (yy.setIndentMode) { yy.setIndentMode(true); } }
+  | union_or_intersection identifierList COLON NUMERIC               { if ($identifierList.length < 2) { throw new Error($1 + ' requires multiple identifiers'); } if (yy.validateUnionIdentifiers) { yy.validateUnionIdentifiers($identifierList); } yy.addSubsetData($identifierList, undefined, parseFloat($NUMERIC)); if (yy.setIndentMode) { yy.setIndentMode(true); } }
+  | union_or_intersection identifierList BRACKET_LABEL COLON NUMERIC { if ($identifierList.length < 2) { throw new Error($1 + ' requires multiple identifiers'); } if (yy.validateUnionIdentifiers) { yy.validateUnionIdentifiers($identifierList); } yy.addSubsetData($identifierList, $BRACKET_LABEL, parseFloat($NUMERIC)); if (yy.setIndentMode) { yy.setIndentMode(true); } }
   | TEXT identifierList IDENTIFIER                     { yy.addTextData($identifierList, $IDENTIFIER, undefined); }
   | TEXT identifierList STRING                          { yy.addTextData($identifierList, $STRING, undefined); }
   | TEXT identifierList NUMERIC                         { yy.addTextData($identifierList, $NUMERIC, undefined); }
@@ -130,6 +131,11 @@ identifierList
 identifier
   : IDENTIFIER                         { $$ = $1 }
   | STRING                             { $$ = $1 }
+  ;
+
+union_or_intersection
+  : UNION
+  | INTERSECTION
   ;
 
 %%
