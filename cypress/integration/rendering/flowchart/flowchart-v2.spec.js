@@ -1153,6 +1153,121 @@ end
       );
     });
   });
+  describe('Multiline subgraph titles (#3806)', () => {
+    it('should not overlap a node with a 3-line <br> subgraph title', () => {
+      imgSnapshotTest(
+        `flowchart TD
+          subgraph C["A long process title that<br>wraps onto a second line<br>and even a third line"]
+            A[Christmas] -->|Get money| B(Go shopping)
+          end
+        `,
+        {}
+      );
+    });
+    it('should render the exact issue #3806 snippet: <br> followed by a literal newline in the title', () => {
+      imgSnapshotTest(
+        `flowchart TD
+          subgraph C["A process that<br>
+          is generally adopted"]
+            A[Christmas] -->|Get money| B(Go shopping)
+          end
+        `,
+        {}
+      );
+    });
+    it('should render the issue #3806 snippet with a literal newline only, no <br>', () => {
+      imgSnapshotTest(
+        `flowchart TD
+          subgraph C["A process that
+          is generally adopted"]
+            A[Christmas] -->|Get money| B(Go shopping)
+          end
+        `,
+        {}
+      );
+    });
+    it('should leave a single-line subgraph title unchanged', () => {
+      imgSnapshotTest(
+        `flowchart TD
+          subgraph S["Single line title"]
+            X[One] --> Y[Two]
+          end
+        `,
+        {}
+      );
+    });
+    it('should not overlap a multiline title with htmlLabels set to false', () => {
+      imgSnapshotTest(
+        `flowchart TD
+          subgraph C["Line one<br>Line two<br>Line three"]
+            A[Christmas] -->|Get money| B(Go shopping)
+          end
+        `,
+        { htmlLabels: false, flowchart: { htmlLabels: false } }
+      );
+    });
+    it('should keep a proper ranksep gap above and below a subgraph whose title grows, even when edges cross its boundary', () => {
+      imgSnapshotTest(
+        `flowchart TD
+          T[Outside node above] --> A
+          subgraph C["A long process title that<br>wraps onto a second line<br>and even a third line"]
+            A[Christmas] -->|Get money| B(Go shopping)
+          end
+          B --> U[Outside node below]
+        `,
+        {}
+      );
+    });
+    it('should shift a shared downstream node by the max, not the sum, of two side-by-side subgraphs with different title heights', () => {
+      imgSnapshotTest(
+        `flowchart TB
+          subgraph S1["Short"]
+            M1[a]
+          end
+          subgraph S2["Tall title<br>second line<br>third line"]
+            N1[c]
+          end
+          M1 --> Z[Shared node below]
+          N1 --> Z
+        `,
+        {}
+      );
+    });
+    it('should not overlap nested multiline subgraph titles', () => {
+      imgSnapshotTest(
+        `flowchart TD
+          subgraph Outer["Outer wrapper title<br>that spans two lines"]
+            subgraph Inner["Inner title<br>also two lines"]
+              P[Node P] --> Q[Node Q]
+            end
+            R[Node R] --> Inner
+          end
+        `,
+        {}
+      );
+    });
+    it('should compose a multiline title with a configured subGraphTitleMargin', () => {
+      imgSnapshotTest(
+        `flowchart TD
+          subgraph M["Configured margin<br>plus multiline title"]
+            E[Node E] --> F[Node F]
+          end
+        `,
+        { flowchart: { subGraphTitleMargin: { top: 20, bottom: 10 } } }
+      );
+    });
+    it('should not overlap a two-line markdown-syntax subgraph title', () => {
+      imgSnapshotTest(
+        `flowchart TD
+          subgraph M["\`**Bold first line**
+          plain second line\`"]
+            E[Node E] --> F[Node F]
+          end
+        `,
+        {}
+      );
+    });
+  });
   describe('New @ syntax for node metadata edge cases', () => {
     it('should be possible to use @  syntax to add labels on multi nodes', () => {
       imgSnapshotTest(

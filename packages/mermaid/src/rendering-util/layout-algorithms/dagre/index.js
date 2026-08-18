@@ -13,10 +13,13 @@ import {
 } from './mermaid-graphlib.js';
 import { positionNode, setNodeElem } from '../../rendering-elements/nodes.js';
 import { insertCluster } from '../../rendering-elements/clusters.js';
+import createLabel from '../../rendering-elements/createLabel.js';
 import { insertEdgeLabel, positionEdgeLabel, insertEdge } from '../../rendering-elements/edges.js';
+import { createText } from '../../createText.js';
 import { log } from '../../../logger.js';
 import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
+import { getEffectiveHtmlLabels } from '../../../config.js';
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
@@ -256,6 +259,30 @@ export const getEdgesToRender = (graph, yOffset = 0, { mergeSelfLoops = true } =
   return edgesToRender;
 };
 
+// Measure a cluster's title label before dagre lays out its children, so the
+// layout can later reserve room for it instead of the label being painted on
+// top of the first row of nodes (see #3806).
+export const measureClusterLabel = async (elem, node, siteConfig) => {
+  const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
+  const labelEl = elem.insert('g').attr('class', 'cluster-label-measure');
+  const text =
+    node.labelType === 'markdown'
+      ? await createText(labelEl, node.label, {
+          style: node.labelStyle,
+          useHtmlLabels,
+          isNode: true,
+          width: node.width,
+        })
+      : await createLabel(labelEl, node.label, node.labelStyle || '', false, true);
+  let bbox = text.getBBox();
+  if (useHtmlLabels && text.children[0]) {
+    bbox = text.children[0].getBoundingClientRect();
+  }
+  labelEl.remove();
+  node.labelBBox = { width: bbox.width, height: bbox.height };
+  return node.labelBBox;
+};
+
 const measureDagreGraph = async ({
   element: _elem,
   graph,
@@ -315,6 +342,8 @@ const measureDagreGraph = async ({
         // const children = graph.children(v);
         log.info('Cluster identified XBX', v, node.width, graph.node(v));
 
+        await measureClusterLabel(nodes, node, siteConfig);
+
         // `node.graph.setGraph` applies the graph configurations such as nodeSpacing to subgraphs as without this the default values would be used
         // We override only the `ranksep` and `nodesep` configurations to allow for setting subgraph spacing while avoiding overriding other properties
         const { ranksep, nodesep } = graph.graph();
@@ -369,6 +398,20 @@ const measureDagreGraph = async ({
           log.trace('Node - the non recursive path XAX', v, nodes, graph.node(v), dir);
           await insertMeasuredNode(nodes, graph.node(v), { config: siteConfig, dir });
         }
+      }
+    })
+  );
+
+  // The recursive-cluster path above re-derives its own compound "parent" node from a JSON
+  // clone of `clusterData` on the fly (once per child, potentially several times), so it can
+  // race with — and overwrite — any measurement made while iterating the original node list.
+  // Do a final sweep once every node insertion has settled and measure whichever cluster nodes
+  // are still missing a labelBBox (see #3806).
+  await Promise.all(
+    graph.nodes().map(async (v) => {
+      const node = graph.node(v);
+      if (node && !node.clusterNode && !node.labelBBox && graph.children(v).length > 0) {
+        await measureClusterLabel(nodes, node, siteConfig);
       }
     })
   );
@@ -450,6 +493,157 @@ const runDagreGraphLayout = (graph) => {
 
   // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
   // log.info('Graph after layout:', JSON.stringify(graphlibJson.write(graph)));
+};
+
+// Cluster shapes that never paint `node.label` as a visible title (see clusters.js) — some of
+// these (`noteGroup`) reuse the `label` field to carry unrelated content (e.g. a state's note
+// text, for internal bookkeeping), so measuring it as if it were a title would reserve space for
+// text that is never actually rendered there.
+const CLUSTER_SHAPES_WITHOUT_VISIBLE_TITLE = new Set(['noteGroup', 'divider']);
+
+// Dagre sizes a compound (subgraph) node purely from its children's bounding box — it never
+// budgets room for the cluster's own title label (see #3806). `measureClusterLabel` gets the
+// label's real bbox before layout; this measures how much each cluster's title overshoots the
+// existing padding.
+const computeClusterLabelMargins = (graph) => {
+  graph.nodes().forEach((nodeId) => {
+    const node = graph.node(nodeId);
+    if (
+      !node ||
+      node.clusterNode ||
+      graph.children(nodeId).length === 0 ||
+      CLUSTER_SHAPES_WITHOUT_VISIBLE_TITLE.has(node.shape)
+    ) {
+      return;
+    }
+    const halfPadding = (node.padding ?? 0) / 2;
+    const labelHeight = node.labelBBox?.height ?? 0;
+    node.labelMarginTop = Math.max(0, labelHeight - halfPadding);
+  });
+};
+
+// Is `nodeId` nested (at any depth) inside `ancestorId`'s subgraph?
+const isDescendantOf = (graph, nodeId, ancestorId) => {
+  let parentId = graph.parent(nodeId);
+  while (parentId) {
+    if (parentId === ancestorId) {
+      return true;
+    }
+    parentId = graph.parent(parentId);
+  }
+  return false;
+};
+
+// Rewrite every node's y/height and every edge's points/label position so the space a
+// multiline subgraph title needs is real *before* anything paints or any ancestor graph reads
+// these nodes' final size (see #3806). Must run immediately after `runDagreGraphLayout` and
+// before paint/normalize.
+//
+// A cluster's title is always drawn along the top of its box regardless of `rankdir` (see
+// `clusters.js`'s `rect()`), so growing a cluster is always a *vertical* (y) concern. Dagre
+// itself never reserves this room, so growing a cluster's box after the fact can only be made
+// safe by treating it like a rank boundary was inserted: every node/edge endpoint that dagre
+// placed at or below the cluster's pre-growth bottom edge — not just the cluster's own
+// descendants — must shift down by the same amount, exactly as a taller node would have pushed
+// later ranks were it sized correctly from the start. Nodes strictly above stay put, and an
+// ancestor of the growing cluster is never pushed by its own child's growth.
+export const reserveClusterLabelSpace = (graph) => {
+  computeClusterLabelMargins(graph);
+
+  // Snapshot pre-reservation y (and each growing cluster's pre-growth bottom edge) up front —
+  // every shift decision below is relative to the original layout, not to values this same pass
+  // is about to mutate.
+  const originalY = new Map();
+  graph.nodes().forEach((nodeId) => {
+    const node = graph.node(nodeId);
+    if (node) {
+      originalY.set(nodeId, node.y ?? 0);
+    }
+  });
+
+  const growths = [];
+  graph.nodes().forEach((nodeId) => {
+    const node = graph.node(nodeId);
+    if (!node || node.clusterNode || graph.children(nodeId).length === 0) {
+      return;
+    }
+    const margin = node.labelMarginTop ?? 0;
+    if (margin <= 0) {
+      return;
+    }
+    growths.push({
+      clusterId: nodeId,
+      oldBottom: (node.y ?? 0) + (node.height ?? 0) / 2,
+      margin,
+    });
+  });
+  if (growths.length === 0) {
+    return;
+  }
+
+  // Total downward shift for `nodeId`, skipping any cluster that `nodeId` is itself an ancestor
+  // of (a subgraph must never be pushed by its own child's title):
+  //  - every ENCLOSING growing cluster contributes its full margin, summed — a node nested
+  //    inside both an outer and inner growing cluster must clear both boundaries in full;
+  //  - growing clusters `nodeId` merely sits AT-OR-BELOW (siblings, not ancestors) contribute
+  //    only their MAX, not a sum — they are parallel obstacles at the same rank, not stacked
+  //    ones, so a shared downstream node only needs to clear the tallest of them, not all of
+  //    them added together (summing here would open unnecessarily large — if harmless — gaps).
+  const shiftForNode = (nodeId) => {
+    const y = originalY.get(nodeId) ?? 0;
+    let enclosingSum = 0;
+    let siblingMax = 0;
+    growths.forEach(({ clusterId, oldBottom, margin }) => {
+      if (nodeId === clusterId || isDescendantOf(graph, clusterId, nodeId)) {
+        return;
+      }
+      if (isDescendantOf(graph, nodeId, clusterId)) {
+        enclosingSum += margin;
+      } else if (y >= oldBottom) {
+        siblingMax = Math.max(siblingMax, margin);
+      }
+    });
+    return enclosingSum + siblingMax;
+  };
+
+  graph.nodes().forEach((nodeId) => {
+    const node = graph.node(nodeId);
+    if (!node) {
+      return;
+    }
+    const ownMargin = node.labelMarginTop ?? 0;
+    const shift = shiftForNode(nodeId);
+    if (ownMargin > 0) {
+      // Grow downward only — the top edge (where the title sits) stays exactly where dagre put
+      // it, so the gap above the cluster is untouched.
+      node.height = (node.height ?? 0) + ownMargin;
+      node.y = (node.y ?? 0) + ownMargin / 2 + shift;
+    } else if (shift > 0) {
+      node.y = (node.y ?? 0) + shift;
+    }
+  });
+
+  graph.edges().forEach((e) => {
+    const edge = graph.edge(e);
+    if (!edge) {
+      return;
+    }
+    // Approximate: edges wholly on one side of every growing cluster get that exact shift (both
+    // endpoints agree); edges crossing a boundary get the average of their endpoints' shifts,
+    // which is the best a single edge-level offset can do without re-routing the path.
+    const shift = (shiftForNode(e.v) + shiftForNode(e.w)) / 2;
+    if (shift === 0) {
+      return;
+    }
+    edge.points?.forEach((point) => {
+      if (typeof point.y === 'number') {
+        point.y += shift;
+      }
+    });
+    if (typeof edge.y === 'number') {
+      edge.y += shift;
+    }
+  });
 };
 
 const normalizeDagreNode = (graph, nodeId, subGraphTitleTotalMargin) => {
@@ -580,10 +774,6 @@ const paintDagreLayoutCore = async ({
           );
           node.height += subGraphTitleTotalMargin;
           graph.node(node.parentId);
-          const halfPadding = node?.padding / 2 || 0;
-          const labelHeight = node?.labelBBox?.height || 0;
-          const offsetY = labelHeight - halfPadding || 0;
-          log.debug('OffsetY', offsetY, 'labelHeight', labelHeight, 'halfPadding', halfPadding);
           await insertCluster(clusters, node);
 
           // A cluster in the non-recursive way
@@ -643,6 +833,7 @@ const paintDagreLayoutCore = async ({
 const renderDagreSubgraph = async (options) => {
   const measuredLayout = await measureDagreGraph(options);
   runDagreGraphLayout(measuredLayout.graph);
+  reserveClusterLabelSpace(measuredLayout.graph);
   return await paintDagreLayoutCore(measuredLayout);
 };
 
@@ -792,6 +983,7 @@ export const runDagreLayoutCore = (data4Layout, context) => {
   }
 
   runDagreGraphLayout(measuredLayout.graph);
+  reserveClusterLabelSpace(measuredLayout.graph);
   applyDagreLayoutResult(data4Layout, measuredLayout);
   return measuredLayout;
 };
