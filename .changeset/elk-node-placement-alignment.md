@@ -3,4 +3,4 @@
 '@mermaid-js/layout-elk': minor
 ---
 
-feat: move ELK onto the shared layout renderer pipeline
+feat(elk): add `elk.nodePlacementAlignment` config option

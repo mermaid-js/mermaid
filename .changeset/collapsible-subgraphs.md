@@ -2,4 +2,4 @@
 'mermaid': minor
 ---
 
-feat: add collapsible flowchart subgraphs via `subgraphId@{ view: collapsed }`
+feat(flowchart): add collapsible flowchart subgraphs via `subgraphId@{ view: collapsed }`

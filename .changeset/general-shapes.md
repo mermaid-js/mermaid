@@ -2,4 +2,4 @@
 'mermaid': minor
 ---
 
-feat: add `folder`, `bucket`, `console` (terminal window) and `browser` shapes for flowcharts
+feat(flowchart): add `folder`, `bucket`, `console` (terminal window) and `browser` shapes
