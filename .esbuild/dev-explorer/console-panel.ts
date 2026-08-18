@@ -14,13 +14,17 @@ export type LogEntry = {
   message: string;
 };
 
+const pad2 = (n: number) => (n < 10 ? '0' + n : '' + n);
+
+// Manual HH:MM:SS.mmm — NOT `toLocaleTimeString`. The Intl path costs ~1µs/call,
+// and the panel formats every visible entry on every render; a chatty render
+// (dagre emits thousands of log lines) turned this into seconds of self-time
+// (9s+ in profiles). Hand-formatting is ~100x cheaper and locale-irrelevant here.
 function formatTs(ts: number) {
   const d = new Date(ts);
-  return (
-    d.toLocaleTimeString(undefined, { hour12: false }) +
-    '.' +
-    String(d.getMilliseconds()).padStart(3, '0')
-  );
+  return `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}.${String(
+    d.getMilliseconds()
+  ).padStart(3, '0')}`;
 }
 
 function _levelVariant(level: LogLevel) {
@@ -72,6 +76,13 @@ export class DevConsolePanel extends LitElement {
   declare showDebug: boolean;
   declare filterText: string;
 
+  /** Hard cap on retained entries. A single dagre render can emit tens of
+   *  thousands of log lines; without a cap the panel grows unbounded and every
+   *  re-render re-formats the whole list (O(n²)). Keep only the newest N. */
+  static MAX_LOGS = 5000;
+  #pending: LogEntry[] = [];
+  #flushHandle = 0;
+
   constructor() {
     super();
     this.logs = [];
@@ -87,11 +98,36 @@ export class DevConsolePanel extends LitElement {
   }
 
   clear() {
+    if (this.#flushHandle) {
+      cancelAnimationFrame(this.#flushHandle);
+      this.#flushHandle = 0;
+    }
+    this.#pending = [];
     this.logs = [];
   }
 
+  // Batch appends into ONE state update per frame. The old code reassigned
+  // `this.logs` on every entry, so a render emitting N log lines triggered N
+  // Lit re-renders, each re-formatting up to N entries → O(n²) and seconds of
+  // wasted reformatting (the dagre-vs-elk "spinning" was entirely this).
+  // Coalescing collapses a whole render's logs into a single bounded update.
   append(entry: LogEntry) {
-    this.logs = [...this.logs, entry];
+    this.#pending.push(entry);
+    if (this.#flushHandle) {
+      return;
+    }
+    this.#flushHandle = requestAnimationFrame(() => this.#flushPending());
+  }
+
+  #flushPending() {
+    this.#flushHandle = 0;
+    if (this.#pending.length === 0) {
+      return;
+    }
+    const merged = [...this.logs, ...this.#pending];
+    this.#pending = [];
+    const max = DevConsolePanel.MAX_LOGS;
+    this.logs = merged.length > max ? merged.slice(merged.length - max) : merged;
   }
 
   #visibleText() {

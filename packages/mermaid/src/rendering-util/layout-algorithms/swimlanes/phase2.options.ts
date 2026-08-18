@@ -63,3 +63,28 @@ export function buildTopLaneOrder(g: Graph): string[] {
   }
   return [...new Set(lanes)].reverse();
 }
+
+export function resolveTopLaneOrder(g: Graph, preferredOrder?: string[]): string[] {
+  const sourceOrder = buildTopLaneOrder(g);
+  if (!preferredOrder || preferredOrder.length === 0) {
+    return sourceOrder;
+  }
+
+  const sourceLaneIds = new Set(sourceOrder);
+  const seen = new Set<string>();
+  const resolved: string[] = [];
+  for (const laneId of preferredOrder) {
+    if (!sourceLaneIds.has(laneId) || seen.has(laneId)) {
+      continue;
+    }
+    seen.add(laneId);
+    resolved.push(laneId);
+  }
+  for (const laneId of sourceOrder) {
+    if (seen.has(laneId)) {
+      continue;
+    }
+    resolved.push(laneId);
+  }
+  return resolved;
+}

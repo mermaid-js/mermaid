@@ -49,6 +49,52 @@ export interface WriteBackOptions {
   nodeGap?: number;
 }
 
+// Captured swimlane fixtures use 21px as the stable single-line label height.
+const TOP_LANE_TITLE_BAND_HEIGHT = 21;
+const MIN_TOP_LANE_HORIZONTAL_PADDING = 20;
+
+function topLaneHorizontalPadding(lane: Node): number {
+  return Math.max(lane.padding ?? MIN_TOP_LANE_HORIZONTAL_PADDING, MIN_TOP_LANE_HORIZONTAL_PADDING);
+}
+
+function assignTopLaneTitleRect(lane: Node): void {
+  const { x, y, width, height } = lane;
+  const contentTop = (lane as { swimlaneContentTop?: unknown }).swimlaneContentTop;
+  if (
+    typeof x !== 'number' ||
+    typeof y !== 'number' ||
+    typeof width !== 'number' ||
+    typeof height !== 'number' ||
+    typeof contentTop !== 'number' ||
+    !Number.isFinite(x) ||
+    !Number.isFinite(y) ||
+    !Number.isFinite(width) ||
+    !Number.isFinite(height) ||
+    !Number.isFinite(contentTop) ||
+    width <= 0 ||
+    height <= 0
+  ) {
+    delete lane.groupTitleRect;
+    return;
+  }
+
+  const top = y - height / 2;
+  const headerBottom = Math.min(contentTop, y + height / 2);
+  const titleHeight = Math.min(TOP_LANE_TITLE_BAND_HEIGHT, Math.max(0, headerBottom - top));
+  const bottom = top + titleHeight;
+  if (bottom <= top) {
+    delete lane.groupTitleRect;
+    return;
+  }
+
+  lane.groupTitleRect = {
+    left: x - width / 2,
+    right: x + width / 2,
+    top,
+    bottom,
+  };
+}
+
 export function prepareLayoutForSwimlanes(layout: LayoutData): void {
   const direction = (layout as any).direction;
   const nodes = (layout.nodes ??= []);
@@ -186,7 +232,7 @@ export function writeBackToLayoutData(
       group.height = group.height ?? 0;
     } else {
       const pad = group.padding ?? 20;
-      const horizontalPad = group.parentId ? pad : 0;
+      const horizontalPad = group.parentId ? pad : 2 * topLaneHorizontalPadding(group);
       const verticalPad = pad;
       const w = Math.max(0, maxX - minX) + horizontalPad;
       const h = Math.max(0, maxY - minY) + verticalPad;
@@ -243,8 +289,8 @@ export function writeBackToLayoutData(
         if (!b) {
           continue;
         }
-        const contentWidth = Math.max(0, b.maxX - b.minX);
-        const cx = lane.x ?? (b.minX + b.maxX) / 2;
+        const contentWidth = Math.max(0, b.maxX - b.minX) + 2 * topLaneHorizontalPadding(lane);
+        const cx = (b.minX + b.maxX) / 2;
         laneIds.push(lane.id);
         centers.push(cx);
         baseWidths.push(contentWidth);
@@ -298,6 +344,7 @@ export function writeBackToLayoutData(
           if (w != null) {
             lane.width = w;
           }
+          assignTopLaneTitleRect(lane);
         }
       }
     }

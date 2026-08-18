@@ -60,7 +60,7 @@ interface RailroadSpecialExpr extends RailroadExpression {
 }
 
 entry Railroad returns Railroad:
-    'railroad-diagram'
+    'railroad-beta'
     ((title=TITLE | accTitle=ACC_TITLE | accDescr=ACC_DESCR))*
     rules+=RailroadRule*
 ;

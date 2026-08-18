@@ -5,6 +5,7 @@ import { readFileSync } from 'fs';
 import jsonSchemaPlugin from './jsonSchemaPlugin.js';
 import type { PackageOptions } from '../.build/common.js';
 import { jisonPlugin } from './jisonPlugin.js';
+import { coverageEnabled, coveragePlugin } from './coverage.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
@@ -15,6 +16,8 @@ export interface MermaidBuildOptions extends BuildOptions {
   format: 'esm' | 'iife';
   options: PackageOptions;
   includeLargeFeatures: boolean;
+  /** Compile the render profiler into the bundle (dev/profiling builds only). */
+  profiling: boolean;
 }
 
 export const defaultOptions: Omit<MermaidBuildOptions, 'entryName' | 'options'> = {
@@ -23,6 +26,7 @@ export const defaultOptions: Omit<MermaidBuildOptions, 'entryName' | 'options'> 
   core: false,
   format: 'esm',
   includeLargeFeatures: true,
+  profiling: false,
 } as const;
 
 const buildOptions = (override: BuildOptions): BuildOptions => {
@@ -35,7 +39,7 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     resolveExtensions: ['.ts', '.js', '.json', '.jison', '.yaml'],
     external: ['require', 'fs', 'path'],
     outdir: 'dist',
-    plugins: [jisonPlugin, jsonSchemaPlugin],
+    plugins: [jisonPlugin, jsonSchemaPlugin, ...(coverageEnabled ? [coveragePlugin()] : [])],
     sourcemap: 'external',
     ...override,
   };
@@ -66,6 +70,7 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
     options: { name, file, packageName },
     globalName = 'mermaid',
     includeLargeFeatures,
+    profiling,
     ...rest
   } = options;
 
@@ -86,6 +91,7 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
     define: {
       // This needs to be stringified for esbuild
       'injected.includeLargeFeatures': `${includeLargeFeatures}`,
+      'injected.profiling': `${profiling}`,
       'injected.version': `'${version}'`,
       'import.meta.vitest': 'undefined',
     },

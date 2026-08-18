@@ -95,6 +95,20 @@ In our release process we rely heavily on visual regression tests using [applito
 
 <!-- </Main description> -->
 
+## Features
+
+- **20+ Diagram Types** – Flowchart, Sequence, Class, State, ER, Gantt, Pie, Git Graph, Mindmap, Timeline, Sankey, and more
+- **Markdown-Inspired Syntax** – Write diagrams as text, no drag-and-drop required
+- **No Design Tool Needed** – Generate professional diagrams straight from code
+- **Live Editor** – Prototype instantly at [mermaid.live](https://mermaid.live)
+- **Version-Control Friendly** – Diagrams live as text, so diffs and reviews just work
+- **Native GitHub Rendering** – Mermaid code blocks render directly in Markdown on GitHub
+- **Highly Customizable** – Themes, colors, fonts, and layout directions
+- **Security First** – Built-in sanitization plus a sandboxed rendering mode
+- **Lightweight** – Small footprint, no heavy dependencies
+- **Active Community** – Frequent releases and thousands of contributors
+- **Open Source** – MIT licensed
+
 ## Examples
 
 **The following are some examples of the diagrams, charts and graphs that can be made using Mermaid. Click here to jump into the [text syntax](https://mermaid.js.org/intro/syntax-reference.html).**

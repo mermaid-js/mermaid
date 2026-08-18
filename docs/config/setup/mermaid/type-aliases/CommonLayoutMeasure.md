@@ -12,4 +12,4 @@
 
 > **CommonLayoutMeasure** = `Awaited`<`ReturnType`<_typeof_ `createGraphWithElements`>>
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:24](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L24)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:25](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L25)

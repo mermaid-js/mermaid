@@ -35,7 +35,7 @@
 
     <style>
       body {
-        /* background: rgb(221, 208, 208); */
+        background: rgb(244, 244, 244);
         /* background: #333; */
         font-family: 'Arial';
         /* color: white; */
@@ -105,653 +105,351 @@
   </head>
 
   <body>
-    <pre id="diagram4" class="mermaid2">
----
-  config:
-    layout: elk
----
-          agentflow
-          group pack[" "]
-            A
-            b
-            c
-            d
-            e["Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean at bibendum ligula. Aenean accumsan sagittis justo efficitur iaculis. Donec sem dolor, lacinia sed dignissim ac, egestas id ipsum. Nulla ac nunc nisi. Sed fringilla ex quis purus iaculis, eu sagittis odio lobortis. Aliquam in imperdiet velit. Aenean tempus, ante eget commodo tempor, turpis ante commodo quam, sed scelerisque nibh erat id metus. Pellentesque suscipit varius faucibus. Nunc ac massa eu risus eleifend mollis sed a dui. Suspendisse imperdiet eu nulla ut euismod. Donec gravida dui mi, suscipit scelerisque eros aliquet a. Nulla facilisi. Donec eu massa porta, ultricies quam eget, fringilla velit. Vestibulum suscipit tempor magna, vel scelerisque urna luctus et."]
-            f
-            g
-            h
-          end
-          pack@{ algorithm: elk.layered}
-
-        </pre
-    >
-    <pre id="diagram4" class="mermaid2">
-      agentflow TB
-  type Issue = Record {
-    affected_diagrams: List&lt;String>
-    author_persona: String
-    comment_count: Int
-    commenter_personas: List&lt;String>
-    id: Int
-    is_contribution_ready: Bool
-    is_regression: Bool
-    labels: List&lt;String>
-    plus_ones: Int
-    title: String
-  }
-
-  type Persona = Record {
-    affected_diagrams: List&lt;String>
-    author_count: Int
-    commenter_count: Int
-    issue_count: Int
-    key_needs: List&lt;String>
-    name: String
-    share_pct: Float
-    weighted_impact: Int
-  }
-
-  type Theme = Record {
-    demand_heated: Int
-    demand_noticed: Int
-    demand_silent: Int
-    demand_wanted: Int
-    flags: List&lt;String>
-    issue_count: Int
-    name: String
-    outcomes: List&lt;String>
-    representative_issues: List&lt;Int>
-    share_pct: Float
-    weighted_impact: Int
-  }
-
-  type RoadmapItem = Record {
-    issue_count: Int
-    key_personas: List&lt;String>
-    priority: String
-    rationale: String
-    title: String
-    weighted_impact: Int
-  }
-
-  type OSTReport = Record {
-    cross_cutting_patterns: List&lt;String>
-    personas: List&lt;String>
-    regression_count: Int
-    roadmap_items: List&lt;String>
-    themes: List&lt;String>
-    total_issues: Int
-  }
-
-  type DemandLevel = Silent | Noticed | Wanted | Heated
-  type Priority = P0 | P1 | P2 | P3
-  type DiagramType = Flowchart | Sequence | Class | ER | State | Gantt | Mindmap | GitGraph | Block | Architecture | C4 | XYChart | Sankey | Pie | Timeline | Radar | Packet | ZenUML
-  type PersonaName = Developer | GeneralUser | TechnicalWriter | Architect | LibraryIntegrator | ProjectManager | DataAnalyst | Educator | Student | DevOpsEngineer | Designer
-
-
-agent ost_team["Ost Team"]
-
-    agent issue_collector["Issue Collector"]
-        fetch_issues
-        classify_issues
-        skill issue_classification["Issue Classification"]
-            #fetch_issues
-            #classify_issues
-        end
-        issue_classification@{
-          strategy: "Fetch all open issues first. Then classify in batches of 100 to
-    avoid context overflow. Use embeddings to detect duplicate/related issues
-    before classification."
-          params: "repo :: String"
-          returns: "List&lt;Issue>"
-        }
+    <pre class="mermaid2">
+      flowchart LR
+    subgraph HoE["Head of Engineering"]
+        HE_CA{Can answer?} -->|Yes| HE_Ans[Answer]
+        HE_CA -->|No| HE_Inv[Investigate] --> HE_Ans2[Answer]
     end
-    issue_collector@{
-        model: "claude-sonnet-4-20250514"
-        permits: "net.read, llm.query, llm.embed"
-        prompt: "You are a GitHub issue analyst specializing in open-source project
-    triage. You fetch issues from repositories and classify them by type, affected
-    component, user persona, and engagement level. You are meticulous about data
-    quality — every issue must be classified consistently. You flag ambiguous cases
-    rather than guessing."
-    }
-
-    agent persona_analyst["Persona Analyst"]
-        profile_personas
+    subgraph StatusSeeker["StatusSeeker"]
+        A([Incoming query]) --> B{Knows which team?}
     end
-    persona_analyst@{
-        model: "claude-sonnet-4-20250514"
-        permits: "llm.query"
-        prompt: "You are a user research analyst who builds persona profiles from
-    quantitative data. You identify distinct user segments by their engagement
-    patterns, pain points, and needs. You distinguish between authors (who file
-    issues) and commenters (who amplify them). You always ground persona
-    descriptions in data, not stereotypes."
-    }
-
-    agent theme_analyst["Theme Analyst"]
-        cluster_themes
-        analyze_theme
-        find_cross_cutting
-        skill theme_deep_dive["Theme Deep Dive"]
-            #cluster_themes
-            #analyze_theme
-        end
-        theme_deep_dive@{
-          strategy: "First cluster all issues into themes. Then analyze each theme
-    independently, generating per-theme reports. Ensure theme analyses reference
-    each other for cross-cutting patterns."
-          params: "issues :: List&lt;Issue>, personas :: List&lt;Persona>"
-          returns: "List&lt;Theme>"
-        }
+    subgraph TechLead["Tech Lead"]
+        TL_CA{Can answer?} -->|Yes| TL_Ans[Answer]
     end
-    theme_analyst@{
-        model: "claude-sonnet-4-20250514"
-        permits: "llm.query, llm.embed"
-        prompt: "You are a product strategy analyst who identifies themes and patterns
-    in issue backlogs. You use hierarchical clustering to group related issues,
-    compute demand profiles, and identify regression flags. You write community
-    signal summaries that capture the qualitative feel of engagement, and roadmap
-    signals that translate data into actionable priorities."
-    }
-
-    agent strategist["Strategist"]
-        score_impact
-        generate_report
-    end
-    strategist@{
-        model: "claude-sonnet-4-20250514"
-        permits: "llm.query"
-        prompt: "You are a product strategist who turns analysis into recommendations.
-    You score themes using weighted impact, persona coverage, and regression severity.
-    You assign P0/P1/P2 priorities and write clear rationale for each recommendation.
-    You balance quick wins against strategic bets. You write executive summaries
-    that decision-makers can act on immediately."
-    }
-
-    agent archivist["Archivist"]
-        save_report
-    end
-    archivist@{
-        permits: "db.write"
-        prompt: "You are a data steward. You persist analysis reports with version
-    metadata for longitudinal comparison. You never fabricate confirmations."
-    }
-    issue_collector --x persona_analyst
-    persona_analyst --x theme_analyst
-    theme_analyst --x strategist
-    strategist --x archivist
-  end
-  ost_team@{
-    view: collapsed
-    fallbacks: "issue_collector ?> persona_analyst ?> theme_analyst ?> strategist ?> archivist"
-  }
-
-data_driven["Data Driven"]
-data_driven@{ shape: trapezoid }
-
-directive persona_centered["Persona Centered"]
-  weighting_model["weighting_model: String = engagement-weighted (comments + plus-ones + discussion)"]
-end
-persona_centered@{ params: "weighting_model :: String = engagement-weighted (comments + plus-ones + discussion)" }
-
-regression_aware["Regression Aware"]
-regression_aware@{ shape: trapezoid }
-
-regression_undercount["Regression Undercount"]
-regression_undercount@{ shape: lin-doc, severity: "warning", context: "Previous analysis underweighted regressions because they were counted
-    once per issue, not per affected diagram type. A rendering regression in flowcharts
-    affects 5x more users than one in packet diagrams.", rule: "Weight regression impact by diagram-type popularity: flowchart=5x,
-    sequence=3x, class/ER=2x, others=1x" }
-heated_signal_quality["Heated Signal Quality"]
-heated_signal_quality@{ shape: lin-doc, severity: "warning", context: "Early analysis treated all \"heated\" issues equally, but a heated
-    feature request (swimlanes, 4+ years open) carries different signal than a
-    heated regression (text overflow, 6 months).", rule: "Distinguish heated-by-demand (long-standing asks) from heated-by-pain
-    (recent breakage). Both matter but require different responses." }
-persona_overlap["Persona Overlap"]
-persona_overlap@{ shape: lin-doc, severity: "error", context: "Personas are not mutually exclusive — a developer can also be an
-    architect. The commenter pool especially shows cross-persona participation.
-    Treating personas as exclusive led to double-counting in impact analysis.", rule: "Use primary persona for authors, but distribute commenter weight across
-    all matching personas proportionally." }
-
-db{{db}}
-llm{{llm}}
-net{{net}}
-llm -->> llm_query
-llm -->> llm_embed
-net -->> net_read
-db -->> db_read
-db -->> db_write
-
-
-flow analyze_roadmap["Analyze Roadmap"]
-      direction TB
-      task analyze_roadmap_step1["Step 1"]
-        analyze_roadmap_agent_s1["issue_collector"] --- analyze_roadmap_fetch_issues_s1["fetch_issues"]
-        analyze_roadmap_agent_s1 --> analyze_roadmap_issues_s1["issues"]
-      end
-
-      task analyze_roadmap_step2["Step 2"]
-        analyze_roadmap_agent_s2["issue_collector"] --- analyze_roadmap_classify_issues_s2["classify_issues"]
-        analyze_roadmap_agent_s2 --> analyze_roadmap_classified_s2["classified"]
-      end
-
-      task analyze_roadmap_step3["Step 3"]
-        analyze_roadmap_agent_s3["persona_analyst"] --- analyze_roadmap_profile_personas_s3["profile_personas"]
-        analyze_roadmap_agent_s3 --> analyze_roadmap_personas_s3["personas"]
-      end
-
-      task analyze_roadmap_step4["Step 4"]
-        analyze_roadmap_agent_s4["theme_analyst"] --- analyze_roadmap_cluster_themes_s4["cluster_themes"]
-        analyze_roadmap_agent_s4 --> analyze_roadmap_themes_s4["themes"]
-      end
-
-      task analyze_roadmap_step5["Step 5"]
-        analyze_roadmap_agent_s5["strategist"] --- analyze_roadmap_score_impact_s5["score_impact"]
-        analyze_roadmap_agent_s5 --> analyze_roadmap_roadmap_s5["roadmap"]
-      end
-
-      task analyze_roadmap_step6["Step 6"]
-        analyze_roadmap_agent_s6["theme_analyst"] --- analyze_roadmap_find_cross_cutting_s6["find_cross_cutting"]
-        analyze_roadmap_agent_s6 --> analyze_roadmap_patterns_s6["patterns"]
-      end
-
-      task analyze_roadmap_step7["Step 7"]
-        analyze_roadmap_agent_s7["strategist"] --- analyze_roadmap_generate_report_s7["generate_report"]
-        analyze_roadmap_agent_s7 --> analyze_roadmap_report_s7["report"]
-      end
-
-      task analyze_roadmap_step8["Step 8"]
-        analyze_roadmap_agent_s8["archivist"] --- analyze_roadmap_save_report_s8["save_report"]
-        analyze_roadmap_agent_s8 --> analyze_roadmap_saved_s8["saved"]
-      end
-
-    analyze_roadmap_step1 -->|"issues"| analyze_roadmap_step2
-    analyze_roadmap_step2 -->|"classified"| analyze_roadmap_step3
-    analyze_roadmap_step3 -->|"personas"| analyze_roadmap_step4
-    analyze_roadmap_step4 -->|"themes"| analyze_roadmap_step5
-    analyze_roadmap_step5 -->|"roadmap"| analyze_roadmap_step6
-    analyze_roadmap_step6 -->|"patterns"| analyze_roadmap_step7
-    analyze_roadmap_step7 -->|"report"| analyze_roadmap_step8
-    analyze_roadmap_step3 -->|"classified"| analyze_roadmap_step4
-    analyze_roadmap_step4 -->|"personas"| analyze_roadmap_step5
-    analyze_roadmap_step5 -->|"themes"| analyze_roadmap_step6
-    analyze_roadmap_step5 -->|"classified"| analyze_roadmap_step6
-    analyze_roadmap_step6 -->|"personas"| analyze_roadmap_step7
-    analyze_roadmap_step6 -->|"themes"| analyze_roadmap_step7
-    analyze_roadmap_step6 -->|"roadmap"| analyze_roadmap_step7
-end
-  analyze_roadmap@{
-    params: "repo: String"
-    returns: "String"
-  }
-analyze_roadmap_agent_s1@{ def: issue_collector, shape: tag-rect }
-analyze_roadmap_fetch_issues_s1@{ shape: subroutine }
-analyze_roadmap_issues_s1@{ shape: doc }
-analyze_roadmap_agent_s2@{ def: issue_collector, shape: tag-rect }
-analyze_roadmap_classify_issues_s2@{ shape: subroutine }
-analyze_roadmap_classified_s2@{ shape: doc }
-analyze_roadmap_agent_s3@{ def: persona_analyst, shape: tag-rect }
-analyze_roadmap_profile_personas_s3@{ shape: subroutine }
-analyze_roadmap_personas_s3@{ shape: doc }
-analyze_roadmap_agent_s4@{ def: theme_analyst, shape: tag-rect }
-analyze_roadmap_cluster_themes_s4@{ shape: subroutine }
-analyze_roadmap_themes_s4@{ shape: doc }
-analyze_roadmap_agent_s5@{ def: strategist, shape: tag-rect }
-analyze_roadmap_score_impact_s5@{ shape: subroutine }
-analyze_roadmap_roadmap_s5@{ shape: doc }
-analyze_roadmap_agent_s6@{ def: theme_analyst, shape: tag-rect }
-analyze_roadmap_find_cross_cutting_s6@{ shape: subroutine }
-analyze_roadmap_patterns_s6@{ shape: doc }
-analyze_roadmap_agent_s7@{ def: strategist, shape: tag-rect }
-analyze_roadmap_generate_report_s7@{ shape: subroutine }
-analyze_roadmap_report_s7@{ shape: doc }
-analyze_roadmap_agent_s8@{ def: archivist, shape: tag-rect }
-analyze_roadmap_save_report_s8@{ shape: subroutine }
-analyze_roadmap_saved_s8@{ shape: doc }
-
-flow quick_theme_check["Quick Theme Check"]
-      direction TB
-      task quick_theme_check_step1["Step 1"]
-        quick_theme_check_agent_s1["issue_collector"] --- quick_theme_check_fetch_issues_s1["fetch_issues"]
-        quick_theme_check_agent_s1 --> quick_theme_check_issues_s1["issues"]
-      end
-
-      task quick_theme_check_step2["Step 2"]
-        quick_theme_check_agent_s2["issue_collector"] --- quick_theme_check_classify_issues_s2["classify_issues"]
-        quick_theme_check_agent_s2 --> quick_theme_check_classified_s2["classified"]
-      end
-
-      task quick_theme_check_step3["Step 3"]
-        quick_theme_check_agent_s3["persona_analyst"] --- quick_theme_check_profile_personas_s3["profile_personas"]
-        quick_theme_check_agent_s3 --> quick_theme_check_personas_s3["personas"]
-      end
-
-      task quick_theme_check_step4["Step 4"]
-        quick_theme_check_agent_s4["theme_analyst"] --- quick_theme_check_cluster_themes_s4["cluster_themes"]
-        quick_theme_check_agent_s4 --> quick_theme_check_themes_s4["themes"]
-      end
-
-    quick_theme_check_step1 -->|"issues"| quick_theme_check_step2
-    quick_theme_check_step2 -->|"classified"| quick_theme_check_step3
-    quick_theme_check_step3 -->|"personas"| quick_theme_check_step4
-    quick_theme_check_step3 -->|"classified"| quick_theme_check_step4
-end
-  quick_theme_check@{
-    params: "repo: String, theme_name: String"
-    returns: "String"
-  }
-quick_theme_check_agent_s1@{ def: issue_collector, shape: tag-rect }
-quick_theme_check_fetch_issues_s1@{ shape: subroutine }
-quick_theme_check_issues_s1@{ shape: doc }
-quick_theme_check_agent_s2@{ def: issue_collector, shape: tag-rect }
-quick_theme_check_classify_issues_s2@{ shape: subroutine }
-quick_theme_check_classified_s2@{ shape: doc }
-quick_theme_check_agent_s3@{ def: persona_analyst, shape: tag-rect }
-quick_theme_check_profile_personas_s3@{ shape: subroutine }
-quick_theme_check_personas_s3@{ shape: doc }
-quick_theme_check_agent_s4@{ def: theme_analyst, shape: tag-rect }
-quick_theme_check_cluster_themes_s4@{ shape: subroutine }
-quick_theme_check_themes_s4@{ shape: doc }
-
-template ost_report {
-    section EXECUTIVE_SUMMARY
-    TOTAL_ISSUES: String           &lt;&lt;total open issues analyzed>>
-    TOP_THEMES: String * 3           &lt;&lt;Theme | Weighted Impact | Share>>
-    KEY_INSIGHT: String           &lt;&lt;one-paragraph synthesis>>
-    section PERSONAS
-    PERSONA_PROFILES: String * 11           &lt;&lt;Name | Issues | WI | Share | Key Needs>>
-    section THEMES
-    THEME_ANALYSES: String * 8           &lt;&lt;Theme | Issues | WI | Demand Profile | Outcomes>>
-    section ROADMAP
-    P0_ITEMS: String * 3           &lt;&lt;Title | Issues | WI | Rationale>>
-    P1_ITEMS: String * 3           &lt;&lt;Title | Issues | WI | Rationale>>
-    P2_ITEMS: String * 2           &lt;&lt;Title | Issues | WI | Rationale>>
-    section PATTERNS
-    DIAGRAM_CONCENTRATION: String * 5           &lt;&lt;Diagram | Issue Count | Primary Themes>>
-    REGRESSION_CLUSTERS: String * 4           &lt;&lt;Area | Issue Count | Impact>>
-    HEATED_DISTRIBUTION: String * 8           &lt;&lt;Theme | Heated Count | Share>>
-  }
-
-template theme_analysis {
-    THEME_NAME: String           &lt;&lt;theme title>>
-    ISSUE_COUNT: String           &lt;&lt;number of issues>>
-    WEIGHTED_IMPACT: String           &lt;&lt;calculated WI score>>
-    DEMAND_PROFILE: String           &lt;&lt;silent | noticed | wanted | heated breakdown>>
-    KEY_OUTCOMES: String * 6           &lt;&lt;Outcome | Issues | Impact | Diagrams | Personas>>
-    COMMUNITY_SIGNAL: String           &lt;&lt;qualitative engagement summary>>
-    ROADMAP_SIGNAL: String           &lt;&lt;prioritization recommendation>>
-    REPRESENTATIVE_ISSUES: String * 5           &lt;&lt;Issue # | Title | Demand Level>>
-  }
-
-testCase test_1["full roadmap analysis produces report"]
-  test_1_assertion["assert"]
-end
-test_1_assertion@{ shape: double-circle }
-test_1@{
-    view: collapsed
-    assert: "full roadmap analysis produces report"
-}
-
-testCase test_2["issue classification returns enriched data"]
-  test_2_assertion["assert"]
-end
-test_2_assertion@{ shape: double-circle }
-test_2@{
-    view: collapsed
-    assert: "issue classification returns enriched data"
-}
-
-testCase test_3["persona profiling covers all personas"]
-  test_3_assertion["assert"]
-end
-test_3_assertion@{ shape: double-circle }
-test_3@{
-    view: collapsed
-    assert: "persona profiling covers all personas"
-}
-
-test_1 -.-> strategist
-test_2 -.-> issue_collector
-test_3 -.-> persona_analyst
-
-ost_team ~~~ data_driven
-data_driven ~~~ regression_undercount
-analyze_roadmap ~~~ test_1
-test_1 ~~~ llm
-ost_team ~~~ analyze_roadmap
-
+    B -->|Yes| TL_CA
+    B -->|No| HE_CA
+    TL_CA -->|No| HE_CA
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre class="mermaid2">
+      flowchart LR
+      C --> D --> E
+      D --> H --> I --Yes but with a long label that will wrap to the next line --> J --> E
+      I -- No --> K --> L --> N
 
-agentflow TB
-subgraph apa[" "]
-  flow sample_flow["Flow: Composable Sequence"]
-    flow_a["Step A"]
-    flow_b["Step B"]
-    flow_a --&gt; flow_b
-  end
 
-  skill sample_skill["Skill: Composed Capability"]
-    skill_search["search"]
-    skill_rank["rank"]
-    skill_search --&gt; skill_rank
-  end
-
-  directive sample_directive["Directive: Behavioral Constraint"]
-    dir_rule1["No PII in output"]
-    dir_rule2["Rate limit"]
-  end
-
-  directive sample_directive2["Directive: Behavioral Constraint"]
-    dir_rule3["No PII in output"]
-    dir_rule4["Rate limit"]
-  end
-end
-apa@{algorithm: elk.rectpacking}
-sample_skill@{algorithm: elk.rectpacking}
-sample_directive2@{algorithm: elk.rectpacking}
-AnotherNode
+      subgraph Constr
+        C
+        D
+        E
+        H
+        L
+        N
+      end
+      subgraph Legal
+        I
+        J["I am a very very long label that will wrap to the next line<br>and this is a second line<br>and this is a second line<br>and this is a second line<br>and this is a second line"]
+        K
+      end
     </pre>
-    <pre id="diagram4" class="mermaid">
-
-agentflow TB
-subgraph apa["root"]
-  %% ═══════════════════════════════════════
-  %% CONTAINER DEFINITIONS
-  %% ═══════════════════════════════════════
-
-  agent sample_agent["Agent: Autonomous Actor"]
-    task sample_task["Task: Unit of Work"]
-      task_input["Input parameter"]
-      task_tool["Callable tool"]
-      task_output["Data artifact"]
-      task_input --&gt; task_tool --&gt; task_output
-      task_tool --o type_ref["TaskResult"]
-    end
-  end
-
-  flow sample_flow["Flow: Composable Sequence"]
-    flow_a["Step A"]
-    flow_b["Step B"]
-    flow_a --&gt; flow_b
-  end
-
-  skill sample_skill["Skill: Composed Capability"]
-    skill_search["search"]
-    skill_rank["rank"]
-    skill_search --&gt; skill_rank
-  end
-
-  directive sample_directive["Directive: Behavioral Constraint"]
-    dir_rule1["No PII in output"]
-    dir_rule2["Rate limit"]
-  end
-
-
-  testCase sample_test["TestCase: Verification"]
-    test_step["Run assessment"]
-    test_assert["Assertion checkpoint"]
-    test_step --&gt; test_assert
-  end
-
-  %% ═══════════════════════════════════════
-  %% NODE SHAPES
-  %% ═══════════════════════════════════════
-
-  subgraph node_shapes["Node Shapes"]
-    direction LR
-    ns_default["roundedRect: Default node"]
-    ns_subroutine["subroutine: Tool"]
-    ns_doc["doc: Data artifact"]
-    ns_input["lean-right: Input"]
-    ns_lindoc["lin-doc: Reference doc"]
-    ns_procs["procs: External ref"]
-    ns_stadium["stadium: Terminal"]
-    ns_hex["hexagon: Permission category"]
-    ns_circle["circle: Join point"]
-    ns_diamond{diamond: Decision}
-    ns_trapezoid["trapezoid: Constraint"]
-    ns_inv_trap["inv-trapezoid:<br>Inverted constraint"]
-    ns_dblcirc["double-circle:<br>Assertion"]
-  end
-  node_shapes@{ algorithm: elk.rectpacking}
-sample_directive@{ algorithm: elk.rectpacking }
-  %% ═══════════════════════════════════════
-  %% INSTANCE SHAPES
-  %% ═══════════════════════════════════════
-
-  subgraph instance_shapes["Instance Shapes"]
-    direction LR
-    is_agent["tag-rect: Agent instance"]
-    is_flow["delay: Flow instance"]
-    is_skill["lin-rect: Skill instance"]
-    is_tool["win-pane: Tool instance"]
-    is_directive["curv-trap: Directive instance"]
-  end
-  instance_shapes@{ algorithm: elk.rectpacking }
-  %% ═══════════════════════════════════════
-  %% EDGE TYPES
-  %% ═══════════════════════════════════════
-
-  subgraph edge_types["Edge Types"]
-    direction LR
-    e1a["Source"] --&gt; e1b["Target"]
-    e2a["Producer"] --o e2b["Type"]
-    e3a["Primary"] --x e3b["Fallback"]
-    e4a["Parent"] --&gt;&gt; e4b["Child"]
-    e5a["Peer A"] --- e5b["Peer B"]
-    e6a["Step 1"] ==&gt; e6b["Step 2"]
-    e7a["Tool"] -.-&gt; e7b["Constraint"]
-  end
-
-  %% ═══════════════════════════════════════
-  %% TYPE AND TEMPLATE DECLARATIONS
-  %% ═══════════════════════════════════════
-
-  type TaskResult = Record {
-    status: String
-    output: String
-    confidence: Float
-  }
-
-  type Severity = String
-
-  template %incident_report {
-    section HEADER
-    INCIDENT_ID: String        &lt;&lt;generated incident ID&gt;&gt;
-    SEVERITY: String           &lt;&lt;P0 through P4&gt;&gt;
-    section DETAILS
-    TITLE: String              &lt;&lt;concise incident title&gt;&gt;
-    BLAST_RADIUS: String       &lt;&lt;affected services&gt;&gt;
-    TIMELINE: String * 3       &lt;&lt;Timestamp | Event | Source&gt;&gt;
-  }
-
-  %% ═══════════════════════════════════════
-  %% SHAPE ASSIGNMENTS
-  %% ═══════════════════════════════════════
-
-  %% Container metadata
-  sample_agent@{ model: "claude-sonnet-4-20250514", permits: "net.read, llm.query" }
-  sample_flow@{ params: "input :: String", returns: "String" }
-  sample_skill@{ strategy: "parallel", params: "query :: String", returns: "Results" }
-  sample_directive@{ params: "max_requests :: Int" }
-  sample_test@{ assert: "result != null", expects: "non-null output" }
-
-  %% Task child shapes
-  task_input@{ shape: lean-right }
-  task_tool@{ shape: subroutine, returns: "TaskResult", requires: "llm.query" }
-  task_output@{ shape: doc }
-  type_ref@{ shape: procs, type: "TaskResult" }
-
-  %% Skill child shapes
-  skill_search@{ shape: subroutine }
-  skill_rank@{ shape: subroutine }
-
-  %% Directive child shapes
-  dir_rule1@{ shape: trapezoid, severity: "critical", rule: "Strip all PII before returning" }
-  dir_rule2@{ shape: trapezoid }
-
-  %% TestCase child shapes
-  test_assert@{ shape: double-circle }
-
-  %% Node shapes legend
-  ns_subroutine@{ shape: subroutine }
-  ns_doc@{ shape: doc }
-  ns_input@{ shape: lean-right }
-  ns_lindoc@{ shape: lin-doc }
-  ns_procs@{ shape: procs }
-  ns_stadium@{ shape: stadium }
-  ns_hex@{ shape: hex }
-  ns_circle@{ shape: circle }
-  ns_trapezoid@{ shape: trapezoid }
-  ns_inv_trap@{ shape: inv-trapezoid }
-  ns_dblcirc@{ shape: double-circle }
-
-  %% Instance shapes
-  is_agent@{ shape: tag-rect, def: "sample_agent" }
-  is_flow@{ shape: delay, def: "sample_flow" }
-  is_skill@{ shape: lin-rect, def: "sample_skill" }
-  is_tool@{ shape: win-pane, def: "task_tool" }
-  is_directive@{ shape: curv-trap, def: "sample_directive" }
-
-  %% Edge type node shapes
-  e1a@{ shape: lean-right }
-  e2b@{ shape: procs }
-  e3b@{ shape: stadium }
-  e4b@{ shape: stadium }
-  e7b@{ shape: trapezoid }
-end
-apa@{algorithm: elk.rectpacking}
-types@{
-    view: expanded
-}
-templates@{
-    view: expanded
-}
-    </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre class="mermaid2">
 flowchart LR
-  subgraph TOP
-    direction TB
-    subgraph B1
-        direction RL
-        i1 -->f1
-    end
-    subgraph B2
-        direction BT
-        i2 -->f2
-    end
-  end
-  A --> TOP --> B
-  B1 --> B2
-</pre
+subgraph Legal
+I
+J["I am a very very long label that will wrap to the next line<br>and this is a second line<br>and this is a second line<br>and this is a second line<br>and this is a second line"]
+K
+end
+I --Yes but with a long label that will wrap to the next line --> J
+I -- No --> K
+    </pre>
+    <pre class="mermaid2">
+---
+config:
+  flowchart:
+    curve: linear
+---
+            flowchart TD
+
+              subgraph lane1
+              B
+              A
+
+              end
+
+              A --> B
+              A --AB--> B
+    </pre>
+    <pre class="mermaid2">
+
+            flowchart TD
+
+              subgraph lane1
+              B
+              A
+              C
+              end
+              subgraph lane2
+              D --> E --EB--> B
+              end
+              A --> D
+              A --AB--> B --> C
+    </pre>
+    <pre class="mermaid2">
+---
+config:
+  curve: basis
+---
+            flowchart TD
+
+              subgraph lane1
+              B
+              A
+
+              end
+
+              A --x B
+              A --AB--> B
+    </pre>
+    <pre class="mermaid2">
+            flowchart TD
+
+              subgraph lane1
+              B
+              A
+              C
+              end
+              subgraph lane2
+              D --> E --EB--> B
+              end
+              A --> D
+              A --AB--> B --> C
+    </pre>
+    <pre class="mermaid2">
+---
+config:
+  flowchart:
+    curve: basis
+---
+            flowchart TD
+
+              subgraph lane1
+              B
+              A
+
+              end
+
+              A --> B
+              A --AB--> B
+    </pre>
+    <pre class="mermaid2">
+            flowchart TD
+
+              subgraph lane1
+              B
+              A
+              C
+              end
+              subgraph lane2
+              D --> E --EB--> B
+              end
+              A --> D
+              A --AB--> B --> C
+    </pre>
+    <pre class="mermaid2">
+
+    flowchart TD
+
+      subgraph lane1
+      B
+      A
+      C
+      end
+      subgraph lane2
+      D --> E --EB--> B
+      end
+      A --> D
+      A --AB--> B --> C
+          </pre
     >
+    <pre class="mermaid2">
+     flowchart TD
+        H --> I --Yes--> J --> E
+        I -- No --> K --> L
+
+        subgraph Constr
+          E
+          H
+          L
+        end
+        subgraph Legal
+          I
+          J["I am a very very long label that will wrap to the next line<br>and this is a second line<br>and this is a second line<br>and this is a second line<br>and this is a second line"]
+          K
+        end
+    </pre>
+    <pre class="mermaid2">
+     flowchart TD
+        H --> I --Yes--> J --> E
+        I -- No --> K --> L
+
+        subgraph Constr
+          E
+          H
+          L
+        end
+        subgraph Legal
+          I
+          J
+          K
+        end
+    </pre>
+    <pre class="mermaid2">
+    flowchart TD
+        Customer --> USCompany
+
+        USCompany -- fdhdfjkfdkjdjd --> HongKongCompany
+        USCompany -- & --> Expenses
+
+        HongKongCompany  --> USCompany
+        HongKongCompany --> ExpensesHK
+        HongKongCompany --> Wages(HK)
+        HongKongCompany --> Incomehk
+
+
+
+    </pre>
+    <pre class="mermaid2">
+flowchart TB
+  subgraph Dep1
+    Start
+    Decision1
+  end
+  subgraph Dep2
+    Process1
+  end
+  Start --> Process1 --> Decision1
+
+    </pre>
+    <pre class="mermaid2">
+     flowchart TD
+
+         H --> I --Yes--> J --> E
+        I -- No --> K --> L
+        subgraph Legal
+          I
+          J["I am a very very long label that will wrap to the next line<br>and this is a second line<br>and this is a second line<br>and this is a second line<br>and this is a second line"]
+          K
+        end
+        subgraph Constr
+          E
+          H
+          L
+        end
+
+    </pre>
+    <pre class="mermaid2">
+flowchart TB
+        A --> B --> C --> D --> E --> F --> G
+        D --> H --> I --Yes--> J --> E
+        I -- No --> K --> L --> M & N
+        subgraph Car
+          A["I am a very very long label that will wrap to the next line<br>and this is a second line<br>and this is a second line<br>and this is a second line<br>and this is a second line"]
+        end
+        subgraph Fun
+          F
+          G
+        end
+        subgraph Sales
+          B
+          M
+        end
+
+        subgraph Constr
+          C
+          D["I am a very very long label that will wrap to the next line<br>and this is a second line<br>and this is a second line<br>and this is a second line<br>and this is a second line"]
+          E
+          H
+          L
+          N
+        end
+        subgraph Legal
+          I
+          J["I am a very very long label that will wrap to the next line<br>and this is a second line<br>and this is a second line<br>and this is a second line<br>and this is a second line"]
+          K
+        end
+    </pre>
+    <pre class="mermaid2">
+flowchart LR
+
+  subgraph L1[Community / Users]
+    A1[Report issue]
+    A2[Submit PR]
+  end
+
+  subgraph L2[GitHub System of Record]
+    G1[GitHub Issues]
+    G2[GitHub Pull Requests]
+    G3["GitHub Projects\n(tracking + prioritization)"]
+  end
+
+  subgraph L3[Full-time OS Team\nOmkar • Darshan • Shubham]
+    C1[Daily call\ncoordinate + unblock]
+    C2[Dev sync Tue/Thu\ntriage + plan complex items]
+    C3[Implement work\nShubham: layout algorithms focus]
+    C4[Peer review]
+  end
+
+  subgraph L4["Senior project members\n(pre-Mermaid Chart maintainers)"]
+    S1["Escalated review\n(deeper expertise / historical context)"]
+  end
+
+  subgraph L5[Team Lead & Release Manager\nAshish Jain]
+    R1[Owns release process\nplanning + cut release]
+    R2[Biweekly release]
+  end
+
+  A1 --> G1 --> G3
+  A2 --> G2 --> G3
+
+  G3 --> C1 --> C3 --> G2
+  G3 --> C2 --> C3
+
+
+  R1 --> R2 --> G3
+
+    </pre>
+    <pre class="mermaid">
+swimlane-beta LR
+  subgraph Customer
+    request[Request service]
+    receive[Receive update]
+  end
+
+  subgraph Support
+    triage[Triage request]
+    answer[Send answer]
+  end
+
+  subgraph Engineering
+    investigate[Investigate issue]
+    fix[Prepare fix]
+  end
+
+  request --> triage
+  triage -->|Known issue| answer
+  triage -->|Needs code change| investigate
+  investigate --> fix --> answer
+  answer --> receive
+
+    </pre>
+    <pre class="mermaid2">
+flowchart LR
+   subgraph customer
+    sales_process(sales process)
+    places_order[places order]
+  end
+
+   subgraph sales
+    order_complete{{order<br>complete?}}
+    details[ask for details]
+  end
+    sales_process --> places_order --> order_complete -- no --> details --> order_complete
+    </pre>
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       import layouts from './mermaid-layout-elk.esm.mjs';
-
+      window.mermaidCaptureSizes = true;
       const staticBellIconPack = {
         prefix: 'fa6-regular',
         icons: {
@@ -787,20 +485,13 @@ flowchart LR
       }
       await mermaid.initialize({
         theme: 'redux',
-        // theme: 'default',
-        // theme: 'forest',
-        // handDrawnSeed: 12,
         look: 'neo',
-        'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
-        // layout: 'dagre',
-        layout: 'elk',
-        // layout: 'fixed',
-        // htmlLabels: false,
-        flowchart: { titleTopMargin: 10 },
-
-        // fontFamily: 'Caveat',
-        // fontFamily: 'Kalam',
-        // fontFamily: 'courier',
+        // layout: 'swimlane',
+        flowchart: {
+          titleTopMargin: 10,
+          ignoreCrossLaneEdges: true,
+          optimizeRanksByCrossings: true,
+        },
         fontFamily: 'arial',
         sequence: {
           actorFontFamily: 'courier',
@@ -820,6 +511,9 @@ flowchart LR
         console.error('In parse error:');
         console.error(err);
       };
+
+      await mermaid.run();
+      window.rendered = true;
     </script>
   </body>
 </html>

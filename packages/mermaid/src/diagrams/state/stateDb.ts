@@ -153,7 +153,6 @@ export interface NodeData {
   cssStyles: string[];
   id: string;
   dir?: string;
-  explicitDir?: boolean; // true only when the user wrote an explicit 'direction X' keyword
   domId?: string;
   type?: string;
   isGroup?: boolean;

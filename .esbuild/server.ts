@@ -50,11 +50,14 @@ console.log(
 console.log('================================================================');
 console.log('');
 
+// The dev server is never published, so always compile the render profiler in.
+// It stays a no-op until toggled on at runtime: `__mermaidProfiler.enable()`.
 const configs = Object.values(packageOptions).map(({ packageName }) =>
   getBuildConfig({
     ...defaultOptions,
     minify: false,
     core: false,
+    profiling: true,
     options: packageOptions[packageName],
   })
 );
@@ -62,10 +65,25 @@ const mermaidIIFEConfig = getBuildConfig({
   ...defaultOptions,
   minify: false,
   core: false,
+  profiling: true,
   options: packageOptions.mermaid,
   format: 'iife',
 });
 configs.push(mermaidIIFEConfig);
+
+// The @mermaid-js/layout-elk package imports mermaid through its package
+// `exports`, which resolves to dist/mermaid.core.mjs — and esbuild INLINES that
+// core bundle into the elk bundle. Keep a core build context alive and rebuild
+// it before the package contexts so every layout sees current Mermaid source.
+const mermaidCoreConfig = getBuildConfig({
+  ...defaultOptions,
+  minify: false,
+  core: true,
+  profiling: true,
+  options: packageOptions.mermaid,
+});
+const mermaidCoreContext = await context(mermaidCoreConfig);
+await mermaidCoreContext.rebuild();
 
 const contexts = await Promise.all(
   configs.map(async (config) => ({ config, context: await context(config) }))
@@ -76,6 +94,11 @@ const rebuildAll = async () => {
   const buildNumber = rebuildCounter++;
   const timeLabel = `Rebuild ${buildNumber} Time (total)`;
   console.time(timeLabel);
+  const coreBuildVariant = `Rebuild ${buildNumber} Time (mermaid.core esm)`;
+  console.time(coreBuildVariant);
+  await mermaidCoreContext.rebuild();
+  console.timeEnd(coreBuildVariant);
+
   await Promise.all(
     contexts.map(async ({ config, context }) => {
       const buildVariant = `Rebuild ${buildNumber} Time (${Object.keys(config.entryPoints!)[0]} ${config.format})`;
@@ -249,7 +272,7 @@ async function createServer() {
   handleFileChange();
   const app = express();
   chokidar
-    .watch('**/src/**/*.{js,ts,g4,langium,yaml,json}', {
+    .watch('**/src/**/*.{js,ts,langium,yaml,json}', {
       ignoreInitial: true,
       ignored: [/node_modules/, /dist/, /docs/, /coverage/],
     })

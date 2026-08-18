@@ -5,6 +5,7 @@ import path from 'path';
 import { SearchPlugin } from 'vitepress-plugin-search';
 import fs from 'fs';
 import Components from 'unplugin-vue-components/vite';
+import Icons from 'unplugin-icons/vite';
 import Unocss from 'unocss/vite';
 import { presetAttributify, presetIcons, presetUno } from 'unocss';
 import { resolve } from 'pathe';
@@ -31,6 +32,9 @@ export default defineConfig({
       include: [/\.vue/, /\.md/],
       dirs: '.vitepress/components',
       dts: '.vitepress/components.d.ts',
+    }) as Plugin,
+    Icons({
+      compiler: 'vue3',
     }) as Plugin,
     // @ts-ignore This package has an incorrect exports.
     Unocss({

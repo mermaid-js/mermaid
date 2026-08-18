@@ -308,8 +308,10 @@ describe('paintLayoutData', () => {
       edges: [layoutOnlyEdge, skippedEdge, renderEdge],
     });
     const measured = measure();
+    const clusterDb = new Map([[group.id, { node: group }]]);
 
     await paintLayoutData(data, { measure: measured } as never, {
+      clusterDb,
       skipEdge: (candidate) => candidate.id === skippedEdge.id,
       skipIntersect: (candidate) => candidate.id === renderEdge.id,
     });
@@ -321,12 +323,93 @@ describe('paintLayoutData', () => {
     expect(mocks.insertEdge).toHaveBeenCalledWith(
       measured.groups.edgePaths,
       { ...renderEdge },
-      {},
+      clusterDb,
       data.type,
       nodeA,
       nodeB,
       data.diagramId,
       true
+    );
+  });
+
+  it('positions pre-rendered cluster nodes without inserting another cluster', async () => {
+    const { paintLayoutData } = await import('./index.js');
+    const clusterNode = node('G', { clusterNode: true, isGroup: true } as never);
+    const data = layout({
+      nodes: [clusterNode],
+      edges: [],
+    });
+    const measured = measure();
+
+    await paintLayoutData(data, { measure: measured } as never);
+
+    expect(mocks.insertCluster).not.toHaveBeenCalled();
+    expect(mocks.positionNode).toHaveBeenCalledWith(clusterNode);
+  });
+
+  it('lets layout algorithms decide which group nodes are clusters', async () => {
+    const { paintLayoutData } = await import('./index.js');
+    const leafGroup = node('G', { isGroup: true, shape: 'roundedWithTitle' });
+    const data = layout({
+      nodes: [leafGroup],
+      edges: [],
+    });
+    const measured = measure();
+
+    await paintLayoutData(data, { measure: measured } as never, {
+      isCluster: () => false,
+    });
+
+    expect(mocks.insertCluster).not.toHaveBeenCalled();
+    expect(mocks.positionNode).toHaveBeenCalledWith(leafGroup);
+  });
+
+  it('lets layout algorithms skip nodes that were already painted elsewhere', async () => {
+    const { paintLayoutData } = await import('./index.js');
+    const rootNode = node('root');
+    const extractedNode = node('nested');
+    const data = layout({
+      nodes: [rootNode, extractedNode],
+      edges: [],
+    });
+    const measured = measure();
+
+    await paintLayoutData(data, { measure: measured } as never, {
+      skipNode: (candidate) => candidate.id === extractedNode.id,
+    });
+
+    expect(mocks.positionNode).toHaveBeenCalledTimes(1);
+    expect(mocks.positionNode).toHaveBeenCalledWith(rootNode);
+    expect(mocks.positionNode).not.toHaveBeenCalledWith(extractedNode);
+  });
+
+  it('lets layout algorithms provide graph-backed paint nodes and edge endpoints', async () => {
+    const { paintLayoutData } = await import('./index.js');
+    const nodeB = node('B');
+    const graphOnlyNode = node('dummy');
+    const renderEdge = edge('render', { start: graphOnlyNode.id, end: nodeB.id });
+    const data = layout({
+      nodes: [nodeB],
+      edges: [renderEdge],
+    });
+    const measured = measure();
+
+    await paintLayoutData(data, { measure: measured } as never, {
+      getNodes: () => [graphOnlyNode, nodeB],
+      getEdgeNode: (id) => (id === graphOnlyNode.id ? graphOnlyNode : undefined),
+    });
+
+    expect(mocks.positionNode).toHaveBeenNthCalledWith(1, graphOnlyNode);
+    expect(mocks.positionNode).toHaveBeenNthCalledWith(2, nodeB);
+    expect(mocks.insertEdge).toHaveBeenCalledWith(
+      measured.groups.edgePaths,
+      { ...renderEdge },
+      expect.any(Map),
+      data.type,
+      graphOnlyNode,
+      nodeB,
+      data.diagramId,
+      false
     );
   });
 
