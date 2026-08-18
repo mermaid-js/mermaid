@@ -86,6 +86,7 @@ const aliasSet39 = ['tag-rect', 'tag-proc', 'tagged-rectangle', 'tagged-process'
 
 const aliasSet40 = ['collate', 'hourglass'] as const;
 const aliasSet41 = ['datastore', 'data-store'] as const;
+const aliasSet42 = ['folder', 'directory'] as const;
 
 // Aggregate all alias sets into a single array
 const aliasSets = [
@@ -130,6 +131,7 @@ const aliasSets = [
   aliasSet39,
   aliasSet40,
   aliasSet41,
+  aliasSet42,
 ] as const;
 
 aliasSets.forEach((aliasSet) => {

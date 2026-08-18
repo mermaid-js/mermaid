@@ -31,6 +31,10 @@ describe('deriveGroupKey', () => {
     expect(deriveGroupKey('rendering/flowchart/flowchart.spec.js/x.png')).toBe(FC);
     expect(deriveGroupKey('rendering/flowchart/flowchart-elk.spec.js/y.png')).toBe(FC);
   });
+  it('gives a spec directly under the top-level category its own group', () => {
+    expect(deriveGroupKey('rendering/newShapes.spec.ts/a.png')).toBe('rendering/newShapes');
+    expect(deriveGroupKey('rendering/gantt.spec.js/b.png')).toBe('rendering/gantt');
+  });
 });
 
 describe('planSheets', () => {

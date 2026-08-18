@@ -209,11 +209,14 @@ export interface WriteSheetsOptions {
 export function deriveGroupKey(relPath: string): string {
   const parts = relPath.split('/');
   const specIdx = parts.findIndex((p) => SPEC_SEGMENT_RE.test(p));
-  if (specIdx > 0) {
+  if (specIdx > 1) {
     return parts.slice(0, specIdx).join('/');
   }
-  if (specIdx === 0) {
-    return parts[0].replace(SPEC_SEGMENT_RE, '');
+  if (specIdx >= 0) {
+    // A spec sitting directly under the top-level category gets its own group;
+    // otherwise every flat spec shares one giant group and a new test in any of
+    // them reshuffles the tile positions of all the following sheets.
+    return [...parts.slice(0, specIdx), parts[specIdx].replace(SPEC_SEGMENT_RE, '')].join('/');
   }
   return parts.slice(0, -1).join('/') || 'root';
 }
