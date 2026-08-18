@@ -15,3 +15,17 @@
 7. [How to have special characters in link text?](https://github.com/mermaid-js/mermaid/issues/407#issuecomment-329944735)
 8. [How to change Flowchart curve style?](https://github.com/mermaid-js/mermaid/issues/580#issuecomment-373929046)
 9. [How to create a Flowchart end-Node that says "End"](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897)
+10. **Why is my large diagram showing "Maximum text size in diagram exceeded"?**
+    Mermaid has a default text size limit of 50,000 characters for performance reasons. To increase this limit:
+
+    ```javascript
+    mermaid.initialize({ maxTextSize: 200000 });
+    ```
+
+    To disable the limit entirely (use with caution):
+
+    ```javascript
+    mermaid.initialize({ maxTextSize: 0 });
+    ```
+
+    For more details, see [Handling Large Diagrams](../config/usage.md#handling-large-diagrams).

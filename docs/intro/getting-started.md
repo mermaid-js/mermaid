@@ -235,9 +235,10 @@ b. The importing of the Mermaid library through the `mermaid.esm.mjs` or `mermai
 
 `startOnLoad` is one of the parameters that can be defined by `mermaid.initialize()`
 
-| Parameter   | Description                       | Type    | Values      |
-| ----------- | --------------------------------- | ------- | ----------- |
-| startOnLoad | Toggle for Rendering upon loading | Boolean | true, false |
+| Parameter   | Description                                                  | Type    | Values      |
+| ----------- | ------------------------------------------------------------ | ------- | ----------- |
+| startOnLoad | Toggle for Rendering upon loading                            | Boolean | true, false |
+| maxTextSize | Maximum size of diagram text in characters (default: 50,000) | Number  | Any number  |
 
 In this example, the `mermaidAPI` is being called through the `CDN`:
 
