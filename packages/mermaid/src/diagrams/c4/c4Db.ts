@@ -682,7 +682,11 @@ export const getC4ShapeArray = function (parentBoundary?: string | null) {
   }
 };
 export const getC4Shape = function (alias: string) {
-  return c4ShapeArray.find((personOrSystem) => personOrSystem.alias === alias);
+  // Relations may target a boundary as well as a shape, so fall back to boundaries (#4864).
+  return (
+    c4ShapeArray.find((personOrSystem) => personOrSystem.alias === alias) ??
+    boundaries.find((boundary) => boundary.alias === alias)
+  );
 };
 export const getC4ShapeKeys = function (parentBoundary?: string | null) {
   return Object.keys(getC4ShapeArray(parentBoundary));
