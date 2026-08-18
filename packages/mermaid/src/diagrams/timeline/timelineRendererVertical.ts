@@ -38,7 +38,7 @@ const TASK_AXIS_GAP = 20;
 const TASK_VERTICAL_GAP = 30;
 const EVENT_AXIS_GAP = 50;
 
-export const draw = function (text: string, id: string, version: string, diagObj: Diagram) {
+export const draw = async function (text: string, id: string, version: string, diagObj: Diagram) {
   //1. Fetch the configuration
   const conf = getConfig();
   const LEFT_MARGIN = conf.timeline?.leftMargin ?? 50;
@@ -79,7 +79,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
 
   const sectionWidth = Math.max(50, leftWidth + rightWidth - NODE_PADDING * 2);
   //Calculate the max height of the sections
-  sections.forEach(function (section: string) {
+  for (const section of sections) {
     const sectionNode: Block<string, number> = {
       number: sectionNumber,
       descr: section,
@@ -88,10 +88,10 @@ export const draw = function (text: string, id: string, version: string, diagObj
       padding: NODE_PADDING,
       maxHeight: maxSectionHeight,
     };
-    const sectionHeight = svgDraw.getVirtualNodeHeight(svg, sectionNode, conf);
+    const sectionHeight = await svgDraw.getVirtualNodeHeight(svg, sectionNode, conf);
     log.debug('sectionHeight before draw', sectionHeight);
     maxSectionHeight = Math.max(maxSectionHeight, sectionHeight);
-  });
+  }
 
   //tasks length and max event stack height
   let maxEventStackHeight = 0;
@@ -106,7 +106,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
       padding: NODE_PADDING,
       maxHeight: maxTaskHeight,
     };
-    const taskHeight = svgDraw.getVirtualNodeHeight(svg, taskNode, conf);
+    const taskHeight = await svgDraw.getVirtualNodeHeight(svg, taskNode, conf);
     log.debug('taskHeight before draw', taskHeight);
     maxTaskHeight = Math.max(maxTaskHeight, taskHeight);
 
@@ -121,7 +121,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
         padding: NODE_PADDING,
         maxHeight: 50,
       };
-      maxEventStackHeightTemp += svgDraw.getVirtualNodeHeight(svg, eventNode, conf);
+      maxEventStackHeightTemp += await svgDraw.getVirtualNodeHeight(svg, eventNode, conf);
     }
     if (task.events.length > 0) {
       maxEventStackHeightTemp += (task.events.length - 1) * EVENT_SPACING;
@@ -137,7 +137,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
   const taskSpacing = taskBlockHeight + TASK_VERTICAL_GAP;
 
   if (hasSections) {
-    sections.forEach((section) => {
+    for (const section of sections) {
       //filter task where tasks.section == section
       const tasksForSection = tasks.filter((task) => task.section === section);
 
@@ -151,7 +151,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
       };
       log.debug('sectionNode', sectionNode);
       const sectionNodeWrapper = svg.append('g');
-      const node = svgDraw.drawNode(sectionNodeWrapper, sectionNode, sectionNumber, conf);
+      const node = await svgDraw.drawNode(sectionNodeWrapper, sectionNode, sectionNumber, conf);
       log.debug('sectionNode output', node);
 
       const sectionX = timelineX - leftWidth;
@@ -160,7 +160,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
       const taskStartY = masterY + node.height + SECTION_TASK_GAP;
       //draw tasks for this section
       if (tasksForSection.length > 0) {
-        drawTasks(
+        await drawTasks(
           svg,
           tasksForSection,
           sectionNumber,
@@ -181,10 +181,10 @@ export const draw = function (text: string, id: string, version: string, diagObj
         (taskCount > 0 ? TASK_VERTICAL_GAP * 2 : 0);
       masterY += sectionHeight;
       sectionNumber++;
-    });
+    }
   } else {
     //draw tasks
-    drawTasks(
+    await drawTasks(
       svg,
       tasks,
       sectionNumber,
@@ -245,7 +245,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
   );
 };
 
-export const drawTasks = function (
+export const drawTasks = async function (
   diagram: SVG,
   tasks: TimelineTask[],
   sectionColor: number,
@@ -271,7 +271,7 @@ export const drawTasks = function (
     log.debug('taskNode', taskNode);
     // create task wrapper
     const taskWrapper = diagram.append('g').attr('class', 'taskWrapper');
-    const node = svgDraw.drawNode(taskWrapper, taskNode, sectionColor, conf);
+    const node = await svgDraw.drawNode(taskWrapper, taskNode, sectionColor, conf);
     const taskHeight = node.height;
     //log task height
     log.debug('taskHeight after draw', taskHeight);
@@ -285,7 +285,7 @@ export const drawTasks = function (
     if (task.events && task.events.length > 0) {
       const eventsStartY = masterY;
       const eventsX = timelineX + EVENT_AXIS_GAP;
-      drawEvents(diagram, task.events, sectionColor, timelineX, eventsX, eventsStartY, conf);
+      await drawEvents(diagram, task.events, sectionColor, timelineX, eventsX, eventsStartY, conf);
     }
 
     masterY = masterY + taskSpacing;
@@ -295,7 +295,7 @@ export const drawTasks = function (
   }
 };
 
-export const drawEvents = function (
+export const drawEvents = async function (
   diagram: SVG,
   events: string[],
   sectionColor: number,
@@ -321,7 +321,7 @@ export const drawEvents = function (
     log.debug('eventNode', eventNode);
     // create event wrapper
     const eventWrapper = diagram.append('g').attr('class', 'eventWrapper');
-    const node = svgDraw.drawNode(eventWrapper, eventNode, sectionColor, conf);
+    const node = await svgDraw.drawNode(eventWrapper, eventNode, sectionColor, conf);
     const eventHeight = node.height;
     eventWrapper.attr('transform', `translate(${eventsX}, ${currentY})`);
 

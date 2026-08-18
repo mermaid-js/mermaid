@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../../helpers/util.ts';
+import { imgSnapshotTest, renderGraph } from '../../../helpers/util.ts';
 
 describe('Timeline diagram', () => {
   it('1: should render a simple timeline with no specific sections', () => {
@@ -253,6 +253,93 @@ timeline
       `,
         {}
       );
+    });
+  });
+
+  describe('HTML formatting', () => {
+    it('15: should render markdown htmlLabels', () => {
+      imgSnapshotTest(
+        `---
+config:
+    theme: forest
+---
+
+ timeline
+    title Timeline of Industrial Revolution
+    section 17th-20th century
+        Industry 1.0 : Machinery, Water power, Steam <br>power
+        Industry 2.0 : Electricity, <strong>Internal combustion engine </strong>, Mass production
+        Industry 3.0 : Electronics, Computers, Automation
+    section 21st century
+        Industry 4.0 : Internet, Robotics, Internet of Things
+        Industry 5.0 : Artificial intelligence, Big data, 3D printing
+      `,
+        {}
+      );
+    });
+    it('16: should render all supported HTML tags in timeline labels', () => {
+      imgSnapshotTest(
+        `---
+config:
+    theme: forest
+---
+
+ timeline
+    title HTML Formatting Test
+    section Text Formatting
+        Event 1 : Normal text with <em>italic</em> and <strong>bold</strong> formatting
+        Event 2 : Text with <sup>superscript</sup> and <br>line break
+        Event 3 : Link to <a href="https://mermaid.js.org">Mermaid</a> documentation
+    section Lists
+        Event 4 : Unordered list: <ul><li>First item</li><li>Second item</li><li>Third item</li></ul>
+        Event 5 : Paragraph with <p>multiple</p> <p>paragraphs</p>
+      `,
+        {}
+      );
+    });
+    it('17: should strip <script> tags from timeline labels', () => {
+      renderGraph(
+        `timeline
+    title XSS Test
+    section S
+        Event : safe<script>window.__timelineXss = true;</script>text
+      `,
+        { screenshot: false }
+      );
+      cy.get('svg').find('script').should('not.exist');
+      cy.window().should((win) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        expect((win as any).__timelineXss).to.equal(undefined);
+      });
+    });
+    it('18: should strip javascript: hrefs from timeline labels', () => {
+      renderGraph(
+        `timeline
+    title XSS Test
+    section S
+        Event : <a href="javascript:window.__timelineXss = true">click</a>
+      `,
+        { screenshot: false }
+      );
+      cy.get('svg a').each(($a) => {
+        const href = $a.attr('href') ?? $a.attr('xlink:href') ?? '';
+        expect(href.toLowerCase()).to.not.contain('javascript:');
+      });
+    });
+    it('19: should strip onerror handlers from timeline labels', () => {
+      renderGraph(
+        `timeline
+    title XSS Test
+    section S
+        Event : <img src="x" onerror="window.__timelineXss = true">caption
+      `,
+        { screenshot: false }
+      );
+      cy.get('svg [onerror]').should('not.exist');
+      cy.window().should((win) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        expect((win as any).__timelineXss).to.equal(undefined);
+      });
     });
   });
 });
