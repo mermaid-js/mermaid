@@ -2,6 +2,7 @@ import { select } from 'd3';
 import { getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 import utils from '../../utils.js';
+import { sanitizeText } from '../common/common.js';
 import type { DrawDefinition } from '../../diagram-api/types.js';
 import type d3 from 'd3';
 import type { Commit, GitGraphDBRenderProvider, DiagramOrientation } from './gitGraphTypes.js';
@@ -199,6 +200,53 @@ const calculateCommitPosition = (commit: Commit): number => {
   return closestParentPos + COMMIT_STEP;
 };
 
+/**
+ * Adds interaction (link, tooltip) to an element during construction.
+ * @param db - The gitGraph database
+ * @param parent - The parent d3 selection to append to
+ * @param id - The ID of the commit, branch, or tag
+ * @param type - The type of the element ('commit', 'branch', or 'tag')
+ * @returns The d3 selection (the new interactive group) or undefined if no interaction is needed
+ */
+const addInteraction = (
+  db: GitGraphDBRenderProvider,
+  parent: d3.Selection<SVGGElement, unknown, HTMLElement, any>,
+  id: string,
+  type: 'commit' | 'branch' | 'tag'
+): d3.Selection<SVGGElement, unknown, HTMLElement, any> | undefined => {
+  const config = getConfig();
+  const { securityLevel } = config;
+  const linkData = db.getLink?.(id, type);
+
+  if (securityLevel === 'strict' || !linkData || linkData.type !== type) {
+    return undefined;
+  }
+
+  const sanitizedUrl = utils.formatUrl(linkData.link, config);
+  if (!sanitizedUrl || sanitizedUrl === 'about:blank') {
+    return undefined;
+  }
+
+  const a = parent.append('a').attr('xlink:href', sanitizedUrl).attr('rel', 'noopener noreferrer');
+
+  if (securityLevel === 'sandbox') {
+    log.debug('Overriding %s "%s" link target to "_top" for sandbox mode', type, id);
+    a.attr('target', '_top');
+  } else if (linkData.target && ['_self', '_blank', '_parent', '_top'].includes(linkData.target)) {
+    a.attr('target', linkData.target);
+  }
+
+  if (linkData.tooltip) {
+    const sanitizedTooltip = sanitizeText(linkData.tooltip, config);
+    a.append('title').text(sanitizedTooltip);
+    a.attr('aria-label', sanitizedTooltip);
+  } else {
+    a.attr('aria-label', id);
+  }
+
+  return a.append('g').classed('clickable', true);
+};
+
 const setCommitPosition = (commit: Commit, curPos: number): CommitPosition => {
   const branch = branchPos.get(commit.branch);
 
@@ -229,14 +277,25 @@ const drawCommitBullet = (
   commitPosition: CommitPositionOffset,
   typeClass: string,
   branchIndex: number,
-  commitSymbolType: number
+  commitSymbolType: number,
+  db: GitGraphDBRenderProvider
 ) => {
-  const { theme } = getConfig();
+  const config = getConfig();
+  const { theme } = config;
   const useReduxGeometry = REDUX_GEOMETRY_THEMES.has(theme ?? '');
   const useColorTheme = COLOR_THEMES.has(theme ?? '');
   const isDark = DARK_THEMES.has(theme ?? '');
+
+  const interactiveGroup = addInteraction(db, gBullets, commit.id, 'commit');
+  const parent = interactiveGroup || gBullets;
+
+  if (interactiveGroup) {
+    interactiveGroup.classed('commit', true);
+    interactiveGroup.attr('data-commit-id', commit.id);
+  }
+
   if (commitSymbolType === commitType.HIGHLIGHT) {
-    gBullets
+    parent
       .append('rect')
       .attr('x', commitPosition.x - 10 + (useReduxGeometry ? 3 : 0))
       .attr('y', commitPosition.y - 10 + (useReduxGeometry ? 3 : 0))
@@ -246,7 +305,7 @@ const drawCommitBullet = (
         'class',
         `commit ${commit.id} commit-highlight${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, useColorTheme)} ${typeClass}-outer`
       );
-    gBullets
+    parent
       .append('rect')
       .attr('x', commitPosition.x - 6 + (useReduxGeometry ? 2 : 0))
       .attr('y', commitPosition.y - 6 + (useReduxGeometry ? 2 : 0))
@@ -257,27 +316,27 @@ const drawCommitBullet = (
         `commit ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, useColorTheme)} ${typeClass}-inner`
       );
   } else if (commitSymbolType === commitType.CHERRY_PICK) {
-    gBullets
+    parent
       .append('circle')
       .attr('cx', commitPosition.x)
       .attr('cy', commitPosition.y)
       .attr('r', useReduxGeometry ? 7 : 10)
       .attr('class', `commit ${commit.id} ${typeClass}`);
-    gBullets
+    parent
       .append('circle')
       .attr('cx', commitPosition.x - 3)
       .attr('cy', commitPosition.y + 2)
       .attr('r', useReduxGeometry ? 2.5 : 2.75)
       .attr('fill', isDark ? '#000000' : '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
-    gBullets
+    parent
       .append('circle')
       .attr('cx', commitPosition.x + 3)
       .attr('cy', commitPosition.y + 2)
       .attr('r', useReduxGeometry ? 2.5 : 2.75)
       .attr('fill', isDark ? '#000000' : '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
-    gBullets
+    parent
       .append('line')
       .attr('x1', commitPosition.x + 3)
       .attr('y1', commitPosition.y + 1)
@@ -285,7 +344,7 @@ const drawCommitBullet = (
       .attr('y2', commitPosition.y - 5)
       .attr('stroke', isDark ? '#000000' : '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
-    gBullets
+    parent
       .append('line')
       .attr('x1', commitPosition.x - 3)
       .attr('y1', commitPosition.y + 1)
@@ -294,7 +353,7 @@ const drawCommitBullet = (
       .attr('stroke', isDark ? '#000000' : '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
   } else {
-    const circle = gBullets.append('circle');
+    const circle = parent.append('circle');
     circle.attr('cx', commitPosition.x);
     circle.attr('cy', commitPosition.y);
     circle.attr('r', useReduxGeometry ? 7 : 10);
@@ -303,7 +362,7 @@ const drawCommitBullet = (
       `commit ${commit.id} commit${calcColorIndex(branchIndex, THEME_COLOR_LIMIT, useColorTheme)}`
     );
     if (commitSymbolType === commitType.MERGE) {
-      const circle2 = gBullets.append('circle');
+      const circle2 = parent.append('circle');
       circle2.attr('cx', commitPosition.x);
       circle2.attr('cy', commitPosition.y);
       circle2.attr('r', useReduxGeometry ? 5 : 6);
@@ -313,7 +372,7 @@ const drawCommitBullet = (
       );
     }
     if (commitSymbolType === commitType.REVERSE) {
-      const cross = gBullets.append('path');
+      const cross = parent.append('path');
       const constValue = useReduxGeometry ? 4 : 5;
       cross
         .attr(
@@ -333,14 +392,21 @@ const drawCommitLabel = (
   commit: Commit,
   commitPosition: CommitPositionOffset,
   pos: number,
-  gitGraphConfig: GitGraphDiagramConfig
+  gitGraphConfig: GitGraphDiagramConfig,
+  db: GitGraphDBRenderProvider
 ) => {
   if (
     commit.type !== commitType.CHERRY_PICK &&
     ((commit.customId && commit.type === commitType.MERGE) || commit.type !== commitType.MERGE) &&
     gitGraphConfig.showCommitLabel
   ) {
-    const wrapper = gLabels.append('g');
+    const interactiveGroup = addInteraction(db, gLabels, commit.id, 'commit');
+    const wrapper = interactiveGroup || gLabels.append('g');
+
+    if (interactiveGroup) {
+      wrapper.classed('commit', true);
+      wrapper.attr('data-commit-id', commit.id);
+    }
     const labelBkg = wrapper.insert('rect').attr('class', 'commit-label-bkg');
     const text = wrapper
       .append('text')
@@ -405,7 +471,8 @@ const drawCommitTags = (
   gLabels: d3.Selection<SVGGElement, unknown, HTMLElement, any>,
   commit: Commit,
   commitPosition: CommitPositionOffset,
-  pos: number
+  pos: number,
+  db: GitGraphDBRenderProvider
 ) => {
   if (commit.tags.length > 0) {
     let yOffset = 0;
@@ -414,9 +481,18 @@ const drawCommitTags = (
     const tagElements = [];
 
     for (const tagValue of commit.tags.reverse()) {
-      const rect = gLabels.insert('polygon');
-      const hole = gLabels.append('circle');
-      const tag = gLabels
+      // Create a group for this tag to enable wrapping in anchor tags
+      const interactiveGroup = addInteraction(db, gLabels, tagValue, 'tag');
+      const tagGroup = interactiveGroup || gLabels.append('g');
+
+      if (interactiveGroup) {
+        tagGroup.attr('data-tag-name', tagValue);
+        tagGroup.classed('tag', true);
+      }
+
+      const rect = tagGroup.insert('polygon');
+      const hole = tagGroup.append('circle');
+      const tag = tagGroup
         .append('text')
         .attr('y', commitPosition.y - 16 - yOffset)
         .attr('class', 'tag-label')
@@ -566,7 +642,8 @@ const drawCommits = (
   svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
   commits: Map<string, Commit>,
   modifyGraph: boolean,
-  gitGraphConfig: GitGraphDiagramConfig
+  gitGraphConfig: GitGraphDiagramConfig,
+  db: GitGraphDBRenderProvider
 ) => {
   const gBullets = svg.append('g').attr('class', 'commit-bullets');
   const gLabels = svg.append('g').attr('class', 'commit-labels');
@@ -603,9 +680,17 @@ const drawCommits = (
       const typeClass = getCommitClassType(commit);
       const commitSymbolType = commit.customType ?? commit.type;
       const branchIndex = branchPos.get(commit.branch)?.index ?? 0;
-      drawCommitBullet(gBullets, commit, commitPosition, typeClass, branchIndex, commitSymbolType);
-      drawCommitLabel(gLabels, commit, commitPosition, pos, gitGraphConfig);
-      drawCommitTags(gLabels, commit, commitPosition, pos);
+      drawCommitBullet(
+        gBullets,
+        commit,
+        commitPosition,
+        typeClass,
+        branchIndex,
+        commitSymbolType,
+        db
+      );
+      drawCommitLabel(gLabels, commit, commitPosition, pos, gitGraphConfig, db);
+      drawCommitTags(gLabels, commit, commitPosition, pos, db);
     }
     if (dir === 'TB' || dir === 'BT') {
       commitPos.set(commit.id, { x: commitPosition.x, y: commitPosition.posWithOffset });
@@ -868,7 +953,8 @@ const drawBranches = (
   svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
   branches: { name: string }[],
   gitGraphConfig: GitGraphDiagramConfig,
-  id: string
+  id: string,
+  db: GitGraphDBRenderProvider
 ) => {
   const { look, theme, themeVariables } = getConfig();
   const { dropShadow, THEME_COLOR_LIMIT: themeColorLimit } = themeVariables;
@@ -918,12 +1004,20 @@ const drawBranches = (
 
     // Create the actual text element
     const labelElement = drawText(name);
-    // Create outer g, edgeLabel, this will be positioned after graph layout
-    const bkg = g.insert('rect');
-    const branchLabel = g.insert('g').attr('class', 'branchLabel');
 
-    // Create inner g, label, this will be positioned now for centering the text
-    const label = branchLabel.insert('g').attr('class', 'label branch-label' + adjustIndexForTheme);
+    const interactiveGroup = addInteraction(db, g, name, 'branch');
+    const branchInteractionGroup = interactiveGroup || g.append('g');
+
+    if (interactiveGroup) {
+      branchInteractionGroup.classed('branchLabel', true);
+      branchInteractionGroup.attr('data-branch-name', name);
+    }
+
+    // Create outer rect and inner g (label), both inside the interaction group
+    const bkg = branchInteractionGroup.insert('rect');
+    const label = branchInteractionGroup
+      .insert('g')
+      .attr('class', 'label branch-label' + adjustIndexForTheme);
 
     label.node()!.appendChild(labelElement);
     const bbox = labelElement.getBBox();
@@ -1070,12 +1164,12 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     g.remove();
   });
 
-  drawCommits(diagram, allCommitsDict, false, gitGraphConfig);
+  drawCommits(diagram, allCommitsDict, false, gitGraphConfig, db);
   if (gitGraphConfig.showBranches) {
-    drawBranches(diagram, branches, gitGraphConfig, id);
+    drawBranches(diagram, branches, gitGraphConfig, id, db);
   }
   drawArrows(diagram, allCommitsDict);
-  drawCommits(diagram, allCommitsDict, true, gitGraphConfig);
+  drawCommits(diagram, allCommitsDict, true, gitGraphConfig, db);
 
   utils.insertTitle(
     diagram,

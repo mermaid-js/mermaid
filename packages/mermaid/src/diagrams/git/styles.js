@@ -170,6 +170,36 @@ const getStyles = (options) => {
     font-size: 18px;
     fill: ${options.textColor};
   }
+
+  .clickable {
+    cursor: pointer;
+  }
+
+  .clickable:hover text,
+  .clickable:focus text,
+  a:focus-visible .clickable text {
+    text-decoration: underline;
+  }
+
+  .commit.clickable:hover circle,
+  .commit.clickable:focus circle,
+  a:focus-visible .commit.clickable circle,
+  .commit.clickable:hover rect:not(.commit-label-bkg),
+  .commit.clickable:focus rect:not(.commit-label-bkg),
+  a:focus-visible .commit.clickable rect:not(.commit-label-bkg),
+  .commit.clickable:hover path,
+  .commit.clickable:focus path,
+  a:focus-visible .commit.clickable path {
+    transform: scale(1.4);
+  }
+
+  .commit circle,
+  .commit rect,
+  .commit path {
+    transform-origin: center;
+    transform-box: fill-box;
+    transition: transform 0.2s ease-in-out;
+  }
 `;
 };
 
