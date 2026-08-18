@@ -10,7 +10,7 @@
 
 # Interface: LayoutLoaderDefinition
 
-Defined in: packages/mermaid/src/rendering-util/render.ts:24
+Defined in: [packages/mermaid/src/rendering-util/render.ts:24](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/render.ts#L24)
 
 ## Properties
 
@@ -18,7 +18,7 @@ Defined in: packages/mermaid/src/rendering-util/render.ts:24
 
 > `optional` **algorithm**: `string`
 
-Defined in: packages/mermaid/src/rendering-util/render.ts:27
+Defined in: [packages/mermaid/src/rendering-util/render.ts:27](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/render.ts#L27)
 
 ---
 
@@ -26,7 +26,7 @@ Defined in: packages/mermaid/src/rendering-util/render.ts:27
 
 > **loader**: `LayoutLoader`
 
-Defined in: packages/mermaid/src/rendering-util/render.ts:26
+Defined in: [packages/mermaid/src/rendering-util/render.ts:26](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/render.ts#L26)
 
 ---
 
@@ -34,4 +34,4 @@ Defined in: packages/mermaid/src/rendering-util/render.ts:26
 
 > **name**: `string`
 
-Defined in: packages/mermaid/src/rendering-util/render.ts:25
+Defined in: [packages/mermaid/src/rendering-util/render.ts:25](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/render.ts#L25)
