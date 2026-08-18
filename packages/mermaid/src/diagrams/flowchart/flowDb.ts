@@ -273,6 +273,7 @@ export class FlowDB implements DiagramDB {
       if (doc.h) {
         vertex.assetHeight = Number(doc.h);
       }
+      vertex.metadata = { ...vertex.metadata, ...doc };
     }
   }
 
@@ -1039,6 +1040,9 @@ You have to call mermaid.initialize.`
       node.cssStyles = vertex.styles;
       node.cssCompiledStyles = this.getCompiledStyles(vertex.classes);
       node.cssClasses = vertex.classes.join(' ');
+      if (vertex.metadata !== undefined) {
+        node.metadata = { ...node.metadata, ...vertex.metadata };
+      }
     } else {
       const baseNode = {
         id: vertex.id,
@@ -1062,6 +1066,7 @@ You have to call mermaid.initialize.`
         assetWidth: vertex.assetWidth,
         assetHeight: vertex.assetHeight,
         constraint: vertex.constraint,
+        metadata: vertex.metadata,
       };
       if (isGroup) {
         nodes.push({
@@ -1193,6 +1198,7 @@ You have to call mermaid.initialize.`
           dir: subGraph.dir,
           isGroup: false,
           look: config.look,
+          metadata: subGraph.metadata,
         });
       } else {
         nodes.push({
@@ -1208,6 +1214,7 @@ You have to call mermaid.initialize.`
           dir: subGraph.dir,
           isGroup: true,
           look: config.look,
+          metadata: subGraph.metadata,
         });
       }
     }

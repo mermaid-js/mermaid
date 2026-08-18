@@ -97,6 +97,13 @@ describe('flow db class', () => {
       expect(Object.hasOwn(flowDb, fun)).toBe(true);
     }
   });
+
+  it('should pass @{} metadata to layout nodes', () => {
+    flowDb.addVertex('A', { text: 'A', type: 'text' }, undefined, [], [], '', {}, 'foo: bar');
+    const { nodes } = flowDb.getData();
+    const nodeA = nodes.find((n) => n.id === 'A');
+    expect(nodeA?.metadata).toEqual({ foo: 'bar' });
+  });
 });
 
 describe('flow db getData', () => {

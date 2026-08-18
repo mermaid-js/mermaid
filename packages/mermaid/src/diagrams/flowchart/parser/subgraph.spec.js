@@ -352,4 +352,21 @@ describe('when parsing subgraphs', function () {
     expect(edges.find((e) => e.start === 'C' && e.end === 'one')).toBeDefined();
     expect(edges.find((e) => e.end === 'A')).toBeUndefined();
   });
+
+  it('should pass arbitrary subgraph metadata to layout algo', function () {
+    flow.parser.parse(`
+      graph TD
+        subgraph one [My Group]
+          A --> B
+        end
+        C --> A
+        one@{ custom: 'value', another: 123 }
+    `);
+
+    const groupNode = flow.parser.yy.getData().nodes.find((node) => node.id === 'one');
+    expect(groupNode).toBeDefined();
+    expect(groupNode.isGroup).toBe(true);
+    expect(groupNode.metadata?.custom).toBe('value');
+    expect(groupNode.metadata?.another).toBe(123);
+  });
 });
