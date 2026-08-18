@@ -8,7 +8,7 @@ import {
   setAccTitle,
   setDiagramTitle,
 } from '../common/commonDb.js';
-import type { WardleyAxesConfig } from './wardleyBuilder.js';
+import type { WardleyAttitudeKind, WardleyAxesConfig } from './wardleyBuilder.js';
 import { WardleyBuilder } from './wardleyBuilder.js';
 
 const builder = new WardleyBuilder();
@@ -26,7 +26,7 @@ function addNode(
   labelOffsetX?: number,
   labelOffsetY?: number,
   inertia?: boolean,
-  sourceStrategy?: 'build' | 'buy' | 'outsource' | 'market'
+  sourceStrategy?: 'build' | 'buy' | 'outsource' | 'market' | 'ecosystem'
 ) {
   builder.addNode({
     id,
@@ -93,6 +93,10 @@ function addDeaccelerator(name: string, x: number, y: number) {
   });
 }
 
+function addAttitude(kind: WardleyAttitudeKind, x1: number, y1: number, x2: number, y2: number) {
+  builder.addAttitude({ kind, x1, y1, x2, y2 });
+}
+
 function setAnnotationsBox(x: number, y: number) {
   builder.setAnnotationsBox(x, y);
 }
@@ -139,6 +143,7 @@ export default {
   addNote,
   addAccelerator,
   addDeaccelerator,
+  addAttitude,
   setAnnotationsBox,
   setSize,
   startPipeline,

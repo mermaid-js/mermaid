@@ -9,7 +9,7 @@ export interface WardleyNode {
   inPipeline?: boolean;
   isPipelineParent?: boolean;
   inertia?: boolean;
-  sourceStrategy?: 'build' | 'buy' | 'outsource' | 'market';
+  sourceStrategy?: 'build' | 'buy' | 'outsource' | 'market' | 'ecosystem';
 }
 
 export interface WardleyLink {
@@ -55,6 +55,16 @@ export interface WardleyDeaccelerator {
   y: number;
 }
 
+export type WardleyAttitudeKind = 'pioneers' | 'settlers' | 'townplanners';
+
+export interface WardleyAttitude {
+  kind: WardleyAttitudeKind;
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+}
+
 export interface WardleyAxesConfig {
   xLabel?: string;
   yLabel?: string;
@@ -71,6 +81,7 @@ export interface WardleyBuildResult {
   notes: WardleyNote[];
   accelerators: WardleyAccelerator[];
   deaccelerators: WardleyDeaccelerator[];
+  attitudes: WardleyAttitude[];
   annotationsBox?: { x: number; y: number };
   axes: WardleyAxesConfig;
   size?: { width: number; height: number };
@@ -85,6 +96,7 @@ export class WardleyBuilder {
   private notes: WardleyNote[] = [];
   private accelerators: WardleyAccelerator[] = [];
   private deaccelerators: WardleyDeaccelerator[] = [];
+  private attitudes: WardleyAttitude[] = [];
   private annotationsBox?: { x: number; y: number };
   private axes: WardleyAxesConfig = {};
   private size?: { width: number; height: number };
@@ -148,6 +160,10 @@ export class WardleyBuilder {
     this.deaccelerators.push(deaccelerator);
   }
 
+  public addAttitude(attitude: WardleyAttitude) {
+    this.attitudes.push(attitude);
+  }
+
   public setAnnotationsBox(x: number, y: number) {
     this.annotationsBox = { x, y };
   }
@@ -201,6 +217,7 @@ export class WardleyBuilder {
       notes: [...this.notes],
       accelerators: [...this.accelerators],
       deaccelerators: [...this.deaccelerators],
+      attitudes: [...this.attitudes],
       annotationsBox: this.annotationsBox,
       axes: { ...this.axes },
       size: this.size,
@@ -216,6 +233,7 @@ export class WardleyBuilder {
     this.notes = [];
     this.accelerators = [];
     this.deaccelerators = [];
+    this.attitudes = [];
     this.annotationsBox = undefined;
     this.axes = {};
     this.size = undefined;

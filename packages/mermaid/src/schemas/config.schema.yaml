@@ -2813,6 +2813,14 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: Whether to display a background grid.
         type: boolean
         default: false
+      autoPlaceLabels:
+        description: |
+          When `true`, component, anchor, link, and annotation labels are
+          automatically repositioned to avoid overlapping each other, node
+          markers, the chart boundary, and link lines. Manual `label [x, y]`
+          offsets are ignored while this is enabled.
+        type: boolean
+        default: false
 
   CynefinDiagramConfig:
     title: Cynefin Diagram Config

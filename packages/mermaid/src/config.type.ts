@@ -2043,6 +2043,14 @@ export interface WardleyDiagramConfig extends BaseDiagramConfig {
    * Whether to display a background grid.
    */
   showGrid?: boolean;
+  /**
+   * When `true`, component, anchor, link, and annotation labels are
+   * automatically repositioned to avoid overlapping each other, node
+   * markers, the chart boundary, and link lines. Manual `label [x, y]`
+   * offsets are ignored while this is enabled.
+   *
+   */
+  autoPlaceLabels?: boolean;
 }
 /**
  * Configuration for Cynefin framework diagrams.
