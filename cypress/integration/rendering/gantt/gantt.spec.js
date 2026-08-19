@@ -208,6 +208,26 @@ describe('Gantt diagram', () => {
     );
   });
 
+  it('should render a gantt chart with scaled layout for larger font sizes', () => {
+    imgSnapshotTest(
+      `
+      %%{init: { "gantt": { "fontSize": 20 } }}%%
+      gantt
+        title Large Font Gantt
+        dateFormat YYYY-MM-DD
+        axisFormat %d/%m
+
+        section Planning<br/>Multiline
+        Task A :a1, 2024-01-01, 7d
+        Task B :after a1, 5d
+
+        section Delivery
+        Task C :2024-01-10, 4d
+      `,
+      { gantt: { fontSize: 20 } }
+    );
+  });
+
   it('should handle milliseconds', () => {
     imgSnapshotTest(
       `

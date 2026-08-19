@@ -28,6 +28,7 @@ import {
 import common from '../common/common.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
+import { getUserDefinedConfig } from '../../config.js';
 
 dayjs.extend(dayjsDuration);
 
@@ -82,8 +83,49 @@ const getMaxIntersections = (tasks, orderOffset) => {
 
 let w;
 const MAX_TICK_COUNT = 10000;
+export const defaultGanttLayout = {
+  titleTopMargin: 25,
+  barHeight: 20,
+  barGap: 4,
+  topPadding: 50,
+  rightPadding: 75,
+  leftPadding: 75,
+  gridLineStartPadding: 35,
+  taskLabelOffset: 60,
+  sectionLabelX: 10,
+};
+
+export const computeGanttLayout = (conf, userDefinedConfig = {}) => {
+  const baseFontSize = 11;
+  const scale = conf.fontSize / baseFontSize;
+
+  const scaleLayoutValue = (key, value) => {
+    const isExplicit = Object.hasOwn(userDefinedConfig, key);
+
+    if (isExplicit) {
+      return value;
+    }
+
+    return value * scale;
+  };
+
+  return {
+    titleTopMargin: scaleLayoutValue('titleTopMargin', conf.titleTopMargin),
+    barHeight: scaleLayoutValue('barHeight', conf.barHeight),
+    barGap: scaleLayoutValue('barGap', conf.barGap),
+    topPadding: scaleLayoutValue('topPadding', conf.topPadding),
+    rightPadding: scaleLayoutValue('rightPadding', conf.rightPadding),
+    leftPadding: scaleLayoutValue('leftPadding', conf.leftPadding),
+    gridLineStartPadding: scaleLayoutValue('gridLineStartPadding', conf.gridLineStartPadding),
+    taskLabelOffset: scaleLayoutValue('taskLabelOffset', defaultGanttLayout.taskLabelOffset),
+    sectionLabelX: scaleLayoutValue('sectionLabelX', defaultGanttLayout.sectionLabelX),
+  };
+};
+
 export const draw = function (text, id, version, diagObj) {
   const conf = getConfig().gantt;
+  const userDefined = getUserDefinedConfig()?.gantt || {};
+  const layout = computeGanttLayout(conf, userDefined);
 
   diagObj.db.setDiagramId(id);
 
@@ -126,7 +168,7 @@ export const draw = function (text, id, version, diagObj) {
   categories = checkUnique(categories);
   const categoryHeights = {};
 
-  let h = 2 * conf.topPadding;
+  let h = 2 * layout.topPadding;
   if (diagObj.db.getDisplayMode() === 'compact' || conf.displayMode === 'compact') {
     const categoryElements = {};
     for (const element of tasksWithoutVert) {
@@ -141,7 +183,7 @@ export const draw = function (text, id, version, diagObj) {
     for (const category of Object.keys(categoryElements)) {
       const categoryHeight = getMaxIntersections(categoryElements[category], intersections) + 1;
       intersections += categoryHeight;
-      h += categoryHeight * (conf.barHeight + conf.barGap);
+      h += categoryHeight * (layout.barHeight + layout.barGap);
       categoryHeights[category] = categoryHeight;
     }
   } else {
@@ -165,7 +207,7 @@ export const draw = function (text, id, version, diagObj) {
         return d.endTime;
       }),
     ])
-    .rangeRound([0, w - conf.leftPadding - conf.rightPadding]);
+    .rangeRound([0, w - layout.leftPadding - layout.rightPadding]);
 
   /**
    * @param a
@@ -195,7 +237,7 @@ export const draw = function (text, id, version, diagObj) {
     .append('text')
     .text(diagObj.db.getDiagramTitle())
     .attr('x', w / 2)
-    .attr('y', conf.titleTopMargin)
+    .attr('y', layout.titleTopMargin)
     .attr('class', 'titleText');
 
   /**
@@ -204,10 +246,10 @@ export const draw = function (text, id, version, diagObj) {
    * @param pageHeight
    */
   function makeGantt(tasks, pageWidth, pageHeight) {
-    const barHeight = conf.barHeight;
-    const gap = barHeight + conf.barGap;
-    const topPadding = conf.topPadding;
-    const leftPadding = conf.leftPadding;
+    const barHeight = layout.barHeight;
+    const gap = barHeight + layout.barGap;
+    const topPadding = layout.topPadding;
+    const leftPadding = layout.leftPadding;
 
     const colorScale = scaleLinear()
       .domain([0, categories.length])
@@ -263,7 +305,7 @@ export const draw = function (text, id, version, diagObj) {
         return i * theGap + theTopPad - 2;
       })
       .attr('width', function () {
-        return w - conf.rightPadding / 2;
+        return w - layout.rightPadding / 2;
       })
       .attr('height', theGap)
       .attr('class', function (d) {
@@ -305,7 +347,7 @@ export const draw = function (text, id, version, diagObj) {
         // Ignore the incoming i value and use our order instead
         i = d.order;
         if (d.vert) {
-          return conf.gridLineStartPadding;
+          return layout.gridLineStartPadding;
         }
         return i * theGap + theTopPad;
       })
@@ -417,7 +459,7 @@ export const draw = function (text, id, version, diagObj) {
 
         // Check id text width > width of rectangle
         if (textWidth > endX - startX) {
-          if (endX + textWidth + 1.5 * conf.leftPadding > w) {
+          if (endX + textWidth + 1.5 * layout.leftPadding > w) {
             return startX + theSidePad - 5;
           } else {
             return endX + theSidePad + 5;
@@ -430,13 +472,16 @@ export const draw = function (text, id, version, diagObj) {
         // Ignore the incoming i value and use our order instead
         if (d.vert) {
           return (
+            layout.gridLineStartPadding +
+            taskArray.length * (layout.barHeight + layout.barGap) +
+            layout.taskLabelOffset
             conf.gridLineStartPadding +
             tasksWithoutVert.length * (conf.barHeight + conf.barGap) +
             60
           );
         }
         i = d.order;
-        return i * theGap + conf.barHeight / 2 + (conf.fontSize / 2 - 2) + theTopPad;
+        return i * theGap + layout.barHeight / 2 + (conf.fontSize / 2 - 2) + theTopPad;
       })
       .attr('text-height', theBarHeight)
       .attr('class', function (d) {
@@ -491,7 +536,7 @@ export const draw = function (text, id, version, diagObj) {
 
         // Check id text width > width of rectangle
         if (textWidth > endX - startX) {
-          if (endX + textWidth + 1.5 * conf.leftPadding > w) {
+          if (endX + textWidth + 1.5 * layout.leftPadding > w) {
             return classStr + ' taskTextOutsideLeft taskTextOutside' + secNum + ' ' + taskType;
           } else {
             return (
@@ -600,10 +645,10 @@ export const draw = function (text, id, version, diagObj) {
       .append('rect')
       .attr('id', (d) => id + '-exclude-' + d.start.format('YYYY-MM-DD'))
       .attr('x', (d) => timeScale(d.start.startOf('day')) + theSidePad)
-      .attr('y', conf.gridLineStartPadding)
+      .attr('y', layout.gridLineStartPadding)
       .attr('width', (d) => timeScale(d.end.endOf('day')) - timeScale(d.start.startOf('day')))
 
-      .attr('height', h - theTopPad - conf.gridLineStartPadding)
+      .attr('height', h - theTopPad - layout.gridLineStartPadding)
       .attr('transform-origin', function (d, i) {
         return (
           (
@@ -659,7 +704,7 @@ export const draw = function (text, id, version, diagObj) {
     }
 
     let bottomXAxis = axisBottom(timeScale)
-      .tickSize(-h + theTopPad + conf.gridLineStartPadding)
+      .tickSize(-h + theTopPad + layout.gridLineStartPadding)
       .tickFormat(timeFormat(axisFormat));
 
     const reTickInterval = /^([1-9]\d*)(millisecond|second|minute|hour|day|week|month)$/;
@@ -722,7 +767,7 @@ export const draw = function (text, id, version, diagObj) {
     svg
       .append('g')
       .attr('class', 'grid')
-      .attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')')
+      .attr('transform', 'translate(' + theSidePad + ', ' + (h - theTopPad) + ')')
       .call(bottomXAxis)
       .selectAll('text')
       .style('text-anchor', 'middle')
@@ -733,7 +778,7 @@ export const draw = function (text, id, version, diagObj) {
 
     if (diagObj.db.topAxisEnabled() || conf.topAxis) {
       let topXAxis = axisTop(timeScale)
-        .tickSize(-h + theTopPad + conf.gridLineStartPadding)
+        .tickSize(-h + theTopPad + layout.gridLineStartPadding)
         .tickFormat(timeFormat(axisFormat));
 
       if (resultTickInterval !== null) {
@@ -820,7 +865,7 @@ export const draw = function (text, id, version, diagObj) {
         for (const [j, row] of rows.entries()) {
           const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
           tspan.setAttribute('alignment-baseline', 'central');
-          tspan.setAttribute('x', '10');
+          tspan.setAttribute('x', layout.sectionLabelX.toString());
           if (j > 0) {
             tspan.setAttribute('dy', '1em');
           }
@@ -829,7 +874,7 @@ export const draw = function (text, id, version, diagObj) {
         }
         return svgLabel;
       })
-      .attr('x', 10)
+      .attr('x', layout.sectionLabelX)
       .attr('y', function (d, i) {
         if (i > 0) {
           for (let j = 0; j < i; j++) {
@@ -870,8 +915,8 @@ export const draw = function (text, id, version, diagObj) {
     todayLine
       .attr('x1', timeScale(today) + theSidePad)
       .attr('x2', timeScale(today) + theSidePad)
-      .attr('y1', conf.titleTopMargin)
-      .attr('y2', h - conf.titleTopMargin)
+      .attr('y1', layout.titleTopMargin)
+      .attr('y2', h - layout.titleTopMargin)
       .attr('class', 'today');
 
     if (todayMarker !== '') {
