@@ -291,7 +291,11 @@ export const drawServices = async function (
         service.title,
         {
           useHtmlLabels: false,
-          width: iconSize * 1.5,
+          // Floor at 120px so long single-word labels (e.g. "ClickHouse", "MessageBroker")
+          // don't wrap mid-character at small iconSize. 120 matches the natural width at the
+          // default iconSize (80 * 1.5 = 120) — so the floor is a no-op at the default and
+          // only kicks in for iconSize values below 80.
+          width: Math.max(iconSize * 1.5, 120),
           classes: 'architecture-service-label',
         },
         config

@@ -356,6 +356,24 @@ describe('architecture diagram', () => {
       { architecture: { randomize: true }, screenshot: false }
     );
   });
+  it('should keep long single-word service labels on one line at small iconSize', () => {
+    // Regression test for the label-width floor. At `iconSize: 50`, the
+    // historical width (`iconSize * 1.5 = 75px`) was too narrow to fit common
+    // single-word labels like "ClickHouse", causing mid-character wraps.
+    // The fix floors the label-area width at 90px so
+    // these labels stay on one line. Multi-word labels still wrap on word
+    // boundaries.
+    imgSnapshotTest(
+      `architecture-beta
+                service ch(database)[ClickHouse]
+                service pg(database)[Postgres]
+                service mb(server)[MessageBroker]
+                ch:R --> L:pg
+                pg:R --> L:mb
+            `,
+      { architecture: { iconSize: 50 } }
+    );
+  });
 });
 
 describe('architecture - fcose layout knobs', () => {
