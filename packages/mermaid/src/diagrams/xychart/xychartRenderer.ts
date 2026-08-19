@@ -14,7 +14,6 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
   const db = diagObj.db as typeof XYChartDB;
   const themeConfig = db.getChartThemeConfig();
   const chartConfig = db.getChartConfig();
-  const labelData = db.getXYChartData().plots[0].data.map((data) => data[1]);
   function getDominantBaseLine(horizontalPos: TextVerticalPos) {
     return horizontalPos === 'top' ? 'text-before-edge' : 'middle';
   }
@@ -47,6 +46,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
   db.setTmpSVGG(svg.append('g').attr('class', 'mermaid-tmp-group'));
 
   const shapes: DrawableElem[] = db.getDrawableElem();
+  const labelData = db.getXYChartData().plots[0].data.map((data) => data[1]);
 
   const groups: Record<string, any> = {};
 

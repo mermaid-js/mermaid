@@ -48,6 +48,7 @@ describe('xychartDb', () => {
         { text: 'cat3', type: 'text' },
       ]);
       db.setBarData({ text: 'testBar', type: 'text' }, pts(10, 20, 30, 40, 50));
+      db.mapPlotData();
 
       const chartData = db.getXYChartData();
       // Should only have 3 data points matching the 3 categories
@@ -66,6 +67,7 @@ describe('xychartDb', () => {
         { text: 'B', type: 'text' },
       ]);
       db.setLineData({ text: 'testLine', type: 'text' }, pts(100, 200, 300, 400));
+      db.mapPlotData();
 
       const chartData = db.getXYChartData();
       expect(chartData.plots).toHaveLength(1);
@@ -83,6 +85,7 @@ describe('xychartDb', () => {
         { text: 'Z', type: 'text' },
       ]);
       db.setBarData({ text: 'exact', type: 'text' }, pts(5, 10, 15));
+      db.mapPlotData();
 
       const chartData = db.getXYChartData();
       expect(chartData.plots[0].data).toHaveLength(3);
@@ -101,6 +104,7 @@ describe('xychartDb', () => {
         { text: 'D', type: 'text' },
       ]);
       db.setBarData({ text: 'short', type: 'text' }, pts(1, 2));
+      db.mapPlotData();
 
       const chartData = db.getXYChartData();
       // categories.map produces entries for all 4 categories, with undefined for missing data
@@ -115,6 +119,7 @@ describe('xychartDb', () => {
       // Provide 4 values but only 2 categories. The value 999 should NOT
       // affect the y-axis range since it belongs to an orphaned data point.
       db.setBarData({ text: 'sales', type: 'text' }, pts(10, 50, 999, 800));
+      db.mapPlotData();
 
       const chartData = db.getXYChartData();
       // y-axis max should be 50, not 999
