@@ -129,48 +129,10 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke-width: 1px;
   }
 
-  .agent-cluster rect {
-    fill: ${options.mainBkg};
-    stroke: ${options.nodeBorder};
-    stroke-width: 1.5px;
-  }
-
   .flow-cluster rect {
     fill: none;
     stroke: ${options.clusterBorder};
     stroke-width: 0.75px;
-  }
-
-  .task-cluster rect {
-    fill: none;
-    stroke: ${options.clusterBorder};
-    stroke-width: 0.75px;
-    stroke-dasharray: 8, 4;
-  }
-
-  .skill-cluster rect {
-    fill: ${options.mainBkg};
-    stroke: ${options.nodeBorder};
-    stroke-width: 1px;
-  }
-
-  .test-cluster rect {
-    fill: none;
-    stroke: ${options.clusterBorder};
-    stroke-width: 2px;
-  }
-
-  .directive-cluster rect {
-    fill: ${options.tertiaryColor};
-    stroke: ${options.clusterBorder};
-    stroke-width: 1.5px;
-    stroke-dasharray: 8, 3, 2, 3;
-  }
-
-  .group-cluster rect {
-    fill: none;
-    stroke: none;
-    stroke-width: 0;
   }
 
   .node .collapsed-indicator {
@@ -182,15 +144,6 @@ const getStyles = (options: FlowChartStyleOptions) =>
 
   .node .collapsed-separator {
     stroke-width: 0.75px;
-  }
-
-  .types-cluster rect,
-  .templates-cluster rect,
-  .connectors-cluster rect {
-    fill: ${options.tertiaryColor};
-    stroke: ${options.clusterBorder};
-    stroke-width: 0.75px;
-    stroke-dasharray: 4, 4;
   }
 
   .node .type-declaration-box path {
@@ -229,7 +182,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
     z-index: 100;
   }
 
-  .flowchartTitleText {
+  .agentflowTitleText {
     text-anchor: middle;
     font-size: 18px;
     fill: ${options.textColor};
