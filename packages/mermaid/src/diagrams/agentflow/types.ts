@@ -74,7 +74,8 @@ export interface FlowText {
 }
 
 /**
- * Canonical per-operator semantic per `AGENTFLOW-SYNTAX.md` §5.1 (v0.8.1).
+ * Canonical per-operator semantic, per the agentflow syntax specification
+ * §5.1 (v0.8.1). See ./README.md for what these section numbers refer to.
  * Populated on every edge produced by one of the three operators; left
  * `undefined` only for malformed edges.
  *
@@ -163,7 +164,7 @@ export interface AgentflowElementMapping {
 
 // ───────────────────────────────────────────────────────────────────────────
 // Semantic model — purpose-built projection of the DB's state with
-// presentation fields removed. See `AGENTFLOW-SYNTAX.md` §11 for the
+// presentation fields removed. See the agentflow syntax specification §11 for the
 // normative list of presentation-only controls.
 // ───────────────────────────────────────────────────────────────────────────
 

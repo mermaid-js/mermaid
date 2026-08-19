@@ -1,7 +1,7 @@
 /**
  * Shape-based tool model (v0.8.1).
  *
- * Per AGENTFLOW-SYNTAX.md §10, a tool definition is any named node whose
+ * Per the agentflow syntax specification §10, a tool definition is any named node whose
  * resolved shape is `subroutine` (canonical) — accessible via the alias
  * `tool` plus historical aliases `subprocess`, `subproc`,
  * `framed-rectangle`.

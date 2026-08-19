@@ -13,7 +13,7 @@
  *
  * PR 4 ships a minimal pair of fixtures proving the runner end-to-end.
  * PR 5 fills the directory with the full wave-1 corpus, including every
- * §19 Semantic Pattern from `AGENTFLOW-SYNTAX.md`.
+ * §19 Semantic Pattern from the agentflow syntax specification.
  */
 
 import { readFileSync, readdirSync } from 'node:fs';

@@ -4,6 +4,34 @@
  *  MIT license.
  */
 
+/*
+ * Why JISON and not Langium
+ * -------------------------
+ * The project rule is that new diagram types use Langium; JISON is legacy.
+ * Agentflow is a deliberate, recorded exception rather than an oversight.
+ *
+ * Agentflow's surface syntax is flowchart's. It reuses, character for
+ * character, two things that exist only as JISON lexer states today:
+ *
+ *   1. The edge-operator vocabulary (`-->`, `-.-`, `--x`, and the split
+ *      `a -- label --> b` form), which flowchart lexes across the `edgeText`
+ *      and related start conditions.
+ *   2. Inline `@{ ... }` shape-data, whose single-line and multi-line block
+ *      forms are recognised by the `shapeData`/`shapeDataStr` states.
+ *
+ * Neither has a Langium implementation to build on, so a Langium agentflow
+ * would mean reimplementing both from scratch and then keeping two
+ * independent definitions of the same user-facing syntax in step. Every
+ * divergence between them would show up as agentflow accepting or rejecting
+ * something a flowchart does not, which is exactly the failure this grammar
+ * exists to avoid.
+ *
+ * This is revisitable: the diagram ships as `agentflow-beta`, and the natural
+ * time to move is when flowchart's own operator and shape-data lexing gains a
+ * Langium implementation that agentflow can share. Porting agentflow alone
+ * buys compliance at the cost of the duplication above.
+ */
+
 /* lexical grammar */
 %lex
 %x string

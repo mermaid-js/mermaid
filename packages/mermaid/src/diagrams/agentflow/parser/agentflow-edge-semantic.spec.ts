@@ -1,7 +1,7 @@
 /**
  * `edgeSemantic` field tests (v0.8.1).
  *
- * Per `AGENTFLOW-SYNTAX.md` §5.1, every edge operator carries a first-class
+ * Per the agentflow syntax specification §5.1, every edge operator carries a first-class
  * `edgeSemantic` value that downstream tooling reads as the authoritative
  * semantic. The v0.8.1 mapping table is:
  *

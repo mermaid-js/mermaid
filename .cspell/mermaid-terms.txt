@@ -1,5 +1,6 @@
 Adamiecki
 agentflow
+agentic
 arrowend
 Bendpoints
 bmatrix
