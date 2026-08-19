@@ -24,6 +24,6 @@ describe('gantt diagram SVGs', () => {
 
 async function drawDiagram(diagramText: string): Promise<Element> {
   const diagram = await Diagram.fromText(diagramText, {});
-  await draw('NOT_USED', 'svg', '1.0.0', diagram);
+  draw('NOT_USED', 'svg', '1.0.0', diagram);
   return ensureNodeFromSelector('#svg');
 }
