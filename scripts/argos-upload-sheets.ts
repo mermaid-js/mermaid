@@ -51,18 +51,18 @@ async function main(): Promise<void> {
     return;
   }
 
-  const args = ['argos', 'upload', sheetsDir];
+  const args = ['exec', 'argos', 'upload', sheetsDir];
   if (process.env.ARGOS_SUBSET === 'true') {
     args.push('--subset');
   }
-  log(`running: npx ${args.join(' ')}`);
+  log(`running: pnpm ${args.join(' ')}`);
 
-  const result = spawnSync('npx', args, {
+  const result = spawnSync('pnpm', args, {
     stdio: 'inherit',
     env: process.env,
   });
   if (result.error) {
-    throw new Error(`Failed to run "npx ${args.join(' ')}": ${result.error.message}`);
+    throw new Error(`Failed to run "pnpm ${args.join(' ')}": ${result.error.message}`);
   }
   if (result.status !== 0) {
     process.exit(result.status ?? 1);

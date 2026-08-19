@@ -132,7 +132,7 @@ const SHARED_PREFIXES = [
   // Plugin packages (separate bundles but tested in main suite)
   'packages/mermaid-zenuml/',
   'packages/mermaid-example-diagram/',
-  // Cypress: config and cross-cutting test utilities
+  // Playwright: config and cross-cutting test utilities
   'e2e/other/',
   'e2e/helpers/',
   'playwright.config',
@@ -153,7 +153,7 @@ const DIAGRAM_PATH_RE = /^packages\/mermaid\/src\/diagrams\/([^/]+)\//;
 
 /**
  * Given a list of changed file paths (relative to repo root), returns the
- * comma-separated spec pattern to pass to `cypress run --spec`, or an empty
+ * comma-separated spec pattern to pass to `playwright test`, or an empty
  * string if the full suite should run.
  *
  * The function uses the filesystem to discover which diagram spec subfolders
@@ -245,7 +245,7 @@ export function detectScope(files, options = {}) {
       continue;
     }
 
-    // Anything else (root config, CI YAML, cypress/other, etc.) → full suite
+    // Anything else (root config, CI YAML, e2e/other, etc.) → full suite
     touchesShared = true;
     break;
   }

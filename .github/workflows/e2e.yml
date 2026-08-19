@@ -35,17 +35,17 @@ defaults:
     shell: bash
 
 env:
-  # For PRs and MergeQueues, the target commit is used, and for push events to non-develop branches, github.event.previous is used if available. Otherwise, 'develop' is used.
+  # For PRs and MergeQueues, the target commit is used, and for push events to non-develop branches, github.event.previous is used if available. Otherwise, the repo default branch is used.
   targetHash: >-
     ${{
-      github.event_name == 'workflow_dispatch' && 'develop' ||
+      github.event_name == 'workflow_dispatch' && github.event.repository.default_branch ||
       github.event.pull_request.base.sha ||
       github.event.merge_group.base_sha ||
       (
         (
-          (github.event_name == 'push' && github.ref == 'refs/heads/develop') ||
+          (github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)) ||
           github.event.before == '0000000000000000000000000000000000000000'
-        ) && 'develop'
+        ) && github.event.repository.default_branch
       ) ||
       github.event.before
     }}
@@ -63,6 +63,9 @@ env:
   # per-screenshot runs then both diff cleanly against it (each marked --subset).
   ARGOS_UPLOAD_BOTH: >-
     ${{ github.event_name == 'push' && github.ref == 'refs/heads/develop' }}
+  # Shard JSON for a full-suite run vs a scoped (single-container) run.
+  E2E_FULL_MATRIX: '[1,2,3,4,5,6,7,8]'
+  E2E_SCOPED_MATRIX: '[1]'
 
 jobs:
   cache:
@@ -119,17 +122,61 @@ jobs:
 
       - name: Detect e2e scope
         id: scope
+        env:
+          # Manual-dispatch spec glob, passed via env to avoid interpolating
+          # user input directly into the shell script.
+          SPEC_PATTERN_INPUT: ${{ github.event.inputs.spec_pattern }}
+          TARGET_HASH: ${{ env.targetHash }}
+          # PRs use base.ref (`master` / `develop`); merge_group uses `refs/heads/...`.
+          BASE_REF: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref || '' }}
+          # Scoping is ON by default.  To disable, set this repository variable
+          # to 'false' (GitHub → Settings → Secrets and variables → Actions → Variables).
+          # Using == 'false' (instead of == 'true') ensures fork PRs — where
+          # repository variables are not exposed — still get scoped runs.
+          E2E_SCOPE_BY_DIAGRAM: "${{ vars.E2E_SCOPE_BY_DIAGRAM == 'false' && 'false' || 'true' }}"
         run: |
+          # Multiline GITHUB_OUTPUT so a glob can't inject extra keys. Empty
+          # values use `key=` — a heredoc with a blank line is a non-empty
+          # newline and would look like a spec pattern to the e2e job.
+          set_output() {
+            local key="$1"
+            local value="$2"
+            if [ -z "$value" ]; then
+              printf '%s=\n' "$key" >> "$GITHUB_OUTPUT"
+              return
+            fi
+            local delim
+            delim="ghadelim_$(openssl rand -hex 16)"
+            {
+              printf '%s<<%s\n' "$key" "$delim"
+              printf '%s\n' "$value"
+              printf '%s\n' "$delim"
+            } >> "$GITHUB_OUTPUT"
+          }
+
+          emit_full() {
+            set_output spec_pattern ""
+            set_output matrix "$E2E_FULL_MATRIX"
+          }
+
+          emit_skip() {
+            set_output spec_pattern "SKIP"
+            set_output matrix "$E2E_SCOPED_MATRIX"
+          }
+
+          emit_scoped() {
+            set_output spec_pattern "$1"
+            set_output matrix "$E2E_SCOPED_MATRIX"
+          }
+
           # Manual runs can target a specific spec glob via the workflow_dispatch
           # input; an empty pattern runs the full suite.
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
             if [ -n "$SPEC_PATTERN_INPUT" ]; then
-              echo "spec_pattern=${SPEC_PATTERN_INPUT}" >> "$GITHUB_OUTPUT"
-              echo "matrix=[1]" >> "$GITHUB_OUTPUT"
+              emit_scoped "$SPEC_PATTERN_INPUT"
               echo "[detect-scope] Manual run scoped to: ${SPEC_PATTERN_INPUT}"
             else
-              echo "spec_pattern=" >> "$GITHUB_OUTPUT"
-              echo "matrix=[1,2,3,4,5,6,7,8]" >> "$GITHUB_OUTPUT"
+              emit_full
               echo "[detect-scope] Manual run — full suite."
             fi
             exit 0
@@ -139,64 +186,54 @@ jobs:
           # to disable scoping.  Scoping is ON by default so that fork PRs
           # (where repository variables are unavailable) still benefit from it.
           if [ "${E2E_SCOPE_BY_DIAGRAM}" = "false" ]; then
-            echo "spec_pattern=" >> "$GITHUB_OUTPUT"
-            echo "matrix=[1,2,3,4,5,6,7,8]" >> "$GITHUB_OUTPUT"
+            emit_full
             echo "[detect-scope] Scoping disabled via kill-switch — full suite."
             exit 0
           fi
 
-          BASE="${{ env.targetHash }}"
-
-          # For direct pushes to the main development branch, always run the
-          # full suite (no PR diff to scope against).
-          if [ "$BASE" = "develop" ] || [ "$BASE" = "master" ]; then
-            echo "spec_pattern=" >> "$GITHUB_OUTPUT"
-            echo "matrix=[1,2,3,4,5,6,7,8]" >> "$GITHUB_OUTPUT"
-            echo "[detect-scope] Direct push to ${BASE} — full suite."
+          # For direct pushes to a long-lived branch, always run the full suite
+          # (no PR diff to scope against).
+          if [ "$TARGET_HASH" = "develop" ] || [ "$TARGET_HASH" = "master" ]; then
+            emit_full
+            echo "[detect-scope] Direct push to ${TARGET_HASH} — full suite."
             exit 0
           fi
 
-          # Fetch the target branch so we can find the true merge-base.
-          git fetch origin develop --depth=1 2>/dev/null || true
-          MERGE_BASE=$(git merge-base HEAD origin/develop 2>/dev/null || echo "")
+          # Fetch the PR/merge-group base (not hardcoded develop) so scoping
+          # works for PRs targeting master.
+          BASE_REF="${BASE_REF#refs/heads/}"
+          if [ -n "$BASE_REF" ]; then
+            git fetch origin "$BASE_REF" --depth=1 2>/dev/null || true
+          fi
+          git fetch origin "$TARGET_HASH" --depth=1 2>/dev/null || true
+          MERGE_BASE=$(git merge-base HEAD "$TARGET_HASH" 2>/dev/null || true)
+          if [ -z "$MERGE_BASE" ] && [ -n "$BASE_REF" ]; then
+            MERGE_BASE=$(git merge-base HEAD "origin/${BASE_REF}" 2>/dev/null || true)
+          fi
 
           if [ -z "$MERGE_BASE" ]; then
-            echo "spec_pattern=" >> "$GITHUB_OUTPUT"
-            echo "matrix=[1,2,3,4,5,6,7,8]" >> "$GITHUB_OUTPUT"
+            emit_full
             echo "[detect-scope] Could not determine merge-base — full suite."
             exit 0
           fi
 
-          echo "[detect-scope] merge-base: ${MERGE_BASE}"
+          echo "[detect-scope] merge-base: ${MERGE_BASE} (base ref: ${BASE_REF:-none})"
 
           # Get changed files and run the detection script.
           SPEC=$(git diff --name-only "$MERGE_BASE" HEAD 2>/dev/null \
                  | node scripts/e2e-diagram-scope.mjs \
                  || echo "")
 
-          # Check and set required no of containers to run
           if [ "$SPEC" = "SKIP" ]; then
-            echo "spec_pattern=SKIP" >> "$GITHUB_OUTPUT"
-            echo "matrix=[1]" >> "$GITHUB_OUTPUT"
+            emit_skip
             echo "[detect-scope] Only docs/ignorable files changed — e2e can be skipped."
           elif [ -n "$SPEC" ]; then
-            echo "spec_pattern=${SPEC}" >> "$GITHUB_OUTPUT"
-            echo "matrix=[1]" >> "$GITHUB_OUTPUT"
+            emit_scoped "$SPEC"
             echo "[detect-scope] Scoped to: ${SPEC}"
           else
-            echo "spec_pattern=" >> "$GITHUB_OUTPUT"
-            echo "matrix=[1,2,3,4,5,6,7,8]" >> "$GITHUB_OUTPUT"
+            emit_full
             echo "[detect-scope] Cannot scope — full suite."
           fi
-        env:
-          # Manual-dispatch spec glob, passed via env to avoid interpolating
-          # user input directly into the shell script.
-          SPEC_PATTERN_INPUT: ${{ github.event.inputs.spec_pattern }}
-          # Scoping is ON by default.  To disable, set this repository variable
-          # to 'false' (GitHub → Settings → Secrets and variables → Actions → Variables).
-          # Using == 'false' (instead of == 'true') ensures fork PRs — where
-          # repository variables are not exposed — still get scoped runs.
-          E2E_SCOPE_BY_DIAGRAM: "${{ vars.E2E_SCOPE_BY_DIAGRAM == 'false' && 'false' || 'true' }}"
 
   e2e:
     # Skip the entire e2e job when only docs/ignorable files changed.
@@ -254,7 +291,7 @@ jobs:
           mv stats e2e/snapshots/stats/head
           echo '## Bundle size difference' >> "$GITHUB_STEP_SUMMARY"
           echo '' >> "$GITHUB_STEP_SUMMARY"
-          npx tsx scripts/size.ts >> "$GITHUB_STEP_SUMMARY" || echo '_Bundle size baseline unavailable (snapshot cache miss)._' >> "$GITHUB_STEP_SUMMARY"
+          pnpm exec tsx scripts/size.ts >> "$GITHUB_STEP_SUMMARY" || echo '_Bundle size baseline unavailable (snapshot cache miss)._' >> "$GITHUB_STEP_SUMMARY"
 
       # Rebuild the served bundle with inline source maps so the Playwright run
       # can collect native V8 coverage and map it back to source (no
@@ -265,20 +302,22 @@ jobs:
 
       - name: Playwright run
         id: playwright
-        run: |
-          set +e
-          if [ -n "${{ needs.detect-scope.outputs.spec_pattern }}" ]; then
-            IFS=',' read -ra SPECS <<< "${{ needs.detect-scope.outputs.spec_pattern }}"
-            pnpm exec playwright test "${SPECS[@]}" --shard=${{ matrix.containers }}/${{ strategy.job-total }}
-          else
-            pnpm exec playwright test --shard=${{ matrix.containers }}/${{ strategy.job-total }}
-          fi
-          exit $?
         env:
           MERMAID_PORT: 9000
           PLAYWRIGHT_COMMIT: ${{ github.sha }}
           # Enables native V8 coverage collection (page.coverage) on coverage runs.
           E2E_COVERAGE: ${{ (github.event_name == 'pull_request' || github.ref == 'refs/heads/develop') && 'true' || '' }}
+          # Job output via env — never interpolate spec globs into the shell via ${{ }}.
+          SPEC_PATTERN: ${{ needs.detect-scope.outputs.spec_pattern }}
+          SHARD: ${{ matrix.containers }}
+          SHARD_TOTAL: ${{ strategy.job-total }}
+        run: |
+          if [ -n "$SPEC_PATTERN" ]; then
+            IFS=',' read -ra SPECS <<< "$SPEC_PATTERN"
+            pnpm exec playwright test "${SPECS[@]}" --shard="${SHARD}/${SHARD_TOTAL}"
+          else
+            pnpm exec playwright test --shard="${SHARD}/${SHARD_TOTAL}"
+          fi
 
       # On failure, surface why a diagram didn't render: traces (with browser
       # console), failure screenshots, and error-context snapshots.
@@ -410,6 +449,7 @@ jobs:
       # only its slice; --files globs stay relative to the same root so names are
       # preserved, and Argos combines the indices into one build once all K report.
       - name: Upload images to Argos
+        if: env.ARGOS_UPLOAD_BOTH == 'true'
         env:
           ARGOS_PARALLEL_NONCE: ${{ github.run_id }}-${{ github.run_attempt }}
         run: |
@@ -442,7 +482,7 @@ jobs:
               if [ $(( j % K + 1 )) -eq "$i" ]; then globs+=( "${groups[$j]}/*.{png,jpg,jpeg}" ); fi
             done
             [ ${#globs[@]} -eq 0 ] && continue
-            npx argos upload e2e/argos-baseline \
+            pnpm exec argos upload e2e/argos-baseline \
               --files "${globs[@]}" \
               --parallel --parallel-total "$K" --parallel-index "$i"
           done
@@ -459,7 +499,7 @@ jobs:
         if: env.GROUP_ARGOS_IMAGES != 'true'
         env:
           ARGOS_SUBSET: true
-        run: npx argos upload e2e/screenshots
+        run: pnpm exec argos upload e2e/screenshots
 
   e2e-required:
     if: always()

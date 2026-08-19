@@ -35,10 +35,7 @@ jobs:
           node-version-file: '.node-version'
 
       - name: Install Packages
-        run: |
-          pnpm install --frozen-lockfile
-        env:
-          CYPRESS_CACHE_FOLDER: .cache/Cypress
+        run: pnpm install --frozen-lockfile
 
       - name: Run Linting
         shell: bash
@@ -92,6 +89,6 @@ jobs:
       - uses: testomatio/check-tests@0ea638fcec1820cf2e7b9854fdbdd04128a55bd4 # stable
         with:
           framework: playwright
-          tests: './e2e/**/**.spec.{js,ts}'
+          tests: './e2e/{rendering,other}/**/*.spec.{js,ts}'
           token: ${{ secrets.GITHUB_TOKEN }}
           has-tests-label: true

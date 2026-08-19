@@ -48,12 +48,11 @@ jobs:
         run: pnpm build
 
       # Capture every screenshot under e2e/screenshots. RUN_VISUAL_TEST makes
-      # verifyScreenshot write PNGs (no upload, no visual assertion), so test
-      # outcomes don't matter here — we only need the captured paths. Keep going on
-      # failure so a flaky test can't abort the whole capture; the resulting manifest
-      # diff is reviewed in the PR below.
+      # verifyScreenshot write PNGs (no upload, no visual assertion). Do not
+      # swallow failures: a partial capture would prune missing tests from the
+      # manifest as if they had been removed.
       - name: Capture screenshots (full suite)
-        run: pnpm exec playwright test || true
+        run: pnpm exec playwright test
         env:
           MERMAID_PORT: 9000
           RUN_VISUAL_TEST: 'true'
@@ -63,7 +62,7 @@ jobs:
         run: pnpm run screenshots:order
 
       - name: Create pull request
-        uses: peter-evans/create-pull-request@d32e88dac789dcc7906e7d26f69f24116fa9c97d
+        uses: peter-evans/create-pull-request@d32e88dac789dcc7906e7d26f69f24116fa9c97d # v8.1.1
         with:
           add-paths: |
             e2e/sheet-order.json
