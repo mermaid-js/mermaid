@@ -21,7 +21,7 @@ import { validateLayout } from '../validateLayoutProxy.js';
 import {
   buildChannelRoutingGraphForPorts,
   collectObstacleRects,
-  findPathOnPreparedChannelGraph,
+  findPathsOnPreparedChannelGraph,
   findRoutingGraphPathBetweenPorts,
 } from '../core/routing.js';
 import { findDirectCompoundRoute } from './directCompoundRoute.js';
@@ -626,13 +626,24 @@ function* sideRouteCandidates(
         : null;
 
     const startHoriz = startSide === 'N' || startSide === 'S';
+    const endStubs = endTs.map((t) => stubFor(rE, endSide, t));
     for (const st of startTs) {
       const { port: ps, stub: startStub } = stubFor(rS, startSide, st);
-      for (const et of endTs) {
-        const { port: pe, stub: endStub } = stubFor(rE, endSide, et);
-        const mid = prepared
-          ? findPathOnPreparedChannelGraph(prepared, startStub, endStub, { avoid })
-          : null;
+      // One search, four targets: the four end offsets sit in the same graph and
+      // share this start stub, so re-running the search per offset re-explored the
+      // same graph four times (6516 ms of `domus/triage2`'s 16016 ms remediation).
+      const mids = prepared
+        ? findPathsOnPreparedChannelGraph(
+            prepared,
+            startStub,
+            endStubs.map((e) => e.stub),
+            { avoid }
+          )
+        : endStubs.map(() => null);
+      for (const [ei, et] of endTs.entries()) {
+        const { port: pe, stub: endStub } = endStubs[ei];
+        void et;
+        const mid = mids[ei];
         const routes: Point[][] = [];
         if (mid && mid.length >= 2) {
           // The router snaps the stub endpoints to its grid, so the joints

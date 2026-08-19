@@ -1013,6 +1013,41 @@ export function buildChannelRoutingGraphForPorts(
 }
 
 /**
+ * Answer one source and MANY targets against a graph built by
+ * `buildChannelRoutingGraphForPorts`, with a single search. Ports whose node is
+ * absent (they fell inside an obstacle) come back as `null` in place.
+ */
+export function findPathsOnPreparedChannelGraph(
+  prepared: PreparedChannelGraph,
+  startPort: Point,
+  endPorts: Point[],
+  options: {
+    prefer?: 'ESWN' | 'ENWS';
+    avoid?: { segments: Point[][]; costPerCrossing: number };
+  } = {}
+): (Point[] | null)[] {
+  const startIdx = prepared.portIndex.get(portKey(startPort));
+  if (startIdx === undefined) {
+    return endPorts.map(() => null);
+  }
+  const targetIdxs = endPorts.map((p) => prepared.portIndex.get(portKey(p)));
+  const reachable = [...new Set(targetIdxs.filter((i): i is number => i !== undefined))];
+  if (reachable.length === 0) {
+    return endPorts.map(() => null);
+  }
+  const paths = findShortestOrthogonalPathsOnGraph(
+    { nodes: prepared.nodes, adj: prepared.adj, startIdx },
+    reachable,
+    options
+  );
+  const byIdx = new Map<number, Point[] | null>();
+  for (const [i, idx] of reachable.entries()) {
+    byIdx.set(idx, paths[i]);
+  }
+  return targetIdxs.map((idx) => (idx === undefined ? null : (byIdx.get(idx) ?? null)));
+}
+
+/**
  * Answer one source/target query against a graph built by
  * `buildChannelRoutingGraphForPorts`. The nodes and adjacency are shared by
  * reference; only the two endpoint indices differ per query.
@@ -1212,7 +1247,11 @@ function segmentsCrossStrict(a1: Point, a2: Point, b1: Point, b2: Point): boolea
  * Find the shortest orthogonal path on a routing graph using bend-aware Dijkstra.
  * Optimizes for (length, bends) lexicographically.
  */
-export function findShortestOrthogonalPathOnGraph(
+/**
+ * The bend-aware Dijkstra itself. Returns a reconstruction closure rather than a
+ * path so one search can answer several targets — see the two wrappers below.
+ */
+function runOrthogonalSearch(
   g: RoutingGraph,
   options: {
     prefer: 'ESWN' | 'ENWS';
@@ -1222,8 +1261,14 @@ export function findShortestOrthogonalPathOnGraph(
      * the path cost. Absent = behavior identical to the classic search.
      */
     avoid?: { segments: Point[][]; costPerCrossing: number };
+    /**
+     * Answer several targets from ONE search (see `findShortestOrthogonalPathsOnGraph`).
+     * When set, `g.endIdx` is ignored, the search runs until every listed node has
+     * been settled, and the result is one path per target in the same order.
+     */
+    targets?: number[];
   } = { prefer: 'ESWN' }
-): Point[] | null {
+): (endIdx: number) => Point[] | null {
   type Dir = 'h' | 'v' | 'n';
   const dirIndex = (d: Dir) => (d === 'n' ? 0 : d === 'h' ? 1 : 2);
 
@@ -1352,6 +1397,8 @@ export function findShortestOrthogonalPathOnGraph(
   };
 
   const sortedAdjacency: (RouteGraphEdge[] | undefined)[] = new Array(N);
+  const settleTargets = options.targets ? new Set(options.targets) : undefined;
+  const requestedTargets = options.targets;
 
   while (heap.size > 0) {
     const cur = heap.pop()!;
@@ -1359,7 +1406,19 @@ export function findShortestOrthogonalPathOnGraph(
     if (cur.len !== distLen[cur.node * 3 + di] || cur.bends !== distBends[cur.node * 3 + di]) {
       continue;
     }
-    if (cur.node === g.endIdx) {
+    if (settleTargets !== undefined) {
+      // Multi-target mode: keep going until every requested target is settled.
+      // Dijkstra settles nodes in non-decreasing key order, so a target's distances
+      // are final the moment it is popped and are identical to what a search that
+      // stopped there would have recorded — which is what makes answering several
+      // targets from one search exact rather than an approximation.
+      if (settleTargets.has(cur.node)) {
+        settleTargets.delete(cur.node);
+        if (settleTargets.size === 0) {
+          break;
+        }
+      }
+    } else if (cur.node === g.endIdx) {
       break;
     }
 
@@ -1409,36 +1468,84 @@ export function findShortestOrthogonalPathOnGraph(
     }
   }
 
-  // Pick best end dir.
-  let bestEndDir = 0;
-  for (let d = 1; d < 3; d++) {
-    if (
-      distLen[g.endIdx * 3 + d] < distLen[g.endIdx * 3 + bestEndDir] ||
-      (distLen[g.endIdx * 3 + d] === distLen[g.endIdx * 3 + bestEndDir] &&
-        distBends[g.endIdx * 3 + d] < distBends[g.endIdx * 3 + bestEndDir])
-    ) {
-      bestEndDir = d;
+  const pathTo = (endIdx: number): Point[] | null => {
+    // Pick best end dir.
+    let bestEndDir = 0;
+    for (let d = 1; d < 3; d++) {
+      if (
+        distLen[endIdx * 3 + d] < distLen[endIdx * 3 + bestEndDir] ||
+        (distLen[endIdx * 3 + d] === distLen[endIdx * 3 + bestEndDir] &&
+          distBends[endIdx * 3 + d] < distBends[endIdx * 3 + bestEndDir])
+      ) {
+        bestEndDir = d;
+      }
     }
-  }
-  if (!Number.isFinite(distLen[g.endIdx * 3 + bestEndDir])) {
-    return null;
-  }
+    if (!Number.isFinite(distLen[endIdx * 3 + bestEndDir])) {
+      return null;
+    }
 
-  // Reconstruct path.
-  const pathIdxs: number[] = [];
-  let curNode = g.endIdx;
-  let curDir = bestEndDir;
-  while (curNode !== -1) {
-    pathIdxs.push(curNode);
-    const pn = prevNode[curNode * 3 + curDir];
-    const pd = prevDir[curNode * 3 + curDir];
-    curNode = pn;
-    curDir = pd;
-  }
-  pathIdxs.reverse();
+    // Reconstruct path.
+    const pathIdxs: number[] = [];
+    let curNode = endIdx;
+    let curDir = bestEndDir;
+    while (curNode !== -1) {
+      pathIdxs.push(curNode);
+      const pn = prevNode[curNode * 3 + curDir];
+      const pd = prevDir[curNode * 3 + curDir];
+      curNode = pn;
+      curDir = pd;
+    }
+    pathIdxs.reverse();
 
-  const pts = pathIdxs.map((i) => ({ x: g.nodes[i].x, y: g.nodes[i].y }));
-  return compressCollinear(pts);
+    const pts = pathIdxs.map((i) => ({ x: g.nodes[i].x, y: g.nodes[i].y }));
+    return compressCollinear(pts);
+  };
+
+  void requestedTargets;
+  return pathTo;
+}
+
+/** One source, one target — the classic entry point. */
+export function findShortestOrthogonalPathOnGraph(
+  g: RoutingGraph,
+  options: {
+    prefer: 'ESWN' | 'ENWS';
+    avoid?: { segments: Point[][]; costPerCrossing: number };
+  } = { prefer: 'ESWN' }
+): Point[] | null {
+  return runOrthogonalSearch(g, options)(g.endIdx);
+}
+
+/**
+ * One source, MANY targets, from a single search.
+ *
+ * `sideRouteCandidates` asks for the route from one start stub to each of four end
+ * offsets on the same side. Those are four targets in one graph from one source, so
+ * four separate searches re-explored the same graph four times; on `domus/triage2`
+ * the searches were 6516 ms of the 16016 ms remediation cost.
+ *
+ * Exact, not an approximation: Dijkstra settles nodes in non-decreasing key order,
+ * so the distances recorded for a target are final the moment it is popped and are
+ * identical to those a search that stopped there would have written. Running until
+ * every target has been settled therefore yields exactly the paths the individual
+ * searches produced, tie-breaks included.
+ */
+export function findShortestOrthogonalPathsOnGraph(
+  g: Omit<RoutingGraph, 'endIdx'>,
+  targets: number[],
+  options: {
+    prefer?: 'ESWN' | 'ENWS';
+    avoid?: { segments: Point[][]; costPerCrossing: number };
+  } = {}
+): (Point[] | null)[] {
+  if (targets.length === 0) {
+    return [];
+  }
+  const pathTo = runOrthogonalSearch(
+    { ...g, endIdx: targets[0] },
+    { prefer: options.prefer ?? 'ESWN', avoid: options.avoid, targets }
+  );
+  return targets.map((t) => pathTo(t));
 }
 
 // ============================================================================
