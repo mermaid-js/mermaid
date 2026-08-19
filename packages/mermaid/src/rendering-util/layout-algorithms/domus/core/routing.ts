@@ -588,12 +588,18 @@ const channelLinesByObstacles = new WeakMap<Rect[], Map<string, ChannelLines>>()
  * extents costs one O(R) pass, against the O(R^2) channel construction plus
  * O(C^2) dominance prune it saves.
  *
- * Bounded and cleared wholesale rather than evicted one by one: entries are only
- * valid while node geometry is unchanged, and a layout run wants a handful of
- * obstacle sets, not hundreds. Clearing on overflow keeps a long session from
- * holding stale geometry alive.
+ * Bounded, with least-recently-used eviction of ONE entry at a time. It used to
+ * hold 64 entries and clear wholesale on overflow, which was fine while each route
+ * query asked for the same bounds. It stopped being fine once the repair sweep began
+ * building a graph per side pair: 12 distinct bounds per flagged edge thrash a
+ * 64-entry cache, every clear also throws away the entries the primary placement and
+ * routing path depends on, and that path's channel construction reappeared —
+ * `domus:core` on `domus/mermaid-chart-architecture` went 155 ms to 654 ms in the Dev
+ * Explorer's profile while remediation was getting faster. Insertion order in a `Map`
+ * is the LRU order, so refreshing on hit and dropping the oldest key on overflow is
+ * all this needs.
  */
-const CHANNEL_LINES_BY_SIGNATURE_MAX = 64;
+const CHANNEL_LINES_BY_SIGNATURE_MAX = 512;
 const channelLinesBySignature = new Map<string, ChannelLines>();
 
 function obstacleSignature(obstacleRects: Rect[]): string {
@@ -630,6 +636,10 @@ function channelRepresentativeLines(
   const signatureKey = `${boundsKey}|${obstacleSignature(obstacleRects)}`;
   const bySignature = channelLinesBySignature.get(signatureKey);
   if (bySignature) {
+    // Refresh recency: delete + set moves the key to the end of the Map's
+    // insertion order, which is what makes the eviction below least-recently-used.
+    channelLinesBySignature.delete(signatureKey);
+    channelLinesBySignature.set(signatureKey, bySignature);
     byBounds.set(boundsKey, bySignature);
     return bySignature;
   }
@@ -808,8 +818,12 @@ function channelRepresentativeLines(
 
   const lines: ChannelLines = { xLines, yLines };
   byBounds.set(boundsKey, lines);
-  if (channelLinesBySignature.size >= CHANNEL_LINES_BY_SIGNATURE_MAX) {
-    channelLinesBySignature.clear();
+  while (channelLinesBySignature.size >= CHANNEL_LINES_BY_SIGNATURE_MAX) {
+    const oldest = channelLinesBySignature.keys().next().value;
+    if (oldest === undefined) {
+      break;
+    }
+    channelLinesBySignature.delete(oldest);
   }
   channelLinesBySignature.set(signatureKey, lines);
   return lines;
