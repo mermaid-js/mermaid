@@ -11,8 +11,7 @@ addDetector(id, detector, loader);
 
 describe('gantt diagram SVGs', () => {
   jsdomIt('adds the exact task date range as a native SVG tooltip', async () => {
-    const svgNode = await drawDiagram(`
-      gantt
+    const svgNode = await drawDiagram(`gantt
         dateFormat YYYY-MM-DD HH:mm
         Timed task : task1, 2026-01-02 09:30, 2026-01-02 17:45
     `);
