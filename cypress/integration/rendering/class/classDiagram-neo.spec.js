@@ -183,3 +183,29 @@ describe('Class diagram — Neo look with new themes', () => {
     });
   });
 });
+
+// The neo/redux themes set `themeVariables.strokeWidth` to 2, which lands on `path.relation`.
+// Relation markers must not scale with it, otherwise they overshoot the line-end offset and end
+// up drawn behind the class box. The `look: 'neo'` cases above use the `-margin` marker variants,
+// so only the default `classic` look exercises the plain markers.
+describe('Class diagram — Classic look with new themes', () => {
+  themes.forEach(({ theme, label }) => {
+    it(`CLASSIC-1 [${label}]: should render relation markers outside the class box`, () => {
+      imgSnapshotTest(diagrams.allRelationships, {
+        logLevel: 1,
+        htmlLabels: true,
+        theme,
+      });
+    });
+  });
+
+  themes.forEach(({ theme, label }) => {
+    it(`CLASSIC-2 [${label}]: should render cardinality with classic look`, () => {
+      imgSnapshotTest(diagrams.cardinality, {
+        logLevel: 1,
+        htmlLabels: true,
+        theme,
+      });
+    });
+  });
+});
