@@ -59,7 +59,7 @@ importers:
         specifier: ^1.2.3
         version: 1.2.3
       '@playwright/test':
-        specifier: ^1.61.0
+        specifier: ^1.62.1
         version: 1.62.1
       '@rollup/plugin-typescript':
         specifier: ^12.1.4
@@ -212,7 +212,7 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1
       playwright:
-        specifier: ^1.61.0
+        specifier: ^1.62.1
         version: 1.62.1
       prettier:
         specifier: ^3.6.2
