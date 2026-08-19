@@ -1,9 +1,8 @@
-// import khroma from 'khroma';
 import * as khroma from 'khroma';
 import { getIconStyles } from '../globalStyles.js';
 
 /** Returns the styles given options */
-export interface FlowChartStyleOptions {
+export interface AgentflowStyleOptions {
   arrowheadColor: string;
   border2: string;
   clusterBkg: string;
@@ -14,6 +13,7 @@ export interface FlowChartStyleOptions {
   mainBkg: string;
   nodeBorder: string;
   nodeTextColor: string;
+  strokeWidth?: string;
   tertiaryColor: string;
   textColor: string;
   titleColor: string;
@@ -31,7 +31,7 @@ const fade = (color: string, opacity: number) => {
   return khroma.rgba(r, g, b, opacity);
 };
 
-const getStyles = (options: FlowChartStyleOptions) =>
+const getStyles = (options: AgentflowStyleOptions) =>
   `.label {
     font-family: ${options.fontFamily};
     color: ${options.nodeTextColor || options.textColor};
@@ -58,18 +58,11 @@ const getStyles = (options: FlowChartStyleOptions) =>
   .node path {
     fill: ${options.mainBkg};
     stroke: ${options.nodeBorder};
-    stroke-width: 1px;
+    stroke-width: ${options.strokeWidth ?? 1}px;
   }
   .rough-node .label text , .node .label text, .image-shape .label, .icon-shape .label {
     text-anchor: middle;
   }
-  // .flowchart-label .text-outer-tspan {
-  //   text-anchor: middle;
-  // }
-  // .flowchart-label .text-inner-tspan {
-  //   text-anchor: start;
-  // }
-
   .node .katex path {
     fill: #000;
     stroke: #000;
@@ -96,7 +89,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
 
   .edgePath .path {
     stroke: ${options.lineColor};
-    stroke-width: 2.0px;
+    stroke-width: ${options.strokeWidth ?? 2}px;
   }
 
   .flowchart-link {
@@ -144,17 +137,6 @@ const getStyles = (options: FlowChartStyleOptions) =>
 
   .node .collapsed-separator {
     stroke-width: 0.75px;
-  }
-
-  .node .type-declaration-box path {
-    fill: ${options.mainBkg};
-    stroke: ${options.nodeBorder};
-    stroke-width: 1px;
-  }
-
-  .node .type-declaration-separator path {
-    stroke: ${options.nodeBorder};
-    stroke-width: 1px;
   }
 
   .cluster text {
